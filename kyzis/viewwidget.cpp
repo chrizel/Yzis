@@ -137,7 +137,6 @@ void KYZisView::syncViewInfo() {
 
 void KYZisView::refreshScreen () {
 	editor->repaint( false );
-	updateCursor();
 }
 
 void KYZisView::setupActions() {

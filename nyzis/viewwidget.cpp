@@ -130,8 +130,8 @@ void NYZView::scrollDown( int n ) {
 	drawContents( getLinesVisible() - n, n );
 }
 
-void NYZView::paintEvent( unsigned int clipx, unsigned int clipy, unsigned int clipw, unsigned int cliph ) {
-	drawContents( clipx - getDrawCurrentTop( ), cliph );
+void NYZView::paintEvent( unsigned int , unsigned int clipy, unsigned int , unsigned int cliph ) {
+	drawContents( clipy - getDrawCurrentTop( ), cliph );
 }
 
 void NYZView::drawContents( int clipy, int cliph ) {
@@ -201,7 +201,8 @@ void NYZView::drawContents( int clipy, int cliph ) {
 	wmove(editor,
 		getCursor()->getY() - getDrawCurrentTop (),
 		getCursor()->getX() - getDrawCurrentLeft () + marginLeft
-		 );
+	);
+	wrefresh( editor );
 }
 
 void NYZView::setCommandLineText( const QString& text )

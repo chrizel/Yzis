@@ -80,8 +80,12 @@ void KYZisEdit::paintEvent( QPaintEvent * pe ) {
 	clipy = clipy ? clipy / linespace : 0;
 	clipw = clipw ? clipw / maxwidth + ( int )ceil( clipw % maxwidth ) : 0;
 	cliph = cliph ? cliph / linespace + ( int )ceil( cliph % linespace ) : 0;
-//	mCursorShown = ! ( mCursorX >= clipx && mCursorX <= clipx + clipw && mCursorY >= clipy && mCursorY <= clipy + cliph );
-	mCursorShown = ! ( mCursorY >= clipy && mCursorY <= clipy + cliph );
+	if ( mCursorY >= clipy && mCursorY <= clipy + cliph ) {
+		if ( pe->erased() && ! ( mCursorX >= clipx && mCursorX <= clipx + clipw ) )
+			mCursorShown = true;
+		else
+			mCursorShown = ! mCursorShown;
+	}
 //	yzDebug() << "KYZisEdit::paintEvent: " << clipx << "," << clipy << "," << clipw << "," << cliph << "," << pe->erased() << "," << mCursorShown << endl;
 	drawContents( clipx, clipy, clipw, cliph, pe->erased() );
 }
@@ -89,14 +93,15 @@ void KYZisEdit::paintEvent( QPaintEvent * pe ) {
 void KYZisEdit::paintEvent( unsigned int clipx, unsigned int clipy, unsigned int clipw, unsigned int cliph ) {
 	clipx -= mParent->getDrawCurrentLeft( ) + marginLeft;
 	clipy -= mParent->getDrawCurrentTop( );
-	mCursorShown = ! ( ( unsigned int )mCursorY >= clipy && ( unsigned int )mCursorY <= clipy + cliph );
-//	yzDebug() << "paintEvent: clipy=" << clipy << "; cliph=" << cliph << endl;
+	if ( ( unsigned int )mCursorY >= clipy && ( unsigned int )mCursorY <= clipy + cliph )
+		mCursorShown = false;
 	drawContents( clipx, clipy, clipw, cliph, false );
 }
 
 void KYZisEdit::setCursor(int c, int l) {
 	c = c - mParent->getDrawCurrentLeft () + marginLeft;
 	l -= mParent->getDrawCurrentTop ();
+//	yzDebug() << "setCursor : mCursorShow=" << mCursorShown << "; (" << mCursorX << ", " << mCursorY << ") - (" << c << ", " << l << ")" << endl;
 	if ( mCursorShown && c == mCursorX && l == mCursorY ) return;
 	if ( mCursorShown ) drawCursorAt( mCursorX, mCursorY );
 	mCursorX = c;
@@ -195,6 +200,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 	}
 
 	unsigned int lineNumber = 0;
+	unsigned int mY = mParent->getCursor()->getY() - mParent->getDrawCurrentTop();
 
 	if ( ! mParent->myBuffer()->introShown() ) {
 		while ( mParent->drawNextLine( ) && cliph > 0 ) {
@@ -226,8 +232,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 					p.drawText(myRect, flag, mParent->drawChar( ) );
 					currentX += mParent->drawLength( );
 				}
-				if ( currentY == mParent->getCursor()->getY() )//&& clipx <= mParent->getCursor()->getX() && mParent->getCursor()->getX() <= clipx + clipw )
-					setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+				if ( currentY == mY ) setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
 				currentY += mParent->drawHeight( );
 				cliph -= mParent->lineHeight( );
 			} else {

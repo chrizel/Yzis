@@ -62,7 +62,7 @@ void NYZView::map( void )
 	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
 
 	editor = subwin( window, getLinesVisible(), 0, 0, 0); YZASSERT( editor );
-	wattrset( editor, A_NORMAL );
+	wattrset( editor, A_NORMAL|A_BOLD );
 	wmove( editor,0,0 );
 	keypad( editor , true); //active symbols for special keycodes
 	scrollok( editor, false ); 
@@ -73,11 +73,11 @@ void NYZView::map( void )
 	 * ------------------ statusbar -------------------
 	 */
 	infobar = subwin(window, 1, 0, getLinesVisible(), 0); YZASSERT( infobar );
-	wattrset(infobar, A_NORMAL );
-	wbkgd(infobar, A_REVERSE);
+	wattrset(infobar, A_NORMAL|A_BOLD );
+	wbkgd(infobar, A_NORMAL|A_BOLD|A_REVERSE);
 
 	statusbar  = subwin(window, 1, 0, getLinesVisible()+1, 0); YZASSERT( statusbar );
-	wattrset(statusbar, A_NORMAL );
+	wattrset(statusbar, A_NORMAL|A_BOLD );
 	if (has_colors())
 		wattron(statusbar, COLOR_PAIR(1));
 
@@ -308,7 +308,7 @@ void NYZView::initialisecolormap()
 	bool changecolorok = (can_change_color() == TRUE);
 	yzWarning() << "Terminal can";
 	if (!changecolorok)
-		yzWarning() << "\'t";
+		yzWarning() << " _not_";
 	yzWarning() << " change colors" << endl;
 
 	yzDebug() << "COLOR_PAIRS is : " << COLOR_PAIRS << endl;

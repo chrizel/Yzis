@@ -115,7 +115,6 @@ void YZModeVisual::cursorMoved( YZView* mView ) {
 
 	visual->clear();
 	visual->addInterval( bufI, scrI );
-	yzDebug() << "" << *visual << endl;
 
 	YZSelection tmp("tmp");
 	if ( scrI.contains( curI ) ) {
@@ -125,7 +124,6 @@ void YZModeVisual::cursorMoved( YZView* mView ) {
 		tmp.addInterval( curI );
 		tmp.delInterval( scrI );
 	}
-	yzDebug() << "visual refresh : " << tmp << endl;
 	mView->sendPaintEvent( tmp.map(), false );
 
 	toClipboard( mView );

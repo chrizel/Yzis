@@ -113,6 +113,16 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), s1.."\n"..s2.."\n"..s3 )
     end
 
+    function TestLuaBinding:test_appendline()
+        assertEquals( bufferContent(), "" )
+        local s = "coucou"
+        appendline(s)
+        assertEquals( bufferContent(), s )
+        appendline("hop\nbof")
+        assertEquals( bufferContent(), s.."\nhop\nbof" )
+    end
+
+    
 
 
 

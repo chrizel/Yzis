@@ -3,6 +3,7 @@
 .deps
 .svn
 nyzis
+yzis
 diff
 *~
 Makefile

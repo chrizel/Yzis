@@ -5512,7 +5512,7 @@ We need perl to generate some code.])
     AC_SUBST(PERL)
 ])
 
-AC_DEFUN(AC_PATH_LUA, [
+AC_DEFUN([AC_PATH_LUA], [
 
 dnl	AC_PATH_PROG(LUA_CONFIG, lua-config, no)
 

@@ -7,5 +7,5 @@ debian/tmp/usr/share/icons/crystalsvg/16x16/apps/kyzis.png
 debian/tmp/usr/share/icons/crystalsvg/32x32/apps/kyzis.png
 debian/tmp/usr/share/icons/crystalsvg/64x64/apps/kyzis.png
 debian/tmp/usr/share/icons/crystalsvg/128x128/apps/kyzis.png
-debian/tmp/usr/share/applnk/Utilities/kyzis.desktop
+debian/tmp/usr/share/applnk/Editors/kyzis.desktop
 debian/tmp/usr/share/services/kyzispart.desktop

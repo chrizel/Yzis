@@ -37,7 +37,7 @@ apidox:
 	echo "GENERATE_MAN        = NO" >> yzis.doxyfile ; \
 	echo "GENERATE_LATEX      = NO" >> yzis.doxyfile ; \
 	echo "HTML_HEADER         = doc/common/header.html" >> yzis.doxyfile ; \
-	echo "HTML_FOOTER         = doc/common/footer.html" >> yzis.doxyfile ; \
+	echo "HTML_FOOTER         = " >> yzis.doxyfile ; \
 	echo "HTML_STYLESHEET     = doc/common/doxygen.css" >> yzis.doxyfile ; \
 	echo "FILE_PATTERNS       = *.h" >> yzis.doxyfile ; \
 	echo "PREDEFINED          = DO_NOT_DOCUMENT" >> yzis.doxyfile ; \

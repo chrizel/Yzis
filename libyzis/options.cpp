@@ -59,6 +59,7 @@ YZOption::YZOption() {
 }
 
 YZOption::~YZOption() {
+	cleanup();
 	mOptions.clear();
 }
 
@@ -284,3 +285,9 @@ bool YZOption::hasGroup( const QString& group ) {
 	return false;
 }
 
+void YZOption::cleanup() {
+	QMap<QString,KOption*>::Iterator it;
+	for ( it = mOptions.begin(); it != mOptions.end(); ++it ) {
+		delete it.data();
+	}
+}

@@ -35,7 +35,7 @@ class KOption {
 		KOption( QString key, QString group, QStringList value, QStringList defaultValue);
 		KOption( QString key, QString group, int value, int defaultValue);
 		KOption( QString key, QString group, bool value, bool defaultValue);
-		~KOption();
+		~KOption() {}
 
 		const QString& getGroup() { return mGroup; }
 		const QString& getKey() { return mKey; }
@@ -65,7 +65,7 @@ class YZOption {
 		 */
 		YZOption();
 		YZOption(const YZOption&);
-		~YZOption();
+		virtual ~YZOption();
 
 		/**
 		 * Load settings from @param file
@@ -140,6 +140,10 @@ class YZOption {
 	private:
 		void init();
 		void initConfFiles();
+		/**
+		 * Clean memory
+		 */
+		void cleanup();
 		
 		//QString here is == group/key
 		QMap<QString, KOption*> mOptions;

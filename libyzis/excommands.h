@@ -130,6 +130,8 @@ class YZExCommandPool {
 		int rangeLine( const YZExRangeArgs& args );
 		int rangeCurrentLine( const YZExRangeArgs& args );
 		int rangeLastLine( const YZExRangeArgs& args );
+		int rangeMark( const YZExRangeArgs& args );
+		int rangeVisual( const YZExRangeArgs& args );
 
 		// commands
 		QString write( const YZExCommandArgs& args );

@@ -34,6 +34,8 @@
 #include "session.h"
 #include "swapfile.h"
 #include "ex_lua.h"
+#include "mark.h"
+#include "selection.h"
 
 YZExCommandPool::YZExCommandPool() {
 	commands.clear();
@@ -52,6 +54,8 @@ void YZExCommandPool::initPool() {
 	ranges.append( new YZExRange( "\\d+", &YZExCommandPool::rangeLine ) );
 	ranges.append( new YZExRange( "\\.", &YZExCommandPool::rangeCurrentLine ) );
 	ranges.append( new YZExRange( "\\$", &YZExCommandPool::rangeLastLine ) );
+	ranges.append( new YZExRange( "'\\w", &YZExCommandPool::rangeMark ) );
+	ranges.append( new YZExRange( "'[<>]", &YZExCommandPool::rangeVisual ) );
 	// commands
 	commands.append( new YZExCommand( "(x|wq?)(a(ll)?)?", &YZExCommandPool::write ) );
 	commands.append( new YZExCommand( "w(rite)?", &YZExCommandPool::write ) );
@@ -148,6 +152,24 @@ int YZExCommandPool::rangeCurrentLine( const YZExRangeArgs& args ) {
 int YZExCommandPool::rangeLastLine( const YZExRangeArgs& args ) {
 	return QMAX( args.view->myBuffer()->lineCount() - 1, 0 );
 }
+int YZExCommandPool::rangeMark( const YZExRangeArgs& args ) {
+	bool found = false;
+	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg.mid( 1 ), &found );
+	if ( found )
+		return pos.bPos->getY();
+	return -1;
+}
+int YZExCommandPool::rangeVisual( const YZExRangeArgs& args ) {
+	YZSelectionMap visual = args.view->visualSelection();
+	if ( visual.size() ) {
+		if ( args.arg.mid( 1 ) == "<" )
+			return visual[ 0 ].from().getY();
+		else if ( args.arg.mid( 1 ) == ">" )
+			return visual[ 0 ].to().getY();
+	}
+	return -1;
+}
+
 
 /**
  * COMMANDS

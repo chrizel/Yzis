@@ -638,6 +638,8 @@ class YZView {
 		 */
 		bool isRecording() { return mRegs.count() > 0; }
 
+		YZSelectionMap visualSelection();
+
 	public slots :
 		void sendMultipleKey( const QString& keys );
 

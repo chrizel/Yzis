@@ -38,6 +38,9 @@ struct yz_event_setline {
 #endif // __cplusplus
 };
 
+/**
+  * x and y are relative to the view
+  */
 struct yz_event_setcursor {
 	int x,y;
 };
@@ -78,6 +81,7 @@ typedef struct yz_event_t yz_event;
 
 
 yz_event mk_event_setstatus(char *text);
+yz_event mk_event_setcursor(int x, int y);
 
 
 #ifdef __cplusplus

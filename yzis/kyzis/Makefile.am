@@ -25,9 +25,9 @@ KDE_ICON = kyzis
 bin_PROGRAMS = kyzis
 
 # the application source, library search path, and link libraries
-kyzis_SOURCES = main.cpp kyzis.cpp kyzsession.cpp
+kyzis_SOURCES = main.cpp kyzis.cpp kyzsession.cpp 
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
-kyzis_LDADD   = $(LIB_KPARTS) $(top_srcdir)/libyzis/libyzis.la
+kyzis_LDADD   = $(LIB_KPARTS) $(top_srcdir)/libyzis/libqtyzis.la
 
 # this is where the desktop file will go 
 shelldesktopdir   = $(kde_appsdir)/Utilities
@@ -45,7 +45,7 @@ kde_module_LTLIBRARIES = libkyzispart.la
 # the Part's source, library search path, and link libraries
 libkyzispart_la_SOURCES = kyzisdoc.cpp kyzisview.cpp kyzis_factory.cpp kyzisedit.cpp
 libkyzispart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor $(top_srcdir)/libyzis/libyzis.la
+libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor $(top_srcdir)/libyzis/libqtyzis.la
 
 # this is where the desktop file will go 
 partdesktopdir   = $(kde_servicesdir)

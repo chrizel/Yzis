@@ -523,7 +523,7 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 	unsigned int c = 0;
 	QRegExp rex1("^(\\w+)\\s*");//a word with boundaries
 	QRegExp rex2("^([^\\w\\s]+)\\s*");//non-word chars with boundaries
-	QRegExp rex3("^\\s+\\S*");//whitespace
+	QRegExp rex3("^\\s+([^\\w\\s]*|\\w*)");//whitespace
 			
 	while ( c < args.count ) { //for each word
 		const QString& current = invertQString( args.view->myBuffer()->textline( result.getY() ) );

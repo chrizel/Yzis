@@ -1606,7 +1606,10 @@ bool YZView::drawPrevCol( ) {
 			sLineLength = wrapNextLine ? 0 : 1;
 		} else {
 			/* go back to begin of line */
-			initDraw( 0, sCursor->getY(), 0, rCursor->getY() - ( rLineHeight - 1 ) );
+			unsigned int nrLineHeight = rCursor->getY();
+			if ( rCursor->getY() > 0 ) nrLineHeight = rCursor->getY() - ( rLineHeight - 1 );
+//			yzDebug() << "nrLineHeight " << nrLineHeight << endl;
+			initDraw( 0, sCursor->getY(), 0, nrLineHeight );
 			rLineLength = 1;
 			rLineHeight = 1;
 			return false;

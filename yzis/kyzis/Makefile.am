@@ -25,7 +25,7 @@ KDE_ICON = kyzis
 bin_PROGRAMS = kyzis
 
 # the application source, library search path, and link libraries
-kyzis_SOURCES = main.cpp kyzis.cpp kyzsession.cpp 
+kyzis_SOURCES = main.cpp kyzis.cpp
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 kyzis_LDADD   = $(LIB_KPARTS) $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
 

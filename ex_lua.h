@@ -80,7 +80,14 @@ class YZExLua : public QObject {
 		 */
 		static int insertline(lua_State *L);
 
-		
+		/**
+		 * Append line at the end of the buffer
+		 * Arguments:
+		 * text
+		 *
+		 * Returns nothing.
+		 */
+		static int appendline(lua_State *L);
 
 		/**
 		 * Replace text on view.

@@ -58,28 +58,36 @@ YZCursor YZSearch::doSearch( YZView* mView, const QString& pattern, bool reverse
 	setCurrentSearch( pattern );
 	int direction = reverse ? 0 : 1;
 
-	YZCursor ret = mView->getBufferCursor();
+	YZCursor cur = mView->getBufferCursor();
 	if ( replay ) {
 		if ( skipline ) {
-			ret.setX( 0 );
-			if ( ! reverse ) ret.setY( QMIN( ret.getY() + 1, mView->myBuffer()->lineCount() - 1 ) );
+			cur.setX( 0 );
+			if ( ! reverse ) cur.setY( QMIN( (int)(cur.getY() + 1), (int)(mView->myBuffer()->lineCount() - 1) ) );
 		} else {
-			ret.setX( QMAX( ret.getX() + direction, 0 ) );
+			cur.setX( QMAX( (int)(cur.getX() + direction), 0 ) );
 		}
 	}
+	YZCursor top( mView, 0, 0 );
+	YZCursor bottom( mView );
+	bottom.setY( mView->myBuffer()->lineCount() - 1 );
+	bottom.setX( QMAX( (int)(mView->myBuffer()->textline( bottom.getY() ).length() - 1), 0 ) );
 
-	YZCursor end( mView );
-	if ( reverse ) {
-		end.setX( 0 );
-		end.setY( 0 );
-	} else {
-		end.setY( mView->myBuffer()->lineCount() - 1 );
-		end.setX( QMAX( mView->myBuffer()->textline( end.getY() ).length() - 1, 0 ) );
-	}
+	YZCursor end( bottom );
+	if ( reverse ) end.setCursor( top );
 
 	unsigned int matchedLength;
-	yzDebug() << "begin = " << ret << endl;
-	ret = mView->myBuffer()->action()->search( mView, pattern, ret, end, reverse, &matchedLength, found );
+	yzDebug() << "begin = " << cur << endl;
+	YZCursor ret = mView->myBuffer()->action()->search( mView, pattern, cur, end, reverse, &matchedLength, found );
+	if ( ! *found ) {
+		yzDebug() << "search hits top or bottom" << endl;
+		end.setCursor( cur );
+		if ( reverse ) 
+			cur.setCursor( bottom );
+		else 
+			cur.setCursor( top );
+		yzDebug() << "begin = " << cur << ", end = " << end << endl;
+		ret = mView->myBuffer()->action()->search( mView, pattern, cur, end, reverse, &matchedLength, found );
+	}
 	yzDebug() << "ret = " << ret << endl;
 
 	return ret;
@@ -110,7 +118,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 			YZCursor cur( from );
 			YZCursor end( v );
 			end.setY( b->lineCount() - 1 );
-			end.setX( QMAX( b->textline( end.getY() ).length() - 1, 0 ) );
+			end.setX( QMAX( (int)(b->textline( end.getY() ).length() - 1), 0 ) );
 
 			bool found = true;
 			unsigned int matchedLength = 0;

@@ -29,7 +29,7 @@ details.
 
 History:
 ========
-Before working on Yzis, the author (Mickael Marchand, Thomas Capricalli and
+Before working on Yzis, the authors (Mickael Marchand, Thomas Capricalli and
 Philippe Fremy) had been working on GVim. GVim is clearly the best vi
 compatible editor today. It contains tons of features, which are very clear
 improvements upon the original vi: visual selection, unlimited undo, powerful
@@ -51,12 +51,10 @@ amount of difficulites:
   difficult to follow.
 - the vi engine is tied to the concept of console editor. We have to add hacks
   after hacks to make it work as a graphical component (for example, we need
-  to fork, embed a graphical window, and run an event loop at full speed while
-  still not taking the whole CPU).
-- the main author and contributores do not have time to work anymore on gvim.
-  The development is very slow and patches are left behind
-- the main author is very reluctant to add any small change, even those that
-  won't affect the current behaviour
+  to fork a process, embed a graphical window, and run an event loop at full
+  speed while still not taking the whole CPU to just make the component work).
+- the main author of GVim is very reluctant to add any small change, even
+  those that won't affect the current behaviour
 - the codebase is very big and the author does not want to introduce any new
   feature, in fear of breaking something.
 
@@ -67,12 +65,13 @@ possible to work with GVim to have a vi-like editor in KDE as a good
 component.
 
 At this point, the decision was simple. Either spend lot of time in working
-around limitations of Gvim, or start a new vi editor. Kudos to Mickael
-Marchand who took over the second decision. This decision was taken shortly
+around limitations of GVim, or dropping the idea of a good vi editor component
+for KDE or start a new vi editor. Kudos to Thomas Capricelli and Mickael
+Marchand who took over the third decision. This decision was taken shortly
 before Fosdem 2003. The design documents and the name were hacked during the
 Fosdem.
 
-Mickael put up a website, a subversion server, mailing lists and started
+They put up a website, a subversion server, mailing lists and started
 coding. To avoid the many problems of gvim, we took the following decisions:
 1. clearly separate the vi engine from the gui
 2. use C++ to provide a clean design
@@ -82,12 +81,12 @@ coding. To avoid the many problems of gvim, we took the following decisions:
 6. provide a C interface in case a hard-core C coder wants to contribute
 7. use some Qt classes for the engine. Qt would bring a string class that
 handles unicode correctly (multibyte support is knightmare in gvim), efficient
-lists implementations, and other goodes. Moreover, we were very familiar and
+lists implementations, and other goodies. Moreover, we were very familiar and
 efficient with Qt.
 8. Use tinyQ as a backup solution for the people not willing to link with Qt
 just for a few template classes.
 
 Over the time, maintaining a C binding to C++ turn out to be quite tedious and
 time consuming. It would also make the code quite complicated. So the C
-binding was dropped and yzis started to develop slowly but surely.
+binding was dropped and yzis started to develop slowly but steadily.
 

@@ -47,33 +47,21 @@
         <source>-- SEARCH --</source>
         <translation type="unfinished">-- ZOEKEN --</translation>
     </message>
+    <message>
+        <source>-- OPEN --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- VISUAL --</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>-- VISUAL LINES --</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>NYZView</name>
-    <message>
-        <source>Entering Insert mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Entering Replace mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Entering Command mode</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>EX Mode :</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Reverse Search:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search mode :</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -118,6 +106,29 @@
     <message>
         <source>One file is modified ! Save it first ...</source>
         <translation>Er is een bestand gewijzigd! Sla deze eerst op.</translation>
+    </message>
+    <message>
+        <source>Invalid option given : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This option cannot be switched this way, this is a boolean option.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This option is a global option which cannot be changed with setlocal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid option given</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>YZExLua</name>
+    <message>
+        <source>The file %1 could not be found in standard directories</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

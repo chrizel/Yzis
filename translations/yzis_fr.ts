@@ -47,32 +47,44 @@
         <source>-- SEARCH --</source>
         <translation>-- RECHERCHE --</translation>
     </message>
+    <message>
+        <source>-- OPEN --</source>
+        <translation>-- OUVERT --</translation>
+    </message>
+    <message>
+        <source>-- VISUAL --</source>
+        <translation>-- VISUEL --</translation>
+    </message>
+    <message>
+        <source>-- VISUAL LINES --</source>
+        <translation>-- VISUEL LIGNE --</translation>
+    </message>
 </context>
 <context>
     <name>NYZView</name>
     <message>
         <source>Entering Insert mode</source>
-        <translation>Passage au mode insertion</translation>
+        <translation type="obsolete">Passage au mode insertion</translation>
     </message>
     <message>
         <source>Entering Replace mode</source>
-        <translation>Passage au mode remplacement</translation>
+        <translation type="obsolete">Passage au mode remplacement</translation>
     </message>
     <message>
         <source>Entering Command mode</source>
-        <translation>Passage au mode commande</translation>
+        <translation type="obsolete">Passage au mode commande</translation>
     </message>
     <message>
         <source>EX Mode :</source>
-        <translation>Mode EX :</translation>
+        <translation type="obsolete">Mode EX :</translation>
     </message>
     <message>
         <source>Reverse Search:</source>
-        <translation>Recherche Inversée:</translation>
+        <translation type="obsolete">Recherche Inversée:</translation>
     </message>
     <message>
         <source>Search mode :</source>
-        <translation>Mode recherche :</translation>
+        <translation type="obsolete">Mode recherche :</translation>
     </message>
 </context>
 <context>
@@ -118,6 +130,29 @@
     <message>
         <source>One file is modified ! Save it first ...</source>
         <translation>Un fichier a été modifié ! Sauvegardez-le avant de quitter ...</translation>
+    </message>
+    <message>
+        <source>Invalid option given : </source>
+        <translation>L&apos;option spécifiée est invalide :</translation>
+    </message>
+    <message>
+        <source>This option cannot be switched this way, this is a boolean option.</source>
+        <translation>Cette option ne peut pas être modifiée de cette manière, c&apos;est une valeur booléenne.</translation>
+    </message>
+    <message>
+        <source>This option is a global option which cannot be changed with setlocal</source>
+        <translation>Cette option est globale , elle n&apos;est pas modifiable par la commande setlocal</translation>
+    </message>
+    <message>
+        <source>Invalid option given</source>
+        <translation>L&apos;option spécifiée est invalide</translation>
+    </message>
+</context>
+<context>
+    <name>YZExLua</name>
+    <message>
+        <source>The file %1 could not be found in standard directories</source>
+        <translation>Le fichier %1 n&apos;a pas pu être trouvé dans les répertoires standards</translation>
     </message>
 </context>
 <context>

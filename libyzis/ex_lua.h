@@ -120,9 +120,6 @@ class YZExLua : public QObject {
 		/**
 		 * Deletes the given line.
 		 * Returns nothing
-		 *
-		 * Note: the underscore is necessary because the name is already
-		 * reserved in C++
 		 */
 		static int YZExLua::deleteline(lua_State *L);
 

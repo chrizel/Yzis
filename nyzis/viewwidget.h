@@ -49,6 +49,10 @@ public:
 	virtual ~NYZView();
 
 	void handle_event(yz_event e);
+	virtual QString getCommandLineText(void) const;
+	virtual void setCommandLineText( const QString& );
+	virtual void setFocusCommandLine() {}
+	virtual void setFocusMainWindow() {}
 
 protected:
 	WINDOW		*window;	/* ncurses window to write to */

@@ -24,12 +24,12 @@
 
 #include "factory.h"
 
-YZSession *NYZFactory::session = 0;
 NYZFactory *NYZFactory::self = 0;
 NYZView *NYZFactory::currentView=0;
 
 
 NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
+	:YZSession( session_name )
 {
 
 	/* init screen */
@@ -46,8 +46,6 @@ NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
 		exit(1);
 	}
 	self = this;
-	session = new YZSession(session_name);
-	session->registerManager( this );
 
 	if (has_colors()) {
 		start_color();
@@ -110,12 +108,10 @@ NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
 
 NYZFactory::~NYZFactory( )
 {
-	delete session;
-	session = 0;
 	self = 0;
 }
 
-void NYZFactory::postEvent( yz_event /*ev*/ ) {
+void NYZFactory::receiveEvent( yz_event /*ev*/ ) {
 	// do nothing, we'll catch them in next flush_events()
 }
 
@@ -148,7 +144,7 @@ void NYZFactory::flush_events()
 		yzError() << "NYZFactory::flush_events() : arghhhhhhh event_loop called with no currentView";
 
 	/* flush event list */
-	while ( (e=NYZFactory::session->fetchNextEvent(/*myId*/)).id != YZ_EV_NOOP )
+	while ( (e=NYZFactory::self->fetchNextEvent(/*myId*/)).id != YZ_EV_NOOP )
 		currentView->handle_event(e);
 }
 
@@ -190,39 +186,26 @@ void NYZFactory::setStatusText( const QString& text )
 }
 
 
-
-void NYZFactory::setCommandLineText( const QString& text )
-{
-	commandline= text;
-	werase(commandbar);
-	waddstr(commandbar, text.local8Bit());
-	wrefresh(commandbar);
-}
-
-QString NYZFactory::getCommandLineText() const {
-	return commandline;
-}
-
 void NYZFactory::quit( bool /*savePopup*/ ) {
 	//FIXME
 	exit( 0 );
 }
 
-void NYZFactory::setCurrentView ( YZView * view  )
+void NYZFactory::changeCurrentView ( YZView * view  )
 {
 	currentView = static_cast<NYZView*>(view);
-	session->currentViewChanged(view);
+	currentViewChanged(view);
 }
 
 YZView* NYZFactory::createView( YZBuffer* buffer ) {
 	WINDOW *window = subwin(screen, LINES-2, 0, 0, 0);
 	currentView = new NYZView(window, buffer);
-	session->currentViewChanged(currentView);
+	currentViewChanged(currentView);
 	return currentView;
 }
 
 YZBuffer *NYZFactory::createBuffer(const QString& path) {
-	YZBuffer *b = new YZBuffer( NYZFactory::session, path );
+	YZBuffer *b = new YZBuffer( NYZFactory::self, path );
 	return b;
 }
 
@@ -232,10 +215,23 @@ void NYZFactory::popupMessage( const QString& /* message */ ) {
 
 void NYZFactory::deleteView() {
 	delete currentView;
-	currentView = static_cast<NYZView*>(session->nextView());
+	currentView = static_cast<NYZView*>(nextView());
 	if ( !currentView )
 		yzError() << "nyzys untested when no view is available...";
 	// TODO ; some kind of fake view when no view is available..
+}
+
+void NYZFactory::setCommandLine( const QString& text ) 
+{
+	commandline = text;
+	werase(commandbar);
+	waddstr(commandbar, text.local8Bit());
+	wrefresh(commandbar);
+}
+
+QString NYZFactory::getCommandLine() const 
+{
+	return commandline;
 }
 
 void NYZFactory::initialiseKeycodes() {

@@ -26,7 +26,7 @@
 #include "factory.h"
 
 NYZView::NYZView(WINDOW *_window, YZBuffer *b)
-	: YZView(b,NYZFactory::session,0)
+	: YZView(b,NYZFactory::self,0)
 {
 	window = _window;
 
@@ -120,6 +120,15 @@ void NYZView::printLine( int line ) {
 //		addch(str[i].unicode());
 	for ( ; i< w; i++ ) waddch(window, ' ' );
 	wmove(window,sy,sx ); // restore cursor
+}
+
+void NYZView::setCommandLineText( const QString& text )
+{
+	NYZFactory::self->setCommandLine( text );
+}
+
+QString NYZView::getCommandLineText() const {
+	return NYZFactory::self->getCommandLine();
 }
 
 

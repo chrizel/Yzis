@@ -1,3 +1,7 @@
+2004-03-07 mikmak
+  * nyzis
+    update to current libyzis API (compile fixes)
+
 2004-03-06 philippe
   * tests
     . add tests for switching between command mode and insert mode

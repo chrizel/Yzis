@@ -24,16 +24,15 @@
 #include "viewwidget.h"
 #include <curses.h>
 #include "factory.h"
-#include "gui.h"
+#include "session.h"
 
 
 #define STATUSBARWIDTH 15
 #define NYZ_VIEW_MAX 300
 //#define NYZ_BUFFER_MAX 300
 
-class NYZFactory : public Gui {
+class NYZFactory : public YZSession {
 public:
-	static YZSession *session;
 	static NYZFactory *self;
 	static NYZView *currentView;
 
@@ -46,19 +45,16 @@ public:
 
 	void		event_loop();
 	void		update_infobar(int, int, int, const QString& msg);
+	QString getCommandLine() const;
+	void setCommandLine( const QString& );
 
-	/* Gui */
-	virtual void postEvent(yz_event);
+	virtual void receiveEvent(yz_event);
 
 	virtual void scrollDown(int lines=1);
 	virtual void scrollUp(int lines=1);
 
-	virtual QString getCommandLineText(void) const;
-	virtual void setCommandLineText( const QString& );
-	virtual void setFocusCommandLine() {}
-	virtual void setFocusMainWindow() {}
 	virtual void quit ( bool savePopup=true ) ;
-	virtual void setCurrentView ( YZView * );
+	virtual void changeCurrentView ( YZView * );
 	virtual YZView* createView( YZBuffer* );
 	virtual	YZBuffer *createBuffer(const QString& path=QString::null);
 	virtual void popupMessage( const QString& message );

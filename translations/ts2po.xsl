@@ -24,32 +24,23 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: ts2po\n"
 </xsl:text>
-		<xsl:variable name="messages" select="//message"/>
-		<xsl:for-each select="$messages">
-			<xsl:variable name="source" select="source"/>
-			<xsl:choose>
-				<xsl:when test="generate-id()=generate-id($messages[source=$source][1])">
-					<xsl:apply-templates select="."/>
-				</xsl:when>
-				<xsl:otherwise>
-					<xsl:apply-templates select="." mode="duplicate"/>
-				</xsl:otherwise>
-			</xsl:choose>
-		</xsl:for-each>
+		<xsl:apply-templates select="//message"/>
 	</xsl:template>
-
-	<xsl:template match="message" mode="duplicate">
+<!-- remove me if you want to convert obsoleted translations too (as comment)
+	<xsl:template match="message[translation/@type='obsolete']">
 <xsl:text>
 #msgid "</xsl:text><xsl:value-of select="source"/><xsl:text>"
 #msgstr "</xsl:text><xsl:value-of select="translation"/><xsl:text>"
 </xsl:text>
 	</xsl:template>
-
-	<xsl:template match="message">
+-->
+	<xsl:template match="message[not(translation/@type='obsolete')]">
 <xsl:text>
 msgid "</xsl:text><xsl:value-of select="source"/><xsl:text>"
 msgstr "</xsl:text><xsl:value-of select="translation"/><xsl:text>"
 </xsl:text>
 	</xsl:template>
+
+	<xsl:template match="*"/>
 
 </xsl:stylesheet>

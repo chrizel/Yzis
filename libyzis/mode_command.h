@@ -208,6 +208,7 @@ class YZModeCommand : public YZMode {
 		void moveWordForward(const YZCommandArgs &args);
 		void appendAtEOL(const YZCommandArgs &args);
 		void append(const YZCommandArgs &args);
+		void substitute(const YZCommandArgs &args);
 		void changeLine(const YZCommandArgs &args);
 		void changeToEOL(const YZCommandArgs &args);
 		void deleteLine(const YZCommandArgs &args);

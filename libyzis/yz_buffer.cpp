@@ -95,7 +95,7 @@ void YZBuffer::addView (YZView *v) {
 //should be moved inside YZView
 void YZBuffer::updateView(YZView *view) {
 	for (unsigned int y=view->getCurrent(); y<text.count() && view->isLineVisible(y); y++) {
-		QString l = findLine( view->getCurrent()+y );
+		QString l = findLine( y );
 		if (l.isNull()) continue;
 		view->postEvent(YZEvent::mkEventLine(y,l));
 	}

@@ -155,7 +155,9 @@ const KAboutData *KYZisFactory::aboutData() {
 }
 
 void KYZisFactory::quit( int /*errorCode*/ ) {
-	kapp->quit();
+	//a kpart CAN NOT exit the main app ;)
+	if (mMainApp)
+		kapp->quit();
 }
 
 void KYZisFactory::writeConfig() {

@@ -80,6 +80,12 @@ class YZSession {
 		void addBuffer( YZBuffer * );
 
 		/**
+		 * Remove a buffer
+		 */
+		void rmBuffer( YZBuffer * );
+
+
+		/**
 		 * Save everything and get out
 		 */
 		QString saveBufferExit( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );

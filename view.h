@@ -328,6 +328,8 @@ class YZView {
 
 		QString tr( const char *source, const char* = 0) { return qApp->translate( "YZView", source ); }
 
+		void detach(void);
+
 	protected:
 		/**
 		 * The buffer we depend on

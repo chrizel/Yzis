@@ -51,6 +51,12 @@ void YZSession::addBuffer( YZBuffer *b ) {
 	mBuffers.insert(b->fileName(), b);
 }
 
+void YZSession::rmBuffer( YZBuffer *b ) {
+	yzDebug() << "Session : rmBuffer " << b->fileName() << endl;
+	mBuffers.remove( b->fileName() );
+	delete b; // kinda hot,no?
+}
+
 QString YZSession::saveBufferExit( const QString& /* inputsBuff */, YZCommandArgs /* args */ ) {
 	if ( saveAll() )
 		quit( true );	
@@ -82,12 +88,8 @@ YZView* YZSession::prevView() {
 		yzDebug() << "WOW, mCurview is NULL !" << endl;
 		return NULL;
 	}
-
-	yzDebug() << "Current view is " << mCurView->myId << endl;
-
-	YZView*	nv = findView( ( mCurView->myId >= 1 ) ? mCurView->myId - 1 : mCurView->myId );
-
-	return nv;
+//	yzDebug() << "Current view is " << mCurView->myId << endl;
+	return findView( ( mCurView->myId >= 1 ) ? mCurView->myId - 1 : mCurView->myId );
 }
 
 YZView* YZSession::nextView() {
@@ -95,14 +97,8 @@ YZView* YZSession::nextView() {
 		yzDebug() << "WOW, mCurview is NULL !" << endl;
 		return NULL;
 	}
-
-	yzDebug() << "Current view is " << mCurView->myId << endl;
-
-	YZView *nv = findView( mCurView->myId + 1 );
-	if ( !nv ) 
-		nv = findView( mCurView->myId );
-
-	return nv;
+//	yzDebug() << "Current view is " << mCurView->myId << endl;
+	return findView( mCurView->myId + 1 );
 }
 
 YZBuffer* YZSession::findBuffer( const QString& path ) {
@@ -139,3 +135,4 @@ bool YZSession::isOneBufferModified() {
 	}
 	return false;
 }
+

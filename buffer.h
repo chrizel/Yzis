@@ -318,6 +318,11 @@ public:
 	YZLine * yzline(unsigned int line) const;
 
 	void makeAttribs();
+
+	/**
+	  * detach
+	  */
+	void detach(void);
 	
 protected:
 	/** 

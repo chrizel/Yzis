@@ -60,16 +60,23 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 QString YZExExecutor::buffernext( YZView *view, const QString& ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
 	YZView *v = view->mySession()->nextView();
+	YZASSERT( v!=view );
 	if ( v )
 		view->mySession()->setCurrentView(v);
+	else 
+		view->displayInfo("No next buffer");
 	return QString::null;
 }
 
 QString YZExExecutor::bufferprevious ( YZView *view, const QString& ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
 	YZView *v = view->mySession()->prevView();
+	YZASSERT( v!=view );
 	if ( v )
 		view->mySession()->setCurrentView(v);
+	else 
+		view->displayInfo("No previous buffer");
+
 	return QString::null;
 }
 

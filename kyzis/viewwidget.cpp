@@ -257,13 +257,13 @@ void KYZisView::scrollLineDown() {
 
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
 
-void KYZisView::scrollView( unsigned int value ) {
-	if ( (int)value < 0 ) value = 0;
-	else if ( value > buffer->lineCount() - 1 )
+void KYZisView::scrollView( int value ) {
+	if ( value < 0 ) value = 0;
+	else if ( (unsigned int)value > buffer->lineCount() - 1 )
 		value = buffer->lineCount() - 1;
 
 	// only redraw if the view actually moves
-	if (value != getCurrentTop()) {
+	if ((unsigned int)value != getCurrentTop()) {
 		alignViewBufferVertically( value );
 
 		if (!mVScroll->draggingSlider())

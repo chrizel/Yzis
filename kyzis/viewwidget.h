@@ -117,7 +117,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void fileSave();
 		void fileSaveAs();
 		void resetInfo();
-		void scrollView( unsigned int );
+		void scrollView( int );
 		void scrollLineUp();
 		void scrollLineDown();
 

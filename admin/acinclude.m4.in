@@ -1623,7 +1623,7 @@ rm -f actest.ui actest.cpp
 
 AC_MSG_RESULT([$kde_cv_uic_plugins])
 if test "$kde_cv_uic_plugins" != yes; then
-	AC_MSG_ERROR([you need to install kdelibs first.])
+	have_kde="no"
 fi
 fi
 ])
@@ -1832,7 +1832,9 @@ AC_SUBST(all_includes)
 AC_SUBST(all_libraries)
 
 if test -z "$1"; then
-KDE_CHECK_UIC_PLUGINS
+	if test "$have_kde" != "no"; then
+		KDE_CHECK_UIC_PLUGINS
+	fi
 fi
 
 ac_kde_libraries="$kde_libdir"

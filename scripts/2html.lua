@@ -198,7 +198,7 @@ end
 if html_use_css then
 	f:write("<style type=\"text/css\"><!--\n")
 	if html_no_pre then
-		f:write("\nbody { color : "..fgc.."; background-color: "..bgc.."; font-family: Helvetica, Courier, monospace; }")
+		f:write("\nbody { color : "..fgc.."; background-color: "..bgc.."; font-family: Courier, monospace; }")
 	else
 		f:write("\npre { color : "..fgc.."; background-color: "..bgc.."; }")
 		f:write("\nbody { color : "..fgc.."; background-color: "..bgc.."; }")

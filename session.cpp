@@ -75,6 +75,7 @@ YZSession::~YZSession() {
 	delete mOptions;
 	delete YzisHlManager::self();
 	delete YZExLua::instance();
+	delete YZDebugBackend::instance();
 }
 
 void YZSession::guiStarted() {

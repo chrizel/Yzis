@@ -32,8 +32,9 @@ YZMotionPool::~YZMotionPool() {
 }
 
 void YZMotionPool::initPool() {
-						//regexp, type, x, y, backward,after
-	addMotion (YZMotion( "\\w*\\b", REGEXP, 0, 0, false, true ) , "[0-9]*w" );
+						//regexp, type, x, y, backward,after,
+	addMotion (YZMotion( "\\w*\\s*", REGEXP, 0, 0, false, true ) , "[0-9]*w" );
+	//addMotion (YZMotion( "\\w*\\b", REGEXP, 0, 0, false, true ) , "[0-9]*w" );
 	addMotion (YZMotion( "\\b\\w*", REGEXP, 0, 0, true, true ), "[0-9]*b");
 	addMotion (YZMotion( "$", REGEXP, 0, 0, false, true ), "\\$" );
 	addMotion (YZMotion( "^", REGEXP, 0, 0, true, true ), "0");
@@ -142,17 +143,20 @@ bool YZMotionPool::applyRegexpMotion( const QString &inputsMotion, YZMotion& mot
 		while (count < counter) {
 			const QString& current = view->myBuffer()->textline( to.getY() );
 			if ( current.isNull() ) return false;
-			idx = rex.search( current, to.getX() + 1 );
+			idx = rex.search( current, to.getX() );
 			if ( idx != -1 ) {
-				yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
+				int mLength = rex.matchedLength();
+				if (mLength==0) mLength++; //how can I have a 0 length match ? Qt does strange things ...
+				yzDebug() << "Match at " << idx << " Matched length " << mLength << endl;
 				count++; //one match
-				to.setX( idx + ( motion.after ? rex.matchedLength() : 0 ) );
+				to.setX( motion.after ? idx + mLength : idx );
 			} else {
 				if ( to.getY() >= view->myBuffer()->lineCount() ) break;
 				to.setX( 0 );
 				to.setY( to.getY() + 1 );
 			}
 		}
+		to.setX( to.getX() > 0 ? to.getX() - 1 : 0 );
 	} else {
 		yzDebug() << "Backward motion" <<endl;
 		while ( count < counter ) {

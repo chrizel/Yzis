@@ -30,6 +30,7 @@
 #include "registers.h"
 #include "motionpool.h"
 #include "syntaxhighlight.h"
+#include "schema.h"
 
 class YZView;
 class YZMotionPool;
@@ -194,6 +195,11 @@ class YZSession {
 		 */
 		virtual void setFocusMainWindow() = 0;
 
+		/**
+		 * Get a pointer on the schema manager for syntax highlighting
+		 */
+		YzisSchemaManager *schemaManager() { return mSchemaManager; }
+
 		//HELPERS
 		/**
 		 * Retrieve an int option
@@ -276,7 +282,8 @@ class YZSession {
 		YZCommandPool *mExPool;
 		YZMotionPool *mMotionPool;
 		YZView* mCurView;
-
+		YzisSchemaManager *mSchemaManager;
+		
 	public:
 		static int mNbViews;
 		static int mNbBuffers;

@@ -70,15 +70,6 @@ class YZExLua : public QObject {
 		static int myprint(lua_State *L);
 
 		/**
-		 * Extract some text from view.
-		 * Arguments:
-		 * startCol, startLine, endCol, endLine
-		 *
-		 * Returns a string
-		 */
-		static int text(lua_State *L);
-
-		/**
 		 * Get one line of text:
 		 * Arguments:
 		 * - the line number
@@ -86,6 +77,16 @@ class YZExLua : public QObject {
 		 * Returns a string
 		 */
 		static int line(lua_State *L);
+
+		/**
+		 * Get one line of text:
+		 * Arguments:
+		 * - the line number
+		 * - line content
+		 *
+		 * Returns a string
+		 */
+		static int setline(lua_State *L);
 
 		/**
 		 * Insert text inside a line:

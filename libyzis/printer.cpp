@@ -29,7 +29,7 @@
 
 #include "debug.h"
 
-YZPrinter::YZPrinter( YZView *view ) : QPrinter() {
+YZPrinter::YZPrinter( YZView *view ) : QPrinter(QPrinter::PrinterResolution) {
 
 	mView = view;
 
@@ -50,7 +50,6 @@ void YZPrinter::run( ) {
 }
 
 void YZPrinter::doPrint( ) {
-
 	QPainter p( this );
 
 	QFont f( "fixed" );

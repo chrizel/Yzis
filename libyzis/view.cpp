@@ -148,6 +148,8 @@ void YZView::sendKey( int c, int modifiers) {
 	//default is lower case unless some modifiers
 	if ( modifiers & Qt::ShiftButton )
 		key = key.upper();
+	
+	bool test = false;
 
 	switch(mMode) {
 
@@ -159,7 +161,9 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoCommandMode( );
 					return;
 				case Qt::Key_Return:
+					test = mCursor->getX() == 0;
 					insertNewLine( mCursor->getX(), mCursor->getY() );
+					if ( test ) gotoxy( 0, mCursor->getY() + 1 );
 					return;
 				case Qt::Key_Down:
 					moveDown( );
@@ -179,7 +183,7 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Backspace:
 					if (mCursor->getX() == 0 && mCursor->getY() > 0 && 1 /* option_go_back_to_previous_line */) {
 						joinLine( mCursor->getY() - 1 );
-						moveRight();
+						if ( mCursor->getX() ) moveRight();
 					} else if ( mCursor->getX() > 0 )
 						delChar( mCursor->getX() - 1, mCursor->getY(), 1);
 					return;
@@ -209,7 +213,9 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoCommandMode( );
 					return;
 				case Qt::Key_Return:
-					insertNewLine(mCursor->getX(),mCursor->getY());
+					test = mCursor->getX() == 0;
+					insertNewLine( mCursor->getX(), mCursor->getY() );
+					if ( test ) gotoxy( 0, mCursor->getY() + 1 );
 					return;
 				case Qt::Key_Down:
 					moveDown( );

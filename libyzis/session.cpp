@@ -52,12 +52,8 @@ void YZSession::addBuffer( YZBuffer *b ) {
 }
 
 QString YZSession::saveBufferExit( const QString& /* inputsBuff */, YZCommandArgs /* args */ ) {
-	QMap<QString,YZBuffer*>::Iterator it;
-	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ )
-		it.data()->save();
-	quit( true );	
-	YZASSERT_MSG( 0, "YZSession::saveBufferExit() - this point should never be reached!" );
-	//should not be reached
+	if ( saveAll() )
+		quit( true );	
 	return QString::null;
 }
 

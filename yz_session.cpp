@@ -15,9 +15,9 @@ YZSession::YZSession( const QString& _sessionName ) {
 }
 
 YZSession::~YZSession() {
-	delete pool;
+/*	delete pool;
 	delete expool;
-	delete motionpool;
+	delete motionpool;*/
 }
 
 YZBuffer *YZSession::createBuffer(const QString& path) {

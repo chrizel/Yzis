@@ -150,10 +150,14 @@ void NYZView::event_loop()
 		/* this is a _basic_ event loop... will be improved */
 		c = getch();
 		if (c!=ERR) {
+			int modifiers = 0;
+			if ( isupper( c ) ) modifiers |= YZIS::Shift;
+			if ( iscntrl( c ) ) modifiers |= YZIS::Ctrl;
+		//TODO: ALT/META	
 			if ( keycodes.contains ( c ) )
-				sendKey( keycodes[ c ], 0/*modifiers*/ );
+				sendKey( keycodes[ c ], modifiers );
 			else
-				sendKey( c, 0/*modifiers*/ );
+				sendKey( c, modifiers );
 		}
 		flush_events();
 	}

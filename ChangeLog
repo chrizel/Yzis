@@ -1,3 +1,8 @@
+2003-09-30 mikmak
+  * nyzis
+    supprt for CTRL and SHIFT keys, this is a bad hack but ncurses test
+    program does it that way ... (on linux we could use ioctl too)
+
 2003-09-29 mikmak
   * libyzis/kyzis
     support for Shift/Ctrl/Alt added (yes one can type UPPER case text now ;)

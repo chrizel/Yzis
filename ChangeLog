@@ -1,3 +1,13 @@
+2004-04-12 philippe
+  * tests
+    . more tests on undo
+	. more tests on buffer operations
+
+  * libyzis
+    . bugfixes on buffer handling
+	. bugfixes on buffer undo
+	. code clean-up
+
 2004-04-12 mikmak
   * all
     display a splash screen on startup with no files loaded

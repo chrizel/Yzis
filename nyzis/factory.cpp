@@ -194,7 +194,7 @@ NYZisDoc *NYZFactory::createBuffer(const QString& filename)
 void NYZFactory::popupMessage( const QString &message )
 {
 	int nl,nc;
-	QString anyKeyMsg = "(Press any key)";
+	QString anyKeyMsg = _("(Press any key)");
 	int length = anyKeyMsg.length();
 #if 0
 	int y;

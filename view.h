@@ -545,10 +545,11 @@ class YZView {
 
 		QString  sCurLine;
 
-		void YZView::gotoy( unsigned int );
-		void YZView::gotody( unsigned int );
-		void YZView::gotox( unsigned int );
-		void YZView::gotodx( unsigned int );
+		void gotoy( unsigned int );
+		void gotody( unsigned int );
+		void gotox( unsigned int );
+		void gotodx( unsigned int );
+		void applyGoto( );
 
 		bool wrapNextLine;
 		QChar lastChar;

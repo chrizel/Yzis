@@ -108,6 +108,7 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 
 	mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
 	                                 l.mid(x,1), x, y );
+	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, c, x, y );
 	
 	/* do the actual modification */
 	l.remove(x, 1);
@@ -115,7 +116,6 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 
 	at(y)->setData(l);
 
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, c, x, y );
 
 	/* inform the views */
 	YZView *it;
@@ -126,15 +126,21 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 
 void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 {
-	yzDebug() << "YZBuffer::delChar(): at " << x << "," << y << ": " << count << endl;
+	yzDebug() << "YZBuffer::delChar(): at " << x << "," << y 
+				<< ": " << count << endl;
+	YZASSERT_MSG( y < lineCount(), QString(
+		"YZBuffer::delChar( %1, %2, %3 ) but line %4 does not exist"
+		", buffer has %5 lines").arg( x ).arg( y ).arg( count )
+		.arg( y ).arg( lineCount() ) );
 
-	YZASSERT_MSG( y < lineCount(), QString("YZBuffer::delChar( %1, %2, %3 ) but line %4 does not exist, buffer has %5 lines").arg( x ).arg( y ).arg( count ).arg( y ).arg( lineCount() ) );
 	/* brute force, we'll have events specific for that later on */
 	QString l=data(y);
 	if (l.isNull()) return;
 
-	YZASSERT_MSG( x < l.length(), QString("YZBuffer::delChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( count ).arg( x ).arg( l.length() ) );
-
+	YZASSERT_MSG( x < l.length(), QString(
+		"YZBuffer::delChar( %1, %2, %3 ) but col %4 does not exist,"
+		" line has %5 columns").arg( x ).arg( y ).arg( count )
+		.arg( x ).arg( l.length() ) );
 
 	mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
 	                                   l.mid(x,count), x, y );
@@ -168,7 +174,10 @@ uint YZBuffer::firstNonBlankChar( uint line )
 // ------------------------------------------------------------------------
 
 void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
-	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::addNewLine( %1, %2 ) but line %3 does not exist, buffer has %4 lines").arg( line ).arg( col ).arg( line ).arg( lineCount() ) );
+	YZASSERT_MSG( line < lineCount(), QString(
+		"YZBuffer::addNewLine( %1, %2 ) but line %3 does not exist,"
+		" buffer has %4 lines").arg( line ).arg( col ).arg( line )
+		.arg( lineCount() ) );
 	if ( line == lineCount() ) {//we are adding a line, fake being at end of last line
 		line --;
 		col = data(line).length(); 
@@ -177,7 +186,10 @@ void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
 	QString l=data(line);
 	if (l.isNull()) return;
 
-	YZASSERT_MSG( col <= l.length(), QString("YZBuffer::addNewLine( %1, %2 ) but column %3 does not exist, line has %4 columns").arg( line ).arg( col ).arg( col ).arg( l.length() ) );
+	YZASSERT_MSG( col <= l.length(), QString(
+		"YZBuffer::addNewLine( %1, %2 ) but column %3 does not exist,"
+		" line has %4 columns").arg( line ).arg( col ).arg( col )
+		.arg( l.length() ) );
 	if (col > l.length() ) return;
 
 	mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
@@ -205,12 +217,14 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 	if (line >= lineCount()) return;
 
-	mUndoBuffer->addBufferOperation( BufferOperation::DELLINE, 
-	                                 QString(), 0, line );
 
 	if (lineCount() > 1) {
+		mUndoBuffer->addBufferOperation( BufferOperation::DELLINE, 
+										 QString(), 0, line );
 		mText.remove(line);
 	} else {
+		mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
+										 data(0), 0, line );
 		at(0)->setData("");
 	}
 

@@ -491,9 +491,10 @@ bool YZBuffer::save() {
 		// do not save empty buffer to avoid creating a file
 		// with only a '\n' while the buffer is emtpy
 		if ( isEmpty() == false) {
-/*			for(YZLine *it = mText.first(); it; it = mText.next()) {
-				stream << it->data() << "\n";
-			}*/
+			QValueVector<YZLine*>::iterator it;
+			for ( it = mText.begin(); it != mText.end(); it++ ) {
+				stream << (*it )->data() << "\n";
+			}
 		}
 		file.close();
 	}

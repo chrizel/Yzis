@@ -62,6 +62,7 @@ class YZModeVisual : public YZModeCommand {
 		void commandAppend( const YZCommandArgs& args );
 	  	void gotoExMode( const YZCommandArgs& args );
 	  	void movetoExMode( const YZCommandArgs& args );
+	  	void movetoInsertMode( const YZCommandArgs& args );
 	  	void escape( const YZCommandArgs& args );
 		void translateToVisualLine( const YZCommandArgs& args );
 

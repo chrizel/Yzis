@@ -1,3 +1,5 @@
+#ifndef YZ_EVENTS_H
+#define YZ_EVENTS_H
 /**
  * view.h
  *
@@ -53,4 +55,8 @@ typedef struct {
 	} u;
 } yz_event;
 
+
+
+
+#endif //  YZ_EVENTS_H
 

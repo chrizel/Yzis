@@ -1,3 +1,5 @@
+#ifndef YZ_BUFFER_H
+#define YZ_BUFFER_H
 /**
  * yz_interface.h
  *
@@ -64,3 +66,7 @@ void buffer_chgchar(yz_buffer , int x, int y, unicode_char_t c);
 #ifdef __cplusplus
 }
 #endif
+
+
+#endif //  YZ_BUFFER_H
+

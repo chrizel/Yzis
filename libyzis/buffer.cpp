@@ -489,7 +489,7 @@ void YZBuffer::setEncoding( const QString& name ) {
 	currentEncoding = name; */
 }
 
-void YZBuffer::setText( QString* content ) {
+void YZBuffer::loadText( QString* content ) {
 	clearText();
 	QTextStream stream( content, IO_ReadOnly );
 	while ( !stream.atEnd() )

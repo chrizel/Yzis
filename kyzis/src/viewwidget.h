@@ -24,7 +24,6 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <ktexteditor/popupmenuinterface.h>
 #include <ktexteditor/codecompletioninterface.h>
-#include <ktexteditor/editinterface.h>
 #include <kstatusbar.h>
 #include <qevent.h>
 #include <qscrollbar.h>
@@ -38,9 +37,7 @@ class KYZisEdit;
 class KYZisCommand;
 class KYZisCodeCompletion;
 
-class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterface, public KTextEditor::PopupMenuInterface, public KTextEditor::CodeCompletionInterface, 
-		 public KTextEditor::EditInterface,
-		 public YZView
+class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterface, public KTextEditor::PopupMenuInterface, public KTextEditor::CodeCompletionInterface, public YZView
 {
 	Q_OBJECT
 
@@ -107,28 +104,8 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		virtual void showCompletionBox (QValueList< KTextEditor::CompletionEntry > complList, int offset=0, bool casesensitive=true);
 		QFontMetrics editorFontMetrics();
 
-		/*
-		 * KTextEditor::EditInterface
-		 */
-		virtual QString text() const;
-		virtual QString text(uint startLine, uint startCol, uint endLine, uint endCol) const;
-		virtual QString textLine (uint line) const;
-		virtual uint numLines() const;
-		virtual uint length() const;
-		virtual int lineLength(uint line) const;
-		virtual bool setText(const QString &text);
-		virtual bool clear();
-		virtual bool insertText (uint line, uint col, const QString &text);
-		virtual bool removeText (uint startLine, uint startCol, uint endLine, uint endCol);
-		virtual bool insertLine (uint line, const QString &text);
-		virtual bool removeLine (uint line);
-		virtual void charactersInteractivelyInserted(int ,int ,const QString&);
-
 		virtual void registerModifierKeys( const QString& keys );
 		virtual void unregisterModifierKeys( const QString& keys );
-
-	signals:
-		virtual void textChanged();
 
 	public slots:
 		QPoint cursorCoordinates();

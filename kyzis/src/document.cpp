@@ -164,30 +164,12 @@ bool KYZisDoc::insertText( uint line, uint col, const QString &s)
 }
 
 QString KYZisDoc::text (  uint startLine, uint startCol, uint endLine, uint endCol ) const {
-	QString content = "";
-	if ( startLine == endLine ) {
-		content = textline( startLine ).mid(startCol, endCol-startCol);
-		return content;
-	}
-
-	for ( unsigned int i = startLine; i <= endLine; i++ ) {
-		if ( i == startLine )
-			content+=textline(i).mid( startCol );
-		else if ( i == endLine )
-			content+=textline(i).left( endCol );
-		else
-			content+=textline( i );
-	}
-	return content;
+	return ( ( YZBuffer* )( this ) )->getText( YZCursor(NULL,startCol,startLine), YZCursor(NULL,endCol,endLine) ).join("\n");
 }
 
 bool KYZisDoc::setText (  const QString &text ) {
-	clearText();
-	QStringList list = QStringList::split( "\n", text );
-	QStringList::Iterator it = list.begin(), end = list.end();
-	for ( ; it != end; ++it ) {
-		appendLine(*it);
-	}
+	QString content = text;
+	loadText( &content );
 	return true;
 }
 

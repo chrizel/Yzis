@@ -199,67 +199,6 @@ void KYZisView::fileSaveAs() {
 		mBuffer->save();
 }
 
-/* KTextEditor::EditInterface */
-QString KYZisView::text() const {
-	return mBuffer->getWholeText();
-}
-QString KYZisView::text( uint startLine, uint startCol, uint endLine, uint endCol ) const {
-	return mBuffer->getText( YZCursor(NULL,startCol,startLine), YZCursor(NULL,endCol,endLine) ).join("\n");
-}
-QString KYZisView::textLine( uint line ) const {
-	return mBuffer->textline( line );
-}
-uint KYZisView::numLines() const {
-	return mBuffer->lineCount();
-}
-uint KYZisView::length() const {
-	return mBuffer->getWholeTextLength();
-}
-int KYZisView::lineLength( uint line ) const {
-	return mBuffer->textline( line ).length();
-}
-bool KYZisView::setText( const QString& text ) {
-	QString content = text;
-	mBuffer->setText( &content );
-	return true;
-}
-bool KYZisView::clear() {
-	mBuffer->clearText();
-	return true;
-}
-bool KYZisView::insertText( uint line, uint col, const QString& text ) {
-	mBuffer->action()->insertChar( this, YZCursor(this,col,line), text );
-	return true;
-}
-bool KYZisView::removeText( uint startLine, uint startCol, uint endLine, uint endCol ) {
-#if QT_VERSION < 0x040000
-	QValueList<QChar> regs;
-#else
-	QList<QChar> regs;
-#endif
-	regs << '\"';
-	mBuffer->action()->deleteArea( this, YZCursor(this,startCol,startLine), YZCursor(this,endCol,endLine), regs );
-	return true;
-}
-bool KYZisView::insertLine( uint line, const QString& text ) {
-	mBuffer->action()->insertLine( this, line, text );
-	return true;
-}
-bool KYZisView::removeLine( uint line ) {
-#if QT_VERSION < 0x040000
-	QValueList<QChar> regs;
-#else
-	QList<QChar> regs;
-#endif
-	regs << '\"';
-	mBuffer->action()->deleteLine( this, line, 1, regs );
-	return true;
-}
-void KYZisView::charactersInteractivelyInserted(int ,int ,const QString&) {
-}
-
-
-
 /* Implementation of KTextEditor::ViewCursorInterface */
 QPoint KYZisView::cursorCoordinates()
 {

@@ -1,3 +1,9 @@
+2004-02-06 mikmak
+  * all 
+    updated admin/ dir
+  * kyzis
+    added contributed icons from ita (Thomas Nagy)
+
 2004-02-16 luci (new to Yzis, welcome luci :)
   * libyzis
     implement command history in EX mode

@@ -513,7 +513,7 @@ x86_64-*linux*|ppc*-*linux*|powerpc*-*linux*|s390*-*linux*|sparc*-*linux*)
       esac
       ;;
     *64-bit*)
-      LINUX_64_MODE="32"
+      LINUX_64_MODE="64"
       case $host in
         x86_64-*linux*)
           LD="${LD-ld} -m elf_x86_64"
@@ -5848,7 +5848,7 @@ for lt_ac_sed in $lt_ac_sed_list /usr/xpg4/bin/sed; do
     fi
   done
 done
-SED=$lt_cv_path_SED
 ])
+SED=$lt_cv_path_SED
 AC_MSG_RESULT([$SED])
 ])

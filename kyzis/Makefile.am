@@ -1,6 +1,6 @@
 # this has all of the subdirectories that make will recurse into.  if
 # there are none, comment this out
-#SUBDIRS = .
+SUBDIRS = pics
 
 # set the include path for X, qt and KDE
 INCLUDES = $(all_includes) -I$(top_srcdir)/libyzis/
@@ -14,7 +14,7 @@ METASOURCES = AUTO
 messages: rc.cpp
 	$(XGETTEXT) *.cpp -o $(podir)/kyzis.pot
 
-KDE_ICON = kyzis
+#KDE_ICON = kyzis
 
 # this Makefile creates both a KPart application and a KPart
 #########################################################################

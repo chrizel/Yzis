@@ -17,6 +17,9 @@ apidox-am-yes:
 		echo "IMAGE_PATH             = $(top_srcdir)/doc/api" >> Doxyfile ;\
 		echo "OUTPUT_DIRECTORY       = $(top_builddir)/apidocs" >> Doxyfile; \
 		echo "HTML_OUTPUT            = $(subdir)/html" >> Doxyfile; \
+		echo "HTML_HEADER            = $(top_builddir)/apidocs/common/header.html" >> Doxyfile;\
+		echo "HTML_FOOTER            = $(top_builddir)/apidocs/common/footer.html" >> Doxyfile;\
+		echo "HTML_STYLESHEET        = $(top_builddir)/apidocs/common/doxygen.css" >> Doxyfile;\
 		echo "LATEX_OUTPUT           = $(subdir)/latex" >> Doxyfile; \
 		echo "RTF_OUTPUT             = $(subdir)/rtf" >> Doxyfile; \
 		echo "MAN_OUTPUT             = $(subdir)/man" >> Doxyfile; \
@@ -26,11 +29,11 @@ apidox-am-yes:
 		if test -n "$(DOXYGEN_EXCLUDE)"; then \
 			patterns= ;\
 			dirs= ;\
-			for item in "$(DOXYGEN_EXCLUDE)"; do \
+			for item in `echo "$(DOXYGEN_EXCLUDE)"`; do \
 				if test -d "$(srcdir)/$$item"; then \
 					dirs="$$dirs $(srcdir)/$$item/" ;\
 			    	else \
-			        	patterns="$$paterns $$item" ;\
+			        	patterns="$$patterns $$item" ;\
 				fi ;\
 			done ;\
 			echo "EXCLUDE_PATTERNS      += $$patterns" >> Doxyfile; \
@@ -55,7 +58,7 @@ apidox-am-yes:
 			    fi ;\
 			fi ;\
 		done ;\
-		echo "GENERATE_TAGFILE       = $(top_builddir)/apidocs/$(subdir)/$(subdir).tag" >> Doxyfile ;\
+		echo "GENERATE_TAGFILE       = $(top_builddir)/apidocs/$(subdir)/`basename $(subdir)`.tag" >> Doxyfile ;\
 		echo "IGNORE_PREFIX          = K" >> Doxyfile ;\
 		echo "HAVE_DOT = $(KDE_HAVE_DOT)" >> Doxyfile ;\
 		$(DOXYGEN) Doxyfile ;\
@@ -75,9 +78,9 @@ install-apidox:
 		fi; \
 		if test -d $(top_builddir)/apidocs/$(subdir)/html; then \
 			list=`ls $(top_builddir)/apidocs/$(subdir)/html`; \
+			echo "installing $(top_builddir)/apidocs/$(subdir)/html" ;\
 			for file in $$list; do \
-				echo $(INSTALL_DATA) $(top_builddir)/apidocs/$(subdir)/html/$$file $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs/$(subdir)/html; \
-					$(INSTALL_DATA) $(top_builddir)/apidocs/$(subdir)/html/$$file $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs/$(subdir)/html; \
+				$(INSTALL_DATA) $(top_builddir)/apidocs/$(subdir)/html/$$file $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs/$(subdir)/html; \
 		done; \
 		fi; \
 		rm -f $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs/common; \
@@ -86,9 +89,9 @@ install-apidox:
 		if test -d $(top_builddir)/apidocs; then \
 		$(mkinstalldirs) $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs ;\
 		list=`cd $(top_builddir)/apidocs && ls -1`; \
+		echo "installing $(top_builddir)/apidocs/$$file" ;\
 		for file in $$list; do \
 			if test -f $(top_builddir)/apidocs/$$file; then \
-				echo $(INSTALL_DATA) $(top_builddir)/apidocs/$$file $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs; \
 				$(INSTALL_DATA) $(top_builddir)/apidocs/$$file $(DESTDIR)$(kde_htmldir)/en/$(PACKAGE)-apidocs; \
 			fi; \
 		done ; fi; \

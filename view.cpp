@@ -920,7 +920,7 @@ void YZView::initChanges( unsigned int x, unsigned int y ) {
 	gotoxy( x, y, false );
 }
 void YZView::applyChanges( unsigned int /*x*/, unsigned int y ) {
-	unsigned int dY = mainCursor->screenY();
+	unsigned int dY = mainCursor->screenY() + 1 - mainCursor->lineHeight;
 	if ( y != beginChanges->y() ) {
 		sendPaintEvent( scrollCursor->screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor->screenY() ) );
 	} else {

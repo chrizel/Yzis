@@ -493,7 +493,7 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 		return CMD_ERROR;
 	}
 	//check the file name
-	if ( path.length() >= 1 && path[ 0 ] == '~' ) // expand ~
+	if ( path.startsWith( "~/") ) // expand ~
 #if QT_VERSION < 0x040000
 		path = QDir::homeDirPath() + path.mid( 1 );
 	QFileInfo fi ( path );

@@ -157,6 +157,7 @@ class YZExCommandPool {
 		QString indent( const YZExCommandArgs& args );
 		QString enew( const YZExCommandArgs& args );
 		QString syntax( const YZExCommandArgs& args );
+		QString highlight( const YZExCommandArgs& args );
 };
 
 #endif

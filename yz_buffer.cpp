@@ -152,13 +152,13 @@ void YZBuffer::load(void)
 
 //	debug("entering");
 	if (!path) {
-		error("called though path is null, ignored");
+//		error("called though path is null, ignored");
 		return;
 	}
 
 	f = fopen(path, "r");
 	if ( !f) {
-		error("Can't open file, errno is %d", errno);
+//		error("Can't open file, errno is %d", errno);
 		return;
 	}
 
@@ -274,7 +274,7 @@ void YZBuffer::load(void)
 void YZBuffer::save(void)
 {
 	if (!path) {
-		error("called though path is null, ignored");
+		//error("called though path is null, ignored");
 		return;
 	}
 }

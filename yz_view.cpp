@@ -61,7 +61,7 @@ void YZView::send_char( unicode_char_t c)
 			break;
 		default:
 			/* ?? */
-			error("unknown mode, ignoring");
+//			error("unknown mode, ignoring");
 			return;
 
 	};

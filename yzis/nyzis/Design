@@ -1,0 +1,15 @@
+
+Nyzis is the ncurses-based gui for Yzis
+
+It is different from the other gui implementation in that it is the main test case for
+the core library. It's meant to be a reference implementation, and should be maintained 
+by those patching the core library
+
+
+It uses the c++ api
+
+
+nyzis.h - classes definitions
+main.cpp - Handles generic stuff (option parsing, object creation and such)
+display.cpp - Display routines (mainly, NYZView implementation)
+

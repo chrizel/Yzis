@@ -43,7 +43,7 @@ public:
 	inline KInstance* instance() { return &m_instance; }
 
 	//GUI interface
-	void quit(int errorCode);
+	bool quit(int errorCode);
 	void changeCurrentView( YZView* );
 	YZView *createView ( YZBuffer* );
 	YZBuffer *createBuffer(const QString& path);

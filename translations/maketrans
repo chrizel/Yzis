@@ -6,7 +6,7 @@ langs=`ls *.po`
 
 # Make the yzis.pot file.
 cpp_files=$(ls ../kyzis/*.cpp ../kyzis/src/*.cpp ../kyzis/src/*.h ../libyzis/*.cpp ../libyzis/*.h ../nyzis/*.cpp ../nyzis/*.h | grep -v .moc.cpp)
-xgettext -C -ki18n -kI18N_NOOP -ktr2i18n -ktranslate -kaliasLocale -k_ -x $KDEDIR/include/kde.pot $cpp_files
+xgettext -C -ki18n -kI18N_NOOP -ktr2i18n -ktranslate -kaliasLocale -k_ -x /usr/include/kde/kde.pot $cpp_files
 
 rm -rf yzis.pot
 mv -f messages.po yzis.pot 

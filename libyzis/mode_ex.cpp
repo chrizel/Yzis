@@ -405,26 +405,25 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 		<< " Buffer Count : " << args.view->mySession()->countBuffers() << endl;
 	if ( args.cmd.startsWith( "qa" ) ) {
 		if ( force || ! args.view->mySession()->isOneBufferModified() ) {
-			args.view->modePool()->stop();
 			ret = CMD_QUIT;
 			args.view->mySession()->exitRequest( );
 		} else args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
 	} else {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( args.view->myBuffer()->views().count() > 1 ) {
-			args.view->modePool()->stop();
 			ret = CMD_QUIT;
 			args.view->mySession()->deleteView( args.view->myId );
 		} else if ( args.view->myBuffer()->views().count() == 1 && args.view->mySession()->countBuffers() == 1) {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
-				args.view->modePool()->stop();
-				ret = CMD_QUIT;
-				args.view->mySession()->exitRequest();
+				if ( args.view->mySession()->exitRequest() )
+					ret = CMD_QUIT;
+				else {
+					ret = CMD_OK;
+				}
 			}
 			else args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
 		} else {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
-				args.view->modePool()->stop();
 				ret = CMD_QUIT;
 				args.view->mySession()->deleteView(args.view->myId);
 			}

@@ -161,7 +161,7 @@ class YZSession {
 		/**
 		 * Ask to quit the app
 		 */
-		virtual void quit(int errorCode=0) = 0;
+		virtual bool quit(int errorCode=0) = 0;
 
 		/**
 		 * Prepare the app to quit
@@ -169,7 +169,7 @@ class YZSession {
 		 * exitRequest will call @ref quit so the real quit comes from the GUI
 		 * This function is used for example to clean up swap files, prompting for unsaved files etc
 		 */
-		void exitRequest(int errorCode=0);
+		bool exitRequest(int errorCode=0);
 
 		/**
 		 * Display the specified error/information message

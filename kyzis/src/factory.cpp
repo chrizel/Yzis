@@ -154,15 +154,16 @@ const KAboutData *KYZisFactory::aboutData() {
 	return data;
 }
 
-void KYZisFactory::quit( int /*errorCode*/ ) {
+bool KYZisFactory::quit( int /*errorCode*/ ) {
 	//a kpart CAN NOT exit the main app ;)
 	if (mMainApp) {
 		kapp->quit();
-	}/* else if ( currentView() && currentView()->modePool()->currentType() == YZMode::MODE_EX 
+	} else if ( currentView() && currentView()->modePool()->currentType() == YZMode::MODE_EX 
 				&& !currentView()->getCommandLineText().isEmpty() ) {
-		currentView()->setCommandLineText("");
-		currentView()->modePool()->pop();
-	}*/
+//		currentView()->setCommandLineText("");
+		return false;
+	}
+	return true;
 }
 
 void KYZisFactory::writeConfig() {

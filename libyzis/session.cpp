@@ -253,18 +253,16 @@ bool YZSession::isOneBufferModified() {
 	return false;
 }
 
-void YZSession::exitRequest( int errorCode ) {
+bool YZSession::exitRequest( int errorCode ) {
 	yzDebug() << "Preparing for final exit with code " << errorCode << endl;
 	//prompt unsaved files XXX
-	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+/*	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
-		//might be better with deleteBuffer(b) no ? //mm
-		//delete b;
 		deleteBuffer( b );
 	}
-	mBuffers.clear();
-	quit( errorCode );
+	mBuffers.clear();*/
+	return quit( errorCode );
 }
 
 void YZSession::sendMultipleKeys ( const QString& text) {

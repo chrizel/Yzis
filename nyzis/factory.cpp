@@ -152,8 +152,9 @@ bool NYZFactory::process_one_event()
 }
 
 
-void NYZFactory::quit( int errorCode ) {
+bool NYZFactory::quit( int errorCode ) {
 	exit( errorCode );
+	return true;
 }
 
 void NYZFactory::changeCurrentView ( YZView * view  )

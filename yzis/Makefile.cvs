@@ -1,0 +1,12 @@
+
+all: 
+	@echo "This Makefile is only for the CVS repository"
+	@echo "This will be deleted before making the distribution"
+	@echo ""
+	aclocal
+	autoconf
+	automake
+
+	@echo "Now you can run ./configure"
+
+.SILENT:

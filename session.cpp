@@ -86,7 +86,7 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ )
 		it.data()->save();
 	mGUI->quit( true );	
-	YZASSERT( 0, "YZSession::saveBufferExit() - this point should never be reached!" );
+	YZASSERT_MSG( 0, "YZSession::saveBufferExit() - this point should never be reached!" );
 	//should not be reached
 	return QString::null;
 }

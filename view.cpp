@@ -358,7 +358,7 @@ QString YZView::moveUp( const QString& inputsBuff ) {
 }
 
 QString YZView::moveLeft( const QString& inputsBuff ) {
-	int nb_cols=1;//default : one line left
+	uint nb_cols=1;//default : one line left
 
 	//check the arguments
 	if ( !inputsBuff.isNull() ) {
@@ -371,6 +371,7 @@ QString YZView::moveLeft( const QString& inputsBuff ) {
 	}
 
 	//execute the code
+	nb_cols = QMIN( mCursor->getX(), nb_cols );
 	gotoxy( mCursor->getX() ? mCursor->getX() - nb_cols : 0 , mCursor->getY());
 
 	//reset the input buffer

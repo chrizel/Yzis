@@ -111,8 +111,7 @@ class YzisHlContext
     virtual ~YzisHlContext();
     YzisHlContext *clone(const QStringList *args);
 
-
-    QPtrList<YzisHlItem> items;
+    QValueVector<YzisHlItem*> items;
     int attr;
     int ctx;
     int lineBeginContext;
@@ -227,6 +226,8 @@ class YzisHlKeyword : public YzisHlItem
     QDict<bool> dict;
     bool _caseSensitive;
     const QString& deliminators;
+    int minLen;
+    int maxLen;
 };
 
 class YzisHlInt : public YzisHlItem
@@ -546,6 +547,8 @@ YzisHlKeyword::YzisHlKeyword (int attribute, int context, signed char regionId,s
   , dict (113, casesensitive)
   , _caseSensitive(casesensitive)
   , deliminators(delims)
+  , minLen (0xFFFFFF)
+  , maxLen (-1)
 {
 }
 
@@ -573,7 +576,18 @@ void YzisHlKeyword::addWord(const QString &word)
 
 void YzisHlKeyword::addList(const QStringList& list)
 {
-  for(uint i=0;i<list.count();i++) dict.insert(list[i], &trueBool);
+  for(uint i=0;i<list.count();i++)
+  {
+    dict.insert(list[i], &trueBool);
+
+    int len = list[i].length();
+
+    if (minLen > len)
+      minLen = len;
+
+    if (maxLen < len)
+      maxLen = len;
+  }
 }
 
 int YzisHlKeyword::checkHgl(const QString& text, int offset, int len)
@@ -581,16 +595,21 @@ int YzisHlKeyword::checkHgl(const QString& text, int offset, int len)
   if (len == 0 || dict.isEmpty()) return 0;
 
   int offset2 = offset;
+  int wordLen = 0;
 
-  while (len > 0 && !yzisInsideString (deliminators, text[offset2]))
+  while ((len > wordLen) && !yzisInsideString (deliminators, text[offset2]))
   {
     offset2++;
-    len--;
+    wordLen++;
+
+    if (wordLen > maxLen) return 0;
   }
 
   if (offset2 == offset) return 0;
 
-  if ( dict.find(QConstString(text.unicode() + offset, offset2 - offset).string()) ) return offset2;
+  if (wordLen < minLen) return 0;
+
+  if ( dict.find(QConstString(text.unicode() + offset, wordLen).string()) ) return offset2;
 
   return 0;
 }
@@ -1082,16 +1101,15 @@ YzisHlContext::YzisHlContext (int attribute, int lineEndContext, int _lineBeginC
 YzisHlContext *YzisHlContext::clone(const QStringList *args)
 {
   YzisHlContext *ret = new YzisHlContext(attr, ctx, lineBeginContext, fallthrough, ftctx, false);
-  YzisHlItem *item;
 
-  for (item = items.first(); item; item = items.next())
+  for (uint n=0; n < items.size(); ++n)
   {
+    YzisHlItem *item = items[n];
     YzisHlItem *i = (item->dynamic ? item->clone(args) : item);
     ret->items.append(i);
   }
 
   ret->dynamicChild = true;
-  ret->items.setAutoDelete(false);
 
   return ret;
 }
@@ -1100,11 +1118,10 @@ YzisHlContext::~YzisHlContext()
 {
   if (dynamicChild)
   {
-    YzisHlItem *item;
-    for (item = items.first(); item; item = items.next())
+    for (uint n=0; n < items.size(); ++n)
     {
-      if (item->dynamicChild)
-        delete item;
+      if (items[n]->dynamicChild)
+        delete items[n];
     }
   }
 }
@@ -1359,7 +1376,8 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
     bool standardStartEnableDetermined = false;
     bool standardStartEnable = false;
 
-    for (item = context->items.first(); item != 0L; item = context->items.next())
+    uint index = 0;
+    for (item = context->items.empty() ? 0 : context->items[0]; item; item = (++index < context->items.size()) ? context->items[index] : 0 )
     {
       bool thisStartEnabled = false;
 
@@ -1980,13 +1998,13 @@ int YzisHighlighting::hlKeyForAttrib( int attrib ) const
 bool YzisHighlighting::isInWord( QChar c, int attrib ) const
 {
   static const QString& sq = " \"'";
-  return getCommentString(3, attrib).find(c) < 0 && sq.find(c) < 0;
+  return getCommentString(4, attrib).find(c) < 0 && sq.find(c) < 0;
 }
 
 bool YzisHighlighting::canBreakAt( QChar c, int attrib ) const
 {
   static const QString& sq = "\"'";
-  return (getCommentString(4, attrib).find(c) != -1) && (sq.find(c) == -1);
+  return (getCommentString(5, attrib).find(c) != -1) && (sq.find(c) == -1);
 }
 
 signed char YzisHighlighting::commentRegion(int attr) const {
@@ -1999,12 +2017,15 @@ bool YzisHighlighting::canComment( int startAttrib, int endAttrib ) const
 {
   int k = hlKeyForAttrib( startAttrib );
   return ( k == hlKeyForAttrib( endAttrib ) &&
-      ( ( !m_additionalData[k][0].isEmpty() && !m_additionalData[k][1].isEmpty() ) ||
-       ! m_additionalData[k][2].isEmpty() ) );
+      ( ( !m_additionalData[k][Start].isEmpty() && !m_additionalData[k][End].isEmpty() ) ||
+       ! m_additionalData[k][SingleLine].isEmpty() ) );
 }
 
 QString YzisHighlighting::getCommentString( int which, int attrib ) const
 {
+  if ( noHl )
+    return which == 4 ? stdDeliminator : "";
+
   int k = hlKeyForAttrib( attrib );
   const QStringList& lst = m_additionalData[k];
   return lst.isEmpty() ? QString::null : lst[which];
@@ -2464,9 +2485,23 @@ void YzisHighlighting::handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::ite
     if ( (*it1)->includeAttrib )
       dest->attr = src->attr;
 
-    uint p=(*it1)->pos; //insert the included context's rules starting at position p
-    for ( YzisHlItem *c = src->items.first(); c; c=src->items.next(), p++ )
-                        dest->items.insert(p,c);
+    // insert the included context's rules starting at position p
+    int p=(*it1)->pos;
+
+    // remember some stuff
+    int oldLen = dest->items.size();
+    uint itemsToInsert = src->items.size();
+
+    // resize target
+    dest->items.resize (oldLen + itemsToInsert);
+
+    // move old elements
+    for (int i=oldLen-1; i >= p; --i)
+      dest->items[i+itemsToInsert] = dest->items[i];
+
+    // insert new stuff
+    for (uint i=0; i < itemsToInsert; ++i  )
+      dest->items[p+i] = src->items[i];
 
     it=it1; //backup the iterator
     --it1; //move to the next entry, which has to be take care of
@@ -2506,7 +2541,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   additionaldata << readWordWrapConfig();
 
   readFoldingConfig ();
-  
+
   uint additionalDataIndex=internalIDList.count();
   m_additionalData.insert( additionalDataIndex, additionaldata );
   m_hlIndex.append( additionalDataIndex );
@@ -2676,7 +2711,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
       errorsAndWarnings+=QString("<B>%1</B>: Specified multiline comment region (%2) could not be resolved<BR>").arg(buildIdentifier).arg(commentData[MultiLineRegion]);
       commentData[MultiLineRegion]=QString();
       //kdDebug()<<"ERROR comment region attribute could not be resolved"<<endl;
-      
+
     } else {
         commentData[MultiLineRegion]=QString::number(commentregionid+1);
         //kdDebug()<<"comment region resolved to:"<<m_additionalData[additionalDataIndex][MultiLineRegion]<<endl;

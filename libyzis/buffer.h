@@ -74,20 +74,12 @@ public:
 	void insertChar (unsigned int x, unsigned int y, const QString& c);
 
 	/**
-	 * Replaces a character in the buffer
-	 * @param x position on the line where to change the character
-	 * @param y line where the character is to be changed
-	 * @param c the character which replaces the current one
-	 */
-	void chgChar (unsigned int x, unsigned int y, const QString& c);
-
-	/**
 	 * Deletes a character in the buffer
 	 * @param x position on the line where to delete the character
 	 * @param y line where the character is to be deleted
 	 * @param count number of characters to delete
 	 */
-	void delChar (unsigned int x, unsigned int y, unsigned int count = 1);
+	void delChar (unsigned int x, unsigned int y, unsigned int count);
 
 	// ----------------- Line Operations
 
@@ -111,7 +103,7 @@ public:
 	 * @param col the position in line where to add a \n
 	 * @param line is the line after which a new line is added
 	 */
-	void insertNewLine( unsigned int col, unsigned int line );
+	void insertNewLine( unsigned int col, unsigned int line);
 
 	/**
 	 * Deletes the given line
@@ -125,11 +117,6 @@ public:
 	 * Replaces the line at @param line with the given string @param l
 	 */
 	void replaceLine( const QString& l, unsigned int line );
-
-	/**
-	 * Merges two lines
-	 */
-	void mergeNextLine( unsigned int line );
 
 
 	// ----------------- Buffer content

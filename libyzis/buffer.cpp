@@ -116,7 +116,20 @@ void YZBuffer::detach() {
 //                            Char Operations
 // ------------------------------------------------------------------------
 
-void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
+/**
+ * WARNING! Here are elementary buffer operations only! 
+ * do _not_ use them directly, use action() ( actions.cpp ) instead.
+ */
+
+#define VIEWS_INIT( x, y ) \
+	for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
+		it->initChanges( x, y )
+
+#define VIEWS_APPLY( x, y ) \
+	for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
+		it->applyChanges( x, y )
+
+void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
 	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), c )
 	ASSERT_LINE_EXISTS( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), y )
 
@@ -132,40 +145,19 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
 		return;
 	}
 
+
+	VIEWS_INIT( x, y );
+
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, c, x, y );
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, c, x, y );
 
 	l.insert(x, c);
 	setTextline(y,l);
+
+	VIEWS_APPLY( x + c.length(), y );
 }
 
-void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
-	ASSERT_TEXT_WITHOUT_NEWLINE( "YZBuffer::chgChar(%1,%2,%3).arg(x).arg(y).arg(c)", c )
-	ASSERT_LINE_EXISTS( QString("YZBuffer::chgChar(%1,%2,%3)").arg(x).arg(y).arg(c), y )
-
-	QString l=textline(y);
-	if (l.isNull()) return;
-
-	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::chgChar(%1,%2,%3)").arg(x).arg(y).arg(c),x,y)
-
-	if (x >= l.length()) {
-		// if we let Qt proceed, it will append spaces to extend the line
-		return;
-	}
-
-	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, l.mid(x,1), x, y );
-	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, l.mid( x,1 ), x, y );
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, c, x, y );
-	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, c, x, y );
-
-	/* do the actual modification */
-	l.remove(x, 1);
-	l.insert(x, c);
-
-	setTextline(y,l);
-}
-
-void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
+void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count ) {
 	ASSERT_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count), y )
 
 	/* brute force, we'll have events specific for that later on */
@@ -177,6 +169,7 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 
 	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count),x,y)
 
+	VIEWS_INIT( x, y );
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, l.mid(x,count), x, y );
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, l.mid( x,count ), x, y );
@@ -185,6 +178,8 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 	l.remove(x, count);
 
 	setTextline(y,l);
+
+	VIEWS_APPLY( x, y );
 }
 
 // ------------------------------------------------------------------------
@@ -193,7 +188,7 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 
 void  YZBuffer::appendLine(const QString &l) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::appendLine(%1)").arg(l),l);
-
+	
 	if ( !mLoading ) {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
 		mSwap->addToSwap( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
@@ -208,6 +203,7 @@ void  YZBuffer::appendLine(const QString &l) {
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
 //		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
+
 	setChanged( true );
 }
 
@@ -219,6 +215,8 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDLINE, QString(), 0, line );
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, l, 0, line );
+
+	VIEWS_INIT( 0, line - 1 );
 
 	QValueVector<YZLine*>::iterator it;
 	uint idx=0;
@@ -239,6 +237,8 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	}
 
 	setChanged( true );
+
+	VIEWS_APPLY( 0, line );
 }
 
 void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
@@ -254,6 +254,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 		line --;
 		col = textline(line).length();
 	}
+	VIEWS_INIT( col, line );
 
 	if ( line >= lineCount() ) return;
 	QString l=textline(line);
@@ -299,6 +300,8 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 		}
 		if ( hlChanged ) updateAllViews( );
 	}
+
+	VIEWS_APPLY( 0, line+1 );
 }
 
 void YZBuffer::deleteLine( unsigned int line ) {
@@ -306,6 +309,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 	if (line >= lineCount()) return;
 
+	VIEWS_INIT( 0, line );
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, textline( line ), 0, line );
 	if (lineCount() > 1) {
@@ -324,12 +328,15 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	}
 
 	setChanged( true );
+
+	VIEWS_APPLY( 0, line + 1 );
 }
 
 void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),l)
 	ASSERT_LINE_EXISTS(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),line)
 
+	VIEWS_INIT( 0, line );
 	if ( line >= lineCount() ) return;
 	if ( textline( line ).isNull() ) return;
 
@@ -340,12 +347,8 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 		mSwap->addToSwap( YZBufferOperation::ADDTEXT, l, 0, line );
 	}
 	setTextline(line,l);
-}
 
-void YZBuffer::mergeNextLine( unsigned int line ) {
-	replaceLine( textline( line ) + textline( line+1 ), line );
-	deleteLine( line+1 );
-	setChanged( true );
+	VIEWS_APPLY( l.length(), line );
 }
 
 // ------------------------------------------------------------------------

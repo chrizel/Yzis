@@ -337,14 +337,16 @@ void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QList<QChar
 	QString eL;
 	if ( deleteAfterEnd ) {
 		eY = mBuffer->lineCount() - 1;
-		if ( bY > 0 ) bY--; // delete the last line
-		eL = mBuffer->textline( bY );
+		if ( bY > 0 )
+			eL = mBuffer->textline( bY - 1 );
+		else
+			eL = "";
 	} else if ( excludeLastLine )
 		eL = mBuffer->textline( eY );
 	else
 		eL = mBuffer->textline( eY ).mid( eX + 1 );
 
-	unsigned int cLine = bY+1;
+	unsigned int cLine = bY + 1;
 	for( unsigned k = cLine; k <= eY; k++ )
 		mBuffer->deleteLine( cLine );
 	mBuffer->replaceLine( bL + eL, bY );

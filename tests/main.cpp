@@ -18,16 +18,30 @@
  **/
 
 
+#include <qtranslator.h>
+#include <qtextcodec.h>
+#include <qapp.h>
+#include "libyzis/translator.h"
 #include "testBuffer.h"
 #include "PhilTestRunner.h"
 
 int main(int argc, char ** argv)
 {
+	int ret;
 	bool doWait = false;
 #ifdef WIN32
 	doWait = true;
 #endif
-	int ret;
+
+	QApplication app(  argc, argv );
+	QTranslator qt(  0 );
+	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
+	app.installTranslator(  &qt );
+	QTranslator myapp(  0 );
+	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
+	app.installTranslator(  &myapp );
+	
+
 	PhilTestRunner runner;
 	runner.addTest( CppUnit::TestFactoryRegistry::getRegistry().makeTest() );
 

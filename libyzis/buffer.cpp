@@ -68,6 +68,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mFileIsNew = true;
 	mUndoBuffer = new YZUndoBuffer( this );
 	mAction = new YZAction( this );
+	mMarks = new YZMark( );
 	displayIntro();
 	YZSession::me->addBuffer( this );
 	yzDebug("YZBuffer") << "NEW BUFFER CREATED : " << mPath << endl;
@@ -80,6 +81,7 @@ YZBuffer::~YZBuffer() {
 	mText.clear();
 	delete mUndoBuffer;
 	delete mAction;
+	delete mMarks;
 	//clear views
 //	YZView *it;
 //	for ( it = mViews.first(); it ; it = mViews.next() )

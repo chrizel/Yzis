@@ -260,6 +260,10 @@ class YZView {
 		 */
 		QString deleteLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
+		/**
+		 * add a mark
+		 */
+		QString addMark( const QString& inputsBuff, YZCommandArgs args = YZCommandArgs() );
 
 
 		/**

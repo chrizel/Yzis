@@ -1189,6 +1189,12 @@ QString YZView::gotoVisualMode(const QString&, YZCommandArgs ) {
 	return QString::null;
 }
 
+QString YZView::addMark( const QString& inputsBuff, YZCommandArgs ) {
+	mBuffer->marks()->add( inputsBuff[ 1 ], *mCursor, *dCursor );
+	purgeInputBuffer();
+	return QString::null;
+}
+
 QString YZView::copy( const QString& , YZCommandArgs args) {
 	//default register to use
 	int nb_lines = args.count;

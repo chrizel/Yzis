@@ -80,6 +80,7 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("a",&YZView::append,true,false,false,false);
 	NEW_VIEW_COMMAND("A",&YZView::appendAtEOL,true,false,false,false);
 	NEW_VIEW_COMMAND("J",&YZView::joinLine,true,false,false,false);
+	NEW_VIEW_COMMAND("m([a-zA-Z])",&YZView::addMark,true,false,false,false)
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true,false,false,false);
 	NEW_VIEW_COMMAND("(\".)?([0-9]*)(y.*|Y)",&YZView::copy,true,true,false,true);
 	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true,false,false,true);
@@ -168,8 +169,7 @@ void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("mkyzisrc", &YZExExecutor::mkyzisrc,true,0);
 	NEW_EX_COMMAND("substitute", &YZExExecutor::substitute,true,2);
 	NEW_EX_COMMAND("set", &YZExExecutor::set,true,1);
-	// FIXME: This conflicts with the POSIX command :print.
-	NEW_EX_COMMAND("print", &YZExExecutor::print,true,1);
+	NEW_EX_COMMAND("hardcopy", &YZExExecutor::hardcopy,true,1);
 	NEW_EX_COMMAND("open", &YZExExecutor::gotoOpenMode,true,1);
 	NEW_EX_COMMAND("visual", &YZExExecutor::gotoCommandMode,true,1);
 	NEW_LUA_COMMAND("lua", &YZExLua::lua,true,0);

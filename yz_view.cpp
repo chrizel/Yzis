@@ -75,7 +75,7 @@ void YZView::sendChar( QChar c) {
 		case YZ_VIEW_MODE_EX:
 			if ( c.unicode() == 13 ) {// <ENTER> 
 				//try to execute that stuff :)
-
+				
 			} // else nothing :)
 			break;
 		default:

@@ -6,10 +6,17 @@
 
 YZSession::YZSession( const QString& _sessionName ) {
   pool = new YZCommandPool();
+	pool->initPool();
+  expool = new YZCommandPool();
+	expool->initExPool();
+  motionpool = new YZMotionPool();
+	motionpool->initPool();
 	sessionName = _sessionName;
 }
 
 YZSession::~YZSession() {
+	delete pool;
+	delete motionpool;
 }
 
 YZBuffer *YZSession::createBuffer(const QString& path) {
@@ -26,5 +33,6 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = buffers.begin(); it!=buffers.end(); it++ )
 		it.data()->save();
+	//XXX QUIT !
 	return QString::null;
 }

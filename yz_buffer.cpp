@@ -8,6 +8,7 @@
 #include "yz_buffer.h"
 #include "yz_events.h"
 #include "yz_view.h"
+#include "yzis.h"
 
 YZBuffer::YZBuffer(const QString& _path) {
 	path	= _path;
@@ -145,4 +146,9 @@ void YZBuffer::save() {
 	}
 }
 
+//motion calculations
+
+yz_point YZBuffer::motionPosition( int xstart, int ystart, YZMotion regexp ) {
+
+}
 

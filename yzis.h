@@ -18,4 +18,13 @@
 
 #define VERSION_CHAR	"0.0.1"
 
+struct yzpoint {
+	int x;
+	int y;
+};
+
+typedef struct yzpoint yz_point;
+
+
+
 #endif /* YZIS_H */

@@ -28,6 +28,9 @@
 //to be used from plugin constructors
 #define NEW_PLUG_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=PLUG; cmd.plugFunc=y; globalCommands[ x ] = cmd; }
 
+//to be used only for the Ex Pool
+#define NEW_EX_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=EX; cmd.exFunc=y; globalExCommands[ x ] = cmd; }
+
 class YZSession;
 
 //oh please don't instanciate me twice !
@@ -37,7 +40,8 @@ class YZCommandPool {
 		POOL,
 		VIEW,
 		BUFF,
-		SESS
+		SESS,
+		EX
 	};
 	struct cmd {
 		type obj; //object type 
@@ -48,6 +52,7 @@ class YZCommandPool {
 		QString ( YZBuffer::*buffFunc ) (const QString& inputsBuff);
 		QString ( YZSession::*sessFunc ) (const QString& inputsBuff);
 		QString ( YZPlugin::*plugFunc ) (const QString& inputsBuff);
+		QString ( YZPlugin::*exFunc ) (const QString& inputsBuff);
 	};
 
 	public:
@@ -61,8 +66,10 @@ class YZCommandPool {
 		//it's quite weird ...
 		typedef struct cmd YZCommand;
 		QMap<QString, YZCommand> globalCommands;
+		QMap<QString, YZCommand> globalExCommands;
 
 		void initPool();
+		void initExPool();
 
 		//just an example method
 		QString test(const QString&);
@@ -71,6 +78,11 @@ class YZCommandPool {
 		 * This function is the entry point to execute ANY command in Yzis
 		 */
 		void execCommand(YZView *view, const QString& inputs);
+
+		/**
+		 * Entry point for ex functions ( scripting )
+		 */
+		void execExCommand(YZView *view, const QString& inputs);
 };
 
 #endif

@@ -55,10 +55,17 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 void KYZisEdit::setCursor(int c, int l) {
 	//undraw previous cursor
 	if ( cursor_shown ) drawCursorAt( cursorx,cursory );
+
 	cursorx = c;
 	cursory = l;
+
 	//draw new cursor
 	cursor_shown = true;
+	
+	//check it the line contains TABs
+	QString currentLine = _parent->myBuffer()->data( cursory );
+	int s = fontMetrics().size( Qt::ExpandTabs|Qt::SingleLine, currentLine, c, 0, 0).width();
+	cursorx = s / fontMetrics().maxWidth();
 	drawCursorAt( cursorx,cursory );
 }
 
@@ -113,9 +120,9 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
 			p->eraseRect(clip);
 			if (_parent->myBuffer()->lineCount() > i + _parent->getCurrent() )
-				p->drawText(clip,/*Qt::ExpandTabs| <= needed in the future */Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->data(i + _parent->getCurrent()));
+				p->drawText(clip,Qt::ExpandTabs|Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->data(i + _parent->getCurrent()));
 			else 
-				p->drawText(clip,/*Qt::ExpandTabs| */Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,"~");
+				p->drawText(clip,Qt::ExpandTabs|Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,"~");
 		}
 	}
 

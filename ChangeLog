@@ -1,3 +1,7 @@
+2004-02-23 mikmak
+  * kyzis
+    support displaying TABs. doh I have tabstops and tabarrays !
+
 2004-02-22 mikmak
   * libyzis
     fix bugs and make :bp and :bn actually do something usefull

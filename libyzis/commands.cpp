@@ -70,6 +70,10 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("F", &YZCommandPool::findPrevious, ARG_CHAR) );
 	commands.append( new YZNewMotion("T", &YZCommandPool::findAfterPrevious, ARG_CHAR) );
 	commands.append( new YZNewMotion(";", &YZCommandPool::repeatFind, ARG_CHAR) );
+	commands.append( new YZNewMotion("*", &YZCommandPool::searchWord, ARG_NONE) );
+	commands.append( new YZNewMotion("g*", &YZCommandPool::searchWord, ARG_NONE) );
+	commands.append( new YZNewMotion("#", &YZCommandPool::searchWord, ARG_NONE) );
+	commands.append( new YZNewMotion("g#", &YZCommandPool::searchWord, ARG_NONE) );
 	commands.append( new YZNewMotion("n", &YZCommandPool::searchNext, ARG_NONE) );
 	commands.append( new YZNewMotion("N", &YZCommandPool::searchPrev, ARG_NONE) );
 	commands.append( new YZNewMotion("<HOME>", &YZCommandPool::gotoSOL, ARG_NONE) );
@@ -654,24 +658,69 @@ YZCursor YZCommandPool::gotoLine(const YZNewMotionArgs &args) {
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::searchNext(const YZNewMotionArgs &args) {
-	YZViewCursor viewCursor = args.view->viewCursor();
-	bool found;
-	YZCursor pos = YZSession::me->search()->replayForward( args.view, &found );
-	if ( found ) {
-		return pos;
+YZCursor YZCommandPool::searchWord(const YZNewMotionArgs &args) {
+	YZCursor from = *args.view->getBufferCursor();
+
+	QString word = args.view->myBuffer()->getWordAt( from );
+	if ( ! word.isNull() ) {
+		yzDebug() << "searchWord : " << word << endl;
+		YZCursor pos( args.view );
+		bool found = true;
+		bool moved = true;
+		word = QRegExp::escape( word );
+		if ( ! args.cmd.contains( 'g' ) ) {
+			if ( word[ 0 ].isLetterOrNumber() || word[ 0 ] == '_' ) // \w
+				word = "\\b" + word + "\\b";
+			else
+				word = word + "(?=[\\s\\w]|$)";
+//				word = "(?=^|[\\s\\w])" + word + "(?=[\\s\\w]|$)"; seems that positive lookahead cannot work together...
+		}
+		for ( unsigned int i = 0; found && i < args.count; i++ ) {
+			if ( args.cmd.contains('*') ) {
+				pos = YZSession::me->search()->forward( args.view, word, &found, &from );
+			} else {
+				pos = YZSession::me->search()->backward( args.view, word, &found, &from );
+			}
+			if ( found ) {
+				from.setCursor( pos );
+				moved = true;
+			}
+		}
+		if ( args.standalone && moved ) args.view->gotoxyAndStick( &from );
 	}
-	return *viewCursor.buffer();
+	return from;
+}
+
+YZCursor YZCommandPool::searchNext(const YZNewMotionArgs &args) {
+	YZCursor from = *args.view->getBufferCursor();
+	YZCursor pos( args.view );
+	bool found = true;
+	bool moved = true;
+	for ( unsigned int i = 0; found && i < args.count; i++ ) {
+		pos = YZSession::me->search()->replayForward( args.view, &found, &from );
+		if ( found ) {
+			from.setCursor( pos );
+			moved = true;
+		}
+	}
+	if ( args.standalone && moved ) args.view->gotoxyAndStick( &from );
+	return from;
 }
 
 YZCursor YZCommandPool::searchPrev(const YZNewMotionArgs &args) {
-	YZViewCursor viewCursor = args.view->viewCursor();
-	bool found;
-	YZCursor pos = YZSession::me->search()->replayBackward( args.view, &found );
-	if ( found ) {
-		return pos;
+	YZCursor from = *args.view->getBufferCursor();
+	YZCursor pos( args.view );
+	bool found = true;
+	bool moved = false;
+	for ( unsigned int i = 0; found && i < args.count; i++ ) {
+		pos = YZSession::me->search()->replayBackward( args.view, &found, &from );
+		if ( found ) {
+			from.setCursor( pos );
+			moved = true;
+		}
 	}
-	return *viewCursor.buffer();
+	if ( args.standalone && moved ) args.view->gotoxyAndStick( &from );
+	return from;
 }
 
 // COMMANDS

@@ -35,30 +35,41 @@ YZSearch::YZSearch() {
 YZSearch::~YZSearch() {
 }
 
-YZCursor YZSearch::forward( YZView* mView, const QString& pattern, bool* found ) {
-	return doSearch( mView, pattern, false, false, found );
+YZCursor YZSearch::forward( YZView* mView, const QString& pattern, bool* found, YZCursor* from ) {
+	return doSearch( mView, from, pattern, false, false, found );
 }
-YZCursor YZSearch::backward( YZView* mView, const QString& pattern, bool* found ) {
-	return doSearch( mView, pattern, true, false, found );
+YZCursor YZSearch::backward( YZView* mView, const QString& pattern, bool* found, YZCursor* from ) {
+	return doSearch( mView, from, pattern, true, false, found );
 }
-YZCursor YZSearch::replayForward( YZView* mView, bool* found, bool skipline ) {
-	return doSearch( mView, mCurrentSearch, false, skipline, found );
+YZCursor YZSearch::replayForward( YZView* mView, bool* found, YZCursor* from, bool skipline ) {
+	return doSearch( mView, from, mCurrentSearch, false, skipline, found );
 }
-YZCursor YZSearch::replayBackward( YZView* mView, bool* found, bool skipline ) {
-	return doSearch( mView, mCurrentSearch, true, skipline, found );
+YZCursor YZSearch::replayBackward( YZView* mView, bool* found, YZCursor* from, bool skipline ) {
+	return doSearch( mView, from, mCurrentSearch, true, skipline, found );
 }
 
 const QString& YZSearch::currentSearch() const {
 	return mCurrentSearch;
 }
 
-YZCursor YZSearch::doSearch( YZView* mView, const QString& pattern, bool reverse, bool skipline, bool* found ) {
+bool YZSearch::active() {
+	return ! ( mCurrentSearch.isNull() || mCurrentSearch.isEmpty() );
+}
+
+YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& pattern, bool reverse, bool skipline, bool* found ) {
 	yzDebug() << "YZSearch::doSearch " << pattern << ", " << reverse << ", " << endl;
 	*found = false;
 	setCurrentSearch( pattern );
 	int direction = reverse ? 0 : 1;
 
-	YZCursor cur = mView->getBufferCursor();
+	YZCursor cur( mView );
+	if ( from != NULL )
+		cur.setCursor( from );
+	else
+		cur.setCursor( mView->getBufferCursor() );
+
+	if ( ! active() ) return cur;
+
 	if ( skipline ) {
 		cur.setX( 0 );
 		if ( ! reverse ) cur.setY( QMIN( (int)(cur.getY() + 1), (int)(mView->myBuffer()->lineCount() - 1) ) );

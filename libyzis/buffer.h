@@ -165,6 +165,11 @@ public:
 	QStringList getText(YZCursor& from, YZCursor& to);
 
 	/**
+	 * Get entire word at given cursor position. Currently behaves like '*' in vim
+	 */
+	QString getWordAt( const YZCursor& at );
+
+	/**
 	 * Number of lines in the buffer
 	 * @return the number of lines
 	 *

@@ -1,3 +1,7 @@
+2004-12-13 panard
+  * libyzis
+  	add *, g*, # and g# command
+
 2004-12-10 apt-drink (patch)
   * translations
     added spanish translation

@@ -471,22 +471,16 @@ void YZView::centerViewVertically(unsigned int line) {
  * all the goto-like commands
  */
 
-/* goto xdraw, ydraw */
-void YZView::gotodxdy( unsigned int nextx, unsigned int nexty ) {
-	if ( mBuffer->introShown() ) mBuffer->clearIntro();
-
+/* PRIVATE */
+void YZView::gotodx( unsigned int nextx ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
-	if ( ( int )nexty < 0 ) nexty = 0;
-
-	initDraw( );
-	if ( sCursor->getY() >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
-	while ( rCursor->getY() > nexty ) drawPrevLine( );
-	while ( rCursor->getY() < nexty && sCursor->getY() < mBuffer->lineCount() ) drawNextLine( );
-
 	unsigned int shift = ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLine.length() > 0 ) ? 1 : 0;
 	if ( sCurLine.length() == 0 ) nextx = 0;
-	else if ( sCursor->getX() >= sCurLine.length() ) nextx = sCurLine.length() - 1 + shift;
-
+	else if ( sCursor->getX() >= sCurLine.length() ) {
+		nextx = sCurLine.length() - 1 + shift;
+		gotox ( nextx );
+		return;
+	}
 	while ( rCursor->getX() > nextx ) {
 		drawPrevCol( );
 		drawChar( );
@@ -495,6 +489,46 @@ void YZView::gotodxdy( unsigned int nextx, unsigned int nexty ) {
 		drawNextCol( );
 		drawChar( );
 	}
+}
+
+void YZView::gotox( unsigned int nextx ) {
+	if ( ( int )nextx < 0 ) nextx = 0;
+	if ( nextx >= sCurLine.length() ) {
+		if ( sCurLine.length() == 0 ) nextx = 0;
+		else nextx = sCurLine.length() - ( ! (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLine.length() > 0) ? 1 : 0 );
+	}
+	while ( sCursor->getX() > nextx ) {
+		drawPrevCol( );
+		drawChar( );
+	}
+	while ( sCursor->getX() < nextx ) {
+		drawNextCol( );
+		drawChar( );
+	}
+}
+
+void YZView::gotody( unsigned int nexty ) {
+	if ( ( int )nexty < 0 ) nexty = 0;
+	if ( sCursor->getY() >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
+	while ( rCursor->getY() > nexty ) drawPrevLine( );
+	while ( rCursor->getY() < nexty && sCursor->getY() < mBuffer->lineCount() ) drawNextLine( );
+}
+
+void YZView::gotoy( unsigned int nexty ) {
+	if ( ( int )nexty < 0 ) nexty = 0;
+	if ( nexty >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
+	while ( sCursor->getY() > nexty ) drawPrevLine( );
+	while ( sCursor->getY() < nexty ) drawNextLine( );
+}
+
+
+/* goto xdraw, ydraw */
+void YZView::gotodxdy( unsigned int nextx, unsigned int nexty ) {
+	if ( mBuffer->introShown() ) mBuffer->clearIntro();
+
+	initDraw( );
+	gotody( nexty );
+	gotodx( nextx );
 
 	dCursor->setX( rCursor->getX() );
 	dCursor->setY( rCursor->getY() );
@@ -511,26 +545,28 @@ void YZView::gotodxdy( unsigned int nextx, unsigned int nexty ) {
 void YZView::gotodxy( unsigned int nextx, unsigned int nexty ) {
 	if ( mBuffer->introShown() ) mBuffer->clearIntro();
 
-	if ( ( int )nextx < 0 ) nextx = 0;
-	if ( ( int )nexty < 0 ) nexty = 0;
+	initDraw( );
+	gotoy( nexty );
+	gotodx( nextx );
+
+	dCursor->setX( rCursor->getX() );
+	dCursor->setY( rCursor->getY() );
+	mCursor->setX( sCursor->getX() );
+	mCursor->setY( sCursor->getY() );
+
+	if ( !isLineVisible( dCursor->getY() ) ) centerViewVertically( dCursor->getY( ) );
+	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
+
+	updateCursor( );
+}
+
+/* goto xdraw, ybuffer */
+void YZView::gotoxdy( unsigned int nextx, unsigned int nexty ) {
+	if ( mBuffer->introShown() ) mBuffer->clearIntro();
 
 	initDraw( );
-	if ( nexty >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
-	while ( sCursor->getY() > nexty ) drawPrevLine( );
-	while ( sCursor->getY() < nexty ) drawNextLine( );
-
-	unsigned int shift = (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLine.length() > 0) ? 1 : 0;
-	if ( sCurLine.length() == 0 ) nextx = 0;
-	else if ( sCursor->getX() >= sCurLine.length() ) nextx = sCurLine.length() - 1 + shift;
-
-	while ( rCursor->getX() > nextx ) {
-		drawPrevCol( );
-		drawChar( );
-	}
-	while ( rCursor->getX() < nextx && sCursor->getX() < sCurLine.length() + shift ) {
-		drawNextCol( );
-		drawChar( );
-	}
+	gotody( nexty );
+	gotox( nextx );
 
 	dCursor->setX( rCursor->getX() );
 	dCursor->setY( rCursor->getY() );
@@ -547,25 +583,9 @@ void YZView::gotodxy( unsigned int nextx, unsigned int nexty ) {
 void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	if ( mBuffer->introShown() ) mBuffer->clearIntro();
 
-	if ( ( int )nextx < 0 ) nextx = 0;
-	if ( ( int )nexty < 0 ) nexty = 0;
-
 	initDraw( );
-	if ( nexty >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
-	while ( sCursor->getY() > nexty ) drawPrevLine( );
-	while ( sCursor->getY() < nexty ) drawNextLine( );
-	if ( nextx >= sCurLine.length() ) {
-		if ( sCurLine.length() == 0 ) nextx = 0;
-		else nextx = sCurLine.length() - ( ! (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLine.length() > 0) ? 1 : 0 );
-	}
-	while ( sCursor->getX() > nextx ) {
-		drawPrevCol( );
-		drawChar( );
-	}
-	while ( sCursor->getX() < nextx ) {
-		drawNextCol( );
-		drawChar( );
-	}
+	gotoy( nexty );
+	gotox( nextx );
 
 	dCursor->setX( rCursor->getX() );
 	dCursor->setY( rCursor->getY() );
@@ -575,10 +595,9 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	if ( !isLineVisible( dCursor->getY() ) ) centerViewVertically( dCursor->getY( ) );
 	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
 
-//	yzDebug( ) << "(2) mCursor:" << mCursor->getX( ) << "," << mCursor->getY( ) << endl;
-//	yzDebug( ) << "(2) dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl;
+//	yzDebug( ) << "mCursor:" << mCursor->getX( ) << "," << mCursor->getY( ) << endl;
+//	yzDebug( ) << "dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl;
 
-	/* do it */
 	updateCursor();
 }
 

@@ -227,6 +227,11 @@ class YZView {
 		void gotodxdy(unsigned int nextx, unsigned int nexty);
 
 		/**
+		 * Moves the cursor to @arg buffer nextx, @arg draw nexty
+		 */
+		void gotoxdy(unsigned int nextx, unsigned int nexty);
+
+		/**
 		 * Moves the cursor to @arg draw nextx, @arg buffer nexty
 		 */
 		void gotodxy(unsigned int nextx, unsigned int nexty);
@@ -526,6 +531,10 @@ class YZView {
 
 		QString  sCurLine;
 
+		void YZView::gotoy( unsigned int );
+		void YZView::gotody( unsigned int );
+		void YZView::gotox( unsigned int );
+		void YZView::gotodx( unsigned int );
 };
 
 #endif /*  YZ_VIEW_H */

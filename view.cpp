@@ -2187,6 +2187,7 @@ void YZView::initCompletion() {
 	//record current begin-of-word-to-complete
 	m_word2Complete = list[0];
 	m_completionCursor->setCursor(mainCursor->buffer());
+	m_oldProposals.clear();
 }
 
 QString YZView::doComplete(bool forward) {
@@ -2206,17 +2207,20 @@ QString YZView::doComplete(bool forward) {
 		if (found) {
 			YZCursor end (this, result.getX()+matchedLength-1, result.getY());
 			list = myBuffer()->getText(result, end)[0];
-			yzDebug() << "Got testing match : " << list << " at " << result << " to " << end << endl;
+//			yzDebug() << "Got testing match : " << list << " at " << result << " to " << end << endl;
 			m_completionCursor->setCursor(result);
 		}
-	} while ( found && list == m_lastMatch );
+	} while ( found && ( list == m_lastMatch || m_oldProposals.contains(list)) );
 
 	//found something ?
 	if ( found )  {
 		yzDebug() << "Match : " << list << endl;
 		m_lastMatch = list;
+		m_oldProposals << list;
 		return list;
 	}
+	//no more result clear the list if we want to go for another round
+	m_oldProposals.clear();
 	return QString::null;
 }
 

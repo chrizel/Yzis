@@ -873,6 +873,7 @@ class YZView {
 		YZCursor *m_completionCursor;
 		QString m_word2Complete;
 		QString m_lastMatch;
+		QStringList m_oldProposals;
 };
 
 #endif /*  YZ_VIEW_H */

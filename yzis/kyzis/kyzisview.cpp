@@ -50,7 +50,7 @@ void KYZisView::customEvent (QCustomEvent *) {
 		}
 		switch ( event->id ) {
 			case YZ_EV_SETLINE:
-				kdDebug() << "event SETLINE" << endl;
+				kdDebug() << "event SETLINE" << *(event->u.setline.line) << endl;
 				editor->setTextLine(event->u.setline.y,*(event->u.setline.line));
 				break;
 			case YZ_EV_SETCURSOR:

@@ -50,6 +50,7 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 	//XXX draw text inside the clip
 	KYZLine::iterator it;
 	for (it = mText.begin(); it!=mText.end(); ++it) {
+			p->eraseRect(0,it.key() * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
 			p->drawText(0,it.key() * fontMetrics().lineSpacing(),it.data());
 	}
 	

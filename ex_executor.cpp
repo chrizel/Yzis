@@ -195,7 +195,7 @@ QString YZExExecutor::substitute( YZView *view, const QString& inputs) {
 	return QString::null;
 }
 
-QString YZExExecutor::print( YZView *view, const QString& inputs ) {
+QString YZExExecutor::hardcopy( YZView *view, const QString& inputs ) {
 	int idx = inputs.find( " " );
 	if ( idx == -1 ) {
 		view->mySession()->popupMessage( tr( "Please specify a filename" ) );

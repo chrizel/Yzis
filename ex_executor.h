@@ -94,7 +94,7 @@ class YZExExecutor : public QObject {
 		/**
 		 * Print
 		 */
-		QString print( YZView *view, const QString& inputs );
+		QString hardcopy( YZView *view, const QString& inputs );
 
 
 };

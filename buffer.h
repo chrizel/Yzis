@@ -33,12 +33,14 @@
 #include "commands.h"
 #include "syntaxhighlight.h"
 #include "action.h"
+#include "mark.h"
 
 class YZView;
 class YZLine;
 class YZSession;
 class YZUndoBuffer;
 class YZAction;
+class YZMark;
 
 typedef QValueVector<YZLine*> YZBufferData;
 static QString myNull;
@@ -274,6 +276,8 @@ public:
 	// Action
 	YZAction* action() { return mAction; }
 
+	YZMark* marks() { return mMarks; }
+
 	/**
 	 * Display a nice intro before first input and when no file is loaded
 	 */
@@ -375,6 +379,7 @@ protected:
 	YzisHighlighting *m_highlight;
 private:
 	YZAction* mAction;
+	YZMark* mMarks;
 };
 
 #endif /*  YZ_BUFFER_H */

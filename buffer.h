@@ -317,8 +317,9 @@ public:
 	/**
 	 * Sets the highlighting mode for this buffer
 	 * @param mode the highlighting mode to use
+	 * @param warnGUI emit signal to GUI so they can reload the view if necessary
 	 */
-	void setHighLight(uint mode);
+	void setHighLight(uint mode, bool warnGUI=true);
 
 	YzisHighlighting *highlight() { return m_highlight; }
 

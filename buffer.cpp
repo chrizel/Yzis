@@ -82,6 +82,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mSwap = new YZSwapFile( this );
 	mLoading = false;
 	mText.append( new YZLine() );
+	setHighLight( 0, false );
 	yzDebug("YZBuffer") << "NEW BUFFER CREATED : " << mPath << endl;
 }
 
@@ -757,7 +758,7 @@ void YZBuffer::statusChanged() {
 //                            Syntax Highlighting
 // ------------------------------------------------------------------------
 
-void YZBuffer::setHighLight( uint mode ) {
+void YZBuffer::setHighLight( uint mode, bool warnGUI ) {
 	YzisHighlighting *h = YzisHlManager::self()->getHl( mode );
 
 	if ( h != m_highlight ) { //HL is changing
@@ -770,7 +771,8 @@ void YZBuffer::setHighLight( uint mode ) {
 		m_highlight = h;
 
 		makeAttribs();
-		highlightingChanged();
+		if ( warnGUI )
+			highlightingChanged();
 
 		//load indent plugin
 		//XXX should we check whether it was already loaded ?

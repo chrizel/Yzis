@@ -30,6 +30,18 @@
 #include "yzis.h"
 #include "translator.h"
 
+/*
+ * TODO:
+ * - invert line/col arguments
+ * - test every argument of the functions
+ * - test text()
+ * - override print() in lua for yzis
+ * - clear the lua stack properly
+ * - arguments to :source must be passed as argv
+ * - add missing function from vim
+ *
+ */
+
 extern "C" {
 #include <lauxlib.h>
 #include <lualib.h>
@@ -53,7 +65,8 @@ void print_lua_stack_value(lua_State*L, int index)
 	}
 }
 
-void print_lua_stack(lua_State *L) {
+void print_lua_stack(lua_State *L, const char * msg="") {
+	printf("stack - %s\n", msg );
 	for(int i=1; i<=lua_gettop(L); i++) {
 		print_lua_stack_value(L,i);
 	}
@@ -76,8 +89,8 @@ YZExLua::YZExLua() {
 	luaopen_io( L );
 	luaopen_debug( L );
 	yzDebug() << "Lua " << lua_version() << " loaded" << endl;
-	lua_register(L,"text",text);
 	lua_register(L,"line",line);
+	lua_register(L,"setline",setline);
 	lua_register(L,"insert",insert);
 	lua_register(L,"insertline",insertline);
 	lua_register(L,"appendline",appendline);
@@ -98,25 +111,13 @@ YZExLua::~YZExLua() {
 }
 
 QString YZExLua::lua(YZView *, const QString& args) {
-	printf("calling hop lua %s\n", args.latin1() );
-	execInLua( "print('called from yzis')\n" );
-	lua_pushstring(L,"text");
-	lua_gettable(L,LUA_GLOBALSINDEX); //to store function name
-	//now arguments in the right order
-	lua_pushnumber( L, 0 ); //start col
-	lua_pushnumber( L, 0 ); //start line
-	lua_pushnumber( L, 0 ); //end col
-	lua_pushnumber( L, 3 ); //end line
-
-	pcall( 4, 1, 0, QString("Error when executing: %1").arg(args) );
+	execInLua( args.latin1() );
 	return QString::null;
 }
 
 //callers
 QString YZExLua::source( YZView *, const QString& args ) {
-	printf("YZExLua::source( %s )\n", args.latin1() );
 	QString filename = args.mid( args.find( " " ) +1 );
-	printf("YZExLua - filneame = %s\n", filename.latin1() );
 	QStringList candidates;
 	candidates << filename 
 	           << QDir::currentDirPath()+"/"+filename
@@ -151,8 +152,22 @@ int YZExLua::execInLua( const QString & luacode )
 	lua_pushstring(L, "loadstring" );
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	lua_pushstring(L, luacode );
-	pcall(1,1,0, "");
-	pcall(0,0,0, "");
+	print_lua_stack(L, "loadstring 0");
+	pcall(1,2,0, "");
+	print_lua_stack(L, "loadstring 1");
+	if (lua_isnil(L,-2) && lua_isstring(L,-1)) {
+		QString luaErrorMsg = lua_tostring(L,-1);
+		lua_pop(L,2);
+		YZSession::me->popupMessage(luaErrorMsg );
+		printf("execInLua - %s\n", luaErrorMsg.latin1() );
+		return 0;
+	} else if (lua_isfunction(L,-2)) {
+		lua_pop(L,1);
+		pcall(0,0,0, "");
+	} else { // big errror
+		print_lua_stack(L, "loadstring returns strange things" );
+		YZSession::me->popupMessage("Unknown lua return type");
+	}
 	return 0;
 }
 
@@ -177,37 +192,6 @@ void YZExLua::yzisprint(const QString & text)
 //
 // ========================================================
 
-//All Lua functions return the number of results returned
-int YZExLua::text(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n < 4 ) return 0; //mis-use of the function
-
-	int sCol = ( int )lua_tonumber( L, 1 );
-	int sLine = ( int )lua_tonumber( L,2 );
-	int eCol = ( int )lua_tonumber( L,3 );
-	int eLine = ( int )lua_tonumber( L,4 );
-
-	sCol = sCol ? sCol - 1 : 0;
-	sLine = sLine ? sLine - 1 : 0;
-	eCol = eCol ? eCol - 1 : 0;
-	eLine = eLine ? eLine - 1 : 0;
-
-	YZView* cView = YZSession::me->currentView();
-	QString result,t;
-	for ( int i = sLine ; i < eLine; i++ ) {
-		t = cView->myBuffer()->textline( i );
-		if ( i == sLine && i == eLine )
-			result += t.mid( sCol, eCol - sCol );
-		else if ( i == sLine )
-			result += t.mid( sCol, t.length() - sCol ) + "\n";
-		else if ( i == eLine )
-			result += t.mid( 0, eCol );
-		else result += t + "\n";
-	}
-	lua_pushstring( L, result ); // first result
-	return 1; // one result
-}
-
 int YZExLua::line(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n != 1 ) return 0; //mis-use of the function
@@ -220,6 +204,24 @@ int YZExLua::line(lua_State *L) {
 	QString	t = cView->myBuffer()->textline( line );
 	lua_pushstring( L, t ); // first result
 	return 1; // one result
+}
+
+int YZExLua::setline(lua_State *L) {
+	int n = lua_gettop( L );
+	if ( n < 2 ) return 0; //mis-use of the function
+
+	int sLine = ( int )lua_tonumber( L,1 );
+	QString text = ( char * )lua_tostring ( L, 2 );
+
+	sLine = sLine ? sLine - 1 : 0;
+
+	if (text.find("\n") != -1) {
+		printf("setline with line containing \n");
+		return 0;
+	}
+	YZView* cView = YZSession::me->currentView();
+	cView->myBuffer()->action()->replaceLine(cView, sLine, text );
+	return 0; // no result
 }
 
 int YZExLua::insert(lua_State *L) {

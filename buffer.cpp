@@ -996,7 +996,7 @@ bool YZBuffer::updateHL( unsigned int line ) {
 	}
 	if ( hlChanged ) {
 		unsigned int nToDraw = hlLine - line - nElines - 1;
-		yzDebug() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
+//		yzDebug() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
 #if QT_VERSION < 0x040000
 		YZView *it;
 		for ( it = mViews.first(); it; it = mViews.next() )

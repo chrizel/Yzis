@@ -17,6 +17,7 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+#include <iostream>
 #include <qfileinfo.h>
 #include <qdir.h>
 #include "ex_lua.h"
@@ -45,11 +46,12 @@ YZExLua::YZExLua() {
 	lua_register(st,"text",text);
 	lua_register(st,"line",line);
 	lua_register(st,"insert",insert);
+	lua_register(st,"insertline",insertline);
 	lua_register(st,"replace",replace);
 	lua_register(st,"wincol",wincol);
 	lua_register(st,"winline",winline);
 	lua_register(st,"goto",_goto);
-	lua_register(st,"delete",_delete);
+	lua_register(st,"deleteline",deleteline);
 	lua_register(st,"version",version);
 	lua_register(st,"filename",filename);
 	lua_register(st,"getcolor",getcolor);
@@ -170,6 +172,30 @@ int YZExLua::insert(lua_State *L) {
 	return 0; // no result
 }
 
+int YZExLua::insertline(lua_State *L) {
+	int n = lua_gettop( L );
+	if ( n < 2 ) return 0; //mis-use of the function
+
+	int sLine = ( int )lua_tonumber( L,1 );
+	QString text = ( char * )lua_tostring ( L, 2 );
+
+	sLine = sLine ? sLine - 1 : 0;
+
+	YZView* cView = YZSession::me->currentView();
+	QStringList list = QStringList::split( "\n", text );
+	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++ ) {
+		YZBuffer * cBuffer = cView->myBuffer();
+		YZAction * cAction = cBuffer->action();
+		if (!(cBuffer->isEmpty() && sLine == 0)) {
+			cAction->insertNewLine( cView, 0, sLine );
+		}
+		cAction->insertChar( cView, 0, sLine, *it );
+		sLine++;
+	}
+
+	return 0; // no result
+}
+
 int YZExLua::replace(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 3 ) return 0; //mis-use of the function
@@ -221,7 +247,7 @@ int YZExLua::_goto(lua_State *L) {
 	return 0; // one result
 }
 
-int YZExLua::_delete(lua_State *L) {
+int YZExLua::deleteline(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 1 ) return 0; //mis-use of the function
 

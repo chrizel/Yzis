@@ -63,13 +63,24 @@ class YZExLua : public QObject {
 		static int line(lua_State *L);
 
 		/**
-		 * Insert text on view:
+		 * Insert text inside a line:
 		 * Arguments:
 		 * startCol,startLine,text
 		 *
 		 * Returns nothing.
 		 */
 		static int insert(lua_State *L);
+
+		/**
+		 * Insert a new line
+		 * Arguments:
+		 * line,text
+		 *
+		 * Returns nothing.
+		 */
+		static int insertline(lua_State *L);
+
+		
 
 		/**
 		 * Replace text on view.
@@ -106,7 +117,7 @@ class YZExLua : public QObject {
 		 * Note: the underscore is necessary because the name is already
 		 * reserved in C++
 		 */
-		static int YZExLua::_delete(lua_State *L);
+		static int YZExLua::deleteline(lua_State *L);
 
 		/**
 		 * Return current's filename

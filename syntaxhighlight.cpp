@@ -2475,7 +2475,7 @@ void YzisHighlighting::handleYzisHlIncludeRules()
 
 void YzisHighlighting::handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::iterator it, YzisHlIncludeRules *list)
 {
-  uint i;
+  int i;
   if (it==list->end()) return;  //invalid iterator, shouldn't happen, but better have a rule prepared ;)
   YzisHlIncludeRules::iterator it1=it;
   int ctx=(*it1)->ctx;

@@ -37,8 +37,6 @@
 #endif
 #define KEY_RETURN 13
 
-#define STATUSBARWIDTH 15
-
 class NYZSession;
 
 class NYZView : public YZView
@@ -57,7 +55,7 @@ public:
 	virtual void setFocusCommandLine() {}
 	virtual void setFocusMainWindow() {}
 	virtual void invalidateLine ( unsigned int line );
-	virtual void modeChanged(void);
+	virtual void modeChanged(void) { syncViewInfo(); }
 	virtual void refreshScreen();
 	virtual void syncViewInfo();
 	virtual void displayInfo(  const QString& info );

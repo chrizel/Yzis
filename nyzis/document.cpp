@@ -19,6 +19,7 @@
  * $Id$
  */
 
+//#include "viewwidget.h"
 #include "document.h"
 #include "factory.h"
 
@@ -30,10 +31,15 @@ NYZisDoc::~NYZisDoc () {
 
 bool NYZisDoc::popupFileSaveAs() {
 	// TODO
+	for (  YZView *it = mViews.first(); it; it = mViews.next() )
+		it->displayInfo ( "Save as not implemented yet, use :w<filname>" );
 	return false;
 }
 
-void NYZisDoc::filenameChanged() {
+void NYZisDoc::filenameChanged()
+{
+	for (  YZView *it = mViews.first(); it; it = mViews.next() )
+		it->displayInfo ( QString("\"%1\" %2L, %3C" ).arg(fileName()).arg(lineCount()).arg(getWholeTextLength()));
 
 }
 

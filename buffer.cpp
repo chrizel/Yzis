@@ -42,10 +42,6 @@ void YZBuffer::addChar (int x, int y, const QString& c) {
 	text[y] = l;
 
 	/* inform the views */
-	/* XXX TESTME 
-	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
-			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
-	}*/
 	QValueList<YZView*>::iterator it;
 	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
 		YZView *v = *it;
@@ -66,11 +62,6 @@ void YZBuffer::chgChar (int x, int y, const QString& c) {
 	text[y] = l;
 
 	/* inform the views */
-	/* XXX TESTME
-	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
-			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
-	} */
-
 	QValueList<YZView*>::iterator it;
 	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
 		YZView *v = *it;
@@ -89,11 +80,6 @@ void YZBuffer::delChar (int x, int y, int count) {
 	text[y] = l;
 
 	/* inform the views */
-	/* XXX TESTME
-	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
-			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
-	}*/
-
 	QValueList<YZView*>::iterator it;
 	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
 		YZView *v = *it;
@@ -133,8 +119,6 @@ void YZBuffer::addView (YZView *v) {
 }
 
 void YZBuffer::updateAllViews() {
-	//XXX TESTME for ( YZView *v = view_list.first();v;v=view_list.next() ) v->redrawScreen();
-	
 	QValueList<YZView*>::iterator it;
 	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
 		YZView *v = *it;
@@ -184,10 +168,6 @@ void YZBuffer::save() {
 
 
 YZView* YZBuffer::findView( int uid ) {
-// XXX TESTME	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
-//		if ( v->myId == uid ) return v;
-//	} 
-
 	QValueList<YZView*>::iterator it;
 	for ( it = view_list.begin(); it != view_list.end(); ++it ){
 		YZView* v = *it;

@@ -43,13 +43,6 @@ void YZView::sendKey( int c, int modifiers) {
 	//map other keys
 	if ( c == Qt::Key_Insert ) c = Qt::Key_I;
 	
-	QString lin;
-	QString key = QChar( tolower( c ) );// = QKeySequence( c );
-	//default is lower case unless some modifiers
-	if ( modifiers & YZIS::Shift ) {
-		key = key.upper();
-	}
-
 	if (Qt::Key_Escape == c) {
 		//when escpaping while adding char in end of line
 		if (cursor->getX() > current_maxx) {
@@ -57,6 +50,13 @@ void YZView::sendKey( int c, int modifiers) {
 		}
 		gotoCommandMode( );
 		return;
+	}
+
+	QString lin;
+	QString key = QChar( tolower( c ) );// = QKeySequence( c );
+	//default is lower case unless some modifiers
+	if ( modifiers & YZIS::Shift ) {
+		key = key.upper();
 	}
 
 	switch(mode) {
@@ -68,16 +68,16 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoxy(0, cursor->getY()+1 );
 					return;
 				case Qt::Key_Down:
-					moveDown( QString::null );
+					moveDown( );
 					return;
 				case Qt::Key_Left:
-					moveLeft( QString::null );
+					moveLeft( );
 					return;
 				case Qt::Key_Right:
-					moveRight( QString::null );
+					moveRight( );
 					return;
 				case Qt::Key_Up:
-					moveUp( QString::null );
+					moveUp( );
 					return;
 				default:
 					buffer->addChar(cursor->getX(),cursor->getY(),key);
@@ -93,16 +93,16 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoxy(0, cursor->getY()+1 );
 					return;
 				case Qt::Key_Down:
-					moveDown( QString::null );
+					moveDown( );
 					return;
 				case Qt::Key_Left:
-					moveLeft( QString::null );
+					moveLeft( );
 					return;
 				case Qt::Key_Right:
-					moveRight( QString::null );
+					moveRight( );
 					return;
 				case Qt::Key_Up:
-					moveUp( QString::null );
+					moveUp( );
 					return;
 				default:
 					buffer->chgChar(cursor->getX(),cursor->getY(),key);
@@ -131,8 +131,7 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoCommandMode();
 					return;
 				default:
-					buffer->chgChar(cursor->getX(),cursor->getY(),key);
-					gotoxy(cursor->getX()+1, cursor->getY() );
+					session->gui_manager->setCommandLineText( session->gui_manager->getCommandLineText() + key );
 					return;
 			}
 			break;
@@ -140,16 +139,16 @@ void YZView::sendKey( int c, int modifiers) {
 		case YZ_VIEW_MODE_COMMAND:
 			switch ( c ) {
 				case Qt::Key_Down:
-					moveDown( QString::null );
+					moveDown( );
 					return;
 				case Qt::Key_Left:
-					moveLeft( QString::null );
+					moveLeft( );
 					return;
 				case Qt::Key_Right:
-					moveRight( QString::null );
+					moveRight( );
 					return;
 				case Qt::Key_Up:
-					moveUp( QString::null );
+					moveUp( );
 					return;
 				default:
 					previous_chars+=key;

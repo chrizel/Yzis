@@ -35,8 +35,6 @@ public:
 
 	void addView (YZView *v);
 
-	//QPtrList<YZView> views() { return view_list; }
-	//XXX TESTME
 	QValueList<YZView*> views() { return view_list; }
 
 	YZView* findView(int uid);

@@ -134,6 +134,7 @@ class KYZisEdit : public QWidget {
 		long lines();
 
 		virtual void focusInEvent( QFocusEvent * );
+		virtual void focusOutEvent( QFocusEvent * );
 
 	private :
 		void initKeys();

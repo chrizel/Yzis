@@ -4,6 +4,7 @@
     added option cursor, cursorinsert and cursorreplace.
   * kyzis
     support square, hbar and vbar cursors with fixed fonts
+    display a different cursor when unfocused
 
 2005-03-02 morbuz
   * libyzis

@@ -112,7 +112,10 @@ KYZisCursor::shape KYZisEdit::cursorShape() {
 		} else if ( shape == "vbar" ) {
 			s = KYZisCursor::VBAR;
 		} else {
-			s = KYZisCursor::SQUARE;
+			if ( hasFocus() ) 
+				s = KYZisCursor::SQUARE;
+			else
+				s = KYZisCursor::RECT;
 		}
 	}
 	return s;
@@ -490,6 +493,10 @@ void KYZisEdit::drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rec
 
 void KYZisEdit::focusInEvent ( QFocusEvent * ) {
 	KYZisFactory::s_self->setCurrentView( mParent );
+	updateCursor();
+}
+void KYZisEdit::focusOutEvent ( QFocusEvent * ) {
+	updateCursor();
 }
 
 void KYZisEdit::initKeys() {

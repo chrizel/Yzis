@@ -93,19 +93,19 @@ bool KYZisCursor::prepareCursors() {
 	bitBlt( bg, 0, 0, mParent, mX, mY, bg->width(), bg->height(), Qt::CopyROP, true );
 	bitBlt( cursor, 0, 0, bg );
 	QPainter p( cursor );
+	p.setPen( mParent->foregroundColor() );
+	QRect rect( 0, 0, cursor->width(), cursor->height() );
 	switch( mCursorType ) {
 		case SQUARE :
-		{
-			QRect rect( 0, 0, cursor->width(), cursor->height() );
 			mParent->drawCell( &p, cell(), rect, true );
 			break;
-		}
+		case RECT :
+			p.drawRect( rect );
+			break;
 		case VBAR :
-			p.setPen( mParent->foregroundColor() );
 			p.drawLine( 0, 0, 0, cursor->height() - 1);
 			break;
 		case HBAR :
-			p.setPen( mParent->foregroundColor() );
 			p.drawLine( 0, cursor->height() - 1, cursor->width() - 1, cursor->height() - 1 );
 			break;
 	}

@@ -38,6 +38,7 @@ class KYZisCursor {
 			SQUARE,
 			VBAR,
 			HBAR,
+			RECT,
 		};
 
 		KYZisCursor( KYZisEdit* parent, shape type );

@@ -108,12 +108,12 @@ main(int argc, char *argv[])
 	NYZisDoc *bf;
 	bool hasatleastone = false;
 
-	while ( --argc )
-		if ( '-' != argv[argc][0] ) {
+	for ( int i=0; i<argc; i++ )
+		if ( '-' != argv[i][0] ) {
 			hasatleastone = true;
-			yzDebug(NYZIS)<< "nyzis : opening file " << argv[argc]<<endl;;
+			yzDebug(NYZIS)<< "nyzis : opening file " << argv[i]<<endl;;
 			bf = factory->createBuffer();
-			bf->load( argv[ argc ] );
+			bf->load( argv[i] );
 		}
 	if ( !hasatleastone )
 		factory->createBuffer();

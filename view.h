@@ -26,6 +26,7 @@
 
 #include "selection.h"
 #include "mode.h"
+#include "option.h"
 
 #include <qglobal.h>
 #if QT_VERSION < 0x040000
@@ -48,6 +49,7 @@ class YZView;
 class YZModePool;
 class YZMode;
 class YZModeCompletion;
+class YZOptionValue;
 
 #if QT_VERSION < 0x040000
 typedef QValueVector<QString> StringVector;
@@ -499,25 +501,19 @@ class YZView {
 		virtual void scrollDown( int ) = 0;
 
 		//Local Options management
+		QString getLocalOptionKey();
+
+		YZOptionValue* getLocalOption( const QString& option );
+		
 		/**
 		 * Retrieve an int option
 		 */
-		int getLocalIntOption( const QString& option );
-
-		/**
-		 * sets an int option
-		 */
-		void setLocalIntOption( const QString& key, int option );
+		int getLocalIntegerOption( const QString& option );
 
 		/**
 		 * Retrieve a bool option
 		 */
-		bool getLocalBoolOption( const QString& option );
-
-		/**
-		 * sets a bool option
-		 */
-		void setLocalBoolOption( const QString& key, bool option );
+		bool getLocalBooleanOption( const QString& option );
 
 		/**
 		 * Retrieve a string option
@@ -525,29 +521,14 @@ class YZView {
 		QString getLocalStringOption( const QString& option );
 
 		/**
-		 * sets a qstring option
-		 */
-		void setLocalQStringOption( const QString& key, const QString& option );
-
-		/**
 		 * Retrieve a qstringlist option
 		 */
-		QStringList getLocalStringListOption( const QString& option );
+		QStringList getLocalListOption( const QString& option );
 
 		/**
-		 * sets a qstringlist option
+		 * Retrieve a map option
 		 */
-		void setLocalQStringListOption( const QString& key, const QStringList& option );
-
-		/**
-		 * Retrieve a qcolor option
-		 */
-		QColor getLocalColorOption( const QString& option );
-
-		/**
-		 * sets a qcolor option
-		 */
-		void setLocalQColorOption( const QString& key, const QColor& option );
+		MapOption getLocalMapOption( const QString& option );
 
 		/**
 		 * width of a space ( in pixel or in cols )

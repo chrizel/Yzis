@@ -1,6 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>
- *  Copyright (C) 2004 Pascal "Poizon" Maillard <poizon@gmx.at>
+ *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,124 +20,168 @@
 #ifndef YZ_OPTION
 #define YZ_OPTION
 
+#include "yzis.h"
+
 #include <qstring.h>
 #include <qmap.h>
 #include <qstringlist.h>
 #include <qcolor.h>
-#include <qregexp.h>
 #include <limits.h> // for INT_MAX and INT_MIN
-#include "yzis.h"
 
-/** The context in which the value of an option is valid. Is essentially the
- * context type and a string representing an instance of the context
+typedef QMap<QString,QString> MapOption;
+
+#include "buffer.h"
+#include "view.h"
+
+/**
+ * Options Handling in libyzis
+ * 	YEP003 - http://www.yzis.org/devel/YEP/YEP003
  */
-struct YZOptionContext {
-	context_t mContextType;
-	QString mInstance;
+
+class YZOption;
+
+class YZOptionValue {
+	public :
+		YZOptionValue( YZOption* o );
+		YZOptionValue( const YZOptionValue& ov );
+		virtual ~YZOptionValue();
+
+		void setBoolean( bool value );
+		void setString( const QString& value );
+		void setInteger( int value );
+		void setList( const QStringList& value );
+		void setMap( const MapOption& value );
+		void setColor( const QColor& value );
+
+		bool boolean() const;
+		const QString& string() const;
+		int integer() const;
+		const QStringList& list() const;
+		const MapOption& map() const;
+		const QColor& color() const;
+		
+		// the YZOption from which I'm the value
+		YZOption* parent() const;
 	
-	/** Convenience function that returns a context specifying the current session */
-	static YZOptionContext currentSession();
-	/** Convenience function that returns a context specifying the current buffer */
-	static YZOptionContext currentBuffer();
-	/** Convenience function that returns a context specifying the current view */
-	static YZOptionContext currentView();
+		value_t type() const;
+		QString toString();
+
+		static bool booleanFromString( bool* success, const QString& value );
+		static QString stringFromString( bool* success, const QString& value );
+		static int integerFromString( bool* success, const QString& value );
+		static QStringList listFromString( bool* success, const QString& value );
+		static MapOption mapFromString( bool* success, const QString& value );
+		static QColor colorFromString( bool* success, const QString& value );
+
+		static QString booleanToString( bool value );
+		static QString stringToString( const QString& value );
+		static QString integerToString( int value );
+		static QString listToString( const QStringList& value );
+		static QString mapToString( const MapOption& value );
+		static QString colorToString( const QColor& value );
+
+	private :
+		YZOption* m_parent;
+		bool v_bool;
+		QString v_str;
+		int v_int;
+		QStringList v_list;
+		MapOption v_map;
+		QColor v_color;
+		value_t m_type;
 };
 
-/** The abstract base class of the classes representing options of a specific value type.
- * Provides the interface to retrieve basic information about the option: name,
- * group, context, default value, value type and if a value is valid.
- */
+typedef void (*ApplyOptionMethod) ( YZBuffer* b, YZView* v );
+
 class YZOption {
-protected:
-	QString mName;
-	context_t mContextType;
-	QString mDefault;
-	QString mDescription;
-public:
-	YZOption(const QString &name, context_t cxt, const QString &def, const QString &desc=QString::null) {
-		mName=name; mContextType=cxt; mDefault=def; mDescription=desc;
-	}
-	virtual ~YZOption() {}
-	const QString &getName() const { return mName; }
-	context_t getContextType() const { return mContextType; }
-	const QString &getStringDefault() const { return mDefault; }
-	const QString &getDescription() const { return mDescription; }
-	virtual value_t getValueType() const = 0;
-	virtual bool isValid(const QString &value) const = 0;
+	public :
+		YZOption( const QString& name, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases );
+		virtual ~YZOption();
+
+		const QString& name() const;
+		context_t context() const;
+		scope_t scope() const;
+
+		YZOptionValue* defaultValue();
+
+		/**
+		 * extract the option value from entry, if the value is correct, 
+		 * fill YZOptionValue value with it and returns true, else returns false;
+		 */
+		virtual bool setValue( const QString& entry, YZOptionValue* value ) = 0;
+
+		/**
+		 * returns true if the entry match with our option
+		 */
+		virtual bool match( const QString& entry );
+		
+		void apply( YZBuffer* b = NULL, YZView* v = NULL );
+
+	private :
+		QString m_name;
+		context_t m_ctx;
+		scope_t m_scope;
+		ApplyOptionMethod m_apply;
+
+	protected :
+		YZOptionValue* v_default;
+		QStringList m_allValues;
+		QStringList m_aliases;
 };
 
-/** Handles options whose value is an integer. You can specify a minimum and
- * a maximum value.
- */
-class YZIntOption : public YZOption {
-protected:
-	int mMin, mMax;
-public:
-	YZIntOption(const QString &name, context_t cxt, int def, int min=INT_MIN, int max=INT_MAX);
-	YZIntOption(const QString &name, context_t cxt, const QString &desc, int def, int min=INT_MIN, int max=INT_MAX);
+class YZOptionBoolean : public YZOption {
+	public :
+		YZOptionBoolean( const QString& name, bool v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases );
+		virtual ~YZOptionBoolean();
 
-	int getMin() const { return mMin; }
-	int getMax() const { return mMax; }
-	int getDefault() const { return mDefault.toInt(); }
-	bool isValid(const QString &value) const ;
-	value_t getValueType() const { return int_t; }
-private:
-	void init(int def, int min, int max) {
-		mDefault=QString::number(def); mMin=min; mMax=max;
-	}
+		virtual bool match( const QString& entry );
+		virtual bool setValue( const QString& entry, YZOptionValue* value );
 };
 
-/** Handles options whose value is a string. You can specify a regular expression
- * (regexp) which matches valid values.
- */
-class YZStringOption : public YZOption {
-protected:
-	QRegExp mRegExp;
-public:
-	YZStringOption(const QString &name, context_t cxt, const QString &def, const QRegExp &regExp=QRegExp(".*"));
-	YZStringOption(const QString &name, context_t cxt, const QString &desc, const QString &def, const QRegExp &regExp=QRegExp(".*"));
+class YZOptionInteger : public YZOption {
+	public :
+		YZOptionInteger( const QString& name, int v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, int min = INT_MIN, int max = INT_MAX );
+		virtual ~YZOptionInteger();
 
-	const QString &getDefault() const { return getStringDefault(); }
-	bool isValid(const QString &value) const;
-	value_t getValueType() const { return string_t; }
-private:
-	void init(const QString &def, const QRegExp &regExp) {
-		mDefault=def; mRegExp=regExp;
-	}
+		virtual bool setValue( const QString& entry, YZOptionValue* value );
+	
+	private :
+		int v_min;
+		int v_max;
 };
 
-/** Handles options which can be enabled or disabled, thus, which take a boolean
- * value.
- */
-class YZBoolOption : public YZOption {
-public:
-	YZBoolOption(const QString &name, context_t cxt, bool def);
-	YZBoolOption(const QString &name, context_t cxt, const QString &desc, bool def);
+class YZOptionString : public YZOption {
+	public :
+		YZOptionString( const QString& name, const QString& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList values );
+		virtual ~YZOptionString();
 
-	bool getDefault() const { return mDefault == "yes" || mDefault == "on" || mDefault == "true"; }
-	bool isValid(const QString &value) const;
-	value_t getValueType() const { return bool_t; }
-private:
-	void init(bool def) {
-		mDefault=def ? "yes" : "no";
-	}
+		virtual bool setValue( const QString& entry, YZOptionValue* value );
 };
 
-/** Handles options whose value is a color.
- */
-class YZColorOption : public YZOption {
-public:
-	YZColorOption(const QString &name, context_t cxt, const QColor &def);
-	YZColorOption(const QString &name, context_t cxt, const QString &desc, const QColor &def);
+class YZOptionList : public YZOption {
+	public :
+		YZOptionList( const QString& name, const QStringList& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList values );
+		virtual ~YZOptionList();
 
-	QColor getDefault() const { return QColor(mDefault); }
-	bool isValid(const QString &name) const;
-	value_t getValueType() const { return color_t; }
-private:
-	void init(const QColor &def) {
-		mDefault=def.name();
-	}
+		virtual bool setValue( const QString& entry, YZOptionValue* value );
 };
 
+class YZOptionMap : public YZOption {
+	public :
+		YZOptionMap( const QString& name, const MapOption& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList keys, QStringList values );
+		virtual ~YZOptionMap();
+
+		virtual bool setValue( const QString& entry, YZOptionValue* value );
+	private :
+		QStringList m_allKeys;
+};
+
+class YZOptionColor : public YZOption {
+	public :
+		YZOptionColor( const QString& name, const QColor& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases );
+		virtual ~YZOptionColor();
+
+		virtual bool setValue( const QString& entry, YZOptionValue* value );
+};
 
 #endif

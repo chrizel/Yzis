@@ -83,16 +83,17 @@ void YZQtPrinter::doPrint( ) {
 	unsigned int oldLinesVis = mView->getLinesVisible( );
 	unsigned int oldColumnsVis = mView->getColumnsVisible( );
 
-	bool number = YZSession::getBoolOption( "Global\\number" );
-	bool rightleft = YZSession::getBoolOption( "Global\\rightleft" );
+	bool number = mView->getLocalBooleanOption( "number" );
+	bool rightleft = mView->getLocalBooleanOption( "rightleft" );
 	unsigned int marginLeft = 0;
 	if ( number ) {
 		marginLeft = ( 2 + QString::number( mView->myBuffer()->lineCount() ).length() );
 	}
 
-	bool oldWrap = YZSession::getBoolOption( "Global\\wrap" );
-	YZSession::mOptions->setGroup("Global");
-	YZSession::setBoolOption( "wrap", true );
+
+	YZOptionValue* ov_wrap = mView->getLocalOption( "wrap" );
+	bool oldWrap = ov_wrap->boolean();
+	ov_wrap->setBoolean( true );
 	mView->setVisibleArea( clipw - marginLeft, cliph, false );
 	unsigned int totalHeight = mView->drawTotalHeight();
 	mView->setVisibleArea( clipw - marginLeft, totalHeight, false );
@@ -186,8 +187,7 @@ void YZQtPrinter::doPrint( ) {
 
 	p.end( );
 
-	YZSession::mOptions->setGroup("Global");
-	YZSession::setBoolOption( "wrap", oldWrap );
+	ov_wrap->setBoolean( oldWrap );
 	mView->setVisibleArea( oldColumnsVis, oldLinesVis, false );
 }
 

@@ -81,7 +81,7 @@ cmd_state YZModeSearch::execCommand( YZView* mView, const QString& _key ) {
 		} else {
 			mView->mSearchHistory[ mView->mCurrentSearchItem++ ] = what;
 			pos = search( mView, what, &found );
-			if ( mView->getLocalBoolOption( "incsearch" ) && mView->incSearchFound ) {
+			if ( mView->getLocalBooleanOption( "incsearch" ) && mView->incSearchFound ) {
 				pos = *mView->incSearchResult;
 				mView->incSearchFound = false;
 			}
@@ -111,7 +111,7 @@ cmd_state YZModeSearch::execCommand( YZView* mView, const QString& _key ) {
 		mView->modePool()->change( MODE_EX );
 		return CMD_OK;
 	} else if ( key == "<ESC>" ) {
-		if ( mView->getLocalBoolOption( "incsearch" ) ) {
+		if ( mView->getLocalBooleanOption( "incsearch" ) ) {
 			mView->gotoxy(mSearchBegin->x(), mSearchBegin->y());
 			mView->setPaintAutoCommit( false );
 			mView->incSearchFound = false;
@@ -128,12 +128,12 @@ cmd_state YZModeSearch::execCommand( YZView* mView, const QString& _key ) {
 		mView->setCommandLineText( mView->getCommandLineText() + key );
 	}
 
-	if ( mView->getLocalBoolOption("incsearch") ) {
+	if ( mView->getLocalBooleanOption("incsearch") ) {
 		mView->setPaintAutoCommit( false );
 		unsigned int matchlength;
 		incSearchResult->setCursor( search(mView, mView->getCommandLineText(), *mSearchBegin, &matchlength, &(mView->incSearchFound)) );
 		if ( mView->incSearchFound ) {
-			if ( mView->getLocalBoolOption("hlsearch") ) {
+			if ( mView->getLocalBooleanOption("hlsearch") ) {
 				YZCursor endResult( incSearchResult );
 				endResult.setX( endResult.x() + matchlength - 1 );
 				searchSelection->addInterval( YZInterval(*incSearchResult, endResult) );

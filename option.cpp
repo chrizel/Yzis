@@ -1,6 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>
- *  Copyright (C) 2004 Pascal "Poizon" Maillard <poizon@gmx.at>
+ *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -18,93 +17,385 @@
  *  Boston, MA 02111-1307, USA.
  **/
  
-#include "session.h" 
-#include "buffer.h" 
-#include "view.h"
 #include "option.h"
 
-YZOptionContext YZOptionContext::currentSession() {
-	YZOptionContext sessionContext;
-	sessionContext.mContextType = CXT_SESSION;
-	return sessionContext;
+YZOptionValue::YZOptionValue( YZOption* o ) {
+	m_parent = o;
+	m_type = invalid_t;
+}
+YZOptionValue::YZOptionValue( const YZOptionValue& ov ) {
+	m_parent = ov.parent();
+	switch( ov.type() ) {
+		case boolean_t :
+			setBoolean( ov.boolean() );
+			break;
+		case string_t :
+			setString( ov.string() );
+			break;
+		case integer_t :
+			setInteger( ov.integer() );
+			break;
+		case list_t :
+			setList( ov.list() );
+			break;
+		case map_t :
+			setMap( ov.map() );
+			break;
+		case color_t :
+			setColor( ov.color() );
+			break;
+		default:
+			break;
+	}
+}
+YZOptionValue::~YZOptionValue() {
 }
 
-YZOptionContext YZOptionContext::currentBuffer() {
-	YZBuffer *buffer = YZSession::me->currentBuffer();
-	QString strBuf = buffer == 0 ? QString::null : buffer->fileName();
-	YZOptionContext bufferContext;
-	bufferContext.mContextType = CXT_BUFFER;
-	bufferContext.mInstance = strBuf;
-	return bufferContext;
+YZOption* YZOptionValue::parent() const {
+	return m_parent;
+}
+value_t YZOptionValue::type() const {
+	return m_type;
+}
+QString YZOptionValue::toString() {
+	QString ret = QString::null;
+	switch( type() ) {
+		case boolean_t :
+			ret = booleanToString( v_bool );
+			break;
+		case string_t :
+			ret = stringToString( v_str );
+			break;
+		case integer_t :
+			ret = integerToString( v_int );
+			break;
+		case list_t :
+			ret = listToString( v_list );
+			break;
+		case map_t :
+			ret = mapToString( v_map );
+			break;
+		case color_t :
+			ret = colorToString( v_color );
+			break;
+		default:
+			break;
+	}
+	return ret;
+}
+QString YZOptionValue::booleanToString( bool value ) {
+	return value ? "true" : "false";
+}
+QString YZOptionValue::stringToString( const QString& value ) {
+	return value;
+}
+QString YZOptionValue::integerToString( int value ) {
+	return QString::number( value );
+}
+QString YZOptionValue::listToString( const QStringList& value ) {
+	return value.join( "," );
+}
+QString YZOptionValue::mapToString( const MapOption& value ) {
+	QString ret = "";
+	QValueList<QString> keys = value.keys();
+	for( unsigned int i = 0; i < keys.size(); i++ ) {
+		if ( i > 0 ) ret += ",";
+		ret += keys[i] + ":" + value[ keys[i] ];
+	}
+	return ret;
+}
+QString YZOptionValue::colorToString( const QColor& value ) {
+	return value.name();
 }
 
-YZOptionContext YZOptionContext::currentView() {
-	YZView *view = YZSession::me->currentView();
-	QString strView = QString::null;
-	if(view != 0)
-		strView =  view->myBuffer()->fileName() + "-view-" + QString::number(view->myId);
-	YZOptionContext viewContext;
-	viewContext.mContextType = CXT_VIEW;
-	viewContext.mInstance = strView;
-	return viewContext;
+bool YZOptionValue::booleanFromString( bool* success, const QString& value ) {
+	bool ret = false;
+	*success = false;
+	if ( value == "yes" || value == "on" || value == "true" ) {
+		*success = true;
+		ret = true;
+	} else if ( value == "no" || value == "off" || value == "false" ) {
+		*success = true;
+		ret = false;
+	}
+	return ret;
+}
+QString YZOptionValue::stringFromString( bool* success, const QString& value ) {
+	*success = true;
+	return value;
+}
+int YZOptionValue::integerFromString( bool* success, const QString& value ) {
+	return value.toInt( success );
+}
+QStringList YZOptionValue::listFromString( bool* success, const QString& value ) {
+	*success = true;
+	return QStringList::split( ",", value, true );
+}
+MapOption YZOptionValue::mapFromString( bool* success, const QString& value ) {
+	*success = true;
+	MapOption ret;
+	QStringList vs = QStringList::split( ",", value );
+	for( unsigned int i = 0; *success && i < vs.size(); i++ ) {
+		int idx_v = vs[i].find(':');
+		if ( idx_v < 0 ) {
+			*success = false;
+		} else {
+			ret[ vs[i].left( idx_v ) ] = vs[i].mid( idx_v + 1 );
+		}
+	}
+	return ret;
+}
+QColor YZOptionValue::colorFromString( bool* success, const QString& value ) {
+	QColor ret( value );
+	*success = ret.isValid();
+	return ret;
 }
 
-bool YZIntOption::isValid(const QString &value) const {
-	bool ok;
-	int i=value.toInt(&ok);
-	return ok ? i>=mMin && i<=mMax : false;
+void YZOptionValue::setBoolean( bool value ) {
+	v_bool = value;
+	m_type = boolean_t;
+}
+void YZOptionValue::setString( const QString& value ) {
+	v_str = value;
+	m_type = string_t;
+}
+void YZOptionValue::setInteger( int value ) {
+	v_int = value;
+	m_type = integer_t;
+}
+void YZOptionValue::setList( const QStringList& value ) {
+	v_list = value;
+	m_type = list_t;
+}
+void YZOptionValue::setMap( const MapOption& value ) {
+	v_map = value;
+	m_type = map_t;
+}
+void YZOptionValue::setColor( const QColor& value ) {
+	v_color = value;
+	m_type = color_t;
 }
 
-bool YZStringOption::isValid(const QString &value) const {
-	return mRegExp.exactMatch(value);
+bool YZOptionValue::boolean() const {
+	return v_bool;
+}
+const QString& YZOptionValue::string() const {
+	return v_str;
+}
+int YZOptionValue::integer() const {
+	return v_int;
+}
+const QStringList& YZOptionValue::list() const {
+	return v_list;
+}
+const MapOption& YZOptionValue::map() const {
+	return v_map;
+}
+const QColor& YZOptionValue::color() const {
+	return v_color;
 }
 
-bool YZBoolOption::isValid(const QString &value) const {
-	return value=="yes" || value=="on" || value=="true" ||
-	       value=="no" || value=="off" || value=="false";
+
+YZOption::YZOption( const QString& name, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases ) {
+	m_name = name;
+	m_ctx = ctx;
+	m_scope = scope;
+	m_apply = m;
+	v_default = new YZOptionValue( this );
+	m_aliases << name;
+	m_aliases += aliases;
+}
+YZOption::~YZOption() {
+	if ( v_default )
+		delete v_default;
+}
+const QString& YZOption::name() const {
+	return m_name;
+}
+context_t YZOption::context() const {
+	return m_ctx;
+}
+scope_t YZOption::scope() const {
+	return m_scope;
+}
+YZOptionValue* YZOption::defaultValue() {
+	return v_default;
+}
+void YZOption::apply( YZBuffer* b, YZView* v ) {
+	m_apply( b, v );
+}
+bool YZOption::match( const QString& entry ) {
+	for( unsigned int i = 0; i < m_aliases.size(); i++ ) {
+		if ( entry.startsWith( m_aliases[ i ] + "=" ) )
+			return true;
+	}
+	return false;
 }
 
-bool YZColorOption::isValid(const QString &name) const {
-	return QColor(name).isValid();
+YZOptionBoolean::YZOptionBoolean( const QString& name, bool v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases )
+	: YZOption( name, ctx, scope, m, aliases ) {
+	v_default->setBoolean( v );
+	m_allValues << "true" << "false" << "on" << "off" << "yes" << "no";
+}
+YZOptionBoolean::~YZOptionBoolean() {
 }
 
-YZIntOption::YZIntOption( const QString & name, context_t cxt, int def, int min, int max )
-		:YZOption(name, cxt, QString::null) {
-	init(def, min, max);
+bool YZOptionBoolean::match( const QString& entry ) {
+	bool ret = YZOption::match( entry );
+	if ( !ret ) {
+		for( unsigned int i = 0; !ret && i < m_aliases.size(); i++ ) {
+			if ( entry == m_aliases[i] || entry == "no" + m_aliases[i] )
+				ret = true;
+		}
+	}
+	return ret;
 }
 
-YZIntOption::YZIntOption( const QString & name, context_t cxt, const QString & desc, int def, int min, int max )
-		:YZOption(name, cxt, desc) {
-	init(def, min, max);
+bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value ) {
+	bool ret = false, v = v_default->boolean();
+
+	int idx = entry.find('=');
+	if ( idx < 0 ) {
+		for( unsigned int i = 0; !ret && i < m_aliases.size(); i++ ) {
+			if ( entry == m_aliases[i] ) {
+				v = true;
+				ret = true;
+			} else if ( entry == "no" + m_aliases[i] ) {
+				v = false;
+				ret = true;
+			}
+		}
+	} else {
+		QString v_s = entry.mid( idx+1 );
+		v = YZOptionValue::booleanFromString( &ret, v_s );
+	}
+	if ( ret )
+		value->setBoolean( v );
+	return ret;
 }
 
-YZStringOption::YZStringOption( const QString & name, context_t cxt, const QString & def, const QRegExp & regExp )
-		:YZOption(name, cxt, QString::null) {
-	init(def, regExp);
+YZOptionInteger::YZOptionInteger( const QString& name, int v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, int min, int max ) 
+	: YZOption( name, ctx, scope, m, aliases ) {
+	v_min = min;
+	v_max = max;
+	v_default->setInteger( v );
+}
+YZOptionInteger::~YZOptionInteger() {
 }
 
-YZStringOption::YZStringOption( const QString & name, context_t cxt, const QString & desc, const QString & def, const QRegExp & regExp )
-		:YZOption(name, cxt, desc) {
-	init(def, regExp);
+bool YZOptionInteger::setValue( const QString& entry, YZOptionValue* value ) {
+	bool ret = false;
+	int v = value->integer();
+	int idx = entry.find( '=' );
+	if ( idx >= 0 ) {
+		QString v_s = entry.mid( idx+1 );
+		v = YZOptionValue::integerFromString( &ret, v_s );
+		ret = ret && v >= v_min && v <= v_max;
+	}
+	if ( ret )
+		value->setInteger( v );
+	return ret;
 }
 
-YZBoolOption::YZBoolOption( const QString & name, context_t cxt, bool def )
-		:YZOption(name, cxt, QString::null) {
-	init(def);
+
+YZOptionString::YZOptionString( const QString& name, const QString& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList values ) 
+	: YZOption( name, ctx, scope, m, aliases ) {
+	m_allValues = values;
+	v_default->setString( v );
+}
+YZOptionString::~YZOptionString() {
 }
 
-YZBoolOption::YZBoolOption( const QString & name, context_t cxt, const QString & desc, bool def )
-		:YZOption(name, cxt, desc) {
-	init(def);
+bool YZOptionString::setValue( const QString& entry, YZOptionValue* value ) {
+	bool ret = false;
+	QString v = value->string();
+	int idx = entry.find( '=' );
+	if ( idx >= 0 ) {
+		v = YZOptionValue::stringFromString( &ret, entry.mid( idx+1 ) );
+		ret = m_allValues.size() == 0 || m_allValues.contains( v ) > 0;
+	}
+	if ( ret )
+		value->setString( v );
+	return ret;
 }
 
-YZColorOption::YZColorOption( const QString & name, context_t cxt, const QColor & def )
-		:YZOption(name, cxt, QString::null) {
-	init(def);
+YZOptionList::YZOptionList( const QString& name, const QStringList& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList values ) 
+	: YZOption( name, ctx, scope, m, aliases ) {
+	m_allValues = values;
+	v_default->setList( v );
+}
+YZOptionList::~YZOptionList() {
 }
 
-YZColorOption::YZColorOption( const QString & name, context_t cxt, const QString & desc, const QColor & def )
-		:YZOption(name, cxt, desc) {
-	init(def);
+bool YZOptionList::setValue( const QString& entry, YZOptionValue* value ) {
+	bool ret = false;
+	QStringList v = value->list();
+	int idx = entry.find( '=' );
+	if ( idx >= 0 ) {
+		v = YZOptionValue::listFromString( &ret, entry.mid( idx + 1 ) );
+		if ( ret && m_allValues.size() > 0 ) {
+			for( unsigned int i = 0; ret && i < v.size(); i++ ) {
+				ret = m_allValues.contains( v[i] ) > 0;
+			}
+		}
+	}
+	if ( ret )
+		value->setList( v );
+	return ret;
 }
+
+YZOptionMap::YZOptionMap( const QString& name, const MapOption& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList keys, QStringList values ) 
+	: YZOption( name, ctx, scope, m, aliases ) {
+	m_allKeys = keys;
+	m_allValues = values;
+	v_default->setMap( v );
+}
+YZOptionMap::~YZOptionMap() {
+}
+
+bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value ) {
+	bool ret = false;
+	MapOption v = value->map();
+	int idx = entry.find( '=' );
+	if ( idx >= 0 ) {
+		v = YZOptionValue::mapFromString( &ret, entry.mid( idx + 1 ) );
+		// check keys
+		if ( ret ) {
+			QValueList<QString> keys = v.keys();
+			for( unsigned int i = 0; ret && i < keys.size(); i++ ) {
+				ret = m_allKeys.contains( keys[i] ) > 0;
+			}
+		}
+		// check values
+		if ( ret && m_allValues.size() > 0 ) {
+			QValueList<QString> values = v.values();
+			for( unsigned int i = 0; ret && i < values.size(); i++ ) {
+				ret = m_allValues.contains( values[i] ) > 0;
+			}
+		}
+	}
+	if ( ret )
+		value->setMap( v );
+	return ret;
+}
+
+YZOptionColor::YZOptionColor( const QString& name, const QColor& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases ) 
+	: YZOption( name, ctx, scope, m, aliases ) {
+	v_default->setColor( v );
+}
+YZOptionColor::~YZOptionColor() {
+}
+
+bool YZOptionColor::setValue( const QString& entry, YZOptionValue* value ) {
+	bool ret = false;
+	QColor v = value->color();
+	int idx = entry.find('=');
+	if ( idx >= 0 ) {
+		v = YZOptionValue::colorFromString( &ret, entry.mid( idx+1 ) );
+	}
+	if ( ret )
+		value->setColor( v );
+	return ret;
+}
+
 

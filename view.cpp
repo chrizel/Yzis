@@ -26,6 +26,7 @@
  */
 
 #include "view.h"
+
 #if QT_VERSION < 0x040000
 #include <qkeysequence.h>
 #include <qclipboard.h>
@@ -126,8 +127,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mFillChar = ' ';
 
 	lineDY = 0;
-	tabstop = getLocalIntOption("tabstop");
-	wrap = getLocalBoolOption( "wrap" );
+	tabstop = getLocalIntegerOption("tabstop");
+	wrap = getLocalBooleanOption( "wrap" );
 
 	//completion
 	m_completionStart = new YZCursor();
@@ -173,15 +174,7 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 }
 
 void YZView::recalcScreen( ) {
-	if ( mBuffer->getLocalStringOption( "encoding" ) != mBuffer->encoding() ) {
-		// XXX: we must do that just after the :set
-		if ( mBuffer->fileIsModified() && YZSession::me->promptYesNo(_("File modified"), _("This file has been modified, do you want to save it ?")) ) {
-			mBuffer->save();
-		}
-		mBuffer->setEncoding( mBuffer->getLocalStringOption( "encoding" ) );
-	}
-	wrap = getLocalBoolOption( "wrap" );
-
+	wrap = getLocalBooleanOption( "wrap" );
 	YZCursor old_pos = *scrollCursor->buffer();
 	scrollCursor->reset();
 	if ( wrap ) old_pos.setX( 0 );
@@ -304,7 +297,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	}
 
 	/** rightleft mapping **/
-	if ( getLocalBoolOption("rightleft") && ( mModePool->current()->mapMode() & (visual|normal) ) ) {
+	if ( getLocalBooleanOption("rightleft") && ( mModePool->current()->mapMode() & (visual|normal) ) ) {
 #define SWITCH_KEY( a, b ) \
 	if ( key == a ) key = b; \
 	else if ( key == b ) key = a
@@ -469,7 +462,7 @@ void YZView::alignViewBufferVertically( unsigned int line ) {
 	// find the last visible line in the buffer
 	unsigned int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
 
-	if (getLocalBoolOption( "wrap" )) {
+	if (getLocalBooleanOption( "wrap" )) {
 		YZViewCursor temp = *scrollCursor;
 		gotodxdy( &temp, getCursor()->x(), getDrawCurrentTop() + getLinesVisible() - 1 );
 		lastBufferLineVisible = temp.bufferY();
@@ -884,7 +877,7 @@ void YZView::gotoLine( YZViewCursor* viewCursor, unsigned int line, bool applyCu
 	if ( line >= mBuffer->lineCount() )
 		line = mBuffer->lineCount() - 1;
 
-	if ( getLocalBoolOption("startofline") ) {
+	if ( getLocalBooleanOption("startofline") ) {
 		gotoxy( viewCursor, mBuffer->firstNonBlankChar(line), line, applyCursor );
 		if ( applyCursor )
 			updateStickyCol( viewCursor );
@@ -1032,7 +1025,7 @@ void YZView::updateCurLine( ) {
 }
 
 unsigned int YZView::initDrawContents( unsigned int clipy ) {
-	wrap = getLocalBoolOption( "wrap" );
+	wrap = getLocalBooleanOption( "wrap" );
 	if ( ! wrap ) {
 		initDraw( getCurrentLeft(), getCurrentTop() + clipy, getDrawCurrentLeft(), getDrawCurrentTop() + clipy );
 	} else {
@@ -1075,10 +1068,9 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop, unsigned int rLeft
 
 	adjust = false;
 
-	wrap = getLocalBoolOption( "wrap" );
+	wrap = getLocalBooleanOption( "wrap" );
+	tabstop = getLocalIntegerOption("tabstop");
 
-	if (getLocalIntOption( "tabstop" ) != 0 ) // avoid division by zero
-		tabstop = getLocalIntOption("tabstop");
 	tablength = tabstop * spaceWidth;
 	areaModTab = ( tablength - mColumnsVis % tablength ) % tablength;
 
@@ -1192,7 +1184,7 @@ bool YZView::drawNextLine( ) {
 			rHLa = rHLa + workCursor->bufferX() - 1;
 			rHLAttributes = 0L;
 			YzisHighlighting * highlight = mBuffer->highlight();
-			int schema = getLocalIntOption("schema");
+			int schema = getLocalIntegerOption("schema");
 			if ( highlight )
 				rHLAttributes = highlight->attributes( schema )->data( );
 			rHLAttributesLen = rHLAttributes ? highlight->attributes( schema )->size() : 0;
@@ -1217,7 +1209,7 @@ bool YZView::drawPrevCol( ) {
 		workCursor->setBufferX( curx );
 		lastChar = sCurLine.at( curx );
 		if ( lastChar != tabChar ) {
-/*			listChar = drawMode && getLocalBoolOption( "list" );
+/*			listChar = drawMode && getLocalBooleanOption( "list" );
 			if ( listChar ) {
 				lastChar = '.';
 				if ( stringHasOnlySpaces(sCurLine.mid(curx)) )
@@ -1262,19 +1254,13 @@ bool YZView::drawNextCol( ) {
 		mFillChar = ' ';
 		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
-			listChar = drawMode && getLocalBoolOption( "list" ) && lastChar == ' ';
+			listChar = drawMode && getLocalBooleanOption( "list" ) && lastChar == ' ';
 			if ( listChar ) {
-				YZInternalOption *opt = YZSession::mOptions->getOption("Global\\listchars");
-				if (opt && stringHasOnlySpaces(sCurLine.mid(curx)) ) {
-					QString option = opt->getValueForKey("trail");
-					if ( !option.isNull() ) {
-						lastChar = option[0];
-					}
-				} else if (opt) {
-					QString option = opt->getValueForKey("space");
-					if ( !option.isNull() ) {
-						lastChar = option[0];
-					}
+				MapOption lc = getLocalMapOption( "listchars" );
+				if ( stringHasOnlySpaces(sCurLine.mid(curx) ) && lc[ "trail" ].length() > 0 ) {
+					lastChar = lc["trail"][0];
+				} else if ( lc["space"].length() > 0 ) {
+					lastChar = lc["space"][0];
 				}
 			}
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
@@ -1282,16 +1268,13 @@ bool YZView::drawNextCol( ) {
 		} else {
 			workCursor->lastCharWasTab = true;
 			lastChar = ' ';
-			listChar = getLocalBoolOption( "list" );
+			listChar = getLocalBooleanOption( "list" );
 			if ( listChar ) {
-				YZInternalOption *opt = YZSession::mOptions->getOption("Global\\listchars");
-				if (opt) {
-					QString option = opt->getValueForKey("tab");
-					if ( !option.isNull() && option.length() > 0 ) {
-						lastChar = option[0];
-						if ( option.length() > 1 )
-							mFillChar = option[1];
-					}
+				MapOption lc = getLocalMapOption( "listchars" );
+				if ( lc["tab"].length() > 0 ) {
+					lastChar = lc["tab"][0];
+					if ( lc["tab"].length() > 1 )
+						mFillChar = lc["tab"][1];
 				}
 			}
 			if ( workCursor->screenX( ) == scrollCursor->bufferX() )
@@ -1376,11 +1359,11 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 		hl = yl->attributes(); //attributes of this line
 		hl += col; // -1 ? //move pointer to the correct column
 		uint len = hl ? highlight->attributes( 0 )->size() : 0 ; //length of attributes
-		int schema = getLocalIntOption("schema");
+		int schema = getLocalIntegerOption("schema");
 		YzisAttribute *list = highlight->attributes( schema )->data( ); //attributes defined by the syntax highlighting document
 		at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
 	}
-	if ( getLocalBoolOption( "list" ) && ( yl->data().at(col) == ' ' || yl->data().at(col) == tabChar ) )
+	if ( getLocalBooleanOption( "list" ) && ( yl->data().at(col) == ' ' || yl->data().at(col) == tabChar ) )
 		return blue;
 	if ( at ) return at->textColor(); //textcolor :)
 	return fake;
@@ -1512,64 +1495,44 @@ QString YZView::refreshScreenInternal() {
 	return QString::null;
 }
 
-int YZView::getLocalIntOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) ) //find the local one ?
-		return YZSession::mOptions->readIntEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, 0 );
+QString YZView::getLocalOptionKey() {
+	return mBuffer->fileName()+"-view-"+ QString::number(myId);
+}
+YZOptionValue* YZView::getLocalOption( const QString& option ) {
+	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
+		return YZSession::mOptions->getOption( getLocalOptionKey() + "\\" + option );
 	else
-		return YZSession::mOptions->readIntEntry( "Global\\" + option, 0 ); // else give the global default if any
+		return YZSession::mOptions->getOption( "Global\\"+option );
 }
-
-void YZView::setLocalIntOption( const QString& key, int option ) {
-	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions->setIntOption( key, option );
-}
-
-bool YZView::getLocalBoolOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
-		return YZSession::mOptions->readBoolEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, false );
+int YZView::getLocalIntegerOption( const QString& option ) {
+	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
+		return YZSession::mOptions->readIntegerOption( getLocalOptionKey()+ "\\" + option );
 	else
-		return YZSession::mOptions->readBoolEntry( "Global\\" + option, false );
+		return YZSession::mOptions->readIntegerOption( "Global\\" + option ); // else give the global default if any
 }
-
-void YZView::setLocalBoolOption( const QString& key, bool option ) {
-	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions->setBoolOption( key, option );
+bool YZView::getLocalBooleanOption( const QString& option ) {
+	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
+		return YZSession::mOptions->readBooleanOption( getLocalOptionKey()+"\\"+option );
+	else
+		return YZSession::mOptions->readBooleanOption( "Global\\" + option );
 }
-
 QString YZView::getLocalStringOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
-		return YZSession::mOptions->readQStringEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QString("") );
+	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
+		return YZSession::mOptions->readStringOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::mOptions->readQStringEntry( "Global\\" + option, QString("") );
+		return YZSession::mOptions->readStringOption( "Global\\" + option );
 }
-
-void YZView::setLocalQStringOption( const QString& key, const QString& option ) {
-	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions->setQStringOption( key, option );
-}
-
-QStringList YZView::getLocalStringListOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
-		return YZSession::mOptions->readQStringListEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QStringList() );
+QStringList YZView::getLocalListOption( const QString& option ) {
+	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
+		return YZSession::mOptions->readListOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::mOptions->readQStringListEntry( "Global\\" + option, QStringList() );
+		return YZSession::mOptions->readListOption( "Global\\" + option );
 }
-
-void YZView::setLocalQStringListOption( const QString& key, const QStringList& option ) {
-	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions->setQStringListOption( key, option );
-}
-
-QColor YZView::getLocalColorOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
-		return YZSession::mOptions->readQColorEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QColor("white") );
+MapOption YZView::getLocalMapOption( const QString& option ) {
+	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
+		return YZSession::mOptions->readMapOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::mOptions->readQColorEntry( "Global\\" + option, QColor("white") );
-}
-
-void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
-	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions->setQColorOption( key, option );
+		return YZSession::mOptions->readMapOption( "Global\\" + option );
 }
 
 void YZView::gotoStickyCol( unsigned int Y ) {
@@ -1728,7 +1691,7 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 	unsigned int size = map.size();
 	unsigned int i;
-	if ( isBufferMap && getLocalBoolOption( "wrap" ) ) { // we must convert bufferMap to screenMap
+	if ( isBufferMap && getLocalBooleanOption( "wrap" ) ) { // we must convert bufferMap to screenMap
 		YZViewCursor vCursor = viewCursor();
 		for ( i = 0; i < size; i++ ) {
 			gotoxy( &vCursor, map[ i ].fromPos().x(), map[ i ].fromPos().y() );
@@ -1758,12 +1721,12 @@ void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 
 void YZView::sendBufferPaintEvent( unsigned int line, unsigned int n ) {
 	YZViewCursor vCursor = viewCursor();
-	if ( getLocalBoolOption( "wrap" ) ) {
+	if ( getLocalBooleanOption( "wrap" ) ) {
 		gotoxy( &vCursor, 0, line );
 		line = vCursor.screenY();
 	}
 	if ( isLineVisible( line ) ) {
-		if ( getLocalBoolOption( "wrap" ) ) {
+		if ( getLocalBooleanOption( "wrap" ) ) {
 			gotoxy( &vCursor, 0, line + n );
 			n = vCursor.screenY() - line;
 		}

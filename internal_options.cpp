@@ -19,6 +19,7 @@
 
 #include "internal_options.h"
 #include "debug.h"
+#include "session.h"
 #if QT_VERSION < 0x040000
 #include <qdir.h>
 #include <qfile.h>
@@ -28,50 +29,6 @@
 #include <QDir>
 #endif
 
-YZInternalOption::YZInternalOption( const QString& key, const QString& group, const QString& value, const QString& defaultValue, option_t type, value_t vtype) {
-	mKey = key;
-	mGroup = group;
-	mType = type;
-	mValue = value;
-	mValueType = vtype;
-	mDefaultValue = defaultValue;
-}
-
-YZInternalOption::YZInternalOption( const QString& key, const QString& group, const QStringList& value, const QStringList& defaultValue, option_t type, value_t vtype) {
-	mKey = key;
-	mGroup = group;
-	mType = type;
-	mValueType = vtype;
-	mValue = value.join( "," );
-	mDefaultValue = defaultValue.join( "," );
-}
-
-YZInternalOption::YZInternalOption( const QString& key, const QString& group, int value, int defaultValue, option_t type, value_t vtype) {
-	mKey = key;
-	mGroup = group;
-	mType = type;
-	mValueType = vtype;
-	mValue = QString::number( value );
-	mDefaultValue = QString::number( defaultValue );
-}
-
-YZInternalOption::YZInternalOption( const QString& key, const QString& group, bool value, bool defaultValue, option_t type, value_t vtype) {
-	mKey = key;
-	mGroup = group;
-	mType = type;
-	mValueType = vtype;
-	mValue = value ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
-	mDefaultValue = defaultValue ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
-}
-
-QString YZInternalOption::getValueForKey( const QString& key ) {
-	if ( mValueType != stringlist_t ) return QString::null;
-	QRegExp rx ( "(^|.*,)" + key + ":([^,]*)(,.*|$)");
-	if ( rx.exactMatch( mValue ) )
-		return rx.cap(2); //should contain the 'value' for the given key
-	return QString::null;
-}
-
 YZInternalOptionPool::YZInternalOptionPool() {
 	init();
 	setGroup("Global");
@@ -79,7 +36,7 @@ YZInternalOptionPool::YZInternalOptionPool() {
 
 YZInternalOptionPool::~YZInternalOptionPool() {
 	cleanup();
-	mOptions.clear();
+	options.clear();
 }
 
 YZInternalOptionPool::YZInternalOptionPool(const YZInternalOptionPool&) {
@@ -107,13 +64,11 @@ void YZInternalOptionPool::loadFrom(const QString& file ) {
 				setGroup(rx.cap(1).simplifyWhiteSpace());
 			else {
 				if ( rx2.exactMatch( line ) ) {
-					//we got an option there
-					if ( rx2.cap( 2 ).simplifyWhiteSpace() == "true" ) {
-						setBoolOption(rx2.cap( 1 ).simplifyWhiteSpace(), true);
-					} else if ( rx2.cap( 2 ).simplifyWhiteSpace() == "false" ) {
-						setBoolOption(rx2.cap( 1 ).simplifyWhiteSpace(), false);
-					} else
-						setQStringOption(rx2.cap( 1 ).simplifyWhiteSpace(), rx2.cap( 2 ).simplifyWhiteSpace());
+					bool matched;
+					setOptionFromString( &matched, rx2.cap(1).simplifyWhiteSpace()+'='+rx2.cap(2).simplifyWhiteSpace() );
+					if ( ! matched ) { // this option is not known, probably a setting
+						setQStringEntry( rx2.cap(1).simplifyWhiteSpace(), rx2.cap(2).simplifyWhiteSpace() );
+					}
 				} else
 					yzDebug( "YZInternalOptionPool" ) << "Error parsing line " << idx << " of " << file << endl;
 			}
@@ -128,13 +83,11 @@ void YZInternalOptionPool::loadFrom(const QString& file ) {
 				setGroup(rx.cap(1).trimmed());
 			else {
 				if ( rx2.exactMatch( line ) ) {
-					//we got an option there
-					if ( rx2.cap( 2 ).trimmed() == "true" ) {
-						setBoolOption(rx2.cap( 1 ).trimmed(), true);
-					} else if ( rx2.cap( 2 ).trimmed() == "false" ) {
-						setBoolOption(rx2.cap( 1 ).trimmed(), false);
-					} else
-						setQStringOption(rx2.cap( 1 ).trimmed(), rx2.cap( 2 ).trimmed());
+					setOptionFromString( &matched, rx2.cap(1).trimmed()+'='+rx2.cap(2).trimmed() );
+					if ( ! matched ) { // this option is not known, probably a setting
+						setQStringEntry( rx2.cap(1).trimmed(), rx2.cap(2).trimmed() );
+					}
+					setOptionFromString( rx2.cap( 1 ).trimmed() );
 				} else
 					yzDebug( "YZInternalOptionPool" ) << "Error parsing line " << idx << " of " << file << endl;
 			}
@@ -152,216 +105,315 @@ void YZInternalOptionPool::saveTo(const QString& file, const QString& what, cons
 
 #if QT_VERSION < 0x040000
 	if ( f.open( IO_WriteOnly ) ) {
+#else
+	if ( f.open( QIODevice::WriteOnly ) ) {
+#endif
 		QTextStream stream( &f );
 		QValueList<QString> keys = mOptions.keys();
 		qHeapSort( keys );
-		QValueList<QString>::iterator it = keys.begin(), end=keys.end();
 		QString cGroup = "";
-		for (; it != end; ++it) {
-			QString myGroup = QStringList::split( "\\", ( *it ) )[ 0 ];
+		for ( unsigned int i = 0; i < keys.size(); ++i ) {
+			QString myGroup = keys[i].section( "\\", 0, -2 );
 			if ( !what.isEmpty() && !myGroup.startsWith( what ) ) continue; //filter !
 			if ( !except.isEmpty() && myGroup.startsWith( except ) ) continue; //filter
 
 			if ( myGroup != cGroup ) { // changing group
-				stream << "[" << myGroup << "]\n";
+				stream << "\n[" << myGroup << "]\n";
 				cGroup = myGroup;
 			}
-			//dump the option + value
-			stream << QStringList::split( "\\", ( *it ) )[ 1 ] << "=" << mOptions[ ( *it ) ]->getValue() << "\n";
+			YZOptionValue* ov = mOptions[ keys[i] ];
+			stream << ov->parent()->name() << "=" << ov->toString() << "\n";
 		}
 		f.close();
 	}
-#else
-	if ( f.open( QIODevice::WriteOnly ) ) {
-		QTextStream stream( &f );
-		QList<QString> keys = mOptions.keys();
-		qHeapSort( keys );
-		QString cGroup = "";
-		for ( int ab = 0; ab < keys.size(); ++ab ) {
-			QString myGroup = (keys.at(ab).split("\\"))[ 0 ];
-			if ( !what.isEmpty() && !myGroup.startsWith( what ) ) continue; //filter !
-			if ( !except.isEmpty() && myGroup.startsWith( except ) ) continue; //filter
-
-			if ( myGroup != cGroup ) { // changing group
-				stream << "[" << myGroup << "]\n";
-				cGroup = myGroup;
-			}
-			//dump the option + value
-			stream << keys.at(ab).split( "\\" )[ 1 ] << "=" << mOptions[ ( keys.at(ab) ) ]->getValue() << "\n";
-		}
-		f.close();
-	}
-#endif
 }
 
-void YZInternalOptionPool::init() {
-	YZInternalOption *tabstop = new YZInternalOption("tabstop", "Global", 8, 8, view_opt, int_t );
-	YZInternalOption *number = new YZInternalOption("number","Global", false, false, view_opt, int_t );
-	YZInternalOption *wrap = new YZInternalOption( "wrap", "Global", false, false, view_opt, bool_t );
-	YZInternalOption *backspace = new YZInternalOption( "backspace", "Global", QString( "eol" ), QString( "eol" ), view_opt, string_t );
-	YZInternalOption *updatecount = new YZInternalOption( "updatecount", "Global", 200, 200, buffer_opt, int_t );
-	YZInternalOption *matchpairs = new YZInternalOption( "matchpairs", "Global", QString( "(){}[]" ), QString( "(){}[]" ), buffer_opt, string_t );
-	YZInternalOption *cindent = new YZInternalOption( "cindent", "Global", false, false, view_opt, bool_t );
-	YZInternalOption *printer = new YZInternalOption( "printer", "Global", QString("qtprinter"),QString("qtprinter"), global_opt, string_t );
-	YZInternalOption *fileencoding = new YZInternalOption( "fileencoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
-	YZInternalOption *encoding = new YZInternalOption( "encoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
-	YZInternalOption *rightleft = new YZInternalOption( "rightleft", "Global", false, false, view_opt, bool_t );
-	YZInternalOption *list = new YZInternalOption( "list", "Global", false, false, view_opt, bool_t );
-	YZInternalOption *blocksplash = new YZInternalOption( "blocksplash", "Global", true, true, global_opt, bool_t );
-	YZInternalOption *listchars = new YZInternalOption( "listchars", "Global", QString("trail:-,space:.,tab:>"), QString("trail:-,space:.,tab:>"), global_opt, stringlist_t );
-	YZInternalOption *incsearch = new YZInternalOption( "incsearch", "Global", false, false, global_opt, bool_t );
-	YZInternalOption *hlsearch = new YZInternalOption( "hlsearch", "Global", false, false, global_opt, bool_t );
-	YZInternalOption *indentkeys = new YZInternalOption( "indentkeys", "Global", QString(""), QString(""), buffer_opt, stringlist_t );
-	YZInternalOption *schema = new YZInternalOption( "schema", "Global", 0, 0, view_opt, int_t );
+/**
+ * Apply options functions
+ */
 
-	mOptions[ "Global\\tabstop" ] = tabstop;
-	mOptions[ "Global\\number" ] = number;
-	mOptions[ "Global\\wrap" ] = wrap;
-	mOptions[ "Global\\backspace" ] = backspace;
-	mOptions[ "Global\\updatecount" ] = updatecount;
-	mOptions[ "Global\\matchpairs" ] = matchpairs;
-	mOptions[ "Global\\cindent" ] = cindent;
-	mOptions[ "Global\\printer" ] = printer;
-	mOptions[ "Global\\fileencoding" ] = fileencoding;
-	mOptions[ "Global\\encoding" ] = encoding;
-	mOptions[ "Global\\rightleft" ] = rightleft;
-	mOptions[ "Global\\list" ] = list;
-	mOptions[ "Global\\blocksplash" ] = blocksplash;
-	mOptions[ "Global\\listchars" ] = listchars;
-	mOptions[ "Global\\incsearch" ] = incsearch;
-	mOptions[ "Global\\hlsearch" ] = hlsearch;
-	mOptions[ "Global\\indentkeys" ] = indentkeys;
-	mOptions[ "Global\\schema" ] = schema;
+void doNothing( YZBuffer*, YZView* ) {
+}
+void changeEncoding( YZBuffer* b, YZView* v ) {
+	if ( b == NULL && v )
+		b = v->myBuffer();
+	if ( b ) {
+		QString enc = b->getLocalStringOption("encoding");
+		if ( enc != b->encoding() ) {
+			if (b->fileIsModified() && YZSession::me->promptYesNo(_("File modified"), _("This file has been modified, do you want to save it ?"))){
+				b->save();
+			}
+			b->setEncoding( enc );
+		}
+	}
+}
+void refreshView( YZBuffer*, YZView* v ) {
+	if ( v )
+		v->refreshScreen();
+}
+void recalcView( YZBuffer*, YZView* v ) {
+	if ( v )
+		v->recalcScreen();
+}
+void viewUpdateListChars( YZBuffer*, YZView* v ) {
+	if ( v && v->getLocalBooleanOption("list") )
+		v->refreshScreen();
+}
+void setSyntax( YZBuffer* b, YZView* v ) {
+	if ( b == NULL && v )
+		b = v->myBuffer();
+	if ( b )
+		b->setHighLight( b->getLocalStringOption("syntax") );
+}
+
+
+void YZInternalOptionPool::init() {
+	// here you add new options
+	options.append((YZOption*)new YZOptionString("backspace","eol", CXT_SESSION,global_scope, &doNothing, QStringList("bs"), QStringList::split(":","eol:indent:start")));
+	options.append((YZOption*)new YZOptionBoolean("blocksplash",true, CXT_SESSION,global_scope, &doNothing, QStringList()));
+	options.append((YZOption*)new YZOptionBoolean("cindent",false, CXT_BUFFER,local_scope, &doNothing, QStringList("cin")));
+	options.append((YZOption*)new YZOptionString("encoding","locale", CXT_BUFFER,local_scope, &changeEncoding, QStringList("enc"),QStringList())); // XXX find the supported codecs
+	options.append((YZOption*)new YZOptionString("fileencoding","", CXT_BUFFER,local_scope, &doNothing, QStringList("fenc"),QStringList()));
+	options.append((YZOption*)new YZOptionBoolean("hlsearch",false, CXT_SESSION,global_scope, &doNothing, QStringList("hls")));
+	options.append((YZOption*)new YZOptionList("indentkeys", QStringList(), CXT_BUFFER,local_scope, &doNothing, QStringList("indk"), QStringList()));
+	options.append((YZOption*)new YZOptionBoolean("incsearch",false, CXT_SESSION,global_scope, &doNothing, QStringList("is")));
+	options.append((YZOption*)new YZOptionBoolean("list",false, CXT_VIEW,local_scope, &refreshView, QStringList()));
+	MapOption lc;
+	lc["trail"] = "-";
+	lc["space"] = ".";
+	lc["tab"] = ">";
+	options.append((YZOption*)new YZOptionMap("listchars",lc, CXT_VIEW,global_scope, &viewUpdateListChars, QStringList("lcs"), lc.keys(), QStringList()));
+	options.append((YZOption*)new YZOptionString("matchpairs","(){}[]", CXT_BUFFER,local_scope, &doNothing, QStringList("mps"), QStringList()));
+	options.append((YZOption*)new YZOptionBoolean("number",false, CXT_VIEW,local_scope, &refreshView, QStringList("nu")));
+	options.append((YZOption*)new YZOptionString("printer","qtprinter", CXT_VIEW,local_scope, &doNothing, QStringList(), QStringList::split(":","qtprinter:pslib")));
+	options.append((YZOption*)new YZOptionBoolean("rightleft",false, CXT_VIEW,local_scope, &recalcView, QStringList("rl")));
+	options.append((YZOption*)new YZOptionInteger("schema",0, CXT_BUFFER,local_scope, &refreshView, QStringList(), 0));
+	options.append((YZOption*)new YZOptionString("syntax","", CXT_BUFFER,local_scope, &setSyntax, QStringList("syn"), QStringList())); // XXX put all name ofsyntaxes here
+	options.append((YZOption*)new YZOptionInteger("tabstop",8, CXT_VIEW,local_scope, &recalcView, QStringList("ts"), 1));
+	options.append((YZOption*)new YZOptionInteger("updatecount",200, CXT_SESSION,global_scope, &doNothing, QStringList("uc"), 1));
+	options.append((YZOption*)new YZOptionBoolean("wrap",true, CXT_VIEW,local_scope, &recalcView, QStringList()));
+
+	for( unsigned int i = 0; i < options.size(); i++ ) {
+		mOptions[ "Global\\"+options[i]->name() ] = new YZOptionValue( *options[i]->defaultValue() );
+	}
 	setGroup("Global");
 
 	//read config files now
 	initConfFiles();
 }
 
-const QString& YZInternalOptionPool::readQStringEntry( const QString& _key, const QString& def ) {
-//	yzDebug( ) << "READ " << currentGroup + '\\' + _key << " with default " << def << endl;
+void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t scope, YZBuffer* b, YZView* v ) {
+	if ( ctx == CXT_SESSION ) {
+	} else if ( ctx == CXT_BUFFER ) {
+		if ( scope == global_scope ) {
+			YZBufferMap bs = YZSession::me->buffers();
+			YZBufferMap::Iterator it = bs.begin(), end = bs.end();
+			for( ; it != end; ++it ) {
+#if QT_VERSION < 0x040000
+				b = it.data();
+#else
+				b = it.value();
+#endif
+				option->apply( b, v );
+			}
+		} else if ( b ) {
+			option->apply( b, v );
+		}
+	} else if ( ctx == CXT_VIEW ) {
+		if ( scope == global_scope ) {
+			YZBufferMap bs = YZSession::me->buffers();
+			YZBufferMap::Iterator it = bs.begin(), end = bs.end();
+			for( ; it != end; ++it ) {
+#if QT_VERSION < 0x040000
+				b = it.data();
+				QPtrList<YZView> vs = b->views();
+#else
+				b = it.value();
+				QVector<YZView*> vs = b->views();
+#endif
+#if QT_VERSION < 0x040000
+				for ( v = vs.first(); v; v = vs.next() )
+					option->apply( b, v );
+#else
+				for ( int i = 0; i < vs.size(); ++i )
+					option->apply( b, v.at(i) );
+#endif
+			}
+		} else if ( v ) {
+			option->apply( b, v );
+		}
+	}
+}
+bool YZInternalOptionPool::setOptionFromString( const QString& entry, scope_t user_scope, YZBuffer* b, YZView* v ) {
+	bool test;
+	return setOptionFromString( &test, entry, user_scope, b, v );
+}
+bool YZInternalOptionPool::setOptionFromString( bool* matched, const QString& entry, scope_t user_scope, YZBuffer* b, YZView* v ) {
+	bool ret = false;
+	*matched = false;
+	unsigned int i;
+	for ( i = 0; !(*matched) && i < options.size(); i++ ) {
+		*matched = options[ i ]->context() != CXT_CONFIG && options[ i ]->match( entry );
+	}
+	if ( *matched ) {
+		--i;
+		scope_t scope = options[i]->scope();
+		context_t ctx = options[i]->context();
+		if ( user_scope != default_scope ) 
+			scope = user_scope;
+		setGroup( "Global" );
+		if ( scope == local_scope ) {
+			if ( b && ctx == CXT_BUFFER )
+				setGroup( b->fileName() );
+			else if ( v && ctx == CXT_VIEW )
+				setGroup( v->getLocalOptionKey() );
+		}
+		ret = fillOptionFromString( options[i], entry );
+		if ( ret )
+			applyOption( options[i], ctx, scope, b, v );
+	}
+	return ret;
+}
+bool YZInternalOptionPool::fillOptionFromString( YZOption* opt, const QString& entry ) {
+	QString option_key = currentGroup + "\\" + opt->name();
+	YZOptionValue* ov = NULL;
+	bool created = false;
+	if ( mOptions.contains( option_key ) ) {
+		ov = mOptions[ option_key ];
+	} else {
+		created = true;
+		ov = new YZOptionValue( *opt->defaultValue() );
+	}
+	bool ret = opt->setValue( entry, ov );
+	if ( created ) {
+		if ( ! ret ) // bad value, delete the newly created ov
+			delete ov;
+		else
+			mOptions[ option_key ] = ov;
+	}
+	return ret;
+}
+
+const QString& YZInternalOptionPool::readStringOption( const QString& _key, const QString& def ) {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains( key ) ) {
-		const QString& s = mOptions[ key ]->getValue();
-		return s;
+		return mOptions[ key ]->string();
 	} else return def;
 }
 
-void YZInternalOptionPool::setQStringOption( const QString& key, const QString& option ) {
-	YZInternalOption *opt=NULL;
-	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
-		opt->setValue(option);
-		mOptions[ currentGroup + '\\' + key ] = opt;
-	} else {
-		opt = new YZInternalOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt, string_t );
-		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug( "YZInternalOptionPool" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
-	}
-}
-
-int YZInternalOptionPool::readIntEntry( const QString& _key, int def ) {
+int YZInternalOptionPool::readIntegerOption( const QString& _key, int def ) {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains( key ) ) {
-		const QString& s = mOptions[ key ]->getValue();
-		return s.toInt();
+		return mOptions[ key ]->integer();
 	} else return def;
 }
 
-void YZInternalOptionPool::setIntOption( const QString& key, int option ) {
-	YZInternalOption *opt=NULL;
-	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
-		opt->setValue(QString::number( option ));
-		mOptions[ currentGroup + '\\' + key ] = opt;
-	} else {
-		opt = new YZInternalOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt, int_t);
-		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug( "YZInternalOptionPool" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
-	}
-}
-
-bool YZInternalOptionPool::readBoolEntry( const QString& _key, bool def ) {
+bool YZInternalOptionPool::readBooleanOption( const QString& _key, bool def ) {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains(  key ) ) {
-		YZInternalOption *opt = mOptions[ key ];
-		if ( opt ) {
-			QString s = opt->getValue();
-			return s == QString::fromLatin1( "true" ) ? true : false;
-		} else {
-			yzDebug( "YZInternalOptionPool" ) << "Option " << key << " does not exist !" << endl;
-		}
+		return mOptions[ key ]->boolean();
 	}
 	return def;
 }
 
-void YZInternalOptionPool::setBoolOption( const QString& key, bool option ) {
-	YZInternalOption *opt=NULL;
-	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
-		opt->setValue(option ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" ));
-		mOptions[ currentGroup + '\\' + key ] = opt;
-	} else {
-		opt = new YZInternalOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt, bool_t);
-		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug( "YZInternalOptionPool" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
-	}
-}
-
-QStringList YZInternalOptionPool::readQStringListEntry( const QString& _key, const QStringList& def ) {
+QStringList YZInternalOptionPool::readListOption( const QString& _key, const QStringList& def ) {
 	QString key = _key;
-//	yzDebug( ) << "READ " << currentGroup + '\\' + key << " with default " << def << endl;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains( key ) ) {
-		const QString& s = mOptions[ key ]->getValue();
-#if QT_VERSION < 0x040000
-		QStringList list ( QStringList::split(",",s,true) );
-#else
-		QStringList list ( s.split(",") );
-#endif
-		return list;
+		return mOptions[ key ]->list();
+	} 
+	return def;
+}
+MapOption YZInternalOptionPool::readMapOption( const QString& _key ) {
+	MapOption ret;
+	QString key = _key;
+	if ( ! key.contains( '\\' ) )
+		key.prepend( currentGroup+'\\' );
+	if ( mOptions.contains( key ) ) {
+		ret = mOptions[ key ]->map();
+	} 
+	return ret;
+}
+QColor YZInternalOptionPool::readColorOption( const QString& _key, const QColor& def ) {
+	QString key = _key;
+	if ( ! key.contains( '\\' ) )
+		key.prepend( currentGroup+'\\' );
+	if ( mOptions.contains( key ) ) {
+		return mOptions[ key ]->color();
 	} 
 	return def;
 }
 
-void YZInternalOptionPool::setQStringListOption( const QString& key, const QStringList& option ) {
-	YZInternalOption *opt=NULL;
-	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
-		opt->setValue(option.join(","));
-		mOptions[ currentGroup + '\\' + key ] = opt;
-	} else {
-		opt = new YZInternalOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt, string_t);
-		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug( "YZInternalOptionPool" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
-	}
+const QString& YZInternalOptionPool::readQStringEntry( const QString& key , const QString& def ) {
+	QString _key = currentGroup+"\\"+key;
+	if ( mOptions.contains( _key ) )
+		return mOptions[ _key ]->string();
+	return def;
+}
+int YZInternalOptionPool::readIntEntry( const QString& key, int def ) {
+	QString _key = currentGroup+"\\"+key;
+	bool test;
+	if ( mOptions.contains( _key ) )
+		return YZOptionValue::integerFromString( &test, mOptions[ _key ]->string() );
+	return def;
+}
+bool YZInternalOptionPool::readBoolEntry( const QString& key , bool def ) {
+	QString _key = currentGroup+"\\"+key;
+	bool test;
+	if ( mOptions.contains( _key ) )
+		return YZOptionValue::booleanFromString( &test, mOptions[ _key ]->string() );
+	return def;
+}
+QStringList YZInternalOptionPool::readQStringListEntry( const QString& key, const QStringList& def ) {
+	QString _key = currentGroup+"\\"+key;
+	bool test;
+	if ( mOptions.contains( _key ) )
+		return YZOptionValue::listFromString( &test, mOptions[ _key ]->string() );
+	return def;
+}
+QColor YZInternalOptionPool::readQColorEntry( const QString& key, const QColor& def ) {
+	QString _key = currentGroup+"\\"+key;
+	bool test;
+	if ( mOptions.contains( _key ) )
+		return YZOptionValue::colorFromString( &test, mOptions[ _key ]->string() );
+	return def;
 }
 
-QColor YZInternalOptionPool::readQColorEntry( const QString& _key, const QColor& def ) {
-	QString key = _key;
-//	yzDebug( ) << "READ " << currentGroup + '\\' + key << " with default " << def.rgb() << endl;
-	if ( ! key.contains( '\\' ) )
-		key.prepend( currentGroup+'\\' );
-	if ( mOptions.contains( key ) ) {
-		const QString& s = mOptions[ key ]->getValue();
-		QColor col( s );
-		return col;
-	} else return def;
-}
+void YZInternalOptionPool::setQStringEntry( const QString& name, const QString& value ) {
+	bool found = false, success = false;
+	unsigned int i;
+	YZOption* opt = NULL;
+	for ( i = 0; !found && i < options.size(); i++ )
+		found = options[ i ]->name() == name;
+	if ( found )
+		opt = options[ i-1 ];
+	else
+		opt = new YZOptionString( name, "", CXT_CONFIG,global_scope, &doNothing, QStringList(), QStringList() );
 
-void YZInternalOptionPool::setQColorOption( const QString& key, const QColor& option ) {
-	YZInternalOption *opt=NULL;
-	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
-		opt->setValue(option.name());
-		mOptions[ currentGroup + '\\' + key ] = opt;
-	} else {
-		opt = new YZInternalOption( currentGroup, key, option.name() , option.name(), getOption( key ) ? getOption( key )->getType() : global_opt, string_t );
-		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug( "YZInternalOptionPool" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
-	}
+	success = fillOptionFromString( opt, name+'='+value );
+	if ( ! success && !found )
+		delete opt;
+	else if ( success && !found )
+		options.append( opt );
+}
+void YZInternalOptionPool::setBoolEntry( const QString& name, bool value ) {
+	setQStringEntry( name, YZOptionValue::booleanToString( value ) );
+}
+void YZInternalOptionPool::setIntEntry( const QString& name, int value ) {
+	setQStringEntry( name, YZOptionValue::integerToString( value ) );
+}
+void YZInternalOptionPool::setQStringListEntry( const QString& name, const QStringList& value ) {
+	setQStringEntry( name, YZOptionValue::listToString( value ) );
+}
+void YZInternalOptionPool::setQColorEntry( const QString& name, const QColor& value ) {
+	setQStringEntry( name, YZOptionValue::colorToString( value ) );
 }
 
 void YZInternalOptionPool::setGroup( const QString& group ) {
@@ -410,23 +462,26 @@ bool YZInternalOptionPool::hasGroup( const QString& group ) {
 }
 
 void YZInternalOptionPool::cleanup() {
-	QMap<QString,YZInternalOption*>::Iterator it = mOptions.begin(), end = mOptions.end();
+	QMap<QString,YZOptionValue*>::Iterator it = mOptions.begin(), end = mOptions.end();
 	for ( ; it != end; ++it )
 #if QT_VERSION < 0x040000
 		delete it.data();
 #else
 		delete it.value();
 #endif
+	for( unsigned int i = 0; i < options.size(); i++ ) {
+		delete options[i];
+	}
 }
 
 bool YZInternalOptionPool::hasOption( const QString& _key ) {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
-	return mOptions.contains( key );
+	return mOptions.contains( key ) > 0;
 }
 
-YZInternalOption *YZInternalOptionPool::getOption( const QString& option ) {
+YZOptionValue* YZInternalOptionPool::getOption( const QString& option ) {
 	QString key = option;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -435,18 +490,64 @@ YZInternalOption *YZInternalOptionPool::getOption( const QString& option ) {
 	return NULL;
 }
 
-void YZInternalOptionPool::createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, option_t visibility, value_t type ) {
-	if (mOptions.contains(group + "\\" + optionName)) return;
-	YZInternalOption *newoption = new YZInternalOption( optionName, group, defaultValue, value, visibility, type);
-	mOptions[ group + "\\" + optionName ] = newoption;
+void YZInternalOptionPool::createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, context_t ctx, value_t type ) {
+	// TODO add scope_t parameter
+	scope_t scope = local_scope;
+	// we search for an alread existing option :
+	bool found;
+	unsigned int i;
+	for ( i = 0; !found && i < options.size(); i++ ) {
+		found = options[ i ]->name() == optionName;
+	}
+	if ( ! found ) {
+		// create a new YZOption
+		YZOption* opt = NULL;
+		bool success = false;
+		if ( type == boolean_t ) {
+			bool d_v = YZOptionValue::booleanFromString( &success, defaultValue );
+			if ( success )
+				opt = new YZOptionBoolean( optionName, d_v, ctx,scope, &doNothing, QStringList() );
+		} else if ( type == string_t ) {
+			QString d_v = YZOptionValue::stringFromString( &success, defaultValue );
+			if ( success ) 
+				opt = new YZOptionString( optionName, d_v, ctx,scope, &doNothing, QStringList(), QStringList() );
+		} else if ( type == integer_t ) {
+			int d_v = YZOptionValue::integerFromString( &success, defaultValue );
+			if ( success )
+				opt = new YZOptionInteger( optionName, d_v, ctx, scope, &doNothing, QStringList() );
+		} else if ( type == list_t ) {
+			QStringList d_v = YZOptionValue::listFromString( &success, defaultValue );
+			if ( success )
+				opt = new YZOptionList( optionName, d_v, ctx,scope, &doNothing, QStringList(), QStringList() );
+		} else if ( type == map_t ) {
+			MapOption d_v = YZOptionValue::mapFromString( &success, defaultValue );
+			if ( success )
+				opt = new YZOptionMap( optionName, d_v, ctx,scope, &doNothing, QStringList(), d_v.keys(), QStringList() );
+		} else if ( type == color_t ) {
+			QColor d_v = YZOptionValue::colorFromString( &success, defaultValue );
+			if ( success )
+				opt = new YZOptionColor( optionName, d_v, ctx,scope, &doNothing, QStringList() );
+		}
+		if ( opt ) {
+			options.append( opt );
+			YZOptionValue* ov = new YZOptionValue( *opt->defaultValue() );
+			success = opt->setValue( value, ov );
+			if ( ! success ) { // bad value, we cannot add that new option. Delete the ov and the option itself.
+				delete ov;
+				delete opt;
+			} else {
+				mOptions[ group + "\\" + opt->name() ] = ov;
+			}
+		}
+	}
 }
 
 void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& newPath) {
-	QMap<QString,YZInternalOption*> newoptions;
+	QMap<QString,YZOptionValue*> newoptions;
 	QStringList toDrop;
 
 	//create the list of new options to add
-	QMap<QString,YZInternalOption*>::Iterator it = mOptions.begin(), end = mOptions.end();
+	QMap<QString,YZOptionValue*>::Iterator it = mOptions.begin(), end = mOptions.end();
 	for ( ; it != end; ++it ) {
 		QString key = it.key();
 		if (it.key().startsWith(oldPath)) {
@@ -466,7 +567,7 @@ void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& 
 		mOptions.remove(*it);
 	}
 
-	//add new options into the QMap now
+	//add new mOptions into the QMap now
 	it = newoptions.begin(), end = newoptions.end();
 	for ( ; it != end; ++it ) {
 #if QT_VERSION < 0x040000
@@ -476,3 +577,4 @@ void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& 
 #endif
 	}
 }
+

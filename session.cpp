@@ -23,12 +23,11 @@
  */
 
 #include "session.h"
+
 #include "debug.h"
 #include "schema.h"
 #include "buffer.h"
-#include "internal_options.h"
 #include "registers.h"
-#include "view.h"
 #include "swapfile.h"
 #include "mapping.h"
 #include "ex_lua.h"

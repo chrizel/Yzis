@@ -967,64 +967,32 @@ void YZBuffer::clearSwap() {
 	mSwap->unlink();
 }
 
-int YZBuffer::getLocalIntOption( const QString& option ) {
+int YZBuffer::getLocalIntegerOption( const QString& option ) {
 	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) ) //find the local one ?
-		return YZSession::mOptions->readIntEntry( mPath+"\\"+option, 0 );
+		return YZSession::mOptions->readIntegerOption( mPath+"\\"+option, 0 );
 	else
-		return YZSession::mOptions->readIntEntry( "Global\\" + option, 0 ); // else give the global default if any
+		return YZSession::mOptions->readIntegerOption( "Global\\" + option, 0 ); // else give the global default if any
 }
 
-void YZBuffer::setLocalIntOption( const QString& key, int option ) {
-	YZSession::mOptions->setGroup(mPath);
-	YZSession::mOptions->setIntOption( key, option );
-}
-
-bool YZBuffer::getLocalBoolOption( const QString& option ) {
+bool YZBuffer::getLocalBooleanOption( const QString& option ) {
 	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) )
-		return YZSession::mOptions->readBoolEntry( mPath+"\\"+option, false );
+		return YZSession::mOptions->readBooleanOption( mPath+"\\"+option, false );
 	else
-		return YZSession::mOptions->readBoolEntry( "Global\\" + option, false );
-}
-
-void YZBuffer::setLocalBoolOption( const QString& key, bool option ) {
-	YZSession::mOptions->setGroup(mPath);
-	YZSession::mOptions->setBoolOption( key, option );
+		return YZSession::mOptions->readBooleanOption( "Global\\" + option, false );
 }
 
 QString YZBuffer::getLocalStringOption( const QString& option ) {
 	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) )
-		return YZSession::mOptions->readQStringEntry( mPath+"\\"+option, QString("") );
+		return YZSession::mOptions->readStringOption( mPath+"\\"+option, QString("") );
 	else
-		return YZSession::mOptions->readQStringEntry( "Global\\" + option, QString("") );
+		return YZSession::mOptions->readStringOption( "Global\\" + option, QString("") );
 }
 
-void YZBuffer::setLocalQStringOption( const QString& key, const QString& option ) {
-	YZSession::mOptions->setGroup(mPath);
-	YZSession::mOptions->setQStringOption( key, option );
-}
-
-QStringList YZBuffer::getLocalStringListOption( const QString& option ) {
+QStringList YZBuffer::getLocalListOption( const QString& option ) {
 	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) )
-		return YZSession::mOptions->readQStringListEntry( mPath+"\\"+option, QStringList() );
+		return YZSession::mOptions->readListOption( mPath+"\\"+option, QStringList() );
 	else
-		return YZSession::mOptions->readQStringListEntry( "Global\\" + option, QStringList() );
-}
-
-void YZBuffer::setLocalQStringListOption( const QString& key, const QStringList& option ) {
-	YZSession::mOptions->setGroup(mPath);
-	YZSession::mOptions->setQStringListOption( key, option );
-}
-
-QColor YZBuffer::getLocalColorOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) )
-		return YZSession::mOptions->readQColorEntry( mPath+"\\"+option, QColor("white") );
-	else
-		return YZSession::mOptions->readQColorEntry( "Global\\" + option, QColor("white") );
-}
-
-void YZBuffer::setLocalQColorOption( const QString& key, const QColor& option ) {
-	YZSession::mOptions->setGroup(mPath);
-	YZSession::mOptions->setQColorOption( key, option );
+		return YZSession::mOptions->readListOption( "Global\\" + option, QStringList() );
 }
 
 bool YZBuffer::updateHL( unsigned int line ) {

@@ -580,7 +580,7 @@ void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
 	unsigned int line = args.view->getCurrentTop() + args.view->getLinesVisible();
 	YZView *view = args.view;
 
-	if (view->getLocalBoolOption("wrap")) {
+	if (view->getLocalBooleanOption("wrap")) {
 		YZViewCursor temp = view->viewCursor();
 		view->gotodxdy( &temp, view->getDrawCurrentLeft(), view->getDrawCurrentTop() + view->getLinesVisible() );
 

@@ -122,7 +122,7 @@ void YZPrinter::doPrint( ) {
 	unsigned int oldColumnsVis = mView->getColumnsVisible( );
 
 	//should be current's view setting no ? XXX
-	bool number = YZSession::getBoolOption( "Global\\number" );
+	bool number = mView->getLocalBooleanOption( "number" );
 	unsigned int marginLeft = 0;
 
 	double red, green, blue;
@@ -131,9 +131,10 @@ void YZPrinter::doPrint( ) {
 		marginLeft = ( 2 + QString::number( mView->myBuffer()->lineCount() ).length() );
 	}
 
-	bool oldWrap = YZSession::getBoolOption( "Global\\wrap" );
-	YZSession::mOptions->setGroup("Global");
-	YZSession::setBoolOption( "wrap", true );
+	YZOptionValue* ov_wrap = mView->getLocalOption( "wrap" );
+	bool oldWrap = ov_wrap->boolean();
+	ov_wrap->setBoolean( true );
+
 	mView->setVisibleArea( clipw - marginLeft, cliph, false );
 	unsigned int totalHeight = mView->drawTotalHeight();
 	mView->setVisibleArea( clipw - marginLeft, totalHeight, false );
@@ -250,8 +251,7 @@ void YZPrinter::doPrint( ) {
 	PS_delete(doc);
 	PS_shutdown();
 
-	YZSession::mOptions->setGroup("Global");
-	YZSession::setBoolOption( "wrap", oldWrap );
+	ov_wrap->setBoolean( oldWrap );
 	mView->setVisibleArea( oldColumnsVis, oldLinesVis, false );
 }
 

@@ -59,15 +59,15 @@
 
 #define _(a) QString::fromUtf8(gettext(a))
 
-//visibility of the option
-enum option_t {
-	global_opt,
-	buffer_opt,
-	view_opt
+enum scope_t {
+	default_scope,
+	global_scope,
+	local_scope,
 };
 
 //visibility of the option
 enum context_t {
+    CXT_CONFIG, // simple entry
     CXT_SESSION,
     CXT_BUFFER,
     CXT_VIEW,
@@ -75,12 +75,13 @@ enum context_t {
 
 //kind of value stored by the option
 enum value_t {
-    int_t, //is an integer
-    string_t, // is a string
-	stringlist_t, // a , separated list of strings (for options like "listchars=space:.,tab:>,trail:-"
-    //	enum_t, // is an enumeration
-    bool_t, // is a boolean
-    color_t, // is a color
+	invalid_t,
+	integer_t,
+	string_t,
+	list_t,
+	boolean_t,
+	map_t,
+	color_t,
 };
 
 enum mapping_t {

@@ -156,7 +156,6 @@ class YZModeEx : public YZMode {
 		cmd_state bufferdelete( const YZExCommandArgs& args );
 		cmd_state edit( const YZExCommandArgs& args );
 		cmd_state mkyzisrc( const YZExCommandArgs& args );
-		cmd_state setlocal( const YZExCommandArgs& args );
 		cmd_state set( const YZExCommandArgs& args );
 		cmd_state substitute( const YZExCommandArgs& args );
 		cmd_state hardcopy( const YZExCommandArgs& args );

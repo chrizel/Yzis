@@ -37,7 +37,7 @@
 #include <ktempfile.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-#include "document.h"
+#include "kyzis/document.h"
 #include "debug.h"
 
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)

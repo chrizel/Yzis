@@ -495,7 +495,12 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					e.setX(0);
 					e.setY(0);
 				}
-				doSearch( getCommandLineText(), mSearchBegin, e );
+				if (!doSearch( getCommandLineText(), mSearchBegin, e )) {
+					gotoxy(mSearchBegin->getX(), mSearchBegin->getY());
+					YZSelection cur_sel = selectionPool->layout( "CLEAR" )[ 0 ];
+					selectionPool->clear( "SEARCH" );
+					sendPaintEvent(cur_sel.drawFrom(), cur_sel.drawTo());
+				}
 				setCommandLineText( "" );
 				mSession->setFocusMainWindow();
 				gotoPreviousMode();
@@ -518,6 +523,10 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			} else if ( key == "<ESC>" ) {
 				setCommandLineText( "" );
 				mSession->setFocusMainWindow();
+				gotoxy(mSearchBegin->getX(), mSearchBegin->getY());
+				YZSelection cur_sel = selectionPool->layout( "CLEAR" )[ 0 ];
+				selectionPool->clear( "SEARCH" );
+				sendPaintEvent(cur_sel.drawFrom(), cur_sel.drawTo());
 				gotoPreviousMode();
 				return;
 			} else if ( key == "<BS>" ) {
@@ -1474,16 +1483,11 @@ void YZView::paste( QChar registr, bool after ) {
 }
 
 bool YZView::doSearch( const QString& search, const YZCursor& begin, const YZCursor& end ) {
+	if ( search.isEmpty() || search.isNull() ) return false;
 	selectionPool->clear( "SEARCH" );
 
 	bool found = false;
 	unsigned int matchlength = 0;
-/*	YZCursor begin = *mainCursor->buffer();
-	YZCursor end = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
-	if ( reverseSearch ) {
-		end.setX(0);
-		end.setY(0);
-	}*/
 	YZCursor result;
 
 	result = mBuffer->action()->search(this, search, begin, end, reverseSearch, &matchlength, &found);

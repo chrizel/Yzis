@@ -85,7 +85,7 @@ void YZView::sendChar( QChar c) {
 void YZView::updateCursor(void)
 {
 	static int lasty = -10; // small speed optimisation
-	QString percentage("All");
+	static QString percentage("All");
 	int y = cursor->getY();
 
 	if ( y != lasty ) {

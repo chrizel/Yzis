@@ -289,9 +289,19 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	bool pendingMapp = false;
 	bool map = false;
 	cmd_state state;
+	QString temp;
 
 	switch(mMode) {
 		case YZ_VIEW_MODE_COMPLETION:
+			temp = modifiers + key;
+			pendingMapp = YZMapping::self()->applyMappings(temp, mapMode, &map);
+			//the result of a mapping could be multiple keys so we can't parse them directly
+			if ( map ) {
+				QString n = temp;
+				purgeInputBuffer();
+				sendMultipleKey(n);
+				return;
+			}
 			if ( modifiers+key == "<CTRL>p" ) {
 				if (m_word2Complete.isEmpty())
 					initCompletion();
@@ -313,6 +323,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( modifiers+key == "<CTRL>x" ) {
+				yzDebug() << "Skip CTRLx in completion mode" << endl;
 				purgeInputBuffer();
 				return;
 			} else if ( modifiers+key == "<ESC>" ) {

@@ -19,6 +19,7 @@ void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 		_parent->sendChar(e->ascii());
 		e->accept();
 	}
+	KComboBox::keyPressEvent( e );
 }
 
 #include "kyziscommand.moc"

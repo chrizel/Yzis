@@ -121,6 +121,11 @@ public:
 	QString gotoInsertMode( const QString& inputsBuff = QString::null );
 
 	/**
+	 * Start Ex mode
+	 */
+	QString gotoExMode( const QString& inputsBuff = QString::null );
+
+	/**
 	 * Start replace mode
 	 */
 	QString gotoReplaceMode( const QString& inputsBuff = QString::null );

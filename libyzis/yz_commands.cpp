@@ -43,6 +43,7 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("$",&YZView::moveToEndOfLine,true);
 	NEW_VIEW_COMMAND("x",&YZView::deleteCharacter,true);
 	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true);
+	NEW_VIEW_COMMAND(":",&YZView::gotoExMode,true);
 	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true);
 	NEW_VIEW_COMMAND("gg",&YZView::gotoLine,true);
 	NEW_VIEW_COMMAND("G",&YZView::gotoLine,true);

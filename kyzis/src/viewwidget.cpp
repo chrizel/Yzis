@@ -51,8 +51,10 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status->insertItem(_("Yzis Ready"),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
 
-	status->insertItem("",80,80,0);
-	status->setItemAlignment(80,Qt::AlignLeft);
+	m_central = new KSqueezedTextLabel(this);
+	status->addWidget(m_central,100);
+//	status->insertItem("",80,80,0);
+//	status->setItemAlignment(80,Qt::AlignLeft);
 
 	status->insertItem("",90,1);
 	status->setItemAlignment(90,Qt::AlignRight);
@@ -256,11 +258,13 @@ unsigned int KYZisView::cursorColumnReal()
 }
 
 void KYZisView::resetInfo() {
-	status->changeItem("", 80);
+//	status->changeItem("", 80);
+	m_central->setText("");
 }
 
 void KYZisView::displayInfo( const QString& info ) {
-	status->changeItem(info, 80);
+	//status->changeItem(info, 80);
+	m_central->setText(info);
 	//clean the info 2 seconds later
 	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }

@@ -25,6 +25,7 @@
 #include <ktexteditor/popupmenuinterface.h>
 #include <ktexteditor/codecompletioninterface.h>
 #include <kstatusbar.h>
+#include <ksqueezedtextlabel.h>
 #include <qevent.h>
 #include <qscrollbar.h>
 #include <qlayout.h>
@@ -138,6 +139,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		QPopupMenu *m_popup;
 		KYZisCodeCompletion *m_codeCompletion;
 		QGridLayout *g ;
+		KSqueezedTextLabel *m_central;
 		// internal ID used for DCOP communications
 		int mkId;
 };

@@ -183,8 +183,9 @@ bool KYZisDoc::setText (  const QString &text ) {
 	return true;
 }
 
-/* Fixme */
-bool KYZisDoc::removeText (  uint , uint , uint , uint ) {
+bool KYZisDoc::removeText (  uint startLine, uint startCol, uint endLine, uint endCol) {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	( ( YZBuffer* )( this ) )->action()->deleteArea( v, YZCursor( v, startCol, startLine ), YZCursor(v,endCol, endLine ), QValueList<QChar>());
 	return true;
 }
 

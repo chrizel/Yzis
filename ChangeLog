@@ -1,3 +1,9 @@
+2003-10-01 mikmak
+  * all
+    moved GUI interface out from *view.h
+    added a UID to views
+    many improvments to prepare multi-buffer/multi-view
+
 2003-09-30 mikmak
   * nyzis
     supprt for CTRL and SHIFT keys, this is a bad hack but ncurses test

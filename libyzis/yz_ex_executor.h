@@ -8,6 +8,8 @@
  * This is TEMPORARY until we designed Ex support properly
  */
 
+class YZView;
+
 class YZExExecutor {
 	public:
 		YZExExecutor();

@@ -7,7 +7,6 @@
  *
  */
 
-#include "yzis.h" /* NULL */
 #include <qstring.h>
 
 class QString;
@@ -65,6 +64,13 @@ struct yz_event_setcursor {
 	}
 };
 
+struct yz_event_redraw {
+	yz_event_redraw() {
+	}
+	yz_event_redraw(const yz_event_redraw& e) {
+	}
+};
+
 struct yz_event_setstatus {
 	QString text;
 	yz_event_setstatus() {
@@ -75,8 +81,7 @@ struct yz_event_setstatus {
 	}
 };
 
-/**
- * The yz_event struct, mainly an union of all event args
+/** The yz_event struct, mainly an union of all event args
  *
  * exemple of use : 
  * (e is of type yz_event)
@@ -90,12 +95,13 @@ struct yz_event_setstatus {
  */
 
 struct yz_event_t {
+	int view;
 	enum yz_events		id;
 	struct yz_event_t	*next;
 	struct yz_event_invalidateline		invalidateline;
 	struct yz_event_setcursor	setcursor;
 	struct yz_event_setstatus	setstatus;
-	/* nothing for REDRAW */
+	struct yz_event_redraw	redraw;
 };
 
 typedef struct yz_event_t yz_event;
@@ -105,9 +111,9 @@ class YZEvent {
 		YZEvent();
 
 		static yz_event mkEventStatus(const QString&);
-		static yz_event mkEventCursor(int x, int y, int y2, const QString&);
-		static yz_event mkEventInvalidateLine(int);
-		static yz_event mkEventRedraw();
+		static yz_event mkEventCursor(int v, int x, int y, int y2, const QString&);
+		static yz_event mkEventInvalidateLine(int,int);
+		static yz_event mkEventRedraw(int);
 		static yz_event mkEventNoop();
 };
 

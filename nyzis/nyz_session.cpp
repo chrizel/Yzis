@@ -62,13 +62,21 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 		wattron(statusbar, COLOR_PAIR(6));
 	}
 
-	bf->addView (new NYZView(this, window, bf));
+	registerManager( this );
+	new NYZView(this, window, bf);
 }
+
+void NYZSession::postEvent( yz_event /*ev*/ ) {
+	// do nothing, we'll catch them in next flush_events()
+}
+
 
 void NYZSession::event_loop()
 {
 	for ( QMap<QString,YZBuffer*>::Iterator b = buffers.begin();b!=buffers.end(); ++b ) 
-		for ( YZView *v = b.data()->views().first() ; v ; v = b.data()->views().next() ) 
+//		for ( QMap<int,YZView*>::iterator it = b.data()->views().begin() ;
+//		it!=b.data()->views().end() ; it++ ) 
+		for ( YZView *v = b.data()->views().first() ; v ; v =b.data()->views().next() ) 
 			( static_cast<NYZView*>( v ) )->event_loop();
 }
 
@@ -98,3 +106,30 @@ void NYZSession::update_infobar(int l, int c1, int c2, const QString& percentage
 	wrefresh(infobar);
 }
 
+
+void NYZSession::scrollDown( int /*lines*/ ) {
+
+}
+
+void NYZSession::scrollUp ( int /*lines*/ ) {
+
+}
+
+//hmmm XXX
+YZSession *NYZSession::getCurrentSession(void)
+{
+	return this;
+}
+
+void NYZSession::setCommandLineText( const QString& text ) {
+	commandline= text;
+}
+
+QString NYZSession::getCommandLineText() const {
+	return commandline;
+}
+
+void NYZSession::quit( bool savePopup ) {
+	//FIXME
+	exit( 0 );
+}

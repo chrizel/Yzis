@@ -13,6 +13,8 @@
  * developers remotely editing the same file :)
  */
 
+class YZView;
+
 class YZCursor {
 	public :
 		YZCursor(YZView *vp);

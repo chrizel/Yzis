@@ -7,11 +7,11 @@
 #include <qnamespace.h>
 
 NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b)
-	: YZView(b,0)
+	: YZView(b,_session,0)
 {
 	session= _session;
 	window = _window;
-	commandline="";
+	session->commandline="";
 
 	update_info();
 	//debug("w,h are %d,%d",w,h);
@@ -19,7 +19,7 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b)
 	wmove(window,0,0 );
 	//active symbols for special keycodes
 	keypad(window , true);
-	registerManager( this );
+	//registerManager( this );
 }
 
 NYZView::~NYZView(){
@@ -138,10 +138,6 @@ void NYZView::initialiseKeycodes() {
 		keycodes[ KEY_MAX ] = ;*/
 }
 
-void NYZView::postEvent( yz_event /*ev*/ ) {
-	// do nothing, we'll catch them in next flush_events()
-}
-
 void NYZView::event_loop()
 {
 	/* event loop */
@@ -162,14 +158,13 @@ void NYZView::event_loop()
 		flush_events();
 	}
 }
-	
 
 void NYZView::flush_events(void)
 {
 	yz_event e;
 
 	/* flush event list */
-	while ( (e=fetchNextEvent()).id != YZ_EV_NOOP )
+	while ( (e=session->fetchNextEvent(/*myId*/)).id != YZ_EV_NOOP )
 		handle_event(e);
 }
 
@@ -248,25 +243,4 @@ void NYZView::printLine( int line ) {
 }
 
 
-
-void NYZView::scrollDown( int /*lines*/ ) {
-
-}
-
-void NYZView::scrollUp ( int /*lines*/ ) {
-
-}
-
-YZSession *NYZView::getCurrentSession(void)
-{
-	return session;
-}
-
-void NYZView::setCommandLineText( const QString& text ) {
-	commandline= text;
-}
-
-QString NYZView::getCommandLineText() const {
-	return commandline;
-}
 

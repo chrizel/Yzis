@@ -7,8 +7,12 @@
 #include "yz_debug.h"
 #include <qkeysequence.h>
 
-YZView::YZView(YZBuffer *_b, int _lines_vis) {
-	gui_manager = NULL;
+//initialise view IDs counter (static)
+int YZView::view_ids = 0;
+
+YZView::YZView(YZBuffer *_b, YZSession *sess, int _lines_vis) {
+	myId = view_ids++;
+	session = sess;
 	buffer		= _b;
 	lines_vis	= _lines_vis;
 	cursor = new YZCursor(this);
@@ -108,10 +112,10 @@ void YZView::sendKey( int c, int modifiers) {
 		case YZ_VIEW_MODE_EX:
 			switch ( c ) {
 				case Qt::Key_Return:
-					yzDebug() << "Current command EX : " << gui_manager->getCommandLineText();
-					session->getExPool()->execExCommand( this, gui_manager->getCommandLineText() );
-					gui_manager->setCommandLineText( "" );
-					gui_manager->setFocusMainWindow();
+					yzDebug() << "Current command EX : " << session->gui_manager->getCommandLineText();
+					session->getExPool()->execExCommand( this, session->gui_manager->getCommandLineText() );
+					session->gui_manager->setCommandLineText( "" );
+					session->gui_manager->setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Down:
@@ -120,8 +124,8 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Up:
 					return;
 				case Qt::Key_Escape:
-					gui_manager->setCommandLineText( "" );
-					gui_manager->setFocusMainWindow();
+					session->gui_manager->setCommandLineText( "" );
+					session->gui_manager->setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				default:
@@ -177,32 +181,12 @@ void YZView::updateCursor(void)
 		lasty=y;
 	}
 
-	postEvent( YZEvent::mkEventCursor(
+	session->postEvent(YZEvent::mkEventCursor(myId,
 				cursor->getX(),
 				y,
 				y,
 				percentage
 				));
-}
-
-yz_event YZView::fetchNextEvent() {
-	if ( !events.empty() ) {
-		yz_event e = events.first();
-		events.pop_front(); //remove it
-		return e;
-	} else
-		return YZEvent::mkEventNoop();
-}
-
-void YZView::postEvent (yz_event e) {
-	events.push_back( e ); //append to the FIFO
-	if ( gui_manager )
-		gui_manager->postEvent( e );
-}
-
-void YZView::registerManager ( Gui *mgr ) {
-	gui_manager = mgr;
-	session = mgr->getCurrentSession();
 }
 
 void YZView::centerView(unsigned int line) {
@@ -223,7 +207,7 @@ void YZView::centerView(unsigned int line) {
 }
 
 void YZView::redrawScreen() {
-	postEvent(YZEvent::mkEventRedraw() );
+	session->postEvent(YZEvent::mkEventRedraw(myId) );
 	updateCursor();
 }
 
@@ -494,28 +478,28 @@ QString YZView::appendAtEOL ( const QString& ) {
 QString YZView::gotoCommandMode( ) {
 	mode = YZ_VIEW_MODE_COMMAND;
 	purgeInputBuffer();
-	postEvent(YZEvent::mkEventStatus("Command mode"));
+	session->postEvent(YZEvent::mkEventStatus("Command mode"));
 	return QString::null;
 }
 
 QString YZView::gotoExMode(const QString&) {
 	mode = YZ_VIEW_MODE_EX;
-	postEvent(YZEvent::mkEventStatus("-- EX --"));
-	gui_manager->setFocusCommandLine();
+	session->postEvent(YZEvent::mkEventStatus("-- EX --"));
+	session->gui_manager->setFocusCommandLine();
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoInsertMode(const QString&) {
 	mode = YZ_VIEW_MODE_INSERT;
-	postEvent(YZEvent::mkEventStatus("-- INSERT --"));
+	session->postEvent(YZEvent::mkEventStatus("-- INSERT --"));
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoReplaceMode(const QString&) {
 	mode = YZ_VIEW_MODE_REPLACE;
-	postEvent(YZEvent::mkEventStatus("-- REPLACE --") );
+	session->postEvent(YZEvent::mkEventStatus("-- REPLACE --") );
 	purgeInputBuffer();
 	return QString::null;
 }

@@ -10,10 +10,16 @@
 #include <assert.h>
 #include <unistd.h>
 
+#include <kapplication.h>
 #include "kyzis_factory.h"
 #include "kyzisdoc.h"
 #include "kyzisview.h"
+#include "yz_session.h"
+#include "yz_debug.h"
 
+YZSession *KYZisFactory::sess = 0;
+KYZisView *KYZisFactory::currentView=0;
+KYZisDoc *KYZisFactory::currentDoc=0;
 KYZisFactory *KYZisFactory::s_self = 0;
 unsigned long int KYZisFactory::s_refcnt = 0;
 QPtrList<class KYZisDoc> KYZisFactory::s_documents;
@@ -29,6 +35,11 @@ extern "C" {
 KInstance* KYZisFactory::s_instance = 0L;
 
 KYZisFactory::KYZisFactory( bool clone ) {
+	if ( !sess )
+		sess = new YZSession();
+
+	sess->registerManager(this);
+
 	if ( clone ) {
 		ref();
 		return;
@@ -65,7 +76,7 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	bool bWantBrowserView =  (classname == QString("Browser/View") );
 	bool bWantReadOnly = (bWantBrowserView || ( classname == QString("KParts::ReadOnlyPart") ));
 
-	KParts::ReadWritePart *part = new KYZisDoc (parentWidget, widgetname, parent, name /*,args*/ );
+	KParts::ReadWritePart *part = new KYZisDoc (parentWidget, widgetname, parent, name );
 	part->setReadWrite( !bWantReadOnly );
 	return part;
 }
@@ -75,6 +86,7 @@ void KYZisFactory::registerDocument ( KYZisDoc *doc ) {
     s_documents.append( doc );
     ref();
   }
+	currentDoc = doc;
 }
 
 void KYZisFactory::deregisterDocument ( KYZisDoc *doc ) {
@@ -87,6 +99,7 @@ void KYZisFactory::registerView ( KYZisView *view ) {
     s_views.append( view );
     ref();
   }
+	currentView = view;
 }
 
 void KYZisFactory::deregisterView ( KYZisView *view ) {
@@ -110,5 +123,81 @@ const KAboutData *KYZisFactory::aboutData() {
 
 	return data;
 }
+
+//GUI itf
+void KYZisFactory::setFocusMainWindow() {
+	currentView->editor->setFocus();
+}
+
+void KYZisFactory::postEvent(yz_event /*ev*/) {
+	QCustomEvent *myev = new QCustomEvent (QEvent::User);
+	QApplication::postEvent( this, myev ); //this hopefully gives Qt the priority before processing our own events
+}
+
+//receives previously generated events from Qt event loop. hopefully it will do
+//what I want :)
+void KYZisFactory::customEvent (QCustomEvent *) {
+	while ( true ) {
+		yz_event event = sess->fetchNextEvent();
+		YZView *vi = sess->findView( event.view );
+		KYZisView *v = currentView;//static_cast<KYZisView*> ( vi );
+		QString str;
+		switch ( event.id ) {
+			case YZ_EV_INVALIDATE_LINE:
+				str = v->myBuffer()->findLine( event.invalidateline.y );
+				if ( str.isNull() ) return;
+				v->editor->setTextLine(event.invalidateline.y, str);
+				break;
+			case YZ_EV_SET_CURSOR:
+				yzDebug() << "event SET_CURSOR" << endl;
+				v->editor->setCursor (event.setcursor.x, event.setcursor.y);
+				v->status->changeItem( QString("%1,%2-%3 (%4)").arg(event.setcursor.x ).arg( event.setcursor.y ).arg( event.setcursor.y2 ).arg( event.setcursor.percentage),99 );
+				break;
+			case YZ_EV_SET_STATUS:
+				yzDebug() << "event SET_STATUS" << event.setstatus.text <<  endl;
+				v->status->changeItem( event.setstatus.text,0);
+				break;
+			case YZ_EV_REDRAW:
+				v->editor->updateContents();
+				break;
+			case YZ_EV_NOOP:
+				return;
+		}
+	}
+}
+
+void KYZisFactory::setFocusCommandLine() {
+	currentView->command->setFocus();
+}
+
+void KYZisFactory::scrollDown( int lines ) {
+	yzDebug() << "ScrollDown " << lines <<endl;
+	currentView->editor->scrollBy(0, lines * currentView->editor->fontMetrics().lineSpacing());
+	currentView->editor->update();
+}
+
+void KYZisFactory::scrollUp ( int lines ) {
+	yzDebug() << "ScrollUp " << lines <<endl;
+	currentView->editor->scrollBy(0, -1 * lines * currentView->editor->fontMetrics().lineSpacing());
+	currentView->editor->update();
+}
+
+YZSession *KYZisFactory::getCurrentSession() {
+	return sess;
+}
+
+void KYZisFactory::setCommandLineText( const QString& text ) {
+	currentView->command->setText( text );
+}
+
+QString KYZisFactory::getCommandLineText() const {
+	return currentView->command->text();
+}
+
+void KYZisFactory::quit( bool ) {
+	kapp->quit();
+}
+
+
 
 #include "kyzis_factory.moc"

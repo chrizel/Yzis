@@ -7,14 +7,9 @@
 #include "kyzis_factory.h"
 #include "yz_debug.h"
 
-static YZSession *sess = 0;
-		
 KYZisDoc::KYZisDoc (QWidget *parentWidget, const char * /*widgetName*/, QObject *parent, const char *name)
-	: KTextEditor::Document(parent,name), YZBuffer(QString::null) {
+	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::sess,QString::null) {
 		setInstance(KYZisFactory::instance());
-		if ( !sess )
-			sess = new YZSession();
-		sess->addBuffer( this );
 		KTextEditor::View *current = createView ( parentWidget, "doc widget" );
 		insertChildClient(current);
 		current->show();
@@ -30,9 +25,9 @@ KYZisDoc::~KYZisDoc () {
 }
 
 KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char * /*name*/) {
-	KYZisView *v = new KYZisView (this, sess, parent);
+	KYZisView *v = new KYZisView (this, parent);
 	//FIXME : two lists
-	addView(v);
+	//addView(v);
 	_views.append( v );
 	return v;
 }

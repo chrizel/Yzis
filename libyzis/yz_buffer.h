@@ -6,9 +6,9 @@
 
 #include <qstringlist.h>
 #include <qptrlist.h>
-#include "yz_events.h"
 #include "yzis.h"
 #include "yz_motion.h"
+#include "yz_session.h"
 
 class YZView;
 
@@ -19,7 +19,7 @@ class YZBuffer {
 
 public:
 	/** opens a buffer using the given file */
-	YZBuffer(const QString& _path=QString::null);
+	YZBuffer(YZSession *sess,const QString& _path=QString::null);
 	~YZBuffer();
 
 	void addChar (int x, int y, const QString& c);
@@ -37,6 +37,8 @@ public:
 
 	QPtrList<YZView> views() { return view_list; }
 
+	YZView* findView(int uid);
+
 	const QStringList& getText() { return text; }
 
 	void addNewLine( int col, int line );
@@ -53,12 +55,12 @@ protected:
 	QString path;
 	QPtrList<YZView> view_list;
 
-	void	postEvent(yz_event e);
 	void	updateAllViews();
 
 	/* readonly?, change, load, save, isclean?, ... */
 	/* locking stuff will be here, too */
 	QStringList text;
+	YZSession *session;
 };
 
 #endif /*  YZ_BUFFER_H */

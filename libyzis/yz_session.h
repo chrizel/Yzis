@@ -9,12 +9,15 @@
  * A buffer owns the views
  */
 
+#include "yz_events.h"
+#include "gui.h"
 #include "yz_buffer.h"
 #include "yz_view.h"
 #include "yz_commands.h"
 #include "yz_motionpool.h"
 
 class YZView;
+class Gui;
 
 class YZSession {
 	public:
@@ -23,6 +26,16 @@ class YZSession {
 		 */
 		YZSession( const QString& _sessionName="Yzis" );
     virtual ~YZSession();
+
+		/**
+		 * Register a GUI event manager
+		 */
+		void registerManager ( Gui *mgr );
+
+		/** 
+		 * Used by the buffer to post events
+		 */
+		void	postEvent ( yz_event );
 
 		/**
 		 * return the session name
@@ -59,6 +72,22 @@ class YZSession {
 		 */
 		QString saveBufferExit( const QString& inputsBuff = QString::null );
 
+		/** get a event to handle from the core.  that's the way the core is
+		 * sending messages to the gui
+		 */
+		/* for the qt/kde gui, we should create QEvents from that? */
+		yz_event fetchNextEvent(int requester=-1);
+
+		/**
+		 * Finds a view by its UID
+		 */
+		YZView* findView( int uid );
+
+		/** 
+		 * Current GUI
+		 */
+		Gui *gui_manager;
+
 	protected:
 		/*
 		 * Find a buffer by QString/QRegExp ?
@@ -67,12 +96,14 @@ class YZSession {
 
 		//we map "filename"/buffer for buffers
 		QMap<QString,YZBuffer*> buffers;
+		QValueList<yz_event> events;
 
 	private:
 		QString sessionName;
     YZCommandPool *pool;
     YZCommandPool *expool;
     YZMotionPool *motionpool;
+
 };
 
 #endif /* YZ_SESSION_H */

@@ -1,3 +1,5 @@
+#ifndef YZ_LINE_H
+#define YZ_LINE_H
 /**
  * line.h
  */
@@ -63,3 +65,7 @@ typedef int *yz_line;
 #ifdef __cplusplus
 }
 #endif
+
+
+#endif //  YZ_LINE_H
+

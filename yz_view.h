@@ -1,3 +1,5 @@
+#ifndef YZ_VIEW_H
+#define YZ_VIEW_H
 /**
  * YZView - abstraction of a view. binded to a buffer of course
  */
@@ -113,4 +115,8 @@ void yz_get_geometry(yz_view , int *current, int *lines);
 }
 #endif
 
+
+
+
+#endif //  YZ_VIEW_H
 

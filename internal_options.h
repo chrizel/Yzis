@@ -24,21 +24,7 @@
 #include <qmap.h>
 #include <qstringlist.h>
 #include <qcolor.h>
-
-//visibility of the option
-enum option_t {
-	global_opt,
-	buffer_opt,
-	view_opt
-};
-
-//kind of value stored by the option
-enum value_t {
-	int_t, //is an integer
-	string_t, // is a string 
-	bool_t // is a boolean
-};
-
+#include "yzis.h"
 
 /**
  * Class to handle an internal option.

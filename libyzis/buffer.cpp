@@ -216,7 +216,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, l, 0, line );
 
-	VIEWS_INIT( 0, line - 1 );
+	VIEWS_INIT( 0, line );
 
 	QValueVector<YZLine*>::iterator it;
 	uint idx=0;
@@ -238,7 +238,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 
 	setChanged( true );
 
-	VIEWS_APPLY( 0, line );
+	VIEWS_APPLY( 0, line + 1 );
 }
 
 void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {

@@ -149,7 +149,7 @@ public:
 	 * Remove all text
 	 * @return void
 	 */
-	void clearText() const;
+	void clearText();
 
 	/**
 	 * Finds a line in the buffer

@@ -288,7 +288,7 @@ void YZBuffer::mergeNextLine( unsigned int line ) {
 // ------------------------------------------------------------------------
 
 //XXX this one is broken, IT DOES NOT CLEAR mText DUE TO CONST
-void YZBuffer::clearText() const {
+void YZBuffer::clearText() {
 	( ( QPtrList<YZLine> )mText ).clear();
 }
 

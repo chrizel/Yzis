@@ -39,7 +39,7 @@ QMap<QRgb,int> NYZView::mColormap; // map Ncurses to Qt codes
 
 
 NYZView::NYZView(YZBuffer *b)
-	: YZView(b,NYZFactory::self,0)
+	: YZView(b,NYZFactory::self,0), editor(0)
 {
 	
 	if ( !colormapinitialised ) initialisecolormap();
@@ -137,6 +137,9 @@ void NYZView::paintEvent( unsigned int , unsigned int clipy, unsigned int , unsi
 void NYZView::drawContents( int clipy, int cliph ) {
 	bool number = YZSession::getBoolOption( "General\\number" );
 	bool wrap = YZSession::getBoolOption( "General\\wrap" );
+
+	if (!editor)	// Avoid segfaults and infinite recursion.
+		return;
 
 	unsigned int lineCount = myBuffer()->lineCount();
 	unsigned int my_marginLeft = 0;
@@ -310,13 +313,13 @@ void NYZView::initialisecolormap()
 
 	// magenta = 1, is used to display info on statusbar..
 	//
-	if ( changecolorok && COLORS>=16 ) {
+	if ( changecolorok ) {
 
 #define COLOR_QT2CURSES(a) ((a)*1000/256)
 #define COLOR_CURSES2QT(a) ((a)*256/1000)
 #define MAP( nb, color )       \
 	init_color( nb, COLOR_QT2CURSES(qRed(color.rgb())), COLOR_QT2CURSES( qGreen(color.rgb())), COLOR_QT2CURSES( qBlue(color.rgb()))) ; \
-	YZASSERT ( ERR != init_pair( nb, nb, COLOR_BLACK ) );    \
+	YZASSERT ( ERR != init_pair( nb, nb%COLORS, COLOR_BLACK ) );    \
 	mColormap[color.rgb()] = nb;
 
 	/*

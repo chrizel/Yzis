@@ -12,3 +12,4 @@
 - nyzis : handle xterm resize
 - configure : should detect/work kde-less configuration
 	--with/--without ncurses/kde flags
+- implement open mode

@@ -1,6 +1,8 @@
 2004-07-19 mikmak
   * scripts
     initial 2html.lua script
+  * libyzis
+    merged poizon's work into trunk (rewrite of the commands/motion engine)
 
 2004-07-12 mikmak
   * libyzis

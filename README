@@ -7,25 +7,16 @@ GUI are available.
 
 Requirements:
 =============
--> Qt 3.x | TinyQ 3
+-> Qt 3.x
 -> Lua 5.x
 -> For kyzis : KDE 3.2.x
 -> For nyzis : NCurses 5
 
 Building Yzis:
 ==============
-To compile Yzis, it's better to have TinyQ installed for performance
-improvment. You can use the --with-tinyq-dir to indicate your TinyQ prefix.
-However, you can use a full Qt (>3.x) to compile the whole Yzis but that will
-slow down "yzis" (ncurses) startup because the system has to load the whole Qt
-library.
-
-In a near future we hope to drop TinyQ and just keep Qt (4.x), since Qt should be splitted into different libraries (thus dropping the need of TinyQ ;)
-
-To be honest I have not tried to compile with TinyQ for ages, so it's probably safer/easier to use Qt 3.1 or later :)
 For Kyzis , KDE 3.2 is required.
 
-You probably need to --with-lua-includes=... so that it finds your Lua 5.x installation.
+You probably need to configure --with-lua-includes=... so that it finds your Lua 5.x installation.
 
 Licenses:
 =========

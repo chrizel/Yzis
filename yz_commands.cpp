@@ -109,6 +109,7 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 
 void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("w",&YZExExecutor::write,true);
+	NEW_EX_COMMAND("write",&YZExExecutor::write,true);
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {

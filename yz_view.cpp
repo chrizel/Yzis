@@ -35,6 +35,13 @@ void YZView::setVisibleLines(int nb) {
 
 /* Used by the buffer to post events */
 void YZView::sendKey( int c, int modifiers) {
+
+	//ignore some keys
+	if ( c == Qt::Key_Shift || c == Qt::Key_Meta || c == Qt::Key_Control || c == Qt::Key_CapsLock ) return;
+
+	//map other keys
+	if ( c == Qt::Key_Insert ) c = Qt::Key_I;
+	
 	QString lin;
 	QString key = QKeySequence( c );
 	/*if ( ! modifiers & Qt::ShiftButton )*/ key = key.lower();
@@ -47,7 +54,9 @@ void YZView::sendKey( int c, int modifiers) {
 		gotoCommandMode( );
 		return;
 	}
+
 	switch(mode) {
+
 		case YZ_VIEW_MODE_INSERT:
 			/* handle adding a char */
 			if ( c == Qt::Key_Return ) {
@@ -57,34 +66,40 @@ void YZView::sendKey( int c, int modifiers) {
 				buffer->addChar(cursor->getX(),cursor->getY(),key);
 				gotoxy(cursor->getX()+1, cursor->getY() );
 			}
-			return;
+			break;
+
 		case YZ_VIEW_MODE_REPLACE:
 			/* handle replacing a char */
 			buffer->chgChar(cursor->getX(),cursor->getY(),key);
 			gotoxy(cursor->getX()+1, cursor->getY() );
-			return;
-		case YZ_VIEW_MODE_COMMAND:
-			/* will be handled after the switch */
 			break;
+
 		case YZ_VIEW_MODE_EX:
 			if ( c == Qt::Key_Return ) {
-				//try to execute that stuff :)
-				if ( session )
-					session->getExPool()->execExCommand( this, gui_manager->getCommandLineText() );
-			} // else nothing :)
-			return; //we don't record anything
+				yzDebug() << "Current command EX : " << gui_manager->getCommandLineText();
+				session->getExPool()->execExCommand( this, gui_manager->getCommandLineText() );
+				gui_manager->setCommandLineText( "" );
+				gui_manager->setFocusMainWindow();
+				gotoCommandMode();
+			} else if ( c == Qt::Key_Escape ) {
+				gui_manager->setCommandLineText( "" );
+				gui_manager->setFocusMainWindow();
+				gotoCommandMode();
+			}
+			break;
+
+		case YZ_VIEW_MODE_COMMAND:
+			previous_chars+=key;
+			yzDebug() << "Previous chars : " << previous_chars << endl;
+			//execute the command
+			if ( session )
+				session->getPool()->execCommand(this, previous_chars);
+			break;
+
 		default:
-			/* ?? */
 			yzDebug() << "Unknown MODE" << endl;
 			purgeInputBuffer();
-			return;
 	};
-	/* ok, here now we're in command */
-	previous_chars+=key;
-	yzDebug() << "Previous chars : " << previous_chars << endl;
-	//execute the command
-	if ( session ) 
-		session->getPool()->execCommand(this, previous_chars);
 }
 
 void YZView::updateCursor(void)
@@ -416,7 +431,6 @@ QString YZView::appendAtEOL ( const QString& ) {
 	return QString::null;
 }
 
-
 QString YZView::gotoCommandMode( ) {
 	mode = YZ_VIEW_MODE_COMMAND;
 	purgeInputBuffer();
@@ -425,8 +439,9 @@ QString YZView::gotoCommandMode( ) {
 }
 
 QString YZView::gotoExMode(const QString&) {
-	mode = YZ_VIEW_MODE_INSERT;
+	mode = YZ_VIEW_MODE_EX;
 	postEvent(YZEvent::mkEventStatus("-- EX --"));
+	gui_manager->setFocusCommandLine();
 	purgeInputBuffer();
 	return QString::null;
 }

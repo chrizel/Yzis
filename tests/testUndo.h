@@ -40,13 +40,20 @@ public:
 
     CPPUNIT_TEST( testUndoBufferCreation );
     CPPUNIT_TEST( testUndoCharOperation );
+    CPPUNIT_TEST( testUndoLineOperation );
+    CPPUNIT_TEST( testUndoInsertLine );
+    CPPUNIT_TEST( testUndoDeleteLine );
 
     CPPUNIT_TEST_SUITE_END();
 
     void testUndoBufferCreation();
     void testUndoCharOperation();
+    void testUndoLineOperation();
+    void testUndoInsertLine();
+    void testUndoDeleteLine();
 
 protected:
+    void performUndoRedo( QStringList & textHistory );
     TYZSession * mSession;
     TYZBuffer *  mBuf;
 };

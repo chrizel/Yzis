@@ -373,4 +373,17 @@ void TestYZBuffer::testFirstNonBlankChar()
     phCheckEquals( mBuf->firstNonBlankChar( 2 ), 3 );
 }
 
+void TestYZBuffer::testGetWholeTextLength()
+{
+    phCheckEquals( mBuf->getWholeTextLength(), 0 );
+
+    mBuf->replaceLine( "1", 0 );
+    phCheckEquals( mBuf->getWholeTextLength(), 2 );
+    phCheckEquals( mBuf->getWholeTextLength(), mBuf->getWholeText().length() );
+
+    mBuf->appendLine( "2" );
+    phCheckEquals( mBuf->getWholeTextLength(), 4 );
+    phCheckEquals( mBuf->getWholeTextLength(), mBuf->getWholeText().length() );
+}
+
 /* ========================================================================= */

@@ -38,13 +38,14 @@ public:
 
     CPPUNIT_TEST_SUITE( TestYZBuffer );
 
+    CPPUNIT_TEST( testAssertion );
     CPPUNIT_TEST( testCreateEmptyBuffer );
     CPPUNIT_TEST( testLineMethods );
     CPPUNIT_TEST( testCharMethods );
     CPPUNIT_TEST( testGetWholeText );
     CPPUNIT_TEST( testLoadSave );
-    CPPUNIT_TEST( testAssertion );
     CPPUNIT_TEST( testFirstNonBlankChar );
+    CPPUNIT_TEST( testGetWholeTextLength );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -55,6 +56,7 @@ public:
     void testGetWholeText();
     void testAssertion();
     void testFirstNonBlankChar();
+    void testGetWholeTextLength();
 
 protected:
     void writeFile( QString fname, QString content );

@@ -136,7 +136,7 @@ public:
 
 	/**
 	 * Get the whole text of the buffer
-	 * @return a QStringList containing the texts
+	 * @return a QString containing the texts
 	 */
 	QString getWholeText() const;
 

@@ -27,10 +27,9 @@
 #include "session.h"
 #include "document.h"
 
-#define NYZ_VIEW_MAX 300
-//#define NYZ_BUFFER_MAX 300
+class NYZFactory : public YZSession
+{
 
-class NYZFactory : public YZSession {
 public:
 	static NYZFactory *self;
 	static NYZView *currentView;
@@ -44,9 +43,9 @@ public:
 
 	void		event_loop();
 
-	virtual void scrollDown(int lines=1);
-	virtual void scrollUp(int lines=1);
-
+	/*
+	 * YZSession interface :
+	 */
 	virtual void quit ( bool savePopup=true ) ;
 	virtual void changeCurrentView ( YZView * );
 	virtual YZView* createView( YZBuffer* );
@@ -55,23 +54,14 @@ public:
 	virtual void deleteView();
 
 private:
-	
-private:
-	WINDOW		*screen;	// whole (ncurses) screen (== stdscr)
-
-	//XXX QMap-me ;)
-	WINDOW		*windows[NYZ_VIEW_MAX];
-	int		windows_nb;
-
 	/**
-	 * Fill the map of keycodes -> Ncurses to Qt
+	 * Fill the map of keycodes ncurses->Qt
 	 */
 	void initialiseKeycodes();
-
-	//XXX static ?
-	QMap<int,Qt::Key> keycodes; // map Ncurses to Qt codes
-
-
+	/**
+	  * mapping ncurses->qt for keycodes
+	  */
+	static QMap<int,Qt::Key> keycodes; // map Ncurses to Qt codes
 
 };
 

@@ -48,6 +48,7 @@ NYZView::NYZView(YZBuffer *b)
 }
 
 NYZView::~NYZView(){
+	if ( window ) unmap();
 }
 
 void NYZView::map( void )
@@ -89,7 +90,8 @@ void NYZView::unmap( void )
 }
 
 
-void NYZView::printVoid( unsigned int relline ) {
+void NYZView::printVoid( unsigned int relline )
+{
 	unsigned int i;
 
 	// clipping
@@ -99,7 +101,8 @@ void NYZView::printVoid( unsigned int relline ) {
 	for (i=1 ; i< w; i++ ) waddch(window, ' ' );
 }
 
-void NYZView::printLine( int line ) {
+void NYZView::printLine( int line )
+{
 
 	unsigned int i,actuallen;
 	int sx,sy; // save x,y
@@ -177,9 +180,6 @@ void NYZView::setCommandLineText( const QString& text )
 	wrefresh(statusbar);
 }
 
-QString NYZView::getCommandLineText() const {
-	return commandline;
-}
 
 void NYZView::invalidateLine ( unsigned int line ) {
 	printLine( line );

@@ -30,13 +30,6 @@
 #include <qmap.h>
 #include <qnamespace.h>
 
-#define KEY_ESCAPE 27
-#ifdef KEY_ENTER
-#undef KEY_ENTER
-#define KEY_ENTER 10
-#endif
-#define KEY_RETURN 13
-
 class NYZSession;
 
 class NYZView : public YZView
@@ -50,7 +43,7 @@ public:
 	NYZView(YZBuffer *b);
 	virtual ~NYZView();
 
-	virtual QString getCommandLineText(void) const;
+	virtual QString getCommandLineText(void) const {return commandline; }
 	virtual void setCommandLineText( const QString& );
 	virtual void setFocusCommandLine() {}
 	virtual void setFocusMainWindow() {}
@@ -59,17 +52,22 @@ public:
 	virtual void refreshScreen();
 	virtual void syncViewInfo();
 	virtual void displayInfo(  const QString& info );
-	QString getCommandLine() const;
-	void setCommandLine( const QString& );
 
+	/**
+	  * Used when this view becomes viewable, that
+	  * is on front of others
+	  */
 	void map( void );
+	/**
+	  * This view is not the front one anymore, hide it
+	  */
 	void unmap( void );
+
+public slots:
 
 protected:
 	WINDOW		*window;	/* ncurses window to write to */
 	unsigned int	h, w;		/** height and width of the window */
-
-public slots:
 
 private:
 	void update_info(void);
@@ -86,10 +84,15 @@ private:
 	  */
 	void printVoid( unsigned int line );
 
+	/* layout */
 	WINDOW		*infobar;	// the white one with filename/size/position...
 	WINDOW		*statusbar;	// the one we show in which mode we are
 	WINDOW          *fileInfo;     // the one with info about current file (modified..)
 
+	/**
+	  * used to implement set/get CommandLine, as we have no 
+	  * special widget for that
+	  */
 	QString commandline;
 
 

@@ -49,16 +49,6 @@ class YZSession {
 		YZSession( const QString& _sessionName="Yzis" );
 		virtual ~YZSession();
 
-		/** 
-		 * Used by the buffer to post events
-		 */
-//		void postEvent ( yz_event );
-
-		/** 
-		 * Send events to the GUI
-		 */
-//		virtual void receiveEvent ( yz_event ) = 0;
-
 		/**
 		 * return the session name
 		 */

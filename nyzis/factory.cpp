@@ -27,6 +27,7 @@
 
 NYZFactory *NYZFactory::self = 0;
 NYZView *NYZFactory::currentView=0;
+QMap<int,Qt::Key> NYZFactory::keycodes; // map Ncurses to Qt codes
 
 
 NYZFactory::NYZFactory(const char *session_name)
@@ -42,8 +43,7 @@ NYZFactory::NYZFactory(const char *session_name)
 	(void) nodelay(stdscr, TRUE);
 	(void) intrflush( stdscr, FALSE );
 
-	screen = stdscr; // just an alias...
-	wattron(screen, A_STANDOUT);	// will be herited by subwin
+	wattron(stdscr, A_STANDOUT);	// will be herited by subwin
 
 	if ( has_colors() ) start_color();
 
@@ -59,6 +59,7 @@ NYZFactory::NYZFactory(const char *session_name)
 NYZFactory::~NYZFactory( )
 {
 	self = 0;
+	currentView = 0;
 }
 
 void NYZFactory::event_loop()
@@ -128,15 +129,6 @@ void NYZFactory::event_loop()
 		currentView->sendKey( c, modifiers );
 	}
 }
-
-void NYZFactory::scrollDown( int /*lines*/ ) {
-
-}
-
-void NYZFactory::scrollUp ( int /*lines*/ ) {
-
-}
-
 
 void NYZFactory::quit( bool /*savePopup*/ ) {
 	// TODO
@@ -242,12 +234,16 @@ void NYZFactory::deleteView()
 
 void NYZFactory::initialiseKeycodes()
 {
-	keycodes[  127 ] = Qt::Key_Backspace;
-	keycodes[ '\t' ] = Qt::Key_Tab;
+	keycodes.clear();
 
-	keycodes[ KEY_ESCAPE ] = Qt::Key_Escape;
-	keycodes[ KEY_ENTER ] = Qt::Key_Return;
-	keycodes[ KEY_RETURN ] = Qt::Key_Return;
+	// ascii stuff
+	keycodes[   9] = Qt::Key_Tab;
+	keycodes[  10] = Qt::Key_Return;   // enter
+	keycodes[  13] = Qt::Key_Return;   // return
+	keycodes[  27] = Qt::Key_Escape;
+	keycodes[ 127] = Qt::Key_Backspace;
+
+
 	//keycodes[ KEY_CODE_YES ] = ;
 	//keycodes[ KEY_MIN ] = ;
 	keycodes[ KEY_BREAK ] = Qt::Key_Escape;

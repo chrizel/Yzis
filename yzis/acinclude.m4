@@ -2794,31 +2794,32 @@ AC_DEFUN(AC_CHECK_COMPILERS,
     ])
   fi
 
-#  if test "$kde_use_warnings" = "yes"; then if test "$GCC" = "yes"; then case
-#  $host in *-*-linux-gnu)	CFLAGS="-W -Wall -Wchar-subscripts -Wshadow
-#  -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -D_XOPEN_SOURCE=500
-#  -D_BSD_SOURCE $CFLAGS" CXXFLAGS="-D_XOPEN_SOURCE=500 -D_BSD_SOURCE
-#  -Wcast-align -Wconversion -Wchar-subscripts $CXXFLAGS"
-#  KDE_CHECK_COMPILER_FLAG(Wmissing-format-attribute, [CXXFLAGS="$CXXFLAGS
-#  -Wformat-security -Wmissing-format-attribute"; CFLAGS="$CFLAGS
-#  -Wformat-security -Wmissing-format-attribute"]) ;; esac CXXFLAGS="-Wall
-#  -pedantic -W -Wpointer-arith -Wmissing-prototypes -Wwrite-strings $CXXFLAGS"
-#  KDE_CHECK_COMPILER_FLAG(Wundef,[CXXFLAGS="-Wundef $CXXFLAGS"])
-#  KDE_CHECK_COMPILER_FLAG(Wno-long-long,[CXXFLAGS="-Wno-long-long $CXXFLAGS"])
-#  KDE_CHECK_COMPILER_FLAG(Wnon-virtual-dtor,[CXXFLAGS="-Wnon-virtual-dtor
-#  $CXXFLAGS"]) fi fi
+  if test "$kde_use_warnings" = "yes"; then
+      if test "$GCC" = "yes"; then
+        case $host in
+          *-*-linux-gnu)	
+            CFLAGS="-ansi -W -Wall -pedantic -Wchar-subscripts -Wshadow -Wpointer-arith -Wmissing-prototypes -Wwrite-strings -D_XOPEN_SOURCE=500 -D_BSD_SOURCE $CFLAGS"
+            CXXFLAGS="-ansi -D_XOPEN_SOURCE=500 -D_BSD_SOURCE -Wcast-align -Wconversion -Wchar-subscripts $CXXFLAGS"
+            KDE_CHECK_COMPILER_FLAG(Wmissing-format-attribute, [CXXFLAGS="$CXXFLAGS -Wformat-security -Wmissing-format-attribute"; CFLAGS="$CFLAGS -Wformat-security -Wmissing-format-attribute"])
+          ;;
+        esac
+        CXXFLAGS="-Wall -pedantic -W -Wpointer-arith -Wmissing-prototypes -Wwrite-strings $CXXFLAGS"
+        KDE_CHECK_COMPILER_FLAG(Wundef,[CXXFLAGS="-Wundef $CXXFLAGS"])
+        KDE_CHECK_COMPILER_FLAG(Wno-long-long,[CXXFLAGS="-Wno-long-long $CXXFLAGS"])
+        KDE_CHECK_COMPILER_FLAG(Wnon-virtual-dtor,[CXXFLAGS="-Wnon-virtual-dtor $CXXFLAGS"])
+     fi
+  fi
 
-#  if test "$GXX" = "yes" && test "$kde_use_strict_options" = "yes"; then
-#    CXXFLAGS="-Wcast-qual -Wshadow -Wcast-align $CXXFLAGS"
-#  fi
+  if test "$GXX" = "yes" && test "$kde_use_strict_options" = "yes"; then
+    CXXFLAGS="-Wcast-qual -Wshadow -Wcast-align $CXXFLAGS"
+  fi
     
-#  if test "$GXX" = "yes"; then
-#  KDE_CHECK_COMPILER_FLAG(fno-exceptions,[CXXFLAGS="$CXXFLAGS
-#  -fno-exceptions"]) KDE_CHECK_COMPILER_FLAG(fno-check-new,
-#  [CXXFLAGS="$CXXFLAGS -fno-check-new"]) KDE_CHECK_COMPILER_FLAG(fno-common,
-#  [CXXFLAGS="$CXXFLAGS -fno-common"]) KDE_CHECK_COMPILER_FLAG(fexceptions,
-#  [USE_EXCEPTIONS="-fexceptions"], USE_EXCEPTIONS=	)
-#  fi
+  if test "$GXX" = "yes"; then
+    KDE_CHECK_COMPILER_FLAG(fno-exceptions,[CXXFLAGS="$CXXFLAGS -fno-exceptions"])
+    KDE_CHECK_COMPILER_FLAG(fno-check-new, [CXXFLAGS="$CXXFLAGS -fno-check-new"])
+    KDE_CHECK_COMPILER_FLAG(fno-common, [CXXFLAGS="$CXXFLAGS -fno-common"])
+    KDE_CHECK_COMPILER_FLAG(fexceptions, [USE_EXCEPTIONS="-fexceptions"], USE_EXCEPTIONS=	)
+  fi
   if test "$CXX" = "KCC"; then
     dnl unfortunately we currently cannot disable exception support in KCC
     dnl because doing so is binary incompatible and Qt by default links with exceptions :-(

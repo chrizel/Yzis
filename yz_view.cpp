@@ -478,13 +478,13 @@ QString YZView::appendAtEOL ( const QString& ) {
 QString YZView::gotoCommandMode( ) {
 	mode = YZ_VIEW_MODE_COMMAND;
 	purgeInputBuffer();
-	session->postEvent(YZEvent::mkEventStatus("Command mode"));
+	session->postEvent(YZEvent::mkEventStatus(0,"Command mode"));
 	return QString::null;
 }
 
 QString YZView::gotoExMode(const QString&) {
 	mode = YZ_VIEW_MODE_EX;
-	session->postEvent(YZEvent::mkEventStatus("-- EX --"));
+	session->postEvent(YZEvent::mkEventStatus(0,"-- EX --"));
 	session->gui_manager->setFocusCommandLine();
 	purgeInputBuffer();
 	return QString::null;
@@ -492,14 +492,14 @@ QString YZView::gotoExMode(const QString&) {
 
 QString YZView::gotoInsertMode(const QString&) {
 	mode = YZ_VIEW_MODE_INSERT;
-	session->postEvent(YZEvent::mkEventStatus("-- INSERT --"));
+	session->postEvent(YZEvent::mkEventStatus(0,"-- INSERT --"));
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoReplaceMode(const QString&) {
 	mode = YZ_VIEW_MODE_REPLACE;
-	session->postEvent(YZEvent::mkEventStatus("-- REPLACE --") );
+	session->postEvent(YZEvent::mkEventStatus(0,"-- REPLACE --") );
 	purgeInputBuffer();
 	return QString::null;
 }

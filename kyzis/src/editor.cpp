@@ -363,8 +363,10 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 			cell.bg = bgColor.isValid() ? bgColor : backgroundColor();
 			//other flags
 			QFont myFont(font());
-			myFont.setItalic(mParent->drawItalic());
-			myFont.setBold(mParent->drawBold());
+			if ( mParent->drawItalic() )
+				myFont.setItalic( true );
+			if ( mParent->drawBold() )
+				myFont.setBold( true );
 			myFont.setOverline(mParent->drawOverline());
 			myFont.setStrikeOut(mParent->drawStrikeOutLine());
 			myFont.setUnderline(mParent->drawUnderline());

@@ -51,7 +51,8 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 	yzDebug() << "viewportResizeEvent" << endl;
 	QSize s = ev->size();
 	int lines = s.height() / fontMetrics().lineSpacing();
-	mParent->setVisibleLines( lines );
+	int columns = s.width() / fontMetrics().maxWidth();
+	mParent->setVisibleArea( columns, lines );
 }
 
 void KYZisEdit::setCursor(int c, int l) {

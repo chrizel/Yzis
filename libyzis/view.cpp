@@ -55,9 +55,11 @@ YZView::~YZView() {
 	mBuffer->rmView(this); //make my buffer forget about me
 }
 
-void YZView::setVisibleLines(int nb) {
+void YZView::setVisibleArea(int c, int l) {
+	yzDebug() << "setVisibleArea : " << c << " " << l << endl;
+	mLinesVis = l;
+	mColumnsVis = c;
 	redrawScreen();
-	mLinesVis = nb;
 }
 
 /* Used by the buffer to post events */
@@ -360,7 +362,7 @@ void YZView::centerView(unsigned int column, unsigned int line) {
 		else newcurrentLeft = 0;
 	}
 
-	if ( newcurrent == mCurrentTop /*&& newcurrentLeft == mCurrentLeft*/ ) return;
+	if ( newcurrent == mCurrentTop && newcurrentLeft == mCurrentLeft ) return;
 	
 	//redraw the screen
 	mCurrentTop = newcurrent;
@@ -401,7 +403,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	mCursor->setX( nextx );
 
 	//make sure this line is visible
-	if ( ! isLineVisible( nexty ) /*|| !isColumnVisible( nextx )*/ ) centerView( nextx, nexty );
+	if ( !isLineVisible( nexty ) || !isColumnVisible( nextx ) ) centerView( nextx, nexty );
 
 	/* do it */
 	updateCursor();

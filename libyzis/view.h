@@ -52,9 +52,9 @@ class YZView {
 		virtual ~YZView();
 
 		/**
-		 * Updates the number of visible lines
+		 * Updates the number of visible @arg c columns and @arg l lines
 		 */
-		void setVisibleLines (int);
+		void setVisibleArea (int c, int l);
 
 		/**
 		 * transfer a key event from GUI to core

@@ -99,5 +99,13 @@
         <source>-- EX --</source>
         <translation>-- EX --</translation>
     </message>
+    <message>
+        <source>Top</source>
+        <translation>Haut</translation>
+    </message>
+    <message>
+        <source>Bot</source>
+        <translation>Bas</translation>
+    </message>
 </context>
 </TS>

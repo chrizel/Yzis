@@ -1,5 +1,12 @@
 <!DOCTYPE TS><TS>
 <context>
+    <name>KTextEditor</name>
+    <message>
+        <source>Yzis Ready</source>
+        <translation>Yzis preparado</translation>
+    </message>
+</context>
+<context>
     <name>KYZisDoc</name>
     <message>
         <source>Yzis is not able to save remote files for now</source>
@@ -59,6 +66,50 @@
         <source>search hit BOTTOM, continuing at TOP</source>
         <translation>la búsqueda alcanzó el FINAL, continuando al PRINCIPIO</translation>
     </message>
+    <message>
+        <source>[ Awaiting Command ]</source>
+        <translation>[ Esperando comando ]</translation>
+    </message>
+    <message>
+        <source>[ Introduction ]</source>
+        <translation>[ Introducción ]</translation>
+    </message>
+    <message>
+        <source>[ Ex ]</source>
+        <translation>[ Ex ]</translation>
+    </message>
+    <message>
+        <source>[ Insert ]</source>
+        <translation>[ Insertar ]</translation>
+    </message>
+    <message>
+        <source>[ Replace ]</source>
+        <translation>[ Reemplazar ]</translation>
+    </message>
+    <message>
+        <source>{ Completion }</source>
+        <translation>{ Completado }</translation>
+    </message>
+    <message>
+        <source>[ Search ]</source>
+        <translation>[ Buscar ]</translation>
+    </message>
+    <message>
+        <source>No match</source>
+        <translation>No hay coincidencias</translation>
+    </message>
+    <message>
+        <source>[ Search backward ]</source>
+        <translation>[ Buscar hacia atrás ]</translation>
+    </message>
+    <message>
+        <source>[ Visual ]</source>
+        <translation>[ Visual ]</translation>
+    </message>
+    <message>
+        <source>[ Visual Line ]</source>
+        <translation>[ Línea visual ]</translation>
+    </message>
 </context>
 <context>
     <name>YZBuffer</name>
@@ -107,51 +158,51 @@
     <name>YZView</name>
     <message>
         <source>[ Insert ]</source>
-		<translation>[ Insertar ]</translation>
+        <translation type="obsolete">[ Insertar ]</translation>
     </message>
     <message>
         <source>[ Replace ]</source>
-        <translation>[ Reemplazar ]</translation>
+        <translation type="obsolete">[ Reemplazar ]</translation>
     </message>
     <message>
         <source>[ Awaiting Command ]</source>
-        <translation>[ Esperando comando ]</translation>
+        <translation type="obsolete">[ Esperando comando ]</translation>
     </message>
     <message>
         <source>[ Ex ]</source>
-        <translation>[ Ex ]</translation>
+        <translation type="obsolete">[ Ex ]</translation>
     </message>
     <message>
         <source>[ Search ]</source>
-        <translation>[ Buscar ]</translation>
+        <translation type="obsolete">[ Buscar ]</translation>
     </message>
     <message>
         <source>[ Open ]</source>
-        <translation>[ Abrir ]</translation>
+        <translation type="obsolete">[ Abrir ]</translation>
     </message>
     <message>
         <source>[ Introduction ]</source>
-        <translation>[ Introducción ]</translation>
+        <translation type="obsolete">[ Introducción ]</translation>
     </message>
     <message>
         <source>{ Completion }</source>
-        <translation>{ Completado }</translation>
+        <translation type="obsolete">{ Completado }</translation>
     </message>
     <message>
         <source>[ Visual ]</source>
-        <translation>[ Visual ]</translation>
+        <translation type="obsolete">[ Visual ]</translation>
     </message>
     <message>
         <source>[ Visual Line ]</source>
-        <translation>[ Línea visual ]</translation>
+        <translation type="obsolete">[ Línea visual ]</translation>
     </message>
     <message>
         <source>Yzis Ready</source>
-        <translation>Yzis preparado</translation>
+        <translation type="obsolete">Yzis preparado</translation>
     </message>
     <message>
         <source>No match</source>
-        <translation>No hay coincidencias</translation>
+        <translation type="obsolete">No hay coincidencias</translation>
     </message>
     <message>
         <source>All</source>
@@ -172,6 +223,14 @@
     <message>
         <source> { Recording }</source>
         <translation>{ Grabando }</translation>
+    </message>
+    <message>
+        <source>File modified</source>
+        <translation>Archivo modificado</translation>
+    </message>
+    <message>
+        <source>This file has been modified, do you want to save it ?</source>
+        <translation>Este archivo ha sido modificado. ¿Desea guardarlo?</translation>
     </message>
 </context>
 </TS>

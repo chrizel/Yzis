@@ -6,7 +6,7 @@
 INCLUDES = $(all_includes)
 
 # these are the headers for your project
-noinst_HEADERS = kyzis.h kyzis_part.h
+noinst_HEADERS = kyzis.h
 
 # let automoc handle all of the meta source files (moc)
 METASOURCES = AUTO
@@ -43,9 +43,9 @@ shellrc_DATA = kyzis_shell.rc
 kde_module_LTLIBRARIES = libkyzispart.la
 
 # the Part's source, library search path, and link libraries
-libkyzispart_la_SOURCES = kyzis_part.cpp
+libkyzispart_la_SOURCES = kyzisdoc.cpp kyzisview.cpp kyzis_factory.cpp kyzisedit.cpp
 libkyzispart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE)
+libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor
 
 # this is where the desktop file will go 
 partdesktopdir   = $(kde_servicesdir)

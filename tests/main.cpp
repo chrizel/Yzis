@@ -44,6 +44,7 @@ int main(int argc, char ** argv)
 	
 
 	YZDebugBackend::instance()->enableDebugArea("TYZView", false );
+	YZDebugBackend::instance()->setDebugOutput( stderr );
 
 	PhilTestRunner runner;
 	runner.addTest( CppUnit::TestFactoryRegistry::getRegistry().makeTest() );

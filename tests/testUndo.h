@@ -44,7 +44,7 @@ public:
     CPPUNIT_TEST( testUndoLineOperation );
     CPPUNIT_TEST( testUndoInsertLine );
     CPPUNIT_TEST( testUndoDeleteLine );
-    //CPPUNIT_TEST( testRedoRemovesUndo );
+    CPPUNIT_TEST( testRedoRemovesUndo );
     CPPUNIT_TEST( testCommandUndo );
 
     CPPUNIT_TEST_SUITE_END();

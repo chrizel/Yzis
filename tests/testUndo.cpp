@@ -274,7 +274,7 @@ void TestUndo::testRedoRemovesUndo()
     mView->sendText("u");
     phCheckEquals( ub->mayUndo(), false );
     phCheckEquals( ub->mayRedo(), true );
-    textHistory.clear();
+    textHistory.pop_back();
 
     yzDebug("TestUndo") << "step 3" << endl;
     mView->sendText("iaaa\nbbb<esc>");

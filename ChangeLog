@@ -1,6 +1,8 @@
 2004-12-01 panard
   * libyzis
   	visual selection synchronisation with X11 Clipboard
+  * nyzis
+  	support utf8 display
 
 2004-11-28 mikmak
   * libyzis

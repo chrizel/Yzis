@@ -204,7 +204,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 					mAttributes = mAttributesMap[ rawcolor ];
 				} else {
 					mAttributes = attribWhite;
-					yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
+					/*yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
 						rawcolor << " (" <<
 						qRed( rawcolor ) << "," <<
 						qGreen( rawcolor ) << "," <<
@@ -213,7 +213,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 						c.red() << "," <<
 						c.green() << "," <<
 						c.blue() << ")" <<
-						endl;
+						endl;*/
 				}
 
 				if ( drawSelected() ) mAttributes |= A_REVERSE;
@@ -223,11 +223,24 @@ void NYZView::drawContents( int clipy, int cliph ) {
 					x = width - currentX - 1;
 				else
 					x = currentX;
-				mvwaddch( editor, currentY, x, mAttributes | drawChar().unicode() );
+
+				QCString my_char = QString( drawChar() ).utf8();
+				char* from_char = new char[ my_char.length() + 1 ]; // XXX always 1 + 1 ?
+				strcpy( from_char, (const char *)my_char );
+				size_t needed = mbstowcs( NULL, from_char, strlen( from_char ) ); // XXX always 1 ?
+				wchar_t* wide_char = (wchar_t*)malloc( needed * sizeof(wchar_t) ); // if size doesn't change, why malloc it each time ?
+				mbstowcs( wide_char, from_char, strlen( from_char ) );
+
+				wattron( editor, mAttributes );
+				mvwaddwstr( editor, currentY, x, wide_char );
+				free( wide_char );
+				delete[] from_char;
+				
 				if ( drawLength() > 1 ) {
 					for (unsigned int i = 1; i < drawLength(); i++ ) 
-						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), mAttributes | fillChar() );
+						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), fillChar() );
 				}
+				wattroff( editor, mAttributes );
 				currentX += drawLength( );
 			}
 			for( ; currentX < getColumnsVisible() + marginLeft; currentX++) 

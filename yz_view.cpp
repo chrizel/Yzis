@@ -1,5 +1,5 @@
 /**
- * $Id: yz_view.cpp,v 1.37 2003/04/25 20:00:54 mikmak Exp $
+ * $Id$
  */
 
 #include <cstdlib>
@@ -31,11 +31,10 @@ void YZView::setVisibleLines(int nb) {
 }
 
 /* Used by the buffer to post events */
-void YZView::sendChar( QChar c) {
+void YZView::sendChar( const QString& c ) {
 	QString lin;
 
-	if ('\033'==c) {
-		//why do we check that ?
+	if ('\033'==c[ 0 ].unicode()) {
 		if (cursor->getX() > current_maxx) {
 			cursor->setX(current_maxx);
 			updateCursor();
@@ -48,7 +47,7 @@ void YZView::sendChar( QChar c) {
 	switch(mode) {
 		case YZ_VIEW_MODE_INSERT:
 			/* handle adding a char */
-			if ( c.unicode() == 13 ) {// <ENTER> 
+			if ( c[ 0 ].unicode() == '\n') {// <ENTER> 
 				buffer->addNewLine(cursor->getX(),cursor->getY());
 				cursor->incY();
 				cursor->setX( 0 );

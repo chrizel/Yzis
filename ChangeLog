@@ -1,6 +1,11 @@
+2004-09-26 mikmak
+  * libyzis
+  	make :map command working (normal mode key mapping)
+  	new :imap command (insert mode key mapping)
+  	
 2004-09-24 mikmak
   * libyzis
-  	- new listchars option
+  	new listchars option
   	
 2004-09-17 philippe
   * libyzis

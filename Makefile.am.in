@@ -1,4 +1,4 @@
-COMPILE_FIRST = libyzis
+COMPILE_FIRST = libyzis translations
 
 localedir = $(DESTDIR)$(prefix)/share/yzis/locale
 

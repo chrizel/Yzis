@@ -83,7 +83,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 	stickyCol = 0;
 
-	mMode = YZ_VIEW_MODE_COMMAND;
+	mPrevMode = mMode = YZ_VIEW_MODE_COMMAND;
 	mCurrentLeft = 0;
 	mCurrentTop = 0;
 	dCurrentLeft = 0;

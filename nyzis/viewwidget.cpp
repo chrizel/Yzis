@@ -312,13 +312,15 @@ void NYZView::syncViewInfo( void )
 	wmove( infobar,0,0 );
 	QString m = mode();
 	wattron( infobar, COLOR_PAIR(2) );
-	wprintw( infobar, "%s ", (const char*)
+	wprintw( infobar, "%s", (const char*)
 #if QT_VERSION < 0x040000
 			m.utf8()
 #else
 			m.toUtf8().data()
 #endif
 	);
+	wattroff( infobar, COLOR_PAIR(2) );
+	waddch( infobar, ' ' );
 
 	// update infobar
 	myfmt=( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if

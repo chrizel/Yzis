@@ -46,7 +46,7 @@
 KYZisDoc *KYZisFactory::currentDoc=0;
 Kyzis *KYZisFactory::mMainApp = 0;
 QPtrList<class KYZisDoc> KYZisFactory::s_documents;
-QPtrList<class KYZisView> KYZisFactory::s_views;
+//QPtrList<class KYZisView> KYZisFactory::s_views;
 
 
 class KYZisPublicFactory : public KParts::Factory {
@@ -70,6 +70,12 @@ KYZisFactory::KYZisFactory() :
 
 KYZisFactory::~KYZisFactory() {
 	kdDebug() << "Factory gets destroyed !" << endl;
+	while ( KYZisDoc *doc=s_documents.first() ) {
+		kdDebug() << "Deleting " << doc->fileName() << endl;
+	    s_self=this;
+	    delete doc;
+	    s_self=0;
+	}
 }
 
 static KStaticDeleter<KYZisFactory> sdFactory;
@@ -112,17 +118,23 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	return doc;
 }
 
-/*KInstance* KYZisFactory::instance() {
-  if( !s_instance )
-    s_instance = new KInstance( aboutData() );
-  return s_instance;
-}*/
+void KYZisFactory::registerDoc( KYZisDoc *doc ) {
+	kdDebug() << "Register " << doc->fileName() << endl;
+	if ( !s_documents.contains( doc ) )
+		s_documents.append( doc );
+}
+
+void KYZisFactory::unregisterDoc( KYZisDoc *doc ) {
+	kdDebug() << "Unregister " << doc->fileName() << endl;
+	if ( s_documents.contains( doc ) )
+		s_documents.removeRef( doc );
+}
 
 const KAboutData *KYZisFactory::aboutData() {
 	KAboutData *data = new KAboutData ("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR,
 					I18N_NOOP( "Kyzis - KDE Frontend for Yzis" ),
 					KAboutData::License_GPL_V2,
-					I18N_NOOP( "(c) 2003,2004" ), 0, "http://www.yzis.org");
+					I18N_NOOP( "(c) 2003-2005" ), 0, "http://www.yzis.org");
 	data->addAuthor ("Mickael Marchand", I18N_NOOP("Initial Author"), "marchand@kde.org");
 	data->addAuthor ("Thomas Capricelli", I18N_NOOP("Initial Author"), "orzel@freehackers.org");
 	data->addAuthor ("Philippe Fremy", I18N_NOOP("Initial Author"), "phil@freehackers.org");
@@ -162,8 +174,7 @@ void KYZisFactory::applyConfig() {
 	}
 }
 
-void KYZisFactory::readConfig( )
-{
+void KYZisFactory::readConfig( ) {
 	Settings::self()->readConfig();
 	applyConfig();
 }

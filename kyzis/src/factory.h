@@ -26,6 +26,7 @@
 #include <kinstance.h>
 #include "session.h"
 #include "kyzis.h"
+#include "document.h"
 
 class KYZisFactory : public KParts::Factory, public YZSession
 {
@@ -54,20 +55,19 @@ public:
 	void splitHorizontally(YZView *view);
 	bool promptYesNo(const QString& title, const QString& message);
 	int promptYesNoCancel(const QString& title, const QString& message);
+	void registerDoc( KYZisDoc *doc );
+	void unregisterDoc( KYZisDoc *doc );
 
-	public slots :
-		void writeConfig();
-		void readConfig();
-		void applyConfig();
-
-protected:
+public slots :
+	void writeConfig();
+	void readConfig();
+	void applyConfig();
 
 private:
 	//doh , QPtrList are evil , drop them ! XXX
     static QPtrList<class KYZisDoc> s_documents;
     static QPtrList<class KYZisView> s_views;
 
-//    static KInstance *s_instance;
     KAboutData m_aboutData;
 	KInstance m_instance;
 

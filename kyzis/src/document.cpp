@@ -42,6 +42,7 @@ KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *paren
 	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::s_self) {
 
 		setInstance(KYZisFactory::self()->instance());
+		KYZisFactory::self()->registerDoc( this );
 		m_parent = parentWidget;
 		mkId = kId;
 
@@ -49,6 +50,7 @@ KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *paren
 }
 
 KYZisDoc::~KYZisDoc () {
+	KYZisFactory::self()->unregisterDoc( this );
 }
 
 

@@ -50,8 +50,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	setFocusPolicy( StrongFocus );
 	QWidget::setCursor( IbeamCursor );
 	rootxpm = new KRootPixmap( this );
-	//testing until we have a config option XXX
-	setTransparent( true );
+	setTransparent( false );
 
 	initKeys();
 }
@@ -61,7 +60,6 @@ KYZisEdit::~KYZisEdit() {
 }
 
 void KYZisEdit::setTransparent ( bool t, double opacity, const QColor& color ) {
-	yzDebug() << "opactity = " << opacity << endl;
 	if ( opacity == 1 )	t = false;	// opactity is max, let use scroll optimisation 
 	mTransparent = t;
 	if ( t ) {
@@ -203,12 +201,15 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 						e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
 		}
 	} else if ( e->button() == Qt::MidButton ) {
-		QString text = QApplication::clipboard()->text();
+		QString text = QApplication::clipboard()->text( QClipboard::Selection );
+		if ( text.isNull() )
+			text = QApplication::clipboard()->text( QClipboard::Clipboard );
 		if ( ! text.isNull() ) {
-			if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_INSERT )
-				mParent->myBuffer()->action()->insertChar( mParent, mParent->getCursor(), text );
-			else if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_REPLACE )
-				mParent->myBuffer()->action()->replaceChar( mParent, mParent->getCursor(), text );
+			if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_INSERT || mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_REPLACE ) {
+				QChar reg = '\"';
+				YZSession::mRegisters.setRegister( reg, QStringList::split( "\n", text ) );
+				mParent->paste( reg, true );
+			}
 		}
 	}
 }

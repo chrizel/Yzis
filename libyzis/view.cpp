@@ -679,14 +679,41 @@ void YZView::gotody( unsigned int nexty ) {
 	} else if ( nexty == dCurrentTop ) {
 		gotoy( mCurrentTop );
 	} else {
+		/** gotody when cursor is > nexty seems buggy, use gotoy way, I'll try to find a better solution */
+		bool first = true;
 		while ( workCursor->screenY() > nexty ) {
+			if ( first && wrap && rCurLineLength > mColumnsVis ) { // move to begin of line
+				initDraw( 0, workCursor->bufferY(), 0, workCursor->screenY() - workCursor->lineHeight + 1, drawMode );
+				workCursor->lineHeight = workCursor->sLineIncrement = workCursor->bLineIncrement = 1;
+				first = false;
+			}
 			drawPrevLine( );
+			if ( wrap && rCurLineLength > mColumnsVis ) {
+				/* goto begin of line */
+				unsigned int wrapLineMinHeight = ( unsigned int ) ceil( rMinCurLineLength / mColumnsVis ) + 1;
+				unsigned int wrapLineMaxHeight = ( unsigned int ) ceil( rCurLineLength / mColumnsVis ) + 1;
+				if ( wrapLineMinHeight == wrapLineMaxHeight ) {
+					workCursor->setScreenY( workCursor->screenY() + 1 - wrapLineMinHeight );
+				} else {
+					unsigned int cury = workCursor->bufferY();
+					unsigned int prevRX = workCursor->screenY();
+					initDraw( 0, cury, 0, 0, drawMode );
+					while ( drawNextCol( ) ) ;
+					while ( workCursor->bufferY() == cury ) {
+						wrapLineMinHeight = workCursor->lineHeight;
+						drawNextLine( );
+						if ( workCursor->bufferY() == cury ) while ( drawNextCol( ) ) ;
+					}
+					initDraw ( 0, cury, 0, prevRX - wrapLineMinHeight + 1, drawMode );
+					workCursor->lineHeight = workCursor->sLineIncrement = workCursor->bLineIncrement = 1;
+				}
+			}
 		}
 		while ( workCursor->screenY() < nexty && workCursor->bufferY() < mBuffer->lineCount() - 1 ) {
 			if ( wrap && ! workCursor->wrapNextLine && rCurLineLength > mColumnsVis ) // make line wrapping
 				while( drawNextCol( ) ) ;
 			drawNextLine( );
-			if ( wrap && workCursor->screenY() < nexty && rCurLineLength > mColumnsVis )
+			if ( wrap && workCursor->screenY() < nexty && rCurLineLength > mColumnsVis ) // move to end of draw line
 				while ( drawNextCol( ) ) ;
 		}
 	}
@@ -706,7 +733,13 @@ void YZView::gotoy( unsigned int nexty ) {
 		drawMode = false;
 		workCursor->lineHeight = workCursor->sLineIncrement = workCursor->bLineIncrement = 1;
 	} else {
+		bool first = true;
 		while ( workCursor->bufferY() > nexty ) {
+			if ( first && wrap && rCurLineLength > mColumnsVis ) { // move to begin of line
+				initDraw( 0, workCursor->bufferY(), 0, workCursor->screenY() - workCursor->lineHeight + 1, drawMode );
+				workCursor->lineHeight = workCursor->sLineIncrement = workCursor->bLineIncrement = 1;
+				first = false;
+			}
 			drawPrevLine( );
 			if ( wrap && rCurLineLength > mColumnsVis ) {
 				/* goto begin of line */
@@ -1492,6 +1525,9 @@ bool YZView::drawNextLine( ) {
 		workCursor->setScreenX( 0 );
 		workCursor->spaceFill = ( workCursor->spaceFill + areaModTab ) % tablength;
 		++workCursor->lineHeight;
+		if ( workCursor->sLineIncrement == 0 ) {
+			workCursor->sLineIncrement = 1;
+		}
 	}
 	workCursor->setScreenY( workCursor->screenY() + workCursor->sLineIncrement );
 	workCursor->sLineIncrement = 1;
@@ -1843,13 +1879,30 @@ void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
 
 void YZView::gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor ) {
 	if ( stickyCol == STICKY_COL_ENDLINE ) gotoxy( viewCursor, mBuffer->textline( Y ).length(), Y, applyCursor );
-	else gotodxy( viewCursor, stickyCol, Y, applyCursor );
+	else {
+		unsigned int col = stickyCol % mColumnsVis;
+		unsigned int deltaY = stickyCol / mColumnsVis;
+		if ( deltaY == 0 ) {
+			gotodxy( viewCursor, col, Y, applyCursor );
+		} else {
+			unsigned int lineLength = mBuffer->textline( Y ).length();
+			gotoxy( viewCursor, 0, Y, false );
+			unsigned int startDY = viewCursor->screenY();
+			gotoxy( viewCursor, lineLength, Y, false );
+			unsigned int endDY = viewCursor->screenY();
+			if ( startDY + deltaY > endDY ) {
+				gotoxy( viewCursor, lineLength, Y, applyCursor );
+			} else {
+				gotodxdy( viewCursor, col, startDY + deltaY, applyCursor );
+			}
+		}
+	}
 }
 void YZView::updateStickyCol( ) {
 	updateStickyCol( mainCursor );
 }
 void YZView::updateStickyCol( YZViewCursor* viewCursor ) {
-	stickyCol = viewCursor->screenX();
+	stickyCol = ( viewCursor->lineHeight - 1 ) * mColumnsVis + viewCursor->screenX();
 }
 
 void YZView::commitNextUndo() {

@@ -114,7 +114,7 @@ QString YZExExecutor::gotoOpenMode( YZView *view, const QString &) {
 
 QString YZExExecutor::gotoLine( YZView *view, const QString& inputs ) {
 	bool valid;
-	unsigned int line = inputs.toUInt( &valid );
+	int line = inputs.toUInt( &valid );
 	if ( valid )
 		view->gotoLine( QMAX( line - 1, 0 ) );
 	return QString::null;

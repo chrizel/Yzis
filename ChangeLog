@@ -1,3 +1,9 @@
+2004-08-13 panard
+  * libyzis, kyzis
+    use X11 clipboard
+  * libyzis
+    sticky column on wrapped lines
+
 2004-08-12 adymo (patch)
   * kyzis
     KTextEditor ConfigInterface

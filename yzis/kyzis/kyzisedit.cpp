@@ -26,8 +26,12 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 // PUBLIC API
 void KYZisEdit::setCursor(int c, int l) {
 	//strange we should not need a -1 //FIXME
+	//undraw previous cursor
+	updateContents(cursorx*fontMetrics().maxWidth(),cursory*fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing()*2);
 	cursorx = c-1;
 	cursory = l-1;
+	//draw new cursor
+	updateContents(cursorx*fontMetrics().maxWidth(),cursory*fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing()*2);
 }
 
 void KYZisEdit::setTextLine(int l, const QString &str){

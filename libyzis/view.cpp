@@ -920,7 +920,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
 		//ok we have a motion , so delete till the end of the motion :)
 		YZCursor *cursor = new YZCursor(this);
-		mSession->getMotionPool()->applyMotion(args.motion,this, cursor);
+		bool goBack = mSession->getMotionPool()->applyMotion(args.motion, this, cursor);
 		//delete to the cursor position now :)
 
 		unsigned int edY = 0;
@@ -931,26 +931,34 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		/* 1. delete the part of the current line */
 		QString b = mBuffer->textline( mY );
 		if ( wrap && ! lineDeleted ) {
-			gotoxy( b.length(), mY );
+			gotoxy( goBack ? 0 : b.length(), mY );
 			edY = dCursor->getY();
 		}
 		gotoxy( mX - 1, mY );
-		buff << b.mid( mX, cursor->getX() - mX );
-		QString b2 = b.left( mX ) + b.mid( cursor->getX() );
+		buff << b.mid( goBack ? cursor->getX() : mX, abs( cursor->getX() - mX ) );
+		QString b2 = goBack ? b.left( cursor->getX() ) + b.mid ( mX ) : b.left( mX ) + b.mid( cursor->getX() );
 		mBuffer->replaceLine( b2 , mY );
 
+
 		/* 2. delete whole lines */
-		unsigned int curY = mY + 1;
-		while ( cursor->getY() > curY ) {
+		unsigned int curY = goBack ? mY - 1 : mY + 1;
+		//forward
+		while ( !goBack && cursor->getY() > curY ) {
 			mBuffer->deleteLine( curY );
 			cursor->setY( cursor->getY() - 1 );
 		}
+		//backward
+		while ( goBack && cursor->getY() < curY ) {
+			mBuffer->deleteLine( curY );
+			cursor->setY( cursor->getY() + 1 );
+		}
+
 
 		/* 3. delete the part of the last line */
 		if ( cursor->getY() == curY ) {
 			b = mBuffer->textline( curY );
-			buff << b.left( cursor->getX() );
-			mBuffer->replaceLine( b.mid( cursor->getX() ), curY );
+			buff << ( goBack ? b.mid( cursor->getX() ) : b.left( cursor->getX() ) );
+			mBuffer->replaceLine( goBack ? b.left( cursor->getX() ) : b.mid( cursor->getX() ), curY );
 		}
 
 		/* ok, all is deleted, now redraw screen */
@@ -958,7 +966,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		} else {
 			if ( wrap ) {
-				gotoxy( b.length(), mY );
+				gotoxy( goBack ? 0 : b.length(), mY );
 				if ( dCursor->getY() != edY )
 					paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 				else

@@ -38,12 +38,15 @@ struct motion_t {
 	enum type_t type; //type of motion
 	int x; // relative x movement
 	int y; // relative y movement
+	bool backward; //we need to calculate backwards (reverse)
 
 	motion_t() {
 		rex=""; type=REGEXP; x=0; y=0;
+		backward=false;
 	}
-	motion_t( QString _rex, enum type_t _type, int _x, int _y) {
+	motion_t( QString _rex, enum type_t _type, int _x, int _y, bool _backward) {
 		rex=_rex; type=_type; x=_x; y=_y;
+		backward=_backward;
 	}
 };
 typedef struct motion_t YZMotion;
@@ -85,8 +88,9 @@ class YZMotionPool {
 		 * Calculates coordinates of the cursor after applying the given motion
 		 * @param motion the motion to apply
 		 * @param view the view on which to operate
+		 * @return whether or not the motion goes backward in the text
 		 */
-		void applyMotion( const QString& inputsMotion, YZView *view, YZCursor *cursor );
+		bool applyMotion( const QString& inputsMotion, YZView *view, YZCursor *cursor );
 
 		/**
 		 * Check whether the @param inputs match a known motion

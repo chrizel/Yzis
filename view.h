@@ -244,6 +244,11 @@ class YZView {
 		QString gotoVisualMode( const QString& inputsBuff = QString::null, YZCommandArgs args  = YZCommandArgs());
 
 		/**
+		 * Leave visual mode
+		 */
+		void leaveVisualMode( );
+
+		/**
 		 * Go back to either open mode or command mode, depending on how the
 		 * previous mode is set.
 		 */
@@ -741,6 +746,7 @@ class YZView {
 		//Visual Mode stuff
 		YZCursor *mVisualCursor;
 		YZCursor *dVisualCursor;
+		bool visualEntireLines;	// v or V
 };
 
 #endif /*  YZ_VIEW_H */

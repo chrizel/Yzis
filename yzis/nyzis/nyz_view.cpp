@@ -2,7 +2,17 @@
  * nyz_view.cpp
  */
 
-#include "nyzis.h"
+#include "nyz_view.h"
+#include "nyz_session.h"
+
+
+
+NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_vis)
+	: YZView(b,lines_vis)
+{
+	session= _session;
+	window = _window;
+}
 
 
 void NYZView::event_loop()
@@ -53,12 +63,7 @@ void NYZView::handle_event(yz_event *e)
 //			debug("YZ_EV_SETCURSOR: received");
 			break;
 		case YZ_EV_SETSTATUS:
-			{
-				int y,x;
-				getyx(stdscr, y, x);
-				mvaddstr(LINES-1,0, e->u.setstatus.text);
-				move(y,x);
-			}
+			session->update_status( e->u.setstatus.text );
 			break;
 		default:
 			warning("Unhandled event from yzis core : %i", e->id);

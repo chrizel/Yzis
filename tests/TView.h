@@ -93,6 +93,17 @@ public:
 		yzDebug() << "TYZView::modeChanged" << endl;
 	}
 
+	virtual void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
+		yzDebug() << "TYZView::paintEvent" << endl;
+	}
+
+	virtual void scrollUp( int ) {
+		yzDebug() << "TYZView::scrollUp" << endl;
+	}
+	virtual void scrollDown( int ) {
+		yzDebug() << "TYZView::scrollDown" << endl;
+	}
+
 protected:
 	class Mapping {
 	public:

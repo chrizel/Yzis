@@ -50,7 +50,7 @@
 #define NEW_PLUG_COMMAND( x,y,z,a,b,c ) { YZCommand cmd; cmd.immutable=z; cmd.obj=PLUG; cmd.plugFunc=y; cmd.hasCounter=a; cmd.hasMotion=b; cmd.hasRegister=c; globalCommands[ x ] = cmd; }
 
 //to be used only for the Ex Pool
-#define NEW_EX_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=EX; cmd.exFunc=y; globalExCommands[ x ] = cmd; }
+#define NEW_EX_COMMAND( x,y,z,a ) { YZCommand cmd; cmd.priority=a; cmd.immutable=z; cmd.obj=EX; cmd.exFunc=y; globalExCommands[ x ] = cmd; }
 
 class YZSession;
 class YZExExecutor;
@@ -101,6 +101,9 @@ class YZCommandPool {
 		bool hasCounter;
 		bool hasMotion;
 		bool hasRegister;
+		//priorities are used to determine which functions must be used by default (for eg, if we :s -> execute :substitute instead of :set)
+		//internal EX commands should use values between 1-100, plugins any values >100 (a plugin should not override an internal command IMHO)
+		int priority;
 		
 		//with function pointers we are limited by class and by prototypes so ...
 		QString ( YZCommandPool::*poolFunc ) (const QString& inputsBuff, YZCommandArgs args);

@@ -89,7 +89,7 @@ QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
 
 QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 	yzDebug() << "View counts: "<< view->myBuffer()->views().count() << " Buffer Count : " << view->mySession()->countBuffers() << endl;
-	if ( inputs == "q" || inputs == "q!" ) {
+	if ( inputs == "q" || inputs == "q!" || inputs.startsWith("qu") ) {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( view->myBuffer()->views().count() > 1 )
 			view->mySession()->deleteView();

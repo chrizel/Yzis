@@ -283,7 +283,9 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 void YZAction::mergeNextLine( YZView* pView, unsigned int y ) {
 	CONFIGURE_VIEWS;
 	QString line = mBuffer->textline( y );
-	mBuffer->replaceLine( line + mBuffer->textline( y + 1 ), y );
+	QString line2 = mBuffer->textline( y + 1 );
+	line2.replace(QRegExp("^\\s*"),"");
+	mBuffer->replaceLine( line + line2, y );
 	mBuffer->deleteLine( y + 1 );
 	pView->moveXY( line.length(), y );
 	COMMIT_VIEWS_CHANGES;

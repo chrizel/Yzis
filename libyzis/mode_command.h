@@ -244,6 +244,8 @@ class YZModeCommand : public YZMode {
 		void deleteChar(const YZCommandArgs &args);
 		void redisplay(const YZCommandArgs &args);
 		void changeCase(const YZCommandArgs &args);
+		void lineToUpperCase(const YZCommandArgs &args);
+		void lineToLowerCase(const YZCommandArgs &args);
 		void replace(const YZCommandArgs &args);
 		void abort(const YZCommandArgs &args);
 		void delkey(const YZCommandArgs &args);

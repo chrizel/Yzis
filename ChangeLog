@@ -1,3 +1,7 @@
+2004-11-01 mikmak
+  * libyzis
+  	new :highlight command !
+  	
 2004-10-31 mikmak
   * libyzis
     support new attributes for characters : bold, underline, overline, strikeout, italic, underline

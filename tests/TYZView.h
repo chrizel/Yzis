@@ -65,6 +65,22 @@ public:
 		return QString::null;
 	}
 
+	virtual void invalidateLine( unsigned int ) {
+		yzDebug() << "TYZView::invalidateLine" << endl;
+	}
+
+	virtual void setStatusBar( const QString& ) {
+		yzDebug() << "TYZView::setStatusBar" << endl;
+	}
+
+	virtual void updateCursor( unsigned int, unsigned int, unsigned int, const QString& ) {
+		yzDebug() << "TYZView::updateCursor" << endl;
+	}
+
+	virtual void refreshScreen( ) {
+		yzDebug() << "TYZView::refreshScreen" << endl;
+	}
+
 protected:
 	class Mapping {
 	public:

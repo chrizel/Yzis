@@ -57,9 +57,6 @@ public:
         // notification
         yzDebug() << "TYZSession::changeCurrentView" << endl;
     }
-    virtual void receiveEvent ( yz_event ) {
-        // yzDebug() << "TYZSession::receiveEvent" << endl;
-    }
 };
 
 #endif // TYZ_SESSION_H

@@ -21,6 +21,7 @@
 #include "kyzis.h"
 
 #include <kkeydialog.h>
+#include <kshortcut.h>
 #include <kconfig.h>
 #include <kurl.h>
 
@@ -93,7 +94,7 @@ void Kyzis::load(const KURL& url) {
 }
 
 void Kyzis::setupActions() {
-	KStdAction::openNew(this, SLOT(fileNew()), actionCollection());
+	KStdAction::openNew(this, SLOT(fileNew()), actionCollection())->setShortcut(KShortcut::null());
 	KStdAction::open(this, SLOT(fileOpen()), actionCollection());
 
 	KStdAction::quit(kapp, SLOT(quit()), actionCollection());

@@ -212,14 +212,12 @@ void YZView::sendMultipleKey(const QString& keys) {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-//	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
+	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );
 		return;
 	}
-	//TODO swapfile
-	//mBuffer->getSwapFile()->addToSwap( c, modifiers );
 
 	QString key=_key;
 	QString modifiers=_modifiers;
@@ -270,8 +268,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			} else if ( key == "<ENTER>" ) {
 				if ( cindent ) {
 					indent();
-				}
-				else {
+				} else {
 					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 				}
 				updateStickyCol( mainCursor );
@@ -311,9 +308,23 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				if ( key == "<TAB>" ) {
 					key="\t";
 				}
+				if ( modifiers == "<CTRL>" ) { //special handling, here we can run commands while in INSERT mode
+					mPreviousChars += modifiers + key;
+					cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
+					switch(state) {
+						case CMD_ERROR:
+						case CMD_OK:
+							purgeInputBuffer();
+							break;
+						default:
+						break;
+					}
+					return;
+				}
 				mBuffer->action()->insertChar( this, mainCursor->buffer(), key );
 				if ( cindent && key == "}" )
 					reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
+				purgeInputBuffer(); //be safe in case we mistyped a CTRL command just before
 				return;
 			}
 			break;

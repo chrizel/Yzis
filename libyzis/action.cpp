@@ -57,6 +57,19 @@ void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& te
 		it->applyInsertChar( mPos, text.length(), pView->myId == it->myId );
 }
 
+void YZAction::replaceText( YZView* pView, const YZCursor& pos, unsigned int replacedLength, const QString& text ) {
+	YZCursor mPos( pos );
+
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+		it->initReplaceChar( mPos, text.length(), pView->myId == it->myId );
+		
+	mBuffer->delChar( mPos.getX(), mPos.getY(), replacedLength );
+	mBuffer->insertChar( mPos.getX(), mPos.getY(), text);
+
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+		it->applyReplaceChar( mPos, text.length(), pView->myId == it->myId );
+}
+
 void YZAction::replaceChar( YZView* pView, const YZCursor& pos, const QString& text ) {
 	YZCursor mPos( pos );
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )

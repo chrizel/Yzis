@@ -1587,7 +1587,7 @@ void YZView::gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool apply
 QString YZView::getCharBelow( int delta ) {
 	YZViewCursor vc = viewCursor();
 	unsigned int Y = vc.bufferY();
-	if ( delta < 0 && Y > (unsigned int)(-delta) || delta >= 0 && ( Y + (unsigned int)delta ) < mBuffer->lineCount() )
+	if ( delta < 0 && Y >= (unsigned int)(-delta) || delta >= 0 && ( Y + (unsigned int)delta ) < mBuffer->lineCount() )
 		Y += delta;
 	else
 		return QString::null;
@@ -1601,7 +1601,9 @@ QString YZView::getCharBelow( int delta ) {
 		unsigned int x = vc.bufferX();
 		if ( vc.screenX() > dx && x > 0 ) // tab
 			--x;
-		ret = mBuffer->textline( Y )[ x ];
+		QString l = mBuffer->textline( Y );
+		if ( x < l.length() )
+			ret = mBuffer->textline( Y )[ x ];
 	}
 
 	// restore stickyCol

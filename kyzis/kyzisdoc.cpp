@@ -19,9 +19,6 @@ KYZisDoc::KYZisDoc (QWidget *parentWidget, const char * /*widgetName*/, QObject 
 
 KYZisDoc::~KYZisDoc () {
 	KYZisFactory::deregisterDocument( this );
-/*	_views.setAutoDelete( true );
-	_views.clear();
-	_views.setAutoDelete( false );*/
 }
 
 KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char * /*name*/) {

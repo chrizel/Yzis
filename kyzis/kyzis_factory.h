@@ -32,6 +32,8 @@ public:
 		void setFocusCommandLine();
 		void setFocusMainWindow();
 		void quit(bool save=true);
+		void setCurrentView( YZView* );
+		void setCurrentBuffer( YZBuffer* );
 	
 protected:
 		void customEvent( QCustomEvent * );
@@ -42,6 +44,7 @@ private:
 
     static unsigned long s_refcnt;
 		static KYZisFactory *s_self;
+		//doh , QPtrList are evil , drop them ! XXX
     static QPtrList<class KYZisDoc> s_documents;
     static QPtrList<class KYZisView> s_views;
 		

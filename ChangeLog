@@ -1,3 +1,11 @@
+2003-10-30 mikmak
+  * kyzis
+    moved pics to a subdir
+  * libyzis
+    prepare multibuffer support / added :bnext
+  * cyzis
+    dropped until someone really works on it (and that won't be me ;)
+
 2003-10-01 mikmak
   * libyzis/kyzis
     some cleanup 

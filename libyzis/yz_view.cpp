@@ -3,6 +3,7 @@
  */
 
 #include <cstdlib>
+#include <ctype.h>
 #include "yz_view.h"
 #include "yz_debug.h"
 #include <qkeysequence.h>
@@ -45,9 +46,7 @@ void YZView::sendKey( int c, int modifiers) {
 	QString lin;
 	QString key = QChar( tolower( c ) );// = QKeySequence( c );
 	//default is lower case unless some modifiers
-	////key = key.lower();
 	if ( modifiers & YZIS::Shift ) {
-		////c = toupper( c );
 		key = key.upper();
 	}
 
@@ -200,7 +199,6 @@ void YZView::centerView(unsigned int line) {
 	if ( newcurrent > ( int( buffer->text.count() ) - int( lines_vis ) ) )
 		newcurrent = buffer->text.count() - lines_vis;
 	if ( newcurrent < 0 ) newcurrent = 0;
-//	printf("Center : %i\n Lines vis : %i\n Current : %i\n",line,lines_vis,newcurrent);
 
 	if ( newcurrent== int( current ) ) return;
 
@@ -222,7 +220,7 @@ void YZView::redrawScreen() {
   * Dont put unsigned here, some function may call with negative here, as
   * checking is done inside gotoxy
   */
-void	YZView::gotoxy(int nextx, int nexty)
+void YZView::gotoxy(int nextx, int nexty)
 {
 	QString lin;
 
@@ -275,7 +273,7 @@ QString YZView::moveDown( const QString& inputsBuff ) {
 }
 
 QString YZView::moveUp( const QString& inputsBuff ) {
-	int nb_lines=1;//default : one line down
+	int nb_lines=1;//default : one line up
 
 	//check the arguments
 	if ( !inputsBuff.isNull() ) {
@@ -506,7 +504,4 @@ QString YZView::gotoReplaceMode(const QString&) {
 	purgeInputBuffer();
 	return QString::null;
 }
-
-//QString YZView::gotoExMode(QString) {
-//}
 

@@ -75,7 +75,6 @@ class YZSession {
 		/** get a event to handle from the core.  that's the way the core is
 		 * sending messages to the gui
 		 */
-		/* for the qt/kde gui, we should create QEvents from that? */
 		yz_event fetchNextEvent(int requester=-1);
 
 		/**
@@ -83,6 +82,20 @@ class YZSession {
 		 */
 		YZView* findView( int uid );
 
+		/**
+		 * Change the current buffer ( :bnext )
+		 */
+		void setCurrentBuffer( YZBuffer* );
+
+		/**
+		 * Change the current view ( unassigned )
+		 */
+		void setCurrentView( YZView* );
+
+		YZBuffer* currentBuffer() { return curBuffer; }
+		YZBuffer* nextBuffer();
+		YZView* currentView() { return curView; }
+		
 		/** 
 		 * Current GUI
 		 */
@@ -103,6 +116,8 @@ class YZSession {
     YZCommandPool *pool;
     YZCommandPool *expool;
     YZMotionPool *motionpool;
+		YZView* curView;
+		YZBuffer* curBuffer;
 
 };
 

@@ -1,2 +1,6 @@
-
-many many things ... :)
+- rename all files ;)
+- make standard use of m_ private members
+- check get...() , set...() functions
+- reindent ;)
+- make yzDebug() works in nyzis !
+- merge last changes into nyzis ...

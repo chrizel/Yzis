@@ -3,6 +3,8 @@ the --with-tinyq-dir to indicate your TinyQ prefix.
 However, you can use a full Qt (>3.x) to compile the whole YZis but that will slow down "yzis" (ncurses) startup
 because the system has to load the whole Qt library.
 
+In a near future we hope to drop TinyQ and just keep Qt (4.x), since Qt should be splitted into different libraries (thus dropping the need of TinyQ ;)
+
 LICENSES
 kyzispart and libyzis are published under LGPL. See COPYING.LGPL for more details.
 kyzis and nyzis are published under GPL. See COPYING for more details.

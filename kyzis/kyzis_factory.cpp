@@ -194,6 +194,15 @@ void KYZisFactory::quit( bool ) {
 	kapp->quit();
 }
 
+void KYZisFactory::setCurrentView( YZView* view ) {
+	currentView->hide(); //simple enough ?
+	currentView = static_cast<KYZisView*>( view );
+	currentView->show();
+}
 
+//useless for now
+void KYZisFactory::setCurrentBuffer( YZBuffer* buffer ) {
+	currentDoc = static_cast<KYZisDoc*>( buffer );
+}
 
 #include "kyzis_factory.moc"

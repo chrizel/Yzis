@@ -74,10 +74,11 @@ void NYZSession::postEvent( yz_event /*ev*/ ) {
 void NYZSession::event_loop()
 {
 	for ( QMap<QString,YZBuffer*>::Iterator b = buffers.begin();b!=buffers.end(); ++b ) 
-//		for ( QMap<int,YZView*>::iterator it = b.data()->views().begin() ;
-//		it!=b.data()->views().end() ; it++ ) 
-		for ( YZView *v = b.data()->views().first() ; v ; v =b.data()->views().next() ) 
+		for ( QValueList<YZView*>::iterator it = b.data()->views().begin() ; it!=b.data()->views().end() ; it++ ) {
+			YZView *v = *it;
+//		for ( YZView *v = b.data()->views().first() ; v ; v =b.data()->views().next() ) 
 			( static_cast<NYZView*>( v ) )->event_loop();
+		}
 }
 
 void NYZSession::update_status(const QString& msg)
@@ -127,3 +128,12 @@ void NYZSession::quit( bool savePopup ) {
 	//FIXME
 	exit( 0 );
 }
+
+void NYZSession::setCurrentBuffer( YZBuffer *buff ) {
+
+}
+
+void NYZSession::setCurrentView ( YZView *view ) {
+
+}
+

@@ -75,9 +75,6 @@ class YZCommandPool {
 		void initPool();
 		void initExPool();
 
-		//just an example method
-		QString test(const QString&);
-
 		/**
 		 * This function is the entry point to execute ANY command in Yzis
 		 */

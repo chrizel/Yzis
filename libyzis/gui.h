@@ -16,6 +16,8 @@
  * Register your GUI the earlier you can in your constructor
  */ 
 class YZSession;
+class YZBuffer;
+class YZView;
 class QString;
 
 class Gui {
@@ -80,6 +82,15 @@ class Gui {
 		 */
 		virtual void quit(bool savePopup=true) = 0;
 
+    /**
+     * Switch buffers
+     */
+    virtual void setCurrentBuffer( YZBuffer* ) = 0;
+
+    /**
+     * Switch views
+     */
+    virtual void setCurrentView ( YZView* ) = 0;
 };
 
 #endif // GUI_H

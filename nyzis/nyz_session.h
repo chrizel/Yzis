@@ -35,6 +35,8 @@ class NYZSession : public YZSession, public Gui {
 		virtual void setFocusCommandLine() {}
 		virtual void setFocusMainWindow() {}
 		virtual void quit ( bool savePopup=true ) ;
+		virtual void setCurrentBuffer ( YZBuffer * );
+		virtual void setCurrentView ( YZView * );
 
 		QString commandline;
 		

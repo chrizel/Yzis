@@ -431,6 +431,8 @@ void YZView::centerViewHorizontally(unsigned int column) {
 		}
 		dCurrentLeft = rCursor->getX( ) + dCurrentLeft;
 		mCurrentLeft = sCursor->getX( ) + mCurrentLeft;
+
+		initDraw ( );
 	} else {
 		dCurrentLeft = 0;
 		mCurrentLeft = 0;
@@ -938,15 +940,22 @@ bool YZView::drawNextLine( ) {
 			sCursor->setX( 0 );
 			rCursor->setX( 0 );
 
-			while( rCursor->getX( ) < rCurrentLeft ) {
+			while( rCursor->getX( ) < rCurrentLeft - 1 ) {
 				drawNextCol( );
 				drawChar( );
 			}
-			rSpaceFill = 1 + (rCurrentLeft % tabLength);
+
+			rSpaceFill = (rCurrentLeft % tabLength);
 
 /*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
 					<< ", rX(cursor):" << rCursor->getX() 
-					<< ", rY:" << rCursor->getY() << ", sX:" << sCursor->getX( ) << ", sY:" << sCursor->getY () << endl; */
+					<< ", rY:" << rCursor->getY() << ", sX:" << sCursor->getX( ) << ", sY:" << sCursor->getY ()
+					<< ", drawLength:" << drawLength() << endl; 
+*/
+			if (drawLength () > 1) {
+				rColLength = 1;
+				sCursor->setX (sCursor->getX () + 1);
+			}
 		}
 
 		if ( ( rCursor->getY() - rCurrentTop ) < mLinesVis ) {

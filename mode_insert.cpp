@@ -1,6 +1,7 @@
 /*  This file is part of the Yzis libraries
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>,
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -138,10 +139,32 @@ void YZModeInsert::commandRight( YZView* mView, const QString& ) {
 	mView->moveRight();
 }
 void YZModeInsert::commandPageDown( YZView* mView, const QString& ) {
-	mView->gotoStickyCol( mView->getBufferCursor()->y() + mView->getLinesVisible() );
+	// find the linenumber we should scroll to
+	//FIXME: take wrapped lines into account. If a line is wrapped it will occupy
+	// more than one line and by just using getLinesVisible() we will scroll too far
+	unsigned int line = mView->getCurrentTop() + mView->getLinesVisible();
+
+	// don't scroll below the last line of the buffer
+	if (line > mView->myBuffer()->lineCount())
+		line = mView->myBuffer()->lineCount();
+
+	// scroll the view one screen down, and move the cursor to the first nonblank on
+	// the line it was moved to, like vim does.
+	if (line != mView->getCurrentTop()) {
+		mView->alignViewBufferVertically( line );
+		mView->moveToFirstNonBlankOfLine();
+	}
 }
 void YZModeInsert::commandPageUp( YZView* mView, const QString& ) {
-	mView->gotoStickyCol( qMax( 0, (int)(mView->getBufferCursor()->y() - mView->getLinesVisible()) ) );
+	int line = mView->getCurrentTop() - mView->getLinesVisible();
+
+	if (line < 0)
+		line = 0;
+
+	if (line != mView->getCurrentTop()) {
+		mView->alignViewBufferVertically( line );
+		mView->moveToFirstNonBlankOfLine();
+	}
 }
 void YZModeInsert::commandBackspace( YZView* mView, const QString& ) {
 	YZCursor cur = *mView->getBufferCursor();

@@ -48,10 +48,24 @@ YZBuffer::~YZBuffer() {
 	mText.clear();
 }
 
+// ------------------------------------------------------------------------
+//                            Char Operations 
+// ------------------------------------------------------------------------
+
 void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
+	YZASSERT( c.contains('\n')==false, QString("YZBuffer::addChar( %1, %2, %3 ) - adding a char that contains a \\n").arg(x).arg(y).arg(c) )
+	YZASSERT(y < lineCount(), QString("YZBuffer::addChar( %1, %2, %3 ) but line %4 does not exist, buffer has %5 lines").arg( x ).arg( y ).arg( c ).arg( y ).arg( lineCount() ) );
+
 	/* brute force, we'll have events specific for that later on */
 	QString l=data(y);
 	if (l.isNull()) return;
+
+	YZASSERT(x <= l.length(), QString("YZBuffer::addChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( c ).arg( x ).arg( l.length() ) );
+
+	if (x > l.length()) {
+		// if we let Qt proceed, it will append spaces to extend the line
+		return;
+	}
 
 	l.insert(x, c);
 
@@ -67,9 +81,19 @@ void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
 }
 
 void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
+	YZASSERT( c.contains('\n')==false, QString("YZBuffer::chgChar( %1, %2, %3 ) - adding a char that contains a \\n").arg(x).arg(y).arg(c) )
+	YZASSERT( y < lineCount(), QString("YZBuffer::chgChar( %1, %2, %3 ) but line %4 does not exist, buffer has %5 lines").arg( x ).arg( y ).arg( c ).arg( y ).arg( lineCount() ) );
+
 	/* brute force, we'll have events specific for that later on */
 	QString l=data(y);
 	if (l.isNull()) return;
+
+	YZASSERT( x < l.length(), QString("YZBuffer::chgChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( c ).arg( x ).arg( l.length() ) );
+
+	if (x >= l.length()) {
+		// if we let Qt proceed, it will append spaces to extend the line
+		return;
+	}
 
 	/* do the actual modification */
 	l.remove(x, 1);
@@ -78,7 +102,6 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 	at(y)->setData(l);
 
 	/* inform the views */
-//	QValueList<YZView*>::iterator it;
 	YZView *it;
 	for ( it = mViews.first(); it; it=mViews.next() ) {
 	//	YZView *v = *it;
@@ -89,10 +112,13 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 {
 	yzDebug() << "YZBuffer::delChar(): at " << x << "," << y << ": " << count << endl;
+
+	YZASSERT( y < lineCount(), QString("YZBuffer::delChar( %1, %2, %3 ) but line %4 does not exist, buffer has %5 lines").arg( x ).arg( y ).arg( count ).arg( y ).arg( lineCount() ) );
 	/* brute force, we'll have events specific for that later on */
 	QString l=data(y);
 	if (l.isNull()) return;
 
+	YZASSERT( x < l.length(), QString("YZBuffer::delChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( count ).arg( x ).arg( l.length() ) );
 	/* do the actual modification */
 	l.remove(x, count);
 
@@ -107,8 +133,12 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 	}
 }
 
+// ------------------------------------------------------------------------
+//                            Line Operations 
+// ------------------------------------------------------------------------
+
 void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
-	yzDebug() << "NB lines in buffer: " << mText.count() << " adding line at : " << line << endl;
+	YZASSERT( line < lineCount(), QString("YZBuffer::addNewLine( %1, %2 ) but line %3 does not exist, buffer has %4 lines").arg( line ).arg( col ).arg( line ).arg( lineCount() ) );
 	if ( line == lineCount() ) {//we are adding a line, fake being at end of last line
 		line --;
 		col = data(line).length(); 
@@ -117,6 +147,7 @@ void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
 	QString l=data(line);
 	if (l.isNull()) return;
 
+	YZASSERT( col < l.length(), QString("YZBuffer::addNewLine( %1, %2 ) but column %3 does not exist, line has %4 columns").arg( line ).arg( col ).arg( col ).arg( l.length() ) );
 	//replace old line
 	at(line)->setData(l.left( col ));
 
@@ -129,12 +160,23 @@ void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
 }
 
 void YZBuffer::deleteLine( unsigned int line ) {
+	YZASSERT( line < lineCount(), QString("YZBuffer::deleteLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
+
 	if ( mText.count() > 1 )
 	 mText.remove(line);
 	else
 		at(line)->setData("");
 	updateAllViews(); //hmm ...
 }
+
+void  YZBuffer::addLine(const QString &l) {
+	YZASSERT( l.contains('\n')==false, "YZBuffer::addLine() : adding a line with '\n' inside" );
+	mText.append(new YZLine(l));
+}
+
+// ------------------------------------------------------------------------
+//                            View Operations 
+// ------------------------------------------------------------------------
 
 void YZBuffer::addView (YZView *v) {
 //	QValueList<YZView*>::iterator it;
@@ -149,6 +191,23 @@ void YZBuffer::addView (YZView *v) {
 	mSession->setCurrentView( v );
 }
 
+YZView* YZBuffer::findView( unsigned int uid ) {
+	yzDebug() << "Buffer: findView " << uid << endl;
+//	QValueList<YZView*>::iterator it;
+	YZView *it;
+	for ( it = mViews.first(); it; it=mViews.next() ){
+//		YZView* v = ( *it );
+		yzDebug() << "Checking view " << uid << " for buffer " << fileName() << endl;
+		if ( it->myId == uid ) {
+			yzDebug() << "Buffer: View " << uid << " found" << endl;
+			return it;
+		}
+	}
+	return NULL;
+}
+
+//motion calculations
+
 void YZBuffer::updateAllViews() {
 //	QValueList<YZView*>::iterator it;
 	YZView *it;
@@ -158,9 +217,21 @@ void YZBuffer::updateAllViews() {
 	}
 }
 
-void  YZBuffer::addLine(const QString &l) {
-	mText.append(new YZLine(l));
+YZView* YZBuffer::firstView() {
+	if (  mViews.first() != NULL ) 
+		return mViews.first();
+	else yzDebug() << "No VIEW !!!" << endl;
+	return NULL;//crash me :)
 }
+
+void YZBuffer::rmView(YZView *v) {
+	int f = mViews.remove(v);
+	yzDebug() << "buffer: removeView found " << f << " views" << endl;
+}
+
+// ------------------------------------------------------------------------
+//                            Content Operations 
+// ------------------------------------------------------------------------
 
 QString	YZBuffer::data(unsigned int no)
 {
@@ -176,6 +247,14 @@ QString	YZBuffer::data(unsigned int no)
 		return QString::null;
 	else
 		return l->data();
+}
+
+QString YZBuffer::getWholeText() {
+		QString text;
+		for(YZLine *it = mText.first(); it; it = mText.next())
+			text += it->data() + "\n";
+		text.truncate( text.length()-1 );
+		return text;
 }
 
 void YZBuffer::load(const QString& file) {
@@ -212,36 +291,8 @@ void YZBuffer::save() {
 }
 
 
-YZView* YZBuffer::findView( unsigned int uid ) {
-	yzDebug() << "Buffer: findView " << uid << endl;
-//	QValueList<YZView*>::iterator it;
-	YZView *it;
-	for ( it = mViews.first(); it; it=mViews.next() ){
-//		YZView* v = ( *it );
-		yzDebug() << "Checking view " << uid << " for buffer " << fileName() << endl;
-		if ( it->myId == uid ) {
-			yzDebug() << "Buffer: View " << uid << " found" << endl;
-			return it;
-		}
-	}
-	return NULL;
-}
-
-//motion calculations
-
 yz_point YZBuffer::motionPosition( unsigned int /*xstart*/, unsigned int /*ystart*/, YZMotion /*regexp*/ ) {
 	yz_point e;
 	return e;
 }
 
-YZView* YZBuffer::firstView() {
-	if (  mViews.first() != NULL ) 
-		return mViews.first();
-	else yzDebug() << "No VIEW !!!" << endl;
-	return NULL;//crash me :)
-}
-
-void YZBuffer::rmView(YZView *v) {
-	int f = mViews.remove(v);
-	yzDebug() << "buffer: removeView found " << f << " views" << endl;
-}

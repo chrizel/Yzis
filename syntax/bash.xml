@@ -2,8 +2,11 @@
 <!DOCTYPE language SYSTEM "language.dtd"
 [
 	<!ENTITY funcname "[A-Za-z_:][A-Za-z0-9_:#&#37;@-]*">
+	<!ENTITY varname  "[A-Za-z_][A-Za-z0-9_]*">
+	<!ENTITY eos      "(?=($|\s))">			<!-- eol or space following -->
+	<!ENTITY noword   "(?![\w$+-])">		<!-- no word, $, + or - following -->
 ]>
-<language name="Bash" version="1.99" kateversion="2.2" section="Scripts" extensions="*.sh;*.bash;*.ebuild;*.eclass" mimetype="application/x-shellscript" casesensitive="1" author="Wilbert Berendsen (wilbert@kde.nl)" license="LGPL">
+<language name="Bash" version="2.02" kateversion="2.3" section="Scripts" extensions="*.sh;*.bash;*.ebuild;*.eclass" mimetype="application/x-shellscript" casesensitive="1" author="Wilbert Berendsen (wilbert@kde.nl)" license="LGPL">
 
 <!-- (c) 2004 by Wilbert Berendsen, wilbert@kde.nl
     Released under the LGPL, part of kdelibs/kate -->
@@ -416,6 +419,8 @@
       <item> kdialog </item>
       <item> kfile </item>
       <item> xhost </item>
+      <item> xmodmap </item>
+      <item> xset </item>
     </list>
 
             
@@ -442,23 +447,34 @@
 	<IncludeRules context="FindOthers" />
       </context>
 
-      
+
       <!-- FindComments consumes shell comments till EOL -->
       <context attribute="Normal Text" lineEndContext="#pop" name="FindComments">
-      	<RegExpr attribute="Comment" context="Comment" String="^#" />
-	<RegExpr attribute="Normal Text" context="Comment" String="(^\s+|[\s;])(?=#)" />
+      	<RegExpr attribute="Comment" context="Comment" String="^\s*#" />
+	<RegExpr attribute="Normal Text" context="Comment" String="[\s;](?=#)" />
+      </context>
+      <context attribute="Comment" lineEndContext="#pop" name="Comment">
+	<IncludeRules context="##Alerts" />
       </context>
       
       <!-- FindCommentsParen consumes shell comments till EOL or a closing parenthese -->
       <context attribute="Normal Text" lineEndContext="#pop" name="FindCommentsParen">
-      	<RegExpr attribute="Comment" context="CommentParen" String="^#" />
-	<RegExpr attribute="Normal Text" context="CommentParen" String="(^\s+|[\s;])(?=#)" />
+      	<RegExpr attribute="Comment" context="CommentParen" String="^\s*#" />
+	<RegExpr attribute="Normal Text" context="CommentParen" String="[\s;](?=#)" />
+      </context>
+      <context attribute="Comment" lineEndContext="#pop" name="CommentParen">
+      	<RegExpr attribute="Comment" context="#pop" String="[^)](?=\))" />
+	<IncludeRules context="##Alerts" />
       </context>
       
       <!-- FindCommentsBackq consumes shell comments till EOL or a backquote -->
       <context attribute="Normal Text" lineEndContext="#pop" name="FindCommentsBackq">
-      	<RegExpr attribute="Comment" context="CommentBackq" String="^#" />
-	<RegExpr attribute="Normal Text" context="CommentBackq" String="(^\s+|[\s;])(?=#)" />
+      	<RegExpr attribute="Comment" context="CommentBackq" String="^\s*#" />
+	<RegExpr attribute="Normal Text" context="CommentBackq" String="[\s;](?=#)" />
+      </context>
+      <context attribute="Comment" lineEndContext="#pop" name="CommentBackq">
+      	<RegExpr attribute="Comment" context="#pop" String="[^`](?=`)" />
+	<IncludeRules context="##Alerts" />
       </context>
       
       
@@ -467,29 +483,28 @@
       	<!-- start expression in double parentheses -->
       	<Detect2Chars attribute="Keyword" context="ExprDblParen" char="(" char1="(" beginRegion="expression" />
 	<!-- start expression in double brackets -->
-	<RegExpr attribute="Keyword" context="ExprDblBracket" String="^\[\[(?=($|\s))" beginRegion="expression" />
-	<RegExpr attribute="Keyword" context="ExprDblBracket" String="\s\[\[(?=($|\s))" beginRegion="expression" />
+	<RegExpr attribute="Keyword" context="ExprDblBracket" String="^\[\[&eos;" beginRegion="expression" />
+	<RegExpr attribute="Keyword" context="ExprDblBracket" String="\s\[\[&eos;" beginRegion="expression" />
 	<!-- start expression in single brackets -->
-	<RegExpr attribute="Builtin" context="ExprBracket" String="^\[(?=($|\s))" beginRegion="expression" />
-	<RegExpr attribute="Builtin" context="ExprBracket" String="\s\[(?=($|\s))" beginRegion="expression" />
+	<RegExpr attribute="Builtin" context="ExprBracket" String="^\[&eos;" beginRegion="expression" />
+	<RegExpr attribute="Builtin" context="ExprBracket" String="\s\[&eos;" beginRegion="expression" />
 	<!-- start a group command with { -->
-	<RegExpr attribute="Keyword" context="Group" String="\{(?=(\s|$))" beginRegion="group" />
+	<RegExpr attribute="Keyword" context="Group" String="\{&eos;" beginRegion="group" />
       	<!-- start a subshell -->
 	<DetectChar attribute="Keyword" context="SubShell" char="(" beginRegion="subshell" />
 	<!-- match do and if blocks -->
-	<RegExpr attribute="Keyword" context="#stay" String="\bdo(?![\w$+-])" beginRegion="do" />
-      	<RegExpr attribute="Keyword" context="#stay" String="\bdone(?![\w$+-])" endRegion="do" />
-      	<RegExpr attribute="Keyword" context="#stay" String="\bif(?![\w$+-])" beginRegion="if" />
-      	<RegExpr attribute="Keyword" context="#stay" String="\bfi(?![\w$+-])" endRegion="if" />
+	<RegExpr attribute="Keyword" context="#stay" String="\bdo&noword;" beginRegion="do" />
+      	<RegExpr attribute="Keyword" context="#stay" String="\bdone&noword;" endRegion="do" />
+      	<RegExpr attribute="Keyword" context="#stay" String="\bif&noword;" beginRegion="if" />
+      	<RegExpr attribute="Keyword" context="#stay" String="\bfi&noword;" endRegion="if" />
       	<!-- handle case as a special case -->
-	<RegExpr attribute="Keyword" context="Case" String="\bcase(?![\w$+-])"
-		beginRegion="case" />
+	<RegExpr attribute="Keyword" context="Case" String="\bcase&noword;" beginRegion="case" />
 	<!-- handle command line options -->
 	<RegExpr attribute="Option" context="#stay" String="-[A-Za-z0-9]+" />
 	<RegExpr attribute="Option" context="#stay" String="--[a-z][A-Za-z0-9_-]*" />
 	<!-- handle variable assignments -->
-	<RegExpr attribute="Variable" context="Assign" String="\b[A-Za-z_][A-Za-z0-9_]*=" />
-	<RegExpr attribute="Variable" context="AssignSubscr" String="\b[A-Za-z_][A-Za-z0-9_]*(?=\[[^]]+\]=)" />
+	<RegExpr attribute="Variable" context="Assign" String="\b&varname;=" />
+	<RegExpr attribute="Variable" context="AssignSubscr" String="\b&varname;(?=\[[^]]+\]=)" />
 	<!-- handle functions with function keyword before keywords -->
 	<StringDetect attribute="Function" context="#stay" String=":()" />
 	<RegExpr attribute="Keyword" context="FunctionDef" String="\bfunction\b" />
@@ -504,7 +519,7 @@
         <!-- handle here-string -->
 	<StringDetect attribute="Redirection" context="#stay" String="&lt;&lt;&lt;" />
 	<!-- handle here document -->
-	<StringDetect attribute="Redirection" context="HereDoc" String="&lt;&lt;" />
+	<StringDetect attribute="Redirection" context="HereDoc" String="&lt;&lt;" lookAhead="true" />
         <!-- handle process subst -->
         <RegExpr attribute="Redirection" context="ProcessSubst" String="[&lt;&gt;]\(" />
         <!-- handle redirection -->
@@ -530,20 +545,21 @@
 	<Detect2Chars attribute="String Transl." context="StringDQ" char="$" char1="&quot;" />
       </context>
             
-      <!-- FindSubstitutions goes after anything starting with $ -->
+      <!-- FindSubstitutions goes after anything starting with $ and ` and their escapes -->
       <context attribute="Normal Text" lineEndContext="#stay" name="FindSubstitutions">
 	<RegExpr attribute="Variable" context="#stay" String="\$[*@#?$!_0-9-]" />
-	<RegExpr attribute="Variable" context="Subscript" String="\$[A-Za-z_][A-Za-z0-9_]*\[" />
-	<RegExpr attribute="Variable" context="#stay" String="\$[A-Za-z_][A-Za-z0-9_]*" />
+	<RegExpr attribute="Variable" context="Subscript" String="\$&varname;\[" />
+	<RegExpr attribute="Variable" context="#stay" String="\$&varname;" />
 	<RegExpr attribute="Variable" context="#stay" String="\$\{[*@#?$!_0-9-]\}" />
-	<RegExpr attribute="Variable" context="#stay" String="\$\{#[A-Za-z_][A-Za-z0-9_]*\}" />
-	<RegExpr attribute="Variable" context="#stay" String="\$\{![A-Za-z_][A-Za-z0-9_]*\*?\}" />
-	<RegExpr attribute="Variable" context="VarBrace" String="\$\{[A-Za-z_][A-Za-z0-9_]*" />
+	<RegExpr attribute="Variable" context="#stay" String="\$\{#&varname;\}" />
+	<RegExpr attribute="Variable" context="#stay" String="\$\{!&varname;\*?\}" />
+	<RegExpr attribute="Variable" context="VarBrace" String="\$\{&varname;" />
 	<RegExpr attribute="Variable" context="VarBrace" String="\$\{[*@#?$!_0-9-](?=[:#%/])" />
 	<StringDetect attribute="Variable" context="ExprDblParenSubst" String="$((" beginRegion="expression" />
 	<StringDetect attribute="Redirection" context="SubstFile" String="$(&lt;" />
         <StringDetect attribute="Variable" context="SubstCommand" String="$(" />
 	<DetectChar attribute="Backquote" context="SubstBackq" char="`" />
+	<RegExpr attribute="Escape" context="#stay" String="\\[`$\\]" />
       </context>
 
       
@@ -551,19 +567,6 @@
 
       
 <!-- ====== These are the contexts that can be branched to ======= -->
-      <!-- Comment consumes anything till EOL, marks Comment -->
-      <context attribute="Comment" lineEndContext="#pop" name="Comment" />
-      
-      <!-- CommentParen consumes anything till closing parenthese or EOL, marks Comment -->
-      <context attribute="Comment" lineEndContext="#pop" name="CommentParen">
-      	<RegExpr attribute="Comment" context="#pop" String="[^)](?=\))" />
-      </context>
-
-      <!-- CommentBackq consumes anything till backquote or EOL, marks Comment -->
-      <context attribute="Comment" lineEndContext="#pop" name="CommentBackq">
-      	<RegExpr attribute="Comment" context="#pop" String="[^`](?=`)" />
-      </context>
-
 
       <!-- ExprDblParen consumes an expression started in command mode till )) -->
       <context attribute="Normal Text" lineEndContext="#stay" name="ExprDblParen">
@@ -620,6 +623,7 @@
 	<IncludeRules context="FindStrings" />
 	<IncludeRules context="FindSubstitutions" />      
 	<IncludeRules context="FindOthers" />
+	<RegExpr attribute="Normal Text" context="#stay" String="[\w:,+_./-]+" />
       </context>
 
       <!-- AssignArray consumes everything till ), marking assignments -->
@@ -657,12 +661,12 @@
 	<!-- handle command line options -->
 	<RegExpr attribute="Option" context="#stay" String="-[A-Za-z0-9]+" />
 	<RegExpr attribute="Option" context="#stay" String="--[a-z][A-Za-z0-9_-]*" />
-	<RegExpr attribute="Variable" context="#stay" String="\b[A-Za-z_][A-Za-z0-9_]*" />
+	<RegExpr attribute="Variable" context="#stay" String="\b&varname;" />
 	<DetectChar attribute="Variable" context="Subscript" char="[" />
 	<DetectChar attribute="Variable" context="Assign" char="=" />
 	<IncludeRules context="FindMost" />
 	<!-- stay here in spaces and other safe characters -->
-	<RegExpr attribute="Normal Text" context="#stay" String="[^;&amp;&gt;&lt;|]" />
+	<RegExpr attribute="Normal Text" context="#stay" String="[^]})|;`&amp;&gt;&lt;]" />
       </context>
 
       <!-- ProcessSubst handles <(command) and >(command) -->
@@ -753,69 +757,46 @@
 	<IncludeRules context="FindAll" />
       </context>
 
-      <!-- HereDoc consumes Here-documents.
-      
-      This is difficult to do because one can't make Kate remember the string used as delimiter.
-      So we support EOF, and the combination _{0,2}E[ON][A-Z_]+ .
-      We support also indented or not, and quoted or not.  More can be added if so desired.
-      
-      If the delimiters are not matched, the text will be interpreted as shell code, which may
-      look odd if there are unbalanced quotes in it.
-       
-       -->
-      <context attribute="Normal Text" lineEndContext="#stay" name="HereDoc" fallthrough="true" fallthroughContext="#pop">
-	<RegExpr attribute="Redirection" context="HDocEOF"    String="\s*EOF\b" />
-        <RegExpr attribute="Redirection" context="HDocEOF Q"  String="\s*([&quot;'])EOF\1" />
-        <RegExpr attribute="Redirection" context="HDocEOF I"  String="-\s*EOF\b" />
-        <RegExpr attribute="Redirection" context="HDocEOF IQ" String="-\s*([&quot;'])EOF\1" />
-
-	<RegExpr attribute="Redirection" context="HDocOTH"    String="\s*_{0,2}E[ON][A-Z_]+\b" />
-        <RegExpr attribute="Redirection" context="HDocOTH Q"  String="\s*([&quot;'])_{0,2}E[ON][A-Z_]+\1" />
-        <RegExpr attribute="Redirection" context="HDocOTH I"  String="-\s*_{0,2}E[ON][A-Z_]+\b" />
-        <RegExpr attribute="Redirection" context="HDocOTH IQ" String="-\s*([&quot;'])_{0,2}E[ON][A-Z_]+\1" />
-
-	<DetectChar attribute="Redirection" context="#pop" char="-" />
+      <!-- HereDoc consumes Here-documents. It is called at the beginning of the "<<" construct. -->
+      <context attribute="Normal Text" lineEndContext="#stay" name="HereDoc">
+	<RegExpr attribute="Redirection" context="HereDocQ"   String="(&lt;&lt;\s*&quot;(&varname;)&quot;)" lookAhead="true" />
+	<RegExpr attribute="Redirection" context="HereDocQ"   String="(&lt;&lt;\s*'(&varname;)')" lookAhead="true" />
+	<RegExpr attribute="Redirection" context="HereDocQ"   String="(&lt;&lt;\s*\\(&varname;))" lookAhead="true" />
+	<RegExpr attribute="Redirection" context="HereDocNQ"  String="(&lt;&lt;\s*(&varname;))" lookAhead="true" />
+	<RegExpr attribute="Redirection" context="HereDocIQ"  String="(&lt;&lt;-\s*&quot;(&varname;)&quot;)" lookAhead="true" />
+	<RegExpr attribute="Redirection" context="HereDocIQ"  String="(&lt;&lt;-\s*'(&varname;)')" lookAhead="true" />
+	<RegExpr attribute="Redirection" context="HereDocIQ"  String="(&lt;&lt;-\s*\\(&varname;))" lookAhead="true" />
+	<RegExpr attribute="Redirection" context="HereDocINQ" String="(&lt;&lt;-\s*(&varname;))" lookAhead="true" />
+	<StringDetect attribute="Redirection" context="#pop"  String="&lt;&lt;" /><!-- always met -->
       </context>
 
-      <context attribute="Normal Text" lineEndContext="#stay" name="HDocSub">
-      	<RegExpr attribute="Normal Text" context="#stay" String="\\[$`\\]" />
-      	<IncludeRules context="FindSubstitutions" />
+      <context attribute="Normal Text" lineEndContext="#pop" name="HereDocRemainder">
+	<IncludeRules context="FindAll" />
       </context>
-      
-      <context attribute="Normal Text" lineEndContext="HDocEOF 2 "  name="HDocEOF"><IncludeRules context="FindAll" /></context>
-      <context attribute="Normal Text" lineEndContext="HDocEOF Q2"  name="HDocEOF Q"><IncludeRules context="FindAll" /></context>
-      <context attribute="Normal Text" lineEndContext="HDocEOF I2"  name="HDocEOF I"><IncludeRules context="FindAll" /></context>
-      <context attribute="Normal Text" lineEndContext="HDocEOF IQ2" name="HDocEOF IQ"><IncludeRules context="FindAll" /></context>
-      
-      <context attribute="Normal Text" lineEndContext="#stay" name="HDocEOF 2">
-        <RegExpr attribute="Redirection" context="#pop#pop#pop" String="^EOF(?=\s*($|\)))" />
-	<IncludeRules context="HDocSub" /></context>
-      <context attribute="Normal Text" lineEndContext="#stay" name="HDocEOF Q2">
-        <RegExpr attribute="Redirection" context="#pop#pop#pop" String="^EOF(?=\s*($|\)))" /></context>
-      <context attribute="Normal Text" lineEndContext="#stay" name="HDocEOF I2">
-        <RegExpr attribute="Redirection" context="#pop#pop#pop" String="^\s*EOF(?=\s*($|\)))" />
-	<IncludeRules context="HDocSub" /></context>
-      <context attribute="Normal Text" lineEndContext="#stay" name="HDocEOF IQ2">
-        <RegExpr attribute="Redirection" context="#pop#pop#pop" String="^\s*EOF(?=\s*($|\)))" /></context>
-    
-      <context attribute="Normal Text" lineEndContext="HDocOTH 2 "  name="HDocOTH"><IncludeRules context="FindAll" /></context>
-      <context attribute="Normal Text" lineEndContext="HDocOTH Q2"  name="HDocOTH Q"><IncludeRules context="FindAll" /></context>
-      <context attribute="Normal Text" lineEndContext="HDocOTH I2"  name="HDocOTH I"><IncludeRules context="FindAll" /></context>
-      <context attribute="Normal Text" lineEndContext="HDocOTH IQ2" name="HDocOTH IQ"><IncludeRules context="FindAll" /></context>
-      
-      <context attribute="Normal Text" lineEndContext="#stay" name="HDocOTH 2">
-        <RegExpr attribute="Redirection" context="#pop#pop#pop" String="^_{0,2}E[ON][A-Z_]+(?=\s*($|\)))" />
-	<IncludeRules context="HDocSub" /></context>
-      <context attribute="Normal Text" lineEndContext="#stay" name="HDocOTH Q2">
-        <RegExpr attribute="Redirection" context="#pop#pop#pop" String="^_{0,2}E[ON][A-Z_]+(?=\s*($|\)))" /></context>
-      <context attribute="Normal Text" lineEndContext="#stay" name="HDocOTH I2">
-        <RegExpr attribute="Redirection" context="#pop#pop#pop" String="^\s*_{0,2}E[ON][A-Z_]+(?=\s*($|\)))" />
-	<IncludeRules context="HDocSub" /></context>
-      <context attribute="Normal Text" lineEndContext="#stay" name="HDocOTH IQ2">
-        <RegExpr attribute="Redirection" context="#pop#pop#pop" String="^\s*_{0,2}E[ON][A-Z_]+(?=\s*($|\)))" /></context>
-    
+
+      <context attribute="Normal Text" lineEndContext="#stay" name="HereDocQ" dynamic="true">
+	<RegExpr attribute="Redirection" context="HereDocRemainder" String="%1" dynamic="true" />
+	<RegExpr attribute="Redirection" context="#pop#pop" String="^%2[\s;]*$" dynamic="true" />
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" name="HereDocNQ" dynamic="true">
+	<RegExpr attribute="Redirection" context="HereDocRemainder" String="%1" dynamic="true" />
+	<RegExpr attribute="Redirection" context="#pop#pop" String="^%2[\s;]*$" dynamic="true" />
+	<IncludeRules context="FindSubstitutions" />
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" name="HereDocIQ" dynamic="true">
+	<RegExpr attribute="Redirection" context="HereDocRemainder" String="%1" dynamic="true" />
+	<RegExpr attribute="Redirection" context="#pop#pop" String="^\s*%2[\s;]*$" dynamic="true" />
+      </context>
+
+      <context attribute="Normal Text" lineEndContext="#stay" name="HereDocINQ" dynamic="true">
+	<RegExpr attribute="Redirection" context="HereDocRemainder" String="%1" dynamic="true" />
+	<RegExpr attribute="Redirection" context="#pop#pop" String="^\s*%2[\s;]*$" dynamic="true" />
+	<IncludeRules context="FindSubstitutions" />
+      </context>
+
     </contexts>
-    
     
     <itemDatas>
       <itemData name="Normal Text"	defStyleNum="dsNormal" />
@@ -842,6 +823,6 @@
     <comments>
       <comment name="singleLine" start="#"/>
     </comments>
-    <keywords casesensitive="1" weakDeliminator="^%#$._{}:-" additionalDeliminator="`"/>
+    <keywords casesensitive="1" weakDeliminator="^%#[]$._{}:-" additionalDeliminator="`"/>
   </general>
 </language>

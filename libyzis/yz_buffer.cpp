@@ -138,7 +138,7 @@ void YZBuffer::save() {
 
 //motion calculations
 
-yz_point YZBuffer::motionPosition( int xstart, int ystart, YZMotion regexp ) {
+yz_point YZBuffer::motionPosition( int /*xstart*/, int /*ystart*/, YZMotion /*regexp*/ ) {
 
 }
 

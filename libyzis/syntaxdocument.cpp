@@ -28,9 +28,18 @@
 */
 
 #include <qfile.h>
+#include <qregexp.h>
 #include "syntaxdocument.h"
 #include "debug.h"
 #include "translator.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <pwd.h>
+
+static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
+static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
+
 
 /** Constructor
     Sets the current file to nothing and build the ModeList
@@ -336,6 +345,189 @@ QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QStrin
   return m_data;
 }
 
+QStringList
+YzisSyntaxDocument::findAllResources( const char *type,
+			         const QString& filter,
+					 bool recursive,
+					 bool unique) const
+{
+    QStringList list;
+    QString filterPath;
+    QString filterFile;
+	QStringList relList;
+
+    if (filter.length())
+    {
+       int slash = filter.findRev('/');
+       if (slash < 0)
+	   filterFile = filter;
+       else {
+	   filterPath = filter.left(slash + 1);
+	   filterFile = filter.mid(slash + 1);
+       }
+    }
+
+    QStringList candidates;
+/*    if (filterPath.startsWith("/")) // absolute path
+    {*/
+        filterPath = filterPath.mid(1);
+        candidates << "/";
+/*    }
+    else
+    {
+        if (d && d->restrictionsActive && (strcmp(type, "data")==0))
+            applyDataRestrictions(filter);
+        candidates = resourceDirs(type);
+    }*/
+    if (filterFile.isEmpty())
+	filterFile = "*";
+
+    QRegExp regExp(filterFile, true, true);
+
+    for (QStringList::ConstIterator it = candidates.begin();
+         it != candidates.end(); it++)
+    {
+        lookupPrefix(*it, filterPath, "", regExp, list,
+                     relList, recursive, unique);
+    }
+
+    return list;
+}
+
+static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique) {
+  QString pattern = regexp.pattern();
+  if (recursive || pattern.contains('?') || pattern.contains('*'))
+  {
+    // We look for a set of files.
+    DIR *dp = opendir( QFile::encodeName(path));
+    if (!dp)
+      return;
+
+//    assert(path.at(path.length() - 1) == '/');
+
+    struct dirent *ep;
+    struct stat buff;
+
+    QString _dot(".");
+    QString _dotdot("..");
+
+    while( ( ep = readdir( dp ) ) != 0L )
+    {
+      QString fn( QFile::decodeName(ep->d_name));
+      if (fn == _dot || fn == _dotdot || fn.at(fn.length() - 1).latin1() == '~')
+	continue;
+
+      if (!recursive && !regexp.exactMatch(fn))
+	continue; // No match
+
+      QString pathfn = path + fn;
+      if ( stat( QFile::encodeName(pathfn), &buff ) != 0 ) {
+	yzDebug() << "Error stat'ing " << pathfn << " : " << perror << endl;
+	continue; // Couldn't stat (e.g. no read permissions)
+      }
+      if ( recursive ) {
+	if ( S_ISDIR( buff.st_mode )) {
+	  lookupDirectory(pathfn + '/', relPart + fn + '/', regexp, list, relList, recursive, unique);
+	}
+        if (!regexp.exactMatch(fn))
+	  continue; // No match
+      }
+      if ( S_ISREG( buff.st_mode))
+      {
+        if (!unique || !relList.contains(relPart + fn))
+        {
+	    list.append( pathfn );
+	    relList.append( relPart + fn );
+        }
+      }
+    }
+    closedir( dp );
+  }
+  else
+  {
+     // We look for a single file.
+     QString fn = pattern;
+     QString pathfn = path + fn;
+     struct stat buff;
+     if ( stat( QFile::encodeName(pathfn), &buff ) != 0 )
+        return; // File not found
+     if ( S_ISREG( buff.st_mode))
+     {
+       if (!unique || !relList.contains(relPart + fn))
+       {
+         list.append( pathfn );
+         relList.append( relPart + fn );
+       }
+     }
+  }
+}
+
+
+static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique) {
+    if (relpath.isNull()) {
+       lookupDirectory(prefix, relPart, regexp, list,
+		       relList, recursive, unique);
+       return;
+    }
+    QString path;
+    QString rest;
+
+    if (relpath.length())
+    {
+       int slash = relpath.find('/');
+       if (slash < 0)
+	   rest = relpath.left(relpath.length() - 1);
+       else {
+	   path = relpath.left(slash);
+	   rest = relpath.mid(slash + 1);
+       }
+    }
+
+//    assert(prefix.at(prefix.length() - 1) == '/');
+
+    struct stat buff;
+
+    if (path.contains('*') || path.contains('?')) {
+
+	QRegExp pathExp(path, true, true);
+	DIR *dp = opendir( QFile::encodeName(prefix) );
+	if (!dp) {
+	    return;
+	}
+
+	struct dirent *ep;
+
+        QString _dot(".");
+        QString _dotdot("..");
+
+	while( ( ep = readdir( dp ) ) != 0L )
+	    {
+		QString fn( QFile::decodeName(ep->d_name));
+		if (fn == _dot || fn == _dotdot || fn.at(fn.length() - 1) == '~')
+		    continue;
+
+		if ( !pathExp.exactMatch(fn) )
+		    continue; // No match
+		QString rfn = relPart+fn;
+		fn = prefix + fn;
+		if ( stat( QFile::encodeName(fn), &buff ) != 0 ) {
+		    yzDebug() << "Error statting " << fn << " : " << perror << endl;
+		    continue; // Couldn't stat (e.g. no permissions)
+		}
+		if ( S_ISDIR( buff.st_mode ))
+		    lookupPrefix(fn + '/', rest, rfn + '/', regexp, list, relList, recursive, unique);
+	    }
+
+	closedir( dp );
+    } else {
+        // Don't stat, if the dir doesn't exist we will find out
+        // when we try to open it.
+        lookupPrefix(prefix + path + '/', rest,
+                     relPart + path + '/', regexp, list,
+                     relList, recursive, unique);
+    }
+}
+
 // Private
 /** Generate the list of hl modes, store them in myModeList
     force: if true forces to rebuild the Mode List from the xml files (instead of configfile)
@@ -358,10 +550,10 @@ void YzisSyntaxDocument::setupModeList (bool force)
   }*/
 
   // Let's get a list of all the xml files for hl
-  //QStringList list = KGlobal::dirs()->findAllResources("data","katepart/syntax/*.xml",false,true);
-  QStringList list;
-  list << QString( PREFIX ) + "/share/yzis/syntax/cpp.xml";
+  QStringList list = findAllResources("data",QString( PREFIX ) + "/share/yzis/syntax/*.xml",false,true);
+//  list << QString( PREFIX ) + "/share/yzis/syntax/cpp.xml";
   //just C++ for now
+  yzDebug() << "LIST : " << list << endl;
 
   // Let's iterate through the list and build the Mode List
   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )

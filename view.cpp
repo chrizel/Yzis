@@ -232,8 +232,8 @@ void YZView::sendKey( int c, int modifiers) {
 							if ( rx.exactMatch( currentLine ) )
 								newline = rx.cap( 1 ); //that should have all tabs and spaces from the previous line
 							newline.prepend( "\t" ); //add a TAB for the nextline
-							mBuffer->action()->insertLine( this, YZCursor(this, mCursor->getX( ), mCursor->getY() + 1 ), newline );
-							gotoxy( newline.length(), mCursor->getY() + 1 );
+							mBuffer->action()->insertLine( this, YZCursor(this, 0, mCursor->getY() + 1 ), newline );
+							gotoxy( newline.length(), mCursor->getY() );
 						} else
 							mBuffer->action()->insertNewLine( this, mCursor );
 						if ( test ) {
@@ -542,9 +542,9 @@ void YZView::reindent( unsigned int X, unsigned int Y ) {
 	YZCursor *cur = new YZCursor ( this, X, Y );
 	YZCursor match = mBuffer->action()->match(this, *cur, &found);
 	if ( !found ) return;
-	yzDebug() << "Match found" << endl;
+	yzDebug() << "Match found on line " << match.getY() << endl;
 	QString matchLine = mBuffer->textline( match.getY() );
-	if ( rx.exactMatch( currentLine ) )
+	if ( rx.exactMatch( matchLine ) )
 		currentLine.prepend( rx.cap( 1 ) ); //that should have all tabs and spaces from the previous line
 	mBuffer->action()->replaceLine( this, mCursor, currentLine );
 	gotoxy( currentLine.length(), mCursor->getY() );

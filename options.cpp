@@ -138,7 +138,7 @@ void YZOption::init() {
 	KOption *backspace = new KOption( "backspace", "Global", QString( "eol" ), QString( "eol" ), view_opt, string_t );
 	KOption *updatecount = new KOption( "updatecount", "Global", 200, 200, buffer_opt, int_t );
 	KOption *matchpairs = new KOption( "matchpairs", "Global", QString( "(){}[]" ), QString( "(){}[]" ), buffer_opt, string_t );
-	KOption *cindent = new KOption( "cindent", "Global", false, false, view_opt, bool_t );
+	KOption *cindent = new KOption( "cindent", "Global", true, true, view_opt, bool_t );
 
 	mOptions[ "Global\\tabwidth" ] = tabwidth;
 	mOptions[ "Global\\number" ] = number;

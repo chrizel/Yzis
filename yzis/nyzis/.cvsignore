@@ -2,4 +2,6 @@
 .svn
 nyzis
 diff
-
+*~
+Makefile
+Makefile.in

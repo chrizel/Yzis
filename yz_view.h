@@ -7,7 +7,7 @@
 
 #include "yz_events.h"
 #include "yz_buffer.h"
-#include "event_mgr.h"
+#include "gui.h"
 
 #define YZ_EVENT_EVENTS_MAX 400
 
@@ -55,7 +55,7 @@ public:
 	/**
 	 * Register a GUI event manager
 	 */
-	void register_manager ( EventMgr *mgr );
+	void register_manager ( Gui *mgr );
 
 protected:
 	void	update_cursor(void);
@@ -87,9 +87,9 @@ protected:
 	 */
 
 	/**
-	 * Current view manager
+	 * Current GUI
 	 */
-	EventMgr *gui_manager;
+	Gui *gui_manager;
 };
 
 #endif /*  YZ_VIEW_H */

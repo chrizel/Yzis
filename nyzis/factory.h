@@ -25,6 +25,7 @@
 #include <curses.h>
 #include "factory.h"
 #include "session.h"
+#include "document.h"
 
 
 #define STATUSBARWIDTH 15
@@ -55,7 +56,7 @@ public:
 	virtual void quit ( bool savePopup=true ) ;
 	virtual void changeCurrentView ( YZView * );
 	virtual YZView* createView( YZBuffer* );
-	virtual	YZBuffer *createBuffer(const QString& path=QString::null);
+	virtual	NYZisDoc *createBuffer(const QString& path=QString::null);
 	virtual void popupMessage( const QString& message );
 	virtual void deleteView();
 

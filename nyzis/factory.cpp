@@ -71,7 +71,7 @@ NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
 	/*
 	 * create a buffer and a view on it
 	 */
-	YZBuffer *bf;
+	NYZisDoc *bf;
 	if ( argc>1 )
 		bf = createBuffer(charv[1]);
 	else {
@@ -187,8 +187,8 @@ YZView* NYZFactory::createView( YZBuffer* buffer ) {
 	return currentView;
 }
 
-YZBuffer *NYZFactory::createBuffer(const QString& path) {
-	YZBuffer *b = new YZBuffer( NYZFactory::self, path );
+NYZisDoc *NYZFactory::createBuffer(const QString& path) {
+	NYZisDoc *b = new NYZisDoc( path );
 	return b;
 }
 

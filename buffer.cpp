@@ -219,7 +219,9 @@ void  YZBuffer::appendLine(const QString &l) {
 #else
 		QVector<uint> foldingList;
 #endif
-		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
+		YZLine *l = new YZLine();
+		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : l), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
+		delete l;
 //		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
 	YZSession::me->search()->highlightLine( this, mText.count() - 1 );
@@ -794,7 +796,9 @@ void YZBuffer::makeAttribs() {
 #else
 			QVector<uint> foldingList;
 #endif
-			m_highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
+			YZLine *l = new YZLine();
+			m_highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : l), yzline( hlLine ), &foldingList, &ctxChanged );
+			delete l;
 			hlLine++;
 		}
 	updateAllViews();
@@ -992,7 +996,9 @@ bool YZBuffer::updateHL( unsigned int line ) {
 #else
 		QVector<uint> foldingList;
 #endif
-		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yl, &foldingList, &ctxChanged );
+		YZLine *l = new YZLine();
+		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : l), yl, &foldingList, &ctxChanged );
+		delete l;
 //		yzDebug() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
 		hlChanged = ctxChanged || hlChanged;
 		if ( ! ctxChanged && yl->data().isEmpty() ) {
@@ -1029,7 +1035,9 @@ void YZBuffer::initHL( unsigned int line ) {
 #else
 		QVector<uint> foldingList;
 #endif
-		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
+		YZLine *l = new YZLine();
+		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : l), yzline( hlLine ), &foldingList, &ctxChanged );
+		delete l;
 	}
 	m_hlupdating=false;
 }

@@ -24,14 +24,17 @@
 #include "option.h"
 
 YZOptionContext YZOptionContext::currentSession() {
-	YZOptionContext sessionContext = {CXT_SESSION, QString::null};
+	YZOptionContext sessionContext;
+	sessionContext.mContextType = CXT_SESSION;
 	return sessionContext;
 }
 
 YZOptionContext YZOptionContext::currentBuffer() {
 	YZBuffer *buffer = YZSession::me->currentBuffer();
 	QString strBuf = buffer == 0 ? QString::null : buffer->fileName();
-	YZOptionContext bufferContext = {CXT_BUFFER, strBuf};
+	YZOptionContext bufferContext;
+	bufferContext.mContextType = CXT_BUFFER;
+	bufferContext.mInstance = strBuf;
 	return bufferContext;
 }
 
@@ -40,7 +43,9 @@ YZOptionContext YZOptionContext::currentView() {
 	QString strView = QString::null;
 	if(view != 0)
 		strView =  view->myBuffer()->fileName() + "-view-" + QString::number(view->myId);
-	YZOptionContext viewContext = {CXT_VIEW, strView};
+	YZOptionContext viewContext;
+	viewContext.mContextType = CXT_VIEW;
+	viewContext.mInstance = strView;
 	return viewContext;
 }
 

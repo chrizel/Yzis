@@ -268,6 +268,11 @@ public:
 	QString undoLast( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 	/**
+	 * Redo last operation on this buffer
+	 */
+	QString redoLast( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+
+	/**
 	 * Display a nice intro before first input and when no file is loaded
 	 */
 	void displayIntro();

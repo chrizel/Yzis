@@ -23,9 +23,11 @@
 #include "session.h"
 extern "C" {
 #include <lauxlib.h>
+#include <lualib.h>
 }
 YZExLua::YZExLua() {
 	st = lua_open();
+	luaopen_base(st);
 	yzDebug() << "Lua " << lua_version() << " loaded" << endl;
 	lua_register(st,"text",text);
 	lua_register(st,"insert",insert);

@@ -78,6 +78,7 @@ void YZBuffer::addNewLine( int col, int line ) {
 
 	//add new line
 	QString newline = l.mid( col );
+	if ( newline.isNull() ) newline = QString( "" );
 	QStringList::Iterator it = text.at( line );
 	text.insert( ++it, newline );
 	/* inform the views */

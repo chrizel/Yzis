@@ -19,7 +19,7 @@
  * $Id$
  */
 
-#include "unistd.h"
+#include <unistd.h>
 #include "debug.h"
 
 #include "factory.h"
@@ -136,7 +136,7 @@ void NYZFactory::event_loop() {
 				currentView->sendKey( keycodes[ c ], modifiers );
 			else
 				currentView->sendKey( c, modifiers );
-		}
+		} else usleep (400);
 		flush_events();
 	}
 }

@@ -270,7 +270,6 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		case YZ_VIEW_MODE_INSERT:
 			mPreviousChars += modifiers + key;
 			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode);
-			yzDebug() << "mPreviousChars " << mPreviousChars << endl;
 			if ( mPreviousChars == "<HOME>" ) {
 				moveToStartOfLine( );
 				purgeInputBuffer();
@@ -365,25 +364,32 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			break;
 
 		case YZ_VIEW_MODE_REPLACE:
-			if ( key == "<HOME>" ) {
+			mPreviousChars += modifiers + key;
+			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode);
+			if ( mPreviousChars == "<HOME>" ) {
 				moveToStartOfLine( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<END>" ) {
+			} else if ( mPreviousChars == "<END>" ) {
 				moveToEndOfLine( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<INS>" ) {
+			} else if ( mPreviousChars == "<INS>" ) {
 				gotoInsertMode( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<DEL>" ) {
+			} else if ( mPreviousChars == "<DEL>" ) {
 				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
 				commitNextUndo();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<ESC>" ) {
+			} else if ( mPreviousChars == "<ESC>" ) {
 				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() )
 					moveToEndOfLine( );
 				gotoPreviousMode();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<RETURN>" ) {
+			} else if ( mPreviousChars == "<RETURN>" ) {
 				test = mainCursor->bufferX() == 0;
 				mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 				if ( test ) {
@@ -391,38 +397,42 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					updateStickyCol( mainCursor );
 				}
 				commitNextUndo();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<DOWN>" ) {
+			} else if ( mPreviousChars == "<DOWN>" ) {
 				moveDown( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<BS>" || key == "<LEFT>" ) {
+			} else if ( mPreviousChars == "<BS>" || mPreviousChars == "<LEFT>" ) {
 				moveLeft();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<RIGHT>" ) {
+			} else if ( mPreviousChars == "<RIGHT>" ) {
 				moveRight();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<UP>" ) {
+			} else if ( mPreviousChars == "<UP>" ) {
 				moveUp( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<TAB>" ) {
+			} else if ( mPreviousChars == "<TAB>" ) {
 				mBuffer->action()->replaceChar( this, mainCursor->buffer(), "\t" );
 				commitNextUndo();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<PDOWN>" ) {
+			} else if ( mPreviousChars == "<PDOWN>" ) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() + mLinesVis );
 				purgeInputBuffer();
 				return;
-			} else if ( key == "<PUP>" ) {
+			} else if ( mPreviousChars == "<PUP>" ) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
 				purgeInputBuffer();
 				return;
 			} else {
 				//Vim has a sub mode for <CTRL>x commands
-				if ( modifiers + key == "<CTRL>x" ) { //special handling, here we can run commands while in INSERT mode
-					mPreviousChars += modifiers + key;
+				if ( mPreviousChars == "<CTRL>x" ) { //special handling, here we can run commands while in INSERT mode
 					return;
-				} else if ( modifiers == "<CTRL>" && mPreviousChars == "<CTRL>x" ) {
-					mPreviousChars += modifiers + key;
+				} else if ( mPreviousChars.startsWith("<CTRL>x<CTRL>") ) {
 					cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
 					switch(state) {
 						case CMD_ERROR:
@@ -434,8 +444,11 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					}
 					return;
 				}
-				mBuffer->action()->replaceChar( this, mainCursor->buffer(), key );
-				commitNextUndo();
+				if (!pendingMapp) {
+					mBuffer->action()->replaceChar( this, mainCursor->buffer(), mPreviousChars );
+					commitNextUndo();
+					purgeInputBuffer();
+				}
 				return;
 			}
 			break;

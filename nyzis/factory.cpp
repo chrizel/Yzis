@@ -31,7 +31,7 @@ QMap<int,QString> NYZFactory::keycodes; // map Ncurses to Qt codes
 
 
 NYZFactory::NYZFactory(const char *session_name, const QString& keys)
-	:YZSession( session_name ), QObject()
+	:QObject(), YZSession( session_name )
 {
 	m_initialCommand = keys;
 	/* init screen */

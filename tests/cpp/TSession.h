@@ -77,6 +77,9 @@ public:
 	    yzDebug( AREA_TESTS) << "TYZSession::promptYesNoCancel" << endl;
 		return 0;
 	}
+	virtual void splitHorizontally(YZView*) {
+        yzDebug( AREA_TESTS) << "TYZSession::splitHorizontally" << endl;
+	}
 };
 
 #endif // TYZ_SESSION_H

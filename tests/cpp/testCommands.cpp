@@ -31,13 +31,12 @@ using namespace std;
 #include "TView.h"
 #include "TBuffer.h"
 
-
 // register the suite so that it is run in the runner
 CPPUNIT_TEST_SUITE_REGISTRATION( TestYZCommands );
 
 // some useful macro
-#define CHECK_MODE_INSERT( view ) phCheckEquals( view->getCurrentMode(), YZView::YZ_VIEW_MODE_INSERT );
-#define CHECK_MODE_COMMAND( view ) phCheckEquals( view->getCurrentMode(), YZView::YZ_VIEW_MODE_COMMAND );
+#define CHECK_MODE_INSERT( view ) phCheckEquals( view->modePool()->currentType(), YZMode::MODE_INSERT );
+#define CHECK_MODE_COMMAND( view ) phCheckEquals( view->modePool()->currentType(), YZMode::MODE_COMMAND );
 #define CHECK_CURSOR_POS( view, line, col ) { phCheckEquals( view->getCursorLine(), line ); phCheckEquals( view->getCursorCol(), col ); }
 
 /* ========================================================================= */
@@ -172,7 +171,7 @@ void TestYZCommands::testCharMovement()
 
 void TestYZCommands::testBeginEndCharMovement()
 {
-	YZSession::mOptions.setGroup("Global");
+	YZSession::mOptions->setGroup("Global");
 	YZSession::setBoolOption("cindent",false);
     mView->sendMultipleKey( "i<TAB>0123<ENTER>4567<ENTER>  89AB <ESC>" );
     CHECK_CURSOR_POS( mView, 2, 6 );
@@ -205,7 +204,7 @@ void TestYZCommands::testBeginEndCharMovement()
 void TestYZCommands::testLineMovement()
 {
 	//we test 'gg' like commands, make sure :set startofline=true first
-	YZSession::mOptions.setGroup("Global");
+	YZSession::mOptions->setGroup("Global");
 	YZSession::setBoolOption("startofline",true);
     mView->sendMultipleKey( "i<TAB><TAB>0123<ENTER>4567<ENTER>89AB<ENTER> CDEF<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "\t\t0123\n4567\n89AB\n CDEF\n" );

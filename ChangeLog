@@ -1,3 +1,7 @@
+2004-08-09 panard, poizon
+  * libyzis
+    fixed 'w' and 'b' motions
+
 2004-08-06 mikmak
   * libyzis
     initial swapfile recovering support

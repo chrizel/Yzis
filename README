@@ -11,6 +11,7 @@ Requirements:
 -> Lua 5.x
 -> For kyzis : KDE 3.2.x
 -> For nyzis : NCurses 5
+-> Optionnally : pslib (pslib.sf.net)
 
 Building Yzis:
 ==============

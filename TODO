@@ -5,5 +5,3 @@
 - nyzis : check event handler(qt one?)
 - nyzis : report meta, etc..
 - implement open mode
--	replay macros and swapfile ...
--	change QString -> QStringlist in swapfile and macros.cpp

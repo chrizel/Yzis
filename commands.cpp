@@ -494,7 +494,7 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 			if(result.getX() == current.length() &&	result.getY() < args.view->myBuffer()->lineCount() - 1) {
 				result.setY(result.getY() + 1);
 				ws.search(args.view->myBuffer()->textline( result.getY() ));
-				result.setX(ws.matchedLength());
+				result.setX( QMAX( ws.matchedLength(), 0 ));
 			}
 		} else {
 			if ( result.getY() >= args.view->myBuffer()->lineCount() - 1 ) {
@@ -545,7 +545,6 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 				yzDebug() << "rex3 : " << idx << "," << len << endl;
 			}
 		}
-		int my_idx = lineLength - idx - len;
 		if ( idx != -1 ) {
 			yzDebug() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
 			c++; //one match

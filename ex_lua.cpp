@@ -28,7 +28,7 @@
 #include "cursor.h"
 #include "session.h"
 #include "yzis.h"
-#include "translator.h"
+#include "portability.h"
 #include <stdarg.h>
 
 /*
@@ -47,6 +47,10 @@ extern "C" {
 #include <lauxlib.h>
 #include <lualib.h>
 }
+
+#ifdef _MSC_VER
+#pragma warning (disable : 4390)
+#endif
 
 void print_lua_stack_value(lua_State*L, int index)
 {
@@ -616,6 +620,3 @@ QStringList YZExLua::getLastResult(int nb) {
 	yzDebug() << "LUA: Result " << list << endl;
 	return list;
 }
-
-#include "ex_lua.moc"
-

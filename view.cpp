@@ -24,7 +24,7 @@
  * $Id$
  */
 
-#include "config.h"
+#include "portability.h"
 #include <cstdlib>
 #include <ctype.h>
 #include <qkeysequence.h>
@@ -778,6 +778,7 @@ QString YZView::centerLine( const QString& s ) {
 
 void YZView::displayIntro() {
 	yzDebug() << "File: " __FILE__ << " Line: " << __LINE__ << endl;
+	unsigned int i;
 	unsigned int linesInIntro = 11; // Update this is if you change # of lines in message
 	unsigned int vMargin = mLinesVis > linesInIntro ? mLinesVis - linesInIntro : 0;
 	vMargin = ( vMargin + 1 ) / 2; // round up to have enough lines so '~' isn't shown
@@ -786,7 +787,7 @@ void YZView::displayIntro() {
 	mBuffer->undoBuffer()->setInsideUndo( true );
 
 	gotoxy( 0, 0 );
-	for (unsigned int i = 0; i < vMargin; i++ ) mBuffer->appendLine("");
+	for (i = 0; i < vMargin; i++ ) mBuffer->appendLine("");
 	mBuffer->appendLine( centerLine( VERSION_CHAR_LONG ) );
 	if ( VERSION_CHAR_ST == VERSION_CHAR_STATE2 )
 		mBuffer->appendLine( centerLine( VERSION_CHAR_DATE ) );
@@ -798,7 +799,7 @@ void YZView::displayIntro() {
 	mBuffer->appendLine( centerLine( "Yzis is distributed under the terms of the GPL v2" ) );
 	mBuffer->appendLine( "" );
 	mBuffer->appendLine( centerLine( "please report bugs at http://bugs.yzis.org" ) );
-	for ( unsigned int i = 0; i < vMargin; i++ ) mBuffer->appendLine( "" );
+	for ( i = 0; i < vMargin; i++ ) mBuffer->appendLine( "" );
 
 	mBuffer->undoBuffer()->setInsideUndo( false );
 
@@ -1758,7 +1759,7 @@ bool YZView::drawPrevCol( ) {
 	if ( workCursor->bufferX() >= workCursor->bColIncrement ) {
 		unsigned int curx = workCursor->bufferX() - 1;
 		workCursor->setBufferX( curx );
-		lastChar = sCurLine[ curx ];
+		lastChar = sCurLine.at( curx );
 		if ( lastChar != tabChar ) {
 /*			listChar = drawMode && getLocalBoolOption( "list" );
 			if ( listChar ) {
@@ -1801,7 +1802,7 @@ bool YZView::drawNextCol( ) {
 	workCursor->lastCharWasTab = false;
 	if ( curx < sCurLineLength ) {
 		unsigned int lenToTest;
-		lastChar = sCurLine[ curx ];
+		lastChar = sCurLine.at( curx );
 		mFillChar = ' ';
 		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
@@ -1851,7 +1852,7 @@ bool YZView::drawNextCol( ) {
 			else lenToTest = workCursor->sColIncrement;
 		}
 		if ( ! drawMode && ! isFontFixed && workCursor->bufferX() + workCursor->bColIncrement < sCurLineLength )
-			nextLength = GET_CHAR_WIDTH( sCurLine[ workCursor->bufferX() + workCursor->bColIncrement ] );
+			nextLength = GET_CHAR_WIDTH( sCurLine.at( workCursor->bufferX() + workCursor->bColIncrement ) );
 
 		// will our new char appear in the area ?
 		ret = adjust || workCursor->screenX() + lenToTest - scrollCursor->screenX() <= mColumnsVis - nextLength;
@@ -1922,7 +1923,7 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 		YzisAttribute *list = highlight->attributes( 0 )->data( ); //attributes defined by the syntax highlighting document
 		at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
 	}
-	if ( getLocalBoolOption( "list" ) && ( yl->data()[col] == ' ' || yl->data()[col] == tabChar ) )
+	if ( getLocalBoolOption( "list" ) && ( yl->data().at(col) == ' ' || yl->data().at(col) == tabChar ) )
 		return blue;
 	if ( at ) return at->textColor(); //textcolor :)
 	return fake;
@@ -2222,7 +2223,7 @@ void YZView::removePaintEvent( const YZCursor& from, const YZCursor& to ) {
 
 bool YZView::stringHasOnlySpaces ( const QString& what ) {
 	for (unsigned int i = 0 ; i < what.length(); i++)
-		if ( !what[i].isSpace() ) {
+		if ( !what.at(i).isSpace() ) {
 			return false;
 		}
 	return true;

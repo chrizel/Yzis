@@ -21,7 +21,7 @@
  * $Id$
  */
 
-#include "config.h"
+#include "portability.h"
 #ifdef HAVE_LIBPS
 #ifndef YZ_PRINTER_H
 #define YZ_PRINTER_H

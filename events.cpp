@@ -108,5 +108,3 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 	}
 	return results;
 }
-
-#include "events.moc"

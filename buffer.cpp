@@ -122,12 +122,12 @@ void YZBuffer::detach() {
  */
 
 #define VIEWS_INIT( x, y ) \
-	for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
-		it->initChanges( x, y )
+	{ for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
+	it->initChanges( x, y ); }
 
 #define VIEWS_APPLY( x, y ) \
-	for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
-		it->applyChanges( x, y )
+	{ for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
+	it->applyChanges( x, y ); }
 
 void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
 	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), c )
@@ -394,7 +394,7 @@ uint YZBuffer::firstNonBlankChar( uint line ) {
 	uint i=0;
 	QString s = textline(line);
 	if (s.isNull()) return 0;
-	while( s[i].isSpace() && i < s.length()) {
+	while( s.at(i).isSpace() && i < s.length()) {
 		i++;
 	}
 	return i;

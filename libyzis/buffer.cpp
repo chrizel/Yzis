@@ -296,11 +296,6 @@ void YZBuffer::save() {
 }
 
 
-yz_point YZBuffer::motionPosition( unsigned int /*xstart*/, unsigned int /*ystart*/, YZMotion /*regexp*/ ) {
-	yz_point e;
-	return e;
-}
-
 void YZBuffer::replaceLine( unsigned int y, const QString& value ) {
 	at(y)->setData(value);
 	/* inform the views */

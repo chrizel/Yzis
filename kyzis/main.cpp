@@ -63,6 +63,7 @@ int main(int argc, char **argv) {
 		} else {
 			int i = 0;
 			Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
+			widget->resize( 600,400 );
 			widget->show();
 			for (; i < args->count(); i++ )
 				widget->createBuffer( args->url( i ).url() );

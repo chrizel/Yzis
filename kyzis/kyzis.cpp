@@ -46,8 +46,10 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	setIDEAlModeStyle( 1 );
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
 
-	menuBar()->insertItem("&Window", windowMenu());
-	menuBar()->insertItem("&Docking", dockHideShowMenu());
+	if ( !isFakingSDIApplication() ) {
+		menuBar()->insertItem("&Window", windowMenu(), -1 , menuBar()->count()-2);
+		menuBar()->insertItem("&Docking", dockHideShowMenu(), -1 , menuBar()->count()-2);
+	}
 	setupActions();
 	
 	if ( m_dockConfig.hasChildNodes() ) {

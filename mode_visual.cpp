@@ -133,6 +133,8 @@ void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand(":", (PoolMethod) &YZModeVisual::gotoExMode ) );
 	commands.append( new YZCommand("A", (PoolMethod) &YZModeVisual::commandAppend ) );
 	commands.append( new YZCommand("I", (PoolMethod) &YZModeVisual::commandInsert ) );
+	//commands.append( new YZCommand("u", (PoolMethod) &YZModeVisual::toLowerCase) );
+	//commands.append( new YZCommand("U", (PoolMethod) &YZModeVisual::toUpperCase) );
 	commands.append( new YZCommand("c", &YZModeCommand::change) );
 	commands.append( new YZCommand("d", &YZModeCommand::del) );
 	commands.append( new YZCommand("y", &YZModeCommand::yank) );
@@ -155,6 +157,14 @@ void YZModeVisual::commandInsert( const YZCommandArgs& args ) {
 	args.view->modePool()->change( MODE_INSERT );
 	args.view->gotoxy( pos.getX(), pos.getY() );
 }
+//void YZModeVisual::toLowerCase( const YZCommandArgs& args ) {
+//	YZCursor pos = qMin( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
+//	args.view->gotoxy( pos.getX(), pos.getY() );
+//}
+//void YZModeVisual::toUpperCase( const YZCommandArgs& args ) {
+//	YZCursor pos = qMin( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
+//	args.view->gotoxy( pos.getX(), pos.getY() );
+//}
 void YZModeVisual::translateToVisualLine( const YZCommandArgs& args ) {
 	args.view->modePool()->change( MODE_VISUAL_LINE, false ); // just translate (don't leave current mode)
 }

@@ -164,6 +164,10 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("<ESC>", &YZModeCommand::abort) );
 	commands.append( new YZCommand("<DEL>", &YZModeCommand::delkey) );
 	commands.append( new YZCommand("<ALT>:", &YZModeCommand::gotoExMode) );
+	commands.append( new YZCommand("gUU", &YZModeCommand::lineToUpperCase) );
+	commands.append( new YZCommand("gUgU", &YZModeCommand::lineToUpperCase) );
+	commands.append( new YZCommand("guu", &YZModeCommand::lineToLowerCase) );
+	commands.append( new YZCommand("gugu", &YZModeCommand::lineToLowerCase) );
 }
 void YZModeCommand::initModifierKeys() {
 #if QT_VERSION < 0x040000
@@ -1143,7 +1147,27 @@ void YZModeCommand::changeCase( const YZCommandArgs &args ) {
 		}
 		args.view->commitNextUndo();
 	}
-	
+
+}
+
+void YZModeCommand::lineToUpperCase( const YZCommandArgs &args ) {
+	YZCursor pos = *args.view->getBufferCursor();
+	const QString line = args.view->myBuffer()->textline( pos.getY() );
+	if ( ! line.isNull() ) {
+		args.view->myBuffer()->action()->replaceLine( args.view, pos.getY(), line.upper());
+		args.view->gotoxy( 0, pos.getY() );
+		args.view->commitNextUndo();
+	}
+}
+
+void YZModeCommand::lineToLowerCase( const YZCommandArgs &args ) {
+	YZCursor pos = *args.view->getBufferCursor();
+	const QString line = args.view->myBuffer()->textline( pos.getY() );
+	if ( ! line.isNull() ) {
+		args.view->myBuffer()->action()->replaceLine( args.view, pos.getY(), line.lower());
+		args.view->gotoxy( 0, pos.getY() );
+		args.view->commitNextUndo();
+	}
 }
 
 void YZModeCommand::macro( const YZCommandArgs &args ) {
@@ -1152,7 +1176,7 @@ void YZModeCommand::macro( const YZCommandArgs &args ) {
 	else
 		args.view->recordMacro( args.regs );
 	args.view->modeChanged();
-	
+
 }
 
 void YZModeCommand::replayMacro( const YZCommandArgs &args ) {

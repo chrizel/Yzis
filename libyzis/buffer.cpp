@@ -209,6 +209,19 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
 		;	
 	mText.insert(it, new YZLine( l ));
+	if ( m_highlight != 0L ) {
+		uint hlLine = line;
+		bool ctxChanged = true;
+		bool hlChanged = false;
+		while ( ctxChanged && hlLine < lineCount()) {
+			QMemArray<signed char> foldingList;
+			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
+			if ( hlLine != line ) hlChanged = true;
+			hlLine++;
+		}
+		if ( hlChanged ) updateAllViews( );
+	}
+
 	setChanged( true );
 }
 

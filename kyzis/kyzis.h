@@ -36,12 +36,14 @@ public:
     /**
      * Use this method to load whatever file/URL you have
      */
-		void load(const KURL& url);
-		
-		/**
-		 * Returns the active Part
-		 */
-		KParts::ReadWritePart *activePart() { return currentPart; }
+    void load(const KURL& url);
+
+    /**
+     * Returns the active Part
+     */
+    KParts::ReadWritePart *activePart() { return currentPart; }
+
+    void createBuffer(const QString& path);
 
 protected:
     /**
@@ -72,9 +74,9 @@ private:
 
 private:
     KToggleAction *m_toolbarAction;
-		QValueList<KParts::ReadWritePart*> partsList;
-		KParts::ReadWritePart *currentPart;
-		KDockWidget *dock;
+    QValueList<KParts::ReadWritePart*> partsList;
+    KParts::ReadWritePart *currentPart;
+    KDockWidget *dock;
 };
 
 #endif // KYZIS_H

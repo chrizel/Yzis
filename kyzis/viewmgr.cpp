@@ -12,3 +12,4 @@ ViewMgr::~ViewMgr() {
 
 }
 
+#include "viewmgr.moc"

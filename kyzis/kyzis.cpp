@@ -72,7 +72,7 @@ Kyzis::Kyzis()
 
 Kyzis::~Kyzis() {
 	//delete m_part;
-	delete partsList;
+	partsList.clear();
 	delete m_toolbarAction;
 }
 
@@ -116,7 +116,7 @@ void Kyzis::fileNew() {
 	// says that it should open a new window if the document is _not_
 	// in its initial state.  This is what we do here..
 	//XXX NOPE
-	if ( ! m_part->url().isEmpty() || m_part->isModified() ) {
+	if ( ! currentPart->url().isEmpty() || currentPart->isModified() ) {
 		(new Kyzis)->show();
 	};
 }
@@ -183,7 +183,7 @@ void Kyzis::createBuffer(const QString& path) {
 			{
 				partsList.append(m_part);
 				currentPart = m_part;
-				dock->
+			//	dock->
 			}
 		}
 }

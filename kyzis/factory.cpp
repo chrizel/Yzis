@@ -10,6 +10,8 @@
 #include <assert.h>
 #include <unistd.h>
 #include <kapplication.h>
+#include <dcopclient.h>
+#include <qstring.h>
 
 #include "factory.h"
 #include "document.h"
@@ -212,9 +214,11 @@ YZView* KYZisFactory::createView( YZBuffer *buffer ) {
 YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 	DCOPClient *client = kapp->dcopClient();
 	QByteArray data, reply;
+	QCString replytype="";
+	QDataStream arg(data, IO_WriteOnly);
 	client->attach();
-	data << path << endl;
-	bool w = client->call(client->appId(), "Kyzis", "createBuffer", data, "", reply, true );
+	arg << path;
+	bool w = client->call(client->appId(), "Kyzis", "createBuffer", data, replytype, reply, true );
 	if (w) {
 		//finds the buffer
 	} else {

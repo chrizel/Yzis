@@ -600,32 +600,32 @@ void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
 YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 	YZCursor from = *args.view->getBufferCursor();
 	unsigned int start = from.y();
-	bool found = false;
-	while ( start >= 1 && !found ) {
+	int count = args.count > 0 ? args.count : 1;
+	int counter=0;
+	while ( start >= 1 && counter!=count) {
 		if (args.view->myBuffer()->yzline(start-1)->data() == "" ) {
-			found = true;
-		} else {
-			start--;	
+			counter++;
 		}
+		start--;	
 	}
-	if (found)
-		return YZCursor(0,start-1);
+	if (counter==count)
+		return YZCursor(0,start);
 	return from;
 }
 
 YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
 	YZCursor from = *args.view->getBufferCursor();
 	unsigned int start = from.y()+1;
-	bool found = false;
-	while ( start < args.view->myBuffer()->lineCount() && !found ) {
+	int count = args.count > 0 ? args.count : 1;
+	int counter=0;
+	while ( start < args.view->myBuffer()->lineCount() && counter!=count ) {
 		if (args.view->myBuffer()->yzline(start)->data() == "" ) {
-			found = true;
-		} else {
-			start++;	
+			counter++;
 		}
+		start++;	
 	}
-	if (found)
-		return YZCursor(0,start);
+	if (counter==count)
+		return YZCursor(0,start-1);
 	return from;
 }
 

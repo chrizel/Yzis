@@ -347,26 +347,31 @@ void YZView::updateCursor() {
 	updateCursor( y, mCursor->getX(), mCursor->getX(), percentage );
 }
 
-void YZView::centerView(unsigned int column, unsigned int line) {
-	unsigned int newcurrent = line - mLinesVis / 2;
+void YZView::centerViewHorizontally(unsigned int column) {
 	unsigned int newcurrentLeft = column - mColumnsVis / 2;
+
+	if ( newcurrentLeft > ( mMaxX - mColumnsVis ) ) {
+		if ( column > mColumnsVis/2 )
+			newcurrentLeft = mMaxX - mColumnsVis;
+		else newcurrentLeft = 0;
+	}
+	if ( newcurrentLeft == mCurrentLeft ) return;
+	mCurrentLeft = mCurrentLeft ? newcurrentLeft : 0;
+	redrawScreen();
+}
+
+void YZView::centerViewVertically(unsigned int line) {
+	unsigned int newcurrent = line - mLinesVis / 2;
 
 	if ( newcurrent > ( mBuffer->lineCount() - mLinesVis ) ) {
 		if ( line > mLinesVis/2 )
 			newcurrent = mBuffer->lineCount() - mLinesVis;
 		else newcurrent = 0;
 	}
-	if ( newcurrentLeft > ( mMaxX - mColumnsVis ) ) {
-		if ( column > mColumnsVis/2 )
-			newcurrentLeft = mMaxX - mColumnsVis;
-		else newcurrentLeft = 0;
-	}
-
-	if ( newcurrent == mCurrentTop && newcurrentLeft == mCurrentLeft ) return;
+	if ( newcurrent == mCurrentTop ) return;
 	
 	//redraw the screen
-	mCurrentTop = newcurrent;
-	mCurrentLeft = newcurrentLeft;
+	mCurrentTop = newcurrent ? newcurrent : 0;
 	redrawScreen();
 }
 
@@ -403,11 +408,11 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	mCursor->setX( nextx );
 
 	//make sure this line is visible
-	if ( !isLineVisible( nexty ) || !isColumnVisible( nextx ) ) centerView( nextx, nexty );
+	if ( !isLineVisible( nexty ) ) centerViewVertically( nexty );
+	if (  !isColumnVisible( nextx ) ) centerViewHorizontally( nextx );
 
 	/* do it */
 	updateCursor();
-
 }
 
 QString YZView::moveDown( const QString& , YZCommandArgs args ) {

@@ -105,9 +105,14 @@ class YZView {
 		YZSession *mySession() { return mSession; }
 
 		/**
-		 * Center view on the given @arg column and @arg line
+		 * Center view vertically on the given @arg line
 		 */
-		void centerView( unsigned int column, unsigned int line );
+		void centerViewVertically( unsigned int line );
+
+		/**
+		 * Center view horizontally on the given @arg column
+		 */
+		void centerViewHorizontally( unsigned int column );
 
 		/**
 		 * Clean out the current buffer of inputs

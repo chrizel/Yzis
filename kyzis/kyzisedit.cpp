@@ -68,13 +68,14 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 }
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
-	int i=0;
-	for ( i=0; i < _parent->getLinesVisible() ; ++i ) {
+	for ( int i=0; i < _parent->getLinesVisible() ; ++i ) {
 			if (fontMetrics().lineSpacing() * i >= clipy &&
 					fontMetrics().lineSpacing() * i <= clipy+cliph ) {
 					QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
 					p->eraseRect(clip);
-					p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->getText()[ i + _parent->getCurrent() ]);
+					if ( _parent->myBuffer()->getText().count() >= i + _parent->getCurrent() ) {
+						p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->getText()[ i + _parent->getCurrent() ]);
+					}
 			}
 	}
 

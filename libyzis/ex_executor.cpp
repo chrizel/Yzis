@@ -149,7 +149,7 @@ QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
 	QRegExp rx2 ( "setl\\S*(\\s+)no(.*)" ); //deactivate a bool option
 	QRegExp rx3 ( "setl\\S*(\\s+)(.*)" ); //activate a bool option
 
-	YZSession::mOptions.setGroup("General");
+	YZSession::mOptions.setGroup("Global");
 
 	if ( rx.exactMatch( inputs ) ) {
 		KOption *opt = YZSession::mOptions.getOption(rx.cap( 2 ).simplifyWhiteSpace());
@@ -217,13 +217,13 @@ QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
 	QRegExp rx2 ( "set(\\s+)no(.*)" ); //deactivate a bool option
 	QRegExp rx3 ( "set(\\s+)(.*)" ); //activate a bool option
 	if ( rx.exactMatch( inputs ) ) {
-		YZSession::mOptions.setGroup("General");
+		YZSession::mOptions.setGroup("Global");
 		YZSession::setQStringOption( rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());
 	} else if ( rx2.exactMatch( inputs )) {
-		YZSession::mOptions.setGroup("General");
+		YZSession::mOptions.setGroup("Global");
 		YZSession::setBoolOption( rx2.cap( 2 ).simplifyWhiteSpace(), false);
 	} else if ( rx3.exactMatch( inputs ) ) {
-		YZSession::mOptions.setGroup("General");
+		YZSession::mOptions.setGroup("Global");
 		YZSession::setBoolOption( rx3.cap( 2 ).simplifyWhiteSpace(), true);
 	} else {
 		view->mySession()->popupMessage( tr( "Invalid option given" ) );

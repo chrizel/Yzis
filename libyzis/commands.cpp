@@ -195,7 +195,7 @@ void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
 	int priority=-1;
 	for ( it = globalExCommands.begin(); it!=globalExCommands.end(); ++it ) {
 		tmpCmd = static_cast<QString>( it.key() );
-		yzDebug() << "execExCommand : testing for match " << tmpCmd << endl;
+//		yzDebug() << "execExCommand : testing for match " << tmpCmd << endl;
 		if ( tmpCmd.startsWith( command ) && it.data().priority > priority ) {
 			priority=it.data().priority; //store the priority
 			cmd = tmpCmd;

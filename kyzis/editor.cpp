@@ -187,8 +187,8 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 	unsigned int linespace = fontMetrics().lineSpacing();
 	unsigned int maxwidth = fontMetrics().maxWidth();
 	QRect myRect;
-	bool number = YZSession::getBoolOption( "General\\number" );
-	bool wrap = YZSession::getBoolOption( "General\\wrap" );
+	bool number = mParent->getLocalBoolOption( "number" );
+	bool wrap = mParent->getLocalBoolOption( "wrap" );
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
 	unsigned int my_marginLeft = 0;

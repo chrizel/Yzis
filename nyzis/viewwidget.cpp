@@ -136,8 +136,8 @@ void NYZView::paintEvent( unsigned int , unsigned int clipy, unsigned int , unsi
 }
 
 void NYZView::drawContents( int clipy, int cliph ) {
-	bool number = YZSession::getBoolOption( "General\\number" );
-	bool wrap = YZSession::getBoolOption( "General\\wrap" );
+	bool number = getLocalBoolOption( "number" );
+	bool wrap = getLocalBoolOption( "wrap" );
 
 	if (!editor)	// Avoid segfaults and infinite recursion.
 		return;

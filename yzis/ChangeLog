@@ -1,3 +1,21 @@
+2003-04-21 mikmak
+  * libyzis
+    added beginning of plugin interface
+    
+2003-04-20 mikmak
+  * libyzis
+    added yz_commands stuff
+
+2003-04-19 mikmak
+  * libyzis
+    fixed find_line() in yz_buffer
+    fixed all calls to find_line()
+    started handling of commands with multiple keystroke ('gg')
+
+2003-04-18 mikmak
+  * fix headers
+  * fix code looking
+
 2003-04-17 mikmak
   * libyzis/kyzis
     fixed cursor going to negative position

@@ -1,3 +1,6 @@
+/**
+ * $id$
+ */
 #include "kyzisview.h"
 #include "kyzis_factory.h"
 #include <qlayout.h>
@@ -18,7 +21,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	l->addWidget(editor);
 	l->addWidget(status);
 
-	register_manager(this);
+	registerManager(this);
 
 	buffer = doc;
 	editor->show();
@@ -42,7 +45,7 @@ void KYZisView::postEvent(yz_event ev) {
 void KYZisView::customEvent (QCustomEvent *) {
 	yz_event *event;
 	while (last_event_done < events_nb_last) {
-		event = fetch_event(last_event_done++);
+		event = fetchEvent(last_event_done++);
 		kdDebug() << "** Processing Event " << last_event_done << " Id : " << event->id << endl;
 		if (! event ) {
 			kdDebug() << "OUPS, no event to fetch !" << endl;
@@ -50,7 +53,8 @@ void KYZisView::customEvent (QCustomEvent *) {
 		}
 		switch ( event->id ) {
 			case YZ_EV_SETLINE:
-				kdDebug() << "event SETLINE" << *(event->u.setline.line) << endl;
+				kdDebug() << "event SETLINE" << *(event->u.setline.line) << endl
+					<< "LINE " << event->u.setline.y << endl;
 				editor->setTextLine(event->u.setline.y,*(event->u.setline.line));
 				break;
 			case YZ_EV_SETCURSOR:

@@ -1,3 +1,7 @@
+/**
+ * $id$
+ */
+
 #include "kyzisdoc.h"
 #include "kyzisview.h"
 #include "kyzis_factory.h"
@@ -19,7 +23,7 @@ KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *name) {
 	KYZisView *v = new KYZisView (this, parent);
 	//FIXME : two lists
 	_views.append(v);
-	add_view(v);
+	addView(v);
 	return v;
 }
 

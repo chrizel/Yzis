@@ -1,3 +1,7 @@
+/**
+ * $id$
+ */
+
 #include "kyzisedit.h"
 #include <kdebug.h>
 
@@ -25,13 +29,14 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 
 // PUBLIC API
 void KYZisEdit::setCursor(int c, int l) {
-	//strange we should not need a -1 //FIXME
 	//undraw previous cursor
-	updateContents(cursorx*fontMetrics().maxWidth(),cursory*fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing()*2);
+	kdDebug() << "CursorX before : " << cursorx << " CursorY before : " << cursory << endl;
+	drawCursorAt( cursorx,cursory );
 	cursorx = c;
-	cursory = l - 1;
+	cursory = l;
+	kdDebug() << "CursorX after : " << cursorx << " CursorY after : " << cursory << endl;
 	//draw new cursor
-	updateContents(cursorx*fontMetrics().maxWidth(),cursory*fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing()*2);
+	drawCursorAt( cursorx,cursory );
 }
 
 void KYZisEdit::setTextLine(int l, const QString &str){
@@ -42,14 +47,14 @@ void KYZisEdit::setTextLine(int l, const QString &str){
 // INTERNAL API
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	kdDebug()<< " Got key : " << e->ascii() << endl;
-	_parent->send_char(e->ascii());
+	_parent->sendChar(e->ascii());
 	e->accept();
 }
 
 void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 	//FIXME needs improvment (add some offset)
 	//relative coordinates ?
-	_parent->update_cursor(e->x()/fontMetrics().maxWidth(), e->y()/fontMetrics().lineSpacing());
+	_parent->updateCursor(e->x()/fontMetrics().maxWidth(), e->y()/fontMetrics().lineSpacing());
 }
 
 void KYZisEdit::drawCursorAt(int x, int y) {
@@ -68,9 +73,11 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 	kdDebug() << "*** DrawContents : clipx " << clipx << " clipy " << clipy << " clipw " << clipw << " cliph " << cliph << endl;
 	KYZLine::iterator it;
 	for (it = mText.begin(); it!=mText.end(); ++it) {
-			if (fontMetrics().lineSpacing() * it.key() >= clipy && fontMetrics().lineSpacing() * it.key() <= clipy+cliph ) {
-				p->eraseRect(0,it.key() * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
-				p->drawText(0,it.key() * fontMetrics().lineSpacing(),it.data());
+			if (fontMetrics().lineSpacing() * ( it.key() ) >= clipy &&
+					fontMetrics().lineSpacing() * ( it.key() ) <= clipy+cliph ) {
+				kdDebug() << "DRAW at " << it.key() << endl;
+				p->eraseRect(0,it.key()*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
+				p->drawText(0,it.key()*fontMetrics().lineSpacing(),it.data());
 			}
 	}
 	

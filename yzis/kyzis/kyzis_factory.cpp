@@ -1,3 +1,7 @@
+/**
+ * $id$
+ */
+
 #include <klocale.h>
 #include <kstandarddirs.h>
 #include <kinstance.h>
@@ -9,10 +13,8 @@
 #include "kyzis_factory.h"
 #include "kyzisdoc.h"
 
-extern "C"
-{
-    void* init_libkyzispart()
-    {
+extern "C" {
+    void* init_libkyzispart() {
 			KGlobal::locale()->insertCatalogue("kyzispart");
 			return new KYZisFactory();
     }
@@ -20,13 +22,11 @@ extern "C"
 
 KInstance* KYZisFactory::s_instance = 0L;
 
-KYZisFactory::KYZisFactory()
-{
+KYZisFactory::KYZisFactory() {
 		s_instance=0;
 }
 
-KYZisFactory::~KYZisFactory()
-{
+KYZisFactory::~KYZisFactory() {
 	if ( s_instance ) {
 		delete s_instance->aboutData();
 		delete s_instance;
@@ -35,8 +35,7 @@ KYZisFactory::~KYZisFactory()
 }
 
 KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, 
-		QObject *parent, const char *name, const char *classname, const QStringList & args)
-{
+		QObject *parent, const char *name, const char *classname, const QStringList & args) {
 	bool bSingleView = (classname!=QString("KTextEditor::Document"));
 	bool bWantBrowserView =  (classname == QString("Browser/View") );
 	bool bWantReadOnly = (bWantBrowserView || ( classname == QString("KParts::ReadOnlyPart") ));
@@ -46,15 +45,13 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	return part;
 }
 
-KInstance* KYZisFactory::instance()
-{
+KInstance* KYZisFactory::instance() {
   if( !s_instance )
     s_instance = new KInstance( aboutData() );
   return s_instance;
 }
 
-const KAboutData *KYZisFactory::aboutData()
-{
+const KAboutData *KYZisFactory::aboutData() {
 	KAboutData *data = new KAboutData ("kyzispart", I18N_NOOP("KYZis"), "0.0.1",
 					I18N_NOOP( "KYZis - KDE Frontend for YZis" ),
 					KAboutData::License_LGPL_V2,

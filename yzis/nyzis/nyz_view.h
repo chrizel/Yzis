@@ -9,9 +9,12 @@
 
 #include "yz_view.h"
 #include <curses.h>
+#include <qstringlist.h>
+#include <qmap.h>
 
 
-#define	YZ_MAX_LINE	3000
+//#define	YZ_MAX_LINE	3000
+typedef QMap<int,QString> NYZLine;
 
 class NYZSession;
 
@@ -30,7 +33,7 @@ public:
 protected:
 	void handle_event(yz_event *e);
 
-	QString		*local_lines[YZ_MAX_LINE];
+	NYZLine		mText;
 	WINDOW		*window;	/* ncurses window to write to */
 	NYZSession	*session;
 

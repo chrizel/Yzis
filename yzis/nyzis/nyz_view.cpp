@@ -44,7 +44,7 @@ void NYZView::flush_events(void)
 void NYZView::handle_event(yz_event *e)
 {
 	int l, i;
-	QString	*yzl;
+	QString	yzl;
 
 //FIXME	if (!e) panic("oulalal c'est pas bon la..");
 
@@ -53,11 +53,12 @@ void NYZView::handle_event(yz_event *e)
 			l = e->u.setline.y;
 //FIXME			if (l<0 or l>=YZ_MAX_LINE) panic("Can't handle more than 3000 lines
 			//yet, kinda sucks, uh?");
-			yzl = local_lines[l] = e->u.setline.line;
+			yzl = mText[l] = *( e->u.setline.line );
+			mText.insert( l,*( e->u.setline.line ));
 
 			/* not use addnstr here, will stop at \0  (i guess) */
 			move ( l, 0);
-			for (i=0; i<w && i<yzl->length(); i++)
+			for (i=0; i<w && i<yzl.length(); i++)
 				addch(yzl[i].unicode());
 
 //			refresh();

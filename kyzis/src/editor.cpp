@@ -507,8 +507,10 @@ void KYZisEdit::unregisterModifierKeys( const QString& keys ) {
 	}
 	actionCollection->take( k );
 	KAccel* accel = actionCollection->kaccel();
-	accel->remove( keys );
-	accel->updateConnections();
+	if ( accel ) {
+		accel->remove( keys );
+		accel->updateConnections();
+	}
 	signalMapper->removeMappings( k );
 	delete k;
 }

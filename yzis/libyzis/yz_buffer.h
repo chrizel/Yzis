@@ -1,7 +1,7 @@
 #ifndef YZ_BUFFER_H
 #define YZ_BUFFER_H
 /**
- * $Id: yz_buffer.h,v 1.19 2003/04/25 18:31:02 mikmak Exp $
+ * $Id: yz_buffer.h,v 1.20 2003/04/25 20:00:54 mikmak Exp $
  */
 
 #include <qstringlist.h>
@@ -21,6 +21,7 @@ public:
 
 	void addChar (int x, int y, QChar c);
 	void chgChar (int x, int y, QChar c);
+	void delChar (int x, int y, int count = 1);
 
 	void load(void);
 	void save(void);

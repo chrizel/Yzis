@@ -1,7 +1,7 @@
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
 /**
- * $Id: yz_view.h,v 1.23 2003/04/25 18:31:02 mikmak Exp $
+ * $Id: yz_view.h,v 1.24 2003/04/25 20:00:54 mikmak Exp $
  */
 
 
@@ -95,6 +95,21 @@ public:
 	 * moves the cursor of the current view right
 	 */
 	QString moveRight( QString inputsBuff = QString::null );
+
+	/**
+	 * moves the cursor of the current view to the start of the current line
+	 */
+	QString moveToStartOfLine( QString inputsBuff = QString::null );
+
+	/**
+	 * moves the cursor of the current view to the end of the current line
+	 */
+	QString moveToEndOfLine( QString inputsBuff = QString::null );
+
+	/**
+	 * deletes the character under the cursor
+	 */
+	QString deleteCharacter( QString inputsBuff = QString::null );
 
 	/**
 	 * Start insert mode

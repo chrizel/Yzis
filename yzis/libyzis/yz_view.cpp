@@ -1,5 +1,5 @@
 /**
- * $Id: yz_view.cpp,v 1.36 2003/04/25 18:32:15 mikmak Exp $
+ * $Id: yz_view.cpp,v 1.37 2003/04/25 20:00:54 mikmak Exp $
  */
 
 #include <cstdlib>
@@ -259,8 +259,8 @@ QString YZView::moveLeft( QString inputsBuff ) {
 
 QString YZView::moveRight( QString inputsBuff ) {
 	QString lin;
-	int nb_cols=1;//default : one line down
-
+	int nb_cols=1;//default : one column right
+	
 	//check the arguments
 	if ( !inputsBuff.isNull() ) {
 		int i=0;
@@ -280,13 +280,78 @@ QString YZView::moveRight( QString inputsBuff ) {
 	if ( nextx > current_maxx ) nextx = current_maxx;
 	if ( nextx < 0 ) nextx = 0;
 	cursor->setX( nextx );
-
+	
 	updateCursor();
 
 	//reset the input buffer
 	purgeInputBuffer();
-
+	
 	//return something
+	return QString::null;
+}
+
+QString YZView::moveToStartOfLine( QString ) {
+	QString lin;
+	
+	//execute the code
+	lin = buffer->findLine(cursor->getY());
+	if ( !lin.isNull() )
+		current_maxx = lin.length()-1;
+	else
+		current_maxx = 0;
+
+	cursor->setX( 0 );
+	
+	updateCursor();
+
+	//reset the input buffer
+	purgeInputBuffer();
+	
+	//return something
+	return QString::null;
+}
+
+QString YZView::moveToEndOfLine( QString ) {
+	QString lin;
+	
+	//execute the code
+	lin = buffer->findLine(cursor->getY());
+	if ( !lin.isNull() )
+		current_maxx = lin.length()-1;
+	else
+		current_maxx = 0;
+
+	cursor->setX( current_maxx );
+	
+	updateCursor();
+
+	//reset the input buffer
+	purgeInputBuffer();
+	
+	//return something
+	return QString::null;
+}
+
+QString YZView::deleteCharacter( QString inputsBuff ) {
+	QString lin;
+	int nb_cols=1;//default : one row right
+	
+	//check the arguments
+	if ( !inputsBuff.isNull() ) {
+		int i=0;
+		while ( inputsBuff[i].isDigit() )
+			i++; //go on
+		bool test;
+		nb_cols = inputsBuff.left( i ).toInt( &test );
+		if ( !test ) nb_cols=1;
+	}
+	
+	//execute the code
+	buffer->delChar(cursor->getX(), cursor->getY(), nb_cols);
+
+	//reset the input buffer
+	purgeInputBuffer();
+
 	return QString::null;
 }
 

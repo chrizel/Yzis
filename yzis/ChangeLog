@@ -1,3 +1,7 @@
+2003-04-25 Neil Stevens (patch)
+  * libyzis
+    added $,^ and x commands (thanks :)
+
 2003-04-25 mikmak
   * libyzis
     added 'gg' and 'G' commands

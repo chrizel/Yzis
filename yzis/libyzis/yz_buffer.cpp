@@ -1,5 +1,5 @@
 /**
- * $Id: yz_buffer.cpp,v 1.25 2003/04/25 18:31:02 mikmak Exp $
+ * $Id: yz_buffer.cpp,v 1.26 2003/04/25 20:00:54 mikmak Exp $
  */
 
 #include <cstdlib>
@@ -38,6 +38,20 @@ void YZBuffer::chgChar (int x, int y, QChar c) {
 	/* do the actual modification */
 	l.remove(x, 1);
 	l.insert(x, c);
+
+	text[y] = l;
+
+	/* inform the views */
+	postEvent(mk_event_setline(y,&l));
+}
+
+void YZBuffer::delChar (int x, int y, int count) {
+	/* brute force, we'll have events specific for that later on */
+	QString l=findLine(y);
+	if (l.isNull()) return;
+
+	/* do the actual modification */
+	l.remove(x, count);
 
 	text[y] = l;
 

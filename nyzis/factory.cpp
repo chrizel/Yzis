@@ -240,6 +240,11 @@ void NYZFactory::deleteView(int /*Id*/)
 	}
 }
 
+bool NYZFactory::prompt( const QString& title, const QString& message ) {
+//TODO
+	return true;
+}
+
 void NYZFactory::initialiseKeycodes()
 {
 	keycodes.clear();

@@ -222,5 +222,10 @@ void KYZisFactory::setFocusCommandLine() {
 	yv->setFocusCommandLine();
 }
 
+bool KYZisFactory::prompt(const QString& title, const QString& message) {
+	int v = KMessageBox::questionYesNo(static_cast<KYZisView*>(currentView()), message, title);
+	if (v == KMessageBox::Yes) return true;
+	else return false;
+}
 
 #include "factory.moc"

@@ -243,6 +243,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 		col = textline(line).length(); 
 	}
 
+	if ( line >= lineCount() ) return;
 	QString l=textline(line);
 	if (l.isNull()) return;
 
@@ -316,6 +317,7 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),l)
 	ASSERT_LINE_EXISTS(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),line)   
 	
+	if ( line >= lineCount() ) return;
 	if ( textline( line ).isNull() ) return;
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );

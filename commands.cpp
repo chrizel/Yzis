@@ -70,7 +70,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("F", &YZCommandPool::findPrevious, ARG_CHAR) );
 	commands.append( new YZNewMotion("T", &YZCommandPool::findAfterPrevious, ARG_CHAR) );
 	commands.append( new YZNewMotion(";", &YZCommandPool::repeatFind, ARG_CHAR) );
-	commands.append( new YZNewMotion("n", &YZCommandPool::searchNext) );
+	commands.append( new YZNewMotion("n", &YZCommandPool::searchNext, ARG_NONE) );
 	commands.append( new YZNewMotion("N", &YZCommandPool::searchPrev, ARG_NONE) );
 	commands.append( new YZNewMotion("<HOME>", &YZCommandPool::gotoSOL, ARG_NONE) );
 	commands.append( new YZNewMotion("<END>", &YZCommandPool::gotoEOL, ARG_NONE) );

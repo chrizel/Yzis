@@ -212,7 +212,7 @@ void NYZFactory::popupMessage( const QString &message )
 	currentView->refreshScreen();
 }
 
-void NYZFactory::deleteView()
+void NYZFactory::deleteView(int /*Id*/)
 {
 	NYZView *oldview = currentView;
 

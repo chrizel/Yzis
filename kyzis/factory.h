@@ -38,10 +38,6 @@ public:
 
 	static const KAboutData *aboutData();
 	static KInstance* instance();
-	static void registerDocument ( class KYZisDoc *doc );
-	static void deregisterDocument ( class KYZisDoc *doc );
-	static void registerView ( class KYZisView *view );
-	static void deregisterView ( class KYZisView *view );
 
 	//GUI interface
 	void quit(bool save=true);
@@ -49,7 +45,7 @@ public:
 	YZView *createView ( YZBuffer* );
 	YZBuffer *createBuffer(const QString& path);
 	void popupMessage( const QString& message );
-	void deleteView ();
+	void deleteView (int Id);
 	void setFocusCommandLine();
 	void setFocusMainWindow();
 	

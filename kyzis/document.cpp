@@ -33,13 +33,11 @@
 KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::s_self) {
 		setInstance(KYZisFactory::instance());
-		KYZisFactory::registerDocument( this );
 		m_parent = parentWidget;
 		mkId = kId;
 }
 
 KYZisDoc::~KYZisDoc () {
-	KYZisFactory::deregisterDocument( this );
 }
 
 KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *) {

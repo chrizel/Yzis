@@ -43,7 +43,6 @@
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
 	m_dockConfig( dockConfig ),
-	m_currentPart( 0 ),
 	mBuffers( 0 ), mViews( 0 )
 {
 	setIDEAlModeStyle( 1 );
@@ -65,7 +64,6 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	
 Kyzis::~Kyzis() {
 	writeDockConfig(m_dockConfig);
-	delete m_currentPart;
 	//delete m_toolbarAction;
 }
 
@@ -75,8 +73,10 @@ void Kyzis::resizeEvent( QResizeEvent *e) {
 }
 
 void Kyzis::load(const KURL& url) {
-	m_currentPart->openURL(url);
-	//m_part->openURL( url );
+	kdDebug() << "load " << url << endl;
+	KParts::ReadWritePart *p = getCurrentPart();
+	if ( p ) p->openURL(url);
+	//XXX else
 }
 
 void Kyzis::setupActions() {
@@ -154,7 +154,7 @@ void Kyzis::fileOpen() {
 		// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
 		// says that it should open a new window if the document is _not_
 		// in its initial state.  This is what we do here..
-		if ( m_currentPart && m_currentPart->url().isEmpty() && ! m_currentPart->isModified() ) {
+		if ( getCurrentPart() && getCurrentPart()->url().isEmpty() && ! getCurrentPart()->isModified() ) {
 			// we open the file in this window...
 			load( url );
 		} else {
@@ -181,11 +181,11 @@ void Kyzis::createBuffer(const QString& path) {
 		if (m_part)
 		{
 			kdDebug() << "Yzis part successfully loaded" << endl;
-			m_currentPart = m_part;
 			KMdiChildView *view = createWrapper( m_part->widget(), QString::number( mViews ), path );
 			m_part->widget()->setFocus();
 			addWindow( view );
-			viewList[mViews-1] = view;
+			KView v = { view , m_part };
+			viewList[mViews-1] = v;
 			createGUI(m_part);
 			load( KURL( path ) );
 		}
@@ -193,14 +193,62 @@ void Kyzis::createBuffer(const QString& path) {
 
 void Kyzis::setCaption( int tab, const QString& caption ) {
 	kdDebug() << "setCaption : " << caption << endl;
-	if ( viewList[ tab ] ) {
-		viewList[ tab ]->setCaption(caption);
-		viewList[ tab ]->setTabCaption(caption);
+	if ( viewList.contains( tab ) ) {
+		viewList[ tab ].v->setCaption(caption);
+		viewList[ tab ].v->setTabCaption(caption);
 	}
 }
 
-void Kyzis::closeView() {
-	closeActiveView();	
+void Kyzis::closeView(int Id) {
+//	closeActiveView();
+	if ( viewList.contains( Id ) ) {
+		kdDebug() << "Closing view from main app " << Id << endl;
+		closeWindow(viewList[Id].v);
+	}
 }
+
+KParts::ReadWritePart* Kyzis::getCurrentPart() {
+	kdDebug() << "getCurrentPart" << endl;
+#if 0
+	QMap<int,KMdiChildView*>::Iterator it;
+	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
+		if ( it.data() == activeWindow() ) {
+			kdDebug() << "Found part at index " << it.key() << endl;
+			return partList[it.key()];
+		}
+	}
+	return partList[ 0] ;
+#endif
+	QMap<int,KView>::Iterator it;
+	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
+		if ( it.data().v == activeWindow() ) {
+			kdDebug() << "Found part at index " << it.key() << endl;
+			return it.data().p;
+		}
+	}
+	return viewList[ 0 ].p;
+}
+
+void Kyzis::childWindowCloseRequest( KMdiChildView *v ) {
+	kdDebug() << "childWindowCloseRequest" << endl;
+#if 0
+	QMap<int,KMdiChildView*>::Iterator it;
+	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
+		if ( it.data() == v ) {
+			kdDebug() << "Found view at index " << it.key() << endl;
+			partList.remove( it.key() ); //remove the corresponding part (no delete here)
+		}
+	}
+#endif
+	QMap<int,KView>::Iterator it;
+	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
+		if ( it.data().v == v ) {
+			kdDebug() << "Found view at index " << it.key() << endl;
+			viewList.remove( it ); //remove the corresponding part (no delete here)
+		}
+	}
+	KMdiMainFrm::childWindowCloseRequest( v );
+}
+
 
 #include "kyzis.moc"

@@ -56,8 +56,6 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	g->addMultiCellWidget(command,1,1,0,1);
 	g->addMultiCellWidget(status,2,2,0,1);
 	
-	KYZisFactory::registerView( this );
-
 	setXMLFile( "kyzispart/kyzispart.rc" );
 	setupActions();
 	
@@ -74,7 +72,6 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 KYZisView::~KYZisView () {
 	yzDebug() << "KYZisView::~KYZisView" << endl;
 	if ( buffer ) buffer->removeView(this);
-	KYZisFactory::deregisterView( this );
 }
 
 void KYZisView::setCommandLineText( const QString& text ) {

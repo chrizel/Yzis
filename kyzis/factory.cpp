@@ -114,32 +114,6 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	return doc;
 }
 
-void KYZisFactory::registerDocument ( KYZisDoc *doc ) {
-  if ( !s_documents.containsRef( doc ) ) {
-    s_documents.append( doc );
-    //ref();
-  }
-	currentDoc = doc;
-}
-
-void KYZisFactory::deregisterDocument ( KYZisDoc *doc ) {
-//  if ( s_documents.removeRef( doc ) )
- //   deref();
-}
-
-void KYZisFactory::registerView ( KYZisView *view ) {
-  if ( !s_views.containsRef( view ) ) {
-    s_views.append( view );
-//    ref();
-  }
-  KYZisFactory::s_self->currentViewChanged(view);
-}
-
-void KYZisFactory::deregisterView ( KYZisView *view ) {
- // if ( s_views.removeRef( view ) )
-//    deref();
-}
-
 KInstance* KYZisFactory::instance() {
   if( !s_instance )
     s_instance = new KInstance( aboutData() );
@@ -214,11 +188,12 @@ void KYZisFactory::popupMessage( const QString& message ) {
 	KMessageBox::information(v, message, tr( "Error" ));
 }
 
-void KYZisFactory::deleteView( ) {
+void KYZisFactory::deleteView( int Id ) {
 	DCOPClient *client = kapp->dcopClient();
 	QByteArray data;
 	QDataStream arg(data, IO_WriteOnly);
-	bool w = client->send(client->appId(), "Kyzis", "closeView()", data);
+	arg << Id;
+	bool w = client->send(client->appId(), "Kyzis", "closeView(int)", data);
 	if (w) {
 		yzDebug() << "DCOP call successful for " << client->appId() << " to delete view " << endl;
 	} else {

@@ -69,18 +69,21 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mUndoBuffer = new YZUndoBuffer( this );
 	mAction = new YZAction( this );
 	displayIntro();
-//	appendLine("");
 	YZSession::me->addBuffer( this );
 	yzDebug("YZBuffer") << "NEW BUFFER CREATED : " << mPath << endl;
 }
 
 YZBuffer::~YZBuffer() {
-	yzDebug("YZBuffer") << "Deleting buffer " << mPath << endl;
+	yzDebug("YZBuffer") << "YZBuffer : Deleting buffer " << mPath << endl;
 	if ( m_highlight != 0L )
 		m_highlight->release();
 	mText.clear();
 	delete mUndoBuffer;
 	delete mAction;
+	//clear views
+//	YZView *it;
+//	for ( it = mViews.first(); it ; it = mViews.next() )
+//		delete it;
 	// delete the temporary file if we haven't changed the file
 }
 

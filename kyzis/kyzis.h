@@ -27,6 +27,14 @@
 #include <dcopobject.h>
 #include <qmap.h>
 
+struct YV {
+	KMdiChildView* v;
+	KParts::ReadWritePart *p;
+};
+
+typedef struct YV KView;
+
+
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
  * statusbar but relies on the "Part" to do all the real work.
@@ -57,6 +65,8 @@ public:
      */
     void load(const KURL& url);
 
+	KParts::ReadWritePart* getCurrentPart();
+
 k_dcop:
 	/**
 	 * Opens a new buffer
@@ -65,16 +75,19 @@ k_dcop:
     void createBuffer(const QString& path=QString::null);
 
 	/**
-	 * Closes the activated view
+	 * Closes the view
+	 * @param the unique ID of the view
 	 */
-	void closeView();
+	void closeView(int);
 
 	/**
 	 * Sets the caption of the tab
 	 */
 	void setCaption( int tab, const QString& caption );
 
+
 public slots:
+	void childWindowCloseRequest( KMdiChildView *v );
 
 protected slots:
 	
@@ -94,10 +107,13 @@ private:
     void setupActions();
     KToggleAction *m_toolbarAction;
 	QDomElement m_dockConfig;
-	KParts::ReadWritePart *m_currentPart;
 	int mBuffers;
 	int mViews;
-	QMap<int,KMdiChildView*> viewList;
+
+
+	QMap<int,KView> viewList;
+
+
 };
 
 #endif // KYZIS_H

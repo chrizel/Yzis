@@ -85,8 +85,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 }
 
 YZView::~YZView() {
+	yzDebug() << "YZView : Deleting view " << myId << endl;
 	delete selectionPool;
-	yzDebug() << "Deleting view " << myId << endl;
 	mBuffer->rmView(this); //make my buffer forget about me
 }
 
@@ -303,18 +303,19 @@ void YZView::sendKey( int c, int modifiers) {
 
 		case YZ_VIEW_MODE_EX:
 			switch ( c ) {
-				case Qt::Key_Return:
+				case Qt::Key_Return:{
 					yzDebug() << "Current command EX : " << getCommandLineText();
 					if(getCommandLineText().isEmpty())
 						return;
 
 					mExHistory[mCurrentExItem] = getCommandLineText();
 					mCurrentExItem++;
-					mSession->getExPool()->execExCommand( this, getCommandLineText() );
+					QString cmd = getCommandLineText();
 					setCommandLineText( "" );
 					mSession->setFocusMainWindow();
 					gotoPreviousMode();
-					return;
+					mSession->getExPool()->execExCommand( this, cmd );
+					return;}
 				case Qt::Key_Down:
 					if(mExHistory[mCurrentExItem].isEmpty())
 						return;

@@ -80,10 +80,15 @@ QString YZExExecutor::bufferprevious ( YZView *view, const QString& ) {
 	return QString::null;
 }
 
-///XXX wrong this one should delete all views on a buffer
 QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
-	yzDebug() << "Delete view " << view->myId << endl;
-	view->mySession()->deleteView();
+	yzDebug() << "Delete buffer " << view->myBuffer()->myId << endl;
+
+	QPtrList<YZView> l = view->myBuffer()->views();
+	YZView *v;
+	for ( v = l.first(); v; v=l.next() ) {
+		view->mySession()->deleteView( view->myId );
+	}
+	
 	return QString::null;
 }
 
@@ -104,14 +109,14 @@ QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 	if ( inputs == "q" || inputs == "q!" || inputs.startsWith("qu") ) {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( view->myBuffer()->views().count() > 1 )
-			view->mySession()->deleteView();
+			view->mySession()->deleteView(view->myId);
 		else if ( view->myBuffer()->views().count() == 1 && view->mySession()->countBuffers() == 1) {
 			if ( !view->myBuffer()->fileIsModified() || inputs.endsWith("!") )
 				view->mySession()->quit();
 			else view->mySession()->popupMessage( tr( "One file is modified ! Save it first ..." ) );
 		} else {
 			if ( !view->myBuffer()->fileIsModified() || inputs.endsWith("!") )
-				view->mySession()->deleteView();
+				view->mySession()->deleteView(view->myId);
 			else view->mySession()->popupMessage( tr( "One file is modified ! Save it first ..." ) );
 		}
 	} else if ( inputs == "qall!" ) {//just quit

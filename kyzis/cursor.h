@@ -46,6 +46,9 @@ class KYZisCursor {
 		void hide();
 		void refresh();
 
+		unsigned int width();
+		unsigned int height();
+
 		inline unsigned int x() { return mX; }
 		inline unsigned int y() { return mY; }
 		inline unsigned int visible() { return shown; }

@@ -36,9 +36,20 @@ KYZisCursor::~KYZisCursor() {
 	delete cursor;
 }
 
+unsigned int KYZisCursor::width() {
+	return bg->width();
+}
+unsigned int KYZisCursor::height() {
+	return bg->height();
+}
+
 void KYZisCursor::setCursorType( int type ) {
 	if ( shown ) hide();
 	mCursorType = static_cast<cursorType>(type);
+	unsigned width = bg->width();
+	unsigned height = bg->height();
+	if ( mCursorType == KYZ_CURSOR_LINE ) width = 1;
+	resize( width, height );
 }
 void KYZisCursor::resize( unsigned int w, unsigned int h ) {
 	if ( shown ) hide();

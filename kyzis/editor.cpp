@@ -122,7 +122,11 @@ void KYZisEdit::setCursor( int c, int l ) {
 	yzDebug() << "setCursor" << endl;
 	c = c - mParent->getDrawCurrentLeft () + marginLeft;
 	l -= mParent->getDrawCurrentTop ();
-	mCursor->move( GETX( c ), l * fontMetrics().lineSpacing() );
+	unsigned int x = GETX( c );
+	if ( mParent->getLocalBoolOption( "rightleft" ) ) {
+		x = width() - x - mCursor->width();
+	}
+	mCursor->move( x, l * fontMetrics().lineSpacing() );
 }
 
 QPoint KYZisEdit::cursorCoordinates( ) {

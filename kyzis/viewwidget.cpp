@@ -120,6 +120,9 @@ unsigned int KYZisView::stringWidth( const QString& str ) const {
 unsigned int KYZisView::charWidth( const QChar& ch ) const {
 	return m_editor->fontMetrics().width( ch );
 }
+QChar KYZisView::currentChar() const {
+	return mBuffer->textline( mainCursor->bufferY() ).at( mainCursor->bufferX() );
+}
 
 void KYZisView::wheelEvent( QWheelEvent * e ) {
 	int n = ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX

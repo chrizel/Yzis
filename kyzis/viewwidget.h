@@ -92,6 +92,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		// return string and char width in pixels
 		unsigned int stringWidth( const QString& str ) const;
 		unsigned int charWidth( const QChar& ch ) const;
+		QChar currentChar() const;
 
 		KYZisEdit *editor() { return m_editor; }
 

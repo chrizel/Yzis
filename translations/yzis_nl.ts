@@ -72,7 +72,35 @@
     </message>
     <message>
         <source>Please specify a filename</source>
-        <translation type="obsolete">Geef een bestandsnaam op</translation>
+        <translation type="unfinished">Geef een bestandsnaam op</translation>
+    </message>
+    <message>
+        <source>One file is modified ! Save it first ...</source>
+        <translation type="unfinished">Er is een bestand gewijzigd! Sla deze eerst op.</translation>
+    </message>
+    <message>
+        <source>No next buffer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No previous buffer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid option given : </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This option cannot be switched this way, this is a boolean option.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This option is a global option which cannot be changed with setlocal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Invalid option given</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -94,33 +122,22 @@
     <name>YZExExecutor</name>
     <message>
         <source>Please specify a filename</source>
-        <translation>Geef een bestandsnaam op</translation>
+        <translation type="obsolete">Geef een bestandsnaam op</translation>
     </message>
     <message>
         <source>One file is modified ! Save it first ...</source>
-        <translation>Er is een bestand gewijzigd! Sla deze eerst op.</translation>
-    </message>
-    <message>
-        <source>Invalid option given : </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This option cannot be switched this way, this is a boolean option.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>This option is a global option which cannot be changed with setlocal</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Invalid option given</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">Er is een bestand gewijzigd! Sla deze eerst op.</translation>
     </message>
 </context>
 <context>
     <name>YZExLua</name>
     <message>
         <source>The file %1 could not be found in standard directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Lua error when running file %1:
+</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -216,6 +233,18 @@
     <message>
         <source>Yzis Ready</source>
         <translation type="unfinished">Yzis klaar</translation>
+    </message>
+    <message>
+        <source>[ Introduction ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>{ Completion }</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> { Recording }</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -119,7 +119,35 @@
     </message>
     <message>
         <source>Please specify a filename</source>
-        <translation type="obsolete">Veuillez indiquer un nom de fichier</translation>
+        <translation>Veuillez indiquer un nom de fichier</translation>
+    </message>
+    <message>
+        <source>One file is modified ! Save it first ...</source>
+        <translation>Un fichier a été modifié ! Sauvegardez-le avant de quitter ...</translation>
+    </message>
+    <message>
+        <source>No next buffer</source>
+        <translation>Pas de prochain buffer</translation>
+    </message>
+    <message>
+        <source>No previous buffer</source>
+        <translation>Pas de buffer précédent</translation>
+    </message>
+    <message>
+        <source>Invalid option given : </source>
+        <translation>L&apos;option spécifiée est invalide :</translation>
+    </message>
+    <message>
+        <source>This option cannot be switched this way, this is a boolean option.</source>
+        <translation>Cette option ne peut pas être modifiée de cette manière, c&apos;est une valeur booléenne.</translation>
+    </message>
+    <message>
+        <source>This option is a global option which cannot be changed with setlocal</source>
+        <translation>Cette option est globale , elle n&apos;est pas modifiable par la commande setlocal</translation>
+    </message>
+    <message>
+        <source>Invalid option given</source>
+        <translation>L&apos;option spécifiée est invalide</translation>
     </message>
 </context>
 <context>
@@ -141,27 +169,27 @@
     <name>YZExExecutor</name>
     <message>
         <source>Please specify a filename</source>
-        <translation>Veuillez indiquer un nom de fichier</translation>
+        <translation type="obsolete">Veuillez indiquer un nom de fichier</translation>
     </message>
     <message>
         <source>One file is modified ! Save it first ...</source>
-        <translation>Un fichier a été modifié ! Sauvegardez-le avant de quitter ...</translation>
+        <translation type="obsolete">Un fichier a été modifié ! Sauvegardez-le avant de quitter ...</translation>
     </message>
     <message>
         <source>Invalid option given : </source>
-        <translation>L&apos;option spécifiée est invalide :</translation>
+        <translation type="obsolete">L&apos;option spécifiée est invalide :</translation>
     </message>
     <message>
         <source>This option cannot be switched this way, this is a boolean option.</source>
-        <translation>Cette option ne peut pas être modifiée de cette manière, c&apos;est une valeur booléenne.</translation>
+        <translation type="obsolete">Cette option ne peut pas être modifiée de cette manière, c&apos;est une valeur booléenne.</translation>
     </message>
     <message>
         <source>This option is a global option which cannot be changed with setlocal</source>
-        <translation>Cette option est globale , elle n&apos;est pas modifiable par la commande setlocal</translation>
+        <translation type="obsolete">Cette option est globale , elle n&apos;est pas modifiable par la commande setlocal</translation>
     </message>
     <message>
         <source>Invalid option given</source>
-        <translation>L&apos;option spécifiée est invalide</translation>
+        <translation type="obsolete">L&apos;option spécifiée est invalide</translation>
     </message>
 </context>
 <context>
@@ -169,6 +197,11 @@
     <message>
         <source>The file %1 could not be found in standard directories</source>
         <translation>Le fichier %1 n&apos;a pas pu être trouvé dans les répertoires standards</translation>
+    </message>
+    <message>
+        <source>Lua error when running file %1:
+</source>
+        <translation>Lua a rencontré une erreur en exécutant le script %1:</translation>
     </message>
 </context>
 <context>
@@ -295,6 +328,18 @@
     <message>
         <source>Yzis Ready</source>
         <translation>Yzis Pret</translation>
+    </message>
+    <message>
+        <source>[ Introduction ]</source>
+        <translation>[ Introduction ]</translation>
+    </message>
+    <message>
+        <source>{ Completion }</source>
+        <translation>{ Completion }</translation>
+    </message>
+    <message>
+        <source> { Recording }</source>
+        <translation>{ Enregistrement }</translation>
     </message>
 </context>
 </TS>

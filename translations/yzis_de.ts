@@ -88,6 +88,41 @@
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <source>One file is modified ! Save it first ...</source>
+        <translation type="unfinished">Eine Datei ist ungespeichert, bitte speichern Sie diese vorher.</translation>
+    </message>
+    <message>
+        <source>No next buffer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No previous buffer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please specify a filename</source>
+        <translation type="unfinished">Bitte geben Sie einen Dateinamen an</translation>
+    </message>
+    <message>
+        <source>Invalid option given : </source>
+        <translation type="unfinished">Ungültige Option : </translation>
+    </message>
+    <message>
+        <source>This option cannot be switched this way, this is a boolean option.</source>
+        <translation type="unfinished">Diese Option kann nicht auf diesem Wege verändert werden, da sie vom Typ &quot;boolean&quot; ist.</translation>
+    </message>
+    <message>
+        <source>This option is a global option which cannot be changed with setlocal</source>
+        <translation type="unfinished">Diese Option ist global und kann daher nicht mit setlocal verändert werden</translation>
+    </message>
+    <message>
+        <source>Invalid option given</source>
+        <translation type="unfinished">Ungültige Option</translation>
+    </message>
+</context>
+<context>
     <name>YZBuffer</name>
     <message>
         <source>Written %1 bytes to file %2</source>
@@ -106,27 +141,27 @@
     <name>YZExExecutor</name>
     <message>
         <source>Please specify a filename</source>
-        <translation>Bitte geben Sie einen Dateinamen an</translation>
+        <translation type="obsolete">Bitte geben Sie einen Dateinamen an</translation>
     </message>
     <message>
         <source>One file is modified ! Save it first ...</source>
-        <translation>Eine Datei ist ungespeichert, bitte speichern Sie diese vorher.</translation>
+        <translation type="obsolete">Eine Datei ist ungespeichert, bitte speichern Sie diese vorher.</translation>
     </message>
     <message>
         <source>Invalid option given : </source>
-        <translation>Ungültige Option : </translation>
+        <translation type="obsolete">Ungültige Option : </translation>
     </message>
     <message>
         <source>This option cannot be switched this way, this is a boolean option.</source>
-        <translation>Diese Option kann nicht auf diesem Wege verändert werden, da sie vom Typ &quot;boolean&quot; ist.</translation>
+        <translation type="obsolete">Diese Option kann nicht auf diesem Wege verändert werden, da sie vom Typ &quot;boolean&quot; ist.</translation>
     </message>
     <message>
         <source>This option is a global option which cannot be changed with setlocal</source>
-        <translation>Diese Option ist global und kann daher nicht mit setlocal verändert werden</translation>
+        <translation type="obsolete">Diese Option ist global und kann daher nicht mit setlocal verändert werden</translation>
     </message>
     <message>
         <source>Invalid option given</source>
-        <translation>Ungültige Option</translation>
+        <translation type="obsolete">Ungültige Option</translation>
     </message>
 </context>
 <context>
@@ -134,6 +169,11 @@
     <message>
         <source>The file %1 could not be found in standard directories</source>
         <translation>Die Datei %1 konnte in den Standard-Verzeichnissen nicht gefunden werden</translation>
+    </message>
+    <message>
+        <source>Lua error when running file %1:
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -204,6 +244,18 @@
     <message>
         <source>Yzis Ready</source>
         <translation>Yzis bereit</translation>
+    </message>
+    <message>
+        <source>[ Introduction ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>{ Completion }</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> { Recording }</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

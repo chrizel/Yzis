@@ -119,8 +119,7 @@ QString	YZBuffer::find_line(int line)
 		else if (l->line>line) return NULL;
 
 	return NULL;*/
-	QString t = text[ line ];
-	return t;
+	return text[ line ];
 }
 
 void YZBuffer::load(void)

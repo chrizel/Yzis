@@ -7,9 +7,12 @@
 
 #include "yz_events.h"
 #include "yz_buffer.h"
+#include "yz_cursor.h"
 #include "gui.h"
 
 #define YZ_EVENT_EVENTS_MAX 400
+
+class YZCursor;
 
 class YZView {
 public:
@@ -70,10 +73,13 @@ protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
 	int		lines_vis;	/** number of visible lines */
 	int		current;	/** current line on top of view */
-	int		cursor_x;	/** current cursor position, relative to the whole file */
-	int		cursor_y;
-	int		cursor_x_ghost;	/** the one we would be if the line was long enough */
+	YZCursor *cursor;
+//	int		cursor_x;	/** current cursor position, relative to the whole file */
+//	int		cursor_y;
+	//m -> orzel :you consider we are wordwrapping by default!this is not true!
+	//int		cursor_x_ghost;	// the one we would be if the line was long enough 
 	int		current_maxx;	/** maximum value for x, that s (lenght of current line -1), -1 means the line is empty */
+
 	enum {
 		YZ_VIEW_MODE_INSERT,
 		YZ_VIEW_MODE_REPLACE,
@@ -96,6 +102,7 @@ protected:
 	 * Current GUI
 	 */
 	Gui *gui_manager;
+
 };
 
 #endif /*  YZ_VIEW_H */

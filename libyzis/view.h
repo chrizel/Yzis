@@ -511,6 +511,11 @@ class YZView {
 		const QColor& drawColor( );
 
 		/**
+		 * Character color at column line
+		 */
+		const QColor& drawColor ( unsigned int col, unsigned int line );
+
+		/**
 		 * return current buffer line
 		 */
 		unsigned int drawLineNumber( );

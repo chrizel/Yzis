@@ -65,31 +65,44 @@ void TestUndo::testUndoCharOperation()
     QStringList textHistory;
     textHistory.append( mBuf->getWholeText() );
 
-    mBuf->addChar( 0, 0, "0" );
-    textHistory.append( mBuf->getWholeText() );
+    mBuf->addChar( 0, 0, "A" );
     ub->commitUndoItem();
+    textHistory.append( mBuf->getWholeText() );
+    yzDebug() << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );
 
-    yzDebug() << "test " << ub->toString() << endl;
-
-    mBuf->addChar( 1, 0, "1" );
-    mBuf->addChar( 0, 0, "A" );
-    textHistory.append( mBuf->getWholeText() );
+    mBuf->addChar( 1, 0, "B" );
+    mBuf->addChar( 0, 0, "C" );
     ub->commitUndoItem();
+    textHistory.append( mBuf->getWholeText() );
+    yzDebug() << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );
 
     ub->undo();
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), true );
+    yzDebug() << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( mBuf->getWholeText(), textHistory[1] );
 
     ub->undo();
     phCheckEquals( ub->mayUndo(), false );
     phCheckEquals( ub->mayRedo(), true );
+    yzDebug() << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( mBuf->getWholeText(), textHistory[0] );
 
+    ub->redo();
+    phCheckEquals( ub->mayUndo(), true );
+    phCheckEquals( ub->mayRedo(), true );
+    yzDebug() << "buffer : '" << mBuf->getWholeText() << "'" << endl;
+    phCheckEquals( mBuf->getWholeText(), textHistory[1] );
+
+    ub->redo();
+    phCheckEquals( ub->mayUndo(), true );
+    phCheckEquals( ub->mayRedo(), false );
+    yzDebug() << "buffer : '" << mBuf->getWholeText() << "'" << endl;
+    phCheckEquals( mBuf->getWholeText(), textHistory[2] );
 }
 
 /* ========================================================================= */

@@ -104,7 +104,6 @@ class YZExLua : public QObject {
 		 */
 		static int YZExLua::version(lua_State *L);
 
-
 	private:
 		lua_State *st;
 };

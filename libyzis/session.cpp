@@ -79,7 +79,7 @@ void YZSession::rmBuffer( YZBuffer *b ) {
 //	delete b; // kinda hot,no?
 }
 
-QString YZSession::saveBufferExit( const QString& /* inputsBuff */, YZCommandArgs /* args */ ) {
+QString YZSession::saveBufferExit() {
 	if ( saveAll() )
 		quit();	
 	return QString::null;

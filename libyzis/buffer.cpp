@@ -626,7 +626,7 @@ bool YZBuffer::substitute( const QString& what, const QString& with, bool wholel
 	return false;
 }
 
-QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) {
+QStringList YZBuffer::getText(YZCursor& from, YZCursor& to) {
 	//the first line
 	QStringList list;
 	if ( from.getY() != to.getY() )

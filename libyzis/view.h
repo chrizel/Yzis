@@ -197,6 +197,10 @@ class YZView {
 		void initReplaceChar( const YZCursor& pos, unsigned int len, bool applyCursor );
 		void applyReplaceChar( const YZCursor& pos, unsigned int len, bool applyCursor );
 
+		/* replace line */
+		void initReplaceLine( const YZCursor& pos, bool applyCursor );
+		void applyReplaceLine( const YZCursor& pos, unsigned int len, bool applyCursor );
+
 		/* insert line */
 		void initInsertLine( const YZCursor& pos, bool applyCursor );
 		void applyInsertLine( const YZCursor& pos, bool applyCursor );
@@ -571,6 +575,11 @@ class YZView {
 		 * sets a qcolor option
 		 */
 		void setLocalQColorOption( const QString& key, const QColor& option );
+
+		/**
+		 * Reindent given line ( cindent )
+		 */
+		void reindent( unsigned int X, unsigned int Y );
 
 	protected:
 		/**

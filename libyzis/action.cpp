@@ -23,6 +23,7 @@
 
 #include "action.h"
 #include "debug.h"
+#include <stdlib.h>
 
 YZAction::YZAction( YZBuffer* buffer ) {
 	mBuffer = buffer;
@@ -73,6 +74,17 @@ void YZAction::insertNewLine( YZView* pView, const YZCursor& pos ) {
 
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
 		it->applyInsertLine( mPos, pView->myId == it->myId );
+}
+
+void YZAction::replaceLine( YZView* pView, const YZCursor& pos, const QString &text ) {
+	YZCursor mPos( pos );
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+		it->initReplaceLine( mPos, pView->myId == it->myId );
+
+	mBuffer->replaceLine( text, mPos.getY() );
+
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+		it->applyReplaceLine( mPos, text.length(), pView->myId == it->myId );
 }
 
 void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &text ) {
@@ -182,6 +194,10 @@ void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len ) {
 	YZCursor pos( pView, 0, Y );
 	deleteLine( pView, pos, len );
 }
+void YZAction::replaceLine( YZView* pView, unsigned int Y, const QString& text ) {
+	YZCursor pos( pView, 0, Y );
+	replaceLine( pView, pos, text );
+}
 
 YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 	QString matchers = pView->myBuffer()->getLocalStringOption("matchpairs");
@@ -198,7 +214,7 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 
 	for ( i = 0; i < ( int )matchers.length() ; i++ ) {
 		if ( matchers[ i ] == cchar ) {
-			back = i>=3;
+			back = ( abs( i/2 ) * 2 ) != i;
 			QChar c = matchers[ back ? i - 1 : i + 1 ]; //the character to match
 			//now do the real search
 			while ( curY < pView->myBuffer()->lineCount() && count > 0 ) {

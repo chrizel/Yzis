@@ -135,6 +135,11 @@ class YZExLua : public QObject {
 		static int winline(lua_State *L);
 
 		/**
+		 * Returns the current cursor position: col, line
+		 */
+		static int winpos(lua_State *L);
+
+		/**
 		 * Moves the cursor to the given position
 		 * Arguments: col, line
 		 *
@@ -186,6 +191,10 @@ class YZExLua : public QObject {
 		/** Private constructor for a singleton */
 		YZExLua();
 		static YZExLua * _instance;
+		static bool checkFunctionArguments(lua_State*L, 
+					int argNb,
+					const char * functionName, 
+					const char * functionArgDesc );
 };
 
 #endif

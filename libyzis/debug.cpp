@@ -80,6 +80,7 @@ void YZDebugBackend::flush( int level, const char * area, const char * data )
 		fprintf( _output, "\n" );
 	}
 	*/
+	fflush( _output );
 }
 
 void YZDebugBackend::parseRcfile(const char * filename)

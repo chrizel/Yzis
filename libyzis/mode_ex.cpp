@@ -282,7 +282,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 	}
 
 
-	if (!commandIsValid) {
+	if (!commandIsValid && _input.length() > 0) {
 		YZSession::me->popupMessage( _("Not an editor command: ") + _input);
 	}
 

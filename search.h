@@ -49,22 +49,22 @@ class YZSearch {
 		/**
 		 * search after current cursor position
 		 */
-		YZCursor forward( YZView* mView, const QString& pattern, bool* found );
+		YZCursor forward( YZView* mView, const QString& pattern, bool* found, YZCursor* from = NULL );
 
 		/**
 		 * search before current cursor position
 		 */
-		YZCursor backward( YZView* mView, const QString& pattern, bool* found );
+		YZCursor backward( YZView* mView, const QString& pattern, bool* found, YZCursor* from = NULL );
 
 		/**
 		 * replay search forward
 		 */
-		YZCursor replayForward( YZView* mView, bool* found, bool skipline = false );
+		YZCursor replayForward( YZView* mView, bool* found, YZCursor* from = NULL, bool skipline = false );
 
 		/**
 		 * replay search backward
 		 */
-		YZCursor replayBackward( YZView* mView, bool* found, bool skipline = false );
+		YZCursor replayBackward( YZView* mView, bool* found, YZCursor* from = NULL, bool skipline = false );
 
 		/**
 		 * Highlight given line
@@ -76,11 +76,16 @@ class YZSearch {
 		 */
 		const QString& currentSearch() const;
 
+		/**
+		 * true if currentSearch is not null
+		 */
+		bool active();
+
 
 	private :
 
 		void setCurrentSearch( const QString& pattern );
-		YZCursor doSearch( YZView* mView, const QString& pattern, bool reverse, bool skipline, bool* found );
+		YZCursor doSearch( YZView* mView, YZCursor* from, const QString& pattern, bool reverse, bool skipline, bool* found );
 		void highlightSearch( YZView* mView, YZSelectionMap searchMap );
 
 		QString mCurrentSearch;

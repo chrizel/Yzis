@@ -737,6 +737,29 @@ QStringList YZBuffer::getText(YZCursor& from, YZCursor& to) {
 	return list;
 }
 
+QString YZBuffer::getWordAt( const YZCursor& at ) {
+	QString l = textline( at.getY() );
+	QRegExp reg( "\\b(\\w+)\\b" );
+	int idx = reg.searchRev( l, at.getX() );
+	if ( idx == -1 || idx + reg.cap( 1 ).length() <= at.getX() ) {
+		idx = reg.search( l, at.getX() );
+		if ( idx >= 0 ) return reg.cap( 1 );
+		else {
+			reg.setPattern( "(^|[\\s\\w])([^\\s\\w]+)([\\s\\w]|$)" );
+			idx = reg.searchRev( l, at.getX() );
+			if ( idx == -1 || idx + reg.cap( 1 ).length() + reg.cap( 2 ).length() <= at.getX() ) {
+				idx = reg.search( l, at.getX() );
+				if ( idx >= 0 ) return reg.cap( 2 );
+			} else {
+				return reg.cap( 2 );
+			}
+		}
+	} else {
+		return reg.cap( 1 );
+	}
+	return QString::null;
+}
+
 void YZBuffer::clearSwap() {
 	mSwap->unlink();
 }

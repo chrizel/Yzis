@@ -174,6 +174,7 @@ public:
 	YZCursor gotoMark(const YZNewMotionArgs &args);
 	YZCursor firstNonBlankNextLine(const YZNewMotionArgs &args);
 	YZCursor gotoLine(const YZNewMotionArgs &args);
+	YZCursor searchWord(const YZNewMotionArgs &args);
 	YZCursor searchNext(const YZNewMotionArgs &args);
 	YZCursor searchPrev(const YZNewMotionArgs &args);
 

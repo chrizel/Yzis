@@ -14,6 +14,7 @@ KYZisDoc::KYZisDoc (QWidget *parentWidget, const char *widgetName, QObject *pare
 		setInstance(KYZisFactory::instance());
 		if ( !sess )
 			sess = new YZSession();
+		sess->addBuffer( this );
 		KTextEditor::View *current = createView ( parentWidget, "doc widget" );
 		insertChildClient(current);
 		current->show();

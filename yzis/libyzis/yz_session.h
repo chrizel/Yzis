@@ -47,6 +47,11 @@ class YZSession {
 		 */
 		void addBuffer( YZBuffer * );
 
+		/**
+		 * Save everything and get out
+		 */
+		QString saveBufferExit( QString inputsBuff = QString::null );
+
 	protected:
 		/*
 		 * Find a buffer by QString/QRegExp ?

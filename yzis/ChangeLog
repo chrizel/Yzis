@@ -1,3 +1,10 @@
+2003-04-25 mikmak
+  * libyzis
+    added 'gg' and 'G' commands
+    added 'ZZ' command, it saves but does not exit for now
+  * kyzis
+    ignore Shift/Control/Meta for now
+
 2003-04-24 mikmak
   * libyzis
     made the commands work

@@ -39,6 +39,9 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("l",&YZView::moveRight,true);
 	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true);
 	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true);
+	NEW_VIEW_COMMAND("gg",&YZView::gotoLine,true);
+	NEW_VIEW_COMMAND("G",&YZView::gotoLine,true);
+	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
 }
 
 QString YZCommandPool::test(QString) {
@@ -94,4 +97,3 @@ void YZCommandPool::execCommand(YZView *view, QString inputs) {
 		view->purgeInputBuffer();
 	}
 }
-

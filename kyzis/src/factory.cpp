@@ -90,15 +90,17 @@ KYZisFactory *KYZisFactory::self() {
 	return s_self;
 }
 
-KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name, const char *classname, const QStringList &args) {
+KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name, const char *_classname, const QStringList &args) {
 	yzDebug() << "Factory::createPartObject" << endl;
-	bool bSingleView = (classname!=QString("KTextEditor::Document"));
+	QCString classname (_classname);
+	bool bSingleView = (classname!="KTextEditor::Document");
 	yzDebug() << "Factory singleView  " << bSingleView << endl;
-	//mMainApp = dynamic_cast<Kyzis*>(parentWidget);
+
 	if ( parentWidget && parentWidget->inherits( "Kyzis" ) )
 		mMainApp = static_cast<Kyzis*>( parentWidget );
-	else
+	else {
 		mMainApp = 0;
+	}
 
 	QString kID, kvId;
 	kID = args[ 0 ];// buffer ID
@@ -158,11 +160,15 @@ bool KYZisFactory::quit( int /*errorCode*/ ) {
 	//a kpart CAN NOT exit the main app ;)
 	if (mMainApp) {
 		kapp->quit();
+	} else if (kapp->name() == QString::fromLatin1("kdevelop") ) {
+		for (int i = 0; i < YZSession::mNbViews; i++)
+			deleteView(i);
 	} else if ( currentView() && currentView()->modePool()->currentType() == YZMode::MODE_EX 
 				&& !currentView()->getCommandLineText().isEmpty() ) {
-//		currentView()->setCommandLineText("");
 		return false;
-	}
+	}		
+
+
 	return true;
 }
 
@@ -245,6 +251,21 @@ void KYZisFactory::popupMessage( const QString& message ) {
 void KYZisFactory::closeView() {
 	if (mMainApp)
 		mMainApp->closeView(lastId);
+	else if (kapp->name() == QString::fromLatin1("kdevelop") ) {
+		yzDebug() << "Calling kdevelop" <<endl;
+		DCOPClient *client = kapp->dcopClient();
+		QByteArray data;
+		QDataStream arg(data, IO_WriteOnly);
+		arg << QCString("file_close");
+		bool w = client->send(client->appId(), "MainWindow", "activateAction(QCString)", data);
+		if (w) {
+			yzDebug() << "DCOP call successful for " << client->appId() << " to close view in kdevelop" << endl;
+		} else {
+			yzDebug() << "DCOP call failed for " << client->appId() << endl;
+			popupMessage( "DCOP communication is broken !" );
+		}
+			
+	}
 	lastId = -1;
 }
 
@@ -264,16 +285,6 @@ void KYZisFactory::deleteView( int Id ) {
 		popupMessage( "DCOP communication is broken ! KYzis is not able to delete the current view" );
 		return; //we failed
 	}
-#endif
-#if 0
-	yzDebug() << "Factory : Close view id : " << Id << endl;
-	if (mMainApp)
-		mMainApp->closeView(Id);
-#endif	
-#if 0 //that does not work since KMdi does not know the view is destroyed
-	yzDebug() << "Factory : deleteView " << v->myId << endl;
-	KYZisView *vv = static_cast<KYZisView*>( v );
-	delete vv;
 #endif
 }
 

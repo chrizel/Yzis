@@ -47,7 +47,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
 	connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
 
-	status->insertItem(tr("Yzis Ready"),0,1);
+	status->insertItem(_("Yzis Ready"),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
 
 	status->insertItem("",80,80,0);

@@ -43,6 +43,7 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 #include <kmultitabbar.h>
+#include "document.h"
 
 // #include "configdialog.h"
 
@@ -238,8 +239,10 @@ void Kyzis::createBuffer(const QString& path) {
 void Kyzis::createView( /*const KTextEditor::Document &doc*/ ) {
 		KParts::ReadWritePart *part = getCurrentPart();
 		KTextEditor::Document *doc = static_cast<KTextEditor::Document*>(part);
+		KYZisDoc *kdoc = static_cast<KYZisDoc*>(doc);
 		KTextEditor::View *kv = doc->createView(this,"view"+QString::number(mViews));
-		KMdiChildView *view = createWrapper( kv, QString::number( mViews ), QString::number( mViews++ ) );
+		QString filename = kdoc->fileName().section("/", -1);
+		KMdiChildView *view = createWrapper( kv, QString::number( mViews ), filename );
 		kv->setFocus();
 		addWindow( view );
 		KView v = { view , part };

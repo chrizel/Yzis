@@ -56,6 +56,7 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	mUpdateView=true;
 	mSession = sess;
 	mText.setAutoDelete( true );
+	mModified=false;
 	if ( !_path.isNull() ) {
 		mPath = _path;
 		mFileIsNew = false;
@@ -72,6 +73,7 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	if ( mFileIsNew ) displayIntro();
 	else load();
 	mSession->addBuffer( this );
+	yzDebug() << "NEW BUFFER CREATED : " << mPath << endl;
 }
 
 YZBuffer::~YZBuffer() {
@@ -119,7 +121,6 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 	ASSERT_TEXT_WITHOUT_NEWLINE( "YZBuffer::chgChar(%1,%2,%3).arg(x).arg(y).arg(c)", c )
 	ASSERT_LINE_EXISTS( QString("YZBuffer::chgChar(%1,%2,%3)").arg(x).arg(y).arg(c), y )
 
-	/* brute force, we'll have events specific for that later on */
 	QString l=textline(y);
 	if (l.isNull()) return;
 
@@ -140,16 +141,13 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 
 	setTextline(y,l);
 
-
 	/* inform the views */
 	YZView *it;
-	for ( it = mViews.first(); it; it=mViews.next() ) {
+	for ( it = mViews.first(); it; it=mViews.next() )
 		it->invalidateLine( y );
-	}
 }
 
-void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
-{
+void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 	ASSERT_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count), y )
 
 	/* brute force, we'll have events specific for that later on */
@@ -158,12 +156,10 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 
 	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count),x,y)
 
-	if (x >= l.length()) {
+	if (x >= l.length())
 		return;
-	}
 
-	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
-	                                   l.mid(x,count), x, y );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, l.mid(x,count), x, y );
 	
 	/* do the actual modification */
 	l.remove(x, count);
@@ -189,6 +185,7 @@ void  YZBuffer::appendLine(const QString &l) {
 	                                   l,  0, lineCount());
 
 	mText.append(new YZLine(l));
+	setModified( true );
 	updateAllViews();
 }
 
@@ -202,6 +199,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	                                   l, 0, line );
 
 	mText.insert(line, new YZLine(l));
+	setModified( true );
 	updateAllViews();
 }
 
@@ -237,7 +235,6 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	//add new line
 	mText.insert( line + 1, new YZLine(newline));
 
-
 	/* inform the views */
 	updateAllViews();
 }
@@ -259,6 +256,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 		setTextline(0,"");
 	}
 
+	setModified( true );
 	updateAllViews(); //hmm ...
 }
 
@@ -272,7 +270,6 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 	                                   textline(line), 0, line );
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
 	                                   l, 0, line );
-
 	setTextline(line,l);
 	/* inform the views */
 	YZView *it;
@@ -283,6 +280,7 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 void YZBuffer::mergeNextLine( unsigned int line ) {
 	replaceLine( textline( line ) + textline( line+1 ), line );
 	deleteLine( line+1 );
+	setModified( true );
 }
 
 // ------------------------------------------------------------------------
@@ -353,10 +351,10 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 			yzline(line)->setData(l);
 		}
 	} 
+	setModified( true );
 }
 
-bool YZBuffer::isEmpty() const
-{
+bool YZBuffer::isEmpty() const {
 	if ( mText.count( ) == 1 && textline(0).isEmpty() ) return true;
 	return false;
 }
@@ -382,8 +380,7 @@ uint YZBuffer::getWholeTextLength() const {
 	return length;
 }
 
-uint YZBuffer::firstNonBlankChar( uint line )
-{
+uint YZBuffer::firstNonBlankChar( uint line ) {
 	uint i=0;
 	QString s = textline(line);
 	if (s == QString::null) return 0;
@@ -423,18 +420,19 @@ void YZBuffer::load(const QString& file) {
 		appendLine("");
 		mUndoBuffer->setInsideUndo( false );
 	}
+	setModified( false );
 	//reenable
 	mUpdateView=true;
 	updateAllViews();
 }
 
-void YZBuffer::save() {
+bool YZBuffer::save() {
 	if (mPath.isEmpty())
-		return;
+		return false;
 	if ( mFileIsNew ) {
 		//popup to ask a file name
 		if ( !popupFileSaveAs() )
-			return; //dont try to save
+			return false; //dont try to save
 	}
 	QFile file( mPath );
 	if ( file.open( IO_WriteOnly ) ) {
@@ -444,11 +442,12 @@ void YZBuffer::save() {
 		if ( isEmpty() == false) {
 			for(YZLine *it = mText.first(); it; it = mText.next()) {
 				stream << it->data() << "\n";
-//				yzDebug() << "saving : " << it->data() << endl;
 			}
 		}
 		file.close();
 	}
+	setModified( false );
+	return true;
 }
 
 // ------------------------------------------------------------------------
@@ -514,3 +513,8 @@ QString YZBuffer::undoLast( const QString& , YZCommandArgs args ) {
 	//return something
 	return QString::null;
 }
+
+void YZBuffer::setModified( bool modif ) {
+	mModified = modif;
+}
+

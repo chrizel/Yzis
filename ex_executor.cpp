@@ -32,14 +32,24 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 		view->mySession()->saveAll();
 		return QString::null;
 	}
+	if ( inputs.startsWith( "wqall" ) ) {//write all modified buffers 
+		if ( view->mySession()->saveAll() ) //if it fails => dont quit
+			view->mySession()->quit();
+		return QString::null;
+	}
 	//XXX support saving to current pwd
 	QRegExp rx ( "^(.*)\\s(.*)$");
 	rx.search( inputs );
-	if ( rx.cap(2) != QString::null ) view->myBuffer()->setPath(rx.cap(2));
-	view->myBuffer()->save();
-	yzDebug() << "File saved as " << view->myBuffer()->fileName() << endl;
-	if ( inputs.startsWith( "wqall" ) ) ;//write all modified buffers XXX
-	else if ( inputs.startsWith( "wq" ) ) view->mySession()->quit();
+	if ( rx.cap(2) != QString::null ) 
+		view->myBuffer()->setPath(rx.cap(2)); //a filename was given as argument
+
+	if ( inputs.startsWith( "wq!" ) ) { //check readonly ? XXX
+		view->myBuffer()->save();
+		view->mySession()->quit(); //whatever happens => quit
+	} else if ( inputs.startsWith( "wq" ) ) {
+		if ( view->myBuffer()->save() )
+			view->mySession()->quit();
+	}
 	return QString::null;
 }
 
@@ -59,6 +69,7 @@ QString YZExExecutor::bufferprevious ( YZView *view, const QString& ) {
 	return QString::null;
 }
 
+///XXX wrong this one should delete all views on a buffer
 QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
 	yzDebug() << "Delete view " << view->myId << endl;
 	view->mySession()->deleteView();
@@ -71,17 +82,20 @@ QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( view->myBuffer()->views().count() > 1 )
 			view->mySession()->deleteView();
-		else if ( view->myBuffer()->views().count() == 1 && view->mySession()->countBuffers() == 1)
-			view->mySession()->quit();
-		else if ( inputs.endsWith( "!" ) ) //close even if modified
-			view->mySession()->deleteView();
-		else //check it the buffer is modified before closing ! XXX
-			view->mySession()->deleteView();
+		else if ( view->myBuffer()->views().count() == 1 && view->mySession()->countBuffers() == 1) { //XXX that one does not work because we have a problem in our buffer counting stuff (from kyzis)
+			if ( !view->myBuffer()->fileIsModified() || inputs.endsWith("!") )
+				view->mySession()->quit();
+			else view->mySession()->popupMessage( tr( "One file is modified ! Save it first ..." ) );
+		} else {
+			if ( !view->myBuffer()->fileIsModified() || inputs.endsWith("!") )
+				view->mySession()->deleteView();
+			else view->mySession()->popupMessage( tr( "One file is modified ! Save it first ..." ) );
+		}
 	} else if ( inputs == "qall!" ) {//just quit
 		view->mySession()->quit( );
 	} else if ( inputs == "qall" ) {
-		//check for modified buffers ! XXX
-		view->mySession()->quit( );
+		if ( !view->mySession()->isOneBufferModified() )
+			view->mySession()->quit( );
 	}
 	return QString::null;
 }

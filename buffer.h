@@ -184,8 +184,9 @@ public:
 
 	/**
 	 * Save the buffer content into the current filename
+	 * @return whether or not the file was saved correctly
 	 */
-	void save();
+	bool save();
 
 	/**
 	* Ask the GUI to popup for a filename
@@ -269,6 +270,16 @@ public:
 	bool fileIsNew() { return mFileIsNew; }
 
 	/**
+	 * Is the file modified
+	 */
+	bool fileIsModified() { return mModified; }
+
+	/**
+	 * Change the modified flag of the file
+	 */
+	void setModified(bool v );
+
+	/**
 	 * Unique ID of the buffer
 	 */
 	unsigned int myId;
@@ -302,7 +313,10 @@ protected:
 	bool mFileIsNew;
 	//used to prevent redrawing of views during some operations
 	bool mUpdateView;
+	//is the intro shown
 	bool mIntro;
+	//is the file modified
+	bool mModified;
 };
 
 #endif /*  YZ_BUFFER_H */

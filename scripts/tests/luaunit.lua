@@ -8,6 +8,8 @@ Version: 1.1
 
 Changes between 1.1 and 1.0:
 - variables are now declared locally inside functions
+- you can choose between assertEquals( actual, expected) or assertEquals(
+  expected, actual )
 
 
 TODO:
@@ -20,12 +22,18 @@ TODO:
 
 argv = arg
 
+REVERSED_ASSERT_EQUALS = true
+
 function assertEquals(expected, actual)
 	if  actual ~= expected  then
 		local function wrapValue( v )
 			if type(v) == 'string' then return "'"..v.."'" end
 			return tostring(v)
 		end
+		if REVERSED_ASSERT_EQUALS then
+			expected, actual = actual, expected
+		end
+
 		local errorMsg = "expected: "..wrapValue(expected)..", actual: "..wrapValue(actual)
 		error( errorMsg, 2 )
 	end

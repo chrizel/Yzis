@@ -643,7 +643,7 @@ int YZBuffer::getLocalIntOption( const QString& option ) {
 	if ( YZSession::mOptions.hasOption( mPath+"\\"+option ) ) //find the local one ?
 		return YZSession::mOptions.readIntEntry( mPath+"\\"+option, 0 );
 	else
-		return YZSession::mOptions.readIntEntry( "General\\" + option, 0 ); // else give the global default if any
+		return YZSession::mOptions.readIntEntry( option, 0 ); // else give the global default if any
 }
 
 void YZBuffer::setLocalIntOption( const QString& key, int option ) {

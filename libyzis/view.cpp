@@ -9,10 +9,10 @@
 #include <qkeysequence.h>
 
 //initialise view IDs counter (static)
-int YZView::view_ids = 0;
+//int YZView::view_ids = 0;
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int _lines_vis) {
-	myId = view_ids++;
+	myId = YZSession::nbViews++;//view_ids++;
 	yzDebug() << "New View created with UID : " << myId << endl;
 	session = sess;
 	buffer	= _b;
@@ -171,8 +171,7 @@ void YZView::sendKey( int c, int modifiers) {
 	};
 }
 
-void YZView::updateCursor(void)
-{
+void YZView::updateCursor() {
 	static int lasty = -10; // small speed optimisation
 	static QString percentage("All");
 	int y = cursor->getY();
@@ -186,12 +185,7 @@ void YZView::updateCursor(void)
 		lasty=y;
 	}
 
-	session->postEvent(YZEvent::mkEventCursor(myId,
-				cursor->getX(),
-				y,
-				y,
-				percentage
-				));
+	session->postEvent(YZEvent::mkEventCursor(myId, cursor->getX(), y, y, percentage));
 }
 
 void YZView::centerView(unsigned int line) {

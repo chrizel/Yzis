@@ -153,8 +153,6 @@ protected:
 	/* locking stuff will be here, too */
 	QStringList text;
 	YZSession *session;
-	//counters of buffers
-	static int buffer_ids;
 };
 
 #endif /*  YZ_BUFFER_H */

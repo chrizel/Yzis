@@ -188,7 +188,7 @@ class YZView {
 		YZSession *session;
 
 		//internal counters to identify a view by a number
-		static int view_ids;
+		//static int view_ids;
 
 };
 

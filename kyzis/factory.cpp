@@ -145,33 +145,35 @@ void KYZisFactory::customEvent (QCustomEvent *) {
 		yz_event event = sess->fetchNextEvent();
 		YZView *vi = sess->findView( event.view );
 		if ( vi == NULL ) {
-			kdDebug() << " Factory : View " << event.view << " NOT found , exiting !" << endl;
+			yzDebug() << " Factory : View " << event.view << " NOT found , event type : " << event.id << endl;
 			return;
 			//kapp->quit();
 		}
 		KYZisView *v = static_cast<KYZisView*> ( vi );
+		yzDebug() << "Handling event for view " << event.view << endl;
 		QString str;
 		switch ( event.id ) {
 			case YZ_EV_INVALIDATE_LINE:
-				yzDebug() << "event INVALIDATE_LINE" << endl;
+				yzDebug() << "event INVALIDATE_LINE " << event.id << endl;
 				str = v->myBuffer()->findLine( event.invalidateline.y );
 				if ( str.isNull() ) return;
 				v->editor->setTextLine(event.invalidateline.y, str);
 				break;
 			case YZ_EV_SET_CURSOR:
-				yzDebug() << "event SET_CURSOR" << endl;
+				yzDebug() << "event SET_CURSOR " << event.id << endl;
 				v->editor->setCursor (event.setcursor.x, event.setcursor.y);
 				v->status->changeItem( QString("%1,%2-%3 (%4)").arg(event.setcursor.x ).arg( event.setcursor.y ).arg( event.setcursor.y2 ).arg( event.setcursor.percentage),99 );
 				break;
 			case YZ_EV_SET_STATUS:
-				yzDebug() << "event SET_STATUS" << event.setstatus.text <<  endl;
+				yzDebug() << "event SET_STATUS " << event.id << " " << event.setstatus.text <<  endl;
 				v->status->changeItem( event.setstatus.text,0);
 				break;
 			case YZ_EV_REDRAW:
-				yzDebug() << "event REDRAW" << endl;
+				yzDebug() << "event REDRAW " << event.id << endl;
 				v->editor->updateContents();
 				break;
 			case YZ_EV_NOOP:
+				yzDebug() << "event NOOP " << event.id << endl;
 				return;
 		}
 	}

@@ -6,12 +6,6 @@ if test "$all_tests" = "bad"; then
     echo ""
   fi
 else
-	if test "$have_qt" = yes -a "x$TINYQ" = "x"; then
-		echo ""
-		echo " WARNING : You are compiling YZis without TinyQ. This will work, however for performance improvements"
-		echo "           we advice you to install TinyQ available at http://www.uwyn.com/projects/tinyq/download.html"
-		echo ""
-	fi
   echo ""
   echo "Good - your configure finished. Start make now"
   echo ""

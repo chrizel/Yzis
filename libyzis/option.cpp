@@ -226,10 +226,37 @@ void YZOption::apply( YZBuffer* b, YZView* v ) {
 }
 bool YZOption::match( const QString& entry ) {
 	for( unsigned int i = 0; i < m_aliases.size(); i++ ) {
-		if ( entry.startsWith( m_aliases[ i ] + "=" ) )
+		if ( entry.startsWith( m_aliases[ i ] ) && ! entry.mid( m_aliases[ i ].length() )[ 0 ].isLetter() )
 			return true;
 	}
 	return false;
+}
+QString YZOption::readValue( const QString& entry, opt_action* action ) {
+	*action = opt_invalid;
+	QString value = entry;
+	for( unsigned int i = 0; *action == opt_invalid && i < m_aliases.size(); i++ ) {
+		if ( entry.startsWith( m_aliases[ i ] ) && ! entry.mid( m_aliases[ i ].length() )[ 0 ].isLetterOrNumber() ) {
+			QString data = entry.mid( m_aliases[ i ].length() );
+			unsigned int idx = 1;
+			if ( data[ 0 ] == '&' ) {
+				*action = opt_reset;
+			} else if ( data[ 0 ] == '=' || data[ 0 ] == ':' ) {
+				*action = opt_set;
+			} else {
+				idx = 2;
+				if ( data.startsWith("+=") ) {
+					*action = opt_append;
+				} else if ( data.startsWith("^=") ) {
+					*action = opt_prepend;
+				} else if ( data.startsWith("-=") ) {
+					*action = opt_subtract;
+				}
+			}
+			if ( *action != opt_invalid )
+				value = data.mid( idx );
+		}
+	}
+	return value;
 }
 
 YZOptionBoolean::YZOptionBoolean( const QString& name, bool v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases )
@@ -252,10 +279,12 @@ bool YZOptionBoolean::match( const QString& entry ) {
 }
 
 bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value ) {
-	bool ret = false, v = v_default->boolean();
+	bool ret = false;
+	bool v = value->boolean();
+	opt_action action;
 
-	int idx = entry.find('=');
-	if ( idx < 0 ) {
+	QString v_s = readValue( entry, &action );
+	if ( action == opt_invalid ) {
 		for( unsigned int i = 0; !ret && i < m_aliases.size(); i++ ) {
 			if ( entry == m_aliases[i] ) {
 				v = true;
@@ -265,8 +294,10 @@ bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value ) {
 				ret = true;
 			}
 		}
-	} else {
-		QString v_s = entry.mid( idx+1 );
+	} else if ( action == opt_reset ) {
+		ret = true;
+		v = v_default->boolean();
+	} else if ( action == opt_set ) {
 		v = YZOptionValue::booleanFromString( &ret, v_s );
 	}
 	if ( ret )
@@ -286,10 +317,24 @@ YZOptionInteger::~YZOptionInteger() {
 bool YZOptionInteger::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
 	int v = value->integer();
-	int idx = entry.find( '=' );
-	if ( idx >= 0 ) {
-		QString v_s = entry.mid( idx+1 );
+	opt_action action;
+
+	QString v_s = readValue( entry, &action );
+	ret = action != opt_invalid;
+	if ( action != opt_reset )
 		v = YZOptionValue::integerFromString( &ret, v_s );
+	if ( ret ) {
+		if ( action == opt_reset ) {
+			v = v_default->integer();
+		} else if ( action == opt_set ) {
+			// nothing
+		} else if ( action == opt_append ) {
+			v += value->integer();
+		} else if ( action == opt_prepend ) { // multiply
+			v *= value->integer();
+		} else if ( action == opt_subtract ) {
+			v = value->integer() - v;
+		}
 		ret = ret && v >= v_min && v <= v_max;
 	}
 	if ( ret )
@@ -308,11 +353,25 @@ YZOptionString::~YZOptionString() {
 
 bool YZOptionString::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
-	QString v = value->string();
-	int idx = entry.find( '=' );
-	if ( idx >= 0 ) {
-		v = YZOptionValue::stringFromString( &ret, entry.mid( idx+1 ) );
-		ret = m_allValues.size() == 0 || m_allValues.contains( v ) > 0;
+	opt_action action;
+
+	QString v = readValue( entry, &action );
+	ret = action != opt_invalid;
+	if ( ret ) {
+		if ( action == opt_reset ) {
+			v = v_default->string();
+		} else if ( action == opt_set ) {
+			// nothing
+		} else if ( action == opt_append ) {
+			v = value->string() + v;
+		} else if ( action == opt_prepend ) {
+			v = v + value->string();
+		} else if ( action == opt_subtract ) {
+			QString mv = value->string();
+			v = mv.remove( v );
+		}
+		if ( m_allValues.size() > 0 ) 
+			ret = m_allValues.contains( v ) > 0;
 	}
 	if ( ret )
 		value->setString( v );
@@ -330,9 +389,27 @@ YZOptionList::~YZOptionList() {
 bool YZOptionList::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
 	QStringList v = value->list();
-	int idx = entry.find( '=' );
-	if ( idx >= 0 ) {
-		v = YZOptionValue::listFromString( &ret, entry.mid( idx + 1 ) );
+	opt_action action;
+
+	QString v_s = readValue( entry, &action );
+	ret = action != opt_invalid;
+	if ( ret != opt_reset )
+		v = YZOptionValue::listFromString( &ret, v_s );
+	if ( ret ) {
+		if ( action == opt_reset ) {
+			v = v_default->list();
+		} else if ( action == opt_set ) {
+			// nothing
+		} else if ( action == opt_append ) {
+			v = value->list() + v;
+		} else if ( action == opt_prepend ) {
+			v = v + value->list();
+		} else if ( action == opt_subtract ) {
+			QStringList mv = value->list();
+			for( unsigned int i = 0; i < v.size(); i++ )
+				mv.remove( v[i] );
+			v = mv;
+		}
 		if ( ret && m_allValues.size() > 0 ) {
 			for( unsigned int i = 0; ret && i < v.size(); i++ ) {
 				ret = m_allValues.contains( v[i] ) > 0;
@@ -356,9 +433,30 @@ YZOptionMap::~YZOptionMap() {
 bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
 	MapOption v = value->map();
-	int idx = entry.find( '=' );
-	if ( idx >= 0 ) {
-		v = YZOptionValue::mapFromString( &ret, entry.mid( idx + 1 ) );
+	opt_action action;
+	
+	QString v_s = readValue( entry, &action );
+	ret = action != opt_invalid;
+	if ( ret != opt_reset )
+		v = YZOptionValue::mapFromString( &ret, v_s );
+	if ( ret ) {
+		if ( action == opt_reset ) {
+			v = v_default->map();
+		} else if ( action == opt_set ) {
+			// nothing
+		} else if ( action == opt_append || action == opt_prepend ) {
+			MapOption mv = value->map();
+			QValueList<QString> keys = v.keys();
+			for ( unsigned int i = 0; i < keys.size(); i++ )
+				mv[ keys[i] ] = v[ keys[i] ];
+			v = mv;
+		} else if ( action == opt_subtract ) {
+			MapOption mv = value->map();
+			QValueList<QString> keys = v.keys();
+			for ( unsigned int i = 0; i < keys.size(); i++ )
+				mv.remove( keys[i] );
+			v = mv;
+		}
 		// check keys
 		if ( ret ) {
 			QValueList<QString> keys = v.keys();

@@ -38,6 +38,15 @@ typedef QMap<QString,QString> MapOption;
  * 	YEP003 - http://www.yzis.org/devel/YEP/YEP003
  */
 
+enum opt_action {
+	opt_invalid,
+	opt_set,
+	opt_reset,
+	opt_append,
+	opt_prepend,
+	opt_subtract,
+};
+
 class YZOption;
 
 class YZOptionValue {
@@ -124,6 +133,12 @@ class YZOption {
 		ApplyOptionMethod m_apply;
 
 	protected :
+
+		/**
+		 * Read the entry and extract the action and the value.
+		 */
+		QString readValue( const QString& entry, opt_action* action );
+		
 		YZOptionValue* v_default;
 		QStringList m_allValues;
 		QStringList m_aliases;

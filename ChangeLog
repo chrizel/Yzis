@@ -1,3 +1,7 @@
+2005-03-14 panard
+  * libyzis
+    :set opt&, :set opt=, :set opt:, :set opt+=, :set opt-=, :set opt^=
+
 2005-03-02 morbuz
   * libyzis
     new commands : S (Visual and command mode), D and X (Visual mode)

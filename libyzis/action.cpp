@@ -203,7 +203,7 @@ void YZAction::copyArea( YZView* pView, const YZInterval& i, const QList<QChar> 
 		buff << QString::null;
 
 	if ( i.from().opened() ) ++bX;
-	if ( i.to().opened() && eX > 0 ) --eX;
+	if ( i.to().closed() ) ++eX;
 
 	QString l = mBuffer->textline( bY );
 	if ( bY == eY ) {

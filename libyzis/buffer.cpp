@@ -268,15 +268,15 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 		}
 	}
 
-	//replace old line
-	setTextline(line,l.left( col ));
-
 	//add new line
 	QValueVector<YZLine*>::iterator it;
 	uint idx=0;
 	for ( it = mText.begin(); idx < line+1 && it != mText.end(); it++, idx++ )
 		;
 	mText.insert(it, new YZLine( newline ));
+
+	//replace old line
+	setTextline(line,l.left( col ));
 
 	if ( !mLoading && m_highlight != 0L ) {
 		if ( updateHL( line + 1 ) ) updateAllViews( );
@@ -767,6 +767,7 @@ void YZBuffer::setLocalQColorOption( const QString& key, const QColor& option ) 
 }
 
 bool YZBuffer::updateHL( unsigned int line ) {
+//	yzDebug() << "updateHL " << line << endl;
 	unsigned int hlLine = line;
 	bool ctxChanged = true;
 	bool hlChanged = false;
@@ -775,6 +776,7 @@ bool YZBuffer::updateHL( unsigned int line ) {
 		yl = yzline( hlLine );
 		QMemArray<uint> foldingList;
 		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yl, &foldingList, &ctxChanged );
+//		yzDebug() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
 		hlChanged = ctxChanged || hlChanged;
 		if ( ! ctxChanged && yl->data().isEmpty() ) ctxChanged = true; // line is empty 
 		hlLine++;

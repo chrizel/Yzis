@@ -969,7 +969,8 @@ void YZView::initDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool /*a
 }
 
 void YZView::applyDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool applyCursor ) {
-	paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
+	unsigned int dBegin = dCursor->getY() + ( pos.getY() ? 1 : 0 );
+	paintEvent( dCurrentLeft, dBegin, mColumnsVis, mLinesVis - ( dBegin - dCurrentTop ) );
 	if ( applyCursor )
 		gotoxy( 0, pos.getY() );
 	else
@@ -1023,8 +1024,10 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 	unsigned int mY = mCursor->getY();
 	unsigned int mX = mCursor->getX();
 	if ( args.command == "dd" ) { //delete whole lines
+		buff << QString::null;
 		for ( int i = 0; i < nb_lines && ( mY + i ) < ( unsigned int )mBuffer->lineCount(); i++ )
 			buff << mBuffer->textline( mY + i );
+		buff << QString::null;
 		mBuffer->action()->deleteLine( this, mCursor, nb_lines );
 		YZSession::mRegisters.setRegister( reg, buff );
 		purgeInputBuffer();

@@ -180,8 +180,9 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Backspace:
 					if (mCursor->getX() == 0 && mCursor->getY() > 0 && 1 /* option_go_back_to_previous_line */) {
 						int lineLen = mBuffer->textline( mCursor->getY()-1 ).length();
-						mBuffer->mergeNextLine( mCursor->getY() -1 );
-						gotoxy(lineLen, mCursor->getY()-1);
+						unsigned int line = mCursor->getY() - 1;
+						gotoxy( lineLen, line );
+						mBuffer->mergeNextLine( line );
 					} else if ( mCursor->getX() > 0 ) {
 						mBuffer->delChar(mCursor->getX()-1,mCursor->getY(),1);
 						gotoxy(mCursor->getX()-1, mCursor->getY() );
@@ -811,10 +812,14 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 
 	QStringList buff; //to copy old lines into the register "
 	if ( args.command == "dd" ) { //delete whole lines
+		unsigned int line = mCursor->getY();
+		// prevent bug when deleting the last line
+		gotoxy( 0, mCursor->getY() - 1);
 		for ( int i=0; i<nb_lines; ++i ) {
-			buff << mBuffer->textline( mCursor->getY() );
-			mBuffer->deleteLine( mCursor->getY() );
+			buff << mBuffer->textline( line );
+			mBuffer->deleteLine( line );
 		}
+		gotoxy( 0, line );
 	} else if ( args.command == "D" || args.command == "d$"  ) { //delete to end of lines
 		QString b = mBuffer->textline( mCursor->getY() );
 		buff << b;
@@ -825,9 +830,6 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 
 	//reset the input buffer
 	purgeInputBuffer();
-
-	// prevent bug when deleting the last line
-	gotoxy( mCursor->getX(), mCursor->getY());
 
 	return QString::null;
 }
@@ -1105,7 +1107,7 @@ bool YZView::drawPrevLine( ) {
 			rCursor->setX( 0 );
 			gotodx( rCurrentLeft );
 			if ( drawMode ) {
-				rSpaceFill -= tabwidth - rCurrentLeft % tabwidth;
+				rSpaceFill -= ( tabwidth - rCurrentLeft % tabwidth ) % tabwidth;
 				if ( rCursor->getX( ) > rCurrentLeft ) {
 					sCursor->setX( sCursor->getX() - 1 );
 				}
@@ -1238,7 +1240,7 @@ bool YZView::drawNextCol( ) {
 				rColLength = ( rSpaceFill ? rSpaceFill : tabwidth );
 			else {
 				unsigned int col = rCursor->getX() % tabwidth;
-				if ( mCurrentLeft == 0 ) {
+				if ( mCurrentLeft == 0 && rSpaceFill ) {
 					if ( col < rSpaceFill ) col = tabwidth + col - rSpaceFill;
 					else col -= rSpaceFill;
 				}

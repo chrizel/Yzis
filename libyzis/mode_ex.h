@@ -166,6 +166,7 @@ class YZModeEx : public YZMode {
 		cmd_state lua( const YZExCommandArgs& args );
 		cmd_state source( const YZExCommandArgs& args );
 		cmd_state map( const YZExCommandArgs& args );
+		cmd_state unmap( const YZExCommandArgs& args );
 		cmd_state imap( const YZExCommandArgs& args );
 		cmd_state indent( const YZExCommandArgs& args );
 		cmd_state enew( const YZExCommandArgs& args );

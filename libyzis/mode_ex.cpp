@@ -170,6 +170,7 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "lua", &YZModeEx::lua, QStringList("lua" )) );
 	commands.append( new YZExCommand( "source", &YZModeEx::source, QStringList("source") ) );
 	commands.append( new YZExCommand( "map", &YZModeEx::map, QStringList("map") ) );
+	commands.append( new YZExCommand( "unmap", &YZModeEx::unmap, QStringList("unmap") ) );
 	commands.append( new YZExCommand( "imap", &YZModeEx::imap, QStringList("imap") ) );
 	commands.append( new YZExCommand( "[<>]", &YZModeEx::indent, QStringList(), false ));
 	commands.append( new YZExCommand( "ene(w)?", &YZModeEx::enew, QStringList("enew") ));
@@ -825,6 +826,21 @@ cmd_state YZModeEx::map( const YZExCommandArgs& args ) {
 	}
 	return CMD_OK;
 }
+
+cmd_state YZModeEx::unmap( const YZExCommandArgs& args ) {
+	yzDebug() << "Removing global mapping : " << args.arg << endl;
+	YZMapping::self()->deleteGlobalMapping(args.arg);
+	if (args.arg.startsWith("<CTRL>")) {
+		mModifierKeys.remove(args.arg);
+		for (int i = 0 ; i <= YZSession::mNbViews; i++) {
+			YZView *v = YZSession::me->findView(i);
+			if (v)
+				v->unregisterModifierKeys(args.arg);
+		}
+	}
+	return CMD_OK;
+}
+
 
 cmd_state YZModeEx::imap( const YZExCommandArgs& args ) {
 	QRegExp rx("(\\S+)\\s+(.+)");

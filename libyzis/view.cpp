@@ -265,69 +265,82 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	else if ( mMode == YZ_VIEW_MODE_EX || mMode == YZ_VIEW_MODE_SEARCH )
 		mapMode = mapMode | cmdline;
 
+	bool pendingMapp = false;
 	switch(mMode) {
 		case YZ_VIEW_MODE_INSERT:
-			if ( key == "<HOME>" ) {
+			mPreviousChars += modifiers + key;
+			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode);
+			yzDebug() << "mPreviousChars " << mPreviousChars << endl;
+			if ( mPreviousChars == "<HOME>" ) {
 				moveToStartOfLine( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<END>" ) {
+			} else if ( mPreviousChars == "<END>" ) {
 				moveToEndOfLine( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<INS>" ) {
+			} else if ( mPreviousChars == "<INS>" ) {
 				gotoReplaceMode( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<ESC>" ) {
+			} else if ( mPreviousChars == "<ESC>" ) {
 				if ( mainCursor->bufferX() > 0) moveLeft();
 				gotoPreviousMode();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<ENTER>" ) {
+			} else if ( mPreviousChars == "<ENTER>" ) {
 				if ( cindent ) {
 					indent();
 				} else {
 					mBuffer->action()->insertNewLine( this, 0, mainCursor->bufferY() + 1 );
 				}
 				updateStickyCol( mainCursor );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<DOWN>" ) {
+			} else if ( mPreviousChars == "<DOWN>" ) {
 				moveDown( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<LEFT>" ) {
+			} else if ( mPreviousChars == "<LEFT>" ) {
 				moveLeft();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<RIGHT>" ) {
+			} else if ( mPreviousChars == "<RIGHT>" ) {
 				moveRight();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<UP>" ) {
+			} else if ( mPreviousChars == "<UP>" ) {
 				moveUp( );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<BS>" ) {
+			} else if ( mPreviousChars == "<BS>" ) {
 				if (mainCursor->bufferX() == 0 && mainCursor->bufferY() > 0 && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
 					mBuffer->action()->mergeNextLine( this, mainCursor->bufferY() - 1 );
 				} else if ( mainCursor->bufferX() > 0 )
 					mBuffer->action()->deleteChar( this, mainCursor->bufferX() - 1, mainCursor->bufferY(), 1 );
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<DEL>" ) {
+			} else if ( mPreviousChars == "<DEL>" ) {
 				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
 				commitNextUndo();
+				purgeInputBuffer();
 				return;
-			} else if ( key == "<PDOWN>" ) {
+			} else if ( mPreviousChars == "<PDOWN>" ) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() + mLinesVis );
 				purgeInputBuffer();
 				return;
-			} else if ( key == "<PUP>" ) {
+			} else if ( mPreviousChars == "<PUP>" ) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
 				purgeInputBuffer();
 				return;
 			} else {
-				if ( key == "<TAB>" ) {
-					key="\t";
+				if ( mPreviousChars == "<TAB>" ) {
+					mPreviousChars="\t";
 				}
 				//Vim has a sub mode for <CTRL>x commands
-				if ( modifiers + key == "<CTRL>x" ) { //special handling, here we can run commands while in INSERT mode
-					mPreviousChars += modifiers + key;
+				if ( mPreviousChars == "<CTRL>x" ) { //special handling, here we can run commands while in INSERT mode
 					return;
-				} else if ( modifiers == "<CTRL>" && mPreviousChars == "<CTRL>x" ) {
-					mPreviousChars += modifiers + key;
+				} else if ( mPreviousChars.startsWith("<CTRL>x<CTRL>") ) {
 					cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
 					switch(state) {
 						case CMD_ERROR:
@@ -341,10 +354,12 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					}
 					return;
 				}
-				mBuffer->action()->insertChar( this, mainCursor->buffer(), key );
-				if ( cindent && key == "}" )
-					reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
-				purgeInputBuffer(); //be safe in case we mistyped a CTRL command just before
+				if (!pendingMapp) {
+					mBuffer->action()->insertChar( this, mainCursor->buffer(), mPreviousChars );
+					if ( cindent && mPreviousChars == "}" )
+						reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
+					purgeInputBuffer(); //be safe in case we mistyped a CTRL command just before
+				}
 				return;
 			}
 			break;
@@ -532,18 +547,16 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				mPreviousChars+=modifiers+key;
 
 				QString mapped = mPreviousChars;
-				bool pendingMapp = YZMapping::self()->applyMappings(mapped, mapMode);
+				pendingMapp = YZMapping::self()->applyMappings(mapped, mapMode);
 				
 				cmd_state state=mSession->getPool()->execCommand(this, mapped);
 				switch(state) {
 					case CMD_ERROR:
-//						yzDebug() << "Error" << endl;
 						if (pendingMapp) break;
 					case CMD_OK:
 						purgeInputBuffer();
 						break;
 					case OPERATOR_PENDING:
-	//					yzDebug() << "Pending" << endl;
 						mapMode = pendingop;
 					default:
 						break;

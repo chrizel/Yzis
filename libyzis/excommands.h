@@ -156,6 +156,7 @@ class YZExCommandPool {
 		QString lua( const YZExCommandArgs& args );
 		QString source( const YZExCommandArgs& args );
 		QString map( const YZExCommandArgs& args );
+		QString imap( const YZExCommandArgs& args );
 };
 
 #endif

@@ -76,6 +76,7 @@ void YZExCommandPool::initPool() {
 	commands.append( new YZExCommand( "lua", &YZExCommandPool::lua ) );
 	commands.append( new YZExCommand( "source", &YZExCommandPool::source ) );
 	commands.append( new YZExCommand( "map", &YZExCommandPool::map ) );
+	commands.append( new YZExCommand( "imap", &YZExCommandPool::imap ) );
 }
 
 QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -516,6 +517,15 @@ QString YZExCommandPool::map( const YZExCommandArgs& args ) {
 	if ( rx.exactMatch(args.arg) ) {
 		yzDebug() << "Adding global mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		YZMapping::self()->addGlobalMapping(rx.cap(1), rx.cap(2));
+	}
+	return QString::null;
+}
+
+QString YZExCommandPool::imap( const YZExCommandArgs& args ) {
+	QRegExp rx("(.+)\\s+(.+)");
+	if ( rx.exactMatch(args.arg) ) {
+		yzDebug() << "Adding insert mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
+		YZMapping::self()->addInsertMapping(rx.cap(1), rx.cap(2));
 	}
 	return QString::null;
 }

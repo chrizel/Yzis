@@ -27,6 +27,7 @@
 
 int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
+YZOption YZSession::mOptions = YZOption();
 
 YZSession::YZSession( const QString& _sessionName ) {
 	mPool = new YZCommandPool();

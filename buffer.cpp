@@ -273,6 +273,19 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	for ( it = mText.begin(); idx < line+1 && it != mText.end(); it++, idx++ )
 		;
 	mText.insert(it, new YZLine( newline ));
+
+	if ( m_highlight != 0L ) {
+		uint hlLine = line+1;
+		bool ctxChanged = true;
+		bool hlChanged = false;
+		while ( ctxChanged && hlLine < lineCount()) {
+			QMemArray<signed char> foldingList;
+			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
+			if ( hlLine != line ) hlChanged = true;
+			hlLine++;
+		}
+		if ( hlChanged ) updateAllViews( );
+	}
 }
 
 void YZBuffer::deleteLine( unsigned int line ) {

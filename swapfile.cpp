@@ -142,7 +142,7 @@ void YZSwapFile::replay( YZBufferOperation::OperationType type, unsigned int col
 			mParent->action()->insertNewLine( pView, 0, line );
 			break;
 		case YZBufferOperation::DELLINE:
-			mParent->action()->deleteLine( pView, line, 1 );
+			mParent->action()->deleteLine( pView, line, 1, QValueList<QChar>() );
 			break;
 	}
 }

@@ -814,7 +814,7 @@ QString YZCommandPool::del(const YZCommandArgs &args) {
 				from.setCursor( tmp );
 			}
 		}
-		args.view->myBuffer()->action()->deleteLine( args.view, from.getY(), to.getY() - from.getY() + 1 );
+		args.view->myBuffer()->action()->deleteLine( args.view, from.getY(), to.getY() - from.getY() + 1, args.regs );
 	} else {
 		YZCursor to=move(args.view, args.arg, args.count);
 		args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);

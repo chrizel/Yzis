@@ -30,6 +30,8 @@
 #include <action.h>
 #include <qnamespace.h>
 #include <krootpixmap.h>
+#include <qsignalmapper.h>
+#include <kactioncollection.h>
 
 class KYZisView;
 
@@ -64,6 +66,12 @@ class KYZisEdit : public QWidget {
 		const QString& convertKey( int key );
 
 		unsigned int spaceWidth;
+
+		void registerModifierKeys( const QString& keys );
+	
+	public slots :
+		void sendMultipleKey( const QString& keys );
+
 
 	protected:
 		//intercept tabs
@@ -102,6 +110,9 @@ class KYZisEdit : public QWidget {
 
 	private :
 		void initKeys();
+		KActionCollection* actionCollection;
+		QSignalMapper* signalMapper;
+		QString keysToShortcut( const QString& keys );
 		
 		KYZisView *mParent;
 

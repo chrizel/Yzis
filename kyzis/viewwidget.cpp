@@ -61,6 +61,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	
 	setXMLFile( "kyzispart/kyzispart.rc" );
 	setupActions();
+	setupKeys();
 	
 	buffer = doc;
 	m_editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
@@ -183,6 +184,9 @@ void KYZisView::setupActions() {
 	KStdAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());
 }
 
+void KYZisView::registerModifierKeys( const QString& keys ) {
+	m_editor->registerModifierKeys( keys );
+}
 
 void KYZisView::applyConfig( bool refresh ) {
 	m_editor->setFont( Settings::font() );

@@ -64,6 +64,9 @@ public:
 	  */
 	void unmap( void );
 
+protected :
+	virtual void registerModifierKeys( const QString& ) { }
+
 public slots:
 
 	protected  :
@@ -108,7 +111,6 @@ private:
 	QString commandline;
 	unsigned int lastLineNumber;
 	unsigned int marginLeft;
-
 
 	void initialiseAttributesMap();
 	static int attributesMapInitialised;

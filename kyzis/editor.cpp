@@ -31,6 +31,8 @@
 #include <math.h>
 #include <qclipboard.h>
 #include <qcursor.h>
+#include <kaction.h>
+#include <qsignalmapper.h>
 
 #include "settings.h"
 
@@ -458,6 +460,28 @@ void KYZisEdit::initKeys() {
 	keys[ Qt::Key_7 ] = "7";
 	keys[ Qt::Key_8 ] = "8";
 	keys[ Qt::Key_9 ] = "9";
+
+
+	actionCollection = new KActionCollection( this, mParent );
+	signalMapper = new QSignalMapper( this );
+	connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMultipleKey( const QString& ) ) );
+}
+
+QString KYZisEdit::keysToShortcut( const QString& keys ) {
+	QString ret = keys;
+	ret = ret.replace( "<CTRL>", "CTRL+" );
+	ret = ret.replace( "<SHIFT>", "SHIFT+" );
+	ret = ret.replace( "<ALT>", "ALT+" );
+	return ret;
+}
+
+void KYZisEdit::registerModifierKeys( const QString& keys ) {
+	KAction* k = new KAction( "", KShortcut( keysToShortcut( keys ) ), signalMapper, SLOT( map() ), actionCollection, keys );
+	signalMapper->setMapping( k, keys );
+}
+
+void KYZisEdit::sendMultipleKey( const QString& keys ) {
+	mParent->sendMultipleKey( keys );
 }
 
 const QString& KYZisEdit::convertKey( int key ) {

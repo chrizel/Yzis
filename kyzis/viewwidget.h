@@ -83,6 +83,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		KYZisEdit *editor() { return m_editor; }
 
 
+
 	public slots:
 		QPoint cursorCoordinates();
 		void cursorPosition ( unsigned int *line, unsigned int *col);
@@ -100,6 +101,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 	
 	protected:
 		void setupActions();
+		virtual void registerModifierKeys( const QString& keys );
 
 	private:
 		KYZisEdit *m_editor;

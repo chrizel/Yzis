@@ -49,6 +49,10 @@
 #include <QLinkedList>
 #endif
 
+#ifndef WIN32
+#include "magic.h"
+#endif
+
 class YzisHlContext;
 class YzisHlItem;
 class YzisHlItemData;
@@ -459,6 +463,7 @@ class YzisHlManager : public QObject
     uint dynamicCtxsCount;
     QTime lastCtxsReset;
     bool forceNoDCReset;
+    magic_t magicSet;
 };
 
 #endif

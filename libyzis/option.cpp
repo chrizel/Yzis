@@ -271,7 +271,8 @@ bool YZOptionBoolean::match( const QString& entry ) {
 	bool ret = YZOption::match( entry );
 	if ( !ret ) {
 		for( unsigned int i = 0; !ret && i < m_aliases.size(); i++ ) {
-			if ( entry == m_aliases[i] || entry == "no" + m_aliases[i] )
+			if ( entry == m_aliases[i] || entry == "no" + m_aliases[i] \
+					|| entry == m_aliases[i] + "!" || entry == "inv" + m_aliases[i] )
 				ret = true;
 		}
 	}
@@ -291,6 +292,9 @@ bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value ) {
 				ret = true;
 			} else if ( entry == "no" + m_aliases[i] ) {
 				v = false;
+				ret = true;
+			} else if ( entry == "inv" + m_aliases[i] || entry == m_aliases[i] + "!" ) {
+				v = ! v;
 				ret = true;
 			}
 		}

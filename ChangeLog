@@ -1,3 +1,7 @@
+2005-03-30 panard
+  * libyzis
+    add :set booloption! and :set invbooloption support
+
 2005-03-29 panard
   * libyzis, kyzis
     add Input Method Support (thanks to Takumi Asaki)

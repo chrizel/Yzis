@@ -55,7 +55,6 @@ private slots:
     void fileNew();
     void fileOpen();
     void optionsShowToolbar();
-    void optionsShowStatusbar();
     void optionsConfigureKeys();
     void optionsConfigureToolbars();
 
@@ -69,7 +68,6 @@ private:
     KParts::ReadWritePart *m_part;
 
     KToggleAction *m_toolbarAction;
-    KToggleAction *m_statusbarAction;
 };
 
 #endif // KYZIS_H

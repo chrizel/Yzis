@@ -18,7 +18,6 @@
 #include <klibloader.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
-#include <kstatusbar.h>
 
 Kyzis::Kyzis()
     : KParts::MainWindow( 0L, "Kyzis" )
@@ -29,12 +28,9 @@ Kyzis::Kyzis()
     // then, setup our actions
     setupActions();
 
-    // and a status bar
-    statusBar()->show();
-
-    // this routine will find and load our Part.  it finds the Part by
-    // name which is a bad idea usually.. but it's alright in this
-    // case since our Part is made for this Shell
+		// this routine will find and load our Part.  it finds the Part by name
+		// which is a bad idea usually.. but it's alright in this case since our
+		// Part is made for this Shell
     KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
     if (factory)
     {
@@ -86,7 +82,6 @@ void Kyzis::setupActions()
     KStdAction::quit(kapp, SLOT(quit()), actionCollection());
 
     m_toolbarAction = KStdAction::showToolbar(this, SLOT(optionsShowToolbar()), actionCollection());
-    m_statusbarAction = KStdAction::showStatusbar(this, SLOT(optionsShowStatusbar()), actionCollection());
 
     KStdAction::keyBindings(this, SLOT(optionsConfigureKeys()), actionCollection());
     KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
@@ -132,16 +127,6 @@ void Kyzis::optionsShowToolbar()
         toolBar()->show();
     else
         toolBar()->hide();
-}
-
-void Kyzis::optionsShowStatusbar()
-{
-    // this is all very cut and paste code for showing/hiding the
-    // statusbar
-    if (m_statusbarAction->isChecked())
-        statusBar()->show();
-    else
-        statusBar()->hide();
 }
 
 void Kyzis::optionsConfigureKeys()

@@ -147,7 +147,7 @@ void YZInternalOptionPool::init() {
 	YZInternalOption *backspace = new YZInternalOption( "backspace", "Global", QString( "eol" ), QString( "eol" ), view_opt, string_t );
 	YZInternalOption *updatecount = new YZInternalOption( "updatecount", "Global", 200, 200, buffer_opt, int_t );
 	YZInternalOption *matchpairs = new YZInternalOption( "matchpairs", "Global", QString( "(){}[]" ), QString( "(){}[]" ), buffer_opt, string_t );
-	YZInternalOption *cindent = new YZInternalOption( "cindent", "Global", true, true, view_opt, bool_t );
+	YZInternalOption *cindent = new YZInternalOption( "cindent", "Global", false, false, view_opt, bool_t );
 	YZInternalOption *printer = new YZInternalOption( "printer", "Global", QString("qtprinter"),QString("qtprinter"), global_opt, string_t );
 	YZInternalOption *fileencoding = new YZInternalOption( "fileencoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
 	YZInternalOption *encoding = new YZInternalOption( "encoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );

@@ -1,5 +1,23 @@
 <!DOCTYPE TS><TS>
 <context>
+    <name>KTextEditor</name>
+    <message>
+        <source>Yzis Ready</source>
+        <translation>Yzis Prêt</translation>
+    </message>
+</context>
+<context>
+    <name>KYZisDoc</name>
+    <message>
+        <source>Yzis is not able to save remote files for now</source>
+        <translation>Yzis ne gère pas les fichiers distants pour le moment</translation>
+    </message>
+    <message>
+        <source>Remote files</source>
+        <translation>Fichiers distants</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <source>All</source>
@@ -7,7 +25,7 @@
     </message>
     <message>
         <source>-- INSERT --</source>
-        <translation>-- INSERTION --</translation>
+        <translation type="obsolete">-- INSERTION --</translation>
     </message>
     <message>
         <source>-- REPLACE --</source>

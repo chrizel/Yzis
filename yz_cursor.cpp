@@ -13,35 +13,4 @@ YZCursor::YZCursor(YZView *vp) {
 YZCursor::~YZCursor() {
 }
 
-void YZCursor::setX(int x) {
-	x_pos = x;
-}
-
-void YZCursor::setY(int y) {
-	y_pos = y;
-}
-
-int YZCursor::getX() {
-	return x_pos;
-}
-
-int YZCursor::getY() {
-	return y_pos;
-}
-
-void YZCursor::incX(int nb) {
-	x_pos+=nb;
-}
-
-void YZCursor::incY(int nb) {
-	y_pos+=nb;
-}
-
-void YZCursor::decX(int nb) {
-	x_pos-=nb;
-}
-
-void YZCursor::decY(int nb) {
-	y_pos-=nb;
-}
 

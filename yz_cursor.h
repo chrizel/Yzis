@@ -17,18 +17,26 @@ class YZCursor {
 	public :
 		YZCursor(YZView *vp);
 		~YZCursor();
-		void setX(int x);
-		void setY(int y);
-		int getX();
-		int getY();
-		void incX(int nb=1);
-		void incY(int nb=1);
-		void decX(int nb=1);
-		void decY(int nb=1);
-		
+
+		inline void setX(int x) { x_pos = x; }
+
+		inline void setY(int y) { y_pos = y; }
+
+		inline int getX() { return x_pos; }
+
+		inline int getY() { return y_pos; }
+
+		inline void incX(int nb=1) { x_pos+=nb; }
+
+		inline void incY(int nb=1) { y_pos+=nb; }
+
+		inline void decX(int nb=1) { x_pos-=nb; }
+
+		inline void decY(int nb=1) { y_pos-=nb; }
+
 	private :
 		YZView *parentView;
-		
+
 		/* position relative to the whole file */
 		int x_pos;
 		int y_pos;

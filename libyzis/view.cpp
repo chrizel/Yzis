@@ -121,6 +121,27 @@ QString YZView::buildCommand( const QString& key, int modifiers ) {
 	return command;
 }
 
+void YZView::sendKey( const QString& key, const QString& modifiers) {
+	//TODO swapfile
+	if ( mBuffer->introShown() ) {
+		mBuffer->clearIntro();
+		gotoxy( 0,0 );
+		return;
+	}
+
+	switch(mMode) {
+		case YZ_VIEW_MODE_INSERT:
+		case YZ_VIEW_MODE_REPLACE:
+		case YZ_VIEW_MODE_SEARCH:
+		case YZ_VIEW_MODE_EX:
+		case YZ_VIEW_MODE_VISUAL:
+		case YZ_VIEW_MODE_VISUAL_LINE :
+		case YZ_VIEW_MODE_COMMAND:
+		case YZ_VIEW_MODE_OPEN:
+			;
+	}
+}
+
 /* Used by the buffer to post events */
 void YZView::sendKey( int c, int modifiers) {
 	mBuffer->getSwapFile()->addToSwap( c, modifiers );

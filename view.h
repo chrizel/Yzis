@@ -295,6 +295,7 @@ class YZView {
 
 		QString undo ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 		QString redo ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString match( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		virtual void printToFile( const QString& path );
 

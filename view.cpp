@@ -128,7 +128,7 @@ void YZView::sendKey( int c, int modifiers) {
 	bool test = false;
 
 	QString mappedCommand = buildCommand(key, modifiers);
-	yzDebug() << "MappedCommand " << mappedCommand << endl;
+//	yzDebug() << "MappedCommand " << mappedCommand << endl;
 
 	//ignore some keys
 	if ( c == Qt::Key_Shift || c == Qt::Key_Alt || c == Qt::Key_Meta ||c == Qt::Key_Control || c == Qt::Key_CapsLock ) {
@@ -1133,7 +1133,6 @@ QString YZView::gotoPreviousMode() {
 QString YZView::gotoCommandMode( ) {
 	mBuffer->undoBuffer()->commitUndoItem(mCursor->getX(), mCursor->getY());
 	switchModes(YZ_VIEW_MODE_COMMAND);
-	setVisibleArea(80, 24);
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -1682,3 +1681,14 @@ QString YZView::redo( const QString& , YZCommandArgs ) {
 	return QString::null;
 }
 
+QString YZView::match( const QString&, YZCommandArgs ) {
+	bool found = false;
+	YZCursor pos = mBuffer->action()->match( this, *mCursor, &found );
+	yzDebug() << "Result " << pos << endl;
+
+	if ( found )
+		gotoxy( pos.getX(), pos.getY() );
+
+	purgeInputBuffer();
+	return QString::null;
+}

@@ -32,7 +32,6 @@ NYZView *NYZFactory::currentView=0;
 NYZFactory::NYZFactory(const char *session_name)
 	:YZSession( session_name )
 {
-
 	/* init screen */
 
 	(void) initscr();	/* initialize the curses library */
@@ -43,6 +42,9 @@ NYZFactory::NYZFactory(const char *session_name)
 	(void) nodelay(stdscr, TRUE);
 	(void) intrflush( stdscr, FALSE );
 
+	screen = stdscr; // just an alias...
+	wattron(screen, A_STANDOUT);	// will be herited by subwin
+
 	if ( has_colors() ) start_color();
 
 	if ( self ) {
@@ -52,8 +54,6 @@ NYZFactory::NYZFactory(const char *session_name)
 	self = this;
 
 	initialiseKeycodes();
-	screen = stdscr; // just an alias...
-	wattron(screen, A_STANDOUT);	// will be herited by subwin
 }
 
 NYZFactory::~NYZFactory( )
@@ -67,15 +67,24 @@ void NYZFactory::event_loop()
 			"NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
 	/* main and only event loop in nyzis */
 	for (;;) {
+		extern uint qGlobalPostedEventsCount();
+//		if ( qApp->hasPendingEvents () ) yzDebug( NYZIS ) << "qt wann do something.. " << qGlobalPostedEventsCount() << " pending events.." << endl;
 		/* this is a _basic_ event loop... will be improved */
 		int c = getch();
-		if (c!=ERR) {
-			int modifiers = 0;
-			if ( isupper( c ) ) modifiers |= Qt::ShiftButton;
-			if ( iscntrl( c ) ) modifiers |= Qt::ControlButton;
-			//TODO: ALT/META	
-			currentView->sendKey( keycodes.contains(c)?keycodes[c]:c, modifiers );
-		} else usleep (400);
+		switch( c ){
+			case ERR:
+				usleep( 400 );
+			// do nothing with the following
+			case KEY_RESIZE:
+				break;
+			default:
+				int modifiers = 0;
+				if ( isupper( c ) ) modifiers |= Qt::ShiftButton;
+				if ( iscntrl( c ) ) modifiers |= Qt::ControlButton;
+				//TODO: ALT/META	
+				yzDebug() << "Receiving key " << c<<endl;
+				currentView->sendKey( keycodes.contains(c)?keycodes[c]:c, modifiers );
+		}
 	}
 }
 
@@ -223,7 +232,8 @@ void NYZFactory::initialiseKeycodes() {
 	//keycodes[ KEY_DL ] = ;
 	//keycodes[ KEY_IL ] = ;
 	keycodes[ KEY_DC ] = Qt::Key_Delete;
-	keycodes[ KEY_IC ] = Qt::Key_Insert;
+	keycodes[ KEY_IC ] = Qt::Key_I;
+	keycodes[ Qt::Key_Insert ] = Qt::Key_I;
 	//keycodes[ KEY_EIC ] = ;
 	keycodes[ KEY_CLEAR ] = Qt::Key_Clear;
 	//keycodes[ KEY_EOS ] = ;
@@ -304,6 +314,5 @@ void NYZFactory::initialiseKeycodes() {
 		keycodes[ KEY_EVENT ] = ;
 		keycodes[ KEY_MAX ] = ;*/
 }
-
 
 

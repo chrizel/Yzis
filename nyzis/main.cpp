@@ -31,7 +31,6 @@
 #include "factory.h"
 #include "translator.h"
 /* std c */
-//#include <unistd.h>
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
@@ -42,16 +41,16 @@
 #include <cstdio>
 #include <csignal>
 
-static void catchsigint(int sig);
+       typedef void ( *sighandler_t )( int );
+
+static void sigint(int sig);
+static void sigwinch(int sig);
 static void cleaning(void);
-void nyz_init_screen(void);
 
 int
 main(int argc, char *argv[])
 {
 
-	(void) signal(SIGINT, catchsigint);      /* arrange interrupts to terminate */
-	atexit(cleaning);
 #ifdef Q_WS_X11
 	bool useGUI = getenv(  "DISPLAY" ) != 0;
 #else
@@ -102,6 +101,11 @@ main(int argc, char *argv[])
 	// create factory
 	NYZFactory *factory  =new NYZFactory();
 
+	// Signal handling
+	(void) signal(SIGINT, sigint);      /* arrange interrupts to terminate */
+	atexit(cleaning);
+	(void)signal(SIGWINCH, sigwinch);// ncurses SHOULD handle that
+
 	/*
 	 * Open buffers
 	 */
@@ -133,10 +137,22 @@ static void cleaning(void)
 	printf("\n"); // prevent prompt to be badly placed after nyzis exits
 }
 
-static void catchsigint(int /*sig*/)
+
+static void sigint(int /*sig*/)
 {
 //	yzDebug(NYZIS) << "^C catched" << endl;
 	// ^c catched -> sends an escape char.. 
-	NYZFactory::currentView->sendKey( Qt::Key_Escape, 0); }
+	NYZFactory::currentView->sendKey( Qt::Key_Escape, 0);
+}
+
+ 
+static void sigwinch(int /*sig*/)
+{
+//	yzDebug(NYZIS) << "sigwinch catched" << endl;
+	endwin();
+	refresh();
+	NYZFactory::currentView->unmap();
+	NYZFactory::currentView->map();
+}
 
  

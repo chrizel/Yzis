@@ -169,10 +169,11 @@ void NYZView::setCommandLineText( const QString& text )
 {
 	werase(statusbar);
 	commandline = text;
-	if ( text.isEmpty() ) return;
-	waddstr(statusbar, text.latin1());
-	waddch( statusbar, ' ' ); // when doing backspace...
-	waddch( statusbar, '\b' );
+	if ( !text.isEmpty() ) {
+		waddstr(statusbar, text.latin1());
+		waddch( statusbar, ' ' ); // when doing backspace...
+		waddch( statusbar, '\b' );
+	}
 	wrefresh(statusbar);
 }
 
@@ -263,7 +264,7 @@ void NYZView::displayInfo( const QString& info )
 
 void NYZView::update_info(void)
 {
-	getmaxyx(window, h, w);
+	getmaxyx(stdscr, h, w);
 	mLinesVis = h-2;
 }
 
@@ -329,12 +330,12 @@ void NYZView::initialisecolormap()
 		MAP( 5, Qt::cyan, COLOR_CYAN );
 		MAP( 6, Qt::black, COLOR_BLACK );
 		MAP( 7, Qt::blue, COLOR_BLUE );
-		MAP( 8, Qt::white, COLOR_WHITE );
+		MAP( 8, Qt::white, COLOR_WHITE | A_BOLD );
 		MAP( 9, Qt::gray, COLOR_WHITE );
 		MAP(10, Qt::darkGreen, COLOR_GREEN | A_BOLD);
 		MAP(11, Qt::darkMagenta, COLOR_MAGENTA | A_BOLD);
 		MAP(12, Qt::darkCyan, COLOR_CYAN | A_BOLD);
-		MAP(13, Qt::lightGray, COLOR_WHITE );
+		MAP(13, Qt::lightGray, COLOR_WHITE | A_BOLD );
 	}
 }
 

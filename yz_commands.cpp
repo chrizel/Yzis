@@ -32,9 +32,6 @@ YZCommandPool::~YZCommandPool() {
 }
 
 void YZCommandPool::initPool() {
-	//our basic example
-	NEW_POOL_COMMAND("test",&YZCommandPool::test,true);
-
 	//normal stuff
 	NEW_VIEW_COMMAND("j",&YZView::moveDown,true);
 	NEW_VIEW_COMMAND("k",&YZView::moveUp,true);
@@ -54,10 +51,6 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("a",&YZView::append,true);
 	NEW_VIEW_COMMAND("A",&YZView::appendAtEOL,true);
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
-}
-
-QString YZCommandPool::test(const QString&) {
-	return QString("testing");
 }
 
 void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error) {
@@ -127,8 +120,9 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error)
 }
 
 void YZCommandPool::initExPool() {
-	NEW_EX_COMMAND("w",&YZExExecutor::write,true);
-	NEW_EX_COMMAND("write",&YZExExecutor::write,true);
+	//XXX should be ok now ? NEW_EX_COMMAND("w",&YZExExecutor::write,true);
+	NEW_EX_COMMAND("write", &YZExExecutor::write,true);
+	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true );
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {

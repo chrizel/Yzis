@@ -12,7 +12,11 @@
 #include "yz_debug.h"
 #include <assert.h>
 
+//initialise buffer IDs counter (static)
+int YZBuffer::buffer_ids = 0;
+
 YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
+	myId = buffer_ids++;
 	session = sess;
 	path	= _path;
 
@@ -21,14 +25,11 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 		QString blah( "" );
 		addLine(blah);
 	}
-	//view_list.setAutoDelete( true ); //we own views
 	session->addBuffer(this );
 }
 
 YZBuffer::~YZBuffer() {
-//	view_list.clear();
 	text.clear();
-	//delete path;
 }
 
 void YZBuffer::addChar (int x, int y, const QString& c) {
@@ -41,9 +42,16 @@ void YZBuffer::addChar (int x, int y, const QString& c) {
 	text[y] = l;
 
 	/* inform the views */
+	/* XXX TESTME 
 	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
 			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
+	}*/
+	QValueList<YZView*>::iterator it;
+	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+		YZView *v = *it;
+		session->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
 	}
+
 }
 
 void YZBuffer::chgChar (int x, int y, const QString& c) {
@@ -58,8 +66,15 @@ void YZBuffer::chgChar (int x, int y, const QString& c) {
 	text[y] = l;
 
 	/* inform the views */
+	/* XXX TESTME
 	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
 			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
+	} */
+
+	QValueList<YZView*>::iterator it;
+	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+		YZView *v = *it;
+		session->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
 	}
 }
 
@@ -74,8 +89,15 @@ void YZBuffer::delChar (int x, int y, int count) {
 	text[y] = l;
 
 	/* inform the views */
+	/* XXX TESTME
 	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
 			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
+	}*/
+
+	QValueList<YZView*>::iterator it;
+	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+		YZView *v = *it;
+		session->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
 	}
 }
 
@@ -111,11 +133,16 @@ void YZBuffer::addView (YZView *v) {
 }
 
 void YZBuffer::updateAllViews() {
-	for ( YZView *v = view_list.first();v;v=view_list.next() ) v->redrawScreen();
+	//XXX TESTME for ( YZView *v = view_list.first();v;v=view_list.next() ) v->redrawScreen();
 	
+	QValueList<YZView*>::iterator it;
+	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+		YZView *v = *it;
+		v->redrawScreen();
+	}
 }
 
-void  YZBuffer::addLine(QString &l) {
+void  YZBuffer::addLine(const QString &l) {
 	text.append(l);
 }
 
@@ -144,7 +171,6 @@ void YZBuffer::load() {
 
 void YZBuffer::save() {
 	if (path.isEmpty()) {
-		//error("called though path is null, ignored");
 		return;
 	}
 	QFile file( path );
@@ -156,9 +182,16 @@ void YZBuffer::save() {
 	}
 }
 
+
 YZView* YZBuffer::findView( int uid ) {
-	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
-		if ( v->myId == uid ) return v;
+// XXX TESTME	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
+//		if ( v->myId == uid ) return v;
+//	} 
+
+	QValueList<YZView*>::iterator it;
+	for ( it = view_list.begin(); it != view_list.end(); ++it ){
+		YZView* v = *it;
+		if ( v->myId == uid ) return *it;
 	}
 	return NULL;
 }
@@ -166,6 +199,7 @@ YZView* YZBuffer::findView( int uid ) {
 //motion calculations
 
 yz_point YZBuffer::motionPosition( int /*xstart*/, int /*ystart*/, YZMotion /*regexp*/ ) {
-
+	yz_point e;
+	return e;
 }
 

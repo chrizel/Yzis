@@ -1,5 +1,6 @@
 #include "yz_debug.h"
 #include <qstringlist.h>
+#include <ctype.h>
 
 //the one which writes to the files ...
 static void YZDebugBackend(int area, const char* data) {

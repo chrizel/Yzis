@@ -2,11 +2,9 @@
 #include "yz_debug.h"
 
 YZExExecutor::YZExExecutor() {
-
 }
 
 YZExExecutor::~YZExExecutor() {
-
 }
 
 QString YZExExecutor::write( YZView *view, const QString& inputs ) {
@@ -15,3 +13,8 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 	return QString::null;
 }
 
+QString YZExExecutor::buffernext( YZView *view, const QString& inputs ) {
+	yzDebug() << "Switching buffers ..." << endl;
+	view->mySession()->setCurrentBuffer(view->mySession()->nextBuffer());
+	return QString::null;
+}

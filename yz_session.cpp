@@ -12,12 +12,11 @@ YZSession::YZSession( const QString& _sessionName ) {
   motionpool = new YZMotionPool();
 	motionpool->initPool();
 	sessionName = _sessionName;
+	curView = 0;
+	curBuffer = 0;
 }
 
 YZSession::~YZSession() {
-/*	delete pool;
-	delete expool;
-	delete motionpool;*/
 }
 
 void YZSession::registerManager ( Gui *mgr ) {
@@ -65,7 +64,8 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = buffers.begin(); it!=buffers.end(); it++ )
 		it.data()->save();
-	//XXX QUIT !
+	gui_manager->quit( true );	
+	//should not be reached
 	return QString::null;
 }
 
@@ -76,4 +76,24 @@ YZView* YZSession::findView( int uid ) {
 		if ( v ) return v;
 	}
 	return NULL;
+}
+
+void YZSession::setCurrentView( YZView* view ) {
+	curView = view;
+	//update the GUIs now
+	gui_manager->setCurrentView( view );
+}
+
+void YZSession::setCurrentBuffer( YZBuffer* buffer) {
+	curBuffer = buffer;
+	//update the GUIs now
+	gui_manager->setCurrentBuffer( buffer );
+}
+
+YZBuffer* YZSession::nextBuffer() {
+	QMap<QString,YZBuffer*>::Iterator it;
+	for ( it = buffers.begin(); it!=buffers.end(); it++ ) {
+		while ( *it != curBuffer ) continue;
+		return *it;
+	}
 }

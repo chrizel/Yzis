@@ -29,16 +29,19 @@ public:
 	void load(void);
 	void save(void);
 
-	void addLine(QString &l);
+	void addLine(const QString &l);
 
-	QString fileName() {return path;}
+	const QString& fileName() {return path;}
 
 	void addView (YZView *v);
 
-	QPtrList<YZView> views() { return view_list; }
+	//QPtrList<YZView> views() { return view_list; }
+	//XXX TESTME
+	QValueList<YZView*> views() { return view_list; }
 
 	YZView* findView(int uid);
 
+	//const ?
 	const QStringList& getText() { return text; }
 
 	void addNewLine( int col, int line );
@@ -51,9 +54,12 @@ public:
 
 	unsigned int getLines( void ) { return text.count(); }
 
+	int myId;
+
 protected:
 	QString path;
-	QPtrList<YZView> view_list;
+	//QPtrList<YZView> view_list;
+	QValueList<YZView*> view_list;
 
 	void	updateAllViews();
 
@@ -61,6 +67,8 @@ protected:
 	/* locking stuff will be here, too */
 	QStringList text;
 	YZSession *session;
+	//counters of buffers
+	static int buffer_ids;
 };
 
 #endif /*  YZ_BUFFER_H */

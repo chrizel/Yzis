@@ -125,8 +125,13 @@ QChar KYZisView::currentChar() const {
 }
 
 void KYZisView::wheelEvent( QWheelEvent * e ) {
-	int n = ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
-	scrollView( getCurrentTop() - n );
+	int n = - ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
+    int top = getCurrentTop();
+    int lastline = buffer->lineCount() - 1;
+
+    // don't scroll up/down if the view already is at the top/bottom
+    if ( ( n < 0 && top != 0 ) || ( n > 0 && top != lastline ) )
+        scrollView( getCurrentTop() + n );
 }
 
 void KYZisView::modeChanged (void) {
@@ -262,7 +267,7 @@ void KYZisView::scrollView( int value ) {
 	else if (getBufferCursor()->getY() > getCurrentTop()+getLinesVisible() - 1)
 		gotoxy(getBufferCursor()->getX(), getCurrentTop()+getLinesVisible()-1);
 
-	syncViewInfo();
+	m_editor->setCursor( mainCursor->screenX(), mainCursor->screenY() );
 }
 
 //KTextEditor::PopupMenuInterface implementation

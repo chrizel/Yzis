@@ -60,7 +60,7 @@ void BufferOperation::performOperation( YZBuffer * buf, bool opposite)
 			buf->delChar( col, line, text.length() ); 
 			break;
 		case ADDLINE:
-			buf->addNewLine( 0, line );
+			buf->insertNewLine( 0, line );
 			break;
 		case DELLINE:
 			buf->deleteLine( line );

@@ -173,9 +173,9 @@ uint YZBuffer::firstNonBlankChar( uint line )
 //                            Line Operations 
 // ------------------------------------------------------------------------
 
-void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
+void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	YZASSERT_MSG( line < lineCount(), QString(
-		"YZBuffer::addNewLine( %1, %2 ) but line %3 does not exist,"
+		"YZBuffer::insertNewLine( %1, %2 ) but line %3 does not exist,"
 		" buffer has %4 lines").arg( line ).arg( col ).arg( line )
 		.arg( lineCount() ) );
 	if ( line == lineCount() ) {//we are adding a line, fake being at end of last line
@@ -187,7 +187,7 @@ void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
 	if (l.isNull()) return;
 
 	YZASSERT_MSG( col <= l.length(), QString(
-		"YZBuffer::addNewLine( %1, %2 ) but column %3 does not exist,"
+		"YZBuffer::insertNewLine( %1, %2 ) but column %3 does not exist,"
 		" line has %4 columns").arg( line ).arg( col ).arg( col )
 		.arg( l.length() ) );
 	if (col > l.length() ) return;
@@ -244,8 +244,8 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	updateAllViews();
 }
 
-void  YZBuffer::addLine(const QString &l) {
-	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::addLine() : adding a line with '\n' inside" );
+void  YZBuffer::appendLine(const QString &l) {
+	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::appendLine() : adding a line with '\n' inside" );
 
 	mUndoBuffer->addBufferOperation( BufferOperation::ADDLINE, 
 	                                 QString(), 0, lineCount() );
@@ -257,22 +257,22 @@ void  YZBuffer::addLine(const QString &l) {
 }
 
 
-void YZBuffer::replaceLine( unsigned int y, const QString& value ) {
-	YZASSERT_MSG( value.contains('\n')==false, "YZBuffer::replaceLine() : replacing a line with '\n' inside" );
-	YZASSERT_MSG( y < lineCount(), QString("YZBuffer::replaceLine( %1 ) but line does not exist, buffer has %3 lines").arg( y ).arg( lineCount() ) );
+void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
+	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::replaceLine() : replacing a line with '\n' inside" );
+	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::replaceLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
 	
-	if ( data( y ).isNull() ) return;
+	if ( data( line ).isNull() ) return;
 
 	mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
-	                                   data(y), 0, y );
+	                                   data(line), 0, line );
 	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, 
-	                                   value, 0, y );
+	                                   l, 0, line );
 
-	at(y)->setData(value);
+	at(line)->setData(l);
 	/* inform the views */
 	YZView *it;
 	for ( it = mViews.first(); it ; it = mViews.next() )
-		it->invalidateLine( y );
+		it->invalidateLine( line );
 }
 
 // ------------------------------------------------------------------------
@@ -364,13 +364,13 @@ void YZBuffer::load(const QString& file) {
 		QTextStream stream( &fl );
 		while ( !stream.atEnd() ) {
 			QString line(stream.readLine() ); // line of text excluding '\n'
-			addLine( line );
+			appendLine( line );
 		}
 		fl.close();
 	}
 	if ( ! mText.count() ) {
 		mUndoBuffer->setInsideUndo( true );
-		addLine("");
+		appendLine("");
 		mUndoBuffer->setInsideUndo( false );
 	}
 	updateAllViews();

@@ -9,11 +9,11 @@
 #include <qstring.h>
 #include <qmap.h>
 #include <qstringlist.h>
-#include "yz_buffer.h"
-#include "yz_view.h"
-#include "yz_session.h"
-#include "yz_plugin.h"
-#include "yz_ex_executor.h"
+#include "buffer.h"
+#include "view.h"
+#include "session.h"
+#include "plugin.h"
+#include "ex_executor.h"
 
 #ifndef YZ_COMMANDS_H
 #define YZ_COMMANDS_H

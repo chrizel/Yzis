@@ -2,9 +2,9 @@
  * $Id$
  */
 
-#include "yz_commands.h"
-#include "yz_view.h"
-#include "yz_debug.h"
+#include "commands.h"
+#include "view.h"
+#include "debug.h"
 
 /**
  * Here is a simple example to add a new command and how to use it :

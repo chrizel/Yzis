@@ -5,7 +5,7 @@
 #ifndef GUI_H
 #define GUI_H
 
-#include "yz_events.h"
+#include "events.h"
 
 /**
  * This is the interface that all GUIs must implement

@@ -2,7 +2,7 @@
  * $Id$
  */
 
-#include "yz_session.h"
+#include "session.h"
 
 YZSession::YZSession( const QString& _sessionName ) {
   pool = new YZCommandPool();

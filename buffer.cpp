@@ -2,14 +2,14 @@
  * $Id$
  */
 
-#include "yz_events.h"
+#include "events.h"
 #include <cstdlib>
 #include <qfile.h>
 #include <qtextstream.h>
-#include "yz_buffer.h"
-#include "yz_view.h"
+#include "buffer.h"
+#include "view.h"
 #include "yzis.h"
-#include "yz_debug.h"
+#include "debug.h"
 #include <assert.h>
 
 //initialise buffer IDs counter (static)

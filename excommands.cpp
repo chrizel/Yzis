@@ -346,6 +346,8 @@ QString YZExCommandPool::edit ( const YZExCommandArgs& args ) {
 		return QString::null;
 	}
 	//check the file name
+	if ( path.length() >= 1 && path[ 0 ] == '~' ) // expand ~
+		path = getenv( "HOME" ) + path.mid( 1 );
 	QFileInfo fi ( path );
 	path = fi.absFilePath();
 	yzDebug() << "New buffer / view : " << path << endl;

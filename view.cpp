@@ -702,22 +702,23 @@ void YZView::gotoy( unsigned int nexty ) {
 	} else {
 		while ( workCursor->bufferY() > nexty ) {
 			drawPrevLine( );
-			if ( wrap && workCursor->bufferY() == nexty && rCurLineLength > mColumnsVis ) { 
+			if ( wrap && rCurLineLength > mColumnsVis ) {
 				/* goto begin of line */
 				unsigned int wrapLineMinHeight = ( unsigned int ) ceil( rMinCurLineLength / mColumnsVis ) + 1;
 				unsigned int wrapLineMaxHeight = ( unsigned int ) ceil( rCurLineLength / mColumnsVis ) + 1;
 				if ( wrapLineMinHeight == wrapLineMaxHeight ) {
 					workCursor->setScreenY( workCursor->screenY() + 1 - wrapLineMinHeight );
 				} else {
+					unsigned int cury = workCursor->bufferY();
 					unsigned int prevRX = workCursor->screenY();
-					initDraw( 0, nexty, 0, 0, drawMode );
+					initDraw( 0, cury, 0, 0, drawMode );
 					while ( drawNextCol( ) ) ;
-					while ( workCursor->bufferY() == nexty ) {
+					while ( workCursor->bufferY() == cury ) {
 						wrapLineMinHeight = workCursor->lineHeight;
 						drawNextLine( );
-						if ( workCursor->bufferY() == nexty ) while ( drawNextCol( ) ) ;
+						if ( workCursor->bufferY() == cury ) while ( drawNextCol( ) ) ;
 					}
-					initDraw ( 0, nexty, 0, prevRX - wrapLineMinHeight, drawMode );
+					initDraw ( 0, cury, 0, prevRX - wrapLineMinHeight + 1, drawMode );
 					workCursor->lineHeight = workCursor->sLineIncrement = workCursor->bLineIncrement = 1;
 				}
 			}

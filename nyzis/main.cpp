@@ -25,6 +25,8 @@
 #include <qtranslator.h>
 #include <qtextcodec.h>
 
+/* X11 */
+#include <X11/Xlib.h>
 
 /* yzis */
 #include "debug.h"
@@ -53,6 +55,11 @@ main(int argc, char *argv[])
 
 #ifdef Q_WS_X11
 	bool useGUI = getenv(  "DISPLAY" ) != 0;
+	if (useGUI) {
+		Display *d = XOpenDisplay(NULL);
+		if (d == NULL) //woups we failed to connect to X
+			useGUI = false; // so don't try again later ;)
+	}
 #else
 	bool useGUI = TRUE;
 #endif

@@ -47,6 +47,7 @@ YZExLua::YZExLua() {
 	lua_register(st,"line",line);
 	lua_register(st,"insert",insert);
 	lua_register(st,"insertline",insertline);
+	lua_register(st,"appendline",appendline);
 	lua_register(st,"replace",replace);
 	lua_register(st,"wincol",wincol);
 	lua_register(st,"winline",winline);
@@ -82,17 +83,29 @@ QString YZExLua::lua(YZView *, const QString& ) {
 //callers
 QString YZExLua::loadFile( YZView *, const QString& inputs ) {
 	QString filename = inputs.mid( inputs.find( " " ) +1 );
-	//find a matching file first
-	if ( !QFile::exists( filename ) ) {
-		if ( QFile::exists( QDir::currentDirPath()+"/"+filename ) ) filename.prepend( QDir::currentDirPath()+"/" );
-		else if ( QFile::exists( QDir::homeDirPath()+"/.yzis/scripts/"+filename ) ) filename.prepend( QDir::homeDirPath()+"/.yzis/scripts/" );
-		else if ( QFile::exists( QString( PREFIX )+"/share/yzis/scripts/"+filename ) ) filename.prepend( QString( PREFIX )+"/share/yzis/scripts/" );
-		else {
-			YZSession::me->popupMessage(tr("The file %1 could not be found in standard directories" ).arg( filename ));
-			return QString::null;
+	QStringList candidates;
+	candidates << filename 
+	           << QDir::currentDirPath()+"/"+filename
+	           << QDir::homeDirPath()+"/.yzis/scripts/"+filename
+		       << QString( PREFIX )+"/share/yzis/scripts/"+filename;
+	QString found;
+	for( QStringList::iterator it = candidates.begin(); it!=candidates.end(); ++it) {
+		found = *it;
+		if (QFile::exists( found )) break;
+
+		if ((found.right(4) != ".lua")) {
+			found += ".lua";
+			if (QFile::exists(found)) break;
 		}
+		found = "";
 	}
-	QFileInfo fi ( filename );
+
+	if (found.isEmpty()) {
+		YZSession::me->popupMessage(tr("The file %1 could not be found in standard directories" ).arg( filename ));
+		return QString::null;
+	}
+
+	QFileInfo fi ( found );
 	filename = fi.absFilePath();
 	yzDebug() << "LUA : sourcing file " << filename << endl;
 	if ( fi.exists() ) {
@@ -191,6 +204,27 @@ int YZExLua::insertline(lua_State *L) {
 		}
 		cAction->insertChar( cView, 0, sLine, *it );
 		sLine++;
+	}
+
+	return 0; // no result
+}
+
+int YZExLua::appendline(lua_State *L) {
+	int n = lua_gettop( L );
+	if ( n < 1 ) return 0; //mis-use of the function
+
+	QString text = ( char * )lua_tostring ( L, 1 );
+
+	YZView* cView = YZSession::me->currentView();
+	YZBuffer * cBuffer = cView->myBuffer();
+	YZAction * cAction = cBuffer->action();
+	QStringList list = QStringList::split( "\n", text );
+	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++ ) {
+		if (cBuffer->isEmpty()) {
+			cAction->insertChar( cView, 0, 0, *it );
+		} else {
+			cAction->insertLine( cView, cBuffer->lineCount(), *it );
+		}
 	}
 
 	return 0; // no result

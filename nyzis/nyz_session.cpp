@@ -68,12 +68,12 @@ void NYZSession::event_loop()
 			( static_cast<NYZView*>( v ) )->event_loop();
 }
 
-void NYZSession::update_status(const char *msg)
+void NYZSession::update_status(QString *msg)
 {
 	save_cursor();
 
 	werase(statusbar);
-	waddstr(statusbar, msg);
+	waddstr(statusbar, msg->latin1());
 	wrefresh(statusbar);
 
 	restore_cursor();

@@ -19,8 +19,8 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_v
 NYZView::~NYZView(){
 }
 
-void NYZView::postEvent( yz_event ev ) {
-
+void NYZView::postEvent( yz_event /*ev*/ ) {
+	// do nothing, we'll catch them in next flush_events()
 }
 
 void NYZView::event_loop()
@@ -48,20 +48,21 @@ void NYZView::flush_events(void)
 
 void NYZView::handle_event(yz_event e)
 {
-	int l, i;
-	QString	yzl;
+	int l;
+	unsigned int i;
+	QString	*yzl;
 
 	switch(e.id) {
 		case YZ_EV_SETLINE:
 			l = e.u.setline.y;
 			//yet, kinda sucks, uh?");
-			yzl = mText[l] = *( e.u.setline.line );
-			mText.insert( l,*( e.u.setline.line ));
+			yzl = e.u.setline.line;
 
 			/* not use addnstr here, will stop at \0  (i guess) */
 			move ( l, 0);
-			for (i=0; i<w && i<yzl.length(); i++)
-				addch(yzl[i].unicode());
+			for (i=0; i<w && i<yzl->length(); i++)
+				addch((*yzl )[i].unicode());
+			for ( ; i< LINES; i++ ) addch( ' ' );
 
 //			refresh();
 //			debug("YZ_EV_SETLINE: received, line is %d", l);

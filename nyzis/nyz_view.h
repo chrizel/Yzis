@@ -13,8 +13,6 @@
 #include <qstringlist.h>
 #include <qmap.h>
 
-typedef QMap<int,QString> NYZLine;
-
 class NYZSession;
 
 class NYZView : public YZView, public Gui  {
@@ -38,11 +36,10 @@ public:
 protected:
 	void handle_event(yz_event e);
 
-	NYZLine		mText;
 	WINDOW		*window;	/* ncurses window to write to */
 	NYZSession	*session;
 
-	int		h, w;		/** height and width of the window */
+	unsigned int	h, w;		/** height and width of the window */
 
 private:
 	void update_info(void) { getmaxyx(window, h, w); }

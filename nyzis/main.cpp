@@ -35,7 +35,7 @@ static void finish2(void)
 	finish(0);
 }
 
-static void finish(int sig)
+static void finish(int /*sig*/)
 {
 	/* ncurses stuff */
 	endwin();

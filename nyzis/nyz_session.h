@@ -20,7 +20,7 @@ class NYZSession : public YZSession {
 		NYZSession( int argc, char **charv, const char *_session_name = "default_session" );
 
 		void		event_loop();
-		void		update_status(const char *msg);
+		void		update_status(QString *msg);
 
 		void		save_cursor(void);
 		void		restore_cursor(void);

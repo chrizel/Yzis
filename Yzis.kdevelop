@@ -13,7 +13,7 @@
     </keywords>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description/>
+    <description></description>
     <ignoreparts/>
     <secondaryLanguages/>
   </general>
@@ -73,11 +73,11 @@
   <kdevdebugger>
     <general>
       <dbgshell>libtool</dbgshell>
-      <programargs/>
-      <gdbpath/>
-      <configGdbScript/>
-      <runShellScript/>
-      <runGdbScript/>
+      <programargs></programargs>
+      <gdbpath></gdbpath>
+      <configGdbScript></configGdbScript>
+      <runShellScript></runShellScript>
+      <runGdbScript></runGdbScript>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -124,19 +124,19 @@
       <mikmak>
         <envvars/>
         <configargs>--prefix=/opt/kde --enable-debug=full --with-lua-includes=/usr/include/lua50</configargs>
-        <builddir>mikmak</builddir>
-        <topsourcedir/>
-        <cppflags/>
-        <ldflags/>
+        <builddir>mm</builddir>
+        <topsourcedir></topsourcedir>
+        <cppflags></cppflags>
+        <ldflags></ldflags>
         <ccompiler>kdevgccoptions</ccompiler>
         <cxxcompiler>kdevgppoptions</cxxcompiler>
         <f77compiler>kdevpgf77options</f77compiler>
         <ccompilerbinary>gcc-4.0</ccompilerbinary>
         <cxxcompilerbinary>g++-4.0</cxxcompilerbinary>
-        <f77compilerbinary/>
-        <cflags/>
-        <cxxflags/>
-        <f77flags/>
+        <f77compilerbinary></f77compilerbinary>
+        <cflags></cflags>
+        <cxxflags></cxxflags>
+        <f77flags></f77flags>
       </mikmak>
       <default>
         <envvars/>
@@ -201,7 +201,7 @@
       <pcs>KDElibs</pcs>
     </references>
     <creategettersetter>
-      <prefixGet/>
+      <prefixGet></prefixGet>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>

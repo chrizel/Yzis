@@ -221,7 +221,6 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 	bool commandIsValid = false;
 	int from, to, current;
 #if QT_VERSION < 0x040000
-	YZView * it;
 	QString _input = inputs.stripWhiteSpace();
 #else
 	QString _input = inputs.trimmed();
@@ -471,7 +470,7 @@ cmd_state YZModeEx::gotoCommandMode( const YZExCommandArgs& args ) {
 	return CMD_OK;
 }
 
-cmd_state YZModeEx::gotoOpenMode( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::gotoOpenMode( const YZExCommandArgs& /*args*/ ) {
 	yzDebug() << "Switching to open mode...";
 //	args.view->gotoOpenMode();
 	yzDebug() << "done." << endl;
@@ -507,7 +506,6 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::setlocal ( const YZExCommandArgs& args ) {
-	cmd_state ret = CMD_OK;
 	QRegExp rx ( "(\\w*)(\\+|-)?=(.*)" ); //option with value
 	QRegExp rx2 ( "no(\\w*)" ); //deactivate a bool option
 	QRegExp rx3 ( "(\\w*)" ); //activate a bool option

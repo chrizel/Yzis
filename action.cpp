@@ -188,7 +188,7 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 
 
 #if QT_VERSION < 0x040000
-void YZAction::copyArea( YZView* pView, const YZInterval& i, const QValueList<QChar> &reg ) {
+void YZAction::copyArea( YZView* /*pView*/, const YZInterval& i, const QValueList<QChar> &reg ) {
 #else
 void YZAction::copyArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg ) {
 #endif

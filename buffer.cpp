@@ -725,14 +725,13 @@ YZView* YZBuffer::firstView() {
 
 void YZBuffer::rmView(YZView *v) {
 #if QT_VERSION < 0x040000
-	int f = mViews.remove(v);
+	mViews.remove(v);
 #else
-	int f = mViews.count(v);
+	mViews.count(v);
 	int idx = mViews.indexOf(v);
 	if ( idx != -1 )
 		mViews.remove(idx);
 #endif
-//	YZASSERT( 1==f ); // isn't it ?
 //	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
 	if ( mViews.isEmpty() )
 		detach();

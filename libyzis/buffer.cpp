@@ -374,8 +374,6 @@ YZView* YZBuffer::findView( unsigned int uid ) {
 	return NULL;
 }
 
-//motion calculations
-
 void YZBuffer::updateAllViews() {
 	YZView *it;
 	for ( it = mViews.first(); it; it = mViews.next() ) {
@@ -395,3 +393,17 @@ void YZBuffer::rmView(YZView *v) {
 	yzDebug() << "buffer: removeView found " << f << " views" << endl;
 }
 
+// ------------------------------------------------------------------------
+//                            Undo/Redo Operations
+// ------------------------------------------------------------------------
+
+QString YZBuffer::undoLast( const QString& , YZCommandArgs args ) {
+	yzDebug() << "buffer: undoLast" << endl;
+	mUndoBuffer->undo();	
+	
+	//reset the input buffer of the originating view
+	args.view->purgeInputBuffer();
+
+	//return something
+	return QString::null;
+}

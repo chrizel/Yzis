@@ -66,6 +66,8 @@ struct args {
 	unsigned int motionStartY;
 	unsigned int motionEndY;
 	QString command;
+	//the origin of inputs
+	YZView *view;
 };
 
 typedef struct args YZCommandArgs;

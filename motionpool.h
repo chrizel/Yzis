@@ -56,7 +56,7 @@ class YZMotionPool {
 		/**
 		 * Adds a new motion to the pool of known motions
 		 * @param regexp the motion to add
-		 * @param the string/regexp which is recognized in inputsbuffer to detect a motion
+		 * @param key the string/regexp which is recognized in inputsbuffer to detect a motion
 		 */
 		void addMotion(const YZMotion& regexp, const QString& key);
 

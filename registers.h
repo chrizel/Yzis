@@ -37,7 +37,7 @@ class YZRegisters {
 
 		/**
 		 * Gets the value of register @param r
-		 * Returns a @ref QString containing the register content
+		 * Returns a QString containing the register content
 		 */
 		QStringList& getRegister ( QChar r ) const;
 	

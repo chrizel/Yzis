@@ -29,6 +29,7 @@
 
 #include "commands.h"
 #include "selection.h"
+//#include "linesearch.h"
 
 class YZViewCursor;
 class YZCursor;
@@ -36,6 +37,7 @@ class YZBuffer;
 class YZSession;
 class YZSelectionPool;
 class YzisAttribute;
+class YZLineSearch;
 class YZView;
 
 typedef QValueVector<QString> StringVector;
@@ -114,6 +116,11 @@ class YZView {
 		 * Return my current session
 		 */
 		YZSession *mySession() { return mSession; }
+
+		/**
+		 * Return my current line search
+		 */
+		 YZLineSearch* myLineSearch() { return mLineSearch; }
 
 		/**
 		 * Adjust view vertically to show @arg line on bottom
@@ -709,6 +716,11 @@ class YZView {
 		 * The current session, provided by the GUI
 		 */
 		YZSession *mSession;
+
+		/** 
+		 * Line search
+		 */
+		 YZLineSearch* mLineSearch;
 
 		/**
 		 * This is the worker cursor, the one which we directly modify in our draw engine

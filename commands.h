@@ -164,7 +164,12 @@ private:
 	YZCursor moveWordBackward(const YZNewMotionArgs &args);
 	YZCursor gotoSOL(const YZNewMotionArgs &args);
 	YZCursor gotoEOL(const YZNewMotionArgs &args);
-	YZCursor find(const YZNewMotionArgs &args);
+	//YZCursor find(const YZNewMotionArgs &args);
+	YZCursor findNext(const YZNewMotionArgs &args);
+	YZCursor findBeforeNext(const YZNewMotionArgs &args);
+	YZCursor findPrevious(const YZNewMotionArgs &args);
+	YZCursor findAfterPrevious(const YZNewMotionArgs &args);
+	YZCursor repeatFind(const YZNewMotionArgs &args);
 	YZCursor matchPair(const YZNewMotionArgs &args);
 	YZCursor firstNonBlank(const YZNewMotionArgs &args);
 	YZCursor gotoMark(const YZNewMotionArgs &args);

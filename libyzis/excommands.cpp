@@ -130,10 +130,10 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 			unsigned int nc = reg.numCaptures();
 			yzDebug() << "matched " << commands.current()->keySeq() << " " << reg.cap( 1 ) 
 				<< "," << reg.cap( nc - 1 ) << "," << reg.cap( nc ) << endl;
-			QString arg = reg.cap( nc ).stripWhiteSpace();
+			QString arg = reg.cap( nc );
 			bool force = arg[ 0 ] == '!';
 			if ( force ) arg = arg.mid( 1 );
-			(this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg, from, to, force ) );
+			(this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.stripWhiteSpace(), from, to, force ) );
 		}
 	}
 	if ( ! matched ) view->gotoStickyCol( to );

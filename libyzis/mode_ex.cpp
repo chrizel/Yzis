@@ -218,6 +218,7 @@ QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, b
 cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 	cmd_state ret = CMD_ERROR;
 	bool matched;
+	bool commandIsValid = false;
 	int from, to, current;
 #if QT_VERSION < 0x040000
 	YZView * it;
@@ -272,11 +273,17 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 #else
 			ret = (this->*( commands.at(ab)->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.trimmed(), from, to, force ) );
 #endif
+			commandIsValid = true;
 		}
 	}
 	if ( current != to ) {
 		view->gotoxy( 0, to );
 		view->moveToFirstNonBlankOfLine();
+	}
+
+
+	if (!commandIsValid) {
+		YZSession::me->popupMessage( QObject::tr("Not an editor command: ") + _input);
 	}
 
 	return ret;
@@ -392,7 +399,7 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 			args.view->modePool()->stop();
 			ret = CMD_QUIT;
 			args.view->mySession()->exitRequest( );
-		} else args.view->mySession()->popupMessage( QObject::tr( "One file is modified ! Save it first ..." ) );
+		} else args.view->mySession()->popupMessage( QObject::tr( "One file is modified! Save it first..." ) );
 	} else {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( args.view->myBuffer()->views().count() > 1 ) {
@@ -405,14 +412,14 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 				ret = CMD_QUIT;
 				args.view->mySession()->exitRequest();
 			}
-			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified ! Save it first ..." ) );
+			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified! Save it first..." ) );
 		} else {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
 				args.view->modePool()->stop();
 				ret = CMD_QUIT;
 				args.view->mySession()->deleteView(args.view->myId);
 			}
-			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified ! Save it first ..." ) );
+			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified! Save it first..." ) );
 		}
 	}
 	return ret;

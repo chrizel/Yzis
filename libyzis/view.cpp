@@ -2437,6 +2437,16 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 		selectionPool->addSelection( "DRAW", curx, cury, curx + curw, cury + curh );
 	}
 }
+void YZView::sendBufferPaintEvent( unsigned int line, unsigned int n ) {
+	YZViewCursor vCursor = viewCursor();
+	gotoxy( &vCursor, 0, line );
+	unsigned int cury = vCursor.screenY();
+	if ( isLineVisible( cury ) ) {
+		gotoxy( &vCursor, 0, line + n );
+		unsigned int curh = vCursor.screenY() - cury;
+		sendPaintEvent( getDrawCurrentLeft(), cury, getColumnsVisible(), curh );
+	}
+}
 
 void YZView::sendRefreshEvent( ) {
 	selectionPool->clear( "DRAW" );

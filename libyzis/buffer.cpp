@@ -250,7 +250,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 
 	YZSession::me->search()->shiftHighlight( this, line, 1 );
 	YZSession::me->search()->highlightLine( this, line );
-	if ( updateHL( line ) ) updateAllViews();
+	updateHL( line );
 
 	setChanged( true );
 
@@ -309,7 +309,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	YZSession::me->search()->highlightLine( this, line+1 );
 	//replace old line
 	setTextline(line,l.left( col ));
-	if ( updateHL( line + 1 ) ) updateAllViews( );
+	updateHL( line + 1 );
 
 	VIEWS_APPLY( 0, line+1 );
 }
@@ -338,7 +338,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 		YZSession::me->search()->shiftHighlight( this, line+1, -1 );
 		YZSession::me->search()->highlightLine( this, line );
-		if ( updateHL( line ) ) updateAllViews();
+		updateHL( line );
 	} else {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, "", 0, line );
 		if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, "", 0, line );
@@ -401,11 +401,12 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 			yzline(line)->setData(l);
 		}
 	}
-	if ( isLineVisible( line ) && updateHL( line ) ) updateAllViews( );
+	updateHL( line );
 	YZSession::me->search()->highlightLine( this, line );
 	setChanged( true );
 }
 
+// XXX Wrong
 bool YZBuffer::isLineVisible(uint line) {
 	bool shown=false;
 #if QT_VERSION < 0x040000
@@ -967,7 +968,7 @@ void YZBuffer::setLocalQColorOption( const QString& key, const QColor& option ) 
 bool YZBuffer::updateHL( unsigned int line ) {
 //	yzDebug() << "updateHL " << line << endl;
 	if ( mLoading ) return false;
-	unsigned int hlLine = line;
+	unsigned int hlLine = line, nElines = 0;
 	bool ctxChanged = true;
 	bool hlChanged = false;
 	YZLine* yl = NULL;
@@ -986,8 +987,24 @@ bool YZBuffer::updateHL( unsigned int line ) {
 		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yl, &foldingList, &ctxChanged );
 //		yzDebug() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
 		hlChanged = ctxChanged || hlChanged;
-		if ( ! ctxChanged && yl->data().isEmpty() ) ctxChanged = true; // line is empty 
+		if ( ! ctxChanged && yl->data().isEmpty() ) {
+			ctxChanged = true; // line is empty 
+			++nElines;
+		} else if ( ctxChanged )
+			nElines = 0;
 		hlLine++;
+	}
+	if ( hlChanged ) {
+		unsigned int nToDraw = hlLine - line - nElines - 1;
+		yzDebug() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
+#if QT_VERSION < 0x040000
+		YZView *it;
+		for ( it = mViews.first(); it; it = mViews.next() )
+			it->sendBufferPaintEvent( line, nToDraw );
+#else
+		for ( int ab = 0; ab < mViews.size(); ++ab ) {
+			mViews.at(ab)->sendBufferPaintEvent( line, nToDraw );
+#endif
 	}
 	return hlChanged;
 }

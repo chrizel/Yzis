@@ -429,6 +429,9 @@ class YZView {
 		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
 		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
 
+		// ask to draw from buffer line @arg line to @arg line + @arg n
+		void sendBufferPaintEvent( unsigned int line, unsigned int n );
+
 		/**
 		 * Ask for refresh screen
 		 */

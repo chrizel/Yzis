@@ -137,6 +137,7 @@ void NYZView::scrollDown( int n ) {
 }
 
 void NYZView::paintEvent( unsigned int , unsigned int clipy, unsigned int , unsigned int cliph ) {
+//	yzDebug() << "NYZView::paintEvent " << cliph << " lines from line " << clipy << endl;
 	unsigned int dTop = getDrawCurrentTop();
 	drawContents( clipy > dTop ? clipy - dTop : 0 , cliph );
 }

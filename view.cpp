@@ -1747,7 +1747,6 @@ unsigned int YZView::drawTotalHeight() {
 
 	return totalHeight;
 }
-	
 
 void YZView::substitute(const QString& range, const QString& search, const QString& replace, const QString& option) {
 	yzDebug() << "substitute : " << range << ":" << search << ":" << replace << ":" << option << endl;

@@ -540,15 +540,32 @@ QString YZCommandPool::append(const YZCommandArgs &args) {
 	return QString::null;
 }
 
-QString YZCommandPool::changeLine(const YZCommandArgs &args) {
-	//TODO (current implementation in trunk is wrong)
+QString YZCommandPool::change(const YZCommandArgs &args) {
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
+		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
+	else {
+		YZCursor to=move(args.view, args.arg, args.count);
+		args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
+	}
+	args.view->commitNextUndo();
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
+		args.view->leaveVisualMode();
+	args.view->append();
+	return QString::null;
+}
 
+QString YZCommandPool::changeLine(const YZCommandArgs &args) {
+	args.view->deleteLine(args.count, args.regs);
+	args.view->openNewLineBefore();
+//	args.view->gotoInsertMode();
 	args.view->commitNextUndo();
 	return QString::null;
 }
 
 QString YZCommandPool::changeToEOL(const YZCommandArgs &args) {
-	//TODO
+	YZCursor to=move(args.view, "$", 1);
+	args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
+	args.view->gotoInsertMode();
 	args.view->commitNextUndo();
 	return QString::null;
 }
@@ -653,7 +670,7 @@ QString YZCommandPool::closeWithoutSaving(const YZCommandArgs &/*args*/) {
 	return QString::null;
 }
 
-QString YZCommandPool::saveAndClose(const YZCommandArgs &args) {
+QString YZCommandPool::saveAndClose(const YZCommandArgs &/*args*/) {
 	YZSession::me->saveBufferExit();
 	return QString::null;
 }
@@ -675,11 +692,6 @@ QString YZCommandPool::searchNext(const YZCommandArgs &args) {
 
 QString YZCommandPool::searchPrev(const YZCommandArgs &args) {
 	args.view->searchAgain( args.count, true );
-	return QString::null;
-}
-
-QString YZCommandPool::change(const YZCommandArgs &args) {
-	args.view->commitNextUndo();
 	return QString::null;
 }
 

@@ -8,6 +8,8 @@
 #include "yz_buffer.h"
 #include "yz_events.h"
 #include "yz_view.h"
+#include <qfile.h>
+#include <qtextstream.h>
 
 YZBuffer::YZBuffer(QString _path)
 {
@@ -30,12 +32,7 @@ void YZBuffer::add_char (int x, int y, QChar c)
 	l->insert(x, c);
 
 	/* inform the views */
-	yz_event e;
-	e.id			= YZ_EV_SETLINE;
-	e.u.setline.y		= y;
-	e.u.setline.line	= l;
-	
-	post_event(e);
+	post_event(mk_event_setline(y,l));
 }
 
 
@@ -50,12 +47,7 @@ void YZBuffer::chg_char (int x, int y, QChar c)
 	l->insert(x, c);
 
 	/* inform the views */
-	yz_event e;
-	e.id			= YZ_EV_SETLINE;
-	e.u.setline.y		= y;
-	e.u.setline.line	= l;
-
-	post_event(e);
+	post_event(mk_event_setline(y,l));
 }
 
 void YZBuffer::post_event(yz_event e)
@@ -76,39 +68,23 @@ void YZBuffer::add_view (YZView *v)
 //		panic("no more rom for new view in YZBuffer");
 
 	//debug("adding view %p, number is %d", v, view_nb);
-	view_list[view_nb++] = v;
-
-	update_view(view_nb-1);
+	view_list[view_nb] = v;
+	update_view(view_nb++);
 } 
 
 void YZBuffer::update_view(int view_nb)
 {
 	int y;
-	yz_event e;
 	YZView *view = view_list[view_nb];
 
 	for (y=view->get_current(); y<lines_nb && view->is_line_visible(y); y++) {
 
 		YZLine *l = find_line( view->get_current()+y);
 		if (!l) continue;
-//		yz_assert(l, "find_line failed");
-		/* post an event about updating this line */
-
-		e.id			= YZ_EV_SETLINE;
-		e.u.setline.y		= y;
-		e.u.setline.line	= l;
-
-//		debug("y is %d, l is %p", y, l);
-//		yz_printfirst("YZBuffer::update_view, line is : ", l->data);
-
-		view->post_event(e);
+		view->post_event(mk_event_setline(y,l));
 	}
 
-	e.id = YZ_EV_SETCURSOR;
-	e.u.setcursor.x = 0;
-	e.u.setcursor.y = 0;
-	view->post_event(e);
-
+	view->post_event(mk_event_setcursor(0,0));
 	view->post_event(mk_event_setstatus("Yzis Ready"));
 }
 
@@ -137,7 +113,23 @@ YZLine	*YZBuffer::find_line(int line)
 	return NULL;
 }
 
+void YZBuffer::load(void)
+{
+	QFile file( path );
+	int counter=0;
+	if ( file.open( IO_ReadOnly ) ) {
+		QTextStream stream( &file );
+		YZLine *line;
+		int i = 1;
+		while ( !stream.atEnd() ) {
+			line = new YZLine(counter++, stream.readLine() ); // line of text excluding '\n'
+			add_line( line );
+		}
+		file.close();
+	}
+}
 
+#if 0
 void YZBuffer::load(void)
 {
 	FILE *f;
@@ -265,7 +257,7 @@ void YZBuffer::load(void)
 //	debug("closing input file");
 	fclose(f);
 }
-
+#endif
 
 void YZBuffer::save(void)
 {

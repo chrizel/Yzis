@@ -55,7 +55,7 @@ public:
 	 */
 	~YZBuffer();
 
-	// ----------------- Character Actions
+	// ----------------- Character Operations
 
 	/**
 	 * Inserts a character into the buffer
@@ -81,7 +81,7 @@ public:
 	 */
 	void delChar (unsigned int x, unsigned int y, unsigned int count = 1);
 
-	// ----------------- Line Actions			
+	// ----------------- Line Operations			
 								
 	/**
 	 * Appends a new line at the end of file
@@ -157,7 +157,7 @@ public:
 	uint firstNonBlankChar( uint line );
 
 
-	// --------------------- File actions
+	// --------------------- File Operations
 
 	/**
 	 * Opens the file and fills the buffer with its content
@@ -182,7 +182,7 @@ public:
 	void setPath( const QString& _path ) { mPath = _path; }
 
 
-	// -------------------------- View actions
+	// -------------------------- View Operations
 
 	/**
 	 * Adds a new view to the buffer

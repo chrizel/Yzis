@@ -150,7 +150,7 @@ void NYZView::modeChanged(void)
 			displayInfo( tr( "Entering Replace mode" ));
 			break;
 		case YZ_VIEW_MODE_COMMAND: // normal
-			if ( modeDisplayed ) displayInfo( tr( "Entering Command mode" ));
+//			if ( modeDisplayed ) displayInfo( tr( "Entering Command mode" ));
 			// else : nothing, we keep the previous message..
 			break;
 		case YZ_VIEW_MODE_EX: //script·
@@ -216,8 +216,10 @@ void NYZView::displayInfo( const QString& info )
 {
 	werase(statusbar);
 	mvwaddstr( statusbar, 0, 0, info.latin1() );
-	wrefresh(statusbar);
+//	wrefresh(statusbar);
+	refresh();
 	modeDisplayed = false;
+	yzDebug()<< "NYZView::displayInfo message is : " << info << endl;
 }
 
 void NYZView::update_info(void)

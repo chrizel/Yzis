@@ -107,7 +107,7 @@ void NYZFactory::scrollUp ( int /*lines*/ ) {
 
 
 void NYZFactory::quit( bool /*savePopup*/ ) {
-	//FIXME
+	// TODO
 	exit( 0 );
 }
 
@@ -181,14 +181,29 @@ void NYZFactory::popupMessage( const QString &message )
 #endif
 }
 
-void NYZFactory::deleteView() {
-	currentView->unmap();
-	delete currentView;
-	currentView = static_cast<NYZView*>(nextView());
-	if ( !currentView ) // as vim does : create a new empty one
-		createView(createBuffer());
-	currentView->map();
-	// TODO ; some kind of fake view when no view is available..
+void NYZFactory::deleteView()
+{
+	NYZView *oldview = currentView;
+
+	// find next one
+	YZView *v = nextView();
+	if ( !v ) v = prevView();
+// ideally would be : but we delteView on quitting, hence looping delete/create..
+// TODO
+//	if ( !v ) v = createView(createBuffer()); 
+	if ( !v ) quit( 0 );
+
+	// switch
+	setCurrentView(v);
+
+	// delete
+//	delete oldview;// wont work because the oldview is the current one used
+	oldview->detach();
+
+	if (mBuffers.isEmpty()) {
+		yzWarning()<<"nyzis can't handle not having any view/buffers, quitting" << endl;;
+		quit();
+	}
 }
 
 void NYZFactory::initialiseKeycodes() {

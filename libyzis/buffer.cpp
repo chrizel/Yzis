@@ -79,6 +79,11 @@ YZBuffer::~YZBuffer() {
 	// delete the temporary file if we haven't changed the file
 }
 
+void YZBuffer::detach(void)
+{
+	mSession->rmBuffer(this);
+}
+
 // ------------------------------------------------------------------------
 //                            Char Operations 
 // ------------------------------------------------------------------------
@@ -515,7 +520,11 @@ YZView* YZBuffer::firstView() {
 
 void YZBuffer::rmView(YZView *v) {
 	int f = mViews.remove(v);
+	YZASSERT( 1==f ); // isn't it ?
 	yzDebug() << "buffer: removeView found " << f << " views" << endl;
+	if ( mViews.isEmpty() ) 
+		detach();
+
 }
 
 // ------------------------------------------------------------------------

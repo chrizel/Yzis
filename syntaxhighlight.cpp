@@ -30,7 +30,6 @@
 
 #include <qstringlist.h>
 #include <qtextstream.h>
-#include <magic.h>
 //END
 
 // same as in kmimemagic, no need to feed more data

@@ -21,7 +21,7 @@
     <name>KYZisView</name>
     <message>
         <source>Yzis Ready</source>
-        <translation>Yzis klaar</translation>
+        <translation type="obsolete">Yzis klaar</translation>
     </message>
     <message>
         <source>-- INSERT --</source>
@@ -182,36 +182,40 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>--INSERT--</source>
+        <source>[ Insert ]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>--REPLACE--</source>
+        <source>[ Replace ]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>--COMMAND--</source>
+        <source>[ Awaiting Command ]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>--EX--</source>
+        <source>[ Ex ]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>--SEARCH--</source>
+        <source>[ Search ]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>--OPEN--</source>
+        <source>[ Open ]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>--VISUAL--</source>
+        <source>[ Visual ]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>--VISUAL LINE--</source>
+        <source>[ Visual Line ]</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Yzis Ready</source>
+        <translation type="unfinished">Yzis klaar</translation>
     </message>
 </context>
 </TS>

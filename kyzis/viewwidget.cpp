@@ -41,7 +41,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	mVScroll = new QScrollBar( this, "vscroll" );
 	connect( mVScroll, SIGNAL(valueChanged(int)), this, SLOT(scrolled(int)) );
 
-	status->insertItem(qApp->translate( "KYZisView", "Yzis Ready" ),0,1);
+	status->insertItem(mode(YZ_VIEW_MODE_LAST),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
 
 	status->insertItem("",80,80,0);
@@ -123,6 +123,10 @@ void KYZisView::wheelEvent( QWheelEvent * e ) {
 void KYZisView::modeChanged (void) {
 	yzDebug() << "switching to mode: " << mMode << "; old mode is: " <<
 		mPrevMode << endl;
+	if (mBuffer->introShown() )  {
+			status->changeItem(mode(YZ_VIEW_MODE_LAST), 0);
+			return;
+	}
 	switch (mMode) {
 		case YZ_VIEW_MODE_INSERT: // insert
 			status->changeItem(mode( YZ_VIEW_MODE_INSERT ), 0);
@@ -165,6 +169,7 @@ void KYZisView::syncViewInfo() {
 
 	status->changeItem(fileInfo, 90);
 	mVScroll->setValue(getBufferCursor()->getY() );
+	modeChanged();
 }
 
 void KYZisView::refreshScreen () {

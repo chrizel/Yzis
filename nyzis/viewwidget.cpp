@@ -248,10 +248,15 @@ void NYZView::syncViewInfo( void )
 
 	werase(infobar);
 	wmove( infobar,0,0 );
-	const char *m = mode ( mMode ).latin1();
-	for ( const char *ptr = m; *ptr; ptr++ )
-		waddch(infobar, COLOR_PAIR(1)|*ptr);
-
+	if ( mBuffer->introShown() ) {
+		const char * r = mode(YZ_VIEW_MODE_LAST);
+		for ( const char *ptr = r; *ptr; ptr++ )
+			waddch(infobar, COLOR_PAIR(1)|*ptr);
+	} else {
+		const char *m = mode ( mMode ).latin1();
+		for ( const char *ptr = m; *ptr; ptr++ )
+			waddch(infobar, COLOR_PAIR(1)|*ptr);
+	}
 	waddch(infobar, ' ');
 
 	// update infobar

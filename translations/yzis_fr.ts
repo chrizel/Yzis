@@ -21,7 +21,7 @@
     <name>KYZisView</name>
     <message>
         <source>Yzis Ready</source>
-        <translation>Yzis Prêt</translation>
+        <translation type="obsolete">Yzis Prêt</translation>
     </message>
     <message>
         <source>-- INSERT --</source>
@@ -230,35 +230,71 @@
     </message>
     <message>
         <source>--INSERT--</source>
-        <translation>--INSERTION--</translation>
+        <translation type="obsolete">--INSERTION--</translation>
     </message>
     <message>
         <source>--REPLACE--</source>
-        <translation>--REMPLACEMENT--</translation>
+        <translation type="obsolete">--REMPLACEMENT--</translation>
     </message>
     <message>
         <source>--COMMAND--</source>
-        <translation>--COMMANDE--</translation>
+        <translation type="obsolete">--COMMANDE--</translation>
     </message>
     <message>
         <source>--EX--</source>
-        <translation>--EX--</translation>
+        <translation type="obsolete">--EX--</translation>
     </message>
     <message>
         <source>--SEARCH--</source>
-        <translation>--RECHERCHE--</translation>
+        <translation type="obsolete">--RECHERCHE--</translation>
     </message>
     <message>
         <source>--OPEN--</source>
-        <translation>--OUVERT--</translation>
+        <translation type="obsolete">--OUVERT--</translation>
     </message>
     <message>
         <source>--VISUAL--</source>
-        <translation>--VISUEL--</translation>
+        <translation type="obsolete">--VISUEL--</translation>
     </message>
     <message>
         <source>--VISUAL LINE--</source>
-        <translation>--VISUEL LIGNE--</translation>
+        <translation type="obsolete">--VISUEL LIGNE--</translation>
+    </message>
+    <message>
+        <source>[ Insert ]</source>
+        <translation>[ Insertion ]</translation>
+    </message>
+    <message>
+        <source>[ Replace ]</source>
+        <translation>[ Remplacement ]</translation>
+    </message>
+    <message>
+        <source>[ Awaiting Command ]</source>
+        <translation>[ Entrez une commande ]</translation>
+    </message>
+    <message>
+        <source>[ Ex ]</source>
+        <translation>[ Ex ]</translation>
+    </message>
+    <message>
+        <source>[ Search ]</source>
+        <translation>[ Recherche ]</translation>
+    </message>
+    <message>
+        <source>[ Open ]</source>
+        <translation>[ Ouvert ]</translation>
+    </message>
+    <message>
+        <source>[ Visual ]</source>
+        <translation>[ Visuel ]</translation>
+    </message>
+    <message>
+        <source>[ Visual Line ]</source>
+        <translation>[ Visuel Ligne ]</translation>
+    </message>
+    <message>
+        <source>Yzis Ready</source>
+        <translation>Yzis Pret</translation>
     </message>
 </context>
 </TS>

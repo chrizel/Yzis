@@ -21,7 +21,7 @@
     <name>KYZisView</name>
     <message>
         <source>Yzis Ready</source>
-        <translation>Yzis bereit</translation>
+        <translation type="obsolete">Yzis bereit</translation>
     </message>
     <message>
         <source>-- INSERT --</source>
@@ -170,36 +170,40 @@
         <translation>Um den Qt-Drucker zu benutzen muss ein X11-Server laufen und die Umgebungsvariable DISPLAY gesetzt sein, Sie sollten im Konsolenmodus pslib probieren</translation>
     </message>
     <message>
-        <source>--INSERT--</source>
+        <source>[ Insert ]</source>
         <translation>--EINFÜGEN--</translation>
     </message>
     <message>
-        <source>--REPLACE--</source>
+        <source>[ Replace ]</source>
         <translation>--ERSETZEN--</translation>
     </message>
     <message>
-        <source>--COMMAND--</source>
+        <source>[ Awaiting Command ]</source>
         <translation>--BEFEHL--</translation>
     </message>
     <message>
-        <source>--EX--</source>
+        <source>[ Ex ]</source>
         <translation>--EX--</translation>
     </message>
     <message>
-        <source>--SEARCH--</source>
+        <source>[ Search ]</source>
         <translation>--SUCHE--</translation>
     </message>
     <message>
-        <source>--OPEN--</source>
+        <source>[ Open ]</source>
         <translation>--OFFEN--</translation>
     </message>
     <message>
-        <source>--VISUAL--</source>
+        <source>[ Visual ]</source>
         <translation>--VISUELL--</translation>
     </message>
     <message>
-        <source>--VISUAL LINE--</source>
+        <source>[ Visual Line ]</source>
         <translation>--VISUELLE ZEILE--</translation>
+    </message>
+    <message>
+        <source>Yzis Ready</source>
+        <translation type="unfinished">Yzis bereit</translation>
     </message>
 </context>
 </TS>

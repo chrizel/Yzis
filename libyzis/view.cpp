@@ -684,6 +684,8 @@ void YZView::alignViewVertically( unsigned int line ) {
 //		yzDebug() << "raw top = " << *sCursor << "; r=" << *rCursor << endl;
 		// rLineHeight > 1 => our new top is in middle of a wrapped line, move new top to next line
 		newcurrent = workCursor->bufferY();
+		if ( workCursor->lineHeight > 1 ) 
+			++newcurrent;
 		gotoy( newcurrent );
 		mCurrentTop = workCursor->bufferY();
 		dCurrentTop = workCursor->screenY();

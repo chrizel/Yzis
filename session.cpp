@@ -110,7 +110,14 @@ YZView* YZSession::prevView() {
 		return NULL;
 	}
 //	yzDebug() << "Current view is " << mCurView->myId << endl;
-	return findView( mCurView->myId - 1 );
+	
+	YZView * v = NULL;
+	int i = 1;
+	while (!v && i <= mNbViews  ) {
+		v = findView( mCurView->myId - i );
+		i++;
+	}
+	return v;
 }
 
 YZView* YZSession::nextView() {
@@ -119,7 +126,13 @@ YZView* YZSession::nextView() {
 		return NULL;
 	}
 //	yzDebug() << "Current view is " << mCurView->myId << endl;
-	return findView( mCurView->myId + 1 );
+	YZView * v = NULL;
+	int i = 1;
+	while (!v && i <= mNbViews) {
+		v = findView( mCurView->myId + i );
+		i++;
+	}
+	return v;
 }
 
 YZBuffer* YZSession::findBuffer( const QString& path ) {

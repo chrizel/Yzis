@@ -189,12 +189,12 @@ void YZSelection::delInterval( const YZInterval& i ) {
 		++idTo;
 		insertInterval( idTo, mMap[ idFrom ] );
 	}
+
 	if ( containsFrom )
 		mMap[ idFrom ].setTo( YZBound(i.from().pos(), !i.from().opened()) );
 	if ( containsTo )
 		mMap[ idTo ].setFrom( YZBound(i.to().pos(), !i.to().opened()) );
-
-	removeInterval( idFrom+(containsFrom?1:0), idTo - idFrom +(containsTo?0:1) );
+	removeInterval( idFrom+(containsFrom?1:0), idTo - idFrom - (containsFrom && containsTo ? 1 : 0) );
 }
 
 void YZSelection::insertInterval( unsigned int pos, const YZInterval& interval ) {
@@ -208,9 +208,11 @@ void YZSelection::removeInterval( unsigned int pos, unsigned int len ) {
 	if ( len == 0 ) return;
 	unsigned int i;
 	unsigned int size = mMap.size();
-	for ( i = pos; i < size - len; ++i ) {
-		mMap[ i ] = mMap[ i + len ];
-	}
+	if ( size >= len )
+		for ( i = pos; i < size - len; ++i )
+			mMap[ i ] = mMap[ i + len ];
+	else // should not happen
+		yzDebug() << "WARNING: YZSelection::removeInterval remove more than size (" << len << " > " << size << ")" << endl;
 	for ( ; i < size; i++ ) {
 		mMap.remove( i );
 	}

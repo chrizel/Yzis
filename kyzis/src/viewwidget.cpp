@@ -215,7 +215,7 @@ QPoint KYZisView::cursorCoordinates()
 
 void KYZisView::cursorPosition ( unsigned int *line, unsigned int *col )
 {
-	*line = getCursor()->y();
+	*line = getBufferCursor()->y();
 	*col  = getCursor()->x();
 }
 
@@ -227,22 +227,20 @@ void KYZisView::cursorPositionReal ( unsigned int *line, unsigned int *col )
 
 bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
 {
-	gotodxdy( line, col );
-//	gotoCommandMode();	XXX sure of that ?
+	gotodxy( col, line );
 	return true;
 }
 
 bool KYZisView::setCursorPositionReal ( unsigned int line, unsigned int col)
 {
-	centerViewVertically(line);
+//	centerViewVertically(line); gotoxy auto-scroll the view
 	gotoxy( col, line );
-//	gotoCommandMode();	XXX sure of that ?
 	return true;
 }
 
 unsigned int KYZisView::cursorLine()
 {
-	return getCursor()->y();
+	return getBufferCursor()->y();
 }
 
 unsigned int KYZisView::cursorColumn()

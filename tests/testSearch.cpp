@@ -26,6 +26,7 @@ using namespace std;
 
 #include "testSearch.h"
 #include "TSession.h"
+#include "TBuffer.h"
 
 #define CHECK_CURSOR_POS( view, col, line ) { phCheckEquals( view->getCursorLine(), line ); phCheckEquals( view->getCursorCol(), col ); }
 
@@ -38,7 +39,7 @@ void TestSearch::setUp()
 {
     mLines = 5;
     mSession = new TYZSession();
-    mBuf = new YZBuffer( mSession );
+    mBuf = new TYZBuffer( mSession );
     mView = new TYZView( mBuf, mSession, mLines );
 }
 

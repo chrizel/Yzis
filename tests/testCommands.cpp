@@ -25,11 +25,11 @@ using namespace std;
 
 #include "libyzis/line.h"
 #include "libyzis/debug.h"
-#include "libyzis/buffer.h"
 
 #include "testCommands.h"
 #include "TSession.h"
 #include "TView.h"
+#include "TBuffer.h"
 
 
 // register the suite so that it is run in the runner
@@ -45,7 +45,7 @@ void TestYZCommands::setUp()
 {
     mLines = 5;
     mSession = new TYZSession();
-    mBuf = new YZBuffer( mSession );
+    mBuf = new TYZBuffer( mSession );
     mView = new TYZView( mBuf, mSession, mLines );
 
 }

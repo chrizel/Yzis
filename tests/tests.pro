@@ -21,6 +21,7 @@ HEADERS   =  testBuffer.h \
 			 testUndo.h \
 			 testSearch.h \
 			 TView.h \
+			 TBuffer.h \
 			 TSession.h
 			 
 SOURCES   = testBuffer.cpp \

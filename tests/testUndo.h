@@ -26,7 +26,7 @@
 #include <cppunit/extensions/HelperMacros.h>
 
 class TYZSession;
-class YZBuffer;
+class TYZBuffer;
 
 class TestUndo : public CppUnit::TestCase
 {
@@ -48,7 +48,7 @@ public:
 
 protected:
     TYZSession * mSession;
-    YZBuffer *  mBuf;
+    TYZBuffer *  mBuf;
 };
 
 

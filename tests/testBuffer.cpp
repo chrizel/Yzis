@@ -26,10 +26,10 @@ using namespace std;
 
 #include "libyzis/line.h"
 #include "libyzis/debug.h"
-#include "libyzis/buffer.h"
 
 #include "testBuffer.h"
 #include "TSession.h"
+#include "TBuffer.h"
 
 /* ========================================================================= */
 
@@ -39,7 +39,8 @@ CPPUNIT_TEST_SUITE_REGISTRATION( TestYZBuffer );
 void TestYZBuffer::setUp()
 {
     mSession = new TYZSession();
-    mBuf = new YZBuffer( mSession );
+    mBuf = new TYZBuffer( mSession );
+    mBuf->clearIntro();
 }
 
 void TestYZBuffer::tearDown()
@@ -51,7 +52,8 @@ void TestYZBuffer::tearDown()
 void TestYZBuffer::testCreateEmptyBuffer()
 {
     YZBuffer * buf;
-    buf = new YZBuffer( mSession );
+    buf = new TYZBuffer( mSession );
+    buf->clearIntro();
 
     phCheckEquals( buf->views().count(), 0 );
     phCheckEquals( buf->firstView(), NULL );

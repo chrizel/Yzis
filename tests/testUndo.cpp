@@ -27,6 +27,7 @@ using namespace std;
 
 #include "testUndo.h"
 #include "TSession.h"
+#include "TBuffer.h"
 
 
 // register the suite so that it is run in the runner
@@ -37,7 +38,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( TestUndo );
 void TestUndo::setUp()
 {
     mSession = new TYZSession();
-    mBuf = new YZBuffer( mSession );
+    mBuf = new TYZBuffer( mSession );
 }
 
 void TestUndo::tearDown()

@@ -258,6 +258,11 @@ bool NYZFactory::promptYesNo( const QString& /*title*/, const QString& /*message
 	return true;
 }
 
+int NYZFactory::promptYesNoCancel( const QString& /*title*/, const QString& /*message*/ ) {
+//TODO
+	return 0;//return yes for now...
+}
+
 void NYZFactory::initialiseKeycodes()
 {
 	keycodes.clear();

@@ -162,6 +162,12 @@ class YZSession {
 		virtual bool promptYesNo(const QString& title, const QString& message) = 0;
 
 		/**
+		 * Prompt a Yes/No/Cancel question for the user
+		 * Returns 0,1,2 in this order
+		 */
+		virtual int promptYesNoCancel(const QString& title, const QString& message) = 0;
+
+		/**
 		 * Creates a new buffer
 		 */
 		virtual	YZBuffer *createBuffer(const QString& path=QString::null) = 0;

@@ -55,6 +55,7 @@ public:
 	virtual void setFocusCommandLine() {}
 	virtual void setFocusMainWindow() {}
 	virtual bool promptYesNo( const QString& title, const QString& message );
+	virtual int promptYesNoCancel( const QString& title, const QString& message );
 
 private:
 	/**

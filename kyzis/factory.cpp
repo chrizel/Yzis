@@ -259,4 +259,10 @@ bool KYZisFactory::promptYesNo(const QString& title, const QString& message) {
 	else return false;
 }
 
+int KYZisFactory::promptYesNoCancel(const QString& title, const QString& message) {
+	int v = KMessageBox::questionYesNoCancel(static_cast<KYZisView*>(currentView()), message, title);
+	if (v == KMessageBox::Yes) return 0;
+	else if (v == KMessageBox::No) return 1;
+	return 2;
+}
 #include "factory.moc"

@@ -51,7 +51,7 @@ pkg_setup() {
 }
 
 src_compile() {
-	local my_conf="$(use_with arts) $(use_enable kde kyzis)
+	local myconf="$(use_with arts) $(use_enable kde kyzis)
 			$(use_enable ncurses nyzis) $(use_enable ps pslib)"
 
 	# from portage/eclass/kde.eclass :

@@ -26,6 +26,3 @@ function clearBuffer()
     deleteline(1)
 end
 
-MODE_NORMAL='n'
-MODE_INSERT='i'
-

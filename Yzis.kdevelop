@@ -31,7 +31,7 @@
     </groups>
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
-      <hidenonprojectfiles>true</hidenonprojectfiles>
+      <hidenonprojectfiles>false</hidenonprojectfiles>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>

@@ -138,6 +138,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"cmap",cmap);
 	lua_register(L,"cunmap",cunmap);
 	lua_register(L,"matchpair",matchpair);
+	lua_register(L,"mode",mode);
 }
 
 YZExLua::~YZExLua() {
@@ -780,6 +781,18 @@ int YZExLua::matchpair(lua_State *L ) {
 	lua_pushnumber(L, c.x());
 	lua_pushnumber(L, c.y());
 	return 3;
+}
+
+int YZExLua::mode(lua_State *L ) {
+	if (!checkFunctionArguments(L, 0, "mode", "return the current view mode")) return 0;
+	YZView *v = YZSession::me->currentView();
+	QString mode = v->mode();
+#if QT_VERSION < 0x040000
+	lua_pushstring(L,mode.latin1());
+#else
+	lua_pushstring(L,mode.toUtf8());
+#endif
+	return 1;
 }
 
 int YZExLua::set(lua_State *L ) {

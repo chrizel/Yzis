@@ -273,9 +273,9 @@ TestLuaBinding = {} --class
     end
 
     function TestLuaBinding:test_mode()
-        assertEquals( mode(), MODE_NORMAL )
+        assertEquals( mode(), "[ Awaiting Command ]" )
         sendkeys('icoucou')
-        assertEquals( mode(), MODE_INSERT )
+        assertEquals( mode(), "[ Insert ]" )
         sendkeys('<ESC>')
     end
 

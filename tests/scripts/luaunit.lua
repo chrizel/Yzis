@@ -215,7 +215,7 @@ LuaUnit = {
 		end
 
 		local function err_handler(e)
-			return e..'\n'..debug.traceback()
+			return e..'\n'--..debug.traceback()
 		end
 
 		-- run testMethod()

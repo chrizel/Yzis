@@ -280,6 +280,11 @@ class YZExLua : public QObject {
 
 		static int matchpair(lua_State *L);
 
+		/**
+		 * Returns the current view mode
+		 */
+		static int mode(lua_State *L);
+
 	protected:
 		lua_State *L;
 

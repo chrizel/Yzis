@@ -8,4 +8,4 @@ if [ -n "$1" ];
 then
     testname=$1
 fi
-kyzis -c ":source $testname <ENTER><ESC>:qall!<ENTER>"
+LANG=C kyzis -c ":source $testname <ENTER><ESC>:qall!<ENTER>"

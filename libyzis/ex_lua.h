@@ -149,7 +149,7 @@ class YZExLua : public QObject {
 		static int deleteline(lua_State *L);
 
 		/**
-		 * Return current's filename
+		 * Return the current lua filename
 		 */
 		static int filename(lua_State *L);
 
@@ -158,7 +158,7 @@ class YZExLua : public QObject {
 		 * Arguments: col, line
 		 * Returns a color string
 		 */
-		static int getcolor(lua_State *L);
+		static int color(lua_State *L);
 
 		/**
 		 * Returns the number of lines of the current buffer.

@@ -859,9 +859,16 @@ void YZBuffer::setPath( const QString& _path ) {
 	filenameChanged();
 }
 
-bool YZBuffer::substitute( const QString& what, const QString& with, bool wholeline, unsigned int line ) {
+bool YZBuffer::substitute( const QString& _what, const QString& with, bool wholeline, unsigned int line ) {
 	QString l = textline( line );
+	bool cs = true;
+	QString what = _what;
+	if ( what.endsWith("\\c") ) {
+		what.truncate(what.length()-2);
+		cs = false;
+	}
 	QRegExp rx( what );
+	rx.setCaseSensitive(cs);
 	bool changed = false;
 	int pos=0;
 	int offset=0;

@@ -585,6 +585,9 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 	args.view->gotoxy( 0, args.fromLine );
 	args.view->moveToFirstNonBlankOfLine();
 	bool found;
+	if ( options.contains( "i" ) && !search.endsWith( "\\c" ) ) {
+		search.append("\\c");
+	}
 	YZSession::me->search()->forward( args.view, search, &found );
 	if ( found ) {
 		for( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {

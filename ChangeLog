@@ -1,3 +1,8 @@
+2005-04-02 mikmak
+  * libyzis
+	support \c for searches
+	support i option for substitute command (case insensitive replace)
+
 2005-03-30 panard
   * libyzis
     add :set booloption! and :set invbooloption support

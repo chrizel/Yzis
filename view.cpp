@@ -1295,18 +1295,23 @@ void YZView::paste( QChar registr, bool after ) {
 			start = copy.length() > 0 ? pos.getX() + 1 : 0;
 		else
 			start = pos.getX();
-		yzDebug() << "First line not NULL !" << endl;
-		copy = copy.mid( start );
-		mBuffer->action()->deleteChar( this, start, pos.getY(), copy.length() );
-		mBuffer->action()->insertChar( this, start, pos.getY(), list[ 0 ] + copy );
-		gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.getY() );
+		i = 0;
+		if ( ! list[ i ].isNull() ) {
+			copy = copy.mid( start );
+			mBuffer->action()->deleteChar( this, start, pos.getY(), copy.length() );
+			mBuffer->action()->insertChar( this, start, pos.getY(), list[ 0 ] + ( list.size() == 1 ? copy : "" ) );
+			gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.getY() );
+		} else {
+			copy = "";
+		}
 		i++;
 		while ( i < list.size() - 1 ) {
 			mBuffer->action()->insertLine( this, pos.getY() + i, list[ i ] );
 			i++;
 		}
-		if ( ! list[ i ].isNull() ) {
-			mBuffer->action()->insertChar( this, 0, pos.getY() + i, list[ i ] + copy );
+		if ( i < list.size() && copy != "" ) {
+			mBuffer->action()->insertLine( this, pos.getY() + i, ( list[ i ].isNull() ? "" : list[ i ] ) + copy );		
+			gotoxy( list[ i ].length(), pos.getY() + i );
 		}
 		if ( copyWholeLinesOnly ) {
 			gotoxy( 0, pos.getY() + 1 );

@@ -525,16 +525,17 @@ void YZView::gotodx( unsigned int nextx ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
 	unsigned int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 0 : 1;
 	if ( sCurLineLength == 0 ) nextx = 0;
-/*	XXX: why ??
- 	else if ( workCursor->bufferX() >= sCurLineLength ) {
-		gotox ( sCurLineLength );
-		return;
-	}
-	*/
-	while ( workCursor->screenX() < nextx && workCursor->bufferX() < sCurLineLength - shift )
-		drawNextCol( );
+
+	// WARNING! we must drawPrevCol _before_ drawNextCol because drawPrevCol doesn't support tab!
 	while ( workCursor->screenX() > nextx )
 		if ( ! drawPrevCol( ) ) break;
+	YZViewCursor last = *workCursor;
+	while ( workCursor->screenX() < nextx && workCursor->bufferX() < sCurLineLength - shift ) {
+		last = *workCursor;
+		drawNextCol( );
+	}
+	if ( workCursor->screenX() > nextx )
+		*workCursor = last;
 }
 
 void YZView::gotox( unsigned int nextx, bool forceGoBehindEOL ) {
@@ -1214,12 +1215,6 @@ bool YZView::drawPrevCol( ) {
 		workCursor->setBufferX( curx );
 		lastChar = sCurLine.at( curx );
 		if ( lastChar != tabChar ) {
-/*			listChar = drawMode && getLocalBooleanOption( "list" );
-			if ( listChar ) {
-				lastChar = '.';
-				if ( stringHasOnlySpaces(sCurLine.mid(curx)) )
-					lastChar = '-';
-			}*/ // useless because drawPrevCol is not used to in drawing stuff in GUIs
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
 			if ( workCursor->screenX() >= workCursor->sColIncrement )
 				workCursor->setScreenX( workCursor->screenX() - workCursor->sColIncrement );

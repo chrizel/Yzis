@@ -116,6 +116,10 @@ main(int argc, char *argv[])
 	};
 
 	int c;
+	
+	// create factory
+	NYZFactory *factory  =new NYZFactory();
+
 	YZSession::mOptions->setGroup("Global");
 	bool splash = YZSession::getBoolOption("blocksplash");
 	while ( 1 ) {
@@ -143,9 +147,6 @@ main(int argc, char *argv[])
 
 	};
 
-
-	// create factory
-	NYZFactory *factory  =new NYZFactory();
 
 	// Signal handling
 	(void) signal(SIGINT, sigint);      /* arrange interrupts to terminate */

@@ -103,7 +103,9 @@ void YZModeCommand::initMotionPool() {
 	commands.append( new YZMotion("<UP>", &YZModeCommand::moveUp, ARG_NONE) );
 	commands.append( new YZMotion("<DOWN>", &YZModeCommand::moveDown, ARG_NONE) );
 	commands.append( new YZMotion("<PUP>", &YZModeCommand::movePageUp, ARG_NONE) );
+	commands.append( new YZMotion("<CTRL>B", &YZModeCommand::movePageUp, ARG_NONE) );
 	commands.append( new YZMotion("<PDOWN>", &YZModeCommand::movePageDown, ARG_NONE) );
+	commands.append( new YZMotion("<CTRL>F", &YZModeCommand::movePageDown, ARG_NONE) );
 	commands.append( new YZMotion("%", &YZModeCommand::matchPair, ARG_NONE) );
 	commands.append( new YZMotion("`", &YZModeCommand::gotoMark, ARG_MARK) );
 	commands.append( new YZMotion("'", &YZModeCommand::gotoMark, ARG_MARK) );

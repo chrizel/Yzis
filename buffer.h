@@ -322,6 +322,7 @@ public:
 	 * @param warnGUI emit signal to GUI so they can reload the view if necessary
 	 */
 	void setHighLight(uint mode, bool warnGUI=true);
+	void setHighLight( const QString& name );
 
 	YzisHighlighting *highlight() { return m_highlight; }
 

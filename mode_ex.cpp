@@ -659,6 +659,10 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 		QString option = rx.cap( 1 ).trimmed();
 		QString value = hasOperator ? rx.cap( 3 ).trimmed() : rx.cap( 2 ).trimmed();
 #endif
+		if ( option == "syntax" && value.length() > 0 ) { // XXX really bad, we need a new way to handle options
+			args.view->myBuffer()->setHighLight( value );
+			return CMD_OK;
+		}
 		YZInternalOption *opt = YZSession::mOptions->getOption(option);
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given : ") + option);

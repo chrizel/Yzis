@@ -3271,7 +3271,11 @@ int YzisHlManager::nameFind(const QString &name)
 {
   int z (hlList.count() - 1);
   for (; z > 0; z--)
-    if (hlList.at(z)->name() == name)
+#if QT_VERSION < 0x040000
+    if (hlList.at(z)->name().lower() == name.lower())
+#else
+    if (hlList.at(z)->name().toLower() == name.toLower())
+#endif
       return z;
 
   return z;

@@ -356,7 +356,7 @@ void YZView::centerViewHorizontally(unsigned int column) {
 		else newcurrentLeft = 0;
 	}
 	if ( newcurrentLeft == mCurrentLeft ) return;
-	mCurrentLeft = mCurrentLeft ? newcurrentLeft : 0;
+	mCurrentLeft = newcurrentLeft ? newcurrentLeft : 0;
 	redrawScreen();
 }
 
@@ -409,7 +409,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 
 	//make sure this line is visible
 	if ( !isLineVisible( nexty ) ) centerViewVertically( nexty );
-	if (  !isColumnVisible( nextx ) ) centerViewHorizontally( nextx );
+	if ( !isColumnVisible( nextx ) ) centerViewHorizontally( nextx );
 
 	/* do it */
 	updateCursor();

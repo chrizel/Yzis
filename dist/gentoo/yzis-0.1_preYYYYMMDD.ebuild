@@ -6,7 +6,7 @@ DESCRIPTION="Yzis - VI-like editor"
 HOMEPAGE="http://www.yzis.org/"
 LICENSE="LGPL-2 GPL-2"
 
-IUSE="kde ncurses pslib arts"
+IUSE="ncurses pslib kde arts kdeenablefinal debug"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
 
@@ -33,11 +33,21 @@ src_compile() {
 	if ! use kde; then
 		myconf="${myconf} --disable-kyzis"
 	fi
-	if ! use arts; then
-		myconf="${myconf} --without-arts"
-	fi
 	if ! use ncurses; then
 		myconf="${myconf} --disable-nyzis"
+	fi
+	myconf="$myconf $(use_with arts)"
+
+	if useq kdeenablefinal; then
+		myconf="$myconf --enable-final"
+	else
+		myconf="$myconf --disable-final"
+	fi
+	[ -z "$UNSERMAKE" ] && myconf="$myconf --disable-dependency-tracking"
+	if use debug ; then
+		myconf="$myconf --enable-debug=full --with-debug"
+	else
+		myconf="$myconf --disable-debug --without-debug"
 	fi
 
 	# from portage/eclass/kde.eclass :
@@ -53,7 +63,7 @@ src_compile() {
 	[ -d "$REALHOME/.ccache" ] && ln -sf "$REALHOME/.ccache" "$HOME/"	
 	[ -n "$UNSERMAKE" ] && addwrite "/usr/kde/unsermake"
 
-	if [ ! -x configure ]; then
+	if [ ! -f "./configure" ] || [ -n "$UNSERMAKE" ]; then
 		make -f Makefile.cvs
 	fi
 	econf ${myconf} || die "Configuration failed."

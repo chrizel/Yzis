@@ -32,6 +32,8 @@ YzisAttribute::YzisAttribute()
   , m_underline(false)
   , m_strikeout(false)
   , m_itemsSet(0)
+  , m_overline(false)
+
 {
 }
 
@@ -54,6 +56,9 @@ YzisAttribute& YzisAttribute::operator+=(const YzisAttribute& a)
 
   if (a.itemSet(Underline))
     setUnderline(a.underline());
+
+  if (a.itemSet(Overline))
+	setOverline(a.overline());
 
   if (a.itemSet(StrikeOut))
     setStrikeOut(a.strikeOut());
@@ -86,6 +91,8 @@ QFont YzisAttribute::font(const QFont& ref)
     ret.setItalic(italic());
   if (itemSet(Underline))
     ret.setUnderline(underline());
+  if (itemSet(Overline))
+    ret.setOverline(overline());
   if (itemSet(StrikeOut))
     ret.setStrikeOut(strikeOut());
 
@@ -129,6 +136,18 @@ void YzisAttribute::setUnderline(bool enable)
 
     m_underline = enable;
 
+    changed();
+  }
+}
+
+void YzisAttribute::setOverline( bool enable )
+{
+  if ( !( m_itemsSet & Overline ) || m_overline != enable )
+  {
+    m_itemsSet |= Overline;
+	
+    m_overline = enable;
+	
     changed();
   }
 }

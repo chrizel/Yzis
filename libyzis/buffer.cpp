@@ -521,36 +521,6 @@ void YZBuffer::rmView(YZView *v) {
 //                            Undo/Redo Operations
 // ------------------------------------------------------------------------
 
-QString YZBuffer::undoLast( const QString& , YZCommandArgs args ) {
-	yzDebug("YZBuffer") << "YZBuffer undoLast" << endl;
-	/* XXX repeat if necessary */
-	mUndoBuffer->undo();	
-	//reset the input buffer of the originating view
-	args.view->purgeInputBuffer();
-	// refresh the screen
-	updateAllViews();
-	return QString::null;
-}
-
-QString YZBuffer::redoLast( const QString& , YZCommandArgs args ) {
-	yzDebug("YZBuffer") << "YZBuffer redoLast" << endl;
-	/* XXX repeat if necessary */
-	mUndoBuffer->redo();	
-
-	yzDebug("YZBuffer") << "YZBuffer redoLast step 2" << endl;
-
-	yzDebug("YZBuffer") << "view : " << args.view << endl;
-	//reset the input buffer of the originating view
-	args.view->purgeInputBuffer();
-
-	yzDebug("YZBuffer") << "YZBuffer redoLast step 3" << endl;
-	// refresh the screen
-	updateAllViews();
-
-	yzDebug("YZBuffer") << "YZBuffer redoLast step 4" << endl;
-	return QString::null;
-}
-	
 void YZBuffer::setModified( bool modif ) {
 	mModified = modif;
 	if ( !mUpdateView ) return;

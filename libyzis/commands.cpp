@@ -80,7 +80,7 @@ void YZCommandPool::initPool() {
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true,false,false,false);
 	NEW_VIEW_COMMAND("(\".)?([0-9]*)(y.+|Y)",&YZView::copy,true,true,false,true);
 	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true,false,false,true);
-	NEW_BUFF_COMMAND("u",&YZBuffer::undoLast,true,false,false,false);
+	NEW_VIEW_COMMAND("u",&YZView::undo,true,false,false,false);
 	NEW_VIEW_COMMAND("/",&YZView::gotoSearchMode,true,false,false,false);
 	NEW_VIEW_COMMAND("\\?",&YZView::gotoSearchMode,true,false,false,false);
 	NEW_VIEW_COMMAND("([0-9]*)n",&YZView::searchAgain,true,true,false,false);

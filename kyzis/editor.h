@@ -85,6 +85,7 @@ class KYZisEdit : public QScrollView {
 
 		virtual void focusInEvent( QFocusEvent * );
 
+#if 0
 		inline int charWidth(const QString& text, int col, int tabWidth, bool isItalic, bool isBold) const { 
 			if ( text[ col ] == QChar( '\t' ) ) 
 				return tabWidth * standard->width(' ');
@@ -108,7 +109,7 @@ class KYZisEdit : public QScrollView {
 			}
 			return standard->width(c); 
 		}
-
+#endif
 
 
 	private :

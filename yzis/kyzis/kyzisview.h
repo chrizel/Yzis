@@ -7,14 +7,14 @@
 #include <yz_view.h>
 #include <kstatusbar.h>
 #include <qevent.h>
-#include <event_mgr.h>
+#include <gui.h>
 
 
 class KYZisEdit;
 
 class KYZisView: public KTextEditor::View
 	, public YZView
-	, public EventMgr
+	, public Gui
 {
 	Q_OBJECT
 

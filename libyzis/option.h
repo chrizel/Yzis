@@ -18,8 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef YZ_OPTIONS
-#define YZ_OPTIONS
+#ifndef YZ_OPTION
+#define YZ_OPTION
 
 #include <qstring.h>
 #include <qmap.h>
@@ -27,22 +27,7 @@
 #include <qcolor.h>
 #include <qregexp.h>
 #include <limits.h> // for INT_MAX and INT_MIN
-
-//visibility of the option
-enum context {
-    CXT_SESSION,
-    CXT_BUFFER,
-    CXT_VIEW,
-};
-
-//kind of value stored by the option
-enum value_t {
-    int_t, //is an integer
-    string_t, // is a string
-    //	enum_t, // is an enumeration
-    bool_t, // is a boolean
-    color_t, // is a color
-};
+#include "yzis.h"
 
 /** The abstract base class of the classes representing options of a specific value type.
  * Provides the interface to retrieve basic information about the option: name,

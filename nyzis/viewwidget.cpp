@@ -23,7 +23,6 @@
 #include "debug.h"
 /* Qt */
 #include <qnamespace.h>
-#include <qtimer.h>
 #include <qcolor.h>
 
 #include <ctype.h>

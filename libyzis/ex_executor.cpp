@@ -191,6 +191,8 @@ QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
 					view->mySession()->popupMessage(tr("This option cannot be switched this way, this is a boolean option."));
 					return QString::null;
 					break;
+				case color_t :
+					break;
 			}
 		}
 		yzDebug() << "Setting option " << option << " to " << value << endl;
@@ -277,6 +279,8 @@ QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
 				case bool_t :
 					view->mySession()->popupMessage(tr("This option cannot be switched this way, this is a boolean option."));
 					return QString::null;
+					break;
+				case color_t :
 					break;
 			}
 		}

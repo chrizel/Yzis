@@ -46,5 +46,30 @@
 #define VERSION_CHAR_ST VERSION_CHAR_STATE3
 #define VERSION_CHAR_DATE "SVN>2004-08-09"
 
+//visibility of the option
+enum option_t {
+	global_opt,
+	buffer_opt,
+	view_opt
+};
+
+//visibility of the option
+enum context {
+    CXT_SESSION,
+    CXT_BUFFER,
+    CXT_VIEW,
+};
+
+//kind of value stored by the option
+enum value_t {
+    int_t, //is an integer
+    string_t, // is a string
+    //	enum_t, // is an enumeration
+    bool_t, // is a boolean
+    color_t, // is a color
+};
+
+
+
 #endif /* YZIS_H */
 

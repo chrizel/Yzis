@@ -140,6 +140,7 @@ void KYZisView::syncViewInfo() {
 	fileInfo +=( mBuffer->fileIsNew() )?"N":" ";
 	fileInfo +=( mBuffer->fileIsModified() )?"M":" ";
 	status->changeItem(fileInfo, 90);
+	mVScroll->setValue(getBufferCursor()->getY() );
 }
 
 void KYZisView::refreshScreen () {

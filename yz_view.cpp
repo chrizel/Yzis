@@ -33,6 +33,10 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 void YZView::send_char( unicode_char_t c)
 {
 	if ('\033'==c) {
+		if (cursor_x>current_maxx) {
+			cursor_x = current_maxx;
+			update_cursor();
+		}
 		mode = YZ_VIEW_MODE_COMMAND;
 		post_event(mk_event_setstatus("Command mode"));
 		return;
@@ -42,12 +46,14 @@ void YZView::send_char( unicode_char_t c)
 			/* handle adding a char */
 			buffer->add_char(cursor_x,cursor_y,c);
 			cursor_x++;
+			current_maxx = buffer->find_line(cursor_y)->len-1;
 			update_cursor();
 			return;
 		case YZ_VIEW_MODE_REPLACE:
 			/* handle replacing a char */
 			buffer->chg_char(cursor_x,cursor_y,c);
 			cursor_x++;
+			current_maxx = buffer->find_line(cursor_y)->len-1;
 			update_cursor();
 			return;
 		case YZ_VIEW_MODE_COMMAND:

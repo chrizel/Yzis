@@ -70,8 +70,9 @@ void YZLine::add_char (int x, unicode_char_t c)
 {
 	/* not optimised */
 	if (len>=len_max) expand(len_max+YZ_LINE_DEFAULT_LENGTH);
-	int i;
-	for (i=len-1; i>x; i--)
+	len++;
+	/* can't use memcpy here */
+	for (int i=len-1; i>x; i--)
 		data[i]=data[i-1];
 	data[x] = c;
 }

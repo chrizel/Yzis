@@ -21,6 +21,7 @@
 #define YZ_SWAPFILE
 
 #include <qstringlist.h>
+#include "undo.h"
 
 class YZBuffer;
 
@@ -37,7 +38,7 @@ class YZSwapFile {
 		/**
 		 * Add an inputs event to history
 		 */
-		void addToSwap( int inputs, int modifiers );
+		void addToSwap( YZBufferOperation::OperationType type, const QString& str, unsigned int col, unsigned int line );
 
 		/**
 		 * Clear the history
@@ -68,8 +69,10 @@ class YZSwapFile {
 
 	private:
 		struct sE {
-			int inputs;
-			int modifiers;
+			YZBufferOperation::OperationType type;
+			unsigned int col;
+			unsigned int line;
+			QString str;
 		} sE;
 		typedef struct sE swapEntry;
 

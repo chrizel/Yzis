@@ -50,20 +50,8 @@ void YZSwapFile::flush() {
 		QTextStream stream( &f );
 		if ( !mHistory.empty() ) {
 			for ( QValueList<swapEntry>::iterator it = mHistory.begin(); it != mHistory.end(); ++it ) {
-				stream << ( *it ).modifiers << "," << ( *it ).inputs << ",";
+				stream << ( *it ).type << ( *it ).col <<","<< ( *it ).line <<","<< ( *it ).str << endl;
 			}
-/*			stream << endl << endl;
-			stream << "===REGISTERS KEYS===" << endl;
-			QValueList<QChar> keys = YZSession::mRegisters.keys();
-			QValueList<QStringList> values = YZSession::mRegisters.values();
-			for ( QValueList<QChar>::iterator it = keys.begin(); it != keys.end(); it++ ) {
-				stream << *it << endl;
-			}
-			stream << "===REGISTERS VALUES===" << endl;
-			for ( QValueList<QStringList>::iterator it = values.begin(); it != values.end(); it++ ) {
-			//	stream << *it << endl;
-			}
-			stream << "===REGISTERS END===" << endl;*/
 		}
 		f.close();
 	} else {
@@ -72,10 +60,10 @@ void YZSwapFile::flush() {
 	mHistory.clear(); //clear previous history
 }
 
-void YZSwapFile::addToSwap( int inputs, int modifiers ) {
-	swapEntry e = { inputs, modifiers };
+void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString& str, unsigned int col, unsigned int line ) {
+	swapEntry e = { type, col, line, str };
 	mHistory.append( e );
-	if ( mHistory.size() >= (int)mParent->getLocalIntOption("updatecount") ) flush();
+	if ( ( ( int )mHistory.size() ) >= mParent->getLocalIntOption("updatecount") ) flush();
 }
 
 void YZSwapFile::unlink() {

@@ -24,6 +24,7 @@
 #define PREFIX ""
 #else
 #include <unistd.h>
+#include <dirent.h>
 #include "config.h"
 #include "translator.h"
 #endif

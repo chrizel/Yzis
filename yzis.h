@@ -34,7 +34,7 @@
 #define VERSION_MINOR	0
 #define VERSION_PATCH	1
 
-#define VERSION_CHAR	"0.0.1"
+#define VERSION_CHAR	"M1"
 
 struct yzpoint {
 	int x;

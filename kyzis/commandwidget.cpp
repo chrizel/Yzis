@@ -21,7 +21,7 @@
  * $Id: kyzisedit.cpp 218 2003-05-29 23:06:22Z mikmak $
  */
 
-#include "command.h"
+#include "commandwidget.h"
 #include "debug.h"
 #include "view.h"
 
@@ -54,4 +54,4 @@ void KYZisCommand::focusOutEvent (QFocusEvent *e) {
 	QWidget::focusOutEvent(e);
 }
 
-#include "command.moc"
+#include "commandwidget.moc"

@@ -26,7 +26,7 @@
 #include "document.h"
 #include "editor.h"
 #include "viewwidget.h"
-#include "command.h"
+#include "commandwidget.h"
 
 class KYZisEdit;
 class KYZisCommand;

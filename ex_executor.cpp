@@ -12,7 +12,7 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 	rx.search( inputs );
 	if ( rx.cap(3) != QString::null ) view->myBuffer()->setPath(rx.cap(3));
 	view->myBuffer()->save();
-	yzDebug() << "File saved as " << view->myBuffer()->getPath() << endl;
+	yzDebug() << "File saved as " << view->myBuffer()->fileName() << endl;
 	return QString::null;
 }
 

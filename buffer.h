@@ -14,10 +14,6 @@ class YZView;
 
 class YZBuffer {
 
-	//required ?
-	friend class YZView;
-	friend class YZSession;
-
 public:
 	/** 
 	 * Creates a new buffer

@@ -16,7 +16,7 @@ class YZSession;
 class YZView {
 	public:
 		/**
-		 * constructor. Each view is bound to a buffer, @param lines is the initial
+		 * Each view is bound to a buffer, @param lines is the initial
 		 * number of lines that this view can display
 		 */
 		YZView(YZBuffer *_b, YZSession *sess, int _lines_vis);

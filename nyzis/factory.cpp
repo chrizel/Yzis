@@ -76,14 +76,33 @@ bool NYZFactory::process_one_event()
 			return false;
 		case KEY_RESIZE: // do nothing with this one
 			return true;
-		case 15:
-			currentView->sendKey("o","<CTRL>");
-			return true;
-		case 12:
-			currentView->sendKey("l","<CTRL>");
-			return true;
-		case 18:
-			currentView->sendKey("r","<CTRL>" );
+		// dont do  currentView->sendKey(QString(QChar(0x60+c)),"<CTRL>");
+		// on all iscntrl(c), it would break <esc> and <enter>....
+		case 0x01: // ^a
+		case 0x02: // ^b
+		case 0x05: // ^e
+		case 0x06: // ^f
+		case 0x07: // ^g
+		case 0x08: // ^h
+//		case 0x09: // ^i  <----- tab
+//		case 0x0a: // ^j  <----- enter
+		case 0x0b: // ^k
+		case 0x0c: // ^l // important, tested
+//		case 0x0d: // ^m  <----- return
+		case 0x0e: // ^n // important, tested
+		case 0x0f: // ^o // important, tested
+		case 0x10: // ^p
+		case 0x11: // ^q
+		case 0x12: // ^r // important, tested
+//		case 0x13: // ^s
+//		case 0x14: // ^t
+//		case 0x15: // ^u
+//		case 0x16: // ^v
+//		case 0x17: // ^w
+		case 0x18: // ^x // important, tested
+		case 0x19: // ^y
+		case 0x1a: // ^z
+			currentView->sendKey( QString( QChar( 0x60+c ) ),"<CTRL>" );
 			return true;
 	} // switch
 

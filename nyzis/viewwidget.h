@@ -71,7 +71,7 @@ private:
 	/**
 	 * update visible area
 	 */
-	void updateVis( );
+	void updateVis( bool refresh=true );
 	/**
 	  * Display a line
 	  * @arg line is the line number, taken from the beginning of the file ( and not

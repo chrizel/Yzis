@@ -148,6 +148,7 @@ void NYZFactory::changeCurrentView ( YZView * view  )
 	currentView = v;
 	currentViewChanged(view);
 	currentView->map();
+	currentView->refreshScreen();
 }
 
 YZView* NYZFactory::createView( YZBuffer* buffer )

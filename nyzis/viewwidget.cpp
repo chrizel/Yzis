@@ -55,7 +55,7 @@ NYZView::~NYZView(){
 void NYZView::map( void )
 {
 	marginLeft = 0;
-	updateVis();
+	updateVis(false);
 
 	// main editor, fullscreen
 	window = newwin( 0,0,0,0 ); YZASSERT( window );
@@ -98,11 +98,11 @@ void NYZView::unmap( void )
 	window = editor = statusbar = infobar = NULL;
 }
 
-void NYZView::updateVis( ) {
+void NYZView::updateVis( bool refresh ) {
 	unsigned int width;
 	unsigned int height;
 	getmaxyx( stdscr, height, width ); 
-	setVisibleArea( width - marginLeft, height - 2 );
+	setVisibleArea( width - marginLeft, height - 2, refresh );
 }
 
 void NYZView::printVoid( unsigned int relline )
@@ -238,7 +238,8 @@ void NYZView::syncViewInfo( void )
 		"Replace",
 		"Command",
 		"     Ex",
-		" Search"
+		" Search",
+		"   Open"
 	};
 
 	werase(infobar);

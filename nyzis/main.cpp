@@ -57,7 +57,7 @@ main(int argc, char *argv[])
 	bool useGUI = TRUE;
 #endif
 	// until we find something better; this causes the printer to segfault
-	//useGUI = false;
+	// useGUI = false;
 	QApplication app( argc, argv, useGUI );
 
 	// Translator stuff

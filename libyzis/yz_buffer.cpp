@@ -9,7 +9,7 @@
 #include "yz_events.h"
 #include "yz_view.h"
 
-YZBuffer::YZBuffer(QString _path) {
+YZBuffer::YZBuffer(const QString& _path) {
 	path	= _path;
 	view_nb	= 0;
 
@@ -73,6 +73,12 @@ void YZBuffer::addNewLine( int col, int line ) {
 	/* inform the views */
 	postEvent(YZEvent::mkEventLine(line,text[ line ]));
 	postEvent(YZEvent::mkEventLine(line+1,newline));
+}
+
+void YZBuffer::deleteLine( int line ) {
+	//ugly no ? ;)
+	text.erase( text.at( line ) );
+	updateAllViews(); //hmm ...
 }
 
 void YZBuffer::postEvent(yz_event e) {

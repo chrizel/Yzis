@@ -1,6 +1,8 @@
 2003-05-31 mikmak
   * kyzis
     added the command line with a combobox :) (does nothing yet)
+  * libyzis
+    added command 'dd'
 
 2003-05-30 mikmak
   * libyzis

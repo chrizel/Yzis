@@ -17,7 +17,7 @@ class YZBuffer {
 
 public:
 	/** opens a buffer using the given file */
-	YZBuffer(QString _path=QString::null);
+	YZBuffer(const QString& _path=QString::null);
 
 	void addChar (int x, int y, QChar c);
 	void chgChar (int x, int y, QChar c);
@@ -37,6 +37,8 @@ public:
 	const QStringList& getText() { return text; }
 
 	void addNewLine( int col, int line );
+
+	void deleteLine( int line );
 
 protected:
 	QString path;

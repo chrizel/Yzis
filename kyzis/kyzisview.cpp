@@ -62,7 +62,7 @@ void KYZisView::customEvent (QCustomEvent *) {
 				status->changeItem( event.setstatus.text,0 );
 				break;
 			case YZ_EV_REDRAW:
-				/* TODO */
+				editor->updateContents();
 				break;
 			case YZ_EV_NOOP:
 				return;

@@ -68,9 +68,10 @@ void YZView::sendChar( QChar c) {
 		case YZ_VIEW_MODE_EX:
 			if ( c.unicode() == 13 ) {// <ENTER> 
 				//try to execute that stuff :)
-				
+				if ( session )
+					session->getExPool()->execExCommand( this, gui_manager->getCommandLineText() );
 			} // else nothing :)
-			break;
+			return; //we don't record anything
 		default:
 			/* ?? */
 			//printf("Currently unknown MODE\n");

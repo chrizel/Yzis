@@ -27,4 +27,8 @@ yz_event mk_event_setline(int l, QString *text) {
 	return e;
 }
 
-
+yz_event mk_event_noop() {
+	yz_event e;
+	e.id=YZ_EV_NOOP;
+	return e;
+}

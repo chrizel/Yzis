@@ -78,6 +78,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 			<< tr("[ Open ]") << tr("[ Introduction ]") << tr("{ Completion }") << tr("[ Visual ]") << tr("[ Visual Line ]") << tr("Yzis Ready");
 	mainCursor = new YZViewCursor( this );
 	workCursor = new YZViewCursor( this );
+	keepCursor = new YZViewCursor( this );
 
 	scrollCursor = new YZViewCursor( this );
 
@@ -133,7 +134,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	m_completionStart = new YZCursor(this);
 	m_completionCursor = new YZCursor(this);
 
-	setPaintAutoCommit();
+	abortPaintEvent();
 }
 
 YZView::~YZView() {
@@ -142,6 +143,7 @@ YZView::~YZView() {
 
 	delete mainCursor;
 	delete scrollCursor;
+	delete keepCursor;
 	delete workCursor;
 	delete origPos;
 	delete mVisualCursor;
@@ -1116,7 +1118,11 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 	if ( applyCursor && viewCursor != mainCursor ) { // do not apply if this isn't the mainCursor
 //		yzDebug() << "THIS IS NOT THE MAINCURSOR" << endl;
 		applyCursor = false;
+	} else if ( applyCursor && m_paintAutoCommit > 0 ) {
+		sendCursor( viewCursor );
+		applyCursor = false;
 	}
+	
 
 /*	yzDebug() << "applyGoto : "
 			<< "dColLength=" << dColLength << "; dLineLength=" << dLineLength << "; mLineLength=" << mLineLength
@@ -2226,6 +2232,11 @@ void YZView::setPaintAutoCommit( bool enable ) {
 void YZView::commitPaintEvent() {
 	if ( m_paintAutoCommit == 0 ) return;
 	if ( --m_paintAutoCommit == 0 ) {
+		if ( keepCursor->valid() ) {
+			*mainCursor = *keepCursor;
+			keepCursor->invalidate();
+			applyGoto( mainCursor );
+		}
 		YZSelectionMap drawPool = selectionPool->layout( "DRAW" );
 		unsigned int size = drawPool.size();
 		unsigned int lastY = 0;
@@ -2243,10 +2254,14 @@ void YZView::commitPaintEvent() {
 	}
 }
 void YZView::abortPaintEvent() {
+	keepCursor->invalidate();
 	selectionPool->clear( "DRAW" );
 	setPaintAutoCommit();
 }
 
+void YZView::sendCursor( YZViewCursor* cursor ) {
+	*keepCursor = *cursor;
+}
 void YZView::sendPaintEvent( const YZCursor& from, const YZCursor& to ) {
 	sendPaintEvent( from.getX(), from.getY(), to.getX() - from.getX(), to.getY() - from.getY() );
 }

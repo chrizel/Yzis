@@ -403,6 +403,7 @@ class YZView {
 
 		virtual void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) = 0;
 
+		void sendCursor( YZViewCursor* cursor );
 		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
 		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
 		void removePaintEvent( const YZCursor& from, const YZCursor& to );
@@ -910,6 +911,7 @@ class YZView {
 		QStringList mModes; //list of modes
 
 		unsigned int m_paintAutoCommit;
+		YZViewCursor* keepCursor;
 
 		YZCursor *m_completionStart;
 		YZCursor *m_completionCursor;

@@ -22,20 +22,34 @@ end
 
 -- char is the char which caused the INDENT_ON_KEY event
 function Indent_OnKey_cpp(char,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,curLine,prevLine,nextLine)
-	--check we are at end of line
 	if wincol() ~= string.len(curLine)+1 then
 		return
 	end
 
+	local xpos, ypos = winpos()
+
+	goto(wincol()-1, winline())
 	if char == "}" then
 		-- find the matching opening { and use the same indent
-
-		-- or just remove 1 tab for now ;)
-		if nbCurTabs > 0 then
-			remove(0, winline(), 1)
-			goto(string.len(curLine), winline())
+		local found, x, y = matchpair()
+		if found == true then 
+			if ( y == winline() ) then -- we are on the same line, dont change anything ;)
+				goto(xpos,ypos)
+				return
+			end
+			lin = line(y+1)
+--			debug("(matched line :"..lin..")")
+			local news = string.gsub(lin, "^(%s*)(.*)$", "%1")
+--			debug("(indent of this line :"..news..")")
+			local newcurline = string.gsub(curLine, "^(%s*)(.*)$", "%2")
+--			debug("(chars of curline :"..newcurline..")")
+			newcurline = news..newcurline
+			setline(winline(), newcurline)
+			goto(string.len(newcurline)+1, winline())
+			return
 		end
 	end
+	goto(xpos,ypos)
 end
 
 connect ("INDENT_ON_ENTER", "Indent_cpp")

@@ -137,6 +137,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"vunmap",vunmap);
 	lua_register(L,"cmap",cmap);
 	lua_register(L,"cunmap",cunmap);
+	lua_register(L,"matchpair",matchpair);
 }
 
 YZExLua::~YZExLua() {
@@ -767,6 +768,18 @@ int YZExLua::nunmap(lua_State *L ) {
 	QString key = ( char * )lua_tostring ( L, 1 );
 	YZMapping::self()->deleteNormalMapping(key);
 	return 0;
+}
+
+int YZExLua::matchpair(lua_State *L ) {
+	if (!checkFunctionArguments(L, 0, "matchpair", "find the matching char according the matchpair option")) return 0;
+	bool found = false;
+	YZView *v = YZSession::me->currentView();
+	YZCursor s (v->getBufferCursor());
+	YZCursor c = v->myBuffer()->action()->match(v, s, &found);
+	lua_pushboolean(L , found);
+	lua_pushnumber(L, c.getX());
+	lua_pushnumber(L, c.getY());
+	return 3;
 }
 
 int YZExLua::set(lua_State *L ) {

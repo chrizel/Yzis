@@ -11,3 +11,4 @@ config.h
 configure
 conftest*
 aclocal.m4
+libtool

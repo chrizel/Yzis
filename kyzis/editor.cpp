@@ -25,10 +25,10 @@
 #include "editor.h"
 #include "debug.h"
 #include "yzis.h"
-#include <kglobalsettings.h>
 #include "factory.h"
+#include <kglobalsettings.h>
+#include <math.h>
 
-static const bool showLineNumber = true;
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WNoAutoErase ) 
@@ -129,7 +129,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 //	yzDebug() << "drawContents: clipy=" << clipy << ",cliph=" << cliph << endl;
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
-	if ( showLineNumber ) { // update marginLeft
+	if ( YZSession::getBoolOption( "number" )) { // update marginLeft
 		/* lineCount length + 2 */
 		unsigned int my_marginLeft = 2 + QString::number( lineCount ).length();
 		if ( marginLeft != my_marginLeft ) {
@@ -144,10 +144,10 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 	unsigned int currentY = 0;
 	while ( !mParent->myBuffer()->introShown() && mParent->drawNextLine( ) && cliph > 0) {
 		if (clipy == 0) {
-			int currentX = 0;
+			unsigned int currentX = 0;
 
 
-			if ( showLineNumber ) { // draw current line number
+			if ( YZSession::getBoolOption( "number" )) { // draw current line number
 				QPen old_pen = p->pen( );
 
 				unsigned int lineNumber = mParent->drawLineNumber();
@@ -203,7 +203,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 			++currentY;
 		}
 	}
-	while ( !mParent->myBuffer()->introShown() && cliph > 0 && currentY < ( height() / fontMetrics().lineSpacing() ) ) {
+	while ( !mParent->myBuffer()->introShown() && cliph > 0 && currentY < ( uint )( height() / fontMetrics().lineSpacing() ) ) {
 		QRect clip( 0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
 		p->eraseRect(clip);
 		p->drawText(clip,flag ,"~");

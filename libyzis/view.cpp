@@ -30,7 +30,6 @@
 #include "debug.h"
 #include "undo.h"
 
-static const int tabLength( 8 );
 static const QChar tabChar( '\t' );
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
@@ -1027,7 +1026,7 @@ bool YZView::drawPrevLine( ) {
 				drawNextCol( );
 				drawChar( );
 			}
-			rSpaceFill = (rCurrentLeft % tabLength);
+			rSpaceFill = (rCurrentLeft % YZSession::getIntOption( "tabwidth" ));
 
 /*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
 					<< ", rX(cursor):" << rCursor->getX() 
@@ -1095,7 +1094,7 @@ bool YZView::drawNextLine( ) {
 				drawNextCol( );
 				drawChar( );
 			}
-			rSpaceFill = (rCurrentLeft % tabLength);
+			rSpaceFill = (rCurrentLeft % YZSession::getIntOption( "tabwidth" ));
 
 /*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
 					<< ", rX(cursor):" << rCursor->getX() 
@@ -1167,9 +1166,9 @@ QChar YZView::drawChar( ) {
 
 	sColLength = 1;
 	rColLength = 1;
-	if (rSpaceFill == tabLength) rSpaceFill = 0;
+	if (rSpaceFill == YZSession::getIntOption( "tabwidth" )) rSpaceFill = 0;
 	if ( ch == tabChar ) {
-		rColLength = tabLength - rSpaceFill;	
+		rColLength = YZSession::getIntOption( "tabwidth" ) - rSpaceFill;	
 		ch = ' ';
 	}
 	rSpaceFill += rColLength;

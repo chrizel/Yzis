@@ -32,8 +32,7 @@
 
 class NYZSession;
 
-class NYZView : public YZView
-{
+class NYZView : public YZView {
 
 public:
 	/**

@@ -30,6 +30,7 @@
 #include "view.h"
 #include "debug.h"
 #include "undo.h"
+#include "printer.h"
 
 static const QChar tabChar( '\t' );
 static QColor fake;
@@ -76,13 +77,19 @@ YZView::~YZView() {
 	mBuffer->rmView(this); //make my buffer forget about me
 }
 
-void YZView::setVisibleArea(int c, int l) {
+void YZView::setVisibleArea(int c, int l, bool refresh) {
 	yzDebug() << "YZView::setVisibleArea(" << c << "," << l << ");" << endl;
 	mLinesVis = l;
 	mColumnsVis = c;
-	refreshScreen();
-	gotoxy( mCursor->getX(), mCursor->getY() );
+	if( refresh ) {
+		refreshScreen();
+		gotoxy( mCursor->getX(), mCursor->getY() );
+	}
 }
+void YZView::setVisibleArea(int c, int l) {
+	setVisibleArea( c, l, true );
+}
+
 
 /* Used by the buffer to post events */
 void YZView::sendKey( int c, int modifiers) {
@@ -1356,6 +1363,21 @@ unsigned int YZView::drawLineNumber( ) {
 	return sCursor->getY( ) + 1;
 }
 
+unsigned int YZView::drawTotalHeight() {
+
+	unsigned int totalHeight = 0;
+
+	initDraw( 0, 0, 0, 0 );
+	drawMode = false;
+	while( sCursor->getY() < mBuffer->lineCount() ) {
+		drawNextLine();
+		totalHeight += drawHeight();
+	}
+
+	return totalHeight;
+}
+	
+
 void YZView::substitute(const QString& range, const QString& search, const QString& replace, const QString& option) {
 	yzDebug() << "substitute : " << range << ":" << search << ":" << replace << ":" << option << endl;
 	//TODO : better range support, better options support
@@ -1393,3 +1415,11 @@ QString YZView::joinLine ( const QString& inputsBuff, YZCommandArgs args) {
 	joinLine( mCursor->getY() );
 	return QString::null;
 }
+
+void YZView::printToFile( const QString& path ) {
+	YZPrinter * printer = new YZPrinter( this );
+	printer->printToFile( path );
+	printer->run( );
+	delete( printer );
+}
+

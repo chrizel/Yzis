@@ -58,6 +58,7 @@ class YZView {
 		 * Updates the number of visible @arg c columns and @arg l lines
 		 */
 		void setVisibleArea (int c, int l);
+		void setVisibleArea (int c, int l, bool refresh );
 
 		/**
 		 * transfer a key event from GUI to core
@@ -242,6 +243,8 @@ class YZView {
 		void delChar( unsigned int mX, unsigned int mY, unsigned int c );
 		void joinLine( unsigned int line );
 
+		void printToFile( const QString& path );
+
 		/**
 		 * Moves the draw cursor to @arg nextx, @arg nexty
 		 */
@@ -413,6 +416,11 @@ class YZView {
 		 * return current buffer line
 		 */
 		unsigned int drawLineNumber( );
+
+		/**
+		 * total height ( draw )
+		 */
+		 unsigned int drawTotalHeight();
 
 		/**
 		 * Search and replace

@@ -81,6 +81,12 @@ class YZExExecutor : public QObject {
 		 */
 		QString substitute ( YZView *view, const QString& inputs );
 
+		/**
+		 * Print
+		 */
+		QString print( YZView *view, const QString& inputs );
+
+
 };
 
 #endif

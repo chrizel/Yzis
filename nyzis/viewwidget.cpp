@@ -363,4 +363,3 @@ void NYZView::initialisecolormap()
 		MAP(13, Qt::lightGray, COLOR_WHITE | A_BOLD );
 	}
 }
-

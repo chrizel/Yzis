@@ -235,6 +235,22 @@ void TestYZCommands::testLineMovement()
     CHECK_CURSOR_POS( mView, 3, 1 );
     mView->sendMultipleKey("3G");
     CHECK_CURSOR_POS( mView, 2, 0 );
+
+    mView->sendMultipleKey("$");
+    CHECK_CURSOR_POS( mView, 2, 3 );
+    mView->sendMultipleKey("0");
+    CHECK_CURSOR_POS( mView, 2, 0 );
+
+    //tests with startofline to false now
+    YZSession::setBoolOption("startofline",false);	
+    mView->sendMultipleKey("gg");
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendMultipleKey("G");
+    CHECK_CURSOR_POS( mView, 3, 0 );
+    mView->sendMultipleKey("$");
+    CHECK_CURSOR_POS( mView, 3, 4 );
+    mView->sendMultipleKey("0");
+    CHECK_CURSOR_POS( mView, 3, 0 );
 }
 
 /* ========================================================================= */

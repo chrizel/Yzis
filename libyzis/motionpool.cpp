@@ -61,10 +61,11 @@ bool YZMotionPool::isValid( const QString& inputs ) {
 	return ok;
 }
 
-bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCursor *result ) {
+bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, bool *backward, YZCursor *result ) {
 	bool ok = false;
 	YZMotion& motion = findMotion(inputsMotion, &ok);
 	if ( !ok ) return false;
+	*backward = motion.backward;
 	int counter = 1; //number of times we have to match
 	QRegExp rx ( "([0-9]+).+" );
 	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
@@ -78,37 +79,38 @@ bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCur
 		yzDebug() << "Forward motion" <<endl;
 		while (count < counter) {
 			const QString& current = view->myBuffer()->textline( result->getY() );
-			if ( current == QString::null ) return false;
+			if ( current.isNull() ) return false;
 			idx = rex.search( current, result->getX() );
-			if ( idx ) {
+			if ( idx != -1 ) {
 				yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
 				count++; //one match
 				result->setX( idx + rex.matchedLength() + 1 );
 			} else {
+				if ( result->getY() >= view->myBuffer()->lineCount() ) break;
 				result->setX( 0 );
 				result->setY( result->getY() + 1 );
 			}
 		}
 	} else {
 		yzDebug() << "Backward motion" <<endl;
-		while (count < counter) {
+		while ( count < counter ) {
 			const QString& current = view->myBuffer()->textline( result->getY() );
-			if ( current == QString::null ) return false;
+			if ( current.isNull() ) return false;
 			idx = rex.searchRev( current, result->getX() );
-			if ( idx ) {
+			if ( idx != -1 ) {
 				yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
 				count++; //one match
-				result->setX( idx - rex.matchedLength() - 1 );
+				result->setX( ( idx - rex.matchedLength() - 1 >= 0 ) ? idx - rex.matchedLength() -1 : 0 );
 			} else {
 				const QString& ncurrent = view->myBuffer()->textline( result->getY() - 1 );
-				if ( ! ncurrent == QString::null ) {
-					result->setX( ncurrent.length() );
-					result->setY( result->getY() - 1 );
-				}
+				if ( ncurrent.isNull() ) return false;
+				if ( result->getY() == 0 ) break;
+				result->setX( ncurrent.length() );
+				result->setY( result->getY() - 1 );
 			}
 		}
 	}
 	yzDebug() << "Result of motion is : " << result->getX() << " " << result->getY() << endl;
-	return motion.backward;
+	return true;
 }
 

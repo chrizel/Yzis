@@ -89,13 +89,14 @@ void YZBuffer::add_view (YZView *v)
 void YZBuffer::update_view(int view_nb)
 {
 	int y;
+	yz_event e;
 	YZView *view = view_list[view_nb];
+
 	for (y=view->get_current(); y<lines_nb && view->is_line_visible(y); y++) {
 
 		YZLine *l = find_line( view->get_current()+y);
 		yz_assert(l, "find_line failed");
 		/* post an event about updating this line */
-		yz_event e;
 
 		e.id			= YZ_EV_SETLINE;
 		e.u.setline.y		= y;
@@ -106,6 +107,13 @@ void YZBuffer::update_view(int view_nb)
 
 		view->post_event(e);
 	}
+
+	e.id = YZ_EV_SETCURSOR;
+	e.u.setcursor.x = 0;
+	e.u.setcursor.y = 0;
+	view->post_event(e);
+
+	view->post_event(mk_event_setstatus("Yzis Ready"));
 }
 
 void  YZBuffer::add_line(YZLine *l)
@@ -142,7 +150,7 @@ void YZBuffer::load(void)
 	char *ptr;
 	int dismiss=false;
 
-	debug("entering");
+//	debug("entering");
 	if (!path) {
 		error("called though path is null, ignored");
 		return;
@@ -159,7 +167,8 @@ void YZBuffer::load(void)
 	do { // read the whole file
 		int a;
 		a = fread(buf, sizeof(char), YZ_LINE_DEFAULT_LENGTH-len, f);
-		debug("read %d bytes from file", a); len +=a;
+//		debug("read %d bytes from file", a);
+		len +=a;
 
 
 		while (1) {
@@ -171,15 +180,15 @@ void YZBuffer::load(void)
 				if ( (ptr-buf)>=len ) {
 					/* we are at the end of the buffer, dismiss everything..*/
 					len =0;
-					debug("deleting.. continue");
+//					debug("deleting.. continue");
 					break;
 				}
 				else {
 					/* *ptr == 0, dismiss until \0, included  */
 					ptr++;
 					len -= (ptr-buf); memcpy(buf, ptr, len); // remove handled part
-					debug("removing %d bytes from buf", ptr-buf);
-					debug("deleting.. end");
+//					debug("removing %d bytes from buf", ptr-buf);
+//					debug("deleting.. end");
 					dismiss = false;
 					continue;
 				}
@@ -194,9 +203,9 @@ void YZBuffer::load(void)
 				len=0;
 				/* add the new line */
 				add_line(line);
-				debug("adding a looooong YZLine");
+//				debug("adding a looooong YZLine");
 				dismiss = true;
-				debug("deleting... begin");
+//				debug("deleting... begin");
 				continue;
 			}
 
@@ -207,16 +216,16 @@ void YZBuffer::load(void)
 			/* we found a whole line, use it */
 			YZLine *line = new YZLine(lines_nb++, buf, ptr-buf);
 			len -= (ptr-buf); memcpy(buf, ptr, len); // remove handled part
-			debug("removing %d bytes from buf", ptr-buf);
+//			debug("removing %d bytes from buf", ptr-buf);
 			/* add the new line */
 			add_line(line);
-			debug("adding a normal YZLine");
+//			debug("adding a normal YZLine");
 		} // while (1)
 
 	} while (!feof(f));
 
 	/* flush the buffer */
-	debug("flushing what remains in buffer");
+//	debug("flushing what remains in buffer");
 	while (len>0) {
 		for (ptr=buf; (ptr-buf)<len && *ptr!='\n'; ptr++); // find the next '\n'
 
@@ -225,15 +234,15 @@ void YZBuffer::load(void)
 			if ( (ptr-buf)>=len ) {
 				/* we are at the end of the buffer, dismiss everything..*/
 				len =0;
-				debug("deleting.. continue");
+//				debug("deleting.. continue");
 				break;
 			}
 			else {
 				/* *ptr == 0, dismiss until \0, included  */
 				ptr++;
 				len -= (ptr-buf); memcpy(buf, ptr, len); // remove handled part
-				debug("removing %d bytes from buf", ptr-buf);
-				debug("deleting.. end");
+//				debug("removing %d bytes from buf", ptr-buf);
+//				debug("deleting.. end");
 				dismiss = false;
 				continue;
 			}
@@ -243,7 +252,7 @@ void YZBuffer::load(void)
 			YZLine *line = new YZLine(lines_nb++, buf, len); // ptr-buf == len, here
 			/* add the new line */
 			add_line(line);
-			debug("adding a looooong YZLine");
+//			debug("adding a looooong YZLine");
 			break; // nothing left in the buffer
 		}
 
@@ -253,11 +262,11 @@ void YZBuffer::load(void)
 		ptr++;
 		YZLine *line = new YZLine(lines_nb++, buf, len);
 		add_line(line);
-		debug("adding a normal YZLine");
+//		debug("adding a normal YZLine");
 	} // while (1)
 
 
-	debug("closing input file");
+//	debug("closing input file");
 	fclose(f);
 }
 

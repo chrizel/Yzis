@@ -414,32 +414,28 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 	setChanged( true );
 }
 
-bool YZBuffer::isEmpty() {
+bool YZBuffer::isEmpty() const {
 	if ( mText.count( ) == 1 && textline(0).isEmpty() ) return true;
 	return false;
 }
 
 
-QString YZBuffer::getWholeText() {
+QString YZBuffer::getWholeText() const {
 	if ( isEmpty() ) { return QString(""); }
 
-	m_hlupdating = true; //override so that it does not parse all lines
 	QString wholeText;
 	for ( uint i = 0 ; i < lineCount() ; i++ )
 		wholeText += textline(i) + "\n";
-	m_hlupdating = false; //override so that it does not parse all lines
 	return wholeText;
 }
 
-uint YZBuffer::getWholeTextLength() {
+uint YZBuffer::getWholeTextLength() const {
 	if ( isEmpty() ) { return 0; }
 
-	m_hlupdating = true; //override so that it does not parse all lines
 	uint length = 0;
 	for ( uint i = 0 ; i < lineCount() ; i++ ) {
 		length += textline(i).length() + 1;
 	}
-	m_hlupdating = false; //override so that it does not parse all lines
 	
 	return length;
 }

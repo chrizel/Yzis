@@ -24,4 +24,4 @@
 
 #  install the man page
 #man_MANS=yzis.1
-SUBDIRS=libyzis 
+SUBDIRS=libyzis cyzis

@@ -39,4 +39,4 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
 
-AC_OUTPUT(Makefile libyzis/Makefile)
+AC_OUTPUT(Makefile libyzis/Makefile cyzis/Makefile)

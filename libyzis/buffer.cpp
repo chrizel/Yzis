@@ -319,10 +319,8 @@ void YZBuffer::clearText() {
 }
 
 QString YZBuffer::textline( uint line ) const {
-	if (yzline(line)) {
-		QString s = yzline(line)->data();
-		return yzline(line)->data();
-	}
+	YZLine * yl = yzline(line);
+	if (yl) return yl->data();
 	return QString::null;
 }
 

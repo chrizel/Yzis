@@ -12,11 +12,10 @@ Changes between 1.1 and 1.0:
   expected, actual )
 - you can assert for an error: assertError( f, a, b ) will assert that f(a,b)
   generates an error
+- display the calling stack when an error is spotted
 
 
 TODO:
-- try to display the failing line
-- use xpcall to reveal the calling stack
 - isolate output rendering into a separate class ?
 - isolate result into a separate class ?
 - customised output for the failing line ?
@@ -54,15 +53,6 @@ assert_equals = assertEquals
 assert_error = assertError
 
 -------------------------------------------------------------------------------
-
-function isFunction(aObject)
-    if  'function' == type(aObject) then
-        return true
-    else
-        return false
-    end
-end
-
 luaUnit = {
 	FailedCount = 0,
 	TestCount = 0,
@@ -98,14 +88,50 @@ luaUnit = {
 			100-math.ceil(failurePercent), successCount, self.TestCount) )
     end
 
-	function luaUnit:analyseErrorLine( errorMsg )
-		local mb, me, filename, line
-		mb, me, filename, line = string.find(errorMsg, "(%w+):(%d+)" )
-		if filename and line then
-			-- check that file exists
-			-- read it, read the line
-			-- display the line
+	-- Split text into a list consisting of the strings in text,
+	-- separated by strings matching delimiter (which may be a pattern). 
+	-- example: strsplit(",%s*", "Anna, Bob, Charlie,Dolores")
+	function luaUnit.strsplit(delimiter, text)
+		local list = {}
+		local pos = 1
+		if string.find("", delimiter, 1) then -- this would result in endless loops
+			error("delimiter matches empty string!")
 		end
+		while 1 do
+			local first, last = string.find(text, delimiter, pos)
+			if first then -- found?
+				table.insert(list, string.sub(text, pos, first-1))
+				pos = last+1
+			else
+				table.insert(list, string.sub(text, pos))
+				break
+			end
+		end
+		return list
+	end
+
+	function luaUnit.isFunction(aObject)
+		if  'function' == type(aObject) then
+			return true
+		else
+			return false
+		end
+	end
+
+	function luaUnit.strip_luaunit_stack(stack_trace)
+		stack_list = luaUnit.strsplit( "\n", stack_trace )
+		strip_end = nil
+		for i = table.getn(stack_list),1,-1 do
+			if string.find(stack_list[i],"[C]: in function `xpcall'",0,true)
+				then
+				strip_end = i - 2
+			end
+		end
+		if strip_end then
+			table.setn( stack_list, strip_end )
+		end
+		stack_trace = table.concat( stack_list, "\n" )
+		return stack_trace
 	end
 
     function luaUnit:runTestMethod(aName, aClassInstance, aMethod)
@@ -115,23 +141,27 @@ luaUnit = {
         self.TestCount = self.TestCount + 1
 
 		-- run setUp first(if any)
-		if isFunction( aClassInstance.setUp) then
+		if self.isFunction( aClassInstance.setUp) then
 				aClassInstance:setUp()
 		end
 
+		function err_handler(e)
+			return e..'\n'..debug.traceback()
+		end
+
 		-- run testMethod()
-        ok, errorMsg = pcall( aMethod )
+        ok, errorMsg = xpcall( aMethod, err_handler )
 		if not ok then
+			errorMsg  = self.strip_luaunit_stack(errorMsg)
             self.FailedCount = self.FailedCount + 1
 			table.insert( self.Errors, errorMsg )
-			luaUnit:analyseErrorLine( errorMsg )
 			luaUnit:displayFailure( errorMsg )
         else
 			luaUnit:displaySuccess()
         end
 
 		-- lastly, run tearDown(if any)
-		if isFunction(aClassInstance.tearDown) then
+		if self.isFunction(aClassInstance.tearDown) then
 				 aClassInstance:tearDown()
 		end
     end
@@ -164,7 +194,7 @@ luaUnit = {
 		else
 			-- run all test methods of the class
 			for methodName, method in classInstance do
-				if isFunction(method) and string.sub(methodName, 1, 4) == "test" then
+				if luaUnit.isFunction(method) and string.sub(methodName, 1, 4) == "test" then
 					luaUnit:runTestMethodName( aClassName..':'.. methodName, classInstance )
 				end
 			end

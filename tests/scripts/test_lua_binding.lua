@@ -1,41 +1,15 @@
 
 -- Unit testing starts
 require('luaunit')
-
-function bufferContent()
-    local i,s
-    i = 2
-    s = line(1)
-    while i<=linecount() do
-        s = s.."\n".. line(i)
-        i = i + 1
-    end
-    return s
-end
-
-function printBufferContent()
-    local i=1
-    print("Buffer content:")
-    while i<=linecount() do
-        print("line "..i.." : '"..line(i).."'")
-        i = i + 1
-    end
-end
+require('utils')
 
 TestLuaBinding = {} --class
-    function TestLuaBinding:clearBuffer()
-        while linecount() > 1 do
-            deleteline(1)
-        end
-        deleteline(1)
-    end
-
     function TestLuaBinding:setUp() 
-        self:clearBuffer()
+        clearBuffer()
     end
 
     function TestLuaBinding:tearDown() 
-        self:clearBuffer()
+        clearBuffer()
     end
 
     function TestLuaBinding:test_setup()
@@ -121,7 +95,7 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), s1.."\n"..s2.."\n"..s3 )
 
         -- multiline support
-        self:setUp()
+        clearBuffer()
         insertline(1,s3)
         assertEquals( bufferContent(), s3 )
         insertline(1,s1.."\n"..s2)

@@ -79,7 +79,7 @@ class YZModeCompletion : public YZMode {
 
 	protected :
 		QString doComplete( YZView* mView, bool forward );
-		void initCompletion( YZView* mView );
+		bool initCompletion( YZView* mView );
 };
 
 #endif

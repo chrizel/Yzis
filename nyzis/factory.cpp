@@ -241,7 +241,7 @@ void NYZFactory::popupMessage( const QString &message )
 	
 	nocbreak(); // Leave half-delay mode for a moment.
 	cbreak(); // Enter cbreak-mode. 
-	int c = wgetch(popup);
+	wgetch(popup);
 	halfdelay(1); // Go back to the halfdelay-mode.
 	
 	delwin( popup );
@@ -289,7 +289,7 @@ int NYZFactory::promptYesNoCancel( const QString& /*title*/, const QString& /*me
 	return 0;//return yes for now...
 }
 
-void NYZFactory::splitHorizontally ( YZView *view ) {
+void NYZFactory::splitHorizontally ( YZView* /*view*/ ) {
 	//TODO
 }
 

@@ -294,7 +294,7 @@ int KYZisFactory::promptYesNoCancel(const QString& title, const QString& message
 	return 2;
 }
 
-void KYZisFactory::splitHorizontally(YZView *view) {
+void KYZisFactory::splitHorizontally(YZView* /*view*/) {
 //	KYZisView *v = static_cast<KYZisView *>(view);
 //	KYZisDoc *doc = static_cast<KYZisDoc*>(v->document());
 	if (mMainApp)

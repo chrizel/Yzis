@@ -1,19 +1,20 @@
+# translation of fr.po to 
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Mickael Marchand <marchand@kde.org>, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Yzis\n"
+"Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-10 09:12+0100\n"
-"PO-Revision-Date: 2005-02-08 20:03+0100\n"
+"POT-Creation-Date: 2005-02-10 23:05+0100\n"
+"PO-Revision-Date: 2005-02-10 21:01+0100\n"
 "Last-Translator: Mickael Marchand <marchand@kde.org>\n"
-"Language-Team: <i18n@yzis.org>\n"
+"Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: ts2po\n"
+"X-Generator: KBabel 1.9\n"
 
 #: ../kyzis/main.cpp:38
 msgid "KDE Frontend for the Yzis Editor"
@@ -349,23 +350,23 @@ msgstr ""
 
 #: ../kyzis/src/hlconfig.cpp:1211
 msgid "Yzis Styles"
-msgstr ""
+msgstr "Styles d'Yzis"
 
 #: ../kyzis/src/kyzis.cpp:116
 msgid "Opens recently opened file."
-msgstr ""
+msgstr "Ouvre un fichier ouvert récemment."
 
 #: ../kyzis/src/kyzis.cpp:125
 msgid "Show &Konsole"
-msgstr ""
+msgstr "Montrer la &Konsole"
 
 #: ../kyzis/src/kyzis.cpp:135
 msgid "&Window"
-msgstr ""
+msgstr "&Fenetre"
 
 #: ../kyzis/src/kyzis.cpp:323
 msgid "Terminal"
-msgstr ""
+msgstr "Console"
 
 #: ../libyzis/buffer.cpp:571
 msgid "Recover"
@@ -405,45 +406,45 @@ msgstr "[ Introduction ]"
 msgid "[ Ex ]"
 msgstr "[ Ex ]"
 
-#: ../libyzis/mode_ex.cpp:286
+#: ../libyzis/mode_ex.cpp:285
 msgid "Not an editor command: "
 msgstr "Commande invalide: "
 
-#: ../libyzis/mode_ex.cpp:402 ../libyzis/mode_ex.cpp:415
-#: ../libyzis/mode_ex.cpp:422
+#: ../libyzis/mode_ex.cpp:401 ../libyzis/mode_ex.cpp:414
+#: ../libyzis/mode_ex.cpp:421
 msgid "One file is modified! Save it first..."
 msgstr "Un fichier a été modifié! Enregistrez-le d'abord..."
 
-#: ../libyzis/mode_ex.cpp:435
+#: ../libyzis/mode_ex.cpp:434
 msgid "No next buffer"
 msgstr "Pas de prochain buffer"
 
-#: ../libyzis/mode_ex.cpp:446
+#: ../libyzis/mode_ex.cpp:445
 msgid "No previous buffer"
 msgstr "Pas de buffer précédent"
 
-#: ../libyzis/mode_ex.cpp:484 ../libyzis/mode_ex.cpp:779
+#: ../libyzis/mode_ex.cpp:483 ../libyzis/mode_ex.cpp:783
 msgid "Please specify a filename"
 msgstr "Veuillez indiquer un nom de fichier"
 
-#: ../libyzis/mode_ex.cpp:530 ../libyzis/mode_ex.cpp:668
+#: ../libyzis/mode_ex.cpp:534 ../libyzis/mode_ex.cpp:672
 msgid "Invalid option given : "
 msgstr "L'option spécifiée est invalide :"
 
-#: ../libyzis/mode_ex.cpp:555 ../libyzis/mode_ex.cpp:683
+#: ../libyzis/mode_ex.cpp:559 ../libyzis/mode_ex.cpp:687
 msgid "This option cannot be switched this way, this is a boolean option."
 msgstr ""
 "Cette option ne peut pas être modifiée de cette manière, c'est une valeur "
 "booléenne."
 
-#: ../libyzis/mode_ex.cpp:565 ../libyzis/mode_ex.cpp:586
-#: ../libyzis/mode_ex.cpp:617
+#: ../libyzis/mode_ex.cpp:569 ../libyzis/mode_ex.cpp:590
+#: ../libyzis/mode_ex.cpp:621
 msgid "This option is a global option which cannot be changed with setlocal"
 msgstr ""
 "Cette option est globale , elle n'est pas modifiable par la commande setlocal"
 
-#: ../libyzis/mode_ex.cpp:581 ../libyzis/mode_ex.cpp:612
-#: ../libyzis/mode_ex.cpp:637 ../libyzis/mode_ex.cpp:707
+#: ../libyzis/mode_ex.cpp:585 ../libyzis/mode_ex.cpp:616
+#: ../libyzis/mode_ex.cpp:641 ../libyzis/mode_ex.cpp:711
 msgid "Invalid option given"
 msgstr "L'option spécifiée est invalide"
 
@@ -457,7 +458,7 @@ msgstr "[ Remplacement ]"
 
 #: ../libyzis/mode_insert.cpp:205
 msgid "{ Completion }"
-msgstr "{ Completion }"
+msgstr "{ Complètement }"
 
 #: ../libyzis/mode_search.cpp:37
 msgid "[ Search ]"
@@ -475,17 +476,17 @@ msgstr "Recherche inversée"
 msgid "[ Visual ]"
 msgstr "[ Visuel ]"
 
-#: ../libyzis/mode_visual.cpp:172
+#: ../libyzis/mode_visual.cpp:182
 msgid "[ Visual Line ]"
 msgstr "[ Visuel Ligne ]"
 
 #: ../libyzis/search.cpp:102
 msgid "search hit TOP, continuing at BOTTOM"
-msgstr "La recherche a atteint le debut du fichier, reprise a partir de la fin"
+msgstr "La recherche a atteint le debut du fichier, reprise à partir de la fin"
 
 #: ../libyzis/search.cpp:104
 msgid "search hit BOTTOM, continuing at TOP"
-msgstr "La recherche a atteint la fin du fichier, reprise a partir du debut"
+msgstr "La recherche a atteint la fin du fichier, reprise à partir du debut"
 
 #: ../libyzis/swapfile.cpp:81
 msgid ""
@@ -542,19 +543,13 @@ msgstr "{ Enregistrement }"
 
 #: ../nyzis/factory.cpp:197
 msgid "(Press any key)"
-msgstr ""
+msgstr "(Appuyez sur une touche)"
 
-#~ msgid "Yzis Ready"
-#~ msgstr "Pret"
+#~ msgid "(stable release)"
+#~ msgstr "(version stable)"
 
-#~ msgid "Yzis is not able to save remote files for now"
-#~ msgstr "Yzis ne gère pas les fichiers distants pour le moment"
+#~ msgid "(development release - Use for testing only)"
+#~ msgstr "(version de développement - Utiliser pour tests uniquement)"
 
-#~ msgid "Remote files"
-#~ msgstr "Fichiers distants"
-
-#~ msgid "Error"
-#~ msgstr "Erreur"
-
-#~ msgid "Top"
-#~ msgstr "Haut"
+#~ msgid "(preview release - Use for testing only)"
+#~ msgstr "(version démo - Utiliser pour tests uniquement)"

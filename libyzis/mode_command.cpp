@@ -1193,7 +1193,7 @@ void YZModeCommand::replace( const YZCommandArgs &args ) {
 	
 }
 
-void YZModeCommand::abort( const YZCommandArgs& args) {
+void YZModeCommand::abort( const YZCommandArgs& /*args*/) {
 }
 
 void YZModeCommand::delkey( const YZCommandArgs &args ) {

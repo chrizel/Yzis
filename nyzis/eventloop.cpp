@@ -48,7 +48,7 @@ NYZEventLoop::~NYZEventLoop ()
 }
 #endif
 
-bool NYZEventLoop::processEvents( QEventLoop::ProcessEventsFlags flags )
+bool NYZEventLoop::processEvents( QEventLoop::ProcessEventsFlags /*flags*/ )
 {
 	// from Qt Doc :
 	// If the WaitForMore flag is set in flags, the behavior of this function is as follows: 

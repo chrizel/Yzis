@@ -213,24 +213,36 @@ void YZModeCompletion::leave( YZView* mView ) {
 	mView->m_word2Complete = QString::null;
 }
 
-void YZModeCompletion::initCompletion( YZView* mView ) {
+bool YZModeCompletion::initCompletion( YZView* mView ) {
 	YZCursor* m_completionStart = mView->m_completionStart;
 	YZCursor* m_completionCursor = mView->m_completionCursor;
 	YZBuffer* mBuffer = mView->myBuffer();
 	YZMotionArgs arg(mView, 1);
+	YZCursor cur = mView->getBufferCursor();
+	QString line = mBuffer->textline(cur.getY());
+	//we cant complete from col 0, neither if the line is empty, neither if the word does not end with a letter or number ;)
+	if (cur.getX() == 0 || line.isEmpty() || !QChar(line.at(cur.getX()-1)).isLetterOrNumber()) {
+		yzDebug() << "Abort completion" << endl;
+		mView->modePool()->pop();
+		return false;
+	}
 	YZCursor begin = YZSession::me->getCommandPool()->moveWordBackward( arg );
 	m_completionStart->setCursor(begin);
-	YZCursor cur = mView->getBufferCursor();
 	YZCursor stop( mView, cur.getX()-1, cur.getY() );
 	yzDebug() << "Start : " << begin << ", End:" << stop << endl;
 	QStringList list = mBuffer->getText(begin, stop);
 	yzDebug() << "Completing word : " << list[0] << endl;
 	//record current begin-of-word-to-complete
+	if (list[0].isEmpty()) {
+		mView->modePool()->pop();
+		return false;
+	}
 	mView->m_word2Complete = list[0];
 	m_completionCursor->setCursor( cur );
 	mView->m_oldProposals.clear();
 	mView->m_lastCompletionDir = true;
 	mView->m_lastMatch = QString::null;
+	return true;
 }
 
 QString YZModeCompletion::doComplete( YZView* mView, bool forward ) {
@@ -289,24 +301,29 @@ cmd_state YZModeCompletion::execCommand( YZView* mView, const QString& _key ) {
 	YZBuffer* mBuffer = mView->myBuffer();
 	YZCursor* m_completionStart = mView->m_completionStart;
 	YZCursor cur = *mView->getBufferCursor();
+	bool initOK = true;
 
 	if ( _key == "<CTRL>p" ) {
 		if (mView->m_word2Complete.isEmpty())
-			initCompletion( mView );
-		QString result = doComplete( mView, false );
-		if (!result.isNull()) {
-			mBuffer->action()->replaceText(mView, *m_completionStart, cur.getX()-m_completionStart->getX(), result);
-			mView->gotoxy(m_completionStart->getX()+result.length(),cur.getY());
+			initOK = initCompletion( mView );
+		if (initOK) {
+			QString result = doComplete( mView, false );
+			if (!result.isNull()) {
+				mBuffer->action()->replaceText(mView, *m_completionStart, cur.getX()-m_completionStart->getX(), result);
+				mView->gotoxy(m_completionStart->getX()+result.length(),cur.getY());
+			}
 		}
 		return CMD_OK;
 
 	} else if ( _key == "<CTRL>n" ) {
 		if (mView->m_word2Complete.isEmpty())
-			initCompletion( mView );
-		QString result = doComplete( mView, true );
-		if (!result.isNull()) {
-			mBuffer->action()->replaceText(mView, *m_completionStart, cur.getX()-m_completionStart->getX(), result);
-			mView->gotoxy(m_completionStart->getX()+result.length(),cur.getY());
+			initOK = initCompletion( mView );
+		if (initOK) {
+			QString result = doComplete( mView, true );
+			if (!result.isNull()) {
+				mBuffer->action()->replaceText(mView, *m_completionStart, cur.getX()-m_completionStart->getX(), result);
+				mView->gotoxy(m_completionStart->getX()+result.length(),cur.getY());
+			}
 		}
 		return CMD_OK;
 

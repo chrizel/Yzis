@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yzis\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-10 09:12+0100\n"
+"POT-Creation-Date: 2005-02-10 23:05+0100\n"
 "PO-Revision-Date: 2005-02-08 20:03+0100\n"
 "Last-Translator: Mickael Marchand <marchand@kde.org>\n"
 "Language-Team: <i18n@yzis.org>\n"
@@ -405,44 +405,44 @@ msgstr "[ Introdução ]"
 msgid "[ Ex ]"
 msgstr "[ Ex ]"
 
-#: ../libyzis/mode_ex.cpp:286
+#: ../libyzis/mode_ex.cpp:285
 msgid "Not an editor command: "
 msgstr "Não é um comando do editor: "
 
-#: ../libyzis/mode_ex.cpp:402 ../libyzis/mode_ex.cpp:415
-#: ../libyzis/mode_ex.cpp:422
+#: ../libyzis/mode_ex.cpp:401 ../libyzis/mode_ex.cpp:414
+#: ../libyzis/mode_ex.cpp:421
 msgid "One file is modified! Save it first..."
 msgstr "Um ficheiro foi modificado! Grave-o primeiro..."
 
-#: ../libyzis/mode_ex.cpp:435
+#: ../libyzis/mode_ex.cpp:434
 msgid "No next buffer"
 msgstr "Não há ficheiro seguinte"
 
-#: ../libyzis/mode_ex.cpp:446
+#: ../libyzis/mode_ex.cpp:445
 msgid "No previous buffer"
 msgstr "Não há ficheiro anterior"
 
-#: ../libyzis/mode_ex.cpp:484 ../libyzis/mode_ex.cpp:779
+#: ../libyzis/mode_ex.cpp:483 ../libyzis/mode_ex.cpp:783
 msgid "Please specify a filename"
 msgstr "Por favor, especifique um nome de ficheiro"
 
-#: ../libyzis/mode_ex.cpp:530 ../libyzis/mode_ex.cpp:668
+#: ../libyzis/mode_ex.cpp:534 ../libyzis/mode_ex.cpp:672
 msgid "Invalid option given : "
 msgstr "Opção inválida dada: "
 
-#: ../libyzis/mode_ex.cpp:555 ../libyzis/mode_ex.cpp:683
+#: ../libyzis/mode_ex.cpp:559 ../libyzis/mode_ex.cpp:687
 msgid "This option cannot be switched this way, this is a boolean option."
 msgstr ""
 "Esta opção não pode ser definida assim, trata-se de uma opção lógica "
 "(booleana)."
 
-#: ../libyzis/mode_ex.cpp:565 ../libyzis/mode_ex.cpp:586
-#: ../libyzis/mode_ex.cpp:617
+#: ../libyzis/mode_ex.cpp:569 ../libyzis/mode_ex.cpp:590
+#: ../libyzis/mode_ex.cpp:621
 msgid "This option is a global option which cannot be changed with setlocal"
 msgstr "Esta opção é global, não pode ser alterada com 'setlocal'"
 
-#: ../libyzis/mode_ex.cpp:581 ../libyzis/mode_ex.cpp:612
-#: ../libyzis/mode_ex.cpp:637 ../libyzis/mode_ex.cpp:707
+#: ../libyzis/mode_ex.cpp:585 ../libyzis/mode_ex.cpp:616
+#: ../libyzis/mode_ex.cpp:641 ../libyzis/mode_ex.cpp:711
 msgid "Invalid option given"
 msgstr "Opção inválida dada"
 
@@ -474,7 +474,7 @@ msgstr "[ Pesquisa invertida ]"
 msgid "[ Visual ]"
 msgstr "[ Visual ]"
 
-#: ../libyzis/mode_visual.cpp:172
+#: ../libyzis/mode_visual.cpp:182
 msgid "[ Visual Line ]"
 msgstr "[ Linha visual ]"
 

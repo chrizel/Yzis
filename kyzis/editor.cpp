@@ -119,7 +119,7 @@ void KYZisEdit::paintEvent( unsigned int clipx, unsigned int clipy, unsigned int
 }
 
 void KYZisEdit::setCursor( int c, int l ) {
-	yzDebug() << "setCursor" << endl;
+//	yzDebug() << "setCursor" << endl;
 	c = c - mParent->getDrawCurrentLeft () + marginLeft;
 	l -= mParent->getDrawCurrentTop ();
 	unsigned int x = GETX( c );

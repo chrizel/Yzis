@@ -58,16 +58,16 @@ void KYZisCursor::resize( unsigned int w, unsigned int h ) {
 }
 void KYZisCursor::hide() {
 	if ( ! shown ) return;
-	yzDebug() << "KYZisCursor::hide" << endl;
+//	yzDebug() << "KYZisCursor::hide" << endl;
 	drawCursor( bg );
 	shown = false;
 }
 void KYZisCursor::refresh() {
-	yzDebug() << "KYZisCursor::refresh" << endl;
+//	yzDebug() << "KYZisCursor::refresh" << endl;
 	move( mX, mY );
 }
 void KYZisCursor::move( unsigned int x, unsigned int y ) {
-	yzDebug() << "KYZisCursor::move" << endl;
+//	yzDebug() << "KYZisCursor::move" << endl;
 	if ( shown ) hide();
 	mX = x;
 	mY = y;

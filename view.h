@@ -78,14 +78,14 @@ class YZView {
 		/**
 		 * Returns the index of the first line displayed on the view
 		 */
-		unsigned int getCurrentTop() { return mCurrentTop; }
-		unsigned int getDrawCurrentTop() { return dCurrentTop; }
+		unsigned int getCurrentTop();
+		unsigned int getDrawCurrentTop();
 
 		/**
 		 * Returns the index of the first column displayed on the view
 		 */
-		unsigned int getCurrentLeft() { return mCurrentLeft; }
-		unsigned int getDrawCurrentLeft() { return dCurrentLeft; }
+		unsigned int getCurrentLeft();
+		unsigned int getDrawCurrentLeft();
 
 		/**
 		 * returns the number of line this view can display
@@ -100,7 +100,7 @@ class YZView {
 		/**
 		 * Returns true if the line @arg l is visible. False otherwise
 		 */
-		int	isLineVisible(unsigned int l) { return ( ( l >= dCurrentTop ) && ( l < mLinesVis + dCurrentTop ) ); }
+		bool	isLineVisible(unsigned int l);
 
 		/**
 		 * Returns true if the column @arg c is visible for @arg line ( expanding TABs ). False otherwise
@@ -738,6 +738,9 @@ class YZView {
 		 */
 		YZViewCursor* workCursor;
 
+		/* screen top-left cursor */
+		YZViewCursor* scrollCursor;
+
 		/**
 		 * are we moving cursor in draw mode ?
 		 */
@@ -753,26 +756,6 @@ class YZView {
 		 * Number of visible columns on the view
 		 */
 		unsigned int mColumnsVis;
-
-		/**
-		 * Index of the first visible line (buffer)
-		 */
-		unsigned int mCurrentTop;
-
-		/**
-		 * Index of the first visible line (buffer)
-		 */
-		unsigned int mCurrentLeft;
-
-		/**
-		 * Index of the first visible column (draw)
-		 */
-		unsigned int dCurrentLeft;
-
-		/**
-		 * Index of the first visible line (draw)
-		 */
-		unsigned int dCurrentTop;
 
 		/**
 		 * Index of the first visible line (buffer)

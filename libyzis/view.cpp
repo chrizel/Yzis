@@ -705,10 +705,24 @@ void YZView::applyGoto( bool applyCursor ) {
 			/* erase current selection */
 			selectionPool->clear( "VISUAL" );
 
-			if ( *mCursor > *mVisualCursor )
-				selectionPool->addSelection( "VISUAL", *mVisualCursor, *mCursor, *dVisualCursor, *dCursor );
-			else
-				selectionPool->addSelection( "VISUAL", *mCursor, *mVisualCursor, *dCursor, *dVisualCursor );
+			YZCursor bBegin( *mVisualCursor );
+			YZCursor dBegin( *dVisualCursor );
+			YZCursor bEnd( *mCursor );
+			YZCursor dEnd( *dCursor );
+
+			if ( bBegin > bEnd ) {
+				YZCursor bTmp( bEnd );
+				YZCursor dTmp( dEnd );
+				bEnd.setCursor( bBegin );
+				dEnd.setCursor( dBegin );
+				bBegin.setCursor( bTmp );
+				dBegin.setCursor( dTmp );
+			}
+			if ( visualEntireLines ) {
+				bBegin.setX( 0 );
+				bEnd.setX( mBuffer->textline( bEnd.getY() ).length() );
+			}
+			selectionPool->addSelection( "VISUAL", bBegin, bEnd, dBegin, dEnd );
 
 			/* apply new selection */
 			YZSelection new_cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
@@ -1185,17 +1199,37 @@ QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs /*args 
 	return QString::null;
 }
 
-QString YZView::gotoVisualMode(const QString&, YZCommandArgs ) {
+QString YZView::gotoVisualMode(const QString& inputsBuff, YZCommandArgs ) {
 	//store the from position
+	visualEntireLines = inputsBuff.startsWith( "V" );
 	*mVisualCursor = *mCursor;
 	*dVisualCursor = *dCursor;
+
+	YZCursor bEnd( *mCursor );
+	YZCursor dEnd( *dCursor );
+
+	if ( visualEntireLines ) {
+		mVisualCursor->setX( 0 );
+		dVisualCursor->setX( 0 );
+		bEnd.setX( mBuffer->textline( bEnd.getY() ).length() );
+	}
+
 	selectionPool->clear( "VISUAL" );
-	selectionPool->addSelection( "VISUAL", *mVisualCursor, *mVisualCursor, *dVisualCursor, *dVisualCursor );
-	yzDebug("Visual mode") << "Starting at " << *mCursor << endl;
+	selectionPool->addSelection( "VISUAL", *mVisualCursor, bEnd, *dVisualCursor, dEnd );
+	paintEvent( dCurrentLeft, dVisualCursor->getY(), mColumnsVis, 1 );
+	yzDebug("Visual mode") << "Starting at " << *mVisualCursor << endl;
 	switchModes(YZ_VIEW_MODE_VISUAL);
 	purgeInputBuffer();
 	return QString::null;
 }
+
+void YZView::leaveVisualMode( ) {
+	YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+	selectionPool->clear( "VISUAL" );
+	paintEvent( dCurrentLeft, cur_sel.drawFrom->getY() > 0 ? cur_sel.drawFrom->getY() - 1 : 0, mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 3 );
+	gotoCommandMode();
+}
+
 
 QString YZView::addMark( const QString& inputsBuff, YZCommandArgs ) {
 	mBuffer->marks()->add( inputsBuff[ 1 ], *mCursor, *dCursor );
@@ -1222,11 +1256,17 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 		QString lin = mBuffer->textline( mCursor->getY() );
 		list << lin.mid(mCursor->getX());
 	} else if ( mMode == YZ_VIEW_MODE_VISUAL && args.command.startsWith( "y" ) ) {
+
 		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-		selectionPool->clear( "VISUAL" );
+
 		list = mBuffer->getText( *cur_sel.from, *cur_sel.to );
-		paintEvent( dCurrentLeft, cur_sel.drawFrom->getY(), mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 1 );
-		gotoCommandMode();
+		if ( visualEntireLines ) {
+			list.insert( list.begin(), QString::null );
+			list.append( QString::null );
+		}
+
+		leaveVisualMode();
+
 	} else if ( args.command.startsWith( "y" ) ) {
 		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
 		//ok we have a motion , so delete till the end of the motion :)
@@ -1247,7 +1287,16 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 			from.setCursor( tmp );
 		}
 
+		bool entire = args.motion.startsWith( "'" ); // copy entire lines
+		if ( entire ) {
+			from.setX( 0 );
+			to.setX( mBuffer->textline( to.getY() ).length() );
+		}
 		list = mBuffer->getText(from, to);
+		if ( entire ) {
+			list.insert( list.begin(), QString::null );
+			list.append( QString::null );
+		}
 	}
 	
 	YZSession::mRegisters.setRegister( args.registr, list );

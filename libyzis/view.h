@@ -82,14 +82,6 @@ class YZView {
 		 */
 		void sendKey(const QString& key, const QString& modifiers);
 
-		/**
-		 * Translate Qt key/modifiers names into a full QString
-		 * @param key the received key
-		 * @param modifiers the received modifiers ( CTRL, SHIFT, ALT )
-		 * @return a QString like <CTRL>key
-		 */
-		QString buildCommand( const QString& key, int modifiers );
-
 		/** 
 		 * Returns the index of the first line displayed on the view
 		 */

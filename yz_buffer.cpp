@@ -31,6 +31,8 @@ void YZBuffer::add_char (int x, int y, QChar c)
 	/* do the actual modification */
 	l.insert(x, c);
 
+	text[y] = l;
+
 	/* inform the views */
 	post_event(mk_event_setline(y,&l));
 }
@@ -45,6 +47,8 @@ void YZBuffer::chg_char (int x, int y, QChar c)
 	/* do the actual modification */
 	l.remove(x,1);
 	l.insert(x, c);
+
+	text[y] = l;
 
 	/* inform the views */
 	post_event(mk_event_setline(y,&l));

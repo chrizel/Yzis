@@ -53,6 +53,8 @@ TestMovements = {} --class
     end
 
     function TestMovements:test_char_movement()
+        sendkeys( "<ESC>" )
+		clearBuffer()
         sendkeys( "i0123<ENTER>4567<ENTER>89AB<ENTER>CDEF<ESC>" )
         assertEquals( bufferContent(), "0123\n4567\n89AB\nCDEF" )
         assertEquals(mode(), MODE_NORMAL)

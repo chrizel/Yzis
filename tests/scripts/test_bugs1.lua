@@ -17,7 +17,7 @@ TestBugs1 = {} --class
 		sendkeys("ggA")
 		assertPos(1, 21)
 		sendkeys("<DEL>")
-		assertEquals(bufferContent(), "	void myfunction() { int doingsomething;")
+		assertEquals(bufferContent(), "	void myfunction() {	int doingsomething;")
 	end
 
 if not _REQUIREDNAME then

@@ -12,8 +12,12 @@
 
 class YZView;
 
+/**
+ * A buffer is the implementation of the content of a file
+ * A buffer can have multiple views. Every buffer is registered in a
+ * @ref YZSession
+ */
 class YZBuffer {
-
 public:
 	/** 
 	 * Creates a new buffer

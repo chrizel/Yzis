@@ -7,6 +7,11 @@
 
 #include "events.h"
 
+class YZSession;
+class YZBuffer;
+class YZView;
+class QString;
+
 /**
  * This is the interface that all GUIs must implement
  * Once you created an instance of it after initializing your GUI
@@ -15,11 +20,6 @@
  * IMPORTANT:
  * Register your GUI the earlier you can in your constructor
  */ 
-class YZSession;
-class YZBuffer;
-class YZView;
-class QString;
-
 class Gui {
 	public:
 

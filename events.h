@@ -36,6 +36,10 @@ enum yz_events {
  *
  * There will be some special events for that, but not yet
  */
+
+/**
+ * Structure to signal the modification of a line of text
+ */
 struct yz_event_invalidateline {
 	int	y;
 	yz_event_invalidateline() {
@@ -47,6 +51,7 @@ struct yz_event_invalidateline {
 };
 
 /**
+ * Structure to handle a cursor movement
  * x and y are NOT relative to the view
  */
 struct yz_event_setcursor {
@@ -64,6 +69,9 @@ struct yz_event_setcursor {
 	}
 };
 
+/**
+ * Signal to ask the GUI to repaint the whole screen
+ */
 struct yz_event_redraw {
 	yz_event_redraw() {
 	}
@@ -71,6 +79,9 @@ struct yz_event_redraw {
 	}
 };
 
+/**
+ * Signal to change the status bar text
+ */
 struct yz_event_setstatus {
 	QString text;
 	yz_event_setstatus() {
@@ -93,7 +104,6 @@ struct yz_event_setstatus {
  case YZ_EV_SETCURSOR:
  }
  */
-
 struct yz_event_t {
 	int view;
 	enum yz_events		id;
@@ -119,6 +129,17 @@ struct yz_event_t {
 
 typedef struct yz_event_t yz_event;
 
+/**
+ * Class to handle communication between the core and the GUIs.
+ * There are for now 5 event types defined :
+ * <UL>
+ * <LI>Status : updates the statusbar</LI>
+ * <LI>Cursor : moves the cursor</LI>
+ * <LI>InvalidateLine : a line has been changed</LI>
+ * <LI>Redraw : repaint the whole visible screen</LI>
+ * <LI>Noop : a fake event like the "idle" loop</LI>
+ * </UL>
+ */
 class YZEvent {
 	public:
 		YZEvent();

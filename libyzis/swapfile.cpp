@@ -49,19 +49,30 @@ void YZSwapFile::flush() {
 			for ( QValueList<swapEntry>::iterator it = mHistory.begin(); it != mHistory.end(); ++it ) {
 				stream << ( *it ).modifiers << "," << ( *it ).inputs << ",";
 			}
+/*			stream << endl << endl;
+			stream << "===REGISTERS KEYS===" << endl;
+			QValueList<QChar> keys = YZSession::mRegisters.keys();
+			QValueList<QStringList> values = YZSession::mRegisters.values();
+			for ( QValueList<QChar>::iterator it = keys.begin(); it != keys.end(); it++ ) {
+				stream << *it << endl;
+			}
+			stream << "===REGISTERS VALUES===" << endl;
+			for ( QValueList<QStringList>::iterator it = values.begin(); it != values.end(); it++ ) {
+			//	stream << *it << endl;
+			}
+			stream << "===REGISTERS END===" << endl;*/
 		}
 		f.close();
 	} else {
 		//XXX error
 	}
 	mHistory.clear(); //clear previous history
-	//dump registers XXX
 }
 
 void YZSwapFile::addToSwap( int inputs, int modifiers ) {
 	swapEntry e = { inputs, modifiers };
 	mHistory.append( e );
-	if ( mHistory.size() >= mParent->getLocalIntOption("updatecount") ) flush();
+	if ( mHistory.size() >= mParent->getLocalIntOption("General\\updatecount") ) flush();
 }
 
 void YZSwapFile::unlink() {

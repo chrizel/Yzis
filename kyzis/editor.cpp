@@ -27,9 +27,6 @@
 #include <kglobalsettings.h>
 #include "factory.h"
 
-static const QChar tabChar( '\t' );
-static const QChar spaceChar( ' ' );
-
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WNoAutoErase ) 
 {
@@ -64,26 +61,14 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 	mParent->setVisibleArea( columns, lines );
 }
 
+//c,l => draw positions
 void KYZisEdit::setCursor(int c, int l) {
 	//erase the previous cursor by redrawing the line 
 	mCursorShown = false; //lock
 	repaintContents( mCursorX * fontMetrics().maxWidth(), mCursorY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 	mCursorShown = true; //unlock
-	
-	//check if the line contains TABs
-	QString line = mParent->myBuffer()->textline( mCursorY + mParent->getCurrentTop() );
-	uint startcol = 0;
-	while ( !mParent->isColumnVisible(startcol++, l) && startcol <= line.length())
-		;
-	startcol--;
-	//new position of cursor
-	mCursorX = c - startcol;
-	mCursorY = l - mParent->getCurrentTop();
-	QString currentLine = mParent->myBuffer()->textline( mCursorY + mParent->getCurrentTop() ).mid( startcol, mParent->getColumnsVisible() );
-
-	mCursorX = 0;
-	for ( uint tmp = 0; tmp < c - startcol; tmp++ )
-		mCursorX +=  currentLine[ tmp ] == tabChar ? 8 : 1 ;
+	mCursorX = c - mParent->getDrawCurrentLeft ();
+	mCursorY = l - mParent->getDrawCurrentTop ();
 	
 	drawCursorAt( mCursorX, mCursorY );
 }
@@ -138,61 +123,53 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 }
 
 void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
-	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::ExpandTabs | Qt::SingleLine;
+	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::SingleLine;
 
-	for ( uint line = mParent->getCurrentTop(); line < mParent->getCurrentTop() + mParent->getLinesVisible() ; line++ ) {
-		uint i = line - mParent->getCurrentTop(); //relative line number
-		if ( fontMetrics().lineSpacing() * i >= (  unsigned int )clipy && fontMetrics().lineSpacing() * i < (  unsigned int ) (  clipy+cliph ) ) {
-			QRect clip(0, i * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
+	cliph = cliph ? cliph / fontMetrics().lineSpacing() : 0;
+	clipy = clipy ? clipy / fontMetrics().lineSpacing() : 0;
+
+//	yzDebug() << "drawContents: clipy=" << clipy << ",cliph=" << cliph << endl;
+
+	mParent->initDraw( );
+
+	int currentY = 0;
+	while ( mParent->drawNextLine( ) && cliph > 0) {
+		if (clipy == 0) {
+			int currentX = 0;
+
+			QRect clip(0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
 			p->eraseRect(clip);
-			QString toDraw = mParent->myBuffer()->textline( line );
-			if (mParent->myBuffer()->lineCount() > line && !toDraw.isNull() && !toDraw.isEmpty() && !mParent->myBuffer()->introShown() ) {
-				uint startcol = 0;
-				while ( !mParent->isColumnVisible(startcol++, line) && startcol <= toDraw.length())
-					;
-				startcol--;
-				toDraw = toDraw.mid( startcol );
 
-				int currentX = 0;
-				const uchar* a = NULL;
-				YZLine *yl = mParent->myBuffer()->yzline( line );
-				if ( yl->length() != 0 ) a = yl->attributes();
-				YzisAttribute *at = 0L;
-				YzisHighlighting *highlight = mParent->myBuffer()->highlight();
-				if ( highlight )
-					at = highlight->attributes( 0 /*only one schema*/ )->data( );
-				uint atLen = at ? highlight->attributes( 0 /*only one schema*/ )->size() : 0;
-				bool noAttribs = !a;
-				a = a + startcol;
-				for ( uint tmp = 0; tmp < toDraw.length(); tmp++ ) {
-					YzisAttribute hl;
-					YzisAttribute *curAt = ( !noAttribs && (*a) >= atLen ) ?  &at[ 0 ] : &at[*a];
-					if ( curAt ) {
-						hl+=*curAt;
-						p->setPen(hl.textColor());
-						//p->setFont(hl.font(myFont));
-					}
-					if ( toDraw[ tmp ] == tabChar ) {
-						QString spaces = "        ";
-						QRect clip3(currentX, ( i ) * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing());
-						p->drawText(clip3,flag,spaces);
-						currentX += fontMetrics().maxWidth() * 8;
-					} else {
-						QRect clip2(currentX, ( i ) * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing());
-						p->drawText(clip2,flag,toDraw.mid( tmp,1 ));
-						currentX+=fontMetrics().maxWidth();
-					}
-					a++;
+			while ( mParent->drawNextCol( ) ) {
+				QRect clip2(currentX, currentY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing());
+
+				QColor c = mParent->drawColor( );
+				if ( c.isValid() ) {
+					p->setPen( c );
 				}
-			} else if (mParent->myBuffer()->introShown()) {
-				p->drawText(clip,flag ,toDraw);
-			} else if (mParent->myBuffer()->lineCount() <= line) {
-				p->drawText(clip,flag ,"~");
+				
+				p->drawText(clip2,flag, mParent->drawChar() );
+				
+				currentX += mParent->drawLength( ) * fontMetrics().maxWidth();
 			}
-			if ( mCursorShown && mCursorY + mParent->getCurrentTop() == line) {
-				setCursor( mParent->getCursor()->getX(), mCursorY + mParent->getCurrentTop() );
-			}
+
+			currentY += mParent->drawHeight( );
+			cliph -= mParent->drawHeight( );
+		} else {
+			--clipy;
+			++currentY;
 		}
+	}
+	while ( cliph > 0 && currentY < ( height() / fontMetrics().lineSpacing() ) ) {
+		QRect clip(0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
+		p->eraseRect(clip);
+		p->drawText(clip,flag ,"~");
+
+		++currentY;
+		--cliph;
+	}
+	if ( mCursorShown ) {
+		setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
 	}
 }
 

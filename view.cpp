@@ -197,6 +197,8 @@ void YZView::sendKey( int c, int modifiers) {
 		return;
 	}
 
+	bool cindent = getLocalBoolOption( "cindent" );
+
 	switch(mMode) {
 		case YZ_VIEW_MODE_INSERT:
 			switch ( c ) {
@@ -213,14 +215,26 @@ void YZView::sendKey( int c, int modifiers) {
 					if (mCursor->getX() > 0) moveLeft();
 					gotoPreviousMode();
 					return;
-				case Qt::Key_Return:
-					test = mCursor->getX() == 0;
-					mBuffer->action()->insertNewLine( this, mCursor );
-					if ( test ) {
-						gotoxy( 0, mCursor->getY() + 1 );
-						stickyCol = dCursor->getX( );
+				case Qt::Key_Return: 
+					{
+						test = mCursor->getX() == 0;
+						QString currentLine = mBuffer->textline( mCursor->getY() );
+						if ( cindent && currentLine.simplifyWhiteSpace().endsWith( "{" ) ) {
+							QRegExp rx("^(\\t*\\s*\\t*\\s*).*$");
+							QString newline = "";
+							if ( rx.exactMatch( currentLine ) )
+								newline = rx.cap( 1 ); //that should have all tabs and spaces from the previous line
+							newline.prepend( "\t" ); //add a TAB for the nextline
+							mBuffer->action()->insertLine( this, YZCursor(this, mCursor->getX( ), mCursor->getY() + 1 ), newline );
+							gotoxy( newline.length(), mCursor->getY() + 1 );
+						} else
+							mBuffer->action()->insertNewLine( this, mCursor );
+						if ( test ) {
+							gotoxy( 0, mCursor->getY() + 1 );
+							stickyCol = dCursor->getX( );
+						}
+						return;
 					}
-					return;
 				case Qt::Key_Down:
 					moveDown( );
 					return;
@@ -255,6 +269,8 @@ void YZView::sendKey( int c, int modifiers) {
 					key = "\t";
 				default:
 					mBuffer->action()->insertChar( this, mCursor, key );
+					if ( cindent && key == "}" )
+						reindent(mCursor->getX()-1, mCursor->getY());
 					return;
 			}
 			break;
@@ -509,6 +525,22 @@ void YZView::sendKey( int c, int modifiers) {
 			yzDebug() << "Unknown MODE" << endl;
 			purgeInputBuffer();
 	};
+}
+
+void YZView::reindent( unsigned int X, unsigned int Y ) {
+	yzDebug() << "Reindent " << endl;
+	QRegExp rx("^(\\t*\\s*\\t*\\s*).*$"); //regexp to get all tabs and spaces
+	QString currentLine = mBuffer->textline( Y ).stripWhiteSpace();
+	bool found = false;
+	YZCursor *cur = new YZCursor ( this, X, Y );
+	YZCursor match = mBuffer->action()->match(this, *cur, &found);
+	if ( !found ) return;
+	yzDebug() << "Match found" << endl;
+	QString matchLine = mBuffer->textline( match.getY() );
+	if ( rx.exactMatch( currentLine ) )
+		currentLine.prepend( rx.cap( 1 ) ); //that should have all tabs and spaces from the previous line
+	mBuffer->action()->replaceLine( this, mCursor, currentLine );
+	gotoxy( currentLine.length(), mCursor->getY() );
 }
 
 void YZView::updateCursor() {
@@ -1013,6 +1045,14 @@ void YZView::initReplaceChar( const YZCursor& pos, unsigned int /*len*/, bool /*
 }
 
 void YZView::applyReplaceChar( const YZCursor& pos, unsigned int len, bool applyCursor ) {
+	applyChanges( pos, len, applyCursor );
+}
+
+void YZView::initReplaceLine( const YZCursor& pos, bool /*applyCursor*/ ) {
+	initChanges( pos );
+}
+
+void YZView::applyReplaceLine( const YZCursor& pos, unsigned int len, bool applyCursor ) {
 	applyChanges( pos, len, applyCursor );
 }
 

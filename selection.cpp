@@ -136,11 +136,20 @@ void YZSelectionPool::delSelection( const QString& layout, const YZCursor& from,
 void YZSelectionPool::clear( ) {
 	YZSelectionLayout::Iterator it;
 	for ( it = selectionPool.begin(); it != selectionPool.end(); ++it )
-		it.data().clear( );
+		clear( it.key() );
 }
 
 void YZSelectionPool::clear( const QString& layout ) {
+	YZSelectionMap::Iterator it;
+	for ( it = selectionPool[ layout ].begin(); it != selectionPool[ layout ].end(); ++it ) {
+		delete it.data().from;
+		delete it.data().to;
+		delete it.data().drawFrom;
+		delete it.data().drawTo;
+	}
+		
 	selectionPool[ layout ].clear( );
+	
 }
 
 YZSelectionMap  YZSelectionPool::layout( const QString& layout ) {
@@ -176,7 +185,13 @@ void YZSelectionPool::removeSelection( const QString& layout, unsigned int begin
 	for ( i = begin; i < size - len; i++ ) {
 		selectionPool[ layout ][ i ] = selectionPool[ layout ][ i + len ];
 	}
-	for ( ; i < size; i++ ) selectionPool[ layout ].remove( i );
+	for ( ; i < size; i++ ) {
+		delete selectionPool[ layout ][ i ].from;
+		delete selectionPool[ layout ][ i ].to;
+		delete selectionPool[ layout ][ i ].drawFrom;
+		delete selectionPool[ layout ][ i ].drawTo;
+		selectionPool[ layout ].remove( i );
+	}
 }
 
 int YZSelectionPool::locatePosition( const QString& layout, const YZCursor& pos, bool * isSelected ) {

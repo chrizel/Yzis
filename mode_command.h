@@ -245,6 +245,7 @@ class YZModeCommand : public YZMode {
 		void macro(const YZCommandArgs &args);
 		void replayMacro(const YZCommandArgs &args);
 		void deleteChar(const YZCommandArgs &args);
+		void deleteCharBackwards(const YZCommandArgs &args);
 		void redisplay(const YZCommandArgs &args);
 		void changeCase(const YZCommandArgs &args);
 		void lineToUpperCase(const YZCommandArgs &args);

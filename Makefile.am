@@ -31,7 +31,7 @@ apidox:
 	fi; \
 	cp $(top_srcdir)/admin/Doxyfile.global yzis.doxyfile; \
 	echo "PROJECT_NAME        = Yzis" >> yzis.doxyfile; \
-	echo "PROJECT_NUMBER      = \"Version M1\"" >> yzis.doxyfile; \
+	echo "PROJECT_NUMBER      = \"Version M2\"" >> yzis.doxyfile; \
 	echo "INPUT               = $(srcdir)" >> yzis.doxyfile; \
 	echo "OUTPUT_DIRECTORY    = doc/api" >> yzis.doxyfile; \
 	echo "HTML_OUTPUT         = html" >> yzis.doxyfile; \
@@ -49,9 +49,6 @@ apidox:
 install-data-local: install-translations
 
 test: 
-	cd tests/cppunit && qmake cppunit.pro -o Makefile
-	cd tests/cppunit && make
-	cd tests && qmake tests.pro -o Makefile
 	cd tests && make && ./env_tests
 
 update-tr:

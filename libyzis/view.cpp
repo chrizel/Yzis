@@ -32,6 +32,8 @@
 #include "undo.h"
 #include "printer.h"
 
+#define STICKY_COL_ENDLINE -1
+
 static const QChar tabChar( '\t' );
 static QColor fake;
 
@@ -53,6 +55,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	dLineLength = 1;
 	mLineLength = 1;
 	dWrapNextLine = false;
+
+	stickyCol = 0;
 
 	mMaxX = 0;
 	mMode = YZ_VIEW_MODE_COMMAND;
@@ -671,10 +675,16 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 }
 
 QString YZView::moveDown( const QString& , YZCommandArgs args ) {
-	int nb_lines=args.count;
+	unsigned int nb_lines=args.count;
 
 	//execute the code
-	gotodxy( dCursor->getX(), mCursor->getY() + nb_lines );
+	unsigned int nextLine = mCursor->getY() + nb_lines;
+	if ( nextLine < mBuffer->lineCount() ) {
+		if ( stickyCol == STICKY_COL_ENDLINE )
+			gotoxy( mBuffer->textline( nextLine ).length(), nextLine );
+		else
+			gotodxy( stickyCol, nextLine );
+	}
 
 	//reset the input buffer
 	purgeInputBuffer();
@@ -687,7 +697,11 @@ QString YZView::moveUp( const QString& , YZCommandArgs args ) {
 	unsigned int nb_lines=args.count;
 
 	//execute the code
-	gotodxy( dCursor->getX(), mCursor->getY() > nb_lines ? mCursor->getY() - nb_lines : 0 );
+	unsigned int nextLine = mCursor->getY() > nb_lines ? mCursor->getY() - nb_lines : 0;
+	if ( stickyCol == STICKY_COL_ENDLINE )
+		gotoxy( mBuffer->textline( nextLine ).length(), nextLine );
+	else
+		gotodxy( stickyCol, nextLine );
 
 	//reset the input buffer
 	purgeInputBuffer();
@@ -702,6 +716,8 @@ QString YZView::moveLeft( const QString& , YZCommandArgs args ) {
 	nb_cols = QMIN( mCursor->getX(), nb_cols );
 	gotoxy( mCursor->getX() ? mCursor->getX() - nb_cols : 0 , mCursor->getY());
 
+	stickyCol = dCursor->getX( );
+
 	//reset the input buffer
 	purgeInputBuffer();
 
@@ -714,6 +730,8 @@ QString YZView::moveRight( const QString& , YZCommandArgs args ) {
 	
 	//execute the code
 	gotoxy(mCursor->getX() + nb_cols , mCursor->getY());
+
+	stickyCol = dCursor->getX( );
 	
 	//reset the input buffer
 	purgeInputBuffer();
@@ -772,15 +790,16 @@ QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs ) {
 		}
 	}
 
-	/* if line is null, we do not want to go to line -1,
-	 * this can happen if the file is empty for exemple */
-	if ( !line ) line++;
-	if (line > mBuffer->lineCount()) line = mBuffer->lineCount();
+	if ( line ) --line;
+	if (line >= mBuffer->lineCount()) line = mBuffer->lineCount() - 1;
 
 	if (/* XXX configuration startofline */ 1 ) {
-		gotoxy(mBuffer->firstNonBlankChar(line-1), line-1);
+		gotoxy(mBuffer->firstNonBlankChar(line), line);
 	} else {
-		gotodxy(dCursor->getX(), line-1);
+		if ( stickyCol == STICKY_COL_ENDLINE )
+			gotoxy( mBuffer->textline( line ).length(), line );
+		else
+			gotodxy( stickyCol, line );
 	}
 
 	purgeInputBuffer();
@@ -792,6 +811,8 @@ QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs ) {
 
 QString YZView::moveToEndOfLine( const QString&, YZCommandArgs ) {
 	gotoxy( mBuffer->textline( mCursor->getY() ).length( ), mCursor->getY());
+
+	stickyCol = STICKY_COL_ENDLINE;
 	
 	purgeInputBuffer();
 	return QString::null;

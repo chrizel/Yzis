@@ -595,6 +595,7 @@ class YZView {
 		void initGoto( );
 		void updateCurLine( );
 
+		int stickyCol;
 
 		bool wrapNextLine;
 		bool dWrapNextLine;

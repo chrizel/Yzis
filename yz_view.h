@@ -106,6 +106,11 @@ public:
 	 */
 	QString gotoReplaceMode( QString inputsBuff = QString::null );
 
+	/**
+	 * Go to line of file
+	 */
+	QString gotoLine( QString inputsBuff = QString::null );
+
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
 	int		lines_vis;	/** number of visible lines */
@@ -119,13 +124,7 @@ protected:
 		YZ_VIEW_MODE_COMMAND 
 	}		mode;		/** mode of this view */
 
-
-	/* fifo event loop. really basic now */
-	//FIXME replace with a QMap
 	QValueList<yz_event> events;
-//	yz_event	events[YZ_EVENT_EVENTS_MAX];
-//	int		events_nb_begin;
-//	int		events_nb_last;
 
 	/*
 	 * mode handling (on a per-view basis, no?)

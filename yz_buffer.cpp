@@ -84,7 +84,7 @@ QString	YZBuffer::findLine(int line) {
 	else return text[ line ];
 }
 
-void YZBuffer::load(void) {
+void YZBuffer::load() {
 	QFile file( path );
 	if ( file.open( IO_ReadOnly ) ) {
 		QTextStream stream( &file );
@@ -97,10 +97,18 @@ void YZBuffer::load(void) {
 	updateAllViews();
 }
 
-void YZBuffer::save(void) {
+void YZBuffer::save() {
 	if (path.isEmpty()) {
 		//error("called though path is null, ignored");
 		return;
 	}
+	QFile file( path );
+	if ( file.open( IO_WriteOnly ) ) {
+		QTextStream stream( &file );
+		for ( QStringList::Iterator it = text.begin(); it != text.end(); ++it )
+			stream << *it << "\n";
+		file.close();
+	}
 }
+
 

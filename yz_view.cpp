@@ -94,7 +94,7 @@ void YZView::updateCursor(int x, int y) {
 			cursor->setX( x > current_maxx ? current_maxx : x );
 		}
 	}
-	postEvent( mk_event_setcursor(cursor->getX(),cursor->getY()-current));
+	postEvent( mk_event_setcursor(cursor->getX(),cursor->getY()));
 }
 
 yz_event YZView::fetchNextEvent() {
@@ -318,3 +318,40 @@ QString YZView::gotoReplaceMode(QString) {
 
 //QString YZView::gotoExMode(QString) {
 //}
+
+QString YZView::gotoLine(QString inputsBuff) {
+	int line=0;
+	//check arguments
+	//can be : 'gg' (goto Top),'G' or a number with one of them
+	if ( !inputsBuff.isNull() ) {
+		//try to find a number
+		int i=0;
+		while ( inputsBuff[i].isDigit() )
+			i++; //go on
+		bool test;
+		line = inputsBuff.left( i ).toInt( &test );
+		if ( !test ) {
+			if ( inputsBuff.startsWith( "gg" ) ) line=0;
+			else line=buffer->text.count(); //there shouldn't be any other solution
+		}
+	}
+	
+	if ( line==0 ) cursor->setX( 0 ); //for gg we go at beginning of line (should be first non blank character XXX)
+	cursor->setY(line);
+	//execute the code
+	updateCursor( );
+
+/**	if ( current + lines_vis < cursor->getY() ) {
+		//scroll down => GUI
+		if ( gui_manager ) //gui_manager necessarly exists here, these are useless now
+			gui_manager->scrollDown( cursor->getY() - current - lines_vis);
+		current+= nb_lines; //bof XXX
+	} */
+
+	//reset the input buffer
+	purgeInputBuffer();
+	
+	//return something
+	return QString::null;
+}
+

@@ -261,15 +261,15 @@ class YZView {
 		QString moveUp( unsigned int nb_lines = 1 );
 
 		/**
-		 * moves the cursor of the current view left
+		 * moves the cursor of the current view to the left
 		 */
-		QString moveLeft( unsigned int nb_cols = 1 );
+		QString moveLeft(int nb_cols=1, bool wrap=false);
 
 		/**
-		 * moves the cursor of the current view right
+		 * moves the cursor of the current view to the right
 		 */
-		QString moveRight( unsigned int nb_cols = 1 );
-
+		QString moveRight(int nb_cols=1, bool wrap=false);
+		
 		/**
 		 * moves the cursor of the current view to the first non-blank character 
 		 * of the current line
@@ -809,7 +809,7 @@ class YZView {
 		YZSession *mSession;
 
 		/**
-		 * This is the worker cursor, the one which we direclty modify in our draw engine
+		 * This is the worker cursor, the one which we directly modify in our draw engine
 		 */
 		YZViewCursor* workCursor;
 

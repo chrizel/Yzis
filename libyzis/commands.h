@@ -47,9 +47,12 @@ class YZExLua;
 class YZBuffer;
 class YZView;
 class YZCursor;
+class YZCommand;
 
 /** holds the arguments a command needs in order to execute */
 struct YZCommandArgs {
+	//the command that is executed
+	const YZCommand *cmd;
 	//the origin of inputs
 	YZView *view;
 	//the registers to operate upon
@@ -61,14 +64,16 @@ struct YZCommandArgs {
 	//the visual mode selection
 	const YZSelectionMap *selection;
 
-	YZCommandArgs(YZView *v, const QValueList<QChar> &r, unsigned int c, QString a) {
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, QString a) {
+		cmd=_cmd;
 		view=v;
 		regs=r;
 		count=c;
 		arg=a;
 		selection=0;
 	}
-	YZCommandArgs(YZView *v, const QValueList<QChar> &r, unsigned int c, const YZSelectionMap *const s) {
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, const YZSelectionMap *const s) {
+		cmd=_cmd;
 		view=v;
 		regs=r;
 		count=c;
@@ -103,32 +108,30 @@ enum cmd_state {
  * after initialization. */
 class YZCommand {
 public:
-	YZCommand( const QString &keySeq, PoolMethod pm, cmd_arg a=ARG_NONE, bool m=false) {
+	YZCommand( const QString &keySeq, PoolMethod pm, cmd_arg a=ARG_NONE) {
 		mKeySeq=keySeq;
 		mPoolMethod=pm;
 		mArg=a;
-		mMotion=m;
 	}
+	virtual ~YZCommand() {}
+	
 	QString keySeq() const { return mKeySeq; }
 	const PoolMethod &poolMethod() const { return mPoolMethod; }
-	bool isMotion() const { return mMotion; }
 	cmd_arg arg() const { return mArg; }
-
-	/** @return true if this is a motion and s is a valid key sequence + argument */
-	bool matches(const QString &s, bool fully=true) const;
 
 	static bool isMark(const QChar &c) {
 		return c >= 'a' && c <= 'z';
 	}
-private:
+protected:
 	/** the key sequence the command "listens to" */
 	QString mKeySeq;
 	/** the method of @ref YZCommandPool which will be called in order to execute the command */
 	PoolMethod mPoolMethod;
-	bool mMotion;
 	/** indicates what sort of argument this command takes */
 	cmd_arg mArg;
 };
+
+class YZNewMotionArgs;
 
 //oh please don't instanciate me twice !
 class YZCommandPool {
@@ -167,21 +170,31 @@ public:
 	void initPool();
 	void initExPool();
 
-	/**
-	 * This function is the entry point to execute any normal command in Yzis
-	 */
+	/** This function is the entry point to execute any normal command in Yzis */
 	cmd_state execCommand(YZView *view, const QString& inputs);
-
-	/**
-	 * Entry point for ex functions ( scripting )
-	 */
+	/** Entry point for ex functions ( scripting ) */
 	void execExCommand(YZView *view, const QString& inputs);
 	
+private:
+	/** Parses the string inputs, which must be a valid motion + argument,
+	 * and executes the corresponding motion function. */
+	YZCursor move(YZView *view, const QString &inputs, unsigned int count);
+
+	// methods implementing motions
+	YZCursor moveLeft(const YZNewMotionArgs &args);
+	YZCursor moveRight(const YZNewMotionArgs &args);
+	YZCursor moveLeftWrap(const YZNewMotionArgs &args);
+	YZCursor moveRightWrap(const YZNewMotionArgs &args);
+	YZCursor moveDown(const YZNewMotionArgs &args);
+	YZCursor moveUp(const YZNewMotionArgs &args);
+	YZCursor moveWordForward(const YZNewMotionArgs &args);
+	YZCursor gotoSOL(const YZNewMotionArgs &args);
+	YZCursor gotoEOL(const YZNewMotionArgs &args);
+	YZCursor find(const YZNewMotionArgs &args);
+		
 	// methods implementing commands
-	QString moveLeft(const YZCommandArgs &args);
-	QString moveRight(const YZCommandArgs &args);
-	QString moveDown(const YZCommandArgs &args);
-	QString moveUp(const YZCommandArgs &args);
+	QString execMotion(const YZCommandArgs &args);
+	QString moveWordForward(const YZCommandArgs &args);
 	QString appendAtEOL(const YZCommandArgs &args);
 	QString append(const YZCommandArgs &args);
 	QString changeLine(const YZCommandArgs &args);
@@ -210,14 +223,50 @@ public:
 	QString searchPrev(const YZCommandArgs &args);
 	QString change(const YZCommandArgs &args);
 	QString del(const YZCommandArgs &args);
-	QString find(const YZCommandArgs &args);
 	QString yank(const YZCommandArgs &args);
 	QString mark(const YZCommandArgs &args);
 	QString gotoMark(const YZCommandArgs &args);
 	QString undo(const YZCommandArgs &args);
-	QString gotoSOL(const YZCommandArgs &args);
-	QString gotoEOL(const YZCommandArgs &args);
-	QString moveWordForward(const YZCommandArgs &args);
+	
+	friend class YZNewMotion;
 };
+
+struct YZNewMotionArgs {
+	YZNewMotionArgs(YZView *v, unsigned int cnt=1, QString a=QString::null) {
+		view=v;
+		count=cnt;
+		arg=a;
+	}
+	
+	YZView *view;
+	unsigned int count;
+	QString arg;
+};
+
+typedef YZCursor (YZCommandPool::*MotionMethod) (const YZNewMotionArgs&);
+
+/** This class represents a command that is also a motion. Its new member is
+ * mMotionMethod, which is also a pointer to a member function of
+ * @ref YZCommandPool, but which does nothing but calculate the new position
+ * of the cursor. This way, other commands can easily "call" this motion by executing
+ * the function whose pointer they can get with @ref motionMethod().
+ * When this motion is executed as a command, the function
+ * YZCommandPool::execMotion() is called which itself calls the function pointed
+ * to by mMotionMethod.
+ */
+class YZNewMotion : public YZCommand {
+public:
+	YZNewMotion(const QString &keySeq, MotionMethod mm, cmd_arg a=ARG_NONE)
+	: YZCommand(keySeq, &YZCommandPool::execMotion, a) {
+		mMotionMethod=mm;
+	}
+	virtual ~YZNewMotion() {}
+	const MotionMethod &motionMethod() const { return mMotionMethod; }
+	/** @return true if s is a valid key sequence + argument */
+	bool matches(const QString &s, bool fully=true) const;
+protected:
+	MotionMethod mMotionMethod;
+};
+
 
 #endif

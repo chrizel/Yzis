@@ -305,10 +305,10 @@ void YZView::sendKey( int c, int modifiers) {
 					moveDown( );
 					return;
 				case Qt::Key_Left:
-					moveLeft( );
+					moveLeft();
 					return;
 				case Qt::Key_Right:
-					moveRight( );
+					moveRight();
 					return;
 				case Qt::Key_Up:
 					moveUp( );
@@ -373,10 +373,10 @@ void YZView::sendKey( int c, int modifiers) {
 					return;
 				case Qt::Key_Backspace:
 				case Qt::Key_Left:
-					moveLeft( );
+					moveLeft();
 					return;
 				case Qt::Key_Right:
-					moveRight( );
+					moveRight();
 					return;
 				case Qt::Key_Up:
 					moveUp( );
@@ -558,6 +558,9 @@ void YZView::sendKey( int c, int modifiers) {
 					GOTO_STICKY_COL( mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
 					purgeInputBuffer();
 					return;
+				case Qt::Key_Backspace:
+					key="<BS>";
+					break;
 				default:
 					break;
 			}
@@ -925,11 +928,28 @@ QString YZView::moveUp( unsigned int nb_lines ) {
 	return QString::null;
 }
 
-QString YZView::moveLeft( unsigned int nb_cols ) {
-	//execute the code
-	unsigned int bX = mainCursor->bufferX();
-	nb_cols = QMIN( bX, nb_cols );
-	gotoxy( bX ? bX - nb_cols : 0 , mainCursor->bufferY());
+
+QString YZView::moveLeft( int nb_cols, bool wrap ) {
+	int x=int(mainCursor->bufferX());
+	unsigned int y=mainCursor->bufferY();
+	x-=nb_cols;
+	if(x<0) {
+		if(wrap) {
+			int line_length;
+			int diff=-x; // the number of columns we moved too far
+			x=0;
+			while(diff>0 && y>=1) {
+				// go one line up
+				line_length = myBuffer()->textline(--y).length();
+				yzDebug() << "line length: " << line_length << endl;
+				diff-=line_length+1;
+			}
+			// if we moved too far, go back
+			if(diff < 0) x-=diff;
+		} else
+			x=0;
+	}
+	gotoxy((unsigned int)(x), y);
 
 	UPDATE_STICKY_COL;
 
@@ -937,12 +957,29 @@ QString YZView::moveLeft( unsigned int nb_cols ) {
 	return QString::null;
 }
 
-QString YZView::moveRight( unsigned int nb_cols ) {
-	//execute the code
-	gotoxy( mainCursor->bufferX() + nb_cols , mainCursor->bufferY() );
+QString YZView::moveRight( int nb_cols, bool wrap ) {
+	int x=int(mainCursor->bufferX());
+	unsigned int y=mainCursor->bufferY();
+	x+=nb_cols;
+	if(x>=myBuffer()->textline(y).length()) {
+		if(wrap) {
+			int line_length=myBuffer()->textline(y).length();
+			int diff=x-line_length+1; // the number of columns we moved too far
+			x=line_length-1;
+			while(diff>0 && y<myBuffer()->lineCount()-1) {
+				// go one line down
+				line_length = myBuffer()->textline(++y).length();
+				diff-=line_length+1;
+			}
+			// if we moved too far, go back
+			if(diff < 0) x+=diff;
+		} else
+			x=myBuffer()->textline(y).length()-1;
+	}
+	gotoxy((unsigned int)(x), y);
 
 	UPDATE_STICKY_COL;
-	
+
 	//return something
 	return QString::null;
 }

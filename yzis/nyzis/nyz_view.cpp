@@ -1,11 +1,9 @@
 /**
- * nyz_view.cpp
+ * $id$
  */
 
 #include "nyz_view.h"
 #include "nyz_session.h"
-
-
 
 NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_vis)
 	: YZView(b,lines_vis)
@@ -15,6 +13,9 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_v
 
 	update_info();
 	//debug("w,h are %d,%d",w,h);
+}
+
+NYZView::~NYZView(){
 }
 
 void NYZView::postEvent( yz_event ev ) {
@@ -29,7 +30,7 @@ void NYZView::event_loop()
 		/* this is a _basic_ event loop... will be improved */
 		c = getch();
 		if (c!=ERR)
-			send_char( c );
+			sendChar( c );
 		flush_events();
 	}
 }
@@ -40,7 +41,7 @@ void NYZView::flush_events(void)
 	yz_event * e;
 
 	/* flush event list */
-	while ( (e=fetch_event()) != NULL )
+	while ( (e=fetchEvent()) != NULL )
 		handle_event(e);
 }
 

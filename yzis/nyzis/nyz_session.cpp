@@ -1,8 +1,8 @@
-
+/**
+ * $id$
+ */
 
 #include "nyz_session.h"
-
-
 
 NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	:YZSession(_session_name)

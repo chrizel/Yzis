@@ -1,10 +1,10 @@
+/**
+ * $id$
+ */
 #ifndef NYZ_VIEW_H
 #define NYZ_VIEW_H
 /**
- * nyz_view.h
- *
  * ncurses-based GUI for yzis
- *
  */
 
 #include "yz_view.h"
@@ -12,7 +12,6 @@
 #include <curses.h>
 #include <qstringlist.h>
 #include <qmap.h>
-
 
 typedef QMap<int,QString> NYZLine;
 
@@ -25,6 +24,7 @@ public:
 	  * this view can display
 	  */
 	NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_vis);
+	virtual ~NYZView();
 
 	void event_loop();
 	void flush_events();
@@ -47,6 +47,5 @@ private:
 	void update_info(void) { getmaxyx(window, h, w); }
 
 };
-
 
 #endif // NYZ_VIEW_H

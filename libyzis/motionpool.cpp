@@ -22,7 +22,7 @@
 #include "cursor.h"
 #include "debug.h"
 
-static YZMotion nullMotion;
+static YZMotion nullMotion("",REGEXP,0,0);
 
 YZMotionPool::YZMotionPool(){
 }
@@ -32,28 +32,38 @@ YZMotionPool::~YZMotionPool() {
 }
 
 void YZMotionPool::initPool() {
-	YZMotion t = { "\\b\\w+\\b", REGEXP, 0, 0};
-	addMotion (t, "[0-9]+w" );
+	addMotion (YZMotion( "\\b\\w+\\b", REGEXP, 0, 0 ) , "[0-9]+w" );
+	addMotion (YZMotion( "$", REGEXP, 0, 0 ), "\\$" );
 }
 
 void YZMotionPool::addMotion(const YZMotion& regexp, const QString& key){
 	pool.insert( key,regexp );
 }
 
-YZMotion& YZMotionPool::findMotion ( const QString& inputs ) {
+YZMotion& YZMotionPool::findMotion ( const QString& inputs, bool *ok ) {
 	QMap<QString,YZMotion>::iterator it;
 	for ( it = pool.begin(); it!=pool.end(); it++) {
 		YZMotion& t = it.data();
 		QRegExp rex ( it.key() );
 		if ( rex.exactMatch( inputs ) ) {
+			*ok = true;
 			return t;
 		}
 	}
+	*ok = false;
 	return nullMotion;
 }
 
+bool YZMotionPool::isValid( const QString& inputs ) {
+	bool ok = false;
+	findMotion( inputs, &ok );
+	return ok;
+}
+
 void YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCursor *result ) {
-	YZMotion& motion = findMotion(inputsMotion);
+	bool ok = false;
+	YZMotion& motion = findMotion(inputsMotion, &ok);
+	if ( !ok ) return;
 	int counter = 1; //number of times we have to match
 	QRegExp rx ( "([0-9]+).*" );
 	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
@@ -76,7 +86,6 @@ void YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCur
 			result->setY( result->getY() + 1 );
 		}
 	}
-//	result->setX( idx + rex.matchedLength() + 1 );
 	yzDebug() << "Result of motion is : " << result->getX() << " " << result->getY() << endl;
 }
 

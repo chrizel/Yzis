@@ -887,7 +887,11 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		for ( int i = 0; i < nb_lines && ( mY + i ) < ( unsigned int )mBuffer->lineCount(); i++ )
 			buff << mBuffer->textline( mY + i );
 		deleteLine( mY, nb_lines );
-	} else if ( args.command == "D" || args.command == "d$"  ) { //delete to end of lines
+	} else if ( args.command == "D" ) { //delete to end of lines
+		//just fake the real command
+		args.command = "d$";
+		args.motion = "$";
+		/*
 		unsigned int dX = 0;
 		unsigned int dY = 0;
 		if ( wrap ) {
@@ -906,8 +910,10 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 				paintEvent( 0, mY, mColumnsVis, 1 );
 		} else 
 			paintEvent( 0, mY, mColumnsVis, 1 );
-	} else if (args.command.startsWith("d")) {
-		if (args.motion.isNull() || args.motion.isEmpty() || (args.motion[0].isDigit() && args.motion.length() <= 1)) return QString::null; //keep going waiting for new inputs
+			*/
+	} 
+	if (args.command.startsWith("d")) {
+		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
 		//ok we have a motion , so delete till the end of the motion :)
 		YZCursor *cursor = new YZCursor(this);
 		mSession->getMotionPool()->applyMotion(args.motion,this, cursor);
@@ -915,18 +921,16 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 
 		if ( cursor->getY() == mCursor->getY() ) {
 			QString b = mBuffer->textline( mCursor->getY() );
-			yzDebug() << "Original line : " << b << endl;
 			buff << b.mid( mCursor->getX(), cursor->getX() - mCursor->getX() );
 			QString b2 = b.left( mCursor->getX() ) + b.mid( cursor->getX() );
 			mBuffer->replaceLine( b2 , mCursor->getY() );
-			yzDebug() << "New line : " << b2 << endl;
-			//repaint ?
+			paintEvent( 0/*really 0 ?*/, mCursor->getY(), mColumnsVis, 1 );
 		} else {
 			if ( cursor->getY() != mCursor->getY() ) {
 				QString b = mBuffer->textline( mCursor->getY() );
 				buff << b.mid( mCursor->getX() );
 				mBuffer->replaceLine( b.left( mCursor->getX() ), mCursor->getY() );
-				//repaint ?
+				paintEvent( 0/*really 0 ?*/, mCursor->getY(), mColumnsVis, 1 );
 			}
 			mCursor->setY( mCursor->getY()+1 );
 			mCursor->setX( 0 );
@@ -934,7 +938,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 			while ( cursor->getY() != mCursor->getY() ) {
 				mBuffer->deleteLine( mY ); //use mY as lines numbering are changing while we delete !
 				mCursor->setY( mCursor->getY()+1 );
-				//repaint ?
+				paintEvent( 0/*really 0 ?*/, mY, mColumnsVis, mCursor->getY()-mY );
 			}
 			mY++;
 			//now we are on the last line to modify
@@ -942,9 +946,10 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 				QString b = mBuffer->textline( mCursor->getY() );
 				buff << b.left( cursor->getX() );
 				mBuffer->replaceLine( b.mid( cursor->getX() ), mY );
-				//repaint ?
+				paintEvent( 0/*really 0 ?*/, mCursor->getY(), mColumnsVis, 1 );
 			}
 		}
+		gotoxy( mCursor->getX(), mCursor->getY() );
 
 	}
 	YZSession::mRegisters.setRegister( reg, buff );

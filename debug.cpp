@@ -46,12 +46,18 @@ YZDebugBackend * YZDebugBackend::_instance = NULL;
 
 YZDebugBackend::YZDebugBackend()
 {
+	_output = NULL;
 #ifndef WIN32
 	setDebugOutput( "/tmp/yzisdebug-" + QString(getpwuid(geteuid())->pw_name) + ".log" );
 #else
 	setDebugOutput( "/tmp/yzisdebug.log" );
 #endif
 	init();
+}
+
+YZDebugBackend::~YZDebugBackend() {
+	if ( _output != NULL )
+		fclose( _output );
 }
 
 void YZDebugBackend::init()
@@ -80,6 +86,11 @@ void YZDebugBackend::setDebugOutput( FILE * file )
 
 void YZDebugBackend::setDebugOutput( const QString& fileName )
 {
+	if ( _output != NULL ) {
+		fclose( _output );
+		_output = NULL;
+	}
+
 	if ( QFile::exists( fileName ) )
 		QFile::remove ( fileName );
 #if QT_VERSION < 0x040000

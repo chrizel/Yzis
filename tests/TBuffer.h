@@ -29,10 +29,11 @@
 
 class TYZBuffer : public YZBuffer {
 public:
-	TYZBuffer(YZSession *sess,const QString& _path=QString::null)
-    : YZBuffer(sess,_path) {}
+	TYZBuffer(YZSession *sess)
+    : YZBuffer(sess) {}
 
     virtual bool popupFileSaveAs() { return true; }
+	virtual void filenameChanged() {}
 };
 
 #endif // TYZ_BUFFER_H

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<language name="HTML" version="1.06" kateversion="2.3" section="Markup" extensions="*.html;*.htm;*.shtml;*.shtm" mimetype="text/html">
+  <highlighting>
+    <contexts>
+       <context attribute="Normal Text" lineEndContext="#stay" name="normal">
+	 <StringDetect attribute="Comment" context="comment" String="&lt;!--"/>
+	 <StringDetect attribute="Keyword" context="javascript_hook" String="&lt;SCRIPT"  insensitive="TRUE" beginRegion="Script" />
+	 <StringDetect attribute="Keyword" context="CSS_hook" String="&lt;style" insensitive="TRUE" beginRegion="Style" />
+
+         <RegExpr attribute="Keyword" context="tagname" String="&lt;\s*\/?\s*[a-zA-Z0-9_]*" />
+       </context>
+
+       <context attribute="Identifier" lineEndContext="#stay" name="tagname">
+         <DetectChar attribute="Keyword" context="#pop" char="&gt;"/>
+         <RegExpr attribute="Normal Text" context="values" String="\s*=\s*"/>
+       </context>
+
+       <context attribute="Wrong Values" lineEndContext="#stay" name="values">
+         <RegExpr attribute="Types" context="#pop" String="\s*#?[a-zA-Z0-9]*" />
+         <DetectChar attribute="Types" context="string" char="&quot;" />
+       </context>
+
+       <context attribute="Types" lineEndContext="#stay" name="string">
+         <DetectChar attribute="Types" context="#pop#pop" char="&quot;" />
+       </context>
+
+       <context attribute="Comment" lineEndContext="#stay" name="comment">
+	 <StringDetect attribute="Comment" context="#pop" String="--&gt;"/>
+       </context>
+
+       <context attribute="Identifier" lineEndContext="#stay" name="javascript_hook">
+         <DetectChar attribute="Keyword" context="javascript" char="&gt;"/>
+         <RegExpr attribute="Normal Text" context="values" String="\s*=\s*"/>
+       </context>
+       <context attribute="Normal Text" lineEndContext="#stay" name="javascript">
+       <Detect2Chars attribute="Comment" char="/" char1="/" context="javascript_comment"/>
+        <StringDetect attribute="Keyword" context="#pop#pop" String="&lt;/SCRIPT&gt;" insensitive="TRUE" endRegion="Script"/>
+	<IncludeRules context="##JavaScript"/>
+       </context>
+       <context attribute="Comment" lineEndContext="#pop" name="javascript_comment">
+        <StringDetect attribute="Keyword" context="#pop#pop#pop" String="&lt;/SCRIPT&gt;" insensitive="TRUE" endRegion="Script" />
+	<RegExpr attribute="Alert" context="#stay" String="(FIXME|TODO)" />
+       </context>
+
+       <context attribute="Identifier" lineEndContext="#stay" name="CSS_hook">
+         <DetectChar attribute="Keyword" context="CSS" char="&gt;"/>
+         <RegExpr attribute="Normal Text" context="values" String="\s*=\s*"/>
+       </context>
+       <context attribute="Normal Text" lineEndContext="#stay" name="CSS">
+         <IncludeRules context="##CSS"/>
+	 <StringDetect attribute="Keyword" context="#pop#pop" String="&lt;/style&gt;" insensitive="TRUE" endRegion="Style"/>
+       </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal Text" defStyleNum="dsNormal"/>
+      <itemData name="Keyword" defStyleNum="dsKeyword"/>
+      <itemData name="Identifier" defStyleNum="dsOthers"/>
+      <itemData name="Types" defStyleNum="dsDataType"/>
+      <itemData name="String" defStyleNum="dsString"/>
+      <itemData name="Comment" defStyleNum="dsComment"/>
+      <itemData name="Wrong Values"  defStyleNum="dsNormal" color="#ff0000" selColor="#ffffff" italic="0" bold="1"/>
+      <itemData name="Alert"        defStyleNum="dsAlert" />
+    </itemDatas>
+  </highlighting>
+  <general>
+    <comments>
+      <comment name="multiLine" start="&lt;!--" end="//--&gt;" />
+    </comments>
+    <keywords casesensitive="0" />
+  </general>
+</language>

@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003, 2004 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -25,6 +25,8 @@
 #include <qpainter.h>
 #include <qevent.h>
 #include <qmap.h>
+#include <qfontmetrics.h>
+#include <qfont.h>
 
 class KYZisView;
 
@@ -85,6 +87,32 @@ class KYZisEdit : public QScrollView {
 
 		int getLineforY( int y );
 
+		inline int charWidth(const QString& text, int col, int tabWidth, bool isItalic, bool isBold) const { 
+			if ( text[ col ] == QChar( '\t' ) ) 
+				return tabWidth * standard->width(' ');
+			if ( isBold ) {
+				if ( isItalic )
+					return standardBoldItalic->charWidth(text, col); 
+				else
+					return standardBold->charWidth(text, col); 
+			}
+			return standard->charWidth(text, col); 
+		}
+
+		inline int charWidth(const QChar& c, int tabWidth, bool isItalic, bool isBold) const { 
+			if ( c == QChar( '\t' ) ) 
+				return tabWidth * standard->width(' ');
+			if ( isBold ) {
+				if ( isItalic )
+					return standardBoldItalic->width(c); 
+				else
+					return standardBold->width( c ); 
+			}
+			return standard->width(c); 
+		}
+
+
+
 	private :
 		KYZisView *mParent;
 
@@ -92,6 +120,10 @@ class KYZisEdit : public QScrollView {
 		int mCursorX;
 		int mCursorY;
 		bool mCursorShown;
+		QFont myFont;
+		QFontMetrics *standard;
+		QFontMetrics *standardBold;
+		QFontMetrics *standardBoldItalic;
 };
 
 #endif

@@ -81,6 +81,14 @@ public:
 		yzDebug() << "TYZView::refreshScreen" << endl;
 	}
 
+	virtual void syncViewInfo( ) {
+		yzDebug() << "TYZView::syncViewInfo" << endl;
+	}
+	
+	virtual void displayInfo( const QString& ) {
+		yzDebug() << "TYZView::displayInfo" << endl;
+	}
+
 protected:
 	class Mapping {
 	public:

@@ -1150,7 +1150,6 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
         {
           if(!item->lookAhead)
             textLine->setAttribs(item->attr,offset1,offset2);
-          yzDebug()<<QString("item->ctx: %1").arg(item->ctx)<<endl;
 
           if (item->region)
           {
@@ -1224,8 +1223,9 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
           lastChar = '\\';
         continue;
       }
-      else
+      else {
         textLine->setAttribs(context->attr,offset1,offset1 + 1);
+	  }
     }
 
     // dominik: do not change offset if we look ahead
@@ -1338,7 +1338,11 @@ void YzisHighlighting::setData(YzisHlData *hlData)
 }
 
 void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &list)
-{/*
+{
+  list.clear();
+  createYzisHlItemData(list);
+
+	/*
   KConfig *config = YzisHlManager::self()->getKConfig();
   config->setGroup("Highlighting " + iName + " - Schema " + YzisFactory::self()->schemaManager()->name(schema));
 
@@ -2661,23 +2665,23 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   list.setAutoDelete(true);
 
   YzisAttribute* normal = new YzisAttribute();
-  normal->setTextColor(Qt::black);
-  normal->setSelectedTextColor(Qt::white);
+  normal->setTextColor(Qt::white);
+  normal->setSelectedTextColor(Qt::black);
   list.append(normal);
 
   YzisAttribute* keyword = new YzisAttribute();
-  keyword->setTextColor(Qt::black);
-  keyword->setSelectedTextColor(Qt::white);
-  keyword->setBold(true);
+  keyword->setTextColor(Qt::yellow/*white*/);
+  keyword->setSelectedTextColor(Qt::black);
+//  keyword->setBold(true);
   list.append(keyword);
 
   YzisAttribute* dataType = new YzisAttribute();
-  dataType->setTextColor(Qt::darkRed);
+  dataType->setTextColor(Qt::green/*darkRed*/);
   dataType->setSelectedTextColor(Qt::white);
   list.append(dataType);
 
   YzisAttribute* decimal = new YzisAttribute();
-  decimal->setTextColor(Qt::blue);
+  decimal->setTextColor(Qt::magenta/*blue*/);
   decimal->setSelectedTextColor(Qt::cyan);
   list.append(decimal);
 
@@ -2697,12 +2701,12 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   list.append(charAttribute);
 
   YzisAttribute* string = new YzisAttribute();
-  string->setTextColor(Qt::red);
+  string->setTextColor(Qt::magenta/*red*/);
   string->setSelectedTextColor(Qt::red);
   list.append(string);
 
   YzisAttribute* comment = new YzisAttribute();
-  comment->setTextColor(Qt::darkGray);
+  comment->setTextColor(Qt::lightGray/*darkGray*/);
   comment->setSelectedTextColor(Qt::gray);
   comment->setItalic(true);
   list.append(comment);
@@ -2720,7 +2724,7 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   list.append(alert);
 
   YzisAttribute* functionAttribute = new YzisAttribute();
-  functionAttribute->setTextColor(Qt::darkBlue);
+  functionAttribute->setTextColor(Qt::cyan/*darkBlue*/);
   functionAttribute->setSelectedTextColor(Qt::white);
   list.append(functionAttribute);
 

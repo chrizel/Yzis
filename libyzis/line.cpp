@@ -27,7 +27,8 @@
 #include "syntaxdocument.h"
 #include "debug.h"
 
-YZLine::YZLine(const QString &l) {
+YZLine::YZLine(const QString &l) :
+m_flags( YZLine::flagVisible ) {
 	setData(l);
 }
 
@@ -39,11 +40,19 @@ YZLine::~YZLine() {
 }
 
 void YZLine::setAttribs(uchar attribute, uint start, uint end) {
-//  yzDebug() << "YZLine setAttribs start : " << start << " end : " << end << endl;
-  if (end > mAttributes.size())
-    end = mAttributes.size();
+	if (end > mAttributes.size())
+		end = mAttributes.size();
 
-  for (uint z = start; z < end; z++)
-    mAttributes[z] = attribute;
+	for (uint z = start; z < end; z++)
+		mAttributes[z] = attribute;
+}
+
+void YZLine::setData(const QString &data) { 
+	mData = data; 
+	uint len = data.length();
+	if ( len == 0 ) len++; //make sure to return a non empty array ... (that sucks)
+	mAttributes.resize( len );
+	for ( uint i = 0; i < len; i++ )
+		mAttributes[ i ] = 0;
 }
 

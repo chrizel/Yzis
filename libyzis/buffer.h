@@ -306,9 +306,8 @@ public:
 	 */
 	void setHighLight(uint mode);
 
-	void makeAttribs();
-	
-protected:
+	YzisHighlighting *highlight() { return m_highlight; }
+
 	/**
 	 * Finds the @ref YZLine pointer for a line in the buffer
 	 * @param line the line to return
@@ -318,6 +317,9 @@ protected:
 	 */
 	YZLine * yzline(unsigned int line) const;
 
+	void makeAttribs();
+	
+protected:
 	/** 
 	 * Sets the line @param line to @param l
 	 * @param line is between 0 and lineCount()-1

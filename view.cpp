@@ -63,7 +63,6 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 	stickyCol = 0;
 
-	mMaxX = 0;
 	mMode = YZ_VIEW_MODE_COMMAND;
 	mCurrentLeft = mCursor->getX();
 	mCurrentTop = mCursor->getY();
@@ -71,7 +70,6 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	dCurrentTop = dCursor->getY();
 
 	QString line = mBuffer->textline(mCurrentTop);
-	if (!line.isNull()) mMaxX = line.length()-1;
 
 	mCurrentExItem = 0;
 	mCurrentSearchItem = 0;
@@ -523,8 +521,12 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else {
 		 refreshScreen();
 	}
-	if ( alignTop ) 
-		gotoxy( mCurrentLeft, mCurrentTop );
+	if ( alignTop ) {
+		if ( stickyCol == STICKY_COL_ENDLINE )
+			gotoxy( mBuffer->textline( mCurrentTop ).length(), mCurrentTop );
+		else
+			gotoxy( stickyCol > ( int )mCurrentLeft ? stickyCol : mCurrentLeft, mCurrentTop );
+	}
 }
 
 /* recalculate cursor position + refresh screen */
@@ -988,8 +990,8 @@ void YZView::initDeleteLine( const YZCursor& begin, const YZCursor& end, bool /*
 }
 
 void YZView::applyDeleteLine( const YZCursor& begin, const YZCursor& end, bool applyCursor ) {
-	if ( begin.getY() == end.getY() )
-		paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
+	if ( begin.getY() != end.getY() )
+		paintEvent( dCurrentLeft, begin.getY(), mColumnsVis, mLinesVis - ( begin.getY() - dCurrentTop ) );
 	else
 		applyDeleteLine( begin, 1, applyCursor );
 	if ( applyCursor )
@@ -1294,6 +1296,7 @@ bool YZView::doSearch( const QString& search ) {
 	int currentMatchLine = mCursor->getY(); //start from current line
 	//if you understand this line you are semi-god :)
 	//if you don't understand, remove the IFs and see what it does when you have the cursor on the last/first column and start a search/reverse search
+	unsigned int mMaxX = mBuffer->textline( mCursor->getY() ).length() - 1;
 	int currentMatchColumn = reverseSearch ? ( mCursor->getX() ? mCursor->getX() : 1 ) - 1 : ( mCursor->getX() < mMaxX ) ? mCursor->getX() + 1 : mCursor->getX(); //start from current column +/- 1
 
 	//get current line
@@ -1325,6 +1328,7 @@ bool YZView::doSearch( const QString& search ) {
 			currentMatchLine = i;
 			selectionPool->addSelection( "SEARCH", currentMatchColumn, currentMatchLine, currentMatchColumn + ex.matchedLength() - 1, currentMatchLine );
 			gotoxy( currentMatchColumn, currentMatchLine );
+			stickyCol = dCursor->getX();
 			refreshScreen( );
 			return true;
 		} else {

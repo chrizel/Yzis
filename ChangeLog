@@ -2,6 +2,8 @@
   * kyzis
     support displaying TABs. doh I have tabstops and tabarrays !
     support adding TABs
+  * libyzis
+    support DEL key in command mode
 
 2004-02-22 mikmak
   * libyzis

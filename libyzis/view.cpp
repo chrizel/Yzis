@@ -216,6 +216,9 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Up:
 					key='k';//moveUp( );
 					break;//return;
+				case Qt::Key_Delete:
+					mBuffer->delChar(mCursor->getX(),mCursor->getY(),1);
+					return;
 				default:
 					break;
 			}

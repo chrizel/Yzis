@@ -235,6 +235,7 @@ private:
 	QString replayMacro(const YZCommandArgs &args);
 	QString deleteChar(const YZCommandArgs &args);
 	QString redisplay(const YZCommandArgs &args);
+	QString changeCase(const YZCommandArgs &args);
 	
 	friend class YZNewMotion;
 };

@@ -111,6 +111,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("?", &YZCommandPool::searchBackwards) );
 	commands.append( new YZCommand("n", &YZCommandPool::searchNext) );
 	commands.append( new YZCommand("N", &YZCommandPool::searchPrev) );
+	commands.append( new YZCommand("~", &YZCommandPool::changeCase) );
 	commands.append( new YZCommand("m", &YZCommandPool::mark, ARG_CHAR) );
 	commands.append( new YZCommand("u", &YZCommandPool::undo) );
 	commands.append( new YZCommand("<CTRL>R", &YZCommandPool::redo) );
@@ -831,6 +832,25 @@ QString YZCommandPool::undo(const YZCommandArgs &args) {
 
 QString YZCommandPool::redo(const YZCommandArgs &args) {
 	args.view->redo( args.count );
+	return QString::null;
+}
+
+QString YZCommandPool::changeCase( const YZCommandArgs &args ) {
+	YZCursor pos = *args.view->getBufferCursor();
+	const QString line = args.view->myBuffer()->textline( pos.getY() );
+	if ( ! line.isNull() ) {
+		unsigned int length = line.length();
+		unsigned int end = pos.getX() + args.count;
+		for ( ; pos.getX() < length && pos.getX() < end; pos.setX( pos.getX() + 1 ) ) {
+			QString ch = line[ pos.getX() ];
+			if ( ch != ch.lower() )
+				ch = ch.lower();
+			else
+				ch = ch.upper();
+			args.view->myBuffer()->action()->replaceChar( args.view, pos, ch );
+		}
+		args.view->commitNextUndo();
+	}
 	return QString::null;
 }
 

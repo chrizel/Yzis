@@ -77,7 +77,7 @@ class YZDocMark {
 		void del( uint line );
 
 		uint get( uint line );
-		
+
 		const YZDocMarker &getMarker() { return marker; }
 
 	private:

@@ -46,7 +46,7 @@ class YZViewCursor {
 		unsigned int bufferY() const;
 		unsigned int screenX() const;
 		unsigned int screenY() const;
-		
+
 		inline YZCursor* buffer() {
 			return mBuffer;
 		}
@@ -76,14 +76,14 @@ class YZViewCursor {
 		 * buffer cursor
 		 */
 		YZCursor* mBuffer;
-		
+
 		/**
 		 * screen cursor
 		 */
 		YZCursor* mScreen;
 
 		/**
-		 * spaceFill is the shift for starting tabs 
+		 * spaceFill is the shift for starting tabs
 		 * ( when wrapping a line, or scrolling horizontally )
 		 */
 		unsigned int spaceFill;

@@ -61,7 +61,7 @@ protected:
 public:
 	YZIntOption(const QString &name, context cxt, int def, int min=INT_MIN, int max=INT_MAX);
 	YZIntOption(const QString &name, context cxt, const QString &desc, int def, int min=INT_MIN, int max=INT_MAX);
-	
+
 	int getMin() const { return mMin; }
 	int getMax() const { return mMax; }
 	int getDefault() const { return mDefault.toInt(); }
@@ -82,7 +82,7 @@ protected:
 public:
 	YZStringOption(const QString &name, context cxt, const QString &def, const QRegExp &regExp=QRegExp(".*"));
 	YZStringOption(const QString &name, context cxt, const QString &desc, const QString &def, const QRegExp &regExp=QRegExp(".*"));
-	
+
 	const QString &getDefault() const { return getStringDefault(); }
 	bool isValid(const QString &value) const;
 	value_t getValueType() const { return string_t; }
@@ -99,7 +99,7 @@ class YZBoolOption : public YZOption {
 public:
 	YZBoolOption(const QString &name, context cxt, bool def);
 	YZBoolOption(const QString &name, context cxt, const QString &desc, bool def);
-	
+
 	bool getDefault() const { return mDefault == "yes" || mDefault == "on" || mDefault == "true"; }
 	bool isValid(const QString &value) const;
 	value_t getValueType() const { return bool_t; }
@@ -115,7 +115,7 @@ class YZColorOption : public YZOption {
 public:
 	YZColorOption(const QString &name, context cxt, const QColor &def);
 	YZColorOption(const QString &name, context cxt, const QString &desc, const QColor &def);
-	
+
 	QColor getDefault() const { return QColor(mDefault); }
 	bool isValid(const QString &name) const;
 	value_t getValueType() const { return color_t; }

@@ -39,7 +39,7 @@ struct buffer_operation
 	enum OperationType {
 		ADDTEXT, // insert some characters inside the line
 		DELTEXT, // delete some characters from the line
-		
+
 		// for ADDLINE and DELLINE, the arguments col and text are ignored.
 		ADDLINE, // insert a line before the specified line.
 		DELLINE  // delete the line from the buffer
@@ -67,7 +67,7 @@ class UndoItem : public UndoItemBase
 {
 public:
 	UndoItem();
-	
+
 	int startCursorX, startCursorY;
 	int endCursorX, endCursorY;
 };
@@ -83,13 +83,13 @@ public:
 
 	void addBufferOperation( YZBufferOperation::OperationType type, const QString & text, uint col, uint line );
 
-	/** 
+	/**
 	 * Undo the last operations on the buffer, move backward in the undo list.
 	 * cursorX and cursorY will be set to the new cursor position
-	 */ 
+	 */
 	void undo( YZView* pView );
 
-	/** 
+	/**
 	 * Redo the current operation on the buffer, move forward in the undo list
 	 * cursorX and cursorY will be set to the new cursor position
 	 */

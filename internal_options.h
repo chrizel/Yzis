@@ -47,7 +47,7 @@ class YZInternalOption {
 
 		void setValue( const QString& value ) { mValue = value; }
 
-	private: 
+	private:
 		QString mKey;
 		QString mGroup;
 		QString mDefaultValue;
@@ -58,8 +58,8 @@ class YZInternalOption {
 
 /**
  * Class to handle the internal options.
- * 
- * every setOption and readOption has a key parameter. 
+ *
+ * every setOption and readOption has a key parameter.
  * The key is composed of two strings, one is for the "group" of the option
  * the other is the actual key name
  */
@@ -159,7 +159,7 @@ class YZInternalOptionPool {
 		 * Clean memory
 		 */
 		void cleanup();
-		
+
 		//QString here is == group/key
 		QMap<QString, YZInternalOption*> mOptions;
 		QString currentGroup;

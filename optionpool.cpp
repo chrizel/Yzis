@@ -45,9 +45,9 @@ namespace YZOptionPool {
 	/*
 	void loadFrom(const QString& file ) {
 		QFile f( file );
-	 
+
 		if ( !f.exists() ) return;
-	 
+
 		if ( f.open( IO_ReadOnly ) ) {
 			QTextStream stream( &f );
 			QRegExp rx("\\[(.*)\\]");
@@ -75,12 +75,12 @@ namespace YZOptionPool {
 			f.close();
 		}
 	}
-	 
+
 	void saveTo(const QString& file, const QString& what, bool force ) {
 		QFile f( file );
-	 
+
 		if ( f.exists() && !force ) return;
-	 
+
 		if ( f.open( IO_WriteOnly ) ) {
 			QTextStream stream( &f );
 			QValueList<QString> names = mOptions.names();
@@ -90,7 +90,7 @@ namespace YZOptionPool {
 			for (it = names.begin(); it != names.end() ; ++it) {
 				QString myGroup = QStringList::split( "\\", ( *it ) )[ 0 ];
 				if ( !myGroup.startsWith( what ) ) continue; //filter !
-				
+
 				if ( myGroup != cGroup ) { // changing group
 					stream << "[" << myGroup << "]\n";
 					cGroup = myGroup;
@@ -107,16 +107,16 @@ namespace YZOptionPool {
 		QDir homeConf( QDir::homeDirPath()+"/.yzis/" );
 		if ( !homeConf.exists( QDir::homeDirPath()+"/.yzis/" ) )
 			if ( !homeConf.mkdir(QDir::homeDirPath()+"/.yzis/", true) ) return;
-		
+
 		loadFrom(QDir::rootDirPath()+"/etc/yzis.conf");
 		loadFrom(QDir::rootDirPath()+"/etc/yzis/yzis.conf");
 		loadFrom(QDir::homeDirPath()+"/.yzis/yzis.conf");
-	
+
 		//load cache files
 		loadFrom(QDir::homeDirPath()+"/.yzis/hl.conf");
 	}
 	*/
-	
+
 	void init() {
 		addOption(new YZIntOption("tabstop", CXT_VIEW, 8, 1));
 		addOption(new YZBoolOption("number", CXT_VIEW, false));
@@ -160,7 +160,7 @@ namespace YZOptionPool {
 		MapName mk={name, id};
 		mOptionValues[mk] = value;
 	}
-	
+
 	bool setOption( const QString &name, const QString &value, unsigned int id ) {
 		const YZOption *opt = getOption(name);
 		if(!opt || !opt->isValid(value)) return false;

@@ -119,7 +119,7 @@ void YZInternalOptionPool::saveTo(const QString& file, const QString& what, bool
 		for (it = keys.begin(); it != keys.end() ; ++it) {
 			QString myGroup = QStringList::split( "\\", ( *it ) )[ 0 ];
 			if ( !myGroup.startsWith( what ) ) continue; //filter !
-			
+
 			if ( myGroup != cGroup ) { // changing group
 				stream << "[" << myGroup << "]\n";
 				cGroup = myGroup;
@@ -282,7 +282,7 @@ void YZInternalOptionPool::initConfFiles() {
 	QDir homeConf( QDir::homeDirPath()+"/.yzis/" );
 	if ( !homeConf.exists( QDir::homeDirPath()+"/.yzis/" ) )
 		if ( !homeConf.mkdir(QDir::homeDirPath()+"/.yzis/", true) ) return;
-	
+
 	loadFrom(QDir::rootDirPath()+"/etc/yzis.conf");
 	loadFrom(QDir::rootDirPath()+"/etc/yzis/yzis.conf");
 	loadFrom(QDir::homeDirPath()+"/.yzis/yzis.conf");

@@ -117,7 +117,7 @@ public:
 		mArg=a;
 	}
 	virtual ~YZCommand() {}
-	
+
 	QString keySeq() const { return mKeySeq; }
 	const PoolMethod &poolMethod() const { return mPoolMethod; }
 	cmd_arg arg() const { return mArg; }
@@ -159,7 +159,7 @@ class YZCommandPool {
 		QString ( YZExLua::*luaFunc ) (YZView *view, const QString& inputsBuff);
 		// TODO : shouldn't that be an union ?
 	};
-	
+
 public:
 	YZCommandPool();
 	~YZCommandPool();
@@ -177,7 +177,7 @@ public:
 	cmd_state execCommand(YZView *view, const QString& inputs);
 	/** Entry point for ex functions ( scripting ) */
 	void execExCommand(YZView *view, const QString& inputs);
-	
+
 private:
 	/** Parses the string inputs, which must be a valid motion + argument,
 	 * and executes the corresponding motion function. */
@@ -200,7 +200,7 @@ private:
 	YZCursor matchPair(const YZNewMotionArgs &args);
 	YZCursor firstNonBlank(const YZNewMotionArgs &args);
 	YZCursor gotoMark(const YZNewMotionArgs &args);
-		
+
 	// methods implementing commands
 	QString execMotion(const YZCommandArgs &args);
 	QString moveWordForward(const YZCommandArgs &args);
@@ -245,7 +245,7 @@ private:
 	QString redisplay(const YZCommandArgs &args);
 	QString changeCase(const YZCommandArgs &args);
 	QString replace(const YZCommandArgs &args);
-	
+
 	friend class YZNewMotion;
 };
 

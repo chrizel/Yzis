@@ -29,7 +29,7 @@
 #include "internal_options.h"
 #include "buffer.h"
 #include "session.h"
- 
+
 #include <stdlib.h>
 #include <assert.h>
 #include <qclipboard.h>
@@ -44,10 +44,10 @@ YZAction::~YZAction( ) {
 void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {
 	YZCursor mPos( pos );
 	yzDebug() << "insertChar " << text << " at " << pos << endl;
-	
+
 	if(pos.getY() >= mBuffer->lineCount())
 		insertNewLine(pView, mPos);
-	
+
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
 		it->initInsertChar( mPos, text.length(), pView->myId == it->myId );
 
@@ -115,7 +115,7 @@ void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &te
 
 void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
 	copyLine(pView, pos, len, reg);
-	
+
 	YZCursor mPos( pos );
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
 		it->initDeleteLine( mPos, len, pView->myId == it->myId );
@@ -159,7 +159,7 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 	YZBuffer *yzb=pView->myBuffer();
 	YZCursor top(0, 0, 0), bottom(0, yzb->textline(yzb->lineCount()-1).length(), yzb->lineCount()-1);
 	assert(begin >= top && end <= bottom);
-	
+
 	QStringList buff;
 	unsigned int bX = begin.getX();
 	unsigned int bY = begin.getY();
@@ -214,7 +214,7 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
 	yzDebug() << "Deleting from X " << beginCursor.getX() << " to X " << endCursor.getX() << endl;
 	QStringList buff;
-	
+
 	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
 		end(beginCursor <= endCursor ? endCursor : beginCursor);
 	YZBuffer *yzb=pView->myBuffer();
@@ -225,7 +225,7 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 	unsigned int bY = begin.getY();
 	unsigned int eX = end.getX();
 	unsigned int eY = end.getY();
-	
+
 	if ( eY >= mBuffer->lineCount() ) return; //something's wrong => abort
 
 	if((pView->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL ||
@@ -338,9 +338,9 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 						start = mCursor.getX()-1;
 				} else if ( !back && mCursor.getY() == curY )
 					start =  mCursor.getX()+1;
-				else 
+				else
 					start = back ? current.length() -1 : 0 ;
-				
+
 				for ( j = start; ( j < current.length() ) && ( count > 0 ) ; back ? j-- : j++ ) { //parse current line
 					if ( current[ j ] == cchar ) {
 						count++;

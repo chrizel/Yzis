@@ -133,9 +133,9 @@ void YZSwapFile::replay( YZBufferOperation::OperationType type, unsigned int col
 	YZView *pView = mParent->firstView();
 	switch( type ) {
 		case YZBufferOperation::ADDTEXT:
-			mParent->action()->insertChar( pView, col, line, text ); 
+			mParent->action()->insertChar( pView, col, line, text );
 			break;
-		case YZBufferOperation::DELTEXT: 
+		case YZBufferOperation::DELTEXT:
 			mParent->action()->deleteChar( pView, col, line, text.length() );
 			break;
 		case YZBufferOperation::ADDLINE:

@@ -89,7 +89,7 @@ class YzisSyntaxDocument : public QDomDocument
      */
     ~YzisSyntaxDocument();
 
-    /** 
+    /**
 	 * If the open hl file is different from the one needed, it opens
      * the new one and assign some other things.
      * @param identifier file name and path of the new xml needed

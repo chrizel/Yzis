@@ -71,17 +71,17 @@ public:
 
   inline bool bold() const
   { return weight() >= QFont::Bold; };
-  
+
   void setBold(bool enable = true);
 
   inline bool italic() const
   { return m_italic; };
-  
+
   void setItalic(bool enable = true);
 
   inline bool underline() const
   { return m_underline; };
-  
+
   void setUnderline(bool enable = true);
 
   inline bool strikeOut() const
@@ -91,12 +91,12 @@ public:
 
   inline const QColor& outline() const
   { return m_outline; };
-  
+
   void setOutline(const QColor& color);
 
   inline const QColor& textColor() const
   { return m_textColor; };
-  
+
   void setTextColor(const QColor& color);
 
   inline const QColor& selectedTextColor() const
@@ -106,12 +106,12 @@ public:
 
   inline const QColor& bgColor() const
   { return m_bgColor; };
-  
+
   void setBGColor(const QColor& color);
 
   inline const QColor& selectedBGColor() const
   { return m_selectedBGColor; };
-  
+
   void setSelectedBGColor(const QColor& color);
 
   YzisAttribute& operator+=(const YzisAttribute& a);

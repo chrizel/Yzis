@@ -73,13 +73,13 @@ class YZView {
 		 */
 		void sendKey(const QString& key, const QString& modifiers="");
 
-		/** 
+		/**
 		 * Returns the index of the first line displayed on the view
 		 */
 		unsigned int getCurrentTop() { return mCurrentTop; }
 		unsigned int getDrawCurrentTop() { return dCurrentTop; }
 
-		/** 
+		/**
 		 * Returns the index of the first column displayed on the view
 		 */
 		unsigned int getCurrentLeft() { return mCurrentLeft; }
@@ -148,7 +148,7 @@ class YZView {
 		QString moveDown( YZViewCursor* viewCursor, unsigned int nb_lines = 1, bool applyCursor = true );
 
 		/**
-		 * moves the cursor of the current view up 
+		 * moves the cursor of the current view up
 		 */
 		QString moveUp( unsigned int nb_lines = 1, bool applyCursor = true );
 		QString moveUp( YZViewCursor* viewCursor,  unsigned int nb_lines = 1, bool applyCursor = true );
@@ -164,9 +164,9 @@ class YZView {
 		 */
 		QString moveRight(int nb_cols=1, bool wrap=false, bool applyCursor = true);
 		QString moveRight( YZViewCursor* viewCursor,int nb_cols=1, bool wrap=false, bool applyCursor = true);
-		
+
 		/**
-		 * moves the cursor of the current view to the first non-blank character 
+		 * moves the cursor of the current view to the first non-blank character
 		 * of the current line
 		 */
 		QString moveToFirstNonBlankOfLine();
@@ -253,7 +253,7 @@ class YZView {
 		 * Leave visual mode
 		 */
 		void leaveVisualMode( );
-		
+
 		/**
 		 * Get the selected area
 		 */
@@ -341,7 +341,7 @@ class YZView {
 		 * Pastes the content of default or given register
 		 */
 		void paste( QChar registr, bool after = true );
-  
+
 		/**
 		 * A global UID for this view
 		 **/
@@ -367,7 +367,7 @@ class YZView {
 			YZ_VIEW_MODE_INSERT=0, // insert
 			YZ_VIEW_MODE_REPLACE, // replace
 			YZ_VIEW_MODE_COMMAND, // normal
-			YZ_VIEW_MODE_EX, //script 
+			YZ_VIEW_MODE_EX, //script
 			YZ_VIEW_MODE_SEARCH, //search mode
 			YZ_VIEW_MODE_OPEN, // open mode
 			YZ_VIEW_MODE_VISUAL, // visual mode //keep these 2 at the end of the list
@@ -375,7 +375,7 @@ class YZView {
 		} mMode,		/** mode of this view */
 			mPrevMode;	/** previous mode of this view */
 #define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_VISUAL_LINE+1) // <-- update that if you touch the enum
-		
+
 		/**
 		 * Get the text describing the mode
 		 */
@@ -425,7 +425,7 @@ class YZView {
 		 */
 		virtual void syncViewInfo() = 0;
 
-		/** 
+		/**
 		 * Get the view cursor
 		 * @return a constant ref to the view cursor ( YZViewCursor )
 		 */
@@ -528,7 +528,7 @@ class YZView {
 		 * total height ( draw )
 		 */
 		 unsigned int drawTotalHeight();
-		
+
 		bool drawSelected();
 
 		/**
@@ -640,7 +640,7 @@ class YZView {
 		 * Start recording a macro into @param regs
 		 */
 		void recordMacro( const QValueList<QChar> &regs );
-		
+
 		/**
 		 * Stop recording macros
 		 */
@@ -664,7 +664,7 @@ class YZView {
 		 */
 		YZBuffer *mBuffer;
 
-		/** 
+		/**
 		 * Used to store previous keystrokes which are not recognised as a command,
 		 * this should allow us to have commands like : 100g or gg etc ...
 		 */
@@ -781,9 +781,9 @@ class YZView {
 		unsigned int rCurrentTop;
 
 		const uchar* rHLa;
-		
+
 		bool rHLnoAttribs;
-		
+
 		unsigned int rHLAttributesLen;
 
 		YzisAttribute *rHLAttributes;
@@ -816,9 +816,9 @@ class YZView {
 		void applyChanges( const YZCursor& pos, unsigned int len, bool applyCursor );
 
 		//cached value of tabstop option
-		unsigned int tabstop;	
+		unsigned int tabstop;
 		bool wrap;
-		
+
 		// tabstop * spaceWidth
 		unsigned int tablength;
 
@@ -829,7 +829,7 @@ class YZView {
 		bool adjust;
 
 		YZSelectionPool * selectionPool;
-		
+
 		//Visual Mode stuff
 		YZCursor *mVisualCursor;
 		YZCursor *dVisualCursor;

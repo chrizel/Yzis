@@ -32,7 +32,7 @@ class YZView;
 
 class YZSelection {
 	public:
-		YZSelection( const YZSelection& sel ) : 
+		YZSelection( const YZSelection& sel ) :
 			mFrom ( sel.from() ), mTo ( sel.to() ), mDrawFrom ( sel.drawFrom() ), mDrawTo ( sel.drawTo() ) {
 		}
 		YZSelection(const YZCursor& _from, const YZCursor& _to, const YZCursor& _drawFrom, const YZCursor& _drawTo) :

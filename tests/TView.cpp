@@ -30,5 +30,6 @@
 TYZView::TYZView(YZBuffer *buf, YZSession *sess, int lines)
 : YZView( buf, sess, lines )
 {
+	setVisibleArea(80,80);
 }
 

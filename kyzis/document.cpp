@@ -125,8 +125,7 @@ bool KYZisDoc::removeLine(unsigned int line)
 
 QString KYZisDoc::textLine(unsigned int line) const
 {
-	QString s = textline(line);
-	return s;
+	return textline(line);
 }
 
 uint KYZisDoc::length() const

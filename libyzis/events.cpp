@@ -28,7 +28,7 @@ YZEvents::~YZEvents() {
 	mEvents.clear();
 }
 
-void YZEvents::connect(const QString& function, const QString& event) {
+void YZEvents::connect(const QString& event, const QString& function) {
 	yzDebug() << "Events : connecting event " << event << " to " << function << endl;
 	if ( mEvents.contains(event) ) {
 		QStringList list = mEvents[event];

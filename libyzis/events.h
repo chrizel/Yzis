@@ -35,13 +35,15 @@ class YZEvents : public QObject {
 		virtual ~YZEvents();
 
 		/**
-		 * Register @param function for @param event
+		 * Connect a Lua function to a specific event
+		 * @param function the Lua function to be called by the event
+		 * @param event the event to listen for
 		 */
-
-		void connect(const QString& function, const QString& event);
+		void connect(const QString& event, const QString& function);
 
 		/**
-		 * Call plugins for @param event
+		 * Call plugins for event
+		 * @param event the event to execute plugins for
 		 */
 		 void exec(const QString& event);
 

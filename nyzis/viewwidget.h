@@ -66,10 +66,7 @@ public slots:
 
 private:
 	WINDOW		*window;	/* ncurses window to write to */
-	void updateVis(void) {
-		getmaxyx(stdscr, mLinesVis, mColumnsVis); mLinesVis-=2;
-		setVisibleArea( mColumnsVis,mLinesVis ); //compatibility..
-	}
+	void updateVis(void) { getmaxyx(stdscr, mLinesVis, mColumnsVis); mLinesVis-=2; }
 	/**
 	  * Display a line
 	  * @arg line is the line number, taken from the beginning of the file ( and not

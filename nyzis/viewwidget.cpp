@@ -77,7 +77,7 @@ void NYZView::map( void )
 //	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 //	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
-	refreshScreen();
+	setVisibleArea( mColumnsVis,mLinesVis ); //compatibility.., does a refresh()
 }
 
 

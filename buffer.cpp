@@ -202,6 +202,7 @@ void  YZBuffer::appendLine(const QString &l) {
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
 //		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
+	YZSession::me->search()->highlightLine( this, mText.count() - 1 );
 
 	setChanged( true );
 }
@@ -364,6 +365,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 	if ( !mLoading && m_highlight != 0L ) {
 		if ( updateHL( line ) ) updateAllViews( );
 	}
+	YZSession::me->search()->highlightLine( this, line );
 	setChanged( true );
 }
 

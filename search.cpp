@@ -146,6 +146,39 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 	}
 }
 
+void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
+	if ( mCurrentSearch.isNull() || mCurrentSearch.isEmpty() ) return;
+	bool doIt = false;
+	QPtrList<YZView> views = buffer->views();
+	for( YZView* v = views.first(); ! doIt && v ; v = views.next() ) {
+		doIt = doIt || v->getLocalBoolOption( "hlsearch" );
+	}
+	if ( doIt ) {
+		YZView* v = views.first();
+		YZCursor from( v, 0, line );
+		YZCursor cur( from );
+		YZCursor end( v, 0, QMAX( (int)(buffer->textline( from.getY() ).length() - 1), 0 ) );
+
+		YZSelectionPool* pool = v->getSelectionPool();
+		pool->delSelection( "SEARCH", from, end, from, end );
+
+		bool found = true;
+		unsigned int matchedLength = 0;
+		do {
+			from = buffer->action()->search( v, mCurrentSearch, cur, end, false, &matchedLength, &found );
+			if ( found && matchedLength > 0 ) {
+				cur.setCursor( from );
+				cur.setX( cur.getX() + matchedLength - 1 );
+				pool->addSelection( "SEARCH", from, cur, from, cur );
+			}
+		} while ( found );
+	}
+
+	for( YZView* v = views.first(); v; v = views.next() ) {
+		v->sendPaintEvent( 0, line, QMAX( (int)(buffer->textline( line ).length() - 1), 0 ), line );
+	}
+}
+
 void YZSearch::highlightSearch( YZView* mView, YZSelectionMap searchMap ) {
 	YZSelectionPool* pool = mView->getSelectionPool();
 	bool wasEmpty = pool->layout( "SEARCH" ).isEmpty();

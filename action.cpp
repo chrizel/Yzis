@@ -412,7 +412,7 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
 YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& mBegin, const YZCursor& mEnd, bool reverseSearch, unsigned int *matchlength, bool *found ) {
-	yzDebug() << " Searching " << what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
+//	yzDebug() << " Searching " << what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
 	QRegExp ex( what );
 
 	unsigned int currentMatchLine;

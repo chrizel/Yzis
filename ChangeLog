@@ -3,6 +3,7 @@
     initial swapfile recovering support
     'd[0-9]*w' command is back
     'd[0-9]*b' command is back
+    'c*' commands are back
 
 2004-07-30 mikmak
   * libyzis

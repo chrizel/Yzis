@@ -200,6 +200,7 @@ private:
 	YZCursor matchPair(const YZNewMotionArgs &args);
 	YZCursor firstNonBlank(const YZNewMotionArgs &args);
 	YZCursor gotoMark(const YZNewMotionArgs &args);
+	YZCursor firstNonBlankNextLine(const YZNewMotionArgs &args);
 
 	// methods implementing commands
 	QString execMotion(const YZCommandArgs &args);

@@ -42,7 +42,7 @@ public:
     CPPUNIT_TEST( testLineMethods );
     CPPUNIT_TEST( testCharMethods );
     CPPUNIT_TEST( testGetWholeText );
-    CPPUNIT_TEST( testViewAllocation );
+    CPPUNIT_TEST( testLoadSave );
     CPPUNIT_TEST( testAssertion );
 
     CPPUNIT_TEST_SUITE_END();
@@ -50,7 +50,7 @@ public:
     void testCreateEmptyBuffer();
     void testLineMethods();
     void testCharMethods();
-	void testViewAllocation();
+	void testLoadSave();
     void testGetWholeText();
     void testAssertion();
 

@@ -17,13 +17,14 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include "testYZBuffer.h"
-
+#include <qfile.h>
+#include <qfileinfo.h>
 #include <string>
+#include "PhilAsserts.h"
 using namespace CppUnit;
 using namespace std;
 
-#include "PhilAsserts.h"
+#include "testYZBuffer.h"
 
 #include "libyzis/line.h"
 #include "libyzis/debug.h"
@@ -224,16 +225,62 @@ void TestYZBuffer::testCharMethods()
     phCheckEquals( mBuf->data(1), "Z" );
 }
 
-void TestYZBuffer::testViewAllocation()
-{
-
-}
-
 void TestYZBuffer::testAssertion()
 {
     YZASSERT( 1 , "*** ASSERTION_ERROR ***, ASSERTION SYSTEM NOT WORKING" );
     YZASSERT( 1 + 2 + 3 + 4 / 2 == 0,"Ok, assertion system is working" );
     YZASSERT( "true" == "false", "Ok, assertion system is working" );
+}
+
+void TestYZBuffer::testLoadSave()
+{
+    QString text;
+    QString fname1 = "test1.txt";
+
+    // save empty buffer and check the file content
+    phCheckEquals( mBuf->getWholeText(), "" );
+    mBuf->save();
+    QFileInfo fi( mBuf->fileName() );
+    phCheckEquals( fi.size(), 0 );
+
+    // save non empty buffer and check the file content
+    mBuf->addLine( "1" );
+    mBuf->addLine( "2" );
+    text = mBuf->getWholeText();
+    mBuf->save();
+    QFile f( mBuf->fileName() );
+    phCheckEquals( f.open( IO_ReadOnly ), true );
+    QTextStream ts( &f );
+    phCheckEquals( ts.read(), text );
+    f.close();
+
+    // load an empty file and check the buffer content
+    text = "";
+    f.setName( fname1 );
+    phCheckEquals( f.open( IO_WriteOnly ), true );
+    ts.setDevice( &f );
+    ts << text;
+    f.close();
+    mBuf->load( fname1 );
+    phCheckEquals( mBuf->getWholeText(), text );
+
+    // load an non-empty file and check the buffer content
+    text = "1\n2\n3";
+    f.setName( fname1 );
+    phCheckEquals( f.open( IO_WriteOnly ), true );
+    ts.setDevice( &f );
+    ts << text;
+    f.close();
+    mBuf->load( fname1 );
+    phCheckEquals( mBuf->getWholeText(), text );
+
+    // save empty buffer and check the file content on a different file
+    mBuf->deleteLine(0);
+    mBuf->deleteLine(0);
+    mBuf->deleteLine(0);
+    phCheckEquals( mBuf->getWholeText(), "" );
+    mBuf->save();
+    phCheckEquals( QFileInfo( mBuf->fileName() ).size(), 0 );
 }
 
 

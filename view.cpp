@@ -31,6 +31,7 @@
 #include "undo.h"
 
 static const QChar tabChar( '\t' );
+static QColor fake;
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	myId = YZSession::mNbViews++;
@@ -1208,7 +1209,6 @@ unsigned int YZView::lineHeight ( ) {
 }
 
 const QColor& YZView::drawColor ( ) {
-	QColor fake;
 	YzisAttribute hl;
 	YzisAttribute * curAt = ( !rHLnoAttribs && (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 	if ( curAt ) {

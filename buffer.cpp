@@ -56,7 +56,6 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mIntro = false;
 	mUpdateView=true;
 	mSession = sess;
-//	mText.setAutoDelete( true );
 	mModified=false;
 	m_highlight = 0L;
 	// buffer at creation time should use a non existing temp filename
@@ -81,8 +80,7 @@ YZBuffer::~YZBuffer() {
 	// delete the temporary file if we haven't changed the file
 }
 
-void YZBuffer::detach(void)
-{
+void YZBuffer::detach() {
 	mSession->rmBuffer(this);
 }
 
@@ -316,12 +314,6 @@ void YZBuffer::clearText() {
 	mText.append(new YZLine());
 }
 
-QString YZBuffer::textline( uint line ) const {
-	YZLine * yl = yzline(line);
-	if (yl) return yl->data();
-	return QString::null;
-}
-
 void YZBuffer::clearIntro() {
 	mIntro = false;
 	clearText();
@@ -356,10 +348,6 @@ void YZBuffer::displayIntro() {
 	mUndoBuffer->setInsideUndo( false );
 
 	updateAllViews();
-}
-
-YZLine * YZBuffer::yzline(unsigned int line) const {
-	return ( ( QValueVector<YZLine*> ) mText ).at(line);
 }
 
 void YZBuffer::setTextline( uint line , const QString & l) {

@@ -39,6 +39,8 @@ class YZSession;
 class YZUndoBuffer;
 
 typedef QValueVector<YZLine*> YZBufferData;
+static QString myNull;
+
 
 
 /**
@@ -160,7 +162,12 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	QString	textline(unsigned int line) const;
+	inline const QString&	textline(unsigned int line) const {
+		YZLine * yl = yzline(line);
+		if (yl) return yl->data();
+		return myNull;
+	}
+
 
 	/**
 	 * Number of lines in the buffer
@@ -315,7 +322,9 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	YZLine * yzline(unsigned int line) const;
+	inline YZLine * yzline(unsigned int line) const {
+		return ( ( QValueVector<YZLine*> ) mText ).at(line);
+	}
 
 	void makeAttribs();
 

@@ -39,7 +39,7 @@ class YZLine
 		YZLine();
 		~YZLine();
 
-		QString data() const { return mData; }
+		const QString& data() const { return mData; }
 		void setData(const QString &data);
 		int length() { return mData.length(); }
 		inline const QMemArray<short> &ctxArray () const { return m_ctx; };

@@ -1453,7 +1453,9 @@ unsigned int YZView::drawTotalHeight() {
 	unsigned int nb = mBuffer->lineCount();
 	if ( nb > 0 ) {
 		YZViewCursor cursor = viewCursor();
-		gotoxy( &cursor, mBuffer->textline( nb - 1 ).length() - 1, nb - 1 );
+		unsigned int x = mBuffer->textline( nb - 1 ).length();
+		if ( x > 0 ) --x;
+		gotoxy( &cursor, x, nb - 1 );
 		totalHeight = cursor.screenY() + 1;
 	}
 	return totalHeight;

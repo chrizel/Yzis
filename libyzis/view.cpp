@@ -1109,7 +1109,7 @@ void YZView::applyDeleteLine( const YZCursor& begin, const YZCursor& end, bool a
 	updateStickyCol( mainCursor );
 }
 
-QString YZView::deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs ) {
+/*QString YZView::deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs ) {
 	QStringList buff; //to copy old lines into the register "
 	unsigned int mY = mainCursor->bufferY();
 	buff << QString::null;
@@ -1121,7 +1121,7 @@ QString YZView::deleteLine ( unsigned int nb_lines, const QValueList<QChar> &reg
 		YZSession::mRegisters.setRegister( *it, buff );
 	}
 	return QString::null;
-}
+}*/
 
 QString YZView::openNewLineBefore (unsigned int count) {
 	for ( unsigned int i = 0 ; i < count ; i++ )

@@ -277,8 +277,9 @@ class YZView {
 
 		/**
 		 * Deletes lines
+		 * obsolete: has been moved to YZAction
 		 */
-		QString deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs);
+		//QString deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs);
 
 		/**
 		 * Opens a new line after current line

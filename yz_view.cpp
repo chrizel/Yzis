@@ -25,8 +25,13 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 }
 
 void YZView::setVisibleLines(int nb) {
+	if ( lines_vis < nb )
+		for (int i=lines_vis; i<nb; i++) {
+			QString l=buffer->find_line(i);
+			if (!l) continue;
+			post_event(mk_event_setline(i,&l));
+		}
 	lines_vis = nb;
-	//update_view ?
 }
 
 /* Used by the buffer to post events */

@@ -247,6 +247,11 @@ class YZExLua : public QObject {
 		 */
 		static int imap(lua_State *L);
 
+		/**
+		 * Adds a new global mapping
+		 */
+		static int map(lua_State *L);
+
 	protected:
 		lua_State *L;
 

@@ -5,7 +5,8 @@ AM_INIT_AUTOMAKE(yzis, 0.0.1)
 dnl These are common macros that you might or might not want to use
 
 dnl Image readers/writers
-KDE_CHECK_KIMGIO
+#nothing to do in the toplevel dir
+#KDE_CHECK_KIMGIO
  
 dnl Checks for header files.
 AC_HEADER_DIRENT
@@ -13,3 +14,4 @@ AC_HEADER_STDC
 AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h)
 AC_CHECK_FUNCS(usleep)
+AC_PATH_TINYQ

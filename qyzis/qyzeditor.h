@@ -9,10 +9,12 @@ class QYZEditor : public QWidget
 {
 public:
 	QYZEditor( QYZView * parent );
-
-protected:
 	void paintEvent( unsigned int curx, unsigned int cury, 
 		unsigned int curw, unsigned int curh );
+
+protected:
+	void paintEvent ( QPaintEvent * e); 
+	bool event(QEvent *e);
 	void drawContents( unsigned int x, unsigned int y, 
 			unsigned int w, unsigned int h );
 

@@ -14,9 +14,13 @@ public:
 	QYZView(YZBuffer *_b, YZSession *sess);
 	virtual ~QYZView();
 
-	virtual QString getCommandLineText() const;
-	virtual void refreshScreen();
 	virtual void setCommandLineText( const QString& );
+	virtual QString getCommandLineText() const;
+
+	virtual void setFocusCommandLine();
+	virtual void setFocusMainWindow();
+	virtual void refreshScreen();
+
 	virtual void modeChanged();
 	virtual void displayInfo( const QString& info );
 	virtual void syncViewInfo();

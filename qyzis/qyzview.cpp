@@ -12,11 +12,11 @@ QYZView::QYZView(YZBuffer *_b, YZSession *sess)
 	: YZView( _b, sess, 50 ), QVBox( static_cast<QYZSession*>(sess) )
 {
 	mKeyConverter = new KeyConverter();
-	QPushButton( "Before Editor", this );
 	mEditor = new QYZEditor( this );
-	QPushButton( "After Editor", this );
 	mStatusBar = new QLineEdit( this );
+	mStatusBar->setEnabled( false );
 	mCommandLine = new QLineEdit( this );
+	mCommandLine->setFocusPolicy( QWidget::NoFocus );
 	setVisibleArea( 80, 50 );
 }
 
@@ -24,6 +24,16 @@ QYZView::~QYZView()
 {
 	delete mKeyConverter;
 	mKeyConverter = 0L;
+}
+
+void QYZView::setFocusCommandLine()
+{
+	mCommandLine->setFocus();
+}
+
+void QYZView::setFocusMainWindow()
+{
+	mEditor->setFocus();
 }
 
 void QYZView::setCommandLineText( const QString& s )
@@ -127,8 +137,7 @@ void QYZView::wheelEvent( QWheelEvent * e ) {
 }
 
 bool QYZView::event(QEvent *e) {
-	qDebug("QYZView - event" );
-	/*
+//	qDebug("QYZView - event" );
 	if ( e->type() == QEvent::KeyPress ) {
 		QKeyEvent *ke = (QKeyEvent *)e;
 		if ( ke->key() == Key_Tab ) {
@@ -136,7 +145,6 @@ bool QYZView::event(QEvent *e) {
 			return TRUE;
 		}
 	}
-	*/
 	return QVBox::event(e);
 }
 
@@ -163,6 +171,7 @@ void QYZView::paintEvent( unsigned int curx, unsigned int cury,
 	unsigned int curw, unsigned int curh )
 {
 	qDebug("QYZView - paintEvent %dx%d, %dx%d", curx, cury, curw, curh );
+	mEditor->paintEvent( curx, cury, curw, curh );
 	repaint();
 }
 

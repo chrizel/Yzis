@@ -12,11 +12,8 @@
 QYZSession::QYZSession()
 	: YZSession(), QVBox()
 {
-	new QPushButton("Before Stack", this );
 	mViewStack = new QWidgetStack( this );
 	mViewStack->show();
-	new QPushButton("After Stack", this );
-	mCommandLine = new QLineEdit( this );
     setFont ( YZSession::mOptions.readQStringEntry("Font", font().toString()) );
 	resize( 80 * 10, 50 * 10 );
 }
@@ -24,6 +21,8 @@ QYZSession::QYZSession()
 QYZSession::~QYZSession()
 {
 }
+
+// -------------	View & Buffer ----------------
 
 YZBuffer * QYZSession::createBuffer(const QString& path)
 {
@@ -43,17 +42,6 @@ YZView * QYZSession::createView ( YZBuffer * buf )
 	qDebug("QYZSession - id of view =  %d", mViewStack->id( view ) );
 	buf->addView( view );
 	return view;
-}
-
-void QYZSession::setFocusCommandLine()
-{
-	mCommandLine->setFocus();
-}
-
-void QYZSession::setFocusMainWindow()
-{
-	QYZView * qyzview = static_cast<QYZView *>( currentView() );
-	mViewStack->setFocus();
 }
 
 void QYZSession::changeCurrentView( YZView * view )
@@ -79,6 +67,23 @@ void QYZSession::deleteBuffer( YZBuffer *b )
 
 }
 
+// -------------  Graphical stuff -----------------
+
+void QYZSession::setFocusCommandLine()
+{
+	(static_cast<QYZView *>(currentView()))->setFocusCommandLine();
+}
+
+void QYZSession::setFocusMainWindow()
+{
+	(static_cast<QYZView *>(currentView()))->setFocusMainWindow();
+}
+
+void QYZSession::splitHorizontally ( YZView* )
+{
+}
+
+// --------------  Messages ------------------
 void QYZSession::quit(int errorCode)
 {
 	qApp->closeAllWindows();
@@ -102,10 +107,6 @@ int QYZSession::promptYesNoCancel(const QString& title, const QString& message)
 	if (ret == QMessageBox::Yes) return 0;
 	else if (ret == QMessageBox::No) return 1;
 	return 2;
-}
-
-void QYZSession::splitHorizontally ( YZView* )
-{
 }
 
 

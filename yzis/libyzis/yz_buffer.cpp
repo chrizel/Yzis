@@ -90,7 +90,7 @@ void YZBuffer::update_view(int view_nb)
 {
 	int y;
 	YZView *view = view_list[view_nb];
-	for (y=view->get_current(); y<lines_nb && y<view->get_current()+view->get_lines_visible(); y++) {
+	for (y=view->get_current(); y<lines_nb && view->is_line_visible(y); y++) {
 
 		YZLine *l = find_line( view->get_current()+y);
 		yz_assert(l, "find_line failed");
@@ -101,18 +101,36 @@ void YZBuffer::update_view(int view_nb)
 		e.u.setline.y		= y;
 		e.u.setline.line	= l;
 
+//		debug("y is %d, l is %p", y, l);
+//		yz_printfirst("YZBuffer::update_view, line is : ", l->data);
+
 		view->post_event(e);
 	}
 }
+
+void  YZBuffer::add_line(YZLine *l)
+{
+	l->set_next(NULL);
+
+	if (line_last)
+		line_last->set_next(l);
+	else line_first=l;
+
+	line_last=l;
+}
+
 
 YZLine	*YZBuffer::find_line(int line)
 {
 	/* sub-optimal, i know */
 
-	YZLine *l;
+	YZLine *l=NULL;
+
 	for (l=line_first; l; l=l->next())
 		if (l->line==line) return l;
 		else if (l->line>line) return NULL;
+
+	return NULL;
 }
 
 
@@ -176,7 +194,7 @@ void YZBuffer::load(void)
 				len=0;
 				/* add the new line */
 				add_line(line);
-				debug("adding a looooong microbuffer");
+				debug("adding a looooong YZLine");
 				dismiss = true;
 				debug("deleting... begin");
 				continue;
@@ -192,7 +210,7 @@ void YZBuffer::load(void)
 			debug("removing %d bytes from buf", ptr-buf);
 			/* add the new line */
 			add_line(line);
-			debug("adding a normal microbuffer");
+			debug("adding a normal YZLine");
 		} // while (1)
 
 	} while (!feof(f));
@@ -225,7 +243,7 @@ void YZBuffer::load(void)
 			YZLine *line = new YZLine(lines_nb++, buf, len); // ptr-buf == len, here
 			/* add the new line */
 			add_line(line);
-			debug("adding a looooong microbuffer");
+			debug("adding a looooong YZLine");
 			break; // nothing left in the buffer
 		}
 
@@ -235,7 +253,7 @@ void YZBuffer::load(void)
 		ptr++;
 		YZLine *line = new YZLine(lines_nb++, buf, len);
 		add_line(line);
-		debug("adding a normal microbuffer");
+		debug("adding a normal YZLine");
 	} // while (1)
 
 

@@ -59,6 +59,15 @@ static const int YZIS_DYNAMIC_CONTEXTS_RESET_DELAY = 30 * 1000;
 
 //BEGIN  Prviate HL classes
 
+inline bool yzisInsideString (const QString &str, QChar ch)
+{
+  for (uint i=0; i < str.length(); i++)
+    if (*(str.unicode()+i) == ch)
+      return true;
+
+  return false;
+}
+
 class YzisHlItem
 {
   public:
@@ -83,7 +92,7 @@ class YzisHlItem
 
     static void dynamicSubstitute(QString& str, const QStringList *args);
 
-    QPtrList<YzisHlItem> *subItems;
+    QMemArray<YzisHlItem*> subItems;
     int attr;
     int ctx;
     signed char region;
@@ -353,28 +362,23 @@ static YzisHlItemData::ItemStyles getDefStyleNum(QString name)
 }
 //END
 
-//BEGIN YzisHlItem
+//BEGIN KateHlItem
 YzisHlItem::YzisHlItem(int attribute, int context,signed char regionId,signed char regionId2)
-	: subItems( 0 ),
-		attr( attribute ),
-		ctx( context ),
-		region( regionId ),
-		region2( regionId2 ),
-		lookAhead( false ),
-		dynamic( false ),
-		dynamicChild( false )
+  : attr(attribute),
+    ctx(context),
+    region(regionId),
+    region2(regionId2),
+    lookAhead(false),
+    dynamic(false),
+    dynamicChild(false)
 {
 }
 
 YzisHlItem::~YzisHlItem()
 {
   //yzDebug("HL")<<"In hlItem::~YzisHlItem()"<<endl;
-  if (subItems!=0)
-  {
-    subItems->setAutoDelete(true);
-    subItems->clear();
-    delete subItems;
-  }
+  for (uint i=0; i < subItems.size(); i++)
+    delete subItems[i];
 }
 
 bool YzisHlItem::startEnable(const QChar& c)
@@ -382,7 +386,7 @@ bool YzisHlItem::startEnable(const QChar& c)
   // ONLY called when alwaysStartEnable() overridden
   // IN FACT not called at all, copied into doHighlight()...
   Q_ASSERT(false);
-  return stdDeliminator.find(c) != -1;
+  return kateInsideString (stdDeliminator, c);
 }
 
 void YzisHlItem::dynamicSubstitute(QString &str, const QStringList *args)
@@ -557,7 +561,7 @@ bool YzisHlKeyword::hasCustomStartEnable() const
 
 bool YzisHlKeyword::startEnable(const QChar& c)
 {
-  return deliminators.find(c) != -1;
+  return kateInsideString (deliminators, c);
 }
 
 // If we use a dictionary for lookup we don't really need
@@ -578,7 +582,7 @@ int YzisHlKeyword::checkHgl(const QString& text, int offset, int len)
 
   int offset2 = offset;
 
-  while (len > 0 && deliminators.find(text[offset2]) == -1 )
+  while (len > 0 && !kateInsideString (deliminators, text[offset2]))
   {
     offset2++;
     len--;
@@ -586,7 +590,7 @@ int YzisHlKeyword::checkHgl(const QString& text, int offset, int len)
 
   if (offset2 == offset) return 0;
 
-  if ( dict.find(text.mid(offset, offset2 - offset)) ) return offset2;
+  if ( dict.find(QConstString(text.unicode() + offset, offset2 - offset).string()) ) return offset2;
 
   return 0;
 }
@@ -615,13 +619,10 @@ int YzisHlInt::checkHgl(const QString& text, int offset, int len)
 
   if (offset2 > offset)
   {
-    if (subItems)
+    for (uint i=0; i < subItems.size(); i++)
     {
-      for (YzisHlItem *it = subItems->first(); it; it = subItems->next())
-      {
-        if ( (offset = it->checkHgl(text, offset2, len)) )
-          return offset;
-      }
+      if ( (offset = subItems[i]->checkHgl(text, offset2, len)) )
+        return offset;
     }
 
     return offset2;
@@ -681,15 +682,12 @@ int YzisHlFloat::checkHgl(const QString& text, int offset, int len)
       return 0;
     else
     {
-      if (subItems)
+      for (uint i=0; i < subItems.size(); i++)
       {
-        for (YzisHlItem *it = subItems->first(); it; it = subItems->next())
-        {
-          int offset2 = it->checkHgl(text, offset, len);
+        int offset2 = subItems[i]->checkHgl(text, offset, len);
 
-          if (offset2)
-            return offset2;
-        }
+        if (offset2)
+          return offset2;
       }
 
       return offset;
@@ -713,15 +711,12 @@ int YzisHlFloat::checkHgl(const QString& text, int offset, int len)
 
   if (b)
   {
-    if (subItems)
+    for (uint i=0; i < subItems.size(); i++)
     {
-      for (YzisHlItem *it = subItems->first(); it; it = subItems->next())
-      {
-        int offset2 = it->checkHgl(text, offset, len);
+      int offset2 = subItems[i]->checkHgl(text, offset, len);
 
-        if (offset2)
-          return offset2;
-      }
+      if (offset2)
+        return offset2;
     }
 
     return offset;
@@ -866,7 +861,7 @@ YzisHlAnyChar::YzisHlAnyChar(int attribute, int context, signed char regionId,si
 
 int YzisHlAnyChar::checkHgl(const QString& text, int offset, int len)
 {
-  if ((len > 0) && _charList.find(text[offset]) != -1)
+  if ((len > 0) && kateInsideString (_charList, text[offset]))
     return ++offset;
 
   return 0;
@@ -1161,70 +1156,76 @@ YzisHighlighting::~YzisHighlighting()
 void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QMemArray<short>* ctxs, int *prevLine, bool lineContinue)
 {
   //yzDebug("HL")<<QString("Entering generateContextStack with %1").arg(ctx)<<endl;
-
-  if (lineContinue)
+  while (true)
   {
-    if ( !ctxs->isEmpty() )
+    if (lineContinue)
     {
-      (*ctxNum)=(*ctxs)[ctxs->size()-1];
-      (*prevLine)--;
+      if ( !ctxs->isEmpty() )
+      {
+        (*ctxNum)=(*ctxs)[ctxs->size()-1];
+        (*prevLine)--;
+      }
+      else
+      {
+        //kdDebug(13010)<<QString("generateContextStack: line continue: len ==0");
+        (*ctxNum)=0;
+      }
+
+      return;
+    }
+
+    if (ctx >= 0)
+    {
+      (*ctxNum) = ctx;
+
+      ctxs->resize (ctxs->size()+1, QGArray::SpeedOptim);
+      (*ctxs)[ctxs->size()-1]=(*ctxNum);
     }
     else
     {
-      //yzDebug("HL")<<QString("generateContextStack: line continue: len ==0");
-      (*ctxNum)=0;
+      if (ctx < -1)
+      {
+        while (ctx < -1)
+        {
+          if ( ctxs->isEmpty() )
+            (*ctxNum)=0;
+          else
+          {
+            ctxs->resize (ctxs->size()-1, QGArray::SpeedOptim);
+            //kdDebug(13010)<<QString("generate context stack: truncated stack to :%1").arg(ctxs->size())<<endl;
+            (*ctxNum) = ( (ctxs->isEmpty() ) ? 0 : (*ctxs)[ctxs->size()-1]);
+          }
+
+          ctx++;
+        }
+
+        ctx = 0;
+
+        if ((*prevLine) >= (int)(ctxs->size()-1))
+        {
+          *prevLine=ctxs->size()-1;
+
+          if ( ctxs->isEmpty() )
+            return;
+
+          if (contextNum((*ctxs)[ctxs->size()-1]) && (contextNum((*ctxs)[ctxs->size()-1])->ctx != -1))
+          {
+            //kdDebug(13010)<<"PrevLine > size()-1 and ctx!=-1)"<<endl;
+            ctx = contextNum((*ctxs)[ctxs->size()-1])->ctx;
+            lineContinue = false;
+
+            continue;
+          }
+        }
+      }
+      else
+      {
+        if (ctx == -1)
+          (*ctxNum)=( (ctxs->isEmpty() ) ? 0 : (*ctxs)[ctxs->size()-1]);
+      }
     }
 
     return;
-  }
-
-  if (ctx >= 0)
-  {
-    (*ctxNum) = ctx;
-
-    ctxs->resize (ctxs->size()+1, QGArray::SpeedOptim);
-    (*ctxs)[ctxs->size()-1]=(*ctxNum);
-  }
-  else
-  {
-    if (ctx < -1)
-    {
-      while (ctx < -1)
-      {
-        if ( ctxs->isEmpty() )
-          (*ctxNum)=0;
-        else
-        {
-          ctxs->resize (ctxs->size()-1, QGArray::SpeedOptim);
-          //yzDebug("HL")<<QString("generate context stack: truncated stack to :%1").arg(ctxs->size())<<endl;
-          (*ctxNum) = ( (ctxs->isEmpty() ) ? 0 : (*ctxs)[ctxs->size()-1]);
-        }
-
-        ctx++;
-      }
-
-      ctx = 0;
-
-      if ((*prevLine) >= (int)(ctxs->size()-1))
-      {
-        *prevLine=ctxs->size()-1;
-
-        if ( ctxs->isEmpty() )
-          return;
-
-        if (contextNum((*ctxs)[ctxs->size()-1]) && (contextNum((*ctxs)[ctxs->size()-1])->ctx != -1))
-        {
-          //yzDebug("HL")<<"PrevLine > size()-1 and ctx!=-1)"<<endl;
-          generateContextStack(ctxNum, contextNum((*ctxs)[ctxs->size()-1])->ctx,ctxs, prevLine);
-          return;
-        }
-      }
-    }
-    else
-    {
-      if (ctx == -1)
-        (*ctxNum)=( (ctxs->isEmpty() ) ? 0 : (*ctxs)[ctxs->size()-1]);
-    }
   }
 }
 
@@ -1284,7 +1285,7 @@ void YzisHighlighting::dropDynamicContexts()
  */
 void YzisHighlighting::doHighlight ( YZLine *prevLine,
                                      YZLine *textLine,
-                                     QMemArray<signed char>* foldingList,
+                                     QMemArray<uint>* foldingList,
                                      bool *ctxChanged )
 {
   if (!textLine)
@@ -1369,7 +1370,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
       {
         if (!standardStartEnableDetermined)
         {
-          standardStartEnable = stdDeliminator.find(lastChar) != -1;
+          standardStartEnable = kateInsideString (stdDeliminator, lastChar);
           standardStartEnableDetermined = true;
         }
 
@@ -1393,14 +1394,18 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
           if (item->region2)
           {
 //              yzDebug("HL")<<QString("Region mark 2 detected: %1").arg(item->region2)<<endl;
-            if ( !foldingList->isEmpty() && ((item->region2 < 0) && (*foldingList)[foldingList->size()-1] == -item->region2 ) )
+            if ( !foldingList->isEmpty() && ((item->region2 < 0) && (*foldingList)[foldingList->size()-2] == -item->region2 ) )
             {
-              foldingList->resize (foldingList->size()-1, QGArray::SpeedOptim);
+              foldingList->resize (foldingList->size()-2, QGArray::SpeedOptim);
             }
             else
             {
-              foldingList->resize (foldingList->size()+1, QGArray::SpeedOptim);
-              (*foldingList)[foldingList->size()-1] = item->region2;
+              foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
+              (*foldingList)[foldingList->size()-2] = (uint)item->region2;
+              if (item->region2<0) //check not really needed yet
+                (*foldingList)[foldingList->size()-1] = offset2;
+              else
+               (*foldingList)[foldingList->size()-1] = offset1;
             }
 
           }
@@ -1415,8 +1420,12 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
             }
             else*/
             {
-              foldingList->resize (foldingList->size()+1, QGArray::SpeedOptim);
-              (*foldingList)[foldingList->size()-1] = item->region;
+              foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
+              (*foldingList)[foldingList->size()-2] = item->region;
+              if (item->region<0) //check not really needed yet
+                (*foldingList)[foldingList->size()-1] = offset2;
+              else
+                (*foldingList)[foldingList->size()-1] = offset1;
             }
 
           }
@@ -1810,7 +1819,7 @@ int  YzisHighlighting::lookupAttrName(const QString& name, YzisHlItemDataList &i
  *
  * @return A pointer to the newly created item object
  */
-YzisHlItem *YzisHighlighting::createYzisHlItem(struct YzisSyntaxContextData *data, YzisHlItemDataList &iDl,QStringList *RegionList, QStringList *ContextNameList)
+YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, YzisHlItemDataList &iDl,QStringList *RegionList, QStringList *ContextNameList)
 {
   // No highlighting -> exit
   if (noHl)
@@ -1973,12 +1982,18 @@ bool YzisHighlighting::canBreakAt( QChar c, int attrib ) const
   return (getCommentString(4, attrib).find(c) != -1) && (sq.find(c) == -1);
 }
 
+signed char YzisHighlighting::commentRegion(int attr) const {
+  int k = hlKeyForAttrib( attr );
+  QString commentRegion=m_additionalData[k][MultiLineRegion];
+  return (commentRegion.isEmpty()?0:(commentRegion.toShort()));
+}
+
 bool YzisHighlighting::canComment( int startAttrib, int endAttrib ) const
 {
   int k = hlKeyForAttrib( startAttrib );
   return ( k == hlKeyForAttrib( endAttrib ) &&
       ( ( !m_additionalData[k][0].isEmpty() && !m_additionalData[k][1].isEmpty() ) ||
-       m_additionalData[k][2].isEmpty() ) );
+       ! m_additionalData[k][2].isEmpty() ) );
 }
 
 QString YzisHighlighting::getCommentString( int which, int attrib ) const
@@ -2015,7 +2030,7 @@ QStringList YzisHighlighting::readCommentConfig()
   YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
   YzisSyntaxContextData *data=YzisHlManager::self()->syntax->getGroupInfo("general","comment");
 
-  QString cmlStart, cmlEnd, cslStart;
+  QString cmlStart, cmlEnd, cmlRegion, cslStart  ;
 
   if (data)
   {
@@ -2028,6 +2043,7 @@ QStringList YzisHighlighting::readCommentConfig()
       {
         cmlStart=YzisHlManager::self()->syntax->groupData(data,"start");
         cmlEnd=YzisHlManager::self()->syntax->groupData(data,"end");
+        cmlRegion=KateHlManager::self()->syntax->groupData(data,"region");
       }
     }
 
@@ -2038,9 +2054,10 @@ QStringList YzisHighlighting::readCommentConfig()
     cslStart = "";
     cmlStart = "";
     cmlEnd = "";
+    cmlRegion = "";
   }
   QStringList res;
-  res << cmlStart << cmlEnd << cslStart;
+  res << cmlStart << cmlEnd <<cmlRegion<< cslStart;
   return res;
 }
 
@@ -2479,9 +2496,10 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   additionaldata << readWordWrapConfig();
 
   readFoldingConfig ();
-
-  m_additionalData.insert( internalIDList.count(), additionaldata );
-  m_hlIndex.append( (int)internalIDList.count() );
+  
+  uint additionalDataIndex=internalIDList.count();
+  m_additionalData.insert( additionalDataIndex, additionaldata );
+  m_hlIndex.append( additionalDataIndex );
 
   QString ctxName;
 
@@ -2619,15 +2637,14 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
         datasub=YzisHlManager::self()->syntax->getSubItems(data);
         bool tmpbool;
         if (tmpbool=YzisHlManager::self()->syntax->nextItem(datasub))
-		{
-            c->subItems=new QPtrList<YzisHlItem>;
-            for (;tmpbool;tmpbool=YzisHlManager::self()->syntax->nextItem(datasub))
-			{
-            c->subItems->append(createYzisHlItem(datasub,iDl,&RegionList,&ContextNameList));
-			}
-		}
-		YzisHlManager::self()->syntax->freeGroupInfo(datasub);
-		// end of sublevel
+        {
+          for (;tmpbool;tmpbool=YzisHlManager::self()->syntax->nextItem(datasub))
+          {
+            c->subItems.resize (c->subItems.size()+1);
+            c->subItems[c->subItems.size()-1] = createKateHlItem(datasub,iDl,&RegionList,&ContextNameList);
+          }                             }
+          YzisHlManager::self()->syntax->freeGroupInfo(datasub);
+                              // end of sublevel
         }
       }
       i++;
@@ -2641,6 +2658,21 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 
   folding = folding || m_foldingIndentationSensitive;
 
+  //BEGIN Resolve multiline region if possible
+  QStringList& commentData=m_additionalData[additionalDataIndex];
+  if (!commentData[MultiLineRegion].isEmpty()) {
+    long commentregionid=RegionList.findIndex(commentData[MultiLineRegion]);
+    if (-1==commentregionid) {
+      errorsAndWarnings+=i18n("<B>%1</B>: Specified multiline comment region (%2) could not be resolved<BR>").arg(buildIdentifier).arg(commentData[MultiLineRegion]);
+      commentData[MultiLineRegion]=QString();
+      kdDebug()<<"ERROR comment region attribute could not be resolved"<<endl;
+      
+    } else {
+        commentData[MultiLineRegion]=QString::number(commentregionid+1);
+        kdDebug()<<"comment region resolved to:"<<m_additionalData[additionalDataIndex][MultiLineRegion]<<endl;
+    }
+  }
+  //END Resolve multiline region if possible
   return i;
 }
 
@@ -2743,7 +2775,7 @@ YzisHlManager::YzisHlManager()
   YzisSyntaxModeList modeList = syntax->modeList();
   for (uint i=0; i < modeList.count(); i++)
   {
-    YzisHighlighting *hl = new YzisHighlighting(modeList.at(i));
+    YzisHighlighting *hl = new YzisHighlighting(modeList[i]);
 
     uint insert = 0;
     for (; insert <= hlList.count(); insert++)
@@ -2968,30 +3000,50 @@ uint YzisHlManager::defaultStyles()
   return 14;
 }
 
-QString YzisHlManager::defaultStyleName(int n)
+QString YzisHlManager::defaultStyleName(int n, bool translateNames)
 {
   static QStringList names;
+  static QStringList translatedNames;
 
   if (names.isEmpty())
   {
-    names << QString("Normal");
-    names << QString("Keyword");
-    names << QString("Data Type");
-    names << QString("Decimal/Value");
-    names << QString("Base-N Integer");
-    names << QString("Floating Point");
-    names << QString("Character");
-    names << QString("String");
-    names << QString("Comment");
-    names << QString("Others");
-    names << QString("Alert");
-    names << QString("Function");
+    names << "Normal";
+    names << "Keyword";
+    names << "Data Type";
+    names << "Decimal/Value";
+    names << "Base-N Integer";
+    names << "Floating Point";
+    names << "Character";
+    names << "String";
+    names << "Comment";
+    names << "Others";
+    names << "Alert";
+    names << "Function";
     // this next one is for denoting the beginning/end of a user defined folding region
-    names << QString("Region Marker");
-	names << QString( "Error" );
+    names << "Region Marker";
+    // this one is for marking invalid input
+    names << "Error";
+
+    translatedNames << i18n("Normal");
+    translatedNames << i18n("Keyword");
+    translatedNames << i18n("Data Type");
+    translatedNames << i18n("Decimal/Value");
+    translatedNames << i18n("Base-N Integer");
+    translatedNames << i18n("Floating Point");
+    translatedNames << i18n("Character");
+    translatedNames << i18n("String");
+    translatedNames << i18n("Comment");
+    translatedNames << i18n("Others");
+    translatedNames << i18n("Alert");
+    translatedNames << i18n("Function");
+    // this next one is for denoting the beginning/end of a user defined folding region
+    translatedNames << i18n("Region Marker");
+    // this one is for marking invalid input
+    translatedNames << i18n("Error");
+>>>>>>> .merge-right.r1247
   }
 
-  return names[n];
+  return translateNames ? translatedNames[n] : names[n];
 }
 
 void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
@@ -3226,17 +3278,17 @@ void YzisViewHighlightAction::slotAboutToShow()
           subMenusName << hlSection;
           QPopupMenu *menu = new QPopupMenu ();
           subMenus.append(menu);
-          popupMenu()->insertItem (hlSection, menu);
+          popupMenu()->insertItem ( '&' + hlSection, menu);
         }
 
         int m = subMenusName.findIndex (hlSection);
         names << hlName;
-        subMenus.at(m)->insertItem ( hlName, this, SLOT(setHl(int)), 0,  z);
+        subMenus.at(m)->insertItem ( '&' + hlName, this, SLOT(setHl(int)), 0,  z);
       }
       else if (names.contains(hlName) < 1)
       {
         names << hlName;
-        popupMenu()->insertItem ( hlName, this, SLOT(setHl(int)), 0,  z);
+        popupMenu()->insertItem ( '&' + hlName, this, SLOT(setHl(int)), 0,  z);
       }
     }
   }

@@ -31,7 +31,6 @@
 #define __YZ_SYNTAXDOCUMENT_H__
 
 #include <qdom.h>
-#include <qptrlist.h>
 #include <qstringlist.h>
 #include <qapplication.h>
 #include <qobject.h>
@@ -58,7 +57,7 @@ class YzisSyntaxModeListItem
 /**
  * List of the YzisSyntaxModeListItems holding all the syntax mode list items
  */
-typedef QPtrList<YzisSyntaxModeListItem> YzisSyntaxModeList;
+typedef QValueList<YzisSyntaxModeListItem*> YzisSyntaxModeList;
 
 /**
  * Class holding the data around the current QDomElement
@@ -100,7 +99,7 @@ class YzisSyntaxDocument : public QDomDocument
      * Get the mode list
      * @return mode list
      */
-    YzisSyntaxModeList modeList() { return myModeList; };
+    const YzisSyntaxModeList &modeList() { return myModeList; }
 
     /**
      * Jump to the next group, YzisSyntaxContextData::currentGroup will point to the next group

@@ -26,6 +26,7 @@ class YZCursor {
 
 		inline int getY() { return y_pos; }
 
+/*
 		inline void incX(int nb=1) { x_pos+=nb; }
 
 		inline void incY(int nb=1) { y_pos+=nb; }
@@ -33,6 +34,7 @@ class YZCursor {
 		inline void decX(int nb=1) { x_pos-=nb; }
 
 		inline void decY(int nb=1) { y_pos-=nb; }
+*/
 
 	private :
 		YZView *parentView;

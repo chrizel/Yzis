@@ -30,10 +30,9 @@ void YZView::sendChar( QChar c) {
 	QString lin;
 
 	if ('\033'==c) {
-		//why do we check that ?
+		//when escpaping while adding char in end of line
 		if (cursor->getX() > current_maxx) {
-			cursor->setX(current_maxx);
-			updateCursor();
+			gotoxy(current_maxx, cursor->getY());
 		}
 		gotoCommandMode( );
 		return;
@@ -43,24 +42,16 @@ void YZView::sendChar( QChar c) {
 			/* handle adding a char */
 			if ( c.unicode() == 13 ) {// <ENTER> 
 				buffer->addNewLine(cursor->getX(),cursor->getY());
-				cursor->incY();
-				cursor->setX( 0 );
-				redrawScreen();
+				gotoxy(0, cursor->getY()+1 );
 			} else {
 				buffer->addChar(cursor->getX(),cursor->getY(),c);
-				cursor->incX();
+				gotoxy(cursor->getX()+1, cursor->getY() );
 			}
-			lin = buffer->findLine(cursor->getY());
-			if ( !lin.isNull() ) current_maxx = lin.length()-1;
-			updateCursor();
 			return;
 		case YZ_VIEW_MODE_REPLACE:
 			/* handle replacing a char */
 			buffer->chgChar(cursor->getX(),cursor->getY(),c);
-			cursor->incX();
-			lin = buffer->findLine(cursor->getY());
-			if ( !lin.isNull() ) current_maxx = lin.length()-1;
-			updateCursor();
+			gotoxy(cursor->getX()+1, cursor->getY() );
 			return;
 		case YZ_VIEW_MODE_COMMAND:
 			/* will be handled after the switch */
@@ -85,12 +76,8 @@ void YZView::sendChar( QChar c) {
 		session->getPool()->execCommand(this, previous_chars);
 }
 
-void YZView::updateCursor(int x, int y) {
-	if ( x != -1 ) cursor->setX ( x );
-	if ( y != -1 ) cursor->setY ( y );
-	QString lin = buffer->findLine( cursor->getY() );
-	if ( !lin.isNull() ) 
-		current_maxx = lin.length()-1;
+void YZView::updateCursor(void)
+{
 	postEvent( YZEvent::mkEventCursor(cursor->getX(),cursor->getY()));
 }
 
@@ -116,14 +103,18 @@ void YZView::registerManager ( Gui *mgr ) {
 
 void YZView::centerView(unsigned int line) {
 
-	if ( line==current ) return;
 	//update current
-	current = line - lines_vis / 2;
-	if ( current < 0 ) current = 0;
-	if ( current > buffer->text.count() - lines_vis ) current = buffer->text.count() - lines_vis;
-	//printf("Center : %i\n Lines vis : %i\n Current : %i\n",line,lines_vis,current);
+	int newcurrent = line - lines_vis / 2;
+
+	if ( newcurrent > ( int( buffer->text.count() ) - int( lines_vis ) ) )
+		newcurrent = buffer->text.count() - lines_vis;
+	if ( newcurrent < 0 ) newcurrent = 0;
+//	printf("Center : %i\n Lines vis : %i\n Current : %i\n",line,lines_vis,newcurrent);
+
+	if ( newcurrent==current ) return;
 
 	//redraw the screen
+	current = newcurrent;
 	redrawScreen();
 }
 
@@ -135,18 +126,29 @@ void YZView::redrawScreen() {
 /*
  * all the goto-like commands
  */
+
+/**
+  * Dont put unsigned here, some function may call with negative here, as
+  * checking is done inside gotoxy
+  */
 void	YZView::gotoxy(int nextx, int nexty)
 {
 	QString lin;
 
 	// check positions
+	if ( nexty >= int( buffer->text.count() ) ) nexty = buffer->text.count() - 1;
 	if ( nexty < 0 ) nexty = 0;
-	if ( nexty >= buffer->text.count() ) nexty = buffer->text.count() - 1;
 	cursor->setY( nexty );
 
 	lin = buffer->findLine(nexty);
 	if ( !lin.isNull() ) current_maxx = lin.length()-1; 
-	if ( nextx > current_maxx ) nextx = current_maxx;
+	if ( YZ_VIEW_MODE_REPLACE == mode || YZ_VIEW_MODE_INSERT==mode ) {
+		/* in edit mode, at end of line, cursor can be on +1 */
+		if ( nextx > current_maxx+1 ) nextx = current_maxx+1;
+	} else {
+		if ( nextx > current_maxx ) nextx = current_maxx;
+	}
+
 	if ( nextx < 0 ) nextx = 0;
 	cursor->setX( nextx );
 
@@ -288,18 +290,8 @@ QString YZView::gotoLine(const QString& inputsBuff) {
 QString YZView::moveToEndOfLine( const QString& ) {
 	QString lin;
 	
-	//execute the code
-	lin = buffer->findLine(cursor->getY());
-	if ( !lin.isNull() )
-		current_maxx = lin.length()-1;
-	else
-		current_maxx = 0;
-
-	cursor->setX( current_maxx );
+	gotoxy( current_maxx+10 , cursor->getY());
 	
-	gotoxy( current_maxx , cursor->getY());
-	
-	//reset the input buffer
 	purgeInputBuffer();
 	//return something
 	return QString::null;
@@ -380,8 +372,7 @@ QString YZView::append ( const QString& ) {
 	//reset the input buffer
 	purgeInputBuffer();
 	gotoInsertMode();
-	cursor->incX();
-	updateCursor();
+	gotoxy(cursor->getX()+1, cursor->getY() );
 
 	return QString::null;
 }

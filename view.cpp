@@ -988,7 +988,8 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 			return QString::null;
 		}
 		//delete to the cursor position now :)
-		yzDebug() << "Result of motion is : " << cursor->getX() << " " << cursor->getY() << endl;
+		yzDebug() << "Start of motion is : " << mCursor->getX() << " " << mCursor->getY() << endl;
+		yzDebug() << "End of motion is : " << cursor->getX() << " " << cursor->getY() << endl;
 
 		unsigned int edY = 0;
 
@@ -1011,9 +1012,15 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 			edY = dCursor->getY();
 		}
 		gotoxy( mX - 1, mY, false );
-		buff << b.mid( mX, cursor->getX() - mX );
-		QString b2 = b.left( mX ) + b.mid( cursor->getX() );
-		mBuffer->replaceLine( b2 , mY );
+		if ( !lineDeleted ) {
+			buff << b.mid( mX, cursor->getX() - mX + 1 );
+			QString b2 = b.left( mX ) + b.mid( cursor->getX() );
+			mBuffer->replaceLine( b2 , mY );
+		} else {
+			buff << b.mid( mX );
+			QString b2 = b.left( mX );
+			mBuffer->replaceLine( b2 , mY );
+		}
 
 		/* 2. delete whole lines */
 		unsigned int curY = mY + 1;
@@ -1026,10 +1033,15 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		}
 
 		/* 3. delete the part of the last line */
-		if ( cursor->getY() == curY ) {
+		if ( cursor->getY() == curY && !lineDeleted ) {
 			b = mBuffer->textline( curY );
 			buff << b.left( cursor->getX() );
 			mBuffer->replaceLine( b.mid( cursor->getX() ), curY );
+		} else if ( cursor->getY() == curY ) {
+			b = mBuffer->textline( curY );
+			buff << b.left( cursor->getX() );
+			mBuffer->replaceLine( b.mid( cursor->getX() ), curY );
+			mBuffer->mergeNextLine( curY - 1 );
 		}
 
 		/* ok, all is deleted, now redraw screen */

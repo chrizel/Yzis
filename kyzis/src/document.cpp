@@ -300,21 +300,23 @@ void KYZisDoc::configDialog() {
 }
 
 void KYZisDoc::setModified( bool modified ) {
-	for (QPtrList<KTextEditor::View>::const_iterator it = _views.constBegin();
-		it != _views.constEnd(); ++it)
-	{
-		KYZisView *kv = dynamic_cast<KYZisView *>(*it);
-		if (kv)
-			kv->emitNewStatus();
+	YZBuffer::setChanged( modified );
+	if ( KTextEditor::Document::isModified() != modified ) {
+		KTextEditor::Document::setModified( modified );
+		for (QPtrList<KTextEditor::View>::const_iterator it = _views.constBegin();
+			it != _views.constEnd(); ++it)
+		{
+			KYZisView *kv = dynamic_cast<KYZisView *>(*it);
+			if (kv)
+				kv->emitNewStatus();
+		}
 	}
 	if ( modified )
 		emit textChanged();
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
-	if ( v && v->modePool()->current()->isSelMode() )
-			emit selectionChanged();
-	KTextEditor::Document::setModified(modified);
 }
-
+void KYZisDoc::emitSelectionChanged() {
+	emit selectionChanged();
+}
 
 
 //KTextEditor::MarkInterface slots

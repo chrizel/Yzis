@@ -661,8 +661,8 @@ class YZView {
 
 		virtual void registerModifierKeys( const QString& ) {}
 		virtual void unregisterModifierKeys( const QString& ) {}
-//		virtual void registerModifierKeys( const QString& ) = 0;
-//		virtual void unregisterModifierKeys( const QString& ) = 0;
+
+		void emitSelectionChanged() {}
 
 	public slots :
 		void sendMultipleKey( const QString& keys );

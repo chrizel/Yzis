@@ -130,13 +130,16 @@ class KYZisDoc : public KTextEditor::Document,
 		virtual int selEndLine();
 		virtual int selEndCol();
 
-		/*state modification changes - to comply with undocumented kate features
-		this overload emits stateChanged() signal from all views*/
-		virtual void setModified(bool modified);
+		void emitSelectionChanged();
+
 
 	public slots:
 		//signals to emit
 //		void configureEditor();
+
+		/*state modification changes - to comply with undocumented kate features
+		this overload emits stateChanged() signal from all views*/
+		virtual void setModified(bool modified);
 
 		//KTextEditor::MarkInterface slots
 		uint mark( uint line );

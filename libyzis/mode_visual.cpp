@@ -94,6 +94,7 @@ void YZModeVisual::enter( YZView* mView ) {
 
 		toClipboard( mView );
 	}
+	mView->emitSelectionChanged();
 }
 void YZModeVisual::leave( YZView* mView ) {
 	YZDoubleSelection* visual = mView->getSelectionPool()->visual();
@@ -101,6 +102,7 @@ void YZModeVisual::leave( YZView* mView ) {
 	mView->sendPaintEvent( visual->screenMap(), false );
 	visual->clear();
 	mView->commitPaintEvent();
+	mView->emitSelectionChanged();
 }
 void YZModeVisual::cursorMoved( YZView* mView ) {
 	YZDoubleSelection* visual = mView->getSelectionPool()->visual();
@@ -125,6 +127,7 @@ void YZModeVisual::cursorMoved( YZView* mView ) {
 	mView->sendPaintEvent( tmp.map(), false );
 
 	toClipboard( mView );
+	mView->emitSelectionChanged();
 }
 
 void YZModeVisual::initCommandPool() {

@@ -81,6 +81,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 
 	applyConfig();
 	setupKeys();
+
 }
 
 KYZisView::~KYZisView () {
@@ -151,13 +152,15 @@ void KYZisView::syncViewInfo() {
 	QString fileInfo;
 	fileInfo +=( mBuffer->fileIsNew() )?"N":" ";
 	fileInfo +=( mBuffer->fileIsModified() )?"M":" ";
-	buffer->setModified( mBuffer->fileIsModified() );
 
 	status->changeItem(fileInfo, 90);
 	if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->draggingSlider())
 		mVScroll->setValue( getCurrentTop() );
 	emit cursorPositionChanged();
 	modeChanged();
+}
+void KYZisView::emitSelectionChanged() {
+	buffer->emitSelectionChanged();
 }
 
 void KYZisView::refreshScreen () {

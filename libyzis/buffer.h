@@ -315,6 +315,7 @@ public:
 	 * Change the modified flag of the file
 	 */
 	void setChanged(bool v);
+	virtual void setModified( bool modified );
 
 	/**
 	 * Unique ID of the buffer
@@ -454,6 +455,8 @@ public:
 	 * Detects the correct syntax highlighting for the current file
 	 */
 	void detectHighLight();
+
+
 
 protected:
 	/**

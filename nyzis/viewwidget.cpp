@@ -33,6 +33,7 @@ NYZView::NYZView(WINDOW *_window, YZBuffer *b)
 	: YZView(b,NYZFactory::self,0)
 {
 	window = _window;
+	modeDisplayed = false;
 
 	wmove(window,0,0 );
 	//active symbols for special keycodes
@@ -132,7 +133,8 @@ void NYZView::modeChanged(void)
 			displayInfo( tr( "Entering Replace mode" ));
 			break;
 		case YZ_VIEW_MODE_COMMAND: // normal
-			displayInfo( tr( "Entering Command mode" ));
+			if ( modeDisplayed ) displayInfo( tr( "Entering Command mode" ));
+			// else : nothing, we keep the previous message..
 			break;
 		case YZ_VIEW_MODE_EX: //script·
 			displayInfo( tr( "EX Mode :" ));
@@ -141,6 +143,7 @@ void NYZView::modeChanged(void)
 			displayInfo( reverseSearch ? tr( "Reverse Search:" ) : tr( "Search mode :" ));
 			break;
 	};
+	modeDisplayed = true;
 }
 
 void NYZView::syncViewInfo( void )
@@ -197,12 +200,7 @@ void NYZView::displayInfo( const QString& info )
 	werase(statusbar);
 	mvwaddstr( statusbar, 0, 0, info.latin1() );
 	wrefresh(statusbar);
-//	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
-}
-
-void NYZView::resetInfo()
-{
-	syncViewInfo();
+	modeDisplayed = false;
 }
 
 void NYZView::update_info(void)

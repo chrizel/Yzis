@@ -139,20 +139,50 @@ void NYZFactory::changeCurrentView ( YZView * view  )
 	currentViewChanged(view);
 }
 
-YZView* NYZFactory::createView( YZBuffer* buffer ) {
+YZView* NYZFactory::createView( YZBuffer* buffer )
+{
 	WINDOW *window = newwin(0,0,0,0 );
 	currentView = new NYZView(window, buffer);
 	currentViewChanged(currentView);
 	return currentView;
 }
 
-NYZisDoc *NYZFactory::createBuffer(const QString& path) {
+NYZisDoc *NYZFactory::createBuffer(const QString& path)
+{
 	NYZisDoc *b = new NYZisDoc( path );
 	return b;
 }
 
-void NYZFactory::popupMessage( const QString& /* message */ ) {
-	//TODO
+void NYZFactory::popupMessage( const QString &message )
+{
+#if 0
+	int nl,nc,y;
+	message.simplifyWhiteSpace();
+	nc = message.length();
+	nl = 1;
+	if ( nc>COLS-4 && COLS-4>0 ) {
+		nl = nc / COLS-4;
+		nc = COLS-4;
+	}
+	WINDOW *popup = newwin(nl+4, nc+4, ( LINES-nl )/2, (COLS-nc)/2);
+	box( popup, 0, 0 );
+
+	y=2;
+	while (nl ) {
+		mvwaddstr( popup, y, 2, message.mid(y*nc, nc).latin1() );
+		y++;nl--;
+	}
+	// TODO : use QString QString::section 
+
+	wrefresh(popup);
+	refresh();
+	yzDebug() << "**********************popupMessage()************" <<endl;
+	sleep (4);
+	delwin( popup );
+	refresh();
+#else
+	currentView->displayInfo(message);
+#endif
 }
 
 void NYZFactory::deleteView() {

@@ -41,9 +41,10 @@
 
 class NYZSession;
 
-class NYZView : public QObject, public YZView
+//class NYZView : public QObject, public YZView
+class NYZView : public YZView
 {
-	Q_OBJECT
+//	Q_OBJECT
 
 public:
 	/**
@@ -70,7 +71,6 @@ protected:
 	unsigned int	h, w;		/** height and width of the window */
 
 public slots:
-	void resetInfo();
 
 private:
 	void update_info(void);
@@ -92,6 +92,7 @@ private:
 	WINDOW          *fileInfo;     // the one with info about current file (modified..)
 
 	QString commandline;
+	bool modeDisplayed;
 
 };
 

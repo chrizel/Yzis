@@ -315,7 +315,6 @@ void YZInternalOptionPool::initConfFiles() {
 	if ( !homeConf.exists( QDir::homeDirPath()+"/.yzis/" ) )
 		if ( !homeConf.mkdir(QDir::homeDirPath()+"/.yzis/", true) ) return;
 
-	loadFrom(QDir::rootDirPath()+"/etc/yzis.conf");
 	loadFrom(QDir::rootDirPath()+"/etc/yzis/yzis.conf");
 	loadFrom(QDir::homeDirPath()+"/.yzis/yzis.conf");
 

@@ -625,13 +625,15 @@ QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 	QString style = list[0];
 	QString type = list[1];
 	list.remove(it++); list.remove(it++);
-	if (!list[0].contains("=") && !list[0].endsWith("bold") && !list[0].endsWith("italic") && !list[0].endsWith("underline") && !list[0].endsWith("strikeout"))
-	type += " " + list[0];
-	list.remove(it++);
+	if (!list[0].contains("=") && !list[0].endsWith("bold") && !list[0].endsWith("italic") && !list[0].endsWith("underline") && !list[0].endsWith("strikeout")) {
+		type += " " + list[0];
+		list.remove(it++);
+	}
 
 	//get the current settings for this option
 	int idx = 0;
-	if ( style == "Defaults" || style == "Default" ) style = "Default Item Styles - Schema ";
+	if ( style == "Defaults" || style == "Default" ) 
+		style = "Default Item Styles - Schema ";
 	else { 
 		style = "Highlighting " + style.simplifyWhiteSpace() + " - Schema ";
 		idx++;
@@ -639,12 +641,14 @@ QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 	style += YZSession::me->schemaManager()->name(0); //XXX make it use the 'current' schema
 	YZSession::mOptions.setGroup(style);
 	QStringList option = YZSession::mOptions.readQStringListEntry(type);
-	yzDebug() << "HIGHLIGHT : Current " << option << endl;
+	yzDebug() << "HIGHLIGHT : Current " << type << " : " << option << endl;
 	if (option.count() < 7) return QString::null; //just make sure it's fine ;)
-	
+
+	end = list.end();
 	//and update it with parameters passed from user
-	QRegExp rx("(.*)=(.*)");
-	for (;it!=end; ++it) {
+	QRegExp rx("(\\S*)=(\\S*)");
+	for (it=list.begin();it!=end; ++it) {
+		yzDebug() << "Testing " << *it << endl;
 		if ( rx.exactMatch(*it) ) { // fg=, selfg= ...
 			QColor col (rx.cap(2)); //can be a name or rgb
 			if ( rx.cap(1) == "fg" ) {
@@ -679,10 +683,12 @@ QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 	YZSession::mOptions.setQStringListOption(type, option);
 	
 	YZSession::mOptions.setGroup("Global");
-	YzisHighlighting *yzis = args.view->myBuffer()->highlight();
-	if (yzis) {
-		args.view->myBuffer()->makeAttribs();
-		args.view->refreshScreen();
+	if ( args.view && args.view->myBuffer() ) {
+		YzisHighlighting *yzis = args.view->myBuffer()->highlight();
+		if (yzis) {
+			args.view->myBuffer()->makeAttribs();
+			args.view->refreshScreen();
+		}
 	}
 
 	return QString::null;

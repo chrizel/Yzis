@@ -105,6 +105,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"color",color);
 	lua_register(L,"linecount",linecount);
 	lua_register(L,"sendkeys",sendkeys);
+	lua_register(L,"highlight",highlight);
 }
 
 YZExLua::~YZExLua() {
@@ -118,7 +119,9 @@ QString YZExLua::lua(YZView *, const QString& args) {
 
 //callers
 QString YZExLua::source( YZView *, const QString& args ) {
+	yzDebug() << "source : " << args << endl;
 	QString filename = args.mid( args.find( " " ) +1 );
+	yzDebug() << "filename : " << filename << endl;
 	QStringList candidates;
 	candidates << filename 
 	           << QDir::currentDirPath()+"/"+filename
@@ -404,6 +407,18 @@ int YZExLua::sendkeys( lua_State *L ) {
 	QString text = ( char * )lua_tostring ( L, 1 );
 	YZSession::me->sendMultipleKeys(text);
 	// nothing to return
+	return 0;
+}
+
+int YZExLua::highlight( lua_State *L ) {
+	int n = lua_gettop( L );
+	if ( n < 3 ) return 0;
+	QStringList arg;
+	for ( int i = 1; i <= n ; i++ ) {
+		arg << ( char * )lua_tostring( L, i );
+	}
+	YZExCommandArgs args(NULL,QString::null,QString::null,arg.join(" "),0,0,true);
+	YZSession::me->getExPool()->highlight(args);
 	return 0;
 }
 

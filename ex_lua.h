@@ -185,6 +185,11 @@ class YZExLua : public QObject {
 		 */
 		static int sendkeys(lua_State *L);
 
+		/**
+		* Command to customize syntax highlighting settings
+		*/
+		static int highlight(lua_State *L);
+
 	protected:
 		lua_State *L;
 

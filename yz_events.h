@@ -9,7 +9,7 @@
 
 
 #include "yzis.h" /* NULL */
-#include "yz_line.h"
+#include <qstring.h>
 
 
 /** list of all events */
@@ -22,7 +22,7 @@ enum yz_events {
 /** Here are some struct used for event args handling
   * we can use long name as we shouldn't need to use those anyway
   */
-class YZLine;
+class QString;
 
 
 /**
@@ -43,7 +43,7 @@ class YZLine;
   */
 struct yz_event_setline {
 	int	y;
-	YZLine 	*line;
+	QString *line;
 };
 
 /**
@@ -90,7 +90,7 @@ typedef struct yz_event_t yz_event;
 
 yz_event mk_event_setstatus(const char *text);
 yz_event mk_event_setcursor(int x, int y);
-yz_event mk_event_setline(int,YZLine*);
+yz_event mk_event_setline(int,QString*);
 
 
 /** Event pool

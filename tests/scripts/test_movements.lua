@@ -155,6 +155,7 @@ TestMovements = {} --class
 	    assertPos( 1, 2 )
 	    sendkeys("$")
 	    assertPos( 1, 5 )
+	    set("cindent&")
 	end
 
 	function TestMovements:testLineMovement()
@@ -201,6 +202,8 @@ TestMovements = {} --class
 	    assertPos( 1, 1 )
 	    sendkeys("G")
 	    assertPos( 4, 1 )
+
+	    set("startofline&")
 	end
 	
 	function TestMovements:testMotionMovement()
@@ -297,13 +300,14 @@ TestMovements = {} --class
 	    assertPos( 2, 13 )
 	    --cleanup
 		clearBuffer()
+	    set("startofline&")
+	    set("cindent&")
 	end
 
 	function TestMovements:testStickyColumn()
 		clearBuffer()
 		insertline(1, "line1 line1 line1 line1 line1")
 		insertline(2, "		line2 line2 line2 line2")
-		printBufferContent()
 		goto(1,1)
 		assertPos(1,1)
 		sendkeys("2lj")

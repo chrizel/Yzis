@@ -27,8 +27,8 @@ public:
 	/** opens a buffer using the given file */
 	YZBuffer(char *_path=NULL);
 
-	void addchar (int x, int y, unicode_char_t c);
-	void chgchar (int x, int y, unicode_char_t c);
+	void add_char (int x, int y, unicode_char_t c);
+	void chg_char (int x, int y, unicode_char_t c);
 
 	void load(void);
 	void save(void);
@@ -82,9 +82,9 @@ yz_buffer create_empty_buffer(void);
 yz_buffer create_buffer(char *path);
 
 /** add a character on the (x,y) position, move all the line to right */
-void buffer_addchar(yz_buffer , int x, int y, unicode_char_t c);
+void buffer_add_char(yz_buffer , int x, int y, unicode_char_t c);
 /** change the character on the (x,y) position, hence erasing the current one */
-void buffer_chgchar(yz_buffer , int x, int y, unicode_char_t c);
+void buffer_chg_char(yz_buffer , int x, int y, unicode_char_t c);
 
 /** load the file (from 'path') */
 void buffer_load(yz_buffer);

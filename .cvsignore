@@ -1,6 +1,10 @@
 *.o
+.libs
 .deps
 .svn
 diff
 Makefile.in
+Makefile
+*.lo
+*.la
 

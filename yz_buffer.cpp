@@ -26,23 +26,41 @@ YZBuffer::YZBuffer(char *_path)
 	if (_path!=NULL) load();
 }
 
-void YZBuffer::addchar (int x, int y, unicode_char_t c)
+void YZBuffer::add_char (int x, int y, unicode_char_t c)
 {
-	yz_event e;
-	/* do the actual modification */
-
+	/* brute force, we'll have events specific for that later on */
 	debug("addchar");
-	//post_event(e); /* inform the views */
+	YZLine *l=find_line(y);
+
+	/* do the actual modification */
+	l->add_char(x, c);
+
+	/* inform the views */
+	yz_event e;
+	e.id			= YZ_EV_SETLINE;
+	e.u.setline.y		= y;
+	e.u.setline.line	= l;
+	
+	post_event(e);
 }
 
 
-void YZBuffer::chgchar (int x, int y, unicode_char_t c)
+void YZBuffer::chg_char (int x, int y, unicode_char_t c)
 {
-	yz_event e;
-	/* do the actual modification */
+	/* brute force, we'll have events specific for that later on */
+	debug("chgchar");
+	YZLine *l=find_line(y);
 
-	debug("addchar");
-	//post_event(e); /* inform the views */
+	/* do the actual modification */
+	l->chg_char(x, c);
+
+	/* inform the views */
+	yz_event e;
+	e.id			= YZ_EV_SETLINE;
+	e.u.setline.y		= y;
+	e.u.setline.line	= l;
+
+	post_event(e);
 }
 
 void YZBuffer::post_event(yz_event e)
@@ -53,7 +71,7 @@ void YZBuffer::post_event(yz_event e)
 	for (int i=0; i<view_nb; i++) {
 		YZView *v = view_list[i];
 		if (v->is_line_visible(l))
-			view_list[i]->post_event(e);
+			v->post_event(e);
 	}
 }
 
@@ -249,17 +267,17 @@ yz_buffer create_buffer(char *_path) { return (yz_buffer)(new YZBuffer(_path)); 
 /*
  * functions
  */
-void buffer_addchar(yz_buffer b , int x, int y, unicode_char_t c)
+void buffer_add_char(yz_buffer b , int x, int y, unicode_char_t c)
 {
 	CHECK_BUFFER(b);
-	buffer->addchar(x,y,c);
+	buffer->add_char(x,y,c);
 }
 
 
-void buffer_chgchar(yz_buffer b, int x, int y, unicode_char_t c)
+void buffer_chg_char(yz_buffer b, int x, int y, unicode_char_t c)
 {
 	CHECK_BUFFER(b);
-	buffer->chgchar(x,y,c);
+	buffer->chg_char(x,y,c);
 }
 
 

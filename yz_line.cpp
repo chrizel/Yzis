@@ -36,13 +36,14 @@ YZLine::~YZLine()
 }
 
 
-void YZLine::expand(int increase)
+void YZLine::expand(int newsize)
 {
-	if (increase<=0) {
-		warning("called with increase<=0, strange, ignored");
+	if (newsize<=len_max) {
+		warning("called with newsize<=len_max, strange, ignored");
 		return;
 	}
-	len_max += increase;
+	debug("expanding upto %d", newsize);
+	len_max = newsize;
 	data = (char*)realloc(data, sizeof(char)*len_max);
 	if (!data) panic("memory allocation problem");
 }
@@ -62,6 +63,24 @@ void YZLine::append(char *_data, int _len)
 	/* actually append */
 	memcpy(data+len, _data, _len);
 }
+
+void YZLine::add_char (int x, unicode_char_t c)
+{
+	/* not optimised */
+	if (len>=len_max) expand(len_max+YZ_LINE_DEFAULT_LENGTH);
+	int i;
+	for (i=len-1; i>x; i--)
+		data[i]=data[i-1];
+	data[x] = c;
+}
+
+
+void YZLine::chg_char (int x, unicode_char_t c)
+{
+	/* not optimised */
+	data[x] = c;
+}
+
 
 
 

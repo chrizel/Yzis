@@ -18,6 +18,7 @@ public:
 	NYZView(YZBuffer *b, int lines) : YZView(b,lines) { }
 
 	void event_loop();
+	void flush_events();
 
 protected:
 	void handle_event(yz_event *e);

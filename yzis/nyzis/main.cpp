@@ -33,7 +33,7 @@ main(int argc, char *argv[])
 	/*
 	 * create an empty buffer and a view on it
 	 */
-	buffer = new YZBuffer();
+	buffer = new YZBuffer("tests/test1");
 	view = new NYZView(buffer, LINES);
 
 	debug("before event_loop");

@@ -3,7 +3,7 @@ INCLUDES=$(QT_INCLUDES) $(all_includes)
 lib_LTLIBRARIES = libqtyzis.la
 
 libqtyzis_la_SOURCES = dummy.cpp
-libqtyzis_la_LIBADD = ../libyzis.la $(LIB_QT) $(all_libraries) $(LUA_LIBS) $(PS_LIBS) -lmagic
+libqtyzis_la_LIBADD = ../libyzis.la $(LIB_QT) $(all_libraries) $(LUA_LIBS) $(PS_LIBS) $(LIBMAGIC_LIBS) $(LIBGETTEXT_LIBS)
 
 dummy.cpp:
 	echo "#ifdef _AIX" > $@

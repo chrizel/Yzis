@@ -408,7 +408,12 @@ uint YZBuffer::firstNonBlankChar( uint line ) {
 
 void YZBuffer::setEncoding( const QString& name ) {
 	yzDebug("YZBuffer") << "set encoding " << name << endl;
-	QTextCodec* destCodec;
+	/*
+	 * We have to reload the file
+	 */
+	load( mPath );
+/*	//Does not work very well, problem when converting from utf8 to iso8859-15, and problem with the EOL
+ 	QTextCodec* destCodec;
 	QTextCodec* fromCodec;
 	if ( name == "locale" ) {
 		destCodec = QTextCodec::codecForLocale();
@@ -426,7 +431,7 @@ void YZBuffer::setEncoding( const QString& name ) {
 			(*it)->setData( destCodec->toUnicode( fromCodec->fromUnicode( (*it)->data() ) ) );
 		}
 	}
-	currentEncoding = name;
+	currentEncoding = name; */
 }
 
 void YZBuffer::load(const QString& file) {

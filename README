@@ -96,4 +96,12 @@ Over the time, maintaining a C binding to C++ turn out to be quite tedious and
 time consuming. It would also make the code quite complicated. So the C
 binding was dropped and yzis started to develop slowly but steadily.
 
+During the development, we added new technologies:
+- we use lua for the scripting engine. It is a mature powerful scripting
+  language that is really lightweight to embed.
+- we use kate's syntax highlighting code, in order not to re-invent the wheel.
+
+
+
+
 

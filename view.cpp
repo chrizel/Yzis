@@ -1544,7 +1544,7 @@ bool YZView::drawNextCol( ) {
 	unsigned int curx = sCursor->getX( );
 	wrapNextLine = false;
 
-	if ( curx < sCurLineLength ) {
+	if ( curx < sCurLineLength) {
 		ret = rCursor->getX() - mCurrentLeft < mColumnsVis;
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {
@@ -1713,3 +1713,10 @@ QString YZView::gotoMark( const QString& inputsBuff, YZCommandArgs ) {
 	return QString::null;
 
 }
+
+QString YZView::refreshScreenInternal(const QString& , YZCommandArgs ) {
+	purgeInputBuffer();
+	refreshScreen();
+}
+
+

@@ -21,11 +21,13 @@
  * This should also allow us to 'remap' commands, and dynamically add new ones :)
  */
 YZCommandPool::YZCommandPool() {
+	executor = new YZExExecutor();
 }
 
 YZCommandPool::~YZCommandPool() {
 	globalCommands.clear();
 	globalExCommands.clear();
+	delete executor;
 }
 
 void YZCommandPool::initPool() {
@@ -105,7 +107,7 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 }
 
 void YZCommandPool::initExPool() {
-//	NEW_EX_COMMAND("w",&YZView::append,true);
+	NEW_EX_COMMAND("w",&YZExExecutor::write,true);
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
@@ -136,7 +138,7 @@ void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
 	if ( it!=globalExCommands.end() ) { //we got one match *ouf*
 		switch ( globalExCommands[ command ].obj ) {
 				case EX :
-					//result = ( *view.*(globalExCommands[ command ].exFunc )) (inputs) ;
+					( *executor.*(globalExCommands[ command ].exFunc )) (view,inputs) ;
 					break;
 			default:
 				break;

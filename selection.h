@@ -25,17 +25,35 @@
 #define YZ_SELECTION_H
 
 #include <qmap.h>
+#include "cursor.h"
 
 class YZCursor;
 class YZView;
 
-struct selection {
-	YZCursor * from;
-	YZCursor * to;
-	YZCursor * drawFrom;
-	YZCursor * drawTo;
+class YZSelection {
+	public:
+		YZSelection( const YZSelection& sel ) : 
+			mFrom ( sel.from() ), mTo ( sel.to() ), mDrawFrom ( sel.drawFrom() ), mDrawTo ( sel.drawTo() ) {
+		}
+		YZSelection(const YZCursor& _from, const YZCursor& _to, const YZCursor& _drawFrom, const YZCursor& _drawTo) :
+	   		mFrom ( _from ), mTo( _to ), mDrawFrom( _drawFrom ), mDrawTo( _drawTo )	{
+		}
+		YZSelection(){}
+		const YZCursor& from() const { return mFrom; }
+		const YZCursor& to() const { return mTo; }
+		const YZCursor& drawFrom() const { return mDrawFrom; }
+		const YZCursor& drawTo() const { return mDrawTo; }
+		void setTo( const YZCursor& t ) { mTo.setCursor( t ); }
+		void setFrom( const YZCursor& t ) { mFrom.setCursor( t ); }
+		void setDrawFrom( const YZCursor& t ) { mDrawFrom.setCursor( t ); }
+		void setDrawTo( const YZCursor& t ) { mDrawTo.setCursor( t ); }
+
+	private:
+		YZCursor mFrom;
+		YZCursor mTo;
+		YZCursor mDrawFrom;
+		YZCursor mDrawTo;
 };
-typedef struct selection YZSelection;
 
 typedef QMap<unsigned int, YZSelection> YZSelectionMap;
 typedef QMap<QString, YZSelectionMap> YZSelectionLayout;

@@ -49,6 +49,7 @@ class YZCursor {
 		YZCursor(YZView *vp, unsigned int X, unsigned int Y );
 		YZCursor( const YZCursor& cursor);
 		YZCursor(YZCursor *cursor);
+		YZCursor() { } //for QMap which sux ass
 		~YZCursor();
 
 		inline void setX(unsigned int x) { x_pos = x; }

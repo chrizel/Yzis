@@ -174,7 +174,7 @@ public:
 	 * @param to the end cursor
 	 * @return a list of strings
 	 */
-	QStringList getText(YZCursor& from, YZCursor& to);
+	QStringList getText(const YZCursor& from, const YZCursor& to);
 
 	/**
 	 * Number of lines in the buffer

@@ -55,7 +55,7 @@ class YZAction {
 
 		void deleteLine( YZView* pView, const YZCursor& pos, unsigned int len );
 		void deleteLine( YZView* pView, unsigned int Y, unsigned int len );
-		void deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const QChar& reg );
+		void deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QChar& reg );
 
 		void replaceLine( YZView* pView, const YZCursor& pos, const QString &text );
 		void replaceLine( YZView* pView, unsigned int Y, const QString &text );

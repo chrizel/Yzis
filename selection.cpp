@@ -23,7 +23,6 @@
 
 #include <cstdlib>
 
-#include "cursor.h"
 #include "selection.h"
 #include "debug.h"
 
@@ -65,20 +64,20 @@ void YZSelectionPool::addSelection( const QString& layout, const YZCursor& from,
 
 	if ( isFromSel && isToSel ) {
 		if ( fromSel != toSel ) {
-			YZCursor new_to( selectionPool[ layout ][ toSel ].to );
+			YZCursor new_to = ( selectionPool[ layout ][ toSel ].to() );
 			// delete all selections included in new one
 			removeSelection( layout, fromSel + 1, toSel - fromSel );
 			// extend fromSel selection
-			selectionPool[ layout ][ fromSel ].to->setCursor( new_to );
+			selectionPool[ layout ][ fromSel ].setTo( new_to );
 		}
 	} else if ( isFromSel ) {
 		removeSelection( layout, fromSel + 1, toSel - fromSel - 1 );
-		selectionPool[ layout ][ fromSel ].to->setCursor( to );
+		selectionPool[ layout ][ fromSel ].setTo( to );
 	} else if ( isToSel || fromSel != toSel ) {
-		YZCursor new_to( selectionPool[ layout ].find( toSel ).data().to );
+		YZCursor new_to( selectionPool[ layout ].find( toSel ).data().to() );
 		removeSelection( layout, fromSel + 1, toSel - fromSel );
-		selectionPool[ layout ][ fromSel ].from->setCursor( from );
-		selectionPool[ layout ][ fromSel ].to->setCursor( new_to );
+		selectionPool[ layout ][ fromSel ].setFrom( from );
+		selectionPool[ layout ][ fromSel ].setTo( new_to );
 	} else {
 		insertSelection( layout, fromSel, from, to, drawFrom, drawTo );
 	}
@@ -103,8 +102,8 @@ void YZSelectionPool::delSelection( const QString& layout, const YZCursor& from,
 	YZCursor new_to( to );
 	new_to.setX( new_to.getX() + 1 );
 
-	bool removeFrom = selectionPool[ layout ].contains( fromSel ) && *selectionPool[ layout ][ fromSel ].from < new_from;
-	bool removeTo = selectionPool[ layout ].contains( toSel ) && *selectionPool[ layout ][ toSel ].to < new_to;
+	bool removeFrom = selectionPool[ layout ].contains( fromSel ) && selectionPool[ layout ][ fromSel ].from() < new_from;
+	bool removeTo = selectionPool[ layout ].contains( toSel ) && selectionPool[ layout ][ toSel ].to() < new_to;
 	yzDebug() << "removeFrom=" << removeFrom << ";removeTo=" << removeTo << endl;
 
 	if ( ! isFromSel && ! isToSel ) {
@@ -112,23 +111,22 @@ void YZSelectionPool::delSelection( const QString& layout, const YZCursor& from,
 			removeSelection( layout, fromSel, toSel - fromSel );
 		}
 	} else if ( ! isToSel ) {
-		if ( ! removeFrom ) selectionPool[ layout ][ fromSel ].to->setCursor( new_from );
+		if ( ! removeFrom ) selectionPool[ layout ][ fromSel ].setTo( new_from );
 		removeSelection( layout, fromSel + ( removeFrom ? 0 : 1 ), toSel - fromSel - ( removeFrom ? 0 : 1 ) );
 	} else if ( ! isFromSel ) {
-		if ( ! removeTo ) selectionPool[ layout ][ toSel ].from->setCursor( new_to );
+		if ( ! removeTo ) selectionPool[ layout ][ toSel ].setFrom( new_to );
 		removeSelection( layout, fromSel, toSel - fromSel + ( removeTo ? 1 : 0 ) );
-	} else if ( *selectionPool[ layout ][ fromSel ].from == from && *selectionPool[ layout ][ toSel ].to == to ) {
+	} else if ( selectionPool[ layout ][ fromSel ].from() == from && selectionPool[ layout ][ toSel ].to() == to ) {
 		removeSelection( layout, fromSel, fromSel - toSel + 1 );
 	} else if ( fromSel != toSel ) {
-		if ( ! removeFrom ) selectionPool[ layout ][ fromSel ].to->setCursor( new_from );
-		if ( ! removeTo ) selectionPool[ layout ][ toSel ].from->setCursor( new_to );
+		if ( ! removeFrom ) selectionPool[ layout ][ fromSel ].setTo( new_from );
+		if ( ! removeTo ) selectionPool[ layout ][ toSel ].setFrom( new_to );
 		removeSelection ( layout, fromSel + ( removeFrom ? 0 : 1 ), toSel - fromSel - 1 + ( removeFrom ? 1 : 0 ) + ( removeTo ? 1 : 0 ) );
 	} else { // split selection
 		if ( removeTo && removeFrom ) removeSelection( layout, fromSel, 1 );
 		else {
-			if ( ! removeTo ) insertSelection( layout, fromSel + 1, new_to, selectionPool[ layout ][ fromSel ].to, 
-						drawFrom, selectionPool[ layout ][ fromSel ].drawTo );
-			if ( ! removeFrom ) selectionPool[ layout ][ fromSel ].to->setCursor( new_from );
+			if ( ! removeTo ) insertSelection( layout, fromSel + 1, new_to, selectionPool[ layout ][ fromSel ].to(), drawFrom, selectionPool[ layout ][ fromSel ].drawTo() );
+			if ( ! removeFrom ) selectionPool[ layout ][ fromSel ].setTo( new_from );
 		}
 	}
 }
@@ -142,10 +140,10 @@ void YZSelectionPool::clear( ) {
 void YZSelectionPool::clear( const QString& layout ) {
 	YZSelectionMap::Iterator it;
 	for ( it = selectionPool[ layout ].begin(); it != selectionPool[ layout ].end(); ++it ) {
-		delete it.data().from;
+/*		delete it.data().from;
 		delete it.data().to;
 		delete it.data().drawFrom;
-		delete it.data().drawTo;
+		delete it.data().drawTo;*/
 	}
 		
 	selectionPool[ layout ].clear( );
@@ -170,11 +168,12 @@ void YZSelectionPool::insertSelection( const QString& layout, unsigned int pos, 
 	for ( unsigned int i = size - 1; i > pos; i-- ) {
 		selectionPool[ layout ][ i ] = selectionPool[ layout ][ i - 1 ];
 	}
-	YZSelection new_sel;
+	YZSelection new_sel( from, to, drawFrom, drawTo );
+		/*
 	new_sel.from = new YZCursor( from );
 	new_sel.to = new YZCursor( to );
 	new_sel.drawFrom = new YZCursor( drawFrom );
-	new_sel.drawTo = new YZCursor( drawTo );
+	new_sel.drawTo = new YZCursor( drawTo );*/
 	selectionPool[ layout ].insert( pos, new_sel );
 }
 
@@ -186,10 +185,10 @@ void YZSelectionPool::removeSelection( const QString& layout, unsigned int begin
 		selectionPool[ layout ][ i ] = selectionPool[ layout ][ i + len ];
 	}
 	for ( ; i < size; i++ ) {
-		delete selectionPool[ layout ][ i ].from;
+/*		delete selectionPool[ layout ][ i ].from;
 		delete selectionPool[ layout ][ i ].to;
 		delete selectionPool[ layout ][ i ].drawFrom;
-		delete selectionPool[ layout ][ i ].drawTo;
+		delete selectionPool[ layout ][ i ].drawTo;*/
 		selectionPool[ layout ].remove( i );
 	}
 }
@@ -197,7 +196,7 @@ void YZSelectionPool::removeSelection( const QString& layout, unsigned int begin
 void YZSelectionPool::debug( const QString& layout ) {
 	unsigned int size = selectionPool[ layout ].size( );
 	for ( unsigned int i = 0; i < size; i++ ) {
-		yzDebug() << "[" << layout << "] (" << i << ") from=" << *selectionPool[ layout ][ i ].from << "; to=" << *selectionPool[ layout ][ i ].to << endl;
+		yzDebug() << "[" << layout << "] (" << i << ") from=" << selectionPool[ layout ][ i ].from() << "; to=" << selectionPool[ layout ][ i ].to() << endl;
 	}
 }
 
@@ -206,8 +205,8 @@ int YZSelectionPool::locatePosition( const QString& layout, const YZCursor& pos,
 	*isSelected = false;
 	unsigned int size = selectionPool[ layout ].size( );
 	for ( i = 0; ! *isSelected && i < size; i++ ) {
-		if ( pos < *selectionPool[ layout ][ i ].from ) break;
-		if ( pos > *selectionPool[ layout ][ i ].to ) continue;
+		if ( pos < selectionPool[ layout ][ i ].from() ) break;
+		if ( pos > selectionPool[ layout ][ i ].to() ) continue;
 		*isSelected = true;
 	}
 	if ( *isSelected ) --i;

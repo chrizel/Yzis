@@ -362,7 +362,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				return;
 			} else if ( mPreviousChars == "<ALT>:" ) {
 				leaveInsertMode();
-				gotoCommandMode();
+				gotoExMode();
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ESC>" ) {
@@ -482,6 +482,11 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			} else if ( mPreviousChars == "<DEL>" ) {
 				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
 				commitNextUndo();
+				purgeInputBuffer();
+				return;
+			} else if ( mPreviousChars == "<ALT>:" ) {
+				leaveReplaceMode();
+				gotoExMode();
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ESC>" ) {
@@ -605,6 +610,11 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 
 				mCurrentSearchItem--;
 				setCommandLineText( mSearchHistory[mCurrentSearchItem] );
+				return;
+			} else if ( mPreviousChars == "<ALT>:" ) {
+				leaveSearchMode();
+				gotoExMode();
+				purgeInputBuffer();
 				return;
 			} else if ( key == "<ESC>" ) {
 				setCommandLineText( "" );
@@ -1532,6 +1542,10 @@ QString YZView::gotoVisualMode( bool isVisualLine ) {
 	sendPaintEvent( scrollCursor->screenX(), dVisualCursor->getY(), mColumnsVis, 1 );
 	yzDebug("Visual mode") << "Starting at " << *mVisualCursor << endl;
 	return QString::null;
+}
+
+void YZView::leaveSearchMode( ) {
+	setCommandLineText("");
 }
 
 void YZView::leaveInsertMode( ) {

@@ -14,7 +14,6 @@
 #include "yz_session.h"
 #include "yz_plugin.h"
 #include "yz_ex_executor.h"
-#include "yz_ex_executor.h"
 
 #ifndef YZ_COMMANDS_H
 #define YZ_COMMANDS_H
@@ -80,7 +79,7 @@ class YZCommandPool {
 		/**
 		 * This function is the entry point to execute ANY command in Yzis
 		 */
-		void execCommand(YZView *view, const QString& inputs);
+		void execCommand(YZView *view, const QString& inputs, int *error);
 
 		/**
 		 * Entry point for ex functions ( scripting )

@@ -148,8 +148,11 @@ void YZView::sendKey( int c, int modifiers) {
 				default:
 					previous_chars+=key;
 					yzDebug() << "Previous chars : " << previous_chars << endl;
-					if ( session )
-						session->getPool()->execCommand(this, previous_chars);
+					if ( session ) {
+						int error = 0;
+						session->getPool()->execCommand(this, previous_chars, &error);
+						if ( error == 1 ) purgeInputBuffer(); // no matching command
+					}
 			}
 			break;
 

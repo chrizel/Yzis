@@ -3,7 +3,7 @@
 #SUBDIRS = .
 
 # set the include path for X, qt and KDE
-INCLUDES = $(all_includes)
+INCLUDES = $(all_includes) -I$(top_srcdir)/libyzis/
 
 # these are the headers for your project
 noinst_HEADERS = kyzis.h
@@ -43,8 +43,7 @@ shellrc_DATA = kyzis_shell.rc
 kde_module_LTLIBRARIES = libkyzispart.la
 
 # the Part's source, library search path, and link libraries
-libkyzispart_la_INCLUDES = -I$(top_srcdir)/libyzis/
-libkyzispart_la_SOURCES = kyzisdoc.cpp kyzisview.cpp kyzis_factory.cpp kyzisedit.cpp
+libkyzispart_la_SOURCES = kyzisdoc.cpp kyzisview.cpp kyzis_factory.cpp kyzisedit.cpp kyzsession.cpp
 libkyzispart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor $(top_srcdir)/libyzis/libyzis.la
 

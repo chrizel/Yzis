@@ -2,8 +2,9 @@
 #define KYZISDOC_H
 
 #include <ktexteditor/document.h>
+#include <yz_buffer.h>
 
-class KYZisDoc : public KTextEditor::Document {
+class KYZisDoc : public KTextEditor::Document, public YZBuffer {
 	Q_OBJECT
 		
 	public:

@@ -4,8 +4,9 @@
 #include <ktexteditor/view.h>
 #include "kyzisdoc.h"
 #include "kyzisedit.h"
+#include <yz_view.h>
 
-class KYZisView: public KTextEditor::View {
+class KYZisView: public KTextEditor::View, YZView {
 	Q_OBJECT
 
 	public:

@@ -13,6 +13,8 @@
 #include "yz_view.h"
 #include "yz_session.h"
 #include "yz_plugin.h"
+#include "yz_ex_executor.h"
+#include "yz_ex_executor.h"
 
 #ifndef YZ_COMMANDS_H
 #define YZ_COMMANDS_H
@@ -32,6 +34,7 @@
 #define NEW_EX_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=EX; cmd.exFunc=y; globalExCommands[ x ] = cmd; }
 
 class YZSession;
+class YZExExecutor;
 
 //oh please don't instanciate me twice !
 class YZCommandPool {
@@ -52,7 +55,7 @@ class YZCommandPool {
 		QString ( YZBuffer::*buffFunc ) (const QString& inputsBuff);
 		QString ( YZSession::*sessFunc ) (const QString& inputsBuff);
 		QString ( YZPlugin::*plugFunc ) (const QString& inputsBuff);
-		QString ( YZPlugin::*exFunc ) (const QString& inputsBuff);
+		QString ( YZExExecutor::*exFunc ) (YZView *view, const QString& inputsBuff);
 	};
 
 	public:
@@ -83,6 +86,10 @@ class YZCommandPool {
 		 * Entry point for ex functions ( scripting )
 		 */
 		void execExCommand(YZView *view, const QString& inputs);
+
+	private:
+		YZExExecutor *executor;
+
 };
 
 #endif

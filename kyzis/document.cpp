@@ -332,6 +332,8 @@ void KYZisDoc::setModified( bool modified ) {
 		if (kv)
 			kv->emitNewStatus();
 	}
+	if ( modified )
+		emit textChanged();
 	KTextEditor::Document::setModified(modified);
 }
 

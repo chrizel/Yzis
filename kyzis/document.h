@@ -103,8 +103,6 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 
 	public slots:
 		//signals to emit
-		virtual void textChanged () {}
-		virtual void charactersInteractivelyInserted( int ,int ,const QString& ) {}
 //		void configureEditor();
 
 		//KTextEditor::MarkInterface slots
@@ -130,6 +128,8 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 	signals:
 		void hlChanged();
 		void undoChanged();
+		void textChanged ();
+		void charactersInteractivelyInserted( int ,int ,const QString& );
 
 		//KTextEditor::MarkInterface slots
 		void marksChanged();

@@ -15,4 +15,4 @@ function Indent_python( nbNextTabs, nbNextSpaces, nbPrevTabs, nbPrevSpaces, prev
 end
 
 connect( "INDENT_ON_ENTER", "Indent_python" )
-
+setlocal ("nocindent")

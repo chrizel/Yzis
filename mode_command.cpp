@@ -105,10 +105,6 @@ void YZModeCommand::initMotionPool() {
 	commands.append( new YZMotion("<RIGHT>", &YZModeCommand::moveRight, ARG_NONE) );
 	commands.append( new YZMotion("<UP>", &YZModeCommand::moveUp, ARG_NONE) );
 	commands.append( new YZMotion("<DOWN>", &YZModeCommand::moveDown, ARG_NONE) );
-	commands.append( new YZMotion("<PUP>", &YZModeCommand::movePageUp, ARG_NONE) );
-	commands.append( new YZMotion("<CTRL>B", &YZModeCommand::movePageUp, ARG_NONE) );
-	commands.append( new YZMotion("<PDOWN>", &YZModeCommand::movePageDown, ARG_NONE) );
-	commands.append( new YZMotion("<CTRL>F", &YZModeCommand::movePageDown, ARG_NONE) );
 	commands.append( new YZMotion("%", &YZModeCommand::matchPair, ARG_NONE) );
 	commands.append( new YZMotion("`", &YZModeCommand::gotoMark, ARG_MARK) );
 	commands.append( new YZMotion("'", &YZModeCommand::gotoMark, ARG_MARK) );
@@ -174,6 +170,10 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("gUgU", &YZModeCommand::lineToUpperCase) );
 	commands.append( new YZCommand("guu", &YZModeCommand::lineToLowerCase) );
 	commands.append( new YZCommand("gugu", &YZModeCommand::lineToLowerCase) );
+	commands.append( new YZCommand("<PUP>", &YZModeCommand::scrollPageUp) );
+	commands.append( new YZCommand("<CTRL>b", &YZModeCommand::scrollPageUp) );
+	commands.append( new YZCommand("<PDOWN>", &YZModeCommand::scrollPageDown) );
+	commands.append( new YZCommand("<CTRL>f", &YZModeCommand::scrollPageDown) );
 }
 void YZModeCommand::initModifierKeys() {
 #if QT_VERSION < 0x040000
@@ -565,16 +565,26 @@ YZCursor YZModeCommand::moveUp(const YZMotionArgs &args) {
 	return *viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::movePageUp(const YZMotionArgs &args) {
-	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveUp(&viewCursor, args.view->getLinesVisible(), args.standalone );
-	return *viewCursor.buffer();
+void YZModeCommand::scrollPageUp(const YZCommandArgs &args) {
+	int line = args.view->getCurrentTop() - args.view->getLinesVisible();
+
+	if (line < 0)
+		line = 0;
+
+	args.view->alignViewBufferVertically( line );
 }
 
-YZCursor YZModeCommand::movePageDown(const YZMotionArgs &args) {
-	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveDown(&viewCursor, args.view->getLinesVisible(), args.standalone );
-	return *viewCursor.buffer();
+void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
+	// find the linenumber we should scroll to
+	//FIXME: take wrapped lines into account. If a line is wrapped it will occupy
+	// more than one line and by just using getLinesVisible() we will scroll too far
+	unsigned int line = args.view->getCurrentTop() + args.view->getLinesVisible();
+
+	// don't scroll below the last line of the buffer
+	if (line > args.view->myBuffer()->lineCount())
+		line = args.view->myBuffer()->lineCount();
+
+	args.view->alignViewBufferVertically( line );
 }
 
 YZCursor YZModeCommand::matchPair(const YZMotionArgs &args) {

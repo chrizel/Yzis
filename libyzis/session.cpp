@@ -181,6 +181,7 @@ void YZSession::setCurrentView( YZView* view ) {
 	yzDebug() << "Session : setCurrentView" << endl;
 	mCurView = view;
 	mCurBuffer = view->myBuffer();
+	mCurBuffer->filenameChanged();
 	changeCurrentView( view );
 }
 

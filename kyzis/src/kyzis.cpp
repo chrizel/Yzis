@@ -266,6 +266,7 @@ void Kyzis::setCaption( int tab, const QString& caption ) {
 		viewList[ tab ].v->setCaption(filename);
 		viewList[ tab ].v->setTabCaption(filename);
 	}
+	KMainWindow::setCaption( caption );
 }
 
 void Kyzis::closeView(int Id) {

@@ -571,7 +571,9 @@ void YZModeCommand::scrollPageUp(const YZCommandArgs &args) {
 	if (line < 0)
 		line = 0;
 
-	args.view->alignViewBufferVertically( line );
+	if (line != args.view->getCurrentTop()) {
+		args.view->alignViewBufferVertically( line );
+	}
 }
 
 void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
@@ -584,7 +586,9 @@ void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
 	if (line > args.view->myBuffer()->lineCount())
 		line = args.view->myBuffer()->lineCount();
 
-	args.view->alignViewBufferVertically( line );
+	if (line != args.view->getCurrentTop()) {
+		args.view->alignViewBufferVertically( line );
+	}
 }
 
 YZCursor YZModeCommand::matchPair(const YZMotionArgs &args) {

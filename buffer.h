@@ -156,9 +156,8 @@ public:
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
 	inline unsigned int getLineLength(unsigned int line) const {
-		YZLine * yl = yzline(line);
-		if (yl) return yl->length();
-		return 0;
+		// if line is >= lineCount(), we will crash. Read the note from yzline()
+		return yzline( line )->length();
 	}
 
 	/**
@@ -177,11 +176,13 @@ public:
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
 	inline const QString& textline(unsigned int line) const {
-		YZLine * yl = yzline(line);
-		if (yl) return yl->data();
-		return myNull;
+		// if line is >= lineCount(), we will crash. Read the note from yzline()
+		return yzline( line )->data();
 	}
 
+	/**
+	 * Extract the corresponding 'from' and 'to' YZCursor from the YZInterval i.
+	 */
 	void intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor* to );
 
 	/**
@@ -349,8 +350,12 @@ public:
 	 */
 	inline YZLine * yzline(unsigned int line, bool noHL = true) {
 		//if you change this method, DO NOT FORGET TO CHANGE THE ONE AFTER !
-		if ( line >= mText.size() )
-			return new YZLine();
+		if ( line >= mText.size() ) {
+			yzDebug() << "ERROR: you are asking for line " << line << " (max is " << mText.size() << ")" << endl;
+			// we will perhaps crash after that, but we don't want to disguise bugs!
+			// fix the one which call yzline ( or textline ) with a wrong line number instead.
+			return NULL;
+		}
 		YZLine *yl = mText.at( line );
 		if ( !noHL && yl && !yl->initialized() ) initHL( line );
 		return yl;
@@ -358,8 +363,12 @@ public:
 
 	inline YZLine * yzline(unsigned int line) const {
 		//if you change this method, DO NOT FORGET TO CHANGE THE ONE BEFORE !
-		if ( line >= mText.size() )
-			return new YZLine();
+		if ( line >= mText.size() ) {
+			yzDebug() << "ERROR: you are asking for line " << line << " (max is " << mText.size() << ")" << endl;
+			// we will perhaps crash after that, but we don't want to disguise bugs!
+			// fix the one which call yzline ( or textline ) with a wrong line number instead.
+			return NULL;
+		}
 		YZLine *yl = mText.at( line );
 		return yl;
 	}

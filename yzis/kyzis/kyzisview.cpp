@@ -12,6 +12,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	editor = new KYZisEdit (this,"editor");
 	status = new KStatusBar (this, "status");
 	status->insertItem("Yzis Ready",0);
+	status->setFixedHeight(status->height());
 	
 	QVBoxLayout *l = new QVBoxLayout(this);
 	l->addWidget(editor);
@@ -22,6 +23,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	buffer = doc;
 	editor->show();
 	status->show();
+	editor->setFocus();
 }
 
 KYZisView::~KYZisView () {
@@ -49,12 +51,11 @@ void KYZisView::customEvent (QCustomEvent *) {
 		switch ( event->id ) {
 			case YZ_EV_SETLINE:
 				kdDebug() << "event SETLINE" << endl;
-				//just a ugly hack to show it should work :)
-				editor->append( *(event->u.setline.line) );
-//				editor->insertAt(*(event->u.setline.line),event->u.setline.y,0);
+				editor->setTextLine(event->u.setline.y,*(event->u.setline.line));
 				break;
 			case YZ_EV_SETCURSOR:
 				kdDebug() << "event SETCURSOR" << endl;
+				editor->setCursor (event->u.setcursor.x, event->u.setcursor.y);
 				break;
 			case YZ_EV_SETSTATUS:
 				kdDebug() << "event SETSTATUS" << event->u.setstatus.text <<  endl;

@@ -160,8 +160,6 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 				if ( number ) { // draw current line number
 					QPen old_pen = p->pen( );
 
-//					myRect.setRect (0, currentY * linespace, ( marginLeft - 1 ) * maxwidth, linespace );
-//					p->eraseRect( myRect );
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
 						p->setPen( Qt::yellow );
 						p->drawText( myRect, flag, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
@@ -180,14 +178,9 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 					QColor c = mParent->drawColor( );
 					if ( c.isValid() )
 						p->setPen( c );
-//					p->eraseRect( myRect );
 					p->drawText(myRect, flag, ch );
 					currentX += mParent->drawLength( );
 				}
-				// erase end of current line 
-//				myRect.setRect (currentX * maxwidth, currentY * linespace, width() - currentX * maxwidth, linespace);
-//				p->eraseRect(myRect);
-
 				currentY += mParent->drawHeight( );
 				cliph -= mParent->lineHeight( );
 			} else {

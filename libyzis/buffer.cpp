@@ -451,10 +451,8 @@ void YZBuffer::load(const QString& file) {
 	//opens and eventually create the file
 	if ( fl.open( IO_ReadOnly ) ) {
 		QTextStream stream( &fl );
-		while ( !stream.atEnd() ) {
-			QString line(stream.readLine() ); // line of text excluding '\n'
-			appendLine( line );
-		}
+		while ( !stream.atEnd() )
+			appendLine( stream.readLine() );
 		fl.close();
 	}
 	if ( ! mText.count() ) {

@@ -128,7 +128,7 @@ void NYZView::printLine( int line )
 	initDraw();
 
 	int rely=-1;
-	while (  drawNextLine() ) {
+	while ( drawNextLine() ) {
 		rely++;
 		// clipping
 		int lineNumber = dCursor->getY();
@@ -136,27 +136,25 @@ void NYZView::printLine( int line )
 		if ( lineNumber>line ) break;
 
 		/* not use addnstr here, will stop at \0  (i guess) */ 
-		if ( myBuffer()->introShown() ) {
+/*		if ( myBuffer()->introShown() ) {
 			//XX prolly broken
 			QString str = mBuffer->textline(line);
 			wmove( window,dCursor->getY(), (getColumnsVisible()-str.length()>0)?(getColumnsVisible()-str.length())/2:0 );
-		} else wmove (window, rely, 0);
-//		} else wmove (window, dCursor->getY(), 0);
+		} else*/
+	   	wmove (window, rely, 0);
 
 		// draw this line
 		actuallen = 0;
-		while (  drawNextCol() ) {
-			QChar ch = drawChar();
+		while ( drawNextCol() ) {
 			QColor c = drawColor();
-			int mColor = mColormap.contains( c.rgb() )?  mColormap[ c.rgb() ]: mColormap[ Qt::white.rgb() ]; 
-			waddch( window, COLOR_PAIR( mColor )|ch.unicode() );
+			int mColor = mColormap.contains( c.rgb() )? mColormap[ c.rgb() ]: mColormap[ Qt::white.rgb() ]; 
+			waddch( window, COLOR_PAIR( mColor )|drawChar().unicode() );
 			actuallen++;
 			for ( unsigned int i=1; i< drawLength(); actuallen++,i++ ) waddch( window, ' ' );
 		}
 		for (  ; actuallen < getColumnsVisible(); actuallen++ ) waddch( window, ' ' );
 	}
 
-	//if ( myBuffer()->introShown() ) return;
 	wmove(window,sy,sx ); // restore cursor
 }
 

@@ -66,7 +66,14 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("<BS>", &YZCommandPool::moveLeftWrap, ARG_NONE) );
 	commands.append( new YZNewMotion(" ", &YZCommandPool::moveRightWrap, ARG_NONE) );
 	commands.append( new YZNewMotion("f", &YZCommandPool::find, ARG_CHAR) );
+	commands.append( new YZNewMotion("<HOME>", &YZCommandPool::gotoSOL, ARG_NONE) );
+	commands.append( new YZNewMotion("<END>", &YZCommandPool::gotoEOL, ARG_NONE) );
+	commands.append( new YZNewMotion("<LEFT>", &YZCommandPool::moveLeft, ARG_NONE) );
+	commands.append( new YZNewMotion("<RIGHT>", &YZCommandPool::moveRight, ARG_NONE) );
+	commands.append( new YZNewMotion("<UP>", &YZCommandPool::moveUp, ARG_NONE) );
+	commands.append( new YZNewMotion("<DOWN>", &YZCommandPool::moveDown, ARG_NONE) );
 	commands.append( new YZCommand("i", &YZCommandPool::gotoInsertMode) );
+	commands.append( new YZCommand("<INS>", &YZCommandPool::gotoInsertMode) );
 	commands.append( new YZCommand(":", &YZCommandPool::gotoExMode) );
 	commands.append( new YZCommand("R", &YZCommandPool::gotoReplaceMode) );
 	commands.append( new YZCommand("v", &YZCommandPool::gotoVisualMode) );
@@ -99,9 +106,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("`", &YZCommandPool::gotoMark, ARG_MARK) );
 	commands.append( new YZCommand("'", &YZCommandPool::gotoMark, ARG_MARK) );
 	commands.append( new YZCommand("u", &YZCommandPool::undo) );
-	//TODO: redo (will be added after the ::sendkey rewrite)
-	//and %,$,0 (treat as 'pure' motions) maybe when we don't find a command try to use it as a motion : like 'w' moves the cursor one word forward in vim
-
+	commands.append( new YZCommand("<CTRL>r", &YZCommandPool::redo) );
 }
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
@@ -618,5 +623,10 @@ QString YZCommandPool::gotoMark(const YZCommandArgs &args) {
 
 QString YZCommandPool::undo(const YZCommandArgs &args) {
 	args.view->undo( args.count );
+	return QString::null;
+}
+
+QString YZCommandPool::redo(const YZCommandArgs &args) {
+	args.view->redo( args.count );
 	return QString::null;
 }

@@ -338,7 +338,11 @@ class YZView {
 		 */
 		void undo ( unsigned int count = 1 );
 
-		QString redo ( const QString& inputsBuff = QString::null );
+		/**
+		 * Redo last undoed action
+		 */
+		void redo ( unsigned int count = 1 );
+
 		QString match( const QString& inputsBuff = QString::null );
 
 		/**

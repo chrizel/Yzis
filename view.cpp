@@ -148,354 +148,286 @@ QString YZView::buildCommand( const QString& key, int modifiers ) {
 	return command;
 }
 
-void YZView::sendKey( const QString& key, const QString& modifiers) {
+void YZView::sendKey( const QString& _key, const QString& modifiers) {
+	yzDebug() << "sendKey : " << _key << " " << modifiers << endl;
 	//TODO swapfile
+	//mBuffer->getSwapFile()->addToSwap( c, modifiers );
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );
 		return;
 	}
 
-	switch(mMode) {
-		case YZ_VIEW_MODE_INSERT:
-		case YZ_VIEW_MODE_REPLACE:
-		case YZ_VIEW_MODE_SEARCH:
-		case YZ_VIEW_MODE_EX:
-		case YZ_VIEW_MODE_VISUAL:
-		case YZ_VIEW_MODE_VISUAL_LINE :
-		case YZ_VIEW_MODE_COMMAND:
-		case YZ_VIEW_MODE_OPEN:
-			;
-	}
-}
+	QString lin,key=_key;
+	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT" ) return; //we are not supposed to received modifiers in key
 
-/* Used by the buffer to post events */
-void YZView::sendKey( int c, int modifiers) {
-	mBuffer->getSwapFile()->addToSwap( c, modifiers );
-	if ( mBuffer->introShown() ) {
-		mBuffer->clearIntro();
-		gotoxy( 0,0 );
-		return;
-	}
-
-	QString lin;
-	QString key = QChar( tolower(c) );// = QKeySequence( c );
-	//default is lower case unless some modifiers
-	if ( modifiers & Qt::ShiftButton )
+	if ( modifiers.contains ("<SHIFT>")) //usefull ?
 		key = key.upper();
-	key = buildCommand(key, modifiers);
 	
 	bool test = false;
-
-	//ignore some keys
-	if ( c == Qt::Key_Shift || c == Qt::Key_Alt || c == Qt::Key_Meta ||c == Qt::Key_Control || c == Qt::Key_CapsLock ) {
-		yzError( )<< "receiving modifiers in c, shouldn't happen" <<endl;
-		return;
-	}
 
 	bool cindent = getLocalBoolOption( "cindent" );
 
 	switch(mMode) {
 		case YZ_VIEW_MODE_INSERT:
-			switch ( c ) {
-				case Qt::Key_Home:
-					moveToStartOfLine( );
-					return;
-				case Qt::Key_End:
-					moveToEndOfLine( );
-					return;
-				case Qt::Key_Insert:
-					gotoReplaceMode( );
-					return;
-				case Qt::Key_Escape:
-					if ( mainCursor->bufferX() > 0) moveLeft();
-					gotoPreviousMode();
-					return;
-				case Qt::Key_Return: 
-					{
-						test = mainCursor->bufferX() == 0;
-						QString currentLine = mBuffer->textline( mainCursor->bufferY() );
-						if ( cindent && currentLine.simplifyWhiteSpace().endsWith( "{" ) ) {
-							QRegExp rx("^(\\t*\\s*\\t*\\s*).*$");
-							QString newline = "";
-							if ( rx.exactMatch( currentLine ) )
-								newline = rx.cap( 1 ); //that should have all tabs and spaces from the previous line
-							newline.prepend( "\t" ); //add a TAB for the nextline
-							mBuffer->action()->insertLine( this, YZCursor(this, 0, mainCursor->bufferY() + 1 ), newline );
-							gotoxy( newline.length(), mainCursor->bufferY() );
-						} else
-							mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
-						if ( test ) {
-							gotoxy( 0, mainCursor->bufferY() + 1 );
-							UPDATE_STICKY_COL;
-						}
-						return;
-					}
-				case Qt::Key_Down:
-					moveDown( );
-					return;
-				case Qt::Key_Left:
-					moveLeft();
-					return;
-				case Qt::Key_Right:
-					moveRight();
-					return;
-				case Qt::Key_Up:
-					moveUp( );
-					return;
-				case Qt::Key_Backspace:
-					if (mainCursor->bufferX() == 0 && mainCursor->bufferY() > 0 && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-						joinLine( mainCursor->bufferY() - 1 );
-						if ( mainCursor->bufferX() ) moveRight();
-					} else if ( mainCursor->bufferX() > 0 )
-						mBuffer->action()->deleteChar( this, mainCursor->bufferX() - 1, mainCursor->bufferY(), 1 );
-					return;
-				case Qt::Key_Delete:
-					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-					return;
-				case Qt::Key_PageDown:
-					GOTO_STICKY_COL( mainCursor->bufferY() + mLinesVis );
-					purgeInputBuffer();
-					return;
-				case Qt::Key_PageUp:
-					GOTO_STICKY_COL( mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
-					purgeInputBuffer();
-					return;
-				case Qt::Key_Tab:
-					key = "\t";
-				default:
-					mBuffer->action()->insertChar( this, mainCursor->buffer(), key );
-					if ( cindent && key == "}" )
-						reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
-					return;
+			if ( key == "<HOME>" ) {
+				moveToStartOfLine( );
+				return;
+			} else if ( key == "<END>" ) {
+				moveToEndOfLine( );
+				return;
+			} else if ( key == "<INS>" ) {
+				gotoReplaceMode( );
+				return;
+			} else if ( key == "<ESC>" ) {
+				if ( mainCursor->bufferX() > 0) moveLeft();
+				gotoPreviousMode();
+				return;
+			} else if ( key == "<ENTER>" ) {
+				test = mainCursor->bufferX() == 0;
+				QString currentLine = mBuffer->textline( mainCursor->bufferY() );
+				if ( cindent && currentLine.simplifyWhiteSpace().endsWith( "{" ) ) {
+					QRegExp rx("^(\\t*\\s*\\t*\\s*).*$");
+					QString newline = "";
+					if ( rx.exactMatch( currentLine ) )
+						newline = rx.cap( 1 ); //that should have all tabs and spaces from the previous line
+					newline.prepend( "\t" ); //add a TAB for the nextline
+					mBuffer->action()->insertLine( this, YZCursor(this, 0, mainCursor->bufferY() + 1 ), newline );
+					gotoxy( newline.length(), mainCursor->bufferY() );
+				} else
+					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
+				if ( test ) {
+					gotoxy( 0, mainCursor->bufferY() + 1 );
+					UPDATE_STICKY_COL;
+				}
+				return;
+			} else if ( key == "<DOWN>" ) {
+				moveDown( );
+				return;
+			} else if ( key == "<LEFT>" ) {
+				moveLeft();
+				return;
+			} else if ( key == "<RIGHT>" ) {
+				moveRight();
+				return;
+			} else if ( key == "<UP>" ) {
+				moveUp( );
+				return;
+			} else if ( key == "<BS>" ) {
+				if (mainCursor->bufferX() == 0 && mainCursor->bufferY() > 0 && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+					joinLine( mainCursor->bufferY() - 1 );
+					if ( mainCursor->bufferX() ) moveRight();
+				} else if ( mainCursor->bufferX() > 0 )
+					mBuffer->action()->deleteChar( this, mainCursor->bufferX() - 1, mainCursor->bufferY(), 1 );
+				return;
+			} else if ( key == "<DEL>" ) {
+				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
+				return;
+			} else if ( key == "<PDOWN>" ) {
+				GOTO_STICKY_COL( mainCursor->bufferY() + mLinesVis );
+				purgeInputBuffer();
+				return;
+			} else if ( key == "<PUP>" ) {
+				GOTO_STICKY_COL( mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
+				purgeInputBuffer();
+				return;
+			} else if ( key == "<TAB>" ) {
+				key = "\t";
+			} else {
+				mBuffer->action()->insertChar( this, mainCursor->buffer(), key );
+				if ( cindent && key == "}" )
+					reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
+				return;
 			}
 			break;
 
 		case YZ_VIEW_MODE_REPLACE:
-			switch ( c ) {
-				case Qt::Key_Home:
-					moveToStartOfLine( );
-					return;
-				case Qt::Key_End:
+			if ( key == "<HOME>" ) {
+				moveToStartOfLine( );
+				return;
+			} else if ( key == "<END>" ) {
+				moveToEndOfLine( );
+				return;
+			} else if ( key == "<INS>" ) {
+				gotoInsertMode( );
+				return;
+			} else if ( key == "<DEL>" ) {
+				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
+				return;
+			} else if ( key == "<ESC>" ) {
+				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() ) 
 					moveToEndOfLine( );
-					return;
-				case Qt::Key_Insert:
-					gotoInsertMode( );
-					return;
-				case Qt::Key_Delete:
-					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-					return;
-				case Qt::Key_Escape:
-					if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() ) 
-						moveToEndOfLine( );
-					gotoPreviousMode();
-					return;
-				case Qt::Key_Return:
-					test = mainCursor->bufferX() == 0;
-					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
-					if ( test ) {
-						gotoxy( 0, mainCursor->bufferY() + 1 );
-						UPDATE_STICKY_COL;
-					}
-					return;
-				case Qt::Key_Down:
-					moveDown( );
-					return;
-				case Qt::Key_Backspace:
-				case Qt::Key_Left:
-					moveLeft();
-					return;
-				case Qt::Key_Right:
-					moveRight();
-					return;
-				case Qt::Key_Up:
-					moveUp( );
-					return;
-				case Qt::Key_Tab:
-					mBuffer->action()->replaceChar( this, mainCursor->buffer(), "\t" );
-					return;
-				case Qt::Key_PageDown:
-					GOTO_STICKY_COL( mainCursor->bufferY() + mLinesVis );
-					purgeInputBuffer();
-					return;
-				case Qt::Key_PageUp:
-					GOTO_STICKY_COL( mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
-					purgeInputBuffer();
-					return;
-				default:
-					mBuffer->action()->replaceChar( this, mainCursor->buffer(), key );
-					return;
+				gotoPreviousMode();
+				return;
+			} else if ( key == "<RETURN>" ) {
+				test = mainCursor->bufferX() == 0;
+				mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
+				if ( test ) {
+					gotoxy( 0, mainCursor->bufferY() + 1 );
+					UPDATE_STICKY_COL;
+				}
+				return;
+			} else if ( key == "<DOWN>" ) {
+				moveDown( );
+				return;
+			} else if ( key == "<BS>" || key == "<LEFT>" ) {
+				moveLeft();
+				return;
+			} else if ( key == "<RIGHT>" ) {
+				moveRight();
+				return;
+			} else if ( key == "<UP>" ) {
+				moveUp( );
+				return;
+			} else if ( key == "<TAB>" ) {
+				mBuffer->action()->replaceChar( this, mainCursor->buffer(), "\t" );
+				return;
+			} else if ( key == "<PDOWN>" ) {
+				GOTO_STICKY_COL( mainCursor->bufferY() + mLinesVis );
+				purgeInputBuffer();
+				return;
+			} else if ( key == "<PUP>" ) {
+				GOTO_STICKY_COL( mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
+				purgeInputBuffer();
+				return;
+			} else {
+				mBuffer->action()->replaceChar( this, mainCursor->buffer(), key );
+				return;
 			}
 			break;
 
 		case YZ_VIEW_MODE_SEARCH:
-			switch ( c ) {
-				case Qt::Key_Return:
-					yzDebug() << "Current search : " << getCommandLineText();
-					if(getCommandLineText().isEmpty())
-						return;
-					mSearchHistory[mCurrentSearchItem] = getCommandLineText();
-					mCurrentSearchItem++;
-					doSearch( getCommandLineText() );
-					setCommandLineText( "" );
-					mSession->setFocusMainWindow();
-					gotoPreviousMode();
+			if ( key == "<ENTER>" ) {
+				yzDebug() << "Current search : " << getCommandLineText();
+				if(getCommandLineText().isEmpty())
 					return;
-				case Qt::Key_Down:
-					if(mSearchHistory[mCurrentSearchItem].isEmpty())
-						return;
+				mSearchHistory[mCurrentSearchItem] = getCommandLineText();
+				mCurrentSearchItem++;
+				doSearch( getCommandLineText() );
+				setCommandLineText( "" );
+				mSession->setFocusMainWindow();
+				gotoPreviousMode();
+				return;
+			} else if ( key == "<DOWN>" ) {
+				if(mSearchHistory[mCurrentSearchItem].isEmpty())
+					return;
 
-					mCurrentSearchItem++;
-					setCommandLineText( mSearchHistory[mCurrentSearchItem] );
+				mCurrentSearchItem++;
+				setCommandLineText( mSearchHistory[mCurrentSearchItem] );
+				return;
+			} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
+				return;
+			} else if ( key == "<UP>" ) {
+				if(mCurrentSearchItem == 0)
 					return;
-				case Qt::Key_Left:
-				case Qt::Key_Right:
-					return;
-				case Qt::Key_Up:
-					if(mCurrentSearchItem == 0)
-						return;
 
-					mCurrentSearchItem--;
-					setCommandLineText( mSearchHistory[mCurrentSearchItem] );
-					return;
-				case Qt::Key_Escape:
-					setCommandLineText( "" );
-					mSession->setFocusMainWindow();
-					gotoPreviousMode();
-					return;
-				case Qt::Key_Backspace:
-				{
-					QString back = getCommandLineText();
-					setCommandLineText(back.remove(back.length() - 1, 1));
-					return;
-				}
-				default:
-					setCommandLineText( getCommandLineText() + key );
-					return;
+				mCurrentSearchItem--;
+				setCommandLineText( mSearchHistory[mCurrentSearchItem] );
+				return;
+			} else if ( key == "<ESC>" ) {
+				setCommandLineText( "" );
+				mSession->setFocusMainWindow();
+				gotoPreviousMode();
+				return;
+			} else if ( key == "<BS>" ) {
+				QString back = getCommandLineText();
+				setCommandLineText(back.remove(back.length() - 1, 1));
+				return;
+			} else {
+				setCommandLineText( getCommandLineText() + key );
+				return;
 			}
+			break;
 
 		case YZ_VIEW_MODE_EX:
-			switch ( c ) {
-				case Qt::Key_Return:{
-					yzDebug() << "Current command EX : " << getCommandLineText();
-					if(getCommandLineText().isEmpty())
-						return;
+			if ( key == "<ENTER>" ) {
+				yzDebug() << "Current command EX : " << getCommandLineText();
+				if(getCommandLineText().isEmpty())
+					return;
 
-					mExHistory[mCurrentExItem] = getCommandLineText();
-					mCurrentExItem++;
-					QString cmd = getCommandLineText();
-					setCommandLineText( "" );
+				mExHistory[mCurrentExItem] = getCommandLineText();
+				mCurrentExItem++;
+				QString cmd = getCommandLineText();
+				setCommandLineText( "" );
+				mSession->setFocusMainWindow();
+				gotoPreviousMode();
+				mSession->getExPool()->execExCommand( this, cmd );
+				return;
+			} else if ( key == "<DOWN>" ) {
+				if(mExHistory[mCurrentExItem].isEmpty())
+					return;
+
+				mCurrentExItem++;
+				setCommandLineText( mExHistory[mCurrentExItem] );
+				return;
+			} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
+				return;
+			} else if ( key == "<UP>" ) {
+				if(mCurrentExItem == 0)
+					return;
+
+				mCurrentExItem--;
+				setCommandLineText( mExHistory[mCurrentExItem] );
+				return;
+			} else if ( key == "<ESC>" ) {
+				setCommandLineText( "" );
+				mSession->setFocusMainWindow();
+				gotoPreviousMode();
+				return;
+			} else if ( key == "<TAB>" ) {
+				//ignore for now
+				return;
+			} else if ( key == "<BS>" ) {
+				QString back = getCommandLineText();
+				if ( back.isEmpty() ) {
 					mSession->setFocusMainWindow();
 					gotoPreviousMode();
-					mSession->getExPool()->execExCommand( this, cmd );
-					return;}
-				case Qt::Key_Down:
-					if(mExHistory[mCurrentExItem].isEmpty())
-						return;
-
-					mCurrentExItem++;
-					setCommandLineText( mExHistory[mCurrentExItem] );
-					return;
-				case Qt::Key_Left:
-				case Qt::Key_Right:
-					return;
-				case Qt::Key_Up:
-					if(mCurrentExItem == 0)
-						return;
-
-					mCurrentExItem--;
-					setCommandLineText( mExHistory[mCurrentExItem] );
-					return;
-				case Qt::Key_Escape:
-					setCommandLineText( "" );
-					mSession->setFocusMainWindow();
-					gotoPreviousMode();
-					return;
-				case Qt::Key_Tab:
-					//ignore for now
-					return;
-				case Qt::Key_Backspace:
-				{
-					QString back = getCommandLineText();
-					if ( back.isEmpty() ) {
-						mSession->setFocusMainWindow();
-						gotoPreviousMode();
-						return;
-						}
-					setCommandLineText(back.remove(back.length() - 1, 1));
 					return;
 				}
-				default:
-					setCommandLineText( getCommandLineText() + key );
-					return;
+				setCommandLineText(back.remove(back.length() - 1, 1));
+				return;
+			} else {
+				setCommandLineText( getCommandLineText() + key );
+				return;
 			}
 			break;
 
 		case YZ_VIEW_MODE_VISUAL:
 		case YZ_VIEW_MODE_VISUAL_LINE :
-			switch ( c ) {
-				case Qt::Key_Escape:
-					YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-					selectionPool->clear( "VISUAL" );
-					paintEvent( dCurrentLeft, cur_sel.drawFrom().getY(), mColumnsVis, cur_sel.drawTo().getY() - cur_sel.drawFrom().getY() + 1 );
-					purgeInputBuffer();
-					gotoPreviousMode();
-					return;
+			if ( key == "<ESC>" ) {
+				YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+				selectionPool->clear( "VISUAL" );
+				paintEvent( dCurrentLeft, cur_sel.drawFrom().getY(), mColumnsVis, cur_sel.drawTo().getY() - cur_sel.drawFrom().getY() + 1 );
+				purgeInputBuffer();
+				gotoPreviousMode();
+				return;
 			}
-		//dont break
+			//dont break
 		case YZ_VIEW_MODE_COMMAND:
-			switch ( c ) {
-				case Qt::Key_Home:
-					key='0';
-					break;
-				case Qt::Key_End:
-					key='$';
-					break;
-				case Qt::Key_Insert:
-					key='i';
-					break;
-				case Qt::Key_Escape:
+			if ( key == "<ESC>" ) {
+				purgeInputBuffer();
+				return;
+			} else if ( key == "<DEL>" ) {
+				if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
+					YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+					mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to(), ( QValueList<QChar>() << QChar( '\"' ) ));
+					selectionPool->clear( "VISUAL" );
 					purgeInputBuffer();
+					gotoCommandMode();
 					return;
-				case Qt::Key_Down:
-					key='j';
-					break;
-				case Qt::Key_Left:
-					key='h';
-					break;
-				case Qt::Key_Right:
-					key='l';
-					break;
-				case Qt::Key_Up:
-					key='k';
-					break;
-				case Qt::Key_Delete:
-					if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
-						YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-						mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to(), ( QValueList<QChar>() << QChar( '\"' ) ));
-						selectionPool->clear( "VISUAL" );
-						purgeInputBuffer();
-						gotoCommandMode();
-						return;
-					} else
-						mBuffer->action()->deleteChar( this, *mainCursor->buffer(), 1);
-					return;
-				case Qt::Key_PageDown:
-					GOTO_STICKY_COL( mainCursor->bufferY() + mLinesVis );
-					purgeInputBuffer();
-					return;
-				case Qt::Key_PageUp:
-					GOTO_STICKY_COL( mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
-					purgeInputBuffer();
-					return;
-				case Qt::Key_Backspace:
-					key="<BS>";
-					break;
-				default:
-					break;
+				} else
+					mBuffer->action()->deleteChar( this, *mainCursor->buffer(), 1);
+				return;
+			} else if ( key == "<PDOWN>" ) {
+				GOTO_STICKY_COL( mainCursor->bufferY() + mLinesVis );
+				purgeInputBuffer();
+				return;
+			} else if ( key == "<PUP>" ) {
+				GOTO_STICKY_COL( mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
+				purgeInputBuffer();
+				return;
 			}
 			mPreviousChars+=key;
-//			yzDebug() << "Previous chars : (" << int( (mPreviousChars.latin1())[0] )<< ") " << mPreviousChars << endl;
 			if ( mSession ) {
 				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
 				yzDebug() << "Command " << mPreviousChars << " gave state: " << state << endl;
@@ -511,13 +443,11 @@ void YZView::sendKey( int c, int modifiers) {
 			break;
 
 		case YZ_VIEW_MODE_OPEN:
-			switch (c) {
-				case ':':
-				case 'Q':
-					gotoExMode();
-					break;
-				default:
-					break;
+			if ( key == ":" || key == "Q" ) {
+				gotoExMode();
+				break;
+			} else {
+				break;
 			}
 			break;
 		default:
@@ -1887,11 +1817,9 @@ void YZView::undo( unsigned int count ) {
 		mBuffer->undoBuffer()->undo( this );
 }
 
-QString YZView::redo( const QString& ) {
-	/* XXX repeat if necessary */
-	mBuffer->undoBuffer()->redo( this );
-	//reset the input buffer of the originating view
-	return QString::null;
+void YZView::redo( unsigned int count ) {
+	for ( unsigned int i = 0 ; i < count ; i++ )
+		mBuffer->undoBuffer()->redo( this );
 }
 
 QString YZView::match( const QString& ) {

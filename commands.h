@@ -227,6 +227,7 @@ private:
 	QString mark(const YZCommandArgs &args);
 	QString gotoMark(const YZCommandArgs &args);
 	QString undo(const YZCommandArgs &args);
+	QString redo(const YZCommandArgs &args);
 	
 	friend class YZNewMotion;
 };

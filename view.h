@@ -899,6 +899,9 @@ class YZView {
 		//search mode cursors
 		YZCursor *mSearchBegin;
 
+		bool incSearchFound;
+		YZCursor* incSearchResult;
+
 		//which regs to store macros in
 		QValueList<QChar> mRegs;
 		QStringList mModes; //list of modes

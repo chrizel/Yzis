@@ -179,10 +179,7 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoReplaceMode( );
 					return;
 				case Qt::Key_Escape:
-					if (mCursor->getX() > 0) {
-						gotoxy(mCursor->getX() - 1, mCursor->getY());
-						stickyCol = dCursor->getX( );
-					}
+					if (mCursor->getX() > 0) moveLeft();
 					gotoCommandMode( );
 					return;
 				case Qt::Key_Return:
@@ -205,9 +202,6 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Up:
 					moveUp( );
 					return;
-				case Qt::Key_Tab:
-					mBuffer->action()->insertChar( this, mCursor, "\t" );
-					return;
 				case Qt::Key_Backspace:
 					if (mCursor->getX() == 0 && mCursor->getY() > 0 && YZSession::getStringOption( "General\\backspace" ).contains( "eol" ) ) {
 						joinLine( mCursor->getY() - 1 );
@@ -226,6 +220,8 @@ void YZView::sendKey( int c, int modifiers) {
 					gotodxy(dCursor->getX(), ( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 ) );
 					purgeInputBuffer();
 					return;
+				case Qt::Key_Tab:
+					key = "\t";
 				default:
 					mBuffer->action()->insertChar( this, mCursor, key );
 					return;
@@ -247,10 +243,8 @@ void YZView::sendKey( int c, int modifiers) {
 					mBuffer->action()->deleteChar( this, mCursor, 1 );
 					return;
 				case Qt::Key_Escape:
-					if (mCursor->getX() > mMaxX) {
-						gotoxy(mMaxX, mCursor->getY());
-						stickyCol = dCursor->getX( );
-					}
+					if ( mCursor->getX() == mBuffer->textline( mCursor->getY() ).length() ) 
+						moveToEndOfLine( );
 					gotoCommandMode( );
 					return;
 				case Qt::Key_Return:
@@ -568,10 +562,10 @@ void YZView::gotodx( unsigned int nextx ) {
 
 void YZView::gotox( unsigned int nextx ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
-	unsigned int shift = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLineLength > 0 ) ) ? 0 : 1;
+	unsigned int shift = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLineLength > 0 ) ) ? 1 : 0;
 	if ( nextx >= sCurLineLength ) {
 		if ( sCurLineLength == 0 ) nextx = 0;
-		else nextx = sCurLineLength - shift;
+		else nextx = sCurLineLength - 1 + shift;
 	}
 	while ( sCursor->getX() > nextx ) {
 		if ( ! wrap || rCurLineLength <= mColumnsVis ) {
@@ -1389,9 +1383,10 @@ bool YZView::drawNextLine( ) {
 }
 
 bool YZView::drawPrevCol( ) {
+	bool afterEnd = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT == mMode && sCurLineLength > 0 ) && sCursor->getX() == sCurLineLength );
 	wrapNextLine = false;
 	if ( sCursor->getX() >= sColLength ) {
-		unsigned int curx = sCursor->getX( ) - sColLength;
+		unsigned int curx = sCursor->getX( ) - ( afterEnd ? 1 : sColLength );
 		sCursor->setX( curx );
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {
@@ -1420,8 +1415,8 @@ bool YZView::drawNextCol( ) {
 
 	if ( curx < sCurLineLength ) {
 		ret = rCursor->getX() - rCurrentLeft < mColumnsVis;
-		if ( sCurLine[ curx ] != tabChar ) {
-			lastChar = sCurLine[ curx ];
+		lastChar = sCurLine[ curx ];
+		if ( lastChar != tabChar ) {
 			if ( drawMode ) charSelected = selectionPool->isSelected( sCursor );
 			rColLength = 1;
 		} else {

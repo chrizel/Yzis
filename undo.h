@@ -87,21 +87,23 @@ public:
 	/*! Return whether it is possibe to issue an undo */
 	bool mayUndo();
 
-protected:
+	QString toString(QString msg="");
+
 	/** Sets this while performing undo and redo, so that the operations
 	 * are not registred as new buffer commands */
-	void setInsideUndo( bool set ) { mInsideUndo = true; }
+	void setInsideUndo( bool set ) { mInsideUndo = set; }
 
+protected:
 	/** purge the undo list after the current item */
 	void removeUndoItemAfterCurrent();
 
-	QString toString(QString msg="");
 	QString undoItemToString( UndoItem * item);
 
 	YZBuffer * mBuffer;
 	UndoItem * mFutureUndoItem;
 	QPtrList<UndoItem> mUndoItemList;
-	QPtrListIterator<UndoItem> mCurrentUndoItem;
+//	QPtrListIterator<UndoItem> mCurrentUndoItem;
+	uint mCurrentIndex;
 	bool mInsideUndo;
 };
 

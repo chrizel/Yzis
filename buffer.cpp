@@ -445,11 +445,8 @@ void YZBuffer::load(const QString& file) {
 	mFileIsNew=false;
 
 	//HL mode selection
-	int hlMode = YzisHlManager::self()->detectHighlighting (this);
-	if ( hlMode >=0 )
-		setHighLight( hlMode );
-	yzDebug("YZBuffer") << "HIGHLIGHTING " << hlMode << endl;
-
+	detectHighLight();
+	
 	QFile fl( mPath );
 	//opens and eventually create the file
 	mUndoBuffer->setInsideUndo( true );
@@ -797,3 +794,9 @@ void YZBuffer::initHL( unsigned int line ) {
 	m_hlupdating=false;
 }
 
+void YZBuffer::detectHighLight() {
+	int hlMode = YzisHlManager::self()->detectHighlighting (this);
+	if ( hlMode >=0 )
+		setHighLight( hlMode );
+	yzDebug("YZBuffer") << "HIGHLIGHTING " << hlMode << endl;
+}

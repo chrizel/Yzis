@@ -98,6 +98,7 @@ void YZExCommandPool::initPool() {
 	commands.append( new YZExCommand( "imap", &YZExCommandPool::imap, "imap" ) );
 	commands.append( new YZExCommand( "[<>]", &YZExCommandPool::indent, false ));
 	commands.append( new YZExCommand( "ene(w)?", &YZExCommandPool::enew, "enew" ));
+	commands.append( new YZExCommand( "syn(tax)?", &YZExCommandPool::syntax, "syntax" ));
 }
 
 QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -599,8 +600,16 @@ QString YZExCommandPool::indent( const YZExCommandArgs& args ) {
 	return QString::null;
 }
 
-QString YZExCommandPool::enew( const YZExCommandArgs& args ) {
+QString YZExCommandPool::enew( const YZExCommandArgs& ) {
 	YZSession::me->createBuffer();
 	return QString::null;
 }
 
+QString YZExCommandPool::syntax( const YZExCommandArgs& args ) {
+	if ( args.arg == "on" ) {
+		args.view->myBuffer()->detectHighLight();
+	} else if ( args.arg == "off" ) {
+		args.view->myBuffer()->setHighLight(0);
+	}
+	return QString::null;
+}

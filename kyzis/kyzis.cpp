@@ -42,7 +42,9 @@
 
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
-	m_dockConfig( dockConfig ), mBuffers( 0 ), mViews( 0 )
+	m_dockConfig( dockConfig ),
+	m_currentPart( 0 ),
+	mBuffers( 0 ), mViews( 0 )
 {
 	setIDEAlModeStyle( 1 );
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
@@ -63,6 +65,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	
 Kyzis::~Kyzis() {
 	writeDockConfig(m_dockConfig);
+	delete m_currentPart;
 	//delete m_toolbarAction;
 }
 
@@ -151,7 +154,7 @@ void Kyzis::fileOpen() {
 		// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
 		// says that it should open a new window if the document is _not_
 		// in its initial state.  This is what we do here..
-		if ( m_currentPart->url().isEmpty() && ! m_currentPart->isModified() ) {
+		if ( m_currentPart && m_currentPart->url().isEmpty() && ! m_currentPart->isModified() ) {
 			// we open the file in this window...
 			load( url );
 		} else {

@@ -296,16 +296,21 @@ void NYZView::initialisecolormap()
 	colormapinitialised = true;
 
 	if ( !has_colors() ) {
-		yzWarning() << "Terminal doesn't has color capabilities, disabling syntax highlighting" <<endl;
+		yzWarning() << "Terminal doesn't have color capabilities, disabling syntax highlighting" <<endl;
 		return;
 	}
+	bool changecolorok = (can_change_color() == TRUE);
+	yzWarning() << "Terminal can";
+	if (!changecolorok)
+		yzWarning() << "\'t";
+	yzWarning() << " change colors" << endl;
 
 	yzDebug() << "COLOR_PAIRS is : " << COLOR_PAIRS << endl;
+	yzDebug() << "COLORS      is : " << COLORS << endl;
 
 	// magenta = 1, is used to display info on statusbar..
 	//
-	if ( can_change_color() ) {
-		yzWarning() << "Terminal can change colors"<< endl;
+	if ( changecolorok && COLORS>=16 ) {
 
 #define COLOR_QT2CURSES(a) ((a)*1000/256)
 #define COLOR_CURSES2QT(a) ((a)*256/1000)
@@ -342,7 +347,6 @@ void NYZView::initialisecolormap()
 		MAP( 17, Qt::darkYellow );
 
 	} else {
-		yzWarning() << "Terminal can't change colors"<< endl;
 #undef MAP
 #define MAP( nb, qtcolor, color )               \
 	YZASSERT( ERR != init_pair( nb, color, COLOR_BLACK ) );    \

@@ -226,6 +226,11 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	for ( ; idx < line && it != end; ++it, ++idx )
 		;
 	mText.insert(it, new YZLine( l ));
+
+	unsigned int maxLine = lineCount();
+	for ( unsigned int i = line; i < maxLine; i++ ) {
+		YZSession::me->search()->highlightLine( this, i );
+	}
 	if ( updateHL( line ) ) updateAllViews();
 
 	setChanged( true );
@@ -279,7 +284,10 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 
 	//replace old line
 	setTextline(line,l.left( col ));
-
+	unsigned int maxLine = lineCount();
+	for ( unsigned int i = line+1; i < maxLine; i++ ) {
+		YZSession::me->search()->highlightLine( this, i );
+	}
 	if ( updateHL( line + 1 ) ) updateAllViews( );
 
 	VIEWS_APPLY( 0, line+1 );
@@ -302,6 +310,10 @@ void YZBuffer::deleteLine( unsigned int line ) {
 			;
 		delete (*it);
 		mText.erase(it);
+		unsigned int maxLine = lineCount();
+		for ( unsigned int i = line; i < maxLine; i++ ) {
+			YZSession::me->search()->highlightLine( this, i );
+		}
 		if ( updateHL( line ) ) updateAllViews();
 	} else {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, "", 0, line );

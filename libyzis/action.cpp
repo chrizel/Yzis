@@ -409,7 +409,7 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 				continue; //should exit the loop at next iteration anyway and return false
 
 			//i really found it ? or is it a previous "found" ?
-			if ( mBegin.getX() == ( unsigned int ) idx ) { //ok we did not move guy (col 0 or last col maybe ...)
+			if ( mBegin.getX() == ( unsigned int ) idx && reverseSearch && i == currentMatchLine ) { //ok we did not move guy (col 0 or last col maybe ...)
 				yzDebug() << "Only a fake match on this line, skip it" << endl;
 				if ( reverseSearch )
 					currentMatchColumn=-1;

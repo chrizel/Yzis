@@ -133,3 +133,6 @@ YZView* NYZSession::createView( YZBuffer* buffer ) {
 	//TODO
 }
 
+YZBuffer *NYZSession::createBuffer(const QString& path) {
+	//TODO
+}

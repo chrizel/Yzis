@@ -331,9 +331,19 @@ class YZView {
 					unsigned int rLeft, unsigned int rTop );
 
 		/**
+		 * go to previous line
+		 */
+		bool YZView::drawPrevLine( );
+
+		/**
 		 * go to next line
 		 */
 		bool YZView::drawNextLine( );
+
+		/*
+		 * go to prev col
+		 */
+		bool YZView::drawPrevCol( );
 
 		/*
 		 * go to next col

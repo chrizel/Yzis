@@ -26,6 +26,7 @@ public:
   TestFailure( Test *failedTest,
                Exception *thrownException,
                bool isError );
+  TestFailure( const TestFailure &other ); 
 
   virtual ~TestFailure ();
 
@@ -49,7 +50,6 @@ protected:
   bool m_isError;
 
 private: 
-  TestFailure( const TestFailure &other ); 
   TestFailure &operator =( const TestFailure& other ); 
 };
 

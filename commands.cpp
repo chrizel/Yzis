@@ -59,6 +59,7 @@ YZCommandPool::~YZCommandPool() {
  */
 void YZCommandPool::initPool() {
 	//normal stuff
+	//bool : immutable, hascounter, hasmotion, hasregister
 	NEW_VIEW_COMMAND("([0-9]*)(j)",&YZView::moveDown,true,true,false,false);
 	NEW_VIEW_COMMAND("([0-9]*)(k)",&YZView::moveUp,true,true,false,false);
 	NEW_VIEW_COMMAND("([0-9]*)(h)",&YZView::moveLeft,true,true,false,false);
@@ -84,9 +85,11 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("/",&YZView::gotoSearchMode,true,false,false,false);
 	NEW_VIEW_COMMAND("\\?",&YZView::gotoSearchMode,true,false,false,false);
 	NEW_VIEW_COMMAND("([0-9]*)n",&YZView::searchAgain,true,true,false,false);
+	NEW_VIEW_COMMAND("<CTRL>r", &YZView::redo,true,false,false,false);
+	NEW_VIEW_COMMAND("<CTRL>l", &YZView::refreshScreen,true,false,false,false);
 }
 
-void YZCommandPool::execCommand(YZView *view, const QString& inputs, int * /* error */ ) {
+void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error ) {
 	QString result;
 	QString command=QString::null;
 	YZCommandArgs args;
@@ -122,6 +125,7 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int * /* er
 	}
 
 	if ( command.isNull() ) {
+		*error=1;
 		return; //not found :/
 	}
 	switch ( globalCommands[ command ].obj ) {

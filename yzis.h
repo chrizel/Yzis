@@ -33,17 +33,10 @@
 
 #define VERSION_MAJOR	0
 #define VERSION_MINOR	0
-#define VERSION_PATCH	3
+#define VERSION_PATCH	4
 
 #define VERSION_CHAR	"M1++"
 #define VERSION_CHAR_LONG "Yzis (from SVN)"
-#define VERSION_CHAR_DATE "SVN>2004-04-25"
-
-struct yzpoint {
-	int x;
-	int y;
-};
-
-typedef struct yzpoint yz_point;
+#define VERSION_CHAR_DATE "SVN>2004-05-31"
 
 #endif /* YZIS_H */

@@ -95,10 +95,17 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 		gotoxy( mCursor->getX(), mCursor->getY() );
 	}
 }
-void YZView::setVisibleArea(int c, int l) {
-	setVisibleArea( c, l, true );
-}
 
+QString YZView::buildCommand( const QString& key, int modifiers ) {
+	QString command;
+	if ( modifiers & Qt::ControlButton ) command += "<CTRL>";
+	if ( modifiers & Qt::ShiftButton ) command += "<SHIFT>";
+	if ( modifiers & Qt::AltButton ) command += "<ALT>";
+	if ( modifiers & Qt::MetaButton ) command += "<META>";
+	command += key;
+
+	return command;
+}
 
 /* Used by the buffer to post events */
 void YZView::sendKey( int c, int modifiers) {
@@ -108,24 +115,26 @@ void YZView::sendKey( int c, int modifiers) {
 		return;
 	}
 
+	QString lin;
+	QString key = QChar( tolower(c) );// = QKeySequence( c );
+	//default is lower case unless some modifiers
+	if ( modifiers & Qt::ShiftButton )
+		key = key.upper();
+	
+	bool test = false;
+
+	QString mappedCommand = buildCommand(key, modifiers); //mm: do we need to add previousChar in this command ? (i believe no since I do not know any <CTRL>xxx command)
+	yzDebug() << "MappedCommand " << mappedCommand << endl;
+
 	//ignore some keys
 	if ( c == Qt::Key_Shift || c == Qt::Key_Alt || c == Qt::Key_Meta ||c == Qt::Key_Control || c == Qt::Key_CapsLock ) {
 		yzError( )<< "receiving modifiers in c, shouldn't happen" <<endl;
 		return;
 	}
 
-#if 0
-	// useful stuff, but dont commit with  #if 1 :)
-	yzDebug()<< "YZView::sendKey : receiving " << 
-		( ( modifiers & Qt::ControlButton )?"CONTROL+":"" ) <<
-		( ( modifiers & Qt::AltButton )?"ALT+":"" ) <<
-		( ( modifiers & Qt::ShiftButton )?"SHIFT+":"" );
-	if ( isprint( c ) ) yzDebug() << QString(QChar(c)) << endl;
-	else yzDebug()<< "(int) " << c << endl;
-#endif
-
 	// handle CONTROL SEQUENCE
 	// we copy vim behaviour ^L go through in INSERT/REPLACE/SEARCH
+#if 0
 	if ( modifiers & Qt::ControlButton )
 	switch(mMode) {
 		case YZ_VIEW_MODE_INSERT:
@@ -155,27 +164,9 @@ void YZView::sendKey( int c, int modifiers) {
 
 			}
 	};
-
-
-	// we did for control, and will do for shift, everything else is discarded
-	if ( modifiers & ~(Qt::ShiftButton|Qt::ControlButton ) ) {
-		// anything else than ShiftButton ?
-		yzWarning( )<< "Other modifier than control/shift -> still unhandled" <<endl;
-		return;
-	}
-
-
-	QString lin;
-	QString key = QChar( tolower(c) );// = QKeySequence( c );
-	//default is lower case unless some modifiers
-	if ( modifiers & Qt::ShiftButton )
-		key = key.upper();
-	
-	bool test = false;
-	
+#endif
 
 	switch(mMode) {
-
 		case YZ_VIEW_MODE_INSERT:
 			switch ( c ) {
 				case Qt::Key_Home:
@@ -446,8 +437,17 @@ void YZView::sendKey( int c, int modifiers) {
 //			yzDebug() << "Previous chars : (" << int( (mPreviousChars.latin1())[0] )<< ") " << mPreviousChars << endl;
 			if ( mSession ) {
 				int error = 0;
-				mSession->getPool()->execCommand(this, mPreviousChars, &error);
-				if ( error == 1 ) purgeInputBuffer(); // no matching command
+				mSession->getPool()->execCommand(this, /*mPreviousChars*/mappedCommand, &error);
+				if ( error == 1 ) {
+					yzDebug() << "No matching command found at first pass" << endl;
+					error = 0;
+					mSession->getPool()->execCommand(this, mPreviousChars, &error); //try to find a command without the modifier
+				} else
+					break;
+				if ( error == 1 ) {
+					yzDebug() << "No matching command found at second pass. I give up..." << endl;
+					purgeInputBuffer(); // no matching command
+				}
 			}
 			break;
 

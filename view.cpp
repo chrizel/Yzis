@@ -145,8 +145,11 @@ void YZView::sendKey( int c, int modifiers) {
 				case 'l':
 					refreshScreen();
 					return;
+				case 'r':
+					mBuffer->undoBuffer()->redo();
+					return;
 				default:
-					yzWarning()<< "Unhandled control sequence " << c <<endl;
+					yzWarning()<< "Unhandled control sequence " << (char) c <<endl;
 					return;
 
 			}

@@ -2341,11 +2341,11 @@ QString YZView::doComplete(bool forward) {
 	
 	do {
 		if (forward) {
-			result = myBuffer()->action()->search(this, m_word2Complete+"\\w*", *m_completionCursor, YZCursor(this, 0, myBuffer()->lineCount()+1), false, &matchedLength, &found);
+			result = myBuffer()->action()->search(this, "\\b" + m_word2Complete + "\\w*", *m_completionCursor, YZCursor(this, 0, myBuffer()->lineCount()+1), false, &matchedLength, &found);
 		} else {
 			if ( *m_completionCursor == mainCursor->buffer() )
 				m_completionCursor->setX(mainCursor->bufferX() - m_word2Complete.length());
-			result = myBuffer()->action()->search(this, m_word2Complete+"\\w*", *m_completionCursor, YZCursor(this, 0, 0), true, &matchedLength, &found);
+			result = myBuffer()->action()->search(this, "\\b" + m_word2Complete + "\\w*", *m_completionCursor, YZCursor(this, 0, 0), true, &matchedLength, &found);
 		}
 		if (found) {
 			YZCursor end (this, result.getX()+matchedLength-1, result.getY());

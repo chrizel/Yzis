@@ -35,10 +35,10 @@ KYZisCommand::~KYZisCommand() {
 
 void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 	yzDebug()<< " KYZisCommand Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
-	if ( e->key() != 0 ) {
+	if ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Up || e->key() == Qt::Key_Down || e->key() == Qt::Key_Escape) {
 		_parent->sendKey(e->key(), e->state());
 		e->accept();
-	}
+	} else KLineEdit::keyPressEvent( e );
 }
 
 void KYZisCommand::focusInEvent (QFocusEvent *) {

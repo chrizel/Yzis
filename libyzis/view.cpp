@@ -48,6 +48,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mSession = sess;
 	mBuffer	= _b;
 	mLinesVis = lines;
+	mColumnsVis = 0;
 	mCursor = new YZCursor(this);
 	dCursor = new YZCursor(this);
 	sCursor = new YZCursor(this);
@@ -64,6 +65,14 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	dLineLength = 1;
 	mLineLength = 1;
 	dWrapNextLine = false;
+	dLineHeight = 1;
+
+	rColLength = 0;
+	rLineLength = 1;
+	rLineHeight = 1;
+	sColLength = 0;
+	sLineLength = 1;
+	rSpaceFill = 0;
 
 	stickyCol = 0;
 
@@ -72,6 +81,10 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mCurrentTop = mCursor->getY();
 	dCurrentLeft = dCursor->getX();
 	dCurrentTop = dCursor->getY();
+	sCurrentTop = mCurrentTop;
+	sCurrentLeft = mCurrentLeft;
+	rCurrentLeft = mCurrentLeft;
+	rCurrentTop = mCurrentTop;
 
 	QString line = mBuffer->textline(mCurrentTop);
 
@@ -82,8 +95,24 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	reverseSearch=false;
 	viewInformation.l = viewInformation.c1 = viewInformation.c2 = 0;
 	viewInformation.percentage = "";
+	mPreviousChars = "";
 
 	selectionPool = new YZSelectionPool( this );
+
+	drawMode = false;
+	rHLnoAttribs = false;
+	rHLAttributesLen = 0;
+
+	sCurLineLength = 0;
+	rCurLineLength = 0;
+
+	wrapNextLine = false;
+	dWrapNextLine = false;
+	charSelected = false;
+
+	lineDY = 0;
+	tabwidth = getLocalIntOption("General\\tabwidth");
+	wrap = getLocalBoolOption( "General\\wrap" );
 }
 
 YZView::~YZView() {
@@ -691,6 +720,7 @@ void YZView::initGoto( ) {
 	rColLength = dColLength;
 	sColLength = mColLength;
 	rLineLength = dLineLength;
+	//XXX sure of that ? dLineHeight does not seem to be updated properly , see bug #31
 	rLineHeight = dLineHeight;
 	sLineLength = mLineLength;
 	wrapNextLine = dWrapNextLine;
@@ -1606,10 +1636,7 @@ bool YZView::drawPrevCol( ) {
 			sLineLength = wrapNextLine ? 0 : 1;
 		} else {
 			/* go back to begin of line */
-			unsigned int nrLineHeight = rCursor->getY();
-			if ( rCursor->getY() > 0 ) nrLineHeight = rCursor->getY() - ( rLineHeight - 1 );
-//			yzDebug() << "nrLineHeight " << nrLineHeight << endl;
-			initDraw( 0, sCursor->getY(), 0, nrLineHeight );
+			initDraw( 0, sCursor->getY(), 0, rCursor->getY() - ( rLineHeight - 1 ) );
 			rLineLength = 1;
 			rLineHeight = 1;
 			return false;

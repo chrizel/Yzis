@@ -264,8 +264,6 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	else if ( mMode == YZ_VIEW_MODE_EX || mMode == YZ_VIEW_MODE_SEARCH )
 		mapMode = mapMode | cmdline;
 
-	YZMapping::self()->applyMappings(key, mapMode);
-
 	switch(mMode) {
 		case YZ_VIEW_MODE_INSERT:
 			if ( key == "<HOME>" ) {
@@ -415,8 +413,6 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 						case CMD_OK:
 							purgeInputBuffer();
 							break;
-						case OPERATOR_PENDING:
-							mapMode = pendingop;
 						default:
 						break;
 					}
@@ -527,32 +523,17 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			}
 			break;
 
+		//all these use Normal Commands in commands.cpp
 		case YZ_VIEW_MODE_VISUAL:
 		case YZ_VIEW_MODE_VISUAL_LINE :
-			if ( key == "<ESC>" ) {
-				leaveVisualMode();
-				return;
-			}
-			//dont break
 		case YZ_VIEW_MODE_COMMAND:
-			if ( key == "<DEL>" ) {
-				if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
-					YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-					mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to(), ( QValueList<QChar>() << QChar( '\"' ) ));
-					selectionPool->clear( "VISUAL" );
-					purgeInputBuffer();
-					gotoCommandMode();
-					return;
-				} else {
-					mBuffer->action()->deleteChar( this, *mainCursor->buffer(), 1);
-					commitNextUndo();
-				}
-				return;
-			}
 			{
 				mPreviousChars+=modifiers+key;
-				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
-//				yzDebug() << "Command " << mPreviousChars << " gave state: " << state << endl;
+
+				QString mapped = mPreviousChars;
+				YZMapping::self()->applyMappings(mapped, mapMode);
+				
+				cmd_state state=mSession->getPool()->execCommand(this, mapped);
 				switch(state) {
 					case CMD_ERROR:
 						yzDebug() << "Error" << endl;

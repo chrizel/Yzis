@@ -24,8 +24,8 @@
 using namespace CppUnit;
 using namespace std;
 
-#include "../libyzis/line.h"
-#include "../libyzis/debug.h"
+#include "libyzis/line.h"
+#include "libyzis/debug.h"
 
 #include "testBuffer.h"
 #include "TSession.h"

@@ -22,7 +22,7 @@
 using namespace CppUnit;
 using namespace std;
 
-#include "../libyzis/debug.h"
+#include "libyzis/debug.h"
 
 #include "testSearch.h"
 #include "TSession.h"

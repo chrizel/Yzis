@@ -24,7 +24,7 @@
  * $Id: session.h 388 2004-03-03 23:44:13Z mikmak $
  */
 
-#include "../libyzis/session.h"
+#include "libyzis/session.h"
 
 class TYZSession : public YZSession
 {

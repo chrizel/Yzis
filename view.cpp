@@ -973,18 +973,18 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 
 		/* ok, all is deleted, now redraw screen */
 		if ( lineDeleted ) {// we need to redraw screen bottom
-			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
+			paintEvent( dCurrentLeft, goBack ? cursor->getY() : dY, mColumnsVis, mLinesVis - ( ( goBack ? cursor->getY() : dY ) - dCurrentTop ) );
 		} else {
 			if ( wrap ) {
-				gotoxy( goBack ? 0 : b.length(), mY );
+				gotoxy( goBack ? 0 : b.length(), goBack ? cursor->getY() : mY );
 				if ( dCursor->getY() != edY )
-					paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
+					paintEvent( dCurrentLeft, goBack ? cursor->getY() : dY, mColumnsVis, mLinesVis - ( ( goBack ? cursor->getY() : dY ) - dCurrentTop ) );
 				else
-					paintEvent( dCurrentLeft, dY, mColumnsVis, 1 + dCursor->getY() - dY );
+					paintEvent( dCurrentLeft, goBack ? cursor->getY() : dY, mColumnsVis, 1 + dCursor->getY() - ( goBack ? cursor->getY() : dY ) );
 			} else
-				paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
+				paintEvent( dCurrentLeft, goBack ? cursor->getY() : dY, mColumnsVis, 1 );
 		}
-		gotoxy( goBack ? cursor->getX() : mX, mY );
+		gotoxy( goBack ? cursor->getX() : mX, goBack ? cursor->getY() : mY );
 	}
 	YZSession::mRegisters.setRegister( reg, buff );
 

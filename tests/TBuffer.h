@@ -34,6 +34,7 @@ public:
 
     virtual bool popupFileSaveAs() { return true; }
 	virtual void filenameChanged() {}
+	virtual void highlightingChanged() {}
 };
 
 #endif // TYZ_BUFFER_H

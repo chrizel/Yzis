@@ -30,6 +30,7 @@ using namespace std;
 #include "testBuffer.h"
 #include "TSession.h"
 #include "TBuffer.h"
+#include "TView.h"
 
 /* ========================================================================= */
 

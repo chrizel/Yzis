@@ -8,9 +8,12 @@
 static void finish(int sig);
 void cyz_init_screen(void);
 
+FILE *debugstr;
+
 int
 main(int argc, char *argv[])
 {
+	debugstr = fopen("/tmp/yzis.log", "a");
 
 	(void) signal(SIGINT, finish);      /* arrange interrupts to terminate */
 	cyz_init_screen();
@@ -24,7 +27,7 @@ main(int argc, char *argv[])
 
 	/* event loop */
 	for (;;) {
-		yz_send_char( view, getch() );
+		yz_view_send_char( view, getch() );
 	}
 	
 	finish(0);               /* we're done */

@@ -1,0 +1,13 @@
+This file references all known incompatibilities with Vi and Vim.
+Please, don't bother us with 'why this command does not do like Vim does ?' before having 
+look into mailing lists archives. I believe that most of the time, this discussion has already
+happened before ;)
+At the beginning of Yzis development it was clearly defined that we wanted some Vim commands to be 
+handled more 'logically'.
+
+
+	--- ==== Vi(m) incompatibilities ==== ---
+
+1->'4o' normal command will open 4 new lines in yzis (Vi and Vim)
+2->'dj' will delete from current cursor to the character below (Vi deletes 2 lines) (Vi and Vim)
+

@@ -81,7 +81,7 @@ class YZSession {
 		/**
 		 * Save everything and get out
 		 */
-		QString saveBufferExit( const QString& inputsBuff = QString::null );
+		QString saveBufferExit( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/** 
 		 * Get an event to handle from the core.  that's the way the core is

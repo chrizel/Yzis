@@ -1,5 +1,5 @@
 /**
- * $Id: yz_commands.cpp,v 1.5 2003/04/25 12:45:30 mikmak Exp $
+ * $Id: yz_commands.cpp,v 1.6 2003/04/25 20:00:54 mikmak Exp $
  */
 
 #include "yz_commands.h"
@@ -37,6 +37,9 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("k",&YZView::moveUp,true);
 	NEW_VIEW_COMMAND("h",&YZView::moveLeft,true);
 	NEW_VIEW_COMMAND("l",&YZView::moveRight,true);
+	NEW_VIEW_COMMAND("^",&YZView::moveToStartOfLine,true);
+	NEW_VIEW_COMMAND("$",&YZView::moveToEndOfLine,true);
+	NEW_VIEW_COMMAND("x",&YZView::deleteCharacter,true);
 	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true);
 	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true);
 	NEW_VIEW_COMMAND("gg",&YZView::gotoLine,true);

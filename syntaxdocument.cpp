@@ -32,13 +32,11 @@
 #include <qregexp.h>
 #include "syntaxdocument.h"
 #include "debug.h"
-#include "translator.h"
+#include "portability.h"
 #include "internal_options.h"
 #include "session.h"
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <dirent.h>
-#include <unistd.h>
 
 static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
 static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
@@ -386,6 +384,9 @@ YzisSyntaxDocument::findAllResources( const char *,
 }
 
 static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique) {
+#ifndef YZIS_WIN32_MSVC
+// The function does not compile under pure win32 becaues opendir does not
+// exist. We should be able to replace it with some Qt code.
   QString pattern = regexp.pattern();
   if (recursive || pattern.contains('?') || pattern.contains('*'))
   {
@@ -450,10 +451,16 @@ static void lookupDirectory(const QString& path, const QString &relPart, const Q
        }
      }
   }
+#endif // YZIS_WIN32_MSVC
 }
 
 
 static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique) {
+
+// The function does not compile under pure win32 becaues opendir does not
+// exist. We should be able to replace it with some Qt code.
+#ifndef YZIS_WIN32_MSVC
+
     if (relpath.isNull()) {
        lookupDirectory(prefix, relPart, regexp, list,
 		       relList, recursive, unique);
@@ -515,6 +522,7 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
                      relPart + path + '/', regexp, list,
                      relList, recursive, unique);
     }
+#endif // YZIS_WIN32_MSVC
 }
 
 // Private

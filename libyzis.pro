@@ -28,6 +28,7 @@ CONFIG    += rtti # necessary for dynamic cast
 win32-msvc {
 	DESTDIR = ./
 	LIBS += $$(LUALIB)/Lua.lib $$(LUALIB)/LuaLib.lib
+	DEFINES += YZIS_WIN32_MSVC
 }
 
 # Input

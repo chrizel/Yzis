@@ -20,7 +20,7 @@
 #ifndef PORTABILITY_H
 #define PORTABILITY_H
 
-#ifdef WIN32
+#ifdef YZIS_WIN32_MSVC
 #define PREFIX ""
 #else
 #include <unistd.h>

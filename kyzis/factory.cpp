@@ -72,11 +72,12 @@ void KYZisFactory::ref() {
 
 KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, 
 		QObject *parent, const char *name, const char *classname, const QStringList & /*args*/) {
-//	bool bSingleView = (classname!=QString("KTextEditor::Document"));
+	bool bSingleView = (classname!=QString("KTextEditor::Document"));
 	bool bWantBrowserView =  (classname == QString("Browser/View") );
 	bool bWantReadOnly = (bWantBrowserView || ( classname == QString("KParts::ReadOnlyPart") ));
 
-	KParts::ReadWritePart *part = new KYZisDoc (parentWidget, widgetname, parent, name );
+	KParts::ReadWritePart *part = new KYZisDoc (bSingleView, bWantBrowserView, bWantReadOnly, parentWidget, widgetname, parent, name );
+	//yzDebug() << "Parent Name : " << parentWidget->name() << endl;
 	part->setReadWrite( !bWantReadOnly );
 	return part;
 }
@@ -203,8 +204,31 @@ void KYZisFactory::setCurrentView( YZView* view ) {
 
 YZView* KYZisFactory::createView( YZBuffer *buffer ) {
   KYZisDoc *doc = static_cast<KYZisDoc*>(buffer);
-	KTextEditor::View* v = doc->createView(doc->parentWidget());
+//	yzDebug() << "Test2 : " << doc->parentWidget()->name() << endl;
+	KTextEditor::View* v = doc->createView(currentDoc->parentWidget());
 	return dynamic_cast<YZView*>( v );
+}
+
+YZBuffer *KYZisFactory::createBuffer(const QString& path) {
+	DCOPClient *client = kapp->dcopClient();
+	QByteArray data, reply;
+	client->attach();
+	data << path << endl;
+	bool w = client->call(client->appId(), "Kyzis", "createBuffer", data, "", reply, true );
+	if (w) {
+		//finds the buffer
+	} else {
+		//popup error
+	}
+	
+	//DCOP between main app and part to allow this function to ask the main app to create the buffer (pfff)
+/*	KParts::ReadWritePart *m_part = static_cast<KParts::ReadWritePart *>(createPart(currentDoc->parentWidget(),"",this, "", "KParts::ReadWritePart" ));
+	KYZisDoc *b = static_cast<KYZisDoc*>( m_part );
+	b->setPath( path );
+	b->load();
+	sess->addBuffer( b );
+	return b;*/
+	return NULL;
 }
 
 #include "factory.moc"

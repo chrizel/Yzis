@@ -7,15 +7,23 @@
 #include "factory.h"
 #include "debug.h"
 
-KYZisDoc::KYZisDoc (QWidget *parentWidget, const char * /*widgetName*/, QObject *parent, const char *name)
+KYZisDoc::KYZisDoc (bool bSingleViewMode, bool bBrowserView, bool bReadOnly, QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::sess,QString::null) {
 		setInstance(KYZisFactory::instance());
-		KTextEditor::View *current = createView ( parentWidget, "doc widget" );
+/*		KTextEditor::View *current = createView ( parentWidget, "doc widget" );
 		insertChildClient(current);
 		current->show();
-		setWidget(current);
+		setWidget(current);*/
 		KYZisFactory::registerDocument( this );
 		m_parent = parentWidget;
+		//yzDebug() << "Document parent name : " << parentWidget->name() << endl;
+
+		if ( bSingleViewMode ) {
+			KTextEditor::View *view = createView( parentWidget, widgetName );
+			insertChildClient( view );
+			view->show();
+			setWidget( view );
+		}
 }
 
 KYZisDoc::~KYZisDoc () {
@@ -25,13 +33,13 @@ KYZisDoc::~KYZisDoc () {
 KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char * /*name*/) {
 	KYZisView *v = new KYZisView (this, parent);
 	//FIXME : two lists
-	//addView(v);
+	addView(v);
 	_views.append( v );
 	return v;
 }
 
 void KYZisDoc::removeView( KTextEditor::View * v ) {
-	if ( !v ) 
+	if ( !v )
 		return;
 
 	_views.removeRef( v );

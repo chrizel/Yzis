@@ -6,7 +6,8 @@
 #endif
 
 #include <kapplication.h>
-#include <kparts/mainwindow.h>
+#include <kparts/dockmainwindow.h>
+#include <kdockwidget.h>
 
 class KToggleAction;
 
@@ -18,7 +19,7 @@ class KToggleAction;
  * @author Yzis Team <yzis-dev@yzis.org>
  * @version 0.1
  */
-class Kyzis : public KParts::MainWindow
+class Kyzis : public KParts::DockMainWindow
 {
     Q_OBJECT
 public:
@@ -35,7 +36,12 @@ public:
     /**
      * Use this method to load whatever file/URL you have
      */
-    void load(const KURL& url);
+		void load(const KURL& url);
+		
+		/**
+		 * Returns the active Part
+		 */
+		KParts::ReadWritePart *activePart() { return currentPart; }
 
 protected:
     /**
@@ -65,9 +71,10 @@ private:
     void setupActions();
 
 private:
-    KParts::ReadWritePart *m_part;
-
     KToggleAction *m_toolbarAction;
+		QValueList<KParts::ReadWritePart*> partsList;
+		KParts::ReadWritePart *currentPart;
+		KDockWidget *dock;
 };
 
 #endif // KYZIS_H

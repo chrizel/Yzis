@@ -9,7 +9,7 @@ class KYZisDoc : public KTextEditor::Document, public YZBuffer {
 	Q_OBJECT
 		
 	public:
-		KYZisDoc (QWidget *parentWidget = 0, const char *widgetName = 0,QObject *parent = 0, const char *name = 0);
+		KYZisDoc (bool bSingleViewMode, bool bBrowserView, bool bReadOnly, QWidget *parentWidget = 0, const char *widgetName=0, QObject *parent=0, const char *name=0);
 		virtual ~KYZisDoc ();
 
 		KTextEditor::View *createView ( QWidget *parent, const char *name = 0 );

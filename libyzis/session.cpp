@@ -50,10 +50,13 @@ yz_event YZSession::fetchNextEvent(int requester) {
 	return YZEvent::mkEventNoop();
 }
 
+#if 0
 YZBuffer *YZSession::createBuffer(const QString& path) {
 	YZBuffer *b = new YZBuffer(this, path );
+	addBuffer( b );
 	return b;
 }
+#endif
 
 #if 0
 YZView *YZSession::createView(YZBuffer *buffer) {

@@ -6,7 +6,7 @@
 INCLUDES = $(all_includes) -I$(top_srcdir)/libyzis/
 
 # these are the headers for your project
-noinst_HEADERS = kyzis.h editor.h command.h viewwidget.h document.h factory.h
+noinst_HEADERS = kyzis.h editor.h command.h viewwidget.h document.h factory.h viewmgr.h
 
 # let automoc handle all of the meta source files (moc)
 METASOURCES = AUTO
@@ -25,7 +25,7 @@ KDE_ICON = kyzis
 bin_PROGRAMS = kyzis
 
 # the application source, library search path, and link libraries
-kyzis_SOURCES = main.cpp kyzis.cpp
+kyzis_SOURCES = main.cpp kyzis.cpp viewmgr.cpp
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 kyzis_LDADD   = $(LIB_KPARTS) $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
 
@@ -43,7 +43,7 @@ shellrc_DATA = kyzis_shell.rc
 kde_module_LTLIBRARIES = libkyzispart.la
 
 # the Part's source, library search path, and link libraries
-libkyzispart_la_SOURCES = document.cpp viewwidget.cpp factory.cpp editor.cpp command.cpp
+libkyzispart_la_SOURCES = document.cpp viewwidget.cpp factory.cpp editor.cpp command.cpp 
 libkyzispart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
 

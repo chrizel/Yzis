@@ -19,7 +19,8 @@
 #include <kfiledialog.h>
 
 Kyzis::Kyzis()
-	: KParts::MainWindow( 0L, "Kyzis" ) {
+	//: KParts::MainWindow( 0L, "Kyzis" ) {
+	: KParts::DockMainWindow( 0L, "Kyzis" ) {
 		// set the shell's ui resource file
 		setXMLFile("kyzis_shell.rc");
 
@@ -30,17 +31,22 @@ Kyzis::Kyzis()
 		// which is a bad idea usually.. but it's alright in this case since our
 		// Part is made for this Shell
 		KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
+		KParts::ReadWritePart *m_part;
+		dock = createDockWidget("mainDock", 0L);
 		if (factory)
 		{
 			// now that the Part is loaded, we cast it to a Part to get
 			// our hands on it
-			m_part = static_cast<KParts::ReadWritePart *>(factory->create(this,
-						"kyzis_part", "KParts::ReadWritePart" ));
-
+			m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzis_part", "KParts::ReadWritePart" ));
 			if (m_part)
 			{
+				partsList.append(m_part);
+				currentPart = m_part;
+
 				// tell the KParts::MainWindow that this is indeed the main widget
-				setCentralWidget(m_part->widget());
+				//setCentralWidget(m_part->widget());
+				//dock->setWidget(m_part->widget());
+				//dock->setToolTipString();
 
 				// and integrate the part's GUI with the shell's
 				createGUI(m_part);
@@ -56,6 +62,7 @@ Kyzis::Kyzis()
 			// next time we enter the event loop...
 			return;
 		}
+		setMainDockWidget(dock);
 
 		// apply the saved mainwindow settings, if any, and ask the mainwindow
 		// to automatically save settings if changed: window size, toolbar
@@ -64,12 +71,14 @@ Kyzis::Kyzis()
 	}
 
 Kyzis::~Kyzis() {
-	delete m_part;
+	//delete m_part;
+	delete partsList;
 	delete m_toolbarAction;
 }
 
 void Kyzis::load(const KURL& url) {
-	m_part->openURL( url );
+	currentPart->openURL(url);
+	//m_part->openURL( url );
 }
 
 void Kyzis::setupActions() {
@@ -106,6 +115,7 @@ void Kyzis::fileNew() {
 	// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
 	// says that it should open a new window if the document is _not_
 	// in its initial state.  This is what we do here..
+	//XXX NOPE
 	if ( ! m_part->url().isEmpty() || m_part->isModified() ) {
 		(new Kyzis)->show();
 	};
@@ -148,14 +158,32 @@ void Kyzis::fileOpen() {
 		// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
 		// says that it should open a new window if the document is _not_
 		// in its initial state.  This is what we do here..
-		if ( m_part->url().isEmpty() && ! m_part->isModified() ) {
+		if ( currentPart->url().isEmpty() && ! currentPart->isModified() ) {
 			// we open the file in this window...
 			load( url );
 		} else {
+			//XXX NOPE
 			// we open the file in a new window...
-			Kyzis* newWin = new Kyzis;
+			/*Kyzis* newWin = new Kyzis;
 			newWin->load( url );
-			newWin->show();
+			newWin->show();*/
 		}
 	}
+}
+
+void Kyzis::createBuffer(const QString& path) {
+		KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
+		if (factory)
+		{
+			// now that the Part is loaded, we cast it to a Part to get
+			// our hands on it
+			KParts::ReadWritePart * m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzis_part", "KParts::ReadWritePart" ));
+
+			if (m_part)
+			{
+				partsList.append(m_part);
+				currentPart = m_part;
+				dock->
+			}
+		}
 }

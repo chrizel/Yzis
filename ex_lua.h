@@ -222,6 +222,11 @@ class YZExLua : public QObject {
 		 */
 		static int source(lua_State *L);
 
+		/**
+		 * Sends a string to debug output
+		 */
+		static int debug(lua_State *L);
+
 	protected:
 		lua_State *L;
 

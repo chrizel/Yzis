@@ -144,7 +144,7 @@ void YZInternalOptionPool::init() {
 	YZInternalOption *encoding = new YZInternalOption( "encoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
 	YZInternalOption *rightleft = new YZInternalOption( "rightleft", "Global", false, false, view_opt, bool_t );
 	YZInternalOption *list = new YZInternalOption( "list", "Global", false, false, view_opt, bool_t );
-	YZInternalOption *makebluebirdhappy = new YZInternalOption( "makebluebirdhappy", "Global", false, false, global_opt, bool_t );
+	YZInternalOption *blocksplash = new YZInternalOption( "blocksplash", "Global", true, true, global_opt, bool_t );
 
 	mOptions[ "Global\\tabstop" ] = tabstop;
 	mOptions[ "Global\\number" ] = number;
@@ -158,7 +158,7 @@ void YZInternalOptionPool::init() {
 	mOptions[ "Global\\encoding" ] = encoding;
 	mOptions[ "Global\\rightleft" ] = rightleft;
 	mOptions[ "Global\\list" ] = list;
-	mOptions[ "Global\\makebluebirdhappy" ] = makebluebirdhappy;
+	mOptions[ "Global\\blocksplash" ] = blocksplash;
 	setGroup("Global");
 
 	//read config files now

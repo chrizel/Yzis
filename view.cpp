@@ -216,7 +216,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );
-		if (!getLocalBoolOption("makebluebirdhappy"))
+		if (getLocalBoolOption("blocksplash"))
 			return;
 	}
 
@@ -1652,6 +1652,8 @@ bool YZView::drawPrevCol( ) {
 		workCursor->setBufferX( curx );
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {
+			if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(sCurLine.mid(curx)) )
+				lastChar = '.';
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
 			if ( workCursor->screenX() >= workCursor->sColIncrement )
 				workCursor->setScreenX( workCursor->screenX() - workCursor->sColIncrement );
@@ -1690,10 +1692,10 @@ bool YZView::drawNextCol( ) {
 		lastChar = sCurLine[ curx ];
 		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
+			if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(sCurLine.mid(curx)) )
+				lastChar = '.';
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
 			lenToTest = workCursor->sColIncrement;
-			if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(sCurLine.mid(curx)) )
-				lastChar = '-';
 		} else {
 			workCursor->lastCharWasTab = true;
 			lastChar = ' ';

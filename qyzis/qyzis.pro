@@ -29,11 +29,11 @@ win32-msvc {
 HEADERS += qyzview.h \
 		   qyzbuffer.h \
 		   qyzeditor.h \
-		   keyConverter.h \
+		   ../kqcommon/keyConverter.h \
 		   qyzsession.h
 
 SOURCES += main.cpp \
-		   keyConverter.cpp \
+		   ../kqcommon/keyConverter.cpp \
 			qyzview.cpp \
 			qyzeditor.cpp \
 			qyzbuffer.cpp \

@@ -1,5 +1,6 @@
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
+ *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -285,22 +286,6 @@ void KYZisView::scrollView( int value ) {
 
 		if (!mVScroll->draggingSlider())
 			mVScroll->setValue( value );
-
-
-		// find out which line in the buffer that's on the bottom of the screen
-		unsigned int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
-		if (getLocalBoolOption( "wrap" )) {
-			YZViewCursor temp = *scrollCursor;
-			gotodxdy( &temp, getCursor()->x(), getDrawCurrentTop() + getLinesVisible() - 1 );
-			lastBufferLineVisible = temp.bufferY();
-		}
-
-		// move cursor if it scrolled off the screen
-		if (getBufferCursor()->y() < getCurrentTop())
-			gotoxy(getBufferCursor()->x(), getCurrentTop());
-		else if (getBufferCursor()->y() > lastBufferLineVisible)
-			gotoxy( getBufferCursor()->x(), lastBufferLineVisible );
-		updateCursor();
 	}
 }
 

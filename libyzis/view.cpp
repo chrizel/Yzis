@@ -3,6 +3,7 @@
  *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>.
  *  Copyright (C) 2003-2005 Loic Pauleve <panard@inzenet.org>
  *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
+ *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -464,6 +465,23 @@ void YZView::alignViewBufferVertically( unsigned int line ) {
 	} else {
 		sendRefreshEvent();
 	}
+
+	// find the last visible line in the buffer
+	unsigned int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
+
+	if (getLocalBoolOption( "wrap" )) {
+		YZViewCursor temp = *scrollCursor;
+		gotodxdy( &temp, getCursor()->x(), getDrawCurrentTop() + getLinesVisible() - 1 );
+		lastBufferLineVisible = temp.bufferY();
+	}
+
+	// move cursor if it scrolled off the screen
+	if (getCursor()->y() < getCurrentTop())
+		gotoxy(getCursor()->x(), getCurrentTop());
+	else if (getCursor()->y() > lastBufferLineVisible)
+		gotoxy( getCursor()->x(), lastBufferLineVisible );
+
+	updateCursor();
 }
 
 void YZView::alignViewVertically( unsigned int line ) {
@@ -489,6 +507,7 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else {
 		scrollCursor->reset();
 	}
+
 	if ( old_dCurrentTop > scrollCursor->screenY() && old_dCurrentTop - scrollCursor->screenY() < mLinesVis ) {
 		scrollUp( old_dCurrentTop - scrollCursor->screenY() );
 	} else if ( old_dCurrentTop < scrollCursor->screenY() && scrollCursor->screenY() - old_dCurrentTop < mLinesVis ) {

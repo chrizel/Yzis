@@ -182,8 +182,6 @@ class YZModeCommand : public YZMode {
 		YZCursor moveRightWrap(const YZMotionArgs &args);
 		YZCursor moveDown(const YZMotionArgs &args);
 		YZCursor moveUp(const YZMotionArgs &args);
-		YZCursor movePageUp(const YZMotionArgs &args);
-		YZCursor movePageDown(const YZMotionArgs &args);
 		YZCursor moveWordForward(const YZMotionArgs &args);
 		YZCursor moveSWordForward(const YZMotionArgs &args);
 		YZCursor moveWordBackward(const YZMotionArgs &args);
@@ -254,6 +252,8 @@ class YZModeCommand : public YZMode {
 		void abort(const YZCommandArgs &args);
 		void delkey(const YZCommandArgs &args);
 		void indent( const YZCommandArgs& args );
+		void scrollPageUp( const YZCommandArgs &args );
+		void scrollPageDown( const YZCommandArgs &args );
 #if QT_VERSION < 0x040000
 		QPtrList<const YZCommand> commands;
 #else

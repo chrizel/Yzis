@@ -30,6 +30,7 @@
 #include "viewwidget.h"
 #include "factory.h"
 #include "debug.h"
+#include "undo.h"
 
 #include "configdialog.h"
 
@@ -247,6 +248,40 @@ QString KYZisDoc::hlModeSectionName (unsigned int mode) {
 
 void KYZisDoc::highlightingChanged( ) {
 	emit hlChanged();
+}
+
+void KYZisDoc::undo() {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	undoBuffer()->undo(v);		
+}
+
+void KYZisDoc::redo() {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	undoBuffer()->redo(v);		
+}
+
+void KYZisDoc::clearUndo() {
+	undoBuffer()->clearUndo();	
+}
+
+void KYZisDoc::clearRedo() {
+	undoBuffer()->clearRedo();	
+}
+
+unsigned int KYZisDoc::undoCount() const {
+	return undoBuffer()->undoCount();	
+}
+
+unsigned int KYZisDoc::redoCount() const {
+	return undoBuffer()->redoCount();	
+}
+
+unsigned int KYZisDoc::undoSteps() const {
+	return 0;	
+}
+
+void KYZisDoc::setUndoSteps(unsigned int steps) {
+	//nothing
 }
 
 #include "document.moc"

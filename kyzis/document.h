@@ -23,11 +23,12 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/highlightinginterface.h>
+#include <ktexteditor/undointerface.h>
 #include <buffer.h>
 #include <view.h>
 #include <session.h>
 
-class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public YZBuffer {
+class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public KTextEditor::UndoInterface, public YZBuffer {
 	Q_OBJECT
 		
 	public:
@@ -75,6 +76,16 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		virtual QString hlModeName (unsigned int mode);
 		virtual QString hlModeSectionName (unsigned int mode);
 
+		//undo interface
+		virtual void undo();
+		virtual void redo();
+		virtual void clearUndo();
+		virtual void clearRedo();
+		virtual unsigned int undoCount() const;
+		virtual unsigned int redoCount() const;
+		virtual unsigned int undoSteps() const;
+		virtual void setUndoSteps(unsigned int steps);
+
 	public slots:
 		//signals to emit
 		virtual void textChanged () {}
@@ -94,6 +105,7 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 
 	signals:
 		void hlChanged();
+		void undoChanged();
 };
 
 #endif

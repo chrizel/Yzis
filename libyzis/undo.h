@@ -76,7 +76,8 @@ class YZUndoBuffer {
 public:
 	YZUndoBuffer( YZBuffer * );
 
-	/** Store the previous undo item (if any) and start a new one
+	/*
+	 * * Store the previous undo item (if any) and start a new one
 	 */
 	void commitUndoItem( uint cursorX, uint cursorY );
 
@@ -107,6 +108,11 @@ public:
 	void setInsideUndo( bool set ) { mInsideUndo = set; }
 	bool isInsideUndo() { return mInsideUndo; }
 
+	void clearUndo() { mUndoItemList.clear(); }
+	void clearRedo() { removeUndoItemAfterCurrent(); }
+	unsigned int undoCount() const { return mCurrentIndex; }
+	unsigned int redoCount() const { return mUndoItemList.count() - mCurrentIndex; }
+
 protected:
 	/** purge the undo list after the current item */
 	void removeUndoItemAfterCurrent();
@@ -116,7 +122,6 @@ protected:
 	YZBuffer * mBuffer;
 	UndoItem * mFutureUndoItem;
 	QPtrList<UndoItem> mUndoItemList;
-//	QPtrListIterator<UndoItem> mCurrentUndoItem;
 	uint mCurrentIndex;
 	bool mInsideUndo;
 };

@@ -53,6 +53,12 @@ struct yz_event_invalidateline {
 struct yz_event_setcursor {
 	int x,y,y2;
 	QString percentage;
+	yz_event_setcursor() {
+		percentage=QString::null;
+	}
+	yz_event_setcursor(const yz_event_setcursor& e) {
+		percentage=e.percentage;
+	}
 };
 
 struct yz_event_setstatus {
@@ -95,7 +101,7 @@ class YZEvent {
 		YZEvent();
 
 		static yz_event mkEventStatus(const QString&);
-		static yz_event mkEventCursor(int x, int y, int y2, QString&);
+		static yz_event mkEventCursor(int x, int y, int y2, const QString&);
 		static yz_event mkEventInvalidateLine(int);
 		static yz_event mkEventRedraw();
 		static yz_event mkEventNoop();

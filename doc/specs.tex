@@ -17,8 +17,7 @@
 \section{About}
 
 This document attempts to describe the internals of Yzis.\newline
-At the time of this writing nothing is frozen yet, so this documentation is not 
-exhaustive but I will try to keep it the most up to date possible.\newline
+At the time of this writing nothing is frozen yet, so this documentation is not exhaustive but I will try to keep it the most up to date possible.\newline
 \newline
 {\it This document is published under the Free Documentation License.}
 
@@ -31,16 +30,17 @@ Project initially started in February 2003 during the FOSDEM in Bruxelles.
 Yzis is a text editor developed using advanced design technics to provide as much features
 than editors like vim and emacs with the same reliability but with adding a great flexibility and the best
 modularisation possible.\newline
-The goal is to provide a fast, reliable, highly configurable and nice looking editor. Yzis is also aimed at "embedding" inside 
-other applications. This should provide a great tool for Integrated Development Environments like KDevelop.\newline
-The idea of Yzis is to separate the "editor processing" from the User Interface so that one can develop a new User Interface 
-(either Console or Graphical) easily and adapt it to the environment he wishes while keeping the whole features of Yzis.\newline
+The goal is to provide a fast, reliable, highly configurable and nice looking editor. Yzis is also aimed at "embedding" inside other applications. This should provide a great tool for Integrated Development Environments like KDevelop.\newline
+The idea of Yzis is to separate the "editor processing" from the User Interface so that one can develop a new User Interface (either Console or Graphical) easily and adapt it to the environment he wishes while keeping the whole features of Yzis.\newline
+
+
+%         INTERNALS
 
 \newpage
-\section{Code Structure}
+\section{Internals}
+\subsection{Code Structure}
 The most important part of Yzis, is based on a core library written in C++. It uses TinyQ or Qt as its backend (TinyQ is adviced for performance). Thanks to TinyQ/Qt Yzis does not rewrite its own unicode, internationalisation, file access, regular expression ... handlers. TinyQ/Qt are also highly portable so porting Yzis to these supported systems should be easy.\newline
-User interfaces uses this core library to create the complete editor. Currently, a ncurses and a KDE interface are being worked on.
-The interaction between the library and the UIs (User Interfaces) is handled through a set a common interfaces :
+User interfaces uses this core library to create the complete editor. Currently, a ncurses and a KDE interface are being worked on.  The interaction between the library and the UIs (User Interfaces) is handled through a set a common interfaces :
 \begin{itemize}
 \item YZBuffer : a class describing a buffer object (a buffer is an opened/new file)
 \item YZView : a class describing a view on a buffer (a view is {\bf always} linked to a buffer
@@ -57,21 +57,33 @@ The core Yzis will also provides some extensions interface so that third party a
 \end{itemize}
 
 \newpage
-\section{Event loop}
-%two event loops : push / get ....
-\newpage
-\section{Graphical/Console User interfaces}
-\subsection{Display}
-\subsection{Inputs}
+\subsection{Session handling}
 
 \newpage
-\section{Session handling}
+\subsection{Command handling}
 
 \newpage
-\section{Command handling}
+\subsection{Scripting support}
 
 \newpage
-\section{Plugins}
+\subsection{Plugins}
+
+
+%        RUNTIME
+\newpage
+\section{Runtime}
+\subsection{Event loop}
+The event loop is basically handled by libyzis. However, libyzis does not {\bf
+run} this event loop. This means that any GUI is responsible for
+pushing/getting events into the event loop.
+
+\newpage
+\subsection{Graphical/Console User interfaces}
+%\subsection{Display}
+%\subsection{Inputs}
+\newpage
+\subsection{Plugins}
+
 
 \vfill
 $ \version\ $

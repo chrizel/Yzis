@@ -83,10 +83,11 @@ void YZView::updateCursor(void)
 	int y = cursor->getY();
 
 	if ( y != lasty ) {
-		percentage = QString("%1%").arg( int( y*100/buffer->getLines()));
+		int nblines = buffer->getLines();
+		percentage = QString("%1%").arg( int( y*100/ nblines)); // nblines=0 ?
 		if ( current < 1 )  percentage="Top";
-		if ( current+lines_vis >= buffer->getLines() )  percentage="Bot";
-		if ( (current<1 ) &&  ( current+lines_vis >= buffer->getLines( ) ) )  percentage="All";
+		if ( current+lines_vis >= nblines )  percentage="Bot";
+		if ( (current<1 ) &&  ( current+lines_vis >= nblines ) ) percentage="All";
 		lasty=y;
 	}
 

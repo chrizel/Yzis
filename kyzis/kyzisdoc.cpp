@@ -19,16 +19,18 @@ KYZisDoc::KYZisDoc (QWidget *parentWidget, const char * /*widgetName*/, QObject 
 		insertChildClient(current);
 		current->show();
 		setWidget(current);
+		_views.setAutoDelete( false ); //we don't own !
 }
 
 KYZisDoc::~KYZisDoc () {
+	delete sess;
 }
 
 KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char * /*name*/) {
 	KYZisView *v = new KYZisView (this, sess, parent);
 	//FIXME : two lists
-	_views.append(v);
 	addView(v);
+	_views.append( v );
 	return v;
 }
 
@@ -40,6 +42,7 @@ bool KYZisDoc::openFile () {
 }
 
 bool KYZisDoc::saveFile () {
+	YZBuffer::save();
 	return true;
 }
 

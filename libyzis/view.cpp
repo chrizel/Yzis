@@ -399,6 +399,9 @@ void YZView::sendKey( int c, int modifiers) {
 						YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 						selectionPool->clear( "VISUAL" );
 						mBuffer->action()->deleteArea( this, *cur_sel.from, *cur_sel.to, QChar( '\"' ));
+						purgeInputBuffer();
+						gotoCommandMode();
+						return;
 					} else
 						mBuffer->action()->deleteChar( this, *mCursor, 1);
 					return;
@@ -1022,7 +1025,12 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		args.command = "d$";
 		args.motion = "$";
 	} 
-	if (args.command.startsWith("d")) {
+	if ( mMode == YZ_VIEW_MODE_VISUAL && args.command.startsWith( "d" ) ) {
+		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+		selectionPool->clear( "VISUAL" );
+		mBuffer->action()->deleteArea( this, *cur_sel.from, *cur_sel.to, reg);
+		gotoCommandMode();
+	} else if (args.command.startsWith("d")) {
 		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
 		//ok we have a motion , so delete till the end of the motion :)
 		YZCursor cursor(this);
@@ -1157,7 +1165,33 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 	} else if ( args.command == "y$" ) {
 		QString lin = mBuffer->textline( mCursor->getY() );
 		list << lin.mid(mCursor->getX());
+	} else if ( mMode == YZ_VIEW_MODE_VISUAL && args.command.startsWith( "y" ) ) {
+		list = mBuffer->getText( *mVisualCursor, *mCursor );
+		gotoCommandMode();
+	} else if ( args.command.startsWith( "y" ) ) {
+		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
+		//ok we have a motion , so delete till the end of the motion :)
+		YZCursor cursor(this);
+		bool goBack = false;
+		bool success = mSession->getMotionPool()->applyMotion(args.motion, this, &goBack, cursor);
+		if ( !success ) {
+			purgeInputBuffer();
+			return QString::null;
+		}
+		//copy to the cursor position now :)
+		yzDebug() << "Start of motion is : " << *mCursor << endl;
+		yzDebug() << "End of motion is : " << cursor << endl;
+
+		if ( goBack ) {
+			int mY = cursor.getY();
+			int mX = cursor.getX();
+			cursor.setCursor( mCursor );
+			gotoxy( mX, mY, false );
+		}
+
+		list = mBuffer->getText(*mCursor, cursor);
 	}
+	
 	YZSession::mRegisters.setRegister( args.registr, list );
 
 	purgeInputBuffer();

@@ -32,8 +32,8 @@ YZMotionPool::~YZMotionPool() {
 }
 
 void YZMotionPool::initPool() {
-	addMotion (YZMotion( "\\b\\w+\\b", REGEXP, 0, 0, false, true ) , "[0-9]*w" );
-	addMotion (YZMotion( "\\b\\w+\\b", REGEXP, 0, 0, true, true ), "[0-9]*b");
+	addMotion (YZMotion( "\\w*\\b", REGEXP, 0, 0, false, true ) , "[0-9]*w" );
+	addMotion (YZMotion( "\\b\\w*", REGEXP, 0, 0, true, true ), "[0-9]*b");
 	addMotion (YZMotion( "$", REGEXP, 0, 0, false, true ), "\\$" );
 	addMotion (YZMotion( "^", REGEXP, 0, 0, true, true ), "0");
 	addMotion (YZMotion( "", RELATIVE, -1, 0, true, true ), "[0-9]*h");
@@ -114,11 +114,11 @@ bool YZMotionPool::applyRegexpMotion( const QString &inputsMotion, YZMotion& mot
 		while (count < counter) {
 			const QString& current = view->myBuffer()->textline( result.getY() );
 			if ( current.isNull() ) return false;
-			idx = rex.search( current, result.getX() );
+			idx = rex.search( current, result.getX() + 1 );
 			if ( idx != -1 ) {
 				yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
 				count++; //one match
-				result.setX( idx + ( motion.after ? rex.matchedLength() : 0 ) + 1 );
+				result.setX( idx + ( motion.after ? rex.matchedLength() : 0 ) );
 			} else {
 				if ( result.getY() >= view->myBuffer()->lineCount() ) break;
 				result.setX( 0 );
@@ -134,9 +134,8 @@ bool YZMotionPool::applyRegexpMotion( const QString &inputsMotion, YZMotion& mot
 			if ( idx != -1 ) {
 				yzDebug() << "Match at " << idx << " on line " << result.getY() << " Matched length " << rex.matchedLength() << endl;
 				count++; //one match
-				//result.setX( idx );
 				yzDebug() << "Motion after " << motion.after << endl;
-				result.setX( idx + ( motion.after ? 0 : rex.matchedLength() ) );
+				result.setX( idx + ( motion.after ? -1 : rex.matchedLength() ) );
 			}
 			if ( count >= counter ) break;
 			if ( idx == -1 || idx == 0 ) { //no match or we matched at beginning of line => go to previous line for next search

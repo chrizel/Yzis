@@ -99,9 +99,7 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len 
 }
 
 void YZAction::deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const QChar& reg ) {
-	YZCursor mPos( begin );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initDeleteLine( mPos, end, pView->myId == it->myId );
+	yzDebug() << "Deleting from X " << begin.getX() << " to X " << end.getX() << endl;
 
 	QStringList buff;
 	unsigned int bX = begin.getX();
@@ -109,13 +107,22 @@ void YZAction::deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const 
 	unsigned int eX = end.getX();
 	unsigned int eY = end.getY();
 
+	YZCursor mPos( begin );
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+		it->initDeleteLine( mPos, end, pView->myId == it->myId );
+
+	yzDebug() << "Cursors : " << bX << ","<< bY << " " << eX << "," << eY << endl;
+
 	bool lineDeleted = bY != eY;
 
 	/* 1. delete the part of the current line */
 	QString b = mBuffer->textline( bY );
+	yzDebug() << "Current Line " << b << endl;
 	if ( !lineDeleted ) {
-		buff << b.mid( bX, eX - bX + 1 );
-		QString b2 = b.left( bX ) + b.mid( eX );
+		buff << b.mid( bX, eX - bX + 1);
+		yzDebug() << "Deleting 1 " << buff <<endl;
+		QString b2 = b.left( bX ) + b.mid( eX + 1 );
+		yzDebug() << "New line is " << b2 << endl;
 		mBuffer->replaceLine( b2 , bY );
 	} else {
 		buff << b.mid( bX );
@@ -144,6 +151,7 @@ void YZAction::deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const 
 		mBuffer->replaceLine( b.mid( end.getX() ), curY );
 		mBuffer->mergeNextLine( curY - 1 );
 	}
+	yzDebug() << "Deleting " << buff << endl;
 	YZSession::mRegisters.setRegister( reg, buff );
 
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )

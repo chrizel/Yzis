@@ -76,7 +76,6 @@ private:
 public:
 	static KYZisFactory *s_self;
 	static YZSession *sess;
-	static KYZisView *currentView;
 	static KYZisDoc *currentDoc;
 };
 

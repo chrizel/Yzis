@@ -1,3 +1,8 @@
+2004-02-24 mikmak
+  * kyzis
+    remove duplication of currentView, use the one from libyzis/session.cpp
+  * libyzis
+    replaced the QValueList of views with a QPtrList
 
 2004-02-24 orzel
   * all

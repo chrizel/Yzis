@@ -42,7 +42,6 @@
 #include <kmessagebox.h>
 
 YZSession *KYZisFactory::sess = 0;
-KYZisView *KYZisFactory::currentView=0;
 KYZisDoc *KYZisFactory::currentDoc=0;
 KYZisFactory *KYZisFactory::s_self = 0;
 unsigned long int KYZisFactory::s_refcnt = 0;
@@ -132,7 +131,7 @@ void KYZisFactory::registerView ( KYZisView *view ) {
     s_views.append( view );
     ref();
   }
-	currentView = view;
+	sess->currentViewChanged(view);
 }
 
 void KYZisFactory::deregisterView ( KYZisView *view ) {
@@ -159,7 +158,8 @@ const KAboutData *KYZisFactory::aboutData() {
 
 //GUI itf
 void KYZisFactory::setFocusMainWindow() {
-	currentView->editor->setFocus();
+	KYZisView *v = static_cast<KYZisView*>(sess->currentView());
+	v->editor->setFocus();
 }
 
 void KYZisFactory::postEvent(yz_event) {
@@ -212,27 +212,32 @@ void KYZisFactory::customEvent (QCustomEvent *) {
 }
 
 void KYZisFactory::setFocusCommandLine() {
-	currentView->command->setFocus();
+	KYZisView *v = static_cast<KYZisView*>(sess->currentView());
+	v->command->setFocus();
 }
 
 void KYZisFactory::scrollDown( int lines ) {
 	yzDebug() << "ScrollDown " << lines <<endl;
-	currentView->editor->scrollBy(0, lines * currentView->editor->fontMetrics().lineSpacing());
-	currentView->editor->update();
+	KYZisView *v = static_cast<KYZisView*>(sess->currentView());
+	v->editor->scrollBy(0, lines * v->editor->fontMetrics().lineSpacing());
+	v->editor->update();
 }
 
 void KYZisFactory::scrollUp ( int lines ) {
 	yzDebug() << "ScrollUp " << lines <<endl;
-	currentView->editor->scrollBy(0, -1 * lines * currentView->editor->fontMetrics().lineSpacing());
-	currentView->editor->update();
+	KYZisView *v = static_cast<KYZisView*>(sess->currentView());
+	v->editor->scrollBy(0, -1 * lines * v->editor->fontMetrics().lineSpacing());
+	v->editor->update();
 }
 
 void KYZisFactory::setCommandLineText( const QString& text ) {
-	currentView->command->setText( text );
+	KYZisView *v = static_cast<KYZisView*>(sess->currentView());
+	v->command->setText( text );
 }
 
 QString KYZisFactory::getCommandLineText() const {
-	return currentView->command->text();
+	KYZisView *v = static_cast<KYZisView*>(sess->currentView());
+	return v->command->text();
 }
 
 void KYZisFactory::quit( bool ) {
@@ -241,9 +246,8 @@ void KYZisFactory::quit( bool ) {
 
 void KYZisFactory::setCurrentView( YZView* view ) {
 	yzDebug() << "Kyzis : setCurrentView " << view->myId << endl;
-	currentView = static_cast<KYZisView*>( view );
-	sess->currentViewChanged( view );
-	currentView->setActiveWindow();
+	KYZisView *v = static_cast<KYZisView*>(view);
+	v->setActiveWindow();
 }
 
 YZView* KYZisFactory::createView( YZBuffer *buffer ) {
@@ -282,7 +286,8 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 }
 
 void KYZisFactory::popupMessage( const QString& message ) {
-	KMessageBox::information(currentView, message, "Error");
+	KYZisView *v = static_cast<KYZisView*>(sess->currentView());
+	KMessageBox::information(v, message, "Error");
 }
 
 void KYZisFactory::deleteView( ) {

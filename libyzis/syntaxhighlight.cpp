@@ -1705,6 +1705,11 @@ void YzisHighlighting::init()
 
   contextList.clear ();
   makeContextList();
+
+	//little hack (for yzis) to fill up our options tree with defaults settings
+  YzisHlItemDataList list;
+  getYzisHlItemDataList(0, list);
+  setYzisHlItemDataList(0, list);
 }
 
 /**
@@ -2803,6 +2808,11 @@ YzisHlManager::YzisHlManager()
   hlDict.insert (hl->name(), hl);
 
   lastCtxsReset.start();
+
+  //little hack to fill up our options tree with HL defaults
+  YzisAttributeList list;
+  getDefaults(0,list);
+  setDefaults(0,list);
 }
 
 YzisHlManager::~YzisHlManager()

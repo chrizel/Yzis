@@ -1,6 +1,7 @@
 2004-04-18 mikmak
   * libyzis
     enable Syntax Highlighting support + bugfixes
+    autodetect filetype to guess which HL to enable
   * kyzis
     redraw line char by char and add syntax highlighting attributes
 

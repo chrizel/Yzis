@@ -235,10 +235,13 @@ int YZExLua::getcolor(lua_State *L) {
 	
 	int sCol = ( int )lua_tonumber( L,1 );
 	int sLine = ( int )lua_tonumber( L,2 );
+	sCol = sCol ? sCol - 1 : 0;
+	sLine = sLine ? sLine - 1 : 0;
 	
 	YZView* cView = YZSession::me->currentView();
 	QString color = cView->drawColor( sCol, sLine ).name();
 
+//	yzDebug() << "Asked color : " << color.latin1() << endl;
 	lua_pushstring( L, color ); // first result
 
 	return 1; // one result

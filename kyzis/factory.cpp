@@ -274,8 +274,7 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 		yzDebug() << "DCOP call failed for " << client->appId() << endl;
 		//popup error
 	}
-	return NULL;
-	//TODO return the buffer
+	return sess->findBuffer( path );
 }
 
 void KYZisFactory::popupMessage( const QString& message ) {

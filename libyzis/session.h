@@ -57,7 +57,7 @@ class YZSession {
 		/** 
 		 * Used by the buffer to post events
 		 */
-		void	postEvent ( yz_event );
+		void postEvent ( yz_event );
 
 		/**
 		 * return the session name
@@ -96,6 +96,11 @@ class YZSession {
 		YZView* findView( int uid );
 
 		/**
+		 * Finds a buffer by a filename
+		 */
+		YZBuffer* findBuffer( const QString& path );
+
+		/**
 		 * Change the current view ( unassigned )
 		 */
 		void setCurrentView( YZView* );
@@ -113,11 +118,6 @@ class YZSession {
 		Gui *mGUI;
 
 	protected:
-		/*
-		 * Find a buffer by QString/QRegExp ?
-		 */
-//		virtual		YZBuffer *buffer(int i)=0;
-
 		//we map "filename"/buffer for buffers
 		QMap<QString,YZBuffer*> mBuffers;
 		QValueList<yz_event> mEvents;

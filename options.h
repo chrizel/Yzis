@@ -20,15 +20,50 @@
 #ifndef YZ_OPTIONS
 #define YZ_OPTIONS
 
-#include <qsettings.h>
+#include <qstring.h>
+#include <qmap.h>
+#include <qstringlist.h>
+#include <qcolor.h>
 
-class YZOption : public QSettings {
+/**
+ * Class to handle a single option
+ * It includes : a name , a group, a default value and the current value
+ */
+class KOption {
+	public:
+		KOption( QString key, QString group, QString value, QString defaultValue);
+		KOption( QString key, QString group, QStringList value, QStringList defaultValue);
+		KOption( QString key, QString group, int value, int defaultValue);
+		KOption( QString key, QString group, bool value, bool defaultValue);
+		~KOption();
+
+		const QString& getGroup() { return mGroup; }
+		const QString& getKey() { return mKey; }
+		const QString& getDefault() { return mDefaultValue; }
+		const QString& getValue() { return mValue; }
+
+	private: 
+		QString mKey;
+		QString mGroup;
+		QString mDefaultValue;
+		QString mValue;
+};
+
+/**
+ * Class to handle all common options of yzis
+ * 
+ * every setOption and readOption has a key parameter. 
+ * The key is composed of two strings, one is for the "group" of the option
+ * the other is the actual key name
+ */
+class YZOption {
 	public:
 		/**
 		 * Default constructor
 		 */
 		YZOption();
 		YZOption(const YZOption&);
+		~YZOption();
 
 		/**
 		 * Load settings from @param file
@@ -40,6 +75,42 @@ class YZOption : public QSettings {
 		 */
 		static void saveTo(const QString& file);
 
+		/**
+		 * return a QString option
+		 */
+		const QString& readQStringEntry( const QString& key );
+
+		/**
+		 * return an int option
+		 */
+		int readIntEntry( const QString& key );
+		
+		/**
+		 * return a bool option
+		 */
+		bool readBoolEntry( const QString& key );
+
+		/**
+		 * return a list option
+		 */
+		const QStringList& readQStringListEntry( const QString& key );
+
+		/**
+		 * return a QColor option
+		 */
+		const QColor& readQColorEntry( const QString& key );
+
+		/**
+		 * Changes the current group of options
+		 */
+		void setGroup( const QString& group );
+		
+	private:
+		void init();
+		
+		//QString here is == group/key
+		QMap<QString, KOption*> mOptions;
+		QString currentGroup;
 };
 
 #endif

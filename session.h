@@ -183,6 +183,41 @@ class YZSession {
 		 */
 		virtual void setFocusMainWindow() = 0;
 
+		//HELPERS
+		/**
+		 * Retrieve an int option
+		 */
+		static int getIntOption( const QString& option ) {
+			return YZSession::mOptions.readIntEntry( option );
+		}
+
+		/**
+		 * Retrieve a bool option
+		 */
+		static bool getBoolOption( const QString& option ) {
+			return YZSession::mOptions.readBoolEntry( option );
+		}
+
+		/**
+		 * Retrieve a string option
+		 */
+		static QString getStringOption( const QString& option ) {
+			return YZSession::mOptions.readQStringEntry( option );
+		}
+
+		/**
+		 * Retrieve a qstringlist option
+		 */
+		static QStringList getStringListOption( const QString& option ) {
+			return YZSession::mOptions.readQStringListEntry( option );
+		}
+
+		/**
+		 * Retrieve a qcolor option
+		 */
+		static QColor getColorOption( const QString& option ) {
+			return YZSession::mOptions.readQColorEntry( option );
+		}
 	protected:
 		//we map "filename"/buffer for buffers
 		QMap<QString,YZBuffer*> mBuffers;

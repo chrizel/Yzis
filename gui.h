@@ -67,10 +67,6 @@ class Gui {
 		 */
 
 		/**
-		 * create View ?
-		 */
-
-		/**
 		 * show scrollbar left,right,top,bottom for view
 		 */
 	//	virtual void setScrollbar( int left, int right, int top, int bottom );
@@ -115,6 +111,11 @@ class Gui {
 		 * Creates a new buffer
 		 */
 		virtual	YZBuffer *createBuffer(const QString& path=QString::null) = 0;
+
+		/**
+		 * Display the specified error/information message
+		 */
+		virtual void popupMessage( const QString& message ) = 0;
 };
 
 #endif // GUI_H

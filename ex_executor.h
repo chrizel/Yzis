@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003-2004 Mickael Marchand <mikmak@yzis.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -33,11 +33,35 @@ class YZExExecutor {
 		YZExExecutor();
 		~YZExExecutor();
 
+		/**
+		 * Saves to a file
+		 */
 		QString write( YZView *view, const QString& inputs );
+
+		/**
+		 * Switch to next buffer if available
+		 */
 		QString buffernext( YZView *view, const QString& inputs );
+
+		/**
+		 * Switch to previous buffer if available
+		 */
+		QString bufferprevious( YZView *view, const QString& inputs );
+
+		/**
+		 * Deletes current buffer
+		 */
+		QString bufferdelete( YZView *view, const QString& inputs );
+
+		/**
+		 * Edit a new file
+		 */
 		QString edit( YZView *view, const QString& inputs );
+
+		/**
+		 * Closes a view and/or quit the app
+		 */
 		QString quit( YZView *view, const QString& inputs );
-	
 };
 
 #endif

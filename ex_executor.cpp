@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003-2004 Mickael Marchand <mikmak@yzis.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -27,6 +27,7 @@ YZExExecutor::~YZExExecutor() {
 }
 
 QString YZExExecutor::write( YZView *view, const QString& inputs ) {
+	//XXX support saving to current pwd
 	QRegExp rx ( "^(\\d*)(\\S+) (.*)$");
 	rx.search( inputs );
 	if ( rx.cap(3) != QString::null ) view->myBuffer()->setPath(rx.cap(3));
@@ -41,14 +42,27 @@ QString YZExExecutor::buffernext( YZView *view, const QString& ) {
 	return QString::null;
 }
 
+QString YZExExecutor::bufferprevious ( YZView *view, const QString& inputs ) {
+	//XXX
+	return QString::null;
+}
+
+QString YZExExecutor::bufferdelete ( YZView *view, const QString& inputs ) {
+	//XXX
+	return QString::null;
+}
 QString YZExExecutor::quit ( YZView *view, const QString& ) {
+	//only for qall or last view ! XXX
 	view->mySession()->mGUI->quit();
 	return QString::null;
 }
 
 QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 	int idx = inputs.find(" ");
-	if ( idx == -1 ) return QString::null; //XXX display error : "No filename given"
+	if ( idx == -1 ) {
+		view->mySession()->mGUI->popupMessage( "Please specify a filename" );
+		return QString::null;
+	}
 	QString path = inputs.mid( idx + 1 ); //extract the path 
 	yzDebug() << "New buffer / view : " << path << endl;
 	YZBuffer *b = view->mySession()->mGUI->createBuffer( path );
@@ -57,3 +71,5 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 //	view->mySession()->mGUI->setCurrentView(v);
 	return QString::null;
 }
+
+

@@ -67,6 +67,7 @@ YZView::~YZView() {
 }
 
 void YZView::setVisibleArea(int c, int l) {
+	yzDebug() << "YZView::setVisibleArea(" << c << "," << l << ");" << endl;
 	mLinesVis = l;
 	mColumnsVis = c;
 	refreshScreen();
@@ -1024,7 +1025,7 @@ bool YZView::drawNextLine( ) {
 */
 			if (drawLength () > 1) {
 				rColLength = 1;
-				sCursor->setX (sCursor->getX () + 1);
+				sCursor->setX (sCursor->getX ());
 			}
 		}
 
@@ -1109,5 +1110,9 @@ const QColor& YZView::drawColor ( ) {
 		return hl.textColor();
 	}
 	return fake;
+}
+
+unsigned int YZView::drawLineNumber( ) {
+	return sCursor->getY( ) + 1;
 }
 

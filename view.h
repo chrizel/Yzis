@@ -365,6 +365,11 @@ class YZView {
 		 */
 		const QColor& YZView::drawColor( );
 
+		/**
+		 * return current buffer line
+		 */
+		unsigned int YZView::drawLineNumber( );
+
 
 
 	protected:

@@ -1,7 +1,7 @@
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
 /**
- * $Id: yz_view.h,v 1.22 2003/04/25 12:45:30 mikmak Exp $
+ * $Id: yz_view.h,v 1.23 2003/04/25 18:31:02 mikmak Exp $
  */
 
 
@@ -111,6 +111,8 @@ public:
 	 */
 	QString gotoLine( QString inputsBuff = QString::null );
 
+	void redrawScreen();
+	
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
 	int		lines_vis;	/** number of visible lines */

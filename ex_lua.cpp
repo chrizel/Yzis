@@ -149,8 +149,7 @@ QString YZExLua::source( YZView *, const QString& args ) {
 	return QString::null;
 }
 
-int YZExLua::execInLua( const QString & luacode )
-{
+int YZExLua::execInLua( const QString & luacode ) {
 	lua_pushstring(L, "loadstring" );
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	lua_pushstring(L, luacode );

@@ -25,6 +25,7 @@ void YZBuffer::add_char (int x, int y, QChar c)
 {
 	/* brute force, we'll have events specific for that later on */
 	YZLine *l=find_line(y);
+	if (!l) return;
 
 	/* do the actual modification */
 	l->insert(x, c);

@@ -1,3 +1,7 @@
+2004-03-06 philippe
+  * tests
+    . add tests for switching between command mode and insert mode
+
 2004-02-28 mikmak
   * libyzis
     improve 'dd', make it copy its content to the register

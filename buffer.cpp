@@ -756,6 +756,9 @@ void YZBuffer::setChanged( bool modif ) {
 	mModified = modif;
 	if ( !mUpdateView ) return;
 	statusChanged();
+	setModified( modif );
+}
+void YZBuffer::setModified( bool ) {
 }
 
 void YZBuffer::statusChanged() {

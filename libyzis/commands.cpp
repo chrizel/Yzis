@@ -80,7 +80,7 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true,false,false,true);
 }
 
-void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error) {
+void YZCommandPool::execCommand(YZView *view, const QString& inputs, int * /* error */ ) {
 	QString result;
 	QString command=QString::null;
 	YZCommandArgs args;

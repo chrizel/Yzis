@@ -26,11 +26,18 @@ public:
 	void event_loop();
 	void flush_events();
 
+
 protected:
 	void handle_event(yz_event *e);
+
 	YZLine		*local_lines[YZ_MAX_LINE];
 	WINDOW		*window;	/* ncurses window to write to */
 	NYZSession	*session;
+
+	int		h, w;		/** height and width of the window */
+
+private:
+	void update_info(void) { getmaxyx(window, h, w); }
 
 };
 

@@ -12,6 +12,9 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_v
 {
 	session= _session;
 	window = _window;
+
+	update_info();
+	debug("w,h are %d,%d",w,h);
 }
 
 
@@ -52,14 +55,15 @@ void NYZView::handle_event(yz_event *e)
 			yzl = local_lines[l] = e->u.setline.line;
 
 			/* not use addnstr here, will stop at \0  (i guess) */
-			for (i=0; i<yzl->len; i++)
+			move ( l, 0);
+			for (i=0; i<w && i<yzl->len; i++)
 				addch(yzl->data[i]);
 
 //			refresh();
 //			debug("YZ_EV_SETLINE: received, line is %d", l);
 			break;
 		case YZ_EV_SETCURSOR:
-			move( e->u.setcursor.x, e->u.setcursor.y) ;
+			move( e->u.setcursor.y, e->u.setcursor.x) ;
 //			debug("YZ_EV_SETCURSOR: received");
 			break;
 		case YZ_EV_SETSTATUS:

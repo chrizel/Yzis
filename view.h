@@ -375,6 +375,10 @@ class YZView {
 			mPrevMode;	/** previous mode of this view */
 #define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_VISUAL_LINE+1) // <-- update that if you touch the enum
 		
+		/**
+		 * Get the text describing the mode
+		 */
+		QString mode( int mode ) { return mModes[ mode ]; }
 
 		//GUI
 		/**
@@ -819,6 +823,7 @@ class YZView {
 
 		//which regs to store macros in
 		QValueList<QChar> mRegs;
+		QStringList mModes; //list of modes
 };
 
 #endif /*  YZ_VIEW_H */

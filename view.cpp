@@ -69,6 +69,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mLinesVis = lines;
 	mColumnsVis = 0;
 
+	mModes << tr("--INSERT--") << tr("--REPLACE--") <<tr("--COMMAND--") <<tr("--EX--") <<tr("--SEARCH--") 
+		<< tr("--OPEN--") << tr("--VISUAL--") << tr("--VISUAL LINE--");
 	mainCursor = new YZViewCursor( this );
 	workCursor = new YZViewCursor( this );
 

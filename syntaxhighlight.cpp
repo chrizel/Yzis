@@ -1664,9 +1664,9 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
 
 void YzisHighlighting::loadWildcards()
 {
-	YZInternalOptionPool& config = YZSession::mOptions;
-	config.setGroup("Highlighting " + iName);
-	QString extensionString = config.readQStringEntry("Highlighting " + iName + "/Wildcards", iWildcards);
+	YZInternalOptionPool* config = YZSession::mOptions;
+	config->setGroup("Highlighting " + iName);
+	QString extensionString = config->readQStringEntry("Highlighting " + iName + "/Wildcards", iWildcards);
 
 	if (extensionSource != extensionString) {
 		regexpExtensions.clear();
@@ -1713,17 +1713,17 @@ QStringList& YzisHighlighting::getPlainExtensions()
 
 QString YzisHighlighting::getMimetypes()
 {
-	YZInternalOptionPool& config = YZSession::mOptions;
-	config.setGroup("Highlighting " + iName);
-	return config.readQStringEntry("Highlighting " + iName + "/Mimetypes", iMimetypes);
+	YZInternalOptionPool* config = YZSession::mOptions;
+	config->setGroup("Highlighting " + iName);
+	return config->readQStringEntry("Highlighting " + iName + "/Mimetypes", iMimetypes);
 }
 
 int YzisHighlighting::priority()
 {
-	YZInternalOptionPool& config = YZSession::mOptions;
-	config.setGroup("Highlighting " + iName);
+	YZInternalOptionPool* config = YZSession::mOptions;
+	config->setGroup("Highlighting " + iName);
 
-	return config.readIntEntry("Highlighting " + iName + "/Priority", m_priority);
+	return config->readIntEntry("Highlighting " + iName + "/Priority", m_priority);
 }
 
 #if 0
@@ -1755,8 +1755,8 @@ void YzisHighlighting::setData(YzisHlData *)
 
 void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &list)
 {
-  YZInternalOptionPool& config = YZSession::mOptions;
-  config.setGroup("Highlighting " + iName + " - Schema " + YZSession::me->schemaManager()->name(schema));
+  YZInternalOptionPool* config = YZSession::mOptions;
+  config->setGroup("Highlighting " + iName + " - Schema " + YZSession::me->schemaManager()->name(schema));
 
   list.clear();
   createYzisHlItemData(list);
@@ -1768,7 +1768,7 @@ void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &l
   for (int ab = 0 ; ab < list.size(); ++ab ) {
     YzisHlItemData *p = list.at(ab);
 #endif
-    QStringList s = config.readQStringListEntry(p->name);
+    QStringList s = config->readQStringListEntry(p->name);
 
     if (s.count()>0)
     {
@@ -1812,8 +1812,8 @@ void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &l
  */
 void YzisHighlighting::setYzisHlItemDataList(uint schema, YzisHlItemDataList& list)
 {
-  YZInternalOptionPool& config = YZSession::mOptions;
-  config.setGroup("Highlighting " + iName + " - Schema " + YZSession::me->schemaManager()->name( schema ));
+  YZInternalOptionPool* config = YZSession::mOptions;
+  config->setGroup("Highlighting " + iName + " - Schema " + YZSession::me->schemaManager()->name( schema ));
 
   QStringList settings;
 
@@ -1835,7 +1835,7 @@ void YzisHighlighting::setYzisHlItemDataList(uint schema, YzisHlItemDataList& li
     settings<<(p->itemSet(YzisAttribute::BGColor)?QString::number(p->bgColor().rgb(),16):"");
     settings<<(p->itemSet(YzisAttribute::SelectedBGColor)?QString::number(p->selectedBGColor().rgb(),16):"");
     settings<<"---";
-    config.setQStringListOption(p->name,settings);
+    config->setQStringListOption(p->name,settings);
   }
 }
 
@@ -3580,13 +3580,13 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   error->setSelectedTextColor(Qt::red);
   list.append(error);
 
-  YZInternalOptionPool& config = YZSession::mOptions;
-  config.setGroup("Default Item Styles - Schema " + YZSession::me->schemaManager()->name( schema ));
+  YZInternalOptionPool* config = YZSession::mOptions;
+  config->setGroup("Default Item Styles - Schema " + YZSession::me->schemaManager()->name( schema ));
 
   for (uint z = 0; z < defaultStyles(); z++)
   {
     YzisAttribute *i = list.at(z);
-    QStringList s = config.readQStringListEntry(defaultStyleName(z));
+    QStringList s = config->readQStringListEntry(defaultStyleName(z));
     if (!s.isEmpty())
     {
       while( s.count()<8)
@@ -3621,8 +3621,8 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 
 void YzisHlManager::setDefaults(uint schema, YzisAttributeList &list)
 {
-  YZInternalOptionPool& config = YZSession::mOptions;
-  config.setGroup("Default Item Styles - Schema " + YZSession::me->schemaManager()->name(schema));
+  YZInternalOptionPool* config = YZSession::mOptions;
+  config->setGroup("Default Item Styles - Schema " + YZSession::me->schemaManager()->name(schema));
 
   for (uint z = 0; z < defaultStyles(); z++)
   {
@@ -3639,7 +3639,7 @@ void YzisHlManager::setDefaults(uint schema, YzisAttributeList &list)
     settings<<(i->itemSet(YzisAttribute::SelectedBGColor)?QString::number(i->selectedBGColor().rgb(),16):"");
     settings<<"---";
 
-    config.setQStringListOption(defaultStyleName(z),settings);
+    config->setQStringListOption(defaultStyleName(z),settings);
   }
   emit changed();
 }

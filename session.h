@@ -245,28 +245,28 @@ class YZSession {
 		 * Retrieve an int option
 		 */
 		static int getIntOption( const QString& option ) {
-			return YZSession::mOptions.readIntEntry( option, 0 );
+			return YZSession::mOptions->readIntEntry( option, 0 );
 		}
 
 		/**
 		 * sets an int option
 		 */
 		static void setIntOption( const QString& key, int option ) {
-			YZSession::mOptions.setIntOption( key, option );
+			YZSession::mOptions->setIntOption( key, option );
 		}
 
 		/**
 		 * Retrieve a bool option
 		 */
 		static bool getBoolOption( const QString& option ) {
-			return YZSession::mOptions.readBoolEntry( option, false );
+			return YZSession::mOptions->readBoolEntry( option, false );
 		}
 
 		/**
 		 * sets a bool option
 		 */
 		static void setBoolOption( const QString& key, bool option ) {
-			YZSession::mOptions.setBoolOption( key, option );
+			YZSession::mOptions->setBoolOption( key, option );
 		}
 
 
@@ -274,14 +274,14 @@ class YZSession {
 		 * Retrieve a string option
 		 */
 		static QString getStringOption( const QString& option ) {
-			return YZSession::mOptions.readQStringEntry( option, QString("") );
+			return YZSession::mOptions->readQStringEntry( option, QString("") );
 		}
 
 		/**
 		 * sets a qstring option
 		 */
 		static void setQStringOption( const QString& key, const QString& option ) {
-			YZSession::mOptions.setQStringOption( key, option );
+			YZSession::mOptions->setQStringOption( key, option );
 		}
 
 		/**
@@ -289,9 +289,9 @@ class YZSession {
 		 */
 		static QStringList getStringListOption( const QString& option ) {
 #if QT_VERSION < 0x040000
-			return YZSession::mOptions.readQStringListEntry( option, QStringList::split(";","") );
+			return YZSession::mOptions->readQStringListEntry( option, QStringList::split(";","") );
 #else
-			return YZSession::mOptions.readQStringListEntry( option, QStringList() );
+			return YZSession::mOptions->readQStringListEntry( option, QStringList() );
 #endif
 		}
 
@@ -299,21 +299,21 @@ class YZSession {
 		 * sets a qstringlist option
 		 */
 		static void setQStringListOption( const QString& key, const QStringList& option ) {
-			YZSession::mOptions.setQStringListOption( key, option );
+			YZSession::mOptions->setQStringListOption( key, option );
 		}
 
 		/**
 		 * Retrieve a qcolor option
 		 */
 		static QColor getColorOption( const QString& option ) {
-			return YZSession::mOptions.readQColorEntry( option, QColor("white") );
+			return YZSession::mOptions->readQColorEntry( option, QColor("white") );
 		}
 
 		/**
 		 * sets a qcolor option
 		 */
 		static void setQColorOption( const QString& key, const QColor& option ) {
-			YZSession::mOptions.setQColorOption( key, option );
+			YZSession::mOptions->setQColorOption( key, option );
 		}
 
 
@@ -333,8 +333,8 @@ class YZSession {
 	public:
 		static int mNbViews;
 		static int mNbBuffers;
-		static YZInternalOptionPool mOptions;
-		static YZRegisters mRegisters;
+		static YZInternalOptionPool *mOptions;
+		static YZRegisters *mRegisters;
 		static YZSession *me;
 		static YZEvents *events;
 };

@@ -124,7 +124,7 @@ void YZPrinter::doPrint( ) {
 	}
 
 	bool oldWrap = YZSession::getBoolOption( "Global\\wrap" );
-	YZSession::mOptions.setGroup("Global");
+	YZSession::mOptions->setGroup("Global");
 	YZSession::setBoolOption( "wrap", true );
 	mView->setVisibleArea( clipw - marginLeft, cliph, false );
 	unsigned int totalHeight = mView->drawTotalHeight();
@@ -230,7 +230,7 @@ void YZPrinter::doPrint( ) {
 	PS_delete(doc);
 	PS_shutdown();
 
-	YZSession::mOptions.setGroup("Global");
+	YZSession::mOptions->setGroup("Global");
 	YZSession::setBoolOption( "wrap", oldWrap );
 	mView->setVisibleArea( oldColumnsVis, oldLinesVis, false );
 }

@@ -179,10 +179,10 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 #if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = reg.begin(), end = reg.end();
 	for ( ; it != end; ++it )
-		YZSession::mRegisters.setRegister( *it, buff );
+		YZSession::mRegisters->setRegister( *it, buff );
 #else
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
-		YZSession::mRegisters.setRegister( reg.at(ab), buff );
+		YZSession::mRegisters->setRegister( reg.at(ab), buff );
 #endif
 }
 
@@ -254,10 +254,10 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 #if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
 	for ( ; it != endd; ++it )
-		YZSession::mRegisters.setRegister( *it, buff );
+		YZSession::mRegisters->setRegister( *it, buff );
 #else
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
-		YZSession::mRegisters.setRegister( reg.at(ab), buff );
+		YZSession::mRegisters->setRegister( reg.at(ab), buff );
 #endif
 
 
@@ -332,10 +332,10 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 #if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
 	for ( ; it != endd; ++it )
-		YZSession::mRegisters.setRegister( *it, buff );
+		YZSession::mRegisters->setRegister( *it, buff );
 #else
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
-		YZSession::mRegisters.setRegister( reg.at(ab), buff );
+		YZSession::mRegisters->setRegister( reg.at(ab), buff );
 #endif
 
 	pView->gotoxyAndStick( beginCursor.getX(), beginCursor.getY() );

@@ -70,7 +70,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mSession->addBuffer( this );
 	yzDebug() << "NEW BUFFER CREATED : " << mPath << endl;
 	//TEST XXX
-	setHighLight( YzisHlManager::self()->nameFind( "C++" ) );//we have only C++ for now :)
+	//setHighLight( YzisHlManager::self()->nameFind( "C++" ) );//we have only C++ for now :)
 }
 
 YZBuffer::~YZBuffer() {
@@ -181,9 +181,11 @@ void  YZBuffer::appendLine(const QString &l) {
 	                                   l,  0, lineCount());
 
 	mText.append(new YZLine(l));
-	bool ctxChanged = false;
-	QMemArray<signed char> foldingList;
-	m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
+	if ( m_highlight ) {
+		bool ctxChanged = false;
+		QMemArray<signed char> foldingList;
+		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
+	}
 	setModified( true );
 	updateAllViews();
 }
@@ -350,9 +352,11 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 			yzline(line)->setData(l);
 		}
 	} 
-	bool ctxChanged = false;
-	QMemArray<signed char> foldingList;
-	m_highlight->doHighlight(( line >= 1 ? yzline( line -1 ) : new YZLine()), yzline( line ), &foldingList, &ctxChanged );
+	if ( m_highlight ) {
+		bool ctxChanged = false;
+		QMemArray<signed char> foldingList;
+		m_highlight->doHighlight(( line >= 1 ? yzline( line -1 ) : new YZLine()), yzline( line ), &foldingList, &ctxChanged );
+	}
 	setModified( true );
 }
 
@@ -407,6 +411,11 @@ void YZBuffer::load(const QString& file) {
 		mPath = file;
 	}
 	mFileIsNew=false;
+	//HL mode selection
+	int hlMode = YzisHlManager::self()->detectHighlighting (this);
+	setHighLight( hlMode );
+	yzDebug() << "HIGHLIGHTING " << hlMode << endl;
+
 	QFile fl( mPath );
 	//opens and eventually create the file
 	if ( fl.open( IO_ReadOnly ) ) {

@@ -18,7 +18,7 @@
  **/
 
 /**
- * $Id: commands.h 335 2004-02-24 00:32:03Z orzel $
+ * $Id$
  */
 
 /**
@@ -39,10 +39,26 @@ QString BufferOperation::toString() {
 	return QString("class BufferOperation: %1 '%2' line %3, col %4").arg(ots).arg(text).arg(line).arg(col) ;
 }
 
+void BufferOperation::performOperation( YZBuffer * buf, bool opposite=false )
+{
+	OperationType t = type;
+	if (opposite = true) {
+		switch( type ) {
+			case ADDTEXT: t = DELTEXT; break;
+			case DELTEXT: t = ADDTEXT; break; 
+			case ADDLINE: t = DELLINE; break; 
+			case DELLINE: t = ADDLINE; break; 
+		}
+	}
+
+	// perform operation on buffer according to t
+}
+
 
 UndoBuffer::UndoBuffer( YZBuffer * buffer )
 :  mBuffer(buffer), mFutureUndoItem( 0L ), mCurrentUndoItem( mUndoItemList )
 {
+	mInsideUndo = false;
 	mCurrentUndoItem = QPtrListIterator<UndoItem>( mUndoItemList );
 	mUndoItemList.setAutoDelete( true );
 	commitUndoItem();
@@ -50,6 +66,7 @@ UndoBuffer::UndoBuffer( YZBuffer * buffer )
 
 void UndoBuffer::commitUndoItem()
 {
+	if (mInsideUndo == true) return;
 	removeUndoItemAfterCurrent();
 	if (mFutureUndoItem) {
 		mUndoItemList.append( mFutureUndoItem );
@@ -63,8 +80,9 @@ void UndoBuffer::commitUndoItem()
 
 void UndoBuffer::addBufferOperation( BufferOperation::OperationType type, 
 									 const QString & text,
-									 uint line, uint col )
+									 uint col, uint line )
 {
+	if (mInsideUndo == true) return;
 	YZASSERT( mFutureUndoItem != NULL );
 	BufferOperation * bufOperation = new BufferOperation();
 	bufOperation->type = type;
@@ -83,12 +101,39 @@ void UndoBuffer::removeUndoItemAfterCurrent()
 
 void UndoBuffer::undo()
 {
+	BufferOperation * bufOp;
 
+	if (mayUndo() == false) {
+		// notify the user that undo is not possible
+		return;
+	}
+	setInsideUndo( true );
+
+	UndoItemIterator it( *mCurrentUndoItem );
+	while( (bufOp = it.current()) ) {
+		bufOp->performOperation( mBuffer, true );
+	}
+	mCurrentUndoItem--;
+	setInsideUndo( false );
 }
 
 void UndoBuffer::redo()
 {
+	BufferOperation * bufOp;
 
+	if (mayRedo() == false) {
+		// notify the user that undo is not possible
+		return;
+	}
+	setInsideUndo( true );
+
+	UndoItemIterator it( *mCurrentUndoItem );
+	while( (bufOp = it.current()) ) {
+		bufOp->performOperation( mBuffer, false );
+	}
+	mCurrentUndoItem++;
+
+	setInsideUndo( false );
 }
 
 bool UndoBuffer::mayRedo()

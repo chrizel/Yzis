@@ -29,13 +29,16 @@ YZExLua::YZExLua() {
 	yzDebug() << "Lua " << lua_version() << " loaded" << endl;
 	lua_register(st,"text",text);
 	lua_register(st,"insert",insert);
+	lua_register(st,"replace",replace);
+	lua_register(st,"wincol",wincol);
+	lua_register(st,"winline",winline);
 }
 
 YZExLua::~YZExLua() {
 	lua_close(st);
 }
 
-QString YZExLua::lua(YZView *view, const QString& inputs) {
+QString YZExLua::lua(YZView *, const QString& ) {
 	lua_pushstring(st,"text");
 	lua_gettable(st,LUA_GLOBALSINDEX); //to store function name
 	//now arguments in the right order
@@ -52,7 +55,7 @@ QString YZExLua::lua(YZView *view, const QString& inputs) {
 }
 
 //callers
-QString YZExLua::loadFile( YZView *view, const QString& inputs ) {
+QString YZExLua::loadFile( YZView *, const QString& inputs ) {
 	QString filename = inputs.mid( inputs.find( " " ) +1 );
 	QFileInfo fi ( filename );
 	filename = fi.absFilePath();
@@ -101,12 +104,57 @@ int YZExLua::insert(lua_State *L) {
 	QString text = lua_tostring ( L, 3 );
 	
 	YZView* cView = YZSession::me->currentView();
-	//split new lines XXX
-	cView->myBuffer()->insertChar(sCol, sLine, text);
+	QStringList list = QStringList::split( "\n", text );
+	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++ ) {
+		cView->myBuffer()->insertChar(sCol, sLine, *it);
+		sCol=0;
+		sLine++;
+	}
 	cView->refreshScreen();
 
 	return 0; // no result
 }
 
+int YZExLua::replace(lua_State *L) {
+	int n = lua_gettop( L );
+	if ( n < 3 ) return 0; //mis-use of the function
+	
+	int sCol = lua_tonumber( L, 1 );
+	int sLine = lua_tonumber( L,2 );
+	QString text = lua_tostring ( L, 3 );
+	
+	YZView* cView = YZSession::me->currentView();
+	QStringList list = QStringList::split( "\n", text );
+	
+	QString v = cView->myBuffer()->textline( sLine );
+	v = v.mid( 0, sCol );
+	v += list[ 0 ]; //for the first line we append at EOL
+	cView->myBuffer()->replaceLine(v, sLine);
+	sCol=0;
+	sLine++;
+	if ( list.count() > 1 )
+		for ( uint i = 1 ; i < list.count() ; i++ )
+			cView->myBuffer()->insertLine( list[ i ], sLine++ );
+	
+	cView->refreshScreen();
+
+	return 0; // no result
+}
+
+int YZExLua::winline(lua_State *L) {
+	YZView* cView = YZSession::me->currentView();
+	uint result = cView->getBufferCursor()->getY();	
+
+	lua_pushnumber( L, result ); // first result
+	return 1; // one result
+}
+
+int YZExLua::wincol(lua_State *L) {
+	YZView* cView = YZSession::me->currentView();
+	uint result = cView->getBufferCursor()->getX();	
+
+	lua_pushnumber( L, result ); // first result
+	return 1; // one result
+}
 #include "ex_lua.moc"
 

@@ -158,7 +158,7 @@ void NYZView::event_loop()
 	}
 }
 
-void NYZView::flush_events(void)
+void NYZView::flush_events()
 {
 	yz_event e;
 

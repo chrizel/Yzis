@@ -16,6 +16,7 @@ class KYZisDoc : public KTextEditor::Document, public YZBuffer {
 		QPtrList<KTextEditor::View> views() const { return _views; }
 		void removeView( KTextEditor::View * v );
 		QWidget *parentWidget() { return m_parent; }
+		void setBaseWidget(QWidget *w) { setWidget(w); }
 
 	protected:
 		bool openFile();

@@ -41,6 +41,7 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	if ( argc>1 )
 		bf = createBuffer(charv[1]);
 	else
+		//WRONG XXX  has to be a real file (mm)
 		bf = createBuffer("");
 
 	screen = stdscr; // just an alias...

@@ -1,0 +1,9 @@
+1 - kyzis:
+EX mode, type some characters, move the cursor to a previous position and type a new character, character is appended at end of line instead of cursor position !
+2 - kyzis:
+clicking on the command line should switch to EX mode automatically
+3 - kyzis:
+initial display of the cursor is wrong ...
+4 - all:
+columns count on empty lines is wrong then the cursor can move horizontally where it should not
+

@@ -33,6 +33,7 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 	QString path = inputs.mid( idx + 1 ); //extract the path 
 	yzDebug() << "New buffer / view : " << path << endl;
 	YZBuffer *b = view->mySession()->mGUI->createBuffer( path );
+	//TODO
 //	YZView* v = view->mySession()->mGUI->createView(b);
 //	view->mySession()->mGUI->setCurrentView(v);
 	return QString::null;

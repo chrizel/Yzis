@@ -21,9 +21,9 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status->insertItem("",80,80,0);
 	status->setItemAlignment(0,Qt::AlignLeft);
 
-	status->insertItem("Yzis Ready",0,1);
+/*	status->insertItem("Yzis Ready",0,1);
 	status->setItemAlignment(0,Qt::AlignRight);
-
+*/
 	status->insertItem("",99,0,true);
 	status->setItemAlignment(99,Qt::AlignRight);
 
@@ -46,6 +46,7 @@ KYZisView::~KYZisView () {
 	KYZisFactory::deregisterView( this );
 }
 
+//DROP ME XXX
 void KYZisView::showEvent ( QShowEvent* ) {
 	yzDebug() << "View " << myId << " got activated" << endl;
 	KYZisFactory::s_self->setCurrentView( this );

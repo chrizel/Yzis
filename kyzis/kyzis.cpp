@@ -19,6 +19,8 @@
 #include <kfiledialog.h>
 #include <kdebug.h>
 #include "document.h"
+#include <ktempfile.h>
+#include <kstandarddirs.h>
 
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
@@ -33,81 +35,14 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 		readDockConfig(m_dockConfig);
 	}
 
-/*	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
-	KParts::ReadWritePart *m_part;
-	if (factory) {
-		m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzis_part", "KParts::ReadWritePart" ));
-		if (m_part) {
-			kdDebug() << "Yzis part successfully loaded" << endl;
-			m_currentPart = m_part;
-			KMdiChildView *view = createWrapper( m_part->widget(), "new buffer" , "buffer1" );
-			addWindow( view );
-			createGUI(m_part);
-		}
-	} else {
-		KMessageBox::error(this, "Could not find our Part!");
-		kapp->quit();
-		return;
-	}*/
-
 	dockManager->finishReadDockConfig();
 	setMenuForSDIModeSysButtons( menuBar() );
 	
 }
 	
-#if 0
-		setXMLFile("kyzis_shell.rc");
-
-		// then, setup our actions
-		setupActions();
-
-
-		// this routine will find and load our Part.  it finds the Part by name
-		// which is a bad idea usually.. but it's alright in this case since our
-		// Part is made for this Shell
-		KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
-		KParts::ReadWritePart *m_part;
-		dock = createDockWidget("mainDock", 0L);
-		if (factory)
-		{
-			// now that the Part is loaded, we cast it to a Part to get
-			// our hands on it
-			m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzis_part", "KParts::ReadWritePart" ));
-			if (m_part)
-			{
-				partsList.append(m_part);
-				m_currentPart = m_part;
-
-				// tell the KParts::MainWindow that this is indeed the main widget
-				//setCentralWidget(m_part->widget());
-				dock->setWidget(m_part->widget());
-				//dock->setToolTipString();
-
-				// and integrate the part's GUI with the shell's
-				createGUI(m_part);
-			}
-		}
-		else
-		{
-			// if we couldn't find our Part, we exit since the Shell by
-			// itself can't do anything useful
-			KMessageBox::error(this, "Could not find our Part!");
-			kapp->quit();
-			// we return here, cause kapp->quit() only means "exit the
-			// next time we enter the event loop...
-			return;
-		}
-		setMainDockWidget(dock);
-
-		// apply the saved mainwindow settings, if any, and ask the mainwindow
-		// to automatically save settings if changed: window size, toolbar
-		// position, icon size, etc.
-		setAutoSaveSettings();
-#endif
-
 Kyzis::~Kyzis() {
 	writeDockConfig(m_dockConfig);
-	delete m_toolbarAction;
+	//delete m_toolbarAction;
 }
 
 void Kyzis::resizeEvent( QResizeEvent *e) {
@@ -126,10 +61,10 @@ void Kyzis::setupActions() {
 
 	KStdAction::quit(kapp, SLOT(quit()), actionCollection());
 
-	m_toolbarAction = KStdAction::showToolbar(this, SLOT(optionsShowToolbar()), actionCollection());
+	//m_toolbarAction = KStdAction::showToolbar(this, SLOT(optionsShowToolbar()), actionCollection());
 
-	KStdAction::keyBindings(this, SLOT(optionsConfigureKeys()), actionCollection());
-	KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
+	//KStdAction::keyBindings(this, SLOT(optionsConfigureKeys()), actionCollection());
+	//KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
 }
 
 void Kyzis::fileNew() {
@@ -141,10 +76,9 @@ void Kyzis::fileNew() {
 	// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
 	// says that it should open a new window if the document is _not_
 	// in its initial state.  This is what we do here..
-	//XXX NOPE
 	if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
-//		FIXME
-//		(new Kyzis)->show();
+			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
+			createBuffer( tmp->name() );
 	};
 }
 
@@ -191,11 +125,6 @@ void Kyzis::fileOpen() {
 		} else {
 			//FIXME (download)
 			createBuffer( url.url() );
-			//XXX NOPE
-			// we open the file in a new window...
-			/*Kyzis* newWin = new Kyzis;
-			newWin->load( url );
-			newWin->show();*/
 		}
 	}
 }

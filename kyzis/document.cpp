@@ -12,23 +12,14 @@ KYZisDoc::KYZisDoc (bool bSingleViewMode, bool bBrowserView, bool bReadOnly, QWi
 		setInstance(KYZisFactory::instance());
 		KYZisFactory::registerDocument( this );
 		m_parent = parentWidget;
-		//yzDebug() << "Document parent name : " << parentWidget->name() << endl;
-
-		//XXX move me to Factory
-		if ( bSingleViewMode ) {
-			yzDebug() << "KYzisDoc constructor creating a default view for this buffer" << endl;
-			KTextEditor::View *view = createView( parentWidget, widgetName );
-			insertChildClient( view );
-			view->show();
-			setWidget( view );
-		}
 }
 
 KYZisDoc::~KYZisDoc () {
 	KYZisFactory::deregisterDocument( this );
 }
 
-KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char * /*name*/) {
+KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *) {
+	//backport to Factory ? XXX
 	KYZisView *v = new KYZisView (this, parent);
 	//FIXME : two lists
 	addView(v);
@@ -37,6 +28,7 @@ KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char * /*name*/
 }
 
 void KYZisDoc::removeView( KTextEditor::View * v ) {
+	//backport to Factory ? XXX
 	if ( !v )
 		return;
 

@@ -1,0 +1,5 @@
+class names are LikeThatClass
+class members are mMyMember
+class structures are mystructure
+
+You have to add a comment for every function you add (doxygen format)

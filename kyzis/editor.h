@@ -32,6 +32,9 @@ class KYZisEdit : public QScrollView {
 		void setCursor(int c,int l);
 
 	protected:
+		//intercept tabs
+		virtual bool event(QEvent*);
+		
 		//update view when the viewport gets resized
 		void viewportResizeEvent(QResizeEvent*);
 

@@ -9,7 +9,7 @@
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) 
 {
-	setFont(QFont("Andale Mono",10));
+	setFont(QFont("Fixed",10));
 	_parent = parent;
 
 	viewport()->setFocusProxy( this );
@@ -42,12 +42,20 @@ void KYZisEdit::setCursor(int c, int l) {
 }
 
 void KYZisEdit::setTextLine(int l, const QString &/*str*/){
-	//mText.insert(l,str);
-	updateContents( 0, ( l - _parent->getCurrent() ) * fontMetrics().lineSpacing(),
-			width(), fontMetrics().lineSpacing()  );
+	updateContents( 0, ( l - _parent->getCurrent() ) * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing()  );
 }
 
-// INTERNAL API
+bool KYZisEdit::event(QEvent *e) {
+	if ( e->type() == QEvent::KeyPress ) {
+		QKeyEvent *ke = (QKeyEvent *)e;
+		if ( ke->key() == Key_Tab ) {
+			keyPressEvent(ke);
+			return TRUE;
+		}
+	}
+	return QWidget::event(e);
+}
+
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	yzDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->key() != 0 ) {
@@ -79,15 +87,13 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
 	for ( unsigned int i=0; i < _parent->getLinesVisible() ; ++i ) {
-		if ( fontMetrics().lineSpacing() * i >= ( unsigned int )clipy &&
-				fontMetrics().lineSpacing() * i <= ( unsigned int ) ( clipy+cliph ) ) {
+		if ( fontMetrics().lineSpacing() * i >= ( unsigned int )clipy && fontMetrics().lineSpacing() * i <= ( unsigned int ) ( clipy+cliph ) ) {
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
 			p->eraseRect(clip);
-			if ( _parent->myBuffer()->getText().count() > i + _parent->getCurrent() ) {
+			if ( _parent->myBuffer()->getText().count() > i + _parent->getCurrent() )
 				p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->getText()[ i + _parent->getCurrent() ]);
-			} else {
+			else 
 				p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,"~");
-			}
 		}
 	}
 

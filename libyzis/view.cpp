@@ -17,7 +17,6 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mCursor = new YZCursor(this);
 	mMaxX = 0;
 	mMode = YZ_VIEW_MODE_COMMAND;
-	//could it be something else than 0 ?
 	mCurrentTop = mCursor->getY();
 	QString line = mBuffer->findLine(mCurrentTop);
 	if (!line.isNull()) mMaxX = line.length()-1;
@@ -44,9 +43,8 @@ void YZView::sendKey( int c, int modifiers) {
 	QString lin;
 	QString key = QChar( tolower( c ) );// = QKeySequence( c );
 	//default is lower case unless some modifiers
-	if ( modifiers & YZIS::Shift ) {
+	if ( modifiers & YZIS::Shift )
 		key = key.upper();
-	}
 
 	switch(mMode) {
 
@@ -73,6 +71,17 @@ void YZView::sendKey( int c, int modifiers) {
 					return;
 				case Qt::Key_Up:
 					moveUp( );
+					return;
+				case Qt::Key_Tab:
+					for (int i=0; i<4; ++i) {
+						mBuffer->addChar(mCursor->getX(),mCursor->getY()," ");
+						gotoxy(mCursor->getX()+1, mCursor->getY() );
+					}
+					return;
+				case Qt::Key_Backspace:
+					if (mCursor->getX() == 0) return;
+					mBuffer->delChar(mCursor->getX()-1,mCursor->getY(),1);
+					gotoxy(mCursor->getX()-1, mCursor->getY() );
 					return;
 				default:
 					mBuffer->addChar(mCursor->getX(),mCursor->getY(),key);
@@ -105,6 +114,20 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Up:
 					moveUp( );
 					return;
+				case Qt::Key_Tab:
+					//replace 1st character
+					mBuffer->chgChar(mCursor->getX(),mCursor->getY()," ");
+					gotoxy(mCursor->getX()+1, mCursor->getY() );
+					//insert 3 spaces
+					for (int i=0; i<3; ++i) {
+						mBuffer->addChar(mCursor->getX(),mCursor->getY()," ");
+						gotoxy(mCursor->getX()+1, mCursor->getY() );
+					}
+					return;
+				case Qt::Key_Backspace:
+					if (mCursor->getX() == 0) return;
+					gotoxy(mCursor->getX()-1, mCursor->getY() );
+					return;
 				default:
 					mBuffer->chgChar(mCursor->getX(),mCursor->getY(),key);
 					gotoxy(mCursor->getX()+1, mCursor->getY() );
@@ -130,6 +153,11 @@ void YZView::sendKey( int c, int modifiers) {
 					mSession->mGUI->setCommandLineText( "" );
 					mSession->mGUI->setFocusMainWindow();
 					gotoCommandMode();
+					return;
+				case Qt::Key_Tab:
+					//ignore for now
+					return;
+				case Qt::Key_Backspace:
 					return;
 				default:
 					mSession->mGUI->setCommandLineText( mSession->mGUI->getCommandLineText() + key );
@@ -277,7 +305,7 @@ QString YZView::moveUp( const QString& inputsBuff ) {
 	}
 
 	//execute the code
-	gotoxy(mCursor->getX(), ( mCursor->getY() - nb_lines < 0 ) ? 0 : ( mCursor->getY() - nb_lines ));
+	gotoxy(mCursor->getX(), ( mCursor->getY() - nb_lines <= 0 ) ? 0 : ( mCursor->getY() - nb_lines ));
 
 	//reset the input buffer
 	purgeInputBuffer();

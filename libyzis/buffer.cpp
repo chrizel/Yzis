@@ -148,10 +148,11 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 	QString l=textline(y);
 	if (l.isNull()) return;
 
-	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count),x,y)
-
 	if (x >= l.length())
 		return;
+
+	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count),x,y)
+
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, l.mid(x,count), x, y );
 	
@@ -524,6 +525,9 @@ QString YZBuffer::undoLast( const QString& , YZCommandArgs args ) {
 	
 	//reset the input buffer of the originating view
 	args.view->purgeInputBuffer();
+	
+	// refresh the screen
+	updateAllViews();
 
 	//return something
 	return QString::null;

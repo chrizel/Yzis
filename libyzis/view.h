@@ -291,8 +291,10 @@ class YZView {
 			YZ_VIEW_MODE_COMMAND, // normal
 			YZ_VIEW_MODE_EX, //script 
 			YZ_VIEW_MODE_SEARCH, //search mode
+			YZ_VIEW_MODE_OPEN, // open mode
 		} mMode;		/** mode of this view */
-#define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_SEARCH+1) // <-- update that if you touch the enum
+#define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_OPEN+1) // <-- update that if you touch the enum
+		
 
 		//GUI
 		/**

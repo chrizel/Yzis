@@ -1,7 +1,12 @@
+2004-05-27 bmc
+  * libyzis
+    added screen refresh after undo
+    started work on open mode
+
 2004-05-26 mikmak
   * libyzis
     support for d[0-9]*b commands (deleting words backwards)
-  
+
 2004-05-26 bmc
   * kyzis
     Fix segfault before libkyzispart is loaded

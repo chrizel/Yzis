@@ -311,19 +311,14 @@ void NYZView::syncViewInfo( void )
 	werase(infobar);
 	wmove( infobar,0,0 );
 	QString m = mode();
-	if ( m.length() > 0 ) {
+	wattron( infobar, COLOR_PAIR(2) );
+	wprintw( infobar, "%s ", (const char*)
 #if QT_VERSION < 0x040000
-		for ( const char *ptr = m.latin1(); *ptr; ptr++ ) {
-//		for ( int i = 0; i < m.length(); i++) {
+			m.utf8()
 #else
-		for ( const char *ptr = m.toUtf8().data(); *ptr; ptr++ ) {
+			m.toUtf8().data()
 #endif
-//			waddch(infobar, attribYellow |*ptr);
-//			waddch(infobar, m.at( i ).unicode() );// | COLOR_PAIR(2) );
-			waddch(infobar, *ptr | COLOR_PAIR(2) );
-		}
-	}
-	waddch(infobar, ' ');
+	);
 
 	// update infobar
 	myfmt=( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if
@@ -332,7 +327,7 @@ void NYZView::syncViewInfo( void )
 #if QT_VERSION < 0x040000
 			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).utf8() ):( const char * )( mBuffer->fileName().utf8() ),
 #else
-			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).utf8() ):( const char * )( mBuffer->fileName().toUtf8().data() ),
+			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).toUtf8().data() ):( const char * )( mBuffer->fileName().toUtf8().data() ),
 #endif
 			( mBuffer->fileIsModified() )?" [+]":""
 			);

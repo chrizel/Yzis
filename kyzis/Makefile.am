@@ -54,7 +54,7 @@ dummy.cpp:
 
 
 install-exec-hook:
-	@for i in `ls $(top_builddir)/translations/*.gmo`; do \
+	-@for i in `ls $(top_builddir)/translations/*.gmo`; do \
 		if test ! -f $(DESTDIR)/`$(KDECONFIG) --install locale --expandvars`/`basename $$i .gmo`/LC_MESSAGES/yzis.mo ; then \
 			$(mkinstalldirs) $(DESTDIR)/`$(KDECONFIG) --install locale --expandvars`/`basename $$i .gmo`/LC_MESSAGES/ ; \
 			$(LN_S) $(DESTDIR)$(prefix)/share/locale/`basename $$i .gmo`/LC_MESSAGES/yzis.mo $(DESTDIR)/`$(KDECONFIG) --install locale --expandvars`/`basename $$i .gmo`/LC_MESSAGES/ ; \

@@ -67,7 +67,7 @@ YZViewCursor::YZViewCursor( YZView* parent ) {
 	bLineIncrement = 0;
 	sColIncrement = 1;
 	sLineIncrement = 0;
-	lineHeight = 0;
+	lineHeight = 1;
 	wrapNextLine = false;
 	wrapTab = false;
 }
@@ -1525,7 +1525,7 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop, unsigned int rLeft
 	workCursor->bLineIncrement = 0;
 	workCursor->sLineIncrement = 0;
 
-	workCursor->lineHeight = 0;
+	workCursor->lineHeight = 1;
 
 	workCursor->spaceFill = 0;
 

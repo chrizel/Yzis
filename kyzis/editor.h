@@ -123,6 +123,14 @@ class KYZisEdit : public QScrollView {
 		QFontMetrics *standard;
 		QFontMetrics *standardBold;
 		QFontMetrics *standardBoldItalic;
+
+		/**
+		 * size of the left margin (used to draw line number)
+		 */
+		unsigned int marginLeft;
+
+		// last line number
+		unsigned int lastLineNumber;
 };
 
 #endif

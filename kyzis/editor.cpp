@@ -28,6 +28,8 @@
 #include <kglobalsettings.h>
 #include "factory.h"
 
+static const bool showLineNumber = true;
+
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WNoAutoErase ) 
 {
@@ -42,6 +44,9 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 //	f.setItalic( true );
 //	standardBoldItalic = new QFontMetrics( f );
 	mParent = parent;
+
+	marginLeft = 0;
+	lastLineNumber = 0;
 
 	setFocusPolicy( StrongFocus );
 	viewport()->setBackgroundMode( PaletteBase );
@@ -58,7 +63,7 @@ KYZisEdit::~KYZisEdit() {
 void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 	QSize s = ev->size();
 	int lines = s.height() / fontMetrics().lineSpacing();
-	int columns = s.width() / fontMetrics().maxWidth();
+	int columns = s.width() / fontMetrics().maxWidth() - marginLeft;
 	mParent->setVisibleArea( columns, lines );
 }
 
@@ -68,7 +73,7 @@ void KYZisEdit::setCursor(int c, int l) {
 	mCursorShown = false; //lock
 	repaintContents( mCursorX * fontMetrics().maxWidth(), mCursorY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 	mCursorShown = true; //unlock
-	mCursorX = c - mParent->getDrawCurrentLeft ();
+	mCursorX = c - mParent->getDrawCurrentLeft () + marginLeft;
 	mCursorY = l - mParent->getDrawCurrentTop ();
 	
 	drawCursorAt( mCursorX, mCursorY );
@@ -131,18 +136,53 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 
 //	yzDebug() << "drawContents: clipy=" << clipy << ",cliph=" << cliph << endl;
 
+	unsigned int lineCount = mParent->myBuffer()->lineCount();
+	if ( showLineNumber ) { // update marginLeft
+		/* lineCount length + 2 */
+		unsigned int my_marginLeft = 2 + QString::number( lineCount ).length();
+		if ( marginLeft != my_marginLeft ) {
+			marginLeft = my_marginLeft;
+			mParent->setVisibleArea( width() / fontMetrics().maxWidth() - marginLeft, height() / fontMetrics().lineSpacing() );
+		}
+		lastLineNumber = 0;
+	}
+
 	mParent->initDraw( );
 
-	int currentY = 0;
+	unsigned int currentY = 0;
 	while ( !mParent->myBuffer()->introShown() && mParent->drawNextLine( ) && cliph > 0) {
 		if (clipy == 0) {
 			int currentX = 0;
 
-			QRect clip(0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
+
+			if ( showLineNumber ) { // draw current line number
+				QPen old_pen = p->pen( );
+
+				unsigned int lineNumber = mParent->drawLineNumber();
+				if ( lineNumber != lastLineNumber ) { // we don't draw it twice
+					QRect clipNL (0, currentY * fontMetrics().lineSpacing(), ( marginLeft - 1 ) * fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+					p->setPen( Qt::yellow );
+					p->drawText( clipNL, flag, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
+
+					lastLineNumber = lineNumber;
+				}
+
+				currentX += marginLeft - 1;
+
+				p->setPen( Qt::white );
+				p->drawLine( currentX * fontMetrics().maxWidth() + fontMetrics().maxWidth() / 2, currentY * fontMetrics().lineSpacing(), \
+						currentX * fontMetrics().maxWidth() + fontMetrics().maxWidth() / 2, ( currentY + 1 ) * fontMetrics().lineSpacing() );
+				++currentX;
+				
+				p->setPen( old_pen );
+			}
+
+			// erase entire current line 
+			QRect clip(currentX * fontMetrics().maxWidth(), currentY * fontMetrics().lineSpacing(), width() - currentX * fontMetrics().maxWidth(), fontMetrics().lineSpacing());
 			p->eraseRect(clip);
 
 			while ( mParent->drawNextCol( ) ) {
-				QRect clip2(currentX, currentY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing());
+				QRect clip2(currentX * fontMetrics().maxWidth(), currentY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing());
 
 				QColor c = mParent->drawColor( );
 				if ( c.isValid() ) {
@@ -151,7 +191,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 				
 				p->drawText(clip2,flag, mParent->drawChar() );
 				
-				currentX += mParent->drawLength( ) * fontMetrics().maxWidth();
+				currentX += mParent->drawLength( );
 			}
 
 			currentY += mParent->drawHeight( );
@@ -162,7 +202,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 		}
 	}
 	if ( mParent->myBuffer()->introShown() ) {
-		while ( currentY < mParent->myBuffer()->lineCount() ) {
+		while ( currentY < lineCount ) {
 			QRect clip(0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
 			p->eraseRect(clip);
 
@@ -172,7 +212,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 		}
 	}
 	while ( !mParent->myBuffer()->introShown() && cliph > 0 && currentY < ( height() / fontMetrics().lineSpacing() ) ) {
-		QRect clip(0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
+		QRect clip( 0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
 		p->eraseRect(clip);
 		p->drawText(clip,flag ,"~");
 

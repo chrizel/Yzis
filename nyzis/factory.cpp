@@ -149,7 +149,7 @@ bool NYZFactory::process_one_event() {
 		return true;
 	}
 	if ( isupper( c ) ) { modifiers +="<SHIFT>"; }
-	yzDebug() << "sendKey < " << c << " (" << QString( QChar( c ) ) << ") modifiers=" << modifiers << endl;
+	//yzDebug() << "sendKey < " << c << " (" << QString( QChar( c ) ) << ") modifiers=" << modifiers << endl;
 	//TODO: META
 	currentView->sendKey( QString( QChar( c ) ), modifiers );
 

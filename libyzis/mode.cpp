@@ -181,7 +181,6 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 			yzDebug() << "cmd_state = CMD_ERROR" << endl;
 			if (pendingMapp) break;
 		case CMD_OK:
-			yzDebug() << "cmd_state = CMD_OK" << endl;
 			mView->purgeInputBuffer();
 			mapMode = 0;
 			break;
@@ -190,6 +189,7 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 			mapMode = pendingop;
 			break;
 		case CMD_QUIT:
+			yzDebug() << "cmd_state = CMD_QUIT" << endl;
 		default:
 			break;
 	}

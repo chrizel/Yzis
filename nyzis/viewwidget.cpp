@@ -95,7 +95,7 @@ void NYZView::unmap( void )
 	YZASSERT( infobar ); delwin( infobar );
 	YZASSERT( editor ); delwin( editor );
 	YZASSERT( window ); delwin( window );
-	editor = statusbar = infobar = NULL;
+	window = editor = statusbar = infobar = NULL;
 }
 
 void NYZView::updateVis( ) {
@@ -172,8 +172,8 @@ void NYZView::drawContents( int clipy, int cliph ) {
 			}
 			while ( drawNextCol( ) ) {
 				QColor c = drawColor( );
-				int mColor = mColormap.contains( c.rgb() )? mColormap[ c.rgb() ]: mColormap[ Qt::white.rgb() ]; 
-				waddch( editor, COLOR_PAIR( mColor )|drawChar().unicode() );
+				int mColor = mColormap.contains( c.rgb() ) ? mColormap[ c.rgb() ] : mColormap[ Qt::white.rgb() ]; 
+				waddch( editor, COLOR_PAIR( mColor ) | drawChar().unicode() );
 				if ( drawLength() > 1 ) {
 					for (unsigned int i = 1; i < drawLength(); i++ ) waddch( editor, ' ' );
 				}

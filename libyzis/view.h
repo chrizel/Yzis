@@ -268,7 +268,7 @@ class YZView {
 		/**
 		 * Go to line of file
 		 */
-		QString gotoLine( const QString& inputsBuff = QString::null );
+		void gotoLine( unsigned int line );
 
 		/**
 		 * Go to last line of the file

@@ -86,8 +86,8 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("R", &YZCommandPool::gotoReplaceMode) );
 	commands.append( new YZCommand("v", &YZCommandPool::gotoVisualMode) );
 	commands.append( new YZCommand("V", &YZCommandPool::gotoVisualLineMode) );
-	commands.append( new YZCommand("gg", &YZCommandPool::gotoFirstLine) );
-	commands.append( new YZCommand("G", &YZCommandPool::gotoLastLine) );
+	commands.append( new YZCommand("gg", &YZCommandPool::gotoLine) );
+	commands.append( new YZCommand("G", &YZCommandPool::gotoLine) );
 	commands.append( new YZCommand("dd", &YZCommandPool::deleteLine) );
 	commands.append( new YZCommand("d", &YZCommandPool::del, ARG_MOTION) );
 	commands.append( new YZCommand("D", &YZCommandPool::deleteToEOL) );
@@ -300,6 +300,7 @@ void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("open", &YZExExecutor::gotoOpenMode,true,1);
 	NEW_EX_COMMAND("visual", &YZExExecutor::gotoCommandMode,true,1);
 	NEW_EX_COMMAND("preserve", &YZExExecutor::preserve,true,1);
+	NEW_EX_COMMAND("", &YZExExecutor::gotoLine, true, 10 );
 	NEW_LUA_COMMAND("lua", &YZExLua::lua,true,0);
 	NEW_LUA_COMMAND("source", &YZExLua::loadFile,true,0);
 }
@@ -310,7 +311,7 @@ void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
 	// assume a command is like : "rangeCOMMANDNAME parameters"
 	// see vim :help [range] for infos on 'range'
 	//QRegExp rx ( "(%?|((\\d*)(,\\d*)?))(\\w+)((\\b)|(/.*/.*/.*))(.*)");
-	QRegExp rx ( "(%?|\\d*|\\d*,\\d*)(\\w+)(.*)");
+	QRegExp rx ( "(%?|\\d*|\\d*,\\d*)(\\w*)(.*)"); // command with range
 	if ( rx.exactMatch(command) ) {
 		command = rx.cap( 2 );
 	} else
@@ -656,23 +657,21 @@ QString YZCommandPool::gotoExMode(const YZCommandArgs &args) {
 	return QString::null;
 }
 
-QString YZCommandPool::gotoFirstLine(const YZCommandArgs &args) {
-	if ( ! args.view->getLocalBoolOption( "startofline" ) ) {
-		args.view->gotoxy( 0, 0 );
-	} else {
-		args.view->gotoxy( 0,0 );
-		args.view->moveToFirstNonBlankOfLine();
-	}
-	return QString::null;
-}
-
 QString YZCommandPool::gotoInsertMode(const YZCommandArgs &args) {
 	args.view->gotoInsertMode();
 	return QString::null;
 }
 
-QString YZCommandPool::gotoLastLine(const YZCommandArgs &args) {
-	args.view->gotoLastLine();
+QString YZCommandPool::gotoLine(const YZCommandArgs &args) {
+	unsigned int line = args.count - 1;
+	if ( line > 0 ) {
+		args.view->gotoLine( line );
+	} else {
+		if ( args.cmd->keySeq().startsWith( "G" ) )
+			args.view->gotoLastLine();
+		else
+			args.view->gotoLine( 0 );
+	}
 	return QString::null;
 }
 

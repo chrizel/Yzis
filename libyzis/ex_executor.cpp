@@ -112,6 +112,14 @@ QString YZExExecutor::gotoOpenMode( YZView *view, const QString &) {
 	return QString::null;
 }
 
+QString YZExExecutor::gotoLine( YZView *view, const QString& inputs ) {
+	bool valid;
+	unsigned int line = inputs.toUInt( &valid );
+	if ( valid )
+		view->gotoLine( QMAX( line - 1, 0 ) );
+	return QString::null;
+}
+
 QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 	yzDebug() << "View counts: "<< view->myBuffer()->views().count() << " Buffer Count : " << view->mySession()->countBuffers() << endl;
 	if ( inputs == "q" || inputs == "q!" || inputs.startsWith("qu") ) {

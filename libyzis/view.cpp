@@ -960,56 +960,18 @@ QString YZView::moveToStartOfLine( YZViewCursor* viewCursor, bool applyCursor ) 
 }
 
 void YZView::gotoLastLine() {
-	unsigned int line = mBuffer->lineCount() - 1;
-
-	if ( getLocalBoolOption("startofline") ) {
-		gotoxy(mBuffer->firstNonBlankChar(line), line);
-	} else {
-		gotoStickyCol( mainCursor, line );
-	}
+	gotoLine( mBuffer->lineCount() - 1 );
 }
 
-QString YZView::gotoLine(const QString& inputsBuff ) {
-	// Accepts "gg", "G", "<number>gg", "<number>G"
-	// "gg", "0gg", "1gg" -> first line of the file
-	// "G", "0G", "3240909G", "23323gg" -> last line of the file
-	// "<line>G", "<line>gg" -> line of the file
-	// in gvim, there is a configuration, startofline, which tells whether
-	// the cursor is set on the first non-blank character (default) or on the
-	// same columns as it originally was
-
-	uint line=0;
-
-	// first and easy case to handle
-	if ( inputsBuff.startsWith( "gg" ) ) {
-		line = 1;
-	} else if ( inputsBuff.startsWith( "G" ) ) {
-		line = mBuffer->lineCount();
-	} else {
-		//try to find a number
-		int i=0;
-		while ( inputsBuff[i].isDigit() ) i++; //go on
-		bool toint_ok;
-		line = inputsBuff.left( i ).toInt( &toint_ok );
-		if (!toint_ok || !line) {
-			if (inputsBuff[i] == 'G') {
-				line=mBuffer->lineCount();
-			} else {
-				line=1;
-			}
-		}
-	}
-
-	if ( line ) --line;
-	if (line >= mBuffer->lineCount()) line = mBuffer->lineCount() - 1;
+void YZView::gotoLine( unsigned int line ) {
+	if ( line >= mBuffer->lineCount() ) 
+		line = mBuffer->lineCount() - 1;
 
 	if ( getLocalBoolOption("startofline") ) {
 		gotoxy(mBuffer->firstNonBlankChar(line), line);
 	} else {
 		gotoStickyCol( mainCursor, line );
 	}
-
-	return QString::null; //return something
 }
 
 QString YZView::moveToEndOfLine( ) {

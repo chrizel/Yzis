@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include <qapplication.h>
 #include "session.h"
 #include "debug.h"
 #include "schema.h"
@@ -181,5 +182,6 @@ void YZSession::sendMultipleKeys ( const QString& text) {
 	for (QStringList::Iterator it = list.begin(); it != list.end(); it++) {
 		YZView* cView = YZSession::me->currentView();
 		cView->sendMultipleKey( *it + "<ENTER>" );
+		qApp->processEvents();
 	}
 }

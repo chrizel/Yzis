@@ -405,7 +405,7 @@ msgstr "Terminal"
 
 #: ../libyzis/buffer.cpp:565
 msgid "Failed opening file %1 for reading : %2"
-msgstr ""
+msgstr "Erro ao abrir o ficheiro %1 para leitura : %2"
 
 #: ../libyzis/buffer.cpp:573
 msgid "Recover"
@@ -422,7 +422,7 @@ msgstr ""
 
 #: ../libyzis/buffer.cpp:643
 msgid "Failed opening file %1 for writing : %2"
-msgstr ""
+msgstr "Erro ao abrir o ficheiro %1 para leitura : %2"
 
 #: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
 msgid "Written %1 bytes to file %2"
@@ -588,19 +588,5 @@ msgstr "(Pressione qualquer tecla)"
 
 #: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
 msgid "[No File]"
-msgstr ""
+msgstr "[Nenhum ficheiro]"
 
-#~ msgid "Yzis Ready"
-#~ msgstr "Yzis Pronto"
-
-#~ msgid "Yzis is not able to save remote files for now"
-#~ msgstr "O Yzis não está apto a gravar ficheiros remotos por enquanto"
-
-#~ msgid "Remote files"
-#~ msgstr "Ficheiros remotos"
-
-#~ msgid "Error"
-#~ msgstr "Erro"
-
-#~ msgid "Top"
-#~ msgstr "Topo"

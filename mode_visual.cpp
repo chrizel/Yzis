@@ -137,6 +137,10 @@ void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand("x", &YZModeCommand::del) );
 	commands.append( new YZCommand(">", &YZModeCommand::indent) );
 	commands.append( new YZCommand("<", &YZModeCommand::indent) );
+	initVisualCommandPool();
+}
+void YZModeVisual::initVisualCommandPool() {
+	commands.append( new YZCommand("v", (PoolMethod) &YZModeVisual::escape) );
 }
 void YZModeVisual::commandAppend( const YZCommandArgs& args ) {
 	YZCursor pos = qMax( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
@@ -172,6 +176,9 @@ YZModeVisualLine::YZModeVisualLine() : YZModeVisual() {
 	mString = _("[ Visual Line ]");
 }
 YZModeVisualLine::~YZModeVisualLine() {
+}
+void YZModeVisualLine::initVisualCommandPool() {
+	commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::escape) );
 }
 
 YZInterval YZModeVisualLine::buildInterval( const YZCursor& from, const YZCursor& to ) {

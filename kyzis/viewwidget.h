@@ -55,6 +55,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void refreshScreen ();
 		QPoint calculateCursorPositionWithTabs ( unsigned int line, unsigned int col, unsigned int tabwidth );
 		void displayInfo( const QString& info );
+		void setInformation( const QString& info );
 
 	public slots:
 		QPoint cursorCoordinates();

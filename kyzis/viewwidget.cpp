@@ -42,9 +42,9 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status->insertItem("",80,80,0);
 	status->setItemAlignment(0,Qt::AlignLeft);
 
-/*	status->insertItem("Yzis Ready",0,1);
+	status->insertItem("",90,1);
 	status->setItemAlignment(0,Qt::AlignRight);
-*/
+
 	status->insertItem("",99,0,true);
 	status->setItemAlignment(99,Qt::AlignRight);
 
@@ -62,6 +62,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	editor->show();
 	status->show();
 	editor->setFocus();
+	mBuffer->statusChanged();
 }
 
 KYZisView::~KYZisView () {
@@ -245,6 +246,10 @@ void KYZisView::displayInfo( const QString& info ) {
 	status->changeItem(info, 80);
 	//clean the info 2 seconds later
 	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
+}
+
+void KYZisView::setInformation( const QString& info ) {
+	status->changeItem(info, 90);
 }
 
 #include "viewwidget.moc"

@@ -115,3 +115,7 @@ void NYZView::refreshScreen() {
 void NYZView::displayInfo( const QString& info ) {
 //TODO
 }
+
+void NYZView::setInformation( const QString& info ) {
+//TODO
+}

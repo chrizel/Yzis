@@ -288,6 +288,11 @@ class YZView {
 		virtual void displayInfo( const QString& info ) = 0;
 
 		/**
+		 * Display informational status about the current file
+		 */
+		virtual void setInformation( const QString& info ) = 0;
+
+		/**
 		 * Get the current cursor information
 		 * @return a reference on the current cursor
 		 */

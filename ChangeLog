@@ -1,3 +1,9 @@
+2004-04-13 mikmak
+  * all
+    added an information status message to be added in GUIs
+  * kyzis
+    display the message :)
+
 2004-04-12 philippe
   * tests
     . more tests on undo

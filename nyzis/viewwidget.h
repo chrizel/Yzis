@@ -57,6 +57,7 @@ public:
 	virtual void updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage);
 	virtual void refreshScreen();
 	virtual void displayInfo( const QString& info );
+	virtual void setInformation ( const QString& info );
 
 protected:
 	WINDOW		*window;	/* ncurses window to write to */

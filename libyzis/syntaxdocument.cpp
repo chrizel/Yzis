@@ -102,7 +102,7 @@ YzisSyntaxModeList YzisSyntaxDocument::modeList()
 /**
  * Jump to the next group, YzisSyntaxContextData::currentGroup will point to the next group
  */
-bool YzisSyntaxDocument::nextGroup( YzisSyntaxContextData* data)
+bool YzisSyntaxDocument::nextGroup( YzisSyntaxContextData* data )
 {
   if(!data)
     return false;

@@ -30,7 +30,7 @@ int YZSession::mNbBuffers = 0;
 YZOption YZSession::mOptions = YZOption();
 YZRegisters YZSession::mRegisters = YZRegisters();
 //syntax highlighting , kate xml files loader
-YzisSyntaxDocument YZSession::mLoader = YzisSyntaxDocument(true);
+YzisSyntaxHighlight YZSession::mHL = YzisSyntaxHighlight();
 
 YZSession::YZSession( const QString& _sessionName ) {
 	mPool = new YZCommandPool();

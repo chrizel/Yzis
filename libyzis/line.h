@@ -21,7 +21,11 @@
  * $Id$
  */
 
+#ifndef YZIS_LINE_H
+#define YZIS_LINE_H
+
 #include <qobject.h>
+#include <qmap.h>
 
 /**
  * this class represents a line in the buffer
@@ -36,8 +40,41 @@ class YZLine
 
 		QString data() const { return mData; }
 		void setData(const QString &data) { mData = data; }
+		int length() { return mData.length(); }
+		inline const QMemArray<short> &ctxArray () const { return m_ctx; };
+		inline void setContext (QMemArray<short> &val) { m_ctx.assign (val); }
+		inline bool hlLineContinue () const { return m_flags & YZLine::flagHlContinue; }
+		//fill mHL
+		void highlight();
+
+		inline void setHlLineContinue (bool cont)
+		{
+			if (cont) m_flags = m_flags | YZLine::flagHlContinue;
+			else m_flags = m_flags & ~ YZLine::flagHlContinue;
+		}
+
+
+		void setAttribs(uchar attribute, uint start, uint end);
+
+		enum Flags
+		{
+			flagNoOtherData = 0x1, // ONLY INTERNAL USE, NEVER EVER SET THAT !!!!
+			flagHlContinue = 0x2,
+			flagVisible = 0x4,
+			flagAutoWrapped = 0x8
+		};
 
 	private:
 		QString mData;
+
+		//rendering settings for each char
+		QMemArray<uchar> mAttributes;
+		//contexts for HL
+		QMemArray<short> m_ctx;
+		/**
+		  Some bools packed
+		  */
+		uchar m_flags;
 };
 
+#endif

@@ -128,11 +128,11 @@ bool NYZFactory::process_one_event()
 		return true;
 	}
 	QString modifiers;
-	if ( c & 0200 ) {
+/*	if ( c & 0200 ) {
 		// heuristic, alt-x is x|0200..
 		modifiers += "<ALT>";
 		c &= ~0200;
-	}
+	} */
 	if ( c>=KEY_MAX) { // non-ascii key
 		yzError(NYZIS) << "*************** Unhandled" <<
 			"and very strange (>KEY_MAX) char received from ncurses, please report : " << (int) c << endl;

@@ -40,7 +40,12 @@ class YZExLua : public QObject {
 		 */
 		QString lua(YZView *view, const QString& inputs);
 
-		static int print(lua_State *L);
+		/**
+		 * Source a lua file
+		 */
+		QString loadFile(YZView *view, const QString& inputs);
+
+		static int text(lua_State *L);
 
 	private:
 		lua_State *st;

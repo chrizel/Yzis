@@ -272,6 +272,7 @@ class YZSession {
 		static int mNbBuffers;
 		static YZOption mOptions;
 		static YZRegisters mRegisters;
+		static YZSession *me;
 };
 
 #endif /* YZ_SESSION_H */

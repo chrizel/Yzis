@@ -139,6 +139,7 @@ void KYZisView::wheelEvent( QWheelEvent * e ) {
 }
 
 void KYZisView::modeChanged (void) {
+	m_editor->updateCursor();
 	status->changeItem(mode(), 0);
 }
 

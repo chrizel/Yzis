@@ -23,8 +23,9 @@
  */
 
 #include "cursor.h"
+#include "editor.h"
 
-KYZisCursor::KYZisCursor( KYZisEdit* parent, int type ) {
+KYZisCursor::KYZisCursor( KYZisEdit* parent, shape type ) {
 	mParent = parent;
 	shown = false;
 	bg = new QPixmap();
@@ -43,13 +44,16 @@ unsigned int KYZisCursor::width() const {
 unsigned int KYZisCursor::height() const {
 	return bg->height();
 }
+KYZisCursor::shape KYZisCursor::type() const {
+	return mCursorType;
+}
 
-void KYZisCursor::setCursorType( int type ) {
+void KYZisCursor::setCursorType( shape type ) {
 	if ( shown ) hide();
-	mCursorType = static_cast<cursorType>(type);
-	unsigned width = bg->width();
-	unsigned height = bg->height();
-	if ( mCursorType == KYZ_CURSOR_LINE ) width = 1;
+	mCursorType = type;
+	unsigned width = mParent->fontMetrics().maxWidth();
+	unsigned height = mParent->fontMetrics().lineSpacing();
+	if ( mCursorType == VBAR ) width = 1;
 	resize( width, height );
 }
 void KYZisCursor::resize( unsigned int w, unsigned int h ) {
@@ -90,17 +94,19 @@ bool KYZisCursor::prepareCursors() {
 	bitBlt( cursor, 0, 0, bg );
 	QPainter p( cursor );
 	switch( mCursorType ) {
-		case KYZ_CURSOR_SQUARE :
+		case SQUARE :
 		{
 			QRect rect( 0, 0, cursor->width(), cursor->height() );
 			mParent->drawCell( &p, cell(), rect, true );
 			break;
 		}
-		case KYZ_CURSOR_LINE :
+		case VBAR :
 			p.setPen( mParent->foregroundColor() );
-			p.drawLine( 0, 0, 0, cursor->height() );
+			p.drawLine( 0, 0, 0, cursor->height() - 1);
 			break;
-		default :
+		case HBAR :
+			p.setPen( mParent->foregroundColor() );
+			p.drawLine( 0, cursor->height() - 1, cursor->width() - 1, cursor->height() - 1 );
 			break;
 	}
 	p.end();

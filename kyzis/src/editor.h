@@ -20,8 +20,8 @@
 #ifndef KYZISEDIT_H
 #define KYZISEDIT_H
 
-#include "viewwidget.h"
 #include "cursor.h"
+#include "viewwidget.h"
 #include <qscrollview.h>
 #include <qpainter.h>
 #include <qevent.h>
@@ -75,6 +75,8 @@ class KYZisEdit : public QWidget {
 		void scrollUp( int );
 		void scrollDown( int );
 
+		KYZisCursor::shape cursorShape();
+		void updateCursor();
 		// update text area
 		void updateArea( );
 

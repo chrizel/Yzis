@@ -24,7 +24,8 @@
 #ifndef KYZISCURSOR_H
 #define KYZISCURSOR_H
 
-#include "editor.h"
+//#include "editor.h"
+#include <qpixmap.h>
 
 class KYZisEdit;
 struct KYZViewCell;
@@ -33,15 +34,16 @@ class KYZisCursor {
 
 	public :
 
-		enum cursorType {
-			KYZ_CURSOR_SQUARE = 0,
-			KYZ_CURSOR_LINE,
-		} mCursorType;
+		enum shape {
+			SQUARE,
+			VBAR,
+			HBAR,
+		};
 
-		KYZisCursor( KYZisEdit* parent, int type );
+		KYZisCursor( KYZisEdit* parent, shape type );
 		virtual ~KYZisCursor();
 
-		void setCursorType( int type );
+		void setCursorType( shape type );
 		void resize( unsigned int w, unsigned int h );
 		void move( unsigned int x, unsigned int y );
 		void hide();
@@ -49,6 +51,7 @@ class KYZisCursor {
 
 		unsigned int width() const;
 		unsigned int height() const;
+		shape type() const;
 
 		const KYZViewCell& cell() const;
 
@@ -69,6 +72,7 @@ class KYZisCursor {
 		unsigned int mX;
 		unsigned int mY;
 		bool shown;
+		shape mCursorType;
 
 };
 

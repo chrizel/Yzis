@@ -59,7 +59,8 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 	initKeys();
 	mCell.clear();
-	mCursor = new KYZisCursor( this, KYZisCursor::KYZ_CURSOR_SQUARE );
+	mCursor = new KYZisCursor( this, KYZisCursor::SQUARE );
+	updateCursor();
 
 	defaultCell.isValid = true;
 	defaultCell.selected = false;
@@ -92,16 +93,46 @@ void KYZisEdit::resizeEvent(QResizeEvent* ) {
 	updateArea();
 }
 
+KYZisCursor::shape KYZisEdit::cursorShape() {
+	KYZisCursor::shape s;
+	if ( !isFontFixed ) {
+		s = KYZisCursor::VBAR;
+	} else {
+		QString shape;
+		YZMode::modeType m = mParent->modePool()->current()->type();
+		if ( m == YZMode::MODE_INSERT ) {
+			shape = mParent->getLocalStringOption("cursorinsert");
+		} else if ( m == YZMode::MODE_REPLACE ) {
+			shape = mParent->getLocalStringOption("cursorreplace");
+		} else {
+			shape = mParent->getLocalStringOption("cursor");
+		}
+		if ( shape == "hbar" ) {
+			s = KYZisCursor::HBAR;
+		} else if ( shape == "vbar" ) {
+			s = KYZisCursor::VBAR;
+		} else {
+			s = KYZisCursor::SQUARE;
+		}
+	}
+	return s;
+}
+void KYZisEdit::updateCursor() {
+	KYZisCursor::shape s = cursorShape();
+	if ( s != mCursor->type() ) {
+		mCursor->setCursorType( s );
+		mCursor->refresh();
+	}
+}
+
+
 void KYZisEdit::updateArea( ) {
 
 	isFontFixed = fontInfo().fixedPitch();
 	mParent->setFixedFont( isFontFixed );
 	spaceWidth = mParent->spaceWidth;
 	mCursor->resize( fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
-	if ( isFontFixed )
-		mCursor->setCursorType( KYZisCursor::KYZ_CURSOR_SQUARE );
-	else
-		mCursor->setCursorType( KYZisCursor::KYZ_CURSOR_LINE );
+	updateCursor();
 
 	int lines = height() / fontMetrics().lineSpacing();
 	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget

@@ -1,6 +1,9 @@
 2005-03-14 panard
   * libyzis
     :set opt&, :set opt=, :set opt:, :set opt+=, :set opt-=, :set opt^=
+    added option cursor, cursorinsert and cursorreplace.
+  * kyzis
+    support square, hbar and vbar cursors with fixed fonts
 
 2005-03-02 morbuz
   * libyzis

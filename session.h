@@ -203,6 +203,13 @@ class YZSession {
 		 */
 		YzisSchemaManager *schemaManager() { return mSchemaManager; }
 
+		/**
+		 * Send multiple key sequence to yzis.
+		 * This method is preferred to the one used in YZView since it will handle
+		 * view changes caused by commands like :bd :bn etc
+		 */
+		void sendMultipleKeys ( const QString& text);
+		
 		//HELPERS
 		/**
 		 * Retrieve an int option

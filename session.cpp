@@ -176,3 +176,10 @@ void YZSession::exitRequest( int errorCode ) {
 	quit( errorCode );
 }
 
+void YZSession::sendMultipleKeys ( const QString& text) {
+	QStringList list = QStringList::split("<ENTER>", text);
+	for (QStringList::Iterator it = list.begin(); it != list.end(); it++) {
+		YZView* cView = YZSession::me->currentView();
+		cView->sendMultipleKey( *it + "<ENTER>" );
+	}
+}

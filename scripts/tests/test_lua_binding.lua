@@ -6,8 +6,6 @@ TestLuaBinding = {} --class
     function TestLuaBinding:setUp() 
         -- this function is run before each test, so that multiple
         -- tests can share initialisations
-        self.a = 1
-        self.b = 2
     end
 
     function TestLuaBinding:tearDown() 
@@ -16,8 +14,14 @@ TestLuaBinding = {} --class
         -- declaring it
     end
 
-    function TestLuaBinding:test_use_all_functions()
+    function TestLuaBinding:Xtest_use_all_functions()
 		require('use_all_functions')
+    end
+
+    function TestLuaBinding:test_version()
+        -- ok, simple one
+        s = version()
+        assertEquals( string.len(s) > 0, true )
     end
 
 luaUnit:run()

@@ -4,7 +4,11 @@
 Description: A unit testing framework
 Initial author: Ryu, Gwang (http://www.gpgstudy.com/gpgiki/LuaUnit)
 improvements by Philippe Fremy <phil@freehackers.org>
-Version: 1.0 
+Version: 1.1 
+
+Changes between 1.1 and 1.0:
+- variables are now declared locally inside functions
+
 
 TODO:
 - try to display the failing line
@@ -22,7 +26,7 @@ function assertEquals(expected, actual)
 			if type(v) == 'string' then return "'"..v.."'" end
 			return tostring(v)
 		end
-		errorMsg = "expected: "..wrapValue(expected)..", actual: "..wrapValue(actual)
+		local errorMsg = "expected: "..wrapValue(expected)..", actual: "..wrapValue(actual)
 		error( errorMsg, 2 )
 	end
 end
@@ -59,6 +63,7 @@ luaUnit = {
 	end
 
 	function luaUnit:displayResult()
+		local failurePercent, successCount
 		if self.TestCount == 0 then
 			failurePercent = 0
 		else
@@ -70,6 +75,7 @@ luaUnit = {
     end
 
 	function luaUnit:analyseErrorLine( errorMsg )
+		local mb, me, filename, line
 		mb, me, filename, line = string.find(errorMsg, "(%w+):(%d+)" )
 		if filename and line then
 			-- check that file exists
@@ -79,6 +85,7 @@ luaUnit = {
 	end
 
     function luaUnit:runTestMethod(aName, aClassInstance, aMethod)
+		local ok, errorMsg
 		-- example: runTestMethod( 'TestToto:test1', TestToto, TestToto.testToto(self) )
 		luaUnit:displayTestName(aName)
         self.TestCount = self.TestCount + 1
@@ -107,12 +114,13 @@ luaUnit = {
 
 	function luaUnit:runTestMethodName( methodName, classInstance )
 		-- example: runTestMethodName( 'TestToto:testToto', TestToto )
-		methodInstance = loadstring(methodName .. '()')
+		local methodInstance = loadstring(methodName .. '()')
 		luaUnit:runTestMethod(methodName, classInstance, methodInstance)
 	end
 
     function luaUnit:runTestClassByName( aClassName )
 		-- example: runTestMethodName( 'TestToto' )
+		local hasMethod, methodName, classInstance
 		hasMethod = string.find(aClassName, ':' )
 		if hasMethod then
 			methodName = string.sub(aClassName, hasMethod+1)
@@ -166,6 +174,7 @@ luaUnit = {
 -- class luaUnit
 
 function wrapFunctions(...)
+	local testClass, testFunction
 	testClass = {}
 	local function storeAsMethod(idx, testName)
 		testFunction = _G[testName]

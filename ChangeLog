@@ -1,3 +1,7 @@
+2003-05-30 mikmak
+  * libyzis
+    changed QString handles in yz_events
+
 2003-05-29 mikmak
   * kyzis
      fixed desktop file

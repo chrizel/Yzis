@@ -1,5 +1,5 @@
 /**
- * $Id: kyzisview.cpp,v 1.17 2003/04/25 18:31:00 mikmak Exp $
+ * $Id$
  */
 #include "kyzisview.h"
 #include "kyzis_factory.h"
@@ -45,23 +45,19 @@ void KYZisView::postEvent(yz_event ev) {
 void KYZisView::customEvent (QCustomEvent *) {
 	while ( true ) {
 		yz_event event = fetchNextEvent();
-//		kdDebug() << "** Processing Event " << event.id << endl;
 		switch ( event.id ) {
 			case YZ_EV_SETLINE:
-//				kdDebug() << "event SETLINE" << *(event.u.setline.line) << endl
-	//				<< "LINE " << event.u.setline.y << endl;
-				editor->setTextLine(event.u.setline.y,*(event.u.setline.line));
+				editor->setTextLine(event.setline.y,event.setline.line);
 				break;
 			case YZ_EV_SETCURSOR:
 				kdDebug() << "event SETCURSOR" << endl;
-				editor->setCursor (event.u.setcursor.x, event.u.setcursor.y);
+				editor->setCursor (event.setcursor.x, event.setcursor.y);
 				break;
 			case YZ_EV_SETSTATUS:
-				kdDebug() << "event SETSTATUS" << event.u.setstatus.text <<  endl;
-				status->changeItem( *event.u.setstatus.text,0 );
+				kdDebug() << "event SETSTATUS" << event.setstatus.text <<  endl;
+				status->changeItem( event.setstatus.text,0 );
 				break;
 			case YZ_EV_NOOP:
-//				kdDebug() << "OUPS, no event to fetch !" << endl;
 				return;
 		}
 	}

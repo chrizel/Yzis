@@ -27,7 +27,7 @@ void YZBuffer::addChar (int x, int y, QChar c) {
 	text[y] = l;
 
 	/* inform the views */
-	postEvent(mk_event_setline(y,&l));
+	postEvent(YZEvent::mkEventLine(y,l));
 }
 
 void YZBuffer::chgChar (int x, int y, QChar c) {
@@ -42,7 +42,7 @@ void YZBuffer::chgChar (int x, int y, QChar c) {
 	text[y] = l;
 
 	/* inform the views */
-	postEvent(mk_event_setline(y,&l));
+	postEvent(YZEvent::mkEventLine(y,l));
 }
 
 void YZBuffer::delChar (int x, int y, int count) {
@@ -56,7 +56,7 @@ void YZBuffer::delChar (int x, int y, int count) {
 	text[y] = l;
 
 	/* inform the views */
-	postEvent(mk_event_setline(y,&l));
+	postEvent(YZEvent::mkEventLine(y,l));
 }
 
 void YZBuffer::addNewLine( int col, int line ) {
@@ -71,8 +71,8 @@ void YZBuffer::addNewLine( int col, int line ) {
 	QStringList::Iterator it = text.at( line );
 	text.insert( ++it, newline );
 	/* inform the views */
-	postEvent(mk_event_setline(line,&text[ line ]));
-	postEvent(mk_event_setline(line+1,&newline));
+	postEvent(YZEvent::mkEventLine(line,text[ line ]));
+	postEvent(YZEvent::mkEventLine(line+1,newline));
 }
 
 void YZBuffer::postEvent(yz_event e) {
@@ -91,7 +91,7 @@ void YZBuffer::updateView(YZView *view) {
 	for (unsigned int y=view->getCurrent(); y<text.count() && view->isLineVisible(y); y++) {
 		QString l = findLine( view->getCurrent()+y );
 		if (l.isNull()) continue;
-		view->postEvent(mk_event_setline(y,&l));
+		view->postEvent(YZEvent::mkEventLine(y,l));
 	}
 	view->updateCursor();
 }

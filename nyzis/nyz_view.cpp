@@ -51,29 +51,28 @@ void NYZView::handle_event(yz_event e)
 {
 	int l;
 	unsigned int i;
-	QString	*yzl;
+	QString	yzl;
 
 	switch(e.id) {
 		case YZ_EV_SETLINE:
-			l = e.u.setline.y - getCurrent();
-			//yet, kinda sucks, uh?");
-			yzl = e.u.setline.line;
+			l = e.setline.y - getCurrent();
+			yzl = e.setline.line;
 
 			/* not use addnstr here, will stop at \0  (i guess) */
 			move ( l, 0);
-			for (i=0; i<w && i<yzl->length(); i++)
-				addch((*yzl )[i].unicode());
+			for (i=0; i<w && i<yzl.length(); i++)
+				addch(yzl[i].unicode());
 			for ( ; i< w; i++ ) addch( ' ' );
 
 //			refresh();
 //			debug("YZ_EV_SETLINE: received, line is %d", l);
 			break;
 		case YZ_EV_SETCURSOR:
-			move( e.u.setcursor.y - getCurrent(), e.u.setcursor.x) ;
+			move( e.setcursor.y - getCurrent(), e.setcursor.x) ;
 //			debug("YZ_EV_SETCURSOR: received");
 			break;
 		case YZ_EV_SETSTATUS:
-			session->update_status( e.u.setstatus.text );
+			session->update_status( e.setstatus.text );
 			break;
 		default:
 			//FIXME warning("Unhandled event from yzis core : %i", e->id);

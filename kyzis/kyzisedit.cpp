@@ -47,7 +47,7 @@ void KYZisEdit::setTextLine(int l, const QString &str){
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	kdDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->ascii() != 0 ) {
-		_parent->sendChar(e->text());
+		_parent->sendChar(e->ascii());
 		e->accept();
 	}
 }

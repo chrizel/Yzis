@@ -134,7 +134,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 	mParent->initDraw( );
 
 	int currentY = 0;
-	while ( mParent->drawNextLine( ) && cliph > 0) {
+	while ( !mParent->myBuffer()->introShown() && mParent->drawNextLine( ) && cliph > 0) {
 		if (clipy == 0) {
 			int currentX = 0;
 
@@ -161,7 +161,17 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 			++currentY;
 		}
 	}
-	while ( cliph > 0 && currentY < ( height() / fontMetrics().lineSpacing() ) ) {
+	if ( mParent->myBuffer()->introShown() ) {
+		while ( currentY < mParent->myBuffer()->lineCount() ) {
+			QRect clip(0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
+			p->eraseRect(clip);
+
+			p->drawText(clip,flag, mParent->myBuffer()->textline(currentY ) );
+
+			++currentY;
+		}
+	}
+	while ( !mParent->myBuffer()->introShown() && cliph > 0 && currentY < ( height() / fontMetrics().lineSpacing() ) ) {
 		QRect clip(0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
 		p->eraseRect(clip);
 		p->drawText(clip,flag ,"~");

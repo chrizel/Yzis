@@ -411,28 +411,34 @@ QString YZView::moveToStartOfLine( const QString& ) {
 }
 
 QString YZView::gotoLine(const QString& inputsBuff) {
+	//can be : 'gg' (goto Top),'G' or a number with one of them
+
+	// first and easy case to handle
+	if ( inputsBuff.startsWith( "gg" ) ) {
+		gotoxy( 0, 0 );
+		purgeInputBuffer();
+		return QString::null;
+	}
+
 	int line=0;
 	//check arguments
-	//can be : 'gg' (goto Top),'G' or a number with one of them
 	if ( !inputsBuff.isNull() ) {
 		//try to find a number
 		int i=0;
-		while ( inputsBuff[i].isDigit() )
-			i++; //go on
+		while ( inputsBuff[i].isDigit() ) i++; //go on
 		bool test;
 		line = inputsBuff.left( i ).toInt( &test );
-		if ( !test && !inputsBuff.startsWith( "gg" ) )
-				line=mBuffer->lineCount()-1; //there shouldn't be any other solution
+		if (!test || !line) line=mBuffer->lineCount(); // in vim '0G' also goes to the end
 	}
 
-	if ( inputsBuff.startsWith( "gg" ) )
-		gotoxy( 0, line );
-	else
-		gotoxy(mCursor->getX(), line);
+	/* if line is null, we dont want to go to line -1,
+	 * this can happen if the file is empty for exemple */
+	if ( !line ) line++;
+
+	gotoxy(mCursor->getX(), line-1);
 
 	purgeInputBuffer();
-	//return something
-	return QString::null;
+	return QString::null; //return something
 }
 
 // end of goto-like command

@@ -33,12 +33,12 @@
 
 #define VERSION_MAJOR	0
 #define VERSION_MINOR	0
-#define VERSION_PATCH	5
+#define VERSION_PATCH	6
 
 //let's use the patch number since it exists ...
-#define VERSION_CHAR	"M2pre5"
+#define VERSION_CHAR	"M2pre6"
 #define VERSION_CHAR_LONG "Yzis (from SVN)"
-#define VERSION_CHAR_DATE "SVN>2004-07-19"
+#define VERSION_CHAR_DATE "SVN>2004-08-06"
 
 #endif /* YZIS_H */
 

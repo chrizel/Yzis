@@ -22,7 +22,7 @@
 #include <ctype.h>
 
 //the one which writes to the files ...
-static void YZDebugBackend(int area, const char* data) {
+static void YZDebugBackend(int , const char* data) {
 	if ( 1 ) { //output to file
 		const int BUFSIZE=4096;
 		char buf[ BUFSIZE ];

@@ -756,7 +756,7 @@ bool YZView::doSearch( const QString& search ) {
 
 		if ( idx >= 0 ) {
 			//i really found it ? or is it a previous "found" ?
-			if ( mCursor->getX() == idx ) { //ok we did not move guy (col 0 or last col maybe ...)
+			if ( mCursor->getX() == ( unsigned int ) idx ) { //ok we did not move guy (col 0 or last col maybe ...)
 				yzDebug() << "Only a fake match on this line, skip it" << endl;
 				if ( reverseSearch )
 					currentMatchColumn=-1;
@@ -790,12 +790,12 @@ QString YZView::searchAgain( const QString& /*inputsBuff*/, YZCommandArgs args )
 bool YZView::isColumnVisible( unsigned int column, unsigned int line ) {
 	QString l = mBuffer->textline(line).mid( 0, column );
 	int tabs = l.contains( '\t' );
-	int displayedCols = l.length() + tabs * 8 - tabs; //tabwidth
+	uint displayedCols = l.length() + tabs * 8 - tabs; //tabwidth
 
 	//count number of tabs before mCurrentLeft now
 	l = mBuffer->textline( line ).mid( 0, mCurrentLeft );
 	int tabsleft = l.contains( '\t' );
-	int displayedColsleft = l.length() + tabs * 8 - tabs; //tabwidth
+	uint displayedColsleft = l.length() + tabsleft * 8 - tabsleft; //tabwidth
 	
 	if ( mCurrentLeft == 0 && displayedCols >= mColumnsVis ) return false;
 	if ( displayedCols - displayedColsleft >= mColumnsVis ) return false;

@@ -326,7 +326,7 @@ class YZView {
 		 */
 		void updateCursor();
 
-		QString tr( const char *source, const char* comment = 0) { return qApp->translate( "YZView", source ); }
+		QString tr( const char *source, const char* = 0) { return qApp->translate( "YZView", source ); }
 
 	protected:
 		/**

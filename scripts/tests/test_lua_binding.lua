@@ -88,6 +88,21 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), s )
     end
 
+    function TestLuaBinding:test_insert()
+        local s1,s2,s3
+        s1 = "1111"
+        s2 = "2222"
+        s3 = "3333"
+
+        assertEquals( bufferContent(), "" )
+        insertline(1,s2)
+        assertEquals( bufferContent(), s2 )
+        insertline(1,s1)
+        assertEquals( bufferContent(), s1.."\n"..s2 )
+        insertline(3,s3)
+        assertEquals( bufferContent(), s1.."\n"..s2.."\n"..s3 )
+    end
+
 
 
 luaUnit:run()

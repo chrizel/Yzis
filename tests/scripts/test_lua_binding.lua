@@ -239,7 +239,7 @@ TestLuaBinding = {} --class
         sendkeys(':e runtests.sh<ENTER>')
         color1 = color(1,1)
         print("color1 : "..color1)
-        sendkeys('G')
+        sendkeys("G")
         color2 = color(wincol(), winline())
         print("color2 : "..color2)
         assertEquals( string.len(color1) > 0, true )
@@ -273,10 +273,11 @@ TestLuaBinding = {} --class
     end
 
     function TestLuaBinding:test_mode()
-        assertEquals( mode(), "[ Awaiting Command ]" )
-        sendkeys('icoucou')
-        assertEquals( mode(), "[ Insert ]" )
-        sendkeys('<ESC>')
+        sendkeys("<ESC>")
+        assertEquals( mode(), MODE_NORMAL )
+        sendkeys("icoucou")
+        assertEquals( mode(), MODE_INSERT )
+        sendkeys("<ESC>")
     end
 
 

@@ -531,7 +531,7 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 	
 	if ( ! matched ) {
 		ret = CMD_ERROR;
-		YZSession::me->popupMessage( _("Invalid option name") );
+		YZSession::me->popupMessage( QString(_("Invalid option name : %1")).arg(args.arg.simplifyWhiteSpace()) );
 	} else if ( ! success ) {
 		ret = CMD_ERROR;
 		YZSession::me->popupMessage( _("Bad value for option given") );

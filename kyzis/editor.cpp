@@ -28,6 +28,7 @@
 #include "factory.h"
 #include <kglobalsettings.h>
 #include <math.h>
+#include <qclipboard.h>
 
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
@@ -150,10 +151,22 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
-	if ( mParent->myBuffer()->introShown() ) mParent->myBuffer()->clearIntro();
-	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
-		mParent->gotodxdy( e->x( ) / fontMetrics().maxWidth() + mParent->getDrawCurrentLeft( ) - marginLeft,
-					e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
+	if ( e->button() == Qt::LeftButton ) {
+		if ( mParent->myBuffer()->introShown() ) mParent->myBuffer()->clearIntro();
+		if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
+			mParent->gotodxdy( e->x( ) / fontMetrics().maxWidth() + mParent->getDrawCurrentLeft( ) - marginLeft,
+						e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
+		}
+	} else if ( e->button() == Qt::MidButton ) {
+		QString text = QApplication::clipboard()->text( QClipboard::Selection );
+		if ( text.isNull() ) text = QApplication::clipboard()->text( QClipboard::Clipboard );
+
+		if ( ! text.isNull() ) {
+			if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_INSERT )
+				mParent->insertChar( text, mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+			else if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_REPLACE )
+				mParent->chgChar( mParent->getCursor()->getX(), mParent->getCursor()->getY(), text );
+		}
 	}
 }
 

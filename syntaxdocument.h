@@ -150,6 +150,7 @@ class YzisSyntaxDocument : public QDomDocument
      * List of mode items
      */
     YzisSyntaxModeList myModeList;
+	QStringList findAllResources( const char *type, const QString& filter, bool recursive, bool unique) const;
 
     QString currentFile;
     QStringList m_data;

@@ -134,7 +134,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
 	unsigned int my_marginLeft = 0;
-	if ( YZSession::getBoolOption( "General\\number" )) { // update marginLeft
+	if ( number ) { // update marginLeft
 		my_marginLeft = 2 + QString::number( lineCount ).length();
 		lastLineNumber = 0;
 	}

@@ -109,7 +109,7 @@ class YzisHighlighting
   public:
     void doHighlight ( YZLine *prevLine,
                        YZLine *textLine,
-                       QMemArray<signed char> *foldingList,
+                       QMemArray<uint> *foldingList,
                        bool *ctxChanged );
 
     void loadWildcards();
@@ -160,9 +160,15 @@ class YzisHighlighting
     bool canComment( int startAttr, int endAttr ) const;
 
     /**
+    * @return 0 if highlighting which attr is a member of does not
+    * define a comment region, otherwise the region is returned
+    */
+    signed char commentRegion(int attr) const;
+    
+    /**
      * Define comment marker type.
      */
-    enum commentData { Start, End, SingleLine };
+    enum commentData { Start, End, MultiLineRegion,SingleLine };
 
     /**
      * @return the comment marker @p which for the highlight corresponding to
@@ -218,7 +224,7 @@ class YzisHighlighting
     // manipulates the ctxs array directly ;)
     void generateContextStack(int *ctxNum, int ctx, QMemArray<short> *ctxs, int *posPrevLine,bool lineContinue=false);
 
-    YzisHlItem *createYzisHlItem(struct YzisSyntaxContextData *data, YzisHlItemDataList &iDl, QStringList *RegionList, QStringList *ContextList);
+    YzisHlItem *createYzisHlItem(YzisSyntaxContextData *data, YzisHlItemDataList &iDl, QStringList *RegionList, QStringList *ContextList);
     int lookupAttrName(const QString& name, YzisHlItemDataList &iDl);
 
     void createContextNameList(QStringList *ContextNameList, int ctx0);
@@ -269,7 +275,6 @@ class YzisHighlighting
     uint itemData0;
     uint buildContext0Offset;
     YzisHlIncludeRules includeRules;
-    QValueList<int> contextsIncludingSomething; //### unused, can i remove it?
     bool m_foldingIndentationSensitive;
 
     QIntDict< QMemArray<YzisAttribute> > m_attributeArrays;
@@ -321,7 +326,7 @@ class YzisHlManager : public QObject
 
     // methodes to get the default style count + names
     static uint defaultStyles();
-    static QString defaultStyleName(int n);
+    static QString defaultStyleName(int n, bool translateNames = false);
 
     void getDefaults(uint schema, YzisAttributeList &);
     void setDefaults(uint schema, YzisAttributeList &);

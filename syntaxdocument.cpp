@@ -49,11 +49,12 @@ YzisSyntaxDocument::YzisSyntaxDocument(bool force)
   : QDomDocument()
 {
   setupModeList(force);
-  myModeList.setAutoDelete( true );
 }
 
 YzisSyntaxDocument::~YzisSyntaxDocument()
 {
+  for (uint i=0; i < myModeList.size(); i++)
+    delete myModeList[i];
 }
 
 /** If the open hl file is different from the one needed, it opens

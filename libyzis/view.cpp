@@ -180,11 +180,11 @@ void YZView::sendKey( int c, int modifiers) {
 					mBuffer->delChar(mCursor->getX(),mCursor->getY(),1);
 					return;
 				case Qt::Key_PageDown:
-					gotoxy(mCursor->getX(), mCursor->getY() + mLinesVis );
+					gotodxy(dCursor->getX(), mCursor->getY() + mLinesVis );
 					purgeInputBuffer();
 					return;
 				case Qt::Key_PageUp:
-					gotoxy(mCursor->getX(), mCursor->getY() - mLinesVis );
+					gotodxy(dCursor->getX(), ( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 ) );
 					purgeInputBuffer();
 					return;
 				default:
@@ -227,11 +227,11 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoxy(mCursor->getX()-1, mCursor->getY() );
 					return;
 				case Qt::Key_PageDown:
-					gotoxy(mCursor->getX(), mCursor->getY() + mLinesVis );
+					gotodxy(dCursor->getX(), mCursor->getY() + mLinesVis );
 					purgeInputBuffer();
 					return;
 				case Qt::Key_PageUp:
-					gotoxy(mCursor->getX(), mCursor->getY() - mLinesVis );
+					gotodxy(dCursor->getX(), ( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 ) );
 					purgeInputBuffer();
 					return;
 				default:
@@ -364,11 +364,11 @@ void YZView::sendKey( int c, int modifiers) {
 					mBuffer->delChar(mCursor->getX(),mCursor->getY(),1);
 					return;
 				case Qt::Key_PageDown:
-					gotoxy(mCursor->getX(), mCursor->getY() + mLinesVis );
+					gotodxy(mCursor->getX(), mCursor->getY() + mLinesVis );
 					purgeInputBuffer();
 					return;
 				case Qt::Key_PageUp:
-					gotoxy(mCursor->getX(), mCursor->getY() - mLinesVis );
+					gotodxy(dCursor->getX(), ( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 ) );
 					purgeInputBuffer();
 					return;
 				default:
@@ -413,13 +413,8 @@ void YZView::updateCursor() {
 void YZView::centerViewHorizontally(unsigned int column) {
 	unsigned int newcurrentLeft = 0;
 
-	if ( column > mMaxX ) {
-		column = mMaxX;
-	}
-
-	if ( column > mColumnsVis/2 ) {
-		newcurrentLeft = column - mColumnsVis / 2;
-	}
+	if ( column > mMaxX ) column = mMaxX;
+	if ( column > mColumnsVis/2 ) newcurrentLeft = column - mColumnsVis / 2;
 
 	if (newcurrentLeft > 0) {
 		initDraw( );
@@ -432,7 +427,7 @@ void YZView::centerViewHorizontally(unsigned int column) {
 		dCurrentLeft = 0;
 		mCurrentLeft = 0;
 	}
-	
+
 	refreshScreen();
 }
 
@@ -444,15 +439,24 @@ void YZView::centerViewVertically(unsigned int line) {
 
 void YZView::alignViewVertically( unsigned int line ) {
 	unsigned int newcurrent = 0;
-	if ( line >= dCurrentTop + mLinesVis ) newcurrent = line - mLinesVis + 1;
-	else if ( line > 0 ) newcurrent = line;
+	bool alignTop = true;
+	if ( line >= dCurrentTop + mLinesVis ) { 
+		newcurrent = line - mLinesVis + 1;
+		alignTop = false;
+	} else if ( line > 0 ) newcurrent = line;
 	if ( newcurrent > 0 ) {
-		initDraw( );
-		gotody( newcurrent - 1 );
-		gotoy ( sCursor->getY( ) + 1 );
+		initDraw( 0, 0, 0, 0 );
+		gotody( newcurrent );
+		unsigned int sCursorY = sCursor->getY();
+		initDraw( 0, 0, 0, 0 );
+		gotoy ( sCursorY + ( alignTop ? 0 : 1 ) );
 		dCurrentTop = rCursor->getY( );
 		mCurrentTop = sCursor->getY( );
 		initDraw( );
+		if ( alignTop ) {
+			mCursor->setY( mCurrentTop );
+			dCursor->setY( dCurrentTop );
+		}
 	} else {
 		dCurrentTop = 0;
 		mCurrentTop = 0;
@@ -552,84 +556,53 @@ void YZView::gotoy( unsigned int nexty ) {
 	}
 }
 
-
-/* goto xdraw, ydraw */
-void YZView::gotodxdy( unsigned int nextx, unsigned int nexty ) {
-	if ( mBuffer->introShown() ) mBuffer->clearIntro();
-
-	initDraw( );
-	gotody( nexty );
-	gotodx( nextx );
-
+void YZView::applyGoto( ) {
 	dCursor->setX( rCursor->getX() );
 	dCursor->setY( rCursor->getY() );
 	mCursor->setX( sCursor->getX() );
 	mCursor->setY( sCursor->getY() );
-
+//	yzDebug( ) << "mCursor:" << mCursor->getX( ) << "," << mCursor->getY( ) << endl;
+//	yzDebug( ) << "dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl;
 	if ( !isLineVisible( dCursor->getY() ) ) alignViewVertically( dCursor->getY( ) );
 	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
-
 	updateCursor( );
+}
+
+
+/* goto xdraw, ydraw */
+void YZView::gotodxdy( unsigned int nextx, unsigned int nexty ) {
+	if ( mBuffer->introShown() ) mBuffer->clearIntro();
+	initDraw( );
+	gotody( nexty );
+	gotodx( nextx );
+	applyGoto( );
 }
 
 /* goto xdraw, ybuffer */
 void YZView::gotodxy( unsigned int nextx, unsigned int nexty ) {
 	if ( mBuffer->introShown() ) mBuffer->clearIntro();
-
 	initDraw( );
 	gotoy( nexty );
 	gotodx( nextx );
-
-	dCursor->setX( rCursor->getX() );
-	dCursor->setY( rCursor->getY() );
-	mCursor->setX( sCursor->getX() );
-	mCursor->setY( sCursor->getY() );
-
-	if ( !isLineVisible( dCursor->getY() ) ) alignViewVertically( dCursor->getY( ) );
-	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
-
-	updateCursor( );
+	applyGoto( );
 }
 
 /* goto xdraw, ybuffer */
 void YZView::gotoxdy( unsigned int nextx, unsigned int nexty ) {
 	if ( mBuffer->introShown() ) mBuffer->clearIntro();
-
 	initDraw( );
 	gotody( nexty );
 	gotox( nextx );
-
-	dCursor->setX( rCursor->getX() );
-	dCursor->setY( rCursor->getY() );
-	mCursor->setX( sCursor->getX() );
-	mCursor->setY( sCursor->getY() );
-
-	if ( !isLineVisible( dCursor->getY() ) ) alignViewVertically( dCursor->getY( ) );
-	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
-
-	updateCursor( );
+	applyGoto( );
 }
 
 /* goto xbuffer, ybuffer */
 void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	if ( mBuffer->introShown() ) mBuffer->clearIntro();
-
 	initDraw( );
 	gotoy( nexty );
 	gotox( nextx );
-
-	dCursor->setX( rCursor->getX() );
-	dCursor->setY( rCursor->getY() );
-	mCursor->setX( sCursor->getX() );
-	mCursor->setY( sCursor->getY() );
-
-//	yzDebug( ) << "mCursor:" << mCursor->getX( ) << "," << mCursor->getY( ) << endl;
-//	yzDebug( ) << "dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl;
-
-	if ( !isLineVisible( dCursor->getY() ) ) alignViewVertically( dCursor->getY( ) );
-	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
-
-	updateCursor();
+	applyGoto( );
 }
 
 QString YZView::moveDown( const QString& , YZCommandArgs args ) {
@@ -646,10 +619,10 @@ QString YZView::moveDown( const QString& , YZCommandArgs args ) {
 }
 
 QString YZView::moveUp( const QString& , YZCommandArgs args ) {
-	int nb_lines=args.count;
+	unsigned int nb_lines=args.count;
 
 	//execute the code
-	gotodxy( dCursor->getX(), mCursor->getY() ? mCursor->getY() - nb_lines : 0 );
+	gotodxy( dCursor->getX(), mCursor->getY() > nb_lines ? mCursor->getY() - nb_lines : 0 );
 
 	//reset the input buffer
 	purgeInputBuffer();
@@ -742,7 +715,7 @@ QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs ) {
 	if (/* XXX configuration startofline */ 1 ) {
 		gotoxy(mBuffer->firstNonBlankChar(line-1), line-1);
 	} else {
-		gotoxy(mCursor->getY(), line-1);
+		gotodxy(dCursor->getX(), line-1);
 	}
 
 	purgeInputBuffer();
@@ -1017,7 +990,6 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 //	yzDebug() << "/ initScreenClip sCurrentLeft(" << sCurrentLeft << "), sCurrentTop(" << sCurrentTop << ")" << endl;
 	sCursor->setX( sCurrentLeft );
 	sCursor->setY( sCurrentTop );
-
 //	yzDebug() << "\\ initScreenClip rCurrentLeft(" << rCurrentLeft << "), rCurrentTop(" << rCurrentTop << ")" << endl;
 	rCursor->setX( rCurrentLeft );
 	rCursor->setY( rCurrentTop );
@@ -1028,9 +1000,7 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 	sColLength = 0;
 
 	wrapNextLine = false;
-
-	YZLine *yl = mBuffer->yzline( sCursor->getY() );
-	sCurLine = yl->data();
+	sCurLine = mBuffer->textline ( sCursor->getY() );
 }
 
 //EXPERIMENTAL
@@ -1106,7 +1076,7 @@ bool YZView::drawNextLine( ) {
 
 	//update the options which we cached
 	tabwidth = YZSession::getIntOption("General\\tabwidth");
-	
+
 	if ( ! wrapNextLine ) {
 		sCursor->setX( sCurrentLeft );
 		sCursor->setY( sCursor->getY() + sLineLength );
@@ -1118,8 +1088,6 @@ bool YZView::drawNextLine( ) {
 		rSpaceFill -= diff;
 	}
 
-	
-
 	rCursor->setY( rCursor->getY( ) + rLineLength );
 	rCursor->setX( rCurrentLeft );
 
@@ -1128,18 +1096,15 @@ bool YZView::drawNextLine( ) {
 	rColLength = 0;
 
 	if ( sCursor->getY() < mBuffer->lineCount() ) {
-	
+
 		YZLine *yl = mBuffer->yzline( sCursor->getY() );
 		sCurLine = yl->data();
 		if (rCurrentLeft > 0) {
 
 			sCursor->setX( 0 );
 			rCursor->setX( 0 );
-			while( rCursor->getX( ) < rCurrentLeft ) {
-				drawNextCol( );
-				drawChar( );
-			}
-			rSpaceFill = (rCurrentLeft % tabwidth );
+			gotodx( rCurrentLeft );
+			rSpaceFill = ( rCurrentLeft % tabwidth );
 
 /*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
 					<< ", rX(cursor):" << rCursor->getX() 
@@ -1214,7 +1179,7 @@ const QChar& YZView::drawChar( ) {
 	rColLength = 1;
 	if (rSpaceFill == tabwidth) rSpaceFill = 0;
 	if ( lastChar == tabChar ) {
-		rColLength = tabwidth - rSpaceFill;	
+		rColLength = tabwidth - rSpaceFill;
 		lastChar = ' ';
 	}
 	rSpaceFill += rColLength;

@@ -241,6 +241,7 @@ void KYZisFactory::deleteView( int Id ) {
 		return; //we failed
 	}
 #endif
+	yzDebug() << "Factory : Close view id : " << Id << endl;
 	if (mMainApp)
 		mMainApp->closeView(Id);
 		

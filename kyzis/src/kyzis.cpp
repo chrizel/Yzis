@@ -240,12 +240,13 @@ void Kyzis::createView( /*const KTextEditor::Document &doc*/ ) {
 		KParts::ReadWritePart *part = getCurrentPart();
 		KTextEditor::Document *doc = static_cast<KTextEditor::Document*>(part);
 		KYZisDoc *kdoc = static_cast<KYZisDoc*>(doc);
-		KTextEditor::View *kv = doc->createView(this,"view"+QString::number(mViews));
+		KTextEditor::View *kv = doc->createView(this,"view"+QString::number(mViews++));
 		QString filename = kdoc->fileName().section("/", -1);
-		KMdiChildView *view = createWrapper( kv, QString::number( mViews ), filename );
+		KMdiChildView *view = createWrapper( kv, QString::number( mViews - 1 ), filename );
 		kv->setFocus();
 		addWindow( view );
 		KView v = { view , part };
+		kdDebug() << "Adding new view " << QString::number(mViews - 1) << endl;
 		viewList[mViews-1] = v;
 		createGUI(part);
 }
@@ -263,6 +264,7 @@ void Kyzis::setCaption( int tab, const QString& caption ) {
 
 void Kyzis::closeView(int Id) {
 //	closeActiveView();
+	kdDebug() << "Main : Close view " << Id << endl;
 	if ( viewList.contains( Id ) ) {
 		kdDebug() << "Closing view from main app " << Id << endl;
 		closeWindow(viewList[Id].v);

@@ -71,7 +71,7 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("a",&YZView::append,true);
 	NEW_VIEW_COMMAND("A",&YZView::appendAtEOL,true);
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
-	NEW_VIEW_COMMAND("(\".)?[0-9]*(yy|Y)",&YZView::copy,true);
+	NEW_VIEW_COMMAND("(\".)?[0-9]*(y.|Y)",&YZView::copy,true);
 	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true);
 }
 

@@ -80,6 +80,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("%", &YZCommandPool::matchPair, ARG_NONE) );
 	commands.append( new YZNewMotion("`", &YZCommandPool::gotoMark, ARG_MARK) );
 	commands.append( new YZNewMotion("'", &YZCommandPool::gotoMark, ARG_MARK) );
+	commands.append( new YZCommand("I", &YZCommandPool::insertAtSOL) );
 	commands.append( new YZCommand("i", &YZCommandPool::gotoInsertMode) );
 	commands.append( new YZCommand("<INS>", &YZCommandPool::gotoInsertMode) );
 	commands.append( new YZCommand(":", &YZCommandPool::gotoExMode) );
@@ -676,6 +677,13 @@ QString YZCommandPool::deleteToEOL(const YZCommandArgs &args) {
 
 QString YZCommandPool::gotoExMode(const YZCommandArgs &args) {
 	args.view->gotoExMode();
+	return QString::null;
+}
+
+
+QString YZCommandPool::insertAtSOL(const YZCommandArgs &args) {
+	args.view->moveToFirstNonBlankOfLine();
+	args.view->gotoInsertMode();
 	return QString::null;
 }
 

@@ -208,6 +208,7 @@ private:
 	QString deleteToEOL(const YZCommandArgs &args);
 	QString gotoExMode(const YZCommandArgs &args);
 	QString gotoLine(const YZCommandArgs &args);
+	QString insertAtSOL(const YZCommandArgs &args);
 	QString gotoInsertMode(const YZCommandArgs &args);
 	QString gotoReplaceMode(const YZCommandArgs &args);
 	QString gotoVisualLineMode(const YZCommandArgs &args);

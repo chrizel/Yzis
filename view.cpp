@@ -1773,9 +1773,9 @@ bool YZView::drawPrevLine( ) {
 	workCursor->sLineIncrement = 1;
 
 	if ( workCursor->bufferY() < mBuffer->lineCount() ) {
-		YZLine *yl = mBuffer->yzline( workCursor->bufferY() );
+		QString yl = mBuffer->textline( workCursor->bufferY() );
 		if ( ! workCursor->wrapNextLine ) {
-			sCurLine = yl->data();
+			sCurLine = yl;
 			updateCurLine( );
 		}
 		if ( rCurrentLeft > 0 && ! workCursor->wrapNextLine ) {
@@ -1819,9 +1819,9 @@ bool YZView::drawNextLine( ) {
 	workCursor->sLineIncrement = 1;
 
 	if ( workCursor->bufferY() < mBuffer->lineCount() ) {
-		YZLine *yl = mBuffer->yzline( workCursor->bufferY() );
+		YZLine* yl = drawMode ? mBuffer->yzline( workCursor->bufferY(), false ) : NULL;
 		if ( ! workCursor->wrapNextLine ) {
-			sCurLine = yl->data();
+			sCurLine = drawMode ? yl->data() : mBuffer->textline( workCursor->bufferY() );
 			updateCurLine( );
 		}
 		if ( rCurrentLeft > 0 && ! workCursor->wrapNextLine ) {

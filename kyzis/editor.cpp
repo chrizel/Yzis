@@ -165,9 +165,9 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		QString text = QApplication::clipboard()->text();
 		if ( ! text.isNull() ) {
 			if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_INSERT )
-				mParent->insertChar( text, mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+				mParent->myBuffer()->action()->insertChar( mParent, mParent->getCursor(), text );
 			else if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_REPLACE )
-				mParent->chgChar( mParent->getCursor()->getX(), mParent->getCursor()->getY(), text );
+				mParent->myBuffer()->action()->replaceChar( mParent, mParent->getCursor(), text );
 		}
 	}
 }

@@ -67,6 +67,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	// there is still a possible race condition here...
 	mFileIsNew = true;
 	mUndoBuffer = new YZUndoBuffer( this );
+	mAction = new YZAction( this );
 	displayIntro();
 //	appendLine("");
 	YZSession::me->addBuffer( this );

@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 		QDomElement dockConfig = domDoc.createElement("dockConfig");
 		domDoc.appendChild( dockConfig );
 
-		Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
+		Kyzis *widget = new Kyzis(dockConfig,KMdi::IDEAlMode);
 		widget->show();
 //		widget->resize( 600,400 );
 		if ( args->count() == 0 ) {

@@ -25,7 +25,7 @@ messages: rc.cpp
 bin_PROGRAMS = kyzis
 
 # the application source, library search path, and link libraries
-kyzis_SOURCES = main.cpp kyzis.cpp kyzis.skel
+kyzis_SOURCES = main.cpp kyzis.cpp kyzis.skel konsole.cpp
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 kyzis_LDADD = -lktexteditor -lkmdi $(LIB_KPARTS) \
 			  $(top_builddir)/libyzis/libqtyzis/libqtyzis.la

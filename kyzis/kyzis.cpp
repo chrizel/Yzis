@@ -28,6 +28,7 @@
 
 #include <kaction.h>
 #include <kstdaction.h>
+#include <kiconloader.h>
 
 #include <klibloader.h>
 #include <kmessagebox.h>
@@ -38,6 +39,7 @@
 #include <klocale.h>
 
 #include <ktexteditor/configinterface.h>
+#include <kmultitabbar.h>
 
 // #include "configdialog.h"
 
@@ -50,7 +52,8 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	m_dockConfig( dockConfig ),
 	mBuffers( 0 ), mViews( 0 )
 {
-	setIDEAlModeStyle( 1 );
+	mConsole = NULL;
+	setToolviewStyle(KMultiTabBar::KDEV3ICON);
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
 	
 	if ( m_dockConfig.hasChildNodes() ) {
@@ -59,6 +62,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 
 	dockManager->finishReadDockConfig();
 	setMenuForSDIModeSysButtons( menuBar() );
+	setManagedDockPositionModeEnabled(true);
 
 	setXMLFile( "kyzis_shell.rc" );
 	setupActions();
@@ -72,6 +76,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 Kyzis::~Kyzis() {
 	writeDockConfig(m_dockConfig);
 	//delete m_toolbarAction;
+	delete m_konsoleAction;
 }
 
 void Kyzis::resizeEvent( QResizeEvent *e) {
@@ -101,6 +106,7 @@ void Kyzis::setupActions() {
 	}
 
 	//m_toolbarAction = KStdAction::showToolbar(this, SLOT(optionsShowToolbar()), actionCollection());
+	m_konsoleAction = new KToggleAction( i18n("Show &Konsole"), SmallIcon( "konsole" ), 0, this, SLOT(showKonsole()), actionCollection(), "show_konsole" );
 
 	//KStdAction::keyBindings(this, SLOT(optionsConfigureKeys()), actionCollection());
 	//KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
@@ -275,14 +281,33 @@ bool Kyzis::queryClose() {
 	return true;
 }
 
+void Kyzis::showKonsole() {
+	if ( m_konsoleAction->isChecked() ) {
+		if ( mConsole ) mConsole->parentWidget()->show();
+		else {
+			mConsole = new Konsole(this, "konsole");
+			addToolView(KDockWidget::DockBottom, mConsole, SmallIcon("konsole"), i18n("Terminal"));
+		}
+	} else {
+		if ( mConsole ) {
+			deleteToolWindow(mConsole);
+			mConsole=0;
+		}
+	}
+}
+
+KMdiToolViewAccessor * Kyzis::addToolView(KDockWidget::DockPosition position, QWidget *widget, const QPixmap& icon, const QString& sname, const QString& tabToolTip, const QString& tabCaption) {
+	widget->setIcon(icon);
+	widget->setCaption(sname);
+	return addToolWindow(widget,position,getMainDockWidget(), 25, tabToolTip, tabCaption);	
+}
+
 void Kyzis::preferences() {
     KTextEditor::ConfigInterface *conf = dynamic_cast<KTextEditor::ConfigInterface*>(getCurrentPart());
     if (!conf)
         return;
-
     conf->configDialog();
     conf->writeConfig();
 }
-
 
 #include "kyzis.moc"

@@ -205,7 +205,7 @@ void KYZisView::fileSaveAs() {
 }
 
 /* Implementation of KTextEditor::ViewCursorInterface */
-
+// FIXME, this is wrong (true for fixed widths font maybe)
 QPoint KYZisView::cursorCoordinates()
 {
 	unsigned int line = 0, col = 0;

@@ -105,6 +105,13 @@ void KYZisConfigDialog::setupPages() {
 	layoutAppearance->addWidget( kcfg_colorFG, line, 1 );
 	++line;
 
+	// Konsole
+/*	QLabel* label_konsole = new QLabel( i18n("Konsole"), pageAppearance );
+	QCheckBox* kcfg_konsole = new QCheckBox( pageAppearance, "kcfg_konsole" );
+	layoutAppearance->addWidget( label_konsole, line, 0, Qt::AlignRight );
+	layoutAppearance->addWidget( kcfg_konsole, line, 1 );
+	++line;
+*/
 	layoutAppearance->setRowStretch( line, 1 );
 
 

@@ -26,6 +26,7 @@
 #include <kmdimainfrm.h>
 #include <dcopobject.h>
 #include <qmap.h>
+#include "konsole.h"
 
 struct YV {
 	KMdiChildView* v;
@@ -67,6 +68,8 @@ public:
 
 	KParts::ReadWritePart* getCurrentPart();
 
+	KMdiToolViewAccessor *addToolView(KDockWidget::DockPosition position, QWidget *widget, const QPixmap& icon, const QString& sname, const QString& tabToolTip = 0, const QString& tabCaption = 0);
+
 k_dcop:
 	/**
 	 * Opens a new buffer
@@ -85,9 +88,14 @@ k_dcop:
 	 */
 	void setCaption( int tab, const QString& caption );
 
-
 public slots:
 	void childWindowCloseRequest( KMdiChildView *v );
+
+	/**
+	 * Enables/disables the konsole
+	 */
+	void showKonsole();
+
 
 protected slots:
 	
@@ -109,13 +117,14 @@ private:
 	virtual bool queryClose();
 
     KToggleAction *m_toolbarAction;
+    KToggleAction *m_konsoleAction;
 	QDomElement m_dockConfig;
 	int mBuffers;
 	int mViews;
 
 
 	QMap<int,KView> viewList;
-
+	Konsole *mConsole;
 
 };
 

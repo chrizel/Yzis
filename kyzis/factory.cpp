@@ -159,6 +159,16 @@ void KYZisFactory::writeConfig() {
 			yv->applyConfig();
 		}	
 	}
+/*	DCOPClient *client = kapp->dcopClient();
+	QByteArray data;
+	QDataStream arg(data, IO_WriteOnly);
+	arg << Settings::konsole();
+	bool w = client->send(client->appId(), "Kyzis", "showKonsole(bool)", data);
+	if (w) {
+		yzDebug() << "DCOP call successful for " << client->appId() << " to show konsole" << endl;
+	} else {
+		yzDebug() << "DCOP call failed for " << client->appId() << endl;
+	}*/
 }
 
 void KYZisFactory::readConfig( )

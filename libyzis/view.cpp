@@ -1812,7 +1812,7 @@ bool YZView::drawNextCol( ) {
 			workCursor->setScreenX( workCursor->screenX() + workCursor->sColIncrement );
 			workCursor->setBufferX( workCursor->bufferX() + workCursor->bColIncrement );
 			// update HL
-			if ( drawMode ) rHLa += workCursor->sColIncrement;
+			if ( drawMode ) rHLa += workCursor->bColIncrement;
 		}
 	}
 

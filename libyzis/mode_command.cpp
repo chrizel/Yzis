@@ -158,7 +158,6 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("u", &YZModeCommand::undo) );
 	commands.append( new YZCommand("U", &YZModeCommand::redo) );
 	commands.append( new YZCommand("<CTRL>r", &YZModeCommand::redo) );
-	commands.append( new YZCommand("<CTRL>R", &YZModeCommand::redo) );
 	commands.append( new YZCommand("q", &YZModeCommand::macro) );
 	commands.append( new YZCommand("@", &YZModeCommand::replayMacro) );
 	commands.append( new YZCommand("<CTRL>l", &YZModeCommand::redisplay) );

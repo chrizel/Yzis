@@ -144,9 +144,10 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 		text += line + "\n";
 	}
 	buff << QString::null;
-	if ( QPaintDevice::x11AppDisplay() ) {
+#ifndef WIN32
+	if ( QPaintDevice::x11AppDisplay() )
+#endif
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
-	}
 	
 	QValueList<QChar>::const_iterator it = reg.begin(), end = reg.end();
 	for ( ; it != end; ++it )
@@ -204,9 +205,11 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 	}
 
 	QString text = buff.join( "\n" );
-	if ( QPaintDevice::x11AppDisplay() ) {
+#ifndef WIN32
+	if ( QPaintDevice::x11AppDisplay() )
+#endif
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
-	}
+	
 	yzDebug() << "Copied " << buff << endl;
 	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
 	for ( ; it != endd; ++it )

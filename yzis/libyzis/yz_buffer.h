@@ -55,7 +55,7 @@ private:
 	/* locking stuff will be here, too */
 };
 
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
 
@@ -65,7 +65,7 @@ private:
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
 typedef int *yz_buffer;
@@ -93,8 +93,8 @@ void buffer_save(yz_buffer);
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
-#endif //  YZ_BUFFER_H
+#endif /*  YZ_BUFFER_H */
 

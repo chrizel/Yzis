@@ -23,7 +23,7 @@
 #if USE_THIS
 extern FILE * debugstr;
 
-// top-modern debug system
+/* top-modern debug system */
 #define debug(format, arg...)	{fprintf(debugstr, "Yzis Debug :" __FILE__ "( %d ): " format "\n" , __LINE__,  ## arg); fflush(debugstr);} 
 #define warning(format, arg...)	{fprintf(debugstr, "Yzis Warning :" __FILE__ "( %d ): " format "\n" , __LINE__,  ## arg); fflush(debugstr);} 
 #define error(format, arg...)	{fprintf(debugstr, "Yzis Error :" __FILE__ "( %d ): " format "\n" , __LINE__, ## arg); fflush(debugstr);} 
@@ -37,7 +37,7 @@ extern FILE * debugstr;
 
 #define debug(format, arg...)	 
 #define warning(format, arg...)	 
-/*#define error(format, arg...)	 */ //these are function names in QT :)
+/*#define error(format, arg...)	 */ /* these are function names in QT :) */
 #define panic(format, arg...)	
 
 #define yz_assert(cond,msg, arg...)  if (!(cond)) debug("ys_assert failed : " msg,## arg);
@@ -45,4 +45,4 @@ extern FILE * debugstr;
 #define yz_printfirst(text,line)	debug( text "%c%c%c%c%c", line[0], line[1], line[2], line[3], line[4], line[5])
 
 #endif
-#endif // YZIS_H
+#endif /* YZIS_H */

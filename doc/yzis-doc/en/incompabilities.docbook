@@ -12,7 +12,7 @@
 	<itemizedlist>
 		<listitem>
 			<para><command>'4o'</command></para>
-			<para>Opens 4 new lines (Vim opens 1 new line).</para>
+			<para>Opens 4 new lines (In vim, 4o is just like 4i<enter>).</para>
 		</listitem>
 		<listitem>
 			<para><command>'2d$'</command></para>

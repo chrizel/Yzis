@@ -268,7 +268,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 										 "", 0, line );
 		QValueVector<YZLine*>::iterator it;
 		uint idx=0;
-		for ( it = mText.begin(); idx <= line && it != mText.end(); it++, idx++ )
+		for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
 			;	
 		mText.erase(it);
 //		mText.remove(line);

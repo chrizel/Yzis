@@ -23,11 +23,11 @@
 YZRegisters::YZRegisters() {
 }
 
-void YZRegisters::setRegister( QChar c, const QString& value ) {
+void YZRegisters::setRegister( QChar c, const QStringList& value ) {
 	mRegisters[ c ] = value;
 	yzDebug() << "Register : " << value << endl;
 }
 
-QString& YZRegisters::getRegister( QChar c ) const {
-	return ( QString& )mRegisters[ c ];
+QStringList& YZRegisters::getRegister( QChar c ) const {
+	return ( QStringList& )mRegisters[ c ];
 }

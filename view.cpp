@@ -494,7 +494,6 @@ QString YZView::deleteLine ( const QString& inputsBuff ) {
 	if ( ls[ 2 ] != "" )  //number of lines ?
 		nb_lines = ls[ 2 ].toInt();
 	
-	YZSession::mRegisters.setRegister( '\"', "" );
 	QStringList buff; //to copy old lines into the register "
 	if ( ls[ 3 ] == "dd" ) { //delete whole lines
 		for ( int i=0; i<nb_lines; ++i ) {
@@ -507,7 +506,7 @@ QString YZView::deleteLine ( const QString& inputsBuff ) {
 		mBuffer->replaceLine( mCursor->getY(), b.left( mCursor->getX() ) );
 		gotoxy( mCursor->getX() - 1, mCursor->getY() );
 	}
-	YZSession::mRegisters.setRegister( '\"', buff.join( "\n" ) );
+	YZSession::mRegisters.setRegister( '\"', buff );
 
 	//reset the input buffer
 	purgeInputBuffer();
@@ -593,74 +592,80 @@ QString YZView::copy( const QString& inputsBuff ) {
 	//default register to use
 	QChar reg = '"';
 	int nb_lines = 1;
-
-	//check if the command starts by " which would select a register
-	int i = 0;
-	if ( inputsBuff[ 0 ] == '"' ) {
-		i+=2;
-		reg = inputsBuff[ 1 ];
-		QString r ( reg );
-		yzDebug() << "View :: copy : copying to register " << r << endl;
-	}
-	//now check the number of lines if given
-	int j = i;
-	while ( inputsBuff[j].isDigit() )
-		j++; //go on
-	bool test;
-	nb_lines = inputsBuff.mid( i, j-i ).toInt( &test );
-	if ( !test ) nb_lines=1;
-	i = j;
-	yzDebug() << "View :: copy : copying " << nb_lines << " lines" << endl;
-
-	if ( inputsBuff[ i ] == 'y' && inputsBuff[ i+1 ] == 'y' )
-		i+=2;
-	else if ( inputsBuff[ i ] = 'Y' ) 
-		i++;
-	//TODO : support motion detection here
-
-	//copy now
-	////get the strings and merge them in one single line
-	QStringList list;
-	for ( i = 0 ; i < nb_lines; i++ )
-		list << mBuffer->data(mCursor->getY()+i);
-	YZSession::mRegisters.setRegister( reg, list.join( "\n" ) );
+	QRegExp ex ( "(\".)?([0-9]*)(y.|Y)" );
+	ex.exactMatch( inputsBuff );
+	QStringList ls = ex.capturedTexts();
+	yzDebug() << "view::copy " << ls << endl;
 	
+	if ( ls[ 1 ] != "" ) //got a register name ?
+		reg = ls[ 2 ][ 1 ];
+	if ( ls[ 2 ] != "" )  //number of lines ?
+		nb_lines = ls[ 2 ].toInt();
+	
+	QStringList list;
+	if ( ls[ 3 ] == "yy" ) {
+		list << QString::null; //just a marker
+		for (int i = 0 ; i < nb_lines; i++ )
+			list << mBuffer->data(mCursor->getY()+i);
+	} else if ( ls[ 3 ] == "Y" ) {
+		list << QString::null; //just a marker
+		for (int i = 0 ; i < nb_lines; i++ )
+			list << mBuffer->data(mCursor->getY()+i);
+	} else if ( ls[ 3 ] == "y$" ) {
+		QString lin = mBuffer->data( mCursor->getY() );
+		list << lin.mid(mCursor->getX());
+	}
+	YZSession::mRegisters.setRegister( reg, list );
+
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::paste( const QString& inputsBuff ) {
 	//default register to use
+	QRegExp ex("(\".)?(p|P)");
+	ex.exactMatch( inputsBuff );
+	QStringList ls = ex.capturedTexts();
+	yzDebug() << "view::paste " << ls << endl;
+
 	QChar reg = '"';
+	if ( ls[ 1 ] != "" ) //got a register name ?
+		reg = ls[ 1 ][ 1 ];
 
-	//check if the command starts by " which would select a register
-	int i = 0;
-	if ( inputsBuff[ 0 ] == '"' ) {
-		i+=2;
-		reg = inputsBuff[ 1 ];
-		QString r ( reg );
-		yzDebug() << "View :: paste : pasting to register " << r << endl;
-	}
-	bool pastebefore=false;
-	if ( inputsBuff[ i ] == 'p' )
-		pastebefore=false;
-	else if ( inputsBuff[ i ] == 'P' )
-		pastebefore=true;
-	i++;
-
-	//paste now
-	////get the strings and merge them in one single line
-	QString data = YZSession::mRegisters.getRegister( reg );
+	QStringList list = YZSession::mRegisters.getRegister( reg );
+	//save cursor pos
 	int curx = mCursor->getX();
 	int cury = mCursor->getY();
-	QStringList list = QStringList::split( "\n", data );
-	if ( pastebefore ) gotoxy( mCursor->getX(), mCursor->getY()-1 );
-	for ( QStringList::Iterator it = list.begin(); it!=list.end(); it++ ) {
-		mBuffer->insertLine(*it, mCursor->getY()+1);
-		gotoxy( mCursor->getX(), mCursor->getY()+1 );
+
+	int i = 0;
+	if ( ls[ 2 ] == "p" ) { //paste after current char
+		QString nl = mBuffer->data( mCursor->getY() );
+		if ( !list[ 0 ].isNull() ) {
+			yzDebug() << "First line not NULL !" << endl;
+			nl = nl.left( mCursor->getX()+1 ) + list[ 0 ] + nl.mid( mCursor->getX()+1 );
+			mBuffer->replaceLine(mCursor->getY(), nl);
+		}
+		i++;
+		while ( i < list.size() ) {
+			mBuffer->insertLine(list[ i++ ], mCursor->getY()+1);
+			gotoxy( mCursor->getX(), mCursor->getY()+1 );
+		}
+	} else if ( ls[ 2 ] == "P" ) { //paste before current char
+		if ( list[ 0 ].isNull() )
+			i++;
+		while ( i < ( list[ 0 ].isNull() ? list.size() : list.size() - 1 ) ) {
+			mBuffer->insertLine(list[ i++ ], mCursor->getY());
+			gotoxy( mCursor->getX(), mCursor->getY()+1 );
+		}
+		if ( !list[ 0 ].isNull() ) {
+			QString nl = mBuffer->data( mCursor->getY() );
+			nl = nl.left( mCursor->getX() ) + list[ list.size()-1 ] + nl.mid( mCursor->getX() );
+			mBuffer->replaceLine(mCursor->getY(), nl);
+		}
 	}
-	//needs some tuning later XXX
+	//restore cursor pos
 	gotoxy( curx, cury );
+
 	purgeInputBuffer();
 	return QString::null;
 }

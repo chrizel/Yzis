@@ -17,7 +17,7 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include <qstring.h>
+#include <qstringlist.h>
 #include <qmap.h>
 
 #ifndef YZ_REGISTERS
@@ -33,16 +33,16 @@ class YZRegisters {
 		/**
 		 * Fills the register @param r with the @param value
 		 */
-		void setRegister( QChar r, const QString& value );
+		void setRegister( QChar r, const QStringList& value );
 
 		/**
 		 * Gets the value of register @param r
 		 * Returns a @ref QString containing the register content
 		 */
-		QString& getRegister ( QChar r ) const;
+		QStringList& getRegister ( QChar r ) const;
 	
 	private:
-		QMap<QChar,QString> mRegisters;
+		QMap<QChar,QStringList> mRegisters;
 };
 
 #endif

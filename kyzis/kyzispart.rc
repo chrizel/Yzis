@@ -1,15 +1,18 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
 <kpartgui name="kyzispart" version="3">
+
 <MenuBar>
-  <Menu name="file">
-    <Action name="file_save"/>
-    <Action name="file_save_as"/>
-	<Action name="file_print"/>
-  </Menu>
+	<Menu name="file">
+		<Action name="file_save"/>
+		<Action name="file_save_as"/>
+		<Action name="file_print"/>
+	</Menu>
 </MenuBar>
+
 <ToolBar name="mainToolBar">
-  <Action name="file_save"/>
-  <Action name="file_print"/>
-  <Separator/>
+	<Action name="file_save"/>
+	<Action name="file_print"/>
+	<Separator/>
 </ToolBar>
+
 </kpartgui>

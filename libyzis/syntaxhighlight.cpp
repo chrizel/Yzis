@@ -34,6 +34,10 @@
 #include "debug.h"
 #include "buffer.h"
 
+#include "translator.h"
+
+#include "magic.h"
+
 #include <qstringlist.h>
 #include <qtextstream.h>
 //END
@@ -2751,6 +2755,13 @@ int YzisHlManager::detectHighlighting (YZBuffer *doc)
 
   if (hl == -1)
   {
+	hl = mimeFind( doc->fileName() );
+/*	QString buf = "";
+	for ( unsigned int i = 0; i < doc->lineCount(); i++ ) {
+		buf += doc->textline( i ) + "\n";
+	}
+	hl = mimeFind( buf ); */
+  /*
     QByteArray buf (YZIS_HL_HOWMANY);
     uint bufpos = 0;
     for (uint i=0; i < doc->lineCount(); i++)
@@ -2769,8 +2780,7 @@ int YzisHlManager::detectHighlighting (YZBuffer *doc)
         break;
     }
     buf.resize( bufpos );
-
-//    hl = mimeFind (buf);
+    hl = mimeFind (buf); */
   }
 
   return hl;
@@ -2839,31 +2849,32 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
   return -1;
 }
 
-QString YzisHlManager::findByContent( const QByteArray& ) {
-#if 0
-	struct magic_set *ms = magic_open( MAGIC_MIME );
+QString YzisHlManager::findByContent( const QString& contents ) {
+// QString YzisHlManager::findByContent( const QByteArray& contents ) {
+	struct magic_set *ms = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );
 	if ( ms == NULL ) {
 		magic_close(ms);
 		return QString::null;
 	}
-	if (magic_load(ms,NULL) == -1) {
+	if (magic_load( ms, QString( PREFIX ) + "/share/yzis/magic"  ) == -1) {
 		yzDebug() << "Magic error " << magic_error( ms ) << endl;
 		magic_close(ms);
 		return QString::null;
 	}
-	const char *magic_result = magic_buffer( ms, contents.data(), contents.size() );
+//	const char *magic_result = magic_buffer( ms, contents.utf8(), contents.length() );
+	const char *magic_result = magic_file( ms, contents );
 	magic_close(ms);
 	if ( magic_result ) {
 		QString mime = QString( magic_result );
-		mime = mime.mid( 0, mime.find( ';' ) );
 		yzDebug() << "Magic result " << mime << endl;
+		mime = mime.mid( 0, mime.find( ';' ) );
 		return mime;
-	} else return QString::null;
-#endif
-	return QString::null;
+	} else 
+		return QString::null;
 }
 
-int YzisHlManager::mimeFind(const QByteArray &contents)
+int YzisHlManager::mimeFind(const QString &contents)
+//int YzisHlManager::mimeFind(const QByteArray &contents)
 {
   static QRegExp sep("\\s*;\\s*");
 

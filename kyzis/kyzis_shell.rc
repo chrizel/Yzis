@@ -1,40 +1,42 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
 <kpartgui name="kyzis_shell" version="3">
+
 <MenuBar noMerge="1">
-  <Menu name="file" noMerge="1"><text>&amp;File</text>
-    <Action name="file_new"/>
-    <Action name="file_open"/>
-    <Separator/>
-    <Merge/>
-    <Separator/>
-    <Action name="file_quit"/>
-  </Menu>
-  <Menu name="settings" noMerge="1"><text>&amp;Settings</text>
-	  <Action name="general_options"/>
-	  <Action name="editor_options"/>
-	  <Merge/>
-	  <Action name="conf_actions"/>
-	  <Action name="conf_toolbars"/>
-	  <Action name="keys_bind"/>
-	  <Separator/>
-	  <Action name="kmdi_toolview_menu" />
-	  <Action name="kmdi_tooldock_menu" />
-  </Menu>
-  <Menu name="help" noMerge="1"><text>&amp;Help</text>
-	  <Action name="help_contents"/>
-	  <Action name="help_whats_this"/>
-	  <Separator/>
-	  <Action name="help_report_bug"/>
-	  <Separator/>
-	  <Action name="help_about_app"/>
-	  <Action name="help_about_kde"/>
-  </Menu>
+	<Menu name="file" noMerge="1"><text>&amp;File</text>
+		<Action name="file_new"/>
+		<Action name="file_open"/>
+		<Separator/>
+		<Merge/>
+		<Separator/>
+		<Action name="file_quit"/>
+	</Menu>
+	<Menu name="settings" noMerge="1"><text>&amp;Settings</text>
+		<Action name="general_options"/>
+		<Action name="editor_options"/>
+		<Merge/>
+		<Action name="conf_actions"/>
+		<Action name="conf_toolbars"/>
+		<Action name="keys_bind"/>
+		<Separator/>
+		<Action name="kmdi_toolview_menu" />
+		<Action name="kmdi_tooldock_menu" />
+	</Menu>
+	<Menu name="help" noMerge="1"><text>&amp;Help</text>
+		<Action name="help_contents"/>
+		<Action name="help_whats_this"/>
+		<Separator/>
+		<Action name="help_report_bug"/>
+		<Separator/>
+		<Action name="help_about_app"/>
+		<Action name="help_about_kde"/>
+	</Menu>
 </MenuBar>
 
 <ToolBar name="mainToolBar" noMerge="1"><text>Main Toolbar</text>
-  <Action name="file_new"/>
-  <Action name="file_open"/>
-  <Merge/>
-  <Action name="help"/>
+	<Action name="file_new"/>
+	<Action name="file_open"/>
+	<Merge/>
+	<Action name="help"/>
 </ToolBar>
+
 </kpartgui>

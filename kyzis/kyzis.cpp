@@ -84,6 +84,9 @@ void Kyzis::setupActions() {
 	KStdAction::open(this, SLOT(fileOpen()), actionCollection());
 
 	KStdAction::quit(kapp, SLOT(quit()), actionCollection());
+
+	KStdAction::preferences( this, SLOT( configureEditor() ), actionCollection(), "editor_options" );
+	
 	if ( !isFakingSDIApplication() ) {
 //		menuBar()->insertItem(i18n( "&Window" ), windowMenu(), -1, menuBar()->count()-2);
 //		menuBar()->insertItem("&Docking", dockHideShowMenu() );//, -1 , menuBar()->count()-2);
@@ -115,6 +118,9 @@ void Kyzis::fileNew() {
 //			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
 			createBuffer();
 //	};
+}
+
+void Kyzis::configureEditor() {
 }
 
 void Kyzis::optionsShowToolbar() {

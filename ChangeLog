@@ -1,3 +1,7 @@
+2004-07-06 panard
+  * libyzis
+    syntax highlighting detection using file content
+
 2004-07-05 mikmak
   * libyzis
     added updatecount option (number of inputs before flushing swapfile to disk)

@@ -13,7 +13,7 @@ KEYWORDS="~x86 ~amd64"
 SRC_URI="ftp://download.yzis.org/yzis/${PN}_${PV##*_pre}-1.tar.gz"
 RESTRICT="nomirror"
 
-DEPEND="
+RDEPEND="
 	>=x11-libs/qt-3.3
 	ncurses? >=sys-libs/ncurses-5.4
 	kde? >=kde-base/kdelibs-3.3
@@ -21,10 +21,10 @@ DEPEND="
 	sys-apps/file
 	=dev-lang/lua-5*"
 
-RDEPEND="
+DEPEND="
 	>=sys-devel/automake-1.7.0
 	sys-devel/autoconf
-	${DEPEND}"
+	${RDEPEND}"
 
 S=${WORKDIR}/${PN}-${PV##*_pre}
 

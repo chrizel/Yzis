@@ -63,7 +63,7 @@ void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& te
 	if( pos.getY() >= mBuffer->lineCount() )
 		mBuffer->insertNewLine( pos.getX(), pos.getY() );
 	mBuffer->insertChar( pos.getX(), pos.getY(), text );
-	pView->moveXY( pos.getX() + text.length(), pos.getY() );
+	pView->gotoxyAndStick( pos.getX() + text.length(), pos.getY() );
 	COMMIT_VIEWS_CHANGES;
 }
 
@@ -72,7 +72,7 @@ void YZAction::replaceText( YZView* pView, const YZCursor& pos, unsigned int rep
 	CONFIGURE_VIEWS;
 	mBuffer->delChar( pos.getX(), pos.getY(), replacedLength );
 	mBuffer->insertChar( pos.getX(), pos.getY(), text );
-	pView->moveXY( pos.getX() + text.length(), pos.getY() );
+	pView->gotoxyAndStick( pos.getX() + text.length(), pos.getY() );
 	COMMIT_VIEWS_CHANGES;
 }
 
@@ -80,14 +80,14 @@ void YZAction::replaceChar( YZView* pView, const YZCursor& pos, const QString& t
 	CONFIGURE_VIEWS;
 	mBuffer->delChar( pos.getX(), pos.getY(), text.length() );
 	mBuffer->insertChar( pos.getX(), pos.getY(), text );
-	pView->moveXY( pos.getX() + text.length(), pos.getY() );
+	pView->gotoxyAndStick( pos.getX() + text.length(), pos.getY() );
 	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::deleteChar( YZView* pView, const YZCursor& pos, unsigned int len ) {
 	CONFIGURE_VIEWS;
 	mBuffer->delChar( pos.getX(), pos.getY(), len );
-	pView->moveXY( pos.getX(), pos.getY() );
+	pView->gotoxyAndStick( pos.getX(), pos.getY() );
 	COMMIT_VIEWS_CHANGES;
 }
 
@@ -96,28 +96,28 @@ void YZAction::appendLine( YZView* pView, const QString& text ) {
 	unsigned int y = mBuffer->lineCount();
 	mBuffer->insertNewLine( 0, y );
 	mBuffer->insertChar( 0, y, text );
-	pView->moveXY( text.length(), y );
+	pView->gotoxyAndStick( text.length(), y );
 	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::insertNewLine( YZView* pView, const YZCursor& pos ) {
 	CONFIGURE_VIEWS;
 	mBuffer->insertNewLine( pos.getX(), pos.getY() );
-	pView->moveXY( 0, pos.getY() + 1 );
+	pView->gotoxyAndStick( 0, pos.getY() + 1 );
 	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::replaceLine( YZView* pView, const YZCursor& pos, const QString &text ) {
 	CONFIGURE_VIEWS;
 	mBuffer->replaceLine( text, pos.getY() );
-	pView->moveXY( text.length(), pos.getY() );
+	pView->gotoxyAndStick( text.length(), pos.getY() );
 	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &text ) {
 	CONFIGURE_VIEWS;
 	mBuffer->insertLine( text, pos.getY() );
-	pView->moveXY( text.length(), pos.getY() );
+	pView->gotoxyAndStick( text.length(), pos.getY() );
 	COMMIT_VIEWS_CHANGES;
 }
 
@@ -126,7 +126,7 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len,
 	copyLine(pView, pos, len, reg);
 	for ( unsigned int i = 0; i < len && pos.getY() < mBuffer->lineCount(); i++ )
 		mBuffer->deleteLine( pos.getY() );
-	pView->moveXY( 0, pos.getY() );
+	pView->gotoxyAndStick( 0, pos.getY() );
 	COMMIT_VIEWS_CHANGES;
 }
 
@@ -284,7 +284,7 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 	for ( ; it != endd; ++it )
 		YZSession::mRegisters.setRegister( *it, buff );
 
-	pView->moveXY( beginCursor.getX(), beginCursor.getY() );
+	pView->gotoxyAndStick( beginCursor.getX(), beginCursor.getY() );
 	COMMIT_VIEWS_CHANGES;
 }
 
@@ -300,7 +300,7 @@ void YZAction::mergeNextLine( YZView* pView, unsigned int y, bool stripSpaces ) 
 	}
 	mBuffer->replaceLine( line + line2, y );
 	mBuffer->deleteLine( y + 1 );
-	pView->moveXY( line.length(), y );
+	pView->gotoxyAndStick( line.length(), y );
 	COMMIT_VIEWS_CHANGES;
 }
 

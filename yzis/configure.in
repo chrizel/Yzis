@@ -18,6 +18,7 @@ dnl Checks for programs.
 AC_PROG_INSTALL
 AC_PROG_CC
 AC_PROG_CXX
+AC_PROG_LIBTOOL
 
 dnl Checks for libraries.
 
@@ -38,4 +39,4 @@ dnl Checks for typedefs, structures, and compiler characteristics.
 
 dnl Checks for library functions.
 
-AC_OUTPUT(Makefile)
+AC_OUTPUT(Makefile libyzis/Makefile)

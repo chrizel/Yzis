@@ -540,7 +540,9 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				end.setX(0);
 				end.setY(0);
 			}
-			doSearch(getCommandLineText(), mSearchBegin, end);
+			if (!doSearch( getCommandLineText(), mSearchBegin, end )) {
+					gotoxy(mSearchBegin->getX(), mSearchBegin->getY());
+			}
 			return;
 			break;
 		}

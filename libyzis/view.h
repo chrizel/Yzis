@@ -24,7 +24,6 @@
  */
 
 #include <qvaluevector.h>
-#include <qobject.h>
 #include <qapplication.h>
 
 #include "buffer.h"
@@ -37,10 +36,6 @@ class YZSession;
 
 typedef QValueVector<QString> StringVector;
 
-/*class YZViewInternal : public QObject {
-	Q_OBJECT
-};
-*/
 /**
  * MUST be reimplemented in the GUI. It's the basis to display the content of a buffer
  * One view is the display of some part of a buffer, it is used to receive inputs and displays

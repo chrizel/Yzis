@@ -25,7 +25,6 @@
 #include <cstdlib>
 #include <ctype.h>
 #include <qkeysequence.h>
-#include <qobject.h>
 #include "view.h"
 #include "debug.h"
 #include "undo.h"
@@ -578,13 +577,13 @@ QString YZView::gotoCommandMode( ) {
 	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_COMMAND;
 	purgeInputBuffer();
-	setStatusBar( "Command mode" );
+	setStatusBar( tr( "Command mode" ) );
 	return QString::null;
 }
 
 QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
 	mMode = YZ_VIEW_MODE_EX;
-	setStatusBar( "-- EX --" );
+	setStatusBar( tr( "-- EX --" ) );
 	setFocusCommandLine();
 	purgeInputBuffer();
 	return QString::null;
@@ -730,4 +729,3 @@ QString YZView::searchAgain( const QString& inputsBuff, YZCommandArgs args ) {
 	return QString::null;
 }
 
-#include "view.moc"

@@ -32,7 +32,7 @@
 class KYZisEdit;
 class KYZisCommand;
 
-class KYZisView: public KTextEditor::View,public KTextEditor::ViewCursorInterface, public YZView
+class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterface, public YZView
 {
 	Q_OBJECT
 

@@ -1,12 +1,5 @@
 <!DOCTYPE TS><TS>
 <context>
-    <name>KTextEditor</name>
-    <message>
-        <source>Yzis Ready</source>
-        <translation>Yzis Prêt</translation>
-    </message>
-</context>
-<context>
     <name>KYZisDoc</name>
     <message>
         <source>Yzis is not able to save remote files for now</source>
@@ -15,6 +8,13 @@
     <message>
         <source>Remote files</source>
         <translation>Fichiers distants</translation>
+    </message>
+</context>
+<context>
+    <name>KYZisView</name>
+    <message>
+        <source>Yzis Ready</source>
+        <translation>Yzis Prêt</translation>
     </message>
 </context>
 <context>
@@ -72,6 +72,14 @@
     <message>
         <source>-- SEARCH --</source>
         <translation>-- RECHERCHE --</translation>
+    </message>
+    <message>
+        <source>Command mode</source>
+        <translation>Commande</translation>
+    </message>
+    <message>
+        <source>-- EX --</source>
+        <translation>-- EX --</translation>
     </message>
 </context>
 </TS>

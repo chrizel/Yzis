@@ -322,6 +322,7 @@ void YzisSchemaConfigColorTab::readConfig (const QString& config)
   m_iconborder->setColor(YZSession::mOptions.readQColorEntry("Color Icon Bar", tmp6));
   m_linenumber->setColor(YZSession::mOptions.readQColorEntry("Color Line Number", tmp7));
 
+#if KDE_VERSION >= 330
   // same std colors like in YzisDocument::markColor
   QValueVector <QColor> mark(KTextEditor::MarkInterface::reservedMarkersCount());
   Q_ASSERT(mark.size() > 6);
@@ -343,7 +344,7 @@ void YzisSchemaConfigColorTab::readConfig (const QString& config)
     m_combobox->changeItem(pix, m_combobox->text(i), i);
   }
   m_markers->setColor( m_markerColors[ m_combobox->currentItem() ] );
-
+#endif
   connect( m_back      , SIGNAL( changed( const QColor& ) ), SIGNAL( changed() ) );
   connect( m_selected  , SIGNAL( changed( const QColor& ) ), SIGNAL( changed() ) );
   connect( m_current   , SIGNAL( changed( const QColor& ) ), SIGNAL( changed() ) );

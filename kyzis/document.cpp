@@ -167,14 +167,15 @@ bool KYZisDoc::removeText (  uint startLine, uint startCol, uint endLine, uint e
 
 bool KYZisDoc::popupFileSaveAs() {
 	KURL url =	KFileDialog::getSaveURL();
-	if ( ! url.isEmpty() ) {//cancelled ?
-		setPath( url.path() );
-		return true;
-	} else if ( !url.isLocalFile() ) {
+	if ( url.isEmpty() ) return false;//canceled
+	else if ( !url.isLocalFile() ) {
 		KMessageBox::sorry(m_parent, tr("Yzis is not able to save remote files for now" ), tr( "Remote files"));
 		return false;
-	} else
-		return false;
+	} else if ( ! url.isEmpty() ) {
+		setPath( url.path() );
+		return true;
+	}
+	return false;
 }
 
 #include "document.moc"

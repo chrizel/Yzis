@@ -343,6 +343,7 @@ void YZView::redrawScreen() {
 
 void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	QString lin;
+	if ( mBuffer->introShown() ) mBuffer->clearIntro();
 
 	// check positions
 	if ( ( int )nexty < 0 ) nexty = 0;

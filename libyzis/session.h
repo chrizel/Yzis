@@ -159,10 +159,19 @@ class YZSession {
 		 */
 		virtual YZView* createView ( YZBuffer* ) = 0;
 
+		/**
+		 * Saves all buffers with a filename set
+		 */
+		void saveAll();
+
+		/**
+		 * Count the number of buffers
+		 */
+		int countBuffers() { return mBuffers.count(); }
+
 	protected:
 		//we map "filename"/buffer for buffers
 		QMap<QString,YZBuffer*> mBuffers;
-//		QValueList<yz_event> mEvents;
 
 	private:
 		QString mSessionName;

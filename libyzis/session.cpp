@@ -121,4 +121,10 @@ void YZSession::updateBufferRecord( const QString& oldname, const QString& newna
 	mBuffers.insert( newname, buffer );
 }
 
-
+void YZSession::saveAll() {
+	QMap<QString,YZBuffer*>::Iterator it;
+	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+		YZBuffer* b = ( *it );
+		if ( !b->fileIsNew() ) b->save();
+	}
+}

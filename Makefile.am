@@ -65,7 +65,7 @@ update-tr:
 translate:
 	echo "Building .qm files for Qt..."; \
 	for i in $(srcdir)/translations/*.ts ; do \
-		$(QTDIR)/bin/lrelease $$i -qm translations/`basename $$i .ts`.qm ; \
+		$(QTDIR)/bin/lrelease $$i -qm $(srcdir)/translations/`basename $$i .ts`.qm ; \
 	done
 
 install-translations:

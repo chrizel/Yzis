@@ -2,4 +2,6 @@
 .svn
 cyzis
 diff
-
+Makefile.in
+Makefile
+*~

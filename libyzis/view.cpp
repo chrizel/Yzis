@@ -962,7 +962,6 @@ bool YZView::drawNextLine( ) {
 			if ( highlight )
 				rHLAttributes = highlight->attributes( 0 )->data( );
 			rHLAttributesLen = rHLAttributes ? highlight->attributes( 0 )->size() : 0;
-			rHLa += sColLength;
 
 			return true;
 		}
@@ -979,6 +978,8 @@ bool YZView::drawNextCol( ) {
 	rCursor->setX( rCursor->getX( ) + rColLength );
 	// update sCursor position
 	sCursor->setX ( sCursor->getX() + sColLength );
+
+	rHLa += sColLength;
 
 	return ( rCursor->getX( ) - rCurrentLeft < mColumnsVis 
 		&& sCursor->getX( ) < sCurLine.length() );

@@ -57,6 +57,12 @@ public:
         // notification
         yzDebug() << "TYZSession::changeCurrentView" << endl;
     }
+    virtual void setFocusCommandLine( ) {
+        yzDebug() << "TYZSession::setFocusCommandLine" << endl;
+    }
+    virtual void setFocusMainWindow( ) {
+        yzDebug() << "TYZSession::setFocusMainWindow" << endl;
+    }
 };
 
 #endif // TYZ_SESSION_H

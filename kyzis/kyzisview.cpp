@@ -16,6 +16,8 @@ KYZisView::KYZisView ( KYZisDoc *doc, YZSession *_session, QWidget *parent, cons
 	command = new KYZisCommand ( this, "command" );
 	status = new KStatusBar (this, "status");
 	status->insertItem("Yzis Ready",0);
+	status->insertItem("",99,1,true);
+	status->setItemAlignment(99,Qt::AlignRight);
 	status->setFixedHeight(status->height());
 	
 	QVBoxLayout *l = new QVBoxLayout(this);
@@ -56,10 +58,11 @@ void KYZisView::customEvent (QCustomEvent *) {
 			case YZ_EV_SET_CURSOR:
 				kdDebug() << "event SET_CURSOR" << endl;
 				editor->setCursor (event.setcursor.x, event.setcursor.y);
+				status->changeItem( QString("%1,%2-%3 (%4)").arg(event.setcursor.x ).arg( event.setcursor.y ).arg( event.setcursor.y2 ).arg( event.setcursor.percentage),99 );
 				break;
 			case YZ_EV_SET_STATUS:
 				kdDebug() << "event SET_STATUS" << event.setstatus.text <<  endl;
-				status->changeItem( event.setstatus.text,0 );
+				status->changeItem( event.setstatus.text,0);
 				break;
 			case YZ_EV_REDRAW:
 				editor->updateContents();

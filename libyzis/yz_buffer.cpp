@@ -21,6 +21,12 @@ YZBuffer::YZBuffer(const QString& _path) {
 	view_list.setAutoDelete( true ); //we own views
 }
 
+YZBuffer::~YZBuffer() {
+	view_list.clear();
+	text.clear();
+	delete path;
+}
+
 void YZBuffer::addChar (int x, int y, QChar c) {
 	/* brute force, we'll have events specific for that later on */
 	QString l=findLine(y);

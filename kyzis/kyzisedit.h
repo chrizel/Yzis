@@ -20,10 +20,10 @@ class KYZisEdit : public QScrollView {
 		virtual ~KYZisEdit();
 
 		//erase all text, and set new text
-		void setText (const QString);
+		void setText (const QString& );
 
 		//append text
-		void append ( const QString );
+		void append ( const QString& );
 
 		//set text at line ...
 		void setTextLine(int l, const QString &);
@@ -45,7 +45,7 @@ class KYZisEdit : public QScrollView {
 		void contentsMousePressEvent (QMouseEvent *);
 
 		//insert text at line
-		void insetTextAt(const QString, int line);
+		void insetTextAt(const QString&, int line);
 
 		//insert a char at idx on line ....
 		void insertCharAt(QChar,int);

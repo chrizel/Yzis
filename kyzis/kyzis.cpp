@@ -64,6 +64,8 @@ Kyzis::Kyzis()
 	}
 
 Kyzis::~Kyzis() {
+	delete m_part;
+	delete m_toolbarAction;
 }
 
 void Kyzis::load(const KURL& url) {

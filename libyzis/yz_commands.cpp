@@ -24,6 +24,8 @@ YZCommandPool::YZCommandPool() {
 }
 
 YZCommandPool::~YZCommandPool() {
+	globalCommands.clear();
+	globalExCommands.clear();
 }
 
 void YZCommandPool::initPool() {

@@ -19,7 +19,7 @@ KYZisDoc::KYZisDoc (QWidget *parentWidget, const char * /*widgetName*/, QObject 
 		insertChildClient(current);
 		current->show();
 		setWidget(current);
-		_views.setAutoDelete( false ); //we don't own !
+//		_views.setAutoDelete( true ); //we don't own !
 }
 
 KYZisDoc::~KYZisDoc () {

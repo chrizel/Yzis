@@ -74,6 +74,7 @@ void YZQtPrinter::doPrint( ) {
 	unsigned int oldColumnsVis = mView->getColumnsVisible( );
 
 	bool number = YZSession::getBoolOption( "Global\\number" );
+	bool rightleft = YZSession::getBoolOption( "Global\\rightleft" );
 	unsigned int marginLeft = 0;
 	if ( number ) {
 		marginLeft = ( 2 + QString::number( mView->myBuffer()->lineCount() ).length() );
@@ -94,7 +95,7 @@ void YZQtPrinter::doPrint( ) {
 
 	unsigned int topY = titleRect.height() + linespace;
 	unsigned int curY = topY;
-	unsigned int curX;
+	unsigned int curX, x;
 
 	cliph = ( height - topY ) / linespace;
 	int nbPages = totalHeight / cliph + ( totalHeight % cliph ? 1 : 0 );
@@ -111,7 +112,14 @@ void YZQtPrinter::doPrint( ) {
 			unsigned int lineNumber = mView->drawLineNumber();
 			if ( lineNumber != lastLineNumber ) {
 				p.setPen( Qt::gray );
-				p.drawText( 0, curY, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
+				QString num = QString::number( lineNumber );
+				if ( rightleft ) {
+					x = width - ( marginLeft - 1 ) * maxwidth;
+				} else {
+					num = num.rightJustify( marginLeft - 1, ' ' );
+					x = 0;
+				}
+				p.drawText( x, curY, num );
 				lastLineNumber = lineNumber;
 			}
 		}
@@ -120,7 +128,7 @@ void YZQtPrinter::doPrint( ) {
 			QColor c = mView->drawColor( );
 			if ( c.isValid() && c != Qt::white ) p.setPen( mView->drawColor( ) );
 			else p.setPen( Qt::black );
-			p.drawText( curX, curY, mView->drawChar( ) );
+			p.drawText( rightleft ? width - curX - maxwidth : curX, curY, mView->drawChar( ) );
 			curX += mView->drawLength( ) * maxwidth;
 		}
 		curY += linespace * mView->drawHeight();
@@ -128,8 +136,11 @@ void YZQtPrinter::doPrint( ) {
 			// draw Rect
 			p.setPen( Qt::black );
 			p.drawRect( 0, 0, width, curY );
-			if ( number )
-				p.drawLine( marginLeft * maxwidth - maxwidth / 2, titleRect.height(), marginLeft * maxwidth - maxwidth / 2, curY );
+			if ( number ) {
+				x = marginLeft * maxwidth - maxwidth / 2;
+				if ( rightleft ) x = width - x;
+				p.drawLine( x, titleRect.height(), x, curY );
+			}
 			p.drawLine( titleRect.x(), titleRect.height(), titleRect.width(), titleRect.height() );
 			curY = topY;
 		}
@@ -138,8 +149,11 @@ void YZQtPrinter::doPrint( ) {
 		// draw Rect
 		p.setPen( Qt::black );
 		p.drawRect( 0, 0, width, curY );
-		if ( number )
-			p.drawLine( marginLeft * maxwidth - maxwidth / 2, titleRect.height(), marginLeft * maxwidth - maxwidth / 2, curY );
+		if ( number ) {
+			x = marginLeft * maxwidth - maxwidth / 2;
+			if ( rightleft ) x = width - x;
+			p.drawLine( x, titleRect.height(), x, curY );
+		}
 		p.drawLine( titleRect.x(), titleRect.height(), titleRect.width(), titleRect.height() );
 	}
 

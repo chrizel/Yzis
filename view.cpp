@@ -241,7 +241,9 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	bool test = false;
 
 	bool cindent = getLocalBoolOption( "cindent" );
-	if ( getLocalBoolOption( "rightleft" ) ) {
+	if ( getLocalBoolOption( "rightleft" ) && 
+		( mMode == YZ_VIEW_MODE_COMMAND || mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE )
+	) {
 #define SWITCH_KEY( a, b ) \
 	if ( key == a ) key = b; \
 	else if ( key == b ) key = a

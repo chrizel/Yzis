@@ -523,7 +523,7 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 	unsigned int c = 0;
 	QRegExp rex1("^(\\w+)\\s*");//a word with boundaries
 	QRegExp rex2("^([^\\w\\s]+)\\s*");//non-word chars with boundaries
-	QRegExp rex3("^\\s+([^\\w\\s]*|\\w*)");//whitespace
+	QRegExp rex3("^\\s+([^\\w\\s$]+|\\w+)");//whitespace
 			
 	while ( c < args.count ) { //for each word
 		const QString& current = invertQString( args.view->myBuffer()->textline( result.getY() ) );
@@ -544,7 +544,8 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 				len = rex3.matchedLength();
 				yzDebug() << "rex3 : " << idx << "," << len << endl;
 			}
-		}			
+		}
+		int my_idx = lineLength - idx - len;
 		if ( idx != -1 ) {
 			yzDebug() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
 			c++; //one match

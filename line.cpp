@@ -59,3 +59,30 @@ void YZLine::setData(const QString &data) {
 		mAttributes[ i ] = 0;
 }
 
+int YZLine::firstChar() const {
+	return nextNonSpaceChar(0);
+}
+
+int YZLine::lastChar() const {
+	return previousNonSpaceChar(mData.length()-1);
+}
+
+int YZLine::nextNonSpaceChar(uint pos) const {
+	int length = (int)mData.length();
+	for (int i = pos; i < length; ++i) {
+		if (!mData[i].isSpace()) 
+			return i;
+	}
+	return -1;
+}
+
+int YZLine::previousNonSpaceChar(uint pos) const {
+	if (pos >= mData.length())
+		pos = mData.length() - 1;
+	for (int i = pos; i>=0; --i) {
+		if (!mData[i].isSpace())
+			return i;
+	}
+	return -1;
+}
+

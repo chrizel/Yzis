@@ -418,6 +418,11 @@ public:
 	inline const QString& encoding() const {
 		return currentEncoding;
 	}
+	
+	/**
+	 * Detects the correct syntax highlighting for the current file
+	 */
+	void detectHighLight();
 
 protected:
 	/**

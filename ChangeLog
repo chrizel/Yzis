@@ -1,6 +1,7 @@
 2004-10-28 mikmak
   * libyzis
   	new enew ex command
+	new :syn (on/off) command to enable/disable syntax HL
   * kyzis
   	replaced DCOP calls with normal C functions calls (faster)
   	

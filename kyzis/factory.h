@@ -23,6 +23,7 @@
 
 #include <kparts/factory.h>
 #include "session.h"
+#include "kyzis.h"
 
 class KInstance;
 class KAboutData;
@@ -58,6 +59,7 @@ public:
 		void applyConfig();
 
 protected:
+	Kyzis *mMainApp;
 
 private:
     static void ref();

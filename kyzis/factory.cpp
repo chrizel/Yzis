@@ -94,6 +94,7 @@ void KYZisFactory::ref() {
 KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name, const char *classname, const QStringList &args) {
 	yzDebug() << "Factory::createPartObject" << endl;
 	bool bSingleView = (classname!=QString("KTextEditor::Document"));
+	mMainApp = static_cast<Kyzis*>(parentWidget);
 
 	QString kID, kvId;
 	kID = args[ 0 ];// buffer ID
@@ -199,6 +200,7 @@ YZView* KYZisFactory::createView( YZBuffer *) {
 }
 
 YZBuffer *KYZisFactory::createBuffer(const QString& path) {
+#if 0
 	DCOPClient *client = kapp->dcopClient();
 	QByteArray data;
 	QDataStream arg(data, IO_WriteOnly);
@@ -212,6 +214,10 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 		return NULL; //we failed
 	}
 	return findBuffer( path );
+#endif
+	if (mMainApp)
+		mMainApp->createBuffer(path);
+	return findBuffer( path );
 }
 
 void KYZisFactory::popupMessage( const QString& message ) {
@@ -220,6 +226,7 @@ void KYZisFactory::popupMessage( const QString& message ) {
 }
 
 void KYZisFactory::deleteView( int Id ) {
+#if 0
 	DCOPClient *client = kapp->dcopClient();
 	QByteArray data;
 	QDataStream arg(data, IO_WriteOnly);
@@ -232,7 +239,10 @@ void KYZisFactory::deleteView( int Id ) {
 		popupMessage( "DCOP communication is broken ! KYzis is not able to delete the current view" );
 		return; //we failed
 	}
-
+#endif
+	if (mMainApp)
+		mMainApp->closeView(Id);
+		
 #if 0 //that does not work since KMdi does not know the view is destroyed
 	yzDebug() << "Factory : deleteView " << v->myId << endl;
 	KYZisView *vv = static_cast<KYZisView*>( v );

@@ -3,8 +3,9 @@
 "/usr/share/sgml/docbook/xml-dtd-4.2/docbookx.dtd" [
 	
 	<!ENTITY insert "<command>insert</command>">
-	<!ENTITY command "<command>command</command>">
 	<!ENTITY replace "<command>replace</command>">
+	<!ENTITY command "<command>command</command>">
+	<!ENTITY ex "<command>ex</command>">
 
 	<!ENTITY introduction SYSTEM "introduction.docbook">
 	<!ENTITY userguide SYSTEM "userguide.docbook">
@@ -16,9 +17,11 @@
 	
 	<bookinfo>
 		<title>Yzis Documentation</title>
-			<mediaobject>
-				<imageobject> <imagedata fileref="test.jpg" format="JPG" /> </imageobject>
-			</mediaobject>
+		
+		<mediaobject>
+			<imageobject> <imagedata fileref="pics/yzis-logo.png" format="PNG" /> </imageobject>
+		</mediaobject>
+		
 	</bookinfo>
 	
 	&introduction;

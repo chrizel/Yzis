@@ -4,10 +4,27 @@
 	<sect1 id="about">
 		<title>About Yzis</title>
 		<para>
-		Yzis is a vi-compatible editor that is composed of a generic vi engine and
-		independant GUI. It is developped in C++ and relies on Qt for the some of the
-		background classes (lists and strings mainly). A KDE GUI and a ncurses based
-		GUI are available.
+		Yzis a brand new editor inspired by vim. Yzis aims to be a powerful, fast editor with all of Vim's features and hopefully, at some point, more.
+		</para>
+
+		<para>
+		In Yzis, the core editing functionality is placed in a library, and interfaces are written on top of that. As of now, there are frontends for KDE and ncurses. Especially the KDE-interface provides an easy-to-use interface for users and allows you to have tabs for different buffers and a GUI that allows you to change things like colour schemes and syntax highlighting easily, while still letting (g)vim users feel at home.
+		</para>
+		
+		<para>
+		By using the powerful scripting language Lua, you can also easily extend yzis' functionality with scripts.
+		</para>
+
+		<para>
+		With an editing-engine clearly separated from the GUI, the different interfaces can be written to be closely integrated in their respective environments. The KDE frontend, kyzis, can be seamlessly embedded in KDE apps like Kdevelop.
+		</para>
+
+		<para>
+		libyzis is published under the terms of the LGPL.
+		</para>
+
+		<para>
+		kyzis and nyzis are published under the terms of the GPL.	
 		</para>	
 		
 		<mediaobject>

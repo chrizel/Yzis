@@ -11,8 +11,9 @@
 	</para>
 
 	<para>
-	The userguide will proceed from the ncurses GUI, but ofcourse everything works identical
-	in the KDE GUI.
+	The userguide will proceed from the ncurses user interface, but of course everything works identical
+	in the KDE user interface. It's highly recomended to have a copy of Yzis started when reading the userguide
+	and try out all steps that are gone through.  
 	</para>
 
 
@@ -21,7 +22,7 @@
 		<title>Start Yzis</title>
 		
 		<para>				
-		To start Yzis (the ncurses version) type:
+		To start Yzis (the ncurses interface) type:
 		</para>
 
 		<screen>
@@ -56,20 +57,21 @@
 		<title>Modes</title>
 		
 		<para>
-		There are three different <command>modes</command> in Yzis.
+		There are three main <command>modes</command> in Yzis.
 		</para>
 
 		<itemizedlist>
 			<listitem><para>Insert</para></listitem>
 			<listitem><para>Command</para></listitem>
-			<listitem><para>Replace</para></listitem>
+			<listitem><para>Ex</para></listitem>
 		</itemizedlist>
 		
 		<para>The &insert; mode is used for inserting text.
-		The &command; mode is used for executing Yzis commands that for instance modifies text.
-		The third mode, &replace;, is also used for inserting
-		text, but unlike &insert; mode it overrides the current text (replaces).
+		The &command; mode is used for executing Yzis commands that edits the text.
+		The third mode, &ex;, is used for executing commands that are file related like saving,
+		opening and exiting files.
 		</para>
+
 	
 		<para>
 		As we mentioned in the previous chapter you are automaticly being placed in
@@ -90,16 +92,34 @@
 		<para>
 		Changing between the modes is achieved by pressing different keys.
 		</para>
-		
+
 		<itemizedlist>
-			<listitem><para>Insert = i</para></listitem>
+			<listitem><para>Insert = i or <![CDATA[<Insert>]]></para></listitem>
 			<listitem><para>Command = <![CDATA[<ESC>]]></para></listitem>
 			<listitem><para>Replace = R</para></listitem>
 		</itemizedlist>
 		
 		<para>
-		Pressing <command>i</command> when we have opened a file would result in
-		changing to &insert; mode:
+		You have now been introduced to the three modes in Yzis. You know how to change
+		between them, but you still haven't learn to use any of them. In the next chapter 
+		you will get more familiar with the	&insert; mode.
+		</para>
+		
+	</sect1>
+
+
+	<!-- Section Insert -->
+	<sect1 id="insert">
+		<title>Insert mode</title>
+		
+		<para>
+		&insert; mode is the mode to use when inserting/writing text in Yzis. The text will
+		be inserted at the cursor. There really aren't so much to say about this mode, 
+		it's pretty much like writing text in any editor.
+		</para>
+		
+		<para>
+		To enter &insert; mode either press <command>i</command> or <![CDATA[<]]><command>Insert</command><![CDATA[>]]>.
 		</para>
 
 		<mediaobject>
@@ -113,9 +133,11 @@
 		</para>
 
 		<para>
-		To enter &replace;, press <command>R</command>:
+		There is special case of &insert; mode called &replace; mode. Unlike the normal &insert; mode it
+		overrides (replaces) text by default, which could be useful on certain occassions. To enter &replace;
+		mode press <command>R</command>.
 		</para>
-
+	
 		<mediaobject>
 			<imageobject>
 			<imagedata fileref="pics/nyzis_replace.png" format="PNG" />
@@ -125,12 +147,87 @@
 		<para>
 		"Replace" in the status bar indicates &replace; mode.
 		</para>
-
-		<para>
-		You have now been introduced to the three modes in Yzis. You know how to change
-		between them, but you still haven't learn to use any of them. In the next chapter 
-		you will get more familiar with the	&insert; mode.
-		</para>
 		
 	</sect1>
+
+	
+	<!-- Section Command -->
+	<sect1 id="command">
+		<title>Command mode</title>
+			
+		<para>
+		It is in this mode you'll get advantage of all the handy commands that Yzis provide for editing the text.
+		&command; mode is only used for executing commands, it's not possible to write text like in
+		the &insert; mode. There are many useful commands in Yzis and it may seem like a steep learning curve for
+		the beginner, but there is no need trying to learn all the commands at once. If you follow this userguide you will be 
+		introduced to the most basic commands which allows you to copy text, paste text, delete text and search in the text.
+		Hopefully you'll understand the power of Yzis' commands and become more efficient in your editing.  
+		</para>
+
+		<para>
+		To enter &command; mode press <![CDATA[<ESC>]]>.
+		</para>
+	
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="pics/nyzis_cmd.png" format="PNG" />
+			</imageobject>
+		</mediaobject>
+
+		<para>
+		"Awaiting Command" in the status bar indicates &command; mode.
+		</para>
+			
+	</sect1>
+
+
+	<!-- Section Ex -->
+	<sect1 id="ex">
+		<title>Ex mode</title>
+
+		<para>
+		The third main mode in Yzis, called &ex; mode is also used for executing commands, but these commands 
+		hasn't got anything to do with editing the text (like in &command; mode). The commands available in &ex;
+		mode are used for things like opening, saving and exiting files. The &ex; mode in Yzis isn't very useable
+		at the moment, it just provides the most vital commands.
+		</para>
+
+		<para>
+		To enter &ex; mode press <command>:</command> (colon).
+		</para>
+
+		<para>
+		Here is a list of the most essential &ex; commands:
+		</para>
+
+		<itemizedlist>
+			<listitem>
+				<para>w</para>
+				<para>Writes/saves the current file.</para> 
+			</listitem>
+			<listitem>
+				<para>q</para>
+				<para>Quits the current file.</para> 
+			</listitem>
+		</itemizedlist>
+
+		<para>
+		To quit Yzis, press <command>:</command> to enter &ex; mode, then
+		press <command>q</command> followed by <![CDATA[<ENTER>]]>.
+		</para>
+
+		<mediaobject>
+			<imageobject>
+			<imagedata fileref="pics/nyzis_ex.png" format="PNG" />
+			</imageobject>
+		</mediaobject>
+
+		<para>
+		"Ex" in the status bar indicates &ex; mode. When you're in &ex; mode you will be able to type commands
+		in the field below the status bar. In the screenshot there is a q written in the &ex; field which means
+		quit. Pressing <![CDATA[<Enter>]]> in that situation would quit the current file.
+		</para>
+
+	</sect1>
+
 </chapter>

@@ -204,8 +204,15 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 }
 
 void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
-	ASSERT_LINE_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),line);
-	if ( line == lineCount() ) {//we are adding a line, fake being at end of last line
+	if (line == lineCount()) {
+		YZASSERT_MSG(line==lineCount() && col==0, QString("YZBuffer::insertNewLine on last line is only possible on col 0").arg(col).arg(line));
+	} else {
+		ASSERT_LINE_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),line);
+	}
+	if ( line == lineCount() ) {
+		//we are adding a new line at the end of the buffer by adding a new
+		//line at the beginning of the next unexisting line
+		//fake being at end of last line to make it work
 		line --;
 		col = textline(line).length(); 
 	}

@@ -269,6 +269,11 @@ class YZView {
 		void leaveVisualMode( );
 
 		/**
+		 * Leave completion mode
+		 */
+		void leaveCompletionMode( );
+
+		/**
 		 * Get the selected area
 		 */
 		YZSelectionMap getVisualSelection();
@@ -669,6 +674,17 @@ class YZView {
 
 		YZSelectionMap visualSelection();
 
+		/**
+		 * Starts a completion in direction forward
+		 */
+		void initCompletion();
+		
+		/**
+		 * Find next completion match
+		 * @param forward selects the direction
+		 */
+		const QString& doComplete(bool forward);
+
 	public slots :
 		void sendMultipleKey( const QString& keys );
 
@@ -852,6 +868,10 @@ class YZView {
 		QStringList mModes; //list of modes
 
 		unsigned int m_paintAutoCommit;
+
+		YZCursor *m_completionStart;
+		YZCursor *m_completionCursor;
+		QString m_word2Complete;
 };
 
 #endif /*  YZ_VIEW_H */

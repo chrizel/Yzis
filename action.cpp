@@ -404,6 +404,7 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
 YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& mBegin, const YZCursor& mEnd, bool reverseSearch, unsigned int *matchlength, bool *found ) {
+	yzDebug() << " Searching " << what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
 	QRegExp ex( what );
 	int currentMatchLine = mBegin.getY(); //start from current line
 	//if you understand this line you are semi-god :)
@@ -420,12 +421,22 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 			reverseSearch ? i-- : i++ ) {
 			
 		l = pView->myBuffer()->textline( i );
-//		yzDebug() << "Searching " << what << " in line : " << l << endl;
+		//cut lines if we are on first/last lines to search in
+		if ( i == mBegin.getY() ) {
+			l = reverseSearch ? l.left(mBegin.getX()) : l.mid(mBegin.getX());
+		}
+		if ( i == mEnd.getY() ) {
+			l = reverseSearch ? l.mid(mEnd.getX()) : l.left(mEnd.getX());
+		}
+		
 		int idx;
-		if ( reverseSearch )
+		if ( reverseSearch ) {
 			idx = ex.searchRev( l, currentMatchColumn );
-		else
+			yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
+		} else {
 			idx = ex.search( l, currentMatchColumn );
+			yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
+		}
 
 		if ( idx >= 0 ) {
 			//check we are not past the mEnd

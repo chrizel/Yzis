@@ -58,7 +58,6 @@ static const QChar tabChar( '\t' );
 static QColor fake/*( "white" )*/;
 static QColor blue( "blue" );
 
-
 /**
  * class YZView
  */
@@ -126,6 +125,10 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	tabstop = getLocalIntOption("tabstop");
 	wrap = getLocalBoolOption( "wrap" );
 
+	//completion
+	m_completionStart = new YZCursor(this);
+	m_completionCursor = new YZCursor(this);
+
 	setPaintAutoCommit();
 }
 
@@ -141,6 +144,8 @@ YZView::~YZView() {
 	delete dVisualCursor;
 	delete selectionPool;
 	delete beginChanges;
+	delete m_completionStart;
+	delete m_completionCursor;
 }
 
 void YZView::setupKeys() {
@@ -230,7 +235,7 @@ void YZView::sendMultipleKey(const QString& keys) {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
+//	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 
 	QString key=_key;
 	QString modifiers=_modifiers;
@@ -281,17 +286,22 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		case YZ_VIEW_MODE_COMPLETION:
 			mPreviousChars += modifiers + key;
 			if ( mPreviousChars == "<ESC>" ) {
-				gotoPreviousMode();
-				purgeInputBuffer();
-				return;
-			} else {
-				if ( mPreviousChars == "<CTRL>p" ) {
-	//				mBuffer->action()->previousWordCompletion();
-				} else if ( mPreviousChars == "<CTRL>n" ) {
-//					mBuffer->action()->nextWordCompletion();
-				}
-				return;
+				leaveCompletionMode();
+			} else if ( mPreviousChars == "<CTRL>p" ) {
+				if (m_word2Complete.isEmpty())
+					initCompletion();
+				QString result = doComplete(false);
+				if (!result.isNull())
+					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
+			} else if ( mPreviousChars == "<CTRL>n" ) {
+				if (m_word2Complete.isEmpty())
+					initCompletion();
+				QString result = doComplete(true);
+				if (!result.isNull())
+					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
 			}
+			purgeInputBuffer();
+			return;
 		case YZ_VIEW_MODE_INSERT:
 			mPreviousChars += modifiers + key;
 			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode);
@@ -363,7 +373,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				}
 				if ( mPreviousChars.startsWith("<CTRL>x") ) {
 					gotoCompletionMode();
-					//purgeInputBuffer();
+					purgeInputBuffer();
 					return;
 				}
 				if ( mPreviousChars.startsWith("<CTRL>") ) {
@@ -456,7 +466,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				return;
 			} else if ( mPreviousChars.startsWith("<CTRL>x") ) {
 				gotoCompletionMode();	
-				//purgeInputBuffer();
+				purgeInputBuffer();
 				return;
 			} else {
 				if ( mPreviousChars.startsWith("<CTRL>") ) {
@@ -1448,6 +1458,11 @@ void YZView::leaveVisualMode( ) {
 	gotoPreviousMode();
 }
 
+void YZView::leaveCompletionMode() {
+	m_word2Complete = "";
+	gotoPreviousMode();
+}
+
 YZSelectionMap YZView::getVisualSelection() {
 	return selectionPool->layout("VISUAL");
 }
@@ -2155,5 +2170,41 @@ QString YZView::mode ( int mode ) {
 		return mModes[mode] + tr(" { Recording }");
 	}
 	return mModes[mode];
+}
+
+void YZView::initCompletion() {
+	YZNewMotionArgs arg (this, 1);
+	YZCursor begin = YZSession::me->getPool()->moveWordBackward( arg );
+	m_completionStart->setCursor(begin);
+	YZCursor stop (this,mainCursor->bufferX()-1, mainCursor->bufferY());
+	QStringList list = myBuffer()->getText(begin, stop);
+	yzDebug() << "Completing word : " << list[0] << endl;
+	//record current begin-of-word-to-complete
+	m_word2Complete = list[0];
+	m_completionCursor->setCursor(mainCursor->buffer());
+}
+
+const QString& YZView::doComplete(bool forward) {
+	YZCursor result;
+	unsigned int matchedLength=0;
+	bool found=false;
+	
+	if (forward) {
+		result = myBuffer()->action()->search(this, m_word2Complete+"\\w*", *m_completionCursor, YZCursor(this, 0, myBuffer()->lineCount()+1), false, &matchedLength, &found);
+	} else {
+		if ( *m_completionCursor == mainCursor->buffer() )
+			m_completionCursor->setX(mainCursor->bufferX() - m_word2Complete.length());
+		result = myBuffer()->action()->search(this, m_word2Complete+"\\w*", *m_completionCursor, YZCursor(this, 0, 0), true, &matchedLength, &found);
+	}
+	if (result == *m_completionStart) found=false; //just make sure we won't loop on myself :)
+	//found something ?
+	if ( found && matchedLength > 0 )  {
+		YZCursor end (this, result.getX()+matchedLength-1, result.getY());
+		QStringList list = myBuffer()->getText(result, end);
+		yzDebug() << "Match : " << list[0] << endl;
+		m_completionCursor->setCursor(result);
+		return list[0];
+	}
+	return QString::null;
 }
 

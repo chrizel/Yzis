@@ -181,8 +181,11 @@ void YZView::recalcScreen( ) {
 		}
 		mBuffer->setEncoding( mBuffer->getLocalStringOption( "encoding" ) );
 	}
+	wrap = getLocalBoolOption( "wrap" );
+
 	YZCursor old_pos = *scrollCursor->buffer();
 	scrollCursor->reset();
+	if ( wrap ) old_pos.setX( 0 );
 	gotoxy( scrollCursor, old_pos.getX(), old_pos.getY(), false );
 
 	old_pos = *mainCursor->buffer();

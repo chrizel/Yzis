@@ -922,7 +922,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		//ok we have a motion , so delete till the end of the motion :)
 		YZCursor *cursor = new YZCursor(this);
 		bool goBack = false;
-	    bool success = mSession->getMotionPool()->applyMotion(args.motion, this, &goBack, cursor);
+		bool success = mSession->getMotionPool()->applyMotion(args.motion, this, &goBack, cursor);
 		if ( !success ) {
 			purgeInputBuffer();
 			return QString::null;
@@ -935,56 +935,57 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		/* delete more than one line ? */
 		bool lineDeleted = ( mY != cursor->getY() );
 
+		if ( goBack ) {
+			mY = cursor->getY();
+			mX = cursor->getX();
+			cursor->setX( mCursor->getX() );
+			cursor->setY( mCursor->getY() );
+			gotoxy( mX, mY );
+			dY = dCursor->getY();
+		}
+
 		/* 1. delete the part of the current line */
 		QString b = mBuffer->textline( mY );
 		if ( wrap && ! lineDeleted ) {
-			gotoxy( goBack ? 0 : b.length(), mY );
+			gotoxy( b.length(), mY );
 			edY = dCursor->getY();
 		}
 		gotoxy( mX - 1, mY );
-		buff << b.mid( goBack ? cursor->getX() : mX, abs( cursor->getX() - mX ) );
-		QString b2 = goBack ? b.left( cursor->getX() ) + b.mid ( mX ) : b.left( mX ) + b.mid( cursor->getX() );
+		buff << b.mid( mX, cursor->getX() - mX );
+		QString b2 = b.left( mX ) + b.mid( cursor->getX() );
 		mBuffer->replaceLine( b2 , mY );
 
-
 		/* 2. delete whole lines */
-		unsigned int curY = goBack ? mY - 1 : mY + 1;
+		unsigned int curY = mY + 1;
 		if ( mY == 0 ) curY = 0; //dont loop ;)
 		if ( mY == mBuffer->lineCount() - 1 ) curY = mBuffer->lineCount() - 1; // and ... dont loop
 
-		//forward
-		while ( !goBack && cursor->getY() > curY ) {
+		while ( cursor->getY() > curY ) {
 			mBuffer->deleteLine( curY );
 			cursor->setY( cursor->getY() - 1 );
 		}
-		//backward
-		while ( goBack && cursor->getY() < curY ) {
-			mBuffer->deleteLine( curY );
-			cursor->setY( cursor->getY() + 1 );
-		}
-
 
 		/* 3. delete the part of the last line */
 		if ( cursor->getY() == curY ) {
 			b = mBuffer->textline( curY );
-			buff << ( goBack ? b.mid( cursor->getX() ) : b.left( cursor->getX() ) );
-			mBuffer->replaceLine( goBack ? b.left( cursor->getX() ) : b.mid( cursor->getX() ), curY );
+			buff << b.left( cursor->getX() );
+			mBuffer->replaceLine( b.mid( cursor->getX() ), curY );
 		}
 
 		/* ok, all is deleted, now redraw screen */
 		if ( lineDeleted ) {// we need to redraw screen bottom
-			paintEvent( dCurrentLeft, goBack ? cursor->getY() : dY, mColumnsVis, mLinesVis - ( ( goBack ? cursor->getY() : dY ) - dCurrentTop ) );
+			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		} else {
 			if ( wrap ) {
-				gotoxy( goBack ? 0 : b.length(), goBack ? cursor->getY() : mY );
+				gotoxy( b.length(), mY );
 				if ( dCursor->getY() != edY )
-					paintEvent( dCurrentLeft, goBack ? cursor->getY() : dY, mColumnsVis, mLinesVis - ( ( goBack ? cursor->getY() : dY ) - dCurrentTop ) );
+					paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 				else
-					paintEvent( dCurrentLeft, goBack ? cursor->getY() : dY, mColumnsVis, 1 + dCursor->getY() - ( goBack ? cursor->getY() : dY ) );
+					paintEvent( dCurrentLeft, dY, mColumnsVis, 1 + dCursor->getY() - dY );
 			} else
-				paintEvent( dCurrentLeft, goBack ? cursor->getY() : dY, mColumnsVis, 1 );
+				paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 		}
-		gotoxy( goBack ? cursor->getX() : mX, goBack ? cursor->getY() : mY );
+		gotoxy( mX, mY );
 	}
 	YZSession::mRegisters.setRegister( reg, buff );
 

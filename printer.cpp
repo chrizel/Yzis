@@ -18,7 +18,7 @@
  **/
 
 /**
- * $Id: $
+ * $Id$
  */
 
 #include <qpainter.h>

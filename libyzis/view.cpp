@@ -1439,8 +1439,8 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 	rLineHeight = 0;
 	rSpaceFill = 0;
 
-	tabwidth = getLocalIntOption("tabwidth");
-	wrap = getLocalBoolOption( "wrap" );
+	tabwidth = getLocalIntOption("General\\tabwidth");
+	wrap = getLocalBoolOption( "General\\wrap" );
 
 	wrapNextLine = false;
 	if ( sCursor->getY() < mBuffer->lineCount() && ! mBuffer->textline( sCursor->getY() ).isNull() )
@@ -1773,7 +1773,7 @@ QString YZView::refreshScreenInternal(const QString& , YZCommandArgs ) {
 int YZView::getLocalIntOption( const QString& option ) {
 	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) ) //find the local one ?
 		return YZSession::mOptions.readIntEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, 0 );
-	else 
+	else
 		return YZSession::mOptions.readIntEntry( option, 0 ); // else give the global default if any
 }
 

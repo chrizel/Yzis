@@ -44,6 +44,7 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mSessionName = _sessionName;
 	mCurView = 0;
 	me = this;
+	mSchemaManager = new YzisSchemaManager();
 }
 
 YZSession::~YZSession() {

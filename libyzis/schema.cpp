@@ -52,7 +52,7 @@ void YzisSchemaManager::update (bool readfromfile)
 //    m_config.reparseConfiguration ();
 
  // m_schemas = m_config.groupList();
-  m_schemas.sort ();
+//  m_schemas.sort ();
 
   m_schemas.remove (printingSchema());
   m_schemas.remove (normalSchema());

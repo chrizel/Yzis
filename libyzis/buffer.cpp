@@ -293,10 +293,7 @@ void YZBuffer::clearText() {
 	 * operation.
 	 */
 	mText.clear();
-	bool oldInsideUndo = mUndoBuffer->isInsideUndo();
-	mUndoBuffer->setInsideUndo( true );
-	appendLine("");
-	mUndoBuffer->setInsideUndo( oldInsideUndo );
+	setTextline( 0, "" );
 }
 
 QString YZBuffer::textline( uint line ) const {

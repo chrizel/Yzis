@@ -190,7 +190,7 @@ void YZView::sendMultipleKey(const QString& keys) {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
+//	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );
@@ -483,7 +483,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			mPreviousChars+=modifiers+key;
 			if ( mSession ) {
 				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
-				yzDebug() << "Command " << mPreviousChars << " gave state: " << state << endl;
+//				yzDebug() << "Command " << mPreviousChars << " gave state: " << state << endl;
 				switch(state) {
 					case CMD_ERROR:
 					case CMD_OK:

@@ -20,8 +20,9 @@
 #ifndef YZ_MOTIONPOOL
 #define YZ_MOTIONPOOL
 
-#include "motion.h"
 #include <qmap.h>
+#include <qregexp.h>
+typedef QMap<QString,QRegExp> YZMotion;
 
 /**
  * This is the main place for handling motion objects 

@@ -27,8 +27,14 @@ YZMotionPool::~YZMotionPool() {
 }
 
 void YZMotionPool::initPool() {
+	YZMotion t;
+	//how do we recognize a word
+	t["[0-9]*w"]= QRegExp( "[0-9]*\b.*\b" );
+	//let's call that a 'word' (meaning that later we would be able to redefine a 'word' at runtime)
+	addMotion (t, "word" );
 }
 
 void YZMotionPool::addMotion(const YZMotion& regexp, const QString& key){
 	pool.insert( key,regexp );
 }
+

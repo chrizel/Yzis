@@ -35,6 +35,7 @@
  * The third parameter specify whether your command will be overwritable or not ( not working
  * yet )
  * NEW_POOL_COMMAND("test", &YZCommandPool::test(),true);
+ * Update: "test" can be a string regexp too
  *
  * This calls the test function with an empty arg list using the 'this' instance :
  *	QString result = ( *this.*( globalCommands[ "test" ].function ) )( QStringList() );

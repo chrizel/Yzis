@@ -6,10 +6,7 @@
 #endif
 
 #include <kapplication.h>
-#include <kparts/dockmainwindow.h>
-#include <kdockwidget.h>
-
-class KToggleAction;
+#include <kmdimainfrm.h>
 
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
@@ -17,16 +14,17 @@ class KToggleAction;
  *
  * @short Application Shell
  * @author Yzis Team <yzis-dev@yzis.org>
- * @version 0.1
  */
-class Kyzis : public KParts::DockMainWindow
+class Kyzis : public KMdiMainFrm
 {
     Q_OBJECT
 public:
     /**
-     * Default Constructor
+	 * Constructs a Kyzis widget
+	 * @param dockConfig the configuration of dock widgets
+	 * @param mode the startup MDI mode
      */
-    Kyzis();
+    Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode);
 
     /**
      * Default Destructor
@@ -35,29 +33,18 @@ public:
 
     /**
      * Use this method to load whatever file/URL you have
+	 * @param url the url to open
      */
     void load(const KURL& url);
 
-    /**
-     * Returns the active Part
-     */
-    KParts::ReadWritePart *activePart() { return currentPart; }
-
+	/**
+	 * Opens a new buffer
+	 * @param path file to which the buffer is linked
+	 */
     void createBuffer(const QString& path);
 
 protected:
-    /**
-     * This method is called when it is time for the app to save its
-     * properties for session management purposes.
-     */
-    void saveProperties(KConfig *);
-
-    /**
-     * This method is called when this app is restored.  The KConfig
-     * object points to the session management config file that was saved
-     * with @ref saveProperties
-     */
-    void readProperties(KConfig *);
+	virtual void resizeEvent( QResizeEvent *e );
 
 private slots:
     void fileNew();
@@ -65,18 +52,15 @@ private slots:
     void optionsShowToolbar();
     void optionsConfigureKeys();
     void optionsConfigureToolbars();
-
     void applyNewToolbarConfig();
 
 private:
-    void setupAccel();
     void setupActions();
 
 private:
     KToggleAction *m_toolbarAction;
-    QValueList<KParts::ReadWritePart*> partsList;
-    KParts::ReadWritePart *currentPart;
-    KDockWidget *dock;
+	QDomElement m_dockConfig;
+	KParts::ReadWritePart *m_currentPart;
 };
 
 #endif // KYZIS_H

@@ -1,3 +1,7 @@
+2003-11-26 mikmak
+  * kyzis
+    move to KMdi :) (kyzis works again)
+
 2003-11-23 mikmak
   * all
     - Doxified Yzis, run 'make apidox' to generate the doc

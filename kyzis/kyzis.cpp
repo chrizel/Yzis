@@ -17,15 +17,49 @@
 #include <klibloader.h>
 #include <kmessagebox.h>
 #include <kfiledialog.h>
+#include <kdebug.h>
 
-Kyzis::Kyzis()
-	//: KParts::MainWindow( 0L, "Kyzis" ) {
-	: KParts::DockMainWindow( 0L, "Kyzis" ) {
-		// set the shell's ui resource file
+Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
+	: KMdiMainFrm(0L,"mdiApp",mode),
+	m_dockConfig( dockConfig ) 
+{
+	setIDEAlModeStyle( 1 );
+	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
+
+	setupActions();
+	
+	if ( m_dockConfig.hasChildNodes() ) {
+		readDockConfig(m_dockConfig);
+	}
+
+	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
+	KParts::ReadWritePart *m_part;
+	if (factory) {
+		m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzis_part", "KParts::ReadWritePart" ));
+		if (m_part) {
+			kdDebug() << "Yzis part successfully loaded" << endl;
+			m_currentPart = m_part;
+			KMdiChildView *view = createWrapper( m_part->widget(), "new buffer" , "buffer1" );
+			addWindow( view );
+			createGUI(m_part);
+		}
+	} else {
+		KMessageBox::error(this, "Could not find our Part!");
+		kapp->quit();
+		return;
+	}
+
+	dockManager->finishReadDockConfig();
+	setMenuForSDIModeSysButtons( menuBar() );
+	
+}
+	
+#if 0
 		setXMLFile("kyzis_shell.rc");
 
 		// then, setup our actions
 		setupActions();
+
 
 		// this routine will find and load our Part.  it finds the Part by name
 		// which is a bad idea usually.. but it's alright in this case since our
@@ -41,11 +75,11 @@ Kyzis::Kyzis()
 			if (m_part)
 			{
 				partsList.append(m_part);
-				currentPart = m_part;
+				m_currentPart = m_part;
 
 				// tell the KParts::MainWindow that this is indeed the main widget
 				//setCentralWidget(m_part->widget());
-				//dock->setWidget(m_part->widget());
+				dock->setWidget(m_part->widget());
 				//dock->setToolTipString();
 
 				// and integrate the part's GUI with the shell's
@@ -68,16 +102,20 @@ Kyzis::Kyzis()
 		// to automatically save settings if changed: window size, toolbar
 		// position, icon size, etc.
 		setAutoSaveSettings();
-	}
+#endif
 
 Kyzis::~Kyzis() {
-	//delete m_part;
-	partsList.clear();
+	writeDockConfig(m_dockConfig);
 	delete m_toolbarAction;
 }
 
+void Kyzis::resizeEvent( QResizeEvent *e) {
+   KMdiMainFrm::resizeEvent( e );
+   setSysButtonsAtMenuPosition();
+}
+
 void Kyzis::load(const KURL& url) {
-	currentPart->openURL(url);
+	m_currentPart->openURL(url);
 	//m_part->openURL( url );
 }
 
@@ -93,19 +131,6 @@ void Kyzis::setupActions() {
 	KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
 }
 
-void Kyzis::saveProperties(KConfig* /*config*/) {
-	// the 'config' object points to the session managed
-	// config file.  anything you write here will be available
-	// later when this app is restored
-}
-
-void Kyzis::readProperties(KConfig* /*config*/) {
-	// the 'config' object points to the session managed
-	// config file.  this function is automatically called whenever
-	// the app is being restored.  read in here whatever you wrote
-	// in 'saveProperties'
-}
-
 void Kyzis::fileNew() {
 	// this slot is called whenever the File->New menu is selected,
 	// the New shortcut is pressed (usually CTRL+N) or the New toolbar
@@ -116,8 +141,8 @@ void Kyzis::fileNew() {
 	// says that it should open a new window if the document is _not_
 	// in its initial state.  This is what we do here..
 	//XXX NOPE
-	if ( ! currentPart->url().isEmpty() || currentPart->isModified() ) {
-		(new Kyzis)->show();
+	if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
+//		(new Kyzis)->show();
 	};
 }
 
@@ -158,7 +183,7 @@ void Kyzis::fileOpen() {
 		// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
 		// says that it should open a new window if the document is _not_
 		// in its initial state.  This is what we do here..
-		if ( currentPart->url().isEmpty() && ! currentPart->isModified() ) {
+		if ( m_currentPart->url().isEmpty() && ! m_currentPart->isModified() ) {
 			// we open the file in this window...
 			load( url );
 		} else {
@@ -172,6 +197,7 @@ void Kyzis::fileOpen() {
 }
 
 void Kyzis::createBuffer(const QString& path) {
+		kdDebug() << "Kyzis::createBuffer " << path << endl;
 		KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
 		if (factory)
 		{
@@ -181,9 +207,9 @@ void Kyzis::createBuffer(const QString& path) {
 
 			if (m_part)
 			{
-				partsList.append(m_part);
-				currentPart = m_part;
-			//	dock->
+//				partsList.append(m_part);
+//				m_currentPart = m_part;
+//				dock->setWidget(m_part->widget());
 			}
 		}
 }

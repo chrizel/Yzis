@@ -10,7 +10,7 @@
 static const char *description =
     I18N_NOOP("KDE Frontend for the YZis Editor");
 
-static const char *version = "v0.0.1";
+static const char *version = "M1";
 
 static KCmdLineOptions options[] = {
     { "+[URL]", I18N_NOOP( "Document to open." ), 0 },
@@ -25,20 +25,24 @@ int main(int argc, char **argv) {
     KApplication app;
 
     // see if we are starting with session management
-    if (app.isRestored())
+/*    if (app.isRestored())
         RESTORE(Kyzis)
-    else
+    else*/
     {
         // no session.. just start up normally
         KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
+		QDomDocument domDoc;
+		QDomElement dockConfig = domDoc.createElement("dockConfig");
+		domDoc.appendChild( dockConfig );
 
         if ( args->count() == 0 ) {
-        Kyzis *widget = new Kyzis;
+        Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
         widget->show();
         } else {
+			//WRONG XXX 
             int i = 0;
             for (; i < args->count(); i++ ) {
-                Kyzis *widget = new Kyzis;
+                Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
                 widget->show();
                 widget->load( args->url( i ) );
             }

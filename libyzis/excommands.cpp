@@ -391,10 +391,10 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 			QString oldVal;
 			switch ( opt->getType() ) {
 				case view_opt:
-					oldVal = view->getLocalStringOption( option );
+					if ( view ) oldVal = view->getLocalStringOption( option );
 					break;
 				case buffer_opt:
-					oldVal = buffer->getLocalStringOption( option );
+					if ( buffer ) oldVal = buffer->getLocalStringOption( option );
 				case global_opt:
 					break;
 			}
@@ -422,10 +422,10 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
 				return QString::null;
 			case view_opt :
-				view->setLocalQStringOption( option, value );
+				if ( view ) view->setLocalQStringOption( option, value );
 				break;
 			case buffer_opt:
-				buffer->setLocalQStringOption( option, value );
+				if ( buffer ) buffer->setLocalQStringOption( option, value );
 				break;
 		}
 	} else if ( rx2.exactMatch( args.arg )) {
@@ -439,10 +439,10 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
 				return QString::null;
 			case view_opt :
-				view->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
+				if ( view ) view->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
 				break;
 			case buffer_opt:
-				buffer->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
+				if ( buffer ) buffer->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
 				break;
 		}
 	} else if ( rx3.exactMatch( args.arg ) ) {
@@ -456,10 +456,10 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
 				return QString::null;
 			case view_opt :
-				view->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
+				if ( view ) view->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
 				break;
 			case buffer_opt:
-				buffer->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
+				if ( buffer ) buffer->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
 				break;
 		}
 	} else {
@@ -467,7 +467,8 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 		return QString::null;
 	}
 	// refresh screen
-	args.view->recalcScreen();
+	if ( args.view )
+		args.view->recalcScreen();
 
 	return QString::null;
 }

@@ -2,10 +2,6 @@
 require('luaunit')
 require('utils')
 
-function assertPos(line,col)
-    assertEquals( winline(), line )
-    assertEquals( wincol(), col )
-end
 
 TestMovements = {} --class
     function TestMovements:setUp() 

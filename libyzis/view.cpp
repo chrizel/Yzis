@@ -265,6 +265,10 @@ void YZView::sendMultipleKey(const QString& _keys) {
 			sendKey ( "<LEFT>" );
 			i+=6;
 			continue;
+		} else if ( key.startsWith( "<DEL>" ) ) {
+			sendKey ( "<DEL>" );
+			i+=5;
+			continue;
 		} else {
 			sendKey( key.mid( 0,1 ) );
 			i++;

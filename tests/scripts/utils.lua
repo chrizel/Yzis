@@ -26,6 +26,11 @@ function clearBuffer()
     deleteline(1)
 end
 
+function assertPos(line,col)
+    assertEquals( winline(), line )
+    assertEquals( wincol(), col )
+end
+
 MODE_NORMAL = "[ Awaiting Command ]"
 MODE_INSERT = "[ Insert ]"
 MODE_COMMAND = "[ Ex ]"

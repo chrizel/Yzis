@@ -53,3 +53,7 @@ dummy.cpp:
 	echo "#endif" >> $@
 
 
+messages: rc.cpp
+	$(EXTRACTRC) `find . -name "*.rc" -o -name "*.ui"` > rc.cpp
+	$(XGETTEXT) rc.cpp *.cpp src/*.cpp src/*.h -o po/kyzis.pot
+

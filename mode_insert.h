@@ -60,6 +60,13 @@ class YZModeInsert : public YZMode {
 		virtual void commandBackspace( YZView* mView, const QString& key );
 		virtual void commandDel( YZView* mView, const QString& key );
 		virtual void commandEnter( YZView* mView, const QString& key );
+
+		virtual void imBegin( YZView* mView );
+		virtual void imCompose( YZView* mView, const QString& entry );
+		virtual void imEnd( YZView* mView, const QString& entry );
+
+	protected :
+		QString m_imPreedit;
 };
 
 class YZModeReplace : public YZModeInsert {

@@ -86,11 +86,24 @@ class YZMode {
 		 */
 		virtual bool isSelMode() const;
 
+		/**
+		 * returns true if we can use input method in this mode
+		 */
+		virtual bool supportsInputMethod() const;
+
+		/**
+		 * Input Method
+		 */
+		virtual void imBegin( YZView* mView );
+		virtual void imCompose( YZView* mView, const QString& entry );
+		virtual void imEnd( YZView* mView, const QString& entry );
+
 	protected:
 		modeType mType;
 		QString mString;
 		bool mEditMode;
 		bool mSelMode;
+		bool mIM;
 		mapping_t mMapMode;
 		QStringList mModifierKeys;
 		bool mRegistered;

@@ -36,6 +36,7 @@ YZModeInsert::YZModeInsert() : YZMode() {
 	mType = YZMode::MODE_INSERT;
 	mString = _( "[ Insert ]" );
 	mEditMode = true;
+	mIM = true;
 	mMapMode = insert;
 }
 void YZModeInsert::leave( YZView* mView ) {
@@ -216,6 +217,28 @@ cmd_state YZModeInsert::commandDefault( YZView* mView, const QString& key ) {
 	if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
 		mView->reindent( mView->getBufferCursor()->x() - 1, mView->getBufferCursor()->y() );
 	return CMD_OK;
+}
+
+void YZModeInsert::imBegin( YZView* ) {
+	m_imPreedit = "";
+}
+void YZModeInsert::imCompose( YZView* mView, const QString& entry ) {
+	if ( !m_imPreedit.isEmpty() ) { // replace current one
+		YZCursor pos = *mView->getBufferCursor();
+		unsigned int len = m_imPreedit.length();
+		if ( pos.x() >= len )
+			pos.setX( pos.x() - len );
+		else
+			pos.setX( 0 );
+		mView->myBuffer()->action()->replaceText( mView, pos, len, entry );
+	} else {
+		mView->sendKey( entry );
+	}
+	m_imPreedit = entry;
+}
+void YZModeInsert::imEnd( YZView* mView, const QString& entry ) {
+	imCompose( mView, entry );
+	m_imPreedit = "";
 }
 
 

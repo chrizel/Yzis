@@ -20,6 +20,11 @@ public:
 	YZView(YZBuffer *_b, int _lines_vis);
 
 	/**
+	 * Updates the number of visible lines
+	 */
+	void setVisibleLines (int);
+
+	/**
 	 * transfer a key event from gui to core
 	 */
 	void	send_char( QChar );

@@ -24,6 +24,10 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 	buffer->add_view(this);
 }
 
+void YZView::setVisibleLines(int nb) {
+	lines_vis = nb;
+	//update_view ?
+}
 
 /* Used by the buffer to post events */
 void YZView::send_char( QChar c)

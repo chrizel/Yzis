@@ -1,3 +1,7 @@
+2004-02-22 mikmak
+  * libyzis
+    fix bugs and make :bp and :bn actually do something usefull
+
 2004-02-21 mikmak
   * all
     add popupMessage to display messages from core in Guis (for errors)

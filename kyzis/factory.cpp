@@ -238,8 +238,10 @@ void KYZisFactory::quit( bool ) {
 }
 
 void KYZisFactory::setCurrentView( YZView* view ) {
-	yzDebug() << "setCurrentView " << endl;
+	yzDebug() << "Kyzis : setCurrentView " << view->myId << endl;
 	currentView = static_cast<KYZisView*>( view );
+	sess->currentViewChanged( view );
+	currentView->setActiveWindow();
 	//DCOP call to KMdi XXX
 #if 0
 	DCOPClient *client = kapp->dcopClient();

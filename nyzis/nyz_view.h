@@ -13,6 +13,9 @@
 #include <qstringlist.h>
 #include <qmap.h>
 
+#define KEY_ESCAPE 27
+#define KEY_ENTER 10
+
 class NYZSession;
 
 class NYZView : public YZView, public Gui  {
@@ -64,7 +67,13 @@ private:
 	  */
 	void printVoid( int line );
 
+	/**
+	 * Fill the map of keycodes -> Ncurses to Qt
+	 */
+	void initialiseKeycodes();
+
 	QString commandline;
+	QMap<int,int> keycodes; // map Ncurses to Qt codes
 
 };
 

@@ -44,6 +44,7 @@ void YZView::sendKey( int c, int modifiers) {
 	
 	QString lin;
 	QString key = QKeySequence( c );
+	//default is lower case unless some modifiers
 	/*if ( ! modifiers & Qt::ShiftButton )*/ key = key.lower();
 
 	if (Qt::Key_Escape == c) {
@@ -58,42 +59,101 @@ void YZView::sendKey( int c, int modifiers) {
 	switch(mode) {
 
 		case YZ_VIEW_MODE_INSERT:
-			/* handle adding a char */
-			if ( c == Qt::Key_Return ) {
-				buffer->addNewLine(cursor->getX(),cursor->getY());
-				gotoxy(0, cursor->getY()+1 );
-			} else {
-				buffer->addChar(cursor->getX(),cursor->getY(),key);
-				gotoxy(cursor->getX()+1, cursor->getY() );
+			switch ( c ) {
+				case Qt::Key_Return:
+					buffer->addNewLine(cursor->getX(),cursor->getY());
+					gotoxy(0, cursor->getY()+1 );
+					return;
+				case Qt::Key_Down:
+					moveDown( QString::null );
+					return;
+				case Qt::Key_Left:
+					moveLeft( QString::null );
+					return;
+				case Qt::Key_Right:
+					moveRight( QString::null );
+					return;
+				case Qt::Key_Up:
+					moveUp( QString::null );
+					return;
+				default:
+					buffer->addChar(cursor->getX(),cursor->getY(),key);
+					gotoxy(cursor->getX()+1, cursor->getY() );
+					return;
 			}
 			break;
 
 		case YZ_VIEW_MODE_REPLACE:
-			/* handle replacing a char */
-			buffer->chgChar(cursor->getX(),cursor->getY(),key);
-			gotoxy(cursor->getX()+1, cursor->getY() );
+			switch ( c ) {
+				case Qt::Key_Return:
+					buffer->addNewLine(cursor->getX(),cursor->getY());
+					gotoxy(0, cursor->getY()+1 );
+					return;
+				case Qt::Key_Down:
+					moveDown( QString::null );
+					return;
+				case Qt::Key_Left:
+					moveLeft( QString::null );
+					return;
+				case Qt::Key_Right:
+					moveRight( QString::null );
+					return;
+				case Qt::Key_Up:
+					moveUp( QString::null );
+					return;
+				default:
+					buffer->chgChar(cursor->getX(),cursor->getY(),key);
+					gotoxy(cursor->getX()+1, cursor->getY() );
+					return;
+			}
 			break;
 
 		case YZ_VIEW_MODE_EX:
-			if ( c == Qt::Key_Return ) {
-				yzDebug() << "Current command EX : " << gui_manager->getCommandLineText();
-				session->getExPool()->execExCommand( this, gui_manager->getCommandLineText() );
-				gui_manager->setCommandLineText( "" );
-				gui_manager->setFocusMainWindow();
-				gotoCommandMode();
-			} else if ( c == Qt::Key_Escape ) {
-				gui_manager->setCommandLineText( "" );
-				gui_manager->setFocusMainWindow();
-				gotoCommandMode();
+			switch ( c ) {
+				case Qt::Key_Return:
+					yzDebug() << "Current command EX : " << gui_manager->getCommandLineText();
+					session->getExPool()->execExCommand( this, gui_manager->getCommandLineText() );
+					gui_manager->setCommandLineText( "" );
+					gui_manager->setFocusMainWindow();
+					gotoCommandMode();
+					return;
+				case Qt::Key_Down:
+				case Qt::Key_Left:
+				case Qt::Key_Right:
+				case Qt::Key_Up:
+					return;
+				case Qt::Key_Escape:
+					gui_manager->setCommandLineText( "" );
+					gui_manager->setFocusMainWindow();
+					gotoCommandMode();
+					return;
+				default:
+					buffer->chgChar(cursor->getX(),cursor->getY(),key);
+					gotoxy(cursor->getX()+1, cursor->getY() );
+					return;
 			}
 			break;
 
 		case YZ_VIEW_MODE_COMMAND:
-			previous_chars+=key;
-			yzDebug() << "Previous chars : " << previous_chars << endl;
-			//execute the command
-			if ( session )
-				session->getPool()->execCommand(this, previous_chars);
+			switch ( c ) {
+				case Qt::Key_Down:
+					moveDown( QString::null );
+					return;
+				case Qt::Key_Left:
+					moveLeft( QString::null );
+					return;
+				case Qt::Key_Right:
+					moveRight( QString::null );
+					return;
+				case Qt::Key_Up:
+					moveUp( QString::null );
+					return;
+				default:
+					previous_chars+=key;
+					yzDebug() << "Previous chars : " << previous_chars << endl;
+					if ( session )
+						session->getPool()->execCommand(this, previous_chars);
+			}
 			break;
 
 		default:

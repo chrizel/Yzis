@@ -227,18 +227,18 @@ void NYZView::syncViewInfo( void )
 	if ( viewInformation.c1!=viewInformation.c2 ) {
 		myfmt=( char* )"%d,%d-%d";
 		mvwprintw( infobar, 0, w-20, myfmt,
-				viewInformation.l+1,
+				viewInformation.l1+1,
 				viewInformation.c1+1,
 				viewInformation.c2+1 );
 	} else {
 		myfmt=( char * )"%d,%d";
-		mvwprintw( infobar, 0, w-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
+		mvwprintw( infobar, 0, w-20, myfmt, viewInformation.l1+1,viewInformation.c1+1 );
 	}
 	mvwaddstr( infobar, 0, w-9, viewInformation.percentage.latin1() );
 
 	wrefresh(infobar);
 
-	wmove(window, viewInformation.l-getCurrentTop() , viewInformation.c2 ) ;
+	wmove(window, viewInformation.l1-getCurrentTop() , viewInformation.c2 ) ;
 	wrefresh( window );
 }
 

@@ -392,7 +392,7 @@ void YZView::sendKey( int c, int modifiers) {
 void YZView::updateCursor() {
 	static unsigned int lasty = 1<<31; // small speed optimisation
 	viewInformation.percentage = tr( "All" );
-	unsigned int y = dCursor->getY();
+	unsigned int y = mCursor->getY();
 
 	if ( y != lasty ) {
 		unsigned int nblines = mBuffer->lineCount();
@@ -421,10 +421,8 @@ void YZView::centerViewHorizontally(unsigned int column) {
 	}
 	if ( newcurrentLeft == mCurrentLeft ) return;
 
-	if (newcurrentLeft) {
-
+	if (newcurrentLeft > 0) {
 		initDraw( 0, 0, 0, 0 );
-		
 		while( sCursor->getY( ) < mCursor->getY( ))
 			drawNextLine( );
 		while ( rCursor->getX( ) < newcurrentLeft ) {
@@ -437,7 +435,7 @@ void YZView::centerViewHorizontally(unsigned int column) {
 		dCurrentLeft = 0;
 		mCurrentLeft = 0;
 	}
-//	yzDebug() << "centerViewHorizontally d:" << dCurrentLeft << ", m:" << mCurrentLeft << ", fill:" << rSpaceFill << endl;
+	yzDebug() << "centerViewHorizontally d:" << dCurrentLeft << ", m:" << mCurrentLeft << ", fill:" << rSpaceFill << endl;
 	
 	redrawScreen();
 }
@@ -453,8 +451,11 @@ void YZView::centerViewVertically(unsigned int line) {
 	if ( newcurrent == mCurrentTop ) return;
 	
 	//redraw the screen
-	mCurrentTop = newcurrent ? newcurrent : 0;
-	dCurrentTop = newcurrent ? newcurrent : 0;
+	mCurrentTop = newcurrent > 0 ? newcurrent : 0;
+	dCurrentTop = newcurrent > 0 ? newcurrent : 0;
+
+//	yzDebug() << "centerVertically: m:" << mCurrentTop << "d: " << dCurrentTop << endl;
+
 	redrawScreen();
 }
 
@@ -490,11 +491,9 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	if ( ( int )nextx < 0 ) nextx = 0;
 	mCursor->setX( nextx );
 
-
 	initDraw(0, 0, 0, 0);
-	unsigned int i;
-	for (i = 0; i <= mCursor->getY( ); i++)	drawNextLine( );
-	for (i = 0; i <= mCursor->getX( ); i++)	{
+	while ( sCursor->getY() < mCursor->getY() ) drawNextLine( );
+	while ( sCursor->getX() < mCursor->getX() ) {
 		drawNextCol( );
 		drawChar( );
 	}
@@ -915,6 +914,7 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 }
 
 bool YZView::drawNextLine( ) {
+
 	// update sCursor
 	sCursor->setX( sCurrentLeft );
 	sCursor->setY( sCursor->getY() + sLineLength );
@@ -928,60 +928,64 @@ bool YZView::drawNextLine( ) {
 	rColLength = 0;
 	rSpaceFill = 0;
 
-	if ( sCursor->getY() < mBuffer->lineCount() && rCursor->getY() - rCurrentTop < mLinesVis ) {
+	if ( sCursor->getY() < mBuffer->lineCount() ) {
+		
+		sCurLine = mBuffer->textline( sCursor->getY() );
+		rCursor->setX( rCurrentLeft );
 		if (rCurrentLeft > 0) {
 
 			sCursor->setX( 0 );
 			rCursor->setX( 0 );
-			QChar ch;
 
 			while( rCursor->getX( ) < rCurrentLeft ) {
 				drawNextCol( );
-				ch = drawChar( );
+				drawChar( );
 			}
 			rSpaceFill = 1 + (rCurrentLeft % tabLength);
 
-/*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
+			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
 					<< ", rX(cursor):" << rCursor->getX() 
-					<< ", rY:" << rCursor->getY() << ", sX:" << sCursor->getX( ) << ", sY:" << sCursor->getY () << endl; */
+					<< ", rY:" << rCursor->getY() << ", sX:" << sCursor->getX( ) << ", sY:" << sCursor->getY () << endl; 
 		}
 
-		rCursor->setX( rCurrentLeft );
+		if ( ( rCursor->getY() - rCurrentTop ) < mLinesVis ) {
+			/* highlight stuff */
+			rHLa = NULL;
+			YZLine *yl = mBuffer->yzline( sCursor->getY() );
+			if ( yl->length() != 0 ) {
+				rHLa = yl->attributes();
+			}
+			rHLnoAttribs = !rHLa;
+			rHLa = rHLa + sCurrentLeft;
+			rHLAttributes = 0L;
+			YzisHighlighting * highlight = mBuffer->highlight();
+			if ( highlight )
+				rHLAttributes = highlight->attributes( 0 )->data( );
+			rHLAttributesLen = rHLAttributes ? highlight->attributes( 0 )->size() : 0;
+			rHLa += sColLength;
 
-		/* highlight stuff */
-		rHLa = NULL;
-		YZLine *yl = mBuffer->yzline( sCursor->getY() );
-		sCurLine = yl->data(); //avoids another search
-		//sCurLine = mBuffer->textline( sCursor->getY() );
-		if ( yl->length() != 0 ) {
-			rHLa = yl->attributes();
+			return true;
 		}
-		rHLa = rHLa + sCurrentLeft;
-		rHLnoAttribs = !rHLa;
-		rHLAttributes = 0L;
-		YzisHighlighting * highlight = mBuffer->highlight();
-		if ( highlight )
-			rHLAttributes = highlight->attributes( 0 )->data( );
-		rHLAttributesLen = rHLAttributes ? highlight->attributes( 0 )->size() : 0;
-
-		return true;
 	} else {
-		return false;
+		sCurLine = "";
+//		yzDebug() << "drawNextLine out of array (r" << rCursor->getY() << ",s" << sCursor->getY() << "), rCurrentTop=" << rCurrentTop << endl;
 	}
+	return false;
 }
 
 bool YZView::drawNextCol( ) {
+
 	// update dCursor position
 	rCursor->setX( rCursor->getX( ) + rColLength );
 	// update sCursor position
 	sCursor->setX ( sCursor->getX() + sColLength );
 
-	rHLa += sColLength;
-
-	return ( rCursor->getX( ) - rCurrentLeft < mColumnsVis && sCursor->getX( ) < sCurLine.length() );
+	return ( rCursor->getX( ) - rCurrentLeft < mColumnsVis 
+		&& sCursor->getX( ) < sCurLine.length() );
 }
 
 QChar YZView::drawChar( ) {
+	
 	QChar ch = ' ';
 	unsigned int curx = sCursor->getX( );
 	if ( curx < sCurLine.length( ) ) {

@@ -96,6 +96,11 @@ class YZExExecutor : public QObject {
 		 */
 		QString hardcopy( YZView *view, const QString& inputs );
 
+		/**
+		 * Preserve file by saving the current modifications to the swap file
+		 */
+		QString preserve( YZView *view, const QString& inputs );
+
 
 };
 

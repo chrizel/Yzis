@@ -46,6 +46,7 @@ public:
 	YZBuffer *createBuffer(const QString& path);
 	void popupMessage( const QString& message );
 	void deleteView (int Id);
+	void deleteBuffer ( YZBuffer *b );
 	void setFocusCommandLine();
 	void setFocusMainWindow();
 	

@@ -174,6 +174,7 @@ void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("hardcopy", &YZExExecutor::hardcopy,true,1);
 	NEW_EX_COMMAND("open", &YZExExecutor::gotoOpenMode,true,1);
 	NEW_EX_COMMAND("visual", &YZExExecutor::gotoCommandMode,true,1);
+	NEW_EX_COMMAND("preserve", &YZExExecutor::preserve,true,1);
 	NEW_LUA_COMMAND("lua", &YZExLua::lua,true,0);
 	NEW_LUA_COMMAND("source", &YZExLua::loadFile,true,0);
 }

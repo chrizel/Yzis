@@ -1032,7 +1032,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 
 	QStringList buff; //to copy old lines into the register "
 	unsigned int mY = mCursor->getY();
-	unsigned int mX = mCursor->getX();
+//	unsigned int mX = mCursor->getX();
 	if ( args.command == "dd" ) { //delete whole lines
 		buff << QString::null;
 		for ( int i = 0; i < nb_lines && ( mY + i ) < ( unsigned int )mBuffer->lineCount(); i++ )
@@ -1718,6 +1718,7 @@ QString YZView::gotoMark( const QString& inputsBuff, YZCommandArgs ) {
 QString YZView::refreshScreenInternal(const QString& , YZCommandArgs ) {
 	purgeInputBuffer();
 	refreshScreen();
+	return QString::null;
 }
 
 

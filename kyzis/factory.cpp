@@ -209,6 +209,9 @@ void KYZisFactory::deleteView( int Id ) {
 #endif
 }
 
+void KYZisFactory::deleteBuffer(YZBuffer *b) {
+}
+
 void KYZisFactory::setFocusMainWindow() {
 	KYZisView *yv = static_cast<KYZisView*>( currentView() );
 	yv->setFocusMainWindow();

@@ -85,6 +85,7 @@ QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
 
 	QPtrList<YZView> l = view->myBuffer()->views();
 	YZView *v;
+	view->myBuffer()->clearSwap();
 	for ( v = l.first(); v; v=l.next() ) {
 		view->mySession()->deleteView( view->myId );
 	}
@@ -205,6 +206,11 @@ QString YZExExecutor::hardcopy( YZView *view, const QString& inputs ) {
 	QFileInfo fi ( path );
 	path = fi.absFilePath( );
 	view->printToFile( path );
+	return QString::null;
+}
+
+QString YZExExecutor::preserve( YZView *view, const QString& inputs ) {
+	view->myBuffer()->getSwapFile()->flush();
 	return QString::null;
 }
 

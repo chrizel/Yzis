@@ -31,8 +31,9 @@ YZSwapFile::YZSwapFile(YZBuffer *b) {
 }
 
 void YZSwapFile::setFileName( const QString& fname ) {
-	//delete old swap file XXX
+	unlink();
 	mFilename = fname;
+	flush(); //create the new one
 }
 
 void YZSwapFile::flush() {
@@ -47,6 +48,8 @@ void YZSwapFile::flush() {
 			}
 		}
 		f.close();
+	} else {
+		//XXX error
 	}
 	//dump registers XXX
 	//add Yzis Version
@@ -58,5 +61,11 @@ void YZSwapFile::flush() {
 void YZSwapFile::addToSwap( int inputs, int modifiers ) {
 	swapEntry e = { inputs, modifiers };
 	mHistory[mHistory.count()+1] = e;
+}
+
+void YZSwapFile::unlink() {
+	yzDebug() << "Unlink swap file " << mFilename << endl;
+	if ( QFile::exists( mFilename ) )
+		QFile::remove ( mFilename );
 }
 

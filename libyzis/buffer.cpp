@@ -76,7 +76,9 @@ YZBuffer::YZBuffer(YZSession *sess) {
 }
 
 YZBuffer::~YZBuffer() {
-	yzDebug("YZBuffer") << "YZBuffer : Deleting buffer " << mPath << endl;
+	//remove swap file
+	mSwap->unlink();
+	delete mSwap;
 	if ( m_highlight != 0L )
 		m_highlight->release();
 	mText.clear();
@@ -474,6 +476,9 @@ bool YZBuffer::save() {
 		it->displayInfo(tr("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
 	setModified( false );
 	filenameChanged();
+	//clear swap memory
+	mSwap->reset();
+	mSwap->unlink();
 	return true;
 }
 
@@ -587,6 +592,7 @@ void YZBuffer::setPath( const QString& _path ) {
 	} else
 		mPath = newPath; 
 	mFileIsNew=false; 
+	mSwap->setFileName( mPath + ".ywp" );
 	filenameChanged();
 }
 
@@ -629,3 +635,6 @@ QStringList YZBuffer::getText(YZCursor& from, YZCursor& to) {
 	return list;
 }
 
+void YZBuffer::clearSwap() {
+	mSwap->unlink();
+}

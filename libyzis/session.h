@@ -79,17 +79,10 @@ class YZSession {
 		 */
 		void rmBuffer( YZBuffer * );
 
-
 		/**
 		 * Save everything and get out
 		 */
 		QString saveBufferExit( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
-
-		/** 
-		 * Get an event to handle from the core.  that's the way the core is
-		 * sending messages to the gui
-		 */
-//		yz_event fetchNextEvent(int requester=-1);
 
 		/**
 		 * Finds a view by its UID
@@ -140,6 +133,11 @@ class YZSession {
 		 * Delete the current view
 		 */
 		virtual void deleteView ( int Id = -1 ) = 0;
+
+		/**
+		 * Deletes the given buffer
+		 */
+		virtual void deleteBuffer( YZBuffer *b ) = 0;
 
 		/**
 		 * Ask to quit the app

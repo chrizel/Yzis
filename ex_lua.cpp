@@ -80,6 +80,11 @@ int YZExLua::text(lua_State *L) {
 	int sLine = lua_tonumber( L,2 );
 	int eCol = lua_tonumber( L,3 );
 	int eLine = lua_tonumber( L,4 );
+
+	sCol = sCol ? sCol - 1 : 0;
+	sLine = sLine ? sLine - 1 : 0;
+	eCol = eCol ? eCol - 1 : 0;
+	eLine = eLine ? eLine - 1 : 0;
 	
 	YZView* cView = YZSession::me->currentView();
 	QString result,t;
@@ -104,6 +109,9 @@ int YZExLua::insert(lua_State *L) {
 	int sCol = lua_tonumber( L, 1 );
 	int sLine = lua_tonumber( L,2 );
 	QString text = lua_tostring ( L, 3 );
+
+	sCol = sCol ? sCol - 1 : 0;
+	sLine = sLine ? sLine - 1 : 0;
 	
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );
@@ -125,6 +133,9 @@ int YZExLua::replace(lua_State *L) {
 	int sCol = lua_tonumber( L, 1 );
 	int sLine = lua_tonumber( L,2 );
 	QString text = lua_tostring ( L, 3 );
+
+	sCol = sCol ? sCol - 1 : 0;
+	sLine = sLine ? sLine - 1 : 0;
 	
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );

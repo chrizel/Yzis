@@ -1,3 +1,9 @@
+2004-08-09 orzel
+  * nyzis
+    fix color bugs
+    fix ncurses use (was severly wrong)
+    some beautifiction
+
 2004-08-09 panard, poizon
   * libyzis
     fixed 'w' and 'b' motions

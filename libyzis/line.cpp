@@ -30,6 +30,7 @@ YZLine::YZLine(const QString &l)
 
 YZLine::YZLine()
 {
+	setData( QString("") );
 }
 
 YZLine::~YZLine()

@@ -107,10 +107,10 @@ void Kyzis::fileNew() {
 	// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
 	// says that it should open a new window if the document is _not_
 	// in its initial state.  This is what we do here..
-	if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
+//	if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
 //			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
 			createBuffer();
-	};
+//	};
 }
 
 void Kyzis::optionsShowToolbar() {

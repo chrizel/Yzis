@@ -2111,16 +2111,15 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 }
 
 const QColor& YZView::drawColor ( ) {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return blue; //XXX make custom
-	else if ( curAt )
-		return (*curAt).textColor();
+	else if ( curAt ) return curAt->textColor();
 	else return fake;
 }
 
 const QColor& YZView::drawSelColor ( ) {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
 	else if ( curAt ) return (*curAt).selectedTextColor();
@@ -2128,7 +2127,7 @@ const QColor& YZView::drawSelColor ( ) {
 }
 
 const QColor& YZView::drawBgColor ( ) {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
 	else if ( curAt ) return (*curAt).bgColor();
@@ -2136,7 +2135,7 @@ const QColor& YZView::drawBgColor ( ) {
 }
 
 const QColor& YZView::drawBgSelColor ( ) {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
 	else if ( curAt ) return (*curAt).selectedBGColor();
@@ -2144,42 +2143,42 @@ const QColor& YZView::drawBgSelColor ( ) {
 }
 
 bool YZView::drawBold() {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 	if ( curAt )
 		return (*curAt).bold();
 	return false;	
 }
 
 bool YZView::drawItalic() {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 	if ( curAt )
 		return (*curAt).italic();
 	return false;	
 }
 
 bool YZView::drawUnderline() {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 	if ( curAt )
 		return (*curAt).underline();
 	return false;	
 }
 
 bool YZView::drawOverline() {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 	if ( curAt )
 		return (*curAt).overline();
 	return false;	
 }
 
 bool YZView::drawStrikeOutLine() {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 	if ( curAt )
 		return (*curAt).strikeOut();
 	return false;	
 }
 
 const QColor& YZView::drawOutline ( ) {
-	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
 	else if ( curAt ) return (*curAt).outline();

@@ -3021,7 +3021,7 @@ void YzisHighlighting::clearAttributeArrays ()
     }
   }
 #else
-  QHashMutableIterator<int, QVector<YzisAttribute> > it ( m_attributeArrays );
+  QHashMutableIterator<int, QVector<YzisAttribute>* > it ( m_attributeArrays );
   while (it.hasNext())
   {
     it.next();
@@ -3033,8 +3033,8 @@ void YzisHighlighting::clearAttributeArrays ()
     getYzisHlItemDataList(it.key(), itemDataList);
 
     uint nAttribs = itemDataList.count();
-    QVector<YzisAttribute> array = it.value();
-    array.resize (nAttribs);
+    QVector<YzisAttribute>* array = it.value();
+    array->resize (nAttribs);
 
     for (uint z = 0; z < nAttribs; z++)
     {
@@ -3044,7 +3044,7 @@ void YzisHighlighting::clearAttributeArrays ()
       if (itemData && itemData->isSomethingSet())
         n += *itemData;
 
-      array[z] = n;
+      (*array)[z] = n;
     }
     it.setValue(array);
   }
@@ -3063,7 +3063,7 @@ QVector<YzisAttribute> *YzisHighlighting::attributes (uint schema) {
   QVector<YzisAttribute> *array;
 
   // found it, allready floating around
-  if ((array = &m_attributeArrays[schema]))
+  if ((array = m_attributeArrays[schema]))
     return array;
 #endif
 
@@ -3109,7 +3109,7 @@ QVector<YzisAttribute> *YzisHighlighting::attributes (uint schema) {
 #if QT_VERSION < 0x040000
   m_attributeArrays.insert(schema, array);
 #else
-  m_attributeArrays.insert(schema, *array);
+  m_attributeArrays.insert(schema, array);
 #endif
 
   return array;

@@ -46,6 +46,7 @@
 #include <QMap>
 #include <QHash>
 #include <QTime>
+#include <QLinkedList>
 #endif
 
 class YzisHlContext;
@@ -80,7 +81,7 @@ typedef QPtrList<YzisHlData> YzisHlDataList;
 typedef QValueList<int> IntList;
 #else
 typedef QList<YzisAttribute*> YzisAttributeList;
-typedef QList<YzisHlIncludeRule*> YzisHlIncludeRules;
+typedef QLinkedList<YzisHlIncludeRule*> YzisHlIncludeRules;
 typedef QList<YzisHlItemData*> YzisHlItemDataList;
 typedef QList<YzisHlData*> YzisHlDataList;
 typedef QList<int> IntList;

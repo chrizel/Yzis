@@ -363,7 +363,11 @@ class YzisHlDetectIdentifier : public YzisHlItem
 
     virtual int checkHgl(const QString& text, int offset, int len)
     {
+#if QT_VERSION < 0x040000
       if (text[offset++].isLetter() || (text[offset] == QChar ('_')))
+#else
+      if (text[offset++].isLetter() || (offset < text.size() && text[offset] == QChar ('_')))
+#endif
       {
         int len2 = offset-1+len;
         while ((offset < len2) && (text[offset].isLetterOrNumber() || (text[offset] == QChar ('_')))) offset++;
@@ -2686,7 +2690,7 @@ void YzisHighlighting::handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::ite
   }
 
   // iterate over each include rule for the context the function has been called for.
-  while ((it1!=list->end()) && ((*it1)->ctx==ctx))
+  while ( (it1!=list->end()) && ((*it1)->ctx==ctx))
   {
     int ctx1=(*it1)->incCtx;
 
@@ -3158,8 +3162,7 @@ YzisHlManager::YzisHlManager()
       if ( QString(hlList.at(insert)->section() + hlList.at(insert)->nameTranslated()).lower()
             > QString(hl->section() + hl->nameTranslated()).lower() )
 #else
-      if ( QString(hlList.at(insert)->section() + hlList.at(insert)->nameTranslated()).toLower()
-            > QString(hl->section() + hl->nameTranslated()).toLower() )
+      if ( QString::localeAwareCompare( QString(hlList.at(insert)->section() + hlList.at(insert)->nameTranslated()).toLower() , QString(hl->section() + hl->nameTranslated()).toLower() ) > 0 )
 #endif
         break;
     }
@@ -3265,7 +3268,7 @@ int YzisHlManager::detectHighlighting (YZBuffer *doc)
 
 int YzisHlManager::wildcardFind(const QString &fileName)
 {
-	yzDebug() << "WidcardFind " << fileName << endl;
+  yzDebug() << "WidcardFind " << fileName << endl;
   int result = -1;
   if ((result = realWildcardFind(fileName)) != -1)
     return result;
@@ -3289,13 +3292,19 @@ int YzisHlManager::wildcardFind(const QString &fileName)
 
 int YzisHlManager::realWildcardFind(const QString &fileName)
 {
-	yzDebug() << "realWidcardFind " << fileName << endl;
+  yzDebug() << "realWidcardFind " << fileName << endl;
   static QRegExp sep("\\s*;\\s*");
 
 #if QT_VERSION < 0x040000
   QPtrList<YzisHighlighting> highlights;
 
   for (YzisHighlighting *highlight = hlList.first(); highlight != 0L; highlight = hlList.next()) {
+#else
+  QList<YzisHighlighting*> highlights;
+
+  for (int ab = 0 ; ab < hlList.size(); ++ab ) {
+    YzisHighlighting *highlight = hlList.at(ab);
+#endif
     highlight->loadWildcards();
 
 	QStringList::Iterator it = highlight->getPlainExtensions().begin(), end = highlight->getPlainExtensions().end();
@@ -3309,24 +3318,6 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
         highlights.append(highlight);
     }
   }
-#else
-  QList<YzisHighlighting*> highlights;
-
-  for (int ab = 0 ; ab < hlList.size(); ++ab ) {
-    hlList.at(ab)->loadWildcards();
-
-    QStringList::Iterator it = hlList.at(ab)->getPlainExtensions().begin(), end = hlList.at(ab)->getPlainExtensions().end();
-    for (; it != end; ++it)
-      if (fileName.endsWith((*it)))
-        highlights.append(hlList.at(ab));
-
-    for (int i = 0; i < (int)hlList.at(ab)->getRegexpExtensions().count(); i++) {
-      QRegExp re = hlList.at(ab)->getRegexpExtensions()[i];
-      if (re.exactMatch(fileName))
-        highlights.append(hlList.at(ab));
-    }
-  }
-#endif
 
   if ( !highlights.isEmpty() )
   {
@@ -3336,20 +3327,21 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 #if QT_VERSION < 0x040000
     for (YzisHighlighting *highlight = highlights.first(); highlight != 0L; highlight = highlights.next())
     {
+#else
+    for (int ab = 0 ; ab < highlights.size(); ++ab ) 
+    {
+      YzisHighlighting *highlight = highlights.at(ab);
+#endif
       if (highlight->priority() > pri)
       {
         pri = highlight->priority();
+#if QT_VERSION < 0x040000
         hl = hlList.findRef (highlight);
-      }
-    }
 #else
-    for (int ab = 0 ; ab < highlights.size(); ++ab ) {
-      if (highlights.at(ab)->priority() > pri) {
-        pri = highlights.at(ab)->priority();
-        hl = hlList.indexOf (highlights.at(ab));
+        hl = hlList.indexOf (highlight);
+#endif
       }
     }
-#endif
 
     return hl;
   }

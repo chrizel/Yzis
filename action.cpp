@@ -416,8 +416,10 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 	int currentMatchColumn;
 	QString l;
 	
-	unsigned int i = reverseSearch ? QMIN( mBegin.getY(), pView->myBuffer()->lineCount() ) : QMAX( mBegin.getY(), 0 );
-	unsigned int maxLine = reverseSearch ? QMAX( mEnd.getY(), 0 ) : QMIN( mEnd.getY(), pView->myBuffer()->lineCount() );
+	unsigned int i = reverseSearch ? QMIN( (int)mBegin.getY(), (int)(pView->myBuffer()->lineCount() - 1) ) 
+					: QMAX( (int)mBegin.getY(), 0 );
+	unsigned int maxLine = reverseSearch ? QMAX( (int)mEnd.getY(), 0 ) : 
+						QMIN( (int)mEnd.getY(), (int)(pView->myBuffer()->lineCount() - 1) );
 	for ( ; reverseSearch && i > maxLine || ! reverseSearch && i < maxLine; reverseSearch ? i-- : i++ ) {
 		l = pView->myBuffer()->textline( i );
 

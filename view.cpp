@@ -1099,42 +1099,6 @@ void YZView::applyDeleteLine( const YZCursor& begin, const YZCursor& end, bool a
 	updateStickyCol( mainCursor );
 }
 
-QString YZView::deleteCharacter( unsigned int nb_chars ) {
-	mBuffer->action()->deleteChar( this, mainCursor->buffer(), nb_chars );
-	return QString::null;
-}
-
-void YZView::del(const QString& motion, const QValueList<QChar> &regs) {
-	if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE  ) {
-		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-		selectionPool->clear( "VISUAL" );
-		yzDebug() << "Del " << cur_sel.from().getY() << " " << cur_sel.to().getY() << endl;
-		mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to(), regs);
-		gotoCommandMode();
-	} else {
-		if ( ! mSession->getMotionPool()->isValid( motion ) ) return; //something's wrong
-		//ok we have a motion , so delete till the end of the motion :)
-		YZCursor from(mainCursor->buffer()), to(this);
-		bool success = mSession->getMotionPool()->applyMotion(motion, this, from, to);
-		bool goBack = to < from;
-		if ( !success ) {
-//			purgeInputBuffer(); //drop me XXX ? should be handle by ::sendKey
-			return;
-		}
-		//delete to the cursor position now :)
-		yzDebug() << "Start of motion is : " << from << endl;
-		yzDebug() << "End of motion is : " << to << endl;
-
-		if ( goBack ) {
-			YZCursor tmp( to );
-			to.setCursor( from );
-			from.setCursor( tmp );
-		}
-
-		mBuffer->action()->deleteArea( this, from, to, regs);
-	}
-}
-
 QString YZView::deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs ) {
 	QStringList buff; //to copy old lines into the register "
 	unsigned int mY = mainCursor->bufferY();

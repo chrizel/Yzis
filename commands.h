@@ -62,7 +62,7 @@ struct YZCommandArgs {
 	//the argument
 	QString arg;
 	//the visual mode selection
-	const YZSelectionMap *selection;
+	YZSelectionMap selection;
 
 	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, QString a) {
 		cmd=_cmd;
@@ -70,9 +70,8 @@ struct YZCommandArgs {
 		regs=r;
 		count=c;
 		arg=a;
-		selection=0;
 	}
-	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, const YZSelectionMap *const s) {
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, const YZSelectionMap &s) {
 		cmd=_cmd;
 		view=v;
 		regs=r;

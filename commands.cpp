@@ -252,7 +252,7 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 		if(cmds.count()==1) {
 			c=cmds.first();
 			if(c->arg() == ARG_NONE || visual && c->arg() == ARG_MOTION)
-				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, &m));
+				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, m));
 			else
 				return OPERATOR_PENDING;
 		} else {
@@ -268,7 +268,7 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			if(!c)
 				return CMD_ERROR;
 			if(visual)
-				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, &m));
+				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, m));
 			else
 				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, QString::null));
 		}
@@ -438,7 +438,7 @@ YZCursor YZCommandPool::matchPair(const YZNewMotionArgs &args) {
 	bool found = false;
 	YZCursor pos = args.view->myBuffer()->action()->match( args.view, *viewCursor.buffer(), &found );
 	if ( found ) return pos;
-	return viewCursor.buffer();
+	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::find(const YZNewMotionArgs &args) {
@@ -512,7 +512,8 @@ QString YZCommandPool::deleteLine(const YZCommandArgs &args) {
 
 QString YZCommandPool::deleteToEOL(const YZCommandArgs &args) {
 	//in vim : 2d$ does not behave as d$d$, this is illogical ..., you cannot delete twice to end of line ...
-	args.view->del("$", args.regs);
+	YZCursor to=move(args.view, "$", 1);
+	args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	args.view->commitNextUndo();
 	return QString::null;
 }
@@ -634,26 +635,26 @@ QString YZCommandPool::change(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::del(const YZCommandArgs &args) {
-	if ( args.selection ) 
-		args.view->myBuffer()->action()->deleteArea(args.view, ( *args.selection )[ 0 ].from(), ( *args.selection )[ 0 ].to() , args.regs);
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
+		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
 	else {
 		YZCursor to=move(args.view, args.arg, args.count);
 		args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	}
 	args.view->commitNextUndo();
-	if ( args.selection ) 
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
 		args.view->leaveVisualMode();
 	return QString::null;
 }
 
 QString YZCommandPool::yank(const YZCommandArgs &args) {
-	if ( args.selection ) 
-		args.view->myBuffer()->action()->copyArea(args.view, ( *args.selection )[ 0 ].from(), ( *args.selection )[ 0 ].to() , args.regs);
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
+		args.view->myBuffer()->action()->copyArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
 	else {
 		YZCursor to=move(args.view, args.arg, args.count);
 		args.view->myBuffer()->action()->copyArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	}
-	if ( args.selection ) 
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
 		args.view->leaveVisualMode();
 	return QString::null;
 }
@@ -696,8 +697,14 @@ QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 }
 
 QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
-	args.view->deleteCharacter(args.count);
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL )
+		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
+	else {
+		args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
+	}
 	args.view->commitNextUndo();
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
+		args.view->leaveVisualMode();
 	return QString::null;
 }
 

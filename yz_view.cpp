@@ -340,6 +340,7 @@ QString YZView::deleteCharacter( const QString& inputsBuff ) {
 
 	//reset the input buffer
 	purgeInputBuffer();
+	gotoxy( cursor->getX(), cursor->getY());
 
 	return QString::null;
 }

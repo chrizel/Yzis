@@ -35,7 +35,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status = new KStatusBar (this, "status");
 	command = new KYZisCommand ( this, "command");
 
-	status->insertItem("Yzis Ready",0,1);
+	status->insertItem(tr( "Yzis Ready" ),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
 
 	status->insertItem("",80,80,0);

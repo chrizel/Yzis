@@ -20,13 +20,19 @@ Description: Yzis Library - editing component
 
 Package: kyzis
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libyzis0
+Depends: ${shlibs:Depends}, ${misc:Depends}, libyzis0, yzis-common
 Description: KDE Frontend for the Yzis editor
  KPart component and main application for the KDE GUI of Yzis
 
 Package: nyzis
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libyzis0
+Depends: ${shlibs:Depends}, ${misc:Depends}, libyzis0, yzis-common
 Description: Ncurses Frontend for the Yzis editor
  Ncurses application for the Ncurses GUI of Yzis
+
+Package: yzis-common
+Architecture: all
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Yzis Common files
+ Data files used by yzis editors.
 

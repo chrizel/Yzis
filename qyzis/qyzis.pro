@@ -47,6 +47,11 @@ win32-msvc {
 	LIBS += $$(LUALIB)/Lua.lib $$(LUALIB)/LuaLib.lib
 	DEFINES += YZIS_WIN32_MSVC
 }
+unix {
+	LIBS += $$(LUALIB)/liblua.so
+	LIBS += $$(LUALIB)/liblualib.so
+	LIBS += -lmagic
+}
 
 # Input
 HEADERS += ../libyzis/action.h \

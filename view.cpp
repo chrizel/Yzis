@@ -258,7 +258,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			} else if ( key == "<ENTER>" ) {
 				test = mainCursor->bufferX() == 0;
 				QString currentLine = mBuffer->textline( mainCursor->bufferY() );
-				if ( cindent && currentLine.simplifyWhiteSpace().endsWith( "{" ) ) {
+				if ( cindent && mainCursor->bufferX() == currentLine.length() && currentLine.simplifyWhiteSpace().endsWith( "{" ) ) {
 					QRegExp rx("^(\\t*\\s*\\t*\\s*).*$");
 					QString newline = "";
 					if ( rx.exactMatch( currentLine ) )

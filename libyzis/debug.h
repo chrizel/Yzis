@@ -72,7 +72,7 @@ public:
 	static YZDebugBackend * instance();
 
 	/** write data to the debug backend */
-	void flush( int level, const char * area, const char * data );
+	void flush( int level, const QString& area, const char * data );
 
 	/** All debugging info under level will not be printed.
 	  * setDebugLevel( YZ_DEBUG_LEVEL ) will log all debug output.
@@ -86,16 +86,16 @@ public:
 	void setDebugOutput( FILE * file );
 
 	/** Same as above, but just specifies the file name */
-	void setDebugOutput( const char * fileName );
+	void setDebugOutput( const QString& );
 
 	/** Enable/Disable the log output of area */
-	void enableDebugArea( const char * area, bool enabled ) {
+	void enableDebugArea( const QString& area, bool enabled ) {
 		_areaOutput[area] = enabled;
 	}
 
 	/** Return whether an area is enabled. All area are enalbed by default
 	  */
-	bool isAreaEnabled( const char * area ) {
+	bool isAreaEnabled( const QString& area ) {
 		if (_areaOutput.contains( area )) {
 			return _areaOutput[area];
 		} else {

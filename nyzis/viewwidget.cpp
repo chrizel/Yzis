@@ -181,6 +181,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 					num = num.rightJustify( marginLeft - 1, ' ' );
 					x = currentX;
 				}
+				mvwaddstr( editor, currentY, x, num );
 #else
 				if ( rightleft ) {
 					num = num.leftJustified( marginLeft - 1, ' ' );
@@ -189,8 +190,8 @@ void NYZView::drawContents( int clipy, int cliph ) {
 					num = num.rightJustified( marginLeft - 1, ' ' );
 					x = currentX;
 				}
+				mvwaddstr( editor, currentY, x, num.toUtf8().data() );
 #endif
-				mvwaddstr( editor, currentY, x, num );
 				wattroff( editor, attribYellow );
 				x = marginLeft - 1;
 				if ( rightleft ) x = width - x - 1;
@@ -234,7 +235,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 #if QT_VERSION < 0x040000
 			QCString my_char = QString( drawChar() ).local8Bit();
 #else
-			QByteArray my_char = QString( drawChar() ).local8Bit();
+			QByteArray my_char = QString( drawChar() ).toLocal8Bit();
 #endif
 			char* from_char = new char[ my_char.length() + 1 ]; // XXX always 1 + 1 ?
 			strcpy( from_char, (const char *)my_char );
@@ -285,7 +286,11 @@ void NYZView::setCommandLineText( const QString& text )
 	werase(statusbar);
 	commandline = text;
 	if ( !text.isEmpty() ) {
+#if QT_VERSION < 0x040000
 		waddstr(statusbar, text.latin1());
+#else
+		waddstr(statusbar, text.toUtf8().data());
+#endif
 		waddch( statusbar, ' ' ); // when doing backspace...
 		waddch( statusbar, '\b' );
 	}
@@ -307,8 +312,13 @@ void NYZView::syncViewInfo( void )
 
 	werase(infobar);
 	wmove( infobar,0,0 );
+#if QT_VERSION < 0x040000
 	QString m = mode ( mMode ).latin1();
 	for ( const char *ptr = m.latin1(); *ptr; ptr++ ) {
+#else
+	QString m = mode ( mMode ).toUtf8().data();
+	for ( const char *ptr = m.toUtf8().data(); *ptr; ptr++ ) {
+#endif
 //		waddch(infobar, attribYellow |*ptr);
 		waddch(infobar, COLOR_PAIR(2) |*ptr);
 	}
@@ -318,7 +328,11 @@ void NYZView::syncViewInfo( void )
 	myfmt=( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if
 	            // it's rather unlikely..
 	wprintw( infobar, myfmt,
+#if QT_VERSION < 0x040000
 			( mBuffer->fileIsNew() )?"[No File]":mBuffer->fileName().latin1(),
+#else
+			( mBuffer->fileIsNew() )?"[No File]":mBuffer->fileName().toUtf8().data(),
+#endif
 			( mBuffer->fileIsModified() )?" [+]":""
 			);
 	// prevent  gcc to use string
@@ -332,7 +346,11 @@ void NYZView::syncViewInfo( void )
 		myfmt=( char * )"%d,%d";
 		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
 	}
+#if QT_VERSION < 0x040000
 	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.latin1() );
+#else
+	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.toUtf8().data() );
+#endif
 	wrefresh(infobar);
 
 	drawCursor();
@@ -350,7 +368,11 @@ void NYZView::refreshScreen() {
 void NYZView::displayInfo( const QString& info )
 {
 	werase(statusbar);
+#if QT_VERSION < 0x040000
 	waddstr( statusbar, info.latin1() );
+#else
+	waddstr( statusbar, info.toUtf8().data() );
+#endif
 	wrefresh(statusbar);
 	drawCursor();
 	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;

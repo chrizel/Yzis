@@ -101,6 +101,8 @@ else
 	YZIS_QT4="libqt4yzis"
 	NYZIS_DEP="libyzis/libqt4yzis/libqt4yzis.la"
 	YZIS_INCLUDES="$QT_INCLUDES $YZIS_INCLUDES"
+	MOC="$QTDIR/bin/moc"
+	AC_SUBST(MOC)
 fi
 AM_CONDITIONAL(use_libqt, test -n "$YZIS_QT3")
 AM_CONDITIONAL(use_libqt4, test -n "$YZIS_QT4")
@@ -121,5 +123,6 @@ AC_SUBST(YZIS_INCLUDES)
 AC_SUBST(NYZIS_DEP)
 AC_SUBST(PS_LIBS)
 AC_SUBST(YZISLIBS)
+AC_SUBST(QT_LIBS)
 AC_CONFIG_FILES([ libyzis/translator.h ])
 

@@ -606,7 +606,11 @@ void YzisSyntaxDocument::setupModeList (bool force)
       YzisSyntaxModeListItem *mli=new YzisSyntaxModeListItem;
       mli->name       = config->readQStringEntry("name");
       //mli->nameTranslated = i18n("Language",mli->name.utf8());
+#if QT_VERSION < 0x040000
       mli->section    = config->readQStringEntry("section").utf8();
+#else
+      mli->section    = config->readQStringEntry("section").toUtf8();
+#endif
       mli->mimetype   = config->readQStringEntry("mimetype");
       mli->extension  = config->readQStringEntry("extension");
       mli->version    = config->readQStringEntry("version");

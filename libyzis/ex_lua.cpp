@@ -132,7 +132,7 @@ YZExLua::~YZExLua() {
 }
 
 QString YZExLua::lua(YZView *, const QString& args) {
-	execInLua( args.latin1() );
+	execInLua( args );
 	return QString::null;
 }
 
@@ -143,8 +143,12 @@ void YZExLua::exe(const QString& function, const char* sig, ...) {
 	int narg, nres;
 	
 	va_start(vl,sig);
-	lua_getglobal(L, function);
-	
+#if QT_VERSION < 0x040000
+	lua_getglobal(L, function.utf8());
+#else
+	lua_getglobal(L, function.toUtf8());
+#endif
+
 	narg=0;
 	while (*sig) {
 		switch(*sig++) {
@@ -201,7 +205,11 @@ void YZExLua::exe(const QString& function, const char* sig, ...) {
 }
 
 void YZExLua::execute(const QString& function, int nbArgs, int nbResults) { 
+#if QT_VERSION < 0x040000
 	lua_getglobal(L,function);
+#else
+	lua_getglobal(L,function.toUtf8());
+#endif
 	if (lua_pcall(L, nbArgs, nbResults, 0) != 0) {
 		yzDebug() << "error : " << lua_tostring(L, -1) << endl;
 	}
@@ -254,7 +262,11 @@ QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 
 	lua_pushstring(L,"dofile");
 	lua_gettable(L, LUA_GLOBALSINDEX);
+#if QT_VERSION < 0x040000
 	lua_pushstring(L,found.latin1());
+#else
+	lua_pushstring(L,found.toUtf8());
+#endif
 	pcall(1,1,0, tr("Lua error when running file %1:\n").arg(found) );
 	return QString::null;
 }
@@ -262,7 +274,11 @@ QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 int YZExLua::execInLua( const QString & luacode ) {
 	lua_pushstring(L, "loadstring" );
 	lua_gettable(L, LUA_GLOBALSINDEX);
+#if QT_VERSION < 0x040000
 	lua_pushstring(L, luacode );
+#else
+	lua_pushstring(L, luacode.toUtf8() );
+#endif
 //	print_lua_stack(L, "loadstring 0");
 	pcall(1,2,0, "");
 //	print_lua_stack(L, "loadstring 1");
@@ -293,7 +309,11 @@ bool YZExLua::pcall( int nbArg, int nbReturn, int errLevel, const QString & erro
 
 void YZExLua::yzisprint(const QString & text)
 {
+#if QT_VERSION < 0x040000
 	printf("yzisprint:%s\n", text.latin1());
+#else
+	printf("yzisprint:%s\n", text.toUtf8().data());
+#endif
 }
 
 // ========================================================
@@ -310,7 +330,11 @@ int YZExLua::line(lua_State *L) {
 
 	YZView* cView = YZSession::me->currentView();
 	QString	t = cView->myBuffer()->textline( line );
+#if QT_VERSION < 0x040000
 	lua_pushstring( L, t ); // first result
+#else
+	lua_pushstring( L, t.toUtf8() ); // first result
+#endif
 	return 1; // one result
 }
 
@@ -514,7 +538,11 @@ int YZExLua::deleteline(lua_State *L) {
 int YZExLua::filename(lua_State *L) {
 	if (!checkFunctionArguments(L, 0, "filename", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
+#if QT_VERSION < 0x040000
 	const char *filename = cView->myBuffer()->fileName();
+#else
+	const char *filename = cView->myBuffer()->fileName().toUtf8().data();
+#endif
 
 	lua_pushstring( L, filename ); // first result
 	return 1; // one result
@@ -528,7 +556,11 @@ int YZExLua::color(lua_State *L) {
 	sLine = sLine ? sLine - 1 : 0;
 
 	YZView* cView = YZSession::me->currentView();
-	QString color = cView->drawColor( sCol, sLine ).name();
+#if QT_VERSION < 0x040000
+	const char *color = cView->drawColor( sCol, sLine ).name();
+#else
+	const char *color = cView->drawColor( sCol, sLine ).name().toUtf8().data();
+#endif
 
 //	yzDebug() << "Asked color : " << color.latin1() << endl;
 	lua_pushstring( L, color ); // first result
@@ -605,7 +637,8 @@ int YZExLua::setlocal(lua_State *L ) {
 	if (!checkFunctionArguments(L, 1, "setlocal", "set local options")) return 0;
 	QString option = ( char * )lua_tostring ( L, 1 );
 
-	YZSession::me->getExPool()->setlocal(YZExCommandArgs(YZSession::me->currentView(), QString::null, QString::null, option, 0, 0, true));
+	YZExCommandArgs ex (YZSession::me->currentView(), QString::null, QString::null, option, 0, 0, true);
+	YZSession::me->getExPool()->setlocal(ex);
 
 	return 0;	
 }
@@ -660,7 +693,11 @@ bool YZExLua::checkFunctionArguments(lua_State*L, int argNb, const char * functi
 
 	QString errorMsg = QString("%1() called with %2 arguments but %3 expected: %4").arg(functionName).arg(n).arg(argNb).arg(functionArgDesc);
 #if 1
+#if QT_VERSION < 0x040000
 	lua_pushstring(L,errorMsg.latin1());
+#else
+	lua_pushstring(L,errorMsg.toUtf8().data());
+#endif
 	lua_error(L);
 #else
 	YZExLua::instance()->execInLua(QString("error(%1)").arg(errorMsg));

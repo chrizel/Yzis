@@ -115,6 +115,16 @@ class YZSession {
 		virtual void changeCurrentView( YZView* ) = 0;
 
 		/**
+		 * Splits the screen vertically showing the 2 given views
+		 */
+//		virtual void splitHorizontallyWithViews( YZView*, YZView* ) = 0;
+
+		/**
+		 * Splits the screen vertically to show the 2 given views
+		 */
+//		virtual void splitVerticallyOnView( YZView*, YZView* ) = 0;
+
+		/**
 		 * Finds the next view relative to the current one
 		 */
 		YZView* nextView();
@@ -128,6 +138,10 @@ class YZSession {
 		 * Returns a pointer to the current view
 		 */
 		YZView* currentView() { return mCurView; }
+
+		/**
+		 * Returns a pointer to the current buffer
+		 */
 		YZBuffer* currentBuffer() { return mCurBuffer; }
 
 		/**

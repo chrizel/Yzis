@@ -223,7 +223,11 @@ void NYZFactory::popupMessage( const QString &message )
 	WINDOW *popup = newwin(nl+4, nc+4, ( LINES-nl )/2, (COLS-nc)/2);
 	box( popup, 0, 0 );
 
+#if QT_VERSION < 0x040000
 	mvwaddstr( popup, 2, 2, message.latin1() );
+#else
+	mvwaddstr( popup, 2, 2, message.toUtf8().data() );
+#endif
 	// TODO : use QString QString::section
 
 #endif

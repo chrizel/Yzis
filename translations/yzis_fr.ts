@@ -3,6 +3,40 @@
     <name>QObject</name>
     <message>
         <source>All</source>
+        <translation type="obsolete">Tout</translation>
+    </message>
+    <message>
+        <source>-- INSERT --</source>
+        <translation>-- INSERTION --</translation>
+    </message>
+    <message>
+        <source>-- REPLACE --</source>
+        <translation type="obsolete">-- REMPLACEMENT --</translation>
+    </message>
+    <message>
+        <source>-- REVERSE SEARCH --</source>
+        <translation type="obsolete">-- RECHERCHE INVERSEE --</translation>
+    </message>
+    <message>
+        <source>-- SEARCH --</source>
+        <translation type="obsolete">-- RECHERCHE --</translation>
+    </message>
+    <message>
+        <source>Please specify a filename</source>
+        <translation type="obsolete">Veuillez indiquer un nom de fichier</translation>
+    </message>
+</context>
+<context>
+    <name>YZExExecutor</name>
+    <message>
+        <source>Please specify a filename</source>
+        <translation>Veuillez indiquer un nom de fichier</translation>
+    </message>
+</context>
+<context>
+    <name>YZView</name>
+    <message>
+        <source>All</source>
         <translation>Tout</translation>
     </message>
     <message>
@@ -20,10 +54,6 @@
     <message>
         <source>-- SEARCH --</source>
         <translation>-- RECHERCHE --</translation>
-    </message>
-    <message>
-        <source>Please specify a filename</source>
-        <translation>Veuillez indiquer un nom de fichier</translation>
     </message>
 </context>
 </TS>

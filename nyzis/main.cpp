@@ -42,10 +42,11 @@ main(int argc, char *argv[])
 	atexit(cleaning);
 	QApplication app(  argc, argv );
 	QTranslator qt(  0 );
-	qt.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
+	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
 	app.installTranslator(  &qt );
 	QTranslator myapp(  0 );
-	myapp.load(  QString(  "myapp_" ) + QTextCodec::locale(), "." );
+	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
+	yzDebug() << "Locale " << QTextCodec::locale() << endl;
 	app.installTranslator(  &myapp );
 	
 	(new NYZFactory(argc,argv)) -> event_loop();

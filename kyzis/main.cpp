@@ -25,9 +25,13 @@
 #include <klocale.h>
 #include <ktempfile.h>
 #include <kstandarddirs.h>
+#include <qtranslator.h>
+#include <qtextcodec.h>
+#include "translator.h"
+#include "debug.h"
 
 static const char *description =
-I18N_NOOP("KDE Frontend for the YZis Editor");
+I18N_NOOP("KDE Frontend for the Yzis Editor");
 
 static const char *version = "M1";
 
@@ -43,6 +47,13 @@ int main(int argc, char **argv) {
 	KCmdLineArgs::addCmdLineOptions( options );
 	KApplication app;
 
+	QTranslator qt(  0 );
+	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
+	app.installTranslator(  &qt );
+	QTranslator myapp(  0 );
+	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
+	app.installTranslator(  &myapp );
+	
 	// see if we are starting with session management
 	/*    if (app.isRestored())
 				RESTORE(Kyzis)

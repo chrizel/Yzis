@@ -24,6 +24,8 @@
  */
 
 #include <qvaluevector.h>
+#include <qobject.h>
+#include <qapplication.h>
 
 #include "buffer.h"
 #include "cursor.h"
@@ -35,12 +37,17 @@ class YZSession;
 
 typedef QValueVector<QString> StringVector;
 
+/*class YZViewInternal : public QObject {
+	Q_OBJECT
+};
+*/
 /**
  * MUST be reimplemented in the GUI. It's the basis to display the content of a buffer
  * One view is the display of some part of a buffer, it is used to receive inputs and displays
  * corresponding outputs
  */
 class YZView {
+
 	public:
 		/**
 		 * Each view is bound to a buffer, @arg lines is the initial
@@ -303,6 +310,8 @@ class YZView {
 		 */
 		void updateCursor();
 
+		QString tr( const char *source, const char* comment = 0) { return qApp->translate( "YZView", source ); }
+
 	protected:
 		/**
 		 * The buffer we depend on
@@ -355,7 +364,6 @@ class YZView {
 		 */
 		unsigned int mCurrentSearchItem;
 
-
 	private:
 		/**
 		 * The current session, provided by the GUI
@@ -366,6 +374,8 @@ class YZView {
 		 * Searching backward
 		 */
 		bool reverseSearch;
+
+//		YZViewInternal *translator;
 };
 
 #endif /*  YZ_VIEW_H */

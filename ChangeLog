@@ -5,6 +5,9 @@
     (translators now needed ! :)
   * nyzis
     add a QApplication/QTranslator in main to support translation of QStrings
+  * kyzis
+    support new translations system, however the kpart won't be translated
+    when used in other apps. Nothing I can do about it ...
     
 2004-04-04 mikmak
   * libyzis

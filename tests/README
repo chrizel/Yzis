@@ -28,3 +28,6 @@ This should create an executable runTests. It is stacitally linked to cppunit
 and dynamically linked to libyzis. Running it will run all the test suites. It
 is possible to select only one test suite to run or only one test of a test
 suite.
+
+PhilAsserts and PhilTestRunner are a small addition to cppunit that I use to
+improve the writing of the tests and the reporting of errors.

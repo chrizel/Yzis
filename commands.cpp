@@ -79,6 +79,7 @@ void YZCommandPool::initPool() {
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true,false,false,false);
 	NEW_VIEW_COMMAND("(\".)?([0-9]*)(y.|Y)",&YZView::copy,true,true,false,true);
 	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true,false,false,true);
+	NEW_BUFF_COMMAND("u",&YZBuffer::undoLast,true,false,false,false);
 }
 
 void YZCommandPool::execCommand(YZView *view, const QString& inputs, int * /* error */ ) {
@@ -110,6 +111,7 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int * /* er
 			if ( it.data().hasMotion ) {//TODO
 				yzDebug() << "hasMotion : " << endl;
 			}
+			args.view = view;
 			break; //leave now
 		}
 	}

@@ -27,6 +27,7 @@
 #include <qstring.h>
 #include "yzis.h"
 #include "session.h"
+#include "commands.h"
 
 class YZView;
 class YZLine;
@@ -217,6 +218,11 @@ public:
 
 	// ------------ Undo
 	YZUndoBuffer * undoBuffer() { return mUndoBuffer; }
+
+	/**
+	 * Undo last operation on this buffer
+	 */
+	QString undoLast( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 	/**
 	 * Unique ID of the buffer

@@ -650,12 +650,17 @@ class YZView {
 		/**
 		 * move the cursor to the sticky column
 		 */
-		void gotoStickyCol(unsigned int Y);
+		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y);
 
 		/**
 		 * Updates stickyCol
 		 */
 		void setStickyCol( unsigned int col ) { stickyCol = col; }
+
+		/**
+		 * update stickCol to according to viewCursor
+		 */
+		void updateStickyCol( YZViewCursor* viewCursor );
 
 		/**
 		 * Prepares to record next undo item

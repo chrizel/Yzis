@@ -37,7 +37,7 @@
 
 //let's use the patch number since it exists ...
 #define VERSION_CHAR	"M2"
-#define VERSION_CHAR_LONG ( "Yzis "VERSION_CHAR )
+#define VERSION_CHAR_LONG "Yzis "VERSION_CHAR
 //dont change these 2 and dont use them in the code
 #define VERSION_CHAR_STATE1 "(stable release)"
 #define VERSION_CHAR_STATE2 "(development release - Use for testing only)"

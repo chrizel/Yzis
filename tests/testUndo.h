@@ -59,7 +59,6 @@ public:
 
 protected:
     void performUndoRedo( QStringList & textHistory, bool commandUndo=false );
-    uint x,y;
     TYZSession * mSession;
     TYZBuffer *  mBuf;
     TYZView * mView;

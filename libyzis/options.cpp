@@ -291,3 +291,11 @@ void YZOption::cleanup() {
 		delete it.data();
 	}
 }
+
+bool YZOption::hasOption( const QString& _key ) {
+	QString key = _key;
+	if ( ! key.contains( '\\' ) )
+		key.prepend( currentGroup+'\\' );
+	return mOptions.contains( key );
+}
+

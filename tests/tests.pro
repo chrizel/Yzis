@@ -13,7 +13,7 @@ DEFINES += TEST
 unix:LIBS += -Lcppunit/bin -lcppunit
 unix:LIBS += -L../libyzis/libqtyzis/.libs -lqtyzis
 
-INCLUDEPATH += cppunit/include cppunit/phil \
+INCLUDEPATH += cppunit/include cppunit/phil /usr/include/lua50 \
 				..
 
 HEADERS   =  testBuffer.h \

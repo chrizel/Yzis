@@ -50,8 +50,11 @@ public:
     virtual void quit(bool /*savePopup=true */) {
         yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
     }
-    virtual void deleteView ( ) {
+    virtual void deleteView ( int  ) {
         yzDebug( AREA_TESTS) << "TYZSession::deleteView" << endl;
+    }
+    virtual void deleteBuffer ( YZBuffer * ) {
+        yzDebug( AREA_TESTS) << "TYZSession::deleteBuffer" << endl;
     }
     virtual void changeCurrentView( YZView* ) {
         // notification
@@ -62,6 +65,9 @@ public:
     }
     virtual void setFocusMainWindow( ) {
         yzDebug( AREA_TESTS) << "TYZSession::setFocusMainWindow" << endl;
+    }
+    virtual void quit( int ) {
+        yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
     }
 };
 

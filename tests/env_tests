@@ -2,3 +2,4 @@
 # run this in bash to dynamivally load the just compiled libyzis library
 
 export LD_LIBRARY_PATH=../libyzis/libqtyzis/.libs/
+./runTests

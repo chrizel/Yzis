@@ -55,10 +55,10 @@ void TestUndo::testUndoBufferCreation()
     YZUndoBuffer * ub = mBuf->undoBuffer();
     phCheckEquals( ub->mayRedo(), false );
     phCheckEquals( ub->mayUndo(), false );
-    ub->undo(&x,&y);
+    ub->undo(mView);
     phCheckEquals( ub->mayRedo(), false );
     phCheckEquals( ub->mayUndo(), false );
-    ub->redo(&x,&y);
+    ub->redo(mView);
     phCheckEquals( ub->mayRedo(), false );
     phCheckEquals( ub->mayUndo(), false );
 }
@@ -77,7 +77,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
         if (commandUndo) {
             mView->sendText("u");
         } else {
-            ub->undo(&x,&y);
+            ub->undo(mView);
         }
         yzDebug( "TestUndo" ) << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
         phCheckEquals( mBuf->getWholeText(), textHistory[i] );
@@ -89,7 +89,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
     if (commandUndo) {
         mView->sendText("u");
     } else {
-        ub->undo(&x,&y);
+        ub->undo( mView );
     }
     yzDebug( "TestUndo" ) << ub->toString() << endl;
     yzDebug( "TestUndo" ) << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
@@ -103,7 +103,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
         if (commandUndo) {
             mView->sendText("<C-R>");
         } else {
-            ub->redo(&x,&y);
+            ub->redo(mView);
         }
         yzDebug( "TestUndo" ) << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
         phCheckEquals( mBuf->getWholeText(), textHistory[i] );
@@ -114,7 +114,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
     if (commandUndo) {
         mView->sendText("<C-R>");
     } else {
-        ub->redo(&x,&y);
+        ub->redo(mView);
     }
     yzDebug( "TestUndo" ) << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( mBuf->getWholeText(), textHistory[i] );

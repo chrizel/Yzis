@@ -52,7 +52,7 @@ test:
 	cd tests/cppunit && qmake cppunit.pro -o Makefile
 	cd tests/cppunit && make
 	cd tests && qmake tests.pro -o Makefile
-	cd tests && make && ./runTests
+	cd tests && make && ./env_tests
 
 update-tr:
 	echo "Updating .ts files in translations..." ; \

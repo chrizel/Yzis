@@ -105,15 +105,16 @@ QString YZExLua::loadFile( YZView *, const QString& inputs ) {
 		return QString::null;
 	}
 
-	QFileInfo fi ( found );
-	filename = fi.absFilePath();
-	yzDebug() << "LUA : sourcing file " << filename << endl;
-	if ( fi.exists() ) {
-		if ( lua_dofile( st, filename ) )
-			yzDebug() << "YZExLua::loadFile failed : " << lua_tostring(st, -1) << endl;
-		else
-			yzDebug() << "YZExLua::loadFile succeded " << endl;
+	lua_pushstring(st,"dofile");
+	lua_gettable(st, LUA_GLOBALSINDEX);
+	lua_pushstring(st,found.latin1());
+	int lua_err = lua_pcall(st,1,1,0);
+	if (lua_err) {
+		QString errorMsg = lua_tostring(st,lua_gettop(st));
+		printf("%s\n", errorMsg.latin1() );
+		YZSession::me->popupMessage(tr("Lua error when running file %1:\n%2").arg(found).arg(errorMsg));
 	}
+
 	return QString::null;
 }
 
@@ -241,13 +242,17 @@ int YZExLua::replace(lua_State *L) {
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
 
+	if (text.find('\n') != -1) {
+		// replace does not accept multiline strings, it is too strange
+		return 0;
+	}
+
 	YZView* cView = YZSession::me->currentView();
-	QStringList list = QStringList::split( "\n", text );
-	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++, sLine++ ) {
-		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
-		cView->myBuffer()->action()->replaceChar( cView, sCol, sLine, *it );
+	if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) {
+		cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
 		sCol = 0;
 	}
+	cView->myBuffer()->action()->replaceChar( cView, sCol, sLine, text );
 
 	return 0; // no result
 }

@@ -6,10 +6,7 @@
  */
 
 #include "yz_buffer.h"
-
-/**
- * C++ API
- */
+#include "yz_commands.h"
 
 class YZView;
 
@@ -18,9 +15,12 @@ class YZSession {
 		/**
 		 * Constructor. Give a session name to identify/save/load sessions.
 		 */
-		YZSession( const char *_session_name );
+		YZSession( QString _sessionName );
+    virtual ~YZSession();
 
-		const char *get_session_name(void) { return session_name; }
+		QString getSessionName(void) { return sessionName; }
+
+    YZCommandPool *getPool() { return pool; }
 
 	protected:
 		virtual		YZBuffer *buffer(int i)=0;
@@ -30,9 +30,9 @@ class YZSession {
 		int		views_nb;
 
 	private:
-		const char *session_name;
+		QString sessionName;
+    YZCommandPool *pool;
 
-		
 		// shall we create views and buffers from there ?
 		// makes sense i think
 

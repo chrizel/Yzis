@@ -21,30 +21,27 @@ public:
 	/** opens a buffer using the given file */
 	YZBuffer(QString _path=QString::null);
 
-	void add_char (int x, int y, QChar c);
-	void chg_char (int x, int y, QChar c);
+	void addChar (int x, int y, QChar c);
+	void chgChar (int x, int y, QChar c);
 
 	void load(void);
 	void save(void);
 
 	/* linked list handling */
-	void add_line(QString &l);
+	void addLine(QString &l);
 
 protected:
-	void add_view (YZView *v);
+	void addView (YZView *v);
 
 	QString path;
 	YZView	*view_list[YZ_MAX_VIEW];	// should be growable 
 	int	view_nb;
 
 private:
-	void	post_event(yz_event e);
-	void	update_view(int view);
-	void	update_all_views();
-	QString	find_line(int line);
-
-//	QString *line_first, *line_last;
-//	int	lines_nb; // number of lines in this buffer
+	void	postEvent(yz_event e);
+	void	updateView(int view);
+	void	updateAllViews();
+	QString	findLine(int line);
 
 	/* readonly?, change, load, save, isclean?, ... */
 	/* locking stuff will be here, too */

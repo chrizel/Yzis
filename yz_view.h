@@ -30,43 +30,50 @@ public:
 	/**
 	 * transfer a key event from gui to core
 	 */
-	void	send_char( QChar );
+	void	sendChar( QChar );
 
 	/**
 	  * Used by the buffer to post events
 	  */
-	void	post_event (yz_event );
+	void	postEvent (yz_event );
 
 	/**
 	 * get a event to handle from the core.
 	 * that's the way the core is sending messages to the gui
 	 */
 	/* for the qt/kde gui, we should create QEvents from that? */
-	yz_event *	fetch_event(int idx=-1);
+	yz_event *	fetchEvent(int idx=-1);
 
 	/**
 	  * returns the number of the line displayed on top of this view
 	  * (refering to the whole file/buffer
 	  */
-	int	get_current(void) { return current; }
+	int	getCurrent(void) { return current; }
 
 	/**
 	  * returns the number of line this view can display
 	  */
-	int	get_lines_visible(void) { return lines_vis; }
+	int	getLinesVisible(void) { return lines_vis; }
 
 	/**
 	  * return true or false according to if the given line is
 	  * visible or not
 	  */
-	int	is_line_visible(int l) { return ( (l>=current) && ((l-current)<lines_vis) ); }
+	int	isLineVisible(int l) { return ( (l>=current) && ((l-current)<lines_vis) ); }
 	
 	/**
 	 * Register a GUI event manager
 	 */
-	void register_manager ( Gui *mgr );
+	void registerManager ( Gui *mgr );
 
-	void	update_cursor(int x=-1,int y=-1);
+	void updateCursor(int x=-1,int y=-1);
+
+	void centerView( int line );
+
+	/**
+	 * moves the cursor of the current view down
+	 */
+	QString moveDown( QStringList );
 
 protected:
 
@@ -89,6 +96,7 @@ protected:
 
 
 	/* fifo event loop. really basic now */
+	//FIXME replace with a QMap
 	yz_event	events[YZ_EVENT_EVENTS_MAX];
 	int		events_nb_begin;
 	int		events_nb_last;
@@ -103,6 +111,12 @@ protected:
 	 * Current GUI
 	 */
 	Gui *gui_manager;
+
+	/**
+	 * Used to store previous keystrokes which are not recognised as a command,
+	 * this should allow us to have commands like : 100g or gg etc ...
+	 */
+	QString previous_chars;
 
 };
 

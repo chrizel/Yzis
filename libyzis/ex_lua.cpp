@@ -93,6 +93,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"line",line);
 	lua_register(L,"setline",setline);
 	lua_register(L,"insert",insert);
+	lua_register(L,"remove",remove);
 	lua_register(L,"insertline",insertline);
 	lua_register(L,"appendline",appendline);
 	lua_register(L,"replace",replace);
@@ -321,6 +322,23 @@ int YZExLua::insert(lua_State *L) {
 		sCol=0;
 		sLine++;
 	}
+
+	return 0; // no result
+}
+
+int YZExLua::remove(lua_State *L) {
+	if (!checkFunctionArguments(L, 3, "remove", "line, col, nb")) return 0;
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
+	int sNb = ( int )lua_tonumber( L,3 );
+
+	sCol = sCol ? sCol - 1 : 0;
+	sLine = sLine ? sLine - 1 : 0;
+
+	YZView* cView = YZSession::me->currentView();
+	YZBuffer * cBuffer = cView->myBuffer();
+	YZAction * cAction = cBuffer->action();
+	cAction->deleteChar(cView, sCol, sLine, sNb);
 
 	return 0; // no result
 }

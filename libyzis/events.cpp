@@ -66,12 +66,22 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 
 				//special handling for indent
 				if ( QString::compare(event, "INDENT_ON_KEY") == 0 ) {
-					nbArgs+=1;
-					const char *inputs = view->getInputBuffer().utf8();
-					YZExLua::instance()->exe(*it2, "s", inputs);
+					const char *inputs = view->getInputBuffer();
+					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
+					QString curLine = view->myBuffer()->textline(view->getBufferCursor()->getY());
+					rx.exactMatch(curLine);
+					int nbCurTabs = rx.cap(1).contains("\t");
+					int nbCurSpaces = rx.cap(1).contains(" ");
+					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->getY()+1);
+					rx.exactMatch(nextLine);
+					int nbNextTabs = rx.cap(1).contains("\t");
+					int nbNextSpaces = rx.cap(1).contains(" ");
+					QString prevLine = view->myBuffer()->textline(view->getBufferCursor()->getY()-1);
+					rx.exactMatch(prevLine);
+					int nbPrevTabs = rx.cap(1).contains("\t");
+					int nbPrevSpaces = rx.cap(1).contains(" ");
+					YZExLua::instance()->exe(*it2, "siiiiiisss", inputs,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,(const char*)curLine,(const char*)prevLine,(const char*)nextLine);
 				} else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
-					nbResults++;
-					nbArgs++;
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
 					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->getY());
 					rx.exactMatch(nextLine);
@@ -83,8 +93,7 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					int nbPrevSpaces = rx.cap(1).contains(" ");
 					int idtabs = 0;
 					int idspaces = 0;
-					yzDebug() << "Params : " << prevLine << "|" << nbNextTabs << "," << nbNextSpaces << "," << nbPrevTabs << "," << nbPrevSpaces << endl;
-					YZExLua::instance()->exe(*it2, "iiiiss>ii",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, (const char*)prevLine.utf8(), (const char*)nextLine.utf8(),  &idtabs, &idspaces );
+					YZExLua::instance()->exe(*it2, "iiiiss>ii",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, (const char*)prevLine, (const char*)nextLine,  &idtabs, &idspaces );
 					yzDebug() << "Got INDENT_ON_ENTER response : " << idtabs << ", " << idspaces << endl;
 					results << QString::number(idtabs) << QString::number(idspaces);
 				} else {

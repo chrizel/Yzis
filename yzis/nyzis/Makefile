@@ -3,7 +3,7 @@
 all : nyzis
 
 
-nyzis : lib display.o main.o nyz_view.o
+nyzis : lib main.o nyz_view.o
 	g++ -o nyzis main.o display.o nyz_view.o  -lcurses ../libyzis/libyzis.a
 
 lib:

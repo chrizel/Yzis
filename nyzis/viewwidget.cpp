@@ -107,8 +107,6 @@ void NYZView::unmap( void )
 }
 
 void NYZView::updateVis( bool refresh ) {
-	unsigned int width;
-	unsigned int height;
 	getmaxyx( stdscr, height, width );
 	setVisibleArea( width - marginLeft, height - 2, refresh );
 }
@@ -117,11 +115,11 @@ void NYZView::printVoid( unsigned int relline )
 {
 	unsigned int i;
 
+	bool rightleft = getLocalBoolOption( "rightleft" );
 	// clipping
 	if ( relline > getLinesVisible() ) return;
-	wmove (editor, relline, 0);
-	waddch(editor, attribBlue|'~');
-	for (i=1 ; i< getColumnsVisible(); i++ ) waddch(editor, ' ' );
+	mvwaddch(editor,relline, rightleft ? width - 1 : 0, attribBlue|'~');
+	for (i=1 ; i< getColumnsVisible(); i++ ) mvwaddch(editor, relline, rightleft ? width - i - 1 : i, ' ' );
 }
 
 void NYZView::scrollUp( int n ) {
@@ -146,6 +144,7 @@ void NYZView::paintEvent( unsigned int , unsigned int clipy, unsigned int , unsi
 void NYZView::drawContents( int clipy, int cliph ) {
 	bool number = getLocalBoolOption( "number" );
 	bool wrap = getLocalBoolOption( "wrap" );
+	bool rightleft = getLocalBoolOption( "rightleft" );
 
 	if (!editor)	// Avoid segfaults and infinite recursion.
 		return;
@@ -182,6 +181,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 			currentY++;
 		}
 	} else {
+		unsigned int x;
 		while ( drawNextLine( ) && cliph > 0 ) {
 			lineNumber = drawLineNumber();
 			if ( currentY >= ( uint )clipy ) {
@@ -190,9 +190,19 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				if ( number ) { // draw current line number
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
 						wattron( editor, attribYellow );
-						waddstr( editor, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
+						QString num = QString::number( lineNumber );
+						if ( rightleft ) {
+							num = num.leftJustify( marginLeft - 1, ' ' );
+							x = width - currentX - num.length();
+						} else {
+							num = num.rightJustify( marginLeft - 1, ' ' );
+							x = currentX;
+						}
+						mvwaddstr( editor, currentY, x, num );
 						wattroff( editor, attribYellow );
-						waddch( editor, ' ' );
+						if ( rightleft ) --x;
+						else ++x;
+						mvwaddch( editor, currentY, x, ' ' );
 						lastLineNumber = lineNumber;
 					} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
 					currentX += marginLeft;
@@ -221,13 +231,19 @@ void NYZView::drawContents( int clipy, int cliph ) {
 							endl;
 					}
 					bool invert = drawSelected( );
-					waddch( editor, mAttributes | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
+					if ( rightleft )
+						x = width - currentX - 1;
+					else
+						x = currentX;
+					mvwaddch( editor, currentY, x, mAttributes | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
 					if ( drawLength() > 1 ) {
-						for (unsigned int i = 1; i < drawLength(); i++ ) waddch( editor, ' ' | ( invert ? A_REVERSE : A_NORMAL ) );
+						for (unsigned int i = 1; i < drawLength(); i++ ) 
+							mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), ' ' | ( invert ? A_REVERSE : A_NORMAL ) );
 					}
 					currentX += drawLength( );
 				}
-				for( ; currentX < getColumnsVisible() + marginLeft; currentX++) waddch( editor, ' ' );
+				for( ; currentX < getColumnsVisible() + marginLeft; currentX++) 
+					mvwaddch( editor, currentY, rightleft ? width - currentX - 1: currentX, ' ' );
 				currentY += drawHeight( );
 				cliph -= lineHeight( );
 			} else {
@@ -242,10 +258,9 @@ void NYZView::drawContents( int clipy, int cliph ) {
 			--cliph;
 		}
 
-		wmove(editor,
-				getCursor()->getY() - getDrawCurrentTop (),
-				getCursor()->getX() - getDrawCurrentLeft () + marginLeft
-			 );
+		x = getCursor()->getX() - getDrawCurrentLeft () + marginLeft;
+		if ( rightleft ) x = width - x - 1;
+		wmove(editor, getCursor()->getY() - getDrawCurrentTop (), x );
 	}
 	wrefresh( editor );
 }
@@ -312,10 +327,9 @@ void NYZView::syncViewInfo( void )
 
 	wrefresh(infobar);
 
-	wmove(editor,
-		getCursor()->getY() - getDrawCurrentTop (),
-		getCursor()->getX() - getDrawCurrentLeft () + marginLeft
-		 );
+	unsigned int x = getCursor()->getX() - getDrawCurrentLeft () + marginLeft;
+	if ( getLocalBoolOption( "rightleft" ) ) x = width - x - 1;
+	wmove(editor, getCursor()->getY() - getDrawCurrentTop (), x );
 	wrefresh( editor );
 }
 

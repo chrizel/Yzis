@@ -111,6 +111,8 @@ private:
 	QString commandline;
 	unsigned int lastLineNumber;
 	unsigned int marginLeft;
+	unsigned int height;
+	unsigned int width;
 
 	void initialiseAttributesMap();
 	static int attributesMapInitialised;

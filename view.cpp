@@ -128,6 +128,14 @@ void YZView::sendKey( int c, int modifiers) {
 		case YZ_VIEW_MODE_REPLACE:
 		case YZ_VIEW_MODE_SEARCH:
 			break;// continue
+		case YZ_VIEW_MODE_OPEN:
+			switch ( tolower(c) ) {
+				case 'b':
+					break;
+				default:
+					break;
+			}
+			// fallthru
 		case YZ_VIEW_MODE_EX:
 		case YZ_VIEW_MODE_COMMAND:
 			switch ( tolower(c) ) {
@@ -157,6 +165,7 @@ void YZView::sendKey( int c, int modifiers) {
 		key = key.upper();
 	
 	bool test = false;
+	
 
 	switch(mMode) {
 
@@ -364,6 +373,9 @@ void YZView::sendKey( int c, int modifiers) {
 
 		case YZ_VIEW_MODE_COMMAND:
 			switch ( c ) {
+				case Qt::Key_End:
+					key='$';
+					break;
 				case Qt::Key_Insert:
 					key='i';
 					break;
@@ -405,6 +417,8 @@ void YZView::sendKey( int c, int modifiers) {
 			}
 			break;
 
+		case YZ_VIEW_MODE_OPEN:
+			break;
 		default:
 			yzDebug() << "Unknown MODE" << endl;
 			purgeInputBuffer();

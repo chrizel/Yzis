@@ -22,6 +22,7 @@
 #include <qtextcodec.h>
 #include <qapp.h>
 #include "libyzis/translator.h"
+#include "libyzis/debug.h"
 #include "testBuffer.h"
 #include "PhilTestRunner.h"
 
@@ -41,6 +42,8 @@ int main(int argc, char ** argv)
 	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
 	app.installTranslator(  &myapp );
 	
+
+	YZDebugBackend::instance()->enableDebugArea("TYZView", false );
 
 	PhilTestRunner runner;
 	runner.addTest( CppUnit::TestFactoryRegistry::getRegistry().makeTest() );

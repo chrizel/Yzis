@@ -88,7 +88,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"deleteline",deleteline);
 	lua_register(L,"version",version);
 	lua_register(L,"filename",filename);
-	lua_register(L,"getcolor",getcolor);
+	lua_register(L,"color",color);
 	lua_register(L,"linecount",linecount);
 	lua_register(L,"sendkeys",sendkeys);
 }
@@ -318,7 +318,7 @@ int YZExLua::replace(lua_State *L) {
 
 int YZExLua::winline(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
-	uint result = cView->getBufferCursor()->getY() - 1;
+	uint result = cView->getBufferCursor()->getY() + 1;
 
 	lua_pushnumber( L, result ); // first result
 	return 1; // one result
@@ -367,7 +367,7 @@ int YZExLua::filename(lua_State *L) {
 	return 1; // one result
 }
 
-int YZExLua::getcolor(lua_State *L) {
+int YZExLua::color(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n != 2 ) return 0; //mis-use of the function
 

@@ -36,17 +36,19 @@ YZSwapFile::YZSwapFile(YZBuffer *b) {
 	mFilename = QString::null;
 	setFileName( b->fileName() );
 	mNotResetted=true;
-	init();
+	//init();
 }
 
 void YZSwapFile::setFileName( const QString& fname ) {
 	unlink();
+	yzDebug() << "orig " << fname << endl;
 	mFilename = fname.section( '/', 0, -2 ) + "/." + fname.section( '/', -1 ) + ".ywp";
 	yzDebug() << "Swap change filename " << mFilename << endl;
 }
 
 void YZSwapFile::flush() {
-	if ( mRecovering || mNotResetted ) return;
+	if ( mRecovering ) return;
+	if ( mNotResetted ) init();
 	yzDebug() << "Flushing swap to " << mFilename << endl;
 	QFile f( mFilename );
 	if ( f.open( IO_WriteOnly | IO_Raw | IO_Append ) ) { //open at end of file
@@ -66,7 +68,7 @@ void YZSwapFile::flush() {
 }
 
 void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString& str, unsigned int col, unsigned int line ) {
-	if ( mRecovering || mNotResetted ) return;
+	if ( mRecovering ) return;
 	swapEntry e;
 	e.type = type;
 	e.col = col;
@@ -80,6 +82,7 @@ void YZSwapFile::unlink() {
 	yzDebug() << "Unlink swap file " << mFilename << endl;
 	if ( ! mFilename.isNull() && QFile::exists( mFilename ) )
 		QFile::remove ( mFilename );
+	mNotResetted=true;
 }
 
 void YZSwapFile::init() {

@@ -25,6 +25,8 @@
 
 #include <qlayout.h>
 #include <qlabel.h>
+#include <qslider.h>
+#include <qhbox.h>
 
 #include <kfontrequester.h>
 #include <kcolorbutton.h>
@@ -51,42 +53,59 @@ KYZisConfigDialog::~KYZisConfigDialog( ) {
 }
 
 void KYZisConfigDialog::setupPages() {
+	unsigned int line = 0;
 
 	/**
 	 * Appearance
 	 */
 	QWidget* pageAppearance = new QWidget( this, "Appearance" );
-	QGridLayout* layoutAppearance = new QGridLayout( pageAppearance, 2, 4, 0, 10 );
+	QGridLayout* layoutAppearance = new QGridLayout( pageAppearance, 2, 5, 0, 10 );
 
 	// Font
 	QLabel* label_Font = new QLabel( i18n("Text font"), pageAppearance );
 	KFontRequester* kcfg_Font = new KFontRequester( pageAppearance, "kcfg_Font" );
 
-	layoutAppearance->addWidget( label_Font, 0, 0, Qt::AlignRight );
-	layoutAppearance->addWidget( kcfg_Font, 0, 1 );
+	layoutAppearance->addWidget( label_Font, line, 0, Qt::AlignRight );
+	layoutAppearance->addWidget( kcfg_Font, line, 1 );
+	++line;
 
 	// Transparency
 	QLabel* label_transparency = new QLabel( i18n("Use a transparent background"), pageAppearance );
 	QCheckBox* kcfg_transparency  = new QCheckBox( pageAppearance, "kcfg_transparency" );
 
-	layoutAppearance->addWidget( label_transparency, 1, 0, Qt::AlignRight );
-	layoutAppearance->addWidget( kcfg_transparency, 1, 1 );
+	layoutAppearance->addWidget( label_transparency, line, 0, Qt::AlignRight );
+	layoutAppearance->addWidget( kcfg_transparency, line, 1 );
+	++line;
+
+	// Opacity
+	QLabel* label_opacity = new QLabel( i18n("Background color opacity"), pageAppearance );
+	QHBox box_opacity = new QHBox( pageAppearance );
+	QLabel* label_left = new QLabel( i18n("Min"), box_opacity );
+	QSlider* slide_fade = new QSlider( 0, 100, 1, 0, Qt::Horizontal, box_opacity, "kcfg_opacity" );
+	QLabel* label_right = new QLabel( i18n("Max"), box_opacity );
+	box_opacity->setStretchFactor( slide_fade, 1 );
+
+	layoutAppearance->addWidget( label_opacity, line, 0, Qt::AlignRight );
+	layoutAppearance->addWidget( box_opacity, line, 1 );
+	++line;
 
 	// BG Color
 	QLabel* label_colorBG = new QLabel( i18n("Background Color"), pageAppearance );
 	KColorButton* kcfg_colorBG = new KColorButton( pageAppearance, "kcfg_colorBG" );
 
-	layoutAppearance->addWidget( label_colorBG, 2, 0, Qt::AlignRight );
-	layoutAppearance->addWidget( kcfg_colorBG, 2, 1 );
+	layoutAppearance->addWidget( label_colorBG, line, 0, Qt::AlignRight );
+	layoutAppearance->addWidget( kcfg_colorBG, line, 1 );
+	++line;
 
 	// FG Color
 	QLabel* label_colorFG = new QLabel( i18n("Foreground Color"), pageAppearance );
 	KColorButton* kcfg_colorFG = new KColorButton( pageAppearance, "kcfg_colorFG" );
 
-	layoutAppearance->addWidget( label_colorFG, 3, 0, Qt::AlignRight );
-	layoutAppearance->addWidget( kcfg_colorFG, 3, 1 );
+	layoutAppearance->addWidget( label_colorFG, line, 0, Qt::AlignRight );
+	layoutAppearance->addWidget( kcfg_colorFG, line, 1 );
+	++line;
 
-	layoutAppearance->setRowStretch( 4, 1 );
+	layoutAppearance->setRowStretch( line, 1 );
 
 
 	addPage( pageAppearance, i18n("Appearance"), "colorize" );

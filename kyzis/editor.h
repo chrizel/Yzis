@@ -59,7 +59,7 @@ class KYZisEdit : public QWidget {
 		// update text area
 		void updateArea( );
 
-		void setTransparent( bool );
+		void setTransparent( bool t, double opacity = 0, const QColor& color = Qt::black );
 
 		const QString& convertKey( int key );
 

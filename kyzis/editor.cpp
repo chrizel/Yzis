@@ -60,10 +60,14 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 KYZisEdit::~KYZisEdit() {
 }
 
-void KYZisEdit::setTransparent ( bool t ) {
+void KYZisEdit::setTransparent ( bool t, double opacity, const QColor& color ) {
+	yzDebug() << "opactity = " << opacity << endl;
+	if ( opacity == 1 )	t = false;	// opactity is max, let use scroll optimisation 
 	mTransparent = t;
-	if ( t ) rootxpm->start();
-	else rootxpm->stop();
+	if ( t ) {
+		rootxpm->setFadeEffect( opacity, color );
+		rootxpm->start();
+	} else rootxpm->stop();
 }
 
 void KYZisEdit::resizeEvent(QResizeEvent* ) {

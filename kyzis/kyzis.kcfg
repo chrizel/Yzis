@@ -20,6 +20,10 @@
 			<label>use a transparent background</label>
 			<default>false</default>
 		</entry>
+		<entry name="opacity" type="UInt">
+			<label>opicity of the background color</label>
+			<default>0</default>
+		</entry>
 	</group>
 
 </kcfg>

@@ -130,8 +130,10 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 			unsigned int nc = reg.numCaptures();
 			yzDebug() << "matched " << commands.current()->keySeq() << " " << reg.cap( 1 ) 
 				<< "," << reg.cap( nc - 1 ) << "," << reg.cap( nc ) << endl;
-			(this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), reg.cap( nc ).stripWhiteSpace(), 
-					from, to, false ) );
+			QString arg = reg.cap( nc ).stripWhiteSpace();
+			bool force = arg[ 0 ] == '!';
+			if ( force ) arg = arg.mid( 1 );
+			(this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg, from, to, force ) );
 		}
 	}
 	if ( ! matched ) view->gotoStickyCol( to );
@@ -177,7 +179,7 @@ int YZExCommandPool::rangeVisual( const YZExRangeArgs& args ) {
 QString YZExCommandPool::write( const YZExCommandArgs& args ) {
 	bool quit = args.cmd.contains( 'q') || args.cmd.contains( 'x' );
 	bool all = args.cmd.contains( 'a' );
-	bool force = (args.arg[0] == '!');
+	bool force = args.force;
 	if ( ! quit && all ) {
 		args.view->mySession()->saveAll();
 		return QString::null;
@@ -207,7 +209,7 @@ QString YZExCommandPool::write( const YZExCommandArgs& args ) {
 	return QString::null;
 }
 QString YZExCommandPool::quit( const YZExCommandArgs& args ) {
-	bool force = (args.arg[0] == '!');
+	bool force = args.force;
 	yzDebug() << "View counts: "<< args.view->myBuffer()->views().count() 
 		<< " Buffer Count : " << args.view->mySession()->countBuffers() << endl;
 	if ( args.cmd.startsWith( "qa" ) ) {

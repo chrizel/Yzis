@@ -117,6 +117,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	lineDY = 0;
 	tabstop = getLocalIntOption("tabstop");
 	wrap = getLocalBoolOption( "wrap" );
+
 }
 
 YZView::~YZView() {
@@ -129,6 +130,18 @@ YZView::~YZView() {
 	delete mVisualCursor;
 	delete dVisualCursor;
 	delete selectionPool;
+}
+
+void YZView::setupKeys() {
+	// register keys with modifiers
+	QPtrList<const YZCommand> commands = mSession->getPool()->commands;
+	for ( commands.first(); commands.current(); commands.next() ) {
+		const QString& keys = commands.current()->keySeq();
+		if ( keys.find( "<CTRL>" ) > -1 || keys.find( "<ALT>" ) > -1 ) {
+			yzDebug() << "registerModifierKeys " << keys << endl;
+			registerModifierKeys( keys );
+		}
+	}
 }
 
 void YZView::setVisibleArea(int c, int l, bool refresh) {
@@ -148,6 +161,7 @@ void YZView::recalcScreen( ) {
 }
 
 void YZView::sendMultipleKey(const QString& keys) {
+	yzDebug() << "sendMultipleKey " << keys << endl;
 	for ( unsigned int i = 0 ; i < keys.length(); i++ ) {
 		QString key = keys.mid( i );
 		if ( key.startsWith( "<CTRL>" ) ) {

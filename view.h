@@ -73,11 +73,6 @@ class YZView {
 		 */
 		void sendKey(const QString& key, const QString& modifiers="");
 
-		/**
-		 * Send multiple keys in one string
-		 */
-		void sendMultipleKey(const QString& keys);
-
 		/** 
 		 * Returns the index of the first line displayed on the view
 		 */
@@ -651,7 +646,13 @@ class YZView {
 		 */
 		bool isRecording() { return mRegs.count() > 0; }
 
+	public slots :
+		void sendMultipleKey( const QString& keys );
+
 	protected:
+
+		void setupKeys();
+		virtual void registerModifierKeys( const QString& keys ) = 0;
 
 		/**
 		 * The buffer we depend on

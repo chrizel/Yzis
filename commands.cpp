@@ -31,7 +31,6 @@
 #include "debug.h"
 #include "view.h"
 #include "viewcursor.h"
-#include "ex_lua.h"
 #include "session.h"
 #include "buffer.h"
 #include "cursor.h"

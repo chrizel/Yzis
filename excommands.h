@@ -27,6 +27,8 @@
 #ifndef YZ_EXCOMMANDS_H
 #define YZ_EXCOMMANDS_H
 
+#include <qregexp.h>
+
 #include "view.h"
 
 class YZView;
@@ -61,14 +63,14 @@ struct YZExCommandArgs {
 	// !
 	bool force;
 
-	YZExCommandArgs( YZView* _v, const QString& _inp, const QString& _cmd, const QString& a, unsigned int from, unsigned int to, bool f ) {
-		input = _inp;
+	YZExCommandArgs( YZView* _view, const QString& _input, const QString& _cmd, const QString& _arg, unsigned int _fromLine, unsigned int _toLine, bool _force ) {
+		input = _input;
 		cmd = _cmd;
-		arg = a;
-		view = _v;
-		fromLine = from;
-		toLine = to;
-		force = f;
+		arg = _arg;
+		view = _view;
+		fromLine = _fromLine;
+		toLine = _toLine;
+		force = _force;
 	}
 };
 
@@ -99,13 +101,16 @@ class YZExCommand {
 		YZExCommand( const QString& input, ExPoolMethod pm ) {
 			mKeySeq = input;
 			mPoolMethod = pm;
+			mRegexp = QRegExp( "^(" + mKeySeq + ")\\b(.*)$" );
 		}
 		virtual ~YZExCommand() { }
 
-		QString keySeq() const { return mKeySeq; }
+		const QString & keySeq() const { return mKeySeq; }
+		const QRegExp & regexp() const { return mRegexp; }
 		const ExPoolMethod& poolMethod() const { return mPoolMethod; }
 
 	private :
+		QRegExp mRegexp;
 		QString mKeySeq;
 		ExPoolMethod mPoolMethod;
 
@@ -149,7 +154,7 @@ class YZExCommandPool {
 		QString gotoCommandMode( const YZExCommandArgs& args );
 		QString preserve( const YZExCommandArgs& args );
 		QString lua( const YZExCommandArgs& args );
-		QString luaLoadFile( const YZExCommandArgs& args );
+		QString source( const YZExCommandArgs& args );
 };
 
 #endif

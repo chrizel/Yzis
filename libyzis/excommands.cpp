@@ -467,8 +467,8 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 		return QString::null;
 	}
 	// refresh screen
-	if ( args.view )
-		args.view->recalcScreen();
+//	if ( args.view )
+//		args.view->recalcScreen();
 
 	return QString::null;
 }
@@ -520,8 +520,8 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 		return QString::null;
 	}
 	// refresh screen
-	if ( args.view )
-		args.view->recalcScreen();
+//	if ( args.view )
+//		args.view->recalcScreen();
 
 	return QString::null;
 }

@@ -239,11 +239,6 @@ class YZSession {
 		 * To be called by the GUI once it has been initialised
 		 */
 		void guiStarted();
-
-		/**
-		 * Returns whether initialization is finished or not
-		 */
-		bool guiHasStarted() { return mGuiStarted; }
 		
 		//HELPERS
 		/**
@@ -330,7 +325,6 @@ class YZSession {
 		YZBuffer* mCurBuffer;
 		YzisSchemaManager *mSchemaManager;
 		YZSearch *mSearch;
-		bool mGuiStarted;
 
 	public:
 		static int mNbViews;

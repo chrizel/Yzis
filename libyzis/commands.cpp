@@ -1,5 +1,6 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2004 Mickael Marchand <marchand@kde.org>,
+ *  Thomas Capricelli <orzel@freehackers.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -71,6 +72,9 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("a",&YZView::append,true);
 	NEW_VIEW_COMMAND("A",&YZView::appendAtEOL,true);
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
+	NEW_VIEW_COMMAND("\"",&YZView::copy,true);
+	NEW_VIEW_COMMAND("yy",&YZView::copy,true);
+	NEW_VIEW_COMMAND("Y",&YZView::copy,true);
 }
 
 void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error) {
@@ -89,6 +93,7 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error)
 		command += inputs[ i++ ];
 	//end FIXME
 	QString realcommand = command;
+	yzDebug() << "Commands :: execCommand " << realcommand << endl;
 	
 	//printf( "%s %s\n", inputs.latin1(), command.latin1() );
 

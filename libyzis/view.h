@@ -189,6 +189,11 @@ class YZView {
 		 * Moves the cursor to @arg nextx, @arg nexty
 		 */
 		void gotoxy(unsigned int nextx, unsigned int nexty);
+
+		/**
+		 * Copy from current to buffer to a register
+		 */
+		QString copy( const QString& inputsBuff = QString::null );
   
 		/**
 		 * A global UID for this view

@@ -573,3 +573,45 @@ QString YZView::gotoReplaceMode(const QString&) {
 	return QString::null;
 }
 
+QString YZView::copy( const QString& inputsBuff ) {
+	//default register to use
+	QChar reg = '"';
+	int nb_lines = 1;
+
+	//check if the command starts by " which would select a register
+	int i = 0;
+	if ( inputsBuff[ 0 ] == '"' ) {
+		if ( !inputsBuff.contains( "yy" ) && !inputsBuff.contains( "Y" ) ) 
+			return QString::null; // don't do it now, we have not the full command, XXX needs a fix when motion is implemented
+		i+=2;
+		reg = inputsBuff[ 1 ];
+		QString r ( reg );
+		yzDebug() << "View :: copy : copying to register " << r << endl;
+	}
+	//now check the number of lines if given
+	int j = i;
+	while ( inputsBuff[j].isDigit() )
+		j++; //go on
+	bool test;
+	nb_lines = inputsBuff.mid( i, j-i ).toInt( &test );
+	if ( !test ) nb_lines=1;
+	i = j;
+	yzDebug() << "View :: copy : copying " << nb_lines << " lines" << endl;
+
+	if ( inputsBuff[ i ] == 'y' && inputsBuff[ i+1 ] == 'y' )
+		i+=2;
+	else if ( inputsBuff[ i ] = 'Y' ) 
+		i++;
+	//TODO : support motion detection here
+
+	//copy now
+	////get the strings and merge them in one single line
+	QStringList list;
+	for ( i = 0 ; i < nb_lines; i++ )
+		list << mBuffer->data(mCursor->getY()+i);
+	YZSession::mRegisters.setRegister( reg, list.join( "\n" ) );
+	
+	purgeInputBuffer();
+	return QString::null;
+}
+

@@ -1168,7 +1168,10 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 		QString lin = mBuffer->textline( mCursor->getY() );
 		list << lin.mid(mCursor->getX());
 	} else if ( mMode == YZ_VIEW_MODE_VISUAL && args.command.startsWith( "y" ) ) {
-		list = mBuffer->getText( *mVisualCursor, *mCursor );
+		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+		selectionPool->clear( "VISUAL" );
+		list = mBuffer->getText( *cur_sel.from, *cur_sel.to );
+		paintEvent( dCurrentLeft, cur_sel.drawFrom->getY(), mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 1 );
 		gotoCommandMode();
 	} else if ( args.command.startsWith( "y" ) ) {
 		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs

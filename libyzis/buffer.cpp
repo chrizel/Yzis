@@ -68,7 +68,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	// buffer at creation time should use a non existing temp filename
 	// find a tmp file that does not exist
 	do {
-		mPath = QString("/tmp/yzisnew%1").arg(random());
+		mPath = QString("/tmp/yzisnew%1").arg(rand());
 	} while ( QFileInfo( mPath ).exists() == true );
 	// there is still a possible race condition here...
 	mFileIsNew = true;

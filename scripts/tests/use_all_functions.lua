@@ -36,9 +36,9 @@ print("Current col,line: "..wincol()..","..winline())
 goto(3,1)
 print("Current col,line: "..wincol()..","..winline())
 
--- delete
-delete(1)
-delete(5)
+-- deleteline
+deleteline(1)
+deleteline(5)
 
 -- filename
 print("Current file is : "..filename())

@@ -25,9 +25,9 @@ end
 TestLuaBinding = {} --class
     function TestLuaBinding:setUp() 
         while linecount() > 1 do
-            delete(1)
+            deleteline(1)
         end
-        delete(1)
+        deleteline(1)
     end
 
     function TestLuaBinding:tearDown() 
@@ -84,11 +84,10 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), "" )
         local s = "coucou\nhop"
         insert(1,1,s)
-        printBufferContent()
         assertEquals( bufferContent(), s )
     end
 
-    function TestLuaBinding:test_insert()
+    function TestLuaBinding:test_insertline()
         local s1,s2,s3
         s1 = "1111"
         s2 = "2222"
@@ -96,12 +95,24 @@ TestLuaBinding = {} --class
 
         assertEquals( bufferContent(), "" )
         insertline(1,s2)
+        printBufferContent()
         assertEquals( bufferContent(), s2 )
         insertline(1,s1)
         assertEquals( bufferContent(), s1.."\n"..s2 )
         insertline(3,s3)
         assertEquals( bufferContent(), s1.."\n"..s2.."\n"..s3 )
+
+        insertline(5,s3)
+        assertEquals( bufferContent(), s1.."\n"..s2.."\n"..s3 )
+
+        -- multiline support
+        self.setUp()
+        insertline(1,s3)
+        assertEquals( bufferContent(), s3 )
+        insertline(1,s1.."\n"..s2)
+        assertEquals( bufferContent(), s1.."\n"..s2.."\n"..s3 )
     end
+
 
 
 

@@ -43,7 +43,7 @@ void YZView::sendKey( int c, int modifiers) {
 	if ( c == Qt::Key_Insert ) c = Qt::Key_I;
 	
 	QString lin;
-	QString key = tolower( c );// = QKeySequence( c );
+	QString key = QChar( tolower( c ) );// = QKeySequence( c );
 	//default is lower case unless some modifiers
 	////key = key.lower();
 	if ( modifiers & YZIS::Shift ) {

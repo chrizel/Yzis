@@ -124,7 +124,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"highlight",highlight);
 	lua_register(L,"connect",connect);
 	lua_register(L,"source",source);
-	lua_register(L,"debug",debug);
+	lua_register(L,"yzdebug",yzdebug);
 	lua_register(L,"setlocal",setlocal);
 	lua_register(L,"newoption",newoption);
 	lua_register(L,"set",set);
@@ -650,8 +650,8 @@ int YZExLua::highlight( lua_State *L ) {
 	return 0;
 }
 
-int YZExLua::debug( lua_State *L ) {
-	if (!checkFunctionArguments(L, 1, "debug", "text")) return 0;
+int YZExLua::yzdebug( lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "yzdebug", "text")) return 0;
 	QString text = ( char * )lua_tostring ( L, 1 );
 	yzDebug() << "Lua debug : " << text << endl;	
 	return 0;

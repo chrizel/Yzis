@@ -1,0 +1,70 @@
+<chapter id="incompatibilities">
+	<title>Vi and Vim incompatibilities</title>
+	
+	<para>
+	Yzis is clearly inspired by Vi and Vim and many of the commands are identical. There are
+	a few incompatibilities though, commands in Vim that seemed unlogic to the Yzis developers.
+	This document references all known incompatibilities with Vi and Vim and is directed
+	towards Vi and Vim users that are interested in Yzis. 
+	</para>
+
+
+	<itemizedlist>
+		<listitem>
+			<para><command>'4o'</command></para>
+			<para>Normal command will open 4 new lines in yzis (Vi and Vim)</para>
+		</listitem>
+		<listitem>
+			<para><command>'dj'</command></para>
+			<para>Will delete from current cursor to the character below (Vi deletes 2 lines) (Vi and Vim)</para>
+		</listitem>
+		<listitem>
+			<para><command>'2d$'</command></para>
+			<para>Will do 'd$' (Vim deletes 2 lines) (Vi and Vim)</para>
+		</listitem>
+		<listitem>
+			<para><command>'Y'</command></para>
+			<para>Yank to end of line (Vim yank one line by default) (Vi and Vim)</para>
+		</listitem>
+		<listitem>
+			<para><command>'U'</command></para>
+			<para>Will redo.  Vim's U functionality is not implemented in Yzis (Vi and Vim)</para>
+		</listitem>
+		<listitem>
+			<para><command>'q'</command> and <command>'@'</command></para>
+			<para>These commands work with registers: "aq start recording in register 'a', "a@ plays register 'a' contents (Vi and Vim)</para>
+		</listitem>
+	</itemizedlist>
+
+	<para>
+	The name of the modes in Yzis differs from Vi and Vim.
+	</para>
+	
+	<table>
+		<tgroup cols="2">
+			<thead>
+				<row>
+				<entry>Vim name</entry>
+				<entry>Yzis name</entry>
+				</row>
+			</thead>
+			<tbody>
+				<row>
+				<entry>Normal</entry>
+				<entry>Command</entry>
+				</row>
+				<row>
+				<entry>Insert</entry>
+				<entry>Insert</entry>
+				</row>
+				<row>
+				<entry>Commandline</entry>
+				<entry>Ex</entry>
+				</row>
+			</tbody>
+		</tgroup>
+	</table> 
+	
+	
+
+</chapter>

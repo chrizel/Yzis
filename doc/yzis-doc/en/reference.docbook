@@ -1,0 +1,15 @@
+<refentry id="command-reference">
+	
+	<refentryinfo>
+		<title>Yzis command reference</title>
+	</refentryinfo>
+
+	<refsect1 id="introduction">
+		<title>Introduction</title>
+		<para>
+		This is meant to give an overview over implemented commands and motions in
+		yzis. It should be quite complete, and I will try to keep it up to date.
+		</para>
+	</refsect1>
+
+</refentry>

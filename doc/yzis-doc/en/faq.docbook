@@ -1,0 +1,16 @@
+<chapter id="faq">
+	<title>FAQ</title>
+	
+	<para>Frequently Asked Questions about Yzis are presented here.</para>
+
+	<para>Why do I get the compilation error:
+		<programlisting>
+	error: `mvwaddwstr' undeclared (first use this function)
+		</programlisting>
+	</para>
+
+	<para>You need ncurses compiled with unicode support.</para>
+
+	 
+	
+</chapter>

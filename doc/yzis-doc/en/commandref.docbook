@@ -1,11 +1,34 @@
 <chapter id="command-ref">
-	<title>Command reference</title>
-	<itemizedlist>
-		<listitem><para>dd</para>
-			<para>Deletes the current line.</para>
-		</listitem>
-		<listitem><para>yy</para>
-			<para>Yanks the current line.</para>
-		</listitem>
-	</itemizedlist>	
+	<title>Yzis command reference</title>
+	
+	<sect1 id="intro">
+		<title>Introduction</title>
+
+		<para>
+		This is meant to give an overview over implemented commands and motions in
+		Yzis. 
+		</para>
+
+	</sect1>
+
+	
+	<sect1 id="delete-change">
+		<title>Delete/Change commands</title>
+
+		<para>
+		
+		<itemizedlist>
+			<listitem><para>dd</para>
+				<para>Deletes the current line.</para>
+			</listitem>
+			<listitem><para>yy</para>
+				<para>Yanks the current line.</para>
+			</listitem>
+		</itemizedlist>	
+
+		</para>
+
+	</sect1>
+	
+	
 </chapter>

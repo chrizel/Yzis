@@ -38,7 +38,7 @@
 		</screen>
 
 		<para>
-		When you have opened a file it would probably look something like this:
+		When you have opened a file it will probably look something like this:
 		</para>
 
 		<mediaobject>
@@ -56,25 +56,26 @@
 	<sect1 id="modes">
 		<title>Modes</title>
 		
-		<para>
+		<para>Yzis is a so called "modal editor". It means that the editor has different
+		modes and that it behaves differently depending on which mode you are in.
 		There are three main <command>modes</command> in Yzis.
 		</para>
 
 		<itemizedlist>
-			<listitem><para>Insert</para></listitem>
-			<listitem><para>Command</para></listitem>
-			<listitem><para>Ex</para></listitem>
+			<listitem><para>Insert mode</para></listitem>
+			<listitem><para>Command mode</para></listitem>
+			<listitem><para>Ex mode</para></listitem>
 		</itemizedlist>
 		
 		<para>The &insert; mode is used for inserting text.
 		The &command; mode is used for executing Yzis commands that edits the text.
-		The third mode, &ex;, is used for executing commands that are file related like saving,
+		The third mode, &ex;, is used for executing commands that are file related, like saving,
 		opening and exiting files.
 		</para>
 
 	
 		<para>
-		As we mentioned in the previous chapter you are automaticly being placed in
+		As we mentioned in the previous section you are automaticly being placed in
 		&command; mode when you open a file. You can always tell which
 		the current mode is by looking at the status bar in Yzis:
 		</para>
@@ -90,18 +91,18 @@
 		</para>
 		
 		<para>
-		Changing between the modes is achieved by pressing different keys.
+		Changing between the modes in Yzis is achieved by pressing different keys.
 		</para>
 
 		<itemizedlist>
-			<listitem><para>Insert = i or <![CDATA[<Insert>]]></para></listitem>
-			<listitem><para>Command = <![CDATA[<ESC>]]></para></listitem>
-			<listitem><para>Replace = R</para></listitem>
+			<listitem><para>Insert mode = <command>'i'</command> or <command><![CDATA[<Insert>]]></command></para></listitem>
+			<listitem><para>Command mode = <command><![CDATA[<ESC>]]></command></para></listitem>
+			<listitem><para>Ex mode = <command>:</command></para></listitem>
 		</itemizedlist>
 		
 		<para>
 		You have now been introduced to the three modes in Yzis. You know how to change
-		between them, but you still haven't learn to use any of them. In the next chapter 
+		between them, but you still haven't learned to use any of them. In the next section 
 		you will get more familiar with the	&insert; mode.
 		</para>
 		
@@ -119,7 +120,9 @@
 		</para>
 		
 		<para>
-		To enter &insert; mode either press <command>i</command> or <![CDATA[<]]><command>Insert</command><![CDATA[>]]>.
+		To enter &insert; mode either press <command>'i'</command> or <![CDATA[<]]><command>Insert</command><![CDATA[>]]>
+		(NOTE: These two key-shortcuts are not the only ones used to enter &insert; mode, consult the command reference to get info
+		about the others. This userguide is meant to just cover the basics).
 		</para>
 
 		<mediaobject>
@@ -133,9 +136,9 @@
 		</para>
 
 		<para>
-		There is special case of &insert; mode called &replace; mode. Unlike the normal &insert; mode it
+		There is a special case of &insert; mode called &replace; mode. Unlike the normal &insert; mode it
 		overrides (replaces) text by default, which could be useful on certain occassions. To enter &replace;
-		mode press <command>R</command>.
+		mode press <command>'R'</command>.
 		</para>
 	
 		<mediaobject>
@@ -156,12 +159,12 @@
 		<title>Command mode</title>
 			
 		<para>
-		It is in this mode you'll get advantage of all the handy commands that Yzis provide for editing the text.
-		&command; mode is only used for executing commands, it's not possible to write text like in
+		It is in this mode you will get advantage of all the handy commands that Yzis provides for editing the text.
+		&command; mode is only used for executing commands, it's not possible to write text there like in
 		the &insert; mode. There are many useful commands in Yzis and it may seem like a steep learning curve for
 		the beginner, but there is no need trying to learn all the commands at once. If you follow this userguide you will be 
 		introduced to the most basic commands which allows you to copy text, paste text, delete text and search in the text.
-		Hopefully you'll understand the power of Yzis' commands and become more efficient in your editing.  
+		Hopefully you will understand the power of Yzis' commands and later on become more efficient in your editing.  
 		</para>
 
 		<para>
@@ -177,7 +180,11 @@
 		<para>
 		"Awaiting Command" in the status bar indicates &command; mode.
 		</para>
-			
+		
+		<para>
+		You will be introduced to Yzis' commands later on in the userguide.
+		</para>
+		
 	</sect1>
 
 
@@ -202,18 +209,19 @@
 
 		<itemizedlist>
 			<listitem>
-				<para>w</para>
+				<para><command>'w'</command></para>
 				<para>Writes/saves the current file.</para> 
 			</listitem>
 			<listitem>
-				<para>q</para>
+				<para><command>'q'</command></para>
 				<para>Quits the current file.</para> 
 			</listitem>
 		</itemizedlist>
 
 		<para>
-		To quit Yzis, press <command>:</command> to enter &ex; mode, then
-		press <command>q</command> followed by <![CDATA[<ENTER>]]>.
+		To quit Yzis: Press <command>:</command> to enter &ex; mode, then
+		press <command>q</command> followed by <![CDATA[<Enter>]]> 
+		(all &ex; commands have <![CDATA[<Enter>]]> at the end).
 		</para>
 
 		<mediaobject>
@@ -227,6 +235,193 @@
 		in the field below the status bar. In the screenshot there is a q written in the &ex; field which means
 		quit. Pressing <![CDATA[<Enter>]]> in that situation would quit the current file.
 		</para>
+
+		<para>
+		The special modifier <command>!</command> is available in &ex; mode and is used for
+		overriding changes. By default Yzis doesn't allow the user to quit (:q) a file when it has
+		been modified without saving the changes, the user will be confronted with a error message.
+		The <command>!</command> modifier can be used together with quit (:q!) to force a quit without
+		saving changes. This modifier should be used with care and only in certain cases when you are sure
+		you don't want to save the current changes.
+		</para>
+
+	</sect1>
+
+	<sect1 id="movement">
+		<title>Movement</title>
+
+		<para>
+		Moving around in Yzis is could be (if you want to) just like moving
+		around in any editor. It's possible to use the arrow-keys (up, down,
+		left, right) as normal, but Yzis also provides some other keys to achieve
+		this. Here they are:
+		</para>
+
+		<itemizedlist>
+			<listitem>
+				<para><command>'h'</command> = left</para>
+			</listitem>
+			<listitem>
+				<para><command>'j'</command> = down</para>
+			</listitem>
+			<listitem>
+				<para><command>'k'</command> = up</para>
+			</listitem>
+			<listitem>
+				<para><command>'l'</command> = right</para>
+			</listitem>
+		</itemizedlist>
+
+		<para>
+		This may seem very strange for the beginner, but when you actually look
+		at the keyboard and notice where these keys are positioned, you may see a 
+		connection. The thing is that moving around in an editor is one of the
+		things you spend a lot of time with, and moving your hand between the
+		arrow-keys and the text-keys all the time is pretty time consuming (and
+		very unnecceserry when you think about it). The mentioned keys are
+		only available in &command; mode since pressing them in &insert; mode would
+		write them to the file. These special movement-keys are of course optional
+		and it's up to the user if he wants to use them or not, the arrow-keys
+		has the exact same function (it's only the placement on the keyboard that
+		differs).
+		</para>
+
+		<para>
+		Commands that moves the cursor are called <command>motions</command> in Yzis.
+		The keys mentioned above (h,j,k,l) are motions because they move the cursor.
+		Here are a couple of other useful motions:
+		</para>
+		
+		<itemizedlist>
+			<listitem><para><command>'w'</command> = one word forward</para></listitem>
+			<listitem><para><command>'b'</command> = one word backward</para></listitem>
+			<listitem><para><command>'$'</command> = the end of the line</para></listitem>
+			<listitem><para><command>'0'</command> = the start of the line</para></listitem>
+			<listitem><para><command>'[count]G'</command> = goto line [count] (default = 0) </para></listitem>
+		</itemizedlist>
+
+		<para>
+		These are all very useful motions which allows the user to quickly move around in the file.
+		I don't think they need any further explanation, the best way to get to know them is undoubtely
+		to try them out in Yzis yourself. The <command>[count]</command> expression
+		may need a little explanation though. It means that the <command>'G'</command>
+		motion can handle a <command>[count]</command> argument. For example <command>'10G'</command> would
+		put you on line 10, <command>'255G'</command> would put you on line 255 and
+		so on. However, with no <command>[count]</command> argument it positions you at the end of the file.
+		The structure with an optional <command>[count]</command> argument isn't specific to the <command>'G'</command> motion,
+		actually many of the motions in Yzis supports a <command>[count]</command> argument. What do you
+		think would happend if you passed an <command>[count]</command> argument to the <command>'w'</command> motion? For example
+		<command>'5w'</command> ? Correct, it would move the cursor 5 words forward. You will notice
+		that this structure is applied to many of the editing commands aswell if you continue
+		reading the next section.
+		</para>
+
+		
+	</sect1>
+	
+	<sect1 id="editing">
+		<title>Editing</title>
+
+		<para>
+		You were introduced to some of Yzis' motions in the previous section, which allowed you to
+		move around quickly in the file. Now it's time to learn how to edit the text in your file 
+		quickly and in a efficient way. We will present a few basic commands here which will speed 
+		up your editing. The best way to learn these editing commands is to have your own copy of 
+		Yzis running and try them out. It will probably take you a long time to be really
+		efficient in your editing, but you've got to start somewhere and the commands mentioned in
+		this section are a good start.
+		</para>
+
+		<para>
+		Let's start with some delete, copy and paste commands:
+		</para>
+
+		<itemizedlist>
+			<listitem><para><command>'dd'</command> = deletes a line</para></listitem>
+			<listitem><para><command>'yy'</command> = yanks a line</para></listitem>
+			<listitem><para><command>'p'</command> = pastes after the cursor</para></listitem>
+			<listitem><para><command>'P'</command> = pastes before the cursor</para></listitem>
+		</itemizedlist>
+		
+		<para>
+		To delete a line, simply press <command>'dd'</command> in &command; mode. It deletes
+		the current line (the one where your cursor is positioned). To paste the deleted line,
+		move the cursor to the wanted position and press either <command>'p'</command> or <command>'P'</command>.
+		To yank (copy) the current line, press <command>'yy'</command>. You can paste this line by using <command>'p'</command>
+		or <command>'P'</command> aswell. As we mentioned in the previous section, many of the editing commands can handle 
+		a <command>[count]</command> argument. Typing <command>'3dd'</command> for example will delete three lines in one stroke, 
+		the same applies to <command>'yy'</command>.
+		</para>
+
+		<para>
+		<command>'d'</command> is also a useful command used for deletion. It deletes
+		all the text the following motion moves over. The structure for this command
+		is <command>'d[motion]'</command>. Here are some handy examples:
+		</para>
+
+		<itemizedlist>
+			<listitem><para><command>'dw'</command> = deletes one word</para></listitem>
+			<listitem><para><command>'d$'</command> = deletes from the cursor to the end of the line</para></listitem>
+			<listitem><para><command>'dG'</command> = deletes from the cursor to the end of the file</para></listitem>
+		</itemizedlist>
+		
+		<para>
+		As you maybe remember from the last section (about movement),  <command>'w'</command>
+		moves the cursor one word. <command>'dw'</command> thereby results in deleting one
+		word. We also mentioned in the last section that <command>'$'</command> moves the cursor
+		to the end of the line, that means that <command>'d$'</command> will delete everything
+		from the cursor to the end of the line. And <command>'dG'</command> will of course
+		delete everything from the cursor to the end of the file.
+		</para>
+		
+		<para>
+		The last command that is presented here is the <command>'c'</command> command. It's
+		very similiar to <command>'d'</command> with the difference that <command>'c'</command>
+		puts you in &insert; mode right after the execution. Just like <command>'d'</command>
+		it accepts a motion as argument and it can be used with the same motions as we
+		presented in the list above. <command>'cw'</command> deletes one word and puts you
+		in &insert; mode right where the word was. <command>'c$'</command> and <command>'cG'</command>
+		doesn't need anu further explanation, the only difference is that it places you in
+		&insert; mode when the command is finished.
+		</para>
+		
+	</sect1>
+	
+	<sect1 id="searching">
+		<title>Searching</title>
+
+		<para>
+		Searching after a certain text in your file is an essential function of a editor.
+		Yzis provides two different commands for searching, one for searching forward, and one
+		for backward.
+		</para>
+
+		<itemizedlist>
+			<listitem><para><command>'/<![CDATA[<pattern>]]>'</command> = search forward</para></listitem>
+			<listitem><para><command>'?<![CDATA[<pattern>]]>'</command> = search backward</para></listitem>
+		</itemizedlist>
+
+		<para>
+		To search forward: Hit the <command>/</command> (slash-key), enter your search pattern and
+		press <![CDATA[<Enter>]]>.
+		</para>
+
+		<mediaobject>
+			<imageobject> <imagedata fileref="pics/nyzis_searchf.png" format="PNG" /> </imageobject>
+		</mediaobject>
+
+		<para>Notice that the text in the status bar changes to "Search" and you are able to insert
+		text in the search-field when you have pressed <command>'/'</command>.
+		</para>
+
+		<para>
+		It's the same procedure for the search backward-function. Just press <command>'?'</command>
+		instead of <command>'/'</command>, enter your search pattern and press <![CDATA[<Enter>]]>:
+		</para>
+
+		<mediaobject>
+			<imageobject> <imagedata fileref="pics/nyzis_searchb.png" format="PNG" /> </imageobject>
+		</mediaobject>
 
 	</sect1>
 

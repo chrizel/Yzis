@@ -206,7 +206,7 @@ TestLuaBinding = {} --class
         f2 = filename()
         print("filename: "..f2)
         assertEquals( string.len(f2) > 0, true )
-        assertEquals( f2, 'toto.txt' )
+        assertEquals( f2, os.getenv('PWD')..'/toto.txt' )
         assertEquals( f1 ~= f2, true )
         sendkeys( ':bd!<ENTER>' )
 

@@ -26,6 +26,14 @@ argv = arg
 
 REVERSED_ASSERT_EQUALS = true
 
+function assertError(f, ...)
+	-- assert that calling f with the arguments will raise an error
+	-- example: assertError( f, 1, 2 ) => f(1,2) should generate an error
+	has_error, error_msg = not pcall( f, unpack(arg) )
+	if has_error then return end 
+	error( "No error generated", 2 )
+end
+
 function assertEquals(expected, actual)
 	-- assert that two values are equal and calls error else
 	if  actual ~= expected  then
@@ -40,14 +48,6 @@ function assertEquals(expected, actual)
 		local errorMsg = "expected: "..wrapValue(expected)..", actual: "..wrapValue(actual)
 		error( errorMsg, 2 )
 	end
-end
-
-function assertError(f, ...)
-	-- assert that calling f with the arguments will raise an error
-	-- example: assertError( f, 1, 2 ) => f(1,2) should generate an error
-	has_error, error_msg = not pcall( f, unpack(arg) )
-	if has_error then return end 
-	error( "No error generated", 2 )
 end
 
 assert_equals = assertEquals

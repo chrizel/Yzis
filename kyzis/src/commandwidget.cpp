@@ -47,15 +47,18 @@ void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 
 void KYZisCommand::focusInEvent (QFocusEvent *) {
 	yzDebug() << "KYZisCommand : Focus IN -> EX mode" << endl;
-	if ( _parent->modePool()->currentType() != YZMode::MODE_EX )
+	if ( _parent->modePool()->currentType() != YZMode::MODE_EX 
+			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH 
+			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH_BACKWARD )
 		_parent->modePool()->push( YZMode::MODE_EX );
 }
 
 void KYZisCommand::focusOutEvent (QFocusEvent *e) {
 	yzDebug() << "KYZisCommand : Focus OUT -> reject" << endl;
-	if ( _parent->modePool()->currentType() == YZMode::MODE_EX ) {
+	if ( _parent->modePool()->currentType() != YZMode::MODE_EX 
+			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH 
+			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH_BACKWARD )
 		return;
-	}
 	QWidget::focusOutEvent(e);
 }
 

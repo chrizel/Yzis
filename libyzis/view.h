@@ -225,11 +225,6 @@ class YZView {
 		void applyCopyLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
 
 		/**
-		 * deletes the character under the cursor
-		 */
-		QString deleteCharacter( unsigned int nb_cols = 1 );
-
-		/**
 		 * Start command mode
 		 */
 		QString gotoCommandMode( );
@@ -294,11 +289,6 @@ class YZView {
 		 * Deletes lines
 		 */
 		QString deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs);
-
-		/**
-		 * Deletes a motion
-		 */
-		void del(const QString& motion, const QValueList<QChar> &regs);
 
 		/**
 		 * Add a mark on the current cursor
@@ -404,7 +394,7 @@ class YZView {
 			YZ_VIEW_MODE_EX, //script 
 			YZ_VIEW_MODE_SEARCH, //search mode
 			YZ_VIEW_MODE_OPEN, // open mode
-			YZ_VIEW_MODE_VISUAL, // visual mode
+			YZ_VIEW_MODE_VISUAL, // visual mode //keep these 2 at the end of the list
 			YZ_VIEW_MODE_VISUAL_LINE, // visual mode
 		} mMode,		/** mode of this view */
 			mPrevMode;	/** previous mode of this view */

@@ -397,6 +397,9 @@ void YZView::sendKey( int c, int modifiers) {
 
 		case YZ_VIEW_MODE_COMMAND:
 			switch ( c ) {
+				case Qt::Key_Home:
+					key='0';
+					break;
 				case Qt::Key_End:
 					key='$';
 					break;
@@ -429,12 +432,6 @@ void YZView::sendKey( int c, int modifiers) {
 					gotodxy(dCursor->getX(), ( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 ) );
 					purgeInputBuffer();
 					return;
-				case Qt::Key_End:
-					key='$';
-					break;
-				case Qt::Key_Home:
-					key='0';
-					break;
 				default:
 					break;
 			}

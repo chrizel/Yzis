@@ -1,3 +1,11 @@
+2004-02-23 philippe
+  * libyzis
+  	add a YZASSERT() macro to report things that should not happen
+	make YZBuffer report and reject any out of limit argument
+  * tests
+  	add tests for the char operations on buffer
+	add more tests on the line operations
+
 2004-02-24 mikmak
   * kyzis
     remove duplication of currentView, use the one from libyzis/session.cpp
@@ -28,6 +36,10 @@
     use mkstemp() for creating temporary filename
     print filename command line when opening a new file
 
+2004-02-23 philippe
+  * yzis
+  	Introduce a test framework for libyzis
+	Add a few tests for line methods
 
 2004-02-23 mikmak
   * kyzis

@@ -221,7 +221,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	//TODO swapfile
 	//mBuffer->getSwapFile()->addToSwap( c, modifiers );
 
-	QString lin,key=_key;
+	QString key=_key;
 	QString modifiers=_modifiers;
 	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
 

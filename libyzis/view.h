@@ -138,7 +138,11 @@ class YZView {
 		void centerViewHorizontally( unsigned int column );
 
 		/**
-		 * align view vertically on the given @arg line
+		 * align view vertically on the given buffer @arg line
+		 */
+		void alignViewBufferVertically(unsigned int line);
+		/**
+		 * align view vertically on the given screen @arg line
 		 */
 		void alignViewVertically(unsigned int line);
 
@@ -734,6 +738,9 @@ class YZView {
 		 */
 		YZViewCursor* mainCursor;
 
+		/* screen top-left cursor */
+		YZViewCursor* scrollCursor;
+
 	private:
 
 		/**
@@ -750,9 +757,6 @@ class YZView {
 		 * This is the worker cursor, the one which we directly modify in our draw engine
 		 */
 		YZViewCursor* workCursor;
-
-		/* screen top-left cursor */
-		YZViewCursor* scrollCursor;
 
 		/**
 		 * are we moving cursor in draw mode ?

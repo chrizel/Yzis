@@ -98,6 +98,11 @@ private:
 	  */
 	void printVoid( unsigned int line );
 
+	/**
+	  * draw cursor
+	  */
+	void drawCursor();
+
 	/* layout */
 	WINDOW		*editor;
 	WINDOW		*infobar;	// the white one with filename/size/position...

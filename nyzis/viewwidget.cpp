@@ -248,10 +248,14 @@ void NYZView::drawContents( int clipy, int cliph ) {
 		--cliph;
 	}
 
-	x = getCursor()->getX() - getDrawCurrentLeft () + marginLeft;
-	if ( rightleft ) x = width - x - 1;
-	wmove(editor, getCursor()->getY() - getDrawCurrentTop (), x );
-	
+	drawCursor();
+	wrefresh( editor );
+}
+
+void NYZView::drawCursor() {
+	unsigned int x = getCursor()->getX() - getDrawCurrentLeft () + marginLeft;
+	if ( getLocalBoolOption( "rightleft" ) ) x = width - x - 1;
+	wmove( editor, getCursor()->getY() - getDrawCurrentTop (), x );
 	wrefresh( editor );
 }
 
@@ -308,13 +312,9 @@ void NYZView::syncViewInfo( void )
 		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
 	}
 	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.latin1() );
-
 	wrefresh(infobar);
 
-	unsigned int x = getCursor()->getX() - getDrawCurrentLeft () + marginLeft;
-	if ( getLocalBoolOption( "rightleft" ) ) x = width - x - 1;
-	wmove(editor, getCursor()->getY() - getDrawCurrentTop (), x );
-	wrefresh( editor );
+	drawCursor();
 }
 
 void NYZView::refreshScreen() {
@@ -331,6 +331,7 @@ void NYZView::displayInfo( const QString& info )
 	werase(statusbar);
 	waddstr( statusbar, info.latin1() );
 	wrefresh(statusbar);
+	drawCursor();
 	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;
 }
 

@@ -747,16 +747,16 @@ void YZView::updateCursor() {
 	syncViewInfo();
 }
 
+/**
+ * TODO: scrollCursor can be separated from the buffer...
+ */
 void YZView::centerViewHorizontally(unsigned int column) {
 //	yzDebug() << "YZView::centerViewHorizontally " << column << endl;
 	unsigned int newcurrentLeft = 0;
 	if ( column > mColumnsVis/2 ) newcurrentLeft = column - mColumnsVis / 2;
 
 	if (newcurrentLeft > 0) {
-		initGoto( scrollCursor );
-		gotoy( mainCursor->bufferY() );
-		gotodx( newcurrentLeft );
-		applyGoto( scrollCursor, false );
+		gotodxy( scrollCursor, newcurrentLeft, scrollCursor->bufferY() );
 	} else {
 		scrollCursor->reset();
 	}
@@ -775,9 +775,30 @@ void YZView::bottomViewVertically( unsigned int line ) {
 	alignViewVertically( newcurrent );
 }
 
+void YZView::alignViewBufferVertically( unsigned int line ) {
+//	yzDebug() << "YZView::alignViewBufferVertically " << line << endl;
+	unsigned int newcurrent = line;
+	unsigned int old_dCurrentTop = scrollCursor->screenY();
+	if ( newcurrent > 0 ) {
+		gotodxy( scrollCursor, scrollCursor->screenX(), newcurrent );
+		// TODO: handle correctly scrolling up/down with screenX > 0
+	} else {
+		scrollCursor->reset();
+	}
+	if ( old_dCurrentTop > scrollCursor->screenY() && old_dCurrentTop - scrollCursor->screenY() < mLinesVis ) {
+		scrollUp( old_dCurrentTop - scrollCursor->screenY() );
+	} else if ( old_dCurrentTop < scrollCursor->screenY() && scrollCursor->screenY() - old_dCurrentTop < mLinesVis ) {
+		scrollDown( scrollCursor->screenY() - old_dCurrentTop );
+	} else {
+		abortPaintEvent();
+		refreshScreen();
+	}
+}
+
 void YZView::alignViewVertically( unsigned int line ) {
 //	yzDebug() << "YZView::alignViewVertically " << line << endl;
 	unsigned int newcurrent = line;
+	unsigned int screenX = scrollCursor->screenX();
 	unsigned int old_dCurrentTop = scrollCursor->screenY();
 	if ( newcurrent > 0 ) {
 		initGoto( scrollCursor );
@@ -789,6 +810,8 @@ void YZView::alignViewVertically( unsigned int line ) {
 				++newcurrent;
 			gotoy( newcurrent );
 		}
+		gotodx( screenX );
+		// TODO: handle correctly scrolling up/down with screenX > 0
 		applyGoto( scrollCursor, false );
 	} else {
 		scrollCursor->reset();

@@ -1,2 +1,2 @@
 #!/bin/sh
-kyzis -c ':source use_all_functions.lua<ENTER>'
+kyzis -c ':source test_lua_binding.lua<ENTER>'

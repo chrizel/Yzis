@@ -151,7 +151,7 @@ luaUnit = {
 		if arg.n > 0 then
 			table.foreachi( arg, luaUnit.runTestClassByName )
 		else 
-			if argv.n > 0 then
+			if argv and argv.n > 0 then
 				table.foreachi(argv, luaUnit.runTestClassByName )
 			else
 				for var, value in _G do

@@ -24,7 +24,25 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: ts2po\n"
 </xsl:text>
-		<xsl:apply-templates select="//message"/>
+		<xsl:variable name="messages" select="//message"/>
+		<xsl:for-each select="$messages">
+			<xsl:variable name="source" select="source"/>
+			<xsl:choose>
+				<xsl:when test="generate-id()=generate-id($messages[source=$source][1])">
+					<xsl:apply-templates select="."/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:apply-templates select="." mode="duplicate"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:for-each>
+	</xsl:template>
+
+	<xsl:template match="message" mode="duplicate">
+<xsl:text>
+#msgid "</xsl:text><xsl:value-of select="source"/><xsl:text>"
+#msgstr "</xsl:text><xsl:value-of select="translation"/><xsl:text>"
+</xsl:text>
 	</xsl:template>
 
 	<xsl:template match="message">

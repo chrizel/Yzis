@@ -276,6 +276,11 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Backspace:
 				{
 					QString back = getCommandLineText();
+					if ( back.isEmpty() ) {
+						setFocusMainWindow();
+						gotoCommandMode( );
+						return;
+						}
 					setCommandLineText(back.remove(back.length() - 1, 1));
 					return;
 				}
@@ -317,7 +322,7 @@ void YZView::sendKey( int c, int modifiers) {
 					break;
 			}
 			mPreviousChars+=key;
-			yzDebug() << "Previous chars : " << mPreviousChars << endl;
+			yzDebug() << "Previous chars : (" << int( (mPreviousChars.latin1())[0] )<< ") " << mPreviousChars << endl;
 			if ( mSession ) {
 				int error = 0;
 				mSession->getPool()->execCommand(this, mPreviousChars, &error);
@@ -645,6 +650,7 @@ QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
 	modeChanged();
 	setFocusCommandLine();
 	purgeInputBuffer();
+	setCommandLineText( "" );
 	return QString::null;
 }
 
@@ -669,6 +675,7 @@ QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs /*args 
 	mMode = YZ_VIEW_MODE_SEARCH;
 	modeChanged();
 	purgeInputBuffer();
+	setCommandLineText( "" );
 	return QString::null;
 }
 

@@ -50,10 +50,10 @@ install-data-local: install-translations
 clean-local: clean-tests
 
 test: 
-	cd tests && make && LD_LIBRARY_PATH=$(top_builddir)/libyzis/libqtyzis/.libs/ /bin/sh ./tests
+	cd tests/cpp && make && LD_LIBRARY_PATH=$(top_builddir)/libyzis/libqtyzis/.libs/ /bin/sh ./tests
 
 clean-tests:
-	cd tests && [ -f Makefile ] && make clean
+	cd tests/cpp && [ -f Makefile ] && make clean
 
 update-tr:
 	echo "Updating .ts files in translations..." ; \

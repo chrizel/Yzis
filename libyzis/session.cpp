@@ -70,8 +70,10 @@ void YZSession::addBuffer( YZBuffer *b ) {
 
 void YZSession::rmBuffer( YZBuffer *b ) {
 	yzDebug() << "Session : rmBuffer " << b->fileName() << endl;
-	mBuffers.remove( b->fileName() );
-	deleteBuffer( b );
+	if ( mBuffers.contains( b->fileName() ) ) {
+			mBuffers.remove( b->fileName() );
+			deleteBuffer( b );
+	}
 //	delete b; // kinda hot,no?
 }
 

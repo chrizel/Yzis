@@ -75,6 +75,7 @@ public:
 class YZUndoBuffer {
 public:
 	YZUndoBuffer( YZBuffer * );
+	virtual ~YZUndoBuffer();
 
 	/*
 	 * * Store the previous undo item (if any) and start a new one

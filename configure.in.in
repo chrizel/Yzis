@@ -107,7 +107,7 @@ AM_CONDITIONAL(use_libqt4, test -n "$YZIS_QT4")
 
 
 if test "$have_kde" != "yes" -o "$enable_kyzis" != "yes" -o "$enable_qt4" = "yes"; then
-	DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis"
+	DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis kqcommon"
 fi
 if test "$enable_nyzis" != "yes"; then
 	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"

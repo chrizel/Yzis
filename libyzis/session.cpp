@@ -3,6 +3,7 @@
  */
 
 #include "session.h"
+#include "debug.h"
 
 YZSession::YZSession( const QString& _sessionName ) {
   pool = new YZCommandPool();
@@ -66,6 +67,7 @@ YZView *YZSession::createView(YZBuffer *buffer) {
 #endif
 
 void YZSession::addBuffer( YZBuffer *b ) {
+	yzDebug() << "Session : addBuffer" << endl;
 	buffers.insert(b->fileName(), b);
 }
 

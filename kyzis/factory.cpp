@@ -74,6 +74,7 @@ void KYZisFactory::ref() {
 
 KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, 
 		QObject *parent, const char *name, const char *classname, const QStringList & /*args*/) {
+	yzDebug() << "Factory::createPartObject" << endl;
 	bool bSingleView = (classname!=QString("KTextEditor::Document"));
 	bool bWantBrowserView =  (classname == QString("Browser/View") );
 	bool bWantReadOnly = (bWantBrowserView || ( classname == QString("KParts::ReadOnlyPart") ));
@@ -207,21 +208,24 @@ void KYZisFactory::setCurrentView( YZView* view ) {
 YZView* KYZisFactory::createView( YZBuffer *buffer ) {
   KYZisDoc *doc = static_cast<KYZisDoc*>(buffer);
 //	yzDebug() << "Test2 : " << doc->parentWidget()->name() << endl;
-	KTextEditor::View* v = doc->createView(currentDoc->parentWidget());
-	return dynamic_cast<YZView*>( v );
+	//XXX KTextEditor::View* v = doc->createView(currentDoc->parentWidget());
+  YZView *v = buffer->firstView();
+  return v;
+//  return dynamic_cast<YZView*>( v );
 }
 
 YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 	DCOPClient *client = kapp->dcopClient();
 	QByteArray data, reply;
-	QCString replytype="";
 	QDataStream arg(data, IO_WriteOnly);
 	client->attach();
 	arg << path;
-	bool w = client->call(client->appId(), "Kyzis", "createBuffer", data, replytype, reply, true );
+	bool w = client->send(client->appId(), "Kyzis", "createBuffer(QString)", data );
 	if (w) {
+		yzDebug() << "DCOP call successful for " << client->appId() << endl;
 		//finds the buffer
 	} else {
+		yzDebug() << "DCOP call failed for " << client->appId() << endl;
 		//popup error
 	}
 	

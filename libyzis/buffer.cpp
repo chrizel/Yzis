@@ -118,8 +118,13 @@ void YZBuffer::deleteLine( int line ) {
 }
 
 void YZBuffer::addView (YZView *v) {
-	yzDebug() << "BUFFER: addView" << endl;
 //	view_list.insert(v->myId, v );
+	QValueList<YZView*>::iterator it;
+	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+		YZView *vi = *it;
+		if ( vi == v ) return; // don't append twice
+	}
+	yzDebug() << "BUFFER: addView" << endl;
 	view_list.append( v );
 	v->redrawScreen();
 }
@@ -188,5 +193,12 @@ YZView* YZBuffer::findView( int uid ) {
 yz_point YZBuffer::motionPosition( int /*xstart*/, int /*ystart*/, YZMotion /*regexp*/ ) {
 	yz_point e;
 	return e;
+}
+
+YZView* YZBuffer::firstView() {
+	if (  view_list.first() != NULL ) 
+		return view_list.first();
+	else yzDebug() << "No VIEW !!!" << endl;
+	return NULL;//crash me :)
 }
 

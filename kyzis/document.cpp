@@ -19,6 +19,7 @@ KYZisDoc::KYZisDoc (bool bSingleViewMode, bool bBrowserView, bool bReadOnly, QWi
 		//yzDebug() << "Document parent name : " << parentWidget->name() << endl;
 
 		if ( bSingleViewMode ) {
+			yzDebug() << "KYzisDoc constructor creating a default view for this buffer" << endl;
 			KTextEditor::View *view = createView( parentWidget, widgetName );
 			insertChildClient( view );
 			view->show();

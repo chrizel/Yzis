@@ -86,6 +86,12 @@ public:
 	QValueList<YZView*> views() { return view_list; }
 
 	/**
+	 * Find the first view of this buffer
+	 * Temporary function
+	 */
+	YZView* firstView();
+
+	/**
 	 * Finds a view by its UID
 	 * @param uid the unique ID of the view to search for
 	 * @return a pointer to the view or NULL

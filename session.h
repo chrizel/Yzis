@@ -50,6 +50,7 @@ class YZModeCommand;
  */
 
 typedef QMap<QString,YZBuffer*> YZBufferMap;
+typedef QMap<int,YZView*> YZViewMap;
  
 class YZSession {
 	public:
@@ -82,6 +83,16 @@ class YZSession {
 		 * Remove a buffer
 		 */
 		void rmBuffer( YZBuffer * );
+
+		/**
+		 * Register a view
+		 */
+		 void registerView( YZView * );
+		 
+		 /**
+		  * Unregister a view
+		  */
+		  void unregisterView ( YZView* );
 
 		/**
 		 * Save everything and get out
@@ -328,6 +339,8 @@ class YZSession {
 	protected:
 		//we map "filename"/buffer for buffers
 		YZBufferMap mBuffers;
+		//we map "id" view to a pointer on the view
+		YZViewMap mViews;
 
 	private:
 		QString mSessionName;

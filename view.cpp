@@ -73,6 +73,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	yzDebug() << "New View created with UID : " << myId << endl;
 	YZASSERT( _b ); YZASSERT( sess );
 	mSession = sess;
+	YZSession::me->registerView( this );
 	mBuffer	= _b;
 	mLineSearch = new YZLineSearch( this );
 	mLinesVis = lines;
@@ -143,6 +144,7 @@ YZView::~YZView() {
 	mModePool->stop();
 //	yzDebug() << "YZView : Deleting view " << myId << endl;
 	mBuffer->rmView(this); //make my buffer forget about me
+	YZSession::me->unregisterView( this );
 
 	delete mainCursor;
 	delete scrollCursor;

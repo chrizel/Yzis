@@ -71,7 +71,7 @@ TODO
 TODO
   - Which matches are affected by casesensitive? keyword, RegExpr, StringDetect...?
 
-WARNING: due to helper scripts, the language opening tag must be on a 
+WARNING: due to helper scripts, the language opening tag must be on a
 *single line* and *cannot* be split in multiple lines.
 
 -->
@@ -167,6 +167,7 @@ TODO:
   fallthrough       (%boolean;) #IMPLIED
   fallthroughContext CDATA      #IMPLIED
   dynamic           (%boolean;) #IMPLIED
+  skipSpaces        (%boolean;) #IMPLIED
 >
 
 <!-- Common attributes
@@ -180,7 +181,8 @@ TODO:
   context       CDATA       #REQUIRED
   beginRegion   CDATA       #IMPLIED
   endRegion     CDATA       #IMPLIED
-  lookAhead     (%boolean;) #IMPLIED"
+  lookAhead     (%boolean;) #IMPLIED
+  firstNonSpace (%boolean;) #IMPLIED"
 >
 
 <!-- Detect members of a keyword list

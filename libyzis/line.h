@@ -57,6 +57,11 @@ class YZLine
 		inline uchar *attributes () const { return mAttributes.data(); }
 		bool initialized() { return m_initialized; }
 
+		int firstChar() const;
+		int lastChar() const;
+		int nextNonSpaceChar(uint pos) const;
+		int previousNonSpaceChar(uint pos) const;
+
 		enum Flags
 		{
 			flagNoOtherData = 0x1, // ONLY INTERNAL USE, NEVER EVER SET THAT !!!!

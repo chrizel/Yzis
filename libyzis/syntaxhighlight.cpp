@@ -101,13 +101,14 @@ class YzisHlItem
     bool lookAhead;
     bool dynamic;
     bool dynamicChild;
+    bool firstNonSpace;
 };
 
 class YzisHlContext
 {
   public:
     YzisHlContext (int attribute, int lineEndContext,int _lineBeginContext,
-               bool _fallthrough, int _fallthroughContext, bool _dynamic);
+                  bool _fallthrough, int _fallthroughContext, bool _dynamic, bool _skipSpaces);
     virtual ~YzisHlContext();
     YzisHlContext *clone(const QStringList *args);
 
@@ -125,6 +126,7 @@ class YzisHlContext
 
     bool dynamic;
     bool dynamicChild;
+    bool skipSpaces;
 };
 
 class YzisEmbeddedHlInfo
@@ -371,7 +373,8 @@ YzisHlItem::YzisHlItem(int attribute, int context,signed char regionId,signed ch
     region2(regionId2),
     lookAhead(false),
     dynamic(false),
-    dynamicChild(false)
+    dynamicChild(false),
+    firstNonSpace(false)
 {
 }
 
@@ -1087,7 +1090,7 @@ YzisHlData::YzisHlData(const QString &wildcards, const QString &mimetypes, const
 {
 }
 
-YzisHlContext::YzisHlContext (int attribute, int lineEndContext, int _lineBeginContext, bool _fallthrough, int _fallthroughContext, bool _dynamic)
+YzisHlContext::YzisHlContext (int attribute, int lineEndContext, int _lineBeginContext, bool _fallthrough, int _fallthroughContext, bool _dynamic, bool _skipSpaces)
 {
   attr = attribute;
   ctx = lineEndContext;
@@ -1096,11 +1099,12 @@ YzisHlContext::YzisHlContext (int attribute, int lineEndContext, int _lineBeginC
   ftctx = _fallthroughContext;
   dynamic = _dynamic;
   dynamicChild = false;
+  skipSpaces = _skipSpaces;
 }
 
 YzisHlContext *YzisHlContext::clone(const QStringList *args)
 {
-  YzisHlContext *ret = new YzisHlContext(attr, ctx, lineBeginContext, fallthrough, ftctx, false);
+  YzisHlContext *ret = new YzisHlContext(attr, ctx, lineBeginContext, fallthrough, ftctx, false, skipSpaces);
 
   for (uint n=0; n < items.size(); ++n)
   {
@@ -1366,6 +1370,10 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
   const QString& text = textLine->data();
   uint len = textLine->length();
 
+  // calc at which char the first char occurs, set it to lenght of line if never
+  int firstChar = textLine->firstChar();
+  uint startNonSpace = (firstChar == -1) ? len : firstChar;
+
   int offset1 = 0;
   uint z = 0;
   YzisHlItem *item = 0;
@@ -1376,135 +1384,146 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
     bool standardStartEnableDetermined = false;
     bool standardStartEnable = false;
 
-    uint index = 0;
-    for (item = context->items.empty() ? 0 : context->items[0]; item; item = (++index < context->items.size()) ? context->items[index] : 0 )
+    if (context->skipSpaces && text[z].isSpace())
     {
-      bool thisStartEnabled = false;
-
-      if (item->alwaysStartEnable())
-      {
-        thisStartEnabled = true;
-      }
-      else if (!item->hasCustomStartEnable())
-      {
-        if (!standardStartEnableDetermined)
-        {
-          standardStartEnable = yzisInsideString (stdDeliminator, lastChar);
-          standardStartEnableDetermined = true;
-        }
-
-        thisStartEnabled = standardStartEnable;
-      }
-      else if (item->startEnable(lastChar))
-      {
-        thisStartEnabled = true;
-      }
-
-      if (thisStartEnabled)
-      {
-        int offset2 = item->checkHgl(text, offset1, len-z);
-
-        if (offset2 > offset1)
-        {
-          if(!item->lookAhead)
-            textLine->setAttribs(item->attr,offset1,offset2);
-
-
-          if (item->region2)
-          {
-//              yzDebug("HL")<<QString("Region mark 2 detected: %1").arg(item->region2)<<endl;
-            if ( !foldingList->isEmpty() && ((item->region2 < 0) && (*foldingList)[foldingList->size()-2] == -item->region2 ) )
-            {
-              foldingList->resize (foldingList->size()-2, QGArray::SpeedOptim);
-            }
-            else
-            {
-              foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
-              (*foldingList)[foldingList->size()-2] = (uint)item->region2;
-              if (item->region2<0) //check not really needed yet
-                (*foldingList)[foldingList->size()-1] = offset2;
-              else
-               (*foldingList)[foldingList->size()-1] = offset1;
-            }
-
-          }
-
-          if (item->region)
-          {
-//              yzDebug("HL")<<QString("Region mark detected: %1").arg(item->region2)<<endl;
-
-/*            if ( !foldingList->isEmpty() && ((item->region < 0) && (*foldingList)[foldingList->size()-1] == -item->region ) )
-            {
-              foldingList->resize (foldingList->size()-1, QGArray::SpeedOptim);
-            }
-            else*/
-            {
-              foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
-              (*foldingList)[foldingList->size()-2] = item->region;
-              if (item->region<0) //check not really needed yet
-                (*foldingList)[foldingList->size()-1] = offset2;
-              else
-                (*foldingList)[foldingList->size()-1] = offset1;
-            }
-
-          }
-
-          generateContextStack(&ctxNum, item->ctx, &ctx, &previousLine);  //regenerate context stack
-
-      //yzDebug("HL")<<QString("generateContextStack has been left in item loop, size: %1").arg(ctx.size())<<endl;
-    //    yzDebug("HL")<<QString("current ctxNum==%1").arg(ctxNum)<<endl;
-
-          context=contextNum(ctxNum);
-
-          // dynamic context: substitute the model with an 'instance'
-          if (context->dynamic)
-          {
-            QStringList *lst = item->capturedTexts();
-            if (lst != 0)
-            {
-              // Replace the top of the stack and the current context
-              int newctx = makeDynamicContext(context, lst);
-              if (ctx.size() > 0)
-                ctx[ctx.size() - 1] = newctx;
-              ctxNum = newctx;
-              context = contextNum(ctxNum);
-            }
-            delete lst;
-          }
-
-          // dominik: look ahead w/o changing offset?
-          if (!item->lookAhead)
-          {
-            z = z + offset2 - offset1 - 1;
-            offset1 = offset2 - 1;
-          }
-          found = true;
-          break;
-        }
-      }
+      // skip the space
+      textLine->setAttribs(context->attr,offset1,offset1 + 1);
     }
-
-    // nothing found: set attribute of one char
-    // anders: unless this context does not want that!
-    if (!found)
+    else
     {
-      if ( context->fallthrough )
+      uint index = 0;
+      for (item = context->items.empty() ? 0 : context->items[0]; item; item = (++index < context->items.size()) ? context->items[index] : 0 )
       {
+        // does we only match if we are firstNonSpace?
+        if (item->firstNonSpace && (z > startNonSpace))
+          continue;
+
+        bool thisStartEnabled = false;
+
+        if (item->alwaysStartEnable())
+        {
+          thisStartEnabled = true;
+        }
+        else if (!item->hasCustomStartEnable())
+        {
+          if (!standardStartEnableDetermined)
+          {
+            standardStartEnable = yzisInsideString (stdDeliminator, lastChar);
+            standardStartEnableDetermined = true;
+          }
+
+          thisStartEnabled = standardStartEnable;
+        }
+        else if (item->startEnable(lastChar))
+        {
+          thisStartEnabled = true;
+        }
+
+        if (thisStartEnabled)
+        {
+          int offset2 = item->checkHgl(text, offset1, len-z);
+
+          if (offset2 > offset1)
+          {
+            if(!item->lookAhead)
+              textLine->setAttribs(item->attr,offset1,offset2);
+            //kdDebug(13010)<<QString("item->ctx: %1").arg(item->ctx)<<endl;
+
+            if (item->region2)
+            {
+  //              kdDebug(13010)<<QString("Region mark 2 detected: %1").arg(item->region2)<<endl;
+              if ( !foldingList->isEmpty() && ((item->region2 < 0) && (*foldingList)[foldingList->size()-2] == -item->region2 ) )
+              {
+                foldingList->resize (foldingList->size()-2, QGArray::SpeedOptim);
+              }
+              else
+              {
+                foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
+                (*foldingList)[foldingList->size()-2] = (uint)item->region2;
+                if (item->region2<0) //check not really needed yet
+                  (*foldingList)[foldingList->size()-1] = offset2;
+                else
+                (*foldingList)[foldingList->size()-1] = offset1;
+              }
+
+            }
+
+            if (item->region)
+            {
+  //              kdDebug(13010)<<QString("Region mark detected: %1").arg(item->region)<<endl;
+
+  /*            if ( !foldingList->isEmpty() && ((item->region < 0) && (*foldingList)[foldingList->size()-1] == -item->region ) )
+              {
+                foldingList->resize (foldingList->size()-1, QGArray::SpeedOptim);
+              }
+              else*/
+              {
+                foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
+                (*foldingList)[foldingList->size()-2] = item->region;
+                if (item->region<0) //check not really needed yet
+                  (*foldingList)[foldingList->size()-1] = offset2;
+                else
+                  (*foldingList)[foldingList->size()-1] = offset1;
+              }
+
+            }
+
+            generateContextStack(&ctxNum, item->ctx, &ctx, &previousLine);  //regenerate context stack
+
+        //kdDebug(13010)<<QString("generateContextStack has been left in item loop, size: %1").arg(ctx.size())<<endl;
+      //    kdDebug(13010)<<QString("current ctxNum==%1").arg(ctxNum)<<endl;
+
+            context=contextNum(ctxNum);
+
+            // dynamic context: substitute the model with an 'instance'
+            if (context->dynamic)
+            {
+              QStringList *lst = item->capturedTexts();
+              if (lst != 0)
+              {
+                // Replace the top of the stack and the current context
+                int newctx = makeDynamicContext(context, lst);
+                if (ctx.size() > 0)
+                  ctx[ctx.size() - 1] = newctx;
+                ctxNum = newctx;
+                context = contextNum(ctxNum);
+              }
+              delete lst;
+            }
+
+            // dominik: look ahead w/o changing offset?
+            if (!item->lookAhead)
+            {
+              z = z + offset2 - offset1 - 1;
+              offset1 = offset2 - 1;
+            }
+            found = true;
+            break;
+          }
+        }
+      }
+
+      // nothing found: set attribute of one char
+      // anders: unless this context does not want that!
+      if (!found)
+      {
+        if ( context->fallthrough )
+        {
         // set context to context->ftctx.
-        generateContextStack(&ctxNum, context->ftctx, &ctx, &previousLine);  //regenerate context stack
-        context=contextNum(ctxNum);
+          generateContextStack(&ctxNum, context->ftctx, &ctx, &previousLine);  //regenerate context stack
+          context=contextNum(ctxNum);
         //yzDebug("HL")<<"context num after fallthrough at col "<<z<<": "<<ctxNum<<endl;
         // the next is nessecary, as otherwise keyword (or anything using the std delimitor check)
         // immediately after fallthrough fails. Is it bad?
         // jowenn, can you come up with a nicer way to do this?
-        if (z)
-          lastChar = text[offset1 - 1];
+          if (z)
+            lastChar = text[offset1 - 1];
+          else
+            lastChar = '\\';
+          continue;
+        }
         else
-          lastChar = '\\';
-        continue;
-      }
-      else {
-        textLine->setAttribs(context->attr,offset1,offset1 + 1);
+          textLine->setAttribs(context->attr,offset1,offset1 + 1);
 	  }
     }
 
@@ -1899,7 +1918,9 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   // dominik: look ahead and do not change offset. so we can change contexts w/o changing offset1.
   bool lookAhead = IS_TRUE( YzisHlManager::self()->syntax->groupItemData(data,QString("lookAhead")) );
 
-  bool dynamic=( YzisHlManager::self()->syntax->groupItemData(data,QString("dynamic")).lower() == QString("true") );
+  bool dynamic= IS_TRUE(YzisHlManager::self()->syntax->groupItemData(data,QString("dynamic")) );
+
+  bool firstNonSpace = IS_TRUE(YzisHlManager::self()->syntax->groupItemData(data,QString("firstNonSpace")) );
 
   // code folding region handling:
   QString beginRegionStr=YzisHlManager::self()->syntax->groupItemData(data,QString("beginRegion"));
@@ -1973,6 +1994,7 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   // set lookAhead & dynamic properties
   tmpItem->lookAhead = lookAhead;
   tmpItem->dynamic = dynamic;
+  tmpItem->firstNonSpace = firstNonSpace;
 
   if (!unresolvedContext.isEmpty())
   {
@@ -2610,7 +2632,8 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
         context,
         (YzisHlManager::self()->syntax->groupData(data,QString("lineBeginContext"))).isEmpty()?-1:
         (YzisHlManager::self()->syntax->groupData(data,QString("lineBeginContext"))).toInt(),
-        ft, ftc, dynamic ));
+        ft, ftc, dynamic,
+        IS_TRUE(YzisHlManager::self()->syntax->groupData(data,QString("skipSpaces")))));
 
 
 	  //Let's create all items for the context

@@ -1,34 +1,38 @@
 /**
- * $Id: yz_events.cpp,v 1.8 2003/04/25 12:45:30 mikmak Exp $
+ * $Id$
  */
 
 #include "yz_events.h"
 
-yz_event mk_event_setstatus(QString *text) {
+YZEvent::YZEvent() {
+}
+
+yz_event YZEvent::mkEventStatus(const QString& text) {
 	yz_event e;
 	e.id=YZ_EV_SETSTATUS;
-	e.u.setstatus.text=new QString ( *text );
+	e.setstatus.text=text;
 	return e;
 }
 
-yz_event mk_event_setcursor(int x, int y) {
+yz_event YZEvent::mkEventCursor(int x, int y) {
 	yz_event e;
 	e.id=YZ_EV_SETCURSOR;
-	e.u.setcursor.x=x;
-	e.u.setcursor.y=y;
+	e.setcursor.x=x;
+	e.setcursor.y=y;
 	return e;
 }
 
-yz_event mk_event_setline(int l, QString *text) {
+yz_event YZEvent::mkEventLine(int l, const QString& text) {
 	yz_event e;
 	e.id=YZ_EV_SETLINE;
-	e.u.setline.y=l;
-	e.u.setline.line=new QString( *text );
+	e.setline.y=l;
+	e.setline.line=text;
 	return e;
 }
 
-yz_event mk_event_noop() {
+yz_event YZEvent::mkEventNoop() {
 	yz_event e;
 	e.id=YZ_EV_NOOP;
 	return e;
 }
+

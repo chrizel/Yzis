@@ -1,7 +1,7 @@
 #ifndef YZ_EVENTS_H
 #define YZ_EVENTS_H
 /**
- * $Id: yz_events.h,v 1.17 2003/04/25 12:45:30 mikmak Exp $
+ * $Id$
  *
  * yzis events
  *
@@ -10,6 +10,8 @@
 #include "yzis.h" /* NULL */
 #include <qstring.h>
 
+class QString;
+
 /** list of all events */
 enum yz_events {
 	YZ_EV_SETLINE,
@@ -17,11 +19,6 @@ enum yz_events {
 	YZ_EV_SETSTATUS,
 	YZ_EV_NOOP //no, nothing :)
 };
-
-/** Here are some struct used for event args handling
- * we can use long name as we shouldn't need to use those anyway
- */
-class QString;
 
 /**
  * Be careful, when the core uses yz_event_setline, it is of its responsability
@@ -41,7 +38,15 @@ class QString;
  */
 struct yz_event_setline {
 	int	y;
-	QString *line;
+	QString line;
+	yz_event_setline() {
+		y=0;
+		line=QString::null;
+	}
+	yz_event_setline(const yz_event_setline& e) {
+		y=e.y;
+		line=e.line;
+	}
 };
 
 /**
@@ -52,7 +57,13 @@ struct yz_event_setcursor {
 };
 
 struct yz_event_setstatus {
-	QString *text;
+	QString text;
+	yz_event_setstatus() {
+		text=QString::null;
+	}
+	yz_event_setstatus(const yz_event_setstatus& e) {
+		text=e.text;
+	}
 };
 
 /**
@@ -68,24 +79,27 @@ struct yz_event_setstatus {
 
  case YZ_EV_SETCURSOR:
  }
+ */
 
-*/
 struct yz_event_t {
 	enum yz_events		id;
 	struct yz_event_t	*next;
-	union {
-		struct yz_event_setline		setline;
-		struct yz_event_setcursor	setcursor;
-		struct yz_event_setstatus	setstatus;
-	} u;
+	struct yz_event_setline		setline;
+	struct yz_event_setcursor	setcursor;
+	struct yz_event_setstatus	setstatus;
 };
 
 typedef struct yz_event_t yz_event;
 
-yz_event mk_event_setstatus(QString *);
-yz_event mk_event_setcursor(int x, int y);
-yz_event mk_event_setline(int,QString *);
-yz_event mk_event_noop();
+class YZEvent {
+	public:
+		YZEvent();
+
+		static yz_event mkEventStatus(const QString&);
+		static yz_event mkEventCursor(int x, int y);
+		static yz_event mkEventLine(int,const QString&);
+		static yz_event mkEventNoop();
+};
 
 #endif /*  YZ_EVENTS_H */
 

@@ -25,7 +25,7 @@ void YZView::setVisibleLines(int nb) {
 		for (int i=lines_vis; i<nb; i++) {
 			QString l=buffer->findLine(i);
 			if (l.isNull()) continue;
-			postEvent(mk_event_setline(i,&l));
+			postEvent(YZEvent::mkEventLine(i,l));
 		}
 	lines_vis = nb;
 }
@@ -42,7 +42,7 @@ void YZView::sendChar( QChar c) {
 		}
 		purgeInputBuffer();
 		mode = YZ_VIEW_MODE_COMMAND;
-		postEvent(mk_event_setstatus(&QString( "Command mode") ));
+		postEvent(YZEvent::mkEventStatus("Command mode"));
 		return;
 	}
 	switch(mode) {
@@ -99,7 +99,7 @@ void YZView::updateCursor(int x, int y) {
 		}
 	}
 
-	postEvent( mk_event_setcursor(cursor->getX(),cursor->getY()));
+	postEvent( YZEvent::mkEventCursor(cursor->getX(),cursor->getY()));
 }
 
 yz_event YZView::fetchNextEvent() {
@@ -108,7 +108,7 @@ yz_event YZView::fetchNextEvent() {
 		events.pop_front(); //remove it
 		return e;
 	} else
-		return mk_event_noop();
+		return YZEvent::mkEventNoop();
 }
 
 void YZView::postEvent (yz_event e) {
@@ -137,7 +137,7 @@ void YZView::redrawScreen() {
 	for (int i=current; i<current + lines_vis; i++) {
 		QString l=buffer->findLine(i);
 		if (l.isNull()) continue;
-		postEvent(mk_event_setline(i,&l));
+		postEvent(YZEvent::mkEventLine(i,l));
 	}
 }
 
@@ -329,14 +329,14 @@ QString YZView::deleteCharacter( QString inputsBuff ) {
 
 QString YZView::gotoInsertMode(QString) {
 	mode = YZ_VIEW_MODE_INSERT;
-	postEvent(mk_event_setstatus(&QString( "-- INSERT --") ));
+	postEvent(YZEvent::mkEventStatus("-- INSERT --"));
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoReplaceMode(QString) {
 	mode = YZ_VIEW_MODE_REPLACE;
-	postEvent(mk_event_setstatus(&QString( "-- REPLACE --") ));
+	postEvent(YZEvent::mkEventStatus("-- REPLACE --") );
 	purgeInputBuffer();
 	return QString::null;
 }

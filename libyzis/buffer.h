@@ -302,7 +302,7 @@ public:
 	/**
 	 * Change the modified flag of the file
 	 */
-	void setModified(bool v );
+	void setChanged(bool v);
 
 	/**
 	 * Unique ID of the buffer

@@ -105,6 +105,8 @@ private slots:
 
 private:
     void setupActions();
+	virtual bool queryClose();
+
     KToggleAction *m_toolbarAction;
 	QDomElement m_dockConfig;
 	int mBuffers;

@@ -257,5 +257,19 @@ void Kyzis::childWindowCloseRequest( KMdiChildView *v ) {
 	KMdiMainFrm::childWindowCloseRequest( v );
 }
 
+bool Kyzis::queryClose() {
+	QMap<int,KView>::Iterator it;
+	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
+		if ( it.data().p->isModified() ) {
+			int msg = KMessageBox::warningYesNoCancel(this, QString("The file '%1' has been modified but not saved, do you want to save it ?" ).arg( it.data().p->url().prettyURL() ), "Close Document", KStdGuiItem::save(), KStdGuiItem::discard() );
+			if ( msg == KMessageBox::Cancel ) return false;
+			if ( msg == KMessageBox::Yes ) 
+				it.data().p->save(); //automatically popups saveAs dialog if needed
+		}
+	}
+
+	return true;
+}
+
 
 #include "kyzis.moc"

@@ -161,6 +161,8 @@ void KYZisView::syncViewInfo() {
 	QString fileInfo;
 	fileInfo +=( mBuffer->fileIsNew() )?"N":" ";
 	fileInfo +=( mBuffer->fileIsModified() )?"M":" ";
+	buffer->setModified( mBuffer->fileIsModified() );
+
 	status->changeItem(fileInfo, 90);
 	mVScroll->setValue(getBufferCursor()->getY() );
 }

@@ -47,8 +47,8 @@ AC_ARG_WITH(curses, AC_HELP_STRING([--with-curses=DIR],[where ncurses is install
 
 cf_ncurses="ncurses"
 AC_CHECK_LIB(ncurses, waddnwstr, [cf_ncurses="ncurses"; break],[have_ncurses="no"])
-AC_CHECK_LIB(ncursesw, waddnwstr, [cf_ncurses="ncursesw"; break],[have_ncursesw="no"])
 AC_CHECK_LIB(ncurses, addch, [cf_ncurses="ncurses"; have_basic_ncurses="yes"; break],[have_basic_ncurses="no"])
+AC_CHECK_LIB(ncursesw, waddnwstr, [cf_ncurses="ncursesw"; break],[have_ncursesw="no"])
 
 AC_CHECK_LIB($cf_ncurses, initscr,
 			 [YZISLIBS="$YZISLIBS -l$cf_ncurses"

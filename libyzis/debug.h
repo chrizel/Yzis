@@ -69,6 +69,7 @@ class QStringList;
 
 class YZDebugBackend {
 public:
+	~YZDebugBackend();
 	static YZDebugBackend * instance();
 
 	/** write data to the debug backend */

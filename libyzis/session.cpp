@@ -66,6 +66,7 @@ YZSession::YZSession( const QString& _sessionName ) {
 }
 
 YZSession::~YZSession() {
+	delete YzisHlManager::self();
 	delete mSchemaManager;
 	delete mExPool;
 	delete mPool;
@@ -73,7 +74,6 @@ YZSession::~YZSession() {
 	delete events;
 	delete mRegisters;
 	delete mOptions;
-	delete YzisHlManager::self();
 	delete YZExLua::instance();
 	delete YZDebugBackend::instance();
 }

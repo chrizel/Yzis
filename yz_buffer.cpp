@@ -1,5 +1,5 @@
 /**
- * $id$
+ * $Id: yz_buffer.cpp,v 1.24 2003/04/25 12:35:32 mikmak Exp $
  */
 
 #include <cstdlib>

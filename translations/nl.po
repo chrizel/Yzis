@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yzis\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-09 20:17+0100\n"
+"POT-Creation-Date: 2005-02-10 09:12+0100\n"
 "PO-Revision-Date: 2005-02-08 20:03+0100\n"
 "Last-Translator: Mickael Marchand <marchand@kde.org>\n"
 "Language-Team: <i18n@yzis.org>\n"
@@ -522,6 +522,10 @@ msgstr ""
 
 #: ../libyzis/view.cpp:1714
 msgid " { Recording }"
+msgstr ""
+
+#: ../nyzis/factory.cpp:197
+msgid "(Press any key)"
 msgstr ""
 
 #~ msgid "Yzis Ready"

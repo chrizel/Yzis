@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-09 20:17+0100\n"
+"POT-Creation-Date: 2005-02-10 09:12+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -523,4 +523,8 @@ msgstr ""
 
 #: ../libyzis/view.cpp:1714
 msgid " { Recording }"
+msgstr ""
+
+#: ../nyzis/factory.cpp:197
+msgid "(Press any key)"
 msgstr ""

@@ -1,6 +1,7 @@
 # translation of fr.po to 
 # translation of fr.po to
 # translation of fr.po to
+# translation of fr.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Mickael Marchand <marchand@kde.org>, 2005.
@@ -10,7 +11,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-12 17:12+0100\n"
-"PO-Revision-Date: 2005-02-13 20:23+0100\n"
+"PO-Revision-Date: 2005-02-14 17:38+0100\n"
 "Last-Translator: Mickael Marchand <marchand@kde.org>\n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -427,7 +428,7 @@ msgstr "Impossible d'ouvrir le fichier %1 en écriture : %2"
 
 #: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
 msgid "Written %1 bytes to file %2"
-msgstr "Ecrit %1 octects dans le fichier %2"
+msgstr "Ecrit %1 octets dans le fichier %2"
 
 #: ../libyzis/ex_lua.cpp:263
 msgid "The file %1 could not be found in standard directories"

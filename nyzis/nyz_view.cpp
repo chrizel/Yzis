@@ -1,5 +1,5 @@
 /**
- * $Id: nyz_view.cpp,v 1.16 2003/04/25 12:45:33 mikmak Exp $
+ * $Id$
  */
 
 #include "nyz_view.h"
@@ -31,7 +31,7 @@ void NYZView::event_loop()
 		/* this is a _basic_ event loop... will be improved */
 		c = getch();
 		if (c!=ERR)
-			sendChar( c );
+			sendChar( QString( QChar( c ) ) );
 		flush_events();
 	}
 }

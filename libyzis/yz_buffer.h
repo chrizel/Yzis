@@ -1,7 +1,7 @@
 #ifndef YZ_BUFFER_H
 #define YZ_BUFFER_H
 /**
- * $Id: yz_buffer.h,v 1.20 2003/04/25 20:00:54 mikmak Exp $
+ * $Id$
  */
 
 #include <qstringlist.h>
@@ -19,8 +19,8 @@ public:
 	/** opens a buffer using the given file */
 	YZBuffer(QString _path=QString::null);
 
-	void addChar (int x, int y, QChar c);
-	void chgChar (int x, int y, QChar c);
+	void addChar (int x, int y, const QString& c);
+	void chgChar (int x, int y, const QString& c);
 	void delChar (int x, int y, int count = 1);
 
 	void load(void);

@@ -1,3 +1,10 @@
+2003-05-29 mikmak
+  * kyzis
+     fixed desktop file
+  * libyzis
+     changed sendChar and friends to handle a QString instead of a QChar => I
+     broke inputs :)
+
 2003-05-28 orzel
   * some warning fixed
   * yz_event_setstatus now uses a QString* instead of a char*, as does setline

@@ -1,7 +1,7 @@
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
 /**
- * $Id: yz_view.h,v 1.24 2003/04/25 20:00:54 mikmak Exp $
+ * $Id$
  */
 
 
@@ -30,7 +30,7 @@ public:
 	/**
 	 * transfer a key event from gui to core
 	 */
-	void	sendChar( QChar );
+	void	sendChar( const QString& );
 
 	/**
 	  * Used by the buffer to post events

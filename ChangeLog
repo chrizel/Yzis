@@ -1,3 +1,13 @@
+2004-02-08 mikmak
+  * libyzis
+    fix column count when line is empty
+    fix moveLeft() and moveUp() when getX() or getY() are 0 already
+  * kyzis
+    go to EX mode when click on the command line
+    refuse to move the cursor with mouse when in EX mode
+  * all
+    license all files : kyzis GPLv2 , nyzis GPLv2, libyzis LGPLv2.x
+
 2004-02-07 mikmak
   * kyzis
     fixed "File New" to open a new tab and not a new window

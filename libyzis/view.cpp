@@ -1,3 +1,22 @@
+/* This file is part of the Yzis libraries
+ *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Library General Public
+ *  License as published by the Free Software Foundation; either
+ *  version 2 of the License, or (at your option) any later version.
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public License
+ *  along with this library; see the file COPYING.LIB.  If not, write to
+ *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ *  Boston, MA 02111-1307, USA.
+ **/
+
 /**
  * $Id$
  */
@@ -239,17 +258,16 @@ void YZView::redrawScreen() {
  * all the goto-like commands
  */
 
-void YZView::gotoxy(unsigned int nextx, unsigned int nexty)
-{
+void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	QString lin;
 
 	// check positions
 	if ( ( int )nexty < 0 ) nexty = 0;
-	else if ( nexty >=  mBuffer->getLines()  ) nexty = mBuffer->getLines() - 1;
+	else if ( nexty >=  mBuffer->getLines() ) nexty = mBuffer->getLines() - 1;
 	mCursor->setY( nexty );
 
 	lin = mBuffer->findLine(nexty);
-	if ( !lin.isNull() ) mMaxX = lin.length()-1; 
+	if ( !lin.isNull() ) mMaxX = (lin.length() == 0) ? 0 : lin.length()-1; 
 	if ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode ) {
 		/* in edit mode, at end of line, cursor can be on +1 */
 		if ( nextx > mMaxX+1 ) nextx = mMaxX+1;
@@ -305,7 +323,7 @@ QString YZView::moveUp( const QString& inputsBuff ) {
 	}
 
 	//execute the code
-	gotoxy(mCursor->getX(), ( mCursor->getY() - nb_lines <= 0 ) ? 0 : ( mCursor->getY() - nb_lines ));
+	gotoxy(mCursor->getX(), mCursor->getY() ? mCursor->getY() - nb_lines : 0 );
 
 	//reset the input buffer
 	purgeInputBuffer();
@@ -327,10 +345,11 @@ QString YZView::moveLeft( const QString& inputsBuff ) {
 	}
 
 	//execute the code
-	gotoxy(mCursor->getX() - nb_cols , mCursor->getY());
+	gotoxy( mCursor->getX() ? mCursor->getX() - nb_cols : 0 , mCursor->getY());
 
 	//reset the input buffer
 	purgeInputBuffer();
+
 	//return something
 	return QString::null;
 }

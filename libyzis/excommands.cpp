@@ -541,9 +541,15 @@ QString YZExCommandPool::substitute( const YZExCommandArgs& args ) {
 	QString options = args.input.mid( idxc+1 );
 
 	bool needsUpdate = false;
-	for( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
-		if ( args.view->myBuffer()->substitute( search, replace, options.contains( "g" ), i ) )
-			needsUpdate = true;
+	args.view->gotoxy( 0, args.fromLine );
+	args.view->moveToFirstNonBlankOfLine();
+	bool found;
+	YZSession::me->search()->forward( args.view, search, &found );
+	if ( found ) {
+		for( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
+			if ( args.view->myBuffer()->substitute( search, replace, options.contains( "g" ), i ) )
+				needsUpdate = true;
+		}
 	}
 	if ( needsUpdate ) {
 		args.view->myBuffer()->updateAllViews();

@@ -27,9 +27,11 @@
 
 #include "cursor.h"
 #include "view.h"
+#include "buffer.h"
 
 class YZView;
 class YZCursor;
+class YZBuffer;
 
 /**
  * YZSearch : 
@@ -63,6 +65,11 @@ class YZSearch {
 		 * replay search backward
 		 */
 		YZCursor replayBackward( YZView* mView, bool* found, bool skipline = false );
+
+		/**
+		 * Highlight given line
+		 */
+		void highlightLine( YZBuffer* buffer, unsigned int line );
 
 		/**
 		 * return current search

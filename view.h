@@ -544,6 +544,7 @@ class YZView {
 		YzisAttribute *rHLAttributes;
 
 		QString  sCurLine;
+		int sCurLineLength;
 
 		void gotoy( unsigned int );
 		void gotody( unsigned int );
@@ -556,6 +557,7 @@ class YZView {
 
 		//cached value of tabwidth option
 		unsigned int tabwidth;	
+		bool wrap;
 };
 
 #endif /*  YZ_VIEW_H */

@@ -54,6 +54,7 @@
 
 static const QChar tabChar( '\t' );
 static QColor fake/*( "white" )*/;
+static QColor blue( "blue" );
 
 
 /**
@@ -212,7 +213,7 @@ void YZView::sendMultipleKey(const QString& keys) {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
+//	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );
@@ -1772,26 +1773,33 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 	YZLine *yl = mBuffer->yzline( line );
 	YzisHighlighting * highlight = mBuffer->highlight();
 	const uchar* hl=NULL;
-
+	YzisAttribute *at = NULL;
+	
 	if ( yl->length() != 0 && highlight ) {
 		hl = yl->attributes(); //attributes of this line
 		hl += col; // -1 ? //move pointer to the correct column
 		uint len = hl ? highlight->attributes( 0 )->size() : 0 ; //length of attributes
 		YzisAttribute *list = highlight->attributes( 0 )->data( ); //attributes defined by the syntax highlighting document
-		YzisAttribute *at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
-		if ( at ) return at->textColor(); //textcolor :)
+		at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
 	}
-
+	if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(yl->data().mid(col)) )
+		return blue;
+	if ( at ) return at->textColor(); //textcolor :)
 	return fake;
 }
 
 const QColor& YZView::drawColor ( ) {
 	YzisAttribute hl;
 	YzisAttribute * curAt = ( !rHLnoAttribs && (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-	if ( curAt ) {
+	if ( curAt )
 		hl += * curAt;
+
+	if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(mBuffer->textline(workCursor->bufferY()).mid(workCursor->bufferX()-1)) )
+		return blue;
+
+	if ( curAt )
 		return hl.textColor();
-	}
+
 	return fake;
 }
 
@@ -2038,7 +2046,7 @@ void YZView::removePaintEvent( const YZCursor& from, const YZCursor& to ) {
 }
 
 bool YZView::stringHasOnlySpaces ( const QString& what ) {
-	for (int i = 0 ; i < what.length(); i++)
+	for (unsigned int i = 0 ; i < what.length(); i++)
 		if ( !what[i].isSpace() ) {
 			return false;
 		}

@@ -313,8 +313,36 @@ void TestYZCommands::testMotionMovement() {
     mView->sendMultipleKey("w");
     CHECK_CURSOR_POS( mView, 2, 12 );
     //test backward
+    mView->sendMultipleKey("G$");
+    CHECK_CURSOR_POS( mView, 2, 12 );
+    mView->sendMultipleKey("5b");
+    CHECK_CURSOR_POS( mView, 1, 14 );
+    mView->sendMultipleKey("G$");
+    CHECK_CURSOR_POS( mView, 2, 12 );
+    mView->sendMultipleKey("10b");
+    CHECK_CURSOR_POS( mView, 0, 13 );
+    mView->sendMultipleKey("G$");
+    CHECK_CURSOR_POS( mView, 2, 12 );
+    mView->sendMultipleKey("11b");
+    CHECK_CURSOR_POS( mView, 0, 6 );
+    mView->sendMultipleKey("b");
+    CHECK_CURSOR_POS( mView, 0, 0 );
 
     //tests with delimiters on multiple lines
+    YZSession::setBoolOption("cindent",false);	
+    mView->sendMultipleKey( "ggVGd" );
+    mView->sendMultipleKey( "itest/function(test)/class::method()/<ENTER><TAB>void yzis::method(test()){<ENTER><TAB><TAB>printf(truc);<ESC>" );
+    phCheckEquals( mBuf->getWholeText(), "test/function(test)/class::method()/\n\tvoid yzis::method(test()){\n\t\tprintf(truc);\n" );
+    mView->sendMultipleKey("gg");
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendMultipleKey("10w");
+    CHECK_CURSOR_POS( mView, 1, 1 );
+    mView->sendMultipleKey("8w");
+    CHECK_CURSOR_POS( mView, 2, 8 );
+    mView->sendMultipleKey("5b");
+    CHECK_CURSOR_POS( mView, 1, 12 );
+    //cleanup
+    mView->sendMultipleKey( "ggVGd" );
 }
 
 /* ========================================================================= */

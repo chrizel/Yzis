@@ -30,7 +30,8 @@ class YZCursor;
 
 enum type_t {
 	REGEXP, //apply a regexp to make calculations (rex)
-	RELATIVE //change cursor position with relative coordinates (x,y)
+	RELATIVE, //change cursor position with relative coordinates (x,y)
+	NORMAL, // motion to match a normal mode command (markers, % etc)
 };
 
 struct motion_t {
@@ -91,11 +92,10 @@ class YZMotionPool {
 		 * Calculates coordinates of the cursor after applying the given motion
 		 * @param inputsMotion the motion string to apply
 		 * @param view the view on which to operate
-		 * @param backward true if the motion goes backward in the text
 		 * @param cursor result of the calculation
 		 * @return whether a match was found
 		 */
-		bool applyMotion( const QString& inputsMotion, YZView *view, bool *backward, YZCursor& cursor );
+		bool applyMotion( const QString& inputsMotion, YZView *view, YZCursor& cursor );
 
 		/**
 		 * Calculates coordinates of the cursor after applying the given regexp motion
@@ -116,6 +116,16 @@ class YZMotionPool {
 		 * @return whether a match was found
 		 */
 		bool applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& result );
+
+		/**
+		 * Calculates coordinates of a match for normal commands
+		 * @param inputsMotion the motion string to apply
+		 * @param motion the motion to apply
+		 * @param view the view on which to operate
+		 * @param result result of the calculation
+		 * @result whether a match was found or not
+		 */
+		bool applyNormalMotion( const QString& inputsMotion, YZMotion& motion, YZView *view, YZCursor& result );
 
 		/**
 		 * Check whether the @param inputs match a known motion

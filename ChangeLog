@@ -2,7 +2,7 @@
   * libyzis
     add CTRL+e and CTRL+y insert commands
   * kyzis
-    improve cursor render
+    improve cursor rendering
 
 2005-02-15 mikmak
   * M3 ready

@@ -5,8 +5,8 @@ function Indent_cpp(nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces,prevLine,nex
 	local nbtabs = nbPrevTabs
 	local nbspaces = nbPrevSpaces
 
-	local st = string.byte(prevLine,-1)
-	if st == string.byte("{",1) or st == string.byte(":",1) or st == string.byte("(",1) then nbtabs=nbtabs+1 end
+	local st = string.sub(prevLine,-1,-1)
+	if st == "{" or st == ":" or st == "(" then nbtabs=nbtabs+1 end
 
 	-- we use tabs only for now
 	return nbtabs, nbspaces
@@ -19,7 +19,7 @@ function Indent_OnKey_cpp(char,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbN
 		return
 	end
 
-	if string.byte(char,1) == string.byte("}",1) then
+	if char == "}" then
 		-- find the matching opening { and use the same indent
 
 		-- or just remove 1 tab for now ;)

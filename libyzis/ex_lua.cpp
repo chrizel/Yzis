@@ -110,6 +110,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"highlight",highlight);
 	lua_register(L,"connect",connect);
 	lua_register(L,"source",source);
+	lua_register(L,"debug",debug);
 }
 
 YZExLua::~YZExLua() {
@@ -516,6 +517,13 @@ int YZExLua::highlight( lua_State *L ) {
 	}
 	YZExCommandArgs args(NULL,QString::null,QString::null,arg.join(" "),0,0,true);
 	YZSession::me->getExPool()->highlight(args);
+	return 0;
+}
+
+int YZExLua::debug( lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "debug", "text")) return 0;
+	QString text = ( char * )lua_tostring ( L, 1 );
+	yzDebug() << "Lua debug : " << text << endl;	
 	return 0;
 }
 

@@ -65,7 +65,6 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 }
 
 void KYZisEdit::setCursor(int c, int l) {
-	yzDebug() << "setCursor " << mCursorX << " " << mCursorY << endl;
 	//erase the previous cursor by redrawing the line 
 	mCursorShown = false; //lock
 	repaintContents( mCursorX * fontMetrics().maxWidth(), mCursorY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
@@ -143,7 +142,7 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 
 	for ( int line = mParent->getCurrentTop(); line < mParent->getCurrentTop() + mParent->getLinesVisible() ; line++ ) {
 		int i = line - mParent->getCurrentTop(); //relative line number
-		if (  fontMetrics().lineSpacing() * i >= (  unsigned int )clipy && fontMetrics().lineSpacing() * i < (  unsigned int ) (  clipy+cliph ) ) {
+		if ( fontMetrics().lineSpacing() * i >= (  unsigned int )clipy && fontMetrics().lineSpacing() * i < (  unsigned int ) (  clipy+cliph ) ) {
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
 			p->eraseRect(clip);
 			QString toDraw = mParent->myBuffer()->textline( line );

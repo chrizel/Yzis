@@ -2525,7 +2525,7 @@ int YzisHlManager::detectHighlighting (YZBuffer *doc)
     }
     buf.resize( bufpos );
 
-    hl = mimeFind (buf);
+//    hl = mimeFind (buf);
   }
 
   return hl;

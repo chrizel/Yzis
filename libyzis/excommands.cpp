@@ -171,8 +171,10 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 				it->commitPaintEvent();
 		}
 	}
-	view->gotoxy( 0, to );
-	view->moveToFirstNonBlankOfLine();
+	if ( from != to ) {
+		view->gotoxy( 0, to );
+		view->moveToFirstNonBlankOfLine();
+	}
 
 	return ret;
 }

@@ -409,73 +409,49 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
 YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& mBegin, const YZCursor& mEnd, bool reverseSearch, unsigned int *matchlength, bool *found ) {
-//	yzDebug() << " Searching " << what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
+	yzDebug() << " Searching " << what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
 	QRegExp ex( what );
-	int currentMatchLine = mBegin.getY(); //start from current line
-	//if you understand this line you are semi-god :)
-	//if you don't understand, remove the IFs and see what it does when you have the cursor on the last/first column and start a search/reverse search
-	unsigned int mMaxX = pView->myBuffer()->textline( currentMatchLine ).length() - 1;
-	int currentMatchColumn = reverseSearch ? ( mBegin.getX() ? mBegin.getX() : 1 ) - 1 : \
-		( mBegin.getX() < mMaxX ) ? mBegin.getX() + 1 : mBegin.getX(); //start from current column +/- 1
 
-	//get current line
+	unsigned int currentMatchLine;
+	int currentMatchColumn;
 	QString l;
-
-	for ( unsigned int i = currentMatchLine; i < pView->myBuffer()->lineCount() 
-		&& ( (reverseSearch && i >= mEnd.getY()) || (!reverseSearch && i <= mEnd.getY()) ); 
-			reverseSearch ? i-- : i++ ) {
-			
+	
+	unsigned int i = reverseSearch ? QMIN( mBegin.getY(), pView->myBuffer()->lineCount() ) : QMAX( mBegin.getY(), 0 );
+	unsigned int maxLine = reverseSearch ? QMAX( mEnd.getY(), 0 ) : QMIN( mEnd.getY(), pView->myBuffer()->lineCount() );
+	for ( ; reverseSearch && i > maxLine || ! reverseSearch && i < maxLine; reverseSearch ? i-- : i++ ) {
 		l = pView->myBuffer()->textline( i );
-		//cut lines if we are on first/last lines to search in
-		if ( i == mBegin.getY() ) {
-			l = reverseSearch ? l.left(mBegin.getX()) : l.mid(mBegin.getX());
-			currentMatchColumn = reverseSearch ? -2 : 1;
-		}
-		if ( i == mEnd.getY() ) {
-			l = reverseSearch ? l.mid(mEnd.getX()) : l.left(mEnd.getX());
-			currentMatchColumn = reverseSearch ? -2 : 1;
-		}
-		
+
 		int idx;
 		if ( reverseSearch ) {
-			idx = ex.searchRev( l , currentMatchColumn );
-//			yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
+			currentMatchColumn = -1;
+			if ( i == mBegin.getY() ) {
+				currentMatchColumn = mBegin.getX();
+			} else if ( i == mEnd.getY() ) {
+				l = l.mid( mEnd.getX() );
+			}
+			idx = ex.searchRev( l, currentMatchColumn );
+			if ( i == mBegin.getY() && idx >= mBegin.getX() ) idx = -1;
+//			yzDebug() << "searchRev on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
 		} else {
-			idx = ex.search( l , currentMatchColumn );
-//			yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
+			currentMatchColumn = 0;
+			if ( i == mBegin.getY() ) {
+				currentMatchColumn = mBegin.getX();
+			} else if ( i == mEnd.getY() ) {
+				l = l.left( mEnd.getX() );
+			}
+			idx = ex.search( l, currentMatchColumn );
+//			yzDebug() << "search on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
 		}
 
 		if ( idx >= 0 ) {
-			//check we are not past the mEnd
-			if ( i == mEnd.getY() && ((!reverseSearch && (unsigned int)idx > mEnd.getX()) || (reverseSearch && (unsigned int)idx < mEnd.getX()))) 
-				continue; //should exit the loop at next iteration anyway and return false
-
-			//i really found it ? or is it a previous "found" ?
-			if ( mBegin.getX() == ( unsigned int ) idx && reverseSearch && i == (unsigned int)currentMatchLine ) { //ok we did not move guy (col 0 or last col maybe ...)
-				yzDebug() << "Only a fake match on this line, skip it" << endl;
-				if ( reverseSearch )
-					currentMatchColumn=-1;
-				else
-					currentMatchColumn=0; //reset the column (only valid for the first line we check)
-				continue; //exit the IF
-			}
-			//really found it !
 			currentMatchColumn = idx;
 			currentMatchLine = i;
 			//if we truncated the line below, then we need to change the cursor getX position too ;)
-			if ( i == mBegin.getY() && !reverseSearch )
-				currentMatchColumn += mBegin.getX();
 			if ( i == mEnd.getY() && reverseSearch )
-				currentMatchColumn += mBegin.getX();
+				currentMatchColumn += mEnd.getX();
 			*found = true;
 			*matchlength = ex.matchedLength();
 			return YZCursor(pView,currentMatchColumn, currentMatchLine);
-		} else {
-//			yzDebug() << "No match on this line" << endl;
-			if ( reverseSearch )
-				currentMatchColumn=-1;
-			else
-				currentMatchColumn=0; //reset the column (only valid for the first line we check)
 		}
 	}
 	*found = false;

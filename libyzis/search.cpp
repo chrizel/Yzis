@@ -56,13 +56,13 @@ YZCursor YZSearch::doSearch( YZView* mView, const QString& pattern, bool reverse
 	yzDebug() << "YZSearch::doSearch " << pattern << ", " << reverse << ", " << replay << endl;
 	*found = false;
 	setCurrentSearch( pattern );
-	int direction = reverse ? -1 : 1;
+	int direction = reverse ? 0 : 1;
 
 	YZCursor ret = mView->getBufferCursor();
 	if ( replay ) {
 		if ( skipline ) {
 			ret.setX( 0 );
-			if ( ! reverse ) ret.setY( ret.getY() + direction );
+			if ( ! reverse ) ret.setY( QMIN( ret.getY() + 1, mView->myBuffer()->lineCount() - 1 ) );
 		} else {
 			ret.setX( QMAX( ret.getX() + direction, 0 ) );
 		}
@@ -74,10 +74,11 @@ YZCursor YZSearch::doSearch( YZView* mView, const QString& pattern, bool reverse
 		end.setY( 0 );
 	} else {
 		end.setY( mView->myBuffer()->lineCount() - 1 );
-		end.setX( mView->myBuffer()->textline( end.getY() ).length() - 1 );
+		end.setX( QMAX( mView->myBuffer()->textline( end.getY() ).length() - 1, 0 ) );
 	}
 
 	unsigned int matchedLength;
+	yzDebug() << "begin = " << ret << endl;
 	ret = mView->myBuffer()->action()->search( mView, pattern, ret, end, reverse, &matchedLength, found );
 	yzDebug() << "ret = " << ret << endl;
 
@@ -109,7 +110,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 			YZCursor cur( from );
 			YZCursor end( v );
 			end.setY( b->lineCount() - 1 );
-			end.setX( b->textline( end.getY() ).length() - 1 );
+			end.setX( QMAX( b->textline( end.getY() ).length() - 1, 0 ) );
 
 			bool found = true;
 			unsigned int matchedLength = 0;

@@ -318,7 +318,12 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 					else p.setPen( foregroundColor() );
 					//FIXME remove flag...
 					//p.drawText(myRect, flag, mParent->drawChar( ) );
-					p.drawText(myRect, 0, QString( mParent->drawChar() ).leftJustify( mParent->drawLength(), mParent->fillChar() ) );
+					QString disp = mParent->drawChar();
+					if ( rightleft )
+						disp = disp.rightJustify( mParent->drawLength(), mParent->fillChar() );
+					else
+						disp = disp.leftJustify( mParent->drawLength(), mParent->fillChar() );
+					p.drawText(myRect, 0, disp );
 
 					if ( mParent->drawSelected() ) {
 						selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );

@@ -135,19 +135,19 @@ public:
 	/**
 	 * Return true if the buffer is empty
 	 */
-	bool isEmpty() const;
+	bool isEmpty() ;
 
 	/**
 	 * Get the whole text of the buffer
 	 * @return a QString containing the texts
 	 */
-	QString getWholeText() const;
+	QString getWholeText();
 
 	/**
 	 * Get the length of the entire buffer
 	 * @return an unsigned int with the lenght of the buffer
 	 */
-	uint getWholeTextLength() const;
+	uint getWholeTextLength();
 
 	/**
 	 * Remove all text
@@ -162,7 +162,7 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	inline const QString& textline(unsigned int line) const {
+	inline const QString& textline(unsigned int line) {
 		YZLine * yl = yzline(line);
 		if (yl) return yl->data();
 		return myNull;
@@ -322,6 +322,8 @@ public:
 
 	YzisHighlighting *highlight() { return m_highlight; }
 
+	void updateHL( unsigned int line );
+
 	/**
 	 * Notify GUIs that HL changed
 	 */
@@ -334,8 +336,10 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	inline YZLine * yzline(unsigned int line) const {
-		return mText.at(line);
+	inline YZLine * yzline(unsigned int line) {
+		YZLine *yl = mText.at( line );
+		if ( !yl->initialized() ) updateHL( line );
+		return yl;
 	}
 
 	void makeAttribs();
@@ -444,6 +448,7 @@ protected:
 	//current highlight mode
 	YzisHighlighting *m_highlight;
 	bool mLoading;
+	bool m_hlupdating;
 
 private:
 	YZAction* mAction;

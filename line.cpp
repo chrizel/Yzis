@@ -30,16 +30,19 @@
 YZLine::YZLine(const QString &l) :
 m_flags( YZLine::flagVisible ) {
 	setData(l);
+	m_initialized = false;
 }
 
 YZLine::YZLine() {
 	setData( QString("") );
+	m_initialized = false;
 }
 
 YZLine::~YZLine() {
 }
 
 void YZLine::setAttribs(uchar attribute, uint start, uint end) {
+	m_initialized = true;
 	if (end > mAttributes.size())
 		end = mAttributes.size();
 

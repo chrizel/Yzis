@@ -562,7 +562,7 @@ AC_DEFUN([KDE_SUBST_PROGRAMS],
         KDE_FIND_PATH(kde-config, KDECONFIG, [$kde_default_bindirs])
         KDE_FIND_PATH(meinproc, MEINPROC, [$kde_default_bindirs])
 
-        kde32ornewer=1
+        kde32ornewer=0
         if test -n "$kde_qtver" && test "$kde_qtver" -lt 3; then
             kde32ornewer=
         else

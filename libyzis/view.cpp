@@ -594,7 +594,7 @@ void YZView::centerViewVertically(unsigned int line) {
 
 void YZView::bottomViewVertically( unsigned int line ) {
 	unsigned int newcurrent = 0;
-	if ( line > mLinesVis ) newcurrent = (line - mLinesVis) + 1;
+	if ( line >= mLinesVis ) newcurrent = (line - mLinesVis) + 1;
 	alignViewVertically( newcurrent );
 }
 
@@ -840,8 +840,12 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 			paintEvent( dCurrentLeft, new_cur_sel.drawFrom().getY() > 0 ? new_cur_sel.drawFrom().getY() - 1 : 0, mColumnsVis, new_cur_sel.drawTo().getY() - new_cur_sel.drawFrom().getY() + 3 );
 		}
 
-		if ( !isLineVisible( mainCursor->screenY() ) )
-			alignViewVertically( mainCursor->screenY() );
+		if ( !isLineVisible( mainCursor->screenY() ) ) {
+			if ( mainCursor->screenY() >= mLinesVis + dCurrentTop ) 
+				bottomViewVertically( mainCursor->screenY() );
+			else
+				alignViewVertically( mainCursor->screenY() );
+		}
 		if ( !isColumnVisible( mainCursor->screenX(), mainCursor->screenY() ) ) {
 			centerViewHorizontally( mainCursor->screenX( ) );
 			refreshScreen();

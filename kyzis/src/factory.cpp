@@ -44,6 +44,7 @@
 
 KYZisDoc *KYZisFactory::currentDoc=0;
 KYZisFactory *KYZisFactory::s_self = 0;
+Kyzis *KYZisFactory::mMainApp = 0;
 unsigned long int KYZisFactory::s_refcnt = 0;
 QPtrList<class KYZisDoc> KYZisFactory::s_documents;
 QPtrList<class KYZisView> KYZisFactory::s_views;

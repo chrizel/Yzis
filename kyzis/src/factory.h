@@ -59,7 +59,6 @@ public:
 		void applyConfig();
 
 protected:
-	Kyzis *mMainApp;
 
 private:
     static void ref();
@@ -76,6 +75,7 @@ private:
 public:
 	static KYZisFactory *s_self;
 	static KYZisDoc *currentDoc;
+	static Kyzis *mMainApp;
 };
 
 #endif

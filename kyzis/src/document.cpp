@@ -209,24 +209,11 @@ bool KYZisDoc::popupFileSaveAs() {
 }
 
 void KYZisDoc::filenameChanged() {
-	DCOPClient *client = kapp->dcopClient();
 	KTextEditor::View *it;
 	for ( it = _views.first(); it; it = _views.next() ) {
 		KYZisView *yv = static_cast<KYZisView*>(it);
 		int id = yv->getkid();
-		QByteArray data;
-		QDataStream arg(data, IO_WriteOnly);
-		arg << id << fileName();
-		yzDebug() << "filenameChanged : view " << id << " " << fileName() << endl;
-
-		bool w = client->send(client->appId(), "Kyzis", "setCaption(int,QString)", data);
-		if (w) {
-			yzDebug() << "DCOP call successful for " << client->appId() << " to change caption " << endl;
-		} else {
-			yzDebug() << "DCOP call failed for " << client->appId() << endl;
-			//popupMessage( "DCOP communication is broken ! KYzis is not able to change the caption of tabs" );
-			return; //we failed
-		}
+		KYZisFactory::mMainApp->setCaption(id,fileName());
 	}
 }
 

@@ -46,10 +46,19 @@ void NYZView::handle_event(yz_event *e)
 				addch(yzl->data[i]);
 
 //			refresh();
-			debug("YZ_EV_SETLINE: received, line is %d", l);
+//			debug("YZ_EV_SETLINE: received, line is %d", l);
 			break;
 		case YZ_EV_SETCURSOR:
-			debug("YZ_EV_SETCURSOR: received");
+			move( e->u.setcursor.x, e->u.setcursor.y) ;
+//			debug("YZ_EV_SETCURSOR: received");
+			break;
+		case YZ_EV_SETSTATUS:
+			{
+				int y,x;
+				getyx(stdscr, y, x);
+				mvaddstr(LINES-1,0, e->u.setstatus.text);
+				move(y,x);
+			}
 			break;
 		default:
 			warning("Unhandled event from yzis core : %i", e->id);

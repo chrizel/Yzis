@@ -51,7 +51,7 @@ void nyz_init_screen(void)
     keypad(stdscr, TRUE);  /* enable keyboard mapping */
     (void) nonl();         /* tell curses not to do NL->CR/NL on output */
     (void) cbreak();       /* take input chars one at a time, no wait for \n */
-    (void) echo();         /* echo input - in color */
+    (void) noecho();         /* echo input - in color */
     (void) nodelay(stdscr, TRUE);
 
     if (has_colors()) {

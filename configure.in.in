@@ -39,7 +39,7 @@ else
 fi
 
 yzis_cv_curses=/usr
-AC_ARG_WITH(curses, AC_HELP_STRING([--with-curses=DIR],[where ncurses is installed]),
+AC_ARG_WITH(curses, AC_HELP_STRING([--with-curses-dir=DIR],[where ncurses is installed]),
 			[if test $withval != yes; then
 			 yzis_cv_curses=$withval
 		 fi
@@ -63,11 +63,11 @@ fi
 
 AC_CHECK_LIB($cf_ncurses, initscr,
 			 [YZISLIBS="$YZISLIBS -l$cf_ncurses"
-			  if test x$yzis_cv_curses = x/usr -a -d /usr/include/ncursesw; then
-				  YZIS_INCLUDES="$YZIS_INCLUDES -I/usr/include/ncursesw"
+			  if test -d ${yzis_cv_curses}/include/ncursesw; then
+				  YZIS_INCLUDES="$YZIS_INCLUDES -I${yzis_cv_curses}/include/ncursesw"
 			  else 
-				  if test x$yzis_cv_curses = x/usr -a -d /usr/include/ncurses; then
-					  YZIS_INCLUDES="$YZIS_INCLUDES -I/usr/include/ncurses"
+				  if test -d ${yzis_cv_curses}/include/ncurses; then
+					  YZIS_INCLUDES="$YZIS_INCLUDES -I${yzis_cv_curses}/include/ncurses"
 				  fi
 			  fi
 			  AC_CHECK_HEADERS(ncurses.h,[cf_cv_ncurses_header="ncurses.h"])

@@ -69,7 +69,7 @@ void YZView::setVisibleArea(int c, int l) {
 	yzDebug() << "setVisibleArea : " << c << " " << l << endl;
 	mLinesVis = l;
 	mColumnsVis = c;
-	redrawScreen();
+	refreshScreen();
 }
 
 /* Used by the buffer to post events */
@@ -107,7 +107,7 @@ void YZView::sendKey( int c, int modifiers) {
 		case YZ_VIEW_MODE_COMMAND:
 			switch ( tolower(c) ) {
 				case 'l':
-					redrawScreen();
+					refreshScreen();
 					return;
 				default:
 					yzWarning()<< "Unhandled control sequence " << c <<endl;
@@ -440,7 +440,7 @@ void YZView::centerViewHorizontally(unsigned int column) {
 	}
 	yzDebug() << "centerViewHorizontally d:" << dCurrentLeft << ", m:" << mCurrentLeft << ", fill:" << rSpaceFill << endl;
 	
-	redrawScreen();
+	refreshScreen();
 }
 
 void YZView::centerViewVertically(unsigned int line) {
@@ -452,21 +452,13 @@ void YZView::centerViewVertically(unsigned int line) {
 		else newcurrent = 0;
 	}
 	if ( newcurrent == mCurrentTop ) return;
-	
 	//redraw the screen
 	mCurrentTop = newcurrent > 0 ? newcurrent : 0;
 	dCurrentTop = newcurrent > 0 ? newcurrent : 0;
 
 //	yzDebug() << "centerVertically: m:" << mCurrentTop << "d: " << dCurrentTop << endl;
 
-	redrawScreen();
-}
-
-//drop me ? (==move it to GUIs directly)
-void YZView::redrawScreen() {
-	yzDebug() << "View " << myId << " redraw" << endl;
-	refreshScreen( );
-	updateCursor();
+	refreshScreen();
 }
 
 /*
@@ -474,7 +466,7 @@ void YZView::redrawScreen() {
  */
 
 void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
-	QString lin;
+	QString line;
 	if ( mBuffer->introShown() ) mBuffer->clearIntro();
 
 	// check positions
@@ -482,9 +474,9 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	else if ( nexty >=  mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
 	mCursor->setY( nexty );
 
-	lin = mBuffer->textline(nexty);
-	if ( !lin.isNull() ) mMaxX = (lin.length() == 0) ? 0 : lin.length()-1; 
-	if ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && lin.length() > 0 ) {
+	line = mBuffer->textline(nexty);
+	if ( !line.isNull() ) mMaxX = (line.length() == 0) ? 0 : line.length()-1; 
+	if ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && line.length() > 0 ) {
 		/* in edit mode, at end of line, cursor can be on +1 */
 		if ( nextx > mMaxX+1 ) nextx = mMaxX+1;
 	} else {
@@ -508,7 +500,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 //	yzDebug( ) << "dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl;
 
 	
-	//make sure this line is visible
+	//make sure cursor position is visible
 	if ( !isLineVisible( dCursor->getY() ) ) centerViewVertically( dCursor->getY( ) );
 	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
 

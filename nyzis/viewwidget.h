@@ -63,12 +63,10 @@ public:
 
 public slots:
 
-protected:
-	WINDOW		*window;	/* ncurses window to write to */
-	unsigned int	h, w;		/** height and width of the window */
 
 private:
-	void update_info(void);
+	WINDOW		*window;	/* ncurses window to write to */
+	void updateVis(void) { getmaxyx(stdscr, mLinesVis, mColumnsVis); mLinesVis-=2; }
 	/**
 	  * Display a line
 	  * @arg line is the line number, taken from the beginning of the file ( and not

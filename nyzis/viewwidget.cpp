@@ -59,25 +59,25 @@ void NYZView::map( void )
 	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
 	wmove(window,0,0 );
 	keypad(window , true); //active symbols for special keycodes
-	update_info();
+	updateVis();
 
 	// creates layout
 	/*
 	 * ------------------ infobar ---------------------
 	 * ------------------ statusbar -------------------
 	 */
-	infobar = subwin(window, 1, 0, h-2, 0); YZASSERT( infobar );
+	infobar = subwin(window, 1, 0, getLinesVisible(), 0); YZASSERT( infobar );
 	wattrset(infobar, A_NORMAL );
 	wbkgd(infobar, A_REVERSE);
 
-	statusbar  = subwin(window, 1, 0, h-1, 0); YZASSERT( statusbar );
+	statusbar  = subwin(window, 1, 0, getLinesVisible()+1, 0); YZASSERT( statusbar );
 	wattrset(statusbar, A_NORMAL );
 	if (has_colors())
 		wattron(statusbar, COLOR_PAIR(1));
 //	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 //	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
-	redrawScreen();
+	refreshScreen();
 }
 
 
@@ -95,16 +95,17 @@ void NYZView::printVoid( unsigned int relline )
 	unsigned int i;
 
 	// clipping
-	if ( relline > mLinesVis ) return;
+	if ( relline > getLinesVisible() ) return;
 	wmove (window, relline, 0);
 	waddch(window, '~');
-	for (i=1 ; i< w; i++ ) waddch(window, ' ' );
+	for (i=1 ; i< getColumnsVisible(); i++ ) waddch(window, ' ' );
 }
 
 void NYZView::printLine( int line )
 {
 
-	unsigned int i,actuallen;
+	unsigned int i;
+	int actuallen;
 	int sx,sy; // save x,y
 	unsigned int relline = line - getCurrentTop(); // relative line #
 
@@ -113,13 +114,13 @@ void NYZView::printLine( int line )
 	if ( str.isNull() ) return; // Erase line ??
 
 	// clipping 
-	if ( relline > mLinesVis ) return;
+	if ( relline > getLinesVisible() ) return;
 
 	getyx(window,sy,sx); // save cursor
 
 	/* not use addnstr here, will stop at \0  (i guess) */ 
 	if ( myBuffer()->introShown() )
-		wmove( window,relline, (w-str.length()>0)?(w-str.length())/2:0 );
+		wmove( window,relline, (getColumnsVisible()-str.length()>0)?(getColumnsVisible()-str.length())/2:0 );
 	else wmove (window, relline, 0);
 
 
@@ -138,10 +139,12 @@ void NYZView::printLine( int line )
 
 //yzDebug() << "at,a,atLen are " << ( int )at << " " <<  ( int )a << " " <<  atLen <<endl;
 	bool noAttribs = !a;
-	for (actuallen=i=0; actuallen<w && i<str.length(); i++) {
+	actuallen = - getCurrentLeft();
+	for (i=0; actuallen<(int)getColumnsVisible() && i<str.length(); i++) {
 		// quickly handle the tab case
 		if ( str[i] == tabChar ) {
-			for ( int j=0; j<TABSIZE && actuallen<w; actuallen++,j++ ) waddch( window, ' ' );
+			for ( int j=0; j<TABSIZE && actuallen<getColumnsVisible(); actuallen++,j++ )
+				if (actuallen>=0) waddch( window, ' ' );
 			if ( a ) a++;
 			continue;
 		}
@@ -154,17 +157,18 @@ void NYZView::printLine( int line )
 				mColormap[hl.textColor().rgb()]:
 				mColormap[Qt::white.rgb()];
 		}
-		waddch(window, COLOR_PAIR(mColor)|str[i].unicode());
+		if ( actuallen>= 0 )
+			waddch(window, COLOR_PAIR(mColor)|str[i].unicode());
 		actuallen++;
-//		addch(str[i].unicode());
-	if ( a ) a++;
+		if ( a ) a++;
 	}
 
 	if ( myBuffer()->introShown() ) return;
 
 	// end of line...
-	for ( ; actuallen< w; actuallen++ ) waddch(window, ' ' );
-//	for ( ; actuallen< w-1; actuallen++ ) waddch(window, COLOR_PAIR(1)|'X' ); // debug :)
+	if ( actuallen<0 ) actuallen=0;
+	for ( ; actuallen< getColumnsVisible(); actuallen++ ) waddch(window, ' ' );
+//	for ( ; actuallen< getColumnsVisible()-1; actuallen++ ) waddch(window, COLOR_PAIR(1)|'X' ); // debug :)
 	wmove(window,sy,sx ); // restore cursor
 }
 
@@ -193,7 +197,7 @@ void NYZView::syncViewInfo( void )
 	// older versions of ncurses want non const..
 	char * myfmt;
 
-	update_info();
+	updateVis();
 
 	/*
 	 * ------------------ infobar ---------------------
@@ -226,32 +230,34 @@ void NYZView::syncViewInfo( void )
 	// prevent  gcc to use string
 	if ( viewInformation.c1!=viewInformation.c2 ) {
 		myfmt=( char* )"%d,%d-%d";
-		mvwprintw( infobar, 0, w-20, myfmt,
+		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt,
 				viewInformation.l1+1,
 				viewInformation.c1+1,
 				viewInformation.c2+1 );
 	} else {
 		myfmt=( char * )"%d,%d";
-		mvwprintw( infobar, 0, w-20, myfmt, viewInformation.l1+1,viewInformation.c1+1 );
+		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt, viewInformation.l1+1,viewInformation.c1+1 );
 	}
-	mvwaddstr( infobar, 0, w-9, viewInformation.percentage.latin1() );
+	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.latin1() );
 
 	wrefresh(infobar);
 
-	wmove(window, viewInformation.l1-getCurrentTop() , viewInformation.c2 ) ;
+	wmove(window, viewInformation.l1-getCurrentTop() , viewInformation.c2 - getCurrentLeft() ) ;
 	wrefresh( window );
 }
 
 void NYZView::refreshScreen() {
 	unsigned int i;
-	for ( i=getCurrentTop(); i < ( getCurrentTop() + mLinesVis ) && i < mBuffer->lineCount(); i++ )
+
+	clear();
+	for ( i=getCurrentTop(); i < ( getCurrentTop() + getLinesVisible() ) && i < mBuffer->lineCount(); i++ )
 		printLine(i);
 	i-=getCurrentTop();
-	for ( ; i < mLinesVis ; i++ ) printVoid( i );
+	for ( ; i < getLinesVisible() ; i++ ) printVoid( i );
 
 	refresh();
 	wrefresh(window);
-	syncViewInfo();
+	updateCursor();
 }
 
 void NYZView::displayInfo( const QString& info )
@@ -260,12 +266,6 @@ void NYZView::displayInfo( const QString& info )
 	waddstr( statusbar, info.latin1() );
 	wrefresh(statusbar);
 	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;
-}
-
-void NYZView::update_info(void)
-{
-	getmaxyx(stdscr, h, w);
-	mLinesVis = h-2;
 }
 
 

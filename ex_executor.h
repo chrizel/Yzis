@@ -65,6 +65,11 @@ class YZExExecutor : public QObject {
 		 * Closes a view and/or quit the app
 		 */
 		QString quit( YZView *view, const QString& inputs );
+
+		/**
+		 * Sets options
+		 */
+		QString set ( YZView *view, const QString& inputs );
 };
 
 #endif

@@ -42,6 +42,8 @@ class KOption {
 		const QString& getDefault() { return mDefaultValue; }
 		const QString& getValue() { return mValue; }
 
+		void setValue( const QString& value ) { mValue = value; }
+
 	private: 
 		QString mKey;
 		QString mGroup;
@@ -81,14 +83,29 @@ class YZOption {
 		const QString& readQStringEntry( const QString& key );
 
 		/**
+		 * Sets a qstring option
+		 */
+		void setQStringOption( const QString& key, const QString& value );
+
+		/**
 		 * return an int option
 		 */
 		int readIntEntry( const QString& key );
-		
+
+		/**
+		 * Sets an int option
+		 */
+		void setIntOption( const QString& key, int value );
+
 		/**
 		 * return a bool option
 		 */
 		bool readBoolEntry( const QString& key );
+
+		/**
+		 * Sets a bool option
+		 */
+		void setBoolOption( const QString& key, bool value );
 
 		/**
 		 * return a list option
@@ -96,9 +113,19 @@ class YZOption {
 		const QStringList& readQStringListEntry( const QString& key );
 
 		/**
+		 * Sets a qstringlist option
+		 */
+		void setQStringListOption( const QString& key, const QStringList& value );
+
+		/**
 		 * return a QColor option
 		 */
 		const QColor& readQColorEntry( const QString& key );
+
+		/**
+		 * Sets a qcolor option
+		 */
+		void setQColorOption( const QString& key, const QColor& value );
 
 		/**
 		 * Changes the current group of options

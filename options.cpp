@@ -18,6 +18,7 @@
  **/
 
 #include "options.h"
+#include "debug.h"
 
 KOption::KOption( QString key, QString group, QString value, QString defaultValue) {
 	mKey = key;
@@ -82,14 +83,41 @@ const QString& YZOption::readQStringEntry( const QString& key ) {
 	return s;
 }
 
+void YZOption::setQStringOption( const QString& key, const QString& option ) {
+	KOption *opt = mOptions[ currentGroup + '/' + key ];
+	if ( opt ) {
+		opt->setValue(option);
+		mOptions[ currentGroup + '/' + key ] = opt;
+	} else {
+		QMap<QString,KOption*>::Iterator it;
+		for ( it = mOptions.begin(); it!=mOptions.end() ; it++ ) yzDebug() << "LOOP : " << it.key() << endl;
+	}
+}
+
 int YZOption::readIntEntry( const QString& key ) {
 	QString s = mOptions[ currentGroup + '/' + key ]->getValue();
 	return s.toInt();
 }
 
+void YZOption::setIntOption( const QString& key, int option ) {
+	KOption *opt = mOptions[ currentGroup + '/' + key ];
+	if ( opt ) {
+		opt->setValue(QString::number( option ));
+		mOptions[ currentGroup + '/' + key ] = opt;
+	}
+}
+
 bool YZOption::readBoolEntry( const QString& key ) {
 	const QString& s = mOptions[ currentGroup + '/' + key ]->getValue();
 	return s.toInt();
+}
+
+void YZOption::setBoolOption( const QString& key, bool option ) {
+	KOption *opt = mOptions[ currentGroup + '/' + key ];
+	if ( opt )  {
+		opt->setValue(option ? "true" : "false");
+		mOptions[ currentGroup + '/' + key ] = opt;
+	}
 }
 
 const QStringList& YZOption::readQStringListEntry( const QString& key ) {
@@ -98,10 +126,26 @@ const QStringList& YZOption::readQStringListEntry( const QString& key ) {
 	return list;
 }
 
+void YZOption::setQStringListOption( const QString& key, const QStringList& option ) {
+	KOption *opt = mOptions[ currentGroup + '/' + key ];
+	if ( opt ) {
+		opt->setValue(option.join("/YZ/"));
+		mOptions[ currentGroup + '/' + key ] = opt;
+	}
+}
+
 const QColor& YZOption::readQColorEntry( const QString& key ) {
 	const QString& s = mOptions[ currentGroup + '/' + key ]->getValue();
 	const QColor& col( s );
 	return col;
+}
+
+void YZOption::setQColorOption( const QString& key, const QColor& option ) {
+	KOption *opt = mOptions[ currentGroup + '/' + key ];
+	if ( opt ) {
+		opt->setValue(option.name());
+		mOptions[ currentGroup + '/' + key ] = opt;
+	}
 }
 
 void YZOption::setGroup( const QString& group ) {

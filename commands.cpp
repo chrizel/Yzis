@@ -157,6 +157,7 @@ void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true);
 	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true);
 	NEW_EX_COMMAND("qall", &YZExExecutor::quit,true);
+	NEW_EX_COMMAND("set", &YZExExecutor::set,true);
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {

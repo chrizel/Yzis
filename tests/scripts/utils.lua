@@ -30,6 +30,10 @@ function assertPos(line,col)
     assertEquals( winline(), line )
     assertEquals( wincol(), col )
 end
+function assertScrPos(line,col)
+    assertEquals( scrline(), line )
+    assertEquals( scrcol(), col )
+end
 
 MODE_NORMAL = "[ Awaiting Command ]"
 MODE_INSERT = "[ Insert ]"

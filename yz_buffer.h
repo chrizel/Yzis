@@ -51,7 +51,6 @@ public:
 protected:
 	QString path;
 	QPtrList<YZView> view_list;
-	int	view_nb;
 
 	void	postEvent(yz_event e);
 	void	updateAllViews();

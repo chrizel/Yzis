@@ -15,7 +15,7 @@ yz_event YZEvent::mkEventStatus(const QString& text) {
 }
 
 
-yz_event YZEvent::mkEventCursor(int x, int y, int y2, QString& p) {
+yz_event YZEvent::mkEventCursor(int x, int y, int y2, const QString& p) {
 	yz_event e;
 	e.id=YZ_EV_SET_CURSOR;
 	e.setcursor.x=x;

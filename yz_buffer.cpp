@@ -12,9 +12,12 @@
 
 YZBuffer::YZBuffer(const QString& _path) {
 	path	= _path;
-	view_nb	= 0;
 
 	if (!_path.isEmpty()) load();
+	else {
+		QString blah;
+		addLine(blah);
+	}
 	view_list.setAutoDelete( true ); //we own views
 }
 
@@ -110,6 +113,7 @@ QString	YZBuffer::findLine(unsigned int line) {
 }
 
 void YZBuffer::load() {
+	text.clear();
 	QFile file( path );
 	if ( file.open( IO_ReadOnly ) ) {
 		QTextStream stream( &file );

@@ -35,12 +35,12 @@ yz_event YZEvent::mkEventStatus(int view, const QString& text) {
 }
 
 
-yz_event YZEvent::mkEventCursor(int view, int x, int y, int y2, const QString& p) {
+yz_event YZEvent::mkEventCursor(int view, int l, int c, int c2, const QString& p) {
 	yz_event e;
 	e.id=YZ_EV_SET_CURSOR;
-	e.setcursor.x=x;
-	e.setcursor.y=y;
-	e.setcursor.y2=y2;
+	e.setcursor.l=l;
+	e.setcursor.c=c;
+	e.setcursor.c2=c2;
 	e.setcursor.percentage=p;
 	e.view = view;
 	return e;

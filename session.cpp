@@ -109,7 +109,6 @@ void YZSession::setCurrentView( YZView* view ) {
 }
 
 YZView* YZSession::prevView() {
-	QMap<QString,YZBuffer*>::Iterator it;
 	bool found = false;
 
 	if ( mCurView == 0 ) {
@@ -125,7 +124,6 @@ YZView* YZSession::prevView() {
 }
 
 YZView* YZSession::nextView() {
-	QMap<QString,YZBuffer*>::Iterator it;
 	bool found = false;
 
 	if ( mCurView == 0 ) {

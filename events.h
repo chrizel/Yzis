@@ -74,17 +74,22 @@ struct yz_event_invalidateline {
  * x and y are NOT relative to the view
  */
 struct yz_event_setcursor {
-	int x,y,y2;
+	/* l stands for 'line number'
+	 * c1 for column number as in number of char in file
+	 * c2 for column number as for number of char on display
+	 * hence c2>=c1 allways, and c2==c1 if no tabs is here
+	 */
+	int l,c,c2;
 	QString percentage;
 	yz_event_setcursor() {
 		percentage=QString::null;
-		x=y=y2=0;
+		l=c=c2=0;
 	}
 	yz_event_setcursor(const yz_event_setcursor& e) {
 		percentage=e.percentage;
-		x=e.x;
-		y=e.y;
-		y2=e.y2;
+		l=e.l;
+		c=e.c;
+		c2=e.c2;
 	}
 };
 
@@ -164,7 +169,7 @@ class YZEvent {
 		YZEvent();
 
 		static yz_event mkEventStatus(int v,const QString&);
-		static yz_event mkEventCursor(int v, int x, int y, int y2, const QString&);
+		static yz_event mkEventCursor(int v, int l, int c, int c2, const QString&);
 		static yz_event mkEventInvalidateLine(int,int);
 		static yz_event mkEventRedraw(int);
 		static yz_event mkEventNoop();

@@ -46,6 +46,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 }
 
 YZView::~YZView() {
+	// delete cursor ?
 }
 
 void YZView::setVisibleLines(int nb) {
@@ -251,7 +252,8 @@ void YZView::updateCursor() {
 		lasty=y;
 	}
 
-	mSession->postEvent(YZEvent::mkEventCursor(myId, mCursor->getX(), y, y, percentage));
+	// FIXME handles tabs here or somwhere else..
+	mSession->postEvent(YZEvent::mkEventCursor(myId, y, mCursor->getX(), mCursor->getX(), percentage));
 }
 
 void YZView::centerView(unsigned int line) {

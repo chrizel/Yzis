@@ -27,7 +27,7 @@ static void YZDebugBackend(int area, const char* data) {
 		const int BUFSIZE=4096;
 		char buf[ BUFSIZE ];
 		int nSize = snprintf(buf, BUFSIZE,"%s", data );
-		QFile out ( "/tmp/test.log" );
+		QFile out ( "/tmp/yzisdebug.log" );
 		out.open(IO_WriteOnly | IO_Append );
 		if ( ( nSize == -1 ) || ( nSize >= BUFSIZE ) )
 			out.writeBlock( buf, BUFSIZE-1 );

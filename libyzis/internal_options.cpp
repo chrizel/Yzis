@@ -191,6 +191,9 @@ void YZInternalOptionPool::init() {
 	lc["trail"] = "-";
 	lc["space"] = ".";
 	lc["tab"] = ">";
+	lc["eol"] = "";
+	lc["precedes"] = "";
+	lc["extends"] = "";
 	options.append(new YZOptionMap("listchars",lc, CXT_VIEW,global_scope, &viewUpdateListChars, QStringList("lcs"), lc.keys(), QStringList()));
 	options.append(new YZOptionString("matchpairs","(){}[]", CXT_BUFFER,local_scope, &doNothing, QStringList("mps"), QStringList()));
 	options.append(new YZOptionBoolean("number",false, CXT_VIEW,local_scope, &refreshView, QStringList("nu")));

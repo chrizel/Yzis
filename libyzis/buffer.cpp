@@ -47,7 +47,7 @@
 #define ASSERT_COL_LINE_EXISTS( functionname, col, line ) \
 	YZASSERT_MSG( col < textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
 
-#define ASSERT_NEXT_COL_LINE_EXISTS( functionname, col, line ) \
+#define ASSERT_PREV_COL_LINE_EXISTS( functionname, col, line ) \
 	YZASSERT_MSG( col <= textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
 
 YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
@@ -95,7 +95,7 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
 	QString l=textline(y);
 	if (l.isNull()) return;
 
-	ASSERT_NEXT_COL_LINE_EXISTS( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c),x,y)
+	ASSERT_PREV_COL_LINE_EXISTS( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c),x,y)
 
 	if (x > l.length()) {
 		// if we let Qt proceed, it would append spaces to extend the line
@@ -215,7 +215,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	QString l=textline(line);
 	if (l.isNull()) return;
 
-	ASSERT_NEXT_COL_LINE_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),col,line )    
+	ASSERT_PREV_COL_LINE_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),col,line )    
 
 	if (col > l.length() ) return;
 
@@ -288,11 +288,22 @@ void YZBuffer::mergeNextLine( unsigned int line ) {
 // ------------------------------------------------------------------------
 
 void YZBuffer::clearText() {
+	/* XXX clearText is not registered to the undo buffer but should be
+	 * as any other text operation. Although I doubt that this is a common
+	 * operation.
+	 */
 	mText.clear();
+	bool oldInsideUndo = mUndoBuffer->isInsideUndo();
+	mUndoBuffer->setInsideUndo( true );
+	appendLine("");
+	mUndoBuffer->setInsideUndo( oldInsideUndo );
 }
 
 QString YZBuffer::textline( uint line ) const {
-	if (yzline(line)) return yzline(line)->data();
+	if (yzline(line)) {
+		QString s = yzline(line)->data();
+		return yzline(line)->data();
+	}
 	return QString::null;
 }
 
@@ -300,9 +311,6 @@ void YZBuffer::clearIntro() {
 	yzDebug() << "ClearIntro"<< endl;
 	mIntro = false;
 	clearText();
-	mUndoBuffer->setInsideUndo( true );
-	appendLine("");
-	mUndoBuffer->setInsideUndo( false );
 	updateAllViews();
 }
 
@@ -321,11 +329,14 @@ void YZBuffer::displayIntro() {
 	<<  ""
 	<<  "Please report bugs at http://bugs.yzis.org" ;
 
+	mUndoBuffer->setInsideUndo( true );
 	for ( int i=0; i< 100; i++ ) introduction << ""; //add empty lines to avoids displaying '~' :)
 
 	for (  QStringList::Iterator it = introduction.begin(); it != introduction.end(); ++it )
 		mText.append( new YZLine( *it ) );
 	mIntro=true;
+	mUndoBuffer->setInsideUndo( false );
+
 	updateAllViews();
 }
 
@@ -334,8 +345,14 @@ YZLine * YZBuffer::yzline(unsigned int line) const {
 }
 
 void YZBuffer::setTextline( uint line , const QString & l) {
+	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::setTextline(%1,%2)").arg(line).arg(l), l );
+	ASSERT_LINE_EXISTS( QString("YZBuffer::setTextline(%1,%2)").arg(line).arg(l), line );
 	if (yzline(line)) {
-		yzline(line)->setData(l);
+		if (l.isNull()) {
+			yzline(line)->setData(QString(""));
+		} else {
+			yzline(line)->setData(l);
+		}
 	} 
 }
 

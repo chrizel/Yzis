@@ -44,6 +44,7 @@ function assertEquals(expected, actual)
 		end
 
 		local errorMsg = "expected: "..wrapValue(expected)..", actual: "..wrapValue(actual)
+		print (errorMsg)
 		error( errorMsg, 2 )
 	end
 end
@@ -122,7 +123,7 @@ UnitResult = { -- class
 		if self.testCount == 0 then
 			failurePercent = 0
 		else
-			failurePercent = 100.0 * self.failureCount / self.testCount
+			failurePercent = 100 * self.failureCount / self.testCount
 		end
 		successCount = self.testCount - self.failureCount
 		print( string.format("Success : %d%% - %d / %d",

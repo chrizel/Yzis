@@ -196,10 +196,38 @@ void YZView::recalcScreen( ) {
 }
 
 void YZView::sendMultipleKey(const QString& _keys) {
+	if (mModePool->current()->mapMode() & cmdline) {
+		mModePool->change( YZMode::MODE_COMMAND );
+	}
 	QString keys = _keys;
 	yzDebug() << "sendMultipleKey " << keys << endl;
-	for ( unsigned int i = 0 ; i < keys.length(); i++ ) {
+	for ( unsigned int i = 0 ; i < keys.length(); ) {
 		QString key = keys.mid( i );
+		yzDebug() << "Handling key : " << key << endl;
+		//exception : in SEARCH, SEARCH_BACKWARD and EX mode we dont send keys immediately
+		if (mModePool->current()->mapMode() & cmdline) {
+			if ( key.startsWith( "<ESC>" ) ) {
+				sendKey ( "<ESC>" );
+				continue;
+			} else if ( key.startsWith( "<ENTER>" ) ) {
+				sendKey ( "<ENTER>" );
+				i+=6;
+				continue;
+			} else if ( key.startsWith( "<UP>" ) ) {
+				sendKey ( "<UP>" );
+				i+=4;
+				continue;
+			} else if ( key.startsWith( "<DOWN>" ) ) {
+				sendKey ( "<DOWN>" );
+				i+=6;
+				continue;
+			} else {
+				setCommandLineText( getCommandLineText() + key.mid(0,1) );
+				yzDebug() << "Set commandline : " << getCommandLineText() + key.mid( 0,1 ) << endl;
+				i++;
+				continue;
+			}
+		}
 		if ( key.startsWith( "<CTRL>" ) ) {
 			yzDebug() << "Sending " << key.mid(6,1) << endl;
 			sendKey (key.mid( 6,1 ), "<CTRL>" );
@@ -243,6 +271,7 @@ void YZView::sendMultipleKey(const QString& _keys) {
 			continue;
 		} else
 			sendKey( key.mid( 0,1 ) );
+			i++;
 	}
 }
 

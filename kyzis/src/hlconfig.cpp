@@ -369,10 +369,12 @@ void YzisSchemaConfigColorTab::writeConfig (const QString& config)
   YZSession::mOptions.setQColorOption("Color Icon Bar", m_iconborder->color());
   YZSession::mOptions.setQColorOption("Color Line Number", m_linenumber->color());
 
+#if KDE_VERSION >= 330
   for (int i = 0; i < KTextEditor::MarkInterface::reservedMarkersCount(); i++)
   {
     YZSession::mOptions.setQColorOption(QString("Color MarkType%1").arg(i + 1), m_markerColors[i]);
   }
+#endif
   YZSession::mOptions.setGroup( "Global" );
 }
 

@@ -25,11 +25,11 @@ YZOption::YZOption():QSettings() {
 YZOption::YZOption(const YZOption&):QSettings() {
 }
 
-void YZOption::loadFrom(const QString& file) {
+void YZOption::loadFrom(const QString& /* file */ ) {
 	
 }
 
-void YZOption::saveTo(const QString& file) {
+void YZOption::saveTo(const QString& /* file */ ) {
 
 }
 

@@ -26,9 +26,51 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 }
 
 
-void YZView::send_char( unicode_char_t)
+/* Used by the buffer to post events */
+void YZView::send_char( unicode_char_t c)
 {
-	// nothing yet;
+	switch(mode) {
+		case YZ_VIEW_MODE_INSERT:
+			/* handle adding a char */
+			return;
+		case YZ_VIEW_MODE_REPLACE:
+			/* handle replacing a char */
+			return;
+		case YZ_VIEW_MODE_COMMAND:
+			/* will be handled after the switch */
+			break;
+		default:
+			/* ?? */
+			error("unknown mode, ignoring");
+			return;
+
+	};
+	/* ok, here we now we're in command */
+	switch (c) {
+		default:
+			post_event(mk_event_setstatus("*Unknown command*"));
+			break;
+		case 'A': /* append -> insert mode */
+			/* go to end of line */
+		/* pass through */
+		case 'a': /* append -> insert mode */
+//			mode = YZ_VIEW_MODE_INSERT;
+			post_event(mk_event_setstatus("-- INSERT --"));
+			break;
+		case 'R': /* -> replace mode */
+//			mode = YZ_VIEW_MODE_REPLACE;
+			post_event(mk_event_setstatus("-- REPLACE --"));
+			break;
+		case 'j': /* move down */
+			break;
+		case 'k': /* move up */
+			break;
+		case 'h': /* move left */
+			break;
+		case 'l': /* move right */
+			break;
+
+	}
 }
 
 yz_event *YZView::fetch_event(/* asasdfasf */)

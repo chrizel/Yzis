@@ -117,7 +117,7 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len 
 		it->applyDeleteLine( mPos, len, pView->myId == it->myId );
 }
 
-void YZAction::deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const QChar& reg ) {
+void YZAction::deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QChar& reg ) {
 	yzDebug() << "Deleting from X " << begin.getX() << " to X " << end.getX() << endl;
 
 	QStringList buff;
@@ -156,20 +156,20 @@ void YZAction::deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const 
 	if ( bY == 0 ) curY = 0; //dont loop ;)
 	if ( bY == mBuffer->lineCount() - 1 ) curY = mBuffer->lineCount() - 1; // and ... dont loop
 
-	while ( end.getY() > curY ) {
+	while ( eY > curY ) {
 		mBuffer->deleteLine( curY );
-		end.setY( end.getY() - 1 );
+		eY--;
 	}
 
 	/* 3. delete the part of the last line */
-	if ( end.getY() == curY && !lineDeleted ) {
+	if ( eY == curY && !lineDeleted ) {
 		b = mBuffer->textline( curY );
-		buff << b.left( end.getX() );
-		mBuffer->replaceLine( b.mid( end.getX() ), curY );
-	} else if ( end.getY() == curY ) {
+		buff << b.left( eX );
+		mBuffer->replaceLine( b.mid( eX ), curY );
+	} else if ( eY == curY ) {
 		b = mBuffer->textline( curY );
-		buff << b.left( end.getX() );
-		mBuffer->replaceLine( b.mid( end.getX() ), curY );
+		buff << b.left( eX );
+		mBuffer->replaceLine( b.mid( eX ), curY );
 		if ( curY > 0 ) mBuffer->mergeNextLine( curY - 1 );
 	}
 	yzDebug() << "Deleting " << buff << endl;

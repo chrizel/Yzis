@@ -458,7 +458,7 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Escape:
 					YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 					selectionPool->clear( "VISUAL" );
-					paintEvent( dCurrentLeft, cur_sel.drawFrom->getY(), mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 1 );
+					paintEvent( dCurrentLeft, cur_sel.drawFrom().getY(), mColumnsVis, cur_sel.drawTo().getY() - cur_sel.drawFrom().getY() + 1 );
 					purgeInputBuffer();
 					gotoPreviousMode();
 					return;
@@ -494,7 +494,7 @@ void YZView::sendKey( int c, int modifiers) {
 					if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 						YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 						selectionPool->clear( "VISUAL" );
-						mBuffer->action()->deleteArea( this, *cur_sel.from, *cur_sel.to, QChar( '\"' ));
+						mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to(), QChar( '\"' ));
 						purgeInputBuffer();
 						gotoCommandMode();
 						return;
@@ -832,9 +832,9 @@ void YZView::applyGoto( bool applyCursor ) {
 
 			/* apply new selection */
 			YZSelection new_cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-			if ( cur_sel.drawFrom != NULL && *new_cur_sel.drawFrom > *cur_sel.drawFrom ) *new_cur_sel.drawFrom = *cur_sel.drawFrom;
-			if ( cur_sel.drawTo != NULL && *new_cur_sel.drawTo < *cur_sel.drawTo ) *new_cur_sel.drawTo = *cur_sel.drawTo;
-			paintEvent( dCurrentLeft, new_cur_sel.drawFrom->getY() > 0 ? new_cur_sel.drawFrom->getY() - 1 : 0, mColumnsVis, new_cur_sel.drawTo->getY() - new_cur_sel.drawFrom->getY() + 3 );
+			if ( new_cur_sel.drawFrom() > cur_sel.drawFrom() ) new_cur_sel.setDrawFrom(cur_sel.drawFrom() );
+			if ( new_cur_sel.drawTo() < cur_sel.drawTo() ) new_cur_sel.setDrawTo ( cur_sel.drawTo() );
+			paintEvent( dCurrentLeft, new_cur_sel.drawFrom().getY() > 0 ? new_cur_sel.drawFrom().getY() - 1 : 0, mColumnsVis, new_cur_sel.drawTo().getY() - new_cur_sel.drawFrom().getY() + 3 );
 		}
 
 		if ( !isLineVisible( dCursor->getY() ) )
@@ -1178,7 +1178,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 	if ( ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) && args.command.startsWith( "d" ) ) {
 		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 		selectionPool->clear( "VISUAL" );
-		mBuffer->action()->deleteArea( this, *cur_sel.from, *cur_sel.to, reg);
+		mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to( ), reg);
 		gotoCommandMode();
 	} else if (args.command.startsWith("d")) {
 		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
@@ -1342,7 +1342,7 @@ QString YZView::gotoVisualMode(const QString& inputsBuff, YZCommandArgs ) {
 void YZView::leaveVisualMode( ) {
 	YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 	selectionPool->clear( "VISUAL" );
-	paintEvent( dCurrentLeft, cur_sel.drawFrom->getY() > 0 ? cur_sel.drawFrom->getY() - 1 : 0, mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 3 );
+	paintEvent( dCurrentLeft, cur_sel.drawFrom().getY() > 0 ? cur_sel.drawFrom().getY() - 1 : 0, mColumnsVis, cur_sel.drawTo().getY() - cur_sel.drawFrom().getY() + 3 );
 	gotoCommandMode();
 }
 
@@ -1375,7 +1375,7 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 
 		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 
-		list = mBuffer->getText( *cur_sel.from, *cur_sel.to );
+		list = mBuffer->getText( cur_sel.from(), cur_sel.to() );
 		if ( mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 			list.insert( list.begin(), QString::null );
 			list.append( QString::null );

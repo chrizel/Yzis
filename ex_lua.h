@@ -242,6 +242,11 @@ class YZExLua : public QObject {
 		 */
 		static int newoption(lua_State *L);
 
+		/**
+		 * Adds new insert mappings
+		 */
+		static int imap(lua_State *L);
+
 	protected:
 		lua_State *L;
 

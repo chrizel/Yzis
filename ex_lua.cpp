@@ -28,6 +28,7 @@
 #include "cursor.h"
 #include "session.h"
 #include "yzis.h"
+#include "mapping.h"
 #include "portability.h"
 #include <stdarg.h>
 
@@ -118,6 +119,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"setlocal",setlocal);
 	lua_register(L,"newoption",newoption);
 	lua_register(L,"set",set);
+	lua_register(L,"imap",imap);
 }
 
 YZExLua::~YZExLua() {
@@ -131,6 +133,7 @@ QString YZExLua::lua(YZView *, const QString& args) {
 
 //see Lua's PIL chapter 25.3 for how to use this :)
 void YZExLua::exe(const QString& function, const char* sig, ...) {
+    yzDebug() << "YZExLua::exe( " << function << " ) sig : " << sig << endl;
 	va_list vl;
 	int narg, nres;
 	
@@ -582,6 +585,16 @@ int YZExLua::newoption(lua_State *L ) {
 	return 0;
 }
 
+int YZExLua::imap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, "imap", "map keys in insert mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	QString mapp = ( char * )lua_tostring ( L, 2 );
+
+	YZMapping::self()->addInsertMapping(key, mapp);
+
+	return 0;
+}
+
 int YZExLua::set(lua_State *L ) {
 	if (!checkFunctionArguments(L, 1, "set", "set global options")) return 0;
 	QString option = ( char * )lua_tostring ( L, 1 );
@@ -591,10 +604,7 @@ int YZExLua::set(lua_State *L ) {
 	return 0;	
 }
 
-bool YZExLua::checkFunctionArguments(lua_State*L, 
-	int argNb,
-	const char * functionName, 
-	const char * functionArgDesc )
+bool YZExLua::checkFunctionArguments(lua_State*L, int argNb, const char * functionName, const char * functionArgDesc )
 {
 	int n = lua_gettop( L );
 	if (n == argNb) return true;

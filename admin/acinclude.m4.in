@@ -5554,8 +5554,11 @@ dnl	fi
 	dnl checking some headers first
 	ac_save_CFLAGS="$CFLAGS"
 	ac_save_CPPFLAGS="$CPPFLAGS"
+	ac_save_LDFLAGS="$LDFLAGS"
 	CFLAGS="$LUA_INCLUDES $CFLAGS"
 	CPPFLAGS="$LUA_INCLUDES $CPPFLAGS"
+	LDFLAGS="$LUA_LIBS $LDFLAGS"
+	
 	AC_CHECK_HEADER(lua.h,,
 			[ AC_MSG_ERROR([lua.h was not found or was not usable, Lua 5.0 headers are required !]) ]
 			)
@@ -5572,6 +5575,7 @@ dnl	fi
 
 	CFLAGS="$ac_save_CFLAGS"
 	CPPFLAGS="$ac_save_CPPFLAGS"
+	LDFLAGS="$ac_save_LDFLAGS"
 
 	AC_SUBST(LUA)
 	AC_SUBST(LUA_INCLUDES)

@@ -32,3 +32,7 @@ bool NYZisDoc::popupFileSaveAs() {
 	return false;
 }
 
+void NYZisDoc::filenameChanged() {
+
+}
+

@@ -57,6 +57,18 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void displayInfo( const QString& info );
 		void setInformation( const QString& info );
 
+		/**
+		 * @internal
+		 * Sets the Kmdi Id of this view, used for DCOP communications
+		 */
+		void setkid( int kId ) { mkId = kId; }
+
+		/**
+		 * @internal
+		 * Get the Kmdi Id of this view
+		 */
+		int getkid() { return mkId; }
+
 	public slots:
 		QPoint cursorCoordinates();
 		void cursorPosition ( unsigned int *line, unsigned int *col);
@@ -80,6 +92,8 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		KYZisDoc *buffer;
 		KStatusBar *status;
 		KYZisCommand *command;
+		// internal ID used for DCOP communications 
+		int mkId;
 };
 
 #endif

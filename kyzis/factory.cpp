@@ -86,23 +86,27 @@ void KYZisFactory::ref() {
 	s_refcnt++;
 }
 
-KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, 
-		QObject *parent, const char *name, const char *classname, const QStringList & /*args*/) {
+KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name, const char *classname, const QStringList &args) {
 	yzDebug() << "Factory::createPartObject" << endl;
 	bool bSingleView = (classname!=QString("KTextEditor::Document"));
-	bool bWantBrowserView =  (classname == QString("Browser/View") );
-	bool bWantReadOnly = (bWantBrowserView || ( classname == QString("KParts::ReadOnlyPart") ));
 
-	KYZisDoc *doc = new KYZisDoc (bSingleView, bWantBrowserView, bWantReadOnly, parentWidget, widgetname, parent, name );
+	QString kID, kvId;
+	kID = args[ 0 ];// buffer ID
+	kvId = args[ 1 ]; // view ID
+
+	KYZisDoc *doc = new KYZisDoc (kID.toInt(), parentWidget, widgetname, parent, name );
 	//separate
 	if ( bSingleView ) {
 		KTextEditor::View *view = doc->createView( parentWidget, widgetname );
+		KYZisView *yv = static_cast<KYZisView*>( view );
+		yv->setkid( kvId.toInt() );
 		doc->insertChildClient( view );
 		view->show();
 		doc->setBaseWidget( view );
 	}
+	doc->filenameChanged();
 
-	doc->setReadWrite( !bWantReadOnly );
+	doc->setReadWrite( true );
 	return doc;
 }
 

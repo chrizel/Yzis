@@ -29,6 +29,7 @@ class NYZisDoc : public YZBuffer {
 		virtual ~NYZisDoc ();
 
 		bool popupFileSaveAs();
+		void filenameChanged();
 };
 
 #endif

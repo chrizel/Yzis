@@ -41,7 +41,7 @@
 
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
-	m_dockConfig( dockConfig ) 
+	m_dockConfig( dockConfig ), mBuffers( 0 ), mViews( 0 )
 {
 	setIDEAlModeStyle( 1 );
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
@@ -167,15 +167,20 @@ void Kyzis::createBuffer(const QString& path) {
 		{
 			// now that the Part is loaded, we cast it to a Part to get
 			// our hands on it
-			KParts::ReadWritePart * m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart" ));
+			QStringList list;
+			//buffer number , view number 
+			list << QString::number( mBuffers++ ) << QString::number( mViews++ );
+
+			KParts::ReadWritePart * m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart", list ));
 
 			if (m_part)
 			{
 				kdDebug() << "Yzis part successfully loaded" << endl;
 				m_currentPart = m_part;
-				KMdiChildView *view = createWrapper( m_part->widget(), "buffer-" + path , path );
+				KMdiChildView *view = createWrapper( m_part->widget(), QString::number( mViews ), path );
 				m_part->widget()->setFocus();
 				addWindow( view );
+				viewList[mViews-1] = view;
 				createGUI(m_part);
 				load( KURL( path ) );
 			}
@@ -185,3 +190,13 @@ void Kyzis::createBuffer(const QString& path) {
 void Kyzis::closeView() {
 	closeActiveView();	
 }
+
+void Kyzis::setCaption( int tab, const QString& caption ) {
+	kdDebug() << "setCaption : " << caption << endl;
+	KMdiChildView *v = viewList[tab];
+	if ( v ) {
+		v->setCaption(caption);
+		v->setTabCaption(caption);
+	}
+}
+

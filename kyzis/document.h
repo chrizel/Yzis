@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003, 2004 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -29,7 +29,7 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 	Q_OBJECT
 		
 	public:
-		KYZisDoc (bool bSingleViewMode, bool bBrowserView, bool bReadOnly, QWidget *parentWidget = 0, const char *widgetName=0, QObject *parent=0, const char *name=0);
+		KYZisDoc (int kId, QWidget *parentWidget = 0, const char *widgetName=0, QObject *parent=0, const char *name=0);
 		virtual ~KYZisDoc ();
 
 		KTextEditor::View *createView ( QWidget *parent, const char *name = 0 );
@@ -53,6 +53,13 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		bool setText (  const QString &text );
 		bool removeText (  uint startLine, uint startCol, uint endLine, uint endCol );
 		bool popupFileSaveAs();
+		void filenameChanged();
+
+		/*
+		 * @internal
+		 * @return the KMdi identifier to be used during DCOP internal communications
+		 */
+		int getkid() { return mkId; }
 
 	public slots:
 		//signals to emit
@@ -66,6 +73,8 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 	private:
 		QPtrList<KTextEditor::View> _views;
 		QWidget *m_parent;
+		//KMdi identifier , used for DCOP communication to identify a buffer/view
+		int mkId;
 };
 
 #endif

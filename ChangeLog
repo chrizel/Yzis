@@ -1,3 +1,9 @@
+2004-04-15 mikmak
+  * libyzis
+    added a signal whenever the filename is changed
+  * kyzis 
+    properly display the filename in the tabbar
+
 2004-04-14 mikmak
   * all
     add horizontal scrolling support

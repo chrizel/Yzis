@@ -25,6 +25,7 @@
 #include <kapplication.h>
 #include <kmdimainfrm.h>
 #include <dcopobject.h>
+#include <qmap.h>
 
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
@@ -68,6 +69,11 @@ k_dcop:
 	 */
 	void closeView();
 
+	/**
+	 * Sets the caption of the tab
+	 */
+	void setCaption( int tab, const QString& caption );
+
 public slots:
 
 protected slots:
@@ -89,6 +95,9 @@ private:
     KToggleAction *m_toolbarAction;
 	QDomElement m_dockConfig;
 	KParts::ReadWritePart *m_currentPart;
+	int mBuffers;
+	int mViews;
+	QMap<int,KMdiChildView*> viewList;
 };
 
 #endif // KYZIS_H

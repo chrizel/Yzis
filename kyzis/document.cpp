@@ -1,5 +1,5 @@
 /*
-	  Copyright (c) 2003 Yzis Team <yzis-dev@yzis.org>
+    Copyright (c) 2003,2004 Mickael Marchand <marchand@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public
@@ -22,16 +22,20 @@
 #include <kfiledialog.h>
 #include <kmessagebox.h>
 #include <klocale.h>
+#include <dcopclient.h>
+#include <qcstring.h>
+#include <kapplication.h>
 #include "document.h"
 #include "viewwidget.h"
 #include "factory.h"
 #include "debug.h"
 
-KYZisDoc::KYZisDoc (bool bSingleViewMode, bool bBrowserView, bool bReadOnly, QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name)
+KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::s_self,QString::null) {
 		setInstance(KYZisFactory::instance());
 		KYZisFactory::registerDocument( this );
 		m_parent = parentWidget;
+		mkId = kId;
 }
 
 KYZisDoc::~KYZisDoc () {
@@ -175,6 +179,28 @@ bool KYZisDoc::popupFileSaveAs() {
 		return true;
 	}
 	return false;
+}
+
+void KYZisDoc::filenameChanged() {
+	DCOPClient *client = kapp->dcopClient();
+	KTextEditor::View *it;
+	for ( it = _views.first(); it; it = _views.next() ) {
+		KYZisView *yv = static_cast<KYZisView*>(it);
+		int id = yv->getkid();
+		QByteArray data;
+		QDataStream arg(data, IO_WriteOnly);
+		arg << id << fileName();
+		yzDebug() << "filenameChanged : view " << id << " " << fileName() << endl;
+
+		bool w = client->send(client->appId(), "Kyzis", "setCaption(int,QString)", data);
+		if (w) {
+			yzDebug() << "DCOP call successful for " << client->appId() << " to change caption " << endl;
+		} else {
+			yzDebug() << "DCOP call failed for " << client->appId() << endl;
+			//popupMessage( "DCOP communication is broken ! KYzis is not able to change the caption of tabs" );
+			return; //we failed
+		}
+	}
 }
 
 #include "document.moc"

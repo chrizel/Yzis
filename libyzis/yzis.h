@@ -35,8 +35,8 @@
 #define VERSION_MINOR	0
 #define VERSION_PATCH	4
 
-#define VERSION_CHAR	"M1++"
+#define VERSION_CHAR	"M2--"
 #define VERSION_CHAR_LONG "Yzis (from SVN)"
-#define VERSION_CHAR_DATE "SVN>2004-05-31"
+#define VERSION_CHAR_DATE "SVN>2004-06-30"
 
 #endif /* YZIS_H */

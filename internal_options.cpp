@@ -60,13 +60,10 @@ YZInternalOption::YZInternalOption( const QString& key, const QString& group, bo
 }
 
 QString YZInternalOption::getValueForKey( const QString& key ) {
-	yzDebug() << "Get value for " << key << " in value " << mValue << endl;
 	if ( mValueType != stringlist_t ) return QString::null;
 	QRegExp rx ( ".*" + key + ":(.).*");
-	if ( rx.exactMatch( mValue ) ) {
-		yzDebug() << "Found value " << rx.cap(1) << " for key " << key << endl;
+	if ( rx.exactMatch( mValue ) )
 		return rx.cap(1); //should contain the 'value' for the given key
-	}
 	return QString::null;
 }
 

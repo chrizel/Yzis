@@ -458,18 +458,6 @@ class YZView {
 		YZCursor* getBufferCursor();
 
 		/**
-		 * Search for text and moves the cursor to the position of match
-		 * @param search a regexp to look for
-		 * @return true if a match is found
-		 */
-		bool doSearch( const QString& search, const YZCursor& begin, const YZCursor& end, bool moveToMatch=true, YZCursor *result=NULL );
-
-		/**
-		 * Continue previous search
-		 */
-		QString searchAgain( unsigned int count = 1, bool inverse = false );
-
-		/**
 		 * Updates the position of the cursor
 		 */
 		void updateCursor();
@@ -677,6 +665,8 @@ class YZView {
 		 */
 		void gotoStickyCol( unsigned int Y );
 		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor = true );
+
+		YZSelectionPool* getSelectionPool() const { return selectionPool; }
 
 		/**
 		 * Updates stickyCol

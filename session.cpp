@@ -48,6 +48,7 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mPool->initPool();
 	mExPool = new YZExCommandPool();
 	mExPool->initPool();
+	mSearch = new YZSearch();
 	mSessionName = _sessionName;
 	mCurView = 0;
 	me = this;
@@ -88,7 +89,7 @@ QString YZSession::saveBufferExit() {
 YZView* YZSession::findView( int uid ) {
 //	yzDebug() << " ========= " << endl;
 //	yzDebug() << "Session::findView " << uid << endl;
-	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	if ( uid<0 ) return NULL;
 	for ( ; it!=end; ++it ) {
 		YZBuffer *b = ( it.data() );

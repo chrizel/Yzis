@@ -73,6 +73,7 @@ class YZSelectionPool {
 		void clear( const QString& layout );
 
 		YZSelectionMap layout( const QString& layout );
+		void setLayout( const QString& layout, YZSelectionMap content );
 
 		bool isSelected( const YZCursor& pos );
 

@@ -29,6 +29,7 @@
 #include "syntaxhighlight.h"
 #include "internal_options.h"
 #include "registers.h"
+#include "search.h"
 
 class YZView;
 class YZBuffer;
@@ -37,6 +38,7 @@ class YZCommandPool;
 class YZExCommandPool;
 class YZInternalOptionPool;
 class YZRegisters;
+class YZSearch;
 
 /**
  * Contains data referring to an instance of yzis
@@ -45,6 +47,9 @@ class YZRegisters;
  * A session owns the buffers
  * A buffer owns the views
  */
+
+typedef QMap<QString,YZBuffer*> YZBufferMap;
+ 
 class YZSession {
 	public:
 		/**
@@ -67,6 +72,11 @@ class YZSession {
 		 * gives access to the pool of ex commands
 		 */
 		YZExCommandPool *getExPool() { return mExPool; }
+
+		/**
+		 * search
+		 */
+		YZSearch *search() { return mSearch; }
 
 		/**
 		 * Add a buffer
@@ -188,6 +198,8 @@ class YZSession {
 		 */
 		int countBuffers() { return mBuffers.count(); }
 
+		YZBufferMap buffers() const { return mBuffers; }
+
 		/**
 		 * Check if one buffer is modified and not saved
 		 * @returns whether a buffer has been modified and not saved since
@@ -291,7 +303,7 @@ class YZSession {
 
 	protected:
 		//we map "filename"/buffer for buffers
-		QMap<QString,YZBuffer*> mBuffers;
+		YZBufferMap mBuffers;
 
 	private:
 		QString mSessionName;
@@ -299,6 +311,7 @@ class YZSession {
 		YZExCommandPool *mExPool;
 		YZView* mCurView;
 		YzisSchemaManager *mSchemaManager;
+		YZSearch *mSearch;
 
 	public:
 		static int mNbViews;

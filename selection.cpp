@@ -143,6 +143,14 @@ void YZSelectionPool::clear( const QString& layout ) {
 	selectionPool[ layout ].clear( );
 }
 
+void YZSelectionPool::setLayout( const QString& layout, YZSelectionMap content ) {
+	clear( layout );
+	unsigned int size = content.size();
+	for ( unsigned int i = 0; i < size; i++ ) {
+		selectionPool[ layout ].insert( i, content[ i ] );
+	}
+}
+
 YZSelectionMap  YZSelectionPool::layout( const QString& layout ) {
 	return selectionPool[ layout ];
 }

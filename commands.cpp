@@ -856,12 +856,14 @@ QString YZCommandPool::searchForwards(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::searchNext(const YZCommandArgs &args) {
-	args.view->searchAgain( args.count, false );
+	bool found;
+	YZSession::me->search()->replayForward( args.view, &found );
 	return QString::null;
 }
 
 QString YZCommandPool::searchPrev(const YZCommandArgs &args) {
-	args.view->searchAgain( args.count, true );
+	bool found;
+	YZSession::me->search()->replayBackward( args.view, &found );
 	return QString::null;
 }
 

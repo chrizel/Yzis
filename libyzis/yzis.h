@@ -28,7 +28,8 @@ namespace YZIS {
 	enum YZKeys {
 		Shift = 1,
 		Alt = 2,
-		Ctrl = 4
+		Ctrl = 4,
+		Meta = 8
 	};
 }
 

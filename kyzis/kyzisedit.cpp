@@ -56,7 +56,8 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 		if ( st & Qt::ShiftButton ) modifiers |= YZIS::Shift;
 		if ( st & Qt::ControlButton ) modifiers |= YZIS::Ctrl;
 		if ( st & Qt::AltButton ) modifiers |= YZIS::Alt;
-		_parent->sendKey(e->key(), modifiers);
+		if ( st & Qt::MetaButton ) modifiers |= YZIS::Meta;
+		if (e->key() != Qt::Key_unknown) _parent->sendKey(e->key(), modifiers);
 		e->accept();
 	}
 }

@@ -37,7 +37,7 @@ void YZView::setVisibleLines(int nb) {
 /* Used by the buffer to post events */
 void YZView::sendKey( int c, int modifiers) {
 	//ignore some keys
-	if ( c == Qt::Key_Shift || c == Qt::Key_Meta || c == Qt::Key_Control || c == Qt::Key_CapsLock ) return;
+	if ( c == Qt::Key_Shift || c == Qt::Key_Alt || c == Qt::Key_Meta ||c == Qt::Key_Control || c == Qt::Key_CapsLock ) return;
 
 	//map other keys
 	if ( c == Qt::Key_Insert ) c = Qt::Key_I;
@@ -46,7 +46,10 @@ void YZView::sendKey( int c, int modifiers) {
 	QString key = QKeySequence( c );
 	//default is lower case unless some modifiers
 	key = key.lower();
-	if ( modifiers & YZIS::Shift ) key = key.upper();
+	if ( modifiers & YZIS::Shift ) {
+		c = toupper( c );
+		key = key.upper();
+	}
 
 	if (Qt::Key_Escape == c) {
 		//when escpaping while adding char in end of line

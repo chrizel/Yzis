@@ -160,9 +160,9 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "bd(elete)?", &YZModeEx::bufferdelete, QStringList("bdelete") ) );
 	commands.append( new YZExCommand( "e(dit)?", &YZModeEx::edit, QStringList("edit") ) );
 	commands.append( new YZExCommand( "mkyzisrc", &YZModeEx::mkyzisrc, QStringList("mkyzisrc") ) );
-	commands.append( new YZExCommand( "set", &YZModeEx::set, QStringList("set") ) );
-	commands.append( new YZExCommand( "setlocal", &YZModeEx::set, QStringList("setlocal") ) );
-	commands.append( new YZExCommand( "setglobal", &YZModeEx::set, QStringList("setglobal") ) );
+	commands.append( new YZExCommand( "se(t)?", &YZModeEx::set, QStringList("set") ) );
+	commands.append( new YZExCommand( "setl(ocal)?", &YZModeEx::set, QStringList("setlocal") ) );
+	commands.append( new YZExCommand( "setg(lobal)?", &YZModeEx::set, QStringList("setglobal") ) );
 	commands.append( new YZExCommand( "s(ubstitute)?", &YZModeEx::substitute, QStringList("substitute") ) );
 	commands.append( new YZExCommand( "hardcopy", &YZModeEx::hardcopy, QStringList("hardcopy") ) );
 	commands.append( new YZExCommand( "visual", &YZModeEx::gotoCommandMode, QStringList("visual") ) );

@@ -226,7 +226,7 @@ void YZOption::apply( YZBuffer* b, YZView* v ) {
 }
 bool YZOption::match( const QString& entry ) {
 	for( unsigned int i = 0; i < m_aliases.size(); i++ ) {
-		if ( entry.startsWith( m_aliases[ i ] ) && ! entry.mid( m_aliases[ i ].length() )[ 0 ].isLetter() )
+		if ( entry.startsWith( m_aliases[ i ] ) && !entry.mid( m_aliases[ i ].length() )[0].isLetter() )
 			return true;
 	}
 	return false;
@@ -235,7 +235,7 @@ QString YZOption::readValue( const QString& entry, opt_action* action ) {
 	*action = opt_invalid;
 	QString value = entry;
 	for( unsigned int i = 0; *action == opt_invalid && i < m_aliases.size(); i++ ) {
-		if ( entry.startsWith( m_aliases[ i ] ) && ! entry.mid( m_aliases[ i ].length() )[ 0 ].isLetterOrNumber() ) {
+		if ( entry.startsWith( m_aliases[ i ] ) && ! entry.mid( m_aliases[ i ].length() )[ 0 ].isLetter() ) {
 			QString data = entry.mid( m_aliases[ i ].length() );
 			unsigned int idx = 1;
 			if ( data[ 0 ] == '&' ) {

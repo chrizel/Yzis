@@ -147,6 +147,10 @@ void changeEncoding( YZBuffer* b, YZView* v ) {
 		}
 	}
 }
+void changeCursor( YZBuffer*, YZView* v ) {
+	if ( v )
+		v->modeChanged();
+}
 void refreshView( YZBuffer*, YZView* v ) {
 	if ( v )
 		v->refreshScreen();
@@ -169,29 +173,34 @@ void setSyntax( YZBuffer* b, YZView* v ) {
 
 void YZInternalOptionPool::init() {
 	// here you add new options
-	options.append((YZOption*)new YZOptionString("backspace","eol", CXT_SESSION,global_scope, &doNothing, QStringList("bs"), QStringList::split(":","eol:indent:start")));
-	options.append((YZOption*)new YZOptionBoolean("blocksplash",true, CXT_SESSION,global_scope, &doNothing, QStringList()));
-	options.append((YZOption*)new YZOptionBoolean("cindent",false, CXT_BUFFER,local_scope, &doNothing, QStringList("cin")));
-	options.append((YZOption*)new YZOptionString("encoding","locale", CXT_BUFFER,local_scope, &changeEncoding, QStringList("enc"),QStringList())); // XXX find the supported codecs
-	options.append((YZOption*)new YZOptionString("fileencoding","", CXT_BUFFER,local_scope, &doNothing, QStringList("fenc"),QStringList()));
-	options.append((YZOption*)new YZOptionBoolean("hlsearch",false, CXT_SESSION,global_scope, &doNothing, QStringList("hls")));
-	options.append((YZOption*)new YZOptionList("indentkeys", QStringList(), CXT_BUFFER,local_scope, &doNothing, QStringList("indk"), QStringList()));
-	options.append((YZOption*)new YZOptionBoolean("incsearch",false, CXT_SESSION,global_scope, &doNothing, QStringList("is")));
-	options.append((YZOption*)new YZOptionBoolean("list",false, CXT_VIEW,local_scope, &refreshView, QStringList()));
+	options.append(new YZOptionString("backspace","eol", CXT_SESSION,global_scope, &doNothing, QStringList("bs"), QStringList::split(":","eol:indent:start")));
+	options.append(new YZOptionBoolean("blocksplash",true, CXT_SESSION,global_scope, &doNothing, QStringList()));
+	options.append(new YZOptionBoolean("cindent",false, CXT_BUFFER,local_scope, &doNothing, QStringList("cin")));
+	QStringList cursor_shape;
+	cursor_shape << "square" << "vbar" << "hbar";
+	options.append(new YZOptionString("cursor","square", CXT_VIEW,local_scope, &changeCursor, QStringList(), cursor_shape) );
+	options.append(new YZOptionString("cursorinsert","square", CXT_VIEW,local_scope, &changeCursor, QStringList(), cursor_shape) );
+	options.append(new YZOptionString("cursorreplace","square", CXT_VIEW,local_scope, &changeCursor, QStringList(), cursor_shape) );
+	options.append(new YZOptionString("encoding","locale", CXT_BUFFER,local_scope, &changeEncoding, QStringList("enc"),QStringList())); // XXX find the supported codecs
+	options.append(new YZOptionString("fileencoding","", CXT_BUFFER,local_scope, &doNothing, QStringList("fenc"),QStringList()));
+	options.append(new YZOptionBoolean("hlsearch",false, CXT_SESSION,global_scope, &doNothing, QStringList("hls")));
+	options.append(new YZOptionList("indentkeys", QStringList(), CXT_BUFFER,local_scope, &doNothing, QStringList("indk"), QStringList()));
+	options.append(new YZOptionBoolean("incsearch",false, CXT_SESSION,global_scope, &doNothing, QStringList("is")));
+	options.append(new YZOptionBoolean("list",false, CXT_VIEW,local_scope, &refreshView, QStringList()));
 	MapOption lc;
 	lc["trail"] = "-";
 	lc["space"] = ".";
 	lc["tab"] = ">";
-	options.append((YZOption*)new YZOptionMap("listchars",lc, CXT_VIEW,global_scope, &viewUpdateListChars, QStringList("lcs"), lc.keys(), QStringList()));
-	options.append((YZOption*)new YZOptionString("matchpairs","(){}[]", CXT_BUFFER,local_scope, &doNothing, QStringList("mps"), QStringList()));
-	options.append((YZOption*)new YZOptionBoolean("number",false, CXT_VIEW,local_scope, &refreshView, QStringList("nu")));
-	options.append((YZOption*)new YZOptionString("printer","qtprinter", CXT_VIEW,local_scope, &doNothing, QStringList(), QStringList::split(":","qtprinter:pslib")));
-	options.append((YZOption*)new YZOptionBoolean("rightleft",false, CXT_VIEW,local_scope, &recalcView, QStringList("rl")));
-	options.append((YZOption*)new YZOptionInteger("schema",0, CXT_BUFFER,local_scope, &refreshView, QStringList(), 0));
-	options.append((YZOption*)new YZOptionString("syntax","", CXT_BUFFER,local_scope, &setSyntax, QStringList("syn"), QStringList())); // XXX put all name ofsyntaxes here
-	options.append((YZOption*)new YZOptionInteger("tabstop",8, CXT_VIEW,local_scope, &recalcView, QStringList("ts"), 1));
-	options.append((YZOption*)new YZOptionInteger("updatecount",200, CXT_SESSION,global_scope, &doNothing, QStringList("uc"), 1));
-	options.append((YZOption*)new YZOptionBoolean("wrap",true, CXT_VIEW,local_scope, &recalcView, QStringList()));
+	options.append(new YZOptionMap("listchars",lc, CXT_VIEW,global_scope, &viewUpdateListChars, QStringList("lcs"), lc.keys(), QStringList()));
+	options.append(new YZOptionString("matchpairs","(){}[]", CXT_BUFFER,local_scope, &doNothing, QStringList("mps"), QStringList()));
+	options.append(new YZOptionBoolean("number",false, CXT_VIEW,local_scope, &refreshView, QStringList("nu")));
+	options.append(new YZOptionString("printer","qtprinter", CXT_VIEW,local_scope, &doNothing, QStringList(), QStringList::split(":","qtprinter:pslib")));
+	options.append(new YZOptionBoolean("rightleft",false, CXT_VIEW,local_scope, &recalcView, QStringList("rl")));
+	options.append(new YZOptionInteger("schema",0, CXT_BUFFER,local_scope, &refreshView, QStringList(), 0));
+	options.append(new YZOptionString("syntax","", CXT_BUFFER,local_scope, &setSyntax, QStringList("syn"), QStringList())); // XXX put all name ofsyntaxes here
+	options.append(new YZOptionInteger("tabstop",8, CXT_VIEW,local_scope, &recalcView, QStringList("ts"), 1));
+	options.append(new YZOptionInteger("updatecount",200, CXT_SESSION,global_scope, &doNothing, QStringList("uc"), 1));
+	options.append(new YZOptionBoolean("wrap",true, CXT_VIEW,local_scope, &recalcView, QStringList()));
 
 	for( unsigned int i = 0; i < options.size(); i++ ) {
 		mOptions[ "Global\\"+options[i]->name() ] = new YZOptionValue( *options[i]->defaultValue() );

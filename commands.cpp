@@ -793,7 +793,7 @@ QString YZCommandPool::insertLineBefore(const YZCommandArgs &args) {
 
 QString YZCommandPool::joinLine(const YZCommandArgs &args) {
 	for ( unsigned int i = 0; i < args.count; i++ ) 
-		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor()->getY() );
+		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor()->getY(), true );
 	args.view->commitNextUndo();
 	return QString::null;
 }

@@ -26,6 +26,7 @@
 #include <qcstring.h>
 #include <kapplication.h>
 #include <kstdaction.h>
+#include <kaction.h>
 #include "document.h"
 #include "viewwidget.h"
 #include "factory.h"
@@ -59,10 +60,9 @@ KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *) {
 }
 
 void KYZisDoc::setupActions() {
-	KStdAction::preferences( this, SLOT( configureEditor() ), actionCollection(), "editor_options" );
 }
 
-void KYZisDoc::configureEditor() {
+/*void KYZisDoc::configureEditor() {
 
 	if ( KConfigDialog::showDialog( "configure_editor" ) )
 		return;
@@ -70,7 +70,7 @@ void KYZisDoc::configureEditor() {
 	KYZisConfigDialog *dialog = new KYZisConfigDialog( m_parent, "configure_editor", Settings::self(), KDialogBase::TreeList );
 	connect( dialog, SIGNAL( settingsChanged() ), KYZisFactory::s_self, SLOT( writeConfig() ) );
 	dialog->show();
-}
+}*/
 
 void KYZisDoc::removeView( KTextEditor::View * v ) {
 	yzDebug() << "Document : removeView" << endl;
@@ -284,6 +284,43 @@ unsigned int KYZisDoc::undoSteps() const {
 
 void KYZisDoc::setUndoSteps(unsigned int ) {
 	//nothing
+}
+
+//KTextEditor::ConfigInterface implementation
+
+void KYZisDoc::readConfig() {
+	KYZisFactory::s_self->readConfig();
+}
+
+void KYZisDoc::writeConfig() {
+	KYZisFactory::s_self->writeConfig();
+}
+
+void KYZisDoc::readConfig( KConfig *config ) {
+	//how to use another config file with kconfigxt?
+}
+
+void KYZisDoc::writeConfig( KConfig *config ) {
+	//how to use another config file with kconfigxt?
+}
+
+void KYZisDoc::readSessionConfig( KConfig *config ) {
+	KURL url(config->readEntry("URL"));
+	if (!url.isEmpty() && url.isValid())
+		openURL(url);
+}
+
+void KYZisDoc::writeSessionConfig( KConfig *config ) {
+	config->writeEntry("URL", url().prettyURL());
+}
+
+void KYZisDoc::configDialog() {
+	if ( KConfigDialog::showDialog( "configure_editor" ) )
+		return;
+
+	KYZisConfigDialog *dialog = new KYZisConfigDialog( m_parent, "configure_editor", Settings::self(), KDialogBase::TreeList );
+	connect( dialog, SIGNAL( settingsChanged() ), KYZisFactory::s_self, SLOT( writeConfig() ) );
+	dialog->exec();
 }
 
 #include "document.moc"

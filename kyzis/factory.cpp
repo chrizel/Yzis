@@ -160,6 +160,23 @@ void KYZisFactory::writeConfig() {
 	}
 }
 
+void KYZisFactory::readConfig( )
+{
+	Settings::self()->readConfig();
+
+	// apply configuration to all views
+	QMap<QString,YZBuffer*>::Iterator it;
+	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+		YZBuffer *b = ( it.data() );
+		QPtrList< YZView > l = b->views();
+		YZView* yit;
+		for ( yit = l.first(); yit; yit = l.next() ) {
+			KYZisView* yv = static_cast<KYZisView*>( yit );
+			yv->applyConfig();
+		}	
+	}
+}
+
 void KYZisFactory::changeCurrentView( YZView* view ) {
 	yzDebug() << "Kyzis : setCurrentView " << view->myId << endl;
 	KYZisView *v = static_cast<KYZisView*>(view);

@@ -102,6 +102,7 @@ private slots:
     void optionsConfigureKeys();
     void optionsConfigureToolbars();
     void applyNewToolbarConfig();
+    void preferences();
 
 private:
     void setupActions();

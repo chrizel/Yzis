@@ -24,11 +24,12 @@
 #include <ktexteditor/editinterface.h>
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/undointerface.h>
+#include <ktexteditor/configinterface.h>
 #include <buffer.h>
 #include <view.h>
 #include <session.h>
 
-class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public KTextEditor::UndoInterface, public YZBuffer {
+class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public KTextEditor::UndoInterface, public KTextEditor::ConfigInterface, public YZBuffer {
 	Q_OBJECT
 		
 	public:
@@ -86,11 +87,20 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		virtual unsigned int undoSteps() const;
 		virtual void setUndoSteps(unsigned int steps);
 
+		//config interface
+		virtual void readConfig();
+		virtual void writeConfig();
+		virtual void readConfig( KConfig *config );
+		virtual void writeConfig( KConfig *config );
+		virtual void readSessionConfig( KConfig *config );
+		virtual void writeSessionConfig( KConfig *config );
+		virtual void configDialog();
+
 	public slots:
 		//signals to emit
 		virtual void textChanged () {}
 		virtual void charactersInteractivelyInserted( int ,int ,const QString& ) {}
-		void configureEditor();
+//		void configureEditor();
 		
 	protected:
 		bool openFile();

@@ -19,6 +19,8 @@
 		<Separator/>
 		<Action name="kmdi_toolview_menu" />
 		<Action name="kmdi_tooldock_menu" />
+		<Separator/>
+		<Action name="options_configure"/>
 	</Menu>
 	<Menu name="help" noMerge="1"><text>&amp;Help</text>
 		<Action name="help_contents"/>

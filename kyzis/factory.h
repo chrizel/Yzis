@@ -53,6 +53,7 @@ public:
 
 	public slots :
 		void writeConfig();
+		void readConfig();
 	
 protected:
 

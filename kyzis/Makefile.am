@@ -27,7 +27,8 @@ bin_PROGRAMS = kyzis
 # the application source, library search path, and link libraries
 kyzis_SOURCES = main.cpp kyzis.cpp kyzis.skel
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
-kyzis_LDADD   = -lkmdi $(LIB_KPARTS) $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
+kyzis_LDADD = -lktexteditor -lkmdi $(LIB_KPARTS) \
+			  $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
 
 # this is where the desktop file will go 
 shelldesktopdir   = $(kde_appsdir)/Utilities

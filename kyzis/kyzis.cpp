@@ -37,6 +37,8 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 
+#include <ktexteditor/configinterface.h>
+
 // #include "configdialog.h"
 
 //#include "kyzis/document.h"
@@ -89,6 +91,8 @@ void Kyzis::setupActions() {
 	KStdAction::open(this, SLOT(fileOpen()), actionCollection());
 
 	KStdAction::quit(kapp, SLOT(quit()), actionCollection());
+	
+	KStdAction::preferences(this, SLOT(preferences()), actionCollection());
 
 	
 	if ( !isFakingSDIApplication() ) {
@@ -269,6 +273,15 @@ bool Kyzis::queryClose() {
 	}
 
 	return true;
+}
+
+void Kyzis::preferences() {
+    KTextEditor::ConfigInterface *conf = dynamic_cast<KTextEditor::ConfigInterface*>(getCurrentPart());
+    if (!conf)
+        return;
+
+    conf->configDialog();
+    conf->writeConfig();
 }
 
 

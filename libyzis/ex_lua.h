@@ -58,6 +58,8 @@ class YZExLua : public QObject {
 		QStringList getLastResult(int nb);
 
 		void execute(const QString& function, int nbArgs, int nbResults);
+		
+		void exe(const QString& function, const char* sig, ...);
 	
 	protected:
 		/** Protected call to lua, popups an error window in case of

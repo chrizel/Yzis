@@ -416,6 +416,9 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					mBuffer->action()->insertChar( this, mainCursor->buffer(), mPreviousChars );
 					if ( cindent && mPreviousChars == "}" )
 						reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
+					QStringList ikeys = getLocalStringListOption("indentkeys");
+					if ( ikeys.contains(mPreviousChars) )
+						YZSession::events->exec("INDENT_ON_KEY", this);
 					purgeInputBuffer(); //be safe in case we mistyped a CTRL command just before
 				}
 				return;

@@ -152,6 +152,8 @@ class YZView {
 		 */
 		void purgeInputBuffer() { mPreviousChars = ""; mapMode = 0; }
 
+		QString getInputBuffer() { return mPreviousChars; }
+
 		/**
 		 * moves the cursor to x,y (buffer) and save sticky column )
 		 */

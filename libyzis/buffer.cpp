@@ -464,15 +464,17 @@ void YZBuffer::load(const QString& file) {
 		QTextCodec* codec;
 		if ( currentEncoding == "locale" ) {
 			codec = QTextCodec::codecForLocale();
-/*			char *buff = (char*)malloc( 1024 * sizeof(char));
-			QTextCodec *c = QTextCodec::codecForContent (buff,1024);
+/*			char *buff = (char*)malloc( 102400 * sizeof(char));
+			int readl = fl.readBlock(buff,102400);
+			QTextCodec *c = QTextCodec::codecForContent (buff,102400);
 			free(buff);
-			yzDebug() << "Detected encoding " << c->name() << endl;
-			if ( c && c->name() != codec->name() ) {
+			fl.reset();
+			yzDebug() << "Detected encoding " << c->name()  << " by reading " << readl << " bytes." << endl;
+			if ( readl > 0 && c && c->name() != codec->name() ) {
 				codec = c;
 				setLocalQStringOption("encoding", c->name());
 				setLocalQStringOption("fileencoding", c->name());
-			}*/ // too bad it is not really reliable ...
+			}*/ //not reliable enough
 		} else {
 			codec = QTextCodec::codecForName( currentEncoding );
 		}

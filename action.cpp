@@ -425,12 +425,13 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 		if ( reverseSearch ) {
 			currentMatchColumn = -1;
 			if ( i == mBegin.getY() ) {
-				currentMatchColumn = mBegin.getX();
+				if ( mBegin.getX() == 0 ) continue;
+				currentMatchColumn = mBegin.getX() - 1;
 			} else if ( i == mEnd.getY() ) {
 				l = l.mid( mEnd.getX() );
 			}
 			idx = ex.searchRev( l, currentMatchColumn );
-			if ( i == mBegin.getY() && idx >= mBegin.getX() ) idx = -1;
+			if ( i == mBegin.getY() && idx >= (int)mBegin.getX() ) idx = -1;
 //			yzDebug() << "searchRev on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
 		} else {
 			currentMatchColumn = 0;

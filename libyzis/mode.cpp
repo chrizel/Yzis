@@ -248,9 +248,13 @@ void YZModePool::pop( modeType mode ) {
 	mView->commitUndoItem();
 	mView->purgeInputBuffer();
 	// do not leave two times the same mode
-	QPtrList<YZMode> leaved;
+#if QT_VERSION < 0x040000
+	QValueList<YZMode*> leaved;
+#else
+	QList<YZMode*> leaved;
+#endif
 	while ( stack.size() > 0 && stack.front()->type() != mode ) {
-		if ( ! leaved.containsRef( stack.front() ) ) {
+		if ( ! leaved.contains( stack.front() ) ) {
 			yzDebug() << "leaving mode " << stack.front()->toString() << endl;
 			stack.front()->leave( mView );
 			leaved.append( stack.front() );

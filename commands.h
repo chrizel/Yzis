@@ -193,6 +193,7 @@ private:
 	YZCursor gotoSOL(const YZNewMotionArgs &args);
 	YZCursor gotoEOL(const YZNewMotionArgs &args);
 	YZCursor find(const YZNewMotionArgs &args);
+	YZCursor matchPair(const YZNewMotionArgs &args);
 		
 	// methods implementing commands
 	QString execMotion(const YZCommandArgs &args);

@@ -74,6 +74,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("<DOWN>", &YZCommandPool::moveDown, ARG_NONE) );
 	commands.append( new YZNewMotion("<PUP>", &YZCommandPool::movePageUp, ARG_NONE) );
 	commands.append( new YZNewMotion("<PDOWN>", &YZCommandPool::movePageDown, ARG_NONE) );
+	commands.append( new YZNewMotion("%", &YZCommandPool::matchPair, ARG_NONE) );
 	commands.append( new YZCommand("i", &YZCommandPool::gotoInsertMode) );
 	commands.append( new YZCommand("<INS>", &YZCommandPool::gotoInsertMode) );
 	commands.append( new YZCommand(":", &YZCommandPool::gotoExMode) );
@@ -427,6 +428,14 @@ YZCursor YZCommandPool::movePageDown(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveDown(&viewCursor, args.view->getLinesVisible() );
 	return *viewCursor.buffer();
+}
+
+YZCursor YZCommandPool::matchPair(const YZNewMotionArgs &args) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	bool found = false;
+	YZCursor pos = args.view->myBuffer()->action()->match( args.view, *viewCursor.buffer(), &found );
+	if ( found ) return pos;
+	return viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::find(const YZNewMotionArgs &args) {

@@ -335,8 +335,6 @@ class YZView {
 		 */
 		void redo ( unsigned int count = 1 );
 
-		QString match( const QString& inputsBuff = QString::null );
-
 		/**
 		 * Moves the cursor to the given mark ( if it exists )
 		 */

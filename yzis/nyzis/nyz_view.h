@@ -7,8 +7,8 @@
  *
  */
 
-#include <curses.h>
 #include "yz_view.h"
+#include <curses.h>
 
 
 #define	YZ_MAX_LINE	3000
@@ -30,7 +30,7 @@ public:
 protected:
 	void handle_event(yz_event *e);
 
-	YZLine		*local_lines[YZ_MAX_LINE];
+	QString		*local_lines[YZ_MAX_LINE];
 	WINDOW		*window;	/* ncurses window to write to */
 	NYZSession	*session;
 

@@ -13,7 +13,6 @@
 
 class YZView;
 
-#ifdef __cplusplus
 class YZSession {
 	public:
 		/**
@@ -38,21 +37,5 @@ class YZSession {
 		// makes sense i think
 
 };
-#endif
-
-/**
- * C API
- */
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-void yzsession_new_session (const char *_session_name);
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
 
 #endif /* YZ_SESSION_H */

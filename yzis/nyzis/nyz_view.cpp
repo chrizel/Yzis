@@ -44,7 +44,7 @@ void NYZView::flush_events(void)
 void NYZView::handle_event(yz_event *e)
 {
 	int l, i;
-	YZLine	*yzl;
+	QString	*yzl;
 
 //FIXME	if (!e) panic("oulalal c'est pas bon la..");
 
@@ -57,8 +57,8 @@ void NYZView::handle_event(yz_event *e)
 
 			/* not use addnstr here, will stop at \0  (i guess) */
 			move ( l, 0);
-			for (i=0; i<w && i<yzl->len; i++)
-				addch(yzl->at(i).unicode());
+			for (i=0; i<w && i<yzl->length(); i++)
+				addch(yzl[i].unicode());
 
 //			refresh();
 //			debug("YZ_EV_SETLINE: received, line is %d", l);

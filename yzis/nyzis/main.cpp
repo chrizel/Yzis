@@ -1,17 +1,12 @@
-
-#include <curses.h>
-#include <signal.h>
 #include <stdlib.h>
-
+#include <stdio.h>
+#include <signal.h>
 #include "nyz_session.h"
-#include "nyz_view.h"
 
 static void finish(int sig);
 static void finish2(void);
 void nyz_init_screen(void);
 void handle_event(yz_event *);
-
-
 
 
 FILE *debugstr;
@@ -36,6 +31,7 @@ static void finish2(void)
 	debug("finish2 called (from atexit)");
 	finish(0);
 }
+
 static void finish(int sig)
 {
 	/* ncurses stuff */

@@ -108,6 +108,13 @@ class YZExLua : public QObject {
 		static int insert(lua_State *L);
 
 		/**
+		 * Remove the given number of caracters
+		 * Arguments :
+		 * col, line, number
+		 */
+		static int remove(lua_State *L);
+
+		/**
 		 * Insert a new line
 		 * Arguments:
 		 * line,text

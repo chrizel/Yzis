@@ -192,11 +192,26 @@ class YZSession {
 		}
 
 		/**
+		 * sets an int option
+		 */
+		static void setIntOption( const QString& key, int option ) {
+			YZSession::mOptions.setIntOption( key, option );
+		}
+
+		/**
 		 * Retrieve a bool option
 		 */
 		static bool getBoolOption( const QString& option ) {
 			return YZSession::mOptions.readBoolEntry( option );
 		}
+
+		/**
+		 * sets a bool option
+		 */
+		static void setBoolOption( const QString& key, bool option ) {
+			YZSession::mOptions.setBoolOption( key, option );
+		}
+
 
 		/**
 		 * Retrieve a string option
@@ -206,10 +221,25 @@ class YZSession {
 		}
 
 		/**
+		 * sets a qstring option
+		 */
+		static void setQStringOption( const QString& key, const QString& option ) {
+			YZSession::mOptions.setQStringOption( key, option );
+		}
+
+
+		/**
 		 * Retrieve a qstringlist option
 		 */
 		static QStringList getStringListOption( const QString& option ) {
 			return YZSession::mOptions.readQStringListEntry( option );
+		}
+
+		/**
+		 * sets a qstringlist option
+		 */
+		static void setQStringListOption( const QString& key, const QStringList& option ) {
+			YZSession::mOptions.setQStringListOption( key, option );
 		}
 
 		/**
@@ -218,6 +248,14 @@ class YZSession {
 		static QColor getColorOption( const QString& option ) {
 			return YZSession::mOptions.readQColorEntry( option );
 		}
+
+		/**
+		 * sets a qcolor option
+		 */
+		static void setQColorOption( const QString& key, const QColor& option ) {
+			YZSession::mOptions.setQColorOption( key, option );
+		}
+
 	protected:
 		//we map "filename"/buffer for buffers
 		QMap<QString,YZBuffer*> mBuffers;

@@ -126,5 +126,18 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 	return QString::null;
 }
 
+QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
+	QRegExp rx ( "set\s*(.*)=(.*)" );
+	bool idx = rx.exactMatch( inputs );
+	if ( !idx ) {
+		view->mySession()->popupMessage( tr( "Invalid option given" ) );
+		return QString::null;
+	}
+
+	YZSession::setQStringOption(rx.cap( 1 ).simplifyWhiteSpace(), rx.cap( 2 ).simplifyWhiteSpace());
+
+	return QString::null;
+}
+
 #include "ex_executor.moc"
 

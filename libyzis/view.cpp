@@ -265,6 +265,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 				}
 				updateStickyCol( mainCursor );
+				commitNextUndo();
 				return;
 			} else if ( key == "<DOWN>" ) {
 				moveDown( );
@@ -287,6 +288,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				return;
 			} else if ( key == "<DEL>" ) {
 				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
+				commitNextUndo();
 				return;
 			} else if ( key == "<PDOWN>" ) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() + mLinesVis );
@@ -303,6 +305,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				mBuffer->action()->insertChar( this, mainCursor->buffer(), key );
 				if ( cindent && key == "}" )
 					reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
+				commitNextUndo();
 				return;
 			}
 			break;
@@ -319,6 +322,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				return;
 			} else if ( key == "<DEL>" ) {
 				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
+				commitNextUndo();
 				return;
 			} else if ( key == "<ESC>" ) {
 				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() )
@@ -332,6 +336,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					gotoxy( 0, mainCursor->bufferY() + 1 );
 					updateStickyCol( mainCursor );
 				}
+				commitNextUndo();
 				return;
 			} else if ( key == "<DOWN>" ) {
 				moveDown( );
@@ -347,6 +352,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				return;
 			} else if ( key == "<TAB>" ) {
 				mBuffer->action()->replaceChar( this, mainCursor->buffer(), "\t" );
+				commitNextUndo();
 				return;
 			} else if ( key == "<PDOWN>" ) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() + mLinesVis );
@@ -358,6 +364,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				return;
 			} else {
 				mBuffer->action()->replaceChar( this, mainCursor->buffer(), key );
+				commitNextUndo();
 				return;
 			}
 			break;
@@ -418,6 +425,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				mSession->setFocusMainWindow();
 				gotoPreviousMode();
 				mSession->getExPool()->execExCommand( this, cmd );
+				//we'll need to check that undo step ...
+				commitNextUndo();
 				return;
 			} else if ( key == "<DOWN>" ) {
 				if(mExHistory[mCurrentExItem].isEmpty())
@@ -477,8 +486,10 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					purgeInputBuffer();
 					gotoCommandMode();
 					return;
-				} else
+				} else {
 					mBuffer->action()->deleteChar( this, *mainCursor->buffer(), 1);
+					commitNextUndo();
+				}
 				return;
 			} else if ( key == "<PDOWN>" ) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() + mLinesVis );
@@ -490,8 +501,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				return;
 			}
 
-			mPreviousChars+=modifiers+key;
-			if ( mSession ) {
+			{
+				mPreviousChars+=modifiers+key;
 				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
 //				yzDebug() << "Command " << mPreviousChars << " gave state: " << state << endl;
 				switch(state) {

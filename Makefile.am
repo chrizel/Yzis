@@ -51,7 +51,7 @@ install-data-local: install-translations
 clean-local: clean-tests
 
 test: 
-	cd tests && make && ./env_tests
+	cd tests && make && LD_LIBRARY_PATH=$(top_builddir)/libyzis/libqtyzis/.libs/ /bin/sh ./tests
 
 clean-tests:
 	cd tests && [ -f Makefile ] && make clean

@@ -101,6 +101,9 @@ public:
 	virtual unsigned int charWidth(const QChar&) const {
 		return 1;
 	}
+	virtual void registerModifierKeys(const QString&) {
+		return;
+	}
 
 protected:
 	class Mapping {

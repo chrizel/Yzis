@@ -333,7 +333,7 @@ class YzisHighlighting
 #if QT_VERSION < 0x040000
     QIntDict< QMemArray<YzisAttribute> > m_attributeArrays;
 #else
-    QHash<int, QVector<YzisAttribute> > m_attributeArrays;
+    QHash<int, QVector<YzisAttribute>* > m_attributeArrays;
 #endif
 
     /**

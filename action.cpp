@@ -146,8 +146,9 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 	if ( QPaintDevice::x11AppDisplay() ) {
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	}
-
-	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
+	
+	QValueList<QChar>::const_iterator it = reg.begin(), end = reg.end();
+	for ( ; it != end; ++it )
 		YZSession::mRegisters.setRegister( *it, buff );
 }
 
@@ -206,7 +207,8 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	}
 	yzDebug() << "Copied " << buff << endl;
-	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
+	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
+	for ( ; it != endd; ++it )
 		YZSession::mRegisters.setRegister( *it, buff );
 
 
@@ -274,7 +276,8 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 		if ( curY > 0 ) mergeNextLine( pView, curY - 1 );
 	}
 	yzDebug() << "Deleted " << buff << endl;
-	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
+	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
+	for ( ; it != endd; ++it )
 		YZSession::mRegisters.setRegister( *it, buff );
 
 	pView->moveXY( beginCursor.getX(), beginCursor.getY() );

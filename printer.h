@@ -43,7 +43,7 @@ class YZPrinter /*: public QPrinter*/ {
 	private:
 		/* methods */
 		void doPrint( );
-		void convertColor(QColor c, double &r, double &g, double &b);
+		void convertColor(const QColor& c, double &r, double &g, double &b);
 
 		/* members */
 		YZView *mView;

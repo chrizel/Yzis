@@ -230,7 +230,7 @@ class YZView {
 		 QString gotoCompletionMode();
 
 		/* Prepend enough spaces to string so line is "centered" */
-		QString centerLine( QString );
+		QString centerLine( const QString& );
 
 		/* Display Intro text message */
 		void displayIntro();

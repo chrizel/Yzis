@@ -40,8 +40,8 @@ YZMapping::~YZMapping() {
 bool YZMapping::applyNormalMappings( QString& text ) {
 	bool pendingMapp = false;
 	QString old = text;
-	QMap<QString,QString>::Iterator it;
-	for (it = mNormalMappings.begin(); it != mNormalMappings.end(); ++it) {
+	QMap<QString,QString>::Iterator it = mNormalMappings.begin(), end = mNormalMappings.end();
+	for (; it != end; ++it) {
 		text.replace(it.key(), it.data());
 		if (text != old)
 			pendingMapp = pendingMapp || it.key().startsWith(text);
@@ -52,8 +52,8 @@ bool YZMapping::applyNormalMappings( QString& text ) {
 bool YZMapping::applyVisualMappings( QString& text ) {
 	bool pendingMapp = false;
 	QString old = text;
-	QMap<QString,QString>::Iterator it;
-	for (it = mVisualMappings.begin(); it != mVisualMappings.end(); ++it) {
+	QMap<QString,QString>::Iterator it = mVisualMappings.begin(), end = mVisualMappings.end();
+	for (; it != end; ++it) {
 		text.replace(it.key(), it.data());
 		if (text != old)
 			pendingMapp = pendingMapp || it.key().startsWith(text);
@@ -64,8 +64,8 @@ bool YZMapping::applyVisualMappings( QString& text ) {
 bool YZMapping::applyCmdLineMappings( QString& text ) {
 	bool pendingMapp = false;
 	QString old = text;
-	QMap<QString,QString>::Iterator it;
-	for (it = mCmdLineMappings.begin(); it != mCmdLineMappings.end(); ++it) {
+	QMap<QString,QString>::Iterator it = mCmdLineMappings.begin(), end = mCmdLineMappings.end();
+	for (; it != end; ++it) {
 		text.replace(it.key(), it.data());
 		if (text != old)
 			pendingMapp = pendingMapp || it.key().startsWith(text);
@@ -76,8 +76,8 @@ bool YZMapping::applyCmdLineMappings( QString& text ) {
 bool YZMapping::applyPendingOpMappings( QString& text ) {
 	bool pendingMapp = false;
 	QString old = text;
-	QMap<QString,QString>::Iterator it;
-	for (it = mPendingOpMappings.begin(); it != mPendingOpMappings.end(); ++it) {
+	QMap<QString,QString>::Iterator it = mPendingOpMappings.begin(), end = mPendingOpMappings.end();
+	for (; it != end; ++it) {
 		text.replace(it.key(), it.data());
 		if (text != old)
 			pendingMapp = pendingMapp || it.key().startsWith(text);
@@ -88,8 +88,8 @@ bool YZMapping::applyPendingOpMappings( QString& text ) {
 bool YZMapping::applyInsertMappings( QString& text ) {
 	bool pendingMapp = false;
 	QString old = text;
-	QMap<QString,QString>::Iterator it;
-	for (it = mInsertMappings.begin(); it != mInsertMappings.end(); ++it) {
+	QMap<QString,QString>::Iterator it = mInsertMappings.begin(), end = mInsertMappings.end();
+	for (; it != end; ++it) {
 		text.replace(it.key(), it.data());
 		pendingMapp = pendingMapp || it.key().startsWith(text);
 	}
@@ -99,8 +99,8 @@ bool YZMapping::applyInsertMappings( QString& text ) {
 bool YZMapping::applyGlobalMappings( QString& text ) {
 	bool pendingMapp = false;
 	QString old = text;
-	QMap<QString,QString>::Iterator it;
-	for (it = mGlobalMappings.begin(); it != mGlobalMappings.end(); ++it) {
+	QMap<QString,QString>::Iterator it = mGlobalMappings.begin(), end = mGlobalMappings.end();
+	for (; it != end; ++it) {
 		text.replace(it.key(), it.data());
 		if (text != old)
 			pendingMapp = pendingMapp || it.key().startsWith(text);

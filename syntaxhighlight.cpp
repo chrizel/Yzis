@@ -904,8 +904,9 @@ YzisHlItem *YzisHlRegExpr::clone(const QStringList *args)
 {
   QString regexp = _regexp;
   QStringList escArgs = *args;
-
-  for (QStringList::Iterator it = escArgs.begin(); it != escArgs.end(); ++it)
+  
+  QStringList::Iterator it = escArgs.begin(), end = escArgs.end();
+  for (; it != end; ++it)
   {
     (*it).replace(QRegExp("(\\W)"), "\\\\1");
   }
@@ -1261,8 +1262,8 @@ int YzisHighlighting::makeDynamicContext(YzisHlContext *model, const QStringList
  */
 void YzisHighlighting::dropDynamicContexts()
 {
-  QMap< QPair<YzisHlContext *, QString>, short>::Iterator it;
-  for (it = dynamicCtxs.begin(); it != dynamicCtxs.end(); ++it)
+  QMap< QPair<YzisHlContext *, QString>, short>::Iterator it = dynamicCtxs.begin(), end = dynamicCtxs.end();
+  for (; it != end; ++it)
   {
     if (contextList[it.data()] != 0 && contextList[it.data()]->dynamicChild)
     {
@@ -1535,7 +1536,8 @@ void YzisHighlighting::loadWildcards()
 
 		static QRegExp boringExpression("\\*\\.[\\d\\w]+");
 
-		for( QStringList::Iterator it = l.begin(); it != l.end(); ++it )
+		QStringList::Iterator it = l.begin(), end = l.end();
+		for( ; it != end; ++it )
 			if (boringExpression.exactMatch(*it))
 				plainExtensions.append((*it).mid(1));
 			else
@@ -2287,7 +2289,9 @@ void YzisHighlighting::makeContextList()
     yzDebug()<<"**************** Outter loop in make ContextList"<<endl;
     yzDebug()<<"**************** Hl List count:"<<embeddedHls.count()<<endl;
     something_changed=false; //assume all "embedded" hls have already been loaded
-    for (YzisEmbeddedHlInfos::const_iterator it=embeddedHls.begin(); it!=embeddedHls.end();++it)
+	
+	YzisEmbeddedHlInfos::const_iterator it=embeddedHls.begin(), end=embeddedHls.end();
+    for (; it!=end;++it)
     {
       if (!it.data().loaded)  // we found one, we still have to load
       {
@@ -2374,7 +2378,8 @@ void YzisHighlighting::handleYzisHlIncludeRules()
 
 
   //resolove context names
-  for (YzisHlIncludeRules::iterator it=includeRules.begin();it!=includeRules.end();)
+  YzisHlIncludeRules::iterator it=includeRules.begin(), end = includeRules.end();
+  for (;it!=end;)
   {
 	  if ((*it)->incCtx==-1) // context unresolved ?
 	  {
@@ -2884,7 +2889,8 @@ int YzisHlManager::wildcardFind(const QString &fileName)
       return result;
   }
 
-  for (QStringList::Iterator it = commonSuffixes.begin(); it != commonSuffixes.end(); ++it) {
+  QStringList::Iterator it = commonSuffixes.begin(), end = commonSuffixes.end();
+  for (; it != end; ++it) {
     if (*it != backupSuffix && fileName.endsWith(*it)) {
       if ((result = realWildcardFind(fileName.left(length - (*it).length()))) != -1)
         return result;
@@ -2903,7 +2909,8 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
   for (YzisHighlighting *highlight = hlList.first(); highlight != 0L; highlight = hlList.next()) {
     highlight->loadWildcards();
 
-    for (QStringList::Iterator it = highlight->getPlainExtensions().begin(); it != highlight->getPlainExtensions().end(); ++it)
+	QStringList::Iterator it = highlight->getPlainExtensions().begin(), end = highlight->getPlainExtensions().end();
+    for (; it != end; ++it)
       if (fileName.endsWith((*it)))
         highlights.append(highlight);
 
@@ -2970,7 +2977,8 @@ int YzisHlManager::mimeFind(const QString &contents)
   {
     QStringList l = QStringList::split( sep, highlight->getMimetypes() );
 
-    for( QStringList::Iterator it = l.begin(); it != l.end(); ++it )
+	QStringList::Iterator it = l.begin(), end = l.end();
+    for( ; it != end; ++it )
     {
       if ( *it == mt ) // faster than a regexp i guess?
         highlights.append (highlight);

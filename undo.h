@@ -109,7 +109,7 @@ public:
 	/*! Return whether it is possibe to issue an undo */
 	bool mayUndo();
 
-	QString toString(QString msg="");
+	QString toString(const QString& msg="");
 
 	/** Sets this while performing undo and redo, so that the operations
 	 * are not registred as new buffer commands */

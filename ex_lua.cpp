@@ -125,7 +125,8 @@ QString YZExLua::source( YZView *, const QString& args ) {
 	           << QDir::homeDirPath()+"/.yzis/scripts/"+filename
 		       << QString( PREFIX )+"/share/yzis/scripts/"+filename;
 	QString found;
-	for( QStringList::iterator it = candidates.begin(); it!=candidates.end(); ++it) {
+	QStringList::iterator it = candidates.begin(), end = candidates.end();
+	for( ; it!=end; ++it) {
 		found = *it;
 		if (QFile::exists( found )) break;
 
@@ -232,7 +233,8 @@ int YZExLua::insert(lua_State *L) {
 
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );
-	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++ ) {
+	QStringList::Iterator it = list.begin(), end = list.end();
+	for ( ; it != end; ++it ) {
 		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
 		cView->myBuffer()->action()->insertChar( cView, sCol, sLine, *it );
 		sCol=0;
@@ -251,7 +253,8 @@ int YZExLua::insertline(lua_State *L) {
 
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );
-	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++ ) {
+	QStringList::Iterator it = list.begin(), end = list.end();
+	for ( ; it != end; ++it ) {
 		YZBuffer * cBuffer = cView->myBuffer();
 		YZAction * cAction = cBuffer->action();
 		if (!(cBuffer->isEmpty() && sLine == 0)) {
@@ -272,7 +275,8 @@ int YZExLua::appendline(lua_State *L) {
 	YZBuffer * cBuffer = cView->myBuffer();
 	YZAction * cAction = cBuffer->action();
 	QStringList list = QStringList::split( "\n", text );
-	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++ ) {
+	QStringList::Iterator it = list.begin(), end = list.end();
+	for ( ; it != end; ++it ) {
 		if (cBuffer->isEmpty()) {
 			cAction->insertChar( cView, 0, 0, *it );
 		} else {

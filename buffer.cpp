@@ -91,8 +91,8 @@ YZBuffer::~YZBuffer() {
 	if ( m_highlight != 0L )
 		m_highlight->release();
 
-	QValueVector<YZLine*>::iterator it;
-	for ( it = mText.begin(); it != mText.end(); it++ ) {
+	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+	for ( ; it != end; ++it ) {
 		delete ( *it );
 	}
 	mText.clear();
@@ -217,9 +217,9 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 
 	VIEWS_INIT( 0, line );
 
-	QValueVector<YZLine*>::iterator it;
+	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
 	uint idx=0;
-	for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
+	for ( ; idx < line && it != end; ++it, ++idx )
 		;
 	mText.insert(it, new YZLine( l ));
 	if ( !mLoading && m_highlight != 0L ) {
@@ -269,9 +269,9 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	}
 
 	//add new line
-	QValueVector<YZLine*>::iterator it;
+	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
 	uint idx=0;
-	for ( it = mText.begin(); idx < line+1 && it != mText.end(); it++, idx++ )
+	for ( ; idx < line+1 && it != end; ++it, ++idx )
 		;
 	mText.insert(it, new YZLine( newline ));
 
@@ -296,9 +296,9 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	if (lineCount() > 1) {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, "", 0, line );
 		if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELLINE, "", 0, line );
-		QValueVector<YZLine*>::iterator it;
+		QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
 		uint idx=0;
-		for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
+		for ( ; idx < line && it != end; ++it, ++idx )
 			;
 		delete (*it);
 		mText.erase(it);
@@ -343,8 +343,8 @@ void YZBuffer::clearText() {
 	 * operation.
 	 */
 	//clear is fine but better _delete_ all yzlines too ;)
-	QValueVector<YZLine*>::iterator it;
-	for ( it = mText.begin(); it != mText.end(); it++ ) {
+	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+	for ( ; it != end; ++it ) {
 		delete ( *it );
 	}
 	mText.clear(); //remove the _pointers_ now
@@ -395,7 +395,7 @@ uint YZBuffer::getWholeTextLength() const {
 uint YZBuffer::firstNonBlankChar( uint line ) {
 	uint i=0;
 	QString s = textline(line);
-	if (s == QString::null) return 0;
+	if (s.isNull()) return 0;
 	while( s[i].isSpace() && i < s.length()) {
 		i++;
 	}
@@ -421,8 +421,8 @@ void YZBuffer::setEncoding( const QString& name ) {
 		fromCodec = QTextCodec::codecForName( currentEncoding );
 	}
 	if ( ! isEmpty() ) {
-		QValueVector<YZLine*>::iterator it;
-		for ( it = mText.begin(); it != mText.end(); it++ ) {
+		QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+		for ( ; it != end; ++it ) {
 			(*it)->setData( destCodec->toUnicode( fromCodec->fromUnicode( (*it)->data() ) ) );
 		}
 	}
@@ -437,8 +437,8 @@ void YZBuffer::load(const QString& file) {
 	//stop redraws
 	mUpdateView=false;
 
-	QValueVector<YZLine*>::iterator it;
-	for ( it = mText.begin(); it != mText.end(); it++ ) {
+	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+	for ( ; it != end; ++it ) {
 		delete ( *it );
 	}
 	mText.clear();
@@ -515,8 +515,8 @@ bool YZBuffer::save() {
 		// do not save empty buffer to avoid creating a file
 		// with only a '\n' while the buffer is emtpy
 		if ( isEmpty() == false) {
-			QValueVector<YZLine*>::iterator it;
-			for ( it = mText.begin(); it != mText.end(); it++ ) {
+			QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+			for ( ; it != end; ++it ) {
 				stream << (*it )->data() << "\n";
 			}
 		}

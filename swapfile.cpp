@@ -52,7 +52,8 @@ void YZSwapFile::flush() {
 	if ( f.open( IO_WriteOnly | IO_Raw | IO_Append ) ) { //open at end of file
 		QTextStream stream( &f );
 		if ( !mHistory.empty() ) {
-			for ( QValueList<swapEntry>::iterator it = mHistory.begin(); it != mHistory.end(); ++it ) {
+			QValueList<swapEntry>::iterator it = mHistory.begin(), end = mHistory.end();
+			for ( ; it != end; ++it ) {
 				stream << ( *it ).type << ( *it ).col <<","<< ( *it ).line <<","<< ( *it ).str << endl;
 			}
 		}

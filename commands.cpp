@@ -973,7 +973,8 @@ QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 		if ( args.view->registersRecorded() == args.regs )
 			return QString::null;
 	}
-	for ( QValueList<QChar>::const_iterator it = args.regs.begin(); it != args.regs.end(); it++ )
+	QValueList<QChar>::const_iterator it = args.regs.begin(), end = args.regs.end();
+	for ( ; it != end; ++it )
 		args.view->sendMultipleKey(YZSession::mRegisters.getRegister(*it)[ 0 ]);
 	args.view->commitNextUndo();
 	return QString::null;

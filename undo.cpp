@@ -223,7 +223,7 @@ QString YZUndoBuffer::undoItemToString( UndoItem * undoItem )
 	return s;
 }
 
-QString YZUndoBuffer::toString(QString msg)
+QString YZUndoBuffer::toString(const QString& msg)
 {
 	QString s = msg + " YZUndoBuffer:\n";
 	QString offsetS = "  ";

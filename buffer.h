@@ -121,7 +121,12 @@ public:
 	
 
 	// ----------------- Buffer content
-		
+	
+	/**
+	 * Return true if the buffer is empty
+	 */
+	bool isEmpty() const;
+
 	/**
 	 * Get the whole text of the buffer
 	 * @return a QStringList containing the texts

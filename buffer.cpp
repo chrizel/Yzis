@@ -323,13 +323,18 @@ QString	YZBuffer::data(unsigned int no) const {
 		return l->data();
 }
 
-QString YZBuffer::getWholeText() const {
-	QString text;
-	if ( mText.count( ) == 1 && data(0).isEmpty() ) {
-		return QString("");
-	}
+bool YZBuffer::isEmpty() const
+{
+	if ( mText.count( ) == 1 && data(0).isEmpty() ) return true;
+	return false;
+}
 
-	for ( int i = 0 ; i < lineCount() ; i++ )
+
+QString YZBuffer::getWholeText() const {
+	if ( isEmpty() ) { return QString(""); }
+
+	QString text;
+	for ( uint i = 0 ; i < lineCount() ; i++ )
 		text += ( ( QPtrList<YZLine> )mText ).at( i )->data() + "\n";
 //	for(YZLine *it = mText.first(); it; it = mText.next())
 //		text += it->data() + "\n";
@@ -337,10 +342,10 @@ QString YZBuffer::getWholeText() const {
 }
 
 uint YZBuffer::getWholeTextLength() const {
+	if ( isEmpty() ) { return 0; }
+
 	uint length = 0;
-	
 	for ( uint i = 0 ; i < lineCount() ; i++ ) {
-		/* Should this include \n? Does for now*/
 		length += ( ( QPtrList<YZLine> )mText ).at( i )->data().length() + 1;
 	}
 	
@@ -403,9 +408,9 @@ void YZBuffer::save() {
 	QFile file( mPath );
 	if ( file.open( IO_WriteOnly ) ) {
 		QTextStream stream( &file );
-		if ( mText.count( ) == 1 && data(0).isEmpty() ) {
-			//only one empty line => don't save it, the file is empty... (it avoids creating 1 byte file where it should be 0)
-		} else {
+		// do not save empty buffer to avoid creating a file
+		// with only a '\n' while the buffer is emtpy
+		if ( isEmpty() == false) {
 			for(YZLine *it = mText.first(); it; it = mText.next()) {
 				stream << it->data() << "\n";
 				yzDebug() << "saving : " << it->data() << endl;

@@ -101,7 +101,7 @@ class YzisHlItem
     bool dynamic;
     bool dynamicChild;
     bool firstNonSpace;
-    bool justConsume;
+    bool onlyConsume;
     int column;
 
     // start enable flags, nicer than the virtual methodes
@@ -332,29 +332,31 @@ class YzisHlRegExpr : public YzisHlItem
 	bool _minimal;
 };
 
-class YzisHlConsumeSpaces : public YzisHlItem
+class YzisHlDetectSpaces : public YzisHlItem
 {
   public:
-    YzisHlConsumeSpaces () : YzisHlItem (0,0,0,0) { justConsume = true; }
+    YzisHlDetectSpaces (int attribute, int context,signed char regionId,signed char regionId2)
+      : YzisHlItem(attribute,context,regionId,regionId2) {}
 
     virtual int checkHgl(const QString& text, int offset, int len)
     {
-      int len2 = text.length();
+      int len2 = offset + len;
       while ((offset < len2) && text[offset].isSpace()) offset++;
       return offset;
     }
 };
 
-class YzisHlConsumeIdentifier : public YzisHlItem
+class YzisHlDetectIdentifier : public YzisHlItem
 {
   public:
-    YzisHlConsumeIdentifier () : YzisHlItem (0,0,0,0) { justConsume = true; }
+    YzisHlDetectIdentifier (int attribute, int context,signed char regionId,signed char regionId2)
+      : YzisHlItem(attribute,context,regionId,regionId2) { alwaysStartEnable = false; }
 
     virtual int checkHgl(const QString& text, int offset, int len)
     {
-      if (text[offset++].isLetter())
+      if (text[offset++].isLetter() || (text[offset] == QChar ('_')))
       {
-        int len2 = text.length();
+        int len2 = offset-1+len;
         while ((offset < len2) && (text[offset].isLetterOrNumber() || (text[offset] == QChar ('_')))) offset++;
         return offset;
       }
@@ -404,7 +406,7 @@ YzisHlItem::YzisHlItem(int attribute, int context,signed char regionId,signed ch
     dynamic(false),
     dynamicChild(false),
     firstNonSpace(false),
-    justConsume(false),
+    onlyConsume(false),
     column (-1),
     alwaysStartEnable (true),
     customStartEnable (false)
@@ -526,7 +528,7 @@ int YzisHlStringDetect::checkHgl(const QString& text, int offset, int len)
       if (text[offset++].upper() != str[i])
         return 0;
 
-    return offset + strLen;
+    return offset;
   }
   else
   {
@@ -534,7 +536,7 @@ int YzisHlStringDetect::checkHgl(const QString& text, int offset, int len)
       if (text[offset++] != str[i])
         return 0;
 
-    return offset + strLen;
+    return offset;
   }
 
   return 0;
@@ -901,7 +903,7 @@ YzisHlAnyChar::YzisHlAnyChar(int attribute, int context, signed char regionId,si
 {
 }
 
-int YzisHlAnyChar::checkHgl(const QString& text, int offset, int len)
+int YzisHlAnyChar::checkHgl(const QString& text, int offset, int)
 {
   if (yzisInsideString (_charList, text[offset]))
     return ++offset;
@@ -1192,53 +1194,43 @@ YzisHighlighting::YzisHighlighting(const YzisSyntaxModeListItem *def) : refCount
 
 YzisHighlighting::~YzisHighlighting()
 {
-  contextList.setAutoDelete( true );
+  for (uint i=0; i < m_contexts.size(); ++i)
+    delete m_contexts[i];
 }
 
-void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QMemArray<short>* ctxs, int *prevLine, bool lineContinue)
+void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QMemArray<short>* ctxs, int *prevLine)
 {
   //yzDebug("HL")<<QString("Entering generateContextStack with %1").arg(ctx)<<endl;
   while (true)
   {
-    if (lineContinue)
-    {
-      if ( !ctxs->isEmpty() )
-      {
-        (*ctxNum)=(*ctxs)[ctxs->size()-1];
-        (*prevLine)--;
-      }
-      else
-      {
-        //kdDebug(13010)<<QString("generateContextStack: line continue: len ==0");
-        (*ctxNum)=0;
-      }
-
-      return;
-    }
-
     if (ctx >= 0)
     {
       (*ctxNum) = ctx;
 
       ctxs->resize (ctxs->size()+1, QGArray::SpeedOptim);
       (*ctxs)[ctxs->size()-1]=(*ctxNum);
+
+      return;
     }
     else
     {
-      if (ctx < -1)
+      if (ctx == -1)
       {
-        while (ctx < -1)
-        {
-          if ( ctxs->isEmpty() )
-            (*ctxNum)=0;
-          else
-          {
-            ctxs->resize (ctxs->size()-1, QGArray::SpeedOptim);
-            //kdDebug(13010)<<QString("generate context stack: truncated stack to :%1").arg(ctxs->size())<<endl;
-            (*ctxNum) = ( (ctxs->isEmpty() ) ? 0 : (*ctxs)[ctxs->size()-1]);
-          }
+        (*ctxNum)=( (ctxs->isEmpty() ) ? 0 : (*ctxs)[ctxs->size()-1]);
+      }
+      else
+      {
+        int size = ctxs->size() + ctx + 1;
 
-          ctx++;
+        if (size > 0)
+        {
+          ctxs->resize (size, QGArray::SpeedOptim);
+          (*ctxNum)=(*ctxs)[size-1];
+        }
+        else
+        {
+          ctxs->resize (0, QGArray::SpeedOptim);
+          (*ctxNum)=0;
         }
 
         ctx = 0;
@@ -1250,24 +1242,19 @@ void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QMemArray<shor
           if ( ctxs->isEmpty() )
             return;
 
-          if (contextNum((*ctxs)[ctxs->size()-1]) && (contextNum((*ctxs)[ctxs->size()-1])->ctx != -1))
+          YzisHlContext *c = contextNum((*ctxs)[ctxs->size()-1]);
+          if (c && (c->ctx != -1))
           {
             //kdDebug(13010)<<"PrevLine > size()-1 and ctx!=-1)"<<endl;
-            ctx = contextNum((*ctxs)[ctxs->size()-1])->ctx;
-            lineContinue = false;
+            ctx = c->ctx;
 
             continue;
           }
         }
       }
-      else
-      {
-        if (ctx == -1)
-          (*ctxNum)=( (ctxs->isEmpty() ) ? 0 : (*ctxs)[ctxs->size()-1]);
-      }
-    }
 
-    return;
+      return;
+    }
   }
 }
 
@@ -1284,10 +1271,13 @@ int YzisHighlighting::makeDynamicContext(YzisHlContext *model, const QStringList
     value = dynamicCtxs[key];
   else
   {
-    ++startctx;
+    yzDebug () << "new stuff: " << startctx << endl;
+
     YzisHlContext *newctx = model->clone(args);
-    contextList.insert(startctx, newctx);
-    value = startctx;
+
+    m_contexts.push_back (newctx);
+
+    value = startctx++;
     dynamicCtxs[key] = value;
     YzisHlManager::self()->incDynamicCtxs();
   }
@@ -1303,15 +1293,10 @@ int YzisHighlighting::makeDynamicContext(YzisHlContext *model, const QStringList
  */
 void YzisHighlighting::dropDynamicContexts()
 {
-  QMap< QPair<YzisHlContext *, QString>, short>::Iterator it = dynamicCtxs.begin(), end = dynamicCtxs.end();
-  for (; it != end; ++it)
-  {
-    if (contextList[it.data()] != 0 && contextList[it.data()]->dynamicChild)
-    {
-      YzisHlContext *todelete = contextList.take(it.data());
-      delete todelete;
-    }
-  }
+  for (uint i=base_startctx; i < m_contexts.size(); ++i)
+    delete m_contexts[i];
+
+  m_contexts.resize (base_startctx);
 
   dynamicCtxs.clear();
   startctx = base_startctx;
@@ -1335,33 +1320,29 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
 
   if (noHl)
   {
-    textLine->setAttribs(0,0,textLine->length());
+    if (textLine->length() > 0)
+      memset (textLine->attributes(), 0, textLine->length());
+
     return;
   }
-
-//  yzDebug("HL")<<QString("The context stack length is: %1").arg(oCtx.size())<<endl;
-  // if (lineContinue) yzDebug("HL")<<"Entering with lineContinue flag set"<<endl;
 
   // duplicate the ctx stack, only once !
   QMemArray<short> ctx;
   ctx.duplicate (prevLine->ctxArray());
 
-  // line continue flag !
-  bool lineContinue = prevLine->hlLineContinue();
-
   int ctxNum = 0;
   int previousLine = -1;
   YzisHlContext *context;
 
-  if ( prevLine->ctxArray().isEmpty() )
+  if (ctx.isEmpty())
   {
     // If the stack is empty, we assume to be in Context 0 (Normal)
-    context=contextNum(ctxNum);
+    context = contextNum(ctxNum);
   }
   else
   {
     // There does an old context stack exist -> find the context at the line start
-    ctxNum=ctx[prevLine->ctxArray().size()-1]; //context ID of the last character in the previous line
+    ctxNum = ctx[ctx.size()-1]; //context ID of the last character in the previous line
 
     //yzDebug("HL") << "\t\tctxNum = " << ctxNum << " contextList[ctxNum] = " << contextList[ctxNum] << endl; // ellis
 
@@ -1372,15 +1353,22 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
 
     //yzDebug("HL")<<"test1-2-1-text2"<<endl;
 
-    previousLine=prevLine->ctxArray().size()-1; //position of the last context ID of th previous line within the stack
+    previousLine=ctx.size()-1; //position of the last context ID of th previous line within the stack
 
-    //yzDebug("HL")<<"test1-2-1-text3"<<endl;
-    generateContextStack(&ctxNum, context->ctx, &ctx, &previousLine, lineContinue); //get stack ID to use
+    // hl continue set or not ???
+    if (prevLine->hlLineContinue())
+    {
+      prevLine--;
+    }
+    else
+    {
+      generateContextStack(&ctxNum, context->ctx, &ctx, &previousLine); //get stack ID to use
 
-    //yzDebug("HL")<<"test1-2-1-text4"<<endl;
+      if (!(context = contextNum(ctxNum)))
+        context = contextNum(0);
+    }
 
-    if (!(context = contextNum(ctxNum)))
-      context = contextNum(0);
+    //kdDebug(13010)<<"test1-2-1-text4"<<endl;
 
     //if (lineContinue)   yzDebug("HL")<<QString("The new context is %1").arg((int)ctxNum)<<endl;
   }
@@ -1401,11 +1389,9 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
   int offset = 0;
   while (offset < len)
   {
-    bool found = false;
+    bool anItemMatched = false;
     bool standardStartEnableDetermined = false;
     bool customStartEnableDetermined = false;
-    bool standardStartEnable = false;
-    bool customStartEnable = false;
 
     uint index = 0;
     for (item = context->items.empty() ? 0 : context->items[0]; item; item = (++index < context->items.size()) ? context->items[index] : 0 )
@@ -1418,164 +1404,134 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
       if ((item->column != -1) && (item->column != offset))
         continue;
 
-      // do we only consume stuff?
-      if (item->justConsume)
+      if (!item->alwaysStartEnable)
       {
-        int offset2 = item->checkHgl(text, offset, len-offset);
-
-        if (offset2 <= offset)
-          continue;
-
-        // set attribute of this context
-        textLine->setAttribs(context->attr,offset,offset2);
-
-        offset = offset2 - 1;
-
-        found = true;
-        break;
-      }
-      else
-      {
-        bool thisStartEnabled = false;
-
-        if (item->alwaysStartEnable)
+        if (item->customStartEnable)
         {
-          thisStartEnabled = true;
-        }
-        else if (item->customStartEnable)
-        {
-          if (!customStartEnableDetermined)
-          {
-            customStartEnable = yzisInsideString (deliminator, lastChar);
+          if (customStartEnableDetermined || yzisInsideString (deliminator, lastChar))
             customStartEnableDetermined = true;
-          }
-
-          thisStartEnabled = customStartEnable;
-        }
-        else
-        {
-          if (!standardStartEnableDetermined)
-          {
-            standardStartEnable = yzisInsideString (stdDeliminator, lastChar);
-            standardStartEnableDetermined = true;
-          }
-
-          thisStartEnabled = standardStartEnable;
-        }
-
-        if (!thisStartEnabled)
-          continue;
-
-        int offset2 = item->checkHgl(text, offset, len-offset);
-
-        if (offset2 <= offset)
-          continue;
-
-        if(!item->lookAhead)
-          textLine->setAttribs(item->attr,offset,offset2);
-
-          //kdDebug(13010)<<QString("item->ctx: %1").arg(item->ctx)<<endl;
-
-        if (item->region2)
-        {
-          // kdDebug(13010)<<QString("Region mark 2 detected: %1").arg(item->region2)<<endl;
-          if ( !foldingList->isEmpty() && ((item->region2 < 0) && (*foldingList)[foldingList->size()-2] == -item->region2 ) )
-          {
-            foldingList->resize (foldingList->size()-2, QGArray::SpeedOptim);
-          }
           else
-          {
-            foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
-            (*foldingList)[foldingList->size()-2] = (uint)item->region2;
-            if (item->region2<0) //check not really needed yet
-              (*foldingList)[foldingList->size()-1] = offset2;
-            else
-            (*foldingList)[foldingList->size()-1] = offset;
-          }
-
+            continue;
         }
-
-        if (item->region)
-        {
-          // kdDebug(13010)<<QString("Region mark detected: %1").arg(item->region)<<endl;
-
-        /* if ( !foldingList->isEmpty() && ((item->region < 0) && (*foldingList)[foldingList->size()-1] == -item->region ) )
-          {
-            foldingList->resize (foldingList->size()-1, QGArray::SpeedOptim);
-          }
-          else*/
-          {
-            foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
-            (*foldingList)[foldingList->size()-2] = item->region;
-            if (item->region<0) //check not really needed yet
-              (*foldingList)[foldingList->size()-1] = offset2;
-            else
-              (*foldingList)[foldingList->size()-1] = offset;
-          }
-
-        }
-
-        generateContextStack(&ctxNum, item->ctx, &ctx, &previousLine);  //regenerate context stack
-
-    //kdDebug(13010)<<QString("generateContextStack has been left in item loop, size: %1").arg(ctx.size())<<endl;
-  //    kdDebug(13010)<<QString("current ctxNum==%1").arg(ctxNum)<<endl;
-
-        context=contextNum(ctxNum);
-
-        // dynamic context: substitute the model with an 'instance'
-        if (context->dynamic)
-        {
-          QStringList *lst = item->capturedTexts();
-          if (lst != 0)
-          {
-            // Replace the top of the stack and the current context
-            int newctx = makeDynamicContext(context, lst);
-            if (ctx.size() > 0)
-              ctx[ctx.size() - 1] = newctx;
-            ctxNum = newctx;
-            context = contextNum(ctxNum);
-          }
-          delete lst;
-        }
-
-        // dominik: look ahead w/o changing offset?
-        if (!item->lookAhead)
-        {
-          offset = offset2 - 1;
-        }
-
-        found = true;
-        break;
-      }
-    }
-
-    if (!found)
-    {
-
-      // nothing found: set attribute of one char
-      // anders: unless this context does not want that!
-      if ( context->fallthrough )
-      {
-      // set context to context->ftctx.
-        generateContextStack(&ctxNum, context->ftctx, &ctx, &previousLine);  //regenerate context stack
-        context=contextNum(ctxNum);
-      //kdDebug(13010)<<"context num after fallthrough at col "<<z<<": "<<ctxNum<<endl;
-      // the next is nessecary, as otherwise keyword (or anything using the std delimitor check)
-      // immediately after fallthrough fails. Is it bad?
-      // jowenn, can you come up with a nicer way to do this?
-        if (offset)
-          lastChar = text[offset - 1];
         else
-          lastChar = '\\';
+        {
+          if (standardStartEnableDetermined || yzisInsideString (stdDeliminator, lastChar))
+            standardStartEnableDetermined = true;
+          else
+            continue;
+        }
+      }
+
+      int offset2 = item->checkHgl(text, offset, len-offset);
+
+      if (offset2 <= offset)
         continue;
-	  }
-      else
-        textLine->setAttribs(context->attr, offset, offset + 1);
+
+      if (item->region2)
+      {
+        // kdDebug(13010)<<QString("Region mark 2 detected: %1").arg(item->region2)<<endl;
+        if ( !foldingList->isEmpty() && ((item->region2 < 0) && (*foldingList)[foldingList->size()-2] == -item->region2 ) )
+        {
+          foldingList->resize (foldingList->size()-2, QGArray::SpeedOptim);
+        }
+        else
+        {
+          foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
+          (*foldingList)[foldingList->size()-2] = (uint)item->region2;
+          if (item->region2<0) //check not really needed yet
+            (*foldingList)[foldingList->size()-1] = offset2;
+          else
+          (*foldingList)[foldingList->size()-1] = offset;
+        }
+
+      }
+
+      if (item->region)
+      {
+        // kdDebug(13010)<<QString("Region mark detected: %1").arg(item->region)<<endl;
+
+      /* if ( !foldingList->isEmpty() && ((item->region < 0) && (*foldingList)[foldingList->size()-1] == -item->region ) )
+        {
+          foldingList->resize (foldingList->size()-1, QGArray::SpeedOptim);
+        }
+        else*/
+        {
+          foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
+          (*foldingList)[foldingList->size()-2] = item->region;
+          if (item->region<0) //check not really needed yet
+            (*foldingList)[foldingList->size()-1] = offset2;
+          else
+            (*foldingList)[foldingList->size()-1] = offset;
+        }
+
+      }
+
+      // regenerate context stack if needed
+      if (item->ctx != -1)
+      {
+        generateContextStack (&ctxNum, item->ctx, &ctx, &previousLine);
+        context = contextNum(ctxNum);
+      }
+
+      // dynamic context: substitute the model with an 'instance'
+      if (context->dynamic)
+      {
+        QStringList *lst = item->capturedTexts();
+        if (lst != 0)
+        {
+          // Replace the top of the stack and the current context
+          int newctx = makeDynamicContext(context, lst);
+          if (ctx.size() > 0)
+            ctx[ctx.size() - 1] = newctx;
+          ctxNum = newctx;
+          context = contextNum(ctxNum);
+        }
+        delete lst;
+      }
+
+      // dominik: look ahead w/o changing offset?
+      if (!item->lookAhead)
+      {
+        if (offset2 > len)
+          offset2 = len;
+
+        // even set attributes ;)
+        memset ( textLine->attributes()+offset
+               , item->onlyConsume ? context->attr : item->attr
+               , len-offset);
+
+        offset = offset2;
+        lastChar = text[offset-1];
+      }
+
+      anItemMatched = true;
+      break;
     }
 
-    // dominik: do not change offset if we look ahead
-    if (!(item && item->lookAhead))
+    // something matched, continue loop
+    if (anItemMatched)
+      continue;
+
+    // nothing found: set attribute of one char
+    // anders: unless this context does not want that!
+    if ( context->fallthrough )
     {
+    // set context to context->ftctx.
+      generateContextStack(&ctxNum, context->ftctx, &ctx, &previousLine);  //regenerate context stack
+      context=contextNum(ctxNum);
+    //kdDebug(13010)<<"context num after fallthrough at col "<<z<<": "<<ctxNum<<endl;
+    // the next is nessecary, as otherwise keyword (or anything using the std delimitor check)
+    // immediately after fallthrough fails. Is it bad?
+    // jowenn, can you come up with a nicer way to do this?
+    /*  if (offset)
+        lastChar = text[offset - 1];
+      else
+        lastChar = '\\';*/
+      continue;
+    }
+    else
+    {
+      *(textLine->attributes() + offset) = context->attr;
       lastChar = text[offset];
       offset++;
     }
@@ -1785,7 +1741,7 @@ void YzisHighlighting::init()
   if (noHl)
     return;
 
-  contextList.clear ();
+  m_contexts.clear ();
   makeContextList();
 
 	//little hack (for yzis) to fill up our options tree with defaults settings
@@ -1803,7 +1759,7 @@ void YzisHighlighting::done()
   if (noHl)
     return;
 
-  contextList.clear ();
+  m_contexts.clear ();
   internalIDList.clear();
 }
 
@@ -1917,61 +1873,6 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   // get the (tagname) itemd type
   QString dataname=YzisHlManager::self()->syntax->groupItemData(data,QString(""));
 
-  //BEGIN - Translation of the attribute parameter
-  QString tmpAttr=YzisHlManager::self()->syntax->groupItemData(data,QString("attribute")).simplifyWhiteSpace();
-  int attr;
-  if (QString("%1").arg(tmpAttr.toInt())==tmpAttr)
-  {
-    errorsAndWarnings+=QString( "<B>%1</B>: Deprecated syntax. Attribute (%2) not addressed by symbolic name<BR>" ).arg(buildIdentifier).arg(tmpAttr);
-    attr=tmpAttr.toInt();
-  }
-  else
-    attr=lookupAttrName(tmpAttr,iDl);
-  //END - Translation of the attribute parameter
-
-  // Info about context switch
-  int context;
-  QString tmpcontext=YzisHlManager::self()->syntax->groupItemData(data,QString("context"));
-
-
-  QString unresolvedContext;
-  context=getIdFromString(ContextNameList, tmpcontext,unresolvedContext);
-
-  // Get the char parameter (eg DetectChar)
-  char chr;
-  if (! YzisHlManager::self()->syntax->groupItemData(data,QString("char")).isEmpty())
-    chr= (YzisHlManager::self()->syntax->groupItemData(data,QString("char")).latin1())[0];
-  else
-    chr=0;
-
-  // Get the String parameter (eg. StringDetect)
-  QString stringdata=YzisHlManager::self()->syntax->groupItemData(data,QString("String"));
-
-  // Get a second char parameter (char1) (eg Detect2Chars)
-  char chr1;
-  if (! YzisHlManager::self()->syntax->groupItemData(data,QString("char1")).isEmpty())
-    chr1= (YzisHlManager::self()->syntax->groupItemData(data,QString("char1")).latin1())[0];
-  else
-    chr1=0;
-
-  // Will be removed eventuall. Atm used for StringDetect
-  bool insensitive = IS_TRUE( YzisHlManager::self()->syntax->groupItemData(data,QString("insensitive")) );
-
-  // for regexp only
-  bool minimal = IS_TRUE( YzisHlManager::self()->syntax->groupItemData(data,QString("minimal")) );
-
-  // dominik: look ahead and do not change offset. so we can change contexts w/o changing offset1.
-  bool lookAhead = IS_TRUE( YzisHlManager::self()->syntax->groupItemData(data,QString("lookAhead")) );
-
-  bool dynamic= IS_TRUE(YzisHlManager::self()->syntax->groupItemData(data,QString("dynamic")) );
-
-  bool firstNonSpace = IS_TRUE(YzisHlManager::self()->syntax->groupItemData(data,QString("firstNonSpace")) );
-
-  int column = -1;
-  QString colStr = YzisHlManager::self()->syntax->groupItemData(data,QString("column"));
-  if (!colStr.isEmpty())
-    column = colStr.toInt();
-
   // code folding region handling:
   QString beginRegionStr=YzisHlManager::self()->syntax->groupItemData(data,QString("beginRegion"));
   QString endRegionStr=YzisHlManager::self()->syntax->groupItemData(data,QString("endRegion"));
@@ -2009,6 +1910,65 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
     yzDebug () << "########### END REG: "  << endRegionStr << " NUM: " << regionId2 << endl;
   }
 
+  int attr = 0;
+  QString tmpAttr=YzisHlManager::self()->syntax->groupItemData(data,QString("attribute")).simplifyWhiteSpace();
+  bool onlyConsume = tmpAttr.isEmpty();
+
+  // only relevant for non consumer
+  if (!onlyConsume)
+  {
+    if (QString("%1").arg(tmpAttr.toInt())==tmpAttr)
+    {
+      errorsAndWarnings+=QString("<B>%1</B>: Deprecated syntax. Attribute (%2) not addressed by symbolic name<BR>").
+      arg(buildIdentifier).arg(tmpAttr);
+      attr=tmpAttr.toInt();
+    }
+    else
+      attr=lookupAttrName(tmpAttr,iDl);
+  }
+
+  // Info about context switch
+  int context = -1;
+  QString unresolvedContext;
+  QString tmpcontext=YzisHlManager::self()->syntax->groupItemData(data,QString("context"));
+  if (!tmpcontext.isEmpty())
+    context=getIdFromString(ContextNameList, tmpcontext,unresolvedContext);
+
+  // Get the char parameter (eg DetectChar)
+  char chr;
+  if (! YzisHlManager::self()->syntax->groupItemData(data,QString("char")).isEmpty())
+    chr= (YzisHlManager::self()->syntax->groupItemData(data,QString("char")).latin1())[0];
+  else
+    chr=0;
+
+  // Get the String parameter (eg. StringDetect)
+  QString stringdata=YzisHlManager::self()->syntax->groupItemData(data,QString("String"));
+
+  // Get a second char parameter (char1) (eg Detect2Chars)
+  char chr1;
+  if (! YzisHlManager::self()->syntax->groupItemData(data,QString("char1")).isEmpty())
+    chr1= (YzisHlManager::self()->syntax->groupItemData(data,QString("char1")).latin1())[0];
+  else
+    chr1=0;
+
+  // Will be removed eventuall. Atm used for StringDetect
+  bool insensitive = IS_TRUE( YzisHlManager::self()->syntax->groupItemData(data,QString("insensitive")) );
+
+  // for regexp only
+  bool minimal = IS_TRUE( YzisHlManager::self()->syntax->groupItemData(data,QString("minimal")) );
+
+  // dominik: look ahead and do not change offset. so we can change contexts w/o changing offset1.
+  bool lookAhead = IS_TRUE( YzisHlManager::self()->syntax->groupItemData(data,QString("lookAhead")) );
+
+  bool dynamic= IS_TRUE(YzisHlManager::self()->syntax->groupItemData(data,QString("dynamic")) );
+
+  bool firstNonSpace = IS_TRUE(YzisHlManager::self()->syntax->groupItemData(data,QString("firstNonSpace")) );
+
+  int column = -1;
+  QString colStr = YzisHlManager::self()->syntax->groupItemData(data,QString("column"));
+  if (!colStr.isEmpty())
+    column = colStr.toInt();
+
   //Create the item corresponding to it's type and set it's parameters
   YzisHlItem *tmpItem;
 
@@ -2035,8 +1995,8 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   else if (dataname=="HlCOct") tmpItem= (new YzisHlCOct(attr,context,regionId,regionId2));
   else if (dataname=="HlCFloat") tmpItem= (new YzisHlCFloat(attr,context,regionId,regionId2));
   else if (dataname=="HlCStringChar") tmpItem= (new YzisHlCStringChar(attr,context,regionId,regionId2));
-  else if (dataname=="ConsumeSpaces") tmpItem= (new YzisHlConsumeSpaces());
-  else if (dataname=="ConsumeIdentifier") tmpItem= (new YzisHlConsumeIdentifier());
+  else if (dataname=="DetectSpaces") tmpItem= (new YzisHlDetectSpaces(attr,context,regionId,regionId2));
+  else if (dataname=="DetectIdentifier") tmpItem= (new YzisHlDetectIdentifier(attr,context,regionId,regionId2));
   else
   {
     // oops, unknown type. Perhaps a spelling error in the xml file
@@ -2048,11 +2008,13 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   tmpItem->dynamic = dynamic;
   tmpItem->firstNonSpace = firstNonSpace;
   tmpItem->column = column;
+  tmpItem->onlyConsume = onlyConsume;
 
   if (!unresolvedContext.isEmpty())
   {
     unresolvedContextReferences.insert(&(tmpItem->ctx),unresolvedContext);
   }
+
   return tmpItem;
 }
 
@@ -2550,8 +2512,8 @@ void YzisHighlighting::handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::ite
     }
 
     // if the context we want to include had sub includes, they are already inserted there.
-    YzisHlContext *dest=contextList[ctx];
-    YzisHlContext *src=contextList[ctx1];
+    YzisHlContext *dest=m_contexts[ctx];
+    YzisHlContext *src=m_contexts[ctx1];
 //     kdDebug(3010)<<"linking included rules from "<<ctx<<" to "<<ctx1<<endl;
 
     // If so desired, change the dest attribute to the one of the src.
@@ -2601,12 +2563,13 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   // Let the syntax document class know, which file we'd like to parse
   if (!YzisHlManager::self()->syntax->setIdentifier(ident))
   {
-	  noHl=true;
-	  yzDebug() << QString("Since there has been an error parsing the highlighting description, this highlighting will be disabled") << endl;
-	  return 0;
+    noHl=true;
+//    KMessageBox::information(0L,i18n("Since there has been an error parsing the highlighting description, this highlighting will be disabled"));
+    return 0;
   }
 
-  RegionList<<"!YzisInternal_TopLevel!";
+
+  RegionList<<"!KateInternal_TopLevel!";
 
   // Now save the comment and delimitor data. We associate it with the
   // length of internalDataList, so when we look it up for an attrib,
@@ -2630,15 +2593,16 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 
   createContextNameList(&ContextNameList,ctx0);
 
-  yzDebug("HL")<<"Parsing Context structure"<<endl;
+
+  yzDebug()<<"Parsing Context structure"<<endl;
   //start the real work
   data=YzisHlManager::self()->syntax->getGroupInfo("highlighting","context");
   uint i=buildContext0Offset;
   if (data)
   {
     while (YzisHlManager::self()->syntax->nextGroup(data))
-        {
-      yzDebug("HL")<<"Found a context in file, building structure now"<<endl;
+    {
+      yzDebug()<<"Found a context in file, building structure now"<<endl;
       //BEGIN - Translation of the attribute parameter
       QString tmpAttr=YzisHlManager::self()->syntax->groupData(data,QString("attribute")).simplifyWhiteSpace();
       int attr;
@@ -2648,12 +2612,12 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
         attr=lookupAttrName(tmpAttr,iDl);
       //END - Translation of the attribute parameter
 
-	  ctxName=buildPrefix+YzisHlManager::self()->syntax->groupData(data,QString("lineEndContext")).simplifyWhiteSpace();
+      ctxName=buildPrefix+YzisHlManager::self()->syntax->groupData(data,QString("lineEndContext")).simplifyWhiteSpace();
 
-	  QString tmpLineEndContext=YzisHlManager::self()->syntax->groupData(data,QString("lineEndContext")).simplifyWhiteSpace();
-	  int context;
+      QString tmpLineEndContext=YzisHlManager::self()->syntax->groupData(data,QString("lineEndContext")).simplifyWhiteSpace();
+      int context;
 
-	  context=getIdFromString(&ContextNameList, tmpLineEndContext,dummy);
+      context=getIdFromString(&ContextNameList, tmpLineEndContext,dummy);
 
       //BEGIN get fallthrough props
       bool ft = false;
@@ -2668,7 +2632,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           QString tmpFtc = YzisHlManager::self()->syntax->groupData( data, QString("fallthroughContext") );
 
           ftc=getIdFromString(&ContextNameList, tmpFtc,dummy);
-		  if (ftc == -1) ftc =0;
+          if (ftc == -1) ftc =0;
 
           yzDebug()<<"Setting fall through context (context "<<i<<"): "<<ftc<<endl;
         }
@@ -2680,20 +2644,23 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
       if ( tmpDynamic.lower() == "true" ||  tmpDynamic.toInt() == 1 )
         dynamic = true;
 
-      contextList.insert (i, new YzisHlContext (
+      YzisHlContext *ctxNew = new YzisHlContext (
         attr,
         context,
         (YzisHlManager::self()->syntax->groupData(data,QString("lineBeginContext"))).isEmpty()?-1:
         (YzisHlManager::self()->syntax->groupData(data,QString("lineBeginContext"))).toInt(),
-        ft, ftc, dynamic));
+        ft, ftc, dynamic);
 
+      m_contexts.push_back (ctxNew);
 
-	  //Let's create all items for the context
-	  while (YzisHlManager::self()->syntax->nextItem(data))
-	  {
-//    yzDebug("HL")<< "In make Contextlist: Item:"<<endl;
+      yzDebug () << "INDEX: " << i << " LENGTH " << m_contexts.size()-1 << endl;
 
-	// YzisHlIncludeRules : add a pointer to each item in that context
+      //Let's create all items for the context
+      while (YzisHlManager::self()->syntax->nextItem(data))
+      {
+//    kdDebug(13010)<< "In make Contextlist: Item:"<<endl;
+
+      // KateHlIncludeRules : add a pointer to each item in that context
         // TODO add a attrib includeAttrib
       QString tag = YzisHlManager::self()->syntax->groupItemData(data,QString(""));
       if ( tag == "IncludeRules" ) //if the new item is an Include rule, we have to take special care
@@ -2709,13 +2676,13 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           {
             // a local reference -> just initialize the include rule structure
             incCtx=buildPrefix+incCtx.simplifyWhiteSpace();
-            includeRules.append(new YzisHlIncludeRule(i,contextList[i]->items.count(),incCtx, includeAttrib));
+            includeRules.append(new YzisHlIncludeRule(i,m_contexts[i]->items.count(),incCtx, includeAttrib));
           }
           else
           {
             //a cross highlighting reference
-            yzDebug("HL")<<"Cross highlight reference <IncludeRules>"<<endl;
-            YzisHlIncludeRule *ir=new YzisHlIncludeRule(i,contextList[i]->items.count(),"",includeAttrib);
+            yzDebug()<<"Cross highlight reference <IncludeRules>"<<endl;
+            YzisHlIncludeRule *ir=new YzisHlIncludeRule(i,m_contexts[i]->items.count(),"",includeAttrib);
 
             //use the same way to determine cross hl file references as other items do
             if (!embeddedHls.contains(incCtx.right(incCtx.length()-2)))
@@ -2727,33 +2694,34 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
             includeRules.append(ir);
           }
         }
-		continue;
-	  }
+
+        continue;
+      }
       // TODO -- can we remove the block below??
 #if 0
-                QString tag = YzisHlManager::self()->syntax->groupYzisHlItemData(data,QString(""));
+                QString tag = KateHlManager::self()->syntax->groupKateHlItemData(data,QString(""));
                 if ( tag == "IncludeRules" ) {
                   // attrib context: the index (jowenn, i think using names here would be a cool feat, goes for mentioning the context in any item. a map or dict?)
                   int ctxId = getIdFromString(&ContextNameList,
-      YzisHlManager::self()->syntax->groupYzisHlItemData( data, QString("context")),dummy); // the index is *required*
+      KateHlManager::self()->syntax->groupKateHlItemData( data, QString("context")),dummy); // the index is *required*
                   if ( ctxId > -1) { // we can even reuse rules of 0 if we want to:)
-                    yzDebug("HL")<<"makeContextList["<<i<<"]: including all items of context "<<ctxId<<endl;
+                    kdDebug(13010)<<"makeContextList["<<i<<"]: including all items of context "<<ctxId<<endl;
                     if ( ctxId < (int) i ) { // must be defined
-                      for ( c = contextList[ctxId]->items.first(); c; c = contextList[ctxId]->items.next() )
-                        contextList[i]->items.append(c);
+                      for ( c = m_contexts[ctxId]->items.first(); c; c = m_contexts[ctxId]->items.next() )
+                        m_contexts[i]->items.append(c);
                     }
                     else
-                      yzDebug("HL")<<"Context "<<ctxId<<"not defined. You can not include the rules of an undefined context"<<endl;
+                      kdDebug(13010)<<"Context "<<ctxId<<"not defined. You can not include the rules of an undefined context"<<endl;
                   }
                   continue; // while nextItem
                 }
 #endif
-	c=createYzisHlItem(data,iDl,&RegionList,&ContextNameList);
-	if (c)
-	{
-		contextList[i]->items.append(c);
+      c=createYzisHlItem(data,iDl,&RegionList,&ContextNameList);
+      if (c)
+      {
+        m_contexts[i]->items.append(c);
 
-		// Not supported completely atm and only one level. Subitems.(all have to be matched to at once)
+        // Not supported completely atm and only one level. Subitems.(all have to be matched to at once)
         datasub=YzisHlManager::self()->syntax->getSubItems(data);
         bool tmpbool;
         if (tmpbool=YzisHlManager::self()->syntax->nextItem(datasub))
@@ -2774,7 +2742,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   YzisHlManager::self()->syntax->freeGroupInfo(data);
 
   if (RegionList.count()!=1)
-	  folding=true;
+    folding=true;
 
   folding = folding || m_foldingIndentationSensitive;
 
@@ -2785,11 +2753,11 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
     if (-1==commentregionid) {
       errorsAndWarnings+=QString("<B>%1</B>: Specified multiline comment region (%2) could not be resolved<BR>").arg(buildIdentifier).arg(commentData[MultiLineRegion]);
       commentData[MultiLineRegion]=QString();
-      //kdDebug()<<"ERROR comment region attribute could not be resolved"<<endl;
+      yzDebug()<<"ERROR comment region attribute could not be resolved"<<endl;
 
     } else {
         commentData[MultiLineRegion]=QString::number(commentregionid+1);
-        //kdDebug()<<"comment region resolved to:"<<m_additionalData[additionalDataIndex][MultiLineRegion]<<endl;
+        yzDebug()<<"comment region resolved to:"<<m_additionalData[additionalDataIndex][MultiLineRegion]<<endl;
     }
   }
   //END Resolve multiline region if possible
@@ -3239,7 +3207,7 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   list.append(others);
 
   YzisAttribute* alert = new YzisAttribute();
-  alert->setTextColor(Qt::black);
+  alert->setTextColor(Qt::lightGray);
   alert->setSelectedTextColor( QColor::QColor("#FCC") );
   alert->setBold(true);
   alert->setBGColor( QColor::QColor("red") );

@@ -174,7 +174,7 @@ void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
 	// assume a command is like : "rangeCOMMANDNAME parameters"
 	// see vim :help [range] for infos on 'range'
 	//QRegExp rx ( "(%?|((\\d*)(,\\d*)?))(\\w+)((\\b)|(/.*/.*/.*))(.*)");
-	QRegExp rx ( "(%?|\\d*)(\\w+)((\\b)|(/.*/.*/.*))(.*)");
+	QRegExp rx ( "(%?|\\d*|\\d*,\\d*)(\\w+)((\\b)|(/.*/.*/.*))(.*)");
 	if ( rx.exactMatch(command) ) {
 		command = rx.cap( 2 );
 	} else

@@ -2,6 +2,7 @@
  *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
  *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>,
  *  Copyright (C) 2003-2004 Philippe Fremy <pfremy@freehackers.org>
+ *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -146,6 +147,19 @@ public:
 	 * @return an unsigned int with the lenght of the buffer
 	 */
 	uint getWholeTextLength() const;
+
+	/**
+	 * Get the length of a line
+	 * @param line the line number
+	 * @return a unsigned int with the length of the line
+	 *
+	 * Note: the valid line numbers are between 0 and lineCount()-1
+	 */
+	inline unsigned int getLineLength(unsigned int line) const {
+		YZLine * yl = yzline(line);
+		if (yl) return yl->length();
+		return 0;
+	}
 
 	/**
 	 * Remove all text

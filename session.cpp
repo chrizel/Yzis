@@ -128,3 +128,11 @@ YZView* YZSession::nextView() {
 	return next;
 }
 
+YZBuffer* YZSession::findBuffer( const QString& path ) {
+	QMap<QString,YZBuffer*>::Iterator it;
+	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+		YZBuffer* b = ( *it );
+		if ( b->fileName() == path ) return b;
+	}
+	return NULL; //not found
+}

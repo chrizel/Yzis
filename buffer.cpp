@@ -695,7 +695,7 @@ bool YZBuffer::substitute( const QString& what, const QString& with, bool wholel
 	int offset=0;
 	while ( ( pos = rx.search( l,offset ) ) != -1 ) {
 		l = l.replace( pos, rx.matchedLength(), with );
-		offset+=pos+with.length();
+		offset = pos + with.length();
 		if ( !wholeline ) break;
 	}
 	if ( offset ) {

@@ -551,7 +551,6 @@ void YzisSyntaxDocument::setupModeList (bool )
   QStringList list = findAllResources("data",QString( PREFIX ) + "/share/yzis/syntax/*.xml",false,true);
 //  list << QString( PREFIX ) + "/share/yzis/syntax/cpp.xml";
   //just C++ for now
-  yzDebug() << "LIST : " << list << endl;
 
   // Let's iterate through the list and build the Mode List
   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )

@@ -1,3 +1,9 @@
+2004-04-14 mikmak
+  * all
+    add horizontal scrolling support
+  * translations
+    added .nl translation (contributed by Mathieu Kooiman)
+
 2004-04-13 mikmak
   * all
     added an information status message to be added in GUIs

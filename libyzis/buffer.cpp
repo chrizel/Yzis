@@ -774,7 +774,7 @@ bool YZBuffer::updateHL( unsigned int line ) {
 	while ( ctxChanged && hlLine < lineCount()) {
 		yl = yzline( hlLine );
 		QMemArray<uint> foldingList;
-		m_highlight->doHighlight( yzline( QMAX( hlLine - 1, 0 ) ), yl, &foldingList, &ctxChanged );
+		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yl, &foldingList, &ctxChanged );
 		hlChanged = ctxChanged || hlChanged;
 		if ( ! ctxChanged && yl->data().isEmpty() ) ctxChanged = true; // line is empty 
 		hlLine++;

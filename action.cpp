@@ -29,7 +29,6 @@
 */
 			
    
-
 #include "view.h"
 #include "action.h"
 #include "debug.h"
@@ -41,8 +40,14 @@
 
 #include <stdlib.h>
 #include <assert.h>
+#if QT_VERSION < 0x040000
 #include <qclipboard.h>
 #include <qpaintdevice.h>
+#else
+#include <QX11Info>
+#include <QApplication>
+#include <QClipboard>
+#endif
 
 YZAction::YZAction( YZBuffer* buffer ) {
 	mBuffer = buffer;
@@ -50,13 +55,23 @@ YZAction::YZAction( YZBuffer* buffer ) {
 YZAction::~YZAction( ) {
 }
 
-#define CONFIGURE_VIEWS \
-	{ for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
-	it->setPaintAutoCommit( false ); } 
+#if QT_VERSION < 0x040000
+	#define CONFIGURE_VIEWS \
+		{ for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
+		it->setPaintAutoCommit( false ); } 
 
-#define COMMIT_VIEWS_CHANGES \
-	{ for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
-	it->commitPaintEvent(); }
+	#define COMMIT_VIEWS_CHANGES \
+		{ for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
+		it->commitPaintEvent(); }
+#else
+	#define CONFIGURE_VIEWS \
+		{ for ( int aabb = 0; aabb < mBuffer->views().size(); ++aabb ) \
+		mBuffer->views().at(aabb)->setPaintAutoCommit( false ); } 
+
+	#define COMMIT_VIEWS_CHANGES \
+		{ for ( int aabb = 0; aabb < mBuffer->views().size(); ++aabb ) \
+		mBuffer->views().at(aabb)->commitPaintEvent(); }
+#endif
 
 void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {
 	CONFIGURE_VIEWS;
@@ -121,7 +136,11 @@ void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &te
 	COMMIT_VIEWS_CHANGES;
 }
 
+#if QT_VERSION < 0x040000
 void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
+#else
+void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QList<QChar> &reg ) {
+#endif
 	CONFIGURE_VIEWS;
 	copyLine(pView, pos, len, reg);
 	for ( unsigned int i = 0; i < len && pos.getY() < mBuffer->lineCount(); i++ )
@@ -130,7 +149,11 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len,
 	COMMIT_VIEWS_CHANGES;
 }
 
+#if QT_VERSION < 0x040000
 void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
+#else
+void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const QList<QChar> &reg ) {
+#endif
 	YZCursor mPos( pos );
 
 	unsigned int bY = mPos.getY();
@@ -145,18 +168,31 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 	}
 	buff << QString::null;
 #ifndef WIN32
+#if QT_VERSION < 0x040000
 	if ( QPaintDevice::x11AppDisplay() )
+#else
+	if ( QX11Info::display() )
+#endif
 #endif
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	
+#if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = reg.begin(), end = reg.end();
 	for ( ; it != end; ++it )
 		YZSession::mRegisters.setRegister( *it, buff );
+#else
+	for ( int ab = 0 ; ab < reg.size(); ++ab )
+		YZSession::mRegisters.setRegister( reg.at(ab), buff );
+#endif
 }
 
 
 //copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
+#if QT_VERSION < 0x040000
 void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+#else
+void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
+#endif
 	yzDebug() << "Copying from " << beginCursor << " to " << endCursor << endl;
 
 	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
@@ -206,20 +242,33 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 
 	QString text = buff.join( "\n" );
 #ifndef WIN32
+#if QT_VERSION < 0x040000
 	if ( QPaintDevice::x11AppDisplay() )
+#else
+	if ( QX11Info::display() )
+#endif
 #endif
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	
 	yzDebug() << "Copied " << buff << endl;
+#if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
 	for ( ; it != endd; ++it )
 		YZSession::mRegisters.setRegister( *it, buff );
+#else
+	for ( int ab = 0 ; ab < reg.size(); ++ab )
+		YZSession::mRegisters.setRegister( reg.at(ab), buff );
+#endif
 
 
 }
 
 //copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
+#if QT_VERSION < 0x040000
 void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+#else
+void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
+#endif
 	CONFIGURE_VIEWS;
 	yzDebug() << "Deleting from " << beginCursor << " to " << endCursor << endl;
 	QStringList buff;
@@ -280,9 +329,14 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 		if ( curY > 0 ) mergeNextLine( pView, curY - 1, false );
 	}
 	yzDebug() << "Deleted " << buff << endl;
+#if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
 	for ( ; it != endd; ++it )
 		YZSession::mRegisters.setRegister( *it, buff );
+#else
+	for ( int ab = 0 ; ab < reg.size(); ++ab )
+		YZSession::mRegisters.setRegister( reg.at(ab), buff );
+#endif
 
 	pView->gotoxyAndStick( beginCursor.getX(), beginCursor.getY() );
 	COMMIT_VIEWS_CHANGES;
@@ -345,7 +399,11 @@ void YZAction::insertNewLine( YZView* pView, unsigned int X, unsigned int Y ) {
 	YZCursor pos( pView, X, Y );
 	insertNewLine( pView, pos );
 }
+#if QT_VERSION < 0x040000
 void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len, const QValueList<QChar>& regs ) {
+#else
+void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len, const QList<QChar>& regs ) {
+#endif
 	YZCursor pos( pView, 0, Y );
 	deleteLine( pView, pos, len, regs );
 }
@@ -419,10 +477,17 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 	int currentMatchColumn;
 	QString l;
 	
+#if QT_VERSION < 0x040000
 	unsigned int i = reverseSearch ? QMIN( (int)mBegin.getY(), (int)(pView->myBuffer()->lineCount() - 1) ) 
 					: QMAX( (int)mBegin.getY(), 0 );
 	unsigned int maxLine = reverseSearch ? QMAX( (int)mEnd.getY(), 0 ) : 
 						QMIN( (int)mEnd.getY(), (int)(pView->myBuffer()->lineCount() - 1) );
+#else
+	unsigned int i = reverseSearch ? qMin( (int)mBegin.getY(), (int)(pView->myBuffer()->lineCount() - 1) ) 
+					: qMax( (int)mBegin.getY(), 0 );
+	unsigned int maxLine = reverseSearch ? qMax( (int)mEnd.getY(), 0 ) : 
+						qMin( (int)mEnd.getY(), (int)(pView->myBuffer()->lineCount() - 1) );
+#endif
 	for ( ; ( reverseSearch && i >= maxLine ) || ( !reverseSearch && i <= maxLine ) ; reverseSearch ? i-- : i++ ) {
 		if ( i == ( unsigned int )( -1 ) ) break; //woups ;)
 		l = pView->myBuffer()->textline( i );
@@ -436,7 +501,11 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 			} else if ( i == mEnd.getY() ) {
 				l = l.mid( mEnd.getX() );
 			}
+#if QT_VERSION < 0x040000
 			idx = ex.searchRev( l, currentMatchColumn );
+#else
+			idx = ex.lastIndexIn( l, currentMatchColumn );
+#endif
 			if ( i == mBegin.getY() && idx >= (int)mBegin.getX() ) idx = -1;
 //			yzDebug() << "searchRev on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
 		} else {
@@ -446,7 +515,11 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 			} else if ( i == mEnd.getY() ) {
 				l = l.left( mEnd.getX() );
 			}
+#if QT_VERSION < 0x040000
 			idx = ex.search( l, currentMatchColumn );
+#else
+			idx = ex.indexIn( l, currentMatchColumn );
+#endif
 //			yzDebug() << "search on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
 		}
 

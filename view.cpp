@@ -24,13 +24,19 @@
  * $Id$
  */
 
+#include "view.h"
+#if QT_VERSION < 0x040000
+#include <qkeysequence.h>
+#include <qclipboard.h>
+#else
+#include <QX11Info>
+#include <QApplication>
+#include <QClipboard>
+#endif
 #include "portability.h"
 #include <cstdlib>
 #include <ctype.h>
-#include <qkeysequence.h>
-#include <qclipboard.h>
 #include <math.h>
-#include "view.h"
 #include "viewcursor.h"
 #include "debug.h"
 #include "undo.h"
@@ -157,6 +163,7 @@ YZView::~YZView() {
 
 void YZView::setupKeys() {
 	// register keys with modifiers
+#if QT_VERSION < 0x040000
 	QPtrList<const YZCommand> commands = mSession->getPool()->commands;
 	for ( commands.first(); commands.current(); commands.next() ) {
 		const QString& keys = commands.current()->keySeq();
@@ -165,15 +172,24 @@ void YZView::setupKeys() {
 			registerModifierKeys( keys );
 		}
 	}
+#else
+	QList<YZCommand*> commands = mSession->getPool()->commands;
+	for ( int ab = 0 ; ab < commands.size(); ++ab) {
+		const QString& keys = commands.at(ab)->keySeq();
+		if ( keys.indexOf( "<CTRL>" ) > -1 || keys.indexOf( "<ALT>" ) > -1 ) {
+			yzDebug() << "registerModifierKeys " << keys << endl;
+			registerModifierKeys( keys );
+		}
+	}
+#endif
 }
 
 void YZView::setVisibleArea(int c, int l, bool refresh) {
 	yzDebug() << "YZView::setVisibleArea(" << c << "," << l << ");" << endl;
 	mLinesVis = l;
 	mColumnsVis = c;
-	if( refresh ) {
+	if( refresh )
 		recalcScreen();
-	}
 }
 
 void YZView::recalcScreen( ) {
@@ -254,16 +270,28 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
 
 	if ( mRegs.count() > 0 ) {
+#if QT_VERSION < 0x040000
 		QValueList<QChar>::iterator end = mRegs.end();
 		for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 			QStringList list;
 		   	list << YZSession::mRegisters.getRegister( *it )[ 0 ] + modifiers + _key;
 			YZSession::mRegisters.setRegister( *it, list);
 		}
+#else
+		for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
+			QStringList list;
+		   	list << YZSession::mRegisters.getRegister( mRegs.at(ab) )[ 0 ] + modifiers + _key;
+			YZSession::mRegisters.setRegister( mRegs.at(ab), list);
+		}
+#endif
 	}
 
 	if ( modifiers.contains ("<SHIFT>")) {//usefull ?
+#if QT_VERSION < 0x040000
 		key = key.upper();
+#else
+		key = key.toUpper();
+#endif
 		modifiers.remove( "<SHIFT>" );
 	}
 
@@ -382,7 +410,11 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					QStringList results = YZSession::events->exec("INDENT_ON_ENTER", this);
 					if (results.count() > 0 ) {
 						if (results[0].length()!=0) {
+#if QT_VERSION < 0x040000
 							mBuffer->action()->replaceLine( this, mainCursor->bufferY(), results[0] + mBuffer->textline( mainCursor->bufferY() ).stripWhiteSpace() );
+#else
+							mBuffer->action()->replaceLine( this, mainCursor->bufferY(), results[0] + mBuffer->textline( mainCursor->bufferY() ).trimmed() );
+#endif
 							gotoxy(results[0].length(),mainCursor->bufferY());
 						}
 					}
@@ -801,7 +833,11 @@ YZSelectionMap YZView::visualSelection() {
 void YZView::reindent( unsigned int X, unsigned int Y ) {
 	yzDebug() << "Reindent " << endl;
 	QRegExp rx("^(\\t*\\s*\\t*\\s*).*$"); //regexp to get all tabs and spaces
+#if QT_VERSION < 0x040000
 	QString currentLine = mBuffer->textline( Y ).stripWhiteSpace();
+#else
+	QString currentLine = mBuffer->textline( Y ).trimmed();
+#endif
 	bool found = false;
 	YZCursor *cur = new YZCursor ( this, X, Y );
 	YZCursor match = mBuffer->action()->match(this, *cur, &found);
@@ -830,7 +866,11 @@ void YZView::indent() {
 		return; //Shouldn't happen
 	}
 	QString indentString = rxLeadingWhiteSpace.cap( 1 );
+#if QT_VERSION < 0x040000
 	if ( mainCursor->bufferX() == currentLine.length() && currentLine.stripWhiteSpace().endsWith( indentMarker ) ) {
+#else
+	if ( mainCursor->bufferX() == currentLine.length() && currentLine.trimmed().endsWith( indentMarker ) ) {
+#endif
 		//yzDebug() << "Indent marker found" << endl;
 		// This should probably be tabstop...
 		indentString.append( "\t" );
@@ -838,7 +878,11 @@ void YZView::indent() {
 	//yzDebug() << "Indent string = \"" << indentString << "\"" << endl;
 	mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 	ypos++;
+#if QT_VERSION < 0x040000
 	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).stripWhiteSpace() );
+#else
+	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).trimmed() );
+#endif
 	gotoxy( indentString.length(), ypos );
 	//yzDebug() << "Leaving YZView::indent" << endl;
 }
@@ -1200,7 +1244,11 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 			selectionPool->addSelection( "VISUAL", bBegin, bEnd, dBegin, dEnd );
 //			yzDebug() << "visual selection : from " << bBegin << " to " << bEnd << endl;
 #ifndef WIN32
+#if QT_VERSION < 0x040000
 			if ( QPaintDevice::x11AppDisplay() )
+#else
+				if ( QX11Info::display() )
+#endif
 #endif
 				QApplication::clipboard()->setText( mBuffer->getText( bBegin, bEnd ).join( "\n" ), QClipboard::Selection );
 
@@ -1210,10 +1258,13 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 //			yzDebug() << "VISUAL MODE : old = " << dOldBegin << " -> " << dOldEnd << endl;
 //			yzDebug() << "              new = " << dBegin << " -> " << dEnd << endl;
 
+#if QT_VERSION < 0x040000
 			sendPaintEvent( QMIN( dOldBegin, dBegin ), QMAX( dOldEnd, dEnd ) );
-//			selectionPool->debug( "DRAW" );
 			removePaintEvent( QMAX( dOldBegin, dBegin ), QMIN( dOldEnd, dEnd ) );
-//			selectionPool->debug( "DRAW" );
+#else
+			sendPaintEvent( qMin( dOldBegin, dBegin ), qMax( dOldEnd, dEnd ) );
+			removePaintEvent( qMax( dOldBegin, dBegin ), qMin( dOldEnd, dEnd ) );
+#endif
 		}
 
 		if ( !isLineVisible( mainCursor->screenY() ) ) {
@@ -1287,14 +1338,22 @@ QString YZView::moveDown( unsigned int nb_lines, bool applyCursor ) {
 	return moveDown( mainCursor, nb_lines, applyCursor );
 }
 QString YZView::moveDown( YZViewCursor* viewCursor, unsigned int nb_lines, bool applyCursor ) {
+#if QT_VERSION < 0x040000
 	gotoStickyCol( viewCursor, QMIN( viewCursor->bufferY() + nb_lines, mBuffer->lineCount() - 1 ), applyCursor );
+#else
+	gotoStickyCol( viewCursor, qMin( viewCursor->bufferY() + nb_lines, mBuffer->lineCount() - 1 ), applyCursor );
+#endif
 	return QString::null;
 }
 QString YZView::moveUp( unsigned int nb_lines, bool applyCursor ) {
 	return moveUp( mainCursor, nb_lines, applyCursor );
 }
 QString YZView::moveUp( YZViewCursor* viewCursor, unsigned int nb_lines, bool applyCursor ) {
-	gotoStickyCol( viewCursor, QMAX( viewCursor->bufferY() - nb_lines, 0 ), applyCursor );
+#if QT_VERSION < 0x040000
+	gotoStickyCol( viewCursor, QMAX( ((int)viewCursor->bufferY()) - (int)nb_lines, 0 ), applyCursor );
+#else
+	gotoStickyCol( viewCursor, qMax( ((int)viewCursor->bufferY()) - (int)nb_lines, 0 ), applyCursor );
+#endif
 	return QString::null;
 }
 
@@ -1703,7 +1762,11 @@ unsigned int YZView::getDrawCurrentLeft() {
 void YZView::updateCurLine( ) {
 	sCurLineLength = sCurLine.length();
 	if ( wrap && ! drawMode ) {
+#if QT_VERSION < 0x040000
 		unsigned int nbTabs = sCurLine.contains( '\t' );
+#else
+		unsigned int nbTabs = sCurLine.count( '\t' );
+#endif
 		if ( isFontFixed ) rMinCurLineLength = sCurLineLength;
 		else rMinCurLineLength = GET_STRING_WIDTH( QString( sCurLine ).remove( '\t' ) ) + nbTabs * spaceWidth;
 		rCurLineLength = rMinCurLineLength + nbTabs * ( tablength - spaceWidth );
@@ -2211,9 +2274,9 @@ void YZView::setLocalQStringOption( const QString& key, const QString& option ) 
 
 QStringList YZView::getLocalStringListOption( const QString& option ) {
 	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
-		return YZSession::mOptions.readQStringListEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QStringList::split(";","") );
+		return YZSession::mOptions.readQStringListEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QStringList() );
 	else
-		return YZSession::mOptions.readQStringListEntry( "Global\\" + option, QStringList::split(";","") );
+		return YZSession::mOptions.readQStringListEntry( "Global\\" + option, QStringList() );
 }
 
 void YZView::setLocalQStringListOption( const QString& key, const QStringList& option ) {
@@ -2278,11 +2341,16 @@ YZCursor *YZView::getBufferCursor() {
 	return mainCursor->buffer();
 }
 
+#if QT_VERSION < 0x040000
 void YZView::recordMacro( const QValueList<QChar> &regs ) {
+#else
+void YZView::recordMacro( const QList<QChar> &regs ) {
+#endif
 	mRegs = regs;
 }
 
 void YZView::stopRecordMacro() {
+#if QT_VERSION < 0x040000
 	QValueList<QChar>::iterator end = mRegs.end();
 	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 		QStringList list;
@@ -2291,6 +2359,15 @@ void YZView::stopRecordMacro() {
 		YZSession::mRegisters.setRegister( *it, list);
 	}
 	mRegs = QValueList<QChar>();
+#else
+	for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
+		QStringList list;
+		QString ne = YZSession::mRegisters.getRegister(mRegs.at(ab))[0];
+		list << ne.mid( 0, ne.length() - 1 ); //remove the last 'q' which was recorded ;)
+		YZSession::mRegisters.setRegister( mRegs.at(ab), list);
+	}
+	mRegs = QList<QChar>();
+#endif
 }
 
 void YZView::setPaintAutoCommit( bool enable ) {

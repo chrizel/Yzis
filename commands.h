@@ -31,12 +31,16 @@
 #ifndef YZ_COMMANDS_H
 #define YZ_COMMANDS_H
 
-#include <qstring.h>
-#include <qmap.h>
-#include <qptrlist.h>
-#include <qstringlist.h>
 #include "selection.h"
 #include "cursor.h"
+#if QT_VERSION < 0x040000
+#include <qstring.h>
+#include <qmap.h>
+#include <qstringlist.h>
+#else
+#include <QList>
+#include <QStringList>
+#endif
 
 class YZBuffer;
 class YZView;
@@ -50,7 +54,11 @@ struct YZCommandArgs {
 	//the origin of inputs
 	YZView *view;
 	//the registers to operate upon
+#if QT_VERSION < 0x040000
 	QValueList<QChar> regs;
+#else
+	QList<QChar> regs;
+#endif
 	//exec this number of times the command
 	unsigned int count;
 	//was the count gave by the user
@@ -60,7 +68,11 @@ struct YZCommandArgs {
 	//the visual mode selection
 	YZSelectionMap selection;
 
+#if QT_VERSION < 0x040000
 	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, bool user, QString a) {
+#else
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, unsigned int c, bool user, QString a) {
+#endif
 		cmd=_cmd;
 		view=v;
 		regs=r;
@@ -68,7 +80,11 @@ struct YZCommandArgs {
 		arg=a;
 		usercount=user;
 	}
+#if QT_VERSION < 0x040000
 	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, bool user, const YZSelectionMap &s) {
+#else
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, unsigned int c, bool user, const YZSelectionMap &s) {
+#endif
 		cmd=_cmd;
 		view=v;
 		regs=r;
@@ -138,7 +154,11 @@ public:
 	~YZCommandPool();
 
 	// this is not a QValueList because there is no constructor with no arguments for YZCommands
+#if QT_VERSION < 0x040000
 	QPtrList<const YZCommand> commands;
+#else
+	QList<YZCommand*> commands;
+#endif
 	QStringList textObjects;
 
 	void initPool();

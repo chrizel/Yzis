@@ -21,8 +21,6 @@
  * $Id: printer.cpp 761 2004-05-30 18:02:55Z bmc $
  */
 
-#include <qpainter.h>
-#include <qpaintdevicemetrics.h>
 #include <math.h>
 
 #include "qtprinter.h"
@@ -30,9 +28,15 @@
 #include "debug.h"
 #include "session.h"
 #include "buffer.h"
+#if QT_VERSION < 0x040000
+#include <qpainter.h>
+#include <qpaintdevicemetrics.h>
+#else
+#include <QPainter>
+#include <QPaintDevice>
+#endif
 
 YZQtPrinter::YZQtPrinter( YZView *view ) : QPrinter(QPrinter::PrinterResolution) {
-
 	mView = view;
 
 	setPageSize( QPrinter::A4 );
@@ -59,9 +63,14 @@ void YZQtPrinter::doPrint( ) {
 	f.setStyleHint( QFont::TypeWriter );
 	p.setFont( f );
 
+#if QT_VERSION < 0x040000
 	QPaintDeviceMetrics pdm( this );
 	unsigned int height = pdm.height();
 	unsigned int width = pdm.width();
+#else
+	unsigned int height = this->height();
+	unsigned int width = this->width();
+#endif
 
 
 	unsigned int linespace = p.fontMetrics().lineSpacing();
@@ -116,7 +125,11 @@ void YZQtPrinter::doPrint( ) {
 				if ( rightleft ) {
 					x = width - ( marginLeft - 1 ) * maxwidth;
 				} else {
+#if QT_VERSION < 0x040000
 					num = num.rightJustify( marginLeft - 1, ' ' );
+#else
+					num = num.rightJustified( marginLeft - 1, ' ' );
+#endif
 					x = 0;
 				}
 				p.drawText( x, curY, num );
@@ -128,11 +141,19 @@ void YZQtPrinter::doPrint( ) {
 			QColor c = mView->drawColor( );
 			if ( c.isValid() && c != Qt::white ) p.setPen( c );
 			else p.setPen( Qt::black );
+#if QT_VERSION < 0x040000
 			QString disp = mView->drawChar();
 			if ( rightleft )
 				disp = disp.rightJustify( mView->drawLength(), mView->fillChar() );
 			else
 				disp = disp.leftJustify( mView->drawLength(), mView->fillChar() );
+#else
+			QString disp = QString(mView->drawChar());
+			if ( rightleft )
+				disp = disp.rightJustified( mView->drawLength(), mView->fillChar() );
+			else
+				disp = disp.leftJustified( mView->drawLength(), mView->fillChar() );
+#endif
 			p.drawText( rightleft ? width - curX - maxwidth : curX, curY, disp );
 			curX += mView->drawLength( ) * maxwidth;
 		}

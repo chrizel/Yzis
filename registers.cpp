@@ -28,6 +28,6 @@ void YZRegisters::setRegister( QChar c, const QStringList& value ) {
 	yzDebug() << "Register : " << c.latin1() << " Value : " << value << endl;
 }
 
-QStringList& YZRegisters::getRegister( QChar c ) const {
-	return ( QStringList& )mRegisters[ c ];
+QStringList& YZRegisters::getRegister( QChar c ) {
+	return /*( QStringList& )*/mRegisters[ c ];
 }

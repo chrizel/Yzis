@@ -25,10 +25,6 @@
  * $Id$
  */
 
-#include <qobject.h>
-#include <qfileinfo.h>
-#include <qdir.h>
-
 #include "excommands.h"
 #include "buffer.h"
 #include "session.h"
@@ -39,12 +35,21 @@
 #include "mapping.h"
 #include "action.h"
 #include "schema.h"
+#if QT_VERSION < 0x040000
+#include <qobject.h>
+#include <qfileinfo.h>
+#include <qdir.h>
+#else
+#include <QDir>
+#endif
+
 
 YZExRange::YZExRange( const QString& regexp, ExRangeMethod pm ) {
 	mKeySeq = regexp;
 	mPoolMethod = pm;
 	mRegexp = QRegExp( "^(" + mKeySeq + ")([+\\-]\\d*)?(.*)$" );
 }
+
 YZExCommand::YZExCommand( const QString& input, ExPoolMethod pm, const QStringList& longName, bool word ) {
 	mKeySeq = input;
 	mPoolMethod = pm;
@@ -58,9 +63,16 @@ YZExCommand::YZExCommand( const QString& input, ExPoolMethod pm, const QStringLi
 
 YZExCommandPool::YZExCommandPool() {
 	commands.clear();
-	commands.setAutoDelete( true );
 	ranges.clear();
+#if QT_VERSION < 0x040000
+	commands.setAutoDelete( true );
 	ranges.setAutoDelete( true );
+#else
+	for (int ab = 0 ; ab < commands.size() ; ++ab) 
+		delete commands.at(ab);
+	for (int ab = 0 ; ab < ranges.size() ; ++ab) 
+		delete ranges.at(ab);
+#endif
 }
 
 YZExCommandPool::~YZExCommandPool() {
@@ -80,42 +92,59 @@ void YZExCommandPool::initPool() {
 
 	// commands
 	commands.append( new YZExCommand( "(x|wq?)(a(ll)?)?", &YZExCommandPool::write ) );
-	commands.append( new YZExCommand( "w(rite)?", &YZExCommandPool::write , "write" ));
+	commands.append( new YZExCommand( "w(rite)?", &YZExCommandPool::write , QStringList("write") ));
+#if QT_VERSION < 0x040000
 	commands.append( new YZExCommand( "q(uit|a(ll)?)?", &YZExCommandPool::quit, QStringList::split(":","quit:qall") ) );
-	commands.append( new YZExCommand( "bn(ext)?", &YZExCommandPool::buffernext, "bnext" ) );
-	commands.append( new YZExCommand( "bp(revious)?", &YZExCommandPool::bufferprevious, "bprevious" ) );
-	commands.append( new YZExCommand( "bd(elete)?", &YZExCommandPool::bufferdelete, "bdelete" ) );
-	commands.append( new YZExCommand( "e(dit)?", &YZExCommandPool::edit, "edit" ) );
-	commands.append( new YZExCommand( "mkyzisrc", &YZExCommandPool::mkyzisrc, "mkyzisrc" ) );
-	commands.append( new YZExCommand( "setlocal", &YZExCommandPool::setlocal, "setlocal" ) );
-	commands.append( new YZExCommand( "set", &YZExCommandPool::set, "set" ) );
-	commands.append( new YZExCommand( "s(ubstitute)?", &YZExCommandPool::substitute, "substitute" ) );
-	commands.append( new YZExCommand( "hardcopy", &YZExCommandPool::hardcopy, "hardcopy" ) );
-	commands.append( new YZExCommand( "open", &YZExCommandPool::gotoOpenMode, "open" ) );
-	commands.append( new YZExCommand( "visual", &YZExCommandPool::gotoCommandMode, "visual" ) );
-	commands.append( new YZExCommand( "preserve", &YZExCommandPool::preserve, "preserve" ) );
-	commands.append( new YZExCommand( "lua", &YZExCommandPool::lua, "lua" ) );
-	commands.append( new YZExCommand( "source", &YZExCommandPool::source, "source" ) );
-	commands.append( new YZExCommand( "map", &YZExCommandPool::map, "map" ) );
-	commands.append( new YZExCommand( "imap", &YZExCommandPool::imap, "imap" ) );
-	commands.append( new YZExCommand( "[<>]", &YZExCommandPool::indent, false ));
-	commands.append( new YZExCommand( "ene(w)?", &YZExCommandPool::enew, "enew" ));
-	commands.append( new YZExCommand( "syn(tax)?", &YZExCommandPool::syntax, "syntax" ));
-	commands.append( new YZExCommand( "highlight", &YZExCommandPool::highlight, "highlight" ));
-	commands.append( new YZExCommand( "split", &YZExCommandPool::split, "split" ));
+#else
+	commands.append( new YZExCommand( "q(uit|a(ll)?)?", &YZExCommandPool::quit, ( QStringList() << "quit" << "qall") ) );
+#endif
+	commands.append( new YZExCommand( "bn(ext)?", &YZExCommandPool::buffernext, QStringList("bnext") ) );
+	commands.append( new YZExCommand( "bp(revious)?", &YZExCommandPool::bufferprevious, QStringList("bprevious") ) );
+	commands.append( new YZExCommand( "bd(elete)?", &YZExCommandPool::bufferdelete, QStringList("bdelete") ) );
+	commands.append( new YZExCommand( "e(dit)?", &YZExCommandPool::edit, QStringList("edit") ) );
+	commands.append( new YZExCommand( "mkyzisrc", &YZExCommandPool::mkyzisrc, QStringList("mkyzisrc") ) );
+	commands.append( new YZExCommand( "setlocal", &YZExCommandPool::setlocal, QStringList("setlocal") ) );
+	commands.append( new YZExCommand( "set", &YZExCommandPool::set, QStringList("set") ) );
+	commands.append( new YZExCommand( "s(ubstitute)?", &YZExCommandPool::substitute, QStringList("substitute") ) );
+	commands.append( new YZExCommand( "hardcopy", &YZExCommandPool::hardcopy, QStringList("hardcopy") ) );
+	commands.append( new YZExCommand( "open", &YZExCommandPool::gotoOpenMode, QStringList("open" )) );
+	commands.append( new YZExCommand( "visual", &YZExCommandPool::gotoCommandMode, QStringList("visual") ) );
+	commands.append( new YZExCommand( "preserve", &YZExCommandPool::preserve, QStringList("preserve") ) );
+	commands.append( new YZExCommand( "lua", &YZExCommandPool::lua, QStringList("lua" )) );
+	commands.append( new YZExCommand( "source", &YZExCommandPool::source, QStringList("source") ) );
+	commands.append( new YZExCommand( "map", &YZExCommandPool::map, QStringList("map") ) );
+	commands.append( new YZExCommand( "imap", &YZExCommandPool::imap, QStringList("imap") ) );
+	commands.append( new YZExCommand( "[<>]", &YZExCommandPool::indent, QStringList(), false ));
+	commands.append( new YZExCommand( "ene(w)?", &YZExCommandPool::enew, QStringList("enew") ));
+	commands.append( new YZExCommand( "syn(tax)?", &YZExCommandPool::syntax, QStringList("syntax")));
+	commands.append( new YZExCommand( "highlight", &YZExCommandPool::highlight, QStringList("highlight") ));
+	commands.append( new YZExCommand( "split", &YZExCommandPool::split, QStringList("split") ));
 }
 
 QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
 	QString _input = inputs;
 	*matched = false;
+#if QT_VERSION < 0x040000
 	for ( ranges.first(); ! *matched && ranges.current(); ranges.next() ) {
 		QRegExp reg( ranges.current()->regexp() );
+#else
+	for ( int ab = 0 ; ab < ranges.size() ; ++ab ) {
+		QRegExp reg( ranges.at(ab)->regexp() );
+#endif
 		*matched = reg.exactMatch( _input );
 		if ( *matched ) {
 			unsigned int nc = reg.numCaptures();
+#if QT_VERSION < 0x040000
 			*range = (this->*( ranges.current()->poolMethod() )) (YZExRangeArgs( ranges.current(), view, reg.cap( 1 ) ));
+#else
+			*range = (this->*( ranges.at(ab)->poolMethod() )) (YZExRangeArgs( ranges.at(ab), view, reg.cap( 1 ) ));
+#endif
 			QString s_add = reg.cap( nc - 1 );
+#if QT_VERSION < 0x040000
 			yzDebug() << "matched " << ranges.current()->keySeq() << " : " << *range << " and " << s_add << endl;
+#else
+			yzDebug() << "matched " << ranges.at(ab)->keySeq() << " : " << *range << " and " << s_add << endl;
+#endif
 			if ( s_add.length() > 0 ) { // a range can be followed by +/-nb
 				int add = 1;
 				if ( s_add.length() > 1 ) add = s_add.mid( 1 ).toUInt();
@@ -131,8 +160,12 @@ QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* r
 bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 	bool ret = false, matched;
 	int from, to, current;
+#if QT_VERSION < 0x040000
 	YZView * it;
 	QString _input = inputs.stripWhiteSpace();
+#else
+	QString _input = inputs.trimmed();
+#endif
 	yzDebug() << "ExCommand : " << _input << endl;
 	_input = _input.replace( QRegExp( "^%" ), "1,$" );
 	// range
@@ -157,20 +190,37 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 	}
 
 	matched = false;
+#if QT_VERSION < 0x040000
 	for ( commands.first(); ! matched && commands.current(); commands.next() ) {
 		QRegExp reg(commands.current()->regexp());
+#else
+	for ( int ab = 0 ; ab < commands.size() ; ++ab ) {
+		QRegExp reg(commands.at(ab)->regexp());
+#endif
 		matched = reg.exactMatch( _input );
 		if ( matched ) {
 			unsigned int nc = reg.numCaptures();
+#if QT_VERSION < 0x040000
 			yzDebug() << "matched " << commands.current()->keySeq() << " " << reg.cap( 1 ) << "," << reg.cap( nc ) << endl;
+#else
+			yzDebug() << "matched " << commands.at(ab)->keySeq() << " " << reg.cap( 1 ) << "," << reg.cap( nc ) << endl;
+#endif
 			QString arg = reg.cap( nc );
 			bool force = arg[ 0 ] == '!';
 			if ( force ) arg = arg.mid( 1 );
+#if QT_VERSION < 0x040000
 			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 				it->setPaintAutoCommit( false );
 			(this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.stripWhiteSpace(), from, to, force ) );
 			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 				it->commitPaintEvent();
+#else
+			for ( int bc = 0 ; bc < view->myBuffer()->views().size() ; ++bc )
+				view->myBuffer()->views().at(bc)->setPaintAutoCommit( false );
+			(this->*( commands.at(ab)->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.trimmed(), from, to, force ) );
+			for ( int bc = 0 ; bc < view->myBuffer()->views().size() ; ++bc )
+				view->myBuffer()->views().at(bc)->commitPaintEvent();
+#endif
 		}
 	}
 	if ( current != to ) {
@@ -194,7 +244,11 @@ int YZExCommandPool::rangeCurrentLine( const YZExRangeArgs& args ) {
 	return args.view->getBufferCursor()->getY();
 }
 int YZExCommandPool::rangeLastLine( const YZExRangeArgs& args ) {
-	return QMAX( args.view->myBuffer()->lineCount() - 1, 0 );
+#if QT_VERSION < 0x040000
+	return QMAX( (int)args.view->myBuffer()->lineCount() - 1, 0 );
+#else
+	return qMax( (int)args.view->myBuffer()->lineCount() - 1, 0 );
+#endif
 }
 int YZExCommandPool::rangeMark( const YZExRangeArgs& args ) {
 	bool found = false;
@@ -214,7 +268,7 @@ int YZExCommandPool::rangeVisual( const YZExRangeArgs& args ) {
 	return -1;
 }
 int YZExCommandPool::rangeSearch( const YZExRangeArgs& args ) {
-	bool reverse = args.arg[ 0 ] == "?";
+	bool reverse = args.arg[ 0 ] == QChar('?');
 
 	bool found;
 	YZCursor pos;
@@ -326,12 +380,17 @@ QString YZExCommandPool::bufferprevious ( const YZExCommandArgs& args ) {
 QString YZExCommandPool::bufferdelete ( const YZExCommandArgs& args ) {
 	yzDebug() << "Delete buffer " << args.view->myBuffer()->myId << endl;
 
+	args.view->myBuffer()->clearSwap();
+#if QT_VERSION < 0x040000
 	QPtrList<YZView> l = args.view->myBuffer()->views();
 	YZView *v;
-	args.view->myBuffer()->clearSwap();
-	for ( v = l.first(); v; v=l.next() ) {
+	for ( v = l.first(); v; v=l.next() )
 		args.view->mySession()->deleteView( args.view->myId );
-	}
+#else
+	int nbV = args.view->myBuffer()->views().size();
+	for ( int ab = 0 ; ab < nbV ; ++ab )
+		args.view->mySession()->deleteView( args.view->myId );
+#endif
 
 	return QString::null;
 }
@@ -356,9 +415,15 @@ QString YZExCommandPool::edit ( const YZExCommandArgs& args ) {
 	}
 	//check the file name
 	if ( path.length() >= 1 && path[ 0 ] == '~' ) // expand ~
+#if QT_VERSION < 0x040000
 		path = QDir::homeDirPath() + path.mid( 1 );
 	QFileInfo fi ( path );
 	path = fi.absFilePath();
+#else
+		path = QDir::homePath() + path.mid( 1 );
+	QFileInfo fi ( path );
+	path = fi.absoluteFilePath();
+#endif
 	yzDebug() << "New buffer / view : " << path << endl;
 	args.view->mySession()->createBuffer( path );
 	return QString::null;
@@ -379,9 +444,15 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 	YZSession::mOptions.setGroup("Global");
 
 	if ( rx.exactMatch( args.arg ) ) {
+#if QT_VERSION < 0x040000
 		QString option = rx.cap( 1 ).simplifyWhiteSpace();
 		bool hasOperator = rx.numCaptures() == 3; // do we have a +/- in the set command ?
 		QString value = hasOperator ? rx.cap( 3 ).simplifyWhiteSpace() : rx.cap( 2 ).simplifyWhiteSpace();
+#else
+		QString option = rx.cap( 1 ).trimmed();
+		bool hasOperator = rx.numCaptures() == 3; // do we have a +/- in the set command ?
+		QString value = hasOperator ? rx.cap( 3 ).trimmed() : rx.cap( 2 ).trimmed();
+#endif
 		YZInternalOption *opt = YZSession::mOptions.getOption(option);
 		if ( !opt ) {
 			YZSession::me->popupMessage( QObject::tr("Invalid option given : ") + option);
@@ -429,7 +500,11 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 				break;
 		}
 	} else if ( rx2.exactMatch( args.arg )) {
+#if QT_VERSION < 0x040000
 		YZInternalOption *opt = YZSession::mOptions.getOption(rx2.cap( 1 ).simplifyWhiteSpace());
+#else
+		YZInternalOption *opt = YZSession::mOptions.getOption(rx2.cap( 1 ).trimmed());
+#endif
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
 			return QString::null;
@@ -439,14 +514,28 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
 				return QString::null;
 			case view_opt :
-				if ( view ) view->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
+				if ( view ) 
+#if QT_VERSION < 0x040000
+					view->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
+#else
+					view->setLocalBoolOption( rx2.cap( 1 ).trimmed(), false);
+#endif
 				break;
 			case buffer_opt:
-				if ( buffer ) buffer->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
+				if ( buffer ) 
+#if QT_VERSION < 0x040000
+					buffer->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
+#else
+					buffer->setLocalBoolOption( rx2.cap( 1 ).trimmed(), false);
+#endif
 				break;
 		}
 	} else if ( rx3.exactMatch( args.arg ) ) {
+#if QT_VERSION < 0x040000
 		YZInternalOption *opt = YZSession::mOptions.getOption(rx3.cap( 1 ).simplifyWhiteSpace());
+#else
+		YZInternalOption *opt = YZSession::mOptions.getOption(rx3.cap( 1 ).trimmed());
+#endif
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
 			return QString::null;
@@ -456,10 +545,20 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
 				return QString::null;
 			case view_opt :
-				if ( view ) view->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
+				if ( view ) 
+#if QT_VERSION < 0x040000
+					view->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
+#else
+					view->setLocalBoolOption( rx3.cap( 1 ).trimmed(), true);
+#endif
 				break;
 			case buffer_opt:
-				if ( buffer ) buffer->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
+				if ( buffer ) 
+#if QT_VERSION < 0x040000
+					buffer->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
+#else
+					buffer->setLocalBoolOption( rx3.cap( 1 ).trimmed(), true);
+#endif
 				break;
 		}
 	} else {
@@ -480,9 +579,14 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 
 	if ( rx.exactMatch( args.arg ) ) {
 		YZSession::mOptions.setGroup("Global");
-		QString option = rx.cap( 1 ).simplifyWhiteSpace();
 		bool hasOperator = rx.numCaptures() == 3; // do we have a +/- in the set command ?
+#if QT_VERSION < 0x040000
+		QString option = rx.cap( 1 ).simplifyWhiteSpace();
 		QString value = hasOperator ? rx.cap( 3 ).simplifyWhiteSpace() : rx.cap( 2 ).simplifyWhiteSpace();
+#else
+		QString option = rx.cap( 1 ).trimmed();
+		QString value = hasOperator ? rx.cap( 3 ).trimmed() : rx.cap( 2 ).trimmed();
+#endif
 		YZInternalOption *opt = YZSession::mOptions.getOption(option);
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given : ") + option);
@@ -511,10 +615,18 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 		YZSession::setQStringOption( option, value );
 	} else if ( rx2.exactMatch( args.arg )) {
 		YZSession::mOptions.setGroup("Global");
+#if QT_VERSION < 0x040000
 		YZSession::setBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
+#else
+		YZSession::setBoolOption( rx2.cap( 1 ).trimmed(), false);
+#endif
 	} else if ( rx3.exactMatch( args.arg ) ) {
 		YZSession::mOptions.setGroup("Global");
+#if QT_VERSION < 0x040000
 		YZSession::setBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
+#else
+		YZSession::setBoolOption( rx3.cap( 1 ).trimmed(), true);
+#endif
 	} else {
 		YZSession::me->popupMessage( QObject::tr( "Invalid option given" ) );
 		return QString::null;
@@ -527,15 +639,27 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 }
 
 QString YZExCommandPool::mkyzisrc ( const YZExCommandArgs& ) {
+#if QT_VERSION < 0x040000
 	YZSession::mOptions.saveTo( QDir::currentDirPath() + "/yzis.conf", "", "HL Cache" );
+#else
+	YZSession::mOptions.saveTo( QDir::currentPath() + "/yzis.conf", "", "HL Cache" );
+#endif
 	return QString::null;
 }
 
 QString YZExCommandPool::substitute( const YZExCommandArgs& args ) {
+#if QT_VERSION < 0x040000
 	unsigned int idx = args.input.find("substitute");
+#else
+	unsigned int idx = args.input.indexOf("substitute");
+#endif
 	unsigned int len = 10;
 	if (static_cast<unsigned int>(-1)==idx) {
+#if QT_VERSION < 0x040000
 		idx = args.input.find("s");
+#else
+		idx = args.input.indexOf("s");
+#endif
 		len = 1;
 	}
 	unsigned int idxb,idxc;
@@ -543,9 +667,15 @@ QString YZExCommandPool::substitute( const YZExCommandArgs& args ) {
 	QChar c;
 	while ((c = args.input.at(tidx)).isSpace())
 		tidx++;
+#if QT_VERSION < 0x040000
 	idx = args.input.find(c, tidx);
 	idxb = args.input.find(c, idx+1);
 	idxc = args.input.find(c, idxb+1);
+#else
+	idx = args.input.indexOf(c, tidx);
+	idxb = args.input.indexOf(c, idx+1);
+	idxc = args.input.indexOf(c, idxb+1);
+#endif
 	QString search = args.input.mid( idx+1, idxb-idx-1 );
 	QString replace = args.input.mid( idxb+1, idxc-idxb-1 );
 	QString options = args.input.mid( idxc+1 );
@@ -575,7 +705,11 @@ QString YZExCommandPool::hardcopy( const YZExCommandArgs& args ) {
 	}
 	QString path = args.arg;
 	QFileInfo fi ( path );
+#if QT_VERSION < 0x040000
 	path = fi.absFilePath( );
+#else
+	path = fi.absoluteFilePath( );
+#endif
 	args.view->printToFile( path );
 	return QString::null;
 }
@@ -638,16 +772,28 @@ QString YZExCommandPool::syntax( const YZExCommandArgs& args ) {
 
 QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 // :highlight Defaults Comment fg= selfg= bg= selbg= italic nobold underline strikeout
-	QStringList list = QStringList::split(" ", args.arg, false);
+#if QT_VERSION < 0x040000
+	QStringList list = QStringList::split(" ", args.arg);
+#else
+	QStringList list = args.arg.split(" ");
+#endif
 	QStringList::Iterator it = list.begin(), end = list.end();
 	yzDebug() << list << endl;
 	if (list.count() < 3) return QString::null; //at least 3 parameters...
 	QString style = list[0];
 	QString type = list[1];
+#if QT_VERSION < 0x040000
 	list.remove(it++); list.remove(it++);
+#else
+	list.erase(it++); list.erase(it++);
+#endif
 	if (!list[0].contains("=") && !list[0].endsWith("bold") && !list[0].endsWith("italic") && !list[0].endsWith("underline") && !list[0].endsWith("strikeout")) {
 		type += " " + list[0];
+#if QT_VERSION < 0x040000
 		list.remove(it++);
+#else
+		list.erase(it++);
+#endif
 	}
 
 	//get the current settings for this option
@@ -655,7 +801,11 @@ QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 	if ( style == "Defaults" || style == "Default" ) 
 		style = "Default Item Styles - Schema ";
 	else { 
+#if QT_VERSION < 0x040000
 		style = "Highlighting " + style.simplifyWhiteSpace() + " - Schema ";
+#else
+		style = "Highlighting " + style.trimmed() + " - Schema ";
+#endif
 		idx++;
 	}
 	style += YZSession::me->schemaManager()->name(0); //XXX make it use the 'current' schema

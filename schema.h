@@ -27,8 +27,11 @@
 
 #include "syntaxhighlight.h"
 
+#if QT_VERSION < 0x040000
 #include <qstringlist.h>
 #include <qintdict.h>
+#else
+#endif
 
 class YzisSchemaManager
 {

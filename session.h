@@ -288,7 +288,11 @@ class YZSession {
 		 * Retrieve a qstringlist option
 		 */
 		static QStringList getStringListOption( const QString& option ) {
+#if QT_VERSION < 0x040000
 			return YZSession::mOptions.readQStringListEntry( option, QStringList::split(";","") );
+#else
+			return YZSession::mOptions.readQStringListEntry( option, QStringList() );
+#endif
 		}
 
 		/**

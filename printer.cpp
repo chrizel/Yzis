@@ -24,8 +24,6 @@
 
 #include "printer.h"
 #ifdef HAVE_LIBPS
-#include <qpainter.h>
-#include <qpaintdevicemetrics.h>
 #include <math.h>
 extern "C" {
 	#include <libps/pslib.h>
@@ -36,6 +34,13 @@ extern "C" {
 #include "buffer.h"
 #include "session.h"
 #include "debug.h"
+#if QT_VERSION < 0x040000
+#include <qpainter.h>
+#include <qpaintdevicemetrics.h>
+#else
+#include <QPaintDevice>
+#include <QPainter>
+#endif
 
 YZPrinter::YZPrinter( YZView *view ) /*: QPrinter(QPrinter::PrinterResolution) */{
 	PS_mp_init();
@@ -85,9 +90,14 @@ void YZPrinter::doPrint( ) {
 	f.setStyleHint( QFont::TypeWriter );
 	p.setFont( f );
 
+#if QT_VERSION < 0x040000
 	QPaintDeviceMetrics pdm( &lpr );
 	unsigned int height = pdm.height();
 	unsigned int width = pdm.width();
+#else
+	unsigned int height = lpr.height();
+	unsigned int width = lpr.width();
+#endif
 
 	unsigned int linespace = p.fontMetrics().lineSpacing();
 	unsigned int maxwidth = p.fontMetrics().maxWidth();
@@ -165,7 +175,11 @@ void YZPrinter::doPrint( ) {
 				convertColor(Qt::gray, red, green, blue);
 				PS_setcolor(doc, "fillstroke", "rgb", red, green, blue, 0.0);
 				PS_moveto(doc, 0, curY);
+#if QT_VERSION < 0x040000
 				PS_show(doc, QString::number(lineNumber).rightJustify(marginLeft-1, ' ').latin1());
+#else
+				PS_show(doc, QString::number(lineNumber).rightJustified(marginLeft-1, ' ').latin1());
+#endif
 				lastLineNumber = lineNumber;
 			}
 		}

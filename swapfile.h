@@ -20,8 +20,11 @@
 #ifndef YZ_SWAPFILE
 #define YZ_SWAPFILE
 
+#if QT_VERSION < 0x040000
 #include <qstringlist.h>
 #include <qapplication.h>
+#else
+#endif
 #include "session.h"
 #include "undo.h"
 
@@ -83,7 +86,11 @@ class YZSwapFile {
 		/**
 		 * Translator helper
 		 */
+#if QT_VERSION < 0x040000
 		QString tr( const char *source, const char* = 0) { return qApp->translate( "YZSwapFile", source ); }
+#else
+		QString tr( const char *source, const char* = 0) { return QCoreApplication::translate( "YZSwapFile", source ); }
+#endif
 
 	private:
 		struct sE {
@@ -94,7 +101,11 @@ class YZSwapFile {
 		} sE;
 		typedef struct sE swapEntry;
 
+#if QT_VERSION < 0x040000
 		QValueList<swapEntry> mHistory;
+#else
+		QList<swapEntry> mHistory;
+#endif
 		YZBuffer *mParent;
 		QString mFilename;
 		bool mRecovering;

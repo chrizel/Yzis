@@ -122,8 +122,13 @@ class YZExCommandPool {
 		bool execCommand( YZView* view, const QString& inputs );
 
 	private :
+#if QT_VERSION < 0x040000
 		QPtrList<const YZExCommand> commands;
 		QPtrList<const YZExRange> ranges;
+#else
+		QList<YZExCommand*> commands;
+		QList<YZExRange*> ranges;
+#endif
 
 		QString parseRange( const QString& inputs, YZView* view, int* range, bool* matched );
 

@@ -24,8 +24,6 @@
  * $Id$
  */
 
-#include <qregexp.h>
-#include <qptrlist.h>
 #include <assert.h>
 #include "commands.h"
 #include "debug.h"
@@ -37,15 +35,27 @@
 #include "linesearch.h"
 #include "action.h"
 #include "mark.h"
+#if QT_VERSION < 0x040000
+#include <qregexp.h>
+#include <qptrlist.h>
+#else
+#include <QRegExp>
+#endif
 
 /**
  */
 YZCommandPool::YZCommandPool() {
 	commands.clear();
+#if QT_VERSION < 0x040000
 	commands.setAutoDelete(true);
+#endif
 }
 
 YZCommandPool::~YZCommandPool() {
+#if QT_VERSION >= 0x040000
+	for ( int ab = 0 ; ab < commands.size(); ++ab)
+		delete commands.at(ab);
+#endif
 	commands.clear();
 }
 
@@ -147,8 +157,12 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 	unsigned int count=1;
 	bool hadCount = false;
 	unsigned int i=0;
+#if QT_VERSION < 0x040000
 	QValueList<QChar> regs;
 	YZView* it;
+#else
+	QList<QChar> regs;
+#endif
 
 	// read in the register operations and the counts
 	while(i<inputs.length()) {
@@ -175,37 +189,64 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 		return NO_COMMAND_YET;
 
 	// collect all the commands
+#if QT_VERSION < 0x040000
 	QPtrList<const YZCommand> cmds, prevcmds;
 	cmds.setAutoDelete(false);
 	prevcmds.setAutoDelete(false);
+#else
+	QList<YZCommand*> cmds, prevcmds;
+#endif
 
 	unsigned int j=i;
 
 	// retrieve all the matching commands
 	// .. first the ones whose first key matches
 	if(j<inputs.length()) {
+#if QT_VERSION < 0x040000
 		for(commands.first(); commands.current(); commands.next())
 			if(commands.current()->keySeq().startsWith(inputs.mid(j,1)))
 				cmds.append(commands.current());
+#else
+		for (int ab = 0; ab < commands.size(); ++ab )
+			if (commands.at(ab)->keySeq().startsWith(inputs.mid(j,1)))
+				cmds.append(commands.at(ab));
+#endif
 	}
 	j++;
 	// .. then the ones whose next keys match, too
 	while(!cmds.isEmpty() && ++j<=inputs.length()) {
 		prevcmds=cmds;
+#if QT_VERSION < 0x040000
 		// delete all the commands that don't match
 		for(cmds.first(); cmds.current();)
 			if(cmds.current()->keySeq().startsWith(inputs.mid(i,j-i)))
 				cmds.next();
 			else
 				cmds.remove();
+#else
+		// delete all the commands that don't match
+		for ( int bc = 0 ; bc < cmds.size() ;  )
+			if(cmds.at(bc)->keySeq().startsWith(inputs.mid(i,j-i)))
+				++bc;
+			else
+				cmds.removeAt(bc);
+#endif
 	}
 	if(cmds.isEmpty()) {
 		// perhaps it is a command with an argument, isolate all those
+#if QT_VERSION < 0x040000
 		for(prevcmds.first(); prevcmds.current();)
 			if(prevcmds.current()->arg() == ARG_NONE)
 				prevcmds.remove();
 			else
 				prevcmds.next();
+#else
+		for ( int bc = 0 ; bc < prevcmds.size() ; )
+			if ( prevcmds.at(bc)->arg() == ARG_NONE )
+				prevcmds.removeAt(bc);
+			else
+				++bc;
+#endif
 		if(prevcmds.isEmpty())
 			return CMD_ERROR;
 		// it really is a command with an argument, read it in
@@ -235,12 +276,24 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 				else if(!textObjects.contains(s))
 					return CMD_ERROR;
 			} else {
+#if QT_VERSION < 0x040000
 				// motion, look for a motion that matches exactly
 				for(commands.first(); commands.current(); commands.next()) {
 					const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.current());
 					if(m && m->matches(s))
 						break;
 				}
+#else
+				bool matched = false;
+				for (int ab = 0; ab < commands.size(); ++ab) {
+					const YZNewMotion *m = dynamic_cast<const YZNewMotion*>(commands.at(ab));
+					if (m && m->matches(s)) {
+						matched = true;
+						break;
+					}
+				}
+#endif
+#if QT_VERSION < 0x040000
 				if(!commands.current()) {
 					// look for an incomplete motion
 					for(commands.first(); commands.current(); commands.next()) {
@@ -250,6 +303,16 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 					}
 					return CMD_ERROR;
 				}
+#else
+				if (!matched) {
+					for (int ab = 0; ab < commands.size(); ++ab ) {
+						const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.at(ab));
+						if(m && m->matches(s, false))
+							return OPERATOR_PENDING;
+
+					}
+				}
+#endif
 			}
 			break;
 		case ARG_CHAR:
@@ -266,20 +329,42 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 		}
 		// the argument is OK, go for it
 
+#if QT_VERSION < 0x040000
 		for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 			it->setPaintAutoCommit( false );
+#else
+		for ( int bc = 0; bc < view->myBuffer()->views().size(); ++bc )
+			view->myBuffer()->views().at(bc)->setPaintAutoCommit(false);
+#endif
+
 		(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, s));
+
+#if QT_VERSION < 0x040000
 		for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 			it->commitPaintEvent();
+#else
+		for ( int bc = 0; bc < view->myBuffer()->views().size(); ++bc )
+			view->myBuffer()->views().at(bc)->commitPaintEvent();
+#endif
+
 	} else {
 		// keep the commands that match exactly
 		QString s=inputs.mid(i);
+#if QT_VERSION < 0x040000
 		for(cmds.first();cmds.current();) {
 			if(cmds.current()->keySeq()!=s)
 				cmds.remove();
 			else
 				cmds.next();
 		}
+#else
+		for ( int ab = 0 ; ab < cmds.size(); ) {
+			if (cmds.at(ab)->keySeq()!=s)
+				cmds.removeAt(ab);
+			else
+				++ab;
+		}
+#endif
 		if(cmds.isEmpty())
 			return NO_COMMAND_YET;
 		bool visual = view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL
@@ -299,21 +384,39 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			a cmd that needs a motion and one without an argument. In visual mode, we take
 			the operator, in normal mode, we take the other. */
 			//this is not sufficient, see the 'q' (record macro command), we need a q+ARG_CHAR and a 'q' commands //mm //FIXME
+#if QT_VERSION < 0x040000
 			for(cmds.first();cmds.current();cmds.next()) {
 				if(cmds.current()->arg() == ARG_MOTION && visual ||
 				        cmds.current()->arg() == ARG_NONE && !visual)
 					c=cmds.current();
 			}
+#else
+			for ( int ab = 0 ; ab < cmds.size(); ++ab ) {
+				if ( cmds.at(ab)->arg() == ARG_MOTION && visual ||
+						cmds.at(ab)->arg() == ARG_NONE && !visual )
+					c = cmds.at(ab);
+			}
+#endif
 			if(!c)
 				return CMD_ERROR;
+#if QT_VERSION < 0x040000
 			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 				it->setPaintAutoCommit( false );
+#else
+			for ( int bc = 0; bc < view->myBuffer()->views().size(); ++bc )
+				view->myBuffer()->views().at(bc)->setPaintAutoCommit(false);
+#endif
 			if(visual)
 				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, m));
 			else
 				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
+#if QT_VERSION < 0x040000
 			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 				it->commitPaintEvent();
+#else
+			for ( int bc = 0; bc < view->myBuffer()->views().size(); ++bc )
+				view->myBuffer()->views().at(bc)->commitPaintEvent();
+#endif
 		}
 	}
 
@@ -346,6 +449,7 @@ bool YZNewMotion::matches(const QString &s, bool fully) const {
 }
 
 YZCursor YZCommandPool::move(YZView *view, const QString &inputs, unsigned int count, bool usercount) {
+#if QT_VERSION < 0x040000
 	for(commands.first(); commands.current(); commands.next()) {
 		// is the command a motion and does it match to the string?
 		const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.current());
@@ -356,6 +460,17 @@ YZCursor YZCommandPool::move(YZView *view, const QString &inputs, unsigned int c
 			return to;
 		}
 	}
+#else
+	for (int ab = 0 ; ab < commands.size(); ++ab ) {
+		const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.at(ab));
+		if(m && m->matches(inputs)) {
+			// execute the corresponding method
+			YZCursor to=(this->*(m->motionMethod()))(YZNewMotionArgs(view, count, inputs.right( m->keySeq().length()), 
+					inputs.left(m->keySeq().length()), usercount ));
+			return to;
+		}
+	}
+#endif
 	return *view->getBufferCursor();
 }
 
@@ -525,14 +640,26 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 		const QString& current = args.view->myBuffer()->textline( result.getY() );
 //		if ( current.isNull() ) return false; //be safe ?
 
+#if QT_VERSION < 0x040000
 		int idx = rex1.search( current, result.getX(), QRegExp::CaretAtOffset );
+#else
+		int idx = rex1.indexIn( current, result.getX(), QRegExp::CaretAtOffset );
+#endif
 		int len = rex1.matchedLength();
 		if ( idx == -1 ) {
+#if QT_VERSION < 0x040000
 			idx = rex2.search( current, result.getX(), QRegExp::CaretAtOffset );
+#else
+			idx = rex2.indexIn( current, result.getX(), QRegExp::CaretAtOffset );
+#endif
 			len = rex2.matchedLength();
 		}
 		if ( idx == -1 ) {
+#if QT_VERSION < 0x040000
 			idx = ws.search( current, result.getX(), QRegExp::CaretAtOffset );
+#else
+			idx = ws.indexIn( current, result.getX(), QRegExp::CaretAtOffset );
+#endif
 			len = ws.matchedLength();
 		}
 		if ( idx != -1 ) {
@@ -541,8 +668,13 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 			result.setX( idx + len );
 			if ( ( c < args.count || args.standalone ) && result.getX() == current.length() && result.getY() < args.view->myBuffer()->lineCount() - 1) {
 				result.setY(result.getY() + 1);
+#if QT_VERSION < 0x040000
 				ws.search(args.view->myBuffer()->textline( result.getY() ));
 				result.setX( QMAX( ws.matchedLength(), 0 ));
+#else
+				ws.indexIn(args.view->myBuffer()->textline( result.getY() ));
+				result.setX( qMax( ws.matchedLength(), 0 ));
+#endif
 			}
 		} else {
 			if ( result.getY() >= args.view->myBuffer()->lineCount() - 1 ) {
@@ -562,9 +694,8 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 
 QString invertQString( const QString& from ) {
 	QString res = "";
-	for ( int i = from.length() - 1 ; i >= 0; i-- ) {
+	for ( int i = from.length() - 1 ; i >= 0; i-- )
 		res.append( from[ i ] );
-	}
 	return res;
 }
 
@@ -583,15 +714,27 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 		yzDebug() << current << " at " << offset << endl;
 
 
+#if QT_VERSION < 0x040000
 		int idx = rex1.search( current, offset , QRegExp::CaretAtOffset );
+#else
+		int idx = rex1.indexIn( current, offset , QRegExp::CaretAtOffset );
+#endif
 		int len = rex1.cap( 1 ).length();
 		yzDebug() << "rex1 : " << idx << "," << len << endl;
 		if ( idx == -1 ) {
+#if QT_VERSION < 0x040000
 			idx = rex2.search( current, offset, QRegExp::CaretAtOffset );
+#else
+			idx = rex2.indexIn( current, offset, QRegExp::CaretAtOffset );
+#endif
 			len = rex2.cap( 1 ).length();
 			yzDebug() << "rex2 : " << idx << "," << len << endl;
 			if ( idx == -1 ) {
+#if QT_VERSION < 0x040000
 				idx = rex3.search( current, offset, QRegExp::CaretAtOffset );
+#else
+				idx = rex3.indexIn( current, offset, QRegExp::CaretAtOffset );
+#endif
 				len = rex3.matchedLength();
 				yzDebug() << "rex3 : " << idx << "," << len << endl;
 			}
@@ -763,8 +906,13 @@ QString YZCommandPool::change(const YZCommandArgs &args) {
 
 	// if we delete to the end of the line, the cursor will be onto (before) the last
 	// character, so we'll have to append. Otherwise, inserting is OK
+#if QT_VERSION < 0x040000
 	unsigned int eol_x = (visualMode ? (QMAX(0, int(args.view->myBuffer()->textline(to.getY()).length()) - 1))
 			: args.view->myBuffer()->textline(to.getY()).length());
+#else
+	unsigned int eol_x = (visualMode ? (qMax(0, int(args.view->myBuffer()->textline(to.getY()).length()) - 1))
+			: args.view->myBuffer()->textline(to.getY()).length());
+#endif
 	bool append = to.getX() >= eol_x;
 
 	args.view->myBuffer()->action()->deleteArea(args.view, from, to, args.regs);
@@ -982,7 +1130,7 @@ QString YZCommandPool::searchForwards(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::del(const YZCommandArgs &args) {
-	bool entireLines = ( args.arg.length() > 0 && args.arg[ 0 ] == "'" ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
+	bool entireLines = ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
 	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL )
 		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
 	else if ( entireLines ) {
@@ -1013,7 +1161,7 @@ QString YZCommandPool::del(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::yank(const YZCommandArgs &args) {
-	bool entireLines =  ( args.arg.length() > 0 && args.arg[ 0 ] == "'" ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
+	bool entireLines =  ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
 	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL )
 		args.view->myBuffer()->action()->copyArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
 	else if ( entireLines ) {
@@ -1065,11 +1213,19 @@ QString YZCommandPool::changeCase( const YZCommandArgs &args ) {
 		unsigned int length = line.length();
 		unsigned int end = pos.getX() + args.count;
 		for ( ; pos.getX() < length && pos.getX() < end; pos.setX( pos.getX() + 1 ) ) {
+#if QT_VERSION < 0x040000
 			QString ch = line.at( pos.getX() );
 			if ( ch != ch.lower() )
 				ch = ch.lower();
 			else
 				ch = ch.upper();
+#else
+			QString ch = QString(line.at( pos.getX() ));
+			if ( ch != ch.toLower() )
+				ch = ch.toLower();
+			else
+				ch = ch.toUpper();
+#endif
 			args.view->myBuffer()->action()->replaceChar( args.view, pos, ch );
 		}
 		args.view->commitNextUndo();
@@ -1093,9 +1249,14 @@ QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 		if ( args.view->registersRecorded() == args.regs )
 			return QString::null;
 	}
+#if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = args.regs.begin(), end = args.regs.end();
 	for ( ; it != end; ++it )
 		args.view->sendMultipleKey(YZSession::mRegisters.getRegister(*it)[ 0 ]);
+#else
+	for ( int ab = 0 ; ab < args.regs.size(); ++ab)
+		args.view->sendMultipleKey(YZSession::mRegisters.getRegister(args.regs.at(ab))[0]);
+#endif
 	args.view->commitNextUndo();
 	return QString::null;
 }
@@ -1138,7 +1299,11 @@ QString YZCommandPool::abort( const YZCommandArgs& args) {
 
 QString YZCommandPool::delkey( const YZCommandArgs &args ) {
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
+#if QT_VERSION < 0x040000
 			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].from(), (args.selection)[0].to(), ( QValueList<QChar>() << QChar( '\"' ) ));
+#else
+			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].from(), (args.selection)[0].to(), ( QList<QChar>() << QChar( '\"' ) ));
+#endif
 			args.view->leaveVisualMode();
 			args.view->gotoPreviousMode();
 	} else

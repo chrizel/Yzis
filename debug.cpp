@@ -27,14 +27,20 @@
 
 
 #include "debug.h"
-#include <qstringlist.h>
-#include <qfile.h>
-#include <qregexp.h>
 #include <ctype.h>
 #ifndef WIN32
 #include <pwd.h>
 #endif
 #include "portability.h"
+#if QT_VERSION < 0x040000
+#include <qstringlist.h>
+#include <qfile.h>
+#include <qregexp.h>
+#else
+#include <QTextStream>
+#include <QRegExp>
+#include <QStringList>
+#endif
 
 YZDebugBackend * YZDebugBackend::_instance = NULL;
 
@@ -97,7 +103,11 @@ void YZDebugBackend::parseRcfile(const char * filename)
 {
 	flush( YZ_DEBUG_LEVEL,"YZDebugBackend", QString("parseRcfile(%1)\n").arg(filename).latin1() );
 	QFile f( filename );
+#if QT_VERSION < 0x040000
 	if (f.open( IO_ReadOnly ) == false) return;
+#else
+	if (f.open( QIODevice::ReadOnly ) == false) return;
+#endif
 	QTextStream ts(&f);
 
 	/* One can imagine more control of the output, like whether to use a file
@@ -109,11 +119,19 @@ void YZDebugBackend::parseRcfile(const char * filename)
 	while( ts.atEnd() == false) {
 		l = ts.readLine();
 		//flush( YZ_DEBUG_LEVEL, "YZDebugBackend", QString("line '%1'\n").arg(l).latin1() );
+#if QT_VERSION < 0x040000
 		if (enableRe.search(l) == 0) {
+#else
+		if (enableRe.indexIn(l) == 0) {
+#endif
 			area = enableRe.cap(1);
 			//flush( YZ_DEBUG_LEVEL, "YZDebugBackend", QString("enable '%1'\n").arg(area).latin1() );
 			enableDebugArea(area, true );
+#if QT_VERSION < 0x040000
 		} else if (disableRe.search(l) == 0) {
+#else
+		} else if (disableRe.indexIn(l) == 0) {
+#endif
 			area = disableRe.cap(1);
 			//flush( YZ_DEBUG_LEVEL, "YZDebugBackend", QString("disable '%1'\n").arg(area).latin1() );
 			enableDebugArea(area, false );
@@ -132,14 +150,16 @@ YZDebugStream::~YZDebugStream() {
 		*this << "\n"; //flush
 }
 
+#if QT_VERSION < 0x040000
 YZDebugStream& YZDebugStream::operator << (const QCString& string) {
 	*this << string.data();
 	return *this;
 }
+#endif
 
 YZDebugStream& YZDebugStream::operator << (const QString& string) {
 	output+=string;
-	if ( output.at( output.length() - 1 ) == '\n' )
+	if ( output.endsWith("\n") )
 		flush();
 	return *this;
 }
@@ -227,7 +247,11 @@ YZDebugStream& YZDebugStream::operator << (double d) {
 
 void YZDebugStream::flush() {
 	if ( output.isEmpty() ) return;
+#if QT_VERSION < 0x040000
 	YZDebugBackend::instance()->flush(level, area, output.local8Bit().data());
+#else
+	YZDebugBackend::instance()->flush(level, area, output.local8Bit());
+#endif
 	output=QString::null;
 }
 

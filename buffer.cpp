@@ -92,10 +92,13 @@ YZBuffer::~YZBuffer() {
 	if ( m_highlight != 0L )
 		m_highlight->release();
 
+#if QT_VERSION < 0x040000
 	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
-	for ( ; it != end; ++it ) {
+#else
+	QVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#endif
+	for ( ; it != end; ++it )
 		delete ( *it );
-	}
 	mText.clear();
 	delete mUndoBuffer;
 	delete mAction;
@@ -123,13 +126,23 @@ void YZBuffer::detach() {
 	
 
 
-#define VIEWS_INIT( x, y ) \
-	{ for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
-	it->initChanges( x, y ); }
+#if QT_VERSION < 0x040000
+	#define VIEWS_INIT( x, y ) \
+		{ for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
+		it->initChanges( x, y ); }
 
 #define VIEWS_APPLY( x, y ) \
 	{ for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
 	it->applyChanges( x, y ); }
+#else
+	#define VIEWS_INIT( x, y ) \
+		{ for ( int abcd=0; abcd < mViews.size(); ++abcd ) \
+		mViews.at(abcd)->initChanges( x, y ); }
+
+	#define VIEWS_APPLY( x, y ) \
+		{ for ( int abcd=0; abcd < mViews.size(); ++abcd ) \
+		mViews.at(abcd)->applyChanges( x, y ); }
+#endif
 
 void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
 	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), c )
@@ -201,7 +214,11 @@ void  YZBuffer::appendLine(const QString &l) {
 	mText.append(new YZLine(l));
 	if ( !mLoading && m_highlight != 0L ) {
 		bool ctxChanged = false;
+#if QT_VERSION < 0x040000
 		QMemArray<uint> foldingList;
+#else
+		QVector<uint> foldingList;
+#endif
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
 //		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
@@ -221,7 +238,11 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 
 	VIEWS_INIT( 0, line );
 
+#if QT_VERSION < 0x040000
 	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#else
+	QVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#endif
 	uint idx=0;
 	for ( ; idx < line && it != end; ++it, ++idx )
 		;
@@ -274,7 +295,11 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	}
 
 	//add new line
+#if QT_VERSION < 0x040000
 	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#else
+	QVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#endif
 	uint idx=0;
 	for ( ; idx < line+1 && it != end; ++it, ++idx )
 		;
@@ -300,7 +325,11 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	if (lineCount() > 1) {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, "", 0, line );
 		if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELLINE, "", 0, line );
+#if QT_VERSION < 0x040000
 		QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#else
+		QVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#endif
 		uint idx=0;
 		for ( ; idx < line && it != end; ++it, ++idx )
 			;
@@ -351,10 +380,13 @@ void YZBuffer::clearText() {
 	 * operation.
 	 */
 	//clear is fine but better _delete_ all yzlines too ;)
+#if QT_VERSION < 0x040000
 	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
-	for ( ; it != end; ++it ) {
+#else
+	QVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#endif
+	for ( ; it != end; ++it )
 		delete ( *it );
-	}
 	mText.clear(); //remove the _pointers_ now
 	mText.append(new YZLine());
 }
@@ -375,11 +407,15 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 }
 
 bool YZBuffer::isLineVisible(uint line) {
-	YZView *it;
 	bool shown=false;
-	for ( it = mViews.first(); it && !shown; it = mViews.next() ) {
+#if QT_VERSION < 0x040000
+	YZView *it;
+	for ( it = mViews.first(); it && !shown; it = mViews.next() )
 		shown = shown || it->isLineVisible(line);
-	}
+#else
+	for ( int ab = 0; ab < mViews.size() ; ++ab )
+		shown = shown || mViews.at(ab)->isLineVisible(line);
+#endif
 	return shown;
 }
 
@@ -411,10 +447,9 @@ uint YZBuffer::getWholeTextLength() const {
 uint YZBuffer::firstNonBlankChar( uint line ) {
 	uint i=0;
 	QString s = textline(line);
-	if (s.isNull()) return 0;
-	while( s.at(i).isSpace() && i < s.length()) {
+	if (s.isEmpty() ) return 0;
+	while( s.at(i).isSpace() && i < s.length())
 		i++;
-	}
 	return i;
 }
 
@@ -458,10 +493,13 @@ void YZBuffer::load(const QString& file) {
 	//stop redraws
 	mUpdateView=false;
 
+#if QT_VERSION < 0x040000
 	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
-	for ( ; it != end; ++it ) {
+#else
+	QVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#endif
+	for ( ; it != end; ++it )
 		delete ( *it );
-	}
 	mText.clear();
 	mFileIsNew=false;
 	
@@ -481,7 +519,11 @@ void YZBuffer::load(const QString& file) {
 	mUndoBuffer->setInsideUndo( true );
 	mLoading=true;
 	currentEncoding = getLocalStringOption( "encoding" );
+#if QT_VERSION < 0x040000
 	if ( fl.open( IO_ReadOnly ) ) {
+#else
+	if ( fl.open( QIODevice::ReadOnly ) ) {
+#endif
 		QTextCodec* codec;
 		if ( currentEncoding == "locale" ) {
 			codec = QTextCodec::codecForLocale();
@@ -523,10 +565,14 @@ void YZBuffer::load(const QString& file) {
 	mUpdateView=true;
 	updateAllViews();
 	if ( scrollTo > 0 ) {
+#if QT_VERSION < 0x040000
 		YZView *it;
-		for ( it = mViews.first(); it; it = mViews.next() ) {
+		for ( it = mViews.first(); it; it = mViews.next() )
 			it->gotoStickyCol( scrollTo - 1 );
-		}
+#else
+		for ( int ab = 0 ; ab < mViews.size(); ++ab )
+			mViews.at(ab)->gotoStickyCol ( scrollTo - 1 );
+#endif
 	}
 	filenameChanged();
 }
@@ -552,13 +598,21 @@ bool YZBuffer::save() {
 	QFile file( mPath );
 	m_hlupdating = true; //override so that it does not parse all lines
 	yzDebug("YZBuffer") << "Saving file to " << mPath << endl;
+#if QT_VERSION < 0x040000
 	if ( file.open( IO_WriteOnly ) ) {
+#else
+	if ( file.open( QIODevice::WriteOnly ) ) {
+#endif
 		QTextStream stream( &file );
 		stream.setCodec( codec );
 		// do not save empty buffer to avoid creating a file
 		// with only a '\n' while the buffer is emtpy
 		if ( isEmpty() == false) {
+#if QT_VERSION < 0x040000
 			QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#else
+			QVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
+#endif
 			for ( ; it != end; ++it ) {
 				stream << (*it )->data() << "\n";
 			}
@@ -566,18 +620,22 @@ bool YZBuffer::save() {
 		file.close();
 	}
 	m_hlupdating = false; //override so that it does not parse all lines
+#if QT_VERSION < 0x040000
 	YZView *it;
 	for ( it = mViews.first(); it ; it = mViews.next() )
 		it->displayInfo(tr("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
+#else
+	for ( int ab = 0; ab < mViews.size(); ++ab )
+		mViews.at(ab)->displayInfo(tr("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
+#endif
 	setChanged( false );
 	filenameChanged();
 	//clear swap memory
 	mSwap->reset();
 	mSwap->unlink();
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);
-	if ( hlMode >= 0 && m_highlight != YzisHlManager::self()->getHl( hlMode ) ) {
+	if ( hlMode >= 0 && m_highlight != YzisHlManager::self()->getHl( hlMode ) )
 		setHighLight( hlMode );
-	}
 	return true;
 }
 
@@ -586,12 +644,20 @@ bool YZBuffer::save() {
 // ------------------------------------------------------------------------
 
 void YZBuffer::addView (YZView *v) {
+#if QT_VERSION < 0x040000
 	YZView *it;
 	for ( it = mViews.first(); it; it=mViews.next() )
 		if ( it == v ) {
 			yzWarning()<< "view " << v->myId << " added for the second time, discarding"<<endl;
 			return; // don't append twice
 		}
+#else
+	for ( int ab = 0; ab < mViews.size(); ++ab )
+		if ( mViews.at(ab) == v ) {
+			yzWarning()<< "view " << v->myId << " added for the second time, discarding"<<endl;
+			return; // don't append twice
+		}
+#endif
 	yzDebug("YZBuffer") << "BUFFER: addView" << endl;
 	mViews.append( v );
 	mSession->setCurrentView( v );
@@ -599,14 +665,17 @@ void YZBuffer::addView (YZView *v) {
 
 YZView* YZBuffer::findView( unsigned int uid ) {
 	yzDebug("YZBuffer") << "Buffer: findView " << uid << endl;
+#if QT_VERSION < 0x040000
 	YZView *it;
 	for ( it = mViews.first(); it; it=mViews.next() ){
-//		yzDebug("YZBuffer") << "buffer:findViewChecking view " << uid << " for buffer " << fileName() << endl;
-		if ( it->myId == uid ) {
-//			yzDebug("YZBuffer") << "Buffer:findView " << uid << " found" << endl;
+		if ( it->myId == uid )
 			return it;
-		}
 	}
+#else
+	for ( int ab = 0; ab < mViews.size(); ++ab )
+		if ( mViews.at(ab)->myId == uid )
+			return mViews.at(ab);
+#endif
 //	yzDebug("YZBuffer") << "buffer::findView " << uid << " returning NULL" << endl;
 	return NULL;
 }
@@ -614,11 +683,18 @@ YZView* YZBuffer::findView( unsigned int uid ) {
 void YZBuffer::updateAllViews() {
 	if ( !mUpdateView ) return;
 	yzDebug("YZBuffer") << "YZBuffer updateAllViews" << endl;
+#if QT_VERSION < 0x040000
 	YZView *it;
 	for ( it = mViews.first(); it; it = mViews.next() ) {
 		it->sendRefreshEvent();
 		it->syncViewInfo();
 	}
+#else
+	for ( int ab = 0; ab < mViews.size(); ++ab ) {
+		mViews.at(ab)->sendRefreshEvent();
+		mViews.at(ab)->syncViewInfo();
+	}
+#endif
 }
 
 YZView* YZBuffer::firstView() {
@@ -629,7 +705,14 @@ YZView* YZBuffer::firstView() {
 }
 
 void YZBuffer::rmView(YZView *v) {
+#if QT_VERSION < 0x040000
 	int f = mViews.remove(v);
+#else
+	int f = mViews.count(v);
+	int idx = mViews.indexOf(v);
+	if ( idx != -1 )
+		mViews.remove(idx);
+#endif
 	YZASSERT( 1==f ); // isn't it ?
 	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
 	if ( mViews.isEmpty() )
@@ -649,8 +732,13 @@ void YZBuffer::setChanged( bool modif ) {
 
 void YZBuffer::statusChanged() {
 	//update all views
+#if QT_VERSION < 0x040000
 	for ( YZView *it = mViews.first(); it; it = mViews.next() )
 		it->syncViewInfo();
+#else
+	for ( int ab = 0; ab < mViews.size(); ++ab )
+		mViews.at(ab)->syncViewInfo();
+#endif
 }
 
 
@@ -677,7 +765,11 @@ void YZBuffer::setHighLight( uint mode ) {
 		//XXX should we check whether it was already loaded ?
 		QString hlName = h->name();
 		hlName.replace("+","p");
+#if QT_VERSION < 0x040000
 		YZExLua::instance()->source(NULL, hlName.lower(),false);
+#else
+		YZExLua::instance()->source(NULL, hlName.toLower(),false);
+#endif
 	}
 }
 
@@ -688,7 +780,11 @@ void YZBuffer::makeAttribs() {
 	unsigned int hlLine = 0;
 	if ( !mLoading )
 		while ( hlLine < lineCount()) {
+#if QT_VERSION < 0x040000
 			QMemArray<uint> foldingList;
+#else
+			QVector<uint> foldingList;
+#endif
 			m_highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
 			hlLine++;
 		}
@@ -697,10 +793,18 @@ void YZBuffer::makeAttribs() {
 }
 
 void YZBuffer::setPath( const QString& _path ) {
+#if QT_VERSION < 0x040000
 	QString newPath = _path.stripWhiteSpace();
+#else
+	QString newPath = _path.trimmed();
+#endif
 	QString oldPath = mPath;
 	if (newPath[0] != '/') {
+#if QT_VERSION < 0x040000
 		mPath = QDir::cleanDirPath(QDir::current().absPath()+"/"+newPath);
+#else
+		mPath = QDir::cleanPath(QDir::current().absolutePath()+"/"+newPath);
+#endif
 		yzDebug("YZBuffer") << "Changing path to absolute " << mPath << endl;
 	} else
 		mPath = newPath;
@@ -716,7 +820,11 @@ bool YZBuffer::substitute( const QString& what, const QString& with, bool wholel
 	bool changed = false;
 	int pos=0;
 	int offset=0;
+#if QT_VERSION < 0x040000
 	while ( ( pos = rx.search( l,offset ) ) != -1 ) {
+#else
+	while ( ( pos = rx.indexIn( l,offset ) ) != -1 ) {
+#endif
 		l = l.replace( pos, rx.matchedLength(), with );
 		changed = true;
 		offset = pos + with.length();
@@ -756,15 +864,31 @@ QStringList YZBuffer::getText(YZCursor& from, YZCursor& to) {
 QString YZBuffer::getWordAt( const YZCursor& at ) {
 	QString l = textline( at.getY() );
 	QRegExp reg( "\\b(\\w+)\\b" );
+#if QT_VERSION < 0x040000
 	int idx = reg.searchRev( l, at.getX() );
+#else
+	int idx = reg.lastIndexIn( l, at.getX() );
+#endif
 	if ( idx == -1 || idx + reg.cap( 1 ).length() <= at.getX() ) {
+#if QT_VERSION < 0x040000
 		idx = reg.search( l, at.getX() );
+#else
+		idx = reg.indexIn( l, at.getX() );
+#endif
 		if ( idx >= 0 ) return reg.cap( 1 );
 		else {
 			reg.setPattern( "(^|[\\s\\w])([^\\s\\w]+)([\\s\\w]|$)" );
+#if QT_VERSION < 0x040000
 			idx = reg.searchRev( l, at.getX() );
+#else
+			idx = reg.lastIndexIn( l, at.getX() );
+#endif
 			if ( idx == -1 || idx + reg.cap( 1 ).length() + reg.cap( 2 ).length() <= at.getX() ) {
+#if QT_VERSION < 0x040000
 				idx = reg.search( l, at.getX() );
+#else
+				idx = reg.indexIn( l, at.getX() );
+#endif
 				if ( idx >= 0 ) return reg.cap( 2 );
 			} else {
 				return reg.cap( 2 );
@@ -818,9 +942,9 @@ void YZBuffer::setLocalQStringOption( const QString& key, const QString& option 
 
 QStringList YZBuffer::getLocalStringListOption( const QString& option ) {
 	if ( YZSession::mOptions.hasOption( mPath+"\\"+option ) )
-		return YZSession::mOptions.readQStringListEntry( mPath+"\\"+option, QStringList::split(";","") );
+		return YZSession::mOptions.readQStringListEntry( mPath+"\\"+option, QStringList() );
 	else
-		return YZSession::mOptions.readQStringListEntry( "Global\\" + option, QStringList::split(";","") );
+		return YZSession::mOptions.readQStringListEntry( "Global\\" + option, QStringList() );
 }
 
 void YZBuffer::setLocalQStringListOption( const QString& key, const QStringList& option ) {
@@ -854,7 +978,11 @@ bool YZBuffer::updateHL( unsigned int line ) {
 	if ( m_highlight == 0L ) return false;
 	while ( ctxChanged && hlLine < maxLine ) {
 		yl = yzline( hlLine );
+#if QT_VERSION < 0x040000
 		QMemArray<uint> foldingList;
+#else
+		QVector<uint> foldingList;
+#endif
 		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yl, &foldingList, &ctxChanged );
 //		yzDebug() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
 		hlChanged = ctxChanged || hlChanged;
@@ -871,7 +999,11 @@ void YZBuffer::initHL( unsigned int line ) {
 	if ( m_highlight != 0L ) {
 		uint hlLine = line;
 		bool ctxChanged = true;
+#if QT_VERSION < 0x040000
 		QMemArray<uint> foldingList;
+#else
+		QVector<uint> foldingList;
+#endif
 		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
 	}
 	m_hlupdating=false;
@@ -883,3 +1015,4 @@ void YZBuffer::detectHighLight() {
 		setHighLight( hlMode );
 	yzDebug("YZBuffer") << "HIGHLIGHTING " << hlMode << endl;
 }
+

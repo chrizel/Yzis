@@ -28,6 +28,7 @@
 
 #include "attribute.h"
 
+#if QT_VERSION < 0x040000
 #include <qptrlist.h>
 #include <qvaluelist.h>
 #include <qvaluevector.h>
@@ -39,12 +40,18 @@
 #include <qstringlist.h>
 #include <qguardedptr.h>
 #include <qdatetime.h>
+#else
+#include <QPair>
+#include <QString>
+#include <QMap>
+#include <QHash>
+#include <QTime>
+#endif
 
 class YzisHlContext;
 class YzisHlItem;
 class YzisHlItemData;
 class YzisHlData;
-class YzisEmbeddedHlInfo;
 class YzisHlIncludeRule;
 class YzisSyntaxDocument;
 class YZLine;
@@ -53,14 +60,33 @@ class YzisSyntaxContextData;
 
 class QPopupMenu;
 
+class YzisEmbeddedHlInfo
+{
+  public:
+    YzisEmbeddedHlInfo() {loaded=false;context0=-1;}
+    YzisEmbeddedHlInfo(bool l, int ctx0) {loaded=l;context0=ctx0;}
+
+  public:
+    bool loaded;
+    int context0;
+};
+
 // some typedefs
+#if QT_VERSION < 0x040000
 typedef QPtrList<YzisAttribute> YzisAttributeList;
 typedef QValueList<YzisHlIncludeRule*> YzisHlIncludeRules;
 typedef QPtrList<YzisHlItemData> YzisHlItemDataList;
 typedef QPtrList<YzisHlData> YzisHlDataList;
+typedef QValueList<int> IntList;
+#else
+typedef QList<YzisAttribute*> YzisAttributeList;
+typedef QList<YzisHlIncludeRule*> YzisHlIncludeRules;
+typedef QList<YzisHlItemData*> YzisHlItemDataList;
+typedef QList<YzisHlData*> YzisHlDataList;
+typedef QList<int> IntList;
+#endif
 typedef QMap<QString,YzisEmbeddedHlInfo> YzisEmbeddedHlInfos;
 typedef QMap<int*,QString> YzisHlUnresolvedCtxRefs;
-typedef QValueList<int> IntList;
 
 //Item Properties: name, Item Style, Item Font
 class YzisHlItemData : public YzisAttribute
@@ -110,11 +136,19 @@ class YzisHighlighting
   public:
     void doHighlight ( YZLine *prevLine,
                        YZLine *textLine,
+#if QT_VERSION < 0x040000
                        QMemArray<uint> *foldingList,
+#else
+                       QVector<uint> *foldingList,
+#endif
                        bool *ctxChanged );
 
     void loadWildcards();
+#if QT_VERSION < 0x040000
     QValueList<QRegExp>& getRegexpExtensions();
+#else
+    QList<QRegExp>& getRegexpExtensions();
+#endif
     QStringList& getPlainExtensions();
 
     QString getMimetypes();
@@ -202,7 +236,11 @@ class YzisHighlighting
 
     void clearAttributeArrays ();
 
+#if QT_VERSION < 0x040000
     QMemArray<YzisAttribute> *attributes (uint schema);
+#else
+    QVector<YzisAttribute> *attributes (uint schema);
+#endif
 
     inline bool noHighlighting () const { return noHl; };
 
@@ -228,7 +266,11 @@ class YzisHighlighting
     void readFoldingConfig ();
 
     // manipulates the ctxs array directly ;)
+#if QT_VERSION < 0x040000
     void generateContextStack(int *ctxNum, int ctx, QMemArray<short> *ctxs, int *posPrevLine);
+#else
+    void generateContextStack(int *ctxNum, int ctx, QVector<short> *ctxs, int *posPrevLine);
+#endif
 
     YzisHlItem *createYzisHlItem(YzisSyntaxContextData *data, YzisHlItemDataList &iDl, QStringList *RegionList, QStringList *ContextList);
     int lookupAttrName(const QString& name, YzisHlItemDataList &iDl);
@@ -243,8 +285,12 @@ class YzisHighlighting
 
     YzisHlItemDataList internalIDList;
 
+#if QT_VERSION < 0x040000
     QValueVector<YzisHlContext*> m_contexts;
-    inline YzisHlContext *contextNum (uint n) { if (n < m_contexts.size()) return m_contexts[n]; return 0; }
+#else
+    QVector<YzisHlContext*> m_contexts;
+#endif
+    inline YzisHlContext *contextNum (uint n) { if (n < (uint)m_contexts.size()) return m_contexts[n]; return 0; }
 
     QMap< QPair<YzisHlContext *, QString>, short> dynamicCtxs;
 
@@ -283,7 +329,11 @@ class YzisHighlighting
     YzisHlIncludeRules includeRules;
     bool m_foldingIndentationSensitive;
 
+#if QT_VERSION < 0x040000
     QIntDict< QMemArray<YzisAttribute> > m_attributeArrays;
+#else
+    QHash<int, QVector<YzisAttribute> > m_attributeArrays;
+#endif
 
     /**
      * This contains a list of comment data, the deliminator string and
@@ -300,7 +350,11 @@ class YzisHighlighting
     IntList m_hlIndex;
 
     QString extensionSource;
+#if QT_VERSION < 0x040000
     QValueList<QRegExp> regexpExtensions;
+#else
+    QList<QRegExp> regexpExtensions;
+#endif
     QStringList plainExtensions;
 
   public:
@@ -327,7 +381,11 @@ class YzisHlManager : public QObject
 
     int detectHighlighting (class YZBuffer *doc);
 
+#if QT_VERSION < 0x040000
     int findHl(YzisHighlighting *h) {return hlList.find(h);}
+#else
+    int findHl(YzisHighlighting *h) {return hlList.indexOf(h);}
+#endif
     QString identifierForName(const QString&);
 
     // methodes to get the default style count + names
@@ -364,8 +422,13 @@ class YzisHlManager : public QObject
   private:
     friend class YzisHighlighting;
 
+#if QT_VERSION < 0x040000
     QPtrList<YzisHighlighting> hlList;
     QDict<YzisHighlighting> hlDict;
+#else
+    QList<YzisHighlighting*> hlList;
+    QHash<QString,YzisHighlighting*> hlDict;
+#endif
 
     static YzisHlManager *s_self;
 

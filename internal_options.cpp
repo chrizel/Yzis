@@ -113,7 +113,7 @@ void YZInternalOptionPool::loadFrom(const QString& file ) {
 	}
 }
 
-void YZInternalOptionPool::saveTo(const QString& file, const QString& what, bool force ) {
+void YZInternalOptionPool::saveTo(const QString& file, const QString& what, const QString& except, bool force ) {
 	QFile f( file );
 
 	if ( f.exists() && !force ) return;
@@ -127,6 +127,7 @@ void YZInternalOptionPool::saveTo(const QString& file, const QString& what, bool
 		for (; it != end; ++it) {
 			QString myGroup = QStringList::split( "\\", ( *it ) )[ 0 ];
 			if ( !what.isEmpty() && !myGroup.startsWith( what ) ) continue; //filter !
+			if ( !except.isEmpty() && myGroup.startsWith( except ) ) continue; //filter
 
 			if ( myGroup != cGroup ) { // changing group
 				stream << "[" << myGroup << "]\n";
@@ -180,7 +181,7 @@ void YZInternalOptionPool::init() {
 }
 
 const QString& YZInternalOptionPool::readQStringEntry( const QString& _key, const QString& def ) {
-	//yzDebug( ) << "READ " << currentGroup + '\\' + _key << " with default " << def << endl;
+//	yzDebug( ) << "READ " << currentGroup + '\\' + _key << " with default " << def << endl;
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -279,7 +280,7 @@ void YZInternalOptionPool::setQStringListOption( const QString& key, const QStri
 	}
 }
 
-const QColor& YZInternalOptionPool::readQColorEntry( const QString& _key, const QColor& def ) {
+QColor YZInternalOptionPool::readQColorEntry( const QString& _key, const QColor& def ) {
 	QString key = _key;
 //	yzDebug( ) << "READ " << currentGroup + '\\' + key << " with default " << def.rgb() << endl;
 	if ( ! key.contains( '\\' ) )

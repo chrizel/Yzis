@@ -512,7 +512,7 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 }
 
 QString YZExCommandPool::mkyzisrc ( const YZExCommandArgs& ) {
-	YZSession::mOptions.saveTo( QDir::currentDirPath() + "/yzis.conf", "" );
+	YZSession::mOptions.saveTo( QDir::currentDirPath() + "/yzis.conf", "", "HL Cache" );
 	return QString::null;
 }
 

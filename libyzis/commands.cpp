@@ -601,13 +601,7 @@ QString YZCommandPool::change(const YZCommandArgs &args) {
 
 QString YZCommandPool::del(const YZCommandArgs &args) {
 	YZCursor to=move(args.view, args.arg, args.count);
-	YZCursor from = *args.view->getBufferCursor();
-	if ( from > to ) {
-		YZCursor tmp( to );
-		to.setCursor( from );
-		from.setCursor( tmp );
-	}
-	args.view->myBuffer()->action()->deleteArea(args.view, from, to, args.regs);
+	args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	args.view->commitNextUndo();
 	return QString::null;
 }

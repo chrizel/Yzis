@@ -38,7 +38,7 @@
         <RegExpr attribute="String" context="#pop" String="^\.$" />
         <HlCStringChar attribute="String Char" context="#stay" />
       </context>
-      <context attribute="Normal Text" lineEndContext="#pop" name="Member">
+      <context attribute="Normal Text" lineEndContext="#pop" name="Member" fallthrough="true" fallthroughContext="#pop">
         <RegExpr attribute="Function" context="#pop" String="\b[_\w][_\w\d]*(?=[\s]*)" />
       </context>
       <context attribute="Comment" lineEndContext="#stay" name="Comment">

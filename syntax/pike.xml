@@ -56,8 +56,8 @@
 	<Detect2Chars attribute="Comment" context="Line Comment" char="/" char1="/"/>
 	<Detect2Chars attribute="Comment" context="Line Comment" char="#" char1="!"/>
 	<Detect2Chars attribute="Comment" context="Block Comment" char="/" char1="*" beginRegion="Comment"/>
-	<StringDetect attribute="Preprocessor" context="Outscoped" String="#if 0" beginRegion="Outscoped"/>
-	<DetectChar attribute="Preprocessor" context="Preprocessor" char="#"/>
+	<RegExpr attribute="Preprocessor" context="Outscoped" String="^\s*#\s*if\s+0" beginRegion="Outscoped"/>
+	<RegExpr attribute="Preprocessor" context="Preprocessor" String="^\s*#"/>
       </context>
       <context attribute="String" lineEndContext="#pop" name="String">
 	<RegExpr attribute="String Char" context="#stay" String="\\d[0-9]+"/>
@@ -80,13 +80,15 @@
 	<LineContinue attribute="Preprocessor" context="#stay"/>
       </context>
       <context attribute="Comment" lineEndContext="#stay" name="Outscoped">
-	<StringDetect attribute="Comment" context="Outscoped Internals" String="#if"/>
-	<RegExpr attribute="Preprocessor" context="#pop" String="#e(ndif|lse)" endRegion="Outscoped"/>
 	<RegExpr attribute="Note" context="#stay" String="(FIXME|TODO|NOT(IC)?E):?"/>
-      </context>
-      <context attribute="Comment" lineEndContext="#stay" name="Outscoped Internals">
-	<StringDetect attribute="Comment" context="Outscoped Internals" String="#if"/>
-	<StringDetect attribute="Comment" context="#pop" String="#endif"/>
+	<Detect2Chars attribute="Comment" context="Block Comment" char="/" char1="*" beginRegion="Comment"/>
+	<RegExpr attribute="Comment" context="Outscoped intern" String="^\s*#\s*if" beginRegion="Outscoped"/>
+	<RegExpr attribute="Preprocessor" context="#pop" String="^\s*#\s*(endif|elif|else)" endRegion="Outscoped"/>
+      </context>         
+      <context attribute="Comment" lineEndContext="#stay" name="Outscoped intern">
+	<Detect2Chars attribute="Comment" context="Block Comment" char="/" char1="*" beginRegion="Comment"/>
+	<RegExpr attribute="Comment" context="Outscoped intern" String="^\s*#\s*if" beginRegion="Outscoped"/>
+	<RegExpr attribute="Comment" context="#pop" String="^\s*#\s*endif" endRegion="Outscoped"/>
       </context>
     </contexts>
     <itemDatas>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
-<language name="ChangeLog" version="1.02" kateversion="2.1" section="Other" extensions="*ChangeLog*" mimetype="" author="Dominik Haumann (dhdev@gmx.de)" license="LGPL">
+<language name="ChangeLog" version="1.02" kateversion="2.1" section="Other" extensions="ChangeLog" mimetype="" author="Dominik Haumann (dhdev@gmx.de)" license="LGPL">
   <highlighting>
     <contexts>
       <context attribute="Normal Text" lineEndContext="#stay" name="Normal">

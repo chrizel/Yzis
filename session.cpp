@@ -59,15 +59,15 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */, YZCommandArg
 
 YZView* YZSession::findView( int uid ) {
 //	yzDebug() << " ========= " << endl;
-//	yzDebug() << "Session: looking for view " << uid << endl;
+//	yzDebug() << "Session::findView " << uid << endl;
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
 		YZBuffer *b = ( it.data() );
-//		yzDebug() << "Session : findView, checking buffer " << b->fileName() << endl;
+//		yzDebug() << "Session::findView, checking buffer " << b->fileName() << endl;
 		YZView *v = b->findView( uid );
 		if ( v ) return v;
 	}
-//	yzDebug() << "Session: View " << uid << " not found !" << endl;
+//	yzDebug() << "Session::findView " << uid << " not found !" << endl;
 	return NULL;
 }
 

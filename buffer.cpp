@@ -318,7 +318,8 @@ void YZBuffer::displayIntro() {
 	<<  ""
 	<<  ""
 	<<  ""
-	<<  "Yzis Milestone 1"
+	<< VERSION_CHAR_LONG
+	<< VERSION_CHAR_DATE
 	<<  ""
 	<<	"Development Release - Use for testing only" 
 	<<  "Copyright 2003, 2004 Yzis Team <yzis-dev@yzis.org>"
@@ -471,9 +472,11 @@ bool YZBuffer::save() {
 
 void YZBuffer::addView (YZView *v) {
 	YZView *it;
-	for ( it = mViews.first(); it; it=mViews.next() ) {
-		if ( it == v ) return; // don't append twice
-	}
+	for ( it = mViews.first(); it; it=mViews.next() )
+		if ( it == v ) {
+			yzWarning()<< "view " << ( int )v << " added for the second time, discarding"<<endl;
+			return; // don't append twice
+		}
 	yzDebug() << "BUFFER: addView" << endl;
 	mViews.append( v );
 	mSession->setCurrentView( v );
@@ -483,12 +486,13 @@ YZView* YZBuffer::findView( unsigned int uid ) {
 	yzDebug() << "Buffer: findView " << uid << endl;
 	YZView *it;
 	for ( it = mViews.first(); it; it=mViews.next() ){
-		yzDebug() << "Checking view " << uid << " for buffer " << fileName() << endl;
+//		yzDebug() << "buffer:findViewChecking view " << uid << " for buffer " << fileName() << endl;
 		if ( it->myId == uid ) {
-			yzDebug() << "Buffer: View " << uid << " found" << endl;
+//			yzDebug() << "Buffer:findView " << uid << " found" << endl;
 			return it;
 		}
 	}
+//	yzDebug() << "buffer::findView " << uid << " returning NULL" << endl;
 	return NULL;
 }
 

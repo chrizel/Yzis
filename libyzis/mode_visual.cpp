@@ -126,6 +126,7 @@ void YZModeVisual::cursorMoved( YZView* mView ) {
 
 void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand("<ALT>:", (PoolMethod) &YZModeVisual::movetoExMode) );
+	commands.append( new YZCommand("<ALT>i", (PoolMethod) &YZModeVisual::movetoInsertMode) );
 	commands.append( new YZCommand("<CTRL>[", &YZModeCommand::gotoCommandMode) );
 	commands.append( new YZCommand("<CTRL>l", &YZModeCommand::redisplay) );
 	commands.append( new YZCommand("<DEL>", &YZModeCommand::del) );
@@ -177,6 +178,9 @@ void YZModeVisual::gotoExMode( const YZCommandArgs& args ) {
 }
 void YZModeVisual::movetoExMode( const YZCommandArgs& args ) {
 	args.view->modePool()->change( MODE_EX );
+}
+void YZModeVisual::movetoInsertMode( const YZCommandArgs& args ) {
+	args.view->modePool()->change( MODE_INSERT );
 }
 
 YZInterval YZModeVisual::interval(const YZCommandArgs& args ) {

@@ -41,10 +41,8 @@
 
 class NYZSession;
 
-//class NYZView : public QObject, public YZView
 class NYZView : public YZView
 {
-//	Q_OBJECT
 
 public:
 	/**

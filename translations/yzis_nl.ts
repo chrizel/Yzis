@@ -23,6 +23,57 @@
         <source>Yzis Ready</source>
         <translation>Yzis klaar</translation>
     </message>
+    <message>
+        <source>-- INSERT --</source>
+        <translation type="unfinished">-- INVOEGEN --</translation>
+    </message>
+    <message>
+        <source>-- REPLACE --</source>
+        <translation type="unfinished">-- VERVANGEN --</translation>
+    </message>
+    <message>
+        <source>Command mode</source>
+        <translation type="unfinished">Commando modus</translation>
+    </message>
+    <message>
+        <source>-- EX --</source>
+        <translation type="unfinished">-- EX --</translation>
+    </message>
+    <message>
+        <source>-- REVERSE SEARCH --</source>
+        <translation type="unfinished">-- TERUG ZOEKEN --</translation>
+    </message>
+    <message>
+        <source>-- SEARCH --</source>
+        <translation type="unfinished">-- ZOEKEN --</translation>
+    </message>
+</context>
+<context>
+    <name>NYZView</name>
+    <message>
+        <source>Entering Insert mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Entering Replace mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Entering Command mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EX Mode :</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Reverse Search:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search mode :</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -77,27 +128,27 @@
     </message>
     <message>
         <source>-- INSERT --</source>
-        <translation>-- INVOEGEN --</translation>
+        <translation type="obsolete">-- INVOEGEN --</translation>
     </message>
     <message>
         <source>-- REPLACE --</source>
-        <translation>-- VERVANGEN --</translation>
+        <translation type="obsolete">-- VERVANGEN --</translation>
     </message>
     <message>
         <source>-- REVERSE SEARCH --</source>
-        <translation>-- TERUG ZOEKEN --</translation>
+        <translation type="obsolete">-- TERUG ZOEKEN --</translation>
     </message>
     <message>
         <source>-- SEARCH --</source>
-        <translation>-- ZOEKEN --</translation>
+        <translation type="obsolete">-- ZOEKEN --</translation>
     </message>
     <message>
         <source>Command mode</source>
-        <translation>Commando modus</translation>
+        <translation type="obsolete">Commando modus</translation>
     </message>
     <message>
         <source>-- EX --</source>
-        <translation>-- EX --</translation>
+        <translation type="obsolete">-- EX --</translation>
     </message>
     <message>
         <source>Top</source>

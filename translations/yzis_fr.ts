@@ -23,6 +23,57 @@
         <source>Yzis Ready</source>
         <translation>Yzis Prêt</translation>
     </message>
+    <message>
+        <source>-- INSERT --</source>
+        <translation>-- INSERTION --</translation>
+    </message>
+    <message>
+        <source>-- REPLACE --</source>
+        <translation>-- REMPLACEMENT --</translation>
+    </message>
+    <message>
+        <source>Command mode</source>
+        <translation>Commande</translation>
+    </message>
+    <message>
+        <source>-- EX --</source>
+        <translation>-- EX --</translation>
+    </message>
+    <message>
+        <source>-- REVERSE SEARCH --</source>
+        <translation>-- RECHERCHE INVERSEE --</translation>
+    </message>
+    <message>
+        <source>-- SEARCH --</source>
+        <translation>-- RECHERCHE --</translation>
+    </message>
+</context>
+<context>
+    <name>NYZView</name>
+    <message>
+        <source>Entering Insert mode</source>
+        <translation>Passage au mode insertion</translation>
+    </message>
+    <message>
+        <source>Entering Replace mode</source>
+        <translation>Passage au mode remplacement</translation>
+    </message>
+    <message>
+        <source>Entering Command mode</source>
+        <translation>Passage au mode commande</translation>
+    </message>
+    <message>
+        <source>EX Mode :</source>
+        <translation>Mode EX :</translation>
+    </message>
+    <message>
+        <source>Reverse Search:</source>
+        <translation>Recherche Inversée:</translation>
+    </message>
+    <message>
+        <source>Search mode :</source>
+        <translation>Mode recherche :</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
@@ -77,27 +128,27 @@
     </message>
     <message>
         <source>-- INSERT --</source>
-        <translation>-- INSERTION --</translation>
+        <translation type="obsolete">-- INSERTION --</translation>
     </message>
     <message>
         <source>-- REPLACE --</source>
-        <translation>-- REMPLACEMENT --</translation>
+        <translation type="obsolete">-- REMPLACEMENT --</translation>
     </message>
     <message>
         <source>-- REVERSE SEARCH --</source>
-        <translation>-- RECHERCHE INVERSEE --</translation>
+        <translation type="obsolete">-- RECHERCHE INVERSEE --</translation>
     </message>
     <message>
         <source>-- SEARCH --</source>
-        <translation>-- RECHERCHE --</translation>
+        <translation type="obsolete">-- RECHERCHE --</translation>
     </message>
     <message>
         <source>Command mode</source>
-        <translation>Commande</translation>
+        <translation type="obsolete">Commande</translation>
     </message>
     <message>
         <source>-- EX --</source>
-        <translation>-- EX --</translation>
+        <translation type="obsolete">-- EX --</translation>
     </message>
     <message>
         <source>Top</source>

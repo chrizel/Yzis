@@ -190,19 +190,19 @@ void NYZView::modeChanged(void)
 {
 	switch ( mMode ) {
 		case YZ_VIEW_MODE_INSERT: // insert
-			displayInfo( tr( "Entering Insert mode" ));
+			displayInfo( qApp->translate( "NYZView", "Entering Insert mode" ));
 			break;
 		case YZ_VIEW_MODE_REPLACE: // replace
-			displayInfo( tr( "Entering Replace mode" ));
+			displayInfo( qApp->translate( "NYZView", "Entering Replace mode" ));
 			break;
 		case YZ_VIEW_MODE_COMMAND: // normal
-			displayInfo( tr( "Entering Command mode" ));
+			displayInfo( qApp->translate( "NYZView",  "Entering Command mode" ));
 			break;
 		case YZ_VIEW_MODE_EX: //script·
-			displayInfo( tr( "EX Mode :" ));
+			displayInfo( qApp->translate( "NYZView",  "EX Mode :" ));
 			break;
 		case YZ_VIEW_MODE_SEARCH: //search mode
-			displayInfo( reverseSearch ? tr( "Reverse Search:" ) : tr( "Search mode :" ));
+			displayInfo( reverseSearch ? qApp->translate( "NYZView",  "Reverse Search:" ) : qApp->translate( "NYZView",  "Search mode :" ));
 			break;
 	};
 }

@@ -14,7 +14,9 @@
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
     <description/>
-    <ignoreparts/>
+    <ignoreparts>
+      <part>kdevsecurity</part>
+    </ignoreparts>
     <secondaryLanguages/>
   </general>
   <kdevfileview>

@@ -73,6 +73,8 @@ YZSession::~YZSession() {
 	delete events;
 	delete mRegisters;
 	delete mOptions;
+	delete YzisHlManager::self();
+	delete YZExLua::instance();
 }
 
 void YZSession::guiStarted() {

@@ -158,6 +158,8 @@ YZView::~YZView() {
 	delete m_completionStart;
 	delete m_completionCursor;
 	delete incSearchResult;
+	delete mLineSearch;
+	delete mSearchBegin;
 }
 
 void YZView::setupKeys() {

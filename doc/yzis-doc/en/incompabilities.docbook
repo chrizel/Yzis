@@ -30,6 +30,10 @@
 			<para><command>'q'</command> and <command>'@'</command></para>
 			<para>These commands work with registers: "aq start recording in register 'a', "a@ plays register 'a' contents.</para>
 		</listitem>
+		<listitem>
+			<para><command>&lt;cr&gt;</command></para>
+			<para>is replaced by &lt;ENTER&gt; in Lua scripts and mappings</para>
+		</listitem>
 	</itemizedlist>
 
 	<para>

@@ -126,6 +126,7 @@ void YZCommandPool::initPool() {
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 	unsigned int count=1;
+	bool hadCount = false;
 	unsigned int i=0;
 	QValueList<QChar> regs;
 	// read in the register operations and the counts
@@ -136,6 +137,8 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 				j++;
 			count*=inputs.mid(i, j-i).toInt();
 			i=j;
+			yzDebug() << "Count " << count << endl;
+			hadCount=true; //we found digits given by the user
 		} else if(inputs[i] == '\"') {
 			if(++i>=inputs.length())
 				break;
@@ -189,8 +192,8 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 		i=j-1;
 		// read in a count that may follow
 		if (c->arg() == ARG_CHAR) {//dont try to read a motion !
-				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, inputs.mid(i)));
-				return CMD_OK;
+			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
+			return CMD_OK;
 		}
 		if(inputs[i].digitValue() > 0) {
 			while(j<inputs.length() && inputs[j].digitValue() > 0)
@@ -241,7 +244,7 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			break;
 		}
 		// the argument is OK, go for it
-		(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, s));
+		(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, s));
 	} else {
 		// keep the commands that match exactly
 		QString s=inputs.mid(i);
@@ -262,7 +265,7 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 		if(cmds.count()==1) {
 			c=cmds.first();
 			if(c->arg() == ARG_NONE || visual && c->arg() == ARG_MOTION)
-				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, m));
+				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, m));
 			else
 				return OPERATOR_PENDING;
 		} else {
@@ -278,9 +281,9 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			if(!c)
 				return CMD_ERROR;
 			if(visual)
-				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, m));
+				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, m));
 			else
-				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, QString::null));
+				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
 		}
 	}
 
@@ -693,10 +696,12 @@ QString YZCommandPool::gotoInsertMode(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::gotoLine(const YZCommandArgs &args) {
-	unsigned int line = args.count - 1;
-	if ( line > 0 ) {
+	unsigned int line = 0;
+    if ( args.usercount ) line	= args.count - 1; //args.count cannot be 0 anyway (since 0 is a command by itself)
+	
+	if ( args.cmd->keySeq().startsWith( "gg" ) || (args.cmd->keySeq().startsWith( "G" ) && args.usercount ) )
 		args.view->gotoLine( line );
-	} else {
+	else {
 		if ( args.cmd->keySeq().startsWith( "G" ) )
 			args.view->gotoLastLine();
 		else
@@ -913,7 +918,6 @@ QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
 }
 
 QString YZCommandPool::redisplay( const YZCommandArgs &args ) {
-	yzDebug() << "OK" << endl;
 	args.view->recalcScreen();
 	return QString::null;
 }
@@ -926,3 +930,4 @@ QString YZCommandPool::replace( const YZCommandArgs &args ) {
 	args.view->commitNextUndo();
 	return QString::null;
 }
+

@@ -59,24 +59,28 @@ struct YZCommandArgs {
 	QValueList<QChar> regs;
 	//exec this number of times the command
 	unsigned int count;
+	//was the count gave by the user
+	bool usercount;
 	//the argument
 	QString arg;
 	//the visual mode selection
 	YZSelectionMap selection;
 
-	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, QString a) {
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, bool user, QString a) {
 		cmd=_cmd;
 		view=v;
 		regs=r;
 		count=c;
 		arg=a;
+		usercount=user;
 	}
-	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, const YZSelectionMap &s) {
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, bool user, const YZSelectionMap &s) {
 		cmd=_cmd;
 		view=v;
 		regs=r;
 		count=c;
 		selection=s;
+		usercount=user;
 	}
 };
 

@@ -350,8 +350,10 @@ void KYZisEdit::initKeys() {
 	keys[ Qt::Key_Up ] = "<UP>" ;
 	keys[ Qt::Key_Right ] = "<RIGHT>" ;
 	keys[ Qt::Key_Down ] = "<DOWN>" ;
-	keys[ Qt::Key_Prior ] = "<PRIOR>" ;
-	keys[ Qt::Key_Next ] = "<NEXT>" ;
+	keys[ Qt::Key_Prior ] = "<PUP>" ;
+	keys[ Qt::Key_Next ] = "<PDOWN>" ;
+	keys[ Qt::Key_PageUp ] = "<PUP>" ;
+	keys[ Qt::Key_PageDown ] = "<PDOWN>" ;
 	keys[ Qt::Key_Shift ] = "<SHIFT>" ;
 	keys[ Qt::Key_Control ] = "<CTRL>" ;
 	keys[ Qt::Key_Meta ] = "<META>" ;

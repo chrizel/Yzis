@@ -233,7 +233,20 @@ void TestUndo::testUndoDeleteLine()
     performUndoRedo( textHistory );
     performUndoRedo( textHistory );
 }
+
  
+void TestUndo::testRedoRemovesUndo()
+{
+    YZUndoBuffer * ub = mBuf->undoBuffer();
+    QStringList textHistory;
+    textHistory.append( mBuf->getWholeText() );
+
+    // do some stuff 
+    // undo some stuff
+    // redo in the middle of undo
+    // undo should not be available
+}
+
 
 
 /* ========================================================================= */

@@ -43,6 +43,7 @@ public:
     CPPUNIT_TEST( testUndoLineOperation );
     CPPUNIT_TEST( testUndoInsertLine );
     CPPUNIT_TEST( testUndoDeleteLine );
+    CPPUNIT_TEST( testRedoRemovesUndo );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -51,6 +52,7 @@ public:
     void testUndoLineOperation();
     void testUndoInsertLine();
     void testUndoDeleteLine();
+    void testRedoRemovesUndo();
 
 protected:
     void performUndoRedo( QStringList & textHistory );

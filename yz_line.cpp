@@ -25,6 +25,7 @@ YZLine::YZLine(int _line, char *init, int initlen, int size)
 {
 	::YZLine(size+initlen);
 	append(init, initlen);
+	debug("YZLine::YZLine init is %s", data);
 	line = _line;
 }
 
@@ -54,14 +55,15 @@ void YZLine::write_to(int fd)
 		write(fd, data, len);
 }
 
-void YZLine::append(char *_data, int _len)
+void YZLine::append(char *_data, int applen)
 {
 	/* checks */
-	if (_len<0) panic("called with negative _len : %d", _len);
-	if (len+_len>len_max)
-		expand(len+_len+YZ_LINE_DEFAULT_LENGTH);
+	if (applen<0) panic("called with negative applen : %d", applen);
+	if (len+applen>len_max)
+		expand(len+applen+YZ_LINE_DEFAULT_LENGTH);
 	/* actually append */
-	memcpy(data+len, _data, _len);
+	memcpy(data+len, _data, applen);
+	len+=applen;
 }
 
 void YZLine::add_char (int x, unicode_char_t c)

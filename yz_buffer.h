@@ -34,7 +34,7 @@ public:
 	void save(void);
 
 	/* linked list handling */
-	void add_line(YZLine *l) { l->set_next(NULL); if (line_last) line_last->set_next(l); line_last=l; }
+	void add_line(YZLine *l);
 
 protected:
 	void add_view (YZView *v);

@@ -168,6 +168,7 @@ QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
 					break;
 				case buffer_opt:
 					oldVal = view->myBuffer()->getLocalStringOption( option );
+				case global_opt:	
 					break;	
 			}
 			switch ( opt->getValueType() ) {
@@ -242,12 +243,38 @@ QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
 }
 
 QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
-	QRegExp rx ( "set(\\s+)(.*)=(.*)" ); //option with value
-	QRegExp rx2 ( "set(\\s+)no(.*)" ); //deactivate a bool option
-	QRegExp rx3 ( "set(\\s+)(.*)" ); //activate a bool option
+	QRegExp rx ( "set(\\s+)(\\w*)(\\+|-)?=(.*)" ); //option with value
+	QRegExp rx2 ( "set(\\s+)no(\\w*)" ); //deactivate a bool option
+	QRegExp rx3 ( "set(\\s+)(\\w*)" ); //activate a bool option
+
 	if ( rx.exactMatch( inputs ) ) {
 		YZSession::mOptions.setGroup("Global");
-		YZSession::setQStringOption( rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());
+		QString option = rx.cap( 2 ).simplifyWhiteSpace();
+		bool hasOperator = rx.numCaptures() == 4; // do we have a +/- in the set command ?
+		QString value = hasOperator ? rx.cap( 4 ).simplifyWhiteSpace() : rx.cap( 3 ).simplifyWhiteSpace();
+		KOption *opt = YZSession::mOptions.getOption(option);
+		if ( !opt ) {
+			view->mySession()->popupMessage(tr("Invalid option given : ") + option);
+			return QString::null;
+		}
+		if ( hasOperator ) {
+			switch ( opt->getValueType() ) {
+				case string_t :
+					if ( rx.cap( 3 ) == "+" ) value = YZSession::mOptions.readQStringEntry( option ) + value;
+					else if ( rx.cap( 3 ) == "-" ) value = QString( YZSession::mOptions.readQStringEntry( option ) ).remove( value );
+					break;
+				case int_t :
+					if ( rx.cap( 3 ) == "+" ) value = QString::number( YZSession::mOptions.readQStringEntry( option ).toInt() + value.toInt() );
+					else if ( rx.cap( 3 ) == "-" ) value = QString::number( YZSession::mOptions.readQStringEntry( option ).toInt() - value.toInt() );
+					break;
+				case bool_t :
+					view->mySession()->popupMessage(tr("This option cannot be switched this way, this is a boolean option."));
+					return QString::null;
+					break;
+			}
+		}
+		yzDebug() << "Setting option " << option << " to " << value << endl;
+		YZSession::setQStringOption( option, value );
 	} else if ( rx2.exactMatch( inputs )) {
 		YZSession::mOptions.setGroup("Global");
 		YZSession::setBoolOption( rx2.cap( 2 ).simplifyWhiteSpace(), false);

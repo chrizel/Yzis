@@ -25,3 +25,6 @@
 #  install the man page
 #man_MANS=yzis.1
 SUBDIRS=libyzis cyzis nyzis
+
+re : clean all
+

@@ -12,3 +12,4 @@ configure
 conftest*
 aclocal.m4
 libtool
+autom4te.cache

@@ -5444,7 +5444,7 @@ AC_DEFUN(AC_PATH_TINYQ, [
 AC_DEFUN(AC_PATH_LUA, [
 	AC_PATH_PROG(LUA_CONFIG, lua-config, no)
 
-	LUA_LIBS="-llualib50 -llua50"
+	LUA_LIBS="-llualib -llua"
 
 	if test "x$LUA_CONFIG" = "xno" ; then
 		AC_PATH_PROG(LUA_CONFIG, lua-config50, no)

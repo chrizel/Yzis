@@ -32,7 +32,7 @@ NYZisDoc::~NYZisDoc () {
 bool NYZisDoc::popupFileSaveAs() {
 	// TODO
 	for (  YZView *it = mViews.first(); it; it = mViews.next() )
-		it->displayInfo ( "Save as not implemented yet, use :w<filname>" );
+		it->displayInfo ( "Save as not implemented yet, use :w<filename>" );
 	return false;
 }
 

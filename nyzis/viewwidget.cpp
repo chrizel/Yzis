@@ -130,31 +130,26 @@ void NYZView::printLine( int line ) {
 	if ( highlight )
 		at = highlight->attributes( 0 /*only one schema*/ )->data( );
 	uint atLen = at ? highlight->attributes( 0 /*only one schema*/ )->size() : 0;
-	int mColor = mColormap[ Qt::white.rgb() ];
+	int mColor = mColormap[Qt::white.rgb()];
 
 
 //yzDebug() << "at,a,atLen are " << ( int )at << " " <<  ( int )a << " " <<  atLen <<endl;
 	bool noAttribs = !a;
 	for (actuallen=i=0; actuallen<w && i<str.length(); i++) {
 		// quickly handle the tab case
-		if ( str[ i ] == tabChar ) {
-			actuallen += TABSIZE;
+		if ( str[i] == tabChar ) {
 			for ( int j=0; j<TABSIZE && actuallen<w; actuallen++,j++ ) waddch( window, ' ' );
 			if ( a ) a++;
 			continue;
 		}
 
 		YzisAttribute hl;
-		//YzisAttribute *curAt=at;
-		//if ( at && a && *a>=atLen) curAt = &at[*a];
-		YzisAttribute *curAt = ( !noAttribs && (*a) >= atLen ) ?  &at[ 0 ] : &at[*a];
+		YzisAttribute *curAt = ( !noAttribs && (*a) >= atLen ) ?  &at[0] : &at[*a];
 		if ( curAt ) {
 			hl+=*curAt;
-			//yzDebug(NYZIS ) << "hl.textColor is" <<  hl.textColor().rgb() << endl;
 			mColor = mColormap.contains(hl.textColor().rgb())?
-				mColormap[ hl.textColor().rgb() ]:
-				mColormap[ Qt::white.rgb() ];
-			//yzDebug()<< "nyzis highlighting *********changing color to  "<< mColor << endl;
+				mColormap[hl.textColor().rgb()]:
+				mColormap[Qt::white.rgb()];
 		}
 		waddch(window, COLOR_PAIR(mColor)|str[i].unicode());
 		actuallen++;
@@ -162,17 +157,20 @@ void NYZView::printLine( int line ) {
 	if ( a ) a++;
 	}
 
-
+	if ( myBuffer()->introShown() ) return;
 
 	// end of line...
 	for ( ; actuallen< w; actuallen++ ) waddch(window, ' ' );
+//	for ( ; actuallen< w-1; actuallen++ ) waddch(window, COLOR_PAIR(1)|'X' ); // debug :)
 	wmove(window,sy,sx ); // restore cursor
 }
 
 void NYZView::setCommandLineText( const QString& text )
 {
+	werase(statusbar);
 	commandline = text;
-	mvwaddstr(statusbar, 0, 0 ,text.latin1());
+	if ( text.isEmpty() ) return;
+	waddstr(statusbar, text.latin1());
 	waddch( statusbar, ' ' ); // when doing backspace...
 	waddch( statusbar, '\b' );
 	wrefresh(statusbar);
@@ -185,6 +183,7 @@ QString NYZView::getCommandLineText() const {
 void NYZView::invalidateLine ( unsigned int line ) {
 	printLine( line );
 	wrefresh( window );
+	refresh();
 }
 
 
@@ -210,7 +209,7 @@ void NYZView::syncViewInfo( void )
 
 	werase(infobar);
 	wmove( infobar,0,0 );
-	for ( const char *ptr = modeName[ mMode ]; *ptr; ptr++ )
+	for ( const char *ptr = modeName[mMode]; *ptr; ptr++ )
 		waddch(infobar, COLOR_PAIR(1)|*ptr);
 
 	waddch(infobar, ' ');
@@ -256,9 +255,8 @@ void NYZView::refreshScreen() {
 void NYZView::displayInfo( const QString& info )
 {
 	werase(statusbar);
-	mvwaddstr( statusbar, 0, 0, info.latin1() );
+	waddstr( statusbar, info.latin1() );
 	wrefresh(statusbar);
-	refresh();
 	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;
 }
 
@@ -321,7 +319,7 @@ void NYZView::initialisecolormap()
 #undef MAP
 #define MAP( nb, qtcolor, color )               \
 	init_pair( nb, color, COLOR_BLACK );    \
-	mColormap[ qtcolor.rgb() ] = nb;
+	mColormap[qtcolor.rgb()] = nb;
 
 		MAP( 1, Qt::magenta, COLOR_MAGENTA );
 		MAP( 2, Qt::red, COLOR_RED );

@@ -1,3 +1,9 @@
+2004-10-28 mikmak
+  * libyzis
+  	new enew ex command
+  * kyzis
+  	replaced DCOP calls with normal C functions calls (faster)
+  	
 2004-10-26 mikmak
   * libyzis
   	reworked completion commands, moved it to a full independant mode

@@ -1,3 +1,9 @@
+2004-09-17 philippe
+  * libyzis
+  	- more bug fixing for lua binding
+  	- tests for all yzis lua functions
+  	- :lua now working
+
 2004-09-15 panard
   * libyzis
   	Range support for ExCommands
@@ -5,6 +11,11 @@
 2004-09-11 orzel
   * nyzis
   	support the CTRL modifier
+
+2004-09-11 philippe
+  * libyzis
+  	- bug fixing and improvement of the lua binding
+  	- tests for most of yzis lua functions
 
 2004-09-10 mikmak
   * all

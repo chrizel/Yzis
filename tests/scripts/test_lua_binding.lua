@@ -47,8 +47,8 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), "" )
     end
 
-    function TestLuaBinding:Xtest_use_all_functions() -- disabled for now
-		require('use_all_functions')
+    function TestLuaBinding:test_use_all_functions() -- disabled for now
+		require('../../doc/examples/example')
     end
 
     function TestLuaBinding:test_version()
@@ -252,4 +252,6 @@ TestLuaBinding = {} --class
 
 
 
-luaUnit:run()
+-- luaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
+-- luaUnit:run('TestLuaBinding') -- will execute only one class of test
+luaUnit:run() -- will execute all tests

@@ -32,8 +32,8 @@
 #include "syntaxhighlight.h"
 #include "line.h"
 #include "debug.h"
+#include "view.h" // needed by Visual
 
-class YZView;
 class YZUndoBuffer;
 class YZAction;
 class YZDocMark;

@@ -30,7 +30,7 @@ apidox:
 	fi; \
 	cp $(top_srcdir)/admin/Doxyfile.global yzis.doxyfile; \
 	echo "PROJECT_NAME        = Yzis" >> yzis.doxyfile; \
-	echo "PROJECT_NUMBER      = \"Version M2\"" >> yzis.doxyfile; \
+	echo "PROJECT_NUMBER      = \"Version M3\"" >> yzis.doxyfile; \
 	echo "INPUT               = $(srcdir)" >> yzis.doxyfile; \
 	echo "OUTPUT_DIRECTORY    = doc/api" >> yzis.doxyfile; \
 	echo "HTML_OUTPUT         = html" >> yzis.doxyfile; \

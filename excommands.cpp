@@ -259,8 +259,7 @@ QString YZExCommandPool::write( const YZExCommandArgs& args ) {
 	}
 	if ( args.arg.length() ) {
 		args.view->myBuffer()->setPath( args.arg ); //a filename was given as argument
-		args.view->myBuffer()->getSwapFile()->setFileName( args.view->myBuffer()->fileName()+".ywp" );
-		args.view->myBuffer()->getSwapFile()->init();
+		args.view->myBuffer()->getSwapFile()->setFileName( args.view->myBuffer()->fileName() );
 	}
 	if ( quit && force ) {//check readonly ? XXX
 		args.view->myBuffer()->save();

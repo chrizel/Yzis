@@ -482,7 +482,7 @@ void YZBuffer::load(const QString& file) {
 				setChanged( true );
 		}
 	}
-	mSwap->init(); // whatever happened before, create a new swapfile
+//	mSwap->init(); // whatever happened before, create a new swapfile
 	mLoading=false;
 	mUndoBuffer->setInsideUndo( false );
 	//reenable

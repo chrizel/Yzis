@@ -101,6 +101,10 @@ void Kyzis::setupActions() {
 
 	KStdAction::preferences(this, SLOT(preferences()), actionCollection());
 
+	m_openRecentAction = KStdAction::openRecent(this, SLOT(openURL(const KURL&)),
+		actionCollection() );
+	m_openRecentAction->setWhatsThis( i18n("Opens recently opened file.") );
+	m_openRecentAction->loadEntries( kapp->config(), "RecentFiles" );
 
 	if ( !isFakingSDIApplication() ) {
 //		menuBar()->insertItem(i18n( "&Window" ), windowMenu(), -1, menuBar()->count()-2);
@@ -172,18 +176,32 @@ void Kyzis::fileOpen() {
 	// the Open shortcut is pressed (usually CTRL+O) or the Open toolbar
 	// button is clicked
 	KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this );
+	if (url.isEmpty())
+		return;
+	openURL(url);
+}
 
-	if (url.isEmpty() == false) {
-		// About this function, the style guide (
-		// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
-		// says that it should open a new window if the document is _not_
-		// in its initial state.  This is what we do here..
-		if ( getCurrentPart() && getCurrentPart()->url().isEmpty() && ! getCurrentPart()->isModified() ) {
-			// we open the file in this window...
-			load( url );
-		} else {
-			createBuffer( url.url() );
-		}
+void Kyzis::openURL(const KURL &url)
+{
+	if (url.isEmpty())
+	{
+		fileOpen();
+		return;
+	}
+
+	m_openRecentAction->addURL(url);
+	m_openRecentAction->saveEntries( kapp->config(), "RecentFiles" );
+
+	// About this function, the style guide (
+	// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
+	// says that it should open a new window if the document is _not_
+	// in its initial state.  This is what we do here..
+	if ( getCurrentPart() && getCurrentPart()->url().isEmpty() && ! getCurrentPart()->isModified() )
+	{
+		// we open the file in this window...
+		load( url );
+	} else {
+		createBuffer( url.url() );
 	}
 }
 

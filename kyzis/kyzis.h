@@ -43,6 +43,7 @@ typedef struct YV KView;
  * @short Application Shell
  * @author Yzis Team <yzis-dev@yzis.org>
  */
+class KRecentFilesAction;
 class Kyzis : public KMdiMainFrm, public DCOPObject
 {
 	K_DCOP
@@ -106,6 +107,7 @@ protected:
 private slots:
     void fileNew();
     void fileOpen();
+    void openURL( const KURL& );
     void fileQuit();
     void optionsShowToolbar();
     void optionsConfigureKeys();
@@ -119,6 +121,7 @@ private:
 
     KToggleAction *m_toolbarAction;
     KToggleAction *m_konsoleAction;
+    KRecentFilesAction *m_openRecentAction;
 	QDomElement m_dockConfig;
 	int mBuffers;
 	int mViews;

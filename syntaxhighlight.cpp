@@ -2594,6 +2594,7 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 }
 
 QString YzisHlManager::findByContent( const QByteArray& contents ) {
+#if 0
 	struct magic_set *ms = magic_open( MAGIC_MIME );
 	if ( ms == NULL ) {
 		magic_close(ms);
@@ -2612,6 +2613,8 @@ QString YzisHlManager::findByContent( const QByteArray& contents ) {
 		yzDebug() << "Magic result " << mime << endl;
 		return mime;
 	} else return QString::null;
+#endif
+	return QString::null;
 }
 
 int YzisHlManager::mimeFind(const QByteArray &contents)

@@ -1805,7 +1805,7 @@ bool YZView::drawNextCol( ) {
 			nextLength = GET_CHAR_WIDTH( sCurLine[ workCursor->bufferX() + workCursor->bColIncrement ] );
 
 		// will our new char appear in the area ?
-		ret = adjust || workCursor->screenX() + lenToTest - mCurrentLeft <= mColumnsVis - nextLength;
+		ret = adjust || workCursor->screenX() + lenToTest - dCurrentLeft <= mColumnsVis - nextLength;
 
 		if ( ret || ! drawMode ) {
 			// moving cursors

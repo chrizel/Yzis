@@ -188,7 +188,7 @@ class YZSession {
 		 * Retrieve an int option
 		 */
 		static int getIntOption( const QString& option ) {
-			return YZSession::mOptions.readIntEntry( option );
+			return YZSession::mOptions.readIntEntry( option, 0 );
 		}
 
 		/**
@@ -202,7 +202,7 @@ class YZSession {
 		 * Retrieve a bool option
 		 */
 		static bool getBoolOption( const QString& option ) {
-			return YZSession::mOptions.readBoolEntry( option );
+			return YZSession::mOptions.readBoolEntry( option, false );
 		}
 
 		/**
@@ -217,7 +217,7 @@ class YZSession {
 		 * Retrieve a string option
 		 */
 		static QString getStringOption( const QString& option ) {
-			return YZSession::mOptions.readQStringEntry( option );
+			return YZSession::mOptions.readQStringEntry( option, QString("") );
 		}
 
 		/**
@@ -232,7 +232,7 @@ class YZSession {
 		 * Retrieve a qstringlist option
 		 */
 		static QStringList getStringListOption( const QString& option ) {
-			return YZSession::mOptions.readQStringListEntry( option );
+			return YZSession::mOptions.readQStringListEntry( option, QStringList::split(";","") );
 		}
 
 		/**
@@ -246,7 +246,7 @@ class YZSession {
 		 * Retrieve a qcolor option
 		 */
 		static QColor getColorOption( const QString& option ) {
-			return YZSession::mOptions.readQColorEntry( option );
+			return YZSession::mOptions.readQColorEntry( option, QColor("white") );
 		}
 
 		/**

@@ -75,12 +75,12 @@ class YZOption {
 		/**
 		 * Save settings to @param file
 		 */
-		void saveTo(const QString& file);
+		void saveTo(const QString& file, const QString& what=QString::null, bool force=false);
 
 		/**
 		 * return a QString option
 		 */
-		const QString& readQStringEntry( const QString& key );
+		const QString& readQStringEntry( const QString& key , const QString& def = QString::null );
 
 		/**
 		 * Sets a qstring option
@@ -90,7 +90,7 @@ class YZOption {
 		/**
 		 * return an int option
 		 */
-		int readIntEntry( const QString& key );
+		int readIntEntry( const QString& key, int def = 0 );
 
 		/**
 		 * Sets an int option
@@ -100,7 +100,7 @@ class YZOption {
 		/**
 		 * return a bool option
 		 */
-		bool readBoolEntry( const QString& key );
+		bool readBoolEntry( const QString& key , bool def = false );
 
 		/**
 		 * Sets a bool option
@@ -110,7 +110,7 @@ class YZOption {
 		/**
 		 * return a list option
 		 */
-		const QStringList& readQStringListEntry( const QString& key );
+		const QStringList& readQStringListEntry( const QString& key, const QStringList& def = QStringList::split("","") );
 
 		/**
 		 * Sets a qstringlist option
@@ -120,7 +120,7 @@ class YZOption {
 		/**
 		 * return a QColor option
 		 */
-		const QColor& readQColorEntry( const QString& key );
+		const QColor& readQColorEntry( const QString& key, const QColor& def );
 
 		/**
 		 * Sets a qcolor option
@@ -131,6 +131,11 @@ class YZOption {
 		 * Changes the current group of options
 		 */
 		void setGroup( const QString& group );
+
+		/**
+		 * Does this group already exists ?
+		 */
+		bool hasGroup ( const QString& group );
 		
 	private:
 		void init();

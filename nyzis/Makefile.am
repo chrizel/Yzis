@@ -8,3 +8,5 @@ yzis_SOURCES = main.cpp viewwidget.cpp factory.cpp document.cpp
 yzis_LDADD = $(top_builddir)/$(NYZIS_DEP) -lcurses
 
 re : clean all
+uncore :
+	gdb  `which yzis` core

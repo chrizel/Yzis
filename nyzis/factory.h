@@ -39,7 +39,7 @@ public:
 	/**
 	 * Constructor. Give a session name to identify/save/load sessions.
 	 */
-	NYZFactory( int argc, char **charv, const char *session_name = "default_nyzis_session" );
+	NYZFactory(const char *session_name = "default_nyzis_session" );
 	virtual ~NYZFactory( );
 
 	void		event_loop();

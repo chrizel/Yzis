@@ -36,6 +36,8 @@
 #define VERSION_PATCH	1
 
 #define VERSION_CHAR	"M1"
+#define VERSION_CHAR_LONG "Yzis Milestone 1"
+#define VERSION_CHAR_DATE "Released on may, 19th, 2004"
 
 struct yzpoint {
 	int x;

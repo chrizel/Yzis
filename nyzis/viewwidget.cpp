@@ -29,11 +29,21 @@
 #include "viewwidget.h"
 #include "factory.h"
 
-NYZView::NYZView(WINDOW *_window, YZBuffer *b)
+NYZView::NYZView(YZBuffer *b)
 	: YZView(b,NYZFactory::self,0)
 {
-	window = _window;
+	YZASSERT( b );
+	yzDebug() << "NYZView::NYZView buffer is : " << ( int )b << endl;
+	window = NULL;
 	modeDisplayed = false;
+}
+
+NYZView::~NYZView(){
+}
+
+void NYZView::map( void )
+{
+	window = newwin( 0,0,0,0 );
 
 	wmove(window,0,0 );
 	//active symbols for special keycodes
@@ -62,12 +72,19 @@ NYZView::NYZView(WINDOW *_window, YZBuffer *b)
 
 	// TODO  write something like :       "bernoulli.tex" [noeol] 65L, 1440C
 	// in last line (vim-like)
-	displayInfo ( QString("\"%1\" %2L, %3C" ).arg(b->fileName()).arg(b->lineCount()).arg(b->getWholeTextLength()));
+	displayInfo ( QString("\"%1\" %2L, %3C" ).arg(mBuffer->fileName()).arg(mBuffer->lineCount()).arg(mBuffer->getWholeTextLength()));
 	redrawScreen();
 }
 
-NYZView::~NYZView(){
+
+void NYZView::unmap( void )
+{
+	YZASSERT( statusbar ); delwin( statusbar );
+	YZASSERT( infobar ); delwin( infobar );
+	YZASSERT( window ); delwin( window );
+	window = statusbar = infobar = NULL;
 }
+
 
 void NYZView::printVoid( unsigned int relline ) {
 	unsigned int i;

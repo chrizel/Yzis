@@ -29,7 +29,7 @@ NYZFactory *NYZFactory::self = 0;
 NYZView *NYZFactory::currentView=0;
 
 
-NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
+NYZFactory::NYZFactory(const char *session_name)
 	:YZSession( session_name )
 {
 
@@ -67,31 +67,8 @@ NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
 	}
 
 	initialiseKeycodes();
-
-	/*
-	 * create a buffer and a view on it
-	 */
-	NYZisDoc *bf;
-	if ( argc>1 ) {
-		bf = createBuffer();
-		bf->load( charv[ 1 ] );
-	} else {
-/*		char tmpname[ 20 ];
-		strcpy( tmpname, "/tmp/nyzis.XXXXXX" );
-		int fd;
-		fd = mkstemp(tmpname);
-		if ( -1 == fd ) {
-			yzError() << "nyzis : can't open temporary file, quitting"; 
-			exit(1);
-		}
-		close (fd); // maybe we should have a createBuffer(int fd) ? */
-		bf = createBuffer();
-	}
-
 	screen = stdscr; // just an alias...
 	wattron(screen, A_BOLD);	// will be herited by subwin
-
-	createView(bf);
 }
 
 NYZFactory::~NYZFactory( )
@@ -99,9 +76,10 @@ NYZFactory::~NYZFactory( )
 	self = 0;
 }
 
-void NYZFactory::event_loop() {
-	if ( !currentView )
-		yzError() << "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView";
+void NYZFactory::event_loop()
+{
+	YZASSERT_MSG( currentView,
+			"NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
 	/* main and only event loop in nyzis */
 	for (;;) {
 		/* this is a _basic_ event loop... will be improved */
@@ -135,21 +113,39 @@ void NYZFactory::quit( bool /*savePopup*/ ) {
 
 void NYZFactory::changeCurrentView ( YZView * view  )
 {
-	currentView = static_cast<NYZView*>(view);
+	NYZView *v = static_cast<NYZView*>(view);
+	YZASSERT( view );
+	if ( currentView == v ){
+		yzWarning() << "changeCurrentView() called with same view.."<<endl;
+		return;
+	}
+	if ( currentView )
+		currentView->unmap();
+	currentView = v;
 	currentViewChanged(view);
+	currentView->map();
 }
 
 YZView* NYZFactory::createView( YZBuffer* buffer )
 {
-	WINDOW *window = newwin(0,0,0,0 );
-	currentView = new NYZView(window, buffer);
+	YZASSERT( buffer );
+	buffer->addView ( new NYZView( buffer ) );
+	return currentView;
+	/*
+	if ( currentView )
+		currentView->unmap();
+	yzDebug() << "NYZFactory::createView , buffer is : " << ( int )buffer << endl;
+	currentView = new NYZView(buffer);
+	currentView->map();
 	currentViewChanged(currentView);
 	return currentView;
+	*/
 }
 
 NYZisDoc *NYZFactory::createBuffer(const QString& path)
 {
 	NYZisDoc *b = new NYZisDoc( path );
+	YZASSERT_MSG(b, "NYZFactory::createBuffer failed creating new NYZisDoc");
 	return b;
 }
 
@@ -186,10 +182,12 @@ void NYZFactory::popupMessage( const QString &message )
 }
 
 void NYZFactory::deleteView() {
+	currentView->unmap();
 	delete currentView;
 	currentView = static_cast<NYZView*>(nextView());
-	if ( !currentView )
-		yzError() << "nyzys untested when no view is available...";
+	if ( !currentView ) // as vim does : create a new empty one
+		createView(createBuffer());
+	currentView->map();
 	// TODO ; some kind of fake view when no view is available..
 }
 

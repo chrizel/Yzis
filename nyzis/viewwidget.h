@@ -51,7 +51,7 @@ public:
 	  * constructor. Each view is binded to a buffer, @arg lines is the initial number of lines that
 	  * this view can display
 	  */
-	NYZView(WINDOW *_window, YZBuffer *b);
+	NYZView(YZBuffer *b);
 	virtual ~NYZView();
 
 	virtual QString getCommandLineText(void) const;
@@ -65,6 +65,9 @@ public:
 	virtual void displayInfo(  const QString& info );
 	QString getCommandLine() const;
 	void setCommandLine( const QString& );
+
+	void map( void );
+	void unmap( void );
 
 protected:
 	WINDOW		*window;	/* ncurses window to write to */

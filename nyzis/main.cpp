@@ -19,13 +19,25 @@
  * $Id$
  */
 
+
+/* Qt */
 #include <qapplication.h>
 #include <qtranslator.h>
 #include <qtextcodec.h>
-#include "debug.h"
 
+
+/* yzis */
+#include "debug.h"
 #include "factory.h"
 #include "translator.h"
+/* std c */
+//#include <unistd.h>
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#include <getopt.h> // getopt
+
+/* std c++ */
 #include <cstdlib>
 #include <cstdio>
 #include <csignal>
@@ -46,6 +58,8 @@ main(int argc, char *argv[])
 	bool useGUI = TRUE;
 #endif
 	QApplication app( argc, argv, useGUI );
+
+	// Translator stuff
 	QTranslator qt(  0 );
 	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
 	app.installTranslator(  &qt );
@@ -53,10 +67,63 @@ main(int argc, char *argv[])
 	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
 	yzDebug() << "Locale " << QTextCodec::locale() << endl;
 	app.installTranslator(  &myapp );
-	
-	(new NYZFactory(argc,argv)) -> event_loop();
 
-	yzError() << "Should never reach this point" << endl;
+
+	// create factory
+	NYZFactory *factory  =new NYZFactory();
+
+	// option stuff
+	int option_index = 0;
+	static struct option long_options[] = { // 0,1,2 = no_argument,required_argument,optional_argument
+		{"help", no_argument, 0, 'h'},
+		{"version", no_argument, 0, 'v'},
+		{0, 0, 0, 0}
+	};
+
+	int c;
+	while ( 1 ) {
+		c = getopt_long ( argc, argv, "hv", long_options, &option_index );
+		if ( -1 == c ) break; // end of parsing
+		switch (c) {
+			case 'h':
+				printf("http://www.yzis.org");
+				printf("Nyzis / ncurses part of Yzis\n"
+					VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
+				printf("\nUsage : %s [--help|-h] [--version|-v] [filename1 [filename2] .... ]\n\n", argv[0]);
+				exit(0);
+				break;
+			case 'v':
+				printf("Nyzis / ncurses part of Yzis\n"
+					VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
+				exit(0);
+				break;
+			default:
+				printf ( "?? getopt returned character code 0%o ??\n", c );
+		}
+
+	};
+
+	/*
+	 * Open buffers
+	 */
+	NYZisDoc *bf;
+	bool hasatleastone = false;
+
+	while ( --argc )
+		if ( '-' != argv[argc][0] ) {
+			hasatleastone = true;
+			yzDebug()<< "nyzis : opening file " << argv[argc]<<endl;;
+			bf = factory->createBuffer();
+			bf->load( argv[ argc ] );
+			factory->createView(bf);
+		}
+	if ( !hasatleastone )
+		factory->createView(factory->createBuffer());
+
+	
+	// let's go and loop
+	factory->event_loop();
+	yzFatal() << "Should never reach this point" << endl;
 }
 
 static void cleaning(void)

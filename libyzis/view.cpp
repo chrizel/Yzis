@@ -32,6 +32,7 @@
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	myId = YZSession::mNbViews++;
 	yzDebug() << "New View created with UID : " << myId << endl;
+	YZASSERT( _b ); YZASSERT( sess );
 	mSession = sess;
 	mBuffer	= _b;
 	mLinesVis = lines;
@@ -43,7 +44,6 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	QString line = mBuffer->textline(mCurrentTop);
 	if (!line.isNull()) mMaxX = line.length()-1;
 
-	mBuffer->addView(this);
 	mCurrentExItem = 0;
 	mCurrentSearchItem = 0;
 	mExHistory.resize(200);

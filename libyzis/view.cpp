@@ -1540,9 +1540,10 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop, unsigned int rLeft
 
 	adjust = false;
 
-	tabstop = getLocalIntOption("tabstop");
 	wrap = getLocalBoolOption( "wrap" );
 
+	if (getLocalIntOption( "tabstop" ) != 0 ) // avoid division by zero
+		tabstop = getLocalIntOption("tabstop");
 	tablength = tabstop * spaceWidth;
 	areaModTab = ( tablength - mColumnsVis % tablength ) % tablength;
 

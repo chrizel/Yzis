@@ -399,7 +399,7 @@ int YZExLua::version( lua_State *L ) {
 int YZExLua::sendkeys( lua_State *L ) {
 	if (!checkFunctionArguments(L, 1, "sendkeys", "text")) return 0;
 	YZView* cView = YZSession::me->currentView();
-	QString text = ( char * )lua_tostring ( L, 3 );
+	QString text = ( char * )lua_tostring ( L, 1 );
 	cView->sendMultipleKey( text );
 	// nothing to return
 	return 0;

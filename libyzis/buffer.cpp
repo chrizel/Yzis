@@ -608,6 +608,8 @@ bool YZBuffer::save() {
 	}
 
 	QString codecName = getLocalStringOption( "fileencoding" );
+	if ( codecName.isEmpty() )
+		codecName = getLocalStringOption( "encoding" );
 	yzDebug("YZBuffer") << "save using " << codecName << " encoding" << endl;
 	QTextCodec* codec;
 	if ( codecName == "locale" ) {
@@ -619,14 +621,15 @@ bool YZBuffer::save() {
 		codec = QTextCodec::codecForName( codecName.toLatin1() );
 #endif
 	}
+	// XXX: we have to test if codec is null, then  alert the user (like we have to do with null yzline()
 
 	QFile file( mPath );
 	m_hlupdating = true; //override so that it does not parse all lines
 	yzDebug("YZBuffer") << "Saving file to " << mPath << endl;
 #if QT_VERSION < 0x040000
-	if ( file.open( IO_WriteOnly ) ) {
+	if ( codec && file.open( IO_WriteOnly ) ) {
 #else
-	if ( file.open( QIODevice::WriteOnly ) ) {
+	if ( codec && file.open( QIODevice::WriteOnly ) ) {
 #endif
 		QTextStream stream( &file );
 		stream.setCodec( codec );
@@ -983,9 +986,9 @@ bool YZBuffer::getLocalBooleanOption( const QString& option ) {
 
 QString YZBuffer::getLocalStringOption( const QString& option ) {
 	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) )
-		return YZSession::mOptions->readStringOption( mPath+"\\"+option, QString("") );
+		return YZSession::mOptions->readStringOption( mPath+"\\"+option );
 	else
-		return YZSession::mOptions->readStringOption( "Global\\" + option, QString("") );
+		return YZSession::mOptions->readStringOption( "Global\\" + option );
 }
 
 QStringList YZBuffer::getLocalListOption( const QString& option ) {

@@ -277,7 +277,7 @@ QString YZExExecutor::hardcopy( YZView *view, const QString& inputs ) {
 	return QString::null;
 }
 
-QString YZExExecutor::preserve( YZView *view, const QString& inputs ) {
+QString YZExExecutor::preserve( YZView *view, const QString& /*inputs*/ ) {
 	view->myBuffer()->getSwapFile()->flush();
 	return QString::null;
 }

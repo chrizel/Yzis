@@ -31,6 +31,8 @@
 #include "motionpool.h"
 #include "syntaxhighlight.h"
 #include "schema.h"
+#include "ex_lua.h"
+#include "ex_executor.h"
 
 class YZView;
 class YZMotionPool;
@@ -200,6 +202,16 @@ class YZSession {
 		 */
 		YzisSchemaManager *schemaManager() { return mSchemaManager; }
 
+		/**
+		 * Get a pointer on the EX executor
+		 */
+		YZExExecutor *exExecutor() { return executor; }
+
+		/**
+		 * Get a pointer on the Lua launcher
+		 */
+		YZExLua *luaExecutor() { return lua_executor; }
+
 		//HELPERS
 		/**
 		 * Retrieve an int option
@@ -283,6 +295,8 @@ class YZSession {
 		YZMotionPool *mMotionPool;
 		YZView* mCurView;
 		YzisSchemaManager *mSchemaManager;
+		YZExExecutor *executor;
+		YZExLua *lua_executor;
 		
 	public:
 		static int mNbViews;

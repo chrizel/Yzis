@@ -293,6 +293,11 @@ class YZView {
 		 */
 		bool doSearch( const QString& search );
 
+		/**
+		 * Continue previous search
+		 */
+		QString searchAgain( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+
 	protected:
 		/**
 		 * Updates the position of the cursor

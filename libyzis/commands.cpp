@@ -142,6 +142,8 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error)
 void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("write", &YZExExecutor::write,true);
 	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true );
+	NEW_EX_COMMAND("bprevious", &YZExExecutor::bufferprevious,true );
+	NEW_EX_COMMAND("bdelete", &YZExExecutor::bufferdelete,true );
 	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true );
 	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true );
 }

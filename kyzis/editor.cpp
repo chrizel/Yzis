@@ -24,11 +24,12 @@
 #include "editor.h"
 #include "debug.h"
 #include "yzis.h"
+#include <kglobalsettings.h>
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) 
 {
-	setFont(QFont("Fixed",10));
+	setFont(KGlobalSettings::fixedFont());
 	_parent = parent;
 
 	viewport()->setFocusProxy( this );

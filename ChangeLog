@@ -1,4 +1,10 @@
-2004-02-06 mikmak
+2004-02-21 mikmak
+  * all
+    add popupMessage to display messages from core in Guis (for errors)
+  * kyzis
+    use KDE's fixed font as default
+
+2004-02-16 mikmak
   * all 
     updated admin/ dir
   * kyzis

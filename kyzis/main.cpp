@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
 			Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
 			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
 			widget->createBuffer( tmp->name() );
+			widget->resize( 600,400 );
 			widget->show();
 		} else {
 			int i = 0;

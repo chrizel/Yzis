@@ -55,6 +55,7 @@ public:
 	void setCurrentView( YZView* );
 	YZView *createView ( YZBuffer* );
 	YZBuffer *createBuffer(const QString& path);
+	void popupMessage( const QString& message );
 	
 protected:
 	void customEvent( QCustomEvent * );

@@ -1,5 +1,6 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003-2004 Mickael Marchand <mikmak@yzis.org>,
+ *  Thomas Capricelli <orzel@freehackers.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -100,6 +101,10 @@ class YZSession {
 		void setCurrentView( YZView* );
 
 		YZView* nextView();
+
+		/**
+		 * Returns a pointer to the current view
+		 */
 		YZView* currentView() { return mCurView; }
 		
 		/** 

@@ -1,5 +1,6 @@
-/* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+/*  This file is part of the Yzis libraries
+ *  Copyright (C) 2003-2004 Mickael Marchand <mikmak@yzis.org>,
+ *  Lucijan Busch <lucijan@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -38,6 +39,7 @@
 #include "session.h"
 #include "debug.h"
 #include <ktexteditor/document.h>
+#include <kmessagebox.h>
 
 YZSession *KYZisFactory::sess = 0;
 KYZisView *KYZisFactory::currentView=0;
@@ -48,10 +50,10 @@ QPtrList<class KYZisDoc> KYZisFactory::s_documents;
 QPtrList<class KYZisView> KYZisFactory::s_views;
 
 extern "C" {
-    void* init_libkyzispart() {
-			KGlobal::locale()->insertCatalogue("kyzispart");
-			return new KYZisFactory(true);
-    }
+	void* init_libkyzispart() {
+		KGlobal::locale()->insertCatalogue("kyzispart");
+		return new KYZisFactory(true);
+	}
 };
 
 KInstance* KYZisFactory::s_instance = 0L;
@@ -254,7 +256,6 @@ void KYZisFactory::setCurrentView( YZView* view ) {
 #endif
 }
 
-//TEST ME 
 YZView* KYZisFactory::createView( YZBuffer *buffer ) {
 	//DCOP call which returns the UID of the created view ?
 	return NULL;
@@ -275,6 +276,10 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 	}
 	return NULL;
 	//TODO return the buffer
+}
+
+void KYZisFactory::popupMessage( const QString& message ) {
+	KMessageBox::information(currentView, message, "Error");
 }
 
 #include "factory.moc"

@@ -156,3 +156,7 @@ YZBuffer *NYZSession::createBuffer(const QString& path) {
 	addBuffer( b );
 	return b;
 }
+
+void NYZSession::popupMessage( const QString& message ) {
+	//TODO
+}

@@ -55,6 +55,7 @@ class NYZSession : public YZSession, public Gui {
 		virtual void setCurrentView ( YZView * );
 		virtual YZView* createView( YZBuffer* );
 		virtual	YZBuffer *createBuffer(const QString& path=QString::null);
+		virtual void popupMessage( const QString& message );
 		
 	private:
 		WINDOW		*screen;	// whole (ncurses) screen (== stdscr)

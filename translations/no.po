@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yzis\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-10 23:05+0100\n"
+"POT-Creation-Date: 2005-02-11 15:24+0100\n"
 "PO-Revision-Date: 2005-02-08 20:03+0100\n"
 "Last-Translator: Mickael Marchand <marchand@kde.org>\n"
 "Language-Team: <i18n@yzis.org>\n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "Execute command passed in argument"
 msgstr ""
 
-#: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:136
+#: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:137
 msgid "Kyzis"
 msgstr ""
 
@@ -64,38 +64,38 @@ msgstr ""
 msgid "Syntax Highlighting"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:65
+#: ../kyzis/src/factory.cpp:66
 msgid "Kyzis Part"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:65
+#: ../kyzis/src/factory.cpp:66
 msgid "Embeddable vi-like editor component"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:65
+#: ../kyzis/src/factory.cpp:66
 msgid "(c)2002-2005 The Kyzis Authors"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:137
+#: ../kyzis/src/factory.cpp:138
 msgid "Kyzis - KDE Frontend for Yzis"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:139
+#: ../kyzis/src/factory.cpp:140
 msgid "(c) 2003-2005"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:140 ../kyzis/src/factory.cpp:141
-#: ../kyzis/src/factory.cpp:142 ../kyzis/src/factory.cpp:143
+#: ../kyzis/src/factory.cpp:141 ../kyzis/src/factory.cpp:142
+#: ../kyzis/src/factory.cpp:143 ../kyzis/src/factory.cpp:144
 msgid "Initial Author"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:151
+#: ../kyzis/src/factory.cpp:152
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:151
+#: ../kyzis/src/factory.cpp:152
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
@@ -363,7 +363,7 @@ msgstr ""
 msgid "&Window"
 msgstr ""
 
-#: ../kyzis/src/kyzis.cpp:323
+#: ../kyzis/src/kyzis.cpp:324
 msgid "Terminal"
 msgstr ""
 
@@ -405,43 +405,43 @@ msgstr "[ Introduksjon ]"
 msgid "[ Ex ]"
 msgstr "[ Ex ]"
 
-#: ../libyzis/mode_ex.cpp:285
+#: ../libyzis/mode_ex.cpp:293
 msgid "Not an editor command: "
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:401 ../libyzis/mode_ex.cpp:414
-#: ../libyzis/mode_ex.cpp:421
+#: ../libyzis/mode_ex.cpp:409 ../libyzis/mode_ex.cpp:422
+#: ../libyzis/mode_ex.cpp:429
 msgid "One file is modified! Save it first..."
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:434
+#: ../libyzis/mode_ex.cpp:442
 msgid "No next buffer"
 msgstr "Ingen buffere etter denne"
 
-#: ../libyzis/mode_ex.cpp:445
+#: ../libyzis/mode_ex.cpp:453
 msgid "No previous buffer"
 msgstr "Ingen buffere før denne"
 
-#: ../libyzis/mode_ex.cpp:483 ../libyzis/mode_ex.cpp:783
+#: ../libyzis/mode_ex.cpp:491 ../libyzis/mode_ex.cpp:791
 msgid "Please specify a filename"
 msgstr "Vennligst spesifiser et filnavn"
 
-#: ../libyzis/mode_ex.cpp:534 ../libyzis/mode_ex.cpp:672
+#: ../libyzis/mode_ex.cpp:542 ../libyzis/mode_ex.cpp:680
 msgid "Invalid option given : "
 msgstr "Ugyldig opsjon gitt:"
 
-#: ../libyzis/mode_ex.cpp:559 ../libyzis/mode_ex.cpp:687
+#: ../libyzis/mode_ex.cpp:567 ../libyzis/mode_ex.cpp:695
 msgid "This option cannot be switched this way, this is a boolean option."
 msgstr ""
 "Denne opsjonen kan ikke bli satt til gitt verdi. Dette er en boolsk opsjon."
 
-#: ../libyzis/mode_ex.cpp:569 ../libyzis/mode_ex.cpp:590
-#: ../libyzis/mode_ex.cpp:621
+#: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
+#: ../libyzis/mode_ex.cpp:629
 msgid "This option is a global option which cannot be changed with setlocal"
 msgstr "Dette er en global opsjon som ikke kan forandres med setlocal"
 
-#: ../libyzis/mode_ex.cpp:585 ../libyzis/mode_ex.cpp:616
-#: ../libyzis/mode_ex.cpp:641 ../libyzis/mode_ex.cpp:711
+#: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
+#: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
 msgid "Invalid option given"
 msgstr "Ugyldig opsjon gitt"
 
@@ -540,6 +540,10 @@ msgstr "{ Spiller inn }"
 
 #: ../nyzis/factory.cpp:197
 msgid "(Press any key)"
+msgstr ""
+
+#: ../nyzis/viewwidget.cpp:333 ../nyzis/viewwidget.cpp:335
+msgid "[No File]"
 msgstr ""
 
 #~ msgid "Yzis Ready"

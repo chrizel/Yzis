@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kyzis M3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-10 23:05+0100\n"
+"POT-Creation-Date: 2005-02-11 15:24+0100\n"
 "PO-Revision-Date: 2005-02-08 23:54+0000\n"
 "Last-Translator: Helder Correia <helder.correia@netcabo.pt>\n"
 "Language-Team: Portuguese <helder.correia@netcabo.pt>\n"
@@ -27,7 +27,7 @@ msgstr "Documento para abrir"
 msgid "Execute command passed in argument"
 msgstr "Executar o comando passado como argumento"
 
-#: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:136
+#: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:137
 msgid "Kyzis"
 msgstr "Kyzis"
 
@@ -64,32 +64,32 @@ msgstr "Cor de primeiro plano"
 msgid "Syntax Highlighting"
 msgstr "Realce"
 
-#: ../kyzis/src/factory.cpp:65
+#: ../kyzis/src/factory.cpp:66
 msgid "Kyzis Part"
 msgstr "Parte Kyzis"
 
-#: ../kyzis/src/factory.cpp:65
+#: ../kyzis/src/factory.cpp:66
 msgid "Embeddable vi-like editor component"
 msgstr "Componente de editor embebido"
 
-#: ../kyzis/src/factory.cpp:65
+#: ../kyzis/src/factory.cpp:66
 msgid "(c)2002-2005 The Kyzis Authors"
 msgstr "(c) 2002-2005 Os autores do Kyzis"
 
-#: ../kyzis/src/factory.cpp:137
+#: ../kyzis/src/factory.cpp:138
 msgid "Kyzis - KDE Frontend for Yzis"
 msgstr "Kyzis - Interface KDE para o Yzis"
 
-#: ../kyzis/src/factory.cpp:139
+#: ../kyzis/src/factory.cpp:140
 msgid "(c) 2003-2005"
 msgstr "(c) 2003-2005"
 
-#: ../kyzis/src/factory.cpp:140 ../kyzis/src/factory.cpp:141
-#: ../kyzis/src/factory.cpp:142 ../kyzis/src/factory.cpp:143
+#: ../kyzis/src/factory.cpp:141 ../kyzis/src/factory.cpp:142
+#: ../kyzis/src/factory.cpp:143 ../kyzis/src/factory.cpp:144
 msgid "Initial Author"
 msgstr "Autor inicial"
 
-#: ../kyzis/src/factory.cpp:151
+#: ../kyzis/src/factory.cpp:152
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
@@ -97,7 +97,7 @@ msgstr ""
 "_: \n"
 "Your names"
 
-#: ../kyzis/src/factory.cpp:151
+#: ../kyzis/src/factory.cpp:152
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
@@ -399,7 +399,7 @@ msgstr "Mostrar a consola (&Konsole)"
 msgid "&Window"
 msgstr "&Janela"
 
-#: ../kyzis/src/kyzis.cpp:323
+#: ../kyzis/src/kyzis.cpp:324
 msgid "Terminal"
 msgstr "Terminal"
 
@@ -440,44 +440,44 @@ msgstr "[ Introdução ]"
 msgid "[ Ex ]"
 msgstr "[ Ex ]"
 
-#: ../libyzis/mode_ex.cpp:285
+#: ../libyzis/mode_ex.cpp:293
 msgid "Not an editor command: "
 msgstr "Não é um comando do editor: "
 
-#: ../libyzis/mode_ex.cpp:401 ../libyzis/mode_ex.cpp:414
-#: ../libyzis/mode_ex.cpp:421
+#: ../libyzis/mode_ex.cpp:409 ../libyzis/mode_ex.cpp:422
+#: ../libyzis/mode_ex.cpp:429
 msgid "One file is modified! Save it first..."
 msgstr "Um ficheiro foi modificado! Grave-o primeiro..."
 
-#: ../libyzis/mode_ex.cpp:434
+#: ../libyzis/mode_ex.cpp:442
 msgid "No next buffer"
 msgstr "Não há ficheiro seguinte"
 
-#: ../libyzis/mode_ex.cpp:445
+#: ../libyzis/mode_ex.cpp:453
 msgid "No previous buffer"
 msgstr "Não há ficheiro anterior"
 
-#: ../libyzis/mode_ex.cpp:483 ../libyzis/mode_ex.cpp:783
+#: ../libyzis/mode_ex.cpp:491 ../libyzis/mode_ex.cpp:791
 msgid "Please specify a filename"
 msgstr "Por favor, especifique um nome de ficheiro"
 
-#: ../libyzis/mode_ex.cpp:534 ../libyzis/mode_ex.cpp:672
+#: ../libyzis/mode_ex.cpp:542 ../libyzis/mode_ex.cpp:680
 msgid "Invalid option given : "
 msgstr "Opção inválida dada: "
 
-#: ../libyzis/mode_ex.cpp:559 ../libyzis/mode_ex.cpp:687
+#: ../libyzis/mode_ex.cpp:567 ../libyzis/mode_ex.cpp:695
 msgid "This option cannot be switched this way, this is a boolean option."
 msgstr ""
 "Esta opção não pode ser definida assim, trata-se de uma opção lógica "
 "(booleana)."
 
-#: ../libyzis/mode_ex.cpp:569 ../libyzis/mode_ex.cpp:590
-#: ../libyzis/mode_ex.cpp:621
+#: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
+#: ../libyzis/mode_ex.cpp:629
 msgid "This option is a global option which cannot be changed with setlocal"
 msgstr "Esta opção é global, não pode ser alterada com 'setlocal'"
 
-#: ../libyzis/mode_ex.cpp:585 ../libyzis/mode_ex.cpp:616
-#: ../libyzis/mode_ex.cpp:641 ../libyzis/mode_ex.cpp:711
+#: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
+#: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
 msgid "Invalid option given"
 msgstr "Opção inválida dada"
 
@@ -578,17 +578,21 @@ msgstr " { A gravar }"
 msgid "(Press any key)"
 msgstr "(Pressione qualquer tecla)"
 
-msgid "Yzis Ready"
-msgstr "Yzis Pronto"
+#: ../nyzis/viewwidget.cpp:333 ../nyzis/viewwidget.cpp:335
+msgid "[No File]"
+msgstr ""
 
-msgid "Yzis is not able to save remote files for now"
-msgstr "O Yzis não está apto a gravar ficheiros remotos por enquanto"
+#~ msgid "Yzis Ready"
+#~ msgstr "Yzis Pronto"
 
-msgid "Remote files"
-msgstr "Ficheiros remotos"
+#~ msgid "Yzis is not able to save remote files for now"
+#~ msgstr "O Yzis não está apto a gravar ficheiros remotos por enquanto"
 
-msgid "Error"
-msgstr "Erro"
+#~ msgid "Remote files"
+#~ msgstr "Ficheiros remotos"
 
-msgid "Top"
-msgstr "Topo"
+#~ msgid "Error"
+#~ msgstr "Erro"
+
+#~ msgid "Top"
+#~ msgstr "Topo"

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
-"/usr/share/sgml/docbook/xml-dtd-4.2/docbookx.dtd" [
+"/usr/share/sgml/docbook/dtd/4.3/docbookx.dtd" [
+<!-- "/usr/share/sgml/docbook/xml-dtd-4.2/docbookx.dtd" [ -->
 	
 	<!ENTITY insert "<command>insert</command>">
 	<!ENTITY replace "<command>replace</command>">
@@ -9,7 +10,7 @@
 
 	<!ENTITY introduction SYSTEM "introduction.docbook">
 	<!ENTITY userguide SYSTEM "userguide.docbook">
-	<!ENTITY commandref SYSTEM "commandref.docbook">
+	<!ENTITY commandref SYSTEM "commandref.docbook"> 
 ]>
 
 

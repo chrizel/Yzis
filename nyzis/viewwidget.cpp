@@ -287,7 +287,7 @@ void NYZView::setCommandLineText( const QString& text )
 	commandline = text;
 	if ( !text.isEmpty() ) {
 #if QT_VERSION < 0x040000
-		waddstr(statusbar, text.latin1());
+		waddstr(statusbar, text.utf8());
 #else
 		waddstr(statusbar, text.toUtf8().data());
 #endif
@@ -314,11 +314,13 @@ void NYZView::syncViewInfo( void )
 	if ( m.length() > 0 ) {
 #if QT_VERSION < 0x040000
 		for ( const char *ptr = m.latin1(); *ptr; ptr++ ) {
+//		for ( int i = 0; i < m.length(); i++) {
 #else
 		for ( const char *ptr = m.toUtf8().data(); *ptr; ptr++ ) {
 #endif
 //			waddch(infobar, attribYellow |*ptr);
-			waddch(infobar, COLOR_PAIR(2) |*ptr);
+//			waddch(infobar, m.at( i ).unicode() );// | COLOR_PAIR(2) );
+			waddch(infobar, *ptr | COLOR_PAIR(2) );
 		}
 	}
 	waddch(infobar, ' ');
@@ -328,9 +330,9 @@ void NYZView::syncViewInfo( void )
 	            // it's rather unlikely..
 	wprintw( infobar, myfmt,
 #if QT_VERSION < 0x040000
-			( mBuffer->fileIsNew() )?"[No File]":mBuffer->fileName().latin1(),
+			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).utf8() ):( const char * )( mBuffer->fileName().utf8() ),
 #else
-			( mBuffer->fileIsNew() )?"[No File]":mBuffer->fileName().toUtf8().data(),
+			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).utf8() ):( const char * )( mBuffer->fileName().toUtf8().data() ),
 #endif
 			( mBuffer->fileIsModified() )?" [+]":""
 			);
@@ -346,7 +348,7 @@ void NYZView::syncViewInfo( void )
 		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
 	}
 #if QT_VERSION < 0x040000
-	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.latin1() );
+	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.utf8() );
 #else
 	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.toUtf8().data() );
 #endif
@@ -368,7 +370,7 @@ void NYZView::displayInfo( const QString& info )
 {
 	werase(statusbar);
 #if QT_VERSION < 0x040000
-	waddstr( statusbar, info.latin1() );
+	waddstr( statusbar, info.utf8() );
 #else
 	waddstr( statusbar, info.toUtf8().data() );
 #endif

@@ -335,7 +335,8 @@ public:
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
 	inline YZLine * yzline(unsigned int line) const {
-		return ( ( QValueVector<YZLine*> ) mText ).at(line);
+		return mText.at(line);
+		//return ( ( QValueVector<YZLine*> ) mText ).at(line);
 	}
 
 	void makeAttribs();

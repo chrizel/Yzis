@@ -202,7 +202,7 @@ bool KYZisCodeCompletion::eventFilter( QObject *o, QEvent *e )
       return false;
     }
 
-    int qtKeyCode = ke->key() | ((ke->state() & Qt::ShiftButton) ? Qt::SHIFT : 0) | ((ke->state() & Qt::ControlButton) ? Qt::CTRL : 0) | ((ke->state() & Qt::AltButton) ? Qt::ALT : 0) | ((ke->state() & Qt::MetaButton) ? Qt::META : 0);
+//    int qtKeyCode = ke->key() | ((ke->state() & Qt::ShiftButton) ? Qt::SHIFT : 0) | ((ke->state() & Qt::ControlButton) ? Qt::CTRL : 0) | ((ke->state() & Qt::AltButton) ? Qt::ALT : 0) | ((ke->state() & Qt::MetaButton) ? Qt::META : 0);
 
     // redirect the event to the editor
 /*    if( ke->key() == Key_Backspace) {

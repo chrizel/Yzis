@@ -140,8 +140,8 @@ void TestUndo::testUndoCharOperation()
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );
 
-    mBuf->chgChar( 0, 0, "B" );
-    mBuf->chgChar( 2, 2, "B" );
+    mBuf->insertChar( 0, 0, "B" );
+    mBuf->insertChar( 2, 2, "B" );
     ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
@@ -149,7 +149,7 @@ void TestUndo::testUndoCharOperation()
     phCheckEquals( ub->mayRedo(), false );
 
     mBuf->delChar( 0, 0, 3 );
-    mBuf->chgChar( 2, 2, "Z" );
+    mBuf->insertChar( 2, 2, "Z" );
     ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;

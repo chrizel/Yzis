@@ -223,7 +223,7 @@ void KYZisEdit::selectRect( unsigned int x, unsigned int y, unsigned int w, unsi
 	bitBlt( this, x, y, this, x, y, w, h, Qt::NotROP, true );
 }
 
-void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool ) {
+void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph, bool ) {
 	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::SingleLine;
 	QPainter p;
 	p.begin( this );

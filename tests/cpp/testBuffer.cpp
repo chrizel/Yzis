@@ -276,9 +276,6 @@ void TestYZBuffer::testCharMethods()
     mBuf->insertChar( 10, 10, QString("Z") );
     phCheckEquals( mBuf->getWholeText(), text );
 
-    mBuf->chgChar( 10, 10, QString("Z") );
-    phCheckEquals( mBuf->getWholeText(), text );
-
     mBuf->delChar( 10, 10, 1 );
     phCheckEquals( mBuf->getWholeText(), text );
 
@@ -291,8 +288,6 @@ void TestYZBuffer::testCharMethods()
     // add/delete/chg char on a non existent column
     mBuf->insertChar( 11, 0, QString("Z") );
     phCheckEquals( mBuf->getWholeText(), text );
-    mBuf->chgChar( 10, 0, QString("Z") );
-    phCheckEquals( mBuf->getWholeText(), text );
     mBuf->delChar( 10, 0, 1 );
     phCheckEquals( mBuf->getWholeText(), text );
 
@@ -301,16 +296,12 @@ void TestYZBuffer::testCharMethods()
     mBuf->insertChar( 0, 0, QString("Z") );
     phCheckEquals( mBuf->textline(0), "Z0123456789Z" );
 
-    mBuf->chgChar( 0, 1, QString("Z") );
-    mBuf->chgChar( 3, 1, QString("Z") );
-    phCheckEquals( mBuf->textline(1), "ZBCZ" );
-
     mBuf->delChar( 0, 0, 1 );
     mBuf->delChar( 10, 0, 1 );
     phCheckEquals( mBuf->textline(0), "0123456789" );
 
     mBuf->delChar( 1, 1, 10 );
-    phCheckEquals( mBuf->textline(1), "Z" );
+    phCheckEquals( mBuf->textline(1), "A" );
 }
 
 void TestYZBuffer::testAssertion()

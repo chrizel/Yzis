@@ -1,5 +1,5 @@
 
-#include <qt.h>
+#include <qnamespace.h>
 
 #include "keyConverter.h"
 

@@ -30,6 +30,10 @@
 #include "session.h"
 
 class YZView;
+class YZLine;
+
+typedef QPtrList<YZLine> YZBufferData;
+
 
 /**
  * A buffer is the implementation of the content of a file
@@ -121,11 +125,13 @@ public:
 	 */
 	YZView* findView(unsigned int uid);
 
+#if 0
 	/**
 	 * Get the whole text of the buffer
 	 * @return a QStringList containing the texts
 	 */
 	const QStringList& getText() { return mText; }
+#endif
 
 	/**
 	 * Opens a new line after the indicated position
@@ -150,13 +156,20 @@ public:
 	 * @param line the line to search for
 	 * @return a QString reference on the line or NULL
 	 */
-	QString	findLine(unsigned int line);
+	QString	data(unsigned int line);
+
+	/**
+	 * Finds the @ref YZLine pointer for a line in the buffer
+	 * @param line the line to return
+	 * @return a YZLine pointer or 0 if none
+	 */
+	YZLine *at(unsigned int no) { return mText.at(no); }
 
 	/**
 	 * Number of lines in the buffer
 	 * @return the number of lines
 	 */
-	unsigned int getLines() { return mText.count(); }
+	unsigned int lineCount() { return mText.count(); }
 
 	/**
 	 * Changes the filename
@@ -174,7 +187,9 @@ protected:
 
 	QString mPath;
 	QValueList<YZView*> mViews;
-	QStringList mText;
+
+	YZBufferData mText;
+//	QStringList mText; //obsolete soon :)
 	YZSession *mSession;
 };
 

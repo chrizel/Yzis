@@ -853,6 +853,7 @@ void YZView::delChar( unsigned int mX, unsigned int mY, unsigned int c ) {
 			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		else
 			paintEvent( dCurrentLeft, dY, mColumnsVis, 1 + dCursor->getY() - dY );
+		gotoxy( mX, mY );
 	} else 
 		paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 }

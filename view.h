@@ -29,6 +29,7 @@
 
 #include "commands.h"
 #include "selection.h"
+#include "viewcursor.h"
 
 class YZCursor;
 class YZBuffer;
@@ -38,104 +39,6 @@ class YzisAttribute;
 class YZView;
 
 typedef QValueVector<QString> StringVector;
-
-/**
- * class YZViewCursor : buffer and screen cursor with all members that YZView needs to move it.
- * this is only an interface, it doesn't have to know how move itself ( this is YZView stuff )
- */
-class YZViewCursor {
-
-	friend class YZView;
-
-	public :
-		YZViewCursor( YZView* parent );
-		virtual ~YZViewCursor();
-
-		unsigned int bufferX() const;
-		unsigned int bufferY() const;
-		unsigned int screenX() const;
-		unsigned int screenY() const;
-		
-		inline YZCursor* buffer() {
-			return mBuffer;
-		}
-		inline YZCursor* screen() {
-			return mScreen;
-		}
-
-		void copy( const YZViewCursor& orig );
-
-	private :
-		void setBuffer( const YZCursor& value );
-		void setScreen( const YZCursor& value );
-
-		void setBufferX( unsigned int value );
-		void setBufferY( unsigned int value );
-		void setScreenX( unsigned int value );
-		void setScreenY( unsigned int value );
-
-		/**
-		 * parent view
-		 */
-		YZView* mParent;
-
-		/**
-		 * buffer cursor
-		 */
-		YZCursor* mBuffer;
-		
-		/**
-		 * screen cursor
-		 */
-		YZCursor* mScreen;
-
-		/**
-		 * spaceFill is the shift for starting tabs 
-		 * ( when wrapping a line, or scrolling horizontally )
-		 */
-		unsigned int spaceFill;
-
-		/**
-		 * buffer column increment
-		 */
-		unsigned int bColIncrement;
-
-		/**
-		 * buffer line increment
-		 */
-		unsigned int bLineIncrement;
-
-		/**
-		 * screen column increment
-		 */
-		unsigned int sColIncrement;
-
-		/**
-		 * screen line increment
-		 */
-		unsigned int sLineIncrement;
-
-		/**
-		 * current line height
-		 */
-		unsigned int lineHeight;
-
-		/**
-		 * last char was a tab ?
-		 */
-		bool lastCharWasTab;
-
-		/**
-		 * are we wrapping a tab ?
-		 */
-		bool wrapTab;
-
-		/**
-		 * are we wrapping a line ?
-		 */
-		bool wrapNextLine;
-
-};
 
 /**
  * MUST be reimplemented in the GUI. It's the basis to display the content of a buffer

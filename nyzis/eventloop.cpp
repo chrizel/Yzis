@@ -60,7 +60,7 @@ bool NYZEventLoop::processEvents(  ProcessEventsFlags flags )
 	bool qt_had_some = false;
 //	yzDebug () << "Flags " << flags << " has events " << QEventLoop::hasPendingEvents() << endl;
 	qt_had_some =  NYZFactory::self->process_one_event();
-	if ( !qt_had_some && QEventLoop::hasPendingEvents() )
+	if ( !qt_had_some && qApp->type() != QApplication::Tty && QEventLoop::hasPendingEvents() )
 		qt_had_some = QEventLoop::processEvents(QEventLoop::AllEvents/*flags*/);
 
 	return /*true*/qt_had_some;

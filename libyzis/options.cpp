@@ -99,14 +99,14 @@ void YZOption::saveTo(const QString& /* file */ ) {
 }
 
 void YZOption::init() {
-	KOption *tabwidth = new KOption("tabwidth", "general", 8, 8 );
-	KOption *number = new KOption("number","general", false, false);
-	KOption *wrap = new KOption( "wrap", "general", false, false );
+	KOption *tabwidth = new KOption("tabwidth", "General", 8, 8 );
+	KOption *number = new KOption("number","General", false, false);
+	KOption *wrap = new KOption( "wrap", "General", false, false );
 
-	mOptions[ "general/tabwidth" ] = tabwidth;
-	mOptions[ "general/number" ] = number;
-	mOptions[ "general/wrap" ] = wrap;
-	setGroup("general");
+	mOptions[ "General/tabwidth" ] = tabwidth;
+	mOptions[ "General/number" ] = number;
+	mOptions[ "General/wrap" ] = wrap;
+	setGroup("General");
 
 	//read config files now
 	initConfFiles();

@@ -17,4 +17,5 @@ public:
 	virtual YZView* createView ( YZBuffer* );
 	virtual void setFocusCommandLine();
 	virtual void setFocusMainWindow();
+	virtual void splitHorizontally ( YZView* );
 };

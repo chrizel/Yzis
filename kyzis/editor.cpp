@@ -69,14 +69,15 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 
 //c,l => draw positions
 void KYZisEdit::setCursor(int c, int l) {
-	//erase the previous cursor by redrawing the line 
-	mCursorShown = false; //lock
-	repaintContents( mCursorX * fontMetrics().maxWidth(), mCursorY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
-	mCursorShown = true; //unlock
-	mCursorX = c - mParent->getDrawCurrentLeft () + marginLeft;
-	mCursorY = l - mParent->getDrawCurrentTop ();
-	
-	drawCursorAt( mCursorX, mCursorY );
+	int new_mCursorX = c - mParent->getDrawCurrentLeft () + marginLeft;
+	int new_mCursorY = l - mParent->getDrawCurrentTop ();
+//	if ( new_mCursorY != mCursorY || new_mCursorX != mCursorX ) {
+		if( mCursorShown ) drawCursorAt( mCursorX, mCursorY );
+		drawCursorAt( new_mCursorX, new_mCursorY );
+		mCursorX = new_mCursorX;
+		mCursorY = new_mCursorY;
+		mCursorShown = true;
+//	}
 }
 
 void KYZisEdit::setTextLine(int , const QString &/*str*/) {
@@ -144,15 +145,22 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 		return;
 	}
 
-	mParent->initDraw( );
-
 	unsigned int currentY = 0;
+	if (! wrap ) {
+		mParent->initDraw( mParent->getCurrentLeft(), mParent->getCurrentTop() + clipy, mParent->getDrawCurrentLeft(), mParent->getDrawCurrentTop() + clipy  );
+		currentY = clipy;
+	} else {
+		mParent->initDraw( );
+	}
+
 	unsigned int lineNumber = 0;
 
 	if ( ! mParent->myBuffer()->introShown() ) {
 		while ( mParent->drawNextLine( ) && cliph > 0 ) {
 			lineNumber = mParent->drawLineNumber();
 			if ( currentY >= ( uint )clipy ) {
+				if( currentY == ( uint )mCursorY ) mCursorShown = false; // we're erasing cursor
+				if( ! mCursorShown && currentY > ( uint )mCursorY ) setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
 				unsigned int currentX = 0;
 
 				if ( number ) { // draw current line number
@@ -200,8 +208,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 			++currentY;
 			--cliph;
 		}
-		if ( mCursorShown )
-			setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+		if ( ! mCursorShown ) setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
 	} else {
 		while ( currentY < lineCount ) {
 			myRect.setRect (0, currentY * linespace, width(), linespace);

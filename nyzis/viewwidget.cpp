@@ -124,8 +124,13 @@ void NYZView::drawContents( int clipy, int cliph ) {
 		return;
 	}
 
-	initDraw( );
 	unsigned int currentY = 0;
+	if (! wrap ) {
+		initDraw( getCurrentLeft(), getCurrentTop() + clipy, getDrawCurrentLeft(), getDrawCurrentTop() + clipy  );
+		currentY = clipy;
+	} else {
+		initDraw( );
+	}
 	unsigned int lineNumber = 0;
 
 	while ( drawNextLine( ) && cliph > 0 ) {

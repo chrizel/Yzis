@@ -468,11 +468,21 @@ class YZView {
 		 */
 		YZSession *mSession;
 
+		/* cursor members */
+		unsigned int dColLength;
+		unsigned int dLineLength;
+		unsigned int mColLength;
+		unsigned int mLineLength;
+		unsigned int dSpaceFill;
+
+		/* draw members */
 		unsigned int rColLength;
 		unsigned int rLineLength;
 		unsigned int sColLength;
 		unsigned int sLineLength;
 		unsigned int rSpaceFill;
+		bool drawMode;
+
 		/**
 		 * Number of visible lines on the view
 		 */
@@ -550,7 +560,8 @@ class YZView {
 		void gotox( unsigned int );
 		void gotodx( unsigned int );
 		void applyGoto( );
-		void updateChar( );
+		void initGoto( );
+
 
 		bool wrapNextLine;
 		QChar lastChar;

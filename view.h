@@ -430,6 +430,9 @@ class YZView {
 		virtual void scrollUp( int ) = 0;
 		virtual void scrollDown( int ) = 0;
 
+		/* recalculate cursor and resfresh screen */
+		void reset( );
+
 
 	protected:
 		/**

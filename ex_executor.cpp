@@ -141,7 +141,10 @@ QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
 		YZSession::setBoolOption( rx3.cap( 2 ).simplifyWhiteSpace(), true);
 	} else {
 		view->mySession()->popupMessage( tr( "Invalid option given" ) );
+		return QString::null;
 	}
+	// refresh screen
+	view->reset();
 
 	return QString::null;
 }

@@ -109,7 +109,12 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoxy(mCursor->getX()+1, mCursor->getY() );
 					return;
 				case Qt::Key_Backspace:
-					if (mCursor->getX() == 0) return;
+					if (mCursor->getX() == 0 && mCursor->getY() > 0 && 1 /* option_go_back_to_previous_line */) {
+						int lineLen = mBuffer->data( mCursor->getY()-1 ).length();
+						mBuffer->mergeNextLine( mCursor->getY() -1 );
+						gotoxy(lineLen, mCursor->getY()-1);
+						return;
+					}
 					mBuffer->delChar(mCursor->getX()-1,mCursor->getY(),1);
 					gotoxy(mCursor->getX()-1, mCursor->getY() );
 					return;

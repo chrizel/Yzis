@@ -42,11 +42,6 @@ class YZExExecutor : public QObject {
 		QString write( YZView *view, const QString& inputs );
 
 		/**
-		 * Saves all files
-		 */
-		QString writeall( YZView *view, const QString& inputs );
-
-		/**
 		 * Switch to next buffer if available
 		 */
 		QString buffernext( YZView *view, const QString& inputs );

@@ -118,6 +118,11 @@ public:
 	 * Replaces the @param line line with the given @param value
 	 */
 	void replaceLine( const QString& l, unsigned int line );
+
+	/**
+	 * Merges two lines
+	 */
+	void mergeNextLine( unsigned int line );
 	
 
 	// ----------------- Buffer content
@@ -132,11 +137,13 @@ public:
 	 * @return a QStringList containing the texts
 	 */
 	QString getWholeText() const;
+
 	/**
 	 * Get the length of the entire buffer
 	 * @return an unsigned int with the lenght of the buffer
 	 */
 	uint getWholeTextLength() const;
+
 	/**
 	 * Remove all text
 	 * @return void

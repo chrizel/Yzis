@@ -266,6 +266,11 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 		it->invalidateLine( line );
 }
 
+void YZBuffer::mergeNextLine( unsigned int line ) {
+	replaceLine( data( line ) + data( line+1 ), line );
+	deleteLine( line+1 );
+}
+
 // ------------------------------------------------------------------------
 //                            Content Operations 
 // ------------------------------------------------------------------------
@@ -377,6 +382,7 @@ void YZBuffer::load(const QString& file) {
 		mSession->updateBufferRecord( mPath, file, this );
 		mPath = file;
 	}
+	mFileIsNew=false;
 	QFile fl( mPath );
 	//opens and eventually create the file
 	if ( fl.open( IO_ReadOnly ) ) {
@@ -413,7 +419,7 @@ void YZBuffer::save() {
 		if ( isEmpty() == false) {
 			for(YZLine *it = mText.first(); it; it = mText.next()) {
 				stream << it->data() << "\n";
-				yzDebug() << "saving : " << it->data() << endl;
+//				yzDebug() << "saving : " << it->data() << endl;
 			}
 		}
 		file.close();

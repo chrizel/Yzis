@@ -72,22 +72,30 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("a",&YZView::append,true);
 	NEW_VIEW_COMMAND("A",&YZView::appendAtEOL,true);
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
-	NEW_VIEW_COMMAND("\"",&YZView::copy,true);
+//	NEW_VIEW_COMMAND("\"",&YZView::copy,true);
 	NEW_VIEW_COMMAND("yy",&YZView::copy,true);
 	NEW_VIEW_COMMAND("Y",&YZView::copy,true);
+	NEW_VIEW_COMMAND("p",&YZView::paste,true);
+	NEW_VIEW_COMMAND("P",&YZView::paste,true);
 }
 
 void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error) {
 	QString result,command;
 	unsigned int i=0;
 
+	//special handling for commands which use registers ...
+	if ( inputs[ i ] == '"' && !inputs.contains( "yy" ) && !inputs.contains("Y") && !inputs.contains("p") && !inputs.contains("P") )
+		return; //keep going until we have a real command (would need a better check .. regexp ? XXX
+	else if ( inputs[ i ] == '"' )
+		i+=2; //skip the first 2 chars (register command + register name)
+	
 	//regexp ? //FIXME
 	//try to find the command we are looking for
 	//first remove any number at the beginning of command
 	//XXX 0 is itself a command !
 	while ( inputs[ i ].isDigit() )
 		i++; //go on
-	
+
 	//now take the command until another number
 	while ( !inputs[ i ].isDigit() && i<inputs.length() )
 		command += inputs[ i++ ];

@@ -46,7 +46,7 @@
 #include <qtextstream.h>
 //END
 
-// BEGIN defines
+//BEGIN defines
 // same as in kmimemagic, no need to feed more data
 #define YZIS_HL_HOWMANY 1024
 
@@ -55,7 +55,7 @@ static const int YZIS_DYNAMIC_CONTEXTS_RESET_DELAY = 30 * 1000;
 
 // x is a QString. if x is "true" or "1" this expression returns "true"
 #define IS_TRUE(x) x.lower() == QString("true") || x.toInt() == 1
-// END defines
+//END defines
 
 //BEGIN  Prviate HL classes
 
@@ -75,12 +75,7 @@ class YzisHlItem
     virtual ~YzisHlItem();
 
   public:
-    virtual bool alwaysStartEnable() const { return true; };
-    virtual bool hasCustomStartEnable() const { return false; };
-    virtual bool startEnable(const QChar&);
-
-    // Changed from using QChar*, because it makes the regular expression check very
-    // inefficient (forces it to copy the string, very bad for long strings)
+    // caller must keep in mind: LEN > 0 is a must !!!!!!!!!!!!!!!!!!!!!1
     // Now, the function returns the offset detected, or 0 if no match is found.
     // bool linestart isn't needed, this is equivalent to offset == 0.
     virtual int checkHgl(const QString& text, int offset, int len) = 0;
@@ -104,6 +99,11 @@ class YzisHlItem
     bool firstNonSpace;
     bool justConsume;
     int column;
+
+    // start enable flags, nicer than the virtual methodes
+    // saves function calls
+    bool alwaysStartEnable;
+    bool customStartEnable;
 };
 
 class YzisHlContext
@@ -198,7 +198,8 @@ class YzisHlStringDetect : public YzisHlItem
 
   private:
     const QString str;
-    bool _inSensitive;
+    const int strLen;
+    const bool _inSensitive;
 };
 
 class YzisHlRangeDetect : public YzisHlItem
@@ -219,11 +220,8 @@ class YzisHlKeyword : public YzisHlItem
     YzisHlKeyword(int attribute, int context,signed char regionId,signed char regionId2, bool casesensitive, const QString& delims);
     virtual ~YzisHlKeyword ();
 
-    virtual void addList(const QStringList &);
+    void addList(const QStringList &);
     virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool startEnable(const QChar& c);
-    virtual bool alwaysStartEnable() const;
-    virtual bool hasCustomStartEnable() const;
 
   private:
     QMemArray< QDict<bool>* > dict;
@@ -239,7 +237,6 @@ class YzisHlInt : public YzisHlItem
     YzisHlInt(int attribute, int context, signed char regionId,signed char regionId2);
 
     virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
 };
 
 class YzisHlFloat : public YzisHlItem
@@ -249,7 +246,6 @@ class YzisHlFloat : public YzisHlItem
     virtual ~YzisHlFloat () {}
 
     virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
 };
 
 class YzisHlCFloat : public YzisHlFloat
@@ -259,7 +255,6 @@ class YzisHlCFloat : public YzisHlFloat
 
     virtual int checkHgl(const QString& text, int offset, int len);
     int checkIntHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
 };
 
 class YzisHlCOct : public YzisHlItem
@@ -268,7 +263,6 @@ class YzisHlCOct : public YzisHlItem
     YzisHlCOct(int attribute, int context, signed char regionId,signed char regionId2);
 
     virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
 };
 
 class YzisHlCHex : public YzisHlItem
@@ -277,7 +271,6 @@ class YzisHlCHex : public YzisHlItem
     YzisHlCHex(int attribute, int context, signed char regionId,signed char regionId2);
 
     virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
 };
 
 class YzisHlLineContinue : public YzisHlItem
@@ -342,7 +335,8 @@ class YzisHlConsumeSpaces : public YzisHlItem
 
     virtual int checkHgl(const QString& text, int offset, int len)
     {
-      while (text[offset].isSpace()) offset++;
+      int len2 = text.length();
+      while ((offset < len2) && text[offset].isSpace()) offset++;
       return offset;
     }
 };
@@ -354,8 +348,14 @@ class YzisHlConsumeIdentifier : public YzisHlItem
 
     virtual int checkHgl(const QString& text, int offset, int len)
     {
-      while (text[offset].isLetterOrNumber() || (text[offset] == QChar ('_'))) offset++;
-      return offset;
+      if (text[offset++].isLetter())
+      {
+        int len2 = text.length();
+        while ((offset < len2) && (text[offset].isLetterOrNumber() || (text[offset] == QChar ('_')))) offset++;
+        return offset;
+      }
+
+      return 0;
     }
 };
 
@@ -401,7 +401,9 @@ YzisHlItem::YzisHlItem(int attribute, int context,signed char regionId,signed ch
     dynamicChild(false),
     firstNonSpace(false),
     justConsume(false),
-    column (-1)
+    column (-1),
+    alwaysStartEnable (true),
+    customStartEnable (false)
 {
 }
 
@@ -410,14 +412,6 @@ YzisHlItem::~YzisHlItem()
   //yzDebug("HL")<<"In hlItem::~YzisHlItem()"<<endl;
   for (uint i=0; i < subItems.size(); i++)
     delete subItems[i];
-}
-
-bool YzisHlItem::startEnable(const QChar& c)
-{
-  // ONLY called when alwaysStartEnable() overridden
-  // IN FACT not called at all, copied into doHighlight()...
-  Q_ASSERT(false);
-  return yzisInsideString (stdDeliminator, c);
 }
 
 void YzisHlItem::dynamicSubstitute(QString &str, const QStringList *args)
@@ -456,7 +450,7 @@ YzisHlCharDetect::YzisHlCharDetect(int attribute, int context, signed char regio
 
 int YzisHlCharDetect::checkHgl(const QString& text, int offset, int len)
 {
-  if (len && text[offset] == sChar)
+  if (text[offset] == sChar)
     return offset + 1;
 
   return 0;
@@ -485,10 +479,7 @@ YzisHl2CharDetect::YzisHl2CharDetect(int attribute, int context, signed char reg
 
 int YzisHl2CharDetect::checkHgl(const QString& text, int offset, int len)
 {
-  if (len < 2)
-    return offset;
-
-  if (text[offset++] == sChar1 && text[offset++] == sChar2)
+  if ((len >= 2) && text[offset++] == sChar1 && text[offset++] == sChar2)
     return offset;
 
   return 0;
@@ -515,17 +506,32 @@ YzisHlItem *YzisHl2CharDetect::clone(const QStringList *args)
 YzisHlStringDetect::YzisHlStringDetect(int attribute, int context, signed char regionId,signed char regionId2,const QString &s, bool inSensitive)
   : YzisHlItem(attribute, context,regionId,regionId2)
   , str(inSensitive ? s.upper() : s)
+  , strLen (str.length())
   , _inSensitive(inSensitive)
 {
 }
 
 int YzisHlStringDetect::checkHgl(const QString& text, int offset, int len)
 {
-  if (len < (int)str.length())
+  if (len < strLen)
     return 0;
 
-  if (QConstString(text.unicode() + offset, str.length()).string().find(str, 0, !_inSensitive) == 0)
-    return offset + str.length();
+  if (_inSensitive)
+  {
+    for (int i=0; i < strLen; i++)
+      if (text[offset++].upper() != str[i])
+        return 0;
+
+    return offset + strLen;
+  }
+  else
+  {
+    for (int i=0; i < strLen; i++)
+      if (text[offset++] != str[i])
+        return 0;
+
+    return offset + strLen;
+  }
 
   return 0;
 }
@@ -555,7 +561,7 @@ YzisHlRangeDetect::YzisHlRangeDetect(int attribute, int context, signed char reg
 
 int YzisHlRangeDetect::checkHgl(const QString& text, int offset, int len)
 {
-  if ((len > 0) && (text[offset] == sChar1))
+  if (text[offset] == sChar1)
   {
     do
     {
@@ -579,27 +585,14 @@ YzisHlKeyword::YzisHlKeyword (int attribute, int context, signed char regionId,s
   , minLen (0xFFFFFF)
   , maxLen (0)
 {
+  alwaysStartEnable = false;
+  customStartEnable = true;
 }
 
 YzisHlKeyword::~YzisHlKeyword ()
 {
   for (uint i=0; i < dict.size(); ++i)
     delete dict[i];
-}
-
-bool YzisHlKeyword::alwaysStartEnable() const
-{
-  return false;
-}
-
-bool YzisHlKeyword::hasCustomStartEnable() const
-{
-  return true;
-}
-
-bool YzisHlKeyword::startEnable(const QChar& c)
-{
-  return yzisInsideString (deliminators, c);
 }
 
 void YzisHlKeyword::addList(const QStringList& list)
@@ -632,8 +625,6 @@ void YzisHlKeyword::addList(const QStringList& list)
 
 int YzisHlKeyword::checkHgl(const QString& text, int offset, int len)
 {
-  if (len == 0 || dict.isEmpty()) return 0;
-
   int offset2 = offset;
   int wordLen = 0;
 
@@ -645,25 +636,20 @@ int YzisHlKeyword::checkHgl(const QString& text, int offset, int len)
     if (wordLen > maxLen) return 0;
   }
 
-  if (offset2 == offset) return 0;
-
   if (wordLen < minLen) return 0;
 
-  if ( dict[wordLen] && dict[wordLen]->find(QConstString(text.unicode() + offset, wordLen).string()) ) return offset2;
+  if ( dict[wordLen] && dict[wordLen]->find(QConstString(text.unicode() + offset, wordLen).string()) )
+    return offset2;
 
   return 0;
 }
 //END
 
-//BEGIN YzisHlInt
-YzisHlInt::YzisHlInt(int attribute, int context, signed char regionId,signed char regionId2)
-  : YzisHlItem(attribute,context,regionId,regionId2)
+//BEGIN KateHlInt
+YzisHlInt::YzisHlInt(int attribute, int context, signed char regionId, signed char regionId2) 
+	: YzisHlItem(attribute,context,regionId,regionId2) 
 {
-}
-
-bool YzisHlInt::alwaysStartEnable() const
-{
-  return false;
+	alwaysStartEnable = false;
 }
 
 int YzisHlInt::checkHgl(const QString& text, int offset, int len)
@@ -678,10 +664,13 @@ int YzisHlInt::checkHgl(const QString& text, int offset, int len)
 
   if (offset2 > offset)
   {
-    for (uint i=0; i < subItems.size(); i++)
+    if (len > 0)
     {
-      if ( (offset = subItems[i]->checkHgl(text, offset2, len)) )
-        return offset;
+      for (uint i=0; i < subItems.size(); i++)
+      {
+        if ( (offset = subItems[i]->checkHgl(text, offset2, len)) )
+          return offset;
+      }
     }
 
     return offset2;
@@ -695,11 +684,7 @@ int YzisHlInt::checkHgl(const QString& text, int offset, int len)
 YzisHlFloat::YzisHlFloat(int attribute, int context, signed char regionId,signed char regionId2)
   : YzisHlItem(attribute,context, regionId,regionId2)
 {
-}
-
-bool YzisHlFloat::alwaysStartEnable() const
-{
-  return false;
+  alwaysStartEnable = false;
 }
 
 int YzisHlFloat::checkHgl(const QString& text, int offset, int len)
@@ -741,12 +726,15 @@ int YzisHlFloat::checkHgl(const QString& text, int offset, int len)
       return 0;
     else
     {
-      for (uint i=0; i < subItems.size(); i++)
+      if (len > 0)
       {
-        int offset2 = subItems[i]->checkHgl(text, offset, len);
+        for (uint i=0; i < subItems.size(); i++)
+        {
+          int offset2 = subItems[i]->checkHgl(text, offset, len);
 
-        if (offset2)
-          return offset2;
+          if (offset2)
+            return offset2;
+        }
       }
 
       return offset;
@@ -770,12 +758,15 @@ int YzisHlFloat::checkHgl(const QString& text, int offset, int len)
 
   if (b)
   {
-    for (uint i=0; i < subItems.size(); i++)
+    if (len > 0)
     {
-      int offset2 = subItems[i]->checkHgl(text, offset, len);
+      for (uint i=0; i < subItems.size(); i++)
+      {
+        int offset2 = subItems[i]->checkHgl(text, offset, len);
 
-      if (offset2)
-        return offset2;
+        if (offset2)
+          return offset2;
+      }
     }
 
     return offset;
@@ -789,16 +780,12 @@ int YzisHlFloat::checkHgl(const QString& text, int offset, int len)
 YzisHlCOct::YzisHlCOct(int attribute, int context, signed char regionId,signed char regionId2)
   : YzisHlItem(attribute,context,regionId,regionId2)
 {
-}
-
-bool YzisHlCOct::alwaysStartEnable() const
-{
-  return false;
+  alwaysStartEnable = false;
 }
 
 int YzisHlCOct::checkHgl(const QString& text, int offset, int len)
 {
-  if ((len > 0) && text[offset] == '0')
+  if (text[offset] == '0')
   {
     offset++;
     len--;
@@ -828,11 +815,7 @@ int YzisHlCOct::checkHgl(const QString& text, int offset, int len)
 YzisHlCHex::YzisHlCHex(int attribute, int context,signed char regionId,signed char regionId2)
   : YzisHlItem(attribute,context,regionId,regionId2)
 {
-}
-
-bool YzisHlCHex::alwaysStartEnable() const
-{
-  return false;
+  alwaysStartEnable = false;
 }
 
 int YzisHlCHex::checkHgl(const QString& text, int offset, int len)
@@ -866,11 +849,7 @@ int YzisHlCHex::checkHgl(const QString& text, int offset, int len)
 YzisHlCFloat::YzisHlCFloat(int attribute, int context, signed char regionId,signed char regionId2)
   : YzisHlFloat(attribute,context,regionId,regionId2)
 {
-}
-
-bool YzisHlCFloat::alwaysStartEnable() const
-{
-  return false;
+  alwaysStartEnable = false;
 }
 
 int YzisHlCFloat::checkIntHgl(const QString& text, int offset, int len)
@@ -920,7 +899,7 @@ YzisHlAnyChar::YzisHlAnyChar(int attribute, int context, signed char regionId,si
 
 int YzisHlAnyChar::checkHgl(const QString& text, int offset, int len)
 {
-  if ((len > 0) && yzisInsideString (_charList, text[offset]))
+  if (yzisInsideString (_charList, text[offset]))
     return ++offset;
 
   return 0;
@@ -1405,46 +1384,48 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
   // text, for programming convenience :)
   QChar lastChar = ' ';
   const QString& text = textLine->data();
-  int len = textLine->length();
+  const int len = textLine->length();
 
   // calc at which char the first char occurs, set it to lenght of line if never
-  int firstChar = textLine->firstChar();
-  int startNonSpace = (firstChar == -1) ? len : firstChar;
+  const int firstChar = textLine->firstChar();
+  const int startNonSpace = (firstChar == -1) ? len : firstChar;
 
-  int offset1 = 0;
-  int z = 0;
+  // last found item
   YzisHlItem *item = 0;
 
-  while (z < len)
+  // loop over the line, offset gives current offset
+  int offset = 0;
+  while (offset < len)
   {
     bool found = false;
     bool standardStartEnableDetermined = false;
+    bool customStartEnableDetermined = false;
     bool standardStartEnable = false;
+    bool customStartEnable = false;
 
     uint index = 0;
     for (item = context->items.empty() ? 0 : context->items[0]; item; item = (++index < context->items.size()) ? context->items[index] : 0 )
     {
       // does we only match if we are firstNonSpace?
-      if (item->firstNonSpace && (z > startNonSpace))
+      if (item->firstNonSpace && (offset > startNonSpace))
         continue;
 
       // have we a column specified? if yes, only match at this column
-      if ((item->column != -1) && (item->column != z))
+      if ((item->column != -1) && (item->column != offset))
         continue;
 
       // do we only consume stuff?
       if (item->justConsume)
       {
-        int offset2 = item->checkHgl(text, offset1, len-z);
+        int offset2 = item->checkHgl(text, offset, len-offset);
 
-        if (offset2 <= offset1)
+        if (offset2 <= offset)
           continue;
 
         // set attribute of this context
-        textLine->setAttribs(context->attr,offset1,offset2);
+        textLine->setAttribs(context->attr,offset,offset2);
 
-        z = z + offset2 - offset1 - 1;
-        offset1 = offset2 - 1;
+        offset = offset2 - 1;
 
         found = true;
         break;
@@ -1453,11 +1434,21 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
       {
         bool thisStartEnabled = false;
 
-        if (item->alwaysStartEnable())
+        if (item->alwaysStartEnable)
         {
           thisStartEnabled = true;
         }
-        else if (!item->hasCustomStartEnable())
+        else if (item->customStartEnable)
+        {
+          if (!customStartEnableDetermined)
+          {
+            customStartEnable = yzisInsideString (deliminator, lastChar);
+            customStartEnableDetermined = true;
+          }
+
+          thisStartEnabled = customStartEnable;
+        }
+        else
         {
           if (!standardStartEnableDetermined)
           {
@@ -1467,21 +1458,17 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
 
           thisStartEnabled = standardStartEnable;
         }
-        else if (item->startEnable(lastChar))
-        {
-          thisStartEnabled = true;
-        }
 
         if (!thisStartEnabled)
           continue;
 
-        int offset2 = item->checkHgl(text, offset1, len-z);
+        int offset2 = item->checkHgl(text, offset, len-offset);
 
-        if (offset2 <= offset1)
+        if (offset2 <= offset)
           continue;
 
         if(!item->lookAhead)
-          textLine->setAttribs(item->attr,offset1,offset2);
+          textLine->setAttribs(item->attr,offset,offset2);
 
           //kdDebug(13010)<<QString("item->ctx: %1").arg(item->ctx)<<endl;
 
@@ -1499,7 +1486,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
             if (item->region2<0) //check not really needed yet
               (*foldingList)[foldingList->size()-1] = offset2;
             else
-            (*foldingList)[foldingList->size()-1] = offset1;
+            (*foldingList)[foldingList->size()-1] = offset;
           }
 
         }
@@ -1519,7 +1506,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
             if (item->region<0) //check not really needed yet
               (*foldingList)[foldingList->size()-1] = offset2;
             else
-              (*foldingList)[foldingList->size()-1] = offset1;
+              (*foldingList)[foldingList->size()-1] = offset;
           }
 
         }
@@ -1550,8 +1537,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
         // dominik: look ahead w/o changing offset?
         if (!item->lookAhead)
         {
-          z = z + offset2 - offset1 - 1;
-          offset1 = offset2 - 1;
+          offset = offset2 - 1;
         }
 
         found = true;
@@ -1573,22 +1559,21 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
       // the next is nessecary, as otherwise keyword (or anything using the std delimitor check)
       // immediately after fallthrough fails. Is it bad?
       // jowenn, can you come up with a nicer way to do this?
-        if (z)
-          lastChar = text[offset1 - 1];
+        if (offset)
+          lastChar = text[offset - 1];
         else
           lastChar = '\\';
         continue;
 	  }
       else
-        textLine->setAttribs(context->attr,offset1,offset1 + 1);
+        textLine->setAttribs(context->attr, offset, offset + 1);
     }
 
     // dominik: do not change offset if we look ahead
     if (!(item && item->lookAhead))
     {
-      lastChar = text[offset1];
-      offset1++;
-      z++;
+      lastChar = text[offset];
+      offset++;
     }
   }
 
@@ -1928,7 +1913,7 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   // get the (tagname) itemd type
   QString dataname=YzisHlManager::self()->syntax->groupItemData(data,QString(""));
 
-  // BEGIN - Translation of the attribute parameter
+  //BEGIN - Translation of the attribute parameter
   QString tmpAttr=YzisHlManager::self()->syntax->groupItemData(data,QString("attribute")).simplifyWhiteSpace();
   int attr;
   if (QString("%1").arg(tmpAttr.toInt())==tmpAttr)
@@ -1938,7 +1923,7 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   }
   else
     attr=lookupAttrName(tmpAttr,iDl);
-  // END - Translation of the attribute parameter
+  //END - Translation of the attribute parameter
 
   // Info about context switch
   int context;
@@ -2650,14 +2635,14 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
     while (YzisHlManager::self()->syntax->nextGroup(data))
         {
       yzDebug("HL")<<"Found a context in file, building structure now"<<endl;
-      // BEGIN - Translation of the attribute parameter
+      //BEGIN - Translation of the attribute parameter
       QString tmpAttr=YzisHlManager::self()->syntax->groupData(data,QString("attribute")).simplifyWhiteSpace();
       int attr;
       if (QString("%1").arg(tmpAttr.toInt())==tmpAttr)
         attr=tmpAttr.toInt();
       else
         attr=lookupAttrName(tmpAttr,iDl);
-      // END - Translation of the attribute parameter
+      //END - Translation of the attribute parameter
 
 	  ctxName=buildPrefix+YzisHlManager::self()->syntax->groupData(data,QString("lineEndContext")).simplifyWhiteSpace();
 
@@ -2666,7 +2651,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 
 	  context=getIdFromString(&ContextNameList, tmpLineEndContext,dummy);
 
-      // BEGIN get fallthrough props
+      //BEGIN get fallthrough props
       bool ft = false;
       int ftc = 0; // fallthrough context
       if ( i > 0 )  // fallthrough is not smart in context 0
@@ -2681,10 +2666,10 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           ftc=getIdFromString(&ContextNameList, tmpFtc,dummy);
 		  if (ftc == -1) ftc =0;
 
-		  yzDebug("HL")<<"Setting fall through context (context "<<i<<"): "<<ftc<<endl;
-		}
-	  }
-	  // END falltrhough props
+          yzDebug()<<"Setting fall through context (context "<<i<<"): "<<ftc<<endl;
+        }
+      }
+      //END falltrhough props
 
       bool dynamic = false;
       QString tmpDynamic = YzisHlManager::self()->syntax->groupData(data, QString("dynamic") );

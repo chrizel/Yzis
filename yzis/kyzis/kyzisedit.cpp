@@ -1,5 +1,5 @@
 /**
- * $Id: kyzisedit.cpp,v 1.23 2003/04/25 13:50:29 mikmak Exp $
+ * $Id: kyzisedit.cpp,v 1.24 2003/04/25 18:31:00 mikmak Exp $
  */
 
 #include "kyzisedit.h"
@@ -38,11 +38,9 @@ void KYZisEdit::setCursor(int c, int l) {
 }
 
 void KYZisEdit::setTextLine(int l, const QString &str){
-	mText.insert(l,str);
-	updateContents( 0, ( l ) * fontMetrics().lineSpacing(),
-								width(), fontMetrics().lineSpacing()  //yes i know, it's a 2, i don't think it will really affect 
-																													// our performances
-								);
+	//mText.insert(l,str);
+	updateContents( 0, ( l - _parent->getCurrent() ) * fontMetrics().lineSpacing(),
+								width(), fontMetrics().lineSpacing()  );
 }
 
 // INTERNAL API
@@ -55,33 +53,32 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
-	//FIXME needs improvment (add some offset)
-	//relative coordinates ?
-	_parent->updateCursor(e->x()/fontMetrics().maxWidth(), e->y()/fontMetrics().lineSpacing());
+	_parent->updateCursor(e->x()/fontMetrics().maxWidth() , e->y()/fontMetrics().lineSpacing() + _parent->getCurrent());
 }
 
 void KYZisEdit::drawCursorAt(int x, int y) {
 	bitBlt (
 			viewport(),
-			x*fontMetrics().maxWidth(),y *fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(),( y - _parent->getCurrent() ) *fontMetrics().lineSpacing(),
 			viewport(),
-			x*fontMetrics().maxWidth(), y*fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(), ( y - _parent->getCurrent() )*fontMetrics().lineSpacing(),
 			fontMetrics().maxWidth(), fontMetrics().lineSpacing(),
 			Qt::NotROP,	    // raster Operation
 			true );		    // ignoreMask
 }
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
-	KYZLine::iterator it;
-	for (it = mText.begin(); it!=mText.end(); ++it) {
-			if (fontMetrics().lineSpacing() * ( it.key() ) >= clipy &&
-					fontMetrics().lineSpacing() * ( it.key() ) <= clipy+cliph ) {
-					QRect clip(0, ( it.key() ) * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
+	int i=0;
+	int current = _parent->getCurrent();
+	for ( i=current; i < current + _parent->getLinesVisible() ; ++i ) {
+			if (fontMetrics().lineSpacing() * ( i-current ) >= clipy &&
+					fontMetrics().lineSpacing() * ( i-current ) <= clipy+cliph ) {
+					QRect clip(0, ( i-current ) * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
 					p->eraseRect(clip);
-					p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,it.data());
+					p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->getText()[ i ]);
 			}
 	}
-	
+
 	drawCursorAt(cursorx,cursory);
 }
 

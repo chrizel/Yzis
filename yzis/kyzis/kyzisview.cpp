@@ -1,5 +1,5 @@
 /**
- * $Id: kyzisview.cpp,v 1.16 2003/04/25 12:45:28 mikmak Exp $
+ * $Id: kyzisview.cpp,v 1.17 2003/04/25 18:31:00 mikmak Exp $
  */
 #include "kyzisview.h"
 #include "kyzis_factory.h"
@@ -48,8 +48,8 @@ void KYZisView::customEvent (QCustomEvent *) {
 //		kdDebug() << "** Processing Event " << event.id << endl;
 		switch ( event.id ) {
 			case YZ_EV_SETLINE:
-				kdDebug() << "event SETLINE" << *(event.u.setline.line) << endl
-					<< "LINE " << event.u.setline.y << endl;
+//				kdDebug() << "event SETLINE" << *(event.u.setline.line) << endl
+	//				<< "LINE " << event.u.setline.y << endl;
 				editor->setTextLine(event.u.setline.y,*(event.u.setline.line));
 				break;
 			case YZ_EV_SETCURSOR:

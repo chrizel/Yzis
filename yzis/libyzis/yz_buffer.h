@@ -1,7 +1,7 @@
 #ifndef YZ_BUFFER_H
 #define YZ_BUFFER_H
 /**
- * $Id: yz_buffer.h,v 1.18 2003/04/25 12:45:30 mikmak Exp $
+ * $Id: yz_buffer.h,v 1.19 2003/04/25 18:31:02 mikmak Exp $
  */
 
 #include <qstringlist.h>
@@ -32,6 +32,10 @@ public:
 	void addView (YZView *v);
 
 	QPtrList<YZView> views() { return view_list; }
+
+	const QStringList& getText() { return text; }
+
+	void addNewLine( int col, int line );
 
 protected:
 	QString path;

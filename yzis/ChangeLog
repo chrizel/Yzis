@@ -2,8 +2,15 @@
   * libyzis
     added 'gg' and 'G' commands
     added 'ZZ' command, it saves but does not exit for now
+    fixed jumping cursor at end of file when pressing 'j'
+    enabled scrolling
+    fixed G going one line too far
+    support "enter" to create newline in INSERT mode
   * kyzis
     ignore Shift/Control/Meta for now
+    removed some drawing hacks
+    enabled scrolling
+    adapt moving cursor with mouse according to scroll
 
 2003-04-24 mikmak
   * libyzis

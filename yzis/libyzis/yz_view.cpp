@@ -1,5 +1,5 @@
 /**
- * $Id: yz_view.cpp,v 1.34 2003/04/25 12:45:30 mikmak Exp $
+ * $Id: yz_view.cpp,v 1.35 2003/04/25 18:31:02 mikmak Exp $
  */
 
 #include <cstdlib>
@@ -16,9 +16,6 @@ YZView::YZView(YZBuffer *_b, int _lines_vis) {
 	current = cursor->getY();
 	QString line = buffer->findLine(current);
 	if (!line.isNull()) current_maxx = line.length()-1;
-
-	//events_nb_begin = 0;
-	//events_nb_last = 0;
 
 	buffer->addView(this);
 }
@@ -51,8 +48,15 @@ void YZView::sendChar( QChar c) {
 	switch(mode) {
 		case YZ_VIEW_MODE_INSERT:
 			/* handle adding a char */
-			buffer->addChar(cursor->getX(),cursor->getY(),c);
-			cursor->incX();
+			if ( c.unicode() == 13 ) {// <ENTER> 
+				buffer->addNewLine(cursor->getX(),cursor->getY());
+				cursor->incY();
+				cursor->setX( 0 );
+				redrawScreen();
+			} else {
+				buffer->addChar(cursor->getX(),cursor->getY(),c);
+				cursor->incX();
+			}
 			lin = buffer->findLine(cursor->getY());
 			if ( !lin.isNull() ) current_maxx = lin.length()-1;
 			updateCursor();
@@ -94,6 +98,7 @@ void YZView::updateCursor(int x, int y) {
 			cursor->setX( x > current_maxx ? current_maxx : x );
 		}
 	}
+
 	postEvent( mk_event_setcursor(cursor->getX(),cursor->getY()));
 }
 
@@ -105,23 +110,6 @@ yz_event YZView::fetchNextEvent() {
 	} else
 		return mk_event_noop();
 }
-
-#if 0
-yz_event *YZView::fetchEvent(int idx) {
-	if ( idx!=-1 )
-		return &events[idx];
-
-	if (events_nb_last==events_nb_begin)
-		return NULL;
-
-	yz_event *e = &events[events_nb_begin++];
-
-	if (events_nb_begin>=YZ_EVENT_EVENTS_MAX)
-		events_nb_last=0;
-
-	return e;
-}
-#endif
 
 void YZView::postEvent (yz_event e) {
 	events.push_back( e ); //append to the FIFO
@@ -135,12 +123,28 @@ void YZView::registerManager ( Gui *mgr ) {
 }
 
 void YZView::centerView(int line) {
+	//update current
+	current = line - lines_vis / 2;
+	if ( current < 0 ) current = 0;
+	if ( current > buffer->text.count() - lines_vis ) current = buffer->text.count() - lines_vis;
+	printf("Center : %i\n Lines vis : %i\n Current : %i\n",line,lines_vis,current);
+
+	//redraw the screen
+	redrawScreen();
+}
+
+void YZView::redrawScreen() {
+	for (int i=current; i<current + lines_vis; i++) {
+		QString l=buffer->findLine(i);
+		if (l.isNull()) continue;
+		postEvent(mk_event_setline(i,&l));
+	}
 }
 
 QString YZView::moveDown( QString inputsBuff ) {
 	QString lin;
 	int nb_lines=1;//default : one line down
-	
+
 	//check the arguments
 	if ( !inputsBuff.isNull() ) {
 		int i=0;
@@ -150,32 +154,31 @@ QString YZView::moveDown( QString inputsBuff ) {
 		nb_lines = inputsBuff.left( i ).toInt( &test );
 		if ( !test ) nb_lines=1;
 	}
-	
+
 	//execute the code
 	int nexty=cursor->getY() + nb_lines;
 	int nextx=cursor->getX();
 
 	//number too big, go to bottom of file
-	if ( nexty > buffer->text.count() ) nexty = buffer->text.count() - 1;
+	if ( nexty >= buffer->text.count() ) nexty = buffer->text.count() - 1;
 	cursor->setY( nexty );
 	lin = buffer->findLine(nexty);
 	if ( !lin.isNull() ) current_maxx = lin.length()-1; 
 	if ( nextx > current_maxx ) nextx = current_maxx;
 	if ( nextx < 0 ) nextx = 0;
 	cursor->setX( nextx );
-	
-	//check if we need to scroll
-/**	if ( current + lines_vis < cursor->getY() ) {
-		//scroll down => GUI
-		if ( gui_manager ) //gui_manager necessarly exists here, these are useless now
-			gui_manager->scrollDown( cursor->getY() - current - lines_vis);
-		current+= nb_lines; //bof XXX
-	} */
+
+	//make sure this line is visible
+	if ( ! isLineVisible( cursor->getY() ) ) {
+		current += nb_lines;
+		redrawScreen();
+	}
+
 	updateCursor();
 
 	//reset the input buffer
 	purgeInputBuffer();
-	
+
 	//return something
 	return QString::null;
 }
@@ -183,7 +186,7 @@ QString YZView::moveDown( QString inputsBuff ) {
 QString YZView::moveUp( QString inputsBuff ) {
 	QString lin;
 	int nb_lines=1;//default : one line down
-	
+
 	//check the arguments
 	if ( !inputsBuff.isNull() ) {
 		int i=0;
@@ -193,7 +196,7 @@ QString YZView::moveUp( QString inputsBuff ) {
 		nb_lines = inputsBuff.left( i ).toInt( &test );
 		if ( !test ) nb_lines=1;
 	}
-	
+
 	//execute the code
 	int nexty=cursor->getY() - nb_lines;
 	int nextx=cursor->getX();
@@ -206,19 +209,18 @@ QString YZView::moveUp( QString inputsBuff ) {
 	if ( nextx > current_maxx ) nextx = current_maxx;
 	if ( nextx < 0 ) nextx = 0;
 	cursor->setX( nextx );
-	
-	//check if we need to scroll
-/**	if ( current + lines_vis < cursor->getY() ) {
-		//scroll down => GUI
-		if ( gui_manager ) //gui_manager necessarly exists here, these are useless now
-			gui_manager->scrollDown( cursor->getY() - current - lines_vis);
-		current+= nb_lines; //bof XXX
-	} */
+
+	//make sure this line is visible
+	if ( ! isLineVisible( cursor->getY() ) ) {
+		current -= nb_lines;
+		redrawScreen();
+	}
+
 	updateCursor();
 
 	//reset the input buffer
 	purgeInputBuffer();
-	
+
 	//return something
 	return QString::null;
 }
@@ -226,7 +228,7 @@ QString YZView::moveUp( QString inputsBuff ) {
 QString YZView::moveLeft( QString inputsBuff ) {
 	QString lin;
 	int nb_cols=1;//default : one line left
-	
+
 	//check the arguments
 	if ( !inputsBuff.isNull() ) {
 		int i=0;
@@ -236,7 +238,7 @@ QString YZView::moveLeft( QString inputsBuff ) {
 		nb_cols = inputsBuff.left( i ).toInt( &test );
 		if ( !test ) nb_cols=1;
 	}
-	
+
 	//execute the code
 	lin = buffer->findLine(cursor->getY());
 	if ( !lin.isNull() ) current_maxx = lin.length()-1; 
@@ -245,19 +247,12 @@ QString YZView::moveLeft( QString inputsBuff ) {
 	//number too big, go to bottom of file
 	if ( nextx < 0 ) nextx = 0;
 	cursor->setX( nextx );
-	
-	//check if we need to scroll
-/**	if ( current + lines_vis < cursor->getY() ) {
-		//scroll down => GUI
-		if ( gui_manager ) //gui_manager necessarly exists here, these are useless now
-			gui_manager->scrollDown( cursor->getY() - current - lines_vis);
-		current+= nb_lines; //bof XXX
-	} */
+
 	updateCursor();
 
 	//reset the input buffer
 	purgeInputBuffer();
-	
+
 	//return something
 	return QString::null;
 }
@@ -265,7 +260,7 @@ QString YZView::moveLeft( QString inputsBuff ) {
 QString YZView::moveRight( QString inputsBuff ) {
 	QString lin;
 	int nb_cols=1;//default : one line down
-	
+
 	//check the arguments
 	if ( !inputsBuff.isNull() ) {
 		int i=0;
@@ -275,7 +270,7 @@ QString YZView::moveRight( QString inputsBuff ) {
 		nb_cols = inputsBuff.left( i ).toInt( &test );
 		if ( !test ) nb_cols=1;
 	}
-	
+
 	//execute the code
 	lin = buffer->findLine(cursor->getY());
 	if ( !lin.isNull() ) current_maxx = lin.length()-1; 
@@ -285,19 +280,12 @@ QString YZView::moveRight( QString inputsBuff ) {
 	if ( nextx > current_maxx ) nextx = current_maxx;
 	if ( nextx < 0 ) nextx = 0;
 	cursor->setX( nextx );
-	
-	//check if we need to scroll
-/**	if ( current + lines_vis < cursor->getY() ) {
-		//scroll down => GUI
-		if ( gui_manager ) //gui_manager necessarly exists here, these are useless now
-			gui_manager->scrollDown( cursor->getY() - current - lines_vis);
-		current+= nb_lines; //bof XXX
-	} */
+
 	updateCursor();
 
 	//reset the input buffer
 	purgeInputBuffer();
-	
+
 	//return something
 	return QString::null;
 }
@@ -332,25 +320,22 @@ QString YZView::gotoLine(QString inputsBuff) {
 		line = inputsBuff.left( i ).toInt( &test );
 		if ( !test ) {
 			if ( inputsBuff.startsWith( "gg" ) ) line=0;
-			else line=buffer->text.count(); //there shouldn't be any other solution
+			else line=buffer->text.count()-1; //there shouldn't be any other solution
 		}
 	}
-	
+
 	if ( line==0 ) cursor->setX( 0 ); //for gg we go at beginning of line (should be first non blank character XXX)
 	cursor->setY(line);
+	
+	//make sure this line is visible
+	if ( ! isLineVisible( cursor->getY() ) ) centerView( cursor->getY() );
+
 	//execute the code
 	updateCursor( );
 
-/**	if ( current + lines_vis < cursor->getY() ) {
-		//scroll down => GUI
-		if ( gui_manager ) //gui_manager necessarly exists here, these are useless now
-			gui_manager->scrollDown( cursor->getY() - current - lines_vis);
-		current+= nb_lines; //bof XXX
-	} */
-
 	//reset the input buffer
 	purgeInputBuffer();
-	
+
 	//return something
 	return QString::null;
 }

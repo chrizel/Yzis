@@ -1,5 +1,5 @@
 /**
- * $Id: yz_buffer.cpp,v 1.24 2003/04/25 12:35:32 mikmak Exp $
+ * $Id: yz_buffer.cpp,v 1.25 2003/04/25 18:31:02 mikmak Exp $
  */
 
 #include <cstdlib>
@@ -22,7 +22,6 @@ void YZBuffer::addChar (int x, int y, QChar c) {
 	QString l=findLine(y);
 	if (l.isNull()) return;
 
-	/* do the actual modification */
 	l.insert(x, c);
 
 	text[y] = l;
@@ -44,6 +43,22 @@ void YZBuffer::chgChar (int x, int y, QChar c) {
 
 	/* inform the views */
 	postEvent(mk_event_setline(y,&l));
+}
+
+void YZBuffer::addNewLine( int col, int line ) {
+	QString l=findLine(line);
+	if (l.isNull()) return;
+
+	//replace old line
+	text[ line ] = l.left( col );
+
+	//add new line
+	QString newline = l.mid( col );
+	QStringList::Iterator it = text.at( line );
+	text.insert( ++it, newline );
+	/* inform the views */
+	postEvent(mk_event_setline(line,&text[ line ]));
+	postEvent(mk_event_setline(line+1,&newline));
 }
 
 void YZBuffer::postEvent(yz_event e) {

@@ -409,6 +409,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					mBuffer->action()->mergeNextLine( this, mainCursor->bufferY() - 1 );
 				} else if ( mainCursor->bufferX() > 0 )
 					mBuffer->action()->deleteChar( this, mainCursor->bufferX() - 1, mainCursor->bufferY(), 1 );
+				commitNextUndo();
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<DEL>" ) {
@@ -418,8 +419,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 
 				} else {
 					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-					commitNextUndo();
 				}
+				commitNextUndo();
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<PDOWN>" ) {
@@ -494,8 +495,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 
 				} else {
 					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-					commitNextUndo();
 				}
+				commitNextUndo();
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ALT>:" ) {

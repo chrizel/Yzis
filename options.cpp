@@ -132,7 +132,7 @@ void YZOption::saveTo(const QString& file, const QString& what, bool force ) {
 }
 
 void YZOption::init() {
-	KOption *tabwidth = new KOption("tabwidth", "Global", 8, 8, view_opt, int_t );
+	KOption *tabstop = new KOption("tabstop", "Global", 8, 8, view_opt, int_t );
 	KOption *number = new KOption("number","Global", false, false, view_opt, int_t );
 	KOption *wrap = new KOption( "wrap", "Global", false, false, view_opt, bool_t );
 	KOption *backspace = new KOption( "backspace", "Global", QString( "eol" ), QString( "eol" ), view_opt, string_t );
@@ -140,7 +140,7 @@ void YZOption::init() {
 	KOption *matchpairs = new KOption( "matchpairs", "Global", QString( "(){}[]" ), QString( "(){}[]" ), buffer_opt, string_t );
 	KOption *cindent = new KOption( "cindent", "Global", true, true, view_opt, bool_t );
 
-	mOptions[ "Global\\tabwidth" ] = tabwidth;
+	mOptions[ "Global\\tabstop" ] = tabstop;
 	mOptions[ "Global\\number" ] = number;
 	mOptions[ "Global\\wrap" ] = wrap;
 	mOptions[ "Global\\backspace" ] = backspace;

@@ -794,11 +794,11 @@ class YZView {
 		void initChanges( const YZCursor& pos );
 		void applyChanges( const YZCursor& pos, unsigned int len, bool applyCursor );
 
-		//cached value of tabwidth option
-		unsigned int tabwidth;	
+		//cached value of tabstop option
+		unsigned int tabstop;	
 		bool wrap;
 		
-		// tabwidth * spaceWidth
+		// tabstop * spaceWidth
 		unsigned int tablength;
 
 		// tablength to wrap

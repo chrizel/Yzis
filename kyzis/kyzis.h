@@ -1,5 +1,5 @@
 /*
-	  Copyright (c) 2003 Yzis Team <yzis-dev@yzis.org>
+    Copyright (c) 2003-2004 Mickael Marchand <mikmak@yzis.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public
@@ -63,6 +63,14 @@ k_dcop:
 	 */
     void createBuffer(const QString& path);
 
+public slots:
+	//XXX
+	virtual void closeWindow ( KMdiChildView *pWnd, bool layoutTaskBar=true );
+
+protected slots:
+	//XXX
+	virtual void activateView ( KMdiChildView * pWnd );
+	
 protected:
 	virtual void resizeEvent( QResizeEvent *e );
 
@@ -76,8 +84,6 @@ private slots:
 
 private:
     void setupActions();
-
-private:
     KToggleAction *m_toolbarAction;
 	QDomElement m_dockConfig;
 	KParts::ReadWritePart *m_currentPart;

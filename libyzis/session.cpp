@@ -74,7 +74,7 @@ yz_event YZSession::fetchNextEvent(int requester) {
 }
 
 void YZSession::addBuffer( YZBuffer *b ) {
-	yzDebug() << "Session : addBuffer" << endl;
+	yzDebug() << "Session : addBuffer " << b->fileName() << endl;
 	mBuffers.insert(b->fileName(), b);
 }
 
@@ -88,6 +88,7 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 }
 
 YZView* YZSession::findView( int uid ) {
+	yzDebug() << " ========= " << endl;
 	yzDebug() << "Session: looking for view " << uid << endl;
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
@@ -135,4 +136,9 @@ YZBuffer* YZSession::findBuffer( const QString& path ) {
 		if ( b->fileName() == path ) return b;
 	}
 	return NULL; //not found
+}
+
+void YZSession::updateBufferRecord( const QString& oldname, const QString& newname, YZBuffer *buffer ) {
+	mBuffers.remove( oldname );
+	mBuffers.insert( newname, buffer );
 }

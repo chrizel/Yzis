@@ -175,6 +175,7 @@ void KYZisFactory::customEvent (QCustomEvent *) {
 		yz_event event = sess->fetchNextEvent();
 		YZView *vi = sess->findView( event.view );
 		if ( vi == NULL ) {
+			//THIS CANNOT HAPPEN, IF THIS HAPPENS YOU BUGGED YZIS !
 			yzDebug() << " Factory : View " << event.view << " NOT found , event type : " << event.id << endl;
 			return;
 		}

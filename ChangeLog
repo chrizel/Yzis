@@ -5,6 +5,9 @@
     use KDE's fixed font as default
   * libyzis
     support :e relativeFilePath :)
+    fix a so so so so stupid bug, buffers were recorded with no name in
+    session, so only one buffer was added to session's list => now multibuffer
+    is really usable !
 
 2004-02-16 mikmak
   * all 

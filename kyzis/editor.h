@@ -81,6 +81,8 @@ class KYZisEdit : public QScrollView {
 		//draw the cursor at the given position
 		void drawCursorAt(int x, int y);
 
+		virtual void focusInEvent( QFocusEvent * );
+
 	private :
 		KYZisView *_parent;
 

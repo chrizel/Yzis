@@ -25,6 +25,7 @@
 #include "debug.h"
 #include "yzis.h"
 #include <kglobalsettings.h>
+#include "factory.h"
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) 
@@ -119,6 +120,11 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 	}
 
 	drawCursorAt(cursorx,cursory);
+}
+
+void KYZisEdit::focusInEvent (  QFocusEvent * ) {
+	yzDebug() << "Activate Window " << endl;
+	KYZisFactory::s_self->setCurrentView( _parent );
 }
 
 #include "editor.moc"

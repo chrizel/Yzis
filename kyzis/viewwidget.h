@@ -42,9 +42,6 @@ class KYZisView: public KTextEditor::View , public YZView
 	 	virtual ~KYZisView();
 		KTextEditor::Document *document () const { return buffer; }
 	
-	protected:
-		virtual void showEvent ( QShowEvent* );
-
 	private:
 		KYZisEdit *editor;
 		KYZisDoc *buffer;

@@ -38,7 +38,7 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	mSession = sess;
 	if ( !_path.isNull() )
 		mPath = _path;
-//	else mPath = "/tmp/yzisnew" + myId;
+	else mPath = "/tmp/yzisnew" + myId; //we need this so that the buffer has a name at creation time (it will change when we load() a new file
 
 	load();
 	mSession->addBuffer( this );
@@ -175,17 +175,22 @@ QString	YZBuffer::data(unsigned int no)
 		return l->data();
 }
 
-void YZBuffer::load() {
+void YZBuffer::load(const QString& file) {
 	mText.clear();
-	QFile file( mPath );
+	if ( !file.isNull() ) { 
+		//hmm changing file :), update Session !!!!
+		mSession->updateBufferRecord( mPath, file, this );
+		mPath = file;
+	}
+	QFile fl( mPath );
 	//opens and eventually create the file
-	if ( file.open( IO_ReadOnly ) ) {
-		QTextStream stream( &file );
+	if ( fl.open( IO_ReadOnly ) ) {
+		QTextStream stream( &fl );
 		while ( !stream.atEnd() ) {
 			QString line(stream.readLine() ); // line of text excluding '\n'
 			addLine( line );
 		}
-		file.close();
+		fl.close();
 	}
 	if ( ! mText.count() ) addLine(" ");
 	updateAllViews();
@@ -209,6 +214,7 @@ YZView* YZBuffer::findView( unsigned int uid ) {
 	QValueList<YZView*>::iterator it;
 	for ( it = mViews.begin(); it != mViews.end(); ++it ){
 		YZView* v = ( *it );
+		yzDebug() << "Checking view " << uid << " for buffer " << fileName() << endl;
 		if ( v->myId == uid ) {
 			yzDebug() << "Buffer: View " << uid << " found" << endl;
 			return v;

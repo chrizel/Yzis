@@ -1,5 +1,5 @@
 /*
-	  Copyright (c) 2003 Yzis Team <yzis-dev@yzis.org>
+    Copyright (c) 2003-2004 Mickael Marchand <mikmak@yzis.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public
@@ -46,6 +46,8 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	setIDEAlModeStyle( 1 );
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
 
+	menuBar()->insertItem("&Window", windowMenu());
+	menuBar()->insertItem("&Docking", dockHideShowMenu());
 	setupActions();
 	
 	if ( m_dockConfig.hasChildNodes() ) {
@@ -166,3 +168,17 @@ void Kyzis::createBuffer(const QString& path) {
 			}
 		}
 }
+
+void Kyzis::activateView ( KMdiChildView * pWnd ) {
+	//need the corresponding view and ensute libyzis knows its the active one
+	
+	KMdiMainFrm::activateView( pWnd );
+}
+
+void Kyzis::closeWindow ( KMdiChildView *pWnd, bool layoutTaskBar ) {
+	//notify libyzis of the destruction
+	//clean things correctly
+	
+	KMdiMainFrm::closeWindow( pWnd,layoutTaskBar );
+}
+

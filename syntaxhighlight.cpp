@@ -1575,20 +1575,17 @@ void YzisHighlighting::setData(YzisHlData *)
   config->writeEntry("Priority",hlData->priority);*/
 }
 
-void YzisHighlighting::getYzisHlItemDataList (uint , YzisHlItemDataList &list)
+void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &list)
 {
-  list.clear();
-  createYzisHlItemData(list);
-
   YZOption& config = YZSession::mOptions;
-  //config->setGroup("Highlighting " + iName + " - Schema " + YzisFactory::self()->schemaManager()->name(schema));
-  config.setGroup("Highlighting " + iName + " - Default Schema");
+  config.setGroup("Highlighting " + iName + " - Schema " + YZSession::me->schemaManager()->name(schema));
+
   list.clear();
   createYzisHlItemData(list);
 
   for (YzisHlItemData *p = list.first(); p != 0L; p = list.next())
   {
-    QStringList s = config.readQStringListEntry("Highlighting " + iName + " - Default Schema/" + p->name);
+    QStringList s = config.readQStringListEntry(p->name);
 
     if (s.count()>0)
     {
@@ -1630,10 +1627,10 @@ void YzisHighlighting::getYzisHlItemDataList (uint , YzisHlItemDataList &list)
  * @param schema The id of the schema group to save
  * @param list YzisHlItemDataList containing the data to be used
  */
-void YzisHighlighting::setYzisHlItemDataList(uint , YzisHlItemDataList& list)
+void YzisHighlighting::setYzisHlItemDataList(uint schema, YzisHlItemDataList& list)
 {
   YZOption& config = YZSession::mOptions;
-  config.setGroup("Highlighting " + iName + " - Default Schema");
+  config.setGroup("Highlighting " + iName + " - Schema " + YZSession::me->schemaManager()->name( schema ));
 
   QStringList settings;
 
@@ -2629,12 +2626,12 @@ QMemArray<YzisAttribute> *YzisHighlighting::attributes (uint schema)
     return array;
 
   // ohh, not found, check if valid schema number
-/*  if (!YzisFactory::self()->schemaManager()->validSchema(schema))
+  if (!YZSession::me->schemaManager()->validSchema(schema))
   {
     // uhh, not valid :/, stick with normal default schema, it's always there !
     return attributes (0);
   }
-*/
+
   // k, schema correct, let create the data
   YzisAttributeList defaultStyleList;
   defaultStyleList.setAutoDelete(true);
@@ -2934,7 +2931,7 @@ QString YzisHlManager::defaultStyleName(int n)
   return names[n];
 }
 
-void YzisHlManager::getDefaults(uint , YzisAttributeList &list)
+void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 {
   list.setAutoDelete(true);
 
@@ -3015,14 +3012,13 @@ void YzisHlManager::getDefaults(uint , YzisAttributeList &list)
   error->setSelectedTextColor(Qt::red);
   list.append(error);
 
-
   YZOption& config = YZSession::mOptions;
-  config.setGroup("Default Item Styles - Default Schema ");
+  config.setGroup("Default Item Styles - Schema " + YZSession::me->schemaManager()->name( schema ));
 
   for (uint z = 0; z < defaultStyles(); z++)
   {
     YzisAttribute *i = list.at(z);
-    QStringList s = config.readQStringListEntry("Default Item Styles - Default Schema/" + defaultStyleName(z));
+    QStringList s = config.readQStringListEntry(defaultStyleName(z));
     if (!s.isEmpty())
     {
       while( s.count()<8)
@@ -3055,10 +3051,10 @@ void YzisHlManager::getDefaults(uint , YzisAttributeList &list)
   }
 }
 
-void YzisHlManager::setDefaults(uint , YzisAttributeList &list)
+void YzisHlManager::setDefaults(uint schema, YzisAttributeList &list)
 {
   YZOption& config = YZSession::mOptions;
-  config.setGroup("Default Item Styles - Default Schema");
+  config.setGroup("Default Item Styles - Schema " + YZSession::me->schemaManager()->name(schema));
 
   for (uint z = 0; z < defaultStyles(); z++)
   {

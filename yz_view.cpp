@@ -43,11 +43,11 @@ void YZView::sendKey( int c, int modifiers) {
 	if ( c == Qt::Key_Insert ) c = Qt::Key_I;
 	
 	QString lin;
-	QString key = QKeySequence( c );
+	QString key = tolower( c );// = QKeySequence( c );
 	//default is lower case unless some modifiers
-	key = key.lower();
+	////key = key.lower();
 	if ( modifiers & YZIS::Shift ) {
-		c = toupper( c );
+		////c = toupper( c );
 		key = key.upper();
 	}
 

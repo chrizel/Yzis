@@ -227,6 +227,16 @@ class YZExLua : public QObject {
 		 */
 		static int debug(lua_State *L);
 
+		/**
+		 * Set local options
+		 */
+		static int setlocal(lua_State *L);
+
+		/**
+		 * Set global options
+		 */
+		static int set(lua_State *L);
+
 	protected:
 		lua_State *L;
 

@@ -40,4 +40,5 @@ end
 
 connect ("INDENT_ON_ENTER", "Indent_cpp")
 connect ("INDENT_ON_KEY", "Indent_OnKey_cpp")
+setlocal ("indentkeys=}")
 

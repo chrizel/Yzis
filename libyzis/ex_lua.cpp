@@ -111,6 +111,8 @@ YZExLua::YZExLua() {
 	lua_register(L,"connect",connect);
 	lua_register(L,"source",source);
 	lua_register(L,"debug",debug);
+	lua_register(L,"setlocal",setlocal);
+	lua_register(L,"set",set);
 }
 
 YZExLua::~YZExLua() {
@@ -544,13 +546,30 @@ int YZExLua::connect(lua_State *L ) {
 }
 
 int YZExLua::source(lua_State *L ) {
-	yzDebug() << "LUA : source " << endl;
 	if (!checkFunctionArguments(L, 1, "source", "")) return 0;
 	QString filename = ( char * )lua_tostring ( L, 1 );
 
 	YZExLua::instance()->source(NULL, filename);
 
 	return 0;
+}
+
+int YZExLua::setlocal(lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "setlocal", "set local options")) return 0;
+	QString option = ( char * )lua_tostring ( L, 1 );
+
+	YZSession::me->getExPool()->setlocal(YZExCommandArgs(YZSession::me->currentView(), QString::null, QString::null, option, 0, 0, true));
+
+	return 0;	
+}
+
+int YZExLua::set(lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "set", "set global options")) return 0;
+	QString option = ( char * )lua_tostring ( L, 1 );
+
+	YZSession::me->getExPool()->set(YZExCommandArgs(YZSession::me->currentView(), QString::null, QString::null, option, 0, 0, true));
+
+	return 0;	
 }
 
 bool YZExLua::checkFunctionArguments(lua_State*L, 

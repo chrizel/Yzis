@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE article PUBLIC
+	"-//OASIS//DTD DocBook XML V4.3//EN"
+	"http://www.docbook.org/xml/4.3/docbookx.dtd">
+
+<article id="documentation-example">
+	<articleinfo>
+		<title>Documentation example</title>
+		<author>
+			<firstname>Loic</firstname>
+			<surname>Pauleve</surname>
+			<email>panard@inzenet.org</email>
+		</author>
+	</articleinfo>
+
+	<sect1 id="documentation-example-introduction">
+		<title>Introduction</title>
+		<para>This is an introduction to our documentation example.</para>
+	</sect1>
+
+	<sect1 id="documentation-example-commands">
+		<title>Some commands</title>
+		<itemizedlist>
+<listitem>
+	<simplelist>
+		<member>l</member>
+		<member><![CDATA[<Space>]]></member>
+		<member><![CDATA[<Right>]]></member>		
+	</simplelist>
+	<para>
+		move <varname>count</varname> characters to the right.
+	</para>
+</listitem>
+		</itemizedlist>
+	</sect1>
+
+</article>
+

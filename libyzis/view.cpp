@@ -414,30 +414,39 @@ QString YZView::moveToStartOfLine( const QString& ) {
 
 QString YZView::gotoLine(const QString& inputsBuff) {
 	//can be : 'gg' (goto Top),'G' or a number with one of them
+	uint line=0;
 
 	// first and easy case to handle
 	if ( inputsBuff.startsWith( "gg" ) ) {
-		gotoxy( 0, 0 );
-		purgeInputBuffer();
-		return QString::null;
-	}
-
-	int line=0;
-	//check arguments
-	if ( !inputsBuff.isNull() ) {
+		line = 1;
+	} else if ( inputsBuff.startsWith( "G" ) ) {
+		line = mBuffer->lineCount();
+	} else {
 		//try to find a number
 		int i=0;
 		while ( inputsBuff[i].isDigit() ) i++; //go on
-		bool test;
-		line = inputsBuff.left( i ).toInt( &test );
-		if (!test || !line) line=mBuffer->lineCount(); // in vim '0G' also goes to the end
+		bool toint_ok;
+		line = inputsBuff.left( i ).toInt( &toint_ok );
+		if (!toint_ok || !line) {
+			if (inputsBuff[i] == 'G') {
+				line=mBuffer->lineCount(); // in vim '0G' also goes to the end
+			} else {
+				line=1; // in vim '0gg' goes to the beginning
+			}
+		}
 	}
 
 	/* if line is null, we dont want to go to line -1,
 	 * this can happen if the file is empty for exemple */
 	if ( !line ) line++;
+	if (line > mBuffer->lineCount()) line = mBuffer->lineCount();
 
-	gotoxy(mBuffer->firstNonBlankChar(line-1), line-1);
+	// XXX configuration startofline
+	if (/* startofline */ 1 ) {
+		gotoxy(mBuffer->firstNonBlankChar(line-1), line-1);
+	} else {
+		gotoxy(mCursor->getY(), line-1);
+	}
 
 	purgeInputBuffer();
 	return QString::null; //return something

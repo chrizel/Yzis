@@ -67,6 +67,8 @@ class YZModeVisual : public YZModeCommand {
 	  	void escape( const YZCommandArgs& args );
 		void translateToVisualLine( const YZCommandArgs& args );
 		void yankWholeLines(const YZCommandArgs &args);
+		void toUpperCase( const YZCommandArgs& args );
+		void toLowerCase( const YZCommandArgs& args );
 
 		virtual YZInterval interval(const YZCommandArgs &args);
 

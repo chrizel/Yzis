@@ -138,8 +138,8 @@ void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand("A", (PoolMethod) &YZModeVisual::commandAppend ) );
 	commands.append( new YZCommand("I", (PoolMethod) &YZModeVisual::commandInsert ) );
 	commands.append( new YZCommand("Y", (PoolMethod) &YZModeVisual::yankWholeLines ) );
-	//commands.append( new YZCommand("u", (PoolMethod) &YZModeVisual::toLowerCase) );
-	//commands.append( new YZCommand("U", (PoolMethod) &YZModeVisual::toUpperCase) );
+	commands.append( new YZCommand("u", (PoolMethod) &YZModeVisual::toLowerCase) );
+	commands.append( new YZCommand("U", (PoolMethod) &YZModeVisual::toUpperCase) );
 	commands.append( new YZCommand("c", &YZModeCommand::change) );
 	commands.append( new YZCommand("s", &YZModeCommand::change) );
 	commands.append( new YZCommand("d", &YZModeCommand::del) );
@@ -163,14 +163,32 @@ void YZModeVisual::commandInsert( const YZCommandArgs& args ) {
 	args.view->modePool()->change( MODE_INSERT );
 	args.view->gotoxy( pos.getX(), pos.getY() );
 }
-//void YZModeVisual::toLowerCase( const YZCommandArgs& args ) {
-//	YZCursor pos = qMin( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
-//	args.view->gotoxy( pos.getX(), pos.getY() );
-//}
-//void YZModeVisual::toUpperCase( const YZCommandArgs& args ) {
-//	YZCursor pos = qMin( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
-//	args.view->gotoxy( pos.getX(), pos.getY() );
-//}
+void YZModeVisual::toLowerCase( const YZCommandArgs& args ) {
+	YZInterval i = interval( args );
+	QStringList t = args.view->myBuffer()->getText( i );
+	QStringList lt;
+	for( unsigned int i = 0; i < t.size(); i++ )
+#if QT_VERSION < 0x040000
+		lt << t[i].lower();
+#else
+		lt << t[i].toLower();
+#endif
+	args.view->myBuffer()->action()->replaceArea( args.view, i, lt );
+	args.view->commitNextUndo();
+}
+void YZModeVisual::toUpperCase( const YZCommandArgs& args ) {
+	YZInterval i = interval( args );
+	QStringList t = args.view->myBuffer()->getText( i );
+	QStringList lt;
+	for( unsigned int i = 0; i < t.size(); i++ )
+#if QT_VERSION < 0x040000
+		lt << t[i].upper();
+#else
+		lt << t[i].toUpper();
+#endif
+	args.view->myBuffer()->action()->replaceArea( args.view, i, lt );
+	args.view->commitNextUndo();
+}
 void YZModeVisual::yankWholeLines(const YZCommandArgs &args) {
 	YZCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
 

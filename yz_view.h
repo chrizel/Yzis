@@ -60,6 +60,10 @@ public:
 	  * visible or not
 	  */
 	int	isLineVisible(int l) { return ( (l>=current) && ((l-current)<lines_vis) ); }
+
+	YZBuffer *myBuffer() { return buffer;}
+
+	YZSession *mySession() { return session; }
 	
 	/**
 	 * Register a GUI event manager
@@ -70,22 +74,18 @@ public:
 
 	void centerView( int line );
 
+	void purgeInputBuffer() { previous_chars="";}
+
 	/**
 	 * moves the cursor of the current view down
 	 */
-	QString moveDown( QStringList );
-
-protected:
+	QString moveDown( QString inputsBuff = QString::null );
 
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
 	int		lines_vis;	/** number of visible lines */
 	int		current;	/** current line on top of view */
 	YZCursor *cursor;
-//	int		cursor_x;	/** current cursor position, relative to the whole file */
-//	int		cursor_y;
-	//m -> orzel :you consider we are wordwrapping by default!this is not true!
-	//int		cursor_x_ghost;	// the one we would be if the line was long enough 
 	int		current_maxx;	/** maximum value for x, that s (lenght of current line -1), -1 means the line is empty */
 
 	enum {
@@ -117,6 +117,12 @@ protected:
 	 * this should allow us to have commands like : 100g or gg etc ...
 	 */
 	QString previous_chars;
+
+private:
+	/**
+	 * The current session, provided by the GUI
+	 */
+	YZSession *session;
 
 };
 

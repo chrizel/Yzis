@@ -36,7 +36,52 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("j",&YZView::moveDown,true);
 }
 
-QString YZCommandPool::test(QStringList) {
+QString YZCommandPool::test(QString) {
 	return QString("testing");
+}
+
+void YZCommandPool::execCommand(YZView *view, QString inputs) {
+	QString result,command;
+	int i=0;
+
+	//regexp ? //FIXME
+	//try to find the command we are looking for
+	//first remove any number at the beginning of command
+	while ( ( ( QChar )inputs.at( i ) ).isDigit() )
+		i++; //go on
+	
+	//now take the command until another number
+	while ( !( ( QChar )inputs.at( i ) ).isDigit() && i<command.length() )
+		command += inputs.at( i++ );
+	//end FIXME
+	
+	//try hard to find a correspondance
+	QMap<QString, YZCommand>::Iterator it = globalCommands.end();
+	while ( command.length() > 0 && it == globalCommands.end() ) {
+		it = globalCommands.find(command);
+		if ( it==globalCommands.end() ) command.truncate(command.length()-1);
+	}
+	
+	if ( it!=globalCommands.end() ) { //we got one match *ouf*
+		switch ( globalCommands[ command ].obj ){
+			case VIEW :
+				result = ( *view.*(globalCommands[ command ].viewFunc )) (inputs) ;
+				break;
+			case BUFF :
+				result = ( *( view->myBuffer() ).*(globalCommands[ command ].buffFunc )) (inputs) ;
+				break;
+			case SESS :
+				result = ( *( view->mySession() ).*(globalCommands[ command ].sessFunc )) (inputs) ;
+				break;
+			case POOL :
+				result = ( *( view->mySession()->getPool() ).*(globalCommands[ command ].poolFunc )) (inputs) ;
+				break;
+				/**		case PLUG :
+					result = ( *this.*(globalCommands[ command ].viewFunc )) (inputs) ;
+					break;*/
+			default:
+				break;
+		}
+	}
 }
 

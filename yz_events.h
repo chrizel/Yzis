@@ -1,18 +1,21 @@
 #ifndef YZ_EVENTS_H
 #define YZ_EVENTS_H
 /**
- * view.h
+ * yz_event.h
  *
  * yzis events
  *
  */
 
 
+#include "yzis.h" // NULL
+
 
 /** list of all events */
 enum yz_events {
 	YZ_EV_SETLINE,
 	YZ_EV_SETCURSOR,
+	YZ_EV_SETSTATUS,
 };
 
 /** Here are some struct used for event args handling
@@ -39,6 +42,10 @@ struct yz_event_setcursor {
 	int x,y;
 };
 
+struct yz_event_setstatus {
+	char *text;
+};
+
 
 
 
@@ -63,10 +70,14 @@ struct yz_event_setcursor {
 	union {
 		struct yz_event_setline		setline;
 		struct yz_event_setcursor	setcursor;
+		struct yz_event_setstatus	setstatus;
 	} u;
 };
 
 typedef struct yz_event_t yz_event;
+
+
+yz_event mk_event_setstatus(char *text);
 
 
 #ifdef __cplusplus

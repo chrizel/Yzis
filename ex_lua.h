@@ -79,6 +79,22 @@ class YZExLua : public QObject {
 		 */
 		static int YZExLua::delline(lua_State *L);
 
+		/**
+		 * Return current's filename
+		 */
+		static int YZExLua::filename(lua_State *L);
+
+		/**
+		 * Return current's syntax highlighting color for given column,line
+		 */
+		static int YZExLua::getcolor(lua_State *L);
+
+		/**
+		 * Number of lines of the current buffer
+		 */
+		static int YZExLua::linecount(lua_State *L);
+
+
 	private:
 		lua_State *st;
 };

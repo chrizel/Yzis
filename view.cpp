@@ -123,8 +123,6 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	sCurLineLength = 0;
 	rCurLineLength = 0;
 
-	rHLnoAttribs = false;
-	rHLAttributesLen = 0;
 	charSelected = false;
 
 	lineDY = 0;
@@ -1827,13 +1825,26 @@ bool YZView::drawSelected( ) {
 	return charSelected;
 }
 
-const QColor& YZView::drawColor ( ) {
-	YzisAttribute hl;
-	YzisAttribute * curAt = ( !rHLnoAttribs && (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-	if ( curAt ) {
-		hl += * curAt;
-		return hl.textColor();
+const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
+	YZLine *yl = mBuffer->yzline( line );
+	YzisHighlighting * highlight = mBuffer->highlight();
+	const uchar* hl=NULL;
+
+	if ( yl->length() != 0 && highlight ) {
+			hl = yl->attributes(); //attributes of this line
+			hl += col; // -1 ? //move pointer to the correct column
+			uint len = hl ? highlight->attributes( 0 )->size() : 0 ; //length of attributes
+			YzisAttribute *list = highlight->attributes( 0 )->data( ); //attributes defined by the syntax highlighting document
+			YzisAttribute *at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
+			if ( at ) return at->textColor(); //textcolor :)
 	}
+
+	return fake;
+}
+
+const QColor& YZView::drawColor ( ) {
+	YzisAttribute * curAt = ( !rHLnoAttribs && (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	if ( curAt ) return curAt->textColor();
 	return fake;
 }
 

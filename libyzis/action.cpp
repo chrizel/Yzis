@@ -302,9 +302,9 @@ void YZAction::insertNewLine( YZView* pView, unsigned int X, unsigned int Y ) {
 	YZCursor pos( pView, X, Y );
 	insertNewLine( pView, pos );
 }
-void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len ) {
+void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len, const QValueList<QChar>& regs ) {
 	YZCursor pos( pView, 0, Y );
-	deleteLine( pView, pos, len, QValueList<QChar>() );
+	deleteLine( pView, pos, len, regs );
 }
 void YZAction::replaceLine( YZView* pView, unsigned int Y, const QString& text ) {
 	YZCursor pos( pView, 0, Y );

@@ -224,7 +224,9 @@ int YZExLua::delline(lua_State *L) {
 	int sLine = ( int )lua_tonumber( L,1 );
 	
 	YZView* cView = YZSession::me->currentView();
-	cView->myBuffer()->action()->deleteLine( cView, sLine ? sLine - 1 : 0, 1 );
+	QValueList<QChar> regs;
+	regs << QChar( '"' ) ;
+	cView->myBuffer()->action()->deleteLine( cView, sLine ? sLine - 1 : 0, 1, regs );
 
 	return 0; // one result
 }

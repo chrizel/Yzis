@@ -68,7 +68,7 @@ void YZBufferOperation::performOperation( YZView* pView, bool opposite)
 			pView->myBuffer()->action()->insertNewLine( pView, 0, line );
 			break;
 		case DELLINE:
-			pView->myBuffer()->action()->deleteLine( pView, line, 1 );
+			pView->myBuffer()->action()->deleteLine( pView, line, 1, QValueList<QChar>() );
 			break;
 	}
 

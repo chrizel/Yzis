@@ -154,6 +154,8 @@ void YZInternalOptionPool::init() {
 	YZInternalOption *list = new YZInternalOption( "list", "Global", false, false, view_opt, bool_t );
 	YZInternalOption *blocksplash = new YZInternalOption( "blocksplash", "Global", true, true, global_opt, bool_t );
 	YZInternalOption *listchars = new YZInternalOption( "listchars", "Global", QString("trail:-,space:.,tab:>"), QString("trail:-,space:.,tab:>"), global_opt, stringlist_t );
+	YZInternalOption *incsearch = new YZInternalOption( "incsearch", "Global", true, true, global_opt, bool_t );
+	YZInternalOption *hlsearch = new YZInternalOption( "hlsearch", "Global", true, true, global_opt, bool_t );
 
 	mOptions[ "Global\\tabstop" ] = tabstop;
 	mOptions[ "Global\\number" ] = number;
@@ -169,6 +171,8 @@ void YZInternalOptionPool::init() {
 	mOptions[ "Global\\list" ] = list;
 	mOptions[ "Global\\blocksplash" ] = blocksplash;
 	mOptions[ "Global\\listchars" ] = listchars;
+	mOptions[ "Global\\incsearch" ] = incsearch;
+	mOptions[ "Global\\hlsearch" ] = hlsearch;
 	setGroup("Global");
 
 	//read config files now

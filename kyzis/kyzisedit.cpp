@@ -4,6 +4,7 @@
 
 #include "kyzisedit.h"
 #include "yz_debug.h"
+#include "yzis.h"
 
 	KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) 
@@ -50,7 +51,12 @@ void KYZisEdit::setTextLine(int l, const QString &/*str*/){
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	yzDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->key() != 0 ) {
-		_parent->sendKey(e->key(), e->state());
+		int modifiers=0;
+		ButtonState st = e->state();
+		if ( st & Qt::ShiftButton ) modifiers |= YZIS::Shift;
+		if ( st & Qt::ControlButton ) modifiers |= YZIS::Ctrl;
+		if ( st & Qt::AltButton ) modifiers |= YZIS::Alt;
+		_parent->sendKey(e->key(), modifiers);
 		e->accept();
 	}
 }

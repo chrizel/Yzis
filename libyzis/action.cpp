@@ -214,7 +214,8 @@ void YZAction::copyArea( YZView* pView, const YZInterval& i, const QList<QChar> 
 		buff << l.mid( bX );
 		for ( unsigned int y = bY+1; y < eY; y++ )
 			buff << mBuffer->textline( y );
-		buff << mBuffer->textline( eY ).left( eX );
+		if ( eY < mBuffer->lineCount() )
+			buff << mBuffer->textline( eY ).left( eX );
 	}
 
 #ifndef WIN32
@@ -303,6 +304,7 @@ void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QValueList<
 #else
 void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg ) {
 #endif
+	yzDebug() << "YZAction::deleteArea " << i << endl;
 	CONFIGURE_VIEWS;
 
 	QStringList buff = mBuffer->getText( i );
@@ -314,9 +316,19 @@ void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QList<QChar
 
 	if ( i.from().opened() ) ++bX;
 	bool excludeLastLine = i.to().opened() && eX == 0;
+	bool deleteAfterEnd = excludeLastLine && eY >= mBuffer->lineCount();
 	if ( i.to().opened() && eX > 0 ) --eX;
+
 	QString bL = mBuffer->textline( bY ).left( bX );
-	QString eL = excludeLastLine ? mBuffer->textline( eY ) : mBuffer->textline( eY ).mid( eX + 1 );
+	QString eL;
+	if ( deleteAfterEnd ) {
+		eY = mBuffer->lineCount() - 1;
+		if ( bY > 0 ) bY--; // delete the last line
+		eL = mBuffer->textline( bY );
+	} else if ( excludeLastLine )
+		eL = mBuffer->textline( eY );
+	else
+		eL = mBuffer->textline( eY ).mid( eX + 1 );
 
 	unsigned int cLine = bY+1;
 	for( unsigned k = cLine; k <= eY; k++ )

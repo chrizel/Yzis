@@ -1038,18 +1038,24 @@ void YZModeCommand::append(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::change(const YZCommandArgs &args) {
-	YZCursor cur = args.view->getBufferCursor();
-
 	YZInterval area = interval( args );
+	YZCursor cur = area.fromPos();
+	
 	yzDebug() << "YZModeCommand::change " << area << endl;
 	args.view->myBuffer()->action()->deleteArea(args.view, area, args.regs);
-	args.view->commitNextUndo();
 
-	// start insert mode, append if at EOL
-	if ( (unsigned int)cur.x() != args.view->myBuffer()->getLineLength( cur.y() ) )
+	if ( cur.y() >= args.view->myBuffer()->lineCount() ) {
+		args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->myBuffer()->lineCount() );
 		args.view->modePool()->change( YZMode::MODE_INSERT );
-	else
-		args.view->append();
+	} else {
+		args.view->gotoxyAndStick( cur.x(), cur.y() );
+		// start insert mode, append if at EOL
+		if ( cur.x() < args.view->myBuffer()->getLineLength( cur.y() ) )
+			args.view->modePool()->change( YZMode::MODE_INSERT );
+		else
+			args.view->append();
+	}
+	args.view->commitNextUndo();
 }
 
 void YZModeCommand::changeLine(const YZCommandArgs &args) {

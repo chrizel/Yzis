@@ -915,10 +915,8 @@ void YZView::applyChanges( unsigned int /*x*/, unsigned int y ) {
 }
 
 QString YZView::append () {
-	mModePool->push( YZMode::MODE_INSERT );
-	gotoxy(mainCursor->bufferX()+1, mainCursor->bufferY() );
-	updateStickyCol( mainCursor );
-
+	mModePool->change( YZMode::MODE_INSERT );
+	gotoxyAndStick(mainCursor->bufferX()+1, mainCursor->bufferY() );
 	return QString::null;
 }
 

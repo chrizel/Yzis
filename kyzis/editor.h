@@ -29,6 +29,7 @@
 #include <qfont.h>
 #include <action.h>
 #include <qnamespace.h>
+#include <krootpixmap.h>
 
 class KYZisView;
 
@@ -57,6 +58,8 @@ class KYZisEdit : public QWidget {
 
 		// update text area
 		void updateArea( );
+
+		void setTransparent( bool );
 
 		const QString& convertKey( int key );
 
@@ -119,6 +122,8 @@ class KYZisEdit : public QWidget {
 		// last line number
 		unsigned int lastLineNumber;
 		QMap<int,QString> keys;
+		KRootPixmap *rootxpm;
+		bool mTransparent;
 };
 
 #endif

@@ -37,8 +37,9 @@
 #define NONFIXED_CURSOR_WIDTH 1
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
-: QWidget( parent, name, WNoAutoErase ) 
+: QWidget( parent, name) 
 {
+	mTransparent = false;
 	mParent = parent;
 
 	marginLeft = 0;
@@ -48,12 +49,21 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 	setFocusPolicy( StrongFocus );
 	QWidget::setCursor( IbeamCursor );
+	rootxpm = new KRootPixmap( this );
+	//testing until we have a config option XXX
+	setTransparent( true );
 
 	initKeys();
 }
 
 
 KYZisEdit::~KYZisEdit() {
+}
+
+void KYZisEdit::setTransparent ( bool t ) {
+	mTransparent = t;
+	if ( t ) rootxpm->start();
+	else rootxpm->stop();
 }
 
 void KYZisEdit::resizeEvent(QResizeEvent* ) {
@@ -118,24 +128,16 @@ void KYZisEdit::setCursor(int c, int l) {
 	mCursorShown = true;
 }
 
-void KYZisEdit::scrollUp( int n ) {
+void KYZisEdit::scrollUp( int ) {
 	drawCursorAt( mCursorX * ( isFontFixed ? fontMetrics().maxWidth() : 1 ) , mCursorY );
-	bitBlt( this, 0, n * fontMetrics().lineSpacing(),
-		this, 0, 0,
-		width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing(),
-		Qt::CopyROP, true );
 	mCursorShown = false;
-	drawContents( 0, 0, mParent->getColumnsVisible(), n, false );
+	drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
 }
 
-void KYZisEdit::scrollDown( int n ) {
+void KYZisEdit::scrollDown( int ) {
 	drawCursorAt( mCursorX * ( isFontFixed ? fontMetrics().maxWidth() : 1 ) , mCursorY );
-	bitBlt( this, 0, 0,
-		this, 0, n * fontMetrics().lineSpacing(),
-		width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing(),
-		Qt::CopyROP, true );
 	mCursorShown = false;
-	drawContents( 0, mParent->getLinesVisible() - n, mParent->getColumnsVisible(), n, false );
+	drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
 }
 
 bool KYZisEdit::event(QEvent *e) {
@@ -265,7 +267,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 
 				if ( number ) { // draw current line number
 					myRect.setRect( GETX( currentX ), currentY * linespace, GETX( marginLeft - spaceWidth ), linespace );
-					p.eraseRect( myRect );
+					erase( myRect );
 					QPen old_pen = p.pen( );
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
 						p.setPen( Qt::yellow );
@@ -277,7 +279,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 					p.setPen( old_pen );
 				}
 				myRect.setRect( GETX( currentX ), currentY * linespace, width() - GETX( currentX ), linespace );
-				p.eraseRect( myRect );
+				erase( myRect );
 
 				while ( mParent->drawNextCol( ) ) {
 					myRect.setX( GETX( currentX ) );
@@ -312,7 +314,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 		unsigned int fh = height() / linespace;
 		while ( cliph > 0 && currentY < fh ) {
 			myRect.setRect ( 0, currentY * linespace, width(), linespace );
-			p.eraseRect( myRect );
+			erase( myRect );
 			p.drawText(myRect,flag ,"~");
 			++currentY;
 			--cliph;
@@ -320,7 +322,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 	} else {
 		while ( currentY < lineCount ) {
 			myRect.setRect (0, currentY * linespace, width(), linespace);
-			p.eraseRect(myRect);
+			erase(myRect);
 			p.drawText(myRect,flag, mParent->myBuffer()->textline(currentY ) );
 			++currentY;
 		}

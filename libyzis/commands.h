@@ -137,8 +137,6 @@ class YZCommandPool {
 		 */
 		void execExCommand(YZView *view, const QString& inputs);
 		
-
-
 	private:
 		YZExExecutor *executor;
 

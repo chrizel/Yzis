@@ -45,7 +45,6 @@ NYZView::NYZView(YZBuffer *b)
 	YZASSERT( b );
 	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << ( int )b << endl;
 	window = NULL;
-	modeDisplayed = false;
 }
 
 NYZView::~NYZView(){
@@ -74,11 +73,11 @@ void NYZView::map( void )
 	wattrset(statusbar, A_NORMAL );
 	if (has_colors())
 		wattron(statusbar, COLOR_PAIR(1));
-	//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
-	//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
+//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
+//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
 	displayInfo ( QString("\"%1\" %2L, %3C" ).arg(mBuffer->fileName()).arg(mBuffer->lineCount()).arg(mBuffer->getWholeTextLength()));
-//	redrawScreen();
+	redrawScreen();
 }
 
 
@@ -197,8 +196,7 @@ void NYZView::modeChanged(void)
 			displayInfo( tr( "Entering Replace mode" ));
 			break;
 		case YZ_VIEW_MODE_COMMAND: // normal
-//			if ( modeDisplayed ) displayInfo( tr( "Entering Command mode" ));
-			// else : nothing, we keep the previous message..
+			displayInfo( tr( "Entering Command mode" ));
 			break;
 		case YZ_VIEW_MODE_EX: //script·
 			displayInfo( tr( "EX Mode :" ));
@@ -207,7 +205,6 @@ void NYZView::modeChanged(void)
 			displayInfo( reverseSearch ? tr( "Reverse Search:" ) : tr( "Search mode :" ));
 			break;
 	};
-	modeDisplayed = true;
 }
 
 void NYZView::syncViewInfo( void )
@@ -256,6 +253,7 @@ void NYZView::refreshScreen() {
 	for ( ; i < mLinesVis ; i++ ) printVoid( i );
 
 	refresh();
+	wrefresh(window);
 	syncViewInfo();
 }
 
@@ -263,9 +261,8 @@ void NYZView::displayInfo( const QString& info )
 {
 	werase(statusbar);
 	mvwaddstr( statusbar, 0, 0, info.latin1() );
-//	wrefresh(statusbar);
+	wrefresh(statusbar);
 	refresh();
-	modeDisplayed = false;
 	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;
 }
 

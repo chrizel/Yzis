@@ -95,7 +95,6 @@ private:
 	WINDOW          *fileInfo;     // the one with info about current file (modified..)
 
 	QString commandline;
-	bool modeDisplayed;
 
 
 	void initialisecolormap();

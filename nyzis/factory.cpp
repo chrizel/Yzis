@@ -127,8 +127,8 @@ NYZisDoc *NYZFactory::createBuffer(const QString&)
 
 void NYZFactory::popupMessage( const QString &message )
 {
-#if 0
 	int nl,nc,y;
+#if 0
 	message.simplifyWhiteSpace();
 	nc = message.length();
 	nl = 1;
@@ -145,16 +145,23 @@ void NYZFactory::popupMessage( const QString &message )
 		y++;nl--;
 	}
 	// TODO : use QString QString::section 
+#else
+	message.simplifyWhiteSpace();
+	nc = message.length();
+	nl = 1;
+	WINDOW *popup = newwin(nl+4, nc+4, ( LINES-nl )/2, (COLS-nc)/2);
+	box( popup, 0, 0 );
+
+	mvwaddstr( popup, 2, 2, message.latin1() );
+	// TODO : use QString QString::section 
+
+#endif
 
 	wrefresh(popup);
 	refresh();
-	yzDebug(NYZIS) << "**********************popupMessage()************" <<endl;
-	sleep (4);
+	sleep (2);
 	delwin( popup );
-	refresh();
-#else
-	currentView->displayInfo(message);
-#endif
+	currentView->refreshScreen();
 }
 
 void NYZFactory::deleteView()

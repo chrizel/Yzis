@@ -10,11 +10,11 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 
 	/* init screen */
 
-	(void) initscr();      /* initialize the curses library */
-	keypad(stdscr, TRUE);  /* enable keyboard mapping */
-	(void) nonl();         /* tell curses not to do NL->CR/NL on output */
-	(void) cbreak();       /* take input chars one at a time, no wait for \n */
-	(void) noecho();         /* echo input - in color */
+	(void) initscr();	/* initialize the curses library */
+	keypad(stdscr, TRUE);	/* enable keyboard mapping */
+	(void) nonl();		/* tell curses not to do NL->CR/NL on output */
+	(void) cbreak();	/* take input chars one at a time, no wait for \n */
+	(void) noecho();	/* echo input - in color */
 	(void) nodelay(stdscr, TRUE);
 
 	if (has_colors()) {
@@ -50,6 +50,8 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	statusbar = subwin(screen, 1, 0, LINES-1, 0);
 	WINDOW *window = subwin(screen, LINES-2, 0, 0, 0);
 
+//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
+//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
 	if (has_colors()) {
 		wattron(infobar, COLOR_PAIR(4));

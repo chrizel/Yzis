@@ -671,30 +671,30 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 	bool wrapped = false;
 
 	while ( c < args.count ) { //for each word
-		const QString& current = args.view->myBuffer()->textline( result.getY() );
+		const QString& current = args.view->myBuffer()->textline( result.y() );
 //		if ( current.isNull() ) return false; //be safe ?
 
 #if QT_VERSION < 0x040000
-		int idx = rex1.search( current, result.getX(), QRegExp::CaretAtOffset );
+		int idx = rex1.search( current, result.x(), QRegExp::CaretAtOffset );
 #else
-		int idx = rex1.indexIn( current, result.getX(), QRegExp::CaretAtOffset );
+		int idx = rex1.indexIn( current, result.x(), QRegExp::CaretAtOffset );
 #endif
 		int len = rex1.matchedLength();
 		if ( idx == 0 && wrapped )
 			len = 0;
 		if ( idx == -1 ) {
 #if QT_VERSION < 0x040000
-			idx = rex2.search( current, result.getX(), QRegExp::CaretAtOffset );
+			idx = rex2.search( current, result.x(), QRegExp::CaretAtOffset );
 #else
-			idx = rex2.indexIn( current, result.getX(), QRegExp::CaretAtOffset );
+			idx = rex2.indexIn( current, result.x(), QRegExp::CaretAtOffset );
 #endif
 			len = rex2.matchedLength();
 		}
 		if ( idx == -1 ) {
 #if QT_VERSION < 0x040000
-			idx = ws.search( current, result.getX(), QRegExp::CaretAtOffset );
+			idx = ws.search( current, result.x(), QRegExp::CaretAtOffset );
 #else
-			idx = ws.indexIn( current, result.getX(), QRegExp::CaretAtOffset );
+			idx = ws.indexIn( current, result.x(), QRegExp::CaretAtOffset );
 #endif
 			len = ws.matchedLength();
 		}
@@ -702,22 +702,22 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 			yzDebug() << "Match at " << idx << " Matched length " << len << endl;
 			c++; //one match
 			result.setX( idx + len );
-			if ( ( c < args.count || args.standalone ) && result.getX() == current.length() && result.getY() < args.view->myBuffer()->lineCount() - 1) {
-				result.setY(result.getY() + 1);
+			if ( ( c < args.count || args.standalone ) && result.x() == current.length() && result.y() < args.view->myBuffer()->lineCount() - 1) {
+				result.setY(result.y() + 1);
 #if QT_VERSION < 0x040000
-				ws.search(args.view->myBuffer()->textline( result.getY() ));
+				ws.search(args.view->myBuffer()->textline( result.y() ));
 #else
-				ws.indexIn(args.view->myBuffer()->textline( result.getY() ));
+				ws.indexIn(args.view->myBuffer()->textline( result.y() ));
 #endif
 				result.setX( qMax( ws.matchedLength(), 0 ));
 			}
 		} else {
-			if ( result.getY() >= args.view->myBuffer()->lineCount() - 1 ) {
+			if ( result.y() >= args.view->myBuffer()->lineCount() - 1 ) {
 				result.setX( current.length() );
 				break;
 			}
 			result.setX(0);
-			result.setY( result.getY() + 1 );
+			result.setY( result.y() + 1 );
 			wrapped = true;
 		}
 
@@ -736,13 +736,13 @@ YZCursor YZModeCommand::moveSWordForward(const YZMotionArgs &args) {
 	QRegExp ws("\\s+");//whitespace
 
 	while ( c < args.count ) { //for each word
-		const QString& current = args.view->myBuffer()->textline( result.getY() );
+		const QString& current = args.view->myBuffer()->textline( result.y() );
 //		if ( current.isNull() ) return false; //be safe ?
 
 #if QT_VERSION < 0x040000
-		int idx = ws.search( current, result.getX(), QRegExp::CaretAtOffset );
+		int idx = ws.search( current, result.x(), QRegExp::CaretAtOffset );
 #else
-		int idx = ws.indexIn( current, result.getX(), QRegExp::CaretAtOffset );
+		int idx = ws.indexIn( current, result.x(), QRegExp::CaretAtOffset );
 #endif
 		int len = ws.matchedLength();
 
@@ -750,22 +750,22 @@ YZCursor YZModeCommand::moveSWordForward(const YZMotionArgs &args) {
 			yzDebug() << "Match at " << idx << " Matched length " << len << endl;
 			c++; //one match
 			result.setX( idx + len );
-			if ( ( c < args.count || args.standalone ) && result.getX() == current.length() && result.getY() < args.view->myBuffer()->lineCount() - 1) {
-				result.setY(result.getY() + 1);
+			if ( ( c < args.count || args.standalone ) && result.x() == current.length() && result.y() < args.view->myBuffer()->lineCount() - 1) {
+				result.setY(result.y() + 1);
 #if QT_VERSION < 0x040000
-				ws.search(args.view->myBuffer()->textline( result.getY() ));
+				ws.search(args.view->myBuffer()->textline( result.y() ));
 #else
-				ws.indexIn(args.view->myBuffer()->textline( result.getY() ));
+				ws.indexIn(args.view->myBuffer()->textline( result.y() ));
 #endif
 				result.setX( qMax( ws.matchedLength(), 0 ));
 			}
 		} else {
-			if ( result.getY() >= args.view->myBuffer()->lineCount() - 1 ) {
+			if ( result.y() >= args.view->myBuffer()->lineCount() - 1 ) {
 				result.setX( current.length() );
 				break;
 			}
 			result.setX(0);
-			result.setY( result.getY() + 1 );
+			result.setY( result.y() + 1 );
 		}
 
 	}
@@ -793,9 +793,9 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 	bool wrapped = false;
 
 	while ( c < args.count ) { //for each word
-		const QString& current = invertQString( args.view->myBuffer()->textline( result.getY() ) );
+		const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
 		int lineLength = current.length();
-		int offset = lineLength - result.getX();
+		int offset = lineLength - result.x();
 		yzDebug() << current << " at " << offset << endl;
 
 
@@ -833,12 +833,12 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 			c++; //one match
 			result.setX( lineLength - idx - len );
 		} else {
-			if ( result.getY() == 0 ) break; //stop here
-			yzDebug() << "Previous line " << result.getY() - 1 << endl;
-			const QString& ncurrent = args.view->myBuffer()->textline( result.getY() - 1 );
+			if ( result.y() == 0 ) break; //stop here
+			yzDebug() << "Previous line " << result.y() - 1 << endl;
+			const QString& ncurrent = args.view->myBuffer()->textline( result.y() - 1 );
 			wrapped = true;
 			result.setX( ncurrent.length() );
-			result.setY( result.getY() - 1 );
+			result.setY( result.y() - 1 );
 		}
 
 	}
@@ -857,9 +857,9 @@ YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args) {
 	QRegExp rex1("([\\S]+)\\s*"); //
 
 	while ( c < args.count ) { //for each word
-		const QString& current = invertQString( args.view->myBuffer()->textline( result.getY() ) );
+		const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
 		int lineLength = current.length();
-		int offset = lineLength - result.getX();
+		int offset = lineLength - result.x();
 		yzDebug() << current << " at " << offset << endl;
 
 
@@ -876,11 +876,11 @@ YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args) {
 			c++; //one match
 			result.setX( lineLength - idx - len );
 		} else {
-			if ( result.getY() == 0 ) break; //stop here
-			yzDebug() << "Previous line " << result.getY() - 1 << endl;
-			const QString& ncurrent = args.view->myBuffer()->textline( result.getY() - 1 );
+			if ( result.y() == 0 ) break; //stop here
+			yzDebug() << "Previous line " << result.y() - 1 << endl;
+			const QString& ncurrent = args.view->myBuffer()->textline( result.y() - 1 );
 			result.setX( ncurrent.length() );
-			result.setY( result.getY() - 1 );
+			result.setY( result.y() - 1 );
 		}
 
 	}
@@ -939,7 +939,7 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 	QString word = args.view->myBuffer()->getWordAt( from );
 	if ( ! word.isNull() ) {
 		yzDebug() << "searchWord : " << word << endl;
-		YZCursor pos( args.view );
+		YZCursor pos;
 		bool found = true;
 		bool moved = true;
 		word = QRegExp::escape( word );
@@ -968,7 +968,7 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 
 YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 	YZCursor from = *args.view->getBufferCursor();
-	YZCursor pos( args.view );
+	YZCursor pos;
 	bool found = true;
 	bool moved = true;
 	for ( unsigned int i = 0; found && i < args.count; i++ ) {
@@ -984,7 +984,7 @@ YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 
 YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 	YZCursor from = *args.view->getBufferCursor();
-	YZCursor pos( args.view );
+	YZCursor pos;
 	bool found = true;
 	bool moved = false;
 	for ( unsigned int i = 0; found && i < args.count; i++ ) {
@@ -1004,7 +1004,7 @@ void YZModeCommand::execMotion( const YZCommandArgs &args ) {
 	const YZMotion *m=dynamic_cast<const YZMotion*>(args.cmd);
 	assert(m);
 	YZCursor to = (this->*(m->motionMethod()))(YZMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true));
-	args.view->gotoxy(to.getX(), to.getY());
+	args.view->gotoxy(to.x(), to.y());
 	
 }
 
@@ -1020,7 +1020,7 @@ YZInterval YZModeCommand::interval(const YZCommandArgs& args) {
 	if ( entireLines ) {
 		from.setX( 0 );
 		to.setX( 0 );
-		to.setY( to.getY() + 1 );
+		to.setY( to.y() + 1 );
 	}
 	YZInterval ret( from, YZBound(to, true) );
 	return ret;
@@ -1046,7 +1046,7 @@ void YZModeCommand::change(const YZCommandArgs &args) {
 	args.view->commitNextUndo();
 
 	// start insert mode, append if at EOL
-	if ( (unsigned int)cur.getX() != args.view->myBuffer()->getLineLength( cur.getY() ) )
+	if ( (unsigned int)cur.x() != args.view->myBuffer()->getLineLength( cur.y() ) )
 		args.view->modePool()->change( YZMode::MODE_INSERT );
 	else
 		args.view->append();
@@ -1054,7 +1054,7 @@ void YZModeCommand::change(const YZCommandArgs &args) {
 
 void YZModeCommand::changeLine(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->deleteLine(args.view, *args.view->getBufferCursor(), args.count, args.regs);
-	args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor()->getY() );
+	args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor()->y() );
 	args.view->modePool()->push( YZMode::MODE_INSERT );
 	args.view->commitNextUndo();
 	
@@ -1145,7 +1145,7 @@ void YZModeCommand::gotoVisualLineMode(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
-	unsigned int y = args.view->getBufferCursor()->getY();
+	unsigned int y = args.view->getBufferCursor()->y();
 	args.view->myBuffer()->action()->insertNewLine( args.view, args.view->myBuffer()->textline( y ).length(), y );
 	for ( unsigned int i = 1 ; i < args.count ; i++ )
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y + i );
@@ -1155,7 +1155,7 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::insertLineBefore(const YZCommandArgs &args) {
-	unsigned int y = args.view->getBufferCursor()->getY();
+	unsigned int y = args.view->getBufferCursor()->y();
 	for ( unsigned int i = 0 ; i < args.count ; i++ )
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
 	args.view->moveUp();
@@ -1166,7 +1166,7 @@ void YZModeCommand::insertLineBefore(const YZCommandArgs &args) {
 
 void YZModeCommand::joinLine(const YZCommandArgs &args) {
 	for ( unsigned int i = 0; i < args.count; i++ ) 
-		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor()->getY(), true );
+		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor()->y(), true );
 	args.view->commitNextUndo();
 }
 
@@ -1227,7 +1227,7 @@ void YZModeCommand::yank(const YZCommandArgs &args) {
 	args.view->modePool()->pop();
 
 	// move cursor to top left corner of selection (yes, this is correct behaviour :)
-	args.view->gotoxy( topLeft.getX(), topLeft.getY(), true );
+	args.view->gotoxy( topLeft.x(), topLeft.y(), true );
 	args.view->updateStickyCol( );
 }
 
@@ -1246,19 +1246,19 @@ void YZModeCommand::redo(const YZCommandArgs &args) {
 
 void YZModeCommand::changeCase( const YZCommandArgs &args ) {
 	YZCursor pos = *args.view->getBufferCursor();
-	const QString line = args.view->myBuffer()->textline( pos.getY() );
+	const QString line = args.view->myBuffer()->textline( pos.y() );
 	if ( ! line.isNull() ) {
 		unsigned int length = line.length();
-		unsigned int end = pos.getX() + args.count;
-		for ( ; pos.getX() < length && pos.getX() < end; pos.setX( pos.getX() + 1 ) ) {
+		unsigned int end = pos.x() + args.count;
+		for ( ; pos.x() < length && pos.x() < end; pos.setX( pos.x() + 1 ) ) {
 #if QT_VERSION < 0x040000
-			QString ch = line.at( pos.getX() );
+			QString ch = line.at( pos.x() );
 			if ( ch != ch.lower() )
 				ch = ch.lower();
 			else
 				ch = ch.upper();
 #else
-			QString ch = QString(line.at( pos.getX() ));
+			QString ch = QString(line.at( pos.x() ));
 			if ( ch != ch.toLower() )
 				ch = ch.toLower();
 			else
@@ -1275,17 +1275,17 @@ void YZModeCommand::lineToUpperCase( const YZCommandArgs &args ) {
 	YZCursor pos = *args.view->getBufferCursor();
 	uint i = 0;
 	while ( i < args.count ) {
-		const QString line = args.view->myBuffer()->textline( pos.getY() + i );
+		const QString line = args.view->myBuffer()->textline( pos.y() + i );
 		if ( ! line.isNull() ) {
 #if QT_VERSION < 0x040000
-			args.view->myBuffer()->action()->replaceLine( args.view, pos.getY() + i , line.upper());
+			args.view->myBuffer()->action()->replaceLine( args.view, pos.y() + i , line.upper());
 #else
-			args.view->myBuffer()->action()->replaceLine( args.view, pos.getY() + i , line.toUpper());
+			args.view->myBuffer()->action()->replaceLine( args.view, pos.y() + i , line.toUpper());
 #endif
 		}
 		i++;
 	}
-	args.view->gotoxy( 0, pos.getY() + i );
+	args.view->gotoxy( 0, pos.y() + i );
 	args.view->commitNextUndo();
 }
 
@@ -1293,17 +1293,17 @@ void YZModeCommand::lineToLowerCase( const YZCommandArgs &args ) {
 	YZCursor pos = *args.view->getBufferCursor();
 	uint i = 0;
 	while ( i < args.count ) {
-		const QString line = args.view->myBuffer()->textline( pos.getY() + i );
+		const QString line = args.view->myBuffer()->textline( pos.y() + i );
 		if ( ! line.isNull() ) {
 #if QT_VERSION < 0x040000
-			args.view->myBuffer()->action()->replaceLine( args.view, pos.getY() + i, line.lower());
+			args.view->myBuffer()->action()->replaceLine( args.view, pos.y() + i, line.lower());
 #else
-			args.view->myBuffer()->action()->replaceLine( args.view, pos.getY() + i, line.toLower());
+			args.view->myBuffer()->action()->replaceLine( args.view, pos.y() + i, line.toLower());
 #endif
 		}
 		i++;
 	}
-	args.view->gotoxy( 0, pos.getY() + i );
+	args.view->gotoxy( 0, pos.y() + i );
 	args.view->commitNextUndo();
 }
 
@@ -1346,7 +1346,7 @@ void YZModeCommand::deleteChar( const YZCommandArgs &args ) {
 
 void YZModeCommand::deleteCharBackwards( const YZCommandArgs &args ) {
 	YZCursor pos = args.view->getBufferCursor();
-	int oldX = pos.getX();
+	int oldX = pos.x();
 	int newX = oldX - args.count;
 	if( newX < 0 )
 		newX = 0;
@@ -1365,7 +1365,7 @@ void YZModeCommand::substitute( const YZCommandArgs &args ) {
 	args.view->commitNextUndo();
 
 	// start insert mode, append if at EOL
-	if ( (unsigned int)cur.getX() != args.view->myBuffer()->getLineLength( cur.getY() ) )
+	if ( (unsigned int)cur.x() != args.view->myBuffer()->getLineLength( cur.y() ) )
 		args.view->modePool()->push( YZMode::MODE_INSERT );
 	else
 		args.view->append();
@@ -1379,7 +1379,7 @@ void YZModeCommand::redisplay( const YZCommandArgs &args ) {
 void YZModeCommand::replace( const YZCommandArgs &args ) {
 	YZCursor pos = args.view->getBufferCursor();
 	args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg );
-	args.view->gotoxy(pos.getX(),pos.getY(),true);
+	args.view->gotoxy(pos.x(),pos.y(),true);
 	args.view->updateStickyCol();
 	args.view->commitNextUndo();
 	
@@ -1396,9 +1396,9 @@ void YZModeCommand::delkey( const YZCommandArgs &args ) {
 
 void YZModeCommand::indent( const YZCommandArgs& args ) {
 	YZInterval area = interval( args );
-	unsigned int fromY = area.fromPos().getY();
-	unsigned int toY = area.toPos().getY();
-	if ( toY > fromY && area.to().opened() && area.toPos().getX() == 0 )
+	unsigned int fromY = area.fromPos().y();
+	unsigned int toY = area.toPos().y();
+	if ( toY > fromY && area.to().opened() && area.toPos().x() == 0 )
 		--toY;
 	unsigned int maxY = args.view->myBuffer()->lineCount() - 1;
 	if ( toY > maxY ) toY = maxY;

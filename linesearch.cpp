@@ -48,8 +48,8 @@ YZLineSearch::~YZLineSearch() {
 
 YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int times ) {
 	YZCursor cur = mView->getBufferCursor();
-	unsigned int x = cur.getX() + 1; // Start search after cursor pos
-	unsigned int y = cur.getY();
+	unsigned int x = cur.x() + 1; // Start search after cursor pos
+	unsigned int y = cur.y();
 	const QString& current = mView->myBuffer()->textline( y );
 	int index = 0;
 	unsigned int nfound = 0;
@@ -77,7 +77,7 @@ YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int tim
 YZCursor YZLineSearch::forwardBefore( const QString& ch, bool& found, unsigned int times ) {
 	YZCursor pos = forward( ch, found, times );
 	if ( found ) {
-		pos.setX( pos.getX() - 1 );
+		pos.setX( pos.x() - 1 );
 	}
 	updateHistory( ch, YZ_LINE_SEARCH_FBEFORE );
 	return pos;
@@ -85,8 +85,8 @@ YZCursor YZLineSearch::forwardBefore( const QString& ch, bool& found, unsigned i
 
 YZCursor YZLineSearch::reverse( const QString& ch, bool& found, unsigned int times ) {
 	YZCursor cur = mView->getBufferCursor();
-	unsigned int x = cur.getX();
-	unsigned int y = cur.getY();
+	unsigned int x = cur.x();
+	unsigned int y = cur.y();
 	if ( x ) x--; // Start search before current cursor
 	const QString& current = mView->myBuffer()->textline( y );
 	int index = 0;
@@ -115,7 +115,7 @@ YZCursor YZLineSearch::reverse( const QString& ch, bool& found, unsigned int tim
 YZCursor YZLineSearch::reverseAfter( const QString& ch, bool& found, unsigned int times ) {
 	YZCursor pos = reverse( ch, found, times );
 	if ( found ) {
-		pos.setX( pos.getX() + 1 );
+		pos.setX( pos.x() + 1 );
 	}
 	updateHistory( ch, YZ_LINE_SEARCH_RAFTER );
 	return pos;

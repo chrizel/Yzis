@@ -37,7 +37,7 @@ YZModeInsert::YZModeInsert() : YZMode() {
 	mMapMode = insert;
 }
 void YZModeInsert::leave( YZView* mView ) {
-	if ( mView->getBufferCursor()->getX() > 0 )
+	if ( mView->getBufferCursor()->x() > 0 )
 		mView->moveLeft();
 }
 
@@ -138,26 +138,26 @@ void YZModeInsert::commandRight( YZView* mView, const QString& ) {
 	mView->moveRight();
 }
 void YZModeInsert::commandPageDown( YZView* mView, const QString& ) {
-	mView->gotoStickyCol( mView->getBufferCursor()->getY() + mView->getLinesVisible() );
+	mView->gotoStickyCol( mView->getBufferCursor()->y() + mView->getLinesVisible() );
 }
 void YZModeInsert::commandPageUp( YZView* mView, const QString& ) {
-	mView->gotoStickyCol( qMax( 0, (int)(mView->getBufferCursor()->getY() - mView->getLinesVisible()) ) );
+	mView->gotoStickyCol( qMax( 0, (int)(mView->getBufferCursor()->y() - mView->getLinesVisible()) ) );
 }
 void YZModeInsert::commandBackspace( YZView* mView, const QString& ) {
 	YZCursor cur = *mView->getBufferCursor();
 	YZBuffer* mBuffer = mView->myBuffer();
-	if ( cur.getX() == 0 && cur.getY() > 0 && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-		mBuffer->action()->mergeNextLine( mView, cur.getY() - 1 );
+	if ( cur.x() == 0 && cur.y() > 0 && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+		mBuffer->action()->mergeNextLine( mView, cur.y() - 1 );
 		mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 );
-	} else if ( cur.getX() > 0 ) {
-		mBuffer->action()->deleteChar( mView, cur.getX() - 1, cur.getY(), 1 );
+	} else if ( cur.x() > 0 ) {
+		mBuffer->action()->deleteChar( mView, cur.x() - 1, cur.y(), 1 );
 	}
 }
 void YZModeInsert::commandDel( YZView* mView, const QString& ) {
 	YZCursor cur = *mView->getBufferCursor();
 	YZBuffer* mBuffer = mView->myBuffer();
-	if ( cur.getX() == mBuffer->textline( cur.getY() ).length() && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-		mBuffer->action()->mergeNextLine( mView, cur.getY() );
+	if ( cur.x() == mBuffer->textline( cur.y() ).length() && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+		mBuffer->action()->mergeNextLine( mView, cur.y() );
 	}
 	mBuffer->action()->deleteChar( mView, cur, 1 );
 }
@@ -172,11 +172,11 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 		if (results.count() > 0 ) {
 			if (results[0].length()!=0) {
 #if QT_VERSION < 0x040000
-				mBuffer->action()->replaceLine( mView, cur.getY()+1, results[0] + mBuffer->textline( cur.getY()+1 ).stripWhiteSpace() );
+				mBuffer->action()->replaceLine( mView, cur.y()+1, results[0] + mBuffer->textline( cur.y()+1 ).stripWhiteSpace() );
 #else
-				mBuffer->action()->replaceLine( mView, cur.getY()+1, results[0] + mBuffer->textline( cur.getY()+1 ).trimmed() );
+				mBuffer->action()->replaceLine( mView, cur.y()+1, results[0] + mBuffer->textline( cur.y()+1 ).trimmed() );
 #endif
-				mView->gotoxy(results[0].length(),cur.getY()+1);
+				mView->gotoxy(results[0].length(),cur.y()+1);
 			}
 		}
 	}
@@ -185,7 +185,7 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 cmd_state YZModeInsert::commandDefault( YZView* mView, const QString& key ) {
 	mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
 	if ( mView->getLocalBoolOption( "cindent" ) && key == "}" )
-		mView->reindent( mView->getBufferCursor()->getX() - 1, mView->getBufferCursor()->getY() );
+		mView->reindent( mView->getBufferCursor()->x() - 1, mView->getBufferCursor()->y() );
 	return CMD_OK;
 }
 
@@ -236,16 +236,16 @@ bool YZModeCompletion::initCompletion( YZView* mView ) {
 	YZBuffer* mBuffer = mView->myBuffer();
 	YZMotionArgs arg(mView, 1);
 	YZCursor cur = mView->getBufferCursor();
-	QString line = mBuffer->textline(cur.getY());
+	QString line = mBuffer->textline(cur.y());
 	//we cant complete from col 0, neither if the line is empty, neither if the word does not end with a letter or number ;)
-	if (cur.getX() == 0 || line.isEmpty() || !QChar(line.at(cur.getX()-1)).isLetterOrNumber()) {
+	if (cur.x() == 0 || line.isEmpty() || !QChar(line.at(cur.x()-1)).isLetterOrNumber()) {
 		yzDebug() << "Abort completion" << endl;
 		mView->modePool()->pop();
 		return false;
 	}
 	YZCursor begin = YZSession::me->getCommandPool()->moveWordBackward( arg );
 	m_completionStart->setCursor(begin);
-	YZCursor stop( mView, cur.getX()-1, cur.getY() );
+	YZCursor stop( cur.x()-1, cur.y() );
 	yzDebug() << "Start : " << begin << ", End:" << stop << endl;
 	QStringList list = mBuffer->getText(begin, stop);
 	yzDebug() << "Completing word : " << list[0] << endl;
@@ -280,22 +280,22 @@ QString YZModeCompletion::doComplete( YZView* mView, bool forward ) {
 	
 	do {
 		if (forward) {
-			result = mBuffer->action()->search(mView, "\\b" + m_word2Complete + "\\w*", *m_completionCursor, YZCursor(mView, 0, mBuffer->lineCount()+1), false, &matchedLength, &found);
+			result = mBuffer->action()->search(mView, "\\b" + m_word2Complete + "\\w*", *m_completionCursor, YZCursor(0, mBuffer->lineCount()+1), false, &matchedLength, &found);
 		} else {
 			if ( *m_completionCursor == cur )
-				m_completionCursor->setX( cur.getX() - m_word2Complete.length() );
-			result = mBuffer->action()->search(mView, "\\b" + m_word2Complete + "\\w*", *m_completionCursor, YZCursor(mView, 0, 0), true, &matchedLength, &found);
+				m_completionCursor->setX( cur.x() - m_word2Complete.length() );
+			result = mBuffer->action()->search(mView, "\\b" + m_word2Complete + "\\w*", *m_completionCursor, YZCursor(0, 0), true, &matchedLength, &found);
 		}
 		if (found) {
-			YZCursor end (mView, result.getX()+matchedLength-1, result.getY());
+			YZCursor end ( result.x()+matchedLength-1, result.y());
 			list = mBuffer->getText(result, end)[0];
 //			yzDebug() << "Got testing match : " << list << " at " << result << " to " << end << endl;
 			m_completionCursor->setCursor(result);
 			if (forward) {
-				if ( m_completionCursor->getX() < mBuffer->textline(m_completionCursor->getY()).length() )
-					m_completionCursor->setX(m_completionCursor->getX()+1);
+				if ( m_completionCursor->x() < mBuffer->textline(m_completionCursor->y()).length() )
+					m_completionCursor->setX(m_completionCursor->x()+1);
 				else {
-					m_completionCursor->setY(m_completionCursor->getY()+1);
+					m_completionCursor->setY(m_completionCursor->y()+1);
 					m_completionCursor->setX(0);
 				}
 			}
@@ -326,8 +326,8 @@ cmd_state YZModeCompletion::execCommand( YZView* mView, const QString& _key ) {
 		if (initOK) {
 			QString result = doComplete( mView, false );
 			if (!result.isNull()) {
-				mBuffer->action()->replaceText(mView, *m_completionStart, cur.getX()-m_completionStart->getX(), result);
-				mView->gotoxy(m_completionStart->getX()+result.length(),cur.getY());
+				mBuffer->action()->replaceText(mView, *m_completionStart, cur.x()-m_completionStart->x(), result);
+				mView->gotoxy(m_completionStart->x()+result.length(),cur.y());
 			}
 		}
 		return CMD_OK;
@@ -338,8 +338,8 @@ cmd_state YZModeCompletion::execCommand( YZView* mView, const QString& _key ) {
 		if (initOK) {
 			QString result = doComplete( mView, true );
 			if (!result.isNull()) {
-				mBuffer->action()->replaceText(mView, *m_completionStart, cur.getX()-m_completionStart->getX(), result);
-				mView->gotoxy(m_completionStart->getX()+result.length(),cur.getY());
+				mBuffer->action()->replaceText(mView, *m_completionStart, cur.x()-m_completionStart->x(), result);
+				mView->gotoxy(m_completionStart->x()+result.length(),cur.y());
 			}
 		}
 		return CMD_OK;
@@ -349,8 +349,8 @@ cmd_state YZModeCompletion::execCommand( YZView* mView, const QString& _key ) {
 		return CMD_OK;
 
 	} else if ( _key == "<ESC>" ) {
-		mBuffer->action()->replaceText(mView, *m_completionStart, cur.getX()-m_completionStart->getX(), mView->m_word2Complete);
-		mView->gotoxy(m_completionStart->getX()+mView->m_word2Complete.length(),cur.getY());
+		mBuffer->action()->replaceText(mView, *m_completionStart, cur.x()-m_completionStart->x(), mView->m_word2Complete);
+		mView->gotoxy(m_completionStart->x()+mView->m_word2Complete.length(),cur.y());
 		mView->modePool()->pop( YZMode::MODE_COMMAND );
 		return CMD_OK;
 

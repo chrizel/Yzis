@@ -63,7 +63,7 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 	setCurrentSearch( pattern );
 	int direction = reverse ? 0 : 1;
 
-	YZCursor cur( mView );
+	YZCursor cur;
 	if ( from != NULL )
 		cur.setCursor( from );
 	else
@@ -73,14 +73,14 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 
 	if ( skipline ) {
 		cur.setX( 0 );
-		if ( ! reverse ) cur.setY( qMin( (int)(cur.getY() + 1), (int)(mView->myBuffer()->lineCount() - 1) ) );
+		if ( ! reverse ) cur.setY( qMin( (int)(cur.y() + 1), (int)(mView->myBuffer()->lineCount() - 1) ) );
 	} else {
-		cur.setX( qMax( (int)(cur.getX() + direction), 0 ) );
+		cur.setX( qMax( (int)(cur.x() + direction), 0 ) );
 	}
-	YZCursor top( mView, 0, 0 );
-	YZCursor bottom( mView );
+	YZCursor top( 0, 0 );
+	YZCursor bottom;
 	bottom.setY( mView->myBuffer()->lineCount() - 1 );
-	bottom.setX( qMax( (int)(mView->myBuffer()->textline( bottom.getY() ).length() - 1), 0 ) );
+	bottom.setX( qMax( (int)(mView->myBuffer()->textline( bottom.y() ).length() - 1), 0 ) );
 
 	YZCursor end( bottom );
 	if ( reverse ) end.setCursor( top );
@@ -140,11 +140,11 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 #endif
 		if ( doIt ) {
 			YZView* v = views.first();
-			YZCursor from( v, 0, 0 );
+			YZCursor from( 0, 0 );
 			YZCursor cur( from );
-			YZCursor end( v );
+			YZCursor end;
 			end.setY( b->lineCount() - 1 );
-			end.setX( qMax( (int)(b->textline( end.getY() ).length() - 1), 0 ) );
+			end.setX( qMax( (int)(b->textline( end.y() ).length() - 1), 0 ) );
 
 			bool found = true;
 			unsigned int matchedLength = 0;
@@ -153,9 +153,9 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 				from = b->action()->search( v, mCurrentSearch, cur, end, false, &matchedLength, &found );
 				if ( found && matchedLength > 0 ) {
 					cur.setCursor( from );
-					cur.setX( cur.getX() + matchedLength - 1 );
+					cur.setX( cur.x() + matchedLength - 1 );
 					YZInterval sel( from, cur );
-					cur.setX( cur.getX() + 1 );
+					cur.setX( cur.x() + 1 );
 					searchMap.insert( pos++, sel );
 				}
 			} while ( found );
@@ -185,14 +185,14 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 #endif
 	if ( doIt ) {
 		YZView* v = views.first();
-		YZCursor from( v, 0, line );
+		YZCursor from( 0, line );
 		YZCursor cur( from );
-		YZCursor end( v, buffer->textline( line ).length(), line );
+		YZCursor end( buffer->textline( line ).length(), line );
 
 		YZSelection* searchMap = v->getSelectionPool()->search();
 		searchMap->delInterval( YZInterval( from, end ) );
 
-		if ( end.getX() > 0 ) end.setX( end.getX() - 1 );
+		if ( end.x() > 0 ) end.setX( end.x() - 1 );
 
 		bool found;
 		unsigned int matchedLength = 0;
@@ -200,9 +200,9 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 			from = buffer->action()->search( v, mCurrentSearch, cur, end, false, &matchedLength, &found );
 			if ( found && matchedLength > 0 ) {
 				cur.setCursor( from );
-				cur.setX( cur.getX() + matchedLength - 1 );
+				cur.setX( cur.x() + matchedLength - 1 );
 				searchMap->addInterval( YZInterval( from, cur ) );
-				cur.setX( cur.getX() + 1 );
+				cur.setX( cur.x() + 1 );
 //				yzDebug() << "cur = " << cur << "; end = " << end << endl;
 			}
 		} while ( found );
@@ -235,11 +235,11 @@ void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shif
 		unsigned int size = searchMap.size();
 		for ( unsigned int i = 0; i < size; i++ ) {
 			YZCursor to = searchMap[ i ].toPos();
-			if ( to.getY() < fromLine ) continue;
+			if ( to.y() < fromLine ) continue;
 
 			YZCursor from = searchMap[ i ].fromPos();
-			from.setY( from.getY() + shift);
-			to.setY( to.getY() + shift);
+			from.setY( from.y() + shift);
+			to.setY( to.y() + shift);
 
 			searchMap[ i ].setFromPos( from );
 			searchMap[ i ].setToPos( to );

@@ -498,7 +498,7 @@ int YZExLua::replace(lua_State *L) {
 int YZExLua::winline(lua_State *L) {
 	if (!checkFunctionArguments(L, 0, "winline", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
-	uint result = cView->getBufferCursor()->getY() + 1;
+	uint result = cView->getBufferCursor()->y() + 1;
 
 	lua_pushnumber( L, result ); // first result
 	return 1; // one result
@@ -507,7 +507,7 @@ int YZExLua::winline(lua_State *L) {
 int YZExLua::wincol(lua_State *L) {
 	if (!checkFunctionArguments(L, 0, "wincol", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
-	uint result = cView->getBufferCursor()->getX() + 1;
+	uint result = cView->getBufferCursor()->x() + 1;
 
 	lua_pushnumber( L, result ); // first result
 	return 1; // one result
@@ -516,8 +516,8 @@ int YZExLua::wincol(lua_State *L) {
 int YZExLua::winpos(lua_State *L) {
 	if (!checkFunctionArguments(L, 0, "winpos", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
-	uint line = cView->getBufferCursor()->getY() + 1;
-	uint col = cView->getBufferCursor()->getX() + 1;
+	uint line = cView->getBufferCursor()->y() + 1;
+	uint col = cView->getBufferCursor()->x() + 1;
 	lua_pushnumber( L, col ); 
 	lua_pushnumber( L, line ); 
 	return 2;
@@ -777,8 +777,8 @@ int YZExLua::matchpair(lua_State *L ) {
 	YZCursor s (v->getBufferCursor());
 	YZCursor c = v->myBuffer()->action()->match(v, s, &found);
 	lua_pushboolean(L , found);
-	lua_pushnumber(L, c.getX());
-	lua_pushnumber(L, c.getY());
+	lua_pushnumber(L, c.x());
+	lua_pushnumber(L, c.y());
 	return 3;
 }
 

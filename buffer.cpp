@@ -883,21 +883,21 @@ QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) {
 	m_hlupdating=true; //override
 	//the first line
 	QStringList list;
-	if ( from.getY() != to.getY() )
-		list << textline( from.getY() ).mid( from.getX() );
+	if ( from.y() != to.y() )
+		list << textline( from.y() ).mid( from.x() );
 	else
-		list << textline( from.getY() ).mid( from.getX(), to.getX() - from.getX() + 1 );
+		list << textline( from.y() ).mid( from.x(), to.x() - from.x() + 1 );
 
 	//other lines
-	unsigned int i = from.getY() + 1;
-	while ( i < to.getY() ) {
+	unsigned int i = from.y() + 1;
+	while ( i < to.y() ) {
 		list << textline( i ); //the whole line
 		i++;
 	}
 
 	//last line
-	if ( from.getY() != to.getY() )
-		list << textline( to.getY() ).left( to.getX() + 1 );
+	if ( from.y() != to.y() )
+		list << textline( to.y() ).left( to.x() + 1 );
 
 	m_hlupdating=false; //override
 	return list;
@@ -912,45 +912,45 @@ void YZBuffer::intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor*
 	*from = i.fromPos();
 	*to = i.toPos();
 	if ( i.from().opened() )
-		from->setX( from->getX() + 1 );
+		from->setX( from->x() + 1 );
 	if ( i.to().opened() ) {
-		if ( to->getX() > 0 ) {
-			to->setX( to->getX() - 1 );
-		} else if ( to->getY() > 0 ) {
-			to->setY( to->getY() - 1 );
-			to->setX( textline(to->getY()).length() - 1 );
+		if ( to->x() > 0 ) {
+			to->setX( to->x() - 1 );
+		} else if ( to->y() > 0 ) {
+			to->setY( to->y() - 1 );
+			to->setX( textline(to->y()).length() - 1 );
 		}
 	}
 }
 
 
 QString YZBuffer::getWordAt( const YZCursor& at ) {
-	QString l = textline( at.getY() );
+	QString l = textline( at.y() );
 	QRegExp reg( "\\b(\\w+)\\b" );
 #if QT_VERSION < 0x040000
-	int idx = reg.searchRev( l, at.getX() );
+	int idx = reg.searchRev( l, at.x() );
 #else
-	int idx = reg.lastIndexIn( l, at.getX() );
+	int idx = reg.lastIndexIn( l, at.x() );
 #endif
-	if ( idx == -1 || idx + reg.cap( 1 ).length() <= at.getX() ) {
+	if ( idx == -1 || idx + reg.cap( 1 ).length() <= at.x() ) {
 #if QT_VERSION < 0x040000
-		idx = reg.search( l, at.getX() );
+		idx = reg.search( l, at.x() );
 #else
-		idx = reg.indexIn( l, at.getX() );
+		idx = reg.indexIn( l, at.x() );
 #endif
 		if ( idx >= 0 ) return reg.cap( 1 );
 		else {
 			reg.setPattern( "(^|[\\s\\w])([^\\s\\w]+)([\\s\\w]|$)" );
 #if QT_VERSION < 0x040000
-			idx = reg.searchRev( l, at.getX() );
+			idx = reg.searchRev( l, at.x() );
 #else
-			idx = reg.lastIndexIn( l, at.getX() );
+			idx = reg.lastIndexIn( l, at.x() );
 #endif
-			if ( idx == -1 || idx + reg.cap( 1 ).length() + reg.cap( 2 ).length() <= at.getX() ) {
+			if ( idx == -1 || idx + reg.cap( 1 ).length() + reg.cap( 2 ).length() <= at.x() ) {
 #if QT_VERSION < 0x040000
-				idx = reg.search( l, at.getX() );
+				idx = reg.search( l, at.x() );
 #else
-				idx = reg.indexIn( l, at.getX() );
+				idx = reg.indexIn( l, at.x() );
 #endif
 				if ( idx >= 0 ) return reg.cap( 2 );
 			} else {

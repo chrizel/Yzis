@@ -23,37 +23,30 @@
 
 #include "cursor.h"
 
-YZCursor::YZCursor(YZView *vp) {
-	parentView=vp;
+YZCursor::YZCursor( ) {
 	x_pos=0;
 	y_pos=0;
 }
-
-YZCursor::YZCursor(YZView *vp, unsigned int X, unsigned int Y ) {
-	parentView=vp;
+YZCursor::YZCursor( unsigned int X, unsigned int Y ) {
 	x_pos=X;
 	y_pos=Y;
 }
-
 YZCursor::YZCursor( const YZCursor& c) {
 	setCursor( c );
 }
-YZCursor::YZCursor(YZCursor *c) {
+YZCursor::YZCursor(YZCursor* c) {
 	setCursor( c );
 }
-
 YZCursor::~YZCursor() {
 }
 
-void YZCursor::setCursor( const YZCursor& c ) {
-	parentView = c.parentView;
-	x_pos = c.getX();
-	y_pos = c.getY();
+void YZCursor::setCursor( YZCursor* c ) {
+	x_pos = c->x();
+	y_pos = c->y();
 }
-void YZCursor::setCursor( YZCursor *c ) {
-	parentView = c->parentView;
-	x_pos = c->getX();
-	y_pos = c->getY();
+void YZCursor::setCursor( const YZCursor& c ) {
+	x_pos = c.x();
+	y_pos = c.y();
 }
 
 bool YZCursor::operator<= ( const YZCursor & right ) const {

@@ -969,7 +969,7 @@ bool YZView::drawPrevLine( ) {
 				rHLa = yl->attributes();
 			}
 			rHLnoAttribs = !rHLa;
-			rHLa = rHLa + sCurrentLeft;
+			rHLa = rHLa + sCursor->getX( );
 			rHLAttributes = 0L;
 			YzisHighlighting * highlight = mBuffer->highlight();
 			if ( highlight )
@@ -1034,7 +1034,7 @@ bool YZView::drawNextLine( ) {
 				rHLa = yl->attributes();
 			}
 			rHLnoAttribs = !rHLa;
-			rHLa = rHLa + sCurrentLeft;
+			rHLa = rHLa + sCursor->getX( );
 			rHLAttributes = 0L;
 			YzisHighlighting * highlight = mBuffer->highlight();
 			if ( highlight )

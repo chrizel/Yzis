@@ -138,16 +138,6 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 	}
 }
 
-QString YZView::buildCommand( const QString& key, int modifiers ) {
-	QString command="";
-	if ( modifiers & Qt::ControlButton ) command += "<CTRL>";
-	if ( modifiers & Qt::AltButton ) command += "<ALT>";
-	if ( modifiers & Qt::MetaButton ) command += "<META>";
-	command += key;
-
-	return command;
-}
-
 void YZView::sendKey( const QString& _key, const QString& modifiers) {
 	yzDebug() << "sendKey : " << _key << " " << modifiers << endl;
 	//TODO swapfile

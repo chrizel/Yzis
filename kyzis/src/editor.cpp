@@ -330,6 +330,12 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 						disp = disp.rightJustify( mParent->drawLength(), mParent->fillChar() );
 					else
 						disp = disp.leftJustify( mParent->drawLength(), mParent->fillChar() );
+					QColor bgColor = mParent->drawBgColor();
+					if ( bgColor.isValid() ) {
+						p.setBackgroundMode(Qt::OpaqueMode);
+						p.setBackgroundColor( bgColor );
+					}
+					
 					p.drawText(myRect, 0, disp );
 
 					if ( mParent->drawSelected() ) {

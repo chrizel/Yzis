@@ -16,6 +16,10 @@
 			<label>color of the foreground</label>
 			<default>white</default>
 		</entry>
+		<entry name="transparency" type="Bool">
+			<label>use a transparent background</label>
+			<default>false</default>
+		</entry>
 	</group>
 
 </kcfg>

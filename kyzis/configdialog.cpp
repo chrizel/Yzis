@@ -33,6 +33,7 @@
 #include "yzis.h"
 
 #include "configdialog.h"
+#include <qcheckbox.h>
 
 
 KYZisConfigDialog::KYZisConfigDialog( QWidget* parent, const char* name, KConfigSkeleton* config, DialogType dialogType )
@@ -64,21 +65,28 @@ void KYZisConfigDialog::setupPages() {
 	layoutAppearance->addWidget( label_Font, 0, 0, Qt::AlignRight );
 	layoutAppearance->addWidget( kcfg_Font, 0, 1 );
 
+	// Transparency
+	QLabel* label_transparency = new QLabel( i18n("Use a transparent background"), pageAppearance );
+	QCheckBox* kcfg_transparency  = new QCheckBox( pageAppearance, "kcfg_transparency" );
+
+	layoutAppearance->addWidget( label_transparency, 1, 0, Qt::AlignRight );
+	layoutAppearance->addWidget( kcfg_transparency, 1, 1 );
+
 	// BG Color
 	QLabel* label_colorBG = new QLabel( i18n("Background Color"), pageAppearance );
 	KColorButton* kcfg_colorBG = new KColorButton( pageAppearance, "kcfg_colorBG" );
 
-	layoutAppearance->addWidget( label_colorBG, 1, 0, Qt::AlignRight );
-	layoutAppearance->addWidget( kcfg_colorBG, 1, 1 );
+	layoutAppearance->addWidget( label_colorBG, 2, 0, Qt::AlignRight );
+	layoutAppearance->addWidget( kcfg_colorBG, 2, 1 );
 
 	// FG Color
 	QLabel* label_colorFG = new QLabel( i18n("Foreground Color"), pageAppearance );
 	KColorButton* kcfg_colorFG = new KColorButton( pageAppearance, "kcfg_colorFG" );
 
-	layoutAppearance->addWidget( label_colorFG, 2, 0, Qt::AlignRight );
-	layoutAppearance->addWidget( kcfg_colorFG, 2, 1 );
+	layoutAppearance->addWidget( label_colorFG, 3, 0, Qt::AlignRight );
+	layoutAppearance->addWidget( kcfg_colorFG, 3, 1 );
 
-	layoutAppearance->setRowStretch( 3, 1 );
+	layoutAppearance->setRowStretch( 4, 1 );
 
 
 	addPage( pageAppearance, i18n("Appearance"), "colorize" );

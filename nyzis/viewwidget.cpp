@@ -34,15 +34,15 @@
 static const QChar tabChar( '\t' );
 static const QChar spaceChar( ' ' );
 
-int NYZView::colormapinitialised = 0;
-QMap<QRgb,int> NYZView::mColormap; // map Ncurses to Qt codes
+int NYZView::attributesMapInitialised = 0;
+QMap<QRgb,unsigned long int> NYZView::mAttributesMap;
 
 
 NYZView::NYZView(YZBuffer *b)
 	: YZView(b,NYZFactory::self,0), editor(0)
 {
 	
-	if ( !colormapinitialised ) initialisecolormap();
+	if ( !attributesMapInitialised ) initialiseAttributesMap();
 	YZASSERT( b );
 	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << ( int )b << endl;
 	window = NULL;
@@ -62,7 +62,8 @@ void NYZView::map( void )
 	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
 
 	editor = subwin( window, getLinesVisible(), 0, 0, 0); YZASSERT( editor );
-	wattrset( editor, A_NORMAL|A_BOLD );
+//	wattrset( editor, A_NORMAL|A_BOLD );
+	wattrset( editor, A_NORMAL );
 	wmove( editor,0,0 );
 	keypad( editor , true); //active symbols for special keycodes
 	scrollok( editor, false ); 
@@ -180,9 +181,9 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				wmove( editor, currentY, currentX );
 				if ( number ) { // draw current line number
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
-						wattron( editor, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
+						wattron( editor, mAttributesMap[ Qt::yellow.rgb() & RGB_MASK] );
 						waddstr( editor, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
-						wattroff( editor, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
+						wattroff( editor, mAttributesMap[ Qt::yellow.rgb() & RGB_MASK] );
 						waddch( editor, ' ' );
 						lastLineNumber = lineNumber;
 					} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
@@ -190,9 +191,25 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				}
 				while ( drawNextCol( ) ) {
 					QColor c = drawColor( );
-					int mColor = mColormap.contains( c.rgb() ) ? mColormap[ c.rgb() ] : mColormap[ Qt::white.rgb() ]; 
+					int mAttributes;
+					int rawcolor = c.rgb() & RGB_MASK;
+					if ( mAttributesMap.contains( rawcolor ) ) {
+						mAttributes = mAttributesMap[ rawcolor ];
+					} else {
+						mAttributes = mAttributesMap[ Qt::white.rgb() & RGB_MASK ]; 
+						yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
+							rawcolor << " (" << 
+							qRed( rawcolor ) << "," << 
+							qGreen( rawcolor ) << "," << 
+							qBlue( rawcolor ) << ") or (" << 
+
+							c.red() << "," << 
+							c.green() << "," << 
+							c.blue() << ")" << 
+							endl;
+					}
 					bool invert = drawSelected( );
-					waddch( editor, COLOR_PAIR( mColor ) | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
+					waddch( editor, mAttributes | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
 					if ( drawLength() > 1 ) {
 						for (unsigned int i = 1; i < drawLength(); i++ ) waddch( editor, ' ' | ( invert ? A_REVERSE : A_NORMAL ) );
 					}
@@ -306,9 +323,9 @@ void NYZView::displayInfo( const QString& info )
 }
 
 
-void NYZView::initialisecolormap()
+void NYZView::initialiseAttributesMap()
 {
-	colormapinitialised = true;
+	attributesMapInitialised = true;
 
 	if ( !has_colors() ) {
 		yzWarning() << "Terminal doesn't have color capabilities, disabling syntax highlighting" <<endl;
@@ -320,28 +337,38 @@ void NYZView::initialisecolormap()
 		yzWarning() << " _not_";
 	yzWarning() << " change colors" << endl;
 
-	yzDebug() << "COLOR_PAIRS is : " << COLOR_PAIRS << endl;
-	yzDebug() << "COLORS      is : " << COLORS << endl;
+	yzDebug(NYZIS) << "COLOR_PAIRS is : " << COLOR_PAIRS << endl;
+	yzDebug(NYZIS) << "COLORS      is : " << COLORS << endl;
 
 
 #undef MAP
-#define MAP( nb, qtcolor, color )               \
-	YZASSERT( ERR != init_pair( nb, color, COLOR_BLACK ) );    \
-	mColormap[qtcolor.rgb()] = nb;
+#define RAWMAP( nb, rawcolor, color, attributes )               \
+	YZASSERT( ERR != init_pair( nb, (color), COLOR_BLACK ) );    \
+	mAttributesMap[(rawcolor)] = COLOR_PAIR((nb)) | (attributes);
+#define MAP( nb, qtcolor, color, attributes )               \
+		RAWMAP((nb),qtcolor.rgb()&RGB_MASK,(color),(attributes))
+// first arg is the new rawcolor, second arg is the one that should be used
+#define ALIASMAP(rawcolor1,rawcolor2) \
+	YZASSERT( ! mAttributesMap.contains( rawcolor1) ); \
+	mAttributesMap[(rawcolor1)] = mAttributesMap[(rawcolor2)];
 
-		MAP( 1, Qt::magenta, COLOR_MAGENTA );
-		MAP( 2, Qt::red, COLOR_RED );
-		MAP( 3, Qt::green, COLOR_GREEN );
-		MAP( 4, Qt::yellow, COLOR_YELLOW );
-		MAP( 5, Qt::cyan, COLOR_CYAN );
-		MAP( 6, Qt::black, COLOR_BLACK );
-		MAP( 7, Qt::blue, COLOR_BLUE );
-		MAP( 8, Qt::white, COLOR_WHITE | A_BOLD );
-		MAP( 9, Qt::gray, COLOR_WHITE );
-		MAP(10, Qt::darkGreen, COLOR_GREEN | A_BOLD);
-		MAP(11, Qt::darkMagenta, COLOR_MAGENTA | A_BOLD);
-		MAP(12, Qt::darkCyan, COLOR_CYAN | A_BOLD);
-		MAP(13, Qt::lightGray, COLOR_WHITE | A_BOLD );
+	MAP( 1, Qt::red,         COLOR_RED,     A_NORMAL ); // red = 1, is used to display info on statusbar..
+	MAP( 2, Qt::magenta,     COLOR_MAGENTA, A_NORMAL );
+	MAP( 3, Qt::green,       COLOR_GREEN,   A_NORMAL );
+	MAP( 4, Qt::yellow,      COLOR_YELLOW,  A_NORMAL );
+	MAP( 5, Qt::cyan,        COLOR_CYAN,    A_NORMAL );
+	MAP( 6, Qt::black,       COLOR_BLACK,   A_NORMAL );
+	MAP( 7, Qt::blue,        COLOR_BLUE,    A_NORMAL );
+	MAP( 8, Qt::white,       COLOR_WHITE,   A_BOLD   );
+	MAP( 9, Qt::gray,        COLOR_WHITE,   A_NORMAL );
+	MAP(10, Qt::darkGreen,   COLOR_GREEN,   A_BOLD   );
+	MAP(11, Qt::darkMagenta, COLOR_MAGENTA, A_BOLD   );
+	MAP(12, Qt::darkCyan,    COLOR_CYAN,    A_BOLD   );
+	MAP(13, Qt::lightGray,   COLOR_WHITE,   A_NORMAL );
+//	ALIASMAP(0xc0c0c0); // already here (lightGray)
+//	ALIASMAP(0xcc00cc); // ???
+	ALIASMAP(0xDD0000, 0xff0000); // red
+
 }
 
 #if 0

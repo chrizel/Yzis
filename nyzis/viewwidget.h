@@ -110,13 +110,13 @@ private:
 	unsigned int marginLeft;
 
 
-	void initialisecolormap();
-	static int colormapinitialised;
+	void initialiseAttributesMap();
+	static int attributesMapInitialised;
 	/**
-	  * maps QRgb to ncurses colors
-	  * mColormap[ QRgb ] is the # of the corresponding pair in ncurses
+	  * maps QRgb to ncurses attributes, as those used in 
+	  * mAttributesMap[ QRgb ] is the # of the corresponding pair in ncurses
 	  */
-	static QMap<QRgb,int> mColormap;
+	static QMap<QRgb,unsigned long int> mAttributesMap;
 
 };
 

@@ -4,7 +4,7 @@
 <chapter id="userguide">
 	<title>Userguide</title>
 	<para>
-	The intention with this userguide is to give a brife overview of the Yzis 
+	The intention with this userguide is to give a brief overview of the Yzis 
 	editor and its capabilities. It's very basic and the idea is to get new Yzis 
 	user started quickly. It covers the most essential parts like starting, exiting,
 	the different modes, basic editing and some basic commands.
@@ -46,7 +46,7 @@
 		</mediaobject>
 
 		<para>
-		You will automaticly be placed in &command; mode when the file
+		You will automatically be placed in &command; mode when the file
 		is opened. Which brings us on to the next section...
 		</para>	
 	</sect1>
@@ -75,7 +75,7 @@
 
 	
 		<para>
-		As we mentioned in the previous section you are automaticly being placed in
+		As we mentioned in the previous section you are automatically being placed in
 		&command; mode when you open a file. You can always tell which
 		the current mode is by looking at the status bar in Yzis:
 		</para>
@@ -278,7 +278,7 @@
 		connection. The thing is that moving around in an editor is one of the
 		things you spend a lot of time with, and moving your hand between the
 		arrow-keys and the text-keys all the time is pretty time consuming (and
-		very unnecceserry when you think about it). The mentioned keys are
+		very unneccesary when you think about it). The mentioned keys are
 		only available in &command; mode since pressing them in &insert; mode would
 		write them to the file. These special movement-keys are of course optional
 		and it's up to the user if he wants to use them or not, the arrow-keys
@@ -309,8 +309,8 @@
 		put you on line 10, <command>'255G'</command> would put you on line 255 and
 		so on. However, with no <command>[count]</command> argument it positions you at the end of the file.
 		The structure with an optional <command>[count]</command> argument isn't specific to the <command>'G'</command> motion,
-		actually many of the motions in Yzis supports a <command>[count]</command> argument. What do you
-		think would happend if you passed an <command>[count]</command> argument to the <command>'w'</command> motion? For example
+		actually many of the motions in Yzis support a <command>[count]</command> argument. What do you
+		think would happen if you passed an <command>[count]</command> argument to the <command>'w'</command> motion? For example
 		<command>'5w'</command> ? Correct, it would move the cursor 5 words forward. You will notice
 		that this structure is applied to many of the editing commands aswell if you continue
 		reading the next section.
@@ -381,7 +381,7 @@
 		it accepts a motion as argument and it can be used with the same motions as we
 		presented in the list above. <command>'cw'</command> deletes one word and puts you
 		in &insert; mode right where the word was. <command>'c$'</command> and <command>'cG'</command>
-		doesn't need anu further explanation, the only difference is that it places you in
+		doesn't need any further explanation, the only difference is that it places you in
 		&insert; mode when the command is finished.
 		</para>
 		

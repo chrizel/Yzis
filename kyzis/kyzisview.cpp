@@ -58,7 +58,7 @@ void KYZisView::customEvent (QCustomEvent *) {
 				break;
 			case YZ_EV_SETSTATUS:
 				kdDebug() << "event SETSTATUS" << event.u.setstatus.text <<  endl;
-				status->changeItem( event.u.setstatus.text,0 );
+				status->changeItem( *event.u.setstatus.text,0 );
 				break;
 			case YZ_EV_NOOP:
 //				kdDebug() << "OUPS, no event to fetch !" << endl;

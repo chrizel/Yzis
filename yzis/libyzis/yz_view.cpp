@@ -146,8 +146,10 @@ void YZView::send_char( QChar c)
 	}
 }
 
-void YZView::update_cursor(void)
+void YZView::update_cursor(int x, int y)
 {
+	if ( x!=-1 ) cursor->setX( x );
+	if ( y!=-1 ) cursor->setY( y );
 	post_event( mk_event_setcursor(cursor->getX(),cursor->getY()-current));
 }
 

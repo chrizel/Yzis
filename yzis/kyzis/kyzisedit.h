@@ -42,6 +42,9 @@ class KYZisEdit : public QScrollView {
 		//normal keypressEvents processing
 		void keyPressEvent (QKeyEvent *);
 
+		//mouse events
+		void mousePressEvent (QMouseEvent *);
+
 		//insert text at line
 		void insetTextAt(const QString, int line);
 

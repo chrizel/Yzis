@@ -66,8 +66,9 @@ public:
 	 */
 	void register_manager ( Gui *mgr );
 
+	void	update_cursor(int x=-1,int y=-1);
+
 protected:
-	void	update_cursor(void);
 
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */

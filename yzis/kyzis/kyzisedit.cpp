@@ -49,6 +49,10 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	e->accept();
 }
 
+void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
+	_parent->update_cursor(e->x()/fontMetrics().maxWidth(), e->y()/fontMetrics().lineSpacing());
+}
+
 void KYZisEdit::drawCursorAt(QPainter *p, int x, int y) {
 	bitBlt (
 			viewport(),

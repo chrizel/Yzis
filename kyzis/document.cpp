@@ -19,6 +19,9 @@
  * $Id$
  */
 
+#include <kfiledialog.h>
+#include <kmessagebox.h>
+#include <klocale.h>
 #include "document.h"
 #include "viewwidget.h"
 #include "factory.h"
@@ -160,6 +163,19 @@ bool KYZisDoc::setText (  const QString &text ) {
 /* Fixme */
 bool KYZisDoc::removeText (  uint startLine, uint startCol, uint endLine, uint endCol ) {
 	return true;
+}
+
+bool KYZisDoc::popupFileSaveAs() {
+	KURL url =	KFileDialog::getSaveURL();
+	if ( !url.isLocalFile() ) {
+		KMessageBox::sorry(m_parent, i18n("Yzis is not able to save remote files for now", "Remote files"));
+		return false;
+	}
+	if ( ! url.isEmpty() ) {//cancelled ?
+		setPath( url.path() );
+		return true;
+	} else
+		return false;
 }
 
 #include "document.moc"

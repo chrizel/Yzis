@@ -1,8 +1,11 @@
 2004-04-04 mikmak
   * libyzis
     disables views updates during a ::load => speed up loading huge files
+    ask GUI to popup a file dialog when a file is "new" and no filename was
+    given before
   * kyzis
     make KAction system working
+    make save and saveAs action working
 
 2004-04-03 mikmak
   * kyzis

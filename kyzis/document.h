@@ -52,6 +52,7 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		QString text (  uint startLine, uint startCol, uint endLine, uint endCol ) const;
 		bool setText (  const QString &text );
 		bool removeText (  uint startLine, uint startCol, uint endLine, uint endCol );
+		bool popupFileSaveAs();
 
 	public slots:
 		//signals to emit

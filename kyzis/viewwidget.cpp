@@ -119,8 +119,16 @@ void KYZisView::setupActions() {
 	KStdAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());
 }
 
-/* Implementation of KTextEditor::ViewCursorInterface */
+void KYZisView::fileSave() {
+	mBuffer->save();
+}
 
+void KYZisView::fileSaveAs() {
+	if ( mBuffer->popupFileSaveAs() )
+		mBuffer->save();
+}
+
+/* Implementation of KTextEditor::ViewCursorInterface */
 
 QPoint KYZisView::cursorCoordinates()
 {

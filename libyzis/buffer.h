@@ -54,7 +54,7 @@ public:
 	/**
 	 * Default destructor
 	 */
-	~YZBuffer();
+	virtual ~YZBuffer();
 
 	// ----------------- Character Operations
 
@@ -179,6 +179,12 @@ public:
 	 * Save the buffer content into the current filename
 	 */
 	void save();
+
+	/**
+	 * Ask the GUI to popup for a filename
+	 * @return whether a file name was successfully chosen
+	 */
+	virtual bool popupFileSaveAs() = 0;
 			
 	/**
 	 * Get the current filename of the buffer
@@ -190,7 +196,7 @@ public:
 	 * Changes the filename
 	 * @param _path the new filename ( and path )
 	 */
-	void setPath( const QString& _path ) { mPath = _path; }
+	void setPath( const QString& _path ) { mPath = _path; mFileIsNew=false; }
 
 
 	// -------------------------- View Operations
@@ -248,6 +254,8 @@ protected:
 	YZBufferData mText;
 	YZSession *mSession;
 	YZUndoBuffer *mUndoBuffer;
+	//if a file is new, this one is true ;) (used at saving time)
+	bool mFileIsNew;
 	//used to prevent redrawing of views during some operations
 	bool mUpdateView;
 };

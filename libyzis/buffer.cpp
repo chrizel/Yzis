@@ -34,17 +34,18 @@
 #include "undo.h"
 #include "debug.h"
 
-YZBuffer::YZBuffer(YZSession *sess, const QString& _path) 
-{
+YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	myId = YZSession::mNbBuffers++;
 	mSession = sess;
 	if ( !_path.isNull() ) {
 		mPath = _path;
+		mFileIsNew = false;
 	} else {
 		// buffer at creation time should use a non existing temp filename
 		// find a tmp file that does not exist
 		do {
 			mPath = QString("/tmp/yzisnew%1").arg(random());
+			mFileIsNew = true;
 		} while ( QFileInfo( mPath ).exists() == true );
 		// there is still a possible race condition here...
 	}
@@ -357,14 +358,21 @@ void YZBuffer::load(const QString& file) {
 void YZBuffer::save() {
 	if (mPath.isEmpty())
 		return;
+	if ( mFileIsNew ) {
+		//popup to ask a file name
+		if ( !popupFileSaveAs() )
+			return; //dont try to save
+	}
 	QFile file( mPath );
 	if ( file.open( IO_WriteOnly ) ) {
 		QTextStream stream( &file );
-		for(YZLine *it = mText.first(); it; it = mText.next()) {
-			if (it != mText.getFirst()) {
-				stream << "\n";
+		if ( mText.count( ) == 1 && data(0).isEmpty() ) {
+			//only one empty line => don't save it, the file is empty... (it avoids creating 1 byte file where it should be 0)
+		} else {
+			for(YZLine *it = mText.first(); it; it = mText.next()) {
+				stream << it->data() << "\n";
+				yzDebug() << "saving : " << it->data() << endl;
 			}
-			stream << it->data();
 		}
 		file.close();
 	}

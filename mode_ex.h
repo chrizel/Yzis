@@ -76,7 +76,7 @@ struct YZExCommandArgs {
 	}
 };
 
-typedef QString (YZModeEx::*ExPoolMethod) (const YZExCommandArgs&);
+typedef cmd_state (YZModeEx::*ExPoolMethod) (const YZExCommandArgs&);
 typedef int (YZModeEx::*ExRangeMethod) (const YZExRangeArgs&);
 
 class YZExRange {
@@ -126,7 +126,7 @@ class YZModeEx : public YZMode {
 		
 		void initPool();
 		cmd_state execCommand( YZView* mView, const QString& key );
-		bool execExCommand( YZView* view, const QString& inputs );
+		cmd_state execExCommand( YZView* view, const QString& inputs );
 
 	private :
 #if QT_VERSION < 0x040000
@@ -149,29 +149,29 @@ class YZModeEx : public YZMode {
 
 	public:
 		// commands
-		QString write( const YZExCommandArgs& args );
-		QString quit( const YZExCommandArgs& args );
-		QString buffernext( const YZExCommandArgs& args );
-		QString bufferprevious( const YZExCommandArgs& args );
-		QString bufferdelete( const YZExCommandArgs& args );
-		QString edit( const YZExCommandArgs& args );
-		QString mkyzisrc( const YZExCommandArgs& args );
-		QString setlocal( const YZExCommandArgs& args );
-		QString set( const YZExCommandArgs& args );
-		QString substitute( const YZExCommandArgs& args );
-		QString hardcopy( const YZExCommandArgs& args );
-		QString gotoOpenMode( const YZExCommandArgs& args );
-		QString gotoCommandMode( const YZExCommandArgs& args );
-		QString preserve( const YZExCommandArgs& args );
-		QString lua( const YZExCommandArgs& args );
-		QString source( const YZExCommandArgs& args );
-		QString map( const YZExCommandArgs& args );
-		QString imap( const YZExCommandArgs& args );
-		QString indent( const YZExCommandArgs& args );
-		QString enew( const YZExCommandArgs& args );
-		QString syntax( const YZExCommandArgs& args );
-		QString highlight( const YZExCommandArgs& args );
-		QString split( const YZExCommandArgs& args );
+		cmd_state write( const YZExCommandArgs& args );
+		cmd_state quit( const YZExCommandArgs& args );
+		cmd_state buffernext( const YZExCommandArgs& args );
+		cmd_state bufferprevious( const YZExCommandArgs& args );
+		cmd_state bufferdelete( const YZExCommandArgs& args );
+		cmd_state edit( const YZExCommandArgs& args );
+		cmd_state mkyzisrc( const YZExCommandArgs& args );
+		cmd_state setlocal( const YZExCommandArgs& args );
+		cmd_state set( const YZExCommandArgs& args );
+		cmd_state substitute( const YZExCommandArgs& args );
+		cmd_state hardcopy( const YZExCommandArgs& args );
+		cmd_state gotoOpenMode( const YZExCommandArgs& args );
+		cmd_state gotoCommandMode( const YZExCommandArgs& args );
+		cmd_state preserve( const YZExCommandArgs& args );
+		cmd_state lua( const YZExCommandArgs& args );
+		cmd_state source( const YZExCommandArgs& args );
+		cmd_state map( const YZExCommandArgs& args );
+		cmd_state imap( const YZExCommandArgs& args );
+		cmd_state indent( const YZExCommandArgs& args );
+		cmd_state enew( const YZExCommandArgs& args );
+		cmd_state syntax( const YZExCommandArgs& args );
+		cmd_state highlight( const YZExCommandArgs& args );
+		cmd_state split( const YZExCommandArgs& args );
 };
 
 

@@ -42,6 +42,7 @@ enum cmd_state {
 	OPERATOR_PENDING,
 	/** The command has been successfully executed. */
 	CMD_OK,
+	CMD_QUIT,
 };
 
 class YZMode {

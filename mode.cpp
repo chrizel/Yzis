@@ -103,6 +103,7 @@ void YZModeIntro::enter( YZView* mView ) {
 	mBuffer->appendLine( "" );
 	mBuffer->appendLine( mView->centerLine( "please report bugs at http://bugs.yzis.org" ) );
 	for ( i = 0; i < vMargin; i++ ) mBuffer->appendLine( "" );
+	mBuffer->setChanged( false );
 
 	mBuffer->undoBuffer()->setInsideUndo( false );
 	mView->refreshScreen();
@@ -169,6 +170,8 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 		case OPERATOR_PENDING:
 			yzDebug() << "cmd_state = OPERATOR_PENDING" << endl;
 			mapMode = pendingop;
+			break;
+		case CMD_QUIT:
 		default:
 			break;
 	}

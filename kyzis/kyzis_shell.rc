@@ -1,5 +1,5 @@
 <!DOCTYPE kpartgui SYSTEM "kpartgui.dtd">
-<kpartgui name="kyzis_shell" version="2">
+<kpartgui name="kyzis_shell" version="3">
 <MenuBar noMerge="1">
   <Menu name="file" noMerge="1"><text>&amp;File</text>
     <Action name="file_new"/>

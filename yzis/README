@@ -1,23 +1,6 @@
-	yzis - 
+To compile you need TinyQ (Tiny Qt) which is small part of the real Qt from Trolltech.
+You need to compile it as shared and as a static lib. To do this you need to compile TinyQ twice (sorry for this).
+First, configure it with -shared, compile, install it. Then make clean, configure it with -static, compile and install again 
+over the previous installation, you should then have both libraries at the right places.
 
-
-
-  Copyright (C) 2003 Mickael Marchand
-
-  yzis is free software; you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation; either version 2 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License
-  along with this program; if not, write to the Free Software
-  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-Comments are welcome.
-
-	- Mickael Marchand <mikmak@yzis.org>
+When configuring Yzis, use the --with-tinyq-dir to indicate your TinyQ prefix, QTDIR is used only for the real Qt needed for KYzis.

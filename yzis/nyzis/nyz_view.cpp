@@ -14,7 +14,7 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_v
 	window = _window;
 
 	update_info();
-	debug("w,h are %d,%d",w,h);
+	//debug("w,h are %d,%d",w,h);
 }
 
 
@@ -46,18 +46,19 @@ void NYZView::handle_event(yz_event *e)
 	int l, i;
 	YZLine	*yzl;
 
-	if (!e) panic("oulalal c'est pas bon la..");
+//FIXME	if (!e) panic("oulalal c'est pas bon la..");
 
 	switch(e->id) {
 		case YZ_EV_SETLINE:
 			l = e->u.setline.y;
-			if (l<0 or l>=YZ_MAX_LINE) panic("Can't handle more than 3000 lines yet, kinda sucks, uh?");
+//FIXME			if (l<0 or l>=YZ_MAX_LINE) panic("Can't handle more than 3000 lines
+			//yet, kinda sucks, uh?");
 			yzl = local_lines[l] = e->u.setline.line;
 
 			/* not use addnstr here, will stop at \0  (i guess) */
 			move ( l, 0);
 			for (i=0; i<w && i<yzl->len; i++)
-				addch(yzl->data[i]);
+				addch(yzl->at(i).unicode());
 
 //			refresh();
 //			debug("YZ_EV_SETLINE: received, line is %d", l);
@@ -70,7 +71,7 @@ void NYZView::handle_event(yz_event *e)
 			session->update_status( e->u.setstatus.text );
 			break;
 		default:
-			warning("Unhandled event from yzis core : %i", e->id);
+			//FIXME warning("Unhandled event from yzis core : %i", e->id);
 			break;
 	}
 }

@@ -4329,7 +4329,7 @@ AC_DEFUN(AC_CHECK_UTMP_FILE,
 AC_DEFUN(KDE_CREATE_SUBDIRSLIST,
 [
 
-DO_NOT_COMPILE="$DO_NOT_COMPILE CVS debian bsd-port admin"
+DO_NOT_COMPILE="$DO_NOT_COMPILE CVS debian bsd-port admin cyzis"
 
 if test ! -s $srcdir/subdirs; then
   dnl Note: Makefile.common creates subdirs, so this is just a fallback

@@ -8,11 +8,8 @@
 #include "yz_events.h"
 #include "yz_buffer.h"
 
-
 #define YZ_EVENT_EVENTS_MAX 400
 
-
-#ifdef __cplusplus
 class YZView {
 public:
 	/**
@@ -24,7 +21,7 @@ public:
 	/**
 	 * transfer a key event from gui to core
 	 */
-	void	send_char( unicode_char_t);
+	void	send_char( QChar );
 
 	/**
 	  * Used by the buffer to post events
@@ -83,69 +80,6 @@ protected:
 	 * yzview should update the core as to how many lines it can display (changegeometry stuff)
 	 */
 };
-
-
-#endif /* __cplusplus */
-
-
-
-/*
- * C API
- */
-
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-typedef int yz_view;
-
-#if 0
-#define CHECK_VIEW(yz_view) YZView *view; if (!yz_view || (view=(YZView*)(yz_view))->magic != MAGIC_YZVIEW) panic("");
-#else
-#define CHECK_VIEW(yz_view) YZView *view=(YZView*)(yz_view);
-#endif
-
-
-
-
-/**
- * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
- * this view can display
- */
-yz_view create_view(yz_buffer , int lines_vis);
-
-/**
- * transfer a key event from gui to core
- */
-void yz_view_send_char(yz_view , unicode_char_t c);
-
-/**
- * get a event to handle from the core.
- * that's the way the core is sending messages to the gui
- *
- * returns the next event to be handled, or NULL if none
- */
-yz_event * yz_view_fetch_event(yz_view );
-
-/**
-  * this returns the geometry of this yz_view, that is
-  * 	the first line displayed
-  * 	the number of line displayed
-  */
-void yz_view_get_geometry(yz_view , int *current, int *lines_vis);
-
-/*
- * used by the yz_buffer to stock events for this view
- */
-void yz_view_post_event (yz_view , yz_event );
-
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
-
-
 
 #endif /*  YZ_VIEW_H */
 

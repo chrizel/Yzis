@@ -64,16 +64,14 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 void NYZSession::add_view( NYZView *v)
 {
 	views[views_nb++] = v;
-	if (views_nb>NYZ_VIEW_MAX)
-		panic("max number of views reached..");
+//FIXME	if (views_nb>NYZ_VIEW_MAX) panic("max number of views reached..");
 }
 
 
 void NYZSession::add_buffer( YZBuffer *b)
 {
 	buffers[buffers_nb++] = b;
-	if (buffers_nb>NYZ_BUFFER_MAX)
-		panic("max number of buffers reached..");
+//FIXME	if (buffers_nb>NYZ_BUFFER_MAX) panic("max number of buffers reached..");
 }
 
 

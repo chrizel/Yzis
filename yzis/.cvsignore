@@ -15,4 +15,6 @@ libtool
 autom4te.cache
 configure.files
 subdirs
-
+acinclude.m4
+config.h.in
+configure.in

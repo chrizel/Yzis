@@ -20,6 +20,7 @@ HEADERS   =  testBuffer.h \
 			 testCommands.h \
 			 testUndo.h \
 			 testSearch.h \
+			 testDebugBackend.h \
 			 TView.h \
 			 TBuffer.h \
 			 TSession.h
@@ -28,5 +29,6 @@ SOURCES   = testBuffer.cpp \
 			testCommands.cpp \
 			testUndo.cpp \
 			testSearch.cpp \
+			testDebugBackend.cpp \
 			TView.cpp \
 			main.cpp

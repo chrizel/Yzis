@@ -34,34 +34,34 @@ public:
     {}
 
     virtual YZView* createView ( YZBuffer* ) { 
-        yzDebug() << "TYZSession::createView" << endl;
+        yzDebug( AREA_TESTS) << "TYZSession::createView" << endl;
         return NULL; 
     }
 
     virtual	YZBuffer *createBuffer(const QString& path=QString::null) { 
-        yzDebug() << "TYZSession::createBuffer " << path << endl;
+        yzDebug( AREA_TESTS) << "TYZSession::createBuffer " << path << endl;
         return NULL; 
     }
 
     virtual void popupMessage( const QString& message) {
-        yzDebug() << "TYZSession::popupMessage: '" << message << "' \n";
+        yzDebug( AREA_TESTS) << "TYZSession::popupMessage: '" << message << "' \n";
     }
 
     virtual void quit(bool /*savePopup=true */) {
-        yzDebug() << "TYZSession::quit" << endl;
+        yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
     }
     virtual void deleteView ( ) {
-        yzDebug() << "TYZSession::deleteView" << endl;
+        yzDebug( AREA_TESTS) << "TYZSession::deleteView" << endl;
     }
     virtual void changeCurrentView( YZView* ) {
         // notification
-        yzDebug() << "TYZSession::changeCurrentView" << endl;
+        yzDebug( AREA_TESTS) << "TYZSession::changeCurrentView" << endl;
     }
     virtual void setFocusCommandLine( ) {
-        yzDebug() << "TYZSession::setFocusCommandLine" << endl;
+        yzDebug( AREA_TESTS) << "TYZSession::setFocusCommandLine" << endl;
     }
     virtual void setFocusMainWindow( ) {
-        yzDebug() << "TYZSession::setFocusMainWindow" << endl;
+        yzDebug( AREA_TESTS) << "TYZSession::setFocusMainWindow" << endl;
     }
 };
 

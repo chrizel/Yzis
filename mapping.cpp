@@ -98,7 +98,7 @@ bool YZMapping::applyGlobalMappings( QString& text ) {
 }
 
 bool YZMapping::applyMappings( QString& text, int modes ) {
-	yzDebug() << "Text1: " << text << endl;
+//	yzDebug() << "Text1: " << text << endl;
 	bool pendingMapp = false;
 	
 	if ( modes & normal || modes & visual || modes & pendingop)
@@ -113,7 +113,7 @@ bool YZMapping::applyMappings( QString& text, int modes ) {
 		pendingMapp = pendingMapp || applyInsertMappings(text);
 	if ( modes & cmdline )
 		pendingMapp = pendingMapp || applyCmdLineMappings(text);
-	yzDebug() << "Text2: " << text << endl << "Pending mapping : " << pendingMapp << endl;
+//	yzDebug() << "Text2: " << text << endl << "Pending mapping : " << pendingMapp << endl;
 	return pendingMapp;
 }
 

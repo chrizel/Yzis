@@ -1236,7 +1236,6 @@ void YZModeCommand::pasteBefore(const YZCommandArgs &args) {
 
 void YZModeCommand::yankLine(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->copyLine( args.view, *args.view->getBufferCursor(), args.count, args.regs );
-	
 }
 
 void YZModeCommand::yankToEOL(const YZCommandArgs &args) {
@@ -1271,14 +1270,10 @@ void YZModeCommand::del(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::yank(const YZCommandArgs &args) {
-	YZCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
-
 	args.view->myBuffer()->action()->copyArea( args.view, interval( args ), args.regs );
+	YZCursor to = move( args.view, args.arg, args.count, args.usercount );
+	args.view->gotoxyAndStick( to.x(), to.y() );
 	args.view->modePool()->pop();
-
-	// move cursor to top left corner of selection (yes, this is correct behaviour :)
-	args.view->gotoxy( topLeft.x(), topLeft.y(), true );
-	args.view->updateStickyCol( );
 }
 
 void YZModeCommand::mark(const YZCommandArgs &args) {

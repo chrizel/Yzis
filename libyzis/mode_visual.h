@@ -69,6 +69,7 @@ class YZModeVisual : public YZModeCommand {
 		void changeWholeLines(const YZCommandArgs &args);
 		void deleteWholeLines(const YZCommandArgs &args);
 		void yankWholeLines(const YZCommandArgs &args);
+		void yank(const YZCommandArgs &args);
 		void toUpperCase( const YZCommandArgs& args );
 		void toLowerCase( const YZCommandArgs& args );
 

@@ -205,6 +205,9 @@ void YZView::sendKey( int c, int modifiers) {
 
 		case YZ_VIEW_MODE_COMMAND:
 			switch ( c ) {
+				case Qt::Key_Escape:
+					purgeInputBuffer();
+					return;
 				case Qt::Key_Down:
 					key='j';//moveDown( );
 					break;//return;
@@ -257,7 +260,6 @@ void YZView::updateCursor() {
 }
 
 void YZView::centerView(unsigned int line) {
-
 	//update current
 	int newcurrent = line - mLinesVis / 2;
 
@@ -630,10 +632,6 @@ QString YZView::paste( const QString& inputsBuff ) {
 		pastebefore=false;
 	else if ( inputsBuff[ i ] == 'P' )
 		pastebefore=true;
-	else {
-		purgeInputBuffer();
-		return QString::null; //wrong command !
-	}
 	i++;
 
 	//paste now
@@ -648,3 +646,4 @@ QString YZView::paste( const QString& inputsBuff ) {
 	purgeInputBuffer();
 	return QString::null;
 }
+

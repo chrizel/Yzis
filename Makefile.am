@@ -43,3 +43,15 @@ apidox:
 	echo "PREDEFINED          = DO_NOT_DOCUMENT" >> yzis.doxyfile ; \
 	echo "EXTRACT_ALL         = YES" >> yzis.doxyfile ; \
 	doxygen yzis.doxyfile
+
+tests/cppunit/Makefile:
+	cd tests/cppunit && qmake cppunit.pro -o Makefile
+cppunit: tests/cppunit/Makefile
+	cd tests/cppunit && make
+tests/Makefile:
+	cd tests && qmake  tests.pro -o Makefile
+tests/runTests: cppunit tests/Makefile
+	cd tests && make
+tests: tests/runTests
+	cd tests && ./runTests
+

@@ -39,6 +39,8 @@ static const QChar spaceChar( ' ' );
 #define attribRed    mAttributesMap[0xff0000]
 #define attribWhite  mAttributesMap[0xffffff]
 #define attribYellow mAttributesMap[0xffff00]
+#define attribBlue mAttributesMap[0x0000ff]
+#define attribIntro mAttributesMap[0x00ff00]
 
 int NYZView::attributesMapInitialised = 0;
 QMap<QRgb,unsigned long int> NYZView::mAttributesMap;
@@ -118,7 +120,7 @@ void NYZView::printVoid( unsigned int relline )
 	// clipping
 	if ( relline > getLinesVisible() ) return;
 	wmove (editor, relline, 0);
-	waddch(editor, '~');
+	waddch(editor, attribBlue|'~');
 	for (i=1 ; i< getColumnsVisible(); i++ ) waddch(editor, ' ' );
 }
 
@@ -175,6 +177,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 		while ( drawNextLine() ) {
 			QString str = myBuffer()->textline( currentY );
 			wmove( window, currentY, (w-str.length()>0)?(w-str.length())/2:0 );
+//change intro color ?			wattron( window, attribIntro );
 			waddstr( window, str );
 			currentY++;
 		}

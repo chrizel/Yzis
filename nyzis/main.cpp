@@ -116,7 +116,7 @@ main(int argc, char *argv[])
 	};
 
 	int c;
-	YZSession::mOptions.setGroup("Global");
+	YZSession::mOptions->setGroup("Global");
 	bool splash = YZSession::getBoolOption("blocksplash");
 	while ( 1 ) {
 		c = getopt_long ( argc, argv, "hvc:", long_options, &option_index );

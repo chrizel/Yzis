@@ -441,7 +441,7 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 	} else
 		buffer = args.view->myBuffer();
 	
-	YZSession::mOptions.setGroup("Global");
+	YZSession::mOptions->setGroup("Global");
 
 	if ( rx.exactMatch( args.arg ) ) {
 #if QT_VERSION < 0x040000
@@ -453,7 +453,7 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 		bool hasOperator = rx.numCaptures() == 3; // do we have a +/- in the set command ?
 		QString value = hasOperator ? rx.cap( 3 ).trimmed() : rx.cap( 2 ).trimmed();
 #endif
-		YZInternalOption *opt = YZSession::mOptions.getOption(option);
+		YZInternalOption *opt = YZSession::mOptions->getOption(option);
 		if ( !opt ) {
 			YZSession::me->popupMessage( QObject::tr("Invalid option given : ") + option);
 			return QString::null;
@@ -501,9 +501,9 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 		}
 	} else if ( rx2.exactMatch( args.arg )) {
 #if QT_VERSION < 0x040000
-		YZInternalOption *opt = YZSession::mOptions.getOption(rx2.cap( 1 ).simplifyWhiteSpace());
+		YZInternalOption *opt = YZSession::mOptions->getOption(rx2.cap( 1 ).simplifyWhiteSpace());
 #else
-		YZInternalOption *opt = YZSession::mOptions.getOption(rx2.cap( 1 ).trimmed());
+		YZInternalOption *opt = YZSession::mOptions->getOption(rx2.cap( 1 ).trimmed());
 #endif
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
@@ -532,9 +532,9 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 		}
 	} else if ( rx3.exactMatch( args.arg ) ) {
 #if QT_VERSION < 0x040000
-		YZInternalOption *opt = YZSession::mOptions.getOption(rx3.cap( 1 ).simplifyWhiteSpace());
+		YZInternalOption *opt = YZSession::mOptions->getOption(rx3.cap( 1 ).simplifyWhiteSpace());
 #else
-		YZInternalOption *opt = YZSession::mOptions.getOption(rx3.cap( 1 ).trimmed());
+		YZInternalOption *opt = YZSession::mOptions->getOption(rx3.cap( 1 ).trimmed());
 #endif
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
@@ -578,7 +578,7 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 	QRegExp rx3 ( "(\\w*)" ); //activate a bool option
 
 	if ( rx.exactMatch( args.arg ) ) {
-		YZSession::mOptions.setGroup("Global");
+		YZSession::mOptions->setGroup("Global");
 		bool hasOperator = rx.numCaptures() == 3; // do we have a +/- in the set command ?
 #if QT_VERSION < 0x040000
 		QString option = rx.cap( 1 ).simplifyWhiteSpace();
@@ -587,7 +587,7 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 		QString option = rx.cap( 1 ).trimmed();
 		QString value = hasOperator ? rx.cap( 3 ).trimmed() : rx.cap( 2 ).trimmed();
 #endif
-		YZInternalOption *opt = YZSession::mOptions.getOption(option);
+		YZInternalOption *opt = YZSession::mOptions->getOption(option);
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given : ") + option);
 			return QString::null;
@@ -596,12 +596,12 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 			switch ( opt->getValueType() ) {
 				case stringlist_t :
 				case string_t :
-					if ( rx.cap( 2 ) == "+" ) value = YZSession::mOptions.readQStringEntry( option ) + value;
-					else if ( rx.cap( 2 ) == "-" ) value = QString( YZSession::mOptions.readQStringEntry( option ) ).remove( value );
+					if ( rx.cap( 2 ) == "+" ) value = YZSession::mOptions->readQStringEntry( option ) + value;
+					else if ( rx.cap( 2 ) == "-" ) value = QString( YZSession::mOptions->readQStringEntry( option ) ).remove( value );
 					break;
 				case int_t :
-					if ( rx.cap( 2 ) == "+" ) value = QString::number( YZSession::mOptions.readQStringEntry( option ).toInt() + value.toInt() );
-					else if ( rx.cap( 2 ) == "-" ) value = QString::number( YZSession::mOptions.readQStringEntry( option ).toInt() - value.toInt() );
+					if ( rx.cap( 2 ) == "+" ) value = QString::number( YZSession::mOptions->readQStringEntry( option ).toInt() + value.toInt() );
+					else if ( rx.cap( 2 ) == "-" ) value = QString::number( YZSession::mOptions->readQStringEntry( option ).toInt() - value.toInt() );
 					break;
 				case bool_t :
 					YZSession::me->popupMessage(QObject::tr("This option cannot be switched this way, this is a boolean option."));
@@ -614,14 +614,14 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 		yzDebug() << "Setting option " << option << " to " << value << endl;
 		YZSession::setQStringOption( option, value );
 	} else if ( rx2.exactMatch( args.arg )) {
-		YZSession::mOptions.setGroup("Global");
+		YZSession::mOptions->setGroup("Global");
 #if QT_VERSION < 0x040000
 		YZSession::setBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
 #else
 		YZSession::setBoolOption( rx2.cap( 1 ).trimmed(), false);
 #endif
 	} else if ( rx3.exactMatch( args.arg ) ) {
-		YZSession::mOptions.setGroup("Global");
+		YZSession::mOptions->setGroup("Global");
 #if QT_VERSION < 0x040000
 		YZSession::setBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
 #else
@@ -640,9 +640,9 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 
 QString YZExCommandPool::mkyzisrc ( const YZExCommandArgs& ) {
 #if QT_VERSION < 0x040000
-	YZSession::mOptions.saveTo( QDir::currentDirPath() + "/yzis.conf", "", "HL Cache" );
+	YZSession::mOptions->saveTo( QDir::currentDirPath() + "/yzis.conf", "", "HL Cache" );
 #else
-	YZSession::mOptions.saveTo( QDir::currentPath() + "/yzis.conf", "", "HL Cache" );
+	YZSession::mOptions->saveTo( QDir::currentPath() + "/yzis.conf", "", "HL Cache" );
 #endif
 	return QString::null;
 }
@@ -809,8 +809,8 @@ QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 		idx++;
 	}
 	style += YZSession::me->schemaManager()->name(0); //XXX make it use the 'current' schema
-	YZSession::mOptions.setGroup(style);
-	QStringList option = YZSession::mOptions.readQStringListEntry(type);
+	YZSession::mOptions->setGroup(style);
+	QStringList option = YZSession::mOptions->readQStringListEntry(type);
 	yzDebug() << "HIGHLIGHT : Current " << type << " : " << option << endl;
 	if (option.count() < 7) return QString::null; //just make sure it's fine ;)
 
@@ -850,9 +850,9 @@ QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 		}
 	}
 	yzDebug() << "HIGHLIGHT : Setting new " << option << endl;
-	YZSession::mOptions.setQStringListOption(type, option);
+	YZSession::mOptions->setQStringListOption(type, option);
 	
-	YZSession::mOptions.setGroup("Global");
+	YZSession::mOptions->setGroup("Global");
 	if ( args.view && args.view->myBuffer() ) {
 		YzisHighlighting *yzis = args.view->myBuffer()->highlight();
 		if (yzis) {

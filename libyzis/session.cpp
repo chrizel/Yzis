@@ -41,8 +41,8 @@
 
 int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
-YZInternalOptionPool YZSession::mOptions = YZInternalOptionPool();
-YZRegisters YZSession::mRegisters = YZRegisters();
+YZInternalOptionPool *YZSession::mOptions = 0;
+YZRegisters *YZSession::mRegisters = 0;
 YZSession *YZSession::me = 0;
 YZEvents *YZSession::events = 0;
 
@@ -61,6 +61,8 @@ YZSession::YZSession( const QString& _sessionName ) {
 	me = this;
 	events = new YZEvents();
 	mSchemaManager = new YzisSchemaManager();
+	mOptions = new YZInternalOptionPool();
+	mRegisters = new YZRegisters();
 }
 
 YZSession::~YZSession() {
@@ -69,6 +71,8 @@ YZSession::~YZSession() {
 	delete mPool;
 	delete mSearch;
 	delete events;
+	delete mRegisters;
+	delete mOptions;
 }
 
 void YZSession::guiStarted() {

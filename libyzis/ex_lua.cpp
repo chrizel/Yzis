@@ -98,7 +98,7 @@ YZExLua::YZExLua() {
 	luaopen_math( L );
 	luaopen_io( L );
 	luaopen_debug( L );
-	yzDebug() << "Lua " << lua_version() << " loaded" << endl;
+	yzDebug() << lua_version() << " loaded" << endl;
 	lua_register(L,"line",line);
 	lua_register(L,"setline",setline);
 	lua_register(L,"insert",insert);
@@ -619,7 +619,7 @@ int YZExLua::newoption(lua_State *L ) {
 	option_t visibility = (option_t)(int)lua_tonumber ( L, 5 );
 	value_t type = (value_t)(int)lua_tonumber ( L, 6 );
 
-	YZSession::mOptions.createOption(option, group, defaultvalue, value, visibility, type );
+	YZSession::mOptions->createOption(option, group, defaultvalue, value, visibility, type );
 
 	return 0;
 }

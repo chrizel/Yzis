@@ -313,15 +313,15 @@ void YzisSchemaConfigColorTab::readConfig (const QString& config)
   QColor tmp6 ( "#EAE9E8" );
   QColor tmp7 ( "#000000" );
 
-  YZSession::mOptions.setGroup( config );
-  m_back->setColor(YZSession::mOptions.readQColorEntry("Color Background", tmp0));
-  m_selected->setColor(YZSession::mOptions.readQColorEntry("Color Selection", tmp1));
-  m_current->setColor(YZSession::mOptions.readQColorEntry("Color Highlighted Line", tmp2));
-  m_bracket->setColor(YZSession::mOptions.readQColorEntry("Color Highlighted Bracket", tmp3));
-  m_wwmarker->setColor(YZSession::mOptions.readQColorEntry("Color Word Wrap Marker", tmp4));
-  m_tmarker->setColor(YZSession::mOptions.readQColorEntry("Color Tab Marker", tmp5));
-  m_iconborder->setColor(YZSession::mOptions.readQColorEntry("Color Icon Bar", tmp6));
-  m_linenumber->setColor(YZSession::mOptions.readQColorEntry("Color Line Number", tmp7));
+  YZSession::mOptions->setGroup( config );
+  m_back->setColor(YZSession::mOptions->readQColorEntry("Color Background", tmp0));
+  m_selected->setColor(YZSession::mOptions->readQColorEntry("Color Selection", tmp1));
+  m_current->setColor(YZSession::mOptions->readQColorEntry("Color Highlighted Line", tmp2));
+  m_bracket->setColor(YZSession::mOptions->readQColorEntry("Color Highlighted Bracket", tmp3));
+  m_wwmarker->setColor(YZSession::mOptions->readQColorEntry("Color Word Wrap Marker", tmp4));
+  m_tmarker->setColor(YZSession::mOptions->readQColorEntry("Color Tab Marker", tmp5));
+  m_iconborder->setColor(YZSession::mOptions->readQColorEntry("Color Icon Bar", tmp6));
+  m_linenumber->setColor(YZSession::mOptions->readQColorEntry("Color Line Number", tmp7));
 
 #if KDE_IS_VERSION( 3,3,0 )
   // same std colors like in YzisDocument::markColor
@@ -339,7 +339,7 @@ void YzisSchemaConfigColorTab::readConfig (const QString& config)
   for (int i = 0; i < KTextEditor::MarkInterface::reservedMarkersCount(); i++)
   {
     // arg(i+1) to match the number conventions in markinterface.h
-    m_markerColors[i] = YZSession::mOptions.readQColorEntry(QString("Color MarkType%1").arg(i + 1), mark[i]);
+    m_markerColors[i] = YZSession::mOptions->readQColorEntry(QString("Color MarkType%1").arg(i + 1), mark[i]);
     QPixmap pix(16, 16);
     pix.fill(m_markerColors[i]);
     m_combobox->changeItem(pix, m_combobox->text(i), i);
@@ -355,28 +355,28 @@ void YzisSchemaConfigColorTab::readConfig (const QString& config)
   connect( m_tmarker   , SIGNAL( changed( const QColor& ) ), SIGNAL( changed() ) );
   connect( m_linenumber, SIGNAL( changed( const QColor& ) ), SIGNAL( changed() ) );
   connect( m_markers   , SIGNAL( changed( const QColor& ) ), SLOT( slotMarkerColorChanged( const QColor& ) ) );
-  YZSession::mOptions.setGroup( "Global" );
+  YZSession::mOptions->setGroup( "Global" );
 }
 
 void YzisSchemaConfigColorTab::writeConfig (const QString& config)
 {
-  YZSession::mOptions.setGroup( config );
-  YZSession::mOptions.setQColorOption("Color Background", m_back->color());
-  YZSession::mOptions.setQColorOption("Color Selection", m_selected->color());
-  YZSession::mOptions.setQColorOption("Color Highlighted Line", m_current->color());
-  YZSession::mOptions.setQColorOption("Color Highlighted Bracket", m_bracket->color());
-  YZSession::mOptions.setQColorOption("Color Word Wrap Marker", m_wwmarker->color());
-  YZSession::mOptions.setQColorOption("Color Tab Marker", m_tmarker->color());
-  YZSession::mOptions.setQColorOption("Color Icon Bar", m_iconborder->color());
-  YZSession::mOptions.setQColorOption("Color Line Number", m_linenumber->color());
+  YZSession::mOptions->setGroup( config );
+  YZSession::mOptions->setQColorOption("Color Background", m_back->color());
+  YZSession::mOptions->setQColorOption("Color Selection", m_selected->color());
+  YZSession::mOptions->setQColorOption("Color Highlighted Line", m_current->color());
+  YZSession::mOptions->setQColorOption("Color Highlighted Bracket", m_bracket->color());
+  YZSession::mOptions->setQColorOption("Color Word Wrap Marker", m_wwmarker->color());
+  YZSession::mOptions->setQColorOption("Color Tab Marker", m_tmarker->color());
+  YZSession::mOptions->setQColorOption("Color Icon Bar", m_iconborder->color());
+  YZSession::mOptions->setQColorOption("Color Line Number", m_linenumber->color());
 
 #if KDE_IS_VERSION( 3,3,0 )
   for (int i = 0; i < KTextEditor::MarkInterface::reservedMarkersCount(); i++)
   {
-    YZSession::mOptions.setQColorOption(QString("Color MarkType%1").arg(i + 1), m_markerColors[i]);
+    YZSession::mOptions->setQColorOption(QString("Color MarkType%1").arg(i + 1), m_markerColors[i]);
   }
 #endif
-  YZSession::mOptions.setGroup( "Global" );
+  YZSession::mOptions->setGroup( "Global" );
 }
 
 void YzisSchemaConfigColorTab::slotMarkerColorChanged( const QColor& color)
@@ -430,18 +430,18 @@ void YzisSchemaConfigFontTab::readConfig (const QString& config)
   QFont f (KGlobalSettings::fixedFont());
 
   m_fontchooser->disconnect ( this );
-  YZSession::mOptions.setGroup( config );
-  m_fontchooser->setFont ( YZSession::mOptions.readQStringEntry("Font", f.toString()) );
+  YZSession::mOptions->setGroup( config );
+  m_fontchooser->setFont ( YZSession::mOptions->readQStringEntry("Font", f.toString()) );
   myFont = m_fontchooser->font();
   connect (m_fontchooser, SIGNAL (fontSelected( const QFont & )), this, SLOT (slotFontSelected( const QFont & )));
-  YZSession::mOptions.setGroup( "Global" );
+  YZSession::mOptions->setGroup( "Global" );
 }
 
 void YzisSchemaConfigFontTab::writeConfig (const QString& config)
 {
-  YZSession::mOptions.setGroup( config );
-  YZSession::mOptions.setQStringOption("Font", myFont.toString() );
-  YZSession::mOptions.setGroup( "Global" );
+  YZSession::mOptions->setGroup( config );
+  YZSession::mOptions->setQStringOption("Font", myFont.toString() );
+  YZSession::mOptions->setGroup( "Global" );
 }
 
 //END FontConfig
@@ -487,10 +487,10 @@ void YzisSchemaConfigFontColorTab::schemaChanged (uint schema)
   // set colors
 /*DISABLED FOR NOW mik ...  QPalette p ( m_defaultStyles->palette() );
   QColor _c ( "black" );//XXX? KGlobalSettings::baseColor() );
-  YZSession::mOptions.setGroup( YZSession::me->schemaManager()->schema(schema) );
-  p.setColor( QColorGroup::Base, YZSession::mOptions.readQColorEntry( "Color Background", _c ) );
+  YZSession::mOptions->setGroup( YZSession::me->schemaManager()->schema(schema) );
+  p.setColor( QColorGroup::Base, YZSession::mOptions->readQColorEntry( "Color Background", _c ) );
   _c = QColor("darkblue");//XXX? KGlobalSettings::highlightColor();
-  p.setColor( QColorGroup::Highlight, YZSession::mOptions.readQColorEntry( "Color Selection", _c ) );
+  p.setColor( QColorGroup::Highlight, YZSession::mOptions->readQColorEntry( "Color Selection", _c ) );
   _c = QColor( "black" );//XXX? l->at(0)->textColor(); // not quite as much of an assumption ;)
   p.setColor( QColorGroup::Text, _c );
   m_defaultStyles->viewport()->setPalette( p ); */
@@ -510,7 +510,7 @@ void YzisSchemaConfigFontColorTab::schemaChanged (uint schema)
     "to edit from the popup menu.<p>You can unset the Background and Selected "
     "Background colors from the popup menu when appropriate.") );
 
-  YZSession::mOptions.setGroup( "Global" );
+  YZSession::mOptions->setGroup( "Global" );
 }
 
 void YzisSchemaConfigFontColorTab::reload ()
@@ -621,10 +621,10 @@ void YzisSchemaConfigHighlightTab::schemaChanged (uint schema)
   // the color tab is fixed.
 /*DISABLE FOR NOW ... mik  QPalette p ( m_styles->palette() );
   QColor _c ( "black" );//XXX? KGlobalSettings::baseColor() );
-  YZSession::mOptions.setGroup(YZSession::me->schemaManager()->schema(m_schema) );
-  p.setColor( QColorGroup::Base, YZSession::mOptions.readQColorEntry( "Color Background", _c ) );
+  YZSession::mOptions->setGroup(YZSession::me->schemaManager()->schema(m_schema) );
+  p.setColor( QColorGroup::Base, YZSession::mOptions->readQColorEntry( "Color Background", _c ) );
   _c = QColor("darkblue");//XXX? KGlobalSettings::highlightColor();
-  p.setColor( QColorGroup::Highlight, YZSession::mOptions.readQColorEntry( "Color Selection", _c ) );
+  p.setColor( QColorGroup::Highlight, YZSession::mOptions->readQColorEntry( "Color Selection", _c ) );
   _c = QColor( "black" );//l->at(0)->textColor(); // not quite as much of an assumption ;)
   p.setColor( QColorGroup::Text, _c );
   m_styles->viewport()->setPalette( p );*/
@@ -655,7 +655,7 @@ void YzisSchemaConfigHighlightTab::schemaChanged (uint schema)
       new YzisStyleListItem( m_styles, itemData->name, l->at(itemData->defStyleNum), itemData );
     }
   }
-  YZSession::mOptions.setGroup( "Global" );
+  YZSession::mOptions->setGroup( "Global" );
 }
 
 void YzisSchemaConfigHighlightTab::reload ()

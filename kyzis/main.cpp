@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
 		}
 
 		QString initialSendKeys = args->getOption("c");
-		YZSession::mOptions.setGroup("Global");
+		YZSession::mOptions->setGroup("Global");
 		bool splash = YZSession::getBoolOption("blocksplash");
 		YZSession::setBoolOption("blocksplash", false);
 		if (initialSendKeys.length()) {

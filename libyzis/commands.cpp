@@ -1252,10 +1252,10 @@ QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 #if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = args.regs.begin(), end = args.regs.end();
 	for ( ; it != end; ++it )
-		args.view->sendMultipleKey(YZSession::mRegisters.getRegister(*it)[ 0 ]);
+		args.view->sendMultipleKey(YZSession::mRegisters->getRegister(*it)[ 0 ]);
 #else
 	for ( int ab = 0 ; ab < args.regs.size(); ++ab)
-		args.view->sendMultipleKey(YZSession::mRegisters.getRegister(args.regs.at(ab))[0]);
+		args.view->sendMultipleKey(YZSession::mRegisters->getRegister(args.regs.at(ab))[0]);
 #endif
 	args.view->commitNextUndo();
 	return QString::null;

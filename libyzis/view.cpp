@@ -274,14 +274,14 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		QValueList<QChar>::iterator end = mRegs.end();
 		for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 			QStringList list;
-		   	list << YZSession::mRegisters.getRegister( *it )[ 0 ] + modifiers + _key;
-			YZSession::mRegisters.setRegister( *it, list);
+		   	list << YZSession::mRegisters->getRegister( *it )[ 0 ] + modifiers + _key;
+			YZSession::mRegisters->setRegister( *it, list);
 		}
 #else
 		for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
 			QStringList list;
-		   	list << YZSession::mRegisters.getRegister( mRegs.at(ab) )[ 0 ] + modifiers + _key;
-			YZSession::mRegisters.setRegister( mRegs.at(ab), list);
+		   	list << YZSession::mRegisters->getRegister( mRegs.at(ab) )[ 0 ] + modifiers + _key;
+			YZSession::mRegisters->setRegister( mRegs.at(ab), list);
 		}
 #endif
 	}
@@ -1687,7 +1687,7 @@ YZSelectionMap YZView::getVisualSelection() {
 }
 
 void YZView::paste( QChar registr, bool after ) {
-	QStringList list = YZSession::mRegisters.getRegister( registr );
+	QStringList list = YZSession::mRegisters->getRegister( registr );
 	if ( list.isEmpty() ) return;
 
 	YZCursor pos( mainCursor->buffer() );
@@ -2005,7 +2005,7 @@ bool YZView::drawNextCol( ) {
 		if ( lastChar != tabChar ) {
 			listChar = drawMode && getLocalBoolOption( "list" ) && lastChar == ' ';
 			if ( listChar ) {
-				YZInternalOption *opt = YZSession::mOptions.getOption("Global\\listchars");
+				YZInternalOption *opt = YZSession::mOptions->getOption("Global\\listchars");
 				if (opt && stringHasOnlySpaces(sCurLine.mid(curx)) ) {
 					QString option = opt->getValueForKey("trail");
 					if ( !option.isNull() ) {
@@ -2025,7 +2025,7 @@ bool YZView::drawNextCol( ) {
 			lastChar = ' ';
 			listChar = getLocalBoolOption( "list" );
 			if ( listChar ) {
-				YZInternalOption *opt = YZSession::mOptions.getOption("Global\\listchars");
+				YZInternalOption *opt = YZSession::mOptions->getOption("Global\\listchars");
 				if (opt) {
 					QString option = opt->getValueForKey("tab");
 					if ( !option.isNull() && option.length() > 0 ) {
@@ -2253,63 +2253,63 @@ QString YZView::refreshScreenInternal() {
 }
 
 int YZView::getLocalIntOption( const QString& option ) {
-	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) ) //find the local one ?
-		return YZSession::mOptions.readIntEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, 0 );
+	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) ) //find the local one ?
+		return YZSession::mOptions->readIntEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, 0 );
 	else
-		return YZSession::mOptions.readIntEntry( "Global\\" + option, 0 ); // else give the global default if any
+		return YZSession::mOptions->readIntEntry( "Global\\" + option, 0 ); // else give the global default if any
 }
 
 void YZView::setLocalIntOption( const QString& key, int option ) {
-	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions.setIntOption( key, option );
+	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions->setIntOption( key, option );
 }
 
 bool YZView::getLocalBoolOption( const QString& option ) {
-	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
-		return YZSession::mOptions.readBoolEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, false );
+	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
+		return YZSession::mOptions->readBoolEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, false );
 	else
-		return YZSession::mOptions.readBoolEntry( "Global\\" + option, false );
+		return YZSession::mOptions->readBoolEntry( "Global\\" + option, false );
 }
 
 void YZView::setLocalBoolOption( const QString& key, bool option ) {
-	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions.setBoolOption( key, option );
+	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions->setBoolOption( key, option );
 }
 
 QString YZView::getLocalStringOption( const QString& option ) {
-	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
-		return YZSession::mOptions.readQStringEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QString("") );
+	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
+		return YZSession::mOptions->readQStringEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QString("") );
 	else
-		return YZSession::mOptions.readQStringEntry( "Global\\" + option, QString("") );
+		return YZSession::mOptions->readQStringEntry( "Global\\" + option, QString("") );
 }
 
 void YZView::setLocalQStringOption( const QString& key, const QString& option ) {
-	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions.setQStringOption( key, option );
+	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions->setQStringOption( key, option );
 }
 
 QStringList YZView::getLocalStringListOption( const QString& option ) {
-	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
-		return YZSession::mOptions.readQStringListEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QStringList() );
+	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
+		return YZSession::mOptions->readQStringListEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QStringList() );
 	else
-		return YZSession::mOptions.readQStringListEntry( "Global\\" + option, QStringList() );
+		return YZSession::mOptions->readQStringListEntry( "Global\\" + option, QStringList() );
 }
 
 void YZView::setLocalQStringListOption( const QString& key, const QStringList& option ) {
-	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions.setQStringListOption( key, option );
+	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions->setQStringListOption( key, option );
 }
 
 QColor YZView::getLocalColorOption( const QString& option ) {
-	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
-		return YZSession::mOptions.readQColorEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QColor("white") );
+	if ( YZSession::mOptions->hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
+		return YZSession::mOptions->readQColorEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QColor("white") );
 	else
-		return YZSession::mOptions.readQColorEntry( "Global\\" + option, QColor("white") );
+		return YZSession::mOptions->readQColorEntry( "Global\\" + option, QColor("white") );
 }
 
 void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
-	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
-	YZSession::mOptions.setQColorOption( key, option );
+	YZSession::mOptions->setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions->setQColorOption( key, option );
 }
 
 void YZView::gotoStickyCol( unsigned int Y ) {
@@ -2370,17 +2370,17 @@ void YZView::stopRecordMacro() {
 	QValueList<QChar>::iterator end = mRegs.end();
 	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 		QStringList list;
-		QString ne = YZSession::mRegisters.getRegister( *it )[ 0 ];
+		QString ne = YZSession::mRegisters->getRegister( *it )[ 0 ];
 		list << ne.mid( 0, ne.length() - 1 ); //remove the last 'q' which was recorded ;)
-		YZSession::mRegisters.setRegister( *it, list);
+		YZSession::mRegisters->setRegister( *it, list);
 	}
 	mRegs = QValueList<QChar>();
 #else
 	for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
 		QStringList list;
-		QString ne = YZSession::mRegisters.getRegister(mRegs.at(ab))[0];
+		QString ne = YZSession::mRegisters->getRegister(mRegs.at(ab))[0];
 		list << ne.mid( 0, ne.length() - 1 ); //remove the last 'q' which was recorded ;)
-		YZSession::mRegisters.setRegister( mRegs.at(ab), list);
+		YZSession::mRegisters->setRegister( mRegs.at(ab), list);
 	}
 	mRegs = QList<QChar>();
 #endif

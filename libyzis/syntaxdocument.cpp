@@ -566,13 +566,13 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
   // We'll store the ModeList in katesyntaxhighlightingrc
   //KConfig config("katesyntaxhighlightingrc", false, false);
-  YZInternalOptionPool& config = YZSession::mOptions;
+  YZInternalOptionPool* config = YZSession::mOptions;
 
   // figure our if the kate install is too new
-  config.setGroup ("General");
-  if (config.readIntEntry ("Version") > config.readIntEntry ("CachedVersion"))
+  config->setGroup ("General");
+  if (config->readIntEntry ("Version") > config->readIntEntry ("CachedVersion"))
   {
-    config.setIntOption ("CachedVersion", config.readIntEntry ("Version"));
+    config->setIntOption ("CachedVersion", config->readIntEntry ("Version"));
     force = true;
   }
 
@@ -592,7 +592,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
     QString Group="HL Cache "+ *it;
 
 	// Let's go to this group
-	config.setGroup(Group);
+	config->setGroup(Group);
 
     // stat the file
     struct stat sbuf;
@@ -600,20 +600,20 @@ void YzisSyntaxDocument::setupModeList (bool force)
     stat(QFile::encodeName(*it), &sbuf);
 
     // If the group exist and we're not forced to read the xml file, let's build myModeList for katesyntax..rc
-    if ( config.hasGroup(Group) && !force && (sbuf.st_mtime == config.readIntEntry("lastModified")) )
+    if ( config->hasGroup(Group) && !force && (sbuf.st_mtime == config->readIntEntry("lastModified")) )
     {
       // Let's make a new YzisSyntaxModeListItem to instert in myModeList from the information in katesyntax..rc
       YzisSyntaxModeListItem *mli=new YzisSyntaxModeListItem;
-      mli->name       = config.readQStringEntry("name");
+      mli->name       = config->readQStringEntry("name");
       //mli->nameTranslated = i18n("Language",mli->name.utf8());
-      mli->section    = config.readQStringEntry("section").utf8();
-      mli->mimetype   = config.readQStringEntry("mimetype");
-      mli->extension  = config.readQStringEntry("extension");
-      mli->version    = config.readQStringEntry("version");
-      mli->priority   = config.readQStringEntry("priority");
-      mli->author    = config.readQStringEntry("author");
-      mli->license   = config.readQStringEntry("license");
-      mli->hidden   =  config.readBoolEntry("hidden");
+      mli->section    = config->readQStringEntry("section").utf8();
+      mli->mimetype   = config->readQStringEntry("mimetype");
+      mli->extension  = config->readQStringEntry("extension");
+      mli->version    = config->readQStringEntry("version");
+      mli->priority   = config->readQStringEntry("priority");
+      mli->author    = config->readQStringEntry("author");
+      mli->license   = config->readQStringEntry("license");
+      mli->hidden   =  config->readBoolEntry("hidden");
       mli->identifier = *it;
 
       // Apend the item to the list
@@ -669,19 +669,19 @@ void YzisSyntaxDocument::setupModeList (bool force)
               mli->identifier = *it;
 
               // Now let's write or overwrite (if force==true) the entry in katesyntax...rc
-              config.setGroup(Group);
-              config.setQStringOption("name",mli->name);
-			  config.setQStringOption("section",mli->section);
-              config.setQStringOption("mimetype",mli->mimetype);
-              config.setQStringOption("extension",mli->extension);
-              config.setQStringOption("version",mli->version);
-              config.setQStringOption("priority",mli->priority);
-              config.setQStringOption("author",mli->author);
-              config.setQStringOption("license",mli->license);
-              config.setBoolOption("hidden",mli->hidden);
+              config->setGroup(Group);
+              config->setQStringOption("name",mli->name);
+			  config->setQStringOption("section",mli->section);
+              config->setQStringOption("mimetype",mli->mimetype);
+              config->setQStringOption("extension",mli->extension);
+              config->setQStringOption("version",mli->version);
+              config->setQStringOption("priority",mli->priority);
+              config->setQStringOption("author",mli->author);
+              config->setQStringOption("license",mli->license);
+              config->setBoolOption("hidden",mli->hidden);
 
               // modified time to keep cache in sync
-              config.setIntOption("lastModified", sbuf.st_mtime);
+              config->setIntOption("lastModified", sbuf.st_mtime);
 
               // Now that the data is in the config file, translate section
 			  mli->section    = "Language Section"; // We need the i18n context for when reading again the config
@@ -710,9 +710,9 @@ void YzisSyntaxDocument::setupModeList (bool force)
     }
   }
 #if QT_VERSION < 0x040000
-  config.saveTo( QDir::homeDirPath()+"/.yzis/hl.conf", "HL Cache", "", true );
+  config->saveTo( QDir::homeDirPath()+"/.yzis/hl.conf", "HL Cache", "", true );
 #else
-  config.saveTo( QDir::homePath()+"/.yzis/hl.conf", "HL Cache", "", true );
+  config->saveTo( QDir::homePath()+"/.yzis/hl.conf", "HL Cache", "", true );
 #endif
 }
 

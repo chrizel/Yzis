@@ -214,7 +214,7 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		if ( ! text.isNull() ) {
 			if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_INSERT || mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_REPLACE ) {
 				QChar reg = '\"';
-				YZSession::mRegisters.setRegister( reg, QStringList::split( "\n", text ) );
+				YZSession::mRegisters->setRegister( reg, QStringList::split( "\n", text ) );
 				mParent->paste( reg, true );
 			}
 		}

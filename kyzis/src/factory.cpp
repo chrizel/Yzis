@@ -69,6 +69,7 @@ KYZisFactory::KYZisFactory() :
 }
 
 KYZisFactory::~KYZisFactory() {
+	kdDebug() << "Factory gets destroyed !" << endl;
 }
 
 static KStaticDeleter<KYZisFactory> sdFactory;

@@ -15,6 +15,8 @@ checkAutoconf()
 {
   if test -x "`$WHICH autoconf-2.5x 2>/dev/null`" ; then	
     AUTOCONF="`$WHICH autoconf-2.5x`"
+  elif test -x "`$WHICH autoconf-2.59 2>/dev/null`" ; then
+    AUTOCONF="`$WHICH autoconf-2.59`"
   elif test -x "`$WHICH autoconf-2.57 2>/dev/null`" ; then
     AUTOCONF="`$WHICH autoconf-2.57`"
   elif test -x "`$WHICH autoconf257 2>/dev/null`" ; then
@@ -41,6 +43,9 @@ checkAutoheader()
   if test -x "`$WHICH autoheader-2.5x 2>/dev/null`" ; then
     AUTOHEADER="`$WHICH autoheader-2.5x`"
     AUTOM4TE="`$WHICH autom4te-2.5x`"
+  elif test -x "`$WHICH autoheader-2.59 2>/dev/null`" ; then
+    AUTOHEADER="`$WHICH autoheader-2.59`"
+    AUTOM4TE="`$WHICH autom4te-2.59`"
   elif test -x "`$WHICH autoheader-2.57 2>/dev/null`" ; then
     AUTOHEADER="`$WHICH autoheader-2.57`"
     AUTOM4TE="`$WHICH autom4te-2.57`"

@@ -143,7 +143,7 @@ void YZModeInsert::commandPageDown( YZView* mView, const QString& ) {
 	unsigned int line = mView->getCurrentTop() + mView->getLinesVisible();
 
 	if (mView->getLocalBoolOption("wrap")) {
-		YZViewCursor temp(mView);
+		YZViewCursor temp = mView->viewCursor();
 		mView->gotodxdy( &temp, mView->getDrawCurrentLeft(),
 				mView->getDrawCurrentTop() + mView->getLinesVisible() );
 

@@ -327,7 +327,7 @@ class YzisHlRegExpr : public YzisHlItem
 {
   public:
     YzisHlRegExpr(int attribute, int context,signed char regionId,signed char regionId2 ,QString expr, bool insensitive, bool minimal);
-    ~YzisHlRegExpr() { delete Expr; };
+    ~YzisHlRegExpr() { delete Expr; }
 
     virtual int checkHgl(const QString& text, int offset, int len);
 	virtual QStringList *capturedTexts();
@@ -1250,6 +1250,7 @@ YzisHighlighting::~YzisHighlighting()
 {
   for (uint i=0; i < m_contexts.size(); ++i)
     delete m_contexts[i];
+  m_contexts.clear();
 }
 
 #if QT_VERSION < 0x040000
@@ -1869,6 +1870,8 @@ void YzisHighlighting::init()
   if (noHl)
     return;
 
+  for (uint i=0; i < m_contexts.size(); ++i)
+    delete m_contexts[i];
   m_contexts.clear ();
   makeContextList();
 
@@ -1887,6 +1890,8 @@ void YzisHighlighting::done()
   if (noHl)
     return;
 
+  for (uint i=0; i < m_contexts.size(); ++i)
+    delete m_contexts[i];
   m_contexts.clear ();
   internalIDList.clear();
 #if QT_VERSION >= 0x040000

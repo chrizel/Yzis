@@ -291,7 +291,11 @@ bool YZInternalOptionPool::fillOptionFromString( YZOption* opt, const QString& e
 		ov = mOptions[ option_key ];
 	} else {
 		created = true;
-		ov = new YZOptionValue( *opt->defaultValue() );
+		// we try to find a global one
+		if ( mOptions.contains( "Global\\" + opt->name() ) )
+			ov = new YZOptionValue( *mOptions[ "Global\\" + opt->name() ] );
+		else
+			ov = new YZOptionValue( *opt->defaultValue() );
 	}
 	bool ret = opt->setValue( entry, ov );
 	if ( created ) {

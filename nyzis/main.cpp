@@ -25,6 +25,7 @@
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
+#include <qtimer.h>
 #include <getopt.h> // getopt
 #include <locale.h>
 
@@ -57,7 +58,6 @@
 #include <X11/Xlib.h>
 
 #include <libintl.h>
-
 
 typedef void ( *sighandler_t )( int );
 

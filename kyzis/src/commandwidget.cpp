@@ -47,7 +47,8 @@ void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 
 void KYZisCommand::focusInEvent (QFocusEvent *) {
 	yzDebug() << "KYZisCommand : Focus IN -> EX mode" << endl;
-	_parent->gotoExMode();
+	if ( _parent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX )
+		_parent->gotoExMode();
 }
 
 void KYZisCommand::focusOutEvent (QFocusEvent *e) {

@@ -189,19 +189,18 @@ void YZSession::exitRequest( int errorCode ) {
 	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
-		b->getSwapFile()->unlink();
 		delete b;
 	}
 	quit( errorCode );
 }
 
 void YZSession::sendMultipleKeys ( const QString& text) {
-	QStringList list = QStringList::split("<ENTER>", text);
-	QStringList::Iterator it = list.begin(), end = list.end();
-	for (; it != end; ++it) {
+//	QStringList list = QStringList::split("<ENTER>", text);
+/*	QStringList::Iterator it = list.begin(), end = list.end();
+	for (; it != end; ++it) {*/
 		YZView* cView = YZSession::me->currentView();
-		cView->sendMultipleKey( *it + "<ENTER>" );
+		cView->sendMultipleKey(/* *it + "<ENTER>" */ text);
 		qApp->processEvents();
-	}
+/*	}*/
 }
 

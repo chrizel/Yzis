@@ -89,13 +89,12 @@ int main(int argc, char **argv) {
 				widget->createBuffer( args->url( i ).url() );
 		}
 
-		QCString initialSendKeys = args->getOption("c");
+		QString initialSendKeys = args->getOption("c");
 		YZSession::mOptions.setGroup("Global");
 		bool splash = YZSession::getBoolOption("blocksplash");
 		YZSession::setBoolOption("blocksplash", false);
 		if (initialSendKeys.length()) {
-			QString keys = (const char *) initialSendKeys;
-			YZSession::me->sendMultipleKeys(keys);
+			YZSession::me->sendMultipleKeys(initialSendKeys);
 		}
 		YZSession::setBoolOption("blocksplash", splash);
 

@@ -1,0 +1,134 @@
+<chapter id="introduction">
+	<title>Introduction</title>
+
+	<sect1 id="about">
+		<title>About Yzis</title>
+		<para>
+		Yzis is a vi-compatible editor that is composed of a generic vi engine and
+		independant GUI. It is developped in C++ and relies on Qt for the some of the
+		background classes (lists and strings mainly). A KDE GUI and a ncurses based
+		GUI are available.
+		</para>	
+		
+		<mediaobject>
+			<imageobject> <imagedata fileref="pics/nyzis.png" format="PNG" /> </imageobject>
+			<caption>
+				<para>The ncurses GUI.</para>
+			</caption>
+		</mediaobject>
+
+		<mediaobject>
+			<imageobject> <imagedata fileref="pics/kyzis.png" format="PNG" /> </imageobject>
+			<caption>
+				<para>The KDE GUI.</para>
+			</caption>
+		</mediaobject>
+	
+	</sect1>
+
+	<sect1 id="requirements">
+		<title>Requirements</title>
+		
+		<itemizedlist>
+			<listitem><para> Qt 3.x or Qt 4.0(strictly superior a beta1 :)</para></listitem>
+			<listitem><para>Lua 5.x</para></listitem>
+			<listitem><para>For kyzis : KDE 3.2.x</para></listitem>
+			<listitem><para>For nyzis : NCurses 5 _WITH_ wide characters support (USE unicode on gentoo)</para></listitem>
+			<listitem><para>Optionnally : pslib (pslib.sf.net)</para></listitem>
+		</itemizedlist>	
+		
+	</sect1>
+		
+	<sect1 id="history">
+		<title>History</title>
+	
+		<para>
+		Before working on Yzis, the authors (Mickael Marchand, Thomas Capricalli and
+		Philippe Fremy) had been working on GVim. GVim is clearly the best vi
+		compatible editor today. It contains tons of features, which are very clear
+		improvements upon the original vi: visual selection, unlimited undo, powerful
+		syntax highlighting, script language, splitted windows, ...
+		</para>
+
+		<para>
+		We did two things with GVim. First, we ported it on KDE and created KVim. The
+		second step was to make KVim embeddable as an editor component into any KDE
+		application. The idea was to be able to use a vi editor anywhere: in KDevelop,
+		in Kate, in KMail, ... We managed to complete both tasks but the second one
+		was very difficult to achieve and a number of problems could not be overcome.
+		For example, kvim can not have multiple windows on the same buffer, and thus
+		won't integrate in Kate.
+		</para>
+		
+		<para>
+		While working with the gvim code base, we have been comfronted with a growing
+		amount of difficulites:
+		- there is a huge pile of C files without much documentation.
+		- it is difficult to find one's way through the code.
+		- the code was written in C and has very little abstraction, which make it
+		difficult to follow.
+		- the vi engine is tied to the concept of console editor. We have to add hacks
+		after hacks to make it work as a graphical component (for example, we need
+		to fork a process, embed a graphical window, and run an event loop at full
+		speed while still not taking the whole CPU to just make the component work).
+		- the main author of GVim is very reluctant to add any small change, even
+		those that won't affect the current behaviour
+		- the codebase is very big and the author does not want to introduce any new
+		feature, in fear of breaking something.
+		</para>
+
+		<para>
+		So, on one side we had implementation limitations and problems, on the other
+		side it was not possible to do any new developments on the editor. We
+		discussed that with the GVim team and came to the conclusion that it was not
+		possible to work with GVim to have a vi-like editor in KDE as a good
+		component.
+		</para>
+
+		<para>
+		At this point, the decision was simple. Either spend lot of time in working
+		around limitations of GVim, or dropping the idea of a good vi editor component
+		for KDE or start a new vi editor. Kudos to Thomas Capricelli and Mickael
+		Marchand who took over the third decision. This decision was taken shortly
+		before Fosdem 2003. The design documents and the name were hacked during the
+		Fosdem.
+		</para>
+
+		<para>
+		They put up a website, a subversion server, mailing lists and started
+		coding. To avoid the many problems of gvim, we took the following decisions:
+		<orderedlist numeration="arabic">
+			<listitem><para>clearly separate the vi engine from the gui</para></listitem>
+			<listitem><para>use C++ to provide a clean design</para></listitem>
+			<listitem><para>abstract the views, the buffer and the gui in the engine</para></listitem>
+			<listitem><para>have a KDE gui</para></listitem>
+			<listitem><para>have a text gui</para></listitem>
+			<listitem><para>provide a C interface in case a hard-core C coder wants to contribute</para></listitem>
+			<listitem><para>use some Qt classes for the engine. Qt would bring a string class that
+			handles unicode correctly (multibyte support is knightmare in gvim), efficient
+			lists implementations, and other goodies. Moreover, we were very familiar and
+			efficient with Qt.</para></listitem>
+			<listitem><para>Use tinyQ as a backup solution for the people not willing to link with Qt
+			just for a few template classes.</para></listitem>
+		</orderedlist>
+		</para>
+
+		<para>
+		Over the time, maintaining a C binding to C++ turn out to be quite tedious and
+		time consuming. It would also make the code quite complicated. So the C
+		binding was dropped and yzis started to develop slowly but steadily.
+		</para>
+	
+	</sect1>
+
+	<sect1 id="authors">
+		<title>Authors</title>
+		<simplelist>
+			<member>Mickael Marchand <![CDATA[<mikmak@yzis.org>]]></member>
+			<member>Thomas Capricelli <![CDATA[<orzel@yzis.org>]]></member>
+			<member>Philippe Fremy <![CDATA[<phil@freehackers.org>]]></member>
+			<member>Loic Pauleve <![CDATA[<panard@inzenet.org>]]></member>
+		</simplelist>
+	</sect1>
+	
+</chapter>

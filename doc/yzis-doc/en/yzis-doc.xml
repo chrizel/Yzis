@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+"/usr/share/sgml/docbook/xml-dtd-4.2/docbookx.dtd" [
+	
+	<!ENTITY insert "<command>insert</command>">
+	<!ENTITY command "<command>command</command>">
+	<!ENTITY replace "<command>replace</command>">
+
+	<!ENTITY introduction SYSTEM "introduction.docbook">
+	<!ENTITY userguide SYSTEM "userguide.docbook">
+	<!ENTITY commandref SYSTEM "commandref.docbook">
+]>
+
+
+<book id="yzis-doc">
+	
+	<bookinfo>
+		<title>Yzis Documentation</title>
+			<mediaobject>
+				<imageobject> <imagedata fileref="test.jpg" format="JPG" /> </imageobject>
+			</mediaobject>
+	</bookinfo>
+	
+	&introduction;
+	&userguide;
+	&commandref;
+	
+</book>

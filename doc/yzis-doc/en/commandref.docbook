@@ -1,0 +1,11 @@
+<chapter id="command-ref">
+	<title>Command reference</title>
+	<itemizedlist>
+		<listitem><para>dd</para>
+			<para>Deletes the current line.</para>
+		</listitem>
+		<listitem><para>yy</para>
+			<para>Yanks the current line.</para>
+		</listitem>
+	</itemizedlist>	
+</chapter>

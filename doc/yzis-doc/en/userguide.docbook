@@ -1,0 +1,136 @@
+
+<!-- The Userguide chapter -->
+
+<chapter id="userguide">
+	<title>Userguide</title>
+	<para>
+	The intention with this userguide is to give a brife overview of the Yzis 
+	editor and its capabilities. It's very basic and the idea is to get new Yzis 
+	user started quickly. It covers the most essential parts like starting, exiting,
+	the different modes, basic editing and some basic commands.
+	</para>
+
+	<para>
+	The userguide will proceed from the ncurses GUI, but ofcourse everything works identical
+	in the KDE GUI.
+	</para>
+
+
+	<!-- Section Start Yzis -->
+	<sect1 id="start-yzis">
+		<title>Start Yzis</title>
+		
+		<para>				
+		To start Yzis (the ncurses version) type:
+		</para>
+
+		<screen>
+<prompt>$</prompt> <command>yzis</command>
+		</screen>
+
+		<para>
+		But normally you would specify a file you wish to edit after the Yzis command:
+		</para>
+
+		<screen>
+<prompt>$</prompt> <command>yzis <replaceable>filename</replaceable></command>
+		</screen>
+
+		<para>
+		When you have opened a file it would probably look something like this:
+		</para>
+
+		<mediaobject>
+			<imageobject> <imagedata fileref="pics/nyzis_cmd.png" format="PNG" /> </imageobject>
+		</mediaobject>
+
+		<para>
+		You will automaticly be placed in &command; mode when the file
+		is opened. Which brings us on to the next section...
+		</para>	
+	</sect1>
+
+
+	<!-- Section Modes -->
+	<sect1 id="modes">
+		<title>Modes</title>
+		
+		<para>
+		There are three different <command>modes</command> in Yzis.
+		</para>
+
+		<itemizedlist>
+			<listitem><para>Insert</para></listitem>
+			<listitem><para>Command</para></listitem>
+			<listitem><para>Replace</para></listitem>
+		</itemizedlist>
+		
+		<para>The &insert; mode is used for inserting text.
+		The &command; mode is used for executing Yzis commands that for instance modifies text.
+		The third mode, &replace;, is also used for inserting
+		text, but unlike &insert; mode it overrides the current text (replaces).
+		</para>
+	
+		<para>
+		As we mentioned in the previous chapter you are automaticly being placed in
+		&command; mode when you open a file. You can always tell which
+		the current mode is by looking at the status bar in Yzis:
+		</para>
+
+		<mediaobject>
+			<imageobject>
+				<imagedata fileref="pics/nyzis_cmd.png" format="PNG" />
+			</imageobject>
+		</mediaobject>
+
+		<para>
+		"Awaiting Command" in the status bar indicates &command; mode.
+		</para>
+		
+		<para>
+		Changing between the modes is achieved by pressing different keys.
+		</para>
+		
+		<itemizedlist>
+			<listitem><para>Insert = i</para></listitem>
+			<listitem><para>Command = <![CDATA[<ESC>]]></para></listitem>
+			<listitem><para>Replace = R</para></listitem>
+		</itemizedlist>
+		
+		<para>
+		Pressing <command>i</command> when we have opened a file would result in
+		changing to &insert; mode:
+		</para>
+
+		<mediaobject>
+			<imageobject>
+			<imagedata fileref="pics/nyzis_insert.png" format="PNG" />
+			</imageobject>
+		</mediaobject>
+		
+		<para>
+		"Insert" in the status bar indicates &insert; mode.
+		</para>
+
+		<para>
+		To enter &replace;, press <command>R</command>:
+		</para>
+
+		<mediaobject>
+			<imageobject>
+			<imagedata fileref="pics/nyzis_replace.png" format="PNG" />
+			</imageobject>
+		</mediaobject>
+		
+		<para>
+		"Replace" in the status bar indicates &replace; mode.
+		</para>
+
+		<para>
+		You have now been introduced to the three modes in Yzis. You know how to change
+		between them, but you still haven't learn to use any of them. In the next chapter 
+		you will get more familiar with the	&insert; mode.
+		</para>
+		
+	</sect1>
+</chapter>

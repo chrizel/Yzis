@@ -31,10 +31,11 @@ void YZView::setVisibleLines(int nb) {
 }
 
 /* Used by the buffer to post events */
-void YZView::sendChar( const QString& c ) {
+void YZView::sendChar( QChar c) {
 	QString lin;
 
-	if ('\033'==c[ 0 ].unicode()) {
+	if ('\033'==c) {
+		//why do we check that ?
 		if (cursor->getX() > current_maxx) {
 			cursor->setX(current_maxx);
 			updateCursor();
@@ -47,7 +48,7 @@ void YZView::sendChar( const QString& c ) {
 	switch(mode) {
 		case YZ_VIEW_MODE_INSERT:
 			/* handle adding a char */
-			if ( c[ 0 ].unicode() == '\n') {// <ENTER> 
+			if ( c.unicode() == 13 ) {// <ENTER> 
 				buffer->addNewLine(cursor->getX(),cursor->getY());
 				cursor->incY();
 				cursor->setX( 0 );

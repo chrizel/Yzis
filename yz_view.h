@@ -30,7 +30,7 @@ public:
 	/**
 	 * transfer a key event from gui to core
 	 */
-	void	sendChar( const QString& );
+	void	sendChar( QChar );
 
 	/**
 	  * Used by the buffer to post events

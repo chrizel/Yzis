@@ -17,7 +17,7 @@ YZBuffer::YZBuffer(QString _path) {
 	view_list.setAutoDelete( true ); //we own views
 }
 
-void YZBuffer::addChar (int x, int y, const QString& c) {
+void YZBuffer::addChar (int x, int y, QChar c) {
 	/* brute force, we'll have events specific for that later on */
 	QString l=findLine(y);
 	if (l.isNull()) return;
@@ -30,7 +30,7 @@ void YZBuffer::addChar (int x, int y, const QString& c) {
 	postEvent(mk_event_setline(y,&l));
 }
 
-void YZBuffer::chgChar (int x, int y, const QString& c) {
+void YZBuffer::chgChar (int x, int y, QChar c) {
 	/* brute force, we'll have events specific for that later on */
 	QString l=findLine(y);
 	if (l.isNull()) return;

@@ -157,21 +157,35 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 	}
 }
 
-uint YZBuffer::firstNonBlankChar( uint line )
-{
-	uint i=0;
-	QString s = data(line);
-	if (s == QString::null) return 0;
-	while( s[i].isSpace() && i < s.length()) {
-		i++;
-	}
-	return i;
-}
-	
-
 // ------------------------------------------------------------------------
 //                            Line Operations 
 // ------------------------------------------------------------------------
+
+void  YZBuffer::appendLine(const QString &l) {
+	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::appendLine() : adding a line with '\n' inside" );
+
+	mUndoBuffer->addBufferOperation( BufferOperation::ADDLINE, 
+	                                 QString(), 0, lineCount() );
+	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, 
+	                                   l,  0, lineCount());
+
+	mText.append(new YZLine(l));
+	updateAllViews();
+}
+
+
+void  YZBuffer::insertLine(const QString &l, unsigned int line) {
+	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::insertLine() : adding a line with '\n' inside" );
+	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::insertLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
+
+	mUndoBuffer->addBufferOperation( BufferOperation::ADDLINE, 
+	                                   QString(), 0, line );
+	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, 
+	                                   l, 0, line );
+
+	mText.insert(line, new YZLine(l));
+	updateAllViews();
+}
 
 void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	YZASSERT_MSG( line < lineCount(), QString(
@@ -231,32 +245,6 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	updateAllViews(); //hmm ...
 }
 
-void  YZBuffer::insertLine(const QString &l, unsigned int line) {
-	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::insertLine() : adding a line with '\n' inside" );
-	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::insertLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
-
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDLINE, 
-	                                   QString(), 0, line );
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, 
-	                                   l, 0, line );
-
-	mText.insert(line, new YZLine(l));
-	updateAllViews();
-}
-
-void  YZBuffer::appendLine(const QString &l) {
-	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::appendLine() : adding a line with '\n' inside" );
-
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDLINE, 
-	                                 QString(), 0, lineCount() );
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, 
-	                                   l,  0, lineCount());
-
-	mText.append(new YZLine(l));
-	updateAllViews();
-}
-
-
 void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::replaceLine() : replacing a line with '\n' inside" );
 	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::replaceLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
@@ -273,6 +261,90 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 	YZView *it;
 	for ( it = mViews.first(); it ; it = mViews.next() )
 		it->invalidateLine( line );
+}
+
+// ------------------------------------------------------------------------
+//                            Content Operations 
+// ------------------------------------------------------------------------
+
+QString	YZBuffer::data(unsigned int no)
+{
+#if 0
+	//we need to check this line exists.
+	//the guy i talked with on IRC was right to doubt about it :)
+	//so I return QString::null then for each call we need to check for if (!line.isNull())
+	//trying if(!line) is NOT working (read QString doc)
+#endif
+
+	YZLine *l = at(no);
+	if(!l)
+		return QString::null;
+	else
+		return l->data();
+}
+
+QString YZBuffer::getWholeText() {
+	QString text;
+	for(YZLine *it = mText.first(); it; it = mText.next())
+		text += it->data() + "\n";
+	text.truncate( text.length()-1 );
+	return text;
+}
+
+uint YZBuffer::firstNonBlankChar( uint line )
+{
+	uint i=0;
+	QString s = data(line);
+	if (s == QString::null) return 0;
+	while( s[i].isSpace() && i < s.length()) {
+		i++;
+	}
+	return i;
+}
+	
+// ------------------------------------------------------------------------
+//                            File Operations 
+// ------------------------------------------------------------------------
+
+void YZBuffer::load(const QString& file) {
+	mText.clear();
+	if ( !file.isNull() ) { 
+		//hmm changing file :), update Session !!!!
+		mSession->updateBufferRecord( mPath, file, this );
+		mPath = file;
+	}
+	QFile fl( mPath );
+	//opens and eventually create the file
+	if ( fl.open( IO_ReadOnly ) ) {
+		QTextStream stream( &fl );
+		while ( !stream.atEnd() ) {
+			QString line(stream.readLine() ); // line of text excluding '\n'
+			appendLine( line );
+		}
+		fl.close();
+	}
+	if ( ! mText.count() ) {
+		mUndoBuffer->setInsideUndo( true );
+		appendLine("");
+		mUndoBuffer->setInsideUndo( false );
+	}
+	updateAllViews();
+}
+
+void YZBuffer::save() {
+	if (mPath.isEmpty())
+		return;
+	QFile file( mPath );
+	if ( file.open( IO_WriteOnly ) ) {
+		QTextStream stream( &file );
+		for(YZLine *it = mText.first(); it; it = mText.next()) {
+			if (it != mText.getFirst()) {
+				stream << "\n";
+			}
+			stream << it->data();
+		}
+		file.close();
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -321,74 +393,5 @@ YZView* YZBuffer::firstView() {
 void YZBuffer::rmView(YZView *v) {
 	int f = mViews.remove(v);
 	yzDebug() << "buffer: removeView found " << f << " views" << endl;
-}
-
-// ------------------------------------------------------------------------
-//                            Content Operations 
-// ------------------------------------------------------------------------
-
-QString	YZBuffer::data(unsigned int no)
-{
-#if 0
-	//we need to check this line exists.
-	//the guy i talked with on IRC was right to doubt about it :)
-	//so I return QString::null then for each call we need to check for if (!line.isNull())
-	//trying if(!line) is NOT working (read QString doc)
-#endif
-
-	YZLine *l = at(no);
-	if(!l)
-		return QString::null;
-	else
-		return l->data();
-}
-
-QString YZBuffer::getWholeText() {
-	QString text;
-	for(YZLine *it = mText.first(); it; it = mText.next())
-		text += it->data() + "\n";
-	text.truncate( text.length()-1 );
-	return text;
-}
-
-void YZBuffer::load(const QString& file) {
-	mText.clear();
-	if ( !file.isNull() ) { 
-		//hmm changing file :), update Session !!!!
-		mSession->updateBufferRecord( mPath, file, this );
-		mPath = file;
-	}
-	QFile fl( mPath );
-	//opens and eventually create the file
-	if ( fl.open( IO_ReadOnly ) ) {
-		QTextStream stream( &fl );
-		while ( !stream.atEnd() ) {
-			QString line(stream.readLine() ); // line of text excluding '\n'
-			appendLine( line );
-		}
-		fl.close();
-	}
-	if ( ! mText.count() ) {
-		mUndoBuffer->setInsideUndo( true );
-		appendLine("");
-		mUndoBuffer->setInsideUndo( false );
-	}
-	updateAllViews();
-}
-
-void YZBuffer::save() {
-	if (mPath.isEmpty())
-		return;
-	QFile file( mPath );
-	if ( file.open( IO_WriteOnly ) ) {
-		QTextStream stream( &file );
-		for(YZLine *it = mText.first(); it; it = mText.next()) {
-			if (it != mText.getFirst()) {
-				stream << "\n";
-			}
-			stream << it->data();
-		}
-		file.close();
-	}
 }
 

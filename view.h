@@ -16,7 +16,7 @@ class YZSession;
 class YZView {
 	public:
 		/**
-		 * Each view is bound to a buffer, @param lines is the initial
+		 * Each view is bound to a buffer, @arg lines is the initial
 		 * number of lines that this view can display
 		 */
 		YZView(YZBuffer *_b, YZSession *sess, int lines);
@@ -43,7 +43,7 @@ class YZView {
 		unsigned int getLinesVisible() { return mLinesVis; }
 
 		/**
-		 * Returns true if the line @param l is visible. False otherwise
+		 * Returns true if the line @arg l is visible. False otherwise
 		 */
 		int	isLineVisible(unsigned int l) { return ( (l>=mCurrentTop) && ((l-mCurrentTop)<mLinesVis) ); }
 
@@ -58,7 +58,7 @@ class YZView {
 		YZSession *mySession() { return mSession; }
 
 		/**
-		 * Center view on the given @param line
+		 * Center view on the given @arg line
 		 */
 		void centerView( unsigned int line );
 
@@ -159,7 +159,7 @@ class YZView {
 		void redrawScreen();
 
 		/**
-		 * Moves the cursor to @param nextx , @param nexty
+		 * Moves the cursor to @arg nextx, @arg nexty
 		 */
 		void gotoxy(unsigned int nextx, unsigned int nexty);
   

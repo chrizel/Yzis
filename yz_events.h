@@ -1,7 +1,7 @@
 #ifndef YZ_EVENTS_H
 #define YZ_EVENTS_H
 /**
- * $id$
+ * $Id: yz_events.h,v 1.17 2003/04/25 12:45:30 mikmak Exp $
  *
  * yzis events
  *

@@ -1,5 +1,5 @@
 /*
- * $id$
+ * $Id: yz_session.cpp,v 1.5 2003/04/25 12:45:30 mikmak Exp $
  */
 
 #include "yz_session.h"

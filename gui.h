@@ -1,5 +1,5 @@
 /**
- * $id$
+ * $Id: gui.h,v 1.5 2003/04/25 12:45:30 mikmak Exp $
  */
 
 #ifndef GUI_H

@@ -1,7 +1,7 @@
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
 /**
- * $id$
+ * $Id: yz_view.h,v 1.22 2003/04/25 12:45:30 mikmak Exp $
  */
 
 

@@ -20,6 +20,9 @@
 #include "events.h"
 #include "debug.h"
 #include "ex_lua.h"
+#include "buffer.h"
+
+class YZView;
 
 YZEvents::YZEvents() {
 }
@@ -42,7 +45,7 @@ void YZEvents::connect(const QString& event, const QString& function) {
 }
 
 
-QStringList YZEvents::exec(const QString& event) {
+QStringList YZEvents::exec(const QString& event, YZView *view) {
 	yzDebug() << "Executing event " << event << endl;
 	QMap<QString,QStringList>::Iterator it = mEvents.begin(), end = mEvents.end();
 	QStringList results;
@@ -52,7 +55,10 @@ QStringList YZEvents::exec(const QString& event) {
 			QStringList list = it.data();
 			yzDebug() << "Matched " << list << endl;
 			QStringList::Iterator it2 = list.begin(), end2 = list.end();
-			for ( ; it2 != end2; ++it2 ) {
+			for ( ; it2 != end2; ++it2 ) { 
+				if ( event.startsWith("INDENT_") && *it2 != "Indent_" + view->myBuffer()->highlight()->name() ) 
+					continue; //skip it (it's not the right plugin for indent according to the current highlight name)
+
 				yzDebug() << "Executing plugin " << *it2 << endl;
 				YZExLua::instance()->execute(*it2,0,1);
 				results += YZExLua::instance()->getLastResult(1);

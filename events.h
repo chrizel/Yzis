@@ -23,6 +23,7 @@
 #include <qstringlist.h>
 #include <qmap.h>
 #include <qobject.h>
+#include "view.h"
 
 class YZEvents : public QObject {
 	Q_OBJECT
@@ -45,7 +46,7 @@ class YZEvents : public QObject {
 		 * Call plugins for event
 		 * @param event the event to execute plugins for
 		 */
-		 QStringList exec(const QString& event);
+		 QStringList exec(const QString& event, YZView *view=NULL);
 
 	private:
 		QMap<QString,QStringList> mEvents;

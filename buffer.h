@@ -296,7 +296,8 @@ public:
 
 	YzisHighlighting *highlight() { return m_highlight; }
 
-	void updateHL( unsigned int line );
+	bool updateHL( unsigned int line );
+	void initHL( unsigned int line );
 
 	/**
 	 * Notify GUIs that HL changed
@@ -317,7 +318,7 @@ public:
 		if ( found == FALSE ) {
 			return new YZLine();
 		}
-		if ( yl && !yl->initialized() ) updateHL( line );
+		if ( yl && !yl->initialized() ) initHL( line );
 		return yl;
 	}
 

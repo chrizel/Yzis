@@ -25,14 +25,20 @@
 #define YZ_SELECTION_H
 
 #include "cursor.h"
+#include <qmap.h>
 
 class YZCursor;
 
 struct selection {
 	YZCursor * from;
 	YZCursor * to;
+	YZCursor * drawFrom;
+	YZCursor * drawTo;
 };
 typedef struct selection YZSelection;
+
+typedef QMap<unsigned int, YZSelection> YZSelectionMap;
+typedef QMap<QString, YZSelectionMap> YZSelectionLayout;
 
 class YZSelectionPool {
 
@@ -40,28 +46,25 @@ class YZSelectionPool {
 		YZSelectionPool( YZView * view );
 		virtual ~YZSelectionPool( );
 
-		void addSelection( const YZCursor& from, const YZCursor& to );
-		void addSelection( unsigned int from_x, unsigned int from_y, unsigned int to_x, unsigned int to_y );
-		void delSelection( const YZCursor& from, const YZCursor& to );
-		void delSelection( unsigned int from_x, unsigned int from_y, unsigned int to_x, unsigned int to_y );
+		void addSelection( const QString& layout, const YZCursor& from, const YZCursor& to, const YZCursor& drawFrom, const YZCursor& drawTo );
+		void addSelection( const QString& layout, unsigned int from_x, unsigned int from_y, unsigned int to_x, unsigned int to_y );
+		void delSelection( const QString& layout, const YZCursor& from, const YZCursor& to, const YZCursor& drawFrom, const YZCursor& drawTo );
+		void delSelection( const QString& layout, unsigned int from_x, unsigned int from_y, unsigned int to_x, unsigned int to_y );
 
 		void clear( );
+		void clear( const QString& layout );
+
+		YZSelectionMap layout( const QString& layout );
 
 		bool isSelected( const YZCursor& pos );
 
-		void test( ); // XXX test
-		void print( ); // XXX test
-
 	private:
 		YZView * parentView;
-		YZSelection * selectionPool;
-		unsigned int size;
+		YZSelectionLayout selectionPool;
 
-		void removeSelection( unsigned int begin, unsigned int len );
-		void insertSelection( unsigned int pos, const YZCursor& from, const YZCursor& to );
-		int locatePosition( const YZCursor& pos, bool * isSelected );
-
-		void printSelection( unsigned int pos ); // XXX test
+		void removeSelection( const QString& layout, unsigned int begin, unsigned int len );
+		void insertSelection( const QString& layout, unsigned int pos, const YZCursor& from, const YZCursor& to, const YZCursor& drawFrom, const YZCursor& drawTo );
+		int locatePosition( const QString& layout, const YZCursor& pos, bool * isSelected );
 
 };
 

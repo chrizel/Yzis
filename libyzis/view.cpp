@@ -49,8 +49,10 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	sCursor = new YZCursor(this);
 	rCursor = new YZCursor(this);
 	origPos = new YZCursor(this);
-	from = new YZCursor(this);
-	to = new YZCursor(this);
+
+	/* start of visual mode */
+	mVisualCursor = new YZCursor(this);
+	dVisualCursor = new YZCursor(this);
 
 	dSpaceFill = 0;
 	dColLength = 0;
@@ -80,10 +82,10 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	viewInformation.percentage = "";
 
 	selectionPool = new YZSelectionPool( this );
-//	selectionPool->test( );
 }
 
 YZView::~YZView() {
+	delete selectionPool;
 	yzDebug() << "Deleting view " << myId << endl;
 	mBuffer->rmView(this); //make my buffer forget about me
 }
@@ -358,6 +360,9 @@ void YZView::sendKey( int c, int modifiers) {
 		case YZ_VIEW_MODE_VISUAL:
 			switch ( c ) {
 				case Qt::Key_Escape:
+					YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+					selectionPool->clear( "VISUAL" );
+					paintEvent( dCurrentLeft, cur_sel.drawFrom->getY(), mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 1 );
 					purgeInputBuffer();
 					gotoCommandMode();
 					return;
@@ -390,9 +395,11 @@ void YZView::sendKey( int c, int modifiers) {
 					key='k';
 					break;
 				case Qt::Key_Delete:
-					if ( mMode == YZ_VIEW_MODE_VISUAL )
-						mBuffer->action()->deleteArea( this, *from, *to, QChar( '\"' ));
-					else
+					if ( mMode == YZ_VIEW_MODE_VISUAL ) {
+						YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+						selectionPool->clear( "VISUAL" );
+						mBuffer->action()->deleteArea( this, *cur_sel.from, *cur_sel.to, QChar( '\"' ));
+					} else
 						mBuffer->action()->deleteChar( this, *mCursor, 1);
 					return;
 				case Qt::Key_PageDown:
@@ -667,15 +674,28 @@ void YZView::applyGoto( bool applyCursor ) {
 			<< endl; 
 	yzDebug( ) << "mCursor:" << mCursor->getX( ) << "," << mCursor->getY( )<< "; dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl; */
 	
-	if ( mMode == YZ_VIEW_MODE_VISUAL ) {
-		*to = *sCursor;
-		yzDebug("Visual mode") << "Ending at " << *to << endl;
-		paintEvent( dCurrentLeft, from->getY()-1, mColumnsVis , to->getY() - from->getY()+1);
-	}
-	
-
 
 	if ( applyCursor ) {
+
+		if ( mMode == YZ_VIEW_MODE_VISUAL ) {
+
+			YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+
+			/* erase current selection */
+			selectionPool->clear( "VISUAL" );
+			if ( cur_sel.drawFrom != NULL ) // prevent empty selection
+				paintEvent( dCurrentLeft, cur_sel.drawFrom->getY(), mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 1 );
+
+			if ( *mCursor > *mVisualCursor )
+				selectionPool->addSelection( "VISUAL", *mVisualCursor, *mCursor, *dVisualCursor, *dCursor );
+			else
+				selectionPool->addSelection( "VISUAL", *mCursor, *mVisualCursor, *dCursor, *dVisualCursor );
+
+			/* apply new selection */
+			cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+			paintEvent( dCurrentLeft, cur_sel.drawFrom->getY(), mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 1 );
+		}
+
 		if ( !isLineVisible( dCursor->getY() ) )
 			alignViewVertically( dCursor->getY( ) );
 		if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) {
@@ -1112,8 +1132,11 @@ QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs /*args 
 QString YZView::gotoVisualMode(const QString&, YZCommandArgs ) {
 	mMode = YZ_VIEW_MODE_VISUAL;
 	//store the from position
-	*from = *mCursor;
-	yzDebug("Visual mode") << "Starting at " << *from << endl;
+	*mVisualCursor = *mCursor;
+	*dVisualCursor = *dCursor;
+	selectionPool->clear( "VISUAL" );
+	selectionPool->addSelection( "VISUAL", *mVisualCursor, *mVisualCursor, *dVisualCursor, *dVisualCursor );
+	yzDebug("Visual mode") << "Starting at " << *mCursor << endl;
 	modeChanged();
 	purgeInputBuffer();
 	return QString::null;
@@ -1182,7 +1205,7 @@ bool YZView::doSearch( const QString& search ) {
 	//get current line
 	QString l;
 
-	selectionPool->clear( );
+	selectionPool->clear( "SEARCH" );
 
 	for ( unsigned int i = currentMatchLine; i < mBuffer->lineCount(); reverseSearch ? i-- : i++ ) {
 		l = mBuffer->textline( i );
@@ -1206,7 +1229,7 @@ bool YZView::doSearch( const QString& search ) {
 			//really found it !
 			currentMatchColumn = idx;
 			currentMatchLine = i;
-			selectionPool->addSelection( currentMatchColumn, currentMatchLine, currentMatchColumn + ex.matchedLength() - 1, currentMatchLine );
+			selectionPool->addSelection( "SEARCH", currentMatchColumn, currentMatchLine, currentMatchColumn + ex.matchedLength() - 1, currentMatchLine );
 			gotoxy( currentMatchColumn, currentMatchLine );
 			refreshScreen( );
 			return true;
@@ -1421,7 +1444,7 @@ bool YZView::drawNextCol( ) {
 		ret = rCursor->getX() - rCurrentLeft < mColumnsVis;
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {
-			if ( drawMode ) charSelected = selectionPool->isSelected( sCursor ) || isSelected( sCursor );
+			if ( drawMode ) charSelected = selectionPool->isSelected( sCursor );
 			rColLength = 1;
 		} else {
 			lastChar = ' ';
@@ -1562,12 +1585,5 @@ QString YZView::redo( const QString& , YZCommandArgs ) {
 	//reset the input buffer of the originating view
 	purgeInputBuffer();
 	return QString::null;
-}
-
-bool YZView::isSelected( const YZCursor& pos ) {
-	if ( mMode != YZ_VIEW_MODE_VISUAL ) return false; //no selection ;)
-	yzDebug() << "Pos to check : " << pos << " From : " << *from << " To : " << *to << endl;
-	if ( pos >= ( *from ) && pos <= ( *to ) ) return true;
-	return false;
 }
 

@@ -475,13 +475,6 @@ class YZView {
 		/* recalculate cursor position and refresh screen */
 		void reset( );
 
-		/**
-		 * Check whether the given cursor is currently highlighted
-		 * @param pos the cursor to check the position
-		 * @return whether the cursor is highlighted
-		 */
-		bool isSelected( const YZCursor& pos );
-
 	protected:
 		/**
 		 * The buffer we depend on
@@ -665,8 +658,8 @@ class YZView {
 		YZSelectionPool * selectionPool;
 		
 		//Visual Mode stuff
-		YZCursor *from;
-		YZCursor *to;
+		YZCursor *mVisualCursor;
+		YZCursor *dVisualCursor;
 };
 
 #endif /*  YZ_VIEW_H */

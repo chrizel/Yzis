@@ -394,6 +394,12 @@ class YZView {
 
 		virtual void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) = 0;
 
+		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
+		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
+		void removePaintEvent( const YZCursor& from, const YZCursor& to );
+		void setPaintAutoCommit( bool enable );
+		void commitPaintEvent();
+
 		/**
 		  * called when the mode is changed, so that gui can
 		  * update information diplayed to the user
@@ -842,6 +848,8 @@ class YZView {
 		//which regs to store macros in
 		QValueList<QChar> mRegs;
 		QStringList mModes; //list of modes
+
+		bool m_paintAutoCommit;
 };
 
 #endif /*  YZ_VIEW_H */

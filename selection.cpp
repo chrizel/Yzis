@@ -138,13 +138,13 @@ void YZSelectionPool::clear( ) {
 }
 
 void YZSelectionPool::clear( const QString& layout ) {
-	YZSelectionMap::Iterator it;
+/*	YZSelectionMap::Iterator it;
 	for ( it = selectionPool[ layout ].begin(); it != selectionPool[ layout ].end(); ++it ) {
-/*		delete it.data().from;
+		delete it.data().from;
 		delete it.data().to;
 		delete it.data().drawFrom;
-		delete it.data().drawTo;*/
-	}
+		delete it.data().drawTo;
+	} */
 
 	selectionPool[ layout ].clear( );
 

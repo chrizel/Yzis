@@ -65,7 +65,7 @@ void YZView::sendKey( int c, int modifiers) {
 	QString lin;
 	QString key = QChar( tolower( c ) );// = QKeySequence( c );
 	//default is lower case unless some modifiers
-	if ( modifiers & YZIS::Shift )
+	if ( modifiers & Qt::ShiftButton )
 		key = key.upper();
 
 	switch(mMode) {

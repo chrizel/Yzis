@@ -129,8 +129,8 @@ void NYZFactory::event_loop() {
 		int c = getch();
 		if (c!=ERR) {
 			int modifiers = 0;
-			if ( isupper( c ) ) modifiers |= YZIS::Shift;
-			if ( iscntrl( c ) ) modifiers |= YZIS::Ctrl;
+			if ( isupper( c ) ) modifiers |= Qt::ShiftButton;
+			if ( iscntrl( c ) ) modifiers |= Qt::ControlButton;
 			//TODO: ALT/META	
 			if ( keycodes.contains ( c ) )
 				currentView->sendKey( keycodes[ c ], modifiers );

@@ -81,6 +81,7 @@ void YZView::setVisibleArea(int c, int l) {
 	mLinesVis = l;
 	mColumnsVis = c;
 	refreshScreen();
+	gotoxy( mCursor->getX(), mCursor->getY() );
 }
 
 /* Used by the buffer to post events */

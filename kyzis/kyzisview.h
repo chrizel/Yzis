@@ -27,6 +27,8 @@ class KYZisView: public KTextEditor::View
 		void scrollDown( int l=1 );
 		void scrollUp( int l=1 );
 		YZSession *getCurrentSession();
+		void setCommandLineText( const QString& text );
+		QString getCommandLineText() const;
 		
 	protected:
 		void customEvent( QCustomEvent * );

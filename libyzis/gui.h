@@ -17,6 +17,7 @@
  * Register your GUI the earlier you can.
  */ 
 class YZSession;
+class QString;
 
 class Gui {
 	public:
@@ -60,6 +61,16 @@ class Gui {
 		 */
 	//	virtual void setScrollbar( int left, int right, int top, int bottom );
 
+
+		/**
+		 * Retrieve the text from command line
+		 */
+		virtual QString getCommandLineText() const = 0;
+
+		/**
+		 * Sets the command line text
+		 */
+		virtual void setCommandLineText( const QString& ) = 0;
 
 };
 

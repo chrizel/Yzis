@@ -85,4 +85,13 @@ void KYZisView::scrollUp ( int lines ) {
 YZSession *KYZisView::getCurrentSession() {
 	return currentSession;
 }
+
+void KYZisView::setCommandLineText( const QString& text ) {
+	command->lineEdit()->setText( text );
+}
+
+QString KYZisView::getCommandLineText() const {
+	return command->lineEdit()->text();
+}
+
 #include "kyzisview.moc"

@@ -46,6 +46,7 @@
 #include "action.h"
 #include "commands.h"
 #include "session.h"
+#include "linesearch.h"
 
 #define STICKY_COL_ENDLINE -1
 
@@ -67,6 +68,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	YZASSERT( _b ); YZASSERT( sess );
 	mSession = sess;
 	mBuffer	= _b;
+	mLineSearch = new YZLineSearch( this );
 	mLinesVis = lines;
 	mColumnsVis = 0;
 

@@ -35,6 +35,7 @@
 #include "session.h"
 #include "buffer.h"
 #include "cursor.h"
+#include "linesearch.h"
 #include "action.h"
 #include "mark.h"
 
@@ -65,7 +66,11 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("l", &YZCommandPool::moveRight, ARG_NONE) );
 	commands.append( new YZNewMotion("<BS>", &YZCommandPool::moveLeftWrap, ARG_NONE) );
 	commands.append( new YZNewMotion(" ", &YZCommandPool::moveRightWrap, ARG_NONE) );
-	commands.append( new YZNewMotion("f", &YZCommandPool::find, ARG_CHAR) );
+	commands.append( new YZNewMotion("f", &YZCommandPool::findNext, ARG_CHAR) );
+	commands.append( new YZNewMotion("t", &YZCommandPool::findBeforeNext, ARG_CHAR) );
+	commands.append( new YZNewMotion("F", &YZCommandPool::findPrevious, ARG_CHAR) );
+	commands.append( new YZNewMotion("T", &YZCommandPool::findAfterPrevious, ARG_CHAR) );
+	commands.append( new YZNewMotion(";", &YZCommandPool::repeatFind, ARG_CHAR) );
 	commands.append( new YZNewMotion("<HOME>", &YZCommandPool::gotoSOL, ARG_NONE) );
 	commands.append( new YZNewMotion("<END>", &YZCommandPool::gotoEOL, ARG_NONE) );
 	commands.append( new YZNewMotion("<LEFT>", &YZCommandPool::moveLeft, ARG_NONE) );
@@ -400,15 +405,59 @@ YZCursor YZCommandPool::matchPair(const YZNewMotionArgs &args) {
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::find(const YZNewMotionArgs &args) {
-	//improve me XXX , merge search commands in YZView
-	YZCursor c=*args.view->getBufferCursor();
-	args.view->doSearch( args.arg );
-	if ( args.count > 1 )
-		args.view->searchAgain( args.count - 1);
-	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY(), args.standalone);
-	return d;
+YZCursor YZCommandPool::findNext(const YZNewMotionArgs &args) {
+	YZLineSearch* finder = args.view->myLineSearch();
+	bool found;
+	YZCursor pos = finder->forward( args.arg, found, args.count );
+	if ( found ) {
+		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		return pos;
+	}
+	return *args.view->getBufferCursor();
+}
+
+YZCursor YZCommandPool::findBeforeNext(const YZNewMotionArgs &args) {
+	YZLineSearch* finder = args.view->myLineSearch();
+	bool found;
+	YZCursor pos = finder->forwardBefore( args.arg, found, args.count );
+	if ( found ) {
+		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		return pos;
+	}
+	return *args.view->getBufferCursor();
+}
+
+YZCursor YZCommandPool::findPrevious(const YZNewMotionArgs &args) {
+	YZLineSearch* finder = args.view->myLineSearch();
+	bool found;
+	YZCursor pos = finder->reverse( args.arg, found, args.count );
+	if ( found ) {
+		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		return pos;
+	}
+	return *args.view->getBufferCursor();
+}
+
+YZCursor YZCommandPool::findAfterPrevious(const YZNewMotionArgs &args) {
+	YZLineSearch* finder = args.view->myLineSearch();
+	bool found;
+	YZCursor pos = finder->reverseAfter( args.arg, found, args.count );
+	if ( found ) {
+		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		return pos;
+	}
+	return *args.view->getBufferCursor();
+}
+
+YZCursor YZCommandPool::repeatFind(const YZNewMotionArgs &args) {
+	YZLineSearch* finder = args.view->myLineSearch();
+	bool found;
+	YZCursor pos = finder->searchAgain( found, args.count );
+	if ( found ) {
+		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		return pos;
+	}
+	return *args.view->getBufferCursor();
 }
 
 YZCursor YZCommandPool::gotoSOL(const YZNewMotionArgs &args) {

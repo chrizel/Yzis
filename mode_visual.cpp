@@ -85,8 +85,7 @@ void YZModeVisual::enter( YZView* mView ) {
 	if ( ! visual->isEmpty() ) {
 		cursorMoved( mView );
 	} else {
-		visualCursor->setBuffer( *mView->getBufferCursor() );
-		visualCursor->setScreen( *mView->getCursor() );
+		*visualCursor = mView->viewCursor();
 		YZCursor buffer( *visualCursor->buffer() );
 		YZCursor screen( *visualCursor->screen() );
 		visual->addInterval( buildInterval(buffer,buffer), buildInterval(screen,screen) );

@@ -72,6 +72,7 @@ void YZViewCursor::reset() {
 	sColIncrement = 1;
 	sLineIncrement = 0;
 	lineHeight = 1;
+	lastCharWasTab = false;
 	wrapNextLine = false;
 	wrapTab = false;
 	mBuffer->setX( 0 );
@@ -88,9 +89,11 @@ bool YZViewCursor::valid() const {
 }
 
 void YZViewCursor::debug() {
-	yzDebug()	<< "YZViewCursor : buffer = " << *mBuffer << " ; screen = " << *mScreen << endl
-		  	<< "               bLineIncrement = " << bLineIncrement << "; sLineIncrement = " << sLineIncrement << endl
-			<< "               lineHeight = " << lineHeight << " ; wrapNextLine = " << wrapNextLine << endl;
+	yzDebug() << "YZViewCursor : buffer = " << *mBuffer << " ; screen = " << *mScreen
+		<< " ; wrapNextLine = " << wrapNextLine << endl
+		<< "               bLineIncrement = " << bLineIncrement << "; sLineIncrement = " << sLineIncrement
+		<< " ; lineHeight = " << lineHeight << endl
+		<< "               lastCharWasTab = " << lastCharWasTab << " ; sColIncrement = " << sColIncrement <<  endl;
 }
 
 unsigned int YZViewCursor::bufferX() const {

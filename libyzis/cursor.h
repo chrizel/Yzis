@@ -24,6 +24,13 @@
 #ifndef YZIS_CURSOR
 #define YZIS_CURSOR
 
+class YZCursor;
+struct cursor_pos {
+	YZCursor* bPos; /* buffer position */
+	YZCursor* dPos; /* draw position */
+};
+typedef struct cursor_pos YZCursorPos;
+
 #include "view.h"
 #include "debug.h"
 

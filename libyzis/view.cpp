@@ -34,6 +34,10 @@
 
 #define STICKY_COL_ENDLINE -1
 
+#define GOTO_STICKY_COL(Y) \
+		if ( stickyCol == STICKY_COL_ENDLINE ) gotoxy( mBuffer->textline( Y ).length(), Y ); \
+		else gotodxy( stickyCol, Y )
+
 static const QChar tabChar( '\t' );
 static QColor fake;
 
@@ -84,8 +88,16 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 YZView::~YZView() {
 	yzDebug() << "YZView : Deleting view " << myId << endl;
-	delete selectionPool;
 	mBuffer->rmView(this); //make my buffer forget about me
+
+	delete selectionPool;
+	delete mCursor;
+	delete dCursor;
+	delete rCursor;
+	delete sCursor;
+	delete origPos;
+	delete mVisualCursor;
+	delete dVisualCursor;
 }
 
 void YZView::setVisibleArea(int c, int l, bool refresh) {
@@ -181,11 +193,11 @@ void YZView::sendKey( int c, int modifiers) {
 					mBuffer->action()->deleteChar( this, mCursor, 1 );
 					return;
 				case Qt::Key_PageDown:
-					gotodxy(dCursor->getX(), mCursor->getY() + mLinesVis );
+					GOTO_STICKY_COL( mCursor->getY() + mLinesVis );
 					purgeInputBuffer();
 					return;
 				case Qt::Key_PageUp:
-					gotodxy(dCursor->getX(), ( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 ) );
+					GOTO_STICKY_COL( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 );
 					purgeInputBuffer();
 					return;
 				case Qt::Key_Tab:
@@ -240,11 +252,11 @@ void YZView::sendKey( int c, int modifiers) {
 					mBuffer->action()->replaceChar( this, mCursor, "\t" );
 					return;
 				case Qt::Key_PageDown:
-					gotodxy(dCursor->getX(), mCursor->getY() + mLinesVis );
+					GOTO_STICKY_COL( mCursor->getY() + mLinesVis );
 					purgeInputBuffer();
 					return;
 				case Qt::Key_PageUp:
-					gotodxy(dCursor->getX(), ( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 ) );
+					GOTO_STICKY_COL( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 );
 					purgeInputBuffer();
 					return;
 				default:
@@ -405,11 +417,11 @@ void YZView::sendKey( int c, int modifiers) {
 						mBuffer->action()->deleteChar( this, *mCursor, 1);
 					return;
 				case Qt::Key_PageDown:
-					gotodxy(mCursor->getX(), mCursor->getY() + mLinesVis );
+					GOTO_STICKY_COL( mCursor->getY() + mLinesVis );
 					purgeInputBuffer();
 					return;
 				case Qt::Key_PageUp:
-					gotodxy(dCursor->getX(), ( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 ) );
+					GOTO_STICKY_COL( mCursor->getY() > mLinesVis ? mCursor->getY() - mLinesVis : 0 );
 					purgeInputBuffer();
 					return;
 				default:
@@ -521,12 +533,7 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else {
 		 refreshScreen();
 	}
-	if ( alignTop ) {
-		if ( stickyCol == STICKY_COL_ENDLINE )
-			gotoxy( mBuffer->textline( mCurrentTop ).length(), mCurrentTop );
-		else
-			gotoxy( stickyCol > ( int )mCurrentLeft ? stickyCol : mCurrentLeft, mCurrentTop );
-	}
+	if ( alignTop ) GOTO_STICKY_COL( mCurrentTop );
 }
 
 /* recalculate cursor position + refresh screen */
@@ -611,6 +618,7 @@ void YZView::gotody( unsigned int nexty ) {
 void YZView::gotoy( unsigned int nexty ) {
 	if ( ( int )nexty < 0 ) nexty = 0;
 	if ( nexty >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
+	if ( nexty == sCursor->getY() ) return;
 
 	/* some easy case */
 	if ( nexty == 0 ) {
@@ -645,10 +653,10 @@ void YZView::gotoy( unsigned int nexty ) {
 			}
 		} 
 		while ( sCursor->getY() < nexty ) {
-			if ( wrap && ! wrapNextLine && rCurLineLength > mColumnsVis ) 
-				while( drawNextCol( ) ) ;
+			if ( wrap && ! wrapNextLine && rCurLineLength > mColumnsVis ) // move to end of draw line
+				while ( drawNextCol( ) );
 			drawNextLine( );
-			if ( wrap && sCursor->getY() < nexty && rCurLineLength > mColumnsVis )
+			if ( wrap && sCursor->getY() < nexty && rCurLineLength > mColumnsVis ) // move to end of draw line
 				while ( drawNextCol( ) ) ;
 		}
 	}
@@ -656,6 +664,7 @@ void YZView::gotoy( unsigned int nexty ) {
 
 void YZView::initGoto( ) {
 	initDraw( mCursor->getX(), mCursor->getY(), dCursor->getX(), dCursor->getY() );
+	yzDebug() << "sCursor = " << *sCursor << endl;
 	rSpaceFill = dSpaceFill;
 	rColLength = dColLength;
 	sColLength = mColLength;
@@ -686,8 +695,7 @@ void YZView::applyGoto( bool applyCursor ) {
 			<< "; dLineLength=" << dLineLength << "; mLineLength=" << mLineLength
 			<< "; dWrapNextLine=" << dWrapNextLine
 			<< endl; 
-	yzDebug( ) << "mCursor:" << mCursor->getX( ) << "," << mCursor->getY( )<< "; dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl; */
-	
+	yzDebug( ) << "mCursor:" << *mCursor << "; dCursor:" << *dCursor << endl; */
 
 	if ( applyCursor ) {
 
@@ -757,10 +765,7 @@ QString YZView::moveDown( const QString& , YZCommandArgs args ) {
 
 	//execute the code
 	unsigned int nextLine = QMIN( mCursor->getY() + nb_lines, mBuffer->lineCount()-1);
-	if ( stickyCol == STICKY_COL_ENDLINE )
-		gotoxy( mBuffer->textline( nextLine ).length(), nextLine );
-	else
-		gotodxy( stickyCol, nextLine );
+	GOTO_STICKY_COL( nextLine );
 
 	//reset the input buffer
 	purgeInputBuffer();
@@ -774,10 +779,7 @@ QString YZView::moveUp( const QString& , YZCommandArgs args ) {
 
 	//execute the code
 	unsigned int nextLine = QMAX( mCursor->getY()-nb_lines,0);
-	if ( stickyCol == STICKY_COL_ENDLINE )
-		gotoxy( mBuffer->textline( nextLine ).length(), nextLine );
-	else
-		gotodxy( stickyCol, nextLine );
+	GOTO_STICKY_COL( nextLine );
 
 	//reset the input buffer
 	purgeInputBuffer();
@@ -874,10 +876,7 @@ QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs ) {
 	if ( YZSession::getBoolOption("General\\startofline") ) {
 		gotoxy(mBuffer->firstNonBlankChar(line), line);
 	} else {
-		if ( stickyCol == STICKY_COL_ENDLINE )
-			gotoxy( mBuffer->textline( line ).length(), line );
-		else
-			gotodxy( stickyCol, line );
+		GOTO_STICKY_COL( line );
 	}
 
 	purgeInputBuffer();
@@ -973,7 +972,7 @@ void YZView::initDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool /*a
 void YZView::applyDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool applyCursor ) {
 	paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
 	if ( applyCursor )
-		gotoxy( stickyCol, pos.getY() );
+		GOTO_STICKY_COL( pos.getY() );
 	else
 		gotoxy( origPos->getX(), origPos->getY() );
 	stickyCol = dCursor->getX( );
@@ -1546,7 +1545,7 @@ bool YZView::drawNextCol( ) {
 	wrapNextLine = false;
 
 	if ( curx < sCurLineLength ) {
-		ret = rCursor->getX() - rCurrentLeft < mColumnsVis;
+		ret = rCursor->getX() - mCurrentLeft < mColumnsVis;
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {
 			if ( drawMode ) charSelected = selectionPool->isSelected( sCursor );
@@ -1712,4 +1711,5 @@ QString YZView::gotoMark( const QString& inputsBuff, YZCommandArgs ) {
 	}
 	purgeInputBuffer();
 	return QString::null;
+
 }

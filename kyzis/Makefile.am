@@ -16,6 +16,10 @@ messages: rc.cpp
 
 #KDE_ICON = kyzis
 
+########## intern lib ##########
+noinst_LTLIBRARIES = libinternkyzis.la
+libinternkyzis_la_SOURCES = document.cpp viewwidget.cpp factory.cpp settings.kcfgc editor.cpp commandwidget.cpp configdialog.cpp kyziscodecompletion.cpp cursor.cpp kyzis.cpp kyzis.skel konsole.cpp
+
 # this Makefile creates both a KPart application and a KPart
 #########################################################################
 # APPLICATION SECTION
@@ -25,13 +29,12 @@ messages: rc.cpp
 bin_PROGRAMS = kyzis
 
 # the application source, library search path, and link libraries
-kyzis_SOURCES = main.cpp kyzis.cpp kyzis.skel konsole.cpp
+kyzis_SOURCES = main.cpp
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
-kyzis_LDADD = -lktexteditor -lkmdi $(LIB_KPARTS) \
-			  $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
+kyzis_LDADD = -lktexteditor -lkmdi $(LIB_KPARTS) $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(top_builddir)/kyzis/libinternkyzis.la
 
 # this is where the desktop file will go 
-shelldesktopdir   = $(kde_appsdir)/Utilities
+shelldesktopdir   = $(kde_appsdir)/Editors
 shelldesktop_DATA = kyzis.desktop
 
 # this is where the shell's XML-GUI resource file goes
@@ -40,15 +43,16 @@ shellrc_DATA = kyzis_shell.rc
 
 kde_kcfg_DATA = kyzis.kcfg
 
+ 
 #########################################################################
 # KPART SECTION
 #########################################################################
 kde_module_LTLIBRARIES = libkyzispart.la
 
 # the Part's source, library search path, and link libraries
-libkyzispart_la_SOURCES = document.cpp viewwidget.cpp factory.cpp settings.kcfgc editor.cpp commandwidget.cpp configdialog.cpp kyziscodecompletion.cpp cursor.cpp
+libkyzispart_la_SOURCES = dummy.cpp
 libkyzispart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
+libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lkmdi -lktexteditor $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(top_builddir)/kyzis/libinternkyzis.la
 
 # this is where the desktop file will go 
 partdesktopdir   = $(kde_servicesdir)
@@ -63,4 +67,12 @@ partrc_DATA = kyzispart.rc
 # MISC SECTION
 #########################################################################
 re : clean all
+
+dummy.cpp: 
+	echo "#ifdef _AIX" > $@
+	echo "namespace {" >> $@
+	echo "void *not_empty_file;" >> $@
+	echo "}" >> $@
+	echo "#endif" >> $@
+
 

@@ -233,6 +233,21 @@ TestLuaBinding = {} --class
         sendkeys(':bd!<ENTER>')
     end
 
+    function TestLuaBinding:test_setline()
+        assertEquals( bufferContent(), "" )
+        setline(1, "hop")
+        assertEquals( bufferContent(), "hop" )
+        setline(1, "coucou")
+        assertEquals( bufferContent(), "coucou" )
+
+        appendline("bof")
+        assertEquals( bufferContent(), "coucou\nbof" )
+        setline(2, "a")
+        assertEquals( bufferContent(), "coucou\na" )
+
+        setline(3, "hop")
+        assertEquals( bufferContent(), "coucou\na" )
+    end
 
 
 

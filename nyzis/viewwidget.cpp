@@ -220,15 +220,18 @@ void NYZView::drawContents( int clipy, int cliph ) {
 						c.blue() << ")" <<
 						endl;
 				}
-				bool invert = drawSelected( );
+
+				if ( drawSelected() ) mAttributes |= A_REVERSE;
+				if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
+
 				if ( rightleft )
 					x = width - currentX - 1;
 				else
 					x = currentX;
-				mvwaddch( editor, currentY, x, mAttributes | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
+				mvwaddch( editor, currentY, x, mAttributes | drawChar().unicode() );
 				if ( drawLength() > 1 ) {
 					for (unsigned int i = 1; i < drawLength(); i++ ) 
-						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), mAttributes | fillChar() | ( invert ? A_REVERSE : A_NORMAL ) );
+						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), mAttributes | fillChar() );
 				}
 				currentX += drawLength( );
 			}

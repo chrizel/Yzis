@@ -24,6 +24,7 @@
 #include <qevent.h>
 #include <kapplication.h>
 #include <kstdaction.h>
+#include <viewcursor.h>
 #include "viewwidget.h"
 #include "factory.h"
 #include "debug.h"
@@ -132,7 +133,7 @@ void KYZisView::modeChanged (void) {
 		case YZ_VIEW_MODE_COMMAND: // normal
 			status->changeItem(tr("Command mode"), 0);
 			break;
-		case YZ_VIEW_MODE_EX: //script·
+		case YZ_VIEW_MODE_EX: //script
 			status->changeItem(tr("-- EX --"), 0);
 			break;
 		case YZ_VIEW_MODE_SEARCH: //search mode

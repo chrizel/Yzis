@@ -29,8 +29,8 @@
 
 #include "commands.h"
 #include "selection.h"
-#include "viewcursor.h"
 
+class YZViewCursor;
 class YZCursor;
 class YZBuffer;
 class YZSession;
@@ -462,28 +462,22 @@ class YZView {
 		virtual void syncViewInfo() = 0;
 
 		/** 
-		 * Get the main cursor
-		 * @return a pointer on the main cursor ( YZViewCursor )
+		 * Get the view cursor
+		 * @return a constant ref to the view cursor ( YZViewCursor )
 		 */
-		YZViewCursor* getMainCursor() { return mainCursor; }
-
-		/**
-		 * Create a new YZViewCursor based on mainCursor
-		 * @return a new YZViewCursor with mainCursor values
-		 */
-		YZViewCursor* copyMainCursor();
+		const YZViewCursor &viewCursor() { return *mainCursor; }
 
 		/**
 		 * Get the current cursor information
 		 * @return a reference on the current cursor
 		 */
-		YZCursor* getCursor() { return mainCursor->screen(); }
+		YZCursor* getCursor();
 
 		/**
 		 * Get the current buffer cursor information
 		 * @return a reference on the current buffer cursor
 		 */
-		YZCursor* getBufferCursor() { return mainCursor->buffer(); }
+		YZCursor* getBufferCursor();
 
 		/**
 		 * Search for text and moves the cursor to the position of match

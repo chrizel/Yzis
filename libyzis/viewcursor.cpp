@@ -43,26 +43,32 @@ YZViewCursor::YZViewCursor( YZView* parent ) {
 	wrapNextLine = false;
 	wrapTab = false;
 }
+
+YZViewCursor::YZViewCursor( const YZViewCursor &c ) {
+	mBuffer = new YZCursor( c.mParent );
+	mScreen = new YZCursor( c.mParent );
+	*this = c;
+}
+
 YZViewCursor::~YZViewCursor( ) {
 	delete mBuffer;
 	delete mScreen;
 }
 
-/**
- * I didn't find better, we cannot do *to = *from cause of mBuffer and mScreen
- */
-void YZViewCursor::copy( const YZViewCursor& orig ) {
-	*mScreen = *orig.mScreen;
-	*mBuffer = *orig.mBuffer;
-	spaceFill = orig.spaceFill;
-	bColIncrement = orig.bColIncrement;
-	bLineIncrement = orig.bLineIncrement;
-	sColIncrement = orig.sColIncrement;
-	sLineIncrement = orig.sLineIncrement;
-	lineHeight = orig.lineHeight;
-	lastCharWasTab = orig.lastCharWasTab;
-	wrapTab = orig.wrapTab;
-	wrapNextLine = orig.wrapNextLine;
+
+YZViewCursor &YZViewCursor::operator=( const YZViewCursor& c ) {
+	*mScreen = *c.mScreen;
+	*mBuffer = *c.mBuffer;
+	spaceFill = c.spaceFill;
+	bColIncrement = c.bColIncrement;
+	bLineIncrement = c.bLineIncrement;
+	sColIncrement = c.sColIncrement;
+	sLineIncrement = c.sLineIncrement;
+	lineHeight = c.lineHeight;
+	lastCharWasTab = c.lastCharWasTab;
+	wrapTab = c.wrapTab;
+	wrapNextLine = c.wrapNextLine;
+	return *this;
 }
 
 unsigned int YZViewCursor::bufferX() const {

@@ -37,6 +37,7 @@ class YZViewCursor {
 
 	public :
 		YZViewCursor( YZView* parent );
+		YZViewCursor( const YZViewCursor &c);
 		virtual ~YZViewCursor();
 
 		unsigned int bufferX() const;
@@ -51,7 +52,7 @@ class YZViewCursor {
 			return mScreen;
 		}
 
-		void copy( const YZViewCursor& orig );
+		YZViewCursor &operator=( const YZViewCursor &c );
 
 	private :
 		void setBuffer( const YZCursor& value );

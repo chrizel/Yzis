@@ -29,6 +29,7 @@
 #include <qkeysequence.h>
 #include <math.h>
 #include "view.h"
+#include "viewcursor.h"
 #include "debug.h"
 #include "undo.h"
 #include "printer.h"
@@ -633,12 +634,6 @@ void YZView::reset( ) {
 	refreshScreen( );
 }
 
-YZViewCursor* YZView::copyMainCursor() {
-	YZViewCursor* viewCursor = new YZViewCursor( this );
-	viewCursor->copy( *mainCursor );
-	return viewCursor;
-}
-
 /*
  * all the goto-like commands
  */
@@ -756,11 +751,11 @@ void YZView::gotoy( unsigned int nexty ) {
 
 void YZView::initGoto( YZViewCursor* viewCursor ) {
 	initDraw( viewCursor->bufferX(), viewCursor->bufferY(), viewCursor->screenX(), viewCursor->screenY(), false );
-	workCursor->copy( *viewCursor );
+	*workCursor = *viewCursor;
 }
 
 void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
-	viewCursor->copy( *workCursor );
+	*viewCursor = *workCursor;
 
 	if ( applyCursor && viewCursor != mainCursor ) { // do not apply if this isn't the mainCursor
 		yzDebug() << "THIS IS NOT THE MAINCURSOR" << endl;
@@ -1990,4 +1985,12 @@ void YZView::gotoStickyCol(unsigned int Y) {
 
 void YZView::commitNextUndo() {
 	mBuffer->undoBuffer()->commitUndoItem( mainCursor->bufferX(), mainCursor->bufferY() );
+}
+
+YZCursor *YZView::getCursor() {
+	return mainCursor->screen();
+}
+
+YZCursor *YZView::getBufferCursor() {
+	return mainCursor->buffer();
 }

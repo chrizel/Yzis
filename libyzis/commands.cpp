@@ -30,11 +30,13 @@
 #include "commands.h"
 #include "debug.h"
 #include "view.h"
+#include "viewcursor.h"
 #include "ex_executor.h"
 #include "ex_lua.h"
 #include "session.h"
 #include "buffer.h"
 #include "cursor.h"
+#include "action.h"
 
 /**
  */
@@ -352,10 +354,12 @@ YZCursor YZCommandPool::move(YZView *view, const QString &inputs, unsigned int c
 	for(commands.first(); commands.current(); commands.next()) {
 		// is the command a motion and does it match to the string?
 		const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.current());
-		if(m && m->matches(inputs))
+		if(m && m->matches(inputs)) {
 			// execute the corresponding method
-			return (this->*(m->motionMethod()))(YZNewMotionArgs(view, count,
+			YZCursor to=(this->*(m->motionMethod()))(YZNewMotionArgs(view, count,
 					inputs.mid(m->keySeq().length())));
+			return to;
+		}
 	}
 	return *view->getBufferCursor();
 }
@@ -364,51 +368,39 @@ YZCursor YZCommandPool::move(YZView *view, const QString &inputs, unsigned int c
 // MOTIONS
 
 YZCursor YZCommandPool::moveLeft(const YZNewMotionArgs &args) {
-	YZCursor c=*args.view->getBufferCursor();
-	args.view->moveLeft(args.count);
-	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY());
-	return d;
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveLeft(&viewCursor, args.count, false);
+	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveRight(const YZNewMotionArgs &args) {
-	YZCursor c=*args.view->getBufferCursor();
-	args.view->moveRight(args.count);
-	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY());
-	return d;
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveRight(&viewCursor, args.count, false);
+	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveLeftWrap( const YZNewMotionArgs & args ) {
-	YZCursor c=*args.view->getBufferCursor();
-	args.view->moveLeft(args.count, true);
-	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY());
-	return d;
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveLeft(&viewCursor, args.count, true);
+	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveRightWrap( const YZNewMotionArgs & args ) {
-	YZCursor c=*args.view->getBufferCursor();
-	args.view->moveRight(args.count, true);
-	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY());
-	return d;
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveRight(&viewCursor, args.count, true);
+	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveDown(const YZNewMotionArgs &args) {
-	YZCursor c=*args.view->getBufferCursor();
-	args.view->moveDown( args.count );
-	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY());
-	return d;
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveDown(&viewCursor, args.count);
+	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveUp(const YZNewMotionArgs &args) {
-	YZCursor c=*args.view->getBufferCursor();
-	args.view->moveUp( args.count );
-	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY());
-	return d;
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveUp(&viewCursor, args.count);
+	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::find(const YZNewMotionArgs &args) {
@@ -423,19 +415,15 @@ YZCursor YZCommandPool::find(const YZNewMotionArgs &args) {
 }
 
 YZCursor YZCommandPool::gotoSOL(const YZNewMotionArgs &args) {
-	YZCursor c=*args.view->getBufferCursor();
-	args.view->moveToStartOfLine();
-	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY());
-	return d;
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveToStartOfLine(&viewCursor);
+	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::gotoEOL(const YZNewMotionArgs &args) {
-	YZCursor c=*args.view->getBufferCursor();
-	args.view->moveToEndOfLine();
-	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY());
-	return d;
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveToEndOfLine(&viewCursor);
+	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
@@ -449,12 +437,6 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 QString YZCommandPool::execMotion( const YZCommandArgs &args ) {
 	const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(args.cmd);
 	assert(m);
-	// this has to be eliminated later
-	if(m->keySeq() == "j")
-		return args.view->moveDown();
-	else if(m->keySeq() == "k")
-		return args.view->moveUp();
-	
 	YZCursor to = (this->*(m->motionMethod()))(YZNewMotionArgs(args.view, args.count, args.arg));
 	args.view->gotoxy(to.getX(), to.getY());
 	return QString::null;
@@ -613,7 +595,8 @@ QString YZCommandPool::change(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::del(const YZCommandArgs &args) {
-	args.view->del( args.arg, args.regs );
+	YZCursor to=move(args.view, args.arg, args.count);
+	args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	args.view->commitNextUndo();
 	return QString::null;
 }

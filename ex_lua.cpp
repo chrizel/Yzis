@@ -32,7 +32,9 @@
 
 /*
  * TODO:
+ * - invert line/col arguments
  * - test every argument of the functions
+ * - test text()
  * - override print() in lua for yzis
  * - clear the lua stack properly
  * - arguments to :source must be passed as argv
@@ -226,8 +228,8 @@ int YZExLua::insert(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 3 ) return 0; //mis-use of the function
 
-	int sLine = ( int )lua_tonumber( L,1 );
-	int sCol = ( int )lua_tonumber( L, 2 );
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
 	QString text = ( char * )lua_tostring ( L, 3 );
 
 	sCol = sCol ? sCol - 1 : 0;
@@ -294,8 +296,8 @@ int YZExLua::replace(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 3 ) return 0; //mis-use of the function
 
-	int sLine = ( int )lua_tonumber( L,1 );
-	int sCol = ( int )lua_tonumber( L, 2 );
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
 	QString text = ( char * )lua_tostring ( L, 3 );
 
 	sCol = sCol ? sCol - 1 : 0;
@@ -336,8 +338,8 @@ int YZExLua::_goto(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 2 ) return 0; //mis-use of the function
 
-	int sLine = ( int )lua_tonumber( L,1 );
-	int sCol = ( int )lua_tonumber( L, 2 );
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
 
 	YZView* cView = YZSession::me->currentView();
 	cView->gotoxy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
@@ -371,8 +373,8 @@ int YZExLua::color(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n != 2 ) return 0; //mis-use of the function
 
-	int sLine = ( int )lua_tonumber( L,1 );
-	int sCol = ( int )lua_tonumber( L,2 );
+	int sCol = ( int )lua_tonumber( L,1 );
+	int sLine = ( int )lua_tonumber( L,2 );
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
 

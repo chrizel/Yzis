@@ -42,6 +42,10 @@ else
 			 fi
 fi
 
+if test "$have_kde" != "yes"; then
+	DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis"
+fi
+
 AC_SUBST(YZIS_SUBDIRS)
 AC_SUBST(YZIS_INCLUDES)
 AC_SUBST(NYZIS_DEP)

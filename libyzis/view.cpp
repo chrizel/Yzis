@@ -1267,14 +1267,14 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 #endif
 		}
 
+		if ( !isColumnVisible( mainCursor->screenX(), mainCursor->screenY() ) ) {
+			centerViewHorizontally( mainCursor->screenX( ) );
+		}
 		if ( !isLineVisible( mainCursor->screenY() ) ) {
 			if ( mainCursor->screenY() >= mLinesVis + scrollCursor->screenY() )
 				bottomViewVertically( mainCursor->screenY() );
 			else
 				alignViewVertically( mainCursor->screenY() );
-		}
-		if ( !isColumnVisible( mainCursor->screenX(), mainCursor->screenY() ) ) {
-			centerViewHorizontally( mainCursor->screenX( ) );
 		}
 		commitPaintEvent();
 		updateCursor( );

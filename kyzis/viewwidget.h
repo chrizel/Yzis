@@ -66,6 +66,9 @@ class KYZisView: public KTextEditor::View,public KTextEditor::ViewCursorInterfac
 		unsigned int cursorColumn();
 		unsigned int cursorColumnReal(); 
 		void cursorPositionChanged();
+	
+	protected:
+		void setupActions();
 
 	private:
 		KYZisEdit *editor;

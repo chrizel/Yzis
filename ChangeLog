@@ -1,6 +1,8 @@
 2004-04-04 mikmak
   * libyzis
     disables views updates during a ::load => speed up loading huge files
+  * kyzis
+    make KAction system working
 
 2004-04-03 mikmak
   * kyzis

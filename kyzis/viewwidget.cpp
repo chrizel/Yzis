@@ -23,6 +23,7 @@
 #include <qlayout.h>
 #include <qevent.h>
 #include <kapplication.h>
+#include <kstdaction.h>
 #include "viewwidget.h"
 #include "factory.h"
 #include "debug.h"
@@ -53,10 +54,12 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 
 	KYZisFactory::registerView( this );
 
+	setXMLFile( "kyzispart/kyzispart.rc" );
+	setupActions();
+	
 	buffer = doc;
 	editor->show();
 	status->show();
-	editor->setFocus();
 }
 
 KYZisView::~KYZisView () {
@@ -109,6 +112,11 @@ void KYZisView::updateCursor ( unsigned int line, unsigned int x1, unsigned int 
 
 void KYZisView::refreshScreen () {
 	editor->updateContents( );
+}
+
+void KYZisView::setupActions() {
+	KStdAction::save(this, SLOT(fileSave()), actionCollection());
+	KStdAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());
 }
 
 /* Implementation of KTextEditor::ViewCursorInterface */

@@ -327,7 +327,7 @@ void YZView::centerView(unsigned int line) {
 
 //drop me ? (==move it to GUIs directly)
 void YZView::redrawScreen() {
-	yzDebug() << "View " << myId << " redraw" << endl;
+	//yzDebug() << "View " << myId << " redraw" << endl;
 	refreshScreen( );
 	updateCursor();
 }

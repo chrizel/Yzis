@@ -74,6 +74,7 @@ protected slots:
 	
 protected:
 	virtual void resizeEvent( QResizeEvent *e );
+	void setWindowMenu();
 
 private slots:
     void fileNew();

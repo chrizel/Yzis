@@ -49,11 +49,11 @@ libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor $(top_builddi
 
 # this is where the desktop file will go 
 partdesktopdir   = $(kde_servicesdir)
-partdesktop_DATA = kyzis_part.desktop
+partdesktop_DATA = kyzispart.desktop
 
 # this is where the part's XML-GUI resource file goes
 partrcdir   = $(kde_datadir)/kyzispart
-partrc_DATA = kyzis_part.rc
+partrc_DATA = kyzispart.rc
 
 #########################################################################
 # MISC SECTION

@@ -17,7 +17,6 @@
 
 /*
  * $Id$
- * Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
  */
 #include "kyzis.h"
 #include "kyzis.moc"
@@ -35,9 +34,10 @@
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kdebug.h>
-#include "document.h"
 #include <ktempfile.h>
 #include <kstandarddirs.h>
+#include <klocale.h>
+#include "document.h"
 
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
@@ -45,12 +45,6 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 {
 	setIDEAlModeStyle( 1 );
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
-
-	if ( !isFakingSDIApplication() ) {
-		menuBar()->insertItem("&Window", windowMenu(), -1 , menuBar()->count()-2);
-		menuBar()->insertItem("&Docking", dockHideShowMenu(), -1 , menuBar()->count()-2);
-	}
-	setupActions();
 	
 	if ( m_dockConfig.hasChildNodes() ) {
 		readDockConfig(m_dockConfig);
@@ -58,6 +52,11 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 
 	dockManager->finishReadDockConfig();
 	setMenuForSDIModeSysButtons( menuBar() );
+
+	setXMLFile( "kyzis_shell.rc" );
+	setupActions();
+	createShellGUI( true );
+	setWindowMenu();
 	
 }
 	
@@ -81,11 +80,22 @@ void Kyzis::setupActions() {
 	KStdAction::open(this, SLOT(fileOpen()), actionCollection());
 
 	KStdAction::quit(kapp, SLOT(quit()), actionCollection());
+	if ( !isFakingSDIApplication() ) {
+//		menuBar()->insertItem(i18n( "&Window" ), windowMenu(), -1, menuBar()->count()-2);
+//		menuBar()->insertItem("&Docking", dockHideShowMenu() );//, -1 , menuBar()->count()-2);
+	}
 
 	//m_toolbarAction = KStdAction::showToolbar(this, SLOT(optionsShowToolbar()), actionCollection());
 
 	//KStdAction::keyBindings(this, SLOT(optionsConfigureKeys()), actionCollection());
 	//KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
+}
+
+void Kyzis::setWindowMenu() {
+	QPopupMenu *menu = ( QPopupMenu* ) menuBar()->child(  "window", "KPopupMenu" );
+	if ( menu )
+		QObject::connect( menu , SIGNAL( aboutToShow() ), this, SLOT( fillWindowMenu() ) );	
+	else menuBar()->insertItem(i18n( "&Window" ), windowMenu(), -1, menuBar()->count()-1);
 }
 
 void Kyzis::fileNew() {
@@ -157,7 +167,7 @@ void Kyzis::createBuffer(const QString& path) {
 		{
 			// now that the Part is loaded, we cast it to a Part to get
 			// our hands on it
-			KParts::ReadWritePart * m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzis_part", "KParts::ReadWritePart" ));
+			KParts::ReadWritePart * m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart" ));
 
 			if (m_part)
 			{

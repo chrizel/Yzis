@@ -542,6 +542,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
   // Let's get a list of all the xml files for hl
   QStringList list = findAllResources("data",QString( PREFIX ) + "/share/yzis/syntax/*.xml",false,true);
+  list += findAllResources("data", QDir::homeDirPath() + "/.yzis/syntax/*.xml", false, true);
 
   // Let's iterate through the list and build the Mode List
   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )

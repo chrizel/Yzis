@@ -25,7 +25,7 @@
 
 class NYZisDoc : public YZBuffer {
 	public:
-		NYZisDoc (const QString& path);
+		NYZisDoc (void);
 		virtual ~NYZisDoc ();
 
 		bool popupFileSaveAs();

@@ -22,7 +22,7 @@
 #include "document.h"
 #include "factory.h"
 
-NYZisDoc::NYZisDoc (const QString& path) : YZBuffer(NYZFactory::self) {
+NYZisDoc::NYZisDoc (void) : YZBuffer(NYZFactory::self) {
 }
 
 NYZisDoc::~NYZisDoc () {

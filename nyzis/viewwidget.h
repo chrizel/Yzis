@@ -97,6 +97,18 @@ private:
 	QString commandline;
 	bool modeDisplayed;
 
+
+	void initialisecolormap();
+	static int colormapinitialised;
+	/**
+	  * maps QRgb to ncurses colors
+	  * mColormap[ QRgb ] is the # of the corresponding pair in ncurses
+	  */
+	static QMap<QRgb,int> mColormap;
+
 };
 
 #endif // NYZ_VIEW_H
+
+
+

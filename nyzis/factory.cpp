@@ -48,24 +48,6 @@ NYZFactory::NYZFactory(const char *session_name)
 	}
 	self = this;
 
-	if (has_colors()) {
-		start_color();
-
-		/*
-		 * Simple color assignment, often all we need.  Color pair 0 cannot
-		 * be redefined.  This example uses the same value for the color
-		 * pair as for the foreground color, though of course that is not
-		 * necessary:
-		 */
-		init_pair(1, COLOR_RED,     COLOR_BLACK);
-		init_pair(2, COLOR_GREEN,   COLOR_BLACK);
-		init_pair(3, COLOR_YELLOW,  COLOR_BLACK);
-		init_pair(4, COLOR_BLUE,    COLOR_BLACK);
-		init_pair(5, COLOR_CYAN,    COLOR_BLACK);
-		init_pair(6, COLOR_MAGENTA, COLOR_BLACK);
-		init_pair(7, COLOR_WHITE,   COLOR_BLACK);
-	}
-
 	initialiseKeycodes();
 	screen = stdscr; // just an alias...
 	wattron(screen, A_BOLD);	// will be herited by subwin
@@ -142,9 +124,9 @@ YZView* NYZFactory::createView( YZBuffer* buffer )
 	*/
 }
 
-NYZisDoc *NYZFactory::createBuffer(const QString& path)
+NYZisDoc *NYZFactory::createBuffer(const QString&)
 {
-	NYZisDoc *b = new NYZisDoc( path );
+	NYZisDoc *b = new NYZisDoc();
 	YZASSERT_MSG(b, "NYZFactory::createBuffer failed creating new NYZisDoc");
 	return b;
 }

@@ -9,6 +9,8 @@
 #include "yz_view.h"
 
 
+#define	YZ_MAX_LINE	3000
+
 class NYZView : public YZView  {
 public:
 	/**
@@ -22,6 +24,7 @@ public:
 
 protected:
 	void handle_event(yz_event *e);
+	YZLine	*lines[YZ_MAX_LINE];
 
 };
 

@@ -327,6 +327,27 @@ QString YZView::deleteCharacter( const QString& inputsBuff ) {
 	return QString::null;
 }
 
+QString YZView::deleteLine ( const QString& inputsBuff = QString::null ) {
+	int nb_lines=1;//default : one line down
+
+	//check the arguments
+	if ( !inputsBuff.isNull() ) {
+		int i=0;
+		while ( inputsBuff[i].isDigit() )
+			i++; //go on
+		bool test;
+		nb_lines = inputsBuff.left( i ).toInt( &test );
+		if ( !test ) nb_lines=1;
+	}
+
+	for ( int i=0; i<nb_lines; ++i ) buffer->deleteLine( cursor->getY() );
+
+	//reset the input buffer
+	purgeInputBuffer();
+
+	return QString::null;
+}
+
 QString YZView::gotoInsertMode(const QString&) {
 	mode = YZ_VIEW_MODE_INSERT;
 	postEvent(YZEvent::mkEventStatus("-- INSERT --"));

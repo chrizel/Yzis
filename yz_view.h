@@ -126,6 +126,11 @@ public:
 	 */
 	QString gotoLine( const QString& inputsBuff = QString::null );
 
+	/**
+	 * Deletes lines
+	 */
+	QString deleteLine ( const QString& inputsBuff = QString::null );
+
 	void redrawScreen();
 
 protected:

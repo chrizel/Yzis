@@ -44,6 +44,7 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true);
 	NEW_VIEW_COMMAND("gg",&YZView::gotoLine,true);
 	NEW_VIEW_COMMAND("G",&YZView::gotoLine,true);
+	NEW_VIEW_COMMAND("dd",&YZView::deleteLine,true);
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
 }
 

@@ -218,9 +218,10 @@ void YZView::sendKey( const QString& _key, const QString& modifiers) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
 				purgeInputBuffer();
 				return;
-			} else if ( key == "<TAB>" ) {
-				key = "\t";
 			} else {
+				if ( key == "<TAB>" ) {
+					key="\t";
+				}
 				mBuffer->action()->insertChar( this, mainCursor->buffer(), key );
 				if ( cindent && key == "}" )
 					reindent(mainCursor->bufferX()-1, mainCursor->bufferY());

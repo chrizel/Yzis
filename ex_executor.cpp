@@ -29,10 +29,10 @@ QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 	int idx = inputs.find(" ");
 	if ( idx == -1 ) return QString::null; //XXX display error : "No filename given"
-	QString path = inputs.mid( idx ); //extract the path 
+	QString path = inputs.mid( idx + 1 ); //extract the path 
 	yzDebug() << "New buffer / view : " << path << endl;
 	YZBuffer *b = view->mySession()->gui_manager->createBuffer( path );
-	YZView* v = view->mySession()->gui_manager->createView(b);
-	view->mySession()->gui_manager->setCurrentView(v);
+//	YZView* v = view->mySession()->gui_manager->createView(b);
+//	view->mySession()->gui_manager->setCurrentView(v);
 	return QString::null;
 }

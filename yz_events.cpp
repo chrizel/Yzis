@@ -9,16 +9,19 @@ YZEvent::YZEvent() {
 
 yz_event YZEvent::mkEventStatus(const QString& text) {
 	yz_event e;
-	e.id=YZ_EV_SETSTATUS;
+	e.id=YZ_EV_SET_STATUS;
 	e.setstatus.text=text;
 	return e;
 }
 
-yz_event YZEvent::mkEventCursor(int x, int y) {
+
+yz_event YZEvent::mkEventCursor(int x, int y, int y2, QString& p) {
 	yz_event e;
-	e.id=YZ_EV_SETCURSOR;
+	e.id=YZ_EV_SET_CURSOR;
 	e.setcursor.x=x;
 	e.setcursor.y=y;
+	e.setcursor.y2=y2;
+	e.setcursor.percentage=p;
 	return e;
 }
 

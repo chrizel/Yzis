@@ -78,7 +78,24 @@ void YZView::sendChar( QChar c) {
 
 void YZView::updateCursor(void)
 {
-	postEvent( YZEvent::mkEventCursor(cursor->getX(),cursor->getY()));
+	static int lasty = -10; // small speed optimisation
+	static QString percentage("All");
+	int y = cursor->getY();
+
+	if ( y != lasty ) {
+		percentage = QString("%1%").arg( int( y*100/buffer->getLines()));
+		if ( current < 1 )  percentage="Top";
+		if ( current+lines_vis >= buffer->getLines() )  percentage="Bot";
+		if ( (current<1 ) &&  ( current+lines_vis >= buffer->getLines( ) ) )  percentage="All";
+		lasty=y;
+	}
+
+	postEvent( YZEvent::mkEventCursor(
+				cursor->getX(),
+				y,
+				y,
+				percentage
+				));
 }
 
 yz_event YZView::fetchNextEvent() {
@@ -111,7 +128,7 @@ void YZView::centerView(unsigned int line) {
 	if ( newcurrent < 0 ) newcurrent = 0;
 //	printf("Center : %i\n Lines vis : %i\n Current : %i\n",line,lines_vis,newcurrent);
 
-	if ( newcurrent==current ) return;
+	if ( newcurrent== int( current ) ) return;
 
 	//redraw the screen
 	current = newcurrent;

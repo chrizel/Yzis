@@ -317,8 +317,8 @@ bool YZExLua::pcall( int nbArg, int nbReturn, int errLevel, const QString & erro
 	int lua_err = lua_pcall(L,nbArg,nbReturn,errLevel);
 	if (! lua_err) return true;
 	QString luaErrorMsg = lua_tostring(L,lua_gettop(L));
-//	printf("%s\n", luaErrorMsg.latin1() );
-	YZSession::me->popupMessage(errorMsg + luaErrorMsg );
+	printf("%s\n", luaErrorMsg.latin1() );
+//	YZSession::me->popupMessage(errorMsg + luaErrorMsg );
 	return false;
 }
 

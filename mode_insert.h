@@ -46,6 +46,8 @@ class YZModeInsert : public YZMode {
 		virtual void commandInsert( YZView* mView, const QString& key );
 		virtual void commandEx( YZView* mView, const QString& key );
 		virtual void commandVisual( YZView* mView, const QString& key );
+		virtual void commandInsertFromBelow( YZView* mView, const QString& key );
+		virtual void commandInsertFromAbove( YZView* mView, const QString& key );
 		virtual void commandCompletion( YZView* mView, const QString& key );
 		virtual void commandCompletionPrevious( YZView* mView, const QString& key );
 		virtual void commandCompletionNext( YZView* mView, const QString& key );

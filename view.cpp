@@ -1583,6 +1583,32 @@ void YZView::gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool apply
 		}
 	}
 }
+
+QString YZView::getCharBelow( int delta ) {
+	YZViewCursor vc = viewCursor();
+	unsigned int Y = vc.bufferY();
+	if ( delta < 0 && Y > (unsigned int)(-delta) || delta >= 0 && ( Y + (unsigned int)delta ) < mBuffer->lineCount() )
+		Y += delta;
+	else
+		return QString::null;
+
+	QString ret = QString::null;
+	unsigned int dx = vc.screenX();
+	int old_stickyCol = stickyCol;
+	updateStickyCol( &vc );
+	gotoStickyCol( &vc, Y, false );
+	if ( vc.screenX() >= dx ) {
+		unsigned int x = vc.bufferX();
+		if ( vc.screenX() > dx && x > 0 ) // tab
+			--x;
+		ret = mBuffer->textline( Y )[ x ];
+	}
+
+	// restore stickyCol
+	stickyCol = old_stickyCol;
+	return ret;
+}
+
 void YZView::updateStickyCol( ) {
 	updateStickyCol( mainCursor );
 }

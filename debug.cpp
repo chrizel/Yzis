@@ -31,12 +31,13 @@
 #include <qfile.h>
 #include <qregexp.h>
 #include <ctype.h>
+#include <unistd.h>
 
 YZDebugBackend * YZDebugBackend::_instance = NULL;
 
 YZDebugBackend::YZDebugBackend() 
 {
-	_output = fopen("/tmp/yzisdebug.log", "w" );
+	_output = fopen("/tmp/yzisdebug-" + QString(cuserid(NULL)) + ".log", "w" );
 	init();
 }
 

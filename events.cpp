@@ -92,7 +92,9 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					int nbCurTabs = rx.cap(1).count("\t");
 					int nbCurSpaces = rx.cap(1).count(" ");
 #endif
-					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->y()+1);
+					QString nextLine;
+					if (view->getBufferCursor()->y()+1 < view->myBuffer()->lineCount())
+						nextLine = view->myBuffer()->textline(view->getBufferCursor()->y()+1);
 					rx.exactMatch(nextLine);
 #if QT_VERSION < 0x040000
 					int nbNextTabs = rx.cap(1).contains("\t");

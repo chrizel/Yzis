@@ -248,22 +248,22 @@ class YZView {
 		/**
 		 * Moves the draw cursor to @arg nextx, @arg nexty
 		 */
-		void gotodxdy(unsigned int nextx, unsigned int nexty);
+		void gotodxdy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the cursor to @arg buffer nextx, @arg draw nexty
 		 */
-		void gotoxdy(unsigned int nextx, unsigned int nexty);
+		void gotoxdy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the cursor to @arg draw nextx, @arg buffer nexty
 		 */
-		void gotodxy(unsigned int nextx, unsigned int nexty);
+		void gotodxy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the buffer cursor to @arg nextx, @arg nexty
 		 */
-		void gotoxy(unsigned int nextx, unsigned int nexty);
+		void gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 
 		/**
 		 * Copy from current to buffer to a register
@@ -432,7 +432,7 @@ class YZView {
 		virtual void scrollUp( int ) = 0;
 		virtual void scrollDown( int ) = 0;
 
-		/* recalculate cursor and resfresh screen */
+		/* recalculate cursor position and refresh screen */
 		void reset( );
 
 
@@ -596,7 +596,7 @@ class YZView {
 		void gotody( unsigned int );
 		void gotox( unsigned int );
 		void gotodx( unsigned int );
-		void applyGoto( );
+		void applyGoto( bool applyCursor = true );
 		void initGoto( );
 		void updateCurLine( );
 

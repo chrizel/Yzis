@@ -118,6 +118,13 @@ QString YZExLua::lua(YZView *, const QString& args) {
 	return QString::null;
 }
 
+void YZExLua::execute(const QString& function, int nbArgs, int nbResults) { 
+	lua_getglobal(L,function);
+	if (lua_pcall(L, nbArgs, nbResults, 0) != 0) {
+		yzDebug() << "error : " << lua_tostring(L, -1) << endl;
+	}
+}
+
 //callers
 QString YZExLua::source( YZView *, const QString& args ) {
 	yzDebug() << "source : " << args << endl;
@@ -157,20 +164,20 @@ int YZExLua::execInLua( const QString & luacode ) {
 	lua_pushstring(L, "loadstring" );
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	lua_pushstring(L, luacode );
-	print_lua_stack(L, "loadstring 0");
+//	print_lua_stack(L, "loadstring 0");
 	pcall(1,2,0, "");
-	print_lua_stack(L, "loadstring 1");
+//	print_lua_stack(L, "loadstring 1");
 	if (lua_isnil(L,-2) && lua_isstring(L,-1)) {
 		QString luaErrorMsg = lua_tostring(L,-1);
 		lua_pop(L,2);
 		YZSession::me->popupMessage(luaErrorMsg );
-		printf("execInLua - %s\n", luaErrorMsg.latin1() );
+//		printf("execInLua - %s\n", luaErrorMsg.latin1() );
 		return 0;
 	} else if (lua_isfunction(L,-2)) {
 		lua_pop(L,1);
 		pcall(0,0,0, "");
 	} else { // big errror
-		print_lua_stack(L, "loadstring returns strange things" );
+//		print_lua_stack(L, "loadstring returns strange things" );
 		YZSession::me->popupMessage("Unknown lua return type");
 	}
 	return 0;
@@ -180,7 +187,7 @@ bool YZExLua::pcall( int nbArg, int nbReturn, int errLevel, const QString & erro
 	int lua_err = lua_pcall(L,nbArg,nbReturn,errLevel);
 	if (! lua_err) return true;
 	QString luaErrorMsg = lua_tostring(L,lua_gettop(L));
-	printf("%s\n", luaErrorMsg.latin1() );
+//	printf("%s\n", luaErrorMsg.latin1() );
 	YZSession::me->popupMessage(errorMsg + luaErrorMsg );
 	return false;
 }
@@ -456,12 +463,13 @@ bool YZExLua::checkFunctionArguments(lua_State*L,
 	return false;
 }
 
-QStringList YZExLua::getLastResult() {
+QStringList YZExLua::getLastResult(int nb) {
 	int n = lua_gettop( L );
 	yzDebug() << "LUA: Stack has " << n << " entries" << endl;
 	QStringList list;
-	for (int i = 1 ; i <= n ; ++i ) {
+	for (int i = - nb ; i < 0 ; ++i ) {
 		int type = lua_type(L,i);
+		yzDebug() << "Type for index " << i << " : " << type << endl;
 		switch (type) {
 			case LUA_TNUMBER:
 				list << QString::number(lua_tonumber(L,i));
@@ -475,6 +483,8 @@ QStringList YZExLua::getLastResult() {
 			default:
 				break;
 		}
+		//cleanup
+		lua_pop(L,1);
 	}
 	yzDebug() << "LUA: Result " << list << endl;
 	return list;

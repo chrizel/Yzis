@@ -52,6 +52,13 @@ class YZExLua : public QObject {
 		/** Called when lua wants to print */
 		void yzisprint(const QString & text);
 
+		/**
+		 * Return the results of the last Lua method invoked
+		 */
+		QStringList getLastResult(int nb);
+
+		void execute(const QString& function, int nbArgs, int nbResults);
+	
 	protected:
 		/** Protected call to lua, popups an error window in case of
 		  * failure. Return true if the call is without error */
@@ -198,11 +205,6 @@ class YZExLua : public QObject {
 		 * Returns nothing
 		 */
 		static int connect(lua_State *L);
-
-		/**
-		 * Return the results of the last Lua method invoked
-		 */
-		QStringList getLastResult();
 
 	protected:
 		lua_State *L;

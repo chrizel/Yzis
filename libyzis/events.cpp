@@ -34,21 +34,32 @@ void YZEvents::connect(const QString& event, const QString& function) {
 		QStringList list = mEvents[event];
 		if ( !list.contains(function) ) list += function;
 		mEvents[event] = list;
+	} else {
+		QStringList list;
+		list << function;
+		mEvents[event] = list;
 	}
 }
 
-void YZEvents::exec(const QString& event) {
+
+QStringList YZEvents::exec(const QString& event) {
+	yzDebug() << "Executing event " << event << endl;
 	QMap<QString,QStringList>::Iterator it = mEvents.begin(), end = mEvents.end();
+	QStringList results;
 	for ( ; it != end; ++it ) {
-		if ( it.key() == event ) {
+		yzDebug() << "Comparing " << it.key() << " to " << event << endl;
+		if ( QString::compare(it.key(), event) == 0 ) {
 			QStringList list = it.data();
+			yzDebug() << "Matched " << list << endl;
 			QStringList::Iterator it2 = list.begin(), end2 = list.end();
 			for ( ; it2 != end2; ++it2 ) {
 				yzDebug() << "Executing plugin " << *it2 << endl;
-				YZExLua::instance()->execInLua(*it2);
+				YZExLua::instance()->execute(*it2,0,1);
+				results += YZExLua::instance()->getLastResult(1);
 			}
 		}
 	}
+	return results;
 }
 
 #include "events.moc"

@@ -216,6 +216,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );
+		if (!getLocalBoolOption("makebluebirdhappy"))
+			return;
 	}
 
 	QString key=_key;

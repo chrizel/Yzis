@@ -106,6 +106,7 @@ void KYZisView::setStatusBar ( const QString& text ) {
 }
 
 void KYZisView::updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage ) {
+	yzDebug() << "KYZisView::updateCursor" << x1 << " " << line << endl;
 	editor->setCursor(x1, line);
 	if (x1!=x2)
 		status->changeItem( QString("%1,%2-%3 (%4)").arg(line+1 ).arg( x1+1 ).arg( x2+1 ).arg( percentage),99 );
@@ -114,7 +115,7 @@ void KYZisView::updateCursor ( unsigned int line, unsigned int x1, unsigned int 
 }
 
 void KYZisView::refreshScreen () {
-	editor->updateContents( );
+	editor->repaintContents( );
 }
 
 void KYZisView::setupActions() {

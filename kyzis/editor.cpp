@@ -48,8 +48,8 @@ KYZisEdit::~KYZisEdit() {
 }
 
 void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
-	yzDebug() << "viewportResizeEvent" << endl;
 	QSize s = ev->size();
+	yzDebug() << "viewportResizeEvent " << s.height() << " " << s.width() << endl;
 	int lines = s.height() / fontMetrics().lineSpacing();
 	int columns = s.width() / fontMetrics().maxWidth();
 	mParent->setVisibleArea( columns, lines );
@@ -57,26 +57,20 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 
 void KYZisEdit::setCursor(int c, int l) {
 	yzDebug() << "setCursor " << c << ", " << l << endl;
-	//undraw previous cursor
-	if ( mCursorShown && ( c!= mCursorX || l!=mCursorY ) ) {
-		yzDebug() << "Undraw previous cursor" << endl;
-		drawCursorAt( mCursorX,mCursorY );
-	} else if ( mCursorShown ) {
-		yzDebug() << "Dont redraw cursor" << endl;
-		return;
-	}
-
-	mCursorX = c;
-	mCursorY = l;
-
-	//draw new cursor
-	mCursorShown = true;
+	//erase the previous cursor by redrawing the line 
+	mCursorShown = false; //lock
+	repaintContents( mCursorX * fontMetrics().maxWidth(), mCursorY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+	mCursorShown = true; //unlock
 	
+	//new position of cursor
+	mCursorX = c - mParent->getCurrentLeft();
+	mCursorY = l - mParent->getCurrentTop();
+
 	//check if the line contains TABs
-	QString currentLine = mParent->myBuffer()->textline( mCursorY );
-	int s = fontMetrics().size( Qt::ExpandTabs|Qt::SingleLine, currentLine, c, 0, 0).width();
+	QString currentLine = mParent->myBuffer()->textline( mCursorY + mParent->getCurrentTop() ).mid( mParent->getCurrentLeft(), mParent->getColumnsVisible() );
+	int s = fontMetrics().size( Qt::ExpandTabs|Qt::SingleLine, currentLine, mCursorX, /*tabstops*/0, /*tabarray*/0).width();
 	mCursorX = s / fontMetrics().maxWidth();
-	drawCursorAt( mCursorX,mCursorY );
+	drawCursorAt( mCursorX, mCursorY );
 }
 
 void KYZisEdit::setTextLine(int l, const QString &/*str*/) {
@@ -113,7 +107,7 @@ void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 			nbcols++;
 		}
 		nbcols = nbcols - 2 >= 0 ? nbcols -2 : 0; //dont ask me why i need this :) i understand -1 but not -2 ...
-		mParent->gotoxy(nbcols, e->y()/fontMetrics().lineSpacing() + mParent->getCurrentTop());
+		mParent->gotoxy(nbcols + mParent->getCurrentLeft(), e->y()/fontMetrics().lineSpacing() + mParent->getCurrentTop());
 	}
 }
 
@@ -121,9 +115,9 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 	yzDebug() << "drawCursorAt :" << x << ", " << y << endl;
 	bitBlt (
 			viewport(),
-			x*fontMetrics().maxWidth(),( y - mParent->getCurrentTop() ) *fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(),y * fontMetrics().lineSpacing(),
 			viewport(),
-			x*fontMetrics().maxWidth(), ( y - mParent->getCurrentTop() )*fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(), y * fontMetrics().lineSpacing(),
 			fontMetrics().maxWidth(), fontMetrics().lineSpacing(),
 			Qt::NotROP,	    // raster Operation
 			true );		    // ignoreMask
@@ -131,18 +125,21 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
 	yzDebug() << "drawContents " << endl;
-	int flag = mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft;
+	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft ) | Qt::ExpandTabs |/* Qt::DontClip |*/ Qt::SingleLine;
 
 	for ( unsigned int i=0; i < mParent->getLinesVisible() ; ++i ) {
 		if ( fontMetrics().lineSpacing() * i >= ( unsigned int )clipy && fontMetrics().lineSpacing() * i <= ( unsigned int ) ( clipy+cliph ) ) {
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
+//			QRect clip(clipx-8, i * fontMetrics().lineSpacing(), 2*clipw, fontMetrics().lineSpacing());
 			p->eraseRect(clip);
-			if (mParent->myBuffer()->lineCount() > i + mParent->getCurrentTop() )
-				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,mParent->myBuffer()->textline(i + mParent->getCurrentTop()));
-			else 
-				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,"~");
-			if ( ( i + mParent->getCurrentTop() ) == mCursorY ) 
-				drawCursorAt( mCursorX, mCursorY );
+			if (mParent->myBuffer()->lineCount() > i + mParent->getCurrentTop() ) {
+				QString toDraw = mParent->myBuffer()->textline( i + mParent->getCurrentTop() ).mid(mParent->getCurrentLeft(), mParent->getColumnsVisible() );
+				p->drawText(clip,flag,toDraw);
+			} else {
+				p->drawText(clip,flag ,"~");
+			}
+			if ( mCursorShown && mCursorY == i)
+				setCursor( mParent->getCursor()->getX(), mCursorY + mParent->getCurrentTop() );
 		}
 	}
 }

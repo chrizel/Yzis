@@ -28,6 +28,8 @@
 #include <qtranslator.h>
 #include <qtextcodec.h>
 #include "libyzis/translator.h"
+#include "libyzis/session.h"
+#include "libyzis/view.h"
 #include "debug.h"
 #include "yzis.h"
 
@@ -36,6 +38,7 @@ I18N_NOOP("KDE Frontend for the Yzis Editor");
 
 static KCmdLineOptions options[] = {
 	{ "+[URL]", I18N_NOOP( "Document to open." ), 0 },
+	{ "c <argument>", I18N_NOOP( "Execute command passed in argument" ), 0 },
 	KCmdLineLastOption
 };
 
@@ -53,6 +56,7 @@ int main(int argc, char **argv) {
 	KCmdLineArgs::init(argc, argv, &about);
 	KCmdLineArgs::addCmdLineOptions( options );
 	KApplication app;
+
 
 	QTranslator qt(  0 );
 	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
@@ -82,6 +86,13 @@ int main(int argc, char **argv) {
 			for (; i < args->count(); i++ )
 				widget->createBuffer( args->url( i ).url() );
 		}
+
+		QCString initialSendKeys = args->getOption("c");
+		if (initialSendKeys.length()) {
+			QString keys = (const char *) initialSendKeys;
+			YZSession::me->currentView()->sendMultipleKey(keys);
+		}
+	
 		args->clear();
 	}
 

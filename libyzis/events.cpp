@@ -83,7 +83,7 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					const char *inputs = view->getInputBuffer().toUtf8().data();
 #endif
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
-					QString curLine = view->myBuffer()->textline(view->getBufferCursor()->getY());
+					QString curLine = view->myBuffer()->textline(view->getBufferCursor()->y());
 					rx.exactMatch(curLine);
 #if QT_VERSION < 0x040000
 					int nbCurTabs = rx.cap(1).contains("\t");
@@ -92,7 +92,7 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					int nbCurTabs = rx.cap(1).count("\t");
 					int nbCurSpaces = rx.cap(1).count(" ");
 #endif
-					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->getY()+1);
+					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->y()+1);
 					rx.exactMatch(nextLine);
 #if QT_VERSION < 0x040000
 					int nbNextTabs = rx.cap(1).contains("\t");
@@ -101,7 +101,7 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					int nbNextTabs = rx.cap(1).count("\t");
 					int nbNextSpaces = rx.cap(1).count(" ");
 #endif
-					QString prevLine = view->myBuffer()->textline(view->getBufferCursor()->getY()-1);
+					QString prevLine = view->myBuffer()->textline(view->getBufferCursor()->y()-1);
 					rx.exactMatch(prevLine);
 #if QT_VERSION < 0x040000
 					int nbPrevTabs = rx.cap(1).contains("\t");
@@ -114,7 +114,7 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 #endif
 				} else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
-					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->getY());
+					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->y());
 					rx.exactMatch(nextLine);
 #if QT_VERSION < 0x040000
 					int nbNextTabs = rx.cap(1).contains("\t");
@@ -123,7 +123,7 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					int nbNextTabs = rx.cap(1).count("\t");
 					int nbNextSpaces = rx.cap(1).count(" ");
 #endif
-					QString prevLine = view->myBuffer()->textline(view->getBufferCursor()->getY()-1);
+					QString prevLine = view->myBuffer()->textline(view->getBufferCursor()->y()-1);
 					rx.exactMatch(prevLine);
 #if QT_VERSION < 0x040000
 					int nbPrevTabs = rx.cap(1).contains("\t");

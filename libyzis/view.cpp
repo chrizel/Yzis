@@ -88,14 +88,12 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	/* start of visual mode */
 	mVisualCursor = new YZViewCursor( this );
 
-	origPos = new YZCursor( this );
-
-	mSearchBegin = new YZCursor( this );
-
-	beginChanges = new YZCursor( this );
+	origPos = new YZCursor();
+	mSearchBegin = new YZCursor();
+	beginChanges = new YZCursor();
 
 	incSearchFound = false;
-	incSearchResult = new YZCursor( this );
+	incSearchResult = new YZCursor();
 
 	stickyCol = 0;
 
@@ -131,8 +129,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	wrap = getLocalBoolOption( "wrap" );
 
 	//completion
-	m_completionStart = new YZCursor(this);
-	m_completionCursor = new YZCursor(this);
+	m_completionStart = new YZCursor();
+	m_completionCursor = new YZCursor();
 
 	abortPaintEvent();
 
@@ -186,11 +184,11 @@ void YZView::recalcScreen( ) {
 	YZCursor old_pos = *scrollCursor->buffer();
 	scrollCursor->reset();
 	if ( wrap ) old_pos.setX( 0 );
-	gotoxy( scrollCursor, old_pos.getX(), old_pos.getY(), false );
+	gotoxy( scrollCursor, old_pos.x(), old_pos.y(), false );
 
 	old_pos = *mainCursor->buffer();
 	mainCursor->reset();
-	gotoxy( mainCursor, old_pos.getX(), old_pos.getY() );
+	gotoxy( mainCursor, old_pos.x(), old_pos.y() );
 
 	sendRefreshEvent();
 }
@@ -342,15 +340,14 @@ void YZView::reindent( unsigned int X, unsigned int Y ) {
 	QString currentLine = mBuffer->textline( Y ).trimmed();
 #endif
 	bool found = false;
-	YZCursor *cur = new YZCursor ( this, X, Y );
-	YZCursor match = mBuffer->action()->match(this, *cur, &found);
+	YZCursor cur( X, Y );
+	YZCursor match = mBuffer->action()->match(this, cur, &found);
 	if ( !found ) return;
-	yzDebug() << "Match found on line " << match.getY() << endl;
-	QString matchLine = mBuffer->textline( match.getY() );
+	yzDebug() << "Match found on line " << match.y() << endl;
+	QString matchLine = mBuffer->textline( match.y() );
 	if ( rx.exactMatch( matchLine ) )
 		currentLine.prepend( rx.cap( 1 ) ); //that should have all tabs and spaces from the previous line
-	YZCursor *c = new YZCursor(this, 0, mainCursor->bufferY());
-	mBuffer->action()->replaceLine( this, c, currentLine );
+	mBuffer->action()->replaceLine( this, YZCursor( 0, mainCursor->bufferY() ), currentLine );
 	gotoxy( currentLine.length(), mainCursor->bufferY() );
 }
 
@@ -738,7 +735,7 @@ void YZView::gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int 
 }
 
 void YZView::gotoxyAndStick( YZCursor* cursor ) {
-	gotoxyAndStick( cursor->getX(), cursor->getY() );
+	gotoxyAndStick( cursor->x(), cursor->y() );
 }
 void YZView::gotoxyAndStick( unsigned int x, unsigned int y ) {
 	gotoxy( x, y );
@@ -902,7 +899,7 @@ void YZView::initChanges( unsigned int x, unsigned int y ) {
 
 void YZView::applyChanges( unsigned int /*x*/, unsigned int y ) {
 	unsigned int dY = mainCursor->screenY();
-	if ( y != beginChanges->getY() ) {
+	if ( y != beginChanges->y() ) {
 		sendPaintEvent( scrollCursor->screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor->screenY() ) );
 	} else {
 		if ( wrap ) {
@@ -914,7 +911,7 @@ void YZView::applyChanges( unsigned int /*x*/, unsigned int y ) {
 		} else
 			sendPaintEvent( scrollCursor->screenX(), dY, mColumnsVis, 1 );
 	}
-	gotoxy( origPos->getX(), origPos->getY(), false );
+	gotoxy( origPos->x(), origPos->y(), false );
 }
 
 QString YZView::append () {
@@ -936,38 +933,38 @@ void YZView::paste( QChar registr, bool after ) {
 	YZCursor pos( mainCursor->buffer() );
 	uint i = 0;
 	bool copyWholeLinesOnly = list[ 0 ].isNull();
-	QString copy = mBuffer->textline( pos.getY() );
+	QString copy = mBuffer->textline( pos.y() );
 	if ( after || ! copyWholeLinesOnly ) { //paste after current char
 		unsigned int start;
 		if( after )
-			start = copy.length() > 0 ? pos.getX() + 1 : 0;
+			start = copy.length() > 0 ? pos.x() + 1 : 0;
 		else
-			start = pos.getX();
+			start = pos.x();
 		i = 0;
 		if ( ! copyWholeLinesOnly ) {
 			copy = copy.mid( start );
-			mBuffer->action()->deleteChar( this, start, pos.getY(), copy.length() );
-			mBuffer->action()->insertChar( this, start, pos.getY(), list[ 0 ] + ( list.size() == 1 ? copy : "" ) );
-			gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.getY() );
+			mBuffer->action()->deleteChar( this, start, pos.y(), copy.length() );
+			mBuffer->action()->insertChar( this, start, pos.y(), list[ 0 ] + ( list.size() == 1 ? copy : "" ) );
+			gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.y() );
 		}
 		i++;
 		while ( i < list.size() - 1 ) {
-			mBuffer->action()->insertLine( this, pos.getY() + i, list[ i ] );
+			mBuffer->action()->insertLine( this, pos.y() + i, list[ i ] );
 			i++;
 		}
 		if ( i < list.size() && ! copyWholeLinesOnly ) {
-			mBuffer->action()->insertLine( this, pos.getY() + i, ( list[ i ].isNull() ? "" : list[ i ] ) + copy );
-			gotoxy( list[ i ].length(), pos.getY() + i );
+			mBuffer->action()->insertLine( this, pos.y() + i, ( list[ i ].isNull() ? "" : list[ i ] ) + copy );
+			gotoxy( list[ i ].length(), pos.y() + i );
 		} else if ( copyWholeLinesOnly ) {
-			gotoxy( 0, pos.getY() + 1 );
+			gotoxy( 0, pos.y() + 1 );
 			moveToFirstNonBlankOfLine();
 		}
 
 	} else if ( !after ) { //paste whole lines before current char
 		for( i = 1; i < list.size() - 1; i++ )
-			mBuffer->action()->insertLine( this, pos.getY() + i - 1, list[ i ] );
+			mBuffer->action()->insertLine( this, pos.y() + i - 1, list[ i ] );
 
-		gotoxy( pos.getX(), pos.getY() );
+		gotoxy( pos.x(), pos.y() );
 	}
 	updateStickyCol( mainCursor );
 }
@@ -1696,7 +1693,7 @@ void YZView::sendCursor( YZViewCursor* cursor ) {
 	*keepCursor = *cursor;
 }
 void YZView::sendPaintEvent( const YZCursor& from, const YZCursor& to ) {
-	sendPaintEvent( from.getX(), from.getY(), to.getX() - to.getX(), to.getY() - from.getY() + 1 );
+	sendPaintEvent( from.x(), from.y(), to.x() - to.x(), to.y() - from.y() + 1 );
 }
 void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
 	if ( curh == 0 ) {
@@ -1707,7 +1704,7 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 		if ( (cury+curh) > getDrawCurrentTop() && cury < getDrawCurrentTop() + getLinesVisible() )
 			paintEvent( curx, cury, curw, curh );
 	} else {
-		mPaintSelection->addInterval( YZInterval(YZCursor(this,curx,cury),YZCursor(this,curx+curw,cury+curh-1)) );
+		mPaintSelection->addInterval( YZInterval(YZCursor(curx,cury),YZCursor(curx+curw,cury+curh-1)) );
 	}
 }
 void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
@@ -1716,9 +1713,9 @@ void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 	if ( isBufferMap && getLocalBoolOption( "wrap" ) ) { // we must convert bufferMap to screenMap
 		YZViewCursor vCursor = viewCursor();
 		for ( i = 0; i < size; i++ ) {
-			gotoxy( &vCursor, map[ i ].fromPos().getX(), map[ i ].fromPos().getY() );
+			gotoxy( &vCursor, map[ i ].fromPos().x(), map[ i ].fromPos().y() );
 			map[ i ].setFromPos( vCursor.screen() );
-			gotoxy( &vCursor, map[ i ].toPos().getX(), map[ i ].toPos().getY() );
+			gotoxy( &vCursor, map[ i ].toPos().x(), map[ i ].toPos().y() );
 			map[ i ].setToPos( vCursor.screen() );
 		}
 	}
@@ -1726,9 +1723,9 @@ void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 	for ( i = 0; i < size; i++ ) {
 		YZBound from = map[ i ].from();
 		YZBound to = map[ i ].to();
-		unsigned int fY = from.pos().getY();
-		unsigned int tY = to.pos().getY();
-		if ( to.opened() && to.pos().getX() == 0 ) {
+		unsigned int fY = from.pos().y();
+		unsigned int tY = to.pos().y();
+		if ( to.opened() && to.pos().x() == 0 ) {
 			if ( tY == 0 ) continue;
 			--tY;
 		}

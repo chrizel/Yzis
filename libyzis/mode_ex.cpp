@@ -308,7 +308,7 @@ int YZModeEx::rangeLine( const YZExRangeArgs& args ) {
 	return l;
 }
 int YZModeEx::rangeCurrentLine( const YZExRangeArgs& args ) {
-	return args.view->getBufferCursor()->getY();
+	return args.view->getBufferCursor()->y();
 }
 int YZModeEx::rangeLastLine( const YZExRangeArgs& args ) {
 	return qMax( (int)args.view->myBuffer()->lineCount() - 1, 0 );
@@ -317,16 +317,16 @@ int YZModeEx::rangeMark( const YZExRangeArgs& args ) {
 	bool found = false;
 	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg.mid( 1 ), &found );
 	if ( found )
-		return pos.bPos->getY();
+		return pos.bPos->y();
 	return -1;
 }
 int YZModeEx::rangeVisual( const YZExRangeArgs& args ) {
 	YZSelectionMap visual = args.view->visualSelection();
 	if ( visual.size() ) {
 		if ( args.arg.mid( 1 ) == "<" )
-			return visual[ 0 ].fromPos().getY();
+			return visual[ 0 ].fromPos().y();
 		else if ( args.arg.mid( 1 ) == ">" )
-			return visual[ 0 ].toPos().getY();
+			return visual[ 0 ].toPos().y();
 	}
 	return -1;
 }
@@ -353,7 +353,7 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 	}
 
 	if ( found ) {
-		return pos.getY();
+		return pos.y();
 	}
 	return -1;
 }

@@ -162,7 +162,7 @@ void KYZisEdit::scrollUp( int n ) {
 		unsigned int i;
 		for( i = lv; (int)i >= n; i-- )
 			mCell[ i ] = mCell[ i - n ];
-		setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+		setCursor( mParent->getCursor()->x(), mParent->getCursor()->y() );
 		drawContents( 0, 0, mParent->getColumnsVisible(), n, false );
 	} else {
 		mParent->abortPaintEvent();
@@ -183,7 +183,7 @@ void KYZisEdit::scrollDown( int n ) {
 		unsigned int i;
 		for( i = 0; i < maxl; i++ )
 			mCell[ i ] = mCell[ i + n ];
-		setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+		setCursor( mParent->getCursor()->x(), mParent->getCursor()->y() );
 		drawContents( 0, maxl, lv, n, false );
 	} else {
 		mParent->abortPaintEvent();
@@ -276,7 +276,7 @@ void KYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 			unsigned int newY = e->y() / fontMetrics().lineSpacing()
 				+ mParent->getDrawCurrentTop();
 
-			if (newX != mParent->getCursor()->getX() || newY != mParent->getCursor()->getY()) {
+			if (newX != mParent->getCursor()->x() || newY != mParent->getCursor()->y()) {
 				mParent->gotodxdy( newX, newY );
 			}
 		}
@@ -318,7 +318,7 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 
 	unsigned int currentY = mParent->initDrawContents( clipy );
 	unsigned int lineNumber = 0;
-	unsigned int mY = mParent->getCursor()->getY() - mParent->getDrawCurrentTop();
+	unsigned int mY = mParent->getCursor()->y() - mParent->getDrawCurrentTop();
 	unsigned int w;
 
 	while ( cliph > 0 && mParent->drawNextLine( ) ) {

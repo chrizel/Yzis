@@ -32,14 +32,14 @@
 
 YZViewCursor::YZViewCursor( YZView* parent ) {
 	mParent = parent;
-	mBuffer = new YZCursor( mParent );
-	mScreen = new YZCursor( mParent );
+	mBuffer = new YZCursor();
+	mScreen = new YZCursor();
 	reset();
 }
 
 YZViewCursor::YZViewCursor( const YZViewCursor &c ) {
-	mBuffer = new YZCursor( c.mParent );
-	mScreen = new YZCursor( c.mParent );
+	mBuffer = new YZCursor();
+	mScreen = new YZCursor();
 	*this = c;
 }
 
@@ -94,16 +94,16 @@ void YZViewCursor::debug() {
 }
 
 unsigned int YZViewCursor::bufferX() const {
-	return mBuffer->getX();
+	return mBuffer->x();
 }
 unsigned int YZViewCursor::bufferY() const {
-	return mBuffer->getY();
+	return mBuffer->y();
 }
 unsigned int YZViewCursor::screenX() const {
-	return mScreen->getX();
+	return mScreen->x();
 }
 unsigned int YZViewCursor::screenY() const {
-	return mScreen->getY();
+	return mScreen->y();
 }
 
 void YZViewCursor::setBuffer( const YZCursor& value ) {

@@ -57,7 +57,7 @@ void TestSearch::testSearchOneLine()
 	mView->gotoxy( 2, 1 );
 	bool found;
 	YZCursor c = YZSession::me->search()->forward(mView,"simple",&found);
-	if ( found ) mView->gotoxy( c.getX(), c.getY() );
+	if ( found ) mView->gotoxy( c.x(), c.y() );
     CHECK_CURSOR_POS( mView, 4, 1 );
 }
 
@@ -68,7 +68,7 @@ void TestSearch::testSearchBeginningOfLine()
 	mView->gotoxy( 0, 1 );
 	bool found;
 	YZCursor c = YZSession::me->search()->forward(mView,"simple",&found);
-	if ( found ) mView->gotoxy( c.getX(), c.getY() );
+	if ( found ) mView->gotoxy( c.x(), c.y() );
     CHECK_CURSOR_POS( mView, 0, 1 );
 }
 

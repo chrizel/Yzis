@@ -214,14 +214,14 @@ QPoint KYZisView::cursorCoordinates()
 
 void KYZisView::cursorPosition ( unsigned int *line, unsigned int *col )
 {
-	*line = getCursor()->getY();
-	*col  = getCursor()->getX();
+	*line = getCursor()->y();
+	*col  = getCursor()->x();
 }
 
 void KYZisView::cursorPositionReal ( unsigned int *line, unsigned int *col )
 {
-	*line = getBufferCursor()->getY();
-	*col  = getBufferCursor()->getX();
+	*line = getBufferCursor()->y();
+	*col  = getBufferCursor()->x();
 }
 
 bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
@@ -241,17 +241,17 @@ bool KYZisView::setCursorPositionReal ( unsigned int line, unsigned int col)
 
 unsigned int KYZisView::cursorLine()
 {
-	return getCursor()->getY();
+	return getCursor()->y();
 }
 
 unsigned int KYZisView::cursorColumn()
 {
-	return getCursor()->getX();
+	return getCursor()->x();
 }
 
 unsigned int KYZisView::cursorColumnReal()
 {
-	return getBufferCursor()->getX();
+	return getBufferCursor()->x();
 }
 
 void KYZisView::resetInfo() {
@@ -291,15 +291,15 @@ void KYZisView::scrollView( int value ) {
 		unsigned int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
 		if (getLocalBoolOption( "wrap" )) {
 			YZViewCursor temp = *scrollCursor;
-			gotodxdy( &temp, getCursor()->getX(), getDrawCurrentTop() + getLinesVisible() - 1 );
+			gotodxdy( &temp, getCursor()->x(), getDrawCurrentTop() + getLinesVisible() - 1 );
 			lastBufferLineVisible = temp.bufferY();
 		}
 
 		// move cursor if it scrolled off the screen
-		if (getBufferCursor()->getY() < getCurrentTop())
-			gotoxy(getBufferCursor()->getX(), getCurrentTop());
-		else if (getBufferCursor()->getY() > lastBufferLineVisible)
-			gotoxy( getBufferCursor()->getX(), lastBufferLineVisible );
+		if (getBufferCursor()->y() < getCurrentTop())
+			gotoxy(getBufferCursor()->x(), getCurrentTop());
+		else if (getBufferCursor()->y() > lastBufferLineVisible)
+			gotoxy( getBufferCursor()->x(), lastBufferLineVisible );
 		updateCursor();
 	}
 }

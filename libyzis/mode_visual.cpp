@@ -162,12 +162,12 @@ void YZModeVisual::initVisualCommandPool() {
 void YZModeVisual::commandAppend( const YZCommandArgs& args ) {
 	YZCursor pos = qMax( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
 	args.view->modePool()->change( MODE_INSERT );
-	args.view->gotoxy( pos.getX(), pos.getY() );
+	args.view->gotoxy( pos.x(), pos.y() );
 }
 void YZModeVisual::commandInsert( const YZCommandArgs& args ) {
 	YZCursor pos = qMin( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
 	args.view->modePool()->change( MODE_INSERT );
-	args.view->gotoxy( pos.getX(), pos.getY() );
+	args.view->gotoxy( pos.x(), pos.y() );
 }
 void YZModeVisual::toLowerCase( const YZCommandArgs& args ) {
 	YZInterval i = interval( args );
@@ -197,8 +197,8 @@ void YZModeVisual::toUpperCase( const YZCommandArgs& args ) {
 }
 void YZModeVisual::changeWholeLines(const YZCommandArgs &args) {
 	YZInterval i = interval(args);
-	YZCursor from(args.view, 0, i.fromPos().getY());
-	YZCursor to(args.view, args.view->myBuffer()->getLineLength(i.toPos().getY())-1, i.toPos().getY());
+	YZCursor from( 0, i.fromPos().y());
+	YZCursor to( args.view->myBuffer()->getLineLength(i.toPos().y())-1, i.toPos().y());
 
 	// delete selected lines and enter insert mode
 	args.view->myBuffer()->action()->deleteArea( args.view, from, to, args.regs);
@@ -206,10 +206,10 @@ void YZModeVisual::changeWholeLines(const YZCommandArgs &args) {
 }
 void YZModeVisual::deleteWholeLines(const YZCommandArgs &args) {
 	YZInterval i = interval(args);
-	unsigned int lines = i.toPos().getY() - i.fromPos().getY() + 1;
+	unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
 
 	// delete whole lines, even those who are only partially selected
-	args.view->myBuffer()->action()->deleteLine(args.view, i.fromPos().getY(), lines, args.regs);
+	args.view->myBuffer()->action()->deleteLine(args.view, i.fromPos().y(), lines, args.regs);
 	args.view->commitNextUndo();
 
 	args.view->modePool()->pop();
@@ -218,7 +218,7 @@ void YZModeVisual::yankWholeLines(const YZCommandArgs &args) {
 	YZCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
 
 	YZInterval i = interval(args);
-	unsigned int lines = i.toPos().getY() - i.fromPos().getY() + 1;
+	unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
 
 	if (args.view->modePool()->currentType() == YZMode::MODE_VISUAL_LINE) {
 		// visual line mode, we don't need to do anything special
@@ -232,7 +232,7 @@ void YZModeVisual::yankWholeLines(const YZCommandArgs &args) {
 	args.view->modePool()->pop();
 
 	// move cursor to top left corner of selection (yes, this is correct behaviour :)
-	args.view->gotoxy( topLeft.getX(), topLeft.getY(), true );
+	args.view->gotoxy( topLeft.x(), topLeft.y(), true );
 	args.view->updateStickyCol( );
 }
 void YZModeVisual::translateToVisualLine( const YZCommandArgs& args ) {
@@ -277,8 +277,8 @@ void YZModeVisualLine::translateToVisual( const YZCommandArgs& args ) {
 YZInterval YZModeVisualLine::buildInterval( const YZCursor& from, const YZCursor& to ) {
 	YZBound bf( from );
 	YZBound bt( to, true );
-	bf.setPos( 0, from.getY() );
-	bt.setPos( 0, to.getY() + 1 );
+	bf.setPos( 0, from.y() );
+	bt.setPos( 0, to.y() + 1 );
 	YZInterval ret( bf, bt );
 	return ret;
 }

@@ -165,7 +165,7 @@ bool KYZisDoc::insertText( uint line, uint col, const QString &s)
 }
 
 QString KYZisDoc::text (  uint startLine, uint startCol, uint endLine, uint endCol ) const {
-	return ( ( YZBuffer* )( this ) )->getText( YZCursor(NULL,startCol,startLine), YZCursor(NULL,endCol,endLine) ).join("\n");
+	return ( ( YZBuffer* )( this ) )->getText( YZCursor(startCol,startLine), YZCursor(endCol,endLine) ).join("\n");
 }
 
 bool KYZisDoc::setText (  const QString &text ) {
@@ -176,7 +176,7 @@ bool KYZisDoc::setText (  const QString &text ) {
 
 bool KYZisDoc::removeText (  uint startLine, uint startCol, uint endLine, uint endCol) {
 	YZView *v = dynamic_cast<YZView*>( _views.first() );
-	( ( YZBuffer* )( this ) )->action()->deleteArea( v, YZCursor( v, startCol, startLine ), YZCursor(v,endCol, endLine ), QValueList<QChar>());
+	( ( YZBuffer* )( this ) )->action()->deleteArea( v, YZCursor( startCol, startLine ), YZCursor( endCol, endLine ), QValueList<QChar>());
 	return true;
 }
 
@@ -431,25 +431,25 @@ int KYZisDoc::selStartLine() {
 	YZView *v = dynamic_cast<YZView*>( _views.first() );
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
-	return visual->bufferMap()[ 0 ].fromPos().getY();
+	return visual->bufferMap()[ 0 ].fromPos().y();
 }
 int KYZisDoc::selStartCol() {
 	YZView *v = dynamic_cast<YZView*>( _views.first() );
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
-	return visual->bufferMap()[ 0 ].fromPos().getX();
+	return visual->bufferMap()[ 0 ].fromPos().x();
 }
 int KYZisDoc::selEndLine() {
 	YZView *v = dynamic_cast<YZView*>( _views.first() );
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
-	return visual->bufferMap()[ 0 ].toPos().getY();
+	return visual->bufferMap()[ 0 ].toPos().y();
 }
 int KYZisDoc::selEndCol() {
 	YZView *v = dynamic_cast<YZView*>( _views.first() );
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
-	return visual->bufferMap()[ 0 ].toPos().getX();
+	return visual->bufferMap()[ 0 ].toPos().x();
 }
 
 #include "document.moc"

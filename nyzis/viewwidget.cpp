@@ -275,9 +275,9 @@ void NYZView::drawContents( int clipy, int cliph ) {
 }
 
 void NYZView::drawCursor() {
-	unsigned int x = getCursor()->getX() - getDrawCurrentLeft () + marginLeft;
+	unsigned int x = getCursor()->x() - getDrawCurrentLeft () + marginLeft;
 	if ( getLocalBoolOption( "rightleft" ) ) x = width - x - 1;
-	wmove( editor, getCursor()->getY() - getDrawCurrentTop (), x );
+	wmove( editor, getCursor()->y() - getDrawCurrentTop (), x );
 	wrefresh( editor );
 }
 

@@ -85,12 +85,12 @@ void YZView::sendChar( QChar c) {
 void YZView::updateCursor(void)
 {
 	static int lasty = -10; // small speed optimisation
-	static QString percentage("All");
+	QString percentage("All");
 	int y = cursor->getY();
 
 	if ( y != lasty ) {
 		int nblines = buffer->getLines();
-		percentage = QString("%1%").arg( int( y*100/ nblines)); // nblines=0 ?
+		percentage = QString("%1%").arg( int( y*100/ ( nblines==0 ? 1 : nblines )));
 		if ( current < 1 )  percentage="Top";
 		if ( current+lines_vis >= nblines )  percentage="Bot";
 		if ( (current<1 ) &&  ( current+lines_vis >= nblines ) ) percentage="All";

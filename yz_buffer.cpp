@@ -15,7 +15,7 @@ YZBuffer::YZBuffer(const QString& _path) {
 
 	if (!_path.isEmpty()) load();
 	else {
-		QString blah;
+		QString blah( "" );
 		addLine(blah);
 	}
 	view_list.setAutoDelete( true ); //we own views
@@ -86,8 +86,10 @@ void YZBuffer::addNewLine( int col, int line ) {
 }
 
 void YZBuffer::deleteLine( int line ) {
-	//ugly no ? ;)
-	text.erase( text.at( line ) );
+	if ( text.count() > 1 )
+	 text.erase( text.at( line ) );
+	else
+		text[ line ] = "";
 	updateAllViews(); //hmm ...
 }
 
@@ -115,7 +117,7 @@ QString	YZBuffer::findLine(unsigned int line) {
 	//the guy i talked with on IRC was right to doubt about it :)
 	//so I return QString::null then for each call we need to check for if (!line.isNull())
 	//trying if(!line) is NOT working (read QString doc)
-	if ( text.count() <= line ) return QString::null;
+	if ( text.count() <= line) return QString::null;
 	else return text[ line ];
 }
 

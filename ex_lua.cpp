@@ -116,6 +116,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"source",source);
 	lua_register(L,"debug",debug);
 	lua_register(L,"setlocal",setlocal);
+	lua_register(L,"newoption",newoption);
 	lua_register(L,"set",set);
 }
 
@@ -565,6 +566,20 @@ int YZExLua::setlocal(lua_State *L ) {
 	YZSession::me->getExPool()->setlocal(YZExCommandArgs(YZSession::me->currentView(), QString::null, QString::null, option, 0, 0, true));
 
 	return 0;	
+}
+
+int YZExLua::newoption(lua_State *L ) {
+	if (!checkFunctionArguments(L, 6, "newoption", "create a new option")) return 0;
+	QString option = ( char * )lua_tostring ( L, 1 );
+	QString group = ( char * )lua_tostring ( L, 2 );
+	QString defaultvalue = ( char * )lua_tostring ( L, 3 );
+	QString value = ( char * )lua_tostring ( L, 4 );
+	option_t visibility = (option_t)lua_tonumber ( L, 5 );
+	value_t type = (value_t)lua_tonumber ( L, 6 );
+
+	YZSession::mOptions.createOption(option, group, defaultvalue, value, visibility, type );
+
+	return 0;
 }
 
 int YZExLua::set(lua_State *L ) {

@@ -356,3 +356,9 @@ YZInternalOption *YZInternalOptionPool::getOption( const QString& option ) {
 	return opt; //may be NULL
 }
 
+void YZInternalOptionPool::createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, option_t visibility, value_t type ) {
+	if (mOptions.contains(group + "\\" + optionName)) return;
+	YZInternalOption *newoption = new YZInternalOption( optionName, group, defaultValue, value, visibility, type);
+	mOptions[ group + "\\" + optionName ] = newoption;
+}
+

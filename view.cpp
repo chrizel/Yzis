@@ -189,11 +189,13 @@ void YZView::recalcScreen( ) {
 	refreshScreen();
 }
 
-void YZView::sendMultipleKey(const QString& keys) {
+void YZView::sendMultipleKey(const QString& _keys) {
+	QString keys = _keys;
 	yzDebug() << "sendMultipleKey " << keys << endl;
 	for ( unsigned int i = 0 ; i < keys.length(); i++ ) {
 		QString key = keys.mid( i );
 		if ( key.startsWith( "<CTRL>" ) ) {
+			yzDebug() << "Sending " << key.mid(6,1) << endl;
 			sendKey (key.mid( 6,1 ), "<CTRL>" );
 			i+=6;
 			continue;
@@ -285,6 +287,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		mapMode = mapMode | cmdline;
 
 	bool pendingMapp = false;
+	bool map = false;
 	cmd_state state;
 
 	switch(mMode) {
@@ -309,6 +312,9 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				}
 				purgeInputBuffer();
 				return;
+			} else if ( modifiers+key == "<CTRL>x" ) {
+				purgeInputBuffer();
+				return;
 			} else if ( modifiers+key == "<ESC>" ) {
 				myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), m_word2Complete);
 				gotoxy(m_completionStart->getX()+m_word2Complete.length(),mainCursor->bufferY());
@@ -320,7 +326,14 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			}
 		case YZ_VIEW_MODE_INSERT:
 			mPreviousChars += modifiers + key;
-			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode);
+			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode, &map);
+			//the result of a mapping could be multiple keys so we can't parse them directly
+			if ( map ) {
+				QString n = mPreviousChars;
+				purgeInputBuffer();
+				sendMultipleKey(n);
+				return;
+			}
 			if ( mPreviousChars == "<HOME>" ) {
 				moveToStartOfLine( );
 				purgeInputBuffer();
@@ -428,7 +441,13 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 
 		case YZ_VIEW_MODE_REPLACE:
 			mPreviousChars += modifiers + key;
-			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode);
+			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode, &map);
+			if ( map ) {
+				QString n = mPreviousChars;
+				purgeInputBuffer();
+				sendMultipleKey(n);
+				return;
+			}
 			if ( mPreviousChars == "<HOME>" ) {
 				moveToStartOfLine( );
 				purgeInputBuffer();
@@ -680,10 +699,15 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			{
 				mPreviousChars+=modifiers+key;
 
-				QString mapped = mPreviousChars;
-				pendingMapp = YZMapping::self()->applyMappings(mapped, mapMode);
+				pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode, &map);
+				if ( map ) {
+					QString n = mPreviousChars;
+					purgeInputBuffer();
+					sendMultipleKey(n);
+					return;
+				}
 				
-				cmd_state state=mSession->getPool()->execCommand(this, mapped);
+				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
 				switch(state) {
 					case CMD_ERROR:
 						if (pendingMapp) break;
@@ -2272,8 +2296,16 @@ QString YZView::doComplete(bool forward) {
 		if (found) {
 			YZCursor end (this, result.getX()+matchedLength-1, result.getY());
 			list = myBuffer()->getText(result, end)[0];
-//			yzDebug() << "Got testing match : " << list << " at " << result << " to " << end << endl;
+			//yzDebug() << "Got testing match : " << list << " at " << result << " to " << end << endl;
 			m_completionCursor->setCursor(result);
+			if (forward) {
+				if ( m_completionCursor->getX() < mBuffer->textline(m_completionCursor->getY()).length() )
+					m_completionCursor->setX(m_completionCursor->getX()+1);
+				else {
+					m_completionCursor->setY(m_completionCursor->getY()+1);
+					m_completionCursor->setX(0);
+				}
+			}
 		}
 	} while ( found && ( list == m_lastMatch || m_oldProposals.contains(list)) );
 

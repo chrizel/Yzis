@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <qfile.h>
 #include <qtextstream.h>
+#include <qfileinfo.h>
 
 #include "events.h"
 #include "buffer.h"
@@ -36,9 +37,16 @@
 YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	myId = YZSession::mNbBuffers++;
 	mSession = sess;
-	if ( !_path.isNull() )
+	if ( !_path.isNull() ) {
 		mPath = _path;
-	else mPath = QString("/tmp/yzisnew%1").arg(myId); //we need this so that the buffer has a name at creation time (it will change when we load() a new file
+	} else {
+		// buffer at creation time should use a non existing temp filename
+		// find a tmp file that does not exist
+		do {
+			mPath = QString("/tmp/yzisnew%1").arg(random());
+		} while ( QFileInfo( mPath ).exists() == true );
+		// there is still a possible race condition here...
+	}
 
 	load();
 	mSession->addBuffer( this );
@@ -289,8 +297,12 @@ void YZBuffer::save() {
 	QFile file( mPath );
 	if ( file.open( IO_WriteOnly ) ) {
 		QTextStream stream( &file );
-		for(YZLine *it = mText.first(); it; it = mText.next())
-			stream << it->data() << "\n";
+		for(YZLine *it = mText.first(); it; it = mText.next()) {
+			if (it != mText.getFirst()) {
+				stream << "\n";
+			}
+			stream << it->data();
+		}
 		file.close();
 	}
 }

@@ -77,12 +77,12 @@ public:
 	void delChar (unsigned int x, unsigned int y, unsigned int count = 1);
 
 	/**
-	 * Opens the file and fills in internals structure with its content
+	 * Opens the file and fills the buffer with its content
 	 */
 	void load(const QString& file=QString::null);
 
 	/**
-	 * Dump the current internal structure to the file to be saved
+	 * Save the buffer content into the current filename
 	 */
 	void save();
 

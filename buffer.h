@@ -153,7 +153,7 @@ public:
 	 */
 	void clearText();
 
-	void setText( QString* content );
+	void loadText( QString* content );
 
 	/**
 	 * Finds a line in the buffer

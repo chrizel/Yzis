@@ -66,6 +66,11 @@ class YZExExecutor : public QObject {
 		QString bufferdelete( YZView *view, const QString& inputs );
 
 		/**
+		 * Goto line
+		 */
+		QString gotoLine( YZView* view, const QString& inputs );
+
+		/**
 		 * Edit a new file
 		 */
 		QString edit( YZView *view, const QString& inputs );

@@ -166,8 +166,6 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 		eX++;
 
 	YZCursor mPos( begin );
-//	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-//		it->initCopyLine( mPos, end, pView->myId == it->myId );
 
 	yzDebug() << "Cursors : " << bX << ","<< bY << " " << eX << "," << eY << endl;
 
@@ -197,8 +195,6 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
 		YZSession::mRegisters.setRegister( *it, buff );
 
-//	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-//		it->applyCopyLine( mPos, end, pView->myId == it->myId );
 
 }
 

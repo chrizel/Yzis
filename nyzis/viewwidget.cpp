@@ -112,4 +112,6 @@ void NYZView::refreshScreen() {
 	for ( ; i < mLinesVis ; i++ ) printVoid( i );
 }
 
-
+void NYZView::displayInfo( const QString& info ) {
+//TODO
+}

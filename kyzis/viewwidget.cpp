@@ -27,6 +27,7 @@
 #include "viewwidget.h"
 #include "factory.h"
 #include "debug.h"
+#include <qtimer.h>
 
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::s_self, 10)
@@ -234,6 +235,16 @@ unsigned int KYZisView::cursorColumnReal()
 
 void KYZisView::cursorPositionChanged()
 {
+}
+
+void KYZisView::resetInfo() {
+	status->changeItem("", 80);
+}
+
+void KYZisView::displayInfo( const QString& info ) {
+	status->changeItem(info, 80);
+	//clean the info 2 seconds later
+	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }
 
 #include "viewwidget.moc"

@@ -281,6 +281,11 @@ class YZView {
 		 * Asks a redraw of the whole view
 		 */
 		virtual void refreshScreen () = 0;
+					
+		/**
+		 * Displays an informational message
+		 */
+		virtual void displayInfo( const QString& info ) = 0;
 
 		/**
 		 * Get the current cursor information

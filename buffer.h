@@ -308,15 +308,6 @@ public:
 	unsigned int myId;
 
 	/**
-	 * Translator wrapper function
-	 */
-#if QT_VERSION < 0x040000
-	QString tr( const char *source, const char* = 0) { return qApp->translate( "YZBuffer", source ); }
-#else
-	QString tr( const char *source, const char* = 0) { return QCoreApplication::translate( "YZBuffer", source ); }
-#endif
-
-	/**
 	 * Sets the highlighting mode for this buffer
 	 * @param mode the highlighting mode to use
 	 * @param warnGUI emit signal to GUI so they can reload the view if necessary

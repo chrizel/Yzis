@@ -42,7 +42,7 @@
 
 YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mType = YZMode::MODE_VISUAL;
-	mString = QObject::tr( "[ Visual ]" );
+	mString = _( "[ Visual ]" );
 	mMapMode = visual;
 	commands.clear();
 #if QT_VERSION < 0x040000
@@ -169,7 +169,7 @@ YZInterval YZModeVisual::interval(const YZCommandArgs& args ) {
 
 YZModeVisualLine::YZModeVisualLine() : YZModeVisual() {
 	mType = YZMode::MODE_VISUAL_LINE;
-	mString = QObject::tr("[ Visual Line ]");
+	mString = _("[ Visual Line ]");
 }
 YZModeVisualLine::~YZModeVisualLine() {
 }

@@ -34,7 +34,7 @@
 
 YZModeSearch::YZModeSearch() : YZMode() {
 	mType = YZMode::MODE_SEARCH;
-	mString = QObject::tr( "[ Search ]" );
+	mString = _( "[ Search ]" );
 	mMapMode = cmdline;
 }
 YZModeSearch::~YZModeSearch() {
@@ -89,7 +89,7 @@ cmd_state YZModeSearch::execCommand( YZView* mView, const QString& _key ) {
 		if ( found ) {
 			mView->gotoxy( pos.getX(), pos.getY() );
 		} else {
-			mView->displayInfo(QObject::tr("No match"));
+			mView->displayInfo(_("No match"));
 		}
 		mView->modePool()->pop();
 		return CMD_OK;
@@ -153,7 +153,7 @@ cmd_state YZModeSearch::execCommand( YZView* mView, const QString& _key ) {
 
 YZModeSearchBackward::YZModeSearchBackward() : YZModeSearch() {
 	mType = YZMode::MODE_SEARCH_BACKWARD;
-	mString = QObject::tr( "[ Search backward ]" );
+	mString = _( "[ Search backward ]" );
 }
 YZModeSearchBackward::~YZModeSearchBackward() {
 }

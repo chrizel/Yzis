@@ -176,7 +176,7 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 void YZView::recalcScreen( ) {
 	if ( mBuffer->getLocalStringOption( "encoding" ) != mBuffer->encoding() ) {
 		// XXX: we must do that just after the :set
-		if ( mBuffer->fileIsModified() && YZSession::me->promptYesNo(tr("File modified"), tr("This file has been modified, do you want to save it ?")) ) {
+		if ( mBuffer->fileIsModified() && YZSession::me->promptYesNo(_("File modified"), _("This file has been modified, do you want to save it ?")) ) {
 			mBuffer->save();
 		}
 		mBuffer->setEncoding( mBuffer->getLocalStringOption( "encoding" ) );
@@ -371,15 +371,15 @@ QString YZView::centerLine( const QString& s ) {
 
 void YZView::updateCursor() {
 	static unsigned int lasty = 1<<31; // small speed optimisation
-	viewInformation.percentage = tr( "All" );
+	viewInformation.percentage = _( "All" );
 	unsigned int y = mainCursor->bufferY();
 
 	if ( y != lasty ) {
 		unsigned int nblines = mBuffer->lineCount();
 		viewInformation.percentage = QString("%1%").arg( ( unsigned int )( y*100/ ( nblines==0 ? 1 : nblines )));
-		if ( scrollCursor->bufferY() < 1 )  viewInformation.percentage=tr( "Top" );
-		if ( scrollCursor->bufferY()+mLinesVis >= nblines )  viewInformation.percentage=tr( "Bot" );
-		if ( (scrollCursor->bufferY()<1 ) &&  ( scrollCursor->bufferY()+mLinesVis >= nblines ) ) viewInformation.percentage=tr( "All" );
+		if ( scrollCursor->bufferY() < 1 )  viewInformation.percentage=_( "Top" );
+		if ( scrollCursor->bufferY()+mLinesVis >= nblines )  viewInformation.percentage=_( "Bot" );
+		if ( (scrollCursor->bufferY()<1 ) &&  ( scrollCursor->bufferY()+mLinesVis >= nblines ) ) viewInformation.percentage=_( "All" );
 		lasty=y;
 	}
 
@@ -1440,7 +1440,7 @@ void YZView::printToFile( const QString& path ) {
 			qtprinter.printToFile( path );
 			qtprinter.run( );
 		} else {
-			YZSession::me->popupMessage( tr("To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode") );
+			YZSession::me->popupMessage( _("To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode") );
 		}
 		return;
 	}
@@ -1711,7 +1711,7 @@ bool YZView::stringHasOnlySpaces ( const QString& what ) {
 QString YZView::mode() {
 	QString ret = mModePool->current()->toString();
 	if ( isRecording() ) 
-		ret += tr(" { Recording }");
+		ret += _(" { Recording }");
 	return ret;
 }
 

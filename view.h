@@ -378,12 +378,6 @@ class YZView {
 		 */
 		void updateCursor();
 
-#if QT_VERSION < 0x040000
-		QString tr( const char *source, const char* = 0) { return qApp->translate( "YZView", source ); }
-#else
-		QString tr( const char *source, const char* = 0) { return QCoreApplication::translate( "YZView", source ); }
-#endif
-
 		/**
 		 * init r and s Cursor
 		 */

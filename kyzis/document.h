@@ -21,10 +21,11 @@
 #define KYZISDOC_H
 
 #include <ktexteditor/document.h>
+#include <ktexteditor/editinterface.h>
 #include <buffer.h>
 #include <session.h>
 
-class KYZisDoc : public KTextEditor::Document, public YZBuffer {
+class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public YZBuffer {
 	Q_OBJECT
 		
 	public:
@@ -36,7 +37,19 @@ class KYZisDoc : public KTextEditor::Document, public YZBuffer {
 		void removeView( KTextEditor::View * v );
 		QWidget *parentWidget() { return m_parent; }
 		void setBaseWidget(QWidget *w) { setWidget(w); }
+	
+		uint numLines() const;
+		QString text() const;
+		uint length() const;
+		bool clear() ;
 
+		int lineLength(unsigned int line) const;
+		bool insertLine( unsigned int line, const QString &s);
+		bool removeLine( unsigned int line );
+		bool insertText (uint line, uint col, const QString &s);
+
+		QString textLine ( unsigned int line ) const;
+		
 	protected:
 		bool openFile();
 		bool saveFile();

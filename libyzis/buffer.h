@@ -127,13 +127,23 @@ public:
 	 * @return a QStringList containing the texts
 	 */
 	QString getWholeText() const;
+	/**
+	 * Get the length of the entire buffer
+	 * @return an unsigned int with the lenght of the buffer
+	 */
+	uint getWholeTextLength() const;
+	/**
+	 * Remove all text
+	 * @return void
+	 */
+	void clearText() const;
 
 	/**
 	 * Finds a line in the buffer
 	 * @param line the line to search for
 	 * @return a QString reference on the line or NULL
 	 */
-	QString	data(unsigned int line);
+	QString	data(unsigned int line) const;
 
 	/**
 	 * Finds the @ref YZLine pointer for a line in the buffer

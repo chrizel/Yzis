@@ -63,4 +63,71 @@ bool KYZisDoc::saveFile () {
 	return true;
 }
 
+/* Implementation of KTextEditor */
+
+QString KYZisDoc::text() const
+{
+	return getWholeText();
+}
+
+
+uint KYZisDoc::numLines() const 
+{
+	return lineCount();
+}
+
+bool KYZisDoc::insertLine(unsigned int line, const QString &s)
+{
+	YZBuffer::insertLine(s, line);
+
+	/* YZBuffer::insertLine() is a void function, apparently it can't fail.
+	 * Return true
+	 */
+
+	return true;
+}
+
+bool KYZisDoc::removeLine(unsigned int line)
+{
+	deleteLine(line);
+
+	/* YZBuffer::deleteLine() also void function */
+
+	return true;
+}
+
+QString KYZisDoc::textLine(unsigned int line) const
+{
+	QString s = data(line);
+	return s;
+}
+
+uint KYZisDoc::length() const
+{
+	uint textlength = getWholeTextLength();
+
+	return textlength;
+}
+
+int KYZisDoc::lineLength(unsigned int line) const
+{
+	uint length = data(line).length();
+
+	return length;
+}
+
+bool KYZisDoc::clear()
+{
+	clearText();
+	return true;
+}
+
+bool KYZisDoc::insertText( uint line, uint col, const QString &s)
+{
+	insertChar(col, line, s);
+
+	return true;
+}
+
+
 #include "document.moc"

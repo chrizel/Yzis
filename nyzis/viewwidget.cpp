@@ -60,7 +60,7 @@ void NYZView::printLine( int line ) {
 
 	unsigned int i;
 	int sx,sy; // save x,y
-	unsigned int relline = line - getCurrent(); // relative line #
+	unsigned int relline = line - getCurrentTop(); // relative line #
 
 	// check
 	QString str = mBuffer->textline(line);
@@ -100,15 +100,15 @@ void NYZView::setStatusBar( const QString& text ) {
 
 void NYZView::updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage) {
 	NYZFactory::self->update_infobar(line+1, x1+1, x2+1, percentage);
-	wmove(window, line-getCurrent() , x1 ) ;
+	wmove(window, line-getCurrentTop() , x1 ) ;
 	wrefresh( window );
 }
 
 void NYZView::refreshScreen() {
 	unsigned int i;
-	for ( i=getCurrent(); i < ( getCurrent() + mLinesVis ) && i < mBuffer->lineCount(); i++ )
+	for ( i=getCurrentTop(); i < ( getCurrentTop() + mLinesVis ) && i < mBuffer->lineCount(); i++ )
 		printLine(i);
-	i-=getCurrent();
+	i-=getCurrentTop();
 	for ( ; i < mLinesVis ; i++ ) printVoid( i );
 }
 

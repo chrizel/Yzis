@@ -38,6 +38,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mCursor = new YZCursor(this);
 	mMaxX = 0;
 	mMode = YZ_VIEW_MODE_COMMAND;
+	mCurrentLeft = mCursor->getX();
 	mCurrentTop = mCursor->getY();
 	QString line = mBuffer->textline(mCurrentTop);
 	if (!line.isNull()) mMaxX = line.length()-1;
@@ -334,9 +335,9 @@ void YZView::updateCursor() {
 	if ( y != lasty ) {
 		unsigned int nblines = mBuffer->lineCount();
 		percentage = QString("%1%").arg( ( unsigned int )( y*100/ ( nblines==0 ? 1 : nblines )));
-		if ( mCurrentTop < 1 )  percentage="Top";
-		if ( mCurrentTop+mLinesVis >= nblines )  percentage="Bot";
-		if ( (mCurrentTop<1 ) &&  ( mCurrentTop+mLinesVis >= nblines ) ) percentage="All";
+		if ( mCurrentTop < 1 )  percentage=tr( "Top" );
+		if ( mCurrentTop+mLinesVis >= nblines )  percentage=tr( "Bot" );
+		if ( (mCurrentTop<1 ) &&  ( mCurrentTop+mLinesVis >= nblines ) ) percentage=tr( "All" );
 		lasty=y;
 	}
 
@@ -344,18 +345,40 @@ void YZView::updateCursor() {
 	updateCursor( y, mCursor->getX(), mCursor->getX(), percentage );
 }
 
-void YZView::centerView(unsigned int line) {
-	//update current
+void YZView::centerView(unsigned int column, unsigned int line) {
 	int newcurrent = line - mLinesVis / 2;
-
-	if ( newcurrent > ( int( mBuffer->lineCount() ) - int( mLinesVis ) ) )
+	if (  newcurrent > (  int(  mBuffer->lineCount() ) - int(  mLinesVis ) ) )
 		newcurrent = mBuffer->lineCount() - mLinesVis;
-	if ( newcurrent < 0 ) newcurrent = 0;
+	if (  newcurrent < 0 ) newcurrent = 0;
+	
+	int newcurrentLeft = column - mColumnsVis / 2;
+	if (  newcurrentLeft > (  int( mMaxX ) - int( mColumnsVis ) ) )
+		newcurrentLeft = mMaxX - mColumnsVis;
+	if (  newcurrentLeft < 0 ) newcurrentLeft = 0;
 
-	if ( newcurrent== int( mCurrentTop ) ) return;
+	if ( newcurrent == int( mCurrentTop )/* && newcurrentLeft == int ( mCurrentLeft )*/ ) return;
 
+#if 0
+	unsigned int newcurrent = line - mLinesVis / 2;
+	unsigned int newcurrentLeft = column - mColumnsVis / 2;
+
+	if ( newcurrent > ( mBuffer->lineCount() - mLinesVis ) ) {
+		if ( mBuffer->lineCount() > mLinesVis )
+			newcurrent = mBuffer->lineCount() - mLinesVis;
+		else newcurrent = 0;
+	}
+	if ( newcurrentLeft > ( mMaxX - mColumnsVis ) ) {
+		if ( mMaxX > mColumnsVis )
+			newcurrentLeft = mMaxX - mColumnsVis;
+		else newcurrentLeft = 0;
+	}
+
+	if ( newcurrent == mCurrentTop && newcurrentLeft == mCurrentLeft ) return;
+#endif
+	
 	//redraw the screen
 	mCurrentTop = newcurrent;
+	mCurrentLeft = newcurrentLeft;
 	redrawScreen();
 }
 
@@ -392,7 +415,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	mCursor->setX( nextx );
 
 	//make sure this line is visible
-	if ( ! isLineVisible( nexty ) ) centerView( nexty );
+	if ( ! isLineVisible( nexty ) /*|| !isColumnVisible( nextx )*/ ) centerView( nextx, nexty );
 
 	/* do it */
 	updateCursor();

@@ -79,7 +79,7 @@ void KYZisEdit::setCursor(int c, int l) {
 }
 
 void KYZisEdit::setTextLine(int l, const QString &/*str*/) {
-	updateContents( 0, ( l - mParent->getCurrent() ) * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing()  );
+	updateContents( 0, ( l - mParent->getCurrentTop() ) * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing()  );
 }
 
 bool KYZisEdit::event(QEvent *e) {
@@ -104,7 +104,7 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 
 void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
-		QString line = mParent->myBuffer()->textline(e->y()/fontMetrics().lineSpacing() + mParent->getCurrent());
+		QString line = mParent->myBuffer()->textline(e->y()/fontMetrics().lineSpacing() + mParent->getCurrentTop());
 		int nbcols=0;
 		int len=0;
 		while ( len <= e->x() ) {
@@ -112,7 +112,7 @@ void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 			nbcols++;
 		}
 		nbcols = nbcols - 2 >= 0 ? nbcols -2 : 0; //dont ask me why i need this :) i understand -1 but not -2 ...
-		mParent->gotoxy(nbcols, e->y()/fontMetrics().lineSpacing() + mParent->getCurrent());
+		mParent->gotoxy(nbcols, e->y()/fontMetrics().lineSpacing() + mParent->getCurrentTop());
 	}
 }
 
@@ -120,9 +120,9 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 	yzDebug() << "drawCursorAt :" << x << ", " << y << endl;
 	bitBlt (
 			viewport(),
-			x*fontMetrics().maxWidth(),( y - mParent->getCurrent() ) *fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(),( y - mParent->getCurrentTop() ) *fontMetrics().lineSpacing(),
 			viewport(),
-			x*fontMetrics().maxWidth(), ( y - mParent->getCurrent() )*fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(), ( y - mParent->getCurrentTop() )*fontMetrics().lineSpacing(),
 			fontMetrics().maxWidth(), fontMetrics().lineSpacing(),
 			Qt::NotROP,	    // raster Operation
 			true );		    // ignoreMask
@@ -136,11 +136,11 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 		if ( fontMetrics().lineSpacing() * i >= ( unsigned int )clipy && fontMetrics().lineSpacing() * i <= ( unsigned int ) ( clipy+cliph ) ) {
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
 			p->eraseRect(clip);
-			if (mParent->myBuffer()->lineCount() > i + mParent->getCurrent() )
-				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,mParent->myBuffer()->textline(i + mParent->getCurrent()));
+			if (mParent->myBuffer()->lineCount() > i + mParent->getCurrentTop() )
+				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,mParent->myBuffer()->textline(i + mParent->getCurrentTop()));
 			else 
 				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,"~");
-			if ( ( i + mParent->getCurrent() ) == mCursorY ) 
+			if ( ( i + mParent->getCurrentTop() ) == mCursorY ) 
 				drawCursorAt( mCursorX, mCursorY );
 		}
 	}

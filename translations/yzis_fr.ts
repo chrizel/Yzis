@@ -52,6 +52,13 @@
     </message>
 </context>
 <context>
+    <name>YZBuffer</name>
+    <message>
+        <source>Written %1 bytes to file %2</source>
+        <translation>Ecrit %1 octects dans le fichier %2</translation>
+    </message>
+</context>
+<context>
     <name>YZExExecutor</name>
     <message>
         <source>Please specify a filename</source>

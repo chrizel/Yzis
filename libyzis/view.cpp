@@ -1402,6 +1402,8 @@ bool YZView::doSearch( const QString& search ) {
 }
 
 QString YZView::searchAgain( const QString& /*inputsBuff*/, YZCommandArgs args ) {
+	if ( mCurrentSearchItem == 0 ) return QString::null; //no previous search ;)
+
 	for ( uint i = 0; i < args.count; i++ )  //search count times
 	 	doSearch( mSearchHistory[mCurrentSearchItem-1] );
 	purgeInputBuffer();

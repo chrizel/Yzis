@@ -136,6 +136,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 					cur.setCursor( from );
 					cur.setX( cur.getX() + matchedLength - 1 );
 					YZSelection sel( from, cur, from, cur );
+					cur.setX( cur.getX() + 1 );
 					searchMap.insert( pos++, sel );
 				}
 			} while ( found );

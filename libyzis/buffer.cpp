@@ -697,14 +697,16 @@ void YZBuffer::setPath( const QString& _path ) {
 bool YZBuffer::substitute( const QString& what, const QString& with, bool wholeline, unsigned int line ) {
 	QString l = textline( line );
 	QRegExp rx( what );
+	bool changed = false;
 	int pos=0;
 	int offset=0;
 	while ( ( pos = rx.search( l,offset ) ) != -1 ) {
 		l = l.replace( pos, rx.matchedLength(), with );
+		changed = true;
 		offset = pos + with.length();
 		if ( !wholeline ) break;
 	}
-	if ( offset ) {
+	if ( changed ) {
 		setTextline( line,l );
 		return true;
 	}

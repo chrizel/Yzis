@@ -74,10 +74,14 @@ void NYZFactory::event_loop()
 		switch( c ){
 			case ERR:
 				extern uint qGlobalPostedEventsCount();
+#if 0
 				if ( qApp->hasPendingEvents () ) {
 					yzDebug( NYZIS ) << "qt wanna do something.. " << qGlobalPostedEventsCount() << " pending events.." << endl;
 					qApp->processEvents( 400 );
 				} else usleep( 400 );
+#else
+				usleep( 400 );
+#endif
 			// do nothing with the following
 			case KEY_RESIZE:
 				continue;

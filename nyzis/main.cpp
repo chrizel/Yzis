@@ -56,6 +56,8 @@ main(int argc, char *argv[])
 #else
 	bool useGUI = TRUE;
 #endif
+	// until we find something better
+	useGUI = false;
 	QApplication app( argc, argv, useGUI );
 
 	// Translator stuff

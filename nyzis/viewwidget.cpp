@@ -62,7 +62,6 @@ void NYZView::map( void )
 	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
 
 	editor = subwin( window, getLinesVisible(), 0, 0, 0); YZASSERT( editor );
-//	wattrset( editor, A_NORMAL|A_BOLD );
 	wattrset( editor, A_NORMAL );
 	wmove( editor,0,0 );
 	keypad( editor , true); //active symbols for special keycodes
@@ -74,13 +73,13 @@ void NYZView::map( void )
 	 * ------------------ statusbar -------------------
 	 */
 	infobar = subwin(window, 1, 0, getLinesVisible(), 0); YZASSERT( infobar );
-	wattrset(infobar, A_NORMAL|A_BOLD );
-	wbkgd(infobar, A_NORMAL|A_BOLD|A_REVERSE);
+	wattrset(infobar, A_BOLD|A_REVERSE );
+	wbkgd(infobar, A_REVERSE|A_BOLD );
 
 	statusbar  = subwin(window, 1, 0, getLinesVisible()+1, 0); YZASSERT( statusbar );
 	wattrset(statusbar, A_NORMAL|A_BOLD );
 	if (has_colors())
-		wattron(statusbar, COLOR_PAIR(1));
+		wattron(statusbar, mAttributesMap[attribRed] );
 
 	/* prevents the delay between hitting <escape> and when we actually receive the event */
 	notimeout( stdscr, true );
@@ -181,9 +180,9 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				wmove( editor, currentY, currentX );
 				if ( number ) { // draw current line number
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
-						wattron( editor, mAttributesMap[ Qt::yellow.rgb() & RGB_MASK] );
+						wattron( editor, mAttributesMap[attribYellow] );
 						waddstr( editor, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
-						wattroff( editor, mAttributesMap[ Qt::yellow.rgb() & RGB_MASK] );
+						wattroff( editor, mAttributesMap[attribYellow] );
 						waddch( editor, ' ' );
 						lastLineNumber = lineNumber;
 					} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
@@ -191,12 +190,16 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				}
 				while ( drawNextCol( ) ) {
 					QColor c = drawColor( );
+					if (!c.isValid()) {
+						yzWarning()<< " drawColor() returns an invalid color..." << endl;
+						c = Qt::white;
+					}
 					int mAttributes;
 					int rawcolor = c.rgb() & RGB_MASK;
 					if ( mAttributesMap.contains( rawcolor ) ) {
 						mAttributes = mAttributesMap[ rawcolor ];
 					} else {
-						mAttributes = mAttributesMap[ Qt::white.rgb() & RGB_MASK ]; 
+						mAttributes = mAttributesMap[attribWhite]; 
 						yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
 							rawcolor << " (" << 
 							qRed( rawcolor ) << "," << 
@@ -268,11 +271,11 @@ void NYZView::syncViewInfo( void )
 	if ( mBuffer->introShown() ) {
 		const char * r = mode(YZ_VIEW_MODE_LAST);
 		for ( const char *ptr = r; *ptr; ptr++ )
-			waddch(infobar, COLOR_PAIR(1)|*ptr);
+			waddch(infobar, mAttributesMap[attribYellow] |*ptr);
 	} else {
 		const char *m = mode ( mMode ).latin1();
 		for ( const char *ptr = m; *ptr; ptr++ )
-			waddch(infobar, COLOR_PAIR(1)|*ptr);
+			waddch(infobar, mAttributesMap[attribYellow] |*ptr);
 	}
 	waddch(infobar, ' ');
 
@@ -352,21 +355,20 @@ void NYZView::initialiseAttributesMap()
 	YZASSERT( ! mAttributesMap.contains( rawcolor1) ); \
 	mAttributesMap[(rawcolor1)] = mAttributesMap[(rawcolor2)];
 
-	MAP( 1, Qt::red,         COLOR_RED,     A_NORMAL ); // red = 1, is used to display info on statusbar..
-	MAP( 2, Qt::magenta,     COLOR_MAGENTA, A_NORMAL );
-	MAP( 3, Qt::green,       COLOR_GREEN,   A_NORMAL );
-	MAP( 4, Qt::yellow,      COLOR_YELLOW,  A_NORMAL );
-	MAP( 5, Qt::cyan,        COLOR_CYAN,    A_NORMAL );
-	MAP( 6, Qt::black,       COLOR_BLACK,   A_NORMAL );
-	MAP( 7, Qt::blue,        COLOR_BLUE,    A_NORMAL );
-	MAP( 8, Qt::white,       COLOR_WHITE,   A_BOLD   );
-	MAP( 9, Qt::gray,        COLOR_WHITE,   A_NORMAL );
-	MAP(10, Qt::darkGreen,   COLOR_GREEN,   A_BOLD   );
-	MAP(11, Qt::darkMagenta, COLOR_MAGENTA, A_BOLD   );
-	MAP(12, Qt::darkCyan,    COLOR_CYAN,    A_BOLD   );
-	MAP(13, Qt::lightGray,   COLOR_WHITE,   A_NORMAL );
+	MAP( 1, Qt::red,         COLOR_RED,     A_BOLD   ); // red = 1, is used to display info on statusbar..
+	MAP( 2, Qt::yellow,      COLOR_YELLOW,  A_BOLD   );
+	MAP( 3, Qt::lightGray,   COLOR_WHITE,   A_NORMAL );
+	MAP( 4, Qt::gray,        COLOR_WHITE,   A_NORMAL );
+	MAP( 5, Qt::white,       COLOR_WHITE,   A_BOLD   );
+	MAP( 6, Qt::magenta,     COLOR_MAGENTA, A_BOLD   );
+	MAP( 7, Qt::green,       COLOR_GREEN,   A_BOLD   );
+	MAP( 8, Qt::cyan,        COLOR_CYAN,    A_BOLD   );
+	MAP( 9, Qt::black,       COLOR_BLACK,   A_NORMAL );
+	MAP(10, Qt::blue,        COLOR_BLUE,    A_BOLD   );
+	MAP(11, Qt::darkGreen,   COLOR_GREEN,   A_NORMAL );
+	MAP(12, Qt::darkMagenta, COLOR_MAGENTA, A_NORMAL );
+	MAP(13, Qt::darkCyan,    COLOR_CYAN,    A_NORMAL );
 //	ALIASMAP(0xc0c0c0); // already here (lightGray)
-//	ALIASMAP(0xcc00cc); // ???
 	ALIASMAP(0xDD0000, 0xff0000); // red
 
 }

@@ -117,6 +117,12 @@ private:
 	  * mAttributesMap[ QRgb ] is the # of the corresponding pair in ncurses
 	  */
 	static QMap<QRgb,unsigned long int> mAttributesMap;
+	/*
+	 * some color used internally
+	 */
+	static const int attribRed = 0xff0000;
+	static const int attribWhite = 0xffffff;
+	static const int attribYellow = 0xffff00;
 
 };
 

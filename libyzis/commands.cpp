@@ -521,9 +521,9 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
 	unsigned int c = 0;
-	QRegExp rex1("^\\w+\\s*");//a word with boundaries
-	QRegExp rex2("^[^\\w\\s]+\\s*");//non-word chars with boundaries
-	QRegExp rex3("^\\s+");//whitespace
+	QRegExp rex1("^(\\w+)\\s*");//a word with boundaries
+	QRegExp rex2("^([^\\w\\s]+)\\s*");//non-word chars with boundaries
+	QRegExp rex3("^\\s+\\S*");//whitespace
 			
 	while ( c < args.count ) { //for each word
 		const QString& current = invertQString( args.view->myBuffer()->textline( result.getY() ) );
@@ -533,11 +533,11 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 
 		
 		int idx = rex1.search( current, offset , QRegExp::CaretAtOffset );
-		int len = rex1.matchedLength();
+		int len = rex1.cap( 1 ).length();
 		yzDebug() << "rex1 : " << idx << "," << len << endl;
 		if ( idx == -1 ) {
 			idx = rex2.search( current, offset, QRegExp::CaretAtOffset );
-			len = rex2.matchedLength();
+			len = rex2.cap( 1 ).length();
 			yzDebug() << "rex2 : " << idx << "," << len << endl;
 			if ( idx == -1 ) {
 				idx = rex3.search( current, offset, QRegExp::CaretAtOffset );

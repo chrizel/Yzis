@@ -1,37 +1,19 @@
 # this has all of the subdirectories that make will recurse into.  if
 # there are none, comment this out
-SUBDIRS = pics
+SUBDIRS = src pics .
 
 # set the include path for X, qt and KDE
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libyzis/ $(all_includes) $(LUA_INCLUDES)
-
-# these are the headers for your project
-noinst_HEADERS = commandwidget.h  configdialog.h  cursor.h  document.h  editor.h  factory.h  konsole.h  kyziscodecompletion.h  kyzis.h  viewwidget.h
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/kyzis/src/ -I$(top_srcdir)/libyzis/ $(all_includes) $(LUA_INCLUDES)
 
 # let automoc handle all of the meta source files (moc)
 METASOURCES = AUTO
 
-messages: rc.cpp
-	$(XGETTEXT) *.cpp -o $(podir)/kyzis.pot
-
-#KDE_ICON = kyzis
-
-########## intern lib ##########
-noinst_LTLIBRARIES = libinternkyzis.la
-libinternkyzis_la_SOURCES = document.cpp viewwidget.cpp factory.cpp settings.kcfgc editor.cpp commandwidget.cpp configdialog.cpp kyziscodecompletion.cpp cursor.cpp kyzis.cpp kyzis.skel konsole.cpp
-
-# this Makefile creates both a KPart application and a KPart
-#########################################################################
-# APPLICATION SECTION
-#########################################################################
-# this is the program that gets installed.  it's name is used for all
-# of the other Makefile.am variables
 bin_PROGRAMS = kyzis
 
 # the application source, library search path, and link libraries
 kyzis_SOURCES = main.cpp
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
-kyzis_LDADD = -lktexteditor -lkmdi $(LIB_KPARTS) $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(top_builddir)/kyzis/libinternkyzis.la
+kyzis_LDADD = -lktexteditor -lkmdi $(LIB_KPARTS) $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(top_builddir)/kyzis/src/libinternkyzis.la
 
 # this is where the desktop file will go 
 shelldesktopdir   = $(kde_appsdir)/Editors
@@ -41,18 +23,13 @@ shelldesktop_DATA = kyzis.desktop
 shellrcdir   = $(kde_datadir)/kyzis
 shellrc_DATA = kyzis_shell.rc
 
-kde_kcfg_DATA = kyzis.kcfg
 
- 
-#########################################################################
-# KPART SECTION
-#########################################################################
 kde_module_LTLIBRARIES = libkyzispart.la
 
 # the Part's source, library search path, and link libraries
 libkyzispart_la_SOURCES = dummy.cpp
 libkyzispart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lkmdi -lktexteditor $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(top_builddir)/kyzis/libinternkyzis.la
+libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lkmdi -lktexteditor $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(top_builddir)/kyzis/src/libinternkyzis.la
 
 # this is where the desktop file will go 
 partdesktopdir   = $(kde_servicesdir)

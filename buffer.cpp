@@ -48,7 +48,7 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path)
 		} while ( QFileInfo( mPath ).exists() == true );
 		// there is still a possible race condition here...
 	}
-	mUndoBuffer = new UndoBuffer( this );
+	mUndoBuffer = new YZUndoBuffer( this );
 	load();
 	mSession->addBuffer( this );
 }
@@ -79,7 +79,7 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
 		return;
 	}
 
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, c, x, y );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, c, x, y );
 
 	l.insert(x, c);
 	at(y)->setData(l);
@@ -106,9 +106,9 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 		return;
 	}
 
-	mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
 	                                 l.mid(x,1), x, y );
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, c, x, y );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, c, x, y );
 	
 	/* do the actual modification */
 	l.remove(x, 1);
@@ -142,7 +142,7 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 		" line has %5 columns").arg( x ).arg( y ).arg( count )
 		.arg( x ).arg( l.length() ) );
 
-	mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
 	                                   l.mid(x,count), x, y );
 	
 	/* do the actual modification */
@@ -164,9 +164,9 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 void  YZBuffer::appendLine(const QString &l) {
 	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::appendLine() : adding a line with '\n' inside" );
 
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDLINE, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, 
 	                                 QString(), 0, lineCount() );
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
 	                                   l,  0, lineCount());
 
 	mText.append(new YZLine(l));
@@ -178,9 +178,9 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::insertLine() : adding a line with '\n' inside" );
 	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::insertLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
 
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDLINE, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, 
 	                                   QString(), 0, line );
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
 	                                   l, 0, line );
 
 	mText.insert(line, new YZLine(l));
@@ -206,11 +206,11 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 		.arg( l.length() ) );
 	if (col > l.length() ) return;
 
-	mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
 	                                   l.mid(col), col, line );
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDLINE, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, 
 	                                   "", col, line+1 );
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
 	                                   l.mid(col), 0, line+1 );
 
 	//replace old line
@@ -233,11 +233,11 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 
 	if (lineCount() > 1) {
-		mUndoBuffer->addBufferOperation( BufferOperation::DELLINE, 
+		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, 
 										 QString(), 0, line );
 		mText.remove(line);
 	} else {
-		mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
+		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
 										 data(0), 0, line );
 		at(0)->setData("");
 	}
@@ -251,9 +251,9 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 	
 	if ( data( line ).isNull() ) return;
 
-	mUndoBuffer->addBufferOperation( BufferOperation::DELTEXT, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
 	                                   data(line), 0, line );
-	mUndoBuffer->addBufferOperation( BufferOperation::ADDTEXT, 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
 	                                   l, 0, line );
 
 	at(line)->setData(l);

@@ -31,7 +31,7 @@
 class YZView;
 class YZLine;
 class YZSession;
-class UndoBuffer;
+class YZUndoBuffer;
 
 typedef QPtrList<YZLine> YZBufferData;
 
@@ -216,7 +216,7 @@ public:
 	YZView* findView(unsigned int uid);
 
 	// ------------ Undo
-	UndoBuffer * undoBuffer() { return mUndoBuffer; }
+	YZUndoBuffer * undoBuffer() { return mUndoBuffer; }
 
 	/**
 	 * Unique ID of the buffer
@@ -231,7 +231,7 @@ protected:
 
 	YZBufferData mText;
 	YZSession *mSession;
-	UndoBuffer *mUndoBuffer;
+	YZUndoBuffer *mUndoBuffer;
 };
 
 #endif /*  YZ_BUFFER_H */

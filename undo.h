@@ -56,20 +56,20 @@ struct buffer_operation
 
 	QString toString();
 };
-typedef struct buffer_operation BufferOperation;
+typedef struct buffer_operation YZBufferOperation;
 
-typedef QPtrList<BufferOperation> UndoItem;
-typedef QPtrListIterator<BufferOperation> UndoItemIterator;
+typedef QPtrList<YZBufferOperation> UndoItem;
+typedef QPtrListIterator<YZBufferOperation> UndoItemIterator;
 
-class UndoBuffer {
+class YZUndoBuffer {
 public:
-	UndoBuffer( YZBuffer * );
+	YZUndoBuffer( YZBuffer * );
 
 	/** Store the previous undo item (if any) and start a new one
 	 */
 	void commitUndoItem();
 
-	void addBufferOperation( BufferOperation::OperationType type, const QString & text, uint col, uint line );
+	void addBufferOperation( YZBufferOperation::OperationType type, const QString & text, uint col, uint line );
 
 	/** 
 	 * Undo the last operations on the buffer, move backward in the undo list.

@@ -479,6 +479,10 @@ bool YZBuffer::save() {
 	//clear swap memory
 	mSwap->reset();
 	mSwap->unlink();
+	int hlMode = YzisHlManager::self()->detectHighlighting (this);
+	if ( hlMode >= 0 && m_highlight != YzisHlManager::self()->getHl( hlMode ) ) {
+		setHighLight( hlMode );
+	}
 	return true;
 }
 
@@ -577,11 +581,15 @@ void YZBuffer::setHighLight( uint mode ) {
 void YZBuffer::makeAttribs() {
 	m_highlight->clearAttributeArrays();
 
-	//do something on the views
-	
-	//buffer->invalidateHL(); ?
-	
-	//tagAll(); ?
+	bool ctxChanged = true;
+	unsigned int hlLine = 0;
+	while ( hlLine < lineCount()) {
+		QMemArray<signed char> foldingList;
+		m_highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
+		hlLine++;
+	}
+	updateAllViews();
+
 }
 
 void YZBuffer::setPath( const QString& _path ) {

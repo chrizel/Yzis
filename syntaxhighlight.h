@@ -336,9 +336,11 @@ class YzisHlManager : public QObject
 
   private:
     int wildcardFind(const QString &fileName);
-    int mimeFind(const QByteArray &contents);
+    int mimeFind(const QString &contents);
+//    int mimeFind(const QByteArray &contents);
     int realWildcardFind(const QString &fileName);
-	QString findByContent( const QByteArray& contents );
+	QString findByContent( const QString& contents );
+//	QString findByContent( const QByteArray& contents );
 
   private:
     friend class YzisHighlighting;

@@ -70,7 +70,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mColumnsVis = 0;
 
 	//order matters here ;)
-	mModes << tr("[ Insert ]") << tr("[ Replace ]") <<tr("[ Awaiting Command ]") <<tr("[ Ex ]") <<tr("[ Search ]") 
+	mModes << tr("[ Insert ]") << tr("[ Replace ]") <<tr("[ Awaiting Command ]") <<tr("[ Ex ]") <<tr("[ Search ]")
 		<< tr("[ Open ]") << tr("[ Visual ]") << tr("[ Visual Line ]") << tr("Yzis Ready");
 	mainCursor = new YZViewCursor( this );
 	workCursor = new YZViewCursor( this );
@@ -235,7 +235,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		key = key.upper();
 		modifiers.remove( "<SHIFT>" );
 	}
-	
+
 	bool test = false;
 
 	bool cindent = getLocalBoolOption( "cindent" );
@@ -328,7 +328,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
 				return;
 			} else if ( key == "<ESC>" ) {
-				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() ) 
+				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() )
 					moveToEndOfLine( );
 				gotoPreviousMode();
 				return;
@@ -561,7 +561,7 @@ void YZView::updateCursor() {
 	}
 
 	viewInformation.l = y;
-	viewInformation.c1 = mainCursor->bufferX(); 
+	viewInformation.c1 = mainCursor->bufferX();
 	viewInformation.c2 = mainCursor->screenX(); // XXX pas du tout, c'est c1 mais en remplacant les tabs par 'tablenght' <-- avec le QRegexp() mais je l'ai perdu
 
 	syncViewInfo();
@@ -741,7 +741,7 @@ void YZView::gotoy( unsigned int nexty ) {
 
 	/* some easy case */
 	if ( nexty == 0 ) {
-		initDraw( 0, 0, 0, 0, false ); 
+		initDraw( 0, 0, 0, 0, false );
 		workCursor->lineHeight = workCursor->sLineIncrement = workCursor->bLineIncrement = 1;
 	} else if ( nexty == mCurrentTop ) {
 		initDraw( ); // XXX
@@ -776,7 +776,7 @@ void YZView::gotoy( unsigned int nexty ) {
 					workCursor->lineHeight = workCursor->sLineIncrement = workCursor->bLineIncrement = 1;
 				}
 			}
-		} 
+		}
 		while ( workCursor->bufferY() < nexty ) {
 			if ( wrap && ! workCursor->wrapNextLine && rCurLineLength > mColumnsVis ) // move to end of draw line
 				while ( drawNextCol( ) );
@@ -802,7 +802,7 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 
 /*	yzDebug() << "applyGoto : "
 			<< "dColLength=" << dColLength << "; dLineLength=" << dLineLength << "; mLineLength=" << mLineLength
-			<< "; dWrapNextLine=" << dWrapNextLine << "; dWrapTab=" << dWrapTab << endl; 
+			<< "; dWrapNextLine=" << dWrapNextLine << "; dWrapTab=" << dWrapTab << endl;
 	yzDebug() << "mCursor:" << *mCursor << "; dCursor:" << *dCursor << endl; */
 
 	if ( applyCursor ) {
@@ -841,7 +841,7 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 		}
 
 		if ( !isLineVisible( mainCursor->screenY() ) ) {
-			if ( mainCursor->screenY() >= mLinesVis + dCurrentTop ) 
+			if ( mainCursor->screenY() >= mLinesVis + dCurrentTop )
 				bottomViewVertically( mainCursor->screenY() );
 			else
 				alignViewVertically( mainCursor->screenY() );
@@ -998,7 +998,7 @@ QString YZView::moveToFirstNonBlankOfLine( YZViewCursor* viewCursor, bool applyC
 //	if ( viewCursor == mainCursor ) UPDATE_STICKY_COL;
 	if ( applyCursor )
 		updateStickyCol( viewCursor );
-	
+
 	//return something
 	return QString::null;
 }
@@ -1013,7 +1013,7 @@ QString YZView::moveToStartOfLine( YZViewCursor* viewCursor, bool applyCursor ) 
 //	if ( viewCursor == mainCursor )	UPDATE_STICKY_COL;
 	if ( applyCursor )
 		updateStickyCol( viewCursor );
-	
+
 	//return something
 	return QString::null;
 }
@@ -1023,7 +1023,7 @@ void YZView::gotoLastLine() {
 }
 
 void YZView::gotoLine( unsigned int line ) {
-	if ( line >= mBuffer->lineCount() ) 
+	if ( line >= mBuffer->lineCount() )
 		line = mBuffer->lineCount() - 1;
 
 	if ( getLocalBoolOption("startofline") ) {
@@ -1042,7 +1042,7 @@ QString YZView::moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
 	gotoxy( viewCursor, mBuffer->textline( viewCursor->bufferY() ).length( ), viewCursor->bufferY(), applyCursor );
 	if ( applyCursor )
 		stickyCol = STICKY_COL_ENDLINE;
-	
+
 	return QString::null;
 }
 
@@ -1067,12 +1067,12 @@ void YZView::applyChanges( const YZCursor& pos, unsigned int len, bool applyCurs
 			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		else
 			paintEvent( dCurrentLeft, dY, mColumnsVis, 1 + mainCursor->screenY() - dY );
-	} else 
+	} else
 		paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 
 	if ( applyCursor )
 		gotoxy( pos.getX() + len, pos.getY() );
-	else 
+	else
 		gotoxy( origPos->getX(), origPos->getY(), false );
 	updateStickyCol( mainCursor );
 }
@@ -1114,7 +1114,7 @@ void YZView::initInsertLine( const YZCursor& pos, bool /*applyCursor*/ ) {
 	gotoxy( pos.getX(), pos.getY(), false );
 }
 
-void YZView::applyInsertLine( const YZCursor& pos, bool applyCursor ) { 
+void YZView::applyInsertLine( const YZCursor& pos, bool applyCursor ) {
 	paintEvent( dCurrentLeft, mainCursor->screenY(), mColumnsVis, mLinesVis - ( mainCursor->screenY() - dCurrentTop ) );
 	if ( applyCursor )
 		gotoxy( 0, pos.getY() + ( pos.getX() ? 1 : 0 ) );
@@ -1331,7 +1331,7 @@ void YZView::paste( QChar registr, bool after ) {
 			i++;
 		}
 		if ( i < list.size() && ! copyWholeLinesOnly ) {
-			mBuffer->action()->insertLine( this, pos.getY() + i, ( list[ i ].isNull() ? "" : list[ i ] ) + copy );		
+			mBuffer->action()->insertLine( this, pos.getY() + i, ( list[ i ].isNull() ? "" : list[ i ] ) + copy );
 			gotoxy( list[ i ].length(), pos.getY() + i );
 		} else if ( copyWholeLinesOnly ) {
 			gotoxy( 0, pos.getY() + 1 );
@@ -1339,7 +1339,7 @@ void YZView::paste( QChar registr, bool after ) {
 		}
 
 	} else if ( !after ) { //paste whole lines before current char
-		for( i = 1; i < list.size() - 1; i++ ) 
+		for( i = 1; i < list.size() - 1; i++ )
 			mBuffer->action()->insertLine( this, pos.getY() + i - 1, list[ i ] );
 
 		gotoxy( pos.getX(), pos.getY() );
@@ -1647,12 +1647,12 @@ bool YZView::drawNextCol( ) {
 		} else {
 			workCursor->lastCharWasTab = true;
 			lastChar = ' ';
-			if ( workCursor->screenX( ) == mCurrentLeft ) 
+			if ( workCursor->screenX( ) == mCurrentLeft )
 				workCursor->sColIncrement = ( workCursor->spaceFill ? workCursor->spaceFill : tablength );
 			else {
 				// calculate tab position
 				unsigned int mySpaceFill = ( mCurrentLeft == 0 ? workCursor->spaceFill : 0 );	// do not care about rSpaceFill if we arent't in wrapped mode
-				if ( workCursor->screenX() >= mySpaceFill ) 
+				if ( workCursor->screenX() >= mySpaceFill )
 					workCursor->sColIncrement = ( ( workCursor->screenX() - mySpaceFill ) / tablength  + 1 ) * tablength + mySpaceFill - workCursor->screenX();
 				else
 					workCursor->sColIncrement = mySpaceFill + spaceWidth - workCursor->screenX();
@@ -1694,7 +1694,7 @@ bool YZView::drawNextCol( ) {
 	workCursor->bLineIncrement = workCursor->wrapNextLine ? 0 : 1;
 
 //	if ( drawMode && mCurrentLeft > 0 )
-//		yzDebug() << "done drawNextCol s=" << *sCursor << ";r=" << *rCursor << ";ret=" << ret << ";wrapNextLine=" 
+//		yzDebug() << "done drawNextCol s=" << *sCursor << ";r=" << *rCursor << ";ret=" << ret << ";wrapNextLine="
 //			<< wrapNextLine << ";rLastCharWasTab=" << rLastCharWasTab << ";wrapTab=" << wrapTab << endl;
 
 	return ret;
@@ -1781,11 +1781,11 @@ void YZView::substitute(const QString& range, const QString& search, const QStri
 			if (endLine>=mBuffer->lineCount())
 				endLine=mBuffer->lineCount()-1;
 		}
-		
+
 	} else if ( range == "." ) {
 		//nothing
 	}
-		
+
 	for ( unsigned int i = startLine; i <= endLine; i++ ) {
 		if ( mBuffer->substitute(search, replace, option.contains( "g" ), i) )
 			needsUpdate = true;
@@ -1797,7 +1797,7 @@ void YZView::joinLine( unsigned int line, unsigned int count ) {
 	if ( line >= mBuffer->lineCount() - 1 ) return;
 	gotoxy( mBuffer->textline( line ).length() - 1, line );
 	updateStickyCol( mainCursor );
-	for ( unsigned int i = 0; i < count ; i ++ ) 
+	for ( unsigned int i = 0; i < count ; i ++ )
 		mBuffer->mergeNextLine( line );
 	paintEvent( dCurrentLeft, mainCursor->screenY(), mColumnsVis, mLinesVis - ( mainCursor->screenY() - dCurrentTop ) );
 }

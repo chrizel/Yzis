@@ -49,59 +49,59 @@ public:
 	// Reimplemented to please compilation
 	
 	virtual void setCommandLineText( const QString& text) {
-		yzDebug( AREA_TESTS) << "TYZView::setCommandLineText '" << text << "'\n";
+		yzDebug( "TYZView") << "TYZView::setCommandLineText '" << text << "'\n";
 	}
 
 	virtual void setFocusCommandLine() {
-		yzDebug( AREA_TESTS) << "TYZView::setFocusCommandLine" << endl;
+		yzDebug( "TYZView") << "TYZView::setFocusCommandLine" << endl;
 	}
 
 	virtual void setFocusMainWindow() {
-		yzDebug( AREA_TESTS) << "TYZView::setFocusMainWindow" << endl;
+		yzDebug( "TYZView") << "TYZView::setFocusMainWindow" << endl;
 	}
 
 	virtual QString getCommandLineText() const {
-		yzDebug( AREA_TESTS) << "TYZView::getCommandLineText" << endl;
+		yzDebug( "TYZView") << "TYZView::getCommandLineText" << endl;
 		return QString::null;
 	}
 
 	virtual void invalidateLine( unsigned int ) {
-		yzDebug( AREA_TESTS) << "TYZView::invalidateLine" << endl;
+		yzDebug( "TYZView") << "TYZView::invalidateLine" << endl;
 	}
 
 	virtual void setStatusBar( const QString& ) {
-		yzDebug( AREA_TESTS) << "TYZView::setStatusBar" << endl;
+		yzDebug( "TYZView") << "TYZView::setStatusBar" << endl;
 	}
 
 	virtual void updateCursor( unsigned int, unsigned int, unsigned int, const QString& ) {
-		yzDebug( AREA_TESTS) << "TYZView::updateCursor" << endl;
+		yzDebug( "TYZView") << "TYZView::updateCursor" << endl;
 	}
 
 	virtual void refreshScreen( ) {
-		yzDebug( AREA_TESTS) << "TYZView::refreshScreen" << endl;
+		yzDebug( "TYZView") << "TYZView::refreshScreen" << endl;
 	}
 
 	virtual void syncViewInfo( ) {
-		yzDebug( AREA_TESTS) << "TYZView::syncViewInfo" << endl;
+		yzDebug( "TYZView") << "TYZView::syncViewInfo" << endl;
 	}
 	
 	virtual void displayInfo( const QString& ) {
-		yzDebug( AREA_TESTS) << "TYZView::displayInfo" << endl;
+		yzDebug( "TYZView") << "TYZView::displayInfo" << endl;
 	}
 
 	virtual void modeChanged( ) {
-		yzDebug( AREA_TESTS) << "TYZView::modeChanged" << endl;
+		yzDebug( "TYZView") << "TYZView::modeChanged" << endl;
 	}
 
 	virtual void paintEvent( unsigned int /*curx*/, unsigned int /*cury*/, unsigned int /*curw*/, unsigned int /*curh*/ ) {
-		yzDebug( AREA_TESTS) << "TYZView::paintEvent" << endl;
+		yzDebug( "TYZView") << "TYZView::paintEvent" << endl;
 	}
 
 	virtual void scrollUp( int ) {
-		yzDebug( AREA_TESTS) << "TYZView::scrollUp" << endl;
+		yzDebug( "TYZView") << "TYZView::scrollUp" << endl;
 	}
 	virtual void scrollDown( int ) {
-		yzDebug( AREA_TESTS) << "TYZView::scrollDown" << endl;
+		yzDebug( "TYZView") << "TYZView::scrollDown" << endl;
 	}
 
 protected:

@@ -1309,6 +1309,7 @@ void YZView::paste( QChar registr, bool after ) {
 		copy = copy.mid( start );
 		mBuffer->action()->deleteChar( this, start, pos.getY(), copy.length() );
 		mBuffer->action()->insertChar( this, start, pos.getY(), list[ 0 ] + copy );
+		gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.getY() );
 		i++;
 		while ( i < list.size() - 1 ) {
 			mBuffer->action()->insertLine( this, pos.getY() + i, list[ i ] );
@@ -1316,7 +1317,10 @@ void YZView::paste( QChar registr, bool after ) {
 		}
 		if ( ! list[ i ].isNull() ) {
 			mBuffer->action()->insertChar( this, 0, pos.getY() + i, list[ i ] + copy );
-			gotoxy( list[ i ].length() - 1, pos.getY() + i );
+		}
+		if ( copyWholeLinesOnly ) {
+			gotoxy( 0, pos.getY() + 1 );
+			moveToFirstNonBlankOfLine();
 		}
 
 	} else if ( !after ) { //paste whole lines before current char
@@ -1325,6 +1329,7 @@ void YZView::paste( QChar registr, bool after ) {
 
 		gotoxy( pos.getX(), pos.getY() );
 	}
+	updateStickyCol( mainCursor );
 }
 
 bool YZView::doSearch( const QString& search ) {

@@ -56,6 +56,8 @@ class YZViewCursor {
 
 		YZViewCursor &operator=( const YZViewCursor &c );
 
+		void debug();
+
 	private :
 		void setBuffer( const YZCursor& value );
 		void setScreen( const YZCursor& value );

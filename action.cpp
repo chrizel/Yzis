@@ -32,6 +32,7 @@
  
 #include <stdlib.h>
 #include <assert.h>
+#include <qclipboard.h>
 
 YZAction::YZAction( YZBuffer* buffer ) {
 	mBuffer = buffer;
@@ -41,6 +42,7 @@ YZAction::~YZAction( ) {
 
 void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {
 	YZCursor mPos( pos );
+	yzDebug() << "insertChar " << text << " at " << pos << endl;
 	
 	if(pos.getY() >= mBuffer->lineCount())
 		insertNewLine(pView, mPos);
@@ -131,10 +133,17 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 
 	unsigned int bY = mPos.getY();
 	QStringList buff;
+	QString text = "";
+	QString line;
 	buff << QString::null;
-	for ( unsigned int i = 0; i < len && mPos.getY() < mBuffer->lineCount(); i++ )
-		buff << mBuffer->textline( bY + i );
+	for ( unsigned int i = 0; i < len && mPos.getY() < mBuffer->lineCount(); i++ ) {
+		line = mBuffer->textline( bY + i );
+		buff << line;
+		text += line + "\n";
+	}
 	buff << QString::null;
+	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
+	QApplication::clipboard()->setText( text, QClipboard::Selection );
 
 	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
 		YZSession::mRegisters.setRegister( *it, buff );
@@ -192,7 +201,10 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 		b = mBuffer->textline( curY );
 		buff << b.left( eX );
 	}
-	
+
+	QString text = buff.join( "\n" );
+	QApplication::clipboard()->setText( text, QClipboard::Clipboard );	
+	QApplication::clipboard()->setText( text, QClipboard::Selection );	
 	yzDebug() << "Copied " << buff << endl;
 	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
 		YZSession::mRegisters.setRegister( *it, buff );

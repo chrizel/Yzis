@@ -74,6 +74,12 @@ void YZViewCursor::reset() {
 	wrapTab = false;
 }
 
+void YZViewCursor::debug() {
+	yzDebug()	<< "YZViewCursor : buffer = " << *mBuffer << " ; screen = " << *mScreen << endl
+		  	<< "               bLineIncrement = " << bLineIncrement << "; sLineIncrement = " << sLineIncrement << endl
+			<< "               lineHeight = " << lineHeight << " ; wrapNextLine = " << wrapNextLine << endl;
+}
+
 unsigned int YZViewCursor::bufferX() const {
 	return mBuffer->getX();
 }

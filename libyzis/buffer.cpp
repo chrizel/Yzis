@@ -77,6 +77,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	displayIntro();
 	YZSession::me->addBuffer( this );
 	mSwap = new YZSwapFile( this );
+	mLoading = false;
 	yzDebug("YZBuffer") << "NEW BUFFER CREATED : " << mPath << endl;
 }
 
@@ -122,6 +123,7 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
 	}
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, c, x, y );
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, c, x, y );
 
 	l.insert(x, c);
 	setTextline(y,l);
@@ -141,9 +143,10 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 		return;
 	}
 
-	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
-	                                 l.mid(x,1), x, y );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, l.mid(x,1), x, y );
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, l.mid( x,1 ), x, y );
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, c, x, y );
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, c, x, y );
 	
 	/* do the actual modification */
 	l.remove(x, 1);
@@ -166,6 +169,7 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, l.mid(x,count), x, y );
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, l.mid( x,count ), x, y );
 	
 	/* do the actual modification */
 	l.remove(x, count);
@@ -180,10 +184,10 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 void  YZBuffer::appendLine(const QString &l) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::appendLine(%1)").arg(l),l);
 
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, 
-	                                 QString(), 0, lineCount() );
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
-	                                   l,  0, lineCount());
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l,  0, lineCount());
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, l, 0, lineCount() );
 
 	mText.append(new YZLine(l));
 	if ( m_highlight != 0L ) {
@@ -199,10 +203,10 @@ void  YZBuffer::appendLine(const QString &l) {
 void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::insertLine(%1,%2)").arg(l).arg(line),l)
 	ASSERT_NEXT_LINE_EXISTS(QString("YZBuffer::insertLine(%1,%2)").arg(l).arg(line),line)   
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, 
-	                                   QString(), 0, line );
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
-	                                   l, 0, line );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, QString(), 0, line );
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDLINE, QString(), 0, line );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, l, 0, line );
 
 	QValueVector<YZLine*>::iterator it;
 	uint idx=0;
@@ -250,9 +254,14 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	if ( newline.isNull() ) newline = QString( "" );
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, "", col, line+1 );
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDLINE, "", col, line+1 );
 	if (newline.length()) {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, newline, col, line );
 		mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, newline, 0, line+1 );
+		if ( !mLoading ) {
+			mSwap->addToSwap( YZBufferOperation::DELTEXT, newline, col, line );
+			mSwap->addToSwap( YZBufferOperation::ADDTEXT, newline, 0, line+1 );
+		}
 	}
 
 	//replace old line
@@ -272,8 +281,10 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	if (line >= lineCount()) return;
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
+	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, textline( line ), 0, line );
 	if (lineCount() > 1) {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, "", 0, line );
+		if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELLINE, "", 0, line );
 		QValueVector<YZLine*>::iterator it;
 		uint idx=0;
 		for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
@@ -281,6 +292,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 		mText.erase(it);
 	} else {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, "", 0, line );
+		if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, "", 0, line );
 		setTextline(0,"");
 	}
 
@@ -295,6 +307,10 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );
+	if ( !mLoading ) {
+		mSwap->addToSwap( YZBufferOperation::DELTEXT, textline( line ), 0, line );
+		mSwap->addToSwap( YZBufferOperation::ADDTEXT, l, 0, line );
+	}
 	setTextline(line,l);
 }
 
@@ -441,6 +457,7 @@ void YZBuffer::load(const QString& file) {
 	QFile fl( mPath );
 	//opens and eventually create the file
 	mUndoBuffer->setInsideUndo( true );
+	mLoading=true;
 	if ( fl.open( IO_ReadOnly ) ) {
 		QTextStream stream( &fl );
 		while ( !stream.atEnd() )
@@ -449,6 +466,7 @@ void YZBuffer::load(const QString& file) {
 	}
 	if ( ! mText.count() )
 		appendLine("");
+	mLoading=false;
 	mUndoBuffer->setInsideUndo( false );
 	setChanged( false );
 	//reenable

@@ -443,6 +443,7 @@ protected:
 	bool mModified;
 	//current highlight mode
 	YzisHighlighting *m_highlight;
+	bool mLoading;
 
 private:
 	YZAction* mAction;

@@ -45,11 +45,3 @@ apidox:
 	echo "EXTRACT_ALL         = YES" >> yzis.doxyfile ; \
 	doxygen yzis.doxyfile
 
-clean-local: clean-tests
-
-test: 
-	cd tests/cpp && make && LD_LIBRARY_PATH=$(top_builddir)/libyzis/libqtyzis/.libs/ /bin/sh ./tests
-
-clean-tests:
-	cd tests/cpp && [ -f Makefile ] && make clean
-

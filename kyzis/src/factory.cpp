@@ -49,12 +49,7 @@ unsigned long int KYZisFactory::s_refcnt = 0;
 QPtrList<class KYZisDoc> KYZisFactory::s_documents;
 QPtrList<class KYZisView> KYZisFactory::s_views;
 
-extern "C" {
-	void* init_libkyzispart() {
-		KGlobal::locale()->insertCatalogue("kyzispart");
-		return new KYZisFactory(false);
-	}
-};
+K_EXPORT_COMPONENT_FACTORY( libkyzispart, KYZisFactory)
 
 KInstance* KYZisFactory::s_instance = 0L;
 

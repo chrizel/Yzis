@@ -969,6 +969,7 @@ QString YZView::moveRight( int nb_cols, bool wrap ) {
 			while(diff>0 && y<myBuffer()->lineCount()-1) {
 				// go one line down
 				line_length = myBuffer()->textline(++y).length();
+				x=line_length-1;
 				diff-=line_length+1;
 			}
 			// if we moved too far, go back

@@ -361,19 +361,19 @@ void YzisSchemaConfigColorTab::readConfig (const QString& config)
 void YzisSchemaConfigColorTab::writeConfig (const QString& config)
 {
   YZSession::mOptions->setGroup( config );
-  YZSession::mOptions->setQColorOption("Color Background", m_back->color());
-  YZSession::mOptions->setQColorOption("Color Selection", m_selected->color());
-  YZSession::mOptions->setQColorOption("Color Highlighted Line", m_current->color());
-  YZSession::mOptions->setQColorOption("Color Highlighted Bracket", m_bracket->color());
-  YZSession::mOptions->setQColorOption("Color Word Wrap Marker", m_wwmarker->color());
-  YZSession::mOptions->setQColorOption("Color Tab Marker", m_tmarker->color());
-  YZSession::mOptions->setQColorOption("Color Icon Bar", m_iconborder->color());
-  YZSession::mOptions->setQColorOption("Color Line Number", m_linenumber->color());
+  YZSession::mOptions->setQColorEntry("Color Background", m_back->color());
+  YZSession::mOptions->setQColorEntry("Color Selection", m_selected->color());
+  YZSession::mOptions->setQColorEntry("Color Highlighted Line", m_current->color());
+  YZSession::mOptions->setQColorEntry("Color Highlighted Bracket", m_bracket->color());
+  YZSession::mOptions->setQColorEntry("Color Word Wrap Marker", m_wwmarker->color());
+  YZSession::mOptions->setQColorEntry("Color Tab Marker", m_tmarker->color());
+  YZSession::mOptions->setQColorEntry("Color Icon Bar", m_iconborder->color());
+  YZSession::mOptions->setQColorEntry("Color Line Number", m_linenumber->color());
 
 #if KDE_IS_VERSION( 3,3,0 )
   for (int i = 0; i < KTextEditor::MarkInterface::reservedMarkersCount(); i++)
   {
-    YZSession::mOptions->setQColorOption(QString("Color MarkType%1").arg(i + 1), m_markerColors[i]);
+    YZSession::mOptions->setQColorEntry(QString("Color MarkType%1").arg(i + 1), m_markerColors[i]);
   }
 #endif
   YZSession::mOptions->setGroup( "Global" );
@@ -440,7 +440,7 @@ void YzisSchemaConfigFontTab::readConfig (const QString& config)
 void YzisSchemaConfigFontTab::writeConfig (const QString& config)
 {
   YZSession::mOptions->setGroup( config );
-  YZSession::mOptions->setQStringOption("Font", myFont.toString() );
+  YZSession::mOptions->setQStringEntry("Font", myFont.toString() );
   YZSession::mOptions->setGroup( "Global" );
 }
 

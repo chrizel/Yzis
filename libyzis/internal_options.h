@@ -17,8 +17,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef YZ_OPTIONS
-#define YZ_OPTIONS
+#ifndef YZ_INTERNAL_OPTIONS
+#define YZ_INTERNAL_OPTIONS
 
 #include <qstring.h>
 #include <qmap.h>
@@ -26,37 +26,7 @@
 #include <qcolor.h>
 #include "yzis.h"
 
-/**
- * Class to handle an internal option.
- * It includes : a name , a group, a default value and the current value
- */
-class YZInternalOption {
-	public:
-		YZInternalOption( const QString& key, const QString& group, const QString& value, const QString& defaultValue, option_t type, value_t vtype);
-		YZInternalOption( const QString& key, const QString& group, const QStringList& value, const QStringList& defaultValue, option_t type, value_t vtype);
-		YZInternalOption( const QString& key, const QString& group, int value, int defaultValue, option_t type, value_t vtype);
-		YZInternalOption( const QString& key, const QString& group, bool value, bool defaultValue, option_t type, value_t vtype);
-		~YZInternalOption() {}
-
-		const QString& getGroup() { return mGroup; }
-		const QString& getKey() { return mKey; }
-		const QString& getDefault() { return mDefaultValue; }
-		const QString& getValue() { return mValue; }
-		option_t getType() { return mType; }
-		value_t getValueType() { return mValueType; }
-		//this is valid only for stringlist_t options
-		QString getValueForKey( const QString& key );
-
-		void setValue( const QString& value ) { mValue = value; }
-
-	private:
-		QString mKey;
-		QString mGroup;
-		QString mDefaultValue;
-		QString mValue;
-		option_t mType;
-		value_t mValueType;
-};
+#include "option.h"
 
 /**
  * Class to handle the internal options.
@@ -75,6 +45,16 @@ class YZInternalOptionPool {
 		virtual ~YZInternalOptionPool();
 
 		/**
+		 * set an option value from a QString
+		 * *matched is set to true if there is an option which mached the entry
+		 * returns true if we succed to set the value
+		 *  => matched && returns false => option found, but the value given in the entry is bad.
+		 */
+		bool setOptionFromString( bool* matched, const QString& entry, scope_t user_scope = default_scope, YZBuffer* b = NULL, YZView* v = NULL );
+		bool setOptionFromString( const QString& entry, scope_t user_scope = default_scope, YZBuffer* b = NULL, YZView* v = NULL );
+
+		
+		/**
 		 * Load settings from @param file
 		 */
 		void loadFrom(const QString& file);
@@ -84,6 +64,49 @@ class YZInternalOptionPool {
 		 */
 		void saveTo(const QString& file, const QString& what=QString::null, const QString& except=QString::null, bool force=false);
 
+
+		/**
+		 * There is two type of options :
+		 * 	- options, They cannot be dynamically created (except with createOption), 
+		 * 		they are attached to type, a context, a scope, and may 
+		 * 		run command after their value has been changed.
+		 * 	- settings, simple entries in the config files.
+		 *
+		 * 	Methods ending with Option are designed to manipulate options
+		 * 	Methods ending with Entry are designed to manipulate settings
+		 */
+
+		/**
+		 * return a QString option
+		 */
+		const QString& readStringOption( const QString& key , const QString& def = QString::null );
+
+		/**
+		 * return an int option
+		 */
+		int readIntegerOption( const QString& key, int def = 0 );
+
+		/**
+		 * return a bool option
+		 */
+		bool readBooleanOption( const QString& key , bool def = false );
+
+		/**
+		 * return a list option
+		 */
+		QStringList readListOption( const QString& key, const QStringList& def = QStringList() );
+
+		/**
+		 * returns a map option
+		 */
+		MapOption readMapOption( const QString& key );
+
+		/**
+		 * return a color option
+		 */
+		QColor readColorOption( const QString& key, const QColor& def = QColor() );
+
+		
 		/**
 		 * return a QString option
 		 */
@@ -92,7 +115,7 @@ class YZInternalOptionPool {
 		/**
 		 * Sets a qstring option
 		 */
-		void setQStringOption( const QString& key, const QString& value );
+		void setQStringEntry( const QString& key, const QString& value );
 
 		/**
 		 * return an int option
@@ -102,7 +125,7 @@ class YZInternalOptionPool {
 		/**
 		 * Sets an int option
 		 */
-		void setIntOption( const QString& key, int value );
+		void setIntEntry( const QString& key, int value );
 
 		/**
 		 * return a bool option
@@ -112,7 +135,7 @@ class YZInternalOptionPool {
 		/**
 		 * Sets a bool option
 		 */
-		void setBoolOption( const QString& key, bool value );
+		void setBoolEntry( const QString& key, bool value );
 
 		/**
 		 * return a list option
@@ -122,7 +145,7 @@ class YZInternalOptionPool {
 		/**
 		 * Sets a qstringlist option
 		 */
-		void setQStringListOption( const QString& key, const QStringList& value );
+		void setQStringListEntry( const QString& key, const QStringList& value );
 
 		/**
 		 * return a QColor option
@@ -132,7 +155,8 @@ class YZInternalOptionPool {
 		/**
 		 * Sets a qcolor option
 		 */
-		void setQColorOption( const QString& key, const QColor& value );
+		void setQColorEntry( const QString& key, const QColor& value );
+
 
 		/**
 		 * Changes the current group of options
@@ -152,28 +176,37 @@ class YZInternalOptionPool {
 		/**
 		 * Return a pointer on a specific option
 		 */
-		YZInternalOption* getOption( const QString& option );
+		YZOptionValue* getOption( const QString& option );
 
 		/**
 		 * Dynamically creates a new option for yzis
 		 */
-		void createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, option_t visibility, value_t type );
+		void createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, context_t ctx, value_t type );
 
 		/**
 		 * Update the keys depending on buffers file name when a buffer change his name
 		 */
 		void updateOptions(const QString& oldPath, const QString& newPath);
 
+#if QT_VERSION < 0x040000
+		QValueList<YZOption*> options;
+#else
+		QList<YZOption*> options;
+#endif
+
 	private:
 		void init();
 		void initConfFiles();
+		void applyOption( YZOption* option, context_t ctx, scope_t scope, YZBuffer* b, YZView* v );
+
+		bool fillOptionFromString( YZOption* opt, const QString& entry );
+
 		/**
 		 * Clean memory
 		 */
 		void cleanup();
 
-		//QString here is == group/key
-		QMap<QString, YZInternalOption*> mOptions;
+		QMap<QString, YZOptionValue*> mOptions;
 		QString currentGroup;
 };
 

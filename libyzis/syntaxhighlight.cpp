@@ -1868,7 +1868,7 @@ void YzisHighlighting::setYzisHlItemDataList(uint schema, YzisHlItemDataList& li
     settings<<(p->itemSet(YzisAttribute::BGColor)?QString::number(p->bgColor().rgb(),16):"");
     settings<<(p->itemSet(YzisAttribute::SelectedBGColor)?QString::number(p->selectedBGColor().rgb(),16):"");
     settings<<"---";
-    config->setQStringListOption(p->name,settings);
+    config->setQStringListEntry(p->name,settings);
   }
 }
 
@@ -3738,7 +3738,7 @@ void YzisHlManager::setDefaults(uint schema, YzisAttributeList &list)
     settings<<(i->itemSet(YzisAttribute::SelectedBGColor)?QString::number(i->selectedBGColor().rgb(),16):"-");
     settings<<"---";
 
-    config->setQStringListOption(defaultStyleName(z),settings);
+    config->setQStringListEntry(defaultStyleName(z),settings);
   }
   emit changed();
 }

@@ -109,7 +109,8 @@ main(int argc, char *argv[])
 	NYZFactory *factory  =new NYZFactory();
 
 	YZSession::mOptions->setGroup("Global");
-	bool splash = YZSession::getBoolOption("blocksplash");
+	YZOptionValue* o_splash = YZSession::mOptions->getOption("blocksplash");
+	bool splash = o_splash->boolean();
 	while ( 1 ) {
 		c = getopt_long ( argc, argv, "hvc:", long_options, &option_index );
 		if ( -1 == c ) break; // end of parsing
@@ -128,7 +129,7 @@ main(int argc, char *argv[])
 				exit(0);
 				break;
 			case 'c':
-				YZSession::setBoolOption("blocksplash", false);
+				o_splash->setBoolean( false );
 				initialSendKeys = (const char *) optarg;
 				break;
 			default:
@@ -165,7 +166,7 @@ main(int argc, char *argv[])
 
 	if (initialSendKeys.length()) {
 		YZSession::me->sendMultipleKeys( initialSendKeys );
-		YZSession::setBoolOption("blocksplash", splash);
+		o_splash->setBoolean( splash );
 	}
 
 	YZSession::me->guiStarted();

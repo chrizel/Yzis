@@ -140,7 +140,7 @@ void KYZisEdit::setCursor( int c, int l ) {
 	c = c - mParent->getDrawCurrentLeft() + marginLeft;
 	l -= mParent->getDrawCurrentTop();
 	unsigned int x = GETX( c );
-	if ( mParent->getLocalBoolOption( "rightleft" ) ) {
+	if ( mParent->getLocalBooleanOption( "rightleft" ) ) {
 		x = width() - x - mCursor->width();
 	}
 	mCursor->move( x, l * fontMetrics().lineSpacing() );
@@ -291,8 +291,8 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 
 	unsigned int linespace = fontMetrics().lineSpacing();
 	QRect myRect;
-	bool number = mParent->getLocalBoolOption( "number" );
-	bool rightleft = mParent->getLocalBoolOption( "rightleft" );
+	bool number = mParent->getLocalBooleanOption( "number" );
+	bool rightleft = mParent->getLocalBooleanOption( "rightleft" );
 
 	int flag = (rightleft ? Qt::AlignRight : Qt::AlignLeft);
 

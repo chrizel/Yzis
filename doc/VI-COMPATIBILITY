@@ -14,4 +14,5 @@ handled more 'logically'.
 4->'Y' yank to end of line (Vim yank one line by default) (Vi and Vim)
 5->'q' and '@' these commands work with registers : "aq start recording in register 'a', "a@ plays register 'a' contents (Vi and Vim)
 6->'U' == redo, Vim's U fonctionnality is not implemented in yzis (Vi and Vim)
+5->option 'tabstop': context is view instead of buffer
 

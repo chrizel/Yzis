@@ -81,7 +81,7 @@ void KYZisCursor::move( unsigned int x, unsigned int y ) {
 
 const KYZViewCell& KYZisCursor::cell() const {
 	return mParent->mCell[ mY / mParent->fontMetrics().lineSpacing() ][ 
-					mParent->mParent->getLocalBoolOption("rightleft") ? mX + width() : mX ];
+					mParent->mParent->getLocalBooleanOption("rightleft") ? mX + width() : mX ];
 }
 
 bool KYZisCursor::prepareCursors() {

@@ -38,7 +38,8 @@
 #include "syntaxhighlight.h"
 #include "line.h"
 #include "debug.h"
-#include "view.h" // needed by Visual
+#include "option.h"
+#include "view.h"
 #include "selection.h"
 
 class YZUndoBuffer;
@@ -48,6 +49,7 @@ class YZViewMark;
 class YZCursor;
 class YZSwapFile;
 class YZSession;
+class YZView;
 
 #if QT_VERSION < 0x040000
 typedef QValueVector<YZLine*> YZBufferData;
@@ -407,22 +409,12 @@ public:
 	/**
 	 * Retrieve an int option
 	 */
-	int getLocalIntOption( const QString& option );
-
-	/**
-	 * sets an int option
-	 */
-	void setLocalIntOption( const QString& key, int option );
+	int getLocalIntegerOption( const QString& option );
 
 	/**
 	 * Retrieve a bool option
 	 */
-	bool getLocalBoolOption( const QString& option );
-
-	/**
-	 * sets a bool option
-	 */
-	void setLocalBoolOption( const QString& key, bool option );
+	bool getLocalBooleanOption( const QString& option );
 
 	/**
 	 * Retrieve a string option
@@ -430,29 +422,9 @@ public:
 	QString getLocalStringOption( const QString& option );
 
 	/**
-	 * sets a qstring option
-	 */
-	void setLocalQStringOption( const QString& key, const QString& option );
-
-	/**
 	 * Retrieve a qstringlist option
 	 */
-	QStringList getLocalStringListOption( const QString& option );
-
-	/**
-	 * sets a qstringlist option
-	 */
-	void setLocalQStringListOption( const QString& key, const QStringList& option );
-
-	/**
-	 * Retrieve a qcolor option
-	 */
-	QColor getLocalColorOption( const QString& option );
-
-	/**
-	 * sets a qcolor option
-	 */
-	void setLocalQColorOption( const QString& key, const QColor& option );
+	QStringList getLocalListOption( const QString& option );
 
 	void setEncoding( const QString& name );
 

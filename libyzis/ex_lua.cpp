@@ -652,8 +652,8 @@ int YZExLua::setlocal(lua_State *L ) {
 	if (!checkFunctionArguments(L, 1, "setlocal", "set local options")) return 0;
 	QString option = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
 
-	YZExCommandArgs ex (YZSession::me->currentView(), QString::null, QString::null, option, 0, 0, true);
-	YZSession::me->getExPool()->setlocal(ex);
+	YZExCommandArgs ex (YZSession::me->currentView(), QString::null, "setlocal", option, 0, 0, true);
+	YZSession::me->getExPool()->set(ex);
 
 	return 0;	
 }
@@ -664,7 +664,7 @@ int YZExLua::newoption(lua_State *L ) {
 	QString group = ( char * )lua_tostring ( L, 2 );
 	QString defaultvalue = ( char * )lua_tostring ( L, 3 );
 	QString value = ( char * )lua_tostring ( L, 4 );
-	option_t visibility = (option_t)(int)lua_tonumber ( L, 5 );
+	context_t visibility = (context_t)(int)lua_tonumber ( L, 5 );
 	value_t type = (value_t)(int)lua_tonumber ( L, 6 );
 
 	YZSession::mOptions->createOption(option, group, defaultvalue, value, visibility, type );

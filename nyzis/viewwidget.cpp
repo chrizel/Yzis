@@ -115,7 +115,7 @@ void NYZView::printVoid( unsigned int relline )
 {
 	unsigned int i;
 
-	bool rightleft = getLocalBoolOption( "rightleft" );
+	bool rightleft = getLocalBooleanOption( "rightleft" );
 	// clipping
 	if ( relline > getLinesVisible() ) return;
 	mvwaddch(editor,relline, rightleft ? width - 1 : 0, attribBlue|'~');
@@ -143,8 +143,8 @@ void NYZView::paintEvent( unsigned int , unsigned int clipy, unsigned int , unsi
 }
 
 void NYZView::drawContents( int clipy, int cliph ) {
-	bool number = getLocalBoolOption( "number" );
-	bool rightleft = getLocalBoolOption( "rightleft" );
+	bool number = getLocalBooleanOption( "number" );
+	bool rightleft = getLocalBooleanOption( "rightleft" );
 
 	if (!editor)	// Avoid segfaults and infinite recursion.
 		return;
@@ -276,7 +276,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 
 void NYZView::drawCursor() {
 	unsigned int x = getCursor()->x() - getDrawCurrentLeft () + marginLeft;
-	if ( getLocalBoolOption( "rightleft" ) ) x = width - x - 1;
+	if ( getLocalBooleanOption( "rightleft" ) ) x = width - x - 1;
 	wmove( editor, getCursor()->y() - getDrawCurrentTop (), x );
 	wrefresh( editor );
 }

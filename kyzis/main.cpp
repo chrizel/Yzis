@@ -94,12 +94,13 @@ int main(int argc, char **argv) {
 
 		QString initialSendKeys = args->getOption("c");
 		YZSession::mOptions->setGroup("Global");
-		bool splash = YZSession::getBoolOption("blocksplash");
-		YZSession::setBoolOption("blocksplash", false);
+		YZOptionValue* o_splash = YZSession::mOptions->getOption("blocksplash");
+		bool splash = o_splash->boolean();
+		o_splash->setBoolean( false );
 		if (initialSendKeys.length()) {
 			YZSession::me->sendMultipleKeys(initialSendKeys);
 		}
-		YZSession::setBoolOption("blocksplash", splash);
+		o_splash->setBoolean( splash );
 
 		args->clear();
 	}

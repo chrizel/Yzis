@@ -33,9 +33,9 @@ void QYZEditor::drawContents( unsigned int , unsigned int line,
 	qDebug("QYZView - drawContents line %d -> %d", line, line+h );
 	int i, my_y;
 	QString s;
-	bool wrap = mParent->getLocalBoolOption( "wrap" );
-	bool rightleft = mParent->getLocalBoolOption( "rightleft" );
-	bool number = mParent->getLocalBoolOption( "number" );
+	bool wrap = mParent->getLocalBooleanOption( "wrap" );
+	bool rightleft = mParent->getLocalBooleanOption( "rightleft" );
+	bool number = mParent->getLocalBooleanOption( "number" );
 
 	int my_marginLeft=0, pixMarginLeft=5;
 	unsigned int lineCount = mParent->myBuffer()->lineCount();

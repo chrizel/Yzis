@@ -571,7 +571,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
   config->setGroup ("General");
   if (config->readIntEntry ("Version") > config->readIntEntry ("CachedVersion"))
   {
-    config->setIntOption ("CachedVersion", config->readIntEntry ("Version"));
+    config->setIntEntry ("CachedVersion", config->readIntEntry ("Version"));
     force = true;
   }
 
@@ -673,18 +673,18 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
               // Now let's write or overwrite (if force==true) the entry in katesyntax...rc
               config->setGroup(Group);
-              config->setQStringOption("name",mli->name);
-			  config->setQStringOption("section",mli->section);
-              config->setQStringOption("mimetype",mli->mimetype);
-              config->setQStringOption("extension",mli->extension);
-              config->setQStringOption("version",mli->version);
-              config->setQStringOption("priority",mli->priority);
-              config->setQStringOption("author",mli->author);
-              config->setQStringOption("license",mli->license);
-              config->setBoolOption("hidden",mli->hidden);
+              config->setQStringEntry("name",mli->name);
+			  config->setQStringEntry("section",mli->section);
+              config->setQStringEntry("mimetype",mli->mimetype);
+              config->setQStringEntry("extension",mli->extension);
+              config->setQStringEntry("version",mli->version);
+              config->setQStringEntry("priority",mli->priority);
+              config->setQStringEntry("author",mli->author);
+              config->setQStringEntry("license",mli->license);
+              config->setBoolEntry("hidden",mli->hidden);
 
               // modified time to keep cache in sync
-              config->setIntOption("lastModified", sbuf.st_mtime);
+              config->setIntEntry("lastModified", sbuf.st_mtime);
 
               // Now that the data is in the config file, translate section
 			  mli->section    = "Language Section"; // We need the i18n context for when reading again the config

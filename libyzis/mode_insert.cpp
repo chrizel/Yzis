@@ -79,7 +79,7 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 			ret = YZSession::me->getCommandPool()->execCommand(mView, key);
 		else*/
 		ret = commandDefault( mView, key );
-		QStringList ikeys = mView->myBuffer()->getLocalStringListOption("indentkeys");
+		QStringList ikeys = mView->myBuffer()->getLocalListOption("indentkeys");
 		if ( ikeys.contains(key) )
 			YZSession::events->exec("INDENT_ON_KEY", mView);
 	}
@@ -142,7 +142,7 @@ void YZModeInsert::commandRight( YZView* mView, const QString& ) {
 void YZModeInsert::commandPageDown( YZView* mView, const QString& ) {
 	unsigned int line = mView->getCurrentTop() + mView->getLinesVisible();
 
-	if (mView->getLocalBoolOption("wrap")) {
+	if (mView->getLocalBooleanOption("wrap")) {
 		YZViewCursor temp = mView->viewCursor();
 		mView->gotodxdy( &temp, mView->getDrawCurrentLeft(),
 				mView->getDrawCurrentTop() + mView->getLinesVisible() );
@@ -193,7 +193,7 @@ void YZModeInsert::commandDel( YZView* mView, const QString& ) {
 void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 	YZCursor cur = *mView->getBufferCursor();
 	YZBuffer* mBuffer = mView->myBuffer();
-	if ( mView->getLocalBoolOption("cindent") ) {
+	if ( mView->getLocalBooleanOption("cindent") ) {
 		mView->indent();
 	} else {
 		mBuffer->action()->insertNewLine( mView, cur );
@@ -213,7 +213,7 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 }
 cmd_state YZModeInsert::commandDefault( YZView* mView, const QString& key ) {
 	mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
-	if ( mView->getLocalBoolOption( "cindent" ) && key == "}" )
+	if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
 		mView->reindent( mView->getBufferCursor()->x() - 1, mView->getBufferCursor()->y() );
 	return CMD_OK;
 }

@@ -27,6 +27,7 @@
 
 #include "buffer.h"
 #include "cursor.h"
+#include "commands.h"
 
 class YZCursor;
 class YZBuffer;
@@ -100,43 +101,43 @@ class YZView {
 		/**
 		 * moves the cursor of the current view down
 		 */
-		QString moveDown( const QString& inputsBuff = QString::null );
+		QString moveDown( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * moves the cursor of the current view up 
 		 */
-		QString moveUp( const QString& inputsBuff = QString::null );
+		QString moveUp( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * moves the cursor of the current view left
 		 */
-		QString moveLeft( const QString& inputsBuff = QString::null );
+		QString moveLeft( const QString& inputsBuff = QString::null , YZCommandArgs args = YZCommandArgs());
 
 		/**
 		 * moves the cursor of the current view right
 		 */
-		QString moveRight( const QString& inputsBuff = QString::null );
+		QString moveRight( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * moves the cursor of the current view to the first non-blank character 
 		 * of the current line
 		 */
-		QString moveToFirstNonBlankOfLine( const QString& inputsBuff = QString::null );
+		QString moveToFirstNonBlankOfLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * moves the cursor of the current view to the start of the current line
 		 */
-		QString moveToStartOfLine( const QString& inputsBuff = QString::null );
+		QString moveToStartOfLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * moves the cursor of the current view to the end of the current line
 		 */
-		QString moveToEndOfLine( const QString& inputsBuff = QString::null );
+		QString moveToEndOfLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * deletes the character under the cursor
 		 */
-		QString deleteCharacter( const QString& inputsBuff = QString::null );
+		QString deleteCharacter( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * Back to command mode
@@ -146,47 +147,47 @@ class YZView {
 		/**
 		 * Start insert mode
 		 */
-		QString gotoInsertMode( const QString& inputsBuff = QString::null );
+		QString gotoInsertMode( const QString& inputsBuff = QString::null, YZCommandArgs args  = YZCommandArgs());
 
 		/**
 		 * Start Ex mode
 		 */
-		QString gotoExMode( const QString& inputsBuff = QString::null );
+		QString gotoExMode( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * Start replace mode
 		 */
-		QString gotoReplaceMode( const QString& inputsBuff = QString::null );
+		QString gotoReplaceMode( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * Go to line of file
 		 */
-		QString gotoLine( const QString& inputsBuff = QString::null );
+		QString gotoLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * Deletes lines
 		 */
-		QString deleteLine ( const QString& inputsBuff = QString::null );
+		QString deleteLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * Opens a new line after current line
 		 */
-		QString openNewLineAfter ( const QString& inputsBuff = QString::null );
+		QString openNewLineAfter ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * Opens a new line before current line
 		 */
-		QString openNewLineBefore ( const QString& inputsBuff = QString::null );
+		QString openNewLineBefore ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * Append after current character
 		 */
-		QString append ( const QString& inputsBuff = QString::null );
+		QString append ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * Append at End of Line
 		 */
-		QString appendAtEOL ( const QString& inputsBuff = QString::null );
+		QString appendAtEOL ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
 		 * Repaint the whole visible screen
@@ -201,12 +202,12 @@ class YZView {
 		/**
 		 * Copy from current to buffer to a register
 		 */
-		QString copy( const QString& inputsBuff = QString::null );
+		QString copy( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
   
 		/**
 		 * Pastes the content of default or given register
 		 */
-		QString paste( const QString& inputsBuff = QString::null );
+		QString paste( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
   
 		/**
 		 * A global UID for this view

@@ -314,7 +314,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 
 }
 
-QString YZView::moveDown( const QString& inputsBuff ) {
+QString YZView::moveDown( const QString& inputsBuff, YZCommandArgs args ) {
 	int nb_lines=1;//default : one line down
 
 	//check the arguments
@@ -337,7 +337,7 @@ QString YZView::moveDown( const QString& inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::moveUp( const QString& inputsBuff ) {
+QString YZView::moveUp( const QString& inputsBuff, YZCommandArgs args ) {
 	int nb_lines=1;//default : one line up
 
 	//check the arguments
@@ -359,7 +359,7 @@ QString YZView::moveUp( const QString& inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::moveLeft( const QString& inputsBuff ) {
+QString YZView::moveLeft( const QString& inputsBuff, YZCommandArgs args ) {
 	uint nb_cols=1;//default : one line left
 
 	//check the arguments
@@ -383,7 +383,7 @@ QString YZView::moveLeft( const QString& inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::moveRight( const QString& inputsBuff ) {
+QString YZView::moveRight( const QString& inputsBuff, YZCommandArgs args ) {
 	int nb_cols=1;//default : one column right
 	
 	//check the arguments
@@ -405,7 +405,7 @@ QString YZView::moveRight( const QString& inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::moveToFirstNonBlankOfLine( const QString& ) {
+QString YZView::moveToFirstNonBlankOfLine( const QString&, YZCommandArgs args ) {
 	//execute the code
 	gotoxy(mBuffer->firstNonBlankChar(mCursor->getY()) , mCursor->getY());
 	
@@ -415,7 +415,7 @@ QString YZView::moveToFirstNonBlankOfLine( const QString& ) {
 	return QString::null;
 }
 
-QString YZView::moveToStartOfLine( const QString& ) {
+QString YZView::moveToStartOfLine( const QString&, YZCommandArgs args ) {
 	//execute the code
 	gotoxy(0 , mCursor->getY());
 	
@@ -425,7 +425,7 @@ QString YZView::moveToStartOfLine( const QString& ) {
 	return QString::null;
 }
 
-QString YZView::gotoLine(const QString& inputsBuff) {
+QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs args) {
 	// Accepts "gg", "G", "<number>gg", "<number>G"
 	// "gg", "0gg", "1gg" -> first line of the file
 	// "G", "0G", "3240909G", "23323gg" -> last line of the file
@@ -474,7 +474,7 @@ QString YZView::gotoLine(const QString& inputsBuff) {
 // end of goto-like command
 
 
-QString YZView::moveToEndOfLine( const QString& ) {
+QString YZView::moveToEndOfLine( const QString&, YZCommandArgs args ) {
 	QString lin;
 	
 	gotoxy( mMaxX+10 , mCursor->getY());
@@ -484,7 +484,7 @@ QString YZView::moveToEndOfLine( const QString& ) {
 	return QString::null;
 }
 
-QString YZView::deleteCharacter( const QString& inputsBuff ) {
+QString YZView::deleteCharacter( const QString& inputsBuff, YZCommandArgs args ) {
 	QString lin;
 	int nb_cols=1;//default : one row right
 	
@@ -508,7 +508,7 @@ QString YZView::deleteCharacter( const QString& inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::deleteLine ( const QString& inputsBuff ) {
+QString YZView::deleteLine ( const QString& inputsBuff, YZCommandArgs args ) {
 	int nb_lines=1;//default : one line
 	QChar reg='\"';
 
@@ -545,7 +545,7 @@ QString YZView::deleteLine ( const QString& inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::openNewLineBefore ( const QString& ) {
+QString YZView::openNewLineBefore ( const QString&, YZCommandArgs args ) {
 	mBuffer->addNewLine(0,mCursor->getY());
 	//reset the input buffer
 	purgeInputBuffer();
@@ -558,7 +558,7 @@ QString YZView::openNewLineBefore ( const QString& ) {
 	return QString::null;
 }
 
-QString YZView::openNewLineAfter ( const QString& ) {
+QString YZView::openNewLineAfter ( const QString&, YZCommandArgs args ) {
 	mBuffer->addNewLine(0,mCursor->getY()+1);
 	//reset the input buffer
 	purgeInputBuffer();
@@ -569,7 +569,7 @@ QString YZView::openNewLineAfter ( const QString& ) {
 	return QString::null;
 }
 
-QString YZView::append ( const QString& ) {
+QString YZView::append ( const QString&, YZCommandArgs args ) {
 	//reset the input buffer
 	purgeInputBuffer();
 	gotoInsertMode();
@@ -578,7 +578,7 @@ QString YZView::append ( const QString& ) {
 	return QString::null;
 }
 
-QString YZView::appendAtEOL ( const QString& ) {
+QString YZView::appendAtEOL ( const QString&, YZCommandArgs args ) {
 	//reset the input buffer
 	purgeInputBuffer();
 	moveToEndOfLine();
@@ -594,7 +594,7 @@ QString YZView::gotoCommandMode( ) {
 	return QString::null;
 }
 
-QString YZView::gotoExMode(const QString&) {
+QString YZView::gotoExMode(const QString&, YZCommandArgs args) {
 	mMode = YZ_VIEW_MODE_EX;
 	setStatusBar( "-- EX --" );
 	setFocusCommandLine();
@@ -602,21 +602,21 @@ QString YZView::gotoExMode(const QString&) {
 	return QString::null;
 }
 
-QString YZView::gotoInsertMode(const QString&) {
+QString YZView::gotoInsertMode(const QString&, YZCommandArgs args) {
 	mMode = YZ_VIEW_MODE_INSERT;
 	setStatusBar( "-- INSERT --" );
 	purgeInputBuffer();
 	return QString::null;
 }
 
-QString YZView::gotoReplaceMode(const QString&) {
+QString YZView::gotoReplaceMode(const QString&, YZCommandArgs args) {
 	mMode = YZ_VIEW_MODE_REPLACE;
 	setStatusBar( "-- REPLACE --" );
 	purgeInputBuffer();
 	return QString::null;
 }
 
-QString YZView::copy( const QString& inputsBuff ) {
+QString YZView::copy( const QString& inputsBuff , YZCommandArgs args) {
 	//default register to use
 	QChar reg = '"';
 	int nb_lines = 1;
@@ -649,7 +649,7 @@ QString YZView::copy( const QString& inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::paste( const QString& inputsBuff ) {
+QString YZView::paste( const QString& inputsBuff, YZCommandArgs args ) {
 	//default register to use
 	QRegExp ex("(\".)?(p|P)");
 	ex.exactMatch( inputsBuff );

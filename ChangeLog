@@ -3,6 +3,9 @@
     update to current libyzis API (compile fixes)
   * all
     drop all events stuff, use direct C++ calls instead
+  * libyzis
+    changed (normal mode) commands API with helper functions as initially
+    designed by Phil
 
 2004-03-06 philippe
   * tests

@@ -1,5 +1,6 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003-2004 Mickael Marchand <marchand@kde.org>
+ *  Thomas Capricelli <orzel@freehackers.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -41,12 +42,12 @@
 //The basic supposition is that you know on which kind of object your command will act. I guess you know right ? :)
 //anyway if you don't know then default to Plugin
 //note this overwrites previous commands with the same name
-#define NEW_POOL_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=POOL; cmd.poolFunc=y; globalCommands[ x ] = cmd; }
-#define NEW_VIEW_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=VIEW; cmd.viewFunc=y; globalCommands[ x ] = cmd; }
-#define NEW_BUFF_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=BUFF; cmd.buffFunc=y; globalCommands[ x ] = cmd; }
-#define NEW_SESS_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=SESS; cmd.sessFunc=y; globalCommands[ x ] = cmd; }
+#define NEW_POOL_COMMAND( x,y,z,a,b,c ) { YZCommand cmd; cmd.immutable=z; cmd.obj=POOL; cmd.poolFunc=y; cmd.hasCounter=a; cmd.hasMotion=b; cmd.hasRegister=c; globalCommands[ x ] = cmd; }
+#define NEW_VIEW_COMMAND( x,y,z,a,b,c ) { YZCommand cmd; cmd.immutable=z; cmd.obj=VIEW; cmd.viewFunc=y; cmd.hasCounter=a; cmd.hasMotion=b; cmd.hasRegister=c; globalCommands[ x ] = cmd; }
+#define NEW_BUFF_COMMAND( x,y,z,a,b,c ) { YZCommand cmd; cmd.immutable=z; cmd.obj=BUFF; cmd.buffFunc=y; cmd.hasCounter=a; cmd.hasMotion=b; cmd.hasRegister=c; globalCommands[ x ] = cmd; }
+#define NEW_SESS_COMMAND( x,y,z,a,b,c ) { YZCommand cmd; cmd.immutable=z; cmd.obj=SESS; cmd.sessFunc=y; cmd.hasCounter=a; cmd.hasMotion=b; cmd.hasRegister=c; globalCommands[ x ] = cmd; }
 //to be used from plugin constructors
-#define NEW_PLUG_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=PLUG; cmd.plugFunc=y; globalCommands[ x ] = cmd; }
+#define NEW_PLUG_COMMAND( x,y,z,a,b,c ) { YZCommand cmd; cmd.immutable=z; cmd.obj=PLUG; cmd.plugFunc=y; cmd.hasCounter=a; cmd.hasMotion=b; cmd.hasRegister=c; globalCommands[ x ] = cmd; }
 
 //to be used only for the Ex Pool
 #define NEW_EX_COMMAND( x,y,z ) { YZCommand cmd; cmd.immutable=z; cmd.obj=EX; cmd.exFunc=y; globalExCommands[ x ] = cmd; }
@@ -55,6 +56,18 @@ class YZSession;
 class YZExExecutor;
 class YZBuffer;
 class YZView;
+
+struct args {
+	QChar registr;
+	//exec this number of times the command 3j (3 times j), 2d3w (delete 3 words 2 times) ...
+	unsigned int count;
+	unsigned int motionStartX;
+	unsigned int motionEndX;
+	unsigned int motionStartY;
+	unsigned int motionEndY;
+};
+
+typedef struct args YZCommandArgs;
 
 //oh please don't instanciate me twice !
 class YZCommandPool {
@@ -66,29 +79,30 @@ class YZCommandPool {
 		SESS,
 		EX
 	};
+
 	struct cmd {
 		type obj; //object type 
 		bool immutable; //is this command overwritable ?//FIXME
+		bool hasCounter;
+		bool hasMotion;
+		bool hasRegister;
+		
 		//with function pointers we are limited by class and by prototypes so ...
-		QString ( YZCommandPool::*poolFunc ) (const QString& inputsBuff);
-		QString ( YZView::*viewFunc ) (const QString& inputsBuff);
-		QString ( YZBuffer::*buffFunc ) (const QString& inputsBuff);
-		QString ( YZSession::*sessFunc ) (const QString& inputsBuff);
-		QString ( YZPlugin::*plugFunc ) (const QString& inputsBuff);
+		QString ( YZCommandPool::*poolFunc ) (const QString& inputsBuff, YZCommandArgs args);
+		QString ( YZView::*viewFunc ) (const QString& inputsBuff, YZCommandArgs args);
+		QString ( YZBuffer::*buffFunc ) (const QString& inputsBuff, YZCommandArgs args);
+		QString ( YZSession::*sessFunc ) (const QString& inputsBuff, YZCommandArgs args);
+		QString ( YZPlugin::*plugFunc ) (const QString& inputsBuff, YZCommandArgs args);
 		QString ( YZExExecutor::*exFunc ) (YZView *view, const QString& inputsBuff);
 		// TODO : shouldn't that be an union ?
 	};
+
+	typedef struct cmd YZCommand;
 
 	public:
 		YZCommandPool();
 		~YZCommandPool();
 		
-		//that's a keystroke/function pointer mapping
-		//this will allow our plugin (Yes there will be some) to add their own functions
-		//
-		//QMap does not like having a function pointer as a parameter so i use a struct to wrap it
-		//it's quite weird ...
-		typedef struct cmd YZCommand;
 		QMap<QString, YZCommand> globalCommands;
 		QMap<QString, YZCommand> globalExCommands;
 
@@ -104,6 +118,8 @@ class YZCommandPool {
 		 * Entry point for ex functions ( scripting )
 		 */
 		void execExCommand(YZView *view, const QString& inputs);
+		
+
 
 	private:
 		YZExExecutor *executor;

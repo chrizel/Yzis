@@ -53,33 +53,37 @@ YZCommandPool::~YZCommandPool() {
 	delete executor;
 }
 
+/**
+ * NORMAL MODE COMMANDS
+ */
 void YZCommandPool::initPool() {
 	//normal stuff
-	NEW_VIEW_COMMAND("[0-9]*j",&YZView::moveDown,true);
-	NEW_VIEW_COMMAND("[0-9]*k",&YZView::moveUp,true);
-	NEW_VIEW_COMMAND("[0-9]*h",&YZView::moveLeft,true);
-	NEW_VIEW_COMMAND("[0-9]*l",&YZView::moveRight,true);
-	NEW_VIEW_COMMAND("\\^",&YZView::moveToFirstNonBlankOfLine,true);
-	NEW_VIEW_COMMAND("0",&YZView::moveToStartOfLine,true);
-	NEW_VIEW_COMMAND("\\$",&YZView::moveToEndOfLine,true);
-	NEW_VIEW_COMMAND("(\".)?[0-9]*(x|X)",&YZView::deleteCharacter,true);
-	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true);
-	NEW_VIEW_COMMAND(":",&YZView::gotoExMode,true);
-	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true);
-	NEW_VIEW_COMMAND("[0-9]*(gg|G)",&YZView::gotoLine,true);
-	NEW_VIEW_COMMAND("(\".)?[0-9]*(d.|D)",&YZView::deleteLine,true);
-	NEW_VIEW_COMMAND("o",&YZView::openNewLineAfter,true);
-	NEW_VIEW_COMMAND("O",&YZView::openNewLineBefore,true);
-	NEW_VIEW_COMMAND("a",&YZView::append,true);
-	NEW_VIEW_COMMAND("A",&YZView::appendAtEOL,true);
-	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
-	NEW_VIEW_COMMAND("(\".)?[0-9]*(y.|Y)",&YZView::copy,true);
-	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true);
+	NEW_VIEW_COMMAND("([0-9]*)j",&YZView::moveDown,true,true,false,false);
+	NEW_VIEW_COMMAND("([0-9]*)k",&YZView::moveUp,true,true,false,false);
+	NEW_VIEW_COMMAND("([0-9]*)h",&YZView::moveLeft,true,true,false,false);
+	NEW_VIEW_COMMAND("([0-9]*)l",&YZView::moveRight,true,true,false,false);
+	NEW_VIEW_COMMAND("\\^",&YZView::moveToFirstNonBlankOfLine,true,false,false,false);
+	NEW_VIEW_COMMAND("0",&YZView::moveToStartOfLine,true,false,false,false);
+	NEW_VIEW_COMMAND("\\$",&YZView::moveToEndOfLine,true,false,false,false);
+	NEW_VIEW_COMMAND("(\".)?([0-9]*)(x|X)",&YZView::deleteCharacter,true,true,false,false);
+	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true,false,false,false);
+	NEW_VIEW_COMMAND(":",&YZView::gotoExMode,true,false,false,false);
+	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true,false,false,false);
+	NEW_VIEW_COMMAND("([0-9]*)(gg|G)",&YZView::gotoLine,true,true,false,false);
+	NEW_VIEW_COMMAND("(\".)?([0-9]*)(d.|D)",&YZView::deleteLine,true,true,true,true);
+	NEW_VIEW_COMMAND("o",&YZView::openNewLineAfter,true,false,false,false);
+	NEW_VIEW_COMMAND("O",&YZView::openNewLineBefore,true,false,false,false);
+	NEW_VIEW_COMMAND("a",&YZView::append,true,false,false,false);
+	NEW_VIEW_COMMAND("A",&YZView::appendAtEOL,true,false,false,false);
+	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true,false,false,false);
+	NEW_VIEW_COMMAND("(\".)?([0-9]*)(y.|Y)",&YZView::copy,true,true,false,true);
+	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true,false,false,true);
 }
 
 void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error) {
 	QString result;
 	QString command=QString::null;
+	YZCommandArgs args;
 
 	QMap<QString, YZCommand>::Iterator it = globalCommands.end();
 	for ( it = globalCommands.begin(); it!=globalCommands.end(); ++it ) {
@@ -87,43 +91,58 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error)
 		QRegExp ex ( t );
 		if ( ex.exactMatch( inputs ) ) { //command found
 			command = it.key(); 
+			//fill args now
+			int ag=1;
+			if ( it.data().hasRegister ) {
+				args.registr = ex.cap( ag++ )[ 1 ];
+				yzDebug() << "hasRegister : " << QString( args.registr ) << endl;
+			}
+			if ( it.data().hasCounter ) {
+				args.count = ex.cap( ag++ ).toUInt();
+				yzDebug() << "hasCounter : " << args.count << endl;
+			}
+			if ( it.data().hasMotion ) {//TODO
+				yzDebug() << "hasMotion : " << endl;
+			}
 			break; //leave now
 		}
 	}
 
-	if ( !command.isNull() ) { //we got one match *ouf*
-		switch ( globalCommands[ command ].obj ) {
-			case VIEW :
-				result = ( *view.*(globalCommands[ command ].viewFunc )) (inputs) ;
-				break;
-			case BUFF :
-				result = ( *( view->myBuffer() ).*(globalCommands[ command ].buffFunc )) (inputs) ;
-				break;
-			case SESS :
-				result = ( *( view->mySession() ).*(globalCommands[ command ].sessFunc )) (inputs) ;
-				break;
-			case POOL :
-				result = ( *( view->mySession()->getPool() ).*(globalCommands[ command ].poolFunc )) (inputs) ;
-				break;
-				/**		case PLUG :
-					result = ( *this.*(globalCommands[ command ].viewFunc )) (inputs) ;
-					break;*/
-			default:
-				break;
-		}
-	} else {
-//		*error = 1; //purge input buffer
+	if ( command.isNull() ) {
 		return; //not found :/
+	}
+	switch ( globalCommands[ command ].obj ) {
+		case VIEW :
+			result = ( *view.*(globalCommands[ command ].viewFunc )) (inputs,args) ;
+			break;
+		case BUFF :
+			result = ( *( view->myBuffer() ).*(globalCommands[ command ].buffFunc )) (inputs,args) ;
+			break;
+		case SESS :
+			result = ( *( view->mySession() ).*(globalCommands[ command ].sessFunc )) (inputs,args) ;
+			break;
+		case POOL :
+			result = ( *( view->mySession()->getPool() ).*(globalCommands[ command ].poolFunc )) (inputs,args) ;
+			break;
+			/**		case PLUG :
+			  result = ( *this.*(globalCommands[ command ].viewFunc )) (inputs,args) ;
+			  break;*/
+		default:
+			break;
 	}
 }
 
+/**
+ * EX MODE COMMANDS
+ */
+
 void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("write", &YZExExecutor::write,true);
-	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true );
-	NEW_EX_COMMAND("bprevious", &YZExExecutor::bufferprevious,true );
-	NEW_EX_COMMAND("bdelete", &YZExExecutor::bufferdelete,true );
-	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true );
-	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true );
+	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true);
+	NEW_EX_COMMAND("bprevious", &YZExExecutor::bufferprevious,true);
+	NEW_EX_COMMAND("bdelete", &YZExExecutor::bufferdelete,true);
+	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true);
+	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true);
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {

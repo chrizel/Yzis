@@ -37,8 +37,8 @@ YZInternalOption::YZInternalOption( const QString& key, const QString& group, co
 	mGroup = group;
 	mType = type;
 	mValueType = vtype;
-	mValue = value.join( "/YZ/" );
-	mDefaultValue = defaultValue.join( "/YZ/" );
+	mValue = value.join( "," );
+	mDefaultValue = defaultValue.join( "," );
 }
 
 YZInternalOption::YZInternalOption( const QString& key, const QString& group, int value, int defaultValue, option_t type, value_t vtype) {
@@ -126,7 +126,7 @@ void YZInternalOptionPool::saveTo(const QString& file, const QString& what, bool
 		QString cGroup = "";
 		for (; it != end; ++it) {
 			QString myGroup = QStringList::split( "\\", ( *it ) )[ 0 ];
-			if ( !myGroup.startsWith( what ) ) continue; //filter !
+			if ( !what.isEmpty() && !myGroup.startsWith( what ) ) continue; //filter !
 
 			if ( myGroup != cGroup ) { // changing group
 				stream << "[" << myGroup << "]\n";
@@ -253,13 +253,14 @@ void YZInternalOptionPool::setBoolOption( const QString& key, bool option ) {
 	}
 }
 
-const QStringList& YZInternalOptionPool::readQStringListEntry( const QString& _key, const QStringList& def ) {
+QStringList YZInternalOptionPool::readQStringListEntry( const QString& _key, const QStringList& def ) {
 	QString key = _key;
+	yzDebug( ) << "READ " << currentGroup + '\\' + key << " with default " << def << endl;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains( key ) ) {
 		const QString& s = mOptions[ key ]->getValue();
-		const QStringList& list ( QStringList::split("/YZ/",s) );
+		const QStringList& list ( QStringList::split(",",s) );
 		return list;
 	} 
 	return def;
@@ -267,8 +268,9 @@ const QStringList& YZInternalOptionPool::readQStringListEntry( const QString& _k
 
 void YZInternalOptionPool::setQStringListOption( const QString& key, const QStringList& option ) {
 	YZInternalOption *opt = mOptions[ currentGroup + '\\' + key ];
+	yzDebug( ) << "SET " << currentGroup + '\\' + key << " to " << option << endl;
 	if ( opt ) {
-		opt->setValue(option.join("/YZ/"));
+		opt->setValue(option.join(","));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
 		opt = new YZInternalOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt, string_t);

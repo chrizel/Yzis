@@ -42,9 +42,9 @@ NYZFactory::NYZFactory(const char *session_name)
 	(void) noecho();	/* echo input - in color */
 	intrflush( stdscr, FALSE );
 
-	notimeout( stdscr, TRUE ); // XXX conflict with nodelay ?? if you want to test half or no delay, comment this line.
-//	halfdelay( 3 );
-	nodelay( stdscr, TRUE );
+//	notimeout( stdscr, TRUE ); // XXX conflict with nodelay ?? if you want to test half or no delay, comment this line.
+	halfdelay( 1 );
+//	nodelay( stdscr, TRUE );
 
 	wattron(stdscr, A_STANDOUT);	// will be herited by subwin
 	use_default_colors();
@@ -144,7 +144,7 @@ bool NYZFactory::process_one_event()
 	//TODO: META
 	currentView->sendKey( QString( QChar( c ) ), modifiers );
 
-	return false;
+	return true;
 }
 
 

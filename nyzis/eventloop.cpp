@@ -47,17 +47,22 @@ bool NYZEventLoop::processEvents(  ProcessEventsFlags flags )
 	//
 	// NOTE: This function will not process events continuously; it returns after all available events are processed. 
 
-	bool nyzis_had_some  = false;
+//	bool nyzis_had_some  = false;
 //	if ( ! flags&QEventLoop::ExcludeUserInput ) { // doesn't work (?)
 //	if (  flags&QEventLoop::AllEvents ) { // neither..
 		// flush our events, only if ExcludeUserInput was not set
-		nyzis_had_some  = NYZFactory::self->process_one_event();
-		while ( NYZFactory::self->process_one_event() )
-			;
+//		nyzis_had_some  = NYZFactory::self->process_one_event();
+//		while ( NYZFactory::self->process_one_event() )
+//			;
 //	}
 
 	// flush Qt ones
-	bool qt_had_some = QEventLoop::processEvents(flags);
-	return nyzis_had_some||qt_had_some;
+	bool qt_had_some = false;
+//	yzDebug () << "Flags " << flags << " has events " << QEventLoop::hasPendingEvents() << endl;
+	qt_had_some =  NYZFactory::self->process_one_event();
+	if ( !qt_had_some && QEventLoop::hasPendingEvents() )
+		qt_had_some = QEventLoop::processEvents(QEventLoop::AllEvents/*flags*/);
+
+	return /*true*/qt_had_some;
 }
 

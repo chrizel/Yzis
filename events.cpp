@@ -49,7 +49,7 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 	yzDebug() << "Executing event " << event << endl;
 	QMap<QString,QStringList>::Iterator it = mEvents.begin(), end = mEvents.end();
 	QStringList results;
-	QString hlName = view->myBuffer()->highlight()->name();
+	QString hlName = view->myBuffer()->highlight()->name().lower();
 	hlName.replace("+","p");
 	for ( ; it != end; ++it ) {
 		yzDebug() << "Comparing " << it.key() << " to " << event << endl;

@@ -228,6 +228,11 @@ class YZSession {
 		 * view changes caused by commands like :bd :bn etc
 		 */
 		void sendMultipleKeys ( const QString& text);
+
+		/**
+		 * To be called by the GUI once it has been initialised
+		 */
+		void guiStarted();
 		
 		//HELPERS
 		/**

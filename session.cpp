@@ -55,11 +55,6 @@ YZSession::YZSession( const QString& _sessionName ) {
 	me = this;
 	events = new YZEvents();
 	mSchemaManager = new YzisSchemaManager();
-	//read init files
-	if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))
-		YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/init.lua" );
-	if (QFile::exists(QDir::homeDirPath() + "/.yzis/init.lua"))
-		YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/init.lua" );
 }
 
 YZSession::~YZSession() {
@@ -68,9 +63,18 @@ YZSession::~YZSession() {
 	delete mPool;
 }
 
+void YZSession::guiStarted() {
+	//read init files
+	if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))
+		YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/init.lua" );
+	if (QFile::exists(QDir::homeDirPath() + "/.yzis/init.lua"))
+		YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/init.lua" );
+}
+
 void YZSession::addBuffer( YZBuffer *b ) {
 	yzDebug() << "Session : addBuffer " << b->fileName() << endl;
 	mBuffers.insert(b->fileName(), b);
+
 }
 
 void YZSession::rmBuffer( YZBuffer *b ) {

@@ -40,6 +40,7 @@ class YZExLua : public QObject {
 		 * Source a lua file
 		 */
 		QString source(YZView *view, const QString& args);
+		QString source(YZView *view, const QString& args,bool canPopup);
 
 		/**
 		 * Execute a lua command
@@ -207,6 +208,12 @@ class YZExLua : public QObject {
 		 * Returns nothing
 		 */
 		static int connect(lua_State *L);
+
+		/**
+		 * Find a file in standard yzis plugin directories
+		 * and source it
+		 */
+		static int source(lua_State *L);
 
 	protected:
 		lua_State *L;

@@ -108,6 +108,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"sendkeys",sendkeys);
 	lua_register(L,"highlight",highlight);
 	lua_register(L,"connect",connect);
+	lua_register(L,"source",source);
 }
 
 YZExLua::~YZExLua() {
@@ -190,7 +191,11 @@ void YZExLua::execute(const QString& function, int nbArgs, int nbResults) {
 }
 
 //callers
-QString YZExLua::source( YZView *, const QString& args ) {
+QString YZExLua::source( YZView *v, const QString& args ) {
+	return source(v,args,true);
+}
+
+QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 	yzDebug() << "source : " << args << endl;
 	QString filename = args.mid( args.find( " " ) +1 );
 	yzDebug() << "filename : " << filename << endl;
@@ -198,7 +203,9 @@ QString YZExLua::source( YZView *, const QString& args ) {
 	candidates << filename 
 	           << QDir::currentDirPath()+"/"+filename
 	           << QDir::homeDirPath()+"/.yzis/scripts/"+filename
-		       << QString( PREFIX )+"/share/yzis/scripts/"+filename;
+	           << QDir::homeDirPath()+"/.yzis/scripts/indent/"+filename
+		       << QString( PREFIX )+"/share/yzis/scripts/"+filename
+		       << QString( PREFIX )+"/share/yzis/scripts/indent/"+filename;
 	QString found;
 	QStringList::iterator it = candidates.begin(), end = candidates.end();
 	for( ; it!=end; ++it) {
@@ -213,7 +220,8 @@ QString YZExLua::source( YZView *, const QString& args ) {
 	}
 
 	if (found.isEmpty()) {
-		YZSession::me->popupMessage(tr("The file %1 could not be found in standard directories" ).arg( filename ));
+		if ( canPopup )
+			YZSession::me->popupMessage(tr("The file %1 could not be found in standard directories" ).arg( filename ));
 		return QString::null;
 	}
 
@@ -506,6 +514,16 @@ int YZExLua::connect(lua_State *L ) {
 
 	YZSession::events->connect(event,function);
 	
+	return 0;
+}
+
+int YZExLua::source(lua_State *L ) {
+	yzDebug() << "LUA : source " << endl;
+	if (!checkFunctionArguments(L, 1, "source", "")) return 0;
+	QString filename = ( char * )lua_tostring ( L, 1 );
+
+	YZExLua::instance()->source(NULL, filename);
+
 	return 0;
 }
 

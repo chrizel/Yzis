@@ -3,13 +3,12 @@
 
 #include "view.h"
 
-/**
- * Entry point to execute Ex functions
- * This is TEMPORARY until we designed Ex support properly
- */
-
 class YZView;
 
+/**
+ * Entry point to execute Ex functions
+ * This is TEMPORARY until we design Ex support properly
+ */
 class YZExExecutor {
 	public:
 		YZExExecutor();

@@ -13,6 +13,11 @@ class YZCursor;
 class YZBuffer;
 class YZSession;
 
+/**
+ * MUST be reimplemented in the GUI. It's the basis to display the content of a buffer
+ * One view is the display of some part of a buffer, it is used to receive inputs and displays
+ * corresponding outputs
+ */
 class YZView {
 	public:
 		/**

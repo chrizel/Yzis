@@ -7,14 +7,13 @@
 
 #include "view.h"
 
+class YZView;
+
 /**
- * This class handles the cursor information.
+ * Handles the cursor information.
  * Maybe we can have more than one cursor per view someday :) ( multiple
  * developers remotely editing the same file :)
  */
-
-class YZView;
-
 class YZCursor {
 	public :
 		YZCursor(YZView *vp);

@@ -323,6 +323,32 @@ void NYZView::initialisecolormap()
 	yzDebug() << "COLOR_PAIRS is : " << COLOR_PAIRS << endl;
 	yzDebug() << "COLORS      is : " << COLORS << endl;
 
+
+#undef MAP
+#define MAP( nb, qtcolor, color )               \
+	YZASSERT( ERR != init_pair( nb, color, COLOR_BLACK ) );    \
+	mColormap[qtcolor.rgb()] = nb;
+
+		MAP( 1, Qt::magenta, COLOR_MAGENTA );
+		MAP( 2, Qt::red, COLOR_RED );
+		MAP( 3, Qt::green, COLOR_GREEN );
+		MAP( 4, Qt::yellow, COLOR_YELLOW );
+		MAP( 5, Qt::cyan, COLOR_CYAN );
+		MAP( 6, Qt::black, COLOR_BLACK );
+		MAP( 7, Qt::blue, COLOR_BLUE );
+		MAP( 8, Qt::white, COLOR_WHITE | A_BOLD );
+		MAP( 9, Qt::gray, COLOR_WHITE );
+		MAP(10, Qt::darkGreen, COLOR_GREEN | A_BOLD);
+		MAP(11, Qt::darkMagenta, COLOR_MAGENTA | A_BOLD);
+		MAP(12, Qt::darkCyan, COLOR_CYAN | A_BOLD);
+		MAP(13, Qt::lightGray, COLOR_WHITE | A_BOLD );
+}
+
+#if 0
+
+// we once tried to use that, but failed (miserably) and as far as links/lynx/elinks dont
+// use that neither...
+
 	// magenta = 1, is used to display info on statusbar..
 	//
 	if ( changecolorok ) {
@@ -362,23 +388,6 @@ void NYZView::initialisecolormap()
 		MAP( 17, Qt::darkYellow );
 
 	} else {
-#undef MAP
-#define MAP( nb, qtcolor, color )               \
-	YZASSERT( ERR != init_pair( nb, color, COLOR_BLACK ) );    \
-	mColormap[qtcolor.rgb()] = nb;
 
-		MAP( 1, Qt::magenta, COLOR_MAGENTA );
-		MAP( 2, Qt::red, COLOR_RED );
-		MAP( 3, Qt::green, COLOR_GREEN );
-		MAP( 4, Qt::yellow, COLOR_YELLOW );
-		MAP( 5, Qt::cyan, COLOR_CYAN );
-		MAP( 6, Qt::black, COLOR_BLACK );
-		MAP( 7, Qt::blue, COLOR_BLUE );
-		MAP( 8, Qt::white, COLOR_WHITE | A_BOLD );
-		MAP( 9, Qt::gray, COLOR_WHITE );
-		MAP(10, Qt::darkGreen, COLOR_GREEN | A_BOLD);
-		MAP(11, Qt::darkMagenta, COLOR_MAGENTA | A_BOLD);
-		MAP(12, Qt::darkCyan, COLOR_CYAN | A_BOLD);
-		MAP(13, Qt::lightGray, COLOR_WHITE | A_BOLD );
-	}
-}
+#endif
+

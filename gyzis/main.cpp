@@ -26,6 +26,7 @@
 #endif
 
 #include "gyzis.h"
+#include <qtgtk/qtgtk.h>
 
 int
 main(int argc, char* argv[])
@@ -33,6 +34,7 @@ main(int argc, char* argv[])
   Gtk::Main mainDoc(argc, argv);
 
   Bakery::init();
+  qtgtk_init( 0 );
 
   GYzis* pApp = new GYzis("test");
   GYzis::set_command_line_args(argc, argv);

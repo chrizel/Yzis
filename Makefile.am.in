@@ -1,5 +1,4 @@
 COMPILE_FIRST = libyzis
-SUBDIRS = $(TOPSUBDIRS)
 
 localedir = $(DESTDIR)$(prefix)/share/yzis/locale
 

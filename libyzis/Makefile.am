@@ -1,9 +1,16 @@
-SUBDIRS = . $(YZIS_SUBDIRS)
+if use_libqt
+	YZIS_QT3 = libqtyzis
+endif
+if use_libqt4
+	YZIS_QT4 = libqt4yzis
+endif
+
+SUBDIRS = . $(YZIS_QT3) $(YZIS_QT4)
 
 INCLUDES = $(YZIS_INCLUDES) $(LUA_INCLUDES)
 noinst_LTLIBRARIES = libyzis.la
 
-libyzis_la_SOURCES = mark.cpp action.cpp cursor.cpp selection.cpp line.cpp buffer.cpp view.cpp session.cpp commands.cpp ex_executor.cpp debug.cpp internal_options.cpp option.cpp optionpool.cpp registers.cpp undo.cpp translator.h syntaxdocument.cpp syntaxhighlight.cpp attribute.cpp ex_lua.cpp qtprinter.cpp swapfile.cpp schema.cpp viewcursor.cpp printer.cpp
+libyzis_la_SOURCES = mark.cpp action.cpp cursor.cpp selection.cpp line.cpp buffer.cpp view.cpp session.cpp commands.cpp ex_executor.cpp debug.cpp internal_options.cpp option.cpp optionpool.cpp registers.cpp undo.cpp syntaxdocument.cpp syntaxhighlight.cpp attribute.cpp ex_lua.cpp qtprinter.cpp swapfile.cpp schema.cpp viewcursor.cpp printer.cpp
 
 libyzismimedir = $(prefix)/share/yzis
 libyzismime_DATA = magic.mime

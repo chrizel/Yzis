@@ -79,7 +79,7 @@ void KYZisConfigDialog::setupPages() {
 
 	// Opacity
 	QLabel* label_opacity = new QLabel( i18n("Background color opacity"), pageAppearance );
-	QHBox box_opacity = new QHBox( pageAppearance );
+	QHBox* box_opacity = new QHBox( pageAppearance );
 	QLabel* label_left = new QLabel( i18n("Min"), box_opacity );
 	QSlider* slide_fade = new QSlider( 0, 100, 1, 0, Qt::Horizontal, box_opacity, "kcfg_opacity" );
 	QLabel* label_right = new QLabel( i18n("Max"), box_opacity );

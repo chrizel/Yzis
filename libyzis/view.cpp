@@ -798,67 +798,63 @@ QString YZView::moveToEndOfLine( const QString&, YZCommandArgs ) {
 }
 
 void YZView::insertChar( const QString& c, unsigned int mX, unsigned int mY ) {
-	unsigned int dX = 0;
-	unsigned int dY = 0;
+	unsigned int edY = 0;
 	if ( wrap ) {
 		gotoxy( mBuffer->textline( mY ).length( ), mY );
-		dX = dCursor->getX();
-		dY = dCursor->getY();
+		edY = dCursor->getY();
 	}
 	gotoxy( mX, mY );
+	unsigned int dY = dCursor->getY();
 	mBuffer->insertChar( mX, mY, c);
 	if ( wrap ) {
 		gotoxy( mBuffer->textline( mY ).length( ), mY );
-		if ( ! dX ||  dX && dCursor->getY() - dY )
-			paintEvent( dCurrentLeft, mY, mColumnsVis, mLinesVis - ( mY - dCurrentTop ) );
+		if ( dCursor->getY() != edY )
+			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		else
-			paintEvent( dCurrentLeft, mY, mColumnsVis, 1 );
+			paintEvent( dCurrentLeft, dY, mColumnsVis, 1 + dCursor->getY() - dY );
 	} else 
-		paintEvent( dCurrentLeft, mY, mColumnsVis, 1 );
+		paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 	gotoxy( mX + c.length(), mY );
 }
 
 void YZView::chgChar( unsigned int mX, unsigned int mY, const QString& c ) {
-	unsigned int dX = 0;
-	unsigned int dY = 0;
+	unsigned int edY = 0;
 	if ( wrap ) {
 		gotoxy( mBuffer->textline( mY ).length( ), mY );
-		dX = dCursor->getX();
-		dY = dCursor->getY();
+		edY = dCursor->getY();
 	}
 	gotoxy( mX, mY );
+	unsigned int dY = dCursor->getY();
 	mBuffer->delChar( mX, mY, c.length() );
 	mBuffer->insertChar( mX, mY, c );
 	if ( wrap ) {
 		gotoxy( mBuffer->textline( mY ).length( ), mY );
-		if ( ! dX ||  dX && dCursor->getY() - dY )
-			paintEvent( dCurrentLeft, mY, mColumnsVis, mLinesVis - ( mY - dCurrentTop ) );
+		if ( dCursor->getY() != edY )
+			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		else
-			paintEvent( dCurrentLeft, mY, mColumnsVis, 1 );
+			paintEvent( dCurrentLeft, dY, mColumnsVis, 1 + dCursor->getY() - dY );
 	} else 
-		paintEvent( dCurrentLeft, mY, mColumnsVis, 1 );
+		paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 	gotoxy( mX + c.length(), mY );
 }
 
 void YZView::delChar( unsigned int mX, unsigned int mY, unsigned int c ) {
-	unsigned int dX = 0;
-	unsigned int dY = 0;
+	unsigned int edY = 0;
 	if ( wrap ) {
 		gotoxy( mBuffer->textline( mY ).length( ), mY );
-		dX = dCursor->getX();
-		dY = dCursor->getY();
+		edY = dCursor->getY();
 	}
 	gotoxy( mX, mY );
+	unsigned int dY = dCursor->getY();
 	mBuffer->delChar( mX, mY, c );
 	if ( wrap ) {
 		gotoxy( mBuffer->textline( mY ).length( ), mY );
-		if ( ! dX ||  dX && dCursor->getY() - dY )
-			paintEvent( dCurrentLeft, mY, mColumnsVis, mLinesVis - ( mY - dCurrentTop ) );
+		if ( dCursor->getY() != edY )
+			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		else
-			paintEvent( dCurrentLeft, mY, mColumnsVis, 1 );
-		gotoxy( mX, mY );
+			paintEvent( dCurrentLeft, dY, mColumnsVis, 1 + dCursor->getY() - dY );
 	} else 
-		paintEvent( dCurrentLeft, mY, mColumnsVis, 1 );
+		paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 }
 
 QString YZView::deleteCharacter( const QString& , YZCommandArgs args ) {
@@ -873,7 +869,7 @@ void YZView::deleteLine( unsigned int line, unsigned int c ) {
 	for ( unsigned int i = 0; i < c && line < mBuffer->lineCount(); i++ ) {
 		mBuffer->deleteLine( line );
 	}
-	paintEvent( dCurrentLeft, line, mColumnsVis, mLinesVis - ( line - dCurrentTop ) );
+	paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
 	gotoxy( 0, line );
 }
 
@@ -884,6 +880,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 	QStringList buff; //to copy old lines into the register "
 	unsigned int mY = mCursor->getY();
 	unsigned int mX = mCursor->getX();
+	unsigned int dY = dCursor->getY();
 	if ( args.command == "dd" ) { //delete whole lines
 		for ( int i = 0; i < nb_lines && ( mY + i ) < ( unsigned int )mBuffer->lineCount(); i++ )
 			buff << mBuffer->textline( mY + i );
@@ -900,8 +897,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		mSession->getMotionPool()->applyMotion(args.motion,this, cursor);
 		//delete to the cursor position now :)
 
-		unsigned int dX = 0;
-		unsigned int dY = 0;
+		unsigned int edY = 0;
 
 		/* delete more than one line ? */
 		bool lineDeleted = ( mY != cursor->getY() );
@@ -910,8 +906,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		QString b = mBuffer->textline( mY );
 		if ( wrap && ! lineDeleted ) {
 			gotoxy( b.length(), mY );
-			dX = dCursor->getX();
-			dY = dCursor->getY();
+			edY = dCursor->getY();
 		}
 		gotoxy( mX - 1, mY );
 		buff << b.mid( mX, cursor->getX() - mX );
@@ -933,16 +928,17 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		}
 
 		/* ok, all is deleted, now redraw screen */
-		if ( lineDeleted ) {// we need to redraw bottom
-			paintEvent( dCurrentLeft, mY, mColumnsVis, mLinesVis - ( mY - dCurrentTop ) );
+		if ( lineDeleted ) {// we need to redraw screen bottom
+			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		} else {
 			if ( wrap ) {
-				if ( ! dX ||  dX && dCursor->getY() - dY )
-					paintEvent( dCurrentLeft, mY, mColumnsVis, mLinesVis - ( mY - dCurrentTop ) );
+				gotoxy( b.length(), mY );
+				if ( dCursor->getY() != edY )
+					paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 				else
-					paintEvent( dCurrentLeft, mY, mColumnsVis, 1 );
+					paintEvent( dCurrentLeft, dY, mColumnsVis, 1 + dCursor->getY() - dY );
 			} else
-				paintEvent( dCurrentLeft, mY, mColumnsVis, 1 );
+				paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 		}
 		gotoxy( mX, mY );
 	}
@@ -955,8 +951,9 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 }
 
 void YZView::insertNewLine( unsigned int mX, unsigned int mY ) {
+	gotoxy( mX, mY );
 	mBuffer->insertNewLine( mX, mY );
-	paintEvent( dCurrentLeft, mY, mColumnsVis, mLinesVis - ( mY - dCurrentTop ) );
+	paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
 	gotoxy( 0, mY + ( mX ? 1 : 0 ) );
 }
 
@@ -1063,6 +1060,7 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 	//save cursor pos
 	unsigned int curx = mCursor->getX();
 	unsigned int cury = mCursor->getY();
+	unsigned int curdy = dCursor->getY();
 
 	uint i = 0;
 	if ( args.command == "p" ) { //paste after current char
@@ -1080,10 +1078,11 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 		}
 		if ( list.size() > 1 ) 
 			gotoxy( 0, cury + 1 );
-		paintEvent( dCurrentLeft, cury, mColumnsVis, mLinesVis - ( cury - dCurrentTop ) );
+		paintEvent( dCurrentLeft, curdy, mColumnsVis, mLinesVis - ( curdy - dCurrentTop ) );
 	} else if ( args.command == "P" ) { //paste before current char
 		unsigned int mY = cury > list.size() - 1 ? cury - list.size() + 1 : 0;
 		gotoxy( 0, mY );
+		curdy = dCursor->getY();
 		i = 1;
 		while ( i < list.size() ) {
 			mBuffer->insertLine( list[ i ], cury + i - 1 );
@@ -1096,7 +1095,7 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 			mBuffer->replaceLine(nl, cury + i );
 			gotoxy( curx + list[ 0 ].length(), cury + i );
 		}
-		paintEvent( dCurrentLeft, mY, mColumnsVis, mLinesVis - ( mY - dCurrentTop ) );
+		paintEvent( dCurrentLeft, curdy, mColumnsVis, mLinesVis - ( curdy - dCurrentTop ) );
 	}
 
 	purgeInputBuffer();
@@ -1445,7 +1444,7 @@ void YZView::joinLine( unsigned int line ) {
 	if ( line >= mBuffer->lineCount() - 1 ) return;
 	gotoxy( mBuffer->textline( line ).length() - 1, line );
 	mBuffer->mergeNextLine( line );
-	paintEvent( dCurrentLeft, line, mColumnsVis, mLinesVis - ( line - dCurrentTop ) );
+	paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
 }
 
 QString YZView::joinLine ( const QString& inputsBuff, YZCommandArgs args) {

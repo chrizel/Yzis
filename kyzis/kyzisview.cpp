@@ -6,7 +6,7 @@
 #include <qlayout.h>
 #include <qevent.h>
 #include <qapplication.h>
-#include <kdebug.h>
+#include "yz_debug.h"
 
 KYZisView::KYZisView ( KYZisDoc *doc, YZSession *_session, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name),
@@ -57,12 +57,12 @@ void KYZisView::customEvent (QCustomEvent *) {
 				break;
 			}
 			case YZ_EV_SET_CURSOR:
-				kdDebug() << "event SET_CURSOR" << endl;
+				yzDebug() << "event SET_CURSOR" << endl;
 				editor->setCursor (event.setcursor.x, event.setcursor.y);
 				status->changeItem( QString("%1,%2-%3 (%4)").arg(event.setcursor.x ).arg( event.setcursor.y ).arg( event.setcursor.y2 ).arg( event.setcursor.percentage),99 );
 				break;
 			case YZ_EV_SET_STATUS:
-				kdDebug() << "event SET_STATUS" << event.setstatus.text <<  endl;
+				yzDebug() << "event SET_STATUS" << event.setstatus.text <<  endl;
 				status->changeItem( event.setstatus.text,0);
 				break;
 			case YZ_EV_REDRAW:
@@ -75,13 +75,13 @@ void KYZisView::customEvent (QCustomEvent *) {
 }
 
 void KYZisView::scrollDown( int lines ) {
-	kdDebug() << "ScrollDown " << lines <<endl;
+	yzDebug() << "ScrollDown " << lines <<endl;
 	editor->scrollBy(0, lines * editor->fontMetrics().lineSpacing());
 	editor->update();
 }
 
 void KYZisView::scrollUp ( int lines ) {
-	kdDebug() << "ScrollUp " << lines <<endl;
+	yzDebug() << "ScrollUp " << lines <<endl;
 	editor->scrollBy(0, -1 * lines * editor->fontMetrics().lineSpacing());
 	editor->update();
 }

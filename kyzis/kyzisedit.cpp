@@ -3,7 +3,7 @@
  */
 
 #include "kyzisedit.h"
-#include <kdebug.h>
+#include "yz_debug.h"
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	: QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) {
@@ -45,7 +45,7 @@ void KYZisEdit::setTextLine(int l, const QString &/*str*/){
 
 // INTERNAL API
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
-	kdDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
+	yzDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->ascii() != 0 ) {
 		_parent->sendChar(e->ascii());
 		e->accept();

@@ -4,6 +4,7 @@
 
 #include <cstdlib>
 #include "yz_view.h"
+#include "yz_debug.h"
 
 YZView::YZView(YZBuffer *_b, int _lines_vis) {
 	gui_manager = NULL;
@@ -71,7 +72,7 @@ void YZView::sendChar( QChar c) {
 			return; //we don't record anything
 		default:
 			/* ?? */
-			//printf("Currently unknown MODE\n");
+			yzDebug() << "Unknown MODE" << endl;
 			purgeInputBuffer();
 			return;
 	};

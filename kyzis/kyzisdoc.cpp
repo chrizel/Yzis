@@ -5,7 +5,7 @@
 #include "kyzisdoc.h"
 #include "kyzisview.h"
 #include "kyzis_factory.h"
-#include <kdebug.h>
+#include "yz_debug.h"
 
 static YZSession *sess = 0;
 		
@@ -35,7 +35,7 @@ KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char * /*name*/
 }
 
 bool KYZisDoc::openFile () {
-	kdDebug() << "openFile " << m_file << endl;
+	yzDebug() << "openFile " << m_file << endl;
 	path = m_file;
 	load();
 	return true;

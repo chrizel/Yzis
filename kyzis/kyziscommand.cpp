@@ -3,7 +3,7 @@
  */
 
 #include "kyziscommand.h"
-#include <kdebug.h>
+#include "yz_debug.h"
 
 KYZisCommand::KYZisCommand(KYZisView *parent, const char *name)
 	: KComboBox( true, parent, name ) {
@@ -14,7 +14,7 @@ KYZisCommand::~KYZisCommand() {
 }
 
 void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
-	kdDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
+	yzDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->ascii() != 0 ) {
 		_parent->sendChar(e->ascii());
 		e->accept();

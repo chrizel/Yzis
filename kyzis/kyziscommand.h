@@ -2,14 +2,14 @@
 #define KYZISCOMMAND_H
 
 #include "kyzisview.h"
-#include <kcombobox.h>
+#include <klineedit.h>
 
 class KYZisView;
 
 /**
  * KYzis command line
  */
-class KYZisCommand : public KComboBox {
+class KYZisCommand : public KLineEdit {
 	Q_OBJECT
 
 	public :

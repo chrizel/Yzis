@@ -10,20 +10,28 @@
 
 KYZisView::KYZisView ( KYZisDoc *doc, YZSession *_session, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name),
-		YZView(doc, 10) {
+YZView(doc, 10) 
+{
 	currentSession = _session;
 	editor = new KYZisEdit (this,"editor");
-	command = new KYZisCommand ( this, "command" );
 	status = new KStatusBar (this, "status");
+	command = new KYZisCommand ( this, "command");
+
 	status->insertItem("Yzis Ready",0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
+
+	status->insertItem("",80,80,0);
+	status->setItemAlignment(0,Qt::AlignLeft);
+
+	status->insertItem("Yzis Ready",0,1);
+	status->setItemAlignment(0,Qt::AlignRight);
+
 	status->insertItem("",99,0,true);
 	status->setItemAlignment(99,Qt::AlignRight);
-	status->setFixedHeight(status->height());
-	
+
 	QVBoxLayout *l = new QVBoxLayout(this);
 	l->addWidget(editor);
-	l->addWidget(command);
+	l->addWidget( command );
 	l->addWidget(status);
 
 	registerManager(this);
@@ -49,13 +57,13 @@ void KYZisView::postEvent(yz_event /*ev*/) {
 void KYZisView::customEvent (QCustomEvent *) {
 	while ( true ) {
 		yz_event event = fetchNextEvent();
+		QString str;
 		switch ( event.id ) {
-			case YZ_EV_INVALIDATE_LINE: {
-				QString str  = buffer->findLine( event.invalidateline.y );
+			case YZ_EV_INVALIDATE_LINE:
+				str = buffer->findLine( event.invalidateline.y );
 				if ( str.isNull() ) return;
 				editor->setTextLine(event.invalidateline.y, str);
 				break;
-			}
 			case YZ_EV_SET_CURSOR:
 				yzDebug() << "event SET_CURSOR" << endl;
 				editor->setCursor (event.setcursor.x, event.setcursor.y);
@@ -90,12 +98,15 @@ YZSession *KYZisView::getCurrentSession() {
 	return currentSession;
 }
 
-void KYZisView::setCommandLineText( const QString& text ) {
-	command->lineEdit()->setText( text );
+void KYZisView::setCommandLineText( const QString& text ) 
+{
+	commandline = text;
+	status->changeItem(text,80);
 }
 
-QString KYZisView::getCommandLineText() const {
-	return command->lineEdit()->text();
+QString KYZisView::getCommandLineText() const 
+{
+	return commandline;
 }
 
 #include "kyzisview.moc"

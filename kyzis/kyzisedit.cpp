@@ -5,15 +5,18 @@
 #include "kyzisedit.h"
 #include "yz_debug.h"
 
-KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
-	: QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) {
+	KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
+: QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) 
+{
 	setFont(QFont("Fixed",10));
 	_parent = parent;
 
 	viewport()->setFocusProxy( this );
 	viewport()->setFocusPolicy( StrongFocus );
 	viewport()->setBackgroundMode( PaletteBase );
-	viewport()->setPaletteBackgroundColor(QColor("white"));
+	//viewport()->setPaletteBackgroundColor(QColor("white"));
+	viewport()->setBackgroundColor(QColor("black"));
+	viewport()->setPaletteForegroundColor(QColor("white"));
 	cursor_shown = false; //cursor is not shown
 }
 
@@ -40,7 +43,7 @@ void KYZisEdit::setCursor(int c, int l) {
 void KYZisEdit::setTextLine(int l, const QString &/*str*/){
 	//mText.insert(l,str);
 	updateContents( 0, ( l - _parent->getCurrent() ) * fontMetrics().lineSpacing(),
-								width(), fontMetrics().lineSpacing()  );
+			width(), fontMetrics().lineSpacing()  );
 }
 
 // INTERNAL API
@@ -69,14 +72,14 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
 	for ( int i=0; i < _parent->getLinesVisible() ; ++i ) {
-			if (fontMetrics().lineSpacing() * i >= clipy &&
-					fontMetrics().lineSpacing() * i <= clipy+cliph ) {
-					QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
-					p->eraseRect(clip);
-					if ( _parent->myBuffer()->getText().count() >= i + _parent->getCurrent() ) {
-						p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->getText()[ i + _parent->getCurrent() ]);
-					}
+		if (fontMetrics().lineSpacing() * i >= clipy &&
+				fontMetrics().lineSpacing() * i <= clipy+cliph ) {
+			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
+			p->eraseRect(clip);
+			if ( _parent->myBuffer()->getText().count() >= i + _parent->getCurrent() ) {
+				p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->getText()[ i + _parent->getCurrent() ]);
 			}
+		}
 	}
 
 	drawCursorAt(cursorx,cursory);

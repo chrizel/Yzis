@@ -6,7 +6,7 @@
 #include "yz_debug.h"
 
 KYZisCommand::KYZisCommand(KYZisView *parent, const char *name)
-	: KComboBox( true, parent, name ) {
+	: KLineEdit( parent, name ) {
 		_parent = parent;
 }
 
@@ -19,7 +19,7 @@ void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 		_parent->sendKey(e->key(), e->state());
 		e->accept();
 	}
-	KComboBox::keyPressEvent( e );
+	KLineEdit::keyPressEvent( e );
 }
 
 #include "kyziscommand.moc"

@@ -4,11 +4,11 @@
 #include <ktexteditor/view.h>
 #include "kyzisdoc.h"
 #include "kyzisedit.h"
-#include "kyziscommand.h"
 #include <yz_view.h>
 #include <kstatusbar.h>
 #include <qevent.h>
 #include <gui.h>
+#include "kyziscommand.h"
 
 class KYZisEdit;
 class KYZisCommand;
@@ -37,8 +37,9 @@ class KYZisView: public KTextEditor::View
 		KYZisEdit *editor;
 		KYZisDoc *buffer;
 		KStatusBar *status;
-		YZSession *currentSession;
 		KYZisCommand *command;
+		YZSession *currentSession;
+		QString commandline;
 };
 
 #endif

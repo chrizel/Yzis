@@ -6,7 +6,7 @@
     <version>$VERSION$</version>
     <projectmanagement>KDevKDEAutoProject</projectmanagement>
     <primarylanguage>C++</primarylanguage>
-    <versioncontrol>KDevSubversion</versioncontrol>
+    <versioncontrol>kdevsubversion</versioncontrol>
     <keywords>
       <keyword>Qt</keyword>
       <keyword>KDE</keyword>
@@ -29,7 +29,7 @@
     </groups>
     <tree>
       <hidepatterns>*.o,*.lo,CVS</hidepatterns>
-      <hidenonprojectfiles>false</hidenonprojectfiles>
+      <hidenonprojectfiles>true</hidenonprojectfiles>
       <showvcsfields>true</showvcsfields>
     </tree>
   </kdevfileview>

@@ -495,6 +495,12 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 	QFileInfo fi ( path );
 	path = fi.absoluteFilePath();
 #endif
+	YZBuffer *b =args.view->mySession()->findBuffer(path);
+	if (b) {
+		yzDebug() << "Buffer already loaded" << endl;
+		args.view->mySession()->setCurrentView(b->firstView());
+		return CMD_OK;
+	}
 	yzDebug() << "New buffer / view : " << path << endl;
 	args.view->mySession()->createBuffer( path );
 	return CMD_OK;

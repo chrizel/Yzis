@@ -106,6 +106,11 @@ class Gui {
 		 * Create a new view
 		 */
 		virtual YZView* createView ( YZBuffer* ) = 0;
+
+		/**
+		 * Delete the current view
+		 */
+		virtual void deleteView ( ) = 0;
 		
 		/**
 		 * Creates a new buffer

@@ -213,25 +213,26 @@ void YZView::sendKey( int c, int modifiers) {
 		case YZ_VIEW_MODE_COMMAND:
 			switch ( c ) {
 				case Qt::Key_Down:
-					moveDown( );
-					return;
+					key='j';//moveDown( );
+					break;//return;
 				case Qt::Key_Left:
-					moveLeft( );
-					return;
+					key='h';//moveLeft( );
+					break;//return;
 				case Qt::Key_Right:
-					moveRight( );
-					return;
+					key='l';//moveRight( );
+					break;//return;
 				case Qt::Key_Up:
-					moveUp( );
-					return;
+					key='k';//moveUp( );
+					break;//return;
 				default:
-					mPreviousChars+=key;
-					yzDebug() << "Previous chars : " << mPreviousChars << endl;
-					if ( mSession ) {
-						int error = 0;
-						mSession->getPool()->execCommand(this, mPreviousChars, &error);
-						if ( error == 1 ) purgeInputBuffer(); // no matching command
-					}
+					break;
+			}
+			mPreviousChars+=key;
+			yzDebug() << "Previous chars : " << mPreviousChars << endl;
+			if ( mSession ) {
+				int error = 0;
+				mSession->getPool()->execCommand(this, mPreviousChars, &error);
+				if ( error == 1 ) purgeInputBuffer(); // no matching command
 			}
 			break;
 

@@ -45,7 +45,7 @@ QString YZExExecutor::buffernext( YZView *view, const QString& ) {
 	return QString::null;
 }
 
-QString YZExExecutor::bufferprevious ( YZView *view, const QString& inputs ) {
+QString YZExExecutor::bufferprevious ( YZView *view, const QString& ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
 	YZView *v = view->mySession()->prevView();
 	if ( v )
@@ -53,8 +53,9 @@ QString YZExExecutor::bufferprevious ( YZView *view, const QString& inputs ) {
 	return QString::null;
 }
 
-QString YZExExecutor::bufferdelete ( YZView *view, const QString& inputs ) {
-	//XXX
+QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
+	yzDebug() << "Delete view " << view->myId << endl;
+	view->mySession()->mGUI->deleteView();
 	return QString::null;
 }
 QString YZExExecutor::quit ( YZView *view, const QString& ) {

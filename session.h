@@ -119,7 +119,7 @@ class YZSession {
 		 * Returns a pointer to the current view
 		 */
 		YZView* currentView() { return mCurView; }
-		
+
 		/** 
 		 * Current GUI
 		 */

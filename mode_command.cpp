@@ -128,6 +128,7 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("dd", &YZModeCommand::deleteLine) );
 	commands.append( new YZCommand("d", &YZModeCommand::del, ARG_MOTION) );
 	commands.append( new YZCommand("D", &YZModeCommand::deleteToEOL) );
+	commands.append( new YZCommand("s", &YZModeCommand::substitute) );
 	commands.append( new YZCommand("x", &YZModeCommand::deleteChar) );
 	commands.append( new YZCommand("yy", &YZModeCommand::yankLine) );
 	commands.append( new YZCommand("y", &YZModeCommand::yank, ARG_MOTION) );
@@ -1227,6 +1228,12 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 void YZModeCommand::deleteChar( const YZCommandArgs &args ) {
 	args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
 	args.view->commitNextUndo();
+}
+
+void YZModeCommand::substitute( const YZCommandArgs &args ) {
+	args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
+	args.view->commitNextUndo();
+	args.view->modePool()->push( YZMode::MODE_INSERT );
 }
 
 void YZModeCommand::redisplay( const YZCommandArgs &args ) {

@@ -360,6 +360,11 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				gotoReplaceMode( );
 				purgeInputBuffer();
 				return;
+			} else if ( mPreviousChars == "<ALT>:" ) {
+				leaveInsertMode();
+				gotoCommandMode();
+				purgeInputBuffer();
+				return;
 			} else if ( mPreviousChars == "<ESC>" ) {
 				leaveInsertMode();
 				gotoPreviousMode();

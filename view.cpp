@@ -1275,36 +1275,6 @@ void YZView::mark( const QString& mark ) {
 	mBuffer->marks()->add( mark , *mainCursor->buffer(), *mainCursor->screen() );
 }
 
-void YZView::copy( const QString& motion, const QValueList<QChar> &regs ) {
-	if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE  ) {
-		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-		selectionPool->clear( "VISUAL" );
-		mBuffer->action()->copyArea( this, cur_sel.from(), cur_sel.to(), regs);
-		gotoCommandMode();
-	} else {
-		if ( ! mSession->getMotionPool()->isValid( motion ) ) return; //something's wrong
-		//ok we have a motion , so delete till the end of the motion :)
-		YZCursor from(mainCursor->buffer()), to(this);
-		bool success = mSession->getMotionPool()->applyMotion(motion, this, from, to);
-		bool goBack = to < from;
-		if ( !success ) {
-//			purgeInputBuffer(); //drop me XXX ? should be handle by ::sendKey
-			return;
-		}
-		//copy to the cursor position now :)
-		yzDebug() << "Start of motion is : " << from << endl;
-		yzDebug() << "End of motion is : " << to << endl;
-
-		if ( goBack ) {
-			YZCursor tmp( to );
-			to.setCursor( from );
-			from.setCursor( tmp );
-		}
-
-		mBuffer->action()->copyArea( this, from, to, regs);
-	}
-}
-
 QString YZView::copyLine( unsigned int nb_lines, const QValueList<QChar> &regs ) {
 	QStringList list;
 	list << QString::null; //just a marker
@@ -1325,17 +1295,15 @@ void YZView::paste( QChar registr, bool after ) {
 	bool copyWholeLinesOnly = list[ 0 ].isNull();
 	QString copy = mBuffer->textline( pos.getY() );
 	if ( after || ! copyWholeLinesOnly ) { //paste after current char
-		if ( !list[ 0 ].isNull() ) {
-			unsigned int start;
-			if( after )
-				start = copy.length() > 0 ? pos.getX() + 1 : 0;
-			else
-				start = pos.getX();
-			yzDebug() << "First line not NULL !" << endl;
-			copy = copy.mid( start );
-			mBuffer->action()->deleteChar( this, start, pos.getY(), copy.length() );
-			mBuffer->action()->insertChar( this, start, pos.getY(), list[ 0 ] );
-		}
+		unsigned int start;
+		if( after )
+			start = copy.length() > 0 ? pos.getX() + 1 : 0;
+		else
+			start = pos.getX();
+		yzDebug() << "First line not NULL !" << endl;
+		copy = copy.mid( start );
+		mBuffer->action()->deleteChar( this, start, pos.getY(), copy.length() );
+		mBuffer->action()->insertChar( this, start, pos.getY(), list[ 0 ] + copy );
 		i++;
 		while ( i < list.size() - 1 ) {
 			mBuffer->action()->insertLine( this, pos.getY() + i, list[ i ] );

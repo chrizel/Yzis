@@ -20,14 +20,15 @@
 #ifndef YZ_OPTIONS
 #define YZ_OPTIONS
 
-#include "session.h"
+#include <qsettings.h>
 
-class YZOption {
+class YZOption : public QSettings {
 	public:
 		/**
 		 * Default constructor
 		 */
 		YZOption();
+		YZOption(const YZOption&);
 
 		/**
 		 * Load settings from @param file
@@ -39,33 +40,6 @@ class YZOption {
 		 */
 		static void saveTo(const QString& file);
 
-		/**
-		 * Sets the @param optName option to the @param value given
-		 */
-		static void setStringOpt(const QString& optName, const QString& value);
-		
-		/**
-		 * Sets the @param optName option to the @param value given
-		 */
-		static void setIntOpt(const QString& optName, int value);
-		
-		/**
-		 * Gets the @param optName option's value
-		 * @return the option value
-		 */
-		static QString& getStringOpt(const QString& optName);
-
-		/**
-		 * Gets the @param optName option's value
-		 * @return the option value
-		 */
-		static int getIntOpt(const QString& optName);
-
-	private:
-		/**
-		 * List of options mapping an option name to its value (recorded as a string)
-		 */
-		static QMap<QString,QString> mOptions;
 };
 
 #endif

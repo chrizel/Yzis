@@ -30,6 +30,7 @@
 #include "view.h"
 #include "commands.h"
 #include "motionpool.h"
+#include "options.h"
 
 class YZView;
 class Gui;
@@ -150,6 +151,7 @@ class YZSession {
 	public:
 		static int mNbViews;
 		static int mNbBuffers;
+		static YZOption mOptions;
 
 };
 

@@ -18,9 +18,11 @@
  **/
 
 #include "options.h"
-QMap<QString,QString> YZOption::mOptions = QMap<QString,QString>();
 
-YZOption::YZOption() {
+YZOption::YZOption():QSettings() {
+}
+
+YZOption::YZOption(const YZOption&):QSettings() {
 }
 
 void YZOption::loadFrom(const QString& file) {
@@ -28,22 +30,6 @@ void YZOption::loadFrom(const QString& file) {
 }
 
 void YZOption::saveTo(const QString& file) {
-
-}
-
-void YZOption::setStringOpt(const QString& optName, const QString& value) {
-
-}
-
-void YZOption::setIntOpt(const QString& optName, int value) {
-
-}
-	
-QString& YZOption::getStringOpt(const QString& optName) {
-
-}
-
-int YZOption::getIntOpt(const QString& optName) {
 
 }
 

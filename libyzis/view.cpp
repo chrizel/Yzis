@@ -304,12 +304,15 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				}
 				purgeInputBuffer();
 				return;
+			} else if ( modifiers+key == "<ESC>" ) {
+				myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), m_word2Complete);
+				gotoxy(m_completionStart->getX()+m_word2Complete.length(),mainCursor->bufferY());
+				leaveCompletionMode();
+				purgeInputBuffer();
+				return;
 			} else {
 				leaveCompletionMode();
-	//			sendKey(key,modifiers);
 			}
-//			purgeInputBuffer();
-//			return;
 		case YZ_VIEW_MODE_INSERT:
 			mPreviousChars += modifiers + key;
 			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode);

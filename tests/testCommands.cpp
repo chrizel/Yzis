@@ -173,6 +173,8 @@ void TestYZCommands::testCharMovement()
 
 void TestYZCommands::testBeginEndCharMovement()
 {
+	YZSession::mOptions.setGroup("Global");
+	YZSession::setBoolOption("cindent",false);
     mView->sendMultipleKey( "i<TAB>0123<ENTER>4567<ENTER>  89AB <ESC>" );
     CHECK_CURSOR_POS( mView, 2, 6 );
 

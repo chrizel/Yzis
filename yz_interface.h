@@ -31,20 +31,11 @@ extern "C" {
 	typedef unsigned int unicode_char_t;
 
 
-	avant de definir les lignes et les colonnes, il faut decider ce qu'on fait des lignes trop longues (voir binaires)
+#define YZ_MAX_LINE_LENGTH	2048
 
-	1) on definit un max, genre 1024, et on prevoit un moyen pour dire que en fait c'est plus long (et le gui affiche "..." ou '@' ou ce qu'il veut)
-	2) on definit pas de max, et on se gere un allocateur de memoire complique ds le core, why not
-
-	sinon, en gros, ce que je vois c'est un 
-	typedef struct { unicode_char_t letter, int color } yz_char;
-	/* avec le color definit par rapport a une table de couleur, changeable bien sur, etc... */
-	puis un 
-	typedef yz_line yz_char[MAX_LINE_LEN];
-
-	et yz_line est la chose basique qu'on s'echange avec le core
-	bon d'accord, sizeof(yz_line) doit etre du genre MAX_LINE_LEN*8. ce qui fait bien 400 k pour MAX=1024 et 50 lignes, mais bon ...
-
+typedef struct { unicode_char_t letter; int color; } yz_char;
+/* avec le color definit par rapport a une table de couleur, changeable bien sur, etc... */
+typedef yz_char yz_line[YZ_MAX_LINE_LENGTH];
 
 
 /**
@@ -53,6 +44,8 @@ extern "C" {
  */
 
 enum yz_events {
+	YZ_EV_SETLINE,
+	YZ_EV_SETCURSOR,
 	YZ_EV_asdf,
 	YZ_EV_asdf2,
 	YZ_EV_asdf3,
@@ -61,6 +54,15 @@ enum yz_events {
 
 
 /** here we can use long name as we shouldn't need to use those anyway */
+struct yz_event_setline {
+	int	line_nb;
+	yz_line	*line;
+};
+
+struct yz_event_setcursor {
+	int x,y;
+};
+
 struct yz_event_asdf {
 	int a;
 	float b;
@@ -83,17 +85,15 @@ struct yz_event_asdf2 {
    }
 
  */
-struct yz_event {
+typedef struct {
 	enum yz_events id;
 	union {
+		struct yz_event_setline;
+		struct yz_event_setcursor;
 		struct yz_event_asdf asdf;
 		struct yz_event_asdf2 asdf2;
 	} u;
-};
-
-#ifdef __cplusplus
-}
-#endif
+} yz_event;
 
 
 /**
@@ -102,44 +102,77 @@ struct yz_event {
  */
 
 /** yz_buffer - abstraction of a file */
+typedef struct {
+	char *path; /** path of the file, NULL if no file */
+} yz_buffer;
 
 /** creates an empty buffer */
 yz_buffer *create_empty_buffer(void);
 /** opens a buffer using the given file */
-yz_buffer *create_buffer(char * /*...*/);
+yz_buffer *create_buffer(char *path);
 
 
 /** yz_view - abstraction of a view. binded to a buffer of course */
-yz_view *create_view(yz_buffer *, /*...*/);
-void yz_send_char(yz_view *, /* ?*/);
-void yz_fetch_event(yz_view *, struct yz_event * /*, ... */);
+typedef struct {
+	yz_buffer	* buffer;	/** buffer this view is on */
+	int		lines;		/** number of lines we can display */
+	int		current;	/** current line on top of the view */
+} yz_view;
+
+/**
+ * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
+ * this view can display
+ */
+yz_view *create_view(yz_buffer *, int lines);
+
+/**
+ * transfer a key event from gui to core
+ */
+void yz_send_char(yz_view *, char a);
+
+/**
+ * get a event to handle from the core.
+ * that's the way the core is sending messages to the gui
+ *
+ * returns the next event to be handled, or NULL if none
+ */
+yz_event * yz_fetch_event(yz_view *);
+
 /**
   * this returns the geometry of this yz_view, that is
   * 	the first line displayed
   * 	the number of line displayed
   */
-void yz_get_geometry(yz_view *, int *firstline, int *line_nbr);
+void yz_get_geometry(yz_view *, int *current, int *lines);
 
 
 
 #ifdef __cplusplus
+}
+#endif
+
+
 /**
  *  Here are the c++ bindings for the previously defined c functions/constants..
  */
-
+#ifdef __cplusplus
 
 //class YZEvent, ? with events beeing herited classes ? mm.. dunno
 
 
 class YZBuffer {
+
+	friend class YZView;
 public:
 	/** creates an empty buffer */
-	YZBuffer(void);
+	YZBuffer(void) { buffer =  create_empty_buffer(); }
 	/** opens a buffer using the given file */
-	YZBuffer(/*char * or ?? */ );
+	YZBuffer(char *path) { buffer =  create_buffer(path); }
 
 	/* readonly?, change, load, save, isclean?, ... */
 	/* locking stuff will be here, too */
+protected:
+	yz_buffer * buffer;
 };
 
 
@@ -152,16 +185,38 @@ public:
 		asdf4	= YZ_EV_asdf4
 	};
 
-	YZView(YZBuffer *);
-	void	send_char(/*? */);
+	/**
+	  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
+	  * this view can display
+	  */
+	YZView(YZBuffer *b, int lines) { buffer=b; view = create_view(buffer->buffer, lines); }
 
+	/**
+	 * transfer a key event from gui to core
+	 */
+	void	send_char( char a ) { yz_send_char(view,a); }
+
+	/**
+	 * get a event to handle from the core.
+	 * that's the way the core is sending messages to the gui
+	 */
 	/* for the qt/kde gui, we should create QEvents from that? */
 	void	fetch_event(/* asasdfasf */);
-	int	get_first_line(void) { int a,b; yz_get_geometry(buffer,&a,&b); return a;}
-	int	get_lines_displayed(void) { int a,b; yz_get_geometry(buffer,&a,&b); return b;}
 
-private:
-	YZBuffer *buffer; /* or &buffer? */
+	/**
+	  * returns the number of the line displayed on top of this view
+	  * (refering to the whole file/buffer
+	  */
+	int	get_current(void) { int a,b; yz_get_geometry(view,&a,&b); return a;}
+
+	/**
+	  * returns the number of line this view can display
+	  */
+	int	get_lines_displayed(void) { int a,b; yz_get_geometry(view,&a,&b); return b;}
+
+protected:
+	YZBuffer 	*buffer;
+	yz_view		*view;
 
 
 	/*
@@ -171,6 +226,7 @@ private:
 	 */
 };
 
+/* End of c++ bindings */
 #endif
 
 

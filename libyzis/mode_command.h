@@ -202,6 +202,7 @@ class YZModeCommand : public YZMode {
 		YZCursor searchWord(const YZMotionArgs &args);
 		YZCursor searchNext(const YZMotionArgs &args);
 		YZCursor searchPrev(const YZMotionArgs &args);
+		YZCursor nextBracket(const YZMotionArgs &args);
 
 		// methods implementing commands
 		void execMotion(const YZCommandArgs &args);

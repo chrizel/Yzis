@@ -111,6 +111,7 @@ void YZModeCommand::initMotionPool() {
 	commands.append( new YZMotion("<ENTER>", &YZModeCommand::firstNonBlankNextLine, ARG_NONE) );
 	commands.append( new YZMotion("gg", &YZModeCommand::gotoLine, ARG_NONE) );
 	commands.append( new YZMotion("G", &YZModeCommand::gotoLine, ARG_NONE) );
+	commands.append( new YZMotion("{", &YZModeCommand::nextBracket, ARG_NONE) );
 }
 void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("I", &YZModeCommand::insertAtSOL) );
@@ -593,6 +594,19 @@ void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
 	if (line != view->getCurrentTop()) {
 		view->alignViewBufferVertically( line );
 	}
+}
+
+YZCursor YZModeCommand::nextBracket(const YZMotionArgs &args) {
+	YZCursor from = *args.view->getBufferCursor();
+	YZViewCursor viewCursor = args.view->viewCursor();
+	bool found = false;
+	YZCursor pos = YZSession::me->search()->forward( args.view, "^$" , &found, &from );
+	if ( found ) {
+		if ( args.standalone ) 
+			args.view->gotoxyAndStick( &pos );
+		return pos;
+	}
+	return pos;
 }
 
 YZCursor YZModeCommand::matchPair(const YZMotionArgs &args) {

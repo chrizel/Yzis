@@ -910,7 +910,7 @@ YZInterval YZModeCommand::interval(const YZCommandArgs& args) {
 		to.setX( 0 );
 		to.setY( to.getY() + 1 );
 	}
-	YZInterval ret( from, YZBound(to, entireLines) );
+	YZInterval ret( from, YZBound(to, true) );
 	return ret;
 }
 

@@ -241,7 +241,7 @@ class YZExLua : public QObject {
 		/**
 		 * Sends a string to debug output
 		 */
-		static int debug(lua_State *L);
+		static int yzdebug(lua_State *L);
 
 		/**
 		 * Set local options

@@ -245,9 +245,10 @@ void NYZView::drawContents( int clipy, int cliph ) {
 #endif
 				char* from_char = new char[ my_char.length() + 1 ]; // XXX always 1 + 1 ?
 				strcpy( from_char, (const char *)my_char );
-				size_t needed = mbstowcs( NULL, from_char, strlen( from_char ) ); // XXX always 1 ?
+				size_t needed = mbstowcs( NULL, from_char, strlen(from_char) ); // XXX always 1 ?
 				wchar_t* wide_char = (wchar_t*)malloc( needed * sizeof(wchar_t) ); // if size doesn't change, why malloc it each time ?
 				mbstowcs( wide_char, from_char, strlen( from_char ) );
+				wide_char[needed] = '\0';
 
 				wattron( editor, mAttributes );
 				mvwaddwstr( editor, currentY, x, wide_char );

@@ -1158,10 +1158,12 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 		list << QString::null; //just a marker
 		for (int i = 0 ; i < nb_lines; i++ )
 			list << mBuffer->textline(mCursor->getY()+i);
+		list << QString::null;
 	} else if ( args.command == "Y" ) {
 		list << QString::null; //just a marker
 		for (int i = 0 ; i < nb_lines; i++ )
 			list << mBuffer->textline(mCursor->getY()+i);
+		list << QString::null;
 	} else if ( args.command == "y$" ) {
 		QString lin = mBuffer->textline( mCursor->getY() );
 		list << lin.mid(mCursor->getX());
@@ -1201,27 +1203,38 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 QString YZView::paste( const QString& , YZCommandArgs args ) {
 	QStringList list = YZSession::mRegisters.getRegister( args.registr );
 
+	YZCursor pos( mCursor );
+
 	uint i = 0;
-	if ( args.command == "p" ) { //paste after current char
+	bool copyWholeLinesOnly = list[ 0 ].isNull();
+	QString copy = mBuffer->textline( pos.getY() );
+	if ( args.command == "p" || ! copyWholeLinesOnly ) { //paste after current char
 		if ( !list[ 0 ].isNull() ) {
+			unsigned int start;
+			if( args.command = "p" )
+				start = copy.length() > 0 ? pos.getX() + 1 : 0;
+			else
+				start = pos.getX();
 			yzDebug() << "First line not NULL !" << endl;
-			mBuffer->action()->insertChar( this, mCursor->getX() + 1, mCursor->getY(), list[ 0 ] );
+			copy = copy.mid( start );
+			mBuffer->action()->deleteChar( this, start, pos.getY(), copy.length() );
+			mBuffer->action()->insertChar( this, start, pos.getY(), list[ 0 ] );
 		}
 		i++;
-		while ( i < list.size() ) {
-			mBuffer->action()->insertLine( this, mCursor->getY() + i, list[ i ] );
+		while ( i < list.size() - 1 ) {
+			mBuffer->action()->insertLine( this, pos.getY() + i, list[ i ] );
 			i++;
 		}
-	} else if ( args.command == "P" ) { //paste before current char
-		i = 1;
-		while ( i < list.size() ) {
-			mBuffer->action()->insertLine( this, mCursor->getY() + i - 1, list[ i ] );
-			i++;
+		if ( ! list[ i ].isNull() ) {
+			mBuffer->action()->insertChar( this, 0, pos.getY() + i, list[ i ] + copy );
+			gotoxy( list[ i ].length() - 1, pos.getY() + i );
 		}
-		--i;
-		if ( !list[ 0 ].isNull() ) {
-			mBuffer->action()->insertChar( this, mCursor->getX() + 1, mCursor->getY(), list[ 0 ] );
-		}
+
+	} else if ( args.command == "P" ) { //paste whole lines before current char
+		for( i = 1; i < list.size() - 1; i++ ) 
+			mBuffer->action()->insertLine( this, pos.getY() + i - 1, list[ i ] );
+
+		gotoxy( pos.getX(), pos.getY() );
 	}
 	purgeInputBuffer();
 	return QString::null;

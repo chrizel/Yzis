@@ -245,6 +245,9 @@ class YZView {
 		void delChar( unsigned int mX, unsigned int mY, unsigned int c );
 		void joinLine( unsigned int line );
 
+		QString undo ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString redo ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+
 		virtual void printToFile( const QString& path );
 
 		/**

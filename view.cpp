@@ -145,12 +145,9 @@ void YZView::sendKey( int c, int modifiers) {
 				case 'l':
 					refreshScreen();
 					return;
-				case 'r': {
-						YZCommandArgs args;
-						args.view = this;
-						mBuffer->redoLast("", args);
-						return;
-					}
+				case 'r':
+					redo();
+					return;
 				default:
 					yzWarning()<< "Unhandled control sequence " << (char) c <<endl;
 					return;
@@ -1118,7 +1115,7 @@ QString YZView::appendAtEOL ( const QString&, YZCommandArgs ) {
 }
 
 QString YZView::gotoCommandMode( ) {
-	mBuffer->undoBuffer()->commitUndoItem();
+	mBuffer->undoBuffer()->commitUndoItem(mCursor->getX(), mCursor->getY());
 	mMode = YZ_VIEW_MODE_COMMAND;
 	modeChanged();
 	purgeInputBuffer();
@@ -1135,7 +1132,7 @@ QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
 }
 
 QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
-	mBuffer->undoBuffer()->commitUndoItem();
+	mBuffer->undoBuffer()->commitUndoItem(mCursor->getX(), mCursor->getY());
 	mMode = YZ_VIEW_MODE_INSERT;
 	modeChanged();
 	purgeInputBuffer();
@@ -1143,7 +1140,7 @@ QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
 }
 
 QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
-	mBuffer->undoBuffer()->commitUndoItem();
+	mBuffer->undoBuffer()->commitUndoItem(mCursor->getX(), mCursor->getY());
 	mMode = YZ_VIEW_MODE_REPLACE;
 	modeChanged();
 	purgeInputBuffer();
@@ -1608,3 +1605,34 @@ void YZView::printToFile( const QString& path ) {
 	delete( printer );
 }
 
+QString YZView::undo( const QString& , YZCommandArgs ) {
+	uint cursorX, cursorY;
+
+	/* XXX repeat if necessary */
+	mBuffer->undoBuffer()->undo(&cursorX, &cursorY);	
+
+	gotoxy( cursorX, cursorY );
+
+	//reset the input buffer of the originating view
+	purgeInputBuffer();
+
+	refreshScreen();
+
+	return QString::null;
+}
+
+QString YZView::redo( const QString& , YZCommandArgs ) {
+	uint cursorX, cursorY;
+
+	/* XXX repeat if necessary */
+	mBuffer->undoBuffer()->redo(&cursorX, &cursorY);	
+
+	gotoxy( cursorX, cursorY );
+
+	//reset the input buffer of the originating view
+	purgeInputBuffer();
+
+	refreshScreen();
+
+	return QString::null;
+}

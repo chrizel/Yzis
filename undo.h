@@ -58,8 +58,17 @@ struct buffer_operation
 };
 typedef struct buffer_operation YZBufferOperation;
 
-typedef QPtrList<YZBufferOperation> UndoItem;
-typedef QPtrListIterator<YZBufferOperation> UndoItemIterator;
+typedef QPtrListIterator<YZBufferOperation> UndoItemContentIterator;
+typedef QPtrList<YZBufferOperation> UndoItemBase;
+
+class UndoItem : public UndoItemBase
+{
+public:
+	UndoItem();
+	
+	int startCursorX, startCursorY;
+	int endCursorX, endCursorY;
+};
 
 class YZUndoBuffer {
 public:
@@ -67,19 +76,21 @@ public:
 
 	/** Store the previous undo item (if any) and start a new one
 	 */
-	void commitUndoItem();
+	void commitUndoItem( uint cursorX, uint cursorY );
 
 	void addBufferOperation( YZBufferOperation::OperationType type, const QString & text, uint col, uint line );
 
 	/** 
 	 * Undo the last operations on the buffer, move backward in the undo list.
+	 * cursorX and cursorY will be set to the new cursor position
 	 */ 
-	void undo();
+	void undo(uint * cursorX, uint * cursorY);
 
 	/** 
 	 * Redo the current operation on the buffer, move forward in the undo list
+	 * cursorX and cursorY will be set to the new cursor position
 	 */
-	void redo();
+	void redo(uint * cursorX, uint * cursorY);
 
 	/*! Return whether it is possibe to issue a redo */
 	bool mayRedo();

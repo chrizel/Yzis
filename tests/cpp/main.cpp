@@ -20,7 +20,7 @@
 
 #include <qtranslator.h>
 #include <qtextcodec.h>
-#include <qapp.h>
+#include <qapplication.h>
 #include "libyzis/translator.h"
 #include "libyzis/debug.h"
 #include "testBuffer.h"

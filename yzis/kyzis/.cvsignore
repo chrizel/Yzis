@@ -5,3 +5,8 @@ Makefile
 .svn
 diff
 Makefile.in
+*.moc
+*.la
+*.lo
+*.closure
+kyzis

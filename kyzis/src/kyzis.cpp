@@ -260,7 +260,6 @@ void Kyzis::createView( /*const KTextEditor::Document &doc*/ ) {
 void Kyzis::setCaption( int tab, const QString& caption ) {
 	// Parse out the filename.
 	QString filename = caption.section("/", -1);
-	kdDebug() << "setCaption : " << filename << endl;
 	
 	if ( viewList.contains( tab ) ) {
 		viewList[ tab ].v->setCaption(filename);

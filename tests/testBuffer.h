@@ -57,6 +57,8 @@ public:
     void testFirstNonBlankChar();
 
 protected:
+    void writeFile( QString fname, QString content );
+    QString readFile( QString fname );
     TYZSession * mSession;
     YZBuffer *  mBuf;
 };

@@ -21,6 +21,14 @@
  * $Id$
  */
 
+/**
+  YZAction: 
+  	Here are all buffer modifications methods. 
+	If you need to add a buffer modification method, you are at the _RIGHT_ place.
+*/
+			
+   
+
 #include "view.h"
 #include "action.h"
 #include "debug.h"
@@ -41,103 +49,83 @@ YZAction::YZAction( YZBuffer* buffer ) {
 YZAction::~YZAction( ) {
 }
 
+#define CONFIGURE_VIEWS \
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
+		it->setPaintAutoCommit( false )
+
+#define COMMIT_VIEWS_CHANGES \
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
+		it->commitPaintEvent();
+
 void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {
-	YZCursor mPos( pos );
-	yzDebug() << "insertChar " << text << " at " << pos << endl;
-
-	if(pos.getY() >= mBuffer->lineCount())
-		insertNewLine(pView, mPos);
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initInsertChar( mPos, text.length(), pView->myId == it->myId );
-
-	mBuffer->insertChar( mPos.getX(), mPos.getY(), text );
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyInsertChar( mPos, text.length(), pView->myId == it->myId );
+	CONFIGURE_VIEWS;
+	if( pos.getY() >= mBuffer->lineCount() )
+		mBuffer->insertNewLine( pos.getX(), pos.getY() );
+	mBuffer->insertChar( pos.getX(), pos.getY(), text );
+	pView->moveXY( pos.getX() + text.length(), pos.getY() );
+	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::replaceText( YZView* pView, const YZCursor& pos, unsigned int replacedLength, const QString& text ) {
-	YZCursor mPos( pos );
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initReplaceChar( mPos, text.length(), pView->myId == it->myId );
-		
-	mBuffer->delChar( mPos.getX(), mPos.getY(), replacedLength );
-	mBuffer->insertChar( mPos.getX(), mPos.getY(), text);
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyReplaceChar( mPos, text.length(), pView->myId == it->myId );
+	CONFIGURE_VIEWS;
+	mBuffer->delChar( pos.getX(), pos.getY(), replacedLength );
+	mBuffer->insertChar( pos.getX(), pos.getY(), text );
+	pView->moveXY( pos.getX() + text.length(), pos.getY() );
+	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::replaceChar( YZView* pView, const YZCursor& pos, const QString& text ) {
-	YZCursor mPos( pos );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initReplaceChar( mPos, text.length(), pView->myId == it->myId );
-
-	mBuffer->delChar( mPos.getX(), mPos.getY(), text.length() );
-	mBuffer->insertChar( mPos.getX(), mPos.getY(), text );
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyReplaceChar( mPos, text.length(), pView->myId == it->myId );
+	CONFIGURE_VIEWS;
+	mBuffer->delChar( pos.getX(), pos.getY(), text.length() );
+	mBuffer->insertChar( pos.getX(), pos.getY(), text );
+	pView->moveXY( pos.getX() + text.length(), pos.getY() );
+	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::deleteChar( YZView* pView, const YZCursor& pos, unsigned int len ) {
-	YZCursor mPos( pos );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initDeleteChar( mPos, len, pView->myId == it->myId );
+	CONFIGURE_VIEWS;
+	mBuffer->delChar( pos.getX(), pos.getY(), len );
+	pView->moveXY( pos.getX(), pos.getY() );
+	COMMIT_VIEWS_CHANGES;
+}
 
-	mBuffer->delChar( mPos.getX(), mPos.getY(), len );
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyDeleteChar( mPos, len, pView->myId == it->myId );
+void YZAction::appendLine( YZView* pView, const QString& text ) {
+	CONFIGURE_VIEWS;
+	unsigned int y = mBuffer->lineCount();
+	mBuffer->insertNewLine( 0, y );
+	mBuffer->insertChar( 0, y, text );
+	pView->moveXY( text.length(), y );
+	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::insertNewLine( YZView* pView, const YZCursor& pos ) {
-	YZCursor mPos( pos );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initInsertLine( mPos, pView->myId == it->myId );
-
-	mBuffer->insertNewLine( mPos.getX(), mPos.getY() );
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyInsertLine( mPos, pView->myId == it->myId );
+	CONFIGURE_VIEWS;
+	mBuffer->insertNewLine( pos.getX(), pos.getY() );
+	pView->moveXY( 0, pos.getY() );
+	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::replaceLine( YZView* pView, const YZCursor& pos, const QString &text ) {
-	YZCursor mPos( pos );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initReplaceLine( mPos, pView->myId == it->myId );
-
-	mBuffer->replaceLine( text, mPos.getY() );
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyReplaceLine( mPos, text.length(), pView->myId == it->myId );
+	CONFIGURE_VIEWS;
+	mBuffer->replaceLine( text, pos.getY() );
+	pView->moveXY( text.length(), pos.getY() );
+	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &text ) {
-	YZCursor mPos( pos );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initInsertLine( mPos, pView->myId == it->myId );
-
-	mBuffer->insertLine( text, mPos.getY() );
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyInsertLine( mPos, pView->myId == it->myId );
+	CONFIGURE_VIEWS;
+	mBuffer->insertLine( text, pos.getY() );
+	pView->moveXY( 0, pos.getY() );
+	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
+	CONFIGURE_VIEWS;
 	copyLine(pView, pos, len, reg);
-
-	YZCursor mPos( pos );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initDeleteLine( mPos, len, pView->myId == it->myId );
-
-	for ( unsigned int i = 0; i < len && mPos.getY() < mBuffer->lineCount(); i++ )
-		mBuffer->deleteLine( mPos.getY() );
-
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyDeleteLine( mPos, len, pView->myId == it->myId );
+	for ( unsigned int i = 0; i < len && pos.getY() < mBuffer->lineCount(); i++ )
+		mBuffer->deleteLine( pos.getY() );
+	pView->moveXY( 0, pos.getY() );
+	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
@@ -225,6 +213,7 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 
 //copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
 void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+	CONFIGURE_VIEWS;
 	yzDebug() << "Deleting from X " << beginCursor.getX() << " to X " << endCursor.getX() << endl;
 	QStringList buff;
 
@@ -247,8 +236,6 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 		eX++;
 
 	YZCursor mPos( begin );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initDeleteLine( mPos, end, pView->myId == it->myId );
 
 	yzDebug() << "Cursors : " << bX << ","<< bY << " " << eX << "," << eY << endl;
 
@@ -283,14 +270,23 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 		b = mBuffer->textline( curY );
 		buff << b.left( eX );
 		mBuffer->replaceLine( b.mid( eX ), curY );
-		if ( curY > 0 ) mBuffer->mergeNextLine( curY - 1 );
+		if ( curY > 0 ) mergeNextLine( pView, curY - 1 );
 	}
 	yzDebug() << "Deleted " << buff << endl;
 	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
 		YZSession::mRegisters.setRegister( *it, buff );
 
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyDeleteLine( mPos, end, pView->myId == it->myId );
+	pView->moveXY( beginCursor.getX(), beginCursor.getY() );
+	COMMIT_VIEWS_CHANGES;
+}
+
+void YZAction::mergeNextLine( YZView* pView, unsigned int y ) {
+	CONFIGURE_VIEWS;
+	QString line = mBuffer->textline( y );
+	mBuffer->replaceLine( line + mBuffer->textline( y + 1 ), y );
+	mBuffer->deleteLine( y + 1 );
+	pView->moveXY( line.length(), y );
+	COMMIT_VIEWS_CHANGES;
 }
 
 void YZAction::insertChar( YZView* pView, unsigned int X, unsigned int Y, const QString& text ) {

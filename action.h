@@ -50,6 +50,10 @@ class YZAction {
 		void insertLine( YZView* pView, const YZCursor& pos, const QString &text );
 		void insertLine( YZView* pView, unsigned int Y, const QString &text );
 
+		void mergeNextLine( YZView* pView, unsigned int Y );
+
+		void appendLine( YZView* pView, const QString& text );
+
 		void insertNewLine( YZView* pView, const YZCursor& pos );
 		void insertNewLine( YZView* pView, unsigned int X, unsigned int Y );
 

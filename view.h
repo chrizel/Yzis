@@ -142,6 +142,10 @@ class YZView {
 		void purgeInputBuffer() { mPreviousChars = ""; }
 
 		/**
+		 * moves the cursor to x,y (buffer) and save sticky column )
+		 */
+		void moveXY( unsigned int x, unsigned int y );
+		/**
 		 * moves the cursor of the current view down
 		 */
 		QString moveDown( unsigned int nb_lines = 1, bool applyCursor = true );
@@ -183,36 +187,6 @@ class YZView {
 		 */
 		QString moveToEndOfLine();
 		QString moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor = true );
-
-		/*
-		 * ACTIONS
-		 */
-
-		/* insert text */
-		void initInsertChar( const YZCursor& pos, unsigned int len, bool applyCursor );
-		void applyInsertChar( const YZCursor& pos, unsigned int len, bool applyCursor );
-
-		/* delete text */
-		void initDeleteChar( const YZCursor& pos, unsigned int len, bool applyCursor );
-		void applyDeleteChar( const YZCursor& pos, unsigned int len, bool applyCursor );
-
-		/* replace text */
-		void initReplaceChar( const YZCursor& pos, unsigned int len, bool applyCursor );
-		void applyReplaceChar( const YZCursor& pos, unsigned int len, bool applyCursor );
-
-		/* replace line */
-		void initReplaceLine( const YZCursor& pos, bool applyCursor );
-		void applyReplaceLine( const YZCursor& pos, unsigned int len, bool applyCursor );
-
-		/* insert line */
-		void initInsertLine( const YZCursor& pos, bool applyCursor );
-		void applyInsertLine( const YZCursor& pos, bool applyCursor );
-
-		/* delete line */
-		void initDeleteLine( const YZCursor& pos, unsigned int len, bool applyCursor );
-		void applyDeleteLine( const YZCursor& pos, unsigned int len, bool applyCursor );
-		void initDeleteLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
-		void applyDeleteLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
 
 		/**
 		 * Start command mode
@@ -282,24 +256,9 @@ class YZView {
 		//QString deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs);
 
 		/**
-		 * Opens a new line after current line
-		 */
-		QString openNewLineAfter (unsigned int count = 1);
-
-		/**
-		 * Opens a new line before current line
-		 */
-		QString openNewLineBefore (unsigned int count = 1);
-
-		/**
 		 * Append after current character
 		 */
 		QString append ( );
-
-		/**
-		 * Join count lines from given line
-		 */
-		void joinLine( unsigned int line, unsigned int count = 1 );
 
 		/**
 		 * Undo last action
@@ -648,6 +607,11 @@ class YZView {
 		 */
 		void commitNextUndo();
 
+		/* inform view for init changes starting at x,y */
+		void initChanges( unsigned int x, unsigned int y );
+		/* inform view for apply changes ending at x,y */
+		void applyChanges( unsigned int x, unsigned int y );
+
 		/**
 		 * Start recording a macro into @param regs
 		 */
@@ -827,8 +791,8 @@ class YZView {
 
 		YZCursor* origPos;
 		unsigned int lineDY;
-		void initChanges( const YZCursor& pos );
-		void applyChanges( const YZCursor& pos, unsigned int len, bool applyCursor );
+
+		YZCursor* beginChanges;
 
 		//cached value of tabstop option
 		unsigned int tabstop;
@@ -853,7 +817,7 @@ class YZView {
 		QValueList<QChar> mRegs;
 		QStringList mModes; //list of modes
 
-		bool m_paintAutoCommit;
+		unsigned int m_paintAutoCommit;
 };
 
 #endif /*  YZ_VIEW_H */

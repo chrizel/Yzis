@@ -251,7 +251,11 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			break;
 		}
 		// the argument is OK, go for it
+		for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+			it->setPaintAutoCommit( false );
 		(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, s));
+		for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+			it->commitPaintEvent();
 	} else {
 		// keep the commands that match exactly
 		QString s=inputs.mid(i);
@@ -287,10 +291,14 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			}
 			if(!c)
 				return CMD_ERROR;
+			for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+				it->setPaintAutoCommit( false );
 			if(visual)
 				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, m));
 			else
 				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
+			for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+				it->commitPaintEvent();
 		}
 	}
 
@@ -664,7 +672,7 @@ QString YZCommandPool::change(const YZCommandArgs &args) {
 
 QString YZCommandPool::changeLine(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->deleteLine(args.view, *args.view->getBufferCursor(), args.count, args.regs);
-	args.view->openNewLineBefore();
+	args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor()->getY() );
 //	args.view->gotoInsertMode();
 	args.view->commitNextUndo();
 	return QString::null;
@@ -781,19 +789,26 @@ QString YZCommandPool::gotoVisualMode(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::insertLineAfter(const YZCommandArgs &args) {
-	args.view->openNewLineAfter(args.count);
+	unsigned int y = args.view->getBufferCursor()->getY();
+	for ( unsigned int i = 0 ; i < args.count ; i++ )
+		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y + i + 1 );
+	args.view->gotoInsertMode();
 	args.view->commitNextUndo();
 	return QString::null;
 }
 
 QString YZCommandPool::insertLineBefore(const YZCommandArgs &args) {
-	args.view->openNewLineBefore(args.count);
+	unsigned int y = args.view->getBufferCursor()->getY();
+	for ( unsigned int i = 0 ; i < args.count ; i++ )
+		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y - i );
+	args.view->gotoInsertMode();
 	args.view->commitNextUndo();
 	return QString::null;
 }
 
 QString YZCommandPool::joinLine(const YZCommandArgs &args) {
-	args.view->joinLine( args.view->getBufferCursor()->getY(), args.count );
+	for ( unsigned int i = 0; i < args.count; i++ ) 
+		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor()->getY() );
 	args.view->commitNextUndo();
 	return QString::null;
 }

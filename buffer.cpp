@@ -450,7 +450,8 @@ void YZBuffer::load(const QString& file) {
 
 	//HL mode selection
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);
-	setHighLight( hlMode );
+	if ( hlMode >=0 )
+		setHighLight( hlMode );
 	yzDebug() << "HIGHLIGHTING " << hlMode << endl;
 
 	QFile fl( mPath );

@@ -173,6 +173,16 @@ class YZSession {
 		 */
 		bool isOneBufferModified();
 
+		/**
+		 * Focus on the command line of the current view
+		 */
+		virtual void setFocusCommandLine() = 0;
+
+		/**
+		 * Focus on the main window of the current view
+		 */
+		virtual void setFocusMainWindow() = 0;
+
 	protected:
 		//we map "filename"/buffer for buffers
 		QMap<QString,YZBuffer*> mBuffers;
@@ -189,7 +199,6 @@ class YZSession {
 		static int mNbBuffers;
 		static YZOption mOptions;
 		static YZRegisters mRegisters;
-//		static YzisHighlighting mHL;
 };
 
 #endif /* YZ_SESSION_H */

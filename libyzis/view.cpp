@@ -243,7 +243,7 @@ void YZView::sendKey( int c, int modifiers) {
 					mCurrentSearchItem++;
 					doSearch( getCommandLineText() );
 					setCommandLineText( "" );
-					setFocusMainWindow();
+					mSession->setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Down:
@@ -265,7 +265,7 @@ void YZView::sendKey( int c, int modifiers) {
 					return;
 				case Qt::Key_Escape:
 					setCommandLineText( "" );
-					setFocusMainWindow();
+					mSession->setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Backspace:
@@ -290,7 +290,7 @@ void YZView::sendKey( int c, int modifiers) {
 					mCurrentExItem++;
 					mSession->getExPool()->execExCommand( this, getCommandLineText() );
 					setCommandLineText( "" );
-//					setFocusMainWindow();
+					mSession->setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Down:
@@ -312,7 +312,7 @@ void YZView::sendKey( int c, int modifiers) {
 					return;
 				case Qt::Key_Escape:
 					setCommandLineText( "" );
-					setFocusMainWindow();
+					mSession->setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Tab:
@@ -322,7 +322,7 @@ void YZView::sendKey( int c, int modifiers) {
 				{
 					QString back = getCommandLineText();
 					if ( back.isEmpty() ) {
-						setFocusMainWindow();
+						mSession->setFocusMainWindow();
 						gotoCommandMode( );
 						return;
 						}
@@ -693,7 +693,7 @@ QString YZView::gotoCommandMode( ) {
 QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
 	mMode = YZ_VIEW_MODE_EX;
 	modeChanged();
-	setFocusCommandLine();
+	mSession->setFocusCommandLine();
 	purgeInputBuffer();
 	setCommandLineText( "" );
 	return QString::null;

@@ -224,4 +224,15 @@ void KYZisFactory::deleteView( ) {
 #endif
 }
 
+void KYZisFactory::setFocusMainWindow() {
+	KYZisView *yv = static_cast<KYZisView*>( currentView() );
+	yv->setFocusMainWindow();
+}
+
+void KYZisFactory::setFocusCommandLine() {
+	KYZisView *yv = static_cast<KYZisView*>( currentView() );
+	yv->setFocusCommandLine();
+}
+
+
 #include "factory.moc"

@@ -45,8 +45,6 @@ public:
 
 	virtual QString getCommandLineText(void) const {return commandline; }
 	virtual void setCommandLineText( const QString& );
-	virtual void setFocusCommandLine() {}
-	virtual void setFocusMainWindow() {}
 	virtual void invalidateLine ( unsigned int line );
 	virtual void modeChanged(void) { syncViewInfo(); }
 	virtual void refreshScreen();

@@ -50,6 +50,8 @@ public:
 	YZBuffer *createBuffer(const QString& path);
 	void popupMessage( const QString& message );
 	void deleteView ();
+	void setFocusCommandLine();
+	void setFocusMainWindow();
 	
 protected:
 

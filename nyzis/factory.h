@@ -52,6 +52,8 @@ public:
 	virtual	NYZisDoc *createBuffer(const QString& path=QString::null);
 	virtual void popupMessage( const QString& message );
 	virtual void deleteView();
+	virtual void setFocusCommandLine() {}
+	virtual void setFocusMainWindow() {}
 
 private:
 	/**

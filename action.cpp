@@ -176,8 +176,8 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 	yzDebug() << "Deleting from X " << beginCursor.getX() << " to X " << endCursor.getX() << endl;
 	QStringList buff;
 	
-	const YZCursor &begin = (beginCursor <= endCursor ? beginCursor : endCursor),
-			&end = (beginCursor <= endCursor ? endCursor : beginCursor);
+	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
+		end(beginCursor <= endCursor ? endCursor : beginCursor);
 	YZBuffer *yzb=pView->myBuffer();
 	YZCursor top(0, 0, 0), bottom(0, yzb->textline(yzb->lineCount()-1).length(), yzb->lineCount()-1);
 	assert(begin >= top && end <= bottom);

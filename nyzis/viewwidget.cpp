@@ -54,14 +54,18 @@ NYZView::~NYZView(){
 
 void NYZView::map( void )
 {
-	// main window, fullscreen
-	window = newwin( 0,0,0,0 ); YZASSERT( window );
-	wattrset(window, A_NORMAL );
-	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
-	wmove(window,0,0 );
-	keypad(window , true); //active symbols for special keycodes
 	marginLeft = 0;
 	updateVis();
+
+	// main editor, fullscreen
+	window = newwin( 0,0,0,0 ); YZASSERT( window );
+	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
+
+	editor = subwin( window, getLinesVisible(), 0, 0, 0); YZASSERT( editor );
+	wattrset( editor, A_NORMAL );
+	wmove( editor,0,0 );
+	keypad( editor , true); //active symbols for special keycodes
+	scrollok( editor, false ); 
 
 	// creates layout
 	/*
@@ -76,9 +80,12 @@ void NYZView::map( void )
 	wattrset(statusbar, A_NORMAL );
 	if (has_colors())
 		wattron(statusbar, COLOR_PAIR(1));
-//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
-//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
+	/* prevents the delay between hitting <escape> and when we actually receive the event */
+	notimeout( stdscr, true );
+	notimeout( editor, true );
+	notimeout( statusbar, true );
+	notimeout( infobar, true );
 }
 
 
@@ -86,8 +93,9 @@ void NYZView::unmap( void )
 {
 	YZASSERT( statusbar ); delwin( statusbar );
 	YZASSERT( infobar ); delwin( infobar );
+	YZASSERT( editor ); delwin( editor );
 	YZASSERT( window ); delwin( window );
-	window = statusbar = infobar = NULL;
+	editor = statusbar = infobar = NULL;
 }
 
 void NYZView::updateVis( ) {
@@ -103,17 +111,23 @@ void NYZView::printVoid( unsigned int relline )
 
 	// clipping
 	if ( relline > getLinesVisible() ) return;
-	wmove (window, relline, 0);
-	waddch(window, '~');
-	for (i=1 ; i< getColumnsVisible(); i++ ) waddch(window, ' ' );
+	wmove (editor, relline, 0);
+	waddch(editor, '~');
+	for (i=1 ; i< getColumnsVisible(); i++ ) waddch(editor, ' ' );
 }
 
 void NYZView::scrollUp( int n ) {
-	refreshScreen( );
+	scrollok( editor, true ); 
+	wscrl( editor, - n );
+	scrollok( editor, false ); 
+	drawContents( 0, n );
 }
 
 void NYZView::scrollDown( int n ) {
-	refreshScreen( );
+	scrollok( editor, true ); 
+	wscrl( editor, n );
+	scrollok( editor, false ); 
+	drawContents( getLinesVisible() - n, n );
 }
 
 void NYZView::drawContents( int clipy, int cliph ) {
@@ -145,27 +159,27 @@ void NYZView::drawContents( int clipy, int cliph ) {
 		lineNumber = drawLineNumber();
 		if ( currentY >= ( uint )clipy ) {
 			unsigned int currentX = 0;
-			wmove( window, currentY, currentX );
+			wmove( editor, currentY, currentX );
 			if ( number ) { // draw current line number
 				if ( lineNumber != lastLineNumber ) { // we don't draw it twice
-					wattron( window, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
-					waddstr( window, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
-					wattroff( window, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
-					waddch( window, ' ' );
+					wattron( editor, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
+					waddstr( editor, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
+					wattroff( editor, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
+					waddch( editor, ' ' );
 					lastLineNumber = lineNumber;
-				} else for( unsigned int i = 0; i < marginLeft; i++) waddch( window, ' ' );
+				} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
 				currentX += marginLeft;
 			}
 			while ( drawNextCol( ) ) {
 				QColor c = drawColor( );
 				int mColor = mColormap.contains( c.rgb() )? mColormap[ c.rgb() ]: mColormap[ Qt::white.rgb() ]; 
-				waddch( window, COLOR_PAIR( mColor )|drawChar().unicode() );
+				waddch( editor, COLOR_PAIR( mColor )|drawChar().unicode() );
 				if ( drawLength() > 1 ) {
-					for (unsigned int i = 1; i < drawLength(); i++ ) waddch( window, ' ' );
+					for (unsigned int i = 1; i < drawLength(); i++ ) waddch( editor, ' ' );
 				}
 				currentX += drawLength( );
 			}
-			for( ; currentX < getColumnsVisible() + marginLeft; currentX++) waddch( window, ' ' );
+			for( ; currentX < getColumnsVisible() + marginLeft; currentX++) waddch( editor, ' ' );
 			currentY += drawHeight( );
 			cliph -= lineHeight( );
 		} else {
@@ -180,7 +194,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 		--cliph;
 	}
 
-	wmove(window,
+	wmove(editor,
 		getCursor()->getY() - getDrawCurrentTop (),
 		getCursor()->getX() - getDrawCurrentLeft () + marginLeft
 		 );
@@ -201,9 +215,9 @@ void NYZView::setCommandLineText( const QString& text )
 
 void NYZView::invalidateLine ( unsigned int ) {
 	int sx, sy;
-	getyx( window, sy, sx );
+	getyx( editor, sy, sx );
 	drawContents( sy, YZSession::getBoolOption( "General\\wrap" ) ? getLinesVisible() - sy : 1 );
-	wrefresh( window );
+	wrefresh( editor );
 	refresh();
 }
 
@@ -256,11 +270,11 @@ void NYZView::syncViewInfo( void )
 
 	wrefresh(infobar);
 
-	wmove(window,
+	wmove(editor,
 		getCursor()->getY() - getDrawCurrentTop (),
 		getCursor()->getX() - getDrawCurrentLeft () + marginLeft
 		 );
-	wrefresh( window );
+	wrefresh( editor );
 }
 
 void NYZView::refreshScreen() {
@@ -268,7 +282,7 @@ void NYZView::refreshScreen() {
 	drawContents( 0, getLinesVisible() );
 
 	refresh();
-	wrefresh(window);
+	wrefresh(editor);
 	updateCursor();
 }
 

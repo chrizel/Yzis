@@ -457,7 +457,6 @@ void YZView::alignViewVertically( unsigned int line ) {
 		alignTop = false;
 	} else if ( line > 0 ) newcurrent = line;
 	unsigned int old_dCurrentTop = dCurrentTop;
-	unsigned int old_mCurrentTop = mCurrentTop;
 	if ( wrap && newcurrent > 0 ) {
 		initDraw( );
 		drawMode = false;

@@ -87,6 +87,7 @@ private:
 	void printVoid( unsigned int line );
 
 	/* layout */
+	WINDOW		*editor;
 	WINDOW		*infobar;	// the white one with filename/size/position...
 	WINDOW		*statusbar;	// the one we show in which mode we are
 	WINDOW          *fileInfo;     // the one with info about current file (modified..)

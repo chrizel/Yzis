@@ -5420,8 +5420,7 @@ AC_DEFUN(AC_PATH_TINYQ, [
 		[
 		TINYQ="$withval"
 		TINYQ_INCLUDES=-I"$withval"/include
-		TINYQ_LIBS="-L$withval/lib -ltinyq"
-		])
+		TINYQ_LIBS="-L$withval/lib -ltinyq-mt" ])
 
 	if test "x$TINYQ" = "x"; then
 	AC_MSG_RESULT(no)

@@ -574,8 +574,8 @@ int YZExLua::newoption(lua_State *L ) {
 	QString group = ( char * )lua_tostring ( L, 2 );
 	QString defaultvalue = ( char * )lua_tostring ( L, 3 );
 	QString value = ( char * )lua_tostring ( L, 4 );
-	option_t visibility = (option_t)lua_tonumber ( L, 5 );
-	value_t type = (value_t)lua_tonumber ( L, 6 );
+	option_t visibility = (option_t)(int)lua_tonumber ( L, 5 );
+	value_t type = (value_t)(int)lua_tonumber ( L, 6 );
 
 	YZSession::mOptions.createOption(option, group, defaultvalue, value, visibility, type );
 

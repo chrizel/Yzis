@@ -19,7 +19,7 @@ class YZView {
 		 * Each view is bound to a buffer, @param lines is the initial
 		 * number of lines that this view can display
 		 */
-		YZView(YZBuffer *_b, YZSession *sess, int _lines_vis);
+		YZView(YZBuffer *_b, YZSession *sess, int lines);
 		~YZView();
 
 		/**
@@ -28,39 +28,45 @@ class YZView {
 		void setVisibleLines (int);
 
 		/**
-		 * transfer a key event from gui to core
+		 * transfer a key event from GUI to core
 		 */
-		void	sendKey( int , int);
+		void sendKey(int , int);
 
 		/** 
-		 * returns the number of the line displayed on top of this view (refering to
-		 * the whole file/buffer
+		 * Returns the index of the first line displayed on the view
 		 */
-		unsigned int	getCurrent(void) { return current; }
+		unsigned int getCurrent() { return mCurrentTop; }
 
 		/**
 		 * returns the number of line this view can display
 		 */
-		unsigned int	getLinesVisible(void) { return lines_vis; }
+		unsigned int getLinesVisible() { return mLinesVis; }
 
 		/**
-		 * return true or false according to if the given line is
-		 * visible or not
+		 * Returns true if the line @param l is visible. False otherwise
 		 */
-		int	isLineVisible(unsigned int l) { return ( (l>=current) && ((l-current)<lines_vis) ); }
-
-		YZBuffer *myBuffer() { return buffer;}
-
-		YZSession *mySession() { return session; }
+		int	isLineVisible(unsigned int l) { return ( (l>=mCurrentTop) && ((l-mCurrentTop)<mLinesVis) ); }
 
 		/**
-		 * Register a GUI event manager
+		 * Returm my current buffer
 		 */
-		//	void registerManager ( Gui *mgr );
+		YZBuffer *myBuffer() { return mBuffer;}
 
+		/**
+		 * Return my current session
+		 */
+		YZSession *mySession() { return mSession; }
+
+		/**
+		 * Center view on the given @param line
+		 */
 		void centerView( unsigned int line );
 
-		void purgeInputBuffer() { previous_chars="";}
+		/**
+		 * Clean out the current buffer of inputs
+		 * Typically used after a command is recognized or when ESC is pressed
+		 */
+		void purgeInputBuffer() { mPreviousChars = ""; }
 
 		/**
 		 * moves the cursor of the current view down
@@ -147,49 +153,67 @@ class YZView {
 		 */
 		QString appendAtEOL ( const QString& inputsBuff = QString::null );
 
+		/**
+		 * Repaint the whole visible screen
+		 */
 		void redrawScreen();
 
-		void	gotoxy(int nextx, int nexty);
-
-		int myId; // the ID of this view
+		/**
+		 * Moves the cursor to @param nextx , @param nexty
+		 */
+		void gotoxy(unsigned int nextx, unsigned int nexty);
+  
+		/**
+		 * A global UID for this view
+		 **/
+		unsigned int myId;
 
 	protected:
-		void updateCursor(void);
+		void updateCursor();
 
-		YZBuffer 	*buffer; 	/** buffer we use */
-		unsigned int	lines_vis;	/** number of visible lines */
-		unsigned int	current;	/** current line on top of view */
-		YZCursor *cursor;
-		int		current_maxx;	/** maximum value for x, that s (lenght of current line -1), -1 means the line is empty */
+		/**
+		 * The buffer we depend on
+		 */
+		YZBuffer *mBuffer;
+
+		/**
+		 * Number of visible lines on the view
+		 */
+		unsigned int mLinesVis;
+
+		/**
+		 * Index of the first visible line
+		 */
+		unsigned int mCurrentTop;
+
+		/**
+		 * The cursor of the view
+		 */
+		YZCursor *mCursor;
+
+		/**
+		 * The maximal X position of the current line
+		 */
+		unsigned int mMaxX;
 
 		enum {
 			YZ_VIEW_MODE_INSERT, // insert
 			YZ_VIEW_MODE_REPLACE, // replace
 			YZ_VIEW_MODE_COMMAND, // normal
 			YZ_VIEW_MODE_EX //script 
-		}		mode;		/** mode of this view */
+		} mMode;		/** mode of this view */
 
-
-		/*
-		 * mode handling (on a per-view basis, no?)
-		 * most of command handling and drawing stuff...
-		 * yzview should update the core as to how many lines it can display (changegeometry stuff)
-		 */
-
-		/** Used to store previous keystrokes which are not recognised as a command,
+		/** 
+		 * Used to store previous keystrokes which are not recognised as a command,
 		 * this should allow us to have commands like : 100g or gg etc ...
 		 */
-		QString previous_chars;
+		QString mPreviousChars;
 
 	private:
 		/**
 		 * The current session, provided by the GUI
 		 */
-		YZSession *session;
-
-		//internal counters to identify a view by a number
-		//static int view_ids;
-
+		YZSession *mSession;
 };
 
 #endif /*  YZ_VIEW_H */

@@ -24,6 +24,7 @@ QString YZExExecutor::buffernext( YZView *view, const QString& inputs ) {
 
 QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 	view->mySession()->gui_manager->quit();
+	return QString::null;
 }
 
 QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {

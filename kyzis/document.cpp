@@ -45,7 +45,7 @@ void KYZisDoc::removeView( KTextEditor::View * v ) {
 
 bool KYZisDoc::openFile () {
 	yzDebug() << "openFile " << m_file << endl;
-	path = m_file;
+	mPath = m_file;
 	load();
 	return true;
 }

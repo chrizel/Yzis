@@ -193,11 +193,11 @@ void NYZView::handle_event(yz_event e)
 			break;
 		case YZ_EV_REDRAW: {
 			unsigned int i;
-			for ( i=getCurrent(); i<getCurrent()+lines_vis && i<buffer->getLines(); i++ ) {
+			for ( i=getCurrent(); i < ( getCurrent() + mLinesVis ) && i < mBuffer->getLines(); i++ ) {
 				printLine(i);
 			}
 			i-=getCurrent();
-			for ( ; i<lines_vis; i++ ) printVoid(i );
+			for ( ; i < mLinesVis ; i++ ) printVoid( i );
 		}
 			break;
 		default:
@@ -206,11 +206,11 @@ void NYZView::handle_event(yz_event e)
 	}
 }
 
-void NYZView::printVoid( int relline ) {
+void NYZView::printVoid( unsigned int relline ) {
 	unsigned int i;
 
 	// clipping
-	if ( relline<0 || relline > lines_vis ) return;
+	if ( relline > mLinesVis ) return;
 	wmove (window, relline, 0);
 	waddch(window, '~');
 	for (i=1 ; i< w; i++ ) waddch(window, ' ' );
@@ -220,14 +220,14 @@ void NYZView::printLine( int line ) {
 
 	unsigned int i;
 	int sx,sy; // save x,y
-	int relline = line - getCurrent(); // relative line #
+	unsigned int relline = line - getCurrent(); // relative line #
 
 	// check
-	QString str = buffer->findLine( line );
+	QString str = mBuffer->findLine( line );
 	if ( str.isNull() ) return;
 
 	// clipping 
-	if ( relline<0 || relline > lines_vis ) return;
+	if ( relline > mLinesVis ) return;
 
 	getyx(window,sy,sx); // save cursor
 

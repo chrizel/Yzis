@@ -43,7 +43,7 @@ protected:
 	unsigned int	h, w;		/** height and width of the window */
 
 private:
-	void update_info(void) { getmaxyx(window, h, w); lines_vis = h; }
+	void update_info(void) { getmaxyx(window, h, w); mLinesVis = h; }
 	/**
 	  * Display a line
 	  * @arg line is the line number, taken from the beginning of the file ( and not
@@ -55,7 +55,7 @@ private:
 	  * @arg line is the line # relative to the displayed screen, not the buffer ( as this
 	  * doesn't belong to the buffer anyway..)
 	  */
-	void printVoid( int line );
+	void printVoid( unsigned int line );
 
 	/**
 	 * Fill the map of keycodes -> Ncurses to Qt

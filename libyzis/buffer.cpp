@@ -14,42 +14,40 @@
 
 YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	myId = YZSession::nbBuffers++;
-	session = sess;
+	mSession = sess;
 	if ( !_path.isNull() )
-		path = _path;
-	else path = "new" + myId;
+		mPath = _path;
+	else mPath = "new" + myId;
 
 	if (!_path.isEmpty()) load();
-	else {
-/*		QString blah( "" );
-		addLine(blah);*/
-	}
-	session->addBuffer( this );
+	else 
+		addLine("");
+	mSession->addBuffer( this );
 }
 
 YZBuffer::~YZBuffer() {
-	text.clear();
+	mText.clear();
 }
 
-void YZBuffer::addChar (int x, int y, const QString& c) {
+void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
 	/* brute force, we'll have events specific for that later on */
 	QString l=findLine(y);
 	if (l.isNull()) return;
 
 	l.insert(x, c);
 
-	text[y] = l;
+	mText[y] = l;
 
 	/* inform the views */
 	QValueList<YZView*>::iterator it;
-	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
 		YZView *v = *it;
-		session->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
+		mSession->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
 	}
 
 }
 
-void YZBuffer::chgChar (int x, int y, const QString& c) {
+void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 	/* brute force, we'll have events specific for that later on */
 	QString l=findLine(y);
 	if (l.isNull()) return;
@@ -58,17 +56,17 @@ void YZBuffer::chgChar (int x, int y, const QString& c) {
 	l.remove(x, 1);
 	l.insert(x, c);
 
-	text[y] = l;
+	mText[y] = l;
 
 	/* inform the views */
 	QValueList<YZView*>::iterator it;
-	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
 		YZView *v = *it;
-		session->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
+		mSession->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
 	}
 }
 
-void YZBuffer::delChar (int x, int y, int count) {
+void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 	/* brute force, we'll have events specific for that later on */
 	QString l=findLine(y);
 	if (l.isNull()) return;
@@ -76,61 +74,61 @@ void YZBuffer::delChar (int x, int y, int count) {
 	/* do the actual modification */
 	l.remove(x, count);
 
-	text[y] = l;
+	mText[y] = l;
 
 	/* inform the views */
 	QValueList<YZView*>::iterator it;
-	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
 		YZView *v = *it;
-		session->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
+		mSession->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
 	}
 }
 
-void YZBuffer::addNewLine( int col, int line ) {
-	yzDebug() << "NB lines in buffer: " << text.count() << " adding line at : " << line << endl;
+void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
+	yzDebug() << "NB lines in buffer: " << mText.count() << " adding line at : " << line << endl;
 	if ( line == getLines() ) {//we are adding a line, fake being at end of last line
 		line --;
-		col = text[ line ].length(); 
+		col = mText[ line ].length(); 
 	}
 
 	QString l=findLine(line);
 	if (l.isNull()) return;
 
 	//replace old line
-	text[ line ] = l.left( col );
+	mText[ line ] = l.left( col );
 
 	//add new line
 	QString newline = l.mid( col );
 	if ( newline.isNull() ) newline = QString( "" );
-	QStringList::Iterator it = text.at( line );
-	text.insert( ++it, newline );
+	QStringList::Iterator it = mText.at( line );
+	mText.insert( ++it, newline );
 	/* inform the views */
 	updateAllViews();
 }
 
-void YZBuffer::deleteLine( int line ) {
-	if ( text.count() > 1 )
-	 text.erase( text.at( line ) );
+void YZBuffer::deleteLine( unsigned int line ) {
+	if ( mText.count() > 1 )
+	 mText.erase( mText.at( line ) );
 	else
-		text[ line ] = "";
+		mText[ line ] = "";
 	updateAllViews(); //hmm ...
 }
 
 void YZBuffer::addView (YZView *v) {
 //	view_list.insert(v->myId, v );
 	QValueList<YZView*>::iterator it;
-	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
 		YZView *vi = ( *it );
 		if ( vi == v ) return; // don't append twice
 	}
 	yzDebug() << "BUFFER: addView" << endl;
-	view_list.append( v );
+	mViews.append( v );
 	v->redrawScreen();
 }
 
 void YZBuffer::updateAllViews() {
 	QValueList<YZView*>::iterator it;
-	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
 		YZView *v = *it;
 		v->redrawScreen();
 	}
@@ -138,7 +136,7 @@ void YZBuffer::updateAllViews() {
 
 void  YZBuffer::addLine(const QString &l) {
 	yzDebug() << "Adding new line : " << l << endl;
-	text.append(l);
+	mText.append(l);
 }
 
 QString	YZBuffer::findLine(unsigned int line) {
@@ -146,13 +144,13 @@ QString	YZBuffer::findLine(unsigned int line) {
 	//the guy i talked with on IRC was right to doubt about it :)
 	//so I return QString::null then for each call we need to check for if (!line.isNull())
 	//trying if(!line) is NOT working (read QString doc)
-	if ( text.count() <= line) return QString::null;
-	else return text[ line ];
+	if ( mText.count() <= line) return QString::null;
+	else return mText[ line ];
 }
 
 void YZBuffer::load() {
-	text.clear();
-	QFile file( path );
+	mText.clear();
+	QFile file( mPath );
 	if ( file.open( IO_ReadOnly ) ) {
 		QTextStream stream( &file );
 		while ( !stream.atEnd() ) {
@@ -165,23 +163,22 @@ void YZBuffer::load() {
 }
 
 void YZBuffer::save() {
-	if (path.isEmpty()) {
+	if (mPath.isEmpty())
 		return;
-	}
-	QFile file( path );
+	QFile file( mPath );
 	if ( file.open( IO_WriteOnly ) ) {
 		QTextStream stream( &file );
-		for ( QStringList::Iterator it = text.begin(); it != text.end(); ++it )
+		for ( QStringList::Iterator it = mText.begin(); it != mText.end(); ++it )
 			stream << *it << "\n";
 		file.close();
 	}
 }
 
 
-YZView* YZBuffer::findView( int uid ) {
+YZView* YZBuffer::findView( unsigned int uid ) {
 	yzDebug() << "Buffer: findView " << uid << endl;
 	QValueList<YZView*>::iterator it;
-	for ( it = view_list.begin(); it != view_list.end(); ++it ){
+	for ( it = mViews.begin(); it != mViews.end(); ++it ){
 		YZView* v = ( *it );
 		if ( v->myId == uid ) {
 			yzDebug() << "Buffer: View " << uid << " found" << endl;
@@ -193,14 +190,14 @@ YZView* YZBuffer::findView( int uid ) {
 
 //motion calculations
 
-yz_point YZBuffer::motionPosition( int /*xstart*/, int /*ystart*/, YZMotion /*regexp*/ ) {
+yz_point YZBuffer::motionPosition( unsigned int /*xstart*/, unsigned int /*ystart*/, YZMotion /*regexp*/ ) {
 	yz_point e;
 	return e;
 }
 
 YZView* YZBuffer::firstView() {
-	if (  view_list.first() != NULL ) 
-		return view_list.first();
+	if (  mViews.first() != NULL ) 
+		return mViews.first();
 	else yzDebug() << "No VIEW !!!" << endl;
 	return NULL;//crash me :)
 }

@@ -33,18 +33,11 @@ on the web site).
 When a line is changed on a buffer, the YZBuffer notifies the gui with an
 InvalidateLine event. The views retrieve the event and repaint the line. When
 a new character is entered, usually, the view deals with it directly by
-forwarding it to the YZView::keyPressEvent().
-
-The class Gui is the class that ensure the communication between the core and
-the gui. It receives the events and dispatch them to the right receiver.
+forwarding it to the YZView::sendKey().
 
 VI commands are separated into commands (the one you enter in the command
 mode) and ex commands (the one you enter after pressing :). They are added to
 the engine through the YZCommandPool (see libyzis/commands.h). Most commands
 are implemented in the YZView though, because they need to know the position
-of the cursor.
-
-
-
-
+of the cursor. Scripting commands can be found in libyzis/ex_lua.cpp.
 

@@ -5,6 +5,12 @@ independant GUI. It is developped in C++ and relies on Qt for the some of the
 background classes (lists and strings mainly). A KDE GUI and a ncurses based
 GUI are available.
 
+Requirements:
+=============
+-> Qt 3.x | TinyQ 3
+-> Lua 5.x
+-> For kyzis : KDE 3.2.x
+-> For nyzis : NCurses 5
 
 Building Yzis:
 ==============
@@ -19,13 +25,14 @@ In a near future we hope to drop TinyQ and just keep Qt (4.x), since Qt should b
 To be honest I have not tried to compile with TinyQ for ages, so it's probably safer/easier to use Qt 3.1 or later :)
 For Kyzis , KDE 3.2 is required.
 
+You probably need to --with-lua-includes=... so that it finds your Lua 5.x installation.
+
 Licenses:
 =========
 libyzis is published under LGPL. See COPYING.LGPL for more
 details.  
 kyzis and nyzis are published under GPL. See COPYING for more
 details.
-
 
 History:
 ========

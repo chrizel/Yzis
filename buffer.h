@@ -193,6 +193,13 @@ public:
 	* @return whether a file name was successfully chosen
 	*/
 	virtual bool popupFileSaveAs() = 0;
+
+	/**
+	 * Notification that some status of the file changed
+	 * Can be : file modified, file readonly ? , other ? XXX
+	 * This is only informational so that GUIs can display the correct information
+	 */
+	void statusChanged();
 		
 	/**
 	 * Get the current filename of the buffer

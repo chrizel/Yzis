@@ -82,9 +82,6 @@ YZBuffer::~YZBuffer() {
 	// delete the temporary file if we haven't changed the file
 }
 
-
-
-
 // ------------------------------------------------------------------------
 //                            Char Operations 
 // ------------------------------------------------------------------------
@@ -520,5 +517,20 @@ QString YZBuffer::undoLast( const QString& , YZCommandArgs args ) {
 
 void YZBuffer::setModified( bool modif ) {
 	mModified = modif;
+	statusChanged();
 }
+
+void YZBuffer::statusChanged() {
+	//update all views
+	YZView *it;
+	QString info;
+	if ( fileIsNew() ) info+="N";
+	else info+=" ";
+	if ( fileIsModified() ) info+="M";
+	else info+=" ";
+	//add some : read only ...
+	for ( it = mViews.first(); it; it = mViews.next() )
+		it->setInformation(info);
+}
+
 

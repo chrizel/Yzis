@@ -133,6 +133,7 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("D", &YZModeCommand::deleteToEOL) );
 	commands.append( new YZCommand("s", &YZModeCommand::substitute) );
 	commands.append( new YZCommand("x", &YZModeCommand::deleteChar) );
+	commands.append( new YZCommand("X", &YZModeCommand::deleteCharBackwards) );
 	commands.append( new YZCommand("yy", &YZModeCommand::yankLine) );
 	commands.append( new YZCommand("y", &YZModeCommand::yank, ARG_MOTION) );
 	commands.append( new YZCommand("Y", &YZModeCommand::yankToEOL) );
@@ -1337,6 +1338,20 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 
 void YZModeCommand::deleteChar( const YZCommandArgs &args ) {
 	args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
+	args.view->commitNextUndo();
+}
+
+void YZModeCommand::deleteCharBackwards( const YZCommandArgs &args ) {
+	YZCursor pos = args.view->getBufferCursor();
+	int oldX = pos.getX();
+	int newX = oldX - args.count;
+	if( newX < 0 )
+		newX = 0;
+	int delCount = oldX - newX;
+	if( delCount == 0 )
+		return; // nothing to delete
+	pos.setX( newX );
+	args.view->myBuffer()->action()->deleteChar( args.view, pos, delCount );
 	args.view->commitNextUndo();
 }
 

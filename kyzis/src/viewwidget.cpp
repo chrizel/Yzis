@@ -133,6 +133,7 @@ void KYZisView::wheelEvent( QWheelEvent * e ) {
 	} else {
 		// TODO : scroll horizontally
 	}
+	e->accept();
 }
 
 void KYZisView::modeChanged (void) {

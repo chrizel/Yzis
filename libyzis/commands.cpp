@@ -131,6 +131,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("<CTRL>x<CTRL>n", &YZCommandPool::completeKeywordForward) );
 	commands.append( new YZCommand("<CTRL>x<CTRL>p", &YZCommandPool::completeKeywordBackward) );
 	commands.append( new YZCommand("<ESC>", &YZCommandPool::abort) );
+	commands.append( new YZCommand("<DEL>", &YZCommandPool::delkey) );
 }
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
@@ -1023,8 +1024,21 @@ QString YZCommandPool::completeKeywordForward( const YZCommandArgs &args ) {
 	return completeKeyword(args, true);
 }
 
-QString YZCommandPool::abort( const YZCommandArgs &args ) {
+QString YZCommandPool::abort( const YZCommandArgs& args) {
 	//actually it's a no-op here, inputBuffer will be purged after
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
+		args.view->leaveVisualMode();
+	}
+	return QString::null;
+}
+
+QString YZCommandPool::delkey( const YZCommandArgs &args ) {
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
+			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].from(), (args.selection)[0].to(), ( QValueList<QChar>() << QChar( '\"' ) ));
+			args.view->leaveVisualMode();
+	} else
+			args.view->myBuffer()->action()->deleteChar( args.view, *(args.view->getBufferCursor()), 1);
+	args.view->commitNextUndo();
 	return QString::null;
 }
 

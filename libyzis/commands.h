@@ -223,6 +223,7 @@ private:
 	QString completeKeywordBackward(const YZCommandArgs &args);
 	QString completeKeyword(const YZCommandArgs &args, bool forward);
 	QString abort(const YZCommandArgs &args);
+	QString delkey(const YZCommandArgs &args);
 
 	friend class YZNewMotion;
 };

@@ -45,7 +45,6 @@
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QWidget( parent, name)
 {
-	initKeys();
 	mTransparent = false;
 	mParent = parent;
 
@@ -55,6 +54,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	setFocusPolicy( StrongFocus );
 	QWidget::setCursor( IbeamCursor );
 	rootxpm = new KRootPixmap( this );
+	initKeys();
 	setTransparent( false );
 
 	mCursor = new KYZisCursor( this, KYZisCursor::KYZ_CURSOR_SQUARE );
@@ -64,6 +64,11 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 KYZisEdit::~KYZisEdit() {
 	delete mCursor;
+	delete signalMapper;
+	delete rootxpm;
+	for( int i = actionCollection->count() - 1; i>= 0; --i )
+		delete actionCollection->take( actionCollection->action(i) );
+	delete actionCollection;
 }
 
 void KYZisEdit::setTransparent ( bool t, double opacity, const QColor& color ) {

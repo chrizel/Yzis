@@ -489,6 +489,13 @@ void YZBuffer::setEncoding( const QString& name ) {
 	currentEncoding = name; */
 }
 
+void YZBuffer::setText( QString* content ) {
+	clearText();
+	QTextStream stream( content, IO_ReadOnly );
+	while ( !stream.atEnd() )
+		appendLine( stream.readLine() );
+}
+
 void YZBuffer::load(const QString& file) {
 	yzDebug("YZBuffer") << "YZBuffer load " << file << endl;
 	if ( file.isNull() || file.isEmpty() ) return;

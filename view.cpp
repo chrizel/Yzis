@@ -493,7 +493,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				moveToFirstNonBlankOfLine();
 				return;
 			}
-			
+
 			mPreviousChars+=modifiers+key;
 			if ( mSession ) {
 				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
@@ -623,7 +623,6 @@ void YZView::bottomViewVertically( unsigned int line ) {
 void YZView::alignViewVertically( unsigned int line ) {
 //	yzDebug() << "YZView::alignViewVertically " << line << endl;
 	unsigned int newcurrent = line;
-	bool alignTop = true;
 	unsigned int old_dCurrentTop = dCurrentTop;
 //	yzDebug() << "newcurrent=" << newcurrent << "; alignTop=" << alignTop << "; old_dCurrentTop=" << dCurrentTop << endl;
 	if ( wrap && newcurrent > 0 ) {
@@ -632,7 +631,7 @@ void YZView::alignViewVertically( unsigned int line ) {
 		gotody( newcurrent );
 //		yzDebug() << "raw top = " << *sCursor << "; r=" << *rCursor << endl;
 		// rLineHeight > 1 => our new top is in middle of a wrapped line, move new top to next line
-		newcurrent = workCursor->bufferY() + ( !alignTop && workCursor->lineHeight > 1 ? 1 : 0 );
+		newcurrent = workCursor->bufferY();
 		gotoy( newcurrent );
 		mCurrentTop = workCursor->bufferY();
 		dCurrentTop = workCursor->screenY();

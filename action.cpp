@@ -384,6 +384,7 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 }
 
 void YZAction::mergeNextLine( YZView* pView, unsigned int y, bool stripSpaces ) {
+	if ( y >= mBuffer->lineCount() - 1 ) return;
 	CONFIGURE_VIEWS;
 	QString line = mBuffer->textline( y );
 	QString line2 = mBuffer->textline( y + 1 );

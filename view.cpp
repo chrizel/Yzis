@@ -129,6 +129,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	lineDY = 0;
 	tabstop = getLocalIntegerOption("tabstop");
 	wrap = getLocalBooleanOption( "wrap" );
+	rightleft = getLocalBooleanOption( "rightleft" );
 
 	//completion
 	m_completionStart = new YZCursor();
@@ -174,7 +175,10 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 }
 
 void YZView::recalcScreen( ) {
+	tabstop = getLocalIntegerOption( "tabstop" );
 	wrap = getLocalBooleanOption( "wrap" );
+	rightleft = getLocalBooleanOption( "rightleft" );
+
 	YZCursor old_pos = *scrollCursor->buffer();
 	scrollCursor->reset();
 	if ( wrap ) old_pos.setX( 0 );
@@ -297,7 +301,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	}
 
 	/** rightleft mapping **/
-	if ( getLocalBooleanOption("rightleft") && ( mModePool->current()->mapMode() & (visual|normal) ) ) {
+	if ( rightleft && ( mModePool->current()->mapMode() & (visual|normal) ) ) {
 #define SWITCH_KEY( a, b ) \
 	if ( key == a ) key = b; \
 	else if ( key == b ) key = a
@@ -462,7 +466,7 @@ void YZView::alignViewBufferVertically( unsigned int line ) {
 	// find the last visible line in the buffer
 	unsigned int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
 
-	if (getLocalBooleanOption( "wrap" )) {
+	if ( wrap ) {
 		YZViewCursor temp = *scrollCursor;
 		gotodxdy( &temp, getCursor()->x(), getDrawCurrentTop() + getLinesVisible() - 1 );
 		lastBufferLineVisible = temp.bufferY();
@@ -1025,7 +1029,6 @@ void YZView::updateCurLine( ) {
 }
 
 unsigned int YZView::initDrawContents( unsigned int clipy ) {
-	wrap = getLocalBooleanOption( "wrap" );
 	if ( ! wrap ) {
 		initDraw( getCurrentLeft(), getCurrentTop() + clipy, getDrawCurrentLeft(), getDrawCurrentTop() + clipy );
 	} else {
@@ -1067,9 +1070,6 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop, unsigned int rLeft
 	workCursor->spaceFill = 0;
 
 	adjust = false;
-
-	wrap = getLocalBooleanOption( "wrap" );
-	tabstop = getLocalIntegerOption("tabstop");
 
 	tablength = tabstop * spaceWidth;
 	areaModTab = ( tablength - mColumnsVis % tablength ) % tablength;
@@ -1691,7 +1691,7 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 	unsigned int size = map.size();
 	unsigned int i;
-	if ( isBufferMap && getLocalBooleanOption( "wrap" ) ) { // we must convert bufferMap to screenMap
+	if ( isBufferMap && wrap ) { // we must convert bufferMap to screenMap
 		YZViewCursor vCursor = viewCursor();
 		for ( i = 0; i < size; i++ ) {
 			gotoxy( &vCursor, map[ i ].fromPos().x(), map[ i ].fromPos().y() );
@@ -1721,12 +1721,12 @@ void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 
 void YZView::sendBufferPaintEvent( unsigned int line, unsigned int n ) {
 	YZViewCursor vCursor = viewCursor();
-	if ( getLocalBooleanOption( "wrap" ) ) {
+	if ( wrap ) {
 		gotoxy( &vCursor, 0, line );
 		line = vCursor.screenY();
 	}
 	if ( isLineVisible( line ) ) {
-		if ( getLocalBooleanOption( "wrap" ) ) {
+		if ( wrap ) {
 			gotoxy( &vCursor, 0, line + n );
 			n = vCursor.screenY() - line;
 		}

@@ -13,9 +13,11 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 	buffer		= _b;
 	lines_vis	= _lines_vis;
 	current		= 0;
+	current_maxx = 0;
 	cursor_x = cursor_y = cursor_x_ghost = 0;
 	mode 		= YZ_VIEW_MODE_COMMAND;
-	current_maxx = buffer->find_line(cursor_y)->len-1;
+	YZLine *line = buffer->find_line(cursor_y);
+	if (line) current_maxx = line->len-1;
 
 	events_nb_begin = 0;
 	events_nb_last = 0;

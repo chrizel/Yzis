@@ -596,6 +596,8 @@ class YZView {
 		 */
 		void updateStickyCol( YZViewCursor* viewCursor );
 
+		QString getCharBelow( int delta );
+
 		/**
 		 * Prepares to record next undo item
 		 */

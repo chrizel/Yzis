@@ -51,10 +51,10 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status->setItemAlignment(0,Qt::AlignLeft);
 
 	status->insertItem("",80,80,0);
-	status->setItemAlignment(0,Qt::AlignLeft);
+	status->setItemAlignment(80,Qt::AlignLeft);
 
 	status->insertItem("",90,1);
-	status->setItemAlignment(0,Qt::AlignRight);
+	status->setItemAlignment(90,Qt::AlignRight);
 
 	status->insertItem("",99,0,true);
 	status->setItemAlignment(99,Qt::AlignRight);

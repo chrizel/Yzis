@@ -42,7 +42,7 @@ void YZModeInsert::leave( YZView* mView ) {
 }
 
 void YZModeInsert::initModifierKeys() {
-	mModifierKeys << "<CTRL>x" << "<CTRL>n" << "<CTRL>p" << "<ALT>:" << "<ALT>v";
+	mModifierKeys << "<CTRL>e" << "<CTRL>n" << "<CTRL>p" << "<CTRL>x" << "<CTRL>y" << "<ALT>:" << "<ALT>v";
 }
 /*
  * if you add a command which use modifiers keys, add it in initModifierKeys too
@@ -62,6 +62,9 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	else if ( key == "<UP>" ) commandUp( mView, key );
 	else if ( key == "<PDOWN>" ) commandPageDown( mView, key );
 	else if ( key == "<PUP>" ) commandPageUp( mView, key );
+	else if	( key == "<CTRL>e" ) commandInsertFromBelow( mView, key );
+	else if	( key == "<CTRL>y" ) commandInsertFromAbove( mView, key );
+	// completion
 	else if ( key == "<CTRL>x" ) commandCompletion( mView, key );
 	else if ( key == "<CTRL>n" ) commandCompletionNext( mView, key );
 	else if ( key == "<CTRL>p" ) commandCompletionPrevious( mView, key );
@@ -98,6 +101,16 @@ void YZModeInsert::commandEx( YZView* mView, const QString& ) {
 }
 void YZModeInsert::commandVisual( YZView* mView, const QString& ) {
 	mView->modePool()->push( MODE_VISUAL );
+}
+void YZModeInsert::commandInsertFromAbove( YZView* mView, const QString& ) {
+	QString c = mView->getCharBelow( -1 );
+	if ( ! c.isNull() )
+		commandDefault( mView, c );
+}
+void YZModeInsert::commandInsertFromBelow( YZView* mView, const QString& ) {
+	QString c = mView->getCharBelow( 1 );
+	if ( ! c.isNull() )
+		commandDefault( mView, c );
 }
 void YZModeInsert::commandCompletion( YZView* mView, const QString& ) {
 	mView->modePool()->push( MODE_COMPLETION );

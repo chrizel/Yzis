@@ -274,7 +274,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				if ( cindent ) {
 					indent();
 				} else {
-					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
+					mBuffer->action()->insertNewLine( this, 0, mainCursor->bufferY() + 1 );
 				}
 				updateStickyCol( mainCursor );
 				return;

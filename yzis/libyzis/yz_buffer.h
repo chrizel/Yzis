@@ -40,6 +40,7 @@ protected:
 private:
 	void	post_event(yz_event e);
 	void	update_view(int view);
+	void	update_all_views();
 	YZLine	*find_line(int line);
 
 	YZLine *line_first, *line_last;

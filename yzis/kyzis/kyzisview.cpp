@@ -7,7 +7,7 @@
 
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name),
-		YZView(doc, 1) {
+		YZView(doc, 10) {
 	last_event_done=0;
 	editor = new KYZisEdit (this,"editor");
 	status = new KStatusBar (this, "status");
@@ -38,11 +38,10 @@ void KYZisView::postEvent(yz_event ev) {
 //receives previously generated events from Qt event loop. hopefully it will do
 //what I want :)
 void KYZisView::customEvent (QCustomEvent *) {
-	yz_event *event/*=fetch_event()*/;
+	yz_event *event;
 	while (last_event_done < events_nb_last) {
 		event = fetch_event(last_event_done++);
 		kdDebug() << "** Processing Event " << last_event_done << " Id : " << event->id << endl;
-//	while ( ( event= fetch_event() ) != NULL) {
 		if (! event ) {
 			kdDebug() << "OUPS, no event to fetch !" << endl;
 			return;
@@ -50,7 +49,9 @@ void KYZisView::customEvent (QCustomEvent *) {
 		switch ( event->id ) {
 			case YZ_EV_SETLINE:
 				kdDebug() << "event SETLINE" << endl;
-//				editor->setText( *(event->u.setline.line) );
+				//just a ugly hack to show it should work :)
+				editor->append( *(event->u.setline.line) );
+//				editor->insertAt(*(event->u.setline.line),event->u.setline.y,0);
 				break;
 			case YZ_EV_SETCURSOR:
 				kdDebug() << "event SETCURSOR" << endl;

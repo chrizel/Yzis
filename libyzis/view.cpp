@@ -1390,8 +1390,8 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 	rLineHeight = 0;
 	rSpaceFill = 0;
 
-	tabwidth = YZSession::getIntOption("General\\tabwidth");
-	wrap = YZSession::getBoolOption( "General\\wrap" );
+	tabwidth = getLocalIntOption("tabwidth");
+	wrap = getLocalBoolOption( "wrap" );
 
 	wrapNextLine = false;
 	if ( sCursor->getY() < mBuffer->lineCount() && ! mBuffer->textline( sCursor->getY() ).isNull() )
@@ -1721,4 +1721,63 @@ QString YZView::refreshScreenInternal(const QString& , YZCommandArgs ) {
 	return QString::null;
 }
 
+int YZView::getLocalIntOption( const QString& option ) {
+	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) ) //find the local one ?
+		return YZSession::mOptions.readIntEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, 0 );
+	else 
+		return YZSession::mOptions.readIntEntry( option, 0 ); // else give the global default if any
+}
+
+void YZView::setLocalIntOption( const QString& key, int option ) {
+	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions.setIntOption( key, option );
+}
+
+bool YZView::getLocalBoolOption( const QString& option ) {
+	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
+		return YZSession::mOptions.readBoolEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, false );
+	else
+		return YZSession::mOptions.readBoolEntry( option, false );
+}
+
+void YZView::setLocalBoolOption( const QString& key, bool option ) {
+	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions.setBoolOption( key, option );
+}
+
+QString YZView::getLocalStringOption( const QString& option ) {
+	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
+		return YZSession::mOptions.readQStringEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QString("") );
+	else
+		return YZSession::mOptions.readQStringEntry( option, QString("") );
+}
+
+void YZView::setLocalQStringOption( const QString& key, const QString& option ) {
+	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions.setQStringOption( key, option );
+}
+
+QStringList YZView::getLocalStringListOption( const QString& option ) {
+	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
+		return YZSession::mOptions.readQStringListEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QStringList::split(";","") );
+	else
+		return YZSession::mOptions.readQStringListEntry( option, QStringList::split(";","") );
+}
+
+void YZView::setLocalQStringListOption( const QString& key, const QStringList& option ) {
+	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions.setQStringListOption( key, option );
+}
+
+QColor YZView::getLocalColorOption( const QString& option ) {
+	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
+		return YZSession::mOptions.readQColorEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QColor("white") );
+	else
+		return YZSession::mOptions.readQColorEntry( option, QColor("white") );
+}
+
+void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
+	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
+	YZSession::mOptions.setQColorOption( key, option );
+}
 

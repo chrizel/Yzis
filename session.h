@@ -190,6 +190,11 @@ class YZSession {
 		virtual YZView* createView ( YZBuffer* ) = 0;
 
 		/**
+		 * Splits horizontally the mainwindow area to create a new view on the current buffer
+		 */
+		 virtual void splitHorizontally ( YZView* ) = 0;
+
+		/**
 		 * Saves all buffers with a filename set
 		 * @return whether all buffers were saved correctly
 		 */

@@ -102,6 +102,7 @@ void YZExCommandPool::initPool() {
 	commands.append( new YZExCommand( "ene(w)?", &YZExCommandPool::enew, "enew" ));
 	commands.append( new YZExCommand( "syn(tax)?", &YZExCommandPool::syntax, "syntax" ));
 	commands.append( new YZExCommand( "highlight", &YZExCommandPool::highlight, "highlight" ));
+	commands.append( new YZExCommand( "split", &YZExCommandPool::split, "split" ));
 }
 
 QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -711,3 +712,7 @@ QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 	return QString::null;
 }
 
+QString YZExCommandPool::split( const YZExCommandArgs& args ) {
+	YZSession::me->splitHorizontally(args.view);
+	return QString::null;
+}

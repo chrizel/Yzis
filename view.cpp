@@ -592,14 +592,16 @@ void YZView::centerViewVertically(unsigned int line) {
 	alignViewVertically ( newcurrent );
 }
 
+void YZView::bottomViewVertically( unsigned int line ) {
+	unsigned int newcurrent = 0;
+	if ( line > mLinesVis ) newcurrent = (line - mLinesVis) + 1;
+	alignViewVertically( newcurrent );
+}
+
 void YZView::alignViewVertically( unsigned int line ) {
 //	yzDebug() << "YZView::alignViewVertically " << line << endl;
-	unsigned int newcurrent = 0;
+	unsigned int newcurrent = line;
 	bool alignTop = true;
-	if ( line >= dCurrentTop + mLinesVis ) { 
-		newcurrent = line - mLinesVis + 1;
-		alignTop = false;
-	} else if ( line > 0 ) newcurrent = line;
 	unsigned int old_dCurrentTop = dCurrentTop;
 //	yzDebug() << "newcurrent=" << newcurrent << "; alignTop=" << alignTop << "; old_dCurrentTop=" << dCurrentTop << endl;
 	if ( wrap && newcurrent > 0 ) {
@@ -624,7 +626,6 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else {
 		 refreshScreen();
 	}
-	if ( alignTop ) gotodxy( mainCursor->screenX(), mCurrentTop );
 }
 
 /* recalculate cursor position + refresh screen */

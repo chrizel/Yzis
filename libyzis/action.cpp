@@ -512,14 +512,14 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
 YZCursor YZAction::search( YZView* pView, const QString& _what, const YZCursor& mBegin, const YZCursor& mEnd, bool reverseSearch, unsigned int *matchlength, bool *found ) {
-	yzDebug() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
+//	yzDebug() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
 	bool cs = true;
 	QString what = _what;
 	if ( what.endsWith("\\c") ) {
 		what.truncate(what.length()-2);
 		cs = false;
 	}
-	yzDebug() << " Casesensitive : " << cs << endl;
+//	yzDebug() << " Casesensitive : " << cs << endl;
 	QRegExp ex( what );
 	ex.setCaseSensitive(cs);
 

@@ -86,6 +86,11 @@ class YZSearch {
 		 */
 		bool active();
 
+		/**
+		 * take care of correctly updating hl
+		 */
+		void update();
+
 
 	private :
 

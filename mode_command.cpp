@@ -908,7 +908,7 @@ YZInterval YZModeCommand::interval(const YZCommandArgs& args) {
 	if ( from > to ) {
 		YZCursor tmp( from );
 		from.setCursor( to );
-		to.setCursor( from );
+		to.setCursor( tmp );
 	}
 	bool entireLines = ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') );
 	if ( entireLines ) {
@@ -1106,8 +1106,14 @@ void YZModeCommand::del(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::yank(const YZCommandArgs &args) {
+	YZCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
+
 	args.view->myBuffer()->action()->copyArea( args.view, interval( args ), args.regs );
 	args.view->modePool()->pop();
+
+	// move cursor to top left corner of selection (yes, this is correct behaviour :)
+	args.view->gotoxy( topLeft.getX(), topLeft.getY(), true );
+	args.view->updateStickyCol( );
 }
 
 void YZModeCommand::mark(const YZCommandArgs &args) {

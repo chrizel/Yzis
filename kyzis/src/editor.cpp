@@ -209,6 +209,12 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		return;
 	}
 	*/
+
+	// leave visual mode if the user clicks somewhere
+	// TODO: this should only be done if the left button is used. Right button
+	// should extend visual selection, like in vim.
+	if (mParent->modePool()->currentType() == YZMode::MODE_VISUAL)
+		mParent->modePool()->pop();
 	
 	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
 		if (mParent->modePool()->currentType() != YZMode::MODE_EX) {
@@ -224,6 +230,41 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 				QChar reg = '\"';
 				YZSession::mRegisters->setRegister( reg, QStringList::split( "\n", text ) );
 				mParent->paste( reg, true );
+			}
+		}
+	}
+}
+
+void KYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
+	if (e->state() == Qt::LeftButton) {
+		if (mParent->modePool()->currentType() == YZMode::MODE_COMMAND) {
+			// start visual mode when user makes a selection with the left mouse button
+			mParent->modePool()->push( YZMode::MODE_VISUAL );
+		} else if (mParent->modePool()->currentType() == YZMode::MODE_VISUAL) {
+			// already in visual mode - move cursor if the mouse pointer has moved over a new char
+			unsigned int newX = e->x() / ( isFontFixed ? fontMetrics().maxWidth() : 1 )
+				+ mParent->getDrawCurrentLeft() - marginLeft;
+			unsigned int newY = e->y() / fontMetrics().lineSpacing()
+				+ mParent->getDrawCurrentTop();
+
+			if (newX != mParent->getCursor()->getX() || newY != mParent->getCursor()->getY()) {
+				mParent->gotodxdy( newX, newY );
+			}
+		}
+	}
+}
+
+void KYZisEdit::mouseReleaseEvent( QMouseEvent *e) {
+	if (e->button() == Qt::LeftButton) {
+		// check if we are in visual mode, which means that the user selected text with the mouse
+		if (mParent->modePool()->currentType() == YZMode::MODE_VISUAL) {
+			// check if we have a selection clipboard (X11) and place the text that was selected there
+			if (QApplication::clipboard()->supportsSelection() ) {
+				QApplication::clipboard()->setSelectionMode( true );
+				YZInterval vSelection = mParent->visualSelection()[0];
+				QStringList text = mParent->myBuffer()->getText(vSelection.fromPos(), vSelection.toPos());
+				QApplication::clipboard()->setText( text.join( "\n" ) );
+				QApplication::clipboard()->setSelectionMode( false );
 			}
 		}
 	}

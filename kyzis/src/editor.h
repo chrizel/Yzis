@@ -94,6 +94,12 @@ class KYZisEdit : public QWidget {
 		//mouse events
 		void mousePressEvent (QMouseEvent *);
 
+		//mouse move event
+		void mouseMoveEvent( QMouseEvent *);
+
+		// mousebutton released
+		void mouseReleaseEvent( QMouseEvent *);
+
 		//insert text at line
 		void insetTextAt(const QString&, int line);
 

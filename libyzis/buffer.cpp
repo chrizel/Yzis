@@ -190,6 +190,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::addLine() : adding a line with '\n' inside" );
+	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::insertLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
 	mText.insert(line, new YZLine(l));
 	updateAllViews();
 }
@@ -198,6 +199,20 @@ void  YZBuffer::addLine(const QString &l) {
 	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::addLine() : adding a line with '\n' inside" );
 	mText.append(new YZLine(l));
 	updateAllViews();
+}
+
+
+void YZBuffer::replaceLine( unsigned int y, const QString& value ) {
+	YZASSERT_MSG( value.contains('\n')==false, "YZBuffer::replaceLine() : replacing a line with '\n' inside" );
+	YZASSERT_MSG( y < lineCount(), QString("YZBuffer::replaceLine( %1 ) but line does not exist, buffer has %3 lines").arg( y ).arg( lineCount() ) );
+	
+	if ( data( y ).isNull() )
+		return;
+	at(y)->setData(value);
+	/* inform the views */
+	YZView *it;
+	for ( it = mViews.first(); it ; it = mViews.next() )
+		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
 }
 
 // ------------------------------------------------------------------------
@@ -320,13 +335,3 @@ void YZBuffer::save() {
 	}
 }
 
-
-void YZBuffer::replaceLine( unsigned int y, const QString& value ) {
-	if ( data( y ).isNull() )
-		return;
-	at(y)->setData(value);
-	/* inform the views */
-	YZView *it;
-	for ( it = mViews.first(); it ; it = mViews.next() )
-		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
-}

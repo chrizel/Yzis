@@ -37,6 +37,7 @@
 #include "settings.h"
 
 #define NONFIXED_CURSOR_WIDTH 1
+#define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QWidget( parent, name) 
@@ -82,7 +83,7 @@ void KYZisEdit::updateArea( ) {
 
 	int lines = height() / fontMetrics().lineSpacing();
 	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget
-	int columns = width() / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) - marginLeft;
+	int columns = width() / GETX( 1 ) - marginLeft;
 	erase( );
 	mParent->setVisibleArea( columns, lines );
 }
@@ -125,15 +126,20 @@ void KYZisEdit::setCursor(int c, int l) {
 	l -= mParent->getDrawCurrentTop ();
 //	yzDebug() << "setCursor : mCursorShow=" << mCursorShown << "; (" << mCursorX << ", " << mCursorY << ") - (" << c << ", " << l << ")" << endl;
 	if ( mCursorShown && c == mCursorX && l == mCursorY ) return;
-	if ( mCursorShown ) drawCursorAt( mCursorX * ( isFontFixed ? fontMetrics().maxWidth() : 1 ) , mCursorY );
+	if ( mCursorShown ) drawCursorAt( GETX( mCursorX ) , mCursorY );
 	mCursorX = c;
 	mCursorY = l;
-	drawCursorAt( mCursorX * ( isFontFixed ? fontMetrics().maxWidth() : 1 ) , mCursorY );
+	drawCursorAt( GETX( mCursorX ) , mCursorY );
 	mCursorShown = true;
 }
 
+QPoint KYZisEdit::cursorCoordinates( ) {
+	QPoint position( GETX( mCursorX ), mCursorY * fontMetrics().lineSpacing() );
+	return position;
+}
+
 void KYZisEdit::scrollUp( int n ) {
-	drawCursorAt( mCursorX * ( isFontFixed ? fontMetrics().maxWidth() : 1 ) , mCursorY );
+	drawCursorAt( GETX( mCursorX ) , mCursorY );
 	mCursorShown = false;
 	if ( ! mTransparent ) {
 		bitBlt( this, 0, n * fontMetrics().lineSpacing(),
@@ -147,7 +153,7 @@ void KYZisEdit::scrollUp( int n ) {
 }
 
 void KYZisEdit::scrollDown( int n ) {
-	drawCursorAt( mCursorX * ( isFontFixed ? fontMetrics().maxWidth() : 1 ) , mCursorY );
+	drawCursorAt( GETX( mCursorX ) , mCursorY );
 	mCursorShown = false;
 	if ( ! mTransparent ) {
 		bitBlt( this, 0, 0,
@@ -250,12 +256,9 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 	p.begin( this );
 
 	unsigned int linespace = fontMetrics().lineSpacing();
-	unsigned int maxwidth = fontMetrics().maxWidth();
 	QRect myRect;
 	bool number = mParent->getLocalBoolOption( "number" );
 	bool wrap = mParent->getLocalBoolOption( "wrap" );
-
-#define GETX( x ) ( isFontFixed ? ( x ) * maxwidth : x )
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
 	unsigned int my_marginLeft = 0;

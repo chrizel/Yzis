@@ -219,18 +219,7 @@ void KYZisView::fileSaveAs() {
 /* Implementation of KTextEditor::ViewCursorInterface */
 QPoint KYZisView::cursorCoordinates()
 {
-	unsigned int line = 0, col = 0, visibleLine = 0, visibleCol = 0;
-	visibleLine = getCursor()->getY() - getCurrentTop();
-	visibleCol  = getCursor()->getX() - getCurrentLeft();
-	line = getCursor()->getY();
-	col = getCursor()->getX();
-	
-	QString currentText = static_cast<KYZisDoc*>(document())->text(line, getCurrentLeft(), line, col);
-
-	QPoint cursorPositionPoint( editorFontMetrics().width(currentText), 
-		visibleLine * editorFontMetrics().lineSpacing() );
-	
-	return cursorPositionPoint;
+	return m_editor->cursorCoordinates();
 }
 
 void KYZisView::cursorPosition ( unsigned int *line, unsigned int *col )

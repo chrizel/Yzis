@@ -68,6 +68,8 @@ class KYZisEdit : public QWidget {
 		unsigned int spaceWidth;
 
 		void registerModifierKeys( const QString& keys );
+
+		QPoint cursorCoordinates( );
 	
 	public slots :
 		void sendMultipleKey( const QString& keys );

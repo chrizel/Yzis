@@ -1,6 +1,6 @@
 2004-03-30 mikmak
   * libyzis
-    add search support (/ command for now)
+    add search support with commands : / and ?
 
 2004-03-22 philippe
   * libyzis

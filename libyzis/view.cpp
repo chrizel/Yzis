@@ -603,9 +603,11 @@ QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
 	return QString::null;
 }
 
-QString YZView::gotoSearchMode( const QString&, YZCommandArgs args ) {
+QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs args ) {
+	if (inputsBuff[ 0 ] == '?' ) reverseSearch = true; 
+	else reverseSearch = false;
 	mMode = YZ_VIEW_MODE_SEARCH;
-	setStatusBar( "-- SEARCH --" );
+	setStatusBar( reverseSearch ? "-- REVERSE SEARCH --" : "-- SEARCH --" );
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -681,10 +683,15 @@ bool YZView::doSearch( const QString& search ) {
 	//get current line
 	QString l;
 
-	for ( int i = currentMatchLine; i < mBuffer->lineCount(); i++ ) {
+	for ( int i = currentMatchLine; i < mBuffer->lineCount() && i != 0 ; reverseSearch ? i-- : i++ ) {
 		l = mBuffer->data( i );
 		yzDebug() << "Searching in line : " << l << endl;
-		int idx = ex.search( l, currentMatchColumn );
+		int idx;
+		if ( reverseSearch ) {
+			idx = ex.searchRev( l, currentMatchColumn ? currentMatchColumn : -1 );
+		} else
+			idx = ex.search( l, currentMatchColumn );
+
 		if ( idx >= 0 ) {
 			//found it !
 			currentMatchColumn = idx;

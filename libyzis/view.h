@@ -356,6 +356,11 @@ class YZView {
 		 * The current session, provided by the GUI
 		 */
 		YZSession *mSession;
+
+		/**
+		 * Searching backward
+		 */
+		bool reverseSearch;
 };
 
 #endif /*  YZ_VIEW_H */

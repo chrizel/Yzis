@@ -671,6 +671,8 @@ class YZView {
 		void setupKeys();
 		virtual void registerModifierKeys( const QString& keys ) = 0;
 
+		bool stringHasOnlySpaces ( const QString& what );
+		
 		/**
 		 * The buffer we depend on
 		 */

@@ -1690,6 +1690,8 @@ bool YZView::drawNextCol( ) {
 		if ( lastChar != tabChar ) {
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
 			lenToTest = workCursor->sColIncrement;
+			if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(sCurLine.mid(curx)) )
+				lastChar = '-';
 		} else {
 			workCursor->lastCharWasTab = true;
 			lastChar = ' ';
@@ -2029,5 +2031,13 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 }
 void YZView::removePaintEvent( const YZCursor& from, const YZCursor& to ) {
 	selectionPool->delSelection( "DRAW", from, to, from, to );
+}
+
+bool YZView::stringHasOnlySpaces ( const QString& what ) {
+	for (int i = 0 ; i < what.length(); i++)
+		if ( !what[i].isSpace() ) {
+			return false;
+		}
+	return true;
 }
 

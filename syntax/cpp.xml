@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
-<language name="C++" version="1.26" kateversion="2.4" section="Sources" extensions="*.cxx;*.cpp;*.cc;*.C;*.h;*.hxx;*.hpp;*.hcc;*.moc" mimetype="text/x-c++src;text/x-c++hdr;text/x-chdr" priority="9">
+<language name="C++" version="1.27" kateversion="2.4" section="Sources" extensions="*.cxx;*.cpp;*.cc;*.C;*.h;*.hxx;*.hpp;*.hcc;*.moc" mimetype="text/x-c++src;text/x-c++hdr;text/x-chdr" priority="9">
   <highlighting>
     <list name="keywords">
       <item> asm </item>
@@ -117,13 +117,15 @@
       <item> wchar_t </item>
     </list>
     <contexts>
-      <context attribute="Normal Text" lineEndContext="#stay" name="Normal" skipSpaces="true">
+      <context attribute="Normal Text" lineEndContext="#stay" name="Normal">
+        <ConsumeSpaces />
         <DetectChar attribute="Preprocessor" context="Preprocessor" char="#" firstNonSpace="true" />
-        <RegExpr attribute="Region Marker" context="#stay" String="//\s*BEGIN.*$" beginRegion="Region1"/>
-        <RegExpr attribute="Region Marker" context="#stay" String="//\s*END.*$" endRegion="Region1"/>
+        <RegExpr attribute="Region Marker" context="#stay" String="//\s*BEGIN.*$" beginRegion="Region1" firstNonSpace="true" />
+        <RegExpr attribute="Region Marker" context="#stay" String="//\s*END.*$" endRegion="Region1" firstNonSpace="true" />
         <keyword attribute="Keyword" context="#stay" String="keywords" />
         <keyword attribute="Extensions" context="#stay" String="extensions" />
         <keyword attribute="Data Type" context="#stay" String="types" />
+        <ConsumeIdentifier />
         <Float attribute="Float" context="#stay">
           <AnyChar String="fF" attribute="Float" context="#stay"/>
         </Float>
@@ -147,8 +149,6 @@
         <DetectChar attribute="Symbol" context="#stay" char="{" beginRegion="Brace1" />
         <DetectChar attribute="Symbol" context="#stay" char="}" endRegion="Brace1" />
         <RegExpr attribute="Preprocessor" context="Outscoped" String="#\s*if\s+0" beginRegion="Outscoped" firstNonSpace="true" />
-        <RegExpr attribute="Function" context="#stay" String="\b[_\w][_\d\w]*(?=[\s]*[(])" />
-        <RegExpr attribute="Symbol" context="Member" String="([.]{1,1}|[:]{2,2})" />
         <AnyChar attribute="Symbol" context="#stay" String=":!%&amp;()+,-/.*&lt;=&gt;?[]{|}~^&#59;"/>
       </context>
       <context attribute="String" lineEndContext="#pop" name="String">
@@ -156,15 +156,12 @@
         <HlCStringChar attribute="String Char" context="#stay"/>
         <DetectChar attribute="String" context="#pop" char="&quot;"/>
       </context>
-      <context attribute="Normal Text" lineEndContext="#pop" name="Member" fallthrough="true" fallthroughContext="#pop">
-        <RegExpr attribute="Function" context="#pop" String="\b[_\w][_\w\d]*(?=[\s]*)" />
-      </context>
       <context attribute="Comment" lineEndContext="#pop" name="Commentar 1">
         <IncludeRules context="##Alerts" />
       </context>
       <context attribute="Comment" lineEndContext="#stay" name="Commentar 2">
-        <IncludeRules context="##Alerts" />
         <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" endRegion="Comment"/>
+        <IncludeRules context="##Alerts" />
       </context>
       <context attribute="Preprocessor" lineEndContext="#pop" name="Preprocessor">
         <LineContinue attribute="Preprocessor" context="#stay"/>
@@ -198,7 +195,6 @@
       <itemData name="Normal Text"  defStyleNum="dsNormal"/>
       <itemData name="Keyword"      defStyleNum="dsKeyword"/>
       <itemData name="Extensions"   defStyleNum="dsKeyword" color="#0095ff" selColor="#ffffff" bold="1" italic="0"/>
-      <itemData name="Function"     defStyleNum="dsFunction" />
       <itemData name="Data Type"    defStyleNum="dsDataType"/>
       <itemData name="Decimal"      defStyleNum="dsDecVal"/>
       <itemData name="Octal"        defStyleNum="dsBaseN"/>

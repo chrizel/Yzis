@@ -1,0 +1,34 @@
+[C style]
+Mimetypes=text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java
+Priority=1
+Section=Sources
+Variables=kate: indent-mode cstyle;
+Wildcards=*.hh;*.cpp;*.cxx;*.cc;*.C;*.CPP;*.h;*.c;*.java;*.js
+
+[GNU Gettext]
+Mimetypes=application/x-gettext
+Priority=1
+Section=Markup
+Variables=kate: encoding utf-8;
+Wildcards=*.po;*.pot
+
+[Makefiles]
+Mimetypes=text/x-makefile
+Priority=5
+Section=Other
+Variables=kate: space-indent off; indent-width 8; replace-tabs off; replace-tabs-save off;
+Wildcards=*Makefile*;*makefile*
+
+[Python]
+Mimetypes=application/x-python
+Priority=1
+Section=Scripts
+Variables=kate: indent-mode python;
+Wildcards=*.py
+
+[XML]
+Mimetypes=application/mathml+xml;application/smil;application/vnd.mozilla.xul+xml;application/x-designer;application/x-kugar;application/x-uml;application/xhtml+xml;text/docbook;text/html;text/mrml;text/rdf;text/sgml;text/vnd.wap.wml;text/xml;image/svg+xml
+Priority=1
+Section=Markup
+Variables=kate: indent-mode xml;
+Wildcards=*.mml;*.MML;*.smil;*.smi;*.xul;*.XUL;*.ui;*.kud;*.xmi;*.XMI;*.xmi.tgz;*.xmi.tar.bz2;*.docbook;*.html;*.HTML;*.htm;*.HTM;*.xhtml;*.asp;*.mrml;*.MRML;*.rdf;*.RDF;*.sgml;*.SGML;*.wml;*.WML;*.xml;*.XML;*ui.rc;*.svg

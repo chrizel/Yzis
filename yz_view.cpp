@@ -82,8 +82,18 @@ void YZView::sendChar( QChar c) {
 }
 
 void YZView::updateCursor(int x, int y) {
-	if ( x!=-1 ) cursor->setX( x );
-	if ( y!=-1 ) cursor->setY( y );
+	if ( y!=-1 ) {
+		QString lin = buffer->findLine( y );
+		if ( !lin.isNull() ) cursor->setY( y );
+		else return; //abort. something's wrong
+	}
+	if ( x!=-1 ) {
+		QString lin = buffer->findLine( y );
+		if ( !lin.isNull() ) {
+			current_maxx = lin.length()-1;
+			cursor->setX( x > current_maxx ? current_maxx : x );
+		}
+	}
 	postEvent( mk_event_setcursor(cursor->getX(),cursor->getY()-current));
 }
 

@@ -31,6 +31,7 @@
 #include "commands.h"
 #include "motionpool.h"
 #include "options.h"
+#include "registers.h"
 
 class YZView;
 class Gui;
@@ -152,7 +153,7 @@ class YZSession {
 		static int mNbViews;
 		static int mNbBuffers;
 		static YZOption mOptions;
-
+		static YZRegisters mRegisters;
 };
 
 #endif /* YZ_SESSION_H */

@@ -279,7 +279,7 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 				p.setPen( Qt::yellow );
 				p.setBackgroundMode( Qt::TransparentMode );
 				p.setFont(font());
-				p.drawText( myRect, flag, QString::number( lineNumber ) );
+				p.drawText( myRect, (rightleft ? Qt::AlignLeft : Qt::AlignRight), QString::number( lineNumber ) );
 				lastLineNumber = lineNumber;
 			}
 			currentX += marginLeft;

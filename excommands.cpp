@@ -74,7 +74,6 @@ void YZExCommandPool::initPool() {
 	ranges.append( new YZExRange( "\\.", &YZExCommandPool::rangeCurrentLine ) );
 	ranges.append( new YZExRange( "\\$", &YZExCommandPool::rangeLastLine ) );
 	ranges.append( new YZExRange( "'\\w", &YZExCommandPool::rangeMark ) );
-	ranges.append( new YZExRange( "%", &YZExCommandPool::rangePair ) );
 	ranges.append( new YZExRange( "'[<>]", &YZExCommandPool::rangeVisual ) );
 	ranges.append( new YZExRange( "/([^/]*/)?", &YZExCommandPool::rangeSearch ) );
 	ranges.append( new YZExRange( "\\?([^\\?]*\\?)?", &YZExCommandPool::rangeSearch ) );
@@ -211,14 +210,6 @@ int YZExCommandPool::rangeVisual( const YZExRangeArgs& args ) {
 			return visual[ 0 ].from().getY();
 		else if ( args.arg.mid( 1 ) == ">" )
 			return visual[ 0 ].to().getY();
-	}
-	return -1;
-}
-int YZExCommandPool::rangePair( const YZExRangeArgs& args ) {
-	bool found = false;
-	YZCursor pos = args.view->myBuffer()->action()->match( args.view, *(args.view->getBufferCursor()), &found );
-	if ( found ) {
-		return pos.getY();
 	}
 	return -1;
 }

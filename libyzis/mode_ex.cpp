@@ -492,15 +492,11 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 		args.view->mySession()->popupMessage( _( "Please specify a filename" ) );
 		return CMD_ERROR;
 	}
-	//check the file name
-	if ( path.startsWith( "~/") ) // expand ~
-#if QT_VERSION < 0x040000
-		path = QDir::homeDirPath() + path.mid( 1 );
+	path = YZBuffer::tildeExpand( path );
 	QFileInfo fi ( path );
+#if QT_VERSION < 0x040000
 	path = fi.absFilePath();
 #else
-		path = QDir::homePath() + path.mid( 1 );
-	QFileInfo fi ( path );
 	path = fi.absoluteFilePath();
 #endif
 	YZBuffer *b =args.view->mySession()->findBuffer(path);

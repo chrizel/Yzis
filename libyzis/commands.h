@@ -174,6 +174,8 @@ public:
 	YZCursor gotoMark(const YZNewMotionArgs &args);
 	YZCursor firstNonBlankNextLine(const YZNewMotionArgs &args);
 	YZCursor gotoLine(const YZNewMotionArgs &args);
+	YZCursor searchNext(const YZNewMotionArgs &args);
+	YZCursor searchPrev(const YZNewMotionArgs &args);
 
 	// methods implementing commands
 	QString execMotion(const YZCommandArgs &args);
@@ -205,8 +207,6 @@ public:
 	QString saveAndClose(const YZCommandArgs &args);
 	QString searchBackwards(const YZCommandArgs &args);
 	QString searchForwards(const YZCommandArgs &args);
-	QString searchNext(const YZCommandArgs &args);
-	QString searchPrev(const YZCommandArgs &args);
 	QString change(const YZCommandArgs &args);
 	QString del(const YZCommandArgs &args);
 	QString yank(const YZCommandArgs &args);

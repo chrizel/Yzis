@@ -70,6 +70,8 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("F", &YZCommandPool::findPrevious, ARG_CHAR) );
 	commands.append( new YZNewMotion("T", &YZCommandPool::findAfterPrevious, ARG_CHAR) );
 	commands.append( new YZNewMotion(";", &YZCommandPool::repeatFind, ARG_CHAR) );
+	commands.append( new YZNewMotion("n", &YZCommandPool::searchNext) );
+	commands.append( new YZNewMotion("N", &YZCommandPool::searchPrev, ARG_NONE) );
 	commands.append( new YZNewMotion("<HOME>", &YZCommandPool::gotoSOL, ARG_NONE) );
 	commands.append( new YZNewMotion("<END>", &YZCommandPool::gotoEOL, ARG_NONE) );
 	commands.append( new YZNewMotion("<LEFT>", &YZCommandPool::moveLeft, ARG_NONE) );
@@ -120,8 +122,6 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("ZQ", &YZCommandPool::closeWithoutSaving) );
 	commands.append( new YZCommand("/", &YZCommandPool::searchForwards) );
 	commands.append( new YZCommand("?", &YZCommandPool::searchBackwards) );
-	commands.append( new YZCommand("n", &YZCommandPool::searchNext) );
-	commands.append( new YZCommand("N", &YZCommandPool::searchPrev) );
 	commands.append( new YZCommand("~", &YZCommandPool::changeCase) );
 	commands.append( new YZCommand("m", &YZCommandPool::mark, ARG_CHAR) );
 	commands.append( new YZCommand("r", &YZCommandPool::replace, ARG_CHAR) );
@@ -615,6 +615,26 @@ YZCursor YZCommandPool::gotoLine(const YZNewMotionArgs &args) {
 	return *viewCursor.buffer();
 }
 
+YZCursor YZCommandPool::searchNext(const YZNewMotionArgs &args) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	bool found;
+	YZCursor pos = YZSession::me->search()->replayForward( args.view, &found );
+	if ( found ) {
+		return pos;
+	}
+	return *viewCursor.buffer();
+}
+
+YZCursor YZCommandPool::searchPrev(const YZNewMotionArgs &args) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	bool found;
+	YZCursor pos = YZSession::me->search()->replayBackward( args.view, &found );
+	if ( found ) {
+		return pos;
+	}
+	return *viewCursor.buffer();
+}
+
 // COMMANDS
 
 QString YZCommandPool::execMotion( const YZCommandArgs &args ) {
@@ -852,18 +872,6 @@ QString YZCommandPool::searchBackwards(const YZCommandArgs &args) {
 
 QString YZCommandPool::searchForwards(const YZCommandArgs &args) {
 	args.view->gotoSearchMode();
-	return QString::null;
-}
-
-QString YZCommandPool::searchNext(const YZCommandArgs &args) {
-	bool found;
-	YZSession::me->search()->replayForward( args.view, &found );
-	return QString::null;
-}
-
-QString YZCommandPool::searchPrev(const YZCommandArgs &args) {
-	bool found;
-	YZSession::me->search()->replayBackward( args.view, &found );
 	return QString::null;
 }
 

@@ -3,12 +3,12 @@
 
 -- Use all the yzis lua functions
 
--- insert
+-- insert (tested)
 for i = 1,10 do
     insert(1,i,"this is line "..i.."\n")
 end
 
--- linecount()
+-- linecount() (tested)
 insert(1,2,"This buffer has "..linecount().." lines" )
 
 -- text, linecount 
@@ -18,33 +18,33 @@ for i=1,linecount() do
 end
 ]]--
 
--- line
+-- line (tested)
 for i=1,10 do
     print("This is the content of line "..i..":")
     print(line(i))
 end
 
--- replace
+-- replace (tested)
 for i=1,10 do
     replace(9,i,"the replaced content of line "..i)
 end
 
--- wincol, winline
-print("Current col,line: "..wincol()..","..winline())
-
--- goto
-goto(3,1)
-print("Current col,line: "..wincol()..","..winline())
-
--- deleteline
+-- deleteline (tested)
 deleteline(1)
 deleteline(5)
 
--- filename
+-- version (tested)
+print("Current version is : "..version())
+
+-- filename (tested)
 print("Current file is : "..filename())
 
--- version
-print("Current version is : "..version())
+-- wincol, winline (tested)
+print("Current col,line: "..wincol()..","..winline())
+
+-- goto (tested)
+goto(3,1)
+print("Current col,line: "..wincol()..","..winline())
 
 -- color
 --[[ not working

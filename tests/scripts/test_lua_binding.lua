@@ -155,7 +155,85 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), "doicohopbof\nbof" )
     end
 
+    function TestLuaBinding:test_deleteline()
+        appendline("1")
+        appendline("2")
+        appendline("3")
+        appendline("4")
+        appendline("5")
+        assertEquals( bufferContent(), "1\n2\n3\n4\n5" )
+
+        deleteline(6)
+        assertEquals( bufferContent(), "1\n2\n3\n4\n5" )
+        deleteline(0)
+        assertEquals( bufferContent(), "2\n3\n4\n5" )
+        deleteline(2)
+        assertEquals( bufferContent(), "2\n4\n5" )
+    end
+
         
+    function TestLuaBinding:test_filename()
+        f1 = filename()
+        print("filename: "..f1)
+        assertEquals( string.len(f1) > 0, true )
+        sendkeys( ':e toto.txt<ENTER>' )
+        f2 = filename()
+        print("filename: "..f2)
+        assertEquals( string.len(f2) > 0, true )
+        assertEquals( f2, 'toto.txt' )
+        assertEquals( f1 ~= f2, true )
+        sendkeys( ':bd!<ENTER>' )
+    end
+
+    function TestLuaBinding:test_goto_and_pos()
+        assertEquals( winline(), 1 )
+        assertEquals( wincol(), 1 )
+
+        appendline("111")
+        appendline("222")
+        appendline("333")
+        goto(1,1)
+        assertEquals( winline(), 1 )
+        assertEquals( wincol(), 1 )
+
+        goto(2,1)
+        assertEquals( wincol(), 2 )
+        assertEquals( winline(), 1 )
+
+        goto(1,2)
+        assertEquals( wincol(), 1 )
+        assertEquals( winline(), 2 )
+
+        goto(2,2)
+        assertEquals( wincol(), 2 )
+        assertEquals( winline(), 2 )
+
+        goto(4,2)
+        assertEquals( wincol(), 3 )
+        assertEquals( winline(), 2 )
+
+        goto(2,4)
+        assertEquals( wincol(), 2 )
+        assertEquals( winline(), 3 )
+
+        goto(0,0)
+        assertEquals( winline(), 1 )
+        assertEquals( wincol(), 1 )
+    end
+
+    function TestLuaBinding:test_color()
+        sendkeys(':e runtests.sh<ENTER>')
+        color1 = color(1,1)
+        print("color1 : "..color1)
+        color2 = color(1,2)
+        print("color2 : "..color2)
+        assertEquals( string.len(color1) > 0, true )
+        assertEquals( string.len(color2) > 0, true )
+        assertEquals( color1 ~= color2, true )
+        sendkeys(':bd!<ENTER>')
+    end
+
+
 
 
 

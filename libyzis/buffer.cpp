@@ -52,6 +52,7 @@
 	YZASSERT_MSG( col <= textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
 
 YZBuffer::YZBuffer(YZSession *sess) {
+	yzDebug("YZBuffer") << "YZBuffer()" << endl;
 	myId = YZSession::mNbBuffers++;
 	mIntro = false;
 	mUpdateView=true;
@@ -69,11 +70,11 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	displayIntro();
 //	appendLine("");
 	YZSession::me->addBuffer( this );
-	yzDebug() << "NEW BUFFER CREATED : " << mPath << endl;
+	yzDebug("YZBuffer") << "NEW BUFFER CREATED : " << mPath << endl;
 }
 
 YZBuffer::~YZBuffer() {
-	yzDebug() << "Deleting buffer " << mPath << endl;
+	yzDebug("YZBuffer") << "Deleting buffer " << mPath << endl;
 	if ( m_highlight != 0L )
 		m_highlight->release();
 	mText.clear();
@@ -179,7 +180,7 @@ void  YZBuffer::appendLine(const QString &l) {
 		bool ctxChanged = false;
 		QMemArray<signed char> foldingList;
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
-//		if ( ctxChanged ) yzDebug() << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
+//		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
 	setModified( true );
 }
@@ -281,6 +282,7 @@ void YZBuffer::mergeNextLine( unsigned int line ) {
 // ------------------------------------------------------------------------
 
 void YZBuffer::clearText() {
+	yzDebug("YZBuffer") << "YZBuffer clearText" << endl;
 	/* XXX clearText is not registered to the undo buffer but should be
 	 * as any other text operation. Although I doubt that this is a common
 	 * operation.
@@ -290,14 +292,14 @@ void YZBuffer::clearText() {
 }
 
 void YZBuffer::clearIntro() {
-	yzDebug() << "YZBuffer clearIntro" << endl;
+	yzDebug("YZBuffer") << "YZBuffer clearIntro" << endl;
 	mIntro = false;
 	clearText();
 	updateAllViews();
 }
 
 void YZBuffer::displayIntro() {
-	yzDebug() << "YZBuffer displayIntro" << endl;
+	yzDebug("YZBuffer") << "YZBuffer displayIntro" << endl;
 	QStringList introduction;
 	introduction 
 	<<  ""
@@ -393,7 +395,7 @@ uint YZBuffer::firstNonBlankChar( uint line ) {
 // ------------------------------------------------------------------------
 
 void YZBuffer::load(const QString& file) {
-	yzDebug() << "YZBuffer load " << file << endl;
+	yzDebug("YZBuffer") << "YZBuffer load " << file << endl;
 	QString oldPath = mPath;
 	if ( file.isNull() || file.isEmpty() ) return;
 	setPath(file);
@@ -409,7 +411,7 @@ void YZBuffer::load(const QString& file) {
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);
 	if ( hlMode >=0 )
 		setHighLight( hlMode );
-	yzDebug() << "HIGHLIGHTING " << hlMode << endl;
+	yzDebug("YZBuffer") << "HIGHLIGHTING " << hlMode << endl;
 
 	QFile fl( mPath );
 	//opens and eventually create the file
@@ -440,7 +442,7 @@ bool YZBuffer::save() {
 			return false; //dont try to save
 	}
 	QFile file( mPath );
-	yzDebug() << "Saving file to " << mPath << endl;
+	yzDebug("YZBuffer") << "Saving file to " << mPath << endl;
 	if ( file.open( IO_WriteOnly ) ) {
 		QTextStream stream( &file );
 		// do not save empty buffer to avoid creating a file
@@ -472,28 +474,28 @@ void YZBuffer::addView (YZView *v) {
 			yzWarning()<< "view " << ( int )v << " added for the second time, discarding"<<endl;
 			return; // don't append twice
 		}
-	yzDebug() << "BUFFER: addView" << endl;
+	yzDebug("YZBuffer") << "BUFFER: addView" << endl;
 	mViews.append( v );
 	mSession->setCurrentView( v );
 }
 
 YZView* YZBuffer::findView( unsigned int uid ) {
-	yzDebug() << "Buffer: findView " << uid << endl;
+	yzDebug("YZBuffer") << "Buffer: findView " << uid << endl;
 	YZView *it;
 	for ( it = mViews.first(); it; it=mViews.next() ){
-//		yzDebug() << "buffer:findViewChecking view " << uid << " for buffer " << fileName() << endl;
+//		yzDebug("YZBuffer") << "buffer:findViewChecking view " << uid << " for buffer " << fileName() << endl;
 		if ( it->myId == uid ) {
-//			yzDebug() << "Buffer:findView " << uid << " found" << endl;
+//			yzDebug("YZBuffer") << "Buffer:findView " << uid << " found" << endl;
 			return it;
 		}
 	}
-//	yzDebug() << "buffer::findView " << uid << " returning NULL" << endl;
+//	yzDebug("YZBuffer") << "buffer::findView " << uid << " returning NULL" << endl;
 	return NULL;
 }
 
 void YZBuffer::updateAllViews() {
 	if ( !mUpdateView ) return;
-	yzDebug() << "updateAllViews" << endl;
+	yzDebug("YZBuffer") << "YZBuffer updateAllViews" << endl;
 	YZView *it;
 	for ( it = mViews.first(); it; it = mViews.next() )
 		it->refreshScreen();
@@ -502,14 +504,14 @@ void YZBuffer::updateAllViews() {
 YZView* YZBuffer::firstView() {
 	if (  mViews.first() != NULL ) 
 		return mViews.first();
-	else yzDebug() << "No VIEW !!!" << endl;
+	else yzDebug("YZBuffer") << "No VIEW !!!" << endl;
 	return NULL;//crash me :)
 }
 
 void YZBuffer::rmView(YZView *v) {
 	int f = mViews.remove(v);
 	YZASSERT( 1==f ); // isn't it ?
-	yzDebug() << "buffer: removeView found " << f << " views" << endl;
+	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
 	if ( mViews.isEmpty() ) 
 		detach();
 
@@ -520,7 +522,7 @@ void YZBuffer::rmView(YZView *v) {
 // ------------------------------------------------------------------------
 
 QString YZBuffer::undoLast( const QString& , YZCommandArgs args ) {
-	yzDebug() << "buffer: undoLast" << endl;
+	yzDebug("YZBuffer") << "buffer: undoLast" << endl;
 	mUndoBuffer->undo();	
 	
 	//reset the input buffer of the originating view
@@ -581,7 +583,7 @@ void YZBuffer::setPath( const QString& _path ) {
 	QString newPath = _path.stripWhiteSpace();
 	if (newPath[0] != '/') {
 		mPath = QDir::cleanDirPath(QDir::current().absPath()+"/"+newPath);
-		yzDebug() << "Changing path to absolute " << mPath << endl;
+		yzDebug("YZBuffer") << "Changing path to absolute " << mPath << endl;
 	} else
 		mPath = newPath; 
 	mFileIsNew=false; 

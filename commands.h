@@ -65,6 +65,7 @@ struct args {
 	unsigned int motionEndX;
 	unsigned int motionStartY;
 	unsigned int motionEndY;
+	QString command;
 };
 
 typedef struct args YZCommandArgs;

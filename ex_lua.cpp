@@ -112,6 +112,9 @@ YZExLua::YZExLua() {
 	lua_register(L,"winline",winline);
 	lua_register(L,"winpos",winpos);
 	lua_register(L,"goto",_goto);
+	lua_register(L,"scrcol",scrcol);
+	lua_register(L,"scrline",scrline);
+	lua_register(L,"scrgoto",scrgoto);
 	lua_register(L,"deleteline",deleteline);
 	lua_register(L,"version",version);
 	lua_register(L,"filename",filename);
@@ -515,6 +518,24 @@ int YZExLua::wincol(lua_State *L) {
 	return 1; // one result
 }
 
+int YZExLua::scrline(lua_State *L) {
+	if (!checkFunctionArguments(L, 0, "scrline", "")) return 0;
+	YZView* cView = YZSession::me->currentView();
+	uint result = cView->getCursor()->y() + 1;
+
+	lua_pushnumber( L, result ); // first result
+	return 1; // one result
+}
+
+int YZExLua::scrcol(lua_State *L) {
+	if (!checkFunctionArguments(L, 0, "scrcol", "")) return 0;
+	YZView* cView = YZSession::me->currentView();
+	uint result = cView->getCursor()->x() + 1;
+
+	lua_pushnumber( L, result ); // first result
+	return 1; // one result
+}
+
 int YZExLua::winpos(lua_State *L) {
 	if (!checkFunctionArguments(L, 0, "winpos", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
@@ -532,6 +553,17 @@ int YZExLua::_goto(lua_State *L) {
 
 	YZView* cView = YZSession::me->currentView();
 	cView->gotoxy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
+
+	return 0; // one result
+}
+
+int YZExLua::scrgoto(lua_State *L) {
+	if (!checkFunctionArguments(L, 2, "scrgoto", "line, col")) return 0;
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
+
+	YZView* cView = YZSession::me->currentView();
+	cView->gotodxdy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
 
 	return 0; // one result
 }

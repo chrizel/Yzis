@@ -166,6 +166,22 @@ class YZExLua : public QObject {
 		static int _goto(lua_State *L);
 
 		/**
+		 * Returns the current column position on screen
+		 */
+		static int scrcol(lua_State *L);
+
+		/**
+		 * Returns the current line position on screen
+		 */
+		static int scrline(lua_State *L);
+
+		/**
+		 * Moves the cursor to the given position on screen
+		 * Arguments: col, line
+		 */
+		static int scrgoto(lua_State *L);
+
+		/**
 		 * Deletes the given line.
 		 * Returns nothing
 		 */

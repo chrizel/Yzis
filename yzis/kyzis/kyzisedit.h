@@ -7,7 +7,6 @@
 #include <qevent.h>
 #include <qmap.h>
 
-typedef QMap<int,QString> KYZLine;
 class KYZisView;
 
 /**
@@ -68,9 +67,6 @@ class KYZisEdit : public QScrollView {
 		int cursory;
 		bool cursor_shown;
 		int current;
-
-		//QMap<int,QString> mText;
-		KYZLine mText;
 };
 
 #endif

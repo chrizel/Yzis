@@ -1,6 +1,12 @@
+2004-08-11 mikmak
+  * libyzis
+    improved loading time with big files
+    
 2004-08-11 panard
   * libyzis
     add '~' command
+  * kyzis
+    added opacity setting for the transparent background
 
 2004-08-10 panard
   * libyzis

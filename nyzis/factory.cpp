@@ -194,6 +194,8 @@ NYZisDoc *NYZFactory::createBuffer(const QString& filename)
 void NYZFactory::popupMessage( const QString &message )
 {
 	int nl,nc;
+	QString anyKeyMsg = "(Press any key)";
+	int length = anyKeyMsg.length();
 #if 0
 	int y;
 	message.simplifyWhiteSpace();
@@ -219,14 +221,16 @@ void NYZFactory::popupMessage( const QString &message )
 	message.trimmed();
 #endif
 	nc = message.length();
-	nl = 1;
-	WINDOW *popup = newwin(nl+4, nc+4, ( LINES-nl )/2, (COLS-nc)/2);
+	nl = 6;
+	WINDOW *popup = newwin(nl, nc+4, ( LINES-nl )/2, (COLS-nc)/2);
 	box( popup, 0, 0 );
 
 #if QT_VERSION < 0x040000
 	mvwaddstr( popup, 2, 2, message.latin1() );
+	mvwaddstr( popup, 4, ((nc+4)-length)/2, anyKeyMsg.latin1() ); // Center the text.
 #else
 	mvwaddstr( popup, 2, 2, message.toUtf8().data() );
+	mvwaddstr( popup, 2, ((nc+4)-length)/2, anyKeyMsg.toUtf8().data() ); // Center the text.
 #endif
 	// TODO : use QString QString::section
 
@@ -234,7 +238,12 @@ void NYZFactory::popupMessage( const QString &message )
 
 	wrefresh(popup);
 	refresh();
-	sleep (2);
+	
+	// Leave half-delay mode for a moment.
+	nocbreak();
+	int c = wgetch(popup);
+	halfdelay(1);
+	
 	delwin( popup );
 	currentView->refreshScreen();
 }

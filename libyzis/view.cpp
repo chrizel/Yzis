@@ -714,7 +714,7 @@ void YZView::applyGoto( bool applyCursor ) {
 			YZSelection new_cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 			if ( cur_sel.drawFrom != NULL && *new_cur_sel.drawFrom > *cur_sel.drawFrom ) *new_cur_sel.drawFrom = *cur_sel.drawFrom;
 			if ( cur_sel.drawTo != NULL && *new_cur_sel.drawTo < *cur_sel.drawTo ) *new_cur_sel.drawTo = *cur_sel.drawTo;
-			paintEvent( dCurrentLeft, new_cur_sel.drawFrom->getY(), mColumnsVis, new_cur_sel.drawTo->getY() - new_cur_sel.drawFrom->getY() + 1 );
+			paintEvent( dCurrentLeft, new_cur_sel.drawFrom->getY() > 0 ? new_cur_sel.drawFrom->getY() - 1 : 0 , mColumnsVis, new_cur_sel.drawTo->getY() - new_cur_sel.drawFrom->getY() + 3 );
 		}
 
 		if ( !isLineVisible( dCursor->getY() ) )

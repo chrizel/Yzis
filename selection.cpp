@@ -287,7 +287,7 @@ void YZDoubleSelection::clear() {
 }
 
 YZDebugStream& operator<<( YZDebugStream& out, const YZDoubleSelection& s ) {
-	out << s.bSelection << s.sSelection;
+	out << *s.bSelection << *s.sSelection;
 	return out;
 }
 

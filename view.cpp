@@ -1307,6 +1307,12 @@ bool YZView::drawNextCol( ) {
 			// update HL
 			if ( drawMode ) rHLa += workCursor->bColIncrement;
 		}
+	} else if ( sCurLineLength == 0 && drawMode && curx == 0 ) {
+		ret = true;
+		lastChar = ' ';
+		charSelected = selectionPool->isSelected( workCursor->buffer() );
+		workCursor->setScreenX( 1 );
+		workCursor->setBufferX( 1 );
 	}
 
 	// can we go after the end of line buffer ?

@@ -26,6 +26,7 @@
 #define _GNU_SOURCE
 #endif
 #include <getopt.h> // getopt
+#include <locale.h>
 
 /* std c++ */
 #include <cstdlib>

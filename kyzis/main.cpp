@@ -28,6 +28,7 @@
 #include <qtranslator.h>
 #include <qtextcodec.h>
 #include <libintl.h>
+#include <locale.h>
 #include "libyzis/translator.h"
 #include "libyzis/session.h"
 #include "libyzis/view.h"

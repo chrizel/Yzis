@@ -1,6 +1,7 @@
 /*  This file is part of the Yzis libraries
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>,
- *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>,
+ *  Copyright (C) 2005 Erlend Hamberg <hamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -26,6 +27,7 @@
 
 #include "debug.h"
 
+#include "action.h"
 #include "buffer.h"
 #include "selection.h"
 #include "viewcursor.h"
@@ -134,6 +136,7 @@ void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand(":", (PoolMethod) &YZModeVisual::gotoExMode ) );
 	commands.append( new YZCommand("A", (PoolMethod) &YZModeVisual::commandAppend ) );
 	commands.append( new YZCommand("I", (PoolMethod) &YZModeVisual::commandInsert ) );
+	commands.append( new YZCommand("Y", (PoolMethod) &YZModeVisual::yankWholeLines ) );
 	//commands.append( new YZCommand("u", (PoolMethod) &YZModeVisual::toLowerCase) );
 	//commands.append( new YZCommand("U", (PoolMethod) &YZModeVisual::toUpperCase) );
 	commands.append( new YZCommand("c", &YZModeCommand::change) );
@@ -166,6 +169,21 @@ void YZModeVisual::commandInsert( const YZCommandArgs& args ) {
 //	YZCursor pos = qMin( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
 //	args.view->gotoxy( pos.getX(), pos.getY() );
 //}
+void YZModeVisual::yankWholeLines(const YZCommandArgs &args) {
+	YZInterval i = interval(args);
+	unsigned int lines = i.toPos().getY() - i.fromPos().getY() + 1;
+
+	if (args.view->modePool()->currentType() == YZMode::MODE_VISUAL_LINE) {
+		// visual line mode, we don't need to do anything special
+		args.view->myBuffer()->action()->copyArea( args.view, i, args.regs);
+	}
+	else {
+		// copy whole lines, even those who are only partially selected
+		args.view->myBuffer()->action()->copyLine( args.view, i.fromPos(), lines, args.regs );
+	}
+
+	args.view->modePool()->pop();
+}
 void YZModeVisual::translateToVisualLine( const YZCommandArgs& args ) {
 	args.view->modePool()->change( MODE_VISUAL_LINE, false ); // just translate (don't leave current mode)
 }

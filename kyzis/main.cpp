@@ -70,16 +70,13 @@ int main(int argc, char **argv) {
 		QDomElement dockConfig = domDoc.createElement("dockConfig");
 		domDoc.appendChild( dockConfig );
 
+		Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
+		widget->show();
+//		widget->resize( 600,400 );
 		if ( args->count() == 0 ) {
-			Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
 			widget->createBuffer();
-			widget->resize( 600,400 );
-			widget->show();
 		} else {
 			int i = 0;
-			Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
-			widget->resize( 600,400 );
-			widget->show();
 			for (; i < args->count(); i++ )
 				widget->createBuffer( args->url( i ).url() );
 		}

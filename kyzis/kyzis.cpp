@@ -62,6 +62,8 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	setupActions();
 	createShellGUI( true );
 	setWindowMenu();
+
+	setAutoSaveSettings();
 	
 }
 	

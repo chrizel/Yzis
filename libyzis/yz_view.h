@@ -131,9 +131,25 @@ public:
 	 */
 	QString deleteLine ( const QString& inputsBuff = QString::null );
 
+	/**
+	 * Opens a new line after current line
+	 */
 	QString openNewLineAfter ( const QString& inputsBuff = QString::null );
 	
+	/**
+	 * Opens a new line before current line
+	 */
 	QString openNewLineBefore ( const QString& inputsBuff = QString::null );
+
+	/**
+	 * Append after current character
+	 */
+	QString append ( const QString& inputsBuff = QString::null );
+
+	/**
+	 * Append at End of Line
+	 */
+	QString appendAtEOL ( const QString& inputsBuff = QString::null );
 
 	void redrawScreen();
 

@@ -2,7 +2,7 @@
   * kyzis
     added the command line with a combobox :) (does nothing yet)
   * libyzis
-    added command 'dd'
+    added command 'dd','o','O','a','A'
 
 2003-05-30 mikmak
   * libyzis

@@ -989,7 +989,8 @@ QString YZCommandPool::completeKeyword( const YZCommandArgs &args, bool forward 
 	//what word do we want to complete ...
 	YZNewMotionArgs arg (args.view, 1);
 	YZCursor begin = moveWordBackward( arg );
-	QStringList list = args.view->myBuffer()->getText(begin, pos);
+	YZCursor stop = YZCursor(args.view,pos.getX()-1, pos.getY());
+	QStringList list = args.view->myBuffer()->getText(begin, stop);
 	yzDebug() << "Completing word : " << list[0] << endl;
 	bool found = false;
 	unsigned int matchedLength = 0;
@@ -1000,7 +1001,7 @@ QString YZCommandPool::completeKeyword( const YZCommandArgs &args, bool forward 
 		result = args.view->myBuffer()->action()->search(args.view, word, pos,
 			YZCursor(args.view, 0, args.view->myBuffer()->lineCount()+1), !forward, &matchedLength, &found);
 	} else {
-		YZCursor start(args.view, pos.getX() - word.length(), pos.getY());
+		YZCursor start(args.view, pos.getX() - list[0].length(), pos.getY());
 		result = args.view->myBuffer()->action()->search(args.view, word, start,
 			YZCursor(args.view, 0, 0), !forward, &matchedLength, &found);
 	}
@@ -1009,7 +1010,7 @@ QString YZCommandPool::completeKeyword( const YZCommandArgs &args, bool forward 
 		YZCursor end (args.view, result.getX()+matchedLength-1, result.getY());
 		QStringList list2 = args.view->myBuffer()->getText(result, end );
 		yzDebug() << "Match : " << list2[0] << endl;
-		args.view->myBuffer()->action()->replaceText(args.view, begin, word.length(), list2[0]);
+		args.view->myBuffer()->action()->replaceText(args.view, begin, list[0].length(), list2[0]);
 		args.view->commitNextUndo();
 	}
 	return QString::null;

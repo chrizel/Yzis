@@ -196,8 +196,13 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	QString modifiers=_modifiers;
 	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
 
-	if ( YZSession::me->mMacros.isRecording() ) 
-		YZSession::me->mMacros.appendCurrentMacro(modifiers+_key);
+	if ( mRegs.count() > 0 ) {
+		for ( QValueList<QChar>::iterator it = mRegs.begin(); it != mRegs.end(); it++ ) {
+			QStringList list;
+		   	list << YZSession::mRegisters.getRegister( *it )[ 0 ] + modifiers + _key;
+			YZSession::mRegisters.setRegister( *it, list);
+		}
+	}
 
 	if ( modifiers.contains ("<SHIFT>")) {//usefull ?
 		key = key.upper();
@@ -1894,3 +1899,18 @@ YZCursor *YZView::getCursor() {
 YZCursor *YZView::getBufferCursor() {
 	return mainCursor->buffer();
 }
+
+void YZView::recordMacro( const QValueList<QChar> &regs ) {
+	mRegs = regs;
+}
+
+void YZView::stopRecordMacro() {
+	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != mRegs.end(); it++ ) {
+		QStringList list;
+		QString ne = YZSession::mRegisters.getRegister( *it )[ 0 ];
+		list << ne.mid( 0, ne.length() - 1 ); //remove the last 'q' which was recorded ;)
+		YZSession::mRegisters.setRegister( *it, list);
+	}
+	mRegs = QValueList<QChar>();
+}
+

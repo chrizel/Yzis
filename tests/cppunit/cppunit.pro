@@ -47,7 +47,9 @@ HEADERS   =  \
 	include/cppunit/extensions/TestSetUp.h	\
 	include/cppunit/extensions/TestSuiteBuilder.h	\
 	include/cppunit/extensions/TestSuiteFactory.h	\
-	include/cppunit/extensions/TypeInfoHelper.h	
+	include/cppunit/extensions/TypeInfoHelper.h	\
+	phil/PhilAsserts.h \
+	phil/PhilTestRunner.h
 
 SOURCES   =  \
 	src/cppunit/Asserter.cpp			\
@@ -71,7 +73,9 @@ SOURCES   =  \
 	src/cppunit/TextTestProgressListener.cpp	\
 	src/cppunit/TextTestResult.cpp		\
 	src/cppunit/TypeInfoHelper.cpp		\
-	src/cppunit/XmlOutputter.cpp		
+	src/cppunit/XmlOutputter.cpp		\
+	phil/PhilAsserts.cpp				\
+	phil/PhilTestRunner.cpp
 
 win32:SOURCES += DllMain.cpp
 

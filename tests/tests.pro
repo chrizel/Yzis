@@ -13,14 +13,10 @@ DEFINES += TEST
 unix:LIBS += -Lcppunit/bin -lcppunit
 unix:LIBS += -L../libyzis/libqtyzis/.libs -lqtyzis
 
-INCLUDEPATH += cppunit/include \
+INCLUDEPATH += cppunit/include cppunit/phil \
 				..
 
-HEADERS   =  testYZBuffer.h \
-			 PhilAsserts.h \
-			 PhilTestRunner.h
+HEADERS   =  testYZBuffer.h
 			 
-SOURCES   = PhilAsserts.cpp \
-			PhilTestRunner.cpp \
-			testYZBuffer.cpp \
+SOURCES   = testYZBuffer.cpp \
 			main.cpp

@@ -191,8 +191,11 @@ void KYZisFactory::customEvent (QCustomEvent *) {
 				break;
 			case YZ_EV_SET_CURSOR:
 				yzDebug() << "event SET_CURSOR " << event.id << endl;
-				v->editor->setCursor (event.setcursor.x, event.setcursor.y);
-				v->status->changeItem( QString("%1,%2-%3 (%4)").arg(event.setcursor.x ).arg( event.setcursor.y ).arg( event.setcursor.y2 ).arg( event.setcursor.percentage),99 );
+				v->editor->setCursor (event.setcursor.c, event.setcursor.l);
+				if (event.setcursor.c2!=event.setcursor.c)
+					v->status->changeItem( QString("%1,%2-%3 (%4)").arg(event.setcursor.l+1 ).arg( event.setcursor.c+1 ).arg( event.setcursor.c2+1 ).arg( event.setcursor.percentage),99 );
+				else
+					v->status->changeItem( QString("%1,%2 (%3)").arg(event.setcursor.l+1 ).arg( event.setcursor.c+1 ).arg( event.setcursor.percentage),99 );
 				break;
 			case YZ_EV_SET_STATUS:
 				yzDebug() << "event SET_STATUS " << event.id << " " << event.setstatus.text <<  endl;

@@ -45,18 +45,13 @@ public:
 	  * constructor. Each view is binded to a buffer, @arg lines is the initial number of lines that
 	  * this view can display
 	  */
-	NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b);
+	NYZView(WINDOW *_window, YZBuffer *b);
 	virtual ~NYZView();
 
-	void event_loop();
-	void flush_events();
-
-protected:
 	void handle_event(yz_event e);
 
+protected:
 	WINDOW		*window;	/* ncurses window to write to */
-	NYZSession	*session;
-
 	unsigned int	h, w;		/** height and width of the window */
 
 private:
@@ -73,15 +68,6 @@ private:
 	  * doesn't belong to the buffer anyway..)
 	  */
 	void printVoid( unsigned int line );
-
-	/**
-	 * Fill the map of keycodes -> Ncurses to Qt
-	 */
-	void initialiseKeycodes();
-
-	//XXX static ?
-	QMap<int,Qt::Key> keycodes; // map Ncurses to Qt codes
-
 };
 
 #endif // NYZ_VIEW_H

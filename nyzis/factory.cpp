@@ -19,10 +19,17 @@
  * $Id$
  */
 
+#include "debug.h"
+
 #include "factory.h"
 
-NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
-:YZSession(_session_name) {
+YZSession *NYZFactory::session = 0;
+NYZFactory *NYZFactory::self = 0;
+NYZView *NYZFactory::currentView=0;
+
+
+NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
+{
 
 	/* init screen */
 
@@ -32,6 +39,14 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	(void) cbreak();	/* take input chars one at a time, no wait for \n */
 	(void) noecho();	/* echo input - in color */
 	(void) nodelay(stdscr, TRUE);
+
+	if ( self ) {
+		yzError( ) << "Instanciating several NYZFactory, should Never happen, quitting..";
+		exit(1);
+	}
+	self = this;
+	session = new YZSession(session_name);
+	session->registerManager( this );
 
 	if (has_colors()) {
 		start_color();
@@ -51,15 +66,26 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 		init_pair(7, COLOR_WHITE,   COLOR_BLACK);
 	}
 
+	initialiseKeycodes();
+
 	/*
 	 * create a buffer and a view on it
 	 */
 	YZBuffer *bf;
 	if ( argc>1 )
 		bf = createBuffer(charv[1]);
-	else
-		//WRONG XXX  has to be a real file (mm)
-		bf = createBuffer("");
+	else {
+		char tmpname[ 20 ];
+		strcpy( tmpname, "/tmp/nyzis.XXXXXX" );
+		int fd;
+		fd = mkstemp(tmpname);
+		if ( -1 == fd ) {
+			yzError() << "nyzis : can't open temporary file, quitting"; 
+			exit(1);
+		}
+		close (fd); // maybe we should have a createBuffer(int fd) ? 
+		bf = createBuffer(tmpname);
+	}
 
 	screen = stdscr; // just an alias...
 	wattron(screen, A_BOLD);	// will be herited by subwin
@@ -69,8 +95,6 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	wbkgd(infobar, A_REVERSE);
 
 	statusbar = subwin(screen, 1, 0, LINES-1, 0);
-	WINDOW *window = subwin(screen, LINES-2, 0, 0, 0);
-
 	//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 	//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
@@ -79,32 +103,55 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 		wattron(statusbar, COLOR_PAIR(6));
 	}
 
-	registerManager( this );
-	new NYZView(this, window, bf);
+	createView(bf);
 }
 
-void NYZSession::postEvent( yz_event /*ev*/ ) {
+NYZFactory::~NYZFactory( )
+{
+	delete session;
+	session = 0;
+	self = 0;
+}
+
+void NYZFactory::postEvent( yz_event /*ev*/ ) {
 	// do nothing, we'll catch them in next flush_events()
 }
 
 
-void NYZSession::event_loop() {
-	for ( QMap<QString,YZBuffer*>::Iterator b = mBuffers.begin();b!=mBuffers.end(); ++b ) 
-		for ( QValueList<YZView*>::iterator it = b.data()->views().begin() ; it!=b.data()->views().end() ; it++ ) {
-			YZView *v = *it;
-			( static_cast<NYZView*>( v ) )->event_loop();
+void NYZFactory::event_loop() {
+	if ( !currentView )
+		yzError() << "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView";
+	/* main and only event loop in nyzis */
+	for (;;) {
+		/* this is a _basic_ event loop... will be improved */
+		int c = getch();
+		if (c!=ERR) {
+			int modifiers = 0;
+			if ( isupper( c ) ) modifiers |= YZIS::Shift;
+			if ( iscntrl( c ) ) modifiers |= YZIS::Ctrl;
+			//TODO: ALT/META	
+			if ( keycodes.contains ( c ) )
+				currentView->sendKey( keycodes[ c ], modifiers );
+			else
+				currentView->sendKey( c, modifiers );
 		}
+		flush_events();
+	}
 }
 
-void NYZSession::update_status(const QString& msg) {
-	werase(statusbar);
-	waddstr(statusbar, msg.local8Bit());
+void NYZFactory::flush_events()
+{
+	yz_event e;
+	if ( !currentView )
+		yzError() << "NYZFactory::flush_events() : arghhhhhhh event_loop called with no currentView";
 
-	wrefresh(statusbar);
+	/* flush event list */
+	while ( (e=NYZFactory::session->fetchNextEvent(/*myId*/)).id != YZ_EV_NOOP )
+		currentView->handle_event(e);
 }
 
 
-void NYZSession::update_infobar(int l, int c1, int c2, const QString& percentage) {
+void NYZFactory::update_infobar(int l, int c1, int c2, const QString& percentage) {
 	int h,w;
 	char * myfmt;
 
@@ -112,56 +159,187 @@ void NYZSession::update_infobar(int l, int c1, int c2, const QString& percentage
 	werase(infobar);
 
 	// prevent  gcc to use string
-	myfmt="%d,%d-%d";
-	mvwprintw( infobar, 0, w-17, myfmt, l,c1,c2 );
-	myfmt="%s";
+	if ( c1!=c2 ) {
+		myfmt="%d,%d-%d";
+		mvwprintw( infobar, 0, w-17, myfmt, l,c1,c2 );
+	} else {
+		myfmt="%d,%d";
+		mvwprintw( infobar, 0, w-17, myfmt, l,c1 );
+	}
 	mvwprintw( infobar, 0, w-4, myfmt, ( const char* )(percentage.local8Bit()) );
 
 	wrefresh(infobar);
 }
 
 
-void NYZSession::scrollDown( int /*lines*/ ) {
+void NYZFactory::scrollDown( int /*lines*/ ) {
 
 }
 
-void NYZSession::scrollUp ( int /*lines*/ ) {
+void NYZFactory::scrollUp ( int /*lines*/ ) {
 
 }
 
-void NYZSession::setCommandLineText( const QString& text ) {
+void NYZFactory::setCommandLineText( const QString& text )
+{
 	commandline= text;
-	update_status( text ); //XXX will that work ?
+	werase(statusbar);
+	waddstr(statusbar, text.local8Bit());
+	wrefresh(statusbar);
 }
 
-QString NYZSession::getCommandLineText() const {
+QString NYZFactory::getCommandLineText() const {
 	return commandline;
 }
 
-void NYZSession::quit( bool savePopup ) {
+void NYZFactory::quit( bool /*savePopup*/ ) {
 	//FIXME
 	exit( 0 );
 }
 
-void NYZSession::setCurrentView ( YZView *view ) {
- 
+void NYZFactory::setCurrentView ( YZView * view  )
+{
+	currentView = static_cast<NYZView*>(view);
+	session->currentViewChanged(view);
 }
 
-YZView* NYZSession::createView( YZBuffer* buffer ) {
-	//TODO
+YZView* NYZFactory::createView( YZBuffer* buffer ) {
+	WINDOW *window = subwin(screen, LINES-2, 0, 0, 0);
+	currentView = new NYZView(window, buffer);
+	session->currentViewChanged(currentView);
+	return currentView;
 }
 
-YZBuffer *NYZSession::createBuffer(const QString& path) {
-	YZBuffer *b = new YZBuffer( this, path );
-	addBuffer( b );
+YZBuffer *NYZFactory::createBuffer(const QString& path) {
+	YZBuffer *b = new YZBuffer( NYZFactory::session, path );
 	return b;
 }
 
-void NYZSession::popupMessage( const QString& message ) {
+void NYZFactory::popupMessage( const QString& /* message */ ) {
 	//TODO
 }
 
-void NYZSession::deleteView() {
-
+void NYZFactory::deleteView() {
+	delete currentView;
+	currentView = static_cast<NYZView*>(session->nextView());
+	if ( !currentView )
+		yzError() << "nyzys untested when no view is available...";
+	// TODO ; some kind of fake view when no view is available..
 }
+
+void NYZFactory::initialiseKeycodes() {
+	//initialise keycodes translation map
+	keycodes[ KEY_ESCAPE ] = Qt::Key_Escape;
+	keycodes[ KEY_ENTER ] = Qt::Key_Return;
+	keycodes[ KEY_RETURN ] = Qt::Key_Return;
+	//keycodes[ KEY_CODE_YES ] = ;
+	//keycodes[ KEY_MIN ] = ;
+	keycodes[ KEY_BREAK ] = Qt::Key_Escape;
+	//keycodes[ KEY_SRESET ] = ;
+	//keycodes[ KEY_RESET ] = ;
+	keycodes[ KEY_DOWN ] = Qt::Key_Down;
+	keycodes[ KEY_UP ] = Qt::Key_Up;
+	keycodes[ KEY_LEFT ] = Qt::Key_Left;
+	keycodes[ KEY_RIGHT ] = Qt::Key_Right;
+	keycodes[ KEY_HOME ] = Qt::Key_Home;
+	keycodes[ KEY_BACKSPACE ] = Qt::Key_Backspace;
+	//keycodes[ KEY_F0 ] = Qt::Key_F0;
+	keycodes[ KEY_F(1) ] = Qt::Key_F1;
+	keycodes[ KEY_F(2) ] = Qt::Key_F2;
+	keycodes[ KEY_F( 3 ) ] = Qt::Key_F3;
+	keycodes[ KEY_F( 4 ) ] = Qt::Key_F4;
+	keycodes[ KEY_F( 5 ) ] = Qt::Key_F5;
+	keycodes[ KEY_F( 6 ) ] = Qt::Key_F6;
+	keycodes[ KEY_F( 7 ) ] = Qt::Key_F7;
+	keycodes[ KEY_F( 8 ) ] = Qt::Key_F8;
+	keycodes[ KEY_F( 9 ) ] = Qt::Key_F9;
+	keycodes[ KEY_F( 10 ) ] = Qt::Key_F10;
+	keycodes[ KEY_F( 11 ) ] = Qt::Key_F11;
+	keycodes[ KEY_F( 12 ) ] = Qt::Key_F12;
+	//keycodes[ KEY_DL ] = ;
+	//keycodes[ KEY_IL ] = ;
+	keycodes[ KEY_DC ] = Qt::Key_Delete;
+	keycodes[ KEY_IC ] = Qt::Key_Insert;
+	//keycodes[ KEY_EIC ] = ;
+	keycodes[ KEY_CLEAR ] = Qt::Key_Clear;
+	//keycodes[ KEY_EOS ] = ;
+	//keycodes[ KEY_EOL ] = ;
+	//keycodes[ KEY_SF ] = ;
+	//keycodes[ KEY_SR ] = ;
+	keycodes[ KEY_NPAGE ] = Qt::Key_Next;
+	keycodes[ KEY_PPAGE ] = Qt::Key_Prior;
+	//keycodes[ KEY_STAB ] = ;
+	//keycodes[ KEY_CTAB ] = ;
+	//keycodes[ KEY_CATAB ] = ;
+	keycodes[ KEY_ENTER ] = Qt::Key_Return;
+	keycodes[ KEY_PRINT ] = Qt::Key_Print;
+	//keycodes[ KEY_LL ] = ;
+	keycodes[ KEY_A1 ] = Qt::Key_Home;
+	keycodes[ KEY_A3 ] = Qt::Key_Prior;
+	//keycodes[ KEY_B2 ] = ;
+	keycodes[ KEY_C1 ] = Qt::Key_End;
+	keycodes[ KEY_C3 ] = Qt::Key_Next;
+	keycodes[ KEY_BTAB ] = Qt::Key_Backtab;
+	//keycodes[ KEY_BEG ] = ;
+	//keycodes[ KEY_CANCEL ] = ;
+	//keycodes[ KEY_CLOSE ] = ;
+	//keycodes[ KEY_COMMAND ] = ;
+	//keycodes[ KEY_COPY ] = ;
+	//keycodes[ KEY_CREATE ] = ;
+	keycodes[ KEY_END ] = Qt::Key_End;
+	//keycodes[ KEY_EXIT ] = ;
+	//keycodes[ KEY_FIND ] = ;
+	//keycodes[ KEY_HELP ] = ;
+	//keycodes[ KEY_MARK ] = ;
+	//keycodes[ KEY_MESSAGE ] = ;
+	//keycodes[ KEY_MOVE ] = ;
+	//keycodes[ KEY_NEXT ] = ;
+	//keycodes[ KEY_OPEN ] = ;
+	//keycodes[ KEY_OPTIONS ] = ;
+	//keycodes[ KEY_PREVIOUS ] = ;
+	//keycodes[ KEY_REDO ] = ;
+	//keycodes[ KEY_REFERENCE ] = ;
+	//keycodes[ KEY_REFRESH ] = ;
+	//keycodes[ KEY_REPLACE ] = ;
+	//keycodes[ KEY_RESTART ] = ;
+	//keycodes[ KEY_RESUME ] = ;
+	//keycodes[ KEY_SAVE ] = ;
+	//keycodes[ KEY_SBEG ] = ;
+	/*keycodes[ KEY_SCANCEL ] = ;
+		keycodes[ KEY_SCOMMAND ] = ;
+		keycodes[ KEY_SCOPY ] = ;
+		keycodes[ KEY_SCREATE ] = ;
+		keycodes[ KEY_SDC ] = ;
+		keycodes[ KEY_SDL ] = ;
+		keycodes[ KEY_SELECT ] = ;
+		keycodes[ KEY_SEND ] = ;
+		keycodes[ KEY_SEOL ] = ;
+		keycodes[ KEY_SEXIT ] = ;
+		keycodes[ KEY_SFIND ] = ;
+		keycodes[ KEY_SHELP ] = ;
+		keycodes[ KEY_SHOME ] = ;
+		keycodes[ KEY_SIC ] = ;
+		keycodes[ KEY_SLEFT ] = ;
+		keycodes[ KEY_SMESSAGE ] = ;
+		keycodes[ KEY_SMOVE ] = ;
+		keycodes[ KEY_SNEXT ] = ;
+		keycodes[ KEY_SOPTIONS ] = ;
+		keycodes[ KEY_SPREVIOUS ] = ;
+		keycodes[ KEY_SPRINT ] = ;
+		keycodes[ KEY_SREDO ] = ;
+		keycodes[ KEY_SREPLACE ] = ;
+		keycodes[ KEY_SRIGHT ] = ;
+		keycodes[ KEY_SRSUME ] = ;
+		keycodes[ KEY_SSAVE ] = ;
+		keycodes[ KEY_SSUSPEND ] = ;
+		keycodes[ KEY_SUNDO ] = ;
+		keycodes[ KEY_SUSPEND ] = ;
+		keycodes[ KEY_UNDO ] = ;
+		keycodes[ KEY_MOUSE ] = ;
+		keycodes[ KEY_RESIZE ] = ;
+		keycodes[ KEY_EVENT ] = ;
+		keycodes[ KEY_MAX ] = ;*/
+}
+
+
 

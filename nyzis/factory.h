@@ -15,10 +15,10 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-#ifndef NYZ_SESSION_H
-#define NYZ_SESSION_H
+#ifndef NYZ_FACTORY_H
+#define NYZ_FACTORY_H
 /**
- * NYZSession - Ncurses main class for the whole session
+ * NYZFactory - Ncurses main class for the whole session
  */
 
 #include "viewwidget.h"
@@ -30,46 +30,64 @@
 #define NYZ_VIEW_MAX 300
 //#define NYZ_BUFFER_MAX 300
 
-class NYZSession : public YZSession, public Gui {
-	public:
-		/**
-		 * Constructor. Give a session name to identify/save/load sessions.
-		 */
-		NYZSession( int argc, char **charv, const char *_session_name = "default_session" );
+class NYZFactory : public Gui {
+public:
+	static YZSession *session;
+	static NYZFactory *self;
+	static NYZView *currentView;
 
-		void		event_loop();
-		void		update_status(const QString& msg);
-		void		update_infobar(int, int, int, const QString& msg);
+public:
+	/**
+	 * Constructor. Give a session name to identify/save/load sessions.
+	 */
+	NYZFactory( int argc, char **charv, const char *session_name = "default_nyzis_session" );
+	virtual ~NYZFactory( );
 
-		/* Gui */
-		virtual void postEvent(yz_event);
+	void		event_loop();
+	void		update_infobar(int, int, int, const QString& msg);
 
-		virtual void scrollDown(int lines=1);
-		virtual void scrollUp(int lines=1);
+	/* Gui */
+	virtual void postEvent(yz_event);
 
-		virtual QString getCommandLineText(void) const;
-		virtual void setCommandLineText( const QString& );
-		virtual void setFocusCommandLine() {}
-		virtual void setFocusMainWindow() {}
-		virtual void quit ( bool savePopup=true ) ;
-		virtual void setCurrentView ( YZView * );
-		virtual YZView* createView( YZBuffer* );
-		virtual	YZBuffer *createBuffer(const QString& path=QString::null);
-		virtual void popupMessage( const QString& message );
-		virtual void deleteView();
-		
-	private:
-		WINDOW		*screen;	// whole (ncurses) screen (== stdscr)
+	virtual void scrollDown(int lines=1);
+	virtual void scrollUp(int lines=1);
 
-		WINDOW		*statusbar;	// the one we type command in (:wq)
-		WINDOW		*infobar;	// the white one with filename/size/position...
+	virtual QString getCommandLineText(void) const;
+	virtual void setCommandLineText( const QString& );
+	virtual void setFocusCommandLine() {}
+	virtual void setFocusMainWindow() {}
+	virtual void quit ( bool savePopup=true ) ;
+	virtual void setCurrentView ( YZView * );
+	virtual YZView* createView( YZBuffer* );
+	virtual	YZBuffer *createBuffer(const QString& path=QString::null);
+	virtual void popupMessage( const QString& message );
+	virtual void deleteView();
 
-		//XXX QMap-me ;)
-		WINDOW		*windows[NYZ_VIEW_MAX];
-		int		windows_nb;
-		QString commandline;
+private:
+	void flush_events(void);
+	
+private:
+	WINDOW		*screen;	// whole (ncurses) screen (== stdscr)
+
+	WINDOW		*statusbar;	// the one we type command in (:wq)
+	WINDOW		*infobar;	// the white one with filename/size/position...
+
+	//XXX QMap-me ;)
+	WINDOW		*windows[NYZ_VIEW_MAX];
+	int		windows_nb;
+	QString commandline;
+
+	/**
+	 * Fill the map of keycodes -> Ncurses to Qt
+	 */
+	void initialiseKeycodes();
+
+	//XXX static ?
+	QMap<int,Qt::Key> keycodes; // map Ncurses to Qt codes
+
+
 
 };
 
-#endif // NYZ_SESSION_H
+#endif // NYZ_FACTORY_H
 

@@ -76,6 +76,7 @@ class YZCommandPool {
 		QString ( YZSession::*sessFunc ) (const QString& inputsBuff);
 		QString ( YZPlugin::*plugFunc ) (const QString& inputsBuff);
 		QString ( YZExExecutor::*exFunc ) (YZView *view, const QString& inputsBuff);
+		// TODO : shouldn't that be an union ?
 	};
 
 	public:

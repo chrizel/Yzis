@@ -1,3 +1,20 @@
+
+2004-02-23 orzel
+  * all 
+    fix compilation with autodetection of autoconf-2.59
+    fix (x,y) display in statusbar to look like in vim (but for tabs, still undone)
+  * libyzis
+    use /tmp/yzisdebug.log instead of /tmp/test.log
+    fixed bogus var names in cursor event (x was actually line #...)
+  * nyzis
+    implements an event loop
+    integrates event loop with libyzis
+    actual use of multi{buffer,view}s..
+    use Gui and YZSession the same way kyzis does for consistency
+    use mkstemp() for creating temporary filename
+    print filename command line when opening a new file
+
+
 2004-02-23 mikmak
   * kyzis
     support displaying TABs. doh I have tabstops and tabarrays !

@@ -6,7 +6,6 @@
  * YZBuffer - abstractino for buffer/file
  */
 
-//#include "yz_line.h"
 #include "yz_events.h"
 #include <qstringlist.h>
 

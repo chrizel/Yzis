@@ -187,6 +187,8 @@ private:
 	YZCursor moveRightWrap(const YZNewMotionArgs &args);
 	YZCursor moveDown(const YZNewMotionArgs &args);
 	YZCursor moveUp(const YZNewMotionArgs &args);
+	YZCursor movePageUp(const YZNewMotionArgs &args);
+	YZCursor movePageDown(const YZNewMotionArgs &args);
 	YZCursor moveWordForward(const YZNewMotionArgs &args);
 	YZCursor gotoSOL(const YZNewMotionArgs &args);
 	YZCursor gotoEOL(const YZNewMotionArgs &args);
@@ -228,6 +230,10 @@ private:
 	QString gotoMark(const YZCommandArgs &args);
 	QString undo(const YZCommandArgs &args);
 	QString redo(const YZCommandArgs &args);
+	QString recordMacro(const YZCommandArgs &args);
+	QString stopRecordMacro(const YZCommandArgs &args);
+	QString replayMacro(const YZCommandArgs &args);
+	QString deleteChar(const YZCommandArgs &args);
 	
 	friend class YZNewMotion;
 };

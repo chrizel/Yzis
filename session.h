@@ -28,6 +28,7 @@
 #include "syntaxhighlight.h"
 #include "options.h"
 #include "registers.h"
+#include "macros.h"
 
 class YZView;
 class YZBuffer;
@@ -310,6 +311,7 @@ class YZSession {
 		static int mNbBuffers;
 		static YZOption mOptions;
 		static YZRegisters mRegisters;
+		static YZMacros mMacros;
 		static YZSession *me;
 };
 

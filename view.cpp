@@ -137,16 +137,19 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 
 void YZView::sendKey( const QString& _key, const QString& modifiers) {
 	yzDebug() << "sendKey : " << _key << " " << modifiers << endl;
-	//TODO swapfile
-	//mBuffer->getSwapFile()->addToSwap( c, modifiers );
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );
 		return;
 	}
+	//TODO swapfile
+	//mBuffer->getSwapFile()->addToSwap( c, modifiers );
 
 	QString lin,key=_key;
-	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT" ) return; //we are not supposed to received modifiers in key
+	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
+
+	if ( YZSession::me->mMacros.isRecording() ) 
+		YZSession::me->mMacros.appendCurrentMacro(modifiers+_key);
 
 	if ( modifiers.contains ("<SHIFT>")) //usefull ?
 		key = key.upper();
@@ -415,7 +418,7 @@ void YZView::sendKey( const QString& _key, const QString& modifiers) {
 				purgeInputBuffer();
 				return;
 			}
-			mPreviousChars+=key;
+			mPreviousChars+=modifiers+key;
 			if ( mSession ) {
 				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
 				yzDebug() << "Command " << mPreviousChars << " gave state: " << state << endl;
@@ -790,6 +793,7 @@ QString YZView::moveDown( YZViewCursor* viewCursor, unsigned int nb_lines ) {
 QString YZView::moveUp( unsigned int nb_lines ) {
 	return moveUp( mainCursor, nb_lines );
 }
+
 QString YZView::moveUp( YZViewCursor* viewCursor, unsigned int nb_lines ) {
 	//execute the code
 	unsigned int nextLine = QMAX( viewCursor->bufferY() - nb_lines, 0 );
@@ -799,10 +803,10 @@ QString YZView::moveUp( YZViewCursor* viewCursor, unsigned int nb_lines ) {
 	return QString::null;
 }
 
-
 QString YZView::moveLeft( int nb_cols, bool wrap ) {
 	return moveLeft( mainCursor, nb_cols, wrap );
 }
+
 QString YZView::moveLeft( YZViewCursor* viewCursor, int nb_cols, bool wrap ) {
 	int x=int(viewCursor->bufferX());
 	unsigned int y=viewCursor->bufferY();
@@ -835,6 +839,7 @@ QString YZView::moveLeft( YZViewCursor* viewCursor, int nb_cols, bool wrap ) {
 QString YZView::moveRight( int nb_cols, bool wrap ) {
 	return moveRight( mainCursor, nb_cols, wrap );
 }
+
 QString YZView::moveRight( YZViewCursor* viewCursor, int nb_cols, bool wrap ) {
 	unsigned int x=viewCursor->bufferX();
 	unsigned int y=viewCursor->bufferY();
@@ -867,6 +872,7 @@ QString YZView::moveRight( YZViewCursor* viewCursor, int nb_cols, bool wrap ) {
 QString YZView::moveToFirstNonBlankOfLine( ) {
 	return moveToFirstNonBlankOfLine( mainCursor );
 }
+
 QString YZView::moveToFirstNonBlankOfLine( YZViewCursor* viewCursor ) {
 	//execute the code
 	gotoxy( viewCursor, mBuffer->firstNonBlankChar(viewCursor->bufferY()) , viewCursor->bufferY());
@@ -880,6 +886,7 @@ QString YZView::moveToFirstNonBlankOfLine( YZViewCursor* viewCursor ) {
 QString YZView::moveToStartOfLine( ) {
 	return moveToStartOfLine( mainCursor );
 }
+
 QString YZView::moveToStartOfLine( YZViewCursor* viewCursor ) {
 	//execute the code
 	gotoxy(viewCursor, 0 , viewCursor->bufferY());
@@ -946,6 +953,7 @@ QString YZView::gotoLine(const QString& inputsBuff ) {
 QString YZView::moveToEndOfLine( ) {
 	return moveToEndOfLine( mainCursor );
 }
+
 QString YZView::moveToEndOfLine( YZViewCursor* viewCursor ) {
 	gotoxy( viewCursor, mBuffer->textline( viewCursor->bufferY() ).length( ), viewCursor->bufferY());
 

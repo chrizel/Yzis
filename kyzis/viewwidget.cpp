@@ -169,6 +169,7 @@ void KYZisView::syncViewInfo() {
 
 	status->changeItem(fileInfo, 90);
 	mVScroll->setValue(getBufferCursor()->getY() );
+	emit cursorPositionChanged();
 	modeChanged();
 }
 
@@ -253,10 +254,6 @@ unsigned int KYZisView::cursorColumn()
 unsigned int KYZisView::cursorColumnReal()
 {
 	return getBufferCursor()->getX();
-}
-
-void KYZisView::cursorPositionChanged()
-{
 }
 
 void KYZisView::resetInfo() {

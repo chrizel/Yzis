@@ -40,6 +40,9 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 
 	friend class KYZisFactory;
 
+	signals :
+		void cursorPositionChanged();
+
 	public:
 		KYZisView(KYZisDoc *doc, QWidget *parent, const char *name=0);
 	 	virtual ~KYZisView();
@@ -90,7 +93,6 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		unsigned int cursorLine();
 		unsigned int cursorColumn();
 		unsigned int cursorColumnReal(); 
-		void cursorPositionChanged();
 		void fileSave();
 		void fileSaveAs();
 		void resetInfo();

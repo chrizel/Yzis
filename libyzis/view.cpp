@@ -610,7 +610,7 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else {
 		 refreshScreen();
 	}
-	if ( alignTop ) gotoStickyCol( mainCursor, mCurrentTop );
+	if ( alignTop ) gotodxy( mainCursor->screenX(), mCurrentTop );
 }
 
 /* recalculate cursor position + refresh screen */
@@ -976,6 +976,7 @@ void YZView::gotoLine( unsigned int line ) {
 
 	if ( getLocalBoolOption("startofline") ) {
 		gotoxy(mBuffer->firstNonBlankChar(line), line);
+		updateStickyCol( mainCursor );
 	} else {
 		gotoStickyCol( mainCursor, line );
 	}
@@ -1843,6 +1844,9 @@ void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
 void YZView::gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor ) {
 	if ( stickyCol == STICKY_COL_ENDLINE ) gotoxy( viewCursor, mBuffer->textline( Y ).length(), Y, applyCursor );
 	else gotodxy( viewCursor, stickyCol, Y, applyCursor );
+}
+void YZView::updateStickyCol( ) {
+	updateStickyCol( mainCursor );
 }
 void YZView::updateStickyCol( YZViewCursor* viewCursor ) {
 	stickyCol = viewCursor->screenX();

@@ -420,6 +420,43 @@ void KYZisEdit::initKeys() {
 	keys[ Qt::Key_F33 ] = "<F33>" ;
 	keys[ Qt::Key_F34 ] = "<F34>" ;
 	keys[ Qt::Key_F35 ] = "<F35>" ;
+
+	keys[ Qt::Key_A ] = "a";
+	keys[ Qt::Key_B ] = "b";
+	keys[ Qt::Key_C ] = "c";
+	keys[ Qt::Key_D ] = "d";
+	keys[ Qt::Key_E ] = "e";
+	keys[ Qt::Key_F ] = "f";
+	keys[ Qt::Key_G ] = "g";
+	keys[ Qt::Key_H ] = "h";
+	keys[ Qt::Key_I ] = "i";
+	keys[ Qt::Key_J ] = "j";
+	keys[ Qt::Key_K ] = "k";
+	keys[ Qt::Key_L ] = "l";
+	keys[ Qt::Key_M ] = "m";
+	keys[ Qt::Key_N ] = "n";
+	keys[ Qt::Key_O ] = "o";
+	keys[ Qt::Key_P ] = "p";
+	keys[ Qt::Key_Q ] = "q";
+	keys[ Qt::Key_R ] = "r";
+	keys[ Qt::Key_S ] = "s";
+	keys[ Qt::Key_T ] = "t";
+	keys[ Qt::Key_U ] = "u";
+	keys[ Qt::Key_V ] = "v";
+	keys[ Qt::Key_W ] = "w";
+	keys[ Qt::Key_X ] = "x";
+	keys[ Qt::Key_Y ] = "y";
+	keys[ Qt::Key_Z ] = "z";
+	keys[ Qt::Key_0 ] = "0";
+	keys[ Qt::Key_1 ] = "1";
+	keys[ Qt::Key_2 ] = "2";
+	keys[ Qt::Key_3 ] = "3";
+	keys[ Qt::Key_4 ] = "4";
+	keys[ Qt::Key_5 ] = "5";
+	keys[ Qt::Key_6 ] = "6";
+	keys[ Qt::Key_7 ] = "7";
+	keys[ Qt::Key_8 ] = "8";
+	keys[ Qt::Key_9 ] = "9";
 }
 
 const QString& KYZisEdit::convertKey( int key ) {

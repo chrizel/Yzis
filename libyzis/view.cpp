@@ -53,7 +53,7 @@
 #define GET_CHAR_WIDTH( c ) ( isFontFixed ? 1 : charWidth( c ) )
 
 static const QChar tabChar( '\t' );
-static QColor fake;
+static QColor fake( "white" );
 
 
 /**

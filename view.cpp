@@ -1773,9 +1773,8 @@ bool YZView::drawPrevLine( ) {
 	workCursor->sLineIncrement = 1;
 
 	if ( workCursor->bufferY() < mBuffer->lineCount() ) {
-		QString yl = mBuffer->textline( workCursor->bufferY() );
 		if ( ! workCursor->wrapNextLine ) {
-			sCurLine = yl;
+			sCurLine = mBuffer->textline( workCursor->bufferY() );
 			updateCurLine( );
 		}
 		if ( rCurrentLeft > 0 && ! workCursor->wrapNextLine ) {

@@ -353,6 +353,7 @@ void YzisSchemaConfigColorTab::readConfig (const QString& config)
   connect( m_tmarker   , SIGNAL( changed( const QColor& ) ), SIGNAL( changed() ) );
   connect( m_linenumber, SIGNAL( changed( const QColor& ) ), SIGNAL( changed() ) );
   connect( m_markers   , SIGNAL( changed( const QColor& ) ), SLOT( slotMarkerColorChanged( const QColor& ) ) );
+  YZSession::mOptions.setGroup( "Global" );
 }
 
 void YzisSchemaConfigColorTab::writeConfig (const QString& config)
@@ -371,6 +372,7 @@ void YzisSchemaConfigColorTab::writeConfig (const QString& config)
   {
     YZSession::mOptions.setQColorOption(QString("Color MarkType%1").arg(i + 1), m_markerColors[i]);
   }
+  YZSession::mOptions.setGroup( "Global" );
 }
 
 void YzisSchemaConfigColorTab::slotMarkerColorChanged( const QColor& color)
@@ -428,12 +430,14 @@ void YzisSchemaConfigFontTab::readConfig (const QString& config)
   m_fontchooser->setFont ( YZSession::mOptions.readQStringEntry("Font", f.toString()) );
   myFont = m_fontchooser->font();
   connect (m_fontchooser, SIGNAL (fontSelected( const QFont & )), this, SLOT (slotFontSelected( const QFont & )));
+  YZSession::mOptions.setGroup( "Global" );
 }
 
 void YzisSchemaConfigFontTab::writeConfig (const QString& config)
 {
   YZSession::mOptions.setGroup( config );
   YZSession::mOptions.setQStringOption("Font", myFont.toString() );
+  YZSession::mOptions.setGroup( "Global" );
 }
 
 //END FontConfig
@@ -502,6 +506,7 @@ void YzisSchemaConfigFontColorTab::schemaChanged (uint schema)
     "to edit from the popup menu.<p>You can unset the Background and Selected "
     "Background colors from the popup menu when appropriate.") );
 
+  YZSession::mOptions.setGroup( "Global" );
 }
 
 void YzisSchemaConfigFontColorTab::reload ()
@@ -646,6 +651,7 @@ void YzisSchemaConfigHighlightTab::schemaChanged (uint schema)
       new YzisStyleListItem( m_styles, itemData->name, l->at(itemData->defStyleNum), itemData );
     }
   }
+  YZSession::mOptions.setGroup( "Global" );
 }
 
 void YzisSchemaConfigHighlightTab::reload ()

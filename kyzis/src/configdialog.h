@@ -27,6 +27,7 @@
 #include <kconfigdialog.h>
 
 #include "settings.h"
+#include "hlconfig.h"
 
 class KYZisConfigDialog : public KConfigDialog {
 	Q_OBJECT
@@ -37,10 +38,11 @@ class KYZisConfigDialog : public KConfigDialog {
 
 	public slots:
 		void slotChanged();
+		void slotApply();
 
 	private :
 		void setupPages();
-	
+		YzisSchemaConfigPage *pageHL;
 };
 
 #endif

@@ -39,6 +39,12 @@
 #include <QDir>
 #endif
 
+#include "mode_command.h"
+#include "mode_ex.h"
+#include "mode_insert.h"
+#include "mode_search.h"
+#include "mode_visual.h"
+
 int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
 YZInternalOptionPool *YZSession::mOptions = 0;
@@ -50,10 +56,8 @@ YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
 	//if ( me != 0 ) int t = 5/( me - me );
 	//FIXME
-	mPool = new YZCommandPool();
-	mPool->initPool();
-	mExPool = new YZExCommandPool();
-	mExPool->initPool();
+
+	initModes();
 	mSearch = new YZSearch();
 	mSessionName = _sessionName;
 	mCurView = 0;
@@ -66,16 +70,54 @@ YZSession::YZSession( const QString& _sessionName ) {
 }
 
 YZSession::~YZSession() {
+	endModes();
 	delete YzisHlManager::self();
 	delete mSchemaManager;
-	delete mExPool;
-	delete mPool;
 	delete mSearch;
 	delete events;
 	delete mRegisters;
 	delete mOptions;
 	delete YZExLua::instance();
 	delete YZDebugBackend::instance();
+}
+
+void YZSession::initModes() {
+	mModes[ YZMode::MODE_INTRO ] = new YZModeIntro();
+	mModes[ YZMode::MODE_COMMAND ] = new YZModeCommand();
+	mModes[ YZMode::MODE_EX ] = new YZModeEx();
+	mModes[ YZMode::MODE_INSERT ] = new YZModeInsert();
+	mModes[ YZMode::MODE_REPLACE ] = new YZModeReplace();
+	mModes[ YZMode::MODE_VISUAL ] = new YZModeVisual();
+	mModes[ YZMode::MODE_VISUAL_LINE ] = new YZModeVisualLine();
+	mModes[ YZMode::MODE_SEARCH ] = new YZModeSearch();
+	mModes[ YZMode::MODE_SEARCH_BACKWARD ] = new YZModeSearchBackward();
+	mModes[ YZMode::MODE_COMPLETION ] = new YZModeCompletion();
+	YZModeMap::Iterator it;
+	for( it = mModes.begin(); it != mModes.end(); ++it )
+#if QT_VERSION < 0x040000
+		it.data()->init();
+#else
+		it.value()->init();
+#endif
+}
+void YZSession::endModes() {
+	YZModeMap::Iterator it;
+	for( it = mModes.begin(); it != mModes.end(); ++it )
+#if QT_VERSION < 0x040000
+		delete it.data();
+#else
+		delete it.value();
+#endif
+	mModes.clear();
+}
+YZModeMap YZSession::getModes() {
+	return mModes;
+}
+YZModeEx* YZSession::getExPool() {
+	return (YZModeEx*)mModes[ YZMode::MODE_EX ];
+}
+YZModeCommand* YZSession::getCommandPool() {
+	return (YZModeCommand*)mModes[ YZMode::MODE_COMMAND ];
 }
 
 void YZSession::guiStarted() {

@@ -40,13 +40,16 @@ void YZBound::open() {
 	mOpen = true;
 }
 void YZBound::close() {
-	mOpen = true;
+	mOpen = false;
 }
 const YZCursor& YZBound::pos() const {
 	return mPos;
 }
 bool YZBound::opened() const {
 	return mOpen;
+}
+bool YZBound::closed() const {
+	return !mOpen;
 }
 // operators on bounds
 bool operator==( const YZBound& left, const YZBound& right ) {

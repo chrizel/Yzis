@@ -187,60 +187,34 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 }
 
 
-//copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
 #if QT_VERSION < 0x040000
-void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+void YZAction::copyArea( YZView* pView, const YZInterval& i, const QValueList<QChar> &reg ) {
 #else
-void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
+void YZAction::copyArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg ) {
 #endif
-	yzDebug() << "Copying from " << beginCursor << " to " << endCursor << endl;
-
-	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
-		end(beginCursor <= endCursor ? endCursor : beginCursor);
-	YZBuffer *yzb=pView->myBuffer();
-	YZCursor top(0, 0, 0), bottom(0, yzb->textline(yzb->lineCount()-1).length(), yzb->lineCount()-1);
-	assert(begin >= top && end <= bottom);
-
 	QStringList buff;
-	unsigned int bX = begin.getX();
-	unsigned int bY = begin.getY();
-	unsigned int eX = end.getX();
-	unsigned int eY = end.getY();
+	unsigned int bX = i.fromPos().getX();
+	unsigned int bY = i.fromPos().getY();
+	unsigned int eX = i.toPos().getX();
+	unsigned int eY = i.toPos().getY();
 
-	if ( eY >= mBuffer->lineCount() ) return; //something's wrong => abort
+	bool copyWholeLines = ( bX == 0 && i.from().closed() && eX == 0 && i.to().opened() );
+	if ( copyWholeLines )
+		buff << QString::null;
 
-	if((pView->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL ||
-	   pView->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE)
-			&& yzb->textline(eY).length() > 0)
-		eX++;
+	if ( i.from().opened() ) ++bX;
+	if ( i.to().opened() && eX > 0 ) --eX;
 
-	YZCursor mPos( begin );
-
-	yzDebug() << "Cursors : " << bX << ","<< bY << " " << eX << "," << eY << endl;
-
-	bool lineCopied = bY != eY;
-
-	/* 1. copy the part of the current line */
-	QString b = mBuffer->textline( bY );
-	yzDebug() << "Current Line " << b << endl;
-	if ( !lineCopied )
-		buff << b.mid( bX, eX - bX );
-	else
-		buff << b.mid( bX );
-
-	/* 2. copy whole lines */
-	unsigned int curY = bY + 1;
-
-	while ( eY > curY )
-		buff << mBuffer->textline( curY++ );
-
-	/* 3. copy the part of the last line */
-	if ( lineCopied ) {
-		b = mBuffer->textline( curY );
-		buff << b.left( eX );
+	QString l = mBuffer->textline( bY );
+	if ( bY == eY ) {
+		buff << l.left( eX ).mid( bX );
+	} else {
+		buff << l.mid( bX );
+		for ( unsigned int y = bY+1; y < eY; y++ )
+			buff << mBuffer->textline( y );
+		buff << mBuffer->textline( eY ).left( eX );
 	}
 
-	QString text = buff.join( "\n" );
 #ifndef WIN32
 #if QT_VERSION < 0x040000
 	if ( QPaintDevice::x11AppDisplay() )
@@ -248,7 +222,7 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 	if ( QX11Info::display() )
 #endif
 #endif
-		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
+		QApplication::clipboard()->setText( mBuffer->getText( i ).join("\n"), QClipboard::Clipboard );
 	
 	yzDebug() << "Copied " << buff << endl;
 #if QT_VERSION < 0x040000
@@ -263,72 +237,30 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 
 }
 
-//copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
 #if QT_VERSION < 0x040000
-void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QValueList<QChar> &reg ) {
 #else
-void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
+void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg ) {
 #endif
 	CONFIGURE_VIEWS;
-	yzDebug() << "Deleting from " << beginCursor << " to " << endCursor << endl;
-	QStringList buff;
 
-	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
-		end(beginCursor <= endCursor ? endCursor : beginCursor);
-	YZBuffer *yzb=pView->myBuffer();
-	YZCursor top(0, 0, 0), bottom(0, yzb->textline(yzb->lineCount()-1).length(), yzb->lineCount()-1);
-	assert(begin >= top && end <= bottom);
+	QStringList buff = mBuffer->getText( i );
 
-	unsigned int bX = begin.getX();
-	unsigned int bY = begin.getY();
-	unsigned int eX = end.getX();
-	unsigned int eY = end.getY();
+	unsigned int bX = i.fromPos().getX();
+	unsigned int bY = i.fromPos().getY();
+	unsigned int eX = i.toPos().getX();
+	unsigned int eY = i.toPos().getY();
 
-	if ( eY >= mBuffer->lineCount() ) return; //something's wrong => abort
+	if ( i.from().opened() ) ++bX;
+	if ( i.to().opened() && eX > 0 ) --eX;
+	QString bL = mBuffer->textline( bY ).left( bX );
+	QString eL = mBuffer->textline( eY ).mid( eX + ( i.to().opened() && eX == 0 ? 0 : 1 ) );
 
-	if((pView->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL ||
-	   pView->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE)
-			&& yzb->textline(eY).length() > 0)
-		eX++;
+	unsigned int cLine = bY+1;
+	for( unsigned k = cLine; k <= eY; k++ )
+		mBuffer->deleteLine( cLine );
+	mBuffer->replaceLine( bL + eL, bY );
 
-	YZCursor mPos( begin );
-
-	yzDebug() << "Cursors : " << bX << ","<< bY << " " << eX << "," << eY << endl;
-
-	bool lineDeleted = bY != eY;
-
-	/* 1. delete the part of the current line */
-	QString b = mBuffer->textline( bY );
-	yzDebug() << "Current Line " << b << endl;
-	if ( !lineDeleted ) {
-		buff << b.mid( bX, eX - bX );
-		yzDebug() << "Deleting 1 " << buff << endl;
-		QString b2 = b.left( bX ) + b.mid( eX );
-		yzDebug() << "New line is " << b2 << endl;
-		mBuffer->replaceLine( b2 , bY );
-	} else {
-		buff << b.mid( bX );
-		QString b2 = b.left( bX );
-		mBuffer->replaceLine( b2 , bY );
-	}
-
-	/* 2. delete whole lines */
-	unsigned int curY = bY + 1;
-
-	yzDebug() << "End " << end.getY() << " " << curY << endl;
-	while ( eY > curY ) {
-		buff << mBuffer->textline( curY );
-		mBuffer->deleteLine( curY );
-		eY--;
-	}
-
-	if(lineDeleted) {
-		b = mBuffer->textline( curY );
-		buff << b.left( eX );
-		mBuffer->replaceLine( b.mid( eX ), curY );
-		if ( curY > 0 ) mergeNextLine( pView, curY - 1, false );
-	}
-	yzDebug() << "Deleted " << buff << endl;
 #if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
 	for ( ; it != endd; ++it )
@@ -338,8 +270,29 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 		YZSession::mRegisters->setRegister( reg.at(ab), buff );
 #endif
 
-	pView->gotoxyAndStick( beginCursor.getX(), beginCursor.getY() );
+	pView->gotoxyAndStick( bX, bY );
+
 	COMMIT_VIEWS_CHANGES;
+}
+
+#if QT_VERSION < 0x040000
+void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+#else
+void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
+#endif
+	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
+		end(beginCursor <= endCursor ? endCursor : beginCursor);
+	copyArea( pView, YZInterval(begin, end), reg );
+}
+
+#if QT_VERSION < 0x040000
+void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+#else
+void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
+#endif
+	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
+		end(beginCursor <= endCursor ? endCursor : beginCursor);
+	deleteArea( pView, YZInterval(begin, end), reg );
 }
 
 void YZAction::mergeNextLine( YZView* pView, unsigned int y, bool stripSpaces ) {
@@ -477,17 +430,10 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 	int currentMatchColumn;
 	QString l;
 	
-#if QT_VERSION < 0x040000
-	unsigned int i = reverseSearch ? QMIN( (int)mBegin.getY(), (int)(pView->myBuffer()->lineCount() - 1) ) 
-					: QMAX( (int)mBegin.getY(), 0 );
-	unsigned int maxLine = reverseSearch ? QMAX( (int)mEnd.getY(), 0 ) : 
-						QMIN( (int)mEnd.getY(), (int)(pView->myBuffer()->lineCount() - 1) );
-#else
 	unsigned int i = reverseSearch ? qMin( (int)mBegin.getY(), (int)(pView->myBuffer()->lineCount() - 1) ) 
 					: qMax( (int)mBegin.getY(), 0 );
 	unsigned int maxLine = reverseSearch ? qMax( (int)mEnd.getY(), 0 ) : 
 						qMin( (int)mEnd.getY(), (int)(pView->myBuffer()->lineCount() - 1) );
-#endif
 	for ( ; ( reverseSearch && i >= maxLine ) || ( !reverseSearch && i <= maxLine ) ; reverseSearch ? i-- : i++ ) {
 		if ( i == ( unsigned int )( -1 ) ) break; //woups ;)
 		l = pView->myBuffer()->textline( i );

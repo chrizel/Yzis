@@ -51,7 +51,6 @@
 #include "swapfile.h"
 #include "mark.h"
 #include "action.h"
-#include "commands.h"
 #include "session.h"
 #include "linesearch.h"
 #include "mapping.h"
@@ -79,16 +78,15 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mLinesVis = lines;
 	mColumnsVis = 0;
 
-	//order matters here ;)
-	mModes << tr("[ Insert ]") << tr("[ Replace ]") <<tr("[ Awaiting Command ]") <<tr("[ Ex ]") <<tr("[ Search ]")
-			<< tr("[ Open ]") << tr("[ Introduction ]") << tr("{ Completion }") << tr("[ Visual ]") << tr("[ Visual Line ]") << tr("Yzis Ready");
+	mModePool = new YZModePool( this );
+
 	mainCursor = new YZViewCursor( this );
 	workCursor = new YZViewCursor( this );
 	keepCursor = new YZViewCursor( this );
 
 	scrollCursor = new YZViewCursor( this );
 	/* start of visual mode */
-	visualCursor = new YZViewCursor( this );
+	mVisualCursor = new YZViewCursor( this );
 
 	origPos = new YZCursor( this );
 
@@ -100,9 +98,6 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	incSearchResult = new YZCursor( this );
 
 	stickyCol = 0;
-
-	mPrevMode = mMode = YZ_VIEW_MODE_COMMAND;
-	mapMode = 0;
 
 	QString line = mBuffer->textline(scrollCursor->bufferY());
 
@@ -140,9 +135,12 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	m_completionCursor = new YZCursor(this);
 
 	abortPaintEvent();
+
+	mModePool->change( YZMode::MODE_COMMAND );
 }
 
 YZView::~YZView() {
+	mModePool->stop();
 	yzDebug() << "YZView : Deleting view " << myId << endl;
 	mBuffer->rmView(this); //make my buffer forget about me
 
@@ -151,7 +149,7 @@ YZView::~YZView() {
 	delete keepCursor;
 	delete workCursor;
 	delete origPos;
-	delete visualCursor;
+	delete mVisualCursor;
 	delete selectionPool;
 	delete mPaintSelection;
 	delete beginChanges;
@@ -160,29 +158,11 @@ YZView::~YZView() {
 	delete incSearchResult;
 	delete mLineSearch;
 	delete mSearchBegin;
+	delete mModePool;
 }
 
 void YZView::setupKeys() {
-	// register keys with modifiers
-#if QT_VERSION < 0x040000
-	QPtrList<const YZCommand> commands = mSession->getPool()->commands;
-	for ( commands.first(); commands.current(); commands.next() ) {
-		const QString& keys = commands.current()->keySeq();
-		if ( keys.find( "<CTRL>" ) > -1 || keys.find( "<ALT>" ) > -1 ) {
-			yzDebug() << "registerModifierKeys " << keys << endl;
-			registerModifierKeys( keys );
-		}
-	}
-#else
-	QList<YZCommand*> commands = mSession->getPool()->commands;
-	for ( int ab = 0 ; ab < commands.size(); ++ab) {
-		const QString& keys = commands.at(ab)->keySeq();
-		if ( keys.indexOf( "<CTRL>" ) > -1 || keys.indexOf( "<ALT>" ) > -1 ) {
-			yzDebug() << "registerModifierKeys " << keys << endl;
-			registerModifierKeys( keys );
-		}
-	}
-#endif
+	mModePool->registerModifierKeys();
 }
 
 void YZView::setVisibleArea(int c, int l, bool refresh) {
@@ -263,6 +243,10 @@ void YZView::sendMultipleKey(const QString& _keys) {
 	}
 }
 
+void YZView::displayIntro() {
+	mModePool->change( YZMode::MODE_INTRO );
+}
+
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 //	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 
@@ -287,6 +271,15 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 #endif
 	}
 
+	/** rightleft mapping **/
+	if ( getLocalBoolOption("rightleft") && ( mModePool->current()->mapMode() & (visual|normal) ) ) {
+#define SWITCH_KEY( a, b ) \
+	if ( key == a ) key = b; \
+	else if ( key == b ) key = a
+		SWITCH_KEY( "<RIGHT>", "<LEFT>" );
+		SWITCH_KEY( "h", "l" );
+	}
+
 	if ( modifiers.contains ("<SHIFT>")) {//usefull ?
 #if QT_VERSION < 0x040000
 		key = key.upper();
@@ -296,535 +289,11 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		modifiers.remove( "<SHIFT>" );
 	}
 
-	bool test = false;
+	mPreviousChars += modifiers + key;
 
-	bool cindent = getLocalBoolOption( "cindent" );
-
-	/** rightleft mapping **/
-	if ( getLocalBoolOption( "rightleft" ) &&
-		( mMode == YZ_VIEW_MODE_COMMAND || mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE )
-	) {
-#define SWITCH_KEY( a, b ) \
-	if ( key == a ) key = b; \
-	else if ( key == b ) key = a
-		SWITCH_KEY( "<RIGHT>", "<LEFT>" );
-		SWITCH_KEY( "h", "l" );
-	}
-
-	//check mappings
-	if ( mMode == YZ_VIEW_MODE_INSERT || mMode == YZ_VIEW_MODE_REPLACE || mMode == YZ_VIEW_MODE_COMPLETION )
-		mapMode = mapMode | insert;
-	else if ( mMode == YZ_VIEW_MODE_COMMAND || mMode == YZ_VIEW_MODE_INTRO || mMode == YZ_VIEW_MODE_OPEN )
-		mapMode = mapMode | normal;
-	else if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE )
-		mapMode = mapMode | visual;
-	else if ( mMode == YZ_VIEW_MODE_EX || mMode == YZ_VIEW_MODE_SEARCH )
-		mapMode = mapMode | cmdline;
-
-	bool pendingMapp = false;
-	bool map = false;
-	cmd_state state;
-	QString temp;
-
-	switch(mMode) {
-		case YZ_VIEW_MODE_COMPLETION:
-			temp = modifiers + key;
-			pendingMapp = YZMapping::self()->applyMappings(temp, mapMode, &map);
-			//the result of a mapping could be multiple keys so we can't parse them directly
-			if ( map ) {
-				QString n = temp;
-				purgeInputBuffer();
-				sendMultipleKey(n);
-				return;
-			}
-			if ( modifiers+key == "<CTRL>p" ) {
-				if (m_word2Complete.isEmpty())
-					initCompletion();
-				QString result = doComplete(false);
-				if (!result.isNull()) {
-					mBuffer->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
-					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
-				}
-				purgeInputBuffer();
-				return;
-			} else if ( modifiers+key == "<CTRL>n" ) {
-				if (m_word2Complete.isEmpty())
-					initCompletion();
-				QString result = doComplete(true);
-				if (!result.isNull()) {
-					mBuffer->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
-					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
-				}
-				purgeInputBuffer();
-				return;
-			} else if ( modifiers+key == "<CTRL>x" ) {
-				yzDebug() << "Skip CTRLx in completion mode" << endl;
-				purgeInputBuffer();
-				return;
-			} else if ( modifiers+key == "<ESC>" ) {
-				myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), m_word2Complete);
-				gotoxy(m_completionStart->getX()+m_word2Complete.length(),mainCursor->bufferY());
-				leaveCompletionMode();
-				gotoPreviousMode();
-				purgeInputBuffer();
-				return;
-			} else {
-				leaveCompletionMode();
-				gotoPreviousMode();
-			}
-		case YZ_VIEW_MODE_INSERT:
-			mPreviousChars += modifiers + key;
-			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode, &map);
-			//the result of a mapping could be multiple keys so we can't parse them directly
-			if ( map ) {
-				QString n = mPreviousChars;
-				purgeInputBuffer();
-				sendMultipleKey(n);
-				return;
-			}
-			if ( mPreviousChars == "<HOME>" ) {
-				moveToStartOfLine( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<END>" ) {
-				moveToEndOfLine( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<INS>" ) {
-				gotoReplaceMode( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<ALT>:" ) {
-				gotoExMode();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<ESC>" ) {
-				gotoPreviousMode();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<ENTER>" ) {
-				setPaintAutoCommit( false );
-				if ( cindent ) {
-					indent();
-				} else {
-					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
-					QStringList results = YZSession::events->exec("INDENT_ON_ENTER", this);
-					if (results.count() > 0 ) {
-						if (results[0].length()!=0) {
-#if QT_VERSION < 0x040000
-							mBuffer->action()->replaceLine( this, mainCursor->bufferY(), results[0] + mBuffer->textline( mainCursor->bufferY() ).stripWhiteSpace() );
-#else
-							mBuffer->action()->replaceLine( this, mainCursor->bufferY(), results[0] + mBuffer->textline( mainCursor->bufferY() ).trimmed() );
-#endif
-							gotoxy(results[0].length(),mainCursor->bufferY());
-						}
-					}
-				}
-				commitPaintEvent();
-				updateStickyCol( mainCursor );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<DOWN>" ) {
-				moveDown( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<LEFT>" ) {
-				moveLeft();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<RIGHT>" ) {
-				moveRight();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<UP>" ) {
-				moveUp( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<BS>" ) {
-				setPaintAutoCommit( false );
-				if (mainCursor->bufferX() == 0 && mainCursor->bufferY() > 0 && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-					mBuffer->action()->mergeNextLine( this, mainCursor->bufferY() - 1 );
-				} else if ( mainCursor->bufferX() > 0 )
-					mBuffer->action()->deleteChar( this, mainCursor->bufferX() - 1, mainCursor->bufferY(), 1 );
-				commitNextUndo();
-				commitPaintEvent();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<DEL>" ) {
-				setPaintAutoCommit( false );
-				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-					mBuffer->action()->mergeNextLine( this, mainCursor->bufferY() );
-					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-
-				} else {
-					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-				}
-				commitNextUndo();
-				commitPaintEvent();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<PDOWN>" ) {
-				gotoStickyCol( mainCursor, mainCursor->bufferY() + mLinesVis );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<PUP>" ) {
-				gotoStickyCol( mainCursor, mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
-				purgeInputBuffer();
-				return;
-			} else {
-				if ( mPreviousChars == "<TAB>" ) {
-					mPreviousChars="\t";
-				}
-				if ( mPreviousChars == "<CTRL>x" ) {
-					gotoCompletionMode();
-					purgeInputBuffer();
-					return;
-				}
-				if ( mPreviousChars.startsWith("<CTRL>") ) {
-					state=mSession->getPool()->execCommand(this, mPreviousChars);
-					switch(state) {
-						case CMD_ERROR:
-						case CMD_OK:
-							purgeInputBuffer();
-							break;
-						case OPERATOR_PENDING:
-							mapMode = pendingop;
-						default:
-							break;
-					}
-					return;
-				}
-				if (!pendingMapp) {
-					setPaintAutoCommit( false );
-					mBuffer->action()->insertChar( this, mainCursor->buffer(), mPreviousChars );
-					if ( cindent && mPreviousChars == "}" )
-						reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
-					QStringList ikeys = mBuffer->getLocalStringListOption("indentkeys");
-					if ( ikeys.contains(mPreviousChars) )
-						YZSession::events->exec("INDENT_ON_KEY", this);
-					purgeInputBuffer(); //be safe in case we mistyped a CTRL command just before
-					commitPaintEvent();
-				}
-				return;
-			}
-			break;
-
-		case YZ_VIEW_MODE_REPLACE:
-			mPreviousChars += modifiers + key;
-			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode, &map);
-			if ( map ) {
-				QString n = mPreviousChars;
-				purgeInputBuffer();
-				sendMultipleKey(n);
-				return;
-			}
-			if ( mPreviousChars == "<HOME>" ) {
-				moveToStartOfLine( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<END>" ) {
-				moveToEndOfLine( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<INS>" ) {
-				gotoInsertMode( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<DEL>" ) {
-				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-					mBuffer->action()->mergeNextLine( this, mainCursor->bufferY() );
-					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-
-				} else {
-					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-				}
-				commitNextUndo();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<ALT>:" ) {
-				gotoExMode();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<ESC>" ) {
-				gotoPreviousMode();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<RETURN>" ) {
-				test = mainCursor->bufferX() == 0;
-				mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
-				if ( test ) {
-					gotoxy( 0, mainCursor->bufferY() + 1 );
-					updateStickyCol( mainCursor );
-				}
-				commitNextUndo();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<DOWN>" ) {
-				moveDown( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<BS>" || mPreviousChars == "<LEFT>" ) {
-				moveLeft();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<RIGHT>" ) {
-				moveRight();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<UP>" ) {
-				moveUp( );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<TAB>" ) {
-				mBuffer->action()->replaceChar( this, mainCursor->buffer(), "\t" );
-				commitNextUndo();
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<PDOWN>" ) {
-				gotoStickyCol( mainCursor, mainCursor->bufferY() + mLinesVis );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars == "<PUP>" ) {
-				gotoStickyCol( mainCursor, mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
-				purgeInputBuffer();
-				return;
-			} else if ( mPreviousChars.startsWith("<CTRL>x") ) {
-				gotoCompletionMode();	
-				purgeInputBuffer();
-				return;
-			} else {
-				if ( mPreviousChars.startsWith("<CTRL>") ) {
-					state=mSession->getPool()->execCommand(this, mPreviousChars);
-					switch(state) {
-						case CMD_ERROR:
-						case CMD_OK:
-							purgeInputBuffer();
-							break;
-						case OPERATOR_PENDING:
-							mapMode = pendingop;
-						default:
-							break;
-					}
-					return;
-				}
-				if (!pendingMapp) {
-					mBuffer->action()->replaceChar( this, mainCursor->buffer(), mPreviousChars );
-					commitNextUndo();
-					purgeInputBuffer();
-				}
-				return;
-			}
-			break;
-
-		case YZ_VIEW_MODE_SEARCH:
-		{
-			if ( key == "<ENTER>" ) {
-				yzDebug() << "Current search : " << getCommandLineText();
-
-				bool found = false;
-				YZCursor pos;
-				if ( getCommandLineText().isEmpty() ) {
-					if ( reverseSearch ) {
-						pos = YZSession::me->search()->replayBackward( this, &found );
-					} else {
-						pos = YZSession::me->search()->replayForward( this, &found );
-					}
-				} else {
-					mSearchHistory[ mCurrentSearchItem++ ] = getCommandLineText();
-					if ( reverseSearch ) {
-							gotoxy( mainCursor->bufferX() + 1, mainCursor->bufferY(), false );
-						pos = YZSession::me->search()->backward( this, getCommandLineText(), &found );
-					} else {
-						pos = YZSession::me->search()->forward( this, getCommandLineText(), &found );
-					}
-					if ( getLocalBoolOption( "incsearch" ) && incSearchFound ) {
-						pos = *incSearchResult;
-						incSearchFound = false;
-					}
-				}
-				if ( found ) {
-					gotoxy( pos.getX(), pos.getY() );
-				} else {
-					displayInfo(tr("No match"));
-				}
-				setCommandLineText( "" );
-				mSession->setFocusMainWindow();
-				gotoPreviousMode();
-				return;
-			} else if ( key == "<DOWN>" ) {
-				if(mSearchHistory[mCurrentSearchItem].isEmpty())
-					return;
-				mCurrentSearchItem++;
-				setCommandLineText( mSearchHistory[mCurrentSearchItem] );
-				return;
-			} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
-				return;
-			} else if ( key == "<UP>" ) {
-				if(mCurrentSearchItem == 0)
-					return;
-
-				mCurrentSearchItem--;
-				setCommandLineText( mSearchHistory[mCurrentSearchItem] );
-				return;
-			} else if ( mPreviousChars == "<ALT>:" ) {
-				gotoExMode();
-				purgeInputBuffer();
-				return;
-			} else if ( key == "<ESC>" ) {
-				setCommandLineText( "" );
-				mSession->setFocusMainWindow();
-				gotoxy(mSearchBegin->getX(), mSearchBegin->getY());
-				if ( getLocalBoolOption( "incsearch" ) ) {
-					setPaintAutoCommit( false );
-					incSearchFound = false;
-					sendPaintEvent( selectionPool->search()->map() );
-					selectionPool->search()->clear();
-					commitPaintEvent();
-				}
-				gotoPreviousMode();
-				return;
-			} else if ( key == "<BS>" ) {
-				QString back = getCommandLineText();
-				setCommandLineText(back.remove(back.length() - 1, 1));
-			} else {
-				setCommandLineText( getCommandLineText() + key );
-			}
-
-			if ( getLocalBoolOption("incsearch") ) {
-				setPaintAutoCommit( false );
-				YZCursor end = YZCursor( this, 0, 0 );
-				if ( ! reverseSearch ) {
-					end.setY( mBuffer->lineCount() - 1 );
-					end.setX( mBuffer->textline( end.getY() ).length() );
-				}
-				unsigned int matchlength;
-				incSearchResult->setCursor( mBuffer->action()->search( this, getCommandLineText(), mSearchBegin, end, 
-										reverseSearch, &matchlength, &incSearchFound ) );
-				if ( incSearchFound ) {
-					if ( getLocalBoolOption("hlsearch") ) {
-						YZCursor endResult( incSearchResult );
-						endResult.setX( endResult.getX() + matchlength - 1 );
-						selectionPool->search()->addInterval( YZInterval(incSearchResult, endResult) );
-						sendPaintEvent( selectionPool->search()->map() );
-					}
-					gotoxy( incSearchResult->getX(), incSearchResult->getY() );
-					updateStickyCol( mainCursor );
-				} else {
-					gotoxy( mSearchBegin->getX(), mSearchBegin->getY() );
-					sendPaintEvent( selectionPool->search()->map() );
-					selectionPool->search()->clear();
-				}
-				commitPaintEvent();
-			}
-			break;
-		}
-
-		case YZ_VIEW_MODE_EX:
-			if ( key == "<ENTER>" ) {
-				yzDebug() << "Current command EX : " << getCommandLineText();
-				if(getCommandLineText().isEmpty())
-					return;
-
-				mExHistory[mCurrentExItem] = getCommandLineText();
-				mCurrentExItem++;
-				QString cmd = getCommandLineText();
-				setCommandLineText( "" );
-				mSession->setFocusMainWindow();
-				gotoPreviousMode();
-				mSession->getExPool()->execCommand( this, cmd );
-				//we'll need to check that undo step ...
-				//breaks when we quit ;), we'll check after the EX rework
-				//commitNextUndo();
-				return;
-			} else if ( key == "<DOWN>" ) {
-				if(mExHistory[mCurrentExItem].isEmpty())
-					return;
-
-				mCurrentExItem++;
-				setCommandLineText( mExHistory[mCurrentExItem] );
-				return;
-			} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
-				return;
-			} else if ( key == "<UP>" ) {
-				if(mCurrentExItem == 0)
-					return;
-
-				mCurrentExItem--;
-				setCommandLineText( mExHistory[mCurrentExItem] );
-				return;
-			} else if ( key == "<ESC>" ) {
-				setCommandLineText( "" );
-				mSession->setFocusMainWindow();
-				gotoPreviousMode();
-				return;
-			} else if ( key == "<TAB>" ) {
-				//ignore for now
-				return;
-			} else if ( key == "<BS>" ) {
-				QString back = getCommandLineText();
-				if ( back.isEmpty() ) {
-					mSession->setFocusMainWindow();
-					gotoPreviousMode();
-					return;
-				}
-				setCommandLineText(back.remove(back.length() - 1, 1));
-				return;
-			} else {
-				setCommandLineText( getCommandLineText() + key );
-				return;
-			}
-			break;
-
-		//all these use Normal Commands in commands.cpp
-		case YZ_VIEW_MODE_VISUAL:
-		case YZ_VIEW_MODE_VISUAL_LINE :
-		case YZ_VIEW_MODE_COMMAND:
-			{
-				mPreviousChars+=modifiers+key;
-
-				pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode, &map);
-				if ( map ) {
-					QString n = mPreviousChars;
-					purgeInputBuffer();
-					sendMultipleKey(n);
-					return;
-				}
-				
-				setPaintAutoCommit( false );
-				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
-				switch(state) {
-					case CMD_ERROR:
-						if (pendingMapp) break;
-					case CMD_OK:
-						purgeInputBuffer();
-						break;
-					case OPERATOR_PENDING:
-						mapMode = pendingop;
-					default:
-						break;
-				}
-				commitPaintEvent();
-			}
-			break;
-
-		case YZ_VIEW_MODE_OPEN:
-			if ( key == ":" || key == "Q" ) {
-				gotoExMode();
-				break;
-			} else {
-				break;
-			}
-			break;
-		case YZ_VIEW_MODE_INTRO:
-			clearIntro();
-			recalcScreen();
-			gotoCommandMode();
-			sendKey( _key, _modifiers );
-			break;
-		default:
-			yzDebug() << "Unknown MODE" << endl;
-			purgeInputBuffer();
-	};
+	setPaintAutoCommit( false );
+	mModePool->sendKey( key, modifiers );
+	commitPaintEvent();
 }
 
 YZSelectionMap YZView::visualSelection() {
@@ -895,50 +364,6 @@ QString YZView::centerLine( const QString& s ) {
 	spacer.fill( ' ', nspaces );
 	spacer.append( s );
 	return spacer;
-}
-
-void YZView::displayIntro() {
-	yzDebug() << "File: " __FILE__ << " Line: " << __LINE__ << endl;
-	unsigned int i;
-	unsigned int linesInIntro = 11; // Update this is if you change # of lines in message
-	unsigned int vMargin = mLinesVis > linesInIntro ? mLinesVis - linesInIntro : 0;
-	vMargin = ( vMargin + 1 ) / 2; // round up to have enough lines so '~' isn't shown
-
-	/* Don't record these in the undo list */
-	mBuffer->undoBuffer()->setInsideUndo( true );
-
-	gotoxy( 0, 0 );
-	for (i = 0; i < vMargin; i++ ) mBuffer->appendLine("");
-	mBuffer->appendLine( centerLine( VERSION_CHAR_LONG ) );
-	if ( VERSION_CHAR_ST == VERSION_CHAR_STATE2 )
-		mBuffer->appendLine( centerLine( VERSION_CHAR_DATE ) );
-	mBuffer->appendLine( centerLine( VERSION_CHAR_ST  ) );
-	mBuffer->appendLine( "" );
-	mBuffer->appendLine( centerLine( "http://www.yzis.org" ) );
-	mBuffer->appendLine( centerLine( "contact/patches/requests: yzis-dev@yzis.org" ) );
-	mBuffer->appendLine( "" );
-	mBuffer->appendLine( centerLine( "Yzis is distributed under the terms of the GPL v2" ) );
-	mBuffer->appendLine( "" );
-	mBuffer->appendLine( centerLine( "please report bugs at http://bugs.yzis.org" ) );
-	for ( i = 0; i < vMargin; i++ ) mBuffer->appendLine( "" );
-
-	mBuffer->undoBuffer()->setInsideUndo( false );
-
-	gotoIntroMode();
-	refreshScreen();
-}
-
-void YZView::clearIntro()
-{
-	yzDebug() << "Entered YZView::clearIntro" << endl;
-	mBuffer->undoBuffer()->setInsideUndo( true );
-
-	gotoxy( 0, 0 );
-	mBuffer->clearText();
-
-	mBuffer->undoBuffer()->setInsideUndo( false );
-
-	mBuffer->setChanged( false );
 }
 
 void YZView::updateCursor() {
@@ -1050,7 +475,7 @@ void YZView::alignViewVertically( unsigned int line ) {
 /* PRIVATE */
 void YZView::gotodx( unsigned int nextx ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
-	unsigned int shift = ( ! drawMode && ( (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode || YZ_VIEW_MODE_COMPLETION==mMode) && sCurLineLength > 0 ) ) ? 0 : 1;
+	unsigned int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 0 : 1;
 	if ( sCurLineLength == 0 ) nextx = 0;
 	else if ( workCursor->bufferX() >= sCurLineLength ) {
 		gotox ( sCurLineLength );
@@ -1064,7 +489,7 @@ void YZView::gotodx( unsigned int nextx ) {
 
 void YZView::gotox( unsigned int nextx, bool forceGoBehindEOL ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
-	unsigned int shift = ( ( ! drawMode && ( (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode || YZ_VIEW_MODE_COMPLETION==mMode) && sCurLineLength > 0 ) ) || forceGoBehindEOL ) ? 1 : 0;
+	unsigned int shift = (!drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0) || forceGoBehindEOL ? 1 : 0;
 	if ( nextx >= sCurLineLength ) {
 		if ( sCurLineLength == 0 ) nextx = 0;
 		else nextx = sCurLineLength - 1 + shift;
@@ -1217,53 +642,8 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 	if ( applyCursor ) {
 
 		setPaintAutoCommit( false );
-		if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 
-			YZInterval cur_sel = selectionPool->visual()->screenMap()[0];
-
-			/* erase current selection */
-			selectionPool->visual()->clear();
-
-#if QT_VERSION < 0x040000
-			YZBound bBegin( QMIN(*visualCursor->buffer(),*mainCursor->buffer()) );
-			YZBound bEnd( QMAX(*visualCursor->buffer(),*mainCursor->buffer()) );
-			YZBound dBegin( QMIN(*visualCursor->screen(),*mainCursor->screen()) );
-			YZBound dEnd( QMAX(*visualCursor->screen(),*mainCursor->screen()) );
-#else
-			YZBound bBegin( qMin(*visualCursor->buffer(),*mainCursor->buffer()) );
-			YZBound bEnd( qMax(*visualCursor->buffer(),*mainCursor->buffer()) );
-			YZBound dBegin( qMin(*visualCursor->screen(),*mainCursor->screen()) );
-			YZBound dEnd( qMax(*visualCursor->screen(),*mainCursor->screen()) );
-#endif
-			if ( mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
-				bBegin.setPos( 0, bBegin.pos().getY() );
-				bEnd.setPos( 0, bEnd.pos().getY() + 1 );
-				bEnd.open();
-				bBegin.setPos( 0, dBegin.pos().getY() );
-				dEnd.setPos( 0, dEnd.pos().getY() + 1 );
-				dEnd.open();
-			}
-			YZInterval new_sel( dBegin, dEnd );
-			selectionPool->visual()->addInterval( YZInterval(bBegin,bEnd), new_sel );
-
-			YZSelection tmp("tmp");
-			if ( new_sel.contains( cur_sel ) ) {
-				tmp.addInterval( new_sel );
-				tmp.delInterval( cur_sel );
-			} else {
-				tmp.addInterval( cur_sel );
-				tmp.delInterval( new_sel );
-			}
-			sendPaintEvent( tmp.map(), false );
-#ifndef WIN32
-#if QT_VERSION < 0x040000
-			if ( QPaintDevice::x11AppDisplay() )
-#else
-			if ( QX11Info::display() )
-#endif
-#endif
-				QApplication::clipboard()->setText( mBuffer->getText( bBegin.pos(), bEnd.pos() ).join( "\n" ), QClipboard::Selection );
-		}
+		mModePool->current()->cursorMoved( this );
 
 		if ( !isColumnVisible( mainCursor->screenX(), mainCursor->screenY() ) ) {
 			centerViewHorizontally( mainCursor->screenX( ) );
@@ -1336,22 +716,14 @@ QString YZView::moveDown( unsigned int nb_lines, bool applyCursor ) {
 	return moveDown( mainCursor, nb_lines, applyCursor );
 }
 QString YZView::moveDown( YZViewCursor* viewCursor, unsigned int nb_lines, bool applyCursor ) {
-#if QT_VERSION < 0x040000
-	gotoStickyCol( viewCursor, QMIN( viewCursor->bufferY() + nb_lines, mBuffer->lineCount() - 1 ), applyCursor );
-#else
 	gotoStickyCol( viewCursor, qMin( viewCursor->bufferY() + nb_lines, mBuffer->lineCount() - 1 ), applyCursor );
-#endif
 	return QString::null;
 }
 QString YZView::moveUp( unsigned int nb_lines, bool applyCursor ) {
 	return moveUp( mainCursor, nb_lines, applyCursor );
 }
 QString YZView::moveUp( YZViewCursor* viewCursor, unsigned int nb_lines, bool applyCursor ) {
-#if QT_VERSION < 0x040000
-	gotoStickyCol( viewCursor, QMAX( ((int)viewCursor->bufferY()) - (int)nb_lines, 0 ), applyCursor );
-#else
 	gotoStickyCol( viewCursor, qMax( ((int)viewCursor->bufferY()) - (int)nb_lines, 0 ), applyCursor );
-#endif
 	return QString::null;
 }
 
@@ -1513,175 +885,15 @@ void YZView::applyChanges( unsigned int /*x*/, unsigned int y ) {
 }
 
 QString YZView::append () {
-	gotoInsertMode();
+	mModePool->push( YZMode::MODE_INSERT );
 	gotoxy(mainCursor->bufferX()+1, mainCursor->bufferY() );
 	updateStickyCol( mainCursor );
 
 	return QString::null;
 }
 
-void YZView::switchModes(int mode) {
-	if (mode != mMode) {
-		if ( mode != YZ_VIEW_MODE_COMPLETION )
-			leaveCurrentMode();
-		mPrevMode = mMode;
-		mMode = static_cast<modeType>(mode);
-		modeChanged();
-	}
-}
-
-QString YZView::gotoPreviousMode() {
-	yzDebug() << "previous mode is  : " << getPreviousMode() << endl;
-	if (getPreviousMode()==YZ_VIEW_MODE_OPEN)
-	{
-		yzDebug() << "switching to Open Mode" <<endl;
-		return gotoOpenMode();
-	}
-	else if (getCurrentMode()==YZ_VIEW_MODE_OPEN)
-	{
-		yzDebug() << "Not switching modes" << endl;
-		return QString::null;
-	}
-	else if (getCurrentMode()==YZ_VIEW_MODE_COMPLETION)
-	{
-		if (getPreviousMode() == YZ_VIEW_MODE_INSERT) gotoInsertMode();
-		if (getPreviousMode() == YZ_VIEW_MODE_REPLACE) gotoReplaceMode();
-		return QString::null;
-	}
-	yzDebug() << "switching to Command Mode" <<endl;
-	return gotoCommandMode();
-}
-
-QString YZView::gotoCommandMode() {
+void YZView::commitUndoItem() {
 	mBuffer->undoBuffer()->commitUndoItem(mainCursor->bufferX(), mainCursor->bufferY());
-	switchModes(YZ_VIEW_MODE_COMMAND);
-	return QString::null;
-}
-
-QString YZView::gotoExMode() {
-	switchModes(YZ_VIEW_MODE_EX);
-	mSession->setFocusCommandLine();
-	setCommandLineText( "" );
-	return QString::null;
-}
-
-QString YZView::gotoOpenMode() {
-	switchModes(YZ_VIEW_MODE_OPEN);
-	setVisibleArea(80, 1);
-	setCommandLineText("");
-	yzDebug() << "successfully set open mode" <<endl;
-	return QString::null;
-}
-
-QString YZView::gotoInsertMode() {
-	mBuffer->undoBuffer()->commitUndoItem(mainCursor->bufferX(), mainCursor->bufferY());
-	switchModes(YZ_VIEW_MODE_INSERT);
-	return QString::null;
-}
-
-QString YZView::gotoReplaceMode() {
-	mBuffer->undoBuffer()->commitUndoItem(mainCursor->bufferX(), mainCursor->bufferY());
-	switchModes(YZ_VIEW_MODE_REPLACE);
-	return QString::null;
-}
-
-QString YZView::gotoSearchMode( bool reverse ) {
-	reverseSearch = reverse;
-	switchModes(YZ_VIEW_MODE_SEARCH);
-	setCommandLineText( "" );
- 	mSearchBegin->setCursor( mainCursor->buffer() );
-	return QString::null;
-}
-
-QString YZView::gotoIntroMode() {
-	switchModes( YZ_VIEW_MODE_INTRO );
-	return QString::null;
-}
-
-QString YZView::gotoCompletionMode() {
-	switchModes( YZ_VIEW_MODE_COMPLETION );
-	return QString::null;
-}
-
-QString YZView::gotoVisualMode( bool isVisualLine ) {
-	//store the from position
-	if ( isVisualLine )
-		switchModes( YZ_VIEW_MODE_VISUAL_LINE );
-	else
-		switchModes( YZ_VIEW_MODE_VISUAL );
-	visualCursor->setBuffer( *mainCursor->buffer() );
-	visualCursor->setScreen( *mainCursor->screen() );
-
-	YZBound bEnd( *visualCursor->buffer() );
-	YZBound dEnd( *visualCursor->screen() );
-
-	if ( mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
-		visualCursor->setScreenX( 0 );
-		visualCursor->setBufferX( 0 );
-		bEnd.setPos( 0, bEnd.pos().getY() + 1 );
-		bEnd.open();
-		dEnd.setPos( 0, dEnd.pos().getY() + 1 );
-		dEnd.open();
-	}
-
-	selectionPool->visual()->clear();
-	selectionPool->visual()->addInterval( YZInterval(*visualCursor->buffer(),bEnd), YZInterval(*visualCursor->screen(),dEnd) );
-	sendPaintEvent( getDrawCurrentLeft(), visualCursor->screen()->getY(), getColumnsVisible(), 1 );
-	yzDebug("Visual mode") << "Starting at " << *visualCursor->buffer() << endl;
-	return QString::null;
-}
-
-void YZView::leaveCurrentMode() {
-	switch ( mMode ) {
-		case YZ_VIEW_MODE_INSERT :
-			leaveInsertMode();
-			break;
-		case YZ_VIEW_MODE_REPLACE :
-			leaveReplaceMode();
-			break;
-		case YZ_VIEW_MODE_EX :
-			break;
-		case YZ_VIEW_MODE_SEARCH :
-			leaveSearchMode();
-			break;
-		case YZ_VIEW_MODE_OPEN :
-			break;
-		case YZ_VIEW_MODE_INTRO :
-			break;
-		case YZ_VIEW_MODE_COMPLETION :
-			leaveCompletionMode();
-			break;
-		case YZ_VIEW_MODE_VISUAL :
-		case YZ_VIEW_MODE_VISUAL_LINE :
-			leaveVisualMode();
-			break;
-		case YZ_VIEW_MODE_COMMAND :
-			break;
-	}
-}
-
-void YZView::leaveSearchMode( ) {
-	setCommandLineText("");
-}
-
-void YZView::leaveInsertMode( ) {
-	if ( mainCursor->bufferX() > 0) moveLeft();
-}
-
-void YZView::leaveReplaceMode( ) {
-	if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() )
-		moveLeft( );
-}
-
-void YZView::leaveVisualMode( ) {
-	setPaintAutoCommit( false );
-	sendPaintEvent( selectionPool->visual()->screenMap(), false );
-	selectionPool->visual()->clear();
-	commitPaintEvent();
-}
-
-void YZView::leaveCompletionMode() {
-	m_word2Complete = "";
 }
 
 void YZView::paste( QChar registr, bool after ) {
@@ -1950,7 +1162,7 @@ bool YZView::drawNextLine( ) {
 
 bool YZView::drawPrevCol( ) {
 	workCursor->wrapNextLine = false;
-	unsigned int shift = ( ! drawMode && ( (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode || YZ_VIEW_MODE_COMPLETION==mMode) && sCurLineLength > 0 ) ) ? 1 : 0;
+	unsigned int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 1 : 0;
 	if ( workCursor->bufferX() >= workCursor->bColIncrement ) {
 		unsigned int curx = workCursor->bufferX() - 1;
 		workCursor->setBufferX( curx );
@@ -2062,7 +1274,7 @@ bool YZView::drawNextCol( ) {
 	}
 
 	// can we go after the end of line buffer ?
-	unsigned int shift = ( ! drawMode && ( (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT == mMode || YZ_VIEW_MODE_COMPLETION==mMode ) && sCurLineLength > 0 ) ) ? 1 : 0;
+	unsigned int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 1 : 0;
 
 	// drawCursor is after end of area ?
 	workCursor->wrapNextLine = ( wrap && workCursor->screenX() + ( ret || ! drawMode ? 0 : workCursor->sColIncrement ) > mColumnsVis - nextLength && curx < sCurLineLength + shift );
@@ -2422,7 +1634,7 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 		return;
 	}
 	if ( m_paintAutoCommit == 0 ) {
-		if ( cury < getDrawCurrentTop() + getLinesVisible() )
+		if ( (cury+curh) > getDrawCurrentTop() && cury < getDrawCurrentTop() + getLinesVisible() )
 			paintEvent( curx, cury, curw, curh );
 	} else {
 		mPaintSelection->addInterval( YZInterval(YZCursor(this,curx,cury),YZCursor(this,curx+curw,cury+curh-1)) );
@@ -2491,72 +1703,10 @@ bool YZView::stringHasOnlySpaces ( const QString& what ) {
 	return true;
 }
 
-QString YZView::mode ( int mode ) {
-	if (isRecording()) {
-		return mModes[mode] + tr(" { Recording }");
-	}
-	return mModes[mode];
-}
-
-void YZView::initCompletion() {
-	YZNewMotionArgs arg (this, 1);
-	YZCursor begin = YZSession::me->getPool()->moveWordBackward( arg );
-	m_completionStart->setCursor(begin);
-	YZCursor stop (this,mainCursor->bufferX()-1, mainCursor->bufferY());
-	yzDebug() << "Start : " << begin << ", End:" << stop << endl;
-	QStringList list = mBuffer->getText(begin, stop);
-	yzDebug() << "Completing word : " << list[0] << endl;
-	//record current begin-of-word-to-complete
-	m_word2Complete = list[0];
-	m_completionCursor->setCursor(mainCursor->buffer());
-	m_oldProposals.clear();
-	m_lastCompletionDir = true;
-}
-
-QString YZView::doComplete(bool forward) {
-	YZCursor result;
-	unsigned int matchedLength=0;
-	bool found=false;
-	QString list="";
-	
-	if (m_lastCompletionDir != forward) {
-		m_oldProposals.clear();
-		m_lastCompletionDir = forward;
-	}
-	
-	do {
-		if (forward) {
-			result = myBuffer()->action()->search(this, "\\b" + m_word2Complete + "\\w*", *m_completionCursor, YZCursor(this, 0, myBuffer()->lineCount()+1), false, &matchedLength, &found);
-		} else {
-			if ( *m_completionCursor == mainCursor->buffer() )
-				m_completionCursor->setX(mainCursor->bufferX() - m_word2Complete.length());
-			result = myBuffer()->action()->search(this, "\\b" + m_word2Complete + "\\w*", *m_completionCursor, YZCursor(this, 0, 0), true, &matchedLength, &found);
-		}
-		if (found) {
-			YZCursor end (this, result.getX()+matchedLength-1, result.getY());
-			list = myBuffer()->getText(result, end)[0];
-			//yzDebug() << "Got testing match : " << list << " at " << result << " to " << end << endl;
-			m_completionCursor->setCursor(result);
-			if (forward) {
-				if ( m_completionCursor->getX() < mBuffer->textline(m_completionCursor->getY()).length() )
-					m_completionCursor->setX(m_completionCursor->getX()+1);
-				else {
-					m_completionCursor->setY(m_completionCursor->getY()+1);
-					m_completionCursor->setX(0);
-				}
-			}
-		}
-	} while ( found && ( list == m_lastMatch || m_oldProposals.contains(list)) );
-
-	//found something ?
-	if ( found )  {
-		yzDebug() << "Match : " << list << endl;
-		m_lastMatch = list;
-		m_oldProposals << list;
-		return list;
-	}
-	//no more result clear the list if we want to go for another round
-	m_oldProposals.clear();
-	return QString::null;
+QString YZView::mode() {
+	QString ret = mModePool->current()->toString();
+	if ( isRecording() ) 
+		ret += tr(" { Recording }");
+	return ret;
 }
 

@@ -25,9 +25,10 @@
 #ifndef YZ_ACTION_H
 #define YZ_ACTION_H
 
-#include <qstring.h>
-
 #include "cursor.h"
+#include "selection.h"
+
+#include <qstring.h>
 
 class YZBuffer;
 class YZView;
@@ -62,16 +63,20 @@ class YZAction {
 		void deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg );
 		void deleteLine( YZView* pView, unsigned int Y, unsigned int len , const QValueList<QChar> &reg );
 		void deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QValueList<QChar> &reg );
+		void deleteArea( YZView* pView, const YZInterval& i, const QValueList<QChar> &reg );
 
 		void copyLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg );
 		void copyArea( YZView* pView, const YZCursor& begin,const YZCursor& end, const QValueList<QChar> &reg );
+		void copyArea( YZView* pView, const YZInterval& i, const QValueList<QChar> &reg );
 #else
 		void deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QList<QChar> &reg );
 		void deleteLine( YZView* pView, unsigned int Y, unsigned int len , const QList<QChar> &reg );
 		void deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QList<QChar> &reg );
+		void deleteArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg );
 
 		void copyLine( YZView* pView, const YZCursor& pos, unsigned int len, const QList<QChar> &reg );
 		void copyArea( YZView* pView, const YZCursor& begin,const YZCursor& end, const QList<QChar> &reg );
+		void copyArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg );
 #endif
 
 		void replaceLine( YZView* pView, const YZCursor& pos, const QString &text );

@@ -67,7 +67,7 @@ QString YZExExecutor::quit ( YZView *view, const QString& ) {
 QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 	int idx = inputs.find(" ");
 	if ( idx == -1 ) {
-		view->mySession()->popupMessage( "Please specify a filename" );
+		view->mySession()->popupMessage( QObject::tr( "Please specify a filename" ) );
 		return QString::null;
 	}
 	QString path = inputs.mid( idx + 1 ); //extract the path 

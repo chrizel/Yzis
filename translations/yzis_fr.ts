@@ -21,5 +21,9 @@
         <source>-- SEARCH --</source>
         <translation>-- RECHERCHE --</translation>
     </message>
+    <message>
+        <source>Please specify a filename</source>
+        <translation>Veuillez indiquer un nom de fichier</translation>
+    </message>
 </context>
 </TS>

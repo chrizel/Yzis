@@ -131,6 +131,7 @@ bool YZSwapFile::recover() {
 
 void YZSwapFile::replay( YZBufferOperation::OperationType type, unsigned int col, unsigned int line, const QString& text ) {
 	YZView *pView = mParent->firstView();
+	pView->setAutoCommit(false);
 	switch( type ) {
 		case YZBufferOperation::ADDTEXT:
 			mParent->action()->insertChar( pView, col, line, text );
@@ -145,5 +146,6 @@ void YZSwapFile::replay( YZBufferOperation::OperationType type, unsigned int col
 			mParent->action()->deleteLine( pView, line, 1, QValueList<QChar>() );
 			break;
 	}
+	pView->commitPaintEvent();
 }
 

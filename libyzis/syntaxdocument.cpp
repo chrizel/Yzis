@@ -422,7 +422,6 @@ static void lookupDirectory(const QString& path, const QString &relPart, const Q
 
       QString pathfn = path + fn;
       if ( stat( QFile::encodeName(pathfn), &buff ) != 0 ) {
-	yzDebug() << "Error stat'ing " << pathfn << " : " << perror << endl;
 	continue; // Couldn't stat (e.g. no read permissions)
       }
       if ( recursive ) {
@@ -511,7 +510,6 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
 		QString rfn = relPart+fn;
 		fn = prefix + fn;
 		if ( stat( QFile::encodeName(fn), &buff ) != 0 ) {
-		    yzDebug() << "Error statting " << fn << " : " << perror << endl;
 		    continue; // Couldn't stat (e.g. no permissions)
 		}
 		if ( S_ISDIR( buff.st_mode ))
@@ -646,7 +644,6 @@ void YzisSyntaxDocument::setupModeList (bool force)
               myModeList.append(mli);
             }
           }
-		  yzDebug() << "SyntaxDocument fully build" << endl;
         }
         else
         {

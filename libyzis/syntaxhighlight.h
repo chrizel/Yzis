@@ -237,7 +237,7 @@ class YzisHlManager : public QObject
     YzisHighlighting *getHl(int n);
     int nameFind(const QString &name);
 
-    int detectHighlighting (class YzisDocument *doc);
+    int detectHighlighting (class YZBuffer *doc);
 
     int findHl(YzisHighlighting *h) {return hlList.find(h);}
     QString identifierForName(const QString&);
@@ -260,6 +260,7 @@ class YzisHlManager : public QObject
     int wildcardFind(const QString &fileName);
     int mimeFind(const QByteArray &contents);
     int realWildcardFind(const QString &fileName);
+	QString findByContent( const QByteArray& contents );
 
   private:
     friend class YzisHighlighting;

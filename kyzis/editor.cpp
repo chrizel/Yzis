@@ -166,8 +166,11 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 				const uchar* a = NULL;
 				YZLine *yl = mParent->myBuffer()->yzline( line );
 				if ( yl->length() != 0 ) a = yl->attributes();
-				YzisAttribute *at = mParent->myBuffer()->highlight()->attributes( 0 /*only one schema*/ )->data( );
-				uint atLen = mParent->myBuffer()->highlight()->attributes( 0 /*only one schema*/ )->size();
+				YzisAttribute *at = 0L;
+				YzisHighlighting *highlight = mParent->myBuffer()->highlight();
+				if ( highlight )
+					at = highlight->attributes( 0 /*only one schema*/ )->data( );
+				uint atLen = at ? highlight->attributes( 0 /*only one schema*/ )->size() : 0;
 				bool noAttribs = !a;
 				a = a + startcol;
 				for ( uint tmp = 0; tmp < toDraw.length(); tmp++ ) {

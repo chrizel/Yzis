@@ -26,9 +26,11 @@
 #include "line.h"
 #include "syntaxdocument.h"
 #include "debug.h"
+#include "buffer.h"
 
 #include <qstringlist.h>
 #include <qtextstream.h>
+#include <magic.h>
 //END
 
 // same as in kmimemagic, no need to feed more data
@@ -1263,6 +1265,8 @@ void YzisHighlighting::loadWildcards()
   QString extensionString = config->readEntry("Wildcards", iWildcards);
 
   if (extensionSource != extensionString) {
+  */
+	QString extensionString = iWildcards;
     regexpExtensions.clear();
     plainExtensions.clear();
 
@@ -1279,6 +1283,7 @@ void YzisHighlighting::loadWildcards()
         plainExtensions.append((*it).mid(1));
       else
         regexpExtensions.append(QRegExp((*it), true, true));
+	/*
   }*/
 }
 
@@ -2495,17 +2500,17 @@ int YzisHlManager::nameFind(const QString &name)
   return z;
 }
 
-int YzisHlManager::detectHighlighting (YzisDocument *doc)
-{/*
-  int hl = wildcardFind( doc->url().filename() );
+int YzisHlManager::detectHighlighting (YZBuffer *doc)
+{
+  int hl = wildcardFind( doc->fileName() );
 
   if (hl == -1)
   {
     QByteArray buf (KATE_HL_HOWMANY);
     uint bufpos = 0;
-    for (uint i=0; i < doc->numLines(); i++)
+    for (uint i=0; i < doc->lineCount(); i++)
     {
-      QString line = doc->textLine( i );
+      QString line = doc->textline( i );
       uint len = line.length() + 1;
 
       if (bufpos + len > KATE_HL_HOWMANY)
@@ -2523,18 +2528,18 @@ int YzisHlManager::detectHighlighting (YzisDocument *doc)
     hl = mimeFind (buf);
   }
 
-  return hl;*/
-	return 0;
+  return hl;
 }
 
 int YzisHlManager::wildcardFind(const QString &fileName)
-{/*
+{
+	yzDebug() << "WidcardFind " << fileName << endl;
   int result = -1;
   if ((result = realWildcardFind(fileName)) != -1)
     return result;
 
   int length = fileName.length();
-  QString backupSuffix = YzisDocumentConfig::global()->backupSuffix();
+  QString backupSuffix = "~";
   if (fileName.endsWith(backupSuffix)) {
     if ((result = realWildcardFind(fileName.left(length - backupSuffix.length()))) != -1)
       return result;
@@ -2546,12 +2551,12 @@ int YzisHlManager::wildcardFind(const QString &fileName)
         return result;
     }
   }
-*/
   return -1;
 }
 
 int YzisHlManager::realWildcardFind(const QString &fileName)
-{/*
+{
+	yzDebug() << "realWidcardFind " << fileName << endl;
   static QRegExp sep("\\s*;\\s*");
 
   QPtrList<YzisHighlighting> highlights;
@@ -2586,16 +2591,37 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 
     return hl;
   }
-*/
   return -1;
 }
 
+QString YzisHlManager::findByContent( const QByteArray& contents ) {
+	struct magic_set *ms = magic_open( MAGIC_MIME );
+	if ( ms == NULL ) {
+		magic_close(ms);
+		return QString::null;
+	}
+	if (magic_load(ms,NULL) == -1) {
+		yzDebug() << "Magic error " << magic_error( ms ) << endl;
+		magic_close(ms);
+		return QString::null;
+	}
+	const char *magic_result = magic_buffer( ms, contents.data(), contents.size() );
+	magic_close(ms);
+	if ( magic_result ) {
+		QString mime = QString( magic_result );
+		mime = mime.mid( 0, mime.find( ';' ) );
+		yzDebug() << "Magic result " << mime << endl;
+		return mime;
+	} else return QString::null;
+}
+
 int YzisHlManager::mimeFind(const QByteArray &contents)
-{/*
+{
   static QRegExp sep("\\s*;\\s*");
 
   int accuracy = 0;
-  KMimeType::Ptr mt = KMimeType::findByContent( contents, &accuracy );
+//  KMimeType::Ptr mt = KMimeType::findByContent( contents, &accuracy );
+  QString mt = findByContent( contents );
 
   QPtrList<YzisHighlighting> highlights;
 
@@ -2605,7 +2631,7 @@ int YzisHlManager::mimeFind(const QByteArray &contents)
 
     for( QStringList::Iterator it = l.begin(); it != l.end(); ++it )
     {
-      if ( *it == mt->name() ) // faster than a regexp i guess?
+      if ( *it == mt ) // faster than a regexp i guess?
         highlights.append (highlight);
     }
   }
@@ -2623,10 +2649,8 @@ int YzisHlManager::mimeFind(const QByteArray &contents)
         hl = hlList.findRef (highlight);
       }
     }
-
     return hl;
   }
-*/
   return -1;
 }
 

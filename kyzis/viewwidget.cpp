@@ -34,7 +34,7 @@
 #include <qtimer.h>
 
 #include <kdebug.h>
- 
+
 #include "settings.h"
 
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
@@ -63,11 +63,11 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	g->addWidget(mVScroll,0,1);
 	g->addMultiCellWidget(command,1,1,0,1);
 	g->addMultiCellWidget(status,2,2,0,1);
-	
+
 	setXMLFile( "kyzispart/kyzispart.rc" );
 	setupActions();
 	setupKeys();
-	
+
 	buffer = doc;
 	m_editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	m_editor->show();
@@ -124,7 +124,7 @@ unsigned int KYZisView::charWidth( const QChar& ch ) const {
 }
 
 void KYZisView::wheelEvent( QWheelEvent * e ) {
-	int n = ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX 
+	int n = ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
 	mVScroll->setValue( mVScroll->value() - n  );
 	scrolled( mVScroll->value() );
 }
@@ -158,7 +158,7 @@ void KYZisView::modeChanged (void) {
 		case YZ_VIEW_MODE_VISUAL: //visual
 			status->changeItem(mode(YZ_VIEW_MODE_VISUAL), 0);
 			break;
-		case YZ_VIEW_MODE_VISUAL_LINE : 
+		case YZ_VIEW_MODE_VISUAL_LINE :
 			status->changeItem( mode(YZ_VIEW_MODE_VISUAL_LINE), 0 );
 	};
 }
@@ -232,7 +232,7 @@ void KYZisView::cursorPositionReal ( unsigned int *line, unsigned int *col )
 {
 	*line = getBufferCursor()->getY();
 	*col  = getBufferCursor()->getX();
-} 
+}
 
 bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
 {
@@ -306,7 +306,7 @@ void KYZisView::emitNewStatus() {
 //KTextEditor::CodeCompletionInterface and support functions
 
 void KYZisView::showArgHint( QStringList functionList, const QString & strWrapping, const QString & strDelimiter ) {
-	m_codeCompletion->showArgHint(functionList, strWrapping, strDelimiter);	
+	m_codeCompletion->showArgHint(functionList, strWrapping, strDelimiter);
 }
 
 void KYZisView::showCompletionBox( QValueList< KTextEditor::CompletionEntry > complList, int offset, bool casesensitive ) {

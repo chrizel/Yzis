@@ -77,7 +77,7 @@ void YZSession::rmBuffer( YZBuffer *b ) {
 
 QString YZSession::saveBufferExit() {
 	if ( saveAll() )
-		quit();	
+		quit();
 	return QString::null;
 }
 

@@ -40,7 +40,7 @@ extern "C" {
 YZPrinter::YZPrinter( YZView *view ) /*: QPrinter(QPrinter::PrinterResolution) */{
 	PS_mp_init();
 	PS_boot();
-	
+
 	mView = view;
 
 	/*setPageSize( QPrinter::A4 );
@@ -76,7 +76,7 @@ void YZPrinter::doPrint( ) {
 	font=PS_findfont(doc, "Fixed", "", 0);
 	yzDebug() << "findfont returned " << font << endl;
 	if ( !font ) return; //no font => abort
-	
+
 	QPrinter lpr(QPrinter::PrinterResolution);
 	QPainter p( &lpr );
 
@@ -93,12 +93,12 @@ void YZPrinter::doPrint( ) {
 	unsigned int maxwidth = p.fontMetrics().maxWidth();
 
 	p.end();
-	
+
 	PS_set_value(doc, "leading", linespace);
 
 	unsigned int clipw = width / maxwidth - 1;
 	unsigned int cliph = height / linespace - 1;
-	
+
 	unsigned int oldLinesVis = mView->getLinesVisible( );
 	unsigned int oldColumnsVis = mView->getColumnsVisible( );
 
@@ -223,7 +223,7 @@ void YZPrinter::doPrint( ) {
 
 void YZPrinter::convertColor(QColor c, double &r, double &g, double &b) {
 	int r0, g0, b0;
-	
+
 	c.getRgb(&r0, &g0, &b0);
 	r=r0;
 	r/=255;

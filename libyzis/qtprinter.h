@@ -35,7 +35,7 @@ class YZQtPrinter : public QPrinter {
 	public:
 		YZQtPrinter( YZView *view );
 		virtual ~YZQtPrinter( );
-		
+
 		void printToFile( const QString& path );
 		void run( );
 

@@ -51,7 +51,7 @@ static QString myNull;
  */
 class YZBuffer {
 public:
-	/** 
+	/**
 	 * Creates a new buffer
 	 * @param sess the session to which the buffer belongs to
 	 */
@@ -88,8 +88,8 @@ public:
 	 */
 	void delChar (unsigned int x, unsigned int y, unsigned int count = 1);
 
-	// ----------------- Line Operations			
-								
+	// ----------------- Line Operations
+
 	/**
 	 * Appends a new line at the end of file
 	 * @param l the line of text to be appended
@@ -129,10 +129,10 @@ public:
 	 * Merges two lines
 	 */
 	void mergeNextLine( unsigned int line );
-	
+
 
 	// ----------------- Buffer content
-	
+
 	/**
 	 * Return true if the buffer is empty
 	 */
@@ -216,7 +216,7 @@ public:
 	 * This is only informational so that GUIs can display the correct information
 	 */
 	void statusChanged();
-		
+
 	/**
 	 * Get the current filename of the buffer
 	 * @return the filename
@@ -292,7 +292,7 @@ public:
 	bool introShown() { return mIntro; }
 
 	/**
-	 * Is this file a new file 
+	 * Is this file a new file
 	 */
 	bool fileIsNew() { return mFileIsNew; }
 
@@ -364,7 +364,7 @@ public:
 	 * @return true if a change was done
 	 */
 	bool substitute( const QString& what, const QString& with, bool wholeline, unsigned int line );
-	
+
 	/**
 	 * Refresh all views
 	 */
@@ -433,7 +433,7 @@ public:
 	void setLocalQColorOption( const QString& key, const QColor& option );
 
 protected:
-	/** 
+	/**
 	 * Sets the line @param line to @param l
 	 * @param line is between 0 and lineCount()-1
 	 * @param l may not contain '\n'

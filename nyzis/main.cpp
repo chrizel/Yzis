@@ -131,7 +131,7 @@ main(int argc, char *argv[])
 		YZView* cView = YZSession::me->currentView();
 		cView->sendMultipleKey( initialSendKeys );
 	}
-	
+
 	// let's go and loop
 	factory->event_loop();
 	yzFatal(NYZIS) << "Should never reach this point" << endl;
@@ -151,11 +151,11 @@ static void cleaning(void)
 static void sigint(int /*sig*/)
 {
 //	yzDebug(NYZIS) << "^C catched" << endl;
-	// ^c catched -> sends an escape char.. 
+	// ^c catched -> sends an escape char..
 	NYZFactory::currentView->sendKey( "<ESC>","" );
 }
 
- 
+
 static void sigwinch(int /*sig*/)
 {
 //	yzDebug(NYZIS) << "sigwinch catched" << endl;
@@ -165,4 +165,4 @@ static void sigwinch(int /*sig*/)
 	NYZFactory::currentView->map();
 }
 
- 
+

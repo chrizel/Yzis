@@ -71,7 +71,7 @@ void NYZFactory::event_loop()
 	for (;;) {
 		/* this is a _basic_ event loop... will be improved */
 		int c = getch();
-	
+
 		// we know what this is..
 		switch( c ){
 			case ERR:
@@ -129,7 +129,7 @@ void NYZFactory::event_loop()
 			continue;
 		}
 		if ( isupper( c ) ) { modifiers +="<SHIFT>"; }
-		//TODO: META	
+		//TODO: META
 		currentView->sendKey( QString( QChar( c ) ), modifiers );
 	}
 }
@@ -193,7 +193,7 @@ void NYZFactory::popupMessage( const QString &message )
 		mvwaddstr( popup, y, 2, message.mid(y*nc, nc).latin1() );
 		y++;nl--;
 	}
-	// TODO : use QString QString::section 
+	// TODO : use QString QString::section
 #else
 	message.simplifyWhiteSpace();
 	nc = message.length();
@@ -202,7 +202,7 @@ void NYZFactory::popupMessage( const QString &message )
 	box( popup, 0, 0 );
 
 	mvwaddstr( popup, 2, 2, message.latin1() );
-	// TODO : use QString QString::section 
+	// TODO : use QString QString::section
 
 #endif
 
@@ -226,7 +226,7 @@ void NYZFactory::deleteView(int /*Id*/)
 	if ( !v ) v = prevView();
 // ideally would be : but we delteView on quitting, hence looping delete/create..
 // TODO
-//	if ( !v ) v = createView(createBuffer()); 
+//	if ( !v ) v = createView(createBuffer());
 	if ( !v ) exitRequest( 0 );
 
 	// switch

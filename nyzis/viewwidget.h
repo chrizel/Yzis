@@ -105,7 +105,7 @@ private:
 	WINDOW          *fileInfo;     // the one with info about current file (modified..)
 
 	/**
-	  * used to implement set/get CommandLine, as we have no 
+	  * used to implement set/get CommandLine, as we have no
 	  * special widget for that
 	  */
 	QString commandline;
@@ -115,7 +115,7 @@ private:
 	void initialiseAttributesMap();
 	static int attributesMapInitialised;
 	/**
-	  * maps QRgb to ncurses attributes, as those used in 
+	  * maps QRgb to ncurses attributes, as those used in
 	  * mAttributesMap[ QRgb ] is the # of the corresponding pair in ncurses
 	  */
 	static QMap<QRgb,unsigned long int> mAttributesMap;

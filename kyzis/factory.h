@@ -33,7 +33,7 @@ class KYZisFactory : public KParts::Factory, public YZSession
 public:
 	KYZisFactory(bool clone=false);
 	virtual ~KYZisFactory();
-	
+
 	KParts::Part *createPartObject (QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args );
 
 	static const KAboutData *aboutData();
@@ -55,7 +55,7 @@ public:
 		void writeConfig();
 		void readConfig();
 		void applyConfig();
-	
+
 protected:
 
 private:
@@ -66,7 +66,7 @@ private:
 	//doh , QPtrList are evil , drop them ! XXX
     static QPtrList<class KYZisDoc> s_documents;
     static QPtrList<class KYZisView> s_views;
-		
+
     static KInstance *s_instance;
     static KAboutData *s_aboutData;
 
@@ -75,4 +75,4 @@ public:
 	static KYZisDoc *currentDoc;
 };
 
-#endif 
+#endif

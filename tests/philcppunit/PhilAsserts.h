@@ -27,7 +27,7 @@
  * - I display the name of the expression being tested inside the failure, not
  *   just the value that did not match.
  *
- * - for int equality asserts, I display the int value in decimal and 
+ * - for int equality asserts, I display the int value in decimal and
  *   hexadecimal
  *
  * - I support native string equality tests, which avoids the following
@@ -36,16 +36,16 @@
  *   	1. With Visual C++, CPPUNIT_ASSERT_EQUAL( std::string("a"), "a" )
  *   	won't compile because the it does not know which template to use.
  *
- *   	2. If you do a 
+ *   	2. If you do a
  *
 	char * s1 = "abcd";
 	char s2[10];
 	strcpy( s2, s1);
 	CPPUNIT_ASSERT_EQUAL( s1, (char *) s2 );
 
- * 		CppUnit will report a failure with the unhelpful message : 
+ * 		CppUnit will report a failure with the unhelpful message :
  *
- * 		"Expected: abcd, but was: abcd." 
+ * 		"Expected: abcd, but was: abcd."
  *
  * 		This is because CppUnit has unintuitively compared the two pointers
  * 		instead of comparing the strings. My functions know how to cast a
@@ -65,7 +65,7 @@
  *
  * - if you define QT_DLL, I support tests on QString too
  *
- * 
+ *
  * This list of macros available are :
  * phCheck( assertion ) for bool
  * phCheckEquals( actual, expected ) for int, long, double, std::string, QString and char *
@@ -77,15 +77,15 @@
  *
  * Send any bug, comment, suggestion, patch to phil@freehackers.org
  *
- */ 
+ */
 
-void philAssert( std::string actualExpr, bool assertion, 
+void philAssert( std::string actualExpr, bool assertion,
 				long lineNumber, std::string fileName );
 
 void philNotNull( std::string actualExpr, void * ptr,
 				long lineNumber, std::string fileName );
 
-void philNotAssert( std::string actualExpr, bool assertion, 
+void philNotAssert( std::string actualExpr, bool assertion,
 				long lineNumber, std::string fileName );
 
 
@@ -142,12 +142,12 @@ inline void philAssertNotEquals( std::string actualExpr, QString actual, QString
 inline void philAssertContains( std::string actualExpr, QString string, QString substring,
 						long lineNumber, std::string fileName );
 
-inline void philAssertIContains( std::string actualExpr, QString string, QString substring, 
+inline void philAssertIContains( std::string actualExpr, QString string, QString substring,
 						 long lineNumber, std::string fileName );
 
 inline void philAssertEquals( std::string actualExpr, QString actual, QString expected,
 					  long lineNumber, std::string fileName ) {
-	philAssertEquals( actualExpr, std::string( actual.latin1() ), 
+	philAssertEquals( actualExpr, std::string( actual.latin1() ),
 		std::string( expected.latin1() ), lineNumber, fileName );
 }
 
@@ -200,7 +200,7 @@ inline void philAssertIContains( std::string actualExpr, QString string, QString
 #define phCheckDeltaEquals( actual, expected, delta ) \
   (philAssertDeltaEquals ( (#actual), (actual),\
     (expected), (delta),__LINE__,__FILE__))
-	
+
 
 
 #endif  // PHIL_ASSERT_H

@@ -15,7 +15,7 @@
 
 #include "PhilTestRunner.h"
 
-// --------- This belongs to CppUnit 
+// --------- This belongs to CppUnit
 
 namespace CppUnit {
 
@@ -37,7 +37,7 @@ ExtendedTestRunner::runTest( Test *test,
 // -------------------------------------------------
 
 
-// My simple runner 
+// My simple runner
 PhilTestRunner::PhilTestRunner()
 {
 	setTestProgressListener( new PhilProgressListener() );
@@ -53,7 +53,7 @@ void printTestName(CppUnit::Test *test) {
 
 	std::string s = test->getName();
 	std::string tc_s = "TestCaller ";
-	
+
 	if (s.find( tc_s ) != std::string::npos ) {
 		s.erase( s.find( tc_s), s.find( tc_s ) + tc_s.size() );
 	}
@@ -99,7 +99,7 @@ void printFailure (const CppUnit::TestFailure &failure) {
 
 	strcpy( s, "" );
 	if( sl.isValid() ) {
-		sprintf( s, errorFormat, sl.fileName().c_str(), sl.lineNumber(), 
+		sprintf( s, errorFormat, sl.fileName().c_str(), sl.lineNumber(),
 			failure.isError() ? "Error" : "Failure" );
 	}
 	strcat( s, failure.thrownException()->what());
@@ -129,7 +129,7 @@ void PhilOutputter::write() {
 		success_percent = (int) (100.0 * success_nb / all_nb);
 	}
 
-	std::cerr << std::endl << "Success : " << success_percent << "% - " << success_nb 
+	std::cerr << std::endl << "Success : " << success_percent << "% - " << success_nb
 		   << " of " << all_nb << std::endl;
 
 	if (m_resultCollector->wasSuccessful() == false) {

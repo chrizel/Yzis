@@ -39,7 +39,7 @@ public:
 	uint getCursorCol() { return mainCursor->bufferX(); }
 
 	// Reimplemented to please compilation
-	
+
 	virtual void setCommandLineText( const QString& text) {
 		yzDebug( "TYZView") << "TYZView::setCommandLineText '" << text << "'\n";
 	}
@@ -76,7 +76,7 @@ public:
 	virtual void syncViewInfo( ) {
 		yzDebug( "TYZView") << "TYZView::syncViewInfo" << endl;
 	}
-	
+
 	virtual void displayInfo( const QString& ) {
 		yzDebug( "TYZView") << "TYZView::displayInfo" << endl;
 	}
@@ -112,7 +112,7 @@ protected:
 		QString text;
 		int key;
 	};
-	
+
 	QValueList<Mapping> mKeyMap;
 };
 

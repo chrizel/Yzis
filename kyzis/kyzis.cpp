@@ -55,7 +55,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	mConsole = NULL;
 //	setToolviewStyle(KMultiTabBar::KDEV3ICON);
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
-	
+
 	if ( m_dockConfig.hasChildNodes() ) {
 		readDockConfig(m_dockConfig);
 	}
@@ -70,9 +70,9 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	setWindowMenu();
 
 	setAutoSaveSettings();
-	
+
 }
-	
+
 Kyzis::~Kyzis() {
 	writeDockConfig(m_dockConfig);
 	//delete m_toolbarAction;
@@ -96,10 +96,10 @@ void Kyzis::setupActions() {
 	KStdAction::open(this, SLOT(fileOpen()), actionCollection());
 
 	KStdAction::quit(kapp, SLOT(quit()), actionCollection());
-	
+
 	KStdAction::preferences(this, SLOT(preferences()), actionCollection());
 
-	
+
 	if ( !isFakingSDIApplication() ) {
 //		menuBar()->insertItem(i18n( "&Window" ), windowMenu(), -1, menuBar()->count()-2);
 //		menuBar()->insertItem("&Docking", dockHideShowMenu() );//, -1 , menuBar()->count()-2);
@@ -115,7 +115,7 @@ void Kyzis::setupActions() {
 void Kyzis::setWindowMenu() {
 	QPopupMenu *menu = ( QPopupMenu* ) menuBar()->child(  "window", "KPopupMenu" );
 	if ( menu )
-		QObject::connect( menu , SIGNAL( aboutToShow() ), this, SLOT( fillWindowMenu() ) );	
+		QObject::connect( menu , SIGNAL( aboutToShow() ), this, SLOT( fillWindowMenu() ) );
 	else menuBar()->insertItem(i18n( "&Window" ), windowMenu(), -1, menuBar()->count()-1);
 }
 
@@ -190,7 +190,7 @@ void Kyzis::createBuffer(const QString& path) {
 		// now that the Part is loaded, we cast it to a Part to get
 		// our hands on it
 		QStringList list;
-		//buffer number , view number 
+		//buffer number , view number
 		list << QString::number( mBuffers++ ) << QString::number( mViews++ );
 
 		KParts::ReadWritePart * m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart", list ));
@@ -273,7 +273,7 @@ bool Kyzis::queryClose() {
 		if ( it.data().p->isModified() ) {
 			int msg = KMessageBox::warningYesNoCancel(this, QString("The file '%1' has been modified but not saved, do you want to save it ?" ).arg( it.data().p->url().prettyURL() ), "Close Document", KStdGuiItem::save(), KStdGuiItem::discard() );
 			if ( msg == KMessageBox::Cancel ) return false;
-			if ( msg == KMessageBox::Yes ) 
+			if ( msg == KMessageBox::Yes )
 				it.data().p->save(); //automatically popups saveAs dialog if needed
 		}
 	}
@@ -299,7 +299,7 @@ void Kyzis::showKonsole() {
 KMdiToolViewAccessor * Kyzis::addToolView(KDockWidget::DockPosition position, QWidget *widget, const QPixmap& icon, const QString& sname, const QString& tabToolTip, const QString& tabCaption) {
 	widget->setIcon(icon);
 	widget->setCaption(sname);
-	return addToolWindow(widget,position,getMainDockWidget(), 25, tabToolTip, tabCaption);	
+	return addToolWindow(widget,position,getMainDockWidget(), 25, tabToolTip, tabCaption);
 }
 
 void Kyzis::preferences() {

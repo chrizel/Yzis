@@ -229,7 +229,7 @@ void TestUndo::testUndoInsertLine()
     performUndoRedo( textHistory );
     performUndoRedo( textHistory );
 }
- 
+
 void TestUndo::testUndoDeleteLine()
 {
     YZUndoBuffer * ub = mBuf->undoBuffer();
@@ -257,7 +257,7 @@ void TestUndo::testUndoDeleteLine()
     performUndoRedo( textHistory );
 }
 
- 
+
 void TestUndo::testRedoRemovesUndo()
 {
     YZUndoBuffer * ub = mBuf->undoBuffer();

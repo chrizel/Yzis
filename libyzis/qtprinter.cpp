@@ -69,7 +69,7 @@ void YZQtPrinter::doPrint( ) {
 
 	unsigned int clipw = width / maxwidth - 1;
 	unsigned int cliph = height / linespace - 1;
-	
+
 	unsigned int oldLinesVis = mView->getLinesVisible( );
 	unsigned int oldColumnsVis = mView->getColumnsVisible( );
 

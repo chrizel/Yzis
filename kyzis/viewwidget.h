@@ -46,7 +46,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 	signals :
 		void cursorPositionChanged();
 		void newStatus();
-		
+
 		//KTextEditor::CodeCompletionInterface signals
 		void completionAborted();
 		void completionDone();
@@ -91,9 +91,9 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		// return string and char width in pixels
 		unsigned int stringWidth( const QString& str ) const;
 		unsigned int charWidth( const QChar& ch ) const;
-		
+
 		KYZisEdit *editor() { return m_editor; }
-                
+
 		//KTextEditor::PopupMenuInterface and support functions
 		virtual void installPopup( QPopupMenu *rmb_Menu );
 		void emitNewStatus();
@@ -112,7 +112,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 
 		unsigned int cursorLine();
 		unsigned int cursorColumn();
-		unsigned int cursorColumnReal(); 
+		unsigned int cursorColumnReal();
 		void fileSave();
 		void fileSaveAs();
 		void resetInfo();
@@ -131,7 +131,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		QScrollBar *mVScroll; //vertical scroll
 		QPopupMenu *m_popup;
 		KYZisCodeCompletion *m_codeCompletion;
-		// internal ID used for DCOP communications 
+		// internal ID used for DCOP communications
 		int mkId;
 };
 

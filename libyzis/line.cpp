@@ -50,8 +50,8 @@ void YZLine::setAttribs(uchar attribute, uint start, uint end) {
 		mAttributes[z] = attribute;
 }
 
-void YZLine::setData(const QString &data) { 
-	mData = data; 
+void YZLine::setData(const QString &data) {
+	mData = data;
 	uint len = data.length();
 	if ( len == 0 ) len++; //make sure to return a non empty array ... (that sucks)
 	mAttributes.resize( len );

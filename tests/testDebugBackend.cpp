@@ -94,16 +94,16 @@ void TestDebugBackend::testParseRcFile()
     YZDebugBackend * dbi = YZDebugBackend::instance();
     dbi->init();
 
-    phCheckEquals( dbi->isAreaEnabled("0"), true );    
-    phCheckEquals( dbi->isAreaEnabled("1"), true );    
-    phCheckEquals( dbi->isAreaEnabled("2"), true );    
-    phCheckEquals( dbi->isAreaEnabled("3"), true );    
+    phCheckEquals( dbi->isAreaEnabled("0"), true );
+    phCheckEquals( dbi->isAreaEnabled("1"), true );
+    phCheckEquals( dbi->isAreaEnabled("2"), true );
+    phCheckEquals( dbi->isAreaEnabled("3"), true );
 
     dbi->parseRcfile( fname );
-    phCheckEquals( dbi->isAreaEnabled("0"), true );    
-    phCheckEquals( dbi->isAreaEnabled("1"), true );    
-    phCheckEquals( dbi->isAreaEnabled("2"), false );    
-    phCheckEquals( dbi->isAreaEnabled("3"), false );    
+    phCheckEquals( dbi->isAreaEnabled("0"), true );
+    phCheckEquals( dbi->isAreaEnabled("1"), true );
+    phCheckEquals( dbi->isAreaEnabled("2"), false );
+    phCheckEquals( dbi->isAreaEnabled("3"), false );
 
     unlink(fname);
 }

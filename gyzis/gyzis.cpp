@@ -56,7 +56,7 @@ void GYzis::init_create_document() {
 
     m_View.set_document(static_cast<Document*>(m_pDocument));
   }
-  
+
   Bakery::App_WithDoc_Gtk::init_create_document(); //Sets window title. Doesn't recreate doc.
 }
 

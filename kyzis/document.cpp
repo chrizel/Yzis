@@ -99,7 +99,7 @@ QString KYZisDoc::text() const
 }
 
 
-uint KYZisDoc::numLines() const 
+uint KYZisDoc::numLines() const
 {
 	return lineCount();
 }
@@ -127,7 +127,7 @@ bool KYZisDoc::removeLine(unsigned int line)
 QString KYZisDoc::textLine(unsigned int line) const
 {
 	//Quanta crashes when it asks for the last line, I am not sure whether our lineCount() is wrong
-	//or if it's just quanta which does not count properly (it asks textLine from 0 to 218 in my test file, 
+	//or if it's just quanta which does not count properly (it asks textLine from 0 to 218 in my test file,
 	//whereas I said it the file have 218 lines)
 	if ( line >= lineCount() ) return QString::null;
 	return textline(line);
@@ -166,9 +166,9 @@ QString KYZisDoc::text (  uint startLine, uint startCol, uint endLine, uint endC
 		content = textline( startLine ).mid(startCol, endCol-startCol);
 		return content;
 	}
-	
+
 	for ( unsigned int i = startLine; i <= endLine; i++ ) {
-		if ( i == startLine ) 
+		if ( i == startLine )
 			content+=textline(i).mid( startCol );
 		else if ( i == endLine )
 			content+=textline(i).left( endCol );
@@ -255,32 +255,32 @@ void KYZisDoc::highlightingChanged( ) {
 
 void KYZisDoc::undo() {
 	YZView *v = dynamic_cast<YZView*>( _views.first() );
-	undoBuffer()->undo(v);		
+	undoBuffer()->undo(v);
 }
 
 void KYZisDoc::redo() {
 	YZView *v = dynamic_cast<YZView*>( _views.first() );
-	undoBuffer()->redo(v);		
+	undoBuffer()->redo(v);
 }
 
 void KYZisDoc::clearUndo() {
-	undoBuffer()->clearUndo();	
+	undoBuffer()->clearUndo();
 }
 
 void KYZisDoc::clearRedo() {
-	undoBuffer()->clearRedo();	
+	undoBuffer()->clearRedo();
 }
 
 unsigned int KYZisDoc::undoCount() const {
-	return undoBuffer()->undoCount();	
+	return undoBuffer()->undoCount();
 }
 
 unsigned int KYZisDoc::redoCount() const {
-	return undoBuffer()->redoCount();	
+	return undoBuffer()->redoCount();
 }
 
 unsigned int KYZisDoc::undoSteps() const {
-	return 0;	
+	return 0;
 }
 
 void KYZisDoc::setUndoSteps(unsigned int ) {
@@ -346,7 +346,7 @@ uint KYZisDoc::mark( uint line ) {
 }
 
 void KYZisDoc::setMark( uint line, uint markType ) {
-	docMarks()->add(line, markType); 
+	docMarks()->add(line, markType);
 }
 
 void KYZisDoc::clearMark( uint line ) {
@@ -354,11 +354,11 @@ void KYZisDoc::clearMark( uint line ) {
 }
 
 void KYZisDoc::addMark( uint line, uint markType ) {
-	docMarks()->add(line, markType); 
+	docMarks()->add(line, markType);
 }
 
 void KYZisDoc::removeMark( uint line, uint markType ) {
-	docMarks()->del(line, markType); 
+	docMarks()->del(line, markType);
 }
 
 QPtrList<KTextEditor::Mark> KYZisDoc::marks() {

@@ -17,7 +17,7 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  **/
- 
+
 #ifndef YZ_OPTIONPOOL
 #define YZ_OPTIONPOOL
 
@@ -30,7 +30,7 @@ class YZOption;
 /**
  * Contains the interface to manage the options set by the user. You can set and read the
  * values of the options and load and save them from/to a file.
- * 
+ *
  * @ref YZOptionInterface provides an easy and secure way for sessions, views and buffers
  * to read the values of their options.
  */
@@ -46,7 +46,7 @@ namespace YZOptionPool {
 	//void loadFrom(const QString& file);
 	/** Save settings to @param file. */
 	//void saveTo(const QString& file, const QString& what=QString::null, bool force=false);
-	
+
 	/** Sets the value of an option whose type is unknown or not important. */
 	bool setOption( const QString &name, const QString &value, unsigned int id=GLOBAL_ID );
 
@@ -58,7 +58,7 @@ namespace YZOptionPool {
 	bool setBoolOption( const QString &name, bool value, unsigned int id=GLOBAL_ID );
 	/** Sets the value of a color option. */
 	bool setColorOption( const QString &name, const QColor& value, unsigned int id=GLOBAL_ID );
-	
+
 	/** Returns the value of a string option in respect to the object ID provided by @arg id */
 	QString getStringOption( const QString &name, unsigned int id=GLOBAL_ID );
 	/** Returns the value of an int option */
@@ -81,7 +81,7 @@ namespace YZOptionPool {
 class YZOptionInterface {
 public:
 	virtual ~YZOptionInterface() {}
-	
+
 	/** Returns the local value of a string option. If it is not set locally,
 	 * or if the option has another context, its global value is returned. */
 	QString getStringOption( const QString &name );
@@ -91,7 +91,7 @@ public:
 	bool getBoolOption( const QString &name );
 	/** Returns the value of a color option */
 	QColor getColorOption( const QString &name );
-	
+
 	/** Returns the context the options must have if local values are to be returned. */
 	virtual context getContext() = 0;
 	/** Returns the ID of the object. Objects of the same type must all have different IDs. */
@@ -101,8 +101,8 @@ private:
 	// and returns getId() if yes or GLOBAL_ID if otherwise
 	unsigned int getEffId( const QString &option );
 };
-	
-	
+
+
 
 #endif
 

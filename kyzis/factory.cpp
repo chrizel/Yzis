@@ -72,7 +72,7 @@ KYZisFactory::~KYZisFactory() {
 		delete s_instance->aboutData();
 		delete s_instance;
 		s_instance=0;
-//	}	else 
+//	}	else
 //		deref();
 }
 

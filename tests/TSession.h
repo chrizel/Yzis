@@ -30,17 +30,17 @@ class TYZSession : public YZSession
 {
 public:
     TYZSession( const QString & sessionName="TestSession" )
-    : YZSession( sessionName ) 
+    : YZSession( sessionName )
     {}
 
-    virtual YZView* createView ( YZBuffer* ) { 
+    virtual YZView* createView ( YZBuffer* ) {
         yzDebug( AREA_TESTS) << "TYZSession::createView" << endl;
-        return NULL; 
+        return NULL;
     }
 
-    virtual	YZBuffer *createBuffer(const QString& path=QString::null) { 
+    virtual	YZBuffer *createBuffer(const QString& path=QString::null) {
         yzDebug( AREA_TESTS) << "TYZSession::createBuffer " << path << endl;
-        return NULL; 
+        return NULL;
     }
 
     virtual void popupMessage( const QString& message) {

@@ -37,7 +37,7 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 		view->mySession()->saveAll();
 		return QString::null;
 	}
-	if ( inputs.startsWith( "wqall" ) ) {//write all modified buffers 
+	if ( inputs.startsWith( "wqall" ) ) {//write all modified buffers
 		if ( view->mySession()->saveAll() ) //if it fails => dont quit
 			view->mySession()->exitRequest();
 		return QString::null;
@@ -70,7 +70,7 @@ QString YZExExecutor::buffernext( YZView *view, const QString& ) {
 	YZASSERT( v!=view );
 	if ( v )
 		view->mySession()->setCurrentView(v);
-	else 
+	else
 		view->mySession()->popupMessage("No next buffer");
 	return QString::null;
 }
@@ -81,7 +81,7 @@ QString YZExExecutor::bufferprevious ( YZView *view, const QString& ) {
 	YZASSERT( v!=view );
 	if ( v )
 		view->mySession()->setCurrentView(v);
-	else 
+	else
 		view->mySession()->popupMessage("No previous buffer");
 
 	return QString::null;
@@ -96,7 +96,7 @@ QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
 	for ( v = l.first(); v; v=l.next() ) {
 		view->mySession()->deleteView( view->myId );
 	}
-	
+
 	return QString::null;
 }
 
@@ -150,7 +150,7 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 		view->mySession()->popupMessage( tr( "Please specify a filename" ) );
 		return QString::null;
 	}
-	QString path = inputs.mid( idx + 1 ); //extract the path 
+	QString path = inputs.mid( idx + 1 ); //extract the path
 	//check the file name
 	QFileInfo fi ( path );
 	path = fi.absFilePath();
@@ -183,8 +183,8 @@ QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
 					break;
 				case buffer_opt:
 					oldVal = view->myBuffer()->getLocalStringOption( option );
-				case global_opt:	
-					break;	
+				case global_opt:
+					break;
 			}
 			switch ( opt->getValueType() ) {
 				case string_t :

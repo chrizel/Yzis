@@ -90,7 +90,7 @@ QString YZExLua::loadFile( YZView *, const QString& inputs ) {
 	filename = fi.absFilePath();
 	yzDebug() << "LUA : sourcing file " << filename << endl;
 	if ( fi.exists() ) {
-		if ( lua_dofile( st, filename ) ) 
+		if ( lua_dofile( st, filename ) )
 			yzDebug() << "YZExLua::loadFile failed : " << lua_tostring(st, -1) << endl;
 		else
 			yzDebug() << "YZExLua::loadFile succeded " << endl;
@@ -102,7 +102,7 @@ QString YZExLua::loadFile( YZView *, const QString& inputs ) {
 int YZExLua::text(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 4 ) return 0; //mis-use of the function
-	
+
 	int sCol = ( int )lua_tonumber( L, 1 );
 	int sLine = ( int )lua_tonumber( L,2 );
 	int eCol = ( int )lua_tonumber( L,3 );
@@ -112,12 +112,12 @@ int YZExLua::text(lua_State *L) {
 	sLine = sLine ? sLine - 1 : 0;
 	eCol = eCol ? eCol - 1 : 0;
 	eLine = eLine ? eLine - 1 : 0;
-	
+
 	YZView* cView = YZSession::me->currentView();
 	QString result,t;
 	for ( int i = sLine ; i < eLine; i++ ) {
 		t = cView->myBuffer()->textline( i );
-		if ( i == sLine && i == eLine ) 
+		if ( i == sLine && i == eLine )
 			result += t.mid( sCol, eCol - sCol );
 		else if ( i == sLine )
 			result += t.mid( sCol, t.length() - sCol ) + "\n";
@@ -132,11 +132,11 @@ int YZExLua::text(lua_State *L) {
 int YZExLua::line(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n != 1 ) return 0; //mis-use of the function
-	
+
 	int line = ( int )lua_tonumber( L,1 );
 
 	line = line ? line - 1 : 0;
-	
+
 	YZView* cView = YZSession::me->currentView();
 	QString	t = cView->myBuffer()->textline( line );
 	lua_pushstring( L, t ); // first result
@@ -146,14 +146,14 @@ int YZExLua::line(lua_State *L) {
 int YZExLua::insert(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 3 ) return 0; //mis-use of the function
-	
+
 	int sCol = ( int )lua_tonumber( L, 1 );
 	int sLine = ( int )lua_tonumber( L,2 );
 	QString text = ( char * )lua_tostring ( L, 3 );
 
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
-	
+
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );
 	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++ ) {
@@ -169,14 +169,14 @@ int YZExLua::insert(lua_State *L) {
 int YZExLua::replace(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 3 ) return 0; //mis-use of the function
-	
+
 	int sCol = ( int )lua_tonumber( L, 1 );
 	int sLine = ( int )lua_tonumber( L,2 );
 	QString text = ( char * )lua_tostring ( L, 3 );
 
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
-	
+
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );
 	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++, sLine++ ) {
@@ -184,13 +184,13 @@ int YZExLua::replace(lua_State *L) {
 		cView->myBuffer()->action()->replaceChar( cView, sCol, sLine, *it );
 		sCol = 0;
 	}
-	
+
 	return 0; // no result
 }
 
 int YZExLua::winline(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
-	uint result = cView->getBufferCursor()->getY() - 1;	
+	uint result = cView->getBufferCursor()->getY() - 1;
 
 	lua_pushnumber( L, result ); // first result
 	return 1; // one result
@@ -198,7 +198,7 @@ int YZExLua::winline(lua_State *L) {
 
 int YZExLua::wincol(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
-	uint result = cView->getBufferCursor()->getX() + 1;	
+	uint result = cView->getBufferCursor()->getX() + 1;
 
 	lua_pushnumber( L, result ); // first result
 	return 1; // one result
@@ -207,10 +207,10 @@ int YZExLua::wincol(lua_State *L) {
 int YZExLua::gotoxy(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 2 ) return 0; //mis-use of the function
-	
+
 	int sCol = ( int )lua_tonumber( L, 1 );
 	int sLine = ( int )lua_tonumber( L,2 );
-	
+
 	YZView* cView = YZSession::me->currentView();
 	cView->gotoxy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
 
@@ -220,9 +220,9 @@ int YZExLua::gotoxy(lua_State *L) {
 int YZExLua::delline(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 1 ) return 0; //mis-use of the function
-	
+
 	int sLine = ( int )lua_tonumber( L,1 );
-	
+
 	YZView* cView = YZSession::me->currentView();
 	QValueList<QChar> regs;
 	regs << QChar( '"' ) ;
@@ -233,7 +233,7 @@ int YZExLua::delline(lua_State *L) {
 
 int YZExLua::filename(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
-	const char *filename = cView->myBuffer()->fileName();	
+	const char *filename = cView->myBuffer()->fileName();
 
 	lua_pushstring( L, filename ); // first result
 	return 1; // one result
@@ -242,12 +242,12 @@ int YZExLua::filename(lua_State *L) {
 int YZExLua::getcolor(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n != 2 ) return 0; //mis-use of the function
-	
+
 	int sCol = ( int )lua_tonumber( L,1 );
 	int sLine = ( int )lua_tonumber( L,2 );
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
-	
+
 	YZView* cView = YZSession::me->currentView();
 	QString color = cView->drawColor( sCol, sLine ).name();
 

@@ -62,7 +62,7 @@ class YZSession {
 		 * gives access to the pool of commands
 		 */
 		YZCommandPool *getPool() { return mPool; }
-    
+
 		/**
 		 * gives access to the pool of ex commands
 		 */
@@ -297,7 +297,7 @@ class YZSession {
 		YzisSchemaManager *mSchemaManager;
 		YZExExecutor *executor;
 		YZExLua *lua_executor;
-		
+
 	public:
 		static int mNbViews;
 		static int mNbBuffers;

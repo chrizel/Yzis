@@ -32,7 +32,7 @@
 
 YZSelectionPool::YZSelectionPool( YZView * view ) {
 	parentView = view;
-	/* 
+	/*
 	 *	selection Layouts :
 	 *  DRAW : this is a fake layout, will be used to improve repaintEvent
 	 *  SEARCH : selections related to search
@@ -145,9 +145,9 @@ void YZSelectionPool::clear( const QString& layout ) {
 		delete it.data().drawFrom;
 		delete it.data().drawTo;*/
 	}
-		
+
 	selectionPool[ layout ].clear( );
-	
+
 }
 
 YZSelectionMap  YZSelectionPool::layout( const QString& layout ) {

@@ -23,7 +23,7 @@
 #include <gtkmm/box.h>
 #include "document.h"
 
-class View: 
+class View:
 	public Gtk::VBox,
 	public Bakery::View<Document> {
 

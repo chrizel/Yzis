@@ -70,7 +70,7 @@ class KYZisEdit : public QWidget {
 		void registerModifierKeys( const QString& keys );
 
 		QPoint cursorCoordinates( );
-	
+
 	public slots :
 		void sendMultipleKey( const QString& keys );
 
@@ -78,7 +78,7 @@ class KYZisEdit : public QWidget {
 	protected:
 		//intercept tabs
 		virtual bool event(QEvent*);
-		
+
 		void resizeEvent(QResizeEvent*);
 		void paintEvent(QPaintEvent*);
 
@@ -96,13 +96,13 @@ class KYZisEdit : public QWidget {
 
 		//insert a char at idx on line ....
 		void insertCharAt(QChar,int);
-		
+
 		//replace a char at idx on line ....
 		void replaceCharAt( QChar,int );
-		
+
 		//number of lines
 		long lines();
-		
+
 		//draw the cursor at the given position
 		void drawCursorAt(int x, int y);
 
@@ -115,7 +115,7 @@ class KYZisEdit : public QWidget {
 		KActionCollection* actionCollection;
 		QSignalMapper* signalMapper;
 		QString keysToShortcut( const QString& keys );
-		
+
 		KYZisView *mParent;
 
 		//cursor position (sync with libyzis one)

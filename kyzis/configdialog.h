@@ -31,10 +31,10 @@
 class KYZisConfigDialog : public KConfigDialog {
 
 	public :
-		
+
 		KYZisConfigDialog( QWidget* parent, const char* name, KConfigSkeleton* config, DialogType dialogType );
 		~KYZisConfigDialog( );
-	
+
 	private :
 		void setupPages();
 

@@ -18,7 +18,7 @@
  **/
 
 /**
- * This file was mostly inspired from the kdelibs kdDebug class distributed under LGPL by 
+ * This file was mostly inspired from the kdelibs kdDebug class distributed under LGPL by
  * by the KDE project.
  * Here are the corresponding copyrights owner :
  * 1997 Matthias Kalle Dalheimer ( kalle@kde.org )
@@ -35,7 +35,7 @@
 
 YZDebugBackend * YZDebugBackend::_instance = NULL;
 
-YZDebugBackend::YZDebugBackend() 
+YZDebugBackend::YZDebugBackend()
 {
 	_output = fopen("/tmp/yzisdebug-" + QString(cuserid(NULL)) + ".log", "w" );
 	init();
@@ -74,7 +74,7 @@ void YZDebugBackend::flush( int level, const char * area, const char * data )
 {
 	if (level < _level) return;
 	if (isAreaEnabled( area ) == false) return;
-	
+
 	fprintf( _output, "%s", data );
 	/*
 	if (data[strlen(data)-1] != '\n') {
@@ -144,7 +144,7 @@ YZDebugStream& YZDebugStream::operator << (const QStringList& string) {
 
 YZDebugStream& YZDebugStream::operator << (const char* string) {
 	output+=QString::fromUtf8( string );
-//	if ( output.at( output.length() - 1 ) == '\n' ) 
+//	if ( output.at( output.length() - 1 ) == '\n' )
 		flush();
 	return *this;
 }

@@ -64,7 +64,7 @@ int main(int argc, char **argv) {
 	QTranslator myapp(  0 );
 	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
 	app.installTranslator(  &myapp );
-	
+
 	// see if we are starting with session management
 	/*    if (app.isRestored())
 				RESTORE(Kyzis)
@@ -92,7 +92,7 @@ int main(int argc, char **argv) {
 			QString keys = (const char *) initialSendKeys;
 			YZSession::me->currentView()->sendMultipleKey(keys);
 		}
-	
+
 		args->clear();
 	}
 

@@ -51,17 +51,17 @@ void YZBufferOperation::performOperation( YZView* pView, bool opposite)
 	if (opposite == true) {
 		switch( type ) {
 			case ADDTEXT: t = DELTEXT; break;
-			case DELTEXT: t = ADDTEXT; break; 
-			case ADDLINE: t = DELLINE; break; 
-			case DELLINE: t = ADDLINE; break; 
+			case DELTEXT: t = ADDTEXT; break;
+			case ADDLINE: t = DELLINE; break;
+			case DELLINE: t = ADDLINE; break;
 		}
 	}
 
 	switch( t) {
 		case ADDTEXT:
-			pView->myBuffer()->action()->insertChar( pView, col, line, text ); 
+			pView->myBuffer()->action()->insertChar( pView, col, line, text );
 			break;
-		case DELTEXT: 
+		case DELTEXT:
 			pView->myBuffer()->action()->deleteChar( pView, col, line, text.length() );
 			break;
 		case ADDLINE:
@@ -119,7 +119,7 @@ void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY )
 	mFutureUndoItem->startCursorY = cursorY;
 }
 
-void YZUndoBuffer::addBufferOperation( YZBufferOperation::OperationType type, 
+void YZUndoBuffer::addBufferOperation( YZBufferOperation::OperationType type,
 									 const QString & text,
 									 uint col, uint line )
 {
@@ -189,7 +189,7 @@ bool YZUndoBuffer::mayRedo()
 	ret = mCurrentIndex < mUndoItemList.count();
 	return ret;
 }
-	
+
 bool YZUndoBuffer::mayUndo()
 {
 	bool ret;

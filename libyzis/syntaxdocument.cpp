@@ -579,7 +579,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
     else
     {
       yzDebug ("HL") << "UPDATE hl cache for: " << *it << endl;
-	  
+
       // We're forced to read the xml files or the mode doesn't exist in the katesyntax...rc
       QFile f(*it);
 

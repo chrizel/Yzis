@@ -83,7 +83,7 @@ void Konsole::cd (KURL url)
 {
   if (!part)
     return;
-    
+
   part->openURL (url);
 }
 
@@ -91,19 +91,19 @@ void Konsole::sendInput( const QString& text )
 {
   if (!part)
     return;
-    
+
   TerminalInterface *t = static_cast<TerminalInterface*>( part->qt_cast( "TerminalInterface" ) );
-  
+
   if (!t)
     return;
-    
+
   t->sendInput (text);
 }
 
 void Konsole::slotDestroyed ()
 {
   part=0;
-  
+
   // hide the dockwidget
   if (parentWidget())
     parentWidget()->hide ();

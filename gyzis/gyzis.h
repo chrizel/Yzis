@@ -45,10 +45,10 @@ class GYzis : public Bakery::App_WithDoc_Gtk, public YZSession
 		YZBuffer *createBuffer(const QString& path=QString::null) {}
 		YZView* createView ( YZBuffer* ) {}
 		void setFocusCommandLine() {}
-		void setFocusMainWindow() {} 
+		void setFocusMainWindow() {}
 
 
-		
+
 	protected:
 		virtual void init_create_document();
 		virtual App* new_instance();

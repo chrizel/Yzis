@@ -18,7 +18,7 @@
  **/
 
 /**
- * This file was mostly inspired from the kdelibs kdDebug class distributed under LGPL by 
+ * This file was mostly inspired from the kdelibs kdDebug class distributed under LGPL by
  * by the KDE project.
  * Here are the corresponding copyrights owner :
  * 1997 Matthias Kalle Dalheimer ( kalle@kde.org )
@@ -104,7 +104,7 @@ public:
 	void parseRcfile(const char * filename);
 
 	/** Reset all area to their default enabled value */
-	void clear() { _areaOutput.clear(); } 
+	void clear() { _areaOutput.clear(); }
 
 	/** Reset the object to its initial state: clear all the disabled/enabled
 	  * area and parse the rc file again */
@@ -164,7 +164,7 @@ class YZDebugStream {
 		QString output;
 		int level;
 		QString area;
-	
+
 };
 
 inline YZDebugStream &endl( YZDebugStream& s ) { s << "\n"; return s; }

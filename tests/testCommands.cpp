@@ -102,14 +102,14 @@ void TestYZCommands::testCharMovement()
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 3, 3 );
     yzDebug("testCharMovement") << "buffer : '" << mBuf->getWholeText() << "'" << endl;
-    
+
     mView->sendMultipleKey( "<RIGHT>" );
     mView->sendMultipleKey( "<DOWN>" );
     CHECK_CURSOR_POS( mView, 3, 3 );
-    
+
     mView->sendMultipleKey( "<LEFT>" );
     CHECK_CURSOR_POS( mView, 3, 2 );
-  
+
     mView->sendMultipleKey( "<UP>" );
     CHECK_CURSOR_POS( mView, 2, 2 );
 
@@ -119,14 +119,14 @@ void TestYZCommands::testCharMovement()
     CHECK_CURSOR_POS( mView, 0, 2 );
     mView->sendMultipleKey( "<UP>" );
     CHECK_CURSOR_POS( mView, 0, 2 );
-    
+
     mView->sendMultipleKey( "<LEFT>" );
     mView->sendMultipleKey( "<LEFT>" );
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendMultipleKey( "<LEFT>" );
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendMultipleKey( "<DOWN>" );
-    CHECK_CURSOR_POS( mView, 1, 0 );          
+    CHECK_CURSOR_POS( mView, 1, 0 );
 
     mView->sendMultipleKey( "2<RIGHT>" );
     mView->sendMultipleKey( "<RIGHT>" );
@@ -147,10 +147,10 @@ void TestYZCommands::testCharMovement()
     mView->sendMultipleKey( "l" );
     mView->sendMultipleKey( "j" );
     CHECK_CURSOR_POS( mView, 3, 3 );
-    
+
     mView->sendMultipleKey( "h" );
     CHECK_CURSOR_POS( mView, 3, 2 );
-  
+
      mView->sendMultipleKey( "k" );
     CHECK_CURSOR_POS( mView, 2, 2 );
 
@@ -158,13 +158,13 @@ void TestYZCommands::testCharMovement()
     CHECK_CURSOR_POS( mView, 0, 2 );
     mView->sendMultipleKey( "k" );
     CHECK_CURSOR_POS( mView, 0, 2 );
-    
+
     mView->sendMultipleKey( "2h" );
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendMultipleKey( "h" );
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendMultipleKey( "j" );
-    CHECK_CURSOR_POS( mView, 1, 0 );          
+    CHECK_CURSOR_POS( mView, 1, 0 );
 
     mView->sendMultipleKey( "3l" );
     mView->sendMultipleKey( "2j" );
@@ -175,7 +175,7 @@ void TestYZCommands::testBeginEndCharMovement()
 {
     mView->sendMultipleKey( "i<TAB>0123<ENTER>4567<ENTER>  89AB <ESC>" );
     CHECK_CURSOR_POS( mView, 2, 6 );
-    
+
     // test beginning and end of line movements
     mView->sendMultipleKey("^");
     CHECK_CURSOR_POS( mView, 2, 2 );
@@ -204,13 +204,13 @@ void TestYZCommands::testBeginEndCharMovement()
 void TestYZCommands::testLineMovement()
 {
 	//we test 'gg' like commands, make sure :set startofline=true first
-	YZSession::mOptions.setGroup("Global");	
-	YZSession::setBoolOption("startofline",true);	
+	YZSession::mOptions.setGroup("Global");
+	YZSession::setBoolOption("startofline",true);
     mView->sendMultipleKey( "i<TAB><TAB>0123<ENTER>4567<ENTER>89AB<ENTER> CDEF<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "\t\t0123\n4567\n89AB\n CDEF\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 3, 4 );
-    
+
     mView->sendMultipleKey( "gg" );
     CHECK_CURSOR_POS( mView, 0, 2 ); //depends on :set startofline value
     mView->sendMultipleKey( "<RIGHT>" );
@@ -242,7 +242,7 @@ void TestYZCommands::testLineMovement()
     CHECK_CURSOR_POS( mView, 2, 0 );
 
     //tests with startofline to false now
-    YZSession::setBoolOption("startofline",false);	
+    YZSession::setBoolOption("startofline",false);
     mView->sendMultipleKey("gg");
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendMultipleKey("G");
@@ -250,7 +250,7 @@ void TestYZCommands::testLineMovement()
 }
 
 void TestYZCommands::testMotionMovement() {
-    YZSession::setBoolOption("startofline",true);	
+    YZSession::setBoolOption("startofline",true);
     //tests with spaces on one line
     mView->sendMultipleKey( "iword1 word02 word03 word4 word05<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "word1 word02 word03 word4 word05\n" );
@@ -329,7 +329,7 @@ void TestYZCommands::testMotionMovement() {
     CHECK_CURSOR_POS( mView, 0, 0 );
 
     //tests with delimiters on multiple lines
-    YZSession::setBoolOption("cindent",false);	
+    YZSession::setBoolOption("cindent",false);
     mView->sendMultipleKey( "ggVGd" );
     mView->sendMultipleKey( "itest/function(test)/class::method()/<ENTER><TAB>void yzis::method(test()){<ENTER><TAB><TAB>printf(truc);<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "test/function(test)/class::method()/\n\tvoid yzis::method(test()){\n\t\tprintf(truc);\n" );

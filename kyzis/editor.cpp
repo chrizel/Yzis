@@ -40,7 +40,7 @@
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
-: QWidget( parent, name) 
+: QWidget( parent, name)
 {
 	mTransparent = false;
 	mParent = parent;
@@ -63,7 +63,7 @@ KYZisEdit::~KYZisEdit() {
 }
 
 void KYZisEdit::setTransparent ( bool t, double opacity, const QColor& color ) {
-	if ( opacity == 1 )	t = false;	// opactity is max, let use scroll optimisation 
+	if ( opacity == 1 )	t = false;	// opactity is max, let use scroll optimisation
 	mTransparent = t;
 	if ( t ) {
 		rootxpm->setFadeEffect( opacity, color );
@@ -87,7 +87,7 @@ void KYZisEdit::updateArea( ) {
 	erase( );
 	mParent->setVisibleArea( columns, lines );
 }
-	
+
 void KYZisEdit::paintEvent( QPaintEvent * pe ) {
 	QRect r = pe->rect( );
 	int clipx = r.x();
@@ -188,7 +188,7 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 		if ( st & Qt::ControlButton )
 			modifiers += "<CTRL>";
 
-//		if (e->key() != Qt::Key_unknown) 
+//		if (e->key() != Qt::Key_unknown)
 			if ( keys.contains( e->key() ) )
 				mParent->sendKey(keys[ e->key() ], modifiers);
 			else
@@ -202,7 +202,7 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		mParent->myBuffer()->clearIntro();
 		mParent->gotodxdy( 0, 0 );
 		return;
-	} 
+	}
 	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
 		if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
 			mParent->gotodxdy( e->x( ) / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + mParent->getDrawCurrentLeft( ) - marginLeft,
@@ -263,7 +263,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
 	unsigned int my_marginLeft = 0;
 	if ( number ) { // update marginLeft
-		my_marginLeft = ( isFontFixed ? QString::number( lineCount ).length() + 2 : mParent->stringWidth( " " + QString::number( lineCount ) + "  " ) ); 
+		my_marginLeft = ( isFontFixed ? QString::number( lineCount ).length() + 2 : mParent->stringWidth( " " + QString::number( lineCount ) + "  " ) );
 		lastLineNumber = 0;
 	}
 	if ( marginLeft != my_marginLeft ) {
@@ -317,7 +317,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 
 					if ( mParent->drawSelected() ) {
 						selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
-						if ( mParent->getCursor()->getY() == currentY && mParent->getCursor()->getX() == currentX - marginLeft ) 
+						if ( mParent->getCursor()->getY() == currentY && mParent->getCursor()->getX() == currentX - marginLeft )
 							drawCursorAt( GETX( currentX ) , currentY );
 					}
 
@@ -333,7 +333,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 			}
 		}
 		p.setPen( Settings::colorFG() );
-		if ( number ) { 
+		if ( number ) {
 			p.drawLine( GETX( marginLeft ) - GETX( spaceWidth ) / 2, clipy * linespace, \
 					GETX( marginLeft ) - GETX( spaceWidth ) / 2, currentY * linespace );
 		}

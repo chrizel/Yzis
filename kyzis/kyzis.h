@@ -98,7 +98,7 @@ public slots:
 
 
 protected slots:
-	
+
 protected:
 	virtual void resizeEvent( QResizeEvent *e );
 	void setWindowMenu();

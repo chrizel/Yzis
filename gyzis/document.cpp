@@ -33,9 +33,9 @@ bool Document::load_after() {
 	if(bTest) {
 		//See comment in save_before().
 		m_strSomething = get_contents();
-	} 
+	}
 
-	return bTest; 
+	return bTest;
 }
 
 bool Document::save_before() {

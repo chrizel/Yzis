@@ -46,7 +46,7 @@ class QLayout;
 class KYZisCodeCompletionCommentLabel : public QLabel
 {
   Q_OBJECT
-  
+
   public:
     KYZisCodeCompletionCommentLabel( QWidget* parent, const QString& text) : QLabel( parent, "toolTipTip",
              WStyle_StaysOnTop | WStyle_Customize | WStyle_NoBorder | WStyle_Tool | WX11BypassWM )
@@ -69,32 +69,32 @@ class KYZisCodeCompletion : public QObject
 
   public:
     KYZisCodeCompletion(KYZisView *view);
-  
+
     bool codeCompletionVisible ();
-  
+
     void showArgHint(
         QStringList functionList, const QString& strWrapping, const QString& strDelimiter );
     void showCompletionBox(
         QValueList<KTextEditor::CompletionEntry> entries, int offset = 0, bool casesensitive = true );
     bool eventFilter( QObject* o, QEvent* e );
-  
+
   public slots:
     void slotCursorPosChanged();
     void showComment();
-  
+
   signals:
     void completionAborted();
     void completionDone();
     void argHintHidden();
     void completionDone(KTextEditor::CompletionEntry);
     void filterInsertString(KTextEditor::CompletionEntry*,QString *);
-  
+
   private:
     void doComplete();
     void abortCompletion();
     void complete( KTextEditor::CompletionEntry );
     void updateBox( bool newCoordinate = false );
-  
+
     KYZisArgHint*    m_pArgHint;
     KYZisView*       m_view;
     class QVBox*          m_completionPopup;
@@ -110,35 +110,35 @@ class KYZisCodeCompletion : public QObject
 class KYZisArgHint: public QFrame
 {
   Q_OBJECT
-  
+
   public:
       KYZisArgHint( KYZisView* =0, const char* =0 );
       virtual ~KYZisArgHint();
-  
+
       virtual void setCurrentFunction( int );
       virtual int currentFunction() const { return m_currentFunction; }
-  
+
       void setArgMarkInfos( const QString&, const QString& );
-  
+
       virtual void addFunction( int, const QString& );
       QString functionAt( int id ) const { return m_functionMap[ id ]; }
-  
+
       virtual void show();
       virtual void adjustSize();
       virtual bool eventFilter( QObject*, QEvent* );
-  
+
   signals:
       void argHintHidden();
       void argHintCompleted();
       void argHintAborted();
-  
+
   public slots:
       virtual void reset( int, int );
       virtual void cursorPositionChanged( KYZisView*, int, int );
-  
+
   private slots:
       void slotDone(bool completed);
-  
+
   private:
       QMap<int, QString> m_functionMap;
       int m_currentFunction;

@@ -37,13 +37,13 @@ class Konsole : public QWidget
     ~Konsole ();
 
     void cd (KURL url=KURL());
-    
+
     void sendInput( const QString& text );
 
   protected:
     void focusInEvent( QFocusEvent * ) { if (part) part->widget()->setFocus(); };
     virtual void showEvent(QShowEvent *);
-    
+
 
   private:
     KParts::ReadOnlyPart *part;

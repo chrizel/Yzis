@@ -40,7 +40,7 @@ class YZRegisters {
 		 * Returns a QString containing the register content
 		 */
 		QStringList& getRegister ( QChar r ) const;
-		
+
 		/**
 		 * Gets the list of registers
 		 */
@@ -50,7 +50,7 @@ class YZRegisters {
 		 * Gets the list of values
 		 */
 		QValueList<QStringList> values() { return mRegisters.values(); }
-	
+
 	private:
 		QMap<QChar,QStringList> mRegisters;
 };

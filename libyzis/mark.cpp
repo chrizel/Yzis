@@ -36,7 +36,7 @@ void YZViewMark::clear( ) {
 	for( ; it != marker.end(); ++it ) {
 		delete it.data().bPos;
 		delete it.data().dPos;
-	}	
+	}
 	marker.clear( );
 }
 

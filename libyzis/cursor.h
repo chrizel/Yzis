@@ -41,9 +41,9 @@ class YZView;
  * developers remotely editing the same file :)
  */
 class YZCursor {
-	
+
 	friend YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
-		
+
 	public :
 		YZCursor(YZView *vp);
 		YZCursor(YZView *vp, unsigned int X, unsigned int Y );

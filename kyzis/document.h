@@ -32,7 +32,7 @@
 
 class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public KTextEditor::UndoInterface, public KTextEditor::ConfigInterface, public KTextEditor::MarkInterface, public YZBuffer {
 	Q_OBJECT
-		
+
 	public:
 		KYZisDoc (int kId, QWidget *parentWidget = 0, const char *widgetName=0, QObject *parent=0, const char *name=0);
 		virtual ~KYZisDoc ();
@@ -42,7 +42,7 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		void removeView( KTextEditor::View * v );
 		QWidget *parentWidget() { return m_parent; }
 		void setBaseWidget(QWidget *w) { setWidget(w); }
-	
+
 		uint numLines() const;
 		QString text() const;
 		uint length() const;

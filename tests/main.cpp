@@ -41,7 +41,7 @@ int main(int argc, char ** argv)
 	QTranslator myapp(  0 );
 	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
 	app.installTranslator(  &myapp );
-	
+
 /*
 	YZDebugBackend::instance()->enableDebugArea("TYZView", false );
 	YZDebugBackend::instance()->setDebugOutput( stderr );

@@ -40,7 +40,7 @@
  *
  * - it prints a short but nice summary at the end, with the number of test
  *   run, failed, and the percentage.
- *   
+ *
  * The output of a run looks like this:
 
 --- suite TestFoo
@@ -82,7 +82,7 @@ namespace CppUnit {
 	class ExtendedTestRunner : public TextUi::TestRunner {
 
 	public:
-	ExtendedTestRunner( Outputter *outputter =NULL, TestListener * progressListener =NULL) 
+	ExtendedTestRunner( Outputter *outputter =NULL, TestListener * progressListener =NULL)
 		: TextUi::TestRunner( outputter), m_progressListener( progressListener)  {
 		if (m_progressListener == NULL) {
 			m_progressListener = new TextTestProgressListener();
@@ -91,7 +91,7 @@ namespace CppUnit {
 
   virtual bool runTest( Test *test,
 	  bool doPrintProgress );
-  
+
   virtual void setTestProgressListener( TestListener * listener) {
 	  delete m_progressListener;
 	  m_progressListener = listener;
@@ -101,8 +101,8 @@ namespace CppUnit {
 	  delete m_result;
 	  m_result = result;
   }
-  
-	
+
+
 protected:
 	TestListener * m_progressListener;
 };
@@ -115,7 +115,7 @@ class PhilTestRunner : public CppUnit::ExtendedTestRunner {
 public:
 	/** I use all the Phil customisers in this runner */
 	PhilTestRunner();
-	
+
 };
 
 

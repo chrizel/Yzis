@@ -3,7 +3,7 @@
    Copyright (C) 2002 John Firebaugh <jfirebaugh@kde.org>
    Copyright (C) 2001 by Victor Röder <Victor_Roeder@GMX.de>
    Copyright (C) 2002 by Roberto Raggi <roberto@kdevelop.org>
-   
+
    port from katecodecompletion code:
    Copyright (C) 2004 by Alexander Dymo <adymo@mksat.net>
 
@@ -242,7 +242,7 @@ void KYZisCodeCompletion::doComplete()
     add += "(";
 
   emit filterInsertString(&(item->m_entry),&add);
-  
+
   m_view->gotoInsertMode();
   static_cast<KYZisDoc*>(m_view->document())->YZBuffer::action()->insertChar(m_view, m_view->getCursor(), add);
 

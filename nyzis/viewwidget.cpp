@@ -49,7 +49,7 @@ QMap<QRgb,unsigned long int> NYZView::mAttributesMap;
 NYZView::NYZView(YZBuffer *b)
 	: YZView(b,NYZFactory::self,0), editor(0)
 {
-	
+
 	if ( !attributesMapInitialised ) initialiseAttributesMap();
 	YZASSERT( b );
 	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << ( int )b << endl;
@@ -73,7 +73,7 @@ void NYZView::map( void )
 	wattrset( editor, A_NORMAL );
 	wmove( editor,0,0 );
 	keypad( editor , true); //active symbols for special keycodes
-	scrollok( editor, false ); 
+	scrollok( editor, false );
 
 	// creates layout
 	/*
@@ -109,7 +109,7 @@ void NYZView::unmap( void )
 void NYZView::updateVis( bool refresh ) {
 	unsigned int width;
 	unsigned int height;
-	getmaxyx( stdscr, height, width ); 
+	getmaxyx( stdscr, height, width );
 	setVisibleArea( width - marginLeft, height - 2, refresh );
 }
 
@@ -125,16 +125,16 @@ void NYZView::printVoid( unsigned int relline )
 }
 
 void NYZView::scrollUp( int n ) {
-	scrollok( editor, true ); 
+	scrollok( editor, true );
 	wscrl( editor, - n );
-	scrollok( editor, false ); 
+	scrollok( editor, false );
 	drawContents( 0, n );
 }
 
 void NYZView::scrollDown( int n ) {
-	scrollok( editor, true ); 
+	scrollok( editor, true );
 	wscrl( editor, n );
-	scrollok( editor, false ); 
+	scrollok( editor, false );
 	drawContents( getLinesVisible() - n, n );
 }
 
@@ -170,10 +170,10 @@ void NYZView::drawContents( int clipy, int cliph ) {
 		initDraw( );
 	}
 	unsigned int lineNumber = 0;
-	
+
 	if ( myBuffer()->introShown() ) {
 		unsigned int h, w;
-		getmaxyx( stdscr, h, w ); 
+		getmaxyx( stdscr, h, w );
 		while ( drawNextLine() ) {
 			QString str = myBuffer()->textline( currentY );
 			wmove( window, currentY, (w-str.length()>0)?(w-str.length())/2:0 );
@@ -208,16 +208,16 @@ void NYZView::drawContents( int clipy, int cliph ) {
 					if ( mAttributesMap.contains( rawcolor ) ) {
 						mAttributes = mAttributesMap[ rawcolor ];
 					} else {
-						mAttributes = attribWhite; 
+						mAttributes = attribWhite;
 						yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
-							rawcolor << " (" << 
-							qRed( rawcolor ) << "," << 
-							qGreen( rawcolor ) << "," << 
-							qBlue( rawcolor ) << ") or (" << 
+							rawcolor << " (" <<
+							qRed( rawcolor ) << "," <<
+							qGreen( rawcolor ) << "," <<
+							qBlue( rawcolor ) << ") or (" <<
 
-							c.red() << "," << 
-							c.green() << "," << 
-							c.blue() << ")" << 
+							c.red() << "," <<
+							c.green() << "," <<
+							c.blue() << ")" <<
 							endl;
 					}
 					bool invert = drawSelected( );
@@ -293,7 +293,7 @@ void NYZView::syncViewInfo( void )
 	// update infobar
 	myfmt=( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if
 	            // it's rather unlikely..
-	wprintw( infobar, myfmt, 
+	wprintw( infobar, myfmt,
 			( mBuffer->fileIsNew() )?"[No File]":mBuffer->fileName().latin1(),
 			( mBuffer->fileIsModified() )?" [+]":""
 			);
@@ -406,8 +406,8 @@ void NYZView::initialiseAttributesMap()
 	init_color( 1,
 			(short)qRed(Qt::magenta.rgb()),
 			(short)qGreen(Qt::magenta.rg),
-			(short)qBlue(Qt::magenta)); 
-	init_pair( 1, 1, COLOR_BLACK );    
+			(short)qBlue(Qt::magenta));
+	init_pair( 1, 1, COLOR_BLACK );
 	mColormap[Qt::magenta] = 1;
 			*/
 

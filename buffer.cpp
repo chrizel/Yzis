@@ -71,6 +71,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mMarks = new YZMark( );
 	displayIntro();
 	YZSession::me->addBuffer( this );
+	mSwap = new YZSwapFile( this );
 	yzDebug("YZBuffer") << "NEW BUFFER CREATED : " << mPath << endl;
 }
 

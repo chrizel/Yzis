@@ -123,6 +123,7 @@ QString YZView::buildCommand( const QString& key, int modifiers ) {
 
 /* Used by the buffer to post events */
 void YZView::sendKey( int c, int modifiers) {
+	mBuffer->getSwapFile()->addToSwap( c, modifiers );
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );

@@ -3235,10 +3235,10 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   list.append(others);
 
   YzisAttribute* alert = new YzisAttribute();
-  alert->setTextColor(Qt::white);
+  alert->setTextColor(Qt::black);
   alert->setSelectedTextColor( QColor::QColor("#FCC") );
   alert->setBold(true);
-  alert->setBGColor( QColor::QColor("#FCC") );
+  alert->setBGColor( QColor::QColor("red") );
   list.append(alert);
 
   YzisAttribute* functionAttribute = new YzisAttribute();

@@ -80,7 +80,7 @@ class YZSearch {
 	private :
 
 		void setCurrentSearch( const QString& pattern );
-		YZCursor doSearch( YZView* mView, const QString& pattern, bool reverse, bool replay, bool skipline, bool* found );
+		YZCursor doSearch( YZView* mView, const QString& pattern, bool reverse, bool skipline, bool* found );
 		void highlightSearch( YZView* mView, YZSelectionMap searchMap );
 
 		QString mCurrentSearch;

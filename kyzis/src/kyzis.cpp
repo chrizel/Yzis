@@ -51,11 +51,12 @@
 //#include "ktexteditor/document.h"
 //class KTextEditor::View;
 
-Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
+Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode, const QString& keys)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
 	m_dockConfig( dockConfig ),
 	mBuffers( 0 ), mViews( 0 )
 {
+	m_initialCommand = keys;
 	resize( 700, 480 );
 //	setMinimumSize( 200, 200 );
 	mConsole = NULL;
@@ -89,6 +90,12 @@ Kyzis::~Kyzis() {
 	//delete m_toolbarAction;
 	delete m_konsoleAction;
 	delete mConsole;
+}
+
+void Kyzis::init () {
+	if (m_initialCommand.length()) {
+		YZSession::me->sendMultipleKeys(m_initialCommand);
+	}
 }
 
 void Kyzis::resizeEvent( QResizeEvent *e) {

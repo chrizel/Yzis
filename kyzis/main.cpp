@@ -27,6 +27,7 @@
 #include <kstandarddirs.h>
 #include <qtranslator.h>
 #include <qtextcodec.h>
+#include <qtimer.h>
 #include <libintl.h>
 #include <locale.h>
 #include "libyzis/translator.h"
@@ -45,7 +46,6 @@ static KCmdLineOptions options[] = {
 };
 
 int main(int argc, char **argv) {
-	
 	KLocale::setMainCatalogue("yzis");
 	KAboutData about("kyzis", I18N_NOOP("Kyzis"), VERSION_CHAR, description, KAboutData::License_GPL_V2, 0, 0, "http://www.yzis.org", "bugs@bugs.yzis.org");
 	about.addAuthor( "Mickael Marchand", "Author", "mikmak@yzis.org" );
@@ -80,7 +80,9 @@ int main(int argc, char **argv) {
 		QDomElement dockConfig = domDoc.createElement("dockConfig");
 		domDoc.appendChild( dockConfig );
 
-		Kyzis *widget = new Kyzis(dockConfig,KMdi::IDEAlMode);
+		QString initialSendKeys = args->getOption("c");
+
+		Kyzis *widget = new Kyzis(dockConfig,KMdi::IDEAlMode, initialSendKeys);
 		kapp->setMainWidget( widget );
 		widget->show();
 
@@ -92,15 +94,7 @@ int main(int argc, char **argv) {
 				widget->createBuffer( args->url( i ).url() );
 		}
 
-		QString initialSendKeys = args->getOption("c");
-		YZSession::mOptions->setGroup("Global");
-		YZOptionValue* o_splash = YZSession::mOptions->getOption("blocksplash");
-		bool splash = o_splash->boolean();
-		o_splash->setBoolean( false );
-		if (initialSendKeys.length()) {
-			YZSession::me->sendMultipleKeys(initialSendKeys);
-		}
-		o_splash->setBoolean( splash );
+		QTimer::singleShot(0, widget, SLOT( init() ));
 
 		args->clear();
 	}

@@ -25,15 +25,15 @@
 #include "debug.h"
 #include <ctype.h>
 
-
 NYZFactory *NYZFactory::self = 0;
 NYZView *NYZFactory::currentView=0;
 QMap<int,QString> NYZFactory::keycodes; // map Ncurses to Qt codes
 
 
-NYZFactory::NYZFactory(const char *session_name)
-	:YZSession( session_name )
+NYZFactory::NYZFactory(const char *session_name, const QString& keys)
+	:YZSession( session_name ), QObject()
 {
+	m_initialCommand = keys;
 	/* init screen */
 
 	(void) initscr();	/* initialize the curses library */
@@ -67,8 +67,13 @@ NYZFactory::~NYZFactory( )
 	currentView = 0;
 }
 
-bool NYZFactory::process_one_event()
-{
+void NYZFactory::init() {
+	if (m_initialCommand.length()) {
+		YZSession::me->sendMultipleKeys(m_initialCommand);
+	}
+}
+
+bool NYZFactory::process_one_event() {
 	YZASSERT_MSG( currentView, "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
 
 	wint_t c;

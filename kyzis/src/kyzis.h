@@ -54,7 +54,7 @@ public:
 	 * @param dockConfig the configuration of dock widgets
 	 * @param mode the startup MDI mode
      */
-    Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode);
+    Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode, const QString& initialKeys);
 
     /**
      * Default Destructor
@@ -102,6 +102,8 @@ public slots:
 	 */
 	void showKonsole();
 
+	void init();
+
 
 protected slots:
 
@@ -134,6 +136,7 @@ private:
 
 	QMap<int,KView> viewList;
 	Konsole *mConsole;
+	QString m_initialCommand;
 
 };
 

@@ -21,6 +21,7 @@
  * $Id$
  */
 
+#include <qtimer.h>
 #include "debug.h"
 /* Qt */
 #if QT_VERSION < 0x040000

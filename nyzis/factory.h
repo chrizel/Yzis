@@ -27,8 +27,9 @@
 #include "session.h"
 #include <ncurses.h>
 
-class NYZFactory : public YZSession
+class NYZFactory : public QObject, public YZSession
 {
+	Q_OBJECT
 
 public:
 	static NYZFactory *self;
@@ -38,7 +39,7 @@ public:
 	/**
 	 * Constructor. Give a session name to identify/save/load sessions.
 	 */
-	NYZFactory(const char *session_name = "default_nyzis_session" );
+	NYZFactory(const char *session_name = "default_nyzis_session", const QString& keys = QString::null );
 	virtual ~NYZFactory( );
 
 	bool process_one_event();
@@ -68,6 +69,10 @@ private:
 	  * mapping ncurses->qt for keycodes
 	  */
 	static QMap<int,QString> keycodes; // map Ncurses to Qt codes
+	QString m_initialCommand;
+
+public slots:
+	void init();
 
 };
 

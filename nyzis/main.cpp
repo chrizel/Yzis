@@ -105,12 +105,6 @@ main(int argc, char *argv[])
 
 	int c;
 	
-	// create factory
-	NYZFactory *factory  =new NYZFactory();
-
-	YZSession::mOptions->setGroup("Global");
-	YZOptionValue* o_splash = YZSession::mOptions->getOption("blocksplash");
-	bool splash = o_splash->boolean();
 	while ( 1 ) {
 		c = getopt_long ( argc, argv, "hvc:", long_options, &option_index );
 		if ( -1 == c ) break; // end of parsing
@@ -129,7 +123,6 @@ main(int argc, char *argv[])
 				exit(0);
 				break;
 			case 'c':
-				o_splash->setBoolean( false );
 				initialSendKeys = (const char *) optarg;
 				break;
 			default:
@@ -138,6 +131,8 @@ main(int argc, char *argv[])
 
 	};
 
+	// create factory
+	NYZFactory *factory = new NYZFactory("default_session", initialSendKeys);
 
 	// Signal handling
 	(void) signal(SIGINT, sigint);      /* arrange interrupts to terminate */
@@ -159,15 +154,12 @@ main(int argc, char *argv[])
 	}
 
 	if ( !hasatleastone ) {
-		factory->createBuffer();
+		bf = factory->createBuffer();
 		YZView* cView = YZSession::me->currentView();
 		cView->displayIntro();
 	}
 
-	if (initialSendKeys.length()) {
-		YZSession::me->sendMultipleKeys( initialSendKeys );
-		o_splash->setBoolean( splash );
-	}
+	QTimer::singleShot( 0, factory, SLOT( init() ) );
 
 	YZSession::me->guiStarted();
 

@@ -143,8 +143,9 @@ void KYZisView::syncViewInfo() {
 	mVScroll->setValue(getBufferCursor()->getY() );
 }
 
-void KYZisView::refreshScreen () {
+QString KYZisView::refreshScreen (const QString&, YZCommandArgs) {
 	editor->repaint( false );
+	return QString::null;
 }
 
 void KYZisView::setupActions() {

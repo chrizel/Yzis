@@ -59,8 +59,7 @@ class YZView {
 		/**
 		 * Updates the number of visible @arg c columns and @arg l lines
 		 */
-		void setVisibleArea (int c, int l);
-		void setVisibleArea (int c, int l, bool refresh );
+		void setVisibleArea (int c, int l, bool refresh = true );
 
 		/**
 		 * transfer a key event from GUI to core
@@ -69,6 +68,14 @@ class YZView {
 		 * as in QKeyEvent::stat()
 		 */
 		void sendKey(int c, int modifiers);
+
+		/**
+		 * Translate Qt key/modifiers names into a full QString
+		 * @param key the received key
+		 * @param modifiers the received modifiers ( CTRL, SHIFT, ALT )
+		 * @return a QString like <CTRL>key
+		 */
+		QString buildCommand( const QString& key, int modifiers );
 
 		/** 
 		 * Returns the index of the first line displayed on the view
@@ -342,8 +349,8 @@ class YZView {
 		/**
 		 * Asks a redraw of the whole view
 		 */
-		virtual void refreshScreen () = 0;
-					
+		virtual QString refreshScreen (const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs()) = 0;
+
 		/**
 		 * Displays an informational message
 		 */

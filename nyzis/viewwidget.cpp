@@ -278,13 +278,14 @@ void NYZView::syncViewInfo( void )
 	wrefresh( editor );
 }
 
-void NYZView::refreshScreen() {
+QString NYZView::refreshScreen(const QString&, YZCommandArgs) {
 //	clear();
 	drawContents( 0, getLinesVisible() );
 
 	refresh();
 	wrefresh(editor);
 	updateCursor();
+	return QString::null;
 }
 
 void NYZView::displayInfo( const QString& info )

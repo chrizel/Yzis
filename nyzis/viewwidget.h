@@ -45,7 +45,7 @@ public:
 	virtual QString getCommandLineText(void) const {return commandline; }
 	virtual void setCommandLineText( const QString& );
 	virtual void modeChanged(void) { syncViewInfo(); }
-	virtual void refreshScreen();
+	virtual QString refreshScreen(const QString& inputsBuff="", YZCommandArgs args=YZCommandArgs());
 	virtual void syncViewInfo();
 	virtual void displayInfo(  const QString& info );
 	void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );

@@ -325,6 +325,12 @@ class YZView {
 		YZCursor* getCursor() { return dCursor; }
 
 		/**
+		 * Get the current buffer cursor information
+		 * @return a reference on the current buffer cursor
+		 */
+		YZCursor* getBufferCursor() { return mCursor; }
+
+		/**
 		 * Search for text and moves the cursor to the position of match
 		 * @param search a regexp to look for
 		 * @return true if a match is found

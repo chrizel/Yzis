@@ -55,6 +55,21 @@ class YZExLua : public QObject {
 		 */
 		static int insert(lua_State *L);
 
+		/**
+		 * Replace text on view, at startCol,startLine,text
+		 */
+		static int replace(lua_State *L);
+
+		/**
+		 * Get the current X position in buffer
+		 */
+		static int wincol(lua_State *L);
+
+		/**
+		 * Get the current Y position in buffer
+		 */
+		static int winline(lua_State *L);
+
 	private:
 		lua_State *st;
 };

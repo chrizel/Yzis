@@ -117,7 +117,7 @@ class YZInternalOptionPool {
 		/**
 		 * return a list option
 		 */
-		QStringList readQStringListEntry( const QString& key, const QStringList& def = QStringList::split("","") );
+		QStringList readQStringListEntry( const QString& key, const QStringList& def = QStringList() );// QStringList::split("","") );
 
 		/**
 		 * Sets a qstringlist option

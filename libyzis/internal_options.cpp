@@ -260,7 +260,7 @@ QStringList YZInternalOptionPool::readQStringListEntry( const QString& _key, con
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains( key ) ) {
 		const QString& s = mOptions[ key ]->getValue();
-		const QStringList& list ( QStringList::split(",",s) );
+		const QStringList& list ( QStringList::split(",",s,true) );
 		return list;
 	} 
 	return def;

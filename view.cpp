@@ -677,15 +677,15 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 bool YZView::doSearch( const QString& search ) {
 	//build the regexp
 	QRegExp ex( search );
-	unsigned int currentMatchLine = mCursor->getY(); //start from current line
+	int currentMatchLine = mCursor->getY(); //start from current line
 	//if you understand this line you are semi-god :)
 	//if you don't understand, remove the IFs and see what it does when you have the cursor on the last/first column and start a search/reverse search
-	unsigned int currentMatchColumn = reverseSearch ? ( mCursor->getX() ? mCursor->getX() : 1 ) - 1 : ( mCursor->getX() < mMaxX ) ? mCursor->getX() + 1 : mCursor->getX(); //start from current column +/- 1
+	int currentMatchColumn = reverseSearch ? ( mCursor->getX() ? mCursor->getX() : 1 ) - 1 : ( mCursor->getX() < mMaxX ) ? mCursor->getX() + 1 : mCursor->getX(); //start from current column +/- 1
 
 	//get current line
 	QString l;
 
-	for ( unsigned int i = currentMatchLine; i < mBuffer->lineCount() && i >= 0 ; reverseSearch ? i-- : i++ ) {
+	for ( unsigned int i = currentMatchLine; i < mBuffer->lineCount(); reverseSearch ? i-- : i++ ) {
 		l = mBuffer->data( i );
 		yzDebug() << "Searching " << search << " in line : " << l << endl;
 		int idx;

@@ -34,7 +34,7 @@ class YZLine
 		YZLine();
 		~YZLine();
 
-		QString data() { return mData; }
+		QString data() const { return mData; }
 		void setData(const QString &data) { mData = data; }
 
 	private:

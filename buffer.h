@@ -126,7 +126,7 @@ public:
 	 * Get the whole text of the buffer
 	 * @return a QStringList containing the texts
 	 */
-	QString getWholeText();
+	QString getWholeText() const;
 
 	/**
 	 * Finds a line in the buffer

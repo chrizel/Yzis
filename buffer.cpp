@@ -283,10 +283,12 @@ QString	YZBuffer::data(unsigned int no)
 		return l->data();
 }
 
-QString YZBuffer::getWholeText() {
+QString YZBuffer::getWholeText() const {
 	QString text;
-	for(YZLine *it = mText.first(); it; it = mText.next())
-		text += it->data() + "\n";
+	for ( int i = 0 ; i < lineCount() ; i++ )
+		text += ( ( QPtrList<YZLine> )mText ).at( i )->data() + "\n";
+//	for(YZLine *it = mText.first(); it; it = mText.next())
+//		text += it->data() + "\n";
 	text.truncate( text.length()-1 );
 	return text;
 }

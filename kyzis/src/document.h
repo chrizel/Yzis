@@ -26,11 +26,12 @@
 #include <ktexteditor/undointerface.h>
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/markinterface.h>
+#include <ktexteditor/configinterfaceextension.h>
 #include <buffer.h>
 #include <view.h>
 #include <session.h>
 
-class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public KTextEditor::UndoInterface, public KTextEditor::ConfigInterface, public KTextEditor::MarkInterface, public YZBuffer {
+class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public KTextEditor::UndoInterface, public KTextEditor::ConfigInterface, public KTextEditor::ConfigInterfaceExtension, public KTextEditor::MarkInterface, public YZBuffer {
 	Q_OBJECT
 
 	public:
@@ -96,6 +97,13 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		virtual void readSessionConfig( KConfig *config );
 		virtual void writeSessionConfig( KConfig *config );
 		virtual void configDialog();
+
+		//configextension interface
+		virtual uint configPages() const;
+		virtual KTextEditor::ConfigPage *configPage ( uint number = 0, QWidget *parent = 0, const char *name=0 );
+		virtual QString configPageName ( uint number = 0 ) const;
+		virtual QString configPageFullName ( uint number = 0 ) const;
+		virtual QPixmap configPagePixmap ( uint number = 0, int size = KIcon::SizeSmall ) const;
 
 		/*state modification changes - to comply with undocumented kate features
 		this overload emits stateChanged() signal from all views*/

@@ -36,7 +36,7 @@
 
 #include "configdialog.h"
 #include <qcheckbox.h>
-
+#include "hlconfig.h"
 
 KYZisConfigDialog::KYZisConfigDialog( QWidget* parent, const char* name, KConfigSkeleton* config, DialogType dialogType )
 	: KConfigDialog( parent, name, config, dialogType ) {
@@ -116,5 +116,14 @@ void KYZisConfigDialog::setupPages() {
 
 
 	addPage( pageAppearance, i18n("Appearance"), "colorize" );
+
+	YzisSchemaConfigPage *pageHL = new YzisSchemaConfigPage ( this );
+	connect( pageHL, SIGNAL( changed() ), this, SLOT( slotChanged() ) );
+	addPage( pageHL, i18n("Syntax Highlighting"), "hl" );
 }
 
+void KYZisConfigDialog::slotChanged() {
+	actionButton( KDialogBase::Apply )->setEnabled( true );
+}
+
+#include "configdialog.moc"

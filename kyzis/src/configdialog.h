@@ -29,15 +29,18 @@
 #include "settings.h"
 
 class KYZisConfigDialog : public KConfigDialog {
+	Q_OBJECT
 
 	public :
-
 		KYZisConfigDialog( QWidget* parent, const char* name, KConfigSkeleton* config, DialogType dialogType );
 		~KYZisConfigDialog( );
 
+	public slots:
+		void slotChanged();
+
 	private :
 		void setupPages();
-
+	
 };
 
 #endif

@@ -64,17 +64,15 @@ void YzisSchemaManager::update (bool /*readfromfile*/)
 // get the right group
 // special handling of the default schemas ;)
 //
-/*KConfig *YzisSchemaManager::schema (uint number)
+QString YzisSchemaManager::schema (uint number)
 {
   if ((number>1) && (number < m_schemas.count()))
-    m_config.setGroup (m_schemas[number]);
+    return m_schemas[number];
   else if (number == 1)
-    m_config.setGroup (printingSchema());
-  else
-    m_config.setGroup (normalSchema());
+    return printingSchema();
 
-  return &m_config;
-}*/
+    return normalSchema();
+}
 
 void YzisSchemaManager::addSchema (const QString &/*t*/)
 {

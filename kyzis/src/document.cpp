@@ -36,6 +36,7 @@
 #include "mark.h"
 
 #include "configdialog.h"
+#include "hlconfig.h"
 
 KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::s_self) {
@@ -377,6 +378,26 @@ QPtrList<KTextEditor::Mark> KYZisDoc::marks() {
 
 void KYZisDoc::clearMarks() {
 	docMarks()->clear();
+}
+
+uint KYZisDoc::configPages() const {
+	return 1;	
+}
+
+KTextEditor::ConfigPage *KYZisDoc::configPage ( uint number, QWidget *parent, const char *name ) {
+	return new YzisSchemaConfigPage( parent, this );
+}
+
+QString KYZisDoc::configPageName ( uint number ) const {
+	return i18n("Syntax Highlighting");
+}
+
+QString KYZisDoc::configPageFullName ( uint number) const {
+	return i18n("Syntax Highlighting");
+}
+
+QPixmap KYZisDoc::configPagePixmap ( uint number, int size ) const {
+	return 0;
 }
 
 #include "document.moc"

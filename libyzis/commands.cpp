@@ -128,6 +128,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("@", &YZCommandPool::replayMacro) );
 	commands.append( new YZCommand("<CTRL>l", &YZCommandPool::redisplay) );
 	commands.append( new YZCommand("<CTRL>x<CTRL>n", &YZCommandPool::completeKeywordForward) );
+	commands.append( new YZCommand("<CTRL>x<CTRL>p", &YZCommandPool::completeKeywordBackward) );
 }
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
@@ -983,7 +984,7 @@ QString YZCommandPool::replace( const YZCommandArgs &args ) {
 	return QString::null;
 }
 
-QString YZCommandPool::completeKeywordForward( const YZCommandArgs &args ) {
+QString YZCommandPool::completeKeyword( const YZCommandArgs &args, bool forward ) {
 	YZCursor pos = args.view->getBufferCursor();
 	//what word do we want to complete ...
 	YZNewMotionArgs arg (args.view, 1);
@@ -994,8 +995,15 @@ QString YZCommandPool::completeKeywordForward( const YZCommandArgs &args ) {
 	unsigned int matchedLength = 0;
 	//regexp to search in the text
 	QString word = list[0] + "\\w*";
-	YZCursor result = args.view->myBuffer()->action()->search(args.view, word, pos, 
-		YZCursor(args.view, 0, args.view->myBuffer()->lineCount()+1), false, &matchedLength, &found);
+	YZCursor result;
+	if (forward) {
+		result = args.view->myBuffer()->action()->search(args.view, word, pos,
+			YZCursor(args.view, 0, args.view->myBuffer()->lineCount()+1), !forward, &matchedLength, &found);
+	} else {
+		YZCursor start(args.view, pos.getX() - word.length(), pos.getY());
+		result = args.view->myBuffer()->action()->search(args.view, word, start,
+			YZCursor(args.view, 0, 0), !forward, &matchedLength, &found);
+	}
 	//found something ?
 	if ( found && matchedLength > 0 )  {
 		YZCursor end (args.view, result.getX()+matchedLength-1, result.getY());
@@ -1005,5 +1013,13 @@ QString YZCommandPool::completeKeywordForward( const YZCommandArgs &args ) {
 		args.view->commitNextUndo();
 	}
 	return QString::null;
+}
+
+QString YZCommandPool::completeKeywordBackward( const YZCommandArgs &args ) {
+	return completeKeyword(args, false);
+}
+
+QString YZCommandPool::completeKeywordForward( const YZCommandArgs &args ) {
+	return completeKeyword(args, true);
 }
 

@@ -50,6 +50,11 @@ class YZExLua : public QObject {
 		static int text(lua_State *L);
 
 		/**
+		 * Get one line of text
+		 */
+		static int line(lua_State *L);
+
+		/**
 		 * Insert text on view, at startCol,startLine,text
 		 */
 		static int insert(lua_State *L);
@@ -93,6 +98,11 @@ class YZExLua : public QObject {
 		 * Number of lines of the current buffer
 		 */
 		static int YZExLua::linecount(lua_State *L);
+
+		/**
+		 * Return yzis version string
+		 */
+		static int YZExLua::version(lua_State *L);
 
 
 	private:

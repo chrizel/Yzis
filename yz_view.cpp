@@ -346,6 +346,9 @@ QString YZView::deleteLine ( const QString& inputsBuff ) {
 	//reset the input buffer
 	purgeInputBuffer();
 
+	// prevent bug when deleting the last line
+	gotoxy( cursor->getX(), cursor->getY());
+
 	return QString::null;
 }
 

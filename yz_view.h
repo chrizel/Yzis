@@ -59,7 +59,7 @@ public:
 	  * return true or false according to if the given line is
 	  * visible or not
 	  */
-	int	isLineVisible(int l) { return ( (l>=current) && ((l-current)<lines_vis) ); }
+	int	isLineVisible(unsigned int l) { return ( (l>=current) && ((l-current)<lines_vis) ); }
 
 	YZBuffer *myBuffer() { return buffer;}
 
@@ -163,8 +163,8 @@ protected:
 	
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
-	unsigned int		lines_vis;	/** number of visible lines */
-	int		current;	/** current line on top of view */
+	unsigned int	lines_vis;	/** number of visible lines */
+	unsigned int	current;	/** current line on top of view */
 	YZCursor *cursor;
 	int		current_maxx;	/** maximum value for x, that s (lenght of current line -1), -1 means the line is empty */
 

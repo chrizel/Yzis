@@ -179,6 +179,23 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 }
 
 void KYZisEdit::drawCursorAt(int x, int y) {
+/*	unsigned int linespace = fontMetrics().lineSpacing();
+	y = y * linespace;
+	unsigned int mid = linespace / 2;
+	QPainter p;
+	p.begin( this );
+	p.setRasterOp( Qt::Qt::NotROP );
+	if ( x ) --x;
+	unsigned int topY = y;
+	if ( topY ) --topY;
+//	p.setBrush( Qt::SolidPattern );
+//	QPointArray shape;
+//	shape.putPoints( 0, 3, x,y, x+5,y+mid, x,y+(2*mid) );
+//	p.drawPolygon( shape, true );
+	p.drawLine( x, topY, x, y + linespace );
+	p.drawLine( x, topY, x + 5, topY );
+	p.drawLine( x, y + linespace, x + 5, y + linespace );
+	p.end(); */
 	bitBlt( this, x, y * fontMetrics().lineSpacing(), this,	x, y * fontMetrics().lineSpacing(),
 			( isFontFixed ? fontMetrics().maxWidth() : NONFIXED_CURSOR_WIDTH ), fontMetrics().lineSpacing(),
 			Qt::NotROP,	    // raster Operation
@@ -259,6 +276,8 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 
 					if ( mParent->drawSelected() ) {
 						selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
+						if ( mParent->getCursor()->getY() == currentY && mParent->getCursor()->getX() == currentX - marginLeft ) 
+							drawCursorAt( GETX( currentX ) , currentY );
 					}
 
 					currentX += mParent->drawLength( );

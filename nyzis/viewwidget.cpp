@@ -131,7 +131,7 @@ void NYZView::printLine( int line )
 	while (  drawNextLine() ) {
 		rely++;
 		// clipping
-		int lineNumber = drawLineNumber();
+		int lineNumber = dCursor->getY();
 		if ( lineNumber<line ) continue;
 		if ( lineNumber>line ) break;
 

@@ -24,9 +24,8 @@
 #ifndef YZIS_CURSOR
 #define YZIS_CURSOR
 
-#include <ostream>
-
 #include "view.h"
+#include "debug.h"
 
 
 class YZView;
@@ -37,6 +36,8 @@ class YZView;
  * developers remotely editing the same file :)
  */
 class YZCursor {
+	
+	friend YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
 		
 	public :
 		YZCursor(YZView *vp);
@@ -55,14 +56,11 @@ class YZCursor {
 
 		void setCursor( YZCursor *cursor );
 
-		bool lt ( YZCursor *c );
-
-		bool operator== ( const YZCursor &right );
-		bool operator<= ( const YZCursor &right );
-		bool operator>= ( const YZCursor &right );
-		bool operator< ( const YZCursor &right );
-		bool operator> ( const YZCursor &right );
-
+		bool operator== ( const YZCursor &right ) const;
+		bool operator<= ( const YZCursor &right ) const;
+		bool operator>= ( const YZCursor &right ) const;
+		bool operator< ( const YZCursor &right ) const;
+		bool operator> ( const YZCursor &right ) const;
 
 /*
 		inline void incX(int nb=1) { x_pos+=nb; }
@@ -73,7 +71,6 @@ class YZCursor {
 
 		inline void decY(int nb=1) { y_pos-=nb; }
 */
-
 	private :
 		YZView *parentView;
 

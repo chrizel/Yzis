@@ -52,8 +52,8 @@ void YZSelectionPool::addSelection( YZCursor * from, YZCursor * to ) {
 	bool isToSel = false;
 	unsigned int fromSel = locatePosition( from, &isFromSel );
 	unsigned int toSel = locatePosition( to, &isToSel );
-	yzDebug() << "addSelection : from(x=" << from->getX() << ";y=" << from->getY() << ";pos=" << fromSel << "," << isFromSel 
-		<< "); to(x=" << to->getX() << ";y=" << to->getY() << ";pos=" << toSel << "," << isToSel << ");" << endl;
+	yzDebug() << "addSelection : from: " << *from << "pos=" << fromSel << "," << isFromSel
+		<< " - to: " << *to << "pos=" << toSel << "," << isToSel << endl;
 
 	if ( isFromSel && isToSel ) {
 		if ( fromSel != toSel ) {
@@ -91,16 +91,16 @@ void YZSelectionPool::delSelection( YZCursor * from, YZCursor * to ) {
 	bool isToSel = false;
 	unsigned int fromSel = locatePosition( from, &isFromSel );
 	unsigned int toSel = locatePosition( to, &isToSel );
-	yzDebug() << "delSelection : from(x=" << from->getX() << ";y=" << from->getY() << ";pos=" << fromSel << "," << isFromSel
-		<< "); to(x=" << to->getX() << ";y=" << to->getY() << ";pos=" << toSel << "," << isToSel << ");" << endl;
+	yzDebug() << "delSelection : from: " << *from << "pos=" << fromSel << "," << isFromSel
+		<< " - to: " << *to << "pos=" << toSel << "," << isToSel << endl;
 
 	YZCursor * new_from = new YZCursor( from );
 	if ( new_from->getX() > 0 ) new_from->setX( new_from->getX() - 1 );
 	YZCursor * new_to = new YZCursor( to );
 	new_to->setX( new_to->getX() + 1 );
 
-	bool removeFrom = fromSel < size && selectionPool[ fromSel].from->lt( new_from );
-	bool removeTo = toSel  < size && selectionPool[ toSel].to->lt( new_to );
+	bool removeFrom = fromSel < size && *selectionPool[ fromSel].from < *new_from;
+	bool removeTo = toSel  < size && *selectionPool[ toSel].to < *new_to;
 	yzDebug() << "removeFrom=" << removeFrom << ";removeTo=" << removeTo << endl;
 
 	if ( ! isFromSel && ! isToSel ) {
@@ -113,8 +113,7 @@ void YZSelectionPool::delSelection( YZCursor * from, YZCursor * to ) {
 	} else if ( ! isFromSel ) {
 		if ( ! removeTo ) selectionPool[ toSel ].from->setCursor( new_to );
 		removeSelection( fromSel, toSel - fromSel + ( removeTo ? 1 : 0 ) );
-	} else if ( selectionPool[ fromSel ].from->getX() == from->getX() && selectionPool[ toSel ].to->getX() == to->getX() 
-			&& selectionPool[ fromSel ].from->getY() == from->getY() && selectionPool[ toSel ].to->getY() == to->getY()  ) {
+	} else if ( *selectionPool[ fromSel ].from == *from && *selectionPool[ toSel ].to == *to ) {
 		removeSelection( fromSel, fromSel - toSel + 1 );
 	} else if ( fromSel != toSel ) {
 		if ( ! removeFrom ) selectionPool[ fromSel ].to->setCursor( new_from );
@@ -168,12 +167,8 @@ int YZSelectionPool::locatePosition( YZCursor * pos, bool * isSelected ) {
 	*isSelected = false;
 
 	for ( i = 0; ! *isSelected && i < size; i++ ) {
-		unsigned int from_x = selectionPool[ i ].from->getX();
-		unsigned int from_y = selectionPool[ i ].from->getY();
-		unsigned int to_x = selectionPool[ i ].to->getX();
-		unsigned int to_y = selectionPool[ i ].to->getY();
-		if ( pos_y < from_y || pos_y == from_y && pos_x < from_x ) break;
-		if ( pos_y > to_y || pos_y == to_y && pos_x > to_x ) continue;
+		if ( *pos < *selectionPool[ i ].from ) break;
+		if ( *pos > *selectionPool[ i ].to ) continue;
 		*isSelected = true;
 	}
 	if ( *isSelected ) --i;
@@ -213,8 +208,8 @@ void YZSelectionPool::test( ) {
 
 	c1->setX( 4 );
 	c1->setY( 0 );
-	c2->setX( 9 );
-	c2->setY( 1 );
+	c2->setX( 6 );
+	c2->setY( 0 );
 	delSelection( c1, c2 ); // 4,0 -> 6,0
 	print();
 	c1->setX( 5 );

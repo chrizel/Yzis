@@ -38,17 +38,18 @@ void YZSwapFile::setFileName( const QString& fname ) {
 void YZSwapFile::flush() {
 	yzDebug() << "Flushing swap to " << mFilename << endl;
 	QFile f( mFilename );
-	if ( f.open( IO_WriteOnly | IO_Truncate | IO_Raw ) ) {
+	if ( f.open( IO_WriteOnly | IO_Raw | IO_Append ) ) { //open at end of file
 		QTextStream stream( &f );
 		if ( !mHistory.empty() ) {
-			for ( QMap<int,swapEntry>::Iterator it = mHistory.begin(); it != mHistory.end(); ++it ) {
-				stream << it.data().modifiers << "," << it.data().inputs;
+			for ( QValueList<swapEntry>::iterator it = mHistory.begin(); it != mHistory.end(); ++it ) {
+				stream << ( *it ).modifiers << "," << ( *it ).inputs << ",";
 			}
 		}
 		f.close();
 	} else {
 		//XXX error
 	}
+	mHistory.clear(); //clear previous history
 	//dump registers XXX
 	//add Yzis Version
 	//datetime creation of the stamp file
@@ -58,7 +59,8 @@ void YZSwapFile::flush() {
 
 void YZSwapFile::addToSwap( int inputs, int modifiers ) {
 	swapEntry e = { inputs, modifiers };
-	mHistory[mHistory.count()+1] = e;
+	mHistory.append( e );
+	if ( mHistory.size() >= 20 ) flush();
 }
 
 void YZSwapFile::unlink() {

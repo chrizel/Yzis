@@ -1,5 +1,12 @@
 <!DOCTYPE TS><TS>
 <context>
+    <name>KTextEditor</name>
+    <message>
+        <source>Yzis Ready</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>KYZisDoc</name>
     <message>
         <source>Yzis is not able to save remote files for now</source>
@@ -157,6 +164,50 @@
         <source>search hit BOTTOM, continuing at TOP</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>[ Awaiting Command ]</source>
+        <translation type="unfinished">[ Entrez une commande ]</translation>
+    </message>
+    <message>
+        <source>[ Introduction ]</source>
+        <translation type="unfinished">[ Introduction ]</translation>
+    </message>
+    <message>
+        <source>[ Ex ]</source>
+        <translation type="unfinished">[ Ex ]</translation>
+    </message>
+    <message>
+        <source>[ Insert ]</source>
+        <translation type="unfinished">[ Insertion ]</translation>
+    </message>
+    <message>
+        <source>[ Replace ]</source>
+        <translation type="unfinished">[ Remplacement ]</translation>
+    </message>
+    <message>
+        <source>{ Completion }</source>
+        <translation type="unfinished">{ Completion }</translation>
+    </message>
+    <message>
+        <source>[ Search ]</source>
+        <translation type="unfinished">[ Recherche ]</translation>
+    </message>
+    <message>
+        <source>No match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Search backward ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Visual ]</source>
+        <translation type="unfinished">[ Visuel ]</translation>
+    </message>
+    <message>
+        <source>[ Visual Line ]</source>
+        <translation type="unfinished">[ Visuel Ligne ]</translation>
+    </message>
 </context>
 <context>
     <name>YZBuffer</name>
@@ -303,54 +354,58 @@
     </message>
     <message>
         <source>[ Insert ]</source>
-        <translation>[ Insertion ]</translation>
+        <translation type="obsolete">[ Insertion ]</translation>
     </message>
     <message>
         <source>[ Replace ]</source>
-        <translation>[ Remplacement ]</translation>
+        <translation type="obsolete">[ Remplacement ]</translation>
     </message>
     <message>
         <source>[ Awaiting Command ]</source>
-        <translation>[ Entrez une commande ]</translation>
+        <translation type="obsolete">[ Entrez une commande ]</translation>
     </message>
     <message>
         <source>[ Ex ]</source>
-        <translation>[ Ex ]</translation>
+        <translation type="obsolete">[ Ex ]</translation>
     </message>
     <message>
         <source>[ Search ]</source>
-        <translation>[ Recherche ]</translation>
+        <translation type="obsolete">[ Recherche ]</translation>
     </message>
     <message>
         <source>[ Open ]</source>
-        <translation>[ Ouvert ]</translation>
+        <translation type="obsolete">[ Ouvert ]</translation>
     </message>
     <message>
         <source>[ Visual ]</source>
-        <translation>[ Visuel ]</translation>
+        <translation type="obsolete">[ Visuel ]</translation>
     </message>
     <message>
         <source>[ Visual Line ]</source>
-        <translation>[ Visuel Ligne ]</translation>
+        <translation type="obsolete">[ Visuel Ligne ]</translation>
     </message>
     <message>
         <source>Yzis Ready</source>
-        <translation>Yzis Pret</translation>
+        <translation type="obsolete">Yzis Pret</translation>
     </message>
     <message>
         <source>[ Introduction ]</source>
-        <translation>[ Introduction ]</translation>
+        <translation type="obsolete">[ Introduction ]</translation>
     </message>
     <message>
         <source>{ Completion }</source>
-        <translation>{ Completion }</translation>
+        <translation type="obsolete">{ Completion }</translation>
     </message>
     <message>
         <source> { Recording }</source>
         <translation>{ Enregistrement }</translation>
     </message>
     <message>
-        <source>No match</source>
+        <source>File modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This file has been modified, do you want to save it ?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -1,5 +1,12 @@
 <!DOCTYPE TS><TS>
 <context>
+    <name>KTextEditor</name>
+    <message>
+        <source>Yzis Ready</source>
+        <translation type="unfinished">Yzis Gotowy</translation>
+    </message>
+</context>
+<context>
     <name>KYZisDoc</name>
     <message>
         <source>Yzis is not able to save remote files for now</source>
@@ -58,6 +65,50 @@
     <message>
         <source>search hit BOTTOM, continuing at TOP</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Awaiting Command ]</source>
+        <translation type="unfinished">[ Oczekuje na Rozkaz ]</translation>
+    </message>
+    <message>
+        <source>[ Introduction ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Ex ]</source>
+        <translation type="unfinished">[ Ex ]</translation>
+    </message>
+    <message>
+        <source>[ Insert ]</source>
+        <translation type="unfinished">[ Wklej ]</translation>
+    </message>
+    <message>
+        <source>[ Replace ]</source>
+        <translation type="unfinished">[ Zamień ]</translation>
+    </message>
+    <message>
+        <source>{ Completion }</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Search ]</source>
+        <translation type="unfinished">[ Szukaj ]</translation>
+    </message>
+    <message>
+        <source>No match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Search backward ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Visual ]</source>
+        <translation type="unfinished">[ Wizualny ]</translation>
+    </message>
+    <message>
+        <source>[ Visual Line ]</source>
+        <translation type="unfinished">[ Wizualna Linia ]</translation>
     </message>
 </context>
 <context>
@@ -133,39 +184,39 @@
     <name>YZView</name>
     <message>
         <source>[ Insert ]</source>
-        <translation>[ Wklej ]</translation>
+        <translation type="obsolete">[ Wklej ]</translation>
     </message>
     <message>
         <source>[ Replace ]</source>
-        <translation>[ Zamień ]</translation>
+        <translation type="obsolete">[ Zamień ]</translation>
     </message>
     <message>
         <source>[ Awaiting Command ]</source>
-        <translation>[ Oczekuje na Rozkaz ]</translation>
+        <translation type="obsolete">[ Oczekuje na Rozkaz ]</translation>
     </message>
     <message>
         <source>[ Ex ]</source>
-        <translation>[ Ex ]</translation>
+        <translation type="obsolete">[ Ex ]</translation>
     </message>
     <message>
         <source>[ Search ]</source>
-        <translation>[ Szukaj ]</translation>
+        <translation type="obsolete">[ Szukaj ]</translation>
     </message>
     <message>
         <source>[ Open ]</source>
-        <translation>[ Otwórz ]</translation>
+        <translation type="obsolete">[ Otwórz ]</translation>
     </message>
     <message>
         <source>[ Visual ]</source>
-        <translation>[ Wizualny ]</translation>
+        <translation type="obsolete">[ Wizualny ]</translation>
     </message>
     <message>
         <source>[ Visual Line ]</source>
-        <translation>[ Wizualna Linia ]</translation>
+        <translation type="obsolete">[ Wizualna Linia ]</translation>
     </message>
     <message>
         <source>Yzis Ready</source>
-        <translation>Yzis Gotowy</translation>
+        <translation type="obsolete">Yzis Gotowy</translation>
     </message>
     <message>
         <source>All</source>
@@ -184,19 +235,15 @@
         <translation>Aby używać drukarki Qt, musisz mieć otwarty i ustawiony ekran X11, pod konsolą tekstową możesz spróbować pslib&apos;a</translation>
     </message>
     <message>
-        <source>[ Introduction ]</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>{ Completion }</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No match</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source> { Recording }</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File modified</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This file has been modified, do you want to save it ?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

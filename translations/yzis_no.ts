@@ -79,10 +79,6 @@
         <translation type="unfinished">[ Ex ]</translation>
     </message>
     <message>
-        <source>One file is modified! Save it first...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>[ Insert ]</source>
         <translation type="unfinished">[ Sett inn ]</translation>
     </message>
@@ -123,15 +119,11 @@
     </message>
     <message>
         <source>A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?</source>
-        <translation type="obsolete">En swap-fil ble funnet for denne filen. Den ble antagelig laget fordi maskinen din eller yzis kræsjet. Vil du starte gjenopprettelse av denne filen?</translation>
+        <translation type="unfinished">En swap-fil ble funnet for denne filen. Den ble antagelig laget fordi maskinen din eller yzis kræsjet. Vil du starte gjenopprettelse av denne filen?</translation>
     </message>
     <message>
         <source>Written %1 bytes to file %2</source>
         <translation>%1 bytes ble skrevet til filen %2</translation>
-    </message>
-    <message>
-        <source>A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file?</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -237,11 +229,7 @@
     </message>
     <message>
         <source>This file has been modified, do you want to save it ?</source>
-        <translation type="obsolete">Det er gjort forandringer i filen, vil du lagre?</translation>
-    </message>
-    <message>
-        <source>This file has been modified, do you want to save it?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Det er gjort forandringer i filen, vil du lagre?</translation>
     </message>
 </context>
 </TS>

@@ -18,6 +18,7 @@
 #include <kmessagebox.h>
 #include <kfiledialog.h>
 #include <kdebug.h>
+#include "document.h"
 
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
@@ -216,5 +217,6 @@ void Kyzis::createBuffer(const QString& path) {
 				addWindow( view );
 				createGUI(m_part);
 			}
+			m_part->openURL( path );
 		}
 }

@@ -22,7 +22,7 @@
 #include "cursor.h"
 #include "debug.h"
 
-static YZMotion nullMotion("",REGEXP,0,0);
+static YZMotion nullMotion("",REGEXP,0,0,false);
 
 YZMotionPool::YZMotionPool(){
 }
@@ -32,8 +32,9 @@ YZMotionPool::~YZMotionPool() {
 }
 
 void YZMotionPool::initPool() {
-	addMotion (YZMotion( "\\b\\w+\\b", REGEXP, 0, 0 ) , "[0-9]+w" );
-	addMotion (YZMotion( "$", REGEXP, 0, 0 ), "\\$" );
+	addMotion (YZMotion( "\\b\\w+\\b", REGEXP, 0, 0, false ) , "[0-9]+w" );
+	addMotion (YZMotion( "$", REGEXP, 0, 0, false ), "\\$" );
+	addMotion (YZMotion( "^", REGEXP, 0, 0, true ), "0");
 }
 
 void YZMotionPool::addMotion(const YZMotion& regexp, const QString& key){
@@ -60,12 +61,12 @@ bool YZMotionPool::isValid( const QString& inputs ) {
 	return ok;
 }
 
-void YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCursor *result ) {
+bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCursor *result ) {
 	bool ok = false;
 	YZMotion& motion = findMotion(inputsMotion, &ok);
-	if ( !ok ) return;
+	if ( !ok ) return false;
 	int counter = 1; //number of times we have to match
-	QRegExp rx ( "([0-9]+).*" );
+	QRegExp rx ( "([0-9]+).+" );
 	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
 	yzDebug() << "Loop " << counter << " times" << endl;
 	QRegExp rex( motion.rex );
@@ -73,19 +74,41 @@ void YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCur
 	result->setY(view->getBufferCursor()->getY());
 	int idx=-1;
 	int count = 0 ;
-	while (count < counter) {
-		const QString& current = view->myBuffer()->textline( result->getY() );
-		if ( current == QString::null ) return;
-		idx = rex.search( current, result->getX() );
-		if ( idx ) {
-			yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
-			count++; //one match
-			result->setX( idx + rex.matchedLength() + 1 );
-		} else {
-			result->setX( 0 );
-			result->setY( result->getY() + 1 );
+	if ( ! motion.backward ) {
+		yzDebug() << "Forward motion" <<endl;
+		while (count < counter) {
+			const QString& current = view->myBuffer()->textline( result->getY() );
+			if ( current == QString::null ) return false;
+			idx = rex.search( current, result->getX() );
+			if ( idx ) {
+				yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
+				count++; //one match
+				result->setX( idx + rex.matchedLength() + 1 );
+			} else {
+				result->setX( 0 );
+				result->setY( result->getY() + 1 );
+			}
+		}
+	} else {
+		yzDebug() << "Backward motion" <<endl;
+		while (count < counter) {
+			const QString& current = view->myBuffer()->textline( result->getY() );
+			if ( current == QString::null ) return false;
+			idx = rex.searchRev( current, result->getX() );
+			if ( idx ) {
+				yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
+				count++; //one match
+				result->setX( idx - rex.matchedLength() - 1 );
+			} else {
+				const QString& ncurrent = view->myBuffer()->textline( result->getY() - 1 );
+				if ( ! ncurrent == QString::null ) {
+					result->setX( ncurrent.length() );
+					result->setY( result->getY() - 1 );
+				}
+			}
 		}
 	}
 	yzDebug() << "Result of motion is : " << result->getX() << " " << result->getY() << endl;
+	return motion.backward;
 }
 

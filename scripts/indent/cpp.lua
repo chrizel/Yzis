@@ -7,9 +7,10 @@ function Indent_cpp(nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces,prevLine,nex
 
 	local st = string.sub(prevLine,-1,-1)
 	if st == "{" or st == ":" or st == "(" then nbtabs=nbtabs+1 end
+	
+	local result = string.rep("\t",nbtabs)..string.rep(" ",nbspaces)
 
-	-- we use tabs only for now
-	return nbtabs, nbspaces
+	return result
 end
 
 -- char is the char which caused the INDENT_ON_KEY event

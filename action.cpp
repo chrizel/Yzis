@@ -364,3 +364,61 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 	*found=false;
 	return YZCursor( pView, 0,0 );
 }
+
+//mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
+YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& mBegin, const YZCursor& mEnd, bool reverseSearch, unsigned int *matchlength, bool *found ) {
+	QRegExp ex( what );
+	int currentMatchLine = mBegin.getY(); //start from current line
+	//if you understand this line you are semi-god :)
+	//if you don't understand, remove the IFs and see what it does when you have the cursor on the last/first column and start a search/reverse search
+	unsigned int mMaxX = pView->myBuffer()->textline( currentMatchLine ).length() - 1;
+	int currentMatchColumn = reverseSearch ? ( mBegin.getX() ? mBegin.getX() : 1 ) - 1 : \
+		( mBegin.getX() < mMaxX ) ? mBegin.getX() + 1 : mBegin.getX(); //start from current column +/- 1
+
+	//get current line
+	QString l;
+
+	for ( unsigned int i = currentMatchLine; i < pView->myBuffer()->lineCount() 
+		&& ( (reverseSearch && i >= mEnd.getY()) || (!reverseSearch && i <= mEnd.getY()) ); 
+			reverseSearch ? i-- : i++ ) {
+			
+		l = pView->myBuffer()->textline( i );
+		yzDebug() << "Searching " << what << " in line : " << l << endl;
+		int idx;
+		if ( reverseSearch )
+			idx = ex.searchRev( l, currentMatchColumn );
+		else
+			idx = ex.search( l, currentMatchColumn );
+
+		if ( idx >= 0 ) {
+			//check we are not past the mEnd
+			if ( i == mEnd.getY() && ((!reverseSearch && idx > mEnd.getX()) || (reverseSearch && idx < mEnd.getX()))) 
+				continue; //should exit the loop at next iteration anyway and return false
+
+			//i really found it ? or is it a previous "found" ?
+			if ( mBegin.getX() == ( unsigned int ) idx ) { //ok we did not move guy (col 0 or last col maybe ...)
+				yzDebug() << "Only a fake match on this line, skip it" << endl;
+				if ( reverseSearch )
+					currentMatchColumn=-1;
+				else
+					currentMatchColumn=0; //reset the column (only valid for the first line we check)
+				continue; //exit the IF
+			}
+			//really found it !
+			currentMatchColumn = idx;
+			currentMatchLine = i;
+			*found = true;
+			*matchlength = ex.matchedLength();
+			return YZCursor(pView,currentMatchColumn, currentMatchLine);
+		} else {
+			yzDebug() << "No match on this line" << endl;
+			if ( reverseSearch )
+				currentMatchColumn=-1;
+			else
+				currentMatchColumn=0; //reset the column (only valid for the first line we check)
+		}
+	}
+	*found = false;
+	return YZCursor(pView,0,0);//fake result
+}
+

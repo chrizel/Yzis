@@ -1390,57 +1390,30 @@ void YZView::paste( QChar registr, bool after ) {
 }
 
 bool YZView::doSearch( const QString& search ) {
-	//build the regexp
-	QRegExp ex( search );
-	int currentMatchLine = mainCursor->bufferY(); //start from current line
-	//if you understand this line you are semi-god :)
-	//if you don't understand, remove the IFs and see what it does when you have the cursor on the last/first column and start a search/reverse search
-	unsigned int mMaxX = mBuffer->textline( mainCursor->bufferY() ).length() - 1;
-	int currentMatchColumn = reverseSearch ? ( mainCursor->bufferX() ? mainCursor->bufferX() : 1 ) - 1 : \
-		( mainCursor->bufferX() < mMaxX ) ? mainCursor->bufferX() + 1 : mainCursor->bufferX(); //start from current column +/- 1
-
-	//get current line
-	QString l;
-
 	selectionPool->clear( "SEARCH" );
-
-	for ( unsigned int i = currentMatchLine; i < mBuffer->lineCount(); reverseSearch ? i-- : i++ ) {
-		l = mBuffer->textline( i );
-		yzDebug() << "Searching " << search << " in line : " << l << endl;
-		int idx;
-		if ( reverseSearch ) {
-			idx = ex.searchRev( l, currentMatchColumn );
-		} else
-			idx = ex.search( l, currentMatchColumn );
-
-		if ( idx >= 0 ) {
-			//i really found it ? or is it a previous "found" ?
-			if ( mainCursor->bufferX() == ( unsigned int ) idx ) { //ok we did not move guy (col 0 or last col maybe ...)
-				yzDebug() << "Only a fake match on this line, skip it" << endl;
-				if ( reverseSearch )
-					currentMatchColumn=-1;
-				else
-					currentMatchColumn=0; //reset the column (only valid for the first line we check)
-				continue; //exit the IF
-			}
-			//really found it !
-			currentMatchColumn = idx;
-			currentMatchLine = i;
-			selectionPool->addSelection( "SEARCH", currentMatchColumn, currentMatchLine, currentMatchColumn + ex.matchedLength() - 1, currentMatchLine );
-			gotoxy( currentMatchColumn, currentMatchLine );
-			updateStickyCol( mainCursor );
-			refreshScreen( );
-			return true;
-		} else {
-			yzDebug() << "No match on this line" << endl;
-			if ( reverseSearch )
-				currentMatchColumn=-1;
-			else
-				currentMatchColumn=0; //reset the column (only valid for the first line we check)
-		}
+	
+	bool found = false;
+	unsigned int matchlength = 0;
+	YZCursor begin = *mainCursor->buffer();
+	YZCursor end = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
+	if ( reverseSearch ) {
+		end.setX(0);
+		end.setY(0);
 	}
-	refreshScreen( );
-	return false;
+	YZCursor result;
+	
+	result = mBuffer->action()->search(this, search, begin, end, reverseSearch, &matchlength, &found);	
+	
+	if ( found ) {
+		selectionPool->addSelection( "SEARCH", result.getX(), result.getY(), result.getX() + matchlength - 1, result.getY() );
+		gotoxy( result.getX(), result.getY() );
+		updateStickyCol( mainCursor );
+		refreshScreen( );
+		return true;
+	} else { 
+		refreshScreen( );
+		return false;
+	}
 }
 
 QString YZView::searchAgain( unsigned int count, bool inverse ) {

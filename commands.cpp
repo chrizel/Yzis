@@ -127,6 +127,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("q", &YZCommandPool::macro) );
 	commands.append( new YZCommand("@", &YZCommandPool::replayMacro) );
 	commands.append( new YZCommand("<CTRL>l", &YZCommandPool::redisplay) );
+	commands.append( new YZCommand("<CTRL>x<CTRL>n", &YZCommandPool::completeKeywordForward) );
 }
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
@@ -982,5 +983,9 @@ QString YZCommandPool::replace( const YZCommandArgs &args ) {
 	args.view->updateStickyCol();
 	args.view->commitNextUndo();
 	return QString::null;
+}
+
+QString YZCommandPool::completeKeywordForward( const YZCommandArgs &args ) {
+	YZCursor pos = args.view->getBufferCursor();		
 }
 

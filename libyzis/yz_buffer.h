@@ -46,7 +46,7 @@ public:
 
 	QString	findLine(unsigned int line);
 
-	int getLines( void ) { return text.count(); }
+	unsigned int getLines( void ) { return text.count(); }
 
 protected:
 	QString path;

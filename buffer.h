@@ -32,11 +32,13 @@
 #include "session.h"
 #include "commands.h"
 #include "syntaxhighlight.h"
+#include "action.h"
 
 class YZView;
 class YZLine;
 class YZSession;
 class YZUndoBuffer;
+class YZAction;
 
 typedef QValueVector<YZLine*> YZBufferData;
 static QString myNull;
@@ -262,6 +264,9 @@ public:
 	// ------------ Undo
 	YZUndoBuffer * undoBuffer() { return mUndoBuffer; }
 
+	// Action
+	YZAction* action() { return mAction; }
+
 	/**
 	 * Display a nice intro before first input and when no file is loaded
 	 */
@@ -361,6 +366,8 @@ protected:
 	bool mModified;
 	//current highlight mode
 	YzisHighlighting *m_highlight;
+private:
+	YZAction* mAction;
 };
 
 #endif /*  YZ_BUFFER_H */

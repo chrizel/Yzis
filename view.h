@@ -169,8 +169,31 @@ class YZView {
 		 */
 		QString moveToEndOfLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
+		/*
+		 * ACTIONS
+		 */
 
-		void insertChar( const QString& c, unsigned int mX, unsigned int mY );
+		/* insert text */
+		void initInsertChar( YZCursor* pos, unsigned int len, bool applyCursor );
+		void applyInsertChar( YZCursor* pos, unsigned int len, bool applyCursor );
+
+		/* delete text */
+		void initDeleteChar( YZCursor* pos, unsigned int len, bool applyCursor );
+		void applyDeleteChar( YZCursor* pos, unsigned int len, bool applyCursor );
+
+		/* replace text */
+		void initReplaceChar( YZCursor* pos, unsigned int len, bool applyCursor );
+		void applyReplaceChar( YZCursor* pos, unsigned int len, bool applyCursor );
+
+		/* insert line */
+		void initInsertLine( YZCursor* pos, bool applyCursor );
+		void applyInsertLine( YZCursor* pos, bool applyCursor );
+
+		/* delete line */
+		void initDeleteLine( YZCursor* pos, unsigned int len, bool applyCursor );
+		void applyDeleteLine( YZCursor* pos, unsigned int len, bool applyCursor );
+		void initDeleteLine( YZCursor* pos, YZCursor* end, bool applyCursor );
+		void applyDeleteLine( YZCursor* pos, YZCursor* end, bool applyCursor );
 
 		/**
 		 * deletes the character under the cursor
@@ -210,10 +233,8 @@ class YZView {
 		/**
 		 * Deletes lines
 		 */
-		void deleteLine( unsigned int line, unsigned int c );
 		QString deleteLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
-		void insertNewLine( unsigned int mX, unsigned int mY );
 
 
 		/**
@@ -241,8 +262,6 @@ class YZView {
 		 */
 		QString joinLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 	
-		void chgChar( unsigned int mX, unsigned int mY, const QString& c );
-		void delChar( unsigned int mX, unsigned int mY, unsigned int c );
 		void joinLine( unsigned int line );
 
 		QString undo ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
@@ -613,6 +632,11 @@ class YZView {
 		bool dWrapNextLine;
 		QChar lastChar;
 		bool charSelected;
+
+		YZCursor* origPos;
+		unsigned int lineDY;
+		void initChanges( YZCursor* pos );
+		void applyChanges( YZCursor* pos, unsigned int len, bool applyCursor );
 
 		//cached value of tabwidth option
 		unsigned int tabwidth;	

@@ -116,8 +116,8 @@ int YZExLua::insert(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );
 	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++ ) {
-		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->insertNewLine( 0, sLine );
-		cView->insertChar( *it, sCol, sLine );
+		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
+		cView->myBuffer()->action()->insertChar( cView, sCol, sLine, *it );
 		sCol=0;
 		sLine++;
 	}
@@ -139,8 +139,8 @@ int YZExLua::replace(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );
 	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++, sLine++ ) {
-		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->insertNewLine( 0, sLine );
-		cView->chgChar( sCol, sLine, *it );
+		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
+		cView->myBuffer()->action()->replaceChar( cView, sCol, sLine, *it );
 		sCol = 0;
 	}
 	
@@ -183,7 +183,7 @@ int YZExLua::delline(lua_State *L) {
 	int sLine = ( int )lua_tonumber( L,1 );
 	
 	YZView* cView = YZSession::me->currentView();
-	cView->deleteLine( sLine ? sLine - 1 : 0, 1 );
+	cView->myBuffer()->action()->deleteLine( cView, sLine ? sLine - 1 : 0, 1 );
 
 	return 0; // one result
 }

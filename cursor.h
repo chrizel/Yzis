@@ -41,6 +41,7 @@ class YZCursor {
 		
 	public :
 		YZCursor(YZView *vp);
+		YZCursor(YZView *vp, unsigned int X, unsigned int Y );
 		YZCursor(YZCursor *cursor);
 		~YZCursor();
 

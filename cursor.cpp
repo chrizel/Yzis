@@ -29,6 +29,12 @@ YZCursor::YZCursor(YZView *vp) {
 	y_pos=0;
 }
 
+YZCursor::YZCursor(YZView *vp, unsigned int X, unsigned int Y ) {
+	parentView=vp;
+	x_pos=X;
+	y_pos=Y;
+}
+
 YZCursor::YZCursor(YZCursor *c) {
 	setCursor( c );
 }

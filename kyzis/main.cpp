@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
 	about.addCredit( "Pascal Maillard", "Commands and motion engine rewrite and cleanup", "pascalmaillard@web.de" );
 	about.addCredit( "Alexander Dymo", "KTextEditor ConfigInterface", "adymo@mksat.net" );
 	about.addCredit( "Erlend Hamberg", "View scrolling fixes", "ehamberg@online.no" );
+	about.addCredit( "Per Johansson", "Kyzis Tab caption improvment", "per.j@hjolug.org" );
 	KCmdLineArgs::init(argc, argv, &about);
 	KCmdLineArgs::addCmdLineOptions( options );
 	KApplication app;

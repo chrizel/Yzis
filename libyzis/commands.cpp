@@ -133,8 +133,6 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("@", &YZCommandPool::replayMacro) );
 	commands.append( new YZCommand("<CTRL>l", &YZCommandPool::redisplay) );
 	commands.append( new YZCommand("<CTRL>[", &YZCommandPool::gotoCommandMode) );
-	commands.append( new YZCommand("<CTRL>x<CTRL>n", &YZCommandPool::completeKeywordForward) );
-	commands.append( new YZCommand("<CTRL>x<CTRL>p", &YZCommandPool::completeKeywordBackward) );
 	commands.append( new YZCommand("<ESC>", &YZCommandPool::abort) );
 	commands.append( new YZCommand("<DEL>", &YZCommandPool::delkey) );
 }
@@ -1004,46 +1002,6 @@ QString YZCommandPool::replace( const YZCommandArgs &args ) {
 	args.view->updateStickyCol();
 	args.view->commitNextUndo();
 	return QString::null;
-}
-
-QString YZCommandPool::completeKeyword( const YZCommandArgs &args, bool forward ) {
-	YZCursor pos = args.view->getBufferCursor();
-	//what word do we want to complete ...
-	YZNewMotionArgs arg (args.view, 1);
-	YZCursor begin = moveWordBackward( arg );
-	YZCursor stop = YZCursor(args.view,pos.getX()-1, pos.getY());
-	QStringList list = args.view->myBuffer()->getText(begin, stop);
-	yzDebug() << "Completing word : " << list[0] << endl;
-	bool found = false;
-	unsigned int matchedLength = 0;
-	//regexp to search in the text
-	QString word = list[0] + "\\w*";
-	YZCursor result;
-	if (forward) {
-		result = args.view->myBuffer()->action()->search(args.view, word, pos,
-			YZCursor(args.view, 0, args.view->myBuffer()->lineCount()+1), !forward, &matchedLength, &found);
-	} else {
-		YZCursor start(args.view, pos.getX() - list[0].length(), pos.getY());
-		result = args.view->myBuffer()->action()->search(args.view, word, start,
-			YZCursor(args.view, 0, 0), !forward, &matchedLength, &found);
-	}
-	//found something ?
-	if ( found && matchedLength > 0 )  {
-		YZCursor end (args.view, result.getX()+matchedLength-1, result.getY());
-		QStringList list2 = args.view->myBuffer()->getText(result, end );
-		yzDebug() << "Match : " << list2[0] << endl;
-		args.view->myBuffer()->action()->replaceText(args.view, begin, list[0].length(), list2[0]);
-		args.view->commitNextUndo();
-	}
-	return QString::null;
-}
-
-QString YZCommandPool::completeKeywordBackward( const YZCommandArgs &args ) {
-	return completeKeyword(args, false);
-}
-
-QString YZCommandPool::completeKeywordForward( const YZCommandArgs &args ) {
-	return completeKeyword(args, true);
 }
 
 QString YZCommandPool::abort( const YZCommandArgs& args) {

@@ -1,3 +1,7 @@
+2004-10-26 mikmak
+  * libyzis
+  	reworked completion commands, moved it to a full independant mode
+  	
 2004-10-25 mikmak
   * libyzis
   	new incsearch option

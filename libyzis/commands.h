@@ -146,7 +146,6 @@ public:
 	/** This function is the entry point to execute any normal command in Yzis */
 	cmd_state execCommand(YZView *view, const QString& inputs);
 
-private:
 	/** Parses the string inputs, which must be a valid motion + argument,
 	 * and executes the corresponding motion function. */
 	YZCursor move(YZView *view, const QString &inputs, unsigned int count, bool usercount );
@@ -220,9 +219,6 @@ private:
 	QString redisplay(const YZCommandArgs &args);
 	QString changeCase(const YZCommandArgs &args);
 	QString replace(const YZCommandArgs &args);
-	QString completeKeywordForward(const YZCommandArgs &args);
-	QString completeKeywordBackward(const YZCommandArgs &args);
-	QString completeKeyword(const YZCommandArgs &args, bool forward);
 	QString abort(const YZCommandArgs &args);
 	QString delkey(const YZCommandArgs &args);
 	QString indent( const YZCommandArgs& args );

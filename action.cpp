@@ -166,7 +166,7 @@ void YZAction::copyArea( YZView* , const YZCursor& begin, const YZCursor& end, c
 	QString b = mBuffer->textline( bY );
 	yzDebug() << "Current Line " << b << endl;
 	if ( !lineCopied )
-		buff << b.mid( bX, eX - bX + 1);
+		buff << b.mid( bX, eX - bX );
 	else
 		buff << b.mid( bX );
 
@@ -221,9 +221,9 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 	QString b = mBuffer->textline( bY );
 	yzDebug() << "Current Line " << b << endl;
 	if ( !lineDeleted ) {
-		buff << b.mid( bX, eX - bX + 1 );
+		buff << b.mid( bX, eX - bX );
 		yzDebug() << "Deleting 1 " << buff << endl;
-		QString b2 = b.left( bX ) + b.mid( eX + 1 );
+		QString b2 = b.left( bX ) + b.mid( eX );
 		yzDebug() << "New line is " << b2 << endl;
 		mBuffer->replaceLine( b2 , bY );
 	} else {

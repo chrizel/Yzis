@@ -30,6 +30,7 @@
 
 #include <qptrlist.h>
 #include <qvaluelist.h>
+#include <qvaluevector.h>
 #include <qregexp.h>
 #include <qdict.h>
 #include <qintdict.h>
@@ -227,7 +228,7 @@ class YzisHighlighting
     void readFoldingConfig ();
 
     // manipulates the ctxs array directly ;)
-    void generateContextStack(int *ctxNum, int ctx, QMemArray<short> *ctxs, int *posPrevLine,bool lineContinue=false);
+    void generateContextStack(int *ctxNum, int ctx, QMemArray<short> *ctxs, int *posPrevLine);
 
     YzisHlItem *createYzisHlItem(YzisSyntaxContextData *data, YzisHlItemDataList &iDl, QStringList *RegionList, QStringList *ContextList);
     int lookupAttrName(const QString& name, YzisHlItemDataList &iDl);
@@ -242,8 +243,8 @@ class YzisHighlighting
 
     YzisHlItemDataList internalIDList;
 
-    QIntDict<YzisHlContext> contextList;
-    inline YzisHlContext *contextNum (uint n) { return contextList[n]; }
+    QValueVector<YzisHlContext*> m_contexts;
+    inline YzisHlContext *contextNum (uint n) { if (n < m_contexts.size()) return m_contexts[n]; return 0; }
 
     QMap< QPair<YzisHlContext *, QString>, short> dynamicCtxs;
 

@@ -41,15 +41,6 @@ YZLine::YZLine() {
 YZLine::~YZLine() {
 }
 
-void YZLine::setAttribs(uchar attribute, uint start, uint end) {
-	m_initialized = true;
-	if (end > mAttributes.size())
-		end = mAttributes.size();
-
-	for (uint z = start; z < end; z++)
-		mAttributes[z] = attribute;
-}
-
 void YZLine::setData(const QString &data) {
 	mData = data;
 	uint len = data.length();

@@ -10,14 +10,13 @@ class KYZisView: public KTextEditor::View, YZView {
 	Q_OBJECT
 
 	public:
-		KYZisView(KYZisDoc *doc, QWidget *parent=0, const char *name=0);
+		KYZisView(KYZisDoc *doc, QWidget *parent, const char *name=0);
 	 	virtual ~KYZisView();
 		KTextEditor::Document *document () const { return buffer; }
 
 	private:
 		KYZisEdit *editor;
 		KYZisDoc *buffer;
-		
 };
 
 #endif

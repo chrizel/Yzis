@@ -27,7 +27,7 @@ main(int argc, char *argv[])
 
 	(new NYZSession(argc,argv)) -> event_loop();
 
-	error("should never reach this point");
+//	error("should never reach this point");
 	finish(0);               /* we're done */
 }
 

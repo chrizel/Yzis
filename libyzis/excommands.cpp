@@ -75,7 +75,8 @@ void YZExCommandPool::initPool() {
 	ranges.append( new YZExRange( "\\$", &YZExCommandPool::rangeLastLine ) );
 	ranges.append( new YZExRange( "'\\w", &YZExCommandPool::rangeMark ) );
 	ranges.append( new YZExRange( "'[<>]", &YZExCommandPool::rangeVisual ) );
-	ranges.append( new YZExRange( "/[^/]*/", &YZExCommandPool::rangeSearch ) );
+	ranges.append( new YZExRange( "/([^/]*/)?", &YZExCommandPool::rangeSearch ) );
+	ranges.append( new YZExRange( "\\?([^\\?]*\\?)?", &YZExCommandPool::rangeSearch ) );
 
 	// commands
 	commands.append( new YZExCommand( "(x|wq?)(a(ll)?)?", &YZExCommandPool::write ) );
@@ -170,7 +171,8 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 				it->commitPaintEvent();
 		}
 	}
-	if ( ! matched ) view->gotoStickyCol( to );
+	view->gotoxy( 0, to );
+	view->moveToFirstNonBlankOfLine();
 
 	return ret;
 }
@@ -209,26 +211,26 @@ int YZExCommandPool::rangeVisual( const YZExRangeArgs& args ) {
 }
 int YZExCommandPool::rangeSearch( const YZExRangeArgs& args ) {
 	bool reverse = args.arg[ 0 ] == "?";
-	QString pat = args.arg.mid( 1, args.arg.length() - 2 );
-	if ( reverse ) 
-		pat.replace( "\\?", "?" );
-	else
-		pat.replace( "\\/", "/" );
-	yzDebug() << "rangeSearch : " << pat << endl;
 
-	YZCursor from( args.view, 0, args.view->getBufferCursor()->getY() );
-	YZCursor to( args.view );
-	if ( reverse ) {
-		to.setX( 0 );
-		to.setY( 0 );
-	} else {
-		to.setY( args.view->myBuffer()->lineCount() - 1 );
-		QString lastLine = args.view->myBuffer()->textline( to.getY() );
-		to.setX( lastLine.length() - 1 );
-	}
 	bool found;
-	unsigned int matchedLength;
-	YZCursor pos = args.view->myBuffer()->action()->search( args.view, pat, from, to, reverse, &matchedLength, &found );
+	YZCursor pos;
+	if ( args.arg.length() == 1 ) {
+		yzDebug() << "rangeSearch : replay" << endl;
+		if ( reverse ) {
+			pos = YZSession::me->search()->replayBackward( args.view, &found, true );
+		} else {
+			pos = YZSession::me->search()->replayForward( args.view, &found, true );
+		}
+	} else {
+		QString pat = args.arg.mid( 1, args.arg.length() - 2 );
+		if ( reverse ) 
+			pat.replace( "\\?", "?" );
+		else
+			pat.replace( "\\/", "/" );
+		yzDebug() << "rangeSearch : " << pat << endl;
+		pos = YZSession::me->search()->forward( args.view, pat, &found );
+	}
+
 	if ( found ) {
 		return pos.getY();
 	}

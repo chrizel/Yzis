@@ -509,28 +509,26 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			YZCursor *result = new YZCursor(this);
 			if ( key == "<ENTER>" ) {
 				yzDebug() << "Current search : " << getCommandLineText();
-				if(getCommandLineText().isEmpty())
-					return;
-				mSearchHistory[mCurrentSearchItem] = getCommandLineText();
-				mCurrentSearchItem++;
-				YZCursor e = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
-				if ( reverseSearch ) {
-					e.setX(0);
-					e.setY(0);
+
+				bool found = false;
+				YZCursor pos;
+				if ( getCommandLineText().isEmpty() ) {
+					if ( reverseSearch ) {
+						pos = YZSession::me->search()->replayBackward( this, &found );
+					} else {
+						pos = YZSession::me->search()->replayForward( this, &found );
+					}
+				} else {
+					mSearchHistory[ mCurrentSearchItem++ ] = getCommandLineText();
+					if ( reverseSearch ) {
+						pos = YZSession::me->search()->backward( this, getCommandLineText(), &found );
+					} else {
+						pos = YZSession::me->search()->forward( this, getCommandLineText(), &found );
+					}
 				}
-				//fill the SEARCH selection with all matches
-				selectionPool->clear( "SEARCH" );
-				if (getLocalBoolOption("hlsearch")) {
-					result->setCursor(mSearchBegin);
-					while (doSearch(getCommandLineText(), *result, e, false, result))
-					;
-				}
-				//go to first match
-				if (!doSearch( getCommandLineText(), mSearchBegin, e, true, result )) {
-					gotoxy(mSearchBegin->getX(), mSearchBegin->getY());
-					YZSelection cur_sel = selectionPool->layout( "SEARCH" )[ 0 ];
-					selectionPool->clear( "SEARCH" );
-					sendPaintEvent(cur_sel.drawFrom(), cur_sel.drawTo());
+				if ( found ) {
+					gotoxy( pos.getX(), pos.getY() );
+				} else {
 					displayInfo(tr("No match"));
 				}
 				setCommandLineText( "" );
@@ -556,26 +554,47 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				setCommandLineText( "" );
 				mSession->setFocusMainWindow();
 				gotoxy(mSearchBegin->getX(), mSearchBegin->getY());
-				YZSelection cur_sel = selectionPool->layout( "CLEAR" )[ 0 ];
-				selectionPool->clear( "SEARCH" );
-				sendPaintEvent(cur_sel.drawFrom(), cur_sel.drawTo());
+				if ( getLocalBoolOption( "incsearch" ) ) {
+					bool wasEmpty = selectionPool->layout( "SEARCH" ).isEmpty();
+					selectionPool->clear( "SEARCH" );
+					bool isEmpty = selectionPool->layout( "SEARCH" ).isEmpty();
+					if ( ! ( wasEmpty && isEmpty ) )
+						refreshScreen();
+				}
 				gotoPreviousMode();
 				return;
 			} else if ( key == "<BS>" ) {
 				QString back = getCommandLineText();
 				setCommandLineText(back.remove(back.length() - 1, 1));
-			} else 
+			} else {
 				setCommandLineText( getCommandLineText() + key );
+			}
 
 			if ( getLocalBoolOption("incsearch") ) {
-				YZCursor end = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
-				if ( reverseSearch ) {
-					end.setX(0);
-					end.setY(0);
+				YZCursor end = YZCursor( this, 0, 0 );
+				if ( ! reverseSearch ) {
+					end.setY( mBuffer->lineCount() - 1 );
+					end.setX( mBuffer->textline( end.getY() ).length() );
 				}
-				if (!doSearch( getCommandLineText(), mSearchBegin, end, true, result ))
-						gotoxy(mSearchBegin->getX(), mSearchBegin->getY());
-				return;
+				bool found;
+				bool wasEmpty = selectionPool->layout( "SEARCH" ).isEmpty();
+				unsigned int matchlength;
+				result->setCursor( mBuffer->action()->search( this, getCommandLineText(), mSearchBegin, end, 
+										reverseSearch, &matchlength, &found ) );
+				if ( found ) {
+					if ( getLocalBoolOption("hlsearch") )
+						selectionPool->addSelection( "SEARCH", result->getX(), result->getY(), 
+										result->getX() + matchlength - 1, result->getY() );
+					gotoxy( result->getX(), result->getY() );
+					updateStickyCol( mainCursor );
+				} else {
+					gotoxy( mSearchBegin->getX(), mSearchBegin->getY() );
+					selectionPool->clear( "SEARCH" );
+				}
+				bool isEmpty = selectionPool->layout( "SEARCH" ).isEmpty();
+				if ( ! ( wasEmpty && isEmpty ) ) {
+					refreshScreen( );
+				}
 			}
 			break;
 		}
@@ -1511,49 +1530,6 @@ void YZView::paste( QChar registr, bool after ) {
 		gotoxy( pos.getX(), pos.getY() );
 	}
 	updateStickyCol( mainCursor );
-}
-
-bool YZView::doSearch( const QString& search, const YZCursor& begin, const YZCursor& end, bool moveToMatch, YZCursor *result ) {
-	if ( search.isEmpty() || search.isNull() ) return false;
-//	selectionPool->clear( "SEARCH" );
-
-	bool found = false;
-	unsigned int matchlength = 0;
-
-	if (!result) result = new YZCursor(this);
-	result->setCursor(mBuffer->action()->search(this, search, begin, end, reverseSearch, &matchlength, &found));
-
-	if ( found ) {
-		if (getLocalBoolOption("hlsearch")) 
-			selectionPool->addSelection( "SEARCH", result->getX(), result->getY(), result->getX() + matchlength - 1, result->getY() );
-		if (moveToMatch) {
-			gotoxy( result->getX(), result->getY() );
-			updateStickyCol( mainCursor );
-			refreshScreen( );
-		}
-		return true;
-	} else {
-		if (moveToMatch)
-			refreshScreen( );
-		return false;
-	}
-}
-
-QString YZView::searchAgain( unsigned int count, bool inverse ) {
-	if ( mCurrentSearchItem == 0 ) return QString::null; //no previous search ;)
-	if ( inverse ) reverseSearch = !reverseSearch;
-
-	YZCursor e = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
-	if ( reverseSearch ) {
-		e.setX(0);
-		e.setY(0);
-	}
-
-	for ( uint i = 0; i < count; i++ ) { //search count times
-		YZCursor b = *mainCursor->buffer();
-	 	doSearch( mSearchHistory[mCurrentSearchItem-1], b, e );
-	}
-	return QString::null;
 }
 
 /*

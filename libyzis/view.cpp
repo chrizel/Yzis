@@ -423,14 +423,12 @@ void YZView::centerViewHorizontally(unsigned int column) {
 //	yzDebug() << "YZView::centerViewHorizontally " << column << endl;
 	unsigned int newcurrentLeft = 0;
 	if ( column > mColumnsVis/2 ) newcurrentLeft = column - mColumnsVis / 2;
-
-	if (newcurrentLeft > 0) {
+	if ( newcurrentLeft != scrollCursor->bufferX() ) {
+		// we are not in wrap mode, so buffer == screen
 		scrollCursor->setBufferX( newcurrentLeft );
 		scrollCursor->setScreenX( newcurrentLeft );
-	} else {
-		scrollCursor->reset();
+		sendRefreshEvent();
 	}
-	sendRefreshEvent();
 }
 
 void YZView::centerViewVertically(unsigned int line) {
@@ -1607,7 +1605,6 @@ void YZView::commitNextUndo() {
 YZCursor *YZView::getCursor() {
 	return mainCursor->screen();
 }
-
 YZCursor *YZView::getBufferCursor() {
 	return mainCursor->buffer();
 }

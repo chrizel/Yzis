@@ -247,11 +247,12 @@ class YZView {
 		int getCurrentMode() { return mMode; }
 
 		enum {
-			YZ_VIEW_MODE_INSERT, // insert
+			YZ_VIEW_MODE_INSERT=0, // insert
 			YZ_VIEW_MODE_REPLACE, // replace
 			YZ_VIEW_MODE_COMMAND, // normal
 			YZ_VIEW_MODE_EX, //script 
-			YZ_VIEW_MODE_SEARCH //search mode
+			YZ_VIEW_MODE_SEARCH, //search mode
+			YZ_VIEW_MODE_LAST
 		} mMode;		/** mode of this view */
 		
 

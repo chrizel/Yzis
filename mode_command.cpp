@@ -1171,13 +1171,15 @@ void YZModeCommand::joinLine(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::pasteAfter(const YZCommandArgs &args) {
-	args.view->paste( args.regs[ 0 ], true );
+	for ( unsigned int i = 0 ; i < args.count ; i++ )
+		args.view->paste( args.regs[ 0 ], true );
 	args.view->commitNextUndo();
 	
 }
 
 void YZModeCommand::pasteBefore(const YZCommandArgs &args) {
-	args.view->paste( args.regs[ 0 ], false );
+	for ( unsigned int i = 0 ; i < args.count ; i++ )
+		args.view->paste( args.regs[ 0 ], false );
 	args.view->commitNextUndo();
 	
 }

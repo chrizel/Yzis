@@ -386,7 +386,12 @@ class YZView {
 		/**
 		 * Asks a redraw of the whole view
 		 */
-		virtual QString refreshScreen (const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs()) = 0;
+		virtual void refreshScreen() = 0;
+
+		/**
+		 * Internal use
+		 */
+		QString refreshScreenInternal(const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs());
 
 		/**
 		 * Displays an informational message

@@ -90,7 +90,7 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("\\?",&YZView::gotoSearchMode,true,false,false,false);
 	NEW_VIEW_COMMAND("([0-9]*)n",&YZView::searchAgain,true,true,false,false);
 	NEW_VIEW_COMMAND("<CTRL>r", &YZView::redo,true,false,false,false);
-	NEW_VIEW_COMMAND("<CTRL>l", &YZView::refreshScreen,true,false,false,false);
+	NEW_VIEW_COMMAND("<CTRL>l", &YZView::refreshScreenInternal,true,false,false,false);
 	NEW_VIEW_COMMAND("%", &YZView::match,true,false,false,false);
 }
 

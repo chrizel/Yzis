@@ -152,10 +152,9 @@ void KYZisView::syncViewInfo() {
 	mVScroll->setValue(getBufferCursor()->getY() );
 }
 
-QString KYZisView::refreshScreen (const QString&, YZCommandArgs) {
+void KYZisView::refreshScreen () {
 	mVScroll->setMaxValue( buffer->lineCount() );
 	editor->repaint( false );
-	return QString::null;
 }
 
 void KYZisView::setupActions() {

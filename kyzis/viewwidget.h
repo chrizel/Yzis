@@ -54,7 +54,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		virtual void modeChanged(void);
 		virtual void syncViewInfo();
 		void displayInfo( const QString& info );
-		QString refreshScreen (const QString&, YZCommandArgs);
+		void refreshScreen ();
 
 		/**
 		 * @internal

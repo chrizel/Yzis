@@ -134,7 +134,7 @@ void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand("c", &YZModeCommand::change) );
 	commands.append( new YZCommand("d", &YZModeCommand::del) );
 	commands.append( new YZCommand("y", &YZModeCommand::yank) );
-	commands.append( new YZCommand("x", &YZModeCommand::yank) );
+	commands.append( new YZCommand("x", &YZModeCommand::del) );
 	commands.append( new YZCommand(">", &YZModeCommand::indent) );
 	commands.append( new YZCommand("<", &YZModeCommand::indent) );
 }

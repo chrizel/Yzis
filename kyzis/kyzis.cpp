@@ -213,10 +213,10 @@ void Kyzis::createBuffer(const QString& path) {
 			{
 				kdDebug() << "Yzis part successfully loaded" << endl;
 				m_currentPart = m_part;
-				KMdiChildView *view = createWrapper( m_part->widget(), "buffer-" + path , "buffer" );
+				KMdiChildView *view = createWrapper( m_part->widget(), "buffer-" + path , path );
 				addWindow( view );
 				createGUI(m_part);
+				load( KURL( path ) );
 			}
-			m_part->openURL( path );
 		}
 }

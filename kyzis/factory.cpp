@@ -209,9 +209,9 @@ void KYZisFactory::quit( bool ) {
 
 void KYZisFactory::setCurrentView( YZView* view ) {
 	yzDebug() << "setCurrentView " << endl;
-	currentView->hide(); //simple enough ?
+//	currentView->hide(); //simple enough ?
 	currentView = static_cast<KYZisView*>( view );
-	currentView->show();
+//	currentView->show();
 }
 
 YZView* KYZisFactory::createView( YZBuffer *buffer ) {
@@ -219,7 +219,7 @@ YZView* KYZisFactory::createView( YZBuffer *buffer ) {
 //	yzDebug() << "Test2 : " << doc->parentWidget()->name() << endl;
 	//XXX KTextEditor::View* v = doc->createView(currentDoc->parentWidget());
   //YZView *v = buffer->firstView();
-  YZView *v = buffer->findView(1);
+  YZView *v = buffer->findView(0);
   assert( v );
   return v;
 //  return dynamic_cast<YZView*>( v );
@@ -227,13 +227,13 @@ YZView* KYZisFactory::createView( YZBuffer *buffer ) {
 
 YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 	DCOPClient *client = kapp->dcopClient();
-	QByteArray data, reply;
+	QByteArray data;
 	QDataStream arg(data, IO_WriteOnly);
-	client->attach();
+//	client->attach();
 	arg << path;
-	bool w = client->send(client->appId(), "Kyzis", "createBuffer(QString)", data );
+	bool w = client->send(client->appId(), "Kyzis", "createBuffer(QString)", data);
 	if (w) {
-		yzDebug() << "DCOP call successful for " << client->appId() << endl;
+		yzDebug() << "DCOP call successful for " << client->appId() << " to create buffer on " << path << endl;
 		//finds the buffer
 	} else {
 		yzDebug() << "DCOP call failed for " << client->appId() << endl;

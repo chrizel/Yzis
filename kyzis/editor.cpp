@@ -6,7 +6,7 @@
 #include "debug.h"
 #include "yzis.h"
 
-	KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
+KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) 
 {
 	setFont(QFont("Andale Mono",10));

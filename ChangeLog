@@ -1,4 +1,8 @@
 2004-02-01 mikmak
+  * libyzis / kyzis
+    support :edit myfile :)
+
+2004-02-01 mikmak
   * all
     support editing multiple files (open files from kyzis menu)
 

@@ -44,4 +44,10 @@ KYZisView::~KYZisView () {
 	if ( buffer ) buffer->removeView(this);
 	KYZisFactory::deregisterView( this );
 }
+
+void KYZisView::showEvent ( QShowEvent* ) {
+	yzDebug() << "View " << myId << " got activated" << endl;
+	KYZisFactory::s_self->setCurrentView( this );
+}
+
 #include "viewwidget.moc"

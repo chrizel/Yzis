@@ -12,9 +12,7 @@
 class KYZisEdit;
 class KYZisCommand;
 
-class KYZisView: public KTextEditor::View
-	, public YZView
-//	, public Gui
+class KYZisView: public KTextEditor::View , public YZView
 {
 	Q_OBJECT
 
@@ -26,6 +24,7 @@ class KYZisView: public KTextEditor::View
 		KTextEditor::Document *document () const { return buffer; }
 	
 	protected:
+		virtual void showEvent ( QShowEvent* );
 
 	private:
 		KYZisEdit *editor;

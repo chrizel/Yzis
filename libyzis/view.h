@@ -463,7 +463,7 @@ class YZView {
 		 * @param search a regexp to look for
 		 * @return true if a match is found
 		 */
-		bool doSearch( const QString& search );
+		bool doSearch( const QString& search, const YZCursor& begin, const YZCursor& end );
 
 		/**
 		 * Continue previous search
@@ -849,6 +849,9 @@ class YZView {
 		//Visual Mode stuff
 		YZCursor *mVisualCursor;
 		YZCursor *dVisualCursor;
+
+		//search mode cursors
+		YZCursor *mSearchBegin;
 
 		//which regs to store macros in
 		QValueList<QChar> mRegs;

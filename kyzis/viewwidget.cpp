@@ -43,7 +43,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status = new KStatusBar (this, "status");
 	command = new KYZisCommand (this, "command");
 	mVScroll = new QScrollBar( this, "vscroll" );
-	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrolled(int)) );
+	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
 
 	status->insertItem(mode(YZ_VIEW_MODE_LAST),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
@@ -126,8 +126,7 @@ QChar KYZisView::currentChar() const {
 
 void KYZisView::wheelEvent( QWheelEvent * e ) {
 	int n = ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
-	mVScroll->setValue( mVScroll->value() - n  );
-	scrolled( mVScroll->value() );
+	scrollView( getCurrentTop() - n );
 }
 
 void KYZisView::modeChanged (void) {
@@ -148,7 +147,7 @@ void KYZisView::syncViewInfo() {
 	buffer->setModified( mBuffer->fileIsModified() );
 
 	status->changeItem(fileInfo, 90);
-	mVScroll->setValue(getBufferCursor()->getY() );
+	mVScroll->setValue( getCurrentTop() );
 	emit cursorPositionChanged();
 	modeChanged();
 }
@@ -244,13 +243,27 @@ void KYZisView::displayInfo( const QString& info ) {
 	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }
 
-void KYZisView::scrolled( int value ) {
-//	yzDebug() << "Scrolled to " << value << endl;
+
+// scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
+
+void KYZisView::scrollView( int value ) {
+	if ( value < 0 )
+		value = 0;
+	else if ( value > (int)buffer->lineCount() - 1 )
+		value = buffer->lineCount() - 1;
+
 	mVScroll->setMaxValue( buffer->lineCount() );
-	gotoxy(getBufferCursor()->getX(), value);
+	mVScroll->setValue( value  );
+	bottomViewVertically( value + getLinesVisible() - 1 );
+
+	// move cursor if it scrolled off the screen
+	if (getBufferCursor()->getY() < getCurrentTop())
+		gotoxy(getBufferCursor()->getX(), getCurrentTop());
+	else if (getBufferCursor()->getY() > getCurrentTop()+getLinesVisible() - 1)
+		gotoxy(getBufferCursor()->getX(), getCurrentTop()+getLinesVisible()-1);
+
+	syncViewInfo();
 }
-
-
 
 //KTextEditor::PopupMenuInterface implementation
 

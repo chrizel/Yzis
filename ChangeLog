@@ -1,3 +1,7 @@
+2004-10-12 morbuz, Erlend Hamberg (patch)
+  * kyzis
+  	scroll the view instead of moving the cursor
+  	
 2004-09-29 panard
   * libyzis
   	add <,>, :<,:> like commands

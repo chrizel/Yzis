@@ -1,3 +1,8 @@
+2004-10-25 mikmak
+  * libyzis
+  	new incsearch option
+  	new hlsearch option
+  	
 2004-10-12 morbuz, Erlend Hamberg (patch)
   * kyzis
   	scroll the view instead of moving the cursor

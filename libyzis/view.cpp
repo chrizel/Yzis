@@ -536,15 +536,16 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			} else 
 				setCommandLineText( getCommandLineText() + key );
 
-			YZCursor end = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
-			if ( reverseSearch ) {
-				end.setX(0);
-				end.setY(0);
+			if ( getLocalBoolOption("incsearch") ) {
+				YZCursor end = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
+				if ( reverseSearch ) {
+					end.setX(0);
+					end.setY(0);
+				}
+				if (!doSearch( getCommandLineText(), mSearchBegin, end ))
+						gotoxy(mSearchBegin->getX(), mSearchBegin->getY());
+				return;
 			}
-			if (!doSearch( getCommandLineText(), mSearchBegin, end )) {
-					gotoxy(mSearchBegin->getX(), mSearchBegin->getY());
-			}
-			return;
 			break;
 		}
 
@@ -1496,7 +1497,8 @@ bool YZView::doSearch( const QString& search, const YZCursor& begin, const YZCur
 	result = mBuffer->action()->search(this, search, begin, end, reverseSearch, &matchlength, &found);
 
 	if ( found ) {
-		selectionPool->addSelection( "SEARCH", result.getX(), result.getY(), result.getX() + matchlength - 1, result.getY() );
+		if (getLocalBoolOption("hlsearch")) 
+			selectionPool->addSelection( "SEARCH", result.getX(), result.getY(), result.getX() + matchlength - 1, result.getY() );
 		gotoxy( result.getX(), result.getY() );
 		updateStickyCol( mainCursor );
 		refreshScreen( );

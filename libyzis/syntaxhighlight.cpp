@@ -125,7 +125,7 @@ class YzisHlItem
 class YzisHlContext
 {
   public:
-    YzisHlContext (int attribute, int lineEndContext,int _lineBeginContext,
+    YzisHlContext(const QString &_hlId, int attribute, int lineEndContext,int _lineBeginContext,
                   bool _fallthrough, int _fallthroughContext, bool _dynamic);
     virtual ~YzisHlContext();
     YzisHlContext *clone(const QStringList *args);
@@ -135,6 +135,7 @@ class YzisHlContext
 #else
     QVector<YzisHlItem*> items;
 #endif
+    QString hlId; ///< A unique highlight identifier. Used to look up correct properties.
     int attr;
     int ctx;
     int lineBeginContext;
@@ -364,13 +365,25 @@ class YzisHlDetectIdentifier : public YzisHlItem
     virtual int checkHgl(const QString& text, int offset, int len)
     {
 #if QT_VERSION < 0x040000
-      if (text[offset++].isLetter() || (text[offset] == QChar ('_')))
+      // first char should be a letter or underscore
+      if ( text[offset].isLetter() || text[offset] == QChar ('_') )
 #else
-      if (text[offset++].isLetter() || (offset < text.size() && text[offset] == QChar ('_')))
+      if (text[offset].isLetter() || (offset < text.size() && text[offset] == QChar ('_')))
 #endif
       {
-        int len2 = offset-1+len;
-        while ((offset < len2) && (text[offset].isLetterOrNumber() || (text[offset] == QChar ('_')))) offset++;
+        // memorize length
+        int len2 = offset+len;
+
+        // one char seen
+        offset++;
+
+        // now loop for all other thingies
+        while (
+               (offset < len2)
+               && (text[offset].isLetterOrNumber() || (text[offset] == QChar ('_')))
+              )
+          offset++;
+
         return offset;
       }
 
@@ -1163,8 +1176,9 @@ YzisHlData::YzisHlData(const QString &wildcards, const QString &mimetypes, const
 }
 
 //BEGIN KateHlContext
-YzisHlContext::YzisHlContext (int attribute, int lineEndContext, int _lineBeginContext, bool _fallthrough, int _fallthroughContext, bool _dynamic)
+YzisHlContext::YzisHlContext (const QString &_hlId, int attribute, int lineEndContext, int _lineBeginContext, bool _fallthrough, int _fallthroughContext, bool _dynamic)
 {
+  hlId = _hlId;
   attr = attribute;
   ctx = lineEndContext;
   lineBeginContext = _lineBeginContext;
@@ -1176,7 +1190,7 @@ YzisHlContext::YzisHlContext (int attribute, int lineEndContext, int _lineBeginC
 
 YzisHlContext *YzisHlContext::clone(const QStringList *args)
 {
-  YzisHlContext *ret = new YzisHlContext(attr, ctx, lineBeginContext, fallthrough, ftctx, false);
+  YzisHlContext *ret = new YzisHlContext(hlId, attr, ctx, lineBeginContext, fallthrough, ftctx, false);
 
   for (uint n=0; n < items.size(); ++n)
   {
@@ -1227,6 +1241,10 @@ YzisHighlighting::YzisHighlighting(const YzisSyntaxModeListItem *def) : refCount
     iSection = "";
     m_priority = 0;
     iHidden = false;
+    m_additionalData.insert( "none", new HighlightPropertyBag );
+    m_additionalData["none"]->deliminator = stdDeliminator;
+    m_additionalData["none"]->wordWrapDeliminator = stdDeliminator;
+    m_hlIndex[0] = "none";
   }
   else
   {
@@ -1243,7 +1261,7 @@ YzisHighlighting::YzisHighlighting(const YzisSyntaxModeListItem *def) : refCount
     m_priority=def->priority.toInt();
   }
 
-  deliminator = stdDeliminator;
+   deliminator = stdDeliminator;
 }
 
 YzisHighlighting::~YzisHighlighting()
@@ -1489,7 +1507,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
       {
         if (item->customStartEnable)
         {
-          if (customStartEnableDetermined || yzisInsideString (deliminator, lastChar))
+          if (customStartEnableDetermined || yzisInsideString (m_additionalData[context->hlId]->deliminator, lastChar))
             customStartEnableDetermined = true;
           else
             continue;
@@ -2005,7 +2023,10 @@ int  YzisHighlighting::lookupAttrName(const QString& name, YzisHlItemDataList &i
  *
  * @return A pointer to the newly created item object
  */
-YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, YzisHlItemDataList &iDl,QStringList *RegionList, QStringList *ContextNameList)
+YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data,
+                                               YzisHlItemDataList &iDl,
+                                               QStringList *RegionList,
+                                               QStringList *ContextNameList)
 {
   // No highlighting -> exit
   if (noHl)
@@ -2144,7 +2165,7 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   if (dataname=="keyword")
   {
     YzisHlKeyword *keyword=new YzisHlKeyword(attr,context,regionId,regionId2,casesensitive,
-      deliminator);
+                                             m_additionalData[ buildIdentifier ]->deliminator);
 
     //Get the entries for the keyword lookup list
     keyword->addList(YzisHlManager::self()->syntax->finddata("highlighting",stringdata));
@@ -2187,25 +2208,25 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   return tmpItem;
 }
 
-int YzisHighlighting::hlKeyForAttrib( int attrib ) const
+QString YzisHighlighting::hlKeyForAttrib( int i ) const
 {
   int k = 0;
-  IntList::const_iterator it = m_hlIndex.constEnd();
+  QMap<int,QString>::const_iterator it = m_hlIndex.constEnd();
   while ( it != m_hlIndex.constBegin() )
   {
     --it;
-    k = (*it);
-    if ( attrib >= k )
+    k = it.key();
+    if ( i >= k )
       break;
   }
-  return k;
+  return it.data();
 }
 
 bool YzisHighlighting::isInWord( QChar c, int attrib ) const
 {
   static const QString sq = " \"'";
 #if QT_VERSION < 0x040000
-  return getCommentString(4, attrib).find(c) < 0 && sq.find(c) < 0;
+  return m_additionalData[ hlKeyForAttrib( attrib ) ]->deliminator.find(c) < 0 && sq.find(c) < 0;
 #else
   return getCommentString(4, attrib).indexOf(c) < 0 && sq.indexOf(c) < 0;
 #endif
@@ -2215,59 +2236,45 @@ bool YzisHighlighting::canBreakAt( QChar c, int attrib ) const
 {
   static const QString sq("\"'");
 #if QT_VERSION < 0x040000
-  return (getCommentString(5, attrib).find(c) != -1) && (sq.find(c) == -1);
+  return (m_additionalData[ hlKeyForAttrib( attrib ) ]->wordWrapDeliminator.find(c) != -1) && (sq.find(c) == -1);
 #else
   return (getCommentString(5, attrib).indexOf(c) != -1) && (sq.indexOf(c) == -1);
 #endif
 }
 
 signed char YzisHighlighting::commentRegion(int attr) const {
-  int k = hlKeyForAttrib( attr );
-  QString commentRegion=m_additionalData[k][MultiLineRegion];
+  QString commentRegion=m_additionalData[ hlKeyForAttrib( attr ) ]->multiLineRegion;
   return (commentRegion.isEmpty()?0:(commentRegion.toShort()));
 }
 
 bool YzisHighlighting::canComment( int startAttrib, int endAttrib ) const
 {
-  int k = hlKeyForAttrib( startAttrib );
+  QString k = hlKeyForAttrib( startAttrib );
   return ( k == hlKeyForAttrib( endAttrib ) &&
-      ( ( !m_additionalData[k][Start].isEmpty() && !m_additionalData[k][End].isEmpty() ) ||
-       ! m_additionalData[k][SingleLine].isEmpty() ) );
-}
-
-QString YzisHighlighting::getCommentString( int which, int attrib ) const
-{
-  if ( noHl )
-    return which == 4 ? stdDeliminator : "";
-
-  int k = hlKeyForAttrib( attrib );
-  const QStringList& lst = m_additionalData[k];
-  return lst.isEmpty() ? QString::null : lst[which];
+      ( ( !m_additionalData[k]->multiLineCommentStart.isEmpty() && !m_additionalData[k]->multiLineCommentEnd.isEmpty() ) ||
+       ! m_additionalData[k]->singleLineCommentMarker.isEmpty() ) );
 }
 
 QString YzisHighlighting::getCommentStart( int attrib ) const
 {
-  return getCommentString( Start, attrib );
+  return m_additionalData[ hlKeyForAttrib( attrib) ]->multiLineCommentStart;
 }
 
 QString YzisHighlighting::getCommentEnd( int attrib ) const
 {
-  return getCommentString( End, attrib );
+  return m_additionalData[ hlKeyForAttrib( attrib ) ]->multiLineCommentEnd;
 }
 
 QString YzisHighlighting::getCommentSingleLineStart( int attrib ) const
  {
-  return getCommentString( SingleLine, attrib );
+  return m_additionalData[ hlKeyForAttrib( attrib) ]->singleLineCommentMarker;
 }
 
 /**
  * Helper for makeContextList. It parses the xml file for
  * information, how single or multi line comments are marked
- *
- * @return a stringlist containing the comment marker strings in the order
- * multilineCommentStart, multilineCommentEnd, singlelineCommentMarker
  */
-QStringList YzisHighlighting::readCommentConfig()
+void YzisHighlighting::readCommentConfig()
 {
   YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
   YzisSyntaxContextData *data=YzisHlManager::self()->syntax->getGroupInfo("general","comment");
@@ -2298,20 +2305,20 @@ QStringList YzisHighlighting::readCommentConfig()
     cmlEnd = "";
     cmlRegion = "";
   }
-  QStringList res;
-  res << cmlStart << cmlEnd <<cmlRegion<< cslStart;
-  return res;
+  m_additionalData[buildIdentifier]->singleLineCommentMarker = cslStart;
+  m_additionalData[buildIdentifier]->multiLineCommentStart = cmlStart;
+  m_additionalData[buildIdentifier]->multiLineCommentEnd = cmlEnd;
+  m_additionalData[buildIdentifier]->multiLineRegion = cmlRegion;
 }
 
 /**
  * Helper for makeContextList. It parses the xml file for information,
  * if keywords should be treated case(in)sensitive and creates the keyword
  * delimiter list. Which is the default list, without any given weak deliminiators
- *
- * @return the computed delimiter string.
  */
-QString YzisHighlighting::readGlobalKeywordConfig()
+void YzisHighlighting::readGlobalKeywordConfig()
 {
+  deliminator = stdDeliminator;
   // Tell the syntax document class which file we want to parse
   yzDebug("HL")<<"readGlobalKeywordConfig:BEGIN"<<endl;
 
@@ -2363,19 +2370,20 @@ QString YzisHighlighting::readGlobalKeywordConfig()
 
   yzDebug("HL")<<"delimiterCharacters are: "<<deliminator<<endl;
 
-  return deliminator; // FIXME un-globalize
+  m_additionalData[buildIdentifier]->deliminator = deliminator;
 }
 
 /**
- * Helper for makeContextList. It parses the xml file for any wordwrap deliminators, characters
- * at which line can be broken. In case no keyword tag is found in the xml file,
- * the wordwrap deliminators list defaults to the standard denominators. In case a keyword tag
- * is defined, but no wordWrapDeliminator attribute is specified, the deliminator list as computed
+ * Helper for makeContextList. It parses the xml file for any wordwrap
+ * deliminators, characters * at which line can be broken. In case no keyword
+ * tag is found in the xml file, the wordwrap deliminators list defaults to the
+ * standard denominators. In case a keyword tag is defined, but no
+ * wordWrapDeliminator attribute is specified, the deliminator list as computed
  * in readGlobalKeywordConfig is used.
  *
  * @return the computed delimiter string.
  */
-QString YzisHighlighting::readWordWrapConfig()
+void YzisHighlighting::readWordWrapConfig()
 {
   // Tell the syntax document class which file we want to parse
   yzDebug()<<"readWordWrapConfig:BEGIN"<<endl;
@@ -2399,7 +2407,22 @@ QString YzisHighlighting::readWordWrapConfig()
 
   yzDebug()<<"readWordWrapConfig:END"<<endl;
 
-  return wordWrapDeliminator; // FIXME un-globalize
+  m_additionalData[buildIdentifier]->wordWrapDeliminator = wordWrapDeliminator;
+}
+
+void YzisHighlighting::readIndentationConfig()
+{
+  m_indentation = "";
+
+  YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
+  YzisSyntaxContextData *data = YzisHlManager::self()->syntax->getConfig("general","indentation");
+
+  if (data)
+  {
+    m_indentation = (YzisHlManager::self()->syntax->groupItemData(data,QString("mode")));
+
+    YzisHlManager::self()->syntax->freeGroupInfo(data);
+  }
 }
 
 void YzisHighlighting::readFoldingConfig()
@@ -2561,11 +2584,12 @@ void YzisHighlighting::makeContextList()
         if (iName==it.key())
           identifierToUse=identifier;  // the own identifier is known
         else
-          identifierToUse=YzisHlManager::self()->identifierForName(it.key()); // all others have to be looked up
+          identifierToUse=YzisHlManager::self()->identifierForName(it.key());
 
 		yzDebug()<<"Location is:"<< identifierToUse<<endl;
 
-		buildPrefix=it.key()+':';  // attribute names get prefixed by the names of the highlighting definitions they belong to
+        buildPrefix=it.key()+':';  // attribute names get prefixed by the names
+                                   // of the highlighting definitions they belong to
 
 		if (identifierToUse.isEmpty() ) yzDebug()<<"OHOH, unknown highlighting description referenced"<<endl;
 
@@ -2651,7 +2675,8 @@ void YzisHighlighting::handleYzisHlIncludeRules()
 	  {
       if ((*it)->incCtxN.isEmpty())
       {
-        // no context name given, and no valid context id set, so this item is going to be removed
+        // no context name given, and no valid context id set, so this item is
+        // going to be removed
         YzisHlIncludeRules::iterator it1=it;
         ++it1;
         delete (*it);
@@ -2673,8 +2698,10 @@ void YzisHighlighting::handleYzisHlIncludeRules()
   	else ++it; //nothing to do, already resolved (by the cross defintion reference resolver
   }
 
-  // now that all YzisHlIncludeRule items should be valid and completely resolved, do the real inclusion of the rules.
-  // recursiveness is needed, because context 0 could include context 1, which itself includes context 2 and so on.
+  // now that all YzisHlIncludeRule items should be valid and completely resolved,
+  // do the real inclusion of the rules.
+  // recursiveness is needed, because context 0 could include context 1, which
+  // itself includes context 2 and so on.
   //  In that case we have to handle context 2 first, then 1, 0
   //TODO: catch circular references: eg 0->1->2->3->1
   while (!includeRules.isEmpty())
@@ -2685,6 +2712,7 @@ void YzisHighlighting::handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::ite
 {
   int i;
   if (it==list->end()) return;  //invalid iterator, shouldn't happen, but better have a rule prepared ;)
+
   YzisHlIncludeRules::iterator it1=it;
   int ctx=(*it1)->ctx;
 
@@ -2766,6 +2794,8 @@ void YzisHighlighting::handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::ite
  */
 int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 {
+  yzDebug()<<"=== Adding hl with ident '"<<ident<<"'"<<endl;
+
   buildIdentifier=ident;
   YzisSyntaxContextData *data, *datasub;
   YzisHlItem *c;
@@ -2776,25 +2806,27 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   if (!YzisHlManager::self()->syntax->setIdentifier(ident))
   {
     noHl=true;
-//    KMessageBox::information(0L,i18n("Since there has been an error parsing the highlighting description, this highlighting will be disabled"));
+    yzDebug() << "Since there has been an error parsing the highlighting description, this highlighting will be disabled" << endl;
     return 0;
   }
 
+  // only read for the own stuff
+  if (identifier == ident)
+  {
+    readIndentationConfig ();
+  }
 
-  RegionList<<"!KateInternal_TopLevel!";
+  RegionList<<"!YzisInternal_TopLevel!";
 
-  // Now save the comment and delimitor data. We associate it with the
-  // length of internalDataList, so when we look it up for an attrib,
-  // all the attribs added in a moment will be in the correct range
-  QStringList additionaldata = readCommentConfig();
-  additionaldata << readGlobalKeywordConfig();
-  additionaldata << readWordWrapConfig();
+  m_hlIndex[internalIDList.count()] = ident;
+  m_additionalData.insert( ident, new HighlightPropertyBag );
+
+  // fill out the propertybag
+  readCommentConfig();
+  readGlobalKeywordConfig();
+  readWordWrapConfig();
 
   readFoldingConfig ();
-
-  uint additionalDataIndex=internalIDList.count();
-  m_additionalData.insert( additionalDataIndex, additionaldata );
-  m_hlIndex.append( additionalDataIndex );
 
   QString ctxName;
 
@@ -2870,6 +2902,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
         dynamic = true;
 
       YzisHlContext *ctxNew = new YzisHlContext (
+        ident,
         attr,
         context,
         (YzisHlManager::self()->syntax->groupData(data,QString("lineBeginContext"))).isEmpty()?-1:
@@ -2934,9 +2967,11 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 #if 0
                 QString tag = KateHlManager::self()->syntax->groupKateHlItemData(data,QString(""));
                 if ( tag == "IncludeRules" ) {
-                  // attrib context: the index (jowenn, i think using names here would be a cool feat, goes for mentioning the context in any item. a map or dict?)
+                  // attrib context: the index (jowenn, i think using names here
+                  // would be a cool feat, goes for mentioning the context in
+                  // any item. a map or dict?)
                   int ctxId = getIdFromString(&ContextNameList,
-      KateHlManager::self()->syntax->groupKateHlItemData( data, QString("context")),dummy); // the index is *required*
+                                               KateHlManager::self()->syntax->groupKateHlItemData( data, QString("context")),dummy); // the index is *required*
                   if ( ctxId > -1) { // we can even reuse rules of 0 if we want to:)
                     kdDebug(13010)<<"makeContextList["<<i<<"]: including all items of context "<<ctxId<<endl;
                     if ( ctxId < (int) i ) { // must be defined
@@ -2954,7 +2989,8 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
       {
         m_contexts[i]->items.append(c);
 
-        // Not supported completely atm and only one level. Subitems.(all have to be matched to at once)
+        // Not supported completely atm and only one level. Subitems.(all have
+        // to be matched to at once)
         datasub=YzisHlManager::self()->syntax->getSubItems(data);
         bool tmpbool;
         if (tmpbool=YzisHlManager::self()->syntax->nextItem(datasub))
@@ -2984,21 +3020,20 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   folding = folding || m_foldingIndentationSensitive;
 
   //BEGIN Resolve multiline region if possible
-  QStringList& commentData=m_additionalData[additionalDataIndex];
-  if (!commentData[MultiLineRegion].isEmpty()) {
 #if QT_VERSION < 0x040000
-    long commentregionid=RegionList.findIndex(commentData[MultiLineRegion]);
+  if (!m_additionalData[ ident ]->multiLineRegion.isEmpty()) {
+    long commentregionid=RegionList.findIndex( m_additionalData[ ident ]->multiLineRegion );
 #else
-    long commentregionid=RegionList.indexOf(QRegExp(commentData[MultiLineRegion]));
+    long commentregionid=RegionList.indexOf(QRegExp( m_additionalData[ ident ]->multiLineRegion ));
 #endif
     if (-1==commentregionid) {
-      errorsAndWarnings+=QString("<B>%1</B>: Specified multiline comment region (%2) could not be resolved<BR>").arg(buildIdentifier).arg(commentData[MultiLineRegion]);
-      commentData[MultiLineRegion]=QString();
+      errorsAndWarnings+=QString("<B>%1</B>: Specified multiline comment region (%2) could not be resolved<BR>").arg(buildIdentifier).arg(m_additionalData[ ident ]->multiLineRegion);
+      m_additionalData[ ident ]->multiLineRegion = QString();
       yzDebug()<<"ERROR comment region attribute could not be resolved"<<endl;
 
     } else {
-        commentData[MultiLineRegion]=QString::number(commentregionid+1);
-        yzDebug()<<"comment region resolved to:"<<m_additionalData[additionalDataIndex][MultiLineRegion]<<endl;
+      m_additionalData[ ident ]->multiLineRegion=QString::number(commentregionid+1);
+      yzDebug()<<"comment region resolved to:"<<m_additionalData[ ident ]->multiLineRegion<<endl;
     }
   }
   //END Resolve multiline region if possible
@@ -3633,10 +3668,23 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
       tmp=s[5]; if (!tmp.isEmpty()) i->setUnderline(tmp!="0");
 
       tmp=s[6]; if (!tmp.isEmpty()) {
-         col=tmp.toUInt(0,16); i->setBGColor(col); }
-
+        if ( tmp != "-" )
+        {
+          col=tmp.toUInt(0,16);
+          i->setBGColor(col);
+        }
+        else
+          i->clearAttribute(YzisAttribute::BGColor);
+      }
       tmp=s[7]; if (!tmp.isEmpty()) {
-         col=tmp.toUInt(0,16); i->setSelectedBGColor(col); }
+        if ( tmp != "-" )
+        {
+          col=tmp.toUInt(0,16);
+          i->setSelectedBGColor(col);
+        }
+        else
+          i->clearAttribute(YzisAttribute::SelectedBGColor);
+      }
 
     }
   }
@@ -3658,8 +3706,8 @@ void YzisHlManager::setDefaults(uint schema, YzisAttributeList &list)
     settings<<(i->itemSet(YzisAttribute::Italic)?(i->italic()?"1":"0"):"");
     settings<<(i->itemSet(YzisAttribute::StrikeOut)?(i->strikeOut()?"1":"0"):"");
     settings<<(i->itemSet(YzisAttribute::Underline)?(i->underline()?"1":"0"):"");
-    settings<<(i->itemSet(YzisAttribute::BGColor)?QString::number(i->bgColor().rgb(),16):"");
-    settings<<(i->itemSet(YzisAttribute::SelectedBGColor)?QString::number(i->selectedBGColor().rgb(),16):"");
+    settings<<(i->itemSet(YzisAttribute::BGColor)?QString::number(i->bgColor().rgb(),16):"-");
+    settings<<(i->itemSet(YzisAttribute::SelectedBGColor)?QString::number(i->selectedBGColor().rgb(),16):"-");
     settings<<"---";
 
     config->setQStringListOption(defaultStyleName(z),settings);

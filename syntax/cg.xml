@@ -15,7 +15,9 @@
 2004-05-27
 	* Added swizzle highlighting
 	* Added stdlib function highlighting
-
+2004-12-07 (julien.antille at kdemail.net)
+	* Added COLOR1 through COLOR3 output sementics, for Multiple Render Targets (MRTs).
+	* Added FACE sementic for the new fp40 profile
 -->
 
 <language name="Cg" section="Sources" extensions="*.cg" mimetype="text/x-cgsrc" version="1.10" author="Florian Schanda (florian.schanda@schanda.de)" license="LGPL">
@@ -25,6 +27,8 @@
 			<item>COLOR</item>
 			<item>COLOR0</item>
 			<item>COLOR1</item>
+			<item>COLOR2</item>
+			<item>COLOR3</item>
 			<item>TEXCOORD0</item>
 			<item>TEXCOORD1</item>
 			<item>TEXCOORD2</item>
@@ -70,6 +74,7 @@
 			<item>FOG</item>
 			<item>BCOL0</item>
 			<item>BCOL1</item>
+			<item>FACE</item>
 		</list>
 		<list name="keywords">
 			<item>do</item>

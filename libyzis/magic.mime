@@ -319,6 +319,8 @@
 0	string		\<!DOCTYPE\ HTML	text/html
 0	string		\<!doctype\ html	text/html
 0	string		\<!doctype\ HTML	text/html
+0	string		\<?xml	text/xml
+0	string		\<?php	application/x-php
 
 #------------------------------------------------------------------------------
 # images:  file(1) magic for image formats (see also "c-lang" for XPM bitmaps)

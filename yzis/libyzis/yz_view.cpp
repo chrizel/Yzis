@@ -5,6 +5,7 @@
 
 
 #include <stdlib.h>
+#include <curses.h>
 #include "yz_view.h"
 
 /*
@@ -15,8 +16,10 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 {
 	buffer		= _b;
 	lines_vis	= _lines_vis;
-	current		= x = y = 0;
+	current		= 0;
+	cursor_x = cursor_y = cursor_x_ghost = 0;
 	mode 		= YZ_VIEW_MODE_COMMAND;
+	current_maxx = buffer->find_line(cursor_y)->len-1;
 
 	events_nb_begin = 0;
 	events_nb_last = 0;
@@ -29,12 +32,21 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 /* Used by the buffer to post events */
 void YZView::send_char( unicode_char_t c)
 {
+	if ('\033'==c) {
+		mode = YZ_VIEW_MODE_COMMAND;
+		post_event(mk_event_setstatus("Command mode"));
+		return;
+	}
 	switch(mode) {
 		case YZ_VIEW_MODE_INSERT:
 			/* handle adding a char */
+			buffer->add_char(cursor_x,cursor_y,c);
+			cursor_x++;
 			return;
 		case YZ_VIEW_MODE_REPLACE:
 			/* handle replacing a char */
+			buffer->chg_char(cursor_x,cursor_y,c);
+			cursor_x++;
 			return;
 		case YZ_VIEW_MODE_COMMAND:
 			/* will be handled after the switch */
@@ -54,23 +66,52 @@ void YZView::send_char( unicode_char_t c)
 			/* go to end of line */
 		/* pass through */
 		case 'a': /* append -> insert mode */
-//			mode = YZ_VIEW_MODE_INSERT;
+			mode = YZ_VIEW_MODE_INSERT;
 			post_event(mk_event_setstatus("-- INSERT --"));
 			break;
 		case 'R': /* -> replace mode */
-//			mode = YZ_VIEW_MODE_REPLACE;
+			mode = YZ_VIEW_MODE_REPLACE;
 			post_event(mk_event_setstatus("-- REPLACE --"));
 			break;
 		case 'j': /* move down */
+			if (cursor_y<buffer->lines_nb-1) {
+				current_maxx = buffer->find_line(++cursor_y)->len-1;
+				cursor_x = cursor_x_ghost;
+				if (cursor_x>current_maxx) cursor_x = current_maxx;
+				if (cursor_x<0) cursor_x = 0;
+				update_cursor();
+			}
 			break;
 		case 'k': /* move up */
+			if (cursor_y>0) {
+				current_maxx = buffer->find_line(--cursor_y)->len-1;
+				cursor_x = cursor_x_ghost;
+				if (cursor_x>current_maxx) cursor_x = current_maxx;
+				if (cursor_x<0) cursor_x = 0;
+				update_cursor();
+			}
 			break;
 		case 'h': /* move left */
+			if (cursor_x>0) {
+				cursor_x_ghost = --cursor_x;
+				update_cursor();
+			}
 			break;
 		case 'l': /* move right */
+			if (cursor_x<current_maxx) {
+				cursor_x_ghost = ++cursor_x;
+				update_cursor();
+			}
 			break;
 
 	}
+}
+
+
+void YZView::update_cursor(void)
+{
+	post_event( mk_event_setcursor(cursor_x,cursor_y-current));
+	debug("posting event about moving cursor to %d,%d, maxx is %d", cursor_x, cursor_y-current,current_maxx);
 }
 
 yz_event *YZView::fetch_event(/* asasdfasf */)

@@ -33,6 +33,7 @@ YZExLua::YZExLua() {
 	lua_register(st,"wincol",wincol);
 	lua_register(st,"winline",winline);
 	lua_register(st,"goto",gotoxy);
+	lua_register(st,"delete",delline);
 }
 
 YZExLua::~YZExLua() {
@@ -111,6 +112,7 @@ int YZExLua::insert(lua_State *L) {
 		sCol=0;
 		sLine++;
 	}
+	//XXX should not be needed ... bug in invalidateLine ?
 	cView->refreshScreen();
 
 	return 0; // no result
@@ -168,6 +170,18 @@ int YZExLua::gotoxy(lua_State *L) {
 	
 	YZView* cView = YZSession::me->currentView();
 	cView->gotoxy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
+
+	return 0; // one result
+}
+
+int YZExLua::delline(lua_State *L) {
+	int n = lua_gettop( L );
+	if ( n < 1 ) return 0; //mis-use of the function
+	
+	int sLine = lua_tonumber( L,1 );
+	
+	YZView* cView = YZSession::me->currentView();
+	cView->myBuffer()->deleteLine( sLine ? sLine - 1 : 0 );
 
 	return 0; // one result
 }

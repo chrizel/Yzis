@@ -972,7 +972,7 @@ void YZView::applyDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool ap
 	unsigned int dBegin = dCursor->getY() + ( pos.getY() ? 1 : 0 );
 	paintEvent( dCurrentLeft, dBegin, mColumnsVis, mLinesVis - ( dBegin - dCurrentTop ) );
 	if ( applyCursor )
-		gotoxy( 0, pos.getY() );
+		gotoxy( stickyCol, pos.getY() );
 	else
 		gotoxy( origPos->getX(), origPos->getY() );
 	stickyCol = dCursor->getX( );

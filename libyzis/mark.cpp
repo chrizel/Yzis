@@ -31,6 +31,11 @@ YZMark::~YZMark( ) {
 }
 
 void YZMark::clear( ) {
+	YZMarker::Iterator it = marker.begin();
+	for( ; it != marker.end(); ++it ) {
+		delete it.data().bPos;
+		delete it.data().dPos;
+	}	
 	marker.clear( );
 }
 
@@ -42,6 +47,11 @@ void YZMark::add( const QString& mark, const YZCursor& bPos, const YZCursor& dPo
 }
 
 void YZMark::del( const QString& mark ) {
+	YZMarker::Iterator it = marker.find( mark );
+	if ( it != marker.end() ) {
+		delete it.data().bPos;
+		delete it.data().dPos;
+	}
 	marker.remove( mark );
 }
 

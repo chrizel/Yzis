@@ -101,18 +101,18 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int * /* er
 			if ( it.data().hasRegister ) {
 				args.registr = ex.cap( ag++ )[ 1 ];
 				if ( args.registr.isNull() ) args.registr = '"'; //default register to use
-				yzDebug() << "hasRegister : " << QString( args.registr ) << endl;
+//				yzDebug() << "hasRegister : " << QString( args.registr ) << endl;
 			}
 			if ( it.data().hasCounter ) {
 				args.count = ( ex.cap( ag ).isNull() || ex.cap( ag ).isEmpty() ) ? 1 : ex.cap( ag ).toUInt();
 				ag++;
-				yzDebug() << "hasCounter : " << args.count << endl;
+//				yzDebug() << "hasCounter : " << args.count << endl;
 			}
 			args.command = ex.cap( ag++ );
-			yzDebug() << "Command : " << args.command << endl;
+//			yzDebug() << "Command : " << args.command << endl;
 			//at last there is the motion
 			if ( it.data().hasMotion ) {//TODO
-				yzDebug() << "hasMotion : " << endl;
+//				yzDebug() << "hasMotion : " << endl;
 			}
 			args.view = view;
 			break; //leave now

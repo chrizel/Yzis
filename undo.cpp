@@ -25,9 +25,9 @@
  * This file contains the classes necessary to handle undo/redo
  */
 
-#include "libyzis/undo.h"
-#include "libyzis/buffer.h"
-#include "libyzis/debug.h"
+#include "undo.h"
+#include "buffer.h"
+#include "debug.h"
 
 QString YZBufferOperation::toString() {
 	QString ots;

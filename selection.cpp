@@ -162,8 +162,8 @@ void YZSelectionPool::removeSelection( unsigned int begin, unsigned int len ) {
 
 int YZSelectionPool::locatePosition( YZCursor * pos, bool * isSelected ) {
 	unsigned int i;
-	unsigned int pos_x = pos->getX();
-	unsigned int pos_y = pos->getY();
+	/*unsigned int pos_x = pos->getX();*/
+	/*unsigned int pos_y = pos->getY();*/
 	*isSelected = false;
 
 	for ( i = 0; ! *isSelected && i < size; i++ ) {

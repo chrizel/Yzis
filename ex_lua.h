@@ -187,8 +187,22 @@ class YZExLua : public QObject {
 
 		/**
 		* Command to customize syntax highlighting settings
+		* Arguments : 3 strings
+		* Returns nothing
 		*/
 		static int highlight(lua_State *L);
+
+		/**
+		 * Plugins main registration point
+		 * Arguments : the event name, the lua function to call
+		 * Returns nothing
+		 */
+		static int connect(lua_State *L);
+
+		/**
+		 * Return the results of the last Lua method invoked
+		 */
+		QStringList getLastResult();
 
 	protected:
 		lua_State *L;

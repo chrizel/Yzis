@@ -223,16 +223,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 		;
 	mText.insert(it, new YZLine( l ));
 	if ( !mLoading && m_highlight != 0L ) {
-		uint hlLine = line;
-		bool ctxChanged = true;
-		bool hlChanged = false;
-		while ( ctxChanged && hlLine < lineCount()) {
-			QMemArray<uint> foldingList;
-			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
-			if ( hlLine != line ) hlChanged = true;
-			hlLine++;
-		}
-		if ( hlChanged ) updateAllViews( );
+		if ( updateHL( line ) ) updateAllViews();
 	}
 
 	setChanged( true );
@@ -288,16 +279,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	mText.insert(it, new YZLine( newline ));
 
 	if ( !mLoading && m_highlight != 0L ) {
-		uint hlLine = line+1;
-		bool ctxChanged = true;
-		bool hlChanged = false;
-		while ( ctxChanged && hlLine < lineCount()) {
-			QMemArray<uint> foldingList;
-			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
-			if ( hlLine != line ) hlChanged = true;
-			hlLine++;
-		}
-		if ( hlChanged ) updateAllViews( );
+		if ( updateHL( line + 1 ) ) updateAllViews( );
 	}
 
 	VIEWS_APPLY( 0, line+1 );
@@ -380,16 +362,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 		}
 	}
 	if ( !mLoading && m_highlight != 0L ) {
-		uint hlLine = line;
-		bool ctxChanged = true;
-		bool hlChanged = false;
-		while ( ctxChanged && hlLine < lineCount()) {
-			QMemArray<uint> foldingList;
-			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
-			if ( hlLine != line ) hlChanged = true;
-			hlLine++;
-		}
-		if ( hlChanged ) updateAllViews( );
+		if ( updateHL( line ) ) updateAllViews( );
 	}
 	setChanged( true );
 }
@@ -793,9 +766,25 @@ void YZBuffer::setLocalQColorOption( const QString& key, const QColor& option ) 
 	YZSession::mOptions.setQColorOption( key, option );
 }
 
-void YZBuffer::updateHL( unsigned int line ) {
+bool YZBuffer::updateHL( unsigned int line ) {
+	unsigned int hlLine = line;
+	bool ctxChanged = true;
+	bool hlChanged = false;
+	YZLine* yl = NULL;
+	while ( ctxChanged && hlLine < lineCount()) {
+		yl = yzline( hlLine );
+		QMemArray<uint> foldingList;
+		m_highlight->doHighlight( yzline( QMAX( hlLine - 1, 0 ) ), yl, &foldingList, &ctxChanged );
+		hlChanged = ctxChanged || hlChanged;
+		if ( ! ctxChanged && yl->data().isEmpty() ) ctxChanged = true; // line is empty 
+		hlLine++;
+	}
+	return hlChanged;
+}
+
+void YZBuffer::initHL( unsigned int line ) {
 	if ( m_hlupdating ) return;
-//	yzDebug() << "updateHL " << line << endl;
+//	yzDebug() << "initHL " << line << endl;
 	m_hlupdating = true;
 	if ( m_highlight != 0L ) {
 		uint hlLine = line;
@@ -805,3 +794,4 @@ void YZBuffer::updateHL( unsigned int line ) {
 	}
 	m_hlupdating=false;
 }
+

@@ -1773,6 +1773,22 @@ void YZView::updateCurLine( ) {
 	}
 }
 
+unsigned int YZView::initDrawContents( unsigned int clipy ) {
+	wrap = getLocalBoolOption( "wrap" );
+	if ( ! wrap ) {
+		initDraw( getCurrentLeft(), getCurrentTop() + clipy, getDrawCurrentLeft(), getDrawCurrentTop() + clipy );
+	} else {
+		unsigned int currentY = 0;
+		initDraw();
+		while( currentY < clipy && drawNextLine() ) {
+			while( drawNextCol() );
+			currentY += drawHeight();
+		}
+		clipy = currentY;
+	}
+	return clipy;
+}
+
 void YZView::initDraw( ) {
 	initDraw( scrollCursor->bufferX(), scrollCursor->bufferY(), scrollCursor->screenX(), scrollCursor->screenY() );
 }

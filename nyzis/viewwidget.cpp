@@ -142,7 +142,6 @@ void NYZView::paintEvent( unsigned int , unsigned int clipy, unsigned int , unsi
 
 void NYZView::drawContents( int clipy, int cliph ) {
 	bool number = getLocalBoolOption( "number" );
-	bool wrap = getLocalBoolOption( "wrap" );
 	bool rightleft = getLocalBoolOption( "rightleft" );
 
 	if (!editor)	// Avoid segfaults and infinite recursion.
@@ -160,121 +159,108 @@ void NYZView::drawContents( int clipy, int cliph ) {
 		return;
 	}
 
-	unsigned int currentY = 0;
-	if (! wrap ) {
-		initDraw( getCurrentLeft(), getCurrentTop() + clipy, getDrawCurrentLeft(), getDrawCurrentTop() + clipy  );
-		currentY = clipy;
-	} else {
-		initDraw( );
-	}
+	unsigned int currentY = initDrawContents( clipy );
 	unsigned int lineNumber = 0;
-
 	
 	unsigned int x;
-	while ( drawNextLine( ) && cliph > 0 ) {
+	while ( cliph > 0 && drawNextLine() ) {
 		lineNumber = drawLineNumber();
-		if ( currentY >= ( uint )clipy ) {
-			unsigned int currentX = 0;
-			wmove( editor, currentY, currentX );
-			if ( number ) { // draw current line number
-				if ( lineNumber != lastLineNumber ) { // we don't draw it twice
-					wattron( editor, attribYellow );
-					QString num = QString::number( lineNumber );
+		unsigned int currentX = 0;
+		wmove( editor, currentY, currentX );
+		if ( number ) { // draw current line number
+			if ( lineNumber != lastLineNumber ) { // we don't draw it twice
+				wattron( editor, attribYellow );
+				QString num = QString::number( lineNumber );
 #if QT_VERSION < 0x040000
-					if ( rightleft ) {
-						num = num.leftJustify( marginLeft - 1, ' ' );
-						x = width - currentX - num.length();
-					} else {
-						num = num.rightJustify( marginLeft - 1, ' ' );
-						x = currentX;
-					}
-#else
-					if ( rightleft ) {
-						num = num.leftJustified( marginLeft - 1, ' ' );
-						x = width - currentX - num.length();
-					} else {
-						num = num.rightJustified( marginLeft - 1, ' ' );
-						x = currentX;
-					}
-#endif
-					mvwaddstr( editor, currentY, x, num );
-					wattroff( editor, attribYellow );
-					x = marginLeft - 1;
-					if ( rightleft ) x = width - x - 1;
-					mvwaddch( editor, currentY, x, ' ' );
-					lastLineNumber = lineNumber;
-				} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
-				currentX += marginLeft;
-			}
-			while ( drawNextCol( ) ) {
-				QColor c = drawColor( );
-				if (!c.isValid()) {
-//					yzWarning()<< " drawColor() returns an invalid color..." << endl;
-					c = Qt::white;
-				}
-				int mAttributes;
-				int rawcolor = c.rgb() & RGB_MASK;
-				if ( mAttributesMap.contains( rawcolor ) ) {
-					mAttributes = mAttributesMap[ rawcolor ];
+				if ( rightleft ) {
+					num = num.leftJustify( marginLeft - 1, ' ' );
+					x = width - currentX - num.length();
 				} else {
-					mAttributes = attribWhite;
-					/*yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
-						rawcolor << " (" <<
-						qRed( rawcolor ) << "," <<
-						qGreen( rawcolor ) << "," <<
-						qBlue( rawcolor ) << ") or (" <<
-
-						c.red() << "," <<
-						c.green() << "," <<
-						c.blue() << ")" <<
-						endl;*/
-				}
-
-				if ( drawSelected() ) mAttributes |= A_REVERSE;
-				if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
-
-				if ( rightleft )
-					x = width - currentX - 1;
-				else
+					num = num.rightJustify( marginLeft - 1, ' ' );
 					x = currentX;
-
-#if QT_VERSION < 0x040000
-				QCString my_char = QString( drawChar() ).local8Bit();
-#else
-				QByteArray my_char = QString( drawChar() ).local8Bit();
-#endif
-				char* from_char = new char[ my_char.length() + 1 ]; // XXX always 1 + 1 ?
-				strcpy( from_char, (const char *)my_char );
-				size_t needed = mbstowcs( NULL, from_char, strlen(from_char) )+1; // XXX always 1 ?
-				wchar_t* wide_char = (wchar_t*)malloc( needed * sizeof(wchar_t) ); // if size doesn't change, why malloc it each time ?
-				mbstowcs( wide_char, from_char, strlen( from_char ) );
-				wide_char[needed-1] = '\0';
-
-				wattron( editor, mAttributes );
-				mvwaddwstr( editor, currentY, x, wide_char );
-				free( wide_char );
-				delete[] from_char;
-				
-				if ( drawLength() > 1 ) {
-					for (unsigned int i = 1; i < drawLength(); i++ ) 
-#if QT_VERSION < 0x040000
-						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), fillChar() );
-#else
-						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), fillChar().unicode() );
-#endif
 				}
-				wattroff( editor, mAttributes );
-				currentX += drawLength( );
-			}
-			for( ; currentX < getColumnsVisible() + marginLeft; currentX++) 
-				mvwaddch( editor, currentY, rightleft ? width - currentX - 1: currentX, ' ' );
-			currentY += drawHeight( );
-			cliph -= lineHeight( );
-		} else {
-			if ( wrap ) while ( drawNextCol( ) ) ;
-			currentY += drawHeight( );
-			lastLineNumber = lineNumber;
+#else
+				if ( rightleft ) {
+					num = num.leftJustified( marginLeft - 1, ' ' );
+					x = width - currentX - num.length();
+				} else {
+					num = num.rightJustified( marginLeft - 1, ' ' );
+					x = currentX;
+				}
+#endif
+				mvwaddstr( editor, currentY, x, num );
+				wattroff( editor, attribYellow );
+				x = marginLeft - 1;
+				if ( rightleft ) x = width - x - 1;
+				mvwaddch( editor, currentY, x, ' ' );
+				lastLineNumber = lineNumber;
+			} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
+			currentX += marginLeft;
 		}
+		while ( drawNextCol( ) ) {
+			QColor c = drawColor( );
+			if (!c.isValid()) {
+//				yzWarning()<< " drawColor() returns an invalid color..." << endl;
+				c = Qt::white;
+			}
+			int mAttributes;
+			int rawcolor = c.rgb() & RGB_MASK;
+			if ( mAttributesMap.contains( rawcolor ) ) {
+				mAttributes = mAttributesMap[ rawcolor ];
+			} else {
+				mAttributes = attribWhite;
+				/*yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
+					rawcolor << " (" <<
+					qRed( rawcolor ) << "," <<
+					qGreen( rawcolor ) << "," <<
+					qBlue( rawcolor ) << ") or (" <<
+
+					c.red() << "," <<
+					c.green() << "," <<
+					c.blue() << ")" <<
+					endl;*/
+			}
+
+			if ( drawSelected() ) mAttributes |= A_REVERSE;
+			if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
+
+			if ( rightleft )
+				x = width - currentX - 1;
+			else
+				x = currentX;
+
+#if QT_VERSION < 0x040000
+			QCString my_char = QString( drawChar() ).local8Bit();
+#else
+			QByteArray my_char = QString( drawChar() ).local8Bit();
+#endif
+			char* from_char = new char[ my_char.length() + 1 ]; // XXX always 1 + 1 ?
+			strcpy( from_char, (const char *)my_char );
+			size_t needed = mbstowcs( NULL, from_char, strlen(from_char) )+1; // XXX always 1 ?
+			wchar_t* wide_char = (wchar_t*)malloc( needed * sizeof(wchar_t) ); // if size doesn't change, why malloc it each time ?
+			mbstowcs( wide_char, from_char, strlen( from_char ) );
+			wide_char[needed-1] = '\0';
+
+			wattron( editor, mAttributes );
+			mvwaddwstr( editor, currentY, x, wide_char );
+			free( wide_char );
+			delete[] from_char;
+			
+			if ( drawLength() > 1 ) {
+				for (unsigned int i = 1; i < drawLength(); i++ ) 
+#if QT_VERSION < 0x040000
+					mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), fillChar() );
+#else
+					mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), fillChar().unicode() );
+#endif
+			}
+			wattroff( editor, mAttributes );
+			currentX += drawLength( );
+		}
+		for( ; currentX < getColumnsVisible() + marginLeft; currentX++) 
+			mvwaddch( editor, currentY, rightleft ? width - currentX - 1: currentX, ' ' );
+		currentY += drawHeight( );
+		cliph -= lineHeight( );
 	}
 	while ( cliph > 0 && currentY < getLinesVisible() ) {
 		printVoid( currentY );

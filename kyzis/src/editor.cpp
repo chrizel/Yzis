@@ -227,7 +227,6 @@ void KYZisEdit::selectRect( unsigned int x, unsigned int y, unsigned int w, unsi
 }
 
 void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph, bool ) {
-	//int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::SingleLine;
 	QPainter p;
 	p.begin( this );
 
@@ -236,8 +235,9 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 	unsigned int linespace = fontMetrics().lineSpacing();
 	QRect myRect;
 	bool number = mParent->getLocalBoolOption( "number" );
-	bool wrap = mParent->getLocalBoolOption( "wrap" );
 	bool rightleft = mParent->getLocalBoolOption( "rightleft" );
+
+	int flag = (rightleft ? Qt::AlignRight : Qt::AlignLeft);
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
 	unsigned int my_marginLeft = 0;
@@ -255,136 +255,108 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 		return;
 	}
 
-	unsigned int currentY = 0;
-	if (! wrap ) {
-		mParent->initDraw( mParent->getCurrentLeft(), mParent->getCurrentTop() + clipy, mParent->getDrawCurrentLeft(), mParent->getDrawCurrentTop() + clipy  );
-		currentY = clipy;
-	} else {
-		mParent->initDraw( );
-	}
-
-
+	unsigned int currentY = mParent->initDrawContents( clipy );
 	unsigned int lineNumber = 0;
 	unsigned int mY = mParent->getCursor()->getY() - mParent->getDrawCurrentTop();
 	unsigned int w;
 
 	mCursor->hide();
 
-	//FIXME introShown eliminate conditional
-	//if ( ! mParent->myBuffer()->introShown() ) {
-		while ( cliph > 0 && mParent->drawNextLine( ) ) {
-			lineNumber = mParent->drawLineNumber();
-			if ( currentY >= ( uint )clipy ) {
-				unsigned int currentX = 0;
+	while ( cliph > 0 && mParent->drawNextLine( ) ) {
+		lineNumber = mParent->drawLineNumber();
+		unsigned int currentX = 0;
 
-				if ( number ) { // draw current line number
-					myRect.setRect( 0, currentY * linespace, GETX( marginLeft - spaceWidth ), linespace );
-					if ( rightleft ) {
-						w = myRect.width();
-						myRect.setLeft( width() - w );
-						myRect.setWidth( w );
-					}
-					erase( myRect );
-					QPen old_pen = p.pen( );
-					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
-						p.setPen( Qt::yellow );
-						p.setBackgroundMode( Qt::TransparentMode );
-						p.setFont(font());
-						// FIXME p.drawText( myRect, flag | ( rightleft ? Qt::AlignLeft : Qt::AlignRight ), QString::number( lineNumber ) );
-						p.drawText( myRect, ( rightleft ? Qt::AlignLeft : Qt::AlignRight ), QString::number( lineNumber ) );
-						lastLineNumber = lineNumber;
-					}
-					currentX += marginLeft;
-					p.setPen( old_pen );
-				}
-				myRect.setRect( GETX( currentX ), currentY * linespace, width() - GETX( currentX ), linespace );
-				if ( rightleft ) {
-					w = myRect.width();
-					myRect.setLeft( width() - myRect.left() - w );
-					myRect.setWidth( w );
-				}
-				erase( myRect );
-
-				while ( mParent->drawNextCol( ) ) {
-					myRect.setX( GETX( currentX ) );
-					myRect.setWidth( GETX( mParent->drawLength() ) );
-					if ( rightleft ) {
-						w = myRect.width();
-						myRect.setLeft( width() - myRect.left() - w );
-						myRect.setWidth( w );
-					}
-					QColor c = mParent->drawColor( );
-					if ( c.isValid() ) p.setPen( c );
-					else p.setPen( foregroundColor() );
-					//other flags
-					QFont myFont(font());
-					myFont.setItalic(mParent->drawItalic());
-					myFont.setBold(mParent->drawBold());
-					myFont.setOverline(mParent->drawOverline());
-					myFont.setStrikeOut(mParent->drawStrikeOutLine());
-					myFont.setUnderline(mParent->drawUnderline());
-					p.setFont(myFont);
-					//FIXME remove flag...
-					//p.drawText(myRect, flag, mParent->drawChar( ) );
-					QString disp = mParent->drawChar();
-					if ( rightleft )
-						disp = disp.rightJustify( mParent->drawLength(), mParent->fillChar() );
-					else
-						disp = disp.leftJustify( mParent->drawLength(), mParent->fillChar() );
-					QColor bgColor = mParent->drawBgColor();
-					if ( bgColor.isValid() && bgColor != backgroundColor() ) {
-						p.setBackgroundMode(Qt::OpaqueMode);
-						p.setBackgroundColor( bgColor );
-					} else {
-						p.setBackgroundMode( Qt::TransparentMode );
-					}
-					
-					p.drawText(myRect, 0, disp );
-
-					if ( mParent->drawSelected() ) {
-						selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
-						if ( mParent->getCursor()->getY() == currentY && mParent->getCursor()->getX() == currentX - marginLeft )
-							mCursor->hide();
-					}
-
-					currentX += mParent->drawLength( );
-				}
-				if ( currentY == mY ) mCursor->refresh();
-				currentY += mParent->drawHeight( );
-				cliph -= mParent->lineHeight( );
-			} else {
-				if ( wrap ) while ( mParent->drawNextCol( ) ) ;
-				currentY += mParent->drawHeight( );
+		if ( number ) { // draw current line number
+			myRect.setRect( 0, currentY * linespace, GETX( marginLeft - spaceWidth ), linespace );
+			if ( rightleft ) {
+				w = myRect.width();
+				myRect.setLeft( width() - w );
+				myRect.setWidth( w );
+			}
+			erase( myRect );
+			QPen old_pen = p.pen( );
+			if ( lineNumber != lastLineNumber ) { // we don't draw it twice
+				p.setPen( Qt::yellow );
+				p.setBackgroundMode( Qt::TransparentMode );
+				p.setFont(font());
+				p.drawText( myRect, flag, QString::number( lineNumber ) );
 				lastLineNumber = lineNumber;
 			}
+			currentX += marginLeft;
+			p.setPen( old_pen );
 		}
-		p.setPen( Settings::colorFG() );
-		if ( number ) {
+		myRect.setRect( GETX( currentX ), currentY * linespace, width() - GETX( currentX ), linespace );
+		if ( rightleft ) {
+			w = myRect.width();
+			myRect.setLeft( width() - myRect.left() - w );
+			myRect.setWidth( w );
+		}
+		erase( myRect );
+
+		while ( mParent->drawNextCol( ) ) {
+			myRect.setX( GETX( currentX ) );
+			myRect.setWidth( GETX( mParent->drawLength() ) );
+			if ( rightleft ) {
+				w = myRect.width();
+				myRect.setLeft( width() - myRect.left() - w );
+				myRect.setWidth( w );
+			}
+			QColor c = mParent->drawColor( );
+			if ( c.isValid() ) p.setPen( c );
+			else p.setPen( foregroundColor() );
+			//other flags
+			QFont myFont(font());
+			myFont.setItalic(mParent->drawItalic());
+			myFont.setBold(mParent->drawBold());
+			myFont.setOverline(mParent->drawOverline());
+			myFont.setStrikeOut(mParent->drawStrikeOutLine());
+			myFont.setUnderline(mParent->drawUnderline());
+			p.setFont(myFont);
+
+			QString disp = mParent->drawChar();
 			if ( rightleft )
-				w = width() - GETX( marginLeft ) + GETX( spaceWidth ) / 2;
+				disp = disp.rightJustify( mParent->drawLength(), mParent->fillChar() );
 			else
-				w = GETX( marginLeft ) - GETX( spaceWidth ) / 2;
-			p.drawLine( w, clipy * linespace, w, currentY * linespace );
+				disp = disp.leftJustify( mParent->drawLength(), mParent->fillChar() );
+			QColor bgColor = mParent->drawBgColor();
+			if ( bgColor.isValid() && bgColor != backgroundColor() ) {
+				p.setBackgroundMode(Qt::OpaqueMode);
+				p.setBackgroundColor( bgColor );
+			} else {
+				p.setBackgroundMode( Qt::TransparentMode );
+			}
+			
+			p.drawText(myRect, flag, disp );
+
+			if ( mParent->drawSelected() ) {
+				selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
+				if ( mParent->getCursor()->getY() == currentY && mParent->getCursor()->getX() == currentX - marginLeft )
+					mCursor->hide();
+			}
+
+			currentX += mParent->drawLength( );
 		}
-		unsigned int fh = height() / linespace;
-		while ( cliph > 0 && currentY < fh ) {
-			myRect.setRect ( 0, currentY * linespace, width(), linespace );
-			erase( myRect );
-			p.setPen( Qt::cyan );
-			//FIXME p.drawText( myRect, rightleft ? flag | Qt::AlignRight : flag,"~" );
-			p.drawText( myRect, rightleft ? Qt::AlignRight : 0,"~" );
-			++currentY;
-			--cliph;
-		}
-	//FIXME eliminate introShown conditional } else {
-	//	while ( currentY < lineCount ) {
-	//		myRect.setRect (0, currentY * linespace, width(), linespace);
-	//		erase(myRect);
-	//		//FIXME p.drawText(myRect,flag, mParent->myBuffer()->textline(currentY ) );
-	//		p.drawText(myRect, 0, mParent->myBuffer()->textline(currentY ) );
-	//		++currentY;
-	//	}
-	//}
+		if ( currentY == mY ) mCursor->refresh();
+		currentY += mParent->drawHeight( );
+		cliph -= mParent->lineHeight( );
+	}
+	p.setPen( Settings::colorFG() );
+	if ( number ) {
+		if ( rightleft )
+			w = width() - GETX( marginLeft ) + GETX( spaceWidth ) / 2;
+		else
+			w = GETX( marginLeft ) - GETX( spaceWidth ) / 2;
+		p.drawLine( w, clipy * linespace, w, currentY * linespace );
+	}
+	unsigned int fh = height() / linespace;
+	while ( cliph > 0 && currentY < fh ) {
+		myRect.setRect ( 0, currentY * linespace, width(), linespace );
+		erase( myRect );
+		p.setPen( Qt::cyan );
+		p.drawText( myRect, flag, "~" );
+		++currentY;
+		--cliph;
+	}
 	p.end( );
 }
 

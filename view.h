@@ -27,7 +27,6 @@
 
 #include "buffer.h"
 #include "cursor.h"
-#include "gui.h"
 
 class YZCursor;
 class YZBuffer;
@@ -47,7 +46,7 @@ class YZView {
 		 * number of lines that this view can display
 		 */
 		YZView(YZBuffer *_b, YZSession *sess, int lines);
-		~YZView();
+		virtual ~YZView();
 
 		/**
 		 * Updates the number of visible lines
@@ -216,7 +215,28 @@ class YZView {
 			YZ_VIEW_MODE_COMMAND, // normal
 			YZ_VIEW_MODE_EX //script 
 		} mMode;		/** mode of this view */
+		
 
+		//GUI
+		/**
+		 * Retrieve the text from command line
+		 */
+		virtual QString getCommandLineText() const = 0;
+
+		/**
+		 * Sets the command line text
+		 */
+		virtual void setCommandLineText( const QString& ) = 0;
+
+		/**
+		 * Focus on the command line
+		 */
+		virtual void setFocusCommandLine() = 0;
+
+		/**
+		 * Focus on the main window
+		 */
+		virtual void setFocusMainWindow() = 0;
 
 	protected:
 		/**

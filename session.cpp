@@ -44,14 +44,9 @@ YZSession::YZSession( const QString& _sessionName ) {
 YZSession::~YZSession() {
 }
 
-void YZSession::registerManager ( Gui *mgr ) {
-	mGUI = mgr;
-}
-
 void YZSession::postEvent (yz_event e) {
 	mEvents.push_back( e ); //append to the FIFO
-	if ( mGUI )
-		mGUI->postEvent( e );
+	receiveEvent( e );
 }
 
 //requester is a pointer on the View requesting an event which is send to
@@ -85,7 +80,7 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ )
 		it.data()->save();
-	mGUI->quit( true );	
+	quit( true );	
 	YZASSERT_MSG( 0, "YZSession::saveBufferExit() - this point should never be reached!" );
 	//should not be reached
 	return QString::null;
@@ -108,8 +103,7 @@ YZView* YZSession::findView( int uid ) {
 void YZSession::setCurrentView( YZView* view ) {
 	yzDebug() << "Session : setCurrentView" << endl;
 	mCurView = view;
-	//update the GUIs now
-	mGUI->setCurrentView( view );
+	changeCurrentView( view );
 }
 
 YZView* YZSession::prevView() {

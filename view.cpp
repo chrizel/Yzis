@@ -155,15 +155,15 @@ void YZView::sendKey( int c, int modifiers) {
 		case YZ_VIEW_MODE_EX:
 			switch ( c ) {
 				case Qt::Key_Return:
-					yzDebug() << "Current command EX : " << mSession->mGUI->getCommandLineText();
-					if(mSession->mGUI->getCommandLineText().isEmpty())
+					yzDebug() << "Current command EX : " << getCommandLineText();
+					if(getCommandLineText().isEmpty())
 						return;
 
-					mExHistory[mCurrentExItem] = mSession->mGUI->getCommandLineText();
+					mExHistory[mCurrentExItem] = getCommandLineText();
 					mCurrentExItem++;
-					mSession->getExPool()->execExCommand( this, mSession->mGUI->getCommandLineText() );
-					mSession->mGUI->setCommandLineText( "" );
-					mSession->mGUI->setFocusMainWindow();
+					mSession->getExPool()->execExCommand( this, getCommandLineText() );
+					setCommandLineText( "" );
+					setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Down:
@@ -171,7 +171,7 @@ void YZView::sendKey( int c, int modifiers) {
 						return;
 
 					mCurrentExItem++;
-					mSession->mGUI->setCommandLineText( mExHistory[mCurrentExItem] );
+					setCommandLineText( mExHistory[mCurrentExItem] );
 					return;
 				case Qt::Key_Left:
 				case Qt::Key_Right:
@@ -181,11 +181,11 @@ void YZView::sendKey( int c, int modifiers) {
 						return;
 
 					mCurrentExItem--;
-					mSession->mGUI->setCommandLineText( mExHistory[mCurrentExItem] );
+					setCommandLineText( mExHistory[mCurrentExItem] );
 					return;
 				case Qt::Key_Escape:
-					mSession->mGUI->setCommandLineText( "" );
-					mSession->mGUI->setFocusMainWindow();
+					setCommandLineText( "" );
+					setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Tab:
@@ -193,12 +193,12 @@ void YZView::sendKey( int c, int modifiers) {
 					return;
 				case Qt::Key_Backspace:
 				{
-					QString back = mSession->mGUI->getCommandLineText();
-					mSession->mGUI->setCommandLineText(back.remove(back.length() - 1, 1));
+					QString back = getCommandLineText();
+					setCommandLineText(back.remove(back.length() - 1, 1));
 					return;
 				}
 				default:
-					mSession->mGUI->setCommandLineText( mSession->mGUI->getCommandLineText() + key );
+					setCommandLineText( getCommandLineText() + key );
 					return;
 			}
 			break;
@@ -569,7 +569,7 @@ QString YZView::gotoCommandMode( ) {
 QString YZView::gotoExMode(const QString&) {
 	mMode = YZ_VIEW_MODE_EX;
 	mSession->postEvent(YZEvent::mkEventStatus(myId,"-- EX --"));
-	mSession->mGUI->setFocusCommandLine();
+	setFocusCommandLine();
 	purgeInputBuffer();
 	return QString::null;
 }

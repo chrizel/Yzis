@@ -43,7 +43,7 @@ NYZFactory::NYZFactory(const char *session_name)
 	(void) nodelay(stdscr, TRUE);
 
 	if ( self ) {
-		yzError( ) << "Instanciating several NYZFactory, should Never happen, quitting..";
+		yzError(NYZIS) << "Instanciating several NYZFactory, should Never happen, quitting..";
 		exit(1);
 	}
 	self = this;
@@ -116,7 +116,7 @@ void NYZFactory::changeCurrentView ( YZView * view  )
 	NYZView *v = static_cast<NYZView*>(view);
 	YZASSERT( view );
 	if ( currentView == v ){
-		yzWarning() << "changeCurrentView() called with same view.."<<endl;
+		yzWarning(NYZIS) << "changeCurrentView() called with same view.."<<endl;
 		return;
 	}
 	if ( currentView )
@@ -134,7 +134,7 @@ YZView* NYZFactory::createView( YZBuffer* buffer )
 	/*
 	if ( currentView )
 		currentView->unmap();
-	yzDebug() << "NYZFactory::createView , buffer is : " << ( int )buffer << endl;
+	yzDebug(NYZIS) << "NYZFactory::createView , buffer is : " << ( int )buffer << endl;
 	currentView = new NYZView(buffer);
 	currentView->map();
 	currentViewChanged(currentView);
@@ -172,7 +172,7 @@ void NYZFactory::popupMessage( const QString &message )
 
 	wrefresh(popup);
 	refresh();
-	yzDebug() << "**********************popupMessage()************" <<endl;
+	yzDebug(NYZIS) << "**********************popupMessage()************" <<endl;
 	sleep (4);
 	delwin( popup );
 	refresh();
@@ -201,7 +201,7 @@ void NYZFactory::deleteView()
 	oldview->detach();
 
 	if (mBuffers.isEmpty()) {
-		yzWarning()<<"nyzis can't handle not having any view/buffers, quitting" << endl;;
+		yzWarning(NYZIS)<<"nyzis can't handle not having any view/buffers, quitting" << endl;;
 		quit();
 	}
 }

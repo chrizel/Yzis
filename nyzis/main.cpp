@@ -65,7 +65,7 @@ main(int argc, char *argv[])
 	app.installTranslator(  &qt );
 	QTranslator myapp(  0 );
 	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
-	yzDebug() << "Locale " << QTextCodec::locale() << endl;
+	yzDebug(NYZIS) << "Locale " << QTextCodec::locale() << endl;
 	app.installTranslator(  &myapp );
 
 
@@ -112,7 +112,7 @@ main(int argc, char *argv[])
 	while ( --argc )
 		if ( '-' != argv[argc][0] ) {
 			hasatleastone = true;
-			yzDebug()<< "nyzis : opening file " << argv[argc]<<endl;;
+			yzDebug(NYZIS)<< "nyzis : opening file " << argv[argc]<<endl;;
 			bf = factory->createBuffer();
 			bf->load( argv[ argc ] );
 			factory->createView(bf);
@@ -123,12 +123,12 @@ main(int argc, char *argv[])
 	
 	// let's go and loop
 	factory->event_loop();
-	yzFatal() << "Should never reach this point" << endl;
+	yzFatal(NYZIS) << "Should never reach this point" << endl;
 }
 
 static void cleaning(void)
 {
-	yzDebug() << "end of nyzis, cleaning" << endl;
+	yzDebug(NYZIS) << "end of nyzis, cleaning" << endl;
 
 	/* ncurses stuff */
 	endwin();
@@ -138,7 +138,7 @@ static void cleaning(void)
 
 static void catchsigint(int /*sig*/)
 {
-//	yzDebug() << "^C catched" << endl;
+//	yzDebug(NYZIS) << "^C catched" << endl;
 	// ^c catched -> sends an escape char.. 
 	NYZFactory::currentView->sendKey( Qt::Key_Escape, 0); }
 

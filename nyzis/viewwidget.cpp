@@ -33,7 +33,7 @@ NYZView::NYZView(YZBuffer *b)
 	: YZView(b,NYZFactory::self,0)
 {
 	YZASSERT( b );
-	yzDebug() << "NYZView::NYZView buffer is : " << ( int )b << endl;
+	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << ( int )b << endl;
 	window = NULL;
 	modeDisplayed = false;
 }
@@ -219,7 +219,7 @@ void NYZView::displayInfo( const QString& info )
 //	wrefresh(statusbar);
 	refresh();
 	modeDisplayed = false;
-	yzDebug()<< "NYZView::displayInfo message is : " << info << endl;
+	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;
 }
 
 void NYZView::update_info(void)

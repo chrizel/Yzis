@@ -10,6 +10,7 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b)
 {
 	session= _session;
 	window = _window;
+	commandline="";
 
 	update_info();
 	//debug("w,h are %d,%d",w,h);
@@ -126,6 +127,16 @@ void NYZView::scrollUp ( int /*lines*/ ) {
 
 }
 
-YZSession *NYZView::getCurrentSession() {
+YZSession *NYZView::getCurrentSession(void)
+{
 	return session;
 }
+
+void NYZView::setCommandLineText( const QString& text ) {
+	commandline= text;
+}
+
+QString NYZView::getCommandLineText() const {
+	return commandline;
+}
+

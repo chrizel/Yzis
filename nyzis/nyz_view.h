@@ -27,11 +27,17 @@ public:
 	void event_loop();
 	void flush_events();
 
-	void postEvent(yz_event);
-	YZSession *getCurrentSession();
+	/* Gui */
+	virtual void postEvent(yz_event);
+	virtual YZSession *getCurrentSession(void);
 
-	void scrollDown(int lines=1);
-	void scrollUp(int lines=1);
+	virtual void scrollDown(int lines=1);
+	virtual void scrollUp(int lines=1);
+
+	virtual QString getCommandLineText(void) const;
+	virtual void setCommandLineText( const QString& );
+
+
 
 protected:
 	void handle_event(yz_event e);
@@ -55,6 +61,8 @@ private:
 	  * doesn't belong to the buffer anyway..)
 	  */
 	void printVoid( int line );
+
+	QString commandline;
 
 };
 

@@ -171,35 +171,35 @@
     </message>
     <message>
         <source>[ Insert ]</source>
-        <translation>--EINFÜGEN--</translation>
+        <translation>[ Einfügen ]</translation>
     </message>
     <message>
         <source>[ Replace ]</source>
-        <translation>--ERSETZEN--</translation>
+        <translation>[ Ersetzen ]</translation>
     </message>
     <message>
         <source>[ Awaiting Command ]</source>
-        <translation>--BEFEHL--</translation>
+        <translation>[ Warte auf Befehl ]</translation>
     </message>
     <message>
         <source>[ Ex ]</source>
-        <translation>--EX--</translation>
+        <translation>[ Ex ]</translation>
     </message>
     <message>
         <source>[ Search ]</source>
-        <translation>--SUCHE--</translation>
+        <translation>[ Suche ]</translation>
     </message>
     <message>
         <source>[ Open ]</source>
-        <translation>--OFFEN--</translation>
+        <translation>[ Offen ]</translation>
     </message>
     <message>
         <source>[ Visual ]</source>
-        <translation>--VISUELL--</translation>
+        <translation>[ Visuell ]</translation>
     </message>
     <message>
         <source>[ Visual Line ]</source>
-        <translation>--VISUELLE ZEILE--</translation>
+        <translation>[ Visuelle Zeile ]</translation>
     </message>
     <message>
         <source>Yzis Ready</source>

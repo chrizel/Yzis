@@ -134,5 +134,7 @@ YZView* NYZSession::createView( YZBuffer* buffer ) {
 }
 
 YZBuffer *NYZSession::createBuffer(const QString& path) {
-	//TODO
+	YZBuffer *b = new YZBuffer( this, path );
+	addBuffer( b );
+	return b;
 }

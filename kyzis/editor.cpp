@@ -55,6 +55,9 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 }
 
 KYZisEdit::~KYZisEdit() {
+	delete standard;
+	delete standardBold;
+	delete standardBoldItalic;
 }
 
 void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {

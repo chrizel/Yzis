@@ -1663,9 +1663,18 @@ bool YZView::drawNextCol( ) {
 		if ( lastChar != tabChar ) {
 			listChar = drawMode && getLocalBoolOption( "list" ) && lastChar == ' ';
 			if ( listChar ) {
-				lastChar = '.';
-				if ( stringHasOnlySpaces(sCurLine.mid(curx)) )
-					lastChar = '-';
+				YZInternalOption *opt = YZSession::mOptions.getOption("Global\\listchars");
+				if (opt && stringHasOnlySpaces(sCurLine.mid(curx)) ) {
+					QString option = opt->getValueForKey("trail");
+					if ( !option.isNull() ) {
+						lastChar = option[0];
+					}
+				} else if (opt) {
+					QString option = opt->getValueForKey("space");
+					if ( !option.isNull() ) {
+						lastChar = option[0];
+					}
+				}
 			}
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
 			lenToTest = workCursor->sColIncrement;
@@ -1673,7 +1682,15 @@ bool YZView::drawNextCol( ) {
 			workCursor->lastCharWasTab = true;
 			lastChar = ' ';
 			listChar = getLocalBoolOption( "list" );
-			if ( listChar ) lastChar = '>';
+			if ( listChar ) {
+				YZInternalOption *opt = YZSession::mOptions.getOption("Global\\listchars");
+				if (opt) {
+					QString option = opt->getValueForKey("tab");
+					if ( !option.isNull() ) {
+						lastChar = option[0];
+					}
+				}
+			}
 			if ( workCursor->screenX( ) == mCurrentLeft )
 				workCursor->sColIncrement = ( workCursor->spaceFill ? workCursor->spaceFill : tablength );
 			else {

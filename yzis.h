@@ -64,6 +64,7 @@ enum context {
 enum value_t {
     int_t, //is an integer
     string_t, // is a string
+	stringlist_t, // a , separated list of strings (for options like "listchars=space:.,tab:>,trail:-"
     //	enum_t, // is an enumeration
     bool_t, // is a boolean
     color_t, // is a color

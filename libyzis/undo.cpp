@@ -37,12 +37,15 @@ QString YZBufferOperation::toString() {
 		case ADDLINE: ots= "ADDLINE"; break;
 		case DELLINE: ots= "DELLINE"; break;
 	}
-	return QString("class YZBufferOperation: %1 '%2' line %3, col %4").arg(ots).arg(text).arg(line).arg(col) ;
+	return QString("%1 '%2' line %3, col %4").arg(ots).arg(text).arg(line).arg(col) ;
 }
 
 void YZBufferOperation::performOperation( YZBuffer * buf, bool opposite)
 {
 	OperationType t = type;
+
+	yzDebug() << "YZBufferOperation: " << (opposite ? "undo " : "redo ") << toString().latin1() << endl;
+
 	if (opposite == true) {
 		switch( type ) {
 			case ADDTEXT: t = DELTEXT; break;
@@ -67,7 +70,7 @@ void YZBufferOperation::performOperation( YZBuffer * buf, bool opposite)
 			break;
 	}
 
-	yzDebug() << "YZBufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
+//	yzDebug() << "YZBufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
 }
 
 

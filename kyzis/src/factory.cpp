@@ -96,7 +96,7 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	yzDebug() << "Factory::createPartObject" << endl;
 	bool bSingleView = (classname!=QString("KTextEditor::Document"));
 	//mMainApp = dynamic_cast<Kyzis*>(parentWidget);
-	if ( parentWidget->inherits( "Kyzis" ) )
+	if ( parentWidget && parentWidget->inherits( "Kyzis" ) )
 		mMainApp = static_cast<Kyzis*>( parentWidget );
 	else
 		mMainApp = 0;

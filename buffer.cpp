@@ -223,9 +223,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	for ( ; idx < line && it != end; ++it, ++idx )
 		;
 	mText.insert(it, new YZLine( l ));
-	if ( !mLoading && m_highlight != 0L ) {
-		if ( updateHL( line ) ) updateAllViews();
-	}
+	if ( updateHL( line ) ) updateAllViews();
 
 	setChanged( true );
 
@@ -279,9 +277,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	//replace old line
 	setTextline(line,l.left( col ));
 
-	if ( !mLoading && m_highlight != 0L ) {
-		if ( updateHL( line + 1 ) ) updateAllViews( );
-	}
+	if ( updateHL( line + 1 ) ) updateAllViews( );
 
 	VIEWS_APPLY( 0, line+1 );
 }
@@ -303,6 +299,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 			;
 		delete (*it);
 		mText.erase(it);
+		if ( updateHL( line ) ) updateAllViews();
 	} else {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, "", 0, line );
 		if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, "", 0, line );
@@ -362,9 +359,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 			yzline(line)->setData(l);
 		}
 	}
-	if ( !mLoading && m_highlight != 0L ) {
-		if ( updateHL( line ) ) updateAllViews( );
-	}
+	if ( updateHL( line ) ) updateAllViews( );
 	YZSession::me->search()->highlightLine( this, line );
 	setChanged( true );
 }
@@ -781,11 +776,17 @@ void YZBuffer::setLocalQColorOption( const QString& key, const QColor& option ) 
 
 bool YZBuffer::updateHL( unsigned int line ) {
 //	yzDebug() << "updateHL " << line << endl;
+	if ( mLoading ) return false;
 	unsigned int hlLine = line;
 	bool ctxChanged = true;
 	bool hlChanged = false;
 	YZLine* yl = NULL;
-	while ( ctxChanged && hlLine < lineCount()) {
+	unsigned int maxLine = lineCount();
+	for ( unsigned int i = hlLine; i < maxLine; i++ ) {
+		YZSession::me->search()->highlightLine( this, i );
+	}
+	if ( m_highlight == 0L ) return false;
+	while ( ctxChanged && hlLine < maxLine ) {
 		yl = yzline( hlLine );
 		QMemArray<uint> foldingList;
 		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yl, &foldingList, &ctxChanged );

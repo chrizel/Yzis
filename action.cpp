@@ -311,9 +311,10 @@ void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QList<QChar
 	unsigned int eY = i.toPos().getY();
 
 	if ( i.from().opened() ) ++bX;
+	bool excludeLastLine = i.to().opened() && eX == 0;
 	if ( i.to().opened() && eX > 0 ) --eX;
 	QString bL = mBuffer->textline( bY ).left( bX );
-	QString eL = mBuffer->textline( eY ).mid( eX + ( i.to().opened() && eX == 0 ? 0 : 1 ) );
+	QString eL = excludeLastLine ? mBuffer->textline( eY ) : mBuffer->textline( eY ).mid( eX + 1 );
 
 	unsigned int cLine = bY+1;
 	for( unsigned k = cLine; k <= eY; k++ )

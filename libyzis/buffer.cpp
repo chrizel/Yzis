@@ -870,7 +870,7 @@ QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) {
 
 	//last line
 	if ( from.getY() != to.getY() )
-		list << textline( to.getY() ).left( to.getX() );
+		list << textline( to.getY() ).left( to.getX() + 1 );
 
 	m_hlupdating=false; //override
 	return list;

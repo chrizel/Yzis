@@ -75,8 +75,10 @@ YZAction::~YZAction( ) {
 
 void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {
 	CONFIGURE_VIEWS;
-	if( pos.y() >= mBuffer->lineCount() )
+	if( pos.y() == mBuffer->lineCount() )
 		mBuffer->insertNewLine( pos.x(), pos.y() );
+	else if (pos.y() > mBuffer->lineCount() )
+		return; //can't insert on non existing lines
 	mBuffer->insertChar( pos.x(), pos.y(), text );
 	pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
 	COMMIT_VIEWS_CHANGES;

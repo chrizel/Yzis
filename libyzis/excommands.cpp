@@ -37,6 +37,22 @@
 #include "mark.h"
 #include "selection.h"
 #include "mapping.h"
+#include "action.h"
+
+YZExRange::YZExRange( const QString& regexp, ExRangeMethod pm ) {
+	mKeySeq = regexp;
+	mPoolMethod = pm;
+	mRegexp = QRegExp( "^(" + mKeySeq + ")([+\\-]\\d*)?(.*)$" );
+}
+YZExCommand::YZExCommand( const QString& input, ExPoolMethod pm, bool word ) {
+	mKeySeq = input;
+	mPoolMethod = pm;
+	if ( word ) {
+		mRegexp = QRegExp( "^(" + mKeySeq + ")(\\b.*)?$" );
+	} else {
+		mRegexp = QRegExp( "^(" + mKeySeq + ")([\\w\\s].*)?$" );
+	}
+}
 
 YZExCommandPool::YZExCommandPool() {
 	commands.clear();
@@ -77,6 +93,7 @@ void YZExCommandPool::initPool() {
 	commands.append( new YZExCommand( "source", &YZExCommandPool::source ) );
 	commands.append( new YZExCommand( "map", &YZExCommandPool::map ) );
 	commands.append( new YZExCommand( "imap", &YZExCommandPool::imap ) );
+	commands.append( new YZExCommand( "[<>]", &YZExCommandPool::indent, false ));
 }
 
 QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -135,7 +152,11 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 			QString arg = reg.cap( nc );
 			bool force = arg[ 0 ] == '!';
 			if ( force ) arg = arg.mid( 1 );
+			for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+				it->setPaintAutoCommit( false );
 			(this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.stripWhiteSpace(), from, to, force ) );
+			for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+				it->commitPaintEvent();
 		}
 	}
 	if ( ! matched ) view->gotoStickyCol( to );
@@ -526,6 +547,17 @@ QString YZExCommandPool::imap( const YZExCommandArgs& args ) {
 		yzDebug() << "Adding insert mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		YZMapping::self()->addInsertMapping(rx.cap(1), rx.cap(2));
 	}
+	return QString::null;
+}
+
+QString YZExCommandPool::indent( const YZExCommandArgs& args ) {
+	int count = 1;
+	if ( args.arg.length() > 0 ) count = args.arg.toUInt();
+	if ( args.cmd[ 0 ] == '<' ) count *= -1;
+	for ( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
+		args.view->myBuffer()->action()->indentLine( args.view, i, count );
+	}
+	args.view->commitNextUndo();
 	return QString::null;
 }
 

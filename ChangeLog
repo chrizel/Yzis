@@ -1,3 +1,7 @@
+2004-09-29 panard
+  * libyzis
+  	add <,>, :<,:> like commands
+
 2004-09-26 mikmak
   * libyzis
   	make :map command working (normal mode key mapping)

@@ -112,6 +112,10 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("a", &YZCommandPool::append) );
 	commands.append( new YZCommand("A", &YZCommandPool::appendAtEOL) );
 	commands.append( new YZCommand("J", &YZCommandPool::joinLine) );
+	commands.append( new YZCommand("<", &YZCommandPool::indent, ARG_MOTION ) );
+	commands.append( new YZCommand("<<", &YZCommandPool::indent ) );
+	commands.append( new YZCommand(">", &YZCommandPool::indent, ARG_MOTION ) );
+	commands.append( new YZCommand(">>", &YZCommandPool::indent ) );
 	commands.append( new YZCommand("ZZ", &YZCommandPool::saveAndClose) );
 	commands.append( new YZCommand("ZQ", &YZCommandPool::closeWithoutSaving) );
 	commands.append( new YZCommand("/", &YZCommandPool::searchForwards) );
@@ -340,8 +344,8 @@ YZCursor YZCommandPool::move(YZView *view, const QString &inputs, unsigned int c
 		const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.current());
 		if(m && m->matches(inputs)) {
 			// execute the corresponding method
-			YZCursor to=(this->*(m->motionMethod()))(YZNewMotionArgs(view, count, inputs.left( m->keySeq().length()), 
-					inputs.mid(m->keySeq().length()), usercount ));
+			YZCursor to=(this->*(m->motionMethod()))(YZNewMotionArgs(view, count, inputs.right( m->keySeq().length()), 
+					inputs.left(m->keySeq().length()), usercount ));
 			return to;
 		}
 	}
@@ -582,8 +586,10 @@ YZCursor YZCommandPool::gotoMark( const YZNewMotionArgs &args ) {
 	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg, &found );
 	if ( found )
 		return *pos.bPos;
-	else
+	else {
+		yzDebug() << "WARNING! mark " << args.arg << " not found" << endl;
 		return *viewCursor.buffer();
+	}
 }
 
 YZCursor YZCommandPool::firstNonBlankNextLine( const YZNewMotionArgs &args ) {
@@ -1044,6 +1050,29 @@ QString YZCommandPool::delkey( const YZCommandArgs &args ) {
 			args.view->leaveVisualMode();
 	} else
 			args.view->myBuffer()->action()->deleteChar( args.view, *(args.view->getBufferCursor()), 1);
+	args.view->commitNextUndo();
+	return QString::null;
+}
+
+QString YZCommandPool::indent( const YZCommandArgs& args ) {
+	unsigned int fromY, toY;
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
+		fromY = (args.selection)[0].from().getY();
+		toY = (args.selection)[0].to().getY();
+	} else {
+		fromY = args.view->getBufferCursor()->getY();
+		toY = move(args.view, args.arg, args.count, args.usercount).getY();
+		if ( fromY > toY ) {
+			fromY = toY;
+			toY = args.view->getBufferCursor()->getY();
+		}
+	}
+	unsigned int maxY = args.view->myBuffer()->lineCount() - 1;
+	if ( toY > maxY ) toY = maxY;
+	int factor = ( args.cmd->keySeq()[0] == '<' ? -1 : 1 ) * args.count;
+	for ( unsigned int l = fromY; l <= toY; l++ ) {
+		args.view->myBuffer()->action()->indentLine( args.view, l, factor );
+	}
 	args.view->commitNextUndo();
 	return QString::null;
 }

@@ -3059,7 +3059,8 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 
   YzisAttribute* normal = new YzisAttribute();
   normal->setTextColor(Qt::white);
-  normal->setSelectedTextColor(Qt::black);
+  normal->setBGColor(Qt::black);
+  normal->setSelectedTextColor(Qt::lightGray);
   list.append(normal);
 
   YzisAttribute* keyword = new YzisAttribute();

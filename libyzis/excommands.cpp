@@ -99,6 +99,7 @@ void YZExCommandPool::initPool() {
 	commands.append( new YZExCommand( "[<>]", &YZExCommandPool::indent, false ));
 	commands.append( new YZExCommand( "ene(w)?", &YZExCommandPool::enew, "enew" ));
 	commands.append( new YZExCommand( "syn(tax)?", &YZExCommandPool::syntax, "syntax" ));
+	commands.append( new YZExCommand( "highlight", &YZExCommandPool::highlight, "highlight" ));
 }
 
 QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -613,3 +614,11 @@ QString YZExCommandPool::syntax( const YZExCommandArgs& args ) {
 	}
 	return QString::null;
 }
+
+QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
+//	YzisAttributeList *list = new YzisAttributeList();
+//	YzisHlManager::self()->getDefaults(0, list);
+
+	return QString::null;
+}
+

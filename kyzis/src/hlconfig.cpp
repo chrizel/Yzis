@@ -481,15 +481,15 @@ void YzisSchemaConfigFontColorTab::schemaChanged (uint schema)
   YzisAttributeList *l = attributeList (schema);
 
   // set colors
-  QPalette p ( m_defaultStyles->palette() );
-  QColor _c ( KGlobalSettings::baseColor() );
+/*DISABLED FOR NOW mik ...  QPalette p ( m_defaultStyles->palette() );
+  QColor _c ( "black" );//XXX? KGlobalSettings::baseColor() );
   YZSession::mOptions.setGroup( YZSession::me->schemaManager()->schema(schema) );
   p.setColor( QColorGroup::Base, YZSession::mOptions.readQColorEntry( "Color Background", _c ) );
-  _c = KGlobalSettings::highlightColor();
+  _c = QColor("darkblue");//XXX? KGlobalSettings::highlightColor();
   p.setColor( QColorGroup::Highlight, YZSession::mOptions.readQColorEntry( "Color Selection", _c ) );
-  _c = l->at(0)->textColor(); // not quite as much of an assumption ;)
+  _c = QColor( "black" );//XXX? l->at(0)->textColor(); // not quite as much of an assumption ;)
   p.setColor( QColorGroup::Text, _c );
-  m_defaultStyles->viewport()->setPalette( p );
+  m_defaultStyles->viewport()->setPalette( p ); */
 
   // insert the default styles backwards to get them in the right order
   for ( int i = YzisHlManager::self()->defaultStyles() - 1; i >= 0; i-- )
@@ -615,15 +615,15 @@ void YzisSchemaConfigHighlightTab::schemaChanged (uint schema)
   // We do that now, because we can now get the "normal text" color.
   // TODO this reads of the KConfig object, which should be changed when
   // the color tab is fixed.
-  QPalette p ( m_styles->palette() );
-  QColor _c ( KGlobalSettings::baseColor() );
+/*DISABLE FOR NOW ... mik  QPalette p ( m_styles->palette() );
+  QColor _c ( "black" );//XXX? KGlobalSettings::baseColor() );
   YZSession::mOptions.setGroup(YZSession::me->schemaManager()->schema(m_schema) );
   p.setColor( QColorGroup::Base, YZSession::mOptions.readQColorEntry( "Color Background", _c ) );
-  _c = KGlobalSettings::highlightColor();
+  _c = QColor("darkblue");//XXX? KGlobalSettings::highlightColor();
   p.setColor( QColorGroup::Highlight, YZSession::mOptions.readQColorEntry( "Color Selection", _c ) );
-  _c = l->at(0)->textColor(); // not quite as much of an assumption ;)
+  _c = QColor( "black" );//l->at(0)->textColor(); // not quite as much of an assumption ;)
   p.setColor( QColorGroup::Text, _c );
-  m_styles->viewport()->setPalette( p );
+  m_styles->viewport()->setPalette( p );*/
 
   QDict<YzisStyleListCaption> prefixes;
   for ( YzisHlItemData *itemData = m_hlDict[m_schema]->find(m_hl)->last();
@@ -928,7 +928,7 @@ YzisStyleListView::YzisStyleListView( QWidget *parent, bool showUseDefaults )
   // grap the bg color, selected color and default font
   normalcol = KGlobalSettings::textColor();
   bgcol = QColor( "white" );//XXX?YzisRendererConfig::global()->backgroundColor();
-  selcol =QColor("white");//XXX?YzisRendererConfig::global()->selectionColor();
+  selcol =QColor("black");//XXX?YzisRendererConfig::global()->selectionColor();
   docfont = KGlobalSettings::fixedFont();
 //XXX?  docfont = *YzisRendererConfig::global()->font();
 

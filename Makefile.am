@@ -44,14 +44,9 @@ apidox:
 	echo "EXTRACT_ALL         = YES" >> yzis.doxyfile ; \
 	doxygen yzis.doxyfile
 
-tests/cppunit/Makefile:
+test: 
 	cd tests/cppunit && qmake cppunit.pro -o Makefile
-cppunit: tests/cppunit/Makefile
 	cd tests/cppunit && make
-tests/Makefile:
-	cd tests && qmake  tests.pro -o Makefile
-tests/runTests: cppunit tests/Makefile
-	cd tests && make
-tests: tests/runTests
-	cd tests && ./runTests
+	cd tests && qmake tests.pro -o Makefile
+	cd tests && make && ./runTests
 

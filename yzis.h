@@ -30,15 +30,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <qstringlist.h>
 
 #define VERSION_MAJOR	0
 #define VERSION_MINOR	0
-#define VERSION_PATCH	2
+#define VERSION_PATCH	3
 
 #define VERSION_CHAR	"M1++"
-#define VERSION_CHAR_LONG "Yzis (from CVS)"
-#define VERSION_CHAR_DATE "CVS>2004-04-21"
+#define VERSION_CHAR_LONG "Yzis (from SVN)"
+#define VERSION_CHAR_DATE "SVN>2004-04-25"
 
 struct yzpoint {
 	int x;

@@ -52,7 +52,7 @@ NYZView::NYZView(YZBuffer *b)
 
 	if ( !attributesMapInitialised ) initialiseAttributesMap();
 	YZASSERT( b );
-	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << ( int )b << endl;
+	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << b->myId << endl;
 	window = NULL;
 }
 

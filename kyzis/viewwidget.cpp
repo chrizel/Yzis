@@ -257,10 +257,8 @@ void KYZisView::scrollLineDown() {
 
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
 
-void KYZisView::scrollView( int value ) {
-	if ( value < 0 )
-		value = 0;
-	else if ( value > (int)buffer->lineCount() - 1 )
+void KYZisView::scrollView( unsigned int value ) {
+	if ( value > buffer->lineCount() - 1 )
 		value = buffer->lineCount() - 1;
 
 	// only redraw if the view actually moves
@@ -272,7 +270,7 @@ void KYZisView::scrollView( int value ) {
 
 
 		// find out which line in the buffer that's on the bottom of the screen
-		int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
+		unsigned int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
 		if (getLocalBoolOption( "wrap" )) {
 			YZViewCursor* temp = new YZViewCursor( this );
 			gotodxdy( temp, getCursor()->getX(), getDrawCurrentTop() + getLinesVisible() - 1, false );

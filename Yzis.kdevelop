@@ -17,6 +17,7 @@
       <part>KDevBookmarks</part>
       <part>KDevClearCase</part>
       <part>KDevCTags2</part>
+      <part>CvsService</part>
       <part>KDevDebugger</part>
       <part>KDevDoxygen</part>
       <part>KDevFileGroups</part>

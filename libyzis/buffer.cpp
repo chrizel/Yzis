@@ -573,7 +573,7 @@ void YZBuffer::addView (YZView *v) {
 	YZView *it;
 	for ( it = mViews.first(); it; it=mViews.next() )
 		if ( it == v ) {
-			yzWarning()<< "view " << ( int )v << " added for the second time, discarding"<<endl;
+			yzWarning()<< "view " << v->myId << " added for the second time, discarding"<<endl;
 			return; // don't append twice
 		}
 	yzDebug("YZBuffer") << "BUFFER: addView" << endl;

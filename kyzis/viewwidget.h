@@ -31,7 +31,6 @@
 #include "cursor.h"
 #include "document.h"
 #include "editor.h"
-#include "viewwidget.h"
 #include "commandwidget.h"
 
 class KYZisEdit;
@@ -118,7 +117,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void fileSave();
 		void fileSaveAs();
 		void resetInfo();
-		void scrollView( int );
+		void scrollView( unsigned int );
 		void scrollLineUp();
 		void scrollLineDown();
 

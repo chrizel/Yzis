@@ -12,26 +12,51 @@
 
 #include "kyzis_factory.h"
 #include "kyzisdoc.h"
+#include "kyzisview.h"
+
+KYZisFactory *KYZisFactory::s_self = 0;
+unsigned long int KYZisFactory::s_refcnt = 0;
+QPtrList<class KYZisDoc> KYZisFactory::s_documents;
+QPtrList<class KYZisView> KYZisFactory::s_views;
 
 extern "C" {
     void* init_libkyzispart() {
 			KGlobal::locale()->insertCatalogue("kyzispart");
-			return new KYZisFactory();
+			return new KYZisFactory(true);
     }
 };
 
 KInstance* KYZisFactory::s_instance = 0L;
 
-KYZisFactory::KYZisFactory() {
-		s_instance=0;
+KYZisFactory::KYZisFactory( bool clone ) {
+	if ( clone ) {
+		ref();
+		return;
+	}
 }
 
 KYZisFactory::~KYZisFactory() {
-	if ( s_instance ) {
+	if ( s_self == this ) {
 		delete s_instance->aboutData();
 		delete s_instance;
+		s_instance=0;
+	}	else 
+		deref();
+}
+
+void KYZisFactory::deref() {
+	if ( !--s_refcnt && s_self )
+	{
+		delete s_self;
+		s_self = 0;
 	}
-	s_instance=0;
+}
+
+void KYZisFactory::ref() {
+	if ( !s_refcnt && !s_self )
+		s_self = new KYZisFactory;
+
+	s_refcnt++;
 }
 
 KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, 
@@ -43,6 +68,30 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	KParts::ReadWritePart *part = new KYZisDoc (parentWidget, widgetname, parent, name /*,args*/ );
 	part->setReadWrite( !bWantReadOnly );
 	return part;
+}
+
+void KYZisFactory::registerDocument ( KYZisDoc *doc ) {
+  if ( !s_documents.containsRef( doc ) ) {
+    s_documents.append( doc );
+    ref();
+  }
+}
+
+void KYZisFactory::deregisterDocument ( KYZisDoc *doc ) {
+  if ( s_documents.removeRef( doc ) )
+    deref();
+}
+
+void KYZisFactory::registerView ( KYZisView *view ) {
+  if ( !s_views.containsRef( view ) ) {
+    s_views.append( view );
+    ref();
+  }
+}
+
+void KYZisFactory::deregisterView ( KYZisView *view ) {
+  if ( s_views.removeRef( view ) )
+    deref();
 }
 
 KInstance* KYZisFactory::instance() {

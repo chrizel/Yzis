@@ -18,13 +18,13 @@ YZBuffer::YZBuffer(const QString& _path) {
 		QString blah( "" );
 		addLine(blah);
 	}
-	view_list.setAutoDelete( true ); //we own views
+	//view_list.setAutoDelete( true ); //we own views
 }
 
 YZBuffer::~YZBuffer() {
-	view_list.clear();
+//	view_list.clear();
 	text.clear();
-	delete path;
+	//delete path;
 }
 
 void YZBuffer::addChar (int x, int y, const QString& c) {
@@ -94,6 +94,10 @@ void YZBuffer::deleteLine( int line ) {
 }
 
 void YZBuffer::postEvent(yz_event e) {
+/*	QValueList<YZView*>::iterator it;
+	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+		( *it )->postEvent( e );
+	}*/
 	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
 			v->postEvent(e);
 	}
@@ -105,7 +109,12 @@ void YZBuffer::addView (YZView *v) {
 }
 
 void YZBuffer::updateAllViews() {
+	/*QValueList<YZView*>::iterator it;
+	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
+		( *it )->redrawScreen();
+	}*/
 	for ( YZView *v = view_list.first();v;v=view_list.next() ) v->redrawScreen();
+	
 }
 
 void  YZBuffer::addLine(QString &l) {

@@ -34,6 +34,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, YZSession *_session, QWidget *parent, cons
 	l->addWidget(status);
 
 	registerManager(this);
+	KYZisFactory::registerView( this );
 
 	buffer = doc;
 	editor->show();
@@ -42,8 +43,8 @@ KYZisView::KYZisView ( KYZisDoc *doc, YZSession *_session, QWidget *parent, cons
 }
 
 KYZisView::~KYZisView () {
-	delete editor;
-	delete status;
+	if ( buffer ) buffer->removeView(this);
+	KYZisFactory::deregisterView( this );
 }
 
 void KYZisView::setFocusMainWindow() {

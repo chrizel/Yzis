@@ -23,9 +23,6 @@ YZView::YZView(YZBuffer *_b, int _lines_vis) {
 }
 
 YZView::~YZView() {
-	delete cursor;
-//	events.clear();
-	delete previous_chars;
 }
 
 void YZView::setVisibleLines(int nb) {

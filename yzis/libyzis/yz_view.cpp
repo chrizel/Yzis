@@ -22,7 +22,7 @@ YZView::YZView(YZBuffer *_b, int _lines)
 	events_nb_last = 0;
 	
 
-	buffer->addview(this);
+	buffer->add_view(this);
 }
 
 
@@ -33,6 +33,7 @@ void YZView::send_char( unicode_char_t)
 
 yz_event *YZView::fetch_event(/* asasdfasf */)
 {
+	debug("fetch_event");
 	if (events_nb_last==events_nb_begin)
 		return NULL;
 
@@ -47,6 +48,7 @@ yz_event *YZView::fetch_event(/* asasdfasf */)
 
 void YZView::post_event (yz_event e)
 {
+	debug("post_event");
 	events[events_nb_last++] = e;
 	if (events_nb_last>=YZ_EVENT_EVENTS_MAX)
 		events_nb_last=0;

@@ -469,20 +469,16 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
 	unsigned int c = 0;
-	QRegExp rex("\\S+\\s*");//a word with boundaries
+	QRegExp rex("(\\w+\\s*)\\b[^$]");//a word with boundaries
 	while ( c < args.count ) { //for each word
 		const QString& current = args.view->myBuffer()->textline( result.getY() );
-//		if ( current.isNull() ) return false; //be safe ?
 		int idx = rex.search( current, result.getX() );
 		if ( idx != -1 ) {
 			yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
 			c++; //one match
-			result.setX( idx + rex.matchedLength() );
+			result.setX( idx + rex.cap( 1 ).length() );
 		} else {
-			if ( result.getY() >= args.view->myBuffer()->lineCount() - 1 ) {
-				result.setX( args.view->myBuffer()->textline( result.getY() ).length() );
-				break;
-			}
+			if ( result.getY() >= args.view->myBuffer()->lineCount() ) break;
 			result.setX( 0 );
 			result.setY( result.getY() + 1 );
 		}

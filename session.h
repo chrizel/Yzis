@@ -28,7 +28,6 @@
 #include "syntaxhighlight.h"
 #include "internal_options.h"
 #include "registers.h"
-#include "macros.h"
 
 class YZView;
 class YZBuffer;

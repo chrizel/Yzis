@@ -39,7 +39,7 @@ void YZView::send_char( QChar c)
 	}
 	switch(mode) {
 		case YZ_VIEW_MODE_INSERT:
-			printf("Currently INSERTMODE\n");
+			//printf("Currently INSERTMODE\n");
 			/* handle adding a char */
 /*			buffer->add_char(cursor_x,cursor_y,c);
 			cursor_x++;
@@ -47,7 +47,7 @@ void YZView::send_char( QChar c)
 			update_cursor();*/
 			return;
 		case YZ_VIEW_MODE_REPLACE:
-			printf("Currently REPLACEMODE\n");
+			//printf("Currently REPLACEMODE\n");
 			/* handle replacing a char */
 			buffer->chg_char(cursor_x,cursor_y,c);
 			cursor_x++;
@@ -55,13 +55,12 @@ void YZView::send_char( QChar c)
 			update_cursor();
 			return;
 		case YZ_VIEW_MODE_COMMAND:
-			printf("Currently COMMANDMODE\n");
+			//printf("Currently COMMANDMODE\n");
 			/* will be handled after the switch */
 			break;
 		default:
 			/* ?? */
-			printf("Currently unknown MODE\n");
-//			error("unknown mode, ignoring");
+			//printf("Currently unknown MODE\n"); error("unknown mode, ignoring");
 			return;
 	};
 	/* ok, here we now we're in command */
@@ -153,7 +152,6 @@ yz_event *YZView::fetch_event(int idx)
 
 void YZView::post_event (yz_event e)
 {
-	printf("postevent\n");
 //	debug("post_event");
 	events[events_nb_last++] = e;
 	if (events_nb_last>=YZ_EVENT_EVENTS_MAX)

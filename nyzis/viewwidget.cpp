@@ -195,7 +195,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 			while ( drawNextCol( ) ) {
 				QColor c = drawColor( );
 				if (!c.isValid()) {
-					yzWarning()<< " drawColor() returns an invalid color..." << endl;
+//					yzWarning()<< " drawColor() returns an invalid color..." << endl;
 					c = Qt::white;
 				}
 				int mAttributes;

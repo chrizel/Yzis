@@ -70,13 +70,20 @@ bool NYZFactory::process_one_event()
 {
 	YZASSERT_MSG( currentView, "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
 
+	wint_t c;
+
 	// this one is not blocking thanx to the nodelay() call
-	int c = getch();
+	int ret = get_wch( &c );
+	if ( ret == ERR ) {
+		return false;
+	}
+
+//	int c = getch();
 
 	// we know what this is..
-	switch( c ){
-		case ERR: // nothing to be done
-			return false;
+	switch( c ) {
+//		case ERR: // nothing to be done
+//			return false;
 		case KEY_RESIZE: // do nothing with this one
 			return true;
 		// dont do  currentView->sendKey(QString(QChar(0x60+c)),"<CTRL>");
@@ -120,19 +127,14 @@ bool NYZFactory::process_one_event()
 		return true;
 	}
 	QString modifiers;
-	if ( c & 0200 ) {
+/*	if ( c & 0200 ) {
 		// heuristic, alt-x is x|0200..
 		modifiers += "<ALT>";
 		c &= ~0200;
-	}
+	} */
 	if ( c>=KEY_MAX) { // non-ascii key
 		yzError(NYZIS) << "*************** Unhandled" <<
 			"and very strange (>KEY_MAX) char received from ncurses, please report : " << (int) c << endl;
-		return true;
-	}
-	if ( c>127 ) { // non-ascii key
-		yzError(NYZIS) << "*************** Unhandled" <<
-			"non-ascii key, please report : " << (int) c << endl;
 		return true;
 	}
 	if ( iscntrl( c ) ) {
@@ -141,6 +143,7 @@ bool NYZFactory::process_one_event()
 		return true;
 	}
 	if ( isupper( c ) ) { modifiers +="<SHIFT>"; }
+	yzDebug() << "sendKey < " << c << " (" << QString( QChar( c ) ) << ") modifiers=" << modifiers << endl;
 	//TODO: META
 	currentView->sendKey( QString( QChar( c ) ), modifiers );
 

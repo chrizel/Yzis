@@ -120,6 +120,8 @@ void YZBuffer::detach() {
  * WARNING! Here are elementary buffer operations only! 
  * do _not_ use them directly, use action() ( actions.cpp ) instead.
  */
+	
+
 
 #define VIEWS_INIT( x, y ) \
 	{ for ( YZView *it = mViews.first(); it; it = mViews.next() ) \

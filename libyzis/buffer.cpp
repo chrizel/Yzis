@@ -519,14 +519,12 @@ void YZBuffer::setModified( bool modif ) {
 void YZBuffer::statusChanged() {
 	//update all views
 	YZView *it;
-	QString info;
-	if ( fileIsNew() ) info+="N";
-	else info+=" ";
-	if ( fileIsModified() ) info+="M";
-	else info+=" ";
+	QString fileInfo;
+	fileInfo +=(fileIsNew())?"N":" ";
+	fileInfo +=(fileIsModified())?"M":" ";
 	//add some : read only ...
 	for ( it = mViews.first(); it; it = mViews.next() )
-		it->setInformation(info);
+		it->YZView::setFileInfo( fileInfo );
 }
 
 

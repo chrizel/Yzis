@@ -106,13 +106,16 @@ void KYZisView::setStatusBar ( const QString& text ) {
 	status->changeItem(text, 0);
 }
 
-void KYZisView::updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage ) {
-	yzDebug() << "KYZisView::updateCursor" << x1 << " " << line << endl;
-	editor->setCursor(x1, line);
-	if (x1!=x2)
-		status->changeItem( QString("%1,%2-%3 (%4)").arg(line+1 ).arg( x1+1 ).arg( x2+1 ).arg( percentage),99 );
+void KYZisView::syncViewInfo()
+{
+	yzDebug() << "KYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.l << endl;
+	editor->setCursor(viewInformation.c1, viewInformation.l);
+	if (viewInformation.c1!=viewInformation.c2)
+		status->changeItem( QString("%1,%2-%3 (%4)").arg(viewInformation.l+1 ).arg( viewInformation.c1+1 ).arg( viewInformation.c2+1 ).arg( viewInformation.percentage),99 );
 	else
-		status->changeItem( QString("%1,%2 (%3)").arg(line+1 ).arg( x1+1 ).arg( percentage),99 );
+		status->changeItem( QString("%1,%2 (%3)").arg(viewInformation.l+1 ).arg( viewInformation.c1+1 ).arg( viewInformation.percentage),99 );
+
+	status->changeItem(viewInformation.fileInfo, 90);
 }
 
 void KYZisView::refreshScreen () {
@@ -250,8 +253,5 @@ void KYZisView::displayInfo( const QString& info ) {
 	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }
 
-void KYZisView::setInformation( const QString& info ) {
-	status->changeItem(info, 90);
-}
 
 #include "viewwidget.moc"

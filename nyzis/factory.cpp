@@ -91,20 +91,6 @@ NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
 	screen = stdscr; // just an alias...
 	wattron(screen, A_BOLD);	// will be herited by subwin
 
-	infobar = subwin(screen, 1, 0, LINES-2, 0);
-	wattrset(infobar, A_STANDOUT || A_BOLD);
-	wbkgd(infobar, A_REVERSE);
-	statusbar  = subwin(screen, 1, STATUSBARWIDTH, LINES-1, 0);
-	commandbar = subwin(screen, 1, 0, LINES-1, STATUSBARWIDTH);
-	//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
-	//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
-
-	if (has_colors()) {
-		//		wattron(infobar, COLOR_PAIR(4));
-		wattron(statusbar, COLOR_PAIR(6));
-		wattron(commandbar, COLOR_PAIR(4));
-	}
-
 	createView(bf);
 }
 
@@ -133,40 +119,12 @@ void NYZFactory::event_loop() {
 	}
 }
 
-void NYZFactory::update_infobar(int l, int c1, int c2, const QString& percentage) {
-	int h,w;
-	char * myfmt;
-
-	getmaxyx(infobar, h, w);
-	werase(infobar);
-
-	// prevent  gcc to use string
-	if ( c1!=c2 ) {
-		myfmt="%d,%d-%d";
-		mvwprintw( infobar, 0, w-17, myfmt, l,c1,c2 );
-	} else {
-		myfmt="%d,%d";
-		mvwprintw( infobar, 0, w-17, myfmt, l,c1 );
-	}
-	mvwprintw( infobar, 0, w-4, myfmt, ( const char* )(percentage.local8Bit()) );
-
-	wrefresh(infobar);
-}
-
-
 void NYZFactory::scrollDown( int /*lines*/ ) {
 
 }
 
 void NYZFactory::scrollUp ( int /*lines*/ ) {
 
-}
-
-void NYZFactory::setStatusText( const QString& text )
-{
-	werase(statusbar);
-	waddstr(statusbar, text.local8Bit());
-	wrefresh(statusbar);
 }
 
 
@@ -182,7 +140,7 @@ void NYZFactory::changeCurrentView ( YZView * view  )
 }
 
 YZView* NYZFactory::createView( YZBuffer* buffer ) {
-	WINDOW *window = subwin(screen, LINES-2, 0, 0, 0);
+	WINDOW *window = newwin(0,0,0,0 );
 	currentView = new NYZView(window, buffer);
 	currentViewChanged(currentView);
 	return currentView;
@@ -203,19 +161,6 @@ void NYZFactory::deleteView() {
 	if ( !currentView )
 		yzError() << "nyzys untested when no view is available...";
 	// TODO ; some kind of fake view when no view is available..
-}
-
-void NYZFactory::setCommandLine( const QString& text ) 
-{
-	commandline = text;
-	werase(commandbar);
-	waddstr(commandbar, text.local8Bit());
-	wrefresh(commandbar);
-}
-
-QString NYZFactory::getCommandLine() const 
-{
-	return commandline;
 }
 
 void NYZFactory::initialiseKeycodes() {

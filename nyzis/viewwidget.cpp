@@ -20,8 +20,12 @@
  */
 
 #include "debug.h"
+/* Qt */
 #include <qnamespace.h>
+#include <qtimer.h>
+
 #include <ctype.h>
+
 #include "viewwidget.h"
 #include "factory.h"
 
@@ -30,16 +34,36 @@ NYZView::NYZView(WINDOW *_window, YZBuffer *b)
 {
 	window = _window;
 
-	update_info();
 	wmove(window,0,0 );
 	//active symbols for special keycodes
 	keypad(window , true);
 
+	// creates layout
+	/*
+	 * ------------------ infobar ---------------------
+	 * statusbar |     command 
+	 */
+
+	update_info();
+	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
+//	WINDOW *window = subwin(screen, LINES-2, 0, 0, 0);
+	infobar = subwin(window, 1, 0, h-2, 0);
+	wattrset(infobar, A_STANDOUT || A_BOLD);
+	wbkgd(infobar, A_REVERSE);
+	statusbar  = subwin(window, 1, STATUSBARWIDTH, h-1, 0);
+	commandbar = subwin(window, 1, 0, h-1, STATUSBARWIDTH);
+	//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
+	//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
+
+	if (has_colors()) {
+		//		wattron(infobar, COLOR_PAIR(4));
+		wattron(statusbar, COLOR_PAIR(6));
+		wattron(commandbar, COLOR_PAIR(4));
+	}
+
 	// TODO  write something like :       "bernoulli.tex" [noeol] 65L, 1440C
 	// in last line (vim-like)
-	NYZFactory::self->setStatusText (
-			b->fileName() + QString(" %1L" ).arg(b->lineCount())
-			);
+	setStatusText ( b->fileName() + QString(" %1L" ).arg(b->lineCount()));
 	redrawScreen();
 }
 
@@ -73,7 +97,7 @@ void NYZView::printLine( int line ) {
 
 	/* not use addnstr here, will stop at \0  (i guess) */ 
 	if ( myBuffer()->introShown() )
-		wmove( window,relline, (w-str.length())?(w-str.length())/2:0 );
+		wmove( window,relline, (w-str.length()>0)?(w-str.length())/2:0 );
 	else wmove (window, relline, 0);
 	for (i=0; i<w && i<str.length(); i++)
 		waddch(window, str[i].unicode());
@@ -84,11 +108,14 @@ void NYZView::printLine( int line ) {
 
 void NYZView::setCommandLineText( const QString& text )
 {
-	NYZFactory::self->setCommandLine( text );
+	commandline = text;
+	werase(commandbar);
+	waddstr(commandbar, text.local8Bit());
+	wrefresh(commandbar);
 }
 
 QString NYZView::getCommandLineText() const {
-	return NYZFactory::self->getCommandLine();
+	return commandline;
 }
 
 void NYZView::invalidateLine ( unsigned int line ) {
@@ -97,12 +124,42 @@ void NYZView::invalidateLine ( unsigned int line ) {
 }
 
 void NYZView::setStatusBar( const QString& text ) {
-	NYZFactory::self->setStatusText (text);
+	// TODO : factorize..
+	setStatusText (text);
 }
 
-void NYZView::updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage) {
-	NYZFactory::self->update_infobar(line+1, x1+1, x2+1, percentage);
-	wmove(window, line-getCurrentTop() , x1 ) ;
+void NYZView::syncViewInfo( void )
+{
+	char * myfmt;
+
+	update_info();
+
+	/*
+	 * ------------------ infobar ---------------------
+	 * statusbar |     command 
+	 */
+
+	// update infobar
+	werase(infobar);
+	// prevent  gcc to use string
+	if ( viewInformation.c1!=viewInformation.c2 ) {
+		myfmt="%d,%d-%d";
+		mvwprintw( infobar, 0, w-20, myfmt,
+				viewInformation.l+1,
+				viewInformation.c1+1,
+				viewInformation.c2+1 );
+	} else {
+		myfmt="%d,%d";
+		mvwprintw( infobar, 0, w-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
+	}
+
+	myfmt="%s"; // <- prevent %s in percentage to fubar everything, even if
+	            // it's rather unlikely..
+	mvwprintw( infobar, 0, w-9, myfmt, viewInformation.percentage.latin1() );
+
+	wrefresh(infobar);
+
+	wmove(window, viewInformation.l-getCurrentTop() , viewInformation.c1 ) ;
 	wrefresh( window );
 }
 
@@ -112,12 +169,31 @@ void NYZView::refreshScreen() {
 		printLine(i);
 	i-=getCurrentTop();
 	for ( ; i < mLinesVis ; i++ ) printVoid( i );
+
+	refresh();
+	syncViewInfo();
 }
 
 void NYZView::displayInfo( const QString& info ) {
 //TODO
+//
+	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }
 
-void NYZView::setInformation( const QString& info ) {
-//TODO
+void NYZView::resetInfo()
+{
+//	status->changeItem( "", 80 );
+}
+
+void NYZView::update_info(void)
+{
+	getmaxyx(window, h, w);
+	mLinesVis = h;
+}
+
+void NYZView::setStatusText( const QString& text )
+{
+	werase(statusbar);
+	waddstr(statusbar, text.latin1());
+	wrefresh(statusbar);
 }

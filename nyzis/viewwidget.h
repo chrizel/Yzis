@@ -37,9 +37,14 @@
 #endif
 #define KEY_RETURN 13
 
+#define STATUSBARWIDTH 15
+
 class NYZSession;
 
-class NYZView : public YZView {
+class NYZView : public QObject, public YZView
+{
+	Q_OBJECT
+
 public:
 	/**
 	  * constructor. Each view is binded to a buffer, @arg lines is the initial number of lines that
@@ -54,17 +59,23 @@ public:
 	virtual void setFocusMainWindow() {}
 	virtual void invalidateLine ( unsigned int line );
 	virtual void setStatusBar( const QString& text );
-	virtual void updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage);
 	virtual void refreshScreen();
-	virtual void displayInfo( const QString& info );
-	virtual void setInformation ( const QString& info );
+	virtual void syncViewInfo();
+	virtual void displayInfo(  const QString& info );
+	QString getCommandLine() const;
+	void setCommandLine( const QString& );
 
 protected:
 	WINDOW		*window;	/* ncurses window to write to */
 	unsigned int	h, w;		/** height and width of the window */
 
+	void setStatusText( const QString& );
+
+public slots:
+	void resetInfo();
+
 private:
-	void update_info(void) { getmaxyx(window, h, w); mLinesVis = h; }
+	void update_info(void);
 	/**
 	  * Display a line
 	  * @arg line is the line number, taken from the beginning of the file ( and not
@@ -77,6 +88,14 @@ private:
 	  * doesn't belong to the buffer anyway..)
 	  */
 	void printVoid( unsigned int line );
+
+	WINDOW		*infobar;	// the white one with filename/size/position...
+	WINDOW          *commandbar;   // the one we type command in (:wq..)
+	WINDOW		*statusbar;	// the one we show in which mode we are
+	WINDOW          *fileInfo;     // the one with info about current file (modified..)
+
+	QString commandline;
+
 };
 
 #endif // NYZ_VIEW_H

@@ -289,15 +289,6 @@ class YZView {
 		virtual void setStatusBar( const QString& text ) = 0;
 
 		/**
-		 * Updates cursor position and information text
-		 * @param line Y position
-		 * @param x1 real X position
-		 * @param x2 fake X position ( counting tab stops )
-		 * @param percentage informational percentage position in text
-		 */
-		virtual void updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage) = 0;
-
-		/**
 		 * Asks a redraw of the whole view
 		 */
 		virtual void refreshScreen () = 0;
@@ -308,9 +299,9 @@ class YZView {
 		virtual void displayInfo( const QString& info ) = 0;
 
 		/**
-		 * Display informational status about the current file
+		 * Display informational status about the current file and cursor
 		 */
-		virtual void setInformation( const QString& info ) = 0;
+		virtual void syncViewInfo() = 0;
 
 		/**
 		 * Get the current cursor information
@@ -329,6 +320,11 @@ class YZView {
 		 * Continue previous search
 		 */
 		QString searchAgain( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+
+		/**
+		  * set the fileInfo field for this view
+		  */
+		void setFileInfo( QString & fileInfo );
 
 		/**
 		 * Updates the position of the cursor
@@ -398,6 +394,15 @@ class YZView {
 		 * current search history item
 		 */
 		unsigned int mCurrentSearchItem;
+
+		struct {
+			int l;
+			int c1;
+			int c2;
+			QString percentage;
+			QString fileInfo;
+		} viewInformation;
+
 
 	private:
 		/**

@@ -330,21 +330,24 @@ void YZView::sendKey( int c, int modifiers) {
 }
 
 void YZView::updateCursor() {
-	static unsigned int lasty = 0; // small speed optimisation
-	static QString percentage(tr( "All" ));
+	static unsigned int lasty = 1<<30; // small speed optimisation
+	viewInformation.percentage = tr( "All" );
 	unsigned int y = mCursor->getY();
 
 	if ( y != lasty ) {
 		unsigned int nblines = mBuffer->lineCount();
-		percentage = QString("%1%").arg( ( unsigned int )( y*100/ ( nblines==0 ? 1 : nblines )));
-		if ( mCurrentTop < 1 )  percentage=tr( "Top" );
-		if ( mCurrentTop+mLinesVis >= nblines )  percentage=tr( "Bot" );
-		if ( (mCurrentTop<1 ) &&  ( mCurrentTop+mLinesVis >= nblines ) ) percentage=tr( "All" );
+		viewInformation.percentage = QString("%1%").arg( ( unsigned int )( y*100/ ( nblines==0 ? 1 : nblines )));
+		if ( mCurrentTop < 1 )  viewInformation.percentage=tr( "Top" );
+		if ( mCurrentTop+mLinesVis >= nblines )  viewInformation.percentage=tr( "Bot" );
+		if ( (mCurrentTop<1 ) &&  ( mCurrentTop+mLinesVis >= nblines ) ) viewInformation.percentage=tr( "All" );
 		lasty=y;
 	}
 
-	// FIXME handles tabs here or somwhere else..
-	updateCursor( y, mCursor->getX(), mCursor->getX(), percentage );
+	viewInformation.l = y;
+	viewInformation.c1 = mCursor->getX(); 
+	viewInformation.c2 = mCursor->getX(); 
+
+	syncViewInfo();
 }
 
 void YZView::centerViewHorizontally(unsigned int column) {
@@ -779,4 +782,11 @@ QString YZView::searchAgain( const QString& /*inputsBuff*/, YZCommandArgs args )
 	purgeInputBuffer();
 	return QString::null;
 }
+
+void YZView::setFileInfo( QString & fileInfo )
+{
+	viewInformation.fileInfo = fileInfo;
+	syncViewInfo();
+}
+
 

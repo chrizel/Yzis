@@ -27,8 +27,6 @@
 #include "session.h"
 #include "document.h"
 
-
-#define STATUSBARWIDTH 15
 #define NYZ_VIEW_MAX 300
 //#define NYZ_BUFFER_MAX 300
 
@@ -45,10 +43,6 @@ public:
 	virtual ~NYZFactory( );
 
 	void		event_loop();
-	void		update_infobar(int, int, int, const QString& msg);
-	QString getCommandLine() const;
-	void setCommandLine( const QString& );
-
 
 	virtual void scrollDown(int lines=1);
 	virtual void scrollUp(int lines=1);
@@ -60,26 +54,14 @@ public:
 	virtual void popupMessage( const QString& message );
 	virtual void deleteView();
 
-	void setStatusText( const QString& );
-
 private:
 	
 private:
-	/* design
-	 * ------------------ infobar ---------------------
-	 * statusbar |     command 
-	 */
-
 	WINDOW		*screen;	// whole (ncurses) screen (== stdscr)
-
-	WINDOW		*infobar;	// the white one with filename/size/position...
-	WINDOW          *commandbar;   // the one we type command in (:wq..)
-	WINDOW		*statusbar;	// the one we show in which mode we are
 
 	//XXX QMap-me ;)
 	WINDOW		*windows[NYZ_VIEW_MAX];
 	int		windows_nb;
-	QString commandline;
 
 	/**
 	 * Fill the map of keycodes -> Ncurses to Qt

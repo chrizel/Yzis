@@ -314,7 +314,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					initCompletion();
 				QString result = doComplete(false);
 				if (!result.isNull()) {
-					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
+					mBuffer->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
 					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
 				}
 				purgeInputBuffer();
@@ -324,7 +324,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					initCompletion();
 				QString result = doComplete(true);
 				if (!result.isNull()) {
-					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
+					mBuffer->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
 					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
 				}
 				purgeInputBuffer();
@@ -337,10 +337,12 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), m_word2Complete);
 				gotoxy(m_completionStart->getX()+m_word2Complete.length(),mainCursor->bufferY());
 				leaveCompletionMode();
+				gotoPreviousMode();
 				purgeInputBuffer();
 				return;
 			} else {
 				leaveCompletionMode();
+				gotoPreviousMode();
 			}
 		case YZ_VIEW_MODE_INSERT:
 			mPreviousChars += modifiers + key;
@@ -1455,7 +1457,8 @@ QString YZView::append () {
 
 void YZView::switchModes(int mode) {
 	if (mode != mMode) {
-		leaveCurrentMode();
+		if ( mode != YZ_VIEW_MODE_COMPLETION )
+			leaveCurrentMode();
 		mPrevMode = mMode;
 		mMode = static_cast<modeType>(mode);
 		modeChanged();
@@ -1606,12 +1609,10 @@ void YZView::leaveVisualMode( ) {
 	YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 	selectionPool->clear( "VISUAL" );
 	sendPaintEvent( scrollCursor->screenX(), cur_sel.drawFrom().getY()/* > 0 ? cur_sel.drawFrom().getY() - 1 : 0*/, mColumnsVis, cur_sel.drawTo().getY() - cur_sel.drawFrom().getY() + 1 );
-	gotoPreviousMode();
 }
 
 void YZView::leaveCompletionMode() {
 	m_word2Complete = "";
-	gotoPreviousMode();
 }
 
 YZSelectionMap YZView::getVisualSelection() {
@@ -2360,7 +2361,8 @@ void YZView::initCompletion() {
 	YZCursor begin = YZSession::me->getPool()->moveWordBackward( arg );
 	m_completionStart->setCursor(begin);
 	YZCursor stop (this,mainCursor->bufferX()-1, mainCursor->bufferY());
-	QStringList list = myBuffer()->getText(begin, stop);
+	yzDebug() << "Start : " << begin << ", End:" << stop << endl;
+	QStringList list = mBuffer->getText(begin, stop);
 	yzDebug() << "Completing word : " << list[0] << endl;
 	//record current begin-of-word-to-complete
 	m_word2Complete = list[0];

@@ -35,6 +35,7 @@
 
 		<screen>
 <prompt>$</prompt> <command>yzis <replaceable>filename</replaceable></command>
+<prompt>$</prompt> <command>yzis <replaceable>filename</replaceable>:<replaceable>line</replaceable> # open filename and scroll to line <replaceable>line</replaceable></command>
 		</screen>
 
 		<para>

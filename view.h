@@ -457,7 +457,7 @@ class YZView {
 		 * @param search a regexp to look for
 		 * @return true if a match is found
 		 */
-		bool doSearch( const QString& search, const YZCursor& begin, const YZCursor& end );
+		bool doSearch( const QString& search, const YZCursor& begin, const YZCursor& end, bool moveToMatch=true, YZCursor *result=NULL );
 
 		/**
 		 * Continue previous search

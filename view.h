@@ -247,6 +247,32 @@ class YZView {
 		 */
 		virtual void setFocusMainWindow() = 0;
 
+		/**
+		 * Inform a view that a line was changed
+		 * @param line the line which was edited
+		 */
+		virtual void invalidateLine( unsigned int line ) = 0;
+
+		/**
+		 * Set status bar information text
+		 * @param text the status information to display
+		 */
+		virtual void setStatusBar( const QString& text ) = 0;
+
+		/**
+		 * Updates cursor position and information text
+		 * @param line Y position
+		 * @param x1 real X position
+		 * @param x2 fake X position ( counting tab stops )
+		 * @param percentage informational percentage position in text
+		 */
+		virtual void updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage) = 0;
+
+		/**
+		 * Asks a redraw of the whole view
+		 */
+		virtual void refreshScreen () = 0;
+
 	protected:
 		/**
 		 * Updates the position of the cursor

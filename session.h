@@ -24,7 +24,6 @@
  * $Id$
  */
 
-#include "events.h"
 #include "buffer.h"
 #include "view.h"
 #include "commands.h"
@@ -52,12 +51,12 @@ class YZSession {
 		/** 
 		 * Used by the buffer to post events
 		 */
-		void postEvent ( yz_event );
+//		void postEvent ( yz_event );
 
 		/** 
 		 * Send events to the GUI
 		 */
-		virtual void receiveEvent ( yz_event ) = 0;
+//		virtual void receiveEvent ( yz_event ) = 0;
 
 		/**
 		 * return the session name
@@ -88,7 +87,7 @@ class YZSession {
 		 * Get an event to handle from the core.  that's the way the core is
 		 * sending messages to the gui
 		 */
-		yz_event fetchNextEvent(int requester=-1);
+//		yz_event fetchNextEvent(int requester=-1);
 
 		/**
 		 * Finds a view by its UID
@@ -163,7 +162,7 @@ class YZSession {
 	protected:
 		//we map "filename"/buffer for buffers
 		QMap<QString,YZBuffer*> mBuffers;
-		QValueList<yz_event> mEvents;
+//		QValueList<yz_event> mEvents;
 
 	private:
 		QString mSessionName;

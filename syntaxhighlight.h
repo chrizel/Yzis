@@ -202,17 +202,6 @@ class YzisHighlighting
     signed char commentRegion(int attr) const;
 
     /**
-     * Define comment marker type.
-     */
-    enum commentData { Start, End, MultiLineRegion, SingleLine };
-
-    /**
-     * @return the comment marker @p which for the highlight corresponding to
-     *         @p attrib.
-     */
-    QString getCommentString( int which, int attrib ) const;
-
-    /**
      * @return the mulitiline comment start marker for the highlight
      * corresponding to @p attrib.
      */
@@ -248,6 +237,8 @@ class YzisHighlighting
     // be carefull: all documents hl should be invalidated after calling this method!
     void dropDynamicContexts();
 
+    QString indentation () { return m_indentation; }
+
   private:
     // make this private, nobody should play with the internal data pointers
     void getYzisHlItemDataList(uint schema, YzisHlItemDataList &);
@@ -261,9 +252,10 @@ class YzisHighlighting
     int addToContextList(const QString &ident, int ctx0);
     void addToYzisHlItemDataList();
     void createYzisHlItemData (YzisHlItemDataList &list);
-    QString readGlobalKeywordConfig();
-    QString readWordWrapConfig();
-    QStringList readCommentConfig();
+    void readGlobalKeywordConfig();
+    void readWordWrapConfig();
+    void readCommentConfig();
+    void readIndentationConfig ();
     void readFoldingConfig ();
 
     // manipulates the ctxs array directly ;)
@@ -280,9 +272,9 @@ class YzisHighlighting
     int getIdFromString(QStringList *ContextNameList, QString tmpLineEndContext,/*NO CONST*/ QString &unres);
 
     /**
-    * @return the key to use for @p attrib in m_additionalData.
-    */
-    int hlKeyForAttrib( int attrib ) const;
+     * @return the key to use for @p attrib in m_additionalData.
+     */
+    QString hlKeyForAttrib( int attrib ) const;
 
     YzisHlItemDataList internalIDList;
 
@@ -317,6 +309,7 @@ class YzisHighlighting
     QString iVersion;
     QString iAuthor;
     QString iLicense;
+    QString m_indentation;
     int m_priority;
     int refCount;
     int startctx, base_startctx;
@@ -337,18 +330,40 @@ class YzisHighlighting
 #endif
 
     /**
-     * This contains a list of comment data, the deliminator string and
-     * wordwrap deliminator pr highlight.
-     * The key is the highlights entry position in internalIDList.
-     * This is used to look up the correct comment and delimitor strings
-     * based on the attrtibute.
+     * This class holds the additional properties for one highlight
+     * definition, such as comment strings, deliminators etc.
+     *
+     * When a highlight is added, a instance of this class is appended to
+     * m_additionalData, and the current position in the attrib and context
+     * arrays are stored in the indexes for look up. You can then use
+     * hlKeyForAttrib or hlKeyForContext to find the relevant instance of this
+     * class from m_additionalData.
+     *
+     * If you need to add a property to a highlight, add it here.
      */
-    QMap<int, QStringList> m_additionalData;
+    class HighlightPropertyBag {
+      public:
+        QString singleLineCommentMarker;
+        QString multiLineCommentStart;
+        QString multiLineCommentEnd;
+        QString multiLineRegion;
+        QString deliminator;
+        QString wordWrapDeliminator;
+    };
 
     /**
-     * fast lookup of hl properties.
+     * Highlight properties for each included highlight definition.
+     * The key is the identifier
      */
-    IntList m_hlIndex;
+    QDict<HighlightPropertyBag> m_additionalData;
+
+    /**
+     * Fast lookup of hl properties, based on attribute index
+     * The key is the starting index in the attribute array for each file.
+     * @see hlKeyForAttrib
+     */
+    QMap<int, QString> m_hlIndex;
+
 
     QString extensionSource;
 #if QT_VERSION < 0x040000

@@ -23,6 +23,7 @@
  * $Id$
  */
 
+#include <qvaluevector.h>
 
 #include "buffer.h"
 #include "cursor.h"
@@ -31,6 +32,8 @@
 class YZCursor;
 class YZBuffer;
 class YZSession;
+
+typedef QValueVector<QString> StringVector;
 
 /**
  * MUST be reimplemented in the GUI. It's the basis to display the content of a buffer
@@ -241,6 +244,16 @@ class YZView {
 		 * this should allow us to have commands like : 100g or gg etc ...
 		 */
 		QString mPreviousChars;
+
+		/**
+		 * command history
+		 */
+		StringVector mExHistory;
+
+		/**
+		 * current command history item
+		 */
+		unsigned int mCurrentExItem;
 
 	private:
 		/**

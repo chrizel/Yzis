@@ -680,11 +680,8 @@ void YZView::applyGoto( bool applyCursor ) {
 		if ( mMode == YZ_VIEW_MODE_VISUAL ) {
 
 			YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-
 			/* erase current selection */
 			selectionPool->clear( "VISUAL" );
-			if ( cur_sel.drawFrom != NULL ) // prevent empty selection
-				paintEvent( dCurrentLeft, cur_sel.drawFrom->getY(), mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 1 );
 
 			if ( *mCursor > *mVisualCursor )
 				selectionPool->addSelection( "VISUAL", *mVisualCursor, *mCursor, *dVisualCursor, *dCursor );
@@ -692,8 +689,10 @@ void YZView::applyGoto( bool applyCursor ) {
 				selectionPool->addSelection( "VISUAL", *mCursor, *mVisualCursor, *dCursor, *dVisualCursor );
 
 			/* apply new selection */
-			cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-			paintEvent( dCurrentLeft, cur_sel.drawFrom->getY(), mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 1 );
+			YZSelection new_cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+			if ( cur_sel.drawFrom != NULL && *new_cur_sel.drawFrom > *cur_sel.drawFrom ) *new_cur_sel.drawFrom = *cur_sel.drawFrom;
+			if ( cur_sel.drawTo != NULL && *new_cur_sel.drawTo < *cur_sel.drawTo ) *new_cur_sel.drawTo = *cur_sel.drawTo;
+			paintEvent( dCurrentLeft, new_cur_sel.drawFrom->getY(), mColumnsVis, new_cur_sel.drawTo->getY() - new_cur_sel.drawFrom->getY() + 1 );
 		}
 
 		if ( !isLineVisible( dCursor->getY() ) )

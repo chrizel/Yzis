@@ -74,6 +74,7 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("v",&YZView::gotoVisualMode,true,false,false,false);
 	NEW_VIEW_COMMAND("([0-9]*)(gg|G)",&YZView::gotoLine,true,true,false,false);
 	NEW_VIEW_COMMAND("(\".)?([0-9]*)(d.*|D)",&YZView::deleteLine,true,true,true,true);
+	NEW_VIEW_COMMAND("(\".)?([0-9]*)(y.*|Y)",&YZView::copy,true,true,true,true);
 	NEW_VIEW_COMMAND("(\".)?([0-9]*)(c.+|C)",&YZView::changeLine,true,true,true,true);
 	NEW_VIEW_COMMAND("o",&YZView::openNewLineAfter,true,false,false,false);
 	NEW_VIEW_COMMAND("O",&YZView::openNewLineBefore,true,false,false,false);
@@ -83,7 +84,6 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("m([a-zA-Z0-9])",&YZView::addMark,true,false,false,false)
 	NEW_VIEW_COMMAND("('|`)([a-zA-Z0-9])",&YZView::gotoMark,true,false,false,false)
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true,false,false,false);
-	NEW_VIEW_COMMAND("(\".)?([0-9]*)(y.*|Y)",&YZView::copy,true,true,false,true);
 	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true,false,false,true);
 	NEW_VIEW_COMMAND("u",&YZView::undo,true,false,false,false);
 	NEW_VIEW_COMMAND("/",&YZView::gotoSearchMode,true,false,false,false);

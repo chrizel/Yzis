@@ -38,7 +38,7 @@
 #define VERSION_PATCH	0
 
 //let's use the patch number since it exists ...
-#define VERSION_CHAR	"M3--"
+#define VERSION_CHAR	"M3"
 #if QT_VERSION < 0x040000
 #define VERSION_CHAR_LONG "Yzis "VERSION_CHAR" for Qt3"
 #else
@@ -49,8 +49,8 @@
 #define VERSION_CHAR_STATE2 "(development release - Use for testing only)"
 #define VERSION_CHAR_STATE3 "(preview release - Use for testing only)"
 //and change/use this one in the code
-#define VERSION_CHAR_ST VERSION_CHAR_STATE2
-#define VERSION_CHAR_DATE "SVN>2005-02-08"
+#define VERSION_CHAR_ST VERSION_CHAR_STATE3
+#define VERSION_CHAR_DATE "SVN>2005-02-15"
 
 #if QT_VERSION < 0x040000
 #define qMax QMAX

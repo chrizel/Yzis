@@ -54,7 +54,7 @@ bool YZMapping::applyNormalMappings( QString& text ) {
 #else
 		if ( it.value().startsWith("<Script>") && text.contains(it.key()) ) {
 			char *result;
-			YZExLua::instance()->exe( (const char*)it.value().mid(8, it.value().length()-10), "s>s",  (const char*)it.key(), &result);
+			YZExLua::instance()->exe( it.value().mid(8, it.value().length()-10), "s>s",  it.key().toUtf8().data(), &result);
 			text.replace(it.key(), result);
 		} else {
 			text.replace(it.key(), it.value());
@@ -82,7 +82,7 @@ bool YZMapping::applyVisualMappings( QString& text ) {
 #else
 		if ( it.value().startsWith("<Script>") && text.contains(it.key()) ) {
 			char *result;
-			YZExLua::instance()->exe( (const char*)it.value().mid(8, it.value().length()-10), "s>s",  (const char*)it.key(), &result);
+			YZExLua::instance()->exe( it.value().mid(8, it.value().length()-10), "s>s",  it.key().toUtf8().data(), &result);
 			text.replace(it.key(), result);
 		} else {
 			text.replace(it.key(), it.value());
@@ -110,7 +110,7 @@ bool YZMapping::applyCmdLineMappings( QString& text ) {
 #else
 		if ( it.value().startsWith("<Script>") && text.contains(it.key()) ) {
 			char *result;
-			YZExLua::instance()->exe( (const char*)it.value().mid(8, it.value().length()-10), "s>s",  (const char*)it.key(), &result);
+			YZExLua::instance()->exe( it.value().mid(8, it.value().length()-10), "s>s",  it.key().toUtf8().data(), &result);
 			text.replace(it.key(), result);
 		} else {
 			text.replace(it.key(), it.value());
@@ -138,7 +138,7 @@ bool YZMapping::applyPendingOpMappings( QString& text ) {
 #else
 		if ( it.value().startsWith("<Script>") && text.contains(it.key()) ) {
 			char *result;
-			YZExLua::instance()->exe( (const char*)it.value().mid(8, it.value().length()-10), "s>s",  (const char*)it.key(), &result);
+			YZExLua::instance()->exe( it.value().mid(8, it.value().length()-10), "s>s",  it.key().toUtf8().data(), &result);
 			text.replace(it.key(), result);
 		} else {
 			text.replace(it.key(), it.value());
@@ -166,7 +166,7 @@ bool YZMapping::applyInsertMappings( QString& text ) {
 #else
 		if ( it.value().startsWith("<Script>") && text.contains(it.key()) ) {
 			char *result;
-			YZExLua::instance()->exe(  (const char*)it.value().mid(8, it.value().length()-10), "s>s",  (const char*)it.key(), &result);
+			YZExLua::instance()->exe(  it.value().mid(8, it.value().length()-10), "s>s",  it.key().toUtf8().data(), &result);
 			text.replace(it.key(), result);
 		} else {
 			text.replace(it.key(), it.value());
@@ -194,7 +194,7 @@ bool YZMapping::applyGlobalMappings( QString& text ) {
 #else
 		if ( it.value().startsWith("<Script>") && text.contains(it.key()) ) {
 			char *result;
-			YZExLua::instance()->exe( (const char*)it.value().mid(8, it.value().length()-10), "s>s",  (const char*)it.key(), &result);
+			YZExLua::instance()->exe( it.value().mid(8, it.value().length()-10), "s>s",  it.key().toUtf8().data(), &result);
 			text.replace(it.key(), result);
 		} else {
 			text.replace(it.key(), it.value());

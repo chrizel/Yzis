@@ -77,7 +77,11 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 
 				//special handling for indent
 				if ( QString::compare(event, "INDENT_ON_KEY") == 0 ) {
+#if QT_VERSION < 0x040000
 					const char *inputs = view->getInputBuffer();
+#else
+					const char *inputs = view->getInputBuffer().toUtf8().data();
+#endif
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
 					QString curLine = view->myBuffer()->textline(view->getBufferCursor()->getY());
 					rx.exactMatch(curLine);
@@ -102,11 +106,12 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 #if QT_VERSION < 0x040000
 					int nbPrevTabs = rx.cap(1).contains("\t");
 					int nbPrevSpaces = rx.cap(1).contains(" ");
+					YZExLua::instance()->exe(*it2, "siiiiiisss", inputs,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,(const char*)curLine,(const char*)prevLine,(const char*)nextLine);
 #else
 					int nbPrevTabs = rx.cap(1).count("\t");
 					int nbPrevSpaces = rx.cap(1).count(" ");
+					YZExLua::instance()->exe(*it2, "siiiiiisss", inputs,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,curLine.toUtf8().data(),prevLine.toUtf8().data(),nextLine.toUtf8().data());
 #endif
-					YZExLua::instance()->exe(*it2, "siiiiiisss", inputs,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,(const char*)curLine,(const char*)prevLine,(const char*)nextLine);
 				} else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
 					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->getY());
@@ -128,7 +133,11 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					int nbPrevSpaces = rx.cap(1).count(" ");
 #endif
 					char *result;
+#if QT_VERSION < 0x040000
 					YZExLua::instance()->exe(*it2, "iiiiss>s",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, (const char*)prevLine, (const char*)nextLine, &result);
+#else
+					YZExLua::instance()->exe(*it2, "iiiiss>s",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, prevLine.toUtf8().data(), nextLine.toUtf8().data(), &result);
+#endif
 					yzDebug() << "Got INDENT_ON_ENTER response : (" << result << ")" << endl;
 					results << QString(result);
 				} else {

@@ -540,7 +540,11 @@ void YZBuffer::load(const QString& file) {
 				setLocalQStringOption("fileencoding", c->name());
 			}*/ //not reliable enough
 		} else {
+#if QT_VERSION < 0x040000
 			codec = QTextCodec::codecForName( currentEncoding );
+#else
+			codec = QTextCodec::codecForName( currentEncoding.toLatin1() );
+#endif
 		}
 		QTextStream stream( &fl );
 		stream.setCodec( codec );
@@ -593,7 +597,11 @@ bool YZBuffer::save() {
 	if ( codecName == "locale" ) {
 		codec = QTextCodec::codecForLocale();
 	} else {
+#if QT_VERSION < 0x040000
 		codec = QTextCodec::codecForName( codecName );
+#else
+		codec = QTextCodec::codecForName( codecName.toLatin1() );
+#endif
 	}
 
 	QFile file( mPath );

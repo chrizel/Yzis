@@ -50,7 +50,7 @@ void YZBufferOperation::performOperation( YZView* pView, bool opposite)
 {
 	OperationType t = type;
 
-	yzDebug("YZUndoBuffer") << "YZBufferOperation: " << (opposite ? "undo " : "redo ") << toString().latin1() << endl;
+	yzDebug("YZUndoBuffer") << "YZBufferOperation: " << (opposite ? "undo " : "redo ") << toString() << endl;
 
 	if (opposite == true) {
 		switch( type ) {

@@ -2093,7 +2093,11 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   // Get the char parameter (eg DetectChar)
   char chr;
   if (! YzisHlManager::self()->syntax->groupItemData(data,QString("char")).isEmpty())
+#if QT_VERSION < 0x040000
     chr= (YzisHlManager::self()->syntax->groupItemData(data,QString("char")).latin1())[0];
+#else
+    chr= (YzisHlManager::self()->syntax->groupItemData(data,QString("char")).toLatin1())[0];
+#endif
   else
     chr=0;
 
@@ -2103,7 +2107,11 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   // Get a second char parameter (char1) (eg Detect2Chars)
   char chr1;
   if (! YzisHlManager::self()->syntax->groupItemData(data,QString("char1")).isEmpty())
+#if QT_VERSION < 0x040000
     chr1= (YzisHlManager::self()->syntax->groupItemData(data,QString("char1")).latin1())[0];
+#else
+    chr= (YzisHlManager::self()->syntax->groupItemData(data,QString("char1")).toLatin1())[0];
+#endif
   else
     chr1=0;
 
@@ -3021,7 +3029,7 @@ void YzisHighlighting::clearAttributeArrays ()
     }
   }
 #else
-  QHashMutableIterator<int, QVector<YzisAttribute>* > it ( m_attributeArrays );
+  QMutableHashIterator<int, QVector<YzisAttribute>* > it ( m_attributeArrays );
   while (it.hasNext())
   {
     it.next();
@@ -3356,13 +3364,23 @@ QString YzisHlManager::findByContent( const QString& contents ) {
 		magic_close(ms);
 		return QString::null;
 	}
-	if (magic_load( ms, QString( PREFIX ) + "/share/yzis/magic"  ) == -1) {
+	QString p = PREFIX;
+	p+= "/share/yzis/magic";
+#if QT_VERSION < 0x040000
+	if (magic_load( ms, p.latin1()  ) == -1) {
+#else
+	if (magic_load( ms, p.toLatin1()  ) == -1) {
+#endif
 		yzDebug() << "Magic error " << magic_error( ms ) << endl;
 		magic_close(ms);
 		return QString::null;
 	}
 //	const char *magic_result = magic_buffer( ms, contents.utf8(), contents.length() );
+#if QT_VERSION < 0x040000
 	const char *magic_result = magic_file( ms, contents );
+#else
+	const char *magic_result = magic_file( ms, contents.toUtf8() );
+#endif
 	magic_close(ms);
 	if ( magic_result ) {
 		QString mime = QString( magic_result );
@@ -3373,7 +3391,7 @@ QString YzisHlManager::findByContent( const QString& contents ) {
 		mime = mime.mid( 0, mime.indexOf( ';' ) );
 #endif
 		return mime;
-	} else
+	}
 #endif
 		return QString::null;
 }

@@ -71,10 +71,18 @@ void YZPrinter::doPrint( ) {
 	PSDoc *doc=PS_new();
 	if (!doc)
 		return;
+#if QT_VERSION < 0x040000
 	PS_open_file(doc, m_path.latin1());
+#else
+	PS_open_file(doc, m_path.toLatin1().data());
+#endif
 	PS_set_info(doc, "Creator", "Yzis");
 	PS_set_info(doc, "Author", "");
+#if QT_VERSION < 0x040000
 	PS_set_info(doc, "Title", m_path.latin1());
+#else
+	PS_set_info(doc, "Title", m_path.toLatin1().data());
+#endif
 	// Set so it'll fit on both A4 and letter paper;
 	// some of us live in the US, with archaic paper sizes. ;-)
 	PS_set_info(doc, "BoundingBox", "0 0 596 792");
@@ -161,11 +169,19 @@ void YZPrinter::doPrint( ) {
 			++pageNumber;
 			convertColor(Qt::black, red, green, blue);
 			PS_setcolor(doc, "fillstroke", "rgb", red, green, blue, 0.0);
+#if QT_VERSION < 0x040000
 			PS_show_boxed(doc, (" "+mView->myBuffer()->fileName()).latin1(),
+#else
+			PS_show_boxed(doc, (" "+mView->myBuffer()->fileName()).toLatin1().data(),
+#endif
 					titleRect.x(), titleRect.y(), titleRect.width(),
 					titleRect.height(), "left", "");
 			PS_show_boxed(doc,
+#if QT_VERSION < 0x040000
 					(QString::number(pageNumber)+"/"+QString::number(nbPages)+" ").latin1(),
+#else
+					(QString::number(pageNumber)+"/"+QString::number(nbPages)+" ").toLatin1().data(),
+#endif
 					titleRect.x(), titleRect.y(), titleRect.width(),
 					titleRect.height(), "right", "");
 		}
@@ -179,7 +195,7 @@ void YZPrinter::doPrint( ) {
 #if QT_VERSION < 0x040000
 				PS_show(doc, QString::number(lineNumber).rightJustify(marginLeft-1, ' ').latin1());
 #else
-				PS_show(doc, QString::number(lineNumber).rightJustified(marginLeft-1, ' ').latin1());
+				PS_show(doc, QString::number(lineNumber).rightJustified(marginLeft-1, ' ').toLatin1().data());
 #endif
 				lastLineNumber = lineNumber;
 			}

@@ -428,8 +428,9 @@ YZInternalOption *YZInternalOptionPool::getOption( const QString& option ) {
 	QString key = option;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
-	YZInternalOption *opt = mOptions[ key ];
-	return opt; //may be NULL
+	if ( mOptions.contains( key ) )
+		return mOptions[ key ];
+	return NULL;
 }
 
 void YZInternalOptionPool::createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, option_t visibility, value_t type ) {

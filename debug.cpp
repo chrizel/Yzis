@@ -78,14 +78,18 @@ void YZDebugBackend::setDebugOutput( FILE * file )
 	_output = file;
 }
 
-void YZDebugBackend::setDebugOutput( const char * fileName )
+void YZDebugBackend::setDebugOutput( const QString& fileName )
 {
 	if ( QFile::exists( fileName ) )
 		QFile::remove ( fileName );
-	setDebugOutput( fopen( fileName, "w" ) );
+#if QT_VERSION < 0x040000
+	setDebugOutput( fopen( fileName.latin1(), "w" ) );
+#else
+	setDebugOutput( fopen( fileName.toLatin1(), "w" ) );
+#endif
 }
 
-void YZDebugBackend::flush( int level, const char * area, const char * data )
+void YZDebugBackend::flush( int level, const QString& area, const char * data )
 {
 	if (level < _level) return;
 	if (isAreaEnabled( area ) == false) return;
@@ -101,11 +105,13 @@ void YZDebugBackend::flush( int level, const char * area, const char * data )
 
 void YZDebugBackend::parseRcfile(const char * filename)
 {
+#if QT_VERSION < 0x040000
 	flush( YZ_DEBUG_LEVEL,"YZDebugBackend", QString("parseRcfile(%1)\n").arg(filename).latin1() );
 	QFile f( filename );
-#if QT_VERSION < 0x040000
 	if (f.open( IO_ReadOnly ) == false) return;
 #else
+	flush( YZ_DEBUG_LEVEL,"YZDebugBackend", QString("parseRcfile(%1)\n").arg(filename).toLatin1() );
+	QFile f( filename );
 	if (f.open( QIODevice::ReadOnly ) == false) return;
 #endif
 	QTextStream ts(&f);
@@ -250,7 +256,7 @@ void YZDebugStream::flush() {
 #if QT_VERSION < 0x040000
 	YZDebugBackend::instance()->flush(level, area, output.local8Bit().data());
 #else
-	YZDebugBackend::instance()->flush(level, area, output.local8Bit());
+	YZDebugBackend::instance()->flush(level, area, output.toUtf8());
 #endif
 	output=QString::null;
 }

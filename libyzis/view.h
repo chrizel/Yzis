@@ -418,6 +418,12 @@ class YZView {
 		void sendCursor( YZViewCursor* cursor );
 		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
 		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
+
+		/**
+		 * Ask for refresh screen
+		 */
+		void sendRefreshEvent();
+
 		void removePaintEvent( const YZCursor& from, const YZCursor& to );
 		void setPaintAutoCommit( bool enable = true );
 		void abortPaintEvent();

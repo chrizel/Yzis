@@ -908,20 +908,18 @@ void YZView::updateCursor() {
 	syncViewInfo();
 }
 
-/**
- * TODO: scrollCursor can be separated from the buffer...
- */
 void YZView::centerViewHorizontally(unsigned int column) {
 //	yzDebug() << "YZView::centerViewHorizontally " << column << endl;
 	unsigned int newcurrentLeft = 0;
 	if ( column > mColumnsVis/2 ) newcurrentLeft = column - mColumnsVis / 2;
 
 	if (newcurrentLeft > 0) {
-		gotodxy( scrollCursor, newcurrentLeft, scrollCursor->bufferY() );
+		scrollCursor->setBufferX( newcurrentLeft );
+		scrollCursor->setScreenX( newcurrentLeft );
 	} else {
 		scrollCursor->reset();
 	}
-//	yzDebug() << "YZView::centerViewHorizontally : scrollCursor->screenX(): " << scrollCursor->screenX() << ", scrollCursor->bufferX(): " << scrollCursor->bufferX() << endl;
+	sendRefreshEvent();
 }
 
 void YZView::centerViewVertically(unsigned int line) {
@@ -941,8 +939,12 @@ void YZView::alignViewBufferVertically( unsigned int line ) {
 	unsigned int newcurrent = line;
 	unsigned int old_dCurrentTop = scrollCursor->screenY();
 	if ( newcurrent > 0 ) {
-		gotodxy( scrollCursor, scrollCursor->screenX(), newcurrent );
-		// TODO: handle correctly scrolling up/down with screenX > 0
+		if ( wrap ) {
+			gotodxy( scrollCursor, scrollCursor->screenX(), newcurrent );
+		} else {
+			scrollCursor->setBufferY( newcurrent );
+			scrollCursor->setScreenY( newcurrent );
+		}
 	} else {
 		scrollCursor->reset();
 	}
@@ -951,8 +953,7 @@ void YZView::alignViewBufferVertically( unsigned int line ) {
 	} else if ( old_dCurrentTop < scrollCursor->screenY() && scrollCursor->screenY() - old_dCurrentTop < mLinesVis ) {
 		scrollDown( scrollCursor->screenY() - old_dCurrentTop );
 	} else {
-		abortPaintEvent();
-		refreshScreen();
+		sendRefreshEvent();
 	}
 }
 
@@ -962,18 +963,20 @@ void YZView::alignViewVertically( unsigned int line ) {
 	unsigned int screenX = scrollCursor->screenX();
 	unsigned int old_dCurrentTop = scrollCursor->screenY();
 	if ( newcurrent > 0 ) {
-		initGoto( scrollCursor );
-		gotody( newcurrent );
-		// rLineHeight > 1 => our new top is in middle of a wrapped line, move new top to next line
 		if ( wrap ) {
+			initGoto( scrollCursor );
+			gotody( newcurrent );
+			// rLineHeight > 1 => our new top is in middle of a wrapped line, move new top to next line
 			newcurrent = workCursor->bufferY();
 			if ( workCursor->lineHeight > 1 ) 
 				++newcurrent;
 			gotoy( newcurrent );
+			gotodx( screenX );
+			applyGoto( scrollCursor, false );
+		} else {
+			scrollCursor->setBufferY( newcurrent );
+			scrollCursor->setScreenY( newcurrent );
 		}
-		gotodx( screenX );
-		// TODO: handle correctly scrolling up/down with screenX > 0
-		applyGoto( scrollCursor, false );
 	} else {
 		scrollCursor->reset();
 	}
@@ -982,8 +985,7 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else if ( old_dCurrentTop < scrollCursor->screenY() && scrollCursor->screenY() - old_dCurrentTop < mLinesVis ) {
 		scrollDown( scrollCursor->screenY() - old_dCurrentTop );
 	} else {
-		abortPaintEvent();
-		refreshScreen();
+		sendRefreshEvent();
 	}
 }
 
@@ -1172,7 +1174,6 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 			YZCursor dBegin( *dVisualCursor );
 			YZCursor bEnd( *mainCursor->buffer() );
 			YZCursor dEnd( *mainCursor->screen() );
-
 			if ( bBegin > bEnd ) {
 				YZCursor bTmp( bEnd );
 				YZCursor dTmp( dEnd );
@@ -1214,8 +1215,6 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 		}
 		if ( !isColumnVisible( mainCursor->screenX(), mainCursor->screenY() ) ) {
 			centerViewHorizontally( mainCursor->screenX( ) );
-			abortPaintEvent();
-			refreshScreen();
 		}
 		commitPaintEvent();
 		updateCursor( );
@@ -2337,6 +2336,12 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 		selectionPool->addSelection( "DRAW", curx, cury, curx + curw, cury + curh );
 	}
 }
+
+void YZView::sendRefreshEvent( ) {
+	abortPaintEvent();
+	sendPaintEvent( getDrawCurrentLeft(), getDrawCurrentTop(), getColumnsVisible(), getLinesVisible() );
+}
+
 void YZView::removePaintEvent( const YZCursor& from, const YZCursor& to ) {
 	selectionPool->delSelection( "DRAW", from, to, from, to );
 }

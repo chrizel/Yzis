@@ -1,8 +1,12 @@
-2004-04-3 mikmak
+2004-04-04 mikmak
+  * libyzis
+    disables views updates during a ::load => speed up loading huge files
+
+2004-04-03 mikmak
   * kyzis
     viewcursorinterface, patch by Mathieu Kooiman (yzis now runs in quanta)
 
-2004-04-1 mikmak
+2004-04-01 mikmak
   * kyzis
     patch from Mathieu Kooiman : implement KTextEditor::EditInterface
 

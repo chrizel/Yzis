@@ -51,6 +51,7 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path)
 	mUndoBuffer = new YZUndoBuffer( this );
 	load();
 	mSession->addBuffer( this );
+	mUpdateView=true;
 }
 
 YZBuffer::~YZBuffer() {
@@ -325,6 +326,8 @@ uint YZBuffer::firstNonBlankChar( uint line )
 // ------------------------------------------------------------------------
 
 void YZBuffer::load(const QString& file) {
+	//stop redraws
+	mUpdateView=false;
 	mText.clear();
 	if ( !file.isNull() ) { 
 		//hmm changing file :), update Session !!!!
@@ -346,6 +349,8 @@ void YZBuffer::load(const QString& file) {
 		appendLine("");
 		mUndoBuffer->setInsideUndo( false );
 	}
+	//reenable
+	mUpdateView=true;
 	updateAllViews();
 }
 
@@ -393,6 +398,7 @@ YZView* YZBuffer::findView( unsigned int uid ) {
 }
 
 void YZBuffer::updateAllViews() {
+	if ( !mUpdateView ) return;
 	YZView *it;
 	for ( it = mViews.first(); it; it = mViews.next() ) {
 		it->redrawScreen();

@@ -1,0 +1,30 @@
+trying to define what motion we will use (TYPES), how we will use them from command mode (command regexp) and how they will match on the text (motion)
+the idea is to :
+1 - detect a command in inputBuffer
+2 - detect a motion in the same inputBuffer following the command we just found (done by each command which supports it i believe)
+3 - let the command which is executed (in YZView for eg) call a static function in motion.cpp to calculate the result of the "motion" :
+	which can be :
+		- a length
+		- a position in text
+		- other things ?
+
+TYPE                                                 command regexp                  motion                
+
+word                                                 [0-9]*w                                                
+(without next space == outer word)
+WORD                                                 [0-9]*w                         [0-9]*\b.*\b           
+(with next space == inner word)
+SENTENCE_BACKWARD                                    [0-9]*(
+SENTENCE_FORWARD                                     [0-9]*)
+PARAGRAPH_BACKWARD                                   [0-9]*{
+PARAGRAPH_FORWARD                                    [0-9]*}
+DOWN                                                 [0-9]*j                          calculated from cursor pos
+UP                                                   [0-9]*k                          calculated from cursor pos 
+LEFT                                                 [0-9]*h                          calculated from cursor pos
+RIGHT                                                [0-9]*l                          calculated from cursor pos
+ZERO                                                 0                                
+FIRSTNONBLANK                                        ^                                (\s*)(\S)
+ENDOFLINE                                            $                                calculated from cursor pos
+SECTION not understood from vim's doc yet ...
+
+

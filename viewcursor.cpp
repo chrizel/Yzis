@@ -72,6 +72,10 @@ void YZViewCursor::reset() {
 	lineHeight = 1;
 	wrapNextLine = false;
 	wrapTab = false;
+	mBuffer->setX( 0 );
+	mBuffer->setY( 0 );
+	mScreen->setX( 0 );
+	mScreen->setY( 0 );
 }
 
 void YZViewCursor::debug() {

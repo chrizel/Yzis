@@ -163,11 +163,19 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 }
 
 void YZView::recalcScreen( ) {
+	if ( getLocalStringOption( "encoding" ) != mBuffer->encoding() ) {
+		mBuffer->setEncoding( getLocalStringOption( "encoding" ) );
+	}
+	YZCursor old_pos = *scrollCursor->buffer();
+	scrollCursor->reset();
+	gotoxy( scrollCursor, old_pos.getX(), old_pos.getY(), false );
+
+	old_pos = *mainCursor->buffer();
+	mainCursor->reset();
+	gotoxy( mainCursor, old_pos.getX(), old_pos.getY() );
+
 	abortPaintEvent();
 	refreshScreen();
-	YZCursor buffer = *mainCursor->buffer();
-	mainCursor->reset();
-	gotoxy( buffer.getX(), buffer.getY() );
 }
 
 void YZView::sendMultipleKey(const QString& keys) {
@@ -751,11 +759,9 @@ void YZView::alignViewVertically( unsigned int line ) {
 //	yzDebug() << "YZView::alignViewVertically " << line << endl;
 	unsigned int newcurrent = line;
 	unsigned int old_dCurrentTop = scrollCursor->screenY();
-//	yzDebug() << "newcurrent=" << newcurrent << "; alignTop=" << alignTop << "; old_scrollCursor->screenY()=" << scrollCursor->screenY() << endl;
 	if ( newcurrent > 0 ) {
 		initGoto( scrollCursor );
 		gotody( newcurrent );
-//		yzDebug() << "raw top = " << *sCursor << "; r=" << *rCursor << endl;
 		// rLineHeight > 1 => our new top is in middle of a wrapped line, move new top to next line
 		if ( wrap ) {
 			newcurrent = workCursor->bufferY();
@@ -767,7 +773,6 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else {
 		scrollCursor->reset();
 	}
-//	yzDebug() << "scrollCursor->screenY() = " << scrollCursor->screenY() << "; scrollCursor->bufferY()=" << scrollCursor->bufferY() << endl;
 	if ( old_dCurrentTop > scrollCursor->screenY() && old_dCurrentTop - scrollCursor->screenY() < mLinesVis ) {
 		scrollUp( old_dCurrentTop - scrollCursor->screenY() );
 	} else if ( old_dCurrentTop < scrollCursor->screenY() && scrollCursor->screenY() - old_dCurrentTop < mLinesVis ) {
@@ -776,19 +781,6 @@ void YZView::alignViewVertically( unsigned int line ) {
 		abortPaintEvent();
 		refreshScreen();
 	}
-}
-
-/* recalculate cursor position + refresh screen */
-void YZView::reset( ) {
-	if ( getLocalStringOption( "encoding" ) != mBuffer->encoding() ) {
-		mBuffer->setEncoding( getLocalStringOption( "encoding" ) );
-	}
-	initDraw( 0, 0, 0, 0 );
-	drawMode = false;
-	gotoy( mainCursor->bufferY() );
-	gotox( mainCursor->bufferX() );
-	applyGoto( mainCursor );
-	refreshScreen( );
 }
 
 /*

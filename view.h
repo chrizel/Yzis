@@ -531,9 +531,6 @@ class YZView {
 		virtual void scrollUp( int ) = 0;
 		virtual void scrollDown( int ) = 0;
 
-		/* recalculate cursor position and refresh screen */
-		void reset( );
-
 		//Local Options management
 		/**
 		 * Retrieve an int option

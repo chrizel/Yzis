@@ -190,7 +190,7 @@ void  YZBuffer::appendLine(const QString &l) {
 		bool ctxChanged = false;
 		QMemArray<signed char> foldingList;
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
-		if ( ctxChanged ) yzDebug() << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
+//		if ( ctxChanged ) yzDebug() << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
 	setModified( true );
 	updateAllViews();

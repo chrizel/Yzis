@@ -315,6 +315,14 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 					QColor c = mParent->drawColor( );
 					if ( c.isValid() ) p.setPen( c );
 					else p.setPen( foregroundColor() );
+					//other flags
+					QFont myFont(font());
+					myFont.setItalic(mParent->drawItalic());
+					myFont.setBold(mParent->drawBold());
+					myFont.setOverline(mParent->drawOverline());
+					myFont.setStrikeOut(mParent->drawStrikeOutLine());
+					myFont.setUnderline(mParent->drawUnderline());
+					p.setFont(myFont);
 					//FIXME remove flag...
 					//p.drawText(myRect, flag, mParent->drawChar( ) );
 					QString disp = mParent->drawChar();

@@ -519,7 +519,6 @@ class YZView {
 		 */
 		unsigned int drawHeight( );
 
-
 		/**
 		 * line height
 		 */
@@ -529,6 +528,51 @@ class YZView {
 		 * char color
 		 */
 		const QColor& drawColor( );
+
+		/**
+		 * char color if selected
+		 */
+		const QColor& drawSelColor( );
+
+		/**
+		 * char background color
+		 */
+		const QColor& drawBgColor( );
+
+		/**
+		 * char background color if selected
+		 */
+		const QColor& drawBgSelColor( );
+
+		/**
+		 * current char is bold
+		 */
+		bool drawBold();
+
+		/**
+		 * current char is italic
+		 */
+		bool drawItalic();
+
+		/**
+		 * current char is underlined
+		 */
+		bool drawUnderline();
+
+		/**
+		 * current char is overlined
+		 */
+		bool drawOverline();
+
+		/**
+		 * current char is striked-out
+		 */
+		bool drawStrikeOutLine();
+
+		/**
+		 * current char outline color
+		 */
+		const QColor& drawOutline();
 
 		/**
 		 * Character color at column line
@@ -875,6 +919,8 @@ class YZView {
 		QString m_lastMatch;
 		QStringList m_oldProposals;
 		bool m_lastCompletionDir;
+		//the current attribute being used by the GUI
+		YzisAttribute * curAt;
 };
 
 #endif /*  YZ_VIEW_H */

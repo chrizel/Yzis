@@ -44,6 +44,7 @@ YZSession::YZSession( const QString& _sessionName ) {
 YZSession::~YZSession() {
 }
 
+#if 0
 void YZSession::postEvent (yz_event e) {
 	mEvents.push_back( e ); //append to the FIFO
 	receiveEvent( e );
@@ -70,6 +71,7 @@ yz_event YZSession::fetchNextEvent(int requester) {
 	}
 	return YZEvent::mkEventNoop();
 }
+#endif
 
 void YZSession::addBuffer( YZBuffer *b ) {
 	yzDebug() << "Session : addBuffer " << b->fileName() << endl;

@@ -149,13 +149,7 @@ const KAboutData *KYZisFactory::aboutData() {
 	return data;
 }
 
-void KYZisFactory::receiveEvent(yz_event) {
-	QCustomEvent *myev = new QCustomEvent (QEvent::User);
-	QApplication::postEvent( this, myev ); //this hopefully gives Qt the priority before processing our own events
-}
-
-//receives previously generated events from Qt event loop. hopefully it will do
-//what I want :)
+#if 0
 void KYZisFactory::customEvent (QCustomEvent *) {
 	while ( true ) {
 		yz_event event = fetchNextEvent();
@@ -197,6 +191,7 @@ void KYZisFactory::customEvent (QCustomEvent *) {
 		}
 	}
 }
+#endif
 
 void KYZisFactory::quit( bool ) {
 	kapp->quit();

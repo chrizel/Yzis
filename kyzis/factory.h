@@ -44,7 +44,6 @@ public:
 	static void deregisterView ( class KYZisView *view );
 
 	//GUI interface
-	void receiveEvent (yz_event);
 	void quit(bool save=true);
 	void changeCurrentView( YZView* );
 	YZView *createView ( YZBuffer* );
@@ -53,7 +52,6 @@ public:
 	void deleteView ();
 	
 protected:
-	void customEvent( QCustomEvent * );
 
 private:
     static void ref();

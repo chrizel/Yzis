@@ -47,6 +47,11 @@ class KYZisView: public KTextEditor::View , public YZView
 		void setFocusMainWindow();
 		void scrollDown( int l=1 );
 		void scrollUp( int l=1 );
+
+		void invalidateLine ( unsigned int line );
+		void setStatusBar ( const QString& text );
+		void updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage );
+		void refreshScreen ();
 	
 	private:
 		KYZisEdit *editor;

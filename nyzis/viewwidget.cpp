@@ -40,52 +40,10 @@ NYZView::NYZView(WINDOW *_window, YZBuffer *b)
 	NYZFactory::self->setStatusText (
 			b->fileName() + QString(" %1L" ).arg(b->lineCount())
 			);
+	redrawScreen();
 }
 
 NYZView::~NYZView(){
-}
-
-void NYZView::handle_event(yz_event e)
-{
-
-	switch(e.id) {
-		case YZ_EV_INVALIDATE_LINE:
-			printLine( e.invalidateline.y );
-
-			wrefresh( window );
-//			debug("YZ_EV_SET_LINE: received, line is %d", l);
-			break;
-		case YZ_EV_SET_CURSOR:
-			NYZFactory::self->update_infobar(
-				e.setcursor.l+1,
-				e.setcursor.c+1,
-				e.setcursor.c2+1,
-				e.setcursor.percentage
-				);
-			//yzAssert(isLineVisible(e.setcursor.c));
-			wmove(window, e.setcursor.l-getCurrent() , e.setcursor.c ) ;
-			wrefresh( window );
-//			debug("YZ_EV_SET_CURSOR: received");
-			break;
-		case YZ_EV_SET_STATUS:
-			NYZFactory::self->setStatusText (e.setstatus.text);
-			break;
-		case YZ_EV_REDRAW: {
-			unsigned int i;
-			for ( i=getCurrent(); i < ( getCurrent() + mLinesVis ) && i < mBuffer->lineCount(); i++ ) {
-				printLine(i);
-			}
-			i-=getCurrent();
-			for ( ; i < mLinesVis ; i++ ) printVoid( i );
-		}
-			break;
-		case YZ_EV_NOOP:
-			yzDebug() << "nyzis : event NOOP " << e.id << endl;
-			break;
-		default:
-			yzWarning() << "Unhandled event from yzis core : " <<  e.id;
-			break;
-	}
 }
 
 void NYZView::printVoid( unsigned int relline ) {
@@ -131,5 +89,27 @@ QString NYZView::getCommandLineText() const {
 	return NYZFactory::self->getCommandLine();
 }
 
+void NYZView::invalidateLine ( unsigned int line ) {
+	printLine( line );
+	wrefresh( window );
+}
+
+void NYZView::setStatusBar( const QString& text ) {
+	NYZFactory::self->setStatusText (text);
+}
+
+void NYZView::updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage) {
+	NYZFactory::self->update_infobar(line+1, x1+1, x2+1, percentage);
+	wmove(window, line-getCurrent() , x1 ) ;
+	wrefresh( window );
+}
+
+void NYZView::refreshScreen() {
+	unsigned int i;
+	for ( i=getCurrent(); i < ( getCurrent() + mLinesVis ) && i < mBuffer->lineCount(); i++ )
+		printLine(i);
+	i-=getCurrent();
+	for ( ; i < mLinesVis ; i++ ) printVoid( i );
+}
 
 

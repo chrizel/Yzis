@@ -111,11 +111,6 @@ NYZFactory::~NYZFactory( )
 	self = 0;
 }
 
-void NYZFactory::receiveEvent( yz_event /*ev*/ ) {
-	// do nothing, we'll catch them in next flush_events()
-}
-
-
 void NYZFactory::event_loop() {
 	if ( !currentView )
 		yzError() << "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView";
@@ -133,21 +128,8 @@ void NYZFactory::event_loop() {
 			else
 				currentView->sendKey( c, modifiers );
 		} else usleep (400);
-		flush_events();
 	}
 }
-
-void NYZFactory::flush_events()
-{
-	yz_event e;
-	if ( !currentView )
-		yzError() << "NYZFactory::flush_events() : arghhhhhhh event_loop called with no currentView";
-
-	/* flush event list */
-	while ( (e=NYZFactory::self->fetchNextEvent(/*myId*/)).id != YZ_EV_NOOP )
-		currentView->handle_event(e);
-}
-
 
 void NYZFactory::update_infobar(int l, int c1, int c2, const QString& percentage) {
 	int h,w;

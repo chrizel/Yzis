@@ -1,5 +1,6 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003-2004 Mickael Marchand <marchand@kde.org>
+ *  Thomas Capricelli <orzel@freehackers.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -256,7 +257,7 @@ void YZView::updateCursor() {
 	}
 
 	// FIXME handles tabs here or somwhere else..
-	mSession->postEvent(YZEvent::mkEventCursor(myId, y, mCursor->getX(), mCursor->getX(), percentage));
+	updateCursor( y, mCursor->getX(), mCursor->getX(), percentage );
 }
 
 void YZView::centerView(unsigned int line) {
@@ -274,9 +275,10 @@ void YZView::centerView(unsigned int line) {
 	redrawScreen();
 }
 
+//drop me ? (==move it to GUIs directly)
 void YZView::redrawScreen() {
 	yzDebug() << "View " << myId << " redraw" << endl;
-	mSession->postEvent(YZEvent::mkEventRedraw(myId) );
+	refreshScreen( );
 	updateCursor();
 }
 
@@ -588,13 +590,13 @@ QString YZView::appendAtEOL ( const QString& ) {
 QString YZView::gotoCommandMode( ) {
 	mMode = YZ_VIEW_MODE_COMMAND;
 	purgeInputBuffer();
-	mSession->postEvent(YZEvent::mkEventStatus(myId,"Command mode"));
+	setStatusBar( "Command mode" );
 	return QString::null;
 }
 
 QString YZView::gotoExMode(const QString&) {
 	mMode = YZ_VIEW_MODE_EX;
-	mSession->postEvent(YZEvent::mkEventStatus(myId,"-- EX --"));
+	setStatusBar( "-- EX --" );
 	setFocusCommandLine();
 	purgeInputBuffer();
 	return QString::null;
@@ -602,14 +604,14 @@ QString YZView::gotoExMode(const QString&) {
 
 QString YZView::gotoInsertMode(const QString&) {
 	mMode = YZ_VIEW_MODE_INSERT;
-	mSession->postEvent(YZEvent::mkEventStatus(myId,"-- INSERT --"));
+	setStatusBar( "-- INSERT --" );
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoReplaceMode(const QString&) {
 	mMode = YZ_VIEW_MODE_REPLACE;
-	mSession->postEvent(YZEvent::mkEventStatus(myId,"-- REPLACE --") );
+	setStatusBar( "-- REPLACE --" );
 	purgeInputBuffer();
 	return QString::null;
 }

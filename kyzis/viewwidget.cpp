@@ -91,5 +91,24 @@ void KYZisView::scrollUp ( int lines ) {
 	editor->update();
 }
 
+void KYZisView::invalidateLine ( unsigned int line ) {
+	editor->setTextLine( line, buffer->data( line ) );
+}
+
+void KYZisView::setStatusBar ( const QString& text ) {
+	status->changeItem(text, 0);
+}
+
+void KYZisView::updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage ) {
+	editor->setCursor(x1, line);
+	if (x1!=x2)
+		status->changeItem( QString("%1,%2-%3 (%4)").arg(line+1 ).arg( x1+1 ).arg( x2+1 ).arg( percentage),99 );
+	else
+		status->changeItem( QString("%1,%2 (%3)").arg(line+1 ).arg( x1+1 ).arg( percentage),99 );
+}
+
+void KYZisView::refreshScreen () {
+	editor->updateContents( );
+}
 
 #include "viewwidget.moc"

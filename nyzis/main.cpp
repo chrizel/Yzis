@@ -30,7 +30,6 @@
 static void catchsigint(int sig);
 static void cleaning(void);
 void nyz_init_screen(void);
-void handle_event(yz_event *);
 
 int
 main(int argc, char *argv[])

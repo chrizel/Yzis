@@ -24,6 +24,7 @@
  */
 
 #include <qptrlist.h>
+#include <qstring.h>
 #include "yzis.h"
 #include "session.h"
 
@@ -45,7 +46,7 @@ public:
 	 * Creates a new buffer
 	 * @param sess the session to which the buffer belongs to
 	 * @param _path the file to open in this buffer
-	 * */
+	 */
 	YZBuffer(YZSession *sess,const QString& _path=QString::null);
 
 	/**

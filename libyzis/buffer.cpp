@@ -27,7 +27,6 @@
 #include <qtextstream.h>
 #include <qfileinfo.h>
 
-#include "events.h"
 #include "buffer.h"
 #include "line.h"
 #include "view.h"
@@ -82,7 +81,7 @@ void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
 	/* inform the views */
 	YZView *it;
 	for ( it = mViews.first(); it ; it = mViews.next() )
-		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
+		it->invalidateLine( y );
 
 }
 
@@ -110,8 +109,7 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 	/* inform the views */
 	YZView *it;
 	for ( it = mViews.first(); it; it=mViews.next() ) {
-	//	YZView *v = *it;
-		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
+		it->invalidateLine( y );
 	}
 }
 
@@ -131,11 +129,9 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 	at(y)->setData(l);
 
 	/* inform the views */
-	//QValueList<YZView*>::iterator it;
 	YZView *it;
 	for ( it = mViews.first(); it; it = mViews.next() ) {
-//		YZView *v = *it;
-		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
+		it->invalidateLine( y );
 	}
 }
 
@@ -212,7 +208,7 @@ void YZBuffer::replaceLine( unsigned int y, const QString& value ) {
 	/* inform the views */
 	YZView *it;
 	for ( it = mViews.first(); it ; it = mViews.next() )
-		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
+		it->invalidateLine( y );
 }
 
 // ------------------------------------------------------------------------
@@ -220,24 +216,19 @@ void YZBuffer::replaceLine( unsigned int y, const QString& value ) {
 // ------------------------------------------------------------------------
 
 void YZBuffer::addView (YZView *v) {
-//	QValueList<YZView*>::iterator it;
 	YZView *it;
 	for ( it = mViews.first(); it; it=mViews.next() ) {
-//		YZView *vi = ( *it );
 		if ( it == v ) return; // don't append twice
 	}
 	yzDebug() << "BUFFER: addView" << endl;
 	mViews.append( v );
-	v->redrawScreen();
 	mSession->setCurrentView( v );
 }
 
 YZView* YZBuffer::findView( unsigned int uid ) {
 	yzDebug() << "Buffer: findView " << uid << endl;
-//	QValueList<YZView*>::iterator it;
 	YZView *it;
 	for ( it = mViews.first(); it; it=mViews.next() ){
-//		YZView* v = ( *it );
 		yzDebug() << "Checking view " << uid << " for buffer " << fileName() << endl;
 		if ( it->myId == uid ) {
 			yzDebug() << "Buffer: View " << uid << " found" << endl;
@@ -250,10 +241,8 @@ YZView* YZBuffer::findView( unsigned int uid ) {
 //motion calculations
 
 void YZBuffer::updateAllViews() {
-//	QValueList<YZView*>::iterator it;
 	YZView *it;
 	for ( it = mViews.first(); it; it = mViews.next() ) {
-//		YZView *v = *it;
 		it->redrawScreen();
 	}
 }

@@ -48,7 +48,6 @@ public:
 	QString getCommandLine() const;
 	void setCommandLine( const QString& );
 
-	virtual void receiveEvent(yz_event);
 
 	virtual void scrollDown(int lines=1);
 	virtual void scrollUp(int lines=1);
@@ -63,7 +62,6 @@ public:
 	void setStatusText( const QString& );
 
 private:
-	void flush_events(void);
 	
 private:
 	/* design

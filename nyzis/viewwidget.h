@@ -48,11 +48,14 @@ public:
 	NYZView(WINDOW *_window, YZBuffer *b);
 	virtual ~NYZView();
 
-	void handle_event(yz_event e);
 	virtual QString getCommandLineText(void) const;
 	virtual void setCommandLineText( const QString& );
 	virtual void setFocusCommandLine() {}
 	virtual void setFocusMainWindow() {}
+	virtual void invalidateLine ( unsigned int line );
+	virtual void setStatusBar( const QString& text );
+	virtual void updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage);
+	virtual void refreshScreen();
 
 protected:
 	WINDOW		*window;	/* ncurses window to write to */

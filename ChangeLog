@@ -1,6 +1,8 @@
 2004-03-07 mikmak
   * nyzis
     update to current libyzis API (compile fixes)
+  * all
+    drop all events stuff, use direct C++ calls instead
 
 2004-03-06 philippe
   * tests
@@ -1101,4 +1103,3 @@
 2003-02-09 15:39  mikmak
 
 	* .cvsignore, Design: init
-

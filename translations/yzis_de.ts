@@ -49,15 +49,15 @@
     </message>
     <message>
         <source>-- OPEN --</source>
-        <translation type="unfinished"></translation>
+        <translation>-- OFFEN --</translation>
     </message>
     <message>
         <source>-- VISUAL --</source>
-        <translation type="unfinished"></translation>
+        <translation>-- VISUELL --</translation>
     </message>
     <message>
         <source>-- VISUAL LINES --</source>
-        <translation type="unfinished"></translation>
+        <translation>-- VISUELLE ZEILE --</translation>
     </message>
 </context>
 <context>
@@ -95,11 +95,11 @@
     </message>
     <message>
         <source>Recover</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <source>A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Eine Auslagerungsdatei wurde gefunden, die vermutlich erstellt wurde weil Ihr Computer oder YZis abgestürzt ist. Wollen Sie die Datei wiederherstellen?</translation>
     </message>
 </context>
 <context>
@@ -114,41 +114,41 @@
     </message>
     <message>
         <source>Invalid option given : </source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Option : </translation>
     </message>
     <message>
         <source>This option cannot be switched this way, this is a boolean option.</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Option kann nicht auf diesem Wege verändert werden, da sie vom Typ &quot;boolean&quot; ist.</translation>
     </message>
     <message>
         <source>This option is a global option which cannot be changed with setlocal</source>
-        <translation type="unfinished"></translation>
+        <translation>Diese Option ist global und kann daher nicht mit setlocal verändert werden</translation>
     </message>
     <message>
         <source>Invalid option given</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Option</translation>
     </message>
 </context>
 <context>
     <name>YZExLua</name>
     <message>
         <source>The file %1 could not be found in standard directories</source>
-        <translation type="unfinished"></translation>
+        <translation>Die Datei %1 konnte in den Standard-Verzeichnissen nicht gefunden werden</translation>
     </message>
 </context>
 <context>
     <name>YZSwapFile</name>
     <message>
         <source>Warning, the swapfile could not be opened maybe due to restrictive permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Warnung, die Auslagerungsdatei konnte nicht geöffnet werden, vielleicht aufgrund fehlender Berechtigungen.</translation>
     </message>
     <message>
         <source>Warning, the swapfile could not be created maybe due to restrictive permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation>Warnung, die Auslagerungsdatei konnte nicht erstellt werden, vielleicht aufgrund fehlender Berechtigungen.</translation>
     </message>
     <message>
         <source>The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files.</source>
-        <translation type="unfinished"></translation>
+        <translation>Da die Auslagerungsdatei nicht geöffnet werden konnte, kann diese Datei nicht wiederhergestellt werden. Überprüfen Sie bitte die Dateiberechtigungen.</translation>
     </message>
 </context>
 <context>
@@ -167,7 +167,7 @@
     </message>
     <message>
         <source>To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode</source>
-        <translation type="unfinished"></translation>
+        <translation>Um den Qt-Drucker zu benutzen muss ein X11-Server laufen und die Umgebungsvariable DISPLAY gesetzt sein, Sie sollten im Konsolenmodus pslib probieren</translation>
     </message>
 </context>
 </TS>

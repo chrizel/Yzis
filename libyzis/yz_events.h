@@ -110,7 +110,7 @@ class YZEvent {
 	public:
 		YZEvent();
 
-		static yz_event mkEventStatus(const QString&);
+		static yz_event mkEventStatus(int v,const QString&);
 		static yz_event mkEventCursor(int v, int x, int y, int y2, const QString&);
 		static yz_event mkEventInvalidateLine(int,int);
 		static yz_event mkEventRedraw(int);

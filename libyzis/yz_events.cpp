@@ -7,10 +7,11 @@
 YZEvent::YZEvent() {
 }
 
-yz_event YZEvent::mkEventStatus(const QString& text) {
+yz_event YZEvent::mkEventStatus(int view, const QString& text) {
 	yz_event e;
 	e.id=YZ_EV_SET_STATUS;
 	e.setstatus.text=text;
+	e.view=view;
 	return e;
 }
 

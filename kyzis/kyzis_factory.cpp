@@ -140,7 +140,7 @@ void KYZisFactory::customEvent (QCustomEvent *) {
 	while ( true ) {
 		yz_event event = sess->fetchNextEvent();
 		YZView *vi = sess->findView( event.view );
-		KYZisView *v = currentView;//static_cast<KYZisView*> ( vi );
+		KYZisView *v = static_cast<KYZisView*> ( vi );
 		QString str;
 		switch ( event.id ) {
 			case YZ_EV_INVALIDATE_LINE:

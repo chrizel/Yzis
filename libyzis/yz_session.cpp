@@ -72,7 +72,7 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 YZView* YZSession::findView( int uid ) {
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = buffers.begin(); it!=buffers.end(); it++ ) {
-		YZView *v = ( *it )->findView( uid );
+		YZView *v = ( it.data() )->findView( uid );
 		if ( v ) return v;
 	}
 	return NULL;

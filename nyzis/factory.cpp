@@ -158,6 +158,12 @@ bool NYZFactory::process_one_event() {
 
 
 bool NYZFactory::quit( int errorCode ) {
+	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	for ( ; it!=end; ++it ) {
+		YZBuffer* b = ( *it );
+		deleteBuffer( b );
+	}
+	mBuffers.clear();
 	exit( errorCode );
 	return true;
 }

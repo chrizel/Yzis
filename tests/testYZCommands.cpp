@@ -48,6 +48,7 @@ void TestYZCommands::setUp()
     mSession = new TYZSession();
     mBuf = new YZBuffer( mSession );
     mView = new TYZView( mBuf, mSession, mLines );
+
 }
 
 void TestYZCommands::tearDown()
@@ -125,6 +126,62 @@ void TestYZCommands::testMoving()
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendText( "<Down>" );
     CHECK_CURSOR_POS( mView, 1, 0 );          
+
+    mView->sendText( "<Right>" );
+    mView->sendText( "<Right>" );
+    mView->sendText( "<Right>" );
+    mView->sendText( "<Down>" );
+    mView->sendText( "<Down>" );
+    CHECK_CURSOR_POS( mView, 3, 3 );
+
+    // rerun the same tests using hjkl
+
+    mView->sendText( "l" );
+    mView->sendText( "j" );
+    CHECK_CURSOR_POS( mView, 3, 3 );
+    
+    mView->sendText( "h" );
+    CHECK_CURSOR_POS( mView, 3, 2 );
+  
+     mView->sendText( "k" );
+    CHECK_CURSOR_POS( mView, 2, 2 );
+
+    mView->sendText( "k" );
+    mView->sendText( "k" );
+    mView->sendText( "k" );
+    CHECK_CURSOR_POS( mView, 0, 2 );
+    mView->sendText( "k" );
+    CHECK_CURSOR_POS( mView, 0, 2 );
+    
+    mView->sendText( "h" );
+    mView->sendText( "h" );
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendText( "h" );
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendText( "j" );
+    CHECK_CURSOR_POS( mView, 1, 0 );          
+
+    mView->sendText( "l" );
+    mView->sendText( "l" );
+    mView->sendText( "l" );
+    mView->sendText( "j" );
+    mView->sendText( "j" );
+    CHECK_CURSOR_POS( mView, 3, 3 );
+
+    // test other movements
+    mView->sendText( "gg" );
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendText( "<Right>" );
+    CHECK_CURSOR_POS( mView, 0, 1 );
+    mView->sendText( "gg" );
+    CHECK_CURSOR_POS( mView, 0, 0 );
+
+    mView->sendText( "G" );
+    CHECK_CURSOR_POS( mView, 3, 0 );
+    mView->sendText( "<Right>" );
+    CHECK_CURSOR_POS( mView, 3, 1 );
+    mView->sendText( "G" );
+    CHECK_CURSOR_POS( mView, 3, 0 );
 }
 
 /* ========================================================================= */

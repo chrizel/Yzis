@@ -21,12 +21,7 @@ enum yz_events {
 /** Here are some struct used for event args handling
   * we can use long name as we shouldn't need to use those anyway
   */
-
-#ifdef __cplusplus
-	class YZLine;
-#else
-	struct yz_line;
-#endif /* __cplusplus */
+class YZLine;
 
 
 /**
@@ -47,11 +42,7 @@ enum yz_events {
   */
 struct yz_event_setline {
 	int	y;
-#ifdef __cplusplus
 	YZLine 	*line;
-#else
-	yz_line	*line;
-#endif /* __cplusplus */
 };
 
 /**
@@ -100,9 +91,7 @@ yz_event mk_event_setstatus(char *text);
 yz_event mk_event_setcursor(int x, int y);
 
 
-#ifdef __cplusplus
-/**
-  * Event pool
+/** Event pool
   */
 
 class EventPool {
@@ -117,8 +106,6 @@ protected:
 	yz_event	pool[4000];
 	int		nb;
 };
-#endif /* __cplusplus */
-
 
 #endif /*  YZ_EVENTS_H */
 

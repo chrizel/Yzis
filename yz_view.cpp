@@ -152,11 +152,18 @@ yz_event *YZView::fetch_event(/* asasdfasf */)
 
 void YZView::post_event (yz_event e)
 {
+	printf("postevent\n");
 //	debug("post_event");
 	events[events_nb_last++] = e;
 	if (events_nb_last>=YZ_EVENT_EVENTS_MAX)
 		events_nb_last=0;
 //FIXME	if (events_nb_last==events_nb_begin)
 //		panic("YZ_EVENT_EVENTS_MAX exceeded");
+	if ( gui_manager )
+		gui_manager->postEvent( e );
 }
 
+void YZView::register_manager ( EventMgr *mgr )
+{
+	gui_manager = mgr;
+}

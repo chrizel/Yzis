@@ -7,6 +7,7 @@
 
 #include "yz_events.h"
 #include "yz_buffer.h"
+#include "event_mgr.h"
 
 #define YZ_EVENT_EVENTS_MAX 400
 
@@ -50,6 +51,11 @@ public:
 	  * visible or not
 	  */
 	int	is_line_visible(int l) { return ( (l>=current) && ((l-current)<lines_vis) ); }
+	
+	/**
+	 * Register a GUI event manager
+	 */
+	void register_manager ( EventMgr *mgr );
 
 protected:
 	void	update_cursor(void);
@@ -79,6 +85,11 @@ protected:
 	 * most of command handling and drawing stuff...
 	 * yzview should update the core as to how many lines it can display (changegeometry stuff)
 	 */
+
+	/**
+	 * Current view manager
+	 */
+	EventMgr *gui_manager;
 };
 
 #endif /*  YZ_VIEW_H */

@@ -25,12 +25,13 @@
 #define YZ_PRINTER_H
 
 #include <qprinter.h>
+#include <qcolor.h>
 
 #include "view.h"
 
 class YZView;
 
-class YZPrinter : public QPrinter {
+class YZPrinter /*: public QPrinter*/ {
 
 	public:
 		YZPrinter( YZView *view );
@@ -42,9 +43,12 @@ class YZPrinter : public QPrinter {
 	private:
 		/* methods */
 		void doPrint( );
+		void convertColor(QColor c, double &r, double &g, double &b);
 
 		/* members */
 		YZView *mView;
+		QString m_path;
+
 };
 
 #endif

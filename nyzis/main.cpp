@@ -91,7 +91,9 @@ main(int argc, char *argv[])
 
 	QString initialSendKeys;
 
+	setlocale( LC_ALL, "");
 	bindtextdomain( "yzis", QString( PREFIX ) + "/share/yzis/locale" );
+	bind_textdomain_codeset( "yzis", "UTF-8" );
 	textdomain( "yzis" );
 	// option stuff
 	int option_index = 0;

@@ -57,7 +57,7 @@
 #define qMin QMIN
 #endif
 
-#define _(a) QString(gettext(a))
+#define _(a) QString::fromUtf8(gettext(a))
 
 //visibility of the option
 enum option_t {

@@ -226,8 +226,8 @@ void NYZFactory::popupMessage( const QString &message )
 	box( popup, 0, 0 );
 
 #if QT_VERSION < 0x040000
-	mvwaddstr( popup, 2, 2, message.latin1() );
-	mvwaddstr( popup, 4, ((nc+4)-length)/2, anyKeyMsg.latin1() ); // Center the text.
+	mvwaddstr( popup, 2, 2, message.utf8() );
+	mvwaddstr( popup, 4, ((nc+4)-length)/2, anyKeyMsg.utf8() ); // Center the text.
 #else
 	mvwaddstr( popup, 2, 2, message.toUtf8().data() );
 	mvwaddstr( popup, 2, ((nc+4)-length)/2, anyKeyMsg.toUtf8().data() ); // Center the text.

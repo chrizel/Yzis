@@ -64,7 +64,9 @@ int main(int argc, char **argv) {
 	KGlobal::dirs()->addResourceDir( "locale", QString( PREFIX )+ "/share/yzis/locale" );
 	KGlobal::locale()->setActiveCatalogue("yzis");
 
+	setlocale( LC_ALL, "");
 	bindtextdomain( "yzis", QString( PREFIX ) + "/share/yzis/locale" );
+	bind_textdomain_codeset( "yzis", "UTF-8" );
 	textdomain( "yzis" );
 	// see if we are starting with session management
 //	if (app.isRestored())

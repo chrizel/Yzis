@@ -36,6 +36,7 @@
 #include <kmessagebox.h>
 #include <kstaticdeleter.h>
 #include <qtimer.h>
+#include <qtextcodec.h>
 
 #include "settings.h"
 #include "factory.h"
@@ -230,7 +231,7 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 
 void KYZisFactory::popupMessage( const QString& message ) {
 	KYZisView *v = static_cast<KYZisView*>(currentView());
-	KMessageBox::information(v, message, tr( "Error" ));
+	KMessageBox::information(v, message, _( "Error" ));
 }
 
 void KYZisFactory::closeView() {

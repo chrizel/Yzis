@@ -1792,7 +1792,7 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 		YzisAttribute *list = highlight->attributes( 0 )->data( ); //attributes defined by the syntax highlighting document
 		at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
 	}
-	if ( getLocalBoolOption( "list" ) && ( stringHasOnlySpaces(yl->data().mid(col)) || yl->data()[col] == tabChar ) )
+	if ( getLocalBoolOption( "list" ) && ( yl->data()[col] == ' ' || yl->data()[col] == tabChar ) )
 		return blue;
 	if ( at ) return at->textColor(); //textcolor :)
 	return fake;

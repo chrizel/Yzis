@@ -362,9 +362,18 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 			yzline(line)->setData(l);
 		}
 	}
-	if ( updateHL( line ) ) updateAllViews( );
-	YZSession::me->search()->highlightLine( this, line );
+	if ( isLineVisible( line ) && updateHL( line ) ) updateAllViews( );
+	else YZSession::me->search()->highlightLine( this, line );
 	setChanged( true );
+}
+
+bool YZBuffer::isLineVisible(uint line) {
+	YZView *it;
+	bool shown=false;
+	for ( it = mViews.first(); it && !shown; it = mViews.next() ) {
+		shown = shown || it->isLineVisible(line);
+	}
+	return shown;
 }
 
 bool YZBuffer::isEmpty() const {
@@ -832,9 +841,9 @@ bool YZBuffer::updateHL( unsigned int line ) {
 	bool hlChanged = false;
 	YZLine* yl = NULL;
 	unsigned int maxLine = lineCount();
-	for ( unsigned int i = hlLine; i < maxLine; i++ ) {
+/*	for ( unsigned int i = hlLine; i < maxLine; i++ ) {
 		YZSession::me->search()->highlightLine( this, i );
-	}
+	}*/
 	if ( m_highlight == 0L ) return false;
 	while ( ctxChanged && hlLine < maxLine ) {
 		yl = yzline( hlLine );

@@ -437,6 +437,11 @@ protected:
 	 */
 	void setTextline( uint line, const QString & l );
 
+	/**
+	 * Is a line displayed in any view ?
+	 */
+	bool isLineVisible(uint line);
+
 	QString mPath;
 	QPtrList<YZView> mViews;
 

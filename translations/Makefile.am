@@ -1,1 +1,4 @@
 POFILES = AUTO
+
+
+DISTCLEANFILES = *.gmo

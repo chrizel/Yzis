@@ -241,7 +241,15 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	bool test = false;
 
 	bool cindent = getLocalBoolOption( "cindent" );
+	if ( getLocalBoolOption( "rightleft" ) ) {
+#define SWITCH_KEY( a, b ) \
+	if ( key == a ) key = b; \
+	else if ( key == b ) key = a
+		SWITCH_KEY( "<RIGHT>", "<LEFT>" );
+		SWITCH_KEY( "h", "l" );
+	}
 
+	/** rightleft mapping **/
 	switch(mMode) {
 		case YZ_VIEW_MODE_INSERT:
 			if ( key == "<HOME>" ) {

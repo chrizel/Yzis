@@ -166,5 +166,18 @@ QString YZExExecutor::substitute( YZView *view, const QString& inputs) {
 	return QString::null;
 }
 
+QString YZExExecutor::print( YZView *view, const QString& inputs ) {
+	int idx = inputs.find( " " );
+	if ( idx == -1 ) {
+		view->mySession()->popupMessage( tr( "Please specify a filename" ) );
+		return QString::null;
+	}
+	QString path = inputs.mid( idx + 1 );
+	QFileInfo fi ( path );
+	path = fi.absFilePath( );
+	view->printToFile( path );
+	return QString::null;
+}
+
 #include "ex_executor.moc"
 

@@ -99,7 +99,7 @@
     </message>
     <message>
         <source>A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?</source>
-        <translation>Eine Auslagerungsdatei wurde gefunden, die vermutlich erstellt wurde weil Ihr Computer oder YZis abgestürzt ist. Wollen Sie die Datei wiederherstellen?</translation>
+        <translation>Eine Auslagerungsdatei wurde gefunden, die vermutlich erstellt wurde weil Ihr Computer oder Yzis abgestürzt ist. Wollen Sie die Datei wiederherstellen?</translation>
     </message>
 </context>
 <context>
@@ -171,35 +171,35 @@
     </message>
     <message>
         <source>--INSERT--</source>
-        <translation type="unfinished"></translation>
+        <translation>--EINFÜGEN--</translation>
     </message>
     <message>
         <source>--REPLACE--</source>
-        <translation type="unfinished"></translation>
+        <translation>--ERSETZEN--</translation>
     </message>
     <message>
         <source>--COMMAND--</source>
-        <translation type="unfinished"></translation>
+        <translation>--BEFEHL--</translation>
     </message>
     <message>
         <source>--EX--</source>
-        <translation type="unfinished"></translation>
+        <translation>--EX--</translation>
     </message>
     <message>
         <source>--SEARCH--</source>
-        <translation type="unfinished"></translation>
+        <translation>--SUCHE--</translation>
     </message>
     <message>
         <source>--OPEN--</source>
-        <translation type="unfinished"></translation>
+        <translation>--OFFEN--</translation>
     </message>
     <message>
         <source>--VISUAL--</source>
-        <translation type="unfinished"></translation>
+        <translation>--VISUELL--</translation>
     </message>
     <message>
         <source>--VISUAL LINE--</source>
-        <translation type="unfinished"></translation>
+        <translation>--VISUELLE ZEILE--</translation>
     </message>
 </context>
 </TS>

@@ -1,3 +1,7 @@
+2003-08-28 mikmak
+  * libyzis
+    add yzDebug(), the debug class ;)
+
 2003-08-26 mikmak
   * admin
     update to current kde-common/admin

@@ -174,8 +174,9 @@ NYZisDoc *NYZFactory::createBuffer(const QString& filename)
 
 void NYZFactory::popupMessage( const QString &message )
 {
-	int nl,nc,y;
+	int nl,nc;
 #if 0
+	int y;
 	message.simplifyWhiteSpace();
 	nc = message.length();
 	nl = 1;
@@ -240,7 +241,7 @@ void NYZFactory::deleteView(int /*Id*/)
 	}
 }
 
-bool NYZFactory::promptYesNo( const QString& title, const QString& message ) {
+bool NYZFactory::promptYesNo( const QString& /*title*/, const QString& /*message*/ ) {
 //TODO
 	return true;
 }

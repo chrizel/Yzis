@@ -140,7 +140,7 @@ const KAboutData *KYZisFactory::aboutData() {
 	return data;
 }
 
-void KYZisFactory::quit( int errorCode ) {
+void KYZisFactory::quit( int /*errorCode*/ ) {
 	kapp->quit();
 }
 
@@ -228,7 +228,7 @@ void KYZisFactory::deleteView( int Id ) {
 #endif
 }
 
-void KYZisFactory::deleteBuffer(YZBuffer *b) {
+void KYZisFactory::deleteBuffer(YZBuffer* /*b*/) {
 }
 
 void KYZisFactory::setFocusMainWindow() {

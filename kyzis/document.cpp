@@ -280,7 +280,7 @@ unsigned int KYZisDoc::undoSteps() const {
 	return 0;	
 }
 
-void KYZisDoc::setUndoSteps(unsigned int steps) {
+void KYZisDoc::setUndoSteps(unsigned int ) {
 	//nothing
 }
 

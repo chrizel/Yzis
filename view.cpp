@@ -78,6 +78,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 }
 
 YZView::~YZView() {
+	yzDebug() << "Deleting view " << myId << endl;
 	mBuffer->rmView(this); //make my buffer forget about me
 }
 
@@ -920,8 +921,14 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
 		//ok we have a motion , so delete till the end of the motion :)
 		YZCursor *cursor = new YZCursor(this);
-		bool goBack = mSession->getMotionPool()->applyMotion(args.motion, this, cursor);
+		bool goBack = false;
+	    bool success = mSession->getMotionPool()->applyMotion(args.motion, this, &goBack, cursor);
+		if ( !success ) {
+			purgeInputBuffer();
+			return QString::null;
+		}
 		//delete to the cursor position now :)
+		yzDebug() << "Result of motion is : " << cursor->getX() << " " << cursor->getY() << endl;
 
 		unsigned int edY = 0;
 
@@ -942,6 +949,9 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 
 		/* 2. delete whole lines */
 		unsigned int curY = goBack ? mY - 1 : mY + 1;
+		if ( mY == 0 ) curY = 0; //dont loop ;)
+		if ( mY == mBuffer->lineCount() - 1 ) curY = mBuffer->lineCount() - 1; // and ... dont loop
+
 		//forward
 		while ( !goBack && cursor->getY() > curY ) {
 			mBuffer->deleteLine( curY );
@@ -974,7 +984,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 			} else
 				paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 		}
-		gotoxy( mX, mY );
+		gotoxy( goBack ? cursor->getX() : mX, mY );
 	}
 	YZSession::mRegisters.setRegister( reg, buff );
 
@@ -1481,7 +1491,7 @@ void YZView::joinLine( unsigned int line ) {
 	paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
 }
 
-QString YZView::joinLine ( const QString& inputsBuff, YZCommandArgs args) {
+QString YZView::joinLine ( const QString& , YZCommandArgs ) {
 	//reset the input buffer
 	purgeInputBuffer();
 	joinLine( mCursor->getY() );

@@ -88,9 +88,10 @@ class YZMotionPool {
 		 * Calculates coordinates of the cursor after applying the given motion
 		 * @param motion the motion to apply
 		 * @param view the view on which to operate
-		 * @return whether or not the motion goes backward in the text
+		 * @param backward true if the motion goes backward in the text
+		 * @return whether a match was found
 		 */
-		bool applyMotion( const QString& inputsMotion, YZView *view, YZCursor *cursor );
+		bool applyMotion( const QString& inputsMotion, YZView *view, bool *backward, YZCursor *cursor );
 
 		/**
 		 * Check whether the @param inputs match a known motion

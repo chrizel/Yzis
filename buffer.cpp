@@ -49,13 +49,13 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 		// find a tmp file that does not exist
 		do {
 			mPath = QString("/tmp/yzisnew%1").arg(random());
-			mFileIsNew = true;
 		} while ( QFileInfo( mPath ).exists() == true );
 		// there is still a possible race condition here...
+		mFileIsNew = true;
 	}
 	mUndoBuffer = new YZUndoBuffer( this );
-/*	if ( mFileIsNew ) displayIntro();
-	else */load();
+	if ( mFileIsNew ) displayIntro();
+	else load();
 	mSession->addBuffer( this );
 }
 
@@ -361,6 +361,7 @@ uint YZBuffer::firstNonBlankChar( uint line )
 
 void YZBuffer::load(const QString& file) {
 	//stop redraws
+	if ( mIntro ) clearIntro();
 	mUpdateView=false;
 	mText.clear();
 	if ( !file.isNull() ) { 

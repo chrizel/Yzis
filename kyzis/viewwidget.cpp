@@ -132,6 +132,9 @@ void KYZisView::modeChanged (void) {
 		case YZ_VIEW_MODE_OPEN: //open
 			status->changeItem(tr("-- OPEN --"), 0);
 			break;
+		case YZ_VIEW_MODE_VISUAL: //visual
+			status->changeItem(tr("-- VISUAL --"), 0);
+			break;
 	};
 }
 

@@ -239,7 +239,8 @@ void NYZView::syncViewInfo( void )
 		"Command",
 		"     Ex",
 		" Search",
-		"   Open"
+		"   Open",
+		" Visual"
 	};
 
 	werase(infobar);

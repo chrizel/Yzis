@@ -1,5 +1,5 @@
 /**
- * $Id: yz_view.cpp,v 1.35 2003/04/25 18:31:02 mikmak Exp $
+ * $Id: yz_view.cpp,v 1.36 2003/04/25 18:32:15 mikmak Exp $
  */
 
 #include <cstdlib>
@@ -127,7 +127,7 @@ void YZView::centerView(int line) {
 	current = line - lines_vis / 2;
 	if ( current < 0 ) current = 0;
 	if ( current > buffer->text.count() - lines_vis ) current = buffer->text.count() - lines_vis;
-	printf("Center : %i\n Lines vis : %i\n Current : %i\n",line,lines_vis,current);
+	//printf("Center : %i\n Lines vis : %i\n Current : %i\n",line,lines_vis,current);
 
 	//redraw the screen
 	redrawScreen();

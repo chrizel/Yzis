@@ -388,49 +388,49 @@ YZCursor YZCommandPool::move(YZView *view, const QString &inputs, unsigned int c
 
 YZCursor YZCommandPool::moveLeft(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveLeft(&viewCursor, args.count, false);
+	args.view->moveLeft(&viewCursor, args.count, false, args.standalone );
 	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveRight(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveRight(&viewCursor, args.count, false);
+	args.view->moveRight(&viewCursor, args.count, false, args.standalone );
 	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveLeftWrap( const YZNewMotionArgs & args ) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveLeft(&viewCursor, args.count, true);
+	args.view->moveLeft(&viewCursor, args.count, true, args.standalone );
 	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveRightWrap( const YZNewMotionArgs & args ) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveRight(&viewCursor, args.count, true);
+	args.view->moveRight(&viewCursor, args.count, true, args.standalone );
 	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveDown(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveDown(&viewCursor, args.count);
+	args.view->moveDown(&viewCursor, args.count, args.standalone );
 	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveUp(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveUp(&viewCursor, args.count);
+	args.view->moveUp(&viewCursor, args.count, args.standalone);
 	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::movePageUp(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveUp(&viewCursor, args.view->getLinesVisible() );
+	args.view->moveUp(&viewCursor, args.view->getLinesVisible(), args.standalone );
 	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::movePageDown(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveDown(&viewCursor, args.view->getLinesVisible() );
+	args.view->moveDown(&viewCursor, args.view->getLinesVisible(), args.standalone );
 	return *viewCursor.buffer();
 }
 
@@ -449,19 +449,19 @@ YZCursor YZCommandPool::find(const YZNewMotionArgs &args) {
 	if ( args.count > 1 )
 		args.view->searchAgain( args.count - 1);
 	YZCursor d=*args.view->getBufferCursor();
-	args.view->gotoxy(c.getX(), c.getY());
+	args.view->gotoxy(c.getX(), c.getY(), args.standalone);
 	return d;
 }
 
 YZCursor YZCommandPool::gotoSOL(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveToStartOfLine(&viewCursor);
+	args.view->moveToStartOfLine(&viewCursor,args.standalone);
 	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::gotoEOL(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveToEndOfLine(&viewCursor);
+	args.view->moveToEndOfLine(&viewCursor,args.standalone);
 	return *viewCursor.buffer();
 }
 
@@ -515,7 +515,7 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 
 YZCursor YZCommandPool::firstNonBlank(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveToFirstNonBlankOfLine(&viewCursor);
+	args.view->moveToFirstNonBlankOfLine(&viewCursor,args.standalone);
 	return *viewCursor.buffer();
 }
 
@@ -534,7 +534,7 @@ YZCursor YZCommandPool::gotoMark( const YZNewMotionArgs &args ) {
 QString YZCommandPool::execMotion( const YZCommandArgs &args ) {
 	const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(args.cmd);
 	assert(m);
-	YZCursor to = (this->*(m->motionMethod()))(YZNewMotionArgs(args.view, args.count, args.arg));
+	YZCursor to = (this->*(m->motionMethod()))(YZNewMotionArgs(args.view, args.count, args.arg,true));
 	args.view->gotoxy(to.getX(), to.getY());
 	return QString::null;
 }

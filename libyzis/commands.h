@@ -242,15 +242,17 @@ private:
 
 class YZNewMotionArgs {
 	public:
-		YZNewMotionArgs(YZView *v, unsigned int cnt=1, QString a=QString::null) {
+		YZNewMotionArgs(YZView *v, unsigned int cnt=1, QString a=QString::null,bool s=false) {
 			view=v;
 			count=cnt;
 			arg=a;
+			standalone=s;
 		}
 
 		YZView *view;
 		unsigned int count;
 		QString arg;
+		bool standalone;
 };
 
 typedef YZCursor (YZCommandPool::*MotionMethod) (const YZNewMotionArgs&);

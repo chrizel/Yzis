@@ -144,45 +144,45 @@ class YZView {
 		/**
 		 * moves the cursor of the current view down
 		 */
-		QString moveDown( unsigned int nb_lines = 1 );
-		QString moveDown( YZViewCursor* viewCursor, unsigned int nb_lines = 1 );
+		QString moveDown( unsigned int nb_lines = 1, bool applyCursor = true );
+		QString moveDown( YZViewCursor* viewCursor, unsigned int nb_lines = 1, bool applyCursor = true );
 
 		/**
 		 * moves the cursor of the current view up 
 		 */
-		QString moveUp( unsigned int nb_lines = 1 );
-		QString moveUp( YZViewCursor* viewCursor,  unsigned int nb_lines = 1 );
+		QString moveUp( unsigned int nb_lines = 1, bool applyCursor = true );
+		QString moveUp( YZViewCursor* viewCursor,  unsigned int nb_lines = 1, bool applyCursor = true );
 
 		/**
 		 * moves the cursor of the current view to the left
 		 */
-		QString moveLeft(int nb_cols=1, bool wrap=false);
-		QString moveLeft( YZViewCursor* viewCursor,int nb_cols=1, bool wrap=false);
+		QString moveLeft(int nb_cols=1, bool wrap=false, bool applyCursor = true);
+		QString moveLeft( YZViewCursor* viewCursor,int nb_cols=1, bool wrap=false, bool applyCursor = true);
 
 		/**
 		 * moves the cursor of the current view to the right
 		 */
-		QString moveRight(int nb_cols=1, bool wrap=false);
-		QString moveRight( YZViewCursor* viewCursor,int nb_cols=1, bool wrap=false);
+		QString moveRight(int nb_cols=1, bool wrap=false, bool applyCursor = true);
+		QString moveRight( YZViewCursor* viewCursor,int nb_cols=1, bool wrap=false, bool applyCursor = true);
 		
 		/**
 		 * moves the cursor of the current view to the first non-blank character 
 		 * of the current line
 		 */
 		QString moveToFirstNonBlankOfLine();
-		QString moveToFirstNonBlankOfLine( YZViewCursor* viewCursor );
+		QString moveToFirstNonBlankOfLine( YZViewCursor* viewCursor, bool applyCursor = true );
 
 		/**
 		 * moves the cursor of the current view to the start of the current line
 		 */
 		QString moveToStartOfLine();
-		QString moveToStartOfLine( YZViewCursor* viewCursor );
+		QString moveToStartOfLine( YZViewCursor* viewCursor, bool applyCursor = true );
 
 		/**
 		 * moves the cursor of the current view to the end of the current line
 		 */
 		QString moveToEndOfLine();
-		QString moveToEndOfLine( YZViewCursor* viewCursor );
+		QString moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor = true );
 
 		/*
 		 * ACTIONS
@@ -614,7 +614,7 @@ class YZView {
 		/**
 		 * move the cursor to the sticky column
 		 */
-		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y);
+		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor = true );
 
 		/**
 		 * Updates stickyCol

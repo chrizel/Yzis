@@ -28,8 +28,10 @@ void KYZisEdit::setCursor(int c, int l) {
 
 void KYZisEdit::setTextLine(int l, const QString &str){
 	mText.insert(l,str);
-	updateContents();
-// 	viewport()->repaint(); // the whole view
+	//fixme :)
+	updateContents(0,( l-1 ) * fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing()*2);
+// 	updateContents(); flickers ...
+// 	 viewport()->repaint(); // the whole view
 }
 
 // INTERNAL API
@@ -50,8 +52,13 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 	//XXX draw text inside the clip
 	KYZLine::iterator it;
 	for (it = mText.begin(); it!=mText.end(); ++it) {
-			p->eraseRect(0,it.key() * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
-			p->drawText(0,it.key() * fontMetrics().lineSpacing(),it.data());
+			kdDebug() << "*** Draw : " << fontMetrics().lineSpacing() * it.key() << " >= " << clipy << endl;
+			kdDebug() << "*** Draw : " << fontMetrics().lineSpacing() * it.key() << " <= " << clipy+cliph << endl;
+			if (fontMetrics().lineSpacing() * it.key() >= clipy && fontMetrics().lineSpacing() * it.key() <= clipy+cliph ) {
+				kdDebug() << "DRAW" << endl;
+				p->eraseRect(0,it.key() * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
+				p->drawText(0,it.key() * fontMetrics().lineSpacing(),it.data());
+			}
 	}
 	
 	//XXX draw the cursor if needed

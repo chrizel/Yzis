@@ -87,6 +87,12 @@ YZCursor YZSearch::doSearch( YZView* mView, const QString& pattern, bool reverse
 			cur.setCursor( top );
 		yzDebug() << "begin = " << cur << ", end = " << end << endl;
 		ret = mView->myBuffer()->action()->search( mView, pattern, cur, end, reverse, &matchedLength, found );
+		if ( *found ) {
+			if ( reverse )
+				mView->displayInfo( QObject::tr("search hit TOP, continuing at BOTTOM") );
+			else
+				mView->displayInfo( QObject::tr("search hit BOTTOM, continuing at TOP") );
+		}
 	}
 	yzDebug() << "ret = " << ret << endl;
 

@@ -66,11 +66,17 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 	int columns = s.width() / fontMetrics().maxWidth() - marginLeft;
 	viewport()->erase( );
 	mParent->setVisibleArea( columns, lines );
+	QSize os = ev->oldSize();
+	if ( s.width() > os.width() ) { // a big mystery...
+		mCursorShown = false;
+		setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+	}
 }
 
-//c,l => draw positions
 void KYZisEdit::setCursor(int c, int l) {
-//	yzDebug() << "KYZisEdit::setCursor: c=" << c << ";l=" << l << ";mCursorShown=" << mCursorShown << endl;
+/*	yzDebug() << "KYZisEdit::setCursor: c=" << c << ";l=" << l << ";mCursorShown=" << mCursorShown 
+		<< "; mCursorX=" << mCursorX << "; mCursorY=" << mCursorY
+		<< endl; */
 	if ( mCursorShown ) drawCursorAt( mCursorX, mCursorY );
 	mCursorX = c - mParent->getDrawCurrentLeft () + marginLeft;
 	mCursorY = l - mParent->getDrawCurrentTop ();
@@ -159,8 +165,6 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 		while ( mParent->drawNextLine( ) && cliph > 0 ) {
 			lineNumber = mParent->drawLineNumber();
 			if ( currentY >= ( uint )clipy ) {
-				if ( currentY == ( uint )mCursorY ) mCursorShown = false; // we're erasing the cursor
-				if ( ! mCursorShown && currentY > ( uint )mCursorY ) setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
 				unsigned int currentX = 0;
 
 				if ( number ) { // draw current line number
@@ -187,6 +191,10 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 					p->drawText(myRect, flag, mParent->drawChar( ) );
 					currentX += mParent->drawLength( );
 				}
+				if ( currentY == ( uint )mCursorY ) {
+					mCursorShown = false;
+					setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+				}
 				currentY += mParent->drawHeight( );
 				cliph -= mParent->lineHeight( );
 			} else {
@@ -198,7 +206,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 		p->setPen( Qt::white );
 		if ( number ) { // draw blank line
 			p->drawLine( marginLeft * maxwidth - maxwidth / 2, clipy * linespace, \
-					marginLeft * maxwidth - maxwidth / 2, ( currentY - clipy ) * linespace );
+					marginLeft * maxwidth - maxwidth / 2, currentY * linespace );
 		}
 		unsigned int fh = height() / linespace;
 		while ( cliph > 0 && currentY < fh ) {
@@ -208,7 +216,6 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 			++currentY;
 			--cliph;
 		}
-		if ( ! mCursorShown ) setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
 	} else {
 		while ( currentY < lineCount ) {
 			myRect.setRect (0, currentY * linespace, width(), linespace);

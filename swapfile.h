@@ -60,6 +60,13 @@ class YZSwapFile {
 		 */
 		void unlink();
 
+	protected:
+
+		/**
+		 * Initialise a swap file
+		 */
+		void init();
+
 	private:
 		struct sE {
 			int inputs;

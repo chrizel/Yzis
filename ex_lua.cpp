@@ -25,6 +25,7 @@
 #include "action.h"
 #include "cursor.h"
 #include "session.h"
+#include "yzis.h"
 
 extern "C" {
 #include <lauxlib.h>
@@ -41,6 +42,7 @@ YZExLua::YZExLua() {
 	luaopen_debug( st );
 	yzDebug() << "Lua " << lua_version() << " loaded" << endl;
 	lua_register(st,"text",text);
+	lua_register(st,"line",line);
 	lua_register(st,"insert",insert);
 	lua_register(st,"replace",replace);
 	lua_register(st,"wincol",wincol);
@@ -50,6 +52,7 @@ YZExLua::YZExLua() {
 	lua_register(st,"filename",filename);
 	lua_register(st,"color",getcolor);
 	lua_register(st,"linecount",linecount);
+	lua_register(st,"version",version);
 }
 
 YZExLua::~YZExLua() {
@@ -115,6 +118,20 @@ int YZExLua::text(lua_State *L) {
 		else result += t + "\n";
 	}
 	lua_pushstring( L, result ); // first result
+	return 1; // one result
+}
+
+int YZExLua::line(lua_State *L) {
+	int n = lua_gettop( L );
+	if ( n != 1 ) return 0; //mis-use of the function
+	
+	int line = ( int )lua_tonumber( L,1 );
+
+	line = line ? line - 1 : 0;
+	
+	YZView* cView = YZSession::me->currentView();
+	QString	t = cView->myBuffer()->textline( line );
+	lua_pushstring( L, t ); // first result
 	return 1; // one result
 }
 
@@ -232,6 +249,12 @@ int YZExLua::linecount(lua_State *L) {
 	lua_pushnumber( L, cView->myBuffer()->lineCount()); // first result
 	return 1; // one result
 }
+
+int YZExLua::version( lua_State *L ) {
+	lua_pushstring( L, VERSION_CHAR );
+	return 1;
+}
+
 
 #include "ex_lua.moc"
 

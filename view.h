@@ -505,6 +505,8 @@ class YZView {
 		void initDraw( );
 		void initDraw( unsigned int sLeft, unsigned int sTop, unsigned int rLeft, unsigned int rTop, bool draw = true );
 
+		unsigned int initDrawContents( unsigned int clipy );
+
 		/**
 		 * go to previous line
 		 */

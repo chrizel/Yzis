@@ -67,7 +67,12 @@ class YZView {
 		/** 
 		 * Returns the index of the first line displayed on the view
 		 */
-		unsigned int getCurrent() { return mCurrentTop; }
+		unsigned int getCurrentTop() { return mCurrentTop; }
+
+		/** 
+		 * Returns the index of the first column displayed on the view
+		 */
+		unsigned int getCurrentLeft() { return mCurrentLeft; }
 
 		/**
 		 * returns the number of line this view can display
@@ -75,14 +80,24 @@ class YZView {
 		unsigned int getLinesVisible() { return mLinesVis; }
 
 		/**
+		 * returns the number of line this view can display
+		 */
+		unsigned int getColumnsVisible() { return mColumnsVis; }
+
+		/**
 		 * Returns true if the line @arg l is visible. False otherwise
 		 */
 		int	isLineVisible(unsigned int l) { return ( (l>=mCurrentTop) && ((l-mCurrentTop)<mLinesVis) ); }
 
 		/**
+		 * Returns true if the column @arg c is visible. False otherwise
+		 */
+		int	isColumnVisible(unsigned int c) { return ( (c>=mCurrentLeft) && ((c-mCurrentLeft)<mColumnsVis) ); }
+
+		/**
 		 * Returm my current buffer
 		 */
-		YZBuffer *myBuffer() { return mBuffer;}
+		YZBuffer *myBuffer() { return mBuffer; }
 
 		/**
 		 * Return my current session
@@ -90,9 +105,9 @@ class YZView {
 		YZSession *mySession() { return mSession; }
 
 		/**
-		 * Center view on the given @arg line
+		 * Center view on the given @arg column and @arg line
 		 */
-		void centerView( unsigned int line );
+		void centerView( unsigned int column, unsigned int line );
 
 		/**
 		 * Clean out the current buffer of inputs
@@ -329,9 +344,19 @@ class YZView {
 		unsigned int mLinesVis;
 
 		/**
+		 * Number of visible columns on the view
+		 */
+		unsigned int mColumnsVis;
+
+		/**
 		 * Index of the first visible line
 		 */
 		unsigned int mCurrentTop;
+
+		/**
+		 * Index of the first visible line
+		 */
+		unsigned int mCurrentLeft;
 
 		/**
 		 * The cursor of the view
@@ -379,8 +404,6 @@ class YZView {
 		 * Searching backward
 		 */
 		bool reverseSearch;
-
-//		YZViewInternal *translator;
 };
 
 #endif /*  YZ_VIEW_H */

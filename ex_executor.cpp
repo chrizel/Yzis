@@ -115,10 +115,7 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 	QFileInfo fi ( path );
 	path = fi.absFilePath();
 	yzDebug() << "New buffer / view : " << path << endl;
-	/*YZBuffer *b = */ view->mySession()->createBuffer( path );
-	//TODO
-//	YZView* v = view->mySession()->mGUI->createView(b);
-//	view->mySession()->mGUI->setCurrentView(v);
+	view->mySession()->createBuffer( path );
 	return QString::null;
 }
 

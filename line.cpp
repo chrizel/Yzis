@@ -34,7 +34,7 @@ m_flags( YZLine::flagVisible ) {
 }
 
 YZLine::YZLine() {
-	setData( QString("") );
+	setData( "" );
 	m_initialized = false;
 }
 

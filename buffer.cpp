@@ -91,6 +91,11 @@ YZBuffer::~YZBuffer() {
 	delete mSwap;
 	if ( m_highlight != 0L )
 		m_highlight->release();
+
+	QValueVector<YZLine*>::iterator it;
+	for ( it = mText.begin(); it != mText.end(); it++ ) {
+		delete ( *it );
+	}
 	mText.clear();
 	delete mUndoBuffer;
 	delete mAction;
@@ -310,6 +315,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 		uint idx=0;
 		for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
 			;
+		delete (*it);
 		mText.erase(it);
 	} else {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, "", 0, line );
@@ -352,7 +358,12 @@ void YZBuffer::clearText() {
 	 * as any other text operation. Although I doubt that this is a common
 	 * operation.
 	 */
-	mText.clear();
+	//clear is fine but better _delete_ all yzlines too ;)
+	QValueVector<YZLine*>::iterator it;
+	for ( it = mText.begin(); it != mText.end(); it++ ) {
+		delete ( *it );
+	}
+	mText.clear(); //remove the _pointers_ now
 	mText.append(new YZLine());
 }
 
@@ -398,7 +409,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 	ASSERT_LINE_EXISTS( QString("YZBuffer::setTextline(%1,%2)").arg(line).arg(l), line );
 	if (yzline(line)) {
 		if (l.isNull()) {
-			yzline(line)->setData(QString(""));
+			yzline(line)->setData("");
 		} else {
 			yzline(line)->setData(l);
 		}
@@ -488,6 +499,11 @@ void YZBuffer::load(const QString& file) {
 	if ( mIntro ) clearIntro();
 	//stop redraws
 	mUpdateView=false;
+
+	QValueVector<YZLine*>::iterator it;
+	for ( it = mText.begin(); it != mText.end(); it++ ) {
+		delete ( *it );
+	}
 	mText.clear();
 	mFileIsNew=false;
 

@@ -100,6 +100,11 @@ YZUndoBuffer::YZUndoBuffer( YZBuffer * buffer )
 	commitUndoItem(0,0);
 }
 
+YZUndoBuffer::~YZUndoBuffer() {
+	if ( mFutureUndoItem )
+		delete mFutureUndoItem;
+}
+
 void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY )
 {
 	if (mInsideUndo == true) return;

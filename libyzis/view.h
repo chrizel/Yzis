@@ -372,11 +372,6 @@ class YZView {
 		QString copyLine( unsigned int nb_lines, const QValueList<QChar> &regs );
 
 		/**
-		 * Copy the area described by motion into the list of registers
-		 */
-		void copy( const QString& motion, const QValueList<QChar> &regs );
-  
-		/**
 		 * Pastes the content of default or given register
 		 */
 		void paste( QChar registr, bool after = true );

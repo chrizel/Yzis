@@ -593,7 +593,8 @@ QString YZCommandPool::yankLine(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::yankToEOL(const YZCommandArgs &args) {
-	args.view->copy( "$", args.regs );
+	YZCursor to=move(args.view, "$", 1);
+	args.view->myBuffer()->action()->copyArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	return QString::null;
 }
 
@@ -633,14 +634,27 @@ QString YZCommandPool::change(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::del(const YZCommandArgs &args) {
-	YZCursor to=move(args.view, args.arg, args.count);
-	args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
+	if ( args.selection ) 
+		args.view->myBuffer()->action()->deleteArea(args.view, ( *args.selection )[ 0 ].from(), ( *args.selection )[ 0 ].to() , args.regs);
+	else {
+		YZCursor to=move(args.view, args.arg, args.count);
+		args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
+	}
 	args.view->commitNextUndo();
+	if ( args.selection ) 
+		args.view->leaveVisualMode();
 	return QString::null;
 }
 
 QString YZCommandPool::yank(const YZCommandArgs &args) {
-	args.view->copy( args.arg, args.regs );
+	if ( args.selection ) 
+		args.view->myBuffer()->action()->copyArea(args.view, ( *args.selection )[ 0 ].from(), ( *args.selection )[ 0 ].to() , args.regs);
+	else {
+		YZCursor to=move(args.view, args.arg, args.count);
+		args.view->myBuffer()->action()->copyArea(args.view, *args.view->getBufferCursor(), to, args.regs);
+	}
+	if ( args.selection ) 
+		args.view->leaveVisualMode();
 	return QString::null;
 }
 

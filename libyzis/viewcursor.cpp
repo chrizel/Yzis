@@ -49,6 +49,7 @@ YZViewCursor::~YZViewCursor( ) {
 }
 
 YZViewCursor &YZViewCursor::operator=( const YZViewCursor& c ) {
+	mValid = true;
 	*mScreen = *c.mScreen;
 	*mBuffer = *c.mBuffer;
 	spaceFill = c.spaceFill;
@@ -64,6 +65,7 @@ YZViewCursor &YZViewCursor::operator=( const YZViewCursor& c ) {
 }
 
 void YZViewCursor::reset() {
+	mValid = true;
 	spaceFill = 0;
 	bColIncrement = 1; // XXX seems to be no longer used... ( always 1 )
 	bLineIncrement = 0;
@@ -76,6 +78,13 @@ void YZViewCursor::reset() {
 	mBuffer->setY( 0 );
 	mScreen->setX( 0 );
 	mScreen->setY( 0 );
+}
+
+void YZViewCursor::invalidate() {
+	mValid = false;
+}
+bool YZViewCursor::valid() const {
+	return mValid;
 }
 
 void YZViewCursor::debug() {

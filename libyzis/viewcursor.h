@@ -47,6 +47,11 @@ class YZViewCursor {
 		unsigned int screenX() const;
 		unsigned int screenY() const;
 
+		// toggle valid token to false
+		void invalidate();
+
+		bool valid() const;
+
 		inline YZCursor* buffer() {
 			return mBuffer;
 		}
@@ -127,6 +132,11 @@ class YZViewCursor {
 		 * are we wrapping a line ?
 		 */
 		bool wrapNextLine;
+
+		/**
+		 * valid token
+		 */
+		bool mValid;
 
 };
 

@@ -38,7 +38,6 @@
 
 #include "settings.h"
 
-#define NONFIXED_CURSOR_WIDTH 1
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)

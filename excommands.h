@@ -83,13 +83,16 @@ class YZExRange {
 		YZExRange( const QString& regexp, ExRangeMethod pm ) {
 			mKeySeq = regexp;
 			mPoolMethod = pm;
+			mRegexp = QRegExp( "^(" + regexp + ")([+\\-]\\d*)?(.*)$" );
 		}
 		virtual ~YZExRange() { }
 		
 		QString keySeq() const { return mKeySeq; }
 		const ExRangeMethod& poolMethod() const { return mPoolMethod; }
+		const QRegExp & regexp() const { return mRegexp; }
 
 	private :
+		QRegExp mRegexp;
 		QString mKeySeq;
 		ExRangeMethod mPoolMethod;
 

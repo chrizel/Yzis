@@ -83,7 +83,7 @@ QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* r
 	QString _input = inputs;
 	*matched = false;
 	for ( ranges.first(); ! *matched && ranges.current(); ranges.next() ) {
-		QRegExp reg( "^(" + ranges.current()->keySeq() + ")([+\\-]\\d*)?(.*)$" );
+		QRegExp reg( ranges.current()->regexp() );
 		*matched = reg.exactMatch( _input );
 		if ( *matched ) {
 			unsigned int nc = reg.numCaptures();
@@ -131,8 +131,7 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 		matched = reg.exactMatch( _input );
 		if ( matched ) {
 			unsigned int nc = reg.numCaptures();
-			yzDebug() << "matched " << commands.current()->keySeq() << " " << reg.cap( 1 ) 
-				<< "," << reg.cap( nc - 1 ) << "," << reg.cap( nc ) << endl;
+			yzDebug() << "matched " << commands.current()->keySeq() << " " << reg.cap( 1 ) << "," << reg.cap( nc ) << endl;
 			QString arg = reg.cap( nc );
 			bool force = arg[ 0 ] == '!';
 			if ( force ) arg = arg.mid( 1 );

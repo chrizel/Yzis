@@ -54,65 +54,43 @@ YZCommandPool::~YZCommandPool() {
 
 void YZCommandPool::initPool() {
 	//normal stuff
-	NEW_VIEW_COMMAND("j",&YZView::moveDown,true);
-	NEW_VIEW_COMMAND("k",&YZView::moveUp,true);
-	NEW_VIEW_COMMAND("h",&YZView::moveLeft,true);
-	NEW_VIEW_COMMAND("l",&YZView::moveRight,true);
-	NEW_VIEW_COMMAND("^",&YZView::moveToStartOfLine,true);
-	NEW_VIEW_COMMAND("$",&YZView::moveToEndOfLine,true);
-	NEW_VIEW_COMMAND("x",&YZView::deleteCharacter,true);
+	NEW_VIEW_COMMAND("[0-9]*j",&YZView::moveDown,true);
+	NEW_VIEW_COMMAND("[0-9]*k",&YZView::moveUp,true);
+	NEW_VIEW_COMMAND("[0-9]*h",&YZView::moveLeft,true);
+	NEW_VIEW_COMMAND("[0-9]*l",&YZView::moveRight,true);
+	NEW_VIEW_COMMAND("\\^",&YZView::moveToStartOfLine,true);
+	NEW_VIEW_COMMAND("\\$",&YZView::moveToEndOfLine,true);
+	NEW_VIEW_COMMAND("[0-9]*x",&YZView::deleteCharacter,true);
 	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true);
 	NEW_VIEW_COMMAND(":",&YZView::gotoExMode,true);
 	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true);
-	NEW_VIEW_COMMAND("gg",&YZView::gotoLine,true);
-	NEW_VIEW_COMMAND("G",&YZView::gotoLine,true);
-	NEW_VIEW_COMMAND("dd",&YZView::deleteLine,true);
+	NEW_VIEW_COMMAND("[0-9]*(gg|G)",&YZView::gotoLine,true);
+	NEW_VIEW_COMMAND("[0-9]*dd",&YZView::deleteLine,true);
 	NEW_VIEW_COMMAND("o",&YZView::openNewLineAfter,true);
 	NEW_VIEW_COMMAND("O",&YZView::openNewLineBefore,true);
 	NEW_VIEW_COMMAND("a",&YZView::append,true);
 	NEW_VIEW_COMMAND("A",&YZView::appendAtEOL,true);
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
-//	NEW_VIEW_COMMAND("\"",&YZView::copy,true);
-	NEW_VIEW_COMMAND("yy",&YZView::copy,true);
-	NEW_VIEW_COMMAND("Y",&YZView::copy,true);
-	NEW_VIEW_COMMAND("p",&YZView::paste,true);
-	NEW_VIEW_COMMAND("P",&YZView::paste,true);
+	NEW_VIEW_COMMAND("(\".)?[0-9]*(yy|Y)",&YZView::copy,true);
+	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true);
 }
 
 void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error) {
-	QString result,command;
+	QString result;
+	QString command=QString::null;
 	unsigned int i=0;
 
-	//special handling for commands which use registers ...
-	if ( inputs[ i ] == '"' && !inputs.contains( "yy" ) && !inputs.contains("Y") && !inputs.contains("p") && !inputs.contains("P") )
-		return; //keep going until we have a real command (would need a better check .. regexp ? XXX
-	else if ( inputs[ i ] == '"' )
-		i+=2; //skip the first 2 chars (register command + register name)
-	
-	//regexp ? //FIXME
-	//try to find the command we are looking for
-	//first remove any number at the beginning of command
-	//XXX 0 is itself a command !
-	while ( inputs[ i ].isDigit() )
-		i++; //go on
-
-	//now take the command until another number
-	while ( !inputs[ i ].isDigit() && i<inputs.length() )
-		command += inputs[ i++ ];
-	//end FIXME
-	QString realcommand = command;
-	yzDebug() << "Commands :: execCommand " << realcommand << endl;
-	
-	//printf( "%s %s\n", inputs.latin1(), command.latin1() );
-
-	//try hard to find a correspondance
 	QMap<QString, YZCommand>::Iterator it = globalCommands.end();
-	while ( command.length() > 0 && it == globalCommands.end() ) {
-		it = globalCommands.find(command);
-		if ( it==globalCommands.end() ) command.truncate(command.length()-1);
-	} // should not end here FIXME
-	
-	if ( it!=globalCommands.end() ) { //we got one match *ouf*
+	for ( it = globalCommands.begin(); it!=globalCommands.end(); ++it ) {
+		QString t = it.key();
+		QRegExp ex ( t );
+		if ( ex.exactMatch( inputs ) ) { //command found
+			command = it.key(); 
+			break; //leave now
+		}
+	}
+
+	if ( !command.isNull() ) { //we got one match *ouf*
 		switch ( globalCommands[ command ].obj ) {
 			case VIEW :
 				result = ( *view.*(globalCommands[ command ].viewFunc )) (inputs) ;
@@ -133,22 +111,8 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error)
 				break;
 		}
 	} else {
-		//if we are here then it's not a sub-command, so
-		//is there a command starting with the input-ed characters ?  if yes then
-		//wait for other characters otherwise return error to purge input buffer
-		bool found=false;
-		for ( it = globalCommands.begin(); !found && it != globalCommands.end(); ++it ) {
-			yzDebug() << " No match : looking for possible future matches before returning error : " << realcommand << 
-				" in command : " << it.key().latin1() << endl;
-			QString command2check = it.key().latin1();
-			if ( command2check.startsWith(realcommand) ) {
-				yzDebug() << "FOUND" << endl;
-				found = true;
-			}
-		}
-
-		if ( !found )
-			*error = 1;
+//		*error = 1; //purge input buffer
+		return; //not found :/
 	}
 }
 

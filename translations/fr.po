@@ -1,4 +1,5 @@
 # translation of fr.po to 
+# translation of fr.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Mickael Marchand <marchand@kde.org>, 2005.
@@ -8,7 +9,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-11 15:24+0100\n"
-"PO-Revision-Date: 2005-02-10 21:01+0100\n"
+"PO-Revision-Date: 2005-02-12 00:08+0100\n"
 "Last-Translator: Mickael Marchand <marchand@kde.org>\n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -18,187 +19,189 @@ msgstr ""
 
 #: ../kyzis/main.cpp:38
 msgid "KDE Frontend for the Yzis Editor"
-msgstr ""
+msgstr "Interface KDE de l'éditeur Yzis"
 
 #: ../kyzis/main.cpp:41
 msgid "Document to open."
-msgstr ""
+msgstr "Document à ouvrir."
 
 #: ../kyzis/main.cpp:42
 msgid "Execute command passed in argument"
-msgstr ""
+msgstr "Exécute la commande passée en argument"
 
 #: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:137
 msgid "Kyzis"
-msgstr ""
+msgstr "Kyzis"
 
 #: ../kyzis/src/configdialog.cpp:65
 msgid "Text font"
-msgstr ""
+msgstr "Police du texte"
 
 #: ../kyzis/src/configdialog.cpp:73
 msgid "Use a transparent background"
-msgstr ""
+msgstr "Utiliser un fond transparent"
 
 #: ../kyzis/src/configdialog.cpp:81
 msgid "Background color opacity"
-msgstr ""
+msgstr "Opacité de la couleur de fond"
 
 #: ../kyzis/src/configdialog.cpp:83
 msgid "Min"
-msgstr ""
+msgstr "Min"
 
 #: ../kyzis/src/configdialog.cpp:85
 msgid "Max"
-msgstr ""
+msgstr "Max"
 
 #: ../kyzis/src/configdialog.cpp:93
 msgid "Background Color"
-msgstr ""
+msgstr "Couleur de fond"
 
 #: ../kyzis/src/configdialog.cpp:101
 msgid "Foreground Color"
-msgstr ""
+msgstr "Couleur du texte"
 
 #: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:364
 #: ../kyzis/src/document.cpp:368
 msgid "Syntax Highlighting"
-msgstr ""
+msgstr "Coloration Syntaxique"
 
 #: ../kyzis/src/factory.cpp:66
 msgid "Kyzis Part"
-msgstr ""
+msgstr "Composant Kyzis"
 
 #: ../kyzis/src/factory.cpp:66
 msgid "Embeddable vi-like editor component"
-msgstr ""
+msgstr "Composant Editeur de type Vi"
 
 #: ../kyzis/src/factory.cpp:66
 msgid "(c)2002-2005 The Kyzis Authors"
-msgstr ""
+msgstr "(c) 2002-2005 L'équipe d'Yzis"
 
 #: ../kyzis/src/factory.cpp:138
 msgid "Kyzis - KDE Frontend for Yzis"
-msgstr ""
+msgstr "Kyzis - Interface KDE de l'éditeur Yzis"
 
 #: ../kyzis/src/factory.cpp:140
 msgid "(c) 2003-2005"
-msgstr ""
+msgstr "(c) 2003-2005"
 
 #: ../kyzis/src/factory.cpp:141 ../kyzis/src/factory.cpp:142
 #: ../kyzis/src/factory.cpp:143 ../kyzis/src/factory.cpp:144
 msgid "Initial Author"
-msgstr ""
+msgstr "Auteur initial"
 
 #: ../kyzis/src/factory.cpp:152
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
-msgstr ""
+msgstr "_:Mickael Marchand"
 
 #: ../kyzis/src/factory.cpp:152
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr ""
+msgstr "_:marchand@kde.org"
 
 #: ../kyzis/src/hlconfig.cpp:186
 msgid "Text Area Background"
-msgstr ""
+msgstr "Couleur de fond de l'éditeur"
 
 #: ../kyzis/src/hlconfig.cpp:190
 msgid "Normal text:"
-msgstr ""
+msgstr "Texte Normal:"
 
 #: ../kyzis/src/hlconfig.cpp:196
 msgid "Selected text:"
-msgstr ""
+msgstr "Texte Sélectionné:"
 
 #: ../kyzis/src/hlconfig.cpp:202
 msgid "Current line:"
-msgstr ""
+msgstr "Ligne courante:"
 
 #: ../kyzis/src/hlconfig.cpp:211
 msgid "Bookmark"
-msgstr ""
+msgstr "Signet"
 
 #: ../kyzis/src/hlconfig.cpp:212
 msgid "Active Breakpoint"
-msgstr ""
+msgstr "Point d'arrêt actif"
 
 #: ../kyzis/src/hlconfig.cpp:213
 msgid "Reached Breakpoint"
-msgstr ""
+msgstr "Point d'arrêt atteint"
 
 #: ../kyzis/src/hlconfig.cpp:214
 msgid "Disabled Breakpoint"
-msgstr ""
+msgstr "Point d'arrêt désactivé"
 
 #: ../kyzis/src/hlconfig.cpp:215
 msgid "Execution"
-msgstr ""
+msgstr "Exécution"
 
 #: ../kyzis/src/hlconfig.cpp:224
 msgid "Additional Elements"
-msgstr ""
+msgstr "Eléments additionnels"
 
 #: ../kyzis/src/hlconfig.cpp:228
 msgid "Left border background:"
-msgstr ""
+msgstr "Couleur de la bordure de gauche:"
 
 #: ../kyzis/src/hlconfig.cpp:234
 msgid "Line numbers:"
-msgstr ""
+msgstr "Numéros de ligne:"
 
 #: ../kyzis/src/hlconfig.cpp:240
 msgid "Bracket highlight:"
-msgstr ""
+msgstr "Surlignage des parenthèses:"
 
 #: ../kyzis/src/hlconfig.cpp:246
 msgid "Word wrap markers:"
-msgstr ""
+msgstr "Marqueurs des coupures de mots:"
 
 #: ../kyzis/src/hlconfig.cpp:252
 msgid "Tab markers:"
-msgstr ""
+msgstr "Marqueurs des tabulations:"
 
 #: ../kyzis/src/hlconfig.cpp:264
 msgid "<p>Sets the background color of the editing area.</p>"
-msgstr ""
+msgstr "<p>Sélectionne la couleur de fond de la zone d'édition.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:265
 msgid ""
 "<p>Sets the background color of the selection.</p><p>To set the text color "
 "for selected text, use the \"<b>Configure Highlighting</b>\" dialog.</p>"
-msgstr ""
+msgstr "<p>Sélectionne la couleur de fond de la sélection.</p><p>Pour choisir la couleur du texte sélectionné; utiliser la fenêtre \"<b>Configurer la coloration syntaxique</b>\".</p>"
 
 #: ../kyzis/src/hlconfig.cpp:268
 msgid ""
 "<p>Sets the background color of the selected marker type.</p><p><b>Note</b>: "
 "The marker color is displayed lightly because of transparency.</p>"
 msgstr ""
+"<p>Sélectionne la couleur de fond du type de marqueur sélectionné.</p><p><b>Note</b>: "
+"La couleur du marqueur est affichée clairement à cause de la transparence.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:271
 msgid "<p>Select the marker type you want to change.</p>"
-msgstr ""
+msgstr "<p>Sélectionne le type de marqueur à changer.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:272
 msgid ""
 "<p>Sets the background color of the currently active line, which means the "
 "line where your cursor is positioned.</p>"
-msgstr ""
+msgstr "<p>Séleectionne la couleur de fond de la ligne active courante; c'est-à-dire la ligne où se trouve le curseur.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:275
 msgid ""
 "<p>This color will be used to draw the line numbers (if enabled) and the "
 "lines in the code-folding pane.</p>"
-msgstr ""
+msgstr "<p>Cette couleur sera utilisée pour dessiner les numéros de ligne (si activé) et les lignes du panneau de code-folding.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:277
 msgid ""
 "<p>Sets the bracket matching color. This means, if you place the cursor e.g. "
 "at a <b>(</b>, the matching <b>)</b> will be highlighted with this color.</p>"
-msgstr ""
+msgstr "<p>Sélectionne la couleur de l'accolade de correspondance. Cela signifie que si vous placez le curseur sur une<b>(</b>, la parenthèse correspondante <b>)</b> sera surlignée avec cette couleur.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:281
 msgid ""
@@ -206,11 +209,11 @@ msgid ""
 "dt><dd>A vertical line which shows the column where text is going to be "
 "wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the left of "
 "visually-wrapped lines</dd></dl>"
-msgstr ""
+msgstr "<p>Sélectionne la couleur des marqueurs de coupure de mots:</p><dl><dt>Coupure de mots statique</dt><dd>Une ligne verticale qui montre la colonne où le texte sera coupé</dd><dt>Coupure de mots dynamique</dt><dd>Une flèche affichée à la gauche des lignes sectionnées</dd></dl>"
 
 #: ../kyzis/src/hlconfig.cpp:287
 msgid "<p>Sets the color of the tabulator marks:</p>"
-msgstr ""
+msgstr "<p>Sélectionne la couleur des marques de tabulations:</p>"
 
 #: ../kyzis/src/hlconfig.cpp:505
 msgid ""
@@ -221,11 +224,11 @@ msgid ""
 "squares, or select the color to edit from the popup menu.<p>You can unset "
 "the Background and Selected Background colors from the popup menu when "
 "appropriate."
-msgstr ""
+msgstr "La liste affiche les styles par défaut pour le schéma courant et offre les moyens de l'éditer. Le nom du style reflète les paramètres du style courant.<p>Pour éditer en utilisant le clavier, appuyer sur <strong>élt;espace&gt;</strong> et choisisser une propriété depuis le menu contextuel.<p>Pour éditer les couleurs, cliquer sur les carrés colorés ou choississez depuis le menu contextuel.<p>Vous pouvez réinitialiser la couleur de fond et la couleur de fond de la sélection depuis le menu contextuel."
 
 #: ../kyzis/src/hlconfig.cpp:548
 msgid "H&ighlight:"
-msgstr ""
+msgstr "&Surlignage:"
 
 #: ../kyzis/src/hlconfig.cpp:569
 msgid ""
@@ -236,79 +239,79 @@ msgid ""
 "colored squares, or select the color to edit from the popup menu.<p>You can "
 "unset the Background and Selected Background colors from the context menu "
 "when appropriate."
-msgstr ""
+msgstr "Cette liste affiche les contextes du mode de coloration syntaxique courant et offre un moyen de les éditer . Le nom du contexte reflète les paramètres du style courant.<p>Pour éditer les paramètres en utilisant le clavier, appuyer sur la touche <strong>&lt;espace&gt;</strong> et choisissez une propriété depuis le menu déroulant.<p>Pour éditer les couleurs, cliquer les carrés colorés, ou sélectionner la couleur à éditer depuis le menu déroulant.<p>Vous pouvez réinitialiser la couleur de fond et la couleur de fond de la sélection depuis le menu contextuel."
 
 #: ../kyzis/src/hlconfig.cpp:688
 msgid "&Schema:"
-msgstr ""
+msgstr "&Schéma:"
 
 #: ../kyzis/src/hlconfig.cpp:694
 msgid "&New..."
-msgstr ""
+msgstr "&Nouveau..."
 
 #: ../kyzis/src/hlconfig.cpp:707
 msgid "Colors"
-msgstr ""
+msgstr "Couleurs"
 
 #: ../kyzis/src/hlconfig.cpp:713
 msgid "Normal Text Styles"
-msgstr ""
+msgstr "Styles de texte normal"
 
 #: ../kyzis/src/hlconfig.cpp:717
 msgid "Highlighting Text Styles"
-msgstr ""
+msgstr "Styles de texte colorés"
 
 #: ../kyzis/src/hlconfig.cpp:722
 msgid "&Default schema for %1:"
-msgstr ""
+msgstr "Schéma par &défaut pour %1:"
 
 #: ../kyzis/src/hlconfig.cpp:817
 msgid "Name for New Schema"
-msgstr ""
+msgstr "Nom pour le Nouveau Schéma"
 
 #: ../kyzis/src/hlconfig.cpp:817
 msgid "Name:"
-msgstr ""
+msgstr "Nom:"
 
 #: ../kyzis/src/hlconfig.cpp:817
 msgid "New Schema"
-msgstr ""
+msgstr "Nouveau Schéma"
 
 #: ../kyzis/src/hlconfig.cpp:917
 msgid "Context"
-msgstr ""
+msgstr "Contexte"
 
 #: ../kyzis/src/hlconfig.cpp:922
 msgid "Normal"
-msgstr ""
+msgstr "Normal"
 
 #: ../kyzis/src/hlconfig.cpp:923
 msgid "Selected"
-msgstr ""
+msgstr "Sélectionné"
 
 #: ../kyzis/src/hlconfig.cpp:924
 msgid "Background"
-msgstr ""
+msgstr "Fond"
 
 #: ../kyzis/src/hlconfig.cpp:925
 msgid "Background Selected"
-msgstr ""
+msgstr "Fond de la sélection"
 
 #: ../kyzis/src/hlconfig.cpp:927
 msgid "Use Default Style"
-msgstr ""
+msgstr "Utiliser le style par défaut"
 
 #: ../kyzis/src/hlconfig.cpp:962
 msgid "&Bold"
-msgstr ""
+msgstr "&Gras"
 
 #: ../kyzis/src/hlconfig.cpp:964
 msgid "&Italic"
-msgstr ""
+msgstr "&Italique"
 
 #: ../kyzis/src/hlconfig.cpp:966
 msgid "&Underline"
-msgstr ""
+msgstr "&Souligné"
 
 #: ../kyzis/src/hlconfig.cpp:968
 msgid "S&trikeout"
@@ -316,37 +319,37 @@ msgstr ""
 
 #: ../kyzis/src/hlconfig.cpp:973
 msgid "Normal &Color..."
-msgstr ""
+msgstr "&Couleur Normale..."
 
 #: ../kyzis/src/hlconfig.cpp:974
 msgid "&Selected Color..."
-msgstr ""
+msgstr "Couleur de la &Sélection..."
 
 #: ../kyzis/src/hlconfig.cpp:975
 msgid "&Background Color..."
-msgstr ""
+msgstr "Couleur de &fond..."
 
 #: ../kyzis/src/hlconfig.cpp:976
 msgid "S&elected Background Color..."
-msgstr ""
+msgstr "Couleur de &fond de la sélection..."
 
 #: ../kyzis/src/hlconfig.cpp:987
 msgid "Unset Background Color"
-msgstr ""
+msgstr "Réinitilialise la couleur de fond"
 
 #: ../kyzis/src/hlconfig.cpp:989
 msgid "Unset Selected Background Color"
-msgstr ""
+msgstr "Réinitiliase la couleur de fond de la sélection"
 
 #: ../kyzis/src/hlconfig.cpp:994
 msgid "Use &Default Style"
-msgstr ""
+msgstr "Utilise le style par &défaut"
 
 #: ../kyzis/src/hlconfig.cpp:1210
 msgid ""
 "\"Use Default Style\" will be automatically unset when you change any style "
 "properties."
-msgstr ""
+msgstr "\"Utilise le style par défaut\" sera automatiquement réinitialisé quand vous changer l'une des propriétés d'un style."
 
 #: ../kyzis/src/hlconfig.cpp:1211
 msgid "Yzis Styles"
@@ -390,9 +393,8 @@ msgid "The file %1 could not be found in standard directories"
 msgstr "Le fichier %1 n'a pas pu être trouvé dans les répertoires standards"
 
 #: ../libyzis/ex_lua.cpp:274
-#, fuzzy
 msgid "Lua error when running file %1:\n"
-msgstr "Lua a rencontré une erreur en exécutant le script %1:"
+msgstr "Lua a rencontré une erreur en exécutant le script %1:\n"
 
 #: ../libyzis/mode_command.cpp:53
 msgid "[ Awaiting Command ]"
@@ -440,8 +442,7 @@ msgstr ""
 #: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
 #: ../libyzis/mode_ex.cpp:629
 msgid "This option is a global option which cannot be changed with setlocal"
-msgstr ""
-"Cette option est globale , elle n'est pas modifiable par la commande setlocal"
+msgstr "Cette option est globale , elle n'est pas modifiable par la commande setlocal"
 
 #: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
 #: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
@@ -547,13 +548,5 @@ msgstr "(Appuyez sur une touche)"
 
 #: ../nyzis/viewwidget.cpp:333 ../nyzis/viewwidget.cpp:335
 msgid "[No File]"
-msgstr ""
+msgstr "[ Pas de fichier ]"
 
-#~ msgid "(stable release)"
-#~ msgstr "(version stable)"
-
-#~ msgid "(development release - Use for testing only)"
-#~ msgstr "(version de développement - Utiliser pour tests uniquement)"
-
-#~ msgid "(preview release - Use for testing only)"
-#~ msgstr "(version démo - Utiliser pour tests uniquement)"

@@ -1383,10 +1383,9 @@ bool YZView::drawNextLine( ) {
 }
 
 bool YZView::drawPrevCol( ) {
-	bool afterEnd = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT == mMode && sCurLineLength > 0 ) && sCursor->getX() == sCurLineLength );
 	wrapNextLine = false;
 	if ( sCursor->getX() >= sColLength ) {
-		unsigned int curx = sCursor->getX( ) - ( afterEnd ? 1 : sColLength );
+		unsigned int curx = sCursor->getX( ) - 1;
 		sCursor->setX( curx );
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {

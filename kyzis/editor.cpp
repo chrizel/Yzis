@@ -89,7 +89,7 @@ bool KYZisEdit::event(QEvent *e) {
 }
 
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
-	yzDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
+	yzDebug()<< "View : " << mParent->myId << " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->key() != 0 ) {
 		ButtonState st = e->state();
 		if (e->key() != Qt::Key_unknown) mParent->sendKey(e->key(), st);

@@ -157,6 +157,7 @@ void KYZisFactory::changeCurrentView( YZView* view ) {
 	yzDebug() << "Kyzis : setCurrentView " << view->myId << endl;
 	KYZisView *v = static_cast<KYZisView*>(view);
 	v->setActiveWindow();
+	v->setFocus();
 }
 
 YZView* KYZisFactory::createView( YZBuffer *buffer ) {

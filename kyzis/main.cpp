@@ -29,11 +29,10 @@
 #include <qtextcodec.h>
 #include "translator.h"
 #include "debug.h"
+#include "yzis.h"
 
 static const char *description =
 I18N_NOOP("KDE Frontend for the Yzis Editor");
-
-static const char *version = "M1";
 
 static KCmdLineOptions options[] = {
 	{ "+[URL]", I18N_NOOP( "Document to open." ), 0 },
@@ -41,8 +40,13 @@ static KCmdLineOptions options[] = {
 };
 
 int main(int argc, char **argv) {
-	KAboutData about("kyzis", I18N_NOOP("Kyzis"), version, description, KAboutData::License_GPL, "(C) 2003, 2004 Yzis Team", 0, 0, "yzis-dev@yzis.org");
-	about.addAuthor( "Yzis Team", 0, "yzis-dev@yzis.org" );
+	KAboutData about("kyzis", I18N_NOOP("Kyzis"), VERSION_CHAR, description, KAboutData::License_GPL, 0, 0, "http://www.yzis.org", "bugs@bugs.yzis.org");
+	about.addAuthor( "Mickael Marchand", "Author", "mikmak@yzis.org" );
+	about.addAuthor( "Thomas Capricelli", "Author", "orzel@freehackers.org" );
+	about.addAuthor( "Philippe Fremy", "Author", "phil@freehackers.org" );
+	about.addCredit( "Thomas Nagy", "Icons, KSettings", "tnagy@eleve.emn.fr" );
+	about.addCredit( "Lucijan Bush", "EX mode history", "lucijan@kde.org" );
+	about.addCredit( "Mathieu Kooiman", "KTextEditor interfaces / Dutch translation", "M.Kooiman@map-is.nl" );
 	KCmdLineArgs::init(argc, argv, &about);
 	KCmdLineArgs::addCmdLineOptions( options );
 	KApplication app;

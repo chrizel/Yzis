@@ -30,9 +30,9 @@ YzisAttribute::YzisAttribute()
   : m_weight(QFont::Normal)
   , m_italic(false)
   , m_underline(false)
+  , m_overline(false)
   , m_strikeout(false)
   , m_itemsSet(0)
-  , m_overline(false)
 
 {
 }

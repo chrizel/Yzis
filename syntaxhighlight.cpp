@@ -362,7 +362,7 @@ static YzisHlItemData::ItemStyles getDefStyleNum(QString name)
 }
 //END
 
-//BEGIN KateHlItem
+//BEGIN YzisHlItem
 YzisHlItem::YzisHlItem(int attribute, int context,signed char regionId,signed char regionId2)
   : attr(attribute),
     ctx(context),
@@ -386,7 +386,7 @@ bool YzisHlItem::startEnable(const QChar& c)
   // ONLY called when alwaysStartEnable() overridden
   // IN FACT not called at all, copied into doHighlight()...
   Q_ASSERT(false);
-  return kateInsideString (stdDeliminator, c);
+  return yzisInsideString (stdDeliminator, c);
 }
 
 void YzisHlItem::dynamicSubstitute(QString &str, const QStringList *args)
@@ -561,7 +561,7 @@ bool YzisHlKeyword::hasCustomStartEnable() const
 
 bool YzisHlKeyword::startEnable(const QChar& c)
 {
-  return kateInsideString (deliminators, c);
+  return yzisInsideString (deliminators, c);
 }
 
 // If we use a dictionary for lookup we don't really need
@@ -582,7 +582,7 @@ int YzisHlKeyword::checkHgl(const QString& text, int offset, int len)
 
   int offset2 = offset;
 
-  while (len > 0 && !kateInsideString (deliminators, text[offset2]))
+  while (len > 0 && !yzisInsideString (deliminators, text[offset2]))
   {
     offset2++;
     len--;
@@ -861,7 +861,7 @@ YzisHlAnyChar::YzisHlAnyChar(int attribute, int context, signed char regionId,si
 
 int YzisHlAnyChar::checkHgl(const QString& text, int offset, int len)
 {
-  if ((len > 0) && kateInsideString (_charList, text[offset]))
+  if ((len > 0) && yzisInsideString (_charList, text[offset]))
     return ++offset;
 
   return 0;
@@ -1370,7 +1370,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
       {
         if (!standardStartEnableDetermined)
         {
-          standardStartEnable = kateInsideString (stdDeliminator, lastChar);
+          standardStartEnable = yzisInsideString (stdDeliminator, lastChar);
           standardStartEnableDetermined = true;
         }
 
@@ -2043,7 +2043,7 @@ QStringList YzisHighlighting::readCommentConfig()
       {
         cmlStart=YzisHlManager::self()->syntax->groupData(data,"start");
         cmlEnd=YzisHlManager::self()->syntax->groupData(data,"end");
-        cmlRegion=KateHlManager::self()->syntax->groupData(data,"region");
+        cmlRegion=YzisHlManager::self()->syntax->groupData(data,"region");
       }
     }
 
@@ -2641,7 +2641,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           for (;tmpbool;tmpbool=YzisHlManager::self()->syntax->nextItem(datasub))
           {
             c->subItems.resize (c->subItems.size()+1);
-            c->subItems[c->subItems.size()-1] = createKateHlItem(datasub,iDl,&RegionList,&ContextNameList);
+            c->subItems[c->subItems.size()-1] = createYzisHlItem(datasub,iDl,&RegionList,&ContextNameList);
           }                             }
           YzisHlManager::self()->syntax->freeGroupInfo(datasub);
                               // end of sublevel
@@ -2663,13 +2663,13 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   if (!commentData[MultiLineRegion].isEmpty()) {
     long commentregionid=RegionList.findIndex(commentData[MultiLineRegion]);
     if (-1==commentregionid) {
-      errorsAndWarnings+=i18n("<B>%1</B>: Specified multiline comment region (%2) could not be resolved<BR>").arg(buildIdentifier).arg(commentData[MultiLineRegion]);
+      errorsAndWarnings+=QString("<B>%1</B>: Specified multiline comment region (%2) could not be resolved<BR>").arg(buildIdentifier).arg(commentData[MultiLineRegion]);
       commentData[MultiLineRegion]=QString();
-      kdDebug()<<"ERROR comment region attribute could not be resolved"<<endl;
+      //kdDebug()<<"ERROR comment region attribute could not be resolved"<<endl;
       
     } else {
         commentData[MultiLineRegion]=QString::number(commentregionid+1);
-        kdDebug()<<"comment region resolved to:"<<m_additionalData[additionalDataIndex][MultiLineRegion]<<endl;
+        //kdDebug()<<"comment region resolved to:"<<m_additionalData[additionalDataIndex][MultiLineRegion]<<endl;
     }
   }
   //END Resolve multiline region if possible
@@ -3024,23 +3024,22 @@ QString YzisHlManager::defaultStyleName(int n, bool translateNames)
     // this one is for marking invalid input
     names << "Error";
 
-    translatedNames << i18n("Normal");
-    translatedNames << i18n("Keyword");
-    translatedNames << i18n("Data Type");
-    translatedNames << i18n("Decimal/Value");
-    translatedNames << i18n("Base-N Integer");
-    translatedNames << i18n("Floating Point");
-    translatedNames << i18n("Character");
-    translatedNames << i18n("String");
-    translatedNames << i18n("Comment");
-    translatedNames << i18n("Others");
-    translatedNames << i18n("Alert");
-    translatedNames << i18n("Function");
+    translatedNames << QString("Normal");
+    translatedNames << QString("Keyword");
+    translatedNames << QString("Data Type");
+    translatedNames << QString("Decimal/Value");
+    translatedNames << QString("Base-N Integer");
+    translatedNames << QString("Floating Point");
+    translatedNames << QString("Character");
+    translatedNames << QString("String");
+    translatedNames << QString("Comment");
+    translatedNames << QString("Others");
+    translatedNames << QString("Alert");
+    translatedNames << QString("Function");
     // this next one is for denoting the beginning/end of a user defined folding region
-    translatedNames << i18n("Region Marker");
+    translatedNames << QString("Region Marker");
     // this one is for marking invalid input
-    translatedNames << i18n("Error");
->>>>>>> .merge-right.r1247
+    translatedNames << QString("Error");
   }
 
   return translateNames ? translatedNames[n] : names[n];

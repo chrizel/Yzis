@@ -54,8 +54,8 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 		// there is still a possible race condition here...
 	}
 	mUndoBuffer = new YZUndoBuffer( this );
-	if ( mFileIsNew ) displayIntro();
-	else load();
+/*	if ( mFileIsNew ) displayIntro();
+	else */load();
 	mSession->addBuffer( this );
 }
 

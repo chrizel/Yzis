@@ -89,6 +89,7 @@ void YZView::sendKey( int c, int modifiers) {
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );
+		return;
 	}
 
 	//ignore some keys

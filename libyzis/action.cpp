@@ -51,12 +51,12 @@ YZAction::~YZAction( ) {
 }
 
 #define CONFIGURE_VIEWS \
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
-		it->setPaintAutoCommit( false )
+	{ for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
+	it->setPaintAutoCommit( false ); } 
 
 #define COMMIT_VIEWS_CHANGES \
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
-		it->commitPaintEvent();
+	{ for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
+	it->commitPaintEvent(); }
 
 void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {
 	CONFIGURE_VIEWS;
@@ -358,7 +358,7 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 	QString matchers = pView->myBuffer()->getLocalStringOption("matchpairs");
 
 	QString current = pView->myBuffer()->textline( mCursor.getY() );
-	QChar cchar = current[ mCursor.getX() ];
+	QChar cchar = current.at(mCursor.getX());
 
 	int i = 0;
 	unsigned int j = 0;
@@ -387,9 +387,9 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 					start = back ? current.length() -1 : 0 ;
 
 				for ( j = start; ( j < current.length() ) && ( count > 0 ) ; back ? j-- : j++ ) { //parse current line
-					if ( current[ j ] == cchar ) {
+					if ( current.at( j ) == cchar ) {
 						count++;
-					} else if ( current[ j ] == c ) {
+					} else if ( current.at( j ) == c ) {
 						count--; // we need to skip one more
 					}
 				}

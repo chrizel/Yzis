@@ -108,6 +108,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 
 	YZSelectionMap searchMap;
 	for( ; it != it_end; it++ ) {
+		YZView* v;
 		YZBuffer* b = it.data();
 		QPtrList<YZView> views = b->views();
 
@@ -115,7 +116,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 
 		/** search all **/
 		bool doIt = false;
-		for( YZView* v = views.first(); ! doIt && v ; v = views.next() ) {
+		for( v = views.first(); ! doIt && v ; v = views.next() ) {
 			doIt = doIt || v->getLocalBoolOption( "hlsearch" );
 		}
 		if ( doIt ) {
@@ -140,7 +141,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 			} while ( found );
 		}
 
-		for( YZView* v = views.first(); v; v = views.next() ) {
+		for( v = views.first(); v; v = views.next() ) {
 			highlightSearch( v, searchMap );
 		}
 	}
@@ -175,7 +176,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 			}
 		} while ( found );
 
-		for( YZView* v = views.first(); v; v = views.next() ) {
+		for( v = views.first(); v; v = views.next() ) {
 			v->getSelectionPool()->setLayout( "SEARCH", pool->layout( "SEARCH" ) );
 			v->sendPaintEvent( 0, line, QMAX( (int)(buffer->textline( line ).length() - 1), 0 ), line );
 		}

@@ -263,7 +263,7 @@ QStringList YZInternalOptionPool::readQStringListEntry( const QString& _key, con
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains( key ) ) {
 		const QString& s = mOptions[ key ]->getValue();
-		const QStringList& list ( QStringList::split(",",s,true) );
+		QStringList list ( QStringList::split(",",s,true) );
 		return list;
 	} 
 	return def;
@@ -289,7 +289,7 @@ QColor YZInternalOptionPool::readQColorEntry( const QString& _key, const QColor&
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains( key ) ) {
 		const QString& s = mOptions[ key ]->getValue();
-		const QColor& col( s );
+		QColor col( s );
 		return col;
 	} else return def;
 }

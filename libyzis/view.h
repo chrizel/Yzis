@@ -762,12 +762,15 @@ class YZView {
 		 */
 		unsigned int mCurrentSearchItem;
 
-		struct {
+		class  ViewInformation {
+		public:
 			int l;  //buffer line
 			int c1; //buffer column
 			int c2; //buffer column as drawn
 			QString percentage;
-		} viewInformation;
+		};
+		ViewInformation viewInformation;
+
 
 		/**
 		 * Searching backward

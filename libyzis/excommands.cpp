@@ -130,6 +130,7 @@ QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* r
 bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 	bool ret = false, matched;
 	int from, to;
+	YZView * it;
 	QString _input = inputs.stripWhiteSpace();
 	yzDebug() << "ExCommand : " << _input << endl;
 	_input = _input.replace( QRegExp( "^%" ), "1,$" );
@@ -164,10 +165,10 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 			QString arg = reg.cap( nc );
 			bool force = arg[ 0 ] == '!';
 			if ( force ) arg = arg.mid( 1 );
-			for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 				it->setPaintAutoCommit( false );
 			(this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.stripWhiteSpace(), from, to, force ) );
-			for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 				it->commitPaintEvent();
 		}
 	}

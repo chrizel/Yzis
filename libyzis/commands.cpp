@@ -143,20 +143,22 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 	bool hadCount = false;
 	unsigned int i=0;
 	QValueList<QChar> regs;
+	YZView* it;
+
 	// read in the register operations and the counts
 	while(i<inputs.length()) {
-		if(inputs[i].digitValue() > 0) {
+		if(inputs.at( i ).digitValue() > 0) {
 			unsigned int j=i+1;
-			while(j<inputs.length() && inputs[j].digitValue() >= 0)
+			while(j<inputs.length() && inputs.at(j).digitValue() >= 0)
 				j++;
 			count*=inputs.mid(i, j-i).toInt();
 			i=j;
 			yzDebug() << "Count " << count << endl;
 			hadCount=true; //we found digits given by the user
-		} else if(inputs[i] == '\"') {
+		} else if(inputs.at( i ) == '\"') {
 			if(++i>=inputs.length())
 				break;
-			regs << inputs[i++];
+			regs << inputs.at(i++);
 		} else
 			break;
 	}
@@ -209,8 +211,8 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
 			return CMD_OK;
 		}
-		if(inputs[i].digitValue() > 0) {
-			while(j<inputs.length() && inputs[j].digitValue() > 0)
+		if(inputs.at(i).digitValue() > 0) {
+			while(j<inputs.length() && inputs.at(j).digitValue() > 0)
 				j++;
 			count*=inputs.mid(i,j-i).toInt();
 			i=j;
@@ -258,10 +260,11 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			break;
 		}
 		// the argument is OK, go for it
-		for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+
+		for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 			it->setPaintAutoCommit( false );
 		(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, s));
-		for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+		for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 			it->commitPaintEvent();
 	} else {
 		// keep the commands that match exactly
@@ -298,13 +301,13 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			}
 			if(!c)
 				return CMD_ERROR;
-			for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 				it->setPaintAutoCommit( false );
 			if(visual)
 				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, m));
 			else
 				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
-			for ( YZView* it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
+			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 				it->commitPaintEvent();
 		}
 	}
@@ -325,7 +328,7 @@ bool YZNewMotion::matches(const QString &s, bool fully) const {
 				return true;
 			break;
 		case ARG_MARK:
-			if(s.length() == ks.length()+1 && isMark(s[s.length()-1]) || !fully && s.length() == ks.length())
+			if(s.length() == ks.length()+1 && isMark(s.at(s.length()-1)) || !fully && s.length() == ks.length())
 				return true;
 			break;
 		default:
@@ -955,7 +958,7 @@ QString YZCommandPool::changeCase( const YZCommandArgs &args ) {
 		unsigned int length = line.length();
 		unsigned int end = pos.getX() + args.count;
 		for ( ; pos.getX() < length && pos.getX() < end; pos.setX( pos.getX() + 1 ) ) {
-			QString ch = line[ pos.getX() ];
+			QString ch = line.at( pos.getX() );
 			if ( ch != ch.lower() )
 				ch = ch.lower();
 			else

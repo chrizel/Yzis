@@ -31,7 +31,7 @@
 #include <qfile.h>
 #include <qregexp.h>
 #include <ctype.h>
-#include <unistd.h>
+#include "portability.h"
 
 YZDebugBackend * YZDebugBackend::_instance = NULL;
 

@@ -8,7 +8,7 @@
  */
 
 
-#include "yzis.h" // NULL
+#include "yzis.h" /* NULL */
 
 
 /** list of all events */
@@ -26,7 +26,7 @@ enum yz_events {
 	class YZLine;
 #else
 	struct yz_line;
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
 /**
@@ -51,7 +51,7 @@ struct yz_event_setline {
 	YZLine 	*line;
 #else
 	yz_line	*line;
-#endif // __cplusplus
+#endif /* __cplusplus */
 };
 
 /**
@@ -117,8 +117,8 @@ protected:
 	yz_event	pool[4000];
 	int		nb;
 };
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
-#endif //  YZ_EVENTS_H
+#endif /*  YZ_EVENTS_H */
 

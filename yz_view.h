@@ -85,7 +85,7 @@ protected:
 };
 
 
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
 
@@ -95,7 +95,7 @@ protected:
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 typedef int yz_view;
 
@@ -142,10 +142,10 @@ void yz_view_post_event (yz_view , yz_event );
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
 
 
-#endif //  YZ_VIEW_H
+#endif /*  YZ_VIEW_H */
 

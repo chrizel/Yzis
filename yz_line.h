@@ -96,7 +96,7 @@ protected:
 
 
 
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
 
@@ -105,7 +105,7 @@ protected:
  */
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
 typedef int *yz_line;
@@ -114,8 +114,8 @@ typedef int *yz_line;
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
-#endif //  YZ_LINE_H
+#endif /*  YZ_LINE_H */
 

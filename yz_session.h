@@ -46,13 +46,13 @@ class YZSession {
 
 #ifdef __cplusplus
 extern "C" {
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 void yzsession_new_session (const char *_session_name);
 
 #ifdef __cplusplus
 }
-#endif // __cplusplus
+#endif /* __cplusplus */
 
 
-#endif // YZ_SESSION_H
+#endif /* YZ_SESSION_H */

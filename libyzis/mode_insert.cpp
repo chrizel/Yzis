@@ -154,11 +154,11 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 		if (results.count() > 0 ) {
 			if (results[0].length()!=0) {
 #if QT_VERSION < 0x040000
-				mBuffer->action()->replaceLine( mView, cur.getY(), results[0] + mBuffer->textline( cur.getY() ).stripWhiteSpace() );
+				mBuffer->action()->replaceLine( mView, cur.getY()+1, results[0] + mBuffer->textline( cur.getY()+1 ).stripWhiteSpace() );
 #else
-				mBuffer->action()->replaceLine( mView, cur.getY(), results[0] + mBuffer->textline( cur.getY() ).trimmed() );
+				mBuffer->action()->replaceLine( mView, cur.getY()+1, results[0] + mBuffer->textline( cur.getY()+1 ).trimmed() );
 #endif
-				mView->gotoxy(results[0].length(),cur.getY());
+				mView->gotoxy(results[0].length(),cur.getY()+1);
 			}
 		}
 	}

@@ -8,3 +8,5 @@
 - remove all that c code with tab and #define *MAX -> use Qt
 - both lib and gui have a currentView that needs to be keep synced.. improve that
 - vim displays 'x,0-1' when positionned on the first char of an empty line : do the same
+- layout classes to handle geometry and windows positions, also add a layout manager to save 'profiles' ala konqueror
+

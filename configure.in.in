@@ -70,7 +70,7 @@ if test "$cf_cv_ncurses_header" = ""; then
 fi
 
 ifdef([AM_PATH_CPPUNIT],
-       [AM_PATH_CPPUNIT(1.8.0)],
+       [AM_PATH_CPPUNIT(1.10.0)],
        )
 AM_CONDITIONAL(HAVE_CPPUNIT, test "$CPPUNIT_LIBS")
 

@@ -338,7 +338,7 @@ public:
 	 */
 	inline YZLine * yzline(unsigned int line) {
 		YZLine *yl = mText.at( line );
-		if ( !yl->initialized() ) updateHL( line );
+		if ( yl && !yl->initialized() ) updateHL( line );
 		return yl;
 	}
 

@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003, 2004 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -16,6 +16,15 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  **/
+
+/**
+ * This file was mostly inspired from the kdelibs kdDebug class distributed under LGPL by 
+ * by the KDE project.
+ * Here are the corresponding copyrights owner :
+ * 1997 Matthias Kalle Dalheimer ( kalle@kde.org )
+ * 2000-2002 Stephan Kulow ( coolo@kde.org )
+ */
+
 
 #include "debug.h"
 #include <qstringlist.h>

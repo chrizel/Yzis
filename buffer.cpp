@@ -329,7 +329,11 @@ void YZBuffer::displayIntro() {
 	<< VERSION_CHAR_DATE
 	<<  ""
 	<<	"Development Release - Use for testing only" 
-	<<  "Copyright 2003, 2004 Yzis Team <yzis-dev@yzis.org>"
+	<<  ""
+	<<	"Copyright (c) 2003, 2004 :"
+	<<	"Mickael Marchand <mikmak@yzis.org>,"
+	<<	"Thomas Capricelli <orzel@freehackers.org>,"
+	<<	"Philippe Fremy <phil@freehackers.org>"
 	<<  ""
 	<<  "Please report bugs at http://bugs.yzis.org" ;
 

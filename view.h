@@ -364,9 +364,10 @@ class YZView {
 			YZ_VIEW_MODE_SEARCH, //search mode
 			YZ_VIEW_MODE_OPEN, // open mode
 			YZ_VIEW_MODE_VISUAL, // visual mode
+			YZ_VIEW_MODE_VISUAL_LINE, // visual mode
 		} mMode,		/** mode of this view */
 			mPrevMode;	/** previous mode of this view */
-#define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_VISUAL+1) // <-- update that if you touch the enum
+#define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_VISUAL_LINE+1) // <-- update that if you touch the enum
 		
 
 		//GUI
@@ -746,7 +747,6 @@ class YZView {
 		//Visual Mode stuff
 		YZCursor *mVisualCursor;
 		YZCursor *dVisualCursor;
-		bool visualEntireLines;	// v or V
 };
 
 #endif /*  YZ_VIEW_H */

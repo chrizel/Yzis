@@ -92,6 +92,7 @@ public:
 	/** Sets this while performing undo and redo, so that the operations
 	 * are not registred as new buffer commands */
 	void setInsideUndo( bool set ) { mInsideUndo = set; }
+	bool isInsideUndo() { return mInsideUndo; }
 
 protected:
 	/** purge the undo list after the current item */

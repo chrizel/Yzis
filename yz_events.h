@@ -53,7 +53,7 @@ struct yz_event_setcursor {
 };
 
 struct yz_event_setstatus {
-	char *text;
+	const char *text;
 };
 
 
@@ -87,7 +87,7 @@ struct yz_event_setstatus {
 typedef struct yz_event_t yz_event;
 
 
-yz_event mk_event_setstatus(char *text);
+yz_event mk_event_setstatus(const char *text);
 yz_event mk_event_setcursor(int x, int y);
 
 

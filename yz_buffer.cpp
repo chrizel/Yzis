@@ -2,7 +2,6 @@
  * YZBuffer implementation
  */
 
-
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
@@ -44,6 +43,7 @@ void YZBuffer::chg_char (int x, int y, QChar c)
 {
 	/* brute force, we'll have events specific for that later on */
 	YZLine *l=find_line(y);
+	if (!l) return;
 
 	/* do the actual modification */
 	l->remove(x,1);
@@ -90,6 +90,7 @@ void YZBuffer::update_view(int view_nb)
 	for (y=view->get_current(); y<lines_nb && view->is_line_visible(y); y++) {
 
 		YZLine *l = find_line( view->get_current()+y);
+		if (!l) continue;
 //		yz_assert(l, "find_line failed");
 		/* post an event about updating this line */
 

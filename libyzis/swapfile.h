@@ -67,7 +67,7 @@ class YZSwapFile {
 		} sE;
 		typedef struct sE swapEntry;
 
-		QMap<int,swapEntry> mHistory;
+		QValueList<swapEntry> mHistory;
 		YZBuffer *mParent;
 		QString mFilename;
 };

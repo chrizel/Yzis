@@ -25,39 +25,27 @@
     </message>
     <message>
         <source>-- INSERT --</source>
-        <translation type="unfinished">-- INVOEGEN --</translation>
+        <translation type="obsolete">-- INVOEGEN --</translation>
     </message>
     <message>
         <source>-- REPLACE --</source>
-        <translation type="unfinished">-- VERVANGEN --</translation>
+        <translation type="obsolete">-- VERVANGEN --</translation>
     </message>
     <message>
         <source>Command mode</source>
-        <translation type="unfinished">Commando modus</translation>
+        <translation type="obsolete">Commando modus</translation>
     </message>
     <message>
         <source>-- EX --</source>
-        <translation type="unfinished">-- EX --</translation>
+        <translation type="obsolete">-- EX --</translation>
     </message>
     <message>
         <source>-- REVERSE SEARCH --</source>
-        <translation type="unfinished">-- TERUG ZOEKEN --</translation>
+        <translation type="obsolete">-- TERUG ZOEKEN --</translation>
     </message>
     <message>
         <source>-- SEARCH --</source>
-        <translation type="unfinished">-- ZOEKEN --</translation>
-    </message>
-    <message>
-        <source>-- OPEN --</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>-- VISUAL --</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>-- VISUAL LINES --</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">-- ZOEKEN --</translation>
     </message>
 </context>
 <context>
@@ -191,6 +179,38 @@
     </message>
     <message>
         <source>To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--INSERT--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--REPLACE--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--COMMAND--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--EX--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--SEARCH--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--OPEN--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--VISUAL--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--VISUAL LINE--</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

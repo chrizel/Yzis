@@ -25,39 +25,39 @@
     </message>
     <message>
         <source>-- INSERT --</source>
-        <translation>-- INSERTION --</translation>
+        <translation type="obsolete">-- INSERTION --</translation>
     </message>
     <message>
         <source>-- REPLACE --</source>
-        <translation>-- REMPLACEMENT --</translation>
+        <translation type="obsolete">-- REMPLACEMENT --</translation>
     </message>
     <message>
         <source>Command mode</source>
-        <translation>Commande</translation>
+        <translation type="obsolete">Commande</translation>
     </message>
     <message>
         <source>-- EX --</source>
-        <translation>-- EX --</translation>
+        <translation type="obsolete">-- EX --</translation>
     </message>
     <message>
         <source>-- REVERSE SEARCH --</source>
-        <translation>-- RECHERCHE INVERSEE --</translation>
+        <translation type="obsolete">-- RECHERCHE INVERSEE --</translation>
     </message>
     <message>
         <source>-- SEARCH --</source>
-        <translation>-- RECHERCHE --</translation>
+        <translation type="obsolete">-- RECHERCHE --</translation>
     </message>
     <message>
         <source>-- OPEN --</source>
-        <translation>-- OUVERT --</translation>
+        <translation type="obsolete">-- OUVERT --</translation>
     </message>
     <message>
         <source>-- VISUAL --</source>
-        <translation>-- VISUEL --</translation>
+        <translation type="obsolete">-- VISUEL --</translation>
     </message>
     <message>
         <source>-- VISUAL LINES --</source>
-        <translation>-- VISUEL LIGNE --</translation>
+        <translation type="obsolete">-- VISUEL LIGNE --</translation>
     </message>
 </context>
 <context>
@@ -85,6 +85,14 @@
     <message>
         <source>Search mode :</source>
         <translation type="obsolete">Mode recherche :</translation>
+    </message>
+    <message>
+        <source>    Insert  </source>
+        <translation type="obsolete">    Insertion  </translation>
+    </message>
+    <message>
+        <source>Insert</source>
+        <translation type="obsolete">Insertion</translation>
     </message>
 </context>
 <context>
@@ -219,6 +227,38 @@
     <message>
         <source>To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode</source>
         <translation>Pour utiliser le mode Qt pour l&apos;impression, un DISPLAY X11 doit être fonctionnel, vous devriez essayer avec pslib pour imprimer en mode console</translation>
+    </message>
+    <message>
+        <source>--INSERT--</source>
+        <translation>--INSERTION--</translation>
+    </message>
+    <message>
+        <source>--REPLACE--</source>
+        <translation>--REMPLACEMENT--</translation>
+    </message>
+    <message>
+        <source>--COMMAND--</source>
+        <translation>--COMMANDE--</translation>
+    </message>
+    <message>
+        <source>--EX--</source>
+        <translation>--EX--</translation>
+    </message>
+    <message>
+        <source>--SEARCH--</source>
+        <translation>--RECHERCHE--</translation>
+    </message>
+    <message>
+        <source>--OPEN--</source>
+        <translation>--OUVERT--</translation>
+    </message>
+    <message>
+        <source>--VISUAL--</source>
+        <translation>--VISUEL--</translation>
+    </message>
+    <message>
+        <source>--VISUAL LINE--</source>
+        <translation>--VISUEL LIGNE--</translation>
     </message>
 </context>
 </TS>

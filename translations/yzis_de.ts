@@ -25,39 +25,39 @@
     </message>
     <message>
         <source>-- INSERT --</source>
-        <translation>-- EINFÜGEN --</translation>
+        <translation type="obsolete">-- EINFÜGEN --</translation>
     </message>
     <message>
         <source>-- REPLACE --</source>
-        <translation>-- ERSETZEN --</translation>
+        <translation type="obsolete">-- ERSETZEN --</translation>
     </message>
     <message>
         <source>Command mode</source>
-        <translation>Kommando-Modus</translation>
+        <translation type="obsolete">Kommando-Modus</translation>
     </message>
     <message>
         <source>-- EX --</source>
-        <translation>-- EX --</translation>
+        <translation type="obsolete">-- EX --</translation>
     </message>
     <message>
         <source>-- REVERSE SEARCH --</source>
-        <translation>-- RÜCKWÄRTSSUCHE --</translation>
+        <translation type="obsolete">-- RÜCKWÄRTSSUCHE --</translation>
     </message>
     <message>
         <source>-- SEARCH --</source>
-        <translation>-- SUCHE --</translation>
+        <translation type="obsolete">-- SUCHE --</translation>
     </message>
     <message>
         <source>-- OPEN --</source>
-        <translation>-- OFFEN --</translation>
+        <translation type="obsolete">-- OFFEN --</translation>
     </message>
     <message>
         <source>-- VISUAL --</source>
-        <translation>-- VISUELL --</translation>
+        <translation type="obsolete">-- VISUELL --</translation>
     </message>
     <message>
         <source>-- VISUAL LINES --</source>
-        <translation>-- VISUELLE ZEILE --</translation>
+        <translation type="obsolete">-- VISUELLE ZEILE --</translation>
     </message>
 </context>
 <context>
@@ -168,6 +168,38 @@
     <message>
         <source>To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode</source>
         <translation>Um den Qt-Drucker zu benutzen muss ein X11-Server laufen und die Umgebungsvariable DISPLAY gesetzt sein, Sie sollten im Konsolenmodus pslib probieren</translation>
+    </message>
+    <message>
+        <source>--INSERT--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--REPLACE--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--COMMAND--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--EX--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--SEARCH--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--OPEN--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--VISUAL--</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>--VISUAL LINE--</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -125,28 +125,28 @@ void KYZisView::modeChanged (void) {
 		mPrevMode << endl;
 	switch (mMode) {
 		case YZ_VIEW_MODE_INSERT: // insert
-			status->changeItem(tr("-- INSERT --"), 0);
+			status->changeItem(mode( YZ_VIEW_MODE_INSERT ), 0);
 			break;
 		case YZ_VIEW_MODE_REPLACE: // replace
-			status->changeItem(tr("-- REPLACE --"), 0);
+			status->changeItem(mode( YZ_VIEW_MODE_REPLACE ), 0);
 			break;
 		case YZ_VIEW_MODE_COMMAND: // normal
-			status->changeItem(tr("Command mode"), 0);
+			status->changeItem(mode( YZ_VIEW_MODE_COMMAND), 0);
 			break;
 		case YZ_VIEW_MODE_EX: //script
-			status->changeItem(tr("-- EX --"), 0);
+			status->changeItem(mode(YZ_VIEW_MODE_EX), 0);
 			break;
 		case YZ_VIEW_MODE_SEARCH: //search mode
-			status->changeItem(reverseSearch ? tr("-- REVERSE SEARCH --") : tr("-- SEARCH --"), 0);
+			status->changeItem( mode( YZ_VIEW_MODE_SEARCH ), 0);
 			break;
 		case YZ_VIEW_MODE_OPEN: //open
-			status->changeItem(tr("-- OPEN --"), 0);
+			status->changeItem(mode(YZ_VIEW_MODE_OPEN), 0);
 			break;
 		case YZ_VIEW_MODE_VISUAL: //visual
-			status->changeItem(tr("-- VISUAL --"), 0);
+			status->changeItem(mode(YZ_VIEW_MODE_VISUAL), 0);
 			break;
 		case YZ_VIEW_MODE_VISUAL_LINE : 
-			status->changeItem( tr("-- VISUAL LINES --" ), 0 );
+			status->changeItem( mode(YZ_VIEW_MODE_VISUAL_LINE), 0 );
 	};
 }
 

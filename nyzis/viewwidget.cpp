@@ -245,20 +245,11 @@ void NYZView::syncViewInfo( void )
 	 */
 
 	YZASSERT( mMode<YZ_VIEW_MODE_LAST );
-	static const char *modeName[] = {
-		"    Insert  ",
-		"   Replace  ",
-		"   Command  ",
-		"        Ex  ",
-		"    Search  ",
-		"      Open  ",
-		"    Visual  ",
-		"Visual Lines"
-	};
 
 	werase(infobar);
 	wmove( infobar,0,0 );
-	for ( const char *ptr = modeName[mMode]; *ptr; ptr++ )
+	const char *m = mode ( mMode ).latin1();
+	for ( const char *ptr = m; *ptr; ptr++ )
 		waddch(infobar, COLOR_PAIR(1)|*ptr);
 
 	waddch(infobar, ' ');

@@ -86,8 +86,6 @@ void YZPrinter::doPrint( ) {
 	mView->setVisibleArea( clipw - marginLeft, totalHeight, false );
 	mView->initDraw( 0, 0, 0, 0 );
 
-	
-
 	unsigned int lastLineNumber = 0;
 	unsigned int pageNumber = 0;
 
@@ -99,21 +97,10 @@ void YZPrinter::doPrint( ) {
 
 	cliph = ( height - topY ) / linespace;
 	int nbPages = totalHeight / cliph + ( totalHeight % cliph ? 1 : 0 );
-	yzDebug() << "cliph = " << cliph << "; totalHeight=" << totalHeight << "; nbPages=" << nbPages << endl;
 
 	while ( mView->drawNextLine( ) ) {
 		if ( curY == topY ) {
-			if ( pageNumber ) {
-
-				// draw Rect
-				p.setPen( Qt::black );
-				p.drawRect( 0, 0, width, curY );
-				if ( number )
-					p.drawLine( marginLeft * maxwidth - maxwidth / 2, titleRect.height(), marginLeft * maxwidth - maxwidth / 2, curY );
-				p.drawLine( titleRect.x(), titleRect.height(), titleRect.width(), titleRect.height() );
-
-				newPage( );
-			}
+			if ( pageNumber ) newPage( );
 			++pageNumber;
 			p.setPen( Qt::black );
 			p.drawText( titleRect, Qt::AlignLeft | Qt::AlignVCenter, " " + mView->myBuffer()->fileName() );
@@ -136,8 +123,15 @@ void YZPrinter::doPrint( ) {
 			curX += mView->drawLength( ) * maxwidth;
 		}
 		curY += linespace * mView->drawHeight();
-		if ( curY >= cliph * linespace + topY )
+		if ( curY >= cliph * linespace + topY ) {
+			// draw Rect
+			p.setPen( Qt::black );
+			p.drawRect( 0, 0, width, curY );
+			if ( number )
+				p.drawLine( marginLeft * maxwidth - maxwidth / 2, titleRect.height(), marginLeft * maxwidth - maxwidth / 2, curY );
+			p.drawLine( titleRect.x(), titleRect.height(), titleRect.width(), titleRect.height() );
 			curY = topY;
+		}
 	}
 	if ( curY != topY ) {
 		// draw Rect

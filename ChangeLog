@@ -1,3 +1,7 @@
+2004-09-24 mikmak
+  * libyzis
+  	- new listchars option
+  	
 2004-09-17 philippe
   * libyzis
   	- more bug fixing for lua binding

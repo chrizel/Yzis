@@ -1,3 +1,7 @@
+2004-04-20 mikmak
+  * all
+    KDE is no more a requirement, you can compile nyzis alone now
+
 2004-04-20 orzel
   * libyzis
   * nyzis

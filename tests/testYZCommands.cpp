@@ -1,4 +1,4 @@
-/* This file is part of the Yzis libraries
+ /* This file is part of the Yzis libraries
  *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -95,7 +95,7 @@ void TestYZCommands::testInsertMode()
     CHECK_CURSOR_POS( mView, 1, 2 );
 }
 
-void TestYZCommands::testMoving()
+void TestYZCommands::testCharMovement()
 {
     mView->sendText( "i0123\n4567\n89AB\nCDEF<Esc>" );
     phCheckEquals( mBuf->getWholeText(), "0123\n4567\n89AB\nCDEF" );
@@ -167,21 +167,69 @@ void TestYZCommands::testMoving()
     mView->sendText( "j" );
     mView->sendText( "j" );
     CHECK_CURSOR_POS( mView, 3, 3 );
+}
 
-    // test other movements
-    mView->sendText( "gg" );
+void TestYZCommands::testBeginEndCharMovement()
+{
+    mView->sendText( "i\t0123\n4567\n  89AB <Esc>" );
+    CHECK_CURSOR_POS( mView, 2, 6 );
+    
+    // test beginning and end of line movements
+    mView->sendText("^");
+    CHECK_CURSOR_POS( mView, 2, 2 );
+    mView->sendText("0");
+    CHECK_CURSOR_POS( mView, 2, 0 );
+    mView->sendText("$");
+    CHECK_CURSOR_POS( mView, 2, 6 );
+
+    mView->sendText("<up>");
+    mView->sendText("0");
+    CHECK_CURSOR_POS( mView, 1, 0 );
+    mView->sendText("^");
+    CHECK_CURSOR_POS( mView, 1, 0 );
+    mView->sendText("$");
+    CHECK_CURSOR_POS( mView, 1, 3 );
+
+    mView->sendText("<up>");
+    mView->sendText("0");
     CHECK_CURSOR_POS( mView, 0, 0 );
-    mView->sendText( "<Right>" );
+    mView->sendText("^");
     CHECK_CURSOR_POS( mView, 0, 1 );
+    mView->sendText("$");
+    CHECK_CURSOR_POS( mView, 0, 4 );
+}
+
+void TestYZCommands::testLineMovement()
+{
+    mView->sendText( "i\t\t0123\n4567\n89AB\n CDEF<Esc>" );
+    phCheckEquals( mBuf->getWholeText(), "\t\t0123\n4567\n89AB\n CDEF" );
+    CHECK_MODE_COMMAND( mView );
+    CHECK_CURSOR_POS( mView, 3, 4 );
+    
     mView->sendText( "gg" );
-    CHECK_CURSOR_POS( mView, 0, 0 );
+    CHECK_CURSOR_POS( mView, 0, 2 );
+    mView->sendText( "<Right>" );
+    CHECK_CURSOR_POS( mView, 0, 3 );
+    mView->sendText( "gg" );
+    CHECK_CURSOR_POS( mView, 0, 2 );
 
     mView->sendText( "G" );
-    CHECK_CURSOR_POS( mView, 3, 0 );
-    mView->sendText( "<Right>" );
     CHECK_CURSOR_POS( mView, 3, 1 );
+    mView->sendText( "<Right>" );
+    CHECK_CURSOR_POS( mView, 3, 2 );
     mView->sendText( "G" );
-    CHECK_CURSOR_POS( mView, 3, 0 );
+    CHECK_CURSOR_POS( mView, 3, 1 );
+
+    mView->sendText("0gg");
+    CHECK_CURSOR_POS( mView, 0, 2 );
+    mView->sendText( "300G" );
+    CHECK_CURSOR_POS( mView, 3, 1 );
+    mView->sendText("2gg");
+    CHECK_CURSOR_POS( mView, 1, 0 );
+    mView->sendText( "300gg" );
+    CHECK_CURSOR_POS( mView, 3, 1 );
+    mView->sendText("3G");
+    CHECK_CURSOR_POS( mView, 2, 0 );
 }
 
 /* ========================================================================= */

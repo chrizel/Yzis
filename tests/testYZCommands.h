@@ -41,13 +41,17 @@ public:
 
     CPPUNIT_TEST( testCreateSession );
     CPPUNIT_TEST( testInsertMode );
-    CPPUNIT_TEST( testMoving );
+    CPPUNIT_TEST( testCharMovement );
+    CPPUNIT_TEST( testBeginEndCharMovement );
+    CPPUNIT_TEST( testLineMovement );
 
     CPPUNIT_TEST_SUITE_END();
 
     void testCreateSession();
     void testInsertMode();
-    void testMoving();
+    void testCharMovement();
+    void testBeginEndCharMovement();
+    void testLineMovement();
 
 protected:
     TYZSession * mSession;

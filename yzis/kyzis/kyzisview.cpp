@@ -68,11 +68,13 @@ void KYZisView::customEvent (QCustomEvent *) {
 void KYZisView::scrollDown( int lines ) {
 	kdDebug() << "ScrollDown " << lines <<endl;
 	editor->scrollBy(0, lines * editor->fontMetrics().lineSpacing());
+	editor->update();
 }
 
 void KYZisView::scrollUp ( int lines ) {
 	kdDebug() << "ScrollUp " << lines <<endl;
 	editor->scrollBy(0, -1 * lines * editor->fontMetrics().lineSpacing());
+	editor->update();
 }
 
 #include "kyzisview.moc"

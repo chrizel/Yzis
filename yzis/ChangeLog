@@ -1,4 +1,9 @@
 2003-04-17 mikmak
+  * libyzis/kyzis
+    fixed cursor going to negative position
+    fixed current in yzview after j/k commands
+
+2003-04-17 mikmak
   * libyzis
     fixed appends command
     started scrolling text implementation

@@ -43,7 +43,7 @@ class KYZisEdit : public QScrollView {
 		void keyPressEvent (QKeyEvent *);
 
 		//mouse events
-		void mousePressEvent (QMouseEvent *);
+		void contentsMousePressEvent (QMouseEvent *);
 
 		//insert text at line
 		void insetTextAt(const QString, int line);
@@ -58,7 +58,7 @@ class KYZisEdit : public QScrollView {
 		long lines();
 		
 		//draw the cursor at the given position
-		void drawCursorAt(QPainter *paint,int x, int y);
+		void drawCursorAt(int x, int y);
 
 	private :
 		KYZisView *_parent;

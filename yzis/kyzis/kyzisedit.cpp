@@ -28,18 +28,15 @@ void KYZisEdit::setCursor(int c, int l) {
 	//strange we should not need a -1 //FIXME
 	//undraw previous cursor
 	updateContents(cursorx*fontMetrics().maxWidth(),cursory*fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing()*2);
-	cursorx = c-1;
-	cursory = l-1;
+	cursorx = c;
+	cursory = l - 1;
 	//draw new cursor
 	updateContents(cursorx*fontMetrics().maxWidth(),cursory*fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing()*2);
 }
 
 void KYZisEdit::setTextLine(int l, const QString &str){
 	mText.insert(l,str);
-	//fixme :)
-	updateContents(0,( l-1 ) * fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing()*2);
-// 	updateContents(); flickers ...
-// 	 viewport()->repaint(); // the whole view
+	updateContents(0,l * fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing());
 }
 
 // INTERNAL API
@@ -49,11 +46,13 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	e->accept();
 }
 
-void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
+void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
+	//FIXME needs improvment (add some offset)
+	//relative coordinates ?
 	_parent->update_cursor(e->x()/fontMetrics().maxWidth(), e->y()/fontMetrics().lineSpacing());
 }
 
-void KYZisEdit::drawCursorAt(QPainter *p, int x, int y) {
+void KYZisEdit::drawCursorAt(int x, int y) {
 	bitBlt (
 			viewport(),
 			x*fontMetrics().maxWidth(),y*fontMetrics().lineSpacing(),
@@ -66,19 +65,17 @@ void KYZisEdit::drawCursorAt(QPainter *p, int x, int y) {
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
 	//XXX draw text inside the clip
+	kdDebug() << "*** DrawContents : clipx " << clipx << " clipy " << clipy << " clipw " << clipw << " cliph " << cliph << endl;
 	KYZLine::iterator it;
 	for (it = mText.begin(); it!=mText.end(); ++it) {
-			kdDebug() << "*** Draw : " << fontMetrics().lineSpacing() * it.key() << " >= " << clipy << endl;
-			kdDebug() << "*** Draw : " << fontMetrics().lineSpacing() * it.key() << " <= " << clipy+cliph << endl;
 			if (fontMetrics().lineSpacing() * it.key() >= clipy && fontMetrics().lineSpacing() * it.key() <= clipy+cliph ) {
-				kdDebug() << "DRAW" << endl;
 				p->eraseRect(0,it.key() * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
 				p->drawText(0,it.key() * fontMetrics().lineSpacing(),it.data());
 			}
 	}
 	
 	//XXX draw the cursor if needed
-	drawCursorAt(p,cursorx,cursory);
+	drawCursorAt(cursorx,cursory);
 }
 
 #include "kyzisedit.moc"

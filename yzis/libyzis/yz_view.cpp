@@ -112,7 +112,9 @@ void YZView::send_char( QChar c)
 				//check if we need to scroll
 				if ( current + lines_vis < cursor->getY() ) {
 					//scroll down => GUI
-					gui_manager->scrollDown(1); //one line down
+					if ( gui_manager )
+						gui_manager->scrollDown(1); //one line down
+					current++;
 				}
 				update_cursor();
 			}
@@ -128,7 +130,9 @@ void YZView::send_char( QChar c)
 				//check if we need to scroll
 				if ( current > cursor->getY() ) {
 					//scroll up => GUI
-					gui_manager->scrollUp(1); //one line up
+					if ( gui_manager )
+						gui_manager->scrollUp(1); //one line up
+					current--;
 				}
 				update_cursor();
 			}

@@ -53,7 +53,7 @@ void YZMotionPool::applyMotion( const YZMotion& motion, YZView *view ) {
 	QRegExp rex( motion.rex );
 	int idx=-1;
 	while ( idx == -1 ) {
-		const QString& current = view->myBuffer()->data( cursor->getY() );
+		const QString& current = view->myBuffer()->textline( cursor->getY() );
 		if ( current.isNull() ) return;
 		idx = rex.search( current, cursor->getX() );
 		cursor->setX( 0 );

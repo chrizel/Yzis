@@ -346,6 +346,7 @@ void YZView::updateCursor() {
 }
 
 void YZView::centerView(unsigned int column, unsigned int line) {
+#if 0
 	int newcurrent = line - mLinesVis / 2;
 	if (  newcurrent > (  int(  mBuffer->lineCount() ) - int(  mLinesVis ) ) )
 		newcurrent = mBuffer->lineCount() - mLinesVis;
@@ -357,8 +358,8 @@ void YZView::centerView(unsigned int column, unsigned int line) {
 	if (  newcurrentLeft < 0 ) newcurrentLeft = 0;
 
 	if ( newcurrent == int( mCurrentTop )/* && newcurrentLeft == int ( mCurrentLeft )*/ ) return;
-
-#if 0
+#endif
+#if 1
 	unsigned int newcurrent = line - mLinesVis / 2;
 	unsigned int newcurrentLeft = column - mColumnsVis / 2;
 
@@ -373,7 +374,7 @@ void YZView::centerView(unsigned int column, unsigned int line) {
 		else newcurrentLeft = 0;
 	}
 
-	if ( newcurrent == mCurrentTop && newcurrentLeft == mCurrentLeft ) return;
+	if ( newcurrent == mCurrentTop /*&& newcurrentLeft == mCurrentLeft*/ ) return;
 #endif
 	
 	//redraw the screen

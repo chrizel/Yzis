@@ -125,8 +125,18 @@ YZExLua::YZExLua() {
 	lua_register(L,"setlocal",setlocal);
 	lua_register(L,"newoption",newoption);
 	lua_register(L,"set",set);
-	lua_register(L,"imap",imap);
 	lua_register(L,"map",map);
+	lua_register(L,"unmap",unmap);
+	lua_register(L,"imap",imap);
+	lua_register(L,"iunmap",iunmap);
+	lua_register(L,"nmap",nmap);
+	lua_register(L,"nunmap",nunmap);
+	lua_register(L,"omap",omap);
+	lua_register(L,"ounmap",ounmap);
+	lua_register(L,"vmap",vmap);
+	lua_register(L,"vunmap",vunmap);
+	lua_register(L,"cmap",cmap);
+	lua_register(L,"cunmap",cunmap);
 }
 
 YZExLua::~YZExLua() {
@@ -662,12 +672,19 @@ int YZExLua::newoption(lua_State *L ) {
 }
 
 int YZExLua::map(lua_State *L ) {
-	if (!checkFunctionArguments(L, 2, "map", "map keys in normal mode")) return 0;
+	if (!checkFunctionArguments(L, 2, "map", "map keys in global mode")) return 0;
 	QString key = ( char * )lua_tostring ( L, 1 );
 	QString mapp = ( char * )lua_tostring ( L, 2 );
 
 	YZMapping::self()->addGlobalMapping(key, mapp);
 
+	return 0;
+}
+
+int YZExLua::unmap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "unmap", "unmap keys in global mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	YZMapping::self()->deleteGlobalMapping(key);
 	return 0;
 }
 
@@ -681,6 +698,77 @@ int YZExLua::imap(lua_State *L ) {
 	return 0;
 }
 
+int YZExLua::iunmap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "iunmap", "unmap keys in insert mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	YZMapping::self()->deleteInsertMapping(key);
+	return 0;
+}
+
+int YZExLua::omap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, "omap", "map keys in pending op mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	QString mapp = ( char * )lua_tostring ( L, 2 );
+
+	YZMapping::self()->addPendingOpMapping(key, mapp);
+	return 0;
+}
+
+int YZExLua::ounmap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "ounmap", "unmap keys in pending op mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	YZMapping::self()->deletePendingOpMapping(key);
+	return 0;
+}
+
+int YZExLua::vmap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, "vmap", "map keys in visual mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	QString mapp = ( char * )lua_tostring ( L, 2 );
+
+	YZMapping::self()->addVisualMapping(key, mapp);
+	return 0;
+}
+
+int YZExLua::vunmap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "vunmap", "unmap keys in cmdline mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	YZMapping::self()->deleteVisualMapping(key);
+	return 0;
+}
+
+int YZExLua::cmap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, "cmap", "map keys in cmdline mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	QString mapp = ( char * )lua_tostring ( L, 2 );
+
+	YZMapping::self()->addCmdLineMapping(key, mapp);
+	return 0;
+}
+
+int YZExLua::cunmap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "cunmap", "unmap keys in cmdline mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	YZMapping::self()->deleteCmdLineMapping(key);
+	return 0;
+}
+
+int YZExLua::nmap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, "nmap", "map keys in normal mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	QString mapp = ( char * )lua_tostring ( L, 2 );
+
+	YZMapping::self()->addNormalMapping(key, mapp);
+	return 0;
+}
+
+int YZExLua::nunmap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "nunmap", "unmap keys in normal mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	YZMapping::self()->deleteNormalMapping(key);
+	return 0;
+}
+
 int YZExLua::set(lua_State *L ) {
 	if (!checkFunctionArguments(L, 1, "set", "set global options")) return 0;
 	QString option = ( char * )lua_tostring ( L, 1 );
@@ -690,8 +778,7 @@ int YZExLua::set(lua_State *L ) {
 	return 0;	
 }
 
-bool YZExLua::checkFunctionArguments(lua_State*L, int argNb, const char * functionName, const char * functionArgDesc )
-{
+bool YZExLua::checkFunctionArguments(lua_State*L, int argNb, const char * functionName, const char * functionArgDesc ) {
 	int n = lua_gettop( L );
 	if (n == argNb) return true;
 

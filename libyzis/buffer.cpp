@@ -247,13 +247,15 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 	if (line >= lineCount()) return;
 
+	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
+										 textline(line), 0, line );
 	if (lineCount() > 1) {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, 
-										 QString(), 0, line );
+										 "", 0, line );
 		mText.remove(line);
 	} else {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
-										 textline(0), 0, line );
+										 "", 0, line );
 		setTextline(0,"");
 	}
 

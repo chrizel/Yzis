@@ -70,6 +70,11 @@ class YZView {
 		void sendKey(int c, int modifiers);
 
 		/**
+		 * transfer key events from GUI to core
+		 */
+		void sendKey(const QString& key, const QString& modifiers);
+
+		/**
 		 * Translate Qt key/modifiers names into a full QString
 		 * @param key the received key
 		 * @param modifiers the received modifiers ( CTRL, SHIFT, ALT )

@@ -25,7 +25,7 @@ messages: rc.cpp
 bin_PROGRAMS = kyzis
 
 # the application source, library search path, and link libraries
-kyzis_SOURCES = main.cpp kyzis.cpp kyzis.skel
+kyzis_SOURCES = main.cpp kyzis.cpp kyzis.skel settings.kcfgc
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 kyzis_LDADD   = -lkmdi $(LIB_KPARTS) $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
 
@@ -36,6 +36,8 @@ shelldesktop_DATA = kyzis.desktop
 # this is where the shell's XML-GUI resource file goes
 shellrcdir   = $(kde_datadir)/kyzis
 shellrc_DATA = kyzis_shell.rc
+
+kde_kcfg_DATA = kyzis.kcfg
 
 #########################################################################
 # KPART SECTION
@@ -54,6 +56,7 @@ partdesktop_DATA = kyzispart.desktop
 # this is where the part's XML-GUI resource file goes
 partrcdir   = $(kde_datadir)/kyzispart
 partrc_DATA = kyzispart.rc
+
 
 #########################################################################
 # MISC SECTION

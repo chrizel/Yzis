@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE kcfg SYSTEM "http://www.kde.org/standards/kcfg/1.0/kcfg.dtd">
+<kcfg>
+  <kcfgfile name="kyzisrc"/>
+  <group name="Preferences">
+    <entry name="col_background" type="Color">
+	    <label>color of the background</label>
+	    <default>black</default>
+    </entry>
+    <entry name="col_foreground" type="Color">
+	    <label>color of the foreground</label>
+	    <default>white</default>
+    </entry>
+    <entry name="switch_key" type="Int">
+	    <label>key for switching from the yzis widget</label>
+	    <default>212</default>
+    </entry>
+  </group>
+</kcfg>

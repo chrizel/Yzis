@@ -233,12 +233,12 @@ echo "KDE_CREATE_SUBDIRSLIST" >> configure.in.new
 if test -f Makefile.am.in; then
   subdirs=`cat subdirs`
   for dir in $subdirs; do
-    dir=`echo $dir | sed -e "s,[-+.],_,g"`
-    echo "AM_CONDITIONAL($dir""_SUBDIR_included, test \"x\$$dir""_SUBDIR_included\" = xyes)" >> configure.in.new
-    if test -f $dir/configure.in; then
-	echo "if test \"x\$$dir""_SUBDIR_included\" = xyes; then " >> configure.in.new
-	echo "  AC_CONFIG_SUBDIRS($dir)" >> configure.in.new
-	echo "fi" >> configure.in.new
+    vdir=`echo $dir | sed -e 's,[-+.@],_,g'`
+    echo "AM_CONDITIONAL($vdir""_SUBDIR_included, test \"x\$$vdir""_SUBDIR_included\" = xyes)" >> configure.in.new
+    if test -f "$dir/configure.in"; then
+        echo "if test \"x\$$vdir""_SUBDIR_included\" = xyes; then " >> configure.in.new
+        echo "  AC_CONFIG_SUBDIRS($dir)" >> configure.in.new
+        echo "fi" >> configure.in.new
     fi
   done
 fi
@@ -459,8 +459,21 @@ if test -f Makefile.am.in; then
     esac
   done
 
+  adds=`fgrep '$(top_srcdir)/acinclude.m4:' Makefile.am.in | sed -e 's,^[^:]*: *,,; s,\$(top_srcdir)/,,g'`
+  if echo "$adds" | fgrep "*" >/dev/null ; then
+    adds=`ls -d -1 $adds 2>/dev/null`
+    fgrep -v  '$(top_srcdir)/acinclude.m4:' Makefile.am.in > Makefile.am.in.adds
+    str='$(top_srcdir)/acinclude.m4:'
+    for add in $adds; do 
+	str="$str \$(top_srcdir)/$add"
+    done
+    echo $str >> Makefile.am.in.adds
+  else
+    cat Makefile.am.in > Makefile.am.in.adds
+  fi
+
   if test -n "$UNSERMAKE"; then
-    cat Makefile.am.in > Makefile.am
+    cat Makefile.am.in.adds > Makefile.am
     topsubdirs=
     for i in $compilefirst $dirs $compilelast; do
        vari=`echo $i | sed -e "s,[-+],_,g"`
@@ -471,11 +484,12 @@ if test -f Makefile.am.in; then
     done
     echo "SUBDIRS=$topsubdirs" >> Makefile.am
   else
-    cat Makefile.am.in | \
+    cat Makefile.am.in.adds | \
         sed -e 's,^\s*\(COMPILE_BEFORE.*\),# \1,' | \
         sed -e 's,^\s*\(COMPILE_AFTER.*\),# \1,' > Makefile.am
     echo "SUBDIRS="'$(TOPSUBDIRS)' >> Makefile.am
   fi
+  rm Makefile.am.in.adds
 fi
 }
 
@@ -486,8 +500,12 @@ acinclude_m4()
   if grep '\$(top_srcdir)/acinclude.m4:' $makefile_am >/dev/null; then 
     strip_makefile
     rm -f acinclude.m4
-    $MAKE -f $makefile_wo top_srcdir=. ./acinclude.m4 || exit 1
     adds=`grep '\$(top_srcdir)/acinclude.m4:' $makefile_wo | sed -e 's,^[^:]*: *,,; s,\$(top_srcdir),.,g'`
+    if echo $adds | fgrep "*" >/dev/null ; then
+      adds=`ls -d -1 $adds 2>/dev/null`
+    else
+      $MAKE -f $makefile_wo top_srcdir=. ./acinclude.m4 || exit 1
+    fi
   else
     rm -f acinclude.m4
   fi

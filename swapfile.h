@@ -21,6 +21,8 @@
 #define YZ_SWAPFILE
 
 #include <qstringlist.h>
+#include <qapplication.h>
+#include "session.h"
 #include "undo.h"
 
 class YZBuffer;
@@ -60,8 +62,6 @@ class YZSwapFile {
 		 */
 		void unlink();
 
-	protected:
-
 		/**
 		 * Initialise a swap file
 		 */
@@ -70,12 +70,19 @@ class YZSwapFile {
 		/**
 		 * Recover a buffer from a swap file
 		 */
-		void recover();
+		bool recover();
 
+
+	protected:
 		/**
 		 * Replay one event on the buffer during a recover
 		 */
 		void replay( YZBufferOperation::OperationType type, unsigned int col, unsigned int line, const QString& str );
+
+		/**
+		 * Translator helper
+		 */
+		QString tr( const char *source, const char* = 0) { return qApp->translate( "YZSwapFile", source ); }
 
 	private:
 		struct sE {
@@ -90,6 +97,7 @@ class YZSwapFile {
 		YZBuffer *mParent;
 		QString mFilename;
 		bool mRecovering;
+		bool mNotResetted;
 };
 
 #endif

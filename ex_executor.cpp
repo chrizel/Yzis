@@ -44,8 +44,11 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 	}
 	QRegExp rx ( "^(.*)\\s(.*)$");
 	rx.search( inputs );
-	if ( rx.cap(2) != QString::null ) 
+	if ( rx.cap(2) != QString::null ) {
 		view->myBuffer()->setPath(rx.cap(2)); //a filename was given as argument
+		view->myBuffer()->getSwapFile()->setFileName( view->myBuffer()->fileName()+".ywp" );
+		view->myBuffer()->getSwapFile()->init();
+	}
 
 	if ( inputs.startsWith( "wq!" ) ) { //check readonly ? XXX
 		view->myBuffer()->save();

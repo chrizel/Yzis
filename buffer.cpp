@@ -450,11 +450,8 @@ uint YZBuffer::firstNonBlankChar( uint line ) {
 
 void YZBuffer::load(const QString& file) {
 	yzDebug("YZBuffer") << "YZBuffer load " << file << endl;
-	QString oldPath = mPath;
 	if ( file.isNull() || file.isEmpty() ) return;
-	setPath(file, false);
-	//hmm changing file :), update Session !!!!
-	mSession->updateBufferRecord( oldPath, mPath, this );
+	setPath(file);
 	if ( mIntro ) clearIntro();
 	//stop redraws
 	mUpdateView=false;
@@ -479,10 +476,18 @@ void YZBuffer::load(const QString& file) {
 	}
 	if ( ! mText.count() )
 		appendLine("");
+	setChanged( false );
+	//check for a swap file left after a crash
+	mSwap->setFileName( mPath + ".ywp" );
+	if ( QFile::exists( mPath + ".ywp" ) ) {//if it already exists, recover from it
+		if ( YZSession::me->promptYesNo(tr("Recover"),tr("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
+			if ( mSwap->recover() )
+				setChanged( true );
+		}
+	}
+	mSwap->init(); // whatever happened before, create a new swapfile
 	mLoading=false;
 	mUndoBuffer->setInsideUndo( false );
-	setPath(file, true);
-	setChanged( false );
 	//reenable
 	mUpdateView=true;
 	updateAllViews();
@@ -632,16 +637,17 @@ void YZBuffer::makeAttribs() {
 
 }
 
-void YZBuffer::setPath( const QString& _path, bool updateswap ) {
+void YZBuffer::setPath( const QString& _path ) {
 	QString newPath = _path.stripWhiteSpace();
+	QString oldPath = mPath;
 	if (newPath[0] != '/') {
 		mPath = QDir::cleanDirPath(QDir::current().absPath()+"/"+newPath);
 		yzDebug("YZBuffer") << "Changing path to absolute " << mPath << endl;
 	} else
 		mPath = newPath; 
 	mFileIsNew=false; 
-	if ( updateswap )
-		mSwap->setFileName( mPath + ".ywp" );
+	//hmm changing file :), update Session !!!!
+	mSession->updateBufferRecord( oldPath, mPath, this );
 	filenameChanged();
 }
 

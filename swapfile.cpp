@@ -34,6 +34,7 @@ YZSwapFile::YZSwapFile(YZBuffer *b) {
 	mParent = b;
 	mRecovering = false;
 	mFilename = b->fileName()+".ywp";
+	mNotResetted=true;
 	init();
 }
 
@@ -41,10 +42,10 @@ void YZSwapFile::setFileName( const QString& fname ) {
 	yzDebug() << "Swap change filename " << fname << endl;
 	unlink();
 	mFilename = fname;
-	init();
 }
 
 void YZSwapFile::flush() {
+	if ( mRecovering || mNotResetted ) return;
 	yzDebug() << "Flushing swap to " << mFilename << endl;
 	QFile f( mFilename );
 	if ( f.open( IO_WriteOnly | IO_Raw | IO_Append ) ) { //open at end of file
@@ -56,13 +57,14 @@ void YZSwapFile::flush() {
 		}
 		f.close();
 	} else {
-		//XXX error
+		YZSession::me->popupMessage(tr( "Warning, the swapfile could not be opened maybe due to restrictive permissions." ));
+		mNotResetted = true;//dont try again ...
 	}
 	mHistory.clear(); //clear previous history
 }
 
 void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString& str, unsigned int col, unsigned int line ) {
-	if ( mRecovering ) return;
+	if ( mRecovering || mNotResetted ) return;
 	swapEntry e = { type, col, line, str };
 	mHistory.append( e );
 	if ( ( ( int )mHistory.size() ) >= mParent->getLocalIntOption("updatecount") ) flush();
@@ -78,7 +80,9 @@ void YZSwapFile::init() {
 	yzDebug() << "Swap : init file " << mFilename << endl;
 	if ( QFile::exists( mFilename ) ) {
 		yzDebug() << "Swap file already EXISTS ! " << endl;
-		recover();
+		//that should really not happen ...
+		mNotResetted = true; //don't try to access that file later ...
+		return;
 	}
 
 	QFile f( mFilename );
@@ -91,10 +95,15 @@ void YZSwapFile::init() {
 		stream << "Process ID : " << QString::number( getpid() ) << endl;
 		stream << endl << endl << endl;
 		f.close();
+	} else {
+		YZSession::me->popupMessage(tr( "Warning, the swapfile could not be created maybe due to restrictive permissions." ));
+		mNotResetted = true;
+		return;
 	}
+	mNotResetted = false;
 }
 
-void YZSwapFile::recover() {
+bool YZSwapFile::recover() {
 	mRecovering=true;
 	QFile f( mFilename );
 	if ( f.open( IO_ReadOnly ) ) {
@@ -111,10 +120,13 @@ void YZSwapFile::recover() {
 		}
 		f.close();
 	} else {
-		//XXX error
+		YZSession::me->popupMessage(tr( "The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files." ));
+		mRecovering=false;
+		return false;
 	}
 
 	mRecovering=false;
+	return true;
 }
 
 void YZSwapFile::replay( YZBufferOperation::OperationType type, unsigned int col, unsigned int line, const QString& text ) {
@@ -133,6 +145,5 @@ void YZSwapFile::replay( YZBufferOperation::OperationType type, unsigned int col
 			mParent->action()->deleteLine( pView, line, 1 );
 			break;
 	}
-	pView->refreshScreen();
 }
 

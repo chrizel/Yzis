@@ -427,7 +427,7 @@ void NYZView::initialiseAttributesMap()
 		MAP( 16, Qt::darkMagenta );
 		MAP( 17, Qt::darkYellow );
 
-	} else {
+	} else 
 
 #endif
 

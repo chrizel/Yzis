@@ -52,13 +52,12 @@ bool NYZEventLoop::processEvents(  ProcessEventsFlags flags )
 //	if (  flags&QEventLoop::AllEvents ) { // neither..
 		// flush our events, only if ExcludeUserInput was not set
 		nyzis_had_some  = NYZFactory::self->process_one_event();
-		while ( bool keep_on = nyzis_had_some)
-			keep_on = NYZFactory::self->process_one_event();
+		while ( NYZFactory::self->process_one_event() )
+			;
 //	}
 
 	// flush Qt ones
 	bool qt_had_some = QEventLoop::processEvents(flags);
-
 	return nyzis_had_some||qt_had_some;
 }
 

@@ -89,11 +89,6 @@ void NYZView::map( void )
 	if (has_colors())
 		wattron(statusbar, attribWhite );
 
-	/* prevents the delay between hitting <escape> and when we actually receive the event */
-	notimeout( stdscr, true );
-	notimeout( editor, true );
-	notimeout( statusbar, true );
-	notimeout( infobar, true );
 }
 
 

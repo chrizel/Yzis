@@ -61,8 +61,6 @@ int main(int argc, char **argv) {
 	KCmdLineArgs::init(argc, argv, &about);
 	KCmdLineArgs::addCmdLineOptions( options );
 	KApplication app;
-	KGlobal::dirs()->addResourceDir( "locale", QString( PREFIX )+ "/share/yzis/locale" );
-	KGlobal::locale()->setActiveCatalogue("yzis");
 
 	setlocale( LC_ALL, "");
 	bindtextdomain( "yzis", QString( PREFIX ) + "/share/locale" );

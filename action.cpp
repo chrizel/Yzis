@@ -284,8 +284,12 @@ void YZAction::mergeNextLine( YZView* pView, unsigned int y, bool stripSpaces ) 
 	CONFIGURE_VIEWS;
 	QString line = mBuffer->textline( y );
 	QString line2 = mBuffer->textline( y + 1 );
-	if ( stripSpaces )
-		line2.replace(QRegExp("^\\s*")," ");
+	if ( stripSpaces ) {
+		QString space(" ");
+		if ( line.endsWith(" ") || line.endsWith("	") )
+			space = "";
+		line2.replace(QRegExp("^\\s*"),space);
+	}
 	mBuffer->replaceLine( line + line2, y );
 	mBuffer->deleteLine( y + 1 );
 	pView->moveXY( line.length(), y );

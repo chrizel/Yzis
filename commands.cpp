@@ -579,7 +579,7 @@ YZCursor YZCommandPool::firstNonBlank(const YZNewMotionArgs &args) {
 YZCursor YZCommandPool::gotoMark( const YZNewMotionArgs &args ) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	bool found = false;
-	YZCursorPos pos = args.view->myBuffer()->marks()->get( args.arg, &found );
+	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg, &found );
 	if ( found )
 		return *pos.bPos;
 	else
@@ -842,7 +842,7 @@ QString YZCommandPool::yank(const YZCommandArgs &args) {
 
 QString YZCommandPool::mark(const YZCommandArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->myBuffer()->marks()->add( args.arg, *viewCursor.buffer(), *viewCursor.screen() );
+	args.view->myBuffer()->viewMarks()->add( args.arg, *viewCursor.buffer(), *viewCursor.screen() );
 	return QString::null;
 }
 

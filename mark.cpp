@@ -24,15 +24,15 @@
 #include "mark.h"
 #include "cursor.h"
 
-YZMark::YZMark( ) {
+YZViewMark::YZViewMark( ) {
 	clear( );
 }
-YZMark::~YZMark( ) {
+YZViewMark::~YZViewMark( ) {
 	clear( );
 }
 
-void YZMark::clear( ) {
-	YZMarker::Iterator it = marker.begin();
+void YZViewMark::clear( ) {
+	YZViewMarker::Iterator it = marker.begin();
 	for( ; it != marker.end(); ++it ) {
 		delete it.data().bPos;
 		delete it.data().dPos;
@@ -40,15 +40,15 @@ void YZMark::clear( ) {
 	marker.clear( );
 }
 
-void YZMark::add( const QString& mark, const YZCursor& bPos, const YZCursor& dPos ) {
+void YZViewMark::add( const QString& mark, const YZCursor& bPos, const YZCursor& dPos ) {
 	YZCursorPos pos;
 	pos.bPos = new YZCursor( bPos );
 	pos.dPos = new YZCursor( dPos );
 	marker.insert( mark, pos, true );
 }
 
-void YZMark::del( const QString& mark ) {
-	YZMarker::Iterator it = marker.find( mark );
+void YZViewMark::del( const QString& mark ) {
+	YZViewMarker::Iterator it = marker.find( mark );
 	if ( it != marker.end() ) {
 		delete it.data().bPos;
 		delete it.data().dPos;
@@ -56,9 +56,43 @@ void YZMark::del( const QString& mark ) {
 	marker.remove( mark );
 }
 
-YZCursorPos YZMark::get( const QString& mark, bool * found ) {
-	YZMarker::Iterator it = marker.find( mark );
+YZCursorPos YZViewMark::get( const QString& mark, bool * found ) {
+	YZViewMarker::Iterator it = marker.find( mark );
 	*found = it != marker.end();
 	return it.data();
 }
 
+
+
+void YZDocMark::clear( ) {
+	marker.clear();
+}
+
+void YZDocMark::add( uint line, uint mark ) {
+	if (marker.contains(line))
+	{
+		mark &= ~marker[line];
+		if (mark == 0)
+			return;
+		marker[line] |= mark;
+	}
+	else
+		marker[line] = mark;
+}
+
+void YZDocMark::del( uint line, uint mark ) {
+	mark &= marker[line];
+	if (mark == 0)
+		return;
+	marker[line] &= ~mark;
+	if (marker[line] == 0)
+		marker.remove(line);
+}
+
+void YZDocMark::del( uint line ) {
+	marker.remove(line);
+}
+
+uint YZDocMark::get( uint line ) {
+	return marker[line];
+}

@@ -35,7 +35,8 @@
 class YZView;
 class YZUndoBuffer;
 class YZAction;
-class YZMark;
+class YZDocMark;
+class YZViewMark;
 class YZCursor;
 class YZSwapFile;
 class YZSession;
@@ -272,7 +273,8 @@ public:
 	// Action
 	YZAction* action() { return mAction; }
 
-	YZMark* marks() { return mMarks; }
+	YZViewMark* viewMarks() { return mViewMarks; }
+	YZDocMark* docMarks() { return mDocMarks; }
 
 	/**
 	 * Display a nice intro before first input and when no file is loaded
@@ -457,7 +459,8 @@ protected:
 
 private:
 	YZAction* mAction;
-	YZMark* mMarks;
+	YZViewMark* mViewMarks;
+	YZDocMark* mDocMarks;
 	YZSwapFile *mSwap;
 };
 

@@ -37,9 +37,9 @@ void YZMotionPool::initPool() {
 	addMotion (YZMotion( "$", REGEXP, 0, 0, false ), "\\$" );
 	addMotion (YZMotion( "^", REGEXP, 0, 0, true ), "0");
 	addMotion (YZMotion( "", RELATIVE, -1, 0, true ), "[0-9]*h");
-	addMotion (YZMotion( "", RELATIVE, 1, 0, true ), "[0-9]*l");
+	addMotion (YZMotion( "", RELATIVE, 1, 0, false ), "[0-9]*l");
 	addMotion (YZMotion( "", RELATIVE, 0, -1, true ), "[0-9]*k");
-	addMotion (YZMotion( "", RELATIVE, 0, 1, true ), "[0-9]*j");
+	addMotion (YZMotion( "", RELATIVE, 0, 1, false ), "[0-9]*j");
 }
 
 void YZMotionPool::addMotion(const YZMotion& regexp, const QString& key){
@@ -86,7 +86,6 @@ bool YZMotionPool::applyRelativeMotion( const QString &inputsMotion, YZMotion& m
 	QRegExp rex( motion.rex );
 	result->setX(view->getBufferCursor()->getX());
 	result->setY(view->getBufferCursor()->getY());
-	int idx=-1;
 	int count = 0 ;
 
 	while (count < counter) {

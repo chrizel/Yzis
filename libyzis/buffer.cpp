@@ -363,7 +363,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 		}
 	}
 	if ( isLineVisible( line ) && updateHL( line ) ) updateAllViews( );
-	else YZSession::me->search()->highlightLine( this, line );
+	YZSession::me->search()->highlightLine( this, line );
 	setChanged( true );
 }
 

@@ -159,7 +159,7 @@ QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
 		QString option = rx.cap( 2 ).simplifyWhiteSpace();
 		bool hasOperator = rx.numCaptures() == 4; // do we have a +/- in the set command ?
 		QString value = hasOperator ? rx.cap( 4 ).simplifyWhiteSpace() : rx.cap( 3 ).simplifyWhiteSpace();
-		KOption *opt = YZSession::mOptions.getOption(option);
+		YZInternalOption *opt = YZSession::mOptions.getOption(option);
 		if ( !opt ) {
 			view->mySession()->popupMessage(tr("Invalid option given : ") + option);
 			return QString::null;
@@ -203,7 +203,7 @@ QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
 				break;
 		}
 	} else if ( rx2.exactMatch( inputs )) {
-		KOption *opt = YZSession::mOptions.getOption(rx2.cap( 2 ).simplifyWhiteSpace());
+		YZInternalOption *opt = YZSession::mOptions.getOption(rx2.cap( 2 ).simplifyWhiteSpace());
 		if ( !opt ) {
 			view->mySession()->popupMessage(tr("Invalid option given"));
 			return QString::null;
@@ -220,7 +220,7 @@ QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
 				break;
 		}
 	} else if ( rx3.exactMatch( inputs ) ) {
-		KOption *opt = YZSession::mOptions.getOption(rx3.cap( 2 ).simplifyWhiteSpace());
+		YZInternalOption *opt = YZSession::mOptions.getOption(rx3.cap( 2 ).simplifyWhiteSpace());
 		if ( !opt ) {
 			view->mySession()->popupMessage(tr("Invalid option given"));
 			return QString::null;
@@ -256,7 +256,7 @@ QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
 		QString option = rx.cap( 2 ).simplifyWhiteSpace();
 		bool hasOperator = rx.numCaptures() == 4; // do we have a +/- in the set command ?
 		QString value = hasOperator ? rx.cap( 4 ).simplifyWhiteSpace() : rx.cap( 3 ).simplifyWhiteSpace();
-		KOption *opt = YZSession::mOptions.getOption(option);
+		YZInternalOption *opt = YZSession::mOptions.getOption(option);
 		if ( !opt ) {
 			view->mySession()->popupMessage(tr("Invalid option given : ") + option);
 			return QString::null;

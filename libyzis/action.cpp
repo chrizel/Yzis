@@ -26,7 +26,7 @@
 #include "debug.h"
 #include "registers.h"
 #include "cursor.h"
-#include "options.h"
+#include "internal_options.h"
 #include "buffer.h"
 #include "session.h"
  

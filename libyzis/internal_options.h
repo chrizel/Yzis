@@ -41,16 +41,16 @@ enum value_t {
 
 
 /**
- * Class to handle a single option
+ * Class to handle an internal option.
  * It includes : a name , a group, a default value and the current value
  */
-class KOption {
+class YZInternalOption {
 	public:
-		KOption( const QString& key, const QString& group, const QString& value, const QString& defaultValue, option_t type, value_t vtype);
-		KOption( const QString& key, const QString& group, const QStringList& value, const QStringList& defaultValue, option_t type, value_t vtype);
-		KOption( const QString& key, const QString& group, int value, int defaultValue, option_t type, value_t vtype);
-		KOption( const QString& key, const QString& group, bool value, bool defaultValue, option_t type, value_t vtype);
-		~KOption() {}
+		YZInternalOption( const QString& key, const QString& group, const QString& value, const QString& defaultValue, option_t type, value_t vtype);
+		YZInternalOption( const QString& key, const QString& group, const QStringList& value, const QStringList& defaultValue, option_t type, value_t vtype);
+		YZInternalOption( const QString& key, const QString& group, int value, int defaultValue, option_t type, value_t vtype);
+		YZInternalOption( const QString& key, const QString& group, bool value, bool defaultValue, option_t type, value_t vtype);
+		~YZInternalOption() {}
 
 		const QString& getGroup() { return mGroup; }
 		const QString& getKey() { return mKey; }
@@ -71,20 +71,20 @@ class KOption {
 };
 
 /**
- * Class to handle all common options of yzis
+ * Class to handle the internal options.
  * 
  * every setOption and readOption has a key parameter. 
  * The key is composed of two strings, one is for the "group" of the option
  * the other is the actual key name
  */
-class YZOption {
+class YZInternalOptionPool {
 	public:
 		/**
 		 * Default constructor
 		 */
-		YZOption();
-		YZOption(const YZOption&);
-		virtual ~YZOption();
+		YZInternalOptionPool();
+		YZInternalOptionPool(const YZInternalOptionPool&);
+		virtual ~YZInternalOptionPool();
 
 		/**
 		 * Load settings from @param file
@@ -164,7 +164,7 @@ class YZOption {
 		/**
 		 * Return a pointer on a specific option
 		 */
-		KOption* getOption( const QString& option );
+		YZInternalOption* getOption( const QString& option );
 
 	private:
 		void init();
@@ -175,7 +175,7 @@ class YZOption {
 		void cleanup();
 		
 		//QString here is == group/key
-		QMap<QString, KOption*> mOptions;
+		QMap<QString, YZInternalOption*> mOptions;
 		QString currentGroup;
 };
 

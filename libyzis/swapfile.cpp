@@ -20,7 +20,7 @@
 #include "debug.h"
 #include "swapfile.h"
 #include "yzis.h"
-#include "options.h"
+#include "internal_options.h"
 #include "buffer.h"
 #include <qfile.h>
 #include <qtextstream.h>

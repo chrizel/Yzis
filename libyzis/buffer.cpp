@@ -36,7 +36,7 @@
 #include "undo.h"
 #include "debug.h"
 #include "action.h"
-#include "options.h"
+#include "internal_options.h"
 #include "mark.h"
 #include "swapfile.h"
 #include "session.h"

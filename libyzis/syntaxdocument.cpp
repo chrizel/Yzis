@@ -33,7 +33,7 @@
 #include "syntaxdocument.h"
 #include "debug.h"
 #include "translator.h"
-#include "options.h"
+#include "internal_options.h"
 #include "session.h"
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -529,7 +529,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
   // We'll store the ModeList in katesyntaxhighlightingrc
   //KConfig config("katesyntaxhighlightingrc", false, false);
-  YZOption& config = YZSession::mOptions;
+  YZInternalOptionPool& config = YZSession::mOptions;
 
   // figure our if the kate install is too new
   config.setGroup ("General");

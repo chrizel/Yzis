@@ -16,6 +16,10 @@ void YZView::send_char( unicode_char_t)
 	// nothing yet;
 }
 
+yz_event *YZView::fetch_event(/* asasdfasf */)
+{
+}
+
 
 
 /*
@@ -42,10 +46,7 @@ void yz_send_char(yz_view v, unicode_char_t c)
 yz_event * yz_fetch_event(yz_view v)
 {
 	CHECK_VIEW(v);
-	/* nothing yet */
-	yz_event *e = NULL;
-
-	return e;
+	return view->fetch_event();
 }
 
 void yz_get_geometry(yz_view v, int *current, int *lines)

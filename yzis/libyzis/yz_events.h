@@ -22,7 +22,6 @@ enum yz_events {
 
 /** here we can use long name as we shouldn't need to use those anyway */
 struct yz_event_setline {
-	int	line_nb;
 #ifdef __cplusplus
 	YZLine 	*line;
 #else

@@ -1,5 +1,6 @@
 # translation of fr.po to 
 # translation of fr.po to
+# translation of fr.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Mickael Marchand <marchand@kde.org>, 2005.
@@ -9,7 +10,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-12 17:12+0100\n"
-"PO-Revision-Date: 2005-02-12 00:08+0100\n"
+"PO-Revision-Date: 2005-02-13 20:23+0100\n"
 "Last-Translator: Mickael Marchand <marchand@kde.org>\n"
 "Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -95,13 +96,13 @@ msgstr "Auteur initial"
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
-msgstr "_:Mickael Marchand"
+msgstr "Mickael Marchand"
 
 #: ../kyzis/src/factory.cpp:152
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr "_:marchand@kde.org"
+msgstr "marchand@kde.org"
 
 #: ../kyzis/src/hlconfig.cpp:186
 msgid "Text Area Background"
@@ -405,7 +406,7 @@ msgstr "Console"
 
 #: ../libyzis/buffer.cpp:565
 msgid "Failed opening file %1 for reading : %2"
-msgstr ""
+msgstr "Impossible d'ouvrir le fichier %1 en lecture : %2"
 
 #: ../libyzis/buffer.cpp:573
 msgid "Recover"
@@ -422,7 +423,7 @@ msgstr ""
 
 #: ../libyzis/buffer.cpp:643
 msgid "Failed opening file %1 for writing : %2"
-msgstr ""
+msgstr "Impossible d'ouvrir le fichier %1 en écriture : %2"
 
 #: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
 msgid "Written %1 bytes to file %2"
@@ -482,8 +483,7 @@ msgstr ""
 #: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
 #: ../libyzis/mode_ex.cpp:629
 msgid "This option is a global option which cannot be changed with setlocal"
-msgstr ""
-"Cette option est globale , elle n'est pas modifiable par la commande setlocal"
+msgstr "Cette option est globale , elle n'est pas modifiable par la commande setlocal"
 
 #: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
 #: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
@@ -590,3 +590,4 @@ msgstr "(Appuyez sur une touche)"
 #: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
 msgid "[No File]"
 msgstr "[ Pas de fichier ]"
+

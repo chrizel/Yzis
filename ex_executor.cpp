@@ -29,17 +29,18 @@ YZExExecutor::~YZExExecutor() {
 }
 
 QString YZExExecutor::write( YZView *view, const QString& inputs ) {
+	if ( inputs == "wall" ) {
+		view->mySession()->saveAll();
+		return QString::null;
+	}
 	//XXX support saving to current pwd
-	QRegExp rx ( "^(\\d*)(\\S+) (.*)$");
+	QRegExp rx ( "^(.*)\\s(.*)$");
 	rx.search( inputs );
-	if ( rx.cap(3) != QString::null ) view->myBuffer()->setPath(rx.cap(3));
+	if ( rx.cap(2) != QString::null ) view->myBuffer()->setPath(rx.cap(2));
 	view->myBuffer()->save();
 	yzDebug() << "File saved as " << view->myBuffer()->fileName() << endl;
-	return QString::null;
-}
-
-QString YZExExecutor::writeall( YZView *view, const QString& inputs ) {
-	view->mySession()->saveAll();
+	if ( inputs.startsWith( "wqall" ) ) ;//write all modified buffers XXX
+	else if ( inputs.startsWith( "wq" ) ) view->mySession()->quit();
 	return QString::null;
 }
 
@@ -64,6 +65,7 @@ QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
 	view->mySession()->deleteView();
 	return QString::null;
 }
+
 QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 	if ( inputs == "q" || inputs == "q!" ) {
 		//close current view, if it's the last one on a buffer , check it is saved or not

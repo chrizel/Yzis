@@ -149,14 +149,14 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int * /* er
 
 void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("write", &YZExExecutor::write,true);
-	NEW_EX_COMMAND("wall", &YZExExecutor::writeall,true);
+	NEW_EX_COMMAND("wall", &YZExExecutor::write,true);
+	NEW_EX_COMMAND("wqall", &YZExExecutor::write,true); //handles wq too
 	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true);
 	NEW_EX_COMMAND("bprevious", &YZExExecutor::bufferprevious,true);
 	NEW_EX_COMMAND("bdelete", &YZExExecutor::bufferdelete,true);
 	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true);
 	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true);
 	NEW_EX_COMMAND("qall", &YZExExecutor::quit,true);
-	NEW_EX_COMMAND("wq", &YZExExecutor::quit,true);
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {

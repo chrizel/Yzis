@@ -177,6 +177,7 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 }
 
 void YZView::recalcScreen( ) {
+	if ( !YZSession::me->guiHasStarted() ) return;
 	if ( mBuffer->getLocalStringOption( "encoding" ) != mBuffer->encoding() ) {
 		// XXX: we must do that just after the :set
 		if ( mBuffer->fileIsModified() && YZSession::me->promptYesNo(tr("File modified"), tr("This file has been modified, do you want to save it ?")) ) {

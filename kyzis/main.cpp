@@ -88,10 +88,14 @@ int main(int argc, char **argv) {
 		}
 
 		QCString initialSendKeys = args->getOption("c");
+		YZSession::mOptions.setGroup("Global");
+		bool splash = YZSession::getBoolOption("makebluebirdhappy");
+		YZSession::setBoolOption("makebluebirdhappy", true);
 		if (initialSendKeys.length()) {
 			QString keys = (const char *) initialSendKeys;
 			YZSession::me->currentView()->sendMultipleKey(keys);
 		}
+		YZSession::setBoolOption("makebluebirdhappy", splash);
 
 		args->clear();
 	}

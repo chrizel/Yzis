@@ -46,6 +46,8 @@ void YZSelectionPool::addSelection( unsigned int from_x, unsigned int from_y, un
 	to->setX( to_x );
 	to->setY( to_y );
 	addSelection( from, to );
+	delete from;
+	delete to;
 }
 void YZSelectionPool::addSelection( YZCursor * from, YZCursor * to ) {
 	bool isFromSel = false;
@@ -62,6 +64,7 @@ void YZSelectionPool::addSelection( YZCursor * from, YZCursor * to ) {
 			removeSelection( fromSel + 1, toSel - fromSel );
 			// extend fromSel selection
 			selectionPool[ fromSel ].to->setCursor( new_to );
+			delete new_to;
 		}
 	} else if ( isFromSel ) {
 		removeSelection( fromSel + 1, toSel - fromSel - 1 );
@@ -126,6 +129,8 @@ void YZSelectionPool::delSelection( YZCursor * from, YZCursor * to ) {
 			if ( ! removeFrom ) selectionPool[ fromSel ].to->setCursor( new_from );
 		}
 	}
+	delete new_from;
+	delete new_to;
 }
 
 void YZSelectionPool::clear( ) {

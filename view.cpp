@@ -1147,48 +1147,29 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 
 QString YZView::paste( const QString& , YZCommandArgs args ) {
 	QStringList list = YZSession::mRegisters.getRegister( args.registr );
-	//save cursor pos
-	unsigned int curx = mCursor->getX();
-	unsigned int cury = mCursor->getY();
-	unsigned int curdy = dCursor->getY();
 
 	uint i = 0;
 	if ( args.command == "p" ) { //paste after current char
-		QString nl = mBuffer->textline( mCursor->getY() );
 		if ( !list[ 0 ].isNull() ) {
 			yzDebug() << "First line not NULL !" << endl;
-			nl = nl.left( curx + 1 ) + list[ 0 ] + nl.mid( curx + 1 );
-			mBuffer->replaceLine(nl, mCursor->getY());
-			gotoxy( curx + list[0].length(), cury );
+			mBuffer->action()->insertChar( this, mCursor->getX() + 1, mCursor->getY(), list[ 0 ] );
 		}
 		i++;
 		while ( i < list.size() ) {
-			mBuffer->insertLine(list[ i ], cury + i );
+			mBuffer->action()->insertLine( this, mCursor->getY() + i, list[ i ] );
 			i++;
 		}
-		if ( list.size() > 1 ) 
-			gotoxy( 0, cury + 1 );
-		paintEvent( dCurrentLeft, curdy, mColumnsVis, mLinesVis - ( curdy - dCurrentTop ) );
 	} else if ( args.command == "P" ) { //paste before current char
-		unsigned int mY = cury > list.size() - 1 ? cury - list.size() + 1 : 0;
-		gotoxy( 0, mY );
-		curdy = dCursor->getY();
 		i = 1;
 		while ( i < list.size() ) {
-			mBuffer->insertLine( list[ i ], cury + i - 1 );
+			mBuffer->action()->insertLine( this, mCursor->getY() + i - 1, list[ i ] );
 			i++;
 		}
 		--i;
 		if ( !list[ 0 ].isNull() ) {
-			QString nl = mBuffer->textline( cury + i );
-			nl = nl.left( curx ) + list[ 0 ] + nl.mid( curx );
-			mBuffer->replaceLine(nl, cury + i );
-			gotoxy( curx + list[ 0 ].length(), cury + i );
+			mBuffer->action()->insertChar( this, mCursor->getX() + 1, mCursor->getY(), list[ 0 ] );
 		}
-		paintEvent( dCurrentLeft, curdy, mColumnsVis, mLinesVis - ( curdy - dCurrentTop ) );
 	}
-	stickyCol = dCursor->getX( );
-
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -1572,33 +1553,17 @@ void YZView::printToFile( const QString& path ) {
 }
 
 QString YZView::undo( const QString& , YZCommandArgs ) {
-	uint cursorX, cursorY;
-
 	/* XXX repeat if necessary */
-	mBuffer->undoBuffer()->undo(&cursorX, &cursorY);	
-
-	gotoxy( cursorX, cursorY );
-
+	mBuffer->undoBuffer()->undo( this );
 	//reset the input buffer of the originating view
 	purgeInputBuffer();
-
-	refreshScreen();
-
 	return QString::null;
 }
 
 QString YZView::redo( const QString& , YZCommandArgs ) {
-	uint cursorX, cursorY;
-
 	/* XXX repeat if necessary */
-	mBuffer->undoBuffer()->redo(&cursorX, &cursorY);	
-
-	gotoxy( cursorX, cursorY );
-
+	mBuffer->undoBuffer()->redo( this );
 	//reset the input buffer of the originating view
 	purgeInputBuffer();
-
-	refreshScreen();
-
 	return QString::null;
 }

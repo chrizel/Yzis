@@ -80,6 +80,7 @@ YZBuffer::~YZBuffer() {
 		m_highlight->release();
 	mText.clear();
 	delete mUndoBuffer;
+	delete mAction;
 	// delete the temporary file if we haven't changed the file
 }
 

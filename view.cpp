@@ -664,7 +664,6 @@ void YZView::gotoy( unsigned int nexty ) {
 
 void YZView::initGoto( ) {
 	initDraw( mCursor->getX(), mCursor->getY(), dCursor->getX(), dCursor->getY() );
-	yzDebug() << "sCursor = " << *sCursor << endl;
 	rSpaceFill = dSpaceFill;
 	rColLength = dColLength;
 	sColLength = mColLength;
@@ -1405,6 +1404,7 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 
 bool YZView::drawPrevLine( ) {
 	if ( ! wrapNextLine ) {
+		sLineLength = 1;
 		sCursor->setX( sCurrentLeft );
 		rCursor->setX( rCurrentLeft );
 		sCursor->setY( sCursor->getY() - sLineLength );

@@ -26,6 +26,7 @@
  * This file contains the list of mappings between keystrokes and commands
  */
 
+
 #include <qstring.h>
 #include <qmap.h>
 #include <qstringlist.h>
@@ -34,6 +35,7 @@
 #include "session.h"
 #include "plugin.h"
 #include "ex_executor.h"
+#include "ex_lua.h"
 
 #ifndef YZ_COMMANDS_H
 #define YZ_COMMANDS_H
@@ -51,9 +53,11 @@
 
 //to be used only for the Ex Pool
 #define NEW_EX_COMMAND( x,y,z,a ) { YZCommand cmd; cmd.priority=a; cmd.immutable=z; cmd.obj=EX; cmd.exFunc=y; globalExCommands[ x ] = cmd; }
+#define NEW_LUA_COMMAND( x,y,z,a ) { YZCommand cmd; cmd.priority=a; cmd.immutable=z; cmd.obj=LUA; cmd.luaFunc=y; globalExCommands[ x ] = cmd; }
 
 class YZSession;
 class YZExExecutor;
+class YZExLua;
 class YZBuffer;
 class YZView;
 
@@ -84,6 +88,7 @@ struct args {
 
 typedef struct args YZCommandArgs;
 
+
 //oh please don't instanciate me twice !
 class YZCommandPool {
 	//object types definition
@@ -92,7 +97,8 @@ class YZCommandPool {
 		VIEW,
 		BUFF,
 		SESS,
-		EX
+		EX,
+		LUA
 	};
 
 	struct cmd {
@@ -112,6 +118,7 @@ class YZCommandPool {
 		QString ( YZSession::*sessFunc ) (const QString& inputsBuff, YZCommandArgs args);
 		QString ( YZPlugin::*plugFunc ) (const QString& inputsBuff, YZCommandArgs args);
 		QString ( YZExExecutor::*exFunc ) (YZView *view, const QString& inputsBuff);
+		QString ( YZExLua::*luaFunc ) (YZView *view, const QString& inputsBuff);
 		// TODO : shouldn't that be an union ?
 	};
 
@@ -139,6 +146,7 @@ class YZCommandPool {
 		
 	private:
 		YZExExecutor *executor;
+		YZExLua *lua_executor;
 
 };
 

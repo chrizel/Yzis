@@ -5443,7 +5443,9 @@ AC_DEFUN(AC_PATH_TINYQ, [
 
 AC_DEFUN(AC_PATH_LUA, [
 	AC_PATH_PROG(LUA_CONFIG, lua-config, no)
-	
+
+	LUA_LIBS="-llualib50 -llua50"
+
 	if test "x$LUA_CONFIG" = "xno" ; then
 		AC_PATH_PROG(LUA_CONFIG, lua-config50, no)
 	fi
@@ -5457,7 +5459,7 @@ AC_DEFUN(AC_PATH_LUA, [
 		[
 		LUA="$withval"
 		LUA_INCLUDES=-I"$withval"/include
-		LUA_LIBS="-L$withval/lib -llua50" ])
+		LUA_LIBS="-L$withval/lib -lualib50 -llua50" ])
 
 	AC_ARG_WITH(lua-inc, 
 		AC_HELP_STRING([--with-lua-includes=DIR],[where the Lua includes are]),
@@ -5466,7 +5468,7 @@ AC_DEFUN(AC_PATH_LUA, [
 	AC_ARG_WITH(lua-lib,
 		AC_HELP_STRING([--with-lua-libraries=DIR],[where the Lua library is installed]),
 		[
-		LUA_LIBS="-L$withval/lib -llua50" ])
+		LUA_LIBS="-L$withval/lib -llualib50 -llua50" ])
 
 
 	if ! test "x$LUA" = "x"; then

@@ -21,9 +21,6 @@
 #include "debug.h"
 #include <qfileinfo.h>
 #include <qdir.h>
-extern "C" {
-#include <lua.h>
-}
 
 YZExExecutor::YZExExecutor() {
 }
@@ -169,10 +166,5 @@ QString YZExExecutor::substitute( YZView *view, const QString& inputs) {
 	return QString::null;
 }
 
-QString YZExExecutor::lua(YZView *view, const QString& inputs) {
-	lua_State *st = lua_open();
-	yzDebug() << "Lua version : " << lua_version() << endl;
-	return QString::null;
-}
 #include "ex_executor.moc"
 

@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <ctype.h>
 #include <qkeysequence.h>
+#include <math.h>
 #include "view.h"
 #include "debug.h"
 #include "undo.h"

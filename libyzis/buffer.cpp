@@ -435,6 +435,7 @@ bool YZBuffer::save() {
 			return false; //dont try to save
 	}
 	QFile file( mPath );
+	yzDebug() << "Saving file to " << mPath << endl;
 	if ( file.open( IO_WriteOnly ) ) {
 		QTextStream stream( &file );
 		// do not save empty buffer to avoid creating a file

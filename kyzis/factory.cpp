@@ -199,7 +199,7 @@ void KYZisFactory::popupMessage( const QString& message ) {
 	KMessageBox::information(v, message, tr( "Error" ));
 }
 
-void KYZisFactory::deleteView( ) {
+void KYZisFactory::deleteView( int uid ) {
 	DCOPClient *client = kapp->dcopClient();
 	QByteArray data;
 	QDataStream arg(data, IO_WriteOnly);

@@ -1,6 +1,7 @@
 2004-08-06 mikmak
   * libyzis
     initial swapfile recovering support
+    'd[0-9]*w' command is back
 
 2004-07-30 mikmak
   * libyzis

@@ -72,9 +72,10 @@ NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
 	 * create a buffer and a view on it
 	 */
 	NYZisDoc *bf;
-	if ( argc>1 )
-		bf = createBuffer(charv[1]);
-	else {
+	if ( argc>1 ) {
+		bf = createBuffer();
+		bf->load( charv[ 1 ] );
+	} else {
 /*		char tmpname[ 20 ];
 		strcpy( tmpname, "/tmp/nyzis.XXXXXX" );
 		int fd;

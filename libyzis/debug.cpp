@@ -30,26 +30,50 @@
 #include <qstringlist.h>
 #include <ctype.h>
 
-//the one which writes to the files ...
-static void YZDebugBackend(int , const char* data) {
-	if ( 1 ) { //output to file
-		const int BUFSIZE=4096;
-		char buf[ BUFSIZE ];
-		int nSize = snprintf(buf, BUFSIZE,"%s", data );
-		QFile out ( "/tmp/yzisdebug.log" );
-		out.open(IO_WriteOnly | IO_Append );
-		if ( ( nSize == -1 ) || ( nSize >= BUFSIZE ) )
-			out.writeBlock( buf, BUFSIZE-1 );
-		else
-			out.writeBlock( buf, nSize );
-/*		QTextStream stream( &out );
-		stream << data << "\n";*/
-		out.close();
-	} else {
-		FILE *output=stderr;
-		fputs( data ,output);
-	}
+YZDebugBackend * YZDebugBackend::_instance = NULL;
+
+YZDebugBackend::YZDebugBackend() 
+: _level(0)
+{
+	_output = stderr;
 }
+
+YZDebugBackend * YZDebugBackend::instance()
+{
+	if (_instance == NULL) {
+		_instance = new YZDebugBackend();
+	}
+	return _instance;
+}
+
+void YZDebugBackend::setDebugOutput( FILE * file )
+{
+	if (file == NULL) {
+		flush( YZ_WARNING_LEVEL, 0, "YZDebugBackend: setting output to a NULL file descriptor\n" );
+		return;
+	}
+	_output = file;
+}
+
+void YZDebugBackend::setDebugOutput( const char * fileName )
+{
+	setDebugOutput( fopen( fileName, "w" ) );
+}
+
+void YZDebugBackend::flush( int level, int area, const char * data )
+{
+	if (level < _level) return;
+	if (isAreaEnabled( area ) == false) return;
+	
+	fprintf( _output, "%s", data );
+	/*
+	if (data[strlen(data)-1] != '\n') {
+		fprintf( _output, "\n" );
+	}
+	*/
+}
+
+
 
 YZDebugStream::YZDebugStream( int _area, int _level ) {
 	area = _area;
@@ -156,7 +180,7 @@ YZDebugStream& YZDebugStream::operator << (double d) {
 
 void YZDebugStream::flush() {
 	if ( output.isEmpty() ) return;
-	YZDebugBackend(area, output.local8Bit().data());
+	YZDebugBackend::instance()->flush(level, area, output.local8Bit().data());
 	output=QString::null;
 }
 

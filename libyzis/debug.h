@@ -34,6 +34,7 @@
 
 #include <qstring.h>
 #include <qfile.h>
+#include <qmap.h>
 
 class QStringList;
 class QCString;
@@ -53,6 +54,54 @@ class QCString;
 #define CORE 1
 #define KYZIS 2
 #define NYZIS 3
+#define AREA_TESTS 4
+
+class YZDebugBackend {
+public:
+	static YZDebugBackend * instance();
+
+	/** write data to the debug backend */
+	void flush( int level, int area, const char * data );
+
+	/** All debugging info under level will not be printed.
+	  * setDebugLevel( YZ_DEBUG_LEVEL ) will log all debug output.
+	  */
+	void setDebugLevel( int level ) { _level = level; }
+
+	int debugLevel() { return _level; }
+
+	/** All debug will be logged to the open file descriptor file.
+	  * stdout and stderr are perfectly valid file descriptors. */
+	void setDebugOutput( FILE * file );
+
+	/** Same as above, but just specifies the file name */
+	void setDebugOutput( const char * fileName );
+
+	/** Enable/Disable the log output of area */
+	void enableDebugArea( int area, bool enabled ) {
+		_areaOutput[area] = enabled;
+	}
+
+	/** Return whether an area is enabled. All area are enalbed by default
+	  */
+	bool isAreaEnabled( int area ) {
+		if (_areaOutput.contains( area )) {
+			return _areaOutput[area];
+		} else {
+			return true;
+		}
+	}
+
+
+private:
+	YZDebugBackend();
+	static YZDebugBackend * _instance;
+
+	QMap<int,bool> _areaOutput;
+	int _level;
+	FILE * _output;
+};
+
 
 class YZDebugStream;
 

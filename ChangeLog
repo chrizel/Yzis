@@ -1,3 +1,7 @@
+2004-07-12 mikmak
+  * libyzis
+    cindent support
+
 2004-07-12 panard
   * libyzis, kyzis
     support for non-fixed fonts

@@ -500,6 +500,8 @@ class YZView {
 		
 		unsigned int rHLAttributesLen;
 
+//		QColor rDrawColor;
+
 		YzisAttribute *rHLAttributes;
 
 		QString  sCurLine;

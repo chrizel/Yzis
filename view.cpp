@@ -1104,6 +1104,9 @@ bool YZView::drawPrevLine( ) {
 
 bool YZView::drawNextLine( ) {
 
+	//update the options which we cached
+	tabwidth = YZSession::getIntOption("General\\tabwidth");
+	
 	if ( ! wrapNextLine ) {
 		sCursor->setX( sCurrentLeft );
 		sCursor->setY( sCursor->getY() + sLineLength );
@@ -1136,7 +1139,7 @@ bool YZView::drawNextLine( ) {
 				drawNextCol( );
 				drawChar( );
 			}
-			rSpaceFill = (rCurrentLeft % YZSession::getIntOption( "General\\tabwidth" ));
+			rSpaceFill = (rCurrentLeft % tabwidth );
 
 /*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
 					<< ", rX(cursor):" << rCursor->getX() 
@@ -1201,28 +1204,28 @@ bool YZView::drawNextCol( ) {
 	return ( rCursor->getX( ) - rCurrentLeft < mColumnsVis && sCursor->getX( ) < sCurLine.length() );
 }
 
-QChar YZView::drawChar( ) {
-	QChar ch = ' ';
+const QChar& YZView::drawChar( ) {
+	lastChar = ' ';
 	unsigned int curx = sCursor->getX( );
-	if ( curx < sCurLine.length( ) ) {
-		ch = sCurLine[ curx ];
-	}
+	if ( curx < sCurLine.length( ) )
+		lastChar = sCurLine[ curx ];
 
 	sColLength = 1;
 	rColLength = 1;
-	if (rSpaceFill == ( uint )YZSession::getIntOption( "General\\tabwidth" )) rSpaceFill = 0;
-	if ( ch == tabChar ) {
-		rColLength = YZSession::getIntOption( "General\\tabwidth" ) - rSpaceFill;	
-		ch = ' ';
+	if (rSpaceFill == tabwidth) rSpaceFill = 0;
+	if ( lastChar == tabChar ) {
+		rColLength = tabwidth - rSpaceFill;	
+		lastChar = ' ';
 	}
 	rSpaceFill += rColLength;
 
-	return ch;
+	return lastChar;
 }
 
 unsigned int YZView::drawLength( ) {
 	return rColLength;
 }
+
 unsigned int YZView::drawHeight ( ) {
 	return rLineLength;
 }

@@ -4,6 +4,7 @@
  * yz_line.h
  */
 
+#include "yzis.h"
 
 
 #ifndef NULL

@@ -5,3 +5,4 @@ noinst_LTLIBRARIES = libyzis.la
 
 libyzis_la_SOURCES = yz_buffer.cpp yz_view.cpp yz_events.cpp yz_session.cpp yz_cursor.cpp yz_commands.cpp
 
+re : clean all

@@ -72,7 +72,7 @@ bool YZCursor::operator== ( const YZCursor & right ) const {
 	return ( x_pos == right.x_pos && y_pos == right.y_pos );
 }
 YZDebugStream &operator<< ( YZDebugStream &out, const YZCursor & c ) {
-	out << "YZCursor(" << c.x_pos << "," << c.y_pos << ") ";
+	out << "(" << c.x_pos << "," << c.y_pos << ")";
 	return out;
 }
 

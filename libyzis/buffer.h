@@ -171,7 +171,7 @@ public:
 	 * @param to the end cursor
 	 * @return a list of strings
 	 */
-	QStringList getText(YZCursor& from, YZCursor& to);
+	QStringList getText(const YZCursor& from, const YZCursor& to);
 
 	/**
 	 * Get entire word at given cursor position. Currently behaves like '*' in vim

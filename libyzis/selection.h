@@ -1,5 +1,5 @@
 /*  This file is part of the Yzis libraries
- *  Copyright (C) 2004 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2004-2005 Loic Pauleve <panard@inzenet.org>
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -29,65 +29,132 @@
 #include "cursor.h"
 
 class YZCursor;
-class YZView;
 
-class YZSelection {
+class YZBound {
 	public:
-		YZSelection( const YZSelection& sel ) :
-			mFrom ( sel.from() ), mTo ( sel.to() ), mDrawFrom ( sel.drawFrom() ), mDrawTo ( sel.drawTo() ) {
+		YZBound( const YZBound& bound ) : mPos( bound.pos() ) {
+			mOpen = bound.opened();
 		}
-		YZSelection(const YZCursor& _from, const YZCursor& _to, const YZCursor& _drawFrom, const YZCursor& _drawTo) :
-	   		mFrom ( _from ), mTo( _to ), mDrawFrom( _drawFrom ), mDrawTo( _drawTo )	{
+		YZBound( const YZCursor& pos, bool open = false ) : mPos( pos ) {
+			mOpen = open;
 		}
-		YZSelection(){}
-		const YZCursor& from() const { return mFrom; }
-		const YZCursor& to() const { return mTo; }
-		const YZCursor& drawFrom() const { return mDrawFrom; }
-		const YZCursor& drawTo() const { return mDrawTo; }
-		void setTo( const YZCursor& t ) { mTo.setCursor( t ); }
-		void setFrom( const YZCursor& t ) { mFrom.setCursor( t ); }
-		void setDrawFrom( const YZCursor& t ) { mDrawFrom.setCursor( t ); }
-		void setDrawTo( const YZCursor& t ) { mDrawTo.setCursor( t ); }
+		YZBound(){}
+
+		void setPos( const YZCursor& pos );
+		void setPos( unsigned int x, unsigned int y );
+		void open();
+		void close();
+		const YZCursor& pos() const;
+		bool opened() const;
 
 	private:
-		YZCursor mFrom;
-		YZCursor mTo;
-		YZCursor mDrawFrom;
-		YZCursor mDrawTo;
+		YZCursor mPos;
+		bool mOpen;
 };
 
-typedef QMap<unsigned int, YZSelection> YZSelectionMap;
-typedef QMap<QString, YZSelectionMap> YZSelectionLayout;
+bool operator==( const YZBound& left, const YZBound& right );
+bool operator>( const YZBound& left, const YZBound& right );
+bool operator<( const YZBound& left, const YZBound& right );
+bool operator>=( const YZBound& left, const YZBound& right );
+bool operator<=( const YZBound& left, const YZBound& right );
+bool operator>=( const YZBound& left, const YZCursor& right );
+bool operator<=( const YZBound& left, const YZCursor& right );
+bool operator>=( const YZCursor& left, const YZBound& right );
+bool operator<=( const YZCursor& left, const YZBound& right );
 
-class YZSelectionPool {
+class YZInterval {
+
+	friend YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i );
 
 	public:
-		YZSelectionPool( YZView * view );
-		virtual ~YZSelectionPool( );
+		YZInterval( const YZBound& from, const YZBound& to ) : mFrom( from ), mTo( to ) {}
+		YZInterval( const YZCursor& from, const YZCursor& to ) : mFrom( from ), mTo( to ) {}
+		YZInterval( const YZBound& from, const YZCursor& to ) : mFrom( from ), mTo( to ) {}
+		YZInterval( const YZCursor& from, const YZBound& to ) : mFrom( from ), mTo( to ) {}
+		YZInterval(){}
 
-		void addSelection( const QString& layout, const YZCursor& from, const YZCursor& to, const YZCursor& drawFrom, const YZCursor& drawTo );
-		void addSelection( const QString& layout, unsigned int from_x, unsigned int from_y, unsigned int to_x, unsigned int to_y );
-		void delSelection( const QString& layout, const YZCursor& from, const YZCursor& to, const YZCursor& drawFrom, const YZCursor& drawTo );
-		void delSelection( const QString& layout, unsigned int from_x, unsigned int from_y, unsigned int to_x, unsigned int to_y );
+		void setFrom( const YZBound& bound );
+		void setTo( const YZBound& bound );
+		const YZBound& from() const;
+		const YZBound& to() const;
 
-		void clear( );
-		void clear( const QString& layout );
+		void setFromPos( const YZCursor& pos );
+		void setToPos( const YZCursor& pos );
+		const YZCursor& fromPos() const;
+		const YZCursor& toPos() const;
 
-		YZSelectionMap layout( const QString& layout );
-		void setLayout( const QString& layout, YZSelectionMap content );
+		bool contains( const YZCursor& pos ) const;
+		bool contains( const YZInterval& pos ) const;
+
+	private:
+		YZBound mFrom;
+		YZBound mTo;
+};
+
+typedef QMap<unsigned int, YZInterval> YZSelectionMap;
+
+class YZSelection {
+
+	friend YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s );
+
+	public:
+		YZSelection( const QString& name );
+
+		YZSelectionMap map();
+		void setMap( const YZSelectionMap& m );
+		void addInterval( const YZInterval& i );
+		void delInterval( const YZInterval& i );
+		bool contains( const YZCursor& pos );
+
+		bool isEmpty();
+
+		void clear();
+
+	private:
+		void insertInterval( unsigned int pos, const YZInterval& interval );
+		void removeInterval( unsigned int pos, unsigned int len );
+		int locatePosition( const YZBound& pos, bool* isSelected );
+		
+		QString mName;
+		YZSelectionMap mMap;
+};
+
+class YZDoubleSelection {
+
+	friend YZDebugStream& operator<<( YZDebugStream& out, const YZDoubleSelection& s );
+
+	public:
+		YZDoubleSelection( const QString& name );
+		virtual ~YZDoubleSelection();
+
+		YZSelectionMap screenMap();
+		YZSelectionMap bufferMap();
+
+		void addInterval( const YZInterval& bi, const YZInterval& si );
+		void delInterval( const YZInterval& bi, const YZInterval& si );
+
+		bool contains( const YZCursor& pos );
+		void clear();
+	private:
+		YZSelection* bSelection;
+		YZSelection* sSelection;
+};
+
+class YZSelectionPool {
+	public:
+		YZSelectionPool();
+		virtual ~YZSelectionPool();
 
 		bool isSelected( const YZCursor& pos );
 
-		void debug( const QString& layout );
+		void setSearch( YZSelection* s );
+
+		YZSelection* search();
+		YZDoubleSelection* visual();
 
 	private:
-		YZView * parentView;
-		YZSelectionLayout selectionPool;
-
-		void removeSelection( const QString& layout, unsigned int begin, unsigned int len );
-		void insertSelection( const QString& layout, unsigned int pos, const YZCursor& from, const YZCursor& to, const YZCursor& drawFrom, const YZCursor& drawTo );
-		int locatePosition( const QString& layout, const YZCursor& pos, bool * isSelected );
-
+		YZSelection* mSearch;
+		YZDoubleSelection* mVisual;
 };
 
 #endif

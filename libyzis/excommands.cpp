@@ -261,9 +261,9 @@ int YZExCommandPool::rangeVisual( const YZExRangeArgs& args ) {
 	YZSelectionMap visual = args.view->visualSelection();
 	if ( visual.size() ) {
 		if ( args.arg.mid( 1 ) == "<" )
-			return visual[ 0 ].from().getY();
+			return visual[ 0 ].fromPos().getY();
 		else if ( args.arg.mid( 1 ) == ">" )
-			return visual[ 0 ].to().getY();
+			return visual[ 0 ].toPos().getY();
 	}
 	return -1;
 }

@@ -1,15 +1,18 @@
+# translation of es.po to 
+# translation of es.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Mickael Marchand <marchand@kde.org>, 2005.
 # Rafael Rodríguez <apt-drink@gulic.org>, 2005.
+# Rafael Rodríguez Martín <apt-drink@gulic.org>, 2005.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-02-12 17:12+0100\n"
-"PO-Revision-Date: 2005-02-12 12:38+0000\n"
-"Last-Translator: Rafael Rodríguez <apt-drink@gulic.org>\n"
+"PO-Revision-Date: 2005-02-24 09:06+0000\n"
+"Last-Translator: Rafael Rodríguez Martín <apt-drink@gulic.org>\n"
 "Language-Team:  <kde-es@kybs.de>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -100,7 +103,7 @@ msgstr "Rafael Rodríguez Martín"
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr "apt-drink _at_ gulic _dot_ org"
+msgstr "apt-drink@gulic.org"
 
 #: ../kyzis/src/hlconfig.cpp:186
 msgid "Text Area Background"
@@ -406,7 +409,7 @@ msgstr "Terminal"
 
 #: ../libyzis/buffer.cpp:565
 msgid "Failed opening file %1 for reading : %2"
-msgstr ""
+msgstr "Error al abrir el archivo %1 para lectura: %2"
 
 #: ../libyzis/buffer.cpp:573
 msgid "Recover"
@@ -423,7 +426,7 @@ msgstr ""
 
 #: ../libyzis/buffer.cpp:643
 msgid "Failed opening file %1 for writing : %2"
-msgstr ""
+msgstr "Error al abrir el archivo %1 para escritura: %2"
 
 #: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
 msgid "Written %1 bytes to file %2"
@@ -476,14 +479,12 @@ msgstr "Opción no válida :"
 
 #: ../libyzis/mode_ex.cpp:567 ../libyzis/mode_ex.cpp:695
 msgid "This option cannot be switched this way, this is a boolean option."
-msgstr ""
-"Esta opción no puede ser configurada de esta manera, es una opción booleana."
+msgstr "Esta opción no puede ser configurada de esta manera, es una opción booleana."
 
 #: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
 #: ../libyzis/mode_ex.cpp:629
 msgid "This option is a global option which cannot be changed with setlocal"
-msgstr ""
-"Esta opción es una opción global que no puede ser modificada con setlocal"
+msgstr "Esta opción es una opción global que no puede ser modificada con setlocal"
 
 #: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
 #: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
@@ -589,3 +590,4 @@ msgstr "(Pulse cualquier tecla)"
 #: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
 msgid "[No File]"
 msgstr "[Sin archivo]"
+

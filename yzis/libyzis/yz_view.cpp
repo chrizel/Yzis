@@ -42,11 +42,13 @@ void YZView::send_char( unicode_char_t c)
 			/* handle adding a char */
 			buffer->add_char(cursor_x,cursor_y,c);
 			cursor_x++;
+			update_cursor();
 			return;
 		case YZ_VIEW_MODE_REPLACE:
 			/* handle replacing a char */
 			buffer->chg_char(cursor_x,cursor_y,c);
 			cursor_x++;
+			update_cursor();
 			return;
 		case YZ_VIEW_MODE_COMMAND:
 			/* will be handled after the switch */
@@ -64,10 +66,15 @@ void YZView::send_char( unicode_char_t c)
 			break;
 		case 'A': /* append -> insert mode */
 			/* go to end of line */
+			cursor_x = current_maxx;
 		/* pass through */
 		case 'a': /* append -> insert mode */
+			cursor_x ++;
+		/* pass through */
+		case 'i': /* insert mode */
 			mode = YZ_VIEW_MODE_INSERT;
 			post_event(mk_event_setstatus("-- INSERT --"));
+			update_cursor();
 			break;
 		case 'R': /* -> replace mode */
 			mode = YZ_VIEW_MODE_REPLACE;

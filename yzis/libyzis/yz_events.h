@@ -29,6 +29,22 @@ enum yz_events {
 #endif // __cplusplus
 
 
+/**
+  * Be careful, when the core uses yz_event_setline, it is of its responsability
+  * to handle the cursor position
+  * for a whole screen refresh
+  * 	yz_event_setline for line 1
+  * 	....
+  * 	yz_event_setline for line n
+  *
+  * 	yz_event_setcursor(wherever)
+  *
+  * for a modified line
+  * 	yz_event_setline for line y
+  * 	yz_event_setcursor(wherever)
+  *
+  * There will be some special events for that, but not yet
+  */
 struct yz_event_setline {
 	int	y;
 #ifdef __cplusplus

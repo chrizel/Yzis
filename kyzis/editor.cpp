@@ -128,16 +128,32 @@ void KYZisEdit::setCursor(int c, int l) {
 	mCursorShown = true;
 }
 
-void KYZisEdit::scrollUp( int ) {
+void KYZisEdit::scrollUp( int n ) {
 	drawCursorAt( mCursorX * ( isFontFixed ? fontMetrics().maxWidth() : 1 ) , mCursorY );
 	mCursorShown = false;
-	drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
+	if ( ! mTransparent ) {
+		bitBlt( this, 0, n * fontMetrics().lineSpacing(),
+			this, 0, 0,
+			width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing(),
+			Qt::CopyROP, true );
+		drawContents( 0, 0, mParent->getColumnsVisible(), n, false );
+	} else {
+		drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
+	}
 }
 
-void KYZisEdit::scrollDown( int ) {
+void KYZisEdit::scrollDown( int n ) {
 	drawCursorAt( mCursorX * ( isFontFixed ? fontMetrics().maxWidth() : 1 ) , mCursorY );
 	mCursorShown = false;
-	drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
+	if ( ! mTransparent ) {
+		bitBlt( this, 0, 0,
+			this, 0, n * fontMetrics().lineSpacing(),
+			width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing(),
+			Qt::CopyROP, true );
+		drawContents( 0, mParent->getLinesVisible() - n, mParent->getColumnsVisible(), n, false );
+	} else {
+		drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
+	}
 }
 
 bool KYZisEdit::event(QEvent *e) {

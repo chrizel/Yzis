@@ -136,9 +136,15 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 	mLinesVis = l;
 	mColumnsVis = c;
 	if( refresh ) {
-		refreshScreen();
-		gotoxy( mainCursor->bufferX(), mainCursor->bufferY() );
+		recalcScreen();
 	}
+}
+
+void YZView::recalcScreen( ) {
+	refreshScreen();
+	YZCursor buffer = *mainCursor->buffer();
+	mainCursor->reset();
+	gotoxy( buffer.getX(), buffer.getY() );
 }
 
 void YZView::sendMultipleKey(const QString& keys) {

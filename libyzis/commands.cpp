@@ -898,7 +898,7 @@ QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
 }
 
 QString YZCommandPool::redisplay( const YZCommandArgs &args ) {
-	args.view->refreshScreen();
+	args.view->recalcScreen();
 	return QString::null;
 }
 

@@ -40,6 +40,8 @@ class YZViewCursor {
 		YZViewCursor( const YZViewCursor &c);
 		virtual ~YZViewCursor();
 
+		void reset();
+
 		unsigned int bufferX() const;
 		unsigned int bufferY() const;
 		unsigned int screenX() const;

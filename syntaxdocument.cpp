@@ -549,8 +549,7 @@ void YzisSyntaxDocument::setupModeList (bool )
 
   // Let's get a list of all the xml files for hl
   QStringList list = findAllResources("data",QString( PREFIX ) + "/share/yzis/syntax/*.xml",false,true);
-//  list << QString( PREFIX ) + "/share/yzis/syntax/cpp.xml";
-  //just C++ for now
+  yzDebug() << "LIST " << list << endl;
 
   // Let's iterate through the list and build the Mode List
   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
@@ -608,6 +607,7 @@ void YzisSyntaxDocument::setupModeList (bool )
               YzisSyntaxModeListItem *mli = new YzisSyntaxModeListItem;
 
               mli->name      = root.attribute("name");
+			  yzDebug() << "Name : " << mli->name << endl;
               mli->section   = root.attribute("section");
               mli->mimetype  = root.attribute("mimetype");
               mli->extension = root.attribute("extensions");

@@ -1,4 +1,5 @@
 #include "kyzisedit.h"
+#include <kdebug.h>
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name) 
 	: QTextEdit( parent, name ) {
@@ -9,9 +10,8 @@ KYZisEdit::~KYZisEdit() {
 }
 
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
-//X 	setText( e->text() );
-	//FIXME should send text() unicode ...
-	_parent->send_char(e->key());
+	kdDebug()<< " Got key : " << e->ascii() << endl;
+	_parent->send_char(e->ascii());
 	e->accept();
 }
 

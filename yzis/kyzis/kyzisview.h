@@ -31,6 +31,7 @@ class KYZisView: public KTextEditor::View
 		KYZisEdit *editor;
 		KYZisDoc *buffer;
 		KStatusBar *status;
+		int last_event_done;
 };
 
 #endif

@@ -25,7 +25,7 @@ extern FILE * debugstr;
 #define debug(format, arg...)	{fprintf(debugstr, "Yzis Debug :" __FILE__ "( %d ): " format "\n" , __LINE__,  ## arg); fflush(debugstr);} 
 #define warning(format, arg...)	{fprintf(debugstr, "Yzis Warning :" __FILE__ "( %d ): " format "\n" , __LINE__,  ## arg); fflush(debugstr);} 
 #define error(format, arg...)	{fprintf(debugstr, "Yzis Error :" __FILE__ "( %d ): " format "\n" , __LINE__, ## arg); fflush(debugstr);} 
-#define panic(format, arg...)	{fprintf(debugstr, "Yzis Panic :" __FILE__ "( %d ): " format "\n" , __LINE__, ## arg); exit(-1); fflush(debugstr);}
+#define panic(format, arg...)	{fprintf(debugstr, "Yzis Panic :" __FILE__ "( %d ): " format "\n" , __LINE__, ## arg); fflush(debugstr); exit(-1); }
 
 #define yz_assert(cond,msg, arg...)  if (!(cond)) error("ys_assert failed : " msg,## arg);
 

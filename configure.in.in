@@ -1,8 +1,6 @@
 #MIN_CONFIG
 
-yzis_version=`cat $srcdir/VERSION`
-
-AM_INIT_AUTOMAKE(yzis, $yzis_version)
+AM_INIT_AUTOMAKE(yzis,`cat $srcdir/VERSION`)
 
 dnl These are common macros that you might or might not want to use
 

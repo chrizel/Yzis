@@ -1,2 +1,2 @@
 #!/bin/sh
-kyzis -c ':source test_lua_binding.lua<ENTER><ESC>:qall!<ENTER>'
+kyzis -c ':source test_all.lua<ENTER><ESC>:qall!<ENTER>'

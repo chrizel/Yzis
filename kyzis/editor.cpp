@@ -397,4 +397,8 @@ void KYZisEdit::initKeys() {
 	keys[ Qt::Key_F35 ] = "<F35>" ;
 }
 
+const QString& KYZisEdit::convertKey( int key ) {
+	return keys[ key ];
+}
+
 #include "editor.moc"

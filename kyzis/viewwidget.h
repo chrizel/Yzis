@@ -76,6 +76,8 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		// return string and char width in pixels
 		unsigned int stringWidth( const QString& str ) const;
 		unsigned int charWidth( const QChar& ch ) const;
+		
+		KYZisEdit *editor() { return m_editor; }
 
 
 	public slots:
@@ -98,7 +100,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void setupActions();
 
 	private:
-		KYZisEdit *editor;
+		KYZisEdit *m_editor;
 		KYZisDoc *buffer;
 		KStatusBar *status;
 		KYZisCommand *command;

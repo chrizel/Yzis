@@ -58,6 +58,8 @@ class KYZisEdit : public QWidget {
 		// update text area
 		void updateArea( );
 
+		const QString& convertKey( int key );
+
 		unsigned int spaceWidth;
 
 	protected:
@@ -94,7 +96,6 @@ class KYZisEdit : public QWidget {
 		virtual void focusInEvent( QFocusEvent * );
 
 		void selectRect( unsigned int x, unsigned int y, unsigned int w, unsigned int h );
-
 
 	private :
 		void initKeys();

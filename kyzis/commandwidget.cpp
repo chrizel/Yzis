@@ -35,8 +35,12 @@ KYZisCommand::~KYZisCommand() {
 
 void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 	yzDebug()<< " KYZisCommand Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
+	QString modifiers;
+	if ( e->state() & Qt::ShiftButton ) modifiers += "<SHIFT>";
+	if ( e->state() & Qt::AltButton ) modifiers += "<ALT>";
+	if ( e->state() & Qt::ControlButton ) modifiers += "<CTRL>";
 	if ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Up || e->key() == Qt::Key_Down || e->key() == Qt::Key_Escape) {
-		_parent->sendKey(e->key(), e->state());
+		_parent->sendKey(_parent->editor()->convertKey( e->key() ), modifiers ) ;
 		e->accept();
 	} else KLineEdit::keyPressEvent( e );
 }

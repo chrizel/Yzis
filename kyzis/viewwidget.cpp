@@ -35,7 +35,7 @@
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::s_self, 10)
 {
-	editor = new KYZisEdit (this,"editor");
+	m_editor = new KYZisEdit (this,"editor");
 	status = new KStatusBar (this, "status");
 	command = new KYZisCommand (this, "command");
 	mVScroll = new QScrollBar( this, "vscroll" );
@@ -54,7 +54,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status->setItemAlignment(99,Qt::AlignRight);
 
 	QGridLayout *g = new QGridLayout(this,1,1);
-	g->addWidget(editor,0,0);
+	g->addWidget(m_editor,0,0);
 	g->addWidget(mVScroll,0,1);
 	g->addMultiCellWidget(command,1,1,0,1);
 	g->addMultiCellWidget(status,2,2,0,1);
@@ -63,11 +63,11 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	setupActions();
 	
 	buffer = doc;
-	editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
-	editor->show();
+	m_editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+	m_editor->show();
 	status->show();
-	editor->setFocus();
-	setFocusProxy( editor );
+	m_editor->setFocus();
+	setFocusProxy( m_editor );
 	mBuffer->statusChanged();
 	mVScroll->setMaxValue( buffer->lineCount() );
 
@@ -88,7 +88,7 @@ QString KYZisView::getCommandLineText() const {
 }
 
 void KYZisView::setFocusMainWindow() {
-	editor->setFocus();
+	m_editor->setFocus();
 }
 
 void KYZisView::setFocusCommandLine() {
@@ -96,22 +96,22 @@ void KYZisView::setFocusCommandLine() {
 }
 
 void KYZisView::scrollDown( int n ) {
-	editor->scrollDown( n );
+	m_editor->scrollDown( n );
 }
 
 void KYZisView::scrollUp( int n ) {
-	editor->scrollUp( n );
+	m_editor->scrollUp( n );
 }
 
 void KYZisView::paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
 	mVScroll->setMaxValue( buffer->lineCount() );
-	editor->paintEvent( curx, cury, curw, curh );
+	m_editor->paintEvent( curx, cury, curw, curh );
 }
 unsigned int KYZisView::stringWidth( const QString& str ) const {
-	return editor->fontMetrics().width( str );
+	return m_editor->fontMetrics().width( str );
 }
 unsigned int KYZisView::charWidth( const QChar& ch ) const {
-	return editor->fontMetrics().width( ch );
+	return m_editor->fontMetrics().width( ch );
 }
 
 void KYZisView::wheelEvent( QWheelEvent * e ) {
@@ -152,7 +152,7 @@ void KYZisView::modeChanged (void) {
 
 void KYZisView::syncViewInfo() {
 //	yzDebug() << "KYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
-	editor->setCursor( mainCursor->screenX(), mainCursor->screenY() );
+	m_editor->setCursor( mainCursor->screenX(), mainCursor->screenY() );
 	if (viewInformation.c1!=viewInformation.c2)
 		status->changeItem( QString("%1,%2-%3 (%4)").arg(viewInformation.l+1 ).arg( viewInformation.c1+1 ).arg( viewInformation.c2+1 ).arg( viewInformation.percentage),99 );
 	else
@@ -167,7 +167,7 @@ void KYZisView::syncViewInfo() {
 
 void KYZisView::refreshScreen () {
 	mVScroll->setMaxValue( buffer->lineCount() );
-	editor->repaint( false );
+	m_editor->repaint( false );
 }
 
 void KYZisView::setupActions() {
@@ -177,12 +177,12 @@ void KYZisView::setupActions() {
 
 
 void KYZisView::applyConfig( bool refresh ) {
-	editor->setFont( Settings::font() );
-	editor->setBackgroundMode( PaletteBase );
-	editor->setBackgroundColor( Settings::colorBG() );
-	editor->setPaletteForegroundColor( Settings::colorFG() );
+	m_editor->setFont( Settings::font() );
+	m_editor->setBackgroundMode( PaletteBase );
+	m_editor->setBackgroundColor( Settings::colorBG() );
+	m_editor->setPaletteForegroundColor( Settings::colorFG() );
 	if ( refresh ) {
-		editor->updateArea( );
+		m_editor->updateArea( );
 	}
 }
 

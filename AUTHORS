@@ -8,3 +8,5 @@ Neil Stevens (buffer commands)
 Mathieu Kooiman (kyzis ktexteditor implementation)
 Thomas Nagy (KDE icons, KSettings stuff)
 Lucijan Bush (command history for EX mode)
+Loic Pauleve (rewritten drawings API for a major performance improvment)
+

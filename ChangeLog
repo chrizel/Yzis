@@ -1,3 +1,11 @@
+2004-04-25 panard
+  * libyzis
+    major API improvments which permits :
+        - faster drawings
+        - relative cursor deplacement in libyzis
+        - allowing major performance improvments
+        - new TABs handling allowing tabshift/tabwidth handling
+    
 2004-04-22 mikmak
   * all
     fix the "i cant leave EX mode" bug

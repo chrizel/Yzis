@@ -83,7 +83,6 @@ public:
 	 */
 	uint firstNonBlankChar( uint line );
 		
-
 	/**
 	 * Opens the file and fills the buffer with its content
 	 */
@@ -126,7 +125,6 @@ public:
 	 * Replaces the @param y line with the given @param value
 	 */
 	void replaceLine( unsigned int y, const QString& value );
-
 			
 	/**
 	 * Get the current filename of the buffer

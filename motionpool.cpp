@@ -18,6 +18,8 @@
  **/
 
 #include "motionpool.h"
+#include "view.h"
+#include "cursor.h"
 
 YZMotionPool::YZMotionPool(){
 }
@@ -27,12 +29,27 @@ YZMotionPool::~YZMotionPool() {
 }
 
 void YZMotionPool::initPool() {
-	YZMotion t = { "[0-9]*\b.*\b", REGEXP, "[0-9]*w", 0, 0};
-	addMotion (t, "word" );
-
+	YZMotion t = { "\b.*\b", REGEXP, 0, 0};
+	addMotion (t, "[0-9]*w" );
 }
 
 void YZMotionPool::addMotion(const YZMotion& regexp, const QString& key){
 	pool.insert( key,regexp );
 }
 
+void YZMotionPool::findMotion ( const QString& inputs, YZMotion *motion ) {
+	QMap<QString,YZMotion>::iterator it;
+	for ( it = pool.begin(); it!=pool.end(); it++) {
+		YZMotion t = it.data();
+		QRegExp rex ( it.key() );
+		if ( rex.exactMatch( inputs ) )
+			motion = &t;
+	}
+	motion = NULL; //not found
+}
+
+void YZMotionPool::applyMotion( const YZMotion& motion, YZView *view ) {
+	//get the current line
+	YZCursor* cursor = view->getCursor();
+	const QString& current = view->myBuffer()->data( cursor->getY() );
+}

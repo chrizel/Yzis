@@ -22,6 +22,9 @@
 
 #include <qmap.h>
 #include <qregexp.h>
+#include "view.h"
+
+class YZBuffer;
 
 enum type_t {
 	REGEXP, //apply a regexp to make calculations (rex)
@@ -31,7 +34,6 @@ enum type_t {
 struct motion_t {
 	QString rex; //the regexp to execute
 	enum type_t type; //type of motion
-	QString command; // motion we detect in commands
 	int x; // relative x movement
 	int y; // relative y movement
 };
@@ -40,7 +42,7 @@ typedef struct motion_t YZMotion;
 /**
  * This is the main place for handling motion objects 
  * This is used for operators commands like "d".
- * The goal is to handle ocmmands like : "2d3w" to delete twice 3 words 
+ * The goal is to handle commands like : "2d3w" to delete twice 3 words 
  * Basics: 
  * We use RegExps to define the motion objects ( but this can be extended ),
  * each object has an identifier key like "w" for words, "p" for paragraphs
@@ -51,10 +53,31 @@ class YZMotionPool {
 		YZMotionPool();
 		~YZMotionPool();
 
-		//adds a new motion to the pool of known motions :)
+		/**
+		 * Adds a new motion to the pool of known motions
+		 * @param regexp the motion to add
+		 * @param the string/regexp which is recognized in inputsbuffer to detect a motion
+		 */
 		void addMotion(const YZMotion& regexp, const QString& key);
 
+		/**
+		 * Initialize the pool
+		 */
 		void initPool();
+
+		/**
+		 * Tries to detect a motion string in the input buffer
+		 * @param inputs the string to analyze
+		 * @param motion the motion found if any or NULL
+		 */
+		void findMotion ( const QString& inputs, YZMotion *motion );
+
+		/**
+		 * Calculates coordinates of the cursor after applying the given motion
+		 * @param motion the motion to apply
+		 * @param view the view on which to operate
+		 */
+		void applyMotion( const YZMotion& motion, YZView *view );
 
 	private:
 		QMap<QString,YZMotion> pool;

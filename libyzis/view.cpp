@@ -9,7 +9,7 @@
 #include <qkeysequence.h>
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
-	myId = YZSession::nbViews++;
+	myId = YZSession::mNbViews++;
 	yzDebug() << "New View created with UID : " << myId << endl;
 	mSession = sess;
 	mBuffer	= _b;
@@ -115,10 +115,10 @@ void YZView::sendKey( int c, int modifiers) {
 		case YZ_VIEW_MODE_EX:
 			switch ( c ) {
 				case Qt::Key_Return:
-					yzDebug() << "Current command EX : " << mSession->gui_manager->getCommandLineText();
-					mSession->getExPool()->execExCommand( this, mSession->gui_manager->getCommandLineText() );
-					mSession->gui_manager->setCommandLineText( "" );
-					mSession->gui_manager->setFocusMainWindow();
+					yzDebug() << "Current command EX : " << mSession->mGUI->getCommandLineText();
+					mSession->getExPool()->execExCommand( this, mSession->mGUI->getCommandLineText() );
+					mSession->mGUI->setCommandLineText( "" );
+					mSession->mGUI->setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Down:
@@ -127,12 +127,12 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Up:
 					return;
 				case Qt::Key_Escape:
-					mSession->gui_manager->setCommandLineText( "" );
-					mSession->gui_manager->setFocusMainWindow();
+					mSession->mGUI->setCommandLineText( "" );
+					mSession->mGUI->setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				default:
-					mSession->gui_manager->setCommandLineText( mSession->gui_manager->getCommandLineText() + key );
+					mSession->mGUI->setCommandLineText( mSession->mGUI->getCommandLineText() + key );
 					return;
 			}
 			break;
@@ -481,7 +481,7 @@ QString YZView::gotoCommandMode( ) {
 QString YZView::gotoExMode(const QString&) {
 	mMode = YZ_VIEW_MODE_EX;
 	mSession->postEvent(YZEvent::mkEventStatus(myId,"-- EX --"));
-	mSession->gui_manager->setFocusCommandLine();
+	mSession->mGUI->setFocusCommandLine();
 	purgeInputBuffer();
 	return QString::null;
 }

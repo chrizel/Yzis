@@ -33,7 +33,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 		readDockConfig(m_dockConfig);
 	}
 
-	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
+/*	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
 	KParts::ReadWritePart *m_part;
 	if (factory) {
 		m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzis_part", "KParts::ReadWritePart" ));
@@ -48,7 +48,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 		KMessageBox::error(this, "Could not find our Part!");
 		kapp->quit();
 		return;
-	}
+	}*/
 
 	dockManager->finishReadDockConfig();
 	setMenuForSDIModeSysButtons( menuBar() );

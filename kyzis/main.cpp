@@ -6,6 +6,8 @@
 #include <kaboutdata.h>
 #include <kcmdlineargs.h>
 #include <klocale.h>
+#include <ktempfile.h>
+#include <kstandarddirs.h>
 
 static const char *description =
     I18N_NOOP("KDE Frontend for the YZis Editor");
@@ -18,7 +20,7 @@ static KCmdLineOptions options[] = {
 };
 
 int main(int argc, char **argv) {
-    KAboutData about("kyzis", I18N_NOOP("Kyzis"), version, description, KAboutData::License_GPL, "(C) 2003 Yzis Team", 0, 0, "yzis-dev@yzis.org");
+    KAboutData about("kyzis", I18N_NOOP("Kyzis"), version, description, KAboutData::License_GPL, "(C) 2003, 2004 Yzis Team", 0, 0, "yzis-dev@yzis.org");
     about.addAuthor( "Yzis Team", 0, "yzis-dev@yzis.org" );
     KCmdLineArgs::init(argc, argv, &about);
     KCmdLineArgs::addCmdLineOptions( options );
@@ -36,15 +38,16 @@ int main(int argc, char **argv) {
 		domDoc.appendChild( dockConfig );
 
         if ( args->count() == 0 ) {
-        Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
-        widget->show();
+			Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
+			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
+			widget->createBuffer( tmp->name() );
+			widget->show();
         } else {
-			//WRONG XXX 
             int i = 0;
+			Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
+			widget->show();
             for (; i < args->count(); i++ ) {
-                Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
-                widget->show();
-                widget->load( args->url( i ) );
+                widget->createBuffer( args->url( i ).url() );
             }
         }
         args->clear();

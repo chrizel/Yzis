@@ -71,7 +71,7 @@ void NYZSession::postEvent( yz_event /*ev*/ ) {
 
 
 void NYZSession::event_loop() {
-	for ( QMap<QString,YZBuffer*>::Iterator b = buffers.begin();b!=buffers.end(); ++b ) 
+	for ( QMap<QString,YZBuffer*>::Iterator b = mBuffers.begin();b!=mBuffers.end(); ++b ) 
 		for ( QValueList<YZView*>::iterator it = b.data()->views().begin() ; it!=b.data()->views().end() ; it++ ) {
 			YZView *v = *it;
 			( static_cast<NYZView*>( v ) )->event_loop();

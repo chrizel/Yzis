@@ -3,6 +3,12 @@
     fixed unsigned/signed stuff
     cleanup documentation
     harmonised mMember notation in buffer and view
+  * kyzis
+    support opening multiple files from command line
+    create a temp file for first default buffer if no files are passed as
+    arguments
+  * all
+    some more doc
 
 2004-02-01 mikmak
   * libyzis / kyzis

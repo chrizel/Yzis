@@ -27,7 +27,7 @@ class YZSession {
 		 * Constructor. Give a session name to identify/save/load sessions.
 		 */
 		YZSession( const QString& _sessionName="Yzis" );
-    virtual ~YZSession();
+		virtual ~YZSession();
 
 		/**
 		 * Register a GUI event manager
@@ -42,32 +42,17 @@ class YZSession {
 		/**
 		 * return the session name
 		 */
-		QString getSessionName() { return sessionName; }
+		QString getSessionName() { return mSessionName; }
 
 		/**
 		 * gives access to the pool of commands
 		 */
-    YZCommandPool *getPool() { return pool; }
+		YZCommandPool *getPool() { return mPool; }
     
 		/**
 		 * gives access to the pool of ex commands
 		 */
-		YZCommandPool *getExPool() { return expool; }
-
-		/**
-		 * Count the current buffers in this session
-		 */
-//		int nbBuffers() { return buffers.count(); }
-
-		/**
-		 * Creates a new buffer
-		 */
-//		YZBuffer *createBuffer(const QString& path=QString::null);
-
-		/**
-		 * Creates a view on a buffer
-		 */
-	//moved to gui.h	YZView *createView(YZBuffer *buffer);
+		YZCommandPool *getExPool() { return mExPool; }
 
 		/**
 		 * Add a buffer
@@ -79,7 +64,8 @@ class YZSession {
 		 */
 		QString saveBufferExit( const QString& inputsBuff = QString::null );
 
-		/** get a event to handle from the core.  that's the way the core is
+		/** 
+		 * Get an event to handle from the core.  that's the way the core is
 		 * sending messages to the gui
 		 */
 		yz_event fetchNextEvent(int requester=-1);
@@ -95,12 +81,12 @@ class YZSession {
 		void setCurrentView( YZView* );
 
 		YZView* nextView();
-		YZView* currentView() { return curView; }
+		YZView* currentView() { return mCurView; }
 		
 		/** 
 		 * Current GUI
 		 */
-		Gui *gui_manager;
+		Gui *mGUI;
 
 	protected:
 		/*
@@ -109,19 +95,19 @@ class YZSession {
 //		virtual		YZBuffer *buffer(int i)=0;
 
 		//we map "filename"/buffer for buffers
-		QMap<QString,YZBuffer*> buffers;
-		QValueList<yz_event> events;
+		QMap<QString,YZBuffer*> mBuffers;
+		QValueList<yz_event> mEvents;
 
 	private:
-		QString sessionName;
-		YZCommandPool *pool;
-		YZCommandPool *expool;
-		YZMotionPool *motionpool;
-		YZView* curView;
+		QString mSessionName;
+		YZCommandPool *mPool;
+		YZCommandPool *mExPool;
+		YZMotionPool *mMotionPool;
+		YZView* mCurView;
 
 	public:
-		static int nbViews;
-		static int nbBuffers;
+		static int mNbViews;
+		static int mNbBuffers;
 
 };
 

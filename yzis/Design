@@ -1,7 +1,7 @@
 
 Core
-	coded in c
-	c++ binding integrated
+	coded in c++
+	c binding integrated
 	provide basic functions
 		files
 		widgets

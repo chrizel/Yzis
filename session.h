@@ -87,7 +87,7 @@ class YZSession {
 		/**
 		 * Save everything and get out
 		 */
-		QString saveBufferExit( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString saveBufferExit();
 
 		/**
 		 * Finds a view by its UID

@@ -28,16 +28,13 @@
 #include <qapplication.h>
 
 #include "commands.h"
-#include "buffer.h"
-#include "cursor.h"
-#include "attribute.h"
-#include "line.h"
 #include "selection.h"
 
 class YZCursor;
 class YZBuffer;
 class YZSession;
 class YZSelectionPool;
+class YzisAttribute;
 class YZView;
 
 typedef QValueVector<QString> StringVector;
@@ -256,38 +253,38 @@ class YZView {
 		/**
 		 * moves the cursor of the current view down
 		 */
-		QString moveDown( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString moveDown( unsigned int nb_lines = 1 );
 
 		/**
 		 * moves the cursor of the current view up 
 		 */
-		QString moveUp( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString moveUp( unsigned int nb_lines = 1 );
 
 		/**
 		 * moves the cursor of the current view left
 		 */
-		QString moveLeft( const QString& inputsBuff = QString::null , YZCommandArgs args = YZCommandArgs());
+		QString moveLeft( unsigned int nb_cols = 1 );
 
 		/**
 		 * moves the cursor of the current view right
 		 */
-		QString moveRight( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString moveRight( unsigned int nb_cols = 1 );
 
 		/**
 		 * moves the cursor of the current view to the first non-blank character 
 		 * of the current line
 		 */
-		QString moveToFirstNonBlankOfLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString moveToFirstNonBlankOfLine();
 
 		/**
 		 * moves the cursor of the current view to the start of the current line
 		 */
-		QString moveToStartOfLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString moveToStartOfLine();
 
 		/**
 		 * moves the cursor of the current view to the end of the current line
 		 */
-		QString moveToEndOfLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString moveToEndOfLine();
 
 		/*
 		 * ACTIONS
@@ -319,10 +316,16 @@ class YZView {
 		void initDeleteLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
 		void applyDeleteLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
 
+		/* copy line */
+		void initCopyLine( const YZCursor& pos, unsigned int len, bool applyCursor );
+		void applyCopyLine( const YZCursor& pos, unsigned int len, bool applyCursor );
+		void initCopyLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
+		void applyCopyLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
+
 		/**
 		 * deletes the character under the cursor
 		 */
-		QString deleteCharacter( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString deleteCharacter( unsigned int nb_cols = 1 );
 
 		/**
 		 * Start command mode
@@ -332,38 +335,42 @@ class YZView {
 		/**
 		 * Start command mode
 		 */
-		QString gotoSearchMode( const QString& inputsBuff = QString::null, YZCommandArgs args  = YZCommandArgs() );
+		QString gotoSearchMode( bool reverse = false );
 
 		/**
 		 * Start insert mode
 		 */
-		QString gotoInsertMode( const QString& inputsBuff = QString::null, YZCommandArgs args  = YZCommandArgs());
+		QString gotoInsertMode();
 
 		/**
 		 * Start Ex mode
 		 */
-		QString gotoExMode( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString gotoExMode();
 
 		/**
 		 * Start Open mode
 		 */
-		QString gotoOpenMode( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
-
+		QString gotoOpenMode();
 
 		/**
 		 * Start replace mode
 		 */
-		QString gotoReplaceMode( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString gotoReplaceMode();
 
 		/**
 		 * Start visual mode
 		 */
-		QString gotoVisualMode( const QString& inputsBuff = QString::null, YZCommandArgs args  = YZCommandArgs());
+		QString gotoVisualMode( bool isVisualLine=false );
 
 		/**
 		 * Leave visual mode
 		 */
 		void leaveVisualMode( );
+		
+		/**
+		 * Get the selected area
+		 */
+		YZSelectionMap getVisualSelection();
 
 		/**
 		 * Go back to either open mode or command mode, depending on how the
@@ -374,51 +381,60 @@ class YZView {
 		/**
 		 * Go to line of file
 		 */
-		QString gotoLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString gotoLine( const QString& inputsBuff = QString::null );
 
-		QString changeLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		/**
+		 * Go to last line of the file
+		 */
+		void gotoLastLine();
+
 		/**
 		 * Deletes lines
 		 */
-		QString deleteLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs);
 
 		/**
-		 * add a mark
+		 * Deletes a motion
 		 */
-		QString addMark( const QString& inputsBuff, YZCommandArgs args = YZCommandArgs() );
+		void del(const QString& motion, const QValueList<QChar> &regs);
 
+		/**
+		 * Add a mark on the current cursor
+		 */
+		void mark( const QString& mark);
 
 		/**
 		 * Opens a new line after current line
 		 */
-		QString openNewLineAfter ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString openNewLineAfter (unsigned int count = 1);
 
 		/**
 		 * Opens a new line before current line
 		 */
-		QString openNewLineBefore ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString openNewLineBefore (unsigned int count = 1);
 
 		/**
 		 * Append after current character
 		 */
-		QString append ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString append ( );
 
 		/**
-		 * Append at End of Line
+		 * Join count lines from given line
 		 */
-		QString appendAtEOL ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		void joinLine( unsigned int line, unsigned int count = 1 );
 
 		/**
-		 * Join current and next line
+		 * Undo last action
 		 */
-		QString joinLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
-	
-		void joinLine( unsigned int line );
+		void undo ( unsigned int count = 1 );
 
-		QString undo ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
-		QString redo ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
-		QString match( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
-		QString gotoMark( const QString&, YZCommandArgs );
+		QString redo ( const QString& inputsBuff = QString::null );
+		QString match( const QString& inputsBuff = QString::null );
+
+		/**
+		 * Moves the cursor to the given mark ( if it exists )
+		 */
+		void gotoMark( const QString& );
 
 		virtual void printToFile( const QString& path );
 
@@ -443,14 +459,19 @@ class YZView {
 		void gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 
 		/**
-		 * Copy from current to buffer to a register
+		 * Copy the given number of lines in the list of registers
 		 */
-		QString copy( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString copyLine( unsigned int nb_lines, const QValueList<QChar> &regs );
+
+		/**
+		 * Copy the area described by motion into the list of registers
+		 */
+		void copy( const QString& motion, const QValueList<QChar> &regs );
   
 		/**
 		 * Pastes the content of default or given register
 		 */
-		QString paste( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		void paste( QChar registr, bool after = true );
   
 		/**
 		 * A global UID for this view
@@ -514,7 +535,7 @@ class YZView {
 		/**
 		 * Internal use
 		 */
-		QString refreshScreenInternal(const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs());
+		QString refreshScreenInternal();
 
 		/**
 		 * Displays an informational message
@@ -548,7 +569,7 @@ class YZView {
 		/**
 		 * Continue previous search
 		 */
-		QString searchAgain( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+		QString searchAgain( unsigned int count = 1, bool inverse = false );
 
 		/**
 		 * Updates the position of the cursor
@@ -705,11 +726,25 @@ class YZView {
 		 */
 		virtual unsigned int charWidth( const QChar& ch ) const = 0;
 
-
 		/**
 		 * Reindent given line ( cindent )
 		 */
 		void reindent( unsigned int X, unsigned int Y );
+
+		/**
+		 * move the cursor to the sticky column
+		 */
+		void gotoStickyCol(unsigned int Y);
+
+		/**
+		 * Updates stickyCol
+		 */
+		void setStickyCol( unsigned int col ) { stickyCol = col; }
+
+		/**
+		 * Prepares to record next undo item
+		 */
+		void commitNextUndo();
 
 	protected:
 

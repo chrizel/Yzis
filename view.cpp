@@ -2,6 +2,7 @@
  *  Copyright (C) 2003-2004 Mickael Marchand <marchand@kde.org>
  *  Thomas Capricelli <orzel@freehackers.org>.
  *  Loic Pauleve <panard@inzenet.org>
+ *  Pascal "Poizon" Maillard <poizon@gmx.at>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -44,9 +45,7 @@
 
 #define STICKY_COL_ENDLINE -1
 
-#define GOTO_STICKY_COL(Y) \
-		if ( stickyCol == STICKY_COL_ENDLINE ) gotoxy( mBuffer->textline( Y ).length(), Y ); \
-		else gotodxy( stickyCol, Y )
+#define GOTO_STICKY_COL(Y) gotoStickyCol(Y)
 #define UPDATE_STICKY_COL	stickyCol = mainCursor->screenX()
 
 #define GET_STRING_WIDTH( s ) ( isFontFixed ? s.length() : stringWidth( s ) )
@@ -178,6 +177,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	sCurLineLength = 0;
 	rCurLineLength = 0;
 
+	rHLnoAttribs = false;
+	rHLAttributesLen = 0;
 	charSelected = false;
 
 	lineDY = 0;
@@ -208,9 +209,8 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 }
 
 QString YZView::buildCommand( const QString& key, int modifiers ) {
-	QString command=mPreviousChars;
+	QString command="";
 	if ( modifiers & Qt::ControlButton ) command += "<CTRL>";
-	if ( modifiers & Qt::ShiftButton ) command += "<SHIFT>";
 	if ( modifiers & Qt::AltButton ) command += "<ALT>";
 	if ( modifiers & Qt::MetaButton ) command += "<META>";
 	command += key;
@@ -253,11 +253,9 @@ void YZView::sendKey( int c, int modifiers) {
 	//default is lower case unless some modifiers
 	if ( modifiers & Qt::ShiftButton )
 		key = key.upper();
+	key = buildCommand(key, modifiers);
 	
 	bool test = false;
-
-	QString mappedCommand = buildCommand(key, modifiers);
-//	yzDebug() << "MappedCommand " << mappedCommand << endl;
 
 	//ignore some keys
 	if ( c == Qt::Key_Shift || c == Qt::Key_Alt || c == Qt::Key_Meta ||c == Qt::Key_Control || c == Qt::Key_CapsLock ) {
@@ -544,8 +542,8 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Delete:
 					if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 						YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
+						mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to(), ( QValueList<QChar>() << QChar( '\"' ) ));
 						selectionPool->clear( "VISUAL" );
-						mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to(), QChar( '\"' ));
 						purgeInputBuffer();
 						gotoCommandMode();
 						return;
@@ -566,16 +564,16 @@ void YZView::sendKey( int c, int modifiers) {
 			mPreviousChars+=key;
 //			yzDebug() << "Previous chars : (" << int( (mPreviousChars.latin1())[0] )<< ") " << mPreviousChars << endl;
 			if ( mSession ) {
-				int error = 0;
-				mSession->getPool()->execCommand(this, mappedCommand, &error);
-				if ( error == 1 ) {
-//					yzDebug("Commands") << "No matching command found at first pass" << endl;
-					error = 0;
-					mSession->getPool()->execCommand(this, mPreviousChars, &error); //try to find a command without the modifier
-				} else
-					break;
-//				if ( error == 1 )
-//					yzDebug("Commands") << "No matching command found at second pass. I give up..." << endl;
+				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
+				yzDebug() << "Command " << mPreviousChars << " gave state: " << state << endl;
+				switch(state) {
+					case CMD_ERROR:
+					case CMD_OK:
+						purgeInputBuffer();
+						break;
+					default:
+						break;
+				}
 			}
 			break;
 
@@ -861,8 +859,8 @@ void YZView::applyGoto( bool applyCursor ) {
 
 			/* apply new selection */
 			YZSelection new_cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-			if ( new_cur_sel.drawFrom() > cur_sel.drawFrom() ) new_cur_sel.setDrawFrom(cur_sel.drawFrom() );
-			if ( new_cur_sel.drawTo() < cur_sel.drawTo() ) new_cur_sel.setDrawTo ( cur_sel.drawTo() );
+			if (new_cur_sel.drawFrom() > cur_sel.drawFrom() ) new_cur_sel.setDrawFrom ( cur_sel.drawFrom() );
+			if ( new_cur_sel.drawTo() < cur_sel.drawTo() ) new_cur_sel.setDrawTo( cur_sel.drawTo() );
 			paintEvent( dCurrentLeft, new_cur_sel.drawFrom().getY() > 0 ? new_cur_sel.drawFrom().getY() - 1 : 0, mColumnsVis, new_cur_sel.drawTo().getY() - new_cur_sel.drawFrom().getY() + 3 );
 		}
 
@@ -909,36 +907,25 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor ) {
 	applyGoto( applyCursor );
 }
 
-QString YZView::moveDown( const QString& , YZCommandArgs args ) {
-	unsigned int nb_lines=args.count;
-
+QString YZView::moveDown( unsigned int nb_lines ) {
 	//execute the code
 	unsigned int nextLine = QMIN( mainCursor->bufferY() + nb_lines, mBuffer->lineCount() - 1 );
 	GOTO_STICKY_COL( nextLine );
 
-	//reset the input buffer
-	purgeInputBuffer();
-
 	//return something
 	return QString::null;
 }
 
-QString YZView::moveUp( const QString& , YZCommandArgs args ) {
-	unsigned int nb_lines=args.count;
-
+QString YZView::moveUp( unsigned int nb_lines ) {
 	//execute the code
 	unsigned int nextLine = QMAX( mainCursor->bufferY() - nb_lines, 0 );
 	GOTO_STICKY_COL( nextLine );
 
-	//reset the input buffer
-	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
 
-QString YZView::moveLeft( const QString& , YZCommandArgs args ) {
-	uint nb_cols=args.count;
-
+QString YZView::moveLeft( unsigned int nb_cols ) {
 	//execute the code
 	unsigned int bX = mainCursor->bufferX();
 	nb_cols = QMIN( bX, nb_cols );
@@ -946,50 +933,49 @@ QString YZView::moveLeft( const QString& , YZCommandArgs args ) {
 
 	UPDATE_STICKY_COL;
 
-	//reset the input buffer
-	purgeInputBuffer();
-
 	//return something
 	return QString::null;
 }
 
-QString YZView::moveRight( const QString& , YZCommandArgs args ) {
-	int nb_cols=args.count;
-	
+QString YZView::moveRight( unsigned int nb_cols ) {
 	//execute the code
 	gotoxy( mainCursor->bufferX() + nb_cols , mainCursor->bufferY() );
 
 	UPDATE_STICKY_COL;
 	
-	//reset the input buffer
-	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
 
-QString YZView::moveToFirstNonBlankOfLine( const QString&, YZCommandArgs ) {
+QString YZView::moveToFirstNonBlankOfLine( ) {
 	//execute the code
 	gotoxy(mBuffer->firstNonBlankChar(mainCursor->bufferY()) , mainCursor->bufferY());
 	UPDATE_STICKY_COL;
 	
-	//reset the input buffer
-	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
 
-QString YZView::moveToStartOfLine( const QString&, YZCommandArgs ) {
+QString YZView::moveToStartOfLine( ) {
 	//execute the code
 	gotoxy(0 , mainCursor->bufferY());
 	UPDATE_STICKY_COL;
 	
-	//reset the input buffer
-	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
 
-QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs ) {
+void YZView::gotoLastLine() {
+	unsigned int line = mBuffer->lineCount() - 1;
+
+	if ( getLocalBoolOption("startofline") ) {
+		gotoxy(mBuffer->firstNonBlankChar(line), line);
+	} else {
+		GOTO_STICKY_COL( line );
+	}
+}
+
+QString YZView::gotoLine(const QString& inputsBuff ) {
 	// Accepts "gg", "G", "<number>gg", "<number>G"
 	// "gg", "0gg", "1gg" -> first line of the file
 	// "G", "0G", "3240909G", "23323gg" -> last line of the file
@@ -1029,19 +1015,14 @@ QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs ) {
 		GOTO_STICKY_COL( line );
 	}
 
-	purgeInputBuffer();
 	return QString::null; //return something
 }
 
-// end of goto-like command
-
-
-QString YZView::moveToEndOfLine( const QString&, YZCommandArgs ) {
+QString YZView::moveToEndOfLine( ) {
 	gotoxy( mBuffer->textline( mainCursor->bufferY() ).length( ), mainCursor->bufferY());
 
 	stickyCol = STICKY_COL_ENDLINE;
 	
-	purgeInputBuffer();
 	return QString::null;
 }
 
@@ -1122,6 +1103,18 @@ void YZView::applyInsertLine( const YZCursor& pos, bool applyCursor ) {
 	UPDATE_STICKY_COL;
 }
 
+void YZView::initCopyLine( const YZCursor& pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
+}
+
+void YZView::applyCopyLine( const YZCursor& pos, unsigned int /*len*/, bool applyCursor ) {
+}
+
+void YZView::initCopyLine( const YZCursor& begin, const YZCursor& end, bool /*applyCursor*/ ) {
+}
+
+void YZView::applyCopyLine( const YZCursor& begin, const YZCursor& end, bool applyCursor ) {
+}
+
 void YZView::initDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
 	origPos->setCursor( mainCursor->buffer() );
 	gotoxy( 0, pos.getY() ? pos.getY() - 1 : pos.getY(), false );
@@ -1167,58 +1160,27 @@ void YZView::applyDeleteLine( const YZCursor& begin, const YZCursor& end, bool a
 	UPDATE_STICKY_COL;
 }
 
-
-
-QString YZView::deleteCharacter( const QString& , YZCommandArgs args ) {
-	mBuffer->action()->deleteChar( this, mainCursor->buffer(), args.count );
-	purgeInputBuffer();
+QString YZView::deleteCharacter( unsigned int nb_chars ) {
+	mBuffer->action()->deleteChar( this, mainCursor->buffer(), nb_chars );
 	return QString::null;
 }
 
-QString YZView::changeLine ( const QString& inputsBuff, YZCommandArgs args ) {
-	if ( args.command == "cc" ) args.command = "dd";
-	else if ( args.command == "C" ) args.command = "D";
-	else args.command = args.command.replace( 0, 1, "d" );
-	deleteLine( inputsBuff, args );
-	gotoInsertMode( );
-	return QString::null;
-}
-
-QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args ) {
-	int nb_lines=args.count;
-	QChar reg=args.registr;
-
-	QStringList buff; //to copy old lines into the register "
-	unsigned int mY = mainCursor->bufferY();
-//	unsigned int mX = mCursor->getX();
-	if ( args.command == "dd" ) { //delete whole lines
-		buff << QString::null;
-		for ( int i = 0; i < nb_lines && ( mY + i ) < ( unsigned int )mBuffer->lineCount(); i++ )
-			buff << mBuffer->textline( mY + i );
-		buff << QString::null;
-		mBuffer->action()->deleteLine( this, mainCursor->buffer(), nb_lines );
-		YZSession::mRegisters.setRegister( reg, buff );
-		purgeInputBuffer();
-		return QString::null;
-	} else if ( args.command == "D" ) { //delete to end of lines
-		//just fake the real command
-		args.command = "d$";
-		args.motion = "$";
-	} 
-	if ( ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) && args.command.startsWith( "d" ) ) {
+void YZView::del(const QString& motion, const QValueList<QChar> &regs) {
+	if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE  ) {
 		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 		selectionPool->clear( "VISUAL" );
-		mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to( ), reg);
+		yzDebug() << "Del " << cur_sel.from().getY() << " " << cur_sel.to().getY() << endl;
+		mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to(), regs);
 		gotoCommandMode();
-	} else if (args.command.startsWith("d")) {
-		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
+	} else {
+		if ( ! mSession->getMotionPool()->isValid( motion ) ) return; //something's wrong
 		//ok we have a motion , so delete till the end of the motion :)
 		YZCursor from(mainCursor->buffer()), to(this);
-		bool success = mSession->getMotionPool()->applyMotion(args.motion, this, from, to);
+		bool success = mSession->getMotionPool()->applyMotion(motion, this, from, to);
 		bool goBack = to < from;
 		if ( !success ) {
-			purgeInputBuffer();
-			return QString::null;
+//			purgeInputBuffer(); //drop me XXX ? should be handle by ::sendKey
+			return;
 		}
 		//delete to the cursor position now :)
 		yzDebug() << "Start of motion is : " << from << endl;
@@ -1230,45 +1192,42 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 			from.setCursor( tmp );
 		}
 
-		mBuffer->action()->deleteArea( this, from, to, reg );
+		mBuffer->action()->deleteArea( this, from, to, regs);
 	}
-	//reset the input buffer
-	purgeInputBuffer();
+}
 
+QString YZView::deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs ) {
+	QStringList buff; //to copy old lines into the register "
+	unsigned int mY = mainCursor->bufferY();
+	buff << QString::null;
+	for ( unsigned int i = 0; i < nb_lines && ( mY + i ) < ( unsigned int )mBuffer->lineCount(); i++ )
+		buff << mBuffer->textline( mY + i );
+	buff << QString::null;
+	mBuffer->action()->deleteLine( this, mainCursor->buffer(), nb_lines );
+	for ( QValueList<QChar>::const_iterator it = regs.begin(); it != regs.end(); it++ ) {
+		YZSession::mRegisters.setRegister( *it, buff );
+	}
 	return QString::null;
 }
 
-
-QString YZView::openNewLineBefore ( const QString&, YZCommandArgs ) {
-	mBuffer->action()->insertNewLine( this, 0, mainCursor->bufferY() );
-	//reset the input buffer
-	purgeInputBuffer();
+QString YZView::openNewLineBefore (unsigned int count) {
+	for ( unsigned int i = 0 ; i < count ; i++ )
+		mBuffer->action()->insertNewLine( this, 0, mainCursor->bufferY() );
 	gotoInsertMode();
 	return QString::null;
 }
 
-QString YZView::openNewLineAfter ( const QString&, YZCommandArgs ) {
-	mBuffer->action()->insertNewLine( this, 0, mainCursor->bufferY() + 1 );
-	purgeInputBuffer();
+QString YZView::openNewLineAfter (unsigned int count) {
+	for ( unsigned int i = 0 ; i < count ; i++ )
+		mBuffer->action()->insertNewLine( this, 0, mainCursor->bufferY() + 1 );
 	gotoInsertMode();
 	return QString::null;
 }
 
-QString YZView::append ( const QString&, YZCommandArgs ) {
-	//reset the input buffer
-	purgeInputBuffer();
+QString YZView::append () {
 	gotoInsertMode();
 	gotoxy(mainCursor->bufferX()+1, mainCursor->bufferY() );
 	UPDATE_STICKY_COL;
-
-	return QString::null;
-}
-
-QString YZView::appendAtEOL ( const QString&, YZCommandArgs ) {
-	//reset the input buffer
-	purgeInputBuffer();
-	moveToEndOfLine();
-	append();
 
 	return QString::null;
 }
@@ -1297,55 +1256,49 @@ QString YZView::gotoPreviousMode() {
 	return gotoCommandMode();
 }
 
-QString YZView::gotoCommandMode( ) {
+QString YZView::gotoCommandMode() {
 	mBuffer->undoBuffer()->commitUndoItem(mainCursor->bufferX(), mainCursor->bufferY());
 	switchModes(YZ_VIEW_MODE_COMMAND);
-	purgeInputBuffer();
 	return QString::null;
 }
 
-QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
+QString YZView::gotoExMode() {
 	switchModes(YZ_VIEW_MODE_EX);
 	mSession->setFocusCommandLine();
-	purgeInputBuffer();
 	setCommandLineText( "" );
 	return QString::null;
 }
 
-QString YZView::gotoOpenMode(const QString &, YZCommandArgs ) {
+QString YZView::gotoOpenMode() {
 	switchModes(YZ_VIEW_MODE_OPEN);
 	setVisibleArea(80, 1);
-	purgeInputBuffer();
 	setCommandLineText("");
 	yzDebug() << "successfully set open mode" <<endl;
 	return QString::null;
 }
 
-QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
+QString YZView::gotoInsertMode() {
 	mBuffer->undoBuffer()->commitUndoItem(mainCursor->bufferX(), mainCursor->bufferY());
 	switchModes(YZ_VIEW_MODE_INSERT);
-	purgeInputBuffer();
 	return QString::null;
 }
 
-QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
+QString YZView::gotoReplaceMode() {
 	mBuffer->undoBuffer()->commitUndoItem(mainCursor->bufferX(), mainCursor->bufferY());
 	switchModes(YZ_VIEW_MODE_REPLACE);
-	purgeInputBuffer();
 	return QString::null;
 }
 
-QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs /*args */) {
-	reverseSearch = (inputsBuff[ 0 ] == '?' );
+QString YZView::gotoSearchMode( bool reverse ) {
+	reverseSearch = reverse;
 	switchModes(YZ_VIEW_MODE_SEARCH);
-	purgeInputBuffer();
 	setCommandLineText( "" );
 	return QString::null;
 }
 
-QString YZView::gotoVisualMode(const QString& inputsBuff, YZCommandArgs ) {
+QString YZView::gotoVisualMode( bool isVisualLine ) {
 	//store the from position
-	if ( inputsBuff.startsWith( "V" ) )
+	if ( isVisualLine )
 		switchModes( YZ_VIEW_MODE_VISUAL_LINE );
 	else
 		switchModes( YZ_VIEW_MODE_VISUAL );
@@ -1365,7 +1318,6 @@ QString YZView::gotoVisualMode(const QString& inputsBuff, YZCommandArgs ) {
 	selectionPool->addSelection( "VISUAL", *mVisualCursor, bEnd, *dVisualCursor, dEnd );
 	paintEvent( dCurrentLeft, dVisualCursor->getY(), mColumnsVis, 1 );
 	yzDebug("Visual mode") << "Starting at " << *mVisualCursor << endl;
-	purgeInputBuffer();
 	return QString::null;
 }
 
@@ -1376,52 +1328,29 @@ void YZView::leaveVisualMode( ) {
 	gotoCommandMode();
 }
 
-
-QString YZView::addMark( const QString& inputsBuff, YZCommandArgs ) {
-	mBuffer->marks()->add( inputsBuff[ 1 ], mainCursor->buffer(), mainCursor->screen() );
-	purgeInputBuffer();
-	return QString::null;
+YZSelectionMap YZView::getVisualSelection() {
+	return selectionPool->layout("VISUAL");
 }
 
-QString YZView::copy( const QString& , YZCommandArgs args) {
-	//default register to use
-	int nb_lines = args.count;
-	
-	QStringList list;
-	if ( args.command == "yy" ) {
-		list << QString::null; //just a marker
-		for (int i = 0 ; i < nb_lines; i++ )
-			list << mBuffer->textline(mainCursor->bufferY()+i);
-		list << QString::null;
-	} else if ( args.command == "Y" ) {
-		list << QString::null; //just a marker
-		for (int i = 0 ; i < nb_lines; i++ )
-			list << mBuffer->textline(mainCursor->bufferY()+i);
-		list << QString::null;
-	} else if ( args.command == "y$" ) {
-		QString lin = mBuffer->textline( mainCursor->bufferY() );
-		list << lin.mid(mainCursor->bufferX());
-	} else if ( ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) && args.command.startsWith( "y" ) ) {
+void YZView::mark( const QString& mark ) {
+	mBuffer->marks()->add( mark , *mainCursor->buffer(), *mainCursor->screen() );
+}
 
+void YZView::copy( const QString& motion, const QValueList<QChar> &regs ) {
+	if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE  ) {
 		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-
-		list = mBuffer->getText( cur_sel.from(), cur_sel.to() );
-		if ( mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
-			list.insert( list.begin(), QString::null );
-			list.append( QString::null );
-		}
-
-		leaveVisualMode();
-
-	} else if ( args.command.startsWith( "y" ) ) {
-		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
+		selectionPool->clear( "VISUAL" );
+		mBuffer->action()->copyArea( this, cur_sel.from(), cur_sel.to(), regs);
+		gotoCommandMode();
+	} else {
+		if ( ! mSession->getMotionPool()->isValid( motion ) ) return; //something's wrong
 		//ok we have a motion , so delete till the end of the motion :)
-		YZCursor from(mainCursor->buffer()),to(this);
-		bool success = mSession->getMotionPool()->applyMotion(args.motion,this,from,to);
+		YZCursor from(mainCursor->buffer()), to(this);
+		bool success = mSession->getMotionPool()->applyMotion(motion, this, from, to);
 		bool goBack = to < from;
 		if ( !success ) {
-			purgeInputBuffer();
-			return QString::null;
+//			purgeInputBuffer(); //drop me XXX ? should be handle by ::sendKey
+			return;
 		}
 		//copy to the cursor position now :)
 		yzDebug() << "Start of motion is : " << from << endl;
@@ -1433,36 +1362,32 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 			from.setCursor( tmp );
 		}
 
-		bool entire = args.motion.startsWith( "'" ); // copy entire lines
-		if ( entire ) {
-			from.setX( 0 );
-			to.setX( mBuffer->textline( to.getY() ).length() );
-		}
-		list = mBuffer->getText(from, to);
-		if ( entire ) {
-			list.insert( list.begin(), QString::null );
-			list.append( QString::null );
-		}
+		mBuffer->action()->copyArea( this, from, to, regs);
 	}
-	
-	YZSession::mRegisters.setRegister( args.registr, list );
+}
 
-	purgeInputBuffer();
+QString YZView::copyLine( unsigned int nb_lines, const QValueList<QChar> &regs ) {
+	QStringList list;
+	list << QString::null; //just a marker
+	for (unsigned int i = 0 ; i < nb_lines; i++ )
+		list << mBuffer->textline(mainCursor->bufferY()+i);
+	list << QString::null;
+	for ( QValueList<QChar>::const_iterator it = regs.begin(); it != regs.end(); it++ )
+		YZSession::mRegisters.setRegister( *it, list );
 	return QString::null;
 }
 
-QString YZView::paste( const QString& , YZCommandArgs args ) {
-	QStringList list = YZSession::mRegisters.getRegister( args.registr );
+void YZView::paste( QChar registr, bool after ) {
+	QStringList list = YZSession::mRegisters.getRegister( registr );
 
 	YZCursor pos( mainCursor->buffer() );
-
 	uint i = 0;
 	bool copyWholeLinesOnly = list[ 0 ].isNull();
 	QString copy = mBuffer->textline( pos.getY() );
-	if ( args.command == "p" || ! copyWholeLinesOnly ) { //paste after current char
+	if ( after || ! copyWholeLinesOnly ) { //paste after current char
 		if ( !list[ 0 ].isNull() ) {
 			unsigned int start;
-			if( args.command = "p" )
+			if( after )
 				start = copy.length() > 0 ? pos.getX() + 1 : 0;
 			else
 				start = pos.getX();
@@ -1481,14 +1406,12 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 			gotoxy( list[ i ].length() - 1, pos.getY() + i );
 		}
 
-	} else if ( args.command == "P" ) { //paste whole lines before current char
+	} else if ( !after ) { //paste whole lines before current char
 		for( i = 1; i < list.size() - 1; i++ ) 
 			mBuffer->action()->insertLine( this, pos.getY() + i - 1, list[ i ] );
 
 		gotoxy( pos.getX(), pos.getY() );
 	}
-	purgeInputBuffer();
-	return QString::null;
 }
 
 bool YZView::doSearch( const QString& search ) {
@@ -1545,12 +1468,12 @@ bool YZView::doSearch( const QString& search ) {
 	return false;
 }
 
-QString YZView::searchAgain( const QString& /*inputsBuff*/, YZCommandArgs args ) {
+QString YZView::searchAgain( unsigned int count, bool inverse ) {
 	if ( mCurrentSearchItem == 0 ) return QString::null; //no previous search ;)
+	if ( inverse ) reverseSearch = !reverseSearch;
 
-	for ( uint i = 0; i < args.count; i++ )  //search count times
+	for ( uint i = 0; i < count; i++ )  //search count times
 	 	doSearch( mSearchHistory[mCurrentSearchItem-1] );
-	purgeInputBuffer();
 	return QString::null;
 }
 
@@ -1875,8 +1798,12 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 }
 
 const QColor& YZView::drawColor ( ) {
+	YzisAttribute hl;
 	YzisAttribute * curAt = ( !rHLnoAttribs && (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-	if ( curAt ) return curAt->textColor();
+	if ( curAt ) {
+		hl += * curAt;
+		return hl.textColor();
+	}
 	return fake;
 }
 
@@ -1931,19 +1858,13 @@ void YZView::substitute(const QString& range, const QString& search, const QStri
 	mBuffer->updateAllViews();
 }
 
-void YZView::joinLine( unsigned int line ) {
+void YZView::joinLine( unsigned int line, unsigned int count ) {
 	if ( line >= mBuffer->lineCount() - 1 ) return;
 	gotoxy( mBuffer->textline( line ).length() - 1, line );
 	UPDATE_STICKY_COL;
-	mBuffer->mergeNextLine( line );
+	for ( unsigned int i = 0; i < count ; i ++ ) 
+		mBuffer->mergeNextLine( line );
 	paintEvent( dCurrentLeft, mainCursor->screenY(), mColumnsVis, mLinesVis - ( mainCursor->screenY() - dCurrentTop ) );
-}
-
-QString YZView::joinLine ( const QString& , YZCommandArgs ) {
-	//reset the input buffer
-	purgeInputBuffer();
-	joinLine( mainCursor->bufferY() );
-	return QString::null;
 }
 
 void YZView::printToFile( const QString& path ) {
@@ -1952,23 +1873,19 @@ void YZView::printToFile( const QString& path ) {
 	printer.run( );
 }
 
-QString YZView::undo( const QString& , YZCommandArgs ) {
-	/* XXX repeat if necessary */
-	mBuffer->undoBuffer()->undo( this );
-	//reset the input buffer of the originating view
-	purgeInputBuffer();
-	return QString::null;
+void YZView::undo( unsigned int count ) {
+	for ( unsigned int i = 0 ; i < count ; i++ )
+		mBuffer->undoBuffer()->undo( this );
 }
 
-QString YZView::redo( const QString& , YZCommandArgs ) {
+QString YZView::redo( const QString& ) {
 	/* XXX repeat if necessary */
 	mBuffer->undoBuffer()->redo( this );
 	//reset the input buffer of the originating view
-	purgeInputBuffer();
 	return QString::null;
 }
 
-QString YZView::match( const QString&, YZCommandArgs ) {
+QString YZView::match( const QString& ) {
 	bool found = false;
 	YZCursor pos = mBuffer->action()->match( this, *mainCursor->buffer(), &found );
 	yzDebug() << "Result " << pos << endl;
@@ -1976,24 +1893,18 @@ QString YZView::match( const QString&, YZCommandArgs ) {
 	if ( found )
 		gotoxy( pos.getX(), pos.getY() );
 
-	purgeInputBuffer();
 	return QString::null;
 }
 
-QString YZView::gotoMark( const QString& inputsBuff, YZCommandArgs ) {
-	yzDebug() << "gotoMark " << inputsBuff.mid( 1,1 ) << endl;
+void YZView::gotoMark( const QString& mark) {
+	yzDebug() << "gotoMark " << mark << endl;
 	bool found = false;
-	YZCursorPos pos = mBuffer->marks()->get(inputsBuff.mid( 1, 1 ), &found);
-	if ( found ) {
+	YZCursorPos pos = mBuffer->marks()->get(mark, &found);
+	if ( found )
 		gotoxy(pos.bPos->getX(), pos.bPos->getY());
-	}
-	purgeInputBuffer();
-	return QString::null;
-
 }
 
-QString YZView::refreshScreenInternal(const QString& , YZCommandArgs ) {
-	purgeInputBuffer();
+QString YZView::refreshScreenInternal() {
 	refreshScreen();
 	return QString::null;
 }
@@ -2058,3 +1969,11 @@ void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
 	YZSession::mOptions.setQColorOption( key, option );
 }
 
+void YZView::gotoStickyCol(unsigned int Y) {
+	if ( stickyCol == STICKY_COL_ENDLINE ) gotoxy( mBuffer->textline( Y ).length(), Y );
+	else gotodxy( stickyCol, Y );
+}
+
+void YZView::commitNextUndo() {
+	mBuffer->undoBuffer()->commitUndoItem( mainCursor->bufferX(), mainCursor->bufferY() );
+}

@@ -117,7 +117,61 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len 
 		it->applyDeleteLine( mPos, len, pView->myId == it->myId );
 }
 
-void YZAction::deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QChar& reg ) {
+//copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
+void YZAction::copyArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QValueList<QChar> &reg ) {
+	yzDebug() << "Copying from X " << begin.getX() << " to X " << end.getX() << endl;
+
+	QStringList buff;
+	unsigned int bX = begin.getX();
+	unsigned int bY = begin.getY();
+	unsigned int eX = end.getX();
+	unsigned int eY = end.getY();
+
+	if ( eY >= mBuffer->lineCount() ) return; //something's wrong => abort
+
+	YZCursor mPos( begin );
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+		it->initCopyLine( mPos, end, pView->myId == it->myId );
+
+	yzDebug() << "Cursors : " << bX << ","<< bY << " " << eX << "," << eY << endl;
+
+	bool lineCopied = bY != eY;
+
+	/* 1. copy the part of the current line */
+	QString b = mBuffer->textline( bY );
+	yzDebug() << "Current Line " << b << endl;
+	if ( !lineCopied )
+		buff << b.mid( bX, eX - bX + 1);
+	else
+		buff << b.mid( bX );
+
+	/* 2. copy whole lines */
+	unsigned int curY = bY + 1;
+	if ( bY == 0 ) curY = 0; //dont loop ;)
+	if ( bY == mBuffer->lineCount() - 1 ) curY = mBuffer->lineCount() - 1; // and ... dont loop
+
+	while ( eY > curY )
+		buff << mBuffer->textline( curY++ );
+
+	/* 3. copy the part of the last line */
+	if ( eY == curY && !lineCopied ) {
+		b = mBuffer->textline( curY );
+		buff << b.left( eX );
+	} else if ( eY == curY ) {
+		b = mBuffer->textline( curY );
+		buff << b.left( eX );
+	}
+	yzDebug() << "Copied " << buff << endl;
+	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
+		YZSession::mRegisters.setRegister( *it, buff );
+
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+		it->applyCopyLine( mPos, end, pView->myId == it->myId );
+
+}
+
+//copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
+void YZAction::deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QValueList<QChar> &reg ) {
 	yzDebug() << "Deleting from X " << begin.getX() << " to X " << end.getX() << endl;
 
 	QStringList buff;
@@ -156,7 +210,9 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& begin, const YZCursor&
 	if ( bY == 0 ) curY = 0; //dont loop ;)
 	if ( bY == mBuffer->lineCount() - 1 ) curY = mBuffer->lineCount() - 1; // and ... dont loop
 
+	yzDebug() << "End " << end.getY() << " " << curY << endl;
 	while ( eY > curY ) {
+		buff << mBuffer->textline( curY );
 		mBuffer->deleteLine( curY );
 		eY--;
 	}
@@ -172,8 +228,9 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& begin, const YZCursor&
 		mBuffer->replaceLine( b.mid( eX ), curY );
 		if ( curY > 0 ) mBuffer->mergeNextLine( curY - 1 );
 	}
-	yzDebug() << "Deleting " << buff << endl;
-	YZSession::mRegisters.setRegister( reg, buff );
+	yzDebug() << "Deleted " << buff << endl;
+	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
+		YZSession::mRegisters.setRegister( *it, buff );
 
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
 		it->applyDeleteLine( mPos, end, pView->myId == it->myId );

@@ -293,7 +293,7 @@ void YZBuffer::clearText() {
 	 * operation.
 	 */
 	mText.clear();
-	setTextline( 0, "" );
+	mText.append(new YZLine());
 }
 
 QString YZBuffer::textline( uint line ) const {

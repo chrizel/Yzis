@@ -787,6 +787,7 @@ class YZView {
 		//cached value of tabstop option
 		unsigned int tabstop;
 		bool wrap;
+		bool rightleft;
 
 		// tabstop * spaceWidth
 		unsigned int tablength;

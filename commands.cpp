@@ -469,6 +469,33 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
 	unsigned int c = 0;
+#if 1 // panard
+	QRegExp rex("(\\s+)\\S");//a word with boundaries
+	QRegExp w("\\S");
+	while ( c < args.count ) { //for each word
+		const QString& current = args.view->myBuffer()->textline( result.getY() );
+		int idx = rex.search( current, result.getX() );
+		if ( idx != -1 ) {
+			yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
+			c++; //one match
+			result.setX( idx + rex.cap( 1 ).length() );
+		} else {
+			if ( result.getY() >= args.view->myBuffer()->lineCount() - 1 ) {
+				result.setX( current.length() );
+				break;
+			}
+			const QString& next = args.view->myBuffer()->textline( result.getY() );
+			result.setX( 0 );
+			idx = w.search( next, 0 );
+			if ( idx != -1 ) {
+				result.setX( idx );
+				c++;
+			}
+			result.setY( result.getY() + 1 );
+		}
+		
+	}
+#else // poizon
 	QRegExp rex1("^\\w+\\s*");//a word with boundaries
 	QRegExp rex2("^\\W+\\s*");//non-word chars with boundaries
 			
@@ -495,6 +522,7 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 		}
 		
 	}
+#endif
 	return result;
 }
 

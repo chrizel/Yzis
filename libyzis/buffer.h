@@ -316,7 +316,7 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	inline YZLine * yzline(unsigned int line, bool noHL = false) {
+	inline YZLine * yzline(unsigned int line, bool noHL = true) {
 		//if you change this method, DO NOT FORGET TO CHANGE THE ONE AFTER !
 		bool found=TRUE;
 		YZLine *yl = mText.at( line, &found );

@@ -94,4 +94,37 @@ void TestYZCommands::testInsertMode()
     CHECK_CURSOR_POS( mView, 1, 2 );
 }
 
+void TestYZCommands::testMoving()
+{
+    mView->sendText( "i0123\n4567\n89AB\nCDEF<Esc>" );
+    phCheckEquals( mBuf->getWholeText(), "0123\n4567\n89AB\nCDEF" );
+    CHECK_MODE_COMMAND( mView );
+    CHECK_CURSOR_POS( mView, 3, 3 );
+    
+    mView->sendText( "<Right>" );
+    mView->sendText( "<Down>" );
+    CHECK_CURSOR_POS( mView, 3, 3 );
+    
+    mView->sendText( "<Left>" );
+    CHECK_CURSOR_POS( mView, 3, 2 );
+  
+     mView->sendText( "<Up>" );
+    CHECK_CURSOR_POS( mView, 2, 2 );
+
+    mView->sendText( "<Up>" );
+    mView->sendText( "<Up>" );
+    mView->sendText( "<Up>" );
+    CHECK_CURSOR_POS( mView, 0, 2 );
+    mView->sendText( "<Up>" );
+    CHECK_CURSOR_POS( mView, 0, 2 );
+    
+    mView->sendText( "<Left>" );
+    mView->sendText( "<Left>" );
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendText( "<Left>" );
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendText( "<Down>" );
+    CHECK_CURSOR_POS( mView, 1, 0 );          
+}
+
 /* ========================================================================= */

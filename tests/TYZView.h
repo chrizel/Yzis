@@ -30,9 +30,7 @@
 class TYZView : public YZView
 {
 public:
-	TYZView(YZBuffer *buf, YZSession *sess, int lines)
-	: YZView( buf, sess, lines )
-	{}
+	TYZView(YZBuffer *buf, YZSession *sess, int lines);
 
 	/** Send text to the view, that will be sent as individual chars
 	  * with the sendKey()
@@ -67,6 +65,18 @@ public:
 		return QString::null;
 	}
 
+protected:
+	class Mapping {
+	public:
+		Mapping( QString ptext="", int pkey=0) {
+			text = ptext;
+			key = pkey;
+		}
+		QString text;
+		int key;
+	};
+	
+	QValueList<Mapping> mKeyMap;
 };
 
 #endif // TYZ_VIEW_H

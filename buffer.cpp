@@ -429,17 +429,16 @@ void YZBuffer::load(const QString& file) {
 
 	QFile fl( mPath );
 	//opens and eventually create the file
+	mUndoBuffer->setInsideUndo( true );
 	if ( fl.open( IO_ReadOnly ) ) {
 		QTextStream stream( &fl );
 		while ( !stream.atEnd() )
 			appendLine( stream.readLine() );
 		fl.close();
 	}
-	if ( ! mText.count() ) {
-		mUndoBuffer->setInsideUndo( true );
+	if ( ! mText.count() )
 		appendLine("");
-		mUndoBuffer->setInsideUndo( false );
-	}
+	mUndoBuffer->setInsideUndo( false );
 	setModified( false );
 	//reenable
 	mUpdateView=true;

@@ -104,6 +104,12 @@ class YZExLua : public QObject {
 		 */
 		static int YZExLua::version(lua_State *L);
 
+		/**
+		 * Send a set of keys contained in a string asif they were typed
+		 * by the user
+		 */
+		static int YZExLua::sendKeys(lua_State *L);
+
 	private:
 		lua_State *st;
 };

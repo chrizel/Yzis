@@ -45,6 +45,7 @@
 YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mType = YZMode::MODE_VISUAL;
 	mString = _( "[ Visual ]" );
+	mSelMode = true;
 	mMapMode = visual;
 	commands.clear();
 #if QT_VERSION < 0x040000

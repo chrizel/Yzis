@@ -81,10 +81,16 @@ class YZMode {
 
 		virtual bool isEditMode() const;
 
+		/**
+		 * returns true if we can select text using this mode
+		 */
+		virtual bool isSelMode() const;
+
 	protected:
 		modeType mType;
 		QString mString;
 		bool mEditMode;
+		bool mSelMode;
 		mapping_t mMapMode;
 		QStringList mModifierKeys;
 		bool mRegistered;

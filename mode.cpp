@@ -33,6 +33,7 @@
 YZMode::YZMode() {
 	mString = "if you see me, there is a problem :)";
 	mEditMode = false;
+	mSelMode = false;
 	mMapMode = normal;
 	mRegistered = false;
 }
@@ -44,6 +45,9 @@ const QString& YZMode::toString() const {
 }
 bool YZMode::isEditMode() const {
 	return mEditMode;
+}
+bool YZMode::isSelMode() const {
+	return mSelMode;
 }
 mapping_t YZMode::mapMode() const {
 	return mMapMode;

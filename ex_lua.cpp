@@ -32,6 +32,7 @@ YZExLua::YZExLua() {
 	lua_register(st,"replace",replace);
 	lua_register(st,"wincol",wincol);
 	lua_register(st,"winline",winline);
+	lua_register(st,"goto",gotoxy);
 }
 
 YZExLua::~YZExLua() {
@@ -136,6 +137,7 @@ int YZExLua::replace(lua_State *L) {
 		for ( uint i = 1 ; i < list.count() ; i++ )
 			cView->myBuffer()->insertLine( list[ i ], sLine++ );
 	
+	//XXX should not be needed ... bug in invalidateLine ?
 	cView->refreshScreen();
 
 	return 0; // no result
@@ -143,7 +145,7 @@ int YZExLua::replace(lua_State *L) {
 
 int YZExLua::winline(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
-	uint result = cView->getBufferCursor()->getY();	
+	uint result = cView->getBufferCursor()->getY() - 1;	
 
 	lua_pushnumber( L, result ); // first result
 	return 1; // one result
@@ -151,10 +153,24 @@ int YZExLua::winline(lua_State *L) {
 
 int YZExLua::wincol(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
-	uint result = cView->getBufferCursor()->getX();	
+	uint result = cView->getBufferCursor()->getX() + 1;	
 
 	lua_pushnumber( L, result ); // first result
 	return 1; // one result
 }
+
+int YZExLua::gotoxy(lua_State *L) {
+	int n = lua_gettop( L );
+	if ( n < 2 ) return 0; //mis-use of the function
+	
+	int sCol = lua_tonumber( L, 1 );
+	int sLine = lua_tonumber( L,2 );
+	
+	YZView* cView = YZSession::me->currentView();
+	cView->gotoxy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
+
+	return 0; // one result
+}
+
 #include "ex_lua.moc"
 

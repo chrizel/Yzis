@@ -22,7 +22,20 @@
 
 #include <qmap.h>
 #include <qregexp.h>
-typedef QMap<QString,QRegExp> YZMotion;
+
+enum type_t {
+	REGEXP, //apply a regexp to make calculations (rex)
+	RELATIVE_POSITION //change cursor position with relative coordinates (x,y)
+};
+
+struct motion_t {
+	QString rex; //the regexp to execute
+	enum type_t type; //type of motion
+	QString command; // motion we detect in commands
+	int x; // relative x movement
+	int y; // relative y movement
+};
+typedef struct motion_t YZMotion;
 
 /**
  * This is the main place for handling motion objects 

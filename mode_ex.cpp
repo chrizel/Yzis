@@ -179,6 +179,8 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "ounmap", &YZModeEx::ounmap, QStringList("ounmap") ) );
 	commands.append( new YZExCommand( "nmap", &YZModeEx::nmap, QStringList("nmap") ) );
 	commands.append( new YZExCommand( "nunmap", &YZModeEx::nunmap, QStringList("nunmap") ) );
+	commands.append( new YZExCommand( "cmap", &YZModeEx::cmap, QStringList("cmap") ) );
+	commands.append( new YZExCommand( "cunmap", &YZModeEx::cunmap, QStringList("cunmap") ) );
 	commands.append( new YZExCommand( "[<>]", &YZModeEx::indent, QStringList(), false ));
 	commands.append( new YZExCommand( "ene(w)?", &YZModeEx::enew, QStringList("enew") ));
 	commands.append( new YZExCommand( "syn(tax)?", &YZModeEx::syntax, QStringList("syntax")));

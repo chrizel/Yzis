@@ -74,7 +74,8 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mFileIsNew = true;
 	mUndoBuffer = new YZUndoBuffer( this );
 	mAction = new YZAction( this );
-	mMarks = new YZMark( );
+	mViewMarks = new YZViewMark( );
+	mDocMarks = new YZDocMark( );
 	displayIntro();
 	YZSession::me->addBuffer( this );
 	mSwap = new YZSwapFile( this );
@@ -91,7 +92,8 @@ YZBuffer::~YZBuffer() {
 	mText.clear();
 	delete mUndoBuffer;
 	delete mAction;
-	delete mMarks;
+	delete mDocMarks;
+	delete mViewMarks;
 	//clear views
 //	YZView *it;
 //	for ( it = mViews.first(); it ; it = mViews.next() )

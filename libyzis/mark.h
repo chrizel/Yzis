@@ -26,17 +26,31 @@
 
 #include <qstring.h>
 #include <qmap.h>
+#include <qintdict.h>
 
 struct YZCursorPos;
 class YZCursor;
 
-typedef QMap<QString, YZCursorPos> YZMarker;
+typedef QMap<QString, YZCursorPos> YZViewMarker;
 
-class YZMark {
+
+// struct YZMarkPos{
+// 	YZMarkPos(): line(0), col(0)
+// 	YZMarkPos(int l, int c): line(l), col(c) {}
+// 	uint line;
+// 	uint col;
+// };
+
+//line <-> marks
+typedef QMap<uint, uint> YZDocMarker;
+
+
+/**Contains view marks (strings)*/
+class YZViewMark {
 
 	public:
-		YZMark( );
-		virtual ~YZMark( );
+		YZViewMark( );
+		virtual ~YZViewMark( );
 
 		void clear( );
 
@@ -46,7 +60,28 @@ class YZMark {
 		YZCursorPos get( const QString& mark, bool * found );
 
 	private:
-		YZMarker marker;
+		YZViewMarker marker;
+
+};
+
+/**Contains document marks (integers) like KTE bookmarks, breakpoints, etc.*/
+class YZDocMark {
+
+	public:
+		YZDocMark( ) {}
+
+		void clear( );
+
+		void add( uint line, uint mark );
+		void del( uint line, uint mark );
+		void del( uint line );
+
+		uint get( uint line );
+		
+		const YZDocMarker &getMarker() { return marker; }
+
+	private:
+		YZDocMarker marker;
 
 };
 

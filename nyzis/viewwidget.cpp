@@ -107,7 +107,7 @@ void NYZView::printLine( int line ) {
 
 	// check
 	QString str = mBuffer->textline(line);
-	if ( str.isNull() ) return;
+	if ( str.isNull() ) return; // Erase line ??
 
 	// clipping 
 	if ( relline > mLinesVis ) return;
@@ -284,9 +284,12 @@ void NYZView::initialisecolormap()
 	//
 	if ( can_change_color() ) {
 		yzWarning() << "Terminal can change colors"<< endl;
+
+#define COLOR_QT2CURSES(a) ((a)*1000/256)
+#define COLOR_CURSES2QT(a) ((a)*256/1000)
 #define MAP( nb, color )       \
-	init_color( nb, (short)qRed(color.rgb()), (short)qGreen(color.rgb()), (short)qBlue(color.rgb())); \
-	init_pair( nb, nb, COLOR_BLACK );    \
+	init_color( nb, COLOR_QT2CURSES(qRed(color.rgb())), COLOR_QT2CURSES( qGreen(color.rgb())), COLOR_QT2CURSES( qBlue(color.rgb()))) ; \
+	YZASSERT ( ERR != init_pair( nb, nb, COLOR_BLACK ) );    \
 	mColormap[color.rgb()] = nb;
 
 	/*
@@ -320,7 +323,7 @@ void NYZView::initialisecolormap()
 		yzWarning() << "Terminal can't change colors"<< endl;
 #undef MAP
 #define MAP( nb, qtcolor, color )               \
-	init_pair( nb, color, COLOR_BLACK );    \
+	YZASSERT( ERR != init_pair( nb, color, COLOR_BLACK ) );    \
 	mColormap[qtcolor.rgb()] = nb;
 
 		MAP( 1, Qt::magenta, COLOR_MAGENTA );

@@ -240,8 +240,11 @@ void NYZFactory::deleteView()
 	}
 }
 
-void NYZFactory::initialiseKeycodes() {
-	//initialise keycodes translation map
+void NYZFactory::initialiseKeycodes()
+{
+	keycodes[  127 ] = Qt::Key_Backspace;
+	keycodes[ '\t' ] = Qt::Key_Tab;
+
 	keycodes[ KEY_ESCAPE ] = Qt::Key_Escape;
 	keycodes[ KEY_ENTER ] = Qt::Key_Return;
 	keycodes[ KEY_RETURN ] = Qt::Key_Return;
@@ -256,7 +259,6 @@ void NYZFactory::initialiseKeycodes() {
 	keycodes[ KEY_RIGHT ] = Qt::Key_Right;
 	keycodes[ KEY_HOME ] = Qt::Key_Home;
 	keycodes[ KEY_BACKSPACE ] = Qt::Key_Backspace;
-	keycodes[  127 ] = Qt::Key_Backspace;
 	//keycodes[ KEY_F0 ] = Qt::Key_F0;
 	keycodes[ KEY_F(1) ] = Qt::Key_F1;
 	keycodes[ KEY_F(2) ] = Qt::Key_F2;

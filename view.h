@@ -214,12 +214,6 @@ class YZView {
 		void initDeleteLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
 		void applyDeleteLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
 
-		/* copy line */
-		void initCopyLine( const YZCursor& pos, unsigned int len, bool applyCursor );
-		void applyCopyLine( const YZCursor& pos, unsigned int len, bool applyCursor );
-		void initCopyLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
-		void applyCopyLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
-
 		/**
 		 * Start command mode
 		 */

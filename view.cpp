@@ -1098,18 +1098,6 @@ void YZView::applyInsertLine( const YZCursor& pos, bool applyCursor ) {
 	updateStickyCol( mainCursor );
 }
 
-void YZView::initCopyLine( const YZCursor& pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
-}
-
-void YZView::applyCopyLine( const YZCursor& pos, unsigned int /*len*/, bool applyCursor ) {
-}
-
-void YZView::initCopyLine( const YZCursor& begin, const YZCursor& end, bool /*applyCursor*/ ) {
-}
-
-void YZView::applyCopyLine( const YZCursor& begin, const YZCursor& end, bool applyCursor ) {
-}
-
 void YZView::initDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
 	origPos->setCursor( mainCursor->buffer() );
 	gotoxy( 0, pos.getY() ? pos.getY() - 1 : pos.getY(), false );

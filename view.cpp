@@ -424,7 +424,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				gotoPreviousMode();
 				mSession->getExPool()->execExCommand( this, cmd );
 				//we'll need to check that undo step ...
-				commitNextUndo();
+				//breaks when we quit ;), we'll check after the EX rework
+				//commitNextUndo();
 				return;
 			} else if ( key == "<DOWN>" ) {
 				if(mExHistory[mCurrentExItem].isEmpty())

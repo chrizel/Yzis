@@ -230,11 +230,11 @@ void TestYZCommands::testLineMovement()
     mView->sendMultipleKey( "300G" );
     CHECK_CURSOR_POS( mView, 3, 1 );
     mView->sendMultipleKey("2gg");
-    CHECK_CURSOR_POS( mView, 0, 2 );
+    CHECK_CURSOR_POS( mView, 1, 0 );
     mView->sendMultipleKey( "300gg" );
-    CHECK_CURSOR_POS( mView, 0, 2 );
-    mView->sendMultipleKey("3G");
     CHECK_CURSOR_POS( mView, 3, 1 );
+    mView->sendMultipleKey("3G");
+    CHECK_CURSOR_POS( mView, 2, 0 );
 }
 
 /* ========================================================================= */

@@ -251,7 +251,7 @@ void YZView::displayIntro() {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-//	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
+//	yzDebug() << "YZView :: sendKey : " << _key << " " << _modifiers << endl;
 
 	QString key=_key;
 	QString modifiers=_modifiers;

@@ -148,9 +148,13 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 	//check mappings
 	mapMode |= current()->mapMode();
 	bool map = false;
-	QString mapped = modifiers + key;
+	QString mapped = mView->getInputBuffer(); // + modifiers + key;
+//	yzDebug() << "Looking mappings for " << mapped << endl;
 	bool pendingMapp = YZMapping::self()->applyMappings( mapped, mapMode, &map );
+//	if (pendingMapp)
+//		yzDebug() << "Pending mapping on " << mapped << endl;
 	if ( map ) {
+//		yzDebug() << "input buffer was remapped to : " << mapped << endl;
 		mView->purgeInputBuffer();
 		mapMode = 0;
 		mView->sendMultipleKey( mapped );

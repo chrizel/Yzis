@@ -9,6 +9,7 @@
 
 #include "yz_line.h"
 #include "yz_events.h"
+#include "yz_microbuffer.h"
 
 #ifdef __cplusplus
 
@@ -29,6 +30,9 @@ public:
 
 	void addchar (int x, int y, unicode_char_t c);
 	void chgchar (int x, int y, unicode_char_t c);
+
+	void load(void);
+	void save(void);
 protected:
 	void addview (YZView *v);
 
@@ -39,6 +43,7 @@ protected:
 private:
 	void	post_event(yz_event e);
 
+	MicroBuffer *mb_first, *mb_last;
 
 	/* readonly?, change, load, save, isclean?, ... */
 	/* locking stuff will be here, too */
@@ -75,6 +80,10 @@ void buffer_addchar(yz_buffer , int x, int y, unicode_char_t c);
 /** change the character on the (x,y) position, hence erasing the current one */
 void buffer_chgchar(yz_buffer , int x, int y, unicode_char_t c);
 
+/** load the file (from 'path') */
+void buffer_load(yz_buffer);
+/** save the file (in 'path', must be set) */
+void buffer_save(yz_buffer);
 
 #ifdef __cplusplus
 }

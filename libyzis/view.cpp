@@ -490,7 +490,12 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
 				purgeInputBuffer();
 				return;
-			}
+			} else if ( key == "<ENTER>" ) {
+				moveDown();
+				moveToFirstNonBlankOfLine();
+				return;
+			}	 
+			
 			mPreviousChars+=modifiers+key;
 			if ( mSession ) {
 				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);

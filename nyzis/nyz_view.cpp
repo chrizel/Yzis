@@ -32,7 +32,7 @@ void NYZView::event_loop()
 		/* this is a _basic_ event loop... will be improved */
 		c = getch();
 		if (c!=ERR)
-			sendChar( QString( QChar( c ) ) );
+			sendChar( c );
 		flush_events();
 	}
 }

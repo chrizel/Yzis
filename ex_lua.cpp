@@ -639,7 +639,7 @@ int YZExLua::source(lua_State *L ) {
 
 int YZExLua::setlocal(lua_State *L ) {
 	if (!checkFunctionArguments(L, 1, "setlocal", "set local options")) return 0;
-	QString option = ( char * )lua_tostring ( L, 1 );
+	QString option = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
 
 	YZExCommandArgs ex (YZSession::me->currentView(), QString::null, QString::null, option, 0, 0, true);
 	YZSession::me->getExPool()->setlocal(ex);

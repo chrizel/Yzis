@@ -74,7 +74,6 @@ class YzisSchemaManager
     static QString printingSchema ();
 
   private:
- //   KConfig m_config;
     QStringList m_schemas;
 };
 

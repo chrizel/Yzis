@@ -169,7 +169,7 @@ int YZOption::readIntEntry( const QString& _key, int def ) {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
-	if ( mOptions.contains(  key ) ) {
+	if ( mOptions.contains( key ) ) {
 		const QString& s = mOptions[ key ]->getValue();
 		return s.toInt();
 	} else return def;
@@ -307,7 +307,6 @@ KOption *YZOption::getOption( const QString& option ) {
 	QString key = option;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
-	yzDebug() << "getOption " << key <<endl;
 	KOption *opt = mOptions[ key ];
 	return opt; //may be NULL
 }

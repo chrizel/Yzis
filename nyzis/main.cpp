@@ -155,6 +155,8 @@ main(int argc, char *argv[])
 		YZSession::setBoolOption("blocksplash", splash);
 	}
 
+	YZSession::me->guiStarted();
+
 	app.exec();
 }
 

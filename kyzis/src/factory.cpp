@@ -66,6 +66,7 @@ KYZisFactory::KYZisFactory( bool clone ) {
 	s_self = this;
 	s_refcnt++;
 	Settings::self()->readConfig();
+	guiStarted();
 }
 
 KYZisFactory::~KYZisFactory() {

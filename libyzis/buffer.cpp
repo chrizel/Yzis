@@ -41,6 +41,7 @@
 #include "mark.h"
 #include "swapfile.h"
 #include "session.h"
+#include "ex_lua.h"
 
 #define ASSERT_TEXT_WITHOUT_NEWLINE( functionname, text ) \
 	YZASSERT_MSG( text .contains('\n')==false, QString("%1 - text contains newline").arg(text) )
@@ -637,6 +638,12 @@ void YZBuffer::setHighLight( uint mode ) {
 
 		makeAttribs();
 		highlightingChanged();
+
+		//load indent plugin
+		//XXX should we check whether it was already loaded ?
+		QString hlName = h->name();
+		hlName.replace("+","p");
+		YZExLua::instance()->source(NULL, hlName.lower(),false);
 	}
 }
 

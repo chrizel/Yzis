@@ -6,32 +6,44 @@
 #include "nyzis.h"
 
 static void finish(int sig);
+static void finish2(void);
 void nyz_init_screen(void);
+void handle_event(yz_event *);
+
+
+// global variables..
+YZBuffer *buffer;
+NYZView *view;
+
+
+FILE *debugstr;
 
 int
 main(int argc, char *argv[])
 {
 
-    (void) signal(SIGINT, finish);      /* arrange interrupts to terminate */
-    nyz_init_screen();
+	debugstr = fopen("/tmp/yzis.log", "a");
+
+	(void) signal(SIGINT, finish);      /* arrange interrupts to terminate */
+
+	atexit(finish2);
+	nyz_init_screen();
 
 
-    YZBuffer *buffer = new YZBuffer();
-    NYZView *view = new NYZView(buffer, LINES);
+	/*
+	 * create an empty buffer and a view on it
+	 */
+	buffer = new YZBuffer();
+	view = new NYZView(buffer, LINES);
 
+	debug("before event_loop");
+	view->event_loop();	// should not return
+	debug("after event_loop");
 
-    /* event loop */
-    for (;;)
-    {
-        int c = getch();     /* refresh, accept single keystroke of input */
+	error();
 
-        /* process the command keystroke */
-    }
-
-    finish(0);               /* we're done */
-
+	finish(0);               /* we're done */
 }
-
 
 void nyz_init_screen(void)
 {
@@ -41,8 +53,8 @@ void nyz_init_screen(void)
     (void) cbreak();       /* take input chars one at a time, no wait for \n */
     (void) echo();         /* echo input - in color */
 
-    if (has_colors())
-    {
+    if (has_colors()) {
+
         start_color();
 
         /*
@@ -61,13 +73,21 @@ void nyz_init_screen(void)
     }
 }
 
+static void finish2(void)
+{
+	debug("finish2 called (from atexit)");
+	finish(0);
+}
 static void finish(int sig)
 {
-    endwin();
+	/* ncurses stuff */
+	endwin();
 
-    /* do your non-curses wrapup here */
+	debug("finish called (sigint)");
+	/* other */
 
-    exit(0);
+	/* exit */
+	exit(0);
 }
 
  

@@ -5,11 +5,8 @@
  *
  */
 
-
-
 #include <curses.h>
-#include "yz_interface.h"
-
+#include "yz_view.h"
 
 
 class NYZView : public YZView  {
@@ -19,6 +16,11 @@ public:
 	  * this view can display
 	  */
 	NYZView(YZBuffer *b, int lines) : YZView(b,lines) { }
+
+	void event_loop();
+
+protected:
+	void handle_event(yz_event *e);
 
 };
 

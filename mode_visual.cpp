@@ -212,6 +212,8 @@ void YZModeVisual::changeWholeLines(const YZCommandArgs &args) {
 void YZModeVisual::deleteWholeLines(const YZCommandArgs &args) {
 	YZInterval i = interval(args);
 	unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
+	if ( type() == MODE_VISUAL_LINE )
+		--lines;
 
 	// delete whole lines, even those who are only partially selected
 	args.view->myBuffer()->action()->deleteLine(args.view, i.fromPos().y(), lines, args.regs);

@@ -1,6 +1,7 @@
 2004-02-23 mikmak
   * kyzis
     support displaying TABs. doh I have tabstops and tabarrays !
+    support adding TABs
 
 2004-02-22 mikmak
   * libyzis

@@ -94,10 +94,8 @@ void YZView::sendKey( int c, int modifiers) {
 					moveUp( );
 					return;
 				case Qt::Key_Tab:
-					for (int i=0; i<4; ++i) {
-						mBuffer->addChar(mCursor->getX(),mCursor->getY()," ");
-						gotoxy(mCursor->getX()+1, mCursor->getY() );
-					}
+					mBuffer->addChar(mCursor->getX(),mCursor->getY(),"\t");
+					gotoxy(mCursor->getX()+1, mCursor->getY() );
 					return;
 				case Qt::Key_Backspace:
 					if (mCursor->getX() == 0) return;
@@ -138,7 +136,7 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Up:
 					moveUp( );
 					return;
-				case Qt::Key_Tab:
+/*				case Qt::Key_Tab:
 					//replace 1st character
 					mBuffer->chgChar(mCursor->getX(),mCursor->getY()," ");
 					gotoxy(mCursor->getX()+1, mCursor->getY() );
@@ -147,7 +145,7 @@ void YZView::sendKey( int c, int modifiers) {
 						mBuffer->addChar(mCursor->getX(),mCursor->getY()," ");
 						gotoxy(mCursor->getX()+1, mCursor->getY() );
 					}
-					return;
+					return;*/
 				case Qt::Key_Backspace:
 					if (mCursor->getX() == 0) return;
 					gotoxy(mCursor->getX()-1, mCursor->getY() );

@@ -37,7 +37,11 @@ YZDebugBackend * YZDebugBackend::_instance = NULL;
 
 YZDebugBackend::YZDebugBackend()
 {
+#ifndef WIN32
 	setDebugOutput( "/tmp/yzisdebug-" + QString(cuserid(NULL)) + ".log" );
+#else
+	setDebugOutput( "/tmp/yzisdebug.log" );
+#endif
 	init();
 }
 

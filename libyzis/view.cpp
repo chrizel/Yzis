@@ -423,10 +423,15 @@ void YZView::centerViewHorizontally(unsigned int column) {
 	}
 
 	if (newcurrentLeft > 0) {
-		initDraw( 0, 0, 0, 0 );
-		while( sCursor->getY( ) < mCursor->getY( ))
-			drawNextLine( );
-		while ( rCursor->getX( ) < newcurrentLeft ) {
+		initDraw( );
+		while ( sCursor->getY() > mCursor->getY() ) drawPrevLine( );
+		while ( sCursor->getY() < mCursor->getY() ) drawNextLine( );
+		while ( sCursor->getX() > newcurrentLeft ) {
+			drawPrevCol( );
+			drawChar( );
+		}
+
+		while ( sCursor->getX() < newcurrentLeft ) {
 			drawNextCol( );
 			drawChar( );
 		}
@@ -486,7 +491,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	if ( ( int )nextx < 0 ) nextx = 0;
 	mCursor->setX( nextx );
 
-//	initDraw(0, 0, 0, 0);
+	initDraw( );
 	while ( sCursor->getY() > mCursor->getY() ) drawPrevLine( );
 	while ( sCursor->getY() < mCursor->getY() ) drawNextLine( );
 	while ( sCursor->getX() > mCursor->getX() ) {

@@ -2,6 +2,8 @@
   * nyzis
     supprt for CTRL and SHIFT keys, this is a bad hack but ncurses test
     program does it that way ... (on linux we could use ioctl too)
+  * libyzis
+    actually make "bad inputs detection" work and let "dd" and "gg" work again
 
 2003-09-29 mikmak
   * libyzis/kyzis

@@ -4,6 +4,7 @@
 
 #include "yz_commands.h"
 #include "yz_view.h"
+#include "yz_debug.h"
 
 /**
  * Here is a simple example to add a new command and how to use it :
@@ -74,6 +75,7 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error)
 	while ( !inputs[ i ].isDigit() && i<inputs.length() )
 		command += inputs[ i++ ];
 	//end FIXME
+	QString realcommand = command;
 	
 	//printf( "%s %s\n", inputs.latin1(), command.latin1() );
 
@@ -104,8 +106,24 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error)
 			default:
 				break;
 		}
-	} else
-		*error = 1;
+	} else {
+		//if we are here then it's not a sub-command, so
+		//is there a command starting with the input-ed characters ?  if yes then
+		//wait for other characters otherwise return error to purge input buffer
+		bool found=false;
+		for ( it = globalCommands.begin(); !found && it != globalCommands.end(); ++it ) {
+			yzDebug() << " No match : looking for possible future matches before returning error : " << realcommand << 
+				" in command : " << it.key().latin1() << endl;
+			QString command2check = it.key().latin1();
+			if ( command2check.startsWith(realcommand) ) {
+				yzDebug() << "FOUND" << endl;
+				found = true;
+			}
+		}
+
+		if ( !found )
+			*error = 1;
+	}
 }
 
 void YZCommandPool::initExPool() {

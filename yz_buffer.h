@@ -46,7 +46,7 @@ protected:
 	void	postEvent(yz_event e);
 	void	updateView(YZView *v);
 	void	updateAllViews();
-	QString	findLine(int line);
+	QString	findLine(unsigned int line);
 
 	/* readonly?, change, load, save, isclean?, ... */
 	/* locking stuff will be here, too */

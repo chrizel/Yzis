@@ -52,7 +52,7 @@ struct yz_event_setcursor {
 };
 
 struct yz_event_setstatus {
-	const char *text;
+	QString *text;
 };
 
 /**
@@ -82,9 +82,9 @@ struct yz_event_t {
 
 typedef struct yz_event_t yz_event;
 
-yz_event mk_event_setstatus(const char *text);
+yz_event mk_event_setstatus(QString *);
 yz_event mk_event_setcursor(int x, int y);
-yz_event mk_event_setline(int,QString*);
+yz_event mk_event_setline(int,QString *);
 yz_event mk_event_noop();
 
 #endif /*  YZ_EVENTS_H */

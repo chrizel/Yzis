@@ -22,7 +22,7 @@ void YZSession::addBuffer( YZBuffer *b ) {
 	buffers.insert(b->fileName(), b);
 }
 
-QString YZSession::saveBufferExit( QString inputsBuff ) {
+QString YZSession::saveBufferExit( QString /* inputsBuff */ ) {
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = buffers.begin(); it!=buffers.end(); it++ )
 		it.data()->save();

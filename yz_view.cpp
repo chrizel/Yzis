@@ -42,7 +42,7 @@ void YZView::sendChar( QChar c) {
 		}
 		purgeInputBuffer();
 		mode = YZ_VIEW_MODE_COMMAND;
-		postEvent(mk_event_setstatus("Command mode"));
+		postEvent(mk_event_setstatus(&QString( "Command mode") ));
 		return;
 	}
 	switch(mode) {
@@ -122,7 +122,7 @@ void YZView::registerManager ( Gui *mgr ) {
 	session = mgr->getCurrentSession();
 }
 
-void YZView::centerView(int line) {
+void YZView::centerView(unsigned int line) {
 	//update current
 	current = line - lines_vis / 2;
 	if ( current < 0 ) current = 0;
@@ -141,8 +141,36 @@ void YZView::redrawScreen() {
 	}
 }
 
-QString YZView::moveDown( QString inputsBuff ) {
+/*
+ * all the goto-like commands
+ */
+void	YZView::gotoxy(int nextx, int nexty)
+{
 	QString lin;
+
+
+	// check positions
+	if ( nexty < 0 ) nexty = 0;
+	if ( nexty >= buffer->text.count() ) nexty = buffer->text.count() - 1;
+	cursor->setY( nexty );
+
+	lin = buffer->findLine(nexty);
+	if ( !lin.isNull() ) current_maxx = lin.length()-1; 
+	if ( nextx > current_maxx ) nextx = current_maxx;
+	if ( nextx < 0 ) nextx = 0;
+	cursor->setX( nextx );
+
+	//make sure this line is visible
+	if ( ! isLineVisible( nexty ) ) centerView( nexty );
+
+	/* do it */
+	updateCursor();
+
+	//reset the input buffer
+	purgeInputBuffer();
+}
+
+QString YZView::moveDown( QString inputsBuff ) {
 	int nb_lines=1;//default : one line down
 
 	//check the arguments
@@ -156,35 +184,13 @@ QString YZView::moveDown( QString inputsBuff ) {
 	}
 
 	//execute the code
-	int nexty=cursor->getY() + nb_lines;
-	int nextx=cursor->getX();
-
-	//number too big, go to bottom of file
-	if ( nexty >= buffer->text.count() ) nexty = buffer->text.count() - 1;
-	cursor->setY( nexty );
-	lin = buffer->findLine(nexty);
-	if ( !lin.isNull() ) current_maxx = lin.length()-1; 
-	if ( nextx > current_maxx ) nextx = current_maxx;
-	if ( nextx < 0 ) nextx = 0;
-	cursor->setX( nextx );
-
-	//make sure this line is visible
-	if ( ! isLineVisible( cursor->getY() ) ) {
-		current += nb_lines;
-		redrawScreen();
-	}
-
-	updateCursor();
-
-	//reset the input buffer
-	purgeInputBuffer();
+	gotoxy(cursor->getX(), cursor->getY() + nb_lines);
 
 	//return something
 	return QString::null;
 }
 
 QString YZView::moveUp( QString inputsBuff ) {
-	QString lin;
 	int nb_lines=1;//default : one line down
 
 	//check the arguments
@@ -198,35 +204,13 @@ QString YZView::moveUp( QString inputsBuff ) {
 	}
 
 	//execute the code
-	int nexty=cursor->getY() - nb_lines;
-	int nextx=cursor->getX();
-
-	//number too big, go to bottom of file
-	if ( nexty < 0 ) nexty = 0;
-	cursor->setY( nexty );
-	lin = buffer->findLine(nexty);
-	if ( !lin.isNull() ) current_maxx = lin.length()-1; 
-	if ( nextx > current_maxx ) nextx = current_maxx;
-	if ( nextx < 0 ) nextx = 0;
-	cursor->setX( nextx );
-
-	//make sure this line is visible
-	if ( ! isLineVisible( cursor->getY() ) ) {
-		current -= nb_lines;
-		redrawScreen();
-	}
-
-	updateCursor();
-
-	//reset the input buffer
-	purgeInputBuffer();
+	gotoxy(cursor->getX(), cursor->getY() - nb_lines);
 
 	//return something
 	return QString::null;
 }
 
 QString YZView::moveLeft( QString inputsBuff ) {
-	QString lin;
 	int nb_cols=1;//default : one line left
 
 	//check the arguments
@@ -240,25 +224,13 @@ QString YZView::moveLeft( QString inputsBuff ) {
 	}
 
 	//execute the code
-	lin = buffer->findLine(cursor->getY());
-	if ( !lin.isNull() ) current_maxx = lin.length()-1; 
-	int nextx=cursor->getX() - nb_cols;
-
-	//number too big, go to bottom of file
-	if ( nextx < 0 ) nextx = 0;
-	cursor->setX( nextx );
-
-	updateCursor();
-
-	//reset the input buffer
-	purgeInputBuffer();
+	gotoxy(cursor->getX() - nb_cols , cursor->getY());
 
 	//return something
 	return QString::null;
 }
 
 QString YZView::moveRight( QString inputsBuff ) {
-	QString lin;
 	int nb_cols=1;//default : one column right
 	
 	//check the arguments
@@ -272,44 +244,47 @@ QString YZView::moveRight( QString inputsBuff ) {
 	}
 
 	//execute the code
-	lin = buffer->findLine(cursor->getY());
-	if ( !lin.isNull() ) current_maxx = lin.length()-1; 
-	int nextx=cursor->getX()+nb_cols;
-
-	//number too big, go to bottom of file
-	if ( nextx > current_maxx ) nextx = current_maxx;
-	if ( nextx < 0 ) nextx = 0;
-	cursor->setX( nextx );
-	
-	updateCursor();
-
-	//reset the input buffer
-	purgeInputBuffer();
+	gotoxy(cursor->getX() + nb_cols , cursor->getY());
 	
 	//return something
 	return QString::null;
 }
 
 QString YZView::moveToStartOfLine( QString ) {
-	QString lin;
-	
 	//execute the code
-	lin = buffer->findLine(cursor->getY());
-	if ( !lin.isNull() )
-		current_maxx = lin.length()-1;
-	else
-		current_maxx = 0;
-
-	cursor->setX( 0 );
-	
-	updateCursor();
-
-	//reset the input buffer
-	purgeInputBuffer();
+	gotoxy(0 , cursor->getY());
 	
 	//return something
 	return QString::null;
 }
+
+QString YZView::gotoLine(QString inputsBuff) {
+	int line=0;
+	//check arguments
+	//can be : 'gg' (goto Top),'G' or a number with one of them
+	if ( !inputsBuff.isNull() ) {
+		//try to find a number
+		int i=0;
+		while ( inputsBuff[i].isDigit() )
+			i++; //go on
+		bool test;
+		line = inputsBuff.left( i ).toInt( &test );
+		if ( !test  &&  !inputsBuff.startsWith( "gg" ) )
+				line=buffer->text.count()-1; //there shouldn't be any other solution
+	}
+
+
+	if ( inputsBuff.startsWith( "gg" ) )
+		gotoxy( 0, line );
+
+	gotoxy(cursor->getX(), line);
+
+	//return something
+	return QString::null;
+}
+
+// end of goto-like command
+
 
 QString YZView::moveToEndOfLine( QString ) {
 	QString lin;
@@ -323,10 +298,7 @@ QString YZView::moveToEndOfLine( QString ) {
 
 	cursor->setX( current_maxx );
 	
-	updateCursor();
-
-	//reset the input buffer
-	purgeInputBuffer();
+	gotoxy( current_maxx , cursor->getY());
 	
 	//return something
 	return QString::null;
@@ -357,51 +329,18 @@ QString YZView::deleteCharacter( QString inputsBuff ) {
 
 QString YZView::gotoInsertMode(QString) {
 	mode = YZ_VIEW_MODE_INSERT;
-	postEvent(mk_event_setstatus("-- INSERT --"));
+	postEvent(mk_event_setstatus(&QString( "-- INSERT --") ));
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoReplaceMode(QString) {
 	mode = YZ_VIEW_MODE_REPLACE;
-	postEvent(mk_event_setstatus("-- REPLACE --"));
+	postEvent(mk_event_setstatus(&QString( "-- REPLACE --") ));
 	purgeInputBuffer();
 	return QString::null;
 }
 
 //QString YZView::gotoExMode(QString) {
 //}
-
-QString YZView::gotoLine(QString inputsBuff) {
-	int line=0;
-	//check arguments
-	//can be : 'gg' (goto Top),'G' or a number with one of them
-	if ( !inputsBuff.isNull() ) {
-		//try to find a number
-		int i=0;
-		while ( inputsBuff[i].isDigit() )
-			i++; //go on
-		bool test;
-		line = inputsBuff.left( i ).toInt( &test );
-		if ( !test ) {
-			if ( inputsBuff.startsWith( "gg" ) ) line=0;
-			else line=buffer->text.count()-1; //there shouldn't be any other solution
-		}
-	}
-
-	if ( line==0 ) cursor->setX( 0 ); //for gg we go at beginning of line (should be first non blank character XXX)
-	cursor->setY(line);
-	
-	//make sure this line is visible
-	if ( ! isLineVisible( cursor->getY() ) ) centerView( cursor->getY() );
-
-	//execute the code
-	updateCursor( );
-
-	//reset the input buffer
-	purgeInputBuffer();
-
-	//return something
-	return QString::null;
-}
 

@@ -72,7 +72,7 @@ public:
 
 	void updateCursor(int x=-1,int y=-1);
 
-	void centerView( int line );
+	void centerView( unsigned int line );
 
 	void purgeInputBuffer() { previous_chars="";}
 
@@ -127,6 +127,9 @@ public:
 	QString gotoLine( QString inputsBuff = QString::null );
 
 	void redrawScreen();
+
+protected:
+	void	gotoxy(int nextx, int nexty);
 	
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */

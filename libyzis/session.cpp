@@ -44,35 +44,6 @@ YZSession::YZSession( const QString& _sessionName ) {
 YZSession::~YZSession() {
 }
 
-#if 0
-void YZSession::postEvent (yz_event e) {
-	mEvents.push_back( e ); //append to the FIFO
-	receiveEvent( e );
-}
-
-//requester is a pointer on the View requesting an event which is send to
-//itself
-yz_event YZSession::fetchNextEvent(int requester) {
-	if ( !mEvents.empty() ) {
-		if ( requester == -1) {
-			yz_event e = mEvents.first();
-			mEvents.pop_front(); //remove it
-			return e;
-		} else {
-			QValueList<yz_event>::iterator it;
-			for ( it = mEvents.begin(); it != mEvents.end(); ++it ) {
-				if ( ( *it ).view == requester ) {
-					yz_event e = *it;
-					mEvents.remove( it );
-					return e;
-				}
-			}
-		}
-	}
-	return YZEvent::mkEventNoop();
-}
-#endif
-
 void YZSession::addBuffer( YZBuffer *b ) {
 	yzDebug() << "Session : addBuffer " << b->fileName() << endl;
 	mBuffers.insert(b->fileName(), b);

@@ -274,6 +274,12 @@ class YZView {
 		 */
 		virtual void refreshScreen () = 0;
 
+		/**
+		 * Get the current cursor information
+		 * @return a reference on the current cursor
+		 */
+		YZCursor* getCursor() { return mCursor; }
+
 	protected:
 		/**
 		 * Updates the position of the cursor

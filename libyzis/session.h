@@ -25,13 +25,13 @@
  */
 
 #include "buffer.h"
-#include "view.h"
 #include "commands.h"
-#include "motionpool.h"
 #include "options.h"
 #include "registers.h"
+#include "motionpool.h"
 
 class YZView;
+class YZMotionPool;
 
 /**
  * Contains data referring to an instance of yzis

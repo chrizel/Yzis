@@ -838,7 +838,7 @@ bool YZBuffer::substitute( const QString& what, const QString& with, bool wholel
 	return false;
 }
 
-QStringList YZBuffer::getText(YZCursor& from, YZCursor& to) {
+QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) {
 	m_hlupdating=true; //override
 	//the first line
 	QStringList list;

@@ -371,7 +371,7 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 		              || view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE;
 		YZSelectionMap m;
 		if(visual)
-			m=view->getVisualSelection();
+			m=view->visualSelection();
 		const YZCommand *c=0;
 		if(cmds.count()==1) {
 			c=cmds.first();
@@ -890,8 +890,8 @@ QString YZCommandPool::append(const YZCommandArgs &args) {
 QString YZCommandPool::change(const YZCommandArgs &args) {
 	YZCursor from, to, temp;
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-		from = ( args.selection )[ 0 ].from();
-		to = ( args.selection )[ 0 ].to();
+		from = ( args.selection )[ 0 ].fromPos();
+		to = ( args.selection )[ 0 ].toPos();
 	} else {
 		from = *args.view->getBufferCursor();
 		to = move(args.view, args.arg, args.count, args.usercount );
@@ -1132,12 +1132,12 @@ QString YZCommandPool::searchForwards(const YZCommandArgs &args) {
 QString YZCommandPool::del(const YZCommandArgs &args) {
 	bool entireLines = ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
 	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL )
-		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
+		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].fromPos(), ( args.selection )[ 0 ].toPos() , args.regs);
 	else if ( entireLines ) {
 		YZCursor from, to;
 		if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
-			from = ( args.selection )[ 0 ].from();
-			to = ( args.selection )[ 0 ].to();
+			from = ( args.selection )[ 0 ].fromPos();
+			to = ( args.selection )[ 0 ].toPos();
 		} else {
 			from = *args.view->getBufferCursor();
 			to = move(args.view, args.arg, args.count, args.usercount);
@@ -1163,12 +1163,12 @@ QString YZCommandPool::del(const YZCommandArgs &args) {
 QString YZCommandPool::yank(const YZCommandArgs &args) {
 	bool entireLines =  ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
 	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL )
-		args.view->myBuffer()->action()->copyArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
+		args.view->myBuffer()->action()->copyArea(args.view, ( args.selection )[ 0 ].fromPos(), ( args.selection )[ 0 ].toPos() , args.regs);
 	else if ( entireLines ) {
 		YZCursor from, to;
 		if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
-			from = ( args.selection )[ 0 ].from();
-			to = ( args.selection )[ 0 ].to();
+			from = ( args.selection )[ 0 ].fromPos();
+			to = ( args.selection )[ 0 ].toPos();
 		} else {
 			from = *args.view->getBufferCursor();
 			to = move(args.view, args.arg, args.count, args.usercount);
@@ -1263,7 +1263,7 @@ QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 
 QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL )
-		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
+		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].fromPos(), ( args.selection )[ 0 ].toPos() , args.regs);
 	else
 		args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
 	args.view->commitNextUndo();
@@ -1300,9 +1300,9 @@ QString YZCommandPool::abort( const YZCommandArgs& args) {
 QString YZCommandPool::delkey( const YZCommandArgs &args ) {
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
 #if QT_VERSION < 0x040000
-			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].from(), (args.selection)[0].to(), ( QValueList<QChar>() << QChar( '\"' ) ));
+			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].fromPos(), (args.selection)[0].toPos(), ( QValueList<QChar>() << QChar( '\"' ) ));
 #else
-			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].from(), (args.selection)[0].to(), ( QList<QChar>() << QChar( '\"' ) ));
+			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].fromPos(), (args.selection)[0].toPos(), ( QList<QChar>() << QChar( '\"' ) ));
 #endif
 			args.view->leaveVisualMode();
 			args.view->gotoPreviousMode();
@@ -1315,8 +1315,8 @@ QString YZCommandPool::delkey( const YZCommandArgs &args ) {
 QString YZCommandPool::indent( const YZCommandArgs& args ) {
 	unsigned int fromY, toY;
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-		fromY = (args.selection)[0].from().getY();
-		toY = (args.selection)[0].to().getY();
+		fromY = (args.selection)[0].fromPos().getY();
+		toY = (args.selection)[0].toPos().getY();
 	} else {
 		fromY = args.view->getBufferCursor()->getY();
 		toY = move(args.view, args.arg, args.count, args.usercount).getY();

@@ -98,7 +98,7 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 	if ( reverse ) end.setCursor( top );
 
 	unsigned int matchedLength;
-	yzDebug() << "begin = " << cur << endl;
+//	yzDebug() << "begin = " << cur << endl;
 	YZCursor ret = mView->myBuffer()->action()->search( mView, pattern, cur, end, reverse, &matchedLength, found );
 	if ( ! *found ) {
 		yzDebug() << "search hits top or bottom" << endl;
@@ -107,7 +107,7 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 			cur.setCursor( bottom );
 		else 
 			cur.setCursor( top );
-		yzDebug() << "begin = " << cur << ", end = " << end << endl;
+//		yzDebug() << "begin = " << cur << ", end = " << end << endl;
 		ret = mView->myBuffer()->action()->search( mView, pattern, cur, end, reverse, &matchedLength, found );
 		if ( *found ) {
 			if ( reverse )
@@ -116,7 +116,7 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 				mView->displayInfo( QObject::tr("search hit BOTTOM, continuing at TOP") );
 		}
 	}
-	yzDebug() << "ret = " << ret << endl;
+//	yzDebug() << "ret = " << ret << endl;
 
 	return ret;
 }
@@ -170,7 +170,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 				if ( found && matchedLength > 0 ) {
 					cur.setCursor( from );
 					cur.setX( cur.getX() + matchedLength - 1 );
-					YZSelection sel( from, cur, from, cur );
+					YZInterval sel( from, cur );
 					cur.setX( cur.getX() + 1 );
 					searchMap.insert( pos++, sel );
 				}
@@ -205,8 +205,8 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 		YZCursor cur( from );
 		YZCursor end( v, buffer->textline( line ).length(), line );
 
-		YZSelectionPool* pool = v->getSelectionPool();
-		pool->delSelection( "SEARCH", from, end, from, end );
+		YZSelection* searchMap = v->getSelectionPool()->search();
+		searchMap->delInterval( YZInterval( from, end ) );
 
 		if ( end.getX() > 0 ) end.setX( end.getX() - 1 );
 
@@ -217,7 +217,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 			if ( found && matchedLength > 0 ) {
 				cur.setCursor( from );
 				cur.setX( cur.getX() + matchedLength - 1 );
-				pool->addSelection( "SEARCH", from, cur, from, cur );
+				searchMap->addInterval( YZInterval( from, cur ) );
 				cur.setX( cur.getX() + 1 );
 //				yzDebug() << "cur = " << cur << "; end = " << end << endl;
 			}
@@ -225,12 +225,12 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 
 #if QT_VERSION < 0x040000
 		for( v = views.first(); v; v = views.next() ) {
-			v->getSelectionPool()->setLayout( "SEARCH", pool->layout( "SEARCH" ) );
+			v->getSelectionPool()->setSearch( searchMap );
 			v->sendPaintEvent( 0, line, QMAX( (int)(buffer->textline( line ).length() - 1), 0 ), line );
 		}
 #else
 		for (int i = 0 ; i < views.size(); ++i ) {
-			views.at(i)->getSelectionPool()->setLayout( "SEARCH", pool->layout( "SEARCH" ) );
+			views.at(i)->getSelectionPool()->setSearch( searchMap );
 			views.at(i)->sendPaintEvent( 0, line, qMax( (int)(buffer->textline( line ).length() - 1), 0 ), line );
 		}
 #endif
@@ -245,22 +245,20 @@ void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shif
 #endif
 	YZView* v = views.first();
 	if ( v ) {
-		YZSelectionMap searchMap = v->getSelectionPool()->layout( "SEARCH" );
+		YZSelectionMap searchMap = v->getSelectionPool()->search()->map();
 
 		if ( ( ( int )( shift + fromLine ) ) < 0 ) fromLine = -shift;
 		unsigned int size = searchMap.size();
 		for ( unsigned int i = 0; i < size; i++ ) {
-			YZCursor to = searchMap[ i ].to();
+			YZCursor to = searchMap[ i ].toPos();
 			if ( to.getY() < fromLine ) continue;
 
-			YZCursor from = searchMap[ i ].from();
+			YZCursor from = searchMap[ i ].fromPos();
 			from.setY( from.getY() + shift);
 			to.setY( to.getY() + shift);
 
-			searchMap[ i ].setFrom( from );
-			searchMap[ i ].setTo( to );
-			searchMap[ i ].setDrawFrom( from );
-			searchMap[ i ].setDrawTo( to );
+			searchMap[ i ].setFromPos( from );
+			searchMap[ i ].setToPos( to );
 		}
 
 #if QT_VERSION < 0x040000
@@ -274,17 +272,14 @@ void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shif
 }
 
 void YZSearch::highlightSearch( YZView* mView, YZSelectionMap searchMap ) {
-	YZSelectionPool* pool = mView->getSelectionPool();
-	bool wasEmpty = pool->layout( "SEARCH" ).isEmpty();
-
-	pool->clear( "SEARCH" );
+	mView->setPaintAutoCommit( false );
+	YZSelection* vMap = mView->getSelectionPool()->search();
+	mView->sendPaintEvent( vMap->map(), false );
+	vMap->clear();
 	if ( mView->getLocalBoolOption( "hlsearch" ) ) {
-		pool->setLayout( "SEARCH", searchMap );
+		vMap->setMap( searchMap );
+		mView->sendPaintEvent( vMap->map(), false );
 	}
-
-	bool isEmpty = pool->layout( "SEARCH" ).isEmpty();
-	if ( ! ( wasEmpty && isEmpty ) && mView->getLocalBoolOption( "hlsearch" ) ) {
-		mView->sendRefreshEvent();
-	}
+	mView->commitPaintEvent();
 }
 

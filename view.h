@@ -292,11 +292,6 @@ class YZView {
 		void leaveCompletionMode( );
 
 		/**
-		 * Get the selected area
-		 */
-		YZSelectionMap getVisualSelection();
-
-		/**
 		 * Go back to either open mode or command mode, depending on how the
 		 * previous mode is set.
 		 */
@@ -428,6 +423,7 @@ class YZView {
 		void sendCursor( YZViewCursor* cursor );
 		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
 		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
+		void sendPaintEvent( YZSelectionMap map, bool isBufferMap = true );
 
 		// ask to draw from buffer line @arg line to @arg line + @arg n
 		void sendBufferPaintEvent( unsigned int line, unsigned int n );
@@ -940,10 +936,10 @@ class YZView {
 		bool adjust;
 
 		YZSelectionPool * selectionPool;
+		YZSelection* mPaintSelection;
 
 		//Visual Mode stuff
-		YZCursor *mVisualCursor;
-		YZCursor *dVisualCursor;
+		YZViewCursor* visualCursor;
 
 		//search mode cursors
 		YZCursor *mSearchBegin;

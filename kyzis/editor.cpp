@@ -72,7 +72,7 @@ void KYZisEdit::setCursor(int c, int l) {
 	
 	//check if the line contains TABs
 	QString line = mParent->myBuffer()->textline( mCursorY + mParent->getCurrentTop() );
-	int startcol = 0;
+	uint startcol = 0;
 	while ( !mParent->isColumnVisible(startcol++, l) && startcol <= line.length())
 		;
 	startcol--;
@@ -137,17 +137,17 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 			true );		    // ignoreMask
 }
 
-void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
+void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::ExpandTabs | Qt::SingleLine;
 
-	for ( int line = mParent->getCurrentTop(); line < mParent->getCurrentTop() + mParent->getLinesVisible() ; line++ ) {
-		int i = line - mParent->getCurrentTop(); //relative line number
+	for ( uint line = mParent->getCurrentTop(); line < mParent->getCurrentTop() + mParent->getLinesVisible() ; line++ ) {
+		uint i = line - mParent->getCurrentTop(); //relative line number
 		if ( fontMetrics().lineSpacing() * i >= (  unsigned int )clipy && fontMetrics().lineSpacing() * i < (  unsigned int ) (  clipy+cliph ) ) {
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
 			p->eraseRect(clip);
 			QString toDraw = mParent->myBuffer()->textline( line );
 			if (mParent->myBuffer()->lineCount() > line && !toDraw.isNull() && !toDraw.isEmpty()) {
-				int startcol = 0;
+				uint startcol = 0;
 				while ( !mParent->isColumnVisible(startcol++, line) && startcol <= toDraw.length())
 					;
 				startcol--;

@@ -213,7 +213,7 @@ bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
 
 	if (data.isNull()) {
 		return false;
-	} else if (cursor.x() > data.length()) {
+	} else if ((uint)cursor.x() > data.length()) {
 		return false;
 	}
 	
@@ -231,7 +231,7 @@ bool KYZisView::setCursorPositionReal ( unsigned int line, unsigned int col)
 		return false;
 	}
 	
-	if (cursor.x() > data.length()) {
+	if ( (uint)cursor.x() > data.length()) {
 		return false;
 	}
 	

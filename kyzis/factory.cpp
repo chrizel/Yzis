@@ -164,7 +164,7 @@ void KYZisFactory::changeCurrentView( YZView* view ) {
 	v->setFocus();
 }
 
-YZView* KYZisFactory::createView( YZBuffer *buffer ) {
+YZView* KYZisFactory::createView( YZBuffer *) {
 	//DCOP call which returns the UID of the created view ?
 #if 0
 	DCOPClient *client = kapp->dcopClient();

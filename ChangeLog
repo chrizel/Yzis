@@ -1,3 +1,7 @@
+2005-03-19 Takumi Asaki (patch)
+  * translations
+    add Japanese translation
+
 2005-03-14 panard
   * libyzis
     :set opt&, :set opt=, :set opt:, :set opt+=, :set opt-=, :set opt^=

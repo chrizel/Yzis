@@ -1,0 +1,581 @@
+# translation of ja.po to Japanese
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Takumi ASAKI <takumi@asaki.jp>, 2005.
+# Takumi ASAKI <asaki@kde.gr.jp>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ja\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-02-12 17:12+0100\n"
+"PO-Revision-Date: 2005-03-06 21:01+0900\n"
+"Last-Translator: Takumi ASAKI <asaki@kde.gr.jp>\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.9.1\n"
+
+#: ../kyzis/main.cpp:38
+msgid "KDE Frontend for the Yzis Editor"
+msgstr "YzisエディタのKDEフロントエンド"
+
+#: ../kyzis/main.cpp:41
+msgid "Document to open."
+msgstr "オープンするドキュメント"
+
+#: ../kyzis/main.cpp:42
+msgid "Execute command passed in argument"
+msgstr "引数で指定されたコマンドを実行"
+
+#: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:137
+msgid "Kyzis"
+msgstr "Kyzis"
+
+#: ../kyzis/src/configdialog.cpp:65
+msgid "Text font"
+msgstr "テキストフォント"
+
+#: ../kyzis/src/configdialog.cpp:73
+msgid "Use a transparent background"
+msgstr "透明な背景を利用する"
+
+#: ../kyzis/src/configdialog.cpp:81
+msgid "Background color opacity"
+msgstr "背景色の不透明度"
+
+#: ../kyzis/src/configdialog.cpp:83
+msgid "Min"
+msgstr "最低"
+
+#: ../kyzis/src/configdialog.cpp:85
+msgid "Max"
+msgstr "最高"
+
+#: ../kyzis/src/configdialog.cpp:93
+msgid "Background Color"
+msgstr "背景色"
+
+#: ../kyzis/src/configdialog.cpp:101
+msgid "Foreground Color"
+msgstr "前景色"
+
+#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:364
+#: ../kyzis/src/document.cpp:368
+msgid "Syntax Highlighting"
+msgstr "強調表示"
+
+#: ../kyzis/src/factory.cpp:66
+msgid "Kyzis Part"
+msgstr "Kyzisパート"
+
+#: ../kyzis/src/factory.cpp:66
+msgid "Embeddable vi-like editor component"
+msgstr "viライクな埋め込み可能なエディタコンポーネント"
+
+#: ../kyzis/src/factory.cpp:66
+msgid "(c)2002-2005 The Kyzis Authors"
+msgstr "(c)2002-2005 Kyzisの作者"
+
+#: ../kyzis/src/factory.cpp:138
+msgid "Kyzis - KDE Frontend for Yzis"
+msgstr "Kyzis - YzisのKDEフロントエンド"
+
+#: ../kyzis/src/factory.cpp:140
+msgid "(c) 2003-2005"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:141 ../kyzis/src/factory.cpp:142
+#: ../kyzis/src/factory.cpp:143 ../kyzis/src/factory.cpp:144
+msgid "Initial Author"
+msgstr "最初の作者"
+
+#: ../kyzis/src/factory.cpp:152
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr "Takumi ASAKI"
+
+#: ../kyzis/src/factory.cpp:152
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr "asaki@kde.gr.jp"
+
+#: ../kyzis/src/hlconfig.cpp:186
+msgid "Text Area Background"
+msgstr "テキスト領域の背景"
+
+#: ../kyzis/src/hlconfig.cpp:190
+msgid "Normal text:"
+msgstr "標準のテキスト"
+
+#: ../kyzis/src/hlconfig.cpp:196
+msgid "Selected text:"
+msgstr "選択されたテキスト"
+
+#: ../kyzis/src/hlconfig.cpp:202
+msgid "Current line:"
+msgstr "現在の行"
+
+#: ../kyzis/src/hlconfig.cpp:211
+msgid "Bookmark"
+msgstr "ブックマーク"
+
+#: ../kyzis/src/hlconfig.cpp:212
+msgid "Active Breakpoint"
+msgstr "アクティブなブレークポイント"
+
+#: ../kyzis/src/hlconfig.cpp:213
+msgid "Reached Breakpoint"
+msgstr "到達したブレークポイント"
+
+#: ../kyzis/src/hlconfig.cpp:214
+msgid "Disabled Breakpoint"
+msgstr "無効なブレークポイント"
+
+#: ../kyzis/src/hlconfig.cpp:215
+msgid "Execution"
+msgstr "実行"
+
+#: ../kyzis/src/hlconfig.cpp:224
+msgid "Additional Elements"
+msgstr "追加要素"
+
+#: ../kyzis/src/hlconfig.cpp:228
+msgid "Left border background:"
+msgstr "左枠の背景"
+
+#: ../kyzis/src/hlconfig.cpp:234
+msgid "Line numbers:"
+msgstr "行番号"
+
+#: ../kyzis/src/hlconfig.cpp:240
+msgid "Bracket highlight:"
+msgstr "括弧の強調表示"
+
+#: ../kyzis/src/hlconfig.cpp:246
+msgid "Word wrap markers:"
+msgstr "行の折り返し記号"
+
+#: ../kyzis/src/hlconfig.cpp:252
+msgid "Tab markers:"
+msgstr "タブ記号"
+
+#: ../kyzis/src/hlconfig.cpp:264
+msgid "<p>Sets the background color of the editing area.</p>"
+msgstr "<p>編集領域の背景色を設定します。</p>"
+
+#: ../kyzis/src/hlconfig.cpp:265
+msgid ""
+"<p>Sets the background color of the selection.</p><p>To set the text color "
+"for selected text, use the \"<b>Configure Highlighting</b>\" dialog.</p>"
+msgstr ""
+"<p>選択されたテキストの背景色を設定します。</p> <p>選択されたテキスト自体の色"
+"を設定するには「<b>強調表示の設定</b>」ダイアログを使用してください。</p>"
+
+#: ../kyzis/src/hlconfig.cpp:268
+msgid ""
+"<p>Sets the background color of the selected marker type.</p><p><b>Note</b>: "
+"The marker color is displayed lightly because of transparency.</p>"
+msgstr ""
+"<p>選択したマーカーの背景色を設定します。</p><p><b>注意</b>: マーカーの色は透"
+"明なため、明るく表示されます。</p>"
+
+#: ../kyzis/src/hlconfig.cpp:271
+msgid "<p>Select the marker type you want to change.</p>"
+msgstr "<p>変更したいマーカーを選択してください。</p>"
+
+#: ../kyzis/src/hlconfig.cpp:272
+msgid ""
+"<p>Sets the background color of the currently active line, which means the "
+"line where your cursor is positioned.</p>"
+msgstr ""
+"<p>"
+"現在アクティブな行(現在カーソルがある行)の背景色をセ"
+"ットします。</p>"
+
+#: ../kyzis/src/hlconfig.cpp:275
+msgid ""
+"<p>This color will be used to draw the line numbers (if enabled) and the "
+"lines in the code-folding pane.</p>"
+msgstr ""
+"<p>"
+"この色は(可能であれば)行数とコード折りたたみペインの"
+"行を表示するのに使われます。</p>"
+
+#: ../kyzis/src/hlconfig.cpp:277
+msgid ""
+"<p>Sets the bracket matching color. This means, if you place the cursor e.g. "
+"at a <b>(</b>, the matching <b>)</b> will be highlighted with this color.</p>"
+msgstr ""
+"<p>カッコがマッチしたときの色をセットします。これは"
+"例えば <b>(</b> を配置すると マッチする "
+"<b>)</b>が色で強調表示されます。</p>"
+
+#: ../kyzis/src/hlconfig.cpp:281
+msgid ""
+"<p>Sets the color of Word Wrap-related markers:</p><dl><dt>Static Word Wrap</"
+"dt><dd>A vertical line which shows the column where text is going to be "
+"wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the left of "
+"visually-wrapped lines</dd></dl>"
+msgstr ""
+"<p>行を折り返すときの記号をセットします。</p><dl><dt>静的行折り返し</dt><dd>"
+"テキストを折り返す桁を示す縦棒</dd><dt>動的行折り返し</dt><dd>視覚的な折り返"
+"し行の左に示される矢印</dd></dl>"
+
+#: ../kyzis/src/hlconfig.cpp:287
+msgid "<p>Sets the color of the tabulator marks:</p>"
+msgstr "<p>タブマークの色を設定:</p>"
+
+#: ../kyzis/src/hlconfig.cpp:505
+msgid ""
+"This list displays the default styles for the current schema and offers the "
+"means to edit them. The style name reflects the current style settings.<p>To "
+"edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> and choose a "
+"property from the popup menu.<p>To edit the colors, click the colored "
+"squares, or select the color to edit from the popup menu.<p>You can unset "
+"the Background and Selected Background colors from the popup menu when "
+"appropriate."
+msgstr ""
+"このリストは現在のスキーマの標準のスタイルを表示し"
+"ており、 "
+"それらを編集する手段を提供しています。スタイル名は"
+"現在のスタイル設定を反映します。"
+"<p>キーボードを使って編集するには "
+"<strong>&lt;スペース&gt;</strong>を押してポップアップメニュ"
+"ーから設定を選択します。"
+"<p>色を編集するには色の付いた四角をクリックするか、 "
+"ポップアップメニューから編集する色を選択します。 "
+"<p>適切な場合には、ポップアップメニューから背景と "
+"選択された背景色の設定を解除することができます。"
+
+#: ../kyzis/src/hlconfig.cpp:548
+msgid "H&ighlight:"
+msgstr "強調表示(&I)"
+
+#: ../kyzis/src/hlconfig.cpp:569
+msgid ""
+"This list displays the contexts of the current syntax highlight mode and "
+"offers the means to edit them. The context name reflects the current style "
+"settings.<p>To edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> "
+"and choose a property from the popup menu.<p>To edit the colors, click the "
+"colored squares, or select the color to edit from the popup menu.<p>You can "
+"unset the Background and Selected Background colors from the context menu "
+"when appropriate."
+msgstr ""
+"このリストは現在の構文強調表示モードを表示し、編集"
+"する意味を要求しています。文脈名は現在のスタイル設"
+"定を反映します。"
+"<p>キーボードを使って編集するには<strong>"
+"&lt;スペース&gt;</strong>"
+"を押してポップアップメニューから設定を選択します。 "
+"<p>色を編集するには色の付いた四角をクリックするかポ"
+"ップアップメニューから編集する色を選択します。"
+
+#: ../kyzis/src/hlconfig.cpp:688
+msgid "&Schema:"
+msgstr "スキーマ(&S):"
+
+#: ../kyzis/src/hlconfig.cpp:694
+msgid "&New..."
+msgstr "新規(&N).."
+
+#: ../kyzis/src/hlconfig.cpp:707
+msgid "Colors"
+msgstr "色"
+
+#: ../kyzis/src/hlconfig.cpp:713
+msgid "Normal Text Styles"
+msgstr "標準のテキストスタイル"
+
+#: ../kyzis/src/hlconfig.cpp:717
+msgid "Highlighting Text Styles"
+msgstr "強調表示のテキストスタイル"
+
+#: ../kyzis/src/hlconfig.cpp:722
+msgid "&Default schema for %1:"
+msgstr "%1の標準のスキーマ(&D):"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "Name for New Schema"
+msgstr "新規スキーマ名"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "Name:"
+msgstr "名前:"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "New Schema"
+msgstr "新規スキーマ"
+
+#: ../kyzis/src/hlconfig.cpp:917
+msgid "Context"
+msgstr ""
+
+#: ../kyzis/src/hlconfig.cpp:922
+msgid "Normal"
+msgstr ""
+
+#: ../kyzis/src/hlconfig.cpp:923
+msgid "Selected"
+msgstr "選択済み"
+
+#: ../kyzis/src/hlconfig.cpp:924
+msgid "Background"
+msgstr "背景"
+
+#: ../kyzis/src/hlconfig.cpp:925
+msgid "Background Selected"
+msgstr "選択された背景"
+
+#: ../kyzis/src/hlconfig.cpp:927
+msgid "Use Default Style"
+msgstr "標準のスタイルを使用"
+
+#: ../kyzis/src/hlconfig.cpp:962
+msgid "&Bold"
+msgstr "ボールド(&B)"
+
+#: ../kyzis/src/hlconfig.cpp:964
+msgid "&Italic"
+msgstr "イタリック(&I)"
+
+#: ../kyzis/src/hlconfig.cpp:966
+msgid "&Underline"
+msgstr "下線(&U)"
+
+#: ../kyzis/src/hlconfig.cpp:968
+msgid "S&trikeout"
+msgstr "打ち消し線(&T)"
+
+#: ../kyzis/src/hlconfig.cpp:973
+msgid "Normal &Color..."
+msgstr "標準色(&C)..."
+
+#: ../kyzis/src/hlconfig.cpp:974
+msgid "&Selected Color..."
+msgstr "選択された色(&S)..."
+
+#: ../kyzis/src/hlconfig.cpp:975
+msgid "&Background Color..."
+msgstr "背景色(&B)..."
+
+#: ../kyzis/src/hlconfig.cpp:976
+msgid "S&elected Background Color..."
+msgstr "選択された背景色(&E)..."
+
+#: ../kyzis/src/hlconfig.cpp:987
+msgid "Unset Background Color"
+msgstr "背景色を解除"
+
+#: ../kyzis/src/hlconfig.cpp:989
+msgid "Unset Selected Background Color"
+msgstr "選択された背景色を解除"
+
+#: ../kyzis/src/hlconfig.cpp:994
+msgid "Use &Default Style"
+msgstr "標準のスタイルを使用(&D)"
+
+#: ../kyzis/src/hlconfig.cpp:1210
+msgid ""
+"\"Use Default Style\" will be automatically unset when you change any style "
+"properties."
+msgstr ""
+"スタイルの設定をどれか変更すると\"標準のスタイルを使用\"は自動的にセットが外"
+"されます。"
+
+#: ../kyzis/src/hlconfig.cpp:1211
+msgid "Yzis Styles"
+msgstr "Yzisスタイル"
+
+#: ../kyzis/src/kyzis.cpp:116
+msgid "Opens recently opened file."
+msgstr "最近開いたファイルを開く"
+
+#: ../kyzis/src/kyzis.cpp:125
+msgid "Show &Konsole"
+msgstr "コンソールの表示(&K)"
+
+#: ../kyzis/src/kyzis.cpp:135
+msgid "&Window"
+msgstr "ウィンドウ(&W)"
+
+#: ../kyzis/src/kyzis.cpp:324
+msgid "Terminal"
+msgstr "ターミナル"
+
+#: ../libyzis/buffer.cpp:565
+msgid "Failed opening file %1 for reading : %2"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:573
+msgid "Recover"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:573
+msgid ""
+"A swap file was found for this file, it was presumably created because your "
+"computer or yzis crashed, do you want to start the recovery of this file ?"
+msgstr "このファイルのスワップファイルが見つかりました。多分、あなたのコンピュータかyzisがクラッシュしたときに作成されたファイルです。このファイルの復旧を行いますか。"
+
+#: ../libyzis/buffer.cpp:643
+msgid "Failed opening file %1 for writing : %2"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
+msgid "Written %1 bytes to file %2"
+msgstr ""
+
+#: ../libyzis/ex_lua.cpp:263
+msgid "The file %1 could not be found in standard directories"
+msgstr ""
+
+#: ../libyzis/ex_lua.cpp:274
+msgid "Lua error when running file %1:\n"
+msgstr ""
+
+#: ../libyzis/mode_command.cpp:53
+msgid "[ Awaiting Command ]"
+msgstr ""
+
+#: ../libyzis/mode.cpp:79
+msgid "[ Introduction ]"
+msgstr ""
+
+#: ../libyzis/mode_ex.cpp:66
+msgid "[ Ex ]"
+msgstr ""
+
+#: ../libyzis/mode_ex.cpp:293
+msgid "Not an editor command: "
+msgstr "エディタコマンドではありません"
+
+#: ../libyzis/mode_ex.cpp:409 ../libyzis/mode_ex.cpp:422
+#: ../libyzis/mode_ex.cpp:429
+msgid "One file is modified! Save it first..."
+msgstr "ファイルが変更されています。まず保存してください。"
+
+#: ../libyzis/mode_ex.cpp:442
+msgid "No next buffer"
+msgstr "次のバッファーはありません"
+
+#: ../libyzis/mode_ex.cpp:453
+msgid "No previous buffer"
+msgstr "前のバッファーはありません"
+
+#: ../libyzis/mode_ex.cpp:491 ../libyzis/mode_ex.cpp:791
+msgid "Please specify a filename"
+msgstr "ファイル名を指定してください"
+
+#: ../libyzis/mode_ex.cpp:542 ../libyzis/mode_ex.cpp:680
+msgid "Invalid option given : "
+msgstr ""
+
+#: ../libyzis/mode_ex.cpp:567 ../libyzis/mode_ex.cpp:695
+msgid "This option cannot be switched this way, this is a boolean option."
+msgstr "このオプションはブーリアンオプションです。その方法では変更できません。"
+
+#: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
+#: ../libyzis/mode_ex.cpp:629
+msgid "This option is a global option which cannot be changed with setlocal"
+msgstr "このオプションはグローバルオプションなので、setlocalでは変更できません。"
+
+#: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
+#: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
+msgid "Invalid option given"
+msgstr "不正なオプションが渡されました"
+
+#: ../libyzis/mode_insert.cpp:35
+msgid "[ Insert ]"
+msgstr ""
+
+#: ../libyzis/mode_insert.cpp:182
+msgid "[ Replace ]"
+msgstr ""
+
+#: ../libyzis/mode_insert.cpp:205
+msgid "{ Completion }"
+msgstr ""
+
+#: ../libyzis/mode_search.cpp:37
+msgid "[ Search ]"
+msgstr ""
+
+#: ../libyzis/mode_search.cpp:92
+msgid "No match"
+msgstr "マッチしません"
+
+#: ../libyzis/mode_search.cpp:156
+msgid "[ Search backward ]"
+msgstr ""
+
+#: ../libyzis/mode_visual.cpp:45
+msgid "[ Visual ]"
+msgstr ""
+
+#: ../libyzis/mode_visual.cpp:182
+msgid "[ Visual Line ]"
+msgstr ""
+
+#: ../libyzis/search.cpp:102
+msgid "search hit TOP, continuing at BOTTOM"
+msgstr "ファイルの先頭に到達しました。末尾から続けますか。"
+
+#: ../libyzis/search.cpp:104
+msgid "search hit BOTTOM, continuing at TOP"
+msgstr "ファイルの末尾に到達しました。先頭から続けますか。"
+
+#: ../libyzis/swapfile.cpp:81
+msgid ""
+"Warning, the swapfile could not be opened maybe due to restrictive "
+"permissions."
+msgstr ""
+
+#: ../libyzis/swapfile.cpp:130
+msgid ""
+"Warning, the swapfile could not be created maybe due to restrictive "
+"permissions."
+msgstr "警告: おそらく、パーミッションの制限のため、スワップファイルが作成できません。"
+
+#: ../libyzis/swapfile.cpp:158
+msgid ""
+"The swap file could not be opened, there will be no recovering for this "
+"file, you might want to check permissions of files."
+msgstr "スワップファイルがオープンできないため、このファイルを復旧できません。ファイルのパーミッションを確認してください。"
+
+#: ../libyzis/view.cpp:179
+msgid "File modified"
+msgstr "ファイルは変更されています"
+
+#: ../libyzis/view.cpp:179
+msgid "This file has been modified, do you want to save it ?"
+msgstr "ファイルが変更されています。 保存しますか。"
+
+#: ../libyzis/view.cpp:404 ../libyzis/view.cpp:412
+msgid "All"
+msgstr ""
+
+#: ../libyzis/view.cpp:411
+msgid "Bot"
+msgstr ""
+
+#: ../libyzis/view.cpp:1473
+msgid ""
+"To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
+"should try pslib in console mode"
+msgstr "Qtのプリンターを使用するためにはX11のDISPLAY環境変数をセットして実行する必要があります。コンソールモードではpslibを使用してください。"
+
+#: ../libyzis/view.cpp:1744
+msgid " { Recording }"
+msgstr ""
+
+#: ../nyzis/factory.cpp:197
+msgid "(Press any key)"
+msgstr "(何かキーを押してください)"
+
+#: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
+msgid "[No File]"
+msgstr ""
+

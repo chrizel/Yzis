@@ -189,6 +189,7 @@ private:
 	YZCursor movePageUp(const YZNewMotionArgs &args);
 	YZCursor movePageDown(const YZNewMotionArgs &args);
 	YZCursor moveWordForward(const YZNewMotionArgs &args);
+	YZCursor moveWordBackward(const YZNewMotionArgs &args);
 	YZCursor gotoSOL(const YZNewMotionArgs &args);
 	YZCursor gotoEOL(const YZNewMotionArgs &args);
 	YZCursor find(const YZNewMotionArgs &args);
@@ -239,16 +240,17 @@ private:
 	friend class YZNewMotion;
 };
 
-struct YZNewMotionArgs {
-	YZNewMotionArgs(YZView *v, unsigned int cnt=1, QString a=QString::null) {
-		view=v;
-		count=cnt;
-		arg=a;
-	}
-	
-	YZView *view;
-	unsigned int count;
-	QString arg;
+class YZNewMotionArgs {
+	public:
+		YZNewMotionArgs(YZView *v, unsigned int cnt=1, QString a=QString::null) {
+			view=v;
+			count=cnt;
+			arg=a;
+		}
+
+		YZView *view;
+		unsigned int count;
+		QString arg;
 };
 
 typedef YZCursor (YZCommandPool::*MotionMethod) (const YZNewMotionArgs&);

@@ -60,6 +60,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("$", &YZCommandPool::gotoEOL, ARG_NONE) );
 	commands.append( new YZNewMotion("^", &YZCommandPool::firstNonBlank, ARG_NONE) );
 	commands.append( new YZNewMotion("w", &YZCommandPool::moveWordForward, ARG_NONE) );
+	commands.append( new YZNewMotion("b", &YZCommandPool::moveWordBackward, ARG_NONE) );
 	commands.append( new YZNewMotion("j", &YZCommandPool::moveDown, ARG_NONE) );
 	commands.append( new YZNewMotion("k", &YZCommandPool::moveUp, ARG_NONE) );
 	commands.append( new YZNewMotion("h", &YZCommandPool::moveLeft, ARG_NONE) );
@@ -464,6 +465,29 @@ YZCursor YZCommandPool::gotoEOL(const YZNewMotionArgs &args) {
 }
 
 YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	YZCursor result( viewCursor.buffer() );
+	unsigned int c = 0;
+	QRegExp rex("\\b\\w+\\b");//a word with boundaries
+	while ( c < args.count ) { //for each word
+		const QString& current = args.view->myBuffer()->textline( result.getY() );
+//		if ( current.isNull() ) return false; //be safe ?
+		int idx = rex.search( current, result.getX() );
+		if ( idx != -1 ) {
+			yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
+			c++; //one match
+			result.setX( idx + rex.matchedLength() );
+		} else {
+			if ( result.getY() >= args.view->myBuffer()->lineCount() ) break;
+			result.setX( 0 );
+			result.setY( result.getY() + 1 );
+		}
+		
+	}
+	return result;
+}
+
+YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 	//TODO
 	return *args.view->getBufferCursor();
 }

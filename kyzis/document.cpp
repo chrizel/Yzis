@@ -157,6 +157,7 @@ bool KYZisDoc::setText (  const QString &text ) {
 	return true;
 }
 
+/* Fixme */
 bool KYZisDoc::removeText (  uint startLine, uint startCol, uint endLine, uint endCol ) {
 	return true;
 }

@@ -1,3 +1,7 @@
+2004-04-3 mikmak
+  * kyzis
+    viewcursorinterface, patch by Mathieu Kooiman (yzis now runs in quanta)
+
 2004-04-1 mikmak
   * kyzis
     patch from Mathieu Kooiman : implement KTextEditor::EditInterface

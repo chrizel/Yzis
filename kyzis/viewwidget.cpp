@@ -111,4 +111,112 @@ void KYZisView::refreshScreen () {
 	editor->updateContents( );
 }
 
+/* Implementation of KTextEditor::ViewCursorInterface */
+
+
+QPoint KYZisView::cursorCoordinates()
+{
+	unsigned int line = 0, col = 0;
+	line = getCursor()->getY();
+	col  = getCursor()->getX();
+
+	QPoint cursorPosition( col * fontMetrics().maxWidth(), line * fontMetrics().lineSpacing() );
+	
+	return cursorPosition;
+}
+
+/* The magic is bluntly copied from Kate */
+
+QPoint KYZisView::calculateCursorPositionWithTabs(unsigned int line, unsigned int col, unsigned int tabwidth)
+{
+	QPoint result;
+	QString data    = mBuffer->data(line);
+	uint dataLength = data.length();	
+	uint z;
+  	uint x = 0;
+  	
+	for (z = 0; z < dataLength && z < col; z++) {
+    	if (data[z] == QChar('\t')) 
+			x += tabwidth - (x % tabwidth); 
+		else 
+			x++;
+  	}
+
+	result.setX(x);
+	result.setY(line);
+
+	return result;
+}
+
+void KYZisView::cursorPosition ( unsigned int *line, unsigned int *col )
+{
+	QPoint position = calculateCursorPositionWithTabs(getCursor()->getY(), getCursor()->getX(), 8);
+
+	*line = position.y();
+	*col  = position.x();
+}
+
+void KYZisView::cursorPositionReal ( unsigned int *line, unsigned int *col )
+{
+	QPoint cursor = calculateCursorPositionWithTabs(getCursor()->getY(), getCursor()->getX(), 1);
+	*line = cursor.y();
+	*col  = cursor.x();
+}
+
+bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
+{
+	QString data    = mBuffer->data(line);
+	QPoint cursor	= calculateCursorPositionWithTabs(line, col, 8);
+
+	if (data.isNull()) {
+		return false;
+	} else if (cursor.x() > data.length()) {
+		return false;
+	}
+	
+	editor->setCursor(cursor.y(), cursor.x());
+
+	return true;
+}
+
+bool KYZisView::setCursorPositionReal ( unsigned int line, unsigned int col)
+{
+	QString data    = mBuffer->data(line);
+	QPoint cursor	= calculateCursorPositionWithTabs(line, col, 1);
+
+	if (data.isNull()) {
+		return false;
+	}
+	
+	if (cursor.x() > data.length()) {
+		return false;
+	}
+	
+	editor->setCursor(cursor.y(), cursor.x());
+
+	return true;
+}
+
+unsigned int KYZisView::cursorLine()
+{
+	return getCursor()->getY();
+}
+
+unsigned int KYZisView::cursorColumn()
+{
+	QPoint cursor = calculateCursorPositionWithTabs(getCursor()->getY(), getCursor()->getX(), 8);
+	return cursor.x();
+}
+
+unsigned int KYZisView::cursorColumnReal()
+{
+	QPoint cursor = calculateCursorPositionWithTabs(getCursor()->getY(), getCursor()->getX(), 1);
+
+	return cursor.x();
+}
+
+void KYZisView::cursorPositionChanged()
+{
+}
+
 #include "viewwidget.moc"

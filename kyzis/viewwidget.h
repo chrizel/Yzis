@@ -21,6 +21,7 @@
 #define KYZISVIEW_H
 
 #include <ktexteditor/view.h>
+#include <ktexteditor/viewcursorinterface.h>
 #include <kstatusbar.h>
 #include <qevent.h>
 #include "document.h"
@@ -31,7 +32,7 @@
 class KYZisEdit;
 class KYZisCommand;
 
-class KYZisView: public KTextEditor::View , public YZView
+class KYZisView: public KTextEditor::View,public KTextEditor::ViewCursorInterface, public YZView
 {
 	Q_OBJECT
 
@@ -52,7 +53,20 @@ class KYZisView: public KTextEditor::View , public YZView
 		void setStatusBar ( const QString& text );
 		void updateCursor ( unsigned int line, unsigned int x1, unsigned int x2, const QString& percentage );
 		void refreshScreen ();
-	
+		QPoint calculateCursorPositionWithTabs ( unsigned int line, unsigned int col, unsigned int tabwidth );
+
+	public slots:
+		QPoint cursorCoordinates();
+		void cursorPosition ( unsigned int *line, unsigned int *col);
+		virtual void cursorPositionReal ( unsigned int *line, unsigned int *col);
+		bool setCursorPosition ( unsigned int line, unsigned int col);
+		bool setCursorPositionReal(unsigned int line, unsigned int col);
+
+		unsigned int cursorLine();
+		unsigned int cursorColumn();
+		unsigned int cursorColumnReal(); 
+		void cursorPositionChanged();
+
 	private:
 		KYZisEdit *editor;
 		KYZisDoc *buffer;

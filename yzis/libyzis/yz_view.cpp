@@ -9,6 +9,7 @@
 
 YZView::YZView(YZBuffer *_b, int _lines_vis)
 {
+	gui_manager = NULL;
 	buffer		= _b;
 	lines_vis	= _lines_vis;
 	current		= 0;
@@ -28,6 +29,8 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 /* Used by the buffer to post events */
 void YZView::send_char( QChar c)
 {
+	YZLine *lin;
+
 	if ('\033'==c) {
 		if (cursor_x>current_maxx) {
 			cursor_x = current_maxx;
@@ -41,17 +44,19 @@ void YZView::send_char( QChar c)
 		case YZ_VIEW_MODE_INSERT:
 			//printf("Currently INSERTMODE\n");
 			/* handle adding a char */
-/*			buffer->add_char(cursor_x,cursor_y,c);
+			buffer->add_char(cursor_x,cursor_y,c);
 			cursor_x++;
-			current_maxx = buffer->find_line(cursor_y)->len-1;
-			update_cursor();*/
+			lin = buffer->find_line(cursor_y);
+			if ( lin ) current_maxx = lin->len-1;
+			update_cursor();
 			return;
 		case YZ_VIEW_MODE_REPLACE:
 			//printf("Currently REPLACEMODE\n");
 			/* handle replacing a char */
 			buffer->chg_char(cursor_x,cursor_y,c);
 			cursor_x++;
-			current_maxx = buffer->find_line(cursor_y)->len-1;
+			lin = buffer->find_line(cursor_y);
+			if ( lin ) current_maxx = lin->len-1;
 			update_cursor();
 			return;
 		case YZ_VIEW_MODE_COMMAND:
@@ -86,7 +91,8 @@ void YZView::send_char( QChar c)
 			break;
 		case 'j': /* move down */
 			if (cursor_y<buffer->lines_nb-1) {
-				current_maxx = buffer->find_line(++cursor_y)->len-1;
+				lin = buffer->find_line(++cursor_y);
+				if ( lin ) current_maxx = lin->len-1;
 				cursor_x = cursor_x_ghost;
 				if (cursor_x>current_maxx) cursor_x = current_maxx;
 				if (cursor_x<0) cursor_x = 0;
@@ -95,7 +101,8 @@ void YZView::send_char( QChar c)
 			break;
 		case 'k': /* move up */
 			if (cursor_y>0) {
-				current_maxx = buffer->find_line(--cursor_y)->len-1;
+				lin = buffer->find_line(--cursor_y);
+				if ( lin ) current_maxx = lin->len-1;
 				cursor_x = cursor_x_ghost;
 				if (cursor_x>current_maxx) cursor_x = current_maxx;
 				if (cursor_x<0) cursor_x = 0;

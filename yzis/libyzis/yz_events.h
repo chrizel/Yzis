@@ -9,6 +9,7 @@
 
 
 #include "yzis.h" /* NULL */
+#include "yz_line.h"
 
 
 /** list of all events */
@@ -89,6 +90,7 @@ typedef struct yz_event_t yz_event;
 
 yz_event mk_event_setstatus(const char *text);
 yz_event mk_event_setcursor(int x, int y);
+yz_event mk_event_setline(int,YZLine*);
 
 
 /** Event pool

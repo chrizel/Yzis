@@ -108,6 +108,14 @@ void NYZView::printVoid( unsigned int relline )
 	for (i=1 ; i< getColumnsVisible(); i++ ) waddch(window, ' ' );
 }
 
+void NYZView::scrollUp( int n ) {
+	refreshScreen( );
+}
+
+void NYZView::scrollDown( int n ) {
+	refreshScreen( );
+}
+
 void NYZView::drawContents( int clipy, int cliph ) {
 	bool number = YZSession::getBoolOption( "General\\number" );
 	bool wrap = YZSession::getBoolOption( "General\\wrap" );

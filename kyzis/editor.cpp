@@ -80,8 +80,7 @@ void KYZisEdit::paintEvent( QPaintEvent * pe ) {
 	clipy = clipy ? clipy / linespace : 0;
 	clipw = clipw ? clipw / maxwidth + ( int )ceil( clipw % maxwidth ) : 0;
 	cliph = cliph ? cliph / linespace + ( int )ceil( cliph % linespace ) : 0;
-	mCursorShown = ( pe->erased() && !( mCursorX > clipx && mCursorX < clipx + clipw && mCursorY > clipy && mCursorY < clipy + cliph ) );
-	drawContents( clipx, clipy, clipw, cliph );
+	drawContents( clipx, clipy, clipw, cliph, pe->erased() );
 }
 
 void KYZisEdit::setCursor(int c, int l) {
@@ -90,6 +89,24 @@ void KYZisEdit::setCursor(int c, int l) {
 	mCursorY = l - mParent->getDrawCurrentTop ();
 	drawCursorAt( mCursorX, mCursorY );
 	mCursorShown = true;
+}
+
+void KYZisEdit::scrollUp( int n ) {
+	drawCursorAt( mCursorX, mCursorY );
+	bitBlt( this, 0, n * fontMetrics().lineSpacing(),
+		this, 0, 0,
+		width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing(),
+		Qt::CopyROP, true );
+	drawContents( 0, 0, mParent->getColumnsVisible(), n, false );
+}
+
+void KYZisEdit::scrollDown( int n ) {
+	drawCursorAt( mCursorX, mCursorY );
+	bitBlt( this, 0, 0,
+		this, 0, n * fontMetrics().lineSpacing(),
+		width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing(),
+		Qt::CopyROP, true );
+	drawContents( 0, mParent->getLinesVisible() - n, mParent->getColumnsVisible(), n, false );
 }
 
 void KYZisEdit::setTextLine(int , const QString &/*str*/) {
@@ -116,7 +133,7 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	}
 }
 
-void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
+void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
 		mParent->gotodxdy( e->x( ) / fontMetrics().maxWidth() + mParent->getDrawCurrentLeft( ) - marginLeft,
 					e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
@@ -134,13 +151,14 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 			true );		    // ignoreMask
 }
 
-void KYZisEdit::drawContents( int , int clipy, int , int cliph) {
+void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool erased ) {
 	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::SingleLine;
 	QPainter p;
 	p.begin( this );
 
 	unsigned int linespace = fontMetrics().lineSpacing();
 	unsigned int maxwidth = fontMetrics().maxWidth();
+	mCursorShown = ( erased && !( mCursorX > clipx && mCursorX < clipx + clipw && mCursorY > clipy && mCursorY < clipy + cliph ) );
 	QRect myRect;
 	bool number = YZSession::getBoolOption( "General\\number" );
 	bool wrap = YZSession::getBoolOption( "General\\wrap" );

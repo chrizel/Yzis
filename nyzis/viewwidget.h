@@ -51,6 +51,9 @@ public:
 	virtual void syncViewInfo();
 	virtual void displayInfo(  const QString& info );
 
+	void scrollUp( int );
+	void scrollDown( int );
+
 	/**
 	  * Used when this view becomes viewable, that
 	  * is on front of others

@@ -456,6 +456,8 @@ void YZView::alignViewVertically( unsigned int line ) {
 		newcurrent = line - mLinesVis + 1;
 		alignTop = false;
 	} else if ( line > 0 ) newcurrent = line;
+	unsigned int old_dCurrentTop = dCurrentTop;
+	unsigned int old_mCurrentTop = mCurrentTop;
 	if ( wrap && newcurrent > 0 ) {
 		initDraw( );
 		drawMode = false;
@@ -468,6 +470,13 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else {
 		dCurrentTop = newcurrent;
 		mCurrentTop = newcurrent;
+	}
+	if ( old_dCurrentTop > dCurrentTop && old_dCurrentTop - dCurrentTop < mLinesVis ) {
+		scrollUp( old_dCurrentTop - dCurrentTop );
+	} else if ( old_dCurrentTop < dCurrentTop && dCurrentTop - old_dCurrentTop < mLinesVis ) {
+		scrollDown( dCurrentTop - old_dCurrentTop );
+	} else {
+		 refreshScreen();
 	}
 	if ( alignTop ) 
 		gotoxy( mCurrentLeft, mCurrentTop );
@@ -619,16 +628,12 @@ void YZView::applyGoto( ) {
 			<< "; dWrapNextLine=" << dWrapNextLine
 			<< endl;
 	yzDebug( ) << "mCursor:" << mCursor->getX( ) << "," << mCursor->getY( )<< "; dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl; */
-	bool doRefresh = false;
-	if ( !isLineVisible( dCursor->getY() ) ) {
+	if ( !isLineVisible( dCursor->getY() ) )
 		alignViewVertically( dCursor->getY( ) );
-		doRefresh = true;
-	}
 	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) {
 		centerViewHorizontally( dCursor->getX( ) );
-		doRefresh = true;
+		refreshScreen();
 	}
-	if( doRefresh ) refreshScreen();
 	updateCursor( );
 }
 

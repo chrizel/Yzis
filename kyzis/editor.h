@@ -51,6 +51,8 @@ class KYZisEdit : public QWidget {
 		
 		//move cursor to position column, line relative to viewport
 		void setCursor(int c,int l);
+		void scrollUp( int );
+		void scrollDown( int );
 
 	protected:
 		//intercept tabs
@@ -60,13 +62,13 @@ class KYZisEdit : public QWidget {
 		void paintEvent(QPaintEvent*);
 
 		//entry point for drawing events
-		void drawContents( int clipx, int clipy, int clipw, int cliph );
+		void drawContents( int clipx, int clipy, int clipw, int cliph, bool );
 
 		//normal keypressEvents processing
 		void keyPressEvent (QKeyEvent *);
 
 		//mouse events
-		void contentsMousePressEvent (QMouseEvent *);
+		void mousePressEvent (QMouseEvent *);
 
 		//insert text at line
 		void insetTextAt(const QString&, int line);

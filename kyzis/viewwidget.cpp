@@ -89,14 +89,12 @@ void KYZisView::setFocusCommandLine() {
 	command->setFocus();
 }
 
-void KYZisView::scrollDown( int ) {
-//	editor->scrollBy(0, lines * editor->fontMetrics().lineSpacing());
-	editor->update();
+void KYZisView::scrollDown( int n ) {
+	editor->scrollDown( n );
 }
 
-void KYZisView::scrollUp( int ) {
-//	editor->scrollBy(0, -1 * lines * editor->fontMetrics().lineSpacing());
-	editor->update();
+void KYZisView::scrollUp( int n ) {
+	editor->scrollUp( n );
 }
 
 void KYZisView::invalidateLine (unsigned int line) {

@@ -63,6 +63,7 @@ class YZModeVisual : public YZModeCommand {
 	  	void gotoExMode( const YZCommandArgs& args );
 	  	void movetoExMode( const YZCommandArgs& args );
 	  	void escape( const YZCommandArgs& args );
+		void translateToVisualLine( const YZCommandArgs& args );
 
 	protected:
 		virtual YZInterval buildInterval( const YZCursor& from, const YZCursor& to );
@@ -76,6 +77,8 @@ class YZModeVisualLine : public YZModeVisual {
 		virtual ~YZModeVisualLine();
 
 		virtual void initVisualCommandPool();
+
+		void translateToVisual( const YZCommandArgs& args );
 
 	protected:
 		virtual YZInterval buildInterval( const YZCursor& from, const YZCursor& to );

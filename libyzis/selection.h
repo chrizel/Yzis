@@ -135,6 +135,8 @@ class YZDoubleSelection {
 		void delInterval( const YZInterval& bi, const YZInterval& si );
 
 		bool contains( const YZCursor& pos );
+
+		bool isEmpty();
 		void clear();
 	private:
 		YZSelection* bSelection;

@@ -79,16 +79,18 @@ void YZModeVisual::enter( YZView* mView ) {
 	YZViewCursor* visualCursor = mView->visualCursor();
 	YZDoubleSelection* visual = mView->getSelectionPool()->visual();
 
-	visual->clear();
+	if ( ! visual->isEmpty() ) {
+		cursorMoved( mView );
+	} else {
+		visualCursor->setBuffer( *mView->getBufferCursor() );
+		visualCursor->setScreen( *mView->getCursor() );
+		YZCursor buffer( *visualCursor->buffer() );
+		YZCursor screen( *visualCursor->screen() );
+		visual->addInterval( buildInterval(buffer,buffer), buildInterval(screen,screen) );
+		mView->sendPaintEvent( visual->screenMap(), false );
 
-	visualCursor->setBuffer( *mView->getBufferCursor() );
-	visualCursor->setScreen( *mView->getCursor() );
-	YZCursor buffer( *visualCursor->buffer() );
-	YZCursor screen( *visualCursor->screen() );
-	visual->addInterval( buildInterval(buffer,buffer), buildInterval(screen,screen) );
-	mView->sendPaintEvent( visual->screenMap(), false );
-
-	toClipboard( mView );
+		toClipboard( mView );
+	}
 }
 void YZModeVisual::leave( YZView* mView ) {
 	YZDoubleSelection* visual = mView->getSelectionPool()->visual();
@@ -141,6 +143,7 @@ void YZModeVisual::initCommandPool() {
 }
 void YZModeVisual::initVisualCommandPool() {
 	commands.append( new YZCommand("v", (PoolMethod) &YZModeVisual::escape) );
+	commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::translateToVisualLine) );
 }
 void YZModeVisual::commandAppend( const YZCommandArgs& args ) {
 	YZCursor pos = qMax( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
@@ -151,6 +154,9 @@ void YZModeVisual::commandInsert( const YZCommandArgs& args ) {
 	YZCursor pos = qMin( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
 	args.view->modePool()->change( MODE_INSERT );
 	args.view->gotoxy( pos.getX(), pos.getY() );
+}
+void YZModeVisual::translateToVisualLine( const YZCommandArgs& args ) {
+	args.view->modePool()->change( MODE_VISUAL_LINE, false ); // just translate (don't leave current mode)
 }
 void YZModeVisual::escape( const YZCommandArgs& args ) {
 	args.view->modePool()->pop();
@@ -179,6 +185,10 @@ YZModeVisualLine::~YZModeVisualLine() {
 }
 void YZModeVisualLine::initVisualCommandPool() {
 	commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::escape) );
+	commands.append( new YZCommand("v", (PoolMethod) &YZModeVisualLine::translateToVisual) );
+}
+void YZModeVisualLine::translateToVisual( const YZCommandArgs& args ) {
+	args.view->modePool()->change( MODE_VISUAL, false );
 }
 
 YZInterval YZModeVisualLine::buildInterval( const YZCursor& from, const YZCursor& to ) {

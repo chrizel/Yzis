@@ -27,6 +27,7 @@ enum yz_events {
 
 
 struct yz_event_setline {
+	int	y;
 #ifdef __cplusplus
 	YZLine 	*line;
 #else
@@ -60,14 +61,15 @@ struct yz_event_setcursor {
 	enum yz_events		id;
 	struct yz_event_t	*next;
 	union {
-		struct yz_event_setline;
-		struct yz_event_setcursor;
+		struct yz_event_setline		setline;
+		struct yz_event_setcursor	setcursor;
 	} u;
 };
 
 typedef struct yz_event_t yz_event;
 
 
+#ifdef __cplusplus
 /**
   * Event pool
   */
@@ -84,6 +86,7 @@ protected:
 	yz_event	pool[4000];
 	int		nb;
 };
+#endif // __cplusplus
 
 
 #endif //  YZ_EVENTS_H

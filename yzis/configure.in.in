@@ -15,3 +15,24 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h)
 AC_CHECK_FUNCS(usleep)
 AC_PATH_TINYQ
+
+DO_NOT_COMPILE="$DO_NOT_COMPILE cyzis"
+
+#check for TinyQ
+if test "x$TINYQ" = "x"; then
+       DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
+       YZIS_INCLUDES="$QT_INCLUDES"
+else
+			 YZIS_SUBDIRS="libtinyqyzis"
+       YZIS_INCLUDES="$TINYQ_INCLUDES"
+fi
+
+#check for Qt
+if test "x$QTDIR" = "x"; then
+       DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis"
+else
+			 YZIS_SUBDIRS="$YZIS_SUBDIRS libqtyzis"
+fi
+
+AC_SUBST(YZIS_SUBDIRS)
+AC_SUBST(YZIS_INCLUDES)

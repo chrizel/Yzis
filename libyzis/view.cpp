@@ -171,10 +171,10 @@ void YZView::sendKey( int c, int modifiers) {
 						int lineLen = mBuffer->textline( mCursor->getY()-1 ).length();
 						mBuffer->mergeNextLine( mCursor->getY() -1 );
 						gotoxy(lineLen, mCursor->getY()-1);
-						return;
+					} else if ( mCursor->getX() > 0 ) {
+						mBuffer->delChar(mCursor->getX()-1,mCursor->getY(),1);
+						gotoxy(mCursor->getX()-1, mCursor->getY() );
 					}
-					mBuffer->delChar(mCursor->getX()-1,mCursor->getY(),1);
-					gotoxy(mCursor->getX()-1, mCursor->getY() );
 					return;
 				case Qt::Key_Delete:
 					mBuffer->delChar(mCursor->getX(),mCursor->getY(),1);
@@ -509,7 +509,7 @@ void YZView::gotody( unsigned int nexty ) {
 	if ( ( int )nexty < 0 ) nexty = 0;
 	if ( sCursor->getY() >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
 	while ( rCursor->getY() > nexty ) drawPrevLine( );
-	while ( rCursor->getY() < nexty && sCursor->getY() < mBuffer->lineCount() ) drawNextLine( );
+	while ( rCursor->getY() < nexty && sCursor->getY() < mBuffer->lineCount() - 1 ) drawNextLine( );
 }
 
 void YZView::gotoy( unsigned int nexty ) {

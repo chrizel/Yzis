@@ -108,7 +108,7 @@ void KYZisView::setStatusBar ( const QString& text ) {
 
 void KYZisView::syncViewInfo()
 {
-	yzDebug() << "KYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.l << endl;
+//	yzDebug() << "KYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.l << endl;
 	editor->setCursor(viewInformation.c1, viewInformation.l);
 	if (viewInformation.c1!=viewInformation.c2)
 		status->changeItem( QString("%1,%2-%3 (%4)").arg(viewInformation.l+1 ).arg( viewInformation.c1+1 ).arg( viewInformation.c2+1 ).arg( viewInformation.percentage),99 );

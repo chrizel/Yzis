@@ -193,7 +193,7 @@ class YZSession {
 		static int mNbBuffers;
 		static YZOption mOptions;
 		static YZRegisters mRegisters;
-		static YzisSyntaxHighlight mHL;
+//		static YzisHighlighting mHL;
 };
 
 #endif /* YZ_SESSION_H */

@@ -44,8 +44,6 @@ class YZLine
 		inline const QMemArray<short> &ctxArray () const { return m_ctx; };
 		inline void setContext (QMemArray<short> &val) { m_ctx.assign (val); }
 		inline bool hlLineContinue () const { return m_flags & YZLine::flagHlContinue; }
-		//fill mHL
-		void highlight();
 
 		inline void setHlLineContinue (bool cont)
 		{
@@ -55,6 +53,7 @@ class YZLine
 
 
 		void setAttribs(uchar attribute, uint start, uint end);
+		inline uchar *attributes () const { return mAttributes.data(); }
 
 		enum Flags
 		{

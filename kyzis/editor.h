@@ -83,6 +83,8 @@ class KYZisEdit : public QScrollView {
 
 		virtual void focusInEvent( QFocusEvent * );
 
+		int getLineforY( int y );
+
 	private :
 		KYZisView *mParent;
 

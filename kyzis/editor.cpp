@@ -42,6 +42,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	viewport()->setBackgroundColor(QColor("black"));
 	viewport()->setPaletteForegroundColor(QColor("white"));
 	mCursorShown = false; //cursor is not shown
+	mCursorY = mCursorX = 0;
 }
 
 KYZisEdit::~KYZisEdit() {
@@ -49,14 +50,12 @@ KYZisEdit::~KYZisEdit() {
 
 void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 	QSize s = ev->size();
-	yzDebug() << "viewportResizeEvent " << s.height() << " " << s.width() << endl;
 	int lines = s.height() / fontMetrics().lineSpacing();
 	int columns = s.width() / fontMetrics().maxWidth();
 	mParent->setVisibleArea( columns, lines );
 }
 
 void KYZisEdit::setCursor(int c, int l) {
-	yzDebug() << "setCursor " << c << ", " << l << endl;
 	//erase the previous cursor by redrawing the line 
 	mCursorShown = false; //lock
 	repaintContents( mCursorX * fontMetrics().maxWidth(), mCursorY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
@@ -89,7 +88,6 @@ bool KYZisEdit::event(QEvent *e) {
 }
 
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
-	yzDebug()<< "View : " << mParent->myId << " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->key() != 0 ) {
 		ButtonState st = e->state();
 		if (e->key() != Qt::Key_unknown) mParent->sendKey(e->key(), st);
@@ -99,7 +97,7 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 
 void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
-		QString line = mParent->myBuffer()->textline(e->y()/fontMetrics().lineSpacing() + mParent->getCurrentTop());
+		QString line = mParent->myBuffer()->textline(e->y()/fontMetrics().lineSpacing() + mParent->getCurrentTop()).mid( mParent->getCurrentLeft() );
 		int nbcols=0;
 		int len=0;
 		while ( len <= e->x() ) {
@@ -112,7 +110,6 @@ void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 }
 
 void KYZisEdit::drawCursorAt(int x, int y) {
-	yzDebug() << "drawCursorAt :" << x << ", " << y << endl;
 	bitBlt (
 			viewport(),
 			x*fontMetrics().maxWidth(),y * fontMetrics().lineSpacing(),
@@ -123,29 +120,29 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 			true );		    // ignoreMask
 }
 
-void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
-	yzDebug() << "drawContents " << endl;
-	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft ) | Qt::ExpandTabs |/* Qt::DontClip |*/ Qt::SingleLine;
+int KYZisEdit::getLineforY( int y ) {
+	int line = y / fontMetrics().lineSpacing();
+	return line + mParent->getCurrentTop() - 1;
+}
 
-	for ( unsigned int i=0; i < mParent->getLinesVisible() ; ++i ) {
-		if ( fontMetrics().lineSpacing() * i >= ( unsigned int )clipy && fontMetrics().lineSpacing() * i <= ( unsigned int ) ( clipy+cliph ) ) {
-			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
-//			QRect clip(clipx-8, i * fontMetrics().lineSpacing(), 2*clipw, fontMetrics().lineSpacing());
-			p->eraseRect(clip);
-			if (mParent->myBuffer()->lineCount() > i + mParent->getCurrentTop() ) {
-				QString toDraw = mParent->myBuffer()->textline( i + mParent->getCurrentTop() ).mid(mParent->getCurrentLeft(), mParent->getColumnsVisible() );
-				p->drawText(clip,flag,toDraw);
-			} else {
-				p->drawText(clip,flag ,"~");
-			}
-			if ( mCursorShown && mCursorY == i)
-				setCursor( mParent->getCursor()->getX(), mCursorY + mParent->getCurrentTop() );
-		}
+void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
+	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft ) | Qt::ExpandTabs /*| Qt::DontClip*/ | Qt::SingleLine;
+
+	for ( int i = cliph / fontMetrics().lineSpacing(); i > 0 ; i-- ) {
+		int line = getLineforY( clipy + i * fontMetrics().lineSpacing() );
+		QRect clip(0, ( i-1 ) * fontMetrics().lineSpacing() + clipy, width(), fontMetrics().lineSpacing());
+		p->eraseRect(clip);
+		QString toDraw = mParent->myBuffer()->textline( line ).mid(mParent->getCurrentLeft(), mParent->getColumnsVisible() );
+		if (mParent->myBuffer()->lineCount() > line )
+			p->drawText(clip,flag,toDraw);
+		else
+			p->drawText(clip,flag ,"~");
+		if ( mCursorShown && mCursorY + mParent->getCurrentTop() == line)
+			setCursor( mParent->getCursor()->getX(), mCursorY + mParent->getCurrentTop() );
 	}
 }
 
 void KYZisEdit::focusInEvent ( QFocusEvent * ) {
-	yzDebug() << "Activate Window " << endl;
 	KYZisFactory::s_self->setCurrentView( mParent );
 }
 

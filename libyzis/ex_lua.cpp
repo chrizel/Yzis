@@ -229,7 +229,9 @@ QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 #else
 	QString filename = args.mid( args.indexOf( " " ) +1 );
 #endif
-	yzDebug() << "filename : " << filename << endl;
+	if ( !filename.endsWith( ".lua" ) )
+		filename += ".lua";
+	yzDebug() << "looking filename : " << filename << endl;
 	QStringList candidates;
 	candidates << filename 
 #if QT_VERSION < 0x040000

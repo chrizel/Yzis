@@ -40,7 +40,7 @@ public:
 	static KInstance* instance();
 
 	//GUI interface
-	void quit(bool save=true);
+	void quit(int errorCode);
 	void changeCurrentView( YZView* );
 	YZView *createView ( YZBuffer* );
 	YZBuffer *createBuffer(const QString& path);

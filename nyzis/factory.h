@@ -46,7 +46,7 @@ public:
 	/*
 	 * YZSession interface :
 	 */
-	virtual void quit ( bool savePopup=true ) ;
+	virtual void quit ( int errorCode ) ;
 	virtual void changeCurrentView ( YZView * );
 	virtual YZView* createView( YZBuffer* );
 	virtual	NYZisDoc *createBuffer(const QString& path=QString::null);

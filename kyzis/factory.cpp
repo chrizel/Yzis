@@ -137,7 +137,7 @@ const KAboutData *KYZisFactory::aboutData() {
 	return data;
 }
 
-void KYZisFactory::quit( bool ) {
+void KYZisFactory::quit( int errorCode ) {
 	kapp->quit();
 }
 

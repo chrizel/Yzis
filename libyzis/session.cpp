@@ -63,7 +63,7 @@ void YZSession::rmBuffer( YZBuffer *b ) {
 
 QString YZSession::saveBufferExit( const QString& /* inputsBuff */, YZCommandArgs /* args */ ) {
 	if ( saveAll() )
-		quit( true );	
+		quit();	
 	return QString::null;
 }
 
@@ -139,5 +139,13 @@ bool YZSession::isOneBufferModified() {
 		if ( b->fileIsNew() ) return true;
 	}
 	return false;
+}
+
+void YZSession::exitRequest( int errorCode ) {
+	yzDebug() << "Preparing for final exit with code " << errorCode << endl;
+	//prompt unsaved files XXX
+	//clean up swap files XXX
+	//delete remaining buffers ? XXX
+	quit( errorCode );
 }
 

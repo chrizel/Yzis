@@ -49,7 +49,7 @@ NYZFactory::NYZFactory(const char *session_name)
 
 	if ( self ) {
 		yzFatal(NYZIS) << "Instanciating several NYZFactory, should Never happen, quitting..";
-		exit(1);
+		exitRequest(1);
 	}
 	self = this;
 
@@ -133,9 +133,8 @@ void NYZFactory::event_loop()
 	}
 }
 
-void NYZFactory::quit( bool /*savePopup*/ ) {
-	// TODO
-	exit( 0 );
+void NYZFactory::quit( int errorCode ) {
+	exit( errorCode );
 }
 
 void NYZFactory::changeCurrentView ( YZView * view  )
@@ -226,7 +225,7 @@ void NYZFactory::deleteView(int /*Id*/)
 // ideally would be : but we delteView on quitting, hence looping delete/create..
 // TODO
 //	if ( !v ) v = createView(createBuffer()); 
-	if ( !v ) quit( 0 );
+	if ( !v ) exitRequest( 0 );
 
 	// switch
 	setCurrentView(v);
@@ -238,7 +237,7 @@ void NYZFactory::deleteView(int /*Id*/)
 
 	if (mBuffers.isEmpty()) {
 		yzWarning(NYZIS)<<"nyzis can't handle not having any view/buffers, quitting" << endl;;
-		quit();
+		exitRequest(0);
 	}
 }
 

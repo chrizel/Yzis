@@ -793,6 +793,13 @@ void YZBuffer::setHighLight( uint mode, bool warnGUI ) {
 	}
 }
 
+void YZBuffer::setHighLight( const QString& name ) {
+	int hlMode = YzisHlManager::self()->nameFind( name );
+	if ( hlMode > 0 )
+		setHighLight( hlMode, true );
+}
+
+
 void YZBuffer::makeAttribs() {
 	m_highlight->clearAttributeArrays();
 

@@ -60,6 +60,8 @@ class YZAction {
 		void deleteLine( YZView* pView, unsigned int Y, unsigned int len );
 		void deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const QChar& reg );
 
+		YZCursor match( YZView* pView, YZCursor& mCursor, bool *found );
+
 	private:
 		YZBuffer* mBuffer;
 		YZCursor* mPos;

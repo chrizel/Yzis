@@ -183,3 +183,58 @@ void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len ) {
 	deleteLine( pView, pos, len );
 }
 
+YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
+	QString matchers = "({[)}]";
+
+	QString current = pView->myBuffer()->textline( mCursor.getY() );
+	QChar cchar = current[ mCursor.getX() ];
+
+	int i = 0;
+	unsigned int j = 0;
+	unsigned int curY = mCursor.getY();
+	int count = 1;
+	bool back = false;
+	unsigned int start = 0;
+
+	for ( i = 0; i < ( int )matchers.length() ; i++ ) {
+		if ( matchers[ i ] == cchar ) {
+			back = i>=3;
+			QChar c = matchers[ back ? i - 3 : i + 3 ]; //the character to match
+			//now do the real search
+			while ( curY < pView->myBuffer()->lineCount() && count > 0 ) {
+				current = pView->myBuffer()->textline( curY );
+				if ( back && mCursor.getY() == curY ) {
+					if ( mCursor.getX() == 0) {
+						curY--;
+						current = pView->myBuffer()->textline( curY );
+						start = current.length() - 1;
+					} else
+						start = mCursor.getX()-1;
+				} else if ( !back && mCursor.getY() == curY )
+					start =  mCursor.getX()+1;
+				else 
+					start = back ? current.length() -1 : 0 ;
+				
+				for ( j = start; ( j < current.length() ) && ( count > 0 ) ; back ? j-- : j++ ) { //parse current line
+					if ( current[ j ] == cchar ) {
+						count++;
+					} else if ( current[ j ] == c ) {
+						count--; // we need to skip one more
+					}
+				}
+				if ( count > 0 ) { //let's do another loop
+					//current = pView->myBuffer()->textline( back ? --curY : ++curY );
+					if ( back ) --curY;
+					else curY++;
+				}
+			}
+		}
+	}
+	if ( count == 0 ) {//found it !
+		*found = true;
+		yzDebug() << "Result action : " << ( back ? j+1 : j-1 ) << ", " << curY << endl;
+		return YZCursor( pView, ( back ? j + 1 : j - 1 ), curY );
+	}
+	*found=false;
+	return YZCursor( pView, 0,0 );
+}

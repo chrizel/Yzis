@@ -98,7 +98,7 @@ void YZBuffer::detach() {
 // ------------------------------------------------------------------------
 
 void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
-	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::insertChar(%1,%2,%3))").arg(x).arg(y).arg(c), c )
+	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), c )
 	ASSERT_LINE_EXISTS( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), y )
 
 	/* brute force, we'll have events specific for that later on */

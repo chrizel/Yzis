@@ -21,6 +21,7 @@ public:
 	  * this view can display
 	  */
 	YZView(YZBuffer *_b, int _lines_vis);
+	~YZView();
 
 	/**
 	 * Updates the number of visible lines

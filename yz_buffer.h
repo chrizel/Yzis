@@ -20,6 +20,7 @@ class YZBuffer {
 public:
 	/** opens a buffer using the given file */
 	YZBuffer(const QString& _path=QString::null);
+	~YZBuffer();
 
 	void addChar (int x, int y, QChar c);
 	void chgChar (int x, int y, QChar c);

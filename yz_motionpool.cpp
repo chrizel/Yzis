@@ -4,6 +4,7 @@ YZMotionPool::YZMotionPool(){
 }
 
 YZMotionPool::~YZMotionPool() {
+	pool.clear();
 }
 
 void YZMotionPool::initPool() {

@@ -33,7 +33,6 @@ YZSwapFile::YZSwapFile(YZBuffer *b) {
 void YZSwapFile::setFileName( const QString& fname ) {
 	unlink();
 	mFilename = fname;
-	flush(); //create the new one
 }
 
 void YZSwapFile::flush() {
@@ -43,8 +42,7 @@ void YZSwapFile::flush() {
 		QTextStream stream( &f );
 		if ( !mHistory.empty() ) {
 			for ( QMap<int,swapEntry>::Iterator it = mHistory.begin(); it != mHistory.end(); ++it ) {
-				stream << it.data().modifiers << "\n";
-				stream << it.data().inputs << "\n";
+				stream << it.data().modifiers << "," << it.data().inputs;
 			}
 		}
 		f.close();

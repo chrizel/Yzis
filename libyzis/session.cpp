@@ -144,8 +144,12 @@ bool YZSession::isOneBufferModified() {
 void YZSession::exitRequest( int errorCode ) {
 	yzDebug() << "Preparing for final exit with code " << errorCode << endl;
 	//prompt unsaved files XXX
-	//clean up swap files XXX
-	//delete remaining buffers ? XXX
+	QMap<QString,YZBuffer*>::Iterator it;
+	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+		YZBuffer* b = ( *it );
+		b->getSwapFile()->unlink();
+		delete b;
+	}
 	quit( errorCode );
 }
 

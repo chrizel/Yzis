@@ -437,7 +437,7 @@ public:
 	 */
 	void detectHighLight();
 
-
+	static QString tildeExpand( const QString& path );
 
 protected:
 	/**

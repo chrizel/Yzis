@@ -23,8 +23,14 @@
  * $Id$
  */
 
+
 #include <assert.h>
 #include <cstdlib>
+
+// for tildeExpand
+#include <sys/types.h>
+#include <pwd.h>
+
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qfileinfo.h>
@@ -1076,4 +1082,29 @@ void YZBuffer::detectHighLight() {
 		setHighLight( hlMode );
 	yzDebug("YZBuffer") << "HIGHLIGHTING " << hlMode << endl;
 }
+
+
+QString YZBuffer::tildeExpand( const QString& path ) {
+	QString ret = path;
+	if ( path[0] == '~' ) {
+		if ( path[1] == '/' || path.length() == 1 ) {
+#if QT_VERSION < 0x040000
+			ret = QDir::homeDirPath() + path.mid( 1 );
+#else
+			ret = QDir::homePath() + path.mid( 1 );
+#endif
+		} else {
+			int pos = path.find('/');
+			if ( pos < 0 ) // eg: ~username (without /)
+				pos = path.length() - 1;
+			QString user = path.left( pos ).mid( 1 );
+			struct passwd* pw = getpwnam( QFile::encodeName( user ).data() );
+			if ( pw )
+				ret = QFile::decodeName( pw->pw_dir ) + path.mid( pos );
+			// else.. do nothing
+		}
+	}
+	return ret;
+}
+
 

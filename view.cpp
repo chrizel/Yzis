@@ -1303,3 +1303,13 @@ void YZView::substitute(const QString& range, const QString& search, const QStri
 	mBuffer->updateAllViews();
 }
 
+QString YZView::joinLine ( const QString& inputsBuff, YZCommandArgs args) {
+	//reset the input buffer
+	purgeInputBuffer();
+	moveToEndOfLine();
+	if ( mCursor->getY() < mBuffer->lineCount() -1 ) 
+		mBuffer->mergeNextLine(mCursor->getY());
+	gotoxy(mCursor->getX()+1, mCursor->getY() );
+	
+	return QString::null;
+}

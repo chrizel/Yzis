@@ -21,6 +21,7 @@
 
 #include <unistd.h>
 #include "debug.h"
+#include <ctype.h>
 
 #include "factory.h"
 

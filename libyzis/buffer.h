@@ -23,7 +23,6 @@
  * $Id$
  */
 
-#include <qstringlist.h>
 #include <qptrlist.h>
 #include "yzis.h"
 #include "motion.h"
@@ -91,6 +90,8 @@ public:
 	/**
 	 * Appends a new line at the end of file
 	 * @param l the line of text to be appended
+	 *
+	 * Note: the line is not supposed to contain '\n'
 	 */
 	void addLine(const QString &l);
 
@@ -131,13 +132,11 @@ public:
 	 */
 	YZView* findView(unsigned int uid);
 
-#if 0
 	/**
 	 * Get the whole text of the buffer
 	 * @return a QStringList containing the texts
 	 */
-	const QStringList& getText() { return mText; }
-#endif
+	QString getWholeText();
 
 	/**
 	 * Opens a new line after the indicated position
@@ -149,6 +148,8 @@ public:
 	/**
 	 * Deletes the given line
 	 * @param line the line number to delete
+	 *
+	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
 	void deleteLine( unsigned int line );
 
@@ -168,12 +169,16 @@ public:
 	 * Finds the @ref YZLine pointer for a line in the buffer
 	 * @param line the line to return
 	 * @return a YZLine pointer or 0 if none
+	 *
+	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
 	YZLine *at(unsigned int no) { return mText.at(no); }
 
 	/**
 	 * Number of lines in the buffer
 	 * @return the number of lines
+	 *
+	 * Note that empty buffer always have one empty line.
 	 */
 	unsigned int lineCount() { return mText.count(); }
 

@@ -22,8 +22,8 @@
 using namespace CppUnit;
 using namespace std;
 
-#include "libyzis/undo.h"
-#include "libyzis/debug.h"
+#include "../libyzis/undo.h"
+#include "../libyzis/debug.h"
 
 #include "testUndo.h"
 #include "TSession.h"

@@ -22,7 +22,7 @@
 #include <qtextcodec.h>
 #include <qapp.h>
 #include "libyzis/translator.h"
-#include "libyzis/debug.h"
+#include "../libyzis/debug.h"
 #include "testBuffer.h"
 #include "philcppunit/PhilTestRunner.h"
 

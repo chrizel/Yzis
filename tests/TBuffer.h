@@ -24,7 +24,7 @@
  * $Id: session.h 388 2004-03-03 23:44:13Z mikmak $
  */
 
-#include <libyzis/buffer.h>
+#include "../libyzis/buffer.h"
 
 
 class TYZBuffer : public YZBuffer {

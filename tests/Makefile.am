@@ -1,5 +1,5 @@
 SUBDIRS = philcppunit .
-INCLUDES = -I$(top_srcdir)/tests/philcppunit/ -I$(top_srcdir)/libyzis/ $(YZIS_INCLUDES) $(LUA_INCLUDES)
+INCLUDES = -I$(top_srcdir)/tests/philcppunit/ $(YZIS_INCLUDES) $(LUA_INCLUDES)
 KDE_CXXFLAGS = $(USE_EXCEPTIONS) -DTEST
 noinst_PROGRAMS = tests
 

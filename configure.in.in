@@ -19,6 +19,16 @@ AC_CHECK_LIB(ps, PS_shutdown,[have_libps=yes],[have_libps=no])
 if test "$have_libps" = "no"; then
 	AC_MSG_ERROR(libps not found. Please install pslib1 libraries.)
 fi
+AC_CHECK_HEADER(ncurses.h)
+if test "$ac_cv_header_ncurses_h" = "no"; then
+	AC_MSG_WARN([ncurses.h not found. Please install ncurses5 headers to enable nyzis compilation.])
+	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
+fi
+AC_CHECK_LIB(ncurses, curses_version,[have_ncurses=yes],[have_ncurses=no])
+if test "$have_libps" = "no"; then
+	AC_MSG_WARN([libncurses not found or unusable, please make sure you install ncurses5, nyzis compilation will be disabled.])
+	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
+fi
 
 KDE_INIT_DOXYGEN([The Yzis API Reference], [Version $VERSION])
 

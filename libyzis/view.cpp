@@ -1653,8 +1653,12 @@ bool YZView::drawPrevCol( ) {
 		workCursor->setBufferX( curx );
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {
-			if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(sCurLine.mid(curx)) )
+/*			listChar = drawMode && getLocalBoolOption( "list" );
+			if ( listChar ) {
 				lastChar = '.';
+				if ( stringHasOnlySpaces(sCurLine.mid(curx)) )
+					lastChar = '-';
+			}*/ // useless because drawPrevCol is not used to in drawing stuff in GUIs
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
 			if ( workCursor->screenX() >= workCursor->sColIncrement )
 				workCursor->setScreenX( workCursor->screenX() - workCursor->sColIncrement );
@@ -1693,8 +1697,12 @@ bool YZView::drawNextCol( ) {
 		lastChar = sCurLine[ curx ];
 		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
-			listChar = getLocalBoolOption( "list" ) && stringHasOnlySpaces(sCurLine.mid(curx));
-			if ( listChar )	lastChar = '.';
+			listChar = drawMode && getLocalBoolOption( "list" ) && sCurLine.mid(curx)[0].isSpace();
+			if ( listChar ) {
+				lastChar = '.';
+				if ( stringHasOnlySpaces(sCurLine.mid(curx)) )
+					lastChar = '-';
+			}
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
 			lenToTest = workCursor->sColIncrement;
 		} else {

@@ -143,6 +143,7 @@ void YZInternalOptionPool::init() {
 	YZInternalOption *fileencoding = new YZInternalOption( "fileencoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
 	YZInternalOption *encoding = new YZInternalOption( "encoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
 	YZInternalOption *rightleft = new YZInternalOption( "rightleft", "Global", false, false, view_opt, bool_t );
+	YZInternalOption *list = new YZInternalOption( "list", "Global", false, false, view_opt, bool_t );
 
 	mOptions[ "Global\\tabstop" ] = tabstop;
 	mOptions[ "Global\\number" ] = number;
@@ -155,6 +156,7 @@ void YZInternalOptionPool::init() {
 	mOptions[ "Global\\fileencoding" ] = fileencoding;
 	mOptions[ "Global\\encoding" ] = encoding;
 	mOptions[ "Global\\rightleft" ] = rightleft;
+	mOptions[ "Global\\list" ] = list;
 	setGroup("Global");
 
 	//read config files now

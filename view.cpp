@@ -630,6 +630,9 @@ void YZView::alignViewVertically( unsigned int line ) {
 
 /* recalculate cursor position + refresh screen */
 void YZView::reset( ) {
+	if ( getLocalStringOption( "encoding" ) != mBuffer->encoding() ) {
+		mBuffer->setEncoding( getLocalStringOption( "encoding" ) );
+	}
 	initDraw( 0, 0, 0, 0 );
 	drawMode = false;
 	gotoy( mainCursor->bufferY() );

@@ -29,6 +29,7 @@
 #include <qtextstream.h>
 #include <qfileinfo.h>
 #include <qdir.h>
+#include <qtextcodec.h>
 
 #include "buffer.h"
 #include "line.h"
@@ -76,6 +77,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mAction = new YZAction( this );
 	mViewMarks = new YZViewMark( );
 	mDocMarks = new YZDocMark( );
+	currentEncoding = getLocalStringOption( "encoding" );
 	displayIntro();
 	YZSession::me->addBuffer( this );
 	mSwap = new YZSwapFile( this );
@@ -456,6 +458,29 @@ uint YZBuffer::firstNonBlankChar( uint line ) {
 //                            File Operations
 // ------------------------------------------------------------------------
 
+void YZBuffer::setEncoding( const QString& name ) {
+	yzDebug("YZBuffer") << "set encoding " << name << endl;
+	QTextCodec* destCodec;
+	QTextCodec* fromCodec;
+	if ( name == "locale" ) {
+		destCodec = QTextCodec::codecForLocale();
+	} else {
+		destCodec = QTextCodec::codecForName( name );
+	}
+	if ( currentEncoding == "locale" ) {
+		fromCodec = QTextCodec::codecForLocale();
+	} else {
+		fromCodec = QTextCodec::codecForName( currentEncoding );
+	}
+	if ( ! isEmpty() ) {
+		QValueVector<YZLine*>::iterator it;
+		for ( it = mText.begin(); it != mText.end(); it++ ) {
+			(*it)->setData( destCodec->toUnicode( fromCodec->fromUnicode( (*it)->data() ) ) );
+		}
+	}
+	currentEncoding = name;
+}
+
 void YZBuffer::load(const QString& file) {
 	yzDebug("YZBuffer") << "YZBuffer load " << file << endl;
 	if ( file.isNull() || file.isEmpty() ) return;
@@ -476,8 +501,16 @@ void YZBuffer::load(const QString& file) {
 	//opens and eventually create the file
 	mUndoBuffer->setInsideUndo( true );
 	mLoading=true;
+	currentEncoding = getLocalStringOption( "encoding" );
 	if ( fl.open( IO_ReadOnly ) ) {
+		QTextCodec* codec;
+		if ( currentEncoding == "locale" ) {
+			codec = QTextCodec::codecForLocale();
+		} else {
+			codec = QTextCodec::codecForName( currentEncoding );
+		}
 		QTextStream stream( &fl );
+		stream.setCodec( codec );
 		while ( !stream.atEnd() )
 			appendLine( stream.readLine() );
 		fl.close();
@@ -510,11 +543,22 @@ bool YZBuffer::save() {
 		if ( !popupFileSaveAs() )
 			return false; //dont try to save
 	}
+
+	QString codecName = getLocalStringOption( "fileencoding" );
+	yzDebug("YZBuffer") << "save using " << codecName << " encoding" << endl;
+	QTextCodec* codec;
+	if ( codecName == "locale" ) {
+		codec = QTextCodec::codecForLocale();
+	} else {
+		codec = QTextCodec::codecForName( codecName );
+	}
+
 	QFile file( mPath );
 	m_hlupdating = true; //override so that it does not parse all lines
 	yzDebug("YZBuffer") << "Saving file to " << mPath << endl;
 	if ( file.open( IO_WriteOnly ) ) {
 		QTextStream stream( &file );
+		stream.setCodec( codec );
 		// do not save empty buffer to avoid creating a file
 		// with only a '\n' while the buffer is emtpy
 		if ( isEmpty() == false) {

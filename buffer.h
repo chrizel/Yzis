@@ -432,6 +432,12 @@ public:
 	 */
 	void setLocalQColorOption( const QString& key, const QColor& option );
 
+	void setEncoding( const QString& name );
+
+	inline const QString& encoding() const {
+		return currentEncoding;
+	}
+
 protected:
 	/**
 	 * Sets the line @param line to @param l
@@ -464,6 +470,7 @@ private:
 	YZViewMark* mViewMarks;
 	YZDocMark* mDocMarks;
 	YZSwapFile *mSwap;
+	QString currentEncoding;
 };
 
 #endif /*  YZ_BUFFER_H */

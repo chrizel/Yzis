@@ -140,6 +140,8 @@ void YZInternalOptionPool::init() {
 	YZInternalOption *matchpairs = new YZInternalOption( "matchpairs", "Global", QString( "(){}[]" ), QString( "(){}[]" ), buffer_opt, string_t );
 	YZInternalOption *cindent = new YZInternalOption( "cindent", "Global", true, true, view_opt, bool_t );
 	YZInternalOption *printer = new YZInternalOption( "printer", "Global", QString("qtprinter"),QString("qtprinter"), global_opt, string_t );
+	YZInternalOption *fileencoding = new YZInternalOption( "fileencoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
+	YZInternalOption *encoding = new YZInternalOption( "encoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
 
 	mOptions[ "Global\\tabstop" ] = tabstop;
 	mOptions[ "Global\\number" ] = number;
@@ -149,6 +151,8 @@ void YZInternalOptionPool::init() {
 	mOptions[ "Global\\matchpairs" ] = matchpairs;
 	mOptions[ "Global\\cindent" ] = cindent;
 	mOptions[ "Global\\printer" ] = printer;
+	mOptions[ "Global\\fileencoding" ] = fileencoding;
+	mOptions[ "Global\\encoding" ] = encoding;
 	setGroup("Global");
 
 	//read config files now

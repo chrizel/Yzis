@@ -601,30 +601,44 @@ QString YZCommandPool::append(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::change(const YZCommandArgs &args) {
-	YZCursor oldBufCursor = *args.view->getBufferCursor();
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
-		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
-	else {
-		YZCursor to=move(args.view, args.arg, args.count);
-		args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
-	}
-	args.view->commitNextUndo();
+	YZCursor from, to, temp;
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-		args.view->leaveVisualMode();
-		args.view->gotoInsertMode();
+		from = ( args.selection )[ 0 ].from();
+		to = ( args.selection )[ 0 ].to();
 	} else {
-		// if the cursor moved, that means that we were at the end of a line
-		// and it has been moved back during delete, thus we have to push it back
-		if(oldBufCursor == args.view->getBufferCursor())
-			args.view->gotoInsertMode();
-		else
-			args.view->append();
+		from = *args.view->getBufferCursor();
+		to = move(args.view, args.arg, args.count);
 	}
+	if(from > to) {
+		temp = from;
+		from = to;
+		to = temp;
+	}
+	
+	bool visualMode = args.view->getCurrentMode() >= YZView::YZ_VIEW_MODE_VISUAL;
+	
+	// if we delete to the end of the line, the cursor will be onto (before) the last 
+	// character, so we'll have to append. Otherwise, inserting is OK
+	unsigned int eol_x = (visualMode ? (QMAX(0, int(args.view->myBuffer()->textline(to.getY()).length()) - 1))
+			: args.view->myBuffer()->textline(to.getY()).length());
+	bool append = to.getX() >= eol_x;
+	
+	args.view->myBuffer()->action()->deleteArea(args.view, from, to, args.regs);
+	args.view->commitNextUndo();
+	
+	if ( visualMode )
+		args.view->leaveVisualMode();
+	
+	if(append)
+		args.view->append();
+	else
+		args.view->gotoInsertMode();
+	
 	return QString::null;
 }
 
 QString YZCommandPool::changeLine(const YZCommandArgs &args) {
-	args.view->deleteLine(args.count, args.regs);
+	args.view->myBuffer()->action()->deleteLine(args.view, *args.view->getBufferCursor(), args.count, args.regs);
 	args.view->openNewLineBefore();
 //	args.view->gotoInsertMode();
 	args.view->commitNextUndo();
@@ -634,13 +648,13 @@ QString YZCommandPool::changeLine(const YZCommandArgs &args) {
 QString YZCommandPool::changeToEOL(const YZCommandArgs &args) {
 	YZCursor to=move(args.view, "$", 1);
 	args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
-	args.view->gotoInsertMode();
+	args.view->append();
 	args.view->commitNextUndo();
 	return QString::null;
 }
 
 QString YZCommandPool::deleteLine(const YZCommandArgs &args) {
-	args.view->deleteLine(args.count, args.regs);
+	args.view->myBuffer()->action()->deleteLine(args.view, *args.view->getBufferCursor(), args.count, args.regs);
 	args.view->commitNextUndo();
 	return QString::null;
 }

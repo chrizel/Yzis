@@ -110,7 +110,9 @@ void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &te
 		it->applyInsertLine( mPos, pView->myId == it->myId );
 }
 
-void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len ) {
+void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
+	copyLine(pView, pos, len, reg);
+	
 	YZCursor mPos( pos );
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
 		it->initDeleteLine( mPos, len, pView->myId == it->myId );
@@ -290,7 +292,7 @@ void YZAction::insertNewLine( YZView* pView, unsigned int X, unsigned int Y ) {
 }
 void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len ) {
 	YZCursor pos( pView, 0, Y );
-	deleteLine( pView, pos, len );
+	deleteLine( pView, pos, len, QValueList<QChar>() );
 }
 void YZAction::replaceLine( YZView* pView, unsigned int Y, const QString& text ) {
 	YZCursor pos( pView, 0, Y );

@@ -753,12 +753,20 @@ QString YZCommandPool::gotoReplaceMode(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::gotoVisualLineMode(const YZCommandArgs &args) {
-	args.view->gotoVisualMode(true);
+	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
+		args.view->leaveVisualMode();
+	} else {
+		args.view->gotoVisualMode( true );
+	}
 	return QString::null;
 }
 
 QString YZCommandPool::gotoVisualMode(const YZCommandArgs &args) {
-	args.view->gotoVisualMode();
+	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL ) {
+		args.view->leaveVisualMode();
+	} else {
+		args.view->gotoVisualMode( false );
+	}
 	return QString::null;
 }
 

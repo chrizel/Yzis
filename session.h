@@ -26,7 +26,7 @@
 
 #include "commands.h"
 #include "syntaxhighlight.h"
-#include "options.h"
+#include "internal_options.h"
 #include "registers.h"
 #include "macros.h"
 
@@ -34,7 +34,7 @@ class YZView;
 class YZBuffer;
 class YzisSchemaManager;
 class YZCommandPool;
-class YZOption;
+class YZInternalOptionPool;
 class YZRegisters;
 class YZExExecutor;
 class YZExLua;
@@ -302,7 +302,7 @@ class YZSession {
 	public:
 		static int mNbViews;
 		static int mNbBuffers;
-		static YZOption mOptions;
+		static YZInternalOptionPool mOptions;
 		static YZRegisters mRegisters;
 		static YZMacros mMacros;
 		static YZSession *me;

@@ -34,7 +34,7 @@
 #include "undo.h"
 #include "printer.h"
 #include "cursor.h"
-#include "options.h"
+#include "internal_options.h"
 #include "registers.h"
 #include "buffer.h"
 #include "swapfile.h"

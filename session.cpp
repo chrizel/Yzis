@@ -28,14 +28,14 @@
 #include "ex_lua.h"
 #include "schema.h"
 #include "buffer.h"
-#include "options.h"
+#include "internal_options.h"
 #include "registers.h"
 #include "view.h"
 #include "swapfile.h"
 
 int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
-YZOption YZSession::mOptions = YZOption();
+YZInternalOptionPool YZSession::mOptions = YZInternalOptionPool();
 YZRegisters YZSession::mRegisters = YZRegisters();
 YZMacros YZSession::mMacros = YZMacros();
 YZSession *YZSession::me = 0;

@@ -260,7 +260,7 @@ QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 
 	if (found.isEmpty()) {
 		if ( canPopup )
-			YZSession::me->popupMessage(tr("The file %1 could not be found in standard directories" ).arg( filename ));
+			YZSession::me->popupMessage(_("The file %1 could not be found in standard directories" ).arg( filename ));
 		return QString::null;
 	}
 
@@ -271,7 +271,7 @@ QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 #else
 	lua_pushstring(L,found.toUtf8());
 #endif
-	pcall(1,1,0, tr("Lua error when running file %1:\n").arg(found) );
+	pcall(1,1,0, _("Lua error when running file %1:\n").arg(found) );
 	return QString::null;
 }
 

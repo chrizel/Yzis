@@ -568,7 +568,7 @@ void YZBuffer::load(const QString& file) {
 	//check for a swap file left after a crash
 	mSwap->setFileName( mPath );
 	if ( QFile::exists( mSwap->filename() ) ) {//if it already exists, recover from it
-		if ( YZSession::me->promptYesNo(tr("Recover"),tr("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
+		if ( YZSession::me->promptYesNo(_("Recover"),_("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
 			if ( mSwap->recover() )
 				setChanged( true );
 		}
@@ -642,10 +642,10 @@ bool YZBuffer::save() {
 #if QT_VERSION < 0x040000
 	YZView *it;
 	for ( it = mViews.first(); it ; it = mViews.next() )
-		it->displayInfo(tr("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
+		it->displayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
 #else
 	for ( int ab = 0; ab < mViews.size(); ++ab )
-		mViews.at(ab)->displayInfo(tr("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
+		mViews.at(ab)->displayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
 #endif
 	setChanged( false );
 	filenameChanged();

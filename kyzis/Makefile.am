@@ -1,6 +1,6 @@
 # this has all of the subdirectories that make will recurse into.  if
 # there are none, comment this out
-SUBDIRS = src pics po .
+SUBDIRS = src pics .
 
 # set the include path for X, qt and KDE
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/kyzis/src/ -I$(top_srcdir)/libyzis/ $(all_includes) $(LUA_INCLUDES)
@@ -53,7 +53,11 @@ dummy.cpp:
 	echo "#endif" >> $@
 
 
-messages: rc.cpp
-	$(EXTRACTRC) `find . -name "*.rc" -o -name "*.ui"` > rc.cpp
-	$(XGETTEXT) rc.cpp *.cpp src/*.cpp src/*.h -o po/kyzis.pot
+install-exec-hook:
+	@for i in `ls $(top_builddir)/translations/*.gmo`; do \
+		echo "Installing KDE translation for lang `basename $$i .gmo`" ; \
+		$(mkinstalldirs) $(DESTDIR)/`$(KDECONFIG) --install locale --expandvars`/`basename $$i .gmo`/LC_MESSAGES/ ; \
+		/bin/rm -f $(DESTDIR)/`$(KDECONFIG) --install locale --expandvars`/`basename $$i .gmo`/LC_MESSAGES/yzis.mo ; \
+		/bin/ln -s $(DESTDIR)$(prefix)/share/yzis/locale/`basename $$i .gmo`/LC_MESSAGES/yzis.mo $(DESTDIR)/`$(KDECONFIG) --install locale --expandvars`/`basename $$i .gmo`/LC_MESSAGES/ ; \
+	done
 

@@ -50,7 +50,7 @@
 
 YZModeCommand::YZModeCommand() : YZMode() {
 	mType = MODE_COMMAND;
-	mString = QObject::tr( "[ Awaiting Command ]" );
+	mString = _( "[ Awaiting Command ]" );
 	commands.clear();
 #if QT_VERSION < 0x040000
 	commands.setAutoDelete(true);

@@ -55,6 +55,7 @@
 /* X11 */
 #include <X11/Xlib.h>
 
+#include <libintl.h>
 
 
 typedef void ( *sighandler_t )( int );
@@ -88,25 +89,10 @@ main(int argc, char *argv[])
 
 	QApplication app( argc, argv, useGUI );
 
-	// Translator stuff
-	QTranslator qt(  0 );
-#if QT_VERSION < 0x040000
-	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
-#else
-	qt.load(  QString(  "qt_" ) + QTextCodec::codecForLocale()->name(), "." );
-#endif
-	app.installTranslator(  &qt );
-	QTranslator translator(  0 );
 	QString initialSendKeys;
-#if QT_VERSION < 0x040000
-	translator.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
-	yzDebug(NYZIS) << "Locale " << QTextCodec::locale() << endl;
-#else
-	translator.load(  QString(  "yzis_" ) + QTextCodec::codecForLocale()->name(), QString( PREFIX ) + "/share/yzis/locale/" );
-	yzDebug(NYZIS) << "Locale " << QString(QTextCodec::codecForLocale()->name()) << endl;
-#endif
-	app.installTranslator(  &translator );
 
+	bindtextdomain( "yzis", QString( PREFIX ) + "/share/yzis/locale" );
+	textdomain( "yzis" );
 	// option stuff
 	int option_index = 0;
 	static struct option long_options[] = { // 0,1,2 = no_argument,required_argument,optional_argument

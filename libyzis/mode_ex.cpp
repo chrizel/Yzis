@@ -63,7 +63,7 @@ YZExCommand::YZExCommand( const QString& input, ExPoolMethod pm, const QStringLi
 
 YZModeEx::YZModeEx() : YZMode() {
 	mType = MODE_EX;
-	mString = QObject::tr("[ Ex ]");
+	mString = _("[ Ex ]");
 	mMapMode = cmdline;
 	commands.clear();
 	ranges.clear();
@@ -283,7 +283,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 
 
 	if (!commandIsValid) {
-		YZSession::me->popupMessage( QObject::tr("Not an editor command: ") + _input);
+		YZSession::me->popupMessage( _("Not an editor command: ") + _input);
 	}
 
 	return ret;
@@ -399,7 +399,7 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 			args.view->modePool()->stop();
 			ret = CMD_QUIT;
 			args.view->mySession()->exitRequest( );
-		} else args.view->mySession()->popupMessage( QObject::tr( "One file is modified! Save it first..." ) );
+		} else args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
 	} else {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( args.view->myBuffer()->views().count() > 1 ) {
@@ -412,14 +412,14 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 				ret = CMD_QUIT;
 				args.view->mySession()->exitRequest();
 			}
-			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified! Save it first..." ) );
+			else args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
 		} else {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
 				args.view->modePool()->stop();
 				ret = CMD_QUIT;
 				args.view->mySession()->deleteView(args.view->myId);
 			}
-			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified! Save it first..." ) );
+			else args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
 		}
 	}
 	return ret;
@@ -432,7 +432,7 @@ cmd_state YZModeEx::buffernext( const YZExCommandArgs& args ) {
 	if ( v )
 		args.view->mySession()->setCurrentView(v);
 	else
-		args.view->mySession()->popupMessage( QObject::tr( "No next buffer" ) );
+		args.view->mySession()->popupMessage( _( "No next buffer" ) );
 	return CMD_OK;
 }
 
@@ -443,7 +443,7 @@ cmd_state YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
 	if ( v )
 		args.view->mySession()->setCurrentView(v);
 	else
-		args.view->mySession()->popupMessage( QObject::tr( "No previous buffer" ) );
+		args.view->mySession()->popupMessage( _( "No previous buffer" ) );
 
 	return CMD_OK;
 }
@@ -481,7 +481,7 @@ cmd_state YZModeEx::gotoOpenMode( const YZExCommandArgs& args ) {
 cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 	QString path = args.arg; //extract the path
 	if ( path.length() == 0 ) {
-		args.view->mySession()->popupMessage( QObject::tr( "Please specify a filename" ) );
+		args.view->mySession()->popupMessage( _( "Please specify a filename" ) );
 		return CMD_ERROR;
 	}
 	//check the file name
@@ -527,7 +527,7 @@ cmd_state YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 #endif
 		YZInternalOption *opt = YZSession::mOptions->getOption(option);
 		if ( !opt ) {
-			YZSession::me->popupMessage( QObject::tr("Invalid option given : ") + option);
+			YZSession::me->popupMessage( _("Invalid option given : ") + option);
 			return CMD_ERROR;
 		}
 		if ( hasOperator ) {
@@ -552,7 +552,7 @@ cmd_state YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 					else if ( rx.cap( 2 ) == "-" ) value = QString::number( oldVal.toInt() - value.toInt() );
 					break;
 				case bool_t :
-					YZSession::me->popupMessage(QObject::tr("This option cannot be switched this way, this is a boolean option."));
+					YZSession::me->popupMessage(_("This option cannot be switched this way, this is a boolean option."));
 					return CMD_ERROR;
 					break;
 				case color_t :
@@ -562,7 +562,7 @@ cmd_state YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 		yzDebug() << "Setting option " << option << " to " << value << endl;
 		switch ( opt->getType() ) {
 			case global_opt :
-				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
+				YZSession::me->popupMessage(_("This option is a global option which cannot be changed with setlocal"));
 				return CMD_ERROR;
 			case view_opt :
 				if ( view ) view->setLocalQStringOption( option, value );
@@ -578,12 +578,12 @@ cmd_state YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 		YZInternalOption *opt = YZSession::mOptions->getOption(rx2.cap( 1 ).trimmed());
 #endif
 		if ( !opt ) {
-			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
+			YZSession::me->popupMessage(_("Invalid option given"));
 			return CMD_ERROR;
 		}
 		switch ( opt->getType() ) {
 			case global_opt :
-				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
+				YZSession::me->popupMessage(_("This option is a global option which cannot be changed with setlocal"));
 				return CMD_ERROR;
 			case view_opt :
 				if ( view ) 
@@ -609,12 +609,12 @@ cmd_state YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 		YZInternalOption *opt = YZSession::mOptions->getOption(rx3.cap( 1 ).trimmed());
 #endif
 		if ( !opt ) {
-			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
+			YZSession::me->popupMessage(_("Invalid option given"));
 			return CMD_ERROR;
 		}
 		switch ( opt->getType() ) {
 			case global_opt :
-				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
+				YZSession::me->popupMessage(_("This option is a global option which cannot be changed with setlocal"));
 				return CMD_ERROR;
 			case view_opt :
 				if ( view ) 
@@ -634,7 +634,7 @@ cmd_state YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 				break;
 		}
 	} else {
-		YZSession::me->popupMessage( QObject::tr( "Invalid option given" ) );
+		YZSession::me->popupMessage( _( "Invalid option given" ) );
 		return CMD_ERROR;
 	}
 	// refresh screen
@@ -665,7 +665,7 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 		}
 		YZInternalOption *opt = YZSession::mOptions->getOption(option);
 		if ( !opt ) {
-			YZSession::me->popupMessage(QObject::tr("Invalid option given : ") + option);
+			YZSession::me->popupMessage(_("Invalid option given : ") + option);
 			return CMD_ERROR;
 		}
 		if ( hasOperator ) {
@@ -680,7 +680,7 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 					else if ( rx.cap( 2 ) == "-" ) value = QString::number( YZSession::mOptions->readQStringEntry( option ).toInt() - value.toInt() );
 					break;
 				case bool_t :
-					YZSession::me->popupMessage(QObject::tr("This option cannot be switched this way, this is a boolean option."));
+					YZSession::me->popupMessage(_("This option cannot be switched this way, this is a boolean option."));
 					return CMD_ERROR;
 					break;
 				case color_t :
@@ -704,7 +704,7 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 		YZSession::setBoolOption( rx3.cap( 1 ).trimmed(), true);
 #endif
 	} else {
-		YZSession::me->popupMessage( QObject::tr( "Invalid option given" ) );
+		YZSession::me->popupMessage( _( "Invalid option given" ) );
 		return CMD_ERROR;
 	}
 	// refresh screen
@@ -776,7 +776,7 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::hardcopy( const YZExCommandArgs& args ) {
 	if ( args.arg.length() == 0 ) {
-		args.view->mySession()->popupMessage( QObject::tr( "Please specify a filename" ) );
+		args.view->mySession()->popupMessage( _( "Please specify a filename" ) );
 		return CMD_ERROR;
 	}
 	QString path = args.arg;

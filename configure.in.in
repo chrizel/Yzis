@@ -124,5 +124,5 @@ AC_SUBST(NYZIS_DEP)
 AC_SUBST(PS_LIBS)
 AC_SUBST(YZISLIBS)
 AC_SUBST(QT_LIBS)
-AC_CONFIG_FILES([ libyzis/translator.h ])
+AC_CONFIG_FILES( [ libyzis/translator.h ] )
 

@@ -45,8 +45,6 @@ apidox:
 	echo "EXTRACT_ALL         = YES" >> yzis.doxyfile ; \
 	doxygen yzis.doxyfile
 
-install-data-local: install-translations
-
 clean-local: clean-tests
 
 test: 
@@ -54,23 +52,4 @@ test:
 
 clean-tests:
 	cd tests/cpp && [ -f Makefile ] && make clean
-
-update-tr:
-	echo "Updating .ts files in translations..." ; \
-	for i in $(srcdir)/translations/*.ts ; do \
-		lupdate $(srcdir)/libyzis/*.cpp $(srcdir)/libyzis/*.h $(srcdir)/kyzis/*.cpp $(srcdir)/kyzis/src/*.cpp $(srcdir)/kyzis/src/*.h $(srcdir)/nyzis/*.cpp $(srcdir)/nyzis/*.h -ts $$i ; \
-	done
-
-translate:
-	echo "Building .qm files for Qt..."; \
-	for i in $(srcdir)/translations/*.ts ; do \
-		lrelease $$i -qm $(srcdir)/translations/`basename $$i .ts`.qm ; \
-	done
-
-install-translations:
-	$(mkinstalldirs) $(localedir)
-	@for i in $(srcdir)/translations/*.qm; do \
-		echo " $(INSTALL_DATA) $$i $(localedir)/`basename $$i`"; \
-		$(INSTALL_DATA) $$i $(localedir)/`basename $$i`; \
-	done;
 

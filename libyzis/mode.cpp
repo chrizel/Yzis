@@ -76,7 +76,7 @@ void YZMode::cursorMoved( YZView* ) {
 
 YZModeIntro::YZModeIntro() : YZMode() {
 	mType = MODE_INTRO;
-	mString = QObject::tr("[ Introduction ]");
+	mString = _("[ Introduction ]");
 }
 void YZModeIntro::enter( YZView* mView ) {
 	YZBuffer* mBuffer = mView->myBuffer();

@@ -28,10 +28,11 @@
 #include "session.h"
 #include "action.h"
 #include "mode_command.h"
+#include "libintl.h"
 
 YZModeInsert::YZModeInsert() : YZMode() {
 	mType = YZMode::MODE_INSERT;
-	mString = QObject::tr( "[ Insert ]" );
+	mString = _( "[ Insert ]" );
 	mEditMode = true;
 	mMapMode = insert;
 }
@@ -178,7 +179,7 @@ cmd_state YZModeInsert::commandDefault( YZView* mView, const QString& key ) {
 
 YZModeReplace::YZModeReplace() : YZModeInsert() {
 	mType = MODE_REPLACE;
-	mString = QObject::tr("[ Replace ]");
+	mString = _("[ Replace ]");
 }
 
 void YZModeReplace::commandInsert( YZView* mView, const QString& ) {
@@ -201,7 +202,7 @@ cmd_state YZModeReplace::commandDefault( YZView* mView, const QString& key ) {
 
 YZModeCompletion::YZModeCompletion() : YZMode() {
 	mType = MODE_COMPLETION;
-	mString = QObject::tr("{ Completion }");
+	mString = _("{ Completion }");
 	mEditMode = true;
 	mMapMode = insert;
 }

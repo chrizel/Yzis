@@ -27,6 +27,7 @@
 #include <kstandarddirs.h>
 #include <qtranslator.h>
 #include <qtextcodec.h>
+#include <libintl.h>
 #include "libyzis/translator.h"
 #include "libyzis/session.h"
 #include "libyzis/view.h"
@@ -43,8 +44,8 @@ static KCmdLineOptions options[] = {
 };
 
 int main(int argc, char **argv) {
-	KLocale::setMainCatalogue("yzis");
 	
+	KLocale::setMainCatalogue("yzis");
 	KAboutData about("kyzis", I18N_NOOP("Kyzis"), VERSION_CHAR, description, KAboutData::License_GPL_V2, 0, 0, "http://www.yzis.org", "bugs@bugs.yzis.org");
 	about.addAuthor( "Mickael Marchand", "Author", "mikmak@yzis.org" );
 	about.addAuthor( "Thomas Capricelli", "Author", "orzel@freehackers.org" );
@@ -60,15 +61,11 @@ int main(int argc, char **argv) {
 	KCmdLineArgs::init(argc, argv, &about);
 	KCmdLineArgs::addCmdLineOptions( options );
 	KApplication app;
+	KGlobal::dirs()->addResourceDir( "locale", QString( PREFIX )+ "/share/yzis/locale" );
+	KGlobal::locale()->setActiveCatalogue("yzis");
 
-
-	QTranslator qt( 0 );
-	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
-	app.installTranslator( &qt );
-	QTranslator myapp(  0 );
-	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
-	app.installTranslator(  &myapp );
-
+	bindtextdomain( "yzis", QString( PREFIX ) + "/share/yzis/locale" );
+	textdomain( "yzis" );
 	// see if we are starting with session management
 //	if (app.isRestored())
 //				RESTORE(Kyzis)

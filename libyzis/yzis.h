@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <qglobal.h>
+#include <libintl.h>
 
 #define VERSION_MAJOR	0
 #define VERSION_MINOR	0
@@ -55,6 +56,8 @@
 #define qMax QMAX
 #define qMin QMIN
 #endif
+
+#define _(a) QString(gettext(a))
 
 //visibility of the option
 enum option_t {

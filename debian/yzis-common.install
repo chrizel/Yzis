@@ -1,3 +1,4 @@
-debian/tmp/usr/share/yzis/locale/*.qm
+debian/tmp/usr/share/yzis/locale/*
 debian/tmp/usr/share/yzis/syntax/*
+debian/tmp/usr/share/locale/*
 

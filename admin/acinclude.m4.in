@@ -443,7 +443,7 @@ if test "$1" = "default"; then
     kde_datadir='\${datadir}/apps'
   fi
   if test -z "$kde_locale"; then
-    kde_locale='\${datadir}/locale'
+    kde_locale='\${prefix}/share/yzis/locale'
   fi
   if test -z "$kde_cgidir"; then
     kde_cgidir='\${exec_prefix}/cgi-bin'

@@ -1,6 +1,6 @@
 debian/tmp/usr/bin/kyzis
 debian/tmp/usr/lib/kde3/libkyzispart.so
-debian/tmp/usr/share/apps/kyzis/kyzis_shell.rc
+debian/tmp/usr/lib/kde3/libkyzispart.la
 debian/tmp/usr/share/apps/kyzis/kyzis_shell.rc
 debian/tmp/usr/share/apps/kyzispart/kyzispart.rc
 debian/tmp/usr/share/icons/crystalsvg/16x16/apps/kyzis.png

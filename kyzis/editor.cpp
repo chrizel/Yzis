@@ -308,6 +308,7 @@ void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool )
 					}
 					QColor c = mParent->drawColor( );
 					if ( c.isValid() ) p.setPen( c );
+					else p.setPen( foregroundColor() );
 					p.drawText(myRect, flag, mParent->drawChar( ) );
 
 					if ( mParent->drawSelected() ) {

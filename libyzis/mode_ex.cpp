@@ -374,11 +374,11 @@ cmd_state YZModeEx::write( const YZExCommandArgs& args ) {
 	}
 	if ( quit && force ) {//check readonly ? XXX
 		args.view->myBuffer()->save();
-		args.view->mySession()->exitRequest(); //whatever happens => quit
+		args.view->mySession()->deleteView( args.view->myId );
 		ret = CMD_QUIT;
 	} else if ( quit ) {
 		if ( args.view->myBuffer()->save() ) {
-			args.view->mySession()->exitRequest();
+			args.view->mySession()->deleteView( args.view->myId );
 			ret = CMD_QUIT;
 		}
 	} else if ( ! force ) {

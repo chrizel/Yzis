@@ -2,7 +2,7 @@ Source: yzis
 Section: editors
 Priority: optional
 Maintainer: Mickael Marchand <marchand@kde.org>
-Build-Depends: debhelper (>= 4.0.0), libqt3-mt-dev, kdelibs4-dev, libncurses5-dev, doxygen, pslib-dev, libmagic-dev, liblua50-dev
+Build-Depends: debhelper (>= 4.0.0), libqt3-mt-dev, kdelibs4-dev, libncurses5-dev, doxygen, pslib-dev, libmagic-dev, liblua50-dev, liblua50lib-dev
 Standards-Version: 3.6.0
 
 Package: libyzis-dev

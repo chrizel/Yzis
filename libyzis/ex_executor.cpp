@@ -87,6 +87,18 @@ QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
 	return QString::null;
 }
 
+QString YZExExecutor::gotoCommandMode( YZView *view, const QString &) {
+	view->gotoCommandMode();
+	return QString::null;
+}
+
+QString YZExExecutor::gotoOpenMode( YZView *view, const QString &) {
+	yzDebug() << "Switching to open mode...";
+	view->gotoOpenMode();
+	yzDebug() << "done." << endl;
+	return QString::null;
+}
+
 QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 	yzDebug() << "View counts: "<< view->myBuffer()->views().count() << " Buffer Count : " << view->mySession()->countBuffers() << endl;
 	if ( inputs == "q" || inputs == "q!" || inputs.startsWith("qu") ) {

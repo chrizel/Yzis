@@ -37,6 +37,16 @@ class YZExExecutor : public QObject {
 		~YZExExecutor();
 
 		/**
+		 * Goes to open mode. Used for the :open command.
+		 */
+		QString gotoOpenMode( YZView *view, const QString& );
+
+		/**
+		 * Goes to command mode. Used for the :visual command.
+		 */
+		QString gotoCommandMode( YZView *view, const QString& );
+
+		/**
 		 * Saves to a file
 		 */
 		QString write( YZView *view, const QString& inputs );

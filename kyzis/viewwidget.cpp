@@ -113,6 +113,8 @@ void KYZisView::wheelEvent( QWheelEvent * e ) {
 }
 
 void KYZisView::modeChanged (void) {
+	yzDebug() << "switching to mode: " << mMode << "; old mode is: " <<
+		mPrevMode << endl;
 	switch (mMode) {
 		case YZ_VIEW_MODE_INSERT: // insert
 			status->changeItem(tr("-- INSERT --"), 0);

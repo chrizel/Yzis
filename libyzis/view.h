@@ -228,6 +228,12 @@ class YZView {
 		QString gotoExMode( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
+		 * Start Open mode
+		 */
+		QString gotoOpenMode( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+
+
+		/**
 		 * Start replace mode
 		 */
 		QString gotoReplaceMode( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
@@ -236,6 +242,12 @@ class YZView {
 		 * Start visual mode
 		 */
 		QString gotoVisualMode( const QString& inputsBuff = QString::null, YZCommandArgs args  = YZCommandArgs());
+
+		/**
+		 * Go back to either open mode or command mode, depending on how the
+		 * previous mode is set.
+		 */
+		QString gotoPreviousMode();
 
 		/**
 		 * Go to line of file
@@ -322,7 +334,18 @@ class YZView {
 		 */
 		int getCurrentMode() { return mMode; }
 
-		enum {
+		/**
+		 * Get the previous mode
+		 */
+		int getPreviousMode() { return mPrevMode; }
+
+		/**
+		 * Switch to the given mode; if the mode is the same as
+		 * the current one, do nothing.
+		 */
+		void switchModes(int mode);
+
+		enum modeType {
 			YZ_VIEW_MODE_INSERT=0, // insert
 			YZ_VIEW_MODE_REPLACE, // replace
 			YZ_VIEW_MODE_COMMAND, // normal
@@ -330,7 +353,8 @@ class YZView {
 			YZ_VIEW_MODE_SEARCH, //search mode
 			YZ_VIEW_MODE_OPEN, // open mode
 			YZ_VIEW_MODE_VISUAL, // visual mode
-		} mMode;		/** mode of this view */
+		} mMode,		/** mode of this view */
+			mPrevMode;	/** previous mode of this view */
 #define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_VISUAL+1) // <-- update that if you touch the enum
 		
 

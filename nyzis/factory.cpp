@@ -75,7 +75,7 @@ NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
 	if ( argc>1 )
 		bf = createBuffer(charv[1]);
 	else {
-		char tmpname[ 20 ];
+/*		char tmpname[ 20 ];
 		strcpy( tmpname, "/tmp/nyzis.XXXXXX" );
 		int fd;
 		fd = mkstemp(tmpname);
@@ -83,8 +83,8 @@ NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
 			yzError() << "nyzis : can't open temporary file, quitting"; 
 			exit(1);
 		}
-		close (fd); // maybe we should have a createBuffer(int fd) ? 
-		bf = createBuffer(tmpname);
+		close (fd); // maybe we should have a createBuffer(int fd) ? */
+		bf = createBuffer();
 	}
 
 	screen = stdscr; // just an alias...

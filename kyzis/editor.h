@@ -84,13 +84,12 @@ class KYZisEdit : public QScrollView {
 		virtual void focusInEvent( QFocusEvent * );
 
 	private :
-		KYZisView *_parent;
+		KYZisView *mParent;
 
 		//cursor position (sync with libyzis one)
-		int cursorx;
-		int cursory;
-		bool cursor_shown;
-		int current;
+		int mCursorX;
+		int mCursorY;
+		bool mCursorShown;
 };
 
 #endif

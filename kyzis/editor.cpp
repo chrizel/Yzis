@@ -34,7 +34,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	f.setFixedPitch(true);
 	f.setStyleHint(QFont::TypeWriter);
 	setFont(f);
-	_parent = parent;
+	mParent = parent;
 
 	viewport()->setFocusProxy( this );
 	viewport()->setFocusPolicy( StrongFocus );
@@ -42,7 +42,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	//viewport()->setPaletteBackgroundColor(QColor("white"));
 	viewport()->setBackgroundColor(QColor("black"));
 	viewport()->setPaletteForegroundColor(QColor("white"));
-	cursor_shown = false; //cursor is not shown
+	mCursorShown = false; //cursor is not shown
 }
 
 KYZisEdit::~KYZisEdit() {
@@ -52,35 +52,35 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 	yzDebug() << "viewportResizeEvent" << endl;
 	QSize s = ev->size();
 	int lines = s.height() / fontMetrics().lineSpacing();
-	_parent->setVisibleLines( lines );
+	mParent->setVisibleLines( lines );
 }
 
 void KYZisEdit::setCursor(int c, int l) {
 	yzDebug() << "setCursor " << c << ", " << l << endl;
 	//undraw previous cursor
-	if ( cursor_shown && ( c!= cursorx || l!=cursory ) ) {
+	if ( mCursorShown && ( c!= mCursorX || l!=mCursorY ) ) {
 		yzDebug() << "Undraw previous cursor" << endl;
-		drawCursorAt( cursorx,cursory );
-	} else if ( cursor_shown ) {
+		drawCursorAt( mCursorX,mCursorY );
+	} else if ( mCursorShown ) {
 		yzDebug() << "Dont redraw cursor" << endl;
 		return;
 	}
 
-	cursorx = c;
-	cursory = l;
+	mCursorX = c;
+	mCursorY = l;
 
 	//draw new cursor
-	cursor_shown = true;
+	mCursorShown = true;
 	
 	//check if the line contains TABs
-	QString currentLine = _parent->myBuffer()->data( cursory );
+	QString currentLine = mParent->myBuffer()->data( mCursorY );
 	int s = fontMetrics().size( Qt::ExpandTabs|Qt::SingleLine, currentLine, c, 0, 0).width();
-	cursorx = s / fontMetrics().maxWidth();
-	drawCursorAt( cursorx,cursory );
+	mCursorX = s / fontMetrics().maxWidth();
+	drawCursorAt( mCursorX,mCursorY );
 }
 
 void KYZisEdit::setTextLine(int l, const QString &/*str*/) {
-	updateContents( 0, ( l - _parent->getCurrent() ) * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing()  );
+	updateContents( 0, ( l - mParent->getCurrent() ) * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing()  );
 }
 
 bool KYZisEdit::event(QEvent *e) {
@@ -98,14 +98,14 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	yzDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->key() != 0 ) {
 		ButtonState st = e->state();
-		if (e->key() != Qt::Key_unknown) _parent->sendKey(e->key(), st);
+		if (e->key() != Qt::Key_unknown) mParent->sendKey(e->key(), st);
 		e->accept();
 	}
 }
 
 void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
-	if (_parent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
-		QString line = _parent->myBuffer()->data(e->y()/fontMetrics().lineSpacing() + _parent->getCurrent());
+	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
+		QString line = mParent->myBuffer()->data(e->y()/fontMetrics().lineSpacing() + mParent->getCurrent());
 		int nbcols=0;
 		int len=0;
 		while ( len <= e->x() ) {
@@ -113,7 +113,7 @@ void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 			nbcols++;
 		}
 		nbcols = nbcols - 2 >= 0 ? nbcols -2 : 0; //dont ask me why i need this :) i understand -1 but not -2 ...
-		_parent->gotoxy(nbcols, e->y()/fontMetrics().lineSpacing() + _parent->getCurrent());
+		mParent->gotoxy(nbcols, e->y()/fontMetrics().lineSpacing() + mParent->getCurrent());
 	}
 }
 
@@ -121,9 +121,9 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 	yzDebug() << "drawCursorAt :" << x << ", " << y << endl;
 	bitBlt (
 			viewport(),
-			x*fontMetrics().maxWidth(),( y - _parent->getCurrent() ) *fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(),( y - mParent->getCurrent() ) *fontMetrics().lineSpacing(),
 			viewport(),
-			x*fontMetrics().maxWidth(), ( y - _parent->getCurrent() )*fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(), ( y - mParent->getCurrent() )*fontMetrics().lineSpacing(),
 			fontMetrics().maxWidth(), fontMetrics().lineSpacing(),
 			Qt::NotROP,	    // raster Operation
 			true );		    // ignoreMask
@@ -131,23 +131,25 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
 	yzDebug() << "drawContents " << endl;
-	for ( unsigned int i=0; i < _parent->getLinesVisible() ; ++i ) {
+	int flag = mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft;
+
+	for ( unsigned int i=0; i < mParent->getLinesVisible() ; ++i ) {
 		if ( fontMetrics().lineSpacing() * i >= ( unsigned int )clipy && fontMetrics().lineSpacing() * i <= ( unsigned int ) ( clipy+cliph ) ) {
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
 			p->eraseRect(clip);
-			if (_parent->myBuffer()->lineCount() > i + _parent->getCurrent() )
-				p->drawText(clip,Qt::ExpandTabs|Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->data(i + _parent->getCurrent()));
+			if (mParent->myBuffer()->lineCount() > i + mParent->getCurrent() )
+				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,mParent->myBuffer()->data(i + mParent->getCurrent()));
 			else 
-				p->drawText(clip,Qt::ExpandTabs|Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,"~");
-			if ( ( i + _parent->getCurrent() ) == cursory ) 
-				drawCursorAt( cursorx, cursory );
+				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,"~");
+			if ( ( i + mParent->getCurrent() ) == mCursorY ) 
+				drawCursorAt( mCursorX, mCursorY );
 		}
 	}
 }
 
 void KYZisEdit::focusInEvent ( QFocusEvent * ) {
 	yzDebug() << "Activate Window " << endl;
-	KYZisFactory::s_self->setCurrentView( _parent );
+	KYZisFactory::s_self->setCurrentView( mParent );
 }
 
 #include "editor.moc"

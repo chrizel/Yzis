@@ -241,6 +241,21 @@ public:
 	QString undoLast( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 	/**
+	 * Display a nice intro before first input and when no file is loaded
+	 */
+	void displayIntro();
+
+	/**
+	 * Remove the introduction text
+	 */
+	void clearIntro();
+
+	/**
+	 * Is the intro displayed ?
+	 */
+	bool introShown() { return mIntro; }
+
+	/**
 	 * Unique ID of the buffer
 	 */
 	unsigned int myId;
@@ -258,6 +273,7 @@ protected:
 	bool mFileIsNew;
 	//used to prevent redrawing of views during some operations
 	bool mUpdateView;
+	bool mIntro;
 };
 
 #endif /*  YZ_BUFFER_H */

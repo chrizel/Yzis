@@ -61,7 +61,7 @@ k_dcop:
 	 * Opens a new buffer
 	 * @param path file to which the buffer is linked
 	 */
-    void createBuffer(const QString& path);
+    void createBuffer(const QString& path=QString::null);
 
 	/**
 	 * Closes the activated view

@@ -1,5 +1,7 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003,2004 Mickael Marchand <marchand@kde.org>,
+ *  Thomas Capricelli <orzel@freehackers.org>,
+ *  Philippe Fremy <pfremy@freehackers.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -30,13 +32,15 @@
 #include "buffer.h"
 #include "line.h"
 #include "view.h"
-#include "yzis.h"
 #include "undo.h"
 #include "debug.h"
 
 YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	myId = YZSession::mNbBuffers++;
+	mIntro = false;
+	mUpdateView=true;
 	mSession = sess;
+	mText.setAutoDelete( true );
 	if ( !_path.isNull() ) {
 		mPath = _path;
 		mFileIsNew = false;
@@ -50,9 +54,9 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 		// there is still a possible race condition here...
 	}
 	mUndoBuffer = new YZUndoBuffer( this );
-	load();
+	if ( mFileIsNew ) displayIntro();
+	else load();
 	mSession->addBuffer( this );
-	mUpdateView=true;
 }
 
 YZBuffer::~YZBuffer() {
@@ -154,9 +158,8 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 
 	/* inform the views */
 	YZView *it;
-	for ( it = mViews.first(); it; it = mViews.next() ) {
+	for ( it = mViews.first(); it; it = mViews.next() )
 		it->invalidateLine( y );
-	}
 }
 
 // ------------------------------------------------------------------------
@@ -190,10 +193,8 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 }
 
 void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
-	YZASSERT_MSG( line < lineCount(), QString(
-		"YZBuffer::insertNewLine( %1, %2 ) but line %3 does not exist,"
-		" buffer has %4 lines").arg( line ).arg( col ).arg( line )
-		.arg( lineCount() ) );
+	YZASSERT_MSG( line < lineCount(), QString( "YZBuffer::insertNewLine( %1, %2 ) but line %3 does not exist," " buffer has %4 lines").arg( line ).arg( col ).arg( line ) .arg( lineCount() ) );
+
 	if ( line == lineCount() ) {//we are adding a line, fake being at end of last line
 		line --;
 		col = data(line).length(); 
@@ -269,13 +270,45 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 //                            Content Operations 
 // ------------------------------------------------------------------------
 
-void YZBuffer::clearText() const
-{
-	( (QPtrList<YZLine> )mText).clear();
+//XXX this one is broken, IT DOES NOT CLEAR mText DUE TO CONST
+void YZBuffer::clearText() const {
+	( ( QPtrList<YZLine> )mText ).clear();
 }
 
-QString	YZBuffer::data(unsigned int no) const
-{
+void YZBuffer::clearIntro() {
+	yzDebug() << "ClearIntro"<< endl;
+	mIntro = false;
+	mText.clear();
+	mUndoBuffer->setInsideUndo( true );
+	appendLine("");
+	mUndoBuffer->setInsideUndo( false );
+	updateAllViews();
+}
+
+void YZBuffer::displayIntro() {
+	yzDebug() << "DisplayIntro"<< endl;
+
+	QStringList introduction;
+	introduction 
+	<<  ""
+	<<  ""
+	<<  ""
+	<<  "Yzis Milestone 1"
+	<<  ""
+	<<	"Development Release - Use for testing only" 
+	<<  "Copyright 2003, 2004 Yzis Team <yzis-dev@yzis.org>"
+	<<  ""
+	<<  "Please report bugs at http://bugs.yzis.org" ;
+
+	for ( int i=0; i< 100; i++ ) introduction << ""; //add empty lines to avoids displaying '~' :)
+
+	for (  QStringList::Iterator it = introduction.begin(); it != introduction.end(); ++it )
+		mText.append( new YZLine( *it ) );
+	mIntro=true;
+	updateAllViews();
+}
+
+QString	YZBuffer::data(unsigned int no) const {
 #if 0
 	//we need to check this line exists.
 	//the guy i talked with on IRC was right to doubt about it :)
@@ -407,6 +440,7 @@ YZView* YZBuffer::findView( unsigned int uid ) {
 
 void YZBuffer::updateAllViews() {
 	if ( !mUpdateView ) return;
+	yzDebug() << "updateAllViews" << endl;
 	YZView *it;
 	for ( it = mViews.first(); it; it = mViews.next() ) {
 		it->redrawScreen();

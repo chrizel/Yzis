@@ -35,9 +35,17 @@
 
 		<screen>
 <prompt>$</prompt> <command>yzis <replaceable>filename</replaceable></command>
-<prompt>$</prompt> <command>yzis <replaceable>filename</replaceable>:<replaceable>line</replaceable> # open filename and scroll to line <replaceable>line</replaceable></command>
 		</screen>
 
+		<para>
+		It's also possible to specify which line the cursor should jump to when opening a file:
+		</para>
+		
+		<screen>
+<prompt>$</prompt> <command>yzis <replaceable>filename</replaceable>:<replaceable>line</replaceable></command>
+		</screen>
+
+		
 		<para>
 		When you have opened a file it will probably look something like this:
 		</para>
@@ -376,7 +384,7 @@
 		</para>
 		
 		<para>
-		The last command that is presented here is the <command>'c'</command> command. It's
+		Another useful editing command is <command>'c'</command>. It's
 		very similiar to <command>'d'</command> with the difference that <command>'c'</command>
 		puts you in &insert; mode right after the execution. Just like <command>'d'</command>
 		it accepts a motion as argument and it can be used with the same motions as we
@@ -384,6 +392,11 @@
 		in &insert; mode right where the word was. <command>'c$'</command> and <command>'cG'</command>
 		doesn't need any further explanation, the only difference is that it places you in
 		&insert; mode when the command is finished.
+		</para>
+		
+		<para>
+		Two essential features for an editor is undo and redo. To undo the latest change in Yzis use
+		the <command>'u'</command> command. To redo, use the <command>'U'</command> command.
 		</para>
 		
 	</sect1>
@@ -400,6 +413,8 @@
 		<itemizedlist>
 			<listitem><para><command>'/<![CDATA[<pattern>]]>'</command> = search forward</para></listitem>
 			<listitem><para><command>'?<![CDATA[<pattern>]]>'</command> = search backward</para></listitem>
+			<listitem><para><command>'n'</command> = next match</para></listitem>
+			<listitem><para><command>'N'</command> = previous match</para></listitem>
 		</itemizedlist>
 
 		<para>
@@ -423,6 +438,35 @@
 		<mediaobject>
 			<imageobject> <imagedata fileref="pics/nyzis_searchb.png" format="PNG" /> </imageobject>
 		</mediaobject>
+
+		<para>
+		When you have entered your search pattern and pressed <![CDATA[<Enter>]]> the cursor will jump
+		to the first match. To jump to the next match (direction=forward) press <command>'n'</command>
+		or to jump to the previous match (direction=backward), press <command>'N'</command>.
+		</para>
+
+		<para>
+		Yzis also provides a search and replace function, called <command>substitute</command>. It allows
+		you to specify the pattern you would like to replace and the text to replace it with. The syntax
+		and available options are explained in the examples below (Note: This function has to be  executed 
+		in &ex; mode). 
+		</para>
+		
+
+		<itemizedlist>
+			<listitem>
+				<para><command>:s/teh/the</command></para>
+				<para>Will replace the first occurence of "teh" with "the" on the current line.</para>
+			</listitem>
+			<listitem>
+				<para><command>:s/teh/the/g</command></para>
+				<para>Will replace all occurences of "teh" with "the" on the current line.</para>
+			</listitem>
+			<listitem>
+				<para><command>:%s/teh/the</command></para>
+				<para>Will replace all occurences of "teh" with "the" in the whole file.</para>
+			</listitem>
+		</itemizedlist>
 
 	</sect1>
 

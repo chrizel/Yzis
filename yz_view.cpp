@@ -147,7 +147,6 @@ void	YZView::gotoxy(int nextx, int nexty)
 {
 	QString lin;
 
-
 	// check positions
 	if ( nexty < 0 ) nexty = 0;
 	if ( nexty >= buffer->text.count() ) nexty = buffer->text.count() - 1;
@@ -165,8 +164,6 @@ void	YZView::gotoxy(int nextx, int nexty)
 	/* do it */
 	updateCursor();
 
-	//reset the input buffer
-	purgeInputBuffer();
 }
 
 QString YZView::moveDown( const QString& inputsBuff ) {
@@ -184,6 +181,9 @@ QString YZView::moveDown( const QString& inputsBuff ) {
 
 	//execute the code
 	gotoxy(cursor->getX(), cursor->getY() + nb_lines);
+
+	//reset the input buffer
+	purgeInputBuffer();
 
 	//return something
 	return QString::null;
@@ -205,6 +205,8 @@ QString YZView::moveUp( const QString& inputsBuff ) {
 	//execute the code
 	gotoxy(cursor->getX(), cursor->getY() - nb_lines);
 
+	//reset the input buffer
+	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
@@ -225,6 +227,8 @@ QString YZView::moveLeft( const QString& inputsBuff ) {
 	//execute the code
 	gotoxy(cursor->getX() - nb_cols , cursor->getY());
 
+	//reset the input buffer
+	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
@@ -245,6 +249,8 @@ QString YZView::moveRight( const QString& inputsBuff ) {
 	//execute the code
 	gotoxy(cursor->getX() + nb_cols , cursor->getY());
 	
+	//reset the input buffer
+	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
@@ -253,6 +259,8 @@ QString YZView::moveToStartOfLine( const QString& ) {
 	//execute the code
 	gotoxy(0 , cursor->getY());
 	
+	//reset the input buffer
+	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
@@ -268,16 +276,16 @@ QString YZView::gotoLine(const QString& inputsBuff) {
 			i++; //go on
 		bool test;
 		line = inputsBuff.left( i ).toInt( &test );
-		if ( !test  &&  !inputsBuff.startsWith( "gg" ) )
+		if ( !test && !inputsBuff.startsWith( "gg" ) )
 				line=buffer->text.count()-1; //there shouldn't be any other solution
 	}
 
-
 	if ( inputsBuff.startsWith( "gg" ) )
 		gotoxy( 0, line );
+	else
+		gotoxy(cursor->getX(), line);
 
-	gotoxy(cursor->getX(), line);
-
+	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
@@ -299,6 +307,8 @@ QString YZView::moveToEndOfLine( const QString& ) {
 	
 	gotoxy( current_maxx , cursor->getY());
 	
+	//reset the input buffer
+	purgeInputBuffer();
 	//return something
 	return QString::null;
 }
@@ -355,6 +365,8 @@ QString YZView::openNewLineBefore ( const QString& ) {
 
 	gotoxy(0,cursor->getY());
 
+	//reset the input buffer
+	purgeInputBuffer();
 	return QString::null;
 }
 

@@ -163,8 +163,9 @@ NYZisDoc *NYZFactory::createBuffer(const QString& filename)
 {
 	NYZisDoc *b = new NYZisDoc();
 	YZASSERT_MSG(b, "NYZFactory::createBuffer failed creating new NYZisDoc");
-	createView( b );
+	setCurrentView( createView( b ) );
 	b->load( filename );
+	currentView->refreshScreen();
 	return b;
 }
 

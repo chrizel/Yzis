@@ -1,5 +1,6 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003-2004 Mickael Marchand <mikmak@yzis.org>
+ *  Copyright (C) 2003-2004 Mickael Marchand <mikmak@yzis.org>,
+ *  Thomas Capricelli <orzel@freehackers.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -88,16 +89,16 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 }
 
 YZView* YZSession::findView( int uid ) {
-	yzDebug() << " ========= " << endl;
-	yzDebug() << "Session: looking for view " << uid << endl;
+//	yzDebug() << " ========= " << endl;
+//	yzDebug() << "Session: looking for view " << uid << endl;
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
 		YZBuffer *b = ( it.data() );
-		yzDebug() << "Session : findView, checking buffer " << b->fileName() << endl;
+//		yzDebug() << "Session : findView, checking buffer " << b->fileName() << endl;
 		YZView *v = b->findView( uid );
 		if ( v ) return v;
 	}
-	yzDebug() << "Session: View " << uid << " not found !" << endl;
+//	yzDebug() << "Session: View " << uid << " not found !" << endl;
 	return NULL;
 }
 
@@ -118,7 +119,7 @@ YZView* YZSession::prevView() {
 
 	yzDebug() << "Current view is " << mCurView->myId << endl;
 
-	YZView*	nv = findView( ( ( mCurView->myId - 1 ) >= 0 ) ? mCurView->myId - 1 : mCurView->myId );
+	YZView*	nv = findView( ( mCurView->myId >= 1 ) ? mCurView->myId - 1 : mCurView->myId );
 
 	return nv;
 }

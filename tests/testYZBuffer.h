@@ -41,12 +41,14 @@ public:
     CPPUNIT_TEST( testCreateEmptyBuffer );
     CPPUNIT_TEST( testLineMethods );
     CPPUNIT_TEST( testCharMethods );
+    CPPUNIT_TEST( testViewAllocation );
 
     CPPUNIT_TEST_SUITE_END();
 
     void testCreateEmptyBuffer();
     void testLineMethods();
     void testCharMethods();
+	void testViewAllocation();
 
 protected:
     YZSession * mSession;

@@ -49,7 +49,7 @@ void TestYZBuffer::testCreateEmptyBuffer()
     YZBuffer * buf;
     buf = new YZBuffer( mSession );
 
-    phCheckEquals( buf->views().size(), 0 );
+    phCheckEquals( buf->views().count(), 0 );
     phCheckEquals( buf->firstView(), NULL );
     // an empty buffer has one line ?
     phCheckEquals( buf->lineCount(), 1 );
@@ -153,6 +153,11 @@ void TestYZBuffer::testLineMethods()
 
 void TestYZBuffer::testCharMethods()
 {
+}
+
+void TestYZBuffer::testViewAllocation()
+{
+
 }
 
 

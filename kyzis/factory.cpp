@@ -104,7 +104,6 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	KYZisDoc *doc = new KYZisDoc (bSingleView, bWantBrowserView, bWantReadOnly, parentWidget, widgetname, parent, name );
 	//separate
 	if ( bSingleView ) {
-		yzDebug() << "KYzisDoc constructor creating a default view for this buffer" << endl;
 		KTextEditor::View *view = doc->createView( parentWidget, widgetname );
 		doc->insertChildClient( view );
 		view->show();
@@ -148,8 +147,8 @@ KInstance* KYZisFactory::instance() {
 }
 
 const KAboutData *KYZisFactory::aboutData() {
-	KAboutData *data = new KAboutData ("kyzispart", I18N_NOOP("KYZis"), "M1",
-					I18N_NOOP( "KYZis - KDE Frontend for YZis" ),
+	KAboutData *data = new KAboutData ("kyzispart", I18N_NOOP("KYzis"), "M1",
+					I18N_NOOP( "KYzis - KDE Frontend for Yzis" ),
 					KAboutData::License_LGPL_V2,
 					I18N_NOOP( "(c) 2002,2003,2004" ), 0, "http://www.yzis.org");
 	data->addAuthor ("Mickael Marchand", I18N_NOOP("KTextEditor implementation"), "marchand@kde.org");
@@ -245,21 +244,6 @@ void KYZisFactory::setCurrentView( YZView* view ) {
 	currentView = static_cast<KYZisView*>( view );
 	sess->currentViewChanged( view );
 	currentView->setActiveWindow();
-	//DCOP call to KMdi XXX
-#if 0
-	DCOPClient *client = kapp->dcopClient();
-	QByteArray data;
-	QDataStream arg(data, IO_WriteOnly);
-	arg << path; // view ID ?
-	bool w = client->send(client->appId(), "Kyzis", "activateView(param ?)", data);
-	if (w) {
-		yzDebug() << "DCOP call successful for " << client->appId() << " to activate view on " << path << endl;
-		//finds the buffer
-	} else {
-		yzDebug() << "DCOP call failed for " << client->appId() << endl;
-		//popup error
-	}
-#endif
 }
 
 YZView* KYZisFactory::createView( YZBuffer *buffer ) {

@@ -107,10 +107,16 @@ public:
 	void addView (YZView *v);
 
 	/**
+	 * Removes a view from this buffer
+	 * @param v the view to be removed
+	 */
+	void rmView (YZView *v);
+
+	/**
 	 * The list of view for this buffer
 	 * @return a QValuelist of pointers to the views
 	 */
-	QValueList<YZView*> views() { return mViews; }
+	QPtrList<YZView> views() { return mViews; }
 
 	/**
 	 * Find the first view of this buffer
@@ -186,7 +192,7 @@ protected:
 	void updateAllViews();
 
 	QString mPath;
-	QValueList<YZView*> mViews;
+	QPtrList<YZView> mViews;
 
 	YZBufferData mText;
 	YZSession *mSession;

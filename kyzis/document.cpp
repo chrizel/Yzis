@@ -50,9 +50,6 @@ void KYZisDoc::removeView( KTextEditor::View * v ) {
 		return;
 
 	_views.removeRef( v );
-	//remove from YZBuffer list too
-/*	YZView *vv = dynamic_cast<YZView*>( v );
-	mViews.remove( vv );*/
 }
 
 bool KYZisDoc::openFile () {

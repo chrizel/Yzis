@@ -58,10 +58,10 @@ void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
 	at(y)->setData(l);
 
 	/* inform the views */
-	QValueList<YZView*>::iterator it;
-	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
-		YZView *v = *it;
-		mSession->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
+	YZView *it;
+	for ( it = mViews.first(); it != mViews.next(); ++it ) {
+//		YZView *v = *it;
+		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
 	}
 
 }
@@ -78,10 +78,11 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 	at(y)->setData(l);
 
 	/* inform the views */
-	QValueList<YZView*>::iterator it;
-	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
-		YZView *v = *it;
-		mSession->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
+//	QValueList<YZView*>::iterator it;
+	YZView *it;
+	for ( it = mViews.first(); it; it=mViews.next() ) {
+	//	YZView *v = *it;
+		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
 	}
 }
 
@@ -98,10 +99,11 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 	at(y)->setData(l);
 
 	/* inform the views */
-	QValueList<YZView*>::iterator it;
-	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
-		YZView *v = *it;
-		mSession->postEvent( YZEvent::mkEventInvalidateLine( v->myId,y ) );
+	//QValueList<YZView*>::iterator it;
+	YZView *it;
+	for ( it = mViews.first(); it; it = mViews.next() ) {
+//		YZView *v = *it;
+		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
 	}
 }
 
@@ -135,10 +137,11 @@ void YZBuffer::deleteLine( unsigned int line ) {
 }
 
 void YZBuffer::addView (YZView *v) {
-	QValueList<YZView*>::iterator it;
-	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
-		YZView *vi = ( *it );
-		if ( vi == v ) return; // don't append twice
+//	QValueList<YZView*>::iterator it;
+	YZView *it;
+	for ( it = mViews.first(); it; it=mViews.next() ) {
+//		YZView *vi = ( *it );
+		if ( it == v ) return; // don't append twice
 	}
 	yzDebug() << "BUFFER: addView" << endl;
 	mViews.append( v );
@@ -147,21 +150,16 @@ void YZBuffer::addView (YZView *v) {
 }
 
 void YZBuffer::updateAllViews() {
-	QValueList<YZView*>::iterator it;
-	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
-		YZView *v = *it;
-		v->redrawScreen();
+//	QValueList<YZView*>::iterator it;
+	YZView *it;
+	for ( it = mViews.first(); it; it = mViews.next() ) {
+//		YZView *v = *it;
+		it->redrawScreen();
 	}
 }
 
 void  YZBuffer::addLine(const QString &l) {
-//	yzDebug() << "Adding new line : " << l << "$" << endl;
 	mText.append(new YZLine(l));
-	yzDebug() << "ADDLINE : count :" << mText.count() << endl;
-	yzDebug() << "ADDLINE : 0 :" << data(0) << endl;
-	yzDebug() << "ADDLINE : 1 :" << data(1) << endl;
-	yzDebug() << "ADDLINE : 2 :" << data(2) << endl;
-	yzDebug() << "ADDLINE : 3 :" << data(3) << endl;
 }
 
 QString	YZBuffer::data(unsigned int no)
@@ -216,13 +214,14 @@ void YZBuffer::save() {
 
 YZView* YZBuffer::findView( unsigned int uid ) {
 	yzDebug() << "Buffer: findView " << uid << endl;
-	QValueList<YZView*>::iterator it;
-	for ( it = mViews.begin(); it != mViews.end(); ++it ){
-		YZView* v = ( *it );
+//	QValueList<YZView*>::iterator it;
+	YZView *it;
+	for ( it = mViews.first(); it; it=mViews.next() ){
+//		YZView* v = ( *it );
 		yzDebug() << "Checking view " << uid << " for buffer " << fileName() << endl;
-		if ( v->myId == uid ) {
+		if ( it->myId == uid ) {
 			yzDebug() << "Buffer: View " << uid << " found" << endl;
-			return v;
+			return it;
 		}
 	}
 	return NULL;
@@ -242,3 +241,7 @@ YZView* YZBuffer::firstView() {
 	return NULL;//crash me :)
 }
 
+void YZBuffer::rmView(YZView *v) {
+	int f = mViews.remove(v);
+	yzDebug() << "buffer: removeView found " << f << " views" << endl;
+}

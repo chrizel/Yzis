@@ -117,6 +117,11 @@ class YZSession {
 		 */
 		Gui *mGUI;
 
+		/**
+		 * Change the filename of a recorded buffer
+		 */
+		void updateBufferRecord( const QString& oldname, const QString& newname, YZBuffer *buffer );
+
 	protected:
 		//we map "filename"/buffer for buffers
 		QMap<QString,YZBuffer*> mBuffers;

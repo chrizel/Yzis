@@ -81,7 +81,7 @@ public:
 	/**
 	 * Opens the file and fills in internals structure with its content
 	 */
-	void load();
+	void load(const QString& file=QString::null);
 
 	/**
 	 * Dump the current internal structure to the file to be saved

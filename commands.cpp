@@ -115,6 +115,8 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("m", &YZCommandPool::mark, ARG_CHAR) );
 	commands.append( new YZCommand("r", &YZCommandPool::replace, ARG_CHAR) );
 	commands.append( new YZCommand("u", &YZCommandPool::undo) );
+	commands.append( new YZCommand("U", &YZCommandPool::redo) );
+	commands.append( new YZCommand("<CTRL>r", &YZCommandPool::redo) );
 	commands.append( new YZCommand("<CTRL>R", &YZCommandPool::redo) );
 	commands.append( new YZCommand("q", &YZCommandPool::macro) );
 	commands.append( new YZCommand("@", &YZCommandPool::replayMacro) );
@@ -185,12 +187,16 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 		const YZCommand *c=prevcmds.first();
 		i=j-1;
 		// read in a count that may follow
+		if (c->arg() == ARG_CHAR) {//dont try to read a motion !
+				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, inputs.mid(i)));
+				return CMD_OK;
+		}
 		if(inputs[i].digitValue() > 0) {
 			while(j<inputs.length() && inputs[j].digitValue() > 0)
 				j++;
 			count*=inputs.mid(i,j-i).toInt();
 			i=j;
-			if(i>=inputs.length())
+			if(i>=inputs.length() )
 				return OPERATOR_PENDING;
 		}
 
@@ -909,5 +915,6 @@ QString YZCommandPool::replace( const YZCommandArgs &args ) {
 	args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg );
 	args.view->gotoxy(pos.getX(),pos.getY(),true);
 	args.view->updateStickyCol();
+	args.view->commitNextUndo();
 	return QString::null;
 }

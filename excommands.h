@@ -80,11 +80,7 @@ typedef int (YZExCommandPool::*ExRangeMethod) (const YZExRangeArgs&);
 class YZExRange {
 
 	public :
-		YZExRange( const QString& regexp, ExRangeMethod pm ) {
-			mKeySeq = regexp;
-			mPoolMethod = pm;
-			mRegexp = QRegExp( "^(" + regexp + ")([+\\-]\\d*)?(.*)$" );
-		}
+		YZExRange( const QString& regexp, ExRangeMethod pm );
 		virtual ~YZExRange() { }
 		
 		QString keySeq() const { return mKeySeq; }
@@ -101,11 +97,7 @@ class YZExRange {
 class YZExCommand {
 
 	public :
-		YZExCommand( const QString& input, ExPoolMethod pm ) {
-			mKeySeq = input;
-			mPoolMethod = pm;
-			mRegexp = QRegExp( "^(" + mKeySeq + ")\\b(.*)$" );
-		}
+		YZExCommand( const QString& input, ExPoolMethod pm, bool word = true );
 		virtual ~YZExCommand() { }
 
 		const QString & keySeq() const { return mKeySeq; }
@@ -160,6 +152,7 @@ class YZExCommandPool {
 		QString source( const YZExCommandArgs& args );
 		QString map( const YZExCommandArgs& args );
 		QString imap( const YZExCommandArgs& args );
+		QString indent( const YZExCommandArgs& args );
 };
 
 #endif

@@ -68,6 +68,8 @@ class YZAction {
 		void replaceLine( YZView* pView, unsigned int Y, const QString &text );
 
 		void replaceText( YZView* pView, const YZCursor& pos, unsigned int replacedLength, const QString& text );
+
+		void indentLine( YZView* pView, unsigned int Y, int count ); // if count is < 0, unindent line
 		
 		YZCursor match( YZView* pView, YZCursor& mCursor, bool *found );
 		YZCursor search( YZView* pView, const QString& what, const YZCursor& mBegin, const YZCursor& mEnd, bool reverseSearch, unsigned int *matchlength, bool *found );

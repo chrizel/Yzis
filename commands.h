@@ -224,6 +224,7 @@ private:
 	QString completeKeyword(const YZCommandArgs &args, bool forward);
 	QString abort(const YZCommandArgs &args);
 	QString delkey(const YZCommandArgs &args);
+	QString indent( const YZCommandArgs& args );
 
 	friend class YZNewMotion;
 };

@@ -296,6 +296,27 @@ void YZAction::mergeNextLine( YZView* pView, unsigned int y, bool stripSpaces ) 
 	COMMIT_VIEWS_CHANGES;
 }
 
+void YZAction::indentLine( YZView* pView, unsigned int Y, int count ) {
+	if ( count == 0 ) return;
+	CONFIGURE_VIEWS;
+	QString line = mBuffer->textline( Y );
+	if ( count > 0 ) {
+		QString s;
+		s.fill( '\t', count );
+		line = s + line;
+	} else {
+		count = -count;
+		unsigned int tabstop = pView->getLocalIntOption( "tabstop" );
+		QRegExp reg( "^(\t| {1," + QString::number( tabstop - 1 ) + "}\t?| {8})" );
+		for ( unsigned int c = count; c > 0; c-- )
+			line = line.replace( reg, "" );
+	}
+	replaceLine( pView, Y, line );
+	pView->moveToFirstNonBlankOfLine();
+	COMMIT_VIEWS_CHANGES;
+}
+
+
 void YZAction::insertChar( YZView* pView, unsigned int X, unsigned int Y, const QString& text ) {
 	YZCursor pos( pView, X, Y );
 	insertChar( pView, pos, text );

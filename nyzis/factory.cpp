@@ -292,8 +292,8 @@ void NYZFactory::initialiseKeycodes()
 	//keycodes[ KEY_EOL ] = ;
 	//keycodes[ KEY_SF ] = ;
 	//keycodes[ KEY_SR ] = ;
-	keycodes[ KEY_NPAGE ] = "<NEXT>";
-	keycodes[ KEY_PPAGE ] = "<PRIOR>";
+	keycodes[ KEY_NPAGE ] = "<PDOWN>";
+	keycodes[ KEY_PPAGE ] = "<PUP>";
 	//keycodes[ KEY_STAB ] = ;
 	//keycodes[ KEY_CTAB ] = ;
 	//keycodes[ KEY_CATAB ] = ;

@@ -38,6 +38,7 @@ int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
 YZOption YZSession::mOptions = YZOption();
 YZRegisters YZSession::mRegisters = YZRegisters();
+YZMacros YZSession::mMacros = YZMacros();
 YZSession *YZSession::me = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {

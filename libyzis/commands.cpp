@@ -72,6 +72,8 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("<RIGHT>", &YZCommandPool::moveRight, ARG_NONE) );
 	commands.append( new YZNewMotion("<UP>", &YZCommandPool::moveUp, ARG_NONE) );
 	commands.append( new YZNewMotion("<DOWN>", &YZCommandPool::moveDown, ARG_NONE) );
+	commands.append( new YZNewMotion("<PUP>", &YZCommandPool::movePageUp, ARG_NONE) );
+	commands.append( new YZNewMotion("<PDOWN>", &YZCommandPool::movePageDown, ARG_NONE) );
 	commands.append( new YZCommand("i", &YZCommandPool::gotoInsertMode) );
 	commands.append( new YZCommand("<INS>", &YZCommandPool::gotoInsertMode) );
 	commands.append( new YZCommand(":", &YZCommandPool::gotoExMode) );
@@ -83,6 +85,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("dd", &YZCommandPool::deleteLine) );
 	commands.append( new YZCommand("d", &YZCommandPool::del, ARG_MOTION) );
 	commands.append( new YZCommand("D", &YZCommandPool::deleteToEOL) );
+	commands.append( new YZCommand("x", &YZCommandPool::deleteChar) );
 	commands.append( new YZCommand("yy", &YZCommandPool::yankLine) );
 	commands.append( new YZCommand("y", &YZCommandPool::yank, ARG_MOTION) );
 	commands.append( new YZCommand("Y", &YZCommandPool::yankToEOL) );
@@ -107,6 +110,11 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("'", &YZCommandPool::gotoMark, ARG_MARK) );
 	commands.append( new YZCommand("u", &YZCommandPool::undo) );
 	commands.append( new YZCommand("<CTRL>r", &YZCommandPool::redo) );
+	//will this work ? mm => no see FIXME before //MM
+	commands.append( new YZCommand("q", &YZCommandPool::recordMacro, ARG_CHAR ) );
+	commands.append( new YZCommand("q", &YZCommandPool::stopRecordMacro) );
+	//end MM
+	commands.append( new YZCommand("@", &YZCommandPool::replayMacro, ARG_CHAR ) );
 }
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
@@ -247,7 +255,8 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			/* two or more commands with the same name, we assert that these are exactly
 			a cmd that needs a motion and one without an argument. In visual mode, we take
 			the operator, in normal mode, we take the other. */
-			for(cmds.first();cmds.current();) {
+			//this is not sufficient, see the 'q' (record macro command), we need a q+ARG_CHAR and a 'q' commands //mm //FIXME
+			for(cmds.first();cmds.current();cmds.next()) {
 				if(cmds.current()->arg() == ARG_MOTION && visual ||
 				        cmds.current()->arg() == ARG_NONE && !visual)
 					c=cmds.current();
@@ -405,6 +414,18 @@ YZCursor YZCommandPool::moveDown(const YZNewMotionArgs &args) {
 YZCursor YZCommandPool::moveUp(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveUp(&viewCursor, args.count);
+	return *viewCursor.buffer();
+}
+
+YZCursor YZCommandPool::movePageUp(const YZNewMotionArgs &args) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveUp(&viewCursor, args.view->getLinesVisible() );
+	return *viewCursor.buffer();
+}
+
+YZCursor YZCommandPool::movePageDown(const YZNewMotionArgs &args) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveDown(&viewCursor, args.view->getLinesVisible() );
 	return *viewCursor.buffer();
 }
 
@@ -630,3 +651,27 @@ QString YZCommandPool::redo(const YZCommandArgs &args) {
 	args.view->redo( args.count );
 	return QString::null;
 }
+
+QString YZCommandPool::recordMacro( const YZCommandArgs &args ) {
+	yzDebug() << "record macro " << args.arg << endl;
+	YZSession::me->mMacros.startRecording( args.arg[ 0 ] );	
+	return QString::null;
+}
+
+QString YZCommandPool::stopRecordMacro( const YZCommandArgs &args ) {
+	yzDebug() << "stop macro " << endl;
+	YZSession::me->mMacros.stopRecording( );	
+	return QString::null;
+}
+
+QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
+	yzDebug() << "replayMacro " << endl;
+	return QString::null;
+}
+
+QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
+	args.view->deleteCharacter(args.count);
+	args.view->commitNextUndo();
+	return QString::null;
+}
+

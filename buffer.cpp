@@ -421,6 +421,7 @@ void YZBuffer::load(const QString& file) {
 	//reenable
 	mUpdateView=true;
 	updateAllViews();
+	filenameChanged();
 }
 
 bool YZBuffer::save() {
@@ -448,6 +449,7 @@ bool YZBuffer::save() {
 	for ( it = mViews.first(); it ; it = mViews.next() )
 		it->displayInfo(tr("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
 	setModified( false );
+	filenameChanged();
 	return true;
 }
 

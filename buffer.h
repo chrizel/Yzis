@@ -211,8 +211,12 @@ public:
 	 * Changes the filename
 	 * @param _path the new filename ( and path )
 	 */
-	void setPath( const QString& _path ) { mPath = _path; mFileIsNew=false; }
+	void setPath( const QString& _path ) { mPath = _path; mFileIsNew=false; filenameChanged(); }
 
+	/**
+	 * Called whenever the filename is changed
+	 */
+	virtual void filenameChanged() = 0;
 
 	// -------------------------- View Operations
 

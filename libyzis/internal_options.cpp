@@ -180,7 +180,7 @@ void YZInternalOptionPool::init() {
 }
 
 const QString& YZInternalOptionPool::readQStringEntry( const QString& _key, const QString& def ) {
-	yzDebug( ) << "READ " << currentGroup + '\\' + _key << " with default " << def << endl;
+	//yzDebug( ) << "READ " << currentGroup + '\\' + _key << " with default " << def << endl;
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -192,7 +192,7 @@ const QString& YZInternalOptionPool::readQStringEntry( const QString& _key, cons
 
 void YZInternalOptionPool::setQStringOption( const QString& key, const QString& option ) {
 	YZInternalOption *opt = mOptions[ currentGroup + '\\' + key ];
-	yzDebug( ) << currentGroup + '\\' + key << " set to " << option << endl;
+	//yzDebug( ) << currentGroup + '\\' + key << " set to " << option << endl;
 	if ( opt ) {
 		opt->setValue(option);
 		mOptions[ currentGroup + '\\' + key ] = opt;
@@ -255,7 +255,7 @@ void YZInternalOptionPool::setBoolOption( const QString& key, bool option ) {
 
 QStringList YZInternalOptionPool::readQStringListEntry( const QString& _key, const QStringList& def ) {
 	QString key = _key;
-	yzDebug( ) << "READ " << currentGroup + '\\' + key << " with default " << def << endl;
+//	yzDebug( ) << "READ " << currentGroup + '\\' + key << " with default " << def << endl;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains( key ) ) {
@@ -268,7 +268,7 @@ QStringList YZInternalOptionPool::readQStringListEntry( const QString& _key, con
 
 void YZInternalOptionPool::setQStringListOption( const QString& key, const QStringList& option ) {
 	YZInternalOption *opt = mOptions[ currentGroup + '\\' + key ];
-	yzDebug( ) << "SET " << currentGroup + '\\' + key << " to " << option << endl;
+//	yzDebug( ) << "SET " << currentGroup + '\\' + key << " to " << option << endl;
 	if ( opt ) {
 		opt->setValue(option.join(","));
 		mOptions[ currentGroup + '\\' + key ] = opt;
@@ -281,7 +281,7 @@ void YZInternalOptionPool::setQStringListOption( const QString& key, const QStri
 
 const QColor& YZInternalOptionPool::readQColorEntry( const QString& _key, const QColor& def ) {
 	QString key = _key;
-	yzDebug( ) << "READ " << currentGroup + '\\' + key << " with default " << def.rgb() << endl;
+//	yzDebug( ) << "READ " << currentGroup + '\\' + key << " with default " << def.rgb() << endl;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains( key ) ) {
@@ -293,7 +293,7 @@ const QColor& YZInternalOptionPool::readQColorEntry( const QString& _key, const 
 
 void YZInternalOptionPool::setQColorOption( const QString& key, const QColor& option ) {
 	YZInternalOption *opt = mOptions[ currentGroup + '\\' + key ];
-	yzDebug( ) << "SET " << currentGroup + '\\' + key << " to " << option.rgb() << endl;
+//	yzDebug( ) << "SET " << currentGroup + '\\' + key << " to " << option.rgb() << endl;
 	if ( opt ) {
 		opt->setValue(option.name());
 		mOptions[ currentGroup + '\\' + key ] = opt;

@@ -201,7 +201,7 @@ void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shif
 	if ( v ) {
 		YZSelectionMap searchMap = v->getSelectionPool()->layout( "SEARCH" );
 
-		if ( fromLine + shift < 0 ) fromLine = -shift;
+		if ( ( ( int )( shift + fromLine ) ) < 0 ) fromLine = -shift;
 		unsigned int size = searchMap.size();
 		for ( unsigned int i = 0; i < size; i++ ) {
 			YZCursor to = searchMap[ i ].to();

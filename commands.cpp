@@ -469,16 +469,27 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
 	unsigned int c = 0;
-	QRegExp rex("(\\w+\\s*)\\b[^$]");//a word with boundaries
+	QRegExp rex1("^\\w+\\s*");//a word with boundaries
+	QRegExp rex2("^\\W+\\s*");//non-word chars with boundaries
+			
 	while ( c < args.count ) { //for each word
 		const QString& current = args.view->myBuffer()->textline( result.getY() );
-		int idx = rex.search( current, result.getX() );
+//		if ( current.isNull() ) return false; //be safe ?
+		int idx = rex1.search( current, result.getX(), QRegExp::CaretAtOffset );
+		int len = rex1.matchedLength();
+		if ( idx == -1 ) {
+			idx = rex2.search( current, result.getX(), QRegExp::CaretAtOffset );
+			len = rex2.matchedLength();
+		}
 		if ( idx != -1 ) {
-			yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
+			yzDebug() << "Match at " << idx << " Matched length " << len << endl;
 			c++; //one match
-			result.setX( idx + rex.cap( 1 ).length() );
+			result.setX( idx + len );
 		} else {
-			if ( result.getY() >= args.view->myBuffer()->lineCount() ) break;
+			if ( result.getY() >= args.view->myBuffer()->lineCount() - 1 ) {
+				result.setX( args.view->myBuffer()->textline( result.getY() ).length() );
+				break;
+			}
 			result.setX( 0 );
 			result.setY( result.getY() + 1 );
 		}

@@ -129,5 +129,36 @@ bool KYZisDoc::insertText( uint line, uint col, const QString &s)
 	return true;
 }
 
+QString KYZisDoc::text (  uint startLine, uint startCol, uint endLine, uint endCol ) const {
+	QString text = "";
+
+	if ( startLine == endLine ) {
+		text = data( startLine ).mid(startCol, endCol-startCol);
+		return text;
+	}
+	
+	for ( unsigned int i = startLine; i <= endLine; i++ ) {
+		if ( i == startLine ) 
+			text+=data(i).mid( startCol );
+		else if ( i == endLine )
+			text+=data(i).left( endCol );
+		else
+			text+=data( i );
+	}
+	return text;
+}
+
+bool KYZisDoc::setText (  const QString &text ) {
+	clearText();
+	QStringList list = QStringList::split( "\n", text );
+	for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
+		appendLine(*it);
+	}
+	return true;
+}
+
+bool KYZisDoc::removeText (  uint startLine, uint startCol, uint endLine, uint endCol ) {
+	return true;
+}
 
 #include "document.moc"

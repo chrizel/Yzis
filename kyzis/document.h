@@ -49,6 +49,14 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		bool insertText (uint line, uint col, const QString &s);
 
 		QString textLine ( unsigned int line ) const;
+		QString text (  uint startLine, uint startCol, uint endLine, uint endCol ) const;
+		bool setText (  const QString &text );
+		bool removeText (  uint startLine, uint startCol, uint endLine, uint endCol );
+
+	public slots:
+		//signals to emit
+		virtual void textChanged () {}
+		virtual void charactersInteractivelyInserted( int ,int ,const QString& ) {}
 		
 	protected:
 		bool openFile();

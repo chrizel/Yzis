@@ -142,7 +142,15 @@ class YZSession {
 		/**
 		 * Ask to quit the app
 		 */
-		virtual void quit(bool savePopup=true) = 0;
+		virtual void quit(int errorCode=0) = 0;
+
+		/**
+		 * Prepare the app to quit
+		 * All GUIs should call this instead of kapp->quit(), exit( 0 ) etc
+		 * exitRequest will call @ref quit so the real quit comes from the GUI
+		 * This function is used for example to clean up swap files, prompting for unsaved files etc
+		 */
+		void exitRequest(int errorCode=0);
 
 		/**
 		 * Display the specified error/information message

@@ -35,7 +35,7 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 	}
 	if ( inputs.startsWith( "wqall" ) ) {//write all modified buffers 
 		if ( view->mySession()->saveAll() ) //if it fails => dont quit
-			view->mySession()->quit();
+			view->mySession()->exitRequest();
 		return QString::null;
 	}
 	QRegExp rx ( "^(.*)\\s(.*)$");
@@ -45,10 +45,10 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 
 	if ( inputs.startsWith( "wq!" ) ) { //check readonly ? XXX
 		view->myBuffer()->save();
-		view->mySession()->quit(); //whatever happens => quit
+		view->mySession()->exitRequest(); //whatever happens => quit
 	} else if ( inputs.startsWith( "wq" ) ) {
 		if ( view->myBuffer()->save() )
-			view->mySession()->quit();
+			view->mySession()->exitRequest();
 	} else if ( inputs.startsWith( "w" ) ) {
 		view->myBuffer()->save();
 	} else if ( inputs.startsWith( "w!" ) ) {
@@ -113,7 +113,7 @@ QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 			view->mySession()->deleteView(view->myId);
 		else if ( view->myBuffer()->views().count() == 1 && view->mySession()->countBuffers() == 1) {
 			if ( !view->myBuffer()->fileIsModified() || inputs.endsWith("!") )
-				view->mySession()->quit();
+				view->mySession()->exitRequest();
 			else view->mySession()->popupMessage( tr( "One file is modified ! Save it first ..." ) );
 		} else {
 			if ( !view->myBuffer()->fileIsModified() || inputs.endsWith("!") )
@@ -121,10 +121,10 @@ QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 			else view->mySession()->popupMessage( tr( "One file is modified ! Save it first ..." ) );
 		}
 	} else if ( inputs == "qall!" ) {//just quit
-		view->mySession()->quit( );
+		view->mySession()->exitRequest( );
 	} else if ( inputs == "qall" ) {
 		if ( !view->mySession()->isOneBufferModified() )
-			view->mySession()->quit( );
+			view->mySession()->exitRequest( );
 	}
 	return QString::null;
 }

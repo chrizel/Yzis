@@ -307,7 +307,7 @@ void YZAction::indentLine( YZView* pView, unsigned int Y, int count ) {
 	} else {
 		count = -count;
 		unsigned int tabstop = pView->getLocalIntOption( "tabstop" );
-		QRegExp reg( "^(\t| {1," + QString::number( tabstop - 1 ) + "}\t?| {8})" );
+		QRegExp reg( "^(\t| {1," + QString::number( tabstop - 1 ) + "}\t?| {" + QString::number( tabstop ) + "})" );
 		for ( unsigned int c = count; c > 0; c-- )
 			line = line.replace( reg, "" );
 	}

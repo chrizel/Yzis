@@ -6,7 +6,6 @@
 #define GUI_H
 
 #include "yz_events.h"
-#include "yz_session.h"
 
 /**
  * This is the interface that all GUIs must implement
@@ -14,7 +13,7 @@
  * you will register it into the lib.
  * Then the lib will be able to talk with the GUIs using this itf :)
  * IMPORTANT:
- * Register your GUI the earlier you can.
+ * Register your GUI the earlier you can in your constructor
  */ 
 class YZSession;
 class QString;
@@ -81,6 +80,11 @@ class Gui {
 		 * Focus on the main window
 		 */
 		virtual void setFocusMainWindow() = 0;
+
+		/**
+		 * Ask to quit the app
+		 */
+		virtual void quit(bool savePopup=true) = 0;
 
 };
 

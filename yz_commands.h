@@ -34,6 +34,8 @@
 
 class YZSession;
 class YZExExecutor;
+class YZBuffer;
+class YZView;
 
 //oh please don't instanciate me twice !
 class YZCommandPool {

@@ -34,14 +34,7 @@ YZViewCursor::YZViewCursor( YZView* parent ) {
 	mParent = parent;
 	mBuffer = new YZCursor( mParent );
 	mScreen = new YZCursor( mParent );
-	spaceFill = 0;
-	bColIncrement = 1; // XXX seems to be no longer used... ( always 1 )
-	bLineIncrement = 0;
-	sColIncrement = 1;
-	sLineIncrement = 0;
-	lineHeight = 1;
-	wrapNextLine = false;
-	wrapTab = false;
+	reset();
 }
 
 YZViewCursor::YZViewCursor( const YZViewCursor &c ) {
@@ -54,7 +47,6 @@ YZViewCursor::~YZViewCursor( ) {
 	delete mBuffer;
 	delete mScreen;
 }
-
 
 YZViewCursor &YZViewCursor::operator=( const YZViewCursor& c ) {
 	*mScreen = *c.mScreen;
@@ -69,6 +61,17 @@ YZViewCursor &YZViewCursor::operator=( const YZViewCursor& c ) {
 	wrapTab = c.wrapTab;
 	wrapNextLine = c.wrapNextLine;
 	return *this;
+}
+
+void YZViewCursor::reset() {
+	spaceFill = 0;
+	bColIncrement = 1; // XXX seems to be no longer used... ( always 1 )
+	bLineIncrement = 0;
+	sColIncrement = 1;
+	sLineIncrement = 0;
+	lineHeight = 1;
+	wrapNextLine = false;
+	wrapTab = false;
 }
 
 unsigned int YZViewCursor::bufferX() const {

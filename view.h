@@ -406,6 +406,11 @@ class YZView {
 		virtual void refreshScreen() = 0;
 
 		/**
+		 * recalcScreen refresh the screen and recalculate cursor position
+		 */
+		void recalcScreen();
+
+		/**
 		 * Internal use
 		 */
 		QString refreshScreenInternal();

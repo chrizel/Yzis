@@ -2,6 +2,12 @@
   Happy Halloween ;)
   * all
     renamed all source files to remove yz_ and kyzis_ and nyz_ prefix
+    EX mode fixes : cursor does not move when typing in the command line
+  * yzis
+    make initialiseKeycodes() really used ;) (helps a lot making yzis working)
+  * libyzis
+    added :edit support
+    added :quit support
 
 2003-10-30 mikmak
   * kyzis

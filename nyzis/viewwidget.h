@@ -11,12 +11,14 @@
 #include <curses.h>
 #include <qstringlist.h>
 #include <qmap.h>
+#include <qnamespace.h>
 
 #define KEY_ESCAPE 27
 #ifdef KEY_ENTER
 #undef KEY_ENTER
 #define KEY_ENTER 10
 #endif
+#define KEY_RETURN 13
 
 class NYZSession;
 
@@ -60,7 +62,7 @@ private:
 	 */
 	void initialiseKeycodes();
 
-	QMap<int,int> keycodes; // map Ncurses to Qt codes
+	QMap<int,Qt::Key> keycodes; // map Ncurses to Qt codes
 
 };
 

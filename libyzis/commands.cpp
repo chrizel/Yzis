@@ -123,6 +123,8 @@ void YZCommandPool::initExPool() {
 	//XXX should be ok now ? NEW_EX_COMMAND("w",&YZExExecutor::write,true);
 	NEW_EX_COMMAND("write", &YZExExecutor::write,true);
 	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true );
+	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true );
+	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true );
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {

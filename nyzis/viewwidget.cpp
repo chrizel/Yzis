@@ -15,12 +15,10 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b)
 	session->commandline="";
 
 	update_info();
-	//debug("w,h are %d,%d",w,h);
-	//
 	wmove(window,0,0 );
 	//active symbols for special keycodes
 	keypad(window , true);
-	//registerManager( this );
+	initialiseKeycodes();
 }
 
 NYZView::~NYZView(){
@@ -30,6 +28,7 @@ void NYZView::initialiseKeycodes() {
 	//initialise keycodes translation map
 	keycodes[ KEY_ESCAPE ] = Qt::Key_Escape;
 	keycodes[ KEY_ENTER ] = Qt::Key_Return;
+	keycodes[ KEY_RETURN ] = Qt::Key_Return;
 	//keycodes[ KEY_CODE_YES ] = ;
 	//keycodes[ KEY_MIN ] = ;
 	keycodes[ KEY_BREAK ] = Qt::Key_Escape;
@@ -143,14 +142,13 @@ void NYZView::event_loop()
 {
 	/* event loop */
 	for (;;) {
-		int c;
 		/* this is a _basic_ event loop... will be improved */
-		c = getch();
+		int c = getch();
 		if (c!=ERR) {
 			int modifiers = 0;
 			if ( isupper( c ) ) modifiers |= YZIS::Shift;
 			if ( iscntrl( c ) ) modifiers |= YZIS::Ctrl;
-		//TODO: ALT/META	
+			//TODO: ALT/META	
 			if ( keycodes.contains ( c ) )
 				sendKey( keycodes[ c ], modifiers );
 			else

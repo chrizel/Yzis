@@ -17,6 +17,8 @@ class YZExExecutor {
 
 		QString write( YZView *view, const QString& inputs );
 		QString buffernext( YZView *view, const QString& inputs );
+		QString edit( YZView *view, const QString& inputs );
+		QString quit( YZView *view, const QString& inputs );
 	
 };
 

@@ -31,7 +31,7 @@ main(int argc, char *argv[])
 
 static void finish2(void)
 {
-	debug("finish2 called (from atexit)");
+	//debug("finish2 called (from atexit)");
 	finish(0);
 }
 
@@ -40,7 +40,7 @@ static void finish(int /*sig*/)
 	/* ncurses stuff */
 	endwin();
 
-	debug("finish called (sigint)");
+	//debug("finish called (sigint)");
 	/* other */
 
 	/* exit */

@@ -5,8 +5,7 @@
 #include "factory.h"
 
 NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
-	:YZSession(_session_name)
-{
+:YZSession(_session_name) {
 
 	/* init screen */
 
@@ -42,23 +41,23 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	if ( argc>1 )
 		bf = createBuffer(charv[1]);
 	else
-		bf = createBuffer("emptybuffer");
+		bf = createBuffer("");
 
 	screen = stdscr; // just an alias...
-		wattron(screen, A_BOLD);	// will be herited by subwin
+	wattron(screen, A_BOLD);	// will be herited by subwin
 
 	infobar = subwin(screen, 1, 0, LINES-2, 0);
-		wattrset(infobar, A_STANDOUT || A_BOLD);
-		wbkgd(infobar, A_REVERSE);
+	wattrset(infobar, A_STANDOUT || A_BOLD);
+	wbkgd(infobar, A_REVERSE);
 
 	statusbar = subwin(screen, 1, 0, LINES-1, 0);
 	WINDOW *window = subwin(screen, LINES-2, 0, 0, 0);
 
-//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
-//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
+	//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
+	//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
 	if (has_colors()) {
-//		wattron(infobar, COLOR_PAIR(4));
+		//		wattron(infobar, COLOR_PAIR(4));
 		wattron(statusbar, COLOR_PAIR(6));
 	}
 
@@ -71,18 +70,15 @@ void NYZSession::postEvent( yz_event /*ev*/ ) {
 }
 
 
-void NYZSession::event_loop()
-{
+void NYZSession::event_loop() {
 	for ( QMap<QString,YZBuffer*>::Iterator b = buffers.begin();b!=buffers.end(); ++b ) 
 		for ( QValueList<YZView*>::iterator it = b.data()->views().begin() ; it!=b.data()->views().end() ; it++ ) {
 			YZView *v = *it;
-//		for ( YZView *v = b.data()->views().first() ; v ; v =b.data()->views().next() ) 
 			( static_cast<NYZView*>( v ) )->event_loop();
 		}
 }
 
-void NYZSession::update_status(const QString& msg)
-{
+void NYZSession::update_status(const QString& msg) {
 	werase(statusbar);
 	waddstr(statusbar, msg.local8Bit());
 
@@ -90,8 +86,7 @@ void NYZSession::update_status(const QString& msg)
 }
 
 
-void NYZSession::update_infobar(int l, int c1, int c2, const QString& percentage)
-{
+void NYZSession::update_infobar(int l, int c1, int c2, const QString& percentage) {
 	int h,w;
 	char * myfmt;
 
@@ -118,6 +113,7 @@ void NYZSession::scrollUp ( int /*lines*/ ) {
 
 void NYZSession::setCommandLineText( const QString& text ) {
 	commandline= text;
+	update_status( text ); //XXX will that work ?
 }
 
 QString NYZSession::getCommandLineText() const {
@@ -134,6 +130,6 @@ void NYZSession::setCurrentBuffer( YZBuffer *buff ) {
 }
 
 void NYZSession::setCurrentView ( YZView *view ) {
-
+ 
 }
 

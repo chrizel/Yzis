@@ -245,7 +245,7 @@ void YZView::sendKey( int c, int modifiers) {
 					mCurrentExItem++;
 					mSession->getExPool()->execExCommand( this, getCommandLineText() );
 					setCommandLineText( "" );
-					setFocusMainWindow();
+//					setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Down:

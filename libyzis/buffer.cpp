@@ -17,11 +17,9 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	mSession = sess;
 	if ( !_path.isNull() )
 		mPath = _path;
-	else mPath = "new" + myId;
+//	else mPath = "/tmp/yzisnew" + myId;
 
-	if (!_path.isEmpty()) load();
-	else 
-		addLine("");
+	load();
 	mSession->addBuffer( this );
 }
 
@@ -135,7 +133,7 @@ void YZBuffer::updateAllViews() {
 }
 
 void  YZBuffer::addLine(const QString &l) {
-	yzDebug() << "Adding new line : " << l << endl;
+	yzDebug() << "Adding new line : " << l << "$" << endl;
 	mText.append(l);
 }
 
@@ -151,6 +149,7 @@ QString	YZBuffer::findLine(unsigned int line) {
 void YZBuffer::load() {
 	mText.clear();
 	QFile file( mPath );
+	//opens and eventually create the file
 	if ( file.open( IO_ReadOnly ) ) {
 		QTextStream stream( &file );
 		while ( !stream.atEnd() ) {
@@ -159,6 +158,7 @@ void YZBuffer::load() {
 		}
 		file.close();
 	}
+	if ( ! mText.count() ) addLine(" ");
 	updateAllViews();
 }
 

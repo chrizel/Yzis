@@ -1,3 +1,10 @@
+2004-02-05 mikmak
+  * kyzis
+    fix ~ position, one line was missing
+  * libyzis
+    fix opening an empty buffer/file with addLine(" ");
+    fix another signed/unsigned problem in gotoxy
+
 2004-02-04 mikmak
   * all
     fixed unsigned/signed stuff

@@ -211,17 +211,13 @@ void YZView::redrawScreen() {
  * all the goto-like commands
  */
 
-/**
-  * Dont put unsigned here, some function may call with negative here, as
-  * checking is done inside gotoxy
-  */
 void YZView::gotoxy(unsigned int nextx, unsigned int nexty)
 {
 	QString lin;
 
 	// check positions
-	if ( nexty >=  mBuffer->getLines()  ) nexty = mBuffer->getLines() - 1;
 	if ( ( int )nexty < 0 ) nexty = 0;
+	else if ( nexty >=  mBuffer->getLines()  ) nexty = mBuffer->getLines() - 1;
 	mCursor->setY( nexty );
 
 	lin = mBuffer->findLine(nexty);
@@ -281,7 +277,7 @@ QString YZView::moveUp( const QString& inputsBuff ) {
 	}
 
 	//execute the code
-	gotoxy(mCursor->getX(), mCursor->getY() - nb_lines);
+	gotoxy(mCursor->getX(), ( mCursor->getY() - nb_lines < 0 ) ? 0 : ( mCursor->getY() - nb_lines ));
 
 	//reset the input buffer
 	purgeInputBuffer();

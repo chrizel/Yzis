@@ -21,18 +21,14 @@
 		<refpurpose>Yzis documentation example</refpurpose>
 	</refnamediv>
 
-	<refsynopsisdiv>
+	<refsect1 id="documentation-example-introduction">
+		<title>Introduction</title>
+		<para>This is an introduction to our documentation example.</para>
+	</refsect1>
 
-		<synopsis>
-
-			<sect1 id="documentation-example-introduction">
-				<title>Introduction</title>
-				<para>This is an introduction to our documentation example.</para>
-			</sect1>
-
-			<sect1 id="documentation-example-commands">
-				<title>Some commands</title>
-				<itemizedlist>
+	<refsect1 id="documentation-example-commands">
+		<title>Some commands</title>
+		<itemizedlist>
 <listitem id="command-move-right">
 	<simplelist type="inline">
 		<member>l</member>
@@ -42,10 +38,8 @@
 	<para />
 	<para>move <varname>count</varname> characters to the right.</para>
 </listitem>
-				</itemizedlist>
-			</sect1>
+		</itemizedlist>
+	</refsect1>
 
-		</synopsis>
-	</refsynopsisdiv>
 </refentry>
 

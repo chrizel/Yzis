@@ -47,7 +47,7 @@ protected:
 	yz_char text[YZ_MAX_LINE_LENGTH];
 };
 
-#endif
+#endif // __cplusplus
 
 
 
@@ -57,14 +57,14 @@ protected:
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif // __cplusplus
 
 typedef int *yz_line;
 
 
 #ifdef __cplusplus
 }
-#endif
+#endif // __cplusplus
 
 
 #endif //  YZ_LINE_H

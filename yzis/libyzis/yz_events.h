@@ -12,7 +12,7 @@
 	class YZLine;
 #else
 	struct yz_line;
-#endif
+#endif // __cplusplus
 
 
 enum yz_events {
@@ -27,7 +27,7 @@ struct yz_event_setline {
 	YZLine 	*line;
 #else
 	yz_line	*line;
-#endif
+#endif // __cplusplus
 };
 
 struct yz_event_setcursor {

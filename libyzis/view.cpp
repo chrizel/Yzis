@@ -535,10 +535,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			}
 			//dont break
 		case YZ_VIEW_MODE_COMMAND:
-			if ( key == "<ESC>" ) {
-				purgeInputBuffer();
-				return;
-			} else if ( key == "<DEL>" ) {
+			if ( key == "<DEL>" ) {
 				if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 					YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 					mBuffer->action()->deleteArea( this, cur_sel.from(), cur_sel.to(), ( QValueList<QChar>() << QChar( '\"' ) ));

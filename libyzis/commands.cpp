@@ -130,6 +130,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("<CTRL>l", &YZCommandPool::redisplay) );
 	commands.append( new YZCommand("<CTRL>x<CTRL>n", &YZCommandPool::completeKeywordForward) );
 	commands.append( new YZCommand("<CTRL>x<CTRL>p", &YZCommandPool::completeKeywordBackward) );
+	commands.append( new YZCommand("<ESC>", &YZCommandPool::abort) );
 }
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
@@ -1020,5 +1021,10 @@ QString YZCommandPool::completeKeywordBackward( const YZCommandArgs &args ) {
 
 QString YZCommandPool::completeKeywordForward( const YZCommandArgs &args ) {
 	return completeKeyword(args, true);
+}
+
+QString YZCommandPool::abort( const YZCommandArgs &args ) {
+	//actually it's a no-op here, inputBuffer will be purged after
+	return QString::null;
 }
 

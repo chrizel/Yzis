@@ -958,7 +958,7 @@ QString YZView::moveLeft( int nb_cols, bool wrap ) {
 }
 
 QString YZView::moveRight( int nb_cols, bool wrap ) {
-	unsigned int x=int(mainCursor->bufferX());
+	unsigned int x=mainCursor->bufferX();
 	unsigned int y=mainCursor->bufferY();
 	x+=nb_cols;
 	if(x>=myBuffer()->textline(y).length()) {

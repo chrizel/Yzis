@@ -145,9 +145,12 @@ void YZView::sendKey( int c, int modifiers) {
 				case 'l':
 					refreshScreen();
 					return;
-				case 'r':
-					mBuffer->undoBuffer()->redo();
-					return;
+				case 'r': {
+						YZCommandArgs args;
+						args.view = this;
+						mBuffer->redoLast("", args);
+						return;
+					}
 				default:
 					yzWarning()<< "Unhandled control sequence " << (char) c <<endl;
 					return;
@@ -740,13 +743,11 @@ QString YZView::moveDown( const QString& , YZCommandArgs args ) {
 	unsigned int nb_lines=args.count;
 
 	//execute the code
-	unsigned int nextLine = mCursor->getY() + nb_lines;
-	if ( nextLine < mBuffer->lineCount() ) {
-		if ( stickyCol == STICKY_COL_ENDLINE )
-			gotoxy( mBuffer->textline( nextLine ).length(), nextLine );
-		else
-			gotodxy( stickyCol, nextLine );
-	}
+	unsigned int nextLine = QMIN( mCursor->getY() + nb_lines, mBuffer->lineCount()-1);
+	if ( stickyCol == STICKY_COL_ENDLINE )
+		gotoxy( mBuffer->textline( nextLine ).length(), nextLine );
+	else
+		gotodxy( stickyCol, nextLine );
 
 	//reset the input buffer
 	purgeInputBuffer();
@@ -759,7 +760,7 @@ QString YZView::moveUp( const QString& , YZCommandArgs args ) {
 	unsigned int nb_lines=args.count;
 
 	//execute the code
-	unsigned int nextLine = mCursor->getY() > nb_lines ? mCursor->getY() - nb_lines : 0;
+	unsigned int nextLine = QMAX( mCursor->getY()-nb_lines,0);
 	if ( stickyCol == STICKY_COL_ENDLINE )
 		gotoxy( mBuffer->textline( nextLine ).length(), nextLine );
 	else

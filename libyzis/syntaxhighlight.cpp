@@ -33,6 +33,7 @@
 #include "syntaxdocument.h"
 #include "debug.h"
 #include "buffer.h"
+#include "view.h"
 #include "internal_options.h"
 #include "schema.h"
 #include "session.h"

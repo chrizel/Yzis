@@ -5,12 +5,9 @@
  */
 
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 
 /**
@@ -35,23 +32,22 @@ extern "C" {
 
 typedef struct { unicode_char_t letter; int color; } yz_char;
 /* avec le color definit par rapport a une table de couleur, changeable bien sur, etc... */
-typedef yz_char yz_line[YZ_MAX_LINE_LENGTH];
+
+typedef struct {
+	int	len;
+	int	flags;
+	yz_char text[YZ_MAX_LINE_LENGTH];
+} yz_line;
 
 
 /**
  * Yzis events
- * (yet to be defined)
  */
 
 enum yz_events {
 	YZ_EV_SETLINE,
 	YZ_EV_SETCURSOR,
-	YZ_EV_asdf,
-	YZ_EV_asdf2,
-	YZ_EV_asdf3,
-	YZ_EV_asdf4
 };
-
 
 /** here we can use long name as we shouldn't need to use those anyway */
 struct yz_event_setline {
@@ -63,25 +59,16 @@ struct yz_event_setcursor {
 	int x,y;
 };
 
-struct yz_event_asdf {
-	int a;
-	float b;
-};
-
-struct yz_event_asdf2 {
-	char c;
-};
-
 
 /* exemple of use : 
  * (e is of type yz_event)
  * switch (e.id) {
- 	case YZ_EV_asdf:
-		here we use e.u.asdf.a
-		here we use e.u.asdf.b
+	 case YZ_EV_SETLINE:
+		here we use e.u.setline.line_nb;
+		here we use e.u.setline.line;
 		break;
 
- 	case YZ_EV_asdf2:
+	case YZ_EV_SETCURSOR:
    }
 
  */
@@ -90,8 +77,6 @@ typedef struct {
 	union {
 		struct yz_event_setline;
 		struct yz_event_setcursor;
-		struct yz_event_asdf asdf;
-		struct yz_event_asdf2 asdf2;
 	} u;
 } yz_event;
 
@@ -111,12 +96,24 @@ yz_buffer *create_empty_buffer(void);
 /** opens a buffer using the given file */
 yz_buffer *create_buffer(char *path);
 
+/** add a character on the (x,y) position, move all the line to right */
+void buffer_addchar(yz_buffer , int x, int y, );
+/** change the character on the (x,y) position, hence erasing the current one */
+void buffer_chgchar(yz_buffer , int x, int y, );
+
 
 /** yz_view - abstraction of a view. binded to a buffer of course */
 typedef struct {
 	yz_buffer	* buffer;	/** buffer this view is on */
 	int		lines;		/** number of lines we can display */
 	int		current;	/** current line on top of the view */
+	int		x,y;		/** cursor position, beginning at (0,0), not (1,1)... */
+	enum {
+		YZ_VIEW_MODE_INSERT,
+		YZ_VIEW_MODE_REPLACE,
+		YZ_VIEW_MODE_COMMAND
+	}		mode;
+
 } yz_view;
 
 /**

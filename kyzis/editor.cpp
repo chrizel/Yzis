@@ -148,6 +148,7 @@ void KYZisEdit::scrollUp( int n ) {
 			Qt::CopyROP, true );
 		drawContents( 0, 0, mParent->getColumnsVisible(), n, false );
 	} else {
+		mParent->abortPaintEvent();
 		drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
 	}
 }
@@ -162,6 +163,7 @@ void KYZisEdit::scrollDown( int n ) {
 			Qt::CopyROP, true );
 		drawContents( 0, mParent->getLinesVisible() - n, mParent->getColumnsVisible(), n, false );
 	} else {
+		mParent->abortPaintEvent();
 		drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
 	}
 }
@@ -250,10 +252,12 @@ void KYZisEdit::selectRect( unsigned int x, unsigned int y, unsigned int w, unsi
 	bitBlt( this, x, y, this, x, y, w, h, Qt::NotROP, true );
 }
 
-void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
+void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool ) {
 	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::SingleLine;
 	QPainter p;
 	p.begin( this );
+
+//	yzDebug() << "==> drawContent at " << clipx << "," << clipy << " " << clipw << " x " << cliph << endl;
 
 	unsigned int linespace = fontMetrics().lineSpacing();
 	QRect myRect;

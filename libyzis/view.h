@@ -397,7 +397,8 @@ class YZView {
 		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
 		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
 		void removePaintEvent( const YZCursor& from, const YZCursor& to );
-		void setPaintAutoCommit( bool enable );
+		void setPaintAutoCommit( bool enable = true );
+		void abortPaintEvent();
 		void commitPaintEvent();
 
 		/**

@@ -43,7 +43,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status = new KStatusBar (this, "status");
 	command = new KYZisCommand (this, "command");
 	mVScroll = new QScrollBar( this, "vscroll" );
-	connect( mVScroll, SIGNAL(valueChanged(int)), this, SLOT(scrolled(int)) );
+	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrolled(int)) );
 
 	status->insertItem(mode(YZ_VIEW_MODE_LAST),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
@@ -128,8 +128,8 @@ void KYZisView::wheelEvent( QWheelEvent * e ) {
 }
 
 void KYZisView::modeChanged (void) {
-	yzDebug() << "switching to mode: " << mMode << "; old mode is: " <<
-		mPrevMode << endl;
+//	yzDebug() << "switching to mode: " << mMode << "; old mode is: " <<
+//		mPrevMode << endl;
 	if (mBuffer->introShown() )  {
 			status->changeItem(mode(YZ_VIEW_MODE_LAST), 0);
 			return;

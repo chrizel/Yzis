@@ -118,7 +118,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	tabstop = getLocalIntOption("tabstop");
 	wrap = getLocalBoolOption( "wrap" );
 
-	setPaintAutoCommit( true );
+	setPaintAutoCommit();
 }
 
 YZView::~YZView() {
@@ -155,6 +155,7 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 }
 
 void YZView::recalcScreen( ) {
+	abortPaintEvent();
 	refreshScreen();
 	YZCursor buffer = *mainCursor->buffer();
 	mainCursor->reset();
@@ -460,11 +461,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		case YZ_VIEW_MODE_VISUAL:
 		case YZ_VIEW_MODE_VISUAL_LINE :
 			if ( key == "<ESC>" ) {
-				YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
-				selectionPool->clear( "VISUAL" );
-				paintEvent( dCurrentLeft, cur_sel.drawFrom().getY(), mColumnsVis, cur_sel.drawTo().getY() - cur_sel.drawFrom().getY() + 1 );
-				purgeInputBuffer();
-				gotoPreviousMode();
+				leaveVisualMode();
 				return;
 			}
 			//dont break
@@ -488,14 +485,14 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( key == "<PUP>" ) {
-				gotoStickyCol( mainCursor, mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
+				gotoStickyCol( mainCursor, QMAX( mainCursor->bufferY() - mLinesVis, 0 ) );
 				purgeInputBuffer();
 				return;
 			} else if ( key == "<ENTER>" ) {
 				moveDown();
 				moveToFirstNonBlankOfLine();
 				return;
-			}	 
+			}
 			
 			mPreviousChars+=modifiers+key;
 			if ( mSession ) {
@@ -649,7 +646,8 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else if ( old_dCurrentTop < dCurrentTop && dCurrentTop - old_dCurrentTop < mLinesVis ) {
 		scrollDown( dCurrentTop - old_dCurrentTop );
 	} else {
-		 refreshScreen();
+		abortPaintEvent();
+		refreshScreen();
 	}
 }
 
@@ -835,7 +833,9 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 
 	if ( applyCursor ) {
 
+		setPaintAutoCommit( false );
 		if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
+
 
 			YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 			/* erase current selection */
@@ -857,22 +857,22 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 			if ( mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 				bBegin.setX( 0 );
 				bEnd.setX( mBuffer->textline( bEnd.getY() ).length() );
+				dBegin.setX( 0 );
+				dEnd.setX( mColumnsVis );
 			}
 			selectionPool->addSelection( "VISUAL", bBegin, bEnd, dBegin, dEnd );
-			yzDebug() << "visual selection : from " << bBegin << " to " << bEnd << endl;
-
+//			yzDebug() << "visual selection : from " << bBegin << " to " << bEnd << endl;
 
 			YZCursor dOldBegin( cur_sel.drawFrom() );
 			YZCursor dOldEnd( cur_sel.drawTo() );
-			dBegin.setX( dCurrentLeft );
-			dOldBegin.setX( dCurrentLeft );
-			dEnd.setX( dCurrentLeft + mColumnsVis );
-			dOldEnd.setX( dCurrentLeft + mColumnsVis );
 
-			setPaintAutoCommit( false );
+//			yzDebug() << "VISUAL MODE : old = " << dOldBegin << " -> " << dOldEnd << endl;
+//			yzDebug() << "              new = " << dBegin << " -> " << dEnd << endl;
+
 			sendPaintEvent( QMIN( dOldBegin, dBegin ), QMAX( dOldEnd, dEnd ) );
+//			selectionPool->debug( "DRAW" );
 			removePaintEvent( QMAX( dOldBegin, dBegin ), QMIN( dOldEnd, dEnd ) );
-			commitPaintEvent();
+//			selectionPool->debug( "DRAW" );
 		}
 
 		if ( !isLineVisible( mainCursor->screenY() ) ) {
@@ -883,8 +883,10 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 		}
 		if ( !isColumnVisible( mainCursor->screenX(), mainCursor->screenY() ) ) {
 			centerViewHorizontally( mainCursor->screenX( ) );
+			abortPaintEvent();
 			refreshScreen();
 		}
+		commitPaintEvent();
 		updateCursor( );
 	}
 }
@@ -938,24 +940,14 @@ QString YZView::moveDown( unsigned int nb_lines, bool applyCursor ) {
 	return moveDown( mainCursor, nb_lines, applyCursor );
 }
 QString YZView::moveDown( YZViewCursor* viewCursor, unsigned int nb_lines, bool applyCursor ) {
-	//execute the code
-	unsigned int nextLine = QMIN( viewCursor->bufferY() + nb_lines, mBuffer->lineCount() - 1 );
-	gotoStickyCol( viewCursor, nextLine, applyCursor );
-
-	//return something
+	gotoStickyCol( viewCursor, QMIN( viewCursor->bufferY() + nb_lines, mBuffer->lineCount() - 1 ), applyCursor );
 	return QString::null;
 }
-
 QString YZView::moveUp( unsigned int nb_lines, bool applyCursor ) {
 	return moveUp( mainCursor, nb_lines, applyCursor );
 }
-
 QString YZView::moveUp( YZViewCursor* viewCursor, unsigned int nb_lines, bool applyCursor ) {
-	//execute the code
-	unsigned int nextLine = QMAX( viewCursor->bufferY() - nb_lines, 0 );
-	gotoStickyCol( viewCursor, nextLine, applyCursor );
-
-	//return something
+	gotoStickyCol( viewCursor, QMAX( viewCursor->bufferY() - nb_lines, 0 ), applyCursor );
 	return QString::null;
 }
 
@@ -1099,11 +1091,11 @@ void YZView::applyChanges( const YZCursor& pos, unsigned int len, bool applyCurs
 	if ( wrap ) {
 		gotoxy( mBuffer->textline( pos.getY() ).length(), pos.getY(), false );
 		if ( mainCursor->screenY() != lineDY )
-			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
+			sendPaintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		else
-			paintEvent( dCurrentLeft, dY, mColumnsVis, 1 + mainCursor->screenY() - dY );
+			sendPaintEvent( dCurrentLeft, dY, mColumnsVis, 1 + mainCursor->screenY() - dY );
 	} else
-		paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
+		sendPaintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 
 	if ( applyCursor )
 		gotoxy( pos.getX() + len, pos.getY() );
@@ -1150,7 +1142,7 @@ void YZView::initInsertLine( const YZCursor& pos, bool /*applyCursor*/ ) {
 }
 
 void YZView::applyInsertLine( const YZCursor& pos, bool applyCursor ) {
-	paintEvent( dCurrentLeft, mainCursor->screenY(), mColumnsVis, mLinesVis - ( mainCursor->screenY() - dCurrentTop ) );
+	sendPaintEvent( dCurrentLeft, mainCursor->screenY(), mColumnsVis, mLinesVis - ( mainCursor->screenY() - dCurrentTop ) );
 	if ( applyCursor )
 		gotoxy( 0, pos.getY() + ( pos.getX() ? 1 : 0 ) );
 	else
@@ -1164,7 +1156,7 @@ void YZView::initDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool /*a
 }
 
 void YZView::applyDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool applyCursor ) {
-	paintEvent( dCurrentLeft, mainCursor->screenY(), mColumnsVis, mLinesVis - ( mainCursor->screenY() - dCurrentTop ) );
+	sendPaintEvent( dCurrentLeft, mainCursor->screenY(), mColumnsVis, mLinesVis - ( mainCursor->screenY() - dCurrentTop ) );
 	if ( applyCursor )
 		gotoStickyCol( mainCursor, pos.getY() );
 	else
@@ -1187,14 +1179,14 @@ void YZView::applyDeleteLine( const YZCursor& begin, const YZCursor& end, bool a
 		if ( wrap ) { // if current line take more/less lines, repaint all bottom
 			gotoxy( mBuffer->textline( begin.getY() ).length(), begin.getY(), false );
 			if ( lineDY != mainCursor->screenY() )
-				paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
+				sendPaintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 			else
-				paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
+				sendPaintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 		} else
-			paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
+			sendPaintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 
 	} else
-		paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
+		sendPaintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 
 	if ( applyCursor )
 		gotoxy( begin.getX(), begin.getY() );
@@ -1323,7 +1315,7 @@ QString YZView::gotoVisualMode( bool isVisualLine ) {
 
 	selectionPool->clear( "VISUAL" );
 	selectionPool->addSelection( "VISUAL", *mVisualCursor, bEnd, *dVisualCursor, dEnd );
-	paintEvent( dCurrentLeft, dVisualCursor->getY(), mColumnsVis, 1 );
+	sendPaintEvent( dCurrentLeft, dVisualCursor->getY(), mColumnsVis, 1 );
 	yzDebug("Visual mode") << "Starting at " << *mVisualCursor << endl;
 	return QString::null;
 }
@@ -1331,8 +1323,8 @@ QString YZView::gotoVisualMode( bool isVisualLine ) {
 void YZView::leaveVisualMode( ) {
 	YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 	selectionPool->clear( "VISUAL" );
-	paintEvent( dCurrentLeft, cur_sel.drawFrom().getY() > 0 ? cur_sel.drawFrom().getY() - 1 : 0, mColumnsVis, cur_sel.drawTo().getY() - cur_sel.drawFrom().getY() + 3 );
-	gotoCommandMode();
+	sendPaintEvent( dCurrentLeft, cur_sel.drawFrom().getY()/* > 0 ? cur_sel.drawFrom().getY() - 1 : 0*/, mColumnsVis, cur_sel.drawTo().getY() - cur_sel.drawFrom().getY() + 1 );
+	gotoPreviousMode();
 }
 
 YZSelectionMap YZView::getVisualSelection() {
@@ -1932,7 +1924,8 @@ void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
 }
 
 void YZView::gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor ) {
-	if ( stickyCol == STICKY_COL_ENDLINE ) gotoxy( viewCursor, mBuffer->textline( Y ).length(), Y, applyCursor );
+	if ( stickyCol == STICKY_COL_ENDLINE ) 
+		gotoxy( viewCursor, mBuffer->textline( Y ).length(), Y, applyCursor );
 	else {
 		unsigned int col = stickyCol % mColumnsVis;
 		unsigned int deltaY = stickyCol / mColumnsVis;
@@ -1994,20 +1987,24 @@ void YZView::commitPaintEvent() {
 	unsigned int size = drawPool.size();
 	setPaintAutoCommit( true );
 	for ( unsigned int i = 0; i < size; i++ ) {
-//		yzDebug() << "commitPaintEvent from " << drawPool[ i ].from() << " to " << drawPool[ i ].to() << endl;
-		sendPaintEvent( drawPool[ i ].from(), drawPool[ i ].to() );
+		const YZCursor from = drawPool[ i ].from();
+		const YZCursor to = drawPool[ i ].to();
+		sendPaintEvent( dCurrentLeft, from.getY(), mColumnsVis, to.getY() - from.getY() + 1 );
 	}
+	abortPaintEvent();
+}
+void YZView::abortPaintEvent() {
 	selectionPool->clear( "DRAW" );
+	setPaintAutoCommit();
 }
 
 void YZView::sendPaintEvent( const YZCursor& from, const YZCursor& to ) {
-	sendPaintEvent( from.getX(), from.getY(), to.getX() - from.getX() + 1, to.getY() - from.getY() + 1 );
+	sendPaintEvent( from.getX(), from.getY(), to.getX() - from.getX(), to.getY() - from.getY() );
 }
 void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
 	if ( m_paintAutoCommit ) {
 		paintEvent( curx, cury, curw, curh );
 	} else {
-//		yzDebug() << "sendPaintEvent : " << curx << "," << cury << " size: " << curw << "x" << curh << endl;
 		selectionPool->addSelection( "DRAW", curx, cury, curx + curw, cury + curh );
 	}
 }

@@ -739,6 +739,10 @@ QString YZCommandPool::insertAtSOL(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::gotoInsertMode(const YZCommandArgs &args) {
+	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE )
+		args.view->leaveVisualMode();
+	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
+		args.view->leaveReplaceMode();
 	args.view->gotoInsertMode();
 	return QString::null;
 }
@@ -748,6 +752,8 @@ QString YZCommandPool::gotoCommandMode(const YZCommandArgs &args) {
 		args.view->leaveInsertMode();
 	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
 		args.view->leaveReplaceMode();
+	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE  )
+		args.view->leaveVisualMode();
 	args.view->gotoCommandMode();
 	return QString::null;
 }
@@ -786,6 +792,10 @@ QString YZCommandPool::gotoLineAtBottom(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::gotoReplaceMode(const YZCommandArgs &args) {
+	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE )
+		args.view->leaveVisualMode();
+	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
+		args.view->leaveReplaceMode();
 	args.view->gotoReplaceMode();
 	return QString::null;
 }

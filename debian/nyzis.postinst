@@ -1,0 +1,19 @@
+#!/bin/sh -e
+
+case $1 in 
+	abort-upgrade)
+		for i in vi editor; do 
+			update-alternatives --install /usr/bin/$i $i /usr/bin/yzis 120
+		done
+		;;
+
+	configure)
+		for i in vi editor; do 
+			update-alternatives --install /usr/bin/$i $i /usr/bin/yzis 120
+		done
+		;;
+esac
+
+#DEBHELPER#
+
+exit 0

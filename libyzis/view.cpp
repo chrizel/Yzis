@@ -429,8 +429,8 @@ void YZView::centerViewHorizontally(unsigned int column) {
 			drawNextCol( );
 			drawChar( );
 		}
-		dCurrentLeft = rCursor->getX( ) + dCurrentLeft;
-		mCurrentLeft = sCursor->getX( ) + mCurrentLeft;
+		dCurrentLeft = rCursor->getX( );
+		mCurrentLeft = sCursor->getX( );
 
 		initDraw ( );
 	} else {

@@ -12,10 +12,11 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 	buffer		= _b;
 	lines_vis	= _lines_vis;
 	cursor = new YZCursor(this);
-	current=0;
 	current_maxx = 0;
 	mode 		= YZ_VIEW_MODE_COMMAND;
-	QString line = buffer->find_line(cursor->getY());
+	//could it be something else than 0 ?
+	current = cursor->getY();
+	QString line = buffer->find_line(current);
 	if (line) current_maxx = line.length()-1;
 
 	events_nb_begin = 0;
@@ -82,9 +83,13 @@ void YZView::send_char( QChar c)
 		case 'A': /* append -> insert mode */
 			/* go to end of line */
 			cursor->setX(current_maxx);
+			mode = YZ_VIEW_MODE_INSERT;
+			post_event(mk_event_setstatus("-- INSERT --"));
 		/* pass through */
 		case 'a': /* append -> insert mode */
 			cursor->incX();
+			mode = YZ_VIEW_MODE_INSERT;
+			post_event(mk_event_setstatus("-- INSERT --"));
 		/* pass through */
 		case 'i': /* insert mode */
 			mode = YZ_VIEW_MODE_INSERT;
@@ -103,6 +108,12 @@ void YZView::send_char( QChar c)
 				//cursor->setX( cursor_x_ghost );
 				if (cursor->getX() > current_maxx) cursor->setX( current_maxx );
 				if (cursor->getX() < 0) cursor->setX( 0 );
+
+				//check if we need to scroll
+				if ( current + lines_vis < cursor->getY() ) {
+					//scroll down => GUI
+					gui_manager->scrollDown(1); //one line down
+				}
 				update_cursor();
 			}
 			break;
@@ -114,6 +125,11 @@ void YZView::send_char( QChar c)
 				//cursor->setX( cursor_x_ghost );
 				if (cursor->getX() > current_maxx) cursor->setX( current_maxx );
 				if (cursor->getX() < 0) cursor->setX( 0 );
+				//check if we need to scroll
+				if ( current > cursor->getY() ) {
+					//scroll up => GUI
+					gui_manager->scrollUp(1); //one line up
+				}
 				update_cursor();
 			}
 			break;

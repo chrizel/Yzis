@@ -10,3 +10,7 @@ yzis_LDADD = $(top_builddir)/$(NYZIS_DEP) $(YZISLIBS)
 re : clean all
 uncore :
 	gdb  `which yzis` core
+
+install-data-local :
+	@-rm -f $(DESTDIR)$(kde_bindir)/yz
+	@$(LN_S) yzis $(DESTDIR)$(kde_bindir)/yz

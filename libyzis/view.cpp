@@ -209,7 +209,7 @@ void YZView::sendKey( int c, int modifiers) {
 					mBuffer->action()->insertChar( this, mCursor, "\t" );
 					return;
 				case Qt::Key_Backspace:
-					if (mCursor->getX() == 0 && mCursor->getY() > 0 && 1 /* option_go_back_to_previous_line */) {
+					if (mCursor->getX() == 0 && mCursor->getY() > 0 && YZSession::getStringOption( "General\\backspace" ).contains( "eol" ) ) {
 						joinLine( mCursor->getY() - 1 );
 						if ( mCursor->getX() ) moveRight();
 					} else if ( mCursor->getX() > 0 )
@@ -858,7 +858,7 @@ QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs ) {
 	if ( line ) --line;
 	if (line >= mBuffer->lineCount()) line = mBuffer->lineCount() - 1;
 
-	if (/* XXX configuration startofline */ 1 ) {
+	if ( YZSession::getBoolOption("General\\startofline") ) {
 		gotoxy(mBuffer->firstNonBlankChar(line), line);
 	} else {
 		if ( stickyCol == STICKY_COL_ENDLINE )

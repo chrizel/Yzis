@@ -103,7 +103,16 @@ void YZView::send_char( unicode_char_t c)
 				update_cursor();
 			}
 			break;
-
+		case '0': /* move beginning of line */
+			cursor_x_ghost = cursor_x = 0;
+			update_cursor();
+			break;
+		case '$': /* move end of line */
+			if (! (current_maxx<0)) {
+				cursor_x_ghost = cursor_x = current_maxx;
+				update_cursor();
+			}
+			break;
 	}
 }
 

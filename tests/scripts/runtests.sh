@@ -1,2 +1,7 @@
 #!/bin/sh
-kyzis -c ':source test_all.lua<ENTER><ESC>:qall!<ENTER>'
+testname='test_all.lua'
+if [ -n "$1" ]; 
+then
+    testname=$1
+fi
+kyzis -c ":source $testname <ENTER><ESC>:qall!<ENTER>"

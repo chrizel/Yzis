@@ -28,6 +28,7 @@
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qfileinfo.h>
+#include <qdir.h>
 
 #include "buffer.h"
 #include "line.h"
@@ -409,11 +410,17 @@ void YZBuffer::load(const QString& file) {
 	if ( mIntro ) clearIntro();
 	mUpdateView=false;
 	mText.clear();
+	QString oldPath = mPath;
+	mPath = file;
 	if ( !file.isNull() ) { 
+	//check if the path is absolute or relative
+		if (file[0] != '/') {
+			mPath = QDir::cleanDirPath(QDir::current().absPath()+"/"+mPath);
+			yzDebug() << "Changing path to " << mPath << endl;
+		}
 		//hmm changing file :), update Session !!!!
-		mSession->updateBufferRecord( mPath, file, this );
-		mPath = file;
-	}
+		mSession->updateBufferRecord( oldPath, mPath, this );
+	} else return; // no file name ...
 	mFileIsNew=false;
 	//HL mode selection
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);

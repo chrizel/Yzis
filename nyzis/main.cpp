@@ -112,8 +112,7 @@ main(int argc, char *argv[])
 		if ( '-' != argv[i][0] ) {
 			hasatleastone = true;
 			yzDebug(NYZIS)<< "nyzis : opening file " << argv[i]<<endl;
-			bf = factory->createBuffer();
-			bf->load( argv[i] );
+			bf = factory->createBuffer(argv[ i ]);
 		}
 	if ( !hasatleastone )
 		factory->createBuffer();

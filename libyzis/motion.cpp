@@ -1,4 +1,4 @@
-#include "yz_motion.h"
+#include "motion.h"
 
 YZMotion::YZMotion() : QRegExp() {
 

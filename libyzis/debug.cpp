@@ -1,4 +1,4 @@
-#include "yz_debug.h"
+#include "debug.h"
 #include <qstringlist.h>
 #include <ctype.h>
 

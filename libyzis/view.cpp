@@ -4,8 +4,8 @@
 
 #include <cstdlib>
 #include <ctype.h>
-#include "yz_view.h"
-#include "yz_debug.h"
+#include "view.h"
+#include "debug.h"
 #include <qkeysequence.h>
 
 //initialise view IDs counter (static)

@@ -9,13 +9,13 @@
 #include <kaboutdata.h>
 #include <assert.h>
 #include <unistd.h>
-
 #include <kapplication.h>
-#include "kyzis_factory.h"
-#include "kyzisdoc.h"
-#include "kyzisview.h"
-#include "yz_session.h"
-#include "yz_debug.h"
+
+#include "factory.h"
+#include "document.h"
+#include "viewwidget.h"
+#include "session.h"
+#include "debug.h"
 
 YZSession *KYZisFactory::sess = 0;
 KYZisView *KYZisFactory::currentView=0;
@@ -205,4 +205,4 @@ void KYZisFactory::setCurrentBuffer( YZBuffer* buffer ) {
 	currentDoc = static_cast<KYZisDoc*>( buffer );
 }
 
-#include "kyzis_factory.moc"
+#include "factory.moc"

@@ -1,7 +1,7 @@
 #ifndef KYZISCOMMAND_H
 #define KYZISCOMMAND_H
 
-#include "kyzisview.h"
+#include "viewwidget.h"
 #include <klineedit.h>
 
 class KYZisView;

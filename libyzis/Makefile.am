@@ -3,6 +3,6 @@ SUBDIRS = . $(YZIS_SUBDIRS)
 INCLUDES = $(YZIS_INCLUDES)
 noinst_LTLIBRARIES = libyzis.la
 
-libyzis_la_SOURCES = yz_buffer.cpp yz_view.cpp yz_events.cpp yz_session.cpp yz_cursor.cpp yz_commands.cpp yz_motion.cpp yz_motionpool.cpp yz_ex_executor.cpp yz_debug.cpp
+libyzis_la_SOURCES = buffer.cpp view.cpp events.cpp session.cpp cursor.cpp commands.cpp motion.cpp motionpool.cpp ex_executor.cpp debug.cpp
 
 re : clean all

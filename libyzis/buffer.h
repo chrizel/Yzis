@@ -7,8 +7,8 @@
 #include <qstringlist.h>
 #include <qptrlist.h>
 #include "yzis.h"
-#include "yz_motion.h"
-#include "yz_session.h"
+#include "motion.h"
+#include "session.h"
 
 class YZView;
 

@@ -2,7 +2,7 @@
  * $Id$
  */
 
-#include "yz_cursor.h"
+#include "cursor.h"
 
 YZCursor::YZCursor(YZView *vp) {
 	parentView=vp;

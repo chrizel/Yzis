@@ -1,12 +1,12 @@
 /**
  * $Id$
  */
-#include "kyzisview.h"
-#include "kyzis_factory.h"
+#include "viewwidget.h"
+#include "factory.h"
 #include <qlayout.h>
 #include <qevent.h>
 #include <kapplication.h>
-#include "yz_debug.h"
+#include "debug.h"
 
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::sess, 10)
@@ -44,4 +44,4 @@ KYZisView::~KYZisView () {
 	if ( buffer ) buffer->removeView(this);
 	KYZisFactory::deregisterView( this );
 }
-#include "kyzisview.moc"
+#include "viewwidget.moc"

@@ -5,7 +5,7 @@
 #ifndef YZIS_CURSOR
 #define YZIS_CURSOR
 
-#include "yz_view.h"
+#include "view.h"
 
 /**
  * This class handles the cursor information.

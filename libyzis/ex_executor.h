@@ -1,7 +1,7 @@
 #ifndef YZ_EX_EXECUTOR
 #define YZ_EX_EXECUTOR
 
-#include "yz_view.h"
+#include "view.h"
 
 /**
  * Entry point to execute Ex functions

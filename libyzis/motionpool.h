@@ -1,7 +1,7 @@
 #ifndef YZ_MOTIONPOOL
 #define YZ_MOTIONPOOL
 
-#include "yz_motion.h"
+#include "motion.h"
 #include <qmap.h>
 
 /**

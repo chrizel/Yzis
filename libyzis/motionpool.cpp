@@ -1,4 +1,4 @@
-#include "yz_motionpool.h"
+#include "motionpool.h"
 
 YZMotionPool::YZMotionPool(){
 }

@@ -2,7 +2,7 @@
  * $Id$
  */
 
-#include "yz_events.h"
+#include "events.h"
 
 YZEvent::YZEvent() {
 }

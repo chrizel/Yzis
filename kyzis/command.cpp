@@ -2,8 +2,8 @@
  * $Id: kyzisedit.cpp 218 2003-05-29 23:06:22Z mikmak $
  */
 
-#include "kyziscommand.h"
-#include "yz_debug.h"
+#include "command.h"
+#include "debug.h"
 
 KYZisCommand::KYZisCommand(KYZisView *parent, const char *name)
 	: KLineEdit( parent, name ) {
@@ -22,4 +22,4 @@ void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 	KLineEdit::keyPressEvent( e );
 }
 
-#include "kyziscommand.moc"
+#include "command.moc"

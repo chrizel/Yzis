@@ -2,10 +2,10 @@
  * $Id$
  */
 
-#include "kyzisdoc.h"
-#include "kyzisview.h"
-#include "kyzis_factory.h"
-#include "yz_debug.h"
+#include "document.h"
+#include "viewwidget.h"
+#include "factory.h"
+#include "debug.h"
 
 KYZisDoc::KYZisDoc (QWidget *parentWidget, const char * /*widgetName*/, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::sess,QString::null) {
@@ -48,4 +48,4 @@ bool KYZisDoc::saveFile () {
 	return true;
 }
 
-#include "kyzisdoc.moc"
+#include "document.moc"

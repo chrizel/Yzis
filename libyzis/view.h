@@ -5,8 +5,8 @@
  */
 
 
-#include "yz_buffer.h"
-#include "yz_cursor.h"
+#include "buffer.h"
+#include "cursor.h"
 #include "gui.h"
 
 class YZCursor;

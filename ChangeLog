@@ -1,3 +1,8 @@
+2003-10-31 mikmak
+  Happy Halloween ;)
+  * all
+    renamed all source files to remove yz_ and kyzis_ and nyz_ prefix
+
 2003-10-30 mikmak
   * kyzis
     moved pics to a subdir

@@ -2,8 +2,8 @@
  * $Id$
  */
 
-#include "kyzisedit.h"
-#include "yz_debug.h"
+#include "editor.h"
+#include "debug.h"
 #include "yzis.h"
 
 	KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
@@ -92,4 +92,4 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 	drawCursorAt(cursorx,cursory);
 }
 
-#include "kyzisedit.moc"
+#include "editor.moc"

@@ -9,12 +9,12 @@
  * A buffer owns the views
  */
 
-#include "yz_events.h"
+#include "events.h"
 #include "gui.h"
-#include "yz_buffer.h"
-#include "yz_view.h"
-#include "yz_commands.h"
-#include "yz_motionpool.h"
+#include "buffer.h"
+#include "view.h"
+#include "commands.h"
+#include "motionpool.h"
 
 class YZView;
 class Gui;

@@ -2,12 +2,12 @@
 #define KYZISVIEW_H
 
 #include <ktexteditor/view.h>
-#include "kyzisdoc.h"
-#include "kyzisedit.h"
-#include <yz_view.h>
 #include <kstatusbar.h>
 #include <qevent.h>
-#include "kyziscommand.h"
+#include "document.h"
+#include "editor.h"
+#include "viewwidget.h"
+#include "command.h"
 
 class KYZisEdit;
 class KYZisCommand;

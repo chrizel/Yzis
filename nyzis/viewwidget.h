@@ -7,7 +7,7 @@
  * ncurses-based GUI for yzis
  */
 
-#include "yz_view.h"
+#include "view.h"
 #include <curses.h>
 #include <qstringlist.h>
 #include <qmap.h>

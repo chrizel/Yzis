@@ -2,7 +2,7 @@
  * $Id$
  */
 
-#include "nyz_session.h"
+#include "factory.h"
 
 NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	:YZSession(_session_name)

@@ -2,10 +2,10 @@
  * $Id$
  */
 
-#include "nyz_view.h"
-#include "nyz_session.h"
 #include <qnamespace.h>
 #include <ctype.h>
+#include "viewwidget.h"
+#include "factory.h"
 
 NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b)
 	: YZView(b,_session,0)

@@ -1,7 +1,7 @@
 #ifndef KYZISEDIT_H
 #define KYZISEDIT_H
 
-#include "kyzisview.h"
+#include "viewwidget.h"
 #include <qscrollview.h>
 #include <qpainter.h>
 #include <qevent.h>

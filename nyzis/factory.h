@@ -4,10 +4,10 @@
  * NYZSession - Ncurses main class for the whole session
  */
 
-#include "yz_session.h"
-#include "nyz_view.h"
-#include "gui.h"
+#include "viewwidget.h"
 #include <curses.h>
+#include "factory.h"
+#include "gui.h"
 
 
 #define NYZ_VIEW_MAX 300

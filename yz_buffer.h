@@ -31,7 +31,7 @@ protected:
 	/* locking stuff will be here, too */
 };
 
-#endif
+#endif // __cplusplus
 
 
 
@@ -41,7 +41,7 @@ protected:
 
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif // __cplusplus
 
 
 typedef int *yz_buffer;
@@ -65,7 +65,7 @@ void buffer_chgchar(yz_buffer , int x, int y, unicode_char_t c);
 
 #ifdef __cplusplus
 }
-#endif
+#endif // __cplusplus
 
 
 #endif //  YZ_BUFFER_H

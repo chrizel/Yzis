@@ -44,9 +44,10 @@ YZExRange::YZExRange( const QString& regexp, ExRangeMethod pm ) {
 	mPoolMethod = pm;
 	mRegexp = QRegExp( "^(" + mKeySeq + ")([+\\-]\\d*)?(.*)$" );
 }
-YZExCommand::YZExCommand( const QString& input, ExPoolMethod pm, bool word ) {
+YZExCommand::YZExCommand( const QString& input, ExPoolMethod pm, const QStringList& longName, bool word ) {
 	mKeySeq = input;
 	mPoolMethod = pm;
+	mLongName = longName;
 	if ( word ) {
 		mRegexp = QRegExp( "^(" + mKeySeq + ")(\\b.*)?$" );
 	} else {
@@ -77,24 +78,24 @@ void YZExCommandPool::initPool() {
 
 	// commands
 	commands.append( new YZExCommand( "(x|wq?)(a(ll)?)?", &YZExCommandPool::write ) );
-	commands.append( new YZExCommand( "w(rite)?", &YZExCommandPool::write ) );
-	commands.append( new YZExCommand( "q(uit|a(ll)?)?", &YZExCommandPool::quit ) );
-	commands.append( new YZExCommand( "bn(ext)?", &YZExCommandPool::buffernext ) );
-	commands.append( new YZExCommand( "bp(revious)?", &YZExCommandPool::bufferprevious ) );
-	commands.append( new YZExCommand( "bd(elete)?", &YZExCommandPool::bufferdelete ) );
-	commands.append( new YZExCommand( "e(dit)?", &YZExCommandPool::edit ) );
-	commands.append( new YZExCommand( "mkyzisrc", &YZExCommandPool::mkyzisrc ) );
-	commands.append( new YZExCommand( "setlocal", &YZExCommandPool::setlocal ) );
-	commands.append( new YZExCommand( "set", &YZExCommandPool::set ) );
-	commands.append( new YZExCommand( "s(ubstitute)?", &YZExCommandPool::substitute ) );
-	commands.append( new YZExCommand( "hardcopy", &YZExCommandPool::hardcopy ) );
-	commands.append( new YZExCommand( "open", &YZExCommandPool::gotoOpenMode ) );
-	commands.append( new YZExCommand( "visual", &YZExCommandPool::gotoCommandMode ) );
-	commands.append( new YZExCommand( "preserve", &YZExCommandPool::preserve ) );
-	commands.append( new YZExCommand( "lua", &YZExCommandPool::lua ) );
-	commands.append( new YZExCommand( "source", &YZExCommandPool::source ) );
-	commands.append( new YZExCommand( "map", &YZExCommandPool::map ) );
-	commands.append( new YZExCommand( "imap", &YZExCommandPool::imap ) );
+	commands.append( new YZExCommand( "w(rite)?", &YZExCommandPool::write , "write" ));
+	commands.append( new YZExCommand( "q(uit|a(ll)?)?", &YZExCommandPool::quit, QStringList::split(":","quit:qall") ) );
+	commands.append( new YZExCommand( "bn(ext)?", &YZExCommandPool::buffernext, "bnext" ) );
+	commands.append( new YZExCommand( "bp(revious)?", &YZExCommandPool::bufferprevious, "bprevious" ) );
+	commands.append( new YZExCommand( "bd(elete)?", &YZExCommandPool::bufferdelete, "bdelete" ) );
+	commands.append( new YZExCommand( "e(dit)?", &YZExCommandPool::edit, "edit" ) );
+	commands.append( new YZExCommand( "mkyzisrc", &YZExCommandPool::mkyzisrc, "mkyzisrc" ) );
+	commands.append( new YZExCommand( "setlocal", &YZExCommandPool::setlocal, "setlocal" ) );
+	commands.append( new YZExCommand( "set", &YZExCommandPool::set, "set" ) );
+	commands.append( new YZExCommand( "s(ubstitute)?", &YZExCommandPool::substitute, "substitute" ) );
+	commands.append( new YZExCommand( "hardcopy", &YZExCommandPool::hardcopy, "hardcopy" ) );
+	commands.append( new YZExCommand( "open", &YZExCommandPool::gotoOpenMode, "open" ) );
+	commands.append( new YZExCommand( "visual", &YZExCommandPool::gotoCommandMode, "visual" ) );
+	commands.append( new YZExCommand( "preserve", &YZExCommandPool::preserve, "preserve" ) );
+	commands.append( new YZExCommand( "lua", &YZExCommandPool::lua, "lua" ) );
+	commands.append( new YZExCommand( "source", &YZExCommandPool::source, "source" ) );
+	commands.append( new YZExCommand( "map", &YZExCommandPool::map, "map" ) );
+	commands.append( new YZExCommand( "imap", &YZExCommandPool::imap, "imap" ) );
 	commands.append( new YZExCommand( "[<>]", &YZExCommandPool::indent, false ));
 }
 

@@ -868,7 +868,7 @@ QString YZCommandPool::searchPrev(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::del(const YZCommandArgs &args) {
-	bool entireLines =  ( args.arg.length() > 0 && args.arg[ 0 ] == "'" ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
+	bool entireLines = ( args.arg.length() > 0 && args.arg[ 0 ] == "'" ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
 	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL )
 		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
 	else if ( entireLines ) {

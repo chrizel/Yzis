@@ -537,12 +537,12 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				cmd_state state=mSession->getPool()->execCommand(this, mapped);
 				switch(state) {
 					case CMD_ERROR:
-						yzDebug() << "Error" << endl;
+//						yzDebug() << "Error" << endl;
 					case CMD_OK:
 						purgeInputBuffer();
 						break;
 					case OPERATOR_PENDING:
-						yzDebug() << "Pending" << endl;
+	//					yzDebug() << "Pending" << endl;
 						mapMode = pendingop;
 					default:
 						break;

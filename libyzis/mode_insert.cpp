@@ -315,8 +315,7 @@ cmd_state YZModeCompletion::execCommand( YZView* mView, const QString& _key ) {
 	} else if ( _key == "<ESC>" ) {
 		mBuffer->action()->replaceText(mView, *m_completionStart, cur.getX()-m_completionStart->getX(), mView->m_word2Complete);
 		mView->gotoxy(m_completionStart->getX()+mView->m_word2Complete.length(),cur.getY());
-		mView->modePool()->pop();
-		mView->modePool()->push( YZMode::MODE_COMMAND );
+		mView->modePool()->pop( YZMode::MODE_COMMAND );
 		return CMD_OK;
 
 	} else {

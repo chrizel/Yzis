@@ -97,7 +97,7 @@ void Kyzis::setupActions() {
 	KStdAction::openNew(this, SLOT(fileNew()), actionCollection())->setShortcut(KShortcut::null());
 	KStdAction::open(this, SLOT(fileOpen()), actionCollection());
 
-	KStdAction::quit(kapp, SLOT(quit()), actionCollection());
+	KStdAction::quit(this, SLOT(fileQuit()), actionCollection());
 
 	KStdAction::preferences(this, SLOT(preferences()), actionCollection());
 
@@ -160,6 +160,11 @@ void Kyzis::optionsConfigureToolbars() {
 
 void Kyzis::applyNewToolbarConfig() {
 	applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
+}
+
+void Kyzis::fileQuit()
+{
+    close();
 }
 
 void Kyzis::fileOpen() {

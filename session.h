@@ -163,7 +163,7 @@ class YZSession {
 		/**
 		 * Prompt a Yes/No question for the user
 		 */
-		virtual bool prompt(const QString& title, const QString& message) = 0;
+		virtual bool promptYesNo(const QString& title, const QString& message) = 0;
 
 		/**
 		 * Creates a new buffer

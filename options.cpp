@@ -132,11 +132,13 @@ void YZOption::init() {
 	KOption *number = new KOption("number","General", false, false, view_opt );
 	KOption *wrap = new KOption( "wrap", "General", false, false, view_opt );
 	KOption *backspace = new KOption( "backspace", "General", "eol", "eol", view_opt );
+	KOption *updatecount = new KOption( "updatecount", "General", "200", "200", buffer_opt );
 
 	mOptions[ "General\\tabwidth" ] = tabwidth;
 	mOptions[ "General\\number" ] = number;
 	mOptions[ "General\\wrap" ] = wrap;
 	mOptions[ "General\\backspace" ] = backspace;
+	mOptions[ "General\\updatecount" ] = updatecount;
 	setGroup("General");
 
 	//read config files now

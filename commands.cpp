@@ -790,8 +790,9 @@ QString YZCommandPool::gotoVisualMode(const YZCommandArgs &args) {
 
 QString YZCommandPool::insertLineAfter(const YZCommandArgs &args) {
 	unsigned int y = args.view->getBufferCursor()->getY();
-	for ( unsigned int i = 0 ; i < args.count ; i++ )
-		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y + i + 1 );
+	args.view->myBuffer()->action()->insertNewLine( args.view, args.view->myBuffer()->textline( y ).length(), y );
+	for ( unsigned int i = 1 ; i < args.count ; i++ )
+		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y + i );
 	args.view->gotoInsertMode();
 	args.view->commitNextUndo();
 	return QString::null;
@@ -800,7 +801,8 @@ QString YZCommandPool::insertLineAfter(const YZCommandArgs &args) {
 QString YZCommandPool::insertLineBefore(const YZCommandArgs &args) {
 	unsigned int y = args.view->getBufferCursor()->getY();
 	for ( unsigned int i = 0 ; i < args.count ; i++ )
-		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y - i );
+		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
+	args.view->moveUp();
 	args.view->gotoInsertMode();
 	args.view->commitNextUndo();
 	return QString::null;

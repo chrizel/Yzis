@@ -101,7 +101,7 @@ void YZAction::appendLine( YZView* pView, const QString& text ) {
 void YZAction::insertNewLine( YZView* pView, const YZCursor& pos ) {
 	CONFIGURE_VIEWS;
 	mBuffer->insertNewLine( pos.getX(), pos.getY() );
-	pView->moveXY( 0, pos.getY() );
+	pView->moveXY( 0, pos.getY() + 1 );
 	COMMIT_VIEWS_CHANGES;
 }
 
@@ -115,7 +115,7 @@ void YZAction::replaceLine( YZView* pView, const YZCursor& pos, const QString &t
 void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &text ) {
 	CONFIGURE_VIEWS;
 	mBuffer->insertLine( text, pos.getY() );
-	pView->moveXY( 0, pos.getY() );
+	pView->moveXY( text.length(), pos.getY() );
 	COMMIT_VIEWS_CHANGES;
 }
 

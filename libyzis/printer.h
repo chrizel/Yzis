@@ -18,7 +18,7 @@
  **/
 
 /**
- * $Id: $
+ * $Id$
  */
 
 #ifndef YZ_PRINTER_H

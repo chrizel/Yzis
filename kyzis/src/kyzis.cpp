@@ -56,6 +56,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	m_dockConfig( dockConfig ),
 	mBuffers( 0 ), mViews( 0 )
 {
+	setMinimumSize( 200, 200 );
 	mConsole = NULL;
 //	setToolviewStyle(KMultiTabBar::KDEV3ICON);
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
@@ -73,7 +74,13 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	createShellGUI( true );
 	setWindowMenu();
 
-	setAutoSaveSettings();
+	//setAutoSaveSettings();
+	// call it as last thing, must be sure everything is already set up ;)
+	setAutoSaveSettings ("MainWindow Settings");
+
+	// init with more usefull size, stolen from konq :)
+	if ( !initialGeometrySet() && !kapp->config()->hasGroup("MainWindow Settings"))
+		resize( 700, 480 );
 
 }
 

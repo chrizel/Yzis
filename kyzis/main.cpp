@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
 
 		Kyzis *widget = new Kyzis(dockConfig,KMdi::IDEAlMode);
 		widget->show();
-//		widget->resize( 600,400 );
+
 		if ( args->count() == 0 ) {
 			widget->createBuffer();
 		} else {

@@ -201,6 +201,7 @@ void YZInternalOptionPool::init() {
 	options.append(new YZOptionInteger("tabstop",8, CXT_VIEW,local_scope, &recalcView, QStringList("ts"), 1));
 	options.append(new YZOptionInteger("updatecount",200, CXT_SESSION,global_scope, &doNothing, QStringList("uc"), 1));
 	options.append(new YZOptionBoolean("wrap",true, CXT_VIEW,local_scope, &recalcView, QStringList()));
+	options.append(new YZOptionBoolean("startofline",true, CXT_VIEW,local_scope, &doNothing, QStringList("sol")));
 
 	for( unsigned int i = 0; i < options.size(); i++ ) {
 		mOptions[ "Global\\"+options[i]->name() ] = new YZOptionValue( *options[i]->defaultValue() );

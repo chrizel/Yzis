@@ -111,7 +111,8 @@ void YZModeCommand::initMotionPool() {
 	commands.append( new YZMotion("<ENTER>", &YZModeCommand::firstNonBlankNextLine, ARG_NONE) );
 	commands.append( new YZMotion("gg", &YZModeCommand::gotoLine, ARG_NONE) );
 	commands.append( new YZMotion("G", &YZModeCommand::gotoLine, ARG_NONE) );
-	commands.append( new YZMotion("{", &YZModeCommand::nextBracket, ARG_NONE) );
+	commands.append( new YZMotion("{", &YZModeCommand::nextEmptyLine, ARG_NONE) );
+	commands.append( new YZMotion("}", &YZModeCommand::previousEmptyLine, ARG_NONE) );
 }
 void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("I", &YZModeCommand::insertAtSOL) );
@@ -596,17 +597,36 @@ void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
 	}
 }
 
-YZCursor YZModeCommand::nextBracket(const YZMotionArgs &args) {
+YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 	YZCursor from = *args.view->getBufferCursor();
-	YZViewCursor viewCursor = args.view->viewCursor();
+	unsigned int start = from.y();
 	bool found = false;
-	YZCursor pos = YZSession::me->search()->forward( args.view, "^$" , &found, &from );
-	if ( found ) {
-		if ( args.standalone ) 
-			args.view->gotoxyAndStick( &pos );
-		return pos;
+	while ( start >= 1 && !found ) {
+		if (args.view->myBuffer()->yzline(start-1)->data() == "" ) {
+			found = true;
+		} else {
+			start--;	
+		}
 	}
-	return pos;
+	if (found)
+		return YZCursor(0,start-1);
+	return from;
+}
+
+YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
+	YZCursor from = *args.view->getBufferCursor();
+	unsigned int start = from.y()+1;
+	bool found = false;
+	while ( start < args.view->myBuffer()->lineCount() && !found ) {
+		if (args.view->myBuffer()->yzline(start)->data() == "" ) {
+			found = true;
+		} else {
+			start++;	
+		}
+	}
+	if (found)
+		return YZCursor(0,start);
+	return from;
 }
 
 YZCursor YZModeCommand::matchPair(const YZMotionArgs &args) {

@@ -267,7 +267,7 @@ public:
 	YZView* findView(unsigned int uid);
 
 	// ------------ Undo
-	YZUndoBuffer * undoBuffer() { return mUndoBuffer; }
+	YZUndoBuffer * undoBuffer() const { return mUndoBuffer; }
 
 	// Action
 	YZAction* action() { return mAction; }

@@ -26,6 +26,7 @@ using namespace std;
 #include "PhilAsserts.h"
 
 #include "libyzis/line.h"
+#include "libyzis/debug.h"
 
 /* ========================================================================= */
 
@@ -153,13 +154,86 @@ void TestYZBuffer::testLineMethods()
     phCheckEquals( mBuf->data( 3 ), s1 );
 }
 
+void TestYZBuffer::testGetWholeText()
+{
+    QString s1 = "0123456789";
+    QString s2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    QString tmp;
+
+    phCheckEquals( mBuf->lineCount(), 1 );
+    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->getWholeText(), "" );
+
+    mBuf->addLine( s1 );
+    mBuf->addLine( s2 );
+    phCheckEquals( mBuf->lineCount(), 3 );
+    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->data( 1 ), s1 );
+    phCheckEquals( mBuf->getWholeText(), "\n" + s1 + "\n" + s2 );
+}
+
 void TestYZBuffer::testCharMethods()
 {
+    // what happens with an empty buffer ?
+    QString s1 = "0123456789";
+    QString s2 = "ABCD";
+    QString text = "";
+
+    phCheckEquals( mBuf->lineCount(), 1 );
+    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->getWholeText(), text );
+
+    // what happens if I delete a line that does not exist ?
+    mBuf->addChar( 10, 10, QString("Z") );
+    phCheckEquals( mBuf->getWholeText(), text );
+
+    mBuf->chgChar( 10, 10, QString("Z") );
+    phCheckEquals( mBuf->getWholeText(), text );
+
+    mBuf->delChar( 10, 10, 1 );
+    phCheckEquals( mBuf->getWholeText(), text );
+
+    mBuf->addLine( s1 );
+    mBuf->addLine( s2 );
+    mBuf->deleteLine( 0 );
+    text = s1 + "\n" + s2;
+    phCheckEquals( mBuf->getWholeText(), text );
+
+    // add/delete/chg char on a non existent column
+    mBuf->addChar( 11, 0, QString("Z") );
+    phCheckEquals( mBuf->getWholeText(), text );
+    mBuf->chgChar( 10, 0, QString("Z") );
+    phCheckEquals( mBuf->getWholeText(), text );
+    mBuf->delChar( 10, 0, 1 );
+    phCheckEquals( mBuf->getWholeText(), text );
+
+    // now the test on the real feature
+    mBuf->addChar( 10, 0, QString("Z") );
+    mBuf->addChar( 0, 0, QString("Z") );
+    phCheckEquals( mBuf->data(0), "Z0123456789Z" );
+
+    mBuf->chgChar( 0, 1, QString("Z") );
+    mBuf->chgChar( 3, 1, QString("Z") );
+    phCheckEquals( mBuf->data(1), "ZBCZ" );
+
+    mBuf->delChar( 0, 0, 1 );
+    mBuf->delChar( 10, 0, 1 );
+    phCheckEquals( mBuf->data(0), "0123456789" );
+
+    mBuf->delChar( 1, 1, 10 );
+    phCheckEquals( mBuf->data(1), "Z" );
 }
 
 void TestYZBuffer::testViewAllocation()
 {
 
+}
+
+void TestYZBuffer::testAssertion()
+{
+    YZASSERT( 1 , "*** ASSERTION_ERROR ***, ASSERTION SYSTEM NOT WORKING" );
+    YZASSERT( 1 + 2 + 3 + 4 / 2 == 0,"Ok, assertion system is working" );
+    YZASSERT( "true" == "false", "Ok, assertion system is working" );
 }
 
 

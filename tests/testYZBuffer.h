@@ -41,7 +41,9 @@ public:
     CPPUNIT_TEST( testCreateEmptyBuffer );
     CPPUNIT_TEST( testLineMethods );
     CPPUNIT_TEST( testCharMethods );
+    CPPUNIT_TEST( testGetWholeText );
     CPPUNIT_TEST( testViewAllocation );
+    CPPUNIT_TEST( testAssertion );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -49,6 +51,8 @@ public:
     void testLineMethods();
     void testCharMethods();
 	void testViewAllocation();
+    void testGetWholeText();
+    void testAssertion();
 
 protected:
     YZSession * mSession;

@@ -1851,7 +1851,7 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 
 const QColor& YZView::drawColor ( ) {
 	YzisAttribute hl;
-	YzisAttribute * curAt = ( !rHLnoAttribs && (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	YzisAttribute * curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 	if ( curAt ) hl += * curAt;
 
 	if ( listChar ) return blue;

@@ -64,7 +64,7 @@ QString YZExExecutor::buffernext( YZView *view, const QString& ) {
 	if ( v )
 		view->mySession()->setCurrentView(v);
 	else 
-		view->displayInfo("No next buffer");
+		view->mySession()->popupMessage("No next buffer");
 	return QString::null;
 }
 
@@ -75,7 +75,7 @@ QString YZExExecutor::bufferprevious ( YZView *view, const QString& ) {
 	if ( v )
 		view->mySession()->setCurrentView(v);
 	else 
-		view->displayInfo("No previous buffer");
+		view->mySession()->popupMessage("No previous buffer");
 
 	return QString::null;
 }

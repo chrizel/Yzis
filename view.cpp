@@ -57,11 +57,6 @@ YZView::~YZView() {
 	mBuffer->rmView(this); //make my buffer forget about me
 }
 
-void YZView::detach()
-{
-	mBuffer->detach();
-}
-
 void YZView::setVisibleArea(int c, int l) {
 	yzDebug() << "setVisibleArea : " << c << " " << l << endl;
 	mLinesVis = l;

@@ -1128,14 +1128,18 @@ YzisHighlighting::YzisHighlighting(const YzisSyntaxModeListItem *def) : refCount
   if (def == 0)
   {
     noHl = true;
-    iName = "None";
+    iName = "None"; // not translated internal name (for config and more)
+    //iNameTranslated = i18n("None"); // user visible name
     iSection = "";
     m_priority = 0;
+    iHidden = false;
   }
   else
   {
     iName = def->name;
+    iNameTranslated = def->nameTranslated;
     iSection = def->section;
+    iHidden = def->hidden;
     iWildcards = def->extension;
     iMimetypes = def->mimetype;
     identifier = def->identifier;
@@ -1451,8 +1455,6 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
       }
     }
 
-    lastChar = text[offset1];
-
     // nothing found: set attribute of one char
     // anders: unless this context does not want that!
     if (!found)
@@ -1480,6 +1482,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
     // dominik: do not change offset if we look ahead
     if (!(item && item->lookAhead))
     {
+      lastChar = text[offset1];
       offset1++;
       z++;
     }
@@ -1702,6 +1705,7 @@ void YzisHighlighting::done()
     return;
 
   contextList.clear ();
+  internalIDList.clear();
 }
 
 /**
@@ -1958,12 +1962,17 @@ int YzisHighlighting::hlKeyForAttrib( int attrib ) const
  
 bool YzisHighlighting::isInWord( QChar c, int attrib ) const
 {
-  int k = hlKeyForAttrib( attrib );
-  static const QString sq(" \"'");
-  return m_additionalData[k][3].find(c) < 0 && sq.find(c) < 0;
+  static const QString& sq = " \"'";
+  return getCommentString(3, attrib).find(c) < 0 && sq.find(c) < 0;
 }
 
-bool YzisHighlighting::canComment( int startAttrib, int endAttrib )
+bool YzisHighlighting::canBreakAt( QChar c, int attrib ) const
+{
+  static const QString& sq = "\"'";
+  return (getCommentString(4, attrib).find(c) != -1) && (sq.find(c) == -1);
+}
+
+bool YzisHighlighting::canComment( int startAttrib, int endAttrib ) const
 {
   int k = hlKeyForAttrib( startAttrib );
   return ( k == hlKeyForAttrib( endAttrib ) &&
@@ -1974,7 +1983,8 @@ bool YzisHighlighting::canComment( int startAttrib, int endAttrib )
 QString YzisHighlighting::getCommentString( int which, int attrib ) const
 {
   int k = hlKeyForAttrib( attrib );
-  return m_additionalData[k][which];
+  const QStringList& lst = m_additionalData[k];
+  return lst.isEmpty() ? QString::null : lst[which];
 }
 
 QString YzisHighlighting::getCommentStart( int attrib ) const
@@ -2090,6 +2100,42 @@ QString YzisHighlighting::readGlobalKeywordConfig()
   yzDebug("HL")<<"delimiterCharacters are: "<<deliminator<<endl;
 
   return deliminator; // FIXME un-globalize
+}
+
+/**
+ * Helper for makeContextList. It parses the xml file for any wordwrap deliminators, characters
+ * at which line can be broken. In case no keyword tag is found in the xml file,
+ * the wordwrap deliminators list defaults to the standard denominators. In case a keyword tag
+ * is defined, but no wordWrapDeliminator attribute is specified, the deliminator list as computed
+ * in readGlobalKeywordConfig is used.
+ *
+ * @return the computed delimiter string.
+ */
+QString YzisHighlighting::readWordWrapConfig()
+{
+  // Tell the syntax document class which file we want to parse
+  yzDebug()<<"readWordWrapConfig:BEGIN"<<endl;
+
+  YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
+  YzisSyntaxContextData *data = YzisHlManager::self()->syntax->getConfig("general","keywords");
+
+  QString wordWrapDeliminator = stdDeliminator;
+  if (data)
+  {
+    yzDebug()<<"Found global keyword config"<<endl;
+
+    wordWrapDeliminator = (YzisHlManager::self()->syntax->groupItemData(data,QString("wordWrapDeliminator")));
+    //when no wordWrapDeliminator is defined use the deliminator list
+    if ( wordWrapDeliminator.length() == 0 ) wordWrapDeliminator = deliminator;
+
+    yzDebug() << "word wrap deliminators are " << wordWrapDeliminator << endl;
+
+    YzisHlManager::self()->syntax->freeGroupInfo(data);
+  }
+
+  yzDebug()<<"readWordWrapConfig:END"<<endl;
+
+  return wordWrapDeliminator; // FIXME un-globalize
 }
 
 void YzisHighlighting::readFoldingConfig()
@@ -2429,6 +2475,8 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   // all the attribs added in a moment will be in the correct range
   QStringList additionaldata = readCommentConfig();
   additionaldata << readGlobalKeywordConfig();
+  additionaldata << readWordWrapConfig();
+
   readFoldingConfig ();
 
   m_additionalData.insert( internalIDList.count(), additionaldata );
@@ -2702,8 +2750,8 @@ YzisHlManager::YzisHlManager()
       if (insert == hlList.count())
         break;
 
-      if ( QString(hlList.at(insert)->section() + hlList.at(insert)->name()).lower()
-            > QString(hl->section() + hl->name()).lower() )
+      if ( QString(hlList.at(insert)->section() + hlList.at(insert)->nameTranslated()).lower()
+            > QString(hl->section() + hl->nameTranslated()).lower() )
         break;
     }
 
@@ -3004,9 +3052,9 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 
   YzisAttribute* alert = new YzisAttribute();
   alert->setTextColor(Qt::white);
-  alert->setSelectedTextColor(Qt::red);
+  alert->setSelectedTextColor( QColor::QColor("#FCC") );
   alert->setBold(true);
-  alert->setBGColor(Qt::red);
+  alert->setBGColor( QColor::QColor("#FCC") );
   list.append(alert);
 
   YzisAttribute* functionAttribute = new YzisAttribute();
@@ -3100,9 +3148,19 @@ QString YzisHlManager::hlName(int n)
   return hlList.at(n)->name();
 }
 
+QString YzisHlManager::hlNameTranslated(int n)
+{
+  return hlList.at(n)->nameTranslated();
+}
+
 QString YzisHlManager::hlSection(int n)
 {
   return hlList.at(n)->section();
+}
+
+bool YzisHlManager::hlHidden(int n)
+{
+  return hlList.at(n)->hidden();
 }
 
 QString YzisHlManager::identifierForName(const QString& name)
@@ -3155,27 +3213,30 @@ void YzisViewHighlightAction::slotAboutToShow()
 
   for (int z=0; z<count; z++)
   {
-    QString hlName = YzisHlManager::self()->hlName (z);
+    QString hlName = YzisHlManager::self()->hlNameTranslated (z);
     QString hlSection = YzisHlManager::self()->hlSection (z);
 
-    if ( !hlSection.isEmpty() && (names.contains(hlName) < 1) )
+    if (!YzisHlManager::self()->hlHidden(z))
     {
-      if (subMenusName.contains(hlSection) < 1)
+      if ( !hlSection.isEmpty() && (names.contains(hlName) < 1) )
       {
-        subMenusName << hlSection;
-        QPopupMenu *menu = new QPopupMenu ();
-        subMenus.append(menu);
-        popupMenu()->insertItem (hlSection, menu);
-      }
+        if (subMenusName.contains(hlSection) < 1)
+        {
+          subMenusName << hlSection;
+          QPopupMenu *menu = new QPopupMenu ();
+          subMenus.append(menu);
+          popupMenu()->insertItem (hlSection, menu);
+        }
 
-      int m = subMenusName.findIndex (hlSection);
-      names << hlName;
-      subMenus.at(m)->insertItem ( hlName, this, SLOT(setHl(int)), 0,  z);
-    }
-    else if (names.contains(hlName) < 1)
-    {
-      names << hlName;
-      popupMenu()->insertItem ( hlName, this, SLOT(setHl(int)), 0,  z);
+        int m = subMenusName.findIndex (hlSection);
+        names << hlName;
+        subMenus.at(m)->insertItem ( hlName, this, SLOT(setHl(int)), 0,  z);
+      }
+      else if (names.contains(hlName) < 1)
+      {
+        names << hlName;
+        popupMenu()->insertItem ( hlName, this, SLOT(setHl(int)), 0,  z);
+      }
     }
   }
 

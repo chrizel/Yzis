@@ -129,22 +129,18 @@ class YzisHighlighting
     // keep track that you delete them, or mem will be lost
     void getYzisHlItemDataListCopy (uint schema, YzisHlItemDataList &);
 
-    inline QString name() const {return iName;}
-    inline QString section() const {return iSection;}
-    inline QString version() const {return iVersion;}
-    QString author () const { return iAuthor; }
-    QString license () const { return iLicense; }
+    const QString &name() const {return iName;}
+    const QString &nameTranslated() const {return iNameTranslated;}
+    const QString &section() const {return iSection;}
+    bool hidden() const {return iHidden;}
+    const QString &version() const {return iVersion;}
+    const QString &author () const { return iAuthor; }
+    const QString &license () const { return iLicense; }
     int priority();
-    inline QString getIdentifier() const {return identifier;}
+    const QString &getIdentifier() const {return identifier;}
     void use();
     void release();
-    //bool isInWord(QChar c); // ### obsolete
 
-    // ### obsolete
-    // inline QString getCommentStart() const {return cmlStart;};
-    // inline QString getCommentEnd()  const {return cmlEnd;};
-    // inline QString getCommentSingleLineStart() const { return cslStart;};
- 
     /**
      * @return true if the character @p c is not a deliminator character
      *     for the corresponding highlight.
@@ -152,10 +148,16 @@ class YzisHighlighting
     bool isInWord( QChar c, int attrib=0 ) const;
 
     /**
+     * @return true if the character @p c is a wordwrap deliminator as specified
+     * in the general keyword section of the xml file.
+     */
+    bool canBreakAt( QChar c, int attrib=0 ) const;
+
+    /**
     * @return true if @p beginAttr and @p endAttr are members of the same
     * highlight, and there are comment markers of either type in that.
     */
-    bool canComment( int startAttr, int endAttr );
+    bool canComment( int startAttr, int endAttr ) const;
 
     /**
      * Define comment marker type.
@@ -209,6 +211,7 @@ class YzisHighlighting
     void addToYzisHlItemDataList();
     void createYzisHlItemData (YzisHlItemDataList &list);
     QString readGlobalKeywordConfig();
+    QString readWordWrapConfig();
     QStringList readCommentConfig();
     void readFoldingConfig ();
 
@@ -246,7 +249,9 @@ class YzisHighlighting
     QString deliminator;
 
     QString iName;
+    QString iNameTranslated;
     QString iSection;
+    bool iHidden;
     QString iWildcards;
     QString iMimetypes;
     QString identifier;
@@ -270,7 +275,8 @@ class YzisHighlighting
     QIntDict< QMemArray<YzisAttribute> > m_attributeArrays;
 
     /**
-     * This contains a list of comment data + the deliminator string pr highlight.
+     * This contains a list of comment data, the deliminator string and
+     * wordwrap deliminator pr highlight.
      * The key is the highlights entry position in internalIDList.
      * This is used to look up the correct comment and delimitor strings
      * based on the attrtibute.
@@ -322,7 +328,10 @@ class YzisHlManager : public QObject
 
     int highlights();
     QString hlName(int n);
+    QString hlNameTranslated (int n);
     QString hlSection(int n);
+    bool hlHidden(int n);
+
     void incDynamicCtxs() { ++dynamicCtxsCount; };
     uint countDynamicCtxs() { return dynamicCtxsCount; };
     void setForceNoDCReset(bool b) { forceNoDCReset = b; };

@@ -21,7 +21,7 @@
 /**
  * This file was originally taken from Kate, KDE editor
  * The copyrights follow below :
-   Copyright (C) 2003 Hamish Rodda <meddie@yoyo.its.monash.edu.au>
+   Copyright (C) 2003 Hamish Rodda <rodda@kde.org>
 */
 
 #include "attribute.h"

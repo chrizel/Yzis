@@ -153,6 +153,8 @@ public:
 	 */
 	void clearText();
 
+	void setText( QString* content );
+
 	/**
 	 * Finds a line in the buffer
 	 * @param line the line to search for

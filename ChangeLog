@@ -1,3 +1,7 @@
+2005-02-06 panard
+  * kyzis
+    add KTextEditor::EditInterface
+
 2005-02-01 mikmak
   * kyzis
     fix 2 similar crashes with 2 different sources. We are on the way to M3

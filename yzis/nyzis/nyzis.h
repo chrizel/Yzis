@@ -17,14 +17,14 @@ public:
 	  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
 	  * this view can display
 	  */
-	NYZView(YZBuffer *b, int lines) : YZView(b,lines) { }
+	NYZView(YZBuffer *b, int lines_vis) : YZView(b,lines_vis) { }
 
 	void event_loop();
 	void flush_events();
 
 protected:
 	void handle_event(yz_event *e);
-	YZLine	*lines[YZ_MAX_LINE];
+	YZLine	*local_lines[YZ_MAX_LINE];
 
 };
 

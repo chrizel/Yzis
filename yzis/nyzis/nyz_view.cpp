@@ -9,10 +9,12 @@ void NYZView::event_loop()
 {
 	/* event loop */
 	for (;;) {
+		int c;
 		/* this is a _basic_ event loop... will be improved */
+		c = getch();
+		if (c!=ERR)
+			send_char( c );
 		flush_events();
-		send_char( getch() );
-
 	}
 }
 	
@@ -28,13 +30,22 @@ void NYZView::flush_events(void)
 
 void NYZView::handle_event(yz_event *e)
 {
+	int l, i;
+	YZLine	*yzl;
+
 	if (!e) panic("oulalal c'est pas bon la..");
-	int l;
+
 	switch(e->id) {
 		case YZ_EV_SETLINE:
 			l = e->u.setline.y;
 			if (l<0 or l>=YZ_MAX_LINE) panic("Can't handle more than 3000 lines yet, kinda sucks, uh?");
-			lines[l] = e->u.setline.line;
+			yzl = local_lines[l] = e->u.setline.line;
+
+			/* not use addnstr here, will stop at \0  (i guess) */
+			for (i=0; i<yzl->len; i++)
+				addch(yzl->data[i]);
+
+//			refresh();
 			debug("YZ_EV_SETLINE: received, line is %d", l);
 			break;
 		case YZ_EV_SETCURSOR:

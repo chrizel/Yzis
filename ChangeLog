@@ -1,3 +1,7 @@
+2004-02-16 luci (new to Yzis, welcome luci :)
+  * libyzis
+    implement command history in EX mode
+    
 2004-02-08 mikmak
   * libyzis
     fix column count when line is empty

@@ -41,6 +41,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	if (!line.isNull()) mMaxX = line.length()-1;
 
 	mBuffer->addView(this);
+	mCurrentExItem = 0;
+	mExHistory.resize(200);
 }
 
 YZView::~YZView() {
@@ -158,15 +160,32 @@ void YZView::sendKey( int c, int modifiers) {
 			switch ( c ) {
 				case Qt::Key_Return:
 					yzDebug() << "Current command EX : " << mSession->mGUI->getCommandLineText();
+					if(mSession->mGUI->getCommandLineText().isEmpty())
+						return;
+
+					mExHistory[mCurrentExItem] = mSession->mGUI->getCommandLineText();
+					mCurrentExItem++;
 					mSession->getExPool()->execExCommand( this, mSession->mGUI->getCommandLineText() );
 					mSession->mGUI->setCommandLineText( "" );
 					mSession->mGUI->setFocusMainWindow();
 					gotoCommandMode();
 					return;
 				case Qt::Key_Down:
+					if(mExHistory[mCurrentExItem].isEmpty())
+						return;
+
+					mCurrentExItem++;
+					mSession->mGUI->setCommandLineText( mExHistory[mCurrentExItem] );
+					return;
 				case Qt::Key_Left:
 				case Qt::Key_Right:
+					return;
 				case Qt::Key_Up:
+					if(mCurrentExItem == 0)
+						return;
+
+					mCurrentExItem--;
+					mSession->mGUI->setCommandLineText( mExHistory[mCurrentExItem] );
 					return;
 				case Qt::Key_Escape:
 					mSession->mGUI->setCommandLineText( "" );
@@ -177,7 +196,11 @@ void YZView::sendKey( int c, int modifiers) {
 					//ignore for now
 					return;
 				case Qt::Key_Backspace:
+				{
+					QString back = mSession->mGUI->getCommandLineText();
+					mSession->mGUI->setCommandLineText(back.remove(back.length() - 1, 1));
 					return;
+				}
 				default:
 					mSession->mGUI->setCommandLineText( mSession->mGUI->getCommandLineText() + key );
 					return;

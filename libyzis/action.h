@@ -78,6 +78,7 @@ class YZAction {
 		void copyArea( YZView* pView, const YZCursor& begin,const YZCursor& end, const QList<QChar> &reg );
 		void copyArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg );
 #endif
+		void replaceArea( YZView* pView, const YZInterval& i, const QStringList& text );
 
 		void replaceLine( YZView* pView, const YZCursor& pos, const QString &text );
 		void replaceLine( YZView* pView, unsigned int Y, const QString &text );

@@ -5,5 +5,6 @@ Philippe Fremy <phil@freehackers.org>
 
 CONTRIBUTOS:
 Neil Stevens (buffer commands)
-Mathieu Kooiman (kyzis editinterface implementation)
-
+Mathieu Kooiman (kyzis ktexteditor implementation)
+Thomas Nagy (KDE icons)
+Lucijan Bush (command history for EX mode)

@@ -247,7 +247,7 @@ void NYZView::syncViewInfo( void )
 
 	wrefresh(infobar);
 
-	wmove(window, viewInformation.l-getCurrentTop() , viewInformation.c1 ) ;
+	wmove(window, viewInformation.l-getCurrentTop() , viewInformation.c2 ) ;
 	wrefresh( window );
 }
 

@@ -155,6 +155,7 @@ class YZExCommandPool {
 		QString map( const YZExCommandArgs& args );
 		QString imap( const YZExCommandArgs& args );
 		QString indent( const YZExCommandArgs& args );
+		QString enew( const YZExCommandArgs& args );
 };
 
 #endif

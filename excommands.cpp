@@ -97,6 +97,7 @@ void YZExCommandPool::initPool() {
 	commands.append( new YZExCommand( "map", &YZExCommandPool::map, "map" ) );
 	commands.append( new YZExCommand( "imap", &YZExCommandPool::imap, "imap" ) );
 	commands.append( new YZExCommand( "[<>]", &YZExCommandPool::indent, false ));
+	commands.append( new YZExCommand( "ene(w)?", &YZExCommandPool::enew, "enew" ));
 }
 
 QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -595,6 +596,11 @@ QString YZExCommandPool::indent( const YZExCommandArgs& args ) {
 		args.view->myBuffer()->action()->indentLine( args.view, i, count );
 	}
 	args.view->commitNextUndo();
+	return QString::null;
+}
+
+QString YZExCommandPool::enew( const YZExCommandArgs& args ) {
+	YZSession::me->createBuffer();
 	return QString::null;
 }
 

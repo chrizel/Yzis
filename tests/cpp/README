@@ -3,31 +3,11 @@ component in software development, you expect it to be very robust. Yzis will
 be, thanks to its (soon) very complete test suite.
 
 The tests depend on cppunit, a test library that helps you organise test into
-suites and fixutres. You can find cppunit on sourceforge (cppunit.sf.net) but
-we provide it here as a convenience.
+suites and fixutres. You need cppunit 1.10 from cppunit.sf.net
 
-The tests are compiled with qmake or tmake. This provides very easy
-compilation framework, without the burden of automake and co. Since they
-depend solely on Qt and cppunit, this is not a problem.
-
-To compile the tests, you need to first compile cppunit. You must execute the
-following:
-cd cppunit
-qmake cppunit.pro -o Makefile
-make
-
-The first command should create a Makefile (you must have your QMAKESPEC
-variable already set but this is very likely already the case) and the second
-will compile cppunit into a static library and put it into cppunit/bin.
-
-Now, you can compile the tests:
-qmake tests.pro -o Makefile
-make
-
-This should create an executable runTests. It is stacitally linked to cppunit
-and dynamically linked to libyzis. Running it will run all the test suites. It
-is possible to select only one test suite to run or only one test of a test
-suite.
+By default, configure won't detect cppunit if it is not installed. So you must
+run make -f Makefile.cvs in yzis in order to get the tests to compile and
+linke correctly.
 
 PhilAsserts and PhilTestRunner are a small addition to cppunit that I use to
 improve the writing of the tests and the reporting of errors.

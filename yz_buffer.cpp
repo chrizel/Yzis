@@ -16,6 +16,14 @@ YZBuffer::YZBuffer(char *_path)
 	path = _path;
 }
 
+void YZBuffer::addchar (int x, int y, unicode_char_t c)
+{
+}
+
+
+void YZBuffer::chgchar (int x, int y, unicode_char_t c)
+{
+}
 
 
 

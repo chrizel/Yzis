@@ -71,8 +71,10 @@ void NYZView::printLine( int line ) {
 
 	getyx(window,sy,sx); // save cursor
 
-	/* not use addnstr here, will stop at \0  (i guess) */
-	wmove (window, relline, 0);
+	/* not use addnstr here, will stop at \0  (i guess) */ 
+	if ( myBuffer()->introShown() )
+		wmove( window,relline, (w-str.length())?(w-str.length())/2:0 );
+	else wmove (window, relline, 0);
 	for (i=0; i<w && i<str.length(); i++)
 		waddch(window, str[i].unicode());
 //		addch(str[i].unicode());

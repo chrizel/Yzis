@@ -616,6 +616,11 @@ class YZView {
 		void reindent( unsigned int X, unsigned int Y );
 
 		/**
+		 * Create new indented line
+		 */
+		void indent();
+
+		/**
 		 * move the cursor to the sticky column
 		 */
 		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor = true );

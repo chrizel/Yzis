@@ -256,22 +256,13 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				gotoPreviousMode();
 				return;
 			} else if ( key == "<ENTER>" ) {
-				test = mainCursor->bufferX() == 0;
-				QString currentLine = mBuffer->textline( mainCursor->bufferY() );
-				if ( cindent && mainCursor->bufferX() == currentLine.length() && currentLine.simplifyWhiteSpace().endsWith( "{" ) ) {
-					QRegExp rx("^(\\t*\\s*\\t*\\s*).*$");
-					QString newline = "";
-					if ( rx.exactMatch( currentLine ) )
-						newline = rx.cap( 1 ); //that should have all tabs and spaces from the previous line
-					newline.prepend( "\t" ); //add a TAB for the nextline
-					mBuffer->action()->insertLine( this, YZCursor(this, 0, mainCursor->bufferY() + 1 ), newline );
-					gotoxy( newline.length(), mainCursor->bufferY() );
-				} else
-					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
-				if ( test ) {
-					gotoxy( 0, mainCursor->bufferY() + 1 );
-					updateStickyCol( mainCursor );
+				if ( cindent ) {
+					indent();
 				}
+				else {
+					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
+				}
+				updateStickyCol( mainCursor );
 				return;
 			} else if ( key == "<DOWN>" ) {
 				moveDown( );
@@ -544,6 +535,34 @@ void YZView::reindent( unsigned int X, unsigned int Y ) {
 	YZCursor *c = new YZCursor(this, 0, mainCursor->bufferY());
 	mBuffer->action()->replaceLine( this, c, currentLine );
 	gotoxy( currentLine.length(), mainCursor->bufferY() );
+}
+
+/*
+* Right now indent just copies the leading whitespace of the current line into the
+* new line this isn't smart as it will duplicate extraneous spaces in indentation
+* rather than giving consistent depth changes/composition based on user settings.
+*/
+void YZView::indent() {
+	//yzDebug() << "Entered YZView::indent" << endl;
+	QString indentMarker = "{"; // Just use open brace for now user defined (BEGIN or whatever) later
+	unsigned int ypos = mainCursor->bufferY();
+	QString currentLine = mBuffer->textline( ypos );
+	QRegExp rxLeadingWhiteSpace( "^([ \t]*).*$" );
+	if ( !rxLeadingWhiteSpace.exactMatch( currentLine ) ) {
+		return; //Shouldn't happen
+	}
+	QString indentString = rxLeadingWhiteSpace.cap( 1 );
+	if ( mainCursor->bufferX() == currentLine.length() && currentLine.stripWhiteSpace().endsWith( indentMarker ) ) {
+		//yzDebug() << "Indent marker found" << endl;
+		// This should probably be tabstop...
+		indentString.append( "\t" );
+	}
+	//yzDebug() << "Indent string = \"" << indentString << "\"" << endl;
+	mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
+	ypos++;
+	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).stripWhiteSpace() );
+	gotoxy( indentString.length(), ypos );
+	//yzDebug() << "Leaving YZView::indent" << endl;
 }
 
 void YZView::updateCursor() {

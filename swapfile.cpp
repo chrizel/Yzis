@@ -33,15 +33,16 @@
 YZSwapFile::YZSwapFile(YZBuffer *b) {
 	mParent = b;
 	mRecovering = false;
-	mFilename = b->fileName()+".ywp";
+	mFilename = QString::null;
+	setFileName( b->fileName() );
 	mNotResetted=true;
 	init();
 }
 
 void YZSwapFile::setFileName( const QString& fname ) {
-	yzDebug() << "Swap change filename " << fname << endl;
 	unlink();
-	mFilename = fname;
+	mFilename = fname.section( '/', 0, -2 ) + "/." + fname.section( '/', -1 ) + ".ywp";
+	yzDebug() << "Swap change filename " << mFilename << endl;
 }
 
 void YZSwapFile::flush() {
@@ -72,7 +73,7 @@ void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString
 
 void YZSwapFile::unlink() {
 	yzDebug() << "Unlink swap file " << mFilename << endl;
-	if ( QFile::exists( mFilename ) )
+	if ( ! mFilename.isNull() && QFile::exists( mFilename ) )
 		QFile::remove ( mFilename );
 }
 

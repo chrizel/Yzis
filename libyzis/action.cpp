@@ -41,6 +41,10 @@ YZAction::~YZAction( ) {
 
 void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {
 	YZCursor mPos( pos );
+	
+	if(pos.getY() >= mBuffer->lineCount())
+		insertNewLine(pView, mPos);
+	
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
 		it->initInsertChar( mPos, text.length(), pView->myId == it->myId );
 
@@ -168,20 +172,16 @@ void YZAction::copyArea( YZView* , const YZCursor& begin, const YZCursor& end, c
 
 	/* 2. copy whole lines */
 	unsigned int curY = bY + 1;
-	if ( bY == 0 ) curY = 0; //dont loop ;)
-	if ( bY == mBuffer->lineCount() - 1 ) curY = mBuffer->lineCount() - 1; // and ... dont loop
 
 	while ( eY > curY )
 		buff << mBuffer->textline( curY++ );
 
 	/* 3. copy the part of the last line */
-	if ( eY == curY && !lineCopied ) {
-		b = mBuffer->textline( curY );
-		buff << b.left( eX );
-	} else if ( eY == curY ) {
+	if ( lineCopied ) {
 		b = mBuffer->textline( curY );
 		buff << b.left( eX );
 	}
+	
 	yzDebug() << "Copied " << buff << endl;
 	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
 		YZSession::mRegisters.setRegister( *it, buff );

@@ -45,11 +45,14 @@ KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *) {
 }
 
 void KYZisDoc::removeView( KTextEditor::View * v ) {
-	//backport to Factory ? XXX
+	yzDebug() << "Document : removeView" << endl;
 	if ( !v )
 		return;
 
 	_views.removeRef( v );
+	//remove from YZBuffer list too
+/*	YZView *vv = dynamic_cast<YZView*>( v );
+	mViews.remove( vv );*/
 }
 
 bool KYZisDoc::openFile () {

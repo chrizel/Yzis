@@ -169,16 +169,6 @@ void Kyzis::createBuffer(const QString& path) {
 		}
 }
 
-void Kyzis::activateView ( KMdiChildView * pWnd ) {
-	//need the corresponding view and ensute libyzis knows its the active one
-	
-	KMdiMainFrm::activateView( pWnd );
+void Kyzis::closeView() {
+	closeActiveView();	
 }
-
-void Kyzis::closeWindow ( KMdiChildView *pWnd, bool layoutTaskBar ) {
-	//notify libyzis of the destruction
-	//clean things correctly
-	
-	KMdiMainFrm::closeWindow( pWnd,layoutTaskBar );
-}
-

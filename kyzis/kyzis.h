@@ -63,13 +63,14 @@ k_dcop:
 	 */
     void createBuffer(const QString& path);
 
+	/**
+	 * Closes the activated view
+	 */
+	void closeView();
+
 public slots:
-	//XXX
-	virtual void closeWindow ( KMdiChildView *pWnd, bool layoutTaskBar=true );
 
 protected slots:
-	//XXX
-	virtual void activateView ( KMdiChildView * pWnd );
 	
 protected:
 	virtual void resizeEvent( QResizeEvent *e );

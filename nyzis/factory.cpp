@@ -160,3 +160,8 @@ YZBuffer *NYZSession::createBuffer(const QString& path) {
 void NYZSession::popupMessage( const QString& message ) {
 	//TODO
 }
+
+void NYZSession::deleteView() {
+
+}
+

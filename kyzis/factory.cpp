@@ -298,4 +298,24 @@ void KYZisFactory::popupMessage( const QString& message ) {
 	KMessageBox::information(currentView, message, "Error");
 }
 
+void KYZisFactory::deleteView( ) {
+	DCOPClient *client = kapp->dcopClient();
+	QByteArray data;
+	QDataStream arg(data, IO_WriteOnly);
+	bool w = client->send(client->appId(), "Kyzis", "closeView()", data);
+	if (w) {
+		yzDebug() << "DCOP call successful for " << client->appId() << " to delete view " << endl;
+	} else {
+		yzDebug() << "DCOP call failed for " << client->appId() << endl;
+		sess->mGUI->popupMessage( "DCOP communication is broken ! KYzis is not able to delete the current view" );
+		return; //we failed
+	}
+
+#if 0 //that does not work since KMdi does not know the view is destroyed
+	yzDebug() << "Factory : deleteView " << v->myId << endl;
+	KYZisView *vv = static_cast<KYZisView*>( v );
+	delete vv;
+#endif
+}
+
 #include "factory.moc"

@@ -1,6 +1,8 @@
 2004-02-22 mikmak
   * libyzis
     fix bugs and make :bp and :bn actually do something usefull
+    support for :bd
+    fix keyboard arrow keys not behaving like h,j,k,l in command mode
   * kyzis
     fix some repaint bugs
 

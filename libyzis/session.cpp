@@ -155,3 +155,5 @@ void YZSession::updateBufferRecord( const QString& oldname, const QString& newna
 	mBuffers.remove( oldname );
 	mBuffers.insert( newname, buffer );
 }
+
+

@@ -155,7 +155,7 @@ void YZBuffer::updateAllViews() {
 }
 
 void  YZBuffer::addLine(const QString &l) {
-	yzDebug() << "Adding new line : " << l << "$" << endl;
+//	yzDebug() << "Adding new line : " << l << "$" << endl;
 	mText.append(new YZLine(l));
 }
 

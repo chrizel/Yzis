@@ -27,15 +27,17 @@
 #include <qvaluevector.h>
 #include <qapplication.h>
 
+#include "commands.h"
 #include "buffer.h"
 #include "cursor.h"
-#include "commands.h"
 #include "attribute.h"
 #include "line.h"
+#include "selection.h"
 
 class YZCursor;
 class YZBuffer;
 class YZSession;
+class YZSelectionPool;
 
 typedef QValueVector<QString> StringVector;
 
@@ -423,6 +425,8 @@ class YZView {
 		 * total height ( draw )
 		 */
 		 unsigned int drawTotalHeight();
+		
+		bool drawSelected();
 
 		/**
 		 * Search and replace
@@ -605,10 +609,13 @@ class YZView {
 		bool wrapNextLine;
 		bool dWrapNextLine;
 		QChar lastChar;
+		bool charSelected;
 
 		//cached value of tabwidth option
 		unsigned int tabwidth;	
 		bool wrap;
+
+		YZSelectionPool * selectionPool;
 };
 
 #endif /*  YZ_VIEW_H */

@@ -103,18 +103,9 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
-	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
-		QString line = mParent->myBuffer()->textline(e->y()/fontMetrics().lineSpacing() + mParent->getCurrentTop()).mid( mParent->getCurrentLeft() );
-		int nbcols=0;
-		int len=0;
-		while ( len <= e->x() ) {
-			//FIXME
-			len = fontMetrics().size( Qt::ExpandTabs|Qt::SingleLine, line, nbcols ,0 , 0).width();
-			nbcols++;
-		}
-		nbcols = nbcols - 2 >= 0 ? nbcols -2 : 0; //dont ask me why i need this :) i understand -1 but not -2 ...
-		mParent->gotoxy(nbcols + mParent->getCurrentLeft(), e->y()/fontMetrics().lineSpacing() + mParent->getCurrentTop());
+/*	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
 	}
+*/
 }
 
 void KYZisEdit::drawCursorAt(int x, int y) {

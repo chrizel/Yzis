@@ -148,11 +148,11 @@ namespace YZOptionPool {
 	}
 
 	// checks if an option of type type exists and return it
-	const YZOption *checkOption( const QString &name, value_t type ) {
-		if(!mOptions.contains(name)) return 0;
+	const bool checkOption( const QString &name, value_t type ) {
+		if(!mOptions.contains(name)) return false;
 		const YZOption *opt=mOptions[name];
-		if(opt->getValueType() != type) return 0;
-		return opt;
+		if(opt->getValueType() != type) return false;
+		return true;
 	}
 
 	// stores the value of an option in the map
@@ -160,9 +160,9 @@ namespace YZOptionPool {
 		MapName mk={name, id};
 		mOptionValues[mk] = value;
 	}
-
-	bool setStringOption( const QString &name, const QString& value, unsigned int id ) {
-		const YZOption *opt = checkOption(name, string_t);
+	
+	bool setOption( const QString &name, const QString &value, unsigned int id ) {
+		const YZOption *opt = getOption(name);
 		if(!opt || !opt->isValid(value)) return false;
 		storeValue(name, id, value);
 		return true;
@@ -170,37 +170,24 @@ namespace YZOptionPool {
 		// TODO: global id -> all the other ids are changed
 	}
 
-	bool setIntOption( const QString &name, int value, unsigned int id ) {
-		return setIntOption(name, QString::number(value), id);
+	bool setStringOption( const QString &name, const QString& value, unsigned int id ) {
+		if(!checkOption(name, string_t)) return false;
+		return setOption(name, value, id);
 	}
 
-	bool setIntOption( const QString &name, const QString &value, unsigned int id ) {
-		const YZOption *opt = checkOption(name, string_t);
-		if(!opt || !opt->isValid(value)) return false;
-		storeValue(name, id, value);
-		return true;
+	bool setIntOption( const QString &name, int value, unsigned int id ) {
+		if(!checkOption(name, int_t)) return false;
+		return setOption(name, QString::number(value), id);
 	}
 
 	bool setBoolOption( const QString &name, bool value, unsigned int id ) {
-		return setBoolOption(name, value ? "yes" : "no", id);
-	}
-
-	bool setBoolOption( const QString &name, const QString &value, unsigned int id ) {
-		const YZOption *opt = checkOption(name, string_t);
-		if(!opt || !opt->isValid(value)) return false;
-		storeValue(name, id, value);
-		return true;
+		if(!checkOption(name, bool_t)) return false;
+		return setOption(name, value ? "yes" : "no", id);
 	}
 
 	bool setColorOption( const QString &name, const QColor& value, unsigned int id ) {
-		return setColorOption(name, value.name(), id);
-	}
-
-	bool setColorOption( const QString &name, const QString& value, unsigned int id ) {
-		const YZOption *opt = checkOption(name, string_t);
-		if(!opt || !opt->isValid(value)) return false;
-		storeValue(name, id, value);
-		return true;
+		if(!checkOption(name, color_t)) return false;
+		return setOption(name, value.name(), id);
 	}
 
 	// get the value of the option name in respect to the ID id

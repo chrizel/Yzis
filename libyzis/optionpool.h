@@ -46,18 +46,18 @@ namespace YZOptionPool {
 	//void loadFrom(const QString& file);
 	/** Save settings to @param file. */
 	//void saveTo(const QString& file, const QString& what=QString::null, bool force=false);
+	
+	/** Sets the value of an option whose type is unknown or not important. */
+	bool setOption( const QString &name, const QString &value, unsigned int id=GLOBAL_ID );
 
 	/** Sets the value of a string option in respect to the object ID provided by @arg id */
 	bool setStringOption( const QString &name, const QString &value, unsigned int id=GLOBAL_ID );
 	/** Sets the value of an int option. */
 	bool setIntOption( const QString &name, int value, unsigned int id=GLOBAL_ID );
-	bool setIntOption( const QString &name, const QString &value, unsigned int id=GLOBAL_ID );
 	/** Sets the value of a bool option. */
 	bool setBoolOption( const QString &name, bool value, unsigned int id=GLOBAL_ID );
-	bool setBoolOption( const QString &name, const QString &value, unsigned int id=GLOBAL_ID );
 	/** Sets the value of a color option. */
 	bool setColorOption( const QString &name, const QColor& value, unsigned int id=GLOBAL_ID );
-	bool setColorOption( const QString &name, const QString& value, unsigned int id=GLOBAL_ID );
 	
 	/** Returns the value of a string option in respect to the object ID provided by @arg id */
 	QString getStringOption( const QString &name, unsigned int id=GLOBAL_ID );

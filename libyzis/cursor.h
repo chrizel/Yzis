@@ -57,7 +57,6 @@ class YZCursor {
 		inline void setY(unsigned int y) { y_pos = y; }
 
 		inline unsigned int getX() const { return x_pos; }
-
 		inline unsigned int getY() const { return y_pos; }
 
 		YZView* getParent() { return parentView; }

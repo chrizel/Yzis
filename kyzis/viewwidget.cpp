@@ -151,7 +151,7 @@ void KYZisView::modeChanged (void) {
 
 void KYZisView::syncViewInfo() {
 //	yzDebug() << "KYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
-	editor->setCursor(dCursor->getX(), dCursor->getY());
+	editor->setCursor( mainCursor->screenX(), mainCursor->screenY() );
 	if (viewInformation.c1!=viewInformation.c2)
 		status->changeItem( QString("%1,%2-%3 (%4)").arg(viewInformation.l+1 ).arg( viewInformation.c1+1 ).arg( viewInformation.c2+1 ).arg( viewInformation.percentage),99 );
 	else

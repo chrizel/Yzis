@@ -38,8 +38,107 @@ class YZCursor;
 class YZBuffer;
 class YZSession;
 class YZSelectionPool;
+class YZView;
 
 typedef QValueVector<QString> StringVector;
+
+/**
+ * class YZViewCursor : buffer and screen cursor with all members that YZView needs to move it.
+ * this is only an interface, it doesn't have to know how move itself ( this is YZView stuff )
+ */
+class YZViewCursor {
+
+	friend class YZView;
+
+	public :
+		YZViewCursor( YZView* parent );
+		virtual ~YZViewCursor();
+
+		unsigned int bufferX() const;
+		unsigned int bufferY() const;
+		unsigned int screenX() const;
+		unsigned int screenY() const;
+		
+		inline YZCursor* buffer() {
+			return mBuffer;
+		}
+		inline YZCursor* screen() {
+			return mScreen;
+		}
+
+		void copy( const YZViewCursor& orig );
+
+	private :
+		void setBuffer( const YZCursor& value );
+		void setScreen( const YZCursor& value );
+
+		void setBufferX( unsigned int value );
+		void setBufferY( unsigned int value );
+		void setScreenX( unsigned int value );
+		void setScreenY( unsigned int value );
+
+		/**
+		 * parent view
+		 */
+		YZView* mParent;
+
+		/**
+		 * buffer cursor
+		 */
+		YZCursor* mBuffer;
+		
+		/**
+		 * screen cursor
+		 */
+		YZCursor* mScreen;
+
+		/**
+		 * spaceFill is the shift for starting tabs 
+		 * ( when wrapping a line, a scrolling horizontally )
+		 */
+		unsigned int spaceFill;
+
+		/**
+		 * buffer column increment
+		 */
+		unsigned int bColIncrement;
+
+		/**
+		 * buffer line increment
+		 */
+		unsigned int bLineIncrement;
+
+		/**
+		 * screen column increment
+		 */
+		unsigned int sColIncrement;
+
+		/**
+		 * screen line increment
+		 */
+		unsigned int sLineIncrement;
+
+		/**
+		 * current line height
+		 */
+		unsigned int lineHeight;
+
+		/**
+		 * last char was a tab ?
+		 */
+		bool lastCharWasTab;
+
+		/**
+		 * are we wrapping a tab ?
+		 */
+		bool wrapTab;
+
+		/**
+		 * are we wrapping a line ?
+		 */
+		bool wrapNextLine;
+
+};
 
 /**
  * MUST be reimplemented in the GUI. It's the basis to display the content of a buffer
@@ -431,13 +530,13 @@ class YZView {
 		 * Get the current cursor information
 		 * @return a reference on the current cursor
 		 */
-		YZCursor* getCursor() { return dCursor; }
+		YZCursor* getCursor() { return mainCursor->screen(); }
 
 		/**
 		 * Get the current buffer cursor information
 		 * @return a reference on the current buffer cursor
 		 */
-		YZCursor* getBufferCursor() { return mCursor; }
+		YZCursor* getBufferCursor() { return mainCursor->buffer(); }
 
 		/**
 		 * Search for text and moves the cursor to the position of match
@@ -619,16 +718,6 @@ class YZView {
 		 */
 		YZBuffer *mBuffer;
 
-		/**
-		 * The cursor of the buffer
-		 */
-		YZCursor *mCursor;
-
-		/**
-		 * The cursor of the view
-		 */
-		YZCursor *dCursor;
-
 		/** 
 		 * Used to store previous keystrokes which are not recognised as a command,
 		 * this should allow us to have commands like : 100g or gg etc ...
@@ -672,28 +761,26 @@ class YZView {
 		 */
 		bool isFontFixed;
 
+		/**
+		 * This is the main cursor, the one which is displayed
+		 */
+		YZViewCursor* mainCursor;
 
 	private:
+
 		/**
 		 * The current session, provided by the GUI
 		 */
 		YZSession *mSession;
 
-		/* cursor members */
-		unsigned int dColLength;
-		unsigned int dLineLength;
-		unsigned int dLineHeight;
-		unsigned int mColLength;
-		unsigned int mLineLength;
-		unsigned int dSpaceFill;
+		/**
+		 * This is the worker cursor, the one which we direclty modify in our draw engine
+		 */
+		YZViewCursor* workCursor;
 
-		/* draw members */
-		unsigned int rColLength;
-		unsigned int rLineLength;
-		unsigned int rLineHeight;
-		unsigned int sColLength;
-		unsigned int sLineLength;
-		unsigned int rSpaceFill;
+		/**
+		 * are we moving cursor in draw mode ?
+		 */
 		bool drawMode;
 
 
@@ -728,15 +815,6 @@ class YZView {
 		unsigned int dCurrentTop;
 
 		/**
-		 * The cursor of the text
-		 */
-		YZCursor *sCursor;
-
-		/**
-		 * The cursor of the draw
-		 */
-		YZCursor *rCursor;
-		/**
 		 * Index of the first visible line (buffer)
 		 */
 		unsigned int sCurrentTop;
@@ -762,8 +840,6 @@ class YZView {
 		
 		unsigned int rHLAttributesLen;
 
-//		QColor rDrawColor;
-
 		YzisAttribute *rHLAttributes;
 
 		// current line
@@ -775,10 +851,6 @@ class YZView {
 		// current line min width( tab is 1 space )
 		unsigned int rMinCurLineLength;
 
-		// last char was a tab ?
-		bool rLastCharWasTab;
-		bool dLastCharWasTab; // used to save it
-
 		void gotoy( unsigned int );
 		void gotody( unsigned int );
 		void gotox( unsigned int );
@@ -789,8 +861,6 @@ class YZView {
 
 		int stickyCol;
 
-		bool wrapNextLine;
-		bool dWrapNextLine;
 		QChar lastChar;
 		bool charSelected;
 
@@ -808,10 +878,6 @@ class YZView {
 
 		// tablength to wrap
 		unsigned int areaModTab;
-
-		// are we wrapping a tab ?
-		bool wrapTab;
-		bool dWrapTab;
 
 		// if true, do not check for cursor visibility
 		bool adjust;

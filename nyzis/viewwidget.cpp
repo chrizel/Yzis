@@ -162,51 +162,62 @@ void NYZView::drawContents( int clipy, int cliph ) {
 		initDraw( );
 	}
 	unsigned int lineNumber = 0;
-
-	while ( drawNextLine( ) && cliph > 0 ) {
-		lineNumber = drawLineNumber();
-		if ( currentY >= ( uint )clipy ) {
-			unsigned int currentX = 0;
-			wmove( editor, currentY, currentX );
-			if ( number ) { // draw current line number
-				if ( lineNumber != lastLineNumber ) { // we don't draw it twice
-					wattron( editor, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
-					waddstr( editor, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
-					wattroff( editor, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
-					waddch( editor, ' ' );
-					lastLineNumber = lineNumber;
-				} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
-				currentX += marginLeft;
-			}
-			while ( drawNextCol( ) ) {
-				QColor c = drawColor( );
-				int mColor = mColormap.contains( c.rgb() ) ? mColormap[ c.rgb() ] : mColormap[ Qt::white.rgb() ]; 
-				bool invert = drawSelected( );
-				waddch( editor, COLOR_PAIR( mColor ) | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
-				if ( drawLength() > 1 ) {
-					for (unsigned int i = 1; i < drawLength(); i++ ) waddch( editor, ' ' | ( invert ? A_REVERSE : A_NORMAL ) );
-				}
-				currentX += drawLength( );
-			}
-			for( ; currentX < getColumnsVisible() + marginLeft; currentX++) waddch( editor, ' ' );
-			currentY += drawHeight( );
-			cliph -= lineHeight( );
-		} else {
-			if ( wrap ) while ( drawNextCol( ) ) ;
-			currentY += drawHeight( );
-			lastLineNumber = lineNumber;
+	
+	if ( myBuffer()->introShown() ) {
+		unsigned int h, w;
+		getmaxyx( stdscr, h, w ); 
+		while ( drawNextLine() ) {
+			QString str = myBuffer()->textline( currentY );
+			wmove( window, currentY, (w-str.length()>0)?(w-str.length())/2:0 );
+			waddstr( window, str );
+			currentY++;
 		}
-	}
-	while ( cliph > 0 && currentY < getLinesVisible() ) {
-		printVoid( currentY );
-		++currentY;
-		--cliph;
-	}
+	} else {
+		while ( drawNextLine( ) && cliph > 0 ) {
+			lineNumber = drawLineNumber();
+			if ( currentY >= ( uint )clipy ) {
+				unsigned int currentX = 0;
+				wmove( editor, currentY, currentX );
+				if ( number ) { // draw current line number
+					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
+						wattron( editor, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
+						waddstr( editor, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
+						wattroff( editor, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
+						waddch( editor, ' ' );
+						lastLineNumber = lineNumber;
+					} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
+					currentX += marginLeft;
+				}
+				while ( drawNextCol( ) ) {
+					QColor c = drawColor( );
+					int mColor = mColormap.contains( c.rgb() ) ? mColormap[ c.rgb() ] : mColormap[ Qt::white.rgb() ]; 
+					bool invert = drawSelected( );
+					waddch( editor, COLOR_PAIR( mColor ) | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
+					if ( drawLength() > 1 ) {
+						for (unsigned int i = 1; i < drawLength(); i++ ) waddch( editor, ' ' | ( invert ? A_REVERSE : A_NORMAL ) );
+					}
+					currentX += drawLength( );
+				}
+				for( ; currentX < getColumnsVisible() + marginLeft; currentX++) waddch( editor, ' ' );
+				currentY += drawHeight( );
+				cliph -= lineHeight( );
+			} else {
+				if ( wrap ) while ( drawNextCol( ) ) ;
+				currentY += drawHeight( );
+				lastLineNumber = lineNumber;
+			}
+		}
+		while ( cliph > 0 && currentY < getLinesVisible() ) {
+			printVoid( currentY );
+			++currentY;
+			--cliph;
+		}
 
-	wmove(editor,
-		getCursor()->getY() - getDrawCurrentTop (),
-		getCursor()->getX() - getDrawCurrentLeft () + marginLeft
-	);
+		wmove(editor,
+				getCursor()->getY() - getDrawCurrentTop (),
+				getCursor()->getX() - getDrawCurrentLeft () + marginLeft
+			 );
+	}
 	wrefresh( editor );
 }
 

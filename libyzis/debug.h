@@ -50,18 +50,20 @@ class QCString;
 /**
  * Areas of debug
  */
-#define UNSPECIFIED 0
-#define CORE 1
-#define KYZIS 2
-#define NYZIS 3
-#define AREA_TESTS 4
+#define UNSPECIFIED 	""
+#define CORE 			"libyzis"
+#define KYZIS 			"kyzis"
+#define NYZIS 			"nyzis"
+#define AREA_TESTS 		"tests"
+
+#define FILENAME_DEBUGRC ".yzdebugrc"
 
 class YZDebugBackend {
 public:
 	static YZDebugBackend * instance();
 
 	/** write data to the debug backend */
-	void flush( int level, int area, const char * data );
+	void flush( int level, const char * area, const char * data );
 
 	/** All debugging info under level will not be printed.
 	  * setDebugLevel( YZ_DEBUG_LEVEL ) will log all debug output.
@@ -78,13 +80,13 @@ public:
 	void setDebugOutput( const char * fileName );
 
 	/** Enable/Disable the log output of area */
-	void enableDebugArea( int area, bool enabled ) {
+	void enableDebugArea( const char * area, bool enabled ) {
 		_areaOutput[area] = enabled;
 	}
 
 	/** Return whether an area is enabled. All area are enalbed by default
 	  */
-	bool isAreaEnabled( int area ) {
+	bool isAreaEnabled( const char * area ) {
 		if (_areaOutput.contains( area )) {
 			return _areaOutput[area];
 		} else {
@@ -92,12 +94,27 @@ public:
 		}
 	}
 
+	/** Read the file to enable/disable some debug area.
+	  * The syntax is:
+	  * enable:area -> area is enabled
+	  * disable:area -> area is disabled
+	  *
+	  * no whitespace should be added at the beginning of the line
+	  **/
+	void parseRcfile(const char * filename);
+
+	/** Reset all area to their default enabled value */
+	void clear() { _areaOutput.clear(); } 
+
+	/** Reset the object to its initial state: clear all the disabled/enabled
+	  * area and parse the rc file again */
+	void init();
 
 private:
 	YZDebugBackend();
 	static YZDebugBackend * _instance;
 
-	QMap<int,bool> _areaOutput;
+	QMap<QString,bool> _areaOutput;
 	int _level;
 	FILE * _output;
 };
@@ -114,7 +131,7 @@ typedef YZDebugStream & (*YDBGFUNC)(YZDebugStream &); // manipulator function
 class YZDebugStream {
 	public:
 		// where to output the debug
-		YZDebugStream(int area=0, int level=0);
+		YZDebugStream(const char * area="", int level=0);
 /*		YZDebugStream(YZDebugStream& str ) :
 			output( str.output ), area( str.area ),level( str.level ) { str.output.truncate( 0 ); }
 		YZDebugStream(const& YZDebugStream& str ) :
@@ -145,7 +162,8 @@ class YZDebugStream {
 
 	private:
 		QString output;
-		int area,level;
+		int level;
+		QString area;
 	
 };
 
@@ -153,10 +171,10 @@ inline YZDebugStream &endl( YZDebugStream& s ) { s << "\n"; return s; }
 inline YZDebugStream& flush( YZDebugStream& s ) { s.flush(); return s; }
 
 //global functions (if it reminds you KDE it's not pure hasard :)
-YZDebugStream yzDebug( int area = 0 );
-YZDebugStream yzWarning( int area = 0 );
-YZDebugStream yzError( int area = 0 );
-YZDebugStream yzFatal( int area = 0 );
+YZDebugStream yzDebug( const char * area = "" );
+YZDebugStream yzWarning( const char * area = "" );
+YZDebugStream yzError( const char * area = "" );
+YZDebugStream yzFatal( const char * area = "" );
 
 // Assertion
 #define YZASSERT_MSG( assertion, msg ) { if (! (assertion) ) { yzError() << QString("%1:%2 assertion '%3' failed : %4\n").arg(__FILE__).arg( __LINE__).arg(#assertion).arg( msg ); } }

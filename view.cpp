@@ -87,6 +87,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mVisualCursor = new YZCursor(this);
 	dVisualCursor = new YZCursor(this);
 
+	mSearchBegin = new YZCursor( this );
+
 	beginChanges = new YZCursor( this );
 
 	stickyCol = 0;
@@ -481,13 +483,19 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			break;
 
 		case YZ_VIEW_MODE_SEARCH:
+		{
 			if ( key == "<ENTER>" ) {
 				yzDebug() << "Current search : " << getCommandLineText();
 				if(getCommandLineText().isEmpty())
 					return;
 				mSearchHistory[mCurrentSearchItem] = getCommandLineText();
 				mCurrentSearchItem++;
-				doSearch( getCommandLineText() );
+				YZCursor e = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
+				if ( reverseSearch ) {
+					e.setX(0);
+					e.setY(0);
+				}
+				doSearch( getCommandLineText(), mSearchBegin, e );
 				setCommandLineText( "" );
 				mSession->setFocusMainWindow();
 				gotoPreviousMode();
@@ -495,7 +503,6 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			} else if ( key == "<DOWN>" ) {
 				if(mSearchHistory[mCurrentSearchItem].isEmpty())
 					return;
-
 				mCurrentSearchItem++;
 				setCommandLineText( mSearchHistory[mCurrentSearchItem] );
 				return;
@@ -516,12 +523,18 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 			} else if ( key == "<BS>" ) {
 				QString back = getCommandLineText();
 				setCommandLineText(back.remove(back.length() - 1, 1));
-				return;
-			} else {
+			} else 
 				setCommandLineText( getCommandLineText() + key );
-				return;
+
+			YZCursor end = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
+			if ( reverseSearch ) {
+				end.setX(0);
+				end.setY(0);
 			}
+			doSearch(getCommandLineText(), mSearchBegin, end);
+			return;
 			break;
+		}
 
 		case YZ_VIEW_MODE_EX:
 			if ( key == "<ENTER>" ) {
@@ -1358,6 +1371,7 @@ QString YZView::gotoSearchMode( bool reverse ) {
 	reverseSearch = reverse;
 	switchModes(YZ_VIEW_MODE_SEARCH);
 	setCommandLineText( "" );
+ 	mSearchBegin->setCursor( mainCursor->buffer() );
 	return QString::null;
 }
 
@@ -1459,17 +1473,17 @@ void YZView::paste( QChar registr, bool after ) {
 	updateStickyCol( mainCursor );
 }
 
-bool YZView::doSearch( const QString& search ) {
+bool YZView::doSearch( const QString& search, const YZCursor& begin, const YZCursor& end ) {
 	selectionPool->clear( "SEARCH" );
 
 	bool found = false;
 	unsigned int matchlength = 0;
-	YZCursor begin = *mainCursor->buffer();
+/*	YZCursor begin = *mainCursor->buffer();
 	YZCursor end = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
 	if ( reverseSearch ) {
 		end.setX(0);
 		end.setY(0);
-	}
+	}*/
 	YZCursor result;
 
 	result = mBuffer->action()->search(this, search, begin, end, reverseSearch, &matchlength, &found);
@@ -1490,8 +1504,17 @@ QString YZView::searchAgain( unsigned int count, bool inverse ) {
 	if ( mCurrentSearchItem == 0 ) return QString::null; //no previous search ;)
 	if ( inverse ) reverseSearch = !reverseSearch;
 
-	for ( uint i = 0; i < count; i++ )  //search count times
-	 	doSearch( mSearchHistory[mCurrentSearchItem-1] );
+
+	YZCursor e = YZCursor (this, mBuffer->textline(mBuffer->lineCount()-1).length(), mBuffer->lineCount()-1);
+	if ( reverseSearch ) {
+		e.setX(0);
+		e.setY(0);
+	}
+
+	for ( uint i = 0; i < count; i++ ) { //search count times
+		YZCursor b = *mainCursor->buffer();
+	 	doSearch( mSearchHistory[mCurrentSearchItem-1], b, e );
+	}
 	return QString::null;
 }
 

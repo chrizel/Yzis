@@ -1,0 +1,40 @@
+
+Core
+	coded in c
+	c++ binding integrated
+	provide basic functions
+		files
+		widgets
+	interfaces
+		utf encoding
+		functions returns immediately
+	features
+		open local files (only)
+		handles buffer
+		handles syntax highlighting
+	API
+		sendchar ( included 'escape' and such..)
+		getevent ( need to define newkvimcore events and args)
+
+
+GUIs
+	provides font/encoding handling
+	handles the event loop (provide one..)
+
+	kde gui
+		implementing ktexteditor
+		using the c++ binding
+
+	ncurses gui
+		using c
+		
+Events
+
+	2 modes ; font fix, and not-fix
+	if fix, we can handle word wrapping and other stuff, if no, we can't
+
+	The gui has a local restricted buffer of n lines. using the api, we update such
+	local buffer, then it belongs to the gui to draw the output.
+
+	The information provided by the core is the colored text
+

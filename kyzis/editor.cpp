@@ -146,7 +146,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
 			p->eraseRect(clip);
 			QString toDraw = mParent->myBuffer()->textline( line );
-			if (mParent->myBuffer()->lineCount() > line && !toDraw.isNull() && !toDraw.isEmpty()) {
+			if (mParent->myBuffer()->lineCount() > line && !toDraw.isNull() && !toDraw.isEmpty() && !mParent->myBuffer()->introShown() ) {
 				uint startcol = 0;
 				while ( !mParent->isColumnVisible(startcol++, line) && startcol <= toDraw.length())
 					;
@@ -184,6 +184,8 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 					}
 					a++;
 				}
+			} else if (mParent->myBuffer()->introShown()) {
+				p->drawText(clip,flag ,toDraw);
 			} else if (mParent->myBuffer()->lineCount() <= line) {
 				p->drawText(clip,flag ,"~");
 			}

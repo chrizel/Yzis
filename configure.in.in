@@ -58,11 +58,8 @@ AC_CHECK_LIB($cf_ncurses, initscr,
 					  YZIS_INCLUDES="$YZIS_INCLUDES -I/usr/include/ncurses"
 				  fi
 			  fi
-			  if test "$cf_ncurses" = ncursesw; then
-				  AC_CHECK_HEADERS(ncursesw/ncurses.h,[cf_cv_ncurses_header="ncursesw/ncurses.h"])
-			  else
-				  AC_CHECK_HEADERS(ncurses.h,[cf_cv_ncurses_header="ncurses.h"])
-			  fi], [CF_CURSES_LIBS])
+			  AC_CHECK_HEADERS(ncurses.h,[cf_cv_ncurses_header="ncurses.h"])
+			  ], [CF_CURSES_LIBS])
 if test "$have_ncurses" = "no" -a "$have_ncursesw" = "no" ; then
 	AC_MSG_WARN(Ncurses libraries with wide characters support not found, nyzis will not be compiled.)
 	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"

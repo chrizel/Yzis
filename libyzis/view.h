@@ -242,6 +242,7 @@ class YZView {
 		 */
 		QString gotoLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
+		QString changeLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 		/**
 		 * Deletes lines
 		 */

@@ -975,6 +975,15 @@ QString YZView::deleteCharacter( const QString& , YZCommandArgs args ) {
 	return QString::null;
 }
 
+QString YZView::changeLine ( const QString& inputsBuff, YZCommandArgs args ) {
+	if ( args.command == "cc" ) args.command = "dd";
+	else if ( args.command == "C" ) args.command = "D";
+	else args.command = args.command.replace( 0, 1, "d" );
+	deleteLine( inputsBuff, args );
+	gotoInsertMode( );
+	return QString::null;
+}
+
 QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args ) {
 	int nb_lines=args.count;
 	QChar reg=args.registr;
@@ -1534,10 +1543,9 @@ QString YZView::joinLine ( const QString& , YZCommandArgs ) {
 }
 
 void YZView::printToFile( const QString& path ) {
-	YZPrinter * printer = new YZPrinter( this );
-	printer->printToFile( path );
-	printer->run( );
-	delete( printer );
+	YZPrinter printer( this );
+	printer.printToFile( path );
+	printer.run( );
 }
 
 QString YZView::undo( const QString& , YZCommandArgs ) {

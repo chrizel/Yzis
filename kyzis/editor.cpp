@@ -29,6 +29,7 @@
 #include <kglobalsettings.h>
 #include <math.h>
 #include <qclipboard.h>
+#include <qcursor.h>
 
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
@@ -38,6 +39,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	f.setFixedPitch(true);
 	f.setStyleHint(QFont::TypeWriter);
 	myFont = f;
+	QWidget::setCursor( IbeamCursor );
 	setFont(f);
 //	standard = new QFontMetrics( myFont );
 //	f.setBold( true );

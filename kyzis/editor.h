@@ -47,7 +47,7 @@ class KYZisEdit : public QWidget {
 		void append ( const QString& );
 
 		void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
-		
+
 		//move cursor to position column, line relative to viewport
 		void setCursor(int c,int l);
 		void scrollUp( int );

@@ -38,6 +38,13 @@ struct motion_t {
 	enum type_t type; //type of motion
 	int x; // relative x movement
 	int y; // relative y movement
+
+	motion_t() {
+		rex=""; type=REGEXP; x=0; y=0;
+	}
+	motion_t( QString _rex, enum type_t _type, int _x, int _y) {
+		rex=_rex; type=_type; x=_x; y=_y;
+	}
 };
 typedef struct motion_t YZMotion;
 
@@ -72,7 +79,7 @@ class YZMotionPool {
 		 * @param inputs the string to analyze
 		 * @param motion the motion found if any or NULL
 		 */
-		YZMotion& findMotion ( const QString& inputs );
+		YZMotion& findMotion ( const QString& inputs, bool *ok );
 
 		/**
 		 * Calculates coordinates of the cursor after applying the given motion
@@ -80,6 +87,11 @@ class YZMotionPool {
 		 * @param view the view on which to operate
 		 */
 		void applyMotion( const QString& inputsMotion, YZView *view, YZCursor *cursor );
+
+		/**
+		 * Check whether the @param inputs match a known motion
+		 */
+		bool isValid( const QString& inputs );
 
 	private:
 		QMap<QString,YZMotion> pool;

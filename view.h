@@ -823,6 +823,7 @@ class YZView {
 
 		QChar lastChar;
 		bool charSelected;
+		bool listChar;
 
 		YZCursor* origPos;
 		unsigned int lineDY;

@@ -1693,13 +1693,15 @@ bool YZView::drawNextCol( ) {
 		lastChar = sCurLine[ curx ];
 		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
-			if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(sCurLine.mid(curx)) )
-				lastChar = '.';
+			listChar = getLocalBoolOption( "list" ) && stringHasOnlySpaces(sCurLine.mid(curx));
+			if ( listChar )	lastChar = '.';
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
 			lenToTest = workCursor->sColIncrement;
 		} else {
 			workCursor->lastCharWasTab = true;
 			lastChar = ' ';
+			listChar = getLocalBoolOption( "list" );
+			if ( listChar ) lastChar = '>';
 			if ( workCursor->screenX( ) == mCurrentLeft )
 				workCursor->sColIncrement = ( workCursor->spaceFill ? workCursor->spaceFill : tablength );
 			else {
@@ -1782,7 +1784,7 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 		YzisAttribute *list = highlight->attributes( 0 )->data( ); //attributes defined by the syntax highlighting document
 		at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
 	}
-	if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(yl->data().mid(col)) )
+	if ( getLocalBoolOption( "list" ) && ( stringHasOnlySpaces(yl->data().mid(col)) || yl->data()[col] == tabChar ) )
 		return blue;
 	if ( at ) return at->textColor(); //textcolor :)
 	return fake;
@@ -1791,16 +1793,11 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 const QColor& YZView::drawColor ( ) {
 	YzisAttribute hl;
 	YzisAttribute * curAt = ( !rHLnoAttribs && (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-	if ( curAt )
-		hl += * curAt;
+	if ( curAt ) hl += * curAt;
 
-	if ( getLocalBoolOption( "list" ) && stringHasOnlySpaces(mBuffer->textline(workCursor->bufferY()).mid(workCursor->bufferX()-1)) )
-		return blue;
-
-	if ( curAt )
-		return hl.textColor();
-
-	return fake;
+	if ( listChar ) return blue;
+	else if ( curAt ) return hl.textColor();
+	else return fake;
 }
 
 unsigned int YZView::drawLineNumber( ) {

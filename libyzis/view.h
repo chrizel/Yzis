@@ -94,7 +94,7 @@ class YZViewCursor {
 
 		/**
 		 * spaceFill is the shift for starting tabs 
-		 * ( when wrapping a line, a scrolling horizontally )
+		 * ( when wrapping a line, or scrolling horizontally )
 		 */
 		unsigned int spaceFill;
 

@@ -857,6 +857,7 @@ void YZView::applyGoto( bool applyCursor ) {
 				bEnd.setX( mBuffer->textline( bEnd.getY() ).length() );
 			}
 			selectionPool->addSelection( "VISUAL", bBegin, bEnd, dBegin, dEnd );
+			yzDebug() << "visual selection : from " << bBegin << " to " << bEnd << endl;
 
 			/* apply new selection */
 			YZSelection new_cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
@@ -1733,8 +1734,8 @@ bool YZView::drawNextLine( ) {
 	return false;
 }
 
-#define WATCHLINE 0 
-#define DEBUG_LINE if ( ! drawMode && sCursor->getY() == WATCHLINE ) yzDebug()
+#define WATCHLINE 1
+#define DEBUG_LINE if ( drawMode && workCursor->bufferY() == WATCHLINE ) yzDebug()
 
 bool YZView::drawPrevCol( ) {
 	workCursor->wrapNextLine = false;
@@ -1766,7 +1767,7 @@ bool YZView::drawNextCol( ) {
 	unsigned int curx = workCursor->bufferX();
 	workCursor->wrapNextLine = false;
 
-//	DEBUG_LINE << "init drawNextCol s=" << *sCursor << ";r=" << *rCursor << endl;
+//	DEBUG_LINE << "init drawNextCol b=" << *workCursor->buffer() << ";s=" << *workCursor->screen() << endl;
 
 	// keep value
 	bool lastCharWasTab = workCursor->lastCharWasTab;
@@ -1780,8 +1781,8 @@ bool YZView::drawNextCol( ) {
 	if ( curx < sCurLineLength ) {
 		unsigned int lenToTest;
 		lastChar = sCurLine[ curx ];
+		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
-			if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
 			lenToTest = workCursor->sColIncrement;
 		} else {

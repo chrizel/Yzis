@@ -425,17 +425,19 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 		//cut lines if we are on first/last lines to search in
 		if ( i == mBegin.getY() ) {
 			l = reverseSearch ? l.left(mBegin.getX()) : l.mid(mBegin.getX());
+			currentMatchColumn = reverseSearch ? -2 : 1;
 		}
 		if ( i == mEnd.getY() ) {
 			l = reverseSearch ? l.mid(mEnd.getX()) : l.left(mEnd.getX());
+			currentMatchColumn = reverseSearch ? -2 : 1;
 		}
 		
 		int idx;
 		if ( reverseSearch ) {
-			idx = ex.searchRev( l, currentMatchColumn );
-	//		yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
+			idx = ex.searchRev( l , currentMatchColumn );
+//			yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
 		} else {
-			idx = ex.search( l, currentMatchColumn );
+			idx = ex.search( l , currentMatchColumn );
 //			yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
 		}
 
@@ -456,6 +458,11 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 			//really found it !
 			currentMatchColumn = idx;
 			currentMatchLine = i;
+			//if we truncated the line below, then we need to change the cursor getX position too ;)
+			if ( i == mBegin.getY() && !reverseSearch )
+				currentMatchColumn += mBegin.getX();
+			if ( i == mEnd.getY() && reverseSearch )
+				currentMatchColumn += mBegin.getX();
 			*found = true;
 			*matchlength = ex.matchedLength();
 			return YZCursor(pView,currentMatchColumn, currentMatchLine);

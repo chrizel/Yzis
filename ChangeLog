@@ -3,6 +3,8 @@
     add popupMessage to display messages from core in Guis (for errors)
   * kyzis
     use KDE's fixed font as default
+  * libyzis
+    support :e relativeFilePath :)
 
 2004-02-16 mikmak
   * all 

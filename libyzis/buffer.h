@@ -189,7 +189,6 @@ protected:
 	QValueList<YZView*> mViews;
 
 	YZBufferData mText;
-//	QStringList mText; //obsolete soon :)
 	YZSession *mSession;
 };
 

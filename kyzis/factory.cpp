@@ -258,6 +258,20 @@ void KYZisFactory::setCurrentView( YZView* view ) {
 
 YZView* KYZisFactory::createView( YZBuffer *buffer ) {
 	//DCOP call which returns the UID of the created view ?
+#if 0
+	DCOPClient *client = kapp->dcopClient();
+	QByteArray data;
+	QDataStream arg(data, IO_WriteOnly);
+	arg << buffer->fileName();
+	bool w = client->send(client->appId(), "Kyzis", "createView(QString)", data);
+	if (w) {
+		yzDebug() << "DCOP call successful for " << client->appId() << " to create view on " << buffer->fileName() << endl;
+	} else {
+		yzDebug() << "DCOP call failed for " << client->appId() << endl;
+		sess->mGUI->popupMessage( "DCOP communication is broken ! KYzis is not able to create new views" );
+		return NULL;
+	}
+#endif
 	return NULL;
 }
 
@@ -269,10 +283,10 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 	bool w = client->send(client->appId(), "Kyzis", "createBuffer(QString)", data);
 	if (w) {
 		yzDebug() << "DCOP call successful for " << client->appId() << " to create buffer on " << path << endl;
-		//finds the buffer
 	} else {
 		yzDebug() << "DCOP call failed for " << client->appId() << endl;
-		//popup error
+		sess->mGUI->popupMessage( "DCOP communication is broken ! KYzis is not able to create new buffers" );
+		return NULL; //we failed
 	}
 	return sess->findBuffer( path );
 }

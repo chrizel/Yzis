@@ -19,6 +19,7 @@
 
 #include "ex_executor.h"
 #include "debug.h"
+#include <qfileinfo.h>
 
 YZExExecutor::YZExExecutor() {
 }
@@ -64,6 +65,9 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 		return QString::null;
 	}
 	QString path = inputs.mid( idx + 1 ); //extract the path 
+	//check the file name
+	QFileInfo fi ( path );
+	path = fi.absFilePath();
 	yzDebug() << "New buffer / view : " << path << endl;
 	YZBuffer *b = view->mySession()->mGUI->createBuffer( path );
 	//TODO

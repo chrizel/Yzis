@@ -2,8 +2,8 @@
 - remove all that c code with tab and #define *MAX -> use Qt
 - vim displays 'x,0-1' when positionned on the first char of an empty line : do the same
 - layout classes to handle geometry and windows positions, also add a layout manager to save 'profiles' ala konqueror
-- nyzis : check event handler(qt one?)
 - nyzis : report meta, etc..
 - implement open mode
 - make / and ? motions to allow 'd/thing' to work
 - implement a C-like Timer (SIGALARM) to dump swapfiles ?
+- yz configure -> G, should be slow, but gg then G should be faster (no ?) //mm

@@ -1,5 +1,10 @@
+2004-11-16 mikmak
+  * libyzis
+  	initial implementation for events
+  	
 2004-11-01 panard
-  * libyzis : support <filename>:<line> to open <filename> and scroll to <line> line.
+  * libyzis
+  	support <filename>:<line> to open <filename> and scroll to <line> line.
 
 2004-11-01 mikmak
   * libyzis

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=GYzis
+Exec=gyzis -caption "%c" %i %m %u
+Comment=GNOME frontend to the Yzis editor
+Icon=kyzis
+MimeTypes=
+Terminal=false

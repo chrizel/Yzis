@@ -102,7 +102,7 @@ if test "$enable_nyzis" != "yes"; then
 	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
 fi
 
-DO_NOT_COMPILE="$DO_NOT_COMPILE tests"
+DO_NOT_COMPILE="$DO_NOT_COMPILE tests gyzis"
 
 AC_SUBST(YZIS_SUBDIRS)
 AC_SUBST(YZIS_INCLUDES)

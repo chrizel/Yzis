@@ -39,14 +39,17 @@ struct motion_t {
 	int x; // relative x movement
 	int y; // relative y movement
 	bool backward; //we need to calculate backwards (reverse)
+	bool after; //return position before the motion match, otherwise return the position at the end of the match. This is of course useless for RELATIVE motions
 
 	motion_t() {
 		rex=""; type=REGEXP; x=0; y=0;
 		backward=false;
+		after=false;
 	}
-	motion_t( QString _rex, enum type_t _type, int _x, int _y, bool _backward) {
+	motion_t( QString _rex, enum type_t _type, int _x, int _y, bool _backward, bool _after) {
 		rex=_rex; type=_type; x=_x; y=_y;
 		backward=_backward;
+		after=_after;
 	}
 };
 typedef struct motion_t YZMotion;

@@ -666,6 +666,7 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 	QRegExp rex1("^\\w+\\s*");//a word with boundaries
 	QRegExp rex2("^[^\\w\\s]+\\s*");//non-word chars with boundaries
 	QRegExp ws("^\\s+");//whitespace
+	bool wrapped = false;
 
 	while ( c < args.count ) { //for each word
 		const QString& current = args.view->myBuffer()->textline( result.getY() );
@@ -677,6 +678,8 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 		int idx = rex1.indexIn( current, result.getX(), QRegExp::CaretAtOffset );
 #endif
 		int len = rex1.matchedLength();
+		if ( idx == 0 && wrapped )
+			len = 0;
 		if ( idx == -1 ) {
 #if QT_VERSION < 0x040000
 			idx = rex2.search( current, result.getX(), QRegExp::CaretAtOffset );
@@ -713,6 +716,7 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 			}
 			result.setX(0);
 			result.setY( result.getY() + 1 );
+			wrapped = true;
 		}
 
 	}
@@ -784,6 +788,7 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 	QRegExp rex1("^(\\w+)\\s*");//a word with boundaries
 	QRegExp rex2("^([^\\w\\s]+)\\s*");//non-word chars with boundaries
 	QRegExp rex3("^\\s+([^\\w\\s$]+|\\w+)");//whitespace
+	bool wrapped = false;
 
 	while ( c < args.count ) { //for each word
 		const QString& current = invertQString( args.view->myBuffer()->textline( result.getY() ) );
@@ -817,6 +822,10 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 				yzDebug() << "rex3 : " << idx << "," << len << endl;
 			}
 		}
+		if ( wrapped && lineLength == 0 ) {
+			idx = 0;
+			len = 0;
+		}
 		if ( idx != -1 ) {
 			yzDebug() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
 			c++; //one match
@@ -825,6 +834,7 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 			if ( result.getY() == 0 ) break; //stop here
 			yzDebug() << "Previous line " << result.getY() - 1 << endl;
 			const QString& ncurrent = args.view->myBuffer()->textline( result.getY() - 1 );
+			wrapped = true;
 			result.setX( ncurrent.length() );
 			result.setY( result.getY() - 1 );
 		}

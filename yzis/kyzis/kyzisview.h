@@ -23,6 +23,8 @@ class KYZisView: public KTextEditor::View
 	 	virtual ~KYZisView();
 		KTextEditor::Document *document () const { return buffer; }
 		void postEvent (yz_event);
+		void scrollDown( int l=1 );
+		void scrollUp( int l=1 );
 		
 	protected:
 		void customEvent( QCustomEvent * );

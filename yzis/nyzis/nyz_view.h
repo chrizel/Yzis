@@ -31,6 +31,9 @@ public:
 
 	void postEvent(yz_event);
 
+	void scrollDown(int lines=1);
+	void scrollUp(int lines=1);
+
 protected:
 	void handle_event(yz_event *e);
 

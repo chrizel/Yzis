@@ -15,6 +15,16 @@ class Gui {
 		 * libyzis posts events to the GUI
 		 */
 		virtual void postEvent(yz_event) = 0;
+
+		/**
+		 * scroll down the given number of lines
+		 */
+		virtual void scrollDown(int l = 1) = 0;
+
+		/**
+		 * scroll up the given number of lines
+		 */
+		virtual void scrollUp(int l = 1) = 0;
 };
 
 #endif // GUI_H

@@ -80,4 +80,11 @@ void NYZView::handle_event(yz_event *e)
 	}
 }
 
+void NYZView::scrollDown( int lines ) {
+
+}
+
+void NYZView::scrollUp ( int lines ) {
+
+}
 

@@ -4,10 +4,6 @@ AM_INIT_AUTOMAKE(yzis, 0.0.1)
 
 dnl These are common macros that you might or might not want to use
 
-dnl Image readers/writers
-#nothing to do in the toplevel dir
-#KDE_CHECK_KIMGIO
- 
 dnl Checks for header files.
 AC_HEADER_DIRENT
 AC_HEADER_STDC
@@ -15,31 +11,32 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h)
 AC_CHECK_FUNCS(usleep)
 AC_PATH_TINYQ
+AC_PATH_LUA
 KDE_INIT_DOXYGEN([The Yzis API Reference], [Version $VERSION])
 
 DO_NOT_COMPILE="$DO_NOT_COMPILE cyzis"
 
 #check for TinyQ
 if test "x$TINYQ" = "x"; then
-       YZIS_INCLUDES="$QT_INCLUDES"
+	YZIS_INCLUDES="$QT_INCLUDES"
 else
-			 YZIS_SUBDIRS="libtinyqyzis"
-       YZIS_INCLUDES="$TINYQ_INCLUDES"
-			 NYZIS_DEP="libyzis/libtinyqyzis/libtinyqyzis.la"
+	YZIS_SUBDIRS="libtinyqyzis"
+	YZIS_INCLUDES="$TINYQ_INCLUDES"
+	NYZIS_DEP="libyzis/libtinyqyzis/libtinyqyzis.la"
 fi
 
 #check for Qt
 if test "$have_qt" != yes; then
-			 if test "x$TINYQ" = "x"; then
-				DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis kyzis"
-			else
-				DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis"
-			 fi
+	if test "x$TINYQ" = "x"; then
+		DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis kyzis"
+	else
+		DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis"
+	fi
 else
-			 YZIS_SUBDIRS="$YZIS_SUBDIRS libqtyzis"
-			 if test "x$TINYQ" = "x"; then
-				 NYZIS_DEP="libyzis/libqtyzis/libqtyzis.la"
-			 fi
+	YZIS_SUBDIRS="$YZIS_SUBDIRS libqtyzis"
+	if test "x$TINYQ" = "x"; then
+		NYZIS_DEP="libyzis/libqtyzis/libqtyzis.la"
+	fi
 fi
 
 if test "$have_kde" != "yes"; then

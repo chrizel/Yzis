@@ -5424,7 +5424,8 @@ We need perl to generate some code.])
 
 AC_DEFUN(AC_PATH_TINYQ, [
 	AC_MSG_CHECKING(for TinyQ)
-	AC_ARG_WITH(tinyq-dir, [  --with-tinyq-dir   Specify prefix of TinyQ files],
+	AC_ARG_WITH(tinyq-dir,
+		AC_HELP_STRING([--with-tinyq-dir=DIR],[where the root of TinyQ is installed]),
 		[
 		TINYQ="$withval"
 		TINYQ_INCLUDES=-I"$withval"/include
@@ -5439,3 +5440,46 @@ AC_DEFUN(AC_PATH_TINYQ, [
 	AC_SUBST(TINYQ_INCLUDES)
 	AC_SUBST(TINYQ_LIBS)
 ])
+
+AC_DEFUN(AC_PATH_LUA, [
+	AC_PATH_PROG(LUA_CONFIG, lua-config, no)
+	
+	if test "x$LUA_CONFIG" = "x" ; then
+		AC_PATH_PROG(LUA_CONFIG, lua-config50, no)
+	fi
+	if ! test "x$LUA_CONFIG" = "x" ; then
+		LUA_INCLUDES=`$LUA_CONFIG --include`
+		LUA_LIBS=`$LUA_CONFIG --libs`
+	fi
+	
+	AC_ARG_WITH(lua-dir,
+		AC_HELP_STRING([--with-lua-dir=DIR],[where the root of Lua 5.x is installed]),
+		[
+		LUA="$withval"
+		LUA_INCLUDES=-I"$withval"/include
+		LUA_LIBS="-L$withval/lib -llua50" ])
+
+	AC_ARG_WITH(lua-inc, 
+		AC_HELP_STRING([--with-lua-includes=DIR],[where the Lua includes are]),
+		[ LUA_INCLUDES="-I$withval/include" ])
+
+	AC_ARG_WITH(lua-lib,
+		AC_HELP_STRING([--with-lua-libraries=DIR],[where the Lua library is installed]),
+		[
+		LUA_LIBS="-L$withval/lib -llua50" ])
+
+
+	if ! test "x$LUA" = "x"; then
+		AC_MSG_RESULT(using Lua from $LUA)
+	fi
+	if ! test "x$LUA_INCLUDES" = "x"; then
+		AC_MSG_RESULT(using Lua libraries $LUA_LIBS)
+	fi
+	if ! test "x$LUA_INCLUDES" = "x"; then
+		AC_MSG_RESULT(using Lua includes in $LUA_INCLUDES)
+	fi
+	AC_SUBST(LUA)
+	AC_SUBST(LUA_INCLUDES)
+	AC_SUBST(LUA_LIBS)
+])
+

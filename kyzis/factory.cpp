@@ -39,6 +39,7 @@
 #include "document.h"
 #include "viewwidget.h"
 #include "debug.h"
+#include "yzis.h"
 
 KYZisDoc *KYZisFactory::currentDoc=0;
 KYZisFactory *KYZisFactory::s_self = 0;
@@ -143,11 +144,17 @@ KInstance* KYZisFactory::instance() {
 }
 
 const KAboutData *KYZisFactory::aboutData() {
-	KAboutData *data = new KAboutData ("kyzispart", I18N_NOOP("KYzis"), "M1",
+	KAboutData *data = new KAboutData ("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR,
 					I18N_NOOP( "Kyzis - KDE Frontend for Yzis" ),
-					KAboutData::License_LGPL_V2,
+					KAboutData::License_GPL_V2,
 					I18N_NOOP( "(c) 2003,2004" ), 0, "http://www.yzis.org");
 	data->addAuthor ("Mickael Marchand", I18N_NOOP("Initial Author"), "marchand@kde.org");
+	data->addAuthor ("Thomas Capricelli", I18N_NOOP("Initial Author"), "orzel@freehackers.org");
+	data->addAuthor ("Philippe Fremy", I18N_NOOP("Initial Author"), "phil@freehackers.org");
+	data->addAuthor ("Loic Pauleve", I18N_NOOP("Initial Author"), "panard@inzenet.org");
+	data->addCredit( "Thomas Nagy", "Icons, KSettings", "tnagy@eleve.emn.fr" );
+	data->addCredit( "Lucijan Bush", "EX mode history", "lucijan@kde.org" );
+	data->addCredit( "Mathieu Kooiman", "KTextEditor interfaces / Dutch translation", "M.Kooiman@map-is.nl" );
 	data->setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"), I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
 
 	return data;

@@ -348,6 +348,7 @@ void YZBuffer::displayIntro() {
 	<<	"Mickael Marchand <mikmak@yzis.org>,"
 	<<	"Thomas Capricelli <orzel@freehackers.org>,"
 	<<	"Philippe Fremy <phil@freehackers.org>"
+	<<	"Loic Pauleve <panard@inzenet.org>"
 	<<  ""
 	<<  "Please report bugs at http://bugs.yzis.org" ;
 

@@ -2,11 +2,11 @@ AUTHORS :
 Mickael Marchand <mikmak@yzis.org>
 Thomas Capricelli <orzel@yzis.org>
 Philippe Fremy <phil@freehackers.org>
+Loic Pauleve <panard@inzenet.org>
 
 CONTRIBUTORS:
 Neil Stevens (buffer commands)
 Mathieu Kooiman (kyzis ktexteditor implementation)
 Thomas Nagy (KDE icons, KSettings stuff)
 Lucijan Bush (command history for EX mode)
-Loic Pauleve (rewritten drawings API for a major performance improvment)
 

@@ -40,10 +40,11 @@ static KCmdLineOptions options[] = {
 };
 
 int main(int argc, char **argv) {
-	KAboutData about("kyzis", I18N_NOOP("Kyzis"), VERSION_CHAR, description, KAboutData::License_GPL, 0, 0, "http://www.yzis.org", "bugs@bugs.yzis.org");
+	KAboutData about("kyzis", I18N_NOOP("Kyzis"), VERSION_CHAR, description, KAboutData::License_GPL_V2, 0, 0, "http://www.yzis.org", "bugs@bugs.yzis.org");
 	about.addAuthor( "Mickael Marchand", "Author", "mikmak@yzis.org" );
 	about.addAuthor( "Thomas Capricelli", "Author", "orzel@freehackers.org" );
 	about.addAuthor( "Philippe Fremy", "Author", "phil@freehackers.org" );
+	about.addAuthor( "Loic Pauleve", "Author", "panard@inzenet.org" );
 	about.addCredit( "Thomas Nagy", "Icons, KSettings", "tnagy@eleve.emn.fr" );
 	about.addCredit( "Lucijan Bush", "EX mode history", "lucijan@kde.org" );
 	about.addCredit( "Mathieu Kooiman", "KTextEditor interfaces / Dutch translation", "M.Kooiman@map-is.nl" );

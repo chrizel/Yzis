@@ -27,11 +27,22 @@
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/markinterface.h>
 #include <ktexteditor/configinterfaceextension.h>
+#include <ktexteditor/selectioninterface.h>
+#include <ktexteditor/selectioninterfaceext.h>
 #include <buffer.h>
 #include <view.h>
 #include <session.h>
 
-class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public KTextEditor::UndoInterface, public KTextEditor::ConfigInterface, public KTextEditor::ConfigInterfaceExtension, public KTextEditor::MarkInterface, public YZBuffer {
+class KYZisDoc : public KTextEditor::Document, 
+		public KTextEditor::EditInterface, 
+		public KTextEditor::HighlightingInterface, 
+		public KTextEditor::UndoInterface, 
+		public KTextEditor::ConfigInterface, 
+		public KTextEditor::ConfigInterfaceExtension, 
+		public KTextEditor::MarkInterface,
+		public KTextEditor::SelectionInterface,
+		public KTextEditor::SelectionInterfaceExt,
+		public YZBuffer {
 	Q_OBJECT
 
 	public:
@@ -105,6 +116,20 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		virtual QString configPageFullName ( uint number = 0 ) const;
 		virtual QPixmap configPagePixmap ( uint number = 0, int size = KIcon::SizeSmall ) const;
 
+		// KTextEditor::SelectionInterface
+		virtual bool setSelection( unsigned int startLine, unsigned int startCol, unsigned int endLine, unsigned int endCol );
+		virtual bool clearSelection();
+		virtual bool hasSelection() const;
+		virtual QString selection() const;
+		virtual bool removeSelectedText();
+		virtual bool selectAll();
+
+		// KTextEditor::SelectionInterfaceExt
+		virtual int selStartLine();
+		virtual int selStartCol();
+		virtual int selEndLine();
+		virtual int selEndCol();
+
 		/*state modification changes - to comply with undocumented kate features
 		this overload emits stateChanged() signal from all views*/
 		virtual void setModified(bool modified);
@@ -137,6 +162,7 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		void hlChanged();
 		void undoChanged();
 		void textChanged ();
+		void selectionChanged();
 		void charactersInteractivelyInserted( int ,int ,const QString& );
 
 		//KTextEditor::MarkInterface slots

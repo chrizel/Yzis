@@ -68,9 +68,10 @@ class YZModeVisual : public YZModeCommand {
 		void translateToVisualLine( const YZCommandArgs& args );
 		void yankWholeLines(const YZCommandArgs &args);
 
+		virtual YZInterval interval(const YZCommandArgs &args);
+
 	protected:
 		virtual YZInterval buildInterval( const YZCursor& from, const YZCursor& to );
-		virtual YZInterval interval(const YZCommandArgs &args);
 		bool mEntireLines;
 };
 

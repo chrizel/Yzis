@@ -34,6 +34,7 @@
 #include "debug.h"
 #include "undo.h"
 #include "mark.h"
+#include "mode_visual.h"
 
 #include "configdialog.h"
 #include "hlconfig.h"
@@ -308,6 +309,9 @@ void KYZisDoc::setModified( bool modified ) {
 	}
 	if ( modified )
 		emit textChanged();
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	if ( v && v->modePool()->current()->isSelMode() )
+			emit selectionChanged();
 	KTextEditor::Document::setModified(modified);
 }
 
@@ -370,6 +374,81 @@ QString KYZisDoc::configPageFullName ( uint /*number*/) const {
 
 QPixmap KYZisDoc::configPagePixmap ( uint /*number*/, int /*size*/ ) const {
 	return 0;
+}
+
+/*
+ * KTextEditor::SelectionInterface
+ */
+bool KYZisDoc::setSelection( unsigned int startLine, unsigned int startCol, unsigned int endLine, unsigned int endCol ) {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	v->setPaintAutoCommit( false );
+	if ( v->modePool()->current()->isSelMode() ) // leave it
+		v->modePool()->pop();
+	v->gotoxy( startCol, startLine );
+	v->modePool()->push( YZMode::MODE_VISUAL );
+	v->gotoxy( endCol, endLine );
+	v->commitPaintEvent();
+	return true;
+}
+bool KYZisDoc::clearSelection() {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
+	v->modePool()->pop();
+	return true;
+}
+bool KYZisDoc::hasSelection() const {
+	YZView *v = dynamic_cast<YZView*>( ((KYZisDoc*)(this))->_views.first() );
+	return !(v->getSelectionPool()->visual()->isEmpty());
+}
+QString KYZisDoc::selection() const {
+	YZView *v = dynamic_cast<YZView*>( ((KYZisDoc*)(this))->_views.first() );
+	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
+#if QT_VERSION < 0x040000
+	QValueList<QChar> regs;
+#else
+	QList<QChar> regs;
+#endif
+	YZInterval i = dynamic_cast<YZModeVisual*>( v->modePool()->current() )->interval( YZCommandArgs(NULL,v,regs,1,false) );
+	return ((YZBuffer*)this)->getText( i ).join("\n");
+}
+bool KYZisDoc::removeSelectedText() {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
+	dynamic_cast<YZModeVisual*>( v->modePool()->current() )->execCommand( v, "d" );
+	return true;
+}
+bool KYZisDoc::selectAll() {
+	if ( lineCount() == 0 )
+		return true;
+	return setSelection( 0, 0, lineCount() - 1, qMax( (int)(textline( lineCount() - 1 ).length() - 1), 0 ) );
+}
+
+/*
+ * KTextEditor::SelectionInterfaceSel
+ */
+int KYZisDoc::selStartLine() {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZDoubleSelection* visual = v->getSelectionPool()->visual();
+	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
+	return visual->bufferMap()[ 0 ].fromPos().getY();
+}
+int KYZisDoc::selStartCol() {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZDoubleSelection* visual = v->getSelectionPool()->visual();
+	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
+	return visual->bufferMap()[ 0 ].fromPos().getX();
+}
+int KYZisDoc::selEndLine() {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZDoubleSelection* visual = v->getSelectionPool()->visual();
+	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
+	return visual->bufferMap()[ 0 ].toPos().getY();
+}
+int KYZisDoc::selEndCol() {
+	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZDoubleSelection* visual = v->getSelectionPool()->visual();
+	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
+	return visual->bufferMap()[ 0 ].toPos().getX();
 }
 
 #include "document.moc"

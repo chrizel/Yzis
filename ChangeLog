@@ -1,3 +1,7 @@
+2005-02-22 panard
+  * kyzis
+    KTextEditor::SelectionInterface and KTextEditor::SelectionInterfaceSel
+
 2005-02-20 panard
   * libyzis
     add CTRL+e and CTRL+y insert commands

@@ -234,7 +234,7 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 	// leave visual mode if the user clicks somewhere
 	// TODO: this should only be done if the left button is used. Right button
 	// should extend visual selection, like in vim.
-	if (mParent->modePool()->currentType() == YZMode::MODE_VISUAL)
+	if ( mParent->modePool()->current()->isSelMode() )
 		mParent->modePool()->pop();
 	
 	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
@@ -261,7 +261,7 @@ void KYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 		if (mParent->modePool()->currentType() == YZMode::MODE_COMMAND) {
 			// start visual mode when user makes a selection with the left mouse button
 			mParent->modePool()->push( YZMode::MODE_VISUAL );
-		} else if (mParent->modePool()->currentType() == YZMode::MODE_VISUAL) {
+		} else if (mParent->modePool()->current()->isSelMode() ) {
 			// already in visual mode - move cursor if the mouse pointer has moved over a new char
 			unsigned int newX = e->x() / ( isFontFixed ? fontMetrics().maxWidth() : 1 )
 				+ mParent->getDrawCurrentLeft() - marginLeft;

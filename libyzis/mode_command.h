@@ -258,7 +258,6 @@ class YZModeCommand : public YZMode {
 		// this is not a QValueList because there is no constructor with no arguments for YZCommands
 		QStringList textObjects;
 
-	protected:
 		virtual YZInterval interval(const YZCommandArgs &args);
 
 };

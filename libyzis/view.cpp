@@ -40,18 +40,9 @@ void YZView::sendKey( int c, int modifiers) {
 	//ignore some keys
 	if ( c == Qt::Key_Shift || c == Qt::Key_Alt || c == Qt::Key_Meta ||c == Qt::Key_Control || c == Qt::Key_CapsLock ) return;
 
-	//map other keys
+	//map other keys //BAD XXX
 	if ( c == Qt::Key_Insert ) c = Qt::Key_I;
 	
-	if (Qt::Key_Escape == c) {
-		//when escpaping while adding char in end of line
-		if (cursor->getX() > current_maxx) {
-			gotoxy(current_maxx, cursor->getY());
-		}
-		gotoCommandMode( );
-		return;
-	}
-
 	QString lin;
 	QString key = QChar( tolower( c ) );// = QKeySequence( c );
 	//default is lower case unless some modifiers
@@ -63,6 +54,12 @@ void YZView::sendKey( int c, int modifiers) {
 
 		case YZ_VIEW_MODE_INSERT:
 			switch ( c ) {
+				case Qt::Key_Escape:
+					if (cursor->getX() > current_maxx) {
+						gotoxy(current_maxx, cursor->getY());
+					}
+					gotoCommandMode( );
+					return;
 				case Qt::Key_Return:
 					buffer->addNewLine(cursor->getX(),cursor->getY());
 					gotoxy(0, cursor->getY()+1 );
@@ -88,6 +85,12 @@ void YZView::sendKey( int c, int modifiers) {
 
 		case YZ_VIEW_MODE_REPLACE:
 			switch ( c ) {
+				case Qt::Key_Escape:
+					if (cursor->getX() > current_maxx) {
+						gotoxy(current_maxx, cursor->getY());
+					}
+					gotoCommandMode( );
+					return;
 				case Qt::Key_Return:
 					buffer->addNewLine(cursor->getX(),cursor->getY());
 					gotoxy(0, cursor->getY()+1 );

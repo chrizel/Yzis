@@ -19,7 +19,6 @@ void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 		_parent->sendKey(e->key(), e->state());
 		e->accept();
 	}
-	KLineEdit::keyPressEvent( e );
 }
 
 #include "command.moc"

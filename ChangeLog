@@ -1,3 +1,9 @@
+2003-11-01 mikmak
+  * kyzis
+    fix command line to not display twice the caracters
+  * libyzis
+    ESC while EX mode clears the command line
+
 2003-10-31 mikmak
   Happy Halloween ;)
   * all

@@ -257,16 +257,13 @@ void YZSearch::highlightSearch( YZView* mView, YZSelectionMap searchMap ) {
 }
 
 void YZSearch::update() {
-	yzDebug() << "YZSearch::update" << endl;
 	if ( ! active() ) return;
 	if ( YZSession::me->getBooleanOption( "hlsearch" ) ) {
-		yzDebug() << "calc hl map" << endl;
 		// force creating hl selection
 		QString pattern = mCurrentSearch;
 		mCurrentSearch = "";
 		setCurrentSearch( pattern );
 	} else {
-		yzDebug() << "clear hl map" << endl;
 		YZSelectionMap searchMap;
 		// clear current hl search selection
 		YZBufferMap buffers = YZSession::me->buffers();

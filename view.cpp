@@ -525,10 +525,12 @@ void YZView::gotodx( unsigned int nextx ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
 	unsigned int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 0 : 1;
 	if ( sCurLineLength == 0 ) nextx = 0;
-	else if ( workCursor->bufferX() >= sCurLineLength ) {
+/*	XXX: why ??
+ 	else if ( workCursor->bufferX() >= sCurLineLength ) {
 		gotox ( sCurLineLength );
 		return;
 	}
+	*/
 	while ( workCursor->screenX() > nextx )
 		if ( ! drawPrevCol( ) ) break;
 	while ( workCursor->screenX() < nextx && workCursor->bufferX() < sCurLineLength - shift )

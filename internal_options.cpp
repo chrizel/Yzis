@@ -170,7 +170,6 @@ void setSyntax( YZBuffer* b, YZView* v ) {
 		b->setHighLight( b->getLocalStringOption("syntax") );
 }
 void updateHLSearch( YZBuffer*, YZView* ) {
-	yzDebug() << "updateHLSearch" << endl;
 	YZSession::me->search()->update();
 }
 

@@ -24,17 +24,12 @@
 #ifndef YZ_MARK_H
 #define YZ_MARK_H
 
-#include "cursor.h"
 #include <qstring.h>
 #include <qmap.h>
 
-class YZCursor;
+#include "cursor.h"
 
-struct cursor_pos {
-	YZCursor* bPos; /* buffer position */
-	YZCursor* dPos; /* draw position */
-};
-typedef struct cursor_pos YZCursorPos;
+class YZCursor;
 
 typedef QMap<QString, YZCursorPos> YZMarker;
 

@@ -237,7 +237,7 @@ void YZAction::copyArea( YZView* pView, const YZInterval& i, const QList<QChar> 
 
 }
 
-void YZAction::replaceArea( YZView* pView, const YZInterval& i, const QStringList& text ) {
+void YZAction::replaceArea( YZView* /*pView*/, const YZInterval& i, const QStringList& text ) {
 	CONFIGURE_VIEWS;
 	QStringList t = text;
 

@@ -1152,30 +1152,38 @@ void YZModeCommand::changeCase( const YZCommandArgs &args ) {
 
 void YZModeCommand::lineToUpperCase( const YZCommandArgs &args ) {
 	YZCursor pos = *args.view->getBufferCursor();
-	const QString line = args.view->myBuffer()->textline( pos.getY() );
-	if ( ! line.isNull() ) {
+	uint i = 0;
+	while ( i < args.count ) {
+		const QString line = args.view->myBuffer()->textline( pos.getY() + i );
+		if ( ! line.isNull() ) {
 #if QT_VERSION < 0x040000
-		args.view->myBuffer()->action()->replaceLine( args.view, pos.getY(), line.upper());
+			args.view->myBuffer()->action()->replaceLine( args.view, pos.getY() + i , line.upper());
 #else
-		args.view->myBuffer()->action()->replaceLine( args.view, pos.getY(), line.toUpper());
+			args.view->myBuffer()->action()->replaceLine( args.view, pos.getY() + i , line.toUpper());
 #endif
-		args.view->gotoxy( 0, pos.getY() );
-		args.view->commitNextUndo();
+		}
+		i++;
 	}
+	args.view->gotoxy( 0, pos.getY() + i );
+	args.view->commitNextUndo();
 }
 
 void YZModeCommand::lineToLowerCase( const YZCommandArgs &args ) {
 	YZCursor pos = *args.view->getBufferCursor();
-	const QString line = args.view->myBuffer()->textline( pos.getY() );
-	if ( ! line.isNull() ) {
+	uint i = 0;
+	while ( i < args.count ) {
+		const QString line = args.view->myBuffer()->textline( pos.getY() + i );
+		if ( ! line.isNull() ) {
 #if QT_VERSION < 0x040000
-		args.view->myBuffer()->action()->replaceLine( args.view, pos.getY(), line.lower());
+			args.view->myBuffer()->action()->replaceLine( args.view, pos.getY() + i, line.lower());
 #else
-		args.view->myBuffer()->action()->replaceLine( args.view, pos.getY(), line.toLower());
+			args.view->myBuffer()->action()->replaceLine( args.view, pos.getY() + i, line.toLower());
 #endif
-		args.view->gotoxy( 0, pos.getY() );
-		args.view->commitNextUndo();
+		}
+		i++;
 	}
+	args.view->gotoxy( 0, pos.getY() + i );
+	args.view->commitNextUndo();
 }
 
 void YZModeCommand::macro( const YZCommandArgs &args ) {

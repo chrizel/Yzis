@@ -70,6 +70,11 @@ class YZExLua : public QObject {
 		 */
 		static int winline(lua_State *L);
 
+		/**
+		 * Moves the cursor to the given position
+		 */
+		static int YZExLua::gotoxy(lua_State *L);
+
 	private:
 		lua_State *st;
 };

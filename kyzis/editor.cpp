@@ -38,11 +38,11 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	f.setStyleHint(QFont::TypeWriter);
 	myFont = f;
 	setFont(f);
-	standard = new QFontMetrics( myFont );
-	f.setBold( true );
-	standardBold = new QFontMetrics( f );
-	f.setItalic( true );
-	standardBoldItalic = new QFontMetrics( f );
+//	standard = new QFontMetrics( myFont );
+//	f.setBold( true );
+//	standardBold = new QFontMetrics( f );
+//	f.setItalic( true );
+//	standardBoldItalic = new QFontMetrics( f );
 	mParent = parent;
 
 	setFocusPolicy( StrongFocus );
@@ -55,9 +55,6 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 }
 
 KYZisEdit::~KYZisEdit() {
-	delete standard;
-	delete standardBold;
-	delete standardBoldItalic;
 }
 
 void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {

@@ -23,6 +23,7 @@
  */
 
 #include <qapplication.h>
+#include <qdir.h>
 #include "session.h"
 #include "debug.h"
 #include "schema.h"
@@ -31,6 +32,7 @@
 #include "registers.h"
 #include "view.h"
 #include "swapfile.h"
+#include "ex_lua.h"
 
 int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
@@ -50,6 +52,11 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mCurView = 0;
 	me = this;
 	mSchemaManager = new YzisSchemaManager();
+	//read init files
+	if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))
+		YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/init.lua" );
+	if (QFile::exists(QDir::homeDirPath() + "/.yzis/init.lua"))
+		YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/init.lua" );
 }
 
 YZSession::~YZSession() {

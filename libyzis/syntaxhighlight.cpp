@@ -42,8 +42,10 @@
 
 #include "magic.h"
 
+#include "ex_lua.h"
 #include <qstringlist.h>
 #include <qtextstream.h>
+#include <qdir.h>
 //END
 
 //BEGIN defines
@@ -2919,6 +2921,11 @@ YzisHlManager::YzisHlManager()
   YzisAttributeList list;
   getDefaults(0,list);
   setDefaults(0,list);
+  //read init files
+  if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))
+    YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/hl.lua" );
+  if (QFile::exists(QDir::homeDirPath() + "/.yzis/hl.lua"))
+    YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/hl.lua" );
 }
 
 YzisHlManager::~YzisHlManager()

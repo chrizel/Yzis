@@ -135,6 +135,7 @@ class YZExCommandPool {
 		int rangeVisual( const YZExRangeArgs& args );
 		int rangeSearch( const YZExRangeArgs& args );
 
+	public:
 		// commands
 		QString write( const YZExCommandArgs& args );
 		QString quit( const YZExCommandArgs& args );

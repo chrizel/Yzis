@@ -56,7 +56,7 @@ void YZCommandPool::initPool() {
 
 void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error) {
 	QString result,command;
-	int i=0;
+	unsigned int i=0;
 
 	//regexp ? //FIXME
 	//try to find the command we are looking for

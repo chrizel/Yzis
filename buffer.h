@@ -33,7 +33,7 @@ public:
 	 * @param y line where the character is to be added
 	 * @param c the character to add
 	 */
-	void addChar (int x, int y, const QString& c);
+	void addChar (unsigned int x, unsigned int y, const QString& c);
 
 	/**
 	 * Replaces a character in the buffer
@@ -41,7 +41,7 @@ public:
 	 * @param y line where the character is to be changed
 	 * @param c the character which replaces the current one
 	 */
-	void chgChar (int x, int y, const QString& c);
+	void chgChar (unsigned int x, unsigned int y, const QString& c);
 
 	/**
 	 * Deletes a character in the buffer
@@ -49,7 +49,7 @@ public:
 	 * @param y line where the character is to be deleted
 	 * @param count number of characters to delete
 	 */
-	void delChar (int x, int y, int count = 1);
+	void delChar (unsigned int x, unsigned int y, unsigned int count = 1);
 
 	/**
 	 * Opens the file and fills in internals structure with its content
@@ -71,7 +71,7 @@ public:
 	 * Get the current filename of the buffer
 	 * @return the filename
 	 */
-	const QString& fileName() {return path;}
+	const QString& fileName() {return mPath;}
 
 	/**
 	 * Adds a new view to the buffer
@@ -83,7 +83,7 @@ public:
 	 * The list of view for this buffer
 	 * @return a QValuelist of pointers to the views
 	 */
-	QValueList<YZView*> views() { return view_list; }
+	QValueList<YZView*> views() { return mViews; }
 
 	/**
 	 * Find the first view of this buffer
@@ -96,28 +96,31 @@ public:
 	 * @param uid the unique ID of the view to search for
 	 * @return a pointer to the view or NULL
 	 */
-	YZView* findView(int uid);
+	YZView* findView(unsigned int uid);
 
 	/**
 	 * Get the whole text of the buffer
 	 * @return a QStringList containing the texts
 	 */
-	const QStringList& getText() { return text; }
+	const QStringList& getText() { return mText; }
 
 	/**
 	 * Opens a new line after the indicated position
 	 * @param col the position in line where to add a \n
 	 * @param line the line preceding the new line
 	 */
-	void addNewLine( int col, int line );
+	void addNewLine( unsigned int col, unsigned int line );
 
 	/**
 	 * Deletes the given line
 	 * @param line the line number to delete
 	 */
-	void deleteLine( int line );
+	void deleteLine( unsigned int line );
 
-	yz_point motionPosition( int xstart, int ystart, YZMotion regexp );
+	/**
+	 * @internal, not implemented yet
+	 */
+	yz_point motionPosition( unsigned int xstart, unsigned int ystart, YZMotion regexp );
 
 	/**
 	 * Finds a line in the buffer
@@ -130,29 +133,26 @@ public:
 	 * Number of lines in the buffer
 	 * @return the number of lines
 	 */
-	unsigned int getLines( void ) { return text.count(); }
+	unsigned int getLines() { return mText.count(); }
 
 	/**
 	 * Changes the filename
 	 * @param _path the new filename ( and path )
 	 */
-	void setPath( const QString& _path ) { path = _path; }
+	void setPath( const QString& _path ) { mPath = _path; }
 
 	/**
 	 * Unique ID of the buffer
 	 */
-	int myId;
+	unsigned int myId;
 
 protected:
-	QString path;
-	QValueList<YZView*> view_list;
+	void updateAllViews();
 
-	void	updateAllViews();
-
-	/* readonly?, change, load, save, isclean?, ... */
-	/* locking stuff will be here, too */
-	QStringList text;
-	YZSession *session;
+	QString mPath;
+	QValueList<YZView*> mViews;
+	QStringList mText;
+	YZSession *mSession;
 };
 
 #endif /*  YZ_BUFFER_H */

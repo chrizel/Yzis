@@ -500,6 +500,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					YZSelection cur_sel = selectionPool->layout( "CLEAR" )[ 0 ];
 					selectionPool->clear( "SEARCH" );
 					sendPaintEvent(cur_sel.drawFrom(), cur_sel.drawTo());
+					displayInfo(tr("No match"));
 				}
 				setCommandLineText( "" );
 				mSession->setFocusMainWindow();

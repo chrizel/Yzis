@@ -118,10 +118,10 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len 
 		it->applyDeleteLine( mPos, len, pView->myId == it->myId );
 }
 
-void YZAction::copyLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
+void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
 	YZCursor mPos( pos );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initCopyLine( mPos, len, pView->myId == it->myId );
+//	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+//		it->initCopyLine( mPos, len, pView->myId == it->myId );
 
 	unsigned int bY = mPos.getY();
 	QStringList buff;
@@ -133,13 +133,13 @@ void YZAction::copyLine( YZView* pView, const YZCursor& pos, unsigned int len, c
 	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
 		YZSession::mRegisters.setRegister( *it, buff );
 
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyCopyLine( mPos, len, pView->myId == it->myId );
+//	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+//		it->applyCopyLine( mPos, len, pView->myId == it->myId );
 }
 
 
 //copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
-void YZAction::copyArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QValueList<QChar> &reg ) {
+void YZAction::copyArea( YZView* , const YZCursor& begin, const YZCursor& end, const QValueList<QChar> &reg ) {
 	yzDebug() << "Copying from X " << begin.getX() << " to X " << end.getX() << endl;
 
 	QStringList buff;
@@ -151,8 +151,8 @@ void YZAction::copyArea( YZView* pView, const YZCursor& begin, const YZCursor& e
 	if ( eY >= mBuffer->lineCount() ) return; //something's wrong => abort
 
 	YZCursor mPos( begin );
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->initCopyLine( mPos, end, pView->myId == it->myId );
+//	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+//		it->initCopyLine( mPos, end, pView->myId == it->myId );
 
 	yzDebug() << "Cursors : " << bX << ","<< bY << " " << eX << "," << eY << endl;
 
@@ -186,8 +186,8 @@ void YZAction::copyArea( YZView* pView, const YZCursor& begin, const YZCursor& e
 	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
 		YZSession::mRegisters.setRegister( *it, buff );
 
-	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-		it->applyCopyLine( mPos, end, pView->myId == it->myId );
+//	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+//		it->applyCopyLine( mPos, end, pView->myId == it->myId );
 
 }
 

@@ -46,7 +46,7 @@ YzisSchemaManager::~YzisSchemaManager ()
 //
 // read the types from config file and update the internal list
 //
-void YzisSchemaManager::update (bool readfromfile)
+void YzisSchemaManager::update (bool /*readfromfile*/)
 {
 //  if (readfromfile)
 //    m_config.reparseConfiguration ();
@@ -76,7 +76,7 @@ void YzisSchemaManager::update (bool readfromfile)
   return &m_config;
 }*/
 
-void YzisSchemaManager::addSchema (const QString &t)
+void YzisSchemaManager::addSchema (const QString &/*t*/)
 {
 /*  m_config.setGroup (t);
   m_config.writeEntry("Color Background", KGlobalSettings::baseColor());

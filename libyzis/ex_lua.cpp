@@ -28,6 +28,7 @@ YZExLua::YZExLua() {
 	st = lua_open();
 	yzDebug() << "Lua " << lua_version() << " loaded" << endl;
 	lua_register(st,"text",text);
+	lua_register(st,"insert",insert);
 }
 
 YZExLua::~YZExLua() {
@@ -38,13 +39,12 @@ QString YZExLua::lua(YZView *view, const QString& inputs) {
 	lua_pushstring(st,"text");
 	lua_gettable(st,LUA_GLOBALSINDEX); //to store function name
 	//now arguments in the right order
-	lua_pushnumber( st, view->myId ); //view ID
 	lua_pushnumber( st, 0 ); //start col
 	lua_pushnumber( st, 0 ); //start line
 	lua_pushnumber( st, 0 ); //end col
 	lua_pushnumber( st, 3 ); //end line
 
-	if ( lua_pcall( st, 5, 1, 0 ) )
+	if ( lua_pcall( st, 4, 1, 0 ) )
 		yzDebug() << "YZExLua::lua " << lua_tostring(st, -1) << endl;
 	else
 		yzDebug() << "YZExLua::text returned " << lua_tostring( st, -1 ) << endl; //XXX remove me
@@ -69,15 +69,14 @@ QString YZExLua::loadFile( YZView *view, const QString& inputs ) {
 //All Lua functions return the number of results returned
 int YZExLua::text(lua_State *L) {
 	int n = lua_gettop( L );
-	if ( n < 5 ) return 0; //mis-use of the function
+	if ( n < 4 ) return 0; //mis-use of the function
 	
-	int vId = lua_tonumber( L, 1 );
-	int sCol = lua_tonumber( L, 2 );
-	int sLine = lua_tonumber( L,3 );
-	int eCol = lua_tonumber( L,4 );
-	int eLine = lua_tonumber( L,5 );
+	int sCol = lua_tonumber( L, 1 );
+	int sLine = lua_tonumber( L,2 );
+	int eCol = lua_tonumber( L,3 );
+	int eLine = lua_tonumber( L,4 );
 	
-	YZView* cView = YZSession::me->findView(vId);
+	YZView* cView = YZSession::me->currentView();
 	QString result,t;
 	for ( int i = sLine ; i < eLine; i++ ) {
 		t = cView->myBuffer()->textline( i );
@@ -91,6 +90,22 @@ int YZExLua::text(lua_State *L) {
 	}
 	lua_pushstring( L, result ); // first result
 	return 1; // one result
+}
+
+int YZExLua::insert(lua_State *L) {
+	int n = lua_gettop( L );
+	if ( n < 3 ) return 0; //mis-use of the function
+	
+	int sCol = lua_tonumber( L, 1 );
+	int sLine = lua_tonumber( L,2 );
+	QString text = lua_tostring ( L, 3 );
+	
+	YZView* cView = YZSession::me->currentView();
+	//split new lines XXX
+	cView->myBuffer()->insertChar(sCol, sLine, text);
+	cView->refreshScreen();
+
+	return 0; // no result
 }
 
 #include "ex_lua.moc"

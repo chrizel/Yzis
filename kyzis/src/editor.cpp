@@ -289,6 +289,8 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 					QPen old_pen = p.pen( );
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
 						p.setPen( Qt::yellow );
+						p.setBackgroundMode( Qt::TransparentMode );
+						p.setFont(font());
 						// FIXME p.drawText( myRect, flag | ( rightleft ? Qt::AlignLeft : Qt::AlignRight ), QString::number( lineNumber ) );
 						p.drawText( myRect, ( rightleft ? Qt::AlignLeft : Qt::AlignRight ), QString::number( lineNumber ) );
 						lastLineNumber = lineNumber;
@@ -334,6 +336,8 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 					if ( bgColor.isValid() && bgColor != backgroundColor() ) {
 						p.setBackgroundMode(Qt::OpaqueMode);
 						p.setBackgroundColor( bgColor );
+					} else {
+						p.setBackgroundMode( Qt::TransparentMode );
 					}
 					
 					p.drawText(myRect, 0, disp );

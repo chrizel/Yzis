@@ -40,14 +40,14 @@ class YZSelectionPool {
 		YZSelectionPool( YZView * view );
 		virtual ~YZSelectionPool( );
 
-		void addSelection( YZCursor * from, YZCursor * to );
+		void addSelection( const YZCursor& from, const YZCursor& to );
 		void addSelection( unsigned int from_x, unsigned int from_y, unsigned int to_x, unsigned int to_y );
-		void delSelection( YZCursor * from, YZCursor * to );
+		void delSelection( const YZCursor& from, const YZCursor& to );
 		void delSelection( unsigned int from_x, unsigned int from_y, unsigned int to_x, unsigned int to_y );
 
 		void clear( );
 
-		bool isSelected( YZCursor * pos );
+		bool isSelected( const YZCursor& pos );
 
 		void test( ); // XXX test
 		void print( ); // XXX test
@@ -58,8 +58,8 @@ class YZSelectionPool {
 		unsigned int size;
 
 		void removeSelection( unsigned int begin, unsigned int len );
-		void insertSelection( unsigned int pos, YZCursor * from, YZCursor * to );
-		int locatePosition( YZCursor * pos, bool * isSelected );
+		void insertSelection( unsigned int pos, const YZCursor& from, const YZCursor& to );
+		int locatePosition( const YZCursor& pos, bool * isSelected );
 
 		void printSelection( unsigned int pos ); // XXX test
 

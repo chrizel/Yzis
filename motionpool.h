@@ -95,7 +95,7 @@ class YZMotionPool {
 		 * @param cursor result of the calculation
 		 * @return whether a match was found
 		 */
-		bool applyMotion( const QString& inputsMotion, YZView *view, bool *backward, YZCursor *cursor );
+		bool applyMotion( const QString& inputsMotion, YZView *view, bool *backward, YZCursor& cursor );
 
 		/**
 		 * Calculates coordinates of the cursor after applying the given regexp motion
@@ -105,7 +105,7 @@ class YZMotionPool {
 		 * @param result result of the calculation
 		 * @return whether a match was found
 		 */
-		bool applyRegexpMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor *result );
+		bool applyRegexpMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& result );
 
 		/**
 		 * Calculates coordinates of the cursor after applying the given motion
@@ -115,7 +115,7 @@ class YZMotionPool {
 		 * @param result result of the calculation
 		 * @return whether a match was found
 		 */
-		bool applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor *result );
+		bool applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& result );
 
 		/**
 		 * Check whether the @param inputs match a known motion

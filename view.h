@@ -174,26 +174,26 @@ class YZView {
 		 */
 
 		/* insert text */
-		void initInsertChar( YZCursor* pos, unsigned int len, bool applyCursor );
-		void applyInsertChar( YZCursor* pos, unsigned int len, bool applyCursor );
+		void initInsertChar( const YZCursor& pos, unsigned int len, bool applyCursor );
+		void applyInsertChar( const YZCursor& pos, unsigned int len, bool applyCursor );
 
 		/* delete text */
-		void initDeleteChar( YZCursor* pos, unsigned int len, bool applyCursor );
-		void applyDeleteChar( YZCursor* pos, unsigned int len, bool applyCursor );
+		void initDeleteChar( const YZCursor& pos, unsigned int len, bool applyCursor );
+		void applyDeleteChar( const YZCursor& pos, unsigned int len, bool applyCursor );
 
 		/* replace text */
-		void initReplaceChar( YZCursor* pos, unsigned int len, bool applyCursor );
-		void applyReplaceChar( YZCursor* pos, unsigned int len, bool applyCursor );
+		void initReplaceChar( const YZCursor& pos, unsigned int len, bool applyCursor );
+		void applyReplaceChar( const YZCursor& pos, unsigned int len, bool applyCursor );
 
 		/* insert line */
-		void initInsertLine( YZCursor* pos, bool applyCursor );
-		void applyInsertLine( YZCursor* pos, bool applyCursor );
+		void initInsertLine( const YZCursor& pos, bool applyCursor );
+		void applyInsertLine( const YZCursor& pos, bool applyCursor );
 
 		/* delete line */
-		void initDeleteLine( YZCursor* pos, unsigned int len, bool applyCursor );
-		void applyDeleteLine( YZCursor* pos, unsigned int len, bool applyCursor );
-		void initDeleteLine( YZCursor* pos, YZCursor* end, bool applyCursor );
-		void applyDeleteLine( YZCursor* pos, YZCursor* end, bool applyCursor );
+		void initDeleteLine( const YZCursor& pos, unsigned int len, bool applyCursor );
+		void applyDeleteLine( const YZCursor& pos, unsigned int len, bool applyCursor );
+		void initDeleteLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
+		void applyDeleteLine( const YZCursor& pos, const YZCursor& end, bool applyCursor );
 
 		/**
 		 * deletes the character under the cursor
@@ -635,8 +635,8 @@ class YZView {
 
 		YZCursor* origPos;
 		unsigned int lineDY;
-		void initChanges( YZCursor* pos );
-		void applyChanges( YZCursor* pos, unsigned int len, bool applyCursor );
+		void initChanges( const YZCursor& pos );
+		void applyChanges( const YZCursor& pos, unsigned int len, bool applyCursor );
 
 		//cached value of tabwidth option
 		unsigned int tabwidth;	

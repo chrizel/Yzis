@@ -930,7 +930,8 @@ bool YZView::drawNextLine( ) {
 
 	if ( sCursor->getY() < mBuffer->lineCount() ) {
 		
-		sCurLine = mBuffer->textline( sCursor->getY() );
+		YZLine *yl = mBuffer->yzline( sCursor->getY() );
+		sCurLine = yl->data();
 		rCursor->setX( rCurrentLeft );
 		if (rCurrentLeft > 0) {
 
@@ -943,15 +944,14 @@ bool YZView::drawNextLine( ) {
 			}
 			rSpaceFill = 1 + (rCurrentLeft % tabLength);
 
-			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
+/*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
 					<< ", rX(cursor):" << rCursor->getX() 
-					<< ", rY:" << rCursor->getY() << ", sX:" << sCursor->getX( ) << ", sY:" << sCursor->getY () << endl; 
+					<< ", rY:" << rCursor->getY() << ", sX:" << sCursor->getX( ) << ", sY:" << sCursor->getY () << endl; */
 		}
 
 		if ( ( rCursor->getY() - rCurrentTop ) < mLinesVis ) {
 			/* highlight stuff */
 			rHLa = NULL;
-			YZLine *yl = mBuffer->yzline( sCursor->getY() );
 			if ( yl->length() != 0 ) {
 				rHLa = yl->attributes();
 			}

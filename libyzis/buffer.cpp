@@ -186,7 +186,7 @@ void  YZBuffer::appendLine(const QString &l) {
 	                                   l,  0, lineCount());
 
 	mText.append(new YZLine(l));
-	if ( m_highlight ) {
+	if ( m_highlight != 0L ) {
 		bool ctxChanged = false;
 		QMemArray<signed char> foldingList;
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
@@ -379,11 +379,11 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 			yzline(line)->setData(l);
 		}
 	} 
-	if ( m_highlight ) {
+	if ( m_highlight != 0L ) {
 		YZView *it;
 		uint hlLine = line;
 		bool ctxChanged = true;
-		while ( ctxChanged && line < lineCount()) {
+		while ( ctxChanged && hlLine < lineCount()) {
 			QMemArray<signed char> foldingList;
 			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
 			if ( hlLine != line ) {

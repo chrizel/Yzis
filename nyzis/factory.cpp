@@ -67,15 +67,17 @@ void NYZFactory::event_loop()
 			"NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
 	/* main and only event loop in nyzis */
 	for (;;) {
-		extern uint qGlobalPostedEventsCount();
-//		if ( qApp->hasPendingEvents () ) yzDebug( NYZIS ) << "qt wann do something.. " << qGlobalPostedEventsCount() << " pending events.." << endl;
 		/* this is a _basic_ event loop... will be improved */
 		int c = getch();
 	
 		// we know what this is..
 		switch( c ){
 			case ERR:
-				usleep( 400 );
+				extern uint qGlobalPostedEventsCount();
+				if ( qApp->hasPendingEvents () ) {
+					yzDebug( NYZIS ) << "qt wanna do something.. " << qGlobalPostedEventsCount() << " pending events.." << endl;
+					qApp->processEvents( 400 );
+				} else usleep( 400 );
 			// do nothing with the following
 			case KEY_RESIZE:
 				continue;

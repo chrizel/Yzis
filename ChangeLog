@@ -4,9 +4,12 @@
 
 2004-04-20 orzel
   * libyzis
+    cleaning key handling code
   * nyzis
     handle resizing from embedding xterm/konsole/..
     bug fixing + copying vim look/behaviour
+    cleaning key handling code
+    handle Qt events from qt main event loop
 
 2004-04-19 everyone
   * M1 ready

@@ -243,14 +243,40 @@ class YZExLua : public QObject {
 		static int newoption(lua_State *L);
 
 		/**
-		 * Adds new insert mappings
-		 */
-		static int imap(lua_State *L);
-
-		/**
 		 * Adds a new global mapping
 		 */
 		static int map(lua_State *L);
+		static int unmap(lua_State *L);
+
+		/**
+		 * Adds new insert mappings
+		 */
+		static int imap(lua_State *L);
+		static int iunmap(lua_State *L);
+
+		/**
+		 * Adds a new visual mapping
+		 */
+		static int vmap(lua_State *L);
+		static int vunmap(lua_State *L);
+
+		/**
+		 * Adds a new cmdline mapping
+		 */
+		static int cmap(lua_State *L);
+		static int cunmap(lua_State *L);
+
+		/**
+		 * Adds a new pending op mapping
+		 */
+		static int omap(lua_State *L);
+		static int ounmap(lua_State *L);
+
+		/**
+		 * Adds a new normal mapping
+		 */
+		static int nmap(lua_State *L);
+		static int nunmap(lua_State *L);
 
 	protected:
 		lua_State *L;

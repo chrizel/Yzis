@@ -212,6 +212,7 @@ void YZInternalOptionPool::init() {
 	YZInternalOption *incsearch = new YZInternalOption( "incsearch", "Global", true, true, global_opt, bool_t );
 	YZInternalOption *hlsearch = new YZInternalOption( "hlsearch", "Global", true, true, global_opt, bool_t );
 	YZInternalOption *indentkeys = new YZInternalOption( "indentkeys", "Global", QString(""), QString(""), buffer_opt, stringlist_t );
+	YZInternalOption *schema = new YZInternalOption( "schema", "Global", 0, 0, view_opt, int_t );
 
 	mOptions[ "Global\\tabstop" ] = tabstop;
 	mOptions[ "Global\\number" ] = number;
@@ -230,6 +231,7 @@ void YZInternalOptionPool::init() {
 	mOptions[ "Global\\incsearch" ] = incsearch;
 	mOptions[ "Global\\hlsearch" ] = hlsearch;
 	mOptions[ "Global\\indentkeys" ] = indentkeys;
+	mOptions[ "Global\\schema" ] = schema;
 	setGroup("Global");
 
 	//read config files now

@@ -22,6 +22,8 @@
  * $Id$
  */
 
+#include "printer.h"
+#ifdef HAVE_LIBPS
 #include <qpainter.h>
 #include <qpaintdevicemetrics.h>
 #include <math.h>
@@ -30,7 +32,6 @@ extern "C" {
 	#include <libps/pslib-mp.h>
 }
 
-#include "printer.h"
 #include "view.h"
 #include "buffer.h"
 #include "session.h"
@@ -231,3 +232,4 @@ void YZPrinter::convertColor(QColor c, double &r, double &g, double &b) {
 	b=b0;
 	b/=255;
 }
+#endif

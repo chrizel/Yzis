@@ -25,11 +25,13 @@
 #include <qpaintdevicemetrics.h>
 #include <math.h>
 
-#include "printer.h"
+#include "qtprinter.h"
 
 #include "debug.h"
+#include "session.h"
+#include "buffer.h"
 
-YZPrinter::YZPrinter( YZView *view ) : QPrinter(QPrinter::PrinterResolution) {
+YZQtPrinter::YZQtPrinter( YZView *view ) : QPrinter(QPrinter::PrinterResolution) {
 
 	mView = view;
 
@@ -37,19 +39,19 @@ YZPrinter::YZPrinter( YZView *view ) : QPrinter(QPrinter::PrinterResolution) {
 	setColorMode( QPrinter::Color );
 }
 
-YZPrinter::~YZPrinter( ) {
+YZQtPrinter::~YZQtPrinter( ) {
 }
 
-void YZPrinter::printToFile( const QString& path ) {
+void YZQtPrinter::printToFile( const QString& path ) {
 	setOutputToFile( true );
 	setOutputFileName( path );
 }
 
-void YZPrinter::run( ) {
+void YZQtPrinter::run( ) {
 	doPrint( );
 }
 
-void YZPrinter::doPrint( ) {
+void YZQtPrinter::doPrint( ) {
 	QPainter p( this );
 
 	QFont f( "fixed" );

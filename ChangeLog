@@ -4,6 +4,9 @@
     'd[0-9]*w' command is back
     'd[0-9]*b' command is back
     'c*' commands are back
+  * all
+    autodetect pslib at configure time
+    new option 'printer' to choose which backend to print with
 
 2004-07-30 mikmak
   * libyzis

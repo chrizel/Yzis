@@ -1,6 +1,6 @@
 #MIN_CONFIG
 
-AM_INIT_AUTOMAKE(yzis, 0.0.1)
+AM_INIT_AUTOMAKE(yzis, M2)
 
 dnl These are common macros that you might or might not want to use
 
@@ -21,12 +21,17 @@ if test "$have_libmagic" = "no"; then
 fi
 AC_CHECK_HEADER(libps/pslib.h)
 if test "$ac_cv_header_libps_pslib_h" = "no"; then
-	AC_MSG_ERROR(libps.h not found. Please install pslib1 headers.)
+	AC_MSG_WARN(libps.h not found. pslib will not be used.)
 fi
 AC_CHECK_LIB(ps, PS_shutdown,[have_libps=yes],[have_libps=no])
 if test "$have_libps" = "no"; then
-	AC_MSG_ERROR(libps not found. Please install pslib1 libraries.)
+	AC_MSG_WARN(libps not found. pslib will not be used.)
 fi
+if test "$have_libps" = "yes" -a "$ac_cv_header_libps_pslib_h" = "yes"; then
+	AC_DEFINE(HAVE_LIBPS,1,[whether libps is present or not])
+	PS_LIBS="-lps"
+fi
+
 AC_CHECK_HEADER(ncurses.h)
 if test "$ac_cv_header_ncurses_h" = "no"; then
 	AC_MSG_WARN([ncurses.h not found. Please install ncurses5 headers to enable nyzis compilation.])
@@ -64,5 +69,6 @@ fi
 AC_SUBST(YZIS_SUBDIRS)
 AC_SUBST(YZIS_INCLUDES)
 AC_SUBST(NYZIS_DEP)
+AC_SUBST(PS_LIBS)
 AC_CONFIG_FILES([ libyzis/translator.h ])
 

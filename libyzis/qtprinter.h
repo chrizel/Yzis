@@ -21,8 +21,8 @@
  * $Id: printer.h 714 2004-05-25 19:34:25Z panard $
  */
 
-#ifndef YZ_PRINTER_H
-#define YZ_PRINTER_H
+#ifndef YZ_QTPRINTER_H
+#define YZ_QTPRINTER_H
 
 #include <qprinter.h>
 
@@ -30,11 +30,11 @@
 
 class YZView;
 
-class YZPrinter : public QPrinter {
+class YZQtPrinter : public QPrinter {
 
 	public:
-		YZPrinter( YZView *view );
-		virtual ~YZPrinter( );
+		YZQtPrinter( YZView *view );
+		virtual ~YZQtPrinter( );
 		
 		void printToFile( const QString& path );
 		void run( );

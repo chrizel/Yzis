@@ -268,6 +268,15 @@ int YZExLua::version( lua_State *L ) {
 	return 1;
 }
 
+int YZExLua::sendKeys( lua_State *L ) {
+	YZView* cView = YZSession::me->currentView();
+	int n = lua_gettop( L );
+	if ( n != 1 ) return 0; //mis-use of the function
+	QString text = ( char * )lua_tostring ( L, 3 );
+	cView->sendMultipleKey( text );
+	// nothing to return
+	return 0;
+}
 
 #include "ex_lua.moc"
 

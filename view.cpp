@@ -575,6 +575,10 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	};
 }
 
+YZSelectionMap YZView::visualSelection() {
+	return selectionPool->layout( "VISUAL" );
+}
+
 void YZView::reindent( unsigned int X, unsigned int Y ) {
 	yzDebug() << "Reindent " << endl;
 	QRegExp rx("^(\\t*\\s*\\t*\\s*).*$"); //regexp to get all tabs and spaces

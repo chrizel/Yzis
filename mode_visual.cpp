@@ -136,10 +136,13 @@ void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand("<ESC>", (PoolMethod) &YZModeVisual::escape) );
 	commands.append( new YZCommand(":", (PoolMethod) &YZModeVisual::gotoExMode ) );
 	commands.append( new YZCommand("A", (PoolMethod) &YZModeVisual::commandAppend ) );
+	commands.append( new YZCommand("D", (PoolMethod) &YZModeVisual::deleteWholeLines) );
 	commands.append( new YZCommand("I", (PoolMethod) &YZModeVisual::commandInsert ) );
-	commands.append( new YZCommand("Y", (PoolMethod) &YZModeVisual::yankWholeLines ) );
+	commands.append( new YZCommand("S", (PoolMethod) &YZModeVisual::changeWholeLines) );
 	commands.append( new YZCommand("u", (PoolMethod) &YZModeVisual::toLowerCase) );
 	commands.append( new YZCommand("U", (PoolMethod) &YZModeVisual::toUpperCase) );
+	commands.append( new YZCommand("X", (PoolMethod) &YZModeVisual::deleteWholeLines) );
+	commands.append( new YZCommand("Y", (PoolMethod) &YZModeVisual::yankWholeLines ) );
 	commands.append( new YZCommand("c", &YZModeCommand::change) );
 	commands.append( new YZCommand("s", &YZModeCommand::change) );
 	commands.append( new YZCommand("d", &YZModeCommand::del) );
@@ -188,6 +191,25 @@ void YZModeVisual::toUpperCase( const YZCommandArgs& args ) {
 #endif
 	args.view->myBuffer()->action()->replaceArea( args.view, i, lt );
 	args.view->commitNextUndo();
+}
+void YZModeVisual::changeWholeLines(const YZCommandArgs &args) {
+	YZInterval i = interval(args);
+	YZCursor from(args.view, 0, i.fromPos().getY());
+	YZCursor to(args.view, args.view->myBuffer()->getLineLength(i.toPos().getY())-1, i.toPos().getY());
+
+	// delete selected lines and enter insert mode
+	args.view->myBuffer()->action()->deleteArea( args.view, from, to, args.regs);
+	args.view->modePool()->change( MODE_INSERT );
+}
+void YZModeVisual::deleteWholeLines(const YZCommandArgs &args) {
+	YZInterval i = interval(args);
+	unsigned int lines = i.toPos().getY() - i.fromPos().getY() + 1;
+
+	// delete whole lines, even those who are only partially selected
+	args.view->myBuffer()->action()->deleteLine(args.view, i.fromPos().getY(), lines, args.regs);
+	args.view->commitNextUndo();
+
+	args.view->modePool()->pop();
 }
 void YZModeVisual::yankWholeLines(const YZCommandArgs &args) {
 	YZCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();

@@ -138,6 +138,7 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("y", &YZModeCommand::yank, ARG_MOTION) );
 	commands.append( new YZCommand("Y", &YZModeCommand::yankToEOL) );
 	commands.append( new YZCommand("cc", &YZModeCommand::changeLine) );
+	commands.append( new YZCommand("S", &YZModeCommand::changeLine) );
 	commands.append( new YZCommand("c", &YZModeCommand::change, ARG_MOTION) );
 	commands.append( new YZCommand("C", &YZModeCommand::changeToEOL) );
 	commands.append( new YZCommand("p", &YZModeCommand::pasteAfter) );

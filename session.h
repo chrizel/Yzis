@@ -139,7 +139,7 @@ class YZSession {
 		/**
 		 * Delete the current view
 		 */
-		virtual void deleteView ( ) = 0;
+		virtual void deleteView ( int Id = -1 ) = 0;
 
 		/**
 		 * Ask to quit the app

@@ -11,9 +11,6 @@
 	<!ENTITY userguide SYSTEM "userguide.docbook">
 	<!ENTITY incompabilities SYSTEM "incompabilities.docbook">
 	<!ENTITY faq SYSTEM "faq.docbook">
-	<!ENTITY commandref SYSTEM "commandref.docbook">
-	<!ENTITY example SYSTEM "example.xml">
-	<!ENTITY ref SYSTEM "reference.docbook">
 ]>
 
 
@@ -32,6 +29,5 @@
 	&userguide;
 	&incompabilities;
 	&faq;
-	&commandref;
 	
 </book>

@@ -26,7 +26,6 @@
 #ifndef __KATE_HIGHLIGHT_H__
 #define __KATE_HIGHLIGHT_H__
 
-#include "line.h"
 #include "attribute.h"
 
 #include <qptrlist.h>

@@ -31,6 +31,16 @@
 #include "debug.h"
 #include "undo.h"
 #include "printer.h"
+#include "cursor.h"
+#include "options.h"
+#include "registers.h"
+#include "buffer.h"
+#include "swapfile.h"
+#include "mark.h"
+#include "action.h"
+#include "commands.h"
+#include "motionpool.h"
+#include "session.h"
 
 #define STICKY_COL_ENDLINE -1
 

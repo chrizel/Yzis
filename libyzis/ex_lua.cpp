@@ -20,6 +20,10 @@
 #include <qfileinfo.h>
 #include "ex_lua.h"
 #include "debug.h"
+#include "view.h"
+#include "buffer.h"
+#include "action.h"
+#include "cursor.h"
 #include "session.h"
 extern "C" {
 #include <lauxlib.h>

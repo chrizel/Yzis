@@ -22,6 +22,7 @@
  */
 
 #include "mark.h"
+#include "cursor.h"
 
 YZMark::YZMark( ) {
 	clear( );

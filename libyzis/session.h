@@ -24,18 +24,20 @@
  * $Id$
  */
 
-#include "buffer.h"
 #include "commands.h"
+#include "syntaxhighlight.h"
 #include "options.h"
 #include "registers.h"
-#include "motionpool.h"
-#include "syntaxhighlight.h"
-#include "schema.h"
-#include "ex_lua.h"
-#include "ex_executor.h"
 
 class YZView;
+class YZBuffer;
+class YzisSchemaManager;
 class YZMotionPool;
+class YZCommandPool;
+class YZOption;
+class YZRegisters;
+class YZExExecutor;
+class YZExLua;
 
 /**
  * Contains data referring to an instance of yzis

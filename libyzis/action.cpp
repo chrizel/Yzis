@@ -23,6 +23,13 @@
 
 #include "action.h"
 #include "debug.h"
+#include "registers.h"
+#include "view.h"
+#include "cursor.h"
+#include "options.h"
+#include "buffer.h"
+#include "session.h"
+ 
 #include <stdlib.h>
 
 YZAction::YZAction( YZBuffer* buffer ) {

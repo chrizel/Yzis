@@ -20,7 +20,6 @@
 #ifndef YZ_EX_EXECUTOR
 #define YZ_EX_EXECUTOR
 
-#include "view.h"
 #include <qobject.h>
 
 class YZView;

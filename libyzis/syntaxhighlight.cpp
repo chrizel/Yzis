@@ -33,6 +33,9 @@
 #include "syntaxdocument.h"
 #include "debug.h"
 #include "buffer.h"
+#include "options.h"
+#include "schema.h"
+#include "session.h"
 
 #include "translator.h"
 

@@ -22,11 +22,10 @@
 
 #include <qmap.h>
 #include <qregexp.h>
-#include "cursor.h"
-#include "view.h"
 
 class YZBuffer;
 class YZCursor;
+class YZView;
 
 enum type_t {
 	REGEXP, //apply a regexp to make calculations (rex)

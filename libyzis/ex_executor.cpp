@@ -17,10 +17,14 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include "ex_executor.h"
-#include "debug.h"
 #include <qfileinfo.h>
 #include <qdir.h>
+#include "ex_executor.h"
+#include "debug.h"
+#include "view.h"
+#include "buffer.h"
+#include "swapfile.h"
+#include "session.h"
 
 YZExExecutor::YZExExecutor() {
 }

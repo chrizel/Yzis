@@ -7,6 +7,8 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 	viewport()->setFocusProxy( this );
 	viewport()->setFocusPolicy( StrongFocus );
+	viewport()->setBackgroundMode( PaletteBase );
+	viewport()->setPaletteBackgroundColor(QColor("white"));
 }
 
 KYZisEdit::~KYZisEdit() {

@@ -179,6 +179,7 @@ void YZUndoBuffer::redo( YZView* pView )
 		return;
 	}
 	setInsideUndo( true );
+	pView->setPaintAutoCommit(false);
 
 	++mCurrentIndex;
 	UndoItem * undoItem = mUndoItemList.at(mCurrentIndex-1);
@@ -188,6 +189,7 @@ void YZUndoBuffer::redo( YZView* pView )
 		++it;
 	}
 	setInsideUndo( false );
+	pView->commitPaintEvent();
 }
 
 bool YZUndoBuffer::mayRedo()

@@ -4,7 +4,6 @@
  */
 
 #include <stdlib.h>
-//hmm hmm #include <curses.h>
 #include "yz_view.h"
 
 YZView::YZView(YZBuffer *_b, int _lines_vis)
@@ -169,7 +168,7 @@ void YZView::post_event (yz_event e)
 		gui_manager->postEvent( e );
 }
 
-void YZView::register_manager ( EventMgr *mgr )
+void YZView::register_manager ( Gui *mgr )
 {
 	gui_manager = mgr;
 }

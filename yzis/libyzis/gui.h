@@ -1,5 +1,5 @@
-#ifndef EVENT_MGR_H
-#define EVENT_MGR_H
+#ifndef GUI_H
+#define GUI_H
 #include "yz_events.h"
 
 /**
@@ -8,7 +8,7 @@
  * you will register it into the lib.
  * Then the lib will be able to talk with the GUIs using this itf :)
  */ 
-class EventMgr {
+class Gui {
 	public:
 
 		/**
@@ -17,5 +17,5 @@ class EventMgr {
 		virtual void postEvent(yz_event) = 0;
 };
 
-#endif // EVENT_MGR_H
+#endif // GUI_H
 

@@ -91,7 +91,7 @@ KDE_INIT_DOXYGEN([The Yzis API Reference], [Version $VERSION])
 
 AC_ARG_ENABLE(kyzis, AC_HELP_STRING([--disable-kyzis],[disable Kyzis compilation.]),, [enable_kyzis="yes"])
 AC_ARG_ENABLE(nyzis, AC_HELP_STRING([--disable-nyzis],[disable Nyzis compilation.]),, [enable_nyzis="yes"])
-AC_ARG_WITH(qt4-dir, AC_HELP_STRING([--with-qt4-dir=DIR],[Enable Qt4 support -- EXPERIMENTAL --]),[enable_qt4="yes"; QT_INCLUDES="-I$withval/include/QtCore  -I$withval/include/QtXml -I$withval/include/QtGui"; QT_LIBS="-L$withval/lib"; QTDIR="$withval"],)
+AC_ARG_WITH(qt4-dir, AC_HELP_STRING([--with-qt4-dir=DIR],[Enable Qt4 support -- EXPERIMENTAL --]),[enable_qt4="yes"; QT_INCLUDES="-I$withval/include -I$withval/include/QtCore  -I$withval/include/QtXml -I$withval/include/QtGui"; QT_LIBS="-L$withval/lib"; QTDIR="$withval"],)
 
 if test "$enable_qt4" != "yes"; then
 	YZIS_QT3="libqtyzis"

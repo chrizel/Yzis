@@ -41,7 +41,7 @@ debian/debiandirs: admin/debianrules
 config.status: configure
 	dh_testdir
 	# Add here commands to configure the package.
-	CFLAGS="$(CFLAGS)" ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) $(configkde) --disable-final --enable-debug=full
+	CFLAGS="$(CFLAGS)" ./configure --host=$(DEB_HOST_GNU_TYPE) --build=$(DEB_BUILD_GNU_TYPE) $(configkde) --with-lua-includes=/usr/include/lua50 --disable-final --enable-debug=full
 
 configure:
 	if [ -f Makefile.cvs ]; then \

@@ -40,7 +40,7 @@ QString YZBufferOperation::toString() {
 	return QString("%1 '%2' line %3, col %4").arg(ots).arg(text).arg(line).arg(col) ;
 }
 
-void YZBufferOperation::performOperation( YZBuffer * buf, bool opposite)
+void YZBufferOperation::performOperation( YZView* pView, bool opposite)
 {
 	OperationType t = type;
 
@@ -57,16 +57,16 @@ void YZBufferOperation::performOperation( YZBuffer * buf, bool opposite)
 
 	switch( t) {
 		case ADDTEXT:
-			buf->insertChar( col, line, text ); 
+			pView->myBuffer()->action()->insertChar( pView, col, line, text ); 
 			break;
 		case DELTEXT: 
-			buf->delChar( col, line, text.length() ); 
+			pView->myBuffer()->action()->deleteChar( pView, col, line, text.length() );
 			break;
 		case ADDLINE:
-			buf->insertNewLine( 0, line );
+			pView->myBuffer()->action()->insertNewLine( pView, 0, line );
 			break;
 		case DELLINE:
-			buf->deleteLine( line );
+			pView->myBuffer()->action()->deleteLine( pView, line, 1 );
 			break;
 	}
 
@@ -139,7 +139,7 @@ void YZUndoBuffer::removeUndoItemAfterCurrent()
 	}
 }
 
-void YZUndoBuffer::undo(uint * cursorX, uint * cursorY)
+void YZUndoBuffer::undo( YZView* pView )
 {
 	YZBufferOperation * bufOp;
 
@@ -153,16 +153,14 @@ void YZUndoBuffer::undo(uint * cursorX, uint * cursorY)
 	UndoItemContentIterator it( *undoItem );
 	it.toLast();
 	while( (bufOp = it.current()) ) {
-		bufOp->performOperation( mBuffer, true );
+		bufOp->performOperation( pView, true );
 		--it;
 	}
 	mCurrentIndex--;
 	setInsideUndo( false );
-	*cursorX = undoItem->startCursorX;
-	*cursorY = undoItem->startCursorY;
 }
 
-void YZUndoBuffer::redo(uint * cursorX, uint * cursorY)
+void YZUndoBuffer::redo( YZView* pView )
 {
 	YZBufferOperation * bufOp;
 
@@ -176,12 +174,10 @@ void YZUndoBuffer::redo(uint * cursorX, uint * cursorY)
 	UndoItem * undoItem = mUndoItemList.at(mCurrentIndex-1);
 	UndoItemContentIterator it( *undoItem );
 	while( (bufOp = it.current()) ) {
-		bufOp->performOperation( mBuffer, false );
+		bufOp->performOperation( pView, false );
 		++it;
 	}
 	setInsideUndo( false );
-	*cursorX = undoItem->endCursorX;
-	*cursorY = undoItem->endCursorY;
 }
 
 bool YZUndoBuffer::mayRedo()

@@ -30,6 +30,8 @@
 
 #include <qstring.h>
 #include <qptrlist.h>
+#include "view.h"
+class YZView;
 class YZBuffer;
 
 struct buffer_operation
@@ -47,7 +49,7 @@ struct buffer_operation
 	/**  Perform the buffer operation on the buffer passed in argument.
 	  *  If opposite is true, perform the opposite operation (used for undo)
 	  */
-	void performOperation( YZBuffer * buf, bool opposite=false );
+	void performOperation( YZView* pView, bool opposite=false );
 
 	OperationType type;
 	QString text;
@@ -84,13 +86,13 @@ public:
 	 * Undo the last operations on the buffer, move backward in the undo list.
 	 * cursorX and cursorY will be set to the new cursor position
 	 */ 
-	void undo(uint * cursorX, uint * cursorY);
+	void undo( YZView* pView );
 
 	/** 
 	 * Redo the current operation on the buffer, move forward in the undo list
 	 * cursorX and cursorY will be set to the new cursor position
 	 */
-	void redo(uint * cursorX, uint * cursorY);
+	void redo( YZView* pView );
 
 	/*! Return whether it is possibe to issue a redo */
 	bool mayRedo();

@@ -50,6 +50,9 @@ class YZAction {
 		void deleteChar( YZView* pView, YZCursor* pos, unsigned int len );
 		void deleteChar( YZView* pView, unsigned int X, unsigned int Y, unsigned int len );
 
+		void insertLine( YZView* pView, YZCursor* pos, const QString &text );
+		void insertLine( YZView* pView, unsigned int Y, const QString &text );
+
 		void insertNewLine( YZView* pView, YZCursor* pos );
 		void insertNewLine( YZView* pView, unsigned int X, unsigned int Y );
 

@@ -513,7 +513,7 @@ QString YZExCommandPool::source( const YZExCommandArgs& args ) {
 }
 
 QString YZExCommandPool::map( const YZExCommandArgs& args ) {
-	QRegExp rx("(.+)\\s+(.+)");
+	QRegExp rx("(\\S+)\\s+(.+)");
 	if ( rx.exactMatch(args.arg) ) {
 		yzDebug() << "Adding global mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		YZMapping::self()->addGlobalMapping(rx.cap(1), rx.cap(2));
@@ -522,7 +522,7 @@ QString YZExCommandPool::map( const YZExCommandArgs& args ) {
 }
 
 QString YZExCommandPool::imap( const YZExCommandArgs& args ) {
-	QRegExp rx("(.+)\\s+(.+)");
+	QRegExp rx("(\\S+)\\s+(.+)");
 	if ( rx.exactMatch(args.arg) ) {
 		yzDebug() << "Adding insert mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		YZMapping::self()->addInsertMapping(rx.cap(1), rx.cap(2));

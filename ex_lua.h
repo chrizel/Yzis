@@ -278,6 +278,8 @@ class YZExLua : public QObject {
 		static int nmap(lua_State *L);
 		static int nunmap(lua_State *L);
 
+		static int matchpair(lua_State *L);
+
 	protected:
 		lua_State *L;
 

@@ -1,4 +1,4 @@
-#include "yz_debugstream.h"
+#include "yz_debug.h"
 #include <qstringlist.h>
 
 //the one which writes to the files ...

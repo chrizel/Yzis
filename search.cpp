@@ -36,36 +36,34 @@ YZSearch::~YZSearch() {
 }
 
 YZCursor YZSearch::forward( YZView* mView, const QString& pattern, bool* found ) {
-	return doSearch( mView, pattern, false, false, false, found );
+	return doSearch( mView, pattern, false, false, found );
 }
 YZCursor YZSearch::backward( YZView* mView, const QString& pattern, bool* found ) {
-	return doSearch( mView, pattern, true, false, false, found );
+	return doSearch( mView, pattern, true, false, found );
 }
 YZCursor YZSearch::replayForward( YZView* mView, bool* found, bool skipline ) {
-	return doSearch( mView, mCurrentSearch, false, true, skipline, found );
+	return doSearch( mView, mCurrentSearch, false, skipline, found );
 }
 YZCursor YZSearch::replayBackward( YZView* mView, bool* found, bool skipline ) {
-	return doSearch( mView, mCurrentSearch, true, true, skipline, found );
+	return doSearch( mView, mCurrentSearch, true, skipline, found );
 }
 
 const QString& YZSearch::currentSearch() const {
 	return mCurrentSearch;
 }
 
-YZCursor YZSearch::doSearch( YZView* mView, const QString& pattern, bool reverse, bool replay, bool skipline, bool* found ) {
-	yzDebug() << "YZSearch::doSearch " << pattern << ", " << reverse << ", " << replay << endl;
+YZCursor YZSearch::doSearch( YZView* mView, const QString& pattern, bool reverse, bool skipline, bool* found ) {
+	yzDebug() << "YZSearch::doSearch " << pattern << ", " << reverse << ", " << endl;
 	*found = false;
 	setCurrentSearch( pattern );
 	int direction = reverse ? 0 : 1;
 
 	YZCursor cur = mView->getBufferCursor();
-	if ( replay ) {
-		if ( skipline ) {
-			cur.setX( 0 );
-			if ( ! reverse ) cur.setY( QMIN( (int)(cur.getY() + 1), (int)(mView->myBuffer()->lineCount() - 1) ) );
-		} else {
-			cur.setX( QMAX( (int)(cur.getX() + direction), 0 ) );
-		}
+	if ( skipline ) {
+		cur.setX( 0 );
+		if ( ! reverse ) cur.setY( QMIN( (int)(cur.getY() + 1), (int)(mView->myBuffer()->lineCount() - 1) ) );
+	} else {
+		cur.setX( QMAX( (int)(cur.getX() + direction), 0 ) );
 	}
 	YZCursor top( mView, 0, 0 );
 	YZCursor bottom( mView );

@@ -43,11 +43,11 @@ class YZCommandPool {
 		type obj; //object type 
 		bool immutable; //is this command overwritable ?//FIXME
 		//with function pointers we are limited by class and by prototypes so ...
-		QString ( YZCommandPool::*poolFunc ) (QString inputsBuff);
-		QString ( YZView::*viewFunc ) (QString inputsBuff);
-		QString ( YZBuffer::*buffFunc ) (QString inputsBuff);
-		QString ( YZSession::*sessFunc ) (QString inputsBuff);
-		QString ( YZPlugin::*plugFunc ) (QString inputsBuff);
+		QString ( YZCommandPool::*poolFunc ) (const QString& inputsBuff);
+		QString ( YZView::*viewFunc ) (const QString& inputsBuff);
+		QString ( YZBuffer::*buffFunc ) (const QString& inputsBuff);
+		QString ( YZSession::*sessFunc ) (const QString& inputsBuff);
+		QString ( YZPlugin::*plugFunc ) (const QString& inputsBuff);
 	};
 
 	public:
@@ -65,12 +65,12 @@ class YZCommandPool {
 		void initPool();
 
 		//just an example method
-		QString test(QString);
+		QString test(const QString&);
 
 		/**
 		 * This function is the entry point to execute ANY command in Yzis
 		 */
-		void execCommand(YZView *view, QString inputs);
+		void execCommand(YZView *view, const QString& inputs);
 };
 
 #endif

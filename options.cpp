@@ -276,7 +276,7 @@ void YZOption::initConfFiles() {
 
 bool YZOption::hasGroup( const QString& group ) {
 	QValueList<QString> keys = mOptions.keys();
-	qHeapSort( keys );
+//	qHeapSort( keys );
 	QValueList<QString>::iterator it;
 	for (it = keys.begin(); it != keys.end() ; ++it) {
 		if ( QStringList::split( "\\", ( *it ) )[ 0 ] == group ) return true;

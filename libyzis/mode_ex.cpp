@@ -524,8 +524,10 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 		user_scope = global_scope;
 	else if ( args.cmd.startsWith("setl") )
 		user_scope = local_scope;
+	YZBuffer* buff = NULL;
+	if ( args.view ) buff = args.view->myBuffer();
 	bool matched;
-	bool success = YZSession::mOptions->setOptionFromString( &matched, args.arg.simplifyWhiteSpace(), user_scope, args.view->myBuffer(), args.view );
+	bool success = YZSession::mOptions->setOptionFromString( &matched, args.arg.simplifyWhiteSpace(), user_scope, buff, args.view );
 	
 	if ( ! matched ) {
 		ret = CMD_ERROR;

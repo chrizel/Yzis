@@ -31,6 +31,9 @@
 #include <qfile.h>
 #include <qregexp.h>
 #include <ctype.h>
+#ifndef WIN32
+#include <pwd.h>
+#endif
 #include "portability.h"
 
 YZDebugBackend * YZDebugBackend::_instance = NULL;
@@ -38,7 +41,7 @@ YZDebugBackend * YZDebugBackend::_instance = NULL;
 YZDebugBackend::YZDebugBackend()
 {
 #ifndef WIN32
-	setDebugOutput( "/tmp/yzisdebug-" + QString(cuserid(NULL)) + ".log" );
+	setDebugOutput( "/tmp/yzisdebug-" + QString(getpwuid(geteuid())->pw_name) + ".log" );
 #else
 	setDebugOutput( "/tmp/yzisdebug.log" );
 #endif

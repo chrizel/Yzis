@@ -203,7 +203,7 @@
     </message>
     <message>
         <source>Yzis Ready</source>
-        <translation type="unfinished">Yzis bereit</translation>
+        <translation>Yzis bereit</translation>
     </message>
 </context>
 </TS>

@@ -52,7 +52,6 @@ YZCursor YZSearch::replayBackward( YZView* mView, bool* found, YZCursor* from, b
 const QString& YZSearch::currentSearch() const {
 	return mCurrentSearch;
 }
-
 bool YZSearch::active() {
 	return ! ( mCurrentSearch.isNull() || mCurrentSearch.isEmpty() );
 }
@@ -130,14 +129,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 		searchMap.clear();
 
 		/** search all **/
-		bool doIt = false;
-#if QT_VERSION < 0x040000
-		for( v = views.first(); ! doIt && v ; v = views.next() )
-			doIt = doIt || v->getLocalBooleanOption( "hlsearch" );
-#else
-		for (int i = 0 ; i < views.size(); ++i )
-			doIt = doIt || views.at(i)->getLocalBooleanOption("hlsearch");
-#endif
+		bool doIt = YZSession::me->getBooleanOption( "hlsearch" );
 		if ( doIt ) {
 			YZView* v = views.first();
 			YZCursor from( 0, 0 );
@@ -173,17 +165,13 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 
 void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 	if ( mCurrentSearch.isNull() || mCurrentSearch.isEmpty() ) return;
-	bool doIt = false;
-#if QT_VERSION < 0x040000
-	QPtrList<YZView> views = buffer->views();
-	for( YZView* v = views.first(); ! doIt && v ; v = views.next() )
-		doIt = doIt || v->getLocalBooleanOption( "hlsearch" );
-#else
-	QVector<YZView*> views = buffer->views();
-	for (int i = 0 ; i < views.size(); ++i )
-		doIt = doIt || views.at(i)->getLocalBooleanOption("hlsearch");
-#endif
+	bool doIt = YZSession::me->getBooleanOption( "hlsearch" );
 	if ( doIt ) {
+#if QT_VERSION < 0x040000
+		QPtrList<YZView> views = buffer->views();
+#else
+		QVector<YZView*> views = buffer->views();
+#endif
 		YZView* v = views.first();
 		YZCursor from( 0, line );
 		YZCursor cur( from );
@@ -260,11 +248,47 @@ void YZSearch::highlightSearch( YZView* mView, YZSelectionMap searchMap ) {
 	YZSelection* vMap = mView->getSelectionPool()->search();
 	mView->sendPaintEvent( vMap->map(), false );
 	vMap->clear();
-	if ( mView->getLocalBooleanOption( "hlsearch" ) ) {
+	if ( YZSession::me->getBooleanOption( "hlsearch" ) ) {
 		vMap->setMap( searchMap );
 //		yzDebug() << "new search Map : " << *(vMap) << endl;
 		mView->sendPaintEvent( vMap->map() );
 	}
 	mView->commitPaintEvent();
+}
+
+void YZSearch::update() {
+	yzDebug() << "YZSearch::update" << endl;
+	if ( ! active() ) return;
+	if ( YZSession::me->getBooleanOption( "hlsearch" ) ) {
+		yzDebug() << "calc hl map" << endl;
+		// force creating hl selection
+		QString pattern = mCurrentSearch;
+		mCurrentSearch = "";
+		setCurrentSearch( pattern );
+	} else {
+		yzDebug() << "clear hl map" << endl;
+		YZSelectionMap searchMap;
+		// clear current hl search selection
+		YZBufferMap buffers = YZSession::me->buffers();
+		YZBufferMap::Iterator it = buffers.begin(), it_end = buffers.end();
+		for( ; it != it_end; it++ ) {
+#if QT_VERSION < 0x040000
+			YZBuffer* b = it.data();
+			QPtrList<YZView> views = b->views();
+#else
+			YZBuffer* b = it.value();
+			QVector<YZView*> views = b->views();
+#endif
+			YZView* v;
+#if QT_VERSION < 0x040000
+			for( v = views.first(); v; v = views.next() ) {
+#else
+			for (int i = 0 ; i < views.size(); ++i ) {
+				v = views.at(i);
+#endif
+				highlightSearch( v, searchMap );
+			}
+		}
+	}
 }
 

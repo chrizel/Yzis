@@ -169,6 +169,10 @@ void setSyntax( YZBuffer* b, YZView* v ) {
 	if ( b )
 		b->setHighLight( b->getLocalStringOption("syntax") );
 }
+void updateHLSearch( YZBuffer*, YZView* ) {
+	yzDebug() << "updateHLSearch" << endl;
+	YZSession::me->search()->update();
+}
 
 
 void YZInternalOptionPool::init() {
@@ -183,7 +187,7 @@ void YZInternalOptionPool::init() {
 	options.append(new YZOptionString("cursorreplace","square", CXT_VIEW,local_scope, &changeCursor, QStringList(), cursor_shape) );
 	options.append(new YZOptionString("encoding","locale", CXT_BUFFER,local_scope, &changeEncoding, QStringList("enc"),QStringList())); // XXX find the supported codecs
 	options.append(new YZOptionString("fileencoding","", CXT_BUFFER,local_scope, &doNothing, QStringList("fenc"),QStringList()));
-	options.append(new YZOptionBoolean("hlsearch",false, CXT_SESSION,global_scope, &doNothing, QStringList("hls")));
+	options.append(new YZOptionBoolean("hlsearch",false, CXT_SESSION,global_scope, &updateHLSearch, QStringList("hls")));
 	options.append(new YZOptionList("indentkeys", QStringList(), CXT_BUFFER,local_scope, &doNothing, QStringList("indk"), QStringList()));
 	options.append(new YZOptionBoolean("incsearch",false, CXT_SESSION,global_scope, &doNothing, QStringList("is")));
 	options.append(new YZOptionBoolean("list",false, CXT_VIEW,local_scope, &refreshView, QStringList()));
@@ -217,6 +221,7 @@ void YZInternalOptionPool::init() {
 
 void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t scope, YZBuffer* b, YZView* v ) {
 	if ( ctx == CXT_SESSION ) {
+		option->apply( NULL, NULL );
 	} else if ( ctx == CXT_BUFFER ) {
 		if ( scope == global_scope ) {
 			YZBufferMap bs = YZSession::me->buffers();

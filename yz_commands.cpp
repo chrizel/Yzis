@@ -1,5 +1,5 @@
 /**
- * $Id: yz_commands.cpp,v 1.6 2003/04/25 20:00:54 mikmak Exp $
+ * $Id$
  */
 
 #include "yz_commands.h"

@@ -37,7 +37,11 @@
 
 //let's use the patch number since it exists ...
 #define VERSION_CHAR	"M3--"
-#define VERSION_CHAR_LONG "Yzis "VERSION_CHAR
+#if QT_VERSION < 0x040000
+#define VERSION_CHAR_LONG "Yzis "VERSION_CHAR" for Qt3"
+#else
+#define VERSION_CHAR_LONG "Yzis "VERSION_CHAR" for Qt4"
+#endif
 //dont change these 2 and dont use them in the code
 #define VERSION_CHAR_STATE1 "(stable release)"
 #define VERSION_CHAR_STATE2 "(development release - Use for testing only)"

@@ -209,8 +209,8 @@ void YZInternalOptionPool::init() {
 	YZInternalOption *list = new YZInternalOption( "list", "Global", false, false, view_opt, bool_t );
 	YZInternalOption *blocksplash = new YZInternalOption( "blocksplash", "Global", true, true, global_opt, bool_t );
 	YZInternalOption *listchars = new YZInternalOption( "listchars", "Global", QString("trail:-,space:.,tab:>"), QString("trail:-,space:.,tab:>"), global_opt, stringlist_t );
-	YZInternalOption *incsearch = new YZInternalOption( "incsearch", "Global", true, true, global_opt, bool_t );
-	YZInternalOption *hlsearch = new YZInternalOption( "hlsearch", "Global", true, true, global_opt, bool_t );
+	YZInternalOption *incsearch = new YZInternalOption( "incsearch", "Global", false, false, global_opt, bool_t );
+	YZInternalOption *hlsearch = new YZInternalOption( "hlsearch", "Global", false, false, global_opt, bool_t );
 	YZInternalOption *indentkeys = new YZInternalOption( "indentkeys", "Global", QString(""), QString(""), buffer_opt, stringlist_t );
 	YZInternalOption *schema = new YZInternalOption( "schema", "Global", 0, 0, view_opt, int_t );
 

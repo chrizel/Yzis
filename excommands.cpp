@@ -425,7 +425,6 @@ QString YZExCommandPool::mkyzisrc ( const YZExCommandArgs& ) {
 }
 
 QString YZExCommandPool::substitute( const YZExCommandArgs& args ) {
-	yzDebug() << "substitute" << endl;
 	unsigned int idx = args.input.find("substitute");
 	unsigned int len = 10;
 	if (static_cast<unsigned int>(-1)==idx) {

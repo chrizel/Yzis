@@ -153,7 +153,8 @@ void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
 	QString l=data(line);
 	if (l.isNull()) return;
 
-	YZASSERT_MSG( col < l.length(), QString("YZBuffer::addNewLine( %1, %2 ) but column %3 does not exist, line has %4 columns").arg( line ).arg( col ).arg( col ).arg( l.length() ) );
+	YZASSERT_MSG( col <= l.length(), QString("YZBuffer::addNewLine( %1, %2 ) but column %3 does not exist, line has %4 columns").arg( line ).arg( col ).arg( col ).arg( l.length() ) );
+	if (col > l.length() ) return;
 	//replace old line
 	at(line)->setData(l.left( col ));
 

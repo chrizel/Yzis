@@ -181,21 +181,8 @@ QString YZSession::saveBufferExit() {
 }
 
 YZView* YZSession::findView( int uid ) {
-//	yzDebug() << " ========= " << endl;
-//	yzDebug() << "Session::findView " << uid << endl;
-	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
-	if ( uid<0 ) return NULL;
-	for ( ; it!=end; ++it ) {
-#if QT_VERSION < 0x040000
-		YZBuffer *b = ( it.data() );
-#else
-		YZBuffer *b = ( it.value() );
-#endif
-//		yzDebug() << "Session::findView, checking buffer " << b->fileName() << endl;
-		YZView *v = b->findView( uid );
-		if ( v ) return v;
-	}
-//	yzDebug() << "Session::findView " << uid << " not found !" << endl;
+	if ( mViews.contains(uid) )
+		return mViews[uid];
 	return NULL;
 }
 
@@ -212,13 +199,19 @@ YZView* YZSession::prevView() {
 		yzDebug() << "WOW, mCurview is NULL !" << endl;
 		return NULL;
 	}
-//	yzDebug() << "Current view is " << mCurView->myId << endl;
 	
-	YZView * v = NULL;
-	int i = 1;
-	while (!v && i <= mNbViews  ) {
-		v = findView( mCurView->myId - i );
-		i++;
+	int i = mCurView->myId;
+	if ( i == 0 ) 
+		i = mNbViews;
+	else
+		i--;
+	
+	YZView *v = NULL;
+	while (!v && i >= 0 ) {
+		if (mViews.contains(i))
+			v = mViews[i];
+		else
+			i--;
 	}
 	return v;
 }
@@ -228,12 +221,19 @@ YZView* YZSession::nextView() {
 		yzDebug() << "WOW, mCurview is NULL !" << endl;
 		return NULL;
 	}
-//	yzDebug() << "Current view is " << mCurView->myId << endl;
-	YZView * v = NULL;
-	int i = 1;
-	while (!v && i <= mNbViews) {
-		v = findView( mCurView->myId + i );
+
+	int i = mCurView->myId;
+	if ( i == mNbViews - 1 ) 
+		i = 0;
+	else
 		i++;
+	
+	YZView *v = NULL;
+	while (!v && i < mNbViews ) {
+		if (mViews.contains(i))
+			v = mViews[i];
+		else
+			i++;
 	}
 	return v;
 }

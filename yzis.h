@@ -54,7 +54,7 @@ enum option_t {
 };
 
 //visibility of the option
-enum context {
+enum context_t {
     CXT_SESSION,
     CXT_BUFFER,
     CXT_VIEW,

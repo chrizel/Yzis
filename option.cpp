@@ -17,8 +17,32 @@
  *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  *  Boston, MA 02111-1307, USA.
  **/
-
+ 
+#include "session.h" 
+#include "buffer.h" 
+#include "view.h"
 #include "option.h"
+
+YZOptionContext YZOptionContext::currentSession() {
+	YZOptionContext sessionContext = {CXT_SESSION, QString::null};
+	return sessionContext;
+}
+
+YZOptionContext YZOptionContext::currentBuffer() {
+	YZBuffer *buffer = YZSession::me->currentBuffer();
+	QString strBuf = buffer == 0 ? QString::null : buffer->fileName();
+	YZOptionContext bufferContext = {CXT_BUFFER, strBuf};
+	return bufferContext;
+}
+
+YZOptionContext YZOptionContext::currentView() {
+	YZView *view = YZSession::me->currentView();
+	QString strView = QString::null;
+	if(view != 0)
+		strView =  view->myBuffer()->fileName() + "-view-" + QString::number(view->myId);
+	YZOptionContext viewContext = {CXT_VIEW, strView};
+	return viewContext;
+}
 
 bool YZIntOption::isValid(const QString &value) const {
 	bool ok;
@@ -39,42 +63,42 @@ bool YZColorOption::isValid(const QString &name) const {
 	return QColor(name).isValid();
 }
 
-YZIntOption::YZIntOption( const QString & name, context cxt, int def, int min, int max )
+YZIntOption::YZIntOption( const QString & name, context_t cxt, int def, int min, int max )
 		:YZOption(name, cxt, QString::null) {
 	init(def, min, max);
 }
 
-YZIntOption::YZIntOption( const QString & name, context cxt, const QString & desc, int def, int min, int max )
+YZIntOption::YZIntOption( const QString & name, context_t cxt, const QString & desc, int def, int min, int max )
 		:YZOption(name, cxt, desc) {
 	init(def, min, max);
 }
 
-YZStringOption::YZStringOption( const QString & name, context cxt, const QString & def, const QRegExp & regExp )
+YZStringOption::YZStringOption( const QString & name, context_t cxt, const QString & def, const QRegExp & regExp )
 		:YZOption(name, cxt, QString::null) {
 	init(def, regExp);
 }
 
-YZStringOption::YZStringOption( const QString & name, context cxt, const QString & desc, const QString & def, const QRegExp & regExp )
+YZStringOption::YZStringOption( const QString & name, context_t cxt, const QString & desc, const QString & def, const QRegExp & regExp )
 		:YZOption(name, cxt, desc) {
 	init(def, regExp);
 }
 
-YZBoolOption::YZBoolOption( const QString & name, context cxt, bool def )
+YZBoolOption::YZBoolOption( const QString & name, context_t cxt, bool def )
 		:YZOption(name, cxt, QString::null) {
 	init(def);
 }
 
-YZBoolOption::YZBoolOption( const QString & name, context cxt, const QString & desc, bool def )
+YZBoolOption::YZBoolOption( const QString & name, context_t cxt, const QString & desc, bool def )
 		:YZOption(name, cxt, desc) {
 	init(def);
 }
 
-YZColorOption::YZColorOption( const QString & name, context cxt, const QColor & def )
+YZColorOption::YZColorOption( const QString & name, context_t cxt, const QColor & def )
 		:YZOption(name, cxt, QString::null) {
 	init(def);
 }
 
-YZColorOption::YZColorOption( const QString & name, context cxt, const QString & desc, const QColor & def )
+YZColorOption::YZColorOption( const QString & name, context_t cxt, const QString & desc, const QColor & def )
 		:YZOption(name, cxt, desc) {
 	init(def);
 }

@@ -42,7 +42,9 @@ typedef struct { unicode_char_t letter; int color; } yz_char;
 
 
 #ifdef __cplusplus
+class MicroBuffer;
 class YZLine {
+	friend class MicroBuffer;
 public:
 	YZLine(void) {len=0; flags=0; }
 

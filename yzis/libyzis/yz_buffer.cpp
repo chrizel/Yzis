@@ -18,6 +18,8 @@ YZBuffer::YZBuffer(char *_path)
 	if (_path!=NULL) panic("non-null path not yet implemented");
 	path	= _path;
 	view_nb	= 0;
+
+	mb_first = mb_last = NULL; // linked mb
 }
 
 void YZBuffer::addchar (int x, int y, unicode_char_t c)
@@ -39,8 +41,13 @@ void YZBuffer::chgchar (int x, int y, unicode_char_t c)
 
 void YZBuffer::post_event(yz_event e)
 {
+	int l = e.u.setline.y;
+
+	/* quite basic, we just check that the line is currently displayed */
 	for (int i=0; i<view_nb; i++) {
-		view_list[i]->post_event(e);
+		YZView *v = view_list[i];
+		if (v->is_line_visible(l))
+			view_list[i]->post_event(e);
 	}
 }
 
@@ -53,6 +60,22 @@ void YZBuffer::addview (YZView *v)
 	view_list[view_nb++] = v;
 } 
 
+
+void YZBuffer::load(void)
+{
+	if (!path) {
+		error("called though path is null, ignored");
+		return;
+	}
+}
+
+void YZBuffer::save(void)
+{
+	if (!path) {
+		error("called though path is null, ignored");
+		return;
+	}
+}
 
 
 /*
@@ -80,6 +103,19 @@ void buffer_chgchar(yz_buffer b, int x, int y, unicode_char_t c)
 {
 	CHECK_BUFFER(b);
 	buffer->chgchar(x,y,c);
+}
+
+
+void buffer_load(yz_buffer b)
+{
+	CHECK_BUFFER(b);
+	buffer->load();
+}
+
+void buffer_save(yz_buffer b)
+{
+	CHECK_BUFFER(b);
+	buffer->save();
 }
 
 

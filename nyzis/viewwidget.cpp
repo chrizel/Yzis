@@ -224,7 +224,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				else
 					x = currentX;
 
-				QCString my_char = QString( drawChar() ).utf8();
+				QCString my_char = QString( drawChar() ).local8Bit();
 				char* from_char = new char[ my_char.length() + 1 ]; // XXX always 1 + 1 ?
 				strcpy( from_char, (const char *)my_char );
 				size_t needed = mbstowcs( NULL, from_char, strlen( from_char ) ); // XXX always 1 ?

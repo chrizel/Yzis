@@ -1,3 +1,7 @@
+2004-11-28 mikmak
+  * libyzis
+ 	support running lua functions for mappings
+
 2004-11-16 mikmak
   * libyzis
   	initial implementation for events

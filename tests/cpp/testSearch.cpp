@@ -69,7 +69,7 @@ void TestSearch::testSearchBeginningOfLine()
 	bool found;
 	YZCursor c = YZSession::me->search()->forward(mView,"simple",&found);
 	if ( found ) mView->gotoxy( c.getX(), c.getY() );
-    CHECK_CURSOR_POS( mView, 20, 1 );
+    CHECK_CURSOR_POS( mView, 0, 1 );
 }
 
 /* ========================================================================= */

@@ -66,6 +66,34 @@ void TestYZBuffer::testCreateEmptyBuffer()
     delete buf;
 }
 
+void TestYZBuffer::testInsertNewLine()
+{
+    QString s1 = "0123456789";
+    QString s2 = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    mBuf->replaceLine( s1, 0 );
+    phCheckEquals( mBuf->getWholeText(), s1 + "\n" );
+    mBuf->insertNewLine( 0, 0);
+    phCheckEquals( mBuf->getWholeText(), "\n" + s1 + "\n" );
+    mBuf->insertNewLine( 5, 1);
+    phCheckEquals( mBuf->getWholeText(), "\n01234\n56789\n" );
+    mBuf->insertNewLine( 5, 1);
+    phCheckEquals( mBuf->getWholeText(), "\n01234\n\n56789\n" );
+    mBuf->insertNewLine( 0, 2);
+    phCheckEquals( mBuf->getWholeText(), "\n01234\n\n\n56789\n" );
+    mBuf->insertNewLine( 5, 4);
+    phCheckEquals( mBuf->getWholeText(), "\n01234\n\n\n56789\n\n" );
+
+    mBuf->clearText();
+    phCheckEquals( mBuf->getWholeText(), "" );
+    mBuf->insertNewLine( 0, 0);
+    phCheckEquals( mBuf->getWholeText(), "\n\n" );
+    mBuf->insertNewLine( 0, 0);
+    phCheckEquals( mBuf->getWholeText(), "\n\n\n" );
+    mBuf->insertNewLine( 0, 1);
+    phCheckEquals( mBuf->getWholeText(), "\n\n\n\n" );
+}
+
 void TestYZBuffer::testLineMethods()
 {
     QString s1 = "0123456789";
@@ -188,9 +216,10 @@ void TestYZBuffer::testLineMethods()
     mBuf->deleteLine( 0 );
     phCheckEquals( mBuf->getWholeText(), "" );
 
-    // add new line on non existing column should not do anything
     mBuf->replaceLine( s1 , 0);
     phCheckEquals( mBuf->getWholeText(), s1+"\n");
+
+    // add new line on non existing column should not do anything
     mBuf->insertNewLine( 30, 0 ); 
     phCheckEquals( mBuf->getWholeText(), s1+"\n");
 
@@ -381,6 +410,17 @@ void TestYZBuffer::testGetWholeTextLength()
     mBuf->appendLine( "2" );
     phCheckEquals( mBuf->getWholeTextLength(), 4 );
     phCheckEquals( mBuf->getWholeTextLength(), mBuf->getWholeText().length() );
+}
+
+void TestYZBuffer::testClearText()
+{
+    phCheckEquals( mBuf->getWholeTextLength(), 0 );
+    mBuf->clearText();
+    phCheckEquals( mBuf->getWholeTextLength(), 0 );
+    mBuf->replaceLine( "1", 0 );
+    phCheckEquals( mBuf->getWholeTextLength(), 2 );
+    mBuf->clearText();
+    phCheckEquals( mBuf->getWholeTextLength(), 0 );
 }
 
 /* ========================================================================= */

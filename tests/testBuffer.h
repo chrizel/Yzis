@@ -41,22 +41,26 @@ public:
     CPPUNIT_TEST( testAssertion );
     CPPUNIT_TEST( testCreateEmptyBuffer );
     CPPUNIT_TEST( testLineMethods );
+    CPPUNIT_TEST( testInsertNewLine );
     CPPUNIT_TEST( testCharMethods );
     CPPUNIT_TEST( testGetWholeText );
     CPPUNIT_TEST( testLoadSave );
     CPPUNIT_TEST( testFirstNonBlankChar );
     CPPUNIT_TEST( testGetWholeTextLength );
+    CPPUNIT_TEST( testClearText );
 
     CPPUNIT_TEST_SUITE_END();
 
     void testCreateEmptyBuffer();
     void testLineMethods();
+    void testInsertNewLine();
     void testCharMethods();
 	void testLoadSave();
     void testGetWholeText();
     void testAssertion();
     void testFirstNonBlankChar();
     void testGetWholeTextLength();
+    void testClearText();
 
 protected:
     void writeFile( QString fname, QString content );

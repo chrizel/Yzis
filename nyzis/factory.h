@@ -65,7 +65,7 @@ private:
 	/**
 	  * mapping ncurses->qt for keycodes
 	  */
-	static QMap<int,Qt::Key> keycodes; // map Ncurses to Qt codes
+	static QMap<int,QString> keycodes; // map Ncurses to Qt codes
 
 };
 

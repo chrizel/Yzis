@@ -28,6 +28,7 @@
 #include <qfontmetrics.h>
 #include <qfont.h>
 #include <action.h>
+#include <qnamespace.h>
 
 class KYZisView;
 
@@ -96,6 +97,8 @@ class KYZisEdit : public QWidget {
 
 
 	private :
+		void initKeys();
+		
 		KYZisView *mParent;
 
 		//cursor position (sync with libyzis one)
@@ -114,6 +117,7 @@ class KYZisEdit : public QWidget {
 
 		// last line number
 		unsigned int lastLineNumber;
+		QMap<int,QString> keys;
 };
 
 #endif

@@ -27,7 +27,7 @@
 
 NYZFactory *NYZFactory::self = 0;
 NYZView *NYZFactory::currentView=0;
-QMap<int,Qt::Key> NYZFactory::keycodes; // map Ncurses to Qt codes
+QMap<int,QString> NYZFactory::keycodes; // map Ncurses to Qt codes
 
 
 NYZFactory::NYZFactory(const char *session_name)
@@ -87,17 +87,17 @@ void NYZFactory::event_loop()
 			case KEY_RESIZE:
 				continue;
 			case 15:
-				currentView->sendKey('o',Qt::ControlButton );
+				currentView->sendKey("o","<CTRL>");
 				continue;
 			case 12:
-				currentView->sendKey('l',Qt::ControlButton );
+				currentView->sendKey("l","<CTRL>");
 				continue;
 			case 18:
-				currentView->sendKey('r',Qt::ControlButton );
+				currentView->sendKey("r","<CTRL>" );
 				continue;
 		}
 		if (keycodes.contains(c)) {
-			currentView->sendKey(keycodes[c],0 );
+			currentView->sendKey(keycodes[c],"");
 			continue;
 		}
 		// remaining cases
@@ -106,10 +106,10 @@ void NYZFactory::event_loop()
 				"ncurses key code, please report : " << (int) c << endl;
 			continue;
 			}
-		int modifiers = 0;
+		QString modifiers;
 		if ( c & 0200 ) {
 			// heuristic, alt-x is x|0200..
-			modifiers |= Qt::AltButton;
+			modifiers += "<ALT>";
 			c &= ~0200;
 		}
 		if ( c>=KEY_MAX) { // non-ascii key
@@ -127,9 +127,9 @@ void NYZFactory::event_loop()
 				"control sequence " << c << " (discarded)" << endl;
 			continue;
 		}
-		if ( isupper( c ) ) { modifiers |= Qt::ShiftButton; c+= 'a'-'A'; }
+		if ( isupper( c ) ) { modifiers +="<SHIFT>"; }
 		//TODO: META	
-		currentView->sendKey( c, modifiers );
+		currentView->sendKey( QString( QChar( c ) ), modifiers );
 	}
 }
 
@@ -250,69 +250,69 @@ void NYZFactory::initialiseKeycodes()
 	keycodes.clear();
 
 	// ascii stuff
-	keycodes[   9] = Qt::Key_Tab;
-	keycodes[  10] = Qt::Key_Return;   // enter
-	keycodes[  13] = Qt::Key_Return;   // return
-	keycodes[  27] = Qt::Key_Escape;
-	keycodes[ 127] = Qt::Key_Backspace;
+	keycodes[   9] = "<TAB>" ;
+	keycodes[  10] = "<ENTER>";   // enter
+	keycodes[  13] = "<ENTER>";   // return
+	keycodes[  27] = "<ESC>";
+	keycodes[ 127] = "<BS>";
 
 
 	//keycodes[ KEY_CODE_YES ] = ;
 	//keycodes[ KEY_MIN ] = ;
-	keycodes[ KEY_BREAK ] = Qt::Key_Escape;
+	keycodes[ KEY_BREAK ] ="<BREAK>";
 	//keycodes[ KEY_SRESET ] = ;
 	//keycodes[ KEY_RESET ] = ;
-	keycodes[ KEY_DOWN ] = Qt::Key_Down;
-	keycodes[ KEY_UP ] = Qt::Key_Up;
-	keycodes[ KEY_LEFT ] = Qt::Key_Left;
-	keycodes[ KEY_RIGHT ] = Qt::Key_Right;
-	keycodes[ KEY_HOME ] = Qt::Key_Home;
-	keycodes[ KEY_BACKSPACE ] = Qt::Key_Backspace;
+	keycodes[ KEY_DOWN ] = "<DOWN>";
+	keycodes[ KEY_UP ] = "<UP>";
+	keycodes[ KEY_LEFT ] = "<LEFT>";
+	keycodes[ KEY_RIGHT ] = "<RIGHT>";
+	keycodes[ KEY_HOME ] = "<HOME>";
+	keycodes[ KEY_BACKSPACE ] = "<BS>";
 	//keycodes[ KEY_F0 ] = Qt::Key_F0;
-	keycodes[ KEY_F(1) ] = Qt::Key_F1;
-	keycodes[ KEY_F(2) ] = Qt::Key_F2;
-	keycodes[ KEY_F( 3 ) ] = Qt::Key_F3;
-	keycodes[ KEY_F( 4 ) ] = Qt::Key_F4;
-	keycodes[ KEY_F( 5 ) ] = Qt::Key_F5;
-	keycodes[ KEY_F( 6 ) ] = Qt::Key_F6;
-	keycodes[ KEY_F( 7 ) ] = Qt::Key_F7;
-	keycodes[ KEY_F( 8 ) ] = Qt::Key_F8;
-	keycodes[ KEY_F( 9 ) ] = Qt::Key_F9;
-	keycodes[ KEY_F( 10 ) ] = Qt::Key_F10;
-	keycodes[ KEY_F( 11 ) ] = Qt::Key_F11;
-	keycodes[ KEY_F( 12 ) ] = Qt::Key_F12;
+	keycodes[ KEY_F(1) ] = "<F1>";
+	keycodes[ KEY_F(2) ] = "<F2>";
+	keycodes[ KEY_F( 3 ) ] = "<F3>";
+	keycodes[ KEY_F( 4 ) ] = "<F4>";
+	keycodes[ KEY_F( 5 ) ] = "<F5>";
+	keycodes[ KEY_F( 6 ) ] = "<F6>";
+	keycodes[ KEY_F( 7 ) ] = "<F7>";
+	keycodes[ KEY_F( 8 ) ] = "<F8>";
+	keycodes[ KEY_F( 9 ) ] = "<F9>";
+	keycodes[ KEY_F( 10 ) ] = "<F10>";
+	keycodes[ KEY_F( 11 ) ] = "<F11>";
+	keycodes[ KEY_F( 12 ) ] = "<F12>";
 	//keycodes[ KEY_DL ] = ;
 	//keycodes[ KEY_IL ] = ;
-	keycodes[ KEY_DC ] = Qt::Key_Delete;
-	keycodes[ KEY_IC ] = Qt::Key_I;
-	keycodes[ Qt::Key_Insert ] = Qt::Key_I;
+	keycodes[ KEY_DC ] = "<DEL>";
+	keycodes[ KEY_IC ] = "<INS>";
+	keycodes[ Qt::Key_Insert ] = "<INS>";
 	//keycodes[ KEY_EIC ] = ;
-	keycodes[ KEY_CLEAR ] = Qt::Key_Clear;
+	keycodes[ KEY_CLEAR ] = "<CLEAR>";
 	//keycodes[ KEY_EOS ] = ;
 	//keycodes[ KEY_EOL ] = ;
 	//keycodes[ KEY_SF ] = ;
 	//keycodes[ KEY_SR ] = ;
-	keycodes[ KEY_NPAGE ] = Qt::Key_Next;
-	keycodes[ KEY_PPAGE ] = Qt::Key_Prior;
+	keycodes[ KEY_NPAGE ] = "<NEXT>";
+	keycodes[ KEY_PPAGE ] = "<PRIOR>";
 	//keycodes[ KEY_STAB ] = ;
 	//keycodes[ KEY_CTAB ] = ;
 	//keycodes[ KEY_CATAB ] = ;
-	keycodes[ KEY_ENTER ] = Qt::Key_Return;
-	keycodes[ KEY_PRINT ] = Qt::Key_Print;
+	keycodes[ KEY_ENTER ] = "<ENTER>";
+	keycodes[ KEY_PRINT ] = "<PRINT>";
 	//keycodes[ KEY_LL ] = ;
-	keycodes[ KEY_A1 ] = Qt::Key_Home;
-	keycodes[ KEY_A3 ] = Qt::Key_Prior;
+	keycodes[ KEY_A1 ] = "<HOME>";
+	keycodes[ KEY_A3 ] = "<PRIOR>";
 	//keycodes[ KEY_B2 ] = ;
-	keycodes[ KEY_C1 ] = Qt::Key_End;
-	keycodes[ KEY_C3 ] = Qt::Key_Next;
-	keycodes[ KEY_BTAB ] = Qt::Key_Backtab;
+	keycodes[ KEY_C1 ] = "<END>";
+	keycodes[ KEY_C3 ] = "<NEXT>";
+	keycodes[ KEY_BTAB ] = "<BTAB>";
 	//keycodes[ KEY_BEG ] = ;
 	//keycodes[ KEY_CANCEL ] = ;
 	//keycodes[ KEY_CLOSE ] = ;
 	//keycodes[ KEY_COMMAND ] = ;
 	//keycodes[ KEY_COPY ] = ;
 	//keycodes[ KEY_CREATE ] = ;
-	keycodes[ KEY_END ] = Qt::Key_End;
+	keycodes[ KEY_END ] = "<END>";
 	//keycodes[ KEY_EXIT ] = ;
 	//keycodes[ KEY_FIND ] = ;
 	//keycodes[ KEY_HELP ] = ;

@@ -144,7 +144,7 @@ static void sigint(int /*sig*/)
 {
 //	yzDebug(NYZIS) << "^C catched" << endl;
 	// ^c catched -> sends an escape char.. 
-	NYZFactory::currentView->sendKey( Qt::Key_Escape, 0);
+	NYZFactory::currentView->sendKey( "<ESC>","" );
 }
 
  

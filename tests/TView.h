@@ -89,6 +89,10 @@ public:
 		yzDebug() << "TYZView::displayInfo" << endl;
 	}
 
+	virtual void modeChanged( ) {
+		yzDebug() << "TYZView::modeChanged" << endl;
+	}
+
 protected:
 	class Mapping {
 	public:

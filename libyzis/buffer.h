@@ -212,7 +212,7 @@ public:
 	 * Changes the filename
 	 * @param _path the new filename ( and path )
 	 */
-	void setPath( const QString& _path ) { mPath = _path; mFileIsNew=false; filenameChanged(); }
+	void setPath( const QString& _path );
 
 	/**
 	 * Called whenever the filename is changed

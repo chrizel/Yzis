@@ -112,7 +112,7 @@ YZView* NYZFactory::createView( YZBuffer* buffer )
 {
 	YZASSERT( buffer );
 	NYZView *v = new NYZView( buffer );
-	YZASSERT_MSG(v, "NYZFactory::createView : failed creating a new KYZView");
+	YZASSERT_MSG(v, "NYZFactory::createView : failed creating a new NYZView");
 	buffer->addView ( v);
 	return currentView;
 }

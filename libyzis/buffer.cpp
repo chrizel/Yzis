@@ -73,6 +73,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 }
 
 YZBuffer::~YZBuffer() {
+	yzDebug() << "Deleting buffer " << mPath << endl;
 	if ( m_highlight != 0L )
 		m_highlight->release();
 	mText.clear();
@@ -406,22 +407,17 @@ uint YZBuffer::firstNonBlankChar( uint line ) {
 // ------------------------------------------------------------------------
 
 void YZBuffer::load(const QString& file) {
-	//stop redraws
+	QString oldPath = mPath;
+	if ( file.isNull() || file.isEmpty() ) return;
+	setPath(file);
+	//hmm changing file :), update Session !!!!
+	mSession->updateBufferRecord( oldPath, mPath, this );
 	if ( mIntro ) clearIntro();
+	//stop redraws
 	mUpdateView=false;
 	mText.clear();
-	QString oldPath = mPath;
-	mPath = file;
-	if ( !file.isNull() ) { 
-	//check if the path is absolute or relative
-		if (file[0] != '/') {
-			mPath = QDir::cleanDirPath(QDir::current().absPath()+"/"+mPath);
-			yzDebug() << "Changing path to " << mPath << endl;
-		}
-		//hmm changing file :), update Session !!!!
-		mSession->updateBufferRecord( oldPath, mPath, this );
-	} else return; // no file name ...
 	mFileIsNew=false;
+
 	//HL mode selection
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);
 	setHighLight( hlMode );
@@ -592,3 +588,15 @@ void YZBuffer::makeAttribs() {
 	
 	//tagAll(); ?
 }
+
+void YZBuffer::setPath( const QString& _path ) {
+	QString newPath = _path.stripWhiteSpace();
+	if (newPath[0] != '/') {
+		mPath = QDir::cleanDirPath(QDir::current().absPath()+"/"+newPath);
+		yzDebug() << "Changing path to absolute " << mPath << endl;
+	} else
+		mPath = newPath; 
+	mFileIsNew=false; 
+	filenameChanged();
+}
+

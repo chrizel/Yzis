@@ -77,6 +77,11 @@ k_dcop:
 	 * @param path file to which the buffer is linked
 	 */
     void createBuffer(const QString& path=QString::null);
+	
+	/**
+	 * Creates a new view on an existing buffer
+	 */
+	void createView( /*const KTextEditor::Document &doc*/ );
 
 	/**
 	 * Closes the view

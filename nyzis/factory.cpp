@@ -266,6 +266,10 @@ int NYZFactory::promptYesNoCancel( const QString& /*title*/, const QString& /*me
 	return 0;//return yes for now...
 }
 
+void NYZFactory::splitHorizontally ( YZView *view ) {
+	//TODO
+}
+
 void NYZFactory::initialiseKeycodes()
 {
 	keycodes.clear();

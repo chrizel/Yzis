@@ -276,4 +276,12 @@ int KYZisFactory::promptYesNoCancel(const QString& title, const QString& message
 	else if (v == KMessageBox::No) return 1;
 	return 2;
 }
+
+void KYZisFactory::splitHorizontally(YZView *view) {
+//	KYZisView *v = static_cast<KYZisView *>(view);
+//	KYZisDoc *doc = static_cast<KYZisDoc*>(v->document());
+	if (mMainApp)
+		mMainApp->createView();
+}
+
 #include "factory.moc"

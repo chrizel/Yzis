@@ -50,6 +50,7 @@ public:
 	void deleteBuffer ( YZBuffer *b );
 	void setFocusCommandLine();
 	void setFocusMainWindow();
+	void splitHorizontally(YZView *view);
 	bool promptYesNo(const QString& title, const QString& message);
 	int promptYesNoCancel(const QString& title, const QString& message);
 

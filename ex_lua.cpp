@@ -20,11 +20,6 @@
 #include "ex_lua.h"
 #include "debug.h"
 
-static int print(lua_State *L) {
-	yzDebug() << "Lua " << lua_version() << " tested" << endl;
-	return 0;
-}
-
 
 YZExLua::YZExLua() {
 	st = lua_open();
@@ -44,6 +39,11 @@ QString YZExLua::lua(YZView *view, const QString& inputs) {
 	if ( lua_pcall( st,0,0,0 ) )
 		yzDebug() << "YZExLua::lua " << lua_tostring(st, -1) << endl;
 	return QString::null;
+}
+
+int YZExLua::print(lua_State *L) {
+	yzDebug() << "Lua " << lua_version() << " tested" << endl;
+	return 0;
 }
 
 #include "ex_lua.moc"

@@ -41,11 +41,12 @@ NYZFactory::NYZFactory(const char *session_name)
 	(void) cbreak();	/* take input chars one at a time, no wait for \n */
 	(void) noecho();	/* echo input - in color */
 	(void) nodelay(stdscr, TRUE);
+	(void) intrflush( stdscr, FALSE );
 
 	if ( has_colors() ) start_color();
 
 	if ( self ) {
-		yzError(NYZIS) << "Instanciating several NYZFactory, should Never happen, quitting..";
+		yzFatal(NYZIS) << "Instanciating several NYZFactory, should Never happen, quitting..";
 		exit(1);
 	}
 	self = this;
@@ -73,10 +74,7 @@ void NYZFactory::event_loop()
 			if ( isupper( c ) ) modifiers |= Qt::ShiftButton;
 			if ( iscntrl( c ) ) modifiers |= Qt::ControlButton;
 			//TODO: ALT/META	
-			if ( keycodes.contains ( c ) )
-				currentView->sendKey( keycodes[ c ], modifiers );
-			else
-				currentView->sendKey( c, modifiers );
+			currentView->sendKey( keycodes.contains(c)?keycodes[c]:c, modifiers );
 		} else usleep (400);
 	}
 }

@@ -82,15 +82,14 @@ main(int argc, char *argv[])
 		if ( -1 == c ) break; // end of parsing
 		switch (c) {
 			case 'h':
-				printf("http://www.yzis.org");
-				printf("Nyzis / ncurses part of Yzis\n"
+				printf("Nyzis, ncurses part of Yzis - http://www.yzis.org\n"
 					VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
-				printf("\nUsage : %s [--help|-h] [--version|-v] [filename1 [filename2] .... ]\n\n", argv[0]);
+				printf("\nUsage : %s [--help|-h] [--version|-v] [filename1 [filename2] .... ]\n", argv[0]);
 				exit(0);
 				break;
 			case 'v':
-				printf("Nyzis / ncurses part of Yzis\n"
-					VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
+				printf("Nyzis, ncurses part of Yzis - http://www.yzis.org\n"
+					VERSION_CHAR_LONG " " VERSION_CHAR_DATE "\n");
 				exit(0);
 				break;
 			default:

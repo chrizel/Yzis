@@ -343,9 +343,9 @@ void NYZView::initialisecolormap()
 		MAP( 7, Qt::blue, COLOR_BLUE );
 		MAP( 8, Qt::white, COLOR_WHITE );
 		MAP( 9, Qt::gray, COLOR_WHITE );
-		MAP(10, Qt::darkGreen, COLOR_GREEN );
-		MAP(11, Qt::darkMagenta, COLOR_MAGENTA );
-		MAP(12, Qt::darkCyan, COLOR_CYAN );
+		MAP(10, Qt::darkGreen, COLOR_GREEN | A_BOLD);
+		MAP(11, Qt::darkMagenta, COLOR_MAGENTA | A_BOLD);
+		MAP(12, Qt::darkCyan, COLOR_CYAN | A_BOLD);
 		MAP(13, Qt::lightGray, COLOR_WHITE );
 	}
 }

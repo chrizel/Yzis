@@ -5623,6 +5623,117 @@ We need perl to generate some code.])
     AC_SUBST(PERL)
 ])
 
+AC_DEFUN([AC_PATH_LIBGETTEXT], [
+
+	AC_ARG_WITH(gettext-dir,
+		AC_HELP_STRING([--with-gettext-dir=DIR],[where the root of gettext is installed]),
+		[
+		LIBGETTEXT="$withval"
+		LIBGETTEXT_INCLUDES=-I"$withval"/include
+		LIBGETTEXT_LIBS="-L$withval/lib" ])
+
+	AC_ARG_WITH(gettext-includes, 
+		AC_HELP_STRING([--with-gettext-includes=DIR],[where gettext includes are]),
+		[ LIBGETTEXT_INCLUDES="-I$withval" ])
+
+	AC_ARG_WITH(gettext-libraries,
+		AC_HELP_STRING([--with-gettext-libraries=DIR],[where the gettext library is installed]),
+		[
+		LIBGETTEXT_LIBS="-L$withval" ])
+
+
+	if ! test "x$LIBGETTEXT" = "x"; then
+		AC_MSG_RESULT(using gettext from $LIBGETTEXT)
+	fi
+	if ! test "x$LIBGETTEXT_LIBS" = "x"; then
+		AC_MSG_RESULT(using gettext libraries in $LIBGETTEXT_LIBS)
+	fi
+	if ! test "x$LIBGETTEXT_INCLUDES" = "x"; then
+		AC_MSG_RESULT(using gettext includes in $LIBGETTEXT_INCLUDES)
+	fi
+
+	dnl checking some headers first
+	ac_save_CFLAGS="$CFLAGS"
+	ac_save_CPPFLAGS="$CPPFLAGS"
+	ac_save_LDFLAGS="$LDFLAGS"
+	CFLAGS="$LIBGETTEXT_INCLUDES $CFLAGS"
+	CPPFLAGS="$LIBGETTEXT_INCLUDES $CPPFLAGS"
+	LDFLAGS="$LIBGETTEXT_LIBS $LDFLAGS"
+	
+	AC_CHECK_HEADER(libintl.h,,
+			[ AC_MSG_ERROR([libintl.h was not found or was not usable, gettext headers are required !]) ]
+			)
+
+	dnl find the libs name
+	AC_CHECK_LIB(intl,bindtextdomain, LIBGETTEXT_LIBS="$LIBGETTEXT_LIBS -lintl",
+				[ AC_MSG_ERROR([gettext library not found !]) ]
+		)
+
+	CFLAGS="$ac_save_CFLAGS"
+	CPPFLAGS="$ac_save_CPPFLAGS"
+	LDFLAGS="$ac_save_LDFLAGS"
+
+	AC_SUBST(LIBGETTEXT)
+	AC_SUBST(LIBGETTEXT_INCLUDES)
+	AC_SUBST(LIBGETTEXT_LIBS)
+])
+
+AC_DEFUN([AC_PATH_LIBMAGIC], [
+
+	AC_ARG_WITH(libmagic-dir,
+		AC_HELP_STRING([--with-libmagic-dir=DIR],[where the root of libmagic is installed]),
+		[
+		LIBMAGIC="$withval"
+		LIBMAGIC_INCLUDES=-I"$withval"/include
+		LIBMAGIC_LIBS="-L$withval/lib" ])
+
+	AC_ARG_WITH(libmagic-includes, 
+		AC_HELP_STRING([--with-libmagic-includes=DIR],[where libmagic includes are]),
+		[ LIBMAGIC_INCLUDES="-I$withval" ])
+
+	AC_ARG_WITH(libmagic-libraries,
+		AC_HELP_STRING([--with-libmagic-libraries=DIR],[where the libmagic library is installed]),
+		[
+		LIBMAGIC_LIBS="-L$withval" ])
+
+
+	if ! test "x$LIBMAGIC" = "x"; then
+		AC_MSG_RESULT(using libmagic from $LIBMAGIC)
+	fi
+	if ! test "x$LIBMAGIC_LIBS" = "x"; then
+		AC_MSG_RESULT(using libmagic libraries in $LIBMAGIC_LIBS)
+	fi
+	if ! test "x$LIBMAGIC_INCLUDES" = "x"; then
+		AC_MSG_RESULT(using libmagic includes in $LIBMAGIC_INCLUDES)
+	fi
+
+	dnl checking some headers first
+	ac_save_CFLAGS="$CFLAGS"
+	ac_save_CPPFLAGS="$CPPFLAGS"
+	ac_save_LDFLAGS="$LDFLAGS"
+	CFLAGS="$LIBMAGIC_INCLUDES $CFLAGS"
+	CPPFLAGS="$LIBMAGIC_INCLUDES $CPPFLAGS"
+	LDFLAGS="$LIBMAGIC_LIBS $LDFLAGS"
+	
+	AC_CHECK_HEADER(magic.h,,
+			[ AC_MSG_ERROR([magic.h was not found or was not usable, libmagic headers are required !]) ]
+			)
+
+	dnl find the libs name
+	AC_CHECK_LIB(magic,magic_open, LIBMAGIC_LIBS="$LIBMAGIC_LIBS -lmagic",
+				[ AC_MSG_ERROR([libmagic library not found !]) ]
+		)
+
+	CFLAGS="$ac_save_CFLAGS"
+	CPPFLAGS="$ac_save_CPPFLAGS"
+	LDFLAGS="$ac_save_LDFLAGS"
+
+	AC_SUBST(LIBMAGIC)
+	AC_SUBST(LIBMAGIC_INCLUDES)
+	AC_SUBST(LIBMAGIC_LIBS)
+
+])
+
 AC_DEFUN([AC_PATH_LUA], [
 
 dnl	AC_PATH_PROG(LUA_CONFIG, lua-config, no)

@@ -11,26 +11,22 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h)
 AC_CHECK_FUNCS(usleep)
 dnl KDE_ENABLE_HIDDEN_VISIBILITY
+
 AC_PATH_LUA
-AC_CHECK_HEADER(magic.h)
-if test "$ac_cv_header_magic_h" = "no"; then
-	AC_MSG_ERROR(magic.h not found. Please install libmagic headers.)
-fi
-AC_CHECK_LIB(magic, magic_open,[have_libmagic=yes],[have_libmagic=no])
-if test "$have_libmagic" = "no"; then
-	AC_MSG_ERROR(libmagic not found. Please install libmagic.)
-fi
+AC_PATH_LIBMAGIC
+AC_PATH_LIBGETTEXT
+
 AC_ARG_ENABLE(pslib, AC_HELP_STRING([--disable-pslib],[disable Pslib-support.]),, [enable_pslib="no"])
 if test "$enable_pslib" == "yes"; then
 	AC_CHECK_HEADER(libps/pslib.h)
-	if test "$ac_cv_header_libps_pslib_h" = "no"; then
+	if test "x$ac_cv_header_libps_pslib_h" = "xno"; then
 		AC_MSG_WARN(libps.h not found. pslib will not be used.)
 	fi
 	AC_CHECK_LIB(ps, PS_shutdown,[have_libps=yes],[have_libps=no])
-	if test "$have_libps" = "no"; then
+	if test "x$have_libps" = "xno"; then
 		AC_MSG_WARN(libps not found. pslib will not be used.)
 	fi
-	if test "$have_libps" = "yes" -a "$ac_cv_header_libps_pslib_h" = "yes"; then
+	if test "x$have_libps" = "xyes" -a "x$ac_cv_header_libps_pslib_h" = "xyes"; then
 		AC_DEFINE(HAVE_LIBPS,1,[whether libps is present or not])
 		PS_LIBS="-lps"
 	fi
@@ -47,7 +43,7 @@ AC_ARG_WITH(curses-dir, AC_HELP_STRING([--with-curses-dir=DIR],[where ncurses is
 		[
 		yzis_cv_curses="$withval"
 		CURSES="$withval"
-		CURSES_INCLUDES="-I$withval/include"
+		CURSES_INCLUDES="-I$withval/include -I$withval/include/ncurses"
 		CURSES_LIBS="-L$withval/lib"
 		])
 ac_save_CFLAGS="$CFLAGS"
@@ -62,10 +58,10 @@ AC_CHECK_LIB(ncurses, waddnwstr, [have_ncurses="yes"],[have_ncurses="no"])
 AC_CHECK_LIB(ncurses, addch, [have_basic_ncurses="yes"],[have_basic_ncurses="no"])
 AC_CHECK_LIB(ncursesw, waddnwstr, [have_ncursesw="yes"],[have_ncursesw="no"])
 
-if test "$have_ncurses" = "yes" -o "$have_basic_ncurses" = "yes" ; then
+if test "x$have_ncurses" = "xyes" -o "x$have_basic_ncurses" = "xyes" ; then
 	cf_ncurses="ncurses"
 fi
-if test "$have_ncursesw" = "yes"; then
+if test "x$have_ncursesw" = "xyes"; then
 	cf_ncurses="ncursesw"
 fi
 
@@ -81,16 +77,16 @@ AC_CHECK_LIB($cf_ncurses, initscr,
 			  AC_CHECK_HEADERS(ncurses.h,[cf_cv_ncurses_header="ncurses.h"])
 			  AC_CHECK_HEADERS(ncursesw/ncurses.h,[cf_cv_ncurses_header="ncursesw.h"])
 			  ], [CF_CURSES_LIBS])
-if test "$have_ncurses" = "no" -a "$have_ncursesw" = "no" -a "$have_basic_ncurses" = "yes"; then
+if test "x$have_ncurses" = "xno" -a "x$have_ncursesw" = "xno" -a "x$have_basic_ncurses" = "xyes"; then
 	AC_MSG_WARN(WARNING Ncurses libraries with wide characters support not found, nyzis will NOT be compiled. Use a ncurses compiled with unicode support !)
 	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
 else 
-	if test "$have_ncurses" = "no" -a "$have_ncursesw" = "no" -a "$have_basic_ncurses" = "no"; then
+	if test "x$have_ncurses" = "xno" -a "x$have_ncursesw" = "xno" -a "x$have_basic_ncurses" = "xno"; then
 		AC_MSG_WARN(Ncurses libraries was not found, nyzis will not be compiled.)
 		DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
 	fi
 fi
-if test "$cf_cv_ncurses_header" = ""; then
+if test "x$cf_cv_ncurses_header" = "x"; then
 	AC_MSG_WARN(Ncurses header not found, nyzis will not be compiled.)
 	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
 fi
@@ -116,7 +112,7 @@ AC_ARG_ENABLE(kyzis, AC_HELP_STRING([--disable-kyzis],[disable Kyzis compilation
 AC_ARG_ENABLE(nyzis, AC_HELP_STRING([--disable-nyzis],[disable Nyzis compilation.]),, [enable_nyzis="yes"])
 AC_ARG_WITH(qt4-dir, AC_HELP_STRING([--with-qt4-dir=DIR],[Enable Qt4 support -- EXPERIMENTAL --]),[enable_qt4="yes"; QT_INCLUDES="-I$withval/include -I$withval/include/QtCore  -I$withval/include/QtXml -I$withval/include/QtGui"; QT_LIBS="-L$withval/lib"; QTDIR="$withval"],)
 
-if test "$enable_qt4" != "yes"; then
+if test "x$enable_qt4" != "xyes"; then
 	YZIS_QT3="libqtyzis"
 	NYZIS_DEP="libyzis/libqtyzis/libqtyzis.la"
 	YZIS_INCLUDES="$YZIS_INCLUDES $all_includes"
@@ -131,10 +127,10 @@ AM_CONDITIONAL(use_libqt, test -n "$YZIS_QT3")
 AM_CONDITIONAL(use_libqt4, test -n "$YZIS_QT4")
 
 
-if test "$have_kde" != "yes" -o "$enable_kyzis" != "yes" -o "$enable_qt4" = "yes"; then
+if test "x$have_kde" != "xyes" -o "x$enable_kyzis" != "xyes" -o "x$enable_qt4" = "xyes"; then
 	DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis kqcommon"
 fi
-if test "$enable_nyzis" != "yes"; then
+if test "x$enable_nyzis" != "xyes"; then
 	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
 fi
 

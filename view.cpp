@@ -2114,7 +2114,8 @@ const QColor& YZView::drawColor ( ) {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return blue; //XXX make custom
-	else if ( curAt ) return (*curAt).textColor();
+	else if ( curAt )
+		return (*curAt).textColor();
 	else return fake;
 }
 

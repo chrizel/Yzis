@@ -356,14 +356,14 @@ YzisSyntaxDocument::findAllResources( const char *,
     QStringList list;
     QString filterPath;
     QString filterFile;
-	QStringList relList;
+    QStringList relList;
 
     if (filter.length())
     {
 #if QT_VERSION < 0x040000
        int slash = filter.findRev('/');
 #else
-       int slash = filter.indexOf('/');
+       int slash = filter.lastIndexOf('/');
 #endif
        if (slash < 0)
 	   filterFile = filter;
@@ -618,6 +618,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
       // Apend the item to the list
       myModeList.append(mli);
+      yzDebug ("HL") << "NO update hl cache for: " << *it << endl;
     }
     else
     {

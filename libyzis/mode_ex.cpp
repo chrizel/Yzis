@@ -878,7 +878,11 @@ cmd_state YZModeEx::genericUnmap ( const YZExCommandArgs& args, int type) {
 			break;
 	}
 	if (args.arg.startsWith("<CTRL>")) {
+#if QT_VERSION < 0x040000
 		mModifierKeys.remove(args.arg);
+#else
+		mModifierKeys.removeAll(args.arg);
+#endif
 		for (int i = 0 ; i <= YZSession::mNbViews; i++) {
 			YZView *v = YZSession::me->findView(i);
 			if (v)

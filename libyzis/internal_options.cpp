@@ -451,7 +451,11 @@ void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& 
 		QString key = it.key();
 		if (it.key().startsWith(oldPath)) {
 			key.replace(oldPath,newPath);
+#if QT_VERSION < 0x040000
 			newoptions[key] = it.data();
+#else
+			newoptions[key] = it.value();
+#endif
 			toDrop << it.key();
 		}
 	}
@@ -465,6 +469,10 @@ void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& 
 	//add new options into the QMap now
 	it = newoptions.begin(), end = newoptions.end();
 	for ( ; it != end; ++it ) {
+#if QT_VERSION < 0x040000
 		mOptions[it.key()] = it.data();
+#else
+		mOptions[it.key()] = it.value();
+#endif
 	}
 }

@@ -491,7 +491,11 @@ void YZBuffer::setEncoding( const QString& name ) {
 
 void YZBuffer::loadText( QString* content ) {
 	mText.clear(); //remove the _pointers_ now
+#if QT_VERSION < 0x040000
 	QTextStream stream( content, IO_ReadOnly );
+#else
+	QTextStream stream( content, QIODevice::ReadOnly );
+#endif
 	while ( !stream.atEnd() )
 		appendLine( stream.readLine() );
 }

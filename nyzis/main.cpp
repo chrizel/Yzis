@@ -79,20 +79,19 @@ main(int argc, char *argv[])
 	bool useGUI = TRUE;
 #endif
 
-#if QT_VERSION < 0x040000
-	// keep this one before QApplication creation, and doesn't declare it as "NYZEventLoop loop();", use new
 	( void ) new NYZEventLoop();
-#else
-	//NYZEventLoop loop;
-	( void ) new NYZEventLoop();
-#endif
 
 	QApplication app( argc, argv, useGUI );
 
 	QString initialSendKeys;
 
 	setlocale( LC_ALL, "");
-	bindtextdomain( "yzis", QString( PREFIX ) + "/share/locale" );
+	QString l = QString(PREFIX) + "/share/locale";
+#if QT_VERSION < 0x040000
+	bindtextdomain( "yzis", l);
+#else
+	bindtextdomain( "yzis", l.toUtf8() );
+#endif
 	bind_textdomain_codeset( "yzis", "UTF-8" );
 	textdomain( "yzis" );
 	// option stuff

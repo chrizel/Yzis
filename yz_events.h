@@ -53,12 +53,16 @@ struct yz_event_invalidateline {
 struct yz_event_setcursor {
 	int x,y,y2;
 	QString percentage;
-/*	yz_event_setcursor() {
+	yz_event_setcursor() {
 		percentage=QString::null;
+		x=y=y2=0;
 	}
 	yz_event_setcursor(const yz_event_setcursor& e) {
 		percentage=e.percentage;
-	}*/
+		x=e.x;
+		y=e.y;
+		y2=e.y2;
+	}
 };
 
 struct yz_event_setstatus {

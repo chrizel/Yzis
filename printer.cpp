@@ -27,6 +27,7 @@
 #include <math.h>
 extern "C" {
 	#include <libps/pslib.h>
+	#include <libps/pslib-mp.h>
 }
 
 #include "printer.h"
@@ -36,8 +37,9 @@ extern "C" {
 #include "debug.h"
 
 YZPrinter::YZPrinter( YZView *view ) /*: QPrinter(QPrinter::PrinterResolution) */{
-
+	PS_mp_init();
 	PS_boot();
+	
 	mView = view;
 
 	/*setPageSize( QPrinter::A4 );
@@ -63,14 +65,16 @@ void YZPrinter::doPrint( ) {
 	if (!doc)
 		return;
 	PS_open_file(doc, m_path.latin1());
-	PS_set_info(doc, "Creator", "YZis");
+	PS_set_info(doc, "Creator", "Yzis");
 	PS_set_info(doc, "Author", "");
 	PS_set_info(doc, "Title", m_path.latin1());
 	// Set so it'll fit on both A4 and letter paper;
 	// some of us live in the US, with archaic paper sizes. ;-)
 	PS_set_info(doc, "BoundingBox", "0 0 596 792");
 	int font;
-	font=PS_findfont(doc, "Fixed", "", 1);
+	font=PS_findfont(doc, "Fixed", "", 0);
+	yzDebug() << "findfont returned " << font << endl;
+	if ( !font ) return; //no font => abort
 	
 	QPrinter lpr(QPrinter::PrinterResolution);
 	QPainter p( &lpr );
@@ -213,103 +217,6 @@ void YZPrinter::doPrint( ) {
 	YZSession::mOptions.setGroup("Global");
 	YZSession::setBoolOption( "wrap", oldWrap );
 	mView->setVisibleArea( oldColumnsVis, oldLinesVis, false );
-	
-	/*QPainter p( this );
-
-	QFont f( "fixed" );
-	f.setFixedPitch( true );
-	f.setStyleHint( QFont::TypeWriter );
-	p.setFont( f );
-
-	QPaintDeviceMetrics pdm( this );
-	unsigned int height = pdm.height();
-	unsigned int width = pdm.width();
-
-
-	unsigned int linespace = p.fontMetrics().lineSpacing();
-	unsigned int maxwidth = p.fontMetrics().maxWidth();
-
-	unsigned int clipw = width / maxwidth - 1;
-	unsigned int cliph = height / linespace - 1;
-	
-	unsigned int oldLinesVis = mView->getLinesVisible( );
-	unsigned int oldColumnsVis = mView->getColumnsVisible( );
-
-	bool number = YZSession::getBoolOption( "Global\\number" );
-	unsigned int marginLeft = 0;
-	if ( number ) {
-		marginLeft = ( 2 + QString::number( mView->myBuffer()->lineCount() ).length() );
-	}
-
-	bool oldWrap = YZSession::getBoolOption( "Global\\wrap" );
-	YZSession::mOptions.setGroup("Global");
-	YZSession::setBoolOption( "wrap", true );
-	mView->setVisibleArea( clipw - marginLeft, cliph, false );
-	unsigned int totalHeight = mView->drawTotalHeight();
-	mView->setVisibleArea( clipw - marginLeft, totalHeight, false );
-	mView->initDraw( 0, 0, 0, 0 );
-
-	unsigned int lastLineNumber = 0;
-	unsigned int pageNumber = 0;
-
-	QRect titleRect( 0, 0, width, linespace + linespace / 2 );
-
-	unsigned int topY = titleRect.height() + linespace;
-	unsigned int curY = topY;
-	unsigned int curX;
-
-	cliph = ( height - topY ) / linespace;
-	int nbPages = totalHeight / cliph + ( totalHeight % cliph ? 1 : 0 );
-
-	while ( mView->drawNextLine( ) ) {
-		if ( curY == topY ) {
-			if ( pageNumber ) newPage( );
-			++pageNumber;
-			p.setPen( Qt::black );
-			p.drawText( titleRect, Qt::AlignLeft | Qt::AlignVCenter, " " + mView->myBuffer()->fileName() );
-			p.drawText( titleRect, Qt::AlignRight | Qt::AlignVCenter, QString::number( pageNumber ) + "/" + QString::number( nbPages ) + " " );
-		}
-		if ( number ) {
-			unsigned int lineNumber = mView->drawLineNumber();
-			if ( lineNumber != lastLineNumber ) {
-				p.setPen( Qt::gray );
-				p.drawText( 0, curY, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
-				lastLineNumber = lineNumber;
-			}
-		}
-		curX = marginLeft * maxwidth;
-		while ( mView->drawNextCol( ) ) {
-			QColor c = mView->drawColor( );
-			if ( c.isValid() && c != Qt::white ) p.setPen( mView->drawColor( ) );
-			else p.setPen( Qt::black );
-			p.drawText( curX, curY, mView->drawChar( ) );
-			curX += mView->drawLength( ) * maxwidth;
-		}
-		curY += linespace * mView->drawHeight();
-		if ( curY >= cliph * linespace + topY ) {
-			// draw Rect
-			p.setPen( Qt::black );
-			p.drawRect( 0, 0, width, curY );
-			if ( number )
-				p.drawLine( marginLeft * maxwidth - maxwidth / 2, titleRect.height(), marginLeft * maxwidth - maxwidth / 2, curY );
-			p.drawLine( titleRect.x(), titleRect.height(), titleRect.width(), titleRect.height() );
-			curY = topY;
-		}
-	}
-	if ( curY != topY ) {
-		// draw Rect
-		p.setPen( Qt::black );
-		p.drawRect( 0, 0, width, curY );
-		if ( number )
-			p.drawLine( marginLeft * maxwidth - maxwidth / 2, titleRect.height(), marginLeft * maxwidth - maxwidth / 2, curY );
-		p.drawLine( titleRect.x(), titleRect.height(), titleRect.width(), titleRect.height() );
-	}
-
-	p.end( );
-
-	YZSession::mOptions.setGroup("Global");
-	YZSession::setBoolOption( "wrap", oldWrap );
-	mView->setVisibleArea( oldColumnsVis, oldLinesVis, false );*/
 }
 
 

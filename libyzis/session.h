@@ -161,13 +161,20 @@ class YZSession {
 
 		/**
 		 * Saves all buffers with a filename set
+		 * @return whether all buffers were saved correctly
 		 */
-		void saveAll();
+		bool saveAll();
 
 		/**
 		 * Count the number of buffers
 		 */
 		int countBuffers() { return mBuffers.count(); }
+
+		/**
+		 * Check if one buffer is modified and not saved
+		 * @returns whether a buffer has been modified and not saved since
+		 */
+		bool isOneBufferModified();
 
 	protected:
 		//we map "filename"/buffer for buffers

@@ -62,8 +62,7 @@ bool KYZisDoc::openFile () {
 }
 
 bool KYZisDoc::saveFile () {
-	YZBuffer::save();
-	return true;
+	return YZBuffer::save();
 }
 
 /* Implementation of KTextEditor */

@@ -121,10 +121,22 @@ void YZSession::updateBufferRecord( const QString& oldname, const QString& newna
 	mBuffers.insert( newname, buffer );
 }
 
-void YZSession::saveAll() {
+bool YZSession::saveAll() {
+	QMap<QString,YZBuffer*>::Iterator it;
+	bool savedAll=true;
+	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+		YZBuffer* b = ( *it );
+		if ( !b->fileIsNew() ) {
+			if ( !b->save() ) savedAll=false;
+		}
+	}
+	return savedAll;
+}
+
+bool YZSession::isOneBufferModified() {
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
 		YZBuffer* b = ( *it );
-		if ( !b->fileIsNew() ) b->save();
+		if ( b->fileIsNew() ) return true;
 	}
 }

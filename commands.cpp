@@ -953,6 +953,11 @@ QString YZCommandPool::macro( const YZCommandArgs &args ) {
 
 QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 	args.view->purgeInputBuffer();
+	if ( args.view->isRecording()) {
+		yzDebug() << "User asked to play a macro he is currently recording, forget it !" << endl;
+		if ( args.view->registersRecorded() == args.regs )
+			return QString::null;
+	}
 	for ( QValueList<QChar>::const_iterator it = args.regs.begin(); it != args.regs.end(); it++ )
 		args.view->sendMultipleKey(YZSession::mRegisters.getRegister(*it)[ 0 ]);
 	args.view->commitNextUndo();

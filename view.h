@@ -654,6 +654,8 @@ class YZView {
 		 */
 		bool isRecording() { return mRegs.count() > 0; }
 
+		const QValueList<QChar> registersRecorded() { return mRegs; }
+
 		YZSelectionMap visualSelection();
 
 	public slots :

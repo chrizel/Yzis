@@ -125,11 +125,6 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
 
 	l.insert(x, c);
 	setTextline(y,l);
-
-	/* inform the views */
-/*	YZView *it;
-	for ( it = mViews.first(); it ; it = mViews.next() )
-		it->invalidateLine( y ); */
 }
 
 void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
@@ -214,7 +209,6 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
 		;	
 	mText.insert(it, new YZLine( l ));
-//	mText.insert(line, new YZLine(l));
 	setChanged( true );
 }
 
@@ -266,16 +260,14 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
 	if (lineCount() > 1) {
-		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, 
-										 "", 0, line );
+		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, "", 0, line );
 		QValueVector<YZLine*>::iterator it;
 		uint idx=0;
 		for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
 			;	
 		mText.erase(it);
 	} else {
-		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
-										 "", 0, line );
+		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, "", 0, line );
 		setTextline(0,"");
 	}
 

@@ -58,6 +58,7 @@ void YZCommandPool::initPool() {
 //	textObjects << "aw" << "iw";
 	commands.append( new YZNewMotion("0", &YZCommandPool::gotoSOL, ARG_NONE) );
 	commands.append( new YZNewMotion("$", &YZCommandPool::gotoEOL, ARG_NONE) );
+	commands.append( new YZNewMotion("^", &YZCommandPool::firstNonBlank, ARG_NONE) );
 	commands.append( new YZNewMotion("w", &YZCommandPool::moveWordForward, ARG_NONE) );
 	commands.append( new YZNewMotion("j", &YZCommandPool::moveDown, ARG_NONE) );
 	commands.append( new YZNewMotion("k", &YZCommandPool::moveUp, ARG_NONE) );
@@ -110,12 +111,10 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("`", &YZCommandPool::gotoMark, ARG_MARK) );
 	commands.append( new YZCommand("'", &YZCommandPool::gotoMark, ARG_MARK) );
 	commands.append( new YZCommand("u", &YZCommandPool::undo) );
-	commands.append( new YZCommand("<CTRL>r", &YZCommandPool::redo) );
-	//will this work ? mm => no see FIXME before //MM
-	commands.append( new YZCommand("q", &YZCommandPool::recordMacro, ARG_CHAR ) );
-	commands.append( new YZCommand("q", &YZCommandPool::stopRecordMacro) );
-	//end MM
-	commands.append( new YZCommand("@", &YZCommandPool::replayMacro, ARG_CHAR ) );
+	commands.append( new YZCommand("<CTRL>R", &YZCommandPool::redo) );
+	commands.append( new YZCommand("q", &YZCommandPool::macro) );
+	commands.append( new YZCommand("@", &YZCommandPool::replayMacro) );
+	commands.append( new YZCommand("<CTRL>l", &YZCommandPool::redisplay) );
 }
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
@@ -126,9 +125,10 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 	while(i<inputs.length()) {
 		if(inputs[i].digitValue() > 0) {
 			unsigned int j=i+1;
-			while(j<inputs.length() && inputs[j].digitValue() > 0)
+			while(j<inputs.length() && inputs[j].digitValue() >= 0)
 				j++;
 			count*=inputs.mid(i, j-i).toInt();
+			yzDebug() << "Count : " << count << endl;
 			i=j;
 		} else if(inputs[i] == '\"') {
 			if(++i>=inputs.length())
@@ -469,6 +469,12 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 	return *args.view->getBufferCursor();
 }
 
+YZCursor YZCommandPool::firstNonBlank(const YZNewMotionArgs &args) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveToFirstNonBlankOfLine(&viewCursor);
+	return *viewCursor.buffer();
+}
+
 
 // COMMANDS
 
@@ -679,20 +685,13 @@ QString YZCommandPool::redo(const YZCommandArgs &args) {
 	return QString::null;
 }
 
-QString YZCommandPool::recordMacro( const YZCommandArgs &args ) {
-	yzDebug() << "record macro " << args.arg << endl;
-	YZSession::me->mMacros.startRecording( args.arg[ 0 ] );	
-	return QString::null;
-}
-
-QString YZCommandPool::stopRecordMacro( const YZCommandArgs &args ) {
-	yzDebug() << "stop macro " << endl;
-	YZSession::me->mMacros.stopRecording( );	
+QString YZCommandPool::macro( const YZCommandArgs &args ) {
 	return QString::null;
 }
 
 QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 	yzDebug() << "replayMacro " << endl;
+	args.view->commitNextUndo();
 	return QString::null;
 }
 
@@ -705,6 +704,11 @@ QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
 	args.view->commitNextUndo();
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
 		args.view->leaveVisualMode();
+	return QString::null;
+}
+
+QString YZCommandPool::redisplay( const YZCommandArgs &args ) {
+	args.view->refreshScreen();
 	return QString::null;
 }
 

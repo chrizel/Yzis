@@ -48,6 +48,12 @@ public:
 	  */
 	int	get_lines_displayed(void) { return lines; }
 
+	/**
+	  * return true or false according to if the given line is
+	  * visible or not
+	  */
+	int	is_line_visible(int l) { return ( (l>=current) && ((l-current)<lines) ); }
+
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
 	int		lines;		/** number of visible lines */

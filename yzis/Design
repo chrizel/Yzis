@@ -38,3 +38,12 @@ Events
 
 	The information provided by the core is the colored text
 
+
+Source Tree
+	libyzis  - sourece for "Core" yzis stuff, might be released independently, and is used by all gui
+		yz_interface.h - what is needed by gui implementation to use the lib
+	nyzis - the ncurses-based gui
+	kyzis - the kde stuff : yzis-based ktexteditor
+
+	(doc?, ...)
+

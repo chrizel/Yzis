@@ -228,7 +228,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				mvwaddch( editor, currentY, x, mAttributes | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
 				if ( drawLength() > 1 ) {
 					for (unsigned int i = 1; i < drawLength(); i++ ) 
-						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), mAttributes | ' ' | ( invert ? A_REVERSE : A_NORMAL ) );
+						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), mAttributes | fillChar() | ( invert ? A_REVERSE : A_NORMAL ) );
 				}
 				currentX += drawLength( );
 			}

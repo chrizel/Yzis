@@ -120,6 +120,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	rHLnoAttribs = false;
 	rHLAttributesLen = 0;
 	charSelected = false;
+	mFillChar = ' ';
 
 	lineDY = 0;
 	tabstop = getLocalIntOption("tabstop");
@@ -1659,6 +1660,7 @@ bool YZView::drawNextCol( ) {
 	if ( curx < sCurLineLength ) {
 		unsigned int lenToTest;
 		lastChar = sCurLine[ curx ];
+		mFillChar = ' ';
 		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
 			listChar = drawMode && getLocalBoolOption( "list" ) && lastChar == ' ';
@@ -1686,8 +1688,10 @@ bool YZView::drawNextCol( ) {
 				YZInternalOption *opt = YZSession::mOptions.getOption("Global\\listchars");
 				if (opt) {
 					QString option = opt->getValueForKey("tab");
-					if ( !option.isNull() ) {
+					if ( !option.isNull() && option.length() > 0 ) {
 						lastChar = option[0];
+						if ( option.length() > 1 )
+							mFillChar = option[1];
 					}
 				}
 			}
@@ -1744,6 +1748,9 @@ bool YZView::drawNextCol( ) {
 	return ret;
 }
 
+const QChar& YZView::fillChar() const {
+	return mFillChar;
+}
 const QChar& YZView::drawChar( ) {
 	return lastChar;
 }

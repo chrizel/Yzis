@@ -61,9 +61,9 @@ YZInternalOption::YZInternalOption( const QString& key, const QString& group, bo
 
 QString YZInternalOption::getValueForKey( const QString& key ) {
 	if ( mValueType != stringlist_t ) return QString::null;
-	QRegExp rx ( ".*" + key + ":(.).*");
+	QRegExp rx ( "(^|.*,)" + key + ":([^,]*)(,.*|$)");
 	if ( rx.exactMatch( mValue ) )
-		return rx.cap(1); //should contain the 'value' for the given key
+		return rx.cap(2); //should contain the 'value' for the given key
 	return QString::null;
 }
 

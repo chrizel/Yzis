@@ -26,7 +26,6 @@ using namespace std;
 #include "libyzis/line.h"
 #include "libyzis/debug.h"
 #include "libyzis/buffer.h"
-#include "libyzis/buffer.h"
 
 #include "testYZCommands.h"
 #include "TYZSession.h"

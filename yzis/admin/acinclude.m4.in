@@ -1437,8 +1437,9 @@ Make sure that you have compiled Qt with thread support!"
     fi
   fi
 
-  AC_MSG_ERROR([Qt ($kde_qt_minversion) $ac_qt_notfound not found. Please check your installation!
+  AC_MSG_WARN([Qt ($kde_qt_minversion) $ac_qt_notfound not found. KYzis compilation will be disabled
 For more details about this problem, look at the end of config.log.$missing_qt_mt])
+	DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis"
 else
   have_qt="yes"
 fi
@@ -4387,7 +4388,7 @@ AC_DEFUN(AC_CHECK_UTMP_FILE,
 AC_DEFUN(KDE_CREATE_SUBDIRSLIST,
 [
 
-DO_NOT_COMPILE="$DO_NOT_COMPILE CVS debian bsd-port admin cyzis"
+DO_NOT_COMPILE="$DO_NOT_COMPILE CVS debian bsd-port admin"
 
 if test ! -s $srcdir/subdirs; then
   dnl Note: Makefile.common creates subdirs, so this is just a fallback
@@ -5418,12 +5419,12 @@ AC_DEFUN(AC_PATH_TINYQ, [
 	AC_ARG_WITH(tinyq-dir, [  --with-tinyq-dir   Specify prefix of TinyQ files],
 		[
 		TINYQ="$withval"
-		TINYQ_INCLUDES="$withval"/include
-		TINYQ_LIBS="$withval"/lib
+		TINYQ_INCLUDES=-I"$withval"/include
+		TINYQ_LIBS="-L$withval/lib -ltinyq"
 		])
 
 	if test "x$TINYQ" = "x"; then
-	AC_MSG_ERROR(could not find TinyQ directory)
+	AC_MSG_RESULT(no)
 	else
 	AC_MSG_RESULT(using TinyQ from $TINYQ)
 	fi

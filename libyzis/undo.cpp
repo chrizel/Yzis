@@ -44,7 +44,7 @@ void YZBufferOperation::performOperation( YZBuffer * buf, bool opposite)
 {
 	OperationType t = type;
 
-	yzDebug() << "YZBufferOperation: " << (opposite ? "undo " : "redo ") << toString().latin1() << endl;
+	yzDebug("YZUndoBuffer") << "YZBufferOperation: " << (opposite ? "undo " : "redo ") << toString().latin1() << endl;
 
 	if (opposite == true) {
 		switch( type ) {
@@ -70,7 +70,7 @@ void YZBufferOperation::performOperation( YZBuffer * buf, bool opposite)
 			break;
 	}
 
-//	yzDebug() << "YZBufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
+//	yzDebug("YZUndoBuffer") << "YZBufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
 }
 
 
@@ -80,20 +80,23 @@ YZUndoBuffer::YZUndoBuffer( YZBuffer * buffer )
 	mCurrentIndex = 0;
 	mInsideUndo = false;
 	mUndoItemList.setAutoDelete( true );
+	// Create the mFutureUndoItem
 	commitUndoItem();
 }
 
 void YZUndoBuffer::commitUndoItem()
 {
 	if (mInsideUndo == true) return;
-	removeUndoItemAfterCurrent();
+	if (mFutureUndoItem && mFutureUndoItem->count() == 0) return;
+
 	if (mFutureUndoItem) {
+		removeUndoItemAfterCurrent();
 		mUndoItemList.append( mFutureUndoItem );
 		mCurrentIndex = mUndoItemList.count();
+		yzDebug("YZUndoBuffer") << "UndoItem::commitUndoItem" << toString() << endl;
 	}
 	mFutureUndoItem = new UndoItem();
 	mFutureUndoItem->setAutoDelete( true );
-	//yzDebug() << "UndoItem::commitUndoItem" << toString() << endl;
 }
 
 void YZUndoBuffer::addBufferOperation( YZBufferOperation::OperationType type, 

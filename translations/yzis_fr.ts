@@ -11,6 +11,13 @@
     </message>
 </context>
 <context>
+    <name>KYZisFactory</name>
+    <message>
+        <source>Error</source>
+        <translation>Erreur</translation>
+    </message>
+</context>
+<context>
     <name>KYZisView</name>
     <message>
         <source>Yzis Ready</source>
@@ -49,6 +56,10 @@
     <message>
         <source>Please specify a filename</source>
         <translation>Veuillez indiquer un nom de fichier</translation>
+    </message>
+    <message>
+        <source>One file is modified ! Save it first ...</source>
+        <translation>Un fichier a été modifié ! Sauvegardez-le avant de quitter ...</translation>
     </message>
 </context>
 <context>

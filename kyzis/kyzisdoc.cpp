@@ -9,7 +9,7 @@
 
 static YZSession *sess = 0;
 		
-KYZisDoc::KYZisDoc (QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name)
+KYZisDoc::KYZisDoc (QWidget *parentWidget, const char * /*widgetName*/, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer(QString::null) {
 		setInstance(KYZisFactory::instance());
 		if ( !sess )
@@ -24,7 +24,7 @@ KYZisDoc::KYZisDoc (QWidget *parentWidget, const char *widgetName, QObject *pare
 KYZisDoc::~KYZisDoc () {
 }
 
-KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *name) {
+KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char * /*name*/) {
 	KYZisView *v = new KYZisView (this, sess, parent);
 	//FIXME : two lists
 	_views.append(v);

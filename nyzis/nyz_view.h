@@ -43,6 +43,18 @@ protected:
 
 private:
 	void update_info(void) { getmaxyx(window, h, w); lines_vis = h; }
+	/**
+	  * Display a line
+	  * @arg line is the line number, taken from the beginning of the file ( and not
+	  * the beginning of the displayed part )
+	  */
+	void printLine( int line );
+	/**
+	  * print a void line ( that is "~    " )
+	  * @arg line is the line # relative to the displayed screen, not the buffer ( as this
+	  * doesn't belong to the buffer anyway..)
+	  */
+	void printVoid( int line );
 
 };
 

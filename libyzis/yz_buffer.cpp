@@ -28,7 +28,7 @@ void YZBuffer::addChar (int x, int y, QChar c) {
 	text[y] = l;
 
 	/* inform the views */
-	postEvent(YZEvent::mkEventLine(y,l));
+	postEvent(YZEvent::mkEventInvalidateLine(y));
 }
 
 void YZBuffer::chgChar (int x, int y, QChar c) {
@@ -43,7 +43,7 @@ void YZBuffer::chgChar (int x, int y, QChar c) {
 	text[y] = l;
 
 	/* inform the views */
-	postEvent(YZEvent::mkEventLine(y,l));
+	postEvent(YZEvent::mkEventInvalidateLine(y));
 }
 
 void YZBuffer::delChar (int x, int y, int count) {
@@ -57,7 +57,7 @@ void YZBuffer::delChar (int x, int y, int count) {
 	text[y] = l;
 
 	/* inform the views */
-	postEvent(YZEvent::mkEventLine(y,l));
+	postEvent(YZEvent::mkEventInvalidateLine(y));
 }
 
 void YZBuffer::addNewLine( int col, int line ) {
@@ -89,21 +89,11 @@ void YZBuffer::postEvent(yz_event e) {
 
 void YZBuffer::addView (YZView *v) {
 	view_list.append( v );
-	updateView(v);
-}
-
-//should be moved inside YZView
-void YZBuffer::updateView(YZView *view) {
-	for (unsigned int y=view->getCurrent(); y<text.count() && view->isLineVisible(y); y++) {
-		QString l = findLine( y );
-		if (l.isNull()) continue;
-		view->postEvent(YZEvent::mkEventLine(y,l));
-	}
-	view->updateCursor();
+	v->redrawScreen();
 }
 
 void YZBuffer::updateAllViews() {
-	for ( YZView *v = view_list.first();v;v=view_list.next() ) updateView(v);
+	for ( YZView *v = view_list.first();v;v=view_list.next() ) v->redrawScreen();
 }
 
 void  YZBuffer::addLine(QString &l) {

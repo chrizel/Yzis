@@ -1,3 +1,17 @@
+
+2003-06-02 orzel
+  * Whole
+     changed YZ_EV_SETLINE for YZ_EV_INVALIDATE_LINE and YZ_EV_REDRAW and updated
+     the whole project accordingly
+     fixed several warnings
+  * libyzis
+     YZBuffer::updateView() removed, obsoloted by YZView->redrawScreen()
+     added YZBuffer->getLines();
+     added YZView->gotoCommandMode() for consistency, so that now the 'mode' var
+     is changed only in goto*Mode();
+  * nyzis
+     added printLine() printVoid() in NYZView
+
 2003-05-31 mikmak
   * kyzis
     added the command line with a combobox :) (does nothing yet)

@@ -35,8 +35,8 @@ KYZisFactory::~KYZisFactory() {
 }
 
 KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, 
-		QObject *parent, const char *name, const char *classname, const QStringList & args) {
-	bool bSingleView = (classname!=QString("KTextEditor::Document"));
+		QObject *parent, const char *name, const char *classname, const QStringList & /*args*/) {
+//	bool bSingleView = (classname!=QString("KTextEditor::Document"));
 	bool bWantBrowserView =  (classname == QString("Browser/View") );
 	bool bWantReadOnly = (bWantBrowserView || ( classname == QString("KParts::ReadOnlyPart") ));
 

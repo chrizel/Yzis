@@ -50,26 +50,10 @@ void NYZView::flush_events(void)
 
 void NYZView::handle_event(yz_event e)
 {
-	int l;
-	unsigned int i;
-	QString	yzl;
-
-	int sx,sy; // save x,y
 
 	switch(e.id) {
-		case YZ_EV_SETLINE:
-			getyx(window,sy,sx);
-			l = e.setline.y - getCurrent();
-			yzl = e.setline.line;
-
-			/* not use addnstr here, will stop at \0  (i guess) */
-			wmove (window, l, 0);
-			for (i=0; i<w && i<yzl.length(); i++)
-				waddch(window, yzl[i].unicode());
-//				addch(yzl[i].unicode());
-			for ( ; i< w; i++ ) waddch(window, ' ' );
-
-			wmove(window,sy,sx );
+		case YZ_EV_INVALIDATE_LINE:
+			printLine( e.invalidateline.y );
 
 			wrefresh( window );
 //			debug("YZ_EV_SETLINE: received, line is %d", l);
@@ -82,17 +66,63 @@ void NYZView::handle_event(yz_event e)
 		case YZ_EV_SETSTATUS:
 			session->update_status( e.setstatus.text );
 			break;
+		case YZ_EV_REDRAW: {
+			unsigned int i;
+			for ( i=getCurrent(); i<getCurrent()+lines_vis && i<buffer->getLines(); i++ ) {
+				printLine(i);
+			}
+			i-=getCurrent();
+			for ( ; i<lines_vis; i++ ) printVoid(i );
+		}
+			break;
 		default:
 			//FIXME warning("Unhandled event from yzis core : %i", e->id);
 			break;
 	}
 }
 
-void NYZView::scrollDown( int lines ) {
+void NYZView::printVoid( int relline ) {
+
+	unsigned int i;
+
+	// clipping
+	if ( relline<0 || relline > lines_vis ) return;
+	wmove (window, relline, 0);
+	waddch(window, '~');
+	for (i=1 ; i< w; i++ ) waddch(window, ' ' );
+}
+
+void NYZView::printLine( int line ) {
+
+	unsigned int i;
+	int sx,sy; // save x,y
+	int relline = line - getCurrent(); // relative line #
+
+	// check
+	QString str = buffer->findLine( line );
+	if ( str.isNull() ) return;
+
+	// clipping 
+	if ( relline<0 || relline > lines_vis ) return;
+
+	getyx(window,sy,sx); // save cursor
+
+	/* not use addnstr here, will stop at \0  (i guess) */
+	wmove (window, relline, 0);
+	for (i=0; i<w && i<str.length(); i++)
+		waddch(window, str[i].unicode());
+//		addch(str[i].unicode());
+	for ( ; i< w; i++ ) waddch(window, ' ' );
+	wmove(window,sy,sx ); // restore cursor
+}
+
+
+
+void NYZView::scrollDown( int /*lines*/ ) {
 
 }
 
-void NYZView::scrollUp ( int lines ) {
+void NYZView::scrollUp ( int /*lines*/ ) {
 
 }
 

@@ -36,7 +36,7 @@ KYZisView::~KYZisView () {
 	delete status;
 }
 
-void KYZisView::postEvent(yz_event ev) {
+void KYZisView::postEvent(yz_event /*ev*/) {
 	QCustomEvent *myev = new QCustomEvent (QEvent::User);
 	QApplication::postEvent( this, myev ); //this hopefully gives Qt the priority before processing our own events
 }
@@ -47,9 +47,12 @@ void KYZisView::customEvent (QCustomEvent *) {
 	while ( true ) {
 		yz_event event = fetchNextEvent();
 		switch ( event.id ) {
-			case YZ_EV_SETLINE:
-				editor->setTextLine(event.setline.y,event.setline.line);
+			case YZ_EV_INVALIDATE_LINE: {
+				QString str  = buffer->findLine( event.invalidateline.y );
+				if ( str.isNull() ) return;
+				editor->setTextLine(event.invalidateline.y, str);
 				break;
+			}
 			case YZ_EV_SETCURSOR:
 				kdDebug() << "event SETCURSOR" << endl;
 				editor->setCursor (event.setcursor.x, event.setcursor.y);
@@ -57,6 +60,9 @@ void KYZisView::customEvent (QCustomEvent *) {
 			case YZ_EV_SETSTATUS:
 				kdDebug() << "event SETSTATUS" << event.setstatus.text <<  endl;
 				status->changeItem( event.setstatus.text,0 );
+				break;
+			case YZ_EV_REDRAW:
+				/* TODO */
 				break;
 			case YZ_EV_NOOP:
 				return;

@@ -37,7 +37,7 @@ void KYZisEdit::setCursor(int c, int l) {
 	drawCursorAt( cursorx,cursory );
 }
 
-void KYZisEdit::setTextLine(int l, const QString &str){
+void KYZisEdit::setTextLine(int l, const QString &/*str*/){
 	//mText.insert(l,str);
 	updateContents( 0, ( l - _parent->getCurrent() ) * fontMetrics().lineSpacing(),
 								width(), fontMetrics().lineSpacing()  );

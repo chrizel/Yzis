@@ -184,7 +184,7 @@ void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len ) {
 }
 
 YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
-	QString matchers = "({[)}]";
+	QString matchers = pView->myBuffer()->getLocalStringOption("matchpairs");
 
 	QString current = pView->myBuffer()->textline( mCursor.getY() );
 	QChar cchar = current[ mCursor.getX() ];
@@ -199,7 +199,7 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 	for ( i = 0; i < ( int )matchers.length() ; i++ ) {
 		if ( matchers[ i ] == cchar ) {
 			back = i>=3;
-			QChar c = matchers[ back ? i - 3 : i + 3 ]; //the character to match
+			QChar c = matchers[ back ? i - 1 : i + 1 ]; //the character to match
 			//now do the real search
 			while ( curY < pView->myBuffer()->lineCount() && count > 0 ) {
 				current = pView->myBuffer()->textline( curY );

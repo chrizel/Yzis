@@ -23,34 +23,38 @@
 #include <qfile.h>
 #include <qregexp.h>
 
-KOption::KOption( QString key, QString group, QString value, QString defaultValue, option_t type) {
+KOption::KOption( const QString& key, const QString& group, const QString& value, const QString& defaultValue, option_t type, value_t vtype) {
 	mKey = key;
 	mGroup = group;
 	mType = type;
 	mValue = value;
+	mValueType = vtype;
 	mDefaultValue = defaultValue;
 }
 
-KOption::KOption( QString key, QString group, QStringList value, QStringList defaultValue, option_t type) {
+KOption::KOption( const QString& key, const QString& group, const QStringList& value, const QStringList& defaultValue, option_t type, value_t vtype) {
 	mKey = key;
 	mGroup = group;
 	mType = type;
+	mValueType = vtype;
 	mValue = value.join( "/YZ/" );
 	mDefaultValue = defaultValue.join( "/YZ/" );
 }
 
-KOption::KOption( QString key, QString group, int value, int defaultValue, option_t type) {
+KOption::KOption( const QString& key, const QString& group, int value, int defaultValue, option_t type, value_t vtype) {
 	mKey = key;
 	mGroup = group;
 	mType = type;
+	mValueType = vtype;
 	mValue = QString::number( value );
 	mDefaultValue = QString::number( defaultValue );
 }
 
-KOption::KOption( QString key, QString group, bool value, bool defaultValue, option_t type) {
+KOption::KOption( const QString& key, const QString& group, bool value, bool defaultValue, option_t type, value_t vtype) {
 	mKey = key;
 	mGroup = group;
 	mType = type;
+	mValueType = vtype;
 	mValue = value ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
 	mDefaultValue = defaultValue ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
 }
@@ -128,17 +132,19 @@ void YZOption::saveTo(const QString& file, const QString& what, bool force ) {
 }
 
 void YZOption::init() {
-	KOption *tabwidth = new KOption("tabwidth", "Global", 8, 8, view_opt );
-	KOption *number = new KOption("number","Global", false, false, view_opt );
-	KOption *wrap = new KOption( "wrap", "Global", false, false, view_opt );
-	KOption *backspace = new KOption( "backspace", "Global", "eol", "eol", view_opt );
-	KOption *updatecount = new KOption( "updatecount", "Global", 200, 200, buffer_opt );
+	KOption *tabwidth = new KOption("tabwidth", "Global", 8, 8, view_opt, int_t );
+	KOption *number = new KOption("number","Global", false, false, view_opt, int_t );
+	KOption *wrap = new KOption( "wrap", "Global", false, false, view_opt, bool_t );
+	KOption *backspace = new KOption( "backspace", "Global", QString( "eol" ), QString( "eol" ), view_opt, string_t );
+	KOption *updatecount = new KOption( "updatecount", "Global", 200, 200, buffer_opt, int_t );
+	KOption *matchpairs = new KOption( "matchpairs", "Global", QString( "(){}[]" ), QString( "(){}[]" ), buffer_opt, string_t );
 
 	mOptions[ "Global\\tabwidth" ] = tabwidth;
 	mOptions[ "Global\\number" ] = number;
 	mOptions[ "Global\\wrap" ] = wrap;
 	mOptions[ "Global\\backspace" ] = backspace;
 	mOptions[ "Global\\updatecount" ] = updatecount;
+	mOptions[ "Global\\matchpairs" ] = matchpairs;
 	setGroup("Global");
 
 	//read config files now
@@ -161,7 +167,7 @@ void YZOption::setQStringOption( const QString& key, const QString& option ) {
 		opt->setValue(option);
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt );
+		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt, string_t );
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
@@ -183,7 +189,7 @@ void YZOption::setIntOption( const QString& key, int option ) {
 		opt->setValue(QString::number( option ));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt);
+		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt, int_t);
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
@@ -211,7 +217,7 @@ void YZOption::setBoolOption( const QString& key, bool option ) {
 		opt->setValue(option ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" ));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt);
+		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt, bool_t);
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
@@ -234,7 +240,7 @@ void YZOption::setQStringListOption( const QString& key, const QStringList& opti
 		opt->setValue(option.join("/YZ/"));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt);
+		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt, string_t);
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
@@ -257,7 +263,7 @@ void YZOption::setQColorOption( const QString& key, const QColor& option ) {
 		opt->setValue(option.name());
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option.name() , option.name(), getOption( key ) ? getOption( key )->getType() : global_opt );
+		opt = new KOption( currentGroup, key, option.name() , option.name(), getOption( key ) ? getOption( key )->getType() : global_opt, string_t );
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}

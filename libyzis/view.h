@@ -409,36 +409,6 @@ class YZView {
 		YZBuffer *mBuffer;
 
 		/**
-		 * Number of visible lines on the view
-		 */
-		unsigned int mLinesVis;
-
-		/**
-		 * Number of visible columns on the view
-		 */
-		unsigned int mColumnsVis;
-
-		/**
-		 * Index of the first visible line (buffer)
-		 */
-		unsigned int mCurrentTop;
-
-		/**
-		 * Index of the first visible line (buffer)
-		 */
-		unsigned int mCurrentLeft;
-
-		/**
-		 * Index of the first visible column (draw)
-		 */
-		unsigned int dCurrentLeft;
-
-		/**
-		 * Index of the first visible line (draw)
-		 */
-		unsigned int dCurrentTop;
-
-		/**
 		 * The cursor of the buffer
 		 */
 		YZCursor *mCursor;
@@ -503,6 +473,35 @@ class YZView {
 		unsigned int sColLength;
 		unsigned int sLineLength;
 		unsigned int rSpaceFill;
+		/**
+		 * Number of visible lines on the view
+		 */
+		unsigned int mLinesVis;
+
+		/**
+		 * Number of visible columns on the view
+		 */
+		unsigned int mColumnsVis;
+
+		/**
+		 * Index of the first visible line (buffer)
+		 */
+		unsigned int mCurrentTop;
+
+		/**
+		 * Index of the first visible line (buffer)
+		 */
+		unsigned int mCurrentLeft;
+
+		/**
+		 * Index of the first visible column (draw)
+		 */
+		unsigned int dCurrentLeft;
+
+		/**
+		 * Index of the first visible line (draw)
+		 */
+		unsigned int dCurrentTop;
 
 		/**
 		 * The cursor of the text

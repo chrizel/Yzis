@@ -1,5 +1,6 @@
 /*
-	  Copyright (c) 2003, 2004 Thomas Capricelli <orzel@freehackers.org>
+    Copyright (c) 2003, 2004 Thomas Capricelli <orzel@freehackers.org>,
+    Loic Pauleve <panard@inzenet.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public
@@ -59,8 +60,8 @@ void NYZView::map( void )
 	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
 	wmove(window,0,0 );
 	keypad(window , true); //active symbols for special keycodes
-	updateVis();
 	marginLeft = 0;
+	updateVis();
 
 	// creates layout
 	/*
@@ -78,7 +79,6 @@ void NYZView::map( void )
 //	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 //	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
-	setVisibleArea( mColumnsVis,mLinesVis ); //compatibility.., does a refresh()
 }
 
 
@@ -90,6 +90,12 @@ void NYZView::unmap( void )
 	window = statusbar = infobar = NULL;
 }
 
+void NYZView::updateVis( ) {
+	unsigned int width;
+	unsigned int height;
+	getmaxyx( stdscr, height, width ); 
+	setVisibleArea( width - marginLeft, height - 2 );
+}
 
 void NYZView::printVoid( unsigned int relline )
 {
@@ -115,7 +121,6 @@ void NYZView::drawContents( int clipy, int cliph ) {
 	if ( marginLeft != my_marginLeft ) {
 		marginLeft = my_marginLeft;
 		updateVis();
-		setVisibleArea( mColumnsVis - marginLeft, mLinesVis );
 		return;
 	}
 
@@ -147,7 +152,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				}
 				currentX += drawLength( );
 			}
-			for( ; currentX < getColumnsVisible() - marginLeft; currentX++) waddch( window, ' ' );
+			for( ; currentX < getColumnsVisible() + marginLeft; currentX++) waddch( window, ' ' );
 			currentY += drawHeight( );
 			cliph -= lineHeight( );
 		} else {

@@ -1171,10 +1171,36 @@ void YZModeCommand::gotoVisualLineMode(const YZCommandArgs &args) {
 
 void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 	unsigned int y = args.view->getBufferCursor()->y();
-	args.view->myBuffer()->action()->insertNewLine( args.view, args.view->myBuffer()->textline( y ).length(), y );
-	for ( unsigned int i = 1 ; i < args.count ; i++ )
-		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y + i );
+	YZBuffer *mBuffer = args.view->myBuffer();
+	mBuffer->action()->insertNewLine( args.view, mBuffer->textline( y ).length(), y );
+	QStringList results = YZSession::events->exec("INDENT_ON_ENTER", args.view);
+	if (results.count() > 0 ) {
+		if (results[0].length()!=0) {
+#if QT_VERSION < 0x040000
+			mBuffer->action()->replaceLine( args.view, y+1, results[0] + mBuffer->textline( y+1 ).stripWhiteSpace() );
+#else
+			mBuffer->action()->replaceLine( args.view, y+1, results[0] + mBuffer->textline( y+1 ).trimmed() );
+#endif
+			args.view->gotoxy(results[0].length(),y+1);
+		}
+	}
+	for ( unsigned int i = 1 ; i < args.count ; i++ ) {
+		y = args.view->getBufferCursor()->y();
+		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
+		results = YZSession::events->exec("INDENT_ON_ENTER", args.view);
+		if (results.count() > 0 ) {
+			if (results[0].length()!=0) {
+#if QT_VERSION < 0x040000
+				mBuffer->action()->replaceLine( args.view, y+1, results[0] + mBuffer->textline( y+1 ).stripWhiteSpace() );
+#else
+				mBuffer->action()->replaceLine( args.view, y+1, results[0] + mBuffer->textline( y+1 ).trimmed() );
+#endif
+				args.view->gotoxy(results[0].length(),y+1);
+			}
+		}
+	}
 	args.view->modePool()->push( YZMode::MODE_INSERT );
+	args.view->moveToEndOfLine();
 	args.view->commitNextUndo();
 	
 }

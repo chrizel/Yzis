@@ -180,9 +180,10 @@ void NYZView::drawContents( int clipy, int cliph ) {
 			while ( drawNextCol( ) ) {
 				QColor c = drawColor( );
 				int mColor = mColormap.contains( c.rgb() ) ? mColormap[ c.rgb() ] : mColormap[ Qt::white.rgb() ]; 
-				waddch( editor, COLOR_PAIR( mColor ) | drawChar().unicode() );
+				bool invert = drawSelected( );
+				waddch( editor, COLOR_PAIR( mColor ) | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
 				if ( drawLength() > 1 ) {
-					for (unsigned int i = 1; i < drawLength(); i++ ) waddch( editor, ' ' );
+					for (unsigned int i = 1; i < drawLength(); i++ ) waddch( editor, ' ' | ( invert ? A_REVERSE : A_NORMAL ) );
 				}
 				currentX += drawLength( );
 			}

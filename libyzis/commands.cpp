@@ -24,7 +24,6 @@
  */
 
 #include "commands.h"
-#include "view.h"
 #include "debug.h"
 #include <qregexp.h>
 

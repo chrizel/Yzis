@@ -30,8 +30,8 @@
 #include <qstring.h>
 #include <qmap.h>
 #include <qstringlist.h>
-#include "buffer.h"
 #include "view.h"
+#include "buffer.h"
 #include "session.h"
 #include "plugin.h"
 #include "ex_executor.h"

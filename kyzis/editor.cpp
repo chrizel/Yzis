@@ -248,6 +248,12 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 					QColor c = mParent->drawColor( );
 					if ( c.isValid() ) p.setPen( c );
 					p.drawText(myRect, flag, mParent->drawChar( ) );
+
+					if ( mParent->drawSelected() ) {
+						for ( unsigned int i = currentX; i < currentX + mParent->drawLength(); i++ )
+							drawCursorAt( i, currentY );
+					}
+
 					currentX += mParent->drawLength( );
 				}
 				if ( currentY == mY ) setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );

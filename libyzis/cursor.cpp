@@ -22,6 +22,7 @@
  */
 
 #include "cursor.h"
+#include "debug.h"
 
 YZCursor::YZCursor(YZView *vp) {
 	parentView=vp;
@@ -30,12 +31,40 @@ YZCursor::YZCursor(YZView *vp) {
 }
 
 YZCursor::YZCursor(YZCursor *c) {
-	parentView=c->parentView;
-	x_pos=c->getX();
-	y_pos=c->getY();
+	setCursor( c );
 }
 
 YZCursor::~YZCursor() {
 }
 
+void YZCursor::setCursor( YZCursor *c ) {
+	parentView = c->parentView;
+	x_pos = c->getX();
+	y_pos = c->getY();
+}
+
+bool YZCursor::lt( YZCursor *c ) {
+	return ( getY() < c->getY() || getY() == c->getY() && getX() < c->getX() );
+}
+
+bool operator<= ( YZCursor &left, const YZCursor & right ) {
+	yzDebug() << "operator <=" << endl;
+	return ( left.y_pos < right.y_pos || left.y_pos == right.y_pos && left.x_pos <= right.x_pos );
+}
+bool operator>= ( YZCursor &left, const YZCursor & right ) {
+	yzDebug() << "operator >=" << endl;
+	return ( left.y_pos > right.y_pos || left.y_pos == right.y_pos && left.x_pos >= right.x_pos );
+}
+bool operator< ( YZCursor &left, const YZCursor & right ) {
+	yzDebug() << "operator < " << endl;
+	return ( left.y_pos < right.y_pos || left.y_pos == right.y_pos && left.x_pos < right.x_pos );
+}
+bool operator> ( YZCursor &left, const YZCursor & right ) {
+	yzDebug() << "operator >" << endl;
+	return ( left.y_pos > right.y_pos || left.y_pos == right.y_pos && left.x_pos > right.x_pos );
+}
+bool operator== ( YZCursor &left, const YZCursor & right ) {
+	yzDebug() << "operator ==" << endl;
+	return ( left.x_pos == right.x_pos && left.y_pos == right.y_pos );
+}
 

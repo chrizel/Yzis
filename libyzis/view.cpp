@@ -75,6 +75,9 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	reverseSearch=false;
 	viewInformation.l = viewInformation.c1 = viewInformation.c2 = 0;
 	viewInformation.percentage = "";
+
+	selectionPool = new YZSelectionPool( this );
+//	selectionPool->test( );
 }
 
 YZView::~YZView() {
@@ -1234,6 +1237,8 @@ bool YZView::doSearch( const QString& search ) {
 	//get current line
 	QString l;
 
+	selectionPool->clear( );
+
 	for ( unsigned int i = currentMatchLine; i < mBuffer->lineCount(); reverseSearch ? i-- : i++ ) {
 		l = mBuffer->textline( i );
 		yzDebug() << "Searching " << search << " in line : " << l << endl;
@@ -1256,7 +1261,9 @@ bool YZView::doSearch( const QString& search ) {
 			//really found it !
 			currentMatchColumn = idx;
 			currentMatchLine = i;
+			selectionPool->addSelection( currentMatchColumn, currentMatchLine, currentMatchColumn + ex.matchedLength() - 1, currentMatchLine );
 			gotoxy( currentMatchColumn, currentMatchLine );
+			refreshScreen( );
 			return true;
 		} else {
 			yzDebug() << "No match on this line" << endl;
@@ -1266,6 +1273,7 @@ bool YZView::doSearch( const QString& search ) {
 				currentMatchColumn=0; //reset the column (only valid for the first line we check)
 		}
 	}
+	refreshScreen( );
 	return false;
 }
 
@@ -1468,6 +1476,7 @@ bool YZView::drawNextCol( ) {
 		ret = rCursor->getX() - rCurrentLeft < mColumnsVis;
 		if ( sCurLine[ curx ] != tabChar ) {
 			lastChar = sCurLine[ curx ];
+			if ( drawMode ) charSelected = selectionPool->isSelected( sCursor );
 			rColLength = 1;
 		} else {
 			lastChar = ' ';
@@ -1506,6 +1515,9 @@ unsigned int YZView::drawHeight ( ) {
 }
 unsigned int YZView::lineHeight ( ) {
 	return sLineLength;
+}
+bool YZView::drawSelected( ) {
+	return charSelected;
 }
 
 const QColor& YZView::drawColor ( ) {

@@ -15,8 +15,8 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 	current_maxx = 0;
 	cursor_x = cursor_y = cursor_x_ghost = 0;
 	mode 		= YZ_VIEW_MODE_COMMAND;
-	YZLine *line = buffer->find_line(cursor_y);
-	if (line) current_maxx = line->len-1;
+	QString line = buffer->find_line(cursor_y);
+	if (line) current_maxx = line.length()-1;
 
 	events_nb_begin = 0;
 	events_nb_last = 0;
@@ -28,7 +28,7 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 /* Used by the buffer to post events */
 void YZView::send_char( QChar c)
 {
-	YZLine *lin;
+	QString lin;
 
 	if ('\033'==c) {
 		if (cursor_x>current_maxx) {
@@ -41,25 +41,22 @@ void YZView::send_char( QChar c)
 	}
 	switch(mode) {
 		case YZ_VIEW_MODE_INSERT:
-			//printf("Currently INSERTMODE\n");
 			/* handle adding a char */
 			buffer->add_char(cursor_x,cursor_y,c);
 			cursor_x++;
 			lin = buffer->find_line(cursor_y);
-			if ( lin ) current_maxx = lin->len-1;
+			if ( lin ) current_maxx = lin.length()-1;
 			update_cursor();
 			return;
 		case YZ_VIEW_MODE_REPLACE:
-			//printf("Currently REPLACEMODE\n");
 			/* handle replacing a char */
 			buffer->chg_char(cursor_x,cursor_y,c);
 			cursor_x++;
 			lin = buffer->find_line(cursor_y);
-			if ( lin ) current_maxx = lin->len-1;
+			if ( lin ) current_maxx = lin.length()-1;
 			update_cursor();
 			return;
 		case YZ_VIEW_MODE_COMMAND:
-			//printf("Currently COMMANDMODE\n");
 			/* will be handled after the switch */
 			break;
 		default:
@@ -89,9 +86,9 @@ void YZView::send_char( QChar c)
 			post_event(mk_event_setstatus("-- REPLACE --"));
 			break;
 		case 'j': /* move down */
-			if (cursor_y<buffer->lines_nb-1) {
+			if (cursor_y<buffer->text.count()-1) {
 				lin = buffer->find_line(++cursor_y);
-				if ( lin ) current_maxx = lin->len-1;
+				if ( lin ) current_maxx = lin.length()-1;
 				cursor_x = cursor_x_ghost;
 				if (cursor_x>current_maxx) cursor_x = current_maxx;
 				if (cursor_x<0) cursor_x = 0;
@@ -101,7 +98,7 @@ void YZView::send_char( QChar c)
 		case 'k': /* move up */
 			if (cursor_y>0) {
 				lin = buffer->find_line(--cursor_y);
-				if ( lin ) current_maxx = lin->len-1;
+				if ( lin ) current_maxx = lin.length()-1;
 				cursor_x = cursor_x_ghost;
 				if (cursor_x>current_maxx) cursor_x = current_maxx;
 				if (cursor_x<0) cursor_x = 0;

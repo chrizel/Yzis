@@ -346,7 +346,7 @@ QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QStrin
 }
 
 QStringList
-YzisSyntaxDocument::findAllResources( const char *type,
+YzisSyntaxDocument::findAllResources( const char *,
 			         const QString& filter,
 					 bool recursive,
 					 bool unique) const
@@ -530,7 +530,7 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
 /** Generate the list of hl modes, store them in myModeList
     force: if true forces to rebuild the Mode List from the xml files (instead of configfile)
 */
-void YzisSyntaxDocument::setupModeList (bool force)
+void YzisSyntaxDocument::setupModeList (bool )
 {
   // If there's something in myModeList the Mode List was already built so, don't do it again
   if (!myModeList.isEmpty())

@@ -1331,7 +1331,7 @@ YzisHlData *YzisHighlighting::getData()
 }
 #endif 
 
-void YzisHighlighting::setData(YzisHlData *hlData)
+void YzisHighlighting::setData(YzisHlData *)
 {/*
   KConfig *config = YzisHlManager::self()->getKConfig();
   config->setGroup("Highlighting " + iName);
@@ -1341,7 +1341,7 @@ void YzisHighlighting::setData(YzisHlData *hlData)
   config->writeEntry("Priority",hlData->priority);*/
 }
 
-void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &list)
+void YzisHighlighting::getYzisHlItemDataList (uint , YzisHlItemDataList &list)
 {
   list.clear();
   createYzisHlItemData(list);
@@ -1408,7 +1408,7 @@ void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &l
                         * return value: none
 *******************************************************************************************/
 
-void YzisHighlighting::setYzisHlItemDataList(uint schema, YzisHlItemDataList &list)
+void YzisHighlighting::setYzisHlItemDataList(uint , YzisHlItemDataList &)
 {/*
   KConfig *config = YzisHlManager::self()->getKConfig();
   config->setGroup("Highlighting " + iName + " - Schema " + YzisFactory::self()->schemaManager()->name(schema));
@@ -2593,7 +2593,7 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
   return -1;
 }
 
-QString YzisHlManager::findByContent( const QByteArray& contents ) {
+QString YzisHlManager::findByContent( const QByteArray& ) {
 #if 0
 	struct magic_set *ms = magic_open( MAGIC_MIME );
 	if ( ms == NULL ) {
@@ -2621,7 +2621,7 @@ int YzisHlManager::mimeFind(const QByteArray &contents)
 {
   static QRegExp sep("\\s*;\\s*");
 
-  int accuracy = 0;
+  //int accuracy = 0;
 //  KMimeType::Ptr mt = KMimeType::findByContent( contents, &accuracy );
   QString mt = findByContent( contents );
 
@@ -2686,7 +2686,7 @@ QString YzisHlManager::defaultStyleName(int n)
   return names[n];
 }
 
-void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
+void YzisHlManager::getDefaults(uint , YzisAttributeList &list)
 {
   list.setAutoDelete(true);
 
@@ -2800,7 +2800,7 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   */
 }
 
-void YzisHlManager::setDefaults(uint schema, YzisAttributeList &list)
+void YzisHlManager::setDefaults(uint , YzisAttributeList &)
 {
 /*  KConfig *config =  YzisHlManager::self()->self()->getKConfig();
   config->setGroup("Default Item Styles - Schema " + YzisFactory::self()->schemaManager()->name(schema));

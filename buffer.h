@@ -298,7 +298,7 @@ public:
 	/**
 	 * Translator wrapper function
 	 */
-	QString tr( const char *source, const char* comment = 0) { return qApp->translate( "YZBuffer", source ); }
+	QString tr( const char *source, const char* = 0) { return qApp->translate( "YZBuffer", source ); }
 
 	/**
 	 * Sets the highlighting mode for this buffer

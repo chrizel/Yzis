@@ -44,6 +44,7 @@ NYZFactory::NYZFactory(const char *session_name)
 	(void) intrflush( stdscr, FALSE );
 
 	wattron(stdscr, A_STANDOUT);	// will be herited by subwin
+	use_default_colors();
 
 	if ( has_colors() ) start_color();
 

@@ -21,10 +21,10 @@
  * $Id$
  */
 
+#include "view.h"
 #include "action.h"
 #include "debug.h"
 #include "registers.h"
-#include "view.h"
 #include "cursor.h"
 #include "options.h"
 #include "buffer.h"

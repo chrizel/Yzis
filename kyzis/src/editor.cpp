@@ -103,17 +103,26 @@ KYZisCursor::shape KYZisEdit::cursorShape() {
 	} else {
 		QString shape;
 		YZMode::modeType m = mParent->modePool()->current()->type();
-		if ( m == YZMode::MODE_INSERT ) {
-			shape = mParent->getLocalStringOption("cursorinsert");
-		} else if ( m == YZMode::MODE_REPLACE ) {
-			shape = mParent->getLocalStringOption("cursorreplace");
-		} else {
-			shape = mParent->getLocalStringOption("cursor");
+		switch( m ) {
+			case YZMode::MODE_INSERT :
+				shape = mParent->getLocalStringOption("cursorinsert");
+				break;
+			case YZMode::MODE_REPLACE :
+				shape = mParent->getLocalStringOption("cursorreplace");
+				break;
+			case YZMode::MODE_COMPLETION :
+				shape = "keep";
+				break;
+			default :
+				shape = mParent->getLocalStringOption("cursor");
+				break;
 		}
 		if ( shape == "hbar" ) {
 			s = KYZisCursor::HBAR;
 		} else if ( shape == "vbar" ) {
 			s = KYZisCursor::VBAR;
+		} else if ( shape == "keep" ) {
+			s = mCursor->type();
 		} else {
 			if ( hasFocus() ) 
 				s = KYZisCursor::SQUARE;

@@ -71,6 +71,7 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true,false,false,false);
 	NEW_VIEW_COMMAND(":",&YZView::gotoExMode,true,false,false,false);
 	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true,false,false,false);
+	NEW_VIEW_COMMAND("v",&YZView::gotoVisualMode,true,false,false,false);
 	NEW_VIEW_COMMAND("([0-9]*)(gg|G)",&YZView::gotoLine,true,true,false,false);
 	NEW_VIEW_COMMAND("(\".)?([0-9]*)(d.+|D)",&YZView::deleteLine,true,true,true,true);
 	NEW_VIEW_COMMAND("o",&YZView::openNewLineAfter,true,false,false,false);
@@ -177,7 +178,7 @@ void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
 	// assume a command is like : "rangeCOMMANDNAME parameters"
 	// see vim :help [range] for infos on 'range'
 	//QRegExp rx ( "(%?|((\\d*)(,\\d*)?))(\\w+)((\\b)|(/.*/.*/.*))(.*)");
-	QRegExp rx ( "(%?|\\d*|\\d*,\\d*)(\\w+)((\\b)|(/.*/.*/.*))(.*)");
+	QRegExp rx ( "(%?|\\d*|\\d*,\\d*)(\\w+)(.*)");
 	if ( rx.exactMatch(command) ) {
 		command = rx.cap( 2 );
 	} else

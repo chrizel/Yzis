@@ -98,7 +98,7 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len 
 		it->applyDeleteLine( mPos, len, pView->myId == it->myId );
 }
 
-void YZAction::deleteLine( YZView* pView, const YZCursor& begin, YZCursor& end, const QChar& reg ) {
+void YZAction::deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const QChar& reg ) {
 	YZCursor mPos( begin );
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
 		it->initDeleteLine( mPos, end, pView->myId == it->myId );
@@ -148,7 +148,6 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& begin, YZCursor& end, 
 
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
 		it->applyDeleteLine( mPos, end, pView->myId == it->myId );
-
 }
 
 void YZAction::insertChar( YZView* pView, unsigned int X, unsigned int Y, const QString& text ) {

@@ -49,6 +49,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	sCursor = new YZCursor(this);
 	rCursor = new YZCursor(this);
 	origPos = new YZCursor(this);
+	from = new YZCursor(this);
+	to = new YZCursor(this);
 
 	dSpaceFill = 0;
 	dColLength = 0;
@@ -131,40 +133,6 @@ void YZView::sendKey( int c, int modifiers) {
 		yzError( )<< "receiving modifiers in c, shouldn't happen" <<endl;
 		return;
 	}
-
-	// handle CONTROL SEQUENCE
-	// we copy vim behaviour ^L go through in INSERT/REPLACE/SEARCH
-#if 0
-	if ( modifiers & Qt::ControlButton )
-	switch(mMode) {
-		case YZ_VIEW_MODE_INSERT:
-		case YZ_VIEW_MODE_REPLACE:
-		case YZ_VIEW_MODE_SEARCH:
-			break;// continue
-		case YZ_VIEW_MODE_OPEN:
-			switch ( tolower(c) ) {
-				case 'b':
-					break;
-				default:
-					break;
-			}
-			// fallthru
-		case YZ_VIEW_MODE_EX:
-		case YZ_VIEW_MODE_COMMAND:
-			switch ( tolower(c) ) {
-				case 'l':
-					refreshScreen();
-					return;
-				case 'r':
-					redo();
-					return;
-				default:
-					yzWarning()<< "Unhandled control sequence " << (char) c <<endl;
-					return;
-
-			}
-	};
-#endif
 
 	switch(mMode) {
 		case YZ_VIEW_MODE_INSERT:
@@ -387,6 +355,14 @@ void YZView::sendKey( int c, int modifiers) {
 			}
 			break;
 
+		case YZ_VIEW_MODE_VISUAL:
+			switch ( c ) {
+				case Qt::Key_Escape:
+					purgeInputBuffer();
+					gotoCommandMode();
+					return;
+			}
+		//dont break
 		case YZ_VIEW_MODE_COMMAND:
 			switch ( c ) {
 				case Qt::Key_Home:
@@ -414,7 +390,10 @@ void YZView::sendKey( int c, int modifiers) {
 					key='k';
 					break;
 				case Qt::Key_Delete:
-					mBuffer->action()->deleteChar( this, mCursor, 1);
+					if ( mMode == YZ_VIEW_MODE_VISUAL )
+						mBuffer->action()->deleteArea( this, *from, *to, QChar( '\"' ));
+					else
+						mBuffer->action()->deleteChar( this, *mCursor, 1);
 					return;
 				case Qt::Key_PageDown:
 					gotodxy(mCursor->getX(), mCursor->getY() + mLinesVis );
@@ -431,17 +410,15 @@ void YZView::sendKey( int c, int modifiers) {
 //			yzDebug() << "Previous chars : (" << int( (mPreviousChars.latin1())[0] )<< ") " << mPreviousChars << endl;
 			if ( mSession ) {
 				int error = 0;
-				mSession->getPool()->execCommand(this, /*mPreviousChars*/mappedCommand, &error);
+				mSession->getPool()->execCommand(this, mappedCommand, &error);
 				if ( error == 1 ) {
-					yzDebug() << "No matching command found at first pass" << endl;
+//					yzDebug("Commands") << "No matching command found at first pass" << endl;
 					error = 0;
 					mSession->getPool()->execCommand(this, mPreviousChars, &error); //try to find a command without the modifier
 				} else
 					break;
-				if ( error == 1 ) {
-					yzDebug() << "No matching command found at second pass. I give up..." << endl;
-//					purgeInputBuffer(); // no matching command
-				}
+//				if ( error == 1 )
+//					yzDebug("Commands") << "No matching command found at second pass. I give up..." << endl;
 			}
 			break;
 
@@ -689,6 +666,15 @@ void YZView::applyGoto( bool applyCursor ) {
 			<< "; dWrapNextLine=" << dWrapNextLine
 			<< endl; 
 	yzDebug( ) << "mCursor:" << mCursor->getX( ) << "," << mCursor->getY( )<< "; dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl; */
+	
+	if ( mMode == YZ_VIEW_MODE_VISUAL ) {
+		*to = *sCursor;
+		yzDebug("Visual mode") << "Ending at " << *to << endl;
+		paintEvent( dCurrentLeft, from->getY()-1, mColumnsVis , to->getY() - from->getY()+1);
+	}
+	
+
+
 	if ( applyCursor ) {
 		if ( !isLineVisible( dCursor->getY() ) )
 			alignViewVertically( dCursor->getY( ) );
@@ -1029,7 +1015,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 			gotoxy( mX, mY, false );
 		}
 
-		mBuffer->action()->deleteLine( this, mCursor, cursor, reg );
+		mBuffer->action()->deleteArea( this, *mCursor, cursor, reg );
 	}
 	//reset the input buffer
 	purgeInputBuffer();
@@ -1111,6 +1097,16 @@ QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs /*args 
 	modeChanged();
 	purgeInputBuffer();
 	setCommandLineText( "" );
+	return QString::null;
+}
+
+QString YZView::gotoVisualMode(const QString&, YZCommandArgs ) {
+	mMode = YZ_VIEW_MODE_VISUAL;
+	//store the from position
+	*from = *mCursor;
+	yzDebug("Visual mode") << "Starting at " << *from << endl;
+	modeChanged();
+	purgeInputBuffer();
 	return QString::null;
 }
 
@@ -1416,7 +1412,7 @@ bool YZView::drawNextCol( ) {
 		ret = rCursor->getX() - rCurrentLeft < mColumnsVis;
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {
-			if ( drawMode ) charSelected = selectionPool->isSelected( sCursor );
+			if ( drawMode ) charSelected = selectionPool->isSelected( sCursor ) || isSelected( sCursor );
 			rColLength = 1;
 		} else {
 			lastChar = ' ';
@@ -1559,3 +1555,11 @@ QString YZView::redo( const QString& , YZCommandArgs ) {
 	purgeInputBuffer();
 	return QString::null;
 }
+
+bool YZView::isSelected( const YZCursor& pos ) {
+	if ( mMode != YZ_VIEW_MODE_VISUAL ) return false; //no selection ;)
+	yzDebug() << "Pos to check : " << pos << " From : " << *from << " To : " << *to << endl;
+	if ( pos >= ( *from ) && pos <= ( *to ) ) return true;
+	return false;
+}
+

@@ -233,6 +233,11 @@ class YZView {
 		QString gotoReplaceMode( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
+		 * Start visual mode
+		 */
+		QString gotoVisualMode( const QString& inputsBuff = QString::null, YZCommandArgs args  = YZCommandArgs());
+
+		/**
 		 * Go to line of file
 		 */
 		QString gotoLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
@@ -323,8 +328,9 @@ class YZView {
 			YZ_VIEW_MODE_EX, //script 
 			YZ_VIEW_MODE_SEARCH, //search mode
 			YZ_VIEW_MODE_OPEN, // open mode
+			YZ_VIEW_MODE_VISUAL, // visual mode
 		} mMode;		/** mode of this view */
-#define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_OPEN+1) // <-- update that if you touch the enum
+#define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_VISUAL+1) // <-- update that if you touch the enum
 		
 
 		//GUI
@@ -468,6 +474,12 @@ class YZView {
 		/* recalculate cursor position and refresh screen */
 		void reset( );
 
+		/**
+		 * Check whether the given cursor is currently highlighted
+		 * @param pos the cursor to check the position
+		 * @return whether the cursor is highlighted
+		 */
+		bool isSelected( const YZCursor& pos );
 
 	protected:
 		/**
@@ -650,6 +662,10 @@ class YZView {
 		bool wrap;
 
 		YZSelectionPool * selectionPool;
+		
+		//Visual Mode stuff
+		YZCursor *from;
+		YZCursor *to;
 };
 
 #endif /*  YZ_VIEW_H */

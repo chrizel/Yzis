@@ -29,6 +29,8 @@ int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
 YZOption YZSession::mOptions = YZOption();
 YZRegisters YZSession::mRegisters = YZRegisters();
+//syntax highlighting , kate xml files loader
+YzisSyntaxDocument YZSession::mLoader = YzisSyntaxDocument(true);
 
 YZSession::YZSession( const QString& _sessionName ) {
 	mPool = new YZCommandPool();
@@ -139,4 +141,5 @@ bool YZSession::isOneBufferModified() {
 		YZBuffer* b = ( *it );
 		if ( b->fileIsNew() ) return true;
 	}
+	return false;
 }

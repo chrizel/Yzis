@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003-2004 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -20,15 +20,15 @@
 /**
  * $Id$
  */
-#include "viewwidget.h"
-#include "factory.h"
 #include <qlayout.h>
 #include <qevent.h>
 #include <kapplication.h>
+#include "viewwidget.h"
+#include "factory.h"
 #include "debug.h"
 
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
-	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::sess, 10)
+	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::s_self, 10)
 {
 	editor = new KYZisEdit (this,"editor");
 	status = new KStatusBar (this, "status");
@@ -64,5 +64,32 @@ KYZisView::~KYZisView () {
 	if ( buffer ) buffer->removeView(this);
 	KYZisFactory::deregisterView( this );
 }
+
+void KYZisView::setCommandLineText( const QString& text ) {
+	command->setText( text );
+}
+
+QString KYZisView::getCommandLineText() const {
+	return command->text();
+}
+
+void KYZisView::setFocusMainWindow() {
+	editor->setFocus();
+}
+
+void KYZisView::setFocusCommandLine() {
+	command->setFocus();
+}
+
+void KYZisView::scrollDown( int lines ) {
+	editor->scrollBy(0, lines * editor->fontMetrics().lineSpacing());
+	editor->update();
+}
+
+void KYZisView::scrollUp ( int lines ) {
+	editor->scrollBy(0, -1 * lines * editor->fontMetrics().lineSpacing());
+	editor->update();
+}
+
 
 #include "viewwidget.moc"

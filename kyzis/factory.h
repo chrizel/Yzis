@@ -22,12 +22,12 @@
 #define KYZIS_FACTORY_H
 
 #include <kparts/factory.h>
-#include "gui.h"
+#include "session.h"
 
 class KInstance;
 class KAboutData;
 
-class KYZisFactory : public KParts::Factory, public Gui
+class KYZisFactory : public KParts::Factory, public YZSession
 {
 	Q_OBJECT
 public:
@@ -44,15 +44,9 @@ public:
 	static void deregisterView ( class KYZisView *view );
 
 	//GUI interface
-	void postEvent (yz_event);
-	void scrollDown( int l=1 );
-	void scrollUp( int l=1 );
-	void setCommandLineText( const QString& text );
-	QString getCommandLineText() const;
-	void setFocusCommandLine();
-	void setFocusMainWindow();
+	void receiveEvent (yz_event);
 	void quit(bool save=true);
-	void setCurrentView( YZView* );
+	void changeCurrentView( YZView* );
 	YZView *createView ( YZBuffer* );
 	YZBuffer *createBuffer(const QString& path);
 	void popupMessage( const QString& message );
@@ -75,7 +69,6 @@ private:
 
 public:
 	static KYZisFactory *s_self;
-	static YZSession *sess;
 	static KYZisDoc *currentDoc;
 };
 

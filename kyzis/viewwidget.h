@@ -41,6 +41,12 @@ class KYZisView: public KTextEditor::View , public YZView
 		KYZisView(KYZisDoc *doc, QWidget *parent, const char *name=0);
 	 	virtual ~KYZisView();
 		KTextEditor::Document *document () const { return buffer; }
+		void setCommandLineText( const QString& text );
+		QString getCommandLineText() const;
+		void setFocusCommandLine();
+		void setFocusMainWindow();
+		void scrollDown( int l=1 );
+		void scrollUp( int l=1 );
 	
 	private:
 		KYZisEdit *editor;

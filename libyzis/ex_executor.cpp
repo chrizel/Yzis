@@ -55,19 +55,19 @@ QString YZExExecutor::bufferprevious ( YZView *view, const QString& ) {
 
 QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
 	yzDebug() << "Delete view " << view->myId << endl;
-	view->mySession()->mGUI->deleteView();
+	view->mySession()->deleteView();
 	return QString::null;
 }
 QString YZExExecutor::quit ( YZView *view, const QString& ) {
 	//only for qall or last view ! XXX
-	view->mySession()->mGUI->quit();
+	view->mySession()->quit();
 	return QString::null;
 }
 
 QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 	int idx = inputs.find(" ");
 	if ( idx == -1 ) {
-		view->mySession()->mGUI->popupMessage( "Please specify a filename" );
+		view->mySession()->popupMessage( "Please specify a filename" );
 		return QString::null;
 	}
 	QString path = inputs.mid( idx + 1 ); //extract the path 
@@ -75,7 +75,7 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 	QFileInfo fi ( path );
 	path = fi.absFilePath();
 	yzDebug() << "New buffer / view : " << path << endl;
-	YZBuffer *b = view->mySession()->mGUI->createBuffer( path );
+	YZBuffer *b = view->mySession()->createBuffer( path );
 	//TODO
 //	YZView* v = view->mySession()->mGUI->createView(b);
 //	view->mySession()->mGUI->setCurrentView(v);

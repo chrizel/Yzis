@@ -25,7 +25,6 @@
  */
 
 #include "events.h"
-#include "gui.h"
 #include "buffer.h"
 #include "view.h"
 #include "commands.h"
@@ -34,7 +33,6 @@
 #include "registers.h"
 
 class YZView;
-class Gui;
 
 /**
  * Contains data referring to an instance of yzis
@@ -51,15 +49,15 @@ class YZSession {
 		YZSession( const QString& _sessionName="Yzis" );
 		virtual ~YZSession();
 
-		/**
-		 * Register a GUI event manager
-		 */
-		void registerManager ( Gui *mgr );
-
 		/** 
 		 * Used by the buffer to post events
 		 */
 		void postEvent ( yz_event );
+
+		/** 
+		 * Send events to the GUI
+		 */
+		virtual void receiveEvent ( yz_event ) = 0;
 
 		/**
 		 * return the session name
@@ -108,6 +106,11 @@ class YZSession {
 		void setCurrentView( YZView* );
 
 		/**
+		 * Notify the change of current view
+		 */
+		virtual void changeCurrentView( YZView* ) = 0;
+
+		/**
 		 * Finds the next view relative to the current one
 		 */
 		YZView* nextView();
@@ -122,11 +125,6 @@ class YZSession {
 		 */
 		YZView* currentView() { return mCurView; }
 
-		/** 
-		 * Current GUI
-		 */
-		Gui *mGUI;
-
 		/**
 		 * Change the filename of a recorded buffer
 		 */
@@ -136,6 +134,31 @@ class YZSession {
 		 * Called from GUI when the current view has been changed
 		 */
 		void currentViewChanged ( YZView *v ) { mCurView = v; }
+
+		/**
+		 * Delete the current view
+		 */
+		virtual void deleteView ( ) = 0;
+
+		/**
+		 * Ask to quit the app
+		 */
+		virtual void quit(bool savePopup=true) = 0;
+
+		/**
+		 * Display the specified error/information message
+		 */
+		virtual void popupMessage( const QString& message ) = 0;
+
+		/**
+		 * Creates a new buffer
+		 */
+		virtual	YZBuffer *createBuffer(const QString& path=QString::null) = 0;
+
+		/**
+		 * Create a new view
+		 */
+		virtual YZView* createView ( YZBuffer* ) = 0;
 
 	protected:
 		//we map "filename"/buffer for buffers

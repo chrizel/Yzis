@@ -29,6 +29,7 @@
 
 class YZView;
 class YZLine;
+class YZSession;
 
 typedef QPtrList<YZLine> YZBufferData;
 

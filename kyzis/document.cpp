@@ -25,7 +25,7 @@
 #include "debug.h"
 
 KYZisDoc::KYZisDoc (bool bSingleViewMode, bool bBrowserView, bool bReadOnly, QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name)
-	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::sess,QString::null) {
+	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::s_self,QString::null) {
 		setInstance(KYZisFactory::instance());
 		KYZisFactory::registerDocument( this );
 		m_parent = parentWidget;

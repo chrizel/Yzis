@@ -134,6 +134,8 @@ void KYZisView::modeChanged (void) {
 		case YZ_VIEW_MODE_VISUAL: //visual
 			status->changeItem(tr("-- VISUAL --"), 0);
 			break;
+		case YZ_VIEW_MODE_VISUAL_LINE : 
+			status->changeItem( tr("-- VISUAL LINES --" ), 0 );
 	};
 }
 

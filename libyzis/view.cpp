@@ -370,6 +370,7 @@ void YZView::sendKey( int c, int modifiers) {
 			break;
 
 		case YZ_VIEW_MODE_VISUAL:
+		case YZ_VIEW_MODE_VISUAL_LINE :
 			switch ( c ) {
 				case Qt::Key_Escape:
 					YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
@@ -407,7 +408,7 @@ void YZView::sendKey( int c, int modifiers) {
 					key='k';
 					break;
 				case Qt::Key_Delete:
-					if ( mMode == YZ_VIEW_MODE_VISUAL ) {
+					if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 						YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 						selectionPool->clear( "VISUAL" );
 						mBuffer->action()->deleteArea( this, *cur_sel.from, *cur_sel.to, QChar( '\"' ));
@@ -699,7 +700,7 @@ void YZView::applyGoto( bool applyCursor ) {
 
 	if ( applyCursor ) {
 
-		if ( mMode == YZ_VIEW_MODE_VISUAL ) {
+		if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 
 			YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 			/* erase current selection */
@@ -718,7 +719,7 @@ void YZView::applyGoto( bool applyCursor ) {
 				bBegin.setCursor( bTmp );
 				dBegin.setCursor( dTmp );
 			}
-			if ( visualEntireLines ) {
+			if ( mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 				bBegin.setX( 0 );
 				bEnd.setX( mBuffer->textline( bEnd.getY() ).length() );
 			}
@@ -1061,7 +1062,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		args.command = "d$";
 		args.motion = "$";
 	} 
-	if ( mMode == YZ_VIEW_MODE_VISUAL && args.command.startsWith( "d" ) ) {
+	if ( ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) && args.command.startsWith( "d" ) ) {
 		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 		selectionPool->clear( "VISUAL" );
 		mBuffer->action()->deleteArea( this, *cur_sel.from, *cur_sel.to, reg);
@@ -1201,14 +1202,17 @@ QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs /*args 
 
 QString YZView::gotoVisualMode(const QString& inputsBuff, YZCommandArgs ) {
 	//store the from position
-	visualEntireLines = inputsBuff.startsWith( "V" );
+	if ( inputsBuff.startsWith( "V" ) )
+		switchModes( YZ_VIEW_MODE_VISUAL_LINE );
+	else
+		switchModes( YZ_VIEW_MODE_VISUAL );
 	*mVisualCursor = *mCursor;
 	*dVisualCursor = *dCursor;
 
 	YZCursor bEnd( *mCursor );
 	YZCursor dEnd( *dCursor );
 
-	if ( visualEntireLines ) {
+	if ( mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 		mVisualCursor->setX( 0 );
 		dVisualCursor->setX( 0 );
 		bEnd.setX( mBuffer->textline( bEnd.getY() ).length() );
@@ -1218,7 +1222,6 @@ QString YZView::gotoVisualMode(const QString& inputsBuff, YZCommandArgs ) {
 	selectionPool->addSelection( "VISUAL", *mVisualCursor, bEnd, *dVisualCursor, dEnd );
 	paintEvent( dCurrentLeft, dVisualCursor->getY(), mColumnsVis, 1 );
 	yzDebug("Visual mode") << "Starting at " << *mVisualCursor << endl;
-	switchModes(YZ_VIEW_MODE_VISUAL);
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -1255,12 +1258,12 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 	} else if ( args.command == "y$" ) {
 		QString lin = mBuffer->textline( mCursor->getY() );
 		list << lin.mid(mCursor->getX());
-	} else if ( mMode == YZ_VIEW_MODE_VISUAL && args.command.startsWith( "y" ) ) {
+	} else if ( ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE ) && args.command.startsWith( "y" ) ) {
 
 		YZSelection cur_sel = selectionPool->layout( "VISUAL" )[ 0 ];
 
 		list = mBuffer->getText( *cur_sel.from, *cur_sel.to );
-		if ( visualEntireLines ) {
+		if ( mMode == YZ_VIEW_MODE_VISUAL_LINE ) {
 			list.insert( list.begin(), QString::null );
 			list.append( QString::null );
 		}

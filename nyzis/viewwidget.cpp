@@ -235,13 +235,14 @@ void NYZView::syncViewInfo( void )
 
 	YZASSERT( mMode<YZ_VIEW_MODE_LAST );
 	static const char *modeName[] = {
-		" Insert",
-		"Replace",
-		"Command",
-		"     Ex",
-		" Search",
-		"   Open",
-		" Visual"
+		"    Insert  ",
+		"   Replace  ",
+		"   Command  ",
+		"        Ex  ",
+		"    Search  ",
+		"      Open  ",
+		"    Visual  ",
+		"Visual Lines"
 	};
 
 	werase(infobar);

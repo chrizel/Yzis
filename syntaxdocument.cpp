@@ -37,6 +37,8 @@
 #include "session.h"
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <dirent.h>
+#include <unistd.h>
 
 static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
 static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);

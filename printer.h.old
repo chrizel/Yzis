@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2004 Mickael Marchand <marchand@kde.org>
+ *  Copyright (C) 2004 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -17,42 +17,35 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include <qstringlist.h>
-#include <qmap.h>
+/**
+ * $Id: printer.h 714 2004-05-25 19:34:25Z panard $
+ */
 
-#ifndef YZ_REGISTERS
-#define YZ_REGISTERS
+#ifndef YZ_PRINTER_H
+#define YZ_PRINTER_H
 
-class YZRegisters {
+#include <qprinter.h>
+
+#include "view.h"
+
+class YZView;
+
+class YZPrinter : public QPrinter {
+
 	public:
-		/**
-		 * Default constructor
-		 */
-		YZRegisters();
-
-		/**
-		 * Fills the register @param r with the @param value
-		 */
-		void setRegister( QChar r, const QStringList& value );
-
-		/**
-		 * Gets the value of register @param r
-		 * Returns a QString containing the register content
-		 */
-		QStringList& getRegister ( QChar r ) const;
+		YZPrinter( YZView *view );
+		virtual ~YZPrinter( );
 		
-		/**
-		 * Gets the list of registers
-		 */
-		QValueList<QChar> keys() { return mRegisters.keys(); }
+		void printToFile( const QString& path );
+		void run( );
 
-		/**
-		 * Gets the list of values
-		 */
-		QValueList<QStringList> values() { return mRegisters.values(); }
-	
 	private:
-		QMap<QChar,QStringList> mRegisters;
+		/* methods */
+		void doPrint( );
+
+		/* members */
+		YZView *mView;
 };
 
 #endif
+

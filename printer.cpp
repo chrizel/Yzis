@@ -25,7 +25,9 @@
 #include <qpainter.h>
 #include <qpaintdevicemetrics.h>
 #include <math.h>
-#include <libps/pslib.h>
+extern "C" {
+	#include <libps/pslib.h>
+}
 
 #include "printer.h"
 

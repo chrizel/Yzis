@@ -35,10 +35,10 @@ extern FILE * debugstr;
 
 #else
 
-#define debug(format, arg...)	{fprintf(NULL, "Yzis Debug :" __FILE__ "( %d ): " format "\n" , __LINE__,  ## arg);} 
-#define warning(format, arg...)	{fprintf(NULL, "Yzis Warning :" __FILE__ "( %d ): " format "\n" , __LINE__,  ## arg);} 
-#define error(format, arg...)	{fprintf(NULL, "Yzis Error :" __FILE__ "( %d ): " format "\n" , __LINE__, ## arg);} 
-#define panic(format, arg...)	{fprintf(NULL, "Yzis Panic :" __FILE__ "( %d ): " format "\n" , __LINE__, ## arg); exit(-1); }
+#define debug(format, arg...)	 
+#define warning(format, arg...)	 
+#define error(format, arg...)	 
+#define panic(format, arg...)	
 
 #define yz_assert(cond,msg, arg...)  if (!(cond)) error("ys_assert failed : " msg,## arg);
 

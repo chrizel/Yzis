@@ -7,4 +7,5 @@ Makefile.in
 Makefile
 *.lo
 *.la
+*.la.closure
 

@@ -61,6 +61,11 @@ void YZView::setVisibleLines(int nb) {
 
 /* Used by the buffer to post events */
 void YZView::sendKey( int c, int modifiers) {
+	if ( mBuffer->introShown() ) {
+		mBuffer->clearIntro();
+		gotoxy( 0,0 );
+	}
+
 	//ignore some keys
 	if ( c == Qt::Key_Shift || c == Qt::Key_Alt || c == Qt::Key_Meta ||c == Qt::Key_Control || c == Qt::Key_CapsLock ) return;
 

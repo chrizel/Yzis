@@ -369,6 +369,7 @@ QPtrList<KTextEditor::Mark> KYZisDoc::marks() {
 		m->type = it.data();
 		marks.append(m);
 	}
+	return marks;
 }
 
 void KYZisDoc::clearMarks() {

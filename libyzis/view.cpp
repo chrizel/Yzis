@@ -26,6 +26,7 @@
 #include <ctype.h>
 #include "view.h"
 #include "debug.h"
+#include "undo.h"
 #include <qkeysequence.h>
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
@@ -164,10 +165,7 @@ void YZView::sendKey( int c, int modifiers) {
 						return;
 					mSearchHistory[mCurrentSearchItem] = getCommandLineText();
 					mCurrentSearchItem++;
-					//TODO add search history like ex mode
 					doSearch( getCommandLineText() );
-					
-					//XXX do the search
 					setCommandLineText( "" );
 					setFocusMainWindow();
 					gotoCommandMode();
@@ -576,6 +574,7 @@ QString YZView::appendAtEOL ( const QString&, YZCommandArgs ) {
 }
 
 QString YZView::gotoCommandMode( ) {
+	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_COMMAND;
 	purgeInputBuffer();
 	setStatusBar( "Command mode" );
@@ -591,6 +590,7 @@ QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
 }
 
 QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
+	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_INSERT;
 	setStatusBar( "-- INSERT --" );
 	purgeInputBuffer();
@@ -598,6 +598,7 @@ QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
 }
 
 QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
+	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_REPLACE;
 	setStatusBar( "-- REPLACE --" );
 	purgeInputBuffer();

@@ -1,3 +1,481 @@
+2003-04-13 00:27  mikmak
+
+	* kyzis/kyzisedit.cpp, libyzis/yz_view.cpp, nyzis/nyz_view.cpp,
+	nyzis/nyz_view.h: yeah we have a cursor in kyzis now :) not perfect
+	yet but it's here
+
+2003-04-12 11:49  mikmak
+
+	* libyzis/yz_view.cpp: check length of lines
+
+2003-04-10 20:56  mikmak
+
+	* nyzis/: .cvsignore, Makefile.am: rename nyzis to yzis as it is
+	the default editor
+
+2003-04-06 20:14  mikmak
+
+	* nyzis/nyz_session.cpp: opening file given as parameter is better
+	...
+
+2003-04-06 20:10  mikmak
+
+	* nyzis/: nyz_view.cpp, nyz_view.h: displaying is back in nyzis :)
+
+2003-04-06 18:45  mikmak
+
+	* kyzis/kyzisedit.cpp: make it with a better background :)
+
+2003-04-06 18:36  mikmak
+
+	* kyzis/kyzisedit.cpp: no more flickering :) ugly but works
+
+2003-04-06 18:10  mikmak
+
+	* kyzis/: kyzisedit.cpp, kyzisview.cpp: now we can insert text and
+	display correctly it flickers a bit though ...
+
+2003-04-06 17:20  mikmak
+
+	* libyzis/yz_buffer.cpp: fix adding char.  it's usefull to update
+	the new text in the list too :)
+
+2003-04-06 15:52  mikmak
+
+	* libyzis/yz_cursor.lo: remove crap
+
+2003-04-06 15:52  mikmak
+
+	* libyzis/: Makefile.am, yz_buffer.cpp, yz_cursor.cpp, yz_cursor.h,
+	yz_cursor.lo, yz_view.cpp, yz_view.h: adding YZCursor stuff
+
+2003-03-24 23:11  mikmak
+
+	* kyzis/kyzisedit.cpp, libyzis/yz_view.cpp, libyzis/yz_view.h: ok
+	it display the text nearly perfectly i'll see for scrolling now :)
+
+2003-03-17 22:10  mikmak
+
+	* kyzis/kyzisedit.cpp, kyzis/kyzisedit.h, libyzis/yz_view.cpp,
+	libyzis/yz_view.h: let's display text again :) it's not yet really
+	aware of updates yet, but that will come
+
+2003-03-16 23:53  mikmak
+
+	* libyzis/yz_buffer.h, libyzis/yz_session.h, nyzis/main.cpp,
+	nyzis/nyz_session.h, nyzis/nyz_view.cpp, nyzis/nyz_view.h: fixing
+	compilation
+	
+		*** WARNING WARNING ***
+	Qt includes can conflict with curses.h curses.h must ALWAYS be
+	included last
+
+2003-03-16 21:07  mikmak
+
+	* kyzis/: kyzisedit.cpp, kyzisedit.h, kyzisview.cpp: removed
+	qtextedit started QScrollView for replacement
+
+2003-03-16 21:06  mikmak
+
+	* libyzis/: Makefile.am, yz_buffer.cpp, yz_buffer.h, yz_events.cpp,
+	yz_events.h, yz_line.cpp, yz_line.h, yz_view.cpp: major change
+	->use QStringList to manage the loaded file and use QStrings to
+	manage lines
+
+2003-03-15 23:24  mikmak
+
+	* kyzis/kyzisview.h: eventMgr->Gui
+
+2003-03-15 23:23  mikmak
+
+	* libyzis/: event_mgr.h, gui.h, yz_view.cpp, yz_view.h: improve
+	naming :) the eventMgr class is now just "Gui"
+
+2003-03-14 20:43  mikmak
+
+	* admin/configure.in.bot.end: warn the user that TinyQ is better
+	than Qt for nyzis :)
+
+2003-03-14 20:13  mikmak
+
+	* configure.in.in, nyzis/Makefile.am: more updates to configure
+	system now we can use Qt to compile nyzis if TinyQ is not there.
+
+2003-03-14 01:11  mikmak
+
+	* libyzis/: libqtyzis/.cvsignore, libtinyqyzis/.cvsignore:
+	CVS_SILENT ignore files
+
+2003-03-14 01:11  mikmak
+
+	* libyzis/: libqtyzis/Makefile.am, libtinyqyzis/Makefile.am: new
+	arch
+
+2003-03-14 01:10  mikmak
+
+	* configure.in.in, libyzis/Makefile.am, nyzis/Makefile.am: new
+	configure arch
+
+2003-03-14 01:09  mikmak
+
+	* kyzis/Makefile.am: update this one for the new architecture
+
+2003-03-14 01:09  mikmak
+
+	* admin/acinclude.m4.in: rewritting configure stuff :)
+
+2003-03-12 22:41  mikmak
+
+	* admin/: Doxyfile.global, Makefile.common, acinclude.m4.in,
+	am_edit, debianrules, libtool.m4.in, nmcheck: added a KDE-CVS
+	branch for admin/ so that we can update easily with kde-common
+	merge our changes with the current kde-common
+
+2003-03-12 22:12  mikmak
+
+	* admin/: Doxyfile.global, Makefile.common, acinclude.m4.in,
+	am_edit, debianrules, libtool.m4.in, nmcheck: kde-cvs update
+
+2003-03-12 22:12  mikmak
+
+	* admin/nmcheck: file nmcheck was initially added on branch
+	KDE-CVS.
+
+2003-03-11 22:07  mikmak
+
+	* kyzis/kyzis_part.cpp, kyzis/kyzis_part.h, kyzis/kyzisdoc.cpp,
+	kyzis/kyzisview.cpp, libyzis/yz_buffer.cpp, libyzis/yz_buffer.h,
+	libyzis/yz_view.cpp: now kyzis can open files :) it's ugly because
+	i havent well done the stuff in qtextedit, since i want to drop it
+	:)
+
+2003-03-10 00:22  mikmak
+
+	* libyzis/: yz_buffer.cpp, yz_events.cpp, yz_events.h, yz_view.cpp:
+	cleanup new mk_event_setline new open() with QFile, much easier
+	
+	bug to fix : lines are not displayed in views...
+
+2003-03-09 22:18  mikmak
+
+	* libyzis/yz_view.cpp: remove debug printf we need something to
+	debug correctly :)
+
+2003-03-09 22:16  mikmak
+
+	* nyzis/: nyz_session.cpp, nyz_session.h: make it compile
+
+2003-03-09 22:14  mikmak
+
+	* kyzis/: kyzisedit.cpp, kyzisview.cpp, kyzisview.h: kyzis now
+	handles events correctly :) we need to make the whole thingy work
+	now currently it can changes modes, but no input is done yet
+
+2003-03-09 22:13  mikmak
+
+	* libyzis/: yz_buffer.cpp, yz_events.cpp, yz_events.h, yz_view.cpp,
+	yz_view.h: minor modifications for events
+
+2003-03-07 22:02  mikmak
+
+	* kyzis/: kyzisview.cpp, kyzisview.h: implem for event_mgr kyzis
+	merge libyzis events into Qt's Eventloop.  seems to work fine we
+	need to debug libyzis now :)
+
+2003-03-07 22:01  mikmak
+
+	* libyzis/: event_mgr.h, yz_buffer.cpp, yz_events.h, yz_view.cpp,
+	yz_view.h: adding the event_mgr interface. this one is used to send
+	events directly to GUIs :)
+
+2003-03-05 00:48  mikmak
+
+	* kyzis/: kyzis.cpp, kyzis.h, kyzisedit.cpp, kyzisedit.h,
+	kyzisview.cpp, kyzisview.h: begin of events managements linked with
+	libyzis, i think i am on the good way :) don't try it keeps
+	crashing libyzis is buggy :)
+
+2003-03-02 18:53  mikmak
+
+	* kyzis/Makefile.am, nyzis/Makefile.am: compile when
+	builddir!=srcdir :)
+
+2003-03-02 03:15  mikmak
+
+	* libyzis/.cvsignore: renamed dummy file
+
+2003-03-02 03:15  mikmak
+
+	* kyzis/Makefile.am, libyzis/Makefile.am, nyzis/Makefile.am: ok ,
+	here is the second try :) everything is libtoolised now.
+	
+	we use a fake libtool lib in libyzis to build 2 others libs :
+	libqtyzis and libtinyqyzis first one is linked with qt the other
+	with tinyq.
+	
+	nyzis uses libtinyqyzis as a shared lib (can be static easily i
+	think) and kyzis uses libqtyzis as shared.
+	
+	kyzis and nyzis both work here.
+
+2003-03-02 01:21  mikmak
+
+	* libyzis/.cvsignore, libyzis/Makefile.am, nyzis/Makefile.am: ok
+	let's try that : what we wants : -> kyzis using shared libyzis +
+	shared Qt instead of shared TinyQ (avoids loading twice the same
+	stuff) -> nyzis using static libyzis statically linked with tinyq
+	(quicker loading and smaller)
+	
+	how it is currently done : libyzis is first built as a static
+	library without tinyqt, then it is built again as a libtool lib
+	usable for kyzis. Nyzis can then be compiled linking with the
+	static tinyq.
+	
+	That seems to work :)
+
+2003-03-01 01:34  mikmak
+
+	* kyzis/kyzisedit.cpp, kyzis/kyzisview.cpp, libyzis/yz_view.cpp: ok
+	kyzis has a view now :) qtextedit for now, we will change that
+	later
+
+2003-03-01 00:47  mikmak
+
+	* .cvsignore, README, admin/acinclude.m4.in, libyzis/Makefile.am,
+	libyzis/yz_buffer.cpp, libyzis/yz_buffer.h, libyzis/yz_line.cpp,
+	libyzis/yz_line.h, libyzis/yz_view.cpp, libyzis/yz_view.h,
+	libyzis/yzis.h, nyzis/nyz_session.cpp, nyzis/nyz_view.cpp: yeah,
+	here comes TinyQ :) read the README for notes about it.
+	
+	libyzis and nyzis have been ported to tinyq.  cyzis is disabled for
+	now.  I removed all C bindings since it appears we wont work on
+	that in the near future.
+	
+	YZLine is basically a QString now.  It compiles and runs for me
+	except nyzis does not properly open the test file.  Prolly some
+	memory problem in allocating YZLines. Maybe we can change that to a
+	more QtLike stuff.
+	
+	And :
+	
+							*********** Happy
+	Birthday Thomas :) ****************
+	
+	Mik
+
+2003-02-28 00:14  mikmak
+
+	* acinclude.m4, config.h.in, configure.in, kyzis/Makefile.am,
+	kyzis/kyzisdoc.cpp, kyzis/kyzisedit.cpp, kyzis/kyzisedit.h,
+	kyzis/kyzisview.cpp, kyzis/kyzisview.h, kyzis/kyzsession.cpp,
+	nyzis/Makefile.am, nyzis/main.cpp: may not run, but it compiles at
+	least :) tinyq should be setup properly in Makefiles
+
+2003-02-28 00:07  mikmak
+
+	* libyzis/Makefile.am: TinyQ enabled (shared lib)
+
+2003-02-27 23:11  mikmak
+
+	* configure.in.in: TinyQ check
+
+2003-02-27 23:10  mikmak
+
+	* admin/acinclude.m4.in: adding TinyQ support
+
+2003-02-27 21:00  orzel
+
+	* libyzis/: yz_buffer.h, yz_events.h, yz_line.h, yz_session.h,
+	yz_view.h, yzis.h: fix comments for ansi c compliance
+
+2003-02-27 20:52  mikmak
+
+	* libyzis/: yz_buffer.cpp, yz_events.h, yz_line.h, yz_view.cpp,
+	yzis.h: maybe that can help Neil :)
+
+2003-02-26 01:11  mikmak
+
+	* kyzis/: Makefile.am, kyzisdoc.cpp, kyzisdoc.h, kyzisedit.cpp,
+	kyzisview.cpp, kyzisview.h, kyzsession.cpp, kyzsession.h: now we
+	start using the lib, no display, no events yet but that will come
+	:)
+
+2003-02-23 23:58  mikmak
+
+	* acinclude.m4, admin/acinclude.m4.in, kyzis/Makefile.am,
+	libyzis/yz_line.h: reenabled compiler warnings and made it compile
+	with them :)
+
+2003-02-22 01:48  mikmak
+
+	* TODO: again ...
+
+2003-02-22 01:46  mikmak
+
+	* TODO: testing again
+
+2003-02-22 01:42  mikmak
+
+	* TODO: testing again
+
+2003-02-22 01:41  mikmak
+
+	* TODO: testing reply to
+
+2003-02-22 01:05  orzel
+
+	* nyzis/nyz_session.cpp: some tries with notimeout() doesn't work,
+	so stay commented out
+
+2003-02-22 01:04  orzel
+
+	* libyzis/: yz_line.cpp, yz_view.cpp: fix some small bugs
+
+2003-02-22 01:04  mikmak
+
+	* Design: fixed c++ <-> c
+
+2003-02-21 00:34  mikmak
+
+	* kyzis/kyzis_part.desktop: show it as a ktexteditor
+
+2003-02-21 00:02  mikmak
+
+	* kyzis/: Makefile.am, kyzis.desktop, kyzis_factory.cpp,
+	kyzis_factory.h, kyzisdoc.cpp, kyzisdoc.h, kyzisedit.cpp,
+	kyzisedit.h, kyzisview.cpp, kyzisview.h, main.cpp: ktexteditor
+	coming in !
+
+2003-02-20 20:15  mikmak
+
+	* kyzis/.cvsignore, libyzis/.cvsignore, libyzis/Makefile.am,
+	libyzis/yzis.h: cleanup
+
+2003-02-20 19:40  mikmak
+
+	* .cvsignore, Makefile.am, Makefile.cvs, VERSION, acinclude.m4,
+	config.guess, config.h.in, config.sub, configure.in,
+	configure.in.in, install-sh, ltmain.sh, missing, mkinstalldirs,
+	admin/ChangeLog, admin/Doxyfile.am, admin/Doxyfile.global,
+	admin/Makefile.common, admin/acinclude.m4.in, admin/am_edit,
+	admin/compile, admin/conf.change.pl, admin/config.guess,
+	admin/config.pl, admin/config.sub, admin/configure.in.bot.end,
+	admin/configure.in.min, admin/cvs-clean.pl, admin/cvs.sh,
+	admin/debianrules, admin/depcomp, admin/detect-autoconf.sh,
+	admin/install-sh, admin/libtool.m4.in, admin/ltmain.sh,
+	admin/missing, admin/mkinstalldirs, admin/ylwrap, kyzis/.cvsignore,
+	kyzis/Makefile.am, kyzis/hi16-app-kyzis.png,
+	kyzis/hi32-app-kyzis.png, kyzis/hi48-app-kyzis.png,
+	kyzis/kyzis.cpp, kyzis/kyzis.desktop, kyzis/kyzis.h,
+	kyzis/kyzis_part.cpp, kyzis/kyzis_part.desktop, kyzis/kyzis_part.h,
+	kyzis/kyzis_part.rc, kyzis/kyzis_shell.rc,
+	kyzis/lo16-app-kyzis.png, kyzis/lo32-app-kyzis.png, kyzis/main.cpp,
+	libyzis/Makefile.am, libyzis/yzis.h: let's go :) here comes kyzis
+	and the KDE build system
+
+2003-02-20 17:08  orzel
+
+	* nyzis/: nyz_session.cpp, nyz_session.h: save/restore cursor stuff
+
+2003-02-20 17:08  orzel
+
+	* libyzis/: yz_events.h, yz_view.cpp: it begins to have a vi
+	look&feel
+
+2003-02-20 15:42  orzel
+
+	* libyzis/yz_view.cpp: added '0' and '$' command, it's just too
+	useful
+
+2003-02-20 15:38  orzel
+
+	* libyzis/: yz_view.cpp, yz_view.h: ok, now we can move the cursor
+
+2003-02-20 15:23  orzel
+
+	* nyzis/: nyz_view.cpp, nyz_view.h: introducing  w,h for
+	width/height missing move() before rendering a YZLine inversion bug
+	fixed in setcurosr move()
+
+2003-02-20 15:22  orzel
+
+	* libyzis/yz_line.cpp: remove debug output
+
+2003-02-20 15:22  orzel
+
+	* libyzis/: yz_events.cpp, yz_events.h: adding mk_event_setcursor
+
+2003-02-20 15:21  orzel
+
+	* libyzis/yz_buffer.cpp: remove the \n before creating the YZLine
+
+2003-02-20 00:15  orzel
+
+	* nyzis/: main.cpp, nyz_view.h, nyzis.h: new session stuff first
+	work on 'rendering' in nyzis well, at least it *looks* like vim
+
+2003-02-20 00:14  orzel
+
+	* nyzis/nyz_view.cpp: constructor in cpp and switched to
+	session->update_status()
+
+2003-02-20 00:13  orzel
+
+	* libyzis/yz_view.cpp: beginning of input handling (mostly while in
+	command mode)
+
+2003-02-20 00:12  orzel
+
+	* nyzis/: Makefile.am, nyz_session.cpp, nyz_session.h: basic
+	session management for nyzis
+
+2003-02-20 00:12  orzel
+
+	* libyzis/yz_buffer.cpp: remove debug output and uses
+	YZ_EV_SETCURSOR
+
+2003-02-20 00:10  orzel
+
+	* libyzis/: Makefile.am, yz_session.cpp, yz_session.h: basic
+	session management in lib
+
+2003-02-18 15:59  orzel
+
+	* nyzis/: main.cpp, nyz_view.cpp: handles new event YZ_EV_SETSTATUS
+
+2003-02-18 15:59  orzel
+
+	* libyzis/: Makefile.am, yz_events.cpp, yz_events.h: new event :
+	YZ_EV_SETSTATUS first help function to generates events        ->
+	hence new file yz_events.cpp
+
+2003-02-18 00:47  orzel
+
+	* .cvsignore, Makefile.am, cyzis/.cvsignore, kyzis/.cvsignore: misc
+	minor stuff
+
+2003-02-16 17:22  mikmak
+
+	* .cvsignore, AUTHORS, ChangeLog: minor updates
+
+2003-02-16 17:21  mikmak
+
+	* libyzis/yz_session.h: add session concept
+
+2003-02-15 13:53  mikmak
+
+	* libyzis/yzis.h: fix panic, it exited before flush
+
+2003-02-14 21:25  orzel
+
+	* nyzis/: main.cpp, nyz_view.cpp, nyzis.h: now we display the
+	content of the file (roughly)
+
+2003-02-14 21:24  orzel
+
+	* libyzis/: yz_buffer.cpp, yz_buffer.h, yz_line.cpp, yzis.h: bug
+	fixing and some some debug output
+
 2003-02-14 20:40  orzel
 
 	* libyzis/: yz_buffer.cpp, yz_buffer.h, yz_line.h, yz_view.cpp,

@@ -1,6 +1,4 @@
-To compile you need TinyQ (Tiny Qt) which is small part of the real Qt from Trolltech.
-You need to compile it as shared and as a static lib. To do this you need to compile TinyQ twice (sorry for this).
-First, configure it with -shared, compile, install it. Then make clean, configure it with -static, compile and install again 
-over the previous installation, you should then have both libraries at the right places.
-
-When configuring Yzis, use the --with-tinyq-dir to indicate your TinyQ prefix, QTDIR is used only for the real Qt needed for KYzis.
+To compile YZis, it's better to have TinyQ installed for performance improvment. You can use
+the --with-tinyq-dir to indicate your TinyQ prefix.
+However, you can use a full Qt (>3.x) to compile the whole YZis but that will slow down "yzis" (ncurses) startup
+because the system has to load the whole Qt library.

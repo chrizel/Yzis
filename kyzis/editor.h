@@ -85,8 +85,6 @@ class KYZisEdit : public QScrollView {
 
 		virtual void focusInEvent( QFocusEvent * );
 
-		int getLineforY( int y );
-
 		inline int charWidth(const QString& text, int col, int tabWidth, bool isItalic, bool isBold) const { 
 			if ( text[ col ] == QChar( '\t' ) ) 
 				return tabWidth * standard->width(' ');

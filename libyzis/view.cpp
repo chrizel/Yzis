@@ -405,7 +405,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 
 	lin = mBuffer->textline(nexty);
 	if ( !lin.isNull() ) mMaxX = (lin.length() == 0) ? 0 : lin.length()-1; 
-	if ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode ) {
+	if ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && lin.length() > 0 ) {
 		/* in edit mode, at end of line, cursor can be on +1 */
 		if ( nextx > mMaxX+1 ) nextx = mMaxX+1;
 	} else {

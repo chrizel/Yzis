@@ -185,6 +185,9 @@ if use_xhtml then
 	tag_close = "/>"
 end
 
+if html_use_css then
+	f:write("<DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n")
+end
 f:write("<html>\n<head>\n<title>"..filename().."</title>\n")
 f:write("<meta name=\"Generator\" content=\"Yzis "..version().."\""..tag_close.."\n")
 
@@ -195,7 +198,7 @@ end
 if html_use_css then
 	f:write("<style type=\"text/css\"><!--\n")
 	if html_no_pre then
-		f:write("\nbody { color : "..fgc.."; background-color: "..bgc.."; font-family: Courier, monospace; }")
+		f:write("\nbody { color : "..fgc.."; background-color: "..bgc.."; font-family: Helvetica, Courier, monospace; }")
 	else
 		f:write("\npre { color : "..fgc.."; background-color: "..bgc.."; }")
 		f:write("\nbody { color : "..fgc.."; background-color: "..bgc.."; }")

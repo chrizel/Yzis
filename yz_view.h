@@ -9,6 +9,9 @@
 #include "yz_buffer.h"
 
 
+#define YZ_EVENT_EVENTS_MAX 400
+
+
 #ifdef __cplusplus
 class YZView {
 public:
@@ -16,13 +19,17 @@ public:
 	  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
 	  * this view can display
 	  */
-	YZView(YZBuffer *_b, int _lines) { buffer=_b; lines=_lines; current=x=y=0; mode = YZ_VIEW_MODE_COMMAND; }
+	YZView(YZBuffer *_b, int _lines);
 
 	/**
 	 * transfer a key event from gui to core
 	 */
 	void	send_char( unicode_char_t);
 
+	/**
+	  * Used by the buffer to post events
+	  */
+	void	post_event (yz_event );
 	/**
 	 * get a event to handle from the core.
 	 * that's the way the core is sending messages to the gui
@@ -51,6 +58,12 @@ protected:
 		YZ_VIEW_MODE_REPLACE,
 		YZ_VIEW_MODE_COMMAND 
 	}		mode;		/** mode of this view */
+
+
+	/* fifo event loop. really basic now */
+	yz_event	events[YZ_EVENT_EVENTS_MAX];
+	int		events_nb_begin;
+	int		events_nb_last;
 
 	/*
 	 * mode handling (on a per-view basis, no?)
@@ -92,7 +105,7 @@ yz_view create_view(yz_buffer , int lines);
 /**
  * transfer a key event from gui to core
  */
-void yz_send_char(yz_view , unicode_char_t c);
+void yz_view_send_char(yz_view , unicode_char_t c);
 
 /**
  * get a event to handle from the core.
@@ -100,15 +113,19 @@ void yz_send_char(yz_view , unicode_char_t c);
  *
  * returns the next event to be handled, or NULL if none
  */
-yz_event * yz_fetch_event(yz_view );
+yz_event * yz_view_fetch_event(yz_view );
 
 /**
   * this returns the geometry of this yz_view, that is
   * 	the first line displayed
   * 	the number of line displayed
   */
-void yz_get_geometry(yz_view , int *current, int *lines);
+void yz_view_get_geometry(yz_view , int *current, int *lines);
 
+/*
+ * used by the yz_buffer to stock events for this view
+ */
+void yz_view_post_event (yz_view , yz_event );
 
 
 #ifdef __cplusplus

@@ -8,11 +8,16 @@
 
 
 #include "yz_line.h"
+#include "yz_events.h"
 
 #ifdef __cplusplus
 
-class YZView;
 
+#define	YZ_MAX_VIEW 50
+
+
+
+class YZView;
 
 class YZBuffer {
 
@@ -25,7 +30,15 @@ public:
 	void addchar (int x, int y, unicode_char_t c);
 	void chgchar (int x, int y, unicode_char_t c);
 protected:
-	char * path;
+	void addview (YZView *v);
+
+	char	*path;
+	YZView	*view_list[YZ_MAX_VIEW];	// should be growable 
+	int	view_nb;
+
+private:
+	void	post_event(yz_event e);
+
 
 	/* readonly?, change, load, save, isclean?, ... */
 	/* locking stuff will be here, too */

@@ -63,7 +63,7 @@ void NYZView::printLine( int line ) {
 	unsigned int relline = line - getCurrent(); // relative line #
 
 	// check
-	QString str = mBuffer->data(line);
+	QString str = mBuffer->textline(line);
 	if ( str.isNull() ) return;
 
 	// clipping 

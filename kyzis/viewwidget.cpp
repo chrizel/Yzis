@@ -95,7 +95,7 @@ void KYZisView::scrollUp ( int lines ) {
 }
 
 void KYZisView::invalidateLine ( unsigned int line ) {
-	editor->setTextLine( line, buffer->data( line ) );
+	editor->setTextLine( line, buffer->textline( line ) );
 }
 
 void KYZisView::setStatusBar ( const QString& text ) {
@@ -146,7 +146,7 @@ QPoint KYZisView::cursorCoordinates()
 QPoint KYZisView::calculateCursorPositionWithTabs(unsigned int line, unsigned int col, unsigned int tabwidth)
 {
 	QPoint result;
-	QString data    = mBuffer->data(line);
+	QString data    = mBuffer->textline(line);
 	uint dataLength = data.length();	
 	uint z;
   	uint x = 0;
@@ -181,7 +181,7 @@ void KYZisView::cursorPositionReal ( unsigned int *line, unsigned int *col )
 
 bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
 {
-	QString data    = mBuffer->data(line);
+	QString data    = mBuffer->textline(line);
 	QPoint cursor	= calculateCursorPositionWithTabs(line, col, 8);
 
 	if (data.isNull()) {
@@ -197,7 +197,7 @@ bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
 
 bool KYZisView::setCursorPositionReal ( unsigned int line, unsigned int col)
 {
-	QString data    = mBuffer->data(line);
+	QString data    = mBuffer->textline(line);
 	QPoint cursor	= calculateCursorPositionWithTabs(line, col, 1);
 
 	if (data.isNull()) {

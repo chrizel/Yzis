@@ -101,7 +101,7 @@ bool KYZisDoc::removeLine(unsigned int line)
 
 QString KYZisDoc::textLine(unsigned int line) const
 {
-	QString s = data(line);
+	QString s = textline(line);
 	return s;
 }
 
@@ -114,7 +114,7 @@ uint KYZisDoc::length() const
 
 int KYZisDoc::lineLength(unsigned int line) const
 {
-	uint length = data(line).length();
+	uint length = textline(line).length();
 
 	return length;
 }
@@ -133,22 +133,22 @@ bool KYZisDoc::insertText( uint line, uint col, const QString &s)
 }
 
 QString KYZisDoc::text (  uint startLine, uint startCol, uint endLine, uint endCol ) const {
-	QString text = "";
+	QString content = "";
 
 	if ( startLine == endLine ) {
-		text = data( startLine ).mid(startCol, endCol-startCol);
-		return text;
+		content = textline( startLine ).mid(startCol, endCol-startCol);
+		return content;
 	}
 	
 	for ( unsigned int i = startLine; i <= endLine; i++ ) {
 		if ( i == startLine ) 
-			text+=data(i).mid( startCol );
+			content+=textline(i).mid( startCol );
 		else if ( i == endLine )
-			text+=data(i).left( endCol );
+			content+=textline(i).left( endCol );
 		else
-			text+=data( i );
+			content+=textline( i );
 	}
-	return text;
+	return content;
 }
 
 bool KYZisDoc::setText (  const QString &text ) {

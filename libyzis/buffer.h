@@ -1,3 +1,4 @@
+
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
  *
@@ -154,17 +155,10 @@ public:
 	 * Finds a line in the buffer
 	 * @param line the line to search for
 	 * @return a QString reference on the line or NULL
-	 */
-	QString	data(unsigned int line) const;
-
-	/**
-	 * Finds the @ref YZLine pointer for a line in the buffer
-	 * @param line the line to return
-	 * @return a YZLine pointer or 0 if none
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	YZLine *at(unsigned int line) { return mText.at(line); }
+	QString	textline(unsigned int line) const;
 
 	/**
 	 * Number of lines in the buffer
@@ -193,10 +187,11 @@ public:
 	void save();
 
 	/**
-	 * Ask the GUI to popup for a filename
-	 * @return whether a file name was successfully chosen
-	 */
+	* Ask the GUI to popup for a filename
+	* @return whether a file name was successfully chosen
+	*/
 	virtual bool popupFileSaveAs() = 0;
+				
 			
 	/**
 	 * Get the current filename of the buffer
@@ -278,6 +273,22 @@ public:
 	unsigned int myId;
 
 protected:
+	/**
+	 * Finds the @ref YZLine pointer for a line in the buffer
+	 * @param line the line to return
+	 * @return a YZLine pointer or 0 if none
+	 *
+	 * Note: the valid line numbers are between 0 and lineCount()-1
+	 */
+	YZLine * yzline(unsigned int line) const;
+
+	/** 
+	 * Sets the line @param line to @param l
+	 * @param line is between 0 and lineCount()-1
+	 * @param l may not contain '\n'
+	 */
+	void setTextline( uint line, const QString & l );
+
 	void updateAllViews();
 
 	QString mPath;

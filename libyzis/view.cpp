@@ -39,7 +39,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mMaxX = 0;
 	mMode = YZ_VIEW_MODE_COMMAND;
 	mCurrentTop = mCursor->getY();
-	QString line = mBuffer->data(mCurrentTop);
+	QString line = mBuffer->textline(mCurrentTop);
 	if (!line.isNull()) mMaxX = line.length()-1;
 
 	mBuffer->addView(this);
@@ -110,7 +110,7 @@ void YZView::sendKey( int c, int modifiers) {
 					return;
 				case Qt::Key_Backspace:
 					if (mCursor->getX() == 0 && mCursor->getY() > 0 && 1 /* option_go_back_to_previous_line */) {
-						int lineLen = mBuffer->data( mCursor->getY()-1 ).length();
+						int lineLen = mBuffer->textline( mCursor->getY()-1 ).length();
 						mBuffer->mergeNextLine( mCursor->getY() -1 );
 						gotoxy(lineLen, mCursor->getY()-1);
 						return;
@@ -337,7 +337,7 @@ void YZView::centerView(unsigned int line) {
 
 //drop me ? (==move it to GUIs directly)
 void YZView::redrawScreen() {
-	//yzDebug() << "View " << myId << " redraw" << endl;
+	yzDebug() << "View " << myId << " redraw" << endl;
 	refreshScreen( );
 	updateCursor();
 }
@@ -355,7 +355,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	else if ( nexty >=  mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
 	mCursor->setY( nexty );
 
-	lin = mBuffer->data(nexty);
+	lin = mBuffer->textline(nexty);
 	if ( !lin.isNull() ) mMaxX = (lin.length() == 0) ? 0 : lin.length()-1; 
 	if ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode ) {
 		/* in edit mode, at end of line, cursor can be on +1 */
@@ -522,11 +522,11 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 	QStringList buff; //to copy old lines into the register "
 	if ( args.command == "dd" ) { //delete whole lines
 		for ( int i=0; i<nb_lines; ++i ) {
-			buff << mBuffer->data( mCursor->getY() );
+			buff << mBuffer->textline( mCursor->getY() );
 			mBuffer->deleteLine( mCursor->getY() );
 		}
 	} else if ( args.command == "D" || args.command == "d$"  ) { //delete to end of lines
-		QString b = mBuffer->data( mCursor->getY() );
+		QString b = mBuffer->textline( mCursor->getY() );
 		buff << b;
 		mBuffer->replaceLine( b.left( mCursor->getX() ), mCursor->getY());
 		gotoxy( mCursor->getX() - 1, mCursor->getY() );
@@ -616,7 +616,7 @@ QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
 	return QString::null;
 }
 
-QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs args ) {
+QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs /*args */) {
 	if (inputsBuff[ 0 ] == '?' ) reverseSearch = true; 
 	else reverseSearch = false;
 	mMode = YZ_VIEW_MODE_SEARCH;
@@ -633,13 +633,13 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 	if ( args.command == "yy" ) {
 		list << QString::null; //just a marker
 		for (int i = 0 ; i < nb_lines; i++ )
-			list << mBuffer->data(mCursor->getY()+i);
+			list << mBuffer->textline(mCursor->getY()+i);
 	} else if ( args.command == "Y" ) {
 		list << QString::null; //just a marker
 		for (int i = 0 ; i < nb_lines; i++ )
-			list << mBuffer->data(mCursor->getY()+i);
+			list << mBuffer->textline(mCursor->getY()+i);
 	} else if ( args.command == "y$" ) {
-		QString lin = mBuffer->data( mCursor->getY() );
+		QString lin = mBuffer->textline( mCursor->getY() );
 		list << lin.mid(mCursor->getX());
 	}
 	YZSession::mRegisters.setRegister( args.registr, list );
@@ -656,7 +656,7 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 
 	uint i = 0;
 	if ( args.command == "p" ) { //paste after current char
-		QString nl = mBuffer->data( mCursor->getY() );
+		QString nl = mBuffer->textline( mCursor->getY() );
 		if ( !list[ 0 ].isNull() ) {
 			yzDebug() << "First line not NULL !" << endl;
 			nl = nl.left( mCursor->getX()+1 ) + list[ 0 ] + nl.mid( mCursor->getX()+1 );
@@ -675,7 +675,7 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 			gotoxy( mCursor->getX(), mCursor->getY()+1 );
 		}
 		if ( !list[ 0 ].isNull() ) {
-			QString nl = mBuffer->data( mCursor->getY() );
+			QString nl = mBuffer->textline( mCursor->getY() );
 			nl = nl.left( mCursor->getX() ) + list[ list.size()-1 ] + nl.mid( mCursor->getX() );
 			mBuffer->replaceLine(nl, mCursor->getY());
 		}
@@ -699,7 +699,7 @@ bool YZView::doSearch( const QString& search ) {
 	QString l;
 
 	for ( unsigned int i = currentMatchLine; i < mBuffer->lineCount(); reverseSearch ? i-- : i++ ) {
-		l = mBuffer->data( i );
+		l = mBuffer->textline( i );
 		yzDebug() << "Searching " << search << " in line : " << l << endl;
 		int idx;
 		if ( reverseSearch ) {
@@ -733,8 +733,8 @@ bool YZView::doSearch( const QString& search ) {
 	return false;
 }
 
-QString YZView::searchAgain( const QString& inputsBuff, YZCommandArgs args ) {
-	for ( int i = 0; i < args.count; i++ )  //search count times
+QString YZView::searchAgain( const QString& /*inputsBuff*/, YZCommandArgs args ) {
+	for ( uint i = 0; i < args.count; i++ )  //search count times
 	 	doSearch( mSearchHistory[mCurrentSearchItem-1] );
 	purgeInputBuffer();
 	return QString::null;

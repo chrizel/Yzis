@@ -59,7 +59,7 @@ void TestYZBuffer::testCreateEmptyBuffer()
     phCheckEquals( buf->firstView(), NULL );
     // an empty buffer has one line ?
     phCheckEquals( buf->lineCount(), 1 );
-    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->textline( 0 ), "" );
     // there should be a tmp filename
     phCheckNotEquals( buf->fileName(), "" );
 
@@ -75,88 +75,85 @@ void TestYZBuffer::testLineMethods()
 	// nothing because it does exist... we always have at least one line
     mBuf->deleteLine(0);
     phCheckEquals( mBuf->lineCount(), 1 );
-    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->textline( 0 ), "" );
 
     // add 3 lines
     mBuf->appendLine( s1 );
     phCheckEquals( mBuf->lineCount(), 2 );
-    phCheckEquals( mBuf->data( 1 ), s1 );
-    phCheckEquals( mBuf->at(1)->data(), s1 );
+    phCheckEquals( mBuf->textline( 1 ), s1 );
 
     mBuf->appendLine( s2 );
     phCheckEquals( mBuf->lineCount(), 3 );
-    phCheckEquals( mBuf->data(2), s2 );
-    phCheckEquals( mBuf->at(2)->data(), s2 );
+    phCheckEquals( mBuf->textline(2), s2 );
 
     mBuf->appendLine( s1 );
     phCheckEquals( mBuf->lineCount(), 4 );
-    phCheckEquals( mBuf->data( 3 ), s1 );
-    phCheckEquals( mBuf->at(3)->data(), s1 );
+    phCheckEquals( mBuf->textline( 3 ), s1 );
 
     // delete middle line
     mBuf->deleteLine( 2 );
     phCheckEquals( mBuf->lineCount(), 3 );
-    phCheckEquals( mBuf->data( 0 ), "" );
-    phCheckEquals( mBuf->data( 1 ), s1 );
-    phCheckEquals( mBuf->data( 2 ), s1 );
+    phCheckEquals( mBuf->textline( 0 ), "" );
+    phCheckEquals( mBuf->textline( 1 ), s1 );
+    phCheckEquals( mBuf->textline( 2 ), s1 );
 
     // delete first line twice
     mBuf->deleteLine( 1 );
     phCheckEquals( mBuf->lineCount(), 2 );
-    phCheckEquals( mBuf->data( 0 ), "" );
-    phCheckEquals( mBuf->data( 1 ), s1 );
+    phCheckEquals( mBuf->textline( 0 ), "" );
+    phCheckEquals( mBuf->textline( 1 ), s1 );
     mBuf->deleteLine( 1 );
     phCheckEquals( mBuf->lineCount(), 1 );
-    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->textline( 0 ), "" );
 
     // buffer is empty again
     mBuf->deleteLine(0);
     phCheckEquals( mBuf->lineCount(), 1 );
-    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->textline( 0 ), "" );
 
     // add 3 lines again
     mBuf->appendLine( s1 );
     mBuf->appendLine( s2 );
     mBuf->appendLine( s1 );
     phCheckEquals( mBuf->lineCount(), 4 );
-    phCheckEquals( mBuf->data( 0 ), "" );
-    phCheckEquals( mBuf->data( 1 ), s1 );
-    phCheckEquals( mBuf->data( 2 ), s2 );
-    phCheckEquals( mBuf->data( 3 ), s1 );
+    phCheckEquals( mBuf->textline( 0 ), "" );
+    phCheckEquals( mBuf->textline( 1 ), s1 );
+    phCheckEquals( mBuf->textline( 2 ), s2 );
+    phCheckEquals( mBuf->textline( 3 ), s1 );
 
     // now delete the lines using the last line
     mBuf->deleteLine(3);
     phCheckEquals( mBuf->lineCount(), 3 );
-    phCheckEquals( mBuf->data( 0 ), "" );
-    phCheckEquals( mBuf->data( 1 ), s1 );
-    phCheckEquals( mBuf->data( 2 ), s2 );
+    phCheckEquals( mBuf->textline( 0 ), "" );
+    phCheckEquals( mBuf->textline( 1 ), s1 );
+    phCheckEquals( mBuf->textline( 2 ), s2 );
     mBuf->deleteLine(2);
     phCheckEquals( mBuf->lineCount(), 2 );
-    phCheckEquals( mBuf->data( 0 ), "" );
-    phCheckEquals( mBuf->data( 1 ), s1 );
+    phCheckEquals( mBuf->textline( 0 ), "" );
+    phCheckEquals( mBuf->textline( 1 ), s1 );
     mBuf->deleteLine(1);
     phCheckEquals( mBuf->lineCount(), 1 );
-    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->textline( 0 ), "" );
 
     // add 3 lines again
     mBuf->appendLine( s1 );
     mBuf->appendLine( s2 );
     mBuf->appendLine( s1 );
     phCheckEquals( mBuf->lineCount(), 4 );
-    phCheckEquals( mBuf->data( 0 ), "" );
-    phCheckEquals( mBuf->data( 1 ), s1 );
-    phCheckEquals( mBuf->data( 2 ), s2 );
-    phCheckEquals( mBuf->data( 3 ), s1 );
+    phCheckEquals( mBuf->textline( 0 ), "" );
+    phCheckEquals( mBuf->textline( 1 ), s1 );
+    phCheckEquals( mBuf->textline( 2 ), s2 );
+    phCheckEquals( mBuf->textline( 3 ), s1 );
 
     // now, the nasty tests
 
     // delete non existing lines should not segfault and simply do nothing
     mBuf->deleteLine( 10 );
     phCheckEquals( mBuf->lineCount(), 4 );
-    phCheckEquals( mBuf->data( 0 ), "" );
-    phCheckEquals( mBuf->data( 1 ), s1 );
-    phCheckEquals( mBuf->data( 2 ), s2 );
-    phCheckEquals( mBuf->data( 3 ), s1 );
+    phCheckEquals( mBuf->textline( 0 ), "" );
+    phCheckEquals( mBuf->textline( 1 ), s1 );
+    phCheckEquals( mBuf->textline( 2 ), s2 );
+    phCheckEquals( mBuf->textline( 3 ), s1 );
 
 	// empty the buffer
     mBuf->deleteLine( 3 );
@@ -171,7 +168,7 @@ void TestYZBuffer::testLineMethods()
 
 	//replace first line
 	mBuf->replaceLine( s2 , 0);
-    phCheckEquals( mBuf->data( 0 ), s2 );
+    phCheckEquals( mBuf->textline( 0 ), s2 );
     phCheckEquals( mBuf->lineCount(), 1 );
     phCheckEquals( mBuf->getWholeText(), s2+"\n" );
 
@@ -215,21 +212,21 @@ void TestYZBuffer::testGetWholeText()
     QString tmp;
 
     phCheckEquals( mBuf->lineCount(), 1 );
-    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->textline( 0 ), "" );
     phCheckEquals( mBuf->getWholeText(), "" );
 
     mBuf->replaceLine( s0, 0 );
     phCheckEquals( mBuf->lineCount(), 1 );
-    phCheckEquals( mBuf->data( 0 ), s0 );
-    phCheckEquals( mBuf->data( 1 ), QString::null );
+    phCheckEquals( mBuf->textline( 0 ), s0 );
+    phCheckEquals( mBuf->textline( 1 ), QString::null );
     phCheckEquals( mBuf->getWholeText(), s0 + "\n" );
 
     mBuf->appendLine( s1 );
     mBuf->appendLine( s2 );
     phCheckEquals( mBuf->lineCount(), 3 );
-    phCheckEquals( mBuf->data( 0 ), s0 );
-    phCheckEquals( mBuf->data( 1 ), s1 );
-    phCheckEquals( mBuf->data( 2 ), s2 );
+    phCheckEquals( mBuf->textline( 0 ), s0 );
+    phCheckEquals( mBuf->textline( 1 ), s1 );
+    phCheckEquals( mBuf->textline( 2 ), s2 );
     phCheckEquals( mBuf->getWholeText(), s0 + "\n" + s1 + "\n" + s2 + "\n" );
 }
 
@@ -241,7 +238,7 @@ void TestYZBuffer::testCharMethods()
     QString text = "";
 
     phCheckEquals( mBuf->lineCount(), 1 );
-    phCheckEquals( mBuf->data( 0 ), "" );
+    phCheckEquals( mBuf->textline( 0 ), "" );
     phCheckEquals( mBuf->getWholeText(), text );
 
     // try to work on non-existing char
@@ -271,18 +268,18 @@ void TestYZBuffer::testCharMethods()
     // now the test on the real feature
     mBuf->insertChar( 10, 0, QString("Z") );
     mBuf->insertChar( 0, 0, QString("Z") );
-    phCheckEquals( mBuf->data(0), "Z0123456789Z" );
+    phCheckEquals( mBuf->textline(0), "Z0123456789Z" );
 
     mBuf->chgChar( 0, 1, QString("Z") );
     mBuf->chgChar( 3, 1, QString("Z") );
-    phCheckEquals( mBuf->data(1), "ZBCZ" );
+    phCheckEquals( mBuf->textline(1), "ZBCZ" );
 
     mBuf->delChar( 0, 0, 1 );
     mBuf->delChar( 10, 0, 1 );
-    phCheckEquals( mBuf->data(0), "0123456789" );
+    phCheckEquals( mBuf->textline(0), "0123456789" );
 
     mBuf->delChar( 1, 1, 10 );
-    phCheckEquals( mBuf->data(1), "Z" );
+    phCheckEquals( mBuf->textline(1), "Z" );
 }
 
 void TestYZBuffer::testAssertion()

@@ -73,7 +73,7 @@ void KYZisEdit::setCursor(int c, int l) {
 	mCursorShown = true;
 	
 	//check if the line contains TABs
-	QString currentLine = mParent->myBuffer()->data( mCursorY );
+	QString currentLine = mParent->myBuffer()->textline( mCursorY );
 	int s = fontMetrics().size( Qt::ExpandTabs|Qt::SingleLine, currentLine, c, 0, 0).width();
 	mCursorX = s / fontMetrics().maxWidth();
 	drawCursorAt( mCursorX,mCursorY );
@@ -105,7 +105,7 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 
 void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
-		QString line = mParent->myBuffer()->data(e->y()/fontMetrics().lineSpacing() + mParent->getCurrent());
+		QString line = mParent->myBuffer()->textline(e->y()/fontMetrics().lineSpacing() + mParent->getCurrent());
 		int nbcols=0;
 		int len=0;
 		while ( len <= e->x() ) {
@@ -138,7 +138,7 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
 			p->eraseRect(clip);
 			if (mParent->myBuffer()->lineCount() > i + mParent->getCurrent() )
-				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,mParent->myBuffer()->data(i + mParent->getCurrent()));
+				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,mParent->myBuffer()->textline(i + mParent->getCurrent()));
 			else 
 				p->drawText(clip,Qt::ExpandTabs|flag|Qt::DontClip|Qt::SingleLine ,"~");
 			if ( ( i + mParent->getCurrent() ) == mCursorY ) 

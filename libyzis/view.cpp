@@ -1820,17 +1820,6 @@ void YZView::redo( unsigned int count ) {
 		mBuffer->undoBuffer()->redo( this );
 }
 
-QString YZView::match( const QString& ) {
-	bool found = false;
-	YZCursor pos = mBuffer->action()->match( this, *mainCursor->buffer(), &found );
-	yzDebug() << "Result " << pos << endl;
-
-	if ( found )
-		gotoxy( pos.getX(), pos.getY() );
-
-	return QString::null;
-}
-
 void YZView::gotoMark( const QString& mark) {
 	yzDebug() << "gotoMark " << mark << endl;
 	bool found = false;

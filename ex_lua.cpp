@@ -29,6 +29,7 @@
 #include "session.h"
 #include "yzis.h"
 #include "translator.h"
+#include <stdarg.h>
 
 /*
  * TODO:
@@ -116,6 +117,69 @@ YZExLua::~YZExLua() {
 QString YZExLua::lua(YZView *, const QString& args) {
 	execInLua( args.latin1() );
 	return QString::null;
+}
+
+//see Lua's PIL chapter 25.3 for how to use this :)
+void YZExLua::exe(const QString& function, const char* sig, ...) {
+	va_list vl;
+	int narg, nres;
+	
+	va_start(vl,sig);
+	lua_getglobal(L, function);
+	
+	narg=0;
+	while (*sig) {
+		switch(*sig++) {
+			case 'd' :
+				lua_pushnumber(L, va_arg(vl, double));
+				break;
+			case 'i' :
+				lua_pushnumber(L, va_arg(vl, int));
+				break;
+			case 's' :
+				lua_pushstring(L, va_arg(vl, char*));
+				break;
+			case '>' :
+				goto endwhile;
+				break;
+			default:
+				//error
+				break;
+		}
+		narg++;
+		luaL_checkstack(L, 1, "too many arguments" );
+	} endwhile:
+
+	nres = strlen(sig);
+	if (lua_pcall(L,narg,nres,0) != 0 ) {
+		//error
+	}
+	
+	nres = -nres;
+	while (*sig) {
+		switch(*sig++) {
+			case 'd' :
+				if (!lua_isnumber(L,nres))
+					;//error
+				*va_arg(vl,double*) = lua_tonumber(L,nres);
+				break;
+			case 'i' :
+				if (!lua_isnumber(L,nres))
+					;//error
+				*va_arg(vl,int*) = (int)lua_tonumber(L,nres);
+				break;
+			case 's' :
+				if (!lua_isstring(L,nres))
+					;//error
+				*va_arg(vl,const char**) = lua_tostring(L,nres);
+				break;
+			default:
+				//error
+				break;
+		}
+		nres++;
+	}
+	va_end(vl);
 }
 
 void YZExLua::execute(const QString& function, int nbArgs, int nbResults) { 

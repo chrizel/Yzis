@@ -56,12 +56,28 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 			yzDebug() << "Matched " << list << endl;
 			QStringList::Iterator it2 = list.begin(), end2 = list.end();
 			for ( ; it2 != end2; ++it2 ) { 
-				if ( event.startsWith("INDENT_") && *it2 != "Indent_" + view->myBuffer()->highlight()->name() ) 
+				int nbArgs = 0, nbResults = 0;
+				if ( event == "INDENT_ON_ENTER" && *it2 != "Indent_" + view->myBuffer()->highlight()->name() ) 
+					continue; //skip it (it's not the right plugin for indent according to the current highlight name)
+				else if ( event == "INDENT_ON_KEY" && *it2 != "Indent_OnKey_" + view->myBuffer()->highlight()->name() )
 					continue; //skip it (it's not the right plugin for indent according to the current highlight name)
 
-				yzDebug() << "Executing plugin " << *it2 << endl;
-				YZExLua::instance()->execute(*it2,0,1);
-				results += YZExLua::instance()->getLastResult(1);
+				//special handling for indent
+				if ( QString::compare(event, "INDENT_ON_KEY") == 0 ) {
+					nbArgs++;
+					const char *inputs = view->getInputBuffer().utf8();
+					YZExLua::instance()->exe(*it2, "s", inputs);
+				} else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
+					nbResults++;
+					int idt = 0;
+					YZExLua::instance()->exe(*it2, ">i", &idt );
+					yzDebug() << "Got INDENT_ON_ENTER response : " << idt << endl;
+					results << QString::number(idt);
+				} else {
+					yzDebug() << "Executing plugin " << *it2 << " with " << nbArgs << " arguments and " << nbResults << " results" << endl;
+					YZExLua::instance()->execute(*it2,nbArgs,nbResults);
+					results += YZExLua::instance()->getLastResult(1);
+				}
 			}
 		}
 	}

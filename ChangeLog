@@ -1,3 +1,8 @@
+2005-02-01 mikmak
+  * kyzis
+    fix 2 similar crashes with 2 different sources. We are on the way to M3
+    now :)
+
 2005-01-02 mikmak
   * libyzis/nyzis
     ported to Qt4 >beta1

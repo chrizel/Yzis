@@ -1297,24 +1297,21 @@ void YZView::paste( QChar registr, bool after ) {
 		else
 			start = pos.getX();
 		i = 0;
-		if ( ! list[ i ].isNull() ) {
+		if ( ! copyWholeLinesOnly ) {
 			copy = copy.mid( start );
 			mBuffer->action()->deleteChar( this, start, pos.getY(), copy.length() );
 			mBuffer->action()->insertChar( this, start, pos.getY(), list[ 0 ] + ( list.size() == 1 ? copy : "" ) );
 			gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.getY() );
-		} else {
-			copy = "";
 		}
 		i++;
 		while ( i < list.size() - 1 ) {
 			mBuffer->action()->insertLine( this, pos.getY() + i, list[ i ] );
 			i++;
 		}
-		if ( i < list.size() && copy != "" ) {
+		if ( i < list.size() && ! copyWholeLinesOnly ) {
 			mBuffer->action()->insertLine( this, pos.getY() + i, ( list[ i ].isNull() ? "" : list[ i ] ) + copy );		
 			gotoxy( list[ i ].length(), pos.getY() + i );
-		}
-		if ( copyWholeLinesOnly ) {
+		} else if ( copyWholeLinesOnly ) {
 			gotoxy( 0, pos.getY() + 1 );
 			moveToFirstNonBlankOfLine();
 		}

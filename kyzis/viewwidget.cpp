@@ -34,7 +34,9 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 {
 	editor = new KYZisEdit (this,"editor");
 	status = new KStatusBar (this, "status");
-	command = new KYZisCommand ( this, "command");
+	command = new KYZisCommand (this, "command");
+	mVScroll = new QScrollBar( this, "vscroll" );
+	connect( mVScroll, SIGNAL(valueChanged(int)), this, SLOT(scrolled(int)) );
 
 	status->insertItem(qApp->translate( "KYZisView", "Yzis Ready" ),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
@@ -48,11 +50,12 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status->insertItem("",99,0,true);
 	status->setItemAlignment(99,Qt::AlignRight);
 
-	QVBoxLayout *l = new QVBoxLayout(this);
-	l->addWidget(editor);
-	l->addWidget( command );
-	l->addWidget(status);
-
+	QGridLayout *g = new QGridLayout(this,1,1);
+	g->addWidget(editor,0,0);
+	g->addWidget(mVScroll,0,1);
+	g->addMultiCellWidget(command,1,1,0,1);
+	g->addMultiCellWidget(status,2,2,0,1);
+	
 	KYZisFactory::registerView( this );
 
 	setXMLFile( "kyzispart/kyzispart.rc" );
@@ -65,6 +68,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	editor->setFocus();
 	setFocusProxy( editor );
 	mBuffer->statusChanged();
+	mVScroll->setMaxValue( buffer->lineCount() );
 }
 
 KYZisView::~KYZisView () {
@@ -117,6 +121,9 @@ void KYZisView::modeChanged (void) {
 			break;
 		case YZ_VIEW_MODE_SEARCH: //search mode
 			status->changeItem(reverseSearch ? tr("-- REVERSE SEARCH --") : tr("-- SEARCH --"), 0);
+			break;
+		case YZ_VIEW_MODE_OPEN: //open
+			status->changeItem(tr("-- OPEN --"), 0);
 			break;
 	};
 }
@@ -219,5 +226,10 @@ void KYZisView::displayInfo( const QString& info ) {
 	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }
 
+void KYZisView::scrolled( int value ) {
+//	yzDebug() << "Scrolled to " << value << endl;
+	mVScroll->setMaxValue( buffer->lineCount() );
+	gotoxy(getBufferCursor()->getX(), value);
+}
 
 #include "viewwidget.moc"

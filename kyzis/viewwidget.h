@@ -24,6 +24,7 @@
 #include <ktexteditor/viewcursorinterface.h>
 #include <kstatusbar.h>
 #include <qevent.h>
+#include <qscrollbar.h>
 #include "document.h"
 #include "editor.h"
 #include "viewwidget.h"
@@ -81,6 +82,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void fileSave();
 		void fileSaveAs();
 		void resetInfo();
+		void scrolled( int );
 	
 	protected:
 		void setupActions();
@@ -90,6 +92,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		KYZisDoc *buffer;
 		KStatusBar *status;
 		KYZisCommand *command;
+		QScrollBar *mVScroll; //vertical scroll
 		// internal ID used for DCOP communications 
 		int mkId;
 };

@@ -44,6 +44,7 @@ public:
     CPPUNIT_TEST( testCharMovement );
     CPPUNIT_TEST( testBeginEndCharMovement );
     CPPUNIT_TEST( testLineMovement );
+    CPPUNIT_TEST( testMotionMovement );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -52,6 +53,7 @@ public:
     void testCharMovement();
     void testBeginEndCharMovement();
     void testLineMovement();
+    void testMotionMovement();
 
 protected:
     TYZSession * mSession;

@@ -247,10 +247,74 @@ void TestYZCommands::testLineMovement()
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendMultipleKey("G");
     CHECK_CURSOR_POS( mView, 3, 0 );
-    mView->sendMultipleKey("$");
-    CHECK_CURSOR_POS( mView, 3, 4 );
-    mView->sendMultipleKey("0");
-    CHECK_CURSOR_POS( mView, 3, 0 );
+}
+
+void TestYZCommands::testMotionMovement() {
+    YZSession::setBoolOption("startofline",true);	
+    //tests with spaces on one line
+    mView->sendMultipleKey( "iword1 word02 word03 word4 word05<ESC>" );
+    phCheckEquals( mBuf->getWholeText(), "word1 word02 word03 word4 word05\n" );
+    mView->sendMultipleKey("gg");
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendMultipleKey("w");
+    CHECK_CURSOR_POS( mView, 0, 6 );
+    mView->sendMultipleKey("w");
+    CHECK_CURSOR_POS( mView, 0, 13 );
+    mView->sendMultipleKey("b");
+    CHECK_CURSOR_POS( mView, 0, 6 );
+    mView->sendMultipleKey("2w");
+    CHECK_CURSOR_POS( mView, 0, 20);
+    mView->sendMultipleKey("2b");
+    CHECK_CURSOR_POS( mView, 0, 6);
+    mView->sendMultipleKey("99b");
+    CHECK_CURSOR_POS( mView, 0, 0);
+    mView->sendMultipleKey("99w");
+    CHECK_CURSOR_POS( mView, 0, 31);
+    mView->sendMultipleKey( "dd" );
+
+    //tests with delimiters on one line
+    mView->sendMultipleKey( "itest/function(test)/method()/test();<ESC>" );
+    phCheckEquals( mBuf->getWholeText(), "test/function(test)/method()/test();\n" );
+    mView->sendMultipleKey("gg");
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendMultipleKey("w");
+    CHECK_CURSOR_POS( mView, 0, 4 );
+    mView->sendMultipleKey("w");
+    CHECK_CURSOR_POS( mView, 0, 5 );
+    mView->sendMultipleKey("b");
+    CHECK_CURSOR_POS( mView, 0, 4 );
+    mView->sendMultipleKey("2w");
+    CHECK_CURSOR_POS( mView, 0, 13);
+    mView->sendMultipleKey("2b");
+    CHECK_CURSOR_POS( mView, 0, 4);
+    mView->sendMultipleKey("99b");
+    CHECK_CURSOR_POS( mView, 0, 0);
+    mView->sendMultipleKey("9w");
+    CHECK_CURSOR_POS( mView, 0, 33 );
+    mView->sendMultipleKey("w");
+    CHECK_CURSOR_POS( mView, 0, 35 );
+    mView->sendMultipleKey( "dd" );
+
+    //tests with spaces on multiple lines
+    mView->sendMultipleKey( "itest1 test02 test003 test04 test5<ENTER>test1 test002 test03 test004 test5<ENTER> test1 test2 <ESC>" );
+    phCheckEquals( mBuf->getWholeText(), "test1 test02 test003 test04 test5\ntest1 test002 test03 test004 test5\n test1 test2 \n" );
+    mView->sendMultipleKey("gg");
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendMultipleKey("5w");
+    CHECK_CURSOR_POS( mView, 1, 0 );
+    mView->sendMultipleKey("gg");
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendMultipleKey("10w");
+    CHECK_CURSOR_POS( mView, 2, 1 );
+    mView->sendMultipleKey("gg");
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendMultipleKey("11w");
+    CHECK_CURSOR_POS( mView, 2, 7 );
+    mView->sendMultipleKey("w");
+    CHECK_CURSOR_POS( mView, 2, 12 );
+    //test backward
+
+    //tests with delimiters on multiple lines
 }
 
 /* ========================================================================= */

@@ -1163,18 +1163,25 @@ QString YZView::moveToStartOfLine( YZViewCursor* viewCursor, bool applyCursor ) 
 }
 
 void YZView::gotoLastLine() {
-	gotoLine( mBuffer->lineCount() - 1 );
+	gotoLastLine( mainCursor );
+}
+void YZView::gotoLastLine( YZViewCursor* viewCursor, bool applyCursor ) {
+	gotoLine( viewCursor, mBuffer->lineCount() - 1, applyCursor );
 }
 
 void YZView::gotoLine( unsigned int line ) {
+	gotoLine( mainCursor, line );
+}
+void YZView::gotoLine( YZViewCursor* viewCursor, unsigned int line, bool applyCursor ) {
 	if ( line >= mBuffer->lineCount() )
 		line = mBuffer->lineCount() - 1;
 
 	if ( getLocalBoolOption("startofline") ) {
-		gotoxy(mBuffer->firstNonBlankChar(line), line);
-		updateStickyCol( mainCursor );
+		gotoxy( viewCursor, mBuffer->firstNonBlankChar(line), line, applyCursor );
+		if ( applyCursor )
+			updateStickyCol( viewCursor );
 	} else {
-		gotoStickyCol( mainCursor, line );
+		gotoStickyCol( viewCursor, line, applyCursor );
 	}
 }
 

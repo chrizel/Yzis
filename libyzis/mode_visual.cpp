@@ -153,6 +153,11 @@ void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand("x", &YZModeCommand::del) );
 	commands.append( new YZCommand(">", &YZModeCommand::indent) );
 	commands.append( new YZCommand("<", &YZModeCommand::indent) );
+
+	commands.append( new YZCommand("<PDOWN>", &YZModeCommand::scrollPageDown) );
+	commands.append( new YZCommand("<CTRL>f", &YZModeCommand::scrollPageDown) );
+	commands.append( new YZCommand("<PUP>", &YZModeCommand::scrollPageUp) );
+	commands.append( new YZCommand("<CTRL>b", &YZModeCommand::scrollPageUp) );
 	initVisualCommandPool();
 }
 void YZModeVisual::initVisualCommandPool() {

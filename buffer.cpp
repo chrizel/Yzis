@@ -773,7 +773,7 @@ void YZBuffer::setLocalQColorOption( const QString& key, const QColor& option ) 
 
 void YZBuffer::updateHL( unsigned int line ) {
 	if ( m_hlupdating ) return;
-	yzDebug() << "updateHL " << line << endl;
+//	yzDebug() << "updateHL " << line << endl;
 	m_hlupdating = true;
 	if ( m_highlight != 0L ) {
 		uint hlLine = line;

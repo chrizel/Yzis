@@ -90,12 +90,14 @@ void TestYZBuffer::testLineMethods()
     // delete middle line
     mBuf->deleteLine( 2 );
     phCheckEquals( mBuf->lineCount(), 3 );
+    phCheckEquals( mBuf->data( 0 ), "" );
     phCheckEquals( mBuf->data( 1 ), s1 );
     phCheckEquals( mBuf->data( 2 ), s1 );
 
     // delete first line twice
     mBuf->deleteLine( 1 );
     phCheckEquals( mBuf->lineCount(), 2 );
+    phCheckEquals( mBuf->data( 0 ), "" );
     phCheckEquals( mBuf->data( 1 ), s1 );
     mBuf->deleteLine( 1 );
     phCheckEquals( mBuf->lineCount(), 1 );
@@ -111,6 +113,7 @@ void TestYZBuffer::testLineMethods()
     mBuf->addLine( s2 );
     mBuf->addLine( s1 );
     phCheckEquals( mBuf->lineCount(), 4 );
+    phCheckEquals( mBuf->data( 0 ), "" );
     phCheckEquals( mBuf->data( 1 ), s1 );
     phCheckEquals( mBuf->data( 2 ), s2 );
     phCheckEquals( mBuf->data( 3 ), s1 );
@@ -142,7 +145,6 @@ void TestYZBuffer::testLineMethods()
     // now, the nasty tests
 
     // delete non existing lines should not segfault and simply do nothing
-   // mBuf->deleteLine( -1 );
     mBuf->deleteLine( 10 );
     phCheckEquals( mBuf->lineCount(), 4 );
     phCheckEquals( mBuf->data( 0 ), "" );

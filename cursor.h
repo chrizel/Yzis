@@ -59,7 +59,7 @@ class YZCursor {
 		inline unsigned int getX() const { return x_pos; }
 		inline unsigned int getY() const { return y_pos; }
 
-		YZView* getParent() { return parentView; }
+		YZView* getParent() const { return parentView; }
 
 		void setCursor( YZCursor *cursor );
 		void setCursor( const YZCursor& cursor );

@@ -31,6 +31,7 @@
 #include "session.h"
  
 #include <stdlib.h>
+#include <assert.h>
 
 YZAction::YZAction( YZBuffer* buffer ) {
 	mBuffer = buffer;
@@ -171,10 +172,16 @@ void YZAction::copyArea( YZView* pView, const YZCursor& begin, const YZCursor& e
 }
 
 //copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
-void YZAction::deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QValueList<QChar> &reg ) {
-	yzDebug() << "Deleting from X " << begin.getX() << " to X " << end.getX() << endl;
-
+void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+	yzDebug() << "Deleting from X " << beginCursor.getX() << " to X " << endCursor.getX() << endl;
 	QStringList buff;
+	
+	const YZCursor &begin = (beginCursor <= endCursor ? beginCursor : endCursor),
+			&end = (beginCursor <= endCursor ? endCursor : beginCursor);
+	YZBuffer *yzb=pView->myBuffer();
+	YZCursor top(0, 0, 0), bottom(0, yzb->textline(yzb->lineCount()-1).length(), yzb->lineCount()-1);
+	assert(begin >= top && end <= bottom);
+
 	unsigned int bX = begin.getX();
 	unsigned int bY = begin.getY();
 	unsigned int eX = end.getX();
@@ -194,9 +201,9 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& begin, const YZCursor&
 	QString b = mBuffer->textline( bY );
 	yzDebug() << "Current Line " << b << endl;
 	if ( !lineDeleted ) {
-		buff << b.mid( bX, eX - bX + 1);
-		yzDebug() << "Deleting 1 " << buff <<endl;
-		QString b2 = b.left( bX ) + b.mid( eX + 1 );
+		buff << b.mid( bX, eX - bX );
+		yzDebug() << "Deleting 1 " << buff << endl;
+		QString b2 = b.left( bX ) + b.mid( eX );
 		yzDebug() << "New line is " << b2 << endl;
 		mBuffer->replaceLine( b2 , bY );
 	} else {
@@ -207,8 +214,6 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& begin, const YZCursor&
 
 	/* 2. delete whole lines */
 	unsigned int curY = bY + 1;
-	if ( bY == 0 ) curY = 0; //dont loop ;)
-	if ( bY == mBuffer->lineCount() - 1 ) curY = mBuffer->lineCount() - 1; // and ... dont loop
 
 	yzDebug() << "End " << end.getY() << " " << curY << endl;
 	while ( eY > curY ) {
@@ -217,12 +222,7 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& begin, const YZCursor&
 		eY--;
 	}
 
-	/* 3. delete the part of the last line */
-	if ( eY == curY && !lineDeleted ) {
-		b = mBuffer->textline( curY );
-		buff << b.left( eX );
-		mBuffer->replaceLine( b.mid( eX ), curY );
-	} else if ( eY == curY ) {
+	if(lineDeleted) {
 		b = mBuffer->textline( curY );
 		buff << b.left( eX );
 		mBuffer->replaceLine( b.mid( eX ), curY );

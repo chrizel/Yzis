@@ -156,18 +156,53 @@ void TestYZBuffer::testLineMethods()
     phCheckEquals( mBuf->data( 2 ), s2 );
     phCheckEquals( mBuf->data( 3 ), s1 );
 
-	//replace lines
+	// empty the buffer
     mBuf->deleteLine( 3 );
     mBuf->deleteLine( 2 );
     mBuf->deleteLine( 1 );
     mBuf->deleteLine( 0 );
+    phCheckEquals( mBuf->getWholeText(), "" );
 	
 	//replace a non existing line should not do anything
 	mBuf->replaceLine( 10, s2 );
+    phCheckEquals( mBuf->getWholeText(), "" );
+
 	//replace first line
 	mBuf->replaceLine( 0, s2 );
     phCheckEquals( mBuf->data( 0 ), s2 );
     phCheckEquals( mBuf->lineCount(), 1 );
+    phCheckEquals( mBuf->getWholeText(), s2 );
+
+    // empty buffer
+    mBuf->deleteLine( 0 );
+    phCheckEquals( mBuf->getWholeText(), "" );
+
+    // addNewLine on non existing line should not do anything
+    mBuf->addNewLine( 10, 10 ); 
+    phCheckEquals( mBuf->getWholeText(), "" );
+
+    // add new line to an empty buffer
+    mBuf->addNewLine( 0, 0 ); 
+    phCheckEquals( mBuf->getWholeText(), "\n" );
+
+    // empty buffer
+    mBuf->deleteLine( 0 );
+    phCheckEquals( mBuf->getWholeText(), "" );
+
+    // add new line on non existing column should not do anything
+    mBuf->replaceLine( 0, s1 );
+    phCheckEquals( mBuf->getWholeText(), s1);
+    mBuf->addNewLine( 30, 0 ); 
+    phCheckEquals( mBuf->getWholeText(), s1 );
+
+    // add new line in the middle of the existing line
+    mBuf->addNewLine( 5, 0 ); 
+    phCheckEquals( mBuf->getWholeText(), "01234\n56789" );
+    mBuf->addNewLine( 5, 0 ); 
+    phCheckEquals( mBuf->getWholeText(), "01234\n\n56789" );
+    mBuf->addNewLine( 0, 0 ); 
+    phCheckEquals( mBuf->getWholeText(), "\n01234\n\n56789" );
+
 }
 
 void TestYZBuffer::testGetWholeText()

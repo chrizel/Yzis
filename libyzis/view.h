@@ -646,6 +646,21 @@ class YZView {
 		 */
 		void commitNextUndo();
 
+		/**
+		 * Start recording a macro into @param regs
+		 */
+		void recordMacro( const QValueList<QChar> &regs );
+		
+		/**
+		 * Stop recording macros
+		 */
+		void stopRecordMacro();
+
+		/**
+		 * Are macros being recorded
+		 */
+		bool isRecording() { return mRegs.count() > 0; }
+
 	protected:
 
 		/**
@@ -822,6 +837,9 @@ class YZView {
 		//Visual Mode stuff
 		YZCursor *mVisualCursor;
 		YZCursor *dVisualCursor;
+
+		//which regs to store macros in
+		QValueList<QChar> mRegs;
 };
 
 #endif /*  YZ_VIEW_H */

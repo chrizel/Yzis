@@ -37,7 +37,6 @@ int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
 YZInternalOptionPool YZSession::mOptions = YZInternalOptionPool();
 YZRegisters YZSession::mRegisters = YZRegisters();
-YZMacros YZSession::mMacros = YZMacros();
 YZSession *YZSession::me = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {

@@ -304,7 +304,6 @@ class YZSession {
 		static int mNbBuffers;
 		static YZInternalOptionPool mOptions;
 		static YZRegisters mRegisters;
-		static YZMacros mMacros;
 		static YZSession *me;
 };
 

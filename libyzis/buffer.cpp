@@ -321,14 +321,12 @@ void YZBuffer::displayIntro() {
 	<<  ""
 	<< VERSION_CHAR_LONG
 	<< VERSION_CHAR_DATE
-	<<  ""
 	<<	"Development Release - Use for testing only" 
 	<<  ""
-	<<	"Copyright (c) 2003, 2004 :"
-	<<	"Mickael Marchand <mikmak@yzis.org>,"
-	<<	"Thomas Capricelli <orzel@freehackers.org>,"
-	<<	"Philippe Fremy <phil@freehackers.org>"
-	<<	"Loic Pauleve <panard@inzenet.org>"
+	<<  "http://www.yzis.org"
+	<<  "Contact/Patches/Requests: yzis-dev@yzis.org"
+	<<  ""
+	<<  "Yzis is distributed under the terms of the General Public License"
 	<<  ""
 	<<  "Please report bugs at http://bugs.yzis.org" ;
 

@@ -685,6 +685,10 @@ QString YZCommandPool::redo(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::macro( const YZCommandArgs &args ) {
+	if ( args.view->isRecording() )
+		args.view->stopRecordMacro();
+	else
+		args.view->recordMacro( args.regs );
 	return QString::null;
 }
 

@@ -1291,21 +1291,6 @@ YZSelectionMap YZView::getVisualSelection() {
 	return selectionPool->layout("VISUAL");
 }
 
-void YZView::mark( const QString& mark ) {
-	mBuffer->marks()->add( mark , *mainCursor->buffer(), *mainCursor->screen() );
-}
-
-QString YZView::copyLine( unsigned int nb_lines, const QValueList<QChar> &regs ) {
-	QStringList list;
-	list << QString::null; //just a marker
-	for (unsigned int i = 0 ; i < nb_lines; i++ )
-		list << mBuffer->textline(mainCursor->bufferY()+i);
-	list << QString::null;
-	for ( QValueList<QChar>::const_iterator it = regs.begin(); it != regs.end(); it++ )
-		YZSession::mRegisters.setRegister( *it, list );
-	return QString::null;
-}
-
 void YZView::paste( QChar registr, bool after ) {
 	QStringList list = YZSession::mRegisters.getRegister( registr );
 	if ( list.isEmpty() ) return;
@@ -1821,14 +1806,6 @@ void YZView::undo( unsigned int count ) {
 void YZView::redo( unsigned int count ) {
 	for ( unsigned int i = 0 ; i < count ; i++ )
 		mBuffer->undoBuffer()->redo( this );
-}
-
-void YZView::gotoMark( const QString& mark) {
-	yzDebug() << "gotoMark " << mark << endl;
-	bool found = false;
-	YZCursorPos pos = mBuffer->marks()->get(mark, &found);
-	if ( found )
-		gotoxy(pos.bPos->getX(), pos.bPos->getY());
 }
 
 QString YZView::refreshScreenInternal() {

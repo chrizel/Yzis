@@ -195,6 +195,7 @@ private:
 	YZCursor find(const YZNewMotionArgs &args);
 	YZCursor matchPair(const YZNewMotionArgs &args);
 	YZCursor firstNonBlank(const YZNewMotionArgs &args);
+	YZCursor gotoMark(const YZNewMotionArgs &args);
 		
 	// methods implementing commands
 	QString execMotion(const YZCommandArgs &args);
@@ -229,7 +230,6 @@ private:
 	QString del(const YZCommandArgs &args);
 	QString yank(const YZCommandArgs &args);
 	QString mark(const YZCommandArgs &args);
-	QString gotoMark(const YZCommandArgs &args);
 	QString undo(const YZCommandArgs &args);
 	QString redo(const YZCommandArgs &args);
 	QString macro(const YZCommandArgs &args);

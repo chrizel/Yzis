@@ -118,6 +118,26 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len 
 		it->applyDeleteLine( mPos, len, pView->myId == it->myId );
 }
 
+void YZAction::copyLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
+	YZCursor mPos( pos );
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+		it->initCopyLine( mPos, len, pView->myId == it->myId );
+
+	unsigned int bY = mPos.getY();
+	QStringList buff;
+	buff << QString::null;
+	for ( unsigned int i = 0; i < len && mPos.getY() < mBuffer->lineCount(); i++ )
+		buff << mBuffer->textline( bY + i );
+	buff << QString::null;
+
+	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
+		YZSession::mRegisters.setRegister( *it, buff );
+
+	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
+		it->applyCopyLine( mPos, len, pView->myId == it->myId );
+}
+
+
 //copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
 void YZAction::copyArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QValueList<QChar> &reg ) {
 	yzDebug() << "Copying from X " << begin.getX() << " to X " << end.getX() << endl;

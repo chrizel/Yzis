@@ -287,11 +287,6 @@ class YZView {
 		QString deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs);
 
 		/**
-		 * Add a mark on the current cursor
-		 */
-		void mark( const QString& mark);
-
-		/**
 		 * Opens a new line after current line
 		 */
 		QString openNewLineAfter (unsigned int count = 1);
@@ -321,11 +316,6 @@ class YZView {
 		 */
 		void redo ( unsigned int count = 1 );
 
-		/**
-		 * Moves the cursor to the given mark ( if it exists )
-		 */
-		void gotoMark( const QString& );
-
 		virtual void printToFile( const QString& path );
 
 		/**
@@ -351,11 +341,6 @@ class YZView {
 		 */
 		void gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 		void gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int nexty, bool applyCursor = true );
-
-		/**
-		 * Copy the given number of lines in the list of registers
-		 */
-		QString copyLine( unsigned int nb_lines, const QValueList<QChar> &regs );
 
 		/**
 		 * Pastes the content of default or given register

@@ -39,16 +39,13 @@ TestLuaUnit = {} --class
     end
 
     function TestLuaUnit:test_xpcall()
-        local function f() a() end
+        local function f() error("[this is a normal error]") end
         local function g() f() end
-
         g()
     end
 
-    function TestLuaUnit:test_strip_luaunit_stack()
-    end
-
--- luaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
--- luaUnit:run('TestLuaBinding') -- will execute only one class of test
-luaUnit:run() -- will execute all tests
+-- LuaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
+-- LuaUnit:run('TestLuaBinding') -- will execute only one class of test
+-- LuaUnit.result.verbosity = 0
+LuaUnit:run() -- will execute all tests
 

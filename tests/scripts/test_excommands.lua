@@ -1,13 +1,9 @@
 
+
 require('luaunit')
 require('utils')
 
-function assertPos(line,col)
-    assertEquals( line, winline() )
-    assertEquals( col, wincol() )
-end
-
-TestMovements = {} --class
+TestExCommands = {} --class
     function TestMovements:setUp() 
         clearBuffer()
     end
@@ -18,7 +14,6 @@ TestMovements = {} --class
 
     function TestMovements:test_initial_state()
         assertEquals(bufferContent(),"")
-        assertPos(1,1)
     end
 
 

@@ -239,7 +239,8 @@ TestLuaBinding = {} --class
         sendkeys(':e runtests.sh<ENTER>')
         color1 = color(1,1)
         print("color1 : "..color1)
-        color2 = color(1,2)
+        sendkeys('G')
+        color2 = color(wincol(), winline())
         print("color2 : "..color2)
         assertEquals( string.len(color1) > 0, true )
         assertEquals( string.len(color2) > 0, true )
@@ -271,11 +272,18 @@ TestLuaBinding = {} --class
         assertError( setline, 1, 'text', 3 )
     end
 
+    function TestLuaBinding:test_mode()
+        assertEquals( mode(), MODE_NORMAL )
+        sendkeys('icoucou')
+        assertEquals( mode(), MODE_INSERT )
+        sendkeys('<ESC>')
+    end
+
 
 
 if not _REQUIREDNAME then
-    -- luaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
-    -- luaUnit:run('TestLuaBinding') -- will execute only one class of test
-    luaUnit:run() -- will execute all tests
+    -- LuaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
+    -- LuaUnit:run('TestLuaBinding') -- will execute only one class of test
+    LuaUnit:run() -- will execute all tests
 end
 

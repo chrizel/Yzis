@@ -1,3 +1,7 @@
+2004-09-10 mikmak
+  * all
+  	support Unsermake ;)
+  	
 2004-09-10 orzel
   * nyzis
     Now use a QEventLoop combined with our own loops. A lot cleaner.

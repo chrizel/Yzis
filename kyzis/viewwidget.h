@@ -62,6 +62,8 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		 */
 		void setkid( int kId ) { mkId = kId; }
 
+		void KYZisView::wheelEvent( QWheelEvent * e );
+
 		/**
 		 * @internal
 		 * Get the Kmdi Id of this view

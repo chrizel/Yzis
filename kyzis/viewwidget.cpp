@@ -102,7 +102,14 @@ void KYZisView::scrollUp( int n ) {
 }
 
 void KYZisView::paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
+	mVScroll->setMaxValue( buffer->lineCount() );
 	editor->paintEvent( curx, cury, curw, curh );
+}
+
+void KYZisView::wheelEvent( QWheelEvent * e ) {
+	int n = ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX 
+	mVScroll->setValue( mVScroll->value() - n  );
+	scrolled( mVScroll->value() );
 }
 
 void KYZisView::modeChanged (void) {
@@ -144,6 +151,7 @@ void KYZisView::syncViewInfo() {
 }
 
 QString KYZisView::refreshScreen (const QString&, YZCommandArgs) {
+	mVScroll->setMaxValue( buffer->lineCount() );
 	editor->repaint( false );
 	return QString::null;
 }

@@ -308,7 +308,11 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				if ( key == "<TAB>" ) {
 					key="\t";
 				}
-				if ( modifiers == "<CTRL>" ) { //special handling, here we can run commands while in INSERT mode
+				//Vim has a sub mode for <CTRL>x commands
+				if ( modifiers + key == "<CTRL>x" ) { //special handling, here we can run commands while in INSERT mode
+					mPreviousChars += modifiers + key;
+					return;
+				} else if ( modifiers == "<CTRL>" && mPreviousChars == "<CTRL>x" ) {
 					mPreviousChars += modifiers + key;
 					cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
 					switch(state) {
@@ -382,6 +386,23 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else {
+				//Vim has a sub mode for <CTRL>x commands
+				if ( modifiers + key == "<CTRL>x" ) { //special handling, here we can run commands while in INSERT mode
+					mPreviousChars += modifiers + key;
+					return;
+				} else if ( modifiers == "<CTRL>" && mPreviousChars == "<CTRL>x" ) {
+					mPreviousChars += modifiers + key;
+					cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
+					switch(state) {
+						case CMD_ERROR:
+						case CMD_OK:
+							purgeInputBuffer();
+							break;
+						default:
+						break;
+					}
+					return;
+				}
 				mBuffer->action()->replaceChar( this, mainCursor->buffer(), key );
 				commitNextUndo();
 				return;

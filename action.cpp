@@ -143,9 +143,11 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len,
 #endif
 	CONFIGURE_VIEWS;
 	copyLine(pView, pos, len, reg);
+	if ( pos.getY() + len > mBuffer->lineCount() )
+		len = mBuffer->lineCount() - pos.getY();
 	for ( unsigned int i = 0; i < len && pos.getY() < mBuffer->lineCount(); i++ )
 		mBuffer->deleteLine( pos.getY() );
-	pView->gotoxyAndStick( 0, pos.getY() );
+	pView->gotoxyAndStick( 0, pos.getY() - (pos.getY() == mBuffer->lineCount() ? 1 : 0) );
 	COMMIT_VIEWS_CHANGES;
 }
 
@@ -161,7 +163,7 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 	QString text = "";
 	QString line;
 	buff << QString::null;
-	for ( unsigned int i = 0; i < len && mPos.getY() < mBuffer->lineCount(); i++ ) {
+	for ( unsigned int i = 0; i < len && (bY + i) < mBuffer->lineCount(); i++ ) {
 		line = mBuffer->textline( bY + i );
 		buff << line;
 		text += line + "\n";

@@ -21,12 +21,7 @@ YZView::YZView(YZBuffer *_b, int _lines_vis) {
 }
 
 void YZView::setVisibleLines(int nb) {
-	if ( lines_vis < nb )
-		for (int i=lines_vis; i<nb; i++) {
-			QString l=buffer->findLine(i);
-			if (l.isNull()) continue;
-			postEvent(YZEvent::mkEventLine(i,l));
-		}
+	redrawScreen();
 	lines_vis = nb;
 }
 
@@ -40,9 +35,7 @@ void YZView::sendChar( QChar c) {
 			cursor->setX(current_maxx);
 			updateCursor();
 		}
-		purgeInputBuffer();
-		mode = YZ_VIEW_MODE_COMMAND;
-		postEvent(YZEvent::mkEventStatus("Command mode"));
+		gotoCommandMode( );
 		return;
 	}
 	switch(mode) {
@@ -121,6 +114,8 @@ void YZView::registerManager ( Gui *mgr ) {
 }
 
 void YZView::centerView(unsigned int line) {
+
+	if ( line==current ) return;
 	//update current
 	current = line - lines_vis / 2;
 	if ( current < 0 ) current = 0;
@@ -132,11 +127,7 @@ void YZView::centerView(unsigned int line) {
 }
 
 void YZView::redrawScreen() {
-	for (int i=current; i<current + lines_vis; i++) {
-		QString l=buffer->findLine(i);
-		if (l.isNull()) continue;
-		postEvent(YZEvent::mkEventLine(i,l));
-	}
+	postEvent(YZEvent::mkEventRedraw() );
 	updateCursor();
 }
 
@@ -397,6 +388,14 @@ QString YZView::appendAtEOL ( const QString& ) {
 	moveToEndOfLine();
 	append();
 
+	return QString::null;
+}
+
+
+QString YZView::gotoCommandMode( ) {
+	mode = YZ_VIEW_MODE_COMMAND;
+	purgeInputBuffer();
+	postEvent(YZEvent::mkEventStatus("Command mode"));
 	return QString::null;
 }
 

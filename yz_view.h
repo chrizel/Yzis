@@ -48,12 +48,12 @@ public:
 	  * returns the number of the line displayed on top of this view
 	  * (refering to the whole file/buffer
 	  */
-	int	getCurrent(void) { return current; }
+	unsigned int	getCurrent(void) { return current; }
 
 	/**
 	  * returns the number of line this view can display
 	  */
-	int	getLinesVisible(void) { return lines_vis; }
+	unsigned int	getLinesVisible(void) { return lines_vis; }
 
 	/**
 	  * return true or false according to if the given line is
@@ -112,6 +112,11 @@ public:
 	QString deleteCharacter( const QString& inputsBuff = QString::null );
 
 	/**
+	 * Back to command mode
+	 */
+	QString gotoCommandMode( );
+
+	/**
 	 * Start insert mode
 	 */
 	QString gotoInsertMode( const QString& inputsBuff = QString::null );
@@ -158,7 +163,7 @@ protected:
 	
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
-	int		lines_vis;	/** number of visible lines */
+	unsigned int		lines_vis;	/** number of visible lines */
 	int		current;	/** current line on top of view */
 	YZCursor *cursor;
 	int		current_maxx;	/** maximum value for x, that s (lenght of current line -1), -1 means the line is empty */

@@ -14,38 +14,36 @@ class QString;
 
 /** list of all events */
 enum yz_events {
-	YZ_EV_SETLINE,
+	YZ_EV_INVALIDATE_LINE,
 	YZ_EV_SETCURSOR,
 	YZ_EV_SETSTATUS,
+	YZ_EV_REDRAW,
 	YZ_EV_NOOP //no, nothing :)
 };
 
 /**
- * Be careful, when the core uses yz_event_setline, it is of its responsability
+ * Be careful, when the core uses yz_event_invalidateline, it is of its responsability
  * to handle the cursor position
  * for a whole screen refresh
- * 	yz_event_setline for line 1
+ * 	yz_event_invalidateline for line 1
  * 	....
- * 	yz_event_setline for line n
+ * 	yz_event_invalidateline for line n
  *
  * 	yz_event_setcursor(wherever)
  *
  * for a modified line
- * 	yz_event_setline for line y
+ * 	yz_event_invalidateline for line y
  * 	yz_event_setcursor(wherever)
  *
  * There will be some special events for that, but not yet
  */
-struct yz_event_setline {
+struct yz_event_invalidateline {
 	int	y;
-	QString line;
-	yz_event_setline() {
+	yz_event_invalidateline() {
 		y=0;
-		line=QString::null;
 	}
-	yz_event_setline(const yz_event_setline& e) {
+	yz_event_invalidateline(const yz_event_invalidateline& e) {
 		y=e.y;
-		line=e.line;
 	}
 };
 
@@ -73,8 +71,7 @@ struct yz_event_setstatus {
  * (e is of type yz_event)
  * switch (e.id) {
  case YZ_EV_SETLINE:
- here we use e.u.setline.line_nb;
- here we use e.u.setline.line;
+ here we use e.u.invalidateline.line_nb;
  break;
 
  case YZ_EV_SETCURSOR:
@@ -84,9 +81,10 @@ struct yz_event_setstatus {
 struct yz_event_t {
 	enum yz_events		id;
 	struct yz_event_t	*next;
-	struct yz_event_setline		setline;
+	struct yz_event_invalidateline		invalidateline;
 	struct yz_event_setcursor	setcursor;
 	struct yz_event_setstatus	setstatus;
+	/* nothing for REDRAW */
 };
 
 typedef struct yz_event_t yz_event;
@@ -97,7 +95,8 @@ class YZEvent {
 
 		static yz_event mkEventStatus(const QString&);
 		static yz_event mkEventCursor(int x, int y);
-		static yz_event mkEventLine(int,const QString&);
+		static yz_event mkEventInvalidateLine(int);
+		static yz_event mkEventRedraw();
 		static yz_event mkEventNoop();
 };
 

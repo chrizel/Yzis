@@ -22,11 +22,16 @@ yz_event YZEvent::mkEventCursor(int x, int y) {
 	return e;
 }
 
-yz_event YZEvent::mkEventLine(int l, const QString& text) {
+yz_event YZEvent::mkEventInvalidateLine(int l) {
 	yz_event e;
-	e.id=YZ_EV_SETLINE;
-	e.setline.y=l;
-	e.setline.line=text;
+	e.id= YZ_EV_INVALIDATE_LINE;
+	e.invalidateline.y=l;
+	return e;
+}
+
+yz_event YZEvent::mkEventRedraw() {
+	yz_event e;
+	e.id= YZ_EV_REDRAW;
 	return e;
 }
 

@@ -44,15 +44,17 @@ public:
 
 	yz_point motionPosition( int xstart, int ystart, YZMotion regexp );
 
+	QString	findLine(unsigned int line);
+
+	int getLines( void ) { return text.count(); }
+
 protected:
 	QString path;
 	QPtrList<YZView> view_list;
 	int	view_nb;
 
 	void	postEvent(yz_event e);
-	void	updateView(YZView *v);
 	void	updateAllViews();
-	QString	findLine(unsigned int line);
 
 	/* readonly?, change, load, save, isclean?, ... */
 	/* locking stuff will be here, too */

@@ -403,7 +403,8 @@ void YZView::updateCursor() {
 		lasty=y;
 	}
 
-	viewInformation.l1 = viewInformation.l2 = y; //XXX wrapped lines
+	viewInformation.l1 = y;
+	viewInformation.l2 = dCursor->getY(); 
 	viewInformation.c1 = mCursor->getX(); 
 	viewInformation.c2 = dCursor->getX(); 
 
@@ -411,8 +412,6 @@ void YZView::updateCursor() {
 }
 
 void YZView::centerViewHorizontally(unsigned int column) {
-	yzDebug() << "centerViewHorizontally " << column << endl;
-
 	unsigned int newcurrentLeft = 0;
 
 	if ( column > mMaxX ) {
@@ -425,43 +424,40 @@ void YZView::centerViewHorizontally(unsigned int column) {
 
 	if (newcurrentLeft > 0) {
 		initDraw( );
-		while ( sCursor->getY() > mCursor->getY() ) drawPrevLine( );
-		while ( sCursor->getY() < mCursor->getY() ) drawNextLine( );
-		while ( sCursor->getX() > newcurrentLeft ) {
-			drawPrevCol( );
-			drawChar( );
-		}
-		while ( sCursor->getX() < newcurrentLeft ) {
-			drawNextCol( );
-			drawChar( );
-		}
+		gotoy( mCursor->getY( ) );
+		gotox( newcurrentLeft );
 		dCurrentLeft = rCursor->getX( );
 		mCurrentLeft = sCursor->getX( );
-
 		initDraw ( );
 	} else {
 		dCurrentLeft = 0;
 		mCurrentLeft = 0;
 	}
-	yzDebug() << "centerViewHorizontally d:" << dCurrentLeft << ", m:" << mCurrentLeft << ", fill:" << rSpaceFill << endl;
 	
 	refreshScreen();
 }
 
 void YZView::centerViewVertically(unsigned int line) {
-	unsigned int newcurrent = line - mLinesVis / 2;
+	unsigned int newcurrent = 0;
+	if ( line > mLinesVis / 2 ) newcurrent = line - mLinesVis / 2;
+	alignViewVertically ( newcurrent );
+}
 
-	if ( newcurrent > ( mBuffer->lineCount() - mLinesVis ) ) {
-		if ( line > mLinesVis/2 )
-			newcurrent = mBuffer->lineCount() - mLinesVis;
-		else newcurrent = 0;
+void YZView::alignViewVertically( unsigned int line ) {
+	unsigned int newcurrent = 0;
+	if ( line >= dCurrentTop + mLinesVis ) newcurrent = line - mLinesVis + 1;
+	else if ( line > 0 ) newcurrent = line;
+	if ( newcurrent > 0 ) {
+		initDraw( );
+		gotody( newcurrent - 1 );
+		gotoy ( sCursor->getY( ) + 1 );
+		dCurrentTop = rCursor->getY( );
+		mCurrentTop = sCursor->getY( );
+		initDraw( );
+	} else {
+		dCurrentTop = 0;
+		mCurrentTop = 0;
 	}
-	if ( newcurrent == mCurrentTop ) return;
-	//redraw the screen
-	mCurrentTop = newcurrent > 0 ? newcurrent : 0;
-	dCurrentTop = newcurrent > 0 ? newcurrent : 0;
-
-//	yzDebug() << "centerVertically: m:" << mCurrentTop << "d: " << dCurrentTop << endl;
 
 	refreshScreen();
 }
@@ -473,7 +469,7 @@ void YZView::centerViewVertically(unsigned int line) {
 /* PRIVATE */
 void YZView::gotodx( unsigned int nextx ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
-	unsigned int shift = ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLine.length() > 0 ) ? 1 : 0;
+	unsigned int shift = ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLine.length() > 0 ) ? 0 : 1;
 	if ( sCurLine.length() == 0 ) nextx = 0;
 	else if ( sCursor->getX() >= sCurLine.length() ) {
 		gotox ( sCurLine.length() );
@@ -483,9 +479,16 @@ void YZView::gotodx( unsigned int nextx ) {
 		drawPrevCol( );
 		drawChar( );
 	}
-	while ( rCursor->getX() < nextx && sCursor->getX() < sCurLine.length() + shift ) {
-		drawNextCol( );
-		drawChar( );
+	while ( rCursor->getX() < nextx && sCursor->getX() < sCurLine.length() - shift ) {
+		if ( ! YZSession::getBoolOption( "wrap" ) ) {
+			drawNextCol( );
+			drawChar( );
+		} else {
+			while ( rCursor->getX() < nextx && sCursor->getX() < sCurLine.length() - shift) {
+				while ( rCursor->getX() < nextx && sCursor->getX() < sCurLine.length() - shift && drawNextCol( ) ) drawChar( );
+				if ( rCursor->getX() <= nextx && wrapNextLine ) drawNextLine( );
+			}
+		}
 	}
 }
 
@@ -496,12 +499,27 @@ void YZView::gotox( unsigned int nextx ) {
 		else nextx = sCurLine.length() - ( ! (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLine.length() > 0) ? 1 : 0 );
 	}
 	while ( sCursor->getX() > nextx ) {
-		drawPrevCol( );
-		drawChar( );
+		if ( ! YZSession::getBoolOption( "wrap" ) ) {
+			drawPrevCol( );
+			drawChar( );
+		} else {
+			yzDebug() << "TODO: gotox wrap" << endl;
+/*			while ( sCursor->getX() > nextx ) {
+				while ( sCursor->getX() < nextx && drawPrevCol( ) ) drawChar( );
+				if ( sCursor->getX() >= nextx && wrapNextLine ) drawPrevLine( );
+			}
+*/		}
 	}
 	while ( sCursor->getX() < nextx ) {
-		drawNextCol( );
-		drawChar( );
+		if ( ! YZSession::getBoolOption( "wrap" ) ) {
+			drawNextCol( );
+			drawChar( );
+		} else {
+			while ( sCursor->getX() < nextx ) {
+				while ( sCursor->getX() < nextx && drawNextCol( ) ) drawChar( );
+				if ( sCursor->getX() <= nextx && wrapNextLine ) drawNextLine( );
+			}
+		}
 	}
 }
 
@@ -509,14 +527,30 @@ void YZView::gotody( unsigned int nexty ) {
 	if ( ( int )nexty < 0 ) nexty = 0;
 	if ( sCursor->getY() >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
 	while ( rCursor->getY() > nexty ) drawPrevLine( );
-	while ( rCursor->getY() < nexty && sCursor->getY() < mBuffer->lineCount() - 1 ) drawNextLine( );
+	while ( rCursor->getY() < nexty && sCursor->getY() < mBuffer->lineCount() - 1 ) {
+		drawNextLine( );
+		if ( YZSession::getBoolOption( "wrap" ) && rCursor->getY() < nexty ) {
+			while ( drawNextCol( ) ) drawChar( );
+		}
+	}
 }
 
 void YZView::gotoy( unsigned int nexty ) {
 	if ( ( int )nexty < 0 ) nexty = 0;
 	if ( nexty >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
-	while ( sCursor->getY() > nexty ) drawPrevLine( );
-	while ( sCursor->getY() < nexty ) drawNextLine( );
+	while ( sCursor->getY() > nexty ) {
+		drawPrevLine( );
+		if ( YZSession::getBoolOption( "wrap" ) && sCursor->getY() < nexty ) {
+			yzDebug() << "TODO: gotoy wrap" << endl;
+//			while ( drawNextCol( ) ) drawChar( );
+		}
+	} 
+	while ( sCursor->getY() < nexty ) {
+		drawNextLine( );
+		if ( YZSession::getBoolOption( "wrap" ) && sCursor->getY() < nexty ) {
+			while ( drawNextCol( ) ) drawChar( );
+		}
+	}
 }
 
 
@@ -533,7 +567,7 @@ void YZView::gotodxdy( unsigned int nextx, unsigned int nexty ) {
 	mCursor->setX( sCursor->getX() );
 	mCursor->setY( sCursor->getY() );
 
-	if ( !isLineVisible( dCursor->getY() ) ) centerViewVertically( dCursor->getY( ) );
+	if ( !isLineVisible( dCursor->getY() ) ) alignViewVertically( dCursor->getY( ) );
 	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
 
 	updateCursor( );
@@ -552,7 +586,7 @@ void YZView::gotodxy( unsigned int nextx, unsigned int nexty ) {
 	mCursor->setX( sCursor->getX() );
 	mCursor->setY( sCursor->getY() );
 
-	if ( !isLineVisible( dCursor->getY() ) ) centerViewVertically( dCursor->getY( ) );
+	if ( !isLineVisible( dCursor->getY() ) ) alignViewVertically( dCursor->getY( ) );
 	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
 
 	updateCursor( );
@@ -571,7 +605,7 @@ void YZView::gotoxdy( unsigned int nextx, unsigned int nexty ) {
 	mCursor->setX( sCursor->getX() );
 	mCursor->setY( sCursor->getY() );
 
-	if ( !isLineVisible( dCursor->getY() ) ) centerViewVertically( dCursor->getY( ) );
+	if ( !isLineVisible( dCursor->getY() ) ) alignViewVertically( dCursor->getY( ) );
 	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
 
 	updateCursor( );
@@ -590,11 +624,11 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	mCursor->setX( sCursor->getX() );
 	mCursor->setY( sCursor->getY() );
 
-	if ( !isLineVisible( dCursor->getY() ) ) centerViewVertically( dCursor->getY( ) );
-	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
-
 //	yzDebug( ) << "mCursor:" << mCursor->getX( ) << "," << mCursor->getY( ) << endl;
 //	yzDebug( ) << "dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl;
+
+	if ( !isLineVisible( dCursor->getY() ) ) alignViewVertically( dCursor->getY( ) );
+	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
 
 	updateCursor();
 }
@@ -994,6 +1028,8 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 	sLineLength = 0;
 	sColLength = 0;
 
+	wrapNextLine = false;
+
 	YZLine *yl = mBuffer->yzline( sCursor->getY() );
 	sCurLine = yl->data();
 }
@@ -1068,24 +1104,31 @@ bool YZView::drawPrevLine( ) {
 }
 
 bool YZView::drawNextLine( ) {
-	// update sCursor
-	sCursor->setX( sCurrentLeft );
-	sCursor->setY( sCursor->getY() + sLineLength );
 
-	// update dCusor
+	if ( ! wrapNextLine ) {
+		sCursor->setX( sCurrentLeft );
+		sCursor->setY( sCursor->getY() + sLineLength );
+		rSpaceFill = 0;
+		sLineLength = 1;
+	} else {
+		unsigned int diff = rCursor->getX( ) - mColumnsVis;
+		sCursor->setX ( sCursor->getX () - ( diff ? 1 : 0 ) );	// wrap a tab
+		rSpaceFill -= diff;
+	}
+
+	
+
 	rCursor->setY( rCursor->getY( ) + rLineLength );
+	rCursor->setX( rCurrentLeft );
 
 	rLineLength = 1;
-	sLineLength = 1;
 	sColLength = 0;
 	rColLength = 0;
-	rSpaceFill = 0;
 
 	if ( sCursor->getY() < mBuffer->lineCount() ) {
 	
 		YZLine *yl = mBuffer->yzline( sCursor->getY() );
 		sCurLine = yl->data();
-		rCursor->setX( rCurrentLeft );
 		if (rCurrentLeft > 0) {
 
 			sCursor->setX( 0 );
@@ -1152,6 +1195,9 @@ bool YZView::drawNextCol( ) {
 	sCursor->setX ( sCursor->getX() + sColLength );
 
 	rHLa += sColLength;
+	unsigned int shift = ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLine.length() > 0 ) ? 1 : 0;
+	wrapNextLine = ( YZSession::getBoolOption( "wrap" ) && rCursor->getX( ) - rCurrentLeft >= mColumnsVis && sCursor->getX( ) < sCurLine.length() + shift );
+	sLineLength = wrapNextLine ? 0 : 1;
 
 	return ( rCursor->getX( ) - rCurrentLeft < mColumnsVis && sCursor->getX( ) < sCurLine.length() );
 }
@@ -1175,13 +1221,16 @@ QChar YZView::drawChar( ) {
 	return ch;
 }
 
-int YZView::drawLength( ) {
+unsigned int YZView::drawLength( ) {
 	return rColLength;
 }
-
-int YZView::drawHeight ( ) {
+unsigned int YZView::drawHeight ( ) {
 	return rLineLength;
 }
+unsigned int YZView::lineHeight ( ) {
+	return sLineLength;
+}
+
 const QColor& YZView::drawColor ( ) {
 	QColor fake;
 	YzisAttribute hl;

@@ -100,9 +100,11 @@ void YZOption::saveTo(const QString& /* file */ ) {
 void YZOption::init() {
 	KOption *tabwidth = new KOption("tabwidth", "general", 8, 8 );
 	KOption *number = new KOption("number","general", false, false);
+	KOption *wrap = new KOption( "wrap", "general", false, false );
 
 	mOptions[ "general/tabwidth" ] = tabwidth;
 	mOptions[ "general/number" ] = number;
+	mOptions[ "general/wrap" ] = wrap;
 	setGroup("general");
 
 	//read config files now

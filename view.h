@@ -92,7 +92,7 @@ class YZView {
 		/**
 		 * Returns true if the line @arg l is visible. False otherwise
 		 */
-		int	isLineVisible(unsigned int l) { return ( (l>=mCurrentTop) && ((l-mCurrentTop)<mLinesVis) ); }
+		int	isLineVisible(unsigned int l) { return ( ( l >= dCurrentTop ) && ( l < mLinesVis + dCurrentTop ) ); }
 
 		/**
 		 * Returns true if the column @arg c is visible for @arg line ( expanding TABs ). False otherwise
@@ -118,6 +118,11 @@ class YZView {
 		 * Center view horizontally on the given @arg column
 		 */
 		void centerViewHorizontally( unsigned int column );
+
+		/**
+		 * align view vertically on the given @arg line
+		 */
+		void alignViewVertically(unsigned int line);
 
 		/**
 		 * Clean out the current buffer of inputs
@@ -336,54 +341,60 @@ class YZView {
 		/**
 		 * init r and s Cursor
 		 */
-		void YZView::initDraw( );
-		void YZView::initDraw( unsigned int sLeft, unsigned int sTop, 
+		void initDraw( );
+		void initDraw( unsigned int sLeft, unsigned int sTop, 
 					unsigned int rLeft, unsigned int rTop );
 
 		/**
 		 * go to previous line
 		 */
-		bool YZView::drawPrevLine( );
+		bool drawPrevLine( );
 
 		/**
 		 * go to next line
 		 */
-		bool YZView::drawNextLine( );
+		bool drawNextLine( );
 
 		/*
 		 * go to prev col
 		 */
-		bool YZView::drawPrevCol( );
+		bool drawPrevCol( );
 
 		/*
 		 * go to next col
 		 */
-		bool YZView::drawNextCol( );
+		bool drawNextCol( );
 
 		/**
 		 * draw char
 		 */
-		QChar YZView::drawChar( );
+		QChar drawChar( );
 
 		/**
 		 * char length
 		 */
-		int YZView::drawLength( );
+		unsigned int drawLength( );
 
 		/**
 		 * line height
 		 */
-		int YZView::drawHeight( );
+		unsigned int drawHeight( );
+
+
+		/**
+		 * line height
+		 */
+		 unsigned int lineHeight( );
 
 		/**
 		 * char color
 		 */
-		const QColor& YZView::drawColor( );
+		const QColor& drawColor( );
 
 		/**
 		 * return current buffer line
 		 */
-		unsigned int YZView::drawLineNumber( );
+		unsigned int drawLineNumber( );
 
 
 
@@ -484,11 +495,11 @@ class YZView {
 		 */
 		YZSession *mSession;
 
-		int rColLength;
-		int rLineLength;
-		int sColLength;
-		int sLineLength;
-		int rSpaceFill;
+		unsigned int rColLength;
+		unsigned int rLineLength;
+		unsigned int sColLength;
+		unsigned int sLineLength;
+		unsigned int rSpaceFill;
 
 		/**
 		 * The cursor of the text
@@ -535,6 +546,8 @@ class YZView {
 		void YZView::gotody( unsigned int );
 		void YZView::gotox( unsigned int );
 		void YZView::gotodx( unsigned int );
+
+		bool wrapNextLine;
 };
 
 #endif /*  YZ_VIEW_H */

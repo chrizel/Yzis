@@ -872,6 +872,7 @@ class YZView {
 		YZCursor *m_completionStart;
 		YZCursor *m_completionCursor;
 		QString m_word2Complete;
+		QString m_lastMatch;
 };
 
 #endif /*  YZ_VIEW_H */

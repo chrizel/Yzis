@@ -235,7 +235,7 @@ void YZView::sendMultipleKey(const QString& keys) {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-//	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
+	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 
 	QString key=_key;
 	QString modifiers=_modifiers;
@@ -270,7 +270,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	}
 
 	//check mappings
-	if ( mMode == YZ_VIEW_MODE_INSERT || mMode == YZ_VIEW_MODE_REPLACE )
+	if ( mMode == YZ_VIEW_MODE_INSERT || mMode == YZ_VIEW_MODE_REPLACE || mMode == YZ_VIEW_MODE_COMPLETION )
 		mapMode = mapMode | insert;
 	else if ( mMode == YZ_VIEW_MODE_COMMAND || mMode == YZ_VIEW_MODE_INTRO || mMode == YZ_VIEW_MODE_OPEN )
 		mapMode = mapMode | normal;
@@ -285,9 +285,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	switch(mMode) {
 		case YZ_VIEW_MODE_COMPLETION:
 			mPreviousChars += modifiers + key;
-			if ( mPreviousChars == "<ESC>" ) {
-				leaveCompletionMode();
-			} else if ( mPreviousChars == "<CTRL>p" ) {
+			if ( mPreviousChars == "<CTRL>p" ) {
 				if (m_word2Complete.isEmpty())
 					initCompletion();
 				QString result = doComplete(false);
@@ -304,6 +302,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
 					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
 				}
+			} else {
+				leaveCompletionMode();
 			}
 			purgeInputBuffer();
 			return;
@@ -376,7 +376,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				if ( mPreviousChars == "<TAB>" ) {
 					mPreviousChars="\t";
 				}
-				if ( mPreviousChars.startsWith("<CTRL>x") ) {
+				if ( mPreviousChars == "<CTRL>x" ) {
 					gotoCompletionMode();
 					purgeInputBuffer();
 					return;
@@ -2193,21 +2193,28 @@ QString YZView::doComplete(bool forward) {
 	YZCursor result;
 	unsigned int matchedLength=0;
 	bool found=false;
+	QString list="";
 	
-	if (forward) {
-		result = myBuffer()->action()->search(this, m_word2Complete+"\\w*", *m_completionCursor, YZCursor(this, 0, myBuffer()->lineCount()+1), false, &matchedLength, &found);
-	} else {
-		if ( *m_completionCursor == mainCursor->buffer() )
-			m_completionCursor->setX(mainCursor->bufferX() - m_word2Complete.length());
-		result = myBuffer()->action()->search(this, m_word2Complete+"\\w*", *m_completionCursor, YZCursor(this, 0, 0), true, &matchedLength, &found);
-	}
-	if (found && result == *m_completionStart) found=false; //just make sure we won't loop on myself :)
+	do {
+		if (forward) {
+			result = myBuffer()->action()->search(this, m_word2Complete+"\\w*", *m_completionCursor, YZCursor(this, 0, myBuffer()->lineCount()+1), false, &matchedLength, &found);
+		} else {
+			if ( *m_completionCursor == mainCursor->buffer() )
+				m_completionCursor->setX(mainCursor->bufferX() - m_word2Complete.length());
+			result = myBuffer()->action()->search(this, m_word2Complete+"\\w*", *m_completionCursor, YZCursor(this, 0, 0), true, &matchedLength, &found);
+		}
+		if (found) {
+			YZCursor end (this, result.getX()+matchedLength-1, result.getY());
+			list = myBuffer()->getText(result, end)[0];
+			yzDebug() << "Got testing match : " << list << " at " << result << " to " << end << endl;
+			m_completionCursor->setCursor(result);
+		}
+	} while ( found && list == m_lastMatch );
+
 	//found something ?
-	if ( found && matchedLength > 0 )  {
-		YZCursor end (this, result.getX()+matchedLength-1, result.getY());
-		QString list = myBuffer()->getText(result, end)[0];
+	if ( found )  {
 		yzDebug() << "Match : " << list << endl;
-		m_completionCursor->setCursor(result);
+		m_lastMatch = list;
 		return list;
 	}
 	return QString::null;

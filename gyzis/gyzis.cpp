@@ -35,7 +35,7 @@ GYzis::~GYzis() {
 void GYzis::init() {
   type_vecStrings vecAuthors;
   vecAuthors.push_back("Mickael Marchand <marchand@kde.org>");
-  set_about_information("M2", vecAuthors, "(C) 2004 Mickael Marchand <marchand@kde.org>", gettext("GNOME GUI of the Yzis editor."));
+  set_about_information("M3", vecAuthors, "(C) 2004 Mickael Marchand <marchand@kde.org>", gettext("GNOME GUI of the Yzis editor."));
 
   Bakery::App_WithDoc_Gtk::init();
 

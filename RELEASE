@@ -1,7 +1,7 @@
 1 - add entry in ChangeLog
 2 - add entry in debian/changelog, fix package number
 3 - check version numbers in the code / check the stable/preview/development status in yzis.h
-4 - clean all, configure, compile, make update-tr, make translate, make install, make test and test (k)yzis
+4 - clean all, configure, compile, make install, make test and test (k)yzis
 5 - create tag in subversion
 6 - svn export the tag, make dist to create the tarball, check the tarball :) (with other people testing)
 7 - upload to download.yzis.org, sync mirrors

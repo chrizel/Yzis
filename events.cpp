@@ -49,6 +49,8 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 	yzDebug() << "Executing event " << event << endl;
 	QMap<QString,QStringList>::Iterator it = mEvents.begin(), end = mEvents.end();
 	QStringList results;
+	QString hlName = view->myBuffer()->highlight()->name();
+	hlName.replace("+","p");
 	for ( ; it != end; ++it ) {
 		yzDebug() << "Comparing " << it.key() << " to " << event << endl;
 		if ( QString::compare(it.key(), event) == 0 ) {
@@ -57,9 +59,9 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 			QStringList::Iterator it2 = list.begin(), end2 = list.end();
 			for ( ; it2 != end2; ++it2 ) { 
 				int nbArgs = 0, nbResults = 0;
-				if ( event == "INDENT_ON_ENTER" && *it2 != "Indent_" + view->myBuffer()->highlight()->name() ) 
+				if ( event == "INDENT_ON_ENTER" && *it2 != "Indent_" + hlName ) 
 					continue; //skip it (it's not the right plugin for indent according to the current highlight name)
-				else if ( event == "INDENT_ON_KEY" && *it2 != "Indent_OnKey_" + view->myBuffer()->highlight()->name() )
+				else if ( event == "INDENT_ON_KEY" && *it2 != "Indent_OnKey_" + hlName )
 					continue; //skip it (it's not the right plugin for indent according to the current highlight name)
 
 				//special handling for indent

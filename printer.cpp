@@ -95,7 +95,8 @@ void YZPrinter::doPrint( ) {
 	unsigned int oldLinesVis = mView->getLinesVisible( );
 	unsigned int oldColumnsVis = mView->getColumnsVisible( );
 
-	bool number = YZSession::getBoolOption( "General\\number" );
+	//should be current's view setting no ? XXX
+	bool number = YZSession::getBoolOption( "Global\\number" );
 	unsigned int marginLeft = 0;
 
 	double red, green, blue;
@@ -104,8 +105,8 @@ void YZPrinter::doPrint( ) {
 		marginLeft = ( 2 + QString::number( mView->myBuffer()->lineCount() ).length() );
 	}
 
-	bool oldWrap = YZSession::getBoolOption( "General\\wrap" );
-	YZSession::mOptions.setGroup("General");
+	bool oldWrap = YZSession::getBoolOption( "Global\\wrap" );
+	YZSession::mOptions.setGroup("Global");
 	YZSession::setBoolOption( "wrap", true );
 	mView->setVisibleArea( clipw - marginLeft, cliph, false );
 	unsigned int totalHeight = mView->drawTotalHeight();
@@ -207,7 +208,7 @@ void YZPrinter::doPrint( ) {
 	PS_delete(doc);
 	PS_shutdown();
 
-	YZSession::mOptions.setGroup("General");
+	YZSession::mOptions.setGroup("Global");
 	YZSession::setBoolOption( "wrap", oldWrap );
 	mView->setVisibleArea( oldColumnsVis, oldLinesVis, false );
 	
@@ -232,14 +233,14 @@ void YZPrinter::doPrint( ) {
 	unsigned int oldLinesVis = mView->getLinesVisible( );
 	unsigned int oldColumnsVis = mView->getColumnsVisible( );
 
-	bool number = YZSession::getBoolOption( "General\\number" );
+	bool number = YZSession::getBoolOption( "Global\\number" );
 	unsigned int marginLeft = 0;
 	if ( number ) {
 		marginLeft = ( 2 + QString::number( mView->myBuffer()->lineCount() ).length() );
 	}
 
-	bool oldWrap = YZSession::getBoolOption( "General\\wrap" );
-	YZSession::mOptions.setGroup("General");
+	bool oldWrap = YZSession::getBoolOption( "Global\\wrap" );
+	YZSession::mOptions.setGroup("Global");
 	YZSession::setBoolOption( "wrap", true );
 	mView->setVisibleArea( clipw - marginLeft, cliph, false );
 	unsigned int totalHeight = mView->drawTotalHeight();
@@ -304,7 +305,7 @@ void YZPrinter::doPrint( ) {
 
 	p.end( );
 
-	YZSession::mOptions.setGroup("General");
+	YZSession::mOptions.setGroup("Global");
 	YZSession::setBoolOption( "wrap", oldWrap );
 	mView->setVisibleArea( oldColumnsVis, oldLinesVis, false );*/
 }

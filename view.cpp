@@ -111,8 +111,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	charSelected = false;
 
 	lineDY = 0;
-	tabwidth = getLocalIntOption("General\\tabwidth");
-	wrap = getLocalBoolOption( "General\\wrap" );
+	tabwidth = getLocalIntOption("tabwidth");
+	wrap = getLocalBoolOption( "wrap" );
 }
 
 YZView::~YZView() {
@@ -234,7 +234,7 @@ void YZView::sendKey( int c, int modifiers) {
 					moveUp( );
 					return;
 				case Qt::Key_Backspace:
-					if (mCursor->getX() == 0 && mCursor->getY() > 0 && YZSession::getStringOption( "General\\backspace" ).contains( "eol" ) ) {
+					if (mCursor->getX() == 0 && mCursor->getY() > 0 && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
 						joinLine( mCursor->getY() - 1 );
 						if ( mCursor->getX() ) moveRight();
 					} else if ( mCursor->getX() > 0 )
@@ -939,7 +939,7 @@ QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs ) {
 	if ( line ) --line;
 	if (line >= mBuffer->lineCount()) line = mBuffer->lineCount() - 1;
 
-	if ( YZSession::getBoolOption("General\\startofline") ) {
+	if ( getLocalBoolOption("startofline") ) {
 		gotoxy(mBuffer->firstNonBlankChar(line), line);
 	} else {
 		GOTO_STICKY_COL( line );
@@ -1495,8 +1495,8 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 	rLineHeight = 0;
 	rSpaceFill = 0;
 
-	tabwidth = getLocalIntOption("General\\tabwidth");
-	wrap = getLocalBoolOption( "General\\wrap" );
+	tabwidth = getLocalIntOption("tabwidth");
+	wrap = getLocalBoolOption( "wrap" );
 
 	wrapNextLine = false;
 	if ( sCursor->getY() < mBuffer->lineCount() && ! mBuffer->textline( sCursor->getY() ).isNull() )
@@ -1830,7 +1830,7 @@ int YZView::getLocalIntOption( const QString& option ) {
 	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) ) //find the local one ?
 		return YZSession::mOptions.readIntEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, 0 );
 	else
-		return YZSession::mOptions.readIntEntry( option, 0 ); // else give the global default if any
+		return YZSession::mOptions.readIntEntry( "Global\\" + option, 0 ); // else give the global default if any
 }
 
 void YZView::setLocalIntOption( const QString& key, int option ) {
@@ -1842,7 +1842,7 @@ bool YZView::getLocalBoolOption( const QString& option ) {
 	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
 		return YZSession::mOptions.readBoolEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, false );
 	else
-		return YZSession::mOptions.readBoolEntry( option, false );
+		return YZSession::mOptions.readBoolEntry( "Global\\" + option, false );
 }
 
 void YZView::setLocalBoolOption( const QString& key, bool option ) {
@@ -1854,7 +1854,7 @@ QString YZView::getLocalStringOption( const QString& option ) {
 	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
 		return YZSession::mOptions.readQStringEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QString("") );
 	else
-		return YZSession::mOptions.readQStringEntry( option, QString("") );
+		return YZSession::mOptions.readQStringEntry( "Global\\" + option, QString("") );
 }
 
 void YZView::setLocalQStringOption( const QString& key, const QString& option ) {
@@ -1866,7 +1866,7 @@ QStringList YZView::getLocalStringListOption( const QString& option ) {
 	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
 		return YZSession::mOptions.readQStringListEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QStringList::split(";","") );
 	else
-		return YZSession::mOptions.readQStringListEntry( option, QStringList::split(";","") );
+		return YZSession::mOptions.readQStringListEntry( "Global\\" + option, QStringList::split(";","") );
 }
 
 void YZView::setLocalQStringListOption( const QString& key, const QStringList& option ) {
@@ -1878,7 +1878,7 @@ QColor YZView::getLocalColorOption( const QString& option ) {
 	if ( YZSession::mOptions.hasOption( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option ) )
 		return YZSession::mOptions.readQColorEntry( mBuffer->fileName()+"-view-"+ QString::number(myId) +"\\"+option, QColor("white") );
 	else
-		return YZSession::mOptions.readQColorEntry( option, QColor("white") );
+		return YZSession::mOptions.readQColorEntry( "Global\\" + option, QColor("white") );
 }
 
 void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {

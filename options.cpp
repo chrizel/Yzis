@@ -57,7 +57,7 @@ KOption::KOption( QString key, QString group, bool value, bool defaultValue, opt
 
 YZOption::YZOption() {
 	init();
-	setGroup("General");
+	setGroup("Global");
 }
 
 YZOption::~YZOption() {
@@ -128,18 +128,18 @@ void YZOption::saveTo(const QString& file, const QString& what, bool force ) {
 }
 
 void YZOption::init() {
-	KOption *tabwidth = new KOption("tabwidth", "General", 8, 8, view_opt );
-	KOption *number = new KOption("number","General", false, false, view_opt );
-	KOption *wrap = new KOption( "wrap", "General", false, false, view_opt );
-	KOption *backspace = new KOption( "backspace", "General", "eol", "eol", view_opt );
-	KOption *updatecount = new KOption( "updatecount", "General", 200, 200, buffer_opt );
+	KOption *tabwidth = new KOption("tabwidth", "Global", 8, 8, view_opt );
+	KOption *number = new KOption("number","Global", false, false, view_opt );
+	KOption *wrap = new KOption( "wrap", "Global", false, false, view_opt );
+	KOption *backspace = new KOption( "backspace", "Global", "eol", "eol", view_opt );
+	KOption *updatecount = new KOption( "updatecount", "Global", 200, 200, buffer_opt );
 
-	mOptions[ "General\\tabwidth" ] = tabwidth;
-	mOptions[ "General\\number" ] = number;
-	mOptions[ "General\\wrap" ] = wrap;
-	mOptions[ "General\\backspace" ] = backspace;
-	mOptions[ "General\\updatecount" ] = updatecount;
-	setGroup("General");
+	mOptions[ "Global\\tabwidth" ] = tabwidth;
+	mOptions[ "Global\\number" ] = number;
+	mOptions[ "Global\\wrap" ] = wrap;
+	mOptions[ "Global\\backspace" ] = backspace;
+	mOptions[ "Global\\updatecount" ] = updatecount;
+	setGroup("Global");
 
 	//read config files now
 	initConfFiles();

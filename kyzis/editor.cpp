@@ -9,7 +9,7 @@
 	KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) 
 {
-	setFont(QFont("Fixed",10));
+	setFont(QFont("Andale Mono",10));
 	_parent = parent;
 
 	viewport()->setFocusProxy( this );

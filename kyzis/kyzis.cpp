@@ -142,6 +142,7 @@ void Kyzis::fileNew() {
 	// in its initial state.  This is what we do here..
 	//XXX NOPE
 	if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
+//		FIXME
 //		(new Kyzis)->show();
 	};
 }
@@ -187,6 +188,8 @@ void Kyzis::fileOpen() {
 			// we open the file in this window...
 			load( url );
 		} else {
+			//FIXME (download)
+			createBuffer( url.url() );
 			//XXX NOPE
 			// we open the file in a new window...
 			/*Kyzis* newWin = new Kyzis;

@@ -144,10 +144,16 @@ void KYZisFactory::customEvent (QCustomEvent *) {
 	while ( true ) {
 		yz_event event = sess->fetchNextEvent();
 		YZView *vi = sess->findView( event.view );
+		if ( vi == NULL ) {
+			kdDebug() << " Factory : View " << event.view << " NOT found , exiting !" << endl;
+			return;
+			//kapp->quit();
+		}
 		KYZisView *v = static_cast<KYZisView*> ( vi );
 		QString str;
 		switch ( event.id ) {
 			case YZ_EV_INVALIDATE_LINE:
+				yzDebug() << "event INVALIDATE_LINE" << endl;
 				str = v->myBuffer()->findLine( event.invalidateline.y );
 				if ( str.isNull() ) return;
 				v->editor->setTextLine(event.invalidateline.y, str);
@@ -162,6 +168,7 @@ void KYZisFactory::customEvent (QCustomEvent *) {
 				v->status->changeItem( event.setstatus.text,0);
 				break;
 			case YZ_EV_REDRAW:
+				yzDebug() << "event REDRAW" << endl;
 				v->editor->updateContents();
 				break;
 			case YZ_EV_NOOP:
@@ -209,7 +216,9 @@ YZView* KYZisFactory::createView( YZBuffer *buffer ) {
   KYZisDoc *doc = static_cast<KYZisDoc*>(buffer);
 //	yzDebug() << "Test2 : " << doc->parentWidget()->name() << endl;
 	//XXX KTextEditor::View* v = doc->createView(currentDoc->parentWidget());
-  YZView *v = buffer->firstView();
+  //YZView *v = buffer->firstView();
+  YZView *v = buffer->findView(1);
+  assert( v );
   return v;
 //  return dynamic_cast<YZView*>( v );
 }
@@ -228,14 +237,6 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 		yzDebug() << "DCOP call failed for " << client->appId() << endl;
 		//popup error
 	}
-	
-	//DCOP between main app and part to allow this function to ask the main app to create the buffer (pfff)
-/*	KParts::ReadWritePart *m_part = static_cast<KParts::ReadWritePart *>(createPart(currentDoc->parentWidget(),"",this, "", "KParts::ReadWritePart" ));
-	KYZisDoc *b = static_cast<KYZisDoc*>( m_part );
-	b->setPath( path );
-	b->load();
-	sess->addBuffer( b );
-	return b;*/
 	return NULL;
 }
 

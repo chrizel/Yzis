@@ -10,14 +10,11 @@
 KYZisDoc::KYZisDoc (bool bSingleViewMode, bool bBrowserView, bool bReadOnly, QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::sess,QString::null) {
 		setInstance(KYZisFactory::instance());
-/*		KTextEditor::View *current = createView ( parentWidget, "doc widget" );
-		insertChildClient(current);
-		current->show();
-		setWidget(current);*/
 		KYZisFactory::registerDocument( this );
 		m_parent = parentWidget;
 		//yzDebug() << "Document parent name : " << parentWidget->name() << endl;
 
+		//XXX move me to Factory
 		if ( bSingleViewMode ) {
 			yzDebug() << "KYzisDoc constructor creating a default view for this buffer" << endl;
 			KTextEditor::View *view = createView( parentWidget, widgetName );

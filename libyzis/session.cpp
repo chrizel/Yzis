@@ -6,11 +6,11 @@
 #include "debug.h"
 
 YZSession::YZSession( const QString& _sessionName ) {
-  pool = new YZCommandPool();
+	pool = new YZCommandPool();
 	pool->initPool();
-  expool = new YZCommandPool();
+	expool = new YZCommandPool();
 	expool->initExPool();
-  motionpool = new YZMotionPool();
+	motionpool = new YZMotionPool();
 	motionpool->initPool();
 	sessionName = _sessionName;
 	curView = 0;
@@ -51,21 +51,6 @@ yz_event YZSession::fetchNextEvent(int requester) {
 	return YZEvent::mkEventNoop();
 }
 
-#if 0
-YZBuffer *YZSession::createBuffer(const QString& path) {
-	YZBuffer *b = new YZBuffer(this, path );
-	addBuffer( b );
-	return b;
-}
-#endif
-
-#if 0
-YZView *YZSession::createView(YZBuffer *buffer) {
-	YZView *view = new YZView(buffer, this);
-	return view;
-}
-#endif
-
 void YZSession::addBuffer( YZBuffer *b ) {
 	yzDebug() << "Session : addBuffer" << endl;
 	buffers.insert(b->fileName(), b);
@@ -81,11 +66,15 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 }
 
 YZView* YZSession::findView( int uid ) {
+	yzDebug() << "Session: looking for view " << uid << endl;
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = buffers.begin(); it!=buffers.end(); it++ ) {
-		YZView *v = ( it.data() )->findView( uid );
+		YZBuffer *b = ( it.data() );
+		yzDebug() << "Session : findView, checking buffer " << b->fileName() << endl;
+		YZView *v = b->findView( uid );
 		if ( v ) return v;
 	}
+	yzDebug() << "Session: View " << uid << " not found !" << endl;
 	return NULL;
 }
 

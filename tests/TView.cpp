@@ -40,10 +40,12 @@ TYZView::TYZView(YZBuffer *buf, YZSession *sess, int lines)
 
 void TYZView::sendText( QString text )
 {
+	QRegExp controlKeyRe( "<C-\\w>.*" );
+	QChar c;
+	int modifier = 0;
 	int consumed = 0;
 	while( text.length() ) {
-		consumed = 0;
-
+		// look for mapping
 		for( QValueList<Mapping>::iterator it = mKeyMap.begin(); it != mKeyMap.end(); ++it  ) {
 			if ((*it).text == text.left((*it).text.length()).lower()) {
 				sendKey( (*it).key , 0 );
@@ -51,10 +53,21 @@ void TYZView::sendText( QString text )
 				break;			
 			}
 		}
-		
-		if ( consumed == 0) {
-			QChar c = text[0];
-			int modifier = 0;
+
+		// look for control-key <C-x>
+		if (consumed == 0 && controlKeyRe.exactMatch(text)) {
+			c = text[3];
+			yzDebug("TYZView - sendKey") << "matched control key: " << text.mid(0,5) << endl;;
+			modifier = Qt::ControlButton;
+			consumed = 5;
+			sendKey( c, modifier );
+			continue;
+		}
+	
+		// send raw text	
+		if (consumed == 0) {
+			c = text[0];
+			modifier = 0;
 			consumed = 1;
 		
 			if (c.upper() == c) {
@@ -64,7 +77,8 @@ void TYZView::sendText( QString text )
 			sendKey( c, modifier );
 		}
 
-		YZASSERT_MSG( consumed != 0, QString("TYZView::sendText() - nothing done with text '%1'").arg(text) );
 		text.remove( 0, consumed );
+		consumed = 0;
+		modifier = 0;
 	}
 }

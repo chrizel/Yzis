@@ -53,6 +53,9 @@ class KYZisEdit : public QWidget {
 		void scrollUp( int );
 		void scrollDown( int );
 
+		// update text area
+		void updateArea( );
+
 	protected:
 		//intercept tabs
 		virtual bool event(QEvent*);

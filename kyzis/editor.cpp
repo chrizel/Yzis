@@ -53,14 +53,17 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 KYZisEdit::~KYZisEdit() {
 }
 
-void KYZisEdit::resizeEvent(QResizeEvent *ev) {
-	QSize s = ev->size();
-	int lines = s.height() / fontMetrics().lineSpacing();
-	int columns = s.width() / fontMetrics().maxWidth() - marginLeft;
+void KYZisEdit::resizeEvent(QResizeEvent* ) {
+	updateArea();
+}
+
+void KYZisEdit::updateArea( ) {
+	int lines = height() / fontMetrics().lineSpacing();
+	int columns = width() / fontMetrics().maxWidth() - marginLeft;
 	erase( );
 	mParent->setVisibleArea( columns, lines );
 }
-
+	
 void KYZisEdit::paintEvent( QPaintEvent * pe ) {
 	QRect r = pe->rect( );
 	int clipx = r.x();

@@ -174,7 +174,7 @@ void KYZisView::applyConfig( bool refresh ) {
 	editor->setBackgroundColor( Settings::colorBG() );
 	editor->setPaletteForegroundColor( Settings::colorFG() );
 	if ( refresh ) {
-		editor->repaint( true );
+		editor->updateArea( );
 	}
 }
 

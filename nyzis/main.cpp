@@ -68,10 +68,6 @@ main(int argc, char *argv[])
 	yzDebug(NYZIS) << "Locale " << QTextCodec::locale() << endl;
 	app.installTranslator(  &myapp );
 
-
-	// create factory
-	NYZFactory *factory  =new NYZFactory();
-
 	// option stuff
 	int option_index = 0;
 	static struct option long_options[] = { // 0,1,2 = no_argument,required_argument,optional_argument
@@ -102,6 +98,10 @@ main(int argc, char *argv[])
 		}
 
 	};
+
+
+	// create factory
+	NYZFactory *factory  =new NYZFactory();
 
 	/*
 	 * Open buffers

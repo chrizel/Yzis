@@ -245,7 +245,8 @@ const QStringList& YZInternalOptionPool::readQStringListEntry( const QString& _k
 		const QString& s = mOptions[ key ]->getValue();
 		const QStringList& list ( QStringList::split("/YZ/",s) );
 		return list;
-	} else return def;
+	} 
+	return def;
 }
 
 void YZInternalOptionPool::setQStringListOption( const QString& key, const QStringList& option ) {

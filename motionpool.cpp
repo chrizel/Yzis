@@ -32,6 +32,7 @@ YZMotionPool::~YZMotionPool() {
 }
 
 void YZMotionPool::initPool() {
+						//regexp, type, x, y, backward,after
 	addMotion (YZMotion( "\\w*\\b", REGEXP, 0, 0, false, true ) , "[0-9]*w" );
 	addMotion (YZMotion( "\\b\\w*", REGEXP, 0, 0, true, true ), "[0-9]*b");
 	addMotion (YZMotion( "$", REGEXP, 0, 0, false, true ), "\\$" );
@@ -41,6 +42,8 @@ void YZMotionPool::initPool() {
 	addMotion (YZMotion( "", RELATIVE, 0, -1, true, true ), "[0-9]*k");
 	addMotion (YZMotion( "", RELATIVE, 0, 1, false, true ), "[0-9]*j");
 	addMotion (YZMotion( "^\\s*", REGEXP, 0, 0, true, false ), "\\^");
+	addMotion (YZMotion( "", NORMAL, 0, 0, false, false ), "%");
+	addMotion (YZMotion( "", NORMAL, 0, 0, false, false ), "(`|')[a-zA-Z0-9]");
 }
 
 void YZMotionPool::addMotion(const YZMotion& regexp, const QString& key){
@@ -67,15 +70,32 @@ bool YZMotionPool::isValid( const QString& inputs ) {
 	return ok;
 }
 
-bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, bool *backward, YZCursor& result ) {
+bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCursor& result ) {
 	bool ok = false;
 	YZMotion& motion = findMotion(inputsMotion, &ok);
 	if ( !ok ) return false;
-	*backward = motion.backward;
-	if ( motion.type == REGEXP )
-		return applyRegexpMotion( inputsMotion, motion, view, result );
-	else if ( motion.type == RELATIVE )
-		return applyRelativeMotion( inputsMotion, motion, view, result );
+	switch ( motion.type ) {
+		case REGEXP :
+			return applyRegexpMotion( inputsMotion, motion, view, result );
+		case RELATIVE :
+			return applyRelativeMotion( inputsMotion, motion, view, result );
+		case NORMAL :
+			return applyNormalMotion( inputsMotion, motion, view, result );
+	}
+	return false;
+}
+
+bool YZMotionPool::applyNormalMotion( const QString& inputsMotion, YZMotion& , YZView *view, YZCursor& result ) {
+	bool found = false;
+	if ( inputsMotion == "%" ) {
+		result = view->myBuffer()->action()->match( view, *( view->getBufferCursor() ), &found );
+		return found;
+	} else if ( inputsMotion.startsWith("`") || inputsMotion.startsWith("'") ) {
+		yzDebug() << "Delete to tag " << inputsMotion.mid( 1,1 ) << endl;
+		YZCursorPos pos = view->myBuffer()->marks()->get(inputsMotion.mid( 1, 1 ), &found);
+		result = pos.bPos;
+		return found;
+	}
 	return false;
 }
 

@@ -1046,8 +1046,8 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
 		//ok we have a motion , so delete till the end of the motion :)
 		YZCursor cursor(this);
-		bool goBack = false;
-		bool success = mSession->getMotionPool()->applyMotion(args.motion, this, &goBack, cursor);
+		bool success = mSession->getMotionPool()->applyMotion(args.motion, this, cursor);
+		bool goBack = cursor < *mCursor;
 		if ( !success ) {
 			purgeInputBuffer();
 			return QString::null;
@@ -1222,8 +1222,8 @@ QString YZView::copy( const QString& , YZCommandArgs args) {
 		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
 		//ok we have a motion , so delete till the end of the motion :)
 		YZCursor cursor(this);
-		bool goBack = false;
-		bool success = mSession->getMotionPool()->applyMotion(args.motion, this, &goBack, cursor);
+		bool success = mSession->getMotionPool()->applyMotion(args.motion, this, cursor);
+		bool goBack = cursor < *mCursor;
 		if ( !success ) {
 			purgeInputBuffer();
 			return QString::null;

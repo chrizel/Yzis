@@ -149,7 +149,7 @@ public:
 private:
 	/** Parses the string inputs, which must be a valid motion + argument,
 	 * and executes the corresponding motion function. */
-	YZCursor move(YZView *view, const QString &inputs, unsigned int count);
+	YZCursor move(YZView *view, const QString &inputs, unsigned int count, bool usercount );
 
 	// methods implementing motions
 	YZCursor moveLeft(const YZNewMotionArgs &args);
@@ -174,6 +174,7 @@ private:
 	YZCursor firstNonBlank(const YZNewMotionArgs &args);
 	YZCursor gotoMark(const YZNewMotionArgs &args);
 	YZCursor firstNonBlankNextLine(const YZNewMotionArgs &args);
+	YZCursor gotoLine(const YZNewMotionArgs &args);
 
 	// methods implementing commands
 	QString execMotion(const YZCommandArgs &args);
@@ -185,7 +186,6 @@ private:
 	QString deleteLine(const YZCommandArgs &args);
 	QString deleteToEOL(const YZCommandArgs &args);
 	QString gotoExMode(const YZCommandArgs &args);
-	QString gotoLine(const YZCommandArgs &args);
 	QString gotoLineAtTop(const YZCommandArgs &args);
 	QString gotoLineAtCenter(const YZCommandArgs &args);
 	QString gotoLineAtBottom(const YZCommandArgs &args);
@@ -228,17 +228,21 @@ private:
 
 class YZNewMotionArgs {
 	public:
-		YZNewMotionArgs(YZView *v, unsigned int cnt=1, QString a=QString::null,bool s=false) {
+		YZNewMotionArgs(YZView *v, unsigned int cnt=1, QString a=QString::null,QString c=QString::null, bool uc = false, bool s=false) {
+			cmd = c;
 			view=v;
 			count=cnt;
 			arg=a;
 			standalone=s;
+			usercount = uc;
 		}
 
 		YZView *view;
 		unsigned int count;
 		QString arg;
 		bool standalone;
+		bool usercount;
+		QString cmd;
 };
 
 typedef YZCursor (YZCommandPool::*MotionMethod) (const YZNewMotionArgs&);

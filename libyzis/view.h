@@ -264,11 +264,13 @@ class YZView {
 		 * Go to line of file
 		 */
 		void gotoLine( unsigned int line );
+		void gotoLine( YZViewCursor* viewCursor, unsigned int line, bool applyCursor = true );
 
 		/**
 		 * Go to last line of the file
 		 */
 		void gotoLastLine();
+		void gotoLastLine( YZViewCursor* viewCursor, bool applyCursor = true );
 
 		/**
 		 * Deletes lines

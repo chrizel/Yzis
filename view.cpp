@@ -291,14 +291,18 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				if (m_word2Complete.isEmpty())
 					initCompletion();
 				QString result = doComplete(false);
-				if (!result.isNull())
+				if (!result.isNull()) {
 					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
+					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
+				}
 			} else if ( mPreviousChars == "<CTRL>n" ) {
 				if (m_word2Complete.isEmpty())
 					initCompletion();
 				QString result = doComplete(true);
-				if (!result.isNull())
+				if (!result.isNull()) {
 					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
+					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
+				}
 			}
 			purgeInputBuffer();
 			return;
@@ -878,7 +882,7 @@ void YZView::alignViewVertically( unsigned int line ) {
 /* PRIVATE */
 void YZView::gotodx( unsigned int nextx ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
-	unsigned int shift = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLineLength > 0 ) ) ? 0 : 1;
+	unsigned int shift = ( ! drawMode && ( (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode || YZ_VIEW_MODE_COMPLETION==mMode) && sCurLineLength > 0 ) ) ? 0 : 1;
 	if ( sCurLineLength == 0 ) nextx = 0;
 	else if ( workCursor->bufferX() >= sCurLineLength ) {
 		gotox ( sCurLineLength );
@@ -892,7 +896,7 @@ void YZView::gotodx( unsigned int nextx ) {
 
 void YZView::gotox( unsigned int nextx, bool forceGoBehindEOL ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
-	unsigned int shift = ( ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLineLength > 0 ) ) || forceGoBehindEOL ) ? 1 : 0;
+	unsigned int shift = ( ( ! drawMode && ( (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode || YZ_VIEW_MODE_COMPLETION==mMode) && sCurLineLength > 0 ) ) || forceGoBehindEOL ) ? 1 : 0;
 	if ( nextx >= sCurLineLength ) {
 		if ( sCurLineLength == 0 ) nextx = 0;
 		else nextx = sCurLineLength - 1 + shift;
@@ -1757,7 +1761,7 @@ bool YZView::drawNextLine( ) {
 
 bool YZView::drawPrevCol( ) {
 	workCursor->wrapNextLine = false;
-	unsigned int shift = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLineLength > 0 ) ) ? 1 : 0;
+	unsigned int shift = ( ! drawMode && ( (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode || YZ_VIEW_MODE_COMPLETION==mMode) && sCurLineLength > 0 ) ) ? 1 : 0;
 	if ( workCursor->bufferX() >= workCursor->bColIncrement ) {
 		unsigned int curx = workCursor->bufferX() - 1;
 		workCursor->setBufferX( curx );
@@ -1869,7 +1873,7 @@ bool YZView::drawNextCol( ) {
 	}
 
 	// can we go after the end of line buffer ?
-	unsigned int shift = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT == mMode && sCurLineLength > 0 ) ) ? 1 : 0;
+	unsigned int shift = ( ! drawMode && ( (YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT == mMode || YZ_VIEW_MODE_COMPLETION==mMode ) && sCurLineLength > 0 ) ) ? 1 : 0;
 
 	// drawCursor is after end of area ?
 	workCursor->wrapNextLine = ( wrap && workCursor->screenX() + ( ret || ! drawMode ? 0 : workCursor->sColIncrement ) > mColumnsVis - nextLength && curx < sCurLineLength + shift );

@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2003-2004 Mickael Marchand <mikmak@yzis.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -102,31 +102,44 @@ YZView* YZSession::findView( int uid ) {
 }
 
 void YZSession::setCurrentView( YZView* view ) {
+	yzDebug() << "Session : setCurrentView" << endl;
 	mCurView = view;
 	//update the GUIs now
 	mGUI->setCurrentView( view );
 }
 
-YZView* YZSession::nextView() {
+YZView* YZSession::prevView() {
 	QMap<QString,YZBuffer*>::Iterator it;
-	YZView *next = NULL;
 	bool found = false;
 
-	for ( it = mBuffers.begin(); !found && it!=mBuffers.end(); it++ ) {
-		YZBuffer* b = ( *it );
-		for ( QValueList<YZView*>::iterator vit = b->views().begin(); 
-				!found && vit != b->views().end(); ++vit ) {
-			YZView *idxv = ( *vit );
-			if ( next != NULL ) {
-				next = idxv;
-				found = true;
-				break;
-			}
-			if ( idxv == mCurView ) next = idxv;//fake,just make it change at next turn
-		}
+	if ( mCurView == 0 ) {
+		yzDebug() << "WOW, mCurview is NULL !" << endl;
+		return NULL;
 	}
 
-	return next;
+	yzDebug() << "Current view is " << mCurView->myId << endl;
+
+	YZView*	nv = findView( ( ( mCurView->myId - 1 ) >= 0 ) ? mCurView->myId - 1 : mCurView->myId );
+
+	return nv;
+}
+
+YZView* YZSession::nextView() {
+	QMap<QString,YZBuffer*>::Iterator it;
+	bool found = false;
+
+	if ( mCurView == 0 ) {
+		yzDebug() << "WOW, mCurview is NULL !" << endl;
+		return NULL;
+	}
+
+	yzDebug() << "Current view is " << mCurView->myId << endl;
+
+	YZView *nv = findView( mCurView->myId + 1 );
+	if ( !nv ) 
+		nv = findView( mCurView->myId );
+
+	return nv;
 }
 
 YZBuffer* YZSession::findBuffer( const QString& path ) {

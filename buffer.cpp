@@ -135,7 +135,6 @@ void YZBuffer::deleteLine( unsigned int line ) {
 }
 
 void YZBuffer::addView (YZView *v) {
-//	view_list.insert(v->myId, v );
 	QValueList<YZView*>::iterator it;
 	for ( it = mViews.begin(); it != mViews.end(); ++it ) {
 		YZView *vi = ( *it );
@@ -144,6 +143,7 @@ void YZBuffer::addView (YZView *v) {
 	yzDebug() << "BUFFER: addView" << endl;
 	mViews.append( v );
 	v->redrawScreen();
+	mSession->setCurrentView( v );
 }
 
 void YZBuffer::updateAllViews() {

@@ -105,7 +105,15 @@ class YZSession {
 		 */
 		void setCurrentView( YZView* );
 
+		/**
+		 * Finds the next view relative to the current one
+		 */
 		YZView* nextView();
+
+		/**
+		 * Finds the previous view relative to the current one
+		 */
+		YZView* prevView();
 
 		/**
 		 * Returns a pointer to the current view
@@ -121,6 +129,11 @@ class YZSession {
 		 * Change the filename of a recorded buffer
 		 */
 		void updateBufferRecord( const QString& oldname, const QString& newname, YZBuffer *buffer );
+
+		/**
+		 * Called from GUI when the current view has been changed
+		 */
+		void currentViewChanged ( YZView *v ) { mCurView = v; }
 
 	protected:
 		//we map "filename"/buffer for buffers

@@ -39,12 +39,17 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 
 QString YZExExecutor::buffernext( YZView *view, const QString& ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
-	view->mySession()->setCurrentView(view->mySession()->nextView());
+	YZView *v = view->mySession()->nextView();
+	if ( v )
+		view->mySession()->setCurrentView(v);
 	return QString::null;
 }
 
 QString YZExExecutor::bufferprevious ( YZView *view, const QString& inputs ) {
-	//XXX
+	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
+	YZView *v = view->mySession()->prevView();
+	if ( v )
+		view->mySession()->setCurrentView(v);
 	return QString::null;
 }
 

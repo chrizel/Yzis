@@ -10,19 +10,18 @@ INCLUDES = -I$(TINYQ_INCLUDES)
 #libyzis_a_SOURCES = yz_buffer.cpp.cc yz_view.cpp.cc yz_line.cpp.cc yz_events.cpp.cc yz_session.cpp.cc
 #libyzis_a_LIBADD = $(TINYQ_LIBS)/libtinyq.a
 
-## Rule to create static lib for nyzis (also convenience lib for the libtool lib) ##
-lib_LIBRARIES = libyzis.a
-libyzis_a_SOURCES = yz_buffer.cpp yz_view.cpp yz_line.cpp yz_events.cpp yz_session.cpp
-#if we add this, we won't be able to use qt in kyzis i think
-#libyzis_a_LIBADD = $(TINYQ_LIBS)/libtinyq.a
+noinst_LTLIBRARIES = libyzis.la
+lib_LTLIBRARIES = libqtyzis.la libtinyqyzis.la
 
-## Rule to create the libtool version from the static lib ##
-lib_LTLIBRARIES = libyzis.la
-libyzis_la_SOURCES = dummy.cc libyzis.a
-libyzis_la_LDFLAGS = -version-info 0:0:0 -no-undefined 
-libyzis_la_LIBADD = -L$(TINYQ_LIBS) -ltinyq 
+libyzis_la_SOURCES = yz_buffer.cpp yz_view.cpp yz_line.cpp yz_events.cpp yz_session.cpp 
 
-re : clean all
+libqtyzis_la_SOURCES = dummy.cpp
+libqtyzis_la_LDFLAGS = -version-info 0:0:0 -no-undefined 
+libqtyzis_la_LIBADD = libyzis.la $(LIB_QT) $(all_libraries)
 
-dummy.cc:
-	echo "" > dummy.cc
+libtinyqyzis_la_SOURCES = dummy.cpp
+libtinyqyzis_la_LDFLAGS = -version-info 0:0:0 -no-undefined 
+libtinyqyzis_la_LIBADD = libyzis.la -L$(TINYQ_LIBS)/ -ltinyq 
+
+dummy.cpp:
+	echo "" > dummy.cpp

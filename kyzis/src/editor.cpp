@@ -213,10 +213,18 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	if ( st & Qt::ControlButton )
 		modifiers += "<CTRL>";
 
+	int lmode = mParent->modePool()->currentType();
+	QString k;
 	if ( keys.contains( e->key() ) ) //to handle some special keys
-		mParent->sendKey(keys[ e->key() ], modifiers);
+		k = keys[ e->key() ];
 	else
-		mParent->sendKey( e->text(), modifiers );
+		k = e->text();
+
+	mParent->sendKey(k, modifiers);
+	if ( lmode == YZMode::MODE_INSERT || lmode == YZMode::MODE_REPLACE ) {
+		KYZisDoc *d = static_cast<KYZisDoc*>(mParent->document());
+		emit d->emitChars(mCursor->y(), mCursor->x(),k);
+	}
 	e->accept();
 }
 

@@ -47,8 +47,8 @@ AC_ARG_WITH(curses, AC_HELP_STRING([--with-curses=DIR],[where ncurses is install
 		 fi
 		 if test x$yzis_cv_curses != x/usr; then
 			 LDFLAGS="-L${yzis_cv_curses}/lib $LDFLAGS"
-			 CXXFLAGS="$CPPFLAGS -I${yzis_cv_curses}/include"
-			 YZIS_INCLUDES="$YZIS_INCLUDES -I${yzis_cv_curses}/include"
+			 CXXFLAGS="-I${yzis_cv_curses}/include $CPPFLAGS"
+			 YZIS_INCLUDES="-I${yzis_cv_curses}/include $YZIS_INCLUDES"
 		 fi])
 
 cf_ncurses="ncurses"

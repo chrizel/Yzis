@@ -152,6 +152,9 @@ class KYZisDoc : public KTextEditor::Document,
 		bool saveFile();
 		void setupActions();
 
+	public:
+		void emitChars(int a, int b, const QString& c) { emit charactersInteractivelyInserted(a,b,c); }
+
 	private:
 		QPtrList<KTextEditor::View> _views;
 		QWidget *m_parent;

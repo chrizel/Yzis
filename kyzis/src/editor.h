@@ -37,6 +37,21 @@
 class KYZisView;
 class KYZisCursor;
 
+
+struct KYZViewCell {
+	bool isValid;
+	QFont font;
+	QString c;
+	QColor bg;
+	QColor fg;
+	bool selected;
+	int flag;
+	KYZViewCell() {
+		isValid = false;
+	}
+};
+typedef QMap<unsigned int,KYZViewCell> lineCell;
+
 /**
  * KYZis Painter Widget
  */
@@ -65,6 +80,8 @@ class KYZisEdit : public QWidget {
 
 		void setTransparent( bool t, double opacity = 0, const QColor& color = Qt::black );
 
+		void drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rect, bool reversed = false );
+
 		const QString& convertKey( int key );
 
 		unsigned int spaceWidth;
@@ -73,6 +90,8 @@ class KYZisEdit : public QWidget {
 		void unregisterModifierKeys( const QString& keys );
 
 		QPoint cursorCoordinates( );
+
+		QMap<unsigned int,lineCell> mCell;
 
 	public slots :
 		void sendMultipleKey( const QString& keys );
@@ -114,8 +133,6 @@ class KYZisEdit : public QWidget {
 
 		virtual void focusInEvent( QFocusEvent * );
 
-		void selectRect( unsigned int x, unsigned int y, unsigned int w, unsigned int h );
-
 	private :
 		void initKeys();
 		KActionCollection* actionCollection;
@@ -140,6 +157,9 @@ class KYZisEdit : public QWidget {
 		QMap<int,QString> keys;
 		KRootPixmap *rootxpm;
 		bool mTransparent;
+		KYZViewCell defaultCell;
+
+	friend class KYZisCursor;
 };
 
 #endif

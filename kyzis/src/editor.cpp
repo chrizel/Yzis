@@ -53,17 +53,24 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 	setFocusPolicy( StrongFocus );
 	QWidget::setCursor( IbeamCursor );
+
 	rootxpm = new KRootPixmap( this );
-	initKeys();
 	setTransparent( false );
 
+	initKeys();
+	mCell.clear();
 	mCursor = new KYZisCursor( this, KYZisCursor::KYZ_CURSOR_SQUARE );
 
+	defaultCell.isValid = true;
+	defaultCell.selected = false;
+	defaultCell.c = " ";
+	defaultCell.flag = 0;
 }
 
 
 KYZisEdit::~KYZisEdit() {
 	delete mCursor;
+	mCell.clear();
 	delete signalMapper;
 	// dont delete rootxpm, this is done by KDE ;)
 //	delete rootxpm;
@@ -100,6 +107,7 @@ void KYZisEdit::updateArea( ) {
 	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget
 	int columns = width() / GETX( 1 ) - marginLeft;
 	erase( );
+	mCell.clear();
 	mParent->setVisibleArea( columns, lines );
 }
 
@@ -129,8 +137,8 @@ void KYZisEdit::paintEvent( unsigned int clipx, unsigned int clipy, unsigned int
 
 void KYZisEdit::setCursor( int c, int l ) {
 //	yzDebug() << "setCursor" << endl;
-	c = c - mParent->getDrawCurrentLeft () + marginLeft;
-	l -= mParent->getDrawCurrentTop ();
+	c = c - mParent->getDrawCurrentLeft() + marginLeft;
+	l -= mParent->getDrawCurrentTop();
 	unsigned int x = GETX( c );
 	if ( mParent->getLocalBoolOption( "rightleft" ) ) {
 		x = width() - x - mCursor->width();
@@ -144,29 +152,42 @@ QPoint KYZisEdit::cursorCoordinates( ) {
 }
 
 void KYZisEdit::scrollUp( int n ) {
-	mCursor->hide();
 	if ( ! mTransparent ) {
+		mCursor->hide();
 		bitBlt( this, 0, n * fontMetrics().lineSpacing(),
 			this, 0, 0,
 			width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing(),
 			Qt::CopyROP, true );
+		unsigned int lv = mParent->getLinesVisible();
+		unsigned int i;
+		for( i = lv; (int)i >= n; i-- )
+			mCell[ i ] = mCell[ i - n ];
+		setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
 		drawContents( 0, 0, mParent->getColumnsVisible(), n, false );
 	} else {
 		mParent->abortPaintEvent();
+		mCell.clear();
 		drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
 	}
 }
 
 void KYZisEdit::scrollDown( int n ) {
-	mCursor->hide();
 	if ( ! mTransparent ) {
+		mCursor->hide();
 		bitBlt( this, 0, 0,
 			this, 0, n * fontMetrics().lineSpacing(),
 			width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing(),
 			Qt::CopyROP, true );
-		drawContents( 0, mParent->getLinesVisible() - n, mParent->getColumnsVisible(), n, false );
+		unsigned int lv = mParent->getLinesVisible();
+		unsigned int maxl = lv - (unsigned int)n;
+		unsigned int i;
+		for( i = 0; i < maxl; i++ )
+			mCell[ i ] = mCell[ i + n ];
+		setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+		drawContents( 0, maxl, lv, n, false );
 	} else {
 		mParent->abortPaintEvent();
+		mCell.clear();
 		drawContents( 0, 0, mParent->getColumnsVisible(), mParent->getLinesVisible(), false );
 	}
 }
@@ -254,28 +275,6 @@ void KYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 	}
 }
 
-/*
-void KYZisEdit::mouseReleaseEvent( QMouseEvent *e) {
-	if (e->button() == Qt::LeftButton) { 
-		// check if we are in visual mode, which means that the user selected text with the mouse
-		if (mParent->modePool()->currentType() == YZMode::MODE_VISUAL) {
-			// check if we have a selection clipboard (X11) and place the text that was selected there
-			if (QApplication::clipboard()->supportsSelection() ) {
-				QApplication::clipboard()->setSelectionMode( true );
-				YZInterval vSelection = mParent->visualSelection()[0];
-				QStringList text = mParent->myBuffer()->getText(vSelection.fromPos(), vSelection.toPos());
-				QApplication::clipboard()->setText( text.join( "\n" ) );
-				QApplication::clipboard()->setSelectionMode( false );
-			}
-		} 
-	}
-} */
-
-void KYZisEdit::selectRect( unsigned int x, unsigned int y, unsigned int w, unsigned int h ) {
-	if ( mParent->getLocalBoolOption( "rightleft" ) ) x = width() - x - w;
-	bitBlt( this, x, y, this, x, y, w, h, Qt::NotROP, true );
-}
-
 void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph, bool ) {
 	QPainter p;
 	p.begin( this );
@@ -298,19 +297,21 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 	if ( marginLeft != my_marginLeft ) {
 		if ( mCursor->visible() ) {
 			mCursor->move( mCursor->x() + GETX( marginLeft - my_marginLeft ), mCursor->y() );
-			mCursor->hide();
 		}
 		marginLeft = my_marginLeft;
 		updateArea();
 		return;
 	}
 
+	defaultCell.flag = flag;
+	defaultCell.bg = backgroundColor();
+	defaultCell.fg = foregroundColor();
+	defaultCell.font = font();
+
 	unsigned int currentY = mParent->initDrawContents( clipy );
 	unsigned int lineNumber = 0;
 	unsigned int mY = mParent->getCursor()->getY() - mParent->getDrawCurrentTop();
 	unsigned int w;
-
-	mCursor->hide();
 
 	while ( cliph > 0 && mParent->drawNextLine( ) ) {
 		lineNumber = mParent->drawLineNumber();
@@ -343,17 +344,23 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 		}
 		erase( myRect );
 
+		KYZViewCell cell = defaultCell;
+		mCell[ currentY ].clear();
+
 		while ( mParent->drawNextCol( ) ) {
-			myRect.setX( GETX( currentX ) );
+
+			QString disp = mParent->drawChar();
+			cell.c = disp;
+
+			myRect.setLeft( GETX( currentX ) );
 			myRect.setWidth( GETX( mParent->drawLength() ) );
 			if ( rightleft ) {
-				w = myRect.width();
-				myRect.setLeft( width() - myRect.left() - w );
-				myRect.setWidth( w );
+				myRect.moveRight( width() - myRect.x() );
 			}
 			QColor c = mParent->drawColor( );
-			if ( c.isValid() ) p.setPen( c );
-			else p.setPen( foregroundColor() );
+			cell.fg = c.isValid() ? c : foregroundColor();
+			QColor bgColor = mParent->drawBgColor();
+			cell.bg = bgColor.isValid() ? bgColor : backgroundColor();
 			//other flags
 			QFont myFont(font());
 			myFont.setItalic(mParent->drawItalic());
@@ -361,29 +368,34 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 			myFont.setOverline(mParent->drawOverline());
 			myFont.setStrikeOut(mParent->drawStrikeOutLine());
 			myFont.setUnderline(mParent->drawUnderline());
-			p.setFont(myFont);
+			cell.font = myFont;
 
-			QString disp = mParent->drawChar();
+			cell.selected = mParent->drawSelected();
+
 			if ( rightleft )
 				disp = disp.rightJustify( mParent->drawLength(), mParent->fillChar() );
 			else
 				disp = disp.leftJustify( mParent->drawLength(), mParent->fillChar() );
-			QColor bgColor = mParent->drawBgColor();
-			if ( bgColor.isValid() && bgColor != backgroundColor() ) {
-				p.setBackgroundMode(Qt::OpaqueMode);
-				p.setBackgroundColor( bgColor );
-			} else {
-				p.setBackgroundMode( Qt::TransparentMode );
-			}
-			
-			p.drawText(myRect, flag, disp );
 
-			if ( mParent->drawSelected() ) {
-				if ( mParent->getCursor()->getY() == currentY && mParent->getCursor()->getX() == currentX - marginLeft )
-					;
-				else
-					selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
+			p.setFont(myFont);
+			if ( cell.selected ) {
+				p.setPen( cell.bg );
+				p.setBackgroundMode( Qt::OpaqueMode );
+				p.setBackgroundColor( cell.fg );
+				p.eraseRect( myRect );
+			} else {
+				p.setPen( cell.fg );
+				if ( cell.bg != backgroundColor() ) {
+					p.setBackgroundMode( Qt::OpaqueMode );
+					p.setBackgroundColor( cell.bg );
+					p.eraseRect( myRect );
+				} else {
+					p.setBackgroundMode( Qt::TransparentMode );
+				}
 			}
+			p.drawText( myRect, flag, disp );
+
+			mCell[ currentY ][ rightleft ? myRect.right() : myRect.left() ] = cell;
 
 			currentX += mParent->drawLength( );
 		}
@@ -409,6 +421,30 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 		--cliph;
 	}
 	p.end( );
+}
+
+void KYZisEdit::drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rect, bool reversed  ) {
+	if ( ! cell.isValid ) {
+		drawCell( p, defaultCell, rect, reversed );
+		return;
+	}
+	p->setFont( cell.font );
+	if ( cell.selected || reversed ) {
+		p->setPen( cell.bg );
+		p->setBackgroundMode( Qt::OpaqueMode );
+		p->setBackgroundColor( cell.fg );
+		p->eraseRect( rect );
+	} else {
+		p->setPen( cell.fg );
+		if ( cell.bg != backgroundColor() ) {
+			p->setBackgroundMode( Qt::OpaqueMode );
+			p->setBackgroundColor( cell.bg );
+			p->eraseRect( rect );
+		} else {
+			p->setBackgroundMode( Qt::TransparentMode );
+		}
+	}
+	p->drawText( rect, cell.flag, cell.c );
 }
 
 void KYZisEdit::focusInEvent ( QFocusEvent * ) {

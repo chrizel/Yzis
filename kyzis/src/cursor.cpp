@@ -37,10 +37,10 @@ KYZisCursor::~KYZisCursor() {
 	delete cursor;
 }
 
-unsigned int KYZisCursor::width() {
+unsigned int KYZisCursor::width() const {
 	return bg->width();
 }
-unsigned int KYZisCursor::height() {
+unsigned int KYZisCursor::height() const {
 	return bg->height();
 }
 
@@ -59,32 +59,43 @@ void KYZisCursor::resize( unsigned int w, unsigned int h ) {
 }
 void KYZisCursor::hide() {
 	if ( ! shown ) return;
-//	yzDebug() << "KYZisCursor::hide" << endl;
-	drawCursor( bg );
+	QRect rect( mX, mY, bg->width(), bg->height() );
+	QPainter p( mParent );
+	mParent->erase( rect );
+	mParent->drawCell( &p, cell(), rect );
+	p.end();
 	shown = false;
 }
 void KYZisCursor::refresh() {
-//	yzDebug() << "KYZisCursor::refresh" << endl;
 	move( mX, mY );
 }
 void KYZisCursor::move( unsigned int x, unsigned int y ) {
-//	yzDebug() << "KYZisCursor::move" << endl;
 	if ( shown ) hide();
 	mX = x;
 	mY = y;
-	prepareCursors();
-	drawCursor( cursor );
-	shown = true;
+	if ( prepareCursors() ) {
+		drawCursor( cursor );
+		shown = true;
+	}
 }
 
-void KYZisCursor::prepareCursors() {
+const KYZViewCell& KYZisCursor::cell() const {
+	return mParent->mCell[ mY / mParent->fontMetrics().lineSpacing() ][ 
+					mParent->mParent->getLocalBoolOption("rightleft") ? mX + width() : mX ];
+}
+
+bool KYZisCursor::prepareCursors() {
+	bool ret = true;
 	bitBlt( bg, 0, 0, mParent, mX, mY, bg->width(), bg->height(), Qt::CopyROP, true );
 	bitBlt( cursor, 0, 0, bg );
 	QPainter p( cursor );
 	switch( mCursorType ) {
 		case KYZ_CURSOR_SQUARE :
-			bitBlt( cursor, 0, 0, bg, 0, 0, bg->width(), bg->height(), Qt::NotROP, false );
+		{
+			QRect rect( 0, 0, cursor->width(), cursor->height() );
+			mParent->drawCell( &p, cell(), rect, true );
 			break;
+		}
 		case KYZ_CURSOR_LINE :
 			p.setPen( mParent->foregroundColor() );
 			p.drawLine( 0, 0, 0, cursor->height() );
@@ -93,6 +104,7 @@ void KYZisCursor::prepareCursors() {
 			break;
 	}
 	p.end();
+	return ret;
 }
 
 void KYZisCursor::drawCursor( QPixmap* orig ) {

@@ -27,6 +27,7 @@
 #include "editor.h"
 
 class KYZisEdit;
+struct KYZViewCell;
 
 class KYZisCursor {
 
@@ -46,17 +47,19 @@ class KYZisCursor {
 		void hide();
 		void refresh();
 
-		unsigned int width();
-		unsigned int height();
+		unsigned int width() const;
+		unsigned int height() const;
 
-		inline unsigned int x() { return mX; }
-		inline unsigned int y() { return mY; }
-		inline unsigned int visible() { return shown; }
+		const KYZViewCell& cell() const;
+
+		inline unsigned int x() const { return mX; }
+		inline unsigned int y() const { return mY; }
+		inline unsigned int visible() const { return shown; }
 
 	private :
 
 		void drawCursor( QPixmap* orig );
-		void prepareCursors();
+		bool prepareCursors();
 
 		KYZisEdit* mParent;
 

@@ -8,3 +8,6 @@ stamp*
 .svn
 diff
 config.h
+configure
+conftest*
+aclocal.m4

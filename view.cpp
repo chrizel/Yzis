@@ -549,7 +549,7 @@ void YZView::gotox( unsigned int nextx, bool forceGoBehindEOL ) {
 
 void YZView::gotody( unsigned int nexty ) {
 	if ( ( int )nexty < 0 ) nexty = 0;
-	if ( workCursor->bufferY() >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
+	if ( workCursor->bufferY() >= mBuffer->lineCount() ) nexty = qMax( 0, (int)(mBuffer->lineCount() - 1) );
 
 	/* some easy case */
 	if ( nexty == 0 ) {
@@ -599,7 +599,7 @@ void YZView::gotody( unsigned int nexty ) {
 
 void YZView::gotoy( unsigned int nexty ) {
 	if ( ( int )nexty < 0 ) nexty = 0;
-	if ( nexty >= mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
+	if ( nexty >= mBuffer->lineCount() ) nexty = qMax( 0, (int)(mBuffer->lineCount() - 1) );
 	if ( nexty == workCursor->bufferY() ) return;
 
 	/* some easy case */

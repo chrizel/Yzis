@@ -24,10 +24,11 @@
 
 #include <cstdlib>
 #include <ctype.h>
+#include <qkeysequence.h>
+#include <qobject.h>
 #include "view.h"
 #include "debug.h"
 #include "undo.h"
-#include <qkeysequence.h>
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	myId = YZSession::mNbViews++;
@@ -294,7 +295,7 @@ void YZView::sendKey( int c, int modifiers) {
 
 void YZView::updateCursor() {
 	static unsigned int lasty = 0; // small speed optimisation
-	static QString percentage("All");
+	static QString percentage(QObject::tr( "All" ));
 	unsigned int y = mCursor->getY();
 
 	if ( y != lasty ) {
@@ -592,7 +593,7 @@ QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
 QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
 	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_INSERT;
-	setStatusBar( "-- INSERT --" );
+	setStatusBar( QObject::tr( "-- INSERT --" ) );
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -600,7 +601,7 @@ QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
 QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
 	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_REPLACE;
-	setStatusBar( "-- REPLACE --" );
+	setStatusBar( QObject::tr( "-- REPLACE --" ) );
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -609,7 +610,7 @@ QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs args ) 
 	if (inputsBuff[ 0 ] == '?' ) reverseSearch = true; 
 	else reverseSearch = false;
 	mMode = YZ_VIEW_MODE_SEARCH;
-	setStatusBar( reverseSearch ? "-- REVERSE SEARCH --" : "-- SEARCH --" );
+	setStatusBar( reverseSearch ? QObject::tr( "-- REVERSE SEARCH --" ) : QObject::tr( "-- SEARCH --" ) );
 	purgeInputBuffer();
 	return QString::null;
 }

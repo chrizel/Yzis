@@ -20,19 +20,27 @@ DO_NOT_COMPILE="$DO_NOT_COMPILE cyzis"
 
 #check for TinyQ
 if test "x$TINYQ" = "x"; then
-       DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
        YZIS_INCLUDES="$QT_INCLUDES"
 else
 			 YZIS_SUBDIRS="libtinyqyzis"
        YZIS_INCLUDES="$TINYQ_INCLUDES"
+			 NYZIS_DEP="libyzis/libtinyqyzis/libtinyqyzis.la"
 fi
 
 #check for Qt
-if test "x$QTDIR" = "x"; then
-       DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis"
+if test "$have_qt" != yes; then
+			 if test "x$TINYQ" = "x"; then
+				DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis kyzis"
+			else
+				DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis"
+			 fi
 else
 			 YZIS_SUBDIRS="$YZIS_SUBDIRS libqtyzis"
+			 if test "x$TINYQ" = "x"; then
+				 NYZIS_DEP="libyzis/libqtyzis/libqtyzis.la"
+			 fi
 fi
 
 AC_SUBST(YZIS_SUBDIRS)
 AC_SUBST(YZIS_INCLUDES)
+AC_SUBST(NYZIS_DEP)

@@ -4,11 +4,18 @@
 function Indent_cpp(nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces,prevLine,nextLine)
 	local nbtabs = nbPrevTabs
 	local nbspaces = nbPrevSpaces
+	local result = ""
 
 	local st = string.sub(prevLine,-1,-1)
 	if st == "{" or st == ":" or st == "(" then nbtabs=nbtabs+1 end
 	
-	local result = string.rep("\t",nbtabs)..string.rep(" ",nbspaces)
+	result = result..string.rep("\t",nbtabs)..string.rep(" ",nbspaces)
+
+	if string.sub(prevLine,-3,-1) == "/**" then 
+		result = result.." * " 
+	elseif string.find(prevLine,"^%s*\*%s.*") then
+		result = result.."* " 
+	end
 
 	return result
 end

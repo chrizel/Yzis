@@ -551,6 +551,7 @@ class YZView {
 		void gotox( unsigned int );
 		void gotodx( unsigned int );
 		void applyGoto( );
+		void updateChar( );
 
 		bool wrapNextLine;
 		QChar lastChar;

@@ -60,6 +60,7 @@ void NYZView::map( void )
 	wmove(window,0,0 );
 	keypad(window , true); //active symbols for special keycodes
 	updateVis();
+	marginLeft = 0;
 
 	// creates layout
 	/*
@@ -101,61 +102,70 @@ void NYZView::printVoid( unsigned int relline )
 	for (i=1 ; i< getColumnsVisible(); i++ ) waddch(window, ' ' );
 }
 
-void NYZView::printLine( int line )
-{
+void NYZView::drawContents( int clipy, int cliph ) {
+	bool number = YZSession::getBoolOption( "General\\number" );
+	bool wrap = YZSession::getBoolOption( "General\\wrap" );
 
-//	yzDebug(NYZIS)<< "printLine called("<< line << ")" << endl;
-
-	unsigned int actuallen;
-	int sx,sy; // save x,y
-
-	// option handling
-	/*
 	unsigned int lineCount = myBuffer()->lineCount();
-	unsigned int my_marginleft = 0;
-	if ( YZSession::getBoolOption("General\\number") ) {
-		my_marginleft = 2 + QString::number( lineCount ).length();
+	unsigned int my_marginLeft = 0;
+	if ( number ) { // update marginLeft
+		my_marginLeft = 2 + QString::number( lineCount ).length();
+		lastLineNumber = 0;
 	}
-	if ( marginLeft != my_marginleft ) {
-		marginLeft = my_marginleft;
+	if ( marginLeft != my_marginLeft ) {
+		marginLeft = my_marginLeft;
 		updateVis();
+		setVisibleArea( mColumnsVis - marginLeft, mLinesVis );
 		return;
 	}
-	*/
 
-	getyx(window,sy,sx); // save cursor
+	initDraw( );
+	unsigned int currentY = 0;
+	unsigned int lineNumber = 0;
 
-	initDraw();
-
-	int rely=-1;
-	while ( drawNextLine() ) {
-		rely++;
-		// clipping
-		int lineNumber = dCursor->getY();
-		if ( lineNumber<line ) continue;
-		if ( lineNumber>line ) break;
-
-		/* not use addnstr here, will stop at \0  (i guess) */ 
-/*		if ( myBuffer()->introShown() ) {
-			//XX prolly broken
-			QString str = mBuffer->textline(line);
-			wmove( window,dCursor->getY(), (getColumnsVisible()-str.length()>0)?(getColumnsVisible()-str.length())/2:0 );
-		} else*/
-	   	wmove (window, rely, 0);
-
-		// draw this line
-		actuallen = 0;
-		while ( drawNextCol() ) {
-			QColor c = drawColor();
-			int mColor = mColormap.contains( c.rgb() )? mColormap[ c.rgb() ]: mColormap[ Qt::white.rgb() ]; 
-			waddch( window, COLOR_PAIR( mColor )|drawChar().unicode() );
-			actuallen++;
-			for ( unsigned int i=1; i< drawLength(); actuallen++,i++ ) waddch( window, ' ' );
+	while ( drawNextLine( ) && cliph > 0 ) {
+		lineNumber = drawLineNumber();
+		if ( currentY >= ( uint )clipy ) {
+			unsigned int currentX = 0;
+			wmove( window, currentY, currentX );
+			if ( number ) { // draw current line number
+				if ( lineNumber != lastLineNumber ) { // we don't draw it twice
+					wattron( window, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
+					waddstr( window, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
+					wattroff( window, COLOR_PAIR( mColormap[ Qt::yellow.rgb() ] ) );
+					waddch( window, ' ' );
+					lastLineNumber = lineNumber;
+				} else for( unsigned int i = 0; i < marginLeft; i++) waddch( window, ' ' );
+				currentX += marginLeft;
+			}
+			while ( drawNextCol( ) ) {
+				QColor c = drawColor( );
+				int mColor = mColormap.contains( c.rgb() )? mColormap[ c.rgb() ]: mColormap[ Qt::white.rgb() ]; 
+				waddch( window, COLOR_PAIR( mColor )|drawChar().unicode() );
+				if ( drawLength() > 1 ) {
+					for (unsigned int i = 1; i < drawLength(); i++ ) waddch( window, ' ' );
+				}
+				currentX += drawLength( );
+			}
+			for( ; currentX < getColumnsVisible() - marginLeft; currentX++) waddch( window, ' ' );
+			currentY += drawHeight( );
+			cliph -= lineHeight( );
+		} else {
+			if ( wrap ) while ( drawNextCol( ) ) ;
+			currentY += drawHeight( );
+			lastLineNumber = lineNumber;
 		}
-		for (  ; actuallen < getColumnsVisible(); actuallen++ ) waddch( window, ' ' );
+	}
+	while ( cliph > 0 && currentY < getLinesVisible() ) {
+		printVoid( currentY );
+		++currentY;
+		--cliph;
 	}
 
-	wmove(window,sy,sx ); // restore cursor
+	wmove(window,
+		getCursor()->getY() - getDrawCurrentTop (),
+		getCursor()->getX() - getDrawCurrentLeft () + marginLeft
+		 );
 }
 
 void NYZView::setCommandLineText( const QString& text )
@@ -171,8 +181,10 @@ void NYZView::setCommandLineText( const QString& text )
 }
 
 
-void NYZView::invalidateLine ( unsigned int line ) {
-	printLine( line );
+void NYZView::invalidateLine ( unsigned int ) {
+	int sx, sy;
+	getyx( window, sy, sx );
+	drawContents( sy, YZSession::getBoolOption( "General\\wrap" ) ? getLinesVisible() - sy : 1 );
 	wrefresh( window );
 	refresh();
 }
@@ -182,8 +194,6 @@ void NYZView::syncViewInfo( void )
 {
 	// older versions of ncurses want non const..
 	char * myfmt;
-
-	updateVis();
 
 	/*
 	 * ------------------ infobar ---------------------
@@ -230,19 +240,14 @@ void NYZView::syncViewInfo( void )
 
 	wmove(window,
 		getCursor()->getY() - getDrawCurrentTop (),
-		getCursor()->getX() - getDrawCurrentLeft ()
+		getCursor()->getX() - getDrawCurrentLeft () + marginLeft
 		 );
 	wrefresh( window );
 }
 
 void NYZView::refreshScreen() {
-	unsigned int i;
-
-	clear();
-	for ( i=getCurrentTop(); i < ( getCurrentTop() + getLinesVisible() ) && i < mBuffer->lineCount(); i++ )
-		printLine(i);
-	i-=getCurrentTop();
-	for ( ; i < getLinesVisible() ; i++ ) printVoid( i );
+//	clear();
+	drawContents( 0, getLinesVisible() );
 
 	refresh();
 	wrefresh(window);

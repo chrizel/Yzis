@@ -171,19 +171,18 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 				p->eraseRect( myRect );
 
 				while ( mParent->drawNextCol( ) ) {
-					const QChar& ch = mParent->drawChar( );
 					myRect.setX( currentX * maxwidth );
 					myRect.setWidth( mParent->drawLength() * maxwidth );
 
 					QColor c = mParent->drawColor( );
 					if ( c.isValid() ) p->setPen( c );
-					p->drawText(myRect, flag, ch );
+					p->drawText(myRect, flag, mParent->drawChar( ) );
 					currentX += mParent->drawLength( );
 				}
 				currentY += mParent->drawHeight( );
 				cliph -= mParent->lineHeight( );
 			} else {
-				if ( wrap ) while ( mParent->drawNextCol( ) ) mParent->drawChar( );
+				if ( wrap ) while ( mParent->drawNextCol( ) ) ;
 				currentY += mParent->drawHeight( );
 				lastLineNumber = lineNumber;
 			}

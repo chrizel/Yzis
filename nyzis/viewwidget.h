@@ -72,7 +72,7 @@ private:
 	  * @arg line is the line number, taken from the beginning of the file ( and not
 	  * the beginning of the displayed part )
 	  */
-	void printLine( int line );
+	void drawContents( int , int );
 	/**
 	  * print a void line ( that is "~    " )
 	  * @arg line is the line # relative to the displayed screen, not the buffer ( as this
@@ -90,6 +90,8 @@ private:
 	  * special widget for that
 	  */
 	QString commandline;
+	unsigned int lastLineNumber;
+	unsigned int marginLeft;
 
 
 	void initialisecolormap();

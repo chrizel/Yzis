@@ -368,10 +368,12 @@ void YZBuffer::clearText() {
 }
 
 void YZBuffer::clearIntro() {
-	yzDebug("YZBuffer") << "YZBuffer clearIntro" << endl;
-	mIntro = false;
-	clearText();
-	updateAllViews();
+	if (mIntro) {
+		yzDebug("YZBuffer") << "YZBuffer clearIntro" << endl;
+		mIntro = false;
+		clearText();
+		updateAllViews();
+	}
 }
 
 void YZBuffer::displayIntro() {

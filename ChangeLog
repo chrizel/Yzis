@@ -1,3 +1,7 @@
+2004-08-12 mikmak
+  * libyzis
+    added 'r' command
+
 2004-08-11 mikmak
   * libyzis
     improved loading time with big files

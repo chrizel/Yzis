@@ -113,6 +113,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("N", &YZCommandPool::searchPrev) );
 	commands.append( new YZCommand("~", &YZCommandPool::changeCase) );
 	commands.append( new YZCommand("m", &YZCommandPool::mark, ARG_CHAR) );
+	commands.append( new YZCommand("r", &YZCommandPool::replace, ARG_CHAR) );
 	commands.append( new YZCommand("u", &YZCommandPool::undo) );
 	commands.append( new YZCommand("<CTRL>R", &YZCommandPool::redo) );
 	commands.append( new YZCommand("q", &YZCommandPool::macro) );
@@ -902,3 +903,9 @@ QString YZCommandPool::redisplay( const YZCommandArgs &args ) {
 	return QString::null;
 }
 
+QString YZCommandPool::replace( const YZCommandArgs &args ) {
+	YZCursor pos = args.view->getBufferCursor();
+	args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg );
+	args.view->gotoxy(pos.getX(),pos.getY(),true);
+	return QString::null;
+}

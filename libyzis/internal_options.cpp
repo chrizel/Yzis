@@ -142,6 +142,7 @@ void YZInternalOptionPool::init() {
 	YZInternalOption *printer = new YZInternalOption( "printer", "Global", QString("qtprinter"),QString("qtprinter"), global_opt, string_t );
 	YZInternalOption *fileencoding = new YZInternalOption( "fileencoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
 	YZInternalOption *encoding = new YZInternalOption( "encoding", "Global", QString("locale"),QString("locale"),buffer_opt,string_t );
+	YZInternalOption *rightleft = new YZInternalOption( "rightleft", "Global", false, false, view_opt, bool_t );
 
 	mOptions[ "Global\\tabstop" ] = tabstop;
 	mOptions[ "Global\\number" ] = number;
@@ -153,6 +154,7 @@ void YZInternalOptionPool::init() {
 	mOptions[ "Global\\printer" ] = printer;
 	mOptions[ "Global\\fileencoding" ] = fileencoding;
 	mOptions[ "Global\\encoding" ] = encoding;
+	mOptions[ "Global\\rightleft" ] = rightleft;
 	setGroup("Global");
 
 	//read config files now

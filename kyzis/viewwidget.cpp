@@ -182,6 +182,7 @@ void KYZisView::syncViewInfo() {
 
 void KYZisView::refreshScreen () {
 	mVScroll->setMaxValue( buffer->lineCount() );
+	abortPaintEvent();
 	m_editor->repaint( false );
 }
 

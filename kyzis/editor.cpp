@@ -113,7 +113,7 @@ void KYZisEdit::paintEvent( QPaintEvent * pe ) {
 }
 
 void KYZisEdit::paintEvent( unsigned int clipx, unsigned int clipy, unsigned int clipw, unsigned int cliph ) {
-	clipx -= mParent->getDrawCurrentLeft( ) + marginLeft;
+	clipx = clipx - mParent->getDrawCurrentLeft( ) + marginLeft;
 	unsigned int dTop = mParent->getDrawCurrentTop();
 	clipy = clipy > dTop ? clipy - dTop : 0;
 	if ( ( unsigned int )mCursorY >= clipy && ( unsigned int )mCursorY <= clipy + cliph )
@@ -242,13 +242,16 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 	p.drawLine( x, topY, x + 5, topY );
 	p.drawLine( x, y + linespace, x + 5, y + linespace );
 	p.end(); */
+	unsigned int w = ( isFontFixed ? fontMetrics().maxWidth() : NONFIXED_CURSOR_WIDTH );
+	if ( mParent->getLocalBoolOption( "rightleft" ) ) x = width() - x - w;
 	bitBlt( this, x, y * fontMetrics().lineSpacing(), this,	x, y * fontMetrics().lineSpacing(),
-			( isFontFixed ? fontMetrics().maxWidth() : NONFIXED_CURSOR_WIDTH ), fontMetrics().lineSpacing(),
+			w, fontMetrics().lineSpacing(),
 			Qt::NotROP,	    // raster Operation
 			true );		    // ignoreMask
 }
 
 void KYZisEdit::selectRect( unsigned int x, unsigned int y, unsigned int w, unsigned int h ) {
+	if ( mParent->getLocalBoolOption( "rightleft" ) ) x = width() - x - w;
 	bitBlt( this, x, y, this, x, y, w, h, Qt::NotROP, true );
 }
 
@@ -263,6 +266,7 @@ void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool )
 	QRect myRect;
 	bool number = mParent->getLocalBoolOption( "number" );
 	bool wrap = mParent->getLocalBoolOption( "wrap" );
+	bool rightleft = mParent->getLocalBoolOption( "rightleft" );
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
 	unsigned int my_marginLeft = 0;
@@ -288,6 +292,7 @@ void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool )
 
 	unsigned int lineNumber = 0;
 	unsigned int mY = mParent->getCursor()->getY() - mParent->getDrawCurrentTop();
+	unsigned int w;
 
 	if ( ! mParent->myBuffer()->introShown() ) {
 		while ( cliph > 0 && mParent->drawNextLine( ) ) {
@@ -296,25 +301,38 @@ void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool )
 				unsigned int currentX = 0;
 
 				if ( number ) { // draw current line number
-					myRect.setRect( GETX( currentX ), currentY * linespace, GETX( marginLeft - spaceWidth ), linespace );
+					myRect.setRect( 0, currentY * linespace, GETX( marginLeft - spaceWidth ), linespace );
+					if ( rightleft ) {
+						w = myRect.width();
+						myRect.setLeft( width() - w );
+						myRect.setWidth( w );
+					}
 					erase( myRect );
 					QPen old_pen = p.pen( );
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
 						p.setPen( Qt::yellow );
-						p.drawText( myRect, flag | Qt::AlignRight, QString::number( lineNumber ) );
+						p.drawText( myRect, flag | ( rightleft ? Qt::AlignLeft : Qt::AlignRight ), QString::number( lineNumber ) );
 						lastLineNumber = lineNumber;
-					}/* else
-						yzDebug() << lineNumber << "==" << lastLineNumber << endl;*/
+					}
 					currentX += marginLeft;
 					p.setPen( old_pen );
 				}
 				myRect.setRect( GETX( currentX ), currentY * linespace, width() - GETX( currentX ), linespace );
+				if ( rightleft ) {
+					w = myRect.width();
+					myRect.setLeft( width() - myRect.left() - w );
+					myRect.setWidth( w );
+				}
 				erase( myRect );
 
 				while ( mParent->drawNextCol( ) ) {
 					myRect.setX( GETX( currentX ) );
 					myRect.setWidth( GETX( mParent->drawLength() ) );
-
+					if ( rightleft ) {
+						w = myRect.width();
+						myRect.setLeft( width() - myRect.left() - w );
+						myRect.setWidth( w );
+					}
 					QColor c = mParent->drawColor( );
 					if ( c.isValid() ) p.setPen( c );
 					p.drawText(myRect, flag, mParent->drawChar( ) );
@@ -338,15 +356,18 @@ void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool )
 		}
 		p.setPen( Settings::colorFG() );
 		if ( number ) {
-			p.drawLine( GETX( marginLeft ) - GETX( spaceWidth ) / 2, clipy * linespace, \
-					GETX( marginLeft ) - GETX( spaceWidth ) / 2, currentY * linespace );
+			if ( rightleft )
+				w = width() - GETX( marginLeft ) + GETX( spaceWidth ) / 2;
+			else
+				w = GETX( marginLeft ) - GETX( spaceWidth ) / 2;
+			p.drawLine( w, clipy * linespace, w, currentY * linespace );
 		}
 		unsigned int fh = height() / linespace;
 		while ( cliph > 0 && currentY < fh ) {
 			myRect.setRect ( 0, currentY * linespace, width(), linespace );
 			erase( myRect );
 			p.setPen( Qt::cyan );
-			p.drawText(myRect,flag ,"~");
+			p.drawText( myRect, rightleft ? flag | Qt::AlignRight : flag,"~" );
 			++currentY;
 			--cliph;
 		}

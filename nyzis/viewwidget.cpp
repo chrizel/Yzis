@@ -321,8 +321,8 @@ void NYZView::syncViewInfo( void )
 
 void NYZView::refreshScreen() {
 //	clear();
+	abortPaintEvent();
 	drawContents( 0, getLinesVisible() );
-
 	refresh();
 	wrefresh(editor);
 	updateCursor();

@@ -814,6 +814,14 @@ cmd_state YZModeEx::map( const YZExCommandArgs& args ) {
 	if ( rx.exactMatch(args.arg) ) {
 		yzDebug() << "Adding global mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		YZMapping::self()->addGlobalMapping(rx.cap(1), rx.cap(2));
+		if (rx.cap(1).startsWith("<CTRL>")) {
+			mModifierKeys << rx.cap(1);
+			for (int i = 0 ; i <= YZSession::mNbViews; i++) {
+				YZView *v = YZSession::me->findView(i);
+				if (v)
+					v->registerModifierKeys(rx.cap(1));
+			}
+		}
 	}
 	return CMD_OK;
 }
@@ -823,6 +831,14 @@ cmd_state YZModeEx::imap( const YZExCommandArgs& args ) {
 	if ( rx.exactMatch(args.arg) ) {
 		yzDebug() << "Adding insert mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		YZMapping::self()->addInsertMapping(rx.cap(1), rx.cap(2));
+		if (rx.cap(1).startsWith("<CTRL>")) {
+			mModifierKeys << rx.cap(1);
+			for (int i = 0 ; i <= YZSession::mNbViews; i++) {
+				YZView *v = YZSession::me->findView(i);
+				if (v)
+					v->registerModifierKeys(rx.cap(1));
+			}
+		}
 	}
 	return CMD_OK;
 }

@@ -149,7 +149,7 @@ void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand("c", &YZModeCommand::change) );
 	commands.append( new YZCommand("s", &YZModeCommand::change) );
 	commands.append( new YZCommand("d", &YZModeCommand::del) );
-	commands.append( new YZCommand("y", &YZModeCommand::yank) );
+	commands.append( new YZCommand("y", (PoolMethod) &YZModeVisual::yank) );
 	commands.append( new YZCommand("x", &YZModeCommand::del) );
 	commands.append( new YZCommand(">", &YZModeCommand::indent) );
 	commands.append( new YZCommand("<", &YZModeCommand::indent) );
@@ -239,6 +239,11 @@ void YZModeVisual::yankWholeLines(const YZCommandArgs &args) {
 	// move cursor to top left corner of selection (yes, this is correct behaviour :)
 	args.view->gotoxy( topLeft.x(), topLeft.y(), true );
 	args.view->updateStickyCol( );
+}
+void YZModeVisual::yank( const YZCommandArgs& args ) {
+	YZCursor topLeft = interval( args ).fromPos();
+	YZModeCommand::yank( args );
+	args.view->gotoxyAndStick( topLeft.x(), topLeft.y() );
 }
 void YZModeVisual::translateToVisualLine( const YZCommandArgs& args ) {
 	args.view->modePool()->change( MODE_VISUAL_LINE, false ); // just translate (don't leave current mode)

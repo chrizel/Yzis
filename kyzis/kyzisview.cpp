@@ -14,12 +14,14 @@ KYZisView::KYZisView ( KYZisDoc *doc, YZSession *_session, QWidget *parent, cons
 	last_event_done=0;
 	currentSession = _session;
 	editor = new KYZisEdit (this,"editor");
+	command = new KComboBox ( true, this, "command" );
 	status = new KStatusBar (this, "status");
 	status->insertItem("Yzis Ready",0);
 	status->setFixedHeight(status->height());
 	
 	QVBoxLayout *l = new QVBoxLayout(this);
 	l->addWidget(editor);
+	l->addWidget(command);
 	l->addWidget(status);
 
 	registerManager(this);

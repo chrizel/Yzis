@@ -8,7 +8,7 @@
 #include <kstatusbar.h>
 #include <qevent.h>
 #include <gui.h>
-
+#include <kcombobox.h>
 
 class KYZisEdit;
 
@@ -36,6 +36,7 @@ class KYZisView: public KTextEditor::View
 		KStatusBar *status;
 		int last_event_done;
 		YZSession *currentSession;
+		KComboBox *command;
 };
 
 #endif

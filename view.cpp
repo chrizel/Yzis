@@ -295,7 +295,7 @@ void YZView::sendKey( int c, int modifiers) {
 
 void YZView::updateCursor() {
 	static unsigned int lasty = 0; // small speed optimisation
-	static QString percentage(QObject::tr( "All" ));
+	static QString percentage(tr( "All" ));
 	unsigned int y = mCursor->getY();
 
 	if ( y != lasty ) {
@@ -593,7 +593,7 @@ QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
 QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
 	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_INSERT;
-	setStatusBar( QObject::tr( "-- INSERT --" ) );
+	setStatusBar( tr( "-- INSERT --" ) );
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -601,7 +601,7 @@ QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
 QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
 	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_REPLACE;
-	setStatusBar( QObject::tr( "-- REPLACE --" ) );
+	setStatusBar( tr( "-- REPLACE --" ) );
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -610,7 +610,7 @@ QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs args ) 
 	if (inputsBuff[ 0 ] == '?' ) reverseSearch = true; 
 	else reverseSearch = false;
 	mMode = YZ_VIEW_MODE_SEARCH;
-	setStatusBar( reverseSearch ? QObject::tr( "-- REVERSE SEARCH --" ) : QObject::tr( "-- SEARCH --" ) );
+	setStatusBar( reverseSearch ? tr( "-- REVERSE SEARCH --" ) : tr( "-- SEARCH --" ) );
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -730,3 +730,4 @@ QString YZView::searchAgain( const QString& inputsBuff, YZCommandArgs args ) {
 	return QString::null;
 }
 
+#include "view.moc"

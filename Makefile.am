@@ -8,3 +8,5 @@ libyzis_la_SOURCES = line.cpp buffer.cpp view.cpp session.cpp cursor.cpp command
 DISTCLEANFILES = translator.h
 
 re : clean all
+
+METASOURCES = AUTO

@@ -21,6 +21,7 @@
 #define YZ_EX_EXECUTOR
 
 #include "view.h"
+#include <qobject.h>
 
 class YZView;
 
@@ -28,7 +29,9 @@ class YZView;
  * Entry point to execute Ex functions
  * This is TEMPORARY until we design Ex support properly
  */
-class YZExExecutor {
+class YZExExecutor : public QObject {
+	Q_OBJECT
+
 	public:
 		YZExExecutor();
 		~YZExExecutor();

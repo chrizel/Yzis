@@ -60,6 +60,7 @@ AC_CHECK_LIB($cf_ncurses, initscr,
 				  fi
 			  fi
 			  AC_CHECK_HEADERS(ncurses.h,[cf_cv_ncurses_header="ncurses.h"])
+			  AC_CHECK_HEADERS(ncursesw/ncurses.h,[cf_cv_ncurses_header="ncursesw.h"])
 			  ], [CF_CURSES_LIBS])
 if test "$have_ncurses" = "no" -a "$have_ncursesw" = "no" -a "$have_basic_ncurses" = "yes"; then
 	AC_MSG_WARN(WARNING Ncurses libraries with wide characters support not found, nyzis will be compiled with a basic ncurses.)

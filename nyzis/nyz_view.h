@@ -42,8 +42,7 @@ protected:
 	unsigned int	h, w;		/** height and width of the window */
 
 private:
-	void update_info(void) { getmaxyx(window, h, w); lines_vis = h;
-	}
+	void update_info(void) { getmaxyx(window, h, w); lines_vis = h; }
 
 };
 

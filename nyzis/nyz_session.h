@@ -22,9 +22,6 @@ class NYZSession : public YZSession {
 		void		event_loop();
 		void		update_status(const QString& msg);
 
-		void		save_cursor(void);
-		void		restore_cursor(void);
-
 	private:
 		WINDOW		*screen;	// whole (ncurses) screen (== stdscr)
 
@@ -33,9 +30,6 @@ class NYZSession : public YZSession {
 
 		WINDOW		*windows[NYZ_VIEW_MAX];
 		int		windows_nb;
-
-		int		save_cursor_x; /** only to be used by save/resore _cursor() until further notice */
-		int		save_cursor_y;
 
 };
 

@@ -14,6 +14,7 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b)
 	update_info();
 	//debug("w,h are %d,%d",w,h);
 	//
+	wmove(window,0,0 );
 	registerManager( this );
 }
 
@@ -53,22 +54,29 @@ void NYZView::handle_event(yz_event e)
 	unsigned int i;
 	QString	yzl;
 
+	int sx,sy; // save x,y
+
 	switch(e.id) {
 		case YZ_EV_SETLINE:
+			getyx(window,sy,sx);
 			l = e.setline.y - getCurrent();
 			yzl = e.setline.line;
 
 			/* not use addnstr here, will stop at \0  (i guess) */
-			move ( l, 0);
+			wmove (window, l, 0);
 			for (i=0; i<w && i<yzl.length(); i++)
-				addch(yzl[i].unicode());
-			for ( ; i< w; i++ ) addch( ' ' );
+				waddch(window, yzl[i].unicode());
+//				addch(yzl[i].unicode());
+			for ( ; i< w; i++ ) waddch(window, ' ' );
 
-//			refresh();
+			wmove(window,sy,sx );
+
+			wrefresh( window );
 //			debug("YZ_EV_SETLINE: received, line is %d", l);
 			break;
 		case YZ_EV_SETCURSOR:
-			move( e.setcursor.y - getCurrent(), e.setcursor.x) ;
+			wmove(window, e.setcursor.y - getCurrent(), e.setcursor.x) ;
+			wrefresh( window );
 //			debug("YZ_EV_SETCURSOR: received");
 			break;
 		case YZ_EV_SETSTATUS:

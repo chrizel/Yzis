@@ -70,12 +70,13 @@ void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
 	YZASSERT_MSG(x <= l.length(), QString("YZBuffer::addChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( c ).arg( x ).arg( l.length() ) );
 
 	if (x > l.length()) {
-		// if we let Qt proceed, it will append spaces to extend the line
+		// if we let Qt proceed, it would append spaces to extend the line
 		return;
 	}
 
-	l.insert(x, c);
+	// mUndoBuffer->addBufferOperation( ADDTEXT, c, x, y );
 
+	l.insert(x, c);
 	at(y)->setData(l);
 
 	/* inform the views */
@@ -100,11 +101,15 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 		return;
 	}
 
+	// mUndoBuffer->addBufferOperation( DELTEXT, l[x], x, y );
+	
 	/* do the actual modification */
 	l.remove(x, 1);
 	l.insert(x, c);
 
 	at(y)->setData(l);
+
+	// mUndoBuffer->addBufferOperation( ADDTEXT, c, x, y );
 
 	/* inform the views */
 	YZView *it;
@@ -123,6 +128,10 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 	if (l.isNull()) return;
 
 	YZASSERT_MSG( x < l.length(), QString("YZBuffer::delChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( count ).arg( x ).arg( l.length() ) );
+
+
+	// mUndoBuffer->addBufferOperation( DELTEXT, l.mid(x,count), x, y );
+	
 	/* do the actual modification */
 	l.remove(x, count);
 
@@ -163,6 +172,11 @@ void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
 
 	YZASSERT_MSG( col <= l.length(), QString("YZBuffer::addNewLine( %1, %2 ) but column %3 does not exist, line has %4 columns").arg( line ).arg( col ).arg( col ).arg( l.length() ) );
 	if (col > l.length() ) return;
+
+	// mUndoBuffer->addBufferOperation( DELTEXT, l.mid(col), col, line );
+	// mUndoBuffer->addBufferOperation( ADDLINE, "", col, line+1 );
+	// mUndoBuffer->addBufferOperation( ADDTEXT, l.mid(col), 0, line+1 );
+
 	//replace old line
 	at(line)->setData(l.left( col ));
 
@@ -170,6 +184,8 @@ void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
 	QString newline = l.mid( col );
 	if ( newline.isNull() ) newline = QString( "" );
 	mText.insert( line + 1, new YZLine(newline));
+
+
 	/* inform the views */
 	updateAllViews();
 }
@@ -177,22 +193,32 @@ void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
 void YZBuffer::deleteLine( unsigned int line ) {
 	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::deleteLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
 
-	if ( mText.count() > 1 )
-	 mText.remove(line);
-	else
-		at(line)->setData("");
+	if (line >= lineCount()) return;
+
+	// mUndoBuffer->addBufferOperation( DELLINE, "", col, line );
+
+	mText.remove(line);
+
 	updateAllViews(); //hmm ...
 }
 
 void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::addLine() : adding a line with '\n' inside" );
 	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::insertLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
+
+	// mUndoBuffer->addBufferOperation( ADDLINE, "", 0, line );
+	// mUndoBuffer->addBufferOperation( ADDTEXT, l, 0, line );
+
 	mText.insert(line, new YZLine(l));
 	updateAllViews();
 }
 
 void  YZBuffer::addLine(const QString &l) {
 	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::addLine() : adding a line with '\n' inside" );
+
+	// mUndoBuffer->addBufferOperation( ADDLINE, "", 0, mText->lineCount() );
+	// mUndoBuffer->addBufferOperation( ADDTEXT, l,  0, mText->lineCount()-1);
+
 	mText.append(new YZLine(l));
 	updateAllViews();
 }
@@ -202,8 +228,11 @@ void YZBuffer::replaceLine( unsigned int y, const QString& value ) {
 	YZASSERT_MSG( value.contains('\n')==false, "YZBuffer::replaceLine() : replacing a line with '\n' inside" );
 	YZASSERT_MSG( y < lineCount(), QString("YZBuffer::replaceLine( %1 ) but line does not exist, buffer has %3 lines").arg( y ).arg( lineCount() ) );
 	
-	if ( data( y ).isNull() )
-		return;
+	if ( data( y ).isNull() ) return;
+
+	// mUndoBuffer->addBufferOperation( DELTEXT, data(y).length(), 0, y );
+	// mUndoBuffer->addBufferOperation( ADDTEXT, value, 0, y );
+
 	at(y)->setData(value);
 	/* inform the views */
 	YZView *it;

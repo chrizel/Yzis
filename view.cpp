@@ -837,36 +837,36 @@ void YZView::gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int 
 	applyGoto( viewCursor, applyCursor );
 }
 
-QString YZView::moveDown( unsigned int nb_lines ) {
-	return moveDown( mainCursor, nb_lines );
+QString YZView::moveDown( unsigned int nb_lines, bool applyCursor ) {
+	return moveDown( mainCursor, nb_lines, applyCursor );
 }
-QString YZView::moveDown( YZViewCursor* viewCursor, unsigned int nb_lines ) {
+QString YZView::moveDown( YZViewCursor* viewCursor, unsigned int nb_lines, bool applyCursor ) {
 	//execute the code
 	unsigned int nextLine = QMIN( viewCursor->bufferY() + nb_lines, mBuffer->lineCount() - 1 );
-	gotoStickyCol( viewCursor, nextLine );
+	gotoStickyCol( viewCursor, nextLine, applyCursor );
 
 	//return something
 	return QString::null;
 }
 
-QString YZView::moveUp( unsigned int nb_lines ) {
-	return moveUp( mainCursor, nb_lines );
+QString YZView::moveUp( unsigned int nb_lines, bool applyCursor ) {
+	return moveUp( mainCursor, nb_lines, applyCursor );
 }
 
-QString YZView::moveUp( YZViewCursor* viewCursor, unsigned int nb_lines ) {
+QString YZView::moveUp( YZViewCursor* viewCursor, unsigned int nb_lines, bool applyCursor ) {
 	//execute the code
 	unsigned int nextLine = QMAX( viewCursor->bufferY() - nb_lines, 0 );
-	gotoStickyCol( viewCursor, nextLine );
+	gotoStickyCol( viewCursor, nextLine, applyCursor );
 
 	//return something
 	return QString::null;
 }
 
-QString YZView::moveLeft( int nb_cols, bool wrap ) {
-	return moveLeft( mainCursor, nb_cols, wrap );
+QString YZView::moveLeft( int nb_cols, bool wrap, bool applyCursor ) {
+	return moveLeft( mainCursor, nb_cols, wrap, applyCursor );
 }
 
-QString YZView::moveLeft( YZViewCursor* viewCursor, int nb_cols, bool wrap ) {
+QString YZView::moveLeft( YZViewCursor* viewCursor, int nb_cols, bool wrap, bool applyCursor ) {
 	int x=int(viewCursor->bufferX());
 	unsigned int y=viewCursor->bufferY();
 	x-=nb_cols;
@@ -888,18 +888,17 @@ QString YZView::moveLeft( YZViewCursor* viewCursor, int nb_cols, bool wrap ) {
 	}
 	gotoxy( viewCursor, (unsigned int)(x), y);
 
-//	if ( viewCursor == mainCursor ) UPDATE_STICKY_COL;
-	updateStickyCol( viewCursor );
+	if ( applyCursor ) updateStickyCol( viewCursor );
 
 	//return something
 	return QString::null;
 }
 
-QString YZView::moveRight( int nb_cols, bool wrap ) {
-	return moveRight( mainCursor, nb_cols, wrap );
+QString YZView::moveRight( int nb_cols, bool wrap, bool applyCursor ) {
+	return moveRight( mainCursor, nb_cols, wrap, applyCursor );
 }
 
-QString YZView::moveRight( YZViewCursor* viewCursor, int nb_cols, bool wrap ) {
+QString YZView::moveRight( YZViewCursor* viewCursor, int nb_cols, bool wrap, bool applyCursor ) {
 	unsigned int x=viewCursor->bufferX();
 	unsigned int y=viewCursor->bufferY();
 	x+=nb_cols;
@@ -921,8 +920,7 @@ QString YZView::moveRight( YZViewCursor* viewCursor, int nb_cols, bool wrap ) {
 	}
 	gotoxy( viewCursor, (unsigned int)(x), y);
 
-//	if ( viewCursor == mainCursor ) UPDATE_STICKY_COL;
-	updateStickyCol( viewCursor );
+	if ( applyCursor ) updateStickyCol( viewCursor );
 
 	//return something
 	return QString::null;
@@ -932,11 +930,12 @@ QString YZView::moveToFirstNonBlankOfLine( ) {
 	return moveToFirstNonBlankOfLine( mainCursor );
 }
 
-QString YZView::moveToFirstNonBlankOfLine( YZViewCursor* viewCursor ) {
+QString YZView::moveToFirstNonBlankOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
 	//execute the code
-	gotoxy( viewCursor, mBuffer->firstNonBlankChar(viewCursor->bufferY()) , viewCursor->bufferY());
+	gotoxy( viewCursor, mBuffer->firstNonBlankChar(viewCursor->bufferY()) , viewCursor->bufferY(), applyCursor );
 //	if ( viewCursor == mainCursor ) UPDATE_STICKY_COL;
-	updateStickyCol( viewCursor );
+	if ( applyCursor )
+		updateStickyCol( viewCursor );
 	
 	//return something
 	return QString::null;
@@ -946,11 +945,12 @@ QString YZView::moveToStartOfLine( ) {
 	return moveToStartOfLine( mainCursor );
 }
 
-QString YZView::moveToStartOfLine( YZViewCursor* viewCursor ) {
+QString YZView::moveToStartOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
 	//execute the code
-	gotoxy(viewCursor, 0 , viewCursor->bufferY());
+	gotoxy(viewCursor, 0 , viewCursor->bufferY(), applyCursor);
 //	if ( viewCursor == mainCursor )	UPDATE_STICKY_COL;
-	updateStickyCol( viewCursor );
+	if ( applyCursor )
+		updateStickyCol( viewCursor );
 	
 	//return something
 	return QString::null;
@@ -1013,10 +1013,10 @@ QString YZView::moveToEndOfLine( ) {
 	return moveToEndOfLine( mainCursor );
 }
 
-QString YZView::moveToEndOfLine( YZViewCursor* viewCursor ) {
-	gotoxy( viewCursor, mBuffer->textline( viewCursor->bufferY() ).length( ), viewCursor->bufferY());
-
-	stickyCol = STICKY_COL_ENDLINE;
+QString YZView::moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
+	gotoxy( viewCursor, mBuffer->textline( viewCursor->bufferY() ).length( ), viewCursor->bufferY(), applyCursor );
+	if ( applyCursor )
+		stickyCol = STICKY_COL_ENDLINE;
 	
 	return QString::null;
 }
@@ -1873,9 +1873,9 @@ void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
 	YZSession::mOptions.setQColorOption( key, option );
 }
 
-void YZView::gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y) {
-	if ( stickyCol == STICKY_COL_ENDLINE ) gotoxy( viewCursor, mBuffer->textline( Y ).length(), Y );
-	else gotodxy( viewCursor, stickyCol, Y );
+void YZView::gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor ) {
+	if ( stickyCol == STICKY_COL_ENDLINE ) gotoxy( viewCursor, mBuffer->textline( Y ).length(), Y, applyCursor );
+	else gotodxy( viewCursor, stickyCol, Y, applyCursor );
 }
 void YZView::updateStickyCol( YZViewCursor* viewCursor ) {
 	stickyCol = viewCursor->screenX();

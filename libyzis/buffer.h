@@ -99,7 +99,28 @@ public:
 	 * Insert line @param l at position @param line
 	 */
 	void insertLine(const QString &l, unsigned int line);
-	
+
+	/**
+	 * Opens a new line after the indicated position
+	 * @param col the position in line where to add a \n
+	 * @param line the line preceding the new line
+	 */
+	void addNewLine( unsigned int col, unsigned int line );
+
+	/**
+	 * Deletes the given line
+	 * @param line the line number to delete
+	 *
+	 * Note: the valid line numbers are between 0 and lineCount()-1
+	 */
+	void deleteLine( unsigned int line );
+
+	/**
+	 * Replaces the @param y line with the given @param value
+	 */
+	void replaceLine( unsigned int y, const QString& value );
+
+			
 	/**
 	 * Get the current filename of the buffer
 	 * @return the filename
@@ -142,26 +163,6 @@ public:
 	 * @return a QStringList containing the texts
 	 */
 	QString getWholeText();
-
-	/**
-	 * Opens a new line after the indicated position
-	 * @param col the position in line where to add a \n
-	 * @param line the line preceding the new line
-	 */
-	void addNewLine( unsigned int col, unsigned int line );
-
-	/**
-	 * Deletes the given line
-	 * @param line the line number to delete
-	 *
-	 * Note: the valid line numbers are between 0 and lineCount()-1
-	 */
-	void deleteLine( unsigned int line );
-
-	/**
-	 * Replaces the @param y line with the given @param value
-	 */
-	void replaceLine( unsigned int y, const QString& value );
 
 	/**
 	 * Finds a line in the buffer

@@ -55,8 +55,11 @@ class YZView {
 
 		/**
 		 * transfer a key event from GUI to core
+		 * @arg c is the key value as in QKeyEvent::key()
+		 * @arg modifiers is ored Qt::ShiftButton, Qt::ControlButton, Qt::AltButton 
+		 * as in QKeyEvent::stat()
 		 */
-		void sendKey(int , int);
+		void sendKey(int c, int modifiers);
 
 		/** 
 		 * Returns the index of the first line displayed on the view

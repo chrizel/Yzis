@@ -150,7 +150,7 @@ void KYZisView::syncViewInfo() {
 	buffer->setModified( mBuffer->fileIsModified() );
 
 	status->changeItem(fileInfo, 90);
-	if (mVScroll->value() != (int)getCurrentTop())
+	if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->draggingSlider())
 		mVScroll->setValue( getCurrentTop() );
 	emit cursorPositionChanged();
 	modeChanged();
@@ -265,15 +265,26 @@ void KYZisView::scrollView( int value ) {
 
 	// only redraw if the view actually moves
 	if (value != getCurrentTop()) {
-		alignViewVertically( value );
+		alignViewBufferVertically( value );
 
-		mVScroll->setValue( value );
+		if (!mVScroll->draggingSlider())
+			mVScroll->setValue( value );
+
+
+		// find out which line in the buffer that's on the bottom of the screen
+		int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
+		if (getLocalBoolOption( "wrap" )) {
+			YZViewCursor* temp = new YZViewCursor( this );
+			gotodxdy( temp, getCursor()->getX(), getDrawCurrentTop() + getLinesVisible() - 1, false );
+			lastBufferLineVisible = temp->bufferY();
+			delete temp;
+		}
 
 		// move cursor if it scrolled off the screen
 		if (getBufferCursor()->getY() < getCurrentTop())
 			gotoxy(getBufferCursor()->getX(), getCurrentTop());
-		else if (getBufferCursor()->getY() > getCurrentTop()+getLinesVisible() - 1)
-			gotoxy(getBufferCursor()->getX(), getCurrentTop()+getLinesVisible()-1);
+		else if (getBufferCursor()->getY() > lastBufferLineVisible)
+			gotoxy( getBufferCursor()->getX(), lastBufferLineVisible );
 
 		m_editor->setCursor( mainCursor->screenX(), mainCursor->screenY() );
 

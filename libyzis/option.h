@@ -29,6 +29,21 @@
 #include <limits.h> // for INT_MAX and INT_MIN
 #include "yzis.h"
 
+/** The context in which the value of an option is valid. Is essentially the
+ * context type and a string representing an instance of the context
+ */
+struct YZOptionContext {
+	context_t mContextType;
+	QString mInstance;
+	
+	/** Convenience function that returns a context specifying the current session */
+	static YZOptionContext currentSession();
+	/** Convenience function that returns a context specifying the current buffer */
+	static YZOptionContext currentBuffer();
+	/** Convenience function that returns a context specifying the current view */
+	static YZOptionContext currentView();
+};
+
 /** The abstract base class of the classes representing options of a specific value type.
  * Provides the interface to retrieve basic information about the option: name,
  * group, context, default value, value type and if a value is valid.
@@ -36,16 +51,16 @@
 class YZOption {
 protected:
 	QString mName;
-	context mContext;
+	context_t mContextType;
 	QString mDefault;
 	QString mDescription;
 public:
-	YZOption(const QString &name, context cxt, const QString &def, const QString &desc=QString::null) {
-		mName=name; mContext=cxt; mDefault=def; mDescription=desc;
+	YZOption(const QString &name, context_t cxt, const QString &def, const QString &desc=QString::null) {
+		mName=name; mContextType=cxt; mDefault=def; mDescription=desc;
 	}
 	virtual ~YZOption() {}
 	const QString &getName() const { return mName; }
-	context getContext() const { return mContext; }
+	context_t getContextType() const { return mContextType; }
 	const QString &getStringDefault() const { return mDefault; }
 	const QString &getDescription() const { return mDescription; }
 	virtual value_t getValueType() const = 0;
@@ -59,8 +74,8 @@ class YZIntOption : public YZOption {
 protected:
 	int mMin, mMax;
 public:
-	YZIntOption(const QString &name, context cxt, int def, int min=INT_MIN, int max=INT_MAX);
-	YZIntOption(const QString &name, context cxt, const QString &desc, int def, int min=INT_MIN, int max=INT_MAX);
+	YZIntOption(const QString &name, context_t cxt, int def, int min=INT_MIN, int max=INT_MAX);
+	YZIntOption(const QString &name, context_t cxt, const QString &desc, int def, int min=INT_MIN, int max=INT_MAX);
 
 	int getMin() const { return mMin; }
 	int getMax() const { return mMax; }
@@ -80,8 +95,8 @@ class YZStringOption : public YZOption {
 protected:
 	QRegExp mRegExp;
 public:
-	YZStringOption(const QString &name, context cxt, const QString &def, const QRegExp &regExp=QRegExp(".*"));
-	YZStringOption(const QString &name, context cxt, const QString &desc, const QString &def, const QRegExp &regExp=QRegExp(".*"));
+	YZStringOption(const QString &name, context_t cxt, const QString &def, const QRegExp &regExp=QRegExp(".*"));
+	YZStringOption(const QString &name, context_t cxt, const QString &desc, const QString &def, const QRegExp &regExp=QRegExp(".*"));
 
 	const QString &getDefault() const { return getStringDefault(); }
 	bool isValid(const QString &value) const;
@@ -97,8 +112,8 @@ private:
  */
 class YZBoolOption : public YZOption {
 public:
-	YZBoolOption(const QString &name, context cxt, bool def);
-	YZBoolOption(const QString &name, context cxt, const QString &desc, bool def);
+	YZBoolOption(const QString &name, context_t cxt, bool def);
+	YZBoolOption(const QString &name, context_t cxt, const QString &desc, bool def);
 
 	bool getDefault() const { return mDefault == "yes" || mDefault == "on" || mDefault == "true"; }
 	bool isValid(const QString &value) const;
@@ -113,8 +128,8 @@ private:
  */
 class YZColorOption : public YZOption {
 public:
-	YZColorOption(const QString &name, context cxt, const QColor &def);
-	YZColorOption(const QString &name, context cxt, const QString &desc, const QColor &def);
+	YZColorOption(const QString &name, context_t cxt, const QColor &def);
+	YZColorOption(const QString &name, context_t cxt, const QString &desc, const QColor &def);
 
 	QColor getDefault() const { return QColor(mDefault); }
 	bool isValid(const QString &name) const;

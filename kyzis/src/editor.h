@@ -136,6 +136,11 @@ class KYZisEdit : public QWidget {
 		virtual void focusInEvent( QFocusEvent * );
 		virtual void focusOutEvent( QFocusEvent * );
 
+		// for InputMethod
+		void imStartEvent( QIMEvent * );
+		void imComposeEvent( QIMEvent * );
+		void imEndEvent( QIMEvent * );
+
 	private :
 		void initKeys();
 		KActionCollection* actionCollection;

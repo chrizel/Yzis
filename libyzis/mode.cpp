@@ -34,6 +34,7 @@ YZMode::YZMode() {
 	mString = "if you see me, there is a problem :)";
 	mEditMode = false;
 	mSelMode = false;
+	mIM = false;
 	mMapMode = normal;
 	mRegistered = false;
 }
@@ -48,6 +49,9 @@ bool YZMode::isEditMode() const {
 }
 bool YZMode::isSelMode() const {
 	return mSelMode;
+}
+bool YZMode::supportsInputMethod() const {
+	return mIM;
 }
 mapping_t YZMode::mapMode() const {
 	return mMapMode;
@@ -71,6 +75,12 @@ void YZMode::enter( YZView* ) {
 void YZMode::leave( YZView* ) {
 }
 void YZMode::cursorMoved( YZView* ) {
+}
+void YZMode::imBegin( YZView* ) {
+}
+void YZMode::imCompose( YZView*, const QString& ) {
+}
+void YZMode::imEnd( YZView*, const QString& ) {
 }
 
 

@@ -1,3 +1,7 @@
+2005-03-29 panard
+  * libyzis, kyzis
+    add Input Method Support (thanks to Takumi Asaki)
+
 2005-03-19 Takumi Asaki (patch)
   * translations
     add Japanese translation

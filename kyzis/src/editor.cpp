@@ -57,6 +57,9 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	rootxpm = new KRootPixmap( this );
 	setTransparent( false );
 
+	// for Input Method
+	setInputMethodEnabled( true );
+
 	initKeys();
 	mCell.clear();
 	mCursor = new KYZisCursor( this, KYZisCursor::SQUARE );
@@ -178,6 +181,9 @@ void KYZisEdit::setCursor( int c, int l ) {
 		x = width() - x - mCursor->width();
 	}
 	mCursor->move( x, l * fontMetrics().lineSpacing() );
+
+	// need for InputMethod (OverTheSpot)
+	setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
 }
 
 QPoint KYZisEdit::cursorCoordinates( ) {
@@ -607,6 +613,37 @@ void KYZisEdit::sendMultipleKey( const QString& keys ) {
 
 const QString& KYZisEdit::convertKey( int key ) {
 	return keys[ key ];
+}
+
+// for InputMethod (OnTheSpot)
+void KYZisEdit::imStartEvent( QIMEvent *e )
+{
+	if ( mParent->modePool()->current()->supportsInputMethod() ) {
+		mParent->modePool()->current()->imBegin( mParent );
+	}
+	e->accept();
+}
+
+// for InputMethod (OnTheSpot)
+void KYZisEdit::imComposeEvent( QIMEvent *e ) {
+	//yzDebug() << "KYZisEdit::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
+	if ( mParent->modePool()->current()->supportsInputMethod() ) {
+		mParent->modePool()->current()->imCompose( mParent, e->text() );
+		e->accept();
+	} else {
+		e->ignore();
+	}
+}
+
+// for InputMethod (OnTheSpot)
+void KYZisEdit::imEndEvent( QIMEvent *e ) {
+//	yzDebug() << "KYZisEdit::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
+	if ( mParent->modePool()->current()->supportsInputMethod() ) {
+		mParent->modePool()->current()->imEnd( mParent, e->text() );
+	} else {
+		mParent->sendKey( e->text() );
+	}
+	e->accept();
 }
 
 #include "editor.moc"

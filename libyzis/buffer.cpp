@@ -569,7 +569,7 @@ void YZBuffer::setHighLight( uint mode ) {
 		m_highlight = h;
 
 		makeAttribs();
-		//emit hlChanged();
+		highlightingChanged();
 	}
 }
 

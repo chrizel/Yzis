@@ -323,6 +323,11 @@ public:
 	YzisHighlighting *highlight() { return m_highlight; }
 
 	/**
+	 * Notify GUIs that HL changed
+	 */
+	virtual void highlightingChanged() = 0;
+
+	/**
 	 * Finds the @ref YZLine pointer for a line in the buffer
 	 * @param line the line to return
 	 * @return a YZLine pointer or 0 if none

@@ -30,6 +30,7 @@ class NYZisDoc : public YZBuffer {
 
 		bool popupFileSaveAs();
 		void filenameChanged();
+		void highlightingChanged() {};
 };
 
 #endif

@@ -22,11 +22,12 @@
 
 #include <ktexteditor/document.h>
 #include <ktexteditor/editinterface.h>
+#include <ktexteditor/highlightinginterface.h>
 #include <buffer.h>
 #include <view.h>
 #include <session.h>
 
-class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public YZBuffer {
+class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public YZBuffer {
 	Q_OBJECT
 		
 	public:
@@ -55,6 +56,7 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		bool removeText (  uint startLine, uint startCol, uint endLine, uint endCol );
 		bool popupFileSaveAs();
 		void filenameChanged();
+		void highlightingChanged();
 
 		/*
 		 * @internal
@@ -63,6 +65,15 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		int getkid() { return mkId; }
 
 		void applyConfig( );
+
+
+		//HL interface
+		unsigned int highlightingInterfaceNumber () const ;
+		virtual unsigned int hlMode ();
+		virtual bool setHlMode (unsigned int mode);
+		virtual unsigned int hlModeCount ();
+		virtual QString hlModeName (unsigned int mode);
+		virtual QString hlModeSectionName (unsigned int mode);
 
 	public slots:
 		//signals to emit
@@ -80,6 +91,9 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		QWidget *m_parent;
 		//KMdi identifier , used for DCOP communication to identify a buffer/view
 		int mkId;
+
+	signals:
+		void hlChanged();
 };
 
 #endif

@@ -223,4 +223,29 @@ void KYZisDoc::filenameChanged() {
 	}
 }
 
+unsigned int KYZisDoc::hlMode () {
+	return YzisHlManager::self()->findHl( highlight() );
+}
+
+bool KYZisDoc::setHlMode (unsigned int mode) {
+	setHighLight( mode );
+	return true;
+}
+
+unsigned int KYZisDoc::hlModeCount () {
+	return YzisHlManager::self()->highlights();
+}
+
+QString KYZisDoc::hlModeName (unsigned int mode) {
+	return YzisHlManager::self()->hlName( mode );
+}
+
+QString KYZisDoc::hlModeSectionName (unsigned int mode) {
+	return YzisHlManager::self()->hlSection( mode );
+}
+
+void KYZisDoc::highlightingChanged( ) {
+	emit hlChanged();
+}
+
 #include "document.moc"

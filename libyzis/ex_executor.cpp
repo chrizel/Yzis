@@ -145,27 +145,56 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 }
 
 QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
-	QRegExp rx ( "setl\\S*(\\s+)(.*)=(.*)" ); //option with value
-	QRegExp rx2 ( "setl\\S*(\\s+)no(.*)" ); //deactivate a bool option
-	QRegExp rx3 ( "setl\\S*(\\s+)(.*)" ); //activate a bool option
+	QRegExp rx ( "setl\\S*(\\s+)(\\w*)(\\+|-)?=(.*)" ); //option with value
+	QRegExp rx2 ( "setl\\S*(\\s+)no(\\w*)" ); //deactivate a bool option
+	QRegExp rx3 ( "setl\\S*(\\s+)(\\w*)" ); //activate a bool option
 
 	YZSession::mOptions.setGroup("Global");
 
 	if ( rx.exactMatch( inputs ) ) {
-		KOption *opt = YZSession::mOptions.getOption(rx.cap( 2 ).simplifyWhiteSpace());
+		QString option = rx.cap( 2 ).simplifyWhiteSpace();
+		bool hasOperator = rx.numCaptures() == 4; // do we have a +/- in the set command ?
+		QString value = hasOperator ? rx.cap( 4 ).simplifyWhiteSpace() : rx.cap( 3 ).simplifyWhiteSpace();
+		KOption *opt = YZSession::mOptions.getOption(option);
 		if ( !opt ) {
-			view->mySession()->popupMessage(tr("Invalid option given"));
+			view->mySession()->popupMessage(tr("Invalid option given : ") + option);
 			return QString::null;
 		}
+		if ( hasOperator ) {
+			QString oldVal;
+			switch ( opt->getType() ) {
+				case view_opt:
+					oldVal = view->getLocalStringOption( option );
+					break;
+				case buffer_opt:
+					oldVal = view->myBuffer()->getLocalStringOption( option );
+					break;	
+			}
+			switch ( opt->getValueType() ) {
+				case string_t :
+					if ( rx.cap( 3 ) == "+" ) value = oldVal + value;
+					else if ( rx.cap( 3 ) == "-" ) value = oldVal.remove( value );
+					break;
+				case int_t :
+					if ( rx.cap( 3 ) == "+" ) value = QString::number( oldVal.toInt() + value.toInt() );
+					else if ( rx.cap( 3 ) == "-" ) value = QString::number( oldVal.toInt() - value.toInt() );
+					break;
+				case bool_t :
+					view->mySession()->popupMessage(tr("This option cannot be switched this way, this is a boolean option."));
+					return QString::null;
+					break;
+			}
+		}
+		yzDebug() << "Setting option " << option << " to " << value << endl;
 		switch ( opt->getType() ) {
 			case global_opt :
 				view->mySession()->popupMessage(tr("This option is a global option which cannot be changed with setlocal"));
 				return QString::null;
 			case view_opt :
-				view->setLocalQStringOption( rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());
+				view->setLocalQStringOption( option, value );
 				break;
 			case buffer_opt:
-				view->myBuffer()->setLocalQStringOption( rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());
+				view->myBuffer()->setLocalQStringOption( option, value );
 				break;
 		}
 	} else if ( rx2.exactMatch( inputs )) {
@@ -236,7 +265,7 @@ QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
 }
 
 QString YZExExecutor::mkyzisrc ( YZView *, const QString& ) {
-	YZSession::mOptions.saveTo( QDir::currentDirPath() + "/yzis.conf" );
+	YZSession::mOptions.saveTo( QDir::currentDirPath() + "/yzis.conf", "Global" );
 	return QString::null;
 }
 

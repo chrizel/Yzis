@@ -25,11 +25,20 @@
 #include <qstringlist.h>
 #include <qcolor.h>
 
+//visibility of the option
 enum option_t {
 	global_opt,
 	buffer_opt,
 	view_opt
 };
+
+//kind of value stored by the option
+enum value_t {
+	int_t, //is an integer
+	string_t, // is a string 
+	bool_t // is a boolean
+};
+
 
 /**
  * Class to handle a single option
@@ -37,10 +46,10 @@ enum option_t {
  */
 class KOption {
 	public:
-		KOption( QString key, QString group, QString value, QString defaultValue, option_t type);
-		KOption( QString key, QString group, QStringList value, QStringList defaultValue, option_t type);
-		KOption( QString key, QString group, int value, int defaultValue, option_t type);
-		KOption( QString key, QString group, bool value, bool defaultValue, option_t type);
+		KOption( const QString& key, const QString& group, const QString& value, const QString& defaultValue, option_t type, value_t vtype);
+		KOption( const QString& key, const QString& group, const QStringList& value, const QStringList& defaultValue, option_t type, value_t vtype);
+		KOption( const QString& key, const QString& group, int value, int defaultValue, option_t type, value_t vtype);
+		KOption( const QString& key, const QString& group, bool value, bool defaultValue, option_t type, value_t vtype);
 		~KOption() {}
 
 		const QString& getGroup() { return mGroup; }
@@ -48,6 +57,7 @@ class KOption {
 		const QString& getDefault() { return mDefaultValue; }
 		const QString& getValue() { return mValue; }
 		option_t getType() { return mType; }
+		value_t getValueType() { return mValueType; }
 
 		void setValue( const QString& value ) { mValue = value; }
 
@@ -57,6 +67,7 @@ class KOption {
 		QString mDefaultValue;
 		QString mValue;
 		option_t mType;
+		value_t mValueType;
 };
 
 /**

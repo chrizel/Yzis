@@ -22,23 +22,24 @@
 #define KYZIS_FACTORY_H
 
 #include <kparts/factory.h>
+#include <kaboutdata.h>
+#include <kinstance.h>
 #include "session.h"
 #include "kyzis.h"
-
-class KInstance;
-class KAboutData;
 
 class KYZisFactory : public KParts::Factory, public YZSession
 {
 	Q_OBJECT
 public:
-	KYZisFactory(bool clone=false);
+	KYZisFactory();
 	virtual ~KYZisFactory();
 
 	KParts::Part *createPartObject (QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args );
 
 	static const KAboutData *aboutData();
-	static KInstance* instance();
+	static KYZisFactory* self();
+
+	inline KInstance* instance() { return &m_instance; }
 
 	//GUI interface
 	void quit(int errorCode);
@@ -62,16 +63,13 @@ public:
 protected:
 
 private:
-    static void ref();
-    static void deref();
-
-    static unsigned long s_refcnt;
 	//doh , QPtrList are evil , drop them ! XXX
     static QPtrList<class KYZisDoc> s_documents;
     static QPtrList<class KYZisView> s_views;
 
-    static KInstance *s_instance;
-    static KAboutData *s_aboutData;
+//    static KInstance *s_instance;
+    KAboutData m_aboutData;
+	KInstance m_instance;
 
 public:
 	static KYZisFactory *s_self;

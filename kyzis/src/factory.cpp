@@ -34,6 +34,7 @@
 #include <qstring.h>
 #include <ktexteditor/document.h>
 #include <kmessagebox.h>
+#include <kstaticdeleter.h>
 
 #include "settings.h"
 #include "factory.h"
@@ -43,49 +44,40 @@
 #include "yzis.h"
 
 KYZisDoc *KYZisFactory::currentDoc=0;
-KYZisFactory *KYZisFactory::s_self = 0;
 Kyzis *KYZisFactory::mMainApp = 0;
-unsigned long int KYZisFactory::s_refcnt = 0;
 QPtrList<class KYZisDoc> KYZisFactory::s_documents;
 QPtrList<class KYZisView> KYZisFactory::s_views;
 
-K_EXPORT_COMPONENT_FACTORY( libkyzispart, KYZisFactory)
 
-KInstance* KYZisFactory::s_instance = 0L;
+class KYZisPublicFactory : public KParts::Factory {
+	public :
+		KParts::Part *createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args ) {
+			return KYZisFactory::self()->createPartObject( parentWidget, widgetName, parent, name, classname, args );
+		}
+};
 
-KYZisFactory::KYZisFactory( bool clone ) {
-	if ( clone ) {
-		ref();
-		return;
-	}
+K_EXPORT_COMPONENT_FACTORY( libkyzispart, KYZisPublicFactory)
+
+KYZisFactory *KYZisFactory::s_self = 0;
+
+KYZisFactory::KYZisFactory() :
+	m_aboutData("kyzispart", I18N_NOOP("Kyzis Part"), VERSION_CHAR, I18N_NOOP("Embeddable vi-like editor component"),KAboutData::License_LGPL_V2, I18N_NOOP("(c)2002-2005 The Kyzis Authors"),0,"http://www.yzis.org"),
+	m_instance( &m_aboutData ) {
 	s_self = this;
-	s_refcnt++;
 	Settings::self()->readConfig();
 	guiStarted();
 }
 
 KYZisFactory::~KYZisFactory() {
-//	if ( s_self == this ) {
-		delete s_instance->aboutData();
-		delete s_instance;
-		s_instance=0;
-//	}	else
-//		deref();
 }
 
-void KYZisFactory::deref() {
-	if ( !--s_refcnt && s_self )
-	{
-		delete s_self;
-		s_self = 0;
-	}
-}
+static KStaticDeleter<KYZisFactory> sdFactory;
 
-void KYZisFactory::ref() {
-	if ( !s_refcnt && !s_self )
-		s_self = new KYZisFactory;
+KYZisFactory *KYZisFactory::self() {
+	if ( !s_self )
+		sdFactory.setObject(s_self, new KYZisFactory());
 
-	s_refcnt++;
+	return s_self;
 }
 
 KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name, const char *classname, const QStringList &args) {
@@ -118,11 +110,11 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	return doc;
 }
 
-KInstance* KYZisFactory::instance() {
+/*KInstance* KYZisFactory::instance() {
   if( !s_instance )
     s_instance = new KInstance( aboutData() );
   return s_instance;
-}
+}*/
 
 const KAboutData *KYZisFactory::aboutData() {
 	KAboutData *data = new KAboutData ("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR,

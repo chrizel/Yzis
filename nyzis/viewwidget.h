@@ -25,7 +25,7 @@
  */
 
 #include "view.h"
-#include <curses.h>
+#include <ncurses.h>
 #include <qstringlist.h>
 #include <qmap.h>
 #include <qnamespace.h>

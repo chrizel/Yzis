@@ -22,7 +22,7 @@
  */
 
 #include "viewwidget.h"
-#include <curses.h>
+#include <ncurses.h>
 #include "factory.h"
 #include "session.h"
 #include "document.h"

@@ -36,6 +36,10 @@ void YZMotionPool::initPool() {
 	addMotion (YZMotion( "\\b\\w+\\b", REGEXP, 0, 0, true ), "[0-9]*b");
 	addMotion (YZMotion( "$", REGEXP, 0, 0, false ), "\\$" );
 	addMotion (YZMotion( "^", REGEXP, 0, 0, true ), "0");
+	addMotion (YZMotion( "", RELATIVE, -1, 0, true ), "[0-9]*h");
+	addMotion (YZMotion( "", RELATIVE, 1, 0, true ), "[0-9]*l");
+	addMotion (YZMotion( "", RELATIVE, 0, -1, true ), "[0-9]*k");
+	addMotion (YZMotion( "", RELATIVE, 0, 1, true ), "[0-9]*j");
 }
 
 void YZMotionPool::addMotion(const YZMotion& regexp, const QString& key){
@@ -67,6 +71,35 @@ bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, bool 
 	YZMotion& motion = findMotion(inputsMotion, &ok);
 	if ( !ok ) return false;
 	*backward = motion.backward;
+	if ( motion.type == REGEXP )
+		return applyRegexpMotion( inputsMotion, motion, view, result );
+	else if ( motion.type == RELATIVE )
+		return applyRelativeMotion( inputsMotion, motion, view, result );
+	return false;
+}
+
+bool YZMotionPool::applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor *result ) {
+	int counter = 1; //number of times we have to match
+	QRegExp rx ( "([0-9]+).+" );
+	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
+	yzDebug() << "Loop " << counter << " times" << endl;
+	QRegExp rex( motion.rex );
+	result->setX(view->getBufferCursor()->getX());
+	result->setY(view->getBufferCursor()->getY());
+	int idx=-1;
+	int count = 0 ;
+
+	while (count < counter) {
+		result->setX( result->getX() + motion.x );
+		result->setY( result->getY() + motion.y );
+		count++;
+	}
+	if ( count ) return true;
+
+	return false;
+}
+
+bool YZMotionPool::applyRegexpMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor *result ) {
 	int counter = 1; //number of times we have to match
 	QRegExp rx ( "([0-9]+).+" );
 	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
@@ -97,7 +130,7 @@ bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, bool 
 		while ( count < counter ) {
 			const QString& current = view->myBuffer()->textline( result->getY() );
 			if ( current.isNull() ) return false;
-			idx = rex.searchRev( current, result->getX() - 1 >= 0 ? result->getX() - 1 : result->getX() );
+			idx = rex.searchRev( current, result->getX() >= 1 ? result->getX() - 1 : result->getX() );
 			if ( idx != -1 ) {
 				yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
 				count++; //one match

@@ -170,6 +170,8 @@ void YZModeVisual::commandInsert( const YZCommandArgs& args ) {
 //	args.view->gotoxy( pos.getX(), pos.getY() );
 //}
 void YZModeVisual::yankWholeLines(const YZCommandArgs &args) {
+	YZCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
+
 	YZInterval i = interval(args);
 	unsigned int lines = i.toPos().getY() - i.fromPos().getY() + 1;
 
@@ -183,6 +185,10 @@ void YZModeVisual::yankWholeLines(const YZCommandArgs &args) {
 	}
 
 	args.view->modePool()->pop();
+
+	// move cursor to top left corner of selection (yes, this is correct behaviour :)
+	args.view->gotoxy( topLeft.getX(), topLeft.getY(), true );
+	args.view->updateStickyCol( );
 }
 void YZModeVisual::translateToVisualLine( const YZCommandArgs& args ) {
 	args.view->modePool()->change( MODE_VISUAL_LINE, false ); // just translate (don't leave current mode)

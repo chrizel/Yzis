@@ -446,10 +446,12 @@ void YZView::alignViewVertically( unsigned int line ) {
 	} else if ( line > 0 ) newcurrent = line;
 	if ( newcurrent > 0 ) {
 		initDraw( 0, 0, 0, 0 );
-		gotody( newcurrent );
-		unsigned int sCursorY = sCursor->getY();
-		initDraw( 0, 0, 0, 0 );
-		gotoy ( sCursorY + ( alignTop ? 0 : 1 ) );
+		if ( wrap ) {
+			gotody( newcurrent );
+			newcurrent = sCursor->getY() + ( wrapNextLine ? 1 : 0 );
+			initDraw( 0, 0, 0, 0 );
+		}
+		gotoy ( newcurrent );
 		dCurrentTop = rCursor->getY( );
 		mCurrentTop = sCursor->getY( );
 		initDraw( );

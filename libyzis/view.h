@@ -544,7 +544,7 @@ class YZView {
 		YzisAttribute *rHLAttributes;
 
 		QString  sCurLine;
-		int sCurLineLength;
+		unsigned int sCurLineLength;
 
 		void gotoy( unsigned int );
 		void gotody( unsigned int );

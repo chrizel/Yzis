@@ -874,6 +874,7 @@ class YZView {
 		QString m_word2Complete;
 		QString m_lastMatch;
 		QStringList m_oldProposals;
+		bool m_lastCompletionDir;
 };
 
 #endif /*  YZ_VIEW_H */

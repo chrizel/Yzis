@@ -2200,6 +2200,7 @@ void YZView::initCompletion() {
 	m_word2Complete = list[0];
 	m_completionCursor->setCursor(mainCursor->buffer());
 	m_oldProposals.clear();
+	m_lastCompletionDir = true;
 }
 
 QString YZView::doComplete(bool forward) {
@@ -2207,6 +2208,11 @@ QString YZView::doComplete(bool forward) {
 	unsigned int matchedLength=0;
 	bool found=false;
 	QString list="";
+	
+	if (m_lastCompletionDir != forward) {
+		m_oldProposals.clear();
+		m_lastCompletionDir = forward;
+	}
 	
 	do {
 		if (forward) {

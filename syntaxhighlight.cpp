@@ -3232,12 +3232,12 @@ YzisHlManager::YzisHlManager()
   setDefaults(0,list);
   //read init files
 #if QT_VERSION < 0x040000
-  if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))
+  if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/hl.lua"))
     YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/hl.lua" );
   if (QFile::exists(QDir::homeDirPath() + "/.yzis/hl.lua"))
     YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/hl.lua" );
 #else
-  if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
+  if (QFile::exists(QDir::rootPath() + "/etc/yzis/hl.lua"))
     YZExLua::instance()->source( NULL, QDir::rootPath() + "/etc/yzis/hl.lua" );
   if (QFile::exists(QDir::homePath() + "/.yzis/hl.lua"))
     YZExLua::instance()->source( NULL, QDir::homePath() + "/.yzis/hl.lua" );

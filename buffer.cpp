@@ -69,8 +69,6 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	displayIntro();
 	mSession->addBuffer( this );
 	yzDebug() << "NEW BUFFER CREATED : " << mPath << endl;
-	//TEST XXX
-	//setHighLight( YzisHlManager::self()->nameFind( "C++" ) );//we have only C++ for now :)
 }
 
 YZBuffer::~YZBuffer() {

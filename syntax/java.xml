@@ -2809,7 +2809,7 @@
 				<Detect2Chars attribute="Comment" context="Commentar 2" char="/" char1="*" beginRegion="Comment"/>
 				<DetectChar attribute="Symbol" context="#stay" char="{" beginRegion="Brace1"/>
 				<DetectChar attribute="Symbol" context="#stay" char="}" endRegion="Brace1"/>
-				<RegExpr attribute="Keyword" context="Imports" String="^\s*(package|import)" />
+				<RegExpr attribute="Keyword" context="Imports" String="^\s*(package|import)\s+" />
 				<RegExpr attribute="Function" context="#stay" String="\b[_\w][_\w\d]*(?=[\s]*[(])" />
 				<RegExpr attribute="Symbol" context="Member" String="[.]{1,1}" />
 				<AnyChar attribute="Symbol" context="#stay" String=":!%&amp;()+,-/.*&lt;=&gt;?[]|~^&#59;"/>

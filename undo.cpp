@@ -155,6 +155,7 @@ void YZUndoBuffer::undo( YZView* pView )
 		return;
 	}
 	setInsideUndo( true );
+	pView->setPaintAutoCommit(false);
 
 	UndoItem * undoItem = mUndoItemList.at(mCurrentIndex-1);
 	UndoItemContentIterator it( *undoItem );
@@ -165,6 +166,7 @@ void YZUndoBuffer::undo( YZView* pView )
 	}
 	mCurrentIndex--;
 	pView->gotoxy(undoItem->endCursorX, undoItem->endCursorY);
+	pView->commitPaintEvent();
 	setInsideUndo( false );
 }
 

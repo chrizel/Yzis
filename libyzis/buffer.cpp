@@ -198,7 +198,7 @@ void  YZBuffer::appendLine(const QString &l) {
 	mText.append(new YZLine(l));
 	if ( !mLoading && m_highlight != 0L ) {
 		bool ctxChanged = false;
-		QMemArray<signed char> foldingList;
+		QMemArray<uint> foldingList;
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
 //		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
@@ -227,7 +227,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 		bool ctxChanged = true;
 		bool hlChanged = false;
 		while ( ctxChanged && hlLine < lineCount()) {
-			QMemArray<signed char> foldingList;
+			QMemArray<uint> foldingList;
 			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
 			if ( hlLine != line ) hlChanged = true;
 			hlLine++;
@@ -292,7 +292,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 		bool ctxChanged = true;
 		bool hlChanged = false;
 		while ( ctxChanged && hlLine < lineCount()) {
-			QMemArray<signed char> foldingList;
+			QMemArray<uint> foldingList;
 			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
 			if ( hlLine != line ) hlChanged = true;
 			hlLine++;
@@ -384,7 +384,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 		bool ctxChanged = true;
 		bool hlChanged = false;
 		while ( ctxChanged && hlLine < lineCount()) {
-			QMemArray<signed char> foldingList;
+			QMemArray<uint> foldingList;
 			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
 			if ( hlLine != line ) hlChanged = true;
 			hlLine++;
@@ -666,7 +666,7 @@ void YZBuffer::makeAttribs() {
 	unsigned int hlLine = 0;
 	if ( !mLoading )
 		while ( hlLine < lineCount()) {
-			QMemArray<signed char> foldingList;
+			QMemArray<uint> foldingList;
 			m_highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
 			hlLine++;
 		}
@@ -800,7 +800,7 @@ void YZBuffer::updateHL( unsigned int line ) {
 	if ( m_highlight != 0L ) {
 		uint hlLine = line;
 		bool ctxChanged = true;
-		QMemArray<signed char> foldingList;
+		QMemArray<uint> foldingList;
 		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
 	}
 	m_hlupdating=false;

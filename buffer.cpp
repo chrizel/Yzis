@@ -1002,7 +1002,7 @@ bool YZBuffer::updateHL( unsigned int line ) {
 		for ( it = mViews.first(); it; it = mViews.next() )
 			it->sendBufferPaintEvent( line, nToDraw );
 #else
-		for ( int ab = 0; ab < mViews.size(); ++ab ) {
+		for ( int ab = 0; ab < mViews.size(); ++ab )
 			mViews.at(ab)->sendBufferPaintEvent( line, nToDraw );
 #endif
 	}

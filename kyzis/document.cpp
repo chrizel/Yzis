@@ -94,7 +94,8 @@ bool KYZisDoc::saveFile () {
 
 QString KYZisDoc::text() const
 {
-	return getWholeText();
+	return QString::null;
+//	return getWholeText();
 }
 
 
@@ -129,21 +130,24 @@ QString KYZisDoc::textLine(unsigned int line) const
 	//or if it's just quanta which does not count properly (it asks textLine from 0 to 218 in my test file, 
 	//whereas I said it the file have 218 lines)
 	if ( line >= lineCount() ) return QString::null;
-	return textline(line);
+	return QString::null;
+//	return textline(line);
 }
 
 uint KYZisDoc::length() const
 {
+	return 0;/*
 	uint textlength = getWholeTextLength();
 
-	return textlength;
+	return textlength;*/
 }
 
 int KYZisDoc::lineLength(unsigned int line) const
 {
+	return 0;/*
 	uint length = textline(line).length();
 
-	return length;
+	return length;*/
 }
 
 bool KYZisDoc::clear()
@@ -161,7 +165,8 @@ bool KYZisDoc::insertText( uint line, uint col, const QString &s)
 
 QString KYZisDoc::text (  uint startLine, uint startCol, uint endLine, uint endCol ) const {
 	QString content = "";
-
+	return content;
+/*
 	if ( startLine == endLine ) {
 		content = textline( startLine ).mid(startCol, endCol-startCol);
 		return content;
@@ -175,7 +180,7 @@ QString KYZisDoc::text (  uint startLine, uint startCol, uint endLine, uint endC
 		else
 			content+=textline( i );
 	}
-	return content;
+	return content;*/
 }
 
 bool KYZisDoc::setText (  const QString &text ) {

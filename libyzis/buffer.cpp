@@ -64,6 +64,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mSession = sess;
 	mModified=false;
 	m_highlight = 0L;
+	m_hlupdating = false;
 	// buffer at creation time should use a non existing temp filename
 	// find a tmp file that does not exist
 	do {
@@ -184,13 +185,15 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 void  YZBuffer::appendLine(const QString &l) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::appendLine(%1)").arg(l),l);
 
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
-	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l,  0, lineCount());
-	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, l, 0, lineCount() );
+	if ( !mLoading ) {
+		mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
+		mSwap->addToSwap( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
+		mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l,  0, lineCount());
+		mSwap->addToSwap( YZBufferOperation::ADDTEXT, l, 0, lineCount() );
+	}
 
 	mText.append(new YZLine(l));
-	if ( m_highlight != 0L ) {
+	if ( !mLoading && m_highlight != 0L ) {
 		bool ctxChanged = false;
 		QMemArray<signed char> foldingList;
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
@@ -213,7 +216,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
 		;	
 	mText.insert(it, new YZLine( l ));
-	if ( m_highlight != 0L ) {
+	if ( !mLoading && m_highlight != 0L ) {
 		uint hlLine = line;
 		bool ctxChanged = true;
 		bool hlChanged = false;
@@ -275,7 +278,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 		;
 	mText.insert(it, new YZLine( newline ));
 
-	if ( m_highlight != 0L ) {
+	if ( !mLoading && m_highlight != 0L ) {
 		uint hlLine = line+1;
 		bool ctxChanged = true;
 		bool hlChanged = false;
@@ -396,7 +399,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 			yzline(line)->setData(l);
 		}
 	} 
-	if ( m_highlight != 0L ) {
+	if ( !mLoading && m_highlight != 0L ) {
 		uint hlLine = line;
 		bool ctxChanged = true;
 		bool hlChanged = false;
@@ -411,28 +414,32 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 	setChanged( true );
 }
 
-bool YZBuffer::isEmpty() const {
+bool YZBuffer::isEmpty() {
 	if ( mText.count( ) == 1 && textline(0).isEmpty() ) return true;
 	return false;
 }
 
 
-QString YZBuffer::getWholeText() const {
+QString YZBuffer::getWholeText() {
 	if ( isEmpty() ) { return QString(""); }
 
+	m_hlupdating = true; //override so that it does not parse all lines
 	QString wholeText;
 	for ( uint i = 0 ; i < lineCount() ; i++ )
 		wholeText += textline(i) + "\n";
+	m_hlupdating = false; //override so that it does not parse all lines
 	return wholeText;
 }
 
-uint YZBuffer::getWholeTextLength() const {
+uint YZBuffer::getWholeTextLength() {
 	if ( isEmpty() ) { return 0; }
 
+	m_hlupdating = true; //override so that it does not parse all lines
 	uint length = 0;
 	for ( uint i = 0 ; i < lineCount() ; i++ ) {
 		length += textline(i).length() + 1;
 	}
+	m_hlupdating = false; //override so that it does not parse all lines
 	
 	return length;
 }
@@ -506,6 +513,7 @@ bool YZBuffer::save() {
 			return false; //dont try to save
 	}
 	QFile file( mPath );
+	m_hlupdating = true; //override so that it does not parse all lines
 	yzDebug("YZBuffer") << "Saving file to " << mPath << endl;
 	if ( file.open( IO_WriteOnly ) ) {
 		QTextStream stream( &file );
@@ -519,6 +527,7 @@ bool YZBuffer::save() {
 		}
 		file.close();
 	}
+	m_hlupdating = false; //override so that it does not parse all lines
 	YZView *it;
 	for ( it = mViews.first(); it ; it = mViews.next() )
 		it->displayInfo(tr("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
@@ -633,11 +642,12 @@ void YZBuffer::makeAttribs() {
 
 	bool ctxChanged = true;
 	unsigned int hlLine = 0;
-	while ( hlLine < lineCount()) {
-		QMemArray<signed char> foldingList;
-		m_highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
-		hlLine++;
-	}
+	if ( !mLoading )
+		while ( hlLine < lineCount()) {
+			QMemArray<signed char> foldingList;
+			m_highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
+			hlLine++;
+		}
 	updateAllViews();
 
 }
@@ -674,6 +684,7 @@ bool YZBuffer::substitute( const QString& what, const QString& with, bool wholel
 }
 
 QStringList YZBuffer::getText(YZCursor& from, YZCursor& to) {
+	m_hlupdating=true; //override
 	//the first line
 	QStringList list;
 	if ( from.getY() != to.getY() )
@@ -692,6 +703,7 @@ QStringList YZBuffer::getText(YZCursor& from, YZCursor& to) {
 	if ( from.getY() != to.getY() )
 		list << textline( to.getY() ).left( to.getX() );
 
+	m_hlupdating=false; //override
 	return list;
 }
 
@@ -759,3 +771,15 @@ void YZBuffer::setLocalQColorOption( const QString& key, const QColor& option ) 
 	YZSession::mOptions.setQColorOption( key, option );
 }
 
+void YZBuffer::updateHL( unsigned int line ) {
+	if ( m_hlupdating ) return;
+	yzDebug() << "updateHL " << line << endl;
+	m_hlupdating = true;
+	if ( m_highlight != 0L ) {
+		uint hlLine = line;
+		bool ctxChanged = true;
+		QMemArray<signed char> foldingList;
+		m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
+	}
+	m_hlupdating=false;
+}

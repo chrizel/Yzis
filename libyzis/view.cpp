@@ -742,7 +742,7 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 	*viewCursor = *workCursor;
 
 	if ( applyCursor && viewCursor != mainCursor ) { // do not apply if this isn't the mainCursor
-		yzDebug() << "THIS IS NOT THE MAINCURSOR" << endl;
+//		yzDebug() << "THIS IS NOT THE MAINCURSOR" << endl;
 		applyCursor = false;
 	}
 
@@ -835,6 +835,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor ) {
 	gotoxy( mainCursor, nextx, nexty, applyCursor );
 }
 void YZView::gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int nexty, bool applyCursor ) {
+	//XXX optimise : why viewCursor ?, if we are on y==0, and want to go to y==lineCount(), this does not look efficient to me // MM
 	initGoto( viewCursor );
 	gotoy( nexty );
 	gotox( nextx, viewCursor != mainCursor );

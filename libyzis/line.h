@@ -55,6 +55,7 @@ class YZLine
 
 		void setAttribs(uchar attribute, uint start, uint end);
 		inline uchar *attributes () const { return mAttributes.data(); }
+		bool initialized() { return m_initialized; }
 
 		enum Flags
 		{
@@ -75,6 +76,7 @@ class YZLine
 		  Some bools packed
 		  */
 		uchar m_flags;
+		bool m_initialized;
 };
 
 #endif

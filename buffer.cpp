@@ -25,7 +25,7 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 		QString blah( "" );
 		addLine(blah);
 	}
-	session->addBuffer(this );
+	session->addBuffer( this );
 }
 
 YZBuffer::~YZBuffer() {
@@ -121,7 +121,7 @@ void YZBuffer::addView (YZView *v) {
 //	view_list.insert(v->myId, v );
 	QValueList<YZView*>::iterator it;
 	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
-		YZView *vi = *it;
+		YZView *vi = ( *it );
 		if ( vi == v ) return; // don't append twice
 	}
 	yzDebug() << "BUFFER: addView" << endl;
@@ -180,10 +180,11 @@ void YZBuffer::save() {
 
 
 YZView* YZBuffer::findView( int uid ) {
+	yzDebug() << "Buffer: findView " << uid << endl;
 	QValueList<YZView*>::iterator it;
 	for ( it = view_list.begin(); it != view_list.end(); ++it ){
-		YZView* v = *it;
-		if ( v->myId == uid ) return *it;
+		YZView* v = ( *it );
+		if ( v->myId == uid ) return v;
 	}
 	return NULL;
 }

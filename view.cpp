@@ -13,12 +13,13 @@ int YZView::view_ids = 0;
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int _lines_vis) {
 	myId = view_ids++;
+	yzDebug() << "New View created with UID : " << myId << endl;
 	session = sess;
-	buffer		= _b;
-	lines_vis	= _lines_vis;
+	buffer	= _b;
+	lines_vis = _lines_vis;
 	cursor = new YZCursor(this);
 	current_maxx = 0;
-	mode 		= YZ_VIEW_MODE_COMMAND;
+	mode = YZ_VIEW_MODE_COMMAND;
 	//could it be something else than 0 ?
 	current = cursor->getY();
 	QString line = buffer->findLine(current);
@@ -210,6 +211,7 @@ void YZView::centerView(unsigned int line) {
 }
 
 void YZView::redrawScreen() {
+	yzDebug() << "View " << myId << " redraw" << endl;
 	session->postEvent(YZEvent::mkEventRedraw(myId) );
 	updateCursor();
 }
@@ -481,13 +483,13 @@ QString YZView::appendAtEOL ( const QString& ) {
 QString YZView::gotoCommandMode( ) {
 	mode = YZ_VIEW_MODE_COMMAND;
 	purgeInputBuffer();
-	session->postEvent(YZEvent::mkEventStatus(0,"Command mode"));
+	session->postEvent(YZEvent::mkEventStatus(myId,"Command mode"));
 	return QString::null;
 }
 
 QString YZView::gotoExMode(const QString&) {
 	mode = YZ_VIEW_MODE_EX;
-	session->postEvent(YZEvent::mkEventStatus(0,"-- EX --"));
+	session->postEvent(YZEvent::mkEventStatus(myId,"-- EX --"));
 	session->gui_manager->setFocusCommandLine();
 	purgeInputBuffer();
 	return QString::null;
@@ -495,14 +497,14 @@ QString YZView::gotoExMode(const QString&) {
 
 QString YZView::gotoInsertMode(const QString&) {
 	mode = YZ_VIEW_MODE_INSERT;
-	session->postEvent(YZEvent::mkEventStatus(0,"-- INSERT --"));
+	session->postEvent(YZEvent::mkEventStatus(myId,"-- INSERT --"));
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoReplaceMode(const QString&) {
 	mode = YZ_VIEW_MODE_REPLACE;
-	session->postEvent(YZEvent::mkEventStatus(0,"-- REPLACE --") );
+	session->postEvent(YZEvent::mkEventStatus(myId,"-- REPLACE --") );
 	purgeInputBuffer();
 	return QString::null;
 }

@@ -82,10 +82,10 @@ class Gui {
 		 */
 		virtual void quit(bool savePopup=true) = 0;
 
-    /**
-     * Switch views
-     */
-    virtual void setCurrentView ( YZView* ) = 0;
+		/**
+		 * Switch views
+		 */
+		virtual void setCurrentView ( YZView* ) = 0;
 
 		/**
 		 * Create a new view

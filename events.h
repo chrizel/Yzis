@@ -102,6 +102,19 @@ struct yz_event_t {
 	struct yz_event_setcursor	setcursor;
 	struct yz_event_setstatus	setstatus;
 	struct yz_event_redraw	redraw;
+
+	yz_event_t() {
+		view=0;
+	}
+	yz_event_t(const yz_event_t& e) {
+		view=e.view;
+		id=e.id;
+		next=e.next;
+		invalidateline=e.invalidateline;
+		setcursor = e.setcursor;
+		setstatus = e.setstatus;
+		redraw = e.redraw;
+	}
 };
 
 typedef struct yz_event_t yz_event;

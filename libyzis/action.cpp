@@ -420,7 +420,7 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 			reverseSearch ? i-- : i++ ) {
 			
 		l = pView->myBuffer()->textline( i );
-		yzDebug() << "Searching " << what << " in line : " << l << endl;
+//		yzDebug() << "Searching " << what << " in line : " << l << endl;
 		int idx;
 		if ( reverseSearch )
 			idx = ex.searchRev( l, currentMatchColumn );
@@ -448,7 +448,7 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 			*matchlength = ex.matchedLength();
 			return YZCursor(pView,currentMatchColumn, currentMatchLine);
 		} else {
-			yzDebug() << "No match on this line" << endl;
+//			yzDebug() << "No match on this line" << endl;
 			if ( reverseSearch )
 				currentMatchColumn=-1;
 			else

@@ -37,7 +37,7 @@ YZDebugBackend * YZDebugBackend::_instance = NULL;
 
 YZDebugBackend::YZDebugBackend()
 {
-	_output = fopen("/tmp/yzisdebug-" + QString(cuserid(NULL)) + ".log", "w" );
+	setDebugOutput( "/tmp/yzisdebug-" + QString(cuserid(NULL)) + ".log" );
 	init();
 }
 
@@ -67,6 +67,8 @@ void YZDebugBackend::setDebugOutput( FILE * file )
 
 void YZDebugBackend::setDebugOutput( const char * fileName )
 {
+	if ( QFile::exists( fileName ) )
+		QFile::remove ( fileName );
 	setDebugOutput( fopen( fileName, "w" ) );
 }
 

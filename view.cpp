@@ -149,11 +149,6 @@ void YZView::sendKey( int c, int modifiers) {
 	}
 
 
-	//map other keys //BAD XXX
-	if ( c == Qt::Key_Insert ) c = Qt::Key_I;
-	
-
-
 	QString lin;
 	QString key = QChar( tolower(c) );// = QKeySequence( c );
 	//default is lower case unless some modifiers
@@ -166,6 +161,9 @@ void YZView::sendKey( int c, int modifiers) {
 
 		case YZ_VIEW_MODE_INSERT:
 			switch ( c ) {
+				case Qt::Key_Insert:
+					gotoReplaceMode( );
+					return;
 				case Qt::Key_Escape:
 					if (mCursor->getX() > 0)
 						gotoxy(mCursor->getX() - 1, mCursor->getY());
@@ -217,6 +215,9 @@ void YZView::sendKey( int c, int modifiers) {
 
 		case YZ_VIEW_MODE_REPLACE:
 			switch ( c ) {
+				case Qt::Key_Insert:
+					gotoInsertMode( );
+					return;
 				case Qt::Key_Escape:
 					if (mCursor->getX() > mMaxX) {
 						gotoxy(mMaxX, mCursor->getY());
@@ -362,6 +363,9 @@ void YZView::sendKey( int c, int modifiers) {
 
 		case YZ_VIEW_MODE_COMMAND:
 			switch ( c ) {
+				case Qt::Key_Insert:
+					key='i';
+					break;
 				case Qt::Key_Escape:
 					purgeInputBuffer();
 					return;

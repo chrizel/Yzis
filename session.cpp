@@ -31,6 +31,7 @@ YZOption YZSession::mOptions = YZOption();
 YZRegisters YZSession::mRegisters = YZRegisters();
 
 YZSession::YZSession( const QString& _sessionName ) {
+	//FIXME
 	mPool = new YZCommandPool();
 	mPool->initPool();
 	mExPool = new YZCommandPool();

@@ -81,11 +81,6 @@ class YZExExecutor : public QObject {
 		 */
 		QString substitute ( YZView *view, const QString& inputs );
 
-		/**
-		 * Lua test
-		 */
-		QString lua(YZView *view, const QString& inputs);
-
 };
 
 #endif

@@ -47,19 +47,20 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 	marginLeft = 0;
 	lastLineNumber = 0;
-	mCursorShown = false; //cursor is not shown
-	mCursorY = mCursorX = 0;
 
 	setFocusPolicy( StrongFocus );
 	QWidget::setCursor( IbeamCursor );
 	rootxpm = new KRootPixmap( this );
 	setTransparent( false );
 
+	mCursor = new KYZisCursor( this, KYZisCursor::KYZ_CURSOR_SQUARE );
+
 	initKeys();
 }
 
 
 KYZisEdit::~KYZisEdit() {
+	delete mCursor;
 }
 
 void KYZisEdit::setTransparent ( bool t, double opacity, const QColor& color ) {
@@ -80,6 +81,11 @@ void KYZisEdit::updateArea( ) {
 	isFontFixed = fontInfo().fixedPitch();
 	mParent->setFixedFont( isFontFixed );
 	spaceWidth = mParent->spaceWidth;
+	mCursor->resize( fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+	if ( isFontFixed )
+		mCursor->setCursorType( KYZisCursor::KYZ_CURSOR_SQUARE );
+	else
+		mCursor->setCursorType( KYZisCursor::KYZ_CURSOR_LINE );
 
 	int lines = height() / fontMetrics().lineSpacing();
 	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget
@@ -102,13 +108,6 @@ void KYZisEdit::paintEvent( QPaintEvent * pe ) {
 		clipw = clipw ? clipw / maxwidth + ( int )ceil( clipw % maxwidth ) : 0;
 		cliph = cliph ? cliph / linespace + ( int )ceil( cliph % linespace ) : 0;
 	}
-	if ( mCursorY >= clipy && mCursorY <= clipy + cliph ) {
-		if ( pe->erased() && ! ( mCursorX >= clipx && mCursorX <= clipx + clipw ) )
-			mCursorShown = true;
-		else
-			mCursorShown = ! mCursorShown;
-	}
-//	yzDebug() << "KYZisEdit::paintEvent: " << clipx << "," << clipy << "," << clipw << "," << cliph << "," << pe->erased() << "," << mCursorShown << endl;
 	drawContents( clipx, clipy, clipw, cliph, pe->erased() );
 }
 
@@ -116,31 +115,23 @@ void KYZisEdit::paintEvent( unsigned int clipx, unsigned int clipy, unsigned int
 	clipx = clipx - mParent->getDrawCurrentLeft( ) + marginLeft;
 	unsigned int dTop = mParent->getDrawCurrentTop();
 	clipy = clipy > dTop ? clipy - dTop : 0;
-	if ( ( unsigned int )mCursorY >= clipy && ( unsigned int )mCursorY <= clipy + cliph )
-		mCursorShown = false;
 	drawContents( clipx, clipy, clipw, cliph, false );
 }
 
-void KYZisEdit::setCursor(int c, int l) {
+void KYZisEdit::setCursor( int c, int l ) {
+	yzDebug() << "setCursor" << endl;
 	c = c - mParent->getDrawCurrentLeft () + marginLeft;
 	l -= mParent->getDrawCurrentTop ();
-//	yzDebug() << "setCursor : mCursorShow=" << mCursorShown << "; (" << mCursorX << ", " << mCursorY << ") - (" << c << ", " << l << ")" << endl;
-	if ( mCursorShown && c == mCursorX && l == mCursorY ) return;
-	if ( mCursorShown ) drawCursorAt( GETX( mCursorX ) , mCursorY );
-	mCursorX = c;
-	mCursorY = l;
-	drawCursorAt( GETX( mCursorX ) , mCursorY );
-	mCursorShown = true;
+	mCursor->move( GETX( c ), l * fontMetrics().lineSpacing() );
 }
 
 QPoint KYZisEdit::cursorCoordinates( ) {
-	QPoint position( GETX( mCursorX ), mCursorY * fontMetrics().lineSpacing() );
+	QPoint position( mCursor->x(), mCursor->y() );
 	return position;
 }
 
 void KYZisEdit::scrollUp( int n ) {
-	drawCursorAt( GETX( mCursorX ) , mCursorY );
-	mCursorShown = false;
+	mCursor->hide();
 	if ( ! mTransparent ) {
 		bitBlt( this, 0, n * fontMetrics().lineSpacing(),
 			this, 0, 0,
@@ -154,8 +145,7 @@ void KYZisEdit::scrollUp( int n ) {
 }
 
 void KYZisEdit::scrollDown( int n ) {
-	drawCursorAt( GETX( mCursorX ) , mCursorY );
-	mCursorShown = false;
+	mCursor->hide();
 	if ( ! mTransparent ) {
 		bitBlt( this, 0, 0,
 			this, 0, n * fontMetrics().lineSpacing(),
@@ -224,32 +214,6 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 	}
 }
 
-void KYZisEdit::drawCursorAt(int x, int y) {
-/*	unsigned int linespace = fontMetrics().lineSpacing();
-	y = y * linespace;
-	unsigned int mid = linespace / 2;
-	QPainter p;
-	p.begin( this );
-	p.setRasterOp( Qt::Qt::NotROP );
-	if ( x ) --x;
-	unsigned int topY = y;
-	if ( topY ) --topY;
-//	p.setBrush( Qt::SolidPattern );
-//	QPointArray shape;
-//	shape.putPoints( 0, 3, x,y, x+5,y+mid, x,y+(2*mid) );
-//	p.drawPolygon( shape, true );
-	p.drawLine( x, topY, x, y + linespace );
-	p.drawLine( x, topY, x + 5, topY );
-	p.drawLine( x, y + linespace, x + 5, y + linespace );
-	p.end(); */
-	unsigned int w = ( isFontFixed ? fontMetrics().maxWidth() : NONFIXED_CURSOR_WIDTH );
-	if ( mParent->getLocalBoolOption( "rightleft" ) ) x = width() - x - w;
-	bitBlt( this, x, y * fontMetrics().lineSpacing(), this,	x, y * fontMetrics().lineSpacing(),
-			w, fontMetrics().lineSpacing(),
-			Qt::NotROP,	    // raster Operation
-			true );		    // ignoreMask
-}
-
 void KYZisEdit::selectRect( unsigned int x, unsigned int y, unsigned int w, unsigned int h ) {
 	if ( mParent->getLocalBoolOption( "rightleft" ) ) x = width() - x - w;
 	bitBlt( this, x, y, this, x, y, w, h, Qt::NotROP, true );
@@ -275,7 +239,10 @@ void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool )
 		lastLineNumber = 0;
 	}
 	if ( marginLeft != my_marginLeft ) {
-		setCursor( mCursorX + marginLeft - my_marginLeft, mCursorY ); // move cursor
+		if ( mCursor->visible() ) {
+			mCursor->move( mCursor->x() + GETX( marginLeft - my_marginLeft ), mCursor->y() );
+			mCursor->hide();
+		}
 		marginLeft = my_marginLeft;
 		updateArea();
 		return;
@@ -293,6 +260,8 @@ void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool )
 	unsigned int lineNumber = 0;
 	unsigned int mY = mParent->getCursor()->getY() - mParent->getDrawCurrentTop();
 	unsigned int w;
+
+	mCursor->hide();
 
 	if ( ! mParent->myBuffer()->introShown() ) {
 		while ( cliph > 0 && mParent->drawNextLine( ) ) {
@@ -340,12 +309,12 @@ void KYZisEdit::drawContents( int clipx, int clipy, int clipw, int cliph, bool )
 					if ( mParent->drawSelected() ) {
 						selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
 						if ( mParent->getCursor()->getY() == currentY && mParent->getCursor()->getX() == currentX - marginLeft )
-							drawCursorAt( GETX( currentX ) , currentY );
+							mCursor->hide();
 					}
 
 					currentX += mParent->drawLength( );
 				}
-				if ( currentY == mY ) setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+				if ( currentY == mY ) mCursor->refresh();
 				currentY += mParent->drawHeight( );
 				cliph -= mParent->lineHeight( );
 			} else {

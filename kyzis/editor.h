@@ -21,6 +21,7 @@
 #define KYZISEDIT_H
 
 #include "viewwidget.h"
+#include "cursor.h"
 #include <qscrollview.h>
 #include <qpainter.h>
 #include <qevent.h>
@@ -34,6 +35,7 @@
 #include <kactioncollection.h>
 
 class KYZisView;
+class KYZisCursor;
 
 /**
  * KYZis Painter Widget
@@ -103,9 +105,6 @@ class KYZisEdit : public QWidget {
 		//number of lines
 		long lines();
 
-		//draw the cursor at the given position
-		void drawCursorAt(int x, int y);
-
 		virtual void focusInEvent( QFocusEvent * );
 
 		void selectRect( unsigned int x, unsigned int y, unsigned int w, unsigned int h );
@@ -117,11 +116,8 @@ class KYZisEdit : public QWidget {
 		QString keysToShortcut( const QString& keys );
 
 		KYZisView *mParent;
+		KYZisCursor* mCursor;
 
-		//cursor position (sync with libyzis one)
-		int mCursorX;
-		int mCursorY;
-		bool mCursorShown;
 		QFontMetrics *standard;
 		QFontMetrics *standardBold;
 		QFontMetrics *standardBoldItalic;

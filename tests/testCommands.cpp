@@ -101,6 +101,7 @@ void TestYZCommands::testCharMovement()
     phCheckEquals( mBuf->getWholeText(), "0123\n4567\n89AB\nCDEF\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 3, 3 );
+    yzDebug("testCharMovement") << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     
     mView->sendText( "<Right>" );
     mView->sendText( "<Down>" );

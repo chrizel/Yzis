@@ -264,10 +264,45 @@ void TestUndo::testRedoRemovesUndo()
     QStringList textHistory;
     textHistory.append( mBuf->getWholeText() );
 
-    // do some stuff 
-    // undo some stuff
-    // redo in the middle of undo
-    // undo should not be available
+    yzDebug("TestUndo") << "step 1" << endl;
+    mView->sendText("i123\n456\n789<esc>");
+    textHistory.append( mBuf->getWholeText() );
+    phCheckEquals( ub->mayUndo(), true );
+    phCheckEquals( ub->mayRedo(), false );
+
+    yzDebug("TestUndo") << "step 2" << endl;
+    mView->sendText("u");
+    phCheckEquals( ub->mayUndo(), false );
+    phCheckEquals( ub->mayRedo(), true );
+    textHistory.clear();
+
+    yzDebug("TestUndo") << "step 3" << endl;
+    mView->sendText("iaaa\nbbb<esc>");
+    textHistory.append( mBuf->getWholeText() );
+    phCheckEquals( ub->mayUndo(), true );
+    phCheckEquals( ub->mayRedo(), false );
+
+    yzDebug("TestUndo") << "step 4" << endl;
+    mView->sendText("iccc\nddd<esc>");
+    textHistory.append( mBuf->getWholeText() );
+    phCheckEquals( ub->mayUndo(), true );
+    phCheckEquals( ub->mayRedo(), false );
+
+    performUndoRedo( textHistory, true );
+
+    yzDebug("TestUndo") << "step 5" << endl;
+    mView->sendText("u");
+    phCheckEquals( ub->mayUndo(), true );
+    phCheckEquals( ub->mayRedo(), true );
+    textHistory.pop_back();
+
+    yzDebug("TestUndo") << "step 6" << endl;
+    mView->sendText("ieee\nfff<esc>");
+    textHistory.append( mBuf->getWholeText() );
+    phCheckEquals( ub->mayUndo(), true );
+    phCheckEquals( ub->mayRedo(), false );
+
+    performUndoRedo( textHistory, true );
 }
 
 void TestUndo::testCommandUndo()
@@ -275,6 +310,18 @@ void TestUndo::testCommandUndo()
     YZUndoBuffer * ub = mBuf->undoBuffer();
     QStringList textHistory;
     textHistory.append( mBuf->getWholeText() );
+
+    mView->sendText("i123\n456\n789<esc>");
+    textHistory.append( mBuf->getWholeText() );
+    phCheckEquals( ub->mayUndo(), true );
+    phCheckEquals( ub->mayRedo(), false );
+
+    performUndoRedo( textHistory, true );
+    return;
+
+    performUndoRedo( textHistory, true );
+
+    return;
 
     mView->sendText("i123\n456\n789<esc>");
     textHistory.append( mBuf->getWholeText() );

@@ -46,6 +46,7 @@ void TestYZCommands::setUp()
     mLines = 5;
     mSession = new TYZSession();
     mBuf = new TYZBuffer( mSession );
+    mBuf->clearIntro();
     mView = new TYZView( mBuf, mSession, mLines );
 
 }
@@ -74,22 +75,22 @@ void TestYZCommands::testInsertMode()
     CHECK_CURSOR_POS( mView, 0, 0 );
 
     mView->sendText( "i23" );
-    phCheckEquals( mBuf->getWholeText(), "i23" );
+    phCheckEquals( mBuf->getWholeText(), "i23\n" );
     CHECK_MODE_INSERT( mView );
     CHECK_CURSOR_POS( mView, 0, 3 );
 
     mView->sendText( "\n456" );
-    phCheckEquals( mBuf->getWholeText(), "i23\n456" );
+    phCheckEquals( mBuf->getWholeText(), "i23\n456\n" );
     CHECK_MODE_INSERT( mView );
     CHECK_CURSOR_POS( mView, 1, 3 );
 
     mView->sendText( "<Esc>" );
-    phCheckEquals( mBuf->getWholeText(), "i23\n456" );
+    phCheckEquals( mBuf->getWholeText(), "i23\n456\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 1, 2 );
 
     mView->sendText( "<Esc>" );
-    phCheckEquals( mBuf->getWholeText(), "i23\n456" );
+    phCheckEquals( mBuf->getWholeText(), "i23\n456\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 1, 2 );
 }
@@ -97,7 +98,7 @@ void TestYZCommands::testInsertMode()
 void TestYZCommands::testCharMovement()
 {
     mView->sendText( "i0123\n4567\n89AB\nCDEF<Esc>" );
-    phCheckEquals( mBuf->getWholeText(), "0123\n4567\n89AB\nCDEF" );
+    phCheckEquals( mBuf->getWholeText(), "0123\n4567\n89AB\nCDEF\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 3, 3 );
     
@@ -202,7 +203,7 @@ void TestYZCommands::testBeginEndCharMovement()
 void TestYZCommands::testLineMovement()
 {
     mView->sendText( "i\t\t0123\n4567\n89AB\n CDEF<Esc>" );
-    phCheckEquals( mBuf->getWholeText(), "\t\t0123\n4567\n89AB\n CDEF" );
+    phCheckEquals( mBuf->getWholeText(), "\t\t0123\n4567\n89AB\n CDEF\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 3, 4 );
     

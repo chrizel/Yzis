@@ -1,3 +1,17 @@
+2004-07-30 mikmak
+  * libyzis
+  	support for recording macros
+	
+2004-07-29 mikmak
+  * libyzis
+  	^ motion is back
+	<CTRL>l is back
+	<CTRL>R is fixed
+
+2004-07-28 mikmak
+  * libyzis
+  	initial rework of the option system
+
 2004-07-19 mikmak
   * scripts
     initial 2html.lua script

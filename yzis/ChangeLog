@@ -8,6 +8,7 @@
     fixed position of the display (first line was hidden)
     fixed (again) display problem while inserting text
     updated to the new event loop API
+    fixed cursor badly displayed at (0,0)
   * nyzis
     updated to the new event loop API
 

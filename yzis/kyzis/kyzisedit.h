@@ -66,6 +66,7 @@ class KYZisEdit : public QScrollView {
 		//cursor position (sync with libyzis one)
 		int cursorx;
 		int cursory;
+		bool cursor_shown;
 
 		//QMap<int,QString> mText;
 		KYZLine mText;

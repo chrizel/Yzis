@@ -14,6 +14,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	viewport()->setFocusPolicy( StrongFocus );
 	viewport()->setBackgroundMode( PaletteBase );
 	viewport()->setPaletteBackgroundColor(QColor("white"));
+	cursor_shown = false; //cursor is not shown
 }
 
 KYZisEdit::~KYZisEdit() {
@@ -30,12 +31,11 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 // PUBLIC API
 void KYZisEdit::setCursor(int c, int l) {
 	//undraw previous cursor
-	kdDebug() << "CursorX before : " << cursorx << " CursorY before : " << cursory << endl;
-	drawCursorAt( cursorx,cursory );
+	if ( cursor_shown ) drawCursorAt( cursorx,cursory );
 	cursorx = c;
 	cursory = l;
-	kdDebug() << "CursorX after : " << cursorx << " CursorY after : " << cursory << endl;
 	//draw new cursor
+	cursor_shown = true;
 	drawCursorAt( cursorx,cursory );
 }
 
@@ -72,19 +72,16 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 }
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
-	//XXX draw text inside the clip
-	kdDebug() << "*** DrawContents : clipx " << clipx << " clipy " << clipy << " clipw " << clipw << " cliph " << cliph << endl;
 	KYZLine::iterator it;
 	for (it = mText.begin(); it!=mText.end(); ++it) {
-			if (fontMetrics().lineSpacing() * ( it.key() + 1 ) >= clipy &&
-					fontMetrics().lineSpacing() * ( it.key() + 1 ) <= clipy+cliph ) {
-				kdDebug() << "DRAW at " << it.key() << endl;
-				p->eraseRect(0,( it.key()+1 )*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
-				p->drawText(0,( it.key()+1 )*fontMetrics().lineSpacing(),it.data());
+			if (fontMetrics().lineSpacing() * ( it.key() ) >= clipy &&
+					fontMetrics().lineSpacing() * ( it.key() ) <= clipy+cliph ) {
+					QRect clip(0, ( it.key() ) * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
+					p->eraseRect(clip);
+					p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,it.data());
 			}
 	}
 	
-	//XXX draw the cursor if needed
 	drawCursorAt(cursorx,cursory);
 }
 

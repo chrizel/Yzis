@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yzis\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-11 15:24+0100\n"
+"POT-Creation-Date: 2005-02-12 17:12+0100\n"
 "PO-Revision-Date: 2005-02-08 20:03+0100\n"
 "Last-Translator: Mickael Marchand <marchand@kde.org>\n"
 "Language-Team: <i18n@yzis.org>\n"
@@ -367,11 +367,15 @@ msgstr ""
 msgid "Terminal"
 msgstr ""
 
-#: ../libyzis/buffer.cpp:571
+#: ../libyzis/buffer.cpp:565
+msgid "Failed opening file %1 for reading : %2"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:573
 msgid "Recover"
 msgstr "Wiederherstellen"
 
-#: ../libyzis/buffer.cpp:571
+#: ../libyzis/buffer.cpp:573
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
@@ -379,7 +383,11 @@ msgstr ""
 "Eine Auslagerungsdatei wurde gefunden, die vermutlich erstellt wurde weil "
 "Ihr Computer oder Yzis abgestürzt ist. Wollen Sie die Datei wiederherstellen?"
 
-#: ../libyzis/buffer.cpp:645 ../libyzis/buffer.cpp:648
+#: ../libyzis/buffer.cpp:643
+msgid "Failed opening file %1 for writing : %2"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
 msgid "Written %1 bytes to file %2"
 msgstr "%1 Bytes in Datei %2 geschrieben"
 
@@ -520,15 +528,15 @@ msgstr ""
 msgid "This file has been modified, do you want to save it ?"
 msgstr ""
 
-#: ../libyzis/view.cpp:374 ../libyzis/view.cpp:382
+#: ../libyzis/view.cpp:404 ../libyzis/view.cpp:412
 msgid "All"
 msgstr "Alle"
 
-#: ../libyzis/view.cpp:381
+#: ../libyzis/view.cpp:411
 msgid "Bot"
 msgstr "Unten"
 
-#: ../libyzis/view.cpp:1443
+#: ../libyzis/view.cpp:1473
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
@@ -537,7 +545,7 @@ msgstr ""
 "Umgebungsvariable DISPLAY gesetzt sein, Sie sollten im Konsolenmodus pslib "
 "probieren"
 
-#: ../libyzis/view.cpp:1714
+#: ../libyzis/view.cpp:1744
 msgid " { Recording }"
 msgstr ""
 
@@ -545,7 +553,7 @@ msgstr ""
 msgid "(Press any key)"
 msgstr ""
 
-#: ../nyzis/viewwidget.cpp:333 ../nyzis/viewwidget.cpp:335
+#: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
 msgid "[No File]"
 msgstr ""
 

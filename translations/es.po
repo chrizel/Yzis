@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-11 15:24+0100\n"
+"POT-Creation-Date: 2005-02-12 17:12+0100\n"
 "PO-Revision-Date: 2005-02-12 12:38+0000\n"
 "Last-Translator: Rafael Rodríguez <apt-drink@gulic.org>\n"
 "Language-Team:  <kde-es@kybs.de>\n"
@@ -170,15 +170,19 @@ msgstr "<p>Fija el color de fondo del área de edición.</p>"
 msgid ""
 "<p>Sets the background color of the selection.</p><p>To set the text color "
 "for selected text, use the \"<b>Configure Highlighting</b>\" dialog.</p>"
-msgstr "<p>Fija el color de fondo de la selección.</p><p>Para fijar el color del texto para texto seleccionado, utilice el diálogo\"<b>Configurar resaltado</b>\".</p>"
+msgstr ""
+"<p>Fija el color de fondo de la selección.</p><p>Para fijar el color del "
+"texto para texto seleccionado, utilice el diálogo\"<b>Configurar resaltado</"
+"b>\".</p>"
 
 #: ../kyzis/src/hlconfig.cpp:268
 msgid ""
 "<p>Sets the background color of the selected marker type.</p><p><b>Note</b>: "
 "The marker color is displayed lightly because of transparency.</p>"
 msgstr ""
-"<p>Fija el color de fondo para el tipo de marca seleccionado.</p><p><b>Nota</b>: "
-"El color del marcador se muestra en color claro debido a la transparencia.</p>"
+"<p>Fija el color de fondo para el tipo de marca seleccionado.</p><p><b>Nota</"
+"b>: El color del marcador se muestra en color claro debido a la "
+"transparencia.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:271
 msgid "<p>Select the marker type you want to change.</p>"
@@ -188,19 +192,26 @@ msgstr "<p>Seleccione el tipo de marca que desea cambiar.</p>"
 msgid ""
 "<p>Sets the background color of the currently active line, which means the "
 "line where your cursor is positioned.</p>"
-msgstr "<p>Fija el color de fondo de la línea activa actualmente (aquella en la cual está el cursor posicionado).</p>"
+msgstr ""
+"<p>Fija el color de fondo de la línea activa actualmente (aquella en la cual "
+"está el cursor posicionado).</p>"
 
 #: ../kyzis/src/hlconfig.cpp:275
 msgid ""
 "<p>This color will be used to draw the line numbers (if enabled) and the "
 "lines in the code-folding pane.</p>"
-msgstr "<p>Este color se utilizará para dibujar los números de línea (si están habilitados) y las líneas en el panel de plegado de código.</p>"
+msgstr ""
+"<p>Este color se utilizará para dibujar los números de línea (si están "
+"habilitados) y las líneas en el panel de plegado de código.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:277
 msgid ""
 "<p>Sets the bracket matching color. This means, if you place the cursor e.g. "
 "at a <b>(</b>, the matching <b>)</b> will be highlighted with this color.</p>"
-msgstr "<p>Fija el color del emparejado de paréntesis, corchetes y llaves. Esto significa que si coloca el cursor, por ejemplo, en un <b>(</b>, el correspondiente <b>)</b> se resaltará con este color.</p>"
+msgstr ""
+"<p>Fija el color del emparejado de paréntesis, corchetes y llaves. Esto "
+"significa que si coloca el cursor, por ejemplo, en un <b>(</b>, el "
+"correspondiente <b>)</b> se resaltará con este color.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:281
 msgid ""
@@ -209,8 +220,11 @@ msgid ""
 "wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the left of "
 "visually-wrapped lines</dd></dl>"
 msgstr ""
-"<p>Fija el color de las marcas relacionadas con separación de palabras: </p><dl><dt>Separación de palabras estática:</"
-"dt><dd>Una línea vertical que muestra la columna donde el texto va a ser separado</dd><dt>Separación dinámica de palabras:</dt><dd>Una flecha mostrada a la izquierda de las líneas visualmente separadas</dd></dl>"
+"<p>Fija el color de las marcas relacionadas con separación de palabras: </"
+"p><dl><dt>Separación de palabras estática:</dt><dd>Una línea vertical que "
+"muestra la columna donde el texto va a ser separado</dd><dt>Separación "
+"dinámica de palabras:</dt><dd>Una flecha mostrada a la izquierda de las "
+"líneas visualmente separadas</dd></dl>"
 
 #: ../kyzis/src/hlconfig.cpp:287
 msgid "<p>Sets the color of the tabulator marks:</p>"
@@ -225,7 +239,15 @@ msgid ""
 "squares, or select the color to edit from the popup menu.<p>You can unset "
 "the Background and Selected Background colors from the popup menu when "
 "appropriate."
-msgstr "Esta lista muestra los estilos por defecto para el esquema actual, y ofrece los medios para editarlo. El nombre refleja la configuración actual del estilo. <p>Para editar utilizando el teclado, pulse <strong>&lt;ESPACIO&gt;</strong> y seleccione una propiedad del menú emergente. <p>Para editar los colores, pulse en los cuadrados coloreados, o seleccione el color que desea editar del menú desplegable. <p>Puede deshacer la selección de los colores de fondo y de fondo seleccionado cuando lo considere apropiado, con el menú emergente."
+msgstr ""
+"Esta lista muestra los estilos por defecto para el esquema actual, y ofrece "
+"los medios para editarlo. El nombre refleja la configuración actual del "
+"estilo. <p>Para editar utilizando el teclado, pulse <strong>&lt;ESPACIO&gt;</"
+"strong> y seleccione una propiedad del menú emergente. <p>Para editar los "
+"colores, pulse en los cuadrados coloreados, o seleccione el color que desea "
+"editar del menú desplegable. <p>Puede deshacer la selección de los colores "
+"de fondo y de fondo seleccionado cuando lo considere apropiado, con el menú "
+"emergente."
 
 #: ../kyzis/src/hlconfig.cpp:548
 msgid "H&ighlight:"
@@ -240,7 +262,15 @@ msgid ""
 "colored squares, or select the color to edit from the popup menu.<p>You can "
 "unset the Background and Selected Background colors from the context menu "
 "when appropriate."
-msgstr "Esta lista muestra los contextos del modo de resaltado de sintaxis actual, y ofrece los medios para editarlo. El nombre del contexto refleja los parámetros de estilo actuales. <p>Para editar utilizando el teclado, presione <strong>&lt;ESPACIO&gt;</strong> y elija una propiedad del menú emergente. <p>Para editar los colores, pulse los cuadrados coloreados, o seleccione el color que desea editar del menú emergente. <p>Puede quitar los colores de fondo y de fondo seleccionado del menú contextual cuando lo considere apropiado."
+msgstr ""
+"Esta lista muestra los contextos del modo de resaltado de sintaxis actual, y "
+"ofrece los medios para editarlo. El nombre del contexto refleja los "
+"parámetros de estilo actuales. <p>Para editar utilizando el teclado, "
+"presione <strong>&lt;ESPACIO&gt;</strong> y elija una propiedad del menú "
+"emergente. <p>Para editar los colores, pulse los cuadrados coloreados, o "
+"seleccione el color que desea editar del menú emergente. <p>Puede quitar los "
+"colores de fondo y de fondo seleccionado del menú contextual cuando lo "
+"considere apropiado."
 
 #: ../kyzis/src/hlconfig.cpp:688
 msgid "&Schema:"
@@ -350,7 +380,9 @@ msgstr "Utilizar estilo por &defecto"
 msgid ""
 "\"Use Default Style\" will be automatically unset when you change any style "
 "properties."
-msgstr "\"Utilizar estilo por defecto\" será automáticamente deseleccionado cuando cambie cualquier propiedad referente al estilo."
+msgstr ""
+"\"Utilizar estilo por defecto\" será automáticamente deseleccionado cuando "
+"cambie cualquier propiedad referente al estilo."
 
 #: ../kyzis/src/hlconfig.cpp:1211
 msgid "Yzis Styles"
@@ -372,11 +404,15 @@ msgstr "&Ventana"
 msgid "Terminal"
 msgstr "Terminal"
 
-#: ../libyzis/buffer.cpp:571
+#: ../libyzis/buffer.cpp:565
+msgid "Failed opening file %1 for reading : %2"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:573
 msgid "Recover"
 msgstr "Recuperar"
 
-#: ../libyzis/buffer.cpp:571
+#: ../libyzis/buffer.cpp:573
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
@@ -385,7 +421,11 @@ msgstr ""
 "creado porque se colgó bien su máquina o bien yzis. ¿Desea comenzar la "
 "recuperación de este archivo?"
 
-#: ../libyzis/buffer.cpp:645 ../libyzis/buffer.cpp:648
+#: ../libyzis/buffer.cpp:643
+msgid "Failed opening file %1 for writing : %2"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
 msgid "Written %1 bytes to file %2"
 msgstr "Escritos %1 bytes al archivo %2"
 
@@ -436,12 +476,14 @@ msgstr "Opción no válida :"
 
 #: ../libyzis/mode_ex.cpp:567 ../libyzis/mode_ex.cpp:695
 msgid "This option cannot be switched this way, this is a boolean option."
-msgstr "Esta opción no puede ser configurada de esta manera, es una opción booleana."
+msgstr ""
+"Esta opción no puede ser configurada de esta manera, es una opción booleana."
 
 #: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
 #: ../libyzis/mode_ex.cpp:629
 msgid "This option is a global option which cannot be changed with setlocal"
-msgstr "Esta opción es una opción global que no puede ser modificada con setlocal"
+msgstr ""
+"Esta opción es una opción global que no puede ser modificada con setlocal"
 
 #: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
 #: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
@@ -520,15 +562,15 @@ msgstr "Archivo modificado"
 msgid "This file has been modified, do you want to save it ?"
 msgstr "Este archivo ha sido modificado. ¿Desea guardarlo?"
 
-#: ../libyzis/view.cpp:374 ../libyzis/view.cpp:382
+#: ../libyzis/view.cpp:404 ../libyzis/view.cpp:412
 msgid "All"
 msgstr "Todo"
 
-#: ../libyzis/view.cpp:381
+#: ../libyzis/view.cpp:411
 msgid "Bot"
 msgstr "Final"
 
-#: ../libyzis/view.cpp:1443
+#: ../libyzis/view.cpp:1473
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
@@ -536,7 +578,7 @@ msgstr ""
 "Para utilizar la impresora Qt, necesita tener un DISPLAY X11 configurado y "
 "ejecutándose. Debería probar pslib en modo consola"
 
-#: ../libyzis/view.cpp:1714
+#: ../libyzis/view.cpp:1744
 msgid " { Recording }"
 msgstr "{ Grabando }"
 
@@ -544,7 +586,6 @@ msgstr "{ Grabando }"
 msgid "(Press any key)"
 msgstr "(Pulse cualquier tecla)"
 
-#: ../nyzis/viewwidget.cpp:333 ../nyzis/viewwidget.cpp:335
+#: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
 msgid "[No File]"
 msgstr "[Sin archivo]"
-

@@ -211,7 +211,7 @@ void YZView::sendMultipleKey(const QString& _keys) {
 				continue;
 			} else if ( key.startsWith( "<ENTER>" ) ) {
 				sendKey ( "<ENTER>" );
-				i+=6;
+				i+=7;
 				continue;
 			} else if ( key.startsWith( "<UP>" ) ) {
 				sendKey ( "<UP>" );
@@ -231,35 +231,35 @@ void YZView::sendMultipleKey(const QString& _keys) {
 		if ( key.startsWith( "<CTRL>" ) ) {
 			yzDebug() << "Sending " << key.mid(6,1) << endl;
 			sendKey (key.mid( 6,1 ), "<CTRL>" );
-			i+=6;
+			i+=7;
 			continue;
 		} else if ( key.startsWith( "<ALT>" ) ) {
 			sendKey (key.mid( 5,1 ), "<ALT>" );
-			i+=5;
+			i+=6;
 			continue;
 		} else if ( key.startsWith( "<SHIFT>" ) ) {
 			sendKey (key.mid( 7,1 ), "<SHIFT>" );
-			i+=7;
+			i+=8;
 			continue;
 		} else if ( key.startsWith( "<ESC>" ) ) {
 			sendKey ( "<ESC>" );
-			i+=4;
+			i+=5;
 			continue;
 		} else if ( key.startsWith( "<ENTER>" ) ) {
 			sendKey ( "<ENTER>" );
-			i+=6;
+			i+=7;
 			continue;
 		} else if ( key.startsWith( "<TAB>" ) ) {
 			sendKey ( "<TAB>" );
-			i+=4;
+			i+=5;
 			continue;
 		} else if ( key.startsWith( "<UP>" ) ) {
 			sendKey ( "<UP>" );
-			i+=3;
+			i+=4;
 			continue;
 		} else if ( key.startsWith( "<DOWN>" ) ) {
 			sendKey ( "<DOWN>" );
-			i+=5;
+			i+=6;
 			continue;
 		} else if ( key.startsWith( "<RIGHT>" ) ) {
 			sendKey ( "<RIGHT>" );
@@ -269,9 +269,10 @@ void YZView::sendMultipleKey(const QString& _keys) {
 			sendKey ( "<LEFT>" );
 			i+=5;
 			continue;
-		} else
+		} else {
 			sendKey( key.mid( 0,1 ) );
 			i++;
+		}
 	}
 }
 

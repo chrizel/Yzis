@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kyzis M3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-11 15:24+0100\n"
+"POT-Creation-Date: 2005-02-12 17:12+0100\n"
 "PO-Revision-Date: 2005-02-08 23:54+0000\n"
 "Last-Translator: Helder Correia <helder.correia@netcabo.pt>\n"
 "Language-Team: Portuguese <helder.correia@netcabo.pt>\n"
@@ -403,11 +403,15 @@ msgstr "&Janela"
 msgid "Terminal"
 msgstr "Terminal"
 
-#: ../libyzis/buffer.cpp:571
+#: ../libyzis/buffer.cpp:565
+msgid "Failed opening file %1 for reading : %2"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:573
 msgid "Recover"
 msgstr "Recuperar"
 
-#: ../libyzis/buffer.cpp:571
+#: ../libyzis/buffer.cpp:573
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
@@ -416,7 +420,11 @@ msgstr ""
 "Provavelmente, foi criado devido a uma interrupção abrupta e anormal do seu "
 "sistema ou do Yzis. Quer iniciar a recuperação deste ficheiro?"
 
-#: ../libyzis/buffer.cpp:645 ../libyzis/buffer.cpp:648
+#: ../libyzis/buffer.cpp:643
+msgid "Failed opening file %1 for writing : %2"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
 msgid "Written %1 bytes to file %2"
 msgstr "Gravados %1 B para o ficheiro %2"
 
@@ -554,15 +562,15 @@ msgstr "Ficheiro modificado"
 msgid "This file has been modified, do you want to save it ?"
 msgstr "Este ficheiro foi modificado, deseja gravá-lo?"
 
-#: ../libyzis/view.cpp:374 ../libyzis/view.cpp:382
+#: ../libyzis/view.cpp:404 ../libyzis/view.cpp:412
 msgid "All"
 msgstr "Todo"
 
-#: ../libyzis/view.cpp:381
+#: ../libyzis/view.cpp:411
 msgid "Bot"
 msgstr "Fundo"
 
-#: ../libyzis/view.cpp:1443
+#: ../libyzis/view.cpp:1473
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
@@ -570,7 +578,7 @@ msgstr ""
 "Para usar a impressão Qt, necessita ter um ecrã X11 configurado e a "
 "executar. Deveria tentar pslib na consola"
 
-#: ../libyzis/view.cpp:1714
+#: ../libyzis/view.cpp:1744
 msgid " { Recording }"
 msgstr " { A gravar }"
 
@@ -578,7 +586,7 @@ msgstr " { A gravar }"
 msgid "(Press any key)"
 msgstr "(Pressione qualquer tecla)"
 
-#: ../nyzis/viewwidget.cpp:333 ../nyzis/viewwidget.cpp:335
+#: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
 msgid "[No File]"
 msgstr ""
 

@@ -561,6 +561,8 @@ void YZBuffer::load(const QString& file) {
 		while ( !stream.atEnd() )
 			appendLine( stream.readLine() );
 		fl.close();
+	} else {
+		YZSession::me->popupMessage(_("Failed opening file %1 for reading : %2").arg(mPath).arg(fl.errorString()));
 	}
 	if ( ! mText.count() )
 		appendLine("");
@@ -637,6 +639,10 @@ bool YZBuffer::save() {
 			}
 		}
 		file.close();
+	} else {
+		YZSession::me->popupMessage(_("Failed opening file %1 for writing : %2").arg(mPath).arg(file.errorString()));
+		m_hlupdating = true;
+		return false;
 	}
 	m_hlupdating = false; //override so that it does not parse all lines
 #if QT_VERSION < 0x040000

@@ -1,3 +1,8 @@
+2005-02-12 mikmak
+  * libyzis
+	added error handling when writing a file fails
+	added error handling when opening a file fails
+
 2005-02-01 mikmak
   * kyzis
     fix 2 similar crashes with 2 different sources. We are on the way to M3

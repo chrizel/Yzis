@@ -17,6 +17,9 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_v
 	//debug("w,h are %d,%d",w,h);
 }
 
+void NYZView::postEvent( yz_event ev ) {
+
+}
 
 void NYZView::event_loop()
 {

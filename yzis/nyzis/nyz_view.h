@@ -8,17 +8,17 @@
  */
 
 #include "yz_view.h"
+#include "gui.h"
 #include <curses.h>
 #include <qstringlist.h>
 #include <qmap.h>
 
 
-//#define	YZ_MAX_LINE	3000
 typedef QMap<int,QString> NYZLine;
 
 class NYZSession;
 
-class NYZView : public YZView  {
+class NYZView : public YZView, public Gui  {
 public:
 	/**
 	  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
@@ -29,6 +29,7 @@ public:
 	void event_loop();
 	void flush_events();
 
+	void postEvent(yz_event);
 
 protected:
 	void handle_event(yz_event *e);

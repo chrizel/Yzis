@@ -12,7 +12,7 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 	buffer		= _b;
 	lines_vis	= _lines_vis;
 	cursor = new YZCursor(this);
-	current		= 0;
+	current=0;
 	current_maxx = 0;
 	mode 		= YZ_VIEW_MODE_COMMAND;
 	QString line = buffer->find_line(cursor->getY());

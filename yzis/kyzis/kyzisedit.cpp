@@ -3,6 +3,7 @@
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	: QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) {
+	setFont(QFont("Fixed",10));
 	_parent = parent;
 
 	viewport()->setFocusProxy( this );
@@ -24,8 +25,9 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 
 // PUBLIC API
 void KYZisEdit::setCursor(int c, int l) {
-	cursorx = c;
-	cursory = l;
+	//strange we should not need a -1 //FIXME
+	cursorx = c-1;
+	cursory = l-1;
 }
 
 void KYZisEdit::setTextLine(int l, const QString &str){
@@ -43,11 +45,15 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	e->accept();
 }
 
-void KYZisEdit::drawCursorAt(QPainter *paint, int x, int y) {
-	QBrush brush(blue);
-	paint->setBrush(brush);
-	paint->setPen(NoPen);
-	paint->drawRect(x,y,100,100);
+void KYZisEdit::drawCursorAt(QPainter *p, int x, int y) {
+	bitBlt (
+			viewport(),
+			x*fontMetrics().maxWidth(),y*fontMetrics().lineSpacing(),
+			viewport(),
+			x*fontMetrics().maxWidth(),y*fontMetrics().lineSpacing(),
+			fontMetrics().maxWidth(), fontMetrics().lineSpacing(),
+			Qt::NotROP,	    // raster Operation
+			true );		    // ignoreMask
 }
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
@@ -64,6 +70,7 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 	}
 	
 	//XXX draw the cursor if needed
+	drawCursorAt(p,cursorx,cursory);
 }
 
 #include "kyzisedit.moc"

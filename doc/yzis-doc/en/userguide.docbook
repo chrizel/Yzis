@@ -297,7 +297,7 @@
 			<listitem><para><command>'b'</command> = one word backward</para></listitem>
 			<listitem><para><command>'$'</command> = the end of the line</para></listitem>
 			<listitem><para><command>'0'</command> = the start of the line</para></listitem>
-			<listitem><para><command>'[count]G'</command> = goto line [count] (default = 0) </para></listitem>
+			<listitem><para><command>'[count]G'</command> = goto line [count] (default = last line) </para></listitem>
 		</itemizedlist>
 
 		<para>

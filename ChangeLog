@@ -1,6 +1,7 @@
 2004-04-13 mikmak
   * all
     added an information status message to be added in GUIs
+    support pageUp and pageDown
   * kyzis
     display the message :)
 

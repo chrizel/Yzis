@@ -121,6 +121,14 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Delete:
 					mBuffer->delChar(mCursor->getX(),mCursor->getY(),1);
 					return;
+				case Qt::Key_PageDown:
+					gotoxy(mCursor->getX(), mCursor->getY() + mLinesVis );
+					purgeInputBuffer();
+					return;
+				case Qt::Key_PageUp:
+					gotoxy(mCursor->getX(), mCursor->getY() - mLinesVis );
+					purgeInputBuffer();
+					return;
 				default:
 					mBuffer->insertChar(mCursor->getX(),mCursor->getY(),key);
 					gotoxy(mCursor->getX()+1, mCursor->getY() );
@@ -159,6 +167,14 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Backspace:
 					if (mCursor->getX() == 0) return;
 					gotoxy(mCursor->getX()-1, mCursor->getY() );
+					return;
+				case Qt::Key_PageDown:
+					gotoxy(mCursor->getX(), mCursor->getY() + mLinesVis );
+					purgeInputBuffer();
+					return;
+				case Qt::Key_PageUp:
+					gotoxy(mCursor->getX(), mCursor->getY() - mLinesVis );
+					purgeInputBuffer();
 					return;
 				default:
 					mBuffer->chgChar(mCursor->getX(),mCursor->getY(),key);
@@ -283,6 +299,14 @@ void YZView::sendKey( int c, int modifiers) {
 					break;
 				case Qt::Key_Delete:
 					mBuffer->delChar(mCursor->getX(),mCursor->getY(),1);
+					return;
+				case Qt::Key_PageDown:
+					gotoxy(mCursor->getX(), mCursor->getY() + mLinesVis );
+					purgeInputBuffer();
+					return;
+				case Qt::Key_PageUp:
+					gotoxy(mCursor->getX(), mCursor->getY() - mLinesVis );
+					purgeInputBuffer();
 					return;
 				default:
 					break;

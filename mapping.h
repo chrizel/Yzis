@@ -83,13 +83,13 @@ class YZMapping {
 		void deleteGlobalMapping( const QString& key ) {
 			mGlobalMappings.erase(key);	
 		}
-		void applyMappings( QString& text, int modes );
-		void applyNormalMappings( QString& text );
-		void applyVisualMappings( QString& text );
-		void applyCmdLineMappings( QString& text );
-		void applyInsertMappings( QString& text );
-		void applyPendingOpMappings( QString& text );
-		void applyGlobalMappings( QString& text );
+		bool applyMappings( QString& text, int modes );
+		bool applyNormalMappings( QString& text );
+		bool applyVisualMappings( QString& text );
+		bool applyCmdLineMappings( QString& text );
+		bool applyInsertMappings( QString& text );
+		bool applyPendingOpMappings( QString& text );
+		bool applyGlobalMappings( QString& text );
 
 	protected:
 		YZMapping();

@@ -37,58 +37,83 @@ YZMapping::YZMapping() {
 YZMapping::~YZMapping() {
 }
 
-void YZMapping::applyNormalMappings( QString& text ) {
-	yzDebug() << "Normal" << endl;
+bool YZMapping::applyNormalMappings( QString& text ) {
+	bool pendingMapp = false;
 	QMap<QString,QString>::Iterator it;
-	for (it = mNormalMappings.begin(); it != mNormalMappings.end(); ++it)
+	for (it = mNormalMappings.begin(); it != mNormalMappings.end(); ++it) {
 		text.replace(it.key(), it.data());
+		pendingMapp = pendingMapp || it.key().startsWith(text);
+	}
+	return pendingMapp;
 }
 
-void YZMapping::applyVisualMappings( QString& text ) {
+bool YZMapping::applyVisualMappings( QString& text ) {
+	bool pendingMapp = false;
 	QMap<QString,QString>::Iterator it;
-	for (it = mVisualMappings.begin(); it != mVisualMappings.end(); ++it)
+	for (it = mVisualMappings.begin(); it != mVisualMappings.end(); ++it) {
 		text.replace(it.key(), it.data());
+		pendingMapp = pendingMapp || it.key().startsWith(text);
+	}
+	return pendingMapp;
 }
 
-void YZMapping::applyCmdLineMappings( QString& text ) {
+bool YZMapping::applyCmdLineMappings( QString& text ) {
+	bool pendingMapp = false;
 	QMap<QString,QString>::Iterator it;
-	for (it = mCmdLineMappings.begin(); it != mCmdLineMappings.end(); ++it)
+	for (it = mCmdLineMappings.begin(); it != mCmdLineMappings.end(); ++it) {
 		text.replace(it.key(), it.data());
+		pendingMapp = pendingMapp || it.key().startsWith(text);
+	}
+	return pendingMapp;
 }
 
-void YZMapping::applyPendingOpMappings( QString& text ) {
+bool YZMapping::applyPendingOpMappings( QString& text ) {
+	bool pendingMapp = false;
 	QMap<QString,QString>::Iterator it;
-	for (it = mPendingOpMappings.begin(); it != mPendingOpMappings.end(); ++it)
+	for (it = mPendingOpMappings.begin(); it != mPendingOpMappings.end(); ++it) {
 		text.replace(it.key(), it.data());
+		pendingMapp = pendingMapp || it.key().startsWith(text);
+	}
+	return pendingMapp;
 }
 
-void YZMapping::applyInsertMappings( QString& text ) {
+bool YZMapping::applyInsertMappings( QString& text ) {
+	bool pendingMapp = false;
 	QMap<QString,QString>::Iterator it;
-	for (it = mInsertMappings.begin(); it != mInsertMappings.end(); ++it)
+	for (it = mInsertMappings.begin(); it != mInsertMappings.end(); ++it) {
 		text.replace(it.key(), it.data());
+		pendingMapp = pendingMapp || it.key().startsWith(text);
+	}
+	return pendingMapp;
 }
 
-void YZMapping::applyGlobalMappings( QString& text ) {
-	yzDebug() << "Global" << endl;
+bool YZMapping::applyGlobalMappings( QString& text ) {
+	bool pendingMapp = false;
 	QMap<QString,QString>::Iterator it;
-	for (it = mGlobalMappings.begin(); it != mGlobalMappings.end(); ++it)
+	for (it = mGlobalMappings.begin(); it != mGlobalMappings.end(); ++it) {
 		text.replace(it.key(), it.data());
+		pendingMapp = pendingMapp || it.key().startsWith(text);
+	}
+	return pendingMapp;
 }
 
-void YZMapping::applyMappings( QString& text, int modes ) {
-//	yzDebug() << "Text1: " << text << endl;
+bool YZMapping::applyMappings( QString& text, int modes ) {
+	yzDebug() << "Text1: " << text << endl;
+	bool pendingMapp = false;
+	
 	if ( modes & normal || modes & visual || modes & pendingop)
-		applyGlobalMappings(text);
+		pendingMapp = pendingMapp || applyGlobalMappings(text);
 	if ( modes & normal )
-		applyNormalMappings(text);
+		pendingMapp = pendingMapp || applyNormalMappings(text);
 	if ( modes & pendingop )
-		applyPendingOpMappings(text);
+		pendingMapp = pendingMapp || applyPendingOpMappings(text);
 	if ( modes & visual )
-		applyVisualMappings(text);
+		pendingMapp = pendingMapp || applyVisualMappings(text);
 	if ( modes & insert )
-		applyInsertMappings(text);
+		pendingMapp = pendingMapp || applyInsertMappings(text);
 	if ( modes & cmdline )
-		applyCmdLineMappings(text);
-	//yzDebug() << "Text2: " << text << endl;
+		pendingMapp = pendingMapp || applyCmdLineMappings(text);
+	yzDebug() << "Text2: " << text << endl << "Pending mapping : " << pendingMapp << endl;
+	return pendingMapp;
 }
 

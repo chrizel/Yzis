@@ -149,6 +149,8 @@ void YZSession::rmBuffer( YZBuffer *b ) {
 			mBuffers.remove( b->fileName() );
 			deleteBuffer( b );
 	}
+	if ( mBuffers.isEmpty() )
+		exitRequest( );
 //	delete b; // kinda hot,no?
 }
 

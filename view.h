@@ -118,6 +118,12 @@ class YZView {
 		QString moveRight( const QString& inputsBuff = QString::null );
 
 		/**
+		 * moves the cursor of the current view to the first non-blank character 
+		 * of the current line
+		 */
+		QString moveToFirstNonBlankOfLine( const QString& inputsBuff = QString::null );
+
+		/**
 		 * moves the cursor of the current view to the start of the current line
 		 */
 		QString moveToStartOfLine( const QString& inputsBuff = QString::null );

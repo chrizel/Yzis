@@ -402,6 +402,16 @@ QString YZView::moveRight( const QString& inputsBuff ) {
 	return QString::null;
 }
 
+QString YZView::moveToFirstNonBlankOfLine( const QString& ) {
+	//execute the code
+	gotoxy(mBuffer->firstNonBlankChar(mCursor->getY()) , mCursor->getY());
+	
+	//reset the input buffer
+	purgeInputBuffer();
+	//return something
+	return QString::null;
+}
+
 QString YZView::moveToStartOfLine( const QString& ) {
 	//execute the code
 	gotoxy(0 , mCursor->getY());
@@ -413,7 +423,14 @@ QString YZView::moveToStartOfLine( const QString& ) {
 }
 
 QString YZView::gotoLine(const QString& inputsBuff) {
-	//can be : 'gg' (goto Top),'G' or a number with one of them
+	// Accepts "gg", "G", "<number>gg", "<number>G"
+	// "gg", "0gg", "1gg" -> first line of the file
+	// "G", "0G", "3240909G", "23323gg" -> last line of the file
+	// "<line>G", "<line>gg" -> line of the file
+	// in gvim, there is a configuration, startofline, which tells whether
+	// the cursor is set on the first non-blank character (default) or on the
+	// same columns as it originally was
+
 	uint line=0;
 
 	// first and easy case to handle
@@ -429,20 +446,19 @@ QString YZView::gotoLine(const QString& inputsBuff) {
 		line = inputsBuff.left( i ).toInt( &toint_ok );
 		if (!toint_ok || !line) {
 			if (inputsBuff[i] == 'G') {
-				line=mBuffer->lineCount(); // in vim '0G' also goes to the end
+				line=mBuffer->lineCount();
 			} else {
-				line=1; // in vim '0gg' goes to the beginning
+				line=1;
 			}
 		}
 	}
 
-	/* if line is null, we dont want to go to line -1,
+	/* if line is null, we do not want to go to line -1,
 	 * this can happen if the file is empty for exemple */
 	if ( !line ) line++;
 	if (line > mBuffer->lineCount()) line = mBuffer->lineCount();
 
-	// XXX configuration startofline
-	if (/* startofline */ 1 ) {
+	if (/* XXX configuration startofline */ 1 ) {
 		gotoxy(mBuffer->firstNonBlankChar(line-1), line-1);
 	} else {
 		gotoxy(mCursor->getY(), line-1);

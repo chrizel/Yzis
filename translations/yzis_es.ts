@@ -3,118 +3,119 @@
     <name>KYZisDoc</name>
     <message>
         <source>Yzis is not able to save remote files for now</source>
-        <translation>Yzis kan ikke lagre eksterne filer ennå</translation>
+        <translation>Yzis de momento no es capaz de guardar archivos remotos</translation>
     </message>
     <message>
         <source>Remote files</source>
-        <translation>Eksterne filer</translation>
+        <translation>Archivos remotos</translation>
     </message>
 </context>
 <context>
     <name>KYZisFactory</name>
     <message>
         <source>Error</source>
-        <translation>Feil</translation>
+        <translation>Error</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>One file is modified ! Save it first ...</source>
-        <translation>En fil er modifisert! Lagre den først...</translation>
+        <translation>¡Un archivo ha sido modificado! Guárdelo primero ...</translation>
     </message>
     <message>
         <source>No next buffer</source>
-        <translation>Ingen buffere etter denne</translation>
+        <translation>No hay siguiente búfer</translation>
     </message>
     <message>
         <source>No previous buffer</source>
-        <translation>Ingen buffere før denne</translation>
+        <translation>No hay búfer previo</translation>
     </message>
     <message>
         <source>Please specify a filename</source>
-        <translation>Vennligst spesifiser et filnavn</translation>
+        <translation>Especifique un nombre de archivo</translation>
     </message>
     <message>
         <source>Invalid option given : </source>
-        <translation>Ugyldig opsjon gitt:</translation>
+        <translation>Opción no válida :</translation>
     </message>
     <message>
         <source>This option cannot be switched this way, this is a boolean option.</source>
-        <translation>Denne opsjonen kan ikke bli satt til gitt verdi. Dette er en boolsk opsjon.</translation>
+        <translation>Esta opción no puede ser configurada de esta manera, es una opción booleana.</translation>
     </message>
     <message>
         <source>This option is a global option which cannot be changed with setlocal</source>
-        <translation>Dette er en global opsjon som ikke kan forandres med setlocal</translation>
+        <translation>Esta opción es una opción global que no puede ser modificada con setlocal</translation>
     </message>
     <message>
         <source>Invalid option given</source>
-        <translation>Ugyldig opsjon gitt</translation>
+        <translation>Opción no válida</translation>
     </message>
     <message>
         <source>search hit TOP, continuing at BOTTOM</source>
-        <translation type="unfinished"></translation>
+        <translation>la búsqueda alcanzó el PRINCIPIO, continuando al FINAL</translation>
     </message>
     <message>
         <source>search hit BOTTOM, continuing at TOP</source>
-        <translation type="unfinished"></translation>
+        <translation>la búsqueda alcanzó el FINAL, continuando al PRINCIPIO</translation>
     </message>
 </context>
 <context>
     <name>YZBuffer</name>
     <message>
         <source>Recover</source>
-        <translation>Gjenopprett</translation>
+        <translation>Recuperar</translation>
     </message>
     <message>
         <source>A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?</source>
-        <translation>En swap-fil ble funnet for denne filen. Den ble antagelig laget fordi maskinen din eller yzis kræsjet, vil du starte gjenopprettelse av denne filen?</translation>
+        <translation>Se encontró un archivo de intercambio para este archivo. Presumiblemente fue creado porque se colgó bien su máquina o bien yzis. ¿Desea comenzar la recuperación de este archivo?</translation>
     </message>
     <message>
         <source>Written %1 bytes to file %2</source>
-        <translation>%1 bytes ble skrevet til filen %2</translation>
+        <translation>Escritos %1 bytes al archivo %2</translation>
     </message>
 </context>
 <context>
     <name>YZExLua</name>
     <message>
         <source>The file %1 could not be found in standard directories</source>
-        <translation>Filen %1 ble ikk funnet i standard-katalogene</translation>
+        <translation>No se pudo encontrar el archivo %1 en los directorios estándares</translation>
     </message>
     <message>
         <source>Lua error when running file %1:
 </source>
-        <translation>Lua-feil når filen %1 ble kjørt:</translation>
+        <translation>Error de Lua cuando ejecutaba el archivo %1:
+</translation>
     </message>
 </context>
 <context>
     <name>YZSwapFile</name>
     <message>
         <source>Warning, the swapfile could not be opened maybe due to restrictive permissions.</source>
-        <translation>Advarsel! Swap-filen kunne ikke åpnes, muligens på grunn av restriktive filrettigheter.</translation>
+        <translation>Atención, no se pudo abrir el archivo de intercambio (tal vez debido a restricciones de permisos).</translation>
     </message>
     <message>
         <source>Warning, the swapfile could not be created maybe due to restrictive permissions.</source>
-        <translation>Advarsel! Swap-filen kunne ikke opprettes, muligens på grunn av restriktive filrettigheter.</translation>
+        <translation>Atención, no se pudo crear el archivo de intercambio (tal vez debido a restricciones de permisos).</translation>
     </message>
     <message>
         <source>The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files.</source>
-        <translation>Swap-filen kunne ikke åpnes, det vil ikke være mulig å gjenopprette denne filen. Du vil kanskje sjekke filrettigheter.</translation>
+        <translation>No se pudo abrir el archivo de intercambio. No habrá recuperación de este archivo. Tal vez quiera comprobar los permisos de los archivos.</translation>
     </message>
 </context>
 <context>
     <name>YZView</name>
     <message>
         <source>[ Insert ]</source>
-        <translation>[ Sett inn ]</translation>
+		<translation>[ Insertar ]</translation>
     </message>
     <message>
         <source>[ Replace ]</source>
-        <translation>[ Erstatt ]</translation>
+        <translation>[ Reemplazar ]</translation>
     </message>
     <message>
         <source>[ Awaiting Command ]</source>
-        <translation>[ Venter på kommando ]</translation>
+        <translation>[ Esperando comando ]</translation>
     </message>
     <message>
         <source>[ Ex ]</source>
@@ -122,55 +123,55 @@
     </message>
     <message>
         <source>[ Search ]</source>
-        <translation>[ Søk ]</translation>
+        <translation>[ Buscar ]</translation>
     </message>
     <message>
         <source>[ Open ]</source>
-        <translation>[ Åpen ]</translation>
+        <translation>[ Abrir ]</translation>
     </message>
     <message>
         <source>[ Introduction ]</source>
-        <translation>[ Introduksjon ]</translation>
+        <translation>[ Introducción ]</translation>
     </message>
     <message>
         <source>{ Completion }</source>
-        <translation>{ komplettering }</translation>
+        <translation>{ Completado }</translation>
     </message>
     <message>
         <source>[ Visual ]</source>
-        <translation>[ Visuell ]</translation>
+        <translation>[ Visual ]</translation>
     </message>
     <message>
         <source>[ Visual Line ]</source>
-        <translation>[ Visuell linje ]</translation>
+        <translation>[ Línea visual ]</translation>
     </message>
     <message>
         <source>Yzis Ready</source>
-        <translation>Yzis klar</translation>
+        <translation>Yzis preparado</translation>
     </message>
     <message>
         <source>No match</source>
-        <translation>Ingen treff</translation>
+        <translation>No hay coincidencias</translation>
     </message>
     <message>
         <source>All</source>
-        <translation>Alle</translation>
+        <translation>Todo</translation>
     </message>
     <message>
         <source>Top</source>
-        <translation>Topp</translation>
+        <translation>Principio</translation>
     </message>
     <message>
         <source>Bot</source>
-        <translation>Bunn</translation>
+        <translation>Final</translation>
     </message>
     <message>
         <source>To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode</source>
-        <translation>For å bruke Qt-printeren må du ha en X11-server kjørende og ha satt miljøvariabelen DISPLAY satt. I konsoll burde du prøve pslib</translation>
+        <translation>Para utilizar la impresora Qt, necesita tener un DISPLAY X11 configurado y ejecutándose. Debería probar pslib en modo consola</translation>
     </message>
     <message>
         <source> { Recording }</source>
-        <translation>{ Spiller inn }</translation>
+        <translation>{ Grabando }</translation>
     </message>
 </context>
 </TS>

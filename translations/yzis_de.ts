@@ -121,6 +121,14 @@
         <source>Invalid option given</source>
         <translation type="unfinished">Ungültige Option</translation>
     </message>
+    <message>
+        <source>search hit TOP, continuing at BOTTOM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>search hit BOTTOM, continuing at TOP</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>YZBuffer</name>
@@ -255,6 +263,10 @@
     </message>
     <message>
         <source> { Recording }</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No match</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

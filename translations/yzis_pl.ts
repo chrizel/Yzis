@@ -18,6 +18,49 @@
     </message>
 </context>
 <context>
+    <name>QObject</name>
+    <message>
+        <source>One file is modified ! Save it first ...</source>
+        <translation type="unfinished">Jeden plik jest zmieniony ! Zapisz go najpierw ...</translation>
+    </message>
+    <message>
+        <source>No next buffer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No previous buffer</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please specify a filename</source>
+        <translation type="unfinished">Proszę podaj nazwę pliku</translation>
+    </message>
+    <message>
+        <source>Invalid option given : </source>
+        <translation type="unfinished">Podano nieprawidłową opcję :</translation>
+    </message>
+    <message>
+        <source>This option cannot be switched this way, this is a boolean option.</source>
+        <translation type="unfinished">Ta opcja nie może być ustawiona w ten sposób, to jest wartość tak/nie.</translation>
+    </message>
+    <message>
+        <source>This option is a global option which cannot be changed with setlocal</source>
+        <translation type="unfinished">Ta opcja jest opcją globalną, i nie może być zmieniona za pomocą setlocal</translation>
+    </message>
+    <message>
+        <source>Invalid option given</source>
+        <translation type="unfinished">Podano nieprawidłową opcję</translation>
+    </message>
+    <message>
+        <source>search hit TOP, continuing at BOTTOM</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>search hit BOTTOM, continuing at TOP</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>YZBuffer</name>
     <message>
         <source>Recover</source>
@@ -36,27 +79,27 @@
     <name>YZExExecutor</name>
     <message>
         <source>One file is modified ! Save it first ...</source>
-        <translation>Jeden plik jest zmieniony ! Zapisz go najpierw ...</translation>
+        <translation type="obsolete">Jeden plik jest zmieniony ! Zapisz go najpierw ...</translation>
     </message>
     <message>
         <source>Please specify a filename</source>
-        <translation>Proszę podaj nazwę pliku</translation>
+        <translation type="obsolete">Proszę podaj nazwę pliku</translation>
     </message>
     <message>
         <source>Invalid option given : </source>
-        <translation>Podano nieprawidłową opcję :</translation>
+        <translation type="obsolete">Podano nieprawidłową opcję :</translation>
     </message>
     <message>
         <source>This option cannot be switched this way, this is a boolean option.</source>
-        <translation>Ta opcja nie może być ustawiona w ten sposób, to jest wartość tak/nie.</translation>
+        <translation type="obsolete">Ta opcja nie może być ustawiona w ten sposób, to jest wartość tak/nie.</translation>
     </message>
     <message>
         <source>This option is a global option which cannot be changed with setlocal</source>
-        <translation>Ta opcja jest opcją globalną, i nie może być zmieniona za pomocą setlocal</translation>
+        <translation type="obsolete">Ta opcja jest opcją globalną, i nie może być zmieniona za pomocą setlocal</translation>
     </message>
     <message>
         <source>Invalid option given</source>
-        <translation>Podano nieprawidłową opcję</translation>
+        <translation type="obsolete">Podano nieprawidłową opcję</translation>
     </message>
 </context>
 <context>
@@ -64,6 +107,11 @@
     <message>
         <source>The file %1 could not be found in standard directories</source>
         <translation>Plik %1 nie został znaleziony w standardowych katalogach</translation>
+    </message>
+    <message>
+        <source>Lua error when running file %1:
+</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -134,6 +182,22 @@
     <message>
         <source>To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode</source>
         <translation>Aby używać drukarki Qt, musisz mieć otwarty i ustawiony ekran X11, pod konsolą tekstową możesz spróbować pslib&apos;a</translation>
+    </message>
+    <message>
+        <source>[ Introduction ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>{ Completion }</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source> { Recording }</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -73,10 +73,8 @@ void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
 
 	/* inform the views */
 	YZView *it;
-	for ( it = mViews.first(); it ; it = mViews.next() ) {
-//		YZView *v = *it;
+	for ( it = mViews.first(); it ; it = mViews.next() )
 		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
-	}
 
 }
 
@@ -303,3 +301,10 @@ yz_point YZBuffer::motionPosition( unsigned int /*xstart*/, unsigned int /*ystar
 	return e;
 }
 
+void YZBuffer::replaceLine( unsigned int y, const QString& value ) {
+	at(y)->setData(value);
+	/* inform the views */
+	YZView *it;
+	for ( it = mViews.first(); it ; it = mViews.next() )
+		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
+}

@@ -159,6 +159,11 @@ public:
 	void deleteLine( unsigned int line );
 
 	/**
+	 * Replaces the @param y line with the given @param value
+	 */
+	void replaceLine( unsigned int y, const QString& value );
+
+	/**
 	 * @internal, not implemented yet
 	 */
 	yz_point motionPosition( unsigned int xstart, unsigned int ystart, YZMotion regexp );

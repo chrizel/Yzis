@@ -60,12 +60,12 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("[0-9]*l",&YZView::moveRight,true);
 	NEW_VIEW_COMMAND("\\^",&YZView::moveToStartOfLine,true);
 	NEW_VIEW_COMMAND("\\$",&YZView::moveToEndOfLine,true);
-	NEW_VIEW_COMMAND("[0-9]*x",&YZView::deleteCharacter,true);
+	NEW_VIEW_COMMAND("(\".)?[0-9]*(x|X)",&YZView::deleteCharacter,true);
 	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true);
 	NEW_VIEW_COMMAND(":",&YZView::gotoExMode,true);
 	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true);
 	NEW_VIEW_COMMAND("[0-9]*(gg|G)",&YZView::gotoLine,true);
-	NEW_VIEW_COMMAND("[0-9]*dd",&YZView::deleteLine,true);
+	NEW_VIEW_COMMAND("(\".)?[0-9]*(d.|D)",&YZView::deleteLine,true);
 	NEW_VIEW_COMMAND("o",&YZView::openNewLineAfter,true);
 	NEW_VIEW_COMMAND("O",&YZView::openNewLineBefore,true);
 	NEW_VIEW_COMMAND("a",&YZView::append,true);
@@ -78,7 +78,6 @@ void YZCommandPool::initPool() {
 void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error) {
 	QString result;
 	QString command=QString::null;
-	unsigned int i=0;
 
 	QMap<QString, YZCommand>::Iterator it = globalCommands.end();
 	for ( it = globalCommands.begin(); it!=globalCommands.end(); ++it ) {

@@ -481,19 +481,33 @@ QString YZView::deleteCharacter( const QString& inputsBuff ) {
 }
 
 QString YZView::deleteLine ( const QString& inputsBuff ) {
-	int nb_lines=1;//default : one line down
+	int nb_lines=1;//default : one line
+	QChar reg='\"';
 
-	//check the arguments
-	if ( !inputsBuff.isNull() ) {
-		int i=0;
-		while ( inputsBuff[i].isDigit() )
-			i++; //go on
-		bool test;
-		nb_lines = inputsBuff.left( i ).toInt( &test );
-		if ( !test ) nb_lines=1;
+	QRegExp ex( "(\".)?([0-9]*)(d.|D)" );
+	ex.exactMatch( inputsBuff );
+	QStringList ls = ex.capturedTexts();
+	yzDebug() << "view::deleteLine " << ls << endl;
+	
+	if ( ls[ 1 ] != "" ) //got a register name ?
+		reg = ls[ 2 ][ 1 ];
+	if ( ls[ 2 ] != "" )  //number of lines ?
+		nb_lines = ls[ 2 ].toInt();
+	
+	YZSession::mRegisters.setRegister( '\"', "" );
+	QStringList buff; //to copy old lines into the register "
+	if ( ls[ 3 ] == "dd" ) { //delete whole lines
+		for ( int i=0; i<nb_lines; ++i ) {
+			buff << mBuffer->data( mCursor->getY() );
+			mBuffer->deleteLine( mCursor->getY() );
+		}
+	} else if ( ls[ 3 ] == "D" || ( ls[ 3 ] == "d$" ) ) { //delete to end of lines
+		QString b = mBuffer->data( mCursor->getY() );
+		buff << b;
+		mBuffer->replaceLine( mCursor->getY(), b.left( mCursor->getX() ) );
+		gotoxy( mCursor->getX() - 1, mCursor->getY() );
 	}
-
-	for ( int i=0; i<nb_lines; ++i ) mBuffer->deleteLine( mCursor->getY() );
+	YZSession::mRegisters.setRegister( '\"', buff.join( "\n" ) );
 
 	//reset the input buffer
 	purgeInputBuffer();
@@ -637,12 +651,16 @@ QString YZView::paste( const QString& inputsBuff ) {
 	//paste now
 	////get the strings and merge them in one single line
 	QString data = YZSession::mRegisters.getRegister( reg );
+	int curx = mCursor->getX();
+	int cury = mCursor->getY();
 	QStringList list = QStringList::split( "\n", data );
 	if ( pastebefore ) gotoxy( mCursor->getX(), mCursor->getY()-1 );
 	for ( QStringList::Iterator it = list.begin(); it!=list.end(); it++ ) {
 		mBuffer->insertLine(*it, mCursor->getY()+1);
 		gotoxy( mCursor->getX(), mCursor->getY()+1 );
 	}
+	//needs some tuning later XXX
+	gotoxy( curx, cury );
 	purgeInputBuffer();
 	return QString::null;
 }

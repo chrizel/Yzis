@@ -1,3 +1,9 @@
+2004-02-28 mikmak
+  * libyzis
+    improve 'dd', make it copy its content to the register
+    added 'd$' and 'D' commands (with register support)
+    added replaceLine() in Buffer
+
 2004-02-27 mikmak
   * libyzis
     basic support for options management

@@ -63,7 +63,6 @@ class YZViewCursor {
 
 		void debug();
 
-	private :
 		void setBuffer( const YZCursor& value );
 		void setScreen( const YZCursor& value );
 
@@ -72,6 +71,7 @@ class YZViewCursor {
 		void setScreenX( unsigned int value );
 		void setScreenY( unsigned int value );
 
+	private :
 		/**
 		 * parent view
 		 */

@@ -70,9 +70,10 @@ public:
 	  * This view is not the front one anymore, hide it
 	  */
 	void unmap( void );
+	virtual void registerModifierKeys( const QString& ) { }
+	virtual void unregisterModifierKeys( const QString& ) { }
 
 protected :
-	virtual void registerModifierKeys( const QString& ) { }
 
 public slots:
 

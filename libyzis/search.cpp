@@ -73,26 +73,14 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 
 	if ( skipline ) {
 		cur.setX( 0 );
-#if QT_VERSION < 0x040000
-		if ( ! reverse ) cur.setY( QMIN( (int)(cur.getY() + 1), (int)(mView->myBuffer()->lineCount() - 1) ) );
-#else
 		if ( ! reverse ) cur.setY( qMin( (int)(cur.getY() + 1), (int)(mView->myBuffer()->lineCount() - 1) ) );
-#endif
 	} else {
-#if QT_VERSION < 0x040000
-		cur.setX( QMAX( (int)(cur.getX() + direction), 0 ) );
-#else
 		cur.setX( qMax( (int)(cur.getX() + direction), 0 ) );
-#endif
 	}
 	YZCursor top( mView, 0, 0 );
 	YZCursor bottom( mView );
 	bottom.setY( mView->myBuffer()->lineCount() - 1 );
-#if QT_VERSION < 0x040000
-	bottom.setX( QMAX( (int)(mView->myBuffer()->textline( bottom.getY() ).length() - 1), 0 ) );
-#else
 	bottom.setX( qMax( (int)(mView->myBuffer()->textline( bottom.getY() ).length() - 1), 0 ) );
-#endif
 
 	YZCursor end( bottom );
 	if ( reverse ) end.setCursor( top );
@@ -156,11 +144,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 			YZCursor cur( from );
 			YZCursor end( v );
 			end.setY( b->lineCount() - 1 );
-#if QT_VERSION < 0x040000
-			end.setX( QMAX( (int)(b->textline( end.getY() ).length() - 1), 0 ) );
-#else
 			end.setX( qMax( (int)(b->textline( end.getY() ).length() - 1), 0 ) );
-#endif
 
 			bool found = true;
 			unsigned int matchedLength = 0;
@@ -226,7 +210,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 #if QT_VERSION < 0x040000
 		for( v = views.first(); v; v = views.next() ) {
 			v->getSelectionPool()->setSearch( searchMap );
-			v->sendPaintEvent( 0, line, QMAX( (int)(buffer->textline( line ).length() - 1), 0 ), line );
+			v->sendPaintEvent( 0, line, qMax( (int)(buffer->textline( line ).length() - 1), 0 ), line );
 		}
 #else
 		for (int i = 0 ; i < views.size(); ++i ) {

@@ -70,6 +70,7 @@ class KYZisEdit : public QWidget {
 		unsigned int spaceWidth;
 
 		void registerModifierKeys( const QString& keys );
+		void unregisterModifierKeys( const QString& keys );
 
 		QPoint cursorCoordinates( );
 

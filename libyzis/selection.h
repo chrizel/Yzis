@@ -46,6 +46,7 @@ class YZBound {
 		void close();
 		const YZCursor& pos() const;
 		bool opened() const;
+		bool closed() const;
 
 	private:
 		YZCursor mPos;

@@ -38,6 +38,7 @@
 #include "line.h"
 #include "debug.h"
 #include "view.h" // needed by Visual
+#include "selection.h"
 
 class YZUndoBuffer;
 class YZAction;
@@ -165,6 +166,8 @@ public:
 		return myNull;
 	}
 
+	void intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor* to );
+
 	/**
 	 * Get a list of strings between two cursors
 	 * @param from the origin cursor
@@ -172,6 +175,7 @@ public:
 	 * @return a list of strings
 	 */
 	QStringList getText(const YZCursor& from, const YZCursor& to);
+	QStringList getText(const YZInterval& i);
 
 	/**
 	 * Get entire word at given cursor position. Currently behaves like '*' in vim

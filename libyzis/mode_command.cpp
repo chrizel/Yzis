@@ -1,8 +1,9 @@
-/* This file is part of the Yzis libraries
+/*  This file is part of the Yzis libraries
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>,
  *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>,
  *  Copyright (C) 2003-2004 Philippe Fremy <phil@freehackers.org>
  *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
+ *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,17 +25,10 @@
  * $Id$
  */
 
+#include "mode_command.h"
+
 #include <assert.h>
-#include "commands.h"
-#include "debug.h"
-#include "view.h"
-#include "viewcursor.h"
-#include "session.h"
-#include "buffer.h"
-#include "cursor.h"
-#include "linesearch.h"
-#include "action.h"
-#include "mark.h"
+
 #if QT_VERSION < 0x040000
 #include <qregexp.h>
 #include <qptrlist.h>
@@ -42,117 +36,152 @@
 #include <QRegExp>
 #endif
 
-/**
- */
-YZCommandPool::YZCommandPool() {
+#include "debug.h"
+
+#include "action.h"
+#include "buffer.h"
+#include "cursor.h"
+#include "linesearch.h"
+#include "mark.h"
+#include "selection.h"
+#include "session.h"
+#include "view.h"
+#include "viewcursor.h"
+
+YZModeCommand::YZModeCommand() : YZMode() {
+	mType = MODE_COMMAND;
+	mString = QObject::tr( "[ Awaiting Command ]" );
 	commands.clear();
 #if QT_VERSION < 0x040000
 	commands.setAutoDelete(true);
 #endif
 }
 
-YZCommandPool::~YZCommandPool() {
+YZModeCommand::~YZModeCommand() {
 #if QT_VERSION >= 0x040000
 	for ( int ab = 0 ; ab < commands.size(); ++ab)
 		delete commands.at(ab);
 #endif
 	commands.clear();
 }
-
-/**
- * NORMAL MODE COMMANDS
- */
-void YZCommandPool::initPool() {
-//	textObjects << "aw" << "iw";
-	commands.append( new YZNewMotion("0", &YZCommandPool::gotoSOL, ARG_NONE) );
-	commands.append( new YZNewMotion("$", &YZCommandPool::gotoEOL, ARG_NONE) );
-	commands.append( new YZNewMotion("^", &YZCommandPool::firstNonBlank, ARG_NONE) );
-	commands.append( new YZNewMotion("w", &YZCommandPool::moveWordForward, ARG_NONE) );
-	commands.append( new YZNewMotion("b", &YZCommandPool::moveWordBackward, ARG_NONE) );
-	commands.append( new YZNewMotion("j", &YZCommandPool::moveDown, ARG_NONE) );
-	commands.append( new YZNewMotion("k", &YZCommandPool::moveUp, ARG_NONE) );
-	commands.append( new YZNewMotion("h", &YZCommandPool::moveLeft, ARG_NONE) );
-	commands.append( new YZNewMotion("l", &YZCommandPool::moveRight, ARG_NONE) );
-	commands.append( new YZNewMotion("<BS>", &YZCommandPool::moveLeftWrap, ARG_NONE) );
-	commands.append( new YZNewMotion(" ", &YZCommandPool::moveRightWrap, ARG_NONE) );
-	commands.append( new YZNewMotion("f", &YZCommandPool::findNext, ARG_CHAR) );
-	commands.append( new YZNewMotion("t", &YZCommandPool::findBeforeNext, ARG_CHAR) );
-	commands.append( new YZNewMotion("F", &YZCommandPool::findPrevious, ARG_CHAR) );
-	commands.append( new YZNewMotion("T", &YZCommandPool::findAfterPrevious, ARG_CHAR) );
-	commands.append( new YZNewMotion(";", &YZCommandPool::repeatFind, ARG_CHAR) );
-	commands.append( new YZNewMotion("*", &YZCommandPool::searchWord, ARG_NONE) );
-	commands.append( new YZNewMotion("g*", &YZCommandPool::searchWord, ARG_NONE) );
-	commands.append( new YZNewMotion("#", &YZCommandPool::searchWord, ARG_NONE) );
-	commands.append( new YZNewMotion("g#", &YZCommandPool::searchWord, ARG_NONE) );
-	commands.append( new YZNewMotion("n", &YZCommandPool::searchNext, ARG_NONE) );
-	commands.append( new YZNewMotion("N", &YZCommandPool::searchPrev, ARG_NONE) );
-	commands.append( new YZNewMotion("<HOME>", &YZCommandPool::gotoSOL, ARG_NONE) );
-	commands.append( new YZNewMotion("<END>", &YZCommandPool::gotoEOL, ARG_NONE) );
-	commands.append( new YZNewMotion("<LEFT>", &YZCommandPool::moveLeft, ARG_NONE) );
-	commands.append( new YZNewMotion("<RIGHT>", &YZCommandPool::moveRight, ARG_NONE) );
-	commands.append( new YZNewMotion("<UP>", &YZCommandPool::moveUp, ARG_NONE) );
-	commands.append( new YZNewMotion("<DOWN>", &YZCommandPool::moveDown, ARG_NONE) );
-	commands.append( new YZNewMotion("<PUP>", &YZCommandPool::movePageUp, ARG_NONE) );
-	commands.append( new YZNewMotion("<PDOWN>", &YZCommandPool::movePageDown, ARG_NONE) );
-	commands.append( new YZNewMotion("%", &YZCommandPool::matchPair, ARG_NONE) );
-	commands.append( new YZNewMotion("`", &YZCommandPool::gotoMark, ARG_MARK) );
-	commands.append( new YZNewMotion("'", &YZCommandPool::gotoMark, ARG_MARK) );
-	commands.append( new YZNewMotion("<ENTER>", &YZCommandPool::firstNonBlankNextLine, ARG_NONE) );
-	commands.append( new YZNewMotion("gg", &YZCommandPool::gotoLine, ARG_NONE) );
-	commands.append( new YZNewMotion("G", &YZCommandPool::gotoLine, ARG_NONE) );
-	commands.append( new YZCommand("I", &YZCommandPool::insertAtSOL) );
-	commands.append( new YZCommand("i", &YZCommandPool::gotoInsertMode) );
-	commands.append( new YZCommand("<INS>", &YZCommandPool::gotoInsertMode) );
-	commands.append( new YZCommand(":", &YZCommandPool::gotoExMode) );
-	commands.append( new YZCommand("R", &YZCommandPool::gotoReplaceMode) );
-	commands.append( new YZCommand("v", &YZCommandPool::gotoVisualMode) );
-	commands.append( new YZCommand("V", &YZCommandPool::gotoVisualLineMode) );
-	commands.append( new YZCommand("z<ENTER>", &YZCommandPool::gotoLineAtTop) );
-	commands.append( new YZCommand("z+", &YZCommandPool::gotoLineAtTop) );
-	commands.append( new YZCommand("z.", &YZCommandPool::gotoLineAtCenter) );
-	commands.append( new YZCommand("z-", &YZCommandPool::gotoLineAtBottom) );
-	commands.append( new YZCommand("dd", &YZCommandPool::deleteLine) );
-	commands.append( new YZCommand("d", &YZCommandPool::del, ARG_MOTION) );
-	commands.append( new YZCommand("D", &YZCommandPool::deleteToEOL) );
-	commands.append( new YZCommand("x", &YZCommandPool::deleteChar) );
-	commands.append( new YZCommand("yy", &YZCommandPool::yankLine) );
-	commands.append( new YZCommand("y", &YZCommandPool::yank, ARG_MOTION) );
-	commands.append( new YZCommand("Y", &YZCommandPool::yankToEOL) );
-	commands.append( new YZCommand("cc", &YZCommandPool::changeLine) );
-	commands.append( new YZCommand("c", &YZCommandPool::change, ARG_MOTION) );
-	commands.append( new YZCommand("C", &YZCommandPool::changeToEOL) );
-	commands.append( new YZCommand("p", &YZCommandPool::pasteAfter) );
-	commands.append( new YZCommand("P", &YZCommandPool::pasteBefore) );
-	commands.append( new YZCommand("o", &YZCommandPool::insertLineAfter) );
-	commands.append( new YZCommand("O", &YZCommandPool::insertLineBefore) );
-	commands.append( new YZCommand("a", &YZCommandPool::append) );
-	commands.append( new YZCommand("A", &YZCommandPool::appendAtEOL) );
-	commands.append( new YZCommand("J", &YZCommandPool::joinLine) );
-	commands.append( new YZCommand("<", &YZCommandPool::indent, ARG_MOTION ) );
-	commands.append( new YZCommand("<<", &YZCommandPool::indent ) );
-	commands.append( new YZCommand(">", &YZCommandPool::indent, ARG_MOTION ) );
-	commands.append( new YZCommand(">>", &YZCommandPool::indent ) );
-	commands.append( new YZCommand("ZZ", &YZCommandPool::saveAndClose) );
-	commands.append( new YZCommand("ZQ", &YZCommandPool::closeWithoutSaving) );
-	commands.append( new YZCommand("/", &YZCommandPool::searchForwards) );
-	commands.append( new YZCommand("?", &YZCommandPool::searchBackwards) );
-	commands.append( new YZCommand("~", &YZCommandPool::changeCase) );
-	commands.append( new YZCommand("m", &YZCommandPool::mark, ARG_CHAR) );
-	commands.append( new YZCommand("r", &YZCommandPool::replace, ARG_CHAR) );
-	commands.append( new YZCommand("u", &YZCommandPool::undo) );
-	commands.append( new YZCommand("U", &YZCommandPool::redo) );
-	commands.append( new YZCommand("<CTRL>r", &YZCommandPool::redo) );
-	commands.append( new YZCommand("<CTRL>R", &YZCommandPool::redo) );
-	commands.append( new YZCommand("q", &YZCommandPool::macro) );
-	commands.append( new YZCommand("@", &YZCommandPool::replayMacro) );
-	commands.append( new YZCommand("<CTRL>l", &YZCommandPool::redisplay) );
-	commands.append( new YZCommand("<CTRL>[", &YZCommandPool::gotoCommandMode) );
-	commands.append( new YZCommand("<ESC>", &YZCommandPool::abort) );
-	commands.append( new YZCommand("<DEL>", &YZCommandPool::delkey) );
-	commands.append( new YZCommand("<ALT>:", &YZCommandPool::gotoExMode) );
+void YZModeCommand::init() {
+	initPool();
+	initModifierKeys();
 }
 
-cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
+void YZModeCommand::initPool() {
+	initMotionPool();
+	initCommandPool();
+}
+void YZModeCommand::initMotionPool() {
+	commands.append( new YZMotion("0", &YZModeCommand::gotoSOL, ARG_NONE) );
+	commands.append( new YZMotion("$", &YZModeCommand::gotoEOL, ARG_NONE) );
+	commands.append( new YZMotion("^", &YZModeCommand::firstNonBlank, ARG_NONE) );
+	commands.append( new YZMotion("w", &YZModeCommand::moveWordForward, ARG_NONE) );
+	commands.append( new YZMotion("b", &YZModeCommand::moveWordBackward, ARG_NONE) );
+	commands.append( new YZMotion("j", &YZModeCommand::moveDown, ARG_NONE) );
+	commands.append( new YZMotion("k", &YZModeCommand::moveUp, ARG_NONE) );
+	commands.append( new YZMotion("h", &YZModeCommand::moveLeft, ARG_NONE) );
+	commands.append( new YZMotion("l", &YZModeCommand::moveRight, ARG_NONE) );
+	commands.append( new YZMotion("<BS>", &YZModeCommand::moveLeftWrap, ARG_NONE) );
+	commands.append( new YZMotion(" ", &YZModeCommand::moveRightWrap, ARG_NONE) );
+	commands.append( new YZMotion("f", &YZModeCommand::findNext, ARG_CHAR) );
+	commands.append( new YZMotion("t", &YZModeCommand::findBeforeNext, ARG_CHAR) );
+	commands.append( new YZMotion("F", &YZModeCommand::findPrevious, ARG_CHAR) );
+	commands.append( new YZMotion("T", &YZModeCommand::findAfterPrevious, ARG_CHAR) );
+	commands.append( new YZMotion(";", &YZModeCommand::repeatFind, ARG_CHAR) );
+	commands.append( new YZMotion("*", &YZModeCommand::searchWord, ARG_NONE) );
+	commands.append( new YZMotion("g*", &YZModeCommand::searchWord, ARG_NONE) );
+	commands.append( new YZMotion("#", &YZModeCommand::searchWord, ARG_NONE) );
+	commands.append( new YZMotion("g#", &YZModeCommand::searchWord, ARG_NONE) );
+	commands.append( new YZMotion("n", &YZModeCommand::searchNext, ARG_NONE) );
+	commands.append( new YZMotion("N", &YZModeCommand::searchPrev, ARG_NONE) );
+	commands.append( new YZMotion("<HOME>", &YZModeCommand::gotoSOL, ARG_NONE) );
+	commands.append( new YZMotion("<END>", &YZModeCommand::gotoEOL, ARG_NONE) );
+	commands.append( new YZMotion("<LEFT>", &YZModeCommand::moveLeft, ARG_NONE) );
+	commands.append( new YZMotion("<RIGHT>", &YZModeCommand::moveRight, ARG_NONE) );
+	commands.append( new YZMotion("<UP>", &YZModeCommand::moveUp, ARG_NONE) );
+	commands.append( new YZMotion("<DOWN>", &YZModeCommand::moveDown, ARG_NONE) );
+	commands.append( new YZMotion("<PUP>", &YZModeCommand::movePageUp, ARG_NONE) );
+	commands.append( new YZMotion("<PDOWN>", &YZModeCommand::movePageDown, ARG_NONE) );
+	commands.append( new YZMotion("%", &YZModeCommand::matchPair, ARG_NONE) );
+	commands.append( new YZMotion("`", &YZModeCommand::gotoMark, ARG_MARK) );
+	commands.append( new YZMotion("'", &YZModeCommand::gotoMark, ARG_MARK) );
+	commands.append( new YZMotion("<ENTER>", &YZModeCommand::firstNonBlankNextLine, ARG_NONE) );
+	commands.append( new YZMotion("gg", &YZModeCommand::gotoLine, ARG_NONE) );
+	commands.append( new YZMotion("G", &YZModeCommand::gotoLine, ARG_NONE) );
+}
+void YZModeCommand::initCommandPool() {
+	commands.append( new YZCommand("I", &YZModeCommand::insertAtSOL) );
+	commands.append( new YZCommand("i", &YZModeCommand::gotoInsertMode) );
+	commands.append( new YZCommand("<INS>", &YZModeCommand::gotoInsertMode) );
+	commands.append( new YZCommand(":", &YZModeCommand::gotoExMode) );
+	commands.append( new YZCommand("R", &YZModeCommand::gotoReplaceMode) );
+	commands.append( new YZCommand("v", &YZModeCommand::gotoVisualMode) );
+	commands.append( new YZCommand("V", &YZModeCommand::gotoVisualLineMode) );
+	commands.append( new YZCommand("z<ENTER>", &YZModeCommand::gotoLineAtTop) );
+	commands.append( new YZCommand("z+", &YZModeCommand::gotoLineAtTop) );
+	commands.append( new YZCommand("z.", &YZModeCommand::gotoLineAtCenter) );
+	commands.append( new YZCommand("z-", &YZModeCommand::gotoLineAtBottom) );
+	commands.append( new YZCommand("dd", &YZModeCommand::deleteLine) );
+	commands.append( new YZCommand("d", &YZModeCommand::del, ARG_MOTION) );
+	commands.append( new YZCommand("D", &YZModeCommand::deleteToEOL) );
+	commands.append( new YZCommand("x", &YZModeCommand::deleteChar) );
+	commands.append( new YZCommand("yy", &YZModeCommand::yankLine) );
+	commands.append( new YZCommand("y", &YZModeCommand::yank, ARG_MOTION) );
+	commands.append( new YZCommand("Y", &YZModeCommand::yankToEOL) );
+	commands.append( new YZCommand("cc", &YZModeCommand::changeLine) );
+	commands.append( new YZCommand("c", &YZModeCommand::change, ARG_MOTION) );
+	commands.append( new YZCommand("C", &YZModeCommand::changeToEOL) );
+	commands.append( new YZCommand("p", &YZModeCommand::pasteAfter) );
+	commands.append( new YZCommand("P", &YZModeCommand::pasteBefore) );
+	commands.append( new YZCommand("o", &YZModeCommand::insertLineAfter) );
+	commands.append( new YZCommand("O", &YZModeCommand::insertLineBefore) );
+	commands.append( new YZCommand("a", &YZModeCommand::append) );
+	commands.append( new YZCommand("A", &YZModeCommand::appendAtEOL) );
+	commands.append( new YZCommand("J", &YZModeCommand::joinLine) );
+	commands.append( new YZCommand("<", &YZModeCommand::indent, ARG_MOTION ) );
+	commands.append( new YZCommand("<<", &YZModeCommand::indent ) );
+	commands.append( new YZCommand(">", &YZModeCommand::indent, ARG_MOTION ) );
+	commands.append( new YZCommand(">>", &YZModeCommand::indent ) );
+	commands.append( new YZCommand("ZZ", &YZModeCommand::saveAndClose) );
+	commands.append( new YZCommand("ZQ", &YZModeCommand::closeWithoutSaving) );
+	commands.append( new YZCommand("/", &YZModeCommand::searchForwards) );
+	commands.append( new YZCommand("?", &YZModeCommand::searchBackwards) );
+	commands.append( new YZCommand("~", &YZModeCommand::changeCase) );
+	commands.append( new YZCommand("m", &YZModeCommand::mark, ARG_CHAR) );
+	commands.append( new YZCommand("r", &YZModeCommand::replace, ARG_CHAR) );
+	commands.append( new YZCommand("u", &YZModeCommand::undo) );
+	commands.append( new YZCommand("U", &YZModeCommand::redo) );
+	commands.append( new YZCommand("<CTRL>r", &YZModeCommand::redo) );
+	commands.append( new YZCommand("<CTRL>R", &YZModeCommand::redo) );
+	commands.append( new YZCommand("q", &YZModeCommand::macro) );
+	commands.append( new YZCommand("@", &YZModeCommand::replayMacro) );
+	commands.append( new YZCommand("<CTRL>l", &YZModeCommand::redisplay) );
+	commands.append( new YZCommand("<CTRL>[", &YZModeCommand::gotoCommandMode) );
+	commands.append( new YZCommand("<ESC>", &YZModeCommand::abort) );
+	commands.append( new YZCommand("<DEL>", &YZModeCommand::delkey) );
+	commands.append( new YZCommand("<ALT>:", &YZModeCommand::gotoExMode) );
+}
+void YZModeCommand::initModifierKeys() {
+#if QT_VERSION < 0x040000
+	for ( commands.first(); commands.current(); commands.next() ) {
+		const QString& keys = commands.current()->keySeq();
+		if ( keys.find( "<CTRL>" ) > -1 || keys.find( "<ALT>" ) > -1 ) {
+			mModifierKeys << keys;
+		}
+	}
+#else
+	for ( int ab = 0 ; ab < commands.size(); ++ab) {
+		const QString& keys = commands.at(ab)->keySeq();
+		if ( keys.indexOf( "<CTRL>" ) > -1 || keys.indexOf( "<ALT>" ) > -1 ) {
+			mModifierKeys << keys;
+		}
+	}
+#endif
+}
+
+cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 //	yzDebug() << "ExecCommand : " << inputs << endl;
 	unsigned int count=1;
 	bool hadCount = false;
@@ -279,14 +308,14 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 #if QT_VERSION < 0x040000
 				// motion, look for a motion that matches exactly
 				for(commands.first(); commands.current(); commands.next()) {
-					const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.current());
+					const YZMotion *m=dynamic_cast<const YZMotion*>(commands.current());
 					if(m && m->matches(s))
 						break;
 				}
 #else
 				bool matched = false;
 				for (int ab = 0; ab < commands.size(); ++ab) {
-					const YZNewMotion *m = dynamic_cast<const YZNewMotion*>(commands.at(ab));
+					const YZMotion *m = dynamic_cast<const YZMotion*>(commands.at(ab));
 					if (m && m->matches(s)) {
 						matched = true;
 						break;
@@ -297,7 +326,7 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 				if(!commands.current()) {
 					// look for an incomplete motion
 					for(commands.first(); commands.current(); commands.next()) {
-						const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.current());
+						const YZMotion *m=dynamic_cast<const YZMotion*>(commands.current());
 						if(m && m->matches(s, false))
 							return OPERATOR_PENDING;
 					}
@@ -306,7 +335,7 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 #else
 				if (!matched) {
 					for (int ab = 0; ab < commands.size(); ++ab ) {
-						const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.at(ab));
+						const YZMotion *m=dynamic_cast<const YZMotion*>(commands.at(ab));
 						if(m && m->matches(s, false))
 							return OPERATOR_PENDING;
 
@@ -367,16 +396,11 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 #endif
 		if(cmds.isEmpty())
 			return NO_COMMAND_YET;
-		bool visual = view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL
-		              || view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE;
-		YZSelectionMap m;
-		if(visual)
-			m=view->visualSelection();
 		const YZCommand *c=0;
 		if(cmds.count()==1) {
 			c=cmds.first();
-			if(c->arg() == ARG_NONE || visual && c->arg() == ARG_MOTION)
-				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, m));
+			if(c->arg() == ARG_NONE)
+				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount));
 			else
 				return OPERATOR_PENDING;
 		} else {
@@ -406,10 +430,7 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			for ( int bc = 0; bc < view->myBuffer()->views().size(); ++bc )
 				view->myBuffer()->views().at(bc)->setPaintAutoCommit(false);
 #endif
-			if(visual)
-				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, m));
-			else
-				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
+			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
 #if QT_VERSION < 0x040000
 			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 				it->commitPaintEvent();
@@ -423,7 +444,7 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 	return CMD_OK;
 }
 
-bool YZNewMotion::matches(const QString &s, bool fully) const {
+bool YZMotion::matches(const QString &s, bool fully) const {
 	QString ks=mKeySeq;
 	if(s.startsWith(ks)) {
 		switch(mArg) {
@@ -448,24 +469,24 @@ bool YZNewMotion::matches(const QString &s, bool fully) const {
 	return false;
 }
 
-YZCursor YZCommandPool::move(YZView *view, const QString &inputs, unsigned int count, bool usercount) {
+YZCursor YZModeCommand::move(YZView *view, const QString &inputs, unsigned int count, bool usercount) {
 #if QT_VERSION < 0x040000
 	for(commands.first(); commands.current(); commands.next()) {
 		// is the command a motion and does it match to the string?
-		const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.current());
+		const YZMotion *m=dynamic_cast<const YZMotion*>(commands.current());
 		if(m && m->matches(inputs)) {
 			// execute the corresponding method
-			YZCursor to=(this->*(m->motionMethod()))(YZNewMotionArgs(view, count, inputs.right( m->keySeq().length()), 
+			YZCursor to=(this->*(m->motionMethod()))(YZMotionArgs(view, count, inputs.right( m->keySeq().length()), 
 					inputs.left(m->keySeq().length()), usercount ));
 			return to;
 		}
 	}
 #else
 	for (int ab = 0 ; ab < commands.size(); ++ab ) {
-		const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(commands.at(ab));
+		const YZMotion *m=dynamic_cast<const YZMotion*>(commands.at(ab));
 		if(m && m->matches(inputs)) {
 			// execute the corresponding method
-			YZCursor to=(this->*(m->motionMethod()))(YZNewMotionArgs(view, count, inputs.right( m->keySeq().length()), 
+			YZCursor to=(this->*(m->motionMethod()))(YZMotionArgs(view, count, inputs.right( m->keySeq().length()), 
 					inputs.left(m->keySeq().length()), usercount ));
 			return to;
 		}
@@ -477,31 +498,31 @@ YZCursor YZCommandPool::move(YZView *view, const QString &inputs, unsigned int c
 
 // MOTIONS
 
-YZCursor YZCommandPool::moveLeft(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::moveLeft(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveLeft(&viewCursor, args.count, false, args.standalone );
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::moveRight(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::moveRight(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveRight(&viewCursor, args.count, false, args.standalone );
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::moveLeftWrap( const YZNewMotionArgs & args ) {
+YZCursor YZModeCommand::moveLeftWrap( const YZMotionArgs & args ) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveLeft(&viewCursor, args.count, true, args.standalone );
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::moveRightWrap( const YZNewMotionArgs & args ) {
+YZCursor YZModeCommand::moveRightWrap( const YZMotionArgs & args ) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveRight(&viewCursor, args.count, true, args.standalone );
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::moveDown(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::moveDown(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	if ( args.standalone )
 		args.view->moveDown(&viewCursor, args.count, true );
@@ -515,7 +536,7 @@ YZCursor YZCommandPool::moveDown(const YZNewMotionArgs &args) {
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::moveUp(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::moveUp(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	if ( args.standalone )
 		args.view->moveUp(&viewCursor, args.count, true );
@@ -532,19 +553,19 @@ YZCursor YZCommandPool::moveUp(const YZNewMotionArgs &args) {
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::movePageUp(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::movePageUp(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveUp(&viewCursor, args.view->getLinesVisible(), args.standalone );
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::movePageDown(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::movePageDown(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveDown(&viewCursor, args.view->getLinesVisible(), args.standalone );
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::matchPair(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::matchPair(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	bool found = false;
 	YZCursor pos = args.view->myBuffer()->action()->match( args.view, *viewCursor.buffer(), &found );
@@ -556,7 +577,7 @@ YZCursor YZCommandPool::matchPair(const YZNewMotionArgs &args) {
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::findNext(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::findNext(const YZMotionArgs &args) {
 	YZLineSearch* finder = args.view->myLineSearch();
 	bool found;
 	YZCursor pos = finder->forward( args.arg, found, args.count );
@@ -568,7 +589,7 @@ YZCursor YZCommandPool::findNext(const YZNewMotionArgs &args) {
 	return *args.view->getBufferCursor();
 }
 
-YZCursor YZCommandPool::findBeforeNext(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::findBeforeNext(const YZMotionArgs &args) {
 	YZLineSearch* finder = args.view->myLineSearch();
 	bool found;
 	YZCursor pos = finder->forwardBefore( args.arg, found, args.count );
@@ -580,7 +601,7 @@ YZCursor YZCommandPool::findBeforeNext(const YZNewMotionArgs &args) {
 	return *args.view->getBufferCursor();
 }
 
-YZCursor YZCommandPool::findPrevious(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::findPrevious(const YZMotionArgs &args) {
 	YZLineSearch* finder = args.view->myLineSearch();
 	bool found;
 	YZCursor pos = finder->reverse( args.arg, found, args.count );
@@ -592,7 +613,7 @@ YZCursor YZCommandPool::findPrevious(const YZNewMotionArgs &args) {
 	return *args.view->getBufferCursor();
 }
 
-YZCursor YZCommandPool::findAfterPrevious(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::findAfterPrevious(const YZMotionArgs &args) {
 	YZLineSearch* finder = args.view->myLineSearch();
 	bool found;
 	YZCursor pos = finder->reverseAfter( args.arg, found, args.count );
@@ -604,7 +625,7 @@ YZCursor YZCommandPool::findAfterPrevious(const YZNewMotionArgs &args) {
 	return *args.view->getBufferCursor();
 }
 
-YZCursor YZCommandPool::repeatFind(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::repeatFind(const YZMotionArgs &args) {
 	YZLineSearch* finder = args.view->myLineSearch();
 	bool found;
 	YZCursor pos = finder->searchAgain( found, args.count );
@@ -616,19 +637,19 @@ YZCursor YZCommandPool::repeatFind(const YZNewMotionArgs &args) {
 	return *args.view->getBufferCursor();
 }
 
-YZCursor YZCommandPool::gotoSOL(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::gotoSOL(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveToStartOfLine(&viewCursor,args.standalone);
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::gotoEOL(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::gotoEOL(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveToEndOfLine(&viewCursor,args.standalone);
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
 	unsigned int c = 0;
@@ -670,11 +691,10 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 				result.setY(result.getY() + 1);
 #if QT_VERSION < 0x040000
 				ws.search(args.view->myBuffer()->textline( result.getY() ));
-				result.setX( QMAX( ws.matchedLength(), 0 ));
 #else
 				ws.indexIn(args.view->myBuffer()->textline( result.getY() ));
-				result.setX( qMax( ws.matchedLength(), 0 ));
 #endif
+				result.setX( qMax( ws.matchedLength(), 0 ));
 			}
 		} else {
 			if ( result.getY() >= args.view->myBuffer()->lineCount() - 1 ) {
@@ -699,7 +719,7 @@ QString invertQString( const QString& from ) {
 	return res;
 }
 
-YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
 	unsigned int c = 0;
@@ -759,13 +779,13 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 	return result;
 }
 
-YZCursor YZCommandPool::firstNonBlank(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::firstNonBlank(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveToFirstNonBlankOfLine(&viewCursor,args.standalone);
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::gotoMark( const YZNewMotionArgs &args ) {
+YZCursor YZModeCommand::gotoMark( const YZMotionArgs &args ) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	bool found = false;
 	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg, &found );
@@ -777,14 +797,14 @@ YZCursor YZCommandPool::gotoMark( const YZNewMotionArgs &args ) {
 	}
 }
 
-YZCursor YZCommandPool::firstNonBlankNextLine( const YZNewMotionArgs &args ) {
+YZCursor YZModeCommand::firstNonBlankNextLine( const YZMotionArgs &args ) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->moveDown(&viewCursor, args.count, args.standalone );
 	args.view->moveToFirstNonBlankOfLine( &viewCursor, args.standalone );
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::gotoLine(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::gotoLine(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	unsigned int line = 0;
 	yzDebug() << "gotoLine " << args.cmd << "," << args.count << endl;
@@ -801,7 +821,7 @@ YZCursor YZCommandPool::gotoLine(const YZNewMotionArgs &args) {
 	return *viewCursor.buffer();
 }
 
-YZCursor YZCommandPool::searchWord(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 	YZCursor from = *args.view->getBufferCursor();
 
 	QString word = args.view->myBuffer()->getWordAt( from );
@@ -834,7 +854,7 @@ YZCursor YZCommandPool::searchWord(const YZNewMotionArgs &args) {
 	return from;
 }
 
-YZCursor YZCommandPool::searchNext(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 	YZCursor from = *args.view->getBufferCursor();
 	YZCursor pos( args.view );
 	bool found = true;
@@ -850,7 +870,7 @@ YZCursor YZCommandPool::searchNext(const YZNewMotionArgs &args) {
 	return from;
 }
 
-YZCursor YZCommandPool::searchPrev(const YZNewMotionArgs &args) {
+YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 	YZCursor from = *args.view->getBufferCursor();
 	YZCursor pos( args.view );
 	bool found = true;
@@ -868,155 +888,114 @@ YZCursor YZCommandPool::searchPrev(const YZNewMotionArgs &args) {
 
 // COMMANDS
 
-QString YZCommandPool::execMotion( const YZCommandArgs &args ) {
-	const YZNewMotion *m=dynamic_cast<const YZNewMotion*>(args.cmd);
+void YZModeCommand::execMotion( const YZCommandArgs &args ) {
+	const YZMotion *m=dynamic_cast<const YZMotion*>(args.cmd);
 	assert(m);
-	YZCursor to = (this->*(m->motionMethod()))(YZNewMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true));
+	YZCursor to = (this->*(m->motionMethod()))(YZMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true));
 	args.view->gotoxy(to.getX(), to.getY());
-	return QString::null;
+	
 }
 
-QString YZCommandPool::appendAtEOL(const YZCommandArgs &args) {
+YZInterval YZModeCommand::interval(const YZCommandArgs& args) {
+	YZCursor from( *args.view->getBufferCursor() );
+	YZCursor to = move( args.view, args.arg, args.count, args.usercount );
+	if ( from > to ) {
+		YZCursor tmp( from );
+		from.setCursor( to );
+		to.setCursor( from );
+	}
+	bool entireLines = ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') );
+	if ( entireLines ) {
+		from.setX( 0 );
+		to.setX( 0 );
+		to.setY( to.getY() + 1 );
+	}
+	YZInterval ret( from, YZBound(to, entireLines) );
+	return ret;
+}
+
+void YZModeCommand::appendAtEOL(const YZCommandArgs &args) {
 	args.view->moveToEndOfLine();
 	args.view->append();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::append(const YZCommandArgs &args) {
+void YZModeCommand::append(const YZCommandArgs &args) {
 	args.view->append();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::change(const YZCommandArgs &args) {
-	YZCursor from, to, temp;
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-		from = ( args.selection )[ 0 ].fromPos();
-		to = ( args.selection )[ 0 ].toPos();
-	} else {
-		from = *args.view->getBufferCursor();
-		to = move(args.view, args.arg, args.count, args.usercount );
-	}
-	if(from > to) {
-		temp = from;
-		from = to;
-		to = temp;
-	}
-
-	bool visualMode = args.view->getCurrentMode() >= YZView::YZ_VIEW_MODE_VISUAL;
-
-	// if we delete to the end of the line, the cursor will be onto (before) the last
-	// character, so we'll have to append. Otherwise, inserting is OK
-#if QT_VERSION < 0x040000
-	unsigned int eol_x = (visualMode ? (QMAX(0, int(args.view->myBuffer()->textline(to.getY()).length()) - 1))
-			: args.view->myBuffer()->textline(to.getY()).length());
-#else
-	unsigned int eol_x = (visualMode ? (qMax(0, int(args.view->myBuffer()->textline(to.getY()).length()) - 1))
-			: args.view->myBuffer()->textline(to.getY()).length());
-#endif
-	bool append = to.getX() >= eol_x;
-
-	args.view->myBuffer()->action()->deleteArea(args.view, from, to, args.regs);
+void YZModeCommand::change(const YZCommandArgs &args) {
+	YZInterval area = interval( args );
+	yzDebug() << "YZModeCommand::change " << area << endl;
+	args.view->myBuffer()->action()->deleteArea(args.view, area, args.regs);
 	args.view->commitNextUndo();
-
-	if ( visualMode ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	}
-
-	if(append)
-		args.view->append();
-	else
-		args.view->gotoInsertMode();
-
-	return QString::null;
+	args.view->modePool()->change( YZMode::MODE_INSERT );
 }
 
-QString YZCommandPool::changeLine(const YZCommandArgs &args) {
+void YZModeCommand::changeLine(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->deleteLine(args.view, *args.view->getBufferCursor(), args.count, args.regs);
 	args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor()->getY() );
-//	args.view->gotoInsertMode();
+	args.view->modePool()->push( YZMode::MODE_INSERT );
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::changeToEOL(const YZCommandArgs &args) {
+void YZModeCommand::changeToEOL(const YZCommandArgs &args) {
 	YZCursor to=move(args.view, "$", 1, false);
 	args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	args.view->append();
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::deleteLine(const YZCommandArgs &args) {
+void YZModeCommand::deleteLine(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->deleteLine(args.view, *args.view->getBufferCursor(), args.count, args.regs);
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::deleteToEOL(const YZCommandArgs &args) {
+void YZModeCommand::deleteToEOL(const YZCommandArgs &args) {
 	//in vim : 2d$ does not behave as d$d$, this is illogical ..., you cannot delete twice to end of line ...
 	YZCursor to=move(args.view, "$", 1, false);
 	args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	args.view->commitNextUndo();
-	return QString::null;
-}
-
-QString YZCommandPool::gotoExMode(const YZCommandArgs &args) {
-	args.view->gotoExMode();
-	return QString::null;
+	
 }
 
 
-QString YZCommandPool::insertAtSOL(const YZCommandArgs &args) {
+
+void YZModeCommand::insertAtSOL(const YZCommandArgs &args) {
 	args.view->moveToFirstNonBlankOfLine();
-	args.view->gotoInsertMode();
-	return QString::null;
+	args.view->modePool()->push( YZMode::MODE_INSERT );
+	
 }
 
-QString YZCommandPool::gotoInsertMode(const YZCommandArgs &args) {
-	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	} else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
-		args.view->leaveReplaceMode();
-	args.view->gotoInsertMode();
-	return QString::null;
+void YZModeCommand::gotoCommandMode(const YZCommandArgs &args) {
+	args.view->modePool()->pop( YZMode::MODE_COMMAND );
 }
 
-QString YZCommandPool::gotoCommandMode(const YZCommandArgs &args) {
-	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_INSERT )
-		args.view->leaveInsertMode();
-	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
-		args.view->leaveReplaceMode();
-	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE  ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	}
-	args.view->gotoCommandMode();
-	return QString::null;
-}
-
-QString YZCommandPool::gotoLineAtTop(const YZCommandArgs &args) {
+void YZModeCommand::gotoLineAtTop(const YZCommandArgs &args) {
 	unsigned int line;
 
 	line = ( args.usercount ) ? args.count - 1 : args.view->drawLineNumber() - 1;
 	args.view->alignViewVertically( line );
 	args.view->gotoLine( line );
 	args.view->moveToFirstNonBlankOfLine();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::gotoLineAtCenter(const YZCommandArgs &args) {
+void YZModeCommand::gotoLineAtCenter(const YZCommandArgs &args) {
 	unsigned int line;
 
 	line = ( args.usercount ) ? args.count - 1 : args.view->drawLineNumber() - 1;
 	args.view->centerViewVertically( line );
 	args.view->gotoLine( line );
 	args.view->moveToFirstNonBlankOfLine();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::gotoLineAtBottom(const YZCommandArgs &args) {
+void YZModeCommand::gotoLineAtBottom(const YZCommandArgs &args) {
 	unsigned int line;
 	//unsigned int linesFromCenter;
 
@@ -1026,187 +1005,119 @@ QString YZCommandPool::gotoLineAtBottom(const YZCommandArgs &args) {
 	//}
 	args.view->gotoLine( line );
 	args.view->moveToFirstNonBlankOfLine();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::gotoReplaceMode(const YZCommandArgs &args) {
-	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	} else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
-		args.view->leaveReplaceMode();
-	args.view->gotoReplaceMode();
-	return QString::null;
+
+void YZModeCommand::gotoExMode(const YZCommandArgs &args) {
+	args.view->modePool()->push( YZMode::MODE_EX );
+}
+void YZModeCommand::gotoInsertMode(const YZCommandArgs &args) {
+	args.view->modePool()->push( YZMode::MODE_INSERT );
+}
+void YZModeCommand::gotoReplaceMode(const YZCommandArgs &args) {
+	args.view->modePool()->push( YZMode::MODE_REPLACE );
+}
+void YZModeCommand::gotoVisualMode(const YZCommandArgs &args) {
+	args.view->modePool()->push( YZMode::MODE_VISUAL );
+}
+void YZModeCommand::gotoVisualLineMode(const YZCommandArgs &args) {
+	args.view->modePool()->push( YZMode::MODE_VISUAL_LINE );
 }
 
-QString YZCommandPool::gotoVisualLineMode(const YZCommandArgs &args) {
-	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	} else {
-		args.view->gotoVisualMode( true );
-	}
-	return QString::null;
-}
-
-QString YZCommandPool::gotoVisualMode(const YZCommandArgs &args) {
-	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	} else {
-		args.view->gotoVisualMode( false );
-	}
-	return QString::null;
-}
-
-QString YZCommandPool::insertLineAfter(const YZCommandArgs &args) {
+void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 	unsigned int y = args.view->getBufferCursor()->getY();
 	args.view->myBuffer()->action()->insertNewLine( args.view, args.view->myBuffer()->textline( y ).length(), y );
 	for ( unsigned int i = 1 ; i < args.count ; i++ )
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y + i );
-	args.view->gotoInsertMode();
+	args.view->modePool()->push( YZMode::MODE_INSERT );
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::insertLineBefore(const YZCommandArgs &args) {
+void YZModeCommand::insertLineBefore(const YZCommandArgs &args) {
 	unsigned int y = args.view->getBufferCursor()->getY();
 	for ( unsigned int i = 0 ; i < args.count ; i++ )
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
 	args.view->moveUp();
-	args.view->gotoInsertMode();
+	args.view->modePool()->push( YZMode::MODE_INSERT );
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::joinLine(const YZCommandArgs &args) {
+void YZModeCommand::joinLine(const YZCommandArgs &args) {
 	for ( unsigned int i = 0; i < args.count; i++ ) 
 		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor()->getY(), true );
 	args.view->commitNextUndo();
-	return QString::null;
 }
 
-QString YZCommandPool::pasteAfter(const YZCommandArgs &args) {
+void YZModeCommand::pasteAfter(const YZCommandArgs &args) {
 	args.view->paste( args.regs[ 0 ], true );
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::pasteBefore(const YZCommandArgs &args) {
+void YZModeCommand::pasteBefore(const YZCommandArgs &args) {
 	args.view->paste( args.regs[ 0 ], false );
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::yankLine(const YZCommandArgs &args) {
+void YZModeCommand::yankLine(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->copyLine( args.view, *args.view->getBufferCursor(), args.count, args.regs );
-	return QString::null;
+	
 }
 
-QString YZCommandPool::yankToEOL(const YZCommandArgs &args) {
+void YZModeCommand::yankToEOL(const YZCommandArgs &args) {
 	YZCursor to=move(args.view, "$", 1, false);
 	args.view->myBuffer()->action()->copyArea(args.view, *args.view->getBufferCursor(), to, args.regs);
-	return QString::null;
+	
 }
 
-QString YZCommandPool::closeWithoutSaving(const YZCommandArgs &/*args*/) {
+void YZModeCommand::closeWithoutSaving(const YZCommandArgs &/*args*/) {
 	YZSession::me->exitRequest( 0 );
-	return QString::null;
+	
 }
 
-QString YZCommandPool::saveAndClose(const YZCommandArgs &/*args*/) {
+void YZModeCommand::saveAndClose(const YZCommandArgs &/*args*/) {
 	YZSession::me->saveBufferExit();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::searchBackwards(const YZCommandArgs &args) {
-	args.view->gotoSearchMode(true);
-	return QString::null;
+void YZModeCommand::searchBackwards(const YZCommandArgs &args) {
+	args.view->modePool()->push( YZMode::MODE_SEARCH_BACKWARD );
+	
 }
 
-QString YZCommandPool::searchForwards(const YZCommandArgs &args) {
-	args.view->gotoSearchMode();
-	return QString::null;
+void YZModeCommand::searchForwards(const YZCommandArgs &args) {
+	args.view->modePool()->push( YZMode::MODE_SEARCH );
 }
 
-QString YZCommandPool::del(const YZCommandArgs &args) {
-	bool entireLines = ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
-	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL )
-		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].fromPos(), ( args.selection )[ 0 ].toPos() , args.regs);
-	else if ( entireLines ) {
-		YZCursor from, to;
-		if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
-			from = ( args.selection )[ 0 ].fromPos();
-			to = ( args.selection )[ 0 ].toPos();
-		} else {
-			from = *args.view->getBufferCursor();
-			to = move(args.view, args.arg, args.count, args.usercount);
-			if ( from > to ) {
-				YZCursor tmp( to );
-				to.setCursor( from );
-				from.setCursor( tmp );
-			}
-		}
-		args.view->myBuffer()->action()->deleteLine( args.view, from.getY(), to.getY() - from.getY() + 1, args.regs );
-	} else {
-		YZCursor to=move(args.view, args.arg, args.count, args.usercount);
-		args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
-	}
+void YZModeCommand::del(const YZCommandArgs &args) {
+	args.view->myBuffer()->action()->deleteArea( args.view, interval( args ), args.regs );
 	args.view->commitNextUndo();
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	}
-	return QString::null;
+	args.view->modePool()->pop();
 }
 
-QString YZCommandPool::yank(const YZCommandArgs &args) {
-	bool entireLines =  ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') ) || args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE;
-	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL )
-		args.view->myBuffer()->action()->copyArea(args.view, ( args.selection )[ 0 ].fromPos(), ( args.selection )[ 0 ].toPos() , args.regs);
-	else if ( entireLines ) {
-		YZCursor from, to;
-		if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
-			from = ( args.selection )[ 0 ].fromPos();
-			to = ( args.selection )[ 0 ].toPos();
-		} else {
-			from = *args.view->getBufferCursor();
-			to = move(args.view, args.arg, args.count, args.usercount);
-			if ( from > to ) {
-				YZCursor tmp( to );
-				to.setCursor( from );
-				from.setCursor( tmp );
-			}
-		}
-		args.view->myBuffer()->action()->copyLine( args.view, from, to.getY() - from.getY() + 1, args.regs );
-	} else {
-		YZCursor to=move(args.view, args.arg, args.count, args.usercount);
-		args.view->myBuffer()->action()->copyArea(args.view, *args.view->getBufferCursor(), to, args.regs);
-	}
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	}
-	return QString::null;
+void YZModeCommand::yank(const YZCommandArgs &args) {
+	args.view->myBuffer()->action()->copyArea( args.view, interval( args ), args.regs );
+	args.view->modePool()->pop();
 }
 
-QString YZCommandPool::mark(const YZCommandArgs &args) {
+void YZModeCommand::mark(const YZCommandArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	args.view->myBuffer()->viewMarks()->add( args.arg, *viewCursor.buffer(), *viewCursor.screen() );
-	return QString::null;
 }
 
-QString YZCommandPool::undo(const YZCommandArgs &args) {
+void YZModeCommand::undo(const YZCommandArgs &args) {
 	args.view->undo( args.count );
-	return QString::null;
 }
 
-QString YZCommandPool::redo(const YZCommandArgs &args) {
+void YZModeCommand::redo(const YZCommandArgs &args) {
 	args.view->redo( args.count );
-	return QString::null;
 }
 
-QString YZCommandPool::changeCase( const YZCommandArgs &args ) {
+void YZModeCommand::changeCase( const YZCommandArgs &args ) {
 	YZCursor pos = *args.view->getBufferCursor();
 	const QString line = args.view->myBuffer()->textline( pos.getY() );
 	if ( ! line.isNull() ) {
@@ -1230,24 +1141,24 @@ QString YZCommandPool::changeCase( const YZCommandArgs &args ) {
 		}
 		args.view->commitNextUndo();
 	}
-	return QString::null;
+	
 }
 
-QString YZCommandPool::macro( const YZCommandArgs &args ) {
+void YZModeCommand::macro( const YZCommandArgs &args ) {
 	if ( args.view->isRecording() )
 		args.view->stopRecordMacro();
 	else
 		args.view->recordMacro( args.regs );
 	args.view->modeChanged();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
+void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 	args.view->purgeInputBuffer();
 	if ( args.view->isRecording()) {
 		yzDebug() << "User asked to play a macro he is currently recording, forget it !" << endl;
 		if ( args.view->registersRecorded() == args.regs )
-			return QString::null;
+			return;
 	}
 #if QT_VERSION < 0x040000
 	QValueList<QChar>::const_iterator it = args.regs.begin(), end = args.regs.end();
@@ -1258,73 +1169,43 @@ QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 		args.view->sendMultipleKey(YZSession::mRegisters->getRegister(args.regs.at(ab))[0]);
 #endif
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL )
-		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].fromPos(), ( args.selection )[ 0 ].toPos() , args.regs);
-	else
-		args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
+void YZModeCommand::deleteChar( const YZCommandArgs &args ) {
+	args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
 	args.view->commitNextUndo();
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	}
-	return QString::null;
 }
 
-QString YZCommandPool::redisplay( const YZCommandArgs &args ) {
+void YZModeCommand::redisplay( const YZCommandArgs &args ) {
 	args.view->recalcScreen();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::replace( const YZCommandArgs &args ) {
+void YZModeCommand::replace( const YZCommandArgs &args ) {
 	YZCursor pos = args.view->getBufferCursor();
 	args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg );
 	args.view->gotoxy(pos.getX(),pos.getY(),true);
 	args.view->updateStickyCol();
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::abort( const YZCommandArgs& args) {
-	//actually it's a no-op here, inputBuffer will be purged after
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-		args.view->leaveVisualMode();
-		args.view->gotoPreviousMode();
-	}
-	return QString::null;
+void YZModeCommand::abort( const YZCommandArgs& args) {
 }
 
-QString YZCommandPool::delkey( const YZCommandArgs &args ) {
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-#if QT_VERSION < 0x040000
-			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].fromPos(), (args.selection)[0].toPos(), ( QValueList<QChar>() << QChar( '\"' ) ));
-#else
-			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].fromPos(), (args.selection)[0].toPos(), ( QList<QChar>() << QChar( '\"' ) ));
-#endif
-			args.view->leaveVisualMode();
-			args.view->gotoPreviousMode();
-	} else
-			args.view->myBuffer()->action()->deleteChar( args.view, *(args.view->getBufferCursor()), 1);
+void YZModeCommand::delkey( const YZCommandArgs &args ) {
+	args.view->myBuffer()->action()->deleteChar( args.view, *(args.view->getBufferCursor()), 1);
 	args.view->commitNextUndo();
-	return QString::null;
+	
 }
 
-QString YZCommandPool::indent( const YZCommandArgs& args ) {
-	unsigned int fromY, toY;
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
-		fromY = (args.selection)[0].fromPos().getY();
-		toY = (args.selection)[0].toPos().getY();
-	} else {
-		fromY = args.view->getBufferCursor()->getY();
-		toY = move(args.view, args.arg, args.count, args.usercount).getY();
-		if ( fromY > toY ) {
-			fromY = toY;
-			toY = args.view->getBufferCursor()->getY();
-		}
-	}
+void YZModeCommand::indent( const YZCommandArgs& args ) {
+	YZInterval area = interval( args );
+	unsigned int fromY = area.fromPos().getY();
+	unsigned int toY = area.toPos().getY();
+	if ( area.to().opened() && area.toPos().getX() == 0 )
+		--toY;
 	unsigned int maxY = args.view->myBuffer()->lineCount() - 1;
 	if ( toY > maxY ) toY = maxY;
 	int factor = ( args.cmd->keySeq()[0] == '<' ? -1 : 1 ) * args.count;
@@ -1332,6 +1213,6 @@ QString YZCommandPool::indent( const YZCommandArgs& args ) {
 		args.view->myBuffer()->action()->indentLine( args.view, l, factor );
 	}
 	args.view->commitNextUndo();
-	return QString::null;
+	args.view->modePool()->pop();
 }
 

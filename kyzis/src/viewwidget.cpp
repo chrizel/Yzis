@@ -47,7 +47,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
 	connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
 
-	status->insertItem(mode(YZ_VIEW_MODE_LAST),0,1);
+	status->insertItem(tr("Yzis Ready"),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
 
 	status->insertItem("",80,80,0);
@@ -67,7 +67,6 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 
 	setXMLFile( "kyzispart/kyzispart.rc" );
 	setupActions();
-	setupKeys();
 
 	buffer = doc;
 	m_editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
@@ -81,6 +80,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	setupCodeCompletion();
 
 	applyConfig();
+	setupKeys();
 }
 
 KYZisView::~KYZisView () {
@@ -133,7 +133,7 @@ void KYZisView::wheelEvent( QWheelEvent * e ) {
 }
 
 void KYZisView::modeChanged (void) {
-	status->changeItem(mode( mMode ), 0);
+	status->changeItem(mode(), 0);
 }
 
 void KYZisView::syncViewInfo() {
@@ -169,6 +169,9 @@ void KYZisView::setupActions() {
 
 void KYZisView::registerModifierKeys( const QString& keys ) {
 	m_editor->registerModifierKeys( keys );
+}
+void KYZisView::unregisterModifierKeys( const QString& keys ) {
+	m_editor->unregisterModifierKeys( keys );
 }
 
 void KYZisView::applyConfig( bool refresh ) {
@@ -217,7 +220,7 @@ void KYZisView::cursorPositionReal ( unsigned int *line, unsigned int *col )
 bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
 {
 	gotodxdy( line, col );
-	gotoCommandMode();
+//	gotoCommandMode();	XXX sure of that ?
 	return true;
 }
 
@@ -225,7 +228,7 @@ bool KYZisView::setCursorPositionReal ( unsigned int line, unsigned int col)
 {
 	centerViewVertically(line);
 	gotoxy( col, line );
-	gotoCommandMode();
+//	gotoCommandMode();	XXX sure of that ?
 	return true;
 }
 

@@ -30,6 +30,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <qglobal.h>
 
 #define VERSION_MAJOR	0
 #define VERSION_MINOR	0
@@ -49,6 +50,11 @@
 //and change/use this one in the code
 #define VERSION_CHAR_ST VERSION_CHAR_STATE2
 #define VERSION_CHAR_DATE "SVN>2005-01-02"
+
+#if QT_VERSION < 0x040000
+#define qMax QMAX
+#define qMin QMIN
+#endif
 
 //visibility of the option
 enum option_t {

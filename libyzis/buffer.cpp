@@ -873,6 +873,27 @@ QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) {
 	m_hlupdating=false; //override
 	return list;
 }
+QStringList YZBuffer::getText( const YZInterval& i ) {
+	YZCursor from, to;
+	intervalToCursors( i, &from, &to );
+	return getText( from, to );
+}
+
+void YZBuffer::intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor* to ) {
+	*from = i.fromPos();
+	*to = i.toPos();
+	if ( i.from().opened() )
+		from->setX( from->getX() + 1 );
+	if ( i.to().opened() ) {
+		if ( to->getX() > 0 ) {
+			to->setX( to->getX() - 1 );
+		} else if ( to->getY() > 0 ) {
+			to->setY( to->getY() - 1 );
+			to->setX( textline(to->getY()).length() - 1 );
+		}
+	}
+}
+
 
 QString YZBuffer::getWordAt( const YZCursor& at ) {
 	QString l = textline( at.getY() );

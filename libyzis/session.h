@@ -24,23 +24,23 @@
  * $Id$
  */
 
-#include "commands.h"
-#include "excommands.h"
 #include "syntaxhighlight.h"
 #include "internal_options.h"
 #include "registers.h"
 #include "search.h"
 #include "events.h"
+#include "mode.h"
 
 class YZView;
 class YZBuffer;
 class YzisSchemaManager;
-class YZCommandPool;
-class YZExCommandPool;
 class YZInternalOptionPool;
 class YZRegisters;
 class YZSearch;
 class YZEvents;
+class YZMode;
+class YZModeEx;
+class YZModeCommand;
 
 /**
  * Contains data referring to an instance of yzis
@@ -64,15 +64,9 @@ class YZSession {
 		 */
 		QString getSessionName() { return mSessionName; }
 
-		/**
-		 * gives access to the pool of commands
-		 */
-		YZCommandPool *getPool() { return mPool; }
-
-		/**
-		 * gives access to the pool of ex commands
-		 */
-		YZExCommandPool *getExPool() { return mExPool; }
+		YZModeMap getModes();
+		YZModeEx* getExPool();
+		YZModeCommand* getCommandPool();
 
 		/**
 		 * search
@@ -337,12 +331,13 @@ class YZSession {
 
 	private:
 		QString mSessionName;
-		YZCommandPool *mPool;
-		YZExCommandPool *mExPool;
 		YZView* mCurView;
 		YZBuffer* mCurBuffer;
 		YzisSchemaManager *mSchemaManager;
 		YZSearch *mSearch;
+		YZModeMap mModes;
+		void initModes();
+		void endModes();
 
 	public:
 		static int mNbViews;

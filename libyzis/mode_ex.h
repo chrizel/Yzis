@@ -1,8 +1,9 @@
-/* This file is part of the Yzis libraries
+/*  This file is part of the Yzis libraries
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>,
  *  Copyright (C) 2004 Thomas Capricelli <orzel@freehackers.org>,
  *  Copyright (C) 2004 Philippe Fremy <phil@freehackers.org>,
- *  Copyright (C) 2004 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2004 Pascal "Poizon" Maillard <poizon@gmx.at>,
+ *  Copyright (C) 2004-2005 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,17 +25,18 @@
  * $Id$
  */
 
-#ifndef YZ_EXCOMMANDS_H
-#define YZ_EXCOMMANDS_H
+#ifndef YZ_MODE_EX_H
+#define YZ_MODE_EX_H
 
 #include <qregexp.h>
 
+#include "mode.h"
 #include "view.h"
 
 class YZView;
 class YZExCommand;
 class YZExRange;
-class YZExCommandPool;
+class YZModeEx;
 
 struct YZExRangeArgs {
 	const YZExRange* cmd;
@@ -74,8 +76,8 @@ struct YZExCommandArgs {
 	}
 };
 
-typedef QString (YZExCommandPool::*ExPoolMethod) (const YZExCommandArgs&);
-typedef int (YZExCommandPool::*ExRangeMethod) (const YZExRangeArgs&);
+typedef QString (YZModeEx::*ExPoolMethod) (const YZExCommandArgs&);
+typedef int (YZModeEx::*ExRangeMethod) (const YZExRangeArgs&);
 
 class YZExRange {
 
@@ -112,14 +114,19 @@ class YZExCommand {
 
 };
 
-class YZExCommandPool {
+class YZModeEx : public YZMode {
 
 	public :
-		YZExCommandPool();
-		virtual ~YZExCommandPool();
+		YZModeEx();
+		virtual ~YZModeEx();
+		
+		void init();
+		void enter( YZView* mView );
+		void leave( YZView* mView );
 		
 		void initPool();
-		bool execCommand( YZView* view, const QString& inputs );
+		cmd_state execCommand( YZView* mView, const QString& key );
+		bool execExCommand( YZView* view, const QString& inputs );
 
 	private :
 #if QT_VERSION < 0x040000
@@ -166,6 +173,7 @@ class YZExCommandPool {
 		QString highlight( const YZExCommandArgs& args );
 		QString split( const YZExCommandArgs& args );
 };
+
 
 #endif
 

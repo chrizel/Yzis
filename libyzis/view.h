@@ -24,8 +24,8 @@
  * $Id$
  */
 
-#include "commands.h"
 #include "selection.h"
+#include "mode.h"
 
 #include <qglobal.h>
 #if QT_VERSION < 0x040000
@@ -45,6 +45,9 @@ class YZSelectionPool;
 class YzisAttribute;
 class YZLineSearch;
 class YZView;
+class YZModePool;
+class YZMode;
+class YZModeCompletion;
 
 #if QT_VERSION < 0x040000
 typedef QValueVector<QString> StringVector;
@@ -160,7 +163,7 @@ class YZView {
 		 * Clean out the current buffer of inputs
 		 * Typically used after a command is recognized or when ESC is pressed
 		 */
-		void purgeInputBuffer() { mPreviousChars = ""; mapMode = 0; }
+		void purgeInputBuffer() { mPreviousChars = ""; }
 
 		QString getInputBuffer() { return mPreviousChars; }
 
@@ -207,96 +210,13 @@ class YZView {
 		QString moveToEndOfLine();
 		QString moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor = true );
 
-		/**
-		 * Start command mode
-		 */
-		QString gotoCommandMode( );
-
-		/**
-		 * Start command mode
-		 */
-		QString gotoSearchMode( bool reverse = false );
-
-		/**
-		 * Start insert mode
-		 */
-		QString gotoInsertMode();
-
-		/**
-		 * Start Ex mode
-		 */
-		QString gotoExMode();
-
-		/**
-		 * Start Open mode
-		 */
-		QString gotoOpenMode();
-
-		/**
-		 * Goto completion mode
-		 */
-		 QString gotoCompletionMode();
-
 		/* Prepend enough spaces to string so line is "centered" */
 		QString centerLine( const QString& );
 
 		/* Display Intro text message */
 		void displayIntro();
 
-		/* Clear intro text message */
-		void clearIntro();
-
-		/**
-		 * Start replace mode
-		 */
-		QString gotoReplaceMode();
-
-		/**
-		 * Start intro mode
-		 */
-		QString gotoIntroMode();
-
-		/**
-		 * Start visual mode
-		 */
-		QString gotoVisualMode( bool isVisualLine=false );
-
-		/**
-		 * Wrapper for next functions
-		 */
-		void leaveCurrentMode( );
-
-		/**
-		 * Leave insert mode
-		 */
-		void leaveInsertMode( );
-
-		/**
-		 * Leave search mode
-		 */
-		void leaveSearchMode( );
-
-		/**
-		 * Leave replace mode
-		 */
-		void leaveReplaceMode( );
-
-		/**
-		 * Leave visual mode
-		 */
-		void leaveVisualMode( );
-
-		/**
-		 * Leave completion mode
-		 */
-		void leaveCompletionMode( );
-
-		/**
-		 * Go back to either open mode or command mode, depending on how the
-		 * previous mode is set.
-		 */
-		QString gotoPreviousMode();
-
+		void commitUndoItem();
 		/**
 		 * Go to line of file
 		 */
@@ -367,45 +287,9 @@ class YZView {
 		unsigned int myId;
 
 		/**
-		 * Get the current mode
-		 */
-		int getCurrentMode() { return mMode; }
-
-		/**
-		 * Get the previous mode
-		 */
-		int getPreviousMode() { return mPrevMode; }
-
-		/**
-		 * Switch to the given mode; if the mode is the same as
-		 * the current one, do nothing.
-		 */
-		void switchModes(int mode);
-
-		enum modeType {
-			YZ_VIEW_MODE_INSERT=0, // insert
-			YZ_VIEW_MODE_REPLACE, // replace
-			YZ_VIEW_MODE_COMMAND, // normal
-			YZ_VIEW_MODE_EX, //script
-			YZ_VIEW_MODE_SEARCH, //search mode
-			YZ_VIEW_MODE_OPEN, // open mode
-			YZ_VIEW_MODE_INTRO, // Intro displayed 
-			YZ_VIEW_MODE_COMPLETION, // completion mode (CTRL-X) 
-			YZ_VIEW_MODE_VISUAL, // visual mode //keep these 2 at the end of the list
-			YZ_VIEW_MODE_VISUAL_LINE, // visual mode
-		} mMode,		/** mode of this view */
-			mPrevMode;	/** previous mode of this view */
-#define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_VISUAL_LINE+1) // <-- update that if you touch the enum
-		
-		/**
-		 * Mode value for key mappings
-		 */
-		int mapMode;
-
-		/**
 		 * Get the text describing the mode
 		 */
-		QString mode( int mode );
+		QString mode();
 
 		//GUI
 		/**
@@ -442,7 +326,7 @@ class YZView {
 		  * called when the mode is changed, so that gui can
 		  * update information diplayed to the user
 		  */
-		virtual void modeChanged() = 0;
+		virtual void modeChanged() {};
 
 		/**
 		 * Asks a redraw of the whole view
@@ -486,6 +370,8 @@ class YZView {
 		 * @return a reference on the current buffer cursor
 		 */
 		YZCursor* getBufferCursor();
+
+		YZViewCursor* visualCursor() { return mVisualCursor; }
 
 		/**
 		 * Updates the position of the cursor
@@ -702,6 +588,7 @@ class YZView {
 		void gotoStickyCol( unsigned int Y );
 		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor = true );
 
+		YZModePool* modePool() { return mModePool; }
 		YZSelectionPool* getSelectionPool() const { return selectionPool; }
 
 		/**
@@ -753,42 +640,9 @@ class YZView {
 		YZSelectionMap visualSelection();
 
 		/**
-		 * Starts a completion in direction forward
-		 */
-		void initCompletion();
-		
-		/**
-		 * Find next completion match
-		 * @param forward selects the direction
-		 */
-		QString doComplete(bool forward);
-
-	public slots :
-		void sendMultipleKey( const QString& keys );
-
-	protected:
-
-		void setupKeys();
-		virtual void registerModifierKeys( const QString& keys ) = 0;
-
-		bool stringHasOnlySpaces ( const QString& what );
-		
-		/**
-		 * The buffer we depend on
-		 */
-		YZBuffer *mBuffer;
-
-		/**
-		 * Used to store previous keystrokes which are not recognised as a command,
-		 * this should allow us to have commands like : 100g or gg etc ...
-		 */
-		QString mPreviousChars;
-
-		/**
 		 * command history
 		 */
 		StringVector mExHistory;
-
 		/**
 		 * search history
 		 */
@@ -803,6 +657,37 @@ class YZView {
 		 * current search history item
 		 */
 		unsigned int mCurrentSearchItem;
+		//search mode cursors
+		YZCursor *mSearchBegin;
+
+		bool incSearchFound;
+		YZCursor* incSearchResult;
+
+		virtual void registerModifierKeys( const QString& ) {}
+		virtual void unregisterModifierKeys( const QString& ) {}
+//		virtual void registerModifierKeys( const QString& ) = 0;
+//		virtual void unregisterModifierKeys( const QString& ) = 0;
+
+	public slots :
+		void sendMultipleKey( const QString& keys );
+
+	protected:
+
+		void setupKeys();
+
+		bool stringHasOnlySpaces ( const QString& what );
+		
+		/**
+		 * The buffer we depend on
+		 */
+		YZBuffer *mBuffer;
+
+		/**
+		 * Used to store previous keystrokes which are not recognised as a command,
+		 * this should allow us to have commands like : 100g or gg etc ...
+		 */
+		QString mPreviousChars;
+
 
 		class  ViewInformation {
 		public:
@@ -939,13 +824,8 @@ class YZView {
 		YZSelection* mPaintSelection;
 
 		//Visual Mode stuff
-		YZViewCursor* visualCursor;
+		YZViewCursor* mVisualCursor;
 
-		//search mode cursors
-		YZCursor *mSearchBegin;
-
-		bool incSearchFound;
-		YZCursor* incSearchResult;
 
 		//which regs to store macros in
 #if QT_VERSION < 0x040000
@@ -953,8 +833,6 @@ class YZView {
 #else
 		QList<QChar> mRegs;
 #endif
-		QStringList mModes; //list of modes
-
 		unsigned int m_paintAutoCommit;
 		YZViewCursor* keepCursor;
 
@@ -966,6 +844,9 @@ class YZView {
 		bool m_lastCompletionDir;
 		//the current attribute being used by the GUI
 		YzisAttribute * curAt;
+		YZModePool* mModePool;
+	
+		friend class YZModeCompletion;
 };
 
 #endif /*  YZ_VIEW_H */

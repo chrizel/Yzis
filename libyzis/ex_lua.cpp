@@ -36,6 +36,8 @@
 #include <QDir>
 #endif
 
+#include "mode_ex.h"
+
 /*
  * TODO:
  * - invert line/col arguments

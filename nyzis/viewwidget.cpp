@@ -308,19 +308,18 @@ void NYZView::syncViewInfo( void )
 	 * ------------------ statusbar -------------------
 	 */
 
-	YZASSERT( mMode<YZ_VIEW_MODE_LAST );
-
 	werase(infobar);
 	wmove( infobar,0,0 );
+	QString m = mode();
+	if ( m.length() > 0 ) {
 #if QT_VERSION < 0x040000
-	QString m = mode ( mMode ).latin1();
-	for ( const char *ptr = m.latin1(); *ptr; ptr++ ) {
+		for ( const char *ptr = m.latin1(); *ptr; ptr++ ) {
 #else
-	QString m = mode ( mMode ).toUtf8().data();
-	for ( const char *ptr = m.toUtf8().data(); *ptr; ptr++ ) {
+		for ( const char *ptr = m.toUtf8().data(); *ptr; ptr++ ) {
 #endif
-//		waddch(infobar, attribYellow |*ptr);
-		waddch(infobar, COLOR_PAIR(2) |*ptr);
+//			waddch(infobar, attribYellow |*ptr);
+			waddch(infobar, COLOR_PAIR(2) |*ptr);
+		}
 	}
 	waddch(infobar, ' ');
 

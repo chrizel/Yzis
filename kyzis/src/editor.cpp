@@ -36,6 +36,8 @@
 #include <kshortcut.h>
 #include <ctype.h>
 
+#include <kaccel.h>
+
 #include "settings.h"
 
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
@@ -43,6 +45,7 @@
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QWidget( parent, name)
 {
+	initKeys();
 	mTransparent = false;
 	mParent = parent;
 
@@ -56,7 +59,6 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 	mCursor = new KYZisCursor( this, KYZisCursor::KYZ_CURSOR_SQUARE );
 
-	initKeys();
 }
 
 
@@ -203,7 +205,7 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 	*/
 	
 	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
-		if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
+		if (mParent->modePool()->currentType() != YZMode::MODE_EX) {
 			mParent->gotodxdy( e->x( ) / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + mParent->getDrawCurrentLeft( ) - marginLeft,
 						e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
 		}
@@ -212,7 +214,7 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		if ( text.isNull() )
 			text = QApplication::clipboard()->text( QClipboard::Clipboard );
 		if ( ! text.isNull() ) {
-			if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_INSERT || mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_REPLACE ) {
+			if ( mParent->modePool()->current()->isEditMode() ) {
 				QChar reg = '\"';
 				YZSession::mRegisters->setRegister( reg, QStringList::split( "\n", text ) );
 				mParent->paste( reg, true );
@@ -449,6 +451,19 @@ QString KYZisEdit::keysToShortcut( const QString& keys ) {
 void KYZisEdit::registerModifierKeys( const QString& keys ) {
 	KAction* k = new KAction( "", KShortcut( keysToShortcut( keys ) ), signalMapper, SLOT( map() ), actionCollection, keys );
 	signalMapper->setMapping( k, keys );
+}
+void KYZisEdit::unregisterModifierKeys( const QString& keys ) {
+	KAction* k = actionCollection->action( keys );
+	if ( k == NULL ) {
+		yzDebug() << "No KAction for " << keys << endl;
+		return;
+	}
+	actionCollection->take( k );
+	KAccel* accel = actionCollection->kaccel();
+	accel->remove( keys );
+	accel->updateConnections();
+	signalMapper->removeMappings( k );
+	delete k;
 }
 
 void KYZisEdit::sendMultipleKey( const QString& keys ) {

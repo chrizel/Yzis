@@ -104,6 +104,9 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		virtual void showCompletionBox (QValueList< KTextEditor::CompletionEntry > complList, int offset=0, bool casesensitive=true);
 		QFontMetrics editorFontMetrics();
 
+		virtual void registerModifierKeys( const QString& keys );
+		virtual void unregisterModifierKeys( const QString& keys );
+
 	public slots:
 		QPoint cursorCoordinates();
 		void cursorPosition ( unsigned int *line, unsigned int *col);
@@ -124,7 +127,6 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 	protected:
 		void setupActions();
 		void setupCodeCompletion();
-		virtual void registerModifierKeys( const QString& keys );
 
 	private:
 		KYZisEdit *m_editor;

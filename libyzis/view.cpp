@@ -339,7 +339,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					indent();
 				} else {
 					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
-					QStringList results = YZSession::events->exec("INDENT_ON_ENTER");
+					QStringList results = YZSession::events->exec("INDENT_ON_ENTER", this);
 					if (results.count() > 0 ) {
 						QStringList::Iterator it = results.begin(), end = results.end();
 						int idt = 0;

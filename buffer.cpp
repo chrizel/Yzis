@@ -602,3 +602,25 @@ bool YZBuffer::substitute( const QString& what, const QString& with, bool wholel
 	return false;
 }
 
+QStringList YZBuffer::getText(YZCursor& from, YZCursor& to) {
+	//the first line
+	QStringList list;
+	if ( from.getY() != to.getY() )
+		list << textline( from.getY() ).mid( from.getX() );
+	else
+		list << textline( from.getY() ).mid( from.getX(), to.getX() - from.getX() + 1 );
+
+	//other lines
+	unsigned int i = from.getY();
+	while ( i < to.getY() ) {
+		list << textline( i ); //the whole line	
+		i++;
+	}
+	
+	//last line
+	if ( from.getY() != to.getY() )
+		list << textline( to.getY() ).left( to.getX() );
+
+	return list;
+}
+

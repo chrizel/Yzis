@@ -170,6 +170,13 @@ public:
 		return myNull;
 	}
 
+	/**
+	 * Get a list of strings between two cursors
+	 * @param from the origin cursor
+	 * @param to the end cursor
+	 * @return a list of strings
+	 */
+	QStringList getText(YZCursor& from, YZCursor& to);
 
 	/**
 	 * Number of lines in the buffer

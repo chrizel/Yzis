@@ -296,8 +296,9 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 	
 	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
 		if (mParent->modePool()->currentType() != YZMode::MODE_EX) {
-			mParent->gotodxdy( e->x( ) / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + mParent->getDrawCurrentLeft( ) - marginLeft,
-						e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
+			mParent->gotodxdy( e->x() / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + mParent->getDrawCurrentLeft( ) - marginLeft,
+						e->y() / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
+			mParent->updateStickyCol();
 		}
 	} else if ( e->button() == Qt::MidButton ) {
 		QString text = QApplication::clipboard()->text( QClipboard::Selection );

@@ -62,6 +62,8 @@ YZSession::~YZSession() {
 	delete mSchemaManager;
 	delete mExPool;
 	delete mPool;
+	delete mSearch;
+	delete events;
 }
 
 void YZSession::guiStarted() {

@@ -721,8 +721,10 @@ QString YZCommandPool::change(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->deleteArea(args.view, from, to, args.regs);
 	args.view->commitNextUndo();
 
-	if ( visualMode )
+	if ( visualMode ) {
 		args.view->leaveVisualMode();
+		args.view->gotoPreviousMode();
+	}
 
 	if(append)
 		args.view->append();
@@ -775,9 +777,10 @@ QString YZCommandPool::insertAtSOL(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::gotoInsertMode(const YZCommandArgs &args) {
-	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE )
+	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
 		args.view->leaveVisualMode();
-	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
+		args.view->gotoPreviousMode();
+	} else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
 		args.view->leaveReplaceMode();
 	args.view->gotoInsertMode();
 	return QString::null;
@@ -788,8 +791,10 @@ QString YZCommandPool::gotoCommandMode(const YZCommandArgs &args) {
 		args.view->leaveInsertMode();
 	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
 		args.view->leaveReplaceMode();
-	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE  )
+	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE  ) {
 		args.view->leaveVisualMode();
+		args.view->gotoPreviousMode();
+	}
 	args.view->gotoCommandMode();
 	return QString::null;
 }
@@ -828,9 +833,10 @@ QString YZCommandPool::gotoLineAtBottom(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::gotoReplaceMode(const YZCommandArgs &args) {
-	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE )
+	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL || args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
 		args.view->leaveVisualMode();
-	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
+		args.view->gotoPreviousMode();
+	} else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
 		args.view->leaveReplaceMode();
 	args.view->gotoReplaceMode();
 	return QString::null;
@@ -839,6 +845,7 @@ QString YZCommandPool::gotoReplaceMode(const YZCommandArgs &args) {
 QString YZCommandPool::gotoVisualLineMode(const YZCommandArgs &args) {
 	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE ) {
 		args.view->leaveVisualMode();
+		args.view->gotoPreviousMode();
 	} else {
 		args.view->gotoVisualMode( true );
 	}
@@ -848,6 +855,7 @@ QString YZCommandPool::gotoVisualLineMode(const YZCommandArgs &args) {
 QString YZCommandPool::gotoVisualMode(const YZCommandArgs &args) {
 	if ( args.view->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL ) {
 		args.view->leaveVisualMode();
+		args.view->gotoPreviousMode();
 	} else {
 		args.view->gotoVisualMode( false );
 	}
@@ -948,8 +956,10 @@ QString YZCommandPool::del(const YZCommandArgs &args) {
 		args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	}
 	args.view->commitNextUndo();
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL )
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
 		args.view->leaveVisualMode();
+		args.view->gotoPreviousMode();
+	}
 	return QString::null;
 }
 
@@ -976,8 +986,10 @@ QString YZCommandPool::yank(const YZCommandArgs &args) {
 		YZCursor to=move(args.view, args.arg, args.count, args.usercount);
 		args.view->myBuffer()->action()->copyArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	}
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL )
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
 		args.view->leaveVisualMode();
+		args.view->gotoPreviousMode();
+	}
 	return QString::null;
 }
 
@@ -1045,8 +1057,10 @@ QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
 	else
 		args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
 	args.view->commitNextUndo();
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL )
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
 		args.view->leaveVisualMode();
+		args.view->gotoPreviousMode();
+	}
 	return QString::null;
 }
 
@@ -1068,6 +1082,7 @@ QString YZCommandPool::abort( const YZCommandArgs& args) {
 	//actually it's a no-op here, inputBuffer will be purged after
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
 		args.view->leaveVisualMode();
+		args.view->gotoPreviousMode();
 	}
 	return QString::null;
 }
@@ -1076,6 +1091,7 @@ QString YZCommandPool::delkey( const YZCommandArgs &args ) {
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
 			args.view->myBuffer()->action()->deleteArea( args.view, (args.selection)[0].from(), (args.selection)[0].to(), ( QValueList<QChar>() << QChar( '\"' ) ));
 			args.view->leaveVisualMode();
+			args.view->gotoPreviousMode();
 	} else
 			args.view->myBuffer()->action()->deleteChar( args.view, *(args.view->getBufferCursor()), 1);
 	args.view->commitNextUndo();

@@ -948,6 +948,7 @@ QString YZCommandPool::macro( const YZCommandArgs &args ) {
 		args.view->stopRecordMacro();
 	else
 		args.view->recordMacro( args.regs );
+	args.view->modeChanged();
 	return QString::null;
 }
 

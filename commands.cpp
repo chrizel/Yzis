@@ -133,6 +133,7 @@ void YZCommandPool::initPool() {
 }
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
+	yzDebug() << "ExecCommand : " << inputs << endl;
 	unsigned int count=1;
 	bool hadCount = false;
 	unsigned int i=0;

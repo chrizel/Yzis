@@ -69,7 +69,13 @@ enum value_t {
     color_t, // is a color
 };
 
-
+enum mapping_t {
+	normal = 1, // in normal mode
+	cmdline = 2, // on command line
+	visual = 4, // in visual mode
+	pendingop = 8, // waiting for an operator
+	insert = 16, // insert mode
+};
 
 #endif /* YZIS_H */
 

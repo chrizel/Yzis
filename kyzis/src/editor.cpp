@@ -331,7 +331,7 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 					else
 						disp = disp.leftJustify( mParent->drawLength(), mParent->fillChar() );
 					QColor bgColor = mParent->drawBgColor();
-					if ( bgColor.isValid() ) {
+					if ( bgColor.isValid() && bgColor != backgroundColor() ) {
 						p.setBackgroundMode(Qt::OpaqueMode);
 						p.setBackgroundColor( bgColor );
 					}

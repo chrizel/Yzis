@@ -102,7 +102,7 @@ void YZBuffer::load(void)
 {
 	FILE *f;
 	size_t len;
-	char buf[YZ_MICROBUFFER_DEFAULT_SIZE+2];
+	char buf[YZ_LINE_DEFAULT_LENGTH+2];
 	char *ptr;
 	int dismiss=false;
 
@@ -122,7 +122,7 @@ void YZBuffer::load(void)
 	lines	= 0;
 	do { // read the whole file
 		int a;
-		a = fread(buf, sizeof(char), YZ_MICROBUFFER_DEFAULT_SIZE-len, f);
+		a = fread(buf, sizeof(char), YZ_LINE_DEFAULT_LENGTH-len, f);
 		debug("read %d bytes from file", a); len +=a;
 
 
@@ -150,7 +150,7 @@ void YZBuffer::load(void)
 
 			if ( (ptr-buf)>=len) {
 				/* we reached the end of the buffer */
-				if ( (ptr-buf)<YZ_MICROBUFFER_DEFAULT_SIZE )
+				if ( (ptr-buf)<YZ_LINE_DEFAULT_LENGTH )
 					break; // read some more data, the buffer is too small
 
 				/* this line is definetely too long */
@@ -202,7 +202,7 @@ void YZBuffer::load(void)
 				continue;
 			}
 
-		if ( (ptr-buf)>=len && (ptr-buf)>=YZ_MICROBUFFER_DEFAULT_SIZE ) {
+		if ( (ptr-buf)>=len && (ptr-buf)>=YZ_LINE_DEFAULT_LENGTH ) {
 			/* this line is definetely too long */
 			YZLine *line = new YZLine(lines++, buf, len); // ptr-buf == len, here
 			/* add the new line */

@@ -9,7 +9,6 @@
 
 #include "yz_line.h"
 #include "yz_events.h"
-#include "yz_microbuffer.h"
 
 #ifdef __cplusplus
 

@@ -32,7 +32,8 @@ YZMotionPool::~YZMotionPool() {
 }
 
 void YZMotionPool::initPool() {
-	addMotion (YZMotion( "\\b\\w+\\b", REGEXP, 0, 0, false ) , "[0-9]+w" );
+	addMotion (YZMotion( "\\b\\w+\\b", REGEXP, 0, 0, false ) , "[0-9]*w" );
+	addMotion (YZMotion( "\\b\\w+\\b", REGEXP, 0, 0, true ), "[0-9]*b");
 	addMotion (YZMotion( "$", REGEXP, 0, 0, false ), "\\$" );
 	addMotion (YZMotion( "^", REGEXP, 0, 0, true ), "0");
 }
@@ -96,21 +97,22 @@ bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, bool 
 		while ( count < counter ) {
 			const QString& current = view->myBuffer()->textline( result->getY() );
 			if ( current.isNull() ) return false;
-			idx = rex.searchRev( current, result->getX() );
+			idx = rex.searchRev( current, result->getX() - 1 >= 0 ? result->getX() - 1 : result->getX() );
 			if ( idx != -1 ) {
 				yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
 				count++; //one match
-				result->setX( ( idx - rex.matchedLength() - 1 >= 0 ) ? idx - rex.matchedLength() -1 : 0 );
-			} else {
+				result->setX( idx );
+			}
+			if ( idx == -1 || idx == 0 ) { //no match or we matched at beginning of line => go to previous line for next search
+				yzDebug() << "Previous line " << result->getY() - 1 << endl;
+				if ( result->getY() == 0 ) break; //stop here
 				const QString& ncurrent = view->myBuffer()->textline( result->getY() - 1 );
 				if ( ncurrent.isNull() ) return false;
-				if ( result->getY() == 0 ) break;
 				result->setX( ncurrent.length() );
 				result->setY( result->getY() - 1 );
 			}
 		}
 	}
-	yzDebug() << "Result of motion is : " << result->getX() << " " << result->getY() << endl;
 	return true;
 }
 

@@ -1,13 +1,9 @@
 <?xml version="1.0"?>
-<!DOCTYPE article PUBLIC
+<!DOCTYPE refentry PUBLIC
 	"-//OASIS//DTD DocBook XML V4.3//EN"
 	"http://www.docbook.org/xml/4.3/docbookx.dtd">
 
 <refentry id="documentation-example">
-	<refmeta>
-		<manvolnum>8</manvolnum>
-		<refentrytitle>Example</refentrytitle>
-	</refmeta>
 	<refentryinfo>
 		<title>Yzis documentation example</title>
 		<author>
@@ -16,6 +12,11 @@
 			<email>panard@inzenet.org</email>
 		</author>
 	</refentryinfo>
+	<refmeta>
+		<refentrytitle>Example</refentrytitle>
+		<manvolnum>8</manvolnum>
+	</refmeta>
+
 	<refnamediv>
 		<refname>yzis.example</refname>
 		<refpurpose>Yzis documentation example</refpurpose>

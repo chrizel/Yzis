@@ -300,7 +300,6 @@ void KYZisDoc::configDialog() {
 }
 
 void KYZisDoc::setModified( bool modified ) {
-	YZBuffer::setChanged( modified );
 	if ( KTextEditor::Document::isModified() != modified ) {
 		KTextEditor::Document::setModified( modified );
 		for (QPtrList<KTextEditor::View>::const_iterator it = _views.constBegin();

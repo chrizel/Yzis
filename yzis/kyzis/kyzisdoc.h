@@ -3,6 +3,7 @@
 
 #include <ktexteditor/document.h>
 #include <yz_buffer.h>
+#include <yz_session.h>
 
 class KYZisDoc : public KTextEditor::Document, public YZBuffer {
 	Q_OBJECT

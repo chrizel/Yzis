@@ -19,12 +19,13 @@ class KYZisView: public KTextEditor::View
 	Q_OBJECT
 
 	public:
-		KYZisView(KYZisDoc *doc, QWidget *parent, const char *name=0);
+		KYZisView(KYZisDoc *doc, YZSession*, QWidget *parent, const char *name=0);
 	 	virtual ~KYZisView();
 		KTextEditor::Document *document () const { return buffer; }
 		void postEvent (yz_event);
 		void scrollDown( int l=1 );
 		void scrollUp( int l=1 );
+		YZSession *getCurrentSession();
 		
 	protected:
 		void customEvent( QCustomEvent * );
@@ -34,6 +35,7 @@ class KYZisView: public KTextEditor::View
 		KYZisDoc *buffer;
 		KStatusBar *status;
 		int last_event_done;
+		YZSession *currentSession;
 };
 
 #endif

@@ -7,10 +7,17 @@
 YZSession::YZSession( QString _sessionName ) {
   pool = new YZCommandPool();
 	sessionName = _sessionName;
-	buffers_nb = 0;
-	views_nb = 0;
 }
 
 YZSession::~YZSession() {
 }
 
+YZBuffer *YZSession::createBuffer(QString path) {
+	YZBuffer *b = new YZBuffer( path );
+	addBuffer( b );
+	return b;
+}
+
+void YZSession::addBuffer( YZBuffer *b ) {
+	buffers.insert(b->fileName(), b);
+}

@@ -2,20 +2,19 @@
  * $id$
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include <errno.h>
+#include <cstdlib>
+#include <qfile.h>
+#include <qtextstream.h>
 #include "yz_buffer.h"
 #include "yz_events.h"
 #include "yz_view.h"
-#include <qfile.h>
-#include <qtextstream.h>
 
 YZBuffer::YZBuffer(QString _path) {
 	path	= _path;
 	view_nb	= 0;
 
 	if (!_path.isEmpty()) load();
+	view_list.setAutoDelete( true ); //we own views
 }
 
 void YZBuffer::addChar (int x, int y, QChar c) {
@@ -48,40 +47,28 @@ void YZBuffer::chgChar (int x, int y, QChar c) {
 }
 
 void YZBuffer::postEvent(yz_event e) {
-	int l = e.u.setline.y;
-
-	/* quite basic, we just check that the line is currently displayed */
-	for (int i=0; i<view_nb; i++) {
-		YZView *v = view_list[i];
-		if (v->isLineVisible(l))
+	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
 			v->postEvent(e);
 	}
 }
 
 void YZBuffer::addView (YZView *v) {
-	view_list[view_nb] = v;
-	updateView(view_nb++);
+	view_list.append( v );
+	updateView(v);
 }
 
-void YZBuffer::updateView(int view_nb) {
-	int y;
-	YZView *view = view_list[view_nb];
-
-	for (y=view->getCurrent(); y<text.count() && view->isLineVisible(y); y++) {
-
-		QString l = findLine( view->getCurrent()+y);
+//should be moved inside YZView
+void YZBuffer::updateView(YZView *view) {
+	for (int y=view->getCurrent(); y<text.count() && view->isLineVisible(y); y++) {
+		QString l = findLine( view->getCurrent()+y );
 		if (l.isNull()) continue;
 		view->postEvent(mk_event_setline(y,&l));
 	}
-
-	view->postEvent(mk_event_setcursor(0,0));
-	
-//MM opening files may be done in different modes
-	//view->postEvent(mk_event_setstatus("Yzis Ready"));
+	view->updateCursor();
 }
 
 void YZBuffer::updateAllViews() {
-	for ( int i = 0 ; i < view_nb ; i++) updateView(i);
+	for ( YZView *v = view_list.first();v;v=view_list.next() ) updateView(v);
 }
 
 void  YZBuffer::addLine(QString &l) {

@@ -2,7 +2,7 @@
  * $id$
  */
 
-#include <stdlib.h>
+#include <cstdlib>
 #include "yz_view.h"
 
 YZView::YZView(YZBuffer *_b, int _lines_vis) {
@@ -72,13 +72,14 @@ void YZView::sendChar( QChar c) {
 			//printf("Currently unknown MODE\n"); error("unknown mode, ignoring");
 			return;
 	};
-	/* ok, here we now we're in command */
-
-	// check for commands with multiple keys
-	// currently I can handle commands like : gg/100G/3dw
-	// but we really need some structure to handle this cleanly
-	// so first I get the number which could be in first position, then i get the command
-	// name, then this command can get other parameters and/or reset the previous_chars buffer
+	/* ok, here now we're in command */
+	previous_chars+=c;
+	//execute the command
+	if ( session ) 
+		session->getPool()->execCommand(this, previous_chars);
+}
+	
+#if 0
 	if ( ! previous_chars.isEmpty() ) {
 		//append the char, then check is the current previous_chars has a sense
 		previous_chars+=c;
@@ -90,16 +91,6 @@ void YZView::sendChar( QChar c) {
 		//the question is : did I forget a possibility ?
 		//check the command name now
 		switch ( ( ( QChar )previous_chars.at(step) ).latin1() ) {
-			case 'g':
-				break;
-			case 'd':
-				break;
-			case 'G':
-				if ( number.isEmpty() ) number="0";
-				cursor->setY( number.toInt() );
-				cursor->setX( 0 );
-				if ( !isLineVisible( number.toInt() ) ) centerView( number.toInt() );
-				break;
 		}
 	} else {
 		//one keystroke commands are below
@@ -128,22 +119,7 @@ void YZView::sendChar( QChar c) {
 				postEvent(mk_event_setstatus("-- REPLACE --"));
 				break;
 			case 'j': /* move down */
-				if (cursor->getY() < buffer->text.count()-1) {
-					cursor->incY();
-					lin = buffer->findLine(cursor->getY());
-					if ( !lin.isNull() ) current_maxx = lin.length()-1; 
-					if (cursor->getX() > current_maxx) cursor->setX( current_maxx );
-					if (cursor->getX() < 0) cursor->setX( 0 );
-
-					//check if we need to scroll
-					if ( current + lines_vis < cursor->getY() ) {
-						//scroll down => GUI
-						if ( gui_manager )
-							gui_manager->scrollDown(); //one line down
-						current++;
-					}
-					updateCursor();
-				}
+				moveDown();
 				break;
 			case 'k': /* move up */
 				if (cursor->getY() > 0) {
@@ -186,7 +162,7 @@ void YZView::sendChar( QChar c) {
 				break;
 		}
 	}
-}
+#endif
 
 void YZView::updateCursor(int x, int y) {
 	if ( x!=-1 ) cursor->setX( x );
@@ -219,11 +195,43 @@ void YZView::postEvent (yz_event e) {
 
 void YZView::registerManager ( Gui *mgr ) {
 	gui_manager = mgr;
+	session = mgr->getCurrentSession();
 }
 
 void YZView::centerView(int line) {
 }
 
-QString YZView::moveDown( QStringList ) {
+QString YZView::moveDown( QString inputsBuff ) {
+	QString lin;
+	int nb_lines=1;//default : one line down
+	
+	//check the arguments
+/**	if ( !inputsBuff.isNull() ) {
+		bool test;
+		nb_lines = inputsBuff.toInt( &test );
+		if ( !test ) return QString::null;
+	}*/
+	
+	//execute the code
+	if (cursor->getY() < buffer->text.count()-1) {
+		cursor->incY();
+		lin = buffer->findLine(cursor->getY());
+		if ( !lin.isNull() ) current_maxx = lin.length()-1; 
+		if (cursor->getX() > current_maxx) cursor->setX( current_maxx );
+		if (cursor->getX() < 0) cursor->setX( 0 );
+
+		//check if we need to scroll
+		if ( current + lines_vis < cursor->getY() ) {
+			//scroll down => GUI
+			if ( gui_manager )
+				gui_manager->scrollDown(); //one line down
+			current++;
+		}
+		updateCursor();
+	}
+	//reset the input buffer
+	purgeInputBuffer();
+	
+	//return something
 	return QString::null;
 }

@@ -1,21 +1,19 @@
 #ifndef YZ_BUFFER_H
 #define YZ_BUFFER_H
 /**
- * yz_interface.h
- *
- * YZBuffer - abstractino for buffer/file
+ * $id$
  */
 
-#include "yz_events.h"
 #include <qstringlist.h>
-
-#define	YZ_MAX_VIEW 50
+#include <qptrlist.h>
+#include "yz_events.h"
 
 class YZView;
 
 class YZBuffer {
 
 	friend class YZView;
+	friend class YZSession;
 
 public:
 	/** opens a buffer using the given file */
@@ -27,19 +25,21 @@ public:
 	void load(void);
 	void save(void);
 
-	/* linked list handling */
 	void addLine(QString &l);
 
-protected:
+	QString fileName() {return path;}
+
 	void addView (YZView *v);
 
+	QPtrList<YZView> views() { return view_list; }
+
+protected:
 	QString path;
-	YZView	*view_list[YZ_MAX_VIEW];	// should be growable 
+	QPtrList<YZView> view_list;
 	int	view_nb;
 
-private:
 	void	postEvent(yz_event e);
-	void	updateView(int view);
+	void	updateView(YZView *v);
 	void	updateAllViews();
 	QString	findLine(int line);
 

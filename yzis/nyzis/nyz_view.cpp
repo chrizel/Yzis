@@ -13,6 +13,7 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_v
 
 	update_info();
 	//debug("w,h are %d,%d",w,h);
+	registerManager( this );
 }
 
 NYZView::~NYZView(){
@@ -89,3 +90,6 @@ void NYZView::scrollUp ( int lines ) {
 
 }
 
+YZSession *NYZView::getCurrentSession() {
+	return session;
+}

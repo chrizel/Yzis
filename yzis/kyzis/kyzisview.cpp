@@ -8,10 +8,11 @@
 #include <qapplication.h>
 #include <kdebug.h>
 
-KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
+KYZisView::KYZisView ( KYZisDoc *doc, YZSession *_session, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name),
 		YZView(doc, 10) {
 	last_event_done=0;
+	currentSession = _session;
 	editor = new KYZisEdit (this,"editor");
 	status = new KStatusBar (this, "status");
 	status->insertItem("Yzis Ready",0);
@@ -81,4 +82,7 @@ void KYZisView::scrollUp ( int lines ) {
 	editor->update();
 }
 
+YZSession *KYZisView::getCurrentSession() {
+	return currentSession;
+}
 #include "kyzisview.moc"

@@ -38,7 +38,7 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	/*
 	 * create a buffer and a view on it
 	 */
-	add_buffer (new YZBuffer(charv[1]));
+	YZBuffer *bf = createBuffer(charv[1]);
 
 	screen = stdscr; // just an alias...
 		wattron(screen, A_BOLD);	// will be herited by subwin
@@ -58,27 +58,14 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 		wattron(statusbar, COLOR_PAIR(6));
 	}
 
-	add_view (new NYZView(this, window, buffers[0], LINES));
+	bf->addView (new NYZView(this, window, bf, LINES));
 }
-
-void NYZSession::add_view( NYZView *v)
-{
-	views[views_nb++] = v;
-//FIXME	if (views_nb>NYZ_VIEW_MAX) panic("max number of views reached..");
-}
-
-
-void NYZSession::add_buffer( YZBuffer *b)
-{
-	buffers[buffers_nb++] = b;
-//FIXME	if (buffers_nb>NYZ_BUFFER_MAX) panic("max number of buffers reached..");
-}
-
 
 void NYZSession::event_loop()
 {
-	for (int i=0; i<views_nb; i++)
-		views[i]->event_loop();
+	for ( QMap<QString,YZBuffer*>::Iterator b = buffers.begin();b!=buffers.end(); ++b ) 
+		for ( YZView *v = b.data()->views().first() ; v ; v = b.data()->views().next() ) 
+			( static_cast<NYZView*>( v ) )->event_loop();
 }
 
 void NYZSession::update_status(const char *msg)

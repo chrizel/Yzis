@@ -43,11 +43,11 @@ class YZCommandPool {
 		type obj; //object type 
 		bool immutable; //is this command overwritable ?//FIXME
 		//with function pointers we are limited by class and by prototypes so ...
-		QString ( YZCommandPool::*poolFunc ) (QStringList argv);
-		QString ( YZView::*viewFunc ) (QStringList argv);
-		QString ( YZBuffer::*buffFunc ) (QStringList argv);
-		QString ( YZSession::*sessFunc ) (QStringList argv);
-		QString ( YZPlugin::*plugFunc ) (QStringList argv);
+		QString ( YZCommandPool::*poolFunc ) (QString inputsBuff);
+		QString ( YZView::*viewFunc ) (QString inputsBuff);
+		QString ( YZBuffer::*buffFunc ) (QString inputsBuff);
+		QString ( YZSession::*sessFunc ) (QString inputsBuff);
+		QString ( YZPlugin::*plugFunc ) (QString inputsBuff);
 	};
 
 	public:
@@ -55,7 +55,7 @@ class YZCommandPool {
 		~YZCommandPool();
 		
 		//that's a keystroke/function pointer mapping
-		//this will allow our plugin (Yes there will be some) to add there own functions
+		//this will allow our plugin (Yes there will be some) to add their own functions
 		//
 		//QMap does not like having a function pointer as a parameter so i use a struct to wrap it
 		//it's quite weird ...
@@ -65,7 +65,12 @@ class YZCommandPool {
 		void initPool();
 
 		//just an example method
-		QString test(QStringList);
+		QString test(QString);
+
+		/**
+		 * This function is the entry point to execute ANY command in Yzis
+		 */
+		void execCommand(YZView *view, QString inputs);
 };
 
 #endif

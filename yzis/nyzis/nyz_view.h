@@ -30,6 +30,7 @@ public:
 	void flush_events();
 
 	void postEvent(yz_event);
+	YZSession *getCurrentSession();
 
 	void scrollDown(int lines=1);
 	void scrollUp(int lines=1);

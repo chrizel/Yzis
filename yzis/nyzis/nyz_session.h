@@ -25,17 +25,6 @@ class NYZSession : public YZSession {
 		void		save_cursor(void);
 		void		restore_cursor(void);
 
-	protected:
-#if 1
-		virtual		YZBuffer *buffer(int i) {return buffers[i]; }
-		virtual		YZView *view(int i) { return views[i]; }
-#else
-		YZBuffer *buffer(int i) {return buffers[i]; }
-		YZView *view(int i) { return views[i]; }
-#endif
-
-		void		add_buffer( YZBuffer *b);
-		void		add_view(NYZView *v);
 	private:
 		WINDOW		*screen;	// whole (ncurses) screen (== stdscr)
 
@@ -44,9 +33,6 @@ class NYZSession : public YZSession {
 
 		WINDOW		*windows[NYZ_VIEW_MAX];
 		int		windows_nb;
-
-		YZBuffer	*buffers[NYZ_BUFFER_MAX];
-		NYZView		*views[NYZ_VIEW_MAX];
 
 		int		save_cursor_x; /** only to be used by save/resore _cursor() until further notice */
 		int		save_cursor_y;

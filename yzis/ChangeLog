@@ -1,3 +1,17 @@
+2003-04-23 mikmak
+  * libyzis
+    make the new command handling active (broken right now :)
+    fix various problems
+    
+  * kyzis/nyzis
+    update to some API changes in libyzis
+
+2003-04-22 mikmak
+  * libyzis
+    buffers owns the views
+    session owns the buffers
+    added some QMap/QPtrList around to replace old C stuff
+
 2003-04-21 mikmak
   * libyzis
     added beginning of plugin interface

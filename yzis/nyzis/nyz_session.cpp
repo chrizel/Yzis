@@ -38,7 +38,7 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	/*
 	 * create a buffer and a view on it
 	 */
-	add_buffer (new  YZBuffer("tests/test1"));
+	add_buffer (new YZBuffer(charv[1]));
 
 	screen = stdscr; // just an alias...
 		wattron(screen, A_BOLD);	// will be herited by subwin

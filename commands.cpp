@@ -59,7 +59,8 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("[0-9]*k",&YZView::moveUp,true);
 	NEW_VIEW_COMMAND("[0-9]*h",&YZView::moveLeft,true);
 	NEW_VIEW_COMMAND("[0-9]*l",&YZView::moveRight,true);
-	NEW_VIEW_COMMAND("\\^",&YZView::moveToStartOfLine,true);
+	NEW_VIEW_COMMAND("\\^",&YZView::moveToFirstNonBlankOfLine,true);
+	NEW_VIEW_COMMAND("0",&YZView::moveToStartOfLine,true);
 	NEW_VIEW_COMMAND("\\$",&YZView::moveToEndOfLine,true);
 	NEW_VIEW_COMMAND("(\".)?[0-9]*(x|X)",&YZView::deleteCharacter,true);
 	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true);

@@ -512,10 +512,8 @@ void YZBuffer::updateAllViews() {
 	if ( !mUpdateView ) return;
 	yzDebug() << "updateAllViews" << endl;
 	YZView *it;
-	for ( it = mViews.first(); it; it = mViews.next() ) {
-		it->redrawScreen();
-		it->updateCursor();
-	}
+	for ( it = mViews.first(); it; it = mViews.next() )
+		it->refreshScreen();
 }
 
 YZView* YZBuffer::firstView() {

@@ -222,11 +222,6 @@ class YZView {
 		QString appendAtEOL ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
-		 * Repaint the whole visible screen
-		 */
-		void redrawScreen();
-
-		/**
 		 * Moves the cursor to @arg nextx, @arg nexty
 		 */
 		void gotoxy(unsigned int nextx, unsigned int nexty);

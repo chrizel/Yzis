@@ -28,6 +28,7 @@
 #include <cstdlib>
 #include <ctype.h>
 #include <qkeysequence.h>
+#include <qclipboard.h>
 #include <math.h>
 #include "view.h"
 #include "viewcursor.h"
@@ -1153,6 +1154,10 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 			}
 			selectionPool->addSelection( "VISUAL", bBegin, bEnd, dBegin, dEnd );
 //			yzDebug() << "visual selection : from " << bBegin << " to " << bEnd << endl;
+#ifndef WIN32
+			if ( QPaintDevice::x11AppDisplay() )
+#endif
+				QApplication::clipboard()->setText( mBuffer->getText( bBegin, bEnd ).join( "\n" ), QClipboard::Selection );
 
 			YZCursor dOldBegin( cur_sel.drawFrom() );
 			YZCursor dOldEnd( cur_sel.drawTo() );

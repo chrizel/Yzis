@@ -124,7 +124,7 @@ void YZAction::appendLine( YZView* pView, const QString& text ) {
 }
 
 void YZAction::insertNewLine( YZView* pView, const YZCursor& pos ) {
-	if( pos.y() >= mBuffer->lineCount() ) 
+	if( pos.y() > mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	CONFIGURE_VIEWS;
 	mBuffer->insertNewLine( pos.x(), pos.y() );
@@ -142,7 +142,7 @@ void YZAction::replaceLine( YZView* pView, const YZCursor& pos, const QString &t
 }
 
 void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &text ) {
-	if( pos.y() >= mBuffer->lineCount() ) 
+	if( pos.y() > mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	CONFIGURE_VIEWS;
 	mBuffer->insertLine( text, pos.y() );

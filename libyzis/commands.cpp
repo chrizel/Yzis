@@ -58,10 +58,10 @@ YZCommandPool::~YZCommandPool() {
  */
 void YZCommandPool::initPool() {
 	//normal stuff
-	NEW_VIEW_COMMAND("([0-9]*)j",&YZView::moveDown,true,true,false,false);
-	NEW_VIEW_COMMAND("([0-9]*)k",&YZView::moveUp,true,true,false,false);
-	NEW_VIEW_COMMAND("([0-9]*)h",&YZView::moveLeft,true,true,false,false);
-	NEW_VIEW_COMMAND("([0-9]*)l",&YZView::moveRight,true,true,false,false);
+	NEW_VIEW_COMMAND("([0-9]*)(j)",&YZView::moveDown,true,true,false,false);
+	NEW_VIEW_COMMAND("([0-9]*)(k)",&YZView::moveUp,true,true,false,false);
+	NEW_VIEW_COMMAND("([0-9]*)(h)",&YZView::moveLeft,true,true,false,false);
+	NEW_VIEW_COMMAND("([0-9]*)(l)",&YZView::moveRight,true,true,false,false);
 	NEW_VIEW_COMMAND("\\^",&YZView::moveToFirstNonBlankOfLine,true,false,false,false);
 	NEW_VIEW_COMMAND("0",&YZView::moveToStartOfLine,true,false,false,false);
 	NEW_VIEW_COMMAND("\\$",&YZView::moveToEndOfLine,true,false,false,false);
@@ -99,7 +99,8 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error)
 				yzDebug() << "hasRegister : " << QString( args.registr ) << endl;
 			}
 			if ( it.data().hasCounter ) {
-				args.count = ex.cap( ag++ ).toUInt();
+				args.count = ( ex.cap( ag ).isNull() || ex.cap( ag ).isEmpty() ) ? 1 : ex.cap( ag ).toUInt();
+				ag++;
 				yzDebug() << "hasCounter : " << args.count << endl;
 			}
 			args.command = ex.cap( ag++ );
@@ -178,4 +179,3 @@ void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
 		}
 	}
 }
-

@@ -210,17 +210,17 @@ void YZView::sendKey( int c, int modifiers) {
 					purgeInputBuffer();
 					return;
 				case Qt::Key_Down:
-					key='j';//moveDown( );
-					break;//return;
+					key='j';
+					break;
 				case Qt::Key_Left:
-					key='h';//moveLeft( );
-					break;//return;
+					key='h';
+					break;
 				case Qt::Key_Right:
-					key='l';//moveRight( );
-					break;//return;
+					key='l';
+					break;
 				case Qt::Key_Up:
-					key='k';//moveUp( );
-					break;//return;
+					key='k';
+					break;
 				case Qt::Key_Delete:
 					mBuffer->delChar(mCursor->getX(),mCursor->getY(),1);
 					return;
@@ -315,17 +315,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 }
 
 QString YZView::moveDown( const QString& inputsBuff, YZCommandArgs args ) {
-	int nb_lines=1;//default : one line down
-
-	//check the arguments
-	if ( !inputsBuff.isNull() ) {
-		int i=0;
-		while ( inputsBuff[i].isDigit() )
-			i++; //go on
-		bool test;
-		nb_lines = inputsBuff.left( i ).toInt( &test );
-		if ( !test ) nb_lines=1;
-	}
+	int nb_lines=args.count;
 
 	//execute the code
 	gotoxy(mCursor->getX(), mCursor->getY() + nb_lines);
@@ -338,17 +328,7 @@ QString YZView::moveDown( const QString& inputsBuff, YZCommandArgs args ) {
 }
 
 QString YZView::moveUp( const QString& inputsBuff, YZCommandArgs args ) {
-	int nb_lines=1;//default : one line up
-
-	//check the arguments
-	if ( !inputsBuff.isNull() ) {
-		int i=0;
-		while ( inputsBuff[i].isDigit() )
-			i++; //go on
-		bool test;
-		nb_lines = inputsBuff.left( i ).toInt( &test );
-		if ( !test ) nb_lines=1;
-	}
+	int nb_lines=args.count;
 
 	//execute the code
 	gotoxy(mCursor->getX(), mCursor->getY() ? mCursor->getY() - nb_lines : 0 );
@@ -360,17 +340,7 @@ QString YZView::moveUp( const QString& inputsBuff, YZCommandArgs args ) {
 }
 
 QString YZView::moveLeft( const QString& inputsBuff, YZCommandArgs args ) {
-	uint nb_cols=1;//default : one line left
-
-	//check the arguments
-	if ( !inputsBuff.isNull() ) {
-		int i=0;
-		while ( inputsBuff[i].isDigit() )
-			i++; //go on
-		bool test;
-		nb_cols = inputsBuff.left( i ).toInt( &test );
-		if ( !test ) nb_cols=1;
-	}
+	uint nb_cols=args.count;
 
 	//execute the code
 	nb_cols = QMIN( mCursor->getX(), nb_cols );
@@ -384,18 +354,8 @@ QString YZView::moveLeft( const QString& inputsBuff, YZCommandArgs args ) {
 }
 
 QString YZView::moveRight( const QString& inputsBuff, YZCommandArgs args ) {
-	int nb_cols=1;//default : one column right
+	int nb_cols=args.count;
 	
-	//check the arguments
-	if ( !inputsBuff.isNull() ) {
-		int i=0;
-		while ( inputsBuff[i].isDigit() )
-			i++; //go on
-		bool test;
-		nb_cols = inputsBuff.left( i ).toInt( &test );
-		if ( !test ) nb_cols=1;
-	}
-
 	//execute the code
 	gotoxy(mCursor->getX() + nb_cols , mCursor->getY());
 	
@@ -475,28 +435,14 @@ QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs args) {
 
 
 QString YZView::moveToEndOfLine( const QString&, YZCommandArgs args ) {
-	QString lin;
-	
 	gotoxy( mMaxX+10 , mCursor->getY());
 	
 	purgeInputBuffer();
-	//return something
 	return QString::null;
 }
 
 QString YZView::deleteCharacter( const QString& inputsBuff, YZCommandArgs args ) {
-	QString lin;
-	int nb_cols=1;//default : one row right
-	
-	//check the arguments
-	if ( !inputsBuff.isNull() ) {
-		int i=0;
-		while ( inputsBuff[i].isDigit() )
-			i++; //go on
-		bool test;
-		nb_cols = inputsBuff.left( i ).toInt( &test );
-		if ( !test ) nb_cols=1;
-	}
+	int nb_cols=args.count;
 	
 	//execute the code
 	mBuffer->delChar(mCursor->getX(), mCursor->getY(), nb_cols);

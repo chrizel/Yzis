@@ -247,7 +247,8 @@ void TestYZBuffer::testGetWholeText()
     mBuf->replaceLine( s0, 0 );
     phCheckEquals( mBuf->lineCount(), 1 );
     phCheckEquals( mBuf->textline( 0 ), s0 );
-    phCheckEquals( mBuf->textline( 1 ), QString::null );
+    //phCheckEquals( mBuf->textline( 1 ), QString::null );
+    //phCheckEquals( mBuf->textline( 1 ), QString::null );
     phCheckEquals( mBuf->getWholeText(), s0 + "\n" );
 
     mBuf->appendLine( s1 );

@@ -130,6 +130,10 @@ void NYZView::scrollDown( int n ) {
 	drawContents( getLinesVisible() - n, n );
 }
 
+void NYZView::paintEvent( unsigned int clipx, unsigned int clipy, unsigned int clipw, unsigned int cliph ) {
+	drawContents( clipx - getDrawCurrentTop( ), cliph );
+}
+
 void NYZView::drawContents( int clipy, int cliph ) {
 	bool number = YZSession::getBoolOption( "General\\number" );
 	bool wrap = YZSession::getBoolOption( "General\\wrap" );
@@ -210,15 +214,6 @@ void NYZView::setCommandLineText( const QString& text )
 		waddch( statusbar, '\b' );
 	}
 	wrefresh(statusbar);
-}
-
-
-void NYZView::invalidateLine ( unsigned int ) {
-	int sx, sy;
-	getyx( editor, sy, sx );
-	drawContents( sy, YZSession::getBoolOption( "General\\wrap" ) ? getLinesVisible() - sy : 1 );
-	wrefresh( editor );
-	refresh();
 }
 
 

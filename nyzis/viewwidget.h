@@ -45,11 +45,11 @@ public:
 
 	virtual QString getCommandLineText(void) const {return commandline; }
 	virtual void setCommandLineText( const QString& );
-	virtual void invalidateLine ( unsigned int line );
 	virtual void modeChanged(void) { syncViewInfo(); }
 	virtual void refreshScreen();
 	virtual void syncViewInfo();
 	virtual void displayInfo(  const QString& info );
+	void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
 
 	void scrollUp( int );
 	void scrollDown( int );

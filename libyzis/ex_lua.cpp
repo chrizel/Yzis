@@ -76,10 +76,10 @@ int YZExLua::text(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 4 ) return 0; //mis-use of the function
 	
-	int sCol = lua_tonumber( L, 1 );
-	int sLine = lua_tonumber( L,2 );
-	int eCol = lua_tonumber( L,3 );
-	int eLine = lua_tonumber( L,4 );
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
+	int eCol = ( int )lua_tonumber( L,3 );
+	int eLine = ( int )lua_tonumber( L,4 );
 
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
@@ -106,9 +106,9 @@ int YZExLua::insert(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 3 ) return 0; //mis-use of the function
 	
-	int sCol = lua_tonumber( L, 1 );
-	int sLine = lua_tonumber( L,2 );
-	QString text = lua_tostring ( L, 3 );
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
+	QString text = ( char * )lua_tostring ( L, 3 );
 
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
@@ -116,12 +116,11 @@ int YZExLua::insert(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );
 	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++ ) {
-		cView->myBuffer()->insertChar(sCol, sLine, *it);
+		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->insertNewLine( 0, sLine );
+		cView->insertChar( *it, sCol, sLine );
 		sCol=0;
 		sLine++;
 	}
-	//XXX should not be needed ... bug in invalidateLine ?
-	cView->refreshScreen();
 
 	return 0; // no result
 }
@@ -130,29 +129,21 @@ int YZExLua::replace(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 3 ) return 0; //mis-use of the function
 	
-	int sCol = lua_tonumber( L, 1 );
-	int sLine = lua_tonumber( L,2 );
-	QString text = lua_tostring ( L, 3 );
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
+	QString text = ( char * )lua_tostring ( L, 3 );
 
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
 	
 	YZView* cView = YZSession::me->currentView();
 	QStringList list = QStringList::split( "\n", text );
+	for ( QStringList::Iterator it = list.begin(); it != list.end(); it++, sLine++ ) {
+		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->insertNewLine( 0, sLine );
+		cView->chgChar( sCol, sLine, *it );
+		sCol = 0;
+	}
 	
-	QString v = cView->myBuffer()->textline( sLine );
-	v = v.mid( 0, sCol );
-	v += list[ 0 ]; //for the first line we append at EOL
-	cView->myBuffer()->replaceLine(v, sLine);
-	sCol=0;
-	sLine++;
-	if ( list.count() > 1 )
-		for ( uint i = 1 ; i < list.count() ; i++ )
-			cView->myBuffer()->insertLine( list[ i ], sLine++ );
-	
-	//XXX should not be needed ... bug in invalidateLine ?
-	cView->refreshScreen();
-
 	return 0; // no result
 }
 
@@ -176,8 +167,8 @@ int YZExLua::gotoxy(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 2 ) return 0; //mis-use of the function
 	
-	int sCol = lua_tonumber( L, 1 );
-	int sLine = lua_tonumber( L,2 );
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
 	
 	YZView* cView = YZSession::me->currentView();
 	cView->gotoxy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
@@ -189,10 +180,10 @@ int YZExLua::delline(lua_State *L) {
 	int n = lua_gettop( L );
 	if ( n < 1 ) return 0; //mis-use of the function
 	
-	int sLine = lua_tonumber( L,1 );
+	int sLine = ( int )lua_tonumber( L,1 );
 	
 	YZView* cView = YZSession::me->currentView();
-	cView->myBuffer()->deleteLine( sLine ? sLine - 1 : 0 );
+	cView->deleteLine( sLine ? sLine - 1 : 0, 1 );
 
 	return 0; // one result
 }

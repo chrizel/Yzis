@@ -110,10 +110,9 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
 	setTextline(y,l);
 
 	/* inform the views */
-	YZView *it;
+/*	YZView *it;
 	for ( it = mViews.first(); it ; it = mViews.next() )
-		it->invalidateLine( y );
-
+		it->invalidateLine( y ); */
 }
 
 void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
@@ -139,11 +138,6 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 	l.insert(x, c);
 
 	setTextline(y,l);
-
-	/* inform the views */
-	YZView *it;
-	for ( it = mViews.first(); it; it=mViews.next() )
-		it->invalidateLine( y );
 }
 
 void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
@@ -164,11 +158,6 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 	l.remove(x, count);
 
 	setTextline(y,l);
-
-	/* inform the views */
-	YZView *it;
-	for ( it = mViews.first(); it; it = mViews.next() )
-		it->invalidateLine( y );
 }
 
 // ------------------------------------------------------------------------
@@ -191,7 +180,6 @@ void  YZBuffer::appendLine(const QString &l) {
 //		if ( ctxChanged ) yzDebug() << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
 	setModified( true );
-	updateAllViews();
 }
 
 
@@ -210,7 +198,6 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	mText.insert(it, new YZLine( l ));
 //	mText.insert(line, new YZLine(l));
 	setModified( true );
-	updateAllViews();
 }
 
 void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
@@ -230,13 +217,10 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	QString newline = l.mid( col );
 	if ( newline.isNull() ) newline = QString( "" );
 
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, 
-	                                   "", col, line+1 );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, "", col, line+1 );
 	if (newline.length()) {
-		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
-										   newline, col, line );
-		mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
-										   newline, 0, line+1 );
+		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, newline, col, line );
+		mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, newline, 0, line+1 );
 	}
 
 	//replace old line
@@ -246,11 +230,8 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	QValueVector<YZLine*>::iterator it;
 	uint idx=0;
 	for ( it = mText.begin(); idx < line+1 && it != mText.end(); it++, idx++ )
-		;	
+		;
 	mText.insert(it, new YZLine( newline ));
-
-	/* inform the views */
-	updateAllViews();
 }
 
 void YZBuffer::deleteLine( unsigned int line ) {
@@ -258,8 +239,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 	if (line >= lineCount()) return;
 
-	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
-										 textline(line), 0, line );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
 	if (lineCount() > 1) {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, 
 										 "", 0, line );
@@ -275,7 +255,6 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	}
 
 	setModified( true );
-	updateAllViews(); //hmm ...
 }
 
 void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
@@ -284,15 +263,9 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 	
 	if ( textline( line ).isNull() ) return;
 
-	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
-	                                   textline(line), 0, line );
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
-	                                   l, 0, line );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
+	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );
 	setTextline(line,l);
-	/* inform the views */
-	YZView *it;
-	for ( it = mViews.first(); it ; it = mViews.next() )
-		it->invalidateLine( line );
 }
 
 void YZBuffer::mergeNextLine( unsigned int line ) {
@@ -364,15 +337,14 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 		YZView *it;
 		uint hlLine = line;
 		bool ctxChanged = true;
+		bool hlChanged = false;
 		while ( ctxChanged && hlLine < lineCount()) {
 			QMemArray<signed char> foldingList;
 			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
-			if ( hlLine != line ) {
-				for ( it = mViews.first(); it ; it = mViews.next() )
-					it->invalidateLine( hlLine );
-			}
+			if ( hlLine != line ) hlChanged = true;
 			hlLine++;
 		}
+		if ( hlChanged ) updateAllViews( );
 	}
 	setModified( true );
 }

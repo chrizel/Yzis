@@ -49,7 +49,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void scrollDown( int l=1 );
 		void scrollUp( int l=1 );
 
-		void invalidateLine ( unsigned int line );
+		void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
 		virtual void modeChanged(void);
 		virtual void syncViewInfo();
 		void displayInfo( const QString& info );

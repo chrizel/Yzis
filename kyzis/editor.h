@@ -46,8 +46,7 @@ class KYZisEdit : public QWidget {
 		//append text
 		void append ( const QString& );
 
-		//set text at line ...
-		void setTextLine(int l, const QString &);
+		void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
 		
 		//move cursor to position column, line relative to viewport
 		void setCursor(int c,int l);

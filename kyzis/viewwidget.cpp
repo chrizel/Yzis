@@ -97,8 +97,8 @@ void KYZisView::scrollUp( int n ) {
 	editor->scrollUp( n );
 }
 
-void KYZisView::invalidateLine (unsigned int line) {
-	editor->setTextLine( line, "");
+void KYZisView::paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
+	editor->paintEvent( curx, cury, curw, curh );
 }
 
 void KYZisView::modeChanged (void) {

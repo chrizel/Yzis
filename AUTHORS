@@ -3,8 +3,8 @@ Mickael Marchand <mikmak@yzis.org>
 Thomas Capricelli <orzel@yzis.org>
 Philippe Fremy <phil@freehackers.org>
 
-CONTRIBUTOS:
+CONTRIBUTORS:
 Neil Stevens (buffer commands)
 Mathieu Kooiman (kyzis ktexteditor implementation)
-Thomas Nagy (KDE icons)
+Thomas Nagy (KDE icons, KSettings stuff)
 Lucijan Bush (command history for EX mode)

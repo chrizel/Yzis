@@ -330,7 +330,7 @@ void YZView::sendKey( int c, int modifiers) {
 }
 
 void YZView::updateCursor() {
-	static unsigned int lasty = 1<<30; // small speed optimisation
+	static unsigned int lasty = 1<<31; // small speed optimisation
 	viewInformation.percentage = tr( "All" );
 	unsigned int y = mCursor->getY();
 
@@ -783,10 +783,5 @@ QString YZView::searchAgain( const QString& /*inputsBuff*/, YZCommandArgs args )
 	return QString::null;
 }
 
-void YZView::setFileInfo( QString & fileInfo )
-{
-	viewInformation.fileInfo = fileInfo;
-	syncViewInfo();
-}
 
 

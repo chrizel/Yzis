@@ -518,13 +518,8 @@ void YZBuffer::setModified( bool modif ) {
 
 void YZBuffer::statusChanged() {
 	//update all views
-	YZView *it;
-	QString fileInfo;
-	fileInfo +=(fileIsNew())?"N":" ";
-	fileInfo +=(fileIsModified())?"M":" ";
-	//add some : read only ...
-	for ( it = mViews.first(); it; it = mViews.next() )
-		it->YZView::setFileInfo( fileInfo );
+	for ( YZView *it = mViews.first(); it; it = mViews.next() )
+		it->syncViewInfo();
 }
 
 

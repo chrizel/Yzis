@@ -55,10 +55,10 @@ void TestUndo::testUndoBufferCreation()
     YZUndoBuffer * ub = mBuf->undoBuffer();
     phCheckEquals( ub->mayRedo(), false );
     phCheckEquals( ub->mayUndo(), false );
-    ub->undo();
+    ub->undo(&x,&y);
     phCheckEquals( ub->mayRedo(), false );
     phCheckEquals( ub->mayUndo(), false );
-    ub->redo();
+    ub->redo(&x,&y);
     phCheckEquals( ub->mayRedo(), false );
     phCheckEquals( ub->mayUndo(), false );
 }
@@ -77,7 +77,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
         if (commandUndo) {
             mView->sendText("u");
         } else {
-            ub->undo();
+            ub->undo(&x,&y);
         }
         yzDebug( "TestUndo" ) << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
         phCheckEquals( mBuf->getWholeText(), textHistory[i] );
@@ -89,7 +89,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
     if (commandUndo) {
         mView->sendText("u");
     } else {
-        ub->undo();
+        ub->undo(&x,&y);
     }
     yzDebug( "TestUndo" ) << ub->toString() << endl;
     yzDebug( "TestUndo" ) << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
@@ -103,7 +103,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
         if (commandUndo) {
             mView->sendText("<C-R>");
         } else {
-            ub->redo();
+            ub->redo(&x,&y);
         }
         yzDebug( "TestUndo" ) << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
         phCheckEquals( mBuf->getWholeText(), textHistory[i] );
@@ -114,7 +114,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
     if (commandUndo) {
         mView->sendText("<C-R>");
     } else {
-        ub->redo();
+        ub->redo(&x,&y);
     }
     yzDebug( "TestUndo" ) << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( mBuf->getWholeText(), textHistory[i] );
@@ -134,7 +134,7 @@ void TestUndo::testUndoCharOperation()
     mBuf->insertChar( 0, 0, "A" );
     mBuf->insertChar( 8, 3, "A" );
     mBuf->insertChar( 8, 3, "A" );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -142,7 +142,7 @@ void TestUndo::testUndoCharOperation()
 
     mBuf->chgChar( 0, 0, "B" );
     mBuf->chgChar( 2, 2, "B" );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -150,7 +150,7 @@ void TestUndo::testUndoCharOperation()
 
     mBuf->delChar( 0, 0, 3 );
     mBuf->chgChar( 2, 2, "Z" );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -169,7 +169,7 @@ void TestUndo::testUndoLineOperation()
     mBuf->appendLine( "1111" );
     mBuf->appendLine( "2222" );
     mBuf->appendLine( "3333" );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -177,7 +177,7 @@ void TestUndo::testUndoLineOperation()
 
     mBuf->insertNewLine( 0, 0 );
     mBuf->insertNewLine( 0, 2 );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -185,7 +185,7 @@ void TestUndo::testUndoLineOperation()
 
     mBuf->insertLine( "5555", 0 );
     mBuf->insertLine( "6666", 5 );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -193,7 +193,7 @@ void TestUndo::testUndoLineOperation()
 
     mBuf->deleteLine( 6 );
     mBuf->deleteLine( 0 );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -201,7 +201,7 @@ void TestUndo::testUndoLineOperation()
 
     mBuf->replaceLine( "7777", 0 );
     mBuf->replaceLine( "8888", 4 );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -220,7 +220,7 @@ void TestUndo::testUndoInsertLine()
     mBuf->replaceLine("1111", 0 );
     mBuf->insertLine( "5555", 0 );
     mBuf->insertLine( "6666", 1 );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -239,7 +239,7 @@ void TestUndo::testUndoDeleteLine()
     mBuf->replaceLine("1111", 0 );
     mBuf->appendLine( "2222" );
     mBuf->appendLine( "3333" );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
@@ -247,7 +247,7 @@ void TestUndo::testUndoDeleteLine()
 
     mBuf->deleteLine( 2 );
     mBuf->deleteLine( 0 );
-    ub->commitUndoItem();
+    ub->commitUndoItem(0,0);
     textHistory.append( mBuf->getWholeText() );
     yzDebug( "TestUndo" ) << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );

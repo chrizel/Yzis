@@ -72,6 +72,11 @@ class YZSearch {
 		void highlightLine( YZBuffer* buffer, unsigned int line );
 
 		/**
+		 * Shift @arg shift lines to the bottom the search highlight layout from @ærg line line
+		 */
+		void shiftHighlight( YZBuffer* buffer, unsigned int line, int shift );
+
+		/**
 		 * return current search
 		 */
 		const QString& currentSearch() const;

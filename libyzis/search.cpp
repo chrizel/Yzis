@@ -195,6 +195,34 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 	}
 }
 
+void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shift ) {
+	QPtrList<YZView> views = buffer->views();
+	YZView* v = views.first();
+	if ( v ) {
+		YZSelectionMap searchMap = v->getSelectionPool()->layout( "SEARCH" );
+
+		if ( fromLine + shift < 0 ) fromLine = -shift;
+		unsigned int size = searchMap.size();
+		for ( unsigned int i = 0; i < size; i++ ) {
+			YZCursor to = searchMap[ i ].to();
+			if ( to.getY() < fromLine ) continue;
+
+			YZCursor from = searchMap[ i ].from();
+			from.setY( from.getY() + shift);
+			to.setY( to.getY() + shift);
+
+			searchMap[ i ].setFrom( from );
+			searchMap[ i ].setTo( to );
+			searchMap[ i ].setDrawFrom( from );
+			searchMap[ i ].setDrawTo( to );
+		}
+
+		for( v = views.first(); v; v = views.next() ) {
+			highlightSearch( v, searchMap );
+		}
+	}
+}
+
 void YZSearch::highlightSearch( YZView* mView, YZSelectionMap searchMap ) {
 	YZSelectionPool* pool = mView->getSelectionPool();
 	bool wasEmpty = pool->layout( "SEARCH" ).isEmpty();
@@ -205,8 +233,8 @@ void YZSearch::highlightSearch( YZView* mView, YZSelectionMap searchMap ) {
 	}
 
 	bool isEmpty = pool->layout( "SEARCH" ).isEmpty();
-	if ( ! ( wasEmpty && isEmpty ) ) {
-		mView->refreshScreen();
+	if ( ! ( wasEmpty && isEmpty ) && mView->getLocalBoolOption( "hlsearch" ) ) {
+		mView->sendRefreshEvent();
 	}
 }
 

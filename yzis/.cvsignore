@@ -13,3 +13,6 @@ conftest*
 aclocal.m4
 libtool
 autom4te.cache
+configure.files
+subdirs
+

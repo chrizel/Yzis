@@ -1,30 +1,23 @@
-#bin_PROGRAMS=yzis
-#yzis_SOURCES=yzis.c xmalloc.c system.h aclocal.m4 yzis-opt.c yzis-opt.h
+COMPILE_FIRST = libyzis
+SUBDIRS = $(TOPSUBDIRS)
 
-#  add " -lm" to the following if yzis requires the math library
-#yzis_LDADD=-lopts
+$(top_srcdir)/configure.in: configure.in.in $(top_srcdir)/subdirs
+	cd $(top_srcdir) && $(MAKE) -f admin/Makefile.common configure.in ;
 
-#EXTRA_DIST=yzis.lsm.in yzis.spec.in yzis-opt.def yzis.1 manpage.tpl
+$(top_srcdir)/subdirs:
+	cd $(top_srcdir) && $(MAKE) -f admin/Makefile.common subdirs
 
-#  if you write a self-test script named `chk', uncomment the
-#  following and add `chk' to the EXTRA_DIST list
-#TESTS=chk
+$(top_srcdir)/acinclude.m4: $(top_srcdir)/admin/acinclude.m4.in $(top_srcdir)/admin/libtool.m4.in
+	@cd $(top_srcdir) && cat admin/acinclude.m4.in admin/libtool.m4.in > acinclude.m4
 
-#yzis.o: yzis-opt.h
-#yzis-opt.o: yzis-opt.c
-#yzis-opt.c yzis-opt.h: $(srcdir)/yzis-opt.def
-#	autogen -L/usr/share/autogen $(srcdir)/yzis-opt.def
+MAINTAINERCLEANFILES = subdirs configure.in acinclude.m4 configure.files 
 
-#yzis.1: $(srcdir)/yzis-opt.def
-#	autogen -T manpage.tpl  $(srcdir)/yzis-opt.def
-#	awk -f updater yzis.1 > tmp$$$$ && mv tmp$$$$ yzis.1 rm updater
+package-messages:
+	$(MAKE) -f admin/Makefile.common package-messages
+	$(MAKE) -C po merge
 
-# info_TEXINFOS = yzis.texinfo
-# yzis_TEXINFOS = gpl.texinfo
+EXTRA_DIST = admin 
 
-#  install the man page
-#man_MANS=yzis.1
-SUBDIRS=libyzis cyzis nyzis
-
-re : clean all
-
+dist-hook:
+	cd $(top_distdir) && perl admin/am_edit -padmin
+	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs

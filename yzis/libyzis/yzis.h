@@ -8,8 +8,8 @@
  */
 
 
-#include <stdio.h>	// printf();
-#include <stdlib.h>	// exit();
+#include <stdio.h>
+#include <stdlib.h>
 
 
 #define VERSION_MAJOR	0
@@ -18,7 +18,9 @@
 
 #define VERSION_CHAR	"0.0.1"
 
+#define USE_THIS 0
 
+#if USE_THIS
 extern FILE * debugstr;
 
 // top-modern debug system
@@ -31,4 +33,16 @@ extern FILE * debugstr;
 
 #define yz_printfirst(text,line)	debug( text "%c%c%c%c%c", line[0], line[1], line[2], line[3], line[4], line[5])
 
+#else
+
+#define debug(format, arg...)	{fprintf(NULL, "Yzis Debug :" __FILE__ "( %d ): " format "\n" , __LINE__,  ## arg);} 
+#define warning(format, arg...)	{fprintf(NULL, "Yzis Warning :" __FILE__ "( %d ): " format "\n" , __LINE__,  ## arg);} 
+#define error(format, arg...)	{fprintf(NULL, "Yzis Error :" __FILE__ "( %d ): " format "\n" , __LINE__, ## arg);} 
+#define panic(format, arg...)	{fprintf(NULL, "Yzis Panic :" __FILE__ "( %d ): " format "\n" , __LINE__, ## arg); exit(-1); }
+
+#define yz_assert(cond,msg, arg...)  if (!(cond)) error("ys_assert failed : " msg,## arg);
+
+#define yz_printfirst(text,line)	debug( text "%c%c%c%c%c", line[0], line[1], line[2], line[3], line[4], line[5])
+
+#endif
 #endif // YZIS_H

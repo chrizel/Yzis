@@ -38,6 +38,7 @@
 #include <qobject.h>
 #include <qstringlist.h>
 #include <qguardedptr.h>
+#include <qdatetime.h>
 
 class YzisHlContext;
 class YzisHlItem;
@@ -59,6 +60,7 @@ typedef QPtrList<YzisHlItemData> YzisHlItemDataList;
 typedef QPtrList<YzisHlData> YzisHlDataList;
 typedef QMap<QString,YzisEmbeddedHlInfo> YzisEmbeddedHlInfos;
 typedef QMap<int*,QString> YzisHlUnresolvedCtxRefs;
+typedef QValueList<int> IntList;
 
 //Item Properties: name, Item Style, Item Font
 class YzisHlItemData : public YzisAttribute
@@ -79,7 +81,8 @@ class YzisHlItemData : public YzisAttribute
       dsOthers,
       dsAlert,
       dsFunction,
-      dsRegionMarker };
+      dsRegionMarker,
+      dsError	};
 
   public:
     const QString name;
@@ -136,17 +139,62 @@ class YzisHighlighting
     inline QString getIdentifier() const {return identifier;}
     void use();
     void release();
-    bool isInWord(QChar c);
+    //bool isInWord(QChar c); // ### obsolete
 
-    inline QString getCommentStart() const {return cmlStart;};
-    inline QString getCommentEnd()  const {return cmlEnd;};
-    inline QString getCommentSingleLineStart() const { return cslStart;};
+    // ### obsolete
+    // inline QString getCommentStart() const {return cmlStart;};
+    // inline QString getCommentEnd()  const {return cmlEnd;};
+    // inline QString getCommentSingleLineStart() const { return cslStart;};
+ 
+    /**
+     * @return true if the character @p c is not a deliminator character
+     *     for the corresponding highlight.
+     */
+    bool isInWord( QChar c, int attrib=0 ) const;
+
+    /**
+    * @return true if @p beginAttr and @p endAttr are members of the same
+    * highlight, and there are comment markers of either type in that.
+    */
+    bool canComment( int startAttr, int endAttr );
+
+    /**
+     * Define comment marker type.
+     */
+    enum commentData { Start, End, SingleLine };
+
+    /**
+     * @return the comment marker @p which for the highlight corresponding to
+     *         @p attrib.
+     */
+    QString getCommentString( int which, int attrib ) const;
+
+    /**
+     * @return the mulitiline comment start marker for the highlight
+     * corresponding to @p attrib.
+     */
+    QString getCommentStart( int attrib=0 ) const;
+
+    /**
+     * @return the muiltiline comment end marker for the highlight corresponding
+     * to @p attrib.
+     */
+    QString getCommentEnd( int attrib=0 ) const;
+
+    /**
+     * @return the single comment marker for the highlight corresponding
+     * to @p attrib.
+     */
+    QString getCommentSingleLineStart( int attrib=0 ) const;
 
     void clearAttributeArrays ();
 
     QMemArray<YzisAttribute> *attributes (uint schema);
 
     inline bool noHighlighting () const { return noHl; };
+
+    // be carefull: all documents hl should be invalidated after calling this method!
+    void dropDynamicContexts();
 
   private:
     // make this private, nobody should play with the internal data pointers
@@ -155,13 +203,14 @@ class YzisHighlighting
     void init();
     void done();
     void makeContextList ();
+    int makeDynamicContext(YzisHlContext *model, const QStringList *args);
     void handleYzisHlIncludeRules ();
     void handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::iterator it, YzisHlIncludeRules *list);
     int addToContextList(const QString &ident, int ctx0);
     void addToYzisHlItemDataList();
     void createYzisHlItemData (YzisHlItemDataList &list);
-    void readGlobalKeywordConfig();
-    void readCommentConfig();
+    QString readGlobalKeywordConfig();
+    QStringList readCommentConfig();
     void readFoldingConfig ();
 
     // manipulates the ctxs array directly ;)
@@ -173,10 +222,17 @@ class YzisHighlighting
     void createContextNameList(QStringList *ContextNameList, int ctx0);
     int getIdFromString(QStringList *ContextNameList, QString tmpLineEndContext,/*NO CONST*/ QString &unres);
 
+    /**
+    * @return the key to use for @p attrib in m_additionalData.
+    */
+    int hlKeyForAttrib( int attrib ) const;
+
     YzisHlItemDataList internalIDList;
 
     QIntDict<YzisHlContext> contextList;
     inline YzisHlContext *contextNum (uint n) { return contextList[n]; }
+
+    QMap< QPair<YzisHlContext *, QString>, short> dynamicCtxs;
 
     // make them pointers perhaps
     YzisEmbeddedHlInfos embeddedHls;
@@ -190,9 +246,6 @@ class YzisHighlighting
     QString weakDeliminator;
     QString deliminator;
 
-    QString cmlStart;
-    QString cmlEnd;
-    QString cslStart;
     QString iName;
     QString iSection;
     QString iWildcards;
@@ -203,6 +256,7 @@ class YzisHighlighting
     QString iLicense;
     int m_priority;
     int refCount;
+    int startctx, base_startctx;
 
     QString errorsAndWarnings;
     QString buildIdentifier;
@@ -211,10 +265,23 @@ class YzisHighlighting
     uint itemData0;
     uint buildContext0Offset;
     YzisHlIncludeRules includeRules;
-    QValueList<int> contextsIncludingSomething;
+    QValueList<int> contextsIncludingSomething; //### unused, can i remove it?
     bool m_foldingIndentationSensitive;
 
     QIntDict< QMemArray<YzisAttribute> > m_attributeArrays;
+
+    /**
+     * This contains a list of comment data + the deliminator string pr highlight.
+     * The key is the highlights entry position in internalIDList.
+     * This is used to look up the correct comment and delimitor strings
+     * based on the attrtibute.
+     */
+    QMap<int, QStringList> m_additionalData;
+
+    /**
+     * fast lookup of hl properties.
+     */
+    IntList m_hlIndex;
 
     QString extensionSource;
     QValueList<QRegExp> regexpExtensions;
@@ -257,6 +324,12 @@ class YzisHlManager : public QObject
     int highlights();
     QString hlName(int n);
     QString hlSection(int n);
+    void incDynamicCtxs() { ++dynamicCtxsCount; };
+    uint countDynamicCtxs() { return dynamicCtxsCount; };
+    void setForceNoDCReset(bool b) { forceNoDCReset = b; };
+
+    // be carefull: all documents hl should be invalidated after having successfully called this method!
+    bool resetDynamicCtxs();
 
   signals:
     void changed();
@@ -279,6 +352,9 @@ class YzisHlManager : public QObject
     QStringList commonSuffixes;
 
     YzisSyntaxDocument *syntax;
+    uint dynamicCtxsCount;
+    QTime lastCtxsReset;
+    bool forceNoDCReset;
 };
 
 #endif

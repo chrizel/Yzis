@@ -39,14 +39,12 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <pwd.h>
+#include <unistd.h>
 
 static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
 static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
 
 
-/** Constructor
-    Sets the current file to nothing and build the ModeList
-*/
 YzisSyntaxDocument::YzisSyntaxDocument(bool force)
   : QDomDocument()
 {
@@ -54,9 +52,6 @@ YzisSyntaxDocument::YzisSyntaxDocument(bool force)
   myModeList.setAutoDelete( true );
 }
 
-/** Destructor
-    Do nothing yet
-*/
 YzisSyntaxDocument::~YzisSyntaxDocument()
 {
 }
@@ -103,13 +98,6 @@ bool YzisSyntaxDocument::setIdentifier(const QString& identifier)
     }
   }
   return true;
-}
-
-/** Get the complete syntax mode list
-*/
-YzisSyntaxModeList YzisSyntaxDocument::modeList()
-{
-  return myModeList;
 }
 
 /**
@@ -558,13 +546,19 @@ void YzisSyntaxDocument::setupModeList (bool force)
   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
   {
     // Each file has a group called:
-    QString Group="HL Cache "+*it;
+    QString Group="HL Cache "+ *it;
+
+	// Let's go to this group
+	config.setGroup(Group);
+
+    // stat the file
+    struct stat sbuf;
+    memset (&sbuf, 0, sizeof(sbuf));
+    stat(QFile::encodeName(*it), &sbuf);
 
     // If the group exist and we're not forced to read the xml file, let's build myModeList for katesyntax..rc
-    if ((config.hasGroup(Group)) && (!force))
+    if ( config.hasGroup(Group) && !force && (sbuf.st_mtime == config.readIntEntry("lastModified")) )
     {
-      // Let's go to this group
-      config.setGroup(Group);
 
       // Let's make a new YzisSyntaxModeListItem to instert in myModeList from the information in katesyntax..rc
       YzisSyntaxModeListItem *mli=new YzisSyntaxModeListItem;
@@ -583,6 +577,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
     }
     else
     {
+      yzDebug ("HL") << "UPDATE hl cache for: " << *it << endl;
       // We're forced to read the xml files or the mode doesn't exist in the katesyntax...rc
       QFile f(*it);
 
@@ -624,22 +619,19 @@ void YzisSyntaxDocument::setupModeList (bool force)
               // Now let's write or overwrite (if force==true) the entry in katesyntax...rc
               config.setGroup(Group);
               config.setQStringOption("name",mli->name);
-              if (mli->section.isEmpty()) // ### TODO: can this happen at all?
-                config.setQStringOption("section","Other");
-              else
-                config.setQStringOption("section",mli->section);
+			  config.setQStringOption("section",mli->section);
               config.setQStringOption("mimetype",mli->mimetype);
               config.setQStringOption("extension",mli->extension);
               config.setQStringOption("version",mli->version);
               config.setQStringOption("priority",mli->priority);
               config.setQStringOption("author",mli->author);
               config.setQStringOption("license",mli->license);
+              
+              // modified time to keep cache in sync
+              config.setIntOption("lastModified", sbuf.st_mtime);
 
               // Now that the data is in the config file, translate section
-              if (mli->section.isEmpty()) // ### TODO: can this happen at all?
-                mli->section    = "Language Section";
-              else
-                mli->section    = "Language Section"; // We need the i18n context for when reading again the config
+			  mli->section    = "Language Section"; // We need the i18n context for when reading again the config
 
               // Append the new item to the list.
               myModeList.append(mli);

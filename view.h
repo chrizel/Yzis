@@ -625,6 +625,7 @@ class YZView {
 		 */
 		void setStickyCol( unsigned int col ) { stickyCol = col; }
 
+		void updateStickyCol( );
 		/**
 		 * update stickCol to according to viewCursor
 		 */

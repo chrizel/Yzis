@@ -899,6 +899,7 @@ QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
 }
 
 QString YZCommandPool::redisplay( const YZCommandArgs &args ) {
+	yzDebug() << "OK" << endl;
 	args.view->recalcScreen();
 	return QString::null;
 }
@@ -907,5 +908,6 @@ QString YZCommandPool::replace( const YZCommandArgs &args ) {
 	YZCursor pos = args.view->getBufferCursor();
 	args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg );
 	args.view->gotoxy(pos.getX(),pos.getY(),true);
+	args.view->updateStickyCol();
 	return QString::null;
 }

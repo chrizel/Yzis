@@ -44,14 +44,11 @@
  * This should also allow us to 'remap' commands, and dynamically add new ones :)
  */
 YZCommandPool::YZCommandPool() {
-	executor = new YZExExecutor();
-	lua_executor = new YZExLua();
 }
 
 YZCommandPool::~YZCommandPool() {
 	globalCommands.clear();
 	globalExCommands.clear();
-	delete executor;
 }
 
 /**
@@ -209,10 +206,10 @@ void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
 	if ( cmd != QString::null ) {
 		switch ( globalExCommands[ cmd ].obj ) {
 				case EX :
-					( *executor.*(globalExCommands[ cmd ].exFunc )) (view,inputs) ;
+					( *YZSession::me->exExecutor().*(globalExCommands[ cmd ].exFunc )) (view,inputs) ;
 					break;
 				case LUA :
-					( *lua_executor.*(globalExCommands[ cmd ].luaFunc )) (view,inputs) ;
+					( *YZSession::me->luaExecutor().*(globalExCommands[ cmd ].luaFunc )) (view,inputs) ;
 					break;
 			default:
 				break;

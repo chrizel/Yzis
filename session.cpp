@@ -45,9 +45,17 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mCurView = 0;
 	me = this;
 	mSchemaManager = new YzisSchemaManager();
+	lua_executor = new YZExLua();
+	executor = new YZExExecutor();
 }
 
 YZSession::~YZSession() {
+	delete executor;
+	delete lua_executor;
+	delete mSchemaManager;
+	delete mMotionPool;
+	delete mExPool;
+	delete mPool;
 }
 
 void YZSession::addBuffer( YZBuffer *b ) {

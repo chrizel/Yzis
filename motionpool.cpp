@@ -107,7 +107,7 @@ bool YZMotionPool::applyNormalMotion( const QString& inputsMotion, YZMotion& , Y
 	return false;
 }
 
-bool YZMotionPool::applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& from, YZCursor& to) {
+bool YZMotionPool::applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& /*from*/, YZCursor& to) {
 	int counter = 1; //number of times we have to match
 	QRegExp rx ( "([0-9]+).+" );
 	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
@@ -127,7 +127,7 @@ bool YZMotionPool::applyRelativeMotion( const QString &inputsMotion, YZMotion& m
 	return false;
 }
 
-bool YZMotionPool::applyRegexpMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& from, YZCursor& to) {
+bool YZMotionPool::applyRegexpMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& /*from*/, YZCursor& to) {
 	int counter = 1; //number of times we have to match
 	QRegExp rx ( "([0-9]+).+" );
 	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();

@@ -1,5 +1,5 @@
 /**
- * $Id: nyz_view.h,v 1.10 2003/04/25 12:45:33 mikmak Exp $
+ * $Id$
  */
 #ifndef NYZ_VIEW_H
 #define NYZ_VIEW_H
@@ -21,7 +21,7 @@ public:
 	  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
 	  * this view can display
 	  */
-	NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_vis);
+	NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b);
 	virtual ~NYZView();
 
 	void event_loop();
@@ -42,7 +42,8 @@ protected:
 	unsigned int	h, w;		/** height and width of the window */
 
 private:
-	void update_info(void) { getmaxyx(window, h, w); }
+	void update_info(void) { getmaxyx(window, h, w); lines_vis = h;
+	}
 
 };
 

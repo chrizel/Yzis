@@ -5,14 +5,15 @@
 #include "nyz_view.h"
 #include "nyz_session.h"
 
-NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_vis)
-	: YZView(b,lines_vis)
+NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b)
+	: YZView(b,0)
 {
 	session= _session;
 	window = _window;
 
 	update_info();
 	//debug("w,h are %d,%d",w,h);
+	//
 	registerManager( this );
 }
 
@@ -54,7 +55,7 @@ void NYZView::handle_event(yz_event e)
 
 	switch(e.id) {
 		case YZ_EV_SETLINE:
-			l = e.u.setline.y;
+			l = e.u.setline.y - getCurrent();
 			//yet, kinda sucks, uh?");
 			yzl = e.u.setline.line;
 
@@ -62,13 +63,13 @@ void NYZView::handle_event(yz_event e)
 			move ( l, 0);
 			for (i=0; i<w && i<yzl->length(); i++)
 				addch((*yzl )[i].unicode());
-			for ( ; i< LINES; i++ ) addch( ' ' );
+			for ( ; i< w; i++ ) addch( ' ' );
 
 //			refresh();
 //			debug("YZ_EV_SETLINE: received, line is %d", l);
 			break;
 		case YZ_EV_SETCURSOR:
-			move( e.u.setcursor.y, e.u.setcursor.x) ;
+			move( e.u.setcursor.y - getCurrent(), e.u.setcursor.x) ;
 //			debug("YZ_EV_SETCURSOR: received");
 			break;
 		case YZ_EV_SETSTATUS:

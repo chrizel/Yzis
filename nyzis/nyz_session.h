@@ -10,7 +10,7 @@
 
 
 #define NYZ_VIEW_MAX 300
-#define NYZ_BUFFER_MAX 300
+//#define NYZ_BUFFER_MAX 300
 
 class NYZSession : public YZSession {
 	public:

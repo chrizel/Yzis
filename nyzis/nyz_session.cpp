@@ -1,5 +1,5 @@
 /**
- * $Id: nyz_session.cpp,v 1.9 2003/04/25 12:45:33 mikmak Exp $
+ * $Id$
  */
 
 #include "nyz_session.h"
@@ -58,7 +58,7 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 		wattron(statusbar, COLOR_PAIR(6));
 	}
 
-	bf->addView (new NYZView(this, window, bf, LINES));
+	bf->addView (new NYZView(this, window, bf));
 }
 
 void NYZSession::event_loop()

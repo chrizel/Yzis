@@ -1,3 +1,7 @@
+2005-03-02 morbuz
+  * libyzis
+    new commands : S (Visual and command mode), D and X (Visual mode)
+
 2005-02-24 panard
   * nyzis
     use locale encoding to display messages

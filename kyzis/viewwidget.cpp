@@ -115,7 +115,10 @@ void KYZisView::syncViewInfo()
 	else
 		status->changeItem( QString("%1,%2 (%3)").arg(viewInformation.l+1 ).arg( viewInformation.c1+1 ).arg( viewInformation.percentage),99 );
 
-	status->changeItem(viewInformation.fileInfo, 90);
+	QString fileInfo;
+	fileInfo +=( mBuffer->fileIsNew() )?"N":" ";
+	fileInfo +=( mBuffer->fileIsModified() )?"M":" ";
+	status->changeItem(fileInfo, 90);
 }
 
 void KYZisView::refreshScreen () {

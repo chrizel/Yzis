@@ -51,7 +51,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 
 		void invalidateLine ( unsigned int line );
 		void setStatusBar ( const QString& text );
-		void syncViewInfo();
+		virtual void syncViewInfo();
 		void displayInfo( const QString& info );
 		void refreshScreen ();
 		QPoint calculateCursorPositionWithTabs ( unsigned int line, unsigned int col, unsigned int tabwidth );

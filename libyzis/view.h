@@ -322,11 +322,6 @@ class YZView {
 		QString searchAgain( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
-		  * set the fileInfo field for this view
-		  */
-		void setFileInfo( QString & fileInfo );
-
-		/**
 		 * Updates the position of the cursor
 		 */
 		void updateCursor();
@@ -400,7 +395,6 @@ class YZView {
 			int c1;
 			int c2;
 			QString percentage;
-			QString fileInfo;
 		} viewInformation;
 
 

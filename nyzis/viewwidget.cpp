@@ -141,6 +141,12 @@ void NYZView::syncViewInfo( void )
 
 	// update infobar
 	werase(infobar);
+	myfmt="%s%s"; // <- prevent %s in percentage to fubar everything, even if
+	            // it's rather unlikely..
+	mvwprintw( infobar, 0, 0, myfmt, 
+			( mBuffer->fileIsNew() )?"[No File]":mBuffer->fileName().latin1(),
+			( mBuffer->fileIsModified() )?" [+]":""
+			);
 	// prevent  gcc to use string
 	if ( viewInformation.c1!=viewInformation.c2 ) {
 		myfmt="%d,%d-%d";
@@ -197,3 +203,5 @@ void NYZView::setStatusText( const QString& text )
 	waddstr(statusbar, text.latin1());
 	wrefresh(statusbar);
 }
+
+

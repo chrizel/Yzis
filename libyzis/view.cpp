@@ -1697,7 +1697,7 @@ bool YZView::drawNextCol( ) {
 		lastChar = sCurLine[ curx ];
 		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
-			listChar = drawMode && getLocalBoolOption( "list" ) && sCurLine.mid(curx)[0].isSpace();
+			listChar = drawMode && getLocalBoolOption( "list" ) && lastChar == ' ';
 			if ( listChar ) {
 				lastChar = '.';
 				if ( stringHasOnlySpaces(sCurLine.mid(curx)) )

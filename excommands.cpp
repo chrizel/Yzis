@@ -520,9 +520,8 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 		return QString::null;
 	}
 	// refresh screen
-	if ( args.view ) {
+	if ( args.view )
 		args.view->recalcScreen();
-	}
 
 	return QString::null;
 }

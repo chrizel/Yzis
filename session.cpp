@@ -57,7 +57,8 @@ void YZSession::addBuffer( YZBuffer *b ) {
 void YZSession::rmBuffer( YZBuffer *b ) {
 	yzDebug() << "Session : rmBuffer " << b->fileName() << endl;
 	mBuffers.remove( b->fileName() );
-	//delete b; // kinda hot,no?
+	deleteBuffer( b );
+//	delete b; // kinda hot,no?
 }
 
 QString YZSession::saveBufferExit( const QString& /* inputsBuff */, YZCommandArgs /* args */ ) {

@@ -20,8 +20,10 @@
 #ifndef YZ_SWAPFILE
 #define YZ_SWAPFILE
 
-#include "buffer.h"
 #include <qstringlist.h>
+#include "buffer.h"
+
+class YZBuffer;
 
 /**
  * Creates a swapfile on a buffer
@@ -52,6 +54,11 @@ class YZSwapFile {
 		 * Changes the swap filename
 		 */
 		void setFileName( const QString& filename );
+
+		/**
+		 * Deletes the swapfile
+		 */
+		void unlink();
 
 	private:
 		struct sE {

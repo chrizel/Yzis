@@ -25,7 +25,6 @@
  * $Id$
  */
 
-//#include <qptrlist.h>
 #include <qvaluevector.h>
 #include <qstring.h>
 #include "yzis.h"
@@ -46,8 +45,6 @@ class YZSwapFile;
 
 typedef QValueVector<YZLine*> YZBufferData;
 static QString myNull;
-
-
 
 /**
  * A buffer is the implementation of the content of a file
@@ -363,6 +360,11 @@ public:
 	 * @return a pointer to the swap file
 	 */
 	YZSwapFile* getSwapFile() { return mSwap; }
+
+	/**
+	 * Clear swap file on normal exits
+	 */
+	void clearSwap();
 
 protected:
 	/** 

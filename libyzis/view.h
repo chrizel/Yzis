@@ -292,12 +292,6 @@ class YZView {
 		void gotoLastLine( YZViewCursor* viewCursor, bool applyCursor = true );
 
 		/**
-		 * Deletes lines
-		 * obsolete: has been moved to YZAction
-		 */
-		//QString deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs);
-
-		/**
 		 * Append after current character
 		 */
 		QString append ( );

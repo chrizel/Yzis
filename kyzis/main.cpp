@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
 		YZSession::setBoolOption("blocksplash", false);
 		if (initialSendKeys.length()) {
 			QString keys = (const char *) initialSendKeys;
-			YZSession::me->currentView()->sendMultipleKey(keys);
+			YZSession::me->sendMultipleKeys(keys);
 		}
 		YZSession::setBoolOption("blocksplash", splash);
 

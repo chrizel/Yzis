@@ -151,8 +151,7 @@ main(int argc, char *argv[])
 	}
 
 	if (initialSendKeys.length()) {
-		YZView* cView = YZSession::me->currentView();
-		cView->sendMultipleKey( initialSendKeys );
+		YZSession::me->sendMultipleKeys( initialSendKeys );
 		YZSession::setBoolOption("blocksplash", splash);
 	}
 

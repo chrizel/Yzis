@@ -80,6 +80,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZNewMotion("%", &YZCommandPool::matchPair, ARG_NONE) );
 	commands.append( new YZNewMotion("`", &YZCommandPool::gotoMark, ARG_MARK) );
 	commands.append( new YZNewMotion("'", &YZCommandPool::gotoMark, ARG_MARK) );
+	commands.append( new YZNewMotion("<ENTER>", &YZCommandPool::firstNonBlankNextLine, ARG_NONE) );
 	commands.append( new YZCommand("I", &YZCommandPool::insertAtSOL) );
 	commands.append( new YZCommand("i", &YZCommandPool::gotoInsertMode) );
 	commands.append( new YZCommand("<INS>", &YZCommandPool::gotoInsertMode) );
@@ -592,6 +593,13 @@ YZCursor YZCommandPool::gotoMark( const YZNewMotionArgs &args ) {
 		return *pos.bPos;
 	else
 		return *viewCursor.buffer();
+}
+
+YZCursor YZCommandPool::firstNonBlankNextLine( const YZNewMotionArgs &args ) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->moveDown(&viewCursor, args.count, args.standalone );
+	args.view->moveToFirstNonBlankOfLine( &viewCursor, args.standalone );
+	return *viewCursor.buffer();
 }
 
 // COMMANDS

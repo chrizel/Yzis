@@ -646,7 +646,7 @@ fi
 ### Main
 ###
 
-arg=`echo $1 | tr '\-.' __`
+arg=`echo $1 | tr '.-' __`
 case $arg in
   cvs | dist | subdir_dist | configure_in | configure_files | subdirs | \
   cvs_clean | package_merge | package_messages | Makefile_am | acinclude_m4 ) $arg ;;

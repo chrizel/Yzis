@@ -156,12 +156,21 @@ QString YZExExecutor::mkyzisrc ( YZView *, const QString& ) {
 
 QString YZExExecutor::substitute( YZView *view, const QString& inputs) {
 	yzDebug() << "substitute" << endl;
-	unsigned int idx = inputs.find("s");
+	unsigned int idx = inputs.find("substitute");
+	unsigned int len = 10;
+	if (static_cast<unsigned int>(-1)==idx) {
+		idx = inputs.find("s");
+		len = 1;
+	}
 	unsigned int idxb,idxc;
+	unsigned int tidx = idx+len;
+	QChar c;
+	while ((c = inputs.at(tidx)).isSpace())
+		tidx++;
 	QString range = inputs.left(idx);
-	idx = inputs.find("/", idx);
-	idxb = inputs.find("/",idx+1);
-	idxc = inputs.find("/",idxb+1);
+	idx = inputs.find(c, tidx);
+	idxb = inputs.find(c, idx+1);
+	idxc = inputs.find(c, idxb+1);
 	QString search = inputs.mid( idx+1, idxb-idx-1 );
 	QString replace = inputs.mid( idxb+1, idxc-idxb-1 );
 	QString options = inputs.mid( idxc+1 );

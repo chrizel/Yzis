@@ -1480,15 +1480,24 @@ void YZView::substitute(const QString& range, const QString& search, const QStri
 	//whole file
 	if ( range == "%" ) {
 		startLine = 0;
-		endLine = mBuffer->lineCount();
+		endLine = mBuffer->lineCount()-1;
 	} else if ( range.contains( "," ) ) {
-//		QStringList list = QStringList::split( ",", range );
+		QStringList list = QStringList::split( ",", range, TRUE);
+		yzDebug() << "sub tmp: " << list.size() <<endl;
+		if (list.size()==2) {	// don't use this if the user made a mistake
+			yzDebug() << "substitute tmp : " << list[0] << ":" << list[1]
+				<< endl;
+			startLine=list[0].toUInt()-1;
+			endLine=list[1].toUInt()-1;
+			if (endLine>=mBuffer->lineCount())
+				endLine=mBuffer->lineCount()-1;
+		}
 		
 	} else if ( range == "." ) {
 		//nothing
 	}
 		
-	for ( unsigned int i = startLine; i < endLine; i++ ) {
+	for ( unsigned int i = startLine; i <= endLine; i++ ) {
 		if ( mBuffer->substitute(search, replace, option.contains( "g" ), i) )
 			needsUpdate = true;
 	}

@@ -53,7 +53,7 @@ void KYZisCursor::setCursorType( shape type ) {
 	mCursorType = type;
 	unsigned width = mParent->fontMetrics().maxWidth();
 	unsigned height = mParent->fontMetrics().lineSpacing();
-	if ( mCursorType == VBAR ) width = 1;
+	if ( mCursorType == VBAR ) width = 2;
 	resize( width, height );
 }
 void KYZisCursor::resize( unsigned int w, unsigned int h ) {
@@ -93,7 +93,6 @@ bool KYZisCursor::prepareCursors() {
 	bitBlt( bg, 0, 0, mParent, mX, mY, bg->width(), bg->height(), Qt::CopyROP, true );
 	bitBlt( cursor, 0, 0, bg );
 	QPainter p( cursor );
-	p.setPen( mParent->foregroundColor() );
 	QRect rect( 0, 0, cursor->width(), cursor->height() );
 	switch( mCursorType ) {
 		case SQUARE :
@@ -103,10 +102,12 @@ bool KYZisCursor::prepareCursors() {
 			p.drawRect( rect );
 			break;
 		case VBAR :
-			p.drawLine( 0, 0, 0, cursor->height() - 1);
+			rect.setRight( 2 );
+			p.fillRect( rect, QBrush( mParent->foregroundColor() ) );
 			break;
 		case HBAR :
-			p.drawLine( 0, cursor->height() - 1, cursor->width() - 1, cursor->height() - 1 );
+			rect.setTop( cursor->height() - 2 );
+			p.fillRect( rect, QBrush( mParent->foregroundColor() ) );
 			break;
 	}
 	p.end();

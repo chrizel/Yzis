@@ -81,7 +81,7 @@ void NYZSession::event_loop()
 		views[i]->event_loop();
 }
 
-void NYZSession::update_status(char *msg)
+void NYZSession::update_status(const char *msg)
 {
 	save_cursor();
 

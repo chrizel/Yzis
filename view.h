@@ -140,9 +140,14 @@ class YZView {
 		QString deleteCharacter( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
-		 * Back to command mode
+		 * Start command mode
 		 */
 		QString gotoCommandMode( );
+
+		/**
+		 * Start command mode
+		 */
+		QString gotoSearchMode( const QString& inputsBuff = QString::null, YZCommandArgs args  = YZCommandArgs() );
 
 		/**
 		 * Start insert mode
@@ -223,7 +228,8 @@ class YZView {
 			YZ_VIEW_MODE_INSERT, // insert
 			YZ_VIEW_MODE_REPLACE, // replace
 			YZ_VIEW_MODE_COMMAND, // normal
-			YZ_VIEW_MODE_EX //script 
+			YZ_VIEW_MODE_EX, //script 
+			YZ_VIEW_MODE_SEARCH //search mode
 		} mMode;		/** mode of this view */
 		
 
@@ -280,6 +286,13 @@ class YZView {
 		 */
 		YZCursor* getCursor() { return mCursor; }
 
+		/**
+		 * Search for text and moves the cursor to the position of match
+		 * @param search a regexp to look for
+		 * @return true if a match is found
+		 */
+		bool doSearch( const QString& search );
+
 	protected:
 		/**
 		 * Updates the position of the cursor
@@ -323,9 +336,20 @@ class YZView {
 		StringVector mExHistory;
 
 		/**
+		 * search history
+		 */
+		StringVector mSearchHistory;
+
+		/**
 		 * current command history item
 		 */
 		unsigned int mCurrentExItem;
+
+		/**
+		 * current search history item
+		 */
+		unsigned int mCurrentSearchItem;
+
 
 	private:
 		/**

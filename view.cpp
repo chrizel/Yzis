@@ -43,7 +43,9 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 	mBuffer->addView(this);
 	mCurrentExItem = 0;
+	mCurrentSearchItem = 0;
 	mExHistory.resize(200);
+	mSearchHistory.resize(200);
 }
 
 YZView::~YZView() {
@@ -152,6 +154,55 @@ void YZView::sendKey( int c, int modifiers) {
 					return;
 			}
 			break;
+
+		case YZ_VIEW_MODE_SEARCH:
+			switch ( c ) {
+				case Qt::Key_Return:
+					yzDebug() << "Current search : " << getCommandLineText();
+					if(getCommandLineText().isEmpty())
+						return;
+					mSearchHistory[mCurrentSearchItem] = getCommandLineText();
+					mCurrentSearchItem++;
+					//TODO add search history like ex mode
+					doSearch( getCommandLineText() );
+					
+					//XXX do the search
+					setCommandLineText( "" );
+					setFocusMainWindow();
+					gotoCommandMode();
+					return;
+				case Qt::Key_Down:
+					if(mSearchHistory[mCurrentSearchItem].isEmpty())
+						return;
+
+					mCurrentSearchItem++;
+					setCommandLineText( mSearchHistory[mCurrentSearchItem] );
+					return;
+				case Qt::Key_Left:
+				case Qt::Key_Right:
+					return;
+				case Qt::Key_Up:
+					if(mCurrentSearchItem == 0)
+						return;
+
+					mCurrentSearchItem--;
+					setCommandLineText( mSearchHistory[mCurrentSearchItem] );
+					return;
+				case Qt::Key_Escape:
+					setCommandLineText( "" );
+					setFocusMainWindow();
+					gotoCommandMode();
+					return;
+				case Qt::Key_Backspace:
+				{
+					QString back = getCommandLineText();
+					setCommandLineText(back.remove(back.length() - 1, 1));
+					return;
+				}
+				default:
+					setCommandLineText( getCommandLineText() + key );
+					return;
+			}
 
 		case YZ_VIEW_MODE_EX:
 			switch ( c ) {
@@ -552,6 +603,13 @@ QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
 	return QString::null;
 }
 
+QString YZView::gotoSearchMode( const QString&, YZCommandArgs args ) {
+	mMode = YZ_VIEW_MODE_SEARCH;
+	setStatusBar( "-- SEARCH --" );
+	purgeInputBuffer();
+	return QString::null;
+}
+
 QString YZView::copy( const QString& , YZCommandArgs args) {
 	//default register to use
 	int nb_lines = args.count;
@@ -612,5 +670,30 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 
 	purgeInputBuffer();
 	return QString::null;
+}
+
+bool YZView::doSearch( const QString& search ) {
+	//build the regexp
+	QRegExp ex( search );
+	unsigned int currentMatchLine = mCursor->getY(); //start from current line
+	unsigned int currentMatchColumn = mCursor->getX(); //start from current column
+
+	//get current line
+	QString l;
+
+	for ( int i = currentMatchLine; i < mBuffer->lineCount(); i++ ) {
+		l = mBuffer->data( i );
+		yzDebug() << "Searching in line : " << l << endl;
+		int idx = ex.search( l, currentMatchColumn );
+		if ( idx >= 0 ) {
+			//found it !
+			currentMatchColumn = idx;
+			currentMatchLine = i;
+			gotoxy( currentMatchColumn, currentMatchLine );
+			return true;
+		} else
+			currentMatchColumn=0; //reset the column (only valid for the first line we check)
+	}
+	return false;
 }
 

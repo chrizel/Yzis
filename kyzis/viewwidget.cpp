@@ -43,7 +43,9 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status = new KStatusBar (this, "status");
 	command = new KYZisCommand (this, "command");
 	mVScroll = new QScrollBar( this, "vscroll" );
-	connect( mVScroll, SIGNAL(valueChanged(int)), this, SLOT(scrollView(int)) );
+	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
+	connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
+	connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
 
 	status->insertItem(mode(YZ_VIEW_MODE_LAST),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
@@ -126,12 +128,8 @@ QChar KYZisView::currentChar() const {
 
 void KYZisView::wheelEvent( QWheelEvent * e ) {
 	int n = - ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
-    int top = getCurrentTop();
-    int lastline = buffer->lineCount() - 1;
 
-    // don't scroll up/down if the view already is at the top/bottom
-    if ( ( n < 0 && top != 0 ) || ( n > 0 && top != lastline ) )
-		mVScroll->setValue( getCurrentTop() + n );
+	scrollView( getCurrentTop() + n );
 }
 
 void KYZisView::modeChanged (void) {
@@ -152,7 +150,8 @@ void KYZisView::syncViewInfo() {
 	buffer->setModified( mBuffer->fileIsModified() );
 
 	status->changeItem(fileInfo, 90);
-	mVScroll->setValue( getCurrentTop() );
+	if (mVScroll->value() != (int)getCurrentTop())
+		mVScroll->setValue( getCurrentTop() );
 	emit cursorPositionChanged();
 	modeChanged();
 }
@@ -248,6 +247,13 @@ void KYZisView::displayInfo( const QString& info ) {
 	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }
 
+void KYZisView::scrollLineUp() {
+	scrollView( getCurrentTop() - 1 );
+}
+
+void KYZisView::scrollLineDown() {
+	scrollView( getCurrentTop() + 1 );
+}
 
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
 
@@ -257,15 +263,22 @@ void KYZisView::scrollView( int value ) {
 	else if ( value > (int)buffer->lineCount() - 1 )
 		value = buffer->lineCount() - 1;
 
-	bottomViewVertically( value + getLinesVisible() - 1 );
+	// only redraw if the view actually moves
+	if (value != getCurrentTop()) {
+		alignViewVertically( value );
 
-	// move cursor if it scrolled off the screen
-	if (getBufferCursor()->getY() < getCurrentTop())
-		gotoxy(getBufferCursor()->getX(), getCurrentTop());
-	else if (getBufferCursor()->getY() > getCurrentTop()+getLinesVisible() - 1)
-		gotoxy(getBufferCursor()->getX(), getCurrentTop()+getLinesVisible()-1);
+		mVScroll->setValue( value );
 
-	m_editor->setCursor( mainCursor->screenX(), mainCursor->screenY() );
+		// move cursor if it scrolled off the screen
+		if (getBufferCursor()->getY() < getCurrentTop())
+			gotoxy(getBufferCursor()->getX(), getCurrentTop());
+		else if (getBufferCursor()->getY() > getCurrentTop()+getLinesVisible() - 1)
+			gotoxy(getBufferCursor()->getX(), getCurrentTop()+getLinesVisible()-1);
+
+		m_editor->setCursor( mainCursor->screenX(), mainCursor->screenY() );
+
+		m_editor->repaint( false );
+	}
 }
 
 //KTextEditor::PopupMenuInterface implementation

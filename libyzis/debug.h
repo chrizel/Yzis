@@ -54,6 +54,7 @@ class QCString;
 #define CORE 			"libyzis"
 #define KYZIS 			"kyzis"
 #define NYZIS 			"nyzis"
+#define QYZIS 			"qyzis"
 #define AREA_TESTS 		"tests"
 
 #define FILENAME_DEBUGRC ".yzdebugrc"

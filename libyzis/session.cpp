@@ -49,7 +49,7 @@ void YZSession::addBuffer( YZBuffer *b ) {
 	mBuffers.insert(b->fileName(), b);
 }
 
-QString YZSession::saveBufferExit( const QString& /* inputsBuff */, YZCommandArgs args ) {
+QString YZSession::saveBufferExit( const QString& /* inputsBuff */, YZCommandArgs /* args */ ) {
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ )
 		it.data()->save();

@@ -77,13 +77,13 @@ public:
 	void chg_char (int x, unicode_char_t c);
 
 	int	line;
+	char	*data;		// actual data
+	char	*color;	// not used yet
+	int	len;		// current len
 protected:
 	YZLine * p_next;
 	void	expand(int newsize); // expand the internal buffer
 
-	char	*data;		// actual data
-	char	*color;	// not used yet
-	int	len;		// current len
 	int	len_max;	// len of *data,*color
 	int	flags;
 };

@@ -11,12 +11,12 @@
  * C++ api
  */
 
-YZView::YZView(YZBuffer *_b, int _lines)
+YZView::YZView(YZBuffer *_b, int _lines_vis)
 {
-	buffer	= _b;
-	lines	= _lines;
-	current	= x = y = 0;
-	mode 	= YZ_VIEW_MODE_COMMAND;
+	buffer		= _b;
+	lines_vis	= _lines_vis;
+	current		= x = y = 0;
+	mode 		= YZ_VIEW_MODE_COMMAND;
 
 	events_nb_begin = 0;
 	events_nb_last = 0;
@@ -33,7 +33,7 @@ void YZView::send_char( unicode_char_t)
 
 yz_event *YZView::fetch_event(/* asasdfasf */)
 {
-	debug("fetch_event");
+//	debug("fetch_event");
 	if (events_nb_last==events_nb_begin)
 		return NULL;
 
@@ -48,7 +48,7 @@ yz_event *YZView::fetch_event(/* asasdfasf */)
 
 void YZView::post_event (yz_event e)
 {
-	debug("post_event");
+//	debug("post_event");
 	events[events_nb_last++] = e;
 	if (events_nb_last>=YZ_EVENT_EVENTS_MAX)
 		events_nb_last=0;
@@ -64,10 +64,10 @@ void YZView::post_event (yz_event e)
 /*
  * constructors
  */
-yz_view create_view(yz_buffer b, int lines)
+yz_view create_view(yz_buffer b, int lines_vis)
 {
 	CHECK_BUFFER(b);
-	return (yz_view)(new YZView(buffer, lines));
+	return (yz_view)(new YZView(buffer, lines_vis));
 }
 
 
@@ -84,11 +84,11 @@ yz_event * yz_view_fetch_event(yz_view v)
 	return view->fetch_event();
 }
 
-void yz_view_get_geometry(yz_view v, int *current, int *lines)
+void yz_view_get_geometry(yz_view v, int *current, int *lines_vis)
 {
 	CHECK_VIEW(v);
 	*current	= view->get_current();
-	*lines		= view->get_lines_displayed();
+	*lines_vis		= view->get_lines_visible();
 }
 
 void yz_view_post_event (yz_view v, yz_event e )

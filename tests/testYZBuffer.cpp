@@ -24,10 +24,12 @@
 using namespace CppUnit;
 using namespace std;
 
-#include "testYZBuffer.h"
-
 #include "libyzis/line.h"
 #include "libyzis/debug.h"
+#include "libyzis/buffer.h"
+
+#include "testYZBuffer.h"
+#include "TYZSession.h"
 
 /* ========================================================================= */
 
@@ -36,7 +38,7 @@ CPPUNIT_TEST_SUITE_REGISTRATION( TestYZBuffer );
 
 void TestYZBuffer::setUp()
 {
-    mSession = new YZSession( "TestSession" );
+    mSession = new TYZSession();
     mBuf = new YZBuffer( mSession );
 }
 
@@ -294,6 +296,8 @@ void TestYZBuffer::testLoadSave()
     phCheckEquals( mBuf->getWholeText(), "" );
     mBuf->save();
     phCheckEquals( QFileInfo( mBuf->fileName() ).size(), 0 );
+
+    phCheckEquals( QFile( mBuf->fileName() ).remove(), true );
 }
 
 

@@ -17,8 +17,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef TEST_YZBUFFER_H
-#define TEST_YZBUFFER_H
+#ifndef TEST_YZCOMMANDS_H
+#define TEST_YZCOMMANDS_H
 
 /* ========================================================================= */
 
@@ -27,40 +27,36 @@
 
 class TYZSession;
 class YZBuffer;
+class TYZView;
 
-class TestYZBuffer : public CppUnit::TestCase
+class TestYZCommands : public CppUnit::TestCase
 {
 public:
-    ~TestYZBuffer() {}
+    ~TestYZCommands() {}
 
 	void setUp();
 	void tearDown();
 
-    CPPUNIT_TEST_SUITE( TestYZBuffer );
+    CPPUNIT_TEST_SUITE( TestYZCommands );
 
-    CPPUNIT_TEST( testCreateEmptyBuffer );
-    CPPUNIT_TEST( testLineMethods );
-    CPPUNIT_TEST( testCharMethods );
-    CPPUNIT_TEST( testGetWholeText );
-    CPPUNIT_TEST( testLoadSave );
-    CPPUNIT_TEST( testAssertion );
+    CPPUNIT_TEST( testCreateSession );
+    CPPUNIT_TEST( testInsertMode );
 
     CPPUNIT_TEST_SUITE_END();
 
-    void testCreateEmptyBuffer();
-    void testLineMethods();
-    void testCharMethods();
-	void testLoadSave();
-    void testGetWholeText();
-    void testAssertion();
+    void testCreateSession();
+    void testInsertMode();
 
 protected:
     TYZSession * mSession;
-    YZBuffer *  mBuf;
+    YZBuffer * mBuf;
+    TYZView * mView;
+
+    int mLines;
 };
 
 
 /* ========================================================================= */
 
-#endif /* TEST_YZBUFFER_H */
+#endif /* TEST_YZCOMMANDS_H */
 

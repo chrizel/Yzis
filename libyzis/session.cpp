@@ -39,6 +39,7 @@ int YZSession::mNbBuffers = 0;
 YZInternalOptionPool YZSession::mOptions = YZInternalOptionPool();
 YZRegisters YZSession::mRegisters = YZRegisters();
 YZSession *YZSession::me = 0;
+YZEvents *YZSession::events = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
@@ -52,6 +53,7 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mSessionName = _sessionName;
 	mCurView = 0;
 	me = this;
+	events = new YZEvents();
 	mSchemaManager = new YzisSchemaManager();
 	//read init files
 	if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))

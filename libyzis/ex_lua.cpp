@@ -106,6 +106,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"linecount",linecount);
 	lua_register(L,"sendkeys",sendkeys);
 	lua_register(L,"highlight",highlight);
+	lua_register(L,"connect",connect);
 }
 
 YZExLua::~YZExLua() {
@@ -175,8 +176,7 @@ int YZExLua::execInLua( const QString & luacode ) {
 	return 0;
 }
 
-bool YZExLua::pcall( int nbArg, int nbReturn, int errLevel, const QString & errorMsg )
-{
+bool YZExLua::pcall( int nbArg, int nbReturn, int errLevel, const QString & errorMsg ) {
 	int lua_err = lua_pcall(L,nbArg,nbReturn,errLevel);
 	if (! lua_err) return true;
 	QString luaErrorMsg = lua_tostring(L,lua_gettop(L));
@@ -422,10 +422,19 @@ int YZExLua::highlight( lua_State *L ) {
 	return 0;
 }
 
-int YZExLua::myprint(lua_State * /*L*/)
-{
+int YZExLua::myprint(lua_State * /*L*/) {
 	// fetch string from the stack
 	// print it
+	return 0;
+}
+
+int YZExLua::connect(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, "connect", "")) return 0;
+	QString event = ( char * )lua_tostring ( L, 1 );
+	QString function = ( char * )lua_tostring ( L, 2 );
+
+	YZSession::events->connect(event,function);
+	
 	return 0;
 }
 
@@ -445,6 +454,30 @@ bool YZExLua::checkFunctionArguments(lua_State*L,
 	YZExLua::instance()->execInLua(QString("error(%1)").arg(errorMsg));
 #endif
 	return false;
+}
+
+QStringList YZExLua::getLastResult() {
+	int n = lua_gettop( L );
+	yzDebug() << "LUA: Stack has " << n << " entries" << endl;
+	QStringList list;
+	for (int i = 1 ; i <= n ; ++i ) {
+		int type = lua_type(L,i);
+		switch (type) {
+			case LUA_TNUMBER:
+				list << QString::number(lua_tonumber(L,i));
+				break;
+			case LUA_TBOOLEAN:
+				list << QString((lua_toboolean(L,i)!=0) ? "true" : "false");
+				break;
+			case LUA_TSTRING:
+				list << QString::fromUtf8((char*)lua_tostring(L,i));
+				break;
+			default:
+				break;
+		}
+	}
+	yzDebug() << "LUA: Result " << list << endl;
+	return list;
 }
 
 #include "ex_lua.moc"

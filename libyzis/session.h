@@ -30,6 +30,7 @@
 #include "internal_options.h"
 #include "registers.h"
 #include "search.h"
+#include "events.h"
 
 class YZView;
 class YZBuffer;
@@ -39,11 +40,11 @@ class YZExCommandPool;
 class YZInternalOptionPool;
 class YZRegisters;
 class YZSearch;
+class YZEvents;
 
 /**
  * Contains data referring to an instance of yzis
  * This may also be used to "transfer" a session from a GUI to another
- * Note : I don't think this is necessary to reimplement it into a GUI but maybe ...
  * A session owns the buffers
  * A buffer owns the views
  */
@@ -319,6 +320,7 @@ class YZSession {
 		static YZInternalOptionPool mOptions;
 		static YZRegisters mRegisters;
 		static YZSession *me;
+		static YZEvents *events;
 };
 
 #endif /* YZ_SESSION_H */

@@ -44,6 +44,7 @@ public:
     CPPUNIT_TEST( testGetWholeText );
     CPPUNIT_TEST( testLoadSave );
     CPPUNIT_TEST( testAssertion );
+    CPPUNIT_TEST( testFirstNonBlankChar );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -53,6 +54,7 @@ public:
 	void testLoadSave();
     void testGetWholeText();
     void testAssertion();
+    void testFirstNonBlankChar();
 
 protected:
     TYZSession * mSession;

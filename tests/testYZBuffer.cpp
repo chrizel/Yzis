@@ -335,5 +335,16 @@ void TestYZBuffer::testLoadSave()
     phCheckEquals( QFile( mBuf->fileName() ).remove(), true );
 }
 
+void TestYZBuffer::testFirstNonBlankChar()
+{
+    phCheckEquals( mBuf->firstNonBlankChar( 10 ), 0 );
+    phCheckEquals( mBuf->firstNonBlankChar( 0 ), 0 );
+    mBuf->replaceLine( 0, "   123" );
+    mBuf->addLine( "\t\tabc" );
+    mBuf->addLine( " \t abc" );
+    phCheckEquals( mBuf->firstNonBlankChar( 0 ), 3 );
+    phCheckEquals( mBuf->firstNonBlankChar( 1 ), 2 );
+    phCheckEquals( mBuf->firstNonBlankChar( 2 ), 3 );
+}
 
 /* ========================================================================= */

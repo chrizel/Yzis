@@ -132,6 +132,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("q", &YZCommandPool::macro) );
 	commands.append( new YZCommand("@", &YZCommandPool::replayMacro) );
 	commands.append( new YZCommand("<CTRL>l", &YZCommandPool::redisplay) );
+	commands.append( new YZCommand("<CTRL>[", &YZCommandPool::gotoCommandMode) );
 	commands.append( new YZCommand("<CTRL>x<CTRL>n", &YZCommandPool::completeKeywordForward) );
 	commands.append( new YZCommand("<CTRL>x<CTRL>p", &YZCommandPool::completeKeywordBackward) );
 	commands.append( new YZCommand("<ESC>", &YZCommandPool::abort) );
@@ -718,6 +719,15 @@ QString YZCommandPool::insertAtSOL(const YZCommandArgs &args) {
 
 QString YZCommandPool::gotoInsertMode(const YZCommandArgs &args) {
 	args.view->gotoInsertMode();
+	return QString::null;
+}
+
+QString YZCommandPool::gotoCommandMode(const YZCommandArgs &args) {
+	if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_INSERT )
+		args.view->leaveInsertMode();
+	else if ( args.view->getCurrentMode()==YZView::YZ_VIEW_MODE_REPLACE )
+		args.view->leaveReplaceMode();
+	args.view->gotoCommandMode();
 	return QString::null;
 }
 

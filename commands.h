@@ -191,6 +191,7 @@ private:
 	QString gotoLineAtBottom(const YZCommandArgs &args);
 	QString insertAtSOL(const YZCommandArgs &args);
 	QString gotoInsertMode(const YZCommandArgs &args);
+	QString gotoCommandMode(const YZCommandArgs &args);
 	QString gotoReplaceMode(const YZCommandArgs &args);
 	QString gotoVisualLineMode(const YZCommandArgs &args);
 	QString gotoVisualMode(const YZCommandArgs &args);

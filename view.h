@@ -220,6 +220,11 @@ class YZView {
 		 */
 		QString gotoOpenMode();
 
+		/**
+		 * Goto completion mode
+		 */
+		 QString gotoCompletionMode();
+
 		/* Prepend enough spaces to string so line is "centered" */
 		QString YZView::centerLine( QString );
 
@@ -243,6 +248,16 @@ class YZView {
 		 * Start visual mode
 		 */
 		QString gotoVisualMode( bool isVisualLine=false );
+
+		/**
+		 * Leave insert mode
+		 */
+		void leaveInsertMode( );
+
+		/**
+		 * Leave replace mode
+		 */
+		void leaveReplaceMode( );
 
 		/**
 		 * Leave visual mode
@@ -353,6 +368,7 @@ class YZView {
 			YZ_VIEW_MODE_SEARCH, //search mode
 			YZ_VIEW_MODE_OPEN, // open mode
 			YZ_VIEW_MODE_INTRO, // Intro displayed 
+			YZ_VIEW_MODE_COMPLETION, // completion mode (CTRL-X) 
 			YZ_VIEW_MODE_VISUAL, // visual mode //keep these 2 at the end of the list
 			YZ_VIEW_MODE_VISUAL_LINE, // visual mode
 		} mMode,		/** mode of this view */

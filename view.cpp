@@ -75,7 +75,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 	//order matters here ;)
 	mModes << tr("[ Insert ]") << tr("[ Replace ]") <<tr("[ Awaiting Command ]") <<tr("[ Ex ]") <<tr("[ Search ]")
-		<< tr("[ Open ]") << tr("[ Introduction ]") << tr("[ Visual ]") << tr("[ Visual Line ]") << tr("Yzis Ready");
+			<< tr("[ Open ]") << tr("[ Introduction ]") << tr("{ Completion }") << tr("[ Visual ]") << tr("[ Visual Line ]") << tr("Yzis Ready");
 	mainCursor = new YZViewCursor( this );
 	workCursor = new YZViewCursor( this );
 
@@ -228,7 +228,7 @@ void YZView::sendMultipleKey(const QString& keys) {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-//	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
+	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 
 	QString key=_key;
 	QString modifiers=_modifiers;
@@ -273,7 +273,23 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		mapMode = mapMode | cmdline;
 
 	bool pendingMapp = false;
+	cmd_state state;
+
 	switch(mMode) {
+		case YZ_VIEW_MODE_COMPLETION:
+			mPreviousChars += modifiers + key;
+			if ( mPreviousChars == "<ESC>" ) {
+				gotoPreviousMode();
+				purgeInputBuffer();
+				return;
+			} else {
+				if ( mPreviousChars == "<CTRL>p" ) {
+	//				mBuffer->action()->previousWordCompletion();
+				} else if ( mPreviousChars == "<CTRL>n" ) {
+//					mBuffer->action()->nextWordCompletion();
+				}
+				return;
+			}
 		case YZ_VIEW_MODE_INSERT:
 			mPreviousChars += modifiers + key;
 			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode);
@@ -290,7 +306,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ESC>" ) {
-				if ( mainCursor->bufferX() > 0) moveLeft();
+				leaveInsertMode();
 				gotoPreviousMode();
 				purgeInputBuffer();
 				return;
@@ -343,11 +359,13 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				if ( mPreviousChars == "<TAB>" ) {
 					mPreviousChars="\t";
 				}
-				//Vim has a sub mode for <CTRL>x commands
-				if ( mPreviousChars == "<CTRL>x" ) { //special handling, here we can run commands while in INSERT mode
+				if ( mPreviousChars.startsWith("<CTRL>x") ) {
+					gotoCompletionMode();
+					//purgeInputBuffer();
 					return;
-				} else if ( mPreviousChars.startsWith("<CTRL>x<CTRL>") ) {
-					cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
+				}
+				if ( mPreviousChars.startsWith("<CTRL>") ) {
+					state=mSession->getPool()->execCommand(this, mPreviousChars);
 					switch(state) {
 						case CMD_ERROR:
 						case CMD_OK:
@@ -391,8 +409,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ESC>" ) {
-				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() )
-					moveToEndOfLine( );
+				leaveReplaceMode();
 				gotoPreviousMode();
 				purgeInputBuffer();
 				return;
@@ -435,19 +452,22 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				gotoStickyCol( mainCursor, mainCursor->bufferY() > mLinesVis ? mainCursor->bufferY() - mLinesVis : 0 );
 				purgeInputBuffer();
 				return;
+			} else if ( mPreviousChars.startsWith("<CTRL>x") ) {
+				gotoCompletionMode();	
+				//purgeInputBuffer();
+				return;
 			} else {
-				//Vim has a sub mode for <CTRL>x commands
-				if ( mPreviousChars == "<CTRL>x" ) { //special handling, here we can run commands while in INSERT mode
-					return;
-				} else if ( mPreviousChars.startsWith("<CTRL>x<CTRL>") ) {
-					cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
+				if ( mPreviousChars.startsWith("<CTRL>") ) {
+					state=mSession->getPool()->execCommand(this, mPreviousChars);
 					switch(state) {
 						case CMD_ERROR:
 						case CMD_OK:
 							purgeInputBuffer();
 							break;
+						case OPERATOR_PENDING:
+							mapMode = pendingop;
 						default:
-						break;
+							break;
 					}
 					return;
 				}
@@ -1323,6 +1343,11 @@ QString YZView::gotoIntroMode() {
 	return QString::null;
 }
 
+QString YZView::gotoCompletionMode() {
+	switchModes( YZ_VIEW_MODE_COMPLETION );
+	return QString::null;
+}
+
 QString YZView::gotoVisualMode( bool isVisualLine ) {
 	//store the from position
 	if ( isVisualLine )
@@ -1346,6 +1371,15 @@ QString YZView::gotoVisualMode( bool isVisualLine ) {
 	sendPaintEvent( scrollCursor->screenX(), dVisualCursor->getY(), mColumnsVis, 1 );
 	yzDebug("Visual mode") << "Starting at " << *mVisualCursor << endl;
 	return QString::null;
+}
+
+void YZView::leaveInsertMode( ) {
+	if ( mainCursor->bufferX() > 0) moveLeft();
+}
+
+void YZView::leaveReplaceMode( ) {
+	if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() )
+		moveLeft( );
 }
 
 void YZView::leaveVisualMode( ) {

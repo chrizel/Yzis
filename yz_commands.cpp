@@ -45,6 +45,8 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND("gg",&YZView::gotoLine,true);
 	NEW_VIEW_COMMAND("G",&YZView::gotoLine,true);
 	NEW_VIEW_COMMAND("dd",&YZView::deleteLine,true);
+	NEW_VIEW_COMMAND("o",&YZView::openNewLineAfter,true);
+	NEW_VIEW_COMMAND("O",&YZView::openNewLineBefore,true);
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
 }
 

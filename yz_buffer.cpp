@@ -71,8 +71,7 @@ void YZBuffer::addNewLine( int col, int line ) {
 	QStringList::Iterator it = text.at( line );
 	text.insert( ++it, newline );
 	/* inform the views */
-	postEvent(YZEvent::mkEventLine(line,text[ line ]));
-	postEvent(YZEvent::mkEventLine(line+1,newline));
+	updateAllViews();
 }
 
 void YZBuffer::deleteLine( int line ) {

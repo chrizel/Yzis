@@ -70,7 +70,7 @@ public:
 	 */
 	void registerManager ( Gui *mgr );
 
-	void updateCursor(int x=-1,int y=-1);
+	void updateCursor(int x=-1, int y=-1);
 
 	void centerView( unsigned int line );
 
@@ -130,6 +130,10 @@ public:
 	 * Deletes lines
 	 */
 	QString deleteLine ( const QString& inputsBuff = QString::null );
+
+	QString openNewLineAfter ( const QString& inputsBuff = QString::null );
+	
+	QString openNewLineBefore ( const QString& inputsBuff = QString::null );
 
 	void redrawScreen();
 

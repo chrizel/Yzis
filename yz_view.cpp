@@ -86,19 +86,11 @@ void YZView::sendChar( QChar c) {
 }
 
 void YZView::updateCursor(int x, int y) {
-	if ( y!=-1 ) {
-		QString lin = buffer->findLine( y );
-		if ( !lin.isNull() ) cursor->setY( y );
-		else return; //abort. something's wrong
-	}
-	if ( x!=-1 ) {
-		QString lin = buffer->findLine( y );
-		if ( !lin.isNull() ) {
-			current_maxx = lin.length()-1;
-			cursor->setX( x > current_maxx ? current_maxx : x );
-		}
-	}
-
+	if ( x != -1 ) cursor->setX ( x );
+	if ( y != -1 ) cursor->setY ( y );
+	QString lin = buffer->findLine( cursor->getY() );
+	if ( !lin.isNull() ) 
+		current_maxx = lin.length()-1;
 	postEvent( YZEvent::mkEventCursor(cursor->getX(),cursor->getY()));
 }
 
@@ -139,6 +131,7 @@ void YZView::redrawScreen() {
 		if (l.isNull()) continue;
 		postEvent(YZEvent::mkEventLine(i,l));
 	}
+	updateCursor();
 }
 
 /*
@@ -327,7 +320,7 @@ QString YZView::deleteCharacter( const QString& inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::deleteLine ( const QString& inputsBuff = QString::null ) {
+QString YZView::deleteLine ( const QString& inputsBuff ) {
 	int nb_lines=1;//default : one line down
 
 	//check the arguments
@@ -344,6 +337,31 @@ QString YZView::deleteLine ( const QString& inputsBuff = QString::null ) {
 
 	//reset the input buffer
 	purgeInputBuffer();
+
+	return QString::null;
+}
+
+QString YZView::openNewLineBefore ( const QString& ) {
+	buffer->addNewLine(0,cursor->getY());
+	//reset the input buffer
+	purgeInputBuffer();
+	gotoInsertMode();
+
+	cursor->setX ( 0 );
+	updateCursor();
+
+	return QString::null;
+}
+
+QString YZView::openNewLineAfter ( const QString& ) {
+	buffer->addNewLine(0,cursor->getY()+1);
+	//reset the input buffer
+	purgeInputBuffer();
+	gotoInsertMode();
+
+	cursor->incY();
+	cursor->setX( 0 );
+	updateCursor();
 
 	return QString::null;
 }

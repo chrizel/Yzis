@@ -30,7 +30,10 @@
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QScrollView( parent, name,WStaticContents | WNoAutoErase ) 
 {
-	setFont(KGlobalSettings::fixedFont());
+	QFont f ("fixed");
+	f.setFixedPitch(true);
+	f.setStyleHint(QFont::TypeWriter);
+	setFont(f);
 	_parent = parent;
 
 	viewport()->setFocusProxy( this );

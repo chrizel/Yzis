@@ -43,13 +43,4 @@ struct yzpoint {
 
 typedef struct yzpoint yz_point;
 
-namespace YZIS {
-	enum YZKeys {
-		Shift = 1,
-		Alt = 2,
-		Ctrl = 4,
-		Meta = 8
-	};
-}
-
 #endif /* YZIS_H */

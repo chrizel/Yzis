@@ -1,5 +1,5 @@
 /**
- * $Id: main.cpp,v 1.4 2003/04/25 12:45:28 mikmak Exp $
+ * $Id$
  */
 #include "kyzis.h"
 #include <kapplication.h>

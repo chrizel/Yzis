@@ -1,5 +1,5 @@
 /**
- * $Id: yz_plugin.h,v 1.2 2003/04/25 12:45:30 mikmak Exp $
+ * $Id$
  */
 #ifndef YZ_PLUGIN_H
 #define YZ_PLUGIN_H

@@ -1,5 +1,5 @@
 /**
- * $Id: kyzisedit.cpp,v 1.24 2003/04/25 18:31:00 mikmak Exp $
+ * $Id$
  */
 
 #include "kyzisedit.h"

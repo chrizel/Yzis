@@ -1,5 +1,5 @@
 /**
- * $Id: kyzis_factory.cpp,v 1.3 2003/04/25 12:45:28 mikmak Exp $
+ * $Id$
  */
 
 #include <klocale.h>

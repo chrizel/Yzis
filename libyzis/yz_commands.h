@@ -1,5 +1,5 @@
 /**
- * $Id: yz_commands.h,v 1.3 2003/04/25 12:45:30 mikmak Exp $
+ * $Id$
  */
 
 /**

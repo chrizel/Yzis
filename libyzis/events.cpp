@@ -66,15 +66,27 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 
 				//special handling for indent
 				if ( QString::compare(event, "INDENT_ON_KEY") == 0 ) {
-					nbArgs++;
+					nbArgs+=1;
 					const char *inputs = view->getInputBuffer().utf8();
 					YZExLua::instance()->exe(*it2, "s", inputs);
 				} else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
 					nbResults++;
-					int idt = 0;
-					YZExLua::instance()->exe(*it2, ">i", &idt );
-					yzDebug() << "Got INDENT_ON_ENTER response : " << idt << endl;
-					results << QString::number(idt);
+					nbArgs++;
+					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
+					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->getY());
+					rx.exactMatch(nextLine);
+					int nbNextTabs = rx.cap(1).contains("\t");
+					int nbNextSpaces = rx.cap(1).contains(" ");
+					QString prevLine = view->myBuffer()->textline(view->getBufferCursor()->getY()-1);
+					rx.exactMatch(prevLine);
+					int nbPrevTabs = rx.cap(1).contains("\t");
+					int nbPrevSpaces = rx.cap(1).contains(" ");
+					int idtabs = 0;
+					int idspaces = 0;
+					yzDebug() << "Params : " << prevLine << "|" << nbNextTabs << "," << nbNextSpaces << "," << nbPrevTabs << "," << nbPrevSpaces << endl;
+					YZExLua::instance()->exe(*it2, "iiiiss>ii",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, (const char*)prevLine.utf8(), (const char*)nextLine.utf8(),  &idtabs, &idspaces );
+					yzDebug() << "Got INDENT_ON_ENTER response : " << idtabs << ", " << idspaces << endl;
+					results << QString::number(idtabs) << QString::number(idspaces);
 				} else {
 					yzDebug() << "Executing plugin " << *it2 << " with " << nbArgs << " arguments and " << nbResults << " results" << endl;
 					YZExLua::instance()->execute(*it2,nbArgs,nbResults);

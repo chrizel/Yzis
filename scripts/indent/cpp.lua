@@ -1,16 +1,15 @@
 -- Indentation plugin for C++
 -- Author : Mickael Marchand
 
-function Indent_cpp()
-	local curLine = line(winline()-1)
-	local nbtabs = nbChar(curLine, "\t")
---	local nbspaces = nbChar(curLine, " ")
+function Indent_cpp(nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces,prevLine,nextLine)
+	local nbtabs = nbPrevTabs
+	local nbspaces = nbPrevSpaces
 
-	local st = string.byte(curLine,-1)
-	if st == string.byte("{",1) or st == string.byte(":",1) then nbtabs=nbtabs+1 end
+	local st = string.byte(prevLine,-1)
+	if st == string.byte("{",1) or st == string.byte(":",1) or st == string.byte("(",1) then nbtabs=nbtabs+1 end
 
 	-- we use tabs only for now
-	return nbtabs
+	return nbtabs, nbspaces
 end
 
 function nbChar(line, char)

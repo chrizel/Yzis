@@ -187,8 +187,9 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 //		if (e->key() != Qt::Key_unknown)
 			if ( keys.contains( e->key() ) )
 				mParent->sendKey(keys[ e->key() ], modifiers);
-			else
+			else {
 				mParent->sendKey( e->text(), modifiers );
+			}
 		e->accept();
 //	}
 }
@@ -478,6 +479,8 @@ void KYZisEdit::initKeys() {
 	keys[ Qt::Key_7 ] = "7";
 	keys[ Qt::Key_8 ] = "8";
 	keys[ Qt::Key_9 ] = "9";
+	keys[ Qt::Key_BracketLeft ] = "[";
+	keys[ Qt::Key_BracketRight ] = "]";
 
 
 	actionCollection = new KActionCollection( this, mParent );

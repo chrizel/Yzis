@@ -265,6 +265,9 @@ YZSelectionMap YZDoubleSelection::bufferMap() {
 YZSelectionMap YZDoubleSelection::screenMap() {
 	return sSelection->map();
 }
+bool YZDoubleSelection::isEmpty() {
+	return bSelection->isEmpty();
+}
 
 void YZDoubleSelection::addInterval( const YZInterval& bi, const YZInterval& si ) {
 	bSelection->addInterval( bi );

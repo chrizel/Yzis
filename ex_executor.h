@@ -75,6 +75,11 @@ class YZExExecutor : public QObject {
 		 * Dump current options to an yzis.conf file in the current directory
 		 */
 		QString mkyzisrc ( YZView *view, const QString& inputs );
+
+		/**
+		 * Substitute
+		 */
+		QString substitute ( YZView *view, const QString& inputs );
 };
 
 #endif

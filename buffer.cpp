@@ -250,7 +250,6 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	for ( it = mText.begin(); idx < line+1 && it != mText.end(); it++, idx++ )
 		;	
 	mText.insert(it, new YZLine( newline ));
-//	mText.insert( line + 1, new YZLine(newline));
 
 	/* inform the views */
 	updateAllViews();
@@ -271,7 +270,6 @@ void YZBuffer::deleteLine( unsigned int line ) {
 		for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
 			;	
 		mText.erase(it);
-//		mText.remove(line);
 	} else {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
 										 "", 0, line );
@@ -325,15 +323,12 @@ QString YZBuffer::textline( uint line ) const {
 }
 
 void YZBuffer::clearIntro() {
-	yzDebug() << "ClearIntro"<< endl;
 	mIntro = false;
 	clearText();
 	updateAllViews();
 }
 
 void YZBuffer::displayIntro() {
-	yzDebug() << "DisplayIntro"<< endl;
-
 	QStringList introduction;
 	introduction 
 	<<  ""
@@ -364,7 +359,6 @@ void YZBuffer::displayIntro() {
 }
 
 YZLine * YZBuffer::yzline(unsigned int line) const {
-	//return ( ( QPtrList<YZLine> ) mText ).at(line);
 	return ( ( QValueVector<YZLine*> ) mText ).at(line);
 }
 
@@ -627,5 +621,22 @@ void YZBuffer::setPath( const QString& _path ) {
 		mPath = newPath; 
 	mFileIsNew=false; 
 	filenameChanged();
+}
+
+bool YZBuffer::substitute( const QString& what, const QString& with, bool wholeline, unsigned int line ) {
+	QString l = textline( line );
+	QRegExp rx( what );
+	int pos=0;
+	int offset=0;
+	while ( ( pos = rx.search( l,offset ) ) != -1 ) {
+		l = l.replace( pos, rx.matchedLength(), with );
+		offset+=pos+with.length();
+		if ( !wholeline ) break;
+	}
+	if ( offset ) {
+		setTextline( line,l );
+		return true;
+	}
+	return false;
 }
 

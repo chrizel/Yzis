@@ -157,21 +157,24 @@ void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true);
 	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true);
 	NEW_EX_COMMAND("qall", &YZExExecutor::quit,true);
-	NEW_EX_COMMAND("set", &YZExExecutor::set,true);
 	NEW_EX_COMMAND("mkyzisrc", &YZExExecutor::mkyzisrc,true);
+	NEW_EX_COMMAND("substitute", &YZExExecutor::substitute,true);
+	NEW_EX_COMMAND("set", &YZExExecutor::set,true);
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
 	QString command = inputs;
 	yzDebug() << "EX CommandLine " << command << endl;
-	// assume a command is like : "numberCOMMANDNAME parameters"
-	QRegExp rx ( "^(\\d*)(\\S+)\\b");
-	rx.search(command);
-	if ( rx.cap( 2 ) != QString::null )
+	// assume a command is like : "rangeCOMMANDNAME parameters"
+	// see vim :help [range] for infos on 'range'
+	//QRegExp rx ( "(%?|((\\d*)(,\\d*)?))(\\w+)((\\b)|(/.*/.*/.*))(.*)");
+	QRegExp rx ( "(%?|\\d*)(\\w+)((\\b)|(/.*/.*/.*))(.*)");
+	if ( rx.exactMatch(command) ) {
 		command = rx.cap( 2 );
-	else
+	} else
 		return; //no command identified XXX eventually popup error messages
 	QString cmd = QString::null;
+	yzDebug() << "Command : " << command << endl;
 	QMap<QString,YZCommand>::Iterator it;
 	for ( it = globalExCommands.begin(); it!=globalExCommands.end(); ++it ) {
 		cmd = static_cast<QString>( it.key() );

@@ -1245,3 +1245,27 @@ unsigned int YZView::drawLineNumber( ) {
 	return sCursor->getY( ) + 1;
 }
 
+void YZView::substitute(const QString& range, const QString& search, const QString& replace, const QString& option) {
+	yzDebug() << "substitute : " << range << ":" << search << ":" << replace << ":" << option << endl;
+	//TODO : better range support, better options support
+	unsigned int startLine = mCursor->getY();
+	unsigned int endLine = mCursor->getY();
+	bool needsUpdate=false;
+	//whole file
+	if ( range == "%" ) {
+		startLine = 0;
+		endLine = mBuffer->lineCount();
+	} else if ( range.contains( "," ) ) {
+//		QStringList list = QStringList::split( ",", range );
+		
+	} else if ( range == "." ) {
+		//nothing
+	}
+		
+	for ( unsigned int i = startLine; i < endLine; i++ ) {
+		if ( mBuffer->substitute(search, replace, option.contains( "g" ), i) )
+			needsUpdate = true;
+	}
+	mBuffer->updateAllViews();
+}
+

@@ -396,6 +396,10 @@ class YZView {
 		 */
 		unsigned int drawLineNumber( );
 
+		/**
+		 * Search and replace
+		 */
+		void substitute(const QString& range, const QString& search, const QString& replace, const QString& option);
 
 
 	protected:

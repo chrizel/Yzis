@@ -489,6 +489,16 @@ void YZView::alignViewVertically( unsigned int line ) {
 		gotoxy( mCurrentLeft, mCurrentTop );
 }
 
+/* recalculate cursor position + resfresh screen */
+void YZView::reset( ) {
+	initDraw( 0, 0, 0, 0 );
+	drawMode = false;
+	gotoy( mCursor->getY() );
+	gotox( mCursor->getX() );
+	applyGoto( );
+	refreshScreen( );
+}
+
 /*
  * all the goto-like commands
  */

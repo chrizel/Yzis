@@ -180,7 +180,7 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 			x*fontMetrics().maxWidth(), y * fontMetrics().lineSpacing(),
 			fontMetrics().maxWidth(), fontMetrics().lineSpacing(),
 			Qt::NotROP,	    // raster Operation
-			false );		    // ignoreMask
+			true );		    // ignoreMask
 }
 
 void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
@@ -201,7 +201,10 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 		lastLineNumber = 0;
 	}
 	if ( marginLeft != my_marginLeft ) {
+		setCursor( mCursorX + marginLeft - my_marginLeft, mCursorY ); // move cursor
 		marginLeft = my_marginLeft;
+		myRect.setRect ( 0 , 0, marginLeft * maxwidth, height() ); // erase numbers
+		p.eraseRect( myRect );
 		mParent->setVisibleArea( width() / maxwidth - marginLeft, height() / linespace );
 		return;
 	}

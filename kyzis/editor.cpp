@@ -130,12 +130,10 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 //	yzDebug() << "drawContents: clipy=" << clipy << ",cliph=" << cliph << endl;
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
-	unsigned int my_marginLeft;
+	unsigned int my_marginLeft = 0;
 	if ( YZSession::getBoolOption( "General\\number" )) { // update marginLeft
 		my_marginLeft = 2 + QString::number( lineCount ).length();
 		lastLineNumber = 0;
-	} else {
-		my_marginLeft = 0;
 	}
 	if ( marginLeft != my_marginLeft ) {
 		marginLeft = my_marginLeft;
@@ -146,7 +144,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 	mParent->initDraw( );
 
 	unsigned int currentY = 0;
-	unsigned int lineNumber;
+	unsigned int lineNumber = 0;
 
 	if ( ! mParent->myBuffer()->introShown() ) {
 		while ( mParent->drawNextLine( ) && cliph > 0 ) {

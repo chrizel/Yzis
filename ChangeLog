@@ -1,3 +1,7 @@
+2004-05-1 mikmak
+  * libyzis
+    basic support for substitute command
+
 2004-04-28 mikmak
   * libyzis
     - new :mkyzisrc EX command to create an yzis.conf file in the current

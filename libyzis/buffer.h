@@ -323,7 +323,16 @@ public:
 	  * detach
 	  */
 	void detach(void);
+
+	/**
+	 * Replaces the given regexp @arg what with the given string @with on the specified @arg line
+	 * Repeat the change on the line if @arg wholeline is true
+	 * @return true if a change was done
+	 */
+	bool substitute( const QString& what, const QString& with, bool wholeline, unsigned int line );
 	
+	void updateAllViews();
+
 protected:
 	/** 
 	 * Sets the line @param line to @param l
@@ -331,8 +340,6 @@ protected:
 	 * @param l may not contain '\n'
 	 */
 	void setTextline( uint line, const QString & l );
-
-	void updateAllViews();
 
 	QString mPath;
 	QPtrList<YZView> mViews;

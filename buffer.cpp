@@ -840,6 +840,7 @@ void YZBuffer::setPath( const QString& _path ) {
 	mFileIsNew=false;
 	//hmm changing file :), update Session !!!!
 	mSession->updateBufferRecord( oldPath, mPath, this );
+	YZSession::mOptions->updateOptions(oldPath, mPath);
 	filenameChanged();
 }
 

@@ -10,4 +10,5 @@ Mathieu Kooiman (kyzis ktexteditor implementation)
 Thomas Nagy (KDE icons, KSettings stuff)
 Lucijan Bush (command history for EX mode)
 Pascal Maillard (commands and motion engine rewrite)
+Alexander Dymo (ktexteditor config interface)
 

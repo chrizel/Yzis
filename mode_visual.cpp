@@ -125,6 +125,7 @@ void YZModeVisual::cursorMoved( YZView* mView ) {
 void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand("<ALT>:", (PoolMethod) &YZModeVisual::movetoExMode) );
 	commands.append( new YZCommand("<CTRL>[", &YZModeCommand::gotoCommandMode) );
+	commands.append( new YZCommand("<CTRL>l", &YZModeCommand::redisplay) );
 	commands.append( new YZCommand("<DEL>", &YZModeCommand::del) );
 	commands.append( new YZCommand("<ESC>", (PoolMethod) &YZModeVisual::escape) );
 	commands.append( new YZCommand(":", (PoolMethod) &YZModeVisual::gotoExMode ) );

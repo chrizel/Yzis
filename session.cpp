@@ -43,7 +43,8 @@ YZEvents *YZSession::events = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
-	mGuiStarted = false;
+	//if ( me != 0 ) int t = 5/( me - me );
+	//FIXME
 	mPool = new YZCommandPool();
 	mPool->initPool();
 	mExPool = new YZExCommandPool();
@@ -69,7 +70,6 @@ void YZSession::guiStarted() {
 		YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/init.lua" );
 	if (QFile::exists(QDir::homeDirPath() + "/.yzis/init.lua"))
 		YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/init.lua" );
-	mGuiStarted = true;
 }
 
 void YZSession::addBuffer( YZBuffer *b ) {

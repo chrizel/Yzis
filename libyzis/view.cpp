@@ -96,7 +96,7 @@ void YZView::sendKey( int c, int modifiers) {
 					moveUp( );
 					return;
 				case Qt::Key_Tab:
-					mBuffer->addChar(mCursor->getX(),mCursor->getY(),"\t");
+					mBuffer->insertChar(mCursor->getX(),mCursor->getY(),"\t");
 					gotoxy(mCursor->getX()+1, mCursor->getY() );
 					return;
 				case Qt::Key_Backspace:
@@ -108,7 +108,7 @@ void YZView::sendKey( int c, int modifiers) {
 					mBuffer->delChar(mCursor->getX(),mCursor->getY(),1);
 					return;
 				default:
-					mBuffer->addChar(mCursor->getX(),mCursor->getY(),key);
+					mBuffer->insertChar(mCursor->getX(),mCursor->getY(),key);
 					gotoxy(mCursor->getX()+1, mCursor->getY() );
 					return;
 			}
@@ -454,7 +454,7 @@ QString YZView::deleteCharacter( const QString& , YZCommandArgs args ) {
 	return QString::null;
 }
 
-QString YZView::deleteLine ( const QString& inputsBuff, YZCommandArgs args ) {
+QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args ) {
 	int nb_lines=args.count;
 	QChar reg=args.registr;
 

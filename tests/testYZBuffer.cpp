@@ -235,7 +235,7 @@ void TestYZBuffer::testCharMethods()
     phCheckEquals( mBuf->getWholeText(), text );
 
     // what happens if I delete a line that does not exist ?
-    mBuf->addChar( 10, 10, QString("Z") );
+    mBuf->insertChar( 10, 10, QString("Z") );
     phCheckEquals( mBuf->getWholeText(), text );
 
     mBuf->chgChar( 10, 10, QString("Z") );
@@ -251,7 +251,7 @@ void TestYZBuffer::testCharMethods()
     phCheckEquals( mBuf->getWholeText(), text );
 
     // add/delete/chg char on a non existent column
-    mBuf->addChar( 11, 0, QString("Z") );
+    mBuf->insertChar( 11, 0, QString("Z") );
     phCheckEquals( mBuf->getWholeText(), text );
     mBuf->chgChar( 10, 0, QString("Z") );
     phCheckEquals( mBuf->getWholeText(), text );
@@ -259,8 +259,8 @@ void TestYZBuffer::testCharMethods()
     phCheckEquals( mBuf->getWholeText(), text );
 
     // now the test on the real feature
-    mBuf->addChar( 10, 0, QString("Z") );
-    mBuf->addChar( 0, 0, QString("Z") );
+    mBuf->insertChar( 10, 0, QString("Z") );
+    mBuf->insertChar( 0, 0, QString("Z") );
     phCheckEquals( mBuf->data(0), "Z0123456789Z" );
 
     mBuf->chgChar( 0, 1, QString("Z") );

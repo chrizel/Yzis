@@ -65,15 +65,15 @@ void TestUndo::testUndoCharOperation()
     QStringList textHistory;
     textHistory.append( mBuf->getWholeText() );
 
-    mBuf->addChar( 0, 0, "A" );
+    mBuf->insertChar( 0, 0, "A" );
     ub->commitUndoItem();
     textHistory.append( mBuf->getWholeText() );
     yzDebug() << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );
 
-    mBuf->addChar( 1, 0, "B" );
-    mBuf->addChar( 0, 0, "C" );
+    mBuf->insertChar( 1, 0, "B" );
+    mBuf->insertChar( 0, 0, "C" );
     ub->commitUndoItem();
     textHistory.append( mBuf->getWholeText() );
     yzDebug() << "buffer : '" << mBuf->getWholeText() << "'" << endl;

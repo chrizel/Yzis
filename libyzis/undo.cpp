@@ -54,7 +54,7 @@ void BufferOperation::performOperation( YZBuffer * buf, bool opposite)
 
 	switch( t) {
 		case ADDTEXT:
-			buf->addChar( col, line, text ); 
+			buf->insertChar( col, line, text ); 
 			break;
 		case DELTEXT: 
 			buf->delChar( col, line, text.length() ); 

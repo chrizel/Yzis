@@ -58,12 +58,12 @@ public:
 	// ----------------- Character Actions
 
 	/**
-	 * Adds a character to the buffer
-	 * @param x position on the line where to add the character
+	 * Inserts a character into the buffer
+	 * @param x position on the line where to insert the character
 	 * @param y line where the character is to be added
 	 * @param c the character to add
 	 */
-	void addChar (unsigned int x, unsigned int y, const QString& c);
+	void insertChar (unsigned int x, unsigned int y, const QString& c);
 
 	/**
 	 * Replaces a character in the buffer

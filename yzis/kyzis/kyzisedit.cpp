@@ -25,10 +25,8 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 	int lines=0;
 	lines = s.height() / fontMetrics().lineSpacing();
 	_parent->setVisibleLines( lines );
-	kdDebug()<<"Update visibles lines to : "<< lines << endl;
 }
 
-// PUBLIC API
 void KYZisEdit::setCursor(int c, int l) {
 	//undraw previous cursor
 	if ( cursor_shown ) drawCursorAt( cursorx,cursory );

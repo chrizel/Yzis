@@ -4,6 +4,7 @@
     some commands fully implemented (h,j,k,l,i,R)
     fixed cursor disappearing in the deep space (on left)
     moved the event loop to a QValueList
+    fixed position of cursor after mouse press event
   * kyzis
     fixed position of the display (first line was hidden)
     fixed (again) display problem while inserting text

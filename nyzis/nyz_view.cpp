@@ -57,14 +57,20 @@ void NYZView::handle_event(yz_event e)
 			printLine( e.invalidateline.y );
 
 			wrefresh( window );
-//			debug("YZ_EV_SETLINE: received, line is %d", l);
+//			debug("YZ_EV_SET_LINE: received, line is %d", l);
 			break;
-		case YZ_EV_SETCURSOR:
-			wmove(window, e.setcursor.y - getCurrent(), e.setcursor.x) ;
+		case YZ_EV_SET_CURSOR:
+			session->update_infobar(
+				e.setcursor.x,
+				e.setcursor.y,
+				e.setcursor.y2,
+				e.setcursor.percentage
+				);
+			wmove(window, e.setcursor.y2 - getCurrent(), e.setcursor.x) ;
 			wrefresh( window );
-//			debug("YZ_EV_SETCURSOR: received");
+//			debug("YZ_EV_SET_CURSOR: received");
 			break;
-		case YZ_EV_SETSTATUS:
+		case YZ_EV_SET_STATUS:
 			session->update_status( e.setstatus.text );
 			break;
 		case YZ_EV_REDRAW: {

@@ -38,13 +38,17 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 	/*
 	 * create a buffer and a view on it
 	 */
-	YZBuffer *bf = createBuffer(charv[1]);
+	YZBuffer *bf;
+	if ( argc>1 )
+		bf = createBuffer(charv[1]);
+	else
+		bf = createBuffer("emptybuffer");
 
 	screen = stdscr; // just an alias...
 		wattron(screen, A_BOLD);	// will be herited by subwin
 
 	infobar = subwin(screen, 1, 0, LINES-2, 0);
-		wattron(infobar, A_REVERSE);
+		wattrset(infobar, A_STANDOUT || A_BOLD);
 		wbkgd(infobar, A_REVERSE);
 
 	statusbar = subwin(screen, 1, 0, LINES-1, 0);
@@ -54,7 +58,7 @@ NYZSession::NYZSession( int argc, char **charv, const char *_session_name)
 //	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
 	if (has_colors()) {
-		wattron(infobar, COLOR_PAIR(4));
+//		wattron(infobar, COLOR_PAIR(4));
 		wattron(statusbar, COLOR_PAIR(6));
 	}
 
@@ -74,5 +78,23 @@ void NYZSession::update_status(const QString& msg)
 	waddstr(statusbar, msg.local8Bit());
 
 	wrefresh(statusbar);
+}
+
+
+void NYZSession::update_infobar(int l, int c1, int c2, const QString& percentage)
+{
+	int h,w;
+	char * myfmt;
+
+	getmaxyx(infobar, h, w);
+	werase(infobar);
+
+	// prevent  gcc to use string
+	myfmt="%d,%d-%d";
+	mvwprintw( infobar, 0, w-17, myfmt, l,c1,c2 );
+	myfmt="%s";
+	mvwprintw( infobar, 0, w-4, myfmt, ( const char* )(percentage.local8Bit()) );
+
+	wrefresh(infobar);
 }
 

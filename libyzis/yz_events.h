@@ -15,8 +15,8 @@ class QString;
 /** list of all events */
 enum yz_events {
 	YZ_EV_INVALIDATE_LINE,
-	YZ_EV_SETCURSOR,
-	YZ_EV_SETSTATUS,
+	YZ_EV_SET_CURSOR,
+	YZ_EV_SET_STATUS,
 	YZ_EV_REDRAW,
 	YZ_EV_NOOP //no, nothing :)
 };
@@ -51,7 +51,8 @@ struct yz_event_invalidateline {
  * x and y are NOT relative to the view
  */
 struct yz_event_setcursor {
-	int x,y;
+	int x,y,y2;
+	QString percentage;
 };
 
 struct yz_event_setstatus {
@@ -94,7 +95,7 @@ class YZEvent {
 		YZEvent();
 
 		static yz_event mkEventStatus(const QString&);
-		static yz_event mkEventCursor(int x, int y);
+		static yz_event mkEventCursor(int x, int y, int y2, QString&);
 		static yz_event mkEventInvalidateLine(int);
 		static yz_event mkEventRedraw();
 		static yz_event mkEventNoop();

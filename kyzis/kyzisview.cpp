@@ -53,12 +53,12 @@ void KYZisView::customEvent (QCustomEvent *) {
 				editor->setTextLine(event.invalidateline.y, str);
 				break;
 			}
-			case YZ_EV_SETCURSOR:
-				kdDebug() << "event SETCURSOR" << endl;
+			case YZ_EV_SET_CURSOR:
+				kdDebug() << "event SET_CURSOR" << endl;
 				editor->setCursor (event.setcursor.x, event.setcursor.y);
 				break;
-			case YZ_EV_SETSTATUS:
-				kdDebug() << "event SETSTATUS" << event.setstatus.text <<  endl;
+			case YZ_EV_SET_STATUS:
+				kdDebug() << "event SET_STATUS" << event.setstatus.text <<  endl;
 				status->changeItem( event.setstatus.text,0 );
 				break;
 			case YZ_EV_REDRAW:

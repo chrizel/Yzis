@@ -21,6 +21,7 @@ class NYZSession : public YZSession {
 
 		void		event_loop();
 		void		update_status(const QString& msg);
+		void		update_infobar(int, int, int, const QString& msg);
 
 	private:
 		WINDOW		*screen;	// whole (ncurses) screen (== stdscr)

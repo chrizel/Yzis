@@ -1,4 +1,13 @@
 
+2003-06-07 orzel
+  * libyzis
+     fixing some more warnings
+     fixing a segfault whene deleting lines at the end of a file
+     cleaning cursor/current_maxx stuff, which leads to some bugs getting fixed (in rendering)
+  * nyzis
+     implementing the new virtual command-related functions from the lib
+     now displays x,y and percentage in file
+
 2003-06-02 orzel
   * Whole
      changed YZ_EV_SETLINE for YZ_EV_INVALIDATE_LINE and YZ_EV_REDRAW and updated

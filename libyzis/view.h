@@ -782,7 +782,7 @@ class YZView {
 
 		void gotoy( unsigned int );
 		void gotody( unsigned int );
-		void gotox( unsigned int );
+		void gotox( unsigned int, bool forceGoBehindEOL = false );
 		void gotodx( unsigned int );
 		void applyGoto( YZViewCursor* viewCursor, bool applyCursor = true );
 		void initGoto( YZViewCursor* viewCursor );

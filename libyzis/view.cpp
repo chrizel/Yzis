@@ -633,9 +633,9 @@ void YZView::gotodx( unsigned int nextx ) {
 		drawNextCol( );
 }
 
-void YZView::gotox( unsigned int nextx ) {
+void YZView::gotox( unsigned int nextx, bool forceGoBehindEOL ) {
 	if ( ( int )nextx < 0 ) nextx = 0;
-	unsigned int shift = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLineLength > 0 ) ) ? 1 : 0;
+	unsigned int shift = ( ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLineLength > 0 ) ) || forceGoBehindEOL ) ? 1 : 0;
 	if ( nextx >= sCurLineLength ) {
 		if ( sCurLineLength == 0 ) nextx = 0;
 		else nextx = sCurLineLength - 1 + shift;
@@ -833,7 +833,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor ) {
 void YZView::gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int nexty, bool applyCursor ) {
 	initGoto( viewCursor );
 	gotoy( nexty );
-	gotox( nextx );
+	gotox( nextx, viewCursor != mainCursor );
 	applyGoto( viewCursor, applyCursor );
 }
 
@@ -916,7 +916,7 @@ QString YZView::moveRight( YZViewCursor* viewCursor, int nb_cols, bool wrap, boo
 			// if we moved too far, go back
 			if(diff < 0) x+=diff;
 		} else
-			x=myBuffer()->textline(y).length()-1;
+			x=myBuffer()->textline(y).length();
 	}
 	gotoxy( viewCursor, (unsigned int)(x), y);
 

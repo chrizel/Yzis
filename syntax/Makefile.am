@@ -1,5 +1,3 @@
-rcyzisdir = $(kde_datadir)/yzis
-
 syntaxyzisdir = $(prefix)/share/yzis/syntax
 syntaxyzis_DATA = language.dtd syntax.template cpp.xml c.xml html.xml kbasic.xml objectivec.xml \
                   changelog.xml ada.xml css.xml perl.xml php.xml xml.xml java.xml rpmspec.xml \
@@ -13,5 +11,14 @@ syntaxyzis_DATA = language.dtd syntax.template cpp.xml c.xml html.xml kbasic.xml
                 vrml.xml rexx.xml cue.xml progress.xml e.xml sieve.xml modula-2.xml awk.xml cisco.xml \
                 doxygen.xml lua.xml pike.xml debianchangelog.xml debiancontrol.xml fgl-4gl.xml fgl-per.xml alert.xml \
                 gettext.xml commonlisp.xml clipper.xml povray.xml euphoria.xml mup.xml jsp.xml ocaml.xml lex.xml yacc.xml \
-                cg.xml
+                cg.xml html-php.xml css-php.xml javascript-php.xml ahdl.xml ansic89.xml tibasic.xml \
+                purebasic.xml mips.xml logtalk.xml txt2tags.xml
 
+html-php.xml: $(srcdir)/html.xml $(srcdir)/generate-php.pl
+	$(PERL) $(srcdir)/generate-php.pl < $(srcdir)/html.xml > $@
+
+css-php.xml: $(srcdir)/css.xml $(srcdir)/generate-php.pl
+	$(PERL) $(srcdir)/generate-php.pl < $(srcdir)/css.xml > $@
+
+javascript-php.xml: $(srcdir)/javascript.xml $(srcdir)/generate-php.pl
+	$(PERL) $(srcdir)/generate-php.pl < $(srcdir)/javascript.xml > $@

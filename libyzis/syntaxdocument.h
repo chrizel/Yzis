@@ -43,6 +43,7 @@ class YzisSyntaxModeListItem
 {
   public:
     QString name;
+    QString nameTranslated;
     QString section;
     QString mimetype;
     QString extension;
@@ -51,6 +52,7 @@ class YzisSyntaxModeListItem
     QString priority;
     QString author;
     QString license;
+    bool hidden;
 };
 
 /**
@@ -165,6 +167,7 @@ class YzisSyntaxDocument : public QDomDocument
      * current parsed filename
      */
     QString currentFile;
+
     /**
      * last found data out of the xml
      */

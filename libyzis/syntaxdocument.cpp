@@ -559,10 +559,10 @@ void YzisSyntaxDocument::setupModeList (bool force)
     // If the group exist and we're not forced to read the xml file, let's build myModeList for katesyntax..rc
     if ( config.hasGroup(Group) && !force && (sbuf.st_mtime == config.readIntEntry("lastModified")) )
     {
-
       // Let's make a new YzisSyntaxModeListItem to instert in myModeList from the information in katesyntax..rc
       YzisSyntaxModeListItem *mli=new YzisSyntaxModeListItem;
-      mli->name       = config.readQStringEntry("name"); // ### TODO: translation (bug #72220)
+      mli->name       = config.readQStringEntry("name");
+      //mli->nameTranslated = i18n("Language",mli->name.utf8());
       mli->section    = config.readQStringEntry("section").utf8();
       mli->mimetype   = config.readQStringEntry("mimetype");
       mli->extension  = config.readQStringEntry("extension");
@@ -570,6 +570,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
       mli->priority   = config.readQStringEntry("priority");
       mli->author    = config.readQStringEntry("author");
       mli->license   = config.readQStringEntry("license");
+      mli->hidden   =  config.readBoolEntry("hidden");
       mli->identifier = *it;
 
       // Apend the item to the list
@@ -578,6 +579,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
     else
     {
       yzDebug ("HL") << "UPDATE hl cache for: " << *it << endl;
+	  
       // We're forced to read the xml files or the mode doesn't exist in the katesyntax...rc
       QFile f(*it);
 
@@ -613,6 +615,8 @@ void YzisSyntaxDocument::setupModeList (bool force)
               mli->author    = root.attribute("author");
               mli->license   = root.attribute("license");
 
+              QString hidden = root.attribute("hidden");
+              mli->hidden    = (hidden == "true" || hidden == "TRUE");
 
               mli->identifier = *it;
 
@@ -626,12 +630,14 @@ void YzisSyntaxDocument::setupModeList (bool force)
               config.setQStringOption("priority",mli->priority);
               config.setQStringOption("author",mli->author);
               config.setQStringOption("license",mli->license);
-              
+              config.setBoolOption("hidden",mli->hidden);
+
               // modified time to keep cache in sync
               config.setIntOption("lastModified", sbuf.st_mtime);
 
               // Now that the data is in the config file, translate section
 			  mli->section    = "Language Section"; // We need the i18n context for when reading again the config
+              //mli->nameTranslated = i18n("Language",mli->name.utf8());
 
               // Append the new item to the list.
               myModeList.append(mli);
@@ -646,7 +652,8 @@ void YzisSyntaxDocument::setupModeList (bool force)
           emli->mimetype="invalid_file/invalid_file";
           emli->extension="invalid_file.invalid_file";
           emli->version="1.";
-          emli->name=QString("Error: %1").arg(*it);
+          emli->name=QString ("Error: %1").arg(*it); // internal
+          //emli->nameTranslated=i18n("Error: %1").arg(*it); // translated
           emli->identifier=(*it);
 
           myModeList.append(emli);

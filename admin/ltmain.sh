@@ -4896,6 +4896,13 @@ else
 "
 	  ;;
 
+	*-*-freebsd* )
+	  # Need to set LD_LIBRARY_PATH, to the value already
+	  # computed within libtool.
+	  $echo >> $output "\
+      LD_LIBRARY_PATH=\"$rpath\" exec \$progdir/\$program \${1+\"\$@\"}
+"
+	  ;;
 	*)
 	  $echo >> $output "\
       exec \$progdir/\$program \${1+\"\$@\"}

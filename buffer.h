@@ -339,7 +339,9 @@ public:
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
 	inline YZLine * yzline(unsigned int line) {
-		YZLine *yl = mText.at( line );
+		bool found;
+		YZLine *yl = mText.at( line, &found );
+		if ( !found ) return new YZLine();
 		if ( yl && !yl->initialized() ) updateHL( line );
 		return yl;
 	}

@@ -4,10 +4,10 @@
 
 #include "yz_events.h"
 
-yz_event mk_event_setstatus(const char *text) {
+yz_event mk_event_setstatus(QString *text) {
 	yz_event e;
 	e.id=YZ_EV_SETSTATUS;
-	e.u.setstatus.text=text;
+	e.u.setstatus.text=new QString ( *text );
 	return e;
 }
 

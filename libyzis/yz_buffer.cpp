@@ -88,7 +88,7 @@ void YZBuffer::addView (YZView *v) {
 
 //should be moved inside YZView
 void YZBuffer::updateView(YZView *view) {
-	for (int y=view->getCurrent(); y<text.count() && view->isLineVisible(y); y++) {
+	for (unsigned int y=view->getCurrent(); y<text.count() && view->isLineVisible(y); y++) {
 		QString l = findLine( view->getCurrent()+y );
 		if (l.isNull()) continue;
 		view->postEvent(mk_event_setline(y,&l));
@@ -104,7 +104,7 @@ void  YZBuffer::addLine(QString &l) {
 	text.append(l);
 }
 
-QString	YZBuffer::findLine(int line) {
+QString	YZBuffer::findLine(unsigned int line) {
 	//we need to check this line exists.
 	//the guy i talked with on IRC was right to doubt about it :)
 	//so I return QString::null then for each call we need to check for if (!line.isNull())

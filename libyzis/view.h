@@ -254,37 +254,44 @@ class YZView {
 		 * moves the cursor of the current view down
 		 */
 		QString moveDown( unsigned int nb_lines = 1 );
+		QString moveDown( YZViewCursor* viewCursor, unsigned int nb_lines = 1 );
 
 		/**
 		 * moves the cursor of the current view up 
 		 */
 		QString moveUp( unsigned int nb_lines = 1 );
+		QString moveUp( YZViewCursor* viewCursor,  unsigned int nb_lines = 1 );
 
 		/**
 		 * moves the cursor of the current view to the left
 		 */
 		QString moveLeft(int nb_cols=1, bool wrap=false);
+		QString moveLeft( YZViewCursor* viewCursor,int nb_cols=1, bool wrap=false);
 
 		/**
 		 * moves the cursor of the current view to the right
 		 */
 		QString moveRight(int nb_cols=1, bool wrap=false);
+		QString moveRight( YZViewCursor* viewCursor,int nb_cols=1, bool wrap=false);
 		
 		/**
 		 * moves the cursor of the current view to the first non-blank character 
 		 * of the current line
 		 */
 		QString moveToFirstNonBlankOfLine();
+		QString moveToFirstNonBlankOfLine( YZViewCursor* viewCursor );
 
 		/**
 		 * moves the cursor of the current view to the start of the current line
 		 */
 		QString moveToStartOfLine();
+		QString moveToStartOfLine( YZViewCursor* viewCursor );
 
 		/**
 		 * moves the cursor of the current view to the end of the current line
 		 */
 		QString moveToEndOfLine();
+		QString moveToEndOfLine( YZViewCursor* viewCursor );
 
 		/*
 		 * ACTIONS
@@ -442,21 +449,25 @@ class YZView {
 		 * Moves the draw cursor to @arg nextx, @arg nexty
 		 */
 		void gotodxdy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
+		void gotodxdy( YZViewCursor* viewCursor,unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the cursor to @arg buffer nextx, @arg draw nexty
 		 */
 		void gotoxdy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
+		void gotoxdy( YZViewCursor* viewCursor,unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the cursor to @arg draw nextx, @arg buffer nexty
 		 */
 		void gotodxy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
+		void gotodxy( YZViewCursor* viewCursor,unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the buffer cursor to @arg nextx, @arg nexty
 		 */
 		void gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
+		void gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 
 		/**
 		 * Copy the given number of lines in the list of registers
@@ -546,6 +557,18 @@ class YZView {
 		 * Display informational status about the current file and cursor
 		 */
 		virtual void syncViewInfo() = 0;
+
+		/** 
+		 * Get the main cursor
+		 * @return a pointer on the main cursor ( YZViewCursor )
+		 */
+		YZViewCursor* getMainCursor() { return mainCursor; }
+
+		/**
+		 * Create a new YZViewCursor based on mainCursor
+		 * @return a new YZViewCursor with mainCursor values
+		 */
+		YZViewCursor* copyMainCursor();
 
 		/**
 		 * Get the current cursor information
@@ -890,8 +913,8 @@ class YZView {
 		void gotody( unsigned int );
 		void gotox( unsigned int );
 		void gotodx( unsigned int );
-		void applyGoto( bool applyCursor = true );
-		void initGoto( );
+		void applyGoto( YZViewCursor* viewCursor, bool applyCursor = true );
+		void initGoto( YZViewCursor* viewCursor );
 		void updateCurLine( );
 
 		int stickyCol;

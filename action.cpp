@@ -143,9 +143,15 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 
 
 //copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
-void YZAction::copyArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QValueList<QChar> &reg ) {
-	yzDebug() << "Copying from X " << begin.getX() << " to X " << end.getX() << endl;
+void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+	yzDebug() << "Copying from X " << beginCursor.getX() << " to X " << endCursor.getX() << endl;
 
+	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
+		end(beginCursor <= endCursor ? endCursor : beginCursor);
+	YZBuffer *yzb=pView->myBuffer();
+	YZCursor top(0, 0, 0), bottom(0, yzb->textline(yzb->lineCount()-1).length(), yzb->lineCount()-1);
+	assert(begin >= top && end <= bottom);
+	
 	QStringList buff;
 	unsigned int bX = begin.getX();
 	unsigned int bY = begin.getY();
@@ -156,7 +162,7 @@ void YZAction::copyArea( YZView* pView, const YZCursor& begin, const YZCursor& e
 
 	if((pView->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL ||
 	   pView->getCurrentMode() == YZView::YZ_VIEW_MODE_VISUAL_LINE)
-			&& pView->myBuffer()->textline(eY).length() > 0)
+			&& yzb->textline(eY).length() > 0)
 		eX++;
 
 	YZCursor mPos( begin );

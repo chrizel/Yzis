@@ -1,3 +1,7 @@
+2004-08-11 panard
+  * libyzis
+    add '~' command
+
 2004-08-10 panard
   * libyzis
     :<line>, gg, G, <line>gg and <line>G

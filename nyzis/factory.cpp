@@ -240,7 +240,7 @@ void NYZFactory::deleteView(int /*Id*/)
 	}
 }
 
-bool NYZFactory::prompt( const QString& title, const QString& message ) {
+bool NYZFactory::promptYesNo( const QString& title, const QString& message ) {
 //TODO
 	return true;
 }

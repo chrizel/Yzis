@@ -49,7 +49,7 @@ public:
 	void deleteBuffer ( YZBuffer *b );
 	void setFocusCommandLine();
 	void setFocusMainWindow();
-	bool prompt(const QString& title, const QString& message);
+	bool promptYesNo(const QString& title, const QString& message);
 	
 protected:
 

@@ -55,7 +55,7 @@ public:
 	virtual void deleteBuffer ( YZBuffer *b );
 	virtual void setFocusCommandLine() {}
 	virtual void setFocusMainWindow() {}
-	virtual bool prompt( const QString& title, const QString& message );
+	virtual bool promptYesNo( const QString& title, const QString& message );
 
 private:
 	/**

@@ -61,7 +61,7 @@ void YZSwapFile::flush() {
 void YZSwapFile::addToSwap( int inputs, int modifiers ) {
 	swapEntry e = { inputs, modifiers };
 	mHistory.append( e );
-	if ( mHistory.size() >= 20 ) flush();
+	if ( mHistory.size() >= mParent->getLocalIntOption("updatecount") ) flush();
 }
 
 void YZSwapFile::unlink() {

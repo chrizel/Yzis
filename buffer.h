@@ -248,6 +248,8 @@ protected:
 	YZBufferData mText;
 	YZSession *mSession;
 	YZUndoBuffer *mUndoBuffer;
+	//used to prevent redrawing of views during some operations
+	bool mUpdateView;
 };
 
 #endif /*  YZ_BUFFER_H */

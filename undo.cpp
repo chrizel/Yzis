@@ -43,7 +43,7 @@ QString BufferOperation::toString() {
 void BufferOperation::performOperation( YZBuffer * buf, bool opposite)
 {
 	OperationType t = type;
-	if (opposite = true) {
+	if (opposite == true) {
 		switch( type ) {
 			case ADDTEXT: t = DELTEXT; break;
 			case DELTEXT: t = ADDTEXT; break; 
@@ -66,15 +66,16 @@ void BufferOperation::performOperation( YZBuffer * buf, bool opposite)
 			buf->deleteLine( line );
 			break;
 	}
+
+	yzDebug() << "BufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
 }
 
 
 UndoBuffer::UndoBuffer( YZBuffer * buffer )
-:  mBuffer(buffer), mFutureUndoItem( 0L ) /* , mCurrentUndoItem( mUndoItemList ) */
+:  mBuffer(buffer), mFutureUndoItem( 0L )
 {
 	mCurrentIndex = 0;
 	mInsideUndo = false;
-//	mCurrentUndoItem = QPtrListIterator<UndoItem>( mUndoItemList );
 	mUndoItemList.setAutoDelete( true );
 	commitUndoItem();
 }
@@ -83,25 +84,19 @@ void UndoBuffer::commitUndoItem()
 {
 	if (mInsideUndo == true) return;
 	removeUndoItemAfterCurrent();
-//	yzDebug() << "UndoItem::commitUndoItem 1 " << toString() << endl;
 	if (mFutureUndoItem) {
 		mUndoItemList.append( mFutureUndoItem );
-//		yzDebug() << "UndoItem::commitUndoItem 2 " << toString() << endl;
-		// we need to re-initialise the iterator
-		//mCurrentUndoItem = QPtrListIterator<UndoItem>( mUndoItemList );
 		mCurrentIndex = mUndoItemList.count();
 	}
-//	yzDebug() << "UndoItem::commitUndoItem 3 " << toString() << endl;
 	mFutureUndoItem = new UndoItem();
 	mFutureUndoItem->setAutoDelete( true );
-	yzDebug() << "UndoItem::commitUndoItem 4 " << toString() << endl;
+	//yzDebug() << "UndoItem::commitUndoItem" << toString() << endl;
 }
 
 void UndoBuffer::addBufferOperation( BufferOperation::OperationType type, 
 									 const QString & text,
 									 uint col, uint line )
 {
-	//yzDebug() << "UndoItem::addBufferOperation 4 " << toString() << endl;
 	if (mInsideUndo == true) return;
 	YZASSERT( mFutureUndoItem != NULL );
 	BufferOperation * bufOperation = new BufferOperation();
@@ -109,22 +104,15 @@ void UndoBuffer::addBufferOperation( BufferOperation::OperationType type,
 	bufOperation->text = text;
 	bufOperation->line = line;
 	bufOperation->col = col;
-	//yzDebug() << "UndoItem::addBufferOperation 4 " << toString() << endl;
 	mFutureUndoItem->append( bufOperation );
-	//yzDebug() << "UndoItem::addBufferOperation 4 " << toString() << endl;
-
 	removeUndoItemAfterCurrent();
-	//yzDebug() << "UndoItem::addBufferOperation 5 " << toString() << endl;
 }
 
 void UndoBuffer::removeUndoItemAfterCurrent()
 {
-	//yzDebug() << "UndoItem::removeUndoItemAfterCurrent 4 " << toString() << endl;
-	// mCurrentUndoItem.toLast();
 	while( mUndoItemList.count() > mCurrentIndex ) {
 		mUndoItemList.removeLast();
 	}
-	yzDebug() << "UndoItem::removeUndoItemAfterCurrent 4 " << toString() << endl;
 }
 
 void UndoBuffer::undo()
@@ -138,11 +126,11 @@ void UndoBuffer::undo()
 	setInsideUndo( true );
 
 	UndoItemIterator it( *mUndoItemList.at(mCurrentIndex-1) );
+	it.toLast();
 	while( (bufOp = it.current()) ) {
 		bufOp->performOperation( mBuffer, true );
-		++it;
+		--it;
 	}
-	//mCurrentUndoItem--;
 	mCurrentIndex--;
 	setInsideUndo( false );
 }
@@ -157,38 +145,26 @@ void UndoBuffer::redo()
 	}
 	setInsideUndo( true );
 
-	//UndoItemIterator it( *mCurrentUndoItem );
+	++mCurrentIndex;
 	UndoItemIterator it( *mUndoItemList.at(mCurrentIndex-1) );
 	while( (bufOp = it.current()) ) {
 		bufOp->performOperation( mBuffer, false );
 		++it;
 	}
-	//mCurrentUndoItem++;
-	mCurrentIndex++;
-
 	setInsideUndo( false );
 }
 
 bool UndoBuffer::mayRedo()
 {
 	bool ret;
-	//yzDebug() << "UndoItem::mayRedo " << toString() << endl;
 	ret = mCurrentIndex < mUndoItemList.count();
-	/* (! mCurrentUndoItem.atLast() ); */
-	//yzDebug() << "UndoItem::mayRedo 4 " << toString() << endl;
-	/* return (! mCurrentUndoItem.atLast() ); */
-	// mCurrentUndoItem.toLast();
 	return ret;
 }
 	
 bool UndoBuffer::mayUndo()
 {
 	bool ret;
-	//yzDebug() << "UndoItem::mayUndo " << toString() << endl;
 	ret = mCurrentIndex > 0;
-	/* (*mCurrentUndoItem) != 0; */
-	//yzDebug() << "UndoItem::mayRedo 4 " << toString() << endl;
-	/* return (*mCurrentUndoItem) != 0; */
 	return ret;
 }
 

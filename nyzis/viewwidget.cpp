@@ -138,12 +138,13 @@ void NYZView::printLine( int line ) {
 	int mColor = mColormap[ Qt::white.rgb() ];
 
 
-	yzDebug() << "at,a,atLen are " << ( int )at << " " <<  ( int )a << " " <<  atLen <<endl;
+//yzDebug() << "at,a,atLen are " << ( int )at << " " <<  ( int )a << " " <<  atLen <<endl;
 	bool noAttribs = !a;
 	for (i=0; i<w && i<str.length(); i++) {
 		// quickly handle the tab case
 		if ( str[ i ] == tabChar ) {
 			for ( int j=0; j<8; j++ ) waddch( window, ' ' );
+			if ( a ) a++;
 			continue;
 		}
 
@@ -153,11 +154,11 @@ void NYZView::printLine( int line ) {
 		YzisAttribute *curAt = ( !noAttribs && (*a) >= atLen ) ?  &at[ 0 ] : &at[*a];
 		if ( curAt ) {
 			hl+=*curAt;
-			yzDebug(NYZIS ) << "hl.textColor is" <<  hl.textColor().rgb() << endl;
+			//yzDebug(NYZIS ) << "hl.textColor is" <<  hl.textColor().rgb() << endl;
 			mColor = mColormap.contains(hl.textColor().rgb())?
 				mColormap[ hl.textColor().rgb() ]:
 				mColormap[ Qt::white.rgb() ];
-			yzDebug()<< "nyzis highlighting *********changing color to  "<< mColor << endl;
+			//yzDebug()<< "nyzis highlighting *********changing color to  "<< mColor << endl;
 		}
 		waddch(window, COLOR_PAIR(mColor)|str[i].unicode());
 //		addch(str[i].unicode());

@@ -73,6 +73,8 @@ void YZExCommandPool::initPool() {
 	ranges.append( new YZExRange( "\\$", &YZExCommandPool::rangeLastLine ) );
 	ranges.append( new YZExRange( "'\\w", &YZExCommandPool::rangeMark ) );
 	ranges.append( new YZExRange( "'[<>]", &YZExCommandPool::rangeVisual ) );
+	ranges.append( new YZExRange( "/[^/]*/", &YZExCommandPool::rangeSearch ) );
+
 	// commands
 	commands.append( new YZExCommand( "(x|wq?)(a(ll)?)?", &YZExCommandPool::write ) );
 	commands.append( new YZExCommand( "w(rite)?", &YZExCommandPool::write ) );
@@ -136,11 +138,15 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 		_input = parseRange( _input, view, &to, &matched );
 	}
 	if ( from > to ) {
-		unsigned int tmp = to;
+		int tmp = to;
 		to = from;
 		from = tmp;
 	}
 	yzDebug() << "ExCommand : naked command : " << _input << "; range " << from << "," << to << endl;
+	if ( from < 0 || to < 0 ) {
+		yzDebug() << "ExCommand : ERROR! < 0 range" << endl;
+		return false;
+	}
 
 	matched = false;
 	for ( commands.first(); ! matched && commands.current(); commands.next() ) {
@@ -169,7 +175,9 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
  */
 
 int YZExCommandPool::rangeLine( const YZExRangeArgs& args ) {
-	return args.arg.toUInt() - 1;
+	unsigned int l = args.arg.toUInt();
+	if ( l > 0 ) --l;
+	return l;
 }
 int YZExCommandPool::rangeCurrentLine( const YZExRangeArgs& args ) {
 	return args.view->getBufferCursor()->getY();
@@ -194,7 +202,33 @@ int YZExCommandPool::rangeVisual( const YZExRangeArgs& args ) {
 	}
 	return -1;
 }
+int YZExCommandPool::rangeSearch( const YZExRangeArgs& args ) {
+	bool reverse = args.arg[ 0 ] == "?";
+	QString pat = args.arg.mid( 1, args.arg.length() - 2 );
+	if ( reverse ) 
+		pat.replace( "\\?", "?" );
+	else
+		pat.replace( "\\/", "/" );
+	yzDebug() << "rangeSearch : " << pat << endl;
 
+	YZCursor from( args.view, 0, args.view->getBufferCursor()->getY() );
+	YZCursor to( args.view );
+	if ( reverse ) {
+		to.setX( 0 );
+		to.setY( 0 );
+	} else {
+		to.setY( args.view->myBuffer()->lineCount() - 1 );
+		QString lastLine = args.view->myBuffer()->textline( to.getY() );
+		to.setX( lastLine.length() - 1 );
+	}
+	bool found;
+	unsigned int matchedLength;
+	YZCursor pos = args.view->myBuffer()->action()->search( args.view, pat, from, to, reverse, &matchedLength, &found );
+	if ( found ) {
+		return pos.getY();
+	}
+	return -1;
+}
 
 /**
  * COMMANDS

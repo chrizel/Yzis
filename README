@@ -8,14 +8,16 @@ GUI are available.
 
 Building Yzis:
 ==============
-To compile YZis, it's better to have TinyQ installed for performance
+To compile Yzis, it's better to have TinyQ installed for performance
 improvment. You can use the --with-tinyq-dir to indicate your TinyQ prefix.
-However, you can use a full Qt (>3.x) to compile the whole YZis but that will
+However, you can use a full Qt (>3.x) to compile the whole Yzis but that will
 slow down "yzis" (ncurses) startup because the system has to load the whole Qt
 library.
 
 In a near future we hope to drop TinyQ and just keep Qt (4.x), since Qt should be splitted into different libraries (thus dropping the need of TinyQ ;)
 
+To be honest I have not tried to compile with TinyQ for ages, so it's probably safer/easier to use Qt 3.1 or later :)
+For Kyzis , KDE 3.2 is required.
 
 Licenses:
 =========
@@ -26,7 +28,6 @@ details.
 
 History:
 ========
-
 Before working on Yzis, the author (Mickael Marchand, Thomas Capricalli and
 Philippe Fremy) had been working on GVim. GVim is clearly the best vi
 compatible editor today. It contains tons of features, which are very clear

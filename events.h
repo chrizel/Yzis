@@ -45,7 +45,7 @@ class YZEvents : public QObject {
 		 * Call plugins for event
 		 * @param event the event to execute plugins for
 		 */
-		 void exec(const QString& event);
+		 QStringList exec(const QString& event);
 
 	private:
 		QMap<QString,QStringList> mEvents;

@@ -338,7 +338,17 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				if ( cindent ) {
 					indent();
 				} else {
-					mBuffer->action()->insertNewLine( this, 0, mainCursor->bufferY() + 1 );
+					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
+					QStringList results = YZSession::events->exec("INDENT_ON_ENTER");
+					if (results.count() > 0 ) {
+						QStringList::Iterator it = results.begin(), end = results.end();
+						int idt = 0;
+						for (;it != end; ++it) idt += (*it).toInt();
+						QString idtstr;
+						for (int b = 0; b < idt; ++b) idtstr+=tabChar;
+						mBuffer->action()->replaceLine( this, mainCursor->bufferY(), idtstr + mBuffer->textline( mainCursor->bufferY() ).stripWhiteSpace() );
+						gotoxy(idt,mainCursor->bufferY());
+					}
 				}
 				updateStickyCol( mainCursor );
 				purgeInputBuffer();

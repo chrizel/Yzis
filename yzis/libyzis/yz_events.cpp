@@ -1,5 +1,5 @@
 /**
- * $id$
+ * $Id: yz_events.cpp,v 1.8 2003/04/25 12:45:30 mikmak Exp $
  */
 
 #include "yz_events.h"

@@ -1,5 +1,5 @@
 /**
- * $id$
+ * $Id: kyzisview.cpp,v 1.16 2003/04/25 12:45:28 mikmak Exp $
  */
 #include "kyzisview.h"
 #include "kyzis_factory.h"

@@ -1,5 +1,5 @@
 /**
- * $id$
+ * $Id: yz_cursor.cpp,v 1.3 2003/04/25 12:45:30 mikmak Exp $
  */
 
 #include "yz_cursor.h"

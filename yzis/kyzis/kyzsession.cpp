@@ -1,5 +1,5 @@
 /**
- * $id$
+ * $Id: kyzsession.cpp,v 1.4 2003/04/25 12:45:28 mikmak Exp $
  */
 
 #include "kyzsession.h"

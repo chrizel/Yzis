@@ -1,7 +1,7 @@
 #ifndef YZ_BUFFER_H
 #define YZ_BUFFER_H
 /**
- * $id$
+ * $Id: yz_buffer.h,v 1.18 2003/04/25 12:45:30 mikmak Exp $
  */
 
 #include <qstringlist.h>

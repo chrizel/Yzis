@@ -1,5 +1,5 @@
 /**
- * $id$
+ * $Id: kyzisdoc.cpp,v 1.8 2003/04/25 12:45:28 mikmak Exp $
  */
 
 #include "kyzisdoc.h"

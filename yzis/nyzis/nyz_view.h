@@ -1,5 +1,5 @@
 /**
- * $id$
+ * $Id: nyz_view.h,v 1.10 2003/04/25 12:45:33 mikmak Exp $
  */
 #ifndef NYZ_VIEW_H
 #define NYZ_VIEW_H

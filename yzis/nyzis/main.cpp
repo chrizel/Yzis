@@ -1,9 +1,9 @@
 /**
- * $id$
+ * $Id: main.cpp,v 1.10 2003/04/25 12:45:33 mikmak Exp $
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <signal.h>
+#include <cstdlib>
+#include <cstdio>
+#include <csignal>
 #include "nyz_session.h"
 
 static void finish(int sig);

@@ -1,6 +1,7 @@
 #ifndef YZ_SESSION_H
 #define YZ_SESSION_H
 /**
+ * $Id: yz_session.h,v 1.8 2003/04/25 12:45:30 mikmak Exp $
  * YZSession - Contains data referring to an instance of yzis
  * This may also be used to "transfer" a session from a GUI to another
  * Note : I don't think this is necessary to reimplement it into a GUI but maybe ...

@@ -51,7 +51,7 @@ public:
 	 * @param sess the session to which the buffer belongs to
 	 * @param _path the file to open in this buffer
 	 */
-	YZBuffer(YZSession *sess,const QString& _path=QString::null);
+	YZBuffer(YZSession *sess);
 
 	/**
 	 * Default destructor

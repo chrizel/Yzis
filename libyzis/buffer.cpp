@@ -50,28 +50,22 @@
 #define ASSERT_PREV_COL_LINE_EXISTS( functionname, col, line ) \
 	YZASSERT_MSG( col <= textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
 
-YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
+YZBuffer::YZBuffer(YZSession *sess) {
 	myId = YZSession::mNbBuffers++;
 	mIntro = false;
 	mUpdateView=true;
 	mSession = sess;
 	mText.setAutoDelete( true );
 	mModified=false;
-	if ( !_path.isNull() ) {
-		mPath = _path;
-		mFileIsNew = false;
-	} else {
-		// buffer at creation time should use a non existing temp filename
-		// find a tmp file that does not exist
-		do {
-			mPath = QString("/tmp/yzisnew%1").arg(random());
-		} while ( QFileInfo( mPath ).exists() == true );
-		// there is still a possible race condition here...
-		mFileIsNew = true;
-	}
+	// buffer at creation time should use a non existing temp filename
+	// find a tmp file that does not exist
+	do {
+		mPath = QString("/tmp/yzisnew%1").arg(random());
+	} while ( QFileInfo( mPath ).exists() == true );
+	// there is still a possible race condition here...
+	mFileIsNew = true;
 	mUndoBuffer = new YZUndoBuffer( this );
-	if ( mFileIsNew ) displayIntro();
-	else load();
+	displayIntro();
 	mSession->addBuffer( this );
 	yzDebug() << "NEW BUFFER CREATED : " << mPath << endl;
 }

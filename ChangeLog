@@ -1,3 +1,7 @@
+2004-04-16 mikmak
+  * kyzis
+    patch from ita to a kconfig settings stuff to kyzis
+
 2004-04-15 mikmak
   * libyzis
     added a signal whenever the filename is changed

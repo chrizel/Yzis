@@ -43,7 +43,7 @@
 #define VERSION_CHAR_STATE2 "(development release - Use for testing only)"
 #define VERSION_CHAR_STATE3 "(preview release - Use for testing only)"
 //and change/use this one in the code
-#define VERSION_CHAR_ST VERSION_CHAR_STATE3
+#define VERSION_CHAR_ST VERSION_CHAR_STATE2
 #define VERSION_CHAR_DATE "SVN>2004-08-09"
 
 //visibility of the option

@@ -18,10 +18,12 @@ INCLUDEPATH += cppunit/include cppunit/phil \
 
 HEADERS   =  testYZBuffer.h \
 			 testYZCommands.h \
+			 testUndo.h \
 			 TYZView.h \
 			 TYZSession.h
 			 
 SOURCES   = testYZBuffer.cpp \
 			testYZCommands.cpp \
+			testUndo.cpp \
 			TYZView.cpp \
 			main.cpp

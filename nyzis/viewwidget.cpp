@@ -282,8 +282,9 @@ void NYZView::syncViewInfo( void )
 
 	werase(infobar);
 	wmove( infobar,0,0 );
-	const char *m = mode ( mMode ).latin1();
-	for ( const char *ptr = m; *ptr; ptr++ ) {
+	QString m = mode ( mMode ).latin1();
+	yzDebug() << m << endl;
+	for ( const char *ptr = m.latin1(); *ptr; ptr++ ) {
 //		waddch(infobar, attribYellow |*ptr);
 		waddch(infobar, COLOR_PAIR(2) |*ptr);
 	}

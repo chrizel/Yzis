@@ -367,7 +367,7 @@ class YZView {
 		/**
 		 * Get the text describing the mode
 		 */
-		QString mode( int mode ) { return mModes[ mode ]; }
+		QString mode( int mode );
 
 		//GUI
 		/**

@@ -2020,3 +2020,10 @@ bool YZView::stringHasOnlySpaces ( const QString& what ) {
 	return true;
 }
 
+QString YZView::mode ( int mode ) {
+	if (isRecording()) {
+		return mModes[mode] + tr(" { Recording }");
+	}
+	return mModes[mode];
+}
+

@@ -64,20 +64,20 @@ class KYZisCCListBox : public QListBox
 
     QSize sizeHint()  const
     {
-        int count = this->count();
+        int countt = count();
         int height = 20;
         int tmpwidth = 8;
         //FIXME the height is for some reasons at least 3 items heigh, even if there is only one item in the list
-        if (count > 0)
-            if(count < 11)
-                height =  count * itemHeight(0);
+        if (countt > 0)
+            if(countt < 11)
+                height =  countt * itemHeight(0);
             else  {
                 height = 10 * itemHeight(0);
                 tmpwidth += verticalScrollBar()->width();
             }
 
         int maxcount = 0, tmpcount = 0;
-        for (int i = 0; i < count; ++i)
+        for (int i = 0; i < countt; ++i)
             if ( (tmpcount = fontMetrics().width(text(i)) ) > maxcount)
                     maxcount = tmpcount;
 
@@ -286,16 +286,16 @@ void KYZisCodeCompletion::updateBox( bool )
   kdDebug(13035) << "Text: '" << currentComplText << "'" << endl;
   kdDebug(13035) << "Count: " << m_complList.count() << endl;
 */
-  QValueList<KTextEditor::CompletionEntry>::Iterator it;
+  QValueList<KTextEditor::CompletionEntry>::Iterator it = m_complList.begin(), end = m_complList.end();
   if( m_caseSensitive ) {
-    for( it = m_complList.begin(); it != m_complList.end(); ++it ) {
+    for( ; it != end; ++it ) {
       if( (*it).text.startsWith(currentComplText) ) {
         new KYZisCompletionItem(m_completionListBox,*it);
       }
     }
   } else {
     currentComplText = currentComplText.upper();
-    for( it = m_complList.begin(); it != m_complList.end(); ++it ) {
+    for( ; it != end; ++it ) {
       if( (*it).text.upper().startsWith(currentComplText) ) {
         new KYZisCompletionItem(m_completionListBox,*it);
       }
@@ -343,7 +343,8 @@ void KYZisCodeCompletion::showArgHint ( QStringList functionList, const QString&
   m_pArgHint->setArgMarkInfos( strWrapping, strDelimiter );
 
   int nNum = 0;
-  for( QStringList::Iterator it = functionList.begin(); it != functionList.end(); it++ )
+  QStringList::Iterator it = functionList.begin(), end = functionList.end();
+  for( ; it != end; ++it )
   {
     kdDebug(13035) << "Insert function text: " << *it << endl;
 

@@ -81,9 +81,9 @@ QString YZSession::saveBufferExit() {
 YZView* YZSession::findView( int uid ) {
 //	yzDebug() << " ========= " << endl;
 //	yzDebug() << "Session::findView " << uid << endl;
-	QMap<QString,YZBuffer*>::Iterator it;
+	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	if ( uid<0 ) return NULL;
-	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+	for ( ; it!=end; ++it ) {
 		YZBuffer *b = ( it.data() );
 //		yzDebug() << "Session::findView, checking buffer " << b->fileName() << endl;
 		YZView *v = b->findView( uid );
@@ -131,8 +131,8 @@ YZView* YZSession::nextView() {
 }
 
 YZBuffer* YZSession::findBuffer( const QString& path ) {
-	QMap<QString,YZBuffer*>::Iterator it;
-	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
 		if ( b->fileName() == path ) return b;
 	}
@@ -145,9 +145,9 @@ void YZSession::updateBufferRecord( const QString& oldname, const QString& newna
 }
 
 bool YZSession::saveAll() {
-	QMap<QString,YZBuffer*>::Iterator it;
+	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	bool savedAll=true;
-	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
 		if ( !b->fileIsNew() ) {
 			if ( !b->save() ) savedAll=false;
@@ -157,8 +157,8 @@ bool YZSession::saveAll() {
 }
 
 bool YZSession::isOneBufferModified() {
-	QMap<QString,YZBuffer*>::Iterator it;
-	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
 		if ( b->fileIsNew() ) return true;
 	}
@@ -168,8 +168,8 @@ bool YZSession::isOneBufferModified() {
 void YZSession::exitRequest( int errorCode ) {
 	yzDebug() << "Preparing for final exit with code " << errorCode << endl;
 	//prompt unsaved files XXX
-	QMap<QString,YZBuffer*>::Iterator it;
-	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
 		b->getSwapFile()->unlink();
 		delete b;
@@ -179,9 +179,11 @@ void YZSession::exitRequest( int errorCode ) {
 
 void YZSession::sendMultipleKeys ( const QString& text) {
 	QStringList list = QStringList::split("<ENTER>", text);
-	for (QStringList::Iterator it = list.begin(); it != list.end(); it++) {
+	QStringList::Iterator it = list.begin(), end = list.end();
+	for (; it != end; ++it) {
 		YZView* cView = YZSession::me->currentView();
 		cView->sendMultipleKey( *it + "<ENTER>" );
 		qApp->processEvents();
 	}
 }
+

@@ -545,7 +545,8 @@ void YzisSyntaxDocument::setupModeList (bool force)
   list += findAllResources("data", QDir::homeDirPath() + "/.yzis/syntax/*.xml", false, true);
 
   // Let's iterate through the list and build the Mode List
-  for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
+  QStringList::Iterator it = list.begin(), end = list.end();
+  for ( ; it != end; ++it )
   {
     // Each file has a group called:
     QString Group="HL Cache "+ *it;

@@ -133,7 +133,7 @@ static std::string strToLower( std::string s )
 {
 	std::string::iterator it;
 	std::string lowS;
-	for( it = s.begin(); it != s.end(); it++ ) {
+	for( it = s.begin(); it != s.end(); ++it ) {
 		lowS.append( 1, (char) tolower( *it ) );
 	}
 	return lowS;

@@ -181,7 +181,8 @@ QString KYZisDoc::text (  uint startLine, uint startCol, uint endLine, uint endC
 bool KYZisDoc::setText (  const QString &text ) {
 	clearText();
 	QStringList list = QStringList::split( "\n", text );
-	for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it ) {
+	QStringList::Iterator it = list.begin(), end = list.end();
+	for ( ; it != end; ++it ) {
 		appendLine(*it);
 	}
 	return true;

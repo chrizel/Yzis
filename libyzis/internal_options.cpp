@@ -122,9 +122,9 @@ void YZInternalOptionPool::saveTo(const QString& file, const QString& what, bool
 		QTextStream stream( &f );
 		QValueList<QString> keys = mOptions.keys();
 		qHeapSort( keys );
-		QValueList<QString>::iterator it;
+		QValueList<QString>::iterator it = keys.begin(), end=keys.end();
 		QString cGroup = "";
-		for (it = keys.begin(); it != keys.end() ; ++it) {
+		for (; it != end; ++it) {
 			QString myGroup = QStringList::split( "\\", ( *it ) )[ 0 ];
 			if ( !myGroup.startsWith( what ) ) continue; //filter !
 
@@ -319,16 +319,16 @@ void YZInternalOptionPool::initConfFiles() {
 bool YZInternalOptionPool::hasGroup( const QString& group ) {
 	QValueList<QString> keys = mOptions.keys();
 //	qHeapSort( keys );
-	QValueList<QString>::iterator it;
-	for (it = keys.begin(); it != keys.end() ; ++it) {
+	QValueList<QString>::iterator it = keys.begin(), end=keys.end();
+	for (; it != end ; ++it) {
 		if ( QStringList::split( "\\", ( *it ) )[ 0 ] == group ) return true;
 	}
 	return false;
 }
 
 void YZInternalOptionPool::cleanup() {
-	QMap<QString,YZInternalOption*>::Iterator it;
-	for ( it = mOptions.begin(); it != mOptions.end(); ++it ) {
+	QMap<QString,YZInternalOption*>::Iterator it = mOptions.begin(), end = mOptions.end();
+	for ( ; it != end; ++it ) {
 		delete it.data();
 	}
 }

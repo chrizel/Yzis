@@ -154,8 +154,8 @@ void KYZisFactory::writeConfig() {
 
 void KYZisFactory::applyConfig() {
 	// apply new configuration to all views
-	QMap<QString,YZBuffer*>::Iterator it;
-	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	for ( ; it!=end; ++it ) {
 		YZBuffer *b = ( it.data() );
 		QPtrList< YZView > l = b->views();
 		YZView* yit;

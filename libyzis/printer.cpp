@@ -221,7 +221,7 @@ void YZPrinter::doPrint( ) {
 }
 
 
-void YZPrinter::convertColor(QColor c, double &r, double &g, double &b) {
+void YZPrinter::convertColor(const QColor& c, double &r, double &g, double &b) {
 	int r0, g0, b0;
 
 	c.getRgb(&r0, &g0, &b0);

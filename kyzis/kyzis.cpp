@@ -254,18 +254,8 @@ void Kyzis::closeView(int Id) {
 
 KParts::ReadWritePart* Kyzis::getCurrentPart() {
 	kdDebug() << "getCurrentPart" << endl;
-#if 0
-	QMap<int,KMdiChildView*>::Iterator it;
-	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
-		if ( it.data() == activeWindow() ) {
-			kdDebug() << "Found part at index " << it.key() << endl;
-			return partList[it.key()];
-		}
-	}
-	return partList[ 0] ;
-#endif
-	QMap<int,KView>::Iterator it;
-	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
+	QMap<int,KView>::Iterator it = viewList.begin(), end = viewList.end();
+	for ( ; it != end; ++it ) {
 		if ( it.data().v == activeWindow() ) {
 			kdDebug() << "Found part at index " << it.key() << endl;
 			return it.data().p;
@@ -276,17 +266,8 @@ KParts::ReadWritePart* Kyzis::getCurrentPart() {
 
 void Kyzis::childWindowCloseRequest( KMdiChildView *v ) {
 	kdDebug() << "childWindowCloseRequest" << endl;
-#if 0
-	QMap<int,KMdiChildView*>::Iterator it;
-	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
-		if ( it.data() == v ) {
-			kdDebug() << "Found view at index " << it.key() << endl;
-			partList.remove( it.key() ); //remove the corresponding part (no delete here)
-		}
-	}
-#endif
-	QMap<int,KView>::Iterator it;
-	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
+	QMap<int,KView>::Iterator it = viewList.begin(), end = viewList.end();
+	for ( ; it != end; ++it ) {
 		if ( it.data().v == v ) {
 			kdDebug() << "Found view at index " << it.key() << endl;
 			viewList.remove( it ); //remove the corresponding part (no delete here)
@@ -296,8 +277,8 @@ void Kyzis::childWindowCloseRequest( KMdiChildView *v ) {
 }
 
 bool Kyzis::queryClose() {
-	QMap<int,KView>::Iterator it;
-	for ( it = viewList.begin(); it != viewList.end(); it++ ) {
+	QMap<int,KView>::Iterator it = viewList.begin(), end = viewList.end();
+	for ( ; it != end; ++it ) {
 		if ( it.data().p->isModified() ) {
 			int msg = KMessageBox::warningYesNoCancel(this, QString("The file '%1' has been modified but not saved, do you want to save it ?" ).arg( it.data().p->url().prettyURL() ), "Close Document", KStdGuiItem::save(), KStdGuiItem::discard() );
 			if ( msg == KMessageBox::Cancel ) return false;

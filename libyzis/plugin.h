@@ -38,7 +38,7 @@ class YZPlugin {
 		//that's the entry point in your plugin
 		//all your keystrokes must callback this function
 		//if you find a better way , let me know :)
-		virtual QString my_function( QStringList ) = 0;
+		virtual QString my_function( const QStringList& ) = 0;
 
 };
 

@@ -235,14 +235,15 @@ void YZView::sendMultipleKey(const QString& keys) {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
+//	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 
 	QString key=_key;
 	QString modifiers=_modifiers;
 	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
 
 	if ( mRegs.count() > 0 ) {
-		for ( QValueList<QChar>::iterator it = mRegs.begin(); it != mRegs.end(); it++ ) {
+		QValueList<QChar>::iterator end = mRegs.end();
+		for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 			QStringList list;
 		   	list << YZSession::mRegisters.getRegister( *it )[ 0 ] + modifiers + _key;
 			YZSession::mRegisters.setRegister( *it, list);
@@ -729,8 +730,7 @@ void YZView::indent() {
 	//yzDebug() << "Leaving YZView::indent" << endl;
 }
 
-QString YZView::centerLine( QString s )
-{
+QString YZView::centerLine( const QString& s ) {
 	QString spacer = "";
 	unsigned int nspaces = mColumnsVis > s.length() ? mColumnsVis - s.length() : 0;
 	nspaces /= 2;
@@ -1330,20 +1330,6 @@ void YZView::applyChanges( unsigned int /*x*/, unsigned int y ) {
 	}
 	gotoxy( origPos->getX(), origPos->getY(), false );
 }
-
-/*QString YZView::deleteLine ( unsigned int nb_lines, const QValueList<QChar> &regs ) {
-	QStringList buff; //to copy old lines into the register "
-	unsigned int mY = mainCursor->bufferY();
-	buff << QString::null;
-	for ( unsigned int i = 0; i < nb_lines && ( mY + i ) < ( unsigned int )mBuffer->lineCount(); i++ )
-		buff << mBuffer->textline( mY + i );
-	buff << QString::null;
-	mBuffer->action()->deleteLine( this, mainCursor->buffer(), nb_lines );
-	for ( QValueList<QChar>::const_iterator it = regs.begin(); it != regs.end(); it++ ) {
-		YZSession::mRegisters.setRegister( *it, buff );
-	}
-	return QString::null;
-}*/
 
 QString YZView::append () {
 	gotoInsertMode();
@@ -2119,7 +2105,8 @@ void YZView::recordMacro( const QValueList<QChar> &regs ) {
 }
 
 void YZView::stopRecordMacro() {
-	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != mRegs.end(); it++ ) {
+	QValueList<QChar>::iterator end = mRegs.end();
+	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 		QStringList list;
 		QString ne = YZSession::mRegisters.getRegister( *it )[ 0 ];
 		list << ne.mid( 0, ne.length() - 1 ); //remove the last 'q' which was recorded ;)

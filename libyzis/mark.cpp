@@ -32,8 +32,8 @@ YZViewMark::~YZViewMark( ) {
 }
 
 void YZViewMark::clear( ) {
-	YZViewMarker::Iterator it = marker.begin();
-	for( ; it != marker.end(); ++it ) {
+	YZViewMarker::Iterator it = marker.begin(), end = marker.end();
+	for( ; it != end; ++it ) {
 		delete it.data().bPos;
 		delete it.data().dPos;
 	}

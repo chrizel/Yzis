@@ -116,6 +116,11 @@ class YZView {
 		YZSession *mySession() { return mSession; }
 
 		/**
+		 * Adjust view vertically to show @arg line on bottom
+		 */
+		void bottomViewVertically( unsigned int line );
+
+		/**
 		 * Center view vertically on the given @arg line
 		 */
 		void centerViewVertically( unsigned int line );

@@ -89,6 +89,10 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("V", &YZCommandPool::gotoVisualLineMode) );
 	commands.append( new YZCommand("gg", &YZCommandPool::gotoLine) );
 	commands.append( new YZCommand("G", &YZCommandPool::gotoLine) );
+	commands.append( new YZCommand("z<ENTER>", &YZCommandPool::gotoLineAtTop) );
+	commands.append( new YZCommand("z+", &YZCommandPool::gotoLineAtTop) );
+	commands.append( new YZCommand("z.", &YZCommandPool::gotoLineAtCenter) );
+	commands.append( new YZCommand("z-", &YZCommandPool::gotoLineAtBottom) );
 	commands.append( new YZCommand("dd", &YZCommandPool::deleteLine) );
 	commands.append( new YZCommand("d", &YZCommandPool::del, ARG_MOTION) );
 	commands.append( new YZCommand("D", &YZCommandPool::deleteToEOL) );
@@ -707,6 +711,39 @@ QString YZCommandPool::gotoLine(const YZCommandArgs &args) {
 		else
 			args.view->gotoLine( 0 );
 	}
+	return QString::null;
+}
+
+QString YZCommandPool::gotoLineAtTop(const YZCommandArgs &args) {
+	unsigned int line;
+	
+	line = ( args.usercount ) ? args.count - 1 : args.view->drawLineNumber() - 1;
+	args.view->alignViewVertically( line );
+	args.view->gotoLine( line );
+	args.view->moveToFirstNonBlankOfLine();
+	return QString::null;
+}
+
+QString YZCommandPool::gotoLineAtCenter(const YZCommandArgs &args) {
+	unsigned int line;
+	
+	line = ( args.usercount ) ? args.count - 1 : args.view->drawLineNumber() - 1;
+	args.view->centerViewVertically( line );
+	args.view->gotoLine( line );
+	args.view->moveToFirstNonBlankOfLine();
+	return QString::null;
+}
+
+QString YZCommandPool::gotoLineAtBottom(const YZCommandArgs &args) {
+	unsigned int line;
+	//unsigned int linesFromCenter;
+	
+	line = ( args.usercount ) ? args.count - 1 : args.view->drawLineNumber() - 1;
+	//if ( line > linesFromCenter ) {
+		args.view->bottomViewVertically( line );
+	//}
+	args.view->gotoLine( line );
+	args.view->moveToFirstNonBlankOfLine();
 	return QString::null;
 }
 

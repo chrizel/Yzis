@@ -1,3 +1,7 @@
+2004-08-27 Adam Connell (patch)
+  * libyzis
+    z., z+, z-, z<ENTER> commands
+
 2004-08-24 mikmak
   * gyzis NEW
     new gnome frontend, HELP WANTED

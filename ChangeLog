@@ -1,6 +1,6 @@
 2004-07-30 mikmak
   * libyzis
-  	support for recording macros
+  	support for recording/playing macros (q -> record, @->play)
 	
 2004-07-29 mikmak
   * libyzis

@@ -693,7 +693,10 @@ QString YZCommandPool::macro( const YZCommandArgs &args ) {
 }
 
 QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
-	yzDebug() << "replayMacro " << endl;
+	args.view->purgeInputBuffer();
+	for ( QValueList<QChar>::const_iterator it = args.regs.begin(); it != args.regs.end(); it++ ) {
+		args.view->sendMultipleKey(YZSession::mRegisters.getRegister(*it)[ 0 ]);
+	}
 	args.view->commitNextUndo();
 	return QString::null;
 }

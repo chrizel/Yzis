@@ -55,9 +55,6 @@ YZEvents *YZSession::events = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
-	//if ( me != 0 ) int t = 5/( me - me );
-	//FIXME
-
 	initModes();
 	mSearch = new YZSearch();
 	mSessionName = _sessionName;
@@ -71,6 +68,17 @@ YZSession::YZSession( const QString& _sessionName ) {
 }
 
 YZSession::~YZSession() {
+/*	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	for ( ; it!=end; ++it ) {
+#if QT_VERSION < 0x040000
+		YZBuffer *b = ( it.data() );
+#else
+		YZBuffer *b = ( it.value() );
+#endif
+		//can't call deleteBuffer from destructor
+		delete b;
+	}*/
+
 	endModes();
 	delete YzisHlManager::self();
 	delete mSchemaManager;
@@ -152,6 +160,18 @@ void YZSession::rmBuffer( YZBuffer *b ) {
 	if ( mBuffers.isEmpty() )
 		exitRequest( );
 //	delete b; // kinda hot,no?
+}
+
+void YZSession::registerView( YZView *v) {
+	if (!mViews.contains(v->myId) ) {
+		mViews[v->myId] = v;
+		yzDebug() << "Registering view : "<< v->myId << endl;
+	}
+}
+
+void YZSession::unregisterView( YZView *v ) {
+	yzDebug() << "Unregistering view : "<< v->myId << endl;
+	mViews.remove(v->myId);	
 }
 
 QString YZSession::saveBufferExit() {

@@ -1,14 +1,18 @@
+2004-09-15 panard
+  * libyzis
+  	Range support for ExCommands
+
 2004-09-11 orzel
   * nyzis
   	support the CTRL modifier
-  	
+
 2004-09-10 mikmak
   * all
   	support Unsermake ;)
   * libyzis
   	Forward word completion with <CTRL>x<CTRL>n
   	Backward word completion with <CTRL>x<CTRL>p
-  	
+
 2004-09-10 orzel
   * nyzis
     Now use a QEventLoop combined with our own loops. A lot cleaner.

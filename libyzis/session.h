@@ -25,6 +25,7 @@
  */
 
 #include "commands.h"
+#include "excommands.h"
 #include "syntaxhighlight.h"
 #include "internal_options.h"
 #include "registers.h"
@@ -33,9 +34,9 @@ class YZView;
 class YZBuffer;
 class YzisSchemaManager;
 class YZCommandPool;
+class YZExCommandPool;
 class YZInternalOptionPool;
 class YZRegisters;
-class YZExExecutor;
 class YZExLua;
 
 /**
@@ -66,7 +67,7 @@ class YZSession {
 		/**
 		 * gives access to the pool of ex commands
 		 */
-		YZCommandPool *getExPool() { return mExPool; }
+		YZExCommandPool *getExPool() { return mExPool; }
 
 		/**
 		 * Add a buffer
@@ -204,11 +205,6 @@ class YZSession {
 		YzisSchemaManager *schemaManager() { return mSchemaManager; }
 
 		/**
-		 * Get a pointer on the EX executor
-		 */
-		YZExExecutor *exExecutor() { return executor; }
-
-		/**
 		 * Get a pointer on the Lua launcher
 		 */
 		YZExLua *luaExecutor() { return lua_executor; }
@@ -292,10 +288,9 @@ class YZSession {
 	private:
 		QString mSessionName;
 		YZCommandPool *mPool;
-		YZCommandPool *mExPool;
+		YZExCommandPool *mExPool;
 		YZView* mCurView;
 		YzisSchemaManager *mSchemaManager;
-		YZExExecutor *executor;
 		YZExLua *lua_executor;
 
 	public:

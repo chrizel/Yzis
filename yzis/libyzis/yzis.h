@@ -37,10 +37,10 @@ extern FILE * debugstr;
 
 #define debug(format, arg...)	 
 #define warning(format, arg...)	 
-#define error(format, arg...)	 
+/*#define error(format, arg...)	 */ //these are function names in QT :)
 #define panic(format, arg...)	
 
-#define yz_assert(cond,msg, arg...)  if (!(cond)) error("ys_assert failed : " msg,## arg);
+#define yz_assert(cond,msg, arg...)  if (!(cond)) debug("ys_assert failed : " msg,## arg);
 
 #define yz_printfirst(text,line)	debug( text "%c%c%c%c%c", line[0], line[1], line[2], line[3], line[4], line[5])
 

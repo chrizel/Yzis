@@ -55,7 +55,7 @@ class YZLine {
 public:
 
 	enum {
-		YZ_LINE_FLAG_TOO_LONG = 1,	/* one bit per flag... */
+		YZ_LINE_FLAG_TOO_LONG = 1	/* one bit per flag... */
 	};
 
 	YZLine(int size=YZ_LINE_DEFAULT_LENGTH);

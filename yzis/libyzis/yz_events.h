@@ -15,7 +15,7 @@
 enum yz_events {
 	YZ_EV_SETLINE,
 	YZ_EV_SETCURSOR,
-	YZ_EV_SETSTATUS,
+	YZ_EV_SETSTATUS
 };
 
 /** Here are some struct used for event args handling

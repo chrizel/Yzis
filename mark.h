@@ -27,8 +27,7 @@
 #include <qstring.h>
 #include <qmap.h>
 
-#include "cursor.h"
-
+struct YZCursorPos;
 class YZCursor;
 
 typedef QMap<QString, YZCursorPos> YZMarker;

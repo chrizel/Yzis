@@ -21,6 +21,9 @@
 #include "view.h"
 #include "cursor.h"
 #include "debug.h"
+#include "buffer.h"
+#include "action.h"
+#include "mark.h"
 
 static YZMotion nullMotion("",REGEXP,0,0,false,false);
 

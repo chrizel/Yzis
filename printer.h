@@ -27,8 +27,6 @@
 #include <qprinter.h>
 #include <qcolor.h>
 
-#include "view.h"
-
 class YZView;
 
 class YZPrinter /*: public QPrinter*/ {

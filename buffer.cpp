@@ -35,6 +35,11 @@
 #include "view.h"
 #include "undo.h"
 #include "debug.h"
+#include "action.h"
+#include "options.h"
+#include "mark.h"
+#include "swapfile.h"
+#include "session.h"
 
 #define ASSERT_TEXT_WITHOUT_NEWLINE( functionname, text ) \
 	YZASSERT_MSG( text .contains('\n')==false, QString("%1 - text contains newline").arg(text) )

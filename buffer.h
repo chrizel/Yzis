@@ -27,19 +27,16 @@
 
 #include <qvaluevector.h>
 #include <qstring.h>
+#include <qapplication.h>
 #include "yzis.h"
-#include "session.h"
-#include "commands.h"
 #include "syntaxhighlight.h"
-#include "action.h"
-#include "mark.h"
-#include "swapfile.h"
+#include "line.h"
 
 class YZView;
-class YZLine;
 class YZUndoBuffer;
 class YZAction;
 class YZMark;
+class YZCursor;
 class YZSwapFile;
 class YZSession;
 

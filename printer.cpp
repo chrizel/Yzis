@@ -30,7 +30,9 @@ extern "C" {
 }
 
 #include "printer.h"
-
+#include "view.h"
+#include "buffer.h"
+#include "session.h"
 #include "debug.h"
 
 YZPrinter::YZPrinter( YZView *view ) /*: QPrinter(QPrinter::PrinterResolution) */{

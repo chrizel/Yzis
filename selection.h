@@ -24,10 +24,10 @@
 #ifndef YZ_SELECTION_H
 #define YZ_SELECTION_H
 
-#include "cursor.h"
 #include <qmap.h>
 
 class YZCursor;
+class YZView;
 
 struct selection {
 	YZCursor * from;

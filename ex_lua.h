@@ -20,7 +20,6 @@
 #ifndef YZ_EX_LUA
 #define YZ_EX_LUA
 
-#include "view.h"
 #include <qobject.h>
 extern "C" {
 #include <lua.h>

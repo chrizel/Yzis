@@ -26,10 +26,7 @@
 
 #include <qstring.h>
 
-#include "buffer.h"
-#include "view.h"
 #include "cursor.h"
-#include "commands.h"
 
 class YZBuffer;
 class YZView;

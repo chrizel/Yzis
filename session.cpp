@@ -24,6 +24,15 @@
 
 #include "session.h"
 #include "debug.h"
+#include "motionpool.h"
+#include "ex_executor.h"
+#include "ex_lua.h"
+#include "schema.h"
+#include "buffer.h"
+#include "options.h"
+#include "registers.h"
+#include "view.h"
+#include "swapfile.h"
 
 int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;

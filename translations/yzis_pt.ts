@@ -170,7 +170,7 @@
     </message>
     <message>
         <source>All</source>
-        <translation>Todos</translation>
+        <translation>Todo</translation>
     </message>
     <message>
         <source>Top</source>

@@ -45,8 +45,6 @@
 //and change/use this one in the code
 #define VERSION_CHAR_ST VERSION_CHAR_STATE3
 #define VERSION_CHAR_DATE "SVN>2004-08-06"
-//for testing
-#define VERSION_REVISION "$Rev$"
 
 #endif /* YZIS_H */
 

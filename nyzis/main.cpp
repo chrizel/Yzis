@@ -31,22 +31,29 @@
 #include <cstdio>
 #include <csignal>
 
-/* Qt */
-#include <qapplication.h>
-#include <qtranslator.h>
-#include <qtextcodec.h>
-
-/* X11 */
-#include <X11/Xlib.h>
-
-
 /* libyzis */
 #include "libyzis/translator.h"
 
 /* yzis */
 #include "debug.h"
-#include "factory.h"
 #include "eventloop.h"
+#include "factory.h"
+
+/* Qt */
+#include <qglobal.h>
+#if QT_VERSION < 0x040000
+#include <qapplication.h>
+#include <qtranslator.h>
+#include <qtextcodec.h>
+#else
+#include <QApplication>
+#include <QTranslator>
+#include <QTextCodec>
+#endif
+
+/* X11 */
+#include <X11/Xlib.h>
+
 
 
 typedef void ( *sighandler_t )( int );
@@ -70,19 +77,33 @@ main(int argc, char *argv[])
 	bool useGUI = TRUE;
 #endif
 
+#if QT_VERSION < 0x040000
 	// keep this one before QApplication creation, and doesn't declare it as "NYZEventLoop loop();", use new
 	( void ) new NYZEventLoop();
+#else
+	//NYZEventLoop loop;
+	( void ) new NYZEventLoop();
+#endif
 
 	QApplication app( argc, argv, useGUI );
 
 	// Translator stuff
 	QTranslator qt(  0 );
+#if QT_VERSION < 0x040000
 	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
+#else
+	qt.load(  QString(  "qt_" ) + QTextCodec::codecForLocale()->name(), "." );
+#endif
 	app.installTranslator(  &qt );
 	QTranslator translator(  0 );
 	QString initialSendKeys;
+#if QT_VERSION < 0x040000
 	translator.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
 	yzDebug(NYZIS) << "Locale " << QTextCodec::locale() << endl;
+#else
+	translator.load(  QString(  "yzis_" ) + QTextCodec::codecForLocale()->name(), QString( PREFIX ) + "/share/yzis/locale/" );
+	yzDebug(NYZIS) << "Locale " << QString(QTextCodec::codecForLocale()->name()) << endl;
+#endif
 	app.installTranslator(  &translator );
 
 	// option stuff
@@ -157,7 +178,7 @@ main(int argc, char *argv[])
 
 	YZSession::me->guiStarted();
 
-	app.exec();
+	return app.exec();
 }
 
 static void cleaning(void)

@@ -25,8 +25,12 @@
 #ifndef YZIS_LINE_H
 #define YZIS_LINE_H
 
+#if QT_VERSION < 0x040000
 #include <qobject.h>
 #include <qmap.h>
+#else
+#include <QVector>
+#endif
 
 /**
  * this class represents a line in the buffer
@@ -42,8 +46,13 @@ class YZLine
 		const QString& data() const { return mData; }
 		void setData(const QString &data);
 		int length() { return mData.length(); }
+#if QT_VERSION < 0x040000
 		inline const QMemArray<short> &ctxArray () const { return m_ctx; };
 		inline void setContext (QMemArray<short> &val) { m_ctx.assign (val); }
+#else
+		inline const QVector<short> &ctxArray () const { return m_ctx; };
+		inline void setContext (QVector<short> &val) { m_ctx = val; }
+#endif
 		inline bool hlLineContinue () const { return m_flags & YZLine::flagHlContinue; }
 
 		inline void setHlLineContinue (bool cont)
@@ -53,7 +62,7 @@ class YZLine
 		}
 
 
-		inline uchar *attributes () const { return mAttributes.data(); }
+		inline uchar *attributes () { return mAttributes.data(); }
 		bool initialized() { return m_initialized; }
 
 		int firstChar() const;
@@ -72,10 +81,17 @@ class YZLine
 	private:
 		QString mData;
 
+#if QT_VERSION < 0x040000
 		//rendering settings for each char
 		QMemArray<uchar> mAttributes;
 		//contexts for HL
 		QMemArray<short> m_ctx;
+#else
+		//rendering settings for each char
+		QVector<uchar> mAttributes;
+		//contexts for HL
+		QVector<short> m_ctx;
+#endif
 		/**
 		  Some bools packed
 		  */

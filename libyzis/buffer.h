@@ -25,9 +25,14 @@
  * $Id$
  */
 
+#if QT_VERSION < 0x040000
 #include <qvaluevector.h>
-#include <qstring.h>
 #include <qapplication.h>
+#include <qstring.h>
+#else
+#include <QVector>
+#include <QCoreApplication>
+#endif
 #include "yzis.h"
 #include "syntaxhighlight.h"
 #include "line.h"
@@ -42,7 +47,11 @@ class YZCursor;
 class YZSwapFile;
 class YZSession;
 
+#if QT_VERSION < 0x040000
 typedef QValueVector<YZLine*> YZBufferData;
+#else
+typedef QVector<YZLine*> YZBufferData;
+#endif
 static QString myNull;
 
 /**
@@ -244,7 +253,11 @@ public:
 	 * The list of view for this buffer
 	 * @return a QValuelist of pointers to the views
 	 */
+#if QT_VERSION < 0x040000
 	QPtrList<YZView> views() { return mViews; }
+#else
+	QVector<YZView*> views() { return mViews; }
+#endif
 
 	/**
 	 * Find the first view of this buffer
@@ -291,7 +304,11 @@ public:
 	/**
 	 * Translator wrapper function
 	 */
+#if QT_VERSION < 0x040000
 	QString tr( const char *source, const char* = 0) { return qApp->translate( "YZBuffer", source ); }
+#else
+	QString tr( const char *source, const char* = 0) { return QCoreApplication::translate( "YZBuffer", source ); }
+#endif
 
 	/**
 	 * Sets the highlighting mode for this buffer
@@ -318,22 +335,18 @@ public:
 	 */
 	inline YZLine * yzline(unsigned int line, bool noHL = true) {
 		//if you change this method, DO NOT FORGET TO CHANGE THE ONE AFTER !
-		bool found=TRUE;
-		YZLine *yl = mText.at( line, &found );
-		if ( found == FALSE ) {
+		if ( line >= mText.size() )
 			return new YZLine();
-		}
+		YZLine *yl = mText.at( line );
 		if ( !noHL && yl && !yl->initialized() ) initHL( line );
 		return yl;
 	}
 
 	inline YZLine * yzline(unsigned int line) const {
 		//if you change this method, DO NOT FORGET TO CHANGE THE ONE BEFORE !
-		bool found=TRUE;
-		YZLine *yl = mText.at( line, &found );
-		if ( found == FALSE ) {
+		if ( line >= mText.size() )
 			return new YZLine();
-		}
+		YZLine *yl = mText.at( line );
 		return yl;
 	}
 
@@ -443,7 +456,11 @@ protected:
 	bool isLineVisible(uint line);
 
 	QString mPath;
+#if QT_VERSION < 0x040000
 	QPtrList<YZView> mViews;
+#else
+	QVector<YZView*> mViews;
+#endif
 
 	YZBufferData mText;
 	YZSession *mSession;

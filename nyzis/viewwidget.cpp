@@ -22,8 +22,12 @@
 
 #include "debug.h"
 /* Qt */
+#if QT_VERSION < 0x040000
 #include <qnamespace.h>
 #include <qcolor.h>
+#else
+#include <QColor>
+#endif
 
 #include <ctype.h>
 
@@ -176,6 +180,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				if ( lineNumber != lastLineNumber ) { // we don't draw it twice
 					wattron( editor, attribYellow );
 					QString num = QString::number( lineNumber );
+#if QT_VERSION < 0x040000
 					if ( rightleft ) {
 						num = num.leftJustify( marginLeft - 1, ' ' );
 						x = width - currentX - num.length();
@@ -183,6 +188,15 @@ void NYZView::drawContents( int clipy, int cliph ) {
 						num = num.rightJustify( marginLeft - 1, ' ' );
 						x = currentX;
 					}
+#else
+					if ( rightleft ) {
+						num = num.leftJustified( marginLeft - 1, ' ' );
+						x = width - currentX - num.length();
+					} else {
+						num = num.rightJustified( marginLeft - 1, ' ' );
+						x = currentX;
+					}
+#endif
 					mvwaddstr( editor, currentY, x, num );
 					wattroff( editor, attribYellow );
 					x = marginLeft - 1;
@@ -224,7 +238,11 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				else
 					x = currentX;
 
+#if QT_VERSION < 0x040000
 				QCString my_char = QString( drawChar() ).local8Bit();
+#else
+				QByteArray my_char = QString( drawChar() ).local8Bit();
+#endif
 				char* from_char = new char[ my_char.length() + 1 ]; // XXX always 1 + 1 ?
 				strcpy( from_char, (const char *)my_char );
 				size_t needed = mbstowcs( NULL, from_char, strlen( from_char ) ); // XXX always 1 ?
@@ -238,7 +256,11 @@ void NYZView::drawContents( int clipy, int cliph ) {
 				
 				if ( drawLength() > 1 ) {
 					for (unsigned int i = 1; i < drawLength(); i++ ) 
+#if QT_VERSION < 0x040000
 						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), fillChar() );
+#else
+						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), fillChar().unicode() );
+#endif
 				}
 				wattroff( editor, mAttributes );
 				currentX += drawLength( );
@@ -260,7 +282,6 @@ void NYZView::drawContents( int clipy, int cliph ) {
 	}
 
 	drawCursor();
-	wrefresh( editor );
 }
 
 void NYZView::drawCursor() {
@@ -370,7 +391,7 @@ void NYZView::initialiseAttributesMap()
 	YZASSERT( ERR != init_pair( nb, (color), -1 /*COLOR_BLACK*/ ) );    \
 	mAttributesMap[(rawcolor)] = COLOR_PAIR((nb)) | (attributes);
 #define MAP( nb, qtcolor, color, attributes )               \
-		RAWMAP((nb),qtcolor.rgb()&RGB_MASK,(color),(attributes))
+		RAWMAP((nb),((QColor)qtcolor).rgb() & RGB_MASK,(color),(attributes))
 // first arg is the new rawcolor, second arg is the one that should be used
 #define ALIASMAP(rawcolor1,rawcolor2) \
 	YZASSERT( ! mAttributesMap.contains( rawcolor1) ); \

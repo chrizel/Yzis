@@ -17,15 +17,25 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+#include <qglobal.h>
+#if QT_VERSION < 0x040000
 #include <qapplication.h>
+#else
+#include <QApplication>
+#endif
 
 #include "debug.h"
 #include "factory.h"
 #include "eventloop.h"
 
 
+#if 0
 NYZEventLoop::NYZEventLoop (  QObject * parent, const char * name)
+#if QT_VERSION < 0x040000
 	:QEventLoop( parent,name )
+#else
+	:QEventDispatcherUNIX()
+#endif
 {
 	yzWarning( NYZIS ) << "constructing NYZEventLoop::NYZEventLoop" << endl;
 }
@@ -35,9 +45,9 @@ NYZEventLoop::NYZEventLoop (  QObject * parent, const char * name)
 NYZEventLoop::~NYZEventLoop ()
 {
 }
+#endif
 
-
-bool NYZEventLoop::processEvents(  ProcessEventsFlags flags )
+bool NYZEventLoop::processEvents( QEventLoop::ProcessEventsFlags flags )
 {
 	// from Qt Doc :
 	// If the WaitForMore flag is set in flags, the behavior of this function is as follows: 
@@ -60,8 +70,13 @@ bool NYZEventLoop::processEvents(  ProcessEventsFlags flags )
 	bool qt_had_some = false;
 //	yzDebug () << "Flags " << flags << " has events " << QEventLoop::hasPendingEvents() << endl;
 	qt_had_some =  NYZFactory::self->process_one_event();
+#if QT_VERSION < 0x040000
 	if ( !qt_had_some && qApp->type() != QApplication::Tty && QEventLoop::hasPendingEvents() )
 		qt_had_some = QEventLoop::processEvents(QEventLoop::AllEvents/*flags*/);
+#else
+	if ( !qt_had_some && qApp->type() != QApplication::Tty && QEventDispatcherUNIX::hasPendingEvents() )
+		qt_had_some = QEventDispatcherUNIX::processEvents(QEventLoop::AllEvents/*flags*/);
+#endif
 
 	return /*true*/qt_had_some;
 }

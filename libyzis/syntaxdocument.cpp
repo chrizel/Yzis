@@ -27,9 +27,6 @@
    Copyright (C) 2000 Scott Manson <sdmanson@alltel.net>
 */
 
-#include <qfile.h>
-#include <qdir.h>
-#include <qregexp.h>
 #include "syntaxdocument.h"
 #include "debug.h"
 #include "portability.h"
@@ -37,6 +34,14 @@
 #include "session.h"
 #include <sys/stat.h>
 #include <sys/types.h>
+#if QT_VERSION < 0x040000
+#include <qfile.h>
+#include <qdir.h>
+#include <qregexp.h>
+#else
+#include <QDir>
+#include <QFile>
+#endif
 
 static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
 static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
@@ -66,7 +71,11 @@ bool YzisSyntaxDocument::setIdentifier(const QString& identifier)
     // let's open the new file
     QFile f( identifier );
 
+#if QT_VERSION < 0x040000
     if ( f.open(IO_ReadOnly) )
+#else
+    if ( f.open(QIODevice::ReadOnly) )
+#endif
     {
       // Let's parse the contets of the xml file
       /* The result of this function should be check for robustness,
@@ -308,7 +317,11 @@ QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QStrin
 
           for (uint i=0; i<childlist.count(); i++)
           {
+#if QT_VERSION < 0x040000
             QString element = childlist.item(i).toElement().text().stripWhiteSpace();
+#else
+            QString element = childlist.item(i).toElement().text().trimmed();
+#endif
             if (element.isEmpty())
               continue;
 #ifndef NDEBUG
@@ -347,7 +360,11 @@ YzisSyntaxDocument::findAllResources( const char *,
 
     if (filter.length())
     {
+#if QT_VERSION < 0x040000
        int slash = filter.findRev('/');
+#else
+       int slash = filter.indexOf('/');
+#endif
        if (slash < 0)
 	   filterFile = filter;
        else {
@@ -371,7 +388,11 @@ YzisSyntaxDocument::findAllResources( const char *,
     if (filterFile.isEmpty())
 	filterFile = "*";
 
+#if QT_VERSION < 0x040000
     QRegExp regExp(filterFile, true, true);
+#else
+    QRegExp regExp(filterFile, Qt::CaseSensitive, QRegExp::Wildcard);
+#endif
 
     for (QStringList::ConstIterator it = candidates.begin();
          it != candidates.end(); it++)
@@ -471,7 +492,11 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
 
     if (relpath.length())
     {
+#if QT_VERSION < 0x040000
        int slash = relpath.find('/');
+#else
+       int slash = relpath.indexOf('/');
+#endif
        if (slash < 0)
 	   rest = relpath.left(relpath.length() - 1);
        else {
@@ -486,7 +511,11 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
 
     if (path.contains('*') || path.contains('?')) {
 
+#if QT_VERSION < 0x040000
 	QRegExp pathExp(path, true, true);
+#else
+	QRegExp pathExp(path, Qt::CaseSensitive, QRegExp::Wildcard);
+#endif
 	DIR *dp = opendir( QFile::encodeName(prefix) );
 	if (!dp) {
 	    return;
@@ -549,7 +578,11 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
   // Let's get a list of all the xml files for hl
   QStringList list = findAllResources("data",QString( PREFIX ) + "/share/yzis/syntax/*.xml",false,true);
+#if QT_VERSION < 0x040000
   list += findAllResources("data", QDir::homeDirPath() + "/.yzis/syntax/*.xml", false, true);
+#else
+  list += findAllResources("data", QDir::homePath() + "/.yzis/syntax/*.xml", false, true);
+#endif
 
   // Let's iterate through the list and build the Mode List
   QStringList::Iterator it = list.begin(), end = list.end();
@@ -593,7 +626,11 @@ void YzisSyntaxDocument::setupModeList (bool force)
       // We're forced to read the xml files or the mode doesn't exist in the katesyntax...rc
       QFile f(*it);
 
+#if QT_VERSION < 0x040000
       if (f.open(IO_ReadOnly))
+#else
+      if (f.open(QIODevice::ReadOnly))
+#endif
       {
         // Ok we opened the file, let's read the contents and close the file
         /* the return of setContent should be checked because a false return shows a parsing error */
@@ -671,6 +708,10 @@ void YzisSyntaxDocument::setupModeList (bool force)
       }
     }
   }
+#if QT_VERSION < 0x040000
   config.saveTo( QDir::homeDirPath()+"/.yzis/hl.conf", "HL Cache", "", true );
+#else
+  config.saveTo( QDir::homePath()+"/.yzis/hl.conf", "HL Cache", "", true );
+#endif
 }
 

@@ -57,12 +57,21 @@ class YZAction {
 		void insertNewLine( YZView* pView, const YZCursor& pos );
 		void insertNewLine( YZView* pView, unsigned int X, unsigned int Y );
 
+#if QT_VERSION < 0x040000
 		void deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg );
 		void deleteLine( YZView* pView, unsigned int Y, unsigned int len , const QValueList<QChar> &reg );
 		void deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QValueList<QChar> &reg );
 
 		void copyLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg );
 		void copyArea( YZView* pView, const YZCursor& begin,const YZCursor& end, const QValueList<QChar> &reg );
+#else
+		void deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QList<QChar> &reg );
+		void deleteLine( YZView* pView, unsigned int Y, unsigned int len , const QList<QChar> &reg );
+		void deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QList<QChar> &reg );
+
+		void copyLine( YZView* pView, const YZCursor& pos, unsigned int len, const QList<QChar> &reg );
+		void copyArea( YZView* pView, const YZCursor& begin,const YZCursor& end, const QList<QChar> &reg );
+#endif
 
 		void replaceLine( YZView* pView, const YZCursor& pos, const QString &text );
 		void replaceLine( YZView* pView, unsigned int Y, const QString &text );

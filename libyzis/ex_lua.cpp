@@ -18,8 +18,6 @@
  **/
 
 #include <iostream>
-#include <qfileinfo.h>
-#include <qdir.h>
 #include "ex_lua.h"
 #include "debug.h"
 #include "view.h"
@@ -31,6 +29,12 @@
 #include "mapping.h"
 #include "portability.h"
 #include <stdarg.h>
+#if QT_VERSION < 0x040000
+#include <qfileinfo.h>
+#include <qdir.h>
+#else
+#include <QDir>
+#endif
 
 /*
  * TODO:
@@ -210,13 +214,23 @@ QString YZExLua::source( YZView *v, const QString& args ) {
 
 QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 	yzDebug() << "source : " << args << endl;
+#if QT_VERSION < 0x040000
 	QString filename = args.mid( args.find( " " ) +1 );
+#else
+	QString filename = args.mid( args.indexOf( " " ) +1 );
+#endif
 	yzDebug() << "filename : " << filename << endl;
 	QStringList candidates;
 	candidates << filename 
+#if QT_VERSION < 0x040000
 	           << QDir::currentDirPath()+"/"+filename
 	           << QDir::homeDirPath()+"/.yzis/scripts/"+filename
 	           << QDir::homeDirPath()+"/.yzis/scripts/indent/"+filename
+#else
+	           << QDir::currentPath()+"/"+filename
+	           << QDir::homePath()+"/.yzis/scripts/"+filename
+	           << QDir::homePath()+"/.yzis/scripts/indent/"+filename
+#endif
 		       << QString( PREFIX )+"/share/yzis/scripts/"+filename
 		       << QString( PREFIX )+"/share/yzis/scripts/indent/"+filename;
 	QString found;
@@ -307,7 +321,11 @@ int YZExLua::setline(lua_State *L) {
 
 	sLine = sLine ? sLine - 1 : 0;
 
+#if QT_VERSION < 0x040000
 	if (text.find("\n") != -1) {
+#else
+	if (text.indexOf("\n") != -1) {
+#endif
 		printf("setline with line containing \n");
 		return 0;
 	}
@@ -326,7 +344,11 @@ int YZExLua::insert(lua_State *L) {
 	sLine = sLine ? sLine - 1 : 0;
 
 	YZView* cView = YZSession::me->currentView();
+#if QT_VERSION < 0x040000
 	QStringList list = QStringList::split( "\n", text );
+#else
+	QStringList list = text.split( "\n" );
+#endif
 	QStringList::Iterator it = list.begin(), end = list.end();
 	for ( ; it != end; ++it ) {
 		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
@@ -363,7 +385,11 @@ int YZExLua::insertline(lua_State *L) {
 	sLine = sLine ? sLine - 1 : 0;
 
 	YZView* cView = YZSession::me->currentView();
+#if QT_VERSION < 0x040000
 	QStringList list = QStringList::split( "\n", text );
+#else
+	QStringList list = text.split( "\n" );
+#endif
 	QStringList::Iterator it = list.begin(), end = list.end();
 	for ( ; it != end; ++it ) {
 		YZBuffer * cBuffer = cView->myBuffer();
@@ -385,7 +411,11 @@ int YZExLua::appendline(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
 	YZBuffer * cBuffer = cView->myBuffer();
 	YZAction * cAction = cBuffer->action();
+#if QT_VERSION < 0x040000
 	QStringList list = QStringList::split( "\n", text );
+#else
+	QStringList list = text.split( "\n" );
+#endif
 	QStringList::Iterator it = list.begin(), end = list.end();
 	for ( ; it != end; ++it ) {
 		if (cBuffer->isEmpty()) {
@@ -407,7 +437,11 @@ int YZExLua::replace(lua_State *L) {
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
 
+#if QT_VERSION < 0x040000
 	if (text.find('\n') != -1) {
+#else
+	if (text.indexOf('\n') != -1) {
+#endif
 		// replace does not accept multiline strings, it is too strange
 		return 0;
 	}
@@ -466,7 +500,11 @@ int YZExLua::deleteline(lua_State *L) {
 	int sLine = ( int )lua_tonumber( L,1 );
 
 	YZView* cView = YZSession::me->currentView();
+#if QT_VERSION < 0x040000
 	QValueList<QChar> regs;
+#else
+	QList<QChar> regs;
+#endif
 	regs << QChar( '"' ) ;
 	cView->myBuffer()->action()->deleteLine( cView, sLine ? sLine - 1 : 0, 1, regs );
 

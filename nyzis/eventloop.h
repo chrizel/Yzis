@@ -19,17 +19,23 @@
 #ifndef  YZIS_EVENT_LOOP
 #define  YZIS_EVENT_LOOP
 
+#if QT_VERSION < 0x040000
 #include <qeventloop.h> 
+#else
+#include <QEventDispatcherUNIX>
+#endif
 
 
+#if QT_VERSION < 0x040000
 class NYZEventLoop : public QEventLoop
+#else
+class NYZEventLoop : public QEventDispatcherUNIX
+#endif
 {
 public:
-	NYZEventLoop (QObject * parent = 0, const char * name = 0);
-	~NYZEventLoop ();
+	inline NYZEventLoop () {}
 
-protected:
-	bool processEvents(  ProcessEventsFlags flags );
+	virtual bool processEvents(  QEventLoop::ProcessEventsFlags flags );
 
 };
 

@@ -44,9 +44,14 @@
 #endif
 
 #include "ex_lua.h"
+#if QT_VERSION < 0x040000
 #include <qstringlist.h>
 #include <qtextstream.h>
 #include <qdir.h>
+#else
+#include <QDir>
+#include <QTextStream>
+#endif
 //END
 
 //BEGIN defines
@@ -57,7 +62,11 @@
 static const int YZIS_DYNAMIC_CONTEXTS_RESET_DELAY = 30 * 1000;
 
 // x is a QString. if x is "true" or "1" this expression returns "true"
+#if QT_VERSION < 0x040000
 #define IS_TRUE(x) x.lower() == QString("true") || x.toInt() == 1
+#else
+#define IS_TRUE(x) x.toLower() == QString("true") || x.toInt() == 1
+#endif
 //END defines
 
 //BEGIN  Prviate HL classes
@@ -90,7 +99,11 @@ class YzisHlItem
 
     static void dynamicSubstitute(QString& str, const QStringList *args);
 
+#if QT_VERSION < 0x040000
     QMemArray<YzisHlItem*> subItems;
+#else
+    QVector<YzisHlItem*> subItems;
+#endif
     int attr;
     int ctx;
     signed char region;
@@ -117,7 +130,11 @@ class YzisHlContext
     virtual ~YzisHlContext();
     YzisHlContext *clone(const QStringList *args);
 
+#if QT_VERSION < 0x040000
     QValueVector<YzisHlItem*> items;
+#else
+    QVector<YzisHlItem*> items;
+#endif
     int attr;
     int ctx;
     int lineBeginContext;
@@ -131,17 +148,6 @@ class YzisHlContext
 
     bool dynamic;
     bool dynamicChild;
-};
-
-class YzisEmbeddedHlInfo
-{
-  public:
-    YzisEmbeddedHlInfo() {loaded=false;context0=-1;}
-    YzisEmbeddedHlInfo(bool l, int ctx0) {loaded=l;context0=ctx0;}
-
-  public:
-    bool loaded;
-    int context0;
 };
 
 class YzisHlIncludeRule
@@ -227,7 +233,11 @@ class YzisHlKeyword : public YzisHlItem
     virtual int checkHgl(const QString& text, int offset, int len);
 
   private:
+#if QT_VERSION < 0x040000
     QMemArray< QDict<bool>* > dict;
+#else
+    QVector< QHash<QString,bool>* > dict;
+#endif
     bool _caseSensitive;
     const QString& deliminators;
     int minLen;
@@ -453,7 +463,7 @@ YzisHlCharDetect::YzisHlCharDetect(int attribute, int context, signed char regio
 {
 }
 
-int YzisHlCharDetect::checkHgl(const QString& text, int offset, int len)
+int YzisHlCharDetect::checkHgl(const QString& text, int offset, int /*len*/)
 {
   if (text[offset] == sChar)
     return offset + 1;
@@ -510,7 +520,11 @@ YzisHlItem *YzisHl2CharDetect::clone(const QStringList *args)
 //BEGIN YzisHlStringDetect
 YzisHlStringDetect::YzisHlStringDetect(int attribute, int context, signed char regionId,signed char regionId2,const QString &s, bool inSensitive)
   : YzisHlItem(attribute, context,regionId,regionId2)
+#if QT_VERSION < 0x040000
   , str(inSensitive ? s.upper() : s)
+#else
+  , str(inSensitive ? s.toUpper() : s)
+#endif
   , strLen (str.length())
   , _inSensitive(inSensitive)
 {
@@ -524,7 +538,11 @@ int YzisHlStringDetect::checkHgl(const QString& text, int offset, int len)
   if (_inSensitive)
   {
     for (int i=0; i < strLen; i++)
+#if QT_VERSION < 0x040000
       if (text[offset++].upper() != str[i])
+#else
+      if (text[offset++].toUpper() != str[i])
+#endif
         return 0;
 
     return offset;
@@ -618,11 +636,20 @@ void YzisHlKeyword::addList(const QStringList& list)
       dict.resize (len+1);
 
       for (uint m=oldSize; m < dict.size(); ++m)
+#if QT_VERSION < 0x040000
         dict.at(m) = 0;
+#else
+      	dict[m] = 0;
+#endif
     }
 
     if (!dict[len])
+#if QT_VERSION < 0x040000
       dict[len] = new QDict<bool> (17, _caseSensitive);
+#else
+    //XXX casesensitive is dropped here ...
+      dict[len] = new QHash<QString,bool> ();
+#endif
 
     dict[len]->insert(list[i], &trueBool);
   }
@@ -643,7 +670,7 @@ int YzisHlKeyword::checkHgl(const QString& text, int offset, int len)
 
   if (wordLen < minLen) return 0;
 
-  if ( dict[wordLen] && dict[wordLen]->find(QConstString(text.unicode() + offset, wordLen).string()) )
+  if ( dict[wordLen] && dict[wordLen]->find(QString(text.unicode() + offset, wordLen)) )
     return offset2;
 
   return 0;
@@ -720,7 +747,7 @@ int YzisHlFloat::checkHgl(const QString& text, int offset, int len)
   if (!b)
     return 0;
 
-  if ((len > 0) && ((text[offset] & 0xdf) == 'E'))
+  if ((len > 0) && ((text[offset].unicode() & 0xdf) == 'E'))
   {
     offset++;
     len--;
@@ -805,7 +832,7 @@ int YzisHlCOct::checkHgl(const QString& text, int offset, int len)
 
     if (offset2 > offset)
     {
-      if ((len > 0) && ((text[offset2] & 0xdf) == 'L' || (text[offset] & 0xdf) == 'U' ))
+      if ((len > 0) && ((text[offset2].unicode() & 0xdf) == 'L' || (text[offset].unicode() & 0xdf) == 'U' ))
         offset2++;
 
       return offset2;
@@ -825,13 +852,13 @@ YzisHlCHex::YzisHlCHex(int attribute, int context,signed char regionId,signed ch
 
 int YzisHlCHex::checkHgl(const QString& text, int offset, int len)
 {
-  if ((len > 1) && (text[offset++] == '0') && ((text[offset++] & 0xdf) == 'X' ))
+  if ((len > 1) && (text[offset++] == QChar('0')) && ((text[offset++].unicode() & 0xdf) == 'X' ))
   {
     len -= 2;
 
     int offset2 = offset;
 
-    while ((len > 0) && (text[offset2].isDigit() || ((text[offset2] & 0xdf) >= 'A' && (text[offset2] & 0xdf) <= 'F')))
+    while ((len > 0) && (text[offset2].isDigit() || ((text[offset2].unicode() & 0xdf) >= 'A' && (text[offset2].unicode() & 0xdf) <= 'F')))
     {
       offset2++;
       len--;
@@ -839,7 +866,7 @@ int YzisHlCHex::checkHgl(const QString& text, int offset, int len)
 
     if (offset2 > offset)
     {
-      if ((len > 0) && ((text[offset2] & 0xdf) == 'L' || (text[offset2] & 0xdf) == 'U' ))
+      if ((len > 0) && ((text[offset2].unicode() & 0xdf) == 'L' || (text[offset2].unicode() & 0xdf) == 'U' ))
         offset2++;
 
       return offset2;
@@ -878,7 +905,7 @@ int YzisHlCFloat::checkHgl(const QString& text, int offset, int len)
 
   if (offset2)
   {
-    if ((text[offset2] & 0xdf) == 'F' )
+    if ((text[offset2].unicode() & 0xdf) == 'F' )
       offset2++;
 
     return offset2;
@@ -887,7 +914,7 @@ int YzisHlCFloat::checkHgl(const QString& text, int offset, int len)
   {
     offset2 = checkIntHgl(text, offset, len);
 
-    if (offset2 && ((text[offset2] & 0xdf) == 'F' ))
+    if (offset2 && ((text[offset2].unicode() & 0xdf) == 'F' ))
       return ++offset2;
     else
       return 0;
@@ -922,7 +949,11 @@ YzisHlRegExpr::YzisHlRegExpr( int attribute, int context, signed char regionId,s
   if (!handlesLinestart)
     regexp.prepend("^");
 
+#if QT_VERSION < 0x040000
   Expr = new QRegExp(regexp, !_insensitive);
+#else
+  Expr = new QRegExp(regexp, _insensitive ? Qt::CaseInsensitive : Qt::CaseSensitive );
+#endif
   Expr->setMinimal(_minimal);
 }
 
@@ -931,7 +962,11 @@ int YzisHlRegExpr::checkHgl(const QString& text, int offset, int /*len*/)
   if (offset && handlesLinestart)
     return 0;
 
+#if QT_VERSION < 0x040000
   int offset2 = Expr->search( text, offset, QRegExp::CaretAtOffset );
+#else
+  int offset2 = Expr->indexIn( text, offset, QRegExp::CaretAtOffset );
+#endif
 
   if (offset2 == -1) return 0;
 
@@ -995,7 +1030,11 @@ static int checkEscapedChar(const QString& text, int offset, int& len)
     offset++;
     len--;
 
+#if QT_VERSION < 0x040000
     switch(text[offset])
+#else
+    switch(text[offset].ascii())
+#endif
     {
       case  'a': // checks for control chars
       case  'b': // we want to fall through
@@ -1021,7 +1060,11 @@ static int checkEscapedChar(const QString& text, int offset, int& len)
         // replaced with something else but
         // for right now they work
         // check for hexdigits
+#if QT_VERSION < 0x040000
         for (i = 0; (len > 0) && (i < 2) && (text[offset] >= '0' && text[offset] <= '9' || (text[offset] & 0xdf) >= 'A' && (text[offset] & 0xdf) <= 'F'); i++)
+#else
+        for (i = 0; (len > 0) && (i < 2) && (text[offset].ascii() >= '0' && text[offset].ascii() <= '9' || (text[offset].unicode() & 0xdf) >= 'A' && (text[offset].unicode() & 0xdf) <= 'F'); i++)
+#endif
         {
           offset++;
           len--;
@@ -1034,7 +1077,11 @@ static int checkEscapedChar(const QString& text, int offset, int& len)
 
       case '0': case '1': case '2': case '3' :
       case '4': case '5': case '6': case '7' :
+#if QT_VERSION < 0x040000
         for (i = 0; (len > 0) && (i < 3) && (text[offset] >='0'&& text[offset] <='7'); i++)
+#else
+        for (i = 0; (len > 0) && (i < 3) && (text[offset].ascii() >='0'&& text[offset].ascii() <='7'); i++)
+#endif
         {
           offset++;
           len--;
@@ -1155,14 +1202,18 @@ YzisHlContext::~YzisHlContext()
 //BEGIN YzisHighlighting
 YzisHighlighting::YzisHighlighting(const YzisSyntaxModeListItem *def) : refCount(0)
 {
+#if QT_VERSION < 0x040000
   m_attributeArrays.setAutoDelete (true);
+#endif
 
   errorsAndWarnings = "";
   building=false;
   noHl = false;
   m_foldingIndentationSensitive = false;
   folding=false;
+#if QT_VERSION < 0x040000
   internalIDList.setAutoDelete(true);
+#endif
 
   if (def == 0)
   {
@@ -1197,7 +1248,11 @@ YzisHighlighting::~YzisHighlighting()
     delete m_contexts[i];
 }
 
+#if QT_VERSION < 0x040000
 void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QMemArray<short>* ctxs, int *prevLine)
+#else
+void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QVector<short>* ctxs, int *prevLine)
+#endif
 {
   //yzDebug("HL")<<QString("Entering generateContextStack with %1").arg(ctx)<<endl;
   while (true)
@@ -1206,8 +1261,13 @@ void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QMemArray<shor
     {
       (*ctxNum) = ctx;
 
+#if QT_VERSION < 0x040000
       ctxs->resize (ctxs->size()+1, QGArray::SpeedOptim);
       (*ctxs).at(ctxs->size()-1)=(*ctxNum);
+#else
+      ctxs->resize (ctxs->size()+1);
+      (*ctxs)[ctxs->size()-1]=(*ctxNum);
+#endif
 
       return;
     }
@@ -1223,12 +1283,20 @@ void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QMemArray<shor
 
         if (size > 0)
         {
+#if QT_VERSION < 0x040000
           ctxs->resize (size, QGArray::SpeedOptim);
+#else
+          ctxs->resize (size);
+#endif
           (*ctxNum)=(*ctxs)[size-1];
         }
         else
         {
+#if QT_VERSION < 0x040000
           ctxs->resize (0, QGArray::SpeedOptim);
+#else
+          ctxs->resize (0);
+#endif
           (*ctxNum)=0;
         }
 
@@ -1311,7 +1379,11 @@ void YzisHighlighting::dropDynamicContexts()
  */
 void YzisHighlighting::doHighlight ( YZLine *prevLine,
                                      YZLine *textLine,
+#if QT_VERSION < 0x040000
                                      QMemArray<uint>* foldingList,
+#else
+                                     QVector<uint>* foldingList,
+#endif
                                      bool *ctxChanged )
 {
   if (!textLine)
@@ -1326,8 +1398,13 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
   }
 
   // duplicate the ctx stack, only once !
+#if QT_VERSION < 0x040000
   QMemArray<short> ctx;
   ctx.duplicate (prevLine->ctxArray());
+#else
+  QVector<short> ctx;
+  ctx = prevLine->ctxArray();
+#endif
 
   int ctxNum = 0;
   int previousLine = -1;
@@ -1431,16 +1508,29 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
         // kdDebug(13010)<<QString("Region mark 2 detected: %1").arg(item->region2)<<endl;
         if ( !foldingList->isEmpty() && ((item->region2 < 0) && (*foldingList).at(foldingList->size()-2) == -item->region2 ) )
         {
+#if QT_VERSION < 0x040000
           foldingList->resize (foldingList->size()-2, QGArray::SpeedOptim);
+#else
+          foldingList->resize (foldingList->size()-2);
+#endif
         }
         else
         {
+#if QT_VERSION < 0x040000
           foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
           (*foldingList).at(foldingList->size()-2) = (uint)item->region2;
           if (item->region2<0) //check not really needed yet
             (*foldingList).at(foldingList->size()-1) = offset2;
           else
           (*foldingList).at(foldingList->size()-1) = offset;
+#else
+          foldingList->resize (foldingList->size()+2);
+          (*foldingList)[foldingList->size()-2] = (uint)item->region2;
+          if (item->region2<0) //check not really needed yet
+            (*foldingList)[foldingList->size()-1] = offset2;
+          else
+          (*foldingList)[foldingList->size()-1] = offset;
+#endif
         }
 
       }
@@ -1455,12 +1545,21 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
         }
         else*/
         {
+#if QT_VERSION < 0x040000
           foldingList->resize (foldingList->size()+2, QGArray::SpeedOptim);
           (*foldingList).at(foldingList->size()-2) = item->region;
           if (item->region<0) //check not really needed yet
             (*foldingList).at(foldingList->size()-1)= offset2;
           else
             (*foldingList).at(foldingList->size()-1) = offset;
+#else
+          foldingList->resize (foldingList->size()+2);
+          (*foldingList)[foldingList->size()-2] = item->region;
+          if (item->region<0) //check not really needed yet
+            (*foldingList)[foldingList->size()-1]= offset2;
+          else
+            (*foldingList)[foldingList->size()-1] = offset;
+#endif
         }
 
       }
@@ -1481,7 +1580,11 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
           // Replace the top of the stack and the current context
           int newctx = makeDynamicContext(context, lst);
           if (ctx.size() > 0)
+#if QT_VERSION < 0x040000
             ctx.at(ctx.size() - 1) = newctx;
+#else
+            ctx[ctx.size() - 1] = newctx;
+#endif
           ctxNum = newctx;
           context = contextNum(ctxNum);
         }
@@ -1569,7 +1672,11 @@ void YzisHighlighting::loadWildcards()
 
 		static QRegExp sep("\\s*;\\s*");
 
+#if QT_VERSION < 0x040000
 		QStringList l = QStringList::split( sep, extensionSource );
+#else
+		QStringList l = extensionSource.split( sep );
+#endif
 
 		static QRegExp boringExpression("\\*\\.[\\d\\w]+");
 
@@ -1578,11 +1685,19 @@ void YzisHighlighting::loadWildcards()
 			if (boringExpression.exactMatch(*it))
 				plainExtensions.append((*it).mid(1));
 			else
+#if QT_VERSION < 0x040000
 				regexpExtensions.append(QRegExp((*it), true, true));
+#else
+				regexpExtensions.append(QRegExp((*it), Qt::CaseSensitive, QRegExp::Wildcard));
+#endif
 	}
 }
 
+#if QT_VERSION < 0x040000
 QValueList<QRegExp>& YzisHighlighting::getRegexpExtensions()
+#else
+QList<QRegExp>& YzisHighlighting::getRegexpExtensions()
+#endif
 {
   return regexpExtensions;
 }
@@ -1642,8 +1757,13 @@ void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &l
   list.clear();
   createYzisHlItemData(list);
 
+#if QT_VERSION < 0x040000
   for (YzisHlItemData *p = list.first(); p != 0L; p = list.next())
   {
+#else
+  for (int ab = 0 ; ab < list.size(); ++ab ) {
+    YzisHlItemData *p = list.at(ab);
+#endif
     QStringList s = config.readQStringListEntry(p->name);
 
     if (s.count()>0)
@@ -1693,8 +1813,13 @@ void YzisHighlighting::setYzisHlItemDataList(uint schema, YzisHlItemDataList& li
 
   QStringList settings;
 
+#if QT_VERSION < 0x040000
   for (YzisHlItemData *p = list.first(); p != 0L; p = list.next())
   {
+#else
+  for (int ab = 0 ; ab < list.size(); ++ab ) {
+    YzisHlItemData *p = list.at(ab);
+#endif
     settings.clear();
     settings<<QString::number(p->defStyleNum,10);
     settings<<(p->itemSet(YzisAttribute::TextColor)?QString::number(p->textColor().rgb(),16):"");
@@ -1760,6 +1885,10 @@ void YzisHighlighting::done()
 
   m_contexts.clear ();
   internalIDList.clear();
+#if QT_VERSION >= 0x040000
+  for ( int ab = 0 ; ab < internalIDList.size() ; ++ab )
+	  delete internalIDList.at(ab);
+#endif
 }
 
 /**
@@ -1808,7 +1937,11 @@ void YzisHighlighting::addToYzisHlItemDataList()
     QString selBgColor = YzisHlManager::self()->syntax->groupData(data,QString("selBackgroundColor"));
 
     YzisHlItemData* newData = new YzisHlItemData(
+#if QT_VERSION < 0x040000
             buildPrefix+YzisHlManager::self()->syntax->groupData(data,QString("name")).simplifyWhiteSpace(),
+#else
+            buildPrefix+YzisHlManager::self()->syntax->groupData(data,QString("name")).trimmed(),
+#endif
             getDefStyleNum(YzisHlManager::self()->syntax->groupData(data,QString("defStyleNum"))));
 
     /* here the custom style overrides are specified, if needed */
@@ -1881,12 +2014,20 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
 
   if (!beginRegionStr.isEmpty())
   {
+#if QT_VERSION < 0x040000
     regionId = RegionList->findIndex(beginRegionStr);
+#else
+    regionId = RegionList->indexOf(QRegExp(beginRegionStr));
+#endif
 
     if (regionId==-1) // if the region name doesn't already exist, add it to the list
     {
       (*RegionList)<<beginRegionStr;
+#if QT_VERSION < 0x040000
       regionId = RegionList->findIndex(beginRegionStr);
+#else
+      regionId = RegionList->indexOf(QRegExp(beginRegionStr));
+#endif
     }
 
     regionId++;
@@ -1896,12 +2037,20 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
 
   if (!endRegionStr.isEmpty())
   {
+#if QT_VERSION < 0x040000
     regionId2 = RegionList->findIndex(endRegionStr);
+#else
+    regionId2 = RegionList->indexOf(QRegExp(endRegionStr));
+#endif
 
     if (regionId2==-1) // if the region name doesn't already exist, add it to the list
     {
       (*RegionList)<<endRegionStr;
+#if QT_VERSION < 0x040000
       regionId2 = RegionList->findIndex(endRegionStr);
+#else
+      regionId2 = RegionList->indexOf(QRegExp(endRegionStr));
+#endif
     }
 
     regionId2 = -regionId2 - 1;
@@ -1910,7 +2059,11 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data, Yzis
   }
 
   int attr = 0;
+#if QT_VERSION < 0x040000
   QString tmpAttr=YzisHlManager::self()->syntax->groupItemData(data,QString("attribute")).simplifyWhiteSpace();
+#else
+  QString tmpAttr=YzisHlManager::self()->syntax->groupItemData(data,QString("attribute")).trimmed();
+#endif
   bool onlyConsume = tmpAttr.isEmpty();
 
   // only relevant for non consumer
@@ -2034,13 +2187,21 @@ int YzisHighlighting::hlKeyForAttrib( int attrib ) const
 bool YzisHighlighting::isInWord( QChar c, int attrib ) const
 {
   static const QString sq = " \"'";
+#if QT_VERSION < 0x040000
   return getCommentString(4, attrib).find(c) < 0 && sq.find(c) < 0;
+#else
+  return getCommentString(4, attrib).indexOf(c) < 0 && sq.indexOf(c) < 0;
+#endif
 }
 
 bool YzisHighlighting::canBreakAt( QChar c, int attrib ) const
 {
   static const QString sq("\"'");
+#if QT_VERSION < 0x040000
   return (getCommentString(5, attrib).find(c) != -1) && (sq.find(c) == -1);
+#else
+  return (getCommentString(5, attrib).indexOf(c) != -1) && (sq.indexOf(c) == -1);
+#endif
 }
 
 signed char YzisHighlighting::commentRegion(int attr) const {
@@ -2157,7 +2318,11 @@ QString YzisHighlighting::readGlobalKeywordConfig()
     // remove any weakDelimitars (if any) from the default list and store this list.
     for (uint s=0; s < weakDeliminator.length(); s++)
     {
+#if QT_VERSION < 0x040000
       int f = deliminator.find (weakDeliminator.at(s));
+#else
+      int f = deliminator.indexOf (weakDeliminator.at(s));
+#endif
 
       if (f > -1)
         deliminator.remove (f, 1);
@@ -2267,7 +2432,11 @@ void  YzisHighlighting::createContextNameList(QStringList *ContextNameList,int c
   {
      while (YzisHlManager::self()->syntax->nextGroup(data))
      {
+#if QT_VERSION < 0x040000
           QString tmpAttr=YzisHlManager::self()->syntax->groupData(data,QString("name")).simplifyWhiteSpace();
+#else
+          QString tmpAttr=YzisHlManager::self()->syntax->groupData(data,QString("name")).trimmed();
+#endif
     if (tmpAttr.isEmpty())
     {
      tmpAttr=QString("!YZIS_INTERNAL_DUMMY! %1").arg(id);
@@ -2287,7 +2456,11 @@ int YzisHighlighting::getIdFromString(QStringList *ContextNameList, QString tmpL
 {
   unres="";
   int context;
+#if QT_VERSION < 0x040000
   if ((tmpLineEndContext=="#stay") || (tmpLineEndContext.simplifyWhiteSpace().isEmpty()))
+#else
+  if ((tmpLineEndContext=="#stay") || (tmpLineEndContext.trimmed().isEmpty()))
+#endif
     context=-1;
 
   else if (tmpLineEndContext.startsWith("#pop"))
@@ -2310,7 +2483,11 @@ int YzisHighlighting::getIdFromString(QStringList *ContextNameList, QString tmpL
 
   else
   {
+#if QT_VERSION < 0x040000
     context=ContextNameList->findIndex(buildPrefix+tmpLineEndContext);
+#else
+    context=ContextNameList->indexOf(QRegExp(buildPrefix+tmpLineEndContext));
+#endif
     if (context==-1)
     {
       context=tmpLineEndContext.toInt();
@@ -2355,7 +2532,11 @@ void YzisHighlighting::makeContextList()
 	YzisEmbeddedHlInfos::const_iterator it=embeddedHls.begin(), end=embeddedHls.end();
     for (; it!=end;++it)
     {
+#if QT_VERSION < 0x040000
       if (!it.data().loaded)  // we found one, we still have to load
+#else
+      if (!it.value().loaded)  // we found one, we still have to load
+#endif
       {
         yzDebug()<<"**************** Inner loop in make ContextList"<<endl;
         QString identifierToUse;
@@ -2399,9 +2580,15 @@ void YzisHighlighting::makeContextList()
     unresIt!=unresolvedContextReferences.end();++unresIt)
   {
     //try to find the context0 id for a given unresolvedReference
+#if QT_VERSION < 0x040000
     YzisEmbeddedHlInfos::const_iterator hlIt=embeddedHls.find(unresIt.data());
     if (hlIt!=embeddedHls.end())
       *(unresIt.key())=hlIt.data().context0;
+#else
+    YzisEmbeddedHlInfos::const_iterator hlIt=embeddedHls.find(unresIt.value());
+    if (hlIt!=embeddedHls.end())
+      *(unresIt.key())=hlIt.value().context0;
+#endif
   }
 
   // eventually handle YzisHlIncludeRules items, if they exist.
@@ -2451,7 +2638,11 @@ void YzisHighlighting::handleYzisHlIncludeRules()
         YzisHlIncludeRules::iterator it1=it;
         ++it1;
         delete (*it);
+#if QT_VERSION < 0x040000
         includeRules.remove(it);
+#else
+        includeRules.erase(it);
+#endif
         it=it1;
       }
       else
@@ -2543,7 +2734,11 @@ void YzisHighlighting::handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::ite
     it=it1; //backup the iterator
     --it1; //move to the next entry, which has to be take care of
     delete (*it); //free the already handled data structure
+#if QT_VERSION < 0x040000
     list->remove(it); // remove it from the list
+#else
+    list->erase(it); // remove it from the list
+#endif
   }
 }
 
@@ -2604,7 +2799,11 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
     {
       yzDebug()<<"Found a context in file, building structure now"<<endl;
       //BEGIN - Translation of the attribute parameter
+#if QT_VERSION < 0x040000
       QString tmpAttr=YzisHlManager::self()->syntax->groupData(data,QString("attribute")).simplifyWhiteSpace();
+#else
+      QString tmpAttr=YzisHlManager::self()->syntax->groupData(data,QString("attribute")).trimmed();
+#endif
       int attr;
       if (QString("%1").arg(tmpAttr.toInt())==tmpAttr)
         attr=tmpAttr.toInt();
@@ -2612,9 +2811,14 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
         attr=lookupAttrName(tmpAttr,iDl);
       //END - Translation of the attribute parameter
 
+#if QT_VERSION < 0x040000
       ctxName=buildPrefix+YzisHlManager::self()->syntax->groupData(data,QString("lineEndContext")).simplifyWhiteSpace();
-
       QString tmpLineEndContext=YzisHlManager::self()->syntax->groupData(data,QString("lineEndContext")).simplifyWhiteSpace();
+#else
+      ctxName=buildPrefix+YzisHlManager::self()->syntax->groupData(data,QString("lineEndContext")).trimmed();
+      QString tmpLineEndContext=YzisHlManager::self()->syntax->groupData(data,QString("lineEndContext")).trimmed();
+#endif
+
       int context;
 
       context=getIdFromString(&ContextNameList, tmpLineEndContext,dummy);
@@ -2641,7 +2845,11 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 
       bool dynamic = false;
       QString tmpDynamic = YzisHlManager::self()->syntax->groupData(data, QString("dynamic") );
+#if QT_VERSION < 0x040000
       if ( tmpDynamic.lower() == "true" ||  tmpDynamic.toInt() == 1 )
+#else
+      if ( tmpDynamic.toLower() == "true" ||  tmpDynamic.toInt() == 1 )
+#endif
         dynamic = true;
 
       YzisHlContext *ctxNew = new YzisHlContext (
@@ -2667,7 +2875,11 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
       {
         QString incCtx = YzisHlManager::self()->syntax->groupItemData( data, QString("context"));
         QString incAttrib = YzisHlManager::self()->syntax->groupItemData( data, QString("includeAttrib"));
+#if QT_VERSION < 0x040000
         bool includeAttrib = ( incAttrib.lower() == "true" || incAttrib.toInt() == 1 );
+#else
+        bool includeAttrib = ( incAttrib.toLower() == "true" || incAttrib.toInt() == 1 );
+#endif
         // only context refernces of type NAME and ##Name are allowed
         if (incCtx.startsWith("##") || (!incCtx.startsWith("#")))
         {
@@ -2675,7 +2887,11 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           if (!incCtx.startsWith("#"))
           {
             // a local reference -> just initialize the include rule structure
+#if QT_VERSION < 0x040000
             incCtx=buildPrefix+incCtx.simplifyWhiteSpace();
+#else
+            incCtx=buildPrefix+incCtx.trimmed();
+#endif
             includeRules.append(new YzisHlIncludeRule(i,m_contexts[i]->items.count(),incCtx, includeAttrib));
           }
           else
@@ -2729,7 +2945,11 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           for (;tmpbool;tmpbool=YzisHlManager::self()->syntax->nextItem(datasub))
           {
             c->subItems.resize (c->subItems.size()+1);
+#if QT_VERSION < 0x040000
             c->subItems.at(c->subItems.size()-1) = createYzisHlItem(datasub,iDl,&RegionList,&ContextNameList);
+#else
+            c->subItems[c->subItems.size()-1] = createYzisHlItem(datasub,iDl,&RegionList,&ContextNameList);
+#endif
           }                             }
           YzisHlManager::self()->syntax->freeGroupInfo(datasub);
                               // end of sublevel
@@ -2749,7 +2969,11 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   //BEGIN Resolve multiline region if possible
   QStringList& commentData=m_additionalData[additionalDataIndex];
   if (!commentData[MultiLineRegion].isEmpty()) {
+#if QT_VERSION < 0x040000
     long commentregionid=RegionList.findIndex(commentData[MultiLineRegion]);
+#else
+    long commentregionid=RegionList.indexOf(QRegExp(commentData[MultiLineRegion]));
+#endif
     if (-1==commentregionid) {
       errorsAndWarnings+=QString("<B>%1</B>: Specified multiline comment region (%2) could not be resolved<BR>").arg(buildIdentifier).arg(commentData[MultiLineRegion]);
       commentData[MultiLineRegion]=QString();
@@ -2766,6 +2990,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 
 void YzisHighlighting::clearAttributeArrays ()
 {
+#if QT_VERSION < 0x040000
   for ( QIntDictIterator< QMemArray<YzisAttribute> > it( m_attributeArrays ); it.current(); ++it )
   {
     // k, schema correct, let create the data
@@ -2791,15 +3016,52 @@ void YzisHighlighting::clearAttributeArrays ()
       array->at(z) = n;
     }
   }
+#else
+  QHashMutableIterator<int, QVector<YzisAttribute> > it ( m_attributeArrays );
+  while (it.hasNext())
+  {
+    it.next();
+    // k, schema correct, let create the data
+    YzisAttributeList defaultStyleList;
+    YzisHlManager::self()->getDefaults(it.key(), defaultStyleList);
+
+    YzisHlItemDataList itemDataList;
+    getYzisHlItemDataList(it.key(), itemDataList);
+
+    uint nAttribs = itemDataList.count();
+    QVector<YzisAttribute> array = it.value();
+    array.resize (nAttribs);
+
+    for (uint z = 0; z < nAttribs; z++)
+    {
+      YzisHlItemData *itemData = itemDataList.at(z);
+      YzisAttribute n = *defaultStyleList.at(itemData->defStyleNum);
+
+      if (itemData && itemData->isSomethingSet())
+        n += *itemData;
+
+      array[z] = n;
+    }
+    it.setValue(array);
+  }
+#endif
 }
 
-QMemArray<YzisAttribute> *YzisHighlighting::attributes (uint schema)
-{
+#if QT_VERSION < 0x040000
+QMemArray<YzisAttribute> *YzisHighlighting::attributes (uint schema) {
   QMemArray<YzisAttribute> *array;
-
+  
   // found it, allready floating around
   if ((array = m_attributeArrays[schema]))
     return array;
+#else
+QVector<YzisAttribute> *YzisHighlighting::attributes (uint schema) {
+  QVector<YzisAttribute> *array;
+
+  // found it, allready floating around
+  if ((array = &m_attributeArrays[schema]))
+    return array;
+#endif
 
   // ohh, not found, check if valid schema number
   if (!YZSession::me->schemaManager()->validSchema(schema))
@@ -2810,14 +3072,20 @@ QMemArray<YzisAttribute> *YzisHighlighting::attributes (uint schema)
 
   // k, schema correct, let create the data
   YzisAttributeList defaultStyleList;
+#if QT_VERSION < 0x040000
   defaultStyleList.setAutoDelete(true);
+#endif
   YzisHlManager::self()->getDefaults(schema, defaultStyleList);
 
   YzisHlItemDataList itemDataList;
   getYzisHlItemDataList(schema, itemDataList);
 
   uint nAttribs = itemDataList.count();
+#if QT_VERSION < 0x040000
   array = new QMemArray<YzisAttribute> (nAttribs);
+#else
+  array = new QVector<YzisAttribute> (nAttribs);
+#endif
 
   for (uint z = 0; z < nAttribs; z++)
   {
@@ -2827,10 +3095,18 @@ QMemArray<YzisAttribute> *YzisHighlighting::attributes (uint schema)
     if (itemData && itemData->isSomethingSet())
       n += *itemData;
 
+#if QT_VERSION < 0x040000
     array->at(z) = n;
+#else
+    (*array)[z] = n;
+#endif
   }
 
+#if QT_VERSION < 0x040000
   m_attributeArrays.insert(schema, array);
+#else
+  m_attributeArrays.insert(schema, *array);
+#endif
 
   return array;
 }
@@ -2841,7 +3117,9 @@ void YzisHighlighting::getYzisHlItemDataListCopy (uint schema, YzisHlItemDataLis
   getYzisHlItemDataList(schema, itemDataList);
 
   outlist.clear ();
+#if QT_VERSION < 0x040000
   outlist.setAutoDelete (true);
+#endif
   for (uint z=0; z < itemDataList.count(); z++)
     outlist.append (new YzisHlItemData (*itemDataList.at(z)));
 }
@@ -2851,13 +3129,19 @@ void YzisHighlighting::getYzisHlItemDataListCopy (uint schema, YzisHlItemDataLis
 YzisHlManager::YzisHlManager()
   : QObject()
 //  , m_config ("katesyntaxhighlightingrc", false, false)
+#if QT_VERSION < 0x040000
   , commonSuffixes (QStringList::split(";", ".orig;.new;~;.bak;.BAK"))
+#else
+  , commonSuffixes (QString(".orig;.new;~;.bak;.BAK").split(";"))
+#endif
   , syntax (new YzisSyntaxDocument())
   , dynamicCtxsCount(0)
   , forceNoDCReset(false)
 {
+#if QT_VERSION < 0x040000
   hlList.setAutoDelete(true);
   hlDict.setAutoDelete(false);
+#endif
 
   YzisSyntaxModeList modeList = syntax->modeList();
   for (uint i=0; i < modeList.count(); i++)
@@ -2870,8 +3154,13 @@ YzisHlManager::YzisHlManager()
       if (insert == hlList.count())
         break;
 
+#if QT_VERSION < 0x040000
       if ( QString(hlList.at(insert)->section() + hlList.at(insert)->nameTranslated()).lower()
             > QString(hl->section() + hl->nameTranslated()).lower() )
+#else
+      if ( QString(hlList.at(insert)->section() + hlList.at(insert)->nameTranslated()).toLower()
+            > QString(hl->section() + hl->nameTranslated()).toLower() )
+#endif
         break;
     }
 
@@ -2891,10 +3180,17 @@ YzisHlManager::YzisHlManager()
   getDefaults(0,list);
   setDefaults(0,list);
   //read init files
+#if QT_VERSION < 0x040000
   if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))
     YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/hl.lua" );
   if (QFile::exists(QDir::homeDirPath() + "/.yzis/hl.lua"))
     YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/hl.lua" );
+#else
+  if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
+    YZExLua::instance()->source( NULL, QDir::rootPath() + "/etc/yzis/hl.lua" );
+  if (QFile::exists(QDir::homePath() + "/.yzis/hl.lua"))
+    YZExLua::instance()->source( NULL, QDir::homePath() + "/.yzis/hl.lua" );
+#endif
 }
 
 YzisHlManager::~YzisHlManager()
@@ -2996,6 +3292,7 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 	yzDebug() << "realWidcardFind " << fileName << endl;
   static QRegExp sep("\\s*;\\s*");
 
+#if QT_VERSION < 0x040000
   QPtrList<YzisHighlighting> highlights;
 
   for (YzisHighlighting *highlight = hlList.first(); highlight != 0L; highlight = hlList.next()) {
@@ -3012,12 +3309,31 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
         highlights.append(highlight);
     }
   }
+#else
+  QList<YzisHighlighting*> highlights;
+
+  for (int ab = 0 ; ab < hlList.size(); ++ab ) {
+    hlList.at(ab)->loadWildcards();
+
+    QStringList::Iterator it = hlList.at(ab)->getPlainExtensions().begin(), end = hlList.at(ab)->getPlainExtensions().end();
+    for (; it != end; ++it)
+      if (fileName.endsWith((*it)))
+        highlights.append(hlList.at(ab));
+
+    for (int i = 0; i < (int)hlList.at(ab)->getRegexpExtensions().count(); i++) {
+      QRegExp re = hlList.at(ab)->getRegexpExtensions()[i];
+      if (re.exactMatch(fileName))
+        highlights.append(hlList.at(ab));
+    }
+  }
+#endif
 
   if ( !highlights.isEmpty() )
   {
     int pri = -1;
     int hl = -1;
 
+#if QT_VERSION < 0x040000
     for (YzisHighlighting *highlight = highlights.first(); highlight != 0L; highlight = highlights.next())
     {
       if (highlight->priority() > pri)
@@ -3026,6 +3342,14 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
         hl = hlList.findRef (highlight);
       }
     }
+#else
+    for (int ab = 0 ; ab < highlights.size(); ++ab ) {
+      if (highlights.at(ab)->priority() > pri) {
+        pri = highlights.at(ab)->priority();
+        hl = hlList.indexOf (highlights.at(ab));
+      }
+    }
+#endif
 
     return hl;
   }
@@ -3051,7 +3375,11 @@ QString YzisHlManager::findByContent( const QString& contents ) {
 	if ( magic_result ) {
 		QString mime = QString( magic_result );
 		yzDebug() << "Magic result " << mime << endl;
+#if QT_VERSION < 0x040000
 		mime = mime.mid( 0, mime.find( ';' ) );
+#else
+		mime = mime.mid( 0, mime.indexOf( ';' ) );
+#endif
 		return mime;
 	} else
 #endif
@@ -3065,6 +3393,7 @@ int YzisHlManager::mimeFind(const QString &contents)
 
   QString mt = findByContent( contents );
 
+#if QT_VERSION < 0x040000
   QPtrList<YzisHighlighting> highlights;
 
   for (YzisHighlighting *highlight = hlList.first(); highlight != 0L; highlight = hlList.next())
@@ -3078,12 +3407,29 @@ int YzisHlManager::mimeFind(const QString &contents)
         highlights.append (highlight);
     }
   }
+#else
+  QList<YzisHighlighting*> highlights;
+
+  for (int ab = 0 ; ab < hlList.size(); ++ab )
+  {
+    YzisHighlighting *highlight = hlList.at(ab);
+    QStringList l = highlight->getMimetypes().split( sep );
+
+	QStringList::Iterator it = l.begin(), end = l.end();
+    for( ; it != end; ++it )
+    {
+      if ( *it == mt ) // faster than a regexp i guess?
+        highlights.append (highlight);
+    }
+  }
+#endif
 
   if ( !highlights.isEmpty() )
   {
     int pri = -1;
     int hl = -1;
 
+#if QT_VERSION < 0x040000
     for (YzisHighlighting *highlight = highlights.first(); highlight != 0L; highlight = highlights.next())
     {
       if (highlight->priority() > pri)
@@ -3092,6 +3438,17 @@ int YzisHlManager::mimeFind(const QString &contents)
         hl = hlList.findRef (highlight);
       }
     }
+#else
+    for (int ab = 0 ; ab < highlights.size(); ++ab )
+    {
+      YzisHighlighting *highlight = highlights.at(ab);
+      if (highlight->priority() > pri)
+      {
+        pri = highlight->priority();
+        hl = hlList.indexOf (highlight);
+      }
+    }
+#endif
     return hl;
   }
   return -1;
@@ -3149,7 +3506,9 @@ QString YzisHlManager::defaultStyleName(int n, bool translateNames)
 
 void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 {
+#if QT_VERSION < 0x040000
   list.setAutoDelete(true);
+#endif
 
   YzisAttribute* normal = new YzisAttribute();
   normal->setTextColor(Qt::white);
@@ -3337,8 +3696,15 @@ bool YzisHlManager::resetDynamicCtxs()
     return false;
 
   YzisHighlighting *hl;
+#if QT_VERSION < 0x040000
   for (hl = hlList.first(); hl; hl = hlList.next())
     hl->dropDynamicContexts();
+#else
+  for (int ab = 0 ; ab < hlList.size(); ++ab ) {
+    hl = hlList.at(ab);
+    hl->dropDynamicContexts();
+  }
+#endif
 
   dynamicCtxsCount = 0;
   lastCtxsReset.start();

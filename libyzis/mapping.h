@@ -24,8 +24,14 @@
  * $Id$
  */
 
+#include <qglobal.h>
+#if QT_VERSION < 0x040000
 #include <qstring.h>
 #include <qmap.h>
+#else
+#include <QMap>
+#include <QString>
+#endif
 
 /**
  * Handles key mappings
@@ -41,7 +47,7 @@ class YZMapping {
 		}
 
 		void deleteNormalMapping( const QString& key ) {
-			mNormalMappings.erase(key);	
+			mNormalMappings.remove(key);	
 		}
 
 		void addVisualMapping( const QString& key, const QString& map ) {
@@ -49,7 +55,7 @@ class YZMapping {
 		}
 
 		void deleteVisualMapping( const QString& key ) {
-			mVisualMappings.erase(key);	
+			mVisualMappings.remove(key);	
 		}
 
 		void addInsertMapping( const QString& key, const QString& map ) {
@@ -57,7 +63,7 @@ class YZMapping {
 		}
 
 		void deleteInsertMapping( const QString& key ) {
-			mInsertMappings.erase(key);	
+			mInsertMappings.remove(key);	
 		}
 
 		void addCmdLineMapping( const QString& key, const QString& map ) {
@@ -65,7 +71,7 @@ class YZMapping {
 		}
 
 		void deleteCmdLineMapping( const QString& key ) {
-			mCmdLineMappings.erase(key);	
+			mCmdLineMappings.remove(key);	
 		}
 
 		void addPendingOpMapping( const QString& key, const QString& map ) {
@@ -73,7 +79,7 @@ class YZMapping {
 		}
 
 		void deletePendingOpMapping( const QString& key ) {
-			mPendingOpMappings.erase(key);	
+			mPendingOpMappings.remove(key);	
 		}
 	
 		void addGlobalMapping( const QString& key, const QString& map ) {
@@ -81,7 +87,7 @@ class YZMapping {
 		}
 
 		void deleteGlobalMapping( const QString& key ) {
-			mGlobalMappings.erase(key);	
+			mGlobalMappings.remove(key);	
 		}
 		bool applyMappings( QString& text, int modes, bool *mapped );
 		bool applyNormalMappings( QString& text );

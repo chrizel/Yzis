@@ -22,8 +22,6 @@
  * $Id$
  */
 
-#include <qapplication.h>
-#include <qdir.h>
 #include "session.h"
 #include "debug.h"
 #include "schema.h"
@@ -33,6 +31,13 @@
 #include "view.h"
 #include "swapfile.h"
 #include "ex_lua.h"
+#if QT_VERSION < 0x040000
+#include <qapplication.h>
+#include <qdir.h>
+#else
+#include <QApplication>
+#include <QDir>
+#endif
 
 int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
@@ -68,10 +73,17 @@ YZSession::~YZSession() {
 
 void YZSession::guiStarted() {
 	//read init files
+#if QT_VERSION < 0x040000
 	if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))
 		YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/init.lua" );
 	if (QFile::exists(QDir::homeDirPath() + "/.yzis/init.lua"))
 		YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/init.lua" );
+#else
+	if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
+		YZExLua::instance()->source( NULL, QDir::rootPath() + "/etc/yzis/init.lua" );
+	if (QFile::exists(QDir::homePath() + "/.yzis/init.lua"))
+		YZExLua::instance()->source( NULL, QDir::homePath() + "/.yzis/init.lua" );
+#endif
 }
 
 void YZSession::addBuffer( YZBuffer *b ) {
@@ -101,7 +113,11 @@ YZView* YZSession::findView( int uid ) {
 	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	if ( uid<0 ) return NULL;
 	for ( ; it!=end; ++it ) {
+#if QT_VERSION < 0x040000
 		YZBuffer *b = ( it.data() );
+#else
+		YZBuffer *b = ( it.value() );
+#endif
 //		yzDebug() << "Session::findView, checking buffer " << b->fileName() << endl;
 		YZView *v = b->findView( uid );
 		if ( v ) return v;

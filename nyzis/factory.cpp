@@ -19,11 +19,11 @@
  * $Id$
  */
 
+#include "factory.h"
 #include <unistd.h>
 #include "debug.h"
 #include <ctype.h>
 
-#include "factory.h"
 
 NYZFactory *NYZFactory::self = 0;
 NYZView *NYZFactory::currentView=0;
@@ -212,7 +212,11 @@ void NYZFactory::popupMessage( const QString &message )
 	}
 	// TODO : use QString QString::section
 #else
+#if QT_VERSION < 0x040000
 	message.simplifyWhiteSpace();
+#else
+	message.trimmed();
+#endif
 	nc = message.length();
 	nl = 1;
 	WINDOW *popup = newwin(nl+4, nc+4, ( LINES-nl )/2, (COLS-nc)/2);

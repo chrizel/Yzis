@@ -22,9 +22,9 @@
  */
 
 #include "viewwidget.h"
-#include <ncurses.h>
-#include "session.h"
 #include "document.h"
+#include "session.h"
+#include <ncurses.h>
 
 class NYZFactory : public YZSession
 {
@@ -40,7 +40,7 @@ public:
 	NYZFactory(const char *session_name = "default_nyzis_session" );
 	virtual ~NYZFactory( );
 
-	bool		process_one_event();
+	bool process_one_event();
 
 	/*
 	 * YZSession interface :

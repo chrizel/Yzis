@@ -30,10 +30,17 @@
 #ifndef __YZ_SYNTAXDOCUMENT_H__
 #define __YZ_SYNTAXDOCUMENT_H__
 
+#include <qglobal.h>
+#if QT_VERSION < 0x040000
 #include <qdom.h>
 #include <qstringlist.h>
 #include <qapplication.h>
 #include <qobject.h>
+#else
+#include <QDomElement>
+#include <QList>
+#include <QStringList>
+#endif
 
 /**
  * Information about each syntax hl Mode
@@ -57,7 +64,11 @@ class YzisSyntaxModeListItem
 /**
  * List of the YzisSyntaxModeListItems holding all the syntax mode list items
  */
+#if QT_VERSION < 0x040000
 typedef QValueList<YzisSyntaxModeListItem*> YzisSyntaxModeList;
+#else
+typedef QList<YzisSyntaxModeListItem*> YzisSyntaxModeList;
+#endif
 
 /**
  * Class holding the data around the current QDomElement

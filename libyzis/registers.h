@@ -17,8 +17,15 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+#include <qglobal.h>
+#if QT_VERSION < 0x040000
 #include <qstringlist.h>
 #include <qmap.h>
+#else
+#include <QChar>
+#include <QStringList>
+#include <QMap>
+#endif
 
 #ifndef YZ_REGISTERS
 #define YZ_REGISTERS
@@ -39,8 +46,9 @@ class YZRegisters {
 		 * Gets the value of register @param r
 		 * Returns a QString containing the register content
 		 */
-		QStringList& getRegister ( QChar r ) const;
+		QStringList& getRegister ( QChar r );
 
+#if QT_VERSION < 0x040000
 		/**
 		 * Gets the list of registers
 		 */
@@ -50,6 +58,17 @@ class YZRegisters {
 		 * Gets the list of values
 		 */
 		QValueList<QStringList> values() { return mRegisters.values(); }
+#else
+		/**
+		 * Gets the list of registers
+		 */
+		QList<QChar> keys() { return mRegisters.keys(); }
+
+		/**
+		 * Gets the list of values
+		 */
+		QList<QStringList> values() { return mRegisters.values(); }
+#endif
 
 	private:
 		QMap<QChar,QStringList> mRegisters;

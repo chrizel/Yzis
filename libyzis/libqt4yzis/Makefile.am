@@ -12,4 +12,4 @@ dummy.cpp:
 	echo "}" >> $@
 	echo "#endif" >> $@
 
-libqt4yzis_la_LIBADD = ../libyzis.la -lQtCore -lQt3Compat $(all_libraries) $(LUA_LIBS) $(PS_LIBS)
+libqt4yzis_la_LIBADD = ../libyzis.la -lQtCore_debug -lQtXml_debug -lQtGui_debug $(all_libraries) $(LUA_LIBS) $(PS_LIBS) -lmagic

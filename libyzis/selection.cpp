@@ -74,7 +74,11 @@ void YZSelectionPool::addSelection( const QString& layout, const YZCursor& from,
 		removeSelection( layout, fromSel + 1, toSel - fromSel - 1 );
 		selectionPool[ layout ][ fromSel ].setTo( to );
 	} else if ( isToSel || fromSel != toSel ) {
+#if QT_VERSION < 0x040000
 		YZCursor new_to( selectionPool[ layout ].find( toSel ).data().to() );
+#else
+		YZCursor new_to( selectionPool[ layout ].find( toSel ).value().to() );
+#endif
 		removeSelection( layout, fromSel + 1, toSel - fromSel );
 		selectionPool[ layout ][ fromSel ].setFrom( from );
 		selectionPool[ layout ][ fromSel ].setTo( new_to );

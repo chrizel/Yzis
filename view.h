@@ -155,10 +155,6 @@ class YZView {
 		QString getInputBuffer() { return mPreviousChars; }
 
 		/**
-		 * moves the cursor to x,y (buffer) and save sticky column )
-		 */
-		void moveXY( unsigned int x, unsigned int y );
-		/**
 		 * moves the cursor of the current view down
 		 */
 		QString moveDown( unsigned int nb_lines = 1, bool applyCursor = true );
@@ -348,6 +344,12 @@ class YZView {
 		 */
 		void gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
 		void gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int nexty, bool applyCursor = true );
+
+		/**
+		 * Moves the buffer cursor to @arg cursor and stick the column
+		 */
+		void gotoxyAndStick( YZCursor* cursor );
+		void gotoxyAndStick( unsigned int x, unsigned int y );
 
 		/**
 		 * Pastes the content of default or given register

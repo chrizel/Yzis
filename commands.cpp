@@ -429,7 +429,11 @@ YZCursor YZCommandPool::matchPair(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	bool found = false;
 	YZCursor pos = args.view->myBuffer()->action()->match( args.view, *viewCursor.buffer(), &found );
-	if ( found ) return pos;
+	if ( found ) {
+		if ( args.standalone ) 
+			args.view->gotoxyAndStick( &pos );
+		return pos;
+	}
 	return *viewCursor.buffer();
 }
 
@@ -438,7 +442,8 @@ YZCursor YZCommandPool::findNext(const YZNewMotionArgs &args) {
 	bool found;
 	YZCursor pos = finder->forward( args.arg, found, args.count );
 	if ( found ) {
-		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		if ( args.standalone ) 
+			args.view->gotoxyAndStick( &pos );
 		return pos;
 	}
 	return *args.view->getBufferCursor();
@@ -449,7 +454,8 @@ YZCursor YZCommandPool::findBeforeNext(const YZNewMotionArgs &args) {
 	bool found;
 	YZCursor pos = finder->forwardBefore( args.arg, found, args.count );
 	if ( found ) {
-		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		if ( args.standalone ) 
+			args.view->gotoxyAndStick( &pos );
 		return pos;
 	}
 	return *args.view->getBufferCursor();
@@ -460,7 +466,8 @@ YZCursor YZCommandPool::findPrevious(const YZNewMotionArgs &args) {
 	bool found;
 	YZCursor pos = finder->reverse( args.arg, found, args.count );
 	if ( found ) {
-		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		if ( args.standalone ) 
+			args.view->gotoxyAndStick( &pos );
 		return pos;
 	}
 	return *args.view->getBufferCursor();
@@ -471,7 +478,8 @@ YZCursor YZCommandPool::findAfterPrevious(const YZNewMotionArgs &args) {
 	bool found;
 	YZCursor pos = finder->reverseAfter( args.arg, found, args.count );
 	if ( found ) {
-		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		if ( args.standalone ) 
+			args.view->gotoxyAndStick( &pos );
 		return pos;
 	}
 	return *args.view->getBufferCursor();
@@ -482,7 +490,8 @@ YZCursor YZCommandPool::repeatFind(const YZNewMotionArgs &args) {
 	bool found;
 	YZCursor pos = finder->searchAgain( found, args.count );
 	if ( found ) {
-		args.view->gotoxy( pos.getX(), pos.getY(), args.standalone );
+		if ( args.standalone ) 
+			args.view->gotoxyAndStick( &pos );
 		return pos;
 	}
 	return *args.view->getBufferCursor();
@@ -541,6 +550,9 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 		}
 
 	}
+	if ( args.standalone ) 
+		args.view->gotoxyAndStick( &result );
+
 	return result;
 }
 
@@ -593,6 +605,10 @@ YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
 		}
 
 	}
+
+	if ( args.standalone ) 
+		args.view->gotoxyAndStick( &result );
+
 	return result;
 }
 

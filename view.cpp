@@ -1252,7 +1252,10 @@ void YZView::gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int 
 	applyGoto( viewCursor, applyCursor );
 }
 
-void YZView::moveXY( unsigned int x, unsigned int y ) {
+void YZView::gotoxyAndStick( YZCursor* cursor ) {
+	gotoxyAndStick( cursor->getX(), cursor->getY() );
+}
+void YZView::gotoxyAndStick( unsigned int x, unsigned int y ) {
 	gotoxy( x, y );
 	updateStickyCol( mainCursor );
 }

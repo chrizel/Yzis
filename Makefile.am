@@ -48,8 +48,13 @@ apidox:
 
 install-data-local: install-translations
 
+clean-local: clean-tests
+
 test: 
 	cd tests && make && ./env_tests
+
+clean-tests:
+	cd tests && [ -f Makefile ] && make clean
 
 update-tr:
 	echo "Updating .ts files in translations..." ; \

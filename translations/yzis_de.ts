@@ -93,6 +93,14 @@
         <source>Written %1 bytes to file %2</source>
         <translation>%1 Bytes in Datei %2 geschrieben</translation>
     </message>
+    <message>
+        <source>Recover</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>YZExExecutor</name>
@@ -129,6 +137,21 @@
     </message>
 </context>
 <context>
+    <name>YZSwapFile</name>
+    <message>
+        <source>Warning, the swapfile could not be opened maybe due to restrictive permissions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Warning, the swapfile could not be created maybe due to restrictive permissions.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>YZView</name>
     <message>
         <source>All</source>
@@ -141,6 +164,10 @@
     <message>
         <source>Bot</source>
         <translation>Unten</translation>
+    </message>
+    <message>
+        <source>To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

@@ -43,7 +43,16 @@ if test "$have_ncurses" = "no"; then
 	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
 fi
 
-AC_PROVIDE_IFELSE([AM_PATH_CPPUNIT],AM_PATH_CPPUNIT(1.8.0))
+dnl example test : grep have_cppunit_test configure; grep have_lua_test configure
+dnl while both tests should return a 'yes' value, the CPPUNIT one does not
+dnl I think AC_PROVIDE_IFELSE work with macros but not with FUNCTIONS (one with arguments)
+dnl that needs more testing ...
+dnl AC_PROVIDE_IFELSE([AM_PATH_CPPUNIT],have_cppunit_test=yes,have_cppunit_test=no)
+dnl AC_PROVIDE_IFELSE([AC_PATH_LUA],have_lua_test=yes,have_lua_test=no)
+
+dnl if test "$have_cppunit_test" = "yes"; then
+	AM_PATH_CPPUNIT(1.8.0)
+dnl fi
 AM_CONDITIONAL(HAVE_CPPUNIT, test "$CPPUNIT_LIBS")
 
 KDE_INIT_DOXYGEN([The Yzis API Reference], [Version $VERSION])

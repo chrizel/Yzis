@@ -126,6 +126,8 @@ void YZAction::deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const 
 	unsigned int eX = end.getX();
 	unsigned int eY = end.getY();
 
+	if ( eY >= mBuffer->lineCount() ) return; //something's wrong => abort
+
 	YZCursor mPos( begin );
 	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
 		it->initDeleteLine( mPos, end, pView->myId == it->myId );
@@ -168,7 +170,7 @@ void YZAction::deleteArea( YZView* pView, YZCursor& begin, YZCursor& end, const 
 		b = mBuffer->textline( curY );
 		buff << b.left( end.getX() );
 		mBuffer->replaceLine( b.mid( end.getX() ), curY );
-		mBuffer->mergeNextLine( curY - 1 );
+		if ( curY > 0 ) mBuffer->mergeNextLine( curY - 1 );
 	}
 	yzDebug() << "Deleting " << buff << endl;
 	YZSession::mRegisters.setRegister( reg, buff );

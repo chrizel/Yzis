@@ -159,6 +159,7 @@ void YZUndoBuffer::undo( YZView* pView )
 		--it;
 	}
 	mCurrentIndex--;
+	pView->gotoxy(undoItem->endCursorX, undoItem->endCursorY);
 	setInsideUndo( false );
 }
 

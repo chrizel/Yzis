@@ -153,6 +153,19 @@ void TestYZBuffer::testLineMethods()
     phCheckEquals( mBuf->data( 1 ), s1 );
     phCheckEquals( mBuf->data( 2 ), s2 );
     phCheckEquals( mBuf->data( 3 ), s1 );
+
+	//replace lines
+    mBuf->deleteLine( 3 );
+    mBuf->deleteLine( 2 );
+    mBuf->deleteLine( 1 );
+    mBuf->deleteLine( 0 );
+	
+	//replace a non existing line should not do anything
+	mBuf->replaceLine( 10, s2 );
+	//replace first line
+	mBuf->replaceLine( 0, s2 );
+    phCheckEquals( mBuf->data( 0 ), s2 );
+    phCheckEquals( mBuf->lineCount(), 1 );
 }
 
 void TestYZBuffer::testGetWholeText()

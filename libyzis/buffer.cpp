@@ -263,11 +263,11 @@ QString	YZBuffer::data(unsigned int no)
 }
 
 QString YZBuffer::getWholeText() {
-		QString text;
-		for(YZLine *it = mText.first(); it; it = mText.next())
-			text += it->data() + "\n";
-		text.truncate( text.length()-1 );
-		return text;
+	QString text;
+	for(YZLine *it = mText.first(); it; it = mText.next())
+		text += it->data() + "\n";
+	text.truncate( text.length()-1 );
+	return text;
 }
 
 void YZBuffer::load(const QString& file) {
@@ -309,6 +309,8 @@ void YZBuffer::save() {
 
 
 void YZBuffer::replaceLine( unsigned int y, const QString& value ) {
+	if ( data( y ).isNull() )
+		return;
 	at(y)->setData(value);
 	/* inform the views */
 	YZView *it;

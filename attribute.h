@@ -52,13 +52,6 @@ public:
 
   QFont font(const QFont& ref);
 
-/*  inline int width(YzisFontStruct& fs, const QString& text, int col, int tabWidth) const
-  { return fs.width(text, col, bold(), italic(), tabWidth); };
-
-  // Non-preferred function when you have a string and you want one char's width!!
-  inline int width(YzisFontStruct& fs, const QChar& c, int tabWidth) const
-  { return fs.width(c, bold(), italic(), tabWidth); };
-*/
   inline bool itemSet(int item) const
   { return item & m_itemsSet; };
 

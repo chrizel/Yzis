@@ -38,6 +38,7 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 #include "document.h"
+#include "debug.h"
 
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
@@ -163,27 +164,28 @@ void Kyzis::fileOpen() {
 void Kyzis::createBuffer(const QString& path) {
 		kdDebug() << "Kyzis::createBuffer " << path << endl;
 		KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
-		if (factory)
+		if (!factory) {
+			yzDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
+			return;
+		}
+		// now that the Part is loaded, we cast it to a Part to get
+		// our hands on it
+		QStringList list;
+		//buffer number , view number 
+		list << QString::number( mBuffers++ ) << QString::number( mViews++ );
+
+		KParts::ReadWritePart * m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart", list ));
+
+		if (m_part)
 		{
-			// now that the Part is loaded, we cast it to a Part to get
-			// our hands on it
-			QStringList list;
-			//buffer number , view number 
-			list << QString::number( mBuffers++ ) << QString::number( mViews++ );
-
-			KParts::ReadWritePart * m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart", list ));
-
-			if (m_part)
-			{
-				kdDebug() << "Yzis part successfully loaded" << endl;
-				m_currentPart = m_part;
-				KMdiChildView *view = createWrapper( m_part->widget(), QString::number( mViews ), path );
-				m_part->widget()->setFocus();
-				addWindow( view );
-				viewList[mViews-1] = view;
-				createGUI(m_part);
-				load( KURL( path ) );
-			}
+			kdDebug() << "Yzis part successfully loaded" << endl;
+			m_currentPart = m_part;
+			KMdiChildView *view = createWrapper( m_part->widget(), QString::number( mViews ), path );
+			m_part->widget()->setFocus();
+			addWindow( view );
+			viewList[mViews-1] = view;
+			createGUI(m_part);
+			load( KURL( path ) );
 		}
 }
 

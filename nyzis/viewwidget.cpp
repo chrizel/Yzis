@@ -53,35 +53,32 @@ NYZView::~NYZView(){
 
 void NYZView::map( void )
 {
-	window = newwin( 0,0,0,0 );
-
+	// main window, fullscreen
+	window = newwin( 0,0,0,0 ); YZASSERT( window );
+	wattrset(window, A_NORMAL );
+	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
 	wmove(window,0,0 );
-	//active symbols for special keycodes
-	keypad(window , true);
+	keypad(window , true); //active symbols for special keycodes
+	update_info();
 
 	// creates layout
 	/*
 	 * ------------------ infobar ---------------------
 	 * ------------------ statusbar -------------------
 	 */
-
-	update_info();
-	touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
-//	WINDOW *window = subwin(screen, LINES-2, 0, 0, 0);
-	infobar = subwin(window, 1, 0, h-2, 0);
-	wattrset(infobar, A_STANDOUT || A_BOLD);
+	infobar = subwin(window, 1, 0, h-2, 0); YZASSERT( infobar );
+	wattrset(infobar, A_NORMAL );
 	wbkgd(infobar, A_REVERSE);
-	statusbar  = subwin(window, 1, 0, h-1, 0);
+
+	statusbar  = subwin(window, 1, 0, h-1, 0); YZASSERT( statusbar );
+	wattrset(statusbar, A_NORMAL );
+	if (has_colors())
+		wattron(statusbar, COLOR_PAIR(1));
 	//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 	//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
-	if (has_colors())
-		wattron(statusbar, COLOR_PAIR(1));
-
-	// TODO  write something like :       "bernoulli.tex" [noeol] 65L, 1440C
-	// in last line (vim-like)
 	displayInfo ( QString("\"%1\" %2L, %3C" ).arg(mBuffer->fileName()).arg(mBuffer->lineCount()).arg(mBuffer->getWholeTextLength()));
-	redrawScreen();
+//	redrawScreen();
 }
 
 
@@ -288,7 +285,6 @@ void NYZView::initialisecolormap()
 		return;
 	}
 
-	start_color();
 	yzDebug() << "COLOR_PAIRS is : " << COLOR_PAIRS << endl;
 
 	// magenta = 1, is used to display info on statusbar..

@@ -25,7 +25,8 @@
  * $Id$
  */
 
-#include <qptrlist.h>
+//#include <qptrlist.h>
+#include <qvaluevector.h>
 #include <qstring.h>
 #include "yzis.h"
 #include "session.h"
@@ -37,7 +38,7 @@ class YZLine;
 class YZSession;
 class YZUndoBuffer;
 
-typedef QPtrList<YZLine> YZBufferData;
+typedef QValueVector<YZLine*> YZBufferData;
 
 
 /**

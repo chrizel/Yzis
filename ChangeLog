@@ -1,3 +1,7 @@
+2004-04-25 mikmak
+  * libyzis
+    replace our storage with a QValueVector, much faster for random access ;)
+
 2004-04-25 panard
   * libyzis
     major API improvments which permits :

@@ -56,7 +56,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mIntro = false;
 	mUpdateView=true;
 	mSession = sess;
-	mText.setAutoDelete( true );
+//	mText.setAutoDelete( true );
 	mModified=false;
 	m_highlight = 0L;
 	// buffer at creation time should use a non existing temp filename
@@ -204,7 +204,12 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
 	                                   l, 0, line );
 
-	mText.insert(line, new YZLine(l));
+	QValueVector<YZLine*>::iterator it;
+	uint idx=0;
+	for ( it = mText.begin(); idx < line && it != mText.end(); it++, idx++ )
+		;	
+	mText.insert(it, new YZLine( l ));
+//	mText.insert(line, new YZLine(l));
 	setModified( true );
 	updateAllViews();
 }
@@ -239,7 +244,12 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	setTextline(line,l.left( col ));
 
 	//add new line
-	mText.insert( line + 1, new YZLine(newline));
+	QValueVector<YZLine*>::iterator it;
+	uint idx=0;
+	for ( it = mText.begin(); idx < line+1 && it != mText.end(); it++, idx++ )
+		;	
+	mText.insert(it, new YZLine( newline ));
+//	mText.insert( line + 1, new YZLine(newline));
 
 	/* inform the views */
 	updateAllViews();
@@ -255,7 +265,12 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	if (lineCount() > 1) {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, 
 										 "", 0, line );
-		mText.remove(line);
+		QValueVector<YZLine*>::iterator it;
+		uint idx=0;
+		for ( it = mText.begin(); idx <= line && it != mText.end(); it++, idx++ )
+			;	
+		mText.erase(it);
+//		mText.remove(line);
 	} else {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
 										 "", 0, line );
@@ -349,7 +364,8 @@ void YZBuffer::displayIntro() {
 }
 
 YZLine * YZBuffer::yzline(unsigned int line) const {
-	return ( ( QPtrList<YZLine> ) mText ).at(line);
+	//return ( ( QPtrList<YZLine> ) mText ).at(line);
+	return ( ( QValueVector<YZLine*> ) mText ).at(line);
 }
 
 void YZBuffer::setTextline( uint line , const QString & l) {
@@ -464,9 +480,9 @@ bool YZBuffer::save() {
 		// do not save empty buffer to avoid creating a file
 		// with only a '\n' while the buffer is emtpy
 		if ( isEmpty() == false) {
-			for(YZLine *it = mText.first(); it; it = mText.next()) {
+/*			for(YZLine *it = mText.first(); it; it = mText.next()) {
 				stream << it->data() << "\n";
-			}
+			}*/
 		}
 		file.close();
 	}

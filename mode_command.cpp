@@ -4,6 +4,7 @@
  *  Copyright (C) 2003-2004 Philippe Fremy <phil@freehackers.org>
  *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -1210,7 +1211,7 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 			return;
 	}
 
-	for ( int i = 0; i < args.count; i++ ) {
+	for ( unsigned int i = 0; i < args.count; i++ ) {
 #if QT_VERSION < 0x040000
 		QValueList<QChar>::const_iterator it = args.regs.begin(), end = args.regs.end();
 		for ( ; it != end; ++it )
@@ -1231,9 +1232,16 @@ void YZModeCommand::deleteChar( const YZCommandArgs &args ) {
 }
 
 void YZModeCommand::substitute( const YZCommandArgs &args ) {
+	YZCursor cur = args.view->getBufferCursor();
+
 	args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
 	args.view->commitNextUndo();
-	args.view->modePool()->push( YZMode::MODE_INSERT );
+
+	// start insert mode, append if at EOL
+	if ( (unsigned int)cur.getX() != args.view->myBuffer()->getLineLength( cur.getY() ) )
+		args.view->modePool()->push( YZMode::MODE_INSERT );
+	else
+		args.view->append();
 }
 
 void YZModeCommand::redisplay( const YZCommandArgs &args ) {

@@ -56,7 +56,8 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	m_dockConfig( dockConfig ),
 	mBuffers( 0 ), mViews( 0 )
 {
-	setMinimumSize( 200, 200 );
+	resize( 700, 480 );
+//	setMinimumSize( 200, 200 );
 	mConsole = NULL;
 //	setToolviewStyle(KMultiTabBar::KDEV3ICON);
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
@@ -79,8 +80,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	setAutoSaveSettings ("MainWindow Settings");
 
 	// init with more usefull size, stolen from konq :)
-	if ( !initialGeometrySet() && !kapp->config()->hasGroup("MainWindow Settings"))
-		resize( 700, 480 );
+//	if ( !initialGeometrySet() && !kapp->config()->hasGroup("MainWindow Settings"))
 
 }
 
@@ -176,8 +176,7 @@ void Kyzis::applyNewToolbarConfig() {
 	applyMainWindowSettings(KGlobal::config(), autoSaveGroup());
 }
 
-void Kyzis::fileQuit()
-{
+void Kyzis::fileQuit() {
     close();
 }
 

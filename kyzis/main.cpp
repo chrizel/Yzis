@@ -68,9 +68,9 @@ int main(int argc, char **argv) {
 	app.installTranslator(  &myapp );
 
 	// see if we are starting with session management
-	/*    if (app.isRestored())
-				RESTORE(Kyzis)
-				else*/
+//	if (app.isRestored())
+//				RESTORE(Kyzis)
+//	else
 	{
 		// no session.. just start up normally
 		KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -79,6 +79,7 @@ int main(int argc, char **argv) {
 		domDoc.appendChild( dockConfig );
 
 		Kyzis *widget = new Kyzis(dockConfig,KMdi::IDEAlMode);
+		kapp->setMainWidget( widget );
 		widget->show();
 
 		if ( args->count() == 0 ) {

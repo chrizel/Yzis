@@ -437,7 +437,7 @@ QString YZView::gotoLine(const QString& inputsBuff) {
 	 * this can happen if the file is empty for exemple */
 	if ( !line ) line++;
 
-	gotoxy(mCursor->getX(), line-1);
+	gotoxy(mBuffer->firstNonBlankChar(line-1), line-1);
 
 	purgeInputBuffer();
 	return QString::null; //return something

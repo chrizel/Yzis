@@ -3,7 +3,7 @@
 SUBDIRS = pics
 
 # set the include path for X, qt and KDE
-INCLUDES = -I$(top_srcdir)/libyzis/ $(all_includes) $(LUA_INCLUDES)
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/libyzis/ $(all_includes) $(LUA_INCLUDES)
 
 # these are the headers for your project
 noinst_HEADERS = kyzis.h editor.h commandwidget.h viewwidget.h document.h factory.h

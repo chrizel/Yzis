@@ -237,6 +237,11 @@ class YZExLua : public QObject {
 		 */
 		static int set(lua_State *L);
 
+		/**
+		 * Create a new option
+		 */
+		static int newoption(lua_State *L);
+
 	protected:
 		lua_State *L;
 

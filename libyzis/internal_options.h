@@ -154,6 +154,11 @@ class YZInternalOptionPool {
 		 */
 		YZInternalOption* getOption( const QString& option );
 
+		/**
+		 * Dynamically creates a new option for yzis
+		 */
+		void createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, option_t visibility, value_t type );
+
 	private:
 		void init();
 		void initConfFiles();

@@ -83,7 +83,7 @@ class YZMapping {
 		void deleteGlobalMapping( const QString& key ) {
 			mGlobalMappings.erase(key);	
 		}
-		bool applyMappings( QString& text, int modes );
+		bool applyMappings( QString& text, int modes, bool *mapped );
 		bool applyNormalMappings( QString& text );
 		bool applyVisualMappings( QString& text );
 		bool applyCmdLineMappings( QString& text );

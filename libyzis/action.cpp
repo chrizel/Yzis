@@ -458,10 +458,12 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 				currentMatchColumn += mEnd.getX();
 			*found = true;
 			*matchlength = ex.matchedLength();
+			yzDebug() << "Search got one result " << endl;
 			return YZCursor(pView,currentMatchColumn, currentMatchLine);
 		}
 	}
 	*found = false;
+	yzDebug() << "Search got no result " << endl;
 	return YZCursor(pView,0,0);//fake result
 }
 

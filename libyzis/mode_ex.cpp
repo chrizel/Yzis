@@ -103,8 +103,9 @@ cmd_state YZModeEx::execCommand( YZView* mView, const QString& key ) {
 		} else {
 			QString cmd = mView->mExHistory[mView->mCurrentExItem] = mView->getCommandLineText();
 			mView->mCurrentExItem++;
-			execExCommand( mView, cmd );
-			mView->modePool()->pop( MODE_COMMAND );
+			ret = execExCommand( mView, cmd );
+			if ( ret != CMD_QUIT ) 
+				mView->modePool()->pop( MODE_COMMAND );
 		}
 	} else if ( key == "<DOWN>" ) {
 		if(mView->mExHistory[mView->mCurrentExItem].isEmpty())
@@ -214,8 +215,9 @@ QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, b
 }
 
 
-bool YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
-	bool ret = false, matched;
+cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
+	cmd_state ret = CMD_ERROR;
+	bool matched;
 	int from, to, current;
 #if QT_VERSION < 0x040000
 	YZView * it;
@@ -243,7 +245,7 @@ bool YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 	yzDebug() << "ExCommand : naked command : " << _input << "; range " << from << "," << to << endl;
 	if ( from < 0 || to < 0 ) {
 		yzDebug() << "ExCommand : ERROR! < 0 range" << endl;
-		return false;
+		return ret;
 	}
 
 	matched = false;
@@ -266,17 +268,9 @@ bool YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 			bool force = arg[ 0 ] == '!';
 			if ( force ) arg = arg.mid( 1 );
 #if QT_VERSION < 0x040000
-			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
-				it->setPaintAutoCommit( false );
-			(this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.stripWhiteSpace(), from, to, force ) );
-			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
-				it->commitPaintEvent();
+			ret = (this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.stripWhiteSpace(), from, to, force ) );
 #else
-			for ( int bc = 0 ; bc < view->myBuffer()->views().size() ; ++bc )
-				view->myBuffer()->views().at(bc)->setPaintAutoCommit( false );
-			(this->*( commands.at(ab)->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.trimmed(), from, to, force ) );
-			for ( int bc = 0 ; bc < view->myBuffer()->views().size() ; ++bc )
-				view->myBuffer()->views().at(bc)->commitPaintEvent();
+			ret = (this->*( commands.at(ab)->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.trimmed(), from, to, force ) );
 #endif
 		}
 	}
@@ -351,19 +345,22 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 /**
  * COMMANDS
  */
-QString YZModeEx::write( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::write( const YZExCommandArgs& args ) {
+	cmd_state ret = CMD_OK;
 	bool quit = args.cmd.contains( 'q') || args.cmd.contains( 'x' );
 	bool all = args.cmd.contains( 'a' );
 	bool force = args.force;
 	if ( ! quit && all ) {
 		args.view->mySession()->saveAll();
-		return QString::null;
+		return ret;
 	}
 	yzDebug() << args.arg << "," << args.cmd << " " << quit << " " << force << endl;
 	if ( quit && all ) {//write all modified buffers
-		if ( args.view->mySession()->saveAll() ) //if it fails => dont quit
+		if ( args.view->mySession()->saveAll() ) {//if it fails => dont quit
 			args.view->mySession()->exitRequest();
-		return QString::null;
+			ret = CMD_QUIT;
+		}
+		return ret;
 	}
 	if ( args.arg.length() ) {
 		args.view->myBuffer()->setPath( args.arg ); //a filename was given as argument
@@ -372,48 +369,56 @@ QString YZModeEx::write( const YZExCommandArgs& args ) {
 	if ( quit && force ) {//check readonly ? XXX
 		args.view->myBuffer()->save();
 		args.view->mySession()->exitRequest(); //whatever happens => quit
+		ret = CMD_QUIT;
 	} else if ( quit ) {
-		if ( args.view->myBuffer()->save() )
+		if ( args.view->myBuffer()->save() ) {
 			args.view->mySession()->exitRequest();
+			ret = CMD_QUIT;
+		}
 	} else if ( ! force ) {
 		args.view->myBuffer()->save();
 	} else if ( force ) {
 		args.view->myBuffer()->save();
 	}
-	return QString::null;
+	return ret;
 }
-QString YZModeEx::quit( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
+	cmd_state ret = CMD_OK;
 	bool force = args.force;
 	yzDebug() << "View counts: "<< args.view->myBuffer()->views().count() 
 		<< " Buffer Count : " << args.view->mySession()->countBuffers() << endl;
 	if ( args.cmd.startsWith( "qa" ) ) {
 		if ( force || ! args.view->mySession()->isOneBufferModified() ) {
 			args.view->modePool()->stop();
+			ret = CMD_QUIT;
 			args.view->mySession()->exitRequest( );
 		} else args.view->mySession()->popupMessage( QObject::tr( "One file is modified ! Save it first ..." ) );
 	} else {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( args.view->myBuffer()->views().count() > 1 ) {
 			args.view->modePool()->stop();
+			ret = CMD_QUIT;
 			args.view->mySession()->deleteView( args.view->myId );
 		} else if ( args.view->myBuffer()->views().count() == 1 && args.view->mySession()->countBuffers() == 1) {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
 				args.view->modePool()->stop();
+				ret = CMD_QUIT;
 				args.view->mySession()->exitRequest();
 			}
 			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified ! Save it first ..." ) );
 		} else {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
 				args.view->modePool()->stop();
+				ret = CMD_QUIT;
 				args.view->mySession()->deleteView(args.view->myId);
 			}
 			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified ! Save it first ..." ) );
 		}
 	}
-	return QString::null;
+	return ret;
 }
 
-QString YZModeEx::buffernext( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::buffernext( const YZExCommandArgs& args ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
 	YZView *v = args.view->mySession()->nextView();
 	YZASSERT( v!=args.view );
@@ -421,10 +426,10 @@ QString YZModeEx::buffernext( const YZExCommandArgs& args ) {
 		args.view->mySession()->setCurrentView(v);
 	else
 		args.view->mySession()->popupMessage( QObject::tr( "No next buffer" ) );
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
 	YZView *v = args.view->mySession()->prevView();
 	YZASSERT( v!=args.view );
@@ -433,10 +438,10 @@ QString YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
 	else
 		args.view->mySession()->popupMessage( QObject::tr( "No previous buffer" ) );
 
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::bufferdelete ( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::bufferdelete ( const YZExCommandArgs& args ) {
 	yzDebug() << "Delete buffer " << args.view->myBuffer()->myId << endl;
 
 	args.view->myBuffer()->clearSwap();
@@ -451,26 +456,26 @@ QString YZModeEx::bufferdelete ( const YZExCommandArgs& args ) {
 		args.view->mySession()->deleteView( args.view->myId );
 #endif
 
-	return QString::null;
+	return CMD_QUIT;
 }
 
-QString YZModeEx::gotoCommandMode( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::gotoCommandMode( const YZExCommandArgs& args ) {
 	args.view->modePool()->pop();
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::gotoOpenMode( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::gotoOpenMode( const YZExCommandArgs& args ) {
 	yzDebug() << "Switching to open mode...";
 //	args.view->gotoOpenMode();
 	yzDebug() << "done." << endl;
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::edit ( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 	QString path = args.arg; //extract the path
 	if ( path.length() == 0 ) {
 		args.view->mySession()->popupMessage( QObject::tr( "Please specify a filename" ) );
-		return QString::null;
+		return CMD_ERROR;
 	}
 	//check the file name
 	if ( path.length() >= 1 && path[ 0 ] == '~' ) // expand ~
@@ -485,10 +490,11 @@ QString YZModeEx::edit ( const YZExCommandArgs& args ) {
 #endif
 	yzDebug() << "New buffer / view : " << path << endl;
 	args.view->mySession()->createBuffer( path );
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::setlocal ( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::setlocal ( const YZExCommandArgs& args ) {
+	cmd_state ret = CMD_OK;
 	QRegExp rx ( "(\\w*)(\\+|-)?=(.*)" ); //option with value
 	QRegExp rx2 ( "no(\\w*)" ); //deactivate a bool option
 	QRegExp rx3 ( "(\\w*)" ); //activate a bool option
@@ -515,7 +521,7 @@ QString YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 		YZInternalOption *opt = YZSession::mOptions->getOption(option);
 		if ( !opt ) {
 			YZSession::me->popupMessage( QObject::tr("Invalid option given : ") + option);
-			return QString::null;
+			return CMD_ERROR;
 		}
 		if ( hasOperator ) {
 			QString oldVal;
@@ -540,7 +546,7 @@ QString YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 					break;
 				case bool_t :
 					YZSession::me->popupMessage(QObject::tr("This option cannot be switched this way, this is a boolean option."));
-					return QString::null;
+					return CMD_ERROR;
 					break;
 				case color_t :
 					break;
@@ -550,7 +556,7 @@ QString YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 		switch ( opt->getType() ) {
 			case global_opt :
 				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
-				return QString::null;
+				return CMD_ERROR;
 			case view_opt :
 				if ( view ) view->setLocalQStringOption( option, value );
 				break;
@@ -566,12 +572,12 @@ QString YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 #endif
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
-			return QString::null;
+			return CMD_ERROR;
 		}
 		switch ( opt->getType() ) {
 			case global_opt :
 				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
-				return QString::null;
+				return CMD_ERROR;
 			case view_opt :
 				if ( view ) 
 #if QT_VERSION < 0x040000
@@ -597,12 +603,12 @@ QString YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 #endif
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
-			return QString::null;
+			return CMD_ERROR;
 		}
 		switch ( opt->getType() ) {
 			case global_opt :
 				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
-				return QString::null;
+				return CMD_ERROR;
 			case view_opt :
 				if ( view ) 
 #if QT_VERSION < 0x040000
@@ -622,16 +628,16 @@ QString YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 		}
 	} else {
 		YZSession::me->popupMessage( QObject::tr( "Invalid option given" ) );
-		return QString::null;
+		return CMD_ERROR;
 	}
 	// refresh screen
 //	if ( args.view )
 //		args.view->recalcScreen();
 
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::set ( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 	QRegExp rx ( "(\\w*)(\\+|-)?=(.*)" ); //option with value
 	QRegExp rx2 ( "no(\\w*)" ); //deactivate a bool option
 	QRegExp rx3 ( "(\\w*)" ); //activate a bool option
@@ -649,7 +655,7 @@ QString YZModeEx::set ( const YZExCommandArgs& args ) {
 		YZInternalOption *opt = YZSession::mOptions->getOption(option);
 		if ( !opt ) {
 			YZSession::me->popupMessage(QObject::tr("Invalid option given : ") + option);
-			return QString::null;
+			return CMD_ERROR;
 		}
 		if ( hasOperator ) {
 			switch ( opt->getValueType() ) {
@@ -664,7 +670,7 @@ QString YZModeEx::set ( const YZExCommandArgs& args ) {
 					break;
 				case bool_t :
 					YZSession::me->popupMessage(QObject::tr("This option cannot be switched this way, this is a boolean option."));
-					return QString::null;
+					return CMD_ERROR;
 					break;
 				case color_t :
 					break;
@@ -688,25 +694,25 @@ QString YZModeEx::set ( const YZExCommandArgs& args ) {
 #endif
 	} else {
 		YZSession::me->popupMessage( QObject::tr( "Invalid option given" ) );
-		return QString::null;
+		return CMD_ERROR;
 	}
 	// refresh screen
 //	if ( args.view )
 //		args.view->recalcScreen();
 
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::mkyzisrc ( const YZExCommandArgs& ) {
+cmd_state YZModeEx::mkyzisrc ( const YZExCommandArgs& ) {
 #if QT_VERSION < 0x040000
 	YZSession::mOptions->saveTo( QDir::currentDirPath() + "/yzis.conf", "", "HL Cache" );
 #else
 	YZSession::mOptions->saveTo( QDir::currentPath() + "/yzis.conf", "", "HL Cache" );
 #endif
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::substitute( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 #if QT_VERSION < 0x040000
 	unsigned int idx = args.input.find("substitute");
 #else
@@ -754,13 +760,13 @@ QString YZModeEx::substitute( const YZExCommandArgs& args ) {
 		args.view->myBuffer()->updateAllViews();
 	}
 
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::hardcopy( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::hardcopy( const YZExCommandArgs& args ) {
 	if ( args.arg.length() == 0 ) {
 		args.view->mySession()->popupMessage( QObject::tr( "Please specify a filename" ) );
-		return QString::null;
+		return CMD_ERROR;
 	}
 	QString path = args.arg;
 	QFileInfo fi ( path );
@@ -770,41 +776,43 @@ QString YZModeEx::hardcopy( const YZExCommandArgs& args ) {
 	path = fi.absoluteFilePath( );
 #endif
 	args.view->printToFile( path );
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::preserve( const YZExCommandArgs& args  ) {
+cmd_state YZModeEx::preserve( const YZExCommandArgs& args  ) {
 	args.view->myBuffer()->getSwapFile()->flush();
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::lua( const YZExCommandArgs& args ) {
-	return YZExLua::instance()->lua( args.view, args.arg );
+cmd_state YZModeEx::lua( const YZExCommandArgs& args ) {
+	YZExLua::instance()->lua( args.view, args.arg );
+	return CMD_OK;
 }
 
-QString YZModeEx::source( const YZExCommandArgs& args ) {
-	return YZExLua::instance()->source( args.view, args.arg );
+cmd_state YZModeEx::source( const YZExCommandArgs& args ) {
+	YZExLua::instance()->source( args.view, args.arg );
+	return CMD_OK;
 }
 
-QString YZModeEx::map( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::map( const YZExCommandArgs& args ) {
 	QRegExp rx("(\\S+)\\s+(.+)");
 	if ( rx.exactMatch(args.arg) ) {
 		yzDebug() << "Adding global mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		YZMapping::self()->addGlobalMapping(rx.cap(1), rx.cap(2));
 	}
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::imap( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::imap( const YZExCommandArgs& args ) {
 	QRegExp rx("(\\S+)\\s+(.+)");
 	if ( rx.exactMatch(args.arg) ) {
 		yzDebug() << "Adding insert mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		YZMapping::self()->addInsertMapping(rx.cap(1), rx.cap(2));
 	}
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::indent( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::indent( const YZExCommandArgs& args ) {
 	int count = 1;
 	if ( args.arg.length() > 0 ) count = args.arg.toUInt();
 	if ( args.cmd[ 0 ] == '<' ) count *= -1;
@@ -812,24 +820,24 @@ QString YZModeEx::indent( const YZExCommandArgs& args ) {
 		args.view->myBuffer()->action()->indentLine( args.view, i, count );
 	}
 	args.view->commitNextUndo();
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::enew( const YZExCommandArgs& ) {
+cmd_state YZModeEx::enew( const YZExCommandArgs& ) {
 	YZSession::me->createBuffer();
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::syntax( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::syntax( const YZExCommandArgs& args ) {
 	if ( args.arg == "on" ) {
 		args.view->myBuffer()->detectHighLight();
 	} else if ( args.arg == "off" ) {
 		args.view->myBuffer()->setHighLight(0);
 	}
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::highlight( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 // :highlight Defaults Comment fg= selfg= bg= selbg= italic nobold underline strikeout
 #if QT_VERSION < 0x040000
 	QStringList list = QStringList::split(" ", args.arg);
@@ -838,7 +846,7 @@ QString YZModeEx::highlight( const YZExCommandArgs& args ) {
 #endif
 	QStringList::Iterator it = list.begin(), end = list.end();
 	yzDebug() << list << endl;
-	if (list.count() < 3) return QString::null; //at least 3 parameters...
+	if (list.count() < 3) return CMD_ERROR; //at least 3 parameters...
 	QString style = list[0];
 	QString type = list[1];
 #if QT_VERSION < 0x040000
@@ -871,7 +879,7 @@ QString YZModeEx::highlight( const YZExCommandArgs& args ) {
 	YZSession::mOptions->setGroup(style);
 	QStringList option = YZSession::mOptions->readQStringListEntry(type);
 	yzDebug() << "HIGHLIGHT : Current " << type << " : " << option << endl;
-	if (option.count() < 7) return QString::null; //just make sure it's fine ;)
+	if (option.count() < 7) return CMD_ERROR; //just make sure it's fine ;)
 
 	end = list.end();
 	//and update it with parameters passed from user
@@ -920,11 +928,11 @@ QString YZModeEx::highlight( const YZExCommandArgs& args ) {
 		}
 	}
 
-	return QString::null;
+	return CMD_OK;
 }
 
-QString YZModeEx::split( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::split( const YZExCommandArgs& args ) {
 	YZSession::me->splitHorizontally(args.view);
-	return QString::null;
+	return CMD_OK;
 }
 

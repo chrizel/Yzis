@@ -16,14 +16,14 @@ unix:LIBS += -L../libyzis/libqtyzis/.libs -lqtyzis
 INCLUDEPATH += cppunit/include cppunit/phil \
 				..
 
-HEADERS   =  testYZBuffer.h \
-			 testYZCommands.h \
+HEADERS   =  testBuffer.h \
+			 testCommands.h \
 			 testUndo.h \
-			 TYZView.h \
-			 TYZSession.h
+			 TView.h \
+			 TSession.h
 			 
-SOURCES   = testYZBuffer.cpp \
-			testYZCommands.cpp \
+SOURCES   = testBuffer.cpp \
+			testCommands.cpp \
 			testUndo.cpp \
-			TYZView.cpp \
+			TView.cpp \
 			main.cpp

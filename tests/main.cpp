@@ -18,7 +18,7 @@
  **/
 
 
-#include "testYZBuffer.h"
+#include "testBuffer.h"
 #include "PhilTestRunner.h"
 
 int main(int argc, char ** argv)

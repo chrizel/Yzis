@@ -28,8 +28,8 @@ using namespace std;
 #include "libyzis/debug.h"
 #include "libyzis/buffer.h"
 
-#include "testYZBuffer.h"
-#include "TYZSession.h"
+#include "testBuffer.h"
+#include "TSession.h"
 
 /* ========================================================================= */
 

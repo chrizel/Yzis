@@ -27,9 +27,9 @@ using namespace std;
 #include "libyzis/debug.h"
 #include "libyzis/buffer.h"
 
-#include "testYZCommands.h"
-#include "TYZSession.h"
-#include "TYZView.h"
+#include "testCommands.h"
+#include "TSession.h"
+#include "TView.h"
 
 
 // register the suite so that it is run in the runner

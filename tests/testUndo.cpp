@@ -26,7 +26,7 @@ using namespace std;
 #include "libyzis/debug.h"
 
 #include "testUndo.h"
-#include "TYZSession.h"
+#include "TSession.h"
 
 
 // register the suite so that it is run in the runner

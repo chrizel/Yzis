@@ -22,7 +22,7 @@
  * $Id: session.h 388 2004-03-03 23:44:13Z mikmak $
  */
 
-#include "TYZView.h"
+#include "TView.h"
 
 #include <ctype.h>
 

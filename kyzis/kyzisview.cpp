@@ -15,8 +15,9 @@ KYZisView::KYZisView ( KYZisDoc *doc, YZSession *_session, QWidget *parent, cons
 	editor = new KYZisEdit (this,"editor");
 	command = new KYZisCommand ( this, "command" );
 	status = new KStatusBar (this, "status");
-	status->insertItem("Yzis Ready",0);
-	status->insertItem("",99,1,true);
+	status->insertItem("Yzis Ready",0,1);
+	status->setItemAlignment(0,Qt::AlignLeft);
+	status->insertItem("",99,0,true);
 	status->setItemAlignment(99,Qt::AlignRight);
 	status->setFixedHeight(status->height());
 	

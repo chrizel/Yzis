@@ -1,6 +1,9 @@
 2003-06-09 mikmak
   * kyzis
      adding status bar informations for cursor position like nyzis
+  * libyzis
+     allow GUI to start without argument to start a new buffer
+     make sure we always keep the first line to avoid NULL problems
 
 2003-06-07 orzel
   * libyzis

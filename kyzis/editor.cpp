@@ -95,7 +95,8 @@ void KYZisEdit::paintEvent( QPaintEvent * pe ) {
 
 void KYZisEdit::paintEvent( unsigned int clipx, unsigned int clipy, unsigned int clipw, unsigned int cliph ) {
 	clipx -= mParent->getDrawCurrentLeft( ) + marginLeft;
-	clipy -= mParent->getDrawCurrentTop( );
+	unsigned int dTop = mParent->getDrawCurrentTop();
+	clipy = clipy > dTop ? clipy - dTop : 0;
 	if ( ( unsigned int )mCursorY >= clipy && ( unsigned int )mCursorY <= clipy + cliph )
 		mCursorShown = false;
 	drawContents( clipx, clipy, clipw, cliph, false );

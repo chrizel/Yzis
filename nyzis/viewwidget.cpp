@@ -131,7 +131,8 @@ void NYZView::scrollDown( int n ) {
 }
 
 void NYZView::paintEvent( unsigned int , unsigned int clipy, unsigned int , unsigned int cliph ) {
-	drawContents( clipy - getDrawCurrentTop( ), cliph );
+	unsigned int dTop = getDrawCurrentTop();
+	drawContents( clipy > dTop ? clipy - dTop : 0 , cliph );
 }
 
 void NYZView::drawContents( int clipy, int cliph ) {

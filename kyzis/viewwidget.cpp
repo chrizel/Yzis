@@ -43,7 +43,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status = new KStatusBar (this, "status");
 	command = new KYZisCommand (this, "command");
 	mVScroll = new QScrollBar( this, "vscroll" );
-	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
+	connect( mVScroll, SIGNAL(valueChanged(int)), this, SLOT(scrollView(int)) );
 
 	status->insertItem(mode(YZ_VIEW_MODE_LAST),0,1);
 	status->setItemAlignment(0,Qt::AlignLeft);
@@ -131,7 +131,7 @@ void KYZisView::wheelEvent( QWheelEvent * e ) {
 
     // don't scroll up/down if the view already is at the top/bottom
     if ( ( n < 0 && top != 0 ) || ( n > 0 && top != lastline ) )
-        scrollView( getCurrentTop() + n );
+		mVScroll->setValue( getCurrentTop() + n );
 }
 
 void KYZisView::modeChanged (void) {
@@ -257,8 +257,6 @@ void KYZisView::scrollView( int value ) {
 	else if ( value > (int)buffer->lineCount() - 1 )
 		value = buffer->lineCount() - 1;
 
-	mVScroll->setMaxValue( buffer->lineCount() -1 );
-	mVScroll->setValue( value  );
 	bottomViewVertically( value + getLinesVisible() - 1 );
 
 	// move cursor if it scrolled off the screen

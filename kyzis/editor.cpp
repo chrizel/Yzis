@@ -155,29 +155,28 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 			if ( currentY >= ( uint )clipy ) {
 				unsigned int currentX = 0;
 
-				myRect.setRect (0, currentY * linespace, width(), linespace );
-				p->eraseRect( myRect );
 				if ( number ) { // draw current line number
+					myRect.setRect ( currentX * maxwidth , currentY * linespace, ( marginLeft - 1 ) * maxwidth, linespace );
+					p->eraseRect( myRect );
 					QPen old_pen = p->pen( );
-
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
 						p->setPen( Qt::yellow );
 						p->drawText( myRect, flag, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
 						lastLineNumber = lineNumber;
 					}
-
 					currentX += marginLeft;
 					p->setPen( old_pen );
 				}
-
+				myRect.setRect (currentX * maxwidth, currentY * linespace, width(), linespace );
+				p->eraseRect( myRect );
 
 				while ( mParent->drawNextCol( ) ) {
 					const QChar& ch = mParent->drawChar( );
-					myRect.setRect (currentX * maxwidth, currentY * linespace, 
-							maxwidth * mParent->drawLength( ), linespace);
+					myRect.setX( currentX * maxwidth );
+					myRect.setWidth( mParent->drawLength() * maxwidth );
+
 					QColor c = mParent->drawColor( );
-					if ( c.isValid() )
-						p->setPen( c );
+					if ( c.isValid() ) p->setPen( c );
 					p->drawText(myRect, flag, ch );
 					currentX += mParent->drawLength( );
 				}

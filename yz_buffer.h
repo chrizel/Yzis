@@ -49,7 +49,7 @@ private:
 	YZLine	*find_line(int line);
 
 	YZLine *line_first, *line_last;
-	int	lines; // number of lines in this buffer
+	int	lines_nb; // number of lines in this buffer
 
 	/* readonly?, change, load, save, isclean?, ... */
 	/* locking stuff will be here, too */

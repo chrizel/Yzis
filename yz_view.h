@@ -19,7 +19,7 @@ public:
 	  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
 	  * this view can display
 	  */
-	YZView(YZBuffer *_b, int _lines);
+	YZView(YZBuffer *_b, int _lines_vis);
 
 	/**
 	 * transfer a key event from gui to core
@@ -46,17 +46,17 @@ public:
 	/**
 	  * returns the number of line this view can display
 	  */
-	int	get_lines_displayed(void) { return lines; }
+	int	get_lines_visible(void) { return lines_vis; }
 
 	/**
 	  * return true or false according to if the given line is
 	  * visible or not
 	  */
-	int	is_line_visible(int l) { return ( (l>=current) && ((l-current)<lines) ); }
+	int	is_line_visible(int l) { return ( (l>=current) && ((l-current)<lines_vis) ); }
 
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
-	int		lines;		/** number of visible lines */
+	int		lines_vis;	/** number of visible lines */
 	int		current;	/** current line on top of view */
 	int		x,y;		/** current cursor position */
 	enum {
@@ -106,7 +106,7 @@ typedef int yz_view;
  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
  * this view can display
  */
-yz_view create_view(yz_buffer , int lines);
+yz_view create_view(yz_buffer , int lines_vis);
 
 /**
  * transfer a key event from gui to core
@@ -126,7 +126,7 @@ yz_event * yz_view_fetch_event(yz_view );
   * 	the first line displayed
   * 	the number of line displayed
   */
-void yz_view_get_geometry(yz_view , int *current, int *lines);
+void yz_view_get_geometry(yz_view , int *current, int *lines_vis);
 
 /*
  * used by the yz_buffer to stock events for this view

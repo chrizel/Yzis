@@ -19,7 +19,7 @@ YZBuffer::YZBuffer(char *_path)
 {
 	path	= _path;
 	view_nb	= 0;
-	lines	= 0;
+	lines_nb= 0;
 
 	line_first = line_last = NULL; // linked lines
 
@@ -90,7 +90,7 @@ void YZBuffer::update_view(int view_nb)
 {
 	int y;
 	YZView *view = view_list[view_nb];
-	for (y=view->get_current(); y<lines && y<view->get_current()+view->get_lines_displayed(); y++) {
+	for (y=view->get_current(); y<lines_nb && y<view->get_current()+view->get_lines_visible(); y++) {
 
 		YZLine *l = find_line( view->get_current()+y);
 		yz_assert(l, "find_line failed");
@@ -137,7 +137,7 @@ void YZBuffer::load(void)
 	}
 
 	len = 0; // len is the number of valid byte in buf[]
-	lines	= 0;
+	lines_nb	= 0;
 	do { // read the whole file
 		int a;
 		a = fread(buf, sizeof(char), YZ_LINE_DEFAULT_LENGTH-len, f);
@@ -172,7 +172,7 @@ void YZBuffer::load(void)
 					break; // read some more data, the buffer is too small
 
 				/* this line is definetely too long */
-				YZLine *line = new YZLine(lines++, buf, len); // ptr-buf == len, here
+				YZLine *line = new YZLine(lines_nb++, buf, len); // ptr-buf == len, here
 				len=0;
 				/* add the new line */
 				add_line(line);
@@ -187,7 +187,7 @@ void YZBuffer::load(void)
 			// here *ptr='\n'
 			ptr++;
 			/* we found a whole line, use it */
-			YZLine *line = new YZLine(lines++, buf, ptr-buf);
+			YZLine *line = new YZLine(lines_nb++, buf, ptr-buf);
 			len -= (ptr-buf); memcpy(buf, ptr, len); // remove handled part
 			debug("removing %d bytes from buf", ptr-buf);
 			/* add the new line */
@@ -222,7 +222,7 @@ void YZBuffer::load(void)
 
 		if ( (ptr-buf)>=len && (ptr-buf)>=YZ_LINE_DEFAULT_LENGTH ) {
 			/* this line is definetely too long */
-			YZLine *line = new YZLine(lines++, buf, len); // ptr-buf == len, here
+			YZLine *line = new YZLine(lines_nb++, buf, len); // ptr-buf == len, here
 			/* add the new line */
 			add_line(line);
 			debug("adding a looooong microbuffer");
@@ -233,7 +233,7 @@ void YZBuffer::load(void)
 		// everything left has no \n in it, and len should be >0
 		yz_assert(len>0, "oops, len is not >0 here, it should though");
 		ptr++;
-		YZLine *line = new YZLine(lines++, buf, len);
+		YZLine *line = new YZLine(lines_nb++, buf, len);
 		add_line(line);
 		debug("adding a normal microbuffer");
 	} // while (1)

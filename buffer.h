@@ -31,6 +31,7 @@
 #include "yzis.h"
 #include "syntaxhighlight.h"
 #include "line.h"
+#include "debug.h"
 
 class YZView;
 class YZUndoBuffer;
@@ -339,15 +340,23 @@ public:
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
 	inline YZLine * yzline(unsigned int line) {
-		bool found;
+		//if you change this method, DO NOT FORGET TO CHANGE THE ONE AFTER !
+		bool found=TRUE;
 		YZLine *yl = mText.at( line, &found );
-		if ( !found ) return new YZLine();
+		if ( found == FALSE ) {
+			return new YZLine();
+		}
 		if ( yl && !yl->initialized() ) updateHL( line );
 		return yl;
 	}
 
 	inline YZLine * yzline(unsigned int line) const {
-		YZLine *yl = mText.at( line );
+		//if you change this method, DO NOT FORGET TO CHANGE THE ONE BEFORE !
+		bool found=TRUE;
+		YZLine *yl = mText.at( line, &found );
+		if ( found == FALSE ) {
+			return new YZLine();
+		}
 		return yl;
 	}
 

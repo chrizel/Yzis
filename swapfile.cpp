@@ -22,6 +22,8 @@
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatetime.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 YZSwapFile::YZSwapFile(YZBuffer *b) {
 	mParent = b;

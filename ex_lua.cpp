@@ -28,6 +28,11 @@ extern "C" {
 YZExLua::YZExLua() {
 	st = lua_open();
 	luaopen_base(st);
+	luaopen_string( st );
+	luaopen_table( st );
+	luaopen_math( st );
+	luaopen_io( st );
+	luaopen_debug( st );
 	yzDebug() << "Lua " << lua_version() << " loaded" << endl;
 	lua_register(st,"text",text);
 	lua_register(st,"insert",insert);

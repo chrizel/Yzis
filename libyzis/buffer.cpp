@@ -35,6 +35,21 @@
 #include "undo.h"
 #include "debug.h"
 
+#define ASSERT_TEXT_WITHOUT_NEWLINE( functionname, text ) \
+	YZASSERT_MSG( text .contains('\n')==false, QString("%1 - text contains newline").arg(text) )
+
+#define ASSERT_LINE_EXISTS( functionname, line ) \
+	YZASSERT_MSG( line < lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
+
+#define ASSERT_NEXT_LINE_EXISTS( functionname, line ) \
+	YZASSERT_MSG( line <= lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
+
+#define ASSERT_COL_LINE_EXISTS( functionname, col, line ) \
+	YZASSERT_MSG( col < data(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( data(line).length() ) );
+
+#define ASSERT_NEXT_COL_LINE_EXISTS( functionname, col, line ) \
+	YZASSERT_MSG( col <= data(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( data(line).length() ) );
+
 YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	myId = YZSession::mNbBuffers++;
 	mIntro = false;
@@ -70,14 +85,14 @@ YZBuffer::~YZBuffer() {
 // ------------------------------------------------------------------------
 
 void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
-	YZASSERT_MSG( c.contains('\n')==false, QString("YZBuffer::insertChar( %1, %2, %3 ) - adding a char that contains a \\n").arg(x).arg(y).arg(c) )
-	YZASSERT_MSG(y < lineCount(), QString("YZBuffer::insertChar( %1, %2, %3 ) but line %4 does not exist, buffer has %5 lines").arg( x ).arg( y ).arg( c ).arg( y ).arg( lineCount() ) );
+	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::insertChar(%1,%2,%3))").arg(x).arg(y).arg(c), c )
+	ASSERT_LINE_EXISTS( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), y )
 
 	/* brute force, we'll have events specific for that later on */
 	QString l=data(y);
 	if (l.isNull()) return;
 
-	YZASSERT_MSG(x <= l.length(), QString("YZBuffer::insertChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( c ).arg( x ).arg( l.length() ) );
+	ASSERT_NEXT_COL_LINE_EXISTS( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c),x,y)
 
 	if (x > l.length()) {
 		// if we let Qt proceed, it would append spaces to extend the line
@@ -98,14 +113,14 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
 }
 
 void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
-	YZASSERT_MSG( c.contains('\n')==false, QString("YZBuffer::chgChar( %1, %2, %3 ) - adding a char that contains a \\n").arg(x).arg(y).arg(c) )
-	YZASSERT_MSG( y < lineCount(), QString("YZBuffer::chgChar( %1, %2, %3 ) but line %4 does not exist, buffer has %5 lines").arg( x ).arg( y ).arg( c ).arg( y ).arg( lineCount() ) );
+	ASSERT_TEXT_WITHOUT_NEWLINE( "YZBuffer::chgChar(%1,%2,%3).arg(x).arg(y).arg(c)", c )
+	ASSERT_LINE_EXISTS( QString("YZBuffer::chgChar(%1,%2,%3)").arg(x).arg(y).arg(c), y )
 
 	/* brute force, we'll have events specific for that later on */
 	QString l=data(y);
 	if (l.isNull()) return;
 
-	YZASSERT_MSG( x < l.length(), QString("YZBuffer::chgChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( c ).arg( x ).arg( l.length() ) );
+	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::chgChar(%1,%2,%3)").arg(x).arg(y).arg(c),x,y)
 
 	if (x >= l.length()) {
 		// if we let Qt proceed, it will append spaces to extend the line
@@ -132,21 +147,17 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 
 void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 {
-	yzDebug() << "YZBuffer::delChar(): at " << x << "," << y 
-				<< ": " << count << endl;
-	YZASSERT_MSG( y < lineCount(), QString(
-		"YZBuffer::delChar( %1, %2, %3 ) but line %4 does not exist"
-		", buffer has %5 lines").arg( x ).arg( y ).arg( count )
-		.arg( y ).arg( lineCount() ) );
+	ASSERT_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count), y )
 
 	/* brute force, we'll have events specific for that later on */
 	QString l=data(y);
 	if (l.isNull()) return;
 
-	YZASSERT_MSG( x < l.length(), QString(
-		"YZBuffer::delChar( %1, %2, %3 ) but col %4 does not exist,"
-		" line has %5 columns").arg( x ).arg( y ).arg( count )
-		.arg( x ).arg( l.length() ) );
+	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count),x,y)
+
+	if (x >= l.length()) {
+		return;
+	}
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
 	                                   l.mid(x,count), x, y );
@@ -167,7 +178,7 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 // ------------------------------------------------------------------------
 
 void  YZBuffer::appendLine(const QString &l) {
-	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::appendLine() : adding a line with '\n' inside" );
+	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::appendLine(%1)").arg(l),l);
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, 
 	                                 QString(), 0, lineCount() );
@@ -180,9 +191,8 @@ void  YZBuffer::appendLine(const QString &l) {
 
 
 void  YZBuffer::insertLine(const QString &l, unsigned int line) {
-	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::insertLine() : adding a line with '\n' inside" );
-	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::insertLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
-
+	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::insertLine(%1,%2)").arg(l).arg(line),l)
+	ASSERT_NEXT_LINE_EXISTS(QString("YZBuffer::insertLine(%1,%2)").arg(l).arg(line),line)   
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, 
 	                                   QString(), 0, line );
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
@@ -193,8 +203,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 }
 
 void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
-	YZASSERT_MSG( line < lineCount(), QString( "YZBuffer::insertNewLine( %1, %2 ) but line %3 does not exist," " buffer has %4 lines").arg( line ).arg( col ).arg( line ) .arg( lineCount() ) );
-
+	ASSERT_LINE_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),line);
 	if ( line == lineCount() ) {//we are adding a line, fake being at end of last line
 		line --;
 		col = data(line).length(); 
@@ -203,25 +212,26 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	QString l=data(line);
 	if (l.isNull()) return;
 
-	YZASSERT_MSG( col <= l.length(), QString(
-		"YZBuffer::insertNewLine( %1, %2 ) but column %3 does not exist,"
-		" line has %4 columns").arg( line ).arg( col ).arg( col )
-		.arg( l.length() ) );
+	ASSERT_NEXT_COL_LINE_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),col,line )    
+
 	if (col > l.length() ) return;
 
-	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
-	                                   l.mid(col), col, line );
+	QString newline = l.mid( col );
+	if ( newline.isNull() ) newline = QString( "" );
+
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, 
 	                                   "", col, line+1 );
-	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
-	                                   l.mid(col), 0, line+1 );
+	if (newline.length()) {
+		mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, 
+										   newline, col, line );
+		mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, 
+										   newline, 0, line+1 );
+	}
 
 	//replace old line
 	at(line)->setData(l.left( col ));
 
 	//add new line
-	QString newline = l.mid( col );
-	if ( newline.isNull() ) newline = QString( "" );
 	mText.insert( line + 1, new YZLine(newline));
 
 
@@ -230,10 +240,9 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 }
 
 void YZBuffer::deleteLine( unsigned int line ) {
-	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::deleteLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
+	ASSERT_LINE_EXISTS(QString("YZBuffer::deleteLine(%1)").arg(line),line)   
 
 	if (line >= lineCount()) return;
-
 
 	if (lineCount() > 1) {
 		mUndoBuffer->addBufferOperation( YZBufferOperation::DELLINE, 
@@ -249,8 +258,8 @@ void YZBuffer::deleteLine( unsigned int line ) {
 }
 
 void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
-	YZASSERT_MSG( l.contains('\n')==false, "YZBuffer::replaceLine() : replacing a line with '\n' inside" );
-	YZASSERT_MSG( line < lineCount(), QString("YZBuffer::replaceLine( %1 ) but line does not exist, buffer has %3 lines").arg( line ).arg( lineCount() ) );
+	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),l)
+	ASSERT_LINE_EXISTS(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),line)   
 	
 	if ( data( line ).isNull() ) return;
 

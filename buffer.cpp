@@ -38,7 +38,7 @@ YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	mSession = sess;
 	if ( !_path.isNull() )
 		mPath = _path;
-	else mPath = "/tmp/yzisnew" + myId; //we need this so that the buffer has a name at creation time (it will change when we load() a new file
+	else mPath = QString("/tmp/yzisnew%1").arg(myId); //we need this so that the buffer has a name at creation time (it will change when we load() a new file
 
 	load();
 	mSession->addBuffer( this );
@@ -157,6 +157,11 @@ void YZBuffer::updateAllViews() {
 void  YZBuffer::addLine(const QString &l) {
 //	yzDebug() << "Adding new line : " << l << "$" << endl;
 	mText.append(new YZLine(l));
+	yzDebug() << "ADDLINE : count :" << mText.count() << endl;
+	yzDebug() << "ADDLINE : 0 :" << data(0) << endl;
+	yzDebug() << "ADDLINE : 1 :" << data(1) << endl;
+	yzDebug() << "ADDLINE : 2 :" << data(2) << endl;
+	yzDebug() << "ADDLINE : 3 :" << data(3) << endl;
 }
 
 QString	YZBuffer::data(unsigned int no)

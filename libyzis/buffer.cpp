@@ -190,6 +190,7 @@ void  YZBuffer::appendLine(const QString &l) {
 		bool ctxChanged = false;
 		QMemArray<signed char> foldingList;
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
+		if ( ctxChanged ) yzDebug() << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
 	setModified( true );
 	updateAllViews();
@@ -379,9 +380,18 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 		}
 	} 
 	if ( m_highlight ) {
-		bool ctxChanged = false;
-		QMemArray<signed char> foldingList;
-		m_highlight->doHighlight(( line >= 1 ? yzline( line -1 ) : new YZLine()), yzline( line ), &foldingList, &ctxChanged );
+		YZView *it;
+		uint hlLine = line;
+		bool ctxChanged = true;
+		while ( ctxChanged && line < lineCount()) {
+			QMemArray<signed char> foldingList;
+			m_highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : new YZLine()), yzline( hlLine ), &foldingList, &ctxChanged );
+			if ( hlLine != line ) {
+				for ( it = mViews.first(); it ; it = mViews.next() )
+					it->invalidateLine( hlLine );
+			}
+			hlLine++;
+		}
 	}
 	setModified( true );
 }

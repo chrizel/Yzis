@@ -1,3 +1,9 @@
+2004-05-9 mikmak
+  * libyzis
+    add Lua 5.0 support through a :source command
+    added a text(int viewId, int startCol, int startLine, int endCol, int
+    endLine) function for Lua bindings
+
 2004-05-1 mikmak
   * libyzis
     basic support for substitute command

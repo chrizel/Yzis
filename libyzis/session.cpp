@@ -29,6 +29,7 @@ int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
 YZOption YZSession::mOptions = YZOption();
 YZRegisters YZSession::mRegisters = YZRegisters();
+YZSession *YZSession::me = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
 	//FIXME
@@ -40,6 +41,7 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mMotionPool->initPool();
 	mSessionName = _sessionName;
 	mCurView = 0;
+	me = this;
 }
 
 YZSession::~YZSession() {

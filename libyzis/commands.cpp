@@ -72,14 +72,14 @@ void YZCommandPool::initPool() {
 	NEW_VIEW_COMMAND(":",&YZView::gotoExMode,true,false,false,false);
 	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true,false,false,false);
 	NEW_VIEW_COMMAND("([0-9]*)(gg|G)",&YZView::gotoLine,true,true,false,false);
-	NEW_VIEW_COMMAND("(\".)?([0-9]*)(d.|D)",&YZView::deleteLine,true,true,true,true);
+	NEW_VIEW_COMMAND("(\".)?([0-9]*)(d.*|D)",&YZView::deleteLine,true,true,true,true);
 	NEW_VIEW_COMMAND("o",&YZView::openNewLineAfter,true,false,false,false);
 	NEW_VIEW_COMMAND("O",&YZView::openNewLineBefore,true,false,false,false);
 	NEW_VIEW_COMMAND("a",&YZView::append,true,false,false,false);
 	NEW_VIEW_COMMAND("A",&YZView::appendAtEOL,true,false,false,false);
 	NEW_VIEW_COMMAND("J",&YZView::joinLine,true,false,false,false);
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true,false,false,false);
-	NEW_VIEW_COMMAND("(\".)?([0-9]*)(y.|Y)",&YZView::copy,true,true,false,true);
+	NEW_VIEW_COMMAND("(\".)?([0-9]*)(y.*|Y)",&YZView::copy,true,true,false,true);
 	NEW_VIEW_COMMAND("(\".)?(p|P)",&YZView::paste,true,false,false,true);
 	NEW_BUFF_COMMAND("u",&YZBuffer::undoLast,true,false,false,false);
 	NEW_VIEW_COMMAND("/",&YZView::gotoSearchMode,true,false,false,false);
@@ -113,8 +113,9 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int * /* er
 			args.command = ex.cap( ag++ );
 //			yzDebug() << "Command : " << args.command << endl;
 			//at last there is the motion
-			if ( it.data().hasMotion ) {//TODO
-//				yzDebug() << "hasMotion : " << endl;
+			if ( it.data().hasMotion ) {
+				args.motion = args.command.mid(1);
+//				yzDebug() << "hasMotion : " << args.motion << endl;
 			}
 			args.view = view;
 			break; //leave now

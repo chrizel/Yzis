@@ -22,9 +22,11 @@
 
 #include <qmap.h>
 #include <qregexp.h>
+#include "cursor.h"
 #include "view.h"
 
 class YZBuffer;
+class YZCursor;
 
 enum type_t {
 	REGEXP, //apply a regexp to make calculations (rex)
@@ -70,14 +72,14 @@ class YZMotionPool {
 		 * @param inputs the string to analyze
 		 * @param motion the motion found if any or NULL
 		 */
-		void findMotion ( const QString& inputs, YZMotion *motion );
+		YZMotion& findMotion ( const QString& inputs );
 
 		/**
 		 * Calculates coordinates of the cursor after applying the given motion
 		 * @param motion the motion to apply
 		 * @param view the view on which to operate
 		 */
-		void applyMotion( const YZMotion& motion, YZView *view );
+		void applyMotion( const QString& inputsMotion, YZView *view, YZCursor *cursor );
 
 	private:
 		QMap<QString,YZMotion> pool;

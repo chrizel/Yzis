@@ -70,6 +70,7 @@ struct args {
 	unsigned int motionStartY;
 	unsigned int motionEndY;
 	QString command;
+	QString motion;
 	//the origin of inputs
 	YZView *view;
 

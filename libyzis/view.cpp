@@ -906,6 +906,46 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 				paintEvent( 0, mY, mColumnsVis, 1 );
 		} else 
 			paintEvent( 0, mY, mColumnsVis, 1 );
+	} else if (args.command.startsWith("d")) {
+		if (args.motion.isNull() || args.motion.isEmpty() || (args.motion[0].isDigit() && args.motion.length() <= 1)) return QString::null; //keep going waiting for new inputs
+		//ok we have a motion , so delete till the end of the motion :)
+		YZCursor *cursor = new YZCursor(this);
+		mSession->getMotionPool()->applyMotion(args.motion,this, cursor);
+		//delete to the cursor position now :)
+
+		if ( cursor->getY() == mCursor->getY() ) {
+			QString b = mBuffer->textline( mCursor->getY() );
+			yzDebug() << "Original line : " << b << endl;
+			buff << b.mid( mCursor->getX(), cursor->getX() - mCursor->getX() );
+			QString b2 = b.left( mCursor->getX() ) + b.mid( cursor->getX() );
+			mBuffer->replaceLine( b2 , mCursor->getY() );
+			yzDebug() << "New line : " << b2 << endl;
+			//repaint ?
+		} else {
+			if ( cursor->getY() != mCursor->getY() ) {
+				QString b = mBuffer->textline( mCursor->getY() );
+				buff << b.mid( mCursor->getX() );
+				mBuffer->replaceLine( b.left( mCursor->getX() ), mCursor->getY() );
+				//repaint ?
+			}
+			mCursor->setY( mCursor->getY()+1 );
+			mCursor->setX( 0 );
+			mY++;
+			while ( cursor->getY() != mCursor->getY() ) {
+				mBuffer->deleteLine( mY ); //use mY as lines numbering are changing while we delete !
+				mCursor->setY( mCursor->getY()+1 );
+				//repaint ?
+			}
+			mY++;
+			//now we are on the last line to modify
+			if ( cursor->getY() == mCursor->getY() ) {
+				QString b = mBuffer->textline( mCursor->getY() );
+				buff << b.left( cursor->getX() );
+				mBuffer->replaceLine( b.mid( cursor->getX() ), mY );
+				//repaint ?
+			}
+		}
+
 	}
 	YZSession::mRegisters.setRegister( reg, buff );
 

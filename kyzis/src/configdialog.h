@@ -37,9 +37,9 @@ class KYZisConfigDialog : public KConfigDialog {
 		~KYZisConfigDialog( );
 
 	public slots:
-		void slotChanged();
+		void slotMyChanged();
 		void slotApply();
-		void slotOk();
+//		void slotOk();
 
 	private :
 		void setupPages();

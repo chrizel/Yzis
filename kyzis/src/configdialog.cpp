@@ -79,9 +79,9 @@ void KYZisConfigDialog::setupPages() {
 	// Opacity
 	QLabel* label_opacity = new QLabel( i18n("Background color opacity"), pageAppearance );
 	QHBox* box_opacity = new QHBox( pageAppearance );
-	QLabel* label_left = new QLabel( i18n("Min"), box_opacity );
+	/*QLabel* label_left =*/ (void) new QLabel( i18n("Min"), box_opacity );
 	QSlider* slide_fade = new QSlider( 0, 100, 1, 0, Qt::Horizontal, box_opacity, "kcfg_opacity" );
-	QLabel* label_right = new QLabel( i18n("Max"), box_opacity );
+	/*QLabel* label_right =*/ (void) new QLabel( i18n("Max"), box_opacity );
 	box_opacity->setStretchFactor( slide_fade, 1 );
 
 	layoutAppearance->addWidget( label_opacity, line, 0, Qt::AlignRight );
@@ -104,38 +104,22 @@ void KYZisConfigDialog::setupPages() {
 	layoutAppearance->addWidget( kcfg_colorFG, line, 1 );
 	++line;
 
-	// Konsole
-/*	QLabel* label_konsole = new QLabel( i18n("Konsole"), pageAppearance );
-	QCheckBox* kcfg_konsole = new QCheckBox( pageAppearance, "kcfg_konsole" );
-	layoutAppearance->addWidget( label_konsole, line, 0, Qt::AlignRight );
-	layoutAppearance->addWidget( kcfg_konsole, line, 1 );
-	++line;
-*/
 	layoutAppearance->setRowStretch( line, 1 );
-
 
 	addPage( pageAppearance, i18n("Appearance"), "colorize" );
 
 	pageHL = new YzisSchemaConfigPage ( this );
-	connect( pageHL, SIGNAL( changed() ), this, SLOT( slotChanged() ) );
+	connect( pageHL, SIGNAL( changed() ), this, SLOT( slotMyChanged() ) );
 	addPage( pageHL, i18n("Syntax Highlighting"), "hl" );
 }
 
-void KYZisConfigDialog::slotChanged() {
+void KYZisConfigDialog::slotMyChanged() {
 	actionButton( KDialogBase::Apply )->setEnabled( true );
-	actionButton( KDialogBase::Default )->setEnabled( true );
 }
 
 void KYZisConfigDialog::slotApply() {
 	pageHL->apply();
-	actionButton( KDialogBase::Apply )->setEnabled( false );
-	actionButton( KDialogBase::Default )->setEnabled( false );
-	emit settingsChanged();
-}
-
-void KYZisConfigDialog::slotOk() {
-	slotApply();
-	accept();
+	KConfigDialog::slotApply();
 }
 
 #include "configdialog.moc"

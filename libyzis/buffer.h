@@ -150,7 +150,7 @@ public:
 	 *
 	 * Note that empty buffer always have one empty line.
 	 */
-	unsigned int lineCount() { return mText.count(); }
+	unsigned int lineCount() const { return mText.count(); }
 
 	/**
 	 * Return the column of the first non-blank character in the line

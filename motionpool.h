@@ -92,40 +92,44 @@ class YZMotionPool {
 		 * Calculates coordinates of the cursor after applying the given motion
 		 * @param inputsMotion the motion string to apply
 		 * @param view the view on which to operate
-		 * @param cursor result of the calculation
+		 * @param from result of the calculation, start cursor
+		 * @param to result of the calculation, end cursor
 		 * @return whether a match was found
 		 */
-		bool applyMotion( const QString& inputsMotion, YZView *view, YZCursor& cursor );
+		bool applyMotion( const QString& inputsMotion, YZView *view, YZCursor& from, YZCursor& to );
 
 		/**
 		 * Calculates coordinates of the cursor after applying the given regexp motion
 		 * @param inputsMotion the motion string to apply
 		 * @param motion the motion to apply
 		 * @param view the view on which to operate
-		 * @param result result of the calculation
+		 * @param from result of the calculation, start cursor
+		 * @param to result of the calculation, end cursor
 		 * @return whether a match was found
 		 */
-		bool applyRegexpMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& result );
+		bool applyRegexpMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& from, YZCursor& tp );
 
 		/**
 		 * Calculates coordinates of the cursor after applying the given motion
 		 * @param inputsMotion the motion string to apply
 		 * @param motion the motion to apply
 		 * @param view the view on which to operate
-		 * @param result result of the calculation
+		 * @param from result of the calculation, start cursor
+		 * @param to result of the calculation, end cursor
 		 * @return whether a match was found
 		 */
-		bool applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& result );
+		bool applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& from, YZCursor& to);
 
 		/**
 		 * Calculates coordinates of a match for normal commands
 		 * @param inputsMotion the motion string to apply
 		 * @param motion the motion to apply
 		 * @param view the view on which to operate
-		 * @param result result of the calculation
+		 * @param from result of the calculation, start cursor
+		 * @param to result of the calculation, end cursor
 		 * @result whether a match was found or not
 		 */
-		bool applyNormalMotion( const QString& inputsMotion, YZMotion& motion, YZView *view, YZCursor& result );
+		bool applyNormalMotion( const QString& inputsMotion, YZMotion& motion, YZView *view, YZCursor& from, YZCursor& to);
 
 		/**
 		 * Check whether the @param inputs match a known motion

@@ -365,12 +365,10 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ALT>:" ) {
-				leaveInsertMode();
 				gotoExMode();
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ESC>" ) {
-				leaveInsertMode();
 				gotoPreviousMode();
 				purgeInputBuffer();
 				return;
@@ -489,12 +487,10 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ALT>:" ) {
-				leaveReplaceMode();
 				gotoExMode();
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ESC>" ) {
-				leaveReplaceMode();
 				gotoPreviousMode();
 				purgeInputBuffer();
 				return;
@@ -616,7 +612,6 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				setCommandLineText( mSearchHistory[mCurrentSearchItem] );
 				return;
 			} else if ( mPreviousChars == "<ALT>:" ) {
-				leaveSearchMode();
 				gotoExMode();
 				purgeInputBuffer();
 				return;
@@ -1444,6 +1439,7 @@ QString YZView::append () {
 
 void YZView::switchModes(int mode) {
 	if (mode != mMode) {
+		leaveCurrentMode();
 		mPrevMode = mMode;
 		mMode = static_cast<modeType>(mode);
 		modeChanged();
@@ -1546,6 +1542,35 @@ QString YZView::gotoVisualMode( bool isVisualLine ) {
 	sendPaintEvent( scrollCursor->screenX(), dVisualCursor->getY(), mColumnsVis, 1 );
 	yzDebug("Visual mode") << "Starting at " << *mVisualCursor << endl;
 	return QString::null;
+}
+
+void YZView::leaveCurrentMode() {
+	switch ( mMode ) {
+		case YZ_VIEW_MODE_INSERT :
+			leaveInsertMode();
+			break;
+		case YZ_VIEW_MODE_REPLACE :
+			leaveReplaceMode();
+			break;
+		case YZ_VIEW_MODE_EX :
+			break;
+		case YZ_VIEW_MODE_SEARCH :
+			leaveSearchMode();
+			break;
+		case YZ_VIEW_MODE_OPEN :
+			break;
+		case YZ_VIEW_MODE_INTRO :
+			break;
+		case YZ_VIEW_MODE_COMPLETION :
+			leaveCompletionMode();
+			break;
+		case YZ_VIEW_MODE_VISUAL :
+		case YZ_VIEW_MODE_VISUAL_LINE :
+			leaveVisualMode();
+			break;
+		case YZ_VIEW_MODE_COMMAND :
+			break;
+	}
 }
 
 void YZView::leaveSearchMode( ) {

@@ -256,6 +256,11 @@ class YZView {
 		QString gotoVisualMode( bool isVisualLine=false );
 
 		/**
+		 * Wrapper for next functions
+		 */
+		void leaveCurrentMode( );
+
+		/**
 		 * Leave insert mode
 		 */
 		void leaveInsertMode( );

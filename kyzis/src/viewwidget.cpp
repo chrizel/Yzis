@@ -217,6 +217,7 @@ void KYZisView::cursorPositionReal ( unsigned int *line, unsigned int *col )
 bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
 {
 	gotodxdy( line, col );
+	gotoCommandMode();
 	return true;
 }
 
@@ -224,6 +225,7 @@ bool KYZisView::setCursorPositionReal ( unsigned int line, unsigned int col)
 {
 	centerViewVertically(line);
 	gotoxy( col, line );
+	gotoCommandMode();
 	return true;
 }
 

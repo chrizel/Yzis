@@ -1379,6 +1379,7 @@ QString YZView::copyLine( unsigned int nb_lines, const QValueList<QChar> &regs )
 
 void YZView::paste( QChar registr, bool after ) {
 	QStringList list = YZSession::mRegisters.getRegister( registr );
+	if ( list.isEmpty() ) return;
 
 	YZCursor pos( mainCursor->buffer() );
 	uint i = 0;

@@ -91,7 +91,7 @@ class YZExLua : public QObject {
 		/**
 		 * Insert text inside a line:
 		 * Arguments:
-		 * startLine,startCol,text
+		 * startCol,startLine,text
 		 *
 		 * Returns nothing.
 		 */
@@ -118,7 +118,7 @@ class YZExLua : public QObject {
 		/**
 		 * Replace text on view.
 		 * Arguments:
-		 * startLine,startCol, text to replace
+		 * startCol,startLine, text to replace
 		 *
 		 * Returns nothing.
 		 */
@@ -136,7 +136,7 @@ class YZExLua : public QObject {
 
 		/**
 		 * Moves the cursor to the given position
-		 * Arguments: line, col
+		 * Arguments: col, line
 		 *
 		 * Note: the underscore is necessary because the name is already
 		 * reserved in C++
@@ -156,7 +156,7 @@ class YZExLua : public QObject {
 
 		/**
 		 * Return current's syntax highlighting color for given column,line
-		 * Arguments: line, col
+		 * Arguments: col, line
 		 * Returns a color string
 		 */
 		static int color(lua_State *L);

@@ -72,17 +72,17 @@ TestLuaBinding = {} --class
         assertEquals( line(1), s )
         insert(1,1,"a")
         assertEquals( line(1), 'a'..s )
-        insert(1,8,"z")
+        insert(8,1,"z")
         assertEquals( line(1), 'a'..s..'z' )
 
         -- insert on a missing line
-        insert(2,1,s)
+        insert(1,2,s)
         assertEquals( line(1), 'a'..s..'z' )
         assertEquals( line(2), s )
         content = bufferContent()
 
         -- insert beyond the end of file does nothing
-        insert(4,1,s)
+        insert(1,4,s)
         assertEquals( bufferContent(), content )
     end
 
@@ -135,15 +135,15 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), "boucou" )
         replace(1,1,"doi")
         assertEquals( bufferContent(), "doicou" )
-        replace(1,6,"hop")
+        replace(6,1,"hop")
         assertEquals( bufferContent(), "doicohop" )
-        replace(1,9,"bof")
+        replace(9,1,"bof")
         assertEquals( bufferContent(), "doicohopbof" )
 
         -- ignore replace on wrong position
-        replace(1,13,"bof")
+        replace(13,1,"bof")
         assertEquals( bufferContent(), "doicohopbof" )
-        replace(3,1,"bof")
+        replace(1,3,"bof")
         assertEquals( bufferContent(), "doicohopbof" )
 
         -- replace on the second line
@@ -151,7 +151,7 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), "doicohopbof\nbof" )
 
         -- replace multiline rejected
-        replace(1,2,"bof\nhop\n")
+        replace(2,1,"bof\nhop\n")
         assertEquals( bufferContent(), "doicohopbof\nbof" )
     end
 
@@ -196,11 +196,11 @@ TestLuaBinding = {} --class
         assertEquals( winline(), 1 )
         assertEquals( wincol(), 1 )
 
-        goto(1,2)
+        goto(2,1)
         assertEquals( wincol(), 2 )
         assertEquals( winline(), 1 )
 
-        goto(2,1)
+        goto(1,2)
         assertEquals( wincol(), 1 )
         assertEquals( winline(), 2 )
 
@@ -208,11 +208,11 @@ TestLuaBinding = {} --class
         assertEquals( wincol(), 2 )
         assertEquals( winline(), 2 )
 
-        goto(2,4)
+        goto(4,2)
         assertEquals( wincol(), 3 )
         assertEquals( winline(), 2 )
 
-        goto(4,2)
+        goto(2,4)
         assertEquals( wincol(), 2 )
         assertEquals( winline(), 3 )
 
@@ -225,7 +225,7 @@ TestLuaBinding = {} --class
         sendkeys(':e runtests.sh<ENTER>')
         color1 = color(1,1)
         print("color1 : "..color1)
-        color2 = color(2,1)
+        color2 = color(1,2)
         print("color2 : "..color2)
         assertEquals( string.len(color1) > 0, true )
         assertEquals( string.len(color2) > 0, true )

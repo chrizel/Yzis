@@ -5,3 +5,5 @@
 - nyzis : check event handler(qt one?)
 - nyzis : report meta, etc..
 - implement open mode
+- make / and ? motions to allow 'd/thing' to work
+- implement a C-like Timer (SIGALARM) to dump swapfiles ?

@@ -59,7 +59,7 @@ void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
 
 	/* inform the views */
 	YZView *it;
-	for ( it = mViews.first(); it != mViews.next(); ++it ) {
+	for ( it = mViews.first(); it ; it = mViews.next() ) {
 //		YZView *v = *it;
 		mSession->postEvent( YZEvent::mkEventInvalidateLine( it->myId,y ) );
 	}

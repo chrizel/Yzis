@@ -1,12 +1,15 @@
 #ifndef KYZISEDIT_H
 #define KYZISEDIT_H
 
-#include <qscrollview.h>
 #include "kyzisview.h"
+#include <qscrollview.h>
 #include <qpainter.h>
 #include <qevent.h>
+#include <qmap.h>
 
+typedef QMap<int,QString> KYZLine;
 class KYZisView;
+
 /**
  * KYZis Painter Widget
  */
@@ -30,6 +33,9 @@ class KYZisEdit : public QScrollView {
 		void setCursor(int c,int l);
 
 	protected:
+		//update view when the viewport gets resized
+		void viewportResizeEvent(QResizeEvent*);
+
 		//entry point for drawing events
 		void drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph );
 
@@ -57,6 +63,9 @@ class KYZisEdit : public QScrollView {
 		//cursor position (sync with libyzis one)
 		int cursorx;
 		int cursory;
+
+		//QMap<int,QString> mText;
+		KYZLine mText;
 };
 
 #endif

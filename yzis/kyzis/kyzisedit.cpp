@@ -12,6 +12,13 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 KYZisEdit::~KYZisEdit() {
 }
 
+void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
+	QSize s = ev->size();
+	int lines=0;
+	lines = s.height() / fontMetrics().lineSpacing();
+	_parent->setVisibleLines( lines );
+	kdDebug()<<"Update visibles lines to : "<< lines << endl;
+}
 
 // PUBLIC API
 void KYZisEdit::setCursor(int c, int l) {
@@ -20,7 +27,8 @@ void KYZisEdit::setCursor(int c, int l) {
 }
 
 void KYZisEdit::setTextLine(int l, const QString &str){
-	drawText(0,l * fontMetrics().lineSpacing(),str);
+//	drawText(0,l * fontMetrics().lineSpacing(),str);
+	mText.insert(l,str);
 }
 
 // INTERNAL API
@@ -38,7 +46,15 @@ void KYZisEdit::drawCursorAt(QPainter *paint, int x, int y) {
 }
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
-	p->drawText(0,1 * fontMetrics().lineSpacing(),"Test");
+	//XXX draw text inside the clip
+	KYZLine::iterator it;
+	for (it = mText.begin(); it!=mText.end(); ++it) {
+		if (clipy < fontMetrics().lineSpacing() * it.key() && cliph + clipy > fontMetrics().lineSpacing() * it.key() ) {
+			p->drawText(0,it.key() * fontMetrics().lineSpacing(),it.data());
+		}
+	}
+	
+	//XXX draw the cursor if needed
 }
 
 #include "kyzisedit.moc"

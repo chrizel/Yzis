@@ -25,7 +25,7 @@ YZLine::YZLine(int _line, char *init, int initlen, int size)
 {
 	::YZLine(size+initlen);
 	append(init, initlen);
-	debug("YZLine::YZLine init is %s", data);
+//	debug("YZLine::YZLine init is %s", data);
 	line = _line;
 }
 

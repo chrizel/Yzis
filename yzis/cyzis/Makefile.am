@@ -1,9 +1,9 @@
 bin_PROGRAMS = cyzis 
 
-INCLUDES = -I../libyzis/
+INCLUDES = -I$(top_srcdir)/libyzis/
 
 cyzis_SOURCES = main.c dummy.cpp
-cyzis_LDADD = ../libyzis/libyzis.la -lcurses
+cyzis_LDADD = $(top_srcdir)/libyzis/libyzis.la -lcurses
 
 dummy.cpp :
 	echo > dummy.cpp

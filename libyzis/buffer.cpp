@@ -192,7 +192,7 @@ void YZBuffer::load(const QString& file) {
 		}
 		fl.close();
 	}
-	if ( ! mText.count() ) addLine(" ");
+	if ( ! mText.count() ) addLine("");
 	updateAllViews();
 }
 

@@ -7,6 +7,7 @@
 
 #include <kapplication.h>
 #include <kmdimainfrm.h>
+#include <dcopobject.h>
 
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
@@ -15,8 +16,9 @@
  * @short Application Shell
  * @author Yzis Team <yzis-dev@yzis.org>
  */
-class Kyzis : public KMdiMainFrm
+class Kyzis : public KMdiMainFrm, public DCOPObject
 {
+	K_DCOP
     Q_OBJECT
 public:
     /**
@@ -37,6 +39,7 @@ public:
      */
     void load(const KURL& url);
 
+k_dcop:
 	/**
 	 * Opens a new buffer
 	 * @param path file to which the buffer is linked

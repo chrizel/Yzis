@@ -198,8 +198,8 @@ void YZView::centerView(unsigned int line) {
 	//update current
 	int newcurrent = line - lines_vis / 2;
 
-	if ( newcurrent > ( int( buffer->text.count() ) - int( lines_vis ) ) )
-		newcurrent = buffer->text.count() - lines_vis;
+	if ( newcurrent > ( int( buffer->getLines() ) - int( lines_vis ) ) )
+		newcurrent = buffer->getLines() - lines_vis;
 	if ( newcurrent < 0 ) newcurrent = 0;
 
 	if ( newcurrent== int( current ) ) return;
@@ -227,7 +227,7 @@ void YZView::gotoxy(int nextx, int nexty)
 	QString lin;
 
 	// check positions
-	if ( nexty >= int( buffer->text.count() ) ) nexty = buffer->text.count() - 1;
+	if ( nexty >= int( buffer->getLines() ) ) nexty = buffer->getLines() - 1;
 	if ( nexty < 0 ) nexty = 0;
 	cursor->setY( nexty );
 
@@ -362,7 +362,7 @@ QString YZView::gotoLine(const QString& inputsBuff) {
 		bool test;
 		line = inputsBuff.left( i ).toInt( &test );
 		if ( !test && !inputsBuff.startsWith( "gg" ) )
-				line=buffer->text.count()-1; //there shouldn't be any other solution
+				line=buffer->getLines()-1; //there shouldn't be any other solution
 	}
 
 	if ( inputsBuff.startsWith( "gg" ) )

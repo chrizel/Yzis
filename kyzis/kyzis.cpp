@@ -20,7 +20,7 @@
 #include <kdebug.h>
 
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
-	: KMdiMainFrm(0L,"mdiApp",mode),
+	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
 	m_dockConfig( dockConfig ) 
 {
 	setIDEAlModeStyle( 1 );
@@ -207,9 +207,11 @@ void Kyzis::createBuffer(const QString& path) {
 
 			if (m_part)
 			{
-//				partsList.append(m_part);
-//				m_currentPart = m_part;
-//				dock->setWidget(m_part->widget());
+				kdDebug() << "Yzis part successfully loaded" << endl;
+				m_currentPart = m_part;
+				KMdiChildView *view = createWrapper( m_part->widget(), "buffer-" + path , "buffer" );
+				addWindow( view );
+				createGUI(m_part);
 			}
 		}
 }

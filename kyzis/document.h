@@ -23,6 +23,7 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/editinterface.h>
 #include <buffer.h>
+#include <view.h>
 #include <session.h>
 
 class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public YZBuffer {

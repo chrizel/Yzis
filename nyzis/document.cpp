@@ -18,7 +18,7 @@
 /**
  * $Id$
  */
-
+#include <qfile.h> // this is needed so that strange things don't happen which I don't understand
 //#include "viewwidget.h"
 #include "document.h"
 #include "factory.h"

@@ -29,6 +29,7 @@
 #include <qstringlist.h>
 #include <qmap.h>
 #include <qnamespace.h>
+#include <cursor.h>
 
 class NYZSession;
 

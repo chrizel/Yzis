@@ -21,7 +21,6 @@
 #define YZ_SWAPFILE
 
 #include <qstringlist.h>
-#include "buffer.h"
 
 class YZBuffer;
 

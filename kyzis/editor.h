@@ -27,6 +27,7 @@
 #include <qmap.h>
 #include <qfontmetrics.h>
 #include <qfont.h>
+#include <action.h>
 
 class KYZisView;
 

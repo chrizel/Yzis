@@ -25,6 +25,7 @@
 #include <kstatusbar.h>
 #include <qevent.h>
 #include <qscrollbar.h>
+#include <cursor.h>
 #include "document.h"
 #include "editor.h"
 #include "viewwidget.h"

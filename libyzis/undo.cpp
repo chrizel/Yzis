@@ -27,6 +27,8 @@
 
 #include "undo.h"
 #include "buffer.h"
+#include "action.h"
+#include "view.h"
 #include "debug.h"
 
 QString YZBufferOperation::toString() {

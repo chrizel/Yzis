@@ -25,7 +25,7 @@ class NYZSession;
 class NYZView : public YZView {
 public:
 	/**
-	  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
+	  * constructor. Each view is binded to a buffer, @arg lines is the initial number of lines that
 	  * this view can display
 	  */
 	NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b);

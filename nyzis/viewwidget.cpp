@@ -200,8 +200,8 @@ void NYZView::drawContents( int clipy, int cliph ) {
 						}
 						mvwaddstr( editor, currentY, x, num );
 						wattroff( editor, attribYellow );
-						if ( rightleft ) --x;
-						else ++x;
+						x = marginLeft - 1;
+						if ( rightleft ) x = width - x - 1;
 						mvwaddch( editor, currentY, x, ' ' );
 						lastLineNumber = lineNumber;
 					} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );

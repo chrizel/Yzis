@@ -97,7 +97,7 @@ void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString
 }
 
 void YZSwapFile::unlink() {
-	yzDebug() << "Unlink swap file " << mFilename << endl;
+//	yzDebug() << "Unlink swap file " << mFilename << endl;
 	if ( ! mFilename.isNull() && QFile::exists( mFilename ) )
 		QFile::remove ( mFilename );
 	mNotResetted=true;

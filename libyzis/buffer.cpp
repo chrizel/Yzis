@@ -725,8 +725,8 @@ void YZBuffer::rmView(YZView *v) {
 	if ( idx != -1 )
 		mViews.remove(idx);
 #endif
-	YZASSERT( 1==f ); // isn't it ?
-	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
+//	YZASSERT( 1==f ); // isn't it ?
+//	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
 	if ( mViews.isEmpty() )
 		detach();
 

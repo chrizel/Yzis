@@ -65,7 +65,8 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 KYZisEdit::~KYZisEdit() {
 	delete mCursor;
 	delete signalMapper;
-	delete rootxpm;
+	// dont delete rootxpm, this is done by KDE ;)
+//	delete rootxpm;
 	for( int i = actionCollection->count() - 1; i>= 0; --i )
 		delete actionCollection->take( actionCollection->action(i) );
 	delete actionCollection;

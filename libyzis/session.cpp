@@ -144,7 +144,7 @@ void YZSession::addBuffer( YZBuffer *b ) {
 }
 
 void YZSession::rmBuffer( YZBuffer *b ) {
-	yzDebug() << "Session : rmBuffer " << b->fileName() << endl;
+//	yzDebug() << "Session : rmBuffer " << b->fileName() << endl;
 	if ( mBuffers.contains( b->fileName() ) ) {
 			mBuffers.remove( b->fileName() );
 			deleteBuffer( b );
@@ -256,8 +256,11 @@ void YZSession::exitRequest( int errorCode ) {
 	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
-		delete b;
+		//might be better with deleteBuffer(b) no ? //mm
+		//delete b;
+		deleteBuffer( b );
 	}
+	mBuffers.clear();
 	quit( errorCode );
 }
 

@@ -75,7 +75,7 @@ void KYZisDoc::setupActions() {
 }*/
 
 void KYZisDoc::removeView( KTextEditor::View * v ) {
-	yzDebug() << "Document : removeView" << endl;
+//	yzDebug() << "Document : removeView" << endl;
 	if ( !v )
 		return;
 

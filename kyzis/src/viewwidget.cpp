@@ -84,7 +84,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 }
 
 KYZisView::~KYZisView () {
-	yzDebug() << "KYZisView::~KYZisView" << endl;
+//	yzDebug() << "KYZisView::~KYZisView" << endl;
 	if ( buffer ) buffer->removeView(this);
 }
 

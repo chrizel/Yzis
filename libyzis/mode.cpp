@@ -139,7 +139,7 @@ YZModePool::~YZModePool() {
 }
 void YZModePool::stop() {
 	mStop = true;
-	yzDebug() << "YZModePool stopped for view " << mView->myId << endl;
+//	yzDebug() << "YZModePool stopped for view " << mView->myId << endl;
 }
 void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 	mKey = key;

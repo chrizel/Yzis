@@ -43,7 +43,7 @@ YZLineSearch::YZLineSearch( YZView *_view ) {
 }
 
 YZLineSearch::~YZLineSearch() {
-        yzDebug() << "YZLineSearch Destructor" << endl;
+//        yzDebug() << "YZLineSearch Destructor" << endl;
 }
 
 YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int times ) {

@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include "yz_view.h"
 #include "yz_debug.h"
+#include <qkeysequence.h>
 
 YZView::YZView(YZBuffer *_b, int _lines_vis) {
 	gui_manager = NULL;
@@ -33,10 +34,12 @@ void YZView::setVisibleLines(int nb) {
 }
 
 /* Used by the buffer to post events */
-void YZView::sendChar( QChar c) {
+void YZView::sendKey( int c, int modifiers) {
 	QString lin;
+	QString key = QKeySequence( c );
+	/*if ( ! modifiers & Qt::ShiftButton )*/ key = key.lower();
 
-	if ('\033'==c) {
+	if (Qt::Key_Escape == c) {
 		//when escpaping while adding char in end of line
 		if (cursor->getX() > current_maxx) {
 			gotoxy(current_maxx, cursor->getY());
@@ -47,24 +50,24 @@ void YZView::sendChar( QChar c) {
 	switch(mode) {
 		case YZ_VIEW_MODE_INSERT:
 			/* handle adding a char */
-			if ( c.unicode() == 13 ) {// <ENTER> 
+			if ( c == Qt::Key_Return ) {
 				buffer->addNewLine(cursor->getX(),cursor->getY());
 				gotoxy(0, cursor->getY()+1 );
 			} else {
-				buffer->addChar(cursor->getX(),cursor->getY(),c);
+				buffer->addChar(cursor->getX(),cursor->getY(),key);
 				gotoxy(cursor->getX()+1, cursor->getY() );
 			}
 			return;
 		case YZ_VIEW_MODE_REPLACE:
 			/* handle replacing a char */
-			buffer->chgChar(cursor->getX(),cursor->getY(),c);
+			buffer->chgChar(cursor->getX(),cursor->getY(),key);
 			gotoxy(cursor->getX()+1, cursor->getY() );
 			return;
 		case YZ_VIEW_MODE_COMMAND:
 			/* will be handled after the switch */
 			break;
 		case YZ_VIEW_MODE_EX:
-			if ( c.unicode() == 13 ) {// <ENTER> 
+			if ( c == Qt::Key_Return ) {
 				//try to execute that stuff :)
 				if ( session )
 					session->getExPool()->execExCommand( this, gui_manager->getCommandLineText() );
@@ -77,7 +80,8 @@ void YZView::sendChar( QChar c) {
 			return;
 	};
 	/* ok, here now we're in command */
-	previous_chars+=c;
+	previous_chars+=key;
+	yzDebug() << "Previous chars : " << previous_chars << endl;
 	//execute the command
 	if ( session ) 
 		session->getPool()->execCommand(this, previous_chars);

@@ -34,7 +34,7 @@ void NYZView::event_loop()
 		/* this is a _basic_ event loop... will be improved */
 		c = getch();
 		if (c!=ERR)
-			sendChar( c );
+			sendKey( c, 0/*modifiers*/ );
 		flush_events();
 	}
 }

@@ -186,6 +186,7 @@ static void sigwinch(int /*sig*/)
 	refresh();
 	NYZFactory::currentView->unmap();
 	NYZFactory::currentView->map();
+	NYZFactory::currentView->refreshScreen();
 }
 
 

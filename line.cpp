@@ -1,5 +1,6 @@
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2004 Lucijan Busch <luci@yzis.org>
+ *  Copyright (C) 2004 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -21,19 +22,29 @@
  * $Id$
  */
 
+#include <qregexp.h>
 #include "line.h"
+#include "syntaxdocument.h"
 
-YZLine::YZLine(const QString &l)
-{
+YZLine::YZLine(const QString &l) {
 	setData(l);
 }
 
-YZLine::YZLine()
-{
+YZLine::YZLine() {
 	setData( QString("") );
 }
 
-YZLine::~YZLine()
-{
+YZLine::~YZLine() {
 }
 
+void YZLine::setAttribs(uchar attribute, uint start, uint end) {
+  if (end > mAttributes.size())
+    end = mAttributes.size();
+
+  for (uint z = start; z < end; z++)
+    mAttributes[z] = attribute;
+}
+
+
+void YZLine::highlight() {
+}

@@ -29,7 +29,7 @@
 #include "options.h"
 #include "registers.h"
 #include "motionpool.h"
-#include "syntaxdocument.h"
+#include "syntaxhighlight.h"
 
 class YZView;
 class YZMotionPool;
@@ -193,7 +193,7 @@ class YZSession {
 		static int mNbBuffers;
 		static YZOption mOptions;
 		static YZRegisters mRegisters;
-		static YzisSyntaxDocument mLoader;
+		static YzisSyntaxHighlight mHL;
 };
 
 #endif /* YZ_SESSION_H */

@@ -72,13 +72,58 @@ void YZView::sendKey( int c, int modifiers) {
 	}
 
 	//ignore some keys
-	if ( c == Qt::Key_Shift || c == Qt::Key_Alt || c == Qt::Key_Meta ||c == Qt::Key_Control || c == Qt::Key_CapsLock ) return;
+	if ( c == Qt::Key_Shift || c == Qt::Key_Alt || c == Qt::Key_Meta ||c == Qt::Key_Control || c == Qt::Key_CapsLock ) {
+		yzError( )<< "receiving modifiers in c, shouldn't happen" <<endl;
+		return;
+	}
+
+#if 0
+	// useful stuff, but dont commit with  #if 1 :)
+	yzDebug()<< "YZView::sendKey : receiving " << 
+		( ( modifiers & Qt::ControlButton )?"CONTROL+":"" ) <<
+		( ( modifiers & Qt::AltButton )?"ALT+":"" ) <<
+		( ( modifiers & Qt::ShiftButton )?"SHIFT+":"" );
+	if ( isprint( c ) ) yzDebug() << QString(QChar(c)) << endl;
+	else yzDebug()<< "(int) " << c << endl;
+#endif
+
+	// handle CONTROL SEQUENCE
+	// we copy vim behaviour ^L go through in INSERT/REPLACE/SEARCH
+	if ( modifiers & Qt::ControlButton )
+	switch(mMode) {
+		case YZ_VIEW_MODE_INSERT:
+		case YZ_VIEW_MODE_REPLACE:
+		case YZ_VIEW_MODE_SEARCH:
+			break;// continue
+		case YZ_VIEW_MODE_EX:
+		case YZ_VIEW_MODE_COMMAND:
+			switch ( tolower(c) ) {
+				case 'l':
+					redrawScreen();
+					return;
+				default:
+					yzWarning()<< "Unhandled control sequence " << c <<endl;
+					return;
+
+			}
+	};
+
+
+	// we did for control, and will do for shift, everything else is discarded
+	if ( modifiers & ~(Qt::ShiftButton|Qt::ControlButton ) ) {
+		// anything else than ShiftButton ?
+		yzWarning( )<< "Other modifier than control/shift -> still unhandled" <<endl;
+		return;
+	}
+
 
 	//map other keys //BAD XXX
 	if ( c == Qt::Key_Insert ) c = Qt::Key_I;
 	
+
+
 	QString lin;
-	QString key = QChar( tolower( c ) );// = QKeySequence( c );
+	QString key = QChar( tolower(c) );// = QKeySequence( c );
 	//default is lower case unless some modifiers
 	if ( modifiers & Qt::ShiftButton )
 		key = key.upper();
@@ -322,7 +367,7 @@ void YZView::sendKey( int c, int modifiers) {
 					break;
 			}
 			mPreviousChars+=key;
-			yzDebug() << "Previous chars : (" << int( (mPreviousChars.latin1())[0] )<< ") " << mPreviousChars << endl;
+//			yzDebug() << "Previous chars : (" << int( (mPreviousChars.latin1())[0] )<< ") " << mPreviousChars << endl;
 			if ( mSession ) {
 				int error = 0;
 				mSession->getPool()->execCommand(this, mPreviousChars, &error);

@@ -71,20 +71,55 @@ void NYZFactory::event_loop()
 //		if ( qApp->hasPendingEvents () ) yzDebug( NYZIS ) << "qt wann do something.. " << qGlobalPostedEventsCount() << " pending events.." << endl;
 		/* this is a _basic_ event loop... will be improved */
 		int c = getch();
+	
+		// we know what this is..
 		switch( c ){
 			case ERR:
 				usleep( 400 );
 			// do nothing with the following
 			case KEY_RESIZE:
-				break;
-			default:
-				int modifiers = 0;
-				if ( isupper( c ) ) modifiers |= Qt::ShiftButton;
-				if ( iscntrl( c ) ) modifiers |= Qt::ControlButton;
-				//TODO: ALT/META	
-				yzDebug() << "Receiving key " << c<<endl;
-				currentView->sendKey( keycodes.contains(c)?keycodes[c]:c, modifiers );
+				continue;
+			case 15:
+				currentView->sendKey('o',Qt::ControlButton );
+				continue;
+			case 12:
+				currentView->sendKey('l',Qt::ControlButton );
+				continue;
 		}
+		if (keycodes.contains(c)) {
+			currentView->sendKey(keycodes[c],0 );
+			continue;
+		}
+		// remaining cases
+		if ( c& KEY_CODE_YES ) { // ncurses special key
+			yzError(NYZIS) << "*************** Unhandled" <<
+				"ncurses key code, please report : " << (int) c << endl;
+			continue;
+			}
+		int modifiers = 0;
+		if ( c & 0200 ) {
+			// heuristic, alt-x is x|0200..
+			modifiers |= Qt::AltButton;
+			c &= ~0200;
+		}
+		if ( c>=KEY_MAX) { // non-ascii key
+			yzError(NYZIS) << "*************** Unhandled" <<
+				"and very strange (>KEY_MAX) char received from ncurses, please report : " << (int) c << endl;
+			continue;
+			}
+		if ( c>127 ) { // non-ascii key
+			yzError(NYZIS) << "*************** Unhandled" <<
+				"non-ascii key, please report : " << (int) c << endl;
+			continue;
+			}
+		if ( iscntrl( c ) ) {
+			yzError(NYZIS) << "*************** Unhandled" <<
+				"control sequence " << c << " (discarded)" << endl;
+			continue;
+		}
+		if ( isupper( c ) ) { modifiers |= Qt::ShiftButton; c+= 'a'-'A'; }
+		//TODO: META	
+		currentView->sendKey( c, modifiers );
 	}
 }
 

@@ -412,8 +412,14 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<DEL>" ) {
-				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-				commitNextUndo();
+				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+					mBuffer->action()->mergeNextLine( this, mainCursor->bufferY() );
+					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
+
+				} else {
+					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
+					commitNextUndo();
+				}
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<PDOWN>" ) {
@@ -482,8 +488,14 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<DEL>" ) {
-				mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
-				commitNextUndo();
+				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+					mBuffer->action()->mergeNextLine( this, mainCursor->bufferY() );
+					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
+
+				} else {
+					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
+					commitNextUndo();
+				}
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ALT>:" ) {

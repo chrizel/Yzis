@@ -128,7 +128,6 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			while(j<inputs.length() && inputs[j].digitValue() >= 0)
 				j++;
 			count*=inputs.mid(i, j-i).toInt();
-			yzDebug() << "Count : " << count << endl;
 			i=j;
 		} else if(inputs[i] == '\"') {
 			if(++i>=inputs.length())

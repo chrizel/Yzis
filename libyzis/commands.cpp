@@ -1,6 +1,7 @@
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2004 Mickael Marchand <marchand@kde.org>,
- *  Thomas Capricelli <orzel@freehackers.org>
+ *  Thomas Capricelli <orzel@freehackers.org>,
+ *  Philippe Fremy <phil@freehackers.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public

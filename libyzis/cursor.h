@@ -36,6 +36,7 @@ class YZView;
 class YZCursor {
 	public :
 		YZCursor(YZView *vp);
+		YZCursor(YZCursor *cursor);
 		~YZCursor();
 
 		inline void setX(unsigned int x) { x_pos = x; }
@@ -45,6 +46,8 @@ class YZCursor {
 		inline unsigned int getX() { return x_pos; }
 
 		inline unsigned int getY() { return y_pos; }
+
+		YZView* getParent() { return parentView; }
 
 /*
 		inline void incX(int nb=1) { x_pos+=nb; }

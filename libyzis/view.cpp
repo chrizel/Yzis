@@ -284,8 +284,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 
 	switch(mMode) {
 		case YZ_VIEW_MODE_COMPLETION:
-			mPreviousChars += modifiers + key;
-			if ( mPreviousChars == "<CTRL>p" ) {
+			if ( modifiers+key == "<CTRL>p" ) {
 				if (m_word2Complete.isEmpty())
 					initCompletion();
 				QString result = doComplete(false);
@@ -293,20 +292,24 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
 					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
 				}
-			} else if ( mPreviousChars == "<CTRL>n" ) {
+				purgeInputBuffer();
+				return;
+			} else if ( modifiers+key == "<CTRL>n" ) {
 				if (m_word2Complete.isEmpty())
 					initCompletion();
 				QString result = doComplete(true);
-				yzDebug() << "result : " << result << endl;
 				if (!result.isNull()) {
 					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
 					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
 				}
+				purgeInputBuffer();
+				return;
 			} else {
 				leaveCompletionMode();
+	//			sendKey(key,modifiers);
 			}
-			purgeInputBuffer();
-			return;
+//			purgeInputBuffer();
+//			return;
 		case YZ_VIEW_MODE_INSERT:
 			mPreviousChars += modifiers + key;
 			pendingMapp = YZMapping::self()->applyMappings(mPreviousChars, mapMode);
@@ -1365,6 +1368,12 @@ QString YZView::gotoPreviousMode() {
 	else if (getCurrentMode()==YZ_VIEW_MODE_OPEN)
 	{
 		yzDebug() << "Not switching modes" << endl;
+		return QString::null;
+	}
+	else if (getCurrentMode()==YZ_VIEW_MODE_COMPLETION)
+	{
+		if (getPreviousMode() == YZ_VIEW_MODE_INSERT) gotoInsertMode();
+		if (getPreviousMode() == YZ_VIEW_MODE_REPLACE) gotoReplaceMode();
 		return QString::null;
 	}
 	yzDebug() << "switching to Command Mode" <<endl;

@@ -39,27 +39,24 @@ void NYZView::event_loop()
 
 void NYZView::flush_events(void)
 {
-	yz_event * e;
+	yz_event e;
 
 	/* flush event list */
-	while ( (e=fetchEvent()) != NULL )
+	while ( (e=fetchNextEvent()).id != YZ_EV_NOOP )
 		handle_event(e);
 }
 
-void NYZView::handle_event(yz_event *e)
+void NYZView::handle_event(yz_event e)
 {
 	int l, i;
 	QString	yzl;
 
-//FIXME	if (!e) panic("oulalal c'est pas bon la..");
-
-	switch(e->id) {
+	switch(e.id) {
 		case YZ_EV_SETLINE:
-			l = e->u.setline.y;
-//FIXME			if (l<0 or l>=YZ_MAX_LINE) panic("Can't handle more than 3000 lines
+			l = e.u.setline.y;
 			//yet, kinda sucks, uh?");
-			yzl = mText[l] = *( e->u.setline.line );
-			mText.insert( l,*( e->u.setline.line ));
+			yzl = mText[l] = *( e.u.setline.line );
+			mText.insert( l,*( e.u.setline.line ));
 
 			/* not use addnstr here, will stop at \0  (i guess) */
 			move ( l, 0);
@@ -70,11 +67,11 @@ void NYZView::handle_event(yz_event *e)
 //			debug("YZ_EV_SETLINE: received, line is %d", l);
 			break;
 		case YZ_EV_SETCURSOR:
-			move( e->u.setcursor.y, e->u.setcursor.x) ;
+			move( e.u.setcursor.y, e.u.setcursor.x) ;
 //			debug("YZ_EV_SETCURSOR: received");
 			break;
 		case YZ_EV_SETSTATUS:
-			session->update_status( e->u.setstatus.text );
+			session->update_status( e.u.setstatus.text );
 			break;
 		default:
 			//FIXME warning("Unhandled event from yzis core : %i", e->id);

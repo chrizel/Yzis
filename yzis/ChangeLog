@@ -1,3 +1,16 @@
+2003-04-24 mikmak
+  * libyzis
+    made the commands work
+    some commands fully implemented (h,j,k,l,i,R)
+    fixed cursor disappearing in the deep space (on left)
+    moved the event loop to a QValueList
+  * kyzis
+    fixed position of the display (first line was hidden)
+    fixed (again) display problem while inserting text
+    updated to the new event loop API
+  * nyzis
+    updated to the new event loop API
+
 2003-04-23 mikmak
   * libyzis
     make the new command handling active (broken right now :)

@@ -34,6 +34,11 @@ void YZCommandPool::initPool() {
 
 	//normal stuff
 	NEW_VIEW_COMMAND("j",&YZView::moveDown,true);
+	NEW_VIEW_COMMAND("k",&YZView::moveUp,true);
+	NEW_VIEW_COMMAND("h",&YZView::moveLeft,true);
+	NEW_VIEW_COMMAND("l",&YZView::moveRight,true);
+	NEW_VIEW_COMMAND("i",&YZView::gotoInsertMode,true);
+	NEW_VIEW_COMMAND("R",&YZView::gotoReplaceMode,true);
 }
 
 QString YZCommandPool::test(QString) {
@@ -47,23 +52,26 @@ void YZCommandPool::execCommand(YZView *view, QString inputs) {
 	//regexp ? //FIXME
 	//try to find the command we are looking for
 	//first remove any number at the beginning of command
-	while ( ( ( QChar )inputs.at( i ) ).isDigit() )
+	//XXX 0 is itself a command !
+	while ( inputs[ i ].isDigit() )
 		i++; //go on
 	
 	//now take the command until another number
-	while ( !( ( QChar )inputs.at( i ) ).isDigit() && i<command.length() )
-		command += inputs.at( i++ );
+	while ( !inputs[ i ].isDigit() && i<inputs.length() )
+		command += inputs[ i++ ];
 	//end FIXME
 	
+	//printf( "%s %s\n", inputs.latin1(), command.latin1() );
+
 	//try hard to find a correspondance
 	QMap<QString, YZCommand>::Iterator it = globalCommands.end();
 	while ( command.length() > 0 && it == globalCommands.end() ) {
 		it = globalCommands.find(command);
 		if ( it==globalCommands.end() ) command.truncate(command.length()-1);
-	}
+	} // should not end here FIXME
 	
 	if ( it!=globalCommands.end() ) { //we got one match *ouf*
-		switch ( globalCommands[ command ].obj ){
+		switch ( globalCommands[ command ].obj ) {
 			case VIEW :
 				result = ( *view.*(globalCommands[ command ].viewFunc )) (inputs) ;
 				break;
@@ -82,6 +90,8 @@ void YZCommandPool::execCommand(YZView *view, QString inputs) {
 			default:
 				break;
 		}
+	} else if ( !command.isEmpty() ) {
+		view->purgeInputBuffer();
 	}
 }
 

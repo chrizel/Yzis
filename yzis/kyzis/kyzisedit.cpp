@@ -41,7 +41,10 @@ void KYZisEdit::setCursor(int c, int l) {
 
 void KYZisEdit::setTextLine(int l, const QString &str){
 	mText.insert(l,str);
-	updateContents(0,l * fontMetrics().lineSpacing(),width(),fontMetrics().lineSpacing());
+	updateContents( 0, ( l-1 ) * fontMetrics().lineSpacing(),
+								width(), fontMetrics().lineSpacing() * 2 //yes i know, it's a 2, i don't think it will really affect 
+																													// our performances
+								);
 }
 
 // INTERNAL API
@@ -60,9 +63,9 @@ void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 void KYZisEdit::drawCursorAt(int x, int y) {
 	bitBlt (
 			viewport(),
-			x*fontMetrics().maxWidth(),y*fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(),( y /*-1*/ )*fontMetrics().lineSpacing(),
 			viewport(),
-			x*fontMetrics().maxWidth(),y*fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(),( y /*-1*/ )*fontMetrics().lineSpacing(),
 			fontMetrics().maxWidth(), fontMetrics().lineSpacing(),
 			Qt::NotROP,	    // raster Operation
 			true );		    // ignoreMask
@@ -73,11 +76,11 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 	kdDebug() << "*** DrawContents : clipx " << clipx << " clipy " << clipy << " clipw " << clipw << " cliph " << cliph << endl;
 	KYZLine::iterator it;
 	for (it = mText.begin(); it!=mText.end(); ++it) {
-			if (fontMetrics().lineSpacing() * ( it.key() ) >= clipy &&
-					fontMetrics().lineSpacing() * ( it.key() ) <= clipy+cliph ) {
+			if (fontMetrics().lineSpacing() * ( it.key() + 1 ) >= clipy &&
+					fontMetrics().lineSpacing() * ( it.key() + 1 ) <= clipy+cliph ) {
 				kdDebug() << "DRAW at " << it.key() << endl;
-				p->eraseRect(0,it.key()*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
-				p->drawText(0,it.key()*fontMetrics().lineSpacing(),it.data());
+				p->eraseRect(0,( it.key()+1 )*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
+				p->drawText(0,( it.key()+1 )*fontMetrics().lineSpacing(),it.data());
 			}
 	}
 	

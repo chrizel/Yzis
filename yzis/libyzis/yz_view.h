@@ -1,7 +1,7 @@
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
 /**
- * YZView - abstraction of a view. binded to a buffer of course
+ * $id$
  */
 
 
@@ -42,7 +42,7 @@ public:
 	 * that's the way the core is sending messages to the gui
 	 */
 	/* for the qt/kde gui, we should create QEvents from that? */
-	yz_event *	fetchEvent(int idx=-1);
+	yz_event fetchNextEvent();
 
 	/**
 	  * returns the number of the line displayed on top of this view
@@ -81,6 +81,31 @@ public:
 	 */
 	QString moveDown( QString inputsBuff = QString::null );
 
+	/**
+	 * moves the cursor of the current view up 
+	 */
+	QString moveUp( QString inputsBuff = QString::null );
+
+	/**
+	 * moves the cursor of the current view left
+	 */
+	QString moveLeft( QString inputsBuff = QString::null );
+
+	/**
+	 * moves the cursor of the current view right
+	 */
+	QString moveRight( QString inputsBuff = QString::null );
+
+	/**
+	 * Start insert mode
+	 */
+	QString gotoInsertMode( QString inputsBuff = QString::null );
+
+	/**
+	 * Start replace mode
+	 */
+	QString gotoReplaceMode( QString inputsBuff = QString::null );
+
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
 	int		lines_vis;	/** number of visible lines */
@@ -97,9 +122,10 @@ protected:
 
 	/* fifo event loop. really basic now */
 	//FIXME replace with a QMap
-	yz_event	events[YZ_EVENT_EVENTS_MAX];
-	int		events_nb_begin;
-	int		events_nb_last;
+	QValueList<yz_event> events;
+//	yz_event	events[YZ_EVENT_EVENTS_MAX];
+//	int		events_nb_begin;
+//	int		events_nb_last;
 
 	/*
 	 * mode handling (on a per-view basis, no?)

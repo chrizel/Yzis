@@ -36,7 +36,7 @@ public:
 	void scrollUp(int lines=1);
 
 protected:
-	void handle_event(yz_event *e);
+	void handle_event(yz_event e);
 
 	NYZLine		mText;
 	WINDOW		*window;	/* ncurses window to write to */

@@ -128,7 +128,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	charSelected = false;
 
 	lineDY = 0;
-	tabwidth = getLocalIntOption("tabwidth");
+	tabstop = getLocalIntOption("tabstop");
 	wrap = getLocalBoolOption( "wrap" );
 }
 
@@ -556,7 +556,8 @@ void YZView::reindent( unsigned int X, unsigned int Y ) {
 	QString matchLine = mBuffer->textline( match.getY() );
 	if ( rx.exactMatch( matchLine ) )
 		currentLine.prepend( rx.cap( 1 ) ); //that should have all tabs and spaces from the previous line
-	mBuffer->action()->replaceLine( this, mCursor, currentLine );
+	YZCursor *c = new YZCursor(this, 0, mCursor->getY());
+	mBuffer->action()->replaceLine( this, c, currentLine );
 	gotoxy( currentLine.length(), mCursor->getY() );
 }
 
@@ -1574,10 +1575,10 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop, unsigned int rLeft
 
 	adjust = false;
 
-	tabwidth = getLocalIntOption("tabwidth");
+	tabstop = getLocalIntOption("tabstop");
 	wrap = getLocalBoolOption( "wrap" );
 
-	tablength = tabwidth * spaceWidth;
+	tablength = tabstop * spaceWidth;
 	areaModTab = ( tablength - mColumnsVis % tablength ) % tablength;
 
 	wrapNextLine = false;

@@ -24,7 +24,7 @@ checkAutoconf()
       AUTOHEADER="`$WHICH $AUTOHEADER$kde_autoconf_version`"
       AUTOM4TE="`$WHICH $AUTOM4TE$kde_autoconf_version`"
       break
-  fi
+    fi
   done
 }
 
@@ -35,11 +35,11 @@ checkAutomake ()
       AUTOMAKE="`$WHICH $AUTOMAKE$kde_automake_version`"
       ACLOCAL="`$WHICH $ACLOCAL$kde_automake_version`"
       break
-  fi
+    fi
   done
 
-  if test -n "$UNSERMAKE"; then 
-     AUTOMAKE="$UNSERMAKE"
+  if test "$UNSERMAKE" != no && test -x "`$WHICH unsermake 2>/dev/null`"; then
+      AUTOMAKE="`$WHICH unsermake` -c"
   fi
 }
 

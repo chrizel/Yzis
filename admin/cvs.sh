@@ -58,6 +58,8 @@ case $AUTOHEADER_VERSION in
     ;;
 esac
 
+unset UNSERMAKE || :
+
 AUTOMAKE_STRING=`$AUTOMAKE --version | head -n 1`
 required_automake_version="1.6.1 or newer"
 case $AUTOMAKE_STRING in
@@ -72,9 +74,10 @@ case $AUTOMAKE_STRING in
     echo "*** KDE requires automake $required_automake_version"
     exit 1
     ;;
-  unsermake* ) :
+  *unsermake* ) :
     echo "*** YOU'RE USING UNSERMAKE."
     echo "*** GOOD LUCK!! :)"
+    UNSERMAKE=unsermake
     ;;
   * )
     echo "*** YOU'RE USING $AUTOMAKE_STRING."
@@ -129,6 +132,7 @@ fi
 
 echo "*** Creating Makefile templates"
 $AUTOMAKE || exit 1
+
 if test -z "$UNSERMAKE"; then
   echo "*** Postprocessing Makefile templates"
   perl -w admin/am_edit || exit 1
@@ -244,10 +248,6 @@ if test -f Makefile.am.in; then
 fi
 
 echo "AC_CONFIG_FILES([ Makefile ])" >> configure.in.new
-if test -n "$UNSERMAKE"; then
-  echo "AC_CONFIG_FILES([ Makefile.rules ])" >> configure.in.new
-  echo "AC_CONFIG_FILES([ Makefile.calls ])" >> configure.in.new
-fi
 
 if test -f inst-apps; then
     topleveldirs=`cat inst-apps`
@@ -268,14 +268,10 @@ for topleveldir in $topleveldirs; do
 	continue
   fi
 
-  mfs=`find $topleveldir -name Makefile.am -print | fgrep -v "/." | \
+  mfs=`find $topleveldir -follow -name Makefile.am -print | fgrep -v "/." | \
        sed -e 's#\./##; s#/Makefile.am$##' | sort | sed -e 's#$#/Makefile#'`
   for i in $mfs; do
      echo "AC_CONFIG_FILES([ $i ])" >> configure.in.new
-     if test -n "$UNSERMAKE"; then
-        echo "AC_CONFIG_FILES([ $i.rules ])" >> configure.in.new
-	echo "AC_CONFIG_FILES([ $i.calls ])" >> configure.in.new
-     fi
   done
 done
 
@@ -284,10 +280,6 @@ list=`egrep '^dnl AC_OUTPUT\(.*\)' $files | sed -e "s#^.*dnl AC_OUTPUT(\(.*\))#\
 for file in $list; do 
     echo "AC_CONFIG_FILES([ $file ])" >>  configure.in.new
 done
-
-if test -n "$UNSERMAKE"; then
-  echo "AC_CONFIG_FILES([ MakeVars ])" >> configure.in.new
-fi
 
 midfiles=`cat configure.files | fgrep "configure.in.mid"`
 test -n "$midfiles" && cat $midfiles >> configure.in.new
@@ -348,11 +340,11 @@ if test -f inst-apps; then
    inst=`cat inst-apps`
    list=""
    for i in $inst; do
-      list="$list `find $i/ -name "configure.in.in" -o -name "configure.in.bot" -o -name "configure.in.mid" | \
+      list="$list `find $i/ -follow -name "configure.in.in" -o -name "configure.in.bot" -o -name "configure.in.mid" | \
 		sed -e "s,/configure,/aaaconfigure," | sort | sed -e "s,/aaaconfigure,/configure,"`"
    done
 else
-   list=`find . -name "configure.in.in" -o -name "configure.in.bot" -o -name "configure.in.mid" | \
+   list=`find . -follow -name "configure.in.in" -o -name "configure.in.bot" -o -name "configure.in.mid" | \
 		sed -e "s,/configure,/aaaconfigure," | sort | sed -e "s,/aaaconfigure,/configure,"`
 fi
 for i in $list; do if test -f $i && test `dirname $i` != "." ; then
@@ -472,23 +464,10 @@ if test -f Makefile.am.in; then
     cat Makefile.am.in > Makefile.am.in.adds
   fi
 
-  if test -n "$UNSERMAKE"; then
-    cat Makefile.am.in.adds > Makefile.am
-    topsubdirs=
-    for i in $compilefirst $dirs $compilelast; do
-       vari=`echo $i | sed -e "s,[-+],_,g"`
-       echo "if $vari""_SUBDIR_included" >> Makefile.am
-       echo "$vari""_SUBDIR=$i" >> Makefile.am
-       echo "endif" >> Makefile.am
-       topsubdirs="$topsubdirs \$($vari""_SUBDIR)"
-    done
-    echo "SUBDIRS=$topsubdirs" >> Makefile.am
-  else
-    cat Makefile.am.in.adds | \
-        sed -e 's,^\s*\(COMPILE_BEFORE.*\),# \1,' | \
-        sed -e 's,^\s*\(COMPILE_AFTER.*\),# \1,' > Makefile.am
+  cat Makefile.am.in.adds | \
+      sed -e 's,^\s*\(COMPILE_BEFORE.*\),# \1,' | \
+      sed -e 's,^\s*\(COMPILE_AFTER.*\),# \1,' > Makefile.am
     echo "SUBDIRS="'$(TOPSUBDIRS)' >> Makefile.am
-  fi
   rm Makefile.am.in.adds
 fi
 }
@@ -575,7 +554,7 @@ for subdir in $dirs; do
 	    echo "$subdir has *.rc, *.ui or *.kcfg files, but not correct messages line"
 	fi
    fi
-   if test -n "`grep -r KAboutData *.c* *.C* 2>/dev/null`"; then
+   if test -n "`find . -name \*.c\* -o -name \*.h\* | xargs grep -s KAboutData 2>/dev/null`"; then
 	echo -e 'i18n("_: NAME OF TRANSLATORS\\n"\n"Your names")\ni18n("_: EMAIL OF TRANSLATORS\\n"\n"Your emails")' > _translatorinfo.cpp
    else echo " " > _translatorinfo.cpp
    fi
@@ -583,7 +562,7 @@ for subdir in $dirs; do
 
    kdepotpath=${includedir:-${KDEDIR:-`kde-config --prefix`}/include}/kde.pot
 
-   $MAKE -s -f _transMakefile podir=$podir EXTRACTRC="$EXTRACTRC" PREPARETIPS="$PREPARETIPS" \
+   $MAKE -s -f _transMakefile podir=$podir EXTRACTRC="$EXTRACTRC" PREPARETIPS="$PREPARETIPS" srcdir=. \
 	XGETTEXT="${XGETTEXT:-xgettext} -C -ki18n -ktr2i18n -kI18N_NOOP -kaliasLocale -x $kdepotpath" messages 
    exit_code=$?
    if test "$exit_code" != 0; then
@@ -605,7 +584,7 @@ for i in `ls -1 po/*.pot 2>/dev/null | sed -e "s#po/##"`; do
    egrep -v '^#([^:]|$)' po/$i | egrep '^.*[^ ]+.*$' | grep -v "\"POT-Creation" > temp.pot
   if test -f po.backup/$i && test -n "`diff temp.pot po.backup/$i`"; then
 	echo "will update $i"
-        sed -e 's,^"Content-Type: text/plain; charset=CHARSET\\n"$,"Content-Type: text/plain; charset=UTF-8\\n",' po.backup/$backup_$i > po/$i.new && mv po/$i.new po.backup/backup_$i
+        sed -e 's,^"Content-Type: text/plain; charset=CHARSET\\n"$,"Content-Type: text/plain; charset=UTF-8\\n",' po.backup/backup_$i > po/$i.new && mv po/$i.new po.backup/backup_$i
 	msgmerge -q po.backup/backup_$i po/$i > temp.pot
 	mv temp.pot po/$i
   else

@@ -581,17 +581,28 @@ AC_DEFUN([KDE_SUBST_PROGRAMS],
         KDE_FIND_PATH(meinproc, MEINPROC, [$kde_default_bindirs])
 
         kde32ornewer=1
+        kde33ornewer=1
         if test -n "$kde_qtver" && test "$kde_qtver" -lt 3; then
             kde32ornewer=
+            kde33ornewer=
         else
-            if test "$kde_qtver" = "3" && test "$kde_qtsubver" -le 1; then
+            if test "$kde_qtver" = "3"; then
+              if test "$kde_qtsubver" -le 1; then
                 kde32ornewer=
+              fi
+              if test "$kde_qtsubver" -le 2; then
+                kde33ornewer=
+              fi
             fi
         fi
 
         if test -n "$kde32ornewer"; then
             KDE_FIND_PATH(kconfig_compiler, KCONFIG_COMPILER, [$kde_default_bindirs], [KDE_MISSING_PROG_ERROR(kconfig_compiler)])
             KDE_FIND_PATH(dcopidlng, DCOPIDLNG, [$kde_default_bindirs], [KDE_MISSING_PROG_ERROR(dcopidlng)])
+        fi
+        if test -n "$kde33ornewer"; then
+            KDE_FIND_PATH(makekdewidgets, MAKEKDEWIDGETS, [$kde_default_bindirs], [KDE_MISSING_PROG_ERROR(makekdewidgets)])
+            AC_SUBST(MAKEKDEWIDGETS)
         fi
         KDE_FIND_PATH(xmllint, XMLLINT, [${prefix}/bin ${exec_prefix}/bin], [XMLLINT=""])
 
@@ -2022,6 +2033,7 @@ if test $kde_qtver = 3; then
    AC_SUBST(LIB_KDEPRINT, "-lkdeprint")
    AC_SUBST(LIB_KUTILS, "-lkutils")
    AC_SUBST(LIB_KDEPIM, "-lkdepim")
+   AC_SUBST(LIB_KIMPROXY, "-lkimproxy")
 # these are for backward compatibility
    AC_SUBST(LIB_KSYCOCA, "-lkio")
    AC_SUBST(LIB_KFILE, "-lkio")
@@ -3003,13 +3015,42 @@ AC_DEFUN([AC_CHECK_COMPILERS],
   if test "$GXX" = "yes" && test "$kde_use_strict_options" = "yes"; then
     CXXFLAGS="-Wcast-qual -Wshadow -Wcast-align $CXXFLAGS"
   fi
-    
+
+  AC_ARG_ENABLE(pch,
+     AC_HELP_STRING([--enable-pch],
+                    [enables precompiled header support (currently only KCC or gcc >=3.4+unsermake) [default=no]]),
+    [ kde_use_pch=$enableval ],[ kde_use_pch=no ])
+ 
   if test "$GXX" = "yes"; then
     KDE_CHECK_COMPILER_FLAG(fno-exceptions,[CXXFLAGS="$CXXFLAGS -fno-exceptions"])
     KDE_CHECK_COMPILER_FLAG(fno-check-new, [CXXFLAGS="$CXXFLAGS -fno-check-new"])
     KDE_CHECK_COMPILER_FLAG(fno-common, [CXXFLAGS="$CXXFLAGS -fno-common"])
     KDE_CHECK_COMPILER_FLAG(fexceptions, [USE_EXCEPTIONS="-fexceptions"], USE_EXCEPTIONS=	)
     ENABLE_PERMISSIVE_FLAG="-fpermissive"
+
+    if test "$kde_use_pch" = "yes"; then
+        AC_MSG_CHECKING(whether gcc supports precompiling c header files)
+        echo >conftest.h
+        if $CC -x c-header conftest.h >/dev/null 2>/dev/null; then
+            kde_gcc_supports_pch=yes
+            AC_MSG_RESULT(yes)
+        else
+            kde_gcc_supports_pch=no
+            AC_MSG_RESULT(no)
+        fi
+        if test "$kde_gcc_supports_pch" = "yes"; then
+            AC_MSG_CHECKING(whether gcc supports precompiling c++ header files)
+            if $CXX -x c++-header conftest.h >/dev/null 2>/dev/null; then
+                kde_gcc_supports_pch=yes
+                AC_MSG_RESULT(yes)
+            else
+                kde_gcc_supports_pch=no
+                AC_MSG_RESULT(no)
+            fi
+        fi
+        rm -f conftest.h conftest.h.gch
+    fi
+    AM_CONDITIONAL(unsermake_enable_pch, test "$kde_use_pch" = "yes" && test "$kde_gcc_supports_pch" = "yes")
   fi
   if test "$CXX" = "KCC"; then
     dnl unfortunately we currently cannot disable exception support in KCC
@@ -3017,13 +3058,6 @@ AC_DEFUN([AC_CHECK_COMPILERS],
     dnl KDE_CHECK_COMPILER_FLAG(-no_exceptions,[CXXFLAGS="$CXXFLAGS --no_exceptions"])
     dnl KDE_CHECK_COMPILER_FLAG(-exceptions, [USE_EXCEPTIONS="--exceptions"], USE_EXCEPTIONS=	)
 
-    AC_ARG_ENABLE(pch,
-	AC_HELP_STRING([--enable-pch],
-		       [enables precompiled header support (currently only KCC) [default=no]]),
-    [
-      kde_use_pch=$enableval
-    ],[kde_use_pch=no])
- 
     if test "$kde_use_pch" = "yes"; then
       dnl TODO: support --pch-dir!
       KDE_CHECK_COMPILER_FLAG(-pch,[CXXFLAGS="$CXXFLAGS --pch"])
@@ -4344,10 +4378,10 @@ AC_DEFUN([KDE_CREATE_SUBDIRSLIST],
 [
 
 DO_NOT_COMPILE="$DO_NOT_COMPILE CVS debian bsd-port admin"
+TOPSUBDIRS=""
 
 if test ! -s $srcdir/subdirs; then
   dnl Note: Makefile.common creates subdirs, so this is just a fallback
-  TOPSUBDIRS=""
   files=`cd $srcdir && ls -1`
   dirs=`for i in $files; do if test -d $i; then echo $i; fi; done`
   for i in $dirs; do
@@ -4547,6 +4581,11 @@ AC_DEFUN([KDE_SET_PREFIX_CORE],
   # And delete superfluous '/' to make compares easier
   prefix=`echo "$prefix" | sed 's,//*,/,g' | sed -e 's,/$,,'`
   exec_prefix=`echo "$exec_prefix" | sed 's,//*,/,g' | sed -e 's,/$,,'`
+
+  kde_libs_prefix='$(prefix)'
+  kde_libs_htmldir='$(kde_htmldir)'
+  AC_SUBST(kde_libs_prefix)
+  AC_SUBST(kde_libs_htmldir)
   KDE_FAST_CONFIGURE
   KDE_CONF_FILES
 ])

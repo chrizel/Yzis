@@ -5444,10 +5444,10 @@ AC_DEFUN(AC_PATH_TINYQ, [
 AC_DEFUN(AC_PATH_LUA, [
 	AC_PATH_PROG(LUA_CONFIG, lua-config, no)
 	
-	if test "x$LUA_CONFIG" = "x" ; then
+	if test "x$LUA_CONFIG" = "xno" ; then
 		AC_PATH_PROG(LUA_CONFIG, lua-config50, no)
 	fi
-	if ! test "x$LUA_CONFIG" = "x" ; then
+	if ! test "x$LUA_CONFIG" = "xno" ; then
 		LUA_INCLUDES=`$LUA_CONFIG --include`
 		LUA_LIBS=`$LUA_CONFIG --libs`
 	fi

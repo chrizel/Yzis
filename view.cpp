@@ -1450,14 +1450,12 @@ unsigned int YZView::drawLineNumber( ) {
 
 unsigned int YZView::drawTotalHeight() {
 	unsigned int totalHeight = 0;
-
-	initDraw( 0, 0, 0, 0 );
-	drawMode = false;
-	while( workCursor->bufferY() < mBuffer->lineCount() ) {
-		drawNextLine();
-		totalHeight += drawHeight();
+	unsigned int nb = mBuffer->lineCount();
+	if ( nb > 0 ) {
+		YZViewCursor cursor = viewCursor();
+		gotoxy( &cursor, mBuffer->textline( nb - 1 ).length() - 1, nb - 1 );
+		totalHeight = cursor.screenY() + 1;
 	}
-
 	return totalHeight;
 }
 

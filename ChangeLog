@@ -1,3 +1,7 @@
+2005-02-24 pholcer (patch)
+  * libyzis
+    new commands : W and B
+
 2005-02-23 panard
   * libyzis
     new visual commands : u and U

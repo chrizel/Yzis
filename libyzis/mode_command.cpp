@@ -79,7 +79,9 @@ void YZModeCommand::initMotionPool() {
 	commands.append( new YZMotion("$", &YZModeCommand::gotoEOL, ARG_NONE) );
 	commands.append( new YZMotion("^", &YZModeCommand::firstNonBlank, ARG_NONE) );
 	commands.append( new YZMotion("w", &YZModeCommand::moveWordForward, ARG_NONE) );
+	commands.append( new YZMotion("W", &YZModeCommand::moveSWordForward, ARG_NONE) );
 	commands.append( new YZMotion("b", &YZModeCommand::moveWordBackward, ARG_NONE) );
+	commands.append( new YZMotion("B", &YZModeCommand::moveSWordBackward, ARG_NONE) );
 	commands.append( new YZMotion("j", &YZModeCommand::moveDown, ARG_NONE) );
 	commands.append( new YZMotion("k", &YZModeCommand::moveUp, ARG_NONE) );
 	commands.append( new YZMotion("h", &YZModeCommand::moveLeft, ARG_NONE) );
@@ -714,11 +716,59 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 		}
 
 	}
-	if ( args.standalone ) 
+	if ( args.standalone )
 		args.view->gotoxyAndStick( &result );
 
 	return result;
 }
+
+
+YZCursor YZModeCommand::moveSWordForward(const YZMotionArgs &args) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	YZCursor result( viewCursor.buffer() );
+	unsigned int c = 0;
+	QRegExp ws("\\s+");//whitespace
+
+	while ( c < args.count ) { //for each word
+		const QString& current = args.view->myBuffer()->textline( result.getY() );
+//		if ( current.isNull() ) return false; //be safe ?
+
+#if QT_VERSION < 0x040000
+		int idx = ws.search( current, result.getX(), QRegExp::CaretAtOffset );
+#else
+		int idx = ws.indexIn( current, result.getX(), QRegExp::CaretAtOffset );
+#endif
+		int len = ws.matchedLength();
+
+		if ( idx != -1 ) {
+			yzDebug() << "Match at " << idx << " Matched length " << len << endl;
+			c++; //one match
+			result.setX( idx + len );
+			if ( ( c < args.count || args.standalone ) && result.getX() == current.length() && result.getY() < args.view->myBuffer()->lineCount() - 1) {
+				result.setY(result.getY() + 1);
+#if QT_VERSION < 0x040000
+				ws.search(args.view->myBuffer()->textline( result.getY() ));
+#else
+				ws.indexIn(args.view->myBuffer()->textline( result.getY() ));
+#endif
+				result.setX( qMax( ws.matchedLength(), 0 ));
+			}
+		} else {
+			if ( result.getY() >= args.view->myBuffer()->lineCount() - 1 ) {
+				result.setX( current.length() );
+				break;
+			}
+			result.setX(0);
+			result.setY( result.getY() + 1 );
+		}
+
+	}
+	if ( args.standalone )
+		args.view->gotoxyAndStick( &result );
+
+	return result;
+}
+
 
 QString invertQString( const QString& from ) {
 	QString res = "";
@@ -781,7 +831,49 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 
 	}
 
-	if ( args.standalone ) 
+	if ( args.standalone )
+		args.view->gotoxyAndStick( &result );
+
+	return result;
+}
+
+
+YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args) {
+	YZViewCursor viewCursor = args.view->viewCursor();
+	YZCursor result( viewCursor.buffer() );
+	unsigned int c = 0;
+	QRegExp rex1("([\\S]+)\\s*"); //
+
+	while ( c < args.count ) { //for each word
+		const QString& current = invertQString( args.view->myBuffer()->textline( result.getY() ) );
+		int lineLength = current.length();
+		int offset = lineLength - result.getX();
+		yzDebug() << current << " at " << offset << endl;
+
+
+#if QT_VERSION < 0x040000
+		int idx = rex1.search( current, offset , QRegExp::CaretAtOffset );
+#else
+		int idx = rex1.indexIn( current, offset , QRegExp::CaretAtOffset );
+#endif
+		int len = rex1.cap( 1 ).length();
+
+		yzDebug() << "rex1 : " << idx << "," << len << endl;
+		if ( idx != -1 ) {
+			yzDebug() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
+			c++; //one match
+			result.setX( lineLength - idx - len );
+		} else {
+			if ( result.getY() == 0 ) break; //stop here
+			yzDebug() << "Previous line " << result.getY() - 1 << endl;
+			const QString& ncurrent = args.view->myBuffer()->textline( result.getY() - 1 );
+			result.setX( ncurrent.length() );
+			result.setY( result.getY() - 1 );
+		}
+
+	}
+
+	if ( args.standalone )
 		args.view->gotoxyAndStick( &result );
 
 	return result;

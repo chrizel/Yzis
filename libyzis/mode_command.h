@@ -185,7 +185,9 @@ class YZModeCommand : public YZMode {
 		YZCursor movePageUp(const YZMotionArgs &args);
 		YZCursor movePageDown(const YZMotionArgs &args);
 		YZCursor moveWordForward(const YZMotionArgs &args);
+		YZCursor moveSWordForward(const YZMotionArgs &args);
 		YZCursor moveWordBackward(const YZMotionArgs &args);
+		YZCursor moveSWordBackward(const YZMotionArgs &args);
 		YZCursor gotoSOL(const YZMotionArgs &args);
 		YZCursor gotoEOL(const YZMotionArgs &args);
 		//YZCursor find(const YZMotionArgs &args);

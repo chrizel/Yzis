@@ -236,9 +236,9 @@ void KYZisCodeCompletion::doComplete()
 
   if( item == 0 )
     return;
-
   QString text = item->m_entry.text;
-  QString currentLine = static_cast<KYZisDoc*>(m_view->document())->textLine(m_view->cursorLine());
+  //QString currentLine = static_cast<KYZisDoc*>(m_view->document())->textLine(m_view->cursorLine());
+  QString currentLine = static_cast<KYZisDoc*>(m_view->document())->textLine(m_lineCursor);
   int len = m_view->cursorColumnReal() - m_colCursor;
   QString currentComplText = currentLine.mid(m_colCursor,len);
   QString add = text.mid(currentComplText.length());
@@ -248,7 +248,7 @@ void KYZisCodeCompletion::doComplete()
   emit filterInsertString(&(item->m_entry),&add);
 
   m_view->gotoInsertMode();
-  static_cast<KYZisDoc*>(m_view->document())->YZBuffer::action()->insertChar(m_view, m_view->getCursor(), add);
+  static_cast<KYZisDoc*>(m_view->document())->YZBuffer::action()->insertChar(m_view, YZCursor(m_view,m_colCursor,m_lineCursor), add);
 
   complete( item->m_entry );
   m_view->setFocus();

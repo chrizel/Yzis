@@ -419,6 +419,13 @@ QString YZView::gotoCommandMode( ) {
 	return QString::null;
 }
 
+QString YZView::gotoExMode(const QString&) {
+	mode = YZ_VIEW_MODE_INSERT;
+	postEvent(YZEvent::mkEventStatus("-- EX --"));
+	purgeInputBuffer();
+	return QString::null;
+}
+
 QString YZView::gotoInsertMode(const QString&) {
 	mode = YZ_VIEW_MODE_INSERT;
 	postEvent(YZEvent::mkEventStatus("-- INSERT --"));

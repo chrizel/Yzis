@@ -488,8 +488,28 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 }
 
 YZCursor YZCommandPool::moveWordBackward(const YZNewMotionArgs &args) {
-	//TODO
-	return *args.view->getBufferCursor();
+	YZViewCursor viewCursor = args.view->viewCursor();
+	YZCursor result( viewCursor.buffer() );
+	unsigned int c = 0;
+	QRegExp rex("\\b\\w+\\b");//a word with boundaries
+	while ( c < args.count ) { //for each word
+		const QString& current = args.view->myBuffer()->textline( result.getY() );
+		int idx = rex.searchRev( current, result.getX() >= 1 ? result.getX() - 1 : result.getX() );
+		if ( idx != -1 ) {
+			yzDebug() << "Match at " << idx << " on line " << result.getY() << " Matched length " << rex.matchedLength() << endl;
+			c++; //one match
+			result.setX( idx );
+		}
+		if ( c >= args.count ) break;
+		if ( idx == -1 || idx == 0 ) { //no match or we matched at beginning of line => go to previous line for next search
+			yzDebug() << "Previous line " << result.getY() - 1 << endl;
+			if ( result.getY() == 0 ) break; //stop here
+			const QString& ncurrent = args.view->myBuffer()->textline( result.getY() - 1 );
+			result.setX( ncurrent.length() );
+			result.setY( result.getY() - 1 );
+		}
+	}
+	return result;
 }
 
 YZCursor YZCommandPool::firstNonBlank(const YZNewMotionArgs &args) {

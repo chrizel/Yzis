@@ -5,8 +5,7 @@
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
+ *  License version 2 as published by the Free Software Foundation
  *
  *  This library is distributed in the hope that it will be useful,
  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -20,7 +19,9 @@
  **/
 /**
  * This file was originally taken from Kate, KDE editor
- * The copyrights follow below :
+   Kate's code is published under the LGPL version 2 (and 2 only not any later 
+   version)
+   The copyrights follow below :
    Copyright (C) 2003 Hamish Rodda <rodda@kde.org>
 */
 

@@ -67,6 +67,7 @@ void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& te
 }
 
 void YZAction::replaceText( YZView* pView, const YZCursor& pos, unsigned int replacedLength, const QString& text ) {
+	yzDebug() << "replaceText :" << pos << " length : " << replacedLength << " text:" << text << endl;
 	CONFIGURE_VIEWS;
 	mBuffer->delChar( pos.getX(), pos.getY(), replacedLength );
 	mBuffer->insertChar( pos.getX(), pos.getY(), text );
@@ -432,10 +433,10 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 		int idx;
 		if ( reverseSearch ) {
 			idx = ex.searchRev( l, currentMatchColumn );
-			yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
+	//		yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
 		} else {
 			idx = ex.search( l, currentMatchColumn );
-			yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
+//			yzDebug() << "Searching in line : " << l << " : match at " << idx << endl;
 		}
 
 		if ( idx >= 0 ) {

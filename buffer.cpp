@@ -447,6 +447,9 @@ bool YZBuffer::save() {
 		}
 		file.close();
 	}
+	YZView *it;
+	for ( it = mViews.first(); it ; it = mViews.next() )
+		it->displayInfo(tr("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
 	setModified( false );
 	return true;
 }

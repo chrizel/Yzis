@@ -193,8 +193,7 @@ public:
 	* @return whether a file name was successfully chosen
 	*/
 	virtual bool popupFileSaveAs() = 0;
-				
-			
+		
 	/**
 	 * Get the current filename of the buffer
 	 * @return the filename
@@ -283,6 +282,8 @@ public:
 	 * Unique ID of the buffer
 	 */
 	unsigned int myId;
+
+	QString tr( const char *source, const char* comment = 0) { return qApp->translate( "YZBuffer", source ); }
 
 protected:
 	/**

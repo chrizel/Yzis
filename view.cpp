@@ -551,16 +551,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					commitNextUndo();
 				}
 				return;
-			} else if ( key == "<PDOWN>" ) {
-				gotoStickyCol( mainCursor, mainCursor->bufferY() + mLinesVis );
-				purgeInputBuffer();
-				return;
-			} else if ( key == "<PUP>" ) {
-				gotoStickyCol( mainCursor, QMAX( mainCursor->bufferY() - mLinesVis, 0 ) );
-				purgeInputBuffer();
-				return;
 			}
-
 			{
 				mPreviousChars+=modifiers+key;
 				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);

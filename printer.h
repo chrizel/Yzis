@@ -21,6 +21,8 @@
  * $Id$
  */
 
+#include "config.h"
+#ifdef HAVE_LIBPS
 #ifndef YZ_PRINTER_H
 #define YZ_PRINTER_H
 
@@ -50,4 +52,4 @@ class YZPrinter /*: public QPrinter*/ {
 };
 
 #endif
-
+#endif

@@ -24,6 +24,7 @@
  * $Id$
  */
 
+#include "config.h"
 #include <cstdlib>
 #include <ctype.h>
 #include <qkeysequence.h>
@@ -32,7 +33,10 @@
 #include "viewcursor.h"
 #include "debug.h"
 #include "undo.h"
+#ifdef HAVE_LIBPS
 #include "printer.h"
+#endif
+#include "qtprinter.h"
 #include "cursor.h"
 #include "internal_options.h"
 #include "registers.h"
@@ -1791,9 +1795,22 @@ void YZView::joinLine( unsigned int line, unsigned int count ) {
 }
 
 void YZView::printToFile( const QString& path ) {
+	if ( YZSession::getStringOption("printer") != "pslib" ) {
+		if ( getenv( "DISPLAY" ) ) {
+			YZQtPrinter qtprinter( this );
+			qtprinter.printToFile( path );
+			qtprinter.run( );
+		} else {
+			YZSession::me->popupMessage( tr("To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode") );
+		}
+		return;
+	}
+
+#ifdef HAVE_LIBPS
 	YZPrinter printer( this );
 	printer.printToFile( path );
 	printer.run( );
+#endif
 }
 
 void YZView::undo( unsigned int count ) {

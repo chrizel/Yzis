@@ -189,7 +189,8 @@ void NYZView::invalidateLine ( unsigned int line ) {
 
 void NYZView::syncViewInfo( void )
 {
-	const char * myfmt;
+	// older versions of ncurses want non const..
+	char * myfmt;
 
 	update_info();
 
@@ -215,7 +216,7 @@ void NYZView::syncViewInfo( void )
 	waddch(infobar, ' ');
 
 	// update infobar
-	myfmt="%s%s"; // <- prevent %s in percentage to fubar everything, even if
+	myfmt=( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if
 	            // it's rather unlikely..
 	wprintw( infobar, myfmt, 
 			( mBuffer->fileIsNew() )?"[No File]":mBuffer->fileName().latin1(),
@@ -223,13 +224,13 @@ void NYZView::syncViewInfo( void )
 			);
 	// prevent  gcc to use string
 	if ( viewInformation.c1!=viewInformation.c2 ) {
-		myfmt="%d,%d-%d";
+		myfmt=( char* )"%d,%d-%d";
 		mvwprintw( infobar, 0, w-20, myfmt,
 				viewInformation.l+1,
 				viewInformation.c1+1,
 				viewInformation.c2+1 );
 	} else {
-		myfmt="%d,%d";
+		myfmt=( char * )"%d,%d";
 		mvwprintw( infobar, 0, w-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
 	}
 	mvwaddstr( infobar, 0, w-9, viewInformation.percentage.latin1() );

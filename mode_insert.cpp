@@ -28,6 +28,7 @@
 #include "buffer.h"
 #include "session.h"
 #include "action.h"
+#include "viewcursor.h"
 #include "mode_command.h"
 #include "libintl.h"
 
@@ -139,10 +140,15 @@ void YZModeInsert::commandRight( YZView* mView, const QString& ) {
 	mView->moveRight();
 }
 void YZModeInsert::commandPageDown( YZView* mView, const QString& ) {
-	// find the linenumber we should scroll to
-	//FIXME: take wrapped lines into account. If a line is wrapped it will occupy
-	// more than one line and by just using getLinesVisible() we will scroll too far
 	unsigned int line = mView->getCurrentTop() + mView->getLinesVisible();
+
+	if (mView->getLocalBoolOption("wrap")) {
+		YZViewCursor temp(mView);
+		mView->gotodxdy( &temp, mView->getDrawCurrentLeft(),
+				mView->getDrawCurrentTop() + mView->getLinesVisible() );
+
+		line = temp.bufferY();
+	}
 
 	// don't scroll below the last line of the buffer
 	if (line > mView->myBuffer()->lineCount())
@@ -161,7 +167,7 @@ void YZModeInsert::commandPageUp( YZView* mView, const QString& ) {
 	if (line < 0)
 		line = 0;
 
-	if (line != mView->getCurrentTop()) {
+	if (line != (int)mView->getCurrentTop()) {
 		mView->alignViewBufferVertically( line );
 		mView->moveToFirstNonBlankOfLine();
 	}

@@ -325,11 +325,14 @@ QString	YZBuffer::data(unsigned int no) const {
 
 QString YZBuffer::getWholeText() const {
 	QString text;
+	if ( mText.count( ) == 1 && data(0).isEmpty() ) {
+		return QString("");
+	}
+
 	for ( int i = 0 ; i < lineCount() ; i++ )
 		text += ( ( QPtrList<YZLine> )mText ).at( i )->data() + "\n";
 //	for(YZLine *it = mText.first(); it; it = mText.next())
 //		text += it->data() + "\n";
-	text.truncate( text.length()-1 );
 	return text;
 }
 

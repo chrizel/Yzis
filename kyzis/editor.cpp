@@ -145,6 +145,7 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
+	if ( mParent->myBuffer()->introShown() ) mParent->myBuffer()->clearIntro();
 	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
 		mParent->gotodxdy( e->x( ) / fontMetrics().maxWidth() + mParent->getDrawCurrentLeft( ) - marginLeft,
 					e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );

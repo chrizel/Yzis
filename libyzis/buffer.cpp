@@ -67,7 +67,8 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mFileIsNew = true;
 	mUndoBuffer = new YZUndoBuffer( this );
 	displayIntro();
-	mSession->addBuffer( this );
+//	appendLine("");
+	YZSession::me->addBuffer( this );
 	yzDebug() << "NEW BUFFER CREATED : " << mPath << endl;
 }
 
@@ -288,12 +289,14 @@ void YZBuffer::clearText() {
 }
 
 void YZBuffer::clearIntro() {
+	yzDebug() << "YZBuffer clearIntro" << endl;
 	mIntro = false;
 	clearText();
 	updateAllViews();
 }
 
 void YZBuffer::displayIntro() {
+	yzDebug() << "YZBuffer displayIntro" << endl;
 	QStringList introduction;
 	introduction 
 	<<  ""
@@ -334,7 +337,6 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 		}
 	} 
 	if ( m_highlight != 0L ) {
-		YZView *it;
 		uint hlLine = line;
 		bool ctxChanged = true;
 		bool hlChanged = false;
@@ -390,6 +392,7 @@ uint YZBuffer::firstNonBlankChar( uint line ) {
 // ------------------------------------------------------------------------
 
 void YZBuffer::load(const QString& file) {
+	yzDebug() << "YZBuffer load " << file << endl;
 	QString oldPath = mPath;
 	if ( file.isNull() || file.isEmpty() ) return;
 	setPath(file);

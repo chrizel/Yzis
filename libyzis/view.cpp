@@ -582,7 +582,6 @@ void YZView::gotoy( unsigned int nexty ) {
 }
 
 void YZView::initGoto( ) {
-	if ( mBuffer->introShown() ) mBuffer->clearIntro();
 	initDraw( mCursor->getX(), mCursor->getY(), dCursor->getX(), dCursor->getY() );
 	rSpaceFill = dSpaceFill;
 	rColLength = dColLength;
@@ -1141,7 +1140,10 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 	wrap = YZSession::getBoolOption( "General\\wrap" );
 
 	wrapNextLine = false;
-	sCurLine = mBuffer->textline ( sCursor->getY() );
+//	yzDebug() << "DEBUG " << sCursor->getY() << endl;
+	if ( ! mBuffer->textline( sCursor->getY() ).isNull() )
+			sCurLine = mBuffer->textline ( sCursor->getY() );
+	//else ? ? mm
 	updateCurLine( );
 
 	drawMode = true;

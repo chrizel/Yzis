@@ -32,6 +32,8 @@ YZRegisters YZSession::mRegisters = YZRegisters();
 YZSession *YZSession::me = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
+	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
+	if ( me != 0 ) int t = 5/( me - me );
 	//FIXME
 	mPool = new YZCommandPool();
 	mPool->initPool();

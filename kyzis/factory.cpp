@@ -50,7 +50,7 @@ QPtrList<class KYZisView> KYZisFactory::s_views;
 extern "C" {
 	void* init_libkyzispart() {
 		KGlobal::locale()->insertCatalogue("kyzispart");
-		return new KYZisFactory(true);
+		return new KYZisFactory(false);
 	}
 };
 
@@ -61,15 +61,17 @@ KYZisFactory::KYZisFactory( bool clone ) {
 		ref();
 		return;
 	}
+	s_self = this;
+	s_refcnt++;
 }
 
 KYZisFactory::~KYZisFactory() {
-	if ( s_self == this ) {
+//	if ( s_self == this ) {
 		delete s_instance->aboutData();
 		delete s_instance;
 		s_instance=0;
-	}	else 
-		deref();
+//	}	else 
+//		deref();
 }
 
 void KYZisFactory::deref() {
@@ -98,6 +100,7 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	KYZisDoc *doc = new KYZisDoc (kID.toInt(), parentWidget, widgetname, parent, name );
 	//separate
 	if ( bSingleView ) {
+		yzDebug() << "Factory creates single view ..." << endl;
 		KTextEditor::View *view = doc->createView( parentWidget, widgetname );
 		KYZisView *yv = static_cast<KYZisView*>( view );
 		yv->setkid( kvId.toInt() );
@@ -114,27 +117,27 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 void KYZisFactory::registerDocument ( KYZisDoc *doc ) {
   if ( !s_documents.containsRef( doc ) ) {
     s_documents.append( doc );
-    ref();
+    //ref();
   }
 	currentDoc = doc;
 }
 
 void KYZisFactory::deregisterDocument ( KYZisDoc *doc ) {
-  if ( s_documents.removeRef( doc ) )
-    deref();
+//  if ( s_documents.removeRef( doc ) )
+ //   deref();
 }
 
 void KYZisFactory::registerView ( KYZisView *view ) {
   if ( !s_views.containsRef( view ) ) {
     s_views.append( view );
-    ref();
+//    ref();
   }
   KYZisFactory::s_self->currentViewChanged(view);
 }
 
 void KYZisFactory::deregisterView ( KYZisView *view ) {
-  if ( s_views.removeRef( view ) )
-    deref();
+ // if ( s_views.removeRef( view ) )
+//    deref();
 }
 
 KInstance* KYZisFactory::instance() {

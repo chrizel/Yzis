@@ -19,7 +19,6 @@
  * $Id$
  */
 #include "kyzis.h"
-#include "kyzis.moc"
 
 #include <kkeydialog.h>
 #include <kconfig.h>
@@ -37,8 +36,9 @@
 #include <ktempfile.h>
 #include <kstandarddirs.h>
 #include <klocale.h>
-#include "kyzis/document.h"
-#include "debug.h"
+//#include "kyzis/document.h"
+//#include "ktexteditor/document.h"
+//class KTextEditor::View;
 
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
@@ -124,7 +124,7 @@ void Kyzis::optionsShowToolbar() {
 }
 
 void Kyzis::optionsConfigureKeys() {
-	KKeyDialog::configureKeys(actionCollection(), "kyzis_shell.rc");
+	//KKeyDialog::configureKeys(actionCollection(), "kyzis_shell.rc");
 }
 
 void Kyzis::optionsConfigureToolbars() {
@@ -155,7 +155,6 @@ void Kyzis::fileOpen() {
 			// we open the file in this window...
 			load( url );
 		} else {
-			//FIXME (download)
 			createBuffer( url.url() );
 		}
 	}
@@ -165,7 +164,7 @@ void Kyzis::createBuffer(const QString& path) {
 		kdDebug() << "Kyzis::createBuffer " << path << endl;
 		KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
 		if (!factory) {
-			yzDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
+			kdDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
 			return;
 		}
 		// now that the Part is loaded, we cast it to a Part to get
@@ -189,16 +188,16 @@ void Kyzis::createBuffer(const QString& path) {
 		}
 }
 
+void Kyzis::setCaption( int tab, const QString& caption ) {
+	kdDebug() << "setCaption : " << caption << endl;
+	if ( viewList[ tab ] ) {
+		viewList[ tab ]->setCaption(caption);
+		viewList[ tab ]->setTabCaption(caption);
+	}
+}
+
 void Kyzis::closeView() {
 	closeActiveView();	
 }
 
-void Kyzis::setCaption( int tab, const QString& caption ) {
-	kdDebug() << "setCaption : " << caption << endl;
-	KMdiChildView *v = viewList[tab];
-	if ( v ) {
-		v->setCaption(caption);
-		v->setTabCaption(caption);
-	}
-}
-
+#include "kyzis.moc"

@@ -108,7 +108,13 @@ YZUndoBuffer::~YZUndoBuffer() {
 void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY )
 {
 	if (mInsideUndo == true) return;
-	if (mFutureUndoItem && mFutureUndoItem->count() == 0) return;
+	if (mFutureUndoItem && mFutureUndoItem->count() == 0) {
+		// nothing has been added but the cursor probably moved
+		// we record the last position
+		mFutureUndoItem->startCursorX = cursorX;
+		mFutureUndoItem->startCursorY = cursorY;
+		return;
+	}
 
 	if (mFutureUndoItem) {
 		removeUndoItemAfterCurrent();
@@ -116,7 +122,7 @@ void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY )
 		mFutureUndoItem->endCursorY = cursorY;
 		mUndoItemList.append( mFutureUndoItem );
 		mCurrentIndex = mUndoItemList.count();
-		yzDebug("YZUndoBuffer") << "UndoItem::commitUndoItem" << toString() << endl;
+		//yzDebug("YZUndoBuffer") << "UndoItem::commitUndoItem" << toString() << endl;
 	}
 	mFutureUndoItem = new UndoItem();
 	mFutureUndoItem->setAutoDelete( true );

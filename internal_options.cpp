@@ -248,9 +248,8 @@ const QString& YZInternalOptionPool::readQStringEntry( const QString& _key, cons
 }
 
 void YZInternalOptionPool::setQStringOption( const QString& key, const QString& option ) {
-	YZInternalOption *opt = mOptions[ currentGroup + '\\' + key ];
-	//yzDebug( ) << currentGroup + '\\' + key << " set to " << option << endl;
-	if ( opt ) {
+	YZInternalOption *opt=NULL;
+	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
 		opt->setValue(option);
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
@@ -271,8 +270,8 @@ int YZInternalOptionPool::readIntEntry( const QString& _key, int def ) {
 }
 
 void YZInternalOptionPool::setIntOption( const QString& key, int option ) {
-	YZInternalOption *opt = mOptions[ currentGroup + '\\' + key ];
-	if ( opt ) {
+	YZInternalOption *opt=NULL;
+	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
 		opt->setValue(QString::number( option ));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
@@ -299,8 +298,8 @@ bool YZInternalOptionPool::readBoolEntry( const QString& _key, bool def ) {
 }
 
 void YZInternalOptionPool::setBoolOption( const QString& key, bool option ) {
-	YZInternalOption *opt = mOptions[ currentGroup + '\\' + key ];
-	if ( opt )  {
+	YZInternalOption *opt=NULL;
+	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
 		opt->setValue(option ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" ));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
@@ -328,9 +327,8 @@ QStringList YZInternalOptionPool::readQStringListEntry( const QString& _key, con
 }
 
 void YZInternalOptionPool::setQStringListOption( const QString& key, const QStringList& option ) {
-	YZInternalOption *opt = mOptions[ currentGroup + '\\' + key ];
-//	yzDebug( ) << "SET " << currentGroup + '\\' + key << " to " << option << endl;
-	if ( opt ) {
+	YZInternalOption *opt=NULL;
+	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
 		opt->setValue(option.join(","));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
@@ -353,9 +351,8 @@ QColor YZInternalOptionPool::readQColorEntry( const QString& _key, const QColor&
 }
 
 void YZInternalOptionPool::setQColorOption( const QString& key, const QColor& option ) {
-	YZInternalOption *opt = mOptions[ currentGroup + '\\' + key ];
-//	yzDebug( ) << "SET " << currentGroup + '\\' + key << " to " << option.rgb() << endl;
-	if ( opt ) {
+	YZInternalOption *opt=NULL;
+	if ( mOptions.contains(currentGroup+"\\"+key) && ( opt=mOptions[ currentGroup + "\\"+key]) != NULL ) {
 		opt->setValue(option.name());
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {

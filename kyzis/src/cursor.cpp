@@ -99,6 +99,7 @@ bool KYZisCursor::prepareCursors() {
 			mParent->drawCell( &p, cell(), rect, true );
 			break;
 		case RECT :
+			p.setPen( mParent->foregroundColor() );
 			p.drawRect( rect );
 			break;
 		case VBAR :

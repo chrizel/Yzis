@@ -1,7 +1,12 @@
+2003-08-28 ita
+  * kyzis
+    reworked the statusbar to make it nice
 
 2003-08-28 mikmak
   * libyzis
     add yzDebug(), the debug class ;)
+  * kyzis
+    added KLineEdit command bar
 
 2003-08-26 mikmak
   * admin

@@ -6,6 +6,8 @@
 # It defines a shell function for each known target
 # and then does a case to call the correct function.
 
+unset MAKEFLAGS
+
 call_and_fix_autoconf()
 {
   $AUTOCONF || exit 1
@@ -185,7 +187,10 @@ if egrep "^AM_CONFIG_HEADER" configure.in >/dev/null 2>&1; then
   $AUTOHEADER || exit 1
 fi
 $AUTOMAKE --foreign
-perl -w admin/am_edit
+if test -z "$UNSERMAKE"; then
+  echo "*** Postprocessing Makefile templates"
+  perl -w admin/am_edit || exit 1
+fi
 call_and_fix_autoconf
 touch stamp-h.in
 if grep "^cvs-local:" $makefile_am >/dev/null; then
@@ -214,7 +219,13 @@ subdir_dist()
 $ACLOCAL $ACLOCALFLAGS
 $AUTOHEADER
 $AUTOMAKE
-perl -w ../admin/am_edit --path=../admin
+AUTOMAKE_STRING=`$AUTOMAKE --version | head -n 1`
+case $AUTOMAKE_STRING in
+  *unsermake* ) :
+    ;;
+  *)
+     perl -w ../admin/am_edit --path=../admin
+esac
 call_and_fix_autoconf
 touch stamp-h.in
 }
@@ -301,7 +312,7 @@ if test -f configure.in.in; then
    fi
 fi
 if test -z "$VERSION" || test "$VERSION" = "@VERSION@"; then
-     VERSION="\"3.3.0\""
+     VERSION="\"3.3.92\""
 fi
 if test -z "$modulename" || test "$modulename" = "@MODULENAME@"; then
    modulename=`pwd`; 
@@ -490,7 +501,7 @@ acinclude_m4()
   fi
   # if it wasn't created up to now, then we do it better
   if test ! -f acinclude.m4; then
-     cat admin/acinclude.m4.in admin/libtool.m4.in $adds > acinclude.m4
+     cat admin/acinclude.m4.in admin/libtool.m4.in admin/pkg.m4.in $adds > acinclude.m4
   fi
 }
 
@@ -523,18 +534,8 @@ for cat in $catalogs; do
 done
 }
 
-package_messages()
+extract_messages()
 {
-rm -rf po.backup
-mkdir po.backup
-
-for i in `ls -1 po/*.pot 2>/dev/null | sed -e "s#po/##"`; do
-  egrep -v '^#([^:]|$)' po/$i | egrep '^.*[^ ]+.*$' | grep -v "\"POT-Creation" > po.backup/$i
-  cat po/$i > po.backup/backup_$i
-  touch -r po/$i po.backup/backup_$i
-  rm po/$i
-done
-
 podir=${podir:-$PWD/po}
 files=`find . -name Makefile.am | xargs egrep -l '^messages:' `
 dirs=`for i in $files; do echo \`dirname $i\`; done`
@@ -554,7 +555,7 @@ for subdir in $dirs; do
 	    echo "$subdir has *.rc, *.ui or *.kcfg files, but not correct messages line"
 	fi
    fi
-   if test -n "`find . -name \*.c\* -o -name \*.h\* | xargs grep -s KAboutData 2>/dev/null`"; then
+   if find . -name \*.c\* -o -name \*.h\* | xargs fgrep -s -q KAboutData ; then
 	echo -e 'i18n("_: NAME OF TRANSLATORS\\n"\n"Your names")\ni18n("_: EMAIL OF TRANSLATORS\\n"\n"Your emails")' > _translatorinfo.cpp
    else echo " " > _translatorinfo.cpp
    fi
@@ -563,7 +564,7 @@ for subdir in $dirs; do
    kdepotpath=${includedir:-${KDEDIR:-`kde-config --prefix`}/include}/kde.pot
 
    $MAKE -s -f _transMakefile podir=$podir EXTRACTRC="$EXTRACTRC" PREPARETIPS="$PREPARETIPS" srcdir=. \
-	XGETTEXT="${XGETTEXT:-xgettext} -C -ki18n -ktr2i18n -kI18N_NOOP -kaliasLocale -x $kdepotpath" messages 
+	XGETTEXT="${XGETTEXT:-xgettext} --foreign-user -C -ci18n -ki18n -ktr2i18n -kI18N_NOOP -kI18N_NOOP2 -kaliasLocale -x $kdepotpath" messages
    exit_code=$?
    if test "$exit_code" != 0; then
        echo "make exit code: $exit_code"
@@ -575,18 +576,31 @@ for subdir in $dirs; do
    rm -f $subdir/_transMakefile
 done
 rm -f $tmpname
+}
+
+package_messages()
+{
+rm -rf po.backup
+mkdir po.backup
+
+for i in `ls -1 po/*.pot 2>/dev/null | sed -e "s#po/##"`; do
+  egrep -v '^#([^:]|$)' po/$i | egrep '^.*[^ ]+.*$' | grep -v "\"POT-Creation" > po.backup/$i
+  cat po/$i > po.backup/backup_$i
+  touch -r po/$i po.backup/backup_$i
+  rm po/$i
+done
+
+extract_messages
+
 for i in `ls -1 po.backup/*.pot 2>/dev/null | sed -e "s#po.backup/##" | egrep -v '^backup_'`; do
   test -f po/$i || echo "disappeared: $i"
 done
 for i in `ls -1 po/*.pot 2>/dev/null | sed -e "s#po/##"`; do
    sed -e 's,^"Content-Type: text/plain; charset=CHARSET\\n"$,"Content-Type: text/plain; charset=UTF-8\\n",' po/$i > po/$i.new && mv po/$i.new po/$i
-   msgmerge -q -o po/$i po/$i po/$i
+   #msgmerge -q -o po/$i po/$i po/$i
    egrep -v '^#([^:]|$)' po/$i | egrep '^.*[^ ]+.*$' | grep -v "\"POT-Creation" > temp.pot
-  if test -f po.backup/$i && test -n "`diff temp.pot po.backup/$i`"; then
+  if test -f po.backup/$i && ! cmp -s temp.pot po.backup/$i; then
 	echo "will update $i"
-        sed -e 's,^"Content-Type: text/plain; charset=CHARSET\\n"$,"Content-Type: text/plain; charset=UTF-8\\n",' po.backup/backup_$i > po/$i.new && mv po/$i.new po.backup/backup_$i
-	msgmerge -q po.backup/backup_$i po/$i > temp.pot
-	mv temp.pot po/$i
   else
     if test -f po.backup/backup_$i; then
       test -z "$VERBOSE" || echo "I'm restoring $i"
@@ -626,10 +640,10 @@ fi
 ### Main
 ###
 
-arg=`echo $1 | tr '.-' __`
+arg=`echo $1 | tr .- __`
 case $arg in
   cvs | dist | subdir_dist | configure_in | configure_files | subdirs | \
-  cvs_clean | package_merge | package_messages | Makefile_am | acinclude_m4 ) $arg ;;
+  cvs_clean | package_merge | package_messages | Makefile_am | acinclude_m4 | extract_messages ) $arg ;;
   configure ) call_and_fix_autoconf ;;
   * ) echo "Usage: cvs.sh <target>"
       echo "Target can be one of:"

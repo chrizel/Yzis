@@ -347,8 +347,7 @@ QString YZView::openNewLineBefore ( const QString& ) {
 	purgeInputBuffer();
 	gotoInsertMode();
 
-	cursor->setX ( 0 );
-	updateCursor();
+	gotoxy(0,cursor->getY());
 
 	return QString::null;
 }
@@ -359,9 +358,26 @@ QString YZView::openNewLineAfter ( const QString& ) {
 	purgeInputBuffer();
 	gotoInsertMode();
 
-	cursor->incY();
-	cursor->setX( 0 );
+	gotoxy( 0,cursor->getY()+1 );
+
+	return QString::null;
+}
+
+QString YZView::append ( const QString& ) {
+	//reset the input buffer
+	purgeInputBuffer();
+	gotoInsertMode();
+	cursor->incX();
 	updateCursor();
+
+	return QString::null;
+}
+
+QString YZView::appendAtEOL ( const QString& ) {
+	//reset the input buffer
+	purgeInputBuffer();
+	moveToEndOfLine();
+	append();
 
 	return QString::null;
 }

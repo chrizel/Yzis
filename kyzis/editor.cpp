@@ -103,9 +103,10 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
-/*	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
+	if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
+		mParent->gotodxdy( e->x( ) / fontMetrics().maxWidth() + mParent->getDrawCurrentLeft( ) - marginLeft,
+					e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
 	}
-*/
 }
 
 void KYZisEdit::drawCursorAt(int x, int y) {
@@ -122,7 +123,7 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::SingleLine;
 
-	cliph = cliph ? cliph / fontMetrics().lineSpacing() : 0;
+	cliph = cliph ? cliph / fontMetrics().lineSpacing() + ( int )ceil( cliph % fontMetrics().lineSpacing() ): 0;
 	clipy = clipy ? clipy / fontMetrics().lineSpacing() : 0;
 
 //	yzDebug() << "drawContents: clipy=" << clipy << ",cliph=" << cliph << endl;

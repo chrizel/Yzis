@@ -222,7 +222,17 @@ class YZView {
 		QString appendAtEOL ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
-		 * Moves the cursor to @arg nextx, @arg nexty
+		 * Moves the draw cursor to @arg nextx, @arg nexty
+		 */
+		void gotodxdy(unsigned int nextx, unsigned int nexty);
+
+		/**
+		 * Moves the cursor to @arg draw nextx, @arg buffer nexty
+		 */
+		void gotodxy(unsigned int nextx, unsigned int nexty);
+
+		/**
+		 * Moves the buffer cursor to @arg nextx, @arg nexty
 		 */
 		void gotoxy(unsigned int nextx, unsigned int nexty);
 

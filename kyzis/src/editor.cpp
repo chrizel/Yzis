@@ -254,8 +254,9 @@ void KYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 	}
 }
 
+/*
 void KYZisEdit::mouseReleaseEvent( QMouseEvent *e) {
-	if (e->button() == Qt::LeftButton) {
+	if (e->button() == Qt::LeftButton) { 
 		// check if we are in visual mode, which means that the user selected text with the mouse
 		if (mParent->modePool()->currentType() == YZMode::MODE_VISUAL) {
 			// check if we have a selection clipboard (X11) and place the text that was selected there
@@ -266,9 +267,9 @@ void KYZisEdit::mouseReleaseEvent( QMouseEvent *e) {
 				QApplication::clipboard()->setText( text.join( "\n" ) );
 				QApplication::clipboard()->setSelectionMode( false );
 			}
-		}
+		} 
 	}
-}
+} */
 
 void KYZisEdit::selectRect( unsigned int x, unsigned int y, unsigned int w, unsigned int h ) {
 	if ( mParent->getLocalBoolOption( "rightleft" ) ) x = width() - x - w;
@@ -378,9 +379,10 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 			p.drawText(myRect, flag, disp );
 
 			if ( mParent->drawSelected() ) {
-				selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
 				if ( mParent->getCursor()->getY() == currentY && mParent->getCursor()->getX() == currentX - marginLeft )
-					mCursor->hide();
+					;
+				else
+					selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
 			}
 
 			currentX += mParent->drawLength( );

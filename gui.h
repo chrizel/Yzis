@@ -91,6 +91,11 @@ class Gui {
 		 * Create a new view
 		 */
 		virtual YZView* createView ( YZBuffer* ) = 0;
+		
+		/**
+		 * Creates a new buffer
+		 */
+		virtual	YZBuffer *createBuffer(const QString& path=QString::null) = 0;
 };
 
 #endif // GUI_H

@@ -60,7 +60,7 @@ class YZSession {
 		/**
 		 * Creates a new buffer
 		 */
-		YZBuffer *createBuffer(const QString& path=QString::null);
+//		YZBuffer *createBuffer(const QString& path=QString::null);
 
 		/**
 		 * Creates a view on a buffer

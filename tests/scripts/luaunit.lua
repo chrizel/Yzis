@@ -7,9 +7,11 @@ improvements by Philippe Fremy <phil@freehackers.org>
 Version: 1.1 
 
 Changes between 1.1 and 1.0:
-- variables are now declared locally inside functions
+- internal variables are not global anymore
 - you can choose between assertEquals( actual, expected) or assertEquals(
   expected, actual )
+- you can assert for an error: assertError( f, a, b ) will assert that f(a,b)
+  generates an error
 
 
 TODO:
@@ -25,6 +27,7 @@ argv = arg
 REVERSED_ASSERT_EQUALS = true
 
 function assertEquals(expected, actual)
+	-- assert that two values are equal and calls error else
 	if  actual ~= expected  then
 		local function wrapValue( v )
 			if type(v) == 'string' then return "'"..v.."'" end
@@ -38,6 +41,19 @@ function assertEquals(expected, actual)
 		error( errorMsg, 2 )
 	end
 end
+
+function assertError(f, ...)
+	-- assert that calling f with the arguments will raise an error
+	-- example: assertError( f, 1, 2 ) => f(1,2) should generate an error
+	has_error, error_msg = not pcall( f, unpack(arg) )
+	if has_error then return end 
+	error( "No error generated", 2 )
+end
+
+assert_equals = assertEquals
+assert_error = assertError
+
+-------------------------------------------------------------------------------
 
 function isFunction(aObject)
     if  'function' == type(aObject) then

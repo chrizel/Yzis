@@ -55,6 +55,9 @@ TestLuaBinding = {} --class
         -- ok, simple one
         s = version()
         assertEquals( string.len(s) > 0, true )
+
+        -- bad number of arguments
+        assertError( version, 1 )
     end
 
     function TestLuaBinding:test_linecount()
@@ -64,6 +67,9 @@ TestLuaBinding = {} --class
         assertEquals( 1, linecount() )
         appendline("hop")
         assertEquals( 2, linecount() )
+
+        -- bad number of arguments
+        assertError( linecount, 1 )
     end
 
     function TestLuaBinding:test_insert()
@@ -84,6 +90,10 @@ TestLuaBinding = {} --class
         -- insert beyond the end of file does nothing
         insert(1,4,s)
         assertEquals( bufferContent(), content )
+
+        -- bad number of arguments
+        assertError( insert, 1, 2 )
+        assertError( insert, 1, 2, 'coucou', 3 )
     end
 
     function TestLuaBinding:test_insert_multiline()
@@ -116,6 +126,10 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), s3 )
         insertline(1,s1.."\n"..s2)
         assertEquals( bufferContent(), s1.."\n"..s2.."\n"..s3 )
+
+        -- bad number of arguments
+        assertError( insertline, 1 )
+        assertError( insertline, 1, 'coucou', 3 )
     end
 
     function TestLuaBinding:test_appendline()
@@ -125,6 +139,10 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), s )
         appendline("hop\nbof")
         assertEquals( bufferContent(), s.."\nhop\nbof" )
+
+        -- bad number of arguments
+        assertError( appendline )
+        assertError( appendline, 'test', 1 )
     end
 
     function TestLuaBinding:test_replace()
@@ -153,6 +171,10 @@ TestLuaBinding = {} --class
         -- replace multiline rejected
         replace(2,1,"bof\nhop\n")
         assertEquals( bufferContent(), "doicohopbof\nbof" )
+
+        -- bad number of arguments
+        assertError( replace, 1, 2 )
+        assertError( replace, 1, 2, 'text', 1 )
     end
 
     function TestLuaBinding:test_deleteline()
@@ -169,6 +191,10 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), "2\n3\n4\n5" )
         deleteline(2)
         assertEquals( bufferContent(), "2\n4\n5" )
+
+        -- bad number of arguments
+        assertError( deleteline )
+        assertError( deleteline, 1, 2 )
     end
 
         
@@ -183,6 +209,9 @@ TestLuaBinding = {} --class
         assertEquals( f2, 'toto.txt' )
         assertEquals( f1 ~= f2, true )
         sendkeys( ':bd!<ENTER>' )
+
+        -- bad number of arguments
+        assertError( filename, 1 )
     end
 
     function TestLuaBinding:test_goto_and_pos()
@@ -227,6 +256,9 @@ TestLuaBinding = {} --class
         assertEquals( winline(), 1 )
         assertEquals( wincol(), 1 )
         c,l = winpos(); assertEquals( l, winline() ); assertEquals( c, winpos() )
+        -- bad number of arguments
+        assertError( goto, 1 )
+        assertError( goto, 1, 2, 3 )
     end
 
     function TestLuaBinding:test_color()
@@ -239,6 +271,10 @@ TestLuaBinding = {} --class
         assertEquals( string.len(color2) > 0, true )
         assertEquals( color1 ~= color2, true )
         sendkeys(':bd!<ENTER>')
+
+        -- bad number of arguments
+        assertError( color, 1 )
+        assertError( color, 1, 2, 3 )
     end
 
     function TestLuaBinding:test_setline()
@@ -255,6 +291,10 @@ TestLuaBinding = {} --class
 
         setline(3, "hop")
         assertEquals( bufferContent(), "coucou\na" )
+
+        -- bad number of arguments
+        assertError( setline, 1 )
+        assertError( setline, 1, 'text', 3 )
     end
 
 

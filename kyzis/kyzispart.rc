@@ -7,6 +7,9 @@
 		<Action name="file_save_as"/>
 		<Action name="file_print"/>
 	</Menu>
+	<Menu name="settings">
+		<Action name="editor_options" />
+	</Menu>
 </MenuBar>
 
 <ToolBar name="mainToolBar">

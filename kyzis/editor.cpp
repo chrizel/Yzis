@@ -26,39 +26,29 @@
 #include "debug.h"
 #include "yzis.h"
 #include "factory.h"
+
 #include <kglobalsettings.h>
 #include <math.h>
 #include <qclipboard.h>
 #include <qcursor.h>
 
+#include "settings.h"
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 : QWidget( parent, name, WNoAutoErase ) 
 {
-	QFont f ("fixed");
-	f.setFixedPitch(true);
-	f.setStyleHint(QFont::TypeWriter);
-	myFont = f;
-	QWidget::setCursor( IbeamCursor );
-	setFont(f);
-//	standard = new QFontMetrics( myFont );
-//	f.setBold( true );
-//	standardBold = new QFontMetrics( f );
-//	f.setItalic( true );
-//	standardBoldItalic = new QFontMetrics( f );
 	mParent = parent;
 
 	marginLeft = 0;
 	lastLineNumber = 0;
-
-	setFocusPolicy( StrongFocus );
-	setBackgroundMode( PaletteBase );
-	//setPaletteBackgroundColor(QColor("white"));
-	setBackgroundColor(QColor("black"));
-	setPaletteForegroundColor(QColor("white"));
 	mCursorShown = false; //cursor is not shown
 	mCursorY = mCursorX = 0;
+
+	setFocusPolicy( StrongFocus );
+	QWidget::setCursor( IbeamCursor );
+
 }
+
 
 KYZisEdit::~KYZisEdit() {
 }

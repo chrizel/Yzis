@@ -1,6 +1,8 @@
 2004-07-06 panard
   * libyzis
     syntax highlighting detection using file content
+  * kyzis
+    basic configuration for fonts and bg/fg colors
 
 2004-07-05 mikmak
   * libyzis

@@ -29,6 +29,8 @@
 #include "debug.h"
 #include <qtimer.h>
 
+#include "settings.h"
+
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::s_self, 10)
 {
@@ -58,6 +60,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	
 	setXMLFile( "kyzispart/kyzispart.rc" );
 	setupActions();
+	applyConfig( false );
 	
 	buffer = doc;
 	editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
@@ -162,6 +165,17 @@ void KYZisView::refreshScreen () {
 void KYZisView::setupActions() {
 	KStdAction::save(this, SLOT(fileSave()), actionCollection());
 	KStdAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());
+}
+
+
+void KYZisView::applyConfig( bool refresh ) {
+	editor->setFont( Settings::font() );
+	editor->setBackgroundMode( PaletteBase );
+	editor->setBackgroundColor( Settings::colorBG() );
+	editor->setPaletteForegroundColor( Settings::colorFG() );
+	if ( refresh ) {
+		editor->repaint( true );
+	}
 }
 
 void KYZisView::fileSave() {

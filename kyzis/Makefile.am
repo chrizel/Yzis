@@ -25,7 +25,7 @@ messages: rc.cpp
 bin_PROGRAMS = kyzis
 
 # the application source, library search path, and link libraries
-kyzis_SOURCES = main.cpp kyzis.cpp kyzis.skel settings.kcfgc
+kyzis_SOURCES = main.cpp kyzis.cpp kyzis.skel
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 kyzis_LDADD   = -lkmdi $(LIB_KPARTS) $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
 
@@ -45,7 +45,7 @@ kde_kcfg_DATA = kyzis.kcfg
 kde_module_LTLIBRARIES = libkyzispart.la
 
 # the Part's source, library search path, and link libraries
-libkyzispart_la_SOURCES = document.cpp viewwidget.cpp factory.cpp editor.cpp commandwidget.cpp 
+libkyzispart_la_SOURCES = document.cpp viewwidget.cpp factory.cpp settings.kcfgc editor.cpp commandwidget.cpp configdialog.cpp
 libkyzispart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
 

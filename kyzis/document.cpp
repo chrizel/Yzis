@@ -25,20 +25,28 @@
 #include <dcopclient.h>
 #include <qcstring.h>
 #include <kapplication.h>
+#include <kstdaction.h>
 #include "document.h"
 #include "viewwidget.h"
 #include "factory.h"
 #include "debug.h"
 
+#include "configdialog.h"
+
 KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::s_self) {
+
 		setInstance(KYZisFactory::instance());
 		m_parent = parentWidget;
 		mkId = kId;
+		setXMLFile( "kyzispart/kyzispart.rc" );
+
+		setupActions();
 }
 
 KYZisDoc::~KYZisDoc () {
 }
+
 
 KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *) {
 	//backport to Factory ? XXX
@@ -47,6 +55,20 @@ KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *) {
 	addView(v);
 	_views.append( v );
 	return v;
+}
+
+void KYZisDoc::setupActions() {
+	KStdAction::preferences( this, SLOT( configureEditor() ), actionCollection(), "editor_options" );
+}
+
+void KYZisDoc::configureEditor() {
+
+	if ( KConfigDialog::showDialog( "configure_editor" ) )
+		return;
+
+	KYZisConfigDialog *dialog = new KYZisConfigDialog( m_parent, "configure_editor", Settings::self(), KDialogBase::TreeList );
+	connect( dialog, SIGNAL( settingsChanged() ), KYZisFactory::s_self, SLOT( writeConfig() ) );
+	dialog->show();
 }
 
 void KYZisDoc::removeView( KTextEditor::View * v ) {

@@ -50,6 +50,9 @@ public:
 	void setFocusCommandLine();
 	void setFocusMainWindow();
 	bool promptYesNo(const QString& title, const QString& message);
+
+	public slots :
+		void writeConfig();
 	
 protected:
 

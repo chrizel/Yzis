@@ -12,7 +12,6 @@
 	</Menu>
 	<Menu name="settings" noMerge="1"><text>&amp;Settings</text>
 		<Action name="general_options"/>
-		<Action name="editor_options"/>
 		<Merge/>
 		<Action name="conf_actions"/>
 		<Action name="conf_toolbars"/>

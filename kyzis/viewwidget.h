@@ -70,6 +70,9 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		 */
 		int getkid() { return mkId; }
 
+		void applyConfig( bool refresh = true );
+
+
 	public slots:
 		QPoint cursorCoordinates();
 		void cursorPosition ( unsigned int *line, unsigned int *col);

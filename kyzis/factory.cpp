@@ -35,6 +35,7 @@
 #include <ktexteditor/document.h>
 #include <kmessagebox.h>
 
+#include "settings.h"
 #include "factory.h"
 #include "document.h"
 #include "viewwidget.h"
@@ -63,6 +64,7 @@ KYZisFactory::KYZisFactory( bool clone ) {
 	}
 	s_self = this;
 	s_refcnt++;
+	Settings::self()->readConfig();
 }
 
 KYZisFactory::~KYZisFactory() {
@@ -139,6 +141,22 @@ const KAboutData *KYZisFactory::aboutData() {
 
 void KYZisFactory::quit( int errorCode ) {
 	kapp->quit();
+}
+
+void KYZisFactory::writeConfig() {
+	Settings::self()->writeConfig();
+
+	// apply new configuration to all views
+	QMap<QString,YZBuffer*>::Iterator it;
+	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
+		YZBuffer *b = ( it.data() );
+		QPtrList< YZView > l = b->views();
+		YZView* yit;
+		for ( yit = l.first(); yit; yit = l.next() ) {
+			KYZisView* yv = static_cast<KYZisView*>( yit );
+			yv->applyConfig();
+		}	
+	}
 }
 
 void KYZisFactory::changeCurrentView( YZView* view ) {

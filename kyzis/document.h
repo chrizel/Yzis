@@ -61,14 +61,18 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		 */
 		int getkid() { return mkId; }
 
+		void applyConfig( );
+
 	public slots:
 		//signals to emit
 		virtual void textChanged () {}
 		virtual void charactersInteractivelyInserted( int ,int ,const QString& ) {}
+		void configureEditor();
 		
 	protected:
 		bool openFile();
 		bool saveFile();
+		void setupActions();
 
 	private:
 		QPtrList<KTextEditor::View> _views;

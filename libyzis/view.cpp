@@ -259,11 +259,11 @@ void YZView::sendMultipleKey(const QString& _keys) {
 			continue;
 		} else if ( key.startsWith( "<RIGHT>" ) ) {
 			sendKey ( "<RIGHT>" );
-			i+=6;
+			i+=7;
 			continue;
 		} else if ( key.startsWith( "<LEFT>" ) ) {
 			sendKey ( "<LEFT>" );
-			i+=5;
+			i+=6;
 			continue;
 		} else {
 			sendKey( key.mid( 0,1 ) );

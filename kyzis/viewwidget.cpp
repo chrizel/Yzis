@@ -99,7 +99,7 @@ void KYZisView::scrollUp (int lines) {
 }
 
 void KYZisView::invalidateLine (unsigned int line) {
-	editor->setTextLine( line, buffer->textline(line));
+	editor->setTextLine( line, "");
 }
 
 void KYZisView::modeChanged (void) {

@@ -79,8 +79,9 @@ void KYZisEdit::setCursor(int c, int l) {
 	drawCursorAt( mCursorX, mCursorY );
 }
 
-void KYZisEdit::setTextLine(int l, const QString &/*str*/) {
-	updateContents( 0, ( l - mParent->getCurrentTop() ) * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing()  );
+void KYZisEdit::setTextLine(int , const QString &/*str*/) {
+	updateContents( 0, mCursorY * fontMetrics().lineSpacing(), width(),
+		YZSession::getBoolOption( "wrap" ) ? height() - mCursorY * fontMetrics().lineSpacing() : fontMetrics().lineSpacing() );
 }
 
 bool KYZisEdit::event(QEvent *e) {
@@ -129,35 +130,37 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 //	yzDebug() << "drawContents: clipy=" << clipy << ",cliph=" << cliph << endl;
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
+	unsigned int my_marginLeft;
 	if ( YZSession::getBoolOption( "number" )) { // update marginLeft
-		/* lineCount length + 2 */
-		unsigned int my_marginLeft = 2 + QString::number( lineCount ).length();
-		if ( marginLeft != my_marginLeft ) {
-			marginLeft = my_marginLeft;
-			mParent->setVisibleArea( width() / fontMetrics().maxWidth() - marginLeft, height() / fontMetrics().lineSpacing() );
-		}
+		my_marginLeft = 2 + QString::number( lineCount ).length();
 		lastLineNumber = 0;
+	} else {
+		my_marginLeft = 0;
+	}
+	if ( marginLeft != my_marginLeft ) {
+		marginLeft = my_marginLeft;
+		mParent->setVisibleArea( width() / fontMetrics().maxWidth() - marginLeft, height() / fontMetrics().lineSpacing() );
+		return;
 	}
 
 	mParent->initDraw( );
 
 	unsigned int currentY = 0;
-	while ( !mParent->myBuffer()->introShown() && mParent->drawNextLine( ) && cliph > 0) {
-		if (clipy == 0) {
+	unsigned int lineNumber;
+	while ( !mParent->myBuffer()->introShown() && mParent->drawNextLine( ) && cliph > 0 ) {
+		lineNumber = mParent->drawLineNumber();
+		if ( currentY >= clipy ) {
 			unsigned int currentX = 0;
-
 
 			if ( YZSession::getBoolOption( "number" )) { // draw current line number
 				QPen old_pen = p->pen( );
 
-				unsigned int lineNumber = mParent->drawLineNumber();
+				QRect clipNL (0, currentY * fontMetrics().lineSpacing(), ( marginLeft - 1 ) * fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 				if ( lineNumber != lastLineNumber ) { // we don't draw it twice
-					QRect clipNL (0, currentY * fontMetrics().lineSpacing(), ( marginLeft - 1 ) * fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 					p->setPen( Qt::yellow );
 					p->drawText( clipNL, flag, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
-
 					lastLineNumber = lineNumber;
-				}
+				} else p->eraseRect( clipNL );
 
 				currentX += marginLeft - 1;
 
@@ -175,22 +178,20 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 
 			while ( mParent->drawNextCol( ) ) {
 				QRect clip2(currentX * fontMetrics().maxWidth(), currentY * fontMetrics().lineSpacing(), fontMetrics().maxWidth(), fontMetrics().lineSpacing());
-
 				QColor c = mParent->drawColor( );
 				if ( c.isValid() ) {
 					p->setPen( c );
 				}
-				
 				p->drawText(clip2,flag, mParent->drawChar() );
-				
 				currentX += mParent->drawLength( );
 			}
 
 			currentY += mParent->drawHeight( );
-			cliph -= mParent->drawHeight( );
+			cliph -= mParent->lineHeight( );
 		} else {
-			--clipy;
-			++currentY;
+			if ( YZSession::getBoolOption( "wrap" ) ) while ( mParent->drawNextCol( ) ) mParent->drawChar( );
+			currentY += mParent->drawHeight( );
+			lastLineNumber = lineNumber;
 		}
 	}
 	if ( mParent->myBuffer()->introShown() ) {

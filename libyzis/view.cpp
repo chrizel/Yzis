@@ -655,7 +655,7 @@ void YZView::displayIntro() {
 	mBuffer->appendLine( centerLine( "http://www.yzis.org" ) );
 	mBuffer->appendLine( centerLine( "contact/patches/requests: yzis-dev@yzis.org" ) );
 	mBuffer->appendLine( "" );
-	mBuffer->appendLine( centerLine( "yzis is distributed under the terms of the gpl v2" ) );
+	mBuffer->appendLine( centerLine( "Yzis is distributed under the terms of the GPL v2" ) );
 	mBuffer->appendLine( "" );
 	mBuffer->appendLine( centerLine( "please report bugs at http://bugs.yzis.org" ) );
 	for ( unsigned int i = 0; i < vMargin; i++ ) mBuffer->appendLine( "" );

@@ -28,14 +28,23 @@
 
 #include "debug.h"
 #include <qstringlist.h>
+#include <qfile.h>
+#include <qregexp.h>
 #include <ctype.h>
 
 YZDebugBackend * YZDebugBackend::_instance = NULL;
 
 YZDebugBackend::YZDebugBackend() 
-: _level(0)
 {
 	_output = stderr;
+	init();
+}
+
+void YZDebugBackend::init()
+{
+	_level = 0;
+	clear();
+	parseRcfile( FILENAME_DEBUGRC );
 }
 
 YZDebugBackend * YZDebugBackend::instance()
@@ -60,7 +69,7 @@ void YZDebugBackend::setDebugOutput( const char * fileName )
 	setDebugOutput( fopen( fileName, "w" ) );
 }
 
-void YZDebugBackend::flush( int level, int area, const char * data )
+void YZDebugBackend::flush( int level, const char * area, const char * data )
 {
 	if (level < _level) return;
 	if (isAreaEnabled( area ) == false) return;
@@ -73,9 +82,36 @@ void YZDebugBackend::flush( int level, int area, const char * data )
 	*/
 }
 
+void YZDebugBackend::parseRcfile(const char * filename)
+{
+	flush( YZ_DEBUG_LEVEL,"YZDebugBackend", QString("parseRcfile(%1)\n").arg(filename).latin1() );
+	QFile f( filename );
+	if (f.open( IO_ReadOnly ) == false) return;
+	QTextStream ts(&f);
+
+	/* One can imagine more control of the output, like whether to use a file
+	 * or not, which is the default debug level.
+	 */
+	QRegExp enableRe("enable:(\\w+)");
+	QRegExp disableRe("disable:(\\w+)");
+	QString l, area;
+	while( ts.atEnd() == false) {
+		l = ts.readLine();
+		//flush( YZ_DEBUG_LEVEL, "YZDebugBackend", QString("line '%1'\n").arg(l).latin1() );
+		if (enableRe.search(l) == 0) {
+			area = enableRe.cap(1);
+			//flush( YZ_DEBUG_LEVEL, "YZDebugBackend", QString("enable '%1'\n").arg(area).latin1() );
+			enableDebugArea(area, true );
+		} else if (disableRe.search(l) == 0) {
+			area = disableRe.cap(1);
+			//flush( YZ_DEBUG_LEVEL, "YZDebugBackend", QString("disable '%1'\n").arg(area).latin1() );
+			enableDebugArea(area, false );
+		}
+	}
+}
 
 
-YZDebugStream::YZDebugStream( int _area, int _level ) {
+YZDebugStream::YZDebugStream( const char * _area, int _level ) {
 	area = _area;
 	level = _level;
 }
@@ -184,16 +220,16 @@ void YZDebugStream::flush() {
 	output=QString::null;
 }
 
-YZDebugStream yzDebug( int area ) {
+YZDebugStream yzDebug( const char * area ) {
 	return YZDebugStream( area, YZ_DEBUG_LEVEL );
 }
-YZDebugStream yzWarning( int area ) {
+YZDebugStream yzWarning( const char * area ) {
 	return YZDebugStream( area, YZ_WARNING_LEVEL );
 }
-YZDebugStream yzError( int area ) {
+YZDebugStream yzError( const char * area ) {
 	return YZDebugStream( area, YZ_ERROR_LEVEL );
 }
-YZDebugStream yzFatal( int area ) {
+YZDebugStream yzFatal( const char * area ) {
 	return YZDebugStream( area, YZ_FATAL_LEVEL );
 }
 

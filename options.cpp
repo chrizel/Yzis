@@ -90,7 +90,7 @@ void YZOption::loadFrom(const QString& file ) {
 					} else
 						setQStringOption(rx2.cap( 1 ).simplifyWhiteSpace(), rx2.cap( 2 ).simplifyWhiteSpace());
 				} else
-					yzDebug() << "Error parsing line " << idx << " of " << file << endl;
+					yzDebug( "YZOption" ) << "Error parsing line " << idx << " of " << file << endl;
 			}
 			idx++;
 		}
@@ -156,7 +156,7 @@ void YZOption::setQStringOption( const QString& key, const QString& option ) {
 	} else {
 		opt = new KOption( currentGroup, key, option , option);
 		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug() << "New option " << currentGroup + '\\' + key << " added !" << endl;
+//		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
 }
 
@@ -178,7 +178,7 @@ void YZOption::setIntOption( const QString& key, int option ) {
 	} else {
 		opt = new KOption( currentGroup, key, option , option);
 		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug() << "New option " << currentGroup + '\\' + key << " added !" << endl;
+//		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
 }
 
@@ -192,7 +192,7 @@ bool YZOption::readBoolEntry( const QString& _key, bool def ) {
 			QString s = opt->getValue();
 			return s == QString::fromLatin1( "true" ) ? true : false;
 		} else {
-			yzDebug() << "Option " << key << " does not exist !" << endl;
+			yzDebug( "YZOption" ) << "Option " << key << " does not exist !" << endl;
 		}
 	}
 	return def;
@@ -206,7 +206,7 @@ void YZOption::setBoolOption( const QString& key, bool option ) {
 	} else {
 		opt = new KOption( currentGroup, key, option , option);
 		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug() << "New option " << currentGroup + '\\' + key << " added !" << endl;
+//		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
 }
 
@@ -229,7 +229,7 @@ void YZOption::setQStringListOption( const QString& key, const QStringList& opti
 	} else {
 		opt = new KOption( currentGroup, key, option , option);
 		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug() << "New option " << currentGroup + '\\' + key << " added !" << endl;
+//		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
 }
 
@@ -252,7 +252,7 @@ void YZOption::setQColorOption( const QString& key, const QColor& option ) {
 	} else {
 		opt = new KOption( currentGroup, key, option.name() , option.name() );
 		mOptions[ currentGroup + '\\' + key ] = opt;
-//		yzDebug() << "New option " << currentGroup + '\\' + key << " added !" << endl;
+//		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
 }
 

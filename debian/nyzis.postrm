@@ -1,0 +1,13 @@
+#!/bin/sh -e
+
+case "$1" in
+	remove)
+	for i in vi ex editor ; do
+		update-alternatives --remove $i /usr/bin/yzis
+	done
+	;;
+esac
+
+#DEBHELPER#
+
+exit 0

@@ -192,8 +192,7 @@ void YZView::recalcScreen( ) {
 	mainCursor->reset();
 	gotoxy( mainCursor, old_pos.getX(), old_pos.getY() );
 
-	abortPaintEvent();
-	refreshScreen();
+	sendRefreshEvent();
 }
 
 void YZView::sendMultipleKey(const QString& _keys) {
@@ -375,6 +374,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<ENTER>" ) {
+				setPaintAutoCommit( false );
 				if ( cindent ) {
 					indent();
 				} else {
@@ -387,6 +387,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 						}
 					}
 				}
+				commitPaintEvent();
 				updateStickyCol( mainCursor );
 				purgeInputBuffer();
 				return;
@@ -407,14 +408,17 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<BS>" ) {
+				setPaintAutoCommit( false );
 				if (mainCursor->bufferX() == 0 && mainCursor->bufferY() > 0 && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
 					mBuffer->action()->mergeNextLine( this, mainCursor->bufferY() - 1 );
 				} else if ( mainCursor->bufferX() > 0 )
 					mBuffer->action()->deleteChar( this, mainCursor->bufferX() - 1, mainCursor->bufferY(), 1 );
 				commitNextUndo();
+				commitPaintEvent();
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<DEL>" ) {
+				setPaintAutoCommit( false );
 				if ( mainCursor->bufferX() == mBuffer->textline( mainCursor->bufferY() ).length() && getLocalStringOption( "backspace" ).contains( "eol" ) ) {
 					mBuffer->action()->mergeNextLine( this, mainCursor->bufferY() );
 					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
@@ -423,6 +427,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					mBuffer->action()->deleteChar( this, mainCursor->buffer(), 1 );
 				}
 				commitNextUndo();
+				commitPaintEvent();
 				purgeInputBuffer();
 				return;
 			} else if ( mPreviousChars == "<PDOWN>" ) {
@@ -457,6 +462,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					return;
 				}
 				if (!pendingMapp) {
+					setPaintAutoCommit( false );
 					mBuffer->action()->insertChar( this, mainCursor->buffer(), mPreviousChars );
 					if ( cindent && mPreviousChars == "}" )
 						reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
@@ -464,6 +470,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					if ( ikeys.contains(mPreviousChars) )
 						YZSession::events->exec("INDENT_ON_KEY", this);
 					purgeInputBuffer(); //be safe in case we mistyped a CTRL command just before
+					commitPaintEvent();
 				}
 				return;
 			}
@@ -640,7 +647,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					selectionPool->clear( "SEARCH" );
 					bool isEmpty = selectionPool->layout( "SEARCH" ).isEmpty();
 					if ( ! ( wasEmpty && isEmpty ) )
-						refreshScreen();
+						sendRefreshEvent();
 				}
 				gotoPreviousMode();
 				return;
@@ -673,7 +680,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				}
 				bool isEmpty = selectionPool->layout( "SEARCH" ).isEmpty();
 				if ( ! ( wasEmpty && isEmpty ) ) {
-					refreshScreen( );
+					sendRefreshEvent();
 				}
 			}
 			break;
@@ -750,6 +757,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					return;
 				}
 				
+				setPaintAutoCommit( false );
 				cmd_state state=mSession->getPool()->execCommand(this, mPreviousChars);
 				switch(state) {
 					case CMD_ERROR:
@@ -762,6 +770,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					default:
 						break;
 				}
+				commitPaintEvent();
 			}
 			break;
 
@@ -2337,7 +2346,7 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 }
 
 void YZView::sendRefreshEvent( ) {
-	abortPaintEvent();
+	selectionPool->clear( "DRAW" );
 	sendPaintEvent( getDrawCurrentLeft(), getDrawCurrentTop(), getColumnsVisible(), getLinesVisible() );
 }
 

@@ -707,7 +707,7 @@ QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 		YzisHighlighting *yzis = args.view->myBuffer()->highlight();
 		if (yzis) {
 			args.view->myBuffer()->makeAttribs();
-			args.view->refreshScreen();
+			args.view->sendRefreshEvent();
 		}
 	}
 

@@ -637,7 +637,7 @@ QString YZView::paste( const QString& inputsBuff ) {
 	int curx = mCursor->getX();
 	int cury = mCursor->getY();
 
-	int i = 0;
+	uint i = 0;
 	if ( ls[ 2 ] == "p" ) { //paste after current char
 		QString nl = mBuffer->data( mCursor->getY() );
 		if ( !list[ 0 ].isNull() ) {

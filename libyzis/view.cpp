@@ -861,13 +861,10 @@ QString YZView::moveToStartOfLine( ) {
 }
 
 QString YZView::moveToStartOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
-	//execute the code
 	gotoxy(viewCursor, 0 , viewCursor->bufferY(), applyCursor);
-//	if ( viewCursor == mainCursor )	UPDATE_STICKY_COL;
 	if ( applyCursor )
 		updateStickyCol( viewCursor );
 
-	//return something
 	return QString::null;
 }
 
@@ -877,7 +874,6 @@ void YZView::gotoLastLine() {
 void YZView::gotoLastLine( YZViewCursor* viewCursor, bool applyCursor ) {
 	gotoLine( viewCursor, mBuffer->lineCount() - 1, applyCursor );
 }
-
 void YZView::gotoLine( unsigned int line ) {
 	gotoLine( mainCursor, line );
 }
@@ -906,25 +902,30 @@ QString YZView::moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
 	return QString::null;
 }
 
+
+/**
+ * initChanges and applyChanges are called by the buffer to inform the view that there are
+ * changes around x,y. Each view have to find what they have to redraw, depending
+ * of the wrap option, and of course window size.
+ */
 void YZView::initChanges( unsigned int x, unsigned int y ) {
 	beginChanges->setX( x );
 	beginChanges->setY( y );
 	origPos->setCursor( mainCursor->buffer() );
 	lineDY = 1;
 	if ( wrap && y < mBuffer->lineCount() ) {
-		gotoxy( mBuffer->getLineLength( y ), y, false );
+		gotoxy( qMax( 1, mBuffer->getLineLength( y ) ) - 1, y, false );
 		lineDY = mainCursor->screenY();
 	}
 	gotoxy( x, y, false );
 }
-
 void YZView::applyChanges( unsigned int /*x*/, unsigned int y ) {
 	unsigned int dY = mainCursor->screenY();
 	if ( y != beginChanges->y() ) {
 		sendPaintEvent( scrollCursor->screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor->screenY() ) );
 	} else {
 		if ( wrap ) {
-			gotoxy( mBuffer->textline( y ).length(), y, false );
+			gotoxy( qMax( 1, mBuffer->getLineLength( y ) ) - 1, y, false );
 			if ( mainCursor->screenY() != lineDY )
 				sendPaintEvent( scrollCursor->screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor->screenY() ) );
 			else

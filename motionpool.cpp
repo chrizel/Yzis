@@ -69,8 +69,8 @@ void YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCur
 	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
 	yzDebug() << "Loop " << counter << " times" << endl;
 	QRegExp rex( motion.rex );
-	result->setX(view->getCursor()->getX());
-	result->setY(view->getCursor()->getY());
+	result->setX(view->getBufferCursor()->getX());
+	result->setY(view->getBufferCursor()->getY());
 	int idx=-1;
 	int count = 0 ;
 	while (count < counter) {

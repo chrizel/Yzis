@@ -243,7 +243,7 @@ class YZView {
 		void delChar( unsigned int mX, unsigned int mY, unsigned int c );
 		void joinLine( unsigned int line );
 
-		void printToFile( const QString& path );
+		virtual void printToFile( const QString& path );
 
 		/**
 		 * Moves the draw cursor to @arg nextx, @arg nexty

@@ -38,7 +38,7 @@ class YZPrinter : public QPrinter {
 		
 		void printToFile( const QString& path );
 		void run( );
-	
+
 	private:
 		/* methods */
 		void doPrint( );

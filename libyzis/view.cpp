@@ -890,8 +890,9 @@ void YZView::initChanges( unsigned int x, unsigned int y ) {
 	beginChanges->setX( x );
 	beginChanges->setY( y );
 	origPos->setCursor( mainCursor->buffer() );
-	if ( wrap ) {
-		gotoxy( mBuffer->textline( y ).length(), y, false );
+	lineDY = 1;
+	if ( wrap && y < mBuffer->lineCount() ) {
+		gotoxy( mBuffer->getLineLength( y ), y, false );
 		lineDY = mainCursor->screenY();
 	}
 	gotoxy( x, y, false );

@@ -357,9 +357,9 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),l)
 	ASSERT_LINE_EXISTS(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),line)
 
-	VIEWS_INIT( 0, line );
 	if ( line >= lineCount() ) return;
 	if ( textline( line ).isNull() ) return;
+	VIEWS_INIT( 0, line );
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );

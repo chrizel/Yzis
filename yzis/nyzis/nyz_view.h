@@ -1,5 +1,7 @@
+#ifndef NYZ_VIEW_H
+#define NYZ_VIEW_H
 /**
- * nyzis.h
+ * nyz_view.h
  *
  * ncurses-based GUI for yzis
  *
@@ -11,20 +13,26 @@
 
 #define	YZ_MAX_LINE	3000
 
+class NYZSession;
+
 class NYZView : public YZView  {
 public:
 	/**
 	  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
 	  * this view can display
 	  */
-	NYZView(YZBuffer *b, int lines_vis) : YZView(b,lines_vis) { }
+	NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b, int lines_vis);
 
 	void event_loop();
 	void flush_events();
 
 protected:
 	void handle_event(yz_event *e);
-	YZLine	*local_lines[YZ_MAX_LINE];
+	YZLine		*local_lines[YZ_MAX_LINE];
+	WINDOW		*window;	/* ncurses window to write to */
+	NYZSession	*session;
 
 };
 
+
+#endif // NYZ_VIEW_H

@@ -1,6 +1,7 @@
 /*  This file is part of the Yzis libraries
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>,
- *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>,
+ *  Copyright (C) 2005 Erlend Hamberg <hamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -65,6 +66,7 @@ class YZModeVisual : public YZModeCommand {
 	  	void movetoInsertMode( const YZCommandArgs& args );
 	  	void escape( const YZCommandArgs& args );
 		void translateToVisualLine( const YZCommandArgs& args );
+		void yankWholeLines(const YZCommandArgs &args);
 
 	protected:
 		virtual YZInterval buildInterval( const YZCursor& from, const YZCursor& to );

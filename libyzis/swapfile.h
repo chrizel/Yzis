@@ -56,6 +56,7 @@ class YZSwapFile {
 		 * Changes the swap filename
 		 */
 		void setFileName( const QString& filename );
+		inline const QString& filename() const { return mFilename; }
 
 		/**
 		 * Deletes the swapfile

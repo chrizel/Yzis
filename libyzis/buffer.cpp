@@ -499,8 +499,8 @@ void YZBuffer::load(const QString& file) {
 		appendLine("");
 	setChanged( false );
 	//check for a swap file left after a crash
-	mSwap->setFileName( mPath + ".ywp" );
-	if ( QFile::exists( mPath + ".ywp" ) ) {//if it already exists, recover from it
+	mSwap->setFileName( mPath );
+	if ( QFile::exists( mSwap->filename() ) ) {//if it already exists, recover from it
 		if ( YZSession::me->promptYesNo(tr("Recover"),tr("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
 			if ( mSwap->recover() )
 				setChanged( true );

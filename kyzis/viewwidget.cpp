@@ -258,7 +258,8 @@ void KYZisView::scrollLineDown() {
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
 
 void KYZisView::scrollView( unsigned int value ) {
-	if ( value > buffer->lineCount() - 1 )
+	if ( (int)value < 0 ) value = 0;
+	else if ( value > buffer->lineCount() - 1 )
 		value = buffer->lineCount() - 1;
 
 	// only redraw if the view actually moves
@@ -272,10 +273,9 @@ void KYZisView::scrollView( unsigned int value ) {
 		// find out which line in the buffer that's on the bottom of the screen
 		unsigned int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
 		if (getLocalBoolOption( "wrap" )) {
-			YZViewCursor* temp = new YZViewCursor( this );
-			gotodxdy( temp, getCursor()->getX(), getDrawCurrentTop() + getLinesVisible() - 1, false );
-			lastBufferLineVisible = temp->bufferY();
-			delete temp;
+			YZViewCursor temp = *scrollCursor;
+			gotodxdy( &temp, getCursor()->getX(), getDrawCurrentTop() + getLinesVisible() - 1 );
+			lastBufferLineVisible = temp.bufferY();
 		}
 
 		// move cursor if it scrolled off the screen
@@ -283,10 +283,7 @@ void KYZisView::scrollView( unsigned int value ) {
 			gotoxy(getBufferCursor()->getX(), getCurrentTop());
 		else if (getBufferCursor()->getY() > lastBufferLineVisible)
 			gotoxy( getBufferCursor()->getX(), lastBufferLineVisible );
-
-		m_editor->setCursor( mainCursor->screenX(), mainCursor->screenY() );
-
-		m_editor->repaint( false );
+		updateCursor();
 	}
 }
 

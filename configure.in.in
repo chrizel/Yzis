@@ -11,6 +11,14 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h)
 AC_CHECK_FUNCS(usleep)
 AC_PATH_LUA
+AC_CHECK_HEADER(magic.h)
+if test "$ac_cv_header_magic_h" = "no"; then
+	AC_MSG_ERROR(magic.h not found. Please install libmagic headers.)
+fi
+AC_CHECK_LIB(magic, magic_open,[have_libmagic=yes],[have_libmagic=no])
+if test "$have_libmagic" = "no"; then
+	AC_MSG_ERROR(libmagic not found. Please install libmagic.)
+fi
 AC_CHECK_HEADER(libps/pslib.h)
 if test "$ac_cv_header_libps_pslib_h" = "no"; then
 	AC_MSG_ERROR(libps.h not found. Please install pslib1 headers.)

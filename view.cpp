@@ -347,7 +347,9 @@ void YZView::updateCursor() {
 
 	viewInformation.l = y;
 	viewInformation.c1 = mCursor->getX(); 
-	viewInformation.c2 = mCursor->getX(); 
+	QString line = mBuffer->textline( y ).mid( 0, mCursor->getX() );
+	int tabs = line.contains('\t');
+	viewInformation.c2 = mCursor->getX() + ( 8 - 1 ) * tabs; 
 
 	syncViewInfo();
 }

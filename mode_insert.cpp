@@ -42,7 +42,7 @@ void YZModeInsert::leave( YZView* mView ) {
 }
 
 void YZModeInsert::initModifierKeys() {
-	mModifierKeys << "<CTRL>x" << "<CTRL>n" << "<CTRL>p" << "<ALT>:";
+	mModifierKeys << "<CTRL>x" << "<CTRL>n" << "<CTRL>p" << "<ALT>:" << "<ALT>v";
 }
 /*
  * if you add a command which use modifiers keys, add it in initModifierKeys too
@@ -55,6 +55,7 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	else if ( key == "<ESC>" ) commandEscape( mView, key );
 	else if ( key == "<INS>" ) commandInsert( mView, key );
 	else if ( key == "<ALT>:" ) commandEx( mView, key );
+	else if ( key == "<ALT>v" ) commandVisual( mView, key );
 	else if ( key == "<DOWN>" ) commandDown( mView, key );
 	else if ( key == "<LEFT>" ) commandLeft( mView, key );
 	else if ( key == "<RIGHT>" ) commandRight( mView, key );
@@ -94,6 +95,9 @@ void YZModeInsert::commandInsert( YZView* mView, const QString& ) {
 }
 void YZModeInsert::commandEx( YZView* mView, const QString& ) {
 	mView->modePool()->push( MODE_EX );
+}
+void YZModeInsert::commandVisual( YZView* mView, const QString& ) {
+	mView->modePool()->push( MODE_VISUAL );
 }
 void YZModeInsert::commandCompletion( YZView* mView, const QString& ) {
 	mView->modePool()->push( MODE_COMPLETION );

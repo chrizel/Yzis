@@ -41,7 +41,6 @@ void TestYZBuffer::setUp()
 {
     mSession = new TYZSession();
     mBuf = new TYZBuffer( mSession );
-    mBuf->clearIntro();
 }
 
 void TestYZBuffer::tearDown()
@@ -54,7 +53,6 @@ void TestYZBuffer::testCreateEmptyBuffer()
 {
     YZBuffer * buf;
     buf = new TYZBuffer( mSession );
-    buf->clearIntro();
 
     phCheckEquals( buf->views().count(), 0 );
     phCheckEquals( buf->firstView(), NULL );

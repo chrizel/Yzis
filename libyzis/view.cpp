@@ -72,7 +72,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 	//order matters here ;)
 	mModes << tr("[ Insert ]") << tr("[ Replace ]") <<tr("[ Awaiting Command ]") <<tr("[ Ex ]") <<tr("[ Search ]")
-		<< tr("[ Open ]") << tr("[ Visual ]") << tr("[ Visual Line ]") << tr("Yzis Ready");
+		<< tr("[ Open ]") << tr("[ Introduction ]") << tr("[ Visual ]") << tr("[ Visual Line ]") << tr("Yzis Ready");
 	mainCursor = new YZViewCursor( this );
 	workCursor = new YZViewCursor( this );
 
@@ -217,12 +217,6 @@ void YZView::sendMultipleKey(const QString& keys) {
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 //	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
-	if ( mBuffer->introShown() ) {
-		mBuffer->clearIntro();
-		gotoxy( 0,0 );
-		if (getLocalBoolOption("blocksplash"))
-			return;
-	}
 
 	QString key=_key;
 	QString modifiers=_modifiers;
@@ -244,7 +238,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	bool test = false;
 
 	bool cindent = getLocalBoolOption( "cindent" );
-	if ( getLocalBoolOption( "rightleft" ) && 
+	if ( getLocalBoolOption( "rightleft" ) &&
 		( mMode == YZ_VIEW_MODE_COMMAND || mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE )
 	) {
 #define SWITCH_KEY( a, b ) \
@@ -569,6 +563,12 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				break;
 			}
 			break;
+		case YZ_VIEW_MODE_INTRO:
+			clearIntro();
+			recalcScreen();
+			gotoCommandMode();
+			sendKey( _key, _modifiers );
+			break;
 		default:
 			yzDebug() << "Unknown MODE" << endl;
 			purgeInputBuffer();
@@ -618,6 +618,59 @@ void YZView::indent() {
 	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).stripWhiteSpace() );
 	gotoxy( indentString.length(), ypos );
 	//yzDebug() << "Leaving YZView::indent" << endl;
+}
+
+QString YZView::centerLine( QString s )
+{
+	QString spacer = "";
+	unsigned int nspaces = mColumnsVis > s.length() ? mColumnsVis - s.length() : 0;
+	nspaces /= 2;
+	spacer.fill( ' ', nspaces );
+	spacer.append( s );
+	return spacer;
+}
+
+void YZView::displayIntro() {
+	yzDebug() << "File: " __FILE__ << " Line: " << __LINE__ << endl;
+	unsigned int linesInIntro = 11; // Update this is if you change # of lines in message
+	unsigned int vMargin = mLinesVis > linesInIntro ? mLinesVis - linesInIntro : 0;
+	vMargin = ( vMargin + 1 ) / 2; // round up to have enough lines so '~' isn't shown
+
+	/* Don't record these in the undo list */
+	mBuffer->undoBuffer()->setInsideUndo( true );
+
+	gotoxy( 0, 0 );
+	for (unsigned int i = 0; i < vMargin; i++ ) mBuffer->appendLine("");
+	mBuffer->appendLine( centerLine( VERSION_CHAR_LONG ) );
+	if ( VERSION_CHAR_ST == VERSION_CHAR_STATE2 )
+		mBuffer->appendLine( centerLine( VERSION_CHAR_DATE ) );
+	mBuffer->appendLine( centerLine( VERSION_CHAR_ST  ) );
+	mBuffer->appendLine( "" );
+	mBuffer->appendLine( centerLine( "http://www.yzis.org" ) );
+	mBuffer->appendLine( centerLine( "contact/patches/requests: yzis-dev@yzis.org" ) );
+	mBuffer->appendLine( "" );
+	mBuffer->appendLine( centerLine( "yzis is distributed under the terms of the gpl v2" ) );
+	mBuffer->appendLine( "" );
+	mBuffer->appendLine( centerLine( "please report bugs at http://bugs.yzis.org" ) );
+	for ( unsigned int i = 0; i < vMargin; i++ ) mBuffer->appendLine( "" );
+
+	mBuffer->undoBuffer()->setInsideUndo( false );
+
+	gotoIntroMode();
+	refreshScreen();
+}
+
+void YZView::clearIntro()
+{
+	yzDebug() << "Entered YZView::clearIntro" << endl;
+	mBuffer->undoBuffer()->setInsideUndo( true );
+
+	gotoxy( 0, 0 );
+	mBuffer->clearText();
+
+	mBuffer->undoBuffer()->setInsideUndo( false );
+
+	mBuffer->setChanged( false );
 }
 
 void YZView::updateCursor() {
@@ -1245,6 +1298,11 @@ QString YZView::gotoSearchMode( bool reverse ) {
 	return QString::null;
 }
 
+QString YZView::gotoIntroMode() {
+	switchModes( YZ_VIEW_MODE_INTRO );
+	return QString::null;
+}
+
 QString YZView::gotoVisualMode( bool isVisualLine ) {
 	//store the from position
 	if ( isVisualLine )
@@ -1326,7 +1384,7 @@ void YZView::paste( QChar registr, bool after ) {
 
 bool YZView::doSearch( const QString& search ) {
 	selectionPool->clear( "SEARCH" );
-	
+
 	bool found = false;
 	unsigned int matchlength = 0;
 	YZCursor begin = *mainCursor->buffer();
@@ -1336,16 +1394,16 @@ bool YZView::doSearch( const QString& search ) {
 		end.setY(0);
 	}
 	YZCursor result;
-	
-	result = mBuffer->action()->search(this, search, begin, end, reverseSearch, &matchlength, &found);	
-	
+
+	result = mBuffer->action()->search(this, search, begin, end, reverseSearch, &matchlength, &found);
+
 	if ( found ) {
 		selectionPool->addSelection( "SEARCH", result.getX(), result.getY(), result.getX() + matchlength - 1, result.getY() );
 		gotoxy( result.getX(), result.getY() );
 		updateStickyCol( mainCursor );
 		refreshScreen( );
 		return true;
-	} else { 
+	} else {
 		refreshScreen( );
 		return false;
 	}
@@ -1854,7 +1912,7 @@ void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
 }
 
 void YZView::gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor ) {
-	if ( stickyCol == STICKY_COL_ENDLINE ) 
+	if ( stickyCol == STICKY_COL_ENDLINE )
 		gotoxy( viewCursor, mBuffer->textline( Y ).length(), Y, applyCursor );
 	else {
 		unsigned int col = stickyCol % mColumnsVis;

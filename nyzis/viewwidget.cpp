@@ -170,98 +170,88 @@ void NYZView::drawContents( int clipy, int cliph ) {
 	}
 	unsigned int lineNumber = 0;
 
-	if ( myBuffer()->introShown() ) {
-		unsigned int h, w;
-		getmaxyx( stdscr, h, w );
-		while ( drawNextLine() ) {
-			QString str = myBuffer()->textline( currentY );
-			wmove( window, currentY, (w-str.length()>0)?(w-str.length())/2:0 );
-//change intro color ?			wattron( window, attribIntro );
-			waddstr( window, str );
-			currentY++;
-		}
-	} else {
-		unsigned int x;
-		while ( drawNextLine( ) && cliph > 0 ) {
-			lineNumber = drawLineNumber();
-			if ( currentY >= ( uint )clipy ) {
-				unsigned int currentX = 0;
-				wmove( editor, currentY, currentX );
-				if ( number ) { // draw current line number
-					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
-						wattron( editor, attribYellow );
-						QString num = QString::number( lineNumber );
-						if ( rightleft ) {
-							num = num.leftJustify( marginLeft - 1, ' ' );
-							x = width - currentX - num.length();
-						} else {
-							num = num.rightJustify( marginLeft - 1, ' ' );
-							x = currentX;
-						}
-						mvwaddstr( editor, currentY, x, num );
-						wattroff( editor, attribYellow );
-						x = marginLeft - 1;
-						if ( rightleft ) x = width - x - 1;
-						mvwaddch( editor, currentY, x, ' ' );
-						lastLineNumber = lineNumber;
-					} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
-					currentX += marginLeft;
-				}
-				while ( drawNextCol( ) ) {
-					QColor c = drawColor( );
-					if (!c.isValid()) {
-						yzWarning()<< " drawColor() returns an invalid color..." << endl;
-						c = Qt::white;
-					}
-					int mAttributes;
-					int rawcolor = c.rgb() & RGB_MASK;
-					if ( mAttributesMap.contains( rawcolor ) ) {
-						mAttributes = mAttributesMap[ rawcolor ];
+	
+	unsigned int x;
+	while ( drawNextLine( ) && cliph > 0 ) {
+		lineNumber = drawLineNumber();
+		if ( currentY >= ( uint )clipy ) {
+			unsigned int currentX = 0;
+			wmove( editor, currentY, currentX );
+			if ( number ) { // draw current line number
+				if ( lineNumber != lastLineNumber ) { // we don't draw it twice
+					wattron( editor, attribYellow );
+					QString num = QString::number( lineNumber );
+					if ( rightleft ) {
+						num = num.leftJustify( marginLeft - 1, ' ' );
+						x = width - currentX - num.length();
 					} else {
-						mAttributes = attribWhite;
-						yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
-							rawcolor << " (" <<
-							qRed( rawcolor ) << "," <<
-							qGreen( rawcolor ) << "," <<
-							qBlue( rawcolor ) << ") or (" <<
-
-							c.red() << "," <<
-							c.green() << "," <<
-							c.blue() << ")" <<
-							endl;
-					}
-					bool invert = drawSelected( );
-					if ( rightleft )
-						x = width - currentX - 1;
-					else
+						num = num.rightJustify( marginLeft - 1, ' ' );
 						x = currentX;
-					mvwaddch( editor, currentY, x, mAttributes | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
-					if ( drawLength() > 1 ) {
-						for (unsigned int i = 1; i < drawLength(); i++ ) 
-							mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), mAttributes | ' ' | ( invert ? A_REVERSE : A_NORMAL ) );
 					}
-					currentX += drawLength( );
-				}
-				for( ; currentX < getColumnsVisible() + marginLeft; currentX++) 
-					mvwaddch( editor, currentY, rightleft ? width - currentX - 1: currentX, ' ' );
-				currentY += drawHeight( );
-				cliph -= lineHeight( );
-			} else {
-				if ( wrap ) while ( drawNextCol( ) ) ;
-				currentY += drawHeight( );
-				lastLineNumber = lineNumber;
+					mvwaddstr( editor, currentY, x, num );
+					wattroff( editor, attribYellow );
+					x = marginLeft - 1;
+					if ( rightleft ) x = width - x - 1;
+					mvwaddch( editor, currentY, x, ' ' );
+					lastLineNumber = lineNumber;
+				} else for( unsigned int i = 0; i < marginLeft; i++) waddch( editor, ' ' );
+				currentX += marginLeft;
 			}
-		}
-		while ( cliph > 0 && currentY < getLinesVisible() ) {
-			printVoid( currentY );
-			++currentY;
-			--cliph;
-		}
+			while ( drawNextCol( ) ) {
+				QColor c = drawColor( );
+				if (!c.isValid()) {
+					yzWarning()<< " drawColor() returns an invalid color..." << endl;
+					c = Qt::white;
+				}
+				int mAttributes;
+				int rawcolor = c.rgb() & RGB_MASK;
+				if ( mAttributesMap.contains( rawcolor ) ) {
+					mAttributes = mAttributesMap[ rawcolor ];
+				} else {
+					mAttributes = attribWhite;
+					yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
+						rawcolor << " (" <<
+						qRed( rawcolor ) << "," <<
+						qGreen( rawcolor ) << "," <<
+						qBlue( rawcolor ) << ") or (" <<
 
-		x = getCursor()->getX() - getDrawCurrentLeft () + marginLeft;
-		if ( rightleft ) x = width - x - 1;
-		wmove(editor, getCursor()->getY() - getDrawCurrentTop (), x );
+						c.red() << "," <<
+						c.green() << "," <<
+						c.blue() << ")" <<
+						endl;
+				}
+				bool invert = drawSelected( );
+				if ( rightleft )
+					x = width - currentX - 1;
+				else
+					x = currentX;
+				mvwaddch( editor, currentY, x, mAttributes | ( invert ? A_REVERSE : A_NORMAL ) | drawChar().unicode() );
+				if ( drawLength() > 1 ) {
+					for (unsigned int i = 1; i < drawLength(); i++ ) 
+						mvwaddch( editor, currentY, x + ( rightleft ? -i : i ), mAttributes | ' ' | ( invert ? A_REVERSE : A_NORMAL ) );
+				}
+				currentX += drawLength( );
+			}
+			for( ; currentX < getColumnsVisible() + marginLeft; currentX++) 
+				mvwaddch( editor, currentY, rightleft ? width - currentX - 1: currentX, ' ' );
+			currentY += drawHeight( );
+			cliph -= lineHeight( );
+		} else {
+			if ( wrap ) while ( drawNextCol( ) ) ;
+			currentY += drawHeight( );
+			lastLineNumber = lineNumber;
+		}
 	}
+	while ( cliph > 0 && currentY < getLinesVisible() ) {
+		printVoid( currentY );
+		++currentY;
+		--cliph;
+	}
+
+	x = getCursor()->getX() - getDrawCurrentLeft () + marginLeft;
+	if ( rightleft ) x = width - x - 1;
+	wmove(editor, getCursor()->getY() - getDrawCurrentTop (), x );
+	
 	wrefresh( editor );
 }
 
@@ -292,16 +282,10 @@ void NYZView::syncViewInfo( void )
 
 	werase(infobar);
 	wmove( infobar,0,0 );
-	if ( mBuffer->introShown() ) {
-		const char * r = mode(YZ_VIEW_MODE_LAST);
-		for ( const char *ptr = r; *ptr; ptr++ )
-//			waddch(infobar, attribYellow |*ptr);
-			waddch(infobar, COLOR_PAIR(2) |*ptr);
-	} else {
-		const char *m = mode ( mMode ).latin1();
-		for ( const char *ptr = m; *ptr; ptr++ )
-//			waddch(infobar, attribYellow |*ptr);
-			waddch(infobar, COLOR_PAIR(2) |*ptr);
+	const char *m = mode ( mMode ).latin1();
+	for ( const char *ptr = m; *ptr; ptr++ ) {
+//		waddch(infobar, attribYellow |*ptr);
+		waddch(infobar, COLOR_PAIR(2) |*ptr);
 	}
 	waddch(infobar, ' ');
 

@@ -60,7 +60,6 @@
 YZBuffer::YZBuffer(YZSession *sess) {
 	yzDebug("YZBuffer") << "YZBuffer()" << endl;
 	myId = YZSession::mNbBuffers++;
-	mIntro = false;
 	mUpdateView=true;
 	mSession = sess;
 	mModified=false;
@@ -78,10 +77,10 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mViewMarks = new YZViewMark( );
 	mDocMarks = new YZDocMark( );
 	currentEncoding = getLocalStringOption( "encoding" );
-	displayIntro();
 	YZSession::me->addBuffer( this );
 	mSwap = new YZSwapFile( this );
 	mLoading = false;
+	mText.append( new YZLine() );
 	yzDebug("YZBuffer") << "NEW BUFFER CREATED : " << mPath << endl;
 }
 
@@ -370,45 +369,6 @@ void YZBuffer::clearText() {
 	mText.append(new YZLine());
 }
 
-void YZBuffer::clearIntro() {
-	if (mIntro) {
-		yzDebug("YZBuffer") << "YZBuffer clearIntro" << endl;
-		mIntro = false;
-		clearText();
-		updateAllViews();
-	}
-}
-
-void YZBuffer::displayIntro() {
-	yzDebug("YZBuffer") << "YZBuffer displayIntro" << endl;
-	QStringList introduction;
-	introduction
-	<<  ""
-	<<  ""
-	<<  ""
-	<< VERSION_CHAR_LONG;
-	if (VERSION_CHAR_ST == VERSION_CHAR_STATE2)
-		introduction << VERSION_CHAR_DATE;
-	introduction << VERSION_CHAR_ST
-	<<  ""
-	<<  "http://www.yzis.org"
-	<<  "Contact/Patches/Requests: yzis-dev@yzis.org"
-	<<  ""
-	<<  "Yzis is distributed under the terms of the GPL v2"
-	<<  ""
-	<<  "Please report bugs at http://bugs.yzis.org";
-
-	mUndoBuffer->setInsideUndo( true );
-	for ( int i=0; i< 100; i++ ) introduction << ""; //add empty lines to avoids displaying '~' :)
-
-	for (  QStringList::Iterator it = introduction.begin(); it != introduction.end(); ++it )
-		mText.append( new YZLine( *it ) );
-	mIntro=true;
-	mUndoBuffer->setInsideUndo( false );
-
-	updateAllViews();
-}
-
 void YZBuffer::setTextline( uint line , const QString & l) {
 	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::setTextline(%1,%2)").arg(line).arg(l), l );
 	ASSERT_LINE_EXISTS( QString("YZBuffer::setTextline(%1,%2)").arg(line).arg(l), line );
@@ -435,8 +395,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 }
 
 bool YZBuffer::isEmpty() const {
-	if ( mText.count( ) == 1 && textline(0).isEmpty() ) return true;
-	return false;
+	return ( mText.count() == 1 && textline(0).isEmpty() );
 }
 
 
@@ -501,7 +460,7 @@ void YZBuffer::load(const QString& file) {
 	yzDebug("YZBuffer") << "YZBuffer load " << file << endl;
 	if ( file.isNull() || file.isEmpty() ) return;
 	setPath(file);
-	if ( mIntro ) clearIntro();
+
 	//stop redraws
 	mUpdateView=false;
 

@@ -194,11 +194,16 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
+	/*
+	FIXME: How to handle mouse events commented out now so kyzis will compile
+	
 	if ( mParent->myBuffer()->introShown() ) {
 		mParent->myBuffer()->clearIntro();
 		mParent->gotodxdy( 0, 0 );
 		return;
 	}
+	*/
+	
 	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
 		if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
 			mParent->gotodxdy( e->x( ) / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + mParent->getDrawCurrentLeft( ) - marginLeft,
@@ -224,7 +229,7 @@ void KYZisEdit::selectRect( unsigned int x, unsigned int y, unsigned int w, unsi
 }
 
 void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph, bool ) {
-	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::SingleLine;
+	//int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::SingleLine;
 	QPainter p;
 	p.begin( this );
 
@@ -267,7 +272,8 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 
 	mCursor->hide();
 
-	if ( ! mParent->myBuffer()->introShown() ) {
+	//FIXME introShown eliminate conditional
+	//if ( ! mParent->myBuffer()->introShown() ) {
 		while ( cliph > 0 && mParent->drawNextLine( ) ) {
 			lineNumber = mParent->drawLineNumber();
 			if ( currentY >= ( uint )clipy ) {
@@ -284,7 +290,8 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 					QPen old_pen = p.pen( );
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
 						p.setPen( Qt::yellow );
-						p.drawText( myRect, flag | ( rightleft ? Qt::AlignLeft : Qt::AlignRight ), QString::number( lineNumber ) );
+						// FIXME p.drawText( myRect, flag | ( rightleft ? Qt::AlignLeft : Qt::AlignRight ), QString::number( lineNumber ) );
+						p.drawText( myRect, ( rightleft ? Qt::AlignLeft : Qt::AlignRight ), QString::number( lineNumber ) );
 						lastLineNumber = lineNumber;
 					}
 					currentX += marginLeft;
@@ -309,7 +316,9 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 					QColor c = mParent->drawColor( );
 					if ( c.isValid() ) p.setPen( c );
 					else p.setPen( foregroundColor() );
-					p.drawText(myRect, flag, mParent->drawChar( ) );
+					//FIXME remove flag...
+					//p.drawText(myRect, flag, mParent->drawChar( ) );
+					p.drawText(myRect, 0, mParent->drawChar( ) );
 
 					if ( mParent->drawSelected() ) {
 						selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
@@ -341,18 +350,20 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 			myRect.setRect ( 0, currentY * linespace, width(), linespace );
 			erase( myRect );
 			p.setPen( Qt::cyan );
-			p.drawText( myRect, rightleft ? flag | Qt::AlignRight : flag,"~" );
+			//FIXME p.drawText( myRect, rightleft ? flag | Qt::AlignRight : flag,"~" );
+			p.drawText( myRect, rightleft ? Qt::AlignRight : 0,"~" );
 			++currentY;
 			--cliph;
 		}
-	} else {
-		while ( currentY < lineCount ) {
-			myRect.setRect (0, currentY * linespace, width(), linespace);
-			erase(myRect);
-			p.drawText(myRect,flag, mParent->myBuffer()->textline(currentY ) );
-			++currentY;
-		}
-	}
+	//FIXME eliminate introShown conditional } else {
+	//	while ( currentY < lineCount ) {
+	//		myRect.setRect (0, currentY * linespace, width(), linespace);
+	//		erase(myRect);
+	//		//FIXME p.drawText(myRect,flag, mParent->myBuffer()->textline(currentY ) );
+	//		p.drawText(myRect, 0, mParent->myBuffer()->textline(currentY ) );
+	//		++currentY;
+	//	}
+	//}
 	p.end( );
 }
 

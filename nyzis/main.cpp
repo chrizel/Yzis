@@ -136,14 +136,19 @@ main(int argc, char *argv[])
 	NYZisDoc *bf;
 	bool hasatleastone = false;
 
-	for ( int i=1; i<argc; i++ )
+	for ( int i=1; i<argc; i++ ) {
 		if ( '-' != argv[i][0] ) {
 			hasatleastone = true;
 			yzDebug(NYZIS)<< "nyzis : opening file " << argv[i]<<endl;
 			bf = factory->createBuffer(argv[ i ]);
 		}
-	if ( !hasatleastone )
+	}
+
+	if ( !hasatleastone ) {
 		factory->createBuffer();
+		YZView* cView = YZSession::me->currentView();
+		cView->displayIntro();
+	}
 
 	if (initialSendKeys.length()) {
 		YZView* cView = YZSession::me->currentView();

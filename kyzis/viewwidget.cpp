@@ -133,10 +133,6 @@ void KYZisView::wheelEvent( QWheelEvent * e ) {
 void KYZisView::modeChanged (void) {
 //	yzDebug() << "switching to mode: " << mMode << "; old mode is: " <<
 //		mPrevMode << endl;
-	if (mBuffer->introShown() )  {
-			status->changeItem(mode(YZ_VIEW_MODE_LAST), 0);
-			return;
-	}
 	switch (mMode) {
 		case YZ_VIEW_MODE_INSERT: // insert
 			status->changeItem(mode( YZ_VIEW_MODE_INSERT ), 0);
@@ -161,6 +157,9 @@ void KYZisView::modeChanged (void) {
 			break;
 		case YZ_VIEW_MODE_VISUAL_LINE :
 			status->changeItem( mode(YZ_VIEW_MODE_VISUAL_LINE), 0 );
+			break;
+		case YZ_VIEW_MODE_INTRO :
+			status->changeItem( mode(YZ_VIEW_MODE_INTRO), 0);
 	};
 }
 

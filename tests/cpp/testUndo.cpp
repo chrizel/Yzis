@@ -40,7 +40,6 @@ void TestUndo::setUp()
 {
     mSession = new TYZSession();
     mBuf = new TYZBuffer( mSession );
-    mBuf->clearIntro();
     mView = new TYZView( mBuf, mSession, 5 );
 }
 

@@ -30,6 +30,7 @@
 #include "registers.h"
 #include "view.h"
 #include "swapfile.h"
+#include "mapping.h"
 #include "ex_lua.h"
 #if QT_VERSION < 0x040000
 #include <qapplication.h>
@@ -77,6 +78,7 @@ YZSession::~YZSession() {
 	delete events;
 	delete mRegisters;
 	delete mOptions;
+	delete YZMapping::self();
 	delete YZExLua::instance();
 	delete YZDebugBackend::instance();
 }

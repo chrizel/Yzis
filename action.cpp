@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <qclipboard.h>
+#include <qpaintdevice.h>
 
 YZAction::YZAction( YZBuffer* buffer ) {
 	mBuffer = buffer;
@@ -128,8 +129,6 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len,
 
 void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
 	YZCursor mPos( pos );
-//	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-//		it->initCopyLine( mPos, len, pView->myId == it->myId );
 
 	unsigned int bY = mPos.getY();
 	QStringList buff;
@@ -142,14 +141,12 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 		text += line + "\n";
 	}
 	buff << QString::null;
-	QApplication::clipboard()->setText( text, QClipboard::Clipboard );
-	QApplication::clipboard()->setText( text, QClipboard::Selection );
+	if ( QPaintDevice::x11AppDisplay() ) {
+		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
+	}
 
 	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
 		YZSession::mRegisters.setRegister( *it, buff );
-
-//	for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() )
-//		it->applyCopyLine( mPos, len, pView->myId == it->myId );
 }
 
 
@@ -203,8 +200,9 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 	}
 
 	QString text = buff.join( "\n" );
-	QApplication::clipboard()->setText( text, QClipboard::Clipboard );	
-	QApplication::clipboard()->setText( text, QClipboard::Selection );	
+	if ( QPaintDevice::x11AppDisplay() ) {
+		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
+	}
 	yzDebug() << "Copied " << buff << endl;
 	for ( QValueList<QChar>::const_iterator it = reg.begin(); it != reg.end( ); it++ )
 		YZSession::mRegisters.setRegister( *it, buff );

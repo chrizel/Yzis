@@ -40,7 +40,9 @@
 
 #include "translator.h"
 
+#ifndef WIN32
 #include "magic.h"
+#endif
 
 #include "ex_lua.h"
 #include <qstringlist.h>
@@ -3065,6 +3067,7 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 
 QString YzisHlManager::findByContent( const QString& contents ) {
 // QString YzisHlManager::findByContent( const QByteArray& contents ) {
+#ifndef WIN32
 	struct magic_set *ms = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );
 	if ( ms == NULL ) {
 		magic_close(ms);
@@ -3084,6 +3087,7 @@ QString YzisHlManager::findByContent( const QString& contents ) {
 		mime = mime.mid( 0, mime.find( ';' ) );
 		return mime;
 	} else
+#endif
 		return QString::null;
 }
 

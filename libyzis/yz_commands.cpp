@@ -59,7 +59,7 @@ QString YZCommandPool::test(const QString&) {
 	return QString("testing");
 }
 
-void YZCommandPool::execCommand(YZView *view, const QString& inputs) {
+void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error) {
 	QString result,command;
 	int i=0;
 
@@ -104,7 +104,8 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			default:
 				break;
 		}
-	}
+	} else
+		*error = 1;
 }
 
 void YZCommandPool::initExPool() {

@@ -1,3 +1,8 @@
+2003-09-28 mikmak
+  * libyzis (command mode) 
+    improve "bad inputs" detection so that we purgeInputBuffers() and wait for
+    a correct command
+
 2003-09-27 mikmak
   * libyzis/kyzis
     fix destructors and references so that it no longer crash at exit

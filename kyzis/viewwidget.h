@@ -27,7 +27,8 @@
 #include <kstatusbar.h>
 #include <qevent.h>
 #include <qscrollbar.h>
-#include <cursor.h>
+#include <qlayout.h>
+#include "cursor.h"
 #include "document.h"
 #include "editor.h"
 #include "viewwidget.h"
@@ -131,6 +132,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		QScrollBar *mVScroll; //vertical scroll
 		QPopupMenu *m_popup;
 		KYZisCodeCompletion *m_codeCompletion;
+		QGridLayout *g ;
 		// internal ID used for DCOP communications
 		int mkId;
 };

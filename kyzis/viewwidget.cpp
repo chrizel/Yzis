@@ -20,7 +20,6 @@
 /**
  * $Id$
  */
-#include <qlayout.h>
 #include <qevent.h>
 #include <qpopupmenu.h>
 #include <kapplication.h>
@@ -58,7 +57,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status->insertItem("",99,0,true);
 	status->setItemAlignment(99,Qt::AlignRight);
 
-	QGridLayout *g = new QGridLayout(this,1,1);
+	g = new QGridLayout(this,1,1);
 	g->addWidget(m_editor,0,0);
 	g->addWidget(mVScroll,0,1);
 	g->addMultiCellWidget(command,1,1,0,1);
@@ -85,7 +84,6 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 KYZisView::~KYZisView () {
 	yzDebug() << "KYZisView::~KYZisView" << endl;
 	if ( buffer ) buffer->removeView(this);
-	delete m_codeCompletion;
 }
 
 void KYZisView::setCommandLineText( const QString& text ) {

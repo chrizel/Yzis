@@ -77,6 +77,7 @@ Kyzis::~Kyzis() {
 	writeDockConfig(m_dockConfig);
 	//delete m_toolbarAction;
 	delete m_konsoleAction;
+	delete mConsole;
 }
 
 void Kyzis::resizeEvent( QResizeEvent *e) {

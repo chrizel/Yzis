@@ -69,6 +69,7 @@ class KYZisCodeCompletion : public QObject
 
   public:
     KYZisCodeCompletion(KYZisView *view);
+    virtual ~KYZisCodeCompletion();
 
     bool codeCompletionVisible ();
 

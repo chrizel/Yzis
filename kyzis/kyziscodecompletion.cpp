@@ -136,6 +136,10 @@ KYZisCodeCompletion::KYZisCodeCompletion( KYZisView* view )
            this, SLOT(slotCursorPosChanged()) );
 }
 
+KYZisCodeCompletion::~KYZisCodeCompletion( ) {
+	delete m_completionPopup; 
+}
+
 bool KYZisCodeCompletion::codeCompletionVisible () {
   return m_completionPopup->isVisible();
 }

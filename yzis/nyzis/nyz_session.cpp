@@ -83,9 +83,23 @@ void NYZSession::event_loop()
 
 void NYZSession::update_status(char *msg)
 {
+	save_cursor();
+
 	werase(statusbar);
 	waddstr(statusbar, msg);
 	wrefresh(statusbar);
+
+	restore_cursor();
+}
+
+void NYZSession::save_cursor(void)
+{
+	getyx(screen,save_cursor_y,save_cursor_x);
+}
+
+void NYZSession::restore_cursor(void)
+{
+	move(save_cursor_y,save_cursor_x);
 }
 
 

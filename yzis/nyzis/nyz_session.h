@@ -22,6 +22,9 @@ class NYZSession : public YZSession {
 		void		event_loop();
 		void		update_status(char *msg);
 
+		void		save_cursor(void);
+		void		restore_cursor(void);
+
 	protected:
 #if 1
 		virtual		YZBuffer *buffer(int i) {return buffers[i]; }
@@ -45,6 +48,8 @@ class NYZSession : public YZSession {
 		YZBuffer	*buffers[NYZ_BUFFER_MAX];
 		NYZView		*views[NYZ_VIEW_MAX];
 
+		int		save_cursor_x; /** only to be used by save/resore _cursor() until further notice */
+		int		save_cursor_y;
 
 };
 

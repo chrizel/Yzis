@@ -1604,11 +1604,18 @@ YZCursor *YZView::getBufferCursor() {
 
 #if QT_VERSION < 0x040000
 void YZView::recordMacro( const QValueList<QChar> &regs ) {
+	mRegs = regs;
+	QValueList<QChar>::iterator end = mRegs.end();
+	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it )
+		YZSession::mRegisters->setRegister( *it, QStringList());
+}
 #else
 void YZView::recordMacro( const QList<QChar> &regs ) {
-#endif
 	mRegs = regs;
+	for ( int ab = 0 ; ab < mRegs.size(); ++ab )
+		YZSession::mRegisters->setRegister( mRegs.at(ab), QStringList());
 }
+#endif
 
 void YZView::stopRecordMacro() {
 #if QT_VERSION < 0x040000

@@ -25,22 +25,29 @@
 #include <qstringlist.h>
 #include <qcolor.h>
 
+enum option_t {
+	global_opt,
+	buffer_opt,
+	view_opt
+};
+
 /**
  * Class to handle a single option
  * It includes : a name , a group, a default value and the current value
  */
 class KOption {
 	public:
-		KOption( QString key, QString group, QString value, QString defaultValue);
-		KOption( QString key, QString group, QStringList value, QStringList defaultValue);
-		KOption( QString key, QString group, int value, int defaultValue);
-		KOption( QString key, QString group, bool value, bool defaultValue);
+		KOption( QString key, QString group, QString value, QString defaultValue, option_t type);
+		KOption( QString key, QString group, QStringList value, QStringList defaultValue, option_t type);
+		KOption( QString key, QString group, int value, int defaultValue, option_t type);
+		KOption( QString key, QString group, bool value, bool defaultValue, option_t type);
 		~KOption() {}
 
 		const QString& getGroup() { return mGroup; }
 		const QString& getKey() { return mKey; }
 		const QString& getDefault() { return mDefaultValue; }
 		const QString& getValue() { return mValue; }
+		option_t getType() { return mType; }
 
 		void setValue( const QString& value ) { mValue = value; }
 
@@ -49,6 +56,7 @@ class KOption {
 		QString mGroup;
 		QString mDefaultValue;
 		QString mValue;
+		option_t mType;
 };
 
 /**
@@ -141,7 +149,12 @@ class YZOption {
 		 * Check the existence of an option
 		 */
 		bool hasOption ( const QString& key );
-		
+
+		/**
+		 * Return a pointer on a specific option
+		 */
+		KOption* getOption( const QString& option );
+
 	private:
 		void init();
 		void initConfFiles();

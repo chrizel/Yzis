@@ -23,35 +23,37 @@
 #include <qfile.h>
 #include <qregexp.h>
 
-KOption::KOption( QString key, QString group, QString value, QString defaultValue) {
+KOption::KOption( QString key, QString group, QString value, QString defaultValue, option_t type) {
 	mKey = key;
 	mGroup = group;
+	mType = type;
 	mValue = value;
 	mDefaultValue = defaultValue;
 }
 
-KOption::KOption( QString key, QString group, QStringList value, QStringList defaultValue) {
+KOption::KOption( QString key, QString group, QStringList value, QStringList defaultValue, option_t type) {
 	mKey = key;
 	mGroup = group;
+	mType = type;
 	mValue = value.join( "/YZ/" );
 	mDefaultValue = defaultValue.join( "/YZ/" );
 }
 
-KOption::KOption( QString key, QString group, int value, int defaultValue) {
+KOption::KOption( QString key, QString group, int value, int defaultValue, option_t type) {
 	mKey = key;
 	mGroup = group;
+	mType = type;
 	mValue = QString::number( value );
 	mDefaultValue = QString::number( defaultValue );
 }
 
-KOption::KOption( QString key, QString group, bool value, bool defaultValue) {
+KOption::KOption( QString key, QString group, bool value, bool defaultValue, option_t type) {
 	mKey = key;
 	mGroup = group;
+	mType = type;
 	mValue = value ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
 	mDefaultValue = defaultValue ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
 }
-
-
 
 YZOption::YZOption() {
 	init();
@@ -126,9 +128,9 @@ void YZOption::saveTo(const QString& file, const QString& what, bool force ) {
 }
 
 void YZOption::init() {
-	KOption *tabwidth = new KOption("tabwidth", "General", 8, 8 );
-	KOption *number = new KOption("number","General", false, false);
-	KOption *wrap = new KOption( "wrap", "General", false, false );
+	KOption *tabwidth = new KOption("tabwidth", "General", 8, 8, view_opt );
+	KOption *number = new KOption("number","General", false, false, view_opt );
+	KOption *wrap = new KOption( "wrap", "General", false, false, view_opt );
 
 	mOptions[ "General\\tabwidth" ] = tabwidth;
 	mOptions[ "General\\number" ] = number;
@@ -155,7 +157,7 @@ void YZOption::setQStringOption( const QString& key, const QString& option ) {
 		opt->setValue(option);
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option , option);
+		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt );
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
@@ -166,7 +168,7 @@ int YZOption::readIntEntry( const QString& _key, int def ) {
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
 	if ( mOptions.contains(  key ) ) {
-		QString s = mOptions[ key ]->getValue();
+		const QString& s = mOptions[ key ]->getValue();
 		return s.toInt();
 	} else return def;
 }
@@ -177,7 +179,7 @@ void YZOption::setIntOption( const QString& key, int option ) {
 		opt->setValue(QString::number( option ));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option , option);
+		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt);
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
@@ -205,7 +207,7 @@ void YZOption::setBoolOption( const QString& key, bool option ) {
 		opt->setValue(option ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" ));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option , option);
+		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt);
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
@@ -228,7 +230,7 @@ void YZOption::setQStringListOption( const QString& key, const QStringList& opti
 		opt->setValue(option.join("/YZ/"));
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option , option);
+		opt = new KOption( currentGroup, key, option , option, getOption( key ) ? getOption( key )->getType() : global_opt);
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
@@ -251,7 +253,7 @@ void YZOption::setQColorOption( const QString& key, const QColor& option ) {
 		opt->setValue(option.name());
 		mOptions[ currentGroup + '\\' + key ] = opt;
 	} else {
-		opt = new KOption( currentGroup, key, option.name() , option.name() );
+		opt = new KOption( currentGroup, key, option.name() , option.name(), getOption( key ) ? getOption( key )->getType() : global_opt );
 		mOptions[ currentGroup + '\\' + key ] = opt;
 //		yzDebug( "YZOption" ) << "New option " << currentGroup + '\\' + key << " added !" << endl;
 	}
@@ -297,5 +299,14 @@ bool YZOption::hasOption( const QString& _key ) {
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
 	return mOptions.contains( key );
+}
+
+KOption *YZOption::getOption( const QString& option ) {
+	QString key = option;
+	if ( ! key.contains( '\\' ) )
+		key.prepend( currentGroup+'\\' );
+	yzDebug() << "getOption " << key <<endl;
+	KOption *opt = mOptions[ key ];
+	return opt; //may be NULL
 }
 

@@ -144,10 +144,78 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 	return QString::null;
 }
 
+QString YZExExecutor::setlocal ( YZView *view, const QString& inputs ) {
+	QRegExp rx ( "setl\\S*(\\s+)(.*)=(.*)" ); //option with value
+	QRegExp rx2 ( "setl\\S*(\\s+)no(.*)" ); //deactivate a bool option
+	QRegExp rx3 ( "setl\\S*(\\s+)(.*)" ); //activate a bool option
+
+	YZSession::mOptions.setGroup("General");
+
+	if ( rx.exactMatch( inputs ) ) {
+		KOption *opt = YZSession::mOptions.getOption(rx.cap( 2 ).simplifyWhiteSpace());
+		if ( !opt ) {
+			view->mySession()->popupMessage(tr("Invalid option given"));
+			return QString::null;
+		}
+		switch ( opt->getType() ) {
+			case global_opt :
+				view->mySession()->popupMessage(tr("This option is a global option which cannot be changed with setlocal"));
+				return QString::null;
+			case view_opt :
+				view->setLocalQStringOption( rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());
+				break;
+			case buffer_opt:
+				view->myBuffer()->setLocalQStringOption( rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());
+				break;
+		}
+	} else if ( rx2.exactMatch( inputs )) {
+		KOption *opt = YZSession::mOptions.getOption(rx2.cap( 2 ).simplifyWhiteSpace());
+		if ( !opt ) {
+			view->mySession()->popupMessage(tr("Invalid option given"));
+			return QString::null;
+		}
+		switch ( opt->getType() ) {
+			case global_opt :
+				view->mySession()->popupMessage(tr("This option is a global option which cannot be changed with setlocal"));
+				return QString::null;
+			case view_opt :
+				view->setLocalBoolOption( rx2.cap( 2 ).simplifyWhiteSpace(), false);
+				break;
+			case buffer_opt:
+				view->myBuffer()->setLocalBoolOption( rx2.cap( 2 ).simplifyWhiteSpace(), false);
+				break;
+		}
+	} else if ( rx3.exactMatch( inputs ) ) {
+		KOption *opt = YZSession::mOptions.getOption(rx3.cap( 2 ).simplifyWhiteSpace());
+		if ( !opt ) {
+			view->mySession()->popupMessage(tr("Invalid option given"));
+			return QString::null;
+		}
+		switch ( opt->getType() ) {
+			case global_opt :
+				view->mySession()->popupMessage(tr("This option is a global option which cannot be changed with setlocal"));
+				return QString::null;
+			case view_opt :
+				view->setLocalBoolOption( rx3.cap( 2 ).simplifyWhiteSpace(), true);
+				break;
+			case buffer_opt:
+				view->myBuffer()->setLocalBoolOption( rx3.cap( 2 ).simplifyWhiteSpace(), true);
+				break;
+		}
+	} else {
+		view->mySession()->popupMessage( tr( "Invalid option given" ) );
+		return QString::null;
+	}
+	// refresh screen
+	view->reset();
+
+	return QString::null;
+}
+
 QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
-	QRegExp rx ( "set(\\s*)(.*)=(.*)" ); //option with value
-	QRegExp rx2 ( "set(\\s*)no(.*)" ); //deactivate a bool option
-	QRegExp rx3 ( "set(\\s*)(.*)" ); //activate a bool option
+	QRegExp rx ( "set(\\s+)(.*)=(.*)" ); //option with value
+	QRegExp rx2 ( "set(\\s+)no(.*)" ); //deactivate a bool option
+	QRegExp rx3 ( "set(\\s+)(.*)" ); //activate a bool option
 	if ( rx.exactMatch( inputs ) ) {
 		YZSession::mOptions.setGroup("General");
 		YZSession::setQStringOption( rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());

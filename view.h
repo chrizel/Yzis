@@ -510,6 +510,57 @@ class YZView {
 		/* recalculate cursor position and refresh screen */
 		void reset( );
 
+		//Local Options management
+		/**
+		 * Retrieve an int option
+		 */
+		int getLocalIntOption( const QString& option );
+
+		/**
+		 * sets an int option
+		 */
+		void setLocalIntOption( const QString& key, int option );
+
+		/**
+		 * Retrieve a bool option
+		 */
+		bool getLocalBoolOption( const QString& option );
+
+		/**
+		 * sets a bool option
+		 */
+		void setLocalBoolOption( const QString& key, bool option );
+
+		/**
+		 * Retrieve a string option
+		 */
+		QString getLocalStringOption( const QString& option );
+
+		/**
+		 * sets a qstring option
+		 */
+		void setLocalQStringOption( const QString& key, const QString& option );
+
+		/**
+		 * Retrieve a qstringlist option
+		 */
+		QStringList getLocalStringListOption( const QString& option );
+
+		/**
+		 * sets a qstringlist option
+		 */
+		void setLocalQStringListOption( const QString& key, const QStringList& option );
+
+		/**
+		 * Retrieve a qcolor option
+		 */
+		QColor getLocalColorOption( const QString& option );
+
+		/**
+		 * sets a qcolor option
+		 */
+		void setLocalQColorOption( const QString& key, const QColor& option );
+
 	protected:
 		/**
 		 * The buffer we depend on

@@ -647,7 +647,8 @@ int YZBuffer::getLocalIntOption( const QString& option ) {
 }
 
 void YZBuffer::setLocalIntOption( const QString& key, int option ) {
-	YZSession::mOptions.setIntOption( mPath+"\\"+key, option );
+	YZSession::mOptions.setGroup(mPath);
+	YZSession::mOptions.setIntOption( key, option );
 }
 
 bool YZBuffer::getLocalBoolOption( const QString& option ) {
@@ -658,7 +659,8 @@ bool YZBuffer::getLocalBoolOption( const QString& option ) {
 }
 
 void YZBuffer::setLocalBoolOption( const QString& key, bool option ) {
-	YZSession::mOptions.setBoolOption( mPath+"\\"+key, option );
+	YZSession::mOptions.setGroup(mPath);
+	YZSession::mOptions.setBoolOption( key, option );
 }
 
 QString YZBuffer::getLocalStringOption( const QString& option ) {
@@ -669,7 +671,8 @@ QString YZBuffer::getLocalStringOption( const QString& option ) {
 }
 
 void YZBuffer::setLocalQStringOption( const QString& key, const QString& option ) {
-	YZSession::mOptions.setQStringOption( mPath+"\\"+key, option );
+	YZSession::mOptions.setGroup(mPath);
+	YZSession::mOptions.setQStringOption( key, option );
 }
 
 QStringList YZBuffer::getLocalStringListOption( const QString& option ) {
@@ -680,7 +683,8 @@ QStringList YZBuffer::getLocalStringListOption( const QString& option ) {
 }
 
 void YZBuffer::setLocalQStringListOption( const QString& key, const QStringList& option ) {
-	YZSession::mOptions.setQStringListOption( mPath+"\\"+key, option );
+	YZSession::mOptions.setGroup(mPath);
+	YZSession::mOptions.setQStringListOption( key, option );
 }
 
 QColor YZBuffer::getLocalColorOption( const QString& option ) {
@@ -691,6 +695,7 @@ QColor YZBuffer::getLocalColorOption( const QString& option ) {
 }
 
 void YZBuffer::setLocalQColorOption( const QString& key, const QColor& option ) {
-	YZSession::mOptions.setQColorOption( mPath+"\\"+key, option );
+	YZSession::mOptions.setGroup(mPath);
+	YZSession::mOptions.setQColorOption( key, option );
 }
 

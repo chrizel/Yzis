@@ -171,6 +171,7 @@ void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("mkyzisrc", &YZExExecutor::mkyzisrc,true,0);
 	NEW_EX_COMMAND("substitute", &YZExExecutor::substitute,true,2);
 	NEW_EX_COMMAND("set", &YZExExecutor::set,true,1);
+	NEW_EX_COMMAND("setlocal", &YZExExecutor::setlocal,true,1);
 	NEW_EX_COMMAND("hardcopy", &YZExExecutor::hardcopy,true,1);
 	NEW_EX_COMMAND("open", &YZExExecutor::gotoOpenMode,true,1);
 	NEW_EX_COMMAND("visual", &YZExExecutor::gotoCommandMode,true,1);

@@ -140,58 +140,14 @@ KInstance* KYZisFactory::instance() {
 
 const KAboutData *KYZisFactory::aboutData() {
 	KAboutData *data = new KAboutData ("kyzispart", I18N_NOOP("KYzis"), "M1",
-					I18N_NOOP( "KYzis - KDE Frontend for Yzis" ),
+					I18N_NOOP( "Kyzis - KDE Frontend for Yzis" ),
 					KAboutData::License_LGPL_V2,
-					I18N_NOOP( "(c) 2002,2003,2004" ), 0, "http://www.yzis.org");
-	data->addAuthor ("Mickael Marchand", I18N_NOOP("KTextEditor implementation"), "marchand@kde.org");
+					I18N_NOOP( "(c) 2003,2004" ), 0, "http://www.yzis.org");
+	data->addAuthor ("Mickael Marchand", I18N_NOOP("Initial Author"), "marchand@kde.org");
 	data->setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"), I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
 
 	return data;
 }
-
-#if 0
-void KYZisFactory::customEvent (QCustomEvent *) {
-	while ( true ) {
-		yz_event event = fetchNextEvent();
-		YZView *vi = findView( event.view );
-		if ( vi == NULL ) {
-			//THIS CANNOT HAPPEN, IF THIS HAPPENS YOU BUGGED YZIS !
-			yzDebug() << " Factory : View " << event.view << " NOT found , event type : " << event.id << endl;
-			return;
-		}
-		KYZisView *v = static_cast<KYZisView*> ( vi );
-		yzDebug() << "Handling event for view " << event.view << endl;
-		QString str;
-		switch ( event.id ) {
-			case YZ_EV_INVALIDATE_LINE:
-				yzDebug() << "event INVALIDATE_LINE " << event.id << endl;
-				str = v->myBuffer()->data( event.invalidateline.y );
-				if ( str.isNull() ) return;//XXX remove me, should not happen
-				v->editor->setTextLine(event.invalidateline.y, str);
-				break;
-			case YZ_EV_SET_CURSOR:
-				yzDebug() << "event SET_CURSOR " << event.id << endl;
-				v->editor->setCursor (event.setcursor.c, event.setcursor.l);
-				if (event.setcursor.c2!=event.setcursor.c)
-					v->status->changeItem( QString("%1,%2-%3 (%4)").arg(event.setcursor.l+1 ).arg( event.setcursor.c+1 ).arg( event.setcursor.c2+1 ).arg( event.setcursor.percentage),99 );
-				else
-					v->status->changeItem( QString("%1,%2 (%3)").arg(event.setcursor.l+1 ).arg( event.setcursor.c+1 ).arg( event.setcursor.percentage),99 );
-				break;
-			case YZ_EV_SET_STATUS:
-				yzDebug() << "event SET_STATUS " << event.id << " " << event.setstatus.text <<  endl;
-				v->status->changeItem( event.setstatus.text,0);
-				break;
-			case YZ_EV_REDRAW:
-				yzDebug() << "event REDRAW " << event.id << endl;
-				v->editor->updateContents();
-				break;
-			case YZ_EV_NOOP:
-				yzDebug() << "event NOOP " << event.id << endl;
-				return;
-		}
-	}
-}
-#endif
 
 void KYZisFactory::quit( bool ) {
 	kapp->quit();
@@ -240,7 +196,7 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 
 void KYZisFactory::popupMessage( const QString& message ) {
 	KYZisView *v = static_cast<KYZisView*>(currentView());
-	KMessageBox::information(v, message, "Error");
+	KMessageBox::information(v, message, tr( "Error" ));
 }
 
 void KYZisFactory::deleteView( ) {

@@ -1,5 +1,5 @@
 /*
-	  Copyright (c) 2003 Yzis Team <yzis-dev@yzis.org>
+    Copyright (c) 2003,2004 Mickael Marchand <marchand@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public
@@ -67,8 +67,7 @@ int main(int argc, char **argv) {
 
 		if ( args->count() == 0 ) {
 			Kyzis *widget = new Kyzis(dockConfig,KMdi::TabPageMode);
-//			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
-			widget->createBuffer( /*tmp->name()*/ );
+			widget->createBuffer();
 			widget->resize( 600,400 );
 			widget->show();
 		} else {

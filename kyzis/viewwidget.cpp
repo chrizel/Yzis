@@ -60,6 +60,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	buffer = doc;
 	editor->show();
 	status->show();
+	editor->setFocus();
 }
 
 KYZisView::~KYZisView () {

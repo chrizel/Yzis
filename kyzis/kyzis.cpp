@@ -108,8 +108,8 @@ void Kyzis::fileNew() {
 	// says that it should open a new window if the document is _not_
 	// in its initial state.  This is what we do here..
 	if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
-			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
-			createBuffer( tmp->name() );
+//			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
+			createBuffer();
 	};
 }
 
@@ -174,6 +174,7 @@ void Kyzis::createBuffer(const QString& path) {
 				kdDebug() << "Yzis part successfully loaded" << endl;
 				m_currentPart = m_part;
 				KMdiChildView *view = createWrapper( m_part->widget(), "buffer-" + path , path );
+				m_part->widget()->setFocus();
 				addWindow( view );
 				createGUI(m_part);
 				load( KURL( path ) );

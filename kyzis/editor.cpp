@@ -36,8 +36,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	setFont(f);
 	mParent = parent;
 
-	viewport()->setFocusProxy( this );
-	viewport()->setFocusPolicy( StrongFocus );
+	setFocusPolicy( StrongFocus );
 	viewport()->setBackgroundMode( PaletteBase );
 	//viewport()->setPaletteBackgroundColor(QColor("white"));
 	viewport()->setBackgroundColor(QColor("black"));

@@ -166,75 +166,27 @@ QPoint KYZisView::cursorCoordinates()
 	return cursorPosition;
 }
 
-/* The magic is bluntly copied from Kate */
-
-QPoint KYZisView::calculateCursorPositionWithTabs(unsigned int line, unsigned int col, unsigned int tabwidth)
-{
-	QPoint result;
-	QString data    = mBuffer->textline(line);
-	uint dataLength = data.length();	
-	uint z;
-  	uint x = 0;
-  	
-	for (z = 0; z < dataLength && z < col; z++) {
-    	if (data[z] == QChar('\t')) 
-			x += tabwidth - (x % tabwidth); 
-		else 
-			x++;
-  	}
-
-	result.setX(x);
-	result.setY(line);
-
-	return result;
-}
-
 void KYZisView::cursorPosition ( unsigned int *line, unsigned int *col )
 {
-	QPoint position = calculateCursorPositionWithTabs(getCursor()->getY(), getCursor()->getX(), 8);
-
-	*line = position.y();
-	*col  = position.x();
+	*line = getCursor()->getY();
+	*col  = getCursor()->getX();
 }
 
 void KYZisView::cursorPositionReal ( unsigned int *line, unsigned int *col )
 {
-	QPoint cursor = calculateCursorPositionWithTabs(getCursor()->getY(), getCursor()->getX(), 1);
-	*line = cursor.y();
-	*col  = cursor.x();
-}
+	*line = getBufferCursor()->getY();
+	*col  = getBufferCursor()->getX();
+} 
 
 bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
 {
-	QString data    = mBuffer->textline(line);
-	QPoint cursor	= calculateCursorPositionWithTabs(line, col, 8);
-
-	if (data.isNull()) {
-		return false;
-	} else if ((uint)cursor.x() > data.length()) {
-		return false;
-	}
-	
-	editor->setCursor(cursor.y(), cursor.x());
-
+	gotodxdy( line, col );
 	return true;
 }
 
 bool KYZisView::setCursorPositionReal ( unsigned int line, unsigned int col)
 {
-	QString data    = mBuffer->textline(line);
-	QPoint cursor	= calculateCursorPositionWithTabs(line, col, 1);
-
-	if (data.isNull()) {
-		return false;
-	}
-	
-	if ( (uint)cursor.x() > data.length()) {
-		return false;
-	}
-	
-	editor->setCursor(cursor.y(), cursor.x());
-
+	gotoxy( col, line );
 	return true;
 }
 
@@ -245,15 +197,12 @@ unsigned int KYZisView::cursorLine()
 
 unsigned int KYZisView::cursorColumn()
 {
-	QPoint cursor = calculateCursorPositionWithTabs(getCursor()->getY(), getCursor()->getX(), 8);
-	return cursor.x();
+	return getCursor()->getX();
 }
 
 unsigned int KYZisView::cursorColumnReal()
 {
-	QPoint cursor = calculateCursorPositionWithTabs(getCursor()->getY(), getCursor()->getX(), 1);
-
-	return cursor.x();
+	return getBufferCursor()->getX();
 }
 
 void KYZisView::cursorPositionChanged()

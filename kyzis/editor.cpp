@@ -151,16 +151,18 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
+	if ( mParent->myBuffer()->introShown() ) {
+		mParent->myBuffer()->clearIntro();
+		mParent->gotodxdy( 0, 0 );
+		return;
+	} 
 	if ( e->button() == Qt::LeftButton ) {
-		if ( mParent->myBuffer()->introShown() ) mParent->myBuffer()->clearIntro();
 		if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
 			mParent->gotodxdy( e->x( ) / fontMetrics().maxWidth() + mParent->getDrawCurrentLeft( ) - marginLeft,
 						e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
 		}
 	} else if ( e->button() == Qt::MidButton ) {
-		QString text = QApplication::clipboard()->text( QClipboard::Selection );
-		if ( text.isNull() ) text = QApplication::clipboard()->text( QClipboard::Clipboard );
-
+		QString text = QApplication::clipboard()->text();
 		if ( ! text.isNull() ) {
 			if ( mParent->getCurrentMode() == mParent->YZ_VIEW_MODE_INSERT )
 				mParent->insertChar( text, mParent->getCursor()->getX(), mParent->getCursor()->getY() );

@@ -99,7 +99,7 @@ void YZView::send_char( QChar c)
 			if (cursor->getY() < buffer->text.count()-1) {
 				cursor->incY();
 				lin = buffer->find_line(cursor->getY());
-				//if ( lin ) current_maxx = lin.length()-1; 
+				if ( lin ) current_maxx = lin.length()-1; 
 				//cursor->setX( cursor_x_ghost );
 				if (cursor->getX() > current_maxx) cursor->setX( current_maxx );
 				if (cursor->getX() < 0) cursor->setX( 0 );
@@ -110,7 +110,7 @@ void YZView::send_char( QChar c)
 			if (cursor->getY() > 0) {
 				cursor->decY();
 				lin = buffer->find_line(cursor->getY());
-				//if ( lin ) current_maxx = lin.length()-1;
+				if ( lin ) current_maxx = lin.length()-1;
 				//cursor->setX( cursor_x_ghost );
 				if (cursor->getX() > current_maxx) cursor->setX( current_maxx );
 				if (cursor->getX() < 0) cursor->setX( 0 );

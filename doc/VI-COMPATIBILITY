@@ -10,4 +10,4 @@ handled more 'logically'.
 
 1->'4o' normal command will open 4 new lines in yzis (Vi and Vim)
 2->'dj' will delete from current cursor to the character below (Vi deletes 2 lines) (Vi and Vim)
-
+3->'2d$' will do 'd$' (Vim deletes 2 lines) (Vi and Vim)

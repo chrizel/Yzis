@@ -35,6 +35,7 @@
 #include <ktexteditor/document.h>
 #include <kmessagebox.h>
 #include <kstaticdeleter.h>
+#include <qtimer.h>
 
 #include "settings.h"
 #include "factory.h"
@@ -64,6 +65,7 @@ KYZisFactory::KYZisFactory() :
 	m_aboutData("kyzispart", I18N_NOOP("Kyzis Part"), VERSION_CHAR, I18N_NOOP("Embeddable vi-like editor component"),KAboutData::License_LGPL_V2, I18N_NOOP("(c)2002-2005 The Kyzis Authors"),0,"http://www.yzis.org"),
 	m_instance( &m_aboutData ) {
 	s_self = this;
+	lastId = -1;
 	Settings::self()->readConfig();
 	guiStarted();
 }
@@ -231,7 +233,15 @@ void KYZisFactory::popupMessage( const QString& message ) {
 	KMessageBox::information(v, message, tr( "Error" ));
 }
 
+void KYZisFactory::closeView() {
+	if (mMainApp)
+		mMainApp->closeView(lastId);
+	lastId = -1;
+}
+
 void KYZisFactory::deleteView( int Id ) {
+	lastId = Id;
+	QTimer::singleShot(10, this, SLOT( closeView() ));
 #if 0
 	DCOPClient *client = kapp->dcopClient();
 	QByteArray data;
@@ -246,10 +256,11 @@ void KYZisFactory::deleteView( int Id ) {
 		return; //we failed
 	}
 #endif
+#if 0
 	yzDebug() << "Factory : Close view id : " << Id << endl;
 	if (mMainApp)
 		mMainApp->closeView(Id);
-		
+#endif	
 #if 0 //that does not work since KMdi does not know the view is destroyed
 	yzDebug() << "Factory : deleteView " << v->myId << endl;
 	KYZisView *vv = static_cast<KYZisView*>( v );

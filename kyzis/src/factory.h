@@ -62,6 +62,7 @@ public slots :
 	void writeConfig();
 	void readConfig();
 	void applyConfig();
+	void closeView();
 
 private:
 	//doh , QPtrList are evil , drop them ! XXX
@@ -75,6 +76,7 @@ public:
 	static KYZisFactory *s_self;
 	static KYZisDoc *currentDoc;
 	static Kyzis *mMainApp;
+	int lastId;
 };
 
 #endif

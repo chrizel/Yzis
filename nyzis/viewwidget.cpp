@@ -104,71 +104,59 @@ void NYZView::printVoid( unsigned int relline )
 void NYZView::printLine( int line )
 {
 
-	unsigned int i;
-	int actuallen;
+	yzDebug(NYZIS)<< "printLine called("<< line << ")" << endl;
+
+	unsigned int actuallen;
 	int sx,sy; // save x,y
-	unsigned int relline = line - getCurrentTop(); // relative line #
 
-	// check
-	QString str = mBuffer->textline(line);
-	if ( str.isNull() ) return; // Erase line ??
-
-	// clipping 
-	if ( relline > getLinesVisible() ) return;
+	// option handling
+	/*
+	unsigned int lineCount = myBuffer()->lineCount();
+	unsigned int my_marginleft = 0;
+	if ( YZSession::getBoolOption("General\\number") ) {
+		my_marginleft = 2 + QString::number( lineCount ).length();
+	}
+	if ( marginLeft != my_marginleft ) {
+		marginLeft = my_marginleft;
+		updateVis();
+		return;
+	}
+	*/
 
 	getyx(window,sy,sx); // save cursor
 
-	/* not use addnstr here, will stop at \0  (i guess) */ 
-	if ( myBuffer()->introShown() )
-		wmove( window,relline, (getColumnsVisible()-str.length()>0)?(getColumnsVisible()-str.length())/2:0 );
-	else wmove (window, relline, 0);
+	initDraw();
 
+	int rely=-1;
+	while (  drawNextLine() ) {
+		rely++;
+		// clipping
+		int lineNumber = drawLineNumber();
+		if ( lineNumber<line ) continue;
+		if ( lineNumber>line ) break;
 
-	// syntax highlighting stuff : copy/paste/enhance from kyzis
-	YzisAttribute *at = 0L;
-	const uchar* a = NULL;
-	YZLine *yl = myBuffer()->yzline( line );
-	if ( yl->length() != 0 ) a = yl->attributes();
-	YzisHighlighting *highlight = myBuffer()->highlight();
-	if ( !has_colors() ) highlight = 0; // disable syntax highlighting
-	if ( highlight )
-		at = highlight->attributes( 0 /*only one schema*/ )->data( );
-	uint atLen = at ? highlight->attributes( 0 /*only one schema*/ )->size() : 0;
-	int mColor = mColormap[Qt::white.rgb()];
+		/* not use addnstr here, will stop at \0  (i guess) */ 
+		if ( myBuffer()->introShown() ) {
+			//XX prolly broken
+			QString str = mBuffer->textline(line);
+			wmove( window,dCursor->getY(), (getColumnsVisible()-str.length()>0)?(getColumnsVisible()-str.length())/2:0 );
+		} else wmove (window, rely, 0);
+//		} else wmove (window, dCursor->getY(), 0);
 
-
-//yzDebug() << "at,a,atLen are " << ( int )at << " " <<  ( int )a << " " <<  atLen <<endl;
-	bool noAttribs = !a;
-	actuallen = - getCurrentLeft();
-	for (i=0; actuallen<(int)getColumnsVisible() && i<str.length(); i++) {
-		// quickly handle the tab case
-		if ( str[i] == tabChar ) {
-			for ( int j=0; j<TABSIZE && actuallen<getColumnsVisible(); actuallen++,j++ )
-				if (actuallen>=0) waddch( window, ' ' );
-			if ( a ) a++;
-			continue;
+		// draw this line
+		actuallen = 0;
+		while (  drawNextCol() ) {
+			QChar ch = drawChar();
+			QColor c = drawColor();
+			int mColor = mColormap.contains( c.rgb() )?  mColormap[ c.rgb() ]: mColormap[ Qt::white.rgb() ]; 
+			waddch( window, COLOR_PAIR( mColor )|ch.unicode() );
+			actuallen++;
+			for ( unsigned int i=1; i< drawLength(); actuallen++,i++ ) waddch( window, ' ' );
 		}
-
-		YzisAttribute hl;
-		YzisAttribute *curAt = ( !noAttribs && (*a) >= atLen ) ?  &at[0] : &at[*a];
-		if ( curAt ) {
-			hl+=*curAt;
-			mColor = mColormap.contains(hl.textColor().rgb())?
-				mColormap[hl.textColor().rgb()]:
-				mColormap[Qt::white.rgb()];
-		}
-		if ( actuallen>= 0 )
-			waddch(window, COLOR_PAIR(mColor)|str[i].unicode());
-		actuallen++;
-		if ( a ) a++;
+		for (  ; actuallen < getColumnsVisible(); actuallen++ ) waddch( window, ' ' );
 	}
 
-	if ( myBuffer()->introShown() ) return;
-
-	// end of line...
-	if ( actuallen<0 ) actuallen=0;
-	for ( ; actuallen< getColumnsVisible(); actuallen++ ) waddch(window, ' ' );
-//	for ( ; actuallen< getColumnsVisible()-1; actuallen++ ) waddch(window, COLOR_PAIR(1)|'X' ); // debug :)
+	//if ( myBuffer()->introShown() ) return;
 	wmove(window,sy,sx ); // restore cursor
 }
 
@@ -231,18 +219,21 @@ void NYZView::syncViewInfo( void )
 	if ( viewInformation.c1!=viewInformation.c2 ) {
 		myfmt=( char* )"%d,%d-%d";
 		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt,
-				viewInformation.l1+1,
+				viewInformation.l+1,
 				viewInformation.c1+1,
 				viewInformation.c2+1 );
 	} else {
 		myfmt=( char * )"%d,%d";
-		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt, viewInformation.l1+1,viewInformation.c1+1 );
+		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
 	}
 	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.latin1() );
 
 	wrefresh(infobar);
 
-	wmove(window, viewInformation.l1-getCurrentTop() , viewInformation.c2 - getCurrentLeft() ) ;
+	wmove(window,
+		getCursor()->getY() - getDrawCurrentTop (),
+		getCursor()->getX() - getDrawCurrentLeft ()
+		 );
 	wrefresh( window );
 }
 

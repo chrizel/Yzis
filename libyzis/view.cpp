@@ -57,7 +57,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mExHistory.resize(200);
 	mSearchHistory.resize(200);
 	reverseSearch=false;
-	viewInformation.l1 = viewInformation.l2 = viewInformation.c1 = viewInformation.c2 = 0;
+	viewInformation.l = viewInformation.c1 = viewInformation.c2 = 0;
 	viewInformation.percentage = "";
 }
 
@@ -403,10 +403,9 @@ void YZView::updateCursor() {
 		lasty=y;
 	}
 
-	viewInformation.l1 = y;
-	viewInformation.l2 = dCursor->getY(); 
+	viewInformation.l = y;
 	viewInformation.c1 = mCursor->getX(); 
-	viewInformation.c2 = dCursor->getX(); 
+	viewInformation.c2 = dCursor->getX(); // XXX pas du tout, c'est c1 mais en remplacant les tabs par 'tablenght' <-- avec le QRegexp() mais je l'ai perdu
 
 	syncViewInfo();
 }

@@ -476,10 +476,9 @@ class YZView {
 		unsigned int mCurrentSearchItem;
 
 		struct {
-			int l1; //buffer line
-			int l2; //draw line
+			int l;  //buffer line
 			int c1; //buffer column
-			int c2; //draw column
+			int c2; //buffer column as drawn
 			QString percentage;
 		} viewInformation;
 

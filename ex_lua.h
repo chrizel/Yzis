@@ -45,7 +45,15 @@ class YZExLua : public QObject {
 		 */
 		QString loadFile(YZView *view, const QString& inputs);
 
+		/**
+		 * Get text from view, startCol, startLine, endCol, endLine
+		 */
 		static int text(lua_State *L);
+
+		/**
+		 * Insert text on view, at startCol,startLine,text
+		 */
+		static int insert(lua_State *L);
 
 	private:
 		lua_State *st;

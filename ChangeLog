@@ -1,3 +1,6 @@
+2003-05-24 mikmak
+  * migration to Subversion completed :)
+
 2003-04-25 Neil Stevens (patch)
   * libyzis
     added $,^ and x commands (thanks :)

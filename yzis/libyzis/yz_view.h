@@ -33,7 +33,7 @@ public:
 	 * that's the way the core is sending messages to the gui
 	 */
 	/* for the qt/kde gui, we should create QEvents from that? */
-	yz_event *	fetch_event(/* asasdfasf */);
+	yz_event *	fetch_event(int idx=-1);
 
 	/**
 	  * returns the number of the line displayed on top of this view

@@ -3,7 +3,6 @@
  *
  */
 
-
 #include <stdlib.h>
 #include <curses.h>
 #include "yz_view.h"
@@ -21,7 +20,6 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 
 	events_nb_begin = 0;
 	events_nb_last = 0;
-	
 
 	buffer->add_view(this);
 }
@@ -41,13 +39,15 @@ void YZView::send_char( QChar c)
 	}
 	switch(mode) {
 		case YZ_VIEW_MODE_INSERT:
+			printf("Currently INSERTMODE\n");
 			/* handle adding a char */
-			buffer->add_char(cursor_x,cursor_y,c);
+/*			buffer->add_char(cursor_x,cursor_y,c);
 			cursor_x++;
 			current_maxx = buffer->find_line(cursor_y)->len-1;
-			update_cursor();
+			update_cursor();*/
 			return;
 		case YZ_VIEW_MODE_REPLACE:
+			printf("Currently REPLACEMODE\n");
 			/* handle replacing a char */
 			buffer->chg_char(cursor_x,cursor_y,c);
 			cursor_x++;
@@ -55,13 +55,14 @@ void YZView::send_char( QChar c)
 			update_cursor();
 			return;
 		case YZ_VIEW_MODE_COMMAND:
+			printf("Currently COMMANDMODE\n");
 			/* will be handled after the switch */
 			break;
 		default:
 			/* ?? */
+			printf("Currently unknown MODE\n");
 //			error("unknown mode, ignoring");
 			return;
-
 	};
 	/* ok, here we now we're in command */
 	switch (c) {
@@ -127,7 +128,6 @@ void YZView::send_char( QChar c)
 	}
 }
 
-
 void YZView::update_cursor(void)
 {
 	post_event( mk_event_setcursor(cursor_x,cursor_y-current));
@@ -135,15 +135,16 @@ void YZView::update_cursor(void)
 	//	cursor_y-current,current_maxx);
 }
 
-yz_event *YZView::fetch_event(/* asasdfasf */)
+yz_event *YZView::fetch_event(int idx)
 {
-//	debug("fetch_event");
+	if ( idx!=-1 )
+		return &events[idx];
+
 	if (events_nb_last==events_nb_begin)
 		return NULL;
 
-	yz_event *e = &events[events_nb_begin];
+	yz_event *e = &events[events_nb_begin++];
 
-	events_nb_begin++;
 	if (events_nb_begin>=YZ_EVENT_EVENTS_MAX)
 		events_nb_last=0;
 

@@ -13,7 +13,7 @@
 #include <assert.h>
 
 YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
-	myId = YZSession::nbBuffers++;
+	myId = YZSession::mNbBuffers++;
 	mSession = sess;
 	if ( !_path.isNull() )
 		mPath = _path;

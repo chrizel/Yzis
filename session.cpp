@@ -5,47 +5,47 @@
 #include "session.h"
 #include "debug.h"
 
-int YZSession::nbViews = 0;
-int YZSession::nbBuffers = 0;
+int YZSession::mNbViews = 0;
+int YZSession::mNbBuffers = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
-	pool = new YZCommandPool();
-	pool->initPool();
-	expool = new YZCommandPool();
-	expool->initExPool();
-	motionpool = new YZMotionPool();
-	motionpool->initPool();
-	sessionName = _sessionName;
-	curView = 0;
+	mPool = new YZCommandPool();
+	mPool->initPool();
+	mExPool = new YZCommandPool();
+	mExPool->initExPool();
+	mMotionPool = new YZMotionPool();
+	mMotionPool->initPool();
+	mSessionName = _sessionName;
+	mCurView = 0;
 }
 
 YZSession::~YZSession() {
 }
 
 void YZSession::registerManager ( Gui *mgr ) {
-	gui_manager = mgr;
+	mGUI = mgr;
 }
 
 void YZSession::postEvent (yz_event e) {
-	events.push_back( e ); //append to the FIFO
-	if ( gui_manager )
-		gui_manager->postEvent( e );
+	mEvents.push_back( e ); //append to the FIFO
+	if ( mGUI )
+		mGUI->postEvent( e );
 }
 
 //requester is a pointer on the View requesting an event which is send to
 //itself
 yz_event YZSession::fetchNextEvent(int requester) {
-	if ( !events.empty() ) {
+	if ( !mEvents.empty() ) {
 		if ( requester == -1) {
-			yz_event e = events.first();
-			events.pop_front(); //remove it
+			yz_event e = mEvents.first();
+			mEvents.pop_front(); //remove it
 			return e;
 		} else {
 			QValueList<yz_event>::iterator it;
-			for ( it = events.begin(); it != events.end(); ++it ) {
+			for ( it = mEvents.begin(); it != mEvents.end(); ++it ) {
 				if ( ( *it ).view == requester ) {
 					yz_event e = *it;
-					events.remove( it );
+					mEvents.remove( it );
 					return e;
 				}
 			}
@@ -56,14 +56,14 @@ yz_event YZSession::fetchNextEvent(int requester) {
 
 void YZSession::addBuffer( YZBuffer *b ) {
 	yzDebug() << "Session : addBuffer" << endl;
-	buffers.insert(b->fileName(), b);
+	mBuffers.insert(b->fileName(), b);
 }
 
 QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 	QMap<QString,YZBuffer*>::Iterator it;
-	for ( it = buffers.begin(); it!=buffers.end(); it++ )
+	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ )
 		it.data()->save();
-	gui_manager->quit( true );	
+	mGUI->quit( true );	
 	//should not be reached
 	return QString::null;
 }
@@ -71,7 +71,7 @@ QString YZSession::saveBufferExit( const QString& /* inputsBuff */ ) {
 YZView* YZSession::findView( int uid ) {
 	yzDebug() << "Session: looking for view " << uid << endl;
 	QMap<QString,YZBuffer*>::Iterator it;
-	for ( it = buffers.begin(); it!=buffers.end(); it++ ) {
+	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
 		YZBuffer *b = ( it.data() );
 		yzDebug() << "Session : findView, checking buffer " << b->fileName() << endl;
 		YZView *v = b->findView( uid );
@@ -82,9 +82,9 @@ YZView* YZSession::findView( int uid ) {
 }
 
 void YZSession::setCurrentView( YZView* view ) {
-	curView = view;
+	mCurView = view;
 	//update the GUIs now
-	gui_manager->setCurrentView( view );
+	mGUI->setCurrentView( view );
 }
 
 YZView* YZSession::nextView() {
@@ -92,7 +92,7 @@ YZView* YZSession::nextView() {
 	YZView *next = NULL;
 	bool found = false;
 
-	for ( it = buffers.begin(); !found && it!=buffers.end(); it++ ) {
+	for ( it = mBuffers.begin(); !found && it!=mBuffers.end(); it++ ) {
 		YZBuffer* b = ( *it );
 		for ( QValueList<YZView*>::iterator vit = b->views().begin(); 
 				!found && vit != b->views().end(); ++vit ) {
@@ -102,7 +102,7 @@ YZView* YZSession::nextView() {
 				found = true;
 				break;
 			}
-			if ( idxv == curView ) next = idxv;//fake,just make it change at next turn
+			if ( idxv == mCurView ) next = idxv;//fake,just make it change at next turn
 		}
 	}
 

@@ -288,7 +288,7 @@ void YZBuffer::mergeNextLine( unsigned int line ) {
 // ------------------------------------------------------------------------
 
 void YZBuffer::clearText() {
-	( ( QPtrList<YZLine> )mText ).clear();
+	mText.clear();
 }
 
 QString YZBuffer::textline( uint line ) const {

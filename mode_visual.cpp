@@ -141,6 +141,7 @@ void YZModeVisual::initCommandPool() {
 	//commands.append( new YZCommand("u", (PoolMethod) &YZModeVisual::toLowerCase) );
 	//commands.append( new YZCommand("U", (PoolMethod) &YZModeVisual::toUpperCase) );
 	commands.append( new YZCommand("c", &YZModeCommand::change) );
+	commands.append( new YZCommand("s", &YZModeCommand::change) );
 	commands.append( new YZCommand("d", &YZModeCommand::del) );
 	commands.append( new YZCommand("y", &YZModeCommand::yank) );
 	commands.append( new YZCommand("x", &YZModeCommand::del) );

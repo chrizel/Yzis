@@ -36,6 +36,8 @@ public:
 
 	virtual QString getCommandLineText(void) const;
 	virtual void setCommandLineText( const QString& );
+	virtual void setFocusCommandLine() {}
+	virtual void setFocusMainWindow() {}
 
 
 

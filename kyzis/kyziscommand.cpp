@@ -14,7 +14,7 @@ KYZisCommand::~KYZisCommand() {
 }
 
 void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
-	yzDebug()<< " KComboBox Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
+	yzDebug()<< " KLineEdit Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->key() != 0 ) {
 		_parent->sendKey(e->key(), e->state());
 		e->accept();

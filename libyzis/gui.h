@@ -72,6 +72,16 @@ class Gui {
 		 */
 		virtual void setCommandLineText( const QString& ) = 0;
 
+		/**
+		 * Focus on the command line
+		 */
+		virtual void setFocusCommandLine() = 0;
+
+		/**
+		 * Focus on the main window
+		 */
+		virtual void setFocusMainWindow() = 0;
+
 };
 
 #endif // GUI_H

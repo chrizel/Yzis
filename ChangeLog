@@ -1,3 +1,7 @@
+2003-08-28 mikmak
+  * all
+    make EX mode actually working :)
+
 2003-08-28 ita
   * kyzis
     reworked the statusbar to make it nice

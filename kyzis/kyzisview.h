@@ -29,6 +29,8 @@ class KYZisView: public KTextEditor::View
 		YZSession *getCurrentSession();
 		void setCommandLineText( const QString& text );
 		QString getCommandLineText() const;
+		void setFocusCommandLine();
+		void setFocusMainWindow();
 		
 	protected:
 		void customEvent( QCustomEvent * );
@@ -39,7 +41,6 @@ class KYZisView: public KTextEditor::View
 		KStatusBar *status;
 		KYZisCommand *command;
 		YZSession *currentSession;
-		QString commandline;
 };
 
 #endif

@@ -9,8 +9,7 @@
 #include "yz_debug.h"
 
 KYZisView::KYZisView ( KYZisDoc *doc, YZSession *_session, QWidget *parent, const char *name )
-	: KTextEditor::View (doc, parent, name),
-YZView(doc, 10) 
+	: KTextEditor::View (doc, parent, name), YZView(doc, 10)
 {
 	currentSession = _session;
 	editor = new KYZisEdit (this,"editor");
@@ -45,6 +44,10 @@ YZView(doc, 10)
 KYZisView::~KYZisView () {
 	delete editor;
 	delete status;
+}
+
+void KYZisView::setFocusMainWindow() {
+	editor->setFocus();
 }
 
 void KYZisView::postEvent(yz_event /*ev*/) {
@@ -82,6 +85,10 @@ void KYZisView::customEvent (QCustomEvent *) {
 	}
 }
 
+void KYZisView::setFocusCommandLine() {
+	command->setFocus();
+}
+
 void KYZisView::scrollDown( int lines ) {
 	yzDebug() << "ScrollDown " << lines <<endl;
 	editor->scrollBy(0, lines * editor->fontMetrics().lineSpacing());
@@ -100,13 +107,12 @@ YZSession *KYZisView::getCurrentSession() {
 
 void KYZisView::setCommandLineText( const QString& text ) 
 {
-	commandline = text;
-	status->changeItem(text,80);
+	command->setText( text );
 }
 
 QString KYZisView::getCommandLineText() const 
 {
-	return commandline;
+	return command->text();
 }
 
 #include "kyzisview.moc"

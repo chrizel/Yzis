@@ -174,6 +174,8 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 				cur.setCursor( from );
 				cur.setX( cur.getX() + matchedLength - 1 );
 				pool->addSelection( "SEARCH", from, cur, from, cur );
+				cur.setX( cur.getX() + 1 );
+//				yzDebug() << "cur = " << cur << "; end = " << end << endl;
 			}
 		} while ( found );
 

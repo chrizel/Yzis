@@ -136,6 +136,11 @@ class YZOption {
 		 * Does this group already exists ?
 		 */
 		bool hasGroup ( const QString& group );
+
+		/**
+		 * Check the existence of an option
+		 */
+		bool hasOption ( const QString& key );
 		
 	private:
 		void init();

@@ -141,7 +141,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 YZView::~YZView() {
 	mModePool->stop();
-	yzDebug() << "YZView : Deleting view " << myId << endl;
+//	yzDebug() << "YZView : Deleting view " << myId << endl;
 	mBuffer->rmView(this); //make my buffer forget about me
 
 	delete mainCursor;

@@ -177,6 +177,11 @@ void KYZisView::applyConfig( bool refresh ) {
 	m_editor->setBackgroundColor( Settings::colorBG() );
 	m_editor->setPaletteForegroundColor( Settings::colorFG() );
 	m_editor->setTransparent( Settings::transparency(), (double)Settings::opacity() / 100., Settings::colorBG() );
+	YzisHighlighting *yzis = myBuffer()->highlight();
+	if (yzis) {
+		myBuffer()->makeAttribs();
+		repaint(true);
+	}
 	if ( refresh ) {
 		m_editor->updateArea( );
 	}

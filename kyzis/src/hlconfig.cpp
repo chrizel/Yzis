@@ -896,9 +896,9 @@ void YzisViewSchemaAction::slotAboutToShow()
   last = /*XXX?view->renderer()->config()->schema()+*/1;
 }
 
-void YzisViewSchemaAction::setSchema (int mode)
+void YzisViewSchemaAction::setSchema (int /*mode*/)
 {
-  YZView *view=m_view;
+//  YZView *view=m_view;
 
 //XXX?  if (view)
   //XXX?  view->renderer()->config()->setSchema (mode-1);

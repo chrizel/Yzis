@@ -130,6 +130,7 @@ void KYZisConfigDialog::slotApply() {
 	pageHL->apply();
 	actionButton( KDialogBase::Apply )->setEnabled( false );
 	actionButton( KDialogBase::Default )->setEnabled( false );
+	emit settingsChanged();
 }
 
 void KYZisConfigDialog::slotOk() {

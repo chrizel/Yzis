@@ -384,19 +384,19 @@ uint KYZisDoc::configPages() const {
 	return 1;	
 }
 
-KTextEditor::ConfigPage *KYZisDoc::configPage ( uint number, QWidget *parent, const char *name ) {
+KTextEditor::ConfigPage *KYZisDoc::configPage ( uint /*number*/, QWidget *parent, const char */*name*/ ) {
 	return new YzisSchemaConfigPage( parent, this );
 }
 
-QString KYZisDoc::configPageName ( uint number ) const {
+QString KYZisDoc::configPageName ( uint /*number*/ ) const {
 	return i18n("Syntax Highlighting");
 }
 
-QString KYZisDoc::configPageFullName ( uint number) const {
+QString KYZisDoc::configPageFullName ( uint /*number*/) const {
 	return i18n("Syntax Highlighting");
 }
 
-QPixmap KYZisDoc::configPagePixmap ( uint number, int size ) const {
+QPixmap KYZisDoc::configPagePixmap ( uint /*number*/, int /*size*/ ) const {
 	return 0;
 }
 

@@ -41,8 +41,11 @@ void YZModeInsert::leave( YZView* mView ) {
 }
 
 void YZModeInsert::initModifierKeys() {
-	mModifierKeys << "<CTRL>x" << "<ALT>:";
+	mModifierKeys << "<CTRL>x" << "<CTRL>n" << "<CTRL>p" << "<ALT>:";
 }
+/*
+ * if you add a command which use modifiers keys, add it in initModifierKeys too
+ */
 cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	QString key = _key;
 	cmd_state ret = CMD_OK;

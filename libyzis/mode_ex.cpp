@@ -638,8 +638,8 @@ cmd_state YZModeEx::setlocal ( const YZExCommandArgs& args ) {
 		return CMD_ERROR;
 	}
 	// refresh screen
-//	if ( args.view )
-//		args.view->recalcScreen();
+	if ( args.view )
+		args.view->recalcScreen();
 
 	return CMD_OK;
 }
@@ -704,8 +704,8 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 		return CMD_ERROR;
 	}
 	// refresh screen
-//	if ( args.view )
-//		args.view->recalcScreen();
+	if ( args.view )
+		args.view->recalcScreen();
 
 	return CMD_OK;
 }

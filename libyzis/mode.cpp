@@ -187,6 +187,34 @@ modeType YZModePool::currentType() {
 }
 void YZModePool::registerModifierKeys() {
 	if ( mStop ) return;
+
+	QStringList mModifierKeys;
+	YZModeMap::Iterator it;
+	for( it = mModes.begin(); it != mModes.end(); ++it ) {
+#if QT_VERSION < 0x040000
+		mModifierKeys += it.data()->modifierKeys();
+#else
+		mModifierKeys += it.value()->modifierKeys();
+#endif
+	}
+	mModifierKeys.sort();
+	unsigned int size = mModifierKeys.size();
+	QString last, current;
+	for ( unsigned int i = 0; i < size; i++ ) {
+#if QT_VERSION < 0x040000
+		current = *mModifierKeys.at(i);
+#else
+		current = mModifierKeys.at(i);
+#endif
+		if ( current != last ) {
+			mView->registerModifierKeys( current );
+			last = current;
+		}
+	}
+
+#if 0
+	
+	
 	mRegisterKeys = true;
 	if ( stack.isEmpty() || stack.front()->registered() ) return;
 	QStringList keys = stack.front()->modifierKeys();
@@ -199,6 +227,7 @@ void YZModePool::registerModifierKeys() {
 		mView->registerModifierKeys( keys.at(i) );
 #endif
 	stack.front()->setRegistered( true );
+#endif
 }
 void YZModePool::unregisterModifierKeys() {
 	if ( mStop ) return;
@@ -220,7 +249,7 @@ void YZModePool::change( modeType mode, bool leave_me ) {
 	push( mode );
 }
 void YZModePool::push( modeType mode ) {
-	unregisterModifierKeys();
+//	unregisterModifierKeys();
 	stack.push_front( mModes[ mode ] );
 	if (mRegisterKeys) registerModifierKeys();
 	yzDebug() << "entering mode " << stack.front()->toString() << endl;
@@ -231,7 +260,7 @@ void YZModePool::pop( bool leave_me ) {
 	if ( mStop ) return;
 	mView->commitUndoItem();
 	mView->purgeInputBuffer();
-	unregisterModifierKeys();
+//	unregisterModifierKeys();
 	if ( ! stack.isEmpty() ) {
 		if ( leave_me ) {
 			yzDebug() << "leaving mode " << stack.front()->toString() << endl;
@@ -247,7 +276,7 @@ void YZModePool::pop( bool leave_me ) {
 }
 void YZModePool::pop( modeType mode ) {
 	if ( mStop ) return;
-	unregisterModifierKeys();
+//	unregisterModifierKeys();
 	mView->commitUndoItem();
 	mView->purgeInputBuffer();
 	// do not leave two times the same mode

@@ -123,10 +123,9 @@ void NYZFactory::event_loop()
 			continue;
 			}
 		if ( iscntrl( c ) ) {
-//			yzError(NYZIS) << "*************** Unhandled" <<
-//				"control sequence " << c << " (discarded)" << endl;
-//			continue;
-			modifiers |= Qt::ControlButton;
+			yzError(NYZIS) << "*************** Unhandled" <<
+				"control sequence " << c << " (discarded)" << endl;
+			continue;
 		}
 		if ( isupper( c ) ) { modifiers |= Qt::ShiftButton; c+= 'a'-'A'; }
 		//TODO: META	

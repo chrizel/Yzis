@@ -368,6 +368,13 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 	QRegExp rx2 ( "no(\\w*)" ); //deactivate a bool option
 	QRegExp rx3 ( "(\\w*)" ); //activate a bool option
 
+	YZView *view = args.view;
+	YZBuffer *buffer = NULL;
+	if ( !args.view ) { //hmm no view, that might be kdevelop that is starting , creating first the buffer then and then a view
+		buffer = YZSession::me->currentBuffer();
+	} else
+		buffer = args.view->myBuffer();
+	
 	YZSession::mOptions.setGroup("Global");
 
 	if ( rx.exactMatch( args.arg ) ) {
@@ -376,17 +383,17 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 		QString value = hasOperator ? rx.cap( 3 ).simplifyWhiteSpace() : rx.cap( 2 ).simplifyWhiteSpace();
 		YZInternalOption *opt = YZSession::mOptions.getOption(option);
 		if ( !opt ) {
-			args.view->mySession()->popupMessage( QObject::tr("Invalid option given : ") + option);
+			YZSession::me->popupMessage( QObject::tr("Invalid option given : ") + option);
 			return QString::null;
 		}
 		if ( hasOperator ) {
 			QString oldVal;
 			switch ( opt->getType() ) {
 				case view_opt:
-					oldVal = args.view->getLocalStringOption( option );
+					oldVal = view->getLocalStringOption( option );
 					break;
 				case buffer_opt:
-					oldVal = args.view->myBuffer()->getLocalStringOption( option );
+					oldVal = buffer->getLocalStringOption( option );
 				case global_opt:
 					break;
 			}
@@ -401,7 +408,7 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 					else if ( rx.cap( 2 ) == "-" ) value = QString::number( oldVal.toInt() - value.toInt() );
 					break;
 				case bool_t :
-					args.view->mySession()->popupMessage(QObject::tr("This option cannot be switched this way, this is a boolean option."));
+					YZSession::me->popupMessage(QObject::tr("This option cannot be switched this way, this is a boolean option."));
 					return QString::null;
 					break;
 				case color_t :
@@ -411,51 +418,51 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 		yzDebug() << "Setting option " << option << " to " << value << endl;
 		switch ( opt->getType() ) {
 			case global_opt :
-				args.view->mySession()->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
+				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
 				return QString::null;
 			case view_opt :
-				args.view->setLocalQStringOption( option, value );
+				view->setLocalQStringOption( option, value );
 				break;
 			case buffer_opt:
-				args.view->myBuffer()->setLocalQStringOption( option, value );
+				buffer->setLocalQStringOption( option, value );
 				break;
 		}
 	} else if ( rx2.exactMatch( args.arg )) {
 		YZInternalOption *opt = YZSession::mOptions.getOption(rx2.cap( 1 ).simplifyWhiteSpace());
 		if ( !opt ) {
-			args.view->mySession()->popupMessage(QObject::tr("Invalid option given"));
+			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
 			return QString::null;
 		}
 		switch ( opt->getType() ) {
 			case global_opt :
-				args.view->mySession()->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
+				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
 				return QString::null;
 			case view_opt :
-				args.view->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
+				view->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
 				break;
 			case buffer_opt:
-				args.view->myBuffer()->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
+				buffer->setLocalBoolOption( rx2.cap( 1 ).simplifyWhiteSpace(), false);
 				break;
 		}
 	} else if ( rx3.exactMatch( args.arg ) ) {
 		YZInternalOption *opt = YZSession::mOptions.getOption(rx3.cap( 1 ).simplifyWhiteSpace());
 		if ( !opt ) {
-			args.view->mySession()->popupMessage(QObject::tr("Invalid option given"));
+			YZSession::me->popupMessage(QObject::tr("Invalid option given"));
 			return QString::null;
 		}
 		switch ( opt->getType() ) {
 			case global_opt :
-				args.view->mySession()->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
+				YZSession::me->popupMessage(QObject::tr("This option is a global option which cannot be changed with setlocal"));
 				return QString::null;
 			case view_opt :
-				args.view->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
+				view->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
 				break;
 			case buffer_opt:
-				args.view->myBuffer()->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
+				buffer->setLocalBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
 				break;
 		}
 	} else {
-		args.view->mySession()->popupMessage( QObject::tr( "Invalid option given" ) );
+		YZSession::me->popupMessage( QObject::tr( "Invalid option given" ) );
 		return QString::null;
 	}
 	// refresh screen
@@ -476,7 +483,7 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 		QString value = hasOperator ? rx.cap( 3 ).simplifyWhiteSpace() : rx.cap( 2 ).simplifyWhiteSpace();
 		YZInternalOption *opt = YZSession::mOptions.getOption(option);
 		if ( !opt ) {
-			args.view->mySession()->popupMessage(QObject::tr("Invalid option given : ") + option);
+			YZSession::me->popupMessage(QObject::tr("Invalid option given : ") + option);
 			return QString::null;
 		}
 		if ( hasOperator ) {
@@ -491,7 +498,7 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 					else if ( rx.cap( 2 ) == "-" ) value = QString::number( YZSession::mOptions.readQStringEntry( option ).toInt() - value.toInt() );
 					break;
 				case bool_t :
-					args.view->mySession()->popupMessage(QObject::tr("This option cannot be switched this way, this is a boolean option."));
+					YZSession::me->popupMessage(QObject::tr("This option cannot be switched this way, this is a boolean option."));
 					return QString::null;
 					break;
 				case color_t :
@@ -507,7 +514,7 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 		YZSession::mOptions.setGroup("Global");
 		YZSession::setBoolOption( rx3.cap( 1 ).simplifyWhiteSpace(), true);
 	} else {
-		args.view->mySession()->popupMessage( QObject::tr( "Invalid option given" ) );
+		YZSession::me->popupMessage( QObject::tr( "Invalid option given" ) );
 		return QString::null;
 	}
 	// refresh screen

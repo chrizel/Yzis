@@ -128,6 +128,7 @@ class YZSession {
 		 * Returns a pointer to the current view
 		 */
 		YZView* currentView() { return mCurView; }
+		YZBuffer* currentBuffer() { return mCurBuffer; }
 
 		/**
 		 * Change the filename of a recorded buffer
@@ -137,7 +138,7 @@ class YZSession {
 		/**
 		 * Called from GUI when the current view has been changed
 		 */
-		void currentViewChanged ( YZView *v ) { mCurView = v; }
+		void currentViewChanged ( YZView *v ) { mCurView = v; mCurBuffer = v->myBuffer(); }
 
 		/**
 		 * Delete the current view
@@ -316,6 +317,7 @@ class YZSession {
 		YZCommandPool *mPool;
 		YZExCommandPool *mExPool;
 		YZView* mCurView;
+		YZBuffer* mCurBuffer;
 		YzisSchemaManager *mSchemaManager;
 		YZSearch *mSearch;
 

@@ -52,6 +52,7 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mSearch = new YZSearch();
 	mSessionName = _sessionName;
 	mCurView = 0;
+	mCurBuffer = 0;
 	me = this;
 	events = new YZEvents();
 	mSchemaManager = new YzisSchemaManager();
@@ -74,7 +75,7 @@ void YZSession::guiStarted() {
 void YZSession::addBuffer( YZBuffer *b ) {
 	yzDebug() << "Session : addBuffer " << b->fileName() << endl;
 	mBuffers.insert(b->fileName(), b);
-
+	mCurBuffer = b;
 }
 
 void YZSession::rmBuffer( YZBuffer *b ) {
@@ -110,6 +111,7 @@ YZView* YZSession::findView( int uid ) {
 void YZSession::setCurrentView( YZView* view ) {
 	yzDebug() << "Session : setCurrentView" << endl;
 	mCurView = view;
+	mCurBuffer = view->myBuffer();
 	changeCurrentView( view );
 }
 

@@ -91,11 +91,10 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					rx.exactMatch(prevLine);
 					int nbPrevTabs = rx.cap(1).contains("\t");
 					int nbPrevSpaces = rx.cap(1).contains(" ");
-					int idtabs = 0;
-					int idspaces = 0;
-					YZExLua::instance()->exe(*it2, "iiiiss>ii",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, (const char*)prevLine, (const char*)nextLine,  &idtabs, &idspaces );
-					yzDebug() << "Got INDENT_ON_ENTER response : " << idtabs << ", " << idspaces << endl;
-					results << QString::number(idtabs) << QString::number(idspaces);
+					char *result;
+					YZExLua::instance()->exe(*it2, "iiiiss>s",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, (const char*)prevLine, (const char*)nextLine, &result);
+					yzDebug() << "Got INDENT_ON_ENTER response : (" << result << ")" << endl;
+					results << QString(result);
 				} else {
 					yzDebug() << "Executing plugin " << *it2 << " with " << nbArgs << " arguments and " << nbResults << " results" << endl;
 					YZExLua::instance()->execute(*it2,nbArgs,nbResults);

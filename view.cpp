@@ -341,12 +341,9 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 					QStringList results = YZSession::events->exec("INDENT_ON_ENTER", this);
 					if (results.count() > 0 ) {
-						QString idtstr;
-						for (int b = 0; b < results[0].toInt(); ++b) idtstr+=tabChar;
-						for (int b = 0; b < results[1].toInt(); ++b) idtstr+=" ";
-						if (idtstr.length()!=0) {
-							mBuffer->action()->replaceLine( this, mainCursor->bufferY(), idtstr + mBuffer->textline( mainCursor->bufferY() ).stripWhiteSpace() );
-							gotoxy(results[0].toInt()+results[1].toInt(),mainCursor->bufferY());
+						if (results[0].length()!=0) {
+							mBuffer->action()->replaceLine( this, mainCursor->bufferY(), results[0] + mBuffer->textline( mainCursor->bufferY() ).stripWhiteSpace() );
+							gotoxy(results[0].length(),mainCursor->bufferY());
 						}
 					}
 				}

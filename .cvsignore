@@ -8,4 +8,4 @@ Makefile
 *.lo
 *.la
 *.la.closure
-
+dummy.cc

@@ -31,6 +31,7 @@
 class YZView;
 class YZLine;
 class YZSession;
+class UndoBuffer;
 
 typedef QPtrList<YZLine> YZBufferData;
 
@@ -53,6 +54,8 @@ public:
 	 * Default destructor
 	 */
 	~YZBuffer();
+
+	// ----------------- Character Actions
 
 	/**
 	 * Adds a character to the buffer
@@ -78,21 +81,8 @@ public:
 	 */
 	void delChar (unsigned int x, unsigned int y, unsigned int count = 1);
 
-	/**
-	 * Return the column of the first non-blank character in the line
-	 */
-	uint firstNonBlankChar( uint line );
-		
-	/**
-	 * Opens the file and fills the buffer with its content
-	 */
-	void load(const QString& file=QString::null);
-
-	/**
-	 * Save the buffer content into the current filename
-	 */
-	void save();
-
+	// ----------------- Line Actions			
+								
 	/**
 	 * Appends a new line at the end of file
 	 * @param l the line of text to be appended
@@ -125,12 +115,72 @@ public:
 	 * Replaces the @param y line with the given @param value
 	 */
 	void replaceLine( unsigned int y, const QString& value );
+	
+
+	// ----------------- Buffer content
+		
+	/**
+	 * Get the whole text of the buffer
+	 * @return a QStringList containing the texts
+	 */
+	QString getWholeText();
+
+	/**
+	 * Finds a line in the buffer
+	 * @param line the line to search for
+	 * @return a QString reference on the line or NULL
+	 */
+	QString	data(unsigned int line);
+
+	/**
+	 * Finds the @ref YZLine pointer for a line in the buffer
+	 * @param line the line to return
+	 * @return a YZLine pointer or 0 if none
+	 *
+	 * Note: the valid line numbers are between 0 and lineCount()-1
+	 */
+	YZLine *at(unsigned int no) { return mText.at(no); }
+
+	/**
+	 * Number of lines in the buffer
+	 * @return the number of lines
+	 *
+	 * Note that empty buffer always have one empty line.
+	 */
+	unsigned int lineCount() { return mText.count(); }
+
+	/**
+	 * Return the column of the first non-blank character in the line
+	 */
+	uint firstNonBlankChar( uint line );
+
+
+	// --------------------- File actions
+
+	/**
+	 * Opens the file and fills the buffer with its content
+	 */
+	void load(const QString& file=QString::null);
+
+	/**
+	 * Save the buffer content into the current filename
+	 */
+	void save();
 			
 	/**
 	 * Get the current filename of the buffer
 	 * @return the filename
 	 */
 	const QString& fileName() {return mPath;}
+
+	/**
+	 * Changes the filename
+	 * @param _path the new filename ( and path )
+	 */
+	void setPath( const QString& _path ) { mPath = _path; }
+
+
+	// -------------------------- View actions
 
 	/**
 	 * Adds a new view to the buffer
@@ -163,41 +213,8 @@ public:
 	 */
 	YZView* findView(unsigned int uid);
 
-	/**
-	 * Get the whole text of the buffer
-	 * @return a QStringList containing the texts
-	 */
-	QString getWholeText();
-
-	/**
-	 * Finds a line in the buffer
-	 * @param line the line to search for
-	 * @return a QString reference on the line or NULL
-	 */
-	QString	data(unsigned int line);
-
-	/**
-	 * Finds the @ref YZLine pointer for a line in the buffer
-	 * @param line the line to return
-	 * @return a YZLine pointer or 0 if none
-	 *
-	 * Note: the valid line numbers are between 0 and lineCount()-1
-	 */
-	YZLine *at(unsigned int no) { return mText.at(no); }
-
-	/**
-	 * Number of lines in the buffer
-	 * @return the number of lines
-	 *
-	 * Note that empty buffer always have one empty line.
-	 */
-	unsigned int lineCount() { return mText.count(); }
-
-	/**
-	 * Changes the filename
-	 * @param _path the new filename ( and path )
-	 */
-	void setPath( const QString& _path ) { mPath = _path; }
+	// ------------ Undo
+	UndoBuffer * undoBuffer() { return mUndoBuffer; }
 
 	/**
 	 * Unique ID of the buffer
@@ -212,6 +229,7 @@ protected:
 
 	YZBufferData mText;
 	YZSession *mSession;
+	UndoBuffer *mUndoBuffer;
 };
 
 #endif /*  YZ_BUFFER_H */

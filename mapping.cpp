@@ -76,7 +76,7 @@ void YZMapping::applyGlobalMappings( QString& text ) {
 }
 
 void YZMapping::applyMappings( QString& text, int modes ) {
-	yzDebug() << "Text1: " << text << endl;
+//	yzDebug() << "Text1: " << text << endl;
 	if ( modes & normal || modes & visual || modes & pendingop)
 		applyGlobalMappings(text);
 	if ( modes & normal )
@@ -89,6 +89,6 @@ void YZMapping::applyMappings( QString& text, int modes ) {
 		applyInsertMappings(text);
 	if ( modes & cmdline )
 		applyCmdLineMappings(text);
-	yzDebug() << "Text2: " << text << endl;
+	//yzDebug() << "Text2: " << text << endl;
 }
 

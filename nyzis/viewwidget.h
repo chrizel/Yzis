@@ -58,7 +58,7 @@ public:
 	virtual void setFocusCommandLine() {}
 	virtual void setFocusMainWindow() {}
 	virtual void invalidateLine ( unsigned int line );
-	virtual void setStatusBar( const QString& text );
+	virtual void modeChanged(void);
 	virtual void refreshScreen();
 	virtual void syncViewInfo();
 	virtual void displayInfo(  const QString& info );
@@ -68,8 +68,6 @@ public:
 protected:
 	WINDOW		*window;	/* ncurses window to write to */
 	unsigned int	h, w;		/** height and width of the window */
-
-	void setStatusText( const QString& );
 
 public slots:
 	void resetInfo();
@@ -90,7 +88,6 @@ private:
 	void printVoid( unsigned int line );
 
 	WINDOW		*infobar;	// the white one with filename/size/position...
-	WINDOW          *commandbar;   // the one we type command in (:wq..)
 	WINDOW		*statusbar;	// the one we show in which mode we are
 	WINDOW          *fileInfo;     // the one with info about current file (modified..)
 

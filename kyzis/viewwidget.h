@@ -50,7 +50,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void scrollUp( int l=1 );
 
 		void invalidateLine ( unsigned int line );
-		void setStatusBar ( const QString& text );
+		virtual void modeChanged(void);
 		virtual void syncViewInfo();
 		void displayInfo( const QString& info );
 		void refreshScreen ();

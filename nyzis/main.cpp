@@ -40,7 +40,12 @@ main(int argc, char *argv[])
 
 	(void) signal(SIGINT, catchsigint);      /* arrange interrupts to terminate */
 	atexit(cleaning);
-	QApplication app(  argc, argv );
+#ifdef Q_WS_X11
+	bool useGUI = getenv(  "DISPLAY" ) != 0;
+#else
+	bool useGUI = TRUE;
+#endif
+	QApplication app( argc, argv, useGUI );
 	QTranslator qt(  0 );
 	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
 	app.installTranslator(  &qt );

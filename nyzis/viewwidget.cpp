@@ -41,7 +41,7 @@ NYZView::NYZView(WINDOW *_window, YZBuffer *b)
 	// creates layout
 	/*
 	 * ------------------ infobar ---------------------
-	 * statusbar |     command 
+	 * ------------------ statusbar -------------------
 	 */
 
 	update_info();
@@ -50,20 +50,18 @@ NYZView::NYZView(WINDOW *_window, YZBuffer *b)
 	infobar = subwin(window, 1, 0, h-2, 0);
 	wattrset(infobar, A_STANDOUT || A_BOLD);
 	wbkgd(infobar, A_REVERSE);
-	statusbar  = subwin(window, 1, STATUSBARWIDTH, h-1, 0);
-	commandbar = subwin(window, 1, 0, h-1, STATUSBARWIDTH);
+	statusbar  = subwin(window, 1, 0, h-1, 0);
 	//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 	//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
 	if (has_colors()) {
 		//		wattron(infobar, COLOR_PAIR(4));
 		wattron(statusbar, COLOR_PAIR(6));
-		wattron(commandbar, COLOR_PAIR(4));
 	}
 
 	// TODO  write something like :       "bernoulli.tex" [noeol] 65L, 1440C
 	// in last line (vim-like)
-	setStatusText ( b->fileName() + QString(" %1L" ).arg(b->lineCount()));
+	displayInfo ( QString("\"%1\" %2L, %3C" ).arg(b->fileName()).arg(b->lineCount()).arg(b->getWholeTextLength()));
 	redrawScreen();
 }
 
@@ -109,9 +107,10 @@ void NYZView::printLine( int line ) {
 void NYZView::setCommandLineText( const QString& text )
 {
 	commandline = text;
-	werase(commandbar);
-	waddstr(commandbar, text.local8Bit());
-	wrefresh(commandbar);
+	mvwaddstr(statusbar, 0, STATUSBARWIDTH,text.latin1());
+	waddch( statusbar, ' ' ); // when doing backspace...
+	waddch( statusbar, '\b' );
+	wrefresh(statusbar);
 }
 
 QString NYZView::getCommandLineText() const {
@@ -123,9 +122,25 @@ void NYZView::invalidateLine ( unsigned int line ) {
 	wrefresh( window );
 }
 
-void NYZView::setStatusBar( const QString& text ) {
-	// TODO : factorize..
-	setStatusText (text);
+void NYZView::modeChanged(void)
+{
+	switch ( mMode ) {
+		case YZ_VIEW_MODE_INSERT: // insert
+			displayInfo( tr( "Entering Insert mode" ));
+			break;
+		case YZ_VIEW_MODE_REPLACE: // replace
+			displayInfo( tr( "Entering Replace mode" ));
+			break;
+		case YZ_VIEW_MODE_COMMAND: // normal
+			displayInfo( tr( "Entering Command mode" ));
+			break;
+		case YZ_VIEW_MODE_EX: //script·
+			displayInfo( tr( "EX Mode :" ));
+			break;
+		case YZ_VIEW_MODE_SEARCH: //search mode
+			displayInfo( reverseSearch ? tr( "Reverse Search:" ) : tr( "Search mode :" ));
+			break;
+	};
 }
 
 void NYZView::syncViewInfo( void )
@@ -136,7 +151,7 @@ void NYZView::syncViewInfo( void )
 
 	/*
 	 * ------------------ infobar ---------------------
-	 * statusbar |     command 
+	 * ------------------ statusbar -------------------
 	 */
 
 	// update infobar
@@ -158,10 +173,7 @@ void NYZView::syncViewInfo( void )
 		myfmt="%d,%d";
 		mvwprintw( infobar, 0, w-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
 	}
-
-	myfmt="%s"; // <- prevent %s in percentage to fubar everything, even if
-	            // it's rather unlikely..
-	mvwprintw( infobar, 0, w-9, myfmt, viewInformation.percentage.latin1() );
+	mvwaddstr( infobar, 0, w-9, viewInformation.percentage.latin1() );
 
 	wrefresh(infobar);
 
@@ -180,28 +192,22 @@ void NYZView::refreshScreen() {
 	syncViewInfo();
 }
 
-void NYZView::displayInfo( const QString& info ) {
-//TODO
-//
-	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
+void NYZView::displayInfo( const QString& info )
+{
+	werase(statusbar);
+	mvwaddstr( statusbar, 0, 0, info.latin1() );
+	wrefresh(statusbar);
+//	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }
 
 void NYZView::resetInfo()
 {
-//	status->changeItem( "", 80 );
+	syncViewInfo();
 }
 
 void NYZView::update_info(void)
 {
 	getmaxyx(window, h, w);
-	mLinesVis = h;
+	mLinesVis = h-2;
 }
-
-void NYZView::setStatusText( const QString& text )
-{
-	werase(statusbar);
-	waddstr(statusbar, text.latin1());
-	wrefresh(statusbar);
-}
-
 

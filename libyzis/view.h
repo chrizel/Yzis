@@ -283,10 +283,10 @@ class YZView {
 		virtual void invalidateLine( unsigned int line ) = 0;
 
 		/**
-		 * Set status bar information text
-		 * @param text the status information to display
-		 */
-		virtual void setStatusBar( const QString& text ) = 0;
+		  * called when the mode is changed, so that gui can
+		  * update information diplayed to the user
+		  */
+		virtual void modeChanged( void ) = 0;
 
 		/**
 		 * Asks a redraw of the whole view
@@ -397,17 +397,17 @@ class YZView {
 			QString percentage;
 		} viewInformation;
 
+		/**
+		 * Searching backward
+		 */
+		bool reverseSearch;
+
 
 	private:
 		/**
 		 * The current session, provided by the GUI
 		 */
 		YZSession *mSession;
-
-		/**
-		 * Searching backward
-		 */
-		bool reverseSearch;
 };
 
 #endif /*  YZ_VIEW_H */

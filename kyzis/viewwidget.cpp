@@ -93,17 +93,33 @@ void KYZisView::scrollDown( int lines ) {
 	editor->update();
 }
 
-void KYZisView::scrollUp ( int lines ) {
+void KYZisView::scrollUp (int lines) {
 	editor->scrollBy(0, -1 * lines * editor->fontMetrics().lineSpacing());
 	editor->update();
 }
 
-void KYZisView::invalidateLine ( unsigned int line ) {
-	editor->setTextLine( line, buffer->textline( line ) );
+void KYZisView::invalidateLine (unsigned int line) {
+	editor->setTextLine( line, buffer->textline(line));
 }
 
-void KYZisView::setStatusBar ( const QString& text ) {
-	status->changeItem(text, 0);
+void KYZisView::modeChanged (void) {
+	switch (mMode) {
+		case YZ_VIEW_MODE_INSERT: // insert
+			status->changeItem(tr("-- INSERT --"), 0);
+			break;
+		case YZ_VIEW_MODE_REPLACE: // replace
+			status->changeItem(tr("-- REPLACE --"), 0);
+			break;
+		case YZ_VIEW_MODE_COMMAND: // normal
+			status->changeItem(tr("Command mode"), 0);
+			break;
+		case YZ_VIEW_MODE_EX: //script·
+			status->changeItem(tr("-- EX --"), 0);
+			break;
+		case YZ_VIEW_MODE_SEARCH: //search mode
+			status->changeItem(reverseSearch ? tr("-- REVERSE SEARCH --") : tr("-- SEARCH --"), 0);
+			break;
+	};
 }
 
 void KYZisView::syncViewInfo()

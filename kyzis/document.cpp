@@ -30,7 +30,7 @@
 #include "factory.h"
 #include "debug.h"
 
-KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name)
+KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::s_self) {
 		setInstance(KYZisFactory::instance());
 		KYZisFactory::registerDocument( this );

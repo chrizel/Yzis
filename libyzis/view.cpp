@@ -633,14 +633,14 @@ QString YZView::appendAtEOL ( const QString&, YZCommandArgs ) {
 QString YZView::gotoCommandMode( ) {
 	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_COMMAND;
+	modeChanged();
 	purgeInputBuffer();
-	setStatusBar( tr( "Command mode" ) );
 	return QString::null;
 }
 
 QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
 	mMode = YZ_VIEW_MODE_EX;
-	setStatusBar( tr( "-- EX --" ) );
+	modeChanged();
 	setFocusCommandLine();
 	purgeInputBuffer();
 	return QString::null;
@@ -649,7 +649,7 @@ QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
 QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
 	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_INSERT;
-	setStatusBar( tr( "-- INSERT --" ) );
+	modeChanged();
 	purgeInputBuffer();
 	return QString::null;
 }
@@ -657,16 +657,15 @@ QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
 QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
 	mBuffer->undoBuffer()->commitUndoItem();
 	mMode = YZ_VIEW_MODE_REPLACE;
-	setStatusBar( tr( "-- REPLACE --" ) );
+	modeChanged();
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs /*args */) {
-	if (inputsBuff[ 0 ] == '?' ) reverseSearch = true; 
-	else reverseSearch = false;
+	reverseSearch = (inputsBuff[ 0 ] == '?' );
 	mMode = YZ_VIEW_MODE_SEARCH;
-	setStatusBar( reverseSearch ? tr( "-- REVERSE SEARCH --" ) : tr( "-- SEARCH --" ) );
+	modeChanged();
 	purgeInputBuffer();
 	return QString::null;
 }

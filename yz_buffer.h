@@ -22,8 +22,8 @@ public:
 	YZBuffer(const QString& _path=QString::null);
 	~YZBuffer();
 
-	void addChar (int x, int y, QChar c);
-	void chgChar (int x, int y, QChar c);
+	void addChar (int x, int y, const QString& c);
+	void chgChar (int x, int y, const QString& c);
 	void delChar (int x, int y, int count = 1);
 
 	void load(void);

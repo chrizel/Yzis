@@ -17,8 +17,8 @@ class YZCursor;
 class YZView {
 public:
 	/**
-	  * constructor. Each view is binded to a buffer, @param lines is the initial number of lines that
-	  * this view can display
+		* constructor. Each view is bound to a buffer, @param lines is the initial
+		* number of lines that this view can display
 	  */
 	YZView(YZBuffer *_b, int _lines_vis);
 	~YZView();
@@ -31,7 +31,7 @@ public:
 	/**
 	 * transfer a key event from gui to core
 	 */
-	void	sendChar( QChar );
+	void	sendKey( int , int);
 
 	/**
 	  * Used by the buffer to post events

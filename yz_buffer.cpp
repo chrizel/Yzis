@@ -27,7 +27,7 @@ YZBuffer::~YZBuffer() {
 	delete path;
 }
 
-void YZBuffer::addChar (int x, int y, QChar c) {
+void YZBuffer::addChar (int x, int y, const QString& c) {
 	/* brute force, we'll have events specific for that later on */
 	QString l=findLine(y);
 	if (l.isNull()) return;
@@ -40,7 +40,7 @@ void YZBuffer::addChar (int x, int y, QChar c) {
 	postEvent(YZEvent::mkEventInvalidateLine(y));
 }
 
-void YZBuffer::chgChar (int x, int y, QChar c) {
+void YZBuffer::chgChar (int x, int y, const QString& c) {
 	/* brute force, we'll have events specific for that later on */
 	QString l=findLine(y);
 	if (l.isNull()) return;

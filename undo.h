@@ -34,6 +34,7 @@
 class YZView;
 class YZBuffer;
 
+/** An individual operation on a buffer, that can be done or undone. */
 struct buffer_operation
 {
 	enum OperationType {
@@ -63,6 +64,9 @@ typedef struct buffer_operation YZBufferOperation;
 typedef QPtrListIterator<YZBufferOperation> UndoItemContentIterator;
 typedef QPtrList<YZBufferOperation> UndoItemBase;
 
+/** An UndoItem contains a list of individual buffer operations
+  * and the two cursor positions: before and after the whole set of operations
+  */
 class UndoItem : public UndoItemBase
 {
 public:
@@ -72,6 +76,9 @@ public:
 	int endCursorX, endCursorY;
 };
 
+/** This class contains all the UndoItem. It stores them (commitUndoItem), do
+  * or undo them.
+  */
 class YZUndoBuffer {
 public:
 	YZUndoBuffer( YZBuffer * );

@@ -55,7 +55,9 @@ void TestSearch::testSearchOneLine()
 	QString s1 = "one simple string !";
 	mBuf->appendLine(s1);
 	mView->gotoxy( 2, 1 );
-	mView->doSearch( "simple" );
+	bool found;
+	YZCursor c = YZSession::me->search()->forward(mView,"simple",&found);
+	if ( found ) mView->gotoxy( c.getX(), c.getY() );
     CHECK_CURSOR_POS( mView, 4, 1 );
 }
 
@@ -64,7 +66,9 @@ void TestSearch::testSearchBeginningOfLine()
 	QString s1 = "simple string, very simple !";
 	mBuf->appendLine(s1);
 	mView->gotoxy( 0, 1 );
-	mView->doSearch( "simple" );
+	bool found;
+	YZCursor c = YZSession::me->search()->forward(mView,"simple",&found);
+	if ( found ) mView->gotoxy( c.getX(), c.getY() );
     CHECK_CURSOR_POS( mView, 20, 1 );
 }
 

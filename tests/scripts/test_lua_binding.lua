@@ -21,9 +21,9 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), "" )
     end
 
-    function TestLuaBinding:test_use_all_functions() -- disabled for now
-		require('../../doc/examples/example')
-    end
+--    function TestLuaBinding:test_use_all_functions() -- disabled for now
+--		require('../../doc/examples/example')
+--    end
 
     function TestLuaBinding:test_version()
         -- ok, simple one

@@ -73,6 +73,10 @@ public:
 	    yzDebug( AREA_TESTS) << "TYZSession::promptYesNo" << endl;
 		return true;
 	}
+	virtual int promptYesNoCancel( const QString&, const QString& ) {
+	    yzDebug( AREA_TESTS) << "TYZSession::promptYesNoCancel" << endl;
+		return 0;
+	}
 };
 
 #endif // TYZ_SESSION_H

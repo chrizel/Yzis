@@ -135,8 +135,8 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 	}
 }
 
-void YZView::sendKey( const QString& _key, const QString& modifiers) {
-	yzDebug() << "sendKey : " << _key << " " << modifiers << endl;
+void YZView::sendKey( const QString& _key, const QString& _modifiers) {
+	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 	if ( mBuffer->introShown() ) {
 		mBuffer->clearIntro();
 		gotoxy( 0,0 );
@@ -146,13 +146,16 @@ void YZView::sendKey( const QString& _key, const QString& modifiers) {
 	//mBuffer->getSwapFile()->addToSwap( c, modifiers );
 
 	QString lin,key=_key;
+	QString modifiers=_modifiers;
 	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
 
 	if ( YZSession::me->mMacros.isRecording() ) 
 		YZSession::me->mMacros.appendCurrentMacro(modifiers+_key);
 
-	if ( modifiers.contains ("<SHIFT>")) //usefull ?
+	if ( modifiers.contains ("<SHIFT>")) {//usefull ?
 		key = key.upper();
+		modifiers.remove( "<SHIFT>" );
+	}
 	
 	bool test = false;
 

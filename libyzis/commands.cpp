@@ -137,6 +137,9 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 		} else
 			break;
 	}
+	//if regs is empty add the default register
+	if ( regs.count() == 0 ) 
+		regs << '\"';
 
 	if(i>=inputs.length())
 		return NO_COMMAND_YET;

@@ -5422,25 +5422,6 @@ We need perl to generate some code.])
     AC_SUBST(PERL)
 ])
 
-AC_DEFUN(AC_PATH_TINYQ, [
-	AC_MSG_CHECKING(for TinyQ)
-	AC_ARG_WITH(tinyq-dir,
-		AC_HELP_STRING([--with-tinyq-dir=DIR],[where the root of TinyQ is installed]),
-		[
-		TINYQ="$withval"
-		TINYQ_INCLUDES=-I"$withval"/include
-		TINYQ_LIBS="-L$withval/lib -ltinyq-mt" ])
-
-	if test "x$TINYQ" = "x"; then
-	AC_MSG_RESULT(no)
-	else
-	AC_MSG_RESULT(using TinyQ from $TINYQ)
-	fi
-	AC_SUBST(TINYQ)
-	AC_SUBST(TINYQ_INCLUDES)
-	AC_SUBST(TINYQ_LIBS)
-])
-
 AC_DEFUN(AC_PATH_LUA, [
 
 dnl	AC_PATH_PROG(LUA_CONFIG, lua-config, no)

@@ -125,6 +125,10 @@ bool KYZisDoc::removeLine(unsigned int line)
 
 QString KYZisDoc::textLine(unsigned int line) const
 {
+	//Quanta crashes when it asks for the last line, I am not sure whether our lineCount() is wrong
+	//or if it's just quanta which does not count properly (it asks textLine from 0 to 218 in my test file, 
+	//whereas I said it the file have 218 lines)
+	if ( line >= lineCount() ) return QString::null;
 	return textline(line);
 }
 

@@ -162,7 +162,7 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	inline const QString&	textline(unsigned int line) const {
+	inline const QString& textline(unsigned int line) const {
 		YZLine * yl = yzline(line);
 		if (yl) return yl->data();
 		return myNull;
@@ -336,7 +336,6 @@ public:
 	 */
 	inline YZLine * yzline(unsigned int line) const {
 		return mText.at(line);
-		//return ( ( QValueVector<YZLine*> ) mText ).at(line);
 	}
 
 	void makeAttribs();

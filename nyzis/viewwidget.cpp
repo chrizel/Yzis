@@ -139,6 +139,7 @@ void NYZView::printLine( int line ) {
 
 
 	yzDebug() << "at,a,atLen are " << ( int )at << " " <<  ( int )a << " " <<  atLen <<endl;
+	bool noAttribs = !a;
 	for (i=0; i<w && i<str.length(); i++) {
 		// quickly handle the tab case
 		if ( str[ i ] == tabChar ) {
@@ -147,8 +148,9 @@ void NYZView::printLine( int line ) {
 		}
 
 		YzisAttribute hl;
-		YzisAttribute *curAt=at;
-		if ( at && a && *a>=atLen) curAt = &at[*a];
+		//YzisAttribute *curAt=at;
+		//if ( at && a && *a>=atLen) curAt = &at[*a];
+		YzisAttribute *curAt = ( !noAttribs && (*a) >= atLen ) ?  &at[ 0 ] : &at[*a];
 		if ( curAt ) {
 			hl+=*curAt;
 			yzDebug(NYZIS ) << "hl.textColor is" <<  hl.textColor().rgb() << endl;

@@ -38,12 +38,6 @@
 #include "selection.h"
 #include "cursor.h"
 
-//to be used only for the Ex Pool
-#define NEW_EX_COMMAND( x,y,z,a ) { YZExCommand cmd; cmd.priority=a; cmd.immutable=z; cmd.obj=EX; cmd.exFunc=y; globalExCommands[ x ] = cmd; }
-#define NEW_LUA_COMMAND( x,y,z,a ) { YZExCommand cmd; cmd.priority=a; cmd.immutable=z; cmd.obj=LUA; cmd.luaFunc=y; globalExCommands[ x ] = cmd; }
-
-class YZExExecutor;
-class YZExLua;
 class YZBuffer;
 class YZView;
 class YZCursor;
@@ -138,27 +132,6 @@ class YZNewMotionArgs;
 
 //oh please don't instanciate me twice !
 class YZCommandPool {
-	//object types definition
-	enum type {
-	    EX,
-	    LUA
-	};
-
-	struct YZExCommand {
-		type obj; //object type
-		bool immutable; //is this command overwritable ?//FIXME
-		bool hasCounter;
-		bool hasMotion;
-		bool hasRegister;
-		//priorities are used to determine which functions must be used by default (for eg, if we :s -> execute :substitute instead of :set)
-		//internal EX commands should use values between 1-100, plugins any values >100 (a plugin should not override an internal command IMHO)
-		int priority;
-
-		//with function pointers we are limited by class and by prototypes so ...
-		QString ( YZExExecutor::*exFunc ) (YZView *view, const QString& inputsBuff);
-		QString ( YZExLua::*luaFunc ) (YZView *view, const QString& inputsBuff);
-		// TODO : shouldn't that be an union ?
-	};
 
 public:
 	YZCommandPool();
@@ -168,15 +141,10 @@ public:
 	QPtrList<const YZCommand> commands;
 	QStringList textObjects;
 
-	QMap<QString, YZExCommand> globalExCommands;
-
 	void initPool();
-	void initExPool();
 
 	/** This function is the entry point to execute any normal command in Yzis */
 	cmd_state execCommand(YZView *view, const QString& inputs);
-	/** Entry point for ex functions ( scripting ) */
-	void execExCommand(YZView *view, const QString& inputs);
 
 private:
 	/** Parses the string inputs, which must be a valid motion + argument,

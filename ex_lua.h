@@ -37,12 +37,12 @@ class YZExLua : public QObject {
 		/**
 		 * Lua test
 		 */
-		QString lua(YZView *view, const QString& inputs);
+		QString lua(YZView *view);
 
 		/**
 		 * Source a lua file
 		 */
-		QString loadFile(YZView *view, const QString& inputs);
+		QString loadFile(YZView *view, const QString& file);
 
 		/**
 		 * Extract some text from view.

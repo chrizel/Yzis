@@ -64,7 +64,7 @@ YZExLua::~YZExLua() {
 	lua_close(st);
 }
 
-QString YZExLua::lua(YZView *, const QString& ) {
+QString YZExLua::lua( YZView* ) {
 	lua_pushstring(st,"text");
 	lua_gettable(st,LUA_GLOBALSINDEX); //to store function name
 	//now arguments in the right order
@@ -81,8 +81,8 @@ QString YZExLua::lua(YZView *, const QString& ) {
 }
 
 //callers
-QString YZExLua::loadFile( YZView *, const QString& inputs ) {
-	QString filename = inputs.mid( inputs.find( " " ) +1 );
+QString YZExLua::loadFile( YZView *, const QString& file ) {
+	QString filename = file;
 	QStringList candidates;
 	candidates << filename 
 	           << QDir::currentDirPath()+"/"+filename

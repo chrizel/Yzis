@@ -268,7 +268,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				if ( cindent ) {
 					indent();
 				} else {
-					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
+					mBuffer->action()->insertNewLine( this, 0, mainCursor->bufferY() + 1 );
 				}
 				updateStickyCol( mainCursor );
 				return;
@@ -462,7 +462,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				setCommandLineText( "" );
 				mSession->setFocusMainWindow();
 				gotoPreviousMode();
-				mSession->getExPool()->execExCommand( this, cmd );
+				mSession->getExPool()->execCommand( this, cmd );
 				//we'll need to check that undo step ...
 				//breaks when we quit ;), we'll check after the EX rework
 				//commitNextUndo();
@@ -1784,39 +1784,6 @@ unsigned int YZView::drawTotalHeight() {
 	return totalHeight;
 }
 
-void YZView::substitute(const QString& range, const QString& search, const QString& replace, const QString& option) {
-	yzDebug() << "substitute : " << range << ":" << search << ":" << replace << ":" << option << endl;
-	//TODO : better range support, better options support
-	unsigned int startLine = mainCursor->bufferY();
-	unsigned int endLine = mainCursor->bufferY();
-	bool needsUpdate=false;
-	//whole file
-	if ( range == "%" ) {
-		startLine = 0;
-		endLine = mBuffer->lineCount()-1;
-	} else if ( range.contains( "," ) ) {
-		QStringList list = QStringList::split( ",", range, TRUE);
-		yzDebug() << "sub tmp: " << list.size() <<endl;
-		if (list.size()==2) {	// don't use this if the user made a mistake
-			yzDebug() << "substitute tmp : " << list[0] << ":" << list[1]
-				<< endl;
-			startLine=list[0].toUInt()-1;
-			endLine=list[1].toUInt()-1;
-			if (endLine>=mBuffer->lineCount())
-				endLine=mBuffer->lineCount()-1;
-		}
-
-	} else if ( range == "." ) {
-		//nothing
-	}
-
-	for ( unsigned int i = startLine; i <= endLine; i++ ) {
-		if ( mBuffer->substitute(search, replace, option.contains( "g" ), i) )
-			needsUpdate = true;
-	}
-	mBuffer->updateAllViews();
-}
-
 void YZView::printToFile( const QString& path ) {
 	if ( YZSession::getStringOption("printer") != "pslib" ) {
 		if ( getenv( "DISPLAY" ) ) {
@@ -1909,6 +1876,10 @@ QColor YZView::getLocalColorOption( const QString& option ) {
 void YZView::setLocalQColorOption( const QString& key, const QColor& option ) {
 	YZSession::mOptions.setGroup( mBuffer->fileName()+"-view-"+ QString::number(myId) );
 	YZSession::mOptions.setQColorOption( key, option );
+}
+
+void YZView::gotoStickyCol( unsigned int Y ) {
+	gotoStickyCol( mainCursor, Y, true );
 }
 
 void YZView::gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor ) {

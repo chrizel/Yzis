@@ -512,11 +512,6 @@ class YZView {
 
 		bool drawSelected();
 
-		/**
-		 * Search and replace
-		 */
-		void substitute(const QString& range, const QString& search, const QString& replace, const QString& option);
-
 		virtual void scrollUp( int ) = 0;
 		virtual void scrollDown( int ) = 0;
 
@@ -604,6 +599,7 @@ class YZView {
 		/**
 		 * move the cursor to the sticky column
 		 */
+		void gotoStickyCol( unsigned int Y );
 		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor = true );
 
 		/**

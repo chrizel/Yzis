@@ -44,12 +44,10 @@
 YZCommandPool::YZCommandPool() {
 	commands.clear();
 	commands.setAutoDelete(true);
-	globalExCommands.clear();
 }
 
 YZCommandPool::~YZCommandPool() {
 	commands.clear();
-	globalExCommands.clear();
 }
 
 /**
@@ -303,73 +301,6 @@ cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 	}
 
 	return CMD_OK;
-}
-
-/**
- * EX MODE COMMANDS
- */
-
-void YZCommandPool::initExPool() {
-	NEW_EX_COMMAND("write", &YZExExecutor::write,true,1);
-	NEW_EX_COMMAND("wall", &YZExExecutor::write,true,2);
-	NEW_EX_COMMAND("wqall", &YZExExecutor::write,true,3); //handles wq too
-	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true,1);
-	NEW_EX_COMMAND("bprevious", &YZExExecutor::bufferprevious,true,2);
-	NEW_EX_COMMAND("bdelete", &YZExExecutor::bufferdelete,true,3);
-	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true,0);
-	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true,1);
-	NEW_EX_COMMAND("qall", &YZExExecutor::quit,true,2);
-	NEW_EX_COMMAND("mkyzisrc", &YZExExecutor::mkyzisrc,true,0);
-	NEW_EX_COMMAND("substitute", &YZExExecutor::substitute,true,2);
-	NEW_EX_COMMAND("set", &YZExExecutor::set,true,1);
-	NEW_EX_COMMAND("setlocal", &YZExExecutor::setlocal,true,1);
-	NEW_EX_COMMAND("hardcopy", &YZExExecutor::hardcopy,true,1);
-	NEW_EX_COMMAND("open", &YZExExecutor::gotoOpenMode,true,1);
-	NEW_EX_COMMAND("visual", &YZExExecutor::gotoCommandMode,true,1);
-	NEW_EX_COMMAND("preserve", &YZExExecutor::preserve,true,1);
-	NEW_EX_COMMAND("", &YZExExecutor::gotoLine, true, 10 );
-	NEW_LUA_COMMAND("lua", &YZExLua::lua,true,0);
-	NEW_LUA_COMMAND("source", &YZExLua::loadFile,true,0);
-}
-
-void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
-	QString command = inputs;
-	yzDebug() << "EX CommandLine " << command << endl;
-	// assume a command is like : "rangeCOMMANDNAME parameters"
-	// see vim :help [range] for infos on 'range'
-	//QRegExp rx ( "(%?|((\\d*)(,\\d*)?))(\\w+)((\\b)|(/.*/.*/.*))(.*)");
-	QRegExp rx ( "(%?|\\d*|\\d*,\\d*)(\\w*)(.*)"); // command with range
-	if ( rx.exactMatch(command) ) {
-		command = rx.cap( 2 );
-	} else
-		return; //no command identified XXX eventually popup error messages
-	QString cmd = QString::null;
-	QString tmpCmd = QString::null;
-	yzDebug() << "Command : " << command << endl;
-	QMap<QString,YZExCommand>::Iterator it;
-	int priority=-1;
-	for ( it = globalExCommands.begin(); it!=globalExCommands.end(); ++it ) {
-		tmpCmd = static_cast<QString>( it.key() );
-		//		yzDebug() << "execExCommand : testing for match " << tmpCmd << endl;
-		if ( tmpCmd.startsWith( command ) && it.data().priority > priority ) {
-			priority=it.data().priority; //store the priority
-			cmd = tmpCmd;
-			yzDebug() << "Found match for command " << cmd << " with priority " << priority << endl;
-		}
-	}
-
-	if ( cmd != QString::null ) {
-		switch ( globalExCommands[ cmd ].obj ) {
-		case EX :
-			( *YZSession::me->exExecutor().*(globalExCommands[ cmd ].exFunc )) (view,inputs) ;
-			break;
-		case LUA :
-			( *YZSession::me->luaExecutor().*(globalExCommands[ cmd ].luaFunc )) (view,inputs) ;
-			break;
-		default:
-			break;
-		}
-	}
 }
 
 bool YZNewMotion::matches(const QString &s, bool fully) const {

@@ -471,6 +471,7 @@ class YZView {
 		/* cursor members */
 		unsigned int dColLength;
 		unsigned int dLineLength;
+		unsigned int dLineHeight;
 		unsigned int mColLength;
 		unsigned int mLineLength;
 		unsigned int dSpaceFill;
@@ -478,6 +479,7 @@ class YZView {
 		/* draw members */
 		unsigned int rColLength;
 		unsigned int rLineLength;
+		unsigned int rLineHeight;
 		unsigned int sColLength;
 		unsigned int sLineLength;
 		unsigned int rSpaceFill;
@@ -554,6 +556,7 @@ class YZView {
 
 		QString  sCurLine;
 		unsigned int sCurLineLength;
+		unsigned int rCurLineLength;
 
 		void gotoy( unsigned int );
 		void gotody( unsigned int );
@@ -561,9 +564,11 @@ class YZView {
 		void gotodx( unsigned int );
 		void applyGoto( );
 		void initGoto( );
+		void updateCurLine( );
 
 
 		bool wrapNextLine;
+		bool dWrapNextLine;
 		QChar lastChar;
 
 		//cached value of tabwidth option

@@ -71,13 +71,11 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 void KYZisEdit::setCursor(int c, int l) {
 	int new_mCursorX = c - mParent->getDrawCurrentLeft () + marginLeft;
 	int new_mCursorY = l - mParent->getDrawCurrentTop ();
-//	if ( new_mCursorY != mCursorY || new_mCursorX != mCursorX ) {
-		if( mCursorShown ) drawCursorAt( mCursorX, mCursorY );
-		drawCursorAt( new_mCursorX, new_mCursorY );
-		mCursorX = new_mCursorX;
-		mCursorY = new_mCursorY;
-		mCursorShown = true;
-//	}
+	if( mCursorShown ) drawCursorAt( mCursorX, mCursorY );
+	drawCursorAt( new_mCursorX, new_mCursorY );
+	mCursorX = new_mCursorX;
+	mCursorY = new_mCursorY;
+	mCursorShown = true;
 }
 
 void KYZisEdit::setTextLine(int , const QString &/*str*/) {

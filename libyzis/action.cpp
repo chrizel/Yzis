@@ -423,7 +423,7 @@ YZCursor YZAction::search( YZView* pView, const QString& what, const YZCursor& m
 					: QMAX( (int)mBegin.getY(), 0 );
 	unsigned int maxLine = reverseSearch ? QMAX( (int)mEnd.getY(), 0 ) : 
 						QMIN( (int)mEnd.getY(), (int)(pView->myBuffer()->lineCount() - 1) );
-	for ( ; reverseSearch && i > maxLine || ! reverseSearch && i < maxLine; reverseSearch ? i-- : i++ ) {
+	for ( ; reverseSearch && i >= maxLine || ! reverseSearch && i <= maxLine; reverseSearch ? i-- : i++ ) {
 		l = pView->myBuffer()->textline( i );
 
 		int idx;

@@ -116,8 +116,8 @@ void YZSelectionPool::delSelection( const QString& layout, const YZCursor& from,
 	} else if ( ! isFromSel ) {
 		if ( ! removeTo ) selectionPool[ layout ][ toSel ].setFrom( new_to );
 		removeSelection( layout, fromSel, toSel - fromSel + ( removeTo ? 1 : 0 ) );
-	} else if ( selectionPool[ layout ][ fromSel ].from() == from && selectionPool[ layout ][ toSel ].to() == to ) {
-		removeSelection( layout, fromSel, fromSel - toSel + 1 );
+	} else if ( removeFrom && removeTo ) {
+		removeSelection( layout, fromSel, toSel - fromSel + 1 );
 	} else if ( fromSel != toSel ) {
 		if ( ! removeFrom ) selectionPool[ layout ][ fromSel ].setTo( new_from );
 		if ( ! removeTo ) selectionPool[ layout ][ toSel ].setFrom( new_to );

@@ -157,12 +157,14 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 		YZView* v = views.first();
 		YZCursor from( v, 0, line );
 		YZCursor cur( from );
-		YZCursor end( v, 0, QMAX( (int)(buffer->textline( from.getY() ).length() - 1), 0 ) );
+		YZCursor end( v, buffer->textline( line ).length(), line );
 
 		YZSelectionPool* pool = v->getSelectionPool();
 		pool->delSelection( "SEARCH", from, end, from, end );
 
-		bool found = true;
+		if ( end.getX() > 0 ) end.setX( end.getX() - 1 );
+
+		bool found;
 		unsigned int matchedLength = 0;
 		do {
 			from = buffer->action()->search( v, mCurrentSearch, cur, end, false, &matchedLength, &found );
@@ -172,10 +174,11 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 				pool->addSelection( "SEARCH", from, cur, from, cur );
 			}
 		} while ( found );
-	}
 
-	for( YZView* v = views.first(); v; v = views.next() ) {
-		v->sendPaintEvent( 0, line, QMAX( (int)(buffer->textline( line ).length() - 1), 0 ), line );
+		for( YZView* v = views.first(); v; v = views.next() ) {
+			v->getSelectionPool()->setLayout( "SEARCH", pool->layout( "SEARCH" ) );
+			v->sendPaintEvent( 0, line, QMAX( (int)(buffer->textline( line ).length() - 1), 0 ), line );
+		}
 	}
 }
 

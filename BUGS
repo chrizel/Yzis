@@ -1,6 +1,3 @@
-1 - kyzis:
-EX mode, type some characters, move the cursor to a previous position and type a new character, character is appended at end of line instead of cursor position !
-
 3 - kyzis:
 initial display of the cursor is wrong ... / display after a resize
 

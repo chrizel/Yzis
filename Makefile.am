@@ -1,6 +1,8 @@
 COMPILE_FIRST = libyzis
 SUBDIRS = $(TOPSUBDIRS)
 
+localedir = $(prefix)/share/yzis/locale
+
 $(top_srcdir)/configure.in: configure.in.in $(top_srcdir)/subdirs
 	cd $(top_srcdir) && $(MAKE) -f admin/Makefile.common configure.in ;
 
@@ -49,4 +51,23 @@ test:
 	cd tests/cppunit && make
 	cd tests && qmake tests.pro -o Makefile
 	cd tests && make && ./runTests
+
+update-tr:
+	echo "Updating .ts files in translations..." ; \
+	for i in $(srcdir)/translations/*.ts ; do \
+		$(QTDIR)/bin/lupdate libyzis/*.cpp libyzis/*.h kyzis/*.cpp kyzis/*.h nyzis/*.cpp nyzis/*.h -ts $$i ; \
+	done
+
+translate:
+	echo "Building .qm files for Qt..."; \
+	for i in $(srcdir)/translations/*.ts ; do \
+		$(QTDIR)/bin/lrelease $$i -qm translations/`basename $$i .ts`.qm ; \
+	done
+
+install-translations:
+	$(mkinstalldirs) $(localedir)
+	@for i in $(srcdir)/translations/*.qm; do \
+		echo " $(INSTALL_DATA) $$i $(localedir)/`basename $$i`"; \
+		$(INSTALL_DATA) $$i $(localedir)/`basename $$i`; \
+	done;
 

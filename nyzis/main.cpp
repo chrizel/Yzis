@@ -19,13 +19,16 @@
  * $Id$
  */
 
+#include <qapplication.h>
+#include <qtranslator.h>
+#include <qtextcodec.h>
 #include "debug.h"
 
 #include "factory.h"
+#include "translator.h"
 #include <cstdlib>
 #include <cstdio>
 #include <csignal>
-
 
 static void catchsigint(int sig);
 static void cleaning(void);
@@ -37,7 +40,14 @@ main(int argc, char *argv[])
 
 	(void) signal(SIGINT, catchsigint);      /* arrange interrupts to terminate */
 	atexit(cleaning);
-
+	QApplication app(  argc, argv );
+	QTranslator qt(  0 );
+	qt.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
+	app.installTranslator(  &qt );
+	QTranslator myapp(  0 );
+	myapp.load(  QString(  "myapp_" ) + QTextCodec::locale(), "." );
+	app.installTranslator(  &myapp );
+	
 	(new NYZFactory(argc,argv)) -> event_loop();
 
 	yzError() << "Should never reach this point" << endl;

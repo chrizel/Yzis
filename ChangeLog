@@ -1,3 +1,11 @@
+2004-04-10 mikmak
+  * all
+    add support for internationalisation through Qt's tr() stuff
+    added translations/ directory where will reside our translations
+    (translators now needed ! :)
+  * nyzis
+    add a QApplication/QTranslator in main to support translation of QStrings
+    
 2004-04-04 mikmak
   * libyzis
     disables views updates during a ::load => speed up loading huge files

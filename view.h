@@ -483,6 +483,8 @@ class YZView {
 		 */
 		bool drawNextCol( );
 
+		const QChar& fillChar() const;
+
 		/**
 		 * draw char
 		 */
@@ -817,6 +819,7 @@ class YZView {
 
 		int stickyCol;
 
+		QChar mFillChar;
 		QChar lastChar;
 		bool charSelected;
 		bool listChar;

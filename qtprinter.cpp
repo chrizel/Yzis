@@ -128,7 +128,8 @@ void YZQtPrinter::doPrint( ) {
 			QColor c = mView->drawColor( );
 			if ( c.isValid() && c != Qt::white ) p.setPen( c );
 			else p.setPen( Qt::black );
-			p.drawText( rightleft ? width - curX - maxwidth : curX, curY, mView->drawChar( ) );
+			p.drawText( rightleft ? width - curX - maxwidth : curX, curY, 
+				QString( mView->drawChar() ).leftJustify( mView->drawLength(), mView->fillChar() ) );
 			curX += mView->drawLength( ) * maxwidth;
 		}
 		curY += linespace * mView->drawHeight();

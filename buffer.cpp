@@ -141,7 +141,7 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
 
 uint YZBuffer::firstNonBlankChar( uint line )
 {
-	int i=0;
+	uint i=0;
 	QString s = data(line);
 	if (s == QString::null) return 0;
 	while( s[i].isSpace() && i < s.length()) {

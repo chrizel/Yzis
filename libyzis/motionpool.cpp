@@ -42,7 +42,7 @@ void YZMotionPool::initPool() {
 	addMotion (YZMotion( "", RELATIVE, 0, -1, true, true ), "[0-9]*k");
 	addMotion (YZMotion( "", RELATIVE, 0, 1, false, true ), "[0-9]*j");
 	addMotion (YZMotion( "^\\s*", REGEXP, 0, 0, true, false ), "\\^");
-	addMotion (YZMotion( "", NORMAL, 0, 0, false, false ), "%");
+	addMotion (YZMotion( "", NORMAL, 0, 0, false, true ), "%");
 	addMotion (YZMotion( "", NORMAL, 0, 0, false, false ), "(`|')[a-zA-Z0-9]");
 }
 
@@ -89,11 +89,16 @@ bool YZMotionPool::applyNormalMotion( const QString& inputsMotion, YZMotion& , Y
 	bool found = false;
 	if ( inputsMotion == "%" ) {
 		result = view->myBuffer()->action()->match( view, *( view->getBufferCursor() ), &found );
+		if ( found ) { //adjust the cursor
+			if ( *( view->getBufferCursor() ) < result )
+				result.setX( result.getX()+1 );
+		}
 		return found;
 	} else if ( inputsMotion.startsWith("`") || inputsMotion.startsWith("'") ) {
 		yzDebug() << "Delete to tag " << inputsMotion.mid( 1,1 ) << endl;
 		YZCursorPos pos = view->myBuffer()->marks()->get(inputsMotion.mid( 1, 1 ), &found);
 		result = pos.bPos;
+		result.setX(result.getX() ? result.getX() - 1 : 0);
 		return found;
 	}
 	return false;

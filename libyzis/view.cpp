@@ -299,6 +299,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				if (m_word2Complete.isEmpty())
 					initCompletion();
 				QString result = doComplete(true);
+				yzDebug() << "result : " << result << endl;
 				if (!result.isNull()) {
 					myBuffer()->action()->replaceText(this, *m_completionStart, mainCursor->bufferX()-m_completionStart->getX(), result);
 					gotoxy(m_completionStart->getX()+result.length(),mainCursor->bufferY());
@@ -2188,7 +2189,7 @@ void YZView::initCompletion() {
 	m_completionCursor->setCursor(mainCursor->buffer());
 }
 
-const QString& YZView::doComplete(bool forward) {
+QString YZView::doComplete(bool forward) {
 	YZCursor result;
 	unsigned int matchedLength=0;
 	bool found=false;
@@ -2200,14 +2201,14 @@ const QString& YZView::doComplete(bool forward) {
 			m_completionCursor->setX(mainCursor->bufferX() - m_word2Complete.length());
 		result = myBuffer()->action()->search(this, m_word2Complete+"\\w*", *m_completionCursor, YZCursor(this, 0, 0), true, &matchedLength, &found);
 	}
-	if (result == *m_completionStart) found=false; //just make sure we won't loop on myself :)
+	if (found && result == *m_completionStart) found=false; //just make sure we won't loop on myself :)
 	//found something ?
 	if ( found && matchedLength > 0 )  {
 		YZCursor end (this, result.getX()+matchedLength-1, result.getY());
-		QStringList list = myBuffer()->getText(result, end);
-		yzDebug() << "Match : " << list[0] << endl;
+		QString list = myBuffer()->getText(result, end)[0];
+		yzDebug() << "Match : " << list << endl;
 		m_completionCursor->setCursor(result);
-		return list[0];
+		return list;
 	}
 	return QString::null;
 }

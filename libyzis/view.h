@@ -683,7 +683,7 @@ class YZView {
 		 * Find next completion match
 		 * @param forward selects the direction
 		 */
-		const QString& doComplete(bool forward);
+		QString doComplete(bool forward);
 
 	public slots :
 		void sendMultipleKey( const QString& keys );

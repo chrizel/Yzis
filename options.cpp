@@ -77,6 +77,7 @@ void YZOption::loadFrom(const QString& file ) {
 		while ( !stream.atEnd() ) {
 			QString line(stream.readLine() ); // line of text excluding '\n'
 			yzDebug() << "Parsing line : " << line << endl;
+			if ( line.simplifyWhiteSpace().startsWith( "#" ) || line.isEmpty() ) continue; //skip comment and empty lines
 			if ( rx.exactMatch( line ) )
 				setGroup(rx.cap(1).simplifyWhiteSpace());
 			else {
@@ -190,8 +191,7 @@ void YZOption::initConfFiles() {
 	if ( !homeConf.exists( QDir::homeDirPath()+"/.yzis/" ) )
 		if ( !homeConf.mkdir(QDir::homeDirPath()+"/.yzis/", true) ) return;
 	
-	//do i have a main config file ?
-	QFile mainConf(QDir::homeDirPath()+"/.yzis/yzis.conf");
-	if ( mainConf.exists() )
-		loadFrom(QDir::homeDirPath()+"/.yzis/yzis.conf");
+	loadFrom(QDir::rootDirPath()+"/etc/yzis.conf");
+	loadFrom(QDir::rootDirPath()+"/etc/yzis/yzis.conf");
+	loadFrom(QDir::homeDirPath()+"/.yzis/yzis.conf");
 }

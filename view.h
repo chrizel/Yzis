@@ -30,6 +30,8 @@
 #include "buffer.h"
 #include "cursor.h"
 #include "commands.h"
+#include "attribute.h"
+#include "line.h"
 
 class YZCursor;
 class YZBuffer;
@@ -69,11 +71,13 @@ class YZView {
 		 * Returns the index of the first line displayed on the view
 		 */
 		unsigned int getCurrentTop() { return mCurrentTop; }
+		unsigned int getDrawCurrentTop() { return dCurrentTop; }
 
 		/** 
 		 * Returns the index of the first column displayed on the view
 		 */
 		unsigned int getCurrentLeft() { return mCurrentLeft; }
+		unsigned int getDrawCurrentLeft() { return dCurrentLeft; }
 
 		/**
 		 * returns the number of line this view can display
@@ -277,7 +281,7 @@ class YZView {
 		  * called when the mode is changed, so that gui can
 		  * update information diplayed to the user
 		  */
-		virtual void modeChanged( void ) = 0;
+		virtual void modeChanged() = 0;
 
 		/**
 		 * Asks a redraw of the whole view
@@ -298,7 +302,7 @@ class YZView {
 		 * Get the current cursor information
 		 * @return a reference on the current cursor
 		 */
-		YZCursor* getCursor() { return mCursor; }
+		YZCursor* getCursor() { return dCursor; }
 
 		/**
 		 * Search for text and moves the cursor to the position of match
@@ -319,6 +323,45 @@ class YZView {
 
 		QString tr( const char *source, const char* = 0) { return qApp->translate( "YZView", source ); }
 
+		/**
+		 * init r and s Cursor
+		 */
+		void YZView::initDraw( );
+		void YZView::initDraw( unsigned int sLeft, unsigned int sTop, 
+					unsigned int rLeft, unsigned int rTop );
+
+		/**
+		 * go to next line
+		 */
+		bool YZView::drawNextLine( );
+
+		/*
+		 * go to next col
+		 */
+		bool YZView::drawNextCol( );
+
+		/**
+		 * draw char
+		 */
+		QChar YZView::drawChar( );
+
+		/**
+		 * char length
+		 */
+		int YZView::drawLength( );
+
+		/**
+		 * line height
+		 */
+		int YZView::drawHeight( );
+
+		/**
+		 * char color
+		 */
+		const QColor& YZView::drawColor( );
+
+
+
 	protected:
 		/**
 		 * The buffer we depend on
@@ -336,19 +379,34 @@ class YZView {
 		unsigned int mColumnsVis;
 
 		/**
-		 * Index of the first visible line
+		 * Index of the first visible line (buffer)
 		 */
 		unsigned int mCurrentTop;
 
 		/**
-		 * Index of the first visible line
+		 * Index of the first visible line (buffer)
 		 */
 		unsigned int mCurrentLeft;
 
 		/**
-		 * The cursor of the view
+		 * Index of the first visible column (draw)
+		 */
+		unsigned int dCurrentLeft;
+
+		/**
+		 * Index of the first visible line (draw)
+		 */
+		unsigned int dCurrentTop;
+
+		/**
+		 * The cursor of the buffer
 		 */
 		YZCursor *mCursor;
+
+		/**
+		 * The cursor of the view
+		 */
+		YZCursor *dCursor;
 
 		/**
 		 * The maximal X position of the current line
@@ -382,9 +440,10 @@ class YZView {
 		unsigned int mCurrentSearchItem;
 
 		struct {
-			int l;
-			int c1;
-			int c2;
+			int l1; //buffer line
+			int l2; //draw line
+			int c1; //buffer column
+			int c2; //draw column
 			QString percentage;
 		} viewInformation;
 
@@ -399,6 +458,52 @@ class YZView {
 		 * The current session, provided by the GUI
 		 */
 		YZSession *mSession;
+
+		int rColLength;
+		int rLineLength;
+		int sColLength;
+		int sLineLength;
+		int rSpaceFill;
+
+		/**
+		 * The cursor of the text
+		 */
+		YZCursor *sCursor;
+
+		/**
+		 * The cursor of the draw
+		 */
+		YZCursor *rCursor;
+		/**
+		 * Index of the first visible line (buffer)
+		 */
+		unsigned int sCurrentTop;
+
+		/**
+		 * Index of the first visible line (buffer)
+		 */
+		unsigned int sCurrentLeft;
+
+		/**
+		 * Index of the first visible column (draw)
+		 */
+		unsigned int rCurrentLeft;
+
+		/**
+		 * Index of the first visible line (draw)
+		 */
+		unsigned int rCurrentTop;
+
+		const uchar* rHLa;
+		
+		bool rHLnoAttribs;
+		
+		unsigned int rHLAttributesLen;
+
+		YzisAttribute *rHLAttributes;
+
+		QString  sCurLine;
+
 };
 
 #endif /*  YZ_VIEW_H */

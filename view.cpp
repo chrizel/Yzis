@@ -29,6 +29,9 @@
 #include "debug.h"
 #include "undo.h"
 
+static const int tabLength( 8 );
+static const QChar tabChar( '\t' );
+
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	myId = YZSession::mNbViews++;
 	yzDebug() << "New View created with UID : " << myId << endl;
@@ -37,10 +40,15 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mBuffer	= _b;
 	mLinesVis = lines;
 	mCursor = new YZCursor(this);
+	dCursor = new YZCursor(this);
+	sCursor = new YZCursor(this);
+	rCursor = new YZCursor(this);
 	mMaxX = 0;
 	mMode = YZ_VIEW_MODE_COMMAND;
 	mCurrentLeft = mCursor->getX();
 	mCurrentTop = mCursor->getY();
+	dCurrentLeft = dCursor->getX();
+	dCurrentTop = dCursor->getY();
 	QString line = mBuffer->textline(mCurrentTop);
 	if (!line.isNull()) mMaxX = line.length()-1;
 
@@ -49,7 +57,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mExHistory.resize(200);
 	mSearchHistory.resize(200);
 	reverseSearch=false;
-	viewInformation.l = viewInformation.c1 = viewInformation.c2 = 0;
+	viewInformation.l1 = viewInformation.l2 = viewInformation.c1 = viewInformation.c2 = 0;
 	viewInformation.percentage = "";
 }
 
@@ -384,7 +392,7 @@ void YZView::sendKey( int c, int modifiers) {
 void YZView::updateCursor() {
 	static unsigned int lasty = 1<<31; // small speed optimisation
 	viewInformation.percentage = tr( "All" );
-	unsigned int y = mCursor->getY();
+	unsigned int y = dCursor->getY();
 
 	if ( y != lasty ) {
 		unsigned int nblines = mBuffer->lineCount();
@@ -395,11 +403,9 @@ void YZView::updateCursor() {
 		lasty=y;
 	}
 
-	viewInformation.l = y;
+	viewInformation.l1 = viewInformation.l2 = y; //XXX wrapped lines
 	viewInformation.c1 = mCursor->getX(); 
-	QString line = mBuffer->textline( y ).mid( 0, mCursor->getX() );
-	int tabs = line.contains('\t');
-	viewInformation.c2 = mCursor->getX() + ( 8 - 1 ) * tabs; 
+	viewInformation.c2 = dCursor->getX(); 
 
 	syncViewInfo();
 }
@@ -414,7 +420,25 @@ void YZView::centerViewHorizontally(unsigned int column) {
 		else newcurrentLeft = 0;
 	}
 	if ( newcurrentLeft == mCurrentLeft ) return;
-	mCurrentLeft = newcurrentLeft ? newcurrentLeft : 0;
+
+	if (newcurrentLeft) {
+
+		initDraw( 0, 0, 0, 0 );
+		
+		while( sCursor->getY( ) < mCursor->getY( ))
+			drawNextLine( );
+		while ( rCursor->getX( ) < newcurrentLeft ) {
+			drawNextCol( );
+			drawChar( );
+		}
+		dCurrentLeft = rCursor->getX( ) + dCurrentLeft;
+		mCurrentLeft = sCursor->getX( ) + mCurrentLeft;
+	} else {
+		dCurrentLeft = 0;
+		mCurrentLeft = 0;
+	}
+//	yzDebug() << "centerViewHorizontally d:" << dCurrentLeft << ", m:" << mCurrentLeft << ", fill:" << rSpaceFill << endl;
+	
 	redrawScreen();
 }
 
@@ -430,6 +454,7 @@ void YZView::centerViewVertically(unsigned int line) {
 	
 	//redraw the screen
 	mCurrentTop = newcurrent ? newcurrent : 0;
+	dCurrentTop = newcurrent ? newcurrent : 0;
 	redrawScreen();
 }
 
@@ -465,9 +490,28 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	if ( ( int )nextx < 0 ) nextx = 0;
 	mCursor->setX( nextx );
 
+
+	initDraw(0, 0, 0, 0);
+	unsigned int i;
+	for (i = 0; i <= mCursor->getY( ); i++)	drawNextLine( );
+	for (i = 0; i <= mCursor->getX( ); i++)	{
+		drawNextCol( );
+		drawChar( );
+	}
+
+	dCursor->setX( rCursor->getX() );
+	dCursor->setY( rCursor->getY() );
+
+//	yzDebug( ) << "mCursor:" << mCursor->getX( ) << "," << mCursor->getY( ) << endl;
+//	yzDebug( ) << "dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl;
+
+	
 	//make sure this line is visible
-	if ( !isLineVisible( nexty ) ) centerViewVertically( nexty );
-	if ( !isColumnVisible( nextx, nexty ) ) centerViewHorizontally( nextx );
+	if ( !isLineVisible( dCursor->getY() ) ) centerViewVertically( dCursor->getY( ) );
+	if ( !isColumnVisible( dCursor->getX(), dCursor->getY() ) ) centerViewHorizontally( dCursor->getX( ) );
+
+//	yzDebug( ) << "(2) mCursor:" << mCursor->getX( ) << "," << mCursor->getY( ) << endl;
+//	yzDebug( ) << "(2) dCursor:" << dCursor->getX( ) << "," << dCursor->getY( ) << endl;
 
 	/* do it */
 	updateCursor();
@@ -839,19 +883,138 @@ QString YZView::searchAgain( const QString& /*inputsBuff*/, YZCommandArgs args )
 	return QString::null;
 }
 
-bool YZView::isColumnVisible( unsigned int column, unsigned int line ) {
-	QString l = mBuffer->textline(line).mid( 0, column );
-	int tabs = l.contains( '\t' );
-	uint displayedCols = l.length() + tabs * 8 - tabs; //tabwidth
+bool YZView::isColumnVisible( unsigned int column, unsigned int  ) {
+	return ! (column < dCurrentLeft || column >= (dCurrentLeft + mColumnsVis));
+}
 
-	//count number of tabs before mCurrentLeft now
-	l = mBuffer->textline( line ).mid( 0, mCurrentLeft );
-	int tabsleft = l.contains( '\t' );
-	uint displayedColsleft = l.length() + tabsleft * 8 - tabsleft; //tabwidth
-	
-	if ( mCurrentLeft == 0 && displayedCols >= mColumnsVis ) return false;
-	if ( displayedCols - displayedColsleft >= mColumnsVis ) return false;
-	if ( displayedCols < mCurrentLeft ) return false;
-	return true;
+void YZView::initDraw( ) {
+	initDraw( mCurrentLeft, mCurrentTop, dCurrentLeft, dCurrentTop );
+}
+
+void YZView::initDraw( unsigned int sLeft, unsigned int sTop, 
+			unsigned int rLeft, unsigned int rTop) {
+
+	sCurrentLeft = sLeft;
+	sCurrentTop = sTop;
+	rCurrentLeft = rLeft;
+	rCurrentTop = rTop;
+
+//	yzDebug() << "/ initScreenClip sCurrentLeft(" << sCurrentLeft << "), sCurrentTop(" << sCurrentTop << ")" << endl;
+	sCursor->setX( sCurrentLeft );
+	sCursor->setY( sCurrentTop );
+
+//	yzDebug() << "\\ initScreenClip rCurrentLeft(" << rCurrentLeft << "), rCurrentTop(" << rCurrentTop << ")" << endl;
+	rCursor->setX( rCurrentLeft );
+	rCursor->setY( rCurrentTop );
+
+	rLineLength = 0;
+	rColLength = 0;
+	sLineLength = 0;
+	sColLength = 0;
+
+}
+
+bool YZView::drawNextLine( ) {
+	// update sCursor
+	sCursor->setX( sCurrentLeft );
+	sCursor->setY( sCursor->getY() + sLineLength );
+
+	// update dCusor
+	rCursor->setY( rCursor->getY( ) + rLineLength );
+
+	rLineLength = 1;
+	sLineLength = 1;
+	sColLength = 0;
+	rColLength = 0;
+	rSpaceFill = 0;
+
+	if ( sCursor->getY() < mBuffer->lineCount() && rCursor->getY() - rCurrentTop < mLinesVis ) {
+		if (rCurrentLeft > 0) {
+
+			sCursor->setX( 0 );
+			rCursor->setX( 0 );
+			QChar ch;
+
+			while( rCursor->getX( ) < rCurrentLeft ) {
+				drawNextCol( );
+				ch = drawChar( );
+			}
+			rSpaceFill = 1 + (rCurrentLeft % tabLength);
+
+/*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
+					<< ", rX(cursor):" << rCursor->getX() 
+					<< ", rY:" << rCursor->getY() << ", sX:" << sCursor->getX( ) << ", sY:" << sCursor->getY () << endl; */
+		}
+
+		rCursor->setX( rCurrentLeft );
+
+		/* highlight stuff */
+		rHLa = NULL;
+		YZLine *yl = mBuffer->yzline( sCursor->getY() );
+		sCurLine = yl->data(); //avoids another search
+		//sCurLine = mBuffer->textline( sCursor->getY() );
+		if ( yl->length() != 0 ) {
+			rHLa = yl->attributes();
+		}
+		rHLa = rHLa + sCurrentLeft;
+		rHLnoAttribs = !rHLa;
+		rHLAttributes = 0L;
+		YzisHighlighting * highlight = mBuffer->highlight();
+		if ( highlight )
+			rHLAttributes = highlight->attributes( 0 )->data( );
+		rHLAttributesLen = rHLAttributes ? highlight->attributes( 0 )->size() : 0;
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
+bool YZView::drawNextCol( ) {
+	// update dCursor position
+	rCursor->setX( rCursor->getX( ) + rColLength );
+	// update sCursor position
+	sCursor->setX ( sCursor->getX() + sColLength );
+
+	rHLa += sColLength;
+
+	return ( rCursor->getX( ) - rCurrentLeft < mColumnsVis && sCursor->getX( ) < sCurLine.length() );
+}
+
+QChar YZView::drawChar( ) {
+	QChar ch = ' ';
+	unsigned int curx = sCursor->getX( );
+	if ( curx < sCurLine.length( ) ) {
+		ch = sCurLine[ curx ];
+	}
+
+	sColLength = 1;
+	rColLength = 1;
+	if (rSpaceFill == tabLength) rSpaceFill = 0;
+	if ( ch == tabChar ) {
+		rColLength = tabLength - rSpaceFill;	
+		ch = ' ';
+	}
+	rSpaceFill += rColLength;
+
+	return ch;
+}
+
+int YZView::drawLength( ) {
+	return rColLength;
+}
+
+int YZView::drawHeight ( ) {
+	return rLineLength;
+}
+const QColor& YZView::drawColor ( ) {
+	QColor fake;
+	YzisAttribute hl;
+	YzisAttribute * curAt = ( !rHLnoAttribs && (*rHLa) >= rHLAttributesLen ) ?  &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
+	if ( curAt ) {
+		hl += * curAt;
+		return hl.textColor();
+	}
+	return fake;
 }
 

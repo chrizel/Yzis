@@ -229,6 +229,7 @@ void YZModeCompletion::initCompletion( YZView* mView ) {
 	m_completionCursor->setCursor( cur );
 	mView->m_oldProposals.clear();
 	mView->m_lastCompletionDir = true;
+	mView->m_lastMatch = QString::null;
 }
 
 QString YZModeCompletion::doComplete( YZView* mView, bool forward ) {
@@ -258,7 +259,7 @@ QString YZModeCompletion::doComplete( YZView* mView, bool forward ) {
 		if (found) {
 			YZCursor end (mView, result.getX()+matchedLength-1, result.getY());
 			list = mBuffer->getText(result, end)[0];
-			//yzDebug() << "Got testing match : " << list << " at " << result << " to " << end << endl;
+//			yzDebug() << "Got testing match : " << list << " at " << result << " to " << end << endl;
 			m_completionCursor->setCursor(result);
 			if (forward) {
 				if ( m_completionCursor->getX() < mBuffer->textline(m_completionCursor->getY()).length() )

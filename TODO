@@ -2,8 +2,6 @@
 - check get...() , set...() functions
 - reindent ;)
 - merge last changes into nyzis ...
-- yzAssert()
-- tabs in nyzis
 - move events to Qt events
 - remove all that c code with tab and #define *MAX -> use Qt
 - both lib and gui have a currentView that needs to be keep synced.. improve that
@@ -12,3 +10,5 @@
 - nyzis : check event handler(qt one?)
 - nyzis : report meta, etc..
 - nyzis : handle xterm resize
+- configure : should detect/work kde-less configuration
+	--with/--without ncurses/kde flags

@@ -65,6 +65,7 @@ YZView* YZSession::findView( int uid ) {
 //	yzDebug() << " ========= " << endl;
 //	yzDebug() << "Session::findView " << uid << endl;
 	QMap<QString,YZBuffer*>::Iterator it;
+	if ( uid<0 ) return NULL;
 	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
 		YZBuffer *b = ( it.data() );
 //		yzDebug() << "Session::findView, checking buffer " << b->fileName() << endl;
@@ -87,7 +88,7 @@ YZView* YZSession::prevView() {
 		return NULL;
 	}
 //	yzDebug() << "Current view is " << mCurView->myId << endl;
-	return findView( ( mCurView->myId >= 1 ) ? mCurView->myId - 1 : mCurView->myId );
+	return findView( mCurView->myId - 1 );
 }
 
 YZView* YZSession::nextView() {

@@ -1,6 +1,6 @@
 
-export WANT_AUTOCONF_2_5=1
-export WANT_AUTOMAKE_1_6=1
+export WANT_AUTOCONF=2.5
+export WANT_AUTOMAKE=1.7
 
 all: 
 	@echo "This Makefile is only for the CVS repository"

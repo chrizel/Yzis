@@ -20,6 +20,7 @@
 #include "ex_executor.h"
 #include "debug.h"
 #include <qfileinfo.h>
+#include <qobject.h>
 
 YZExExecutor::YZExExecutor() {
 }

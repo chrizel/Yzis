@@ -46,6 +46,8 @@ apidox:
 	echo "EXTRACT_ALL         = YES" >> yzis.doxyfile ; \
 	doxygen yzis.doxyfile
 
+install-data-local: install-translations
+
 test: 
 	cd tests/cppunit && qmake cppunit.pro -o Makefile
 	cd tests/cppunit && make

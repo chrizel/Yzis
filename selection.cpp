@@ -60,7 +60,7 @@ void YZSelectionPool::addSelection( const QString& layout, const YZCursor& from,
 	bool isToSel = false;
 	unsigned int fromSel = locatePosition( layout, from, &isFromSel );
 	unsigned int toSel = locatePosition( layout, to, &isToSel );
-	yzDebug() << "addSelection : from: " << from << "pos=" << fromSel << "," << isFromSel
+	yzDebug() << "addSelection(" << layout << ") : from: " << from << "pos=" << fromSel << "," << isFromSel
 		<< " - to: " << to << "pos=" << toSel << "," << isToSel << endl;
 
 	if ( isFromSel && isToSel ) {
@@ -194,13 +194,20 @@ void YZSelectionPool::removeSelection( const QString& layout, unsigned int begin
 	}
 }
 
+void YZSelectionPool::debug( const QString& layout ) {
+	unsigned int size = selectionPool[ layout ].size( );
+	for ( unsigned int i = 0; i < size; i++ ) {
+		yzDebug() << "[" << layout << "] (" << i << ") from=" << *selectionPool[ layout ][ i ].from << "; to=" << *selectionPool[ layout ][ i ].to << endl;
+	}
+}
+
 int YZSelectionPool::locatePosition( const QString& layout, const YZCursor& pos, bool * isSelected ) {
 	unsigned int i;
 	*isSelected = false;
 	unsigned int size = selectionPool[ layout ].size( );
 	for ( i = 0; ! *isSelected && i < size; i++ ) {
-		if ( pos < *selectionPool[ layout ].find( i ).data().from ) break;
-		if ( pos > *selectionPool[ layout ].find( i ).data().to ) continue;
+		if ( pos < *selectionPool[ layout ][ i ].from ) break;
+		if ( pos > *selectionPool[ layout ][ i ].to ) continue;
 		*isSelected = true;
 	}
 	if ( *isSelected ) --i;

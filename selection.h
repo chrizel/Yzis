@@ -58,6 +58,8 @@ class YZSelectionPool {
 
 		bool isSelected( const YZCursor& pos );
 
+		void debug( const QString& layout );
+
 	private:
 		YZView * parentView;
 		YZSelectionLayout selectionPool;

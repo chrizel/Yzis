@@ -18,12 +18,14 @@
  **/
 
 #include "registers.h"
+#include "debug.h"
 
 YZRegisters::YZRegisters() {
 }
 
 void YZRegisters::setRegister( QChar c, const QString& value ) {
 	mRegisters[ c ] = value;
+	yzDebug() << "Register : " << value << endl;
 }
 
 QString& YZRegisters::getRegister( QChar c ) const {

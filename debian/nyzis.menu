@@ -1,0 +1,2 @@
+?package(nyzis):needs="text" section="Apps/Editors"\
+  title="nyzis" command="/usr/bin/yzis"

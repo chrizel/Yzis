@@ -1,0 +1,15 @@
+This package was debianized by Mickael Marchand <marchand@kde.org> on
+Fri,  2 Apr 2004 00:51:53 +0200.
+
+It was downloaded from http://www.yzis.org
+
+Upstream Authors: Mickael Marchand <marchand@kde.org>, 
+ Thomas Capricelli <orzel@freehackers.org>, 
+ Philippe Fremy <phil@freehackers.org>
+
+Copyright:
+
+libyzis is released under LGPL v2.1 or later (see /usr/share/common-licenses/LGPL-2.1)
+kyzis is released under GPL v2 or later (see /usr/share/common-licenses/GPL-2)
+nyzis is released under GPL v2 or later (see /usr/share/common-licenses/GPL-2)
+

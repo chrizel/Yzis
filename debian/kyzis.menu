@@ -1,0 +1,2 @@
+?package(kyzis):needs="X11" section="Apps/Editors"\
+  title="kyzis" command="/usr/bin/kyzis" kderemove="y" hints="KDE,Editors"

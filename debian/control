@@ -1,0 +1,32 @@
+Source: yzis
+Section: editors
+Priority: optional
+Maintainer: Mickael Marchand <marchand@kde.org>
+Build-Depends: debhelper (>= 4.0.0), libqt3-mt-dev, kdelibs4-dev, libncurses5-dev, doxygen
+Standards-Version: 3.6.0
+
+Package: libyzis-dev
+Architecture: any
+Depends: libyzis0 (= ${Source-Version})
+Description: Yzis Library - editing component
+ Core module used by KYzis and Nyzis editors.
+ Development package.
+
+Package: libyzis0
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Yzis Library - editing component
+ Core module used by KYzis and Nyzis editors.
+
+Package: kyzis
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: KDE Frontend for the Yzis editor
+ KPart component and main application for the KDE GUI of Yzis
+
+Package: nyzis
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Ncurses Frontend for the Yzis editor
+ Ncurses application for the Ncurses GUI of Yzis
+

@@ -75,6 +75,11 @@ class YZExLua : public QObject {
 		 */
 		static int YZExLua::gotoxy(lua_State *L);
 
+		/**
+		 * Deletes the line at the given index
+		 */
+		static int YZExLua::delline(lua_State *L);
+
 	private:
 		lua_State *st;
 };

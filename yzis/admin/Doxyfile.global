@@ -228,11 +228,15 @@ GENERATE_BUGLIST       = YES
 # will result in a user defined paragraph with heading "Side Effects:". 
 # You can put \n's in the value part of an alias to insert newlines.
 
+# @ref in KDE docu are for kdoc, doxygen doesn't need them, so we alias them
+# to nothing here
+
 ALIASES                = libdoc=@mainpage \
                          sect=<p><b> \
                          reimplemented= \
                          "deprecated=<b>This class or method is obsolete, it is provided for compatibility only.</b>" \
-                         obsolete=@deprecated
+                         obsolete=@deprecated \
+			 ref=
 
 # The ENABLED_SECTIONS tag can be used to enable conditional 
 # documentation sections, marked by \if sectionname ... \endif.

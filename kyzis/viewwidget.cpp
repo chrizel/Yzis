@@ -342,4 +342,5 @@ QFontMetrics KYZisView::editorFontMetrics( ) {
 	return m_editor->fontMetrics();
 }
 
+
 #include "viewwidget.moc"

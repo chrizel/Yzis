@@ -1,5 +1,6 @@
 /*
     Copyright (c) 2003,2004 Mickael Marchand <marchand@kde.org>
+    Copyright (c) 2004 Alexander Dymo <adymo@mksat.net>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public
@@ -32,6 +33,7 @@
 #include "factory.h"
 #include "debug.h"
 #include "undo.h"
+#include "mark.h"
 
 #include "configdialog.h"
 
@@ -331,6 +333,46 @@ void KYZisDoc::setModified( bool modified ) {
 			kv->emitNewStatus();
 	}
 	KTextEditor::Document::setModified(modified);
+}
+
+
+
+//KTextEditor::MarkInterface slots
+
+uint KYZisDoc::mark( uint line ) {
+	return docMarks()->get(line);
+}
+
+void KYZisDoc::setMark( uint line, uint markType ) {
+	docMarks()->add(line, markType); 
+}
+
+void KYZisDoc::clearMark( uint line ) {
+	docMarks()->del(line);
+}
+
+void KYZisDoc::addMark( uint line, uint markType ) {
+	docMarks()->add(line, markType); 
+}
+
+void KYZisDoc::removeMark( uint line, uint markType ) {
+	docMarks()->del(line, markType); 
+}
+
+QPtrList<KTextEditor::Mark> KYZisDoc::marks() {
+	QPtrList<KTextEditor::Mark> marks;
+	const YZDocMarker &marker = docMarks()->getMarker();
+	for (YZDocMarker::const_iterator it = marker.constBegin(); it != marker.constEnd(); ++it)
+	{
+		KTextEditor::Mark *m = new KTextEditor::Mark;
+		m->line = it.key();
+		m->type = it.data();
+		marks.append(m);
+	}
+}
+
+void KYZisDoc::clearMarks() {
+	docMarks()->clear();
 }
 
 #include "document.moc"

@@ -25,11 +25,12 @@
 #include <ktexteditor/highlightinginterface.h>
 #include <ktexteditor/undointerface.h>
 #include <ktexteditor/configinterface.h>
+#include <ktexteditor/markinterface.h>
 #include <buffer.h>
 #include <view.h>
 #include <session.h>
 
-class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public KTextEditor::UndoInterface, public KTextEditor::ConfigInterface, public YZBuffer {
+class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface, public KTextEditor::HighlightingInterface, public KTextEditor::UndoInterface, public KTextEditor::ConfigInterface, public KTextEditor::MarkInterface, public YZBuffer {
 	Q_OBJECT
 		
 	public:
@@ -105,7 +106,16 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		virtual void textChanged () {}
 		virtual void charactersInteractivelyInserted( int ,int ,const QString& ) {}
 //		void configureEditor();
-		
+
+		//KTextEditor::MarkInterface slots
+		uint mark( uint line );
+		void setMark( uint line, uint markType );
+		void clearMark( uint line );
+		void addMark( uint line, uint markType );
+		void removeMark( uint line, uint markType );
+		QPtrList<KTextEditor::Mark> marks();
+		void clearMarks();
+
 	protected:
 		bool openFile();
 		bool saveFile();
@@ -120,6 +130,10 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 	signals:
 		void hlChanged();
 		void undoChanged();
+
+		//KTextEditor::MarkInterface slots
+		void marksChanged();
+
 };
 
 #endif

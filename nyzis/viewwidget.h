@@ -65,6 +65,15 @@ public:
 
 public slots:
 
+	protected  :
+
+		inline unsigned int stringWidth( const QString& /*str*/ ) const {
+			return 1;
+		}
+		inline unsigned int charWidth( const QChar& /*ch*/ ) const {
+			return 1;
+		}
+
 
 private:
 	WINDOW		*window;	/* ncurses window to write to */

@@ -1,3 +1,7 @@
+2004-07-12 panard
+  * libyzis, kyzis
+    support for non-fixed fonts
+
 2004-07-06 panard
   * libyzis
     syntax highlighting detection using file content

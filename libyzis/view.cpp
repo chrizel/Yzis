@@ -38,6 +38,9 @@
 		if ( stickyCol == STICKY_COL_ENDLINE ) gotoxy( mBuffer->textline( Y ).length(), Y ); \
 		else gotodxy( stickyCol, Y )
 
+#define GET_STRING_WIDTH( s ) ( isFontFixed ? s.length() : stringWidth( s ) )
+#define GET_CHAR_WIDTH( c ) ( isFontFixed ? 1 : charWidth( c ) )
+
 static const QChar tabChar( '\t' );
 static QColor fake;
 
@@ -64,13 +67,16 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mColLength = 0;
 	dLineLength = 1;
 	mLineLength = 1;
-	dWrapNextLine = false;
 	dLineHeight = 1;
+	dWrapNextLine = false;
+	wrapNextLine = false;
+	dWrapTab = false;
+	dLastCharWasTab = false;
 
 	rColLength = 0;
 	rLineLength = 1;
 	rLineHeight = 1;
-	sColLength = 0;
+	sColLength = 1;
 	sLineLength = 1;
 	rSpaceFill = 0;
 
@@ -98,6 +104,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mPreviousChars = "";
 
 	selectionPool = new YZSelectionPool( this );
+	setFixedFont( true );
 
 	drawMode = false;
 	rHLnoAttribs = false;
@@ -106,8 +113,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	sCurLineLength = 0;
 	rCurLineLength = 0;
 
-	wrapNextLine = false;
-	dWrapNextLine = false;
+	rHLnoAttribs = false;
+	rHLAttributesLen = 0;
 	charSelected = false;
 
 	lineDY = 0;
@@ -598,10 +605,13 @@ void YZView::alignViewVertically( unsigned int line ) {
 		alignTop = false;
 	} else if ( line > 0 ) newcurrent = line;
 	unsigned int old_dCurrentTop = dCurrentTop;
+//	yzDebug() << "newcurrent=" << newcurrent << "; alignTop=" << alignTop << "; old_dCurrentTop=" << dCurrentTop << endl;
 	if ( wrap && newcurrent > 0 ) {
-		initDraw( );
+		initDraw();
 		drawMode = false;
 		gotody( newcurrent );
+//		yzDebug() << "raw top = " << *sCursor << "; r=" << *rCursor << endl;
+		// rLineHeight > 1 => our new top is in middle of a wrapped line, move new top to next line
 		newcurrent = sCursor->getY() + ( !alignTop && rLineHeight > 1 ? 1 : 0 );
 		gotoy( newcurrent );
 		dCurrentTop = rCursor->getY( );
@@ -610,6 +620,7 @@ void YZView::alignViewVertically( unsigned int line ) {
 		dCurrentTop = newcurrent;
 		mCurrentTop = newcurrent;
 	}
+//	yzDebug() << "dCurrentTop = " << dCurrentTop << "; mCurrentTop=" << mCurrentTop << endl;
 	if ( old_dCurrentTop > dCurrentTop && old_dCurrentTop - dCurrentTop < mLinesVis ) {
 		scrollUp( old_dCurrentTop - dCurrentTop );
 	} else if ( old_dCurrentTop < dCurrentTop && dCurrentTop - old_dCurrentTop < mLinesVis ) {
@@ -657,7 +668,7 @@ void YZView::gotox( unsigned int nextx ) {
 		else nextx = sCurLineLength - 1 + shift;
 	}
 	while ( sCursor->getX() > nextx ) {
-		if ( ! wrap || rCurLineLength <= mColumnsVis ) {
+		if ( ! wrap || rCurLineLength <= mColumnsVis - shift ) {
 			if ( ! drawPrevCol( ) ) break;
 		} else {
 			if ( ! drawPrevCol( ) ) {
@@ -667,11 +678,11 @@ void YZView::gotox( unsigned int nextx ) {
 		}
 	}
 	while ( sCursor->getX() < nextx ) {
-		if ( ! wrap || rCurLineLength <= mColumnsVis ) {
+		if ( ! wrap || rCurLineLength <= mColumnsVis - shift ) {
 			drawNextCol( );
 		} else {
 			while ( drawNextCol() && sCursor->getX() < nextx ) ;
-			if ( wrapNextLine ) drawNextLine( );
+			if ( wrapNextLine ) drawNextLine();
 		}
 	}
 }
@@ -686,11 +697,11 @@ void YZView::gotody( unsigned int nexty ) {
 	} else if ( nexty == dCurrentTop ) {
 		gotoy( mCurrentTop );
 	} else {
-		if ( wrap ) gotoy( mCurrentTop );
-		while ( rCursor->getY() > nexty )
+		while ( rCursor->getY() > nexty ) {
 			drawPrevLine( );
+		}
 		while ( rCursor->getY() < nexty && sCursor->getY() < mBuffer->lineCount() - 1 ) {
-			if ( wrap && ! wrapNextLine && rCurLineLength > mColumnsVis ) 
+			if ( wrap && ! wrapNextLine && rCurLineLength > mColumnsVis ) // make line wrapping
 				while( drawNextCol( ) ) ;
 			drawNextLine( );
 			if ( wrap && rCursor->getY() < nexty && rCurLineLength > mColumnsVis )
@@ -718,7 +729,7 @@ void YZView::gotoy( unsigned int nexty ) {
 			drawPrevLine( );
 			if ( wrap && sCursor->getY() == nexty && rCurLineLength > mColumnsVis ) { 
 				/* goto begin of line */
-				unsigned int wrapLineMinHeight = ( unsigned int ) ceil( sCurLineLength / mColumnsVis ) + 1;
+				unsigned int wrapLineMinHeight = ( unsigned int ) ceil( rMinCurLineLength / mColumnsVis ) + 1;
 				unsigned int wrapLineMaxHeight = ( unsigned int ) ceil( rCurLineLength / mColumnsVis ) + 1;
 				if ( wrapLineMinHeight == wrapLineMaxHeight ) {
 					rCursor->setY( rCursor->getY() + 1 - wrapLineMinHeight );
@@ -747,16 +758,16 @@ void YZView::gotoy( unsigned int nexty ) {
 }
 
 void YZView::initGoto( ) {
-	initDraw( mCursor->getX(), mCursor->getY(), dCursor->getX(), dCursor->getY() );
+	initDraw( mCursor->getX(), mCursor->getY(), dCursor->getX(), dCursor->getY(), false );
+	// we need to restore draw values
 	rSpaceFill = dSpaceFill;
 	rColLength = dColLength;
-	sColLength = mColLength;
 	rLineLength = dLineLength;
-	//XXX sure of that ? dLineHeight does not seem to be updated properly , see bug #31
 	rLineHeight = dLineHeight;
 	sLineLength = mLineLength;
 	wrapNextLine = dWrapNextLine;
-	drawMode = false;
+	wrapTab = dWrapTab;
+	rLastCharWasTab = dLastCharWasTab;
 }
 
 void YZView::applyGoto( bool applyCursor ) {
@@ -766,20 +777,20 @@ void YZView::applyGoto( bool applyCursor ) {
 	mCursor->setX( sCursor->getX() );
 	mCursor->setY( sCursor->getY() );
 
+	// save draw values
 	dSpaceFill = rSpaceFill;
 	dColLength = rColLength;
 	dLineLength = rLineLength;
-	mColLength = sColLength;
 	mLineLength = sLineLength;
 	dWrapNextLine = wrapNextLine;
+	dWrapTab = wrapTab;
 	dLineHeight = rLineHeight;
+	dLastCharWasTab = rLastCharWasTab;
 
 /*	yzDebug() << "applyGoto : "
-			<< "dColLength=" << dColLength << "; dSpaceFill=" << dSpaceFill
-			<< "; dLineLength=" << dLineLength << "; mLineLength=" << mLineLength
-			<< "; dWrapNextLine=" << dWrapNextLine
-			<< endl; 
-	yzDebug( ) << "mCursor:" << *mCursor << "; dCursor:" << *dCursor << endl; */
+			<< "dColLength=" << dColLength << "; dLineLength=" << dLineLength << "; mLineLength=" << mLineLength
+			<< "; dWrapNextLine=" << dWrapNextLine << "; dWrapTab=" << dWrapTab << endl; 
+	yzDebug() << "mCursor:" << *mCursor << "; dCursor:" << *dCursor << endl; */
 
 	if ( applyCursor ) {
 
@@ -876,7 +887,7 @@ QString YZView::moveUp( const QString& , YZCommandArgs args ) {
 	unsigned int nb_lines=args.count;
 
 	//execute the code
-	unsigned int nextLine = QMAX( mCursor->getY()-nb_lines,0);
+	unsigned int nextLine = QMAX( mCursor->getY() - nb_lines, 0 );
 	GOTO_STICKY_COL( nextLine );
 
 	//reset the input buffer
@@ -1017,7 +1028,7 @@ void YZView::applyChanges( const YZCursor& pos, unsigned int len, bool applyCurs
 	} else 
 		paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 
-	if ( applyCursor ) 
+	if ( applyCursor )
 		gotoxy( pos.getX() + len, pos.getY() );
 	else 
 		gotoxy( origPos->getX(), origPos->getY(), false );
@@ -1501,23 +1512,39 @@ QString YZView::searchAgain( const QString& /*inputsBuff*/, YZCommandArgs args )
 	return QString::null;
 }
 
+/*
+ * Drawing engine
+ */
+
+void YZView::setFixedFont( bool fixed ) {
+	isFontFixed = fixed;
+	spaceWidth = GET_CHAR_WIDTH( ' ' );
+}
+
 bool YZView::isColumnVisible( unsigned int column, unsigned int  ) {
 	return ! (column < dCurrentLeft || column >= (dCurrentLeft + mColumnsVis));
 }
 
+
 /* update sCurLine informations */
 void YZView::updateCurLine( ) {
 	sCurLineLength = sCurLine.length();
-	if ( wrap ) rCurLineLength = sCurLineLength + sCurLine.contains( '\t' ) * ( tabwidth - 1 );
+	if ( wrap && ! drawMode ) {
+		unsigned int nbTabs = sCurLine.contains( '\t' );
+		if ( isFontFixed ) rMinCurLineLength = sCurLineLength;
+		else rMinCurLineLength = GET_STRING_WIDTH( QString( sCurLine ).remove( '\t' ) ) + nbTabs * spaceWidth;
+		rCurLineLength = rMinCurLineLength + nbTabs * ( tablength - spaceWidth );
+	}
 }
-	
 
 void YZView::initDraw( ) {
 	initDraw( mCurrentLeft, mCurrentTop, dCurrentLeft, dCurrentTop );
 }
 
-void YZView::initDraw( unsigned int sLeft, unsigned int sTop, 
-			unsigned int rLeft, unsigned int rTop ) {
+/**
+ * initDraw is called before each cursor/draw manipulation.
+ */
+void YZView::initDraw( unsigned int sLeft, unsigned int sTop, unsigned int rLeft, unsigned int rTop, bool draw ) {
 	sCurrentLeft = sLeft;
 	sCurrentTop = sTop;
 	rCurrentLeft = rLeft;
@@ -1528,40 +1555,52 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 	rCursor->setX( rCurrentLeft );
 	rCursor->setY( rCurrentTop );
 
-	rLineLength = 0;
-	rColLength = 0;
+	rColLength = 1;
+
 	sLineLength = 0;
-	sColLength = 0;
-	rLineHeight = 0;
+	rLineLength = 0;
+	rLineHeight = 1;
 	rSpaceFill = 0;
+
+	adjust = false;
 
 	tabwidth = getLocalIntOption("tabwidth");
 	wrap = getLocalBoolOption( "wrap" );
 
-	wrapNextLine = false;
-	if ( sCursor->getY() < mBuffer->lineCount() && ! mBuffer->textline( sCursor->getY() ).isNull() )
-		sCurLine = mBuffer->textline ( sCursor->getY() );
-	else
-		sCurLine = "";
-	updateCurLine( );
+	tablength = tabwidth * spaceWidth;
+	areaModTab = ( tablength - mColumnsVis % tablength ) % tablength;
 
-	drawMode = true;
+	wrapNextLine = false;
+	if ( sCursor->getY() < mBuffer->lineCount() ) {
+		sCurLine = mBuffer->textline ( sCursor->getY() );
+		if ( sCurLine.isNull() ) sCurLine = "";
+	} else sCurLine = "";
+
+	drawMode = draw;
+	updateCurLine( );
 }
 
 bool YZView::drawPrevLine( ) {
 	if ( ! wrapNextLine ) {
-		sLineLength = 1;
+		if ( rLineHeight > 1 ) {
+			sLineLength = 0;
+			--rLineHeight;
+		} else {
+			sLineLength = 1;
+			rLineHeight = 1;
+		}
 		sCursor->setX( sCurrentLeft );
 		rCursor->setX( rCurrentLeft );
 		sCursor->setY( sCursor->getY() - sLineLength );
+		if ( rLineLength == 0 && sLineLength > 0 ) {
+			rLineLength = 1;
+		}
 		rSpaceFill = 0;
 		sLineLength = 1;
-		sColLength = 0;
-		rColLength = 0;
-		rLineHeight = 1;
+		rColLength = 1;
 	} else {
 		rCursor->setX( mColumnsVis - rColLength );
-		rSpaceFill -= ( tabwidth - mColumnsVis % tabwidth ) % tabwidth;
+		rSpaceFill = rSpaceFill - areaModTab;
 		--rLineHeight;
 	}
 	rCursor->setY( rCursor->getY( ) - rLineLength );
@@ -1574,17 +1613,9 @@ bool YZView::drawPrevLine( ) {
 			updateCurLine( );
 		}
 		if ( rCurrentLeft > 0 && ! wrapNextLine ) {
-			sCursor->setX( 0 );
 			rCursor->setX( 0 );
+			sCursor->setX( 0 );
 			gotodx( rCurrentLeft );
-			if ( drawMode ) {
-				rSpaceFill -= ( tabwidth - rCurrentLeft % tabwidth ) % tabwidth;
-				if ( rCursor->getX( ) > rCurrentLeft ) {
-					sCursor->setX( sCursor->getX() - 1 );
-				}
-				rColLength = 0;
-				sColLength = 0;
-			}
 		}
 		if ( ( rCursor->getY() - rCurrentTop ) < mLinesVis ) {
 			return true;
@@ -1602,22 +1633,22 @@ bool YZView::drawNextLine( ) {
 		sCursor->setX( sCurrentLeft );
 		sCursor->setY( sCursor->getY() + sLineLength );
 		rCursor->setX( rCurrentLeft );
+		if ( rLineLength == 0 && sLineLength > 0 ) {
+			// this is need when drawNextCol is called before drawNextLine ( when scrolling )
+			rLineLength = 1;
+		}
 		rSpaceFill = 0;
 		sLineLength = 1;
 		rLineHeight = 1;
 	} else {
-		if ( drawMode )
-			sCursor->setX( sCursor->getX() - 1 - ( rCursor->getX() - mColumnsVis > 1 ? 1 : 0 ) );
-		else if ( ! drawMode )
-			sCursor->setX( sCursor->getX() - ( rCursor->getX() - mColumnsVis > 0 ? 1 : 0 ) );
+		if ( wrapTab ) sCursor->setX( sCursor->getX() - 1 );
 		rCursor->setX( 0 );
-		rSpaceFill += ( tabwidth - mColumnsVis % tabwidth ) % tabwidth;
+
+		rSpaceFill = ( rSpaceFill + areaModTab ) % tablength;
 		++rLineHeight;
 	}
 	rCursor->setY( rCursor->getY( ) + rLineLength );
 	rLineLength = 1;
-	sColLength = 0;
-	rColLength = 0;
 
 	if ( sCursor->getY() < mBuffer->lineCount() ) {
 		YZLine *yl = mBuffer->yzline( sCursor->getY() );
@@ -1628,16 +1659,17 @@ bool YZView::drawNextLine( ) {
 		if ( rCurrentLeft > 0 && ! wrapNextLine ) {
 			sCursor->setX( 0 );
 			rCursor->setX( 0 );
+			adjust = true;
 			gotodx( rCurrentLeft );
+			adjust = false;
 			if ( drawMode ) {
-				rSpaceFill += ( tabwidth - rCurrentLeft % tabwidth ) % tabwidth;
+				if ( mCurrentLeft > 0 )
+					rSpaceFill = ( tablength - mCurrentLeft % tablength ) % tablength;
 				if ( rCursor->getX( ) > rCurrentLeft ) {
 					sCursor->setX( sCursor->getX() - 1 );
 					rCursor->setX( rCurrentLeft );
 				}
 			}
-			rColLength = 0;
-			sColLength = 0;
 		}
 		if ( drawMode && ( rCursor->getY() - rCurrentTop ) < mLinesVis ) {
 			rHLa = NULL;
@@ -1660,25 +1692,28 @@ bool YZView::drawNextLine( ) {
 	return false;
 }
 
+#define WATCHLINE 0 
+#define DEBUG_LINE if ( ! drawMode && sCursor->getY() == WATCHLINE ) yzDebug()
+
 bool YZView::drawPrevCol( ) {
 	wrapNextLine = false;
+	unsigned int shift = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLineLength > 0 ) ) ? 1 : 0;
 	if ( sCursor->getX() >= sColLength ) {
 		unsigned int curx = sCursor->getX( ) - 1;
 		sCursor->setX( curx );
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {
-			rColLength = 1;
-			sColLength = 1;
+			rColLength = GET_CHAR_WIDTH( lastChar );
 			if ( rCursor->getX() >= rColLength )
 				rCursor->setX( rCursor->getX( ) - rColLength );
 			else
-				wrapNextLine = ( wrap && rCurLineLength > mColumnsVis && rCursor->getX() == 0 && sCursor->getX() > 0 );
+				wrapNextLine = ( wrap && rCurLineLength > mColumnsVis - shift && rCursor->getX() == 0 && sCursor->getX() > 0 );
 			sLineLength = wrapNextLine ? 0 : 1;
 		} else {
 			/* go back to begin of line */
-			initDraw( 0, sCursor->getY(), 0, rCursor->getY() - ( rLineHeight - 1 ) );
-			rLineLength = 1;
-			rLineHeight = 1;
+			DEBUG_LINE << "rLineHeight=" << rLineHeight << " at " << *rCursor << endl;
+			initDraw( 0, sCursor->getY(), 0, rCursor->getY() - rLineHeight + 1 );
+			drawMode = false;
 			return false;
 		}
 	}
@@ -1686,38 +1721,81 @@ bool YZView::drawPrevCol( ) {
 }
 
 bool YZView::drawNextCol( ) {
+//	if ( drawMode ) yzDebug() << "drawNextCol at " << *sCursor << "," << *rCursor << endl;
 	bool ret = false;
 	unsigned int curx = sCursor->getX( );
 	wrapNextLine = false;
 
-	if ( curx < sCurLineLength) {
-		ret = rCursor->getX() - mCurrentLeft < mColumnsVis;
+//	DEBUG_LINE << "init drawNextCol s=" << *sCursor << ";r=" << *rCursor << endl;
+
+	// keep value
+	bool lastCharWasTab = rLastCharWasTab;
+
+	unsigned int nextLength = 0;
+	if ( ! drawMode ) nextLength = spaceWidth;
+
+	rColLength = spaceWidth;
+
+	rLastCharWasTab = false;
+	if ( curx < sCurLineLength ) {
+		unsigned int lenToTest;
 		lastChar = sCurLine[ curx ];
 		if ( lastChar != tabChar ) {
 			if ( drawMode ) charSelected = selectionPool->isSelected( sCursor );
-			rColLength = 1;
+			rColLength = GET_CHAR_WIDTH( lastChar );
+			lenToTest = rColLength;
 		} else {
+			rLastCharWasTab = true;
 			lastChar = ' ';
 			if ( rCursor->getX( ) == mCurrentLeft ) 
-				rColLength = ( rSpaceFill ? rSpaceFill : tabwidth );
+				rColLength = ( rSpaceFill ? rSpaceFill : tablength );
 			else {
-				unsigned int col = rCursor->getX() % tabwidth;
-				if ( mCurrentLeft == 0 && rSpaceFill ) {
-					if ( col < rSpaceFill ) col = tabwidth + col - rSpaceFill;
-					else col -= rSpaceFill;
-				}
-				rColLength = tabwidth - col;
+				// calculate tab position
+				unsigned int mySpaceFill = ( mCurrentLeft == 0 ? rSpaceFill : 0 );	// do not care about rSpaceFill if we arent't in wrapped mode
+				if ( rCursor->getX() >= mySpaceFill ) 
+					rColLength = ( ( rCursor->getX() - mySpaceFill ) / tablength  + 1 ) * tablength + mySpaceFill - rCursor->getX();
+				else
+					rColLength = mySpaceFill + spaceWidth - rCursor->getX();
 			}
+			if ( drawMode ) lenToTest = spaceWidth;
+			else lenToTest = rColLength;
 		}
-		sColLength = 1;
+		if ( ! drawMode && ! isFontFixed && sCursor->getX() + sColLength < sCurLineLength )
+			nextLength = GET_CHAR_WIDTH( sCurLine[ sCursor->getX() + sColLength ] );
 
-		rCursor->setX( rCursor->getX() + rColLength );
-		sCursor->setX( sCursor->getX() + sColLength );
-		if ( drawMode && ret ) rHLa += sColLength;
+		// will our new char appear in the area ?
+		ret = adjust || rCursor->getX() + lenToTest - mCurrentLeft <= mColumnsVis - nextLength;
+
+		if ( ret || ! drawMode ) {
+			// moving cursors
+			rCursor->setX( rCursor->getX() + rColLength );
+			sCursor->setX( sCursor->getX() + sColLength );
+			// update HL
+			if ( drawMode ) rHLa += sColLength;
+		}
 	}
+
+	// can we go after the end of line buffer ?
 	unsigned int shift = ( ! drawMode && ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT == mMode && sCurLineLength > 0 ) ) ? 1 : 0;
-	wrapNextLine = ( wrap && rCursor->getX() >= mColumnsVis && curx < sCurLineLength + shift );
+
+	// drawCursor is after end of area ?
+	wrapNextLine = ( wrap && rCursor->getX() + ( ret || ! drawMode ? 0 : rColLength ) > mColumnsVis - nextLength && curx < sCurLineLength + shift );
+
+	// only remember of case where wrapNextLine is true ( => we will wrap a tab next drawNextCol )
+	if ( rLastCharWasTab )	rLastCharWasTab = wrapNextLine;
+
+	// wrapNextLine is true, we are out of area ( ret is false ), last char was a tab => we are wrapping a tab
+	if ( wrapNextLine ) {
+		if ( drawMode )	wrapTab = ! ret && lastCharWasTab;
+		else wrapTab = rLastCharWasTab && rCursor->getX() > mColumnsVis;
+	}
+
+	// do not increment line buffer if we are wrapping a line
 	sLineLength = wrapNextLine ? 0 : 1;
+
+//	if ( drawMode && mCurrentLeft > 0 )
+//		yzDebug() << "done drawNextCol s=" << *sCursor << ";r=" << *rCursor << ";ret=" << ret << ";wrapNextLine=" 
+//			<< wrapNextLine << ";rLastCharWasTab=" << rLastCharWasTab << ";wrapTab=" << wrapTab << endl;
 
 	return ret;
 }

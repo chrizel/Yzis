@@ -57,7 +57,16 @@ class YZView {
 		virtual ~YZView();
 
 		/**
+		 * set font mode ( fixed or not )
+		 * @arg fixed is true if used font is fixed
+		 */
+		void setFixedFont( bool fixed );
+
+		/**
 		 * Updates the number of visible @arg c columns and @arg l lines
+		 * @arg c is the number of columns ( fixed fonts ) or width in pixel ( non-fixed fonts ) of the Area
+		 * @arg l is the number of lines
+		 * @arg resfresh if true, refreshView is called
 		 */
 		void setVisibleArea (int c, int l, bool refresh = true );
 
@@ -453,8 +462,7 @@ class YZView {
 		 * init r and s Cursor
 		 */
 		void initDraw( );
-		void initDraw( unsigned int sLeft, unsigned int sTop, 
-					unsigned int rLeft, unsigned int rTop );
+		void initDraw( unsigned int sLeft, unsigned int sTop, unsigned int rLeft, unsigned int rTop, bool draw = true );
 
 		/**
 		 * go to previous line
@@ -577,11 +585,30 @@ class YZView {
 		void setLocalQColorOption( const QString& key, const QColor& option );
 
 		/**
+		 * width of a space ( in pixel or in cols )
+		 */
+		unsigned int spaceWidth;
+
+		/**
+		 * Returns pixel width of given string str, must be implemented in ui.
+		 * Used only with non-Fixed fonts
+		 */
+		virtual unsigned int stringWidth( const QString& str ) const = 0;
+
+		/**
+		 * Returns pixel width of given char ch, must be implemented in ui.
+		 * Used only with non-Fixed fonts
+		 */
+		virtual unsigned int charWidth( const QChar& ch ) const = 0;
+
+
+		/**
 		 * Reindent given line ( cindent )
 		 */
 		void reindent( unsigned int X, unsigned int Y );
 
 	protected:
+
 		/**
 		 * The buffer we depend on
 		 */
@@ -635,6 +662,11 @@ class YZView {
 		 */
 		bool reverseSearch;
 
+		/**
+		 * is font used fixed ?
+		 */
+		bool isFontFixed;
+
 
 	private:
 		/**
@@ -658,6 +690,7 @@ class YZView {
 		unsigned int sLineLength;
 		unsigned int rSpaceFill;
 		bool drawMode;
+
 
 		/**
 		 * Number of visible lines on the view
@@ -728,9 +761,18 @@ class YZView {
 
 		YzisAttribute *rHLAttributes;
 
+		// current line
 		QString  sCurLine;
+		// current line length
 		unsigned int sCurLineLength;
+		// current line max width ( tab is 8 spaces )
 		unsigned int rCurLineLength;
+		// current line min width( tab is 1 space )
+		unsigned int rMinCurLineLength;
+
+		// last char was a tab ?
+		bool rLastCharWasTab;
+		bool dLastCharWasTab; // used to save it
 
 		void gotoy( unsigned int );
 		void gotody( unsigned int );
@@ -755,6 +797,19 @@ class YZView {
 		//cached value of tabwidth option
 		unsigned int tabwidth;	
 		bool wrap;
+		
+		// tabwidth * spaceWidth
+		unsigned int tablength;
+
+		// tablength to wrap
+		unsigned int areaModTab;
+
+		// are we wrapping a tab ?
+		bool wrapTab;
+		bool dWrapTab;
+
+		// if true, do not check for cursor visibility
+		bool adjust;
 
 		YZSelectionPool * selectionPool;
 		

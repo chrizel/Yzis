@@ -56,6 +56,8 @@ class KYZisEdit : public QWidget {
 		// update text area
 		void updateArea( );
 
+		unsigned int spaceWidth;
+
 	protected:
 		//intercept tabs
 		virtual bool event(QEvent*);
@@ -89,31 +91,7 @@ class KYZisEdit : public QWidget {
 
 		virtual void focusInEvent( QFocusEvent * );
 
-#if 0
-		inline int charWidth(const QString& text, int col, int tabWidth, bool isItalic, bool isBold) const { 
-			if ( text[ col ] == QChar( '\t' ) ) 
-				return tabWidth * standard->width(' ');
-			if ( isBold ) {
-				if ( isItalic )
-					return standardBoldItalic->charWidth(text, col); 
-				else
-					return standardBold->charWidth(text, col); 
-			}
-			return standard->charWidth(text, col); 
-		}
-
-		inline int charWidth(const QChar& c, int tabWidth, bool isItalic, bool isBold) const { 
-			if ( c == QChar( '\t' ) ) 
-				return tabWidth * standard->width(' ');
-			if ( isBold ) {
-				if ( isItalic )
-					return standardBoldItalic->width(c); 
-				else
-					return standardBold->width( c ); 
-			}
-			return standard->width(c); 
-		}
-#endif
+		void selectRect( unsigned int x, unsigned int y, unsigned int w, unsigned int h );
 
 
 	private :
@@ -123,11 +101,11 @@ class KYZisEdit : public QWidget {
 		int mCursorX;
 		int mCursorY;
 		bool mCursorShown;
-		QFont myFont;
 		QFontMetrics *standard;
 		QFontMetrics *standardBold;
 		QFontMetrics *standardBoldItalic;
 
+		bool isFontFixed;
 		/**
 		 * size of the left margin (used to draw line number)
 		 */

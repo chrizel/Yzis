@@ -60,7 +60,6 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	
 	setXMLFile( "kyzispart/kyzispart.rc" );
 	setupActions();
-	applyConfig( false );
 	
 	buffer = doc;
 	editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
@@ -70,6 +69,8 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	setFocusProxy( editor );
 	mBuffer->statusChanged();
 	mVScroll->setMaxValue( buffer->lineCount() );
+
+	applyConfig();
 }
 
 KYZisView::~KYZisView () {
@@ -104,6 +105,12 @@ void KYZisView::scrollUp( int n ) {
 void KYZisView::paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
 	mVScroll->setMaxValue( buffer->lineCount() );
 	editor->paintEvent( curx, cury, curw, curh );
+}
+unsigned int KYZisView::stringWidth( const QString& str ) const {
+	return editor->fontMetrics().width( str );
+}
+unsigned int KYZisView::charWidth( const QChar& ch ) const {
+	return editor->fontMetrics().width( ch );
 }
 
 void KYZisView::wheelEvent( QWheelEvent * e ) {

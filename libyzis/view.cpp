@@ -989,27 +989,25 @@ void YZView::initDeleteLine( const YZCursor& begin, const YZCursor& end, bool /*
 }
 
 void YZView::applyDeleteLine( const YZCursor& begin, const YZCursor& end, bool applyCursor ) {
+	unsigned int dY = dCursor->getY();
 	if ( begin.getY() == end.getY() ) {
 		if ( wrap ) { // if current line take more/less lines, repaint all bottom
 			gotoxy( mBuffer->textline( begin.getY() ).length(), begin.getY(), false );
-			bool sizeLineChanged = dCursor->getY() != lineDY;
-			gotoxy( begin.getX(), begin.getY(), false );
-			if ( sizeLineChanged ) {
-				applyDeleteLine( begin, end.getY() - begin.getY(), applyCursor );
-				return;
-			} else {
-				paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, 1 );
-			}	
-		} else {
-			paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, 1 );
-		}
-		if ( applyCursor )
-			gotoxy( begin.getX(), begin.getY() );
-		else
-			gotoxy( origPos->getX(), origPos->getY() );
-		stickyCol = dCursor->getX( );
+			if ( lineDY != dCursor->getY() )
+				paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
+			else
+				paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
+		} else
+			paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
+
 	} else
-		applyDeleteLine( begin, end.getY() - begin.getY(), applyCursor );
+		paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
+
+	if ( applyCursor )
+		gotoxy( begin.getX(), begin.getY() );
+	else
+		gotoxy( origPos->getX(), origPos->getY() );
+	stickyCol = dCursor->getX( );
 }
 
 

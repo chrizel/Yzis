@@ -45,44 +45,68 @@ class YZExLua : public QObject {
 		QString loadFile(YZView *view, const QString& inputs);
 
 		/**
-		 * Get text from view, startCol, startLine, endCol, endLine
+		 * Extract some text from view.
+		 * Arguments:
+		 * startCol, startLine, endCol, endLine
+		 *
+		 * Returns a string
 		 */
 		static int text(lua_State *L);
 
 		/**
-		 * Get one line of text
+		 * Get one line of text:
+		 * Arguments:
+		 * - the line number
+		 *
+		 * Returns a string
 		 */
 		static int line(lua_State *L);
 
 		/**
-		 * Insert text on view, at startCol,startLine,text
+		 * Insert text on view:
+		 * Arguments:
+		 * startCol,startLine,text
+		 *
+		 * Returns nothing.
 		 */
 		static int insert(lua_State *L);
 
 		/**
-		 * Replace text on view, at startCol,startLine,text
+		 * Replace text on view.
+		 * Arguments:
+		 * startCol,startLine, text to replace
+		 *
+		 * Returns nothing.
 		 */
 		static int replace(lua_State *L);
 
 		/**
-		 * Get the current X position in buffer
+		 * Returns the current column position in buffer
 		 */
 		static int wincol(lua_State *L);
 
 		/**
-		 * Get the current Y position in buffer
+		 * Returns the current line position in buffer
 		 */
 		static int winline(lua_State *L);
 
 		/**
 		 * Moves the cursor to the given position
+		 * Arguments: col, line
+		 *
+		 * Note: the underscore is necessary because the name is already
+		 * reserved in C++
 		 */
-		static int YZExLua::gotoxy(lua_State *L);
+		static int _goto(lua_State *L);
 
 		/**
-		 * Deletes the line at the given index
+		 * Deletes the given line.
+		 * Returns nothing
+		 *
+		 * Note: the underscore is necessary because the name is already
+		 * reserved in C++
 		 */
-		static int YZExLua::delline(lua_State *L);
+		static int YZExLua::_delete(lua_State *L);
 
 		/**
 		 * Return current's filename
@@ -91,24 +115,29 @@ class YZExLua : public QObject {
 
 		/**
 		 * Return current's syntax highlighting color for given column,line
+		 * Arguments: col, line
+		 * Returns a color string
 		 */
 		static int YZExLua::getcolor(lua_State *L);
 
 		/**
-		 * Number of lines of the current buffer
+		 * Returns the number of lines of the current buffer.
 		 */
 		static int YZExLua::linecount(lua_State *L);
 
 		/**
-		 * Return yzis version string
+		 * Returns the yzis version string
 		 */
 		static int YZExLua::version(lua_State *L);
 
 		/**
 		 * Send a set of keys contained in a string asif they were typed
-		 * by the user
+		 * by the user.
+		 *
+		 * Arguments: string
+		 * Returns nothing
 		 */
-		static int YZExLua::sendKeys(lua_State *L);
+		static int YZExLua::sendkeys(lua_State *L);
 
 	private:
 		lua_State *st;

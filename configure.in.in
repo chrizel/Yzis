@@ -22,17 +22,22 @@ AC_CHECK_LIB(magic, magic_open,[have_libmagic=yes],[have_libmagic=no])
 if test "$have_libmagic" = "no"; then
 	AC_MSG_ERROR(libmagic not found. Please install libmagic.)
 fi
-AC_CHECK_HEADER(libps/pslib.h)
-if test "$ac_cv_header_libps_pslib_h" = "no"; then
-	AC_MSG_WARN(libps.h not found. pslib will not be used.)
-fi
-AC_CHECK_LIB(ps, PS_shutdown,[have_libps=yes],[have_libps=no])
-if test "$have_libps" = "no"; then
-	AC_MSG_WARN(libps not found. pslib will not be used.)
-fi
-if test "$have_libps" = "yes" -a "$ac_cv_header_libps_pslib_h" = "yes"; then
-	AC_DEFINE(HAVE_LIBPS,1,[whether libps is present or not])
-	PS_LIBS="-lps"
+AC_ARG_ENABLE(pslib, AC_HELP_STRING([--disable-pslib],[disable Pslib-support.]),, [enable_pslib="no"])
+if test "$enable_pslib" == "yes"; then
+	AC_CHECK_HEADER(libps/pslib.h)
+	if test "$ac_cv_header_libps_pslib_h" = "no"; then
+		AC_MSG_WARN(libps.h not found. pslib will not be used.)
+	fi
+	AC_CHECK_LIB(ps, PS_shutdown,[have_libps=yes],[have_libps=no])
+	if test "$have_libps" = "no"; then
+		AC_MSG_WARN(libps not found. pslib will not be used.)
+	fi
+	if test "$have_libps" = "yes" -a "$ac_cv_header_libps_pslib_h" = "yes"; then
+		AC_DEFINE(HAVE_LIBPS,1,[whether libps is present or not])
+		PS_LIBS="-lps"
+	fi
+else
+	have_libps="no"
 fi
 
 yzis_cv_curses=/usr

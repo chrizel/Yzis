@@ -20,6 +20,7 @@
 #include "ex_executor.h"
 #include "debug.h"
 #include <qfileinfo.h>
+#include <qdir.h>
 
 YZExExecutor::YZExExecutor() {
 }
@@ -49,6 +50,10 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 	} else if ( inputs.startsWith( "wq" ) ) {
 		if ( view->myBuffer()->save() )
 			view->mySession()->quit();
+	} else if ( inputs.startsWith( "w" ) ) {
+		view->myBuffer()->save();
+	} else if ( inputs.startsWith( "w!" ) ) {
+		view->myBuffer()->save();
 	}
 	return QString::null;
 }
@@ -82,7 +87,7 @@ QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( view->myBuffer()->views().count() > 1 )
 			view->mySession()->deleteView();
-		else if ( view->myBuffer()->views().count() == 1 && view->mySession()->countBuffers() == 1) { //XXX that one does not work because we have a problem in our buffer counting stuff (from kyzis)
+		else if ( view->myBuffer()->views().count() == 1 && view->mySession()->countBuffers() == 1) {
 			if ( !view->myBuffer()->fileIsModified() || inputs.endsWith("!") )
 				view->mySession()->quit();
 			else view->mySession()->popupMessage( tr( "One file is modified ! Save it first ..." ) );

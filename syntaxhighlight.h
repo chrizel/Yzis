@@ -355,7 +355,11 @@ class YzisHighlighting
      * Highlight properties for each included highlight definition.
      * The key is the identifier
      */
+#if QT_VERSION < 0x040000
     QDict<HighlightPropertyBag> m_additionalData;
+#else
+    QHash<QString,HighlightPropertyBag*> m_additionalData;
+#endif
 
     /**
      * Fast lookup of hl properties, based on attribute index

@@ -427,7 +427,7 @@ static void lookupDirectory(const QString& path, const QString &relPart, const Q
     while( ( ep = readdir( dp ) ) != 0L )
     {
       QString fn( QFile::decodeName(ep->d_name));
-      if (fn == _dot || fn == _dotdot || fn.at(fn.length() - 1).latin1() == '~')
+      if (fn == _dot || fn == _dotdot || fn.at(fn.length() - 1) == QChar( '~' ))
 	continue;
 
       if (!recursive && !regexp.exactMatch(fn))

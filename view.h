@@ -90,9 +90,9 @@ class YZView {
 		int	isLineVisible(unsigned int l) { return ( (l>=mCurrentTop) && ((l-mCurrentTop)<mLinesVis) ); }
 
 		/**
-		 * Returns true if the column @arg c is visible. False otherwise
+		 * Returns true if the column @arg c is visible for @arg line ( expanding TABs ). False otherwise
 		 */
-		int	isColumnVisible(unsigned int c) { return ( (c>=mCurrentLeft) && ((c-mCurrentLeft)<mColumnsVis) ); }
+		bool	isColumnVisible(unsigned int column, unsigned int line);
 
 		/**
 		 * Returm my current buffer

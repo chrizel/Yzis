@@ -1,44 +1,65 @@
-/* This file is part of the Yzis libraries
- *  Copyright (C) 2003,2004 Mickael Marchand <marchand@kde.org>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
- **/
+/* This file is part of the KDE libraries
+   Copyright (C) 2001,2002 Joseph Wenninger <jowenn@kde.org>
+   Copyright (C) 2001 Christoph Cullmann <cullmann@kde.org>
+   Copyright (C) 1999 Jochen Wilhelmy <digisnap@cs.tu-berlin.de>
 
-#ifndef __YZ_SYNTAXHIGHLIGHT_H__
-#define __YZ_SYNTAXHIGHLIGHT_H__
+   This library is free software; you can redistribute it and/or
+   modify it under the terms of the GNU Library General Public
+   License version 2 as published by the Free Software Foundation.
 
-#include <qdom.h>
-#include <qptrlist.h>
-#include <qstringlist.h>
-#include <qapplication.h>
-#include <qintdict.h>
-#include <qobject.h>
-#include <qdict.h>
-#include "syntaxdocument.h"
-#include "attribute.h"
+   This library is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU Library General Public License
+   along with this library; see the file COPYING.LIB.  If not, write to
+   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+   Boston, MA 02111-1307, USA.
+*/
+
+#ifndef __KATE_HIGHLIGHT_H__
+#define __KATE_HIGHLIGHT_H__
+
 #include "line.h"
+#include "attribute.h"
+
+#include <qptrlist.h>
+#include <qvaluelist.h>
 #include <qregexp.h>
+#include <qdict.h>
+#include <qintdict.h>
+#include <qmap.h>
+#include <qobject.h>
+#include <qstringlist.h>
+#include <qguardedptr.h>
 
 class YzisHlContext;
+class YzisHlItem;
+class YzisHlItemData;
+class YzisHlData;
+class YzisEmbeddedHlInfo;
+class YzisHlIncludeRule;
+class YzisSyntaxDocument;
+class YZLine;
+class YzisSyntaxModeListItem;
+class YzisSyntaxContextData;
+
+class QPopupMenu;
+
+// some typedefs
+typedef QPtrList<YzisAttribute> YzisAttributeList;
+typedef QValueList<YzisHlIncludeRule*> YzisHlIncludeRules;
+typedef QPtrList<YzisHlItemData> YzisHlItemDataList;
+typedef QPtrList<YzisHlData> YzisHlDataList;
+typedef QMap<QString,YzisEmbeddedHlInfo> YzisEmbeddedHlInfos;
+typedef QMap<int*,QString> YzisHlUnresolvedCtxRefs;
 
 //Item Properties: name, Item Style, Item Font
 class YzisHlItemData : public YzisAttribute
 {
   public:
-    YzisHlItemData(const QString name, int defStyleNum);
+    YzisHlItemData(const QString  name, int defStyleNum);
 
     enum ItemStyles {
       dsNormal,
@@ -72,259 +93,188 @@ class YzisHlData
     int priority;
 };
 
-
-/**
- * Read and interpret the syntax file document to create HL structures
- */
-class YzisSyntaxHighlight 
+class YzisHighlighting
 {
   public:
-    /**
-     * Constructor
-     */
-    YzisSyntaxHighlight();
+    YzisHighlighting(const YzisSyntaxModeListItem *def);
+    ~YzisHighlighting();
 
-    /**
-     * Desctructor
-     */
-    ~YzisSyntaxHighlight();
+  public:
+    void doHighlight ( YZLine *prevLine,
+                       YZLine *textLine,
+                       QMemArray<signed char> *foldingList,
+                       bool *ctxChanged );
+
+    void loadWildcards();
+    QValueList<QRegExp>& getRegexpExtensions();
+    QStringList& getPlainExtensions();
+
+    QString getMimetypes();
+
+    // this pointer needs to be deleted !!!!!!!!!!
+//    YzisHlData *getData();
+    void setData(YzisHlData *);
+
+    void setYzisHlItemDataList(uint schema, YzisHlItemDataList &);
+
+    // both methodes return hard copies of the internal lists
+    // the lists are cleared first + autodelete is set !
+    // keep track that you delete them, or mem will be lost
+    void getYzisHlItemDataListCopy (uint schema, YzisHlItemDataList &);
+
+    inline QString name() const {return iName;}
+    inline QString section() const {return iSection;}
+    inline QString version() const {return iVersion;}
+    QString author () const { return iAuthor; }
+    QString license () const { return iLicense; }
+    int priority();
+    inline QString getIdentifier() const {return identifier;}
+    void use();
+    void release();
+    bool isInWord(QChar c);
+
+    inline QString getCommentStart() const {return cmlStart;};
+    inline QString getCommentEnd()  const {return cmlEnd;};
+    inline QString getCommentSingleLineStart() const { return cslStart;};
+
+    void clearAttributeArrays ();
+
+    QMemArray<YzisAttribute> *attributes (uint schema);
+
+    inline bool noHighlighting () const { return noHl; };
+
+  private:
+    // make this private, nobody should play with the internal data pointers
+    void getYzisHlItemDataList(uint schema, YzisHlItemDataList &);
+
+    void init();
+    void done();
+    void makeContextList ();
+    void handleYzisHlIncludeRules ();
+    void handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::iterator it, YzisHlIncludeRules *list);
+    int addToContextList(const QString &ident, int ctx0);
+    void addToYzisHlItemDataList();
+    void createYzisHlItemData (YzisHlItemDataList &list);
+    void readGlobalKeywordConfig();
+    void readCommentConfig();
+    void readFoldingConfig ();
+
+    // manipulates the ctxs array directly ;)
+    void generateContextStack(int *ctxNum, int ctx, QMemArray<short> *ctxs, int *posPrevLine,bool lineContinue=false);
+
+    YzisHlItem *createYzisHlItem(struct YzisSyntaxContextData *data, YzisHlItemDataList &iDl, QStringList *RegionList, QStringList *ContextList);
+    int lookupAttrName(const QString& name, YzisHlItemDataList &iDl);
+
+    void createContextNameList(QStringList *ContextNameList, int ctx0);
+    int getIdFromString(QStringList *ContextNameList, QString tmpLineEndContext,/*NO CONST*/ QString &unres);
+
+    YzisHlItemDataList internalIDList;
 
     QIntDict<YzisHlContext> contextList;
-	inline YzisHlContext *contextNum (uint n) { return contextList[n]; }
-	void highlight( YZLine *prevLine, YZLine *textLine, QMemArray<signed char> foldingList, bool *ctxChanged);
-    void generateContextStack(int *ctxNum, int ctx, QMemArray<short> *ctxs, int *posPrevLine,bool lineContinue=false);
-	
-  private:
-	bool noHl;
-	YzisSyntaxDocument *mSdoc;
+    inline YzisHlContext *contextNum (uint n) { return contextList[n]; }
+
+    // make them pointers perhaps
+    YzisEmbeddedHlInfos embeddedHls;
+    YzisHlUnresolvedCtxRefs unresolvedContextReferences;
+    QStringList RegionList;
+    QStringList ContextNameList;
+
+    bool noHl;
+    bool folding;
+    bool casesensitive;
+    QString weakDeliminator;
+    QString deliminator;
+
+    QString cmlStart;
+    QString cmlEnd;
+    QString cslStart;
+    QString iName;
+    QString iSection;
+    QString iWildcards;
+    QString iMimetypes;
+    QString identifier;
+    QString iVersion;
+    QString iAuthor;
+    QString iLicense;
+    int m_priority;
+    int refCount;
+
+    QString errorsAndWarnings;
+    QString buildIdentifier;
+    QString buildPrefix;
+    bool building;
+    uint itemData0;
+    uint buildContext0Offset;
+    YzisHlIncludeRules includeRules;
+    QValueList<int> contextsIncludingSomething;
+    bool m_foldingIndentationSensitive;
+
+    QIntDict< QMemArray<YzisAttribute> > m_attributeArrays;
+
+    QString extensionSource;
+    QValueList<QRegExp> regexpExtensions;
+    QStringList plainExtensions;
+
+  public:
+    inline bool foldingIndentationSensitive () { return m_foldingIndentationSensitive; }
+    inline bool allowsFolding(){return folding;}
 };
 
-class YzisHlItem
+class YzisHlManager : public QObject
 {
-  public:
-    YzisHlItem(int attribute, int context,signed char regionId, signed char regionId2);
-    virtual ~YzisHlItem();
-
-  public:
-    virtual bool alwaysStartEnable() const { return true; };
-    virtual bool hasCustomStartEnable() const { return false; };
-    virtual bool startEnable(const QChar&);
-
-    // Changed from using QChar*, because it makes the regular expression check very
-    // inefficient (forces it to copy the string, very bad for long strings)
-    // Now, the function returns the offset detected, or 0 if no match is found.
-    // bool linestart isn't needed, this is equivalent to offset == 0.
-    virtual int checkHgl(const QString& text, int offset, int len) = 0;
-
-    virtual bool lineContinue(){return false;}
-
-    QPtrList<YzisHlItem> *subItems;
-    int attr;
-    int ctx;
-    signed char region;
-    signed char region2;
-
-    bool lookAhead;
-};
-
-class YzisHlContext
-{
-  public:
-    YzisHlContext (int attribute, int lineEndContext,int _lineBeginContext, bool _fallthrough, int _fallthroughContext);
-
-    QPtrList<YzisHlItem> items;
-    int attr;
-    int ctx;
-    int lineBeginContext;
-    bool fallthrough;
-    int ftctx; // where to go after no rules matched
-};
-
-class YzisEmbeddedHlInfo
-{
-  public:
-    YzisEmbeddedHlInfo() {loaded=false;context0=-1;}
-    YzisEmbeddedHlInfo(bool l, int ctx0) {loaded=l;context0=ctx0;}
-
-  public:
-    bool loaded;
-    int context0;
-};
-
-class YzisHlIncludeRule
-{
-  public:
-    YzisHlIncludeRule(int ctx_, uint pos_, const QString &incCtxN_) {ctx=ctx_;pos=pos_;incCtxN=incCtxN_;incCtx=-1;}
-    YzisHlIncludeRule(int ctx_, uint  pos_) {ctx=ctx_;pos=pos_;incCtx=-1;incCtxN="";}
-
-  public:
-    uint pos;
-    int ctx;
-    int incCtx;
-    QString incCtxN;
-};
-
-class YzisHlCharDetect : public YzisHlItem
-{
-  public:
-    YzisHlCharDetect(int attribute, int context,signed char regionId,signed char regionId2, QChar);
-    virtual int checkHgl(const QString& text, int offset, int len);
+  Q_OBJECT
 
   private:
-    QChar sChar;
-};
+    YzisHlManager();
 
-class YzisHl2CharDetect : public YzisHlItem
-{
   public:
-    YzisHl2CharDetect(int attribute, int context, signed char regionId,signed char regionId2,  QChar ch1, QChar ch2);
-    YzisHl2CharDetect(int attribute, int context,signed char regionId,signed char regionId2,  const QChar *ch);
+    ~YzisHlManager();
 
-    virtual int checkHgl(const QString& text, int offset, int len);
+    static YzisHlManager *self();
+
+//    inline KConfig *getKConfig() { return &m_config; };
+
+    YzisHighlighting *getHl(int n);
+    int nameFind(const QString &name);
+
+    int detectHighlighting (class YzisDocument *doc);
+
+    int findHl(YzisHighlighting *h) {return hlList.find(h);}
+    QString identifierForName(const QString&);
+
+    // methodes to get the default style count + names
+    static uint defaultStyles();
+    static QString defaultStyleName(int n);
+
+    void getDefaults(uint schema, YzisAttributeList &);
+    void setDefaults(uint schema, YzisAttributeList &);
+
+    int highlights();
+    QString hlName(int n);
+    QString hlSection(int n);
+
+  signals:
+    void changed();
 
   private:
-    QChar sChar1;
-    QChar sChar2;
-};
-
-class YzisHlStringDetect : public YzisHlItem
-{
-  public:
-    YzisHlStringDetect(int attribute, int context, signed char regionId,signed char regionId2, const QString &, bool inSensitive=false);
-
-    virtual int checkHgl(const QString& text, int offset, int len);
+    int wildcardFind(const QString &fileName);
+    int mimeFind(const QByteArray &contents);
+    int realWildcardFind(const QString &fileName);
 
   private:
-    const QString str;
-    bool _inSensitive;
+    friend class YzisHighlighting;
+
+    QPtrList<YzisHighlighting> hlList;
+    QDict<YzisHighlighting> hlDict;
+
+    static YzisHlManager *s_self;
+
+    //KConfig m_config;
+    QStringList commonSuffixes;
+
+    YzisSyntaxDocument *syntax;
 };
-
-class YzisHlRangeDetect : public YzisHlItem
-{
-  public:
-    YzisHlRangeDetect(int attribute, int context, signed char regionId,signed char regionId2, QChar ch1, QChar ch2);
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-
-  private:
-    QChar sChar1;
-    QChar sChar2;
-};
-
-class YzisHlKeyword : public YzisHlItem
-{
-  public:
-    YzisHlKeyword(int attribute, int context,signed char regionId,signed char regionId2, bool casesensitive, const QString& delims);
-
-    virtual void addWord(const QString &);
-    virtual void addList(const QStringList &);
-    virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool startEnable(const QChar& c);
-    virtual bool alwaysStartEnable() const;
-    virtual bool hasCustomStartEnable() const;
-
-  private:
-    QDict<bool> dict;
-    bool _caseSensitive;
-    const QString& deliminators;
-};
-
-class YzisHlInt : public YzisHlItem
-{
-  public:
-    YzisHlInt(int attribute, int context, signed char regionId,signed char regionId2);
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
-};
-
-class YzisHlFloat : public YzisHlItem
-{
-  public:
-    YzisHlFloat(int attribute, int context, signed char regionId,signed char regionId2);
-    virtual ~YzisHlFloat () {}
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
-};
-
-class YzisHlCFloat : public YzisHlFloat
-{
-  public:
-    YzisHlCFloat(int attribute, int context, signed char regionId,signed char regionId2);
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-    int checkIntHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
-};
-
-class YzisHlCOct : public YzisHlItem
-{
-  public:
-    YzisHlCOct(int attribute, int context, signed char regionId,signed char regionId2);
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
-};
-
-class YzisHlCHex : public YzisHlItem
-{
-  public:
-    YzisHlCHex(int attribute, int context, signed char regionId,signed char regionId2);
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool alwaysStartEnable() const;
-};
-
-class YzisHlLineContinue : public YzisHlItem
-{
-  public:
-    YzisHlLineContinue(int attribute, int context, signed char regionId,signed char regionId2);
-
-    virtual bool endEnable(QChar c) {return c == '\0';}
-    virtual int checkHgl(const QString& text, int offset, int len);
-    virtual bool lineContinue(){return true;}
-};
-
-class YzisHlCStringChar : public YzisHlItem
-{
-  public:
-    YzisHlCStringChar(int attribute, int context, signed char regionId,signed char regionId2);
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-};
-
-class YzisHlCChar : public YzisHlItem
-{
-  public:
-    YzisHlCChar(int attribute, int context,signed char regionId,signed char regionId2);
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-};
-
-class YzisHlAnyChar : public YzisHlItem
-{
-  public:
-    YzisHlAnyChar(int attribute, int context, signed char regionId,signed char regionId2, const QString& charList);
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-
-  private:
-    const QString _charList;
-};
-
-class YzisHlRegExpr : public YzisHlItem
-{
-  public:
-    YzisHlRegExpr(int attribute, int context,signed char regionId,signed char regionId2 ,QString expr, bool insensitive, bool minimal);
-    ~YzisHlRegExpr() { delete Expr; };
-
-    virtual int checkHgl(const QString& text, int offset, int len);
-
-  private:
-    QRegExp *Expr;
-    bool handlesLinestart;
-};
-
 
 #endif
+
+// kate: space-indent on; indent-width 2; replace-tabs on;

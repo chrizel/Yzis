@@ -49,6 +49,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mExHistory.resize(200);
 	mSearchHistory.resize(200);
 	reverseSearch=false;
+	viewInformation.l = viewInformation.c1 = viewInformation.c2 = 0;
+	viewInformation.percentage = "";
 }
 
 YZView::~YZView() {
@@ -351,6 +353,7 @@ void YZView::updateCursor() {
 }
 
 void YZView::centerViewHorizontally(unsigned int column) {
+	yzDebug() << "centerViewHorizontally " << column << endl;
 	unsigned int newcurrentLeft = column - mColumnsVis / 2;
 
 	if ( newcurrentLeft > ( mMaxX - mColumnsVis ) ) {
@@ -412,7 +415,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 
 	//make sure this line is visible
 	if ( !isLineVisible( nexty ) ) centerViewVertically( nexty );
-	if ( !isColumnVisible( nextx ) ) centerViewHorizontally( nextx );
+	if ( !isColumnVisible( nextx, nexty ) ) centerViewHorizontally( nextx );
 
 	/* do it */
 	updateCursor();
@@ -783,5 +786,19 @@ QString YZView::searchAgain( const QString& /*inputsBuff*/, YZCommandArgs args )
 	return QString::null;
 }
 
+bool YZView::isColumnVisible( unsigned int column, unsigned int line ) {
+	QString l = mBuffer->textline(line).mid( 0, column );
+	int tabs = l.contains( '\t' );
+	int displayedCols = l.length() + tabs * 8 - tabs; //tabwidth
 
+	//count number of tabs before mCurrentLeft now
+	l = mBuffer->textline( line ).mid( 0, mCurrentLeft );
+	int tabsleft = l.contains( '\t' );
+	int displayedColsleft = l.length() + tabs * 8 - tabs; //tabwidth
+	
+	if ( mCurrentLeft == 0 && displayedCols >= mColumnsVis ) return false;
+	if ( displayedCols - displayedColsleft >= mColumnsVis ) return false;
+	if ( displayedCols < mCurrentLeft ) return false;
+	return true;
+}
 

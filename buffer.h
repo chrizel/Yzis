@@ -30,6 +30,7 @@
 #include "yzis.h"
 #include "session.h"
 #include "commands.h"
+#include "syntaxhighlight.h"
 
 class YZView;
 class YZLine;
@@ -294,8 +295,19 @@ public:
 	 */
 	unsigned int myId;
 
+	/**
+	 * Translator wrapper function
+	 */
 	QString tr( const char *source, const char* comment = 0) { return qApp->translate( "YZBuffer", source ); }
 
+	/**
+	 * Sets the highlighting mode for this buffer
+	 * @param mode the highlighting mode to use
+	 */
+	void setHighLight(uint mode);
+
+	void makeAttribs();
+	
 protected:
 	/**
 	 * Finds the @ref YZLine pointer for a line in the buffer
@@ -329,6 +341,8 @@ protected:
 	bool mIntro;
 	//is the file modified
 	bool mModified;
+	//current highlight mode
+	YzisHighlighting *m_highlight;
 };
 
 #endif /*  YZ_BUFFER_H */

@@ -25,6 +25,7 @@
 #include <qregexp.h>
 #include "line.h"
 #include "syntaxdocument.h"
+#include "debug.h"
 
 YZLine::YZLine(const QString &l) {
 	setData(l);
@@ -38,6 +39,7 @@ YZLine::~YZLine() {
 }
 
 void YZLine::setAttribs(uchar attribute, uint start, uint end) {
+//  yzDebug() << "YZLine setAttribs start : " << start << " end : " << end << endl;
   if (end > mAttributes.size())
     end = mAttributes.size();
 
@@ -45,6 +47,3 @@ void YZLine::setAttribs(uchar attribute, uint start, uint end) {
     mAttributes[z] = attribute;
 }
 
-
-void YZLine::highlight() {
-}

@@ -57,6 +57,7 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	mSession = sess;
 	mText.setAutoDelete( true );
 	mModified=false;
+	m_highlight = 0L;
 	// buffer at creation time should use a non existing temp filename
 	// find a tmp file that does not exist
 	do {
@@ -68,9 +69,13 @@ YZBuffer::YZBuffer(YZSession *sess) {
 	displayIntro();
 	mSession->addBuffer( this );
 	yzDebug() << "NEW BUFFER CREATED : " << mPath << endl;
+	//TEST XXX
+	setHighLight( 1 );//we have only C++ for now :)
 }
 
 YZBuffer::~YZBuffer() {
+	if ( m_highlight != 0L )
+		m_highlight->release();
 	mText.clear();
 	delete mUndoBuffer;
 	// delete the temporary file if we haven't changed the file
@@ -342,6 +347,9 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 			yzline(line)->setData(l);
 		}
 	} 
+	bool ctxChanged = false;
+	QMemArray<signed char> foldingList;
+//	m_highlight->doHighlight(yzline( line - 1 >= 0 ? line -1 : 0), yzline( line ), &foldingList, &ctxChanged );
 	setModified( true );
 }
 
@@ -513,6 +521,7 @@ QString YZBuffer::undoLast( const QString& , YZCommandArgs args ) {
 
 void YZBuffer::setModified( bool modif ) {
 	mModified = modif;
+	if ( !mUpdateView ) return;
 	statusChanged();
 }
 
@@ -523,3 +532,33 @@ void YZBuffer::statusChanged() {
 }
 
 
+// ------------------------------------------------------------------------
+//                            Syntax Highlighting
+// ------------------------------------------------------------------------
+
+void YZBuffer::setHighLight( uint mode ) {
+	YzisHighlighting *h = YzisHlManager::self()->getHl( mode );
+	
+	if ( h != m_highlight ) { //HL is changing
+		if ( m_highlight != 0L ) 
+			m_highlight->release(); //free memory
+
+		//init
+		h->use();
+
+		m_highlight = h;
+
+		makeAttribs();
+		//emit hlChanged();
+	}
+}
+
+void YZBuffer::makeAttribs() {
+	m_highlight->clearAttributeArrays();
+
+	//do something on the views
+	
+	//buffer->invalidateHL(); ?
+	
+	//tagAll(); ?
+}

@@ -9,7 +9,7 @@ docs:
 		$(mkinstalldirs) $(top_builddir)/doc/yzis-doc/en/pdf/pics; \
 	fi; \
 	for i in $(top_srcdir)/doc/yzis-doc/en/*.xml; do \
-		docbook2html -o $(top_builddir)/doc/yzis-doc/en/html $$i; \
+		xmlto html -o $(top_builddir)/doc/yzis-doc/en/html $$i; \
 	done ;\
 	cp $(top_srcdir)/doc/yzis-doc/en/pics/*.* $(top_builddir)/doc/yzis-doc/en/html/pics/ ; \
 	cp $(top_srcdir)/doc/yzis-doc/en/pics/*.* $(top_builddir)/doc/yzis-doc/en/pdf/pics/ ; \
@@ -17,6 +17,6 @@ docs:
 		$(mkinstalldirs) $(top_builddir)/doc/yzis-doc/en/pdf; \
 	fi; \
 	for i in $(top_srcdir)/doc/yzis-doc/en/*.xml; do \
-		docbook2pdf -o $(top_builddir)/doc/yzis-doc/en/pdf $$i; \
+		xmlto pdf -o $(top_builddir)/doc/yzis-doc/en/pdf $$i; \
 	done
 

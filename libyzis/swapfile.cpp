@@ -48,6 +48,7 @@ void YZSwapFile::setFileName( const QString& fname ) {
 
 void YZSwapFile::flush() {
 	if ( mRecovering ) return;
+	if ( mParent->getLocalIntOption("updatecount") == 0 ) return;
 	if ( mNotResetted ) init();
 	yzDebug() << "Flushing swap to " << mFilename << endl;
 	QFile f( mFilename );
@@ -69,6 +70,7 @@ void YZSwapFile::flush() {
 
 void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString& str, unsigned int col, unsigned int line ) {
 	if ( mRecovering ) return;
+	if ( mParent->getLocalIntOption("updatecount") == 0 ) return;
 	swapEntry e;
 	e.type = type;
 	e.col = col;

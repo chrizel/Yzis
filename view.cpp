@@ -341,13 +341,13 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 					QStringList results = YZSession::events->exec("INDENT_ON_ENTER", this);
 					if (results.count() > 0 ) {
-						QStringList::Iterator it = results.begin(), end = results.end();
-						int idt = 0;
-						for (;it != end; ++it) idt += (*it).toInt();
 						QString idtstr;
-						for (int b = 0; b < idt; ++b) idtstr+=tabChar;
-						mBuffer->action()->replaceLine( this, mainCursor->bufferY(), idtstr + mBuffer->textline( mainCursor->bufferY() ).stripWhiteSpace() );
-						gotoxy(idt,mainCursor->bufferY());
+						for (int b = 0; b < results[0].toInt(); ++b) idtstr+=tabChar;
+						for (int b = 0; b < results[1].toInt(); ++b) idtstr+=" ";
+						if (idtstr.length()!=0) {
+							mBuffer->action()->replaceLine( this, mainCursor->bufferY(), idtstr + mBuffer->textline( mainCursor->bufferY() ).stripWhiteSpace() );
+							gotoxy(results[0].toInt()+results[1].toInt(),mainCursor->bufferY());
+						}
 					}
 				}
 				updateStickyCol( mainCursor );

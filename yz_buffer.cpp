@@ -199,7 +199,7 @@ void YZBuffer::load(void)
 					break; // read some more data, the buffer is too small
 
 				/* this line is definetely too long */
-				YZLine *line = new YZLine(lines_nb++, buf, len); // ptr-buf == len, here
+				YZLine *line = new YZLine(lines_nb++, buf, len-1); // ptr-buf == len, here
 				len=0;
 				/* add the new line */
 				add_line(line);
@@ -214,7 +214,7 @@ void YZBuffer::load(void)
 			// here *ptr='\n'
 			ptr++;
 			/* we found a whole line, use it */
-			YZLine *line = new YZLine(lines_nb++, buf, ptr-buf);
+			YZLine *line = new YZLine(lines_nb++, buf, ptr-buf-1);
 			len -= (ptr-buf); memcpy(buf, ptr, len); // remove handled part
 //			debug("removing %d bytes from buf", ptr-buf);
 			/* add the new line */
@@ -249,7 +249,7 @@ void YZBuffer::load(void)
 
 		if ( (ptr-buf)>=len && (ptr-buf)>=YZ_LINE_DEFAULT_LENGTH ) {
 			/* this line is definetely too long */
-			YZLine *line = new YZLine(lines_nb++, buf, len); // ptr-buf == len, here
+			YZLine *line = new YZLine(lines_nb++, buf, len-1); // ptr-buf == len, here
 			/* add the new line */
 			add_line(line);
 //			debug("adding a looooong YZLine");
@@ -260,7 +260,7 @@ void YZBuffer::load(void)
 		// everything left has no \n in it, and len should be >0
 		yz_assert(len>0, "oops, len is not >0 here, it should though");
 		ptr++;
-		YZLine *line = new YZLine(lines_nb++, buf, len);
+		YZLine *line = new YZLine(lines_nb++, buf, len-1);
 		add_line(line);
 //		debug("adding a normal YZLine");
 	} // while (1)

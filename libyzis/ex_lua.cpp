@@ -34,55 +34,89 @@ extern "C" {
 #include <lauxlib.h>
 #include <lualib.h>
 }
+
+void print_lua_stack_value(lua_State*L, int index)
+{
+	printf("stack %d ", index );
+	switch(lua_type(L,index)) {
+		case LUA_TNIL: printf("nil\n"); break;
+		case LUA_TNUMBER: printf("number: %f\n", lua_tonumber(L,index)); break;
+		case LUA_TBOOLEAN: printf("boolean: %d\n", lua_toboolean(L,index)); break;
+		case LUA_TSTRING: printf("string: \"%s\"\n", lua_tostring(L,index)); break;
+		case LUA_TTABLE: printf("table\n"); break;
+		case LUA_TFUNCTION: printf("function\n"); break;
+		case LUA_TUSERDATA: printf("userdata\n"); break;
+		case LUA_TTHREAD: printf("thread\n"); break;
+		case LUA_TLIGHTUSERDATA: printf("light user data:\n");break;
+		default:
+		printf("Unknown lua type: %d\n", lua_type(L,index) );
+	}
+}
+
+void print_lua_stack(lua_State *L) {
+	for(int i=1; i<=lua_gettop(L); i++) {
+		print_lua_stack_value(L,i);
+	}
+}
+
+YZExLua * YZExLua::_instance = 0L;
+
+YZExLua * YZExLua::instance()
+{
+	if (YZExLua::_instance == NULL) YZExLua::_instance = new YZExLua();
+	return YZExLua::_instance;
+}
+
 YZExLua::YZExLua() {
-	st = lua_open();
-	luaopen_base(st);
-	luaopen_string( st );
-	luaopen_table( st );
-	luaopen_math( st );
-	luaopen_io( st );
-	luaopen_debug( st );
+	L = lua_open();
+	luaopen_base(L);
+	luaopen_string( L );
+	luaopen_table( L );
+	luaopen_math( L );
+	luaopen_io( L );
+	luaopen_debug( L );
 	yzDebug() << "Lua " << lua_version() << " loaded" << endl;
-	lua_register(st,"text",text);
-	lua_register(st,"line",line);
-	lua_register(st,"insert",insert);
-	lua_register(st,"insertline",insertline);
-	lua_register(st,"appendline",appendline);
-	lua_register(st,"replace",replace);
-	lua_register(st,"wincol",wincol);
-	lua_register(st,"winline",winline);
-	lua_register(st,"goto",_goto);
-	lua_register(st,"deleteline",deleteline);
-	lua_register(st,"version",version);
-	lua_register(st,"filename",filename);
-	lua_register(st,"getcolor",getcolor);
-	lua_register(st,"linecount",linecount);
-	lua_register(st,"sendkeys",sendkeys);
+	lua_register(L,"text",text);
+	lua_register(L,"line",line);
+	lua_register(L,"insert",insert);
+	lua_register(L,"insertline",insertline);
+	lua_register(L,"appendline",appendline);
+	lua_register(L,"replace",replace);
+	lua_register(L,"wincol",wincol);
+	lua_register(L,"winline",winline);
+	lua_register(L,"goto",_goto);
+	lua_register(L,"deleteline",deleteline);
+	lua_register(L,"version",version);
+	lua_register(L,"filename",filename);
+	lua_register(L,"getcolor",getcolor);
+	lua_register(L,"linecount",linecount);
+	lua_register(L,"sendkeys",sendkeys);
 }
 
 YZExLua::~YZExLua() {
-	lua_close(st);
+	lua_close(L);
 }
 
-QString YZExLua::lua( YZView* ) {
-	lua_pushstring(st,"text");
-	lua_gettable(st,LUA_GLOBALSINDEX); //to store function name
+QString YZExLua::lua(YZView *, const QString& args) {
+	printf("calling hop lua %s\n", args.latin1() );
+	execInLua( "print('called from yzis')\n" );
+	lua_pushstring(L,"text");
+	lua_gettable(L,LUA_GLOBALSINDEX); //to store function name
 	//now arguments in the right order
-	lua_pushnumber( st, 0 ); //start col
-	lua_pushnumber( st, 0 ); //start line
-	lua_pushnumber( st, 0 ); //end col
-	lua_pushnumber( st, 3 ); //end line
+	lua_pushnumber( L, 0 ); //start col
+	lua_pushnumber( L, 0 ); //start line
+	lua_pushnumber( L, 0 ); //end col
+	lua_pushnumber( L, 3 ); //end line
 
-	if ( lua_pcall( st, 4, 1, 0 ) )
-		yzDebug() << "YZExLua::lua " << lua_tostring(st, -1) << endl;
-	else
-		yzDebug() << "YZExLua::text returned " << lua_tostring( st, -1 ) << endl; //XXX remove me
+	pcall( 4, 1, 0, QString("Error when executing: %1").arg(args) );
 	return QString::null;
 }
 
 //callers
-QString YZExLua::loadFile( YZView *, const QString& file ) {
-	QString filename = file;
+QString YZExLua::source( YZView *, const QString& args ) {
+	printf("YZExLua::source( %s )\n", args.latin1() );
+	QString filename = args.mid( args.find( " " ) +1 );
+	printf("YZExLua - filneame = %s\n", filename.latin1() );
 	QStringList candidates;
 	candidates << filename 
 	           << QDir::currentDirPath()+"/"+filename
@@ -105,18 +139,43 @@ QString YZExLua::loadFile( YZView *, const QString& file ) {
 		return QString::null;
 	}
 
-	lua_pushstring(st,"dofile");
-	lua_gettable(st, LUA_GLOBALSINDEX);
-	lua_pushstring(st,found.latin1());
-	int lua_err = lua_pcall(st,1,1,0);
-	if (lua_err) {
-		QString errorMsg = lua_tostring(st,lua_gettop(st));
-		printf("%s\n", errorMsg.latin1() );
-		YZSession::me->popupMessage(tr("Lua error when running file %1:\n%2").arg(found).arg(errorMsg));
-	}
-
+	lua_pushstring(L,"dofile");
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	lua_pushstring(L,found.latin1());
+	pcall(1,1,0, tr("Lua error when running file %1:").arg(found) );
 	return QString::null;
 }
+
+int YZExLua::execInLua( const QString & luacode )
+{
+	lua_pushstring(L, "loadstring" );
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	lua_pushstring(L, luacode );
+	pcall(1,1,0, "");
+	pcall(0,0,0, "");
+	return 0;
+}
+
+bool YZExLua::pcall( int nbArg, int nbReturn, int errLevel, const QString & errorMsg )
+{
+	int lua_err = lua_pcall(L,nbArg,nbReturn,errLevel);
+	if (! lua_err) return true;
+	QString luaErrorMsg = lua_tostring(L,lua_gettop(L));
+	printf("%s\n", luaErrorMsg.latin1() );
+	YZSession::me->popupMessage(errorMsg + luaErrorMsg );
+	return false;
+}
+
+void YZExLua::yzisprint(const QString & text)
+{
+	printf("yzisprint:%s\n", text.latin1());
+}
+
+// ========================================================
+//
+//                     Lua Commands
+//
+// ========================================================
 
 //All Lua functions return the number of results returned
 int YZExLua::text(lua_State *L) {
@@ -344,6 +403,13 @@ int YZExLua::sendkeys( lua_State *L ) {
 	QString text = ( char * )lua_tostring ( L, 3 );
 	cView->sendMultipleKey( text );
 	// nothing to return
+	return 0;
+}
+
+int YZExLua::myprint(lua_State * /*L*/)
+{
+	// fetch string from the stack
+	// print it
 	return 0;
 }
 

@@ -31,18 +31,43 @@ class YZExLua : public QObject {
 	Q_OBJECT
 
 	public:
-		YZExLua();
-		~YZExLua();
+		/** Get the pointer to the singleton YZExLua */
+		static YZExLua * instance();
 
-		/**
-		 * Lua test
-		 */
-		QString lua(YZView *view);
+		~YZExLua();
 
 		/**
 		 * Source a lua file
 		 */
-		QString loadFile(YZView *view, const QString& file);
+		QString source(YZView *view, const QString& args);
+
+		/**
+		 * Execute a lua command
+		 */
+		QString lua(YZView *view, const QString& args);
+
+		/** Execute the given lua code */
+		int execInLua( const QString & luacode );
+
+		/** Called when lua wants to print */
+		void yzisprint(const QString & text);
+
+	protected:
+		/** Protected call to lua, popups an error window in case of
+		  * failure. Return true if the call is without error */
+		bool pcall( int nbArg, int nbReturn, int errLevel, const QString & errorMsg );
+
+		// ========================================================
+		//
+		//                     Lua Commands
+		//
+		// ========================================================
+
+		/**
+		  * Replacement of lua print, allows to control the output of print
+		  * Just take one string argument
+		  */
+		static int myprint(lua_State *L);
 
 		/**
 		 * Extract some text from view.
@@ -121,29 +146,29 @@ class YZExLua : public QObject {
 		 * Deletes the given line.
 		 * Returns nothing
 		 */
-		static int YZExLua::deleteline(lua_State *L);
+		static int deleteline(lua_State *L);
 
 		/**
 		 * Return current's filename
 		 */
-		static int YZExLua::filename(lua_State *L);
+		static int filename(lua_State *L);
 
 		/**
 		 * Return current's syntax highlighting color for given column,line
 		 * Arguments: col, line
 		 * Returns a color string
 		 */
-		static int YZExLua::getcolor(lua_State *L);
+		static int getcolor(lua_State *L);
 
 		/**
 		 * Returns the number of lines of the current buffer.
 		 */
-		static int YZExLua::linecount(lua_State *L);
+		static int linecount(lua_State *L);
 
 		/**
 		 * Returns the yzis version string
 		 */
-		static int YZExLua::version(lua_State *L);
+		static int version(lua_State *L);
 
 		/**
 		 * Send a set of keys contained in a string asif they were typed
@@ -152,10 +177,14 @@ class YZExLua : public QObject {
 		 * Arguments: string
 		 * Returns nothing
 		 */
-		static int YZExLua::sendkeys(lua_State *L);
+		static int sendkeys(lua_State *L);
 
-	private:
-		lua_State *st;
+	protected:
+		lua_State *L;
+
+		/** Private constructor for a singleton */
+		YZExLua();
+		static YZExLua * _instance;
 };
 
 #endif

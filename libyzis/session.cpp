@@ -24,7 +24,6 @@
 
 #include "session.h"
 #include "debug.h"
-#include "ex_lua.h"
 #include "schema.h"
 #include "buffer.h"
 #include "internal_options.h"
@@ -50,11 +49,9 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mCurView = 0;
 	me = this;
 	mSchemaManager = new YzisSchemaManager();
-	lua_executor = new YZExLua();
 }
 
 YZSession::~YZSession() {
-	delete lua_executor;
 	delete mSchemaManager;
 	delete mExPool;
 	delete mPool;

@@ -73,7 +73,7 @@ void YZExCommandPool::initPool() {
 	commands.append( new YZExCommand( "visual", &YZExCommandPool::gotoCommandMode ) );
 	commands.append( new YZExCommand( "preserve", &YZExCommandPool::preserve ) );
 	commands.append( new YZExCommand( "lua", &YZExCommandPool::lua ) );
-	commands.append( new YZExCommand( "source", &YZExCommandPool::luaLoadFile ) );
+	commands.append( new YZExCommand( "source", &YZExCommandPool::source ) );
 }
 
 QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -86,7 +86,7 @@ QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* r
 			unsigned int nc = reg.numCaptures();
 			*range = (this->*( ranges.current()->poolMethod() )) (YZExRangeArgs( ranges.current(), view, reg.cap( 1 ) ));
 			QString s_add = reg.cap( nc - 1 );
-//			yzDebug() << "matched " << ranges.current()->keySeq() << " : " << *range << " and " << s_add << endl;
+			yzDebug() << "matched " << ranges.current()->keySeq() << " : " << *range << " and " << s_add << endl;
 			if ( s_add.length() > 0 ) { // a range can be followed by +/-nb
 				int add = 1;
 				if ( s_add.length() > 1 ) add = s_add.mid( 1 ).toUInt();
@@ -124,14 +124,14 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 
 	matched = false;
 	for ( commands.first(); ! matched && commands.current(); commands.next() ) {
-		QRegExp reg( "^(" + commands.current()->keySeq() + ")(!)?(.*)$" );
+		QRegExp reg(commands.current()->regexp());
 		matched = reg.exactMatch( _input );
 		if ( matched ) {
 			unsigned int nc = reg.numCaptures();
 			yzDebug() << "matched " << commands.current()->keySeq() << " " << reg.cap( 1 ) 
 				<< "," << reg.cap( nc - 1 ) << "," << reg.cap( nc ) << endl;
 			(this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), reg.cap( nc ).stripWhiteSpace(), 
-					from, to, reg.cap( nc - 1 ).length() > 0 ));
+					from, to, false ) );
 		}
 	}
 	if ( ! matched ) view->gotoStickyCol( to );
@@ -177,6 +177,7 @@ int YZExCommandPool::rangeVisual( const YZExRangeArgs& args ) {
 QString YZExCommandPool::write( const YZExCommandArgs& args ) {
 	bool quit = args.cmd.contains( 'q') || args.cmd.contains( 'x' );
 	bool all = args.cmd.contains( 'a' );
+	bool force = (args.arg[0] == '!');
 	if ( ! quit && all ) {
 		args.view->mySession()->saveAll();
 		return QString::null;
@@ -191,24 +192,25 @@ QString YZExCommandPool::write( const YZExCommandArgs& args ) {
 		args.view->myBuffer()->getSwapFile()->setFileName( args.view->myBuffer()->fileName()+".ywp" );
 		args.view->myBuffer()->getSwapFile()->init();
 	}
-	if ( quit && args.force ) {//check readonly ? XXX
+	if ( quit && force ) {//check readonly ? XXX
 		args.view->myBuffer()->save();
 		args.view->mySession()->exitRequest(); //whatever happens => quit
 	} else if ( quit ) {
 		if ( args.view->myBuffer()->save() )
 			args.view->mySession()->exitRequest();
-	} else if ( ! args.force ) {
+	} else if ( ! force ) {
 		args.view->myBuffer()->save();
-	} else if ( args.force ) {
+	} else if ( force ) {
 		args.view->myBuffer()->save();
 	}
 	return QString::null;
 }
 QString YZExCommandPool::quit( const YZExCommandArgs& args ) {
+	bool force = (args.arg[0] == '!');
 	yzDebug() << "View counts: "<< args.view->myBuffer()->views().count() 
 		<< " Buffer Count : " << args.view->mySession()->countBuffers() << endl;
 	if ( args.cmd.startsWith( "qa" ) ) {
-		if ( args.force || ! args.view->mySession()->isOneBufferModified() ) {
+		if ( force || ! args.view->mySession()->isOneBufferModified() ) {
 			args.view->mySession()->exitRequest( );
 		} else args.view->mySession()->popupMessage( QObject::tr( "One file is modified ! Save it first ..." ) );
 	} else {
@@ -216,11 +218,11 @@ QString YZExCommandPool::quit( const YZExCommandArgs& args ) {
 		if ( args.view->myBuffer()->views().count() > 1 )
 			args.view->mySession()->deleteView( args.view->myId );
 		else if ( args.view->myBuffer()->views().count() == 1 && args.view->mySession()->countBuffers() == 1) {
-			if ( args.force || !args.view->myBuffer()->fileIsModified() )
+			if ( force || !args.view->myBuffer()->fileIsModified() )
 				args.view->mySession()->exitRequest();
 			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified ! Save it first ..." ) );
 		} else {
-			if ( args.force || !args.view->myBuffer()->fileIsModified() )
+			if ( force || !args.view->myBuffer()->fileIsModified() )
 				args.view->mySession()->deleteView(args.view->myId);
 			else args.view->mySession()->popupMessage( QObject::tr( "One file is modified ! Save it first ..." ) );
 		}
@@ -495,10 +497,10 @@ QString YZExCommandPool::preserve( const YZExCommandArgs& args  ) {
 }
 
 QString YZExCommandPool::lua( const YZExCommandArgs& args ) {
-	return YZSession::me->luaExecutor()->lua( args.view );
+	return YZExLua::instance()->lua( args.view, args.arg );
 }
 
-QString YZExCommandPool::luaLoadFile( const YZExCommandArgs& args ) {
-	return YZSession::me->luaExecutor()->loadFile( args.view, args.arg );
+QString YZExCommandPool::source( const YZExCommandArgs& args ) {
+	return YZExLua::instance()->source( args.view, args.arg );
 }
 

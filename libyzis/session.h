@@ -37,7 +37,6 @@ class YZCommandPool;
 class YZExCommandPool;
 class YZInternalOptionPool;
 class YZRegisters;
-class YZExLua;
 
 /**
  * Contains data referring to an instance of yzis
@@ -204,11 +203,6 @@ class YZSession {
 		 */
 		YzisSchemaManager *schemaManager() { return mSchemaManager; }
 
-		/**
-		 * Get a pointer on the Lua launcher
-		 */
-		YZExLua *luaExecutor() { return lua_executor; }
-
 		//HELPERS
 		/**
 		 * Retrieve an int option
@@ -291,7 +285,6 @@ class YZSession {
 		YZExCommandPool *mExPool;
 		YZView* mCurView;
 		YzisSchemaManager *mSchemaManager;
-		YZExLua *lua_executor;
 
 	public:
 		static int mNbViews;

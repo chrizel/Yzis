@@ -195,14 +195,16 @@ void KYZisFactory::quit( bool ) {
 }
 
 void KYZisFactory::setCurrentView( YZView* view ) {
+	yzDebug() << "setCurrentView " << endl;
 	currentView->hide(); //simple enough ?
 	currentView = static_cast<KYZisView*>( view );
 	currentView->show();
 }
 
-//useless for now
-void KYZisFactory::setCurrentBuffer( YZBuffer* buffer ) {
-	currentDoc = static_cast<KYZisDoc*>( buffer );
+YZView* KYZisFactory::createView( YZBuffer *buffer ) {
+  KYZisDoc *doc = static_cast<KYZisDoc*>(buffer);
+	KTextEditor::View* v = doc->createView(doc->parentWidget());
+	return dynamic_cast<YZView*>( v );
 }
 
 #include "factory.moc"

@@ -33,7 +33,7 @@ public:
 		void setFocusMainWindow();
 		void quit(bool save=true);
 		void setCurrentView( YZView* );
-		void setCurrentBuffer( YZBuffer* );
+		YZView *createView ( YZBuffer* );
 	
 protected:
 		void customEvent( QCustomEvent * );

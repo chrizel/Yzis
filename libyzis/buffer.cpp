@@ -88,6 +88,12 @@ void YZBuffer::delChar (int x, int y, int count) {
 }
 
 void YZBuffer::addNewLine( int col, int line ) {
+	yzDebug() << "NB lines in buffer: " << text.count() << " adding line at : " << line << endl;
+	if ( line == getLines() ) {//we are adding a line, fake being at end of last line
+		line --;
+		col = text[ line ].length(); 
+	}
+
 	QString l=findLine(line);
 	if (l.isNull()) return;
 
@@ -127,6 +133,7 @@ void YZBuffer::updateAllViews() {
 }
 
 void  YZBuffer::addLine(const QString &l) {
+	yzDebug() << "Adding new line : " << l << endl;
 	text.append(l);
 }
 

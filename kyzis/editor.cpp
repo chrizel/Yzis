@@ -85,6 +85,8 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 			p->eraseRect(clip);
 			if ( _parent->myBuffer()->getText().count() >= i + _parent->getCurrent() ) {
 				p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->getText()[ i + _parent->getCurrent() ]);
+			} else {//XXX TESTME
+				p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,"~");
 			}
 		}
 	}

@@ -125,11 +125,11 @@ void NYZSession::quit( bool savePopup ) {
 	exit( 0 );
 }
 
-void NYZSession::setCurrentBuffer( YZBuffer *buff ) {
-
-}
-
 void NYZSession::setCurrentView ( YZView *view ) {
  
+}
+
+YZView* NYZSession::createView( YZBuffer* buffer ) {
+	//TODO
 }
 

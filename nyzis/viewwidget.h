@@ -62,6 +62,7 @@ private:
 	 */
 	void initialiseKeycodes();
 
+	//XXX static ?
 	QMap<int,Qt::Key> keycodes; // map Ncurses to Qt codes
 
 };

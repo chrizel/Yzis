@@ -5,6 +5,7 @@
 #include "commands.h"
 #include "view.h"
 #include "debug.h"
+#include <qregexp.h>
 
 /**
  * Here is a simple example to add a new command and how to use it :
@@ -120,7 +121,6 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int *error)
 }
 
 void YZCommandPool::initExPool() {
-	//XXX should be ok now ? NEW_EX_COMMAND("w",&YZExExecutor::write,true);
 	NEW_EX_COMMAND("write", &YZExExecutor::write,true);
 	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true );
 	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true );
@@ -128,34 +128,28 @@ void YZCommandPool::initExPool() {
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
-	QString result,command;
-	int i=0;
+	QString command = inputs;
+	yzDebug() << "EX CommandLine " << command << endl;
+	// assume a command is like : "numberCOMMANDNAME parameters"
+	QRegExp rx ( "^(\\d*)(\\S+)\\b");
+	rx.search(command);
+	if ( rx.cap( 2 ) != QString::null )
+		command = rx.cap( 2 );
+	else
+		return; //no command identified XXX eventually popup error messages
+	QString cmd = QString::null;
+	QMap<QString,YZCommand>::Iterator it;
+	for ( it = globalExCommands.begin(); it!=globalExCommands.end(); ++it ) {
+		cmd = static_cast<QString>( it.key() );
+		yzDebug() << "execExCommand : testing for match " << cmd << endl;
+		if ( cmd.startsWith( command ) ) break;
+		cmd = QString::null;
+	}
 
-	//regexp ? //FIXME
-	//try to find the command we are looking for
-	//first remove any number at the beginning of command
-	//XXX 0 is itself a command !
-	while ( inputs[ i ].isDigit() )
-		i++; //go on
-	
-	//now take the command until another number
-	while ( !inputs[ i ].isDigit() && i<inputs.length() )
-		command += inputs[ i++ ];
-	//end FIXME
-	
-	//printf( "%s %s\n", inputs.latin1(), command.latin1() );
-
-	//try hard to find a correspondance
-	QMap<QString, YZCommand>::Iterator it = globalExCommands.end();
-	while ( command.length() > 0 && it == globalExCommands.end() ) {
-		it = globalExCommands.find(command);
-		if ( it==globalExCommands.end() ) command.truncate(command.length()-1);
-	} // should not end here FIXME
-	
-	if ( it!=globalExCommands.end() ) { //we got one match *ouf*
-		switch ( globalExCommands[ command ].obj ) {
+	if ( cmd != QString::null ) {
+		switch ( globalExCommands[ cmd ].obj ) {
 				case EX :
-					( *executor.*(globalExCommands[ command ].exFunc )) (view,inputs) ;
+					( *executor.*(globalExCommands[ cmd ].exFunc )) (view,inputs) ;
 					break;
 			default:
 				break;

@@ -12,7 +12,7 @@ NYZView::NYZView(NYZSession *_session, WINDOW *_window, YZBuffer *b)
 {
 	session= _session;
 	window = _window;
-	session->commandline="";
+	session->setCommandLineText( "" );
 
 	update_info();
 	wmove(window,0,0 );
@@ -207,7 +207,6 @@ void NYZView::handle_event(yz_event e)
 }
 
 void NYZView::printVoid( int relline ) {
-
 	unsigned int i;
 
 	// clipping

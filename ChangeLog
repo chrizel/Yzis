@@ -1,3 +1,14 @@
+2003-11-02 mikmak
+  * libyzis
+    - use of QRegExps for command line parsing : commands are assumed to use the
+     following scheme : numberCommandName<space>any_parameters 
+    - EX mode ready for use ;) :
+     in commands.cpp you enter new commands, for eg "write" command, which can
+     be also found by our matching algorithm as "w"
+    - o at EOF, now opens a new line properly (was a regression)
+    - support filename as :write parameters
+    - added ~ display in kyzis
+
 2003-11-01 mikmak
   * kyzis
     fix command line to not display twice the caracters

@@ -35,10 +35,8 @@ class NYZSession : public YZSession, public Gui {
 		virtual void setFocusCommandLine() {}
 		virtual void setFocusMainWindow() {}
 		virtual void quit ( bool savePopup=true ) ;
-		virtual void setCurrentBuffer ( YZBuffer * );
 		virtual void setCurrentView ( YZView * );
-
-		QString commandline;
+		virtual YZView* createView( YZBuffer* );
 		
 	private:
 		WINDOW		*screen;	// whole (ncurses) screen (== stdscr)
@@ -46,8 +44,10 @@ class NYZSession : public YZSession, public Gui {
 		WINDOW		*statusbar;	// the one we type command in (:wq)
 		WINDOW		*infobar;	// the white one with filename/size/position...
 
+		//XXX QMap-me ;)
 		WINDOW		*windows[NYZ_VIEW_MAX];
 		int		windows_nb;
+		QString commandline;
 
 };
 

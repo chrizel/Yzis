@@ -58,9 +58,14 @@ class YZSession {
 		int nbBuffers() { return buffers.count(); }
 
 		/**
-		 * Create a new buffer
+		 * Creates a new buffer
 		 */
 		YZBuffer *createBuffer(const QString& path=QString::null);
+
+		/**
+		 * Creates a view on a buffer
+		 */
+	//moved to gui.h	YZView *createView(YZBuffer *buffer);
 
 		/**
 		 * Add a buffer
@@ -83,17 +88,11 @@ class YZSession {
 		YZView* findView( int uid );
 
 		/**
-		 * Change the current buffer ( :bnext )
-		 */
-		void setCurrentBuffer( YZBuffer* );
-
-		/**
 		 * Change the current view ( unassigned )
 		 */
 		void setCurrentView( YZView* );
 
-		YZBuffer* currentBuffer() { return curBuffer; }
-		YZBuffer* nextBuffer();
+		YZView* nextView();
 		YZView* currentView() { return curView; }
 		
 		/** 
@@ -117,7 +116,6 @@ class YZSession {
     YZCommandPool *expool;
     YZMotionPool *motionpool;
 		YZView* curView;
-		YZBuffer* curBuffer;
 
 };
 

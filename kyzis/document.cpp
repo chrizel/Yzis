@@ -15,6 +15,7 @@ KYZisDoc::KYZisDoc (QWidget *parentWidget, const char * /*widgetName*/, QObject 
 		current->show();
 		setWidget(current);
 		KYZisFactory::registerDocument( this );
+		m_parent = parentWidget;
 }
 
 KYZisDoc::~KYZisDoc () {

@@ -22,6 +22,8 @@
 #include "yzis.h"
 #include "internal_options.h"
 #include "buffer.h"
+#include "action.h"
+#include "view.h"
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatetime.h>
@@ -30,14 +32,13 @@
 
 YZSwapFile::YZSwapFile(YZBuffer *b) {
 	mParent = b;
+	mRecovering = false;
 	mFilename = b->fileName()+".ywp";
-	//check if the file exists and then popup an error XXX
-	if ( QFile::exists( mFilename ) ) yzDebug() << "Swap file already EXISTS ! " << endl;
-	//then start a recover session ? XXX
 	init();
 }
 
 void YZSwapFile::setFileName( const QString& fname ) {
+	yzDebug() << "Swap change filename " << fname << endl;
 	unlink();
 	mFilename = fname;
 	init();
@@ -61,6 +62,7 @@ void YZSwapFile::flush() {
 }
 
 void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString& str, unsigned int col, unsigned int line ) {
+	if ( mRecovering ) return;
 	swapEntry e = { type, col, line, str };
 	mHistory.append( e );
 	if ( ( ( int )mHistory.size() ) >= mParent->getLocalIntOption("updatecount") ) flush();
@@ -73,6 +75,12 @@ void YZSwapFile::unlink() {
 }
 
 void YZSwapFile::init() {
+	yzDebug() << "Swap : init file " << mFilename << endl;
+	if ( QFile::exists( mFilename ) ) {
+		yzDebug() << "Swap file already EXISTS ! " << endl;
+		recover();
+	}
+
 	QFile f( mFilename );
 	if ( f.open( IO_WriteOnly | IO_Raw | IO_Truncate ) ) {
 		QTextStream stream( &f );
@@ -84,5 +92,47 @@ void YZSwapFile::init() {
 		stream << endl << endl << endl;
 		f.close();
 	}
+}
+
+void YZSwapFile::recover() {
+	mRecovering=true;
+	QFile f( mFilename );
+	if ( f.open( IO_ReadOnly ) ) {
+		QTextStream stream( &f );
+		while ( !stream.atEnd() ) {
+			QString line = stream.readLine();
+				//stream << ( *it ).type << ( *it ).col <<","<< ( *it ).line <<","<< ( *it ).str << endl;
+			QRegExp rx("([0-9])([0-9]*),([0-9]*),(.*)");
+			if ( rx.exactMatch( line ) ) {
+				replay( ( YZBufferOperation::OperationType )rx.cap( 1 ).toInt(), rx.cap( 2 ).toUInt(), rx.cap( 3 ).toUInt(), rx.cap( 4 ) );
+			} else {
+				yzDebug() << "Error replaying line : " << line << endl;
+			}
+		}
+		f.close();
+	} else {
+		//XXX error
+	}
+
+	mRecovering=false;
+}
+
+void YZSwapFile::replay( YZBufferOperation::OperationType type, unsigned int col, unsigned int line, const QString& text ) {
+	YZView *pView = mParent->firstView();
+	switch( type ) {
+		case YZBufferOperation::ADDTEXT:
+			mParent->action()->insertChar( pView, col, line, text ); 
+			break;
+		case YZBufferOperation::DELTEXT: 
+			mParent->action()->deleteChar( pView, col, line, text.length() );
+			break;
+		case YZBufferOperation::ADDLINE:
+			mParent->action()->insertNewLine( pView, 0, line );
+			break;
+		case YZBufferOperation::DELLINE:
+			mParent->action()->deleteLine( pView, line, 1 );
+			break;
+	}
+	pView->refreshScreen();
 }
 

@@ -30,7 +30,7 @@
 
 #include <qstring.h>
 #include <qptrlist.h>
-#include "view.h"
+
 class YZView;
 class YZBuffer;
 

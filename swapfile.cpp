@@ -19,6 +19,9 @@
 
 #include "debug.h"
 #include "swapfile.h"
+#include "yzis.h"
+#include "options.h"
+#include "buffer.h"
 #include <qfile.h>
 #include <qtextstream.h>
 #include <qdatetime.h>

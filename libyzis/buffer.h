@@ -50,7 +50,6 @@ public:
 	/** 
 	 * Creates a new buffer
 	 * @param sess the session to which the buffer belongs to
-	 * @param _path the file to open in this buffer
 	 */
 	YZBuffer(YZSession *sess);
 
@@ -118,7 +117,7 @@ public:
 	void deleteLine( unsigned int line );
 
 	/**
-	 * Replaces the @param line line with the given @param value
+	 * Replaces the line at @param line with the given string @param l
 	 */
 	void replaceLine( const QString& l, unsigned int line );
 

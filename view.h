@@ -166,6 +166,9 @@ class YZView {
 		 */
 		QString moveToEndOfLine( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
+
+		void insertChar( const QString& c, unsigned int mX, unsigned int mY );
+
 		/**
 		 * deletes the character under the cursor
 		 */
@@ -204,7 +207,11 @@ class YZView {
 		/**
 		 * Deletes lines
 		 */
+		void deleteLine( unsigned int line, unsigned int c );
 		QString deleteLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+
+		void insertNewLine( unsigned int mX, unsigned int mY );
+
 
 		/**
 		 * Opens a new line after current line
@@ -230,6 +237,10 @@ class YZView {
 		 * Join current and next line
 		 */
 		QString joinLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+	
+		void chgChar( unsigned int mX, unsigned int mY, const QString& c );
+		void delChar( unsigned int mX, unsigned int mY, unsigned int c );
+		void joinLine( unsigned int line );
 
 		/**
 		 * Moves the draw cursor to @arg nextx, @arg nexty
@@ -291,11 +302,7 @@ class YZView {
 		 */
 		virtual void setCommandLineText( const QString& ) = 0;
 
-		/**
-		 * Inform a view that a line was changed
-		 * @param line the line which was edited
-		 */
-		virtual void invalidateLine( unsigned int line ) = 0;
+		virtual void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) = 0;
 
 		/**
 		  * called when the mode is changed, so that gui can

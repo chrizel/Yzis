@@ -74,7 +74,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	m_editor->setFocus();
 	setFocusProxy( m_editor );
 	mBuffer->statusChanged();
-	mVScroll->setMaxValue( buffer->lineCount() );
+	mVScroll->setMaxValue( buffer->lineCount() - 1 );
 
 	setupCodeCompletion();
 
@@ -111,7 +111,7 @@ void KYZisView::scrollUp( int n ) {
 }
 
 void KYZisView::paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
-	mVScroll->setMaxValue( buffer->lineCount() );
+	mVScroll->setMaxValue( buffer->lineCount() - 1 );
 	m_editor->paintEvent( curx, cury, curw, curh );
 }
 unsigned int KYZisView::stringWidth( const QString& str ) const {
@@ -153,7 +153,7 @@ void KYZisView::syncViewInfo() {
 }
 
 void KYZisView::refreshScreen () {
-	mVScroll->setMaxValue( buffer->lineCount() );
+	mVScroll->setMaxValue( buffer->lineCount() -1 );
 	abortPaintEvent();
 	m_editor->repaint( false );
 }
@@ -252,7 +252,7 @@ void KYZisView::scrollView( int value ) {
 	else if ( value > (int)buffer->lineCount() - 1 )
 		value = buffer->lineCount() - 1;
 
-	mVScroll->setMaxValue( buffer->lineCount() );
+	mVScroll->setMaxValue( buffer->lineCount() -1 );
 	mVScroll->setValue( value  );
 	bottomViewVertically( value + getLinesVisible() - 1 );
 

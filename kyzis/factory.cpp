@@ -182,7 +182,7 @@ void KYZisFactory::customEvent (QCustomEvent *) {
 		switch ( event.id ) {
 			case YZ_EV_INVALIDATE_LINE:
 				yzDebug() << "event INVALIDATE_LINE " << event.id << endl;
-				str = v->myBuffer()->findLine( event.invalidateline.y );
+				str = v->myBuffer()->data( event.invalidateline.y );
 				if ( str.isNull() ) return;//XXX remove me, should not happen
 				v->editor->setTextLine(event.invalidateline.y, str);
 				break;

@@ -37,7 +37,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mMaxX = 0;
 	mMode = YZ_VIEW_MODE_COMMAND;
 	mCurrentTop = mCursor->getY();
-	QString line = mBuffer->findLine(mCurrentTop);
+	QString line = mBuffer->data(mCurrentTop);
 	if (!line.isNull()) mMaxX = line.length()-1;
 
 	mBuffer->addView(this);
@@ -103,6 +103,9 @@ void YZView::sendKey( int c, int modifiers) {
 					if (mCursor->getX() == 0) return;
 					mBuffer->delChar(mCursor->getX()-1,mCursor->getY(),1);
 					gotoxy(mCursor->getX()-1, mCursor->getY() );
+					return;
+				case Qt::Key_Delete:
+					mBuffer->delChar(mCursor->getX(),mCursor->getY(),1);
 					return;
 				default:
 					mBuffer->addChar(mCursor->getX(),mCursor->getY(),key);
@@ -244,7 +247,7 @@ void YZView::updateCursor() {
 	unsigned int y = mCursor->getY();
 
 	if ( y != lasty ) {
-		unsigned int nblines = mBuffer->getLines();
+		unsigned int nblines = mBuffer->lineCount();
 		percentage = QString("%1%").arg( ( unsigned int )( y*100/ ( nblines==0 ? 1 : nblines )));
 		if ( mCurrentTop < 1 )  percentage="Top";
 		if ( mCurrentTop+mLinesVis >= nblines )  percentage="Bot";
@@ -260,8 +263,8 @@ void YZView::centerView(unsigned int line) {
 	//update current
 	int newcurrent = line - mLinesVis / 2;
 
-	if ( newcurrent > ( int( mBuffer->getLines() ) - int( mLinesVis ) ) )
-		newcurrent = mBuffer->getLines() - mLinesVis;
+	if ( newcurrent > ( int( mBuffer->lineCount() ) - int( mLinesVis ) ) )
+		newcurrent = mBuffer->lineCount() - mLinesVis;
 	if ( newcurrent < 0 ) newcurrent = 0;
 
 	if ( newcurrent== int( mCurrentTop ) ) return;
@@ -286,10 +289,10 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 
 	// check positions
 	if ( ( int )nexty < 0 ) nexty = 0;
-	else if ( nexty >=  mBuffer->getLines() ) nexty = mBuffer->getLines() - 1;
+	else if ( nexty >=  mBuffer->lineCount() ) nexty = mBuffer->lineCount() - 1;
 	mCursor->setY( nexty );
 
-	lin = mBuffer->findLine(nexty);
+	lin = mBuffer->data(nexty);
 	if ( !lin.isNull() ) mMaxX = (lin.length() == 0) ? 0 : lin.length()-1; 
 	if ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode ) {
 		/* in edit mode, at end of line, cursor can be on +1 */
@@ -421,7 +424,7 @@ QString YZView::gotoLine(const QString& inputsBuff) {
 		bool test;
 		line = inputsBuff.left( i ).toInt( &test );
 		if ( !test && !inputsBuff.startsWith( "gg" ) )
-				line=mBuffer->getLines()-1; //there shouldn't be any other solution
+				line=mBuffer->lineCount()-1; //there shouldn't be any other solution
 	}
 
 	if ( inputsBuff.startsWith( "gg" ) )

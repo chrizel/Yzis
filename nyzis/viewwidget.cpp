@@ -210,7 +210,7 @@ void NYZView::handle_event(yz_event e)
 			break;
 		case YZ_EV_REDRAW: {
 			unsigned int i;
-			for ( i=getCurrent(); i < ( getCurrent() + mLinesVis ) && i < mBuffer->getLines(); i++ ) {
+			for ( i=getCurrent(); i < ( getCurrent() + mLinesVis ) && i < mBuffer->lineCount(); i++ ) {
 				printLine(i);
 			}
 			i-=getCurrent();
@@ -240,7 +240,7 @@ void NYZView::printLine( int line ) {
 	unsigned int relline = line - getCurrent(); // relative line #
 
 	// check
-	QString str = mBuffer->findLine( line );
+	QString str = mBuffer->data(line);
 	if ( str.isNull() ) return;
 
 	// clipping 

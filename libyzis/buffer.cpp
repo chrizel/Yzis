@@ -21,15 +21,17 @@
  * $Id$
  */
 
-#include "events.h"
+#include <assert.h>
 #include <cstdlib>
 #include <qfile.h>
 #include <qtextstream.h>
+
+#include "events.h"
 #include "buffer.h"
+#include "line.h"
 #include "view.h"
 #include "yzis.h"
 #include "debug.h"
-#include <assert.h>
 
 YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
 	myId = YZSession::mNbBuffers++;
@@ -48,12 +50,12 @@ YZBuffer::~YZBuffer() {
 
 void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
 	/* brute force, we'll have events specific for that later on */
-	QString l=findLine(y);
+	QString l=data(y);
 	if (l.isNull()) return;
 
 	l.insert(x, c);
 
-	mText[y] = l;
+	at(y)->setData(l);
 
 	/* inform the views */
 	QValueList<YZView*>::iterator it;
@@ -66,14 +68,14 @@ void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
 
 void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 	/* brute force, we'll have events specific for that later on */
-	QString l=findLine(y);
+	QString l=data(y);
 	if (l.isNull()) return;
 
 	/* do the actual modification */
 	l.remove(x, 1);
 	l.insert(x, c);
 
-	mText[y] = l;
+	at(y)->setData(l);
 
 	/* inform the views */
 	QValueList<YZView*>::iterator it;
@@ -83,15 +85,17 @@ void YZBuffer::chgChar (unsigned int x, unsigned int y, const QString& c) {
 	}
 }
 
-void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
+void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count)
+{
+	yzDebug() << "YZBuffer::delChar(): at " << x << "," << y << ": " << count << endl;
 	/* brute force, we'll have events specific for that later on */
-	QString l=findLine(y);
+	QString l=data(y);
 	if (l.isNull()) return;
 
 	/* do the actual modification */
 	l.remove(x, count);
 
-	mText[y] = l;
+	at(y)->setData(l);
 
 	/* inform the views */
 	QValueList<YZView*>::iterator it;
@@ -103,31 +107,30 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count) {
 
 void YZBuffer::addNewLine( unsigned int col, unsigned int line ) {
 	yzDebug() << "NB lines in buffer: " << mText.count() << " adding line at : " << line << endl;
-	if ( line == getLines() ) {//we are adding a line, fake being at end of last line
+	if ( line == lineCount() ) {//we are adding a line, fake being at end of last line
 		line --;
-		col = mText[ line ].length(); 
+		col = data(line).length(); 
 	}
 
-	QString l=findLine(line);
+	QString l=data(line);
 	if (l.isNull()) return;
 
 	//replace old line
-	mText[ line ] = l.left( col );
+	at(line)->setData(l.left( col ));
 
 	//add new line
 	QString newline = l.mid( col );
 	if ( newline.isNull() ) newline = QString( "" );
-	QStringList::Iterator it = mText.at( line );
-	mText.insert( ++it, newline );
+	mText.insert( line + 1, new YZLine(newline));
 	/* inform the views */
 	updateAllViews();
 }
 
 void YZBuffer::deleteLine( unsigned int line ) {
 	if ( mText.count() > 1 )
-	 mText.erase( mText.at( line ) );
+	 mText.remove(line);
 	else
-		mText[ line ] = "";
+		at(line)->setData("");
 	updateAllViews(); //hmm ...
 }
 
@@ -153,16 +156,23 @@ void YZBuffer::updateAllViews() {
 
 void  YZBuffer::addLine(const QString &l) {
 	yzDebug() << "Adding new line : " << l << "$" << endl;
-	mText.append(l);
+	mText.append(new YZLine(l));
 }
 
-QString	YZBuffer::findLine(unsigned int line) {
+QString	YZBuffer::data(unsigned int no)
+{
+#if 0
 	//we need to check this line exists.
 	//the guy i talked with on IRC was right to doubt about it :)
 	//so I return QString::null then for each call we need to check for if (!line.isNull())
 	//trying if(!line) is NOT working (read QString doc)
-	if ( mText.count() <= line) return QString::null;
-	else return mText[ line ];
+#endif
+
+	YZLine *l = at(no);
+	if(!l)
+		return QString::null;
+	else
+		return l->data();
 }
 
 void YZBuffer::load() {
@@ -187,8 +197,8 @@ void YZBuffer::save() {
 	QFile file( mPath );
 	if ( file.open( IO_WriteOnly ) ) {
 		QTextStream stream( &file );
-		for ( QStringList::Iterator it = mText.begin(); it != mText.end(); ++it )
-			stream << *it << "\n";
+		for(YZLine *it = mText.first(); it; it = mText.next())
+			stream << it->data() << "\n";
 		file.close();
 	}
 }

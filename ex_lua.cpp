@@ -243,6 +243,12 @@ QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 #endif
 	if ( !filename.endsWith( ".lua" ) )
 		filename += ".lua";
+	if ( filename.startsWith("~") ) // expand ~
+#if QT_VERSION < 0x040000
+		filename = QDir::homeDirPath() + filename.mid( 1 );
+#else
+		filename = QDir::homePath() + filename.mid( 1 );
+#endif
 	yzDebug() << "looking filename : " << filename << endl;
 	QStringList candidates;
 	candidates << filename 

@@ -55,6 +55,9 @@ YZEvents *YZSession::events = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
+	//if ( me != 0 ) int t = 5/( me - me );
+	//FIXME
+
 	initModes();
 	mSearch = new YZSearch();
 	mSessionName = _sessionName;
@@ -68,17 +71,6 @@ YZSession::YZSession( const QString& _sessionName ) {
 }
 
 YZSession::~YZSession() {
-/*	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
-	for ( ; it!=end; ++it ) {
-#if QT_VERSION < 0x040000
-		YZBuffer *b = ( it.data() );
-#else
-		YZBuffer *b = ( it.value() );
-#endif
-		//can't call deleteBuffer from destructor
-		delete b;
-	}*/
-
 	endModes();
 	delete YzisHlManager::self();
 	delete mSchemaManager;
@@ -162,18 +154,6 @@ void YZSession::rmBuffer( YZBuffer *b ) {
 //	delete b; // kinda hot,no?
 }
 
-void YZSession::registerView( YZView *v) {
-	if (!mViews.contains(v->myId) ) {
-		mViews[v->myId] = v;
-		yzDebug() << "Registering view : "<< v->myId << endl;
-	}
-}
-
-void YZSession::unregisterView( YZView *v ) {
-	yzDebug() << "Unregistering view : "<< v->myId << endl;
-	mViews.remove(v->myId);	
-}
-
 QString YZSession::saveBufferExit() {
 	if ( saveAll() )
 		quit();
@@ -181,8 +161,21 @@ QString YZSession::saveBufferExit() {
 }
 
 YZView* YZSession::findView( int uid ) {
-	if ( mViews.contains(uid) )
-		return mViews[uid];
+//	yzDebug() << " ========= " << endl;
+//	yzDebug() << "Session::findView " << uid << endl;
+	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	if ( uid<0 ) return NULL;
+	for ( ; it!=end; ++it ) {
+#if QT_VERSION < 0x040000
+		YZBuffer *b = ( it.data() );
+#else
+		YZBuffer *b = ( it.value() );
+#endif
+//		yzDebug() << "Session::findView, checking buffer " << b->fileName() << endl;
+		YZView *v = b->findView( uid );
+		if ( v ) return v;
+	}
+//	yzDebug() << "Session::findView " << uid << " not found !" << endl;
 	return NULL;
 }
 
@@ -199,19 +192,13 @@ YZView* YZSession::prevView() {
 		yzDebug() << "WOW, mCurview is NULL !" << endl;
 		return NULL;
 	}
+//	yzDebug() << "Current view is " << mCurView->myId << endl;
 	
-	int i = mCurView->myId;
-	if ( i == 0 ) 
-		i = mNbViews;
-	else
-		i--;
-	
-	YZView *v = NULL;
-	while (!v && i >= 0 ) {
-		if (mViews.contains(i))
-			v = mViews[i];
-		else
-			i--;
+	YZView * v = NULL;
+	int i = 1;
+	while (!v && i <= mNbViews  ) {
+		v = findView( mCurView->myId - i );
+		i++;
 	}
 	return v;
 }
@@ -221,19 +208,12 @@ YZView* YZSession::nextView() {
 		yzDebug() << "WOW, mCurview is NULL !" << endl;
 		return NULL;
 	}
-
-	int i = mCurView->myId;
-	if ( i == mNbViews - 1 ) 
-		i = 0;
-	else
+//	yzDebug() << "Current view is " << mCurView->myId << endl;
+	YZView * v = NULL;
+	int i = 1;
+	while (!v && i <= mNbViews) {
+		v = findView( mCurView->myId + i );
 		i++;
-	
-	YZView *v = NULL;
-	while (!v && i < mNbViews ) {
-		if (mViews.contains(i))
-			v = mViews[i];
-		else
-			i++;
 	}
 	return v;
 }

@@ -1,6 +1,13 @@
 2004-03-06 philippe
   * tests
     . add tests for switching between command mode and insert mode
+	. add tests for up,down,left,right cursor movement
+	. add tests for 0,^,$ cursor movement
+	. add tests for gg,G cursor movement
+  * libyzis
+	. add a method to move to the first non-blank character of a line
+    . fix gg,G (non-blank character of the line)
+	. add command 0 and fix command ^
 
 2004-02-28 mikmak
   * libyzis

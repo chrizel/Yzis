@@ -267,7 +267,12 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 //                            Content Operations 
 // ------------------------------------------------------------------------
 
-QString	YZBuffer::data(unsigned int no)
+void YZBuffer::clearText() const
+{
+	( (QPtrList<YZLine> )mText).clear();
+}
+
+QString	YZBuffer::data(unsigned int no) const
 {
 #if 0
 	//we need to check this line exists.
@@ -276,7 +281,7 @@ QString	YZBuffer::data(unsigned int no)
 	//trying if(!line) is NOT working (read QString doc)
 #endif
 
-	YZLine *l = at(no);
+	YZLine *l = ( ( QPtrList<YZLine> )mText ).at(no);
 	if(!l)
 		return QString::null;
 	else
@@ -291,6 +296,17 @@ QString YZBuffer::getWholeText() const {
 //		text += it->data() + "\n";
 	text.truncate( text.length()-1 );
 	return text;
+}
+
+uint YZBuffer::getWholeTextLength() const {
+	uint length = 0;
+	
+	for ( uint i = 0 ; i < lineCount() ; i++ ) {
+		/* Should this include \n? Does for now*/
+		length += ( ( QPtrList<YZLine> )mText ).at( i )->data().length() + 1;
+	}
+	
+	return length;
 }
 
 uint YZBuffer::firstNonBlankChar( uint line )

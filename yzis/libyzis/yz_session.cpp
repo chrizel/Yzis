@@ -1,15 +1,16 @@
 /*
- * yz_session.cpp
+ * $id$
  */
 
 #include "yz_session.h"
 
-
-YZSession::YZSession( const char *_session_name )
-{
-	session_name = _session_name;
+YZSession::YZSession( QString _sessionName ) {
+  pool = new YZCommandPool();
+	sessionName = _sessionName;
 	buffers_nb = 0;
 	views_nb = 0;
 }
 
+YZSession::~YZSession() {
+}
 

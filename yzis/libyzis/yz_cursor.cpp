@@ -1,3 +1,7 @@
+/**
+ * $id$
+ */
+
 #include "yz_cursor.h"
 
 YZCursor::YZCursor(YZView *vp) {

@@ -1,8 +1,5 @@
 /**
- * yz_event.cpp
- *
- * yzis events
- *
+ * $id$
  */
 
 #include "yz_events.h"

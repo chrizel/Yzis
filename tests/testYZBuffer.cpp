@@ -227,9 +227,9 @@ void TestYZBuffer::testCharMethods()
 
 void TestYZBuffer::testAssertion()
 {
-    YZASSERT( 1 , "*** ASSERTION_ERROR ***, ASSERTION SYSTEM NOT WORKING" );
-    YZASSERT( 1 + 2 + 3 + 4 / 2 == 0,"Ok, assertion system is working" );
-    YZASSERT( "true" == "false", "Ok, assertion system is working" );
+    YZASSERT_MSG( 1 , "*** ASSERTION_ERROR ***, ASSERTION SYSTEM NOT WORKING" );
+    YZASSERT_MSG( 1 + 2 + 3 + 4 / 2 == 0,"Ok, assertion system is working" );
+    YZASSERT_MSG( "true" == "false", "Ok, assertion system is working" );
 }
 
 void TestYZBuffer::testLoadSave()

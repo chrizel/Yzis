@@ -1208,14 +1208,18 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 		if ( args.view->registersRecorded() == args.regs )
 			return;
 	}
+
+	for ( int i = 0; i < args.count; i++ ) {
 #if QT_VERSION < 0x040000
-	QValueList<QChar>::const_iterator it = args.regs.begin(), end = args.regs.end();
-	for ( ; it != end; ++it )
-		args.view->sendMultipleKey(YZSession::mRegisters->getRegister(*it)[ 0 ]);
+		QValueList<QChar>::const_iterator it = args.regs.begin(), end = args.regs.end();
+		for ( ; it != end; ++it )
+			args.view->sendMultipleKey(YZSession::mRegisters->getRegister(*it)[ 0 ]);
 #else
-	for ( int ab = 0 ; ab < args.regs.size(); ++ab)
-		args.view->sendMultipleKey(YZSession::mRegisters->getRegister(args.regs.at(ab))[0]);
+		for ( int ab = 0 ; ab < args.regs.size(); ++ab)
+			args.view->sendMultipleKey(YZSession::mRegisters->getRegister(args.regs.at(ab))[0]);
 #endif
+	}
+
 	args.view->commitNextUndo();
 	
 }

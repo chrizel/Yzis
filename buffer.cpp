@@ -361,16 +361,17 @@ void YZBuffer::displayIntro() {
 	<<  ""
 	<<  ""
 	<<  ""
-	<< VERSION_CHAR_LONG
-	<< VERSION_CHAR_DATE
-	<<	"Development Release - Use for testing only" 
+	<< VERSION_CHAR_LONG;
+	if (VERSION_CHAR_ST == VERSION_CHAR_STATE2)
+		introduction << VERSION_CHAR_DATE;
+	introduction << VERSION_CHAR_ST
 	<<  ""
 	<<  "http://www.yzis.org"
 	<<  "Contact/Patches/Requests: yzis-dev@yzis.org"
 	<<  ""
-	<<  "Yzis is distributed under the terms of the General Public License"
+	<<  "Yzis is distributed under the terms of the GPL v2"
 	<<  ""
-	<<  "Please report bugs at http://bugs.yzis.org" ;
+	<<  "Please report bugs at http://bugs.yzis.org";
 
 	mUndoBuffer->setInsideUndo( true );
 	for ( int i=0; i< 100; i++ ) introduction << ""; //add empty lines to avoids displaying '~' :)

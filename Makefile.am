@@ -21,3 +21,25 @@ EXTRA_DIST = admin
 dist-hook:
 	cd $(top_distdir) && perl admin/am_edit -padmin
 	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
+
+apidox:
+	$(mkinstalldirs) doc/api; \
+	if test ! -x doc/common; then \
+	$(LN_S) $(kde_libs_htmldir)/en/common doc/common ; \
+	fi; \
+	cp $(top_srcdir)/admin/Doxyfile.global yzis.doxyfile; \
+	echo "PROJECT_NAME        = Yzis" >> yzis.doxyfile; \
+	echo "PROJECT_NUMBER      = \"Version M1\"" >> yzis.doxyfile; \
+	echo "INPUT               = $(srcdir)" >> yzis.doxyfile; \
+	echo "OUTPUT_DIRECTORY    = doc/api" >> yzis.doxyfile; \
+	echo "HTML_OUTPUT         = html" >> yzis.doxyfile; \
+	echo "GENERATE_HTML       = YES" >> yzis.doxyfile ; \
+	echo "GENERATE_MAN        = NO" >> yzis.doxyfile ; \
+	echo "GENERATE_LATEX      = NO" >> yzis.doxyfile ; \
+	echo "HTML_HEADER         = doc/common/header.html" >> yzis.doxyfile ; \
+	echo "HTML_FOOTER         = doc/common/footer.html" >> yzis.doxyfile ; \
+	echo "HTML_STYLESHEET     = doc/common/doxygen.css" >> yzis.doxyfile ; \
+	echo "FILE_PATTERNS       = *.h" >> yzis.doxyfile ; \
+	echo "PREDEFINED          = DO_NOT_DOCUMENT" >> yzis.doxyfile ; \
+	echo "EXTRACT_ALL         = YES" >> yzis.doxyfile ; \
+	doxygen yzis.doxyfile

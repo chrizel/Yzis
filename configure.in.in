@@ -15,6 +15,7 @@ AC_HEADER_TIME
 AC_CHECK_HEADERS(fcntl.h sys/time.h unistd.h stdlib.h paths.h)
 AC_CHECK_FUNCS(usleep)
 AC_PATH_TINYQ
+KDE_INIT_DOXYGEN([The Yzis API Reference], [Version $VERSION])
 
 DO_NOT_COMPILE="$DO_NOT_COMPILE cyzis"
 

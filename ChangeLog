@@ -1,3 +1,7 @@
+2003-11-23 mikmak
+  * all
+    - Doxified Yzis, run 'make apidox' to generate the doc
+
 2003-11-02 mikmak
   * libyzis
     - use of QRegExps for command line parsing : commands are assumed to use the

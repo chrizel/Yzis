@@ -66,7 +66,7 @@ case $AUTOMAKE_STRING in
     echo "*** KDE requires automake $required_automake_version"
     exit 1
     ;;
-  automake*1.6.* | automake*1.7* | automake*1.8* ) : ;;
+  automake*1.6.* | automake*1.7* | automake*1.8* | automake*1.9*) : ;;
   "" )
     echo "*** AUTOMAKE NOT FOUND!."
     echo "*** KDE requires automake $required_automake_version"
@@ -309,7 +309,7 @@ if test -f configure.in.in; then
    fi
 fi
 if test -z "$VERSION" || test "$VERSION" = "@VERSION@"; then
-     VERSION="\"3.2.92\""
+     VERSION="\"3.3.0\""
 fi
 if test -z "$modulename" || test "$modulename" = "@MODULENAME@"; then
    modulename=`pwd`; 

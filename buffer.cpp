@@ -443,11 +443,19 @@ void YZBuffer::load(const QString& file) {
 	}
 	mText.clear();
 	mFileIsNew=false;
+	
+	QFile fl( mPath );
+	int dp = mPath.findRev( ":" );
+	unsigned int scrollTo = 0;
+	if ( dp > 0 && ! fl.exists() && QFile::exists( mPath.left( dp ) ) ) {
+		scrollTo = mPath.mid( dp + 1 ).toUInt();
+		mPath = mPath.left( dp );
+		fl.setName( mPath );
+	}
 
 	//HL mode selection
 	detectHighLight();
-	
-	QFile fl( mPath );
+		
 	//opens and eventually create the file
 	mUndoBuffer->setInsideUndo( true );
 	mLoading=true;
@@ -482,6 +490,12 @@ void YZBuffer::load(const QString& file) {
 	//reenable
 	mUpdateView=true;
 	updateAllViews();
+	if ( scrollTo > 0 ) {
+		YZView *it;
+		for ( it = mViews.first(); it; it = mViews.next() ) {
+			it->gotoStickyCol( scrollTo - 1 );
+		}
+	}
 	filenameChanged();
 }
 

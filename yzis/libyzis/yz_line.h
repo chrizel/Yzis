@@ -31,7 +31,9 @@
 // from unicode.h :
 
 	/* FIXME: assumes 32-bit int.  */
-	typedef unsigned int unicode_char_t;
+	//typedef unsigned int unicode_char_t;
+/* ugly, temporary */
+#define unicode_char_t char
 
 
 #define YZ_LINE_MAX_LENGTH	4096
@@ -69,10 +71,15 @@ public:
 	YZLine * next(void) { return p_next; }
 	void	set_next(YZLine *n) { p_next = n; }
 
+
+	/* editing */
+	void add_char (int x, unicode_char_t c);
+	void chg_char (int x, unicode_char_t c);
+
 	int	line;
 protected:
 	YZLine * p_next;
-	void	expand(int increase); 
+	void	expand(int newsize); // expand the internal buffer
 
 	char	*data;		// actual data
 	char	*color;	// not used yet

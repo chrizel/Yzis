@@ -45,6 +45,7 @@ INCLUDEPATH += $$(LUAINCLUDE)
 win32-msvc {
 	DESTDIR = ./
 	LIBS += $$(LUALIB)/Lua.lib $$(LUALIB)/LuaLib.lib
+	DEFINES += YZIS_WIN32_MSVC
 }
 
 # Input

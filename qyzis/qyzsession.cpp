@@ -13,12 +13,14 @@ QYZSession::~QYZSession()
 
 void QYZSession::changeCurrentView( YZView* )
 {
-
+		// set the current view
 }
+
 void QYZSession::deleteView ( int Id )
 {
-
+		// delete the given view
 }
+
 void QYZSession::deleteBuffer( YZBuffer *b )
 {
 

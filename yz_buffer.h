@@ -33,8 +33,12 @@ public:
 
 	void load(void);
 	void save(void);
+
+	/* linked list handling */
+	void add_line(YZLine *l) { l->set_next(NULL); if (line_last) line_last->set_next(l); line_last=l; }
+
 protected:
-	void addview (YZView *v);
+	void add_view (YZView *v);
 
 	char	*path;
 	YZView	*view_list[YZ_MAX_VIEW];	// should be growable 
@@ -42,8 +46,11 @@ protected:
 
 private:
 	void	post_event(yz_event e);
+	void	update_view(int view);
+	YZLine	*find_line(int line);
 
-	MicroBuffer *mb_first, *mb_last;
+	YZLine *line_first, *line_last;
+	int	lines; // number of lines in this buffer
 
 	/* readonly?, change, load, save, isclean?, ... */
 	/* locking stuff will be here, too */

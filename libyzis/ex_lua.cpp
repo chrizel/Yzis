@@ -34,7 +34,7 @@
  * TODO:
  * - invert line/col arguments
  * - test every argument of the functions
- * - test text()
+ * - find how to add file:line info to error messages
  * - override print() in lua for yzis
  * - clear the lua stack properly
  * - arguments to :source must be passed as argv
@@ -97,6 +97,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"replace",replace);
 	lua_register(L,"wincol",wincol);
 	lua_register(L,"winline",winline);
+	lua_register(L,"winpos",winpos);
 	lua_register(L,"goto",_goto);
 	lua_register(L,"deleteline",deleteline);
 	lua_register(L,"version",version);
@@ -143,7 +144,7 @@ QString YZExLua::source( YZView *, const QString& args ) {
 	lua_pushstring(L,"dofile");
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	lua_pushstring(L,found.latin1());
-	pcall(1,1,0, tr("Lua error when running file %1:").arg(found) );
+	pcall(1,1,0, tr("Lua error when running file %1:\n").arg(found) );
 	return QString::null;
 }
 
@@ -193,9 +194,7 @@ void YZExLua::yzisprint(const QString & text)
 // ========================================================
 
 int YZExLua::line(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n != 1 ) return 0; //mis-use of the function
-
+	if (!checkFunctionArguments(L, 1, "line", "line")) return 0;
 	int line = ( int )lua_tonumber( L,1 );
 
 	line = line ? line - 1 : 0;
@@ -207,9 +206,7 @@ int YZExLua::line(lua_State *L) {
 }
 
 int YZExLua::setline(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n < 2 ) return 0; //mis-use of the function
-
+	if (!checkFunctionArguments(L, 2, "setline", "line, text")) return 0;
 	int sLine = ( int )lua_tonumber( L,1 );
 	QString text = ( char * )lua_tostring ( L, 2 );
 
@@ -225,9 +222,7 @@ int YZExLua::setline(lua_State *L) {
 }
 
 int YZExLua::insert(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n < 3 ) return 0; //mis-use of the function
-
+	if (!checkFunctionArguments(L, 3, "insert", "line, col, text")) return 0;
 	int sCol = ( int )lua_tonumber( L, 1 );
 	int sLine = ( int )lua_tonumber( L,2 );
 	QString text = ( char * )lua_tostring ( L, 3 );
@@ -248,9 +243,7 @@ int YZExLua::insert(lua_State *L) {
 }
 
 int YZExLua::insertline(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n < 2 ) return 0; //mis-use of the function
-
+	if (!checkFunctionArguments(L, 2, "insertline", "line, text")) return 0;
 	int sLine = ( int )lua_tonumber( L,1 );
 	QString text = ( char * )lua_tostring ( L, 2 );
 
@@ -272,9 +265,7 @@ int YZExLua::insertline(lua_State *L) {
 }
 
 int YZExLua::appendline(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n < 1 ) return 0; //mis-use of the function
-
+	if (!checkFunctionArguments(L, 1, "appendline", "text")) return 0;
 	QString text = ( char * )lua_tostring ( L, 1 );
 
 	YZView* cView = YZSession::me->currentView();
@@ -293,9 +284,7 @@ int YZExLua::appendline(lua_State *L) {
 }
 
 int YZExLua::replace(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n < 3 ) return 0; //mis-use of the function
-
+	if (!checkFunctionArguments(L, 3, "replace", "line, col, text")) return 0;
 	int sCol = ( int )lua_tonumber( L, 1 );
 	int sLine = ( int )lua_tonumber( L,2 );
 	QString text = ( char * )lua_tostring ( L, 3 );
@@ -319,6 +308,7 @@ int YZExLua::replace(lua_State *L) {
 }
 
 int YZExLua::winline(lua_State *L) {
+	if (!checkFunctionArguments(L, 0, "winline", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
 	uint result = cView->getBufferCursor()->getY() + 1;
 
@@ -327,6 +317,7 @@ int YZExLua::winline(lua_State *L) {
 }
 
 int YZExLua::wincol(lua_State *L) {
+	if (!checkFunctionArguments(L, 0, "wincol", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
 	uint result = cView->getBufferCursor()->getX() + 1;
 
@@ -334,10 +325,18 @@ int YZExLua::wincol(lua_State *L) {
 	return 1; // one result
 }
 
-int YZExLua::_goto(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n < 2 ) return 0; //mis-use of the function
+int YZExLua::winpos(lua_State *L) {
+	if (!checkFunctionArguments(L, 0, "winpos", "")) return 0;
+	YZView* cView = YZSession::me->currentView();
+	uint line = cView->getBufferCursor()->getY() + 1;
+	uint col = cView->getBufferCursor()->getX() + 1;
+	lua_pushnumber( L, col ); 
+	lua_pushnumber( L, line ); 
+	return 2;
+}
 
+int YZExLua::_goto(lua_State *L) {
+	if (!checkFunctionArguments(L, 2, "goto", "line, col")) return 0;
 	int sCol = ( int )lua_tonumber( L, 1 );
 	int sLine = ( int )lua_tonumber( L,2 );
 
@@ -348,9 +347,7 @@ int YZExLua::_goto(lua_State *L) {
 }
 
 int YZExLua::deleteline(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n < 1 ) return 0; //mis-use of the function
-
+	if (!checkFunctionArguments(L, 1, "deleteline", "line")) return 0;
 	int sLine = ( int )lua_tonumber( L,1 );
 
 	YZView* cView = YZSession::me->currentView();
@@ -362,6 +359,7 @@ int YZExLua::deleteline(lua_State *L) {
 }
 
 int YZExLua::filename(lua_State *L) {
+	if (!checkFunctionArguments(L, 0, "filename", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
 	const char *filename = cView->myBuffer()->fileName();
 
@@ -370,9 +368,7 @@ int YZExLua::filename(lua_State *L) {
 }
 
 int YZExLua::color(lua_State *L) {
-	int n = lua_gettop( L );
-	if ( n != 2 ) return 0; //mis-use of the function
-
+	if (!checkFunctionArguments(L, 2, "color", "line, col")) return 0;
 	int sCol = ( int )lua_tonumber( L,1 );
 	int sLine = ( int )lua_tonumber( L,2 );
 	sCol = sCol ? sCol - 1 : 0;
@@ -388,20 +384,21 @@ int YZExLua::color(lua_State *L) {
 }
 
 int YZExLua::linecount(lua_State *L) {
+	if (!checkFunctionArguments(L, 0, "linecount", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
 	lua_pushnumber( L, cView->myBuffer()->lineCount()); // first result
 	return 1; // one result
 }
 
 int YZExLua::version( lua_State *L ) {
+	if (!checkFunctionArguments(L, 0, "version", "")) return 0;
 	lua_pushstring( L, VERSION_CHAR );
 	return 1;
 }
 
 int YZExLua::sendkeys( lua_State *L ) {
+	if (!checkFunctionArguments(L, 1, "sendkeys", "text")) return 0;
 	YZView* cView = YZSession::me->currentView();
-	int n = lua_gettop( L );
-	if ( n != 1 ) return 0; //mis-use of the function
 	QString text = ( char * )lua_tostring ( L, 3 );
 	cView->sendMultipleKey( text );
 	// nothing to return
@@ -413,6 +410,24 @@ int YZExLua::myprint(lua_State * /*L*/)
 	// fetch string from the stack
 	// print it
 	return 0;
+}
+
+bool YZExLua::checkFunctionArguments(lua_State*L, 
+	int argNb,
+	const char * functionName, 
+	const char * functionArgDesc )
+{
+	int n = lua_gettop( L );
+	if (n == argNb) return true;
+
+	QString errorMsg = QString("%1() called with %2 arguments but %3 expected: %4").arg(functionName).arg(n).arg(argNb).arg(functionArgDesc);
+#if 1
+	lua_pushstring(L,errorMsg.latin1());
+	lua_error(L);
+#else
+	YZExLua::instance()->execInLua(QString("error(%1)").arg(errorMsg));
+#endif
+	return false;
 }
 
 #include "ex_lua.moc"

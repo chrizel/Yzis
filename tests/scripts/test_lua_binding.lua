@@ -188,6 +188,7 @@ TestLuaBinding = {} --class
     function TestLuaBinding:test_goto_and_pos()
         assertEquals( winline(), 1 )
         assertEquals( wincol(), 1 )
+        c,l = winpos(); assertEquals( l, 1); assertEquals( c, 1)
 
         appendline("111")
         appendline("222")
@@ -195,30 +196,37 @@ TestLuaBinding = {} --class
         goto(1,1)
         assertEquals( winline(), 1 )
         assertEquals( wincol(), 1 )
+        c,l = winpos(); assertEquals( l, winline() ); assertEquals( c, winpos() )
 
         goto(2,1)
         assertEquals( wincol(), 2 )
         assertEquals( winline(), 1 )
+        c,l = winpos(); assertEquals( l, winline() ); assertEquals( c, winpos() )
 
         goto(1,2)
         assertEquals( wincol(), 1 )
         assertEquals( winline(), 2 )
+        c,l = winpos(); assertEquals( l, winline() ); assertEquals( c, winpos() )
 
         goto(2,2)
         assertEquals( wincol(), 2 )
         assertEquals( winline(), 2 )
+        c,l = winpos(); assertEquals( l, winline() ); assertEquals( c, winpos() )
 
         goto(4,2)
         assertEquals( wincol(), 3 )
         assertEquals( winline(), 2 )
+        c,l = winpos(); assertEquals( l, winline() ); assertEquals( c, winpos() )
 
         goto(2,4)
         assertEquals( wincol(), 2 )
         assertEquals( winline(), 3 )
+        c,l = winpos(); assertEquals( l, winline() ); assertEquals( c, winpos() )
 
         goto(0,0)
         assertEquals( winline(), 1 )
         assertEquals( wincol(), 1 )
+        c,l = winpos(); assertEquals( l, winline() ); assertEquals( c, winpos() )
     end
 
     function TestLuaBinding:test_color()
@@ -255,3 +263,4 @@ TestLuaBinding = {} --class
 -- luaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
 -- luaUnit:run('TestLuaBinding') -- will execute only one class of test
 luaUnit:run() -- will execute all tests
+

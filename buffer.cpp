@@ -63,15 +63,15 @@ YZBuffer::~YZBuffer() {
 //                            Char Operations 
 // ------------------------------------------------------------------------
 
-void YZBuffer::addChar (unsigned int x, unsigned int y, const QString& c) {
-	YZASSERT_MSG( c.contains('\n')==false, QString("YZBuffer::addChar( %1, %2, %3 ) - adding a char that contains a \\n").arg(x).arg(y).arg(c) )
-	YZASSERT_MSG(y < lineCount(), QString("YZBuffer::addChar( %1, %2, %3 ) but line %4 does not exist, buffer has %5 lines").arg( x ).arg( y ).arg( c ).arg( y ).arg( lineCount() ) );
+void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c) {
+	YZASSERT_MSG( c.contains('\n')==false, QString("YZBuffer::insertChar( %1, %2, %3 ) - adding a char that contains a \\n").arg(x).arg(y).arg(c) )
+	YZASSERT_MSG(y < lineCount(), QString("YZBuffer::insertChar( %1, %2, %3 ) but line %4 does not exist, buffer has %5 lines").arg( x ).arg( y ).arg( c ).arg( y ).arg( lineCount() ) );
 
 	/* brute force, we'll have events specific for that later on */
 	QString l=data(y);
 	if (l.isNull()) return;
 
-	YZASSERT_MSG(x <= l.length(), QString("YZBuffer::addChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( c ).arg( x ).arg( l.length() ) );
+	YZASSERT_MSG(x <= l.length(), QString("YZBuffer::insertChar( %1, %2, %3 ) but col %4 does not exist, line has %5 columns").arg( x ).arg( y ).arg( c ).arg( x ).arg( l.length() ) );
 
 	if (x > l.length()) {
 		// if we let Qt proceed, it would append spaces to extend the line

@@ -4,5 +4,5 @@ EX mode, type some characters, move the cursor to a previous position and type a
 3 - kyzis:
 initial display of the cursor is wrong ...
 
-4 - both lib and gui have a currentView that needs to be keep synced.. improve that
-5 - vim displays 'x,0-1' when positionned on the first char of an empty line : do the same
+4 - control c quits....
+

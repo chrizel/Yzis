@@ -93,14 +93,15 @@ NYZFactory::NYZFactory( int argc, char **charv, const char *session_name)
 	infobar = subwin(screen, 1, 0, LINES-2, 0);
 	wattrset(infobar, A_STANDOUT || A_BOLD);
 	wbkgd(infobar, A_REVERSE);
-
-	statusbar = subwin(screen, 1, 0, LINES-1, 0);
+	statusbar  = subwin(screen, 1, STATUSBARWIDTH, LINES-1, 0);
+	commandbar = subwin(screen, 1, 0, LINES-1, STATUSBARWIDTH);
 	//	(void) notimeout(stdscr,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 	//	(void) notimeout(window,TRUE);/* prevents the delay between hitting <escape> and when we actually receive the event */
 
 	if (has_colors()) {
 		//		wattron(infobar, COLOR_PAIR(4));
 		wattron(statusbar, COLOR_PAIR(6));
+		wattron(commandbar, COLOR_PAIR(4));
 	}
 
 	createView(bf);
@@ -180,12 +181,21 @@ void NYZFactory::scrollUp ( int /*lines*/ ) {
 
 }
 
-void NYZFactory::setCommandLineText( const QString& text )
+void NYZFactory::setStatusText( const QString& text )
 {
-	commandline= text;
 	werase(statusbar);
 	waddstr(statusbar, text.local8Bit());
 	wrefresh(statusbar);
+}
+
+
+
+void NYZFactory::setCommandLineText( const QString& text )
+{
+	commandline= text;
+	werase(commandbar);
+	waddstr(commandbar, text.local8Bit());
+	wrefresh(commandbar);
 }
 
 QString NYZFactory::getCommandLineText() const {

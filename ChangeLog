@@ -1,4 +1,11 @@
 
+2004-02-24 orzel
+  * all
+    add a make rule for tests
+  * nyzis
+    fix misc stupid bugs
+    makes EX works
+
 2004-02-23 orzel
   * all 
     fix compilation with autodetection of autoconf-2.59

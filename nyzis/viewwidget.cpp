@@ -37,7 +37,7 @@ NYZView::NYZView(WINDOW *_window, YZBuffer *b)
 
 	// TODO  write something like :       "bernoulli.tex" [noeol] 65L, 1440C
 	// in last line (vim-like)
-	NYZFactory::self->setCommandLineText (
+	NYZFactory::self->setStatusText (
 			b->fileName() + QString(" %1L" ).arg(b->lineCount())
 			);
 }
@@ -68,7 +68,7 @@ void NYZView::handle_event(yz_event e)
 //			debug("YZ_EV_SET_CURSOR: received");
 			break;
 		case YZ_EV_SET_STATUS:
-			NYZFactory::self->setCommandLineText (e.setstatus.text);
+			NYZFactory::self->setStatusText (e.setstatus.text);
 			break;
 		case YZ_EV_REDRAW: {
 			unsigned int i;

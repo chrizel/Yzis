@@ -86,14 +86,14 @@ AC_ARG_ENABLE(nyzis, AC_HELP_STRING([--disable-nyzis],[disable Nyzis compilation
 AC_ARG_WITH(qt4-dir, AC_HELP_STRING([--with-qt4-dir=DIR],[Enable Qt4 support -- EXPERIMENTAL --]),[enable_qt4="yes"; QT_INCLUDES="-I$withval/include/Qt"; QT_LIBS="-L$withval/lib"; QTDIR="$withval"],)
 
 if test "$enable_qt4" != "yes"; then
-	YZIS_INCLUDES="$YZIS_INCLUDES $QT_INCLUDES"
 	YZIS_SUBDIRS="$YZIS_SUBDIRS libqtyzis"
 	NYZIS_DEP="libyzis/libqtyzis/libqtyzis.la"
 else
-	YZIS_INCLUDES="$YZIS_INCLUDES $QT_INCLUDES"
 	YZIS_SUBDIRS="$YZIS_SUBDIRS libqt4yzis"
 	NYZIS_DEP="libyzis/libqt4yzis/libqt4yzis.la"
 fi
+
+YZIS_INCLUDES="$YZIS_INCLUDES $all_includes"
 
 if test "$have_kde" != "yes" -o "$enable_kyzis" != "yes" -o "$enable_qt4" = "yes"; then
 	DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis"

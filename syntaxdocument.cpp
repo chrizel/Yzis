@@ -30,6 +30,7 @@
 #include <qfile.h>
 #include "syntaxdocument.h"
 #include "debug.h"
+#include "translator.h"
 
 /** Constructor
     Sets the current file to nothing and build the ModeList
@@ -359,7 +360,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
   // Let's get a list of all the xml files for hl
   //QStringList list = KGlobal::dirs()->findAllResources("data","katepart/syntax/*.xml",false,true);
   QStringList list;
-  list << "/opt/kde/share/apps/katepart/syntax/cpp.xml";
+  list << QString( PREFIX ) + "/share/yzis/syntax/cpp.xml";
   //just C++ for now
 
   // Let's iterate through the list and build the Mode List

@@ -22,18 +22,23 @@
  */
 #include <qlayout.h>
 #include <qevent.h>
+#include <qpopupmenu.h>
 #include <kapplication.h>
 #include <kstdaction.h>
+#include <kxmlguifactory.h>
 #include <viewcursor.h>
 #include "viewwidget.h"
 #include "factory.h"
 #include "debug.h"
+#include "kyziscodecompletion.h"
 #include <qtimer.h>
 
+#include <kdebug.h>
+ 
 #include "settings.h"
 
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
-	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::s_self, 10)
+	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::s_self, 10), m_popup(0)
 {
 	m_editor = new KYZisEdit (this,"editor");
 	status = new KStatusBar (this, "status");
@@ -72,12 +77,15 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	mBuffer->statusChanged();
 	mVScroll->setMaxValue( buffer->lineCount() );
 
+	setupCodeCompletion();
+
 	applyConfig();
 }
 
 KYZisView::~KYZisView () {
 	yzDebug() << "KYZisView::~KYZisView" << endl;
 	if ( buffer ) buffer->removeView(this);
+	delete m_codeCompletion;
 }
 
 void KYZisView::setCommandLineText( const QString& text ) {
@@ -209,16 +217,20 @@ void KYZisView::fileSaveAs() {
 }
 
 /* Implementation of KTextEditor::ViewCursorInterface */
-// FIXME, this is wrong (true for fixed widths font maybe)
 QPoint KYZisView::cursorCoordinates()
 {
-	unsigned int line = 0, col = 0;
+	unsigned int line = 0, col = 0, visibleLine = 0, visibleCol = 0;
+	visibleLine = getCursor()->getY() - getCurrentTop();
+	visibleCol  = getCursor()->getX() - getCurrentLeft();
 	line = getCursor()->getY();
-	col  = getCursor()->getX();
-
-	QPoint cursorPosition( col * fontMetrics().maxWidth(), line * fontMetrics().lineSpacing() );
+	col = getCursor()->getX();
 	
-	return cursorPosition;
+	QString currentText = static_cast<KYZisDoc*>(document())->text(line, getCurrentLeft(), line, col);
+
+	QPoint cursorPositionPoint( editorFontMetrics().width(currentText), 
+		visibleLine * editorFontMetrics().lineSpacing() );
+	
+	return cursorPositionPoint;
 }
 
 void KYZisView::cursorPosition ( unsigned int *line, unsigned int *col )
@@ -274,6 +286,60 @@ void KYZisView::scrolled( int value ) {
 //	yzDebug() << "Scrolled to " << value << endl;
 	mVScroll->setMaxValue( buffer->lineCount() );
 	gotoxy(getBufferCursor()->getX(), value);
+}
+
+
+
+//KTextEditor::PopupMenuInterface implementation
+
+void KYZisView::installPopup( QPopupMenu *rmb_Menu ) {
+	m_popup = rmb_Menu;
+}
+
+void KYZisView::contextMenuEvent( QContextMenuEvent * e ) {
+	QPopupMenu * popup = 0;
+	if (m_popup)
+		popup =  m_popup;
+	else
+		popup = dynamic_cast<QPopupMenu*>( factory()->container("ktexteditor_popup", this ) );
+	if (popup/* && popup->count() > 0*/)
+	{
+		e->accept();
+		popup->exec(e->globalPos());
+	}
+}
+
+void KYZisView::emitNewStatus() {
+	emit newStatus();
+}
+
+
+//KTextEditor::CodeCompletionInterface and support functions
+
+void KYZisView::showArgHint( QStringList functionList, const QString & strWrapping, const QString & strDelimiter ) {
+	m_codeCompletion->showArgHint(functionList, strWrapping, strDelimiter);	
+}
+
+void KYZisView::showCompletionBox( QValueList< KTextEditor::CompletionEntry > complList, int offset, bool casesensitive ) {
+	m_codeCompletion->showCompletionBox(complList, offset, casesensitive);
+}
+
+void KYZisView::setupCodeCompletion() {
+	m_codeCompletion = new KYZisCodeCompletion(this);
+	connect( m_codeCompletion, SIGNAL(completionAborted()),
+		this, SIGNAL(completionAborted()));
+	connect( m_codeCompletion, SIGNAL(completionDone()),
+		this, SIGNAL(completionDone()));
+	connect( m_codeCompletion, SIGNAL(argHintHidden()),
+		this, SIGNAL(argHintHidden()));
+	connect( m_codeCompletion, SIGNAL(completionDone(KTextEditor::CompletionEntry)),
+		this, SIGNAL(completionDone(KTextEditor::CompletionEntry)));
+	connect( m_codeCompletion, SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString*)),
+		this,             SIGNAL(filterInsertString(KTextEditor::CompletionEntry*,QString*)));
+}
+
+QFontMetrics KYZisView::editorFontMetrics( ) {
+	return m_editor->fontMetrics();
 }
 
 #include "viewwidget.moc"

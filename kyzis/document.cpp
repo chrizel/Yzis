@@ -41,7 +41,6 @@ KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *paren
 		setInstance(KYZisFactory::instance());
 		m_parent = parentWidget;
 		mkId = kId;
-		setXMLFile( "kyzispart/kyzispart.rc" );
 
 		setupActions();
 }
@@ -296,11 +295,11 @@ void KYZisDoc::writeConfig() {
 	KYZisFactory::s_self->writeConfig();
 }
 
-void KYZisDoc::readConfig( KConfig *config ) {
+void KYZisDoc::readConfig( KConfig */*config*/ ) {
 	//how to use another config file with kconfigxt?
 }
 
-void KYZisDoc::writeConfig( KConfig *config ) {
+void KYZisDoc::writeConfig( KConfig */*config*/ ) {
 	//how to use another config file with kconfigxt?
 }
 
@@ -319,8 +318,19 @@ void KYZisDoc::configDialog() {
 		return;
 
 	KYZisConfigDialog *dialog = new KYZisConfigDialog( m_parent, "configure_editor", Settings::self(), KDialogBase::TreeList );
-	connect( dialog, SIGNAL( settingsChanged() ), KYZisFactory::s_self, SLOT( writeConfig() ) );
+	connect( dialog, SIGNAL( settingsChanged() ), KYZisFactory::s_self, SLOT( applyConfig() ) );
 	dialog->exec();
+}
+
+void KYZisDoc::setModified( bool modified ) {
+	for (QPtrList<KTextEditor::View>::const_iterator it = _views.constBegin();
+		it != _views.constEnd(); ++it)
+	{
+		KYZisView *kv = dynamic_cast<KYZisView *>(*it);
+		if (kv)
+			kv->emitNewStatus();
+	}
+	KTextEditor::Document::setModified(modified);
 }
 
 #include "document.moc"

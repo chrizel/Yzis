@@ -22,6 +22,8 @@
 
 #include <ktexteditor/view.h>
 #include <ktexteditor/viewcursorinterface.h>
+#include <ktexteditor/popupmenuinterface.h>
+#include <ktexteditor/codecompletioninterface.h>
 #include <kstatusbar.h>
 #include <qevent.h>
 #include <qscrollbar.h>
@@ -33,8 +35,9 @@
 
 class KYZisEdit;
 class KYZisCommand;
+class KYZisCodeCompletion;
 
-class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterface, public YZView
+class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterface, public KTextEditor::PopupMenuInterface, public KTextEditor::CodeCompletionInterface, public YZView
 {
 	Q_OBJECT
 
@@ -42,6 +45,14 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 
 	signals :
 		void cursorPositionChanged();
+		void newStatus();
+		
+		//KTextEditor::CodeCompletionInterface signals
+		void completionAborted();
+		void completionDone();
+		void completionDone(KTextEditor::CompletionEntry);
+		void argHintHidden();
+		void filterInsertString(KTextEditor::CompletionEntry *, QString *);
 
 	public:
 		KYZisView(KYZisDoc *doc, QWidget *parent, const char *name=0);
@@ -67,6 +78,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void setkid( int kId ) { mkId = kId; }
 
 		void KYZisView::wheelEvent( QWheelEvent * e );
+		void KYZisView::contextMenuEvent( QContextMenuEvent * e );
 
 		/**
 		 * @internal
@@ -81,8 +93,15 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		unsigned int charWidth( const QChar& ch ) const;
 		
 		KYZisEdit *editor() { return m_editor; }
+                
+		//KTextEditor::PopupMenuInterface and support functions
+		virtual void installPopup( QPopupMenu *rmb_Menu );
+		void emitNewStatus();
 
-
+		//KTextEditor::CodeCompletionInterface and support functions
+		virtual void showArgHint (QStringList functionList, const QString &strWrapping, const QString &strDelimiter);
+		virtual void showCompletionBox (QValueList< KTextEditor::CompletionEntry > complList, int offset=0, bool casesensitive=true);
+		QFontMetrics editorFontMetrics();
 
 	public slots:
 		QPoint cursorCoordinates();
@@ -101,6 +120,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 	
 	protected:
 		void setupActions();
+		void setupCodeCompletion();
 		virtual void registerModifierKeys( const QString& keys );
 
 	private:
@@ -109,6 +129,8 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		KStatusBar *status;
 		KYZisCommand *command;
 		QScrollBar *mVScroll; //vertical scroll
+		QPopupMenu *m_popup;
+		KYZisCodeCompletion *m_codeCompletion;
 		// internal ID used for DCOP communications 
 		int mkId;
 };

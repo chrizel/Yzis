@@ -18,4 +18,7 @@
 	<Separator/>
 </ToolBar>
 
+<Menu name="ktexteditor_popup" noMerge="1">
+</Menu>
+
 </kpartgui>

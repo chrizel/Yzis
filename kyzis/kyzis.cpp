@@ -53,7 +53,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode)
 	mBuffers( 0 ), mViews( 0 )
 {
 	mConsole = NULL;
-	setToolviewStyle(KMultiTabBar::KDEV3ICON);
+//	setToolviewStyle(KMultiTabBar::KDEV3ICON);
 	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
 	
 	if ( m_dockConfig.hasChildNodes() ) {

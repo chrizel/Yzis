@@ -197,7 +197,7 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		mParent->gotodxdy( 0, 0 );
 		return;
 	} 
-	if ( e->button() == Qt::LeftButton ) {
+	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
 		if (mParent->getCurrentMode() != YZView::YZ_VIEW_MODE_EX) {
 			mParent->gotodxdy( e->x( ) / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + mParent->getDrawCurrentLeft( ) - marginLeft,
 						e->y( ) / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );

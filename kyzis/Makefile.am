@@ -46,7 +46,7 @@ kde_kcfg_DATA = kyzis.kcfg
 kde_module_LTLIBRARIES = libkyzispart.la
 
 # the Part's source, library search path, and link libraries
-libkyzispart_la_SOURCES = document.cpp viewwidget.cpp factory.cpp settings.kcfgc editor.cpp commandwidget.cpp configdialog.cpp
+libkyzispart_la_SOURCES = document.cpp viewwidget.cpp factory.cpp settings.kcfgc editor.cpp commandwidget.cpp configdialog.cpp kyziscodecompletion.cpp
 libkyzispart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
 libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
 

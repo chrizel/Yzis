@@ -147,7 +147,10 @@ void KYZisFactory::quit( int /*errorCode*/ ) {
 
 void KYZisFactory::writeConfig() {
 	Settings::self()->writeConfig();
+	applyConfig();
+}
 
+void KYZisFactory::applyConfig() {
 	// apply new configuration to all views
 	QMap<QString,YZBuffer*>::Iterator it;
 	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
@@ -157,35 +160,14 @@ void KYZisFactory::writeConfig() {
 		for ( yit = l.first(); yit; yit = l.next() ) {
 			KYZisView* yv = static_cast<KYZisView*>( yit );
 			yv->applyConfig();
-		}	
+		}
 	}
-/*	DCOPClient *client = kapp->dcopClient();
-	QByteArray data;
-	QDataStream arg(data, IO_WriteOnly);
-	arg << Settings::konsole();
-	bool w = client->send(client->appId(), "Kyzis", "showKonsole(bool)", data);
-	if (w) {
-		yzDebug() << "DCOP call successful for " << client->appId() << " to show konsole" << endl;
-	} else {
-		yzDebug() << "DCOP call failed for " << client->appId() << endl;
-	}*/
 }
 
 void KYZisFactory::readConfig( )
 {
 	Settings::self()->readConfig();
-
-	// apply configuration to all views
-	QMap<QString,YZBuffer*>::Iterator it;
-	for ( it = mBuffers.begin(); it!=mBuffers.end(); it++ ) {
-		YZBuffer *b = ( it.data() );
-		QPtrList< YZView > l = b->views();
-		YZView* yit;
-		for ( yit = l.first(); yit; yit = l.next() ) {
-			KYZisView* yv = static_cast<KYZisView*>( yit );
-			yv->applyConfig();
-		}	
-	}
+	applyConfig();
 }
 
 void KYZisFactory::changeCurrentView( YZView* view ) {

@@ -96,6 +96,10 @@ class KYZisDoc : public KTextEditor::Document, public KTextEditor::EditInterface
 		virtual void writeSessionConfig( KConfig *config );
 		virtual void configDialog();
 
+		/*state modification changes - to comply with undocumented kate features
+		this overload emits stateChanged() signal from all views*/
+		virtual void setModified(bool modified);
+
 	public slots:
 		//signals to emit
 		virtual void textChanged () {}

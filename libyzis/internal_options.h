@@ -44,6 +44,8 @@ class YZInternalOption {
 		const QString& getValue() { return mValue; }
 		option_t getType() { return mType; }
 		value_t getValueType() { return mValueType; }
+		//this is valid only for stringlist_t options
+		QString getValueForKey( const QString& key );
 
 		void setValue( const QString& value ) { mValue = value; }
 

@@ -21,7 +21,7 @@
 #include "debug.h"
 #include <qdir.h>
 #include <qfile.h>
-#include <qregexp.h>
+#include <qregexp.h> 
 
 YZInternalOption::YZInternalOption( const QString& key, const QString& group, const QString& value, const QString& defaultValue, option_t type, value_t vtype) {
 	mKey = key;
@@ -57,6 +57,17 @@ YZInternalOption::YZInternalOption( const QString& key, const QString& group, bo
 	mValueType = vtype;
 	mValue = value ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
 	mDefaultValue = defaultValue ? QString::fromLatin1( "true" ) : QString::fromLatin1( "false" );
+}
+
+QString YZInternalOption::getValueForKey( const QString& key ) {
+	yzDebug() << "Get value for " << key << " in value " << mValue << endl;
+	if ( mValueType != stringlist_t ) return QString::null;
+	QRegExp rx ( ".*" + key + ":(.).*");
+	if ( rx.exactMatch( mValue ) ) {
+		yzDebug() << "Found value " << rx.cap(1) << " for key " << key << endl;
+		return rx.cap(1); //should contain the 'value' for the given key
+	}
+	return QString::null;
 }
 
 YZInternalOptionPool::YZInternalOptionPool() {
@@ -145,6 +156,7 @@ void YZInternalOptionPool::init() {
 	YZInternalOption *rightleft = new YZInternalOption( "rightleft", "Global", false, false, view_opt, bool_t );
 	YZInternalOption *list = new YZInternalOption( "list", "Global", false, false, view_opt, bool_t );
 	YZInternalOption *blocksplash = new YZInternalOption( "blocksplash", "Global", true, true, global_opt, bool_t );
+	YZInternalOption *listchars = new YZInternalOption( "listchars", "Global", QString("trail:-,space:.,tab:>"), QString("trail:-,space:.,tab:>"), global_opt, stringlist_t );
 
 	mOptions[ "Global\\tabstop" ] = tabstop;
 	mOptions[ "Global\\number" ] = number;
@@ -159,6 +171,7 @@ void YZInternalOptionPool::init() {
 	mOptions[ "Global\\rightleft" ] = rightleft;
 	mOptions[ "Global\\list" ] = list;
 	mOptions[ "Global\\blocksplash" ] = blocksplash;
+	mOptions[ "Global\\listchars" ] = listchars;
 	setGroup("Global");
 
 	//read config files now

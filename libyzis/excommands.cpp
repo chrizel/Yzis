@@ -325,6 +325,7 @@ QString YZExCommandPool::setlocal ( const YZExCommandArgs& args ) {
 					break;
 			}
 			switch ( opt->getValueType() ) {
+				case stringlist_t :
 				case string_t :
 					if ( rx.cap( 2 ) == "+" ) value = oldVal + value;
 					else if ( rx.cap( 2 ) == "-" ) value = oldVal.remove( value );
@@ -414,6 +415,7 @@ QString YZExCommandPool::set ( const YZExCommandArgs& args ) {
 		}
 		if ( hasOperator ) {
 			switch ( opt->getValueType() ) {
+				case stringlist_t :
 				case string_t :
 					if ( rx.cap( 2 ) == "+" ) value = YZSession::mOptions.readQStringEntry( option ) + value;
 					else if ( rx.cap( 2 ) == "-" ) value = QString( YZSession::mOptions.readQStringEntry( option ) ).remove( value );

@@ -86,7 +86,7 @@ void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& te
 
 void YZAction::replaceText( YZView* pView, const YZCursor& pos, unsigned int replacedLength, const QString& text ) {
 	yzDebug() << "replaceText :" << pos << " length : " << replacedLength << " text:" << text << endl;
-	if( pos.y() > mBuffer->lineCount() ) 
+	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	CONFIGURE_VIEWS;
 	mBuffer->delChar( pos.x(), pos.y(), replacedLength );
@@ -96,7 +96,7 @@ void YZAction::replaceText( YZView* pView, const YZCursor& pos, unsigned int rep
 }
 
 void YZAction::replaceChar( YZView* pView, const YZCursor& pos, const QString& text ) {
-	if( pos.y() > mBuffer->lineCount() ) 
+	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	CONFIGURE_VIEWS;
 	mBuffer->delChar( pos.x(), pos.y(), text.length() );
@@ -106,7 +106,7 @@ void YZAction::replaceChar( YZView* pView, const YZCursor& pos, const QString& t
 }
 
 void YZAction::deleteChar( YZView* pView, const YZCursor& pos, unsigned int len ) {
-	if( pos.y() > mBuffer->lineCount() ) 
+	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	CONFIGURE_VIEWS;
 	mBuffer->delChar( pos.x(), pos.y(), len );

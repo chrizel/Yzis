@@ -571,23 +571,28 @@ void YZModeCommand::scrollPageUp(const YZCommandArgs &args) {
 	if (line < 0)
 		line = 0;
 
-	if (line != args.view->getCurrentTop()) {
+	if (line != (int)args.view->getCurrentTop()) {
 		args.view->alignViewBufferVertically( line );
 	}
 }
 
 void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
-	// find the linenumber we should scroll to
-	//FIXME: take wrapped lines into account. If a line is wrapped it will occupy
-	// more than one line and by just using getLinesVisible() we will scroll too far
 	unsigned int line = args.view->getCurrentTop() + args.view->getLinesVisible();
+	YZView *view = args.view;
+
+	if (view->getLocalBoolOption("wrap")) {
+		YZViewCursor temp(view);
+		view->gotodxdy( &temp, view->getDrawCurrentLeft(), view->getDrawCurrentTop() + view->getLinesVisible() );
+
+		line = temp.bufferY();
+	}
 
 	// don't scroll below the last line of the buffer
-	if (line > args.view->myBuffer()->lineCount())
-		line = args.view->myBuffer()->lineCount();
+	if (line > view->myBuffer()->lineCount())
+		line = view->myBuffer()->lineCount();
 
-	if (line != args.view->getCurrentTop()) {
-		args.view->alignViewBufferVertically( line );
+	if (line != view->getCurrentTop()) {
+		view->alignViewBufferVertically( line );
 	}
 }
 

@@ -148,18 +148,18 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs, int * /* er
  */
 
 void YZCommandPool::initExPool() {
-	NEW_EX_COMMAND("write", &YZExExecutor::write,true);
-	NEW_EX_COMMAND("wall", &YZExExecutor::write,true);
-	NEW_EX_COMMAND("wqall", &YZExExecutor::write,true); //handles wq too
-	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true);
-	NEW_EX_COMMAND("bprevious", &YZExExecutor::bufferprevious,true);
-	NEW_EX_COMMAND("bdelete", &YZExExecutor::bufferdelete,true);
-	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true);
-	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true);
-	NEW_EX_COMMAND("qall", &YZExExecutor::quit,true);
-	NEW_EX_COMMAND("mkyzisrc", &YZExExecutor::mkyzisrc,true);
-	NEW_EX_COMMAND("substitute", &YZExExecutor::substitute,true);
-	NEW_EX_COMMAND("set", &YZExExecutor::set,true);
+	NEW_EX_COMMAND("write", &YZExExecutor::write,true,1);
+	NEW_EX_COMMAND("wall", &YZExExecutor::write,true,2);
+	NEW_EX_COMMAND("wqall", &YZExExecutor::write,true,3); //handles wq too
+	NEW_EX_COMMAND("bnext", &YZExExecutor::buffernext,true,1);
+	NEW_EX_COMMAND("bprevious", &YZExExecutor::bufferprevious,true,2);
+	NEW_EX_COMMAND("bdelete", &YZExExecutor::bufferdelete,true,3);
+	NEW_EX_COMMAND("edit", &YZExExecutor::edit,true,0);
+	NEW_EX_COMMAND("quit", &YZExExecutor::quit,true,1);
+	NEW_EX_COMMAND("qall", &YZExExecutor::quit,true,2);
+	NEW_EX_COMMAND("mkyzisrc", &YZExExecutor::mkyzisrc,true,0);
+	NEW_EX_COMMAND("substitute", &YZExExecutor::substitute,true,2);
+	NEW_EX_COMMAND("set", &YZExExecutor::set,true,1);
 }
 
 void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
@@ -174,13 +174,18 @@ void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
 	} else
 		return; //no command identified XXX eventually popup error messages
 	QString cmd = QString::null;
+	QString tmpCmd = QString::null;
 	yzDebug() << "Command : " << command << endl;
 	QMap<QString,YZCommand>::Iterator it;
+	int priority=-1;
 	for ( it = globalExCommands.begin(); it!=globalExCommands.end(); ++it ) {
-		cmd = static_cast<QString>( it.key() );
-		yzDebug() << "execExCommand : testing for match " << cmd << endl;
-		if ( cmd.startsWith( command ) ) break;
-		cmd = QString::null;
+		tmpCmd = static_cast<QString>( it.key() );
+		yzDebug() << "execExCommand : testing for match " << tmpCmd << endl;
+		if ( tmpCmd.startsWith( command ) && it.data().priority > priority ) {
+			priority=it.data().priority; //store the priority
+			cmd = tmpCmd;
+			yzDebug() << "Found match for command " << cmd << " with priority " << priority << endl;
+		}
 	}
 
 	if ( cmd != QString::null ) {

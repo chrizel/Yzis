@@ -1,8 +1,8 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003-2004 Mickael Marchand <marchand@kde.org>
- *  Thomas Capricelli <orzel@freehackers.org>.
- *  Loic Pauleve <panard@inzenet.org>
- *  Pascal "Poizon" Maillard <poizon@gmx.at>
+ *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
+ *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>.
+ *  Copyright (C) 2003-2004 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public

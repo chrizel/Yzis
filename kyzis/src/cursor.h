@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2004 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2004-2005 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public

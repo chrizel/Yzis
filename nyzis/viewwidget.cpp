@@ -1,6 +1,7 @@
 /*
-    Copyright (c) 2003, 2004 Thomas Capricelli <orzel@freehackers.org>,
-    Loic Pauleve <panard@inzenet.org>
+    Copyright (c) 2003-2004 Thomas Capricelli <orzel@freehackers.org>,
+    Copyright (c) 2003-2004 Loic Pauleve <panard@inzenet.org>
+    Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public

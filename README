@@ -7,10 +7,10 @@ GUI are available.
 
 Requirements:
 =============
--> Qt 3.x
+-> Qt 3.x or Qt 4.0(strictly superior a beta1 :)
 -> Lua 5.x
 -> For kyzis : KDE 3.2.x
--> For nyzis : NCurses 5
+-> For nyzis : NCurses 5 _WITH_ wide characters support (USE unicode on gentoo)
 -> Optionnally : pslib (pslib.sf.net)
 
 Building Yzis:

@@ -1,6 +1,6 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003,2004 Mickael Marchand <marchand@kde.org>,
- *  Thomas Capricelli <orzel@freehackers.org>
+ *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
+ *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -48,7 +48,7 @@
 #define VERSION_CHAR_STATE3 "(preview release - Use for testing only)"
 //and change/use this one in the code
 #define VERSION_CHAR_ST VERSION_CHAR_STATE2
-#define VERSION_CHAR_DATE "SVN>2004-11-30"
+#define VERSION_CHAR_DATE "SVN>2005-01-02"
 
 //visibility of the option
 enum option_t {

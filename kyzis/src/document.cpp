@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2003,2004 Mickael Marchand <marchand@kde.org>
+    Copyright (c) 2003-2005 Mickael Marchand <marchand@kde.org>
     Copyright (c) 2004 Alexander Dymo <adymo@mksat.net>
 
     This program is free software; you can redistribute it and/or

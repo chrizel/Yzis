@@ -23,21 +23,26 @@ function printBufferContent()
 end
 
 TestLuaBinding = {} --class
-    function TestLuaBinding:setUp() 
+    function TestLuaBinding:clearBuffer()
         while linecount() > 1 do
             deleteline(1)
         end
         deleteline(1)
     end
 
+    function TestLuaBinding:setUp() 
+        self:clearBuffer()
+    end
+
     function TestLuaBinding:tearDown() 
+        self:clearBuffer()
     end
 
     function TestLuaBinding:test_setup()
         -- check that setup correctly clears the buffer
         insert(1,1,"coucou")
         assertEquals(line(1), "coucou" )
-        self.setUp()
+        self:setUp()
         assertEquals(line(1), "" )
         assertEquals( bufferContent(), "" )
     end
@@ -57,6 +62,8 @@ TestLuaBinding = {} --class
         insert(1,1,"coucou")
         -- still only one line
         assertEquals( 1, linecount() )
+        appendline("hop")
+        assertEquals( 2, linecount() )
     end
 
     function TestLuaBinding:test_insert()
@@ -76,7 +83,6 @@ TestLuaBinding = {} --class
 
         -- insert beyond the end of file does nothing
         insert(1,4,s)
-        printBufferContent()
         assertEquals( bufferContent(), content )
     end
 
@@ -95,7 +101,6 @@ TestLuaBinding = {} --class
 
         assertEquals( bufferContent(), "" )
         insertline(1,s2)
-        printBufferContent()
         assertEquals( bufferContent(), s2 )
         insertline(1,s1)
         assertEquals( bufferContent(), s1.."\n"..s2 )
@@ -106,7 +111,7 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), s1.."\n"..s2.."\n"..s3 )
 
         -- multiline support
-        self.setUp()
+        self:setUp()
         insertline(1,s3)
         assertEquals( bufferContent(), s3 )
         insertline(1,s1.."\n"..s2)
@@ -122,7 +127,35 @@ TestLuaBinding = {} --class
         assertEquals( bufferContent(), s.."\nhop\nbof" )
     end
 
-    
+    function TestLuaBinding:test_replace()
+        local s = "coucou"
+        appendline(s)
+        assertEquals( bufferContent(), s )
+        replace(1,1,"b")
+        assertEquals( bufferContent(), "boucou" )
+        replace(1,1,"doi")
+        assertEquals( bufferContent(), "doicou" )
+        replace(6,1,"hop")
+        assertEquals( bufferContent(), "doicohop" )
+        replace(9,1,"bof")
+        assertEquals( bufferContent(), "doicohopbof" )
+
+        -- ignore replace on wrong position
+        replace(13,1,"bof")
+        assertEquals( bufferContent(), "doicohopbof" )
+        replace(1,3,"bof")
+        assertEquals( bufferContent(), "doicohopbof" )
+
+        -- replace on the second line
+        replace(2,2,"bof")
+        assertEquals( bufferContent(), "doicohopbof\nbof" )
+
+        -- replace multiline rejected
+        replace(2,1,"bof\nhop\n")
+        assertEquals( bufferContent(), "doicohopbof\nbof" )
+    end
+
+        
 
 
 

@@ -65,6 +65,7 @@ main(int argc, char *argv[])
 	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
 	app.installTranslator(  &qt );
 	QTranslator myapp(  0 );
+	QString initialSendKeys;
 	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
 	yzDebug(NYZIS) << "Locale " << QTextCodec::locale() << endl;
 	app.installTranslator(  &myapp );
@@ -79,7 +80,7 @@ main(int argc, char *argv[])
 
 	int c;
 	while ( 1 ) {
-		c = getopt_long ( argc, argv, "hv", long_options, &option_index );
+		c = getopt_long ( argc, argv, "hvc:", long_options, &option_index );
 		if ( -1 == c ) break; // end of parsing
 		switch (c) {
 			case 'h':
@@ -92,6 +93,9 @@ main(int argc, char *argv[])
 				printf("Nyzis, ncurses part of Yzis - http://www.yzis.org\n"
 					VERSION_CHAR_LONG " " VERSION_CHAR_DATE "\n");
 				exit(0);
+				break;
+			case 'c':
+				initialSendKeys = (const char *) optarg;
 				break;
 			default:
 				printf ( "?? getopt returned character code 0%o ??\n", c );
@@ -123,6 +127,10 @@ main(int argc, char *argv[])
 	if ( !hasatleastone )
 		factory->createBuffer();
 
+	if (initialSendKeys.length()) {
+		YZView* cView = YZSession::me->currentView();
+		cView->sendMultipleKey( initialSendKeys );
+	}
 	
 	// let's go and loop
 	factory->event_loop();

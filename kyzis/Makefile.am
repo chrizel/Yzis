@@ -54,3 +54,9 @@ partdesktop_DATA = kyzis_part.desktop
 # this is where the part's XML-GUI resource file goes
 partrcdir   = $(kde_datadir)/kyzispart
 partrc_DATA = kyzis_part.rc
+
+#########################################################################
+# MISC SECTION
+#########################################################################
+re : clean all
+

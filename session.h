@@ -161,6 +161,11 @@ class YZSession {
 		virtual void popupMessage( const QString& message ) = 0;
 
 		/**
+		 * Prompt a Yes/No question for the user
+		 */
+		virtual bool prompt(const QString& title, const QString& message) = 0;
+
+		/**
 		 * Creates a new buffer
 		 */
 		virtual	YZBuffer *createBuffer(const QString& path=QString::null) = 0;

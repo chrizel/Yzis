@@ -23,7 +23,6 @@
 
 #include "viewwidget.h"
 #include <ncurses.h>
-#include "factory.h"
 #include "session.h"
 #include "document.h"
 
@@ -41,7 +40,7 @@ public:
 	NYZFactory(const char *session_name = "default_nyzis_session" );
 	virtual ~NYZFactory( );
 
-	void		event_loop();
+	bool		process_one_event();
 
 	/*
 	 * YZSession interface :

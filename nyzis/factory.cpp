@@ -63,76 +63,68 @@ NYZFactory::~NYZFactory( )
 	currentView = 0;
 }
 
-void NYZFactory::event_loop()
+bool NYZFactory::process_one_event()
 {
-	YZASSERT_MSG( currentView,
-			"NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
-	/* main and only event loop in nyzis */
-	for (;;) {
-		/* this is a _basic_ event loop... will be improved */
-		int c = getch();
+	YZASSERT_MSG( currentView, "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
 
-		// we know what this is..
-		switch( c ){
-			case ERR:
-				extern uint qGlobalPostedEventsCount();
-#if 0
-				if ( qApp->hasPendingEvents () ) {
-					yzDebug( NYZIS ) << "qt wanna do something.. " << qGlobalPostedEventsCount() << " pending events.." << endl;
-					qApp->processEvents( 400 );
-				} else usleep( 400 );
-#else
-				usleep( 400 );
-#endif
-			// do nothing with the following
-			case KEY_RESIZE:
-				continue;
-			case 15:
-				currentView->sendKey("o","<CTRL>");
-				continue;
-			case 12:
-				currentView->sendKey("l","<CTRL>");
-				continue;
-			case 18:
-				currentView->sendKey("r","<CTRL>" );
-				continue;
-		}
-		if (keycodes.contains(c)) {
-			currentView->sendKey(keycodes[c],"");
-			continue;
-		}
-		// remaining cases
-		if ( c& KEY_CODE_YES ) { // ncurses special key
-			yzError(NYZIS) << "*************** Unhandled" <<
-				"ncurses key code, please report : " << (int) c << endl;
-			continue;
-			}
-		QString modifiers;
-		if ( c & 0200 ) {
-			// heuristic, alt-x is x|0200..
-			modifiers += "<ALT>";
-			c &= ~0200;
-		}
-		if ( c>=KEY_MAX) { // non-ascii key
-			yzError(NYZIS) << "*************** Unhandled" <<
-				"and very strange (>KEY_MAX) char received from ncurses, please report : " << (int) c << endl;
-			continue;
-			}
-		if ( c>127 ) { // non-ascii key
-			yzError(NYZIS) << "*************** Unhandled" <<
-				"non-ascii key, please report : " << (int) c << endl;
-			continue;
-			}
-		if ( iscntrl( c ) ) {
-			yzError(NYZIS) << "*************** Unhandled" <<
-				"control sequence " << c << " (discarded)" << endl;
-			continue;
-		}
-		if ( isupper( c ) ) { modifiers +="<SHIFT>"; }
-		//TODO: META
-		currentView->sendKey( QString( QChar( c ) ), modifiers );
+	// this one is not blocking thanx to the nodelay() call
+	int c = getch();
+
+	// we know what this is..
+	switch( c ){
+		case ERR: // nothing to be done
+			return false;
+		case KEY_RESIZE: // do nothing with this one
+			return true;
+		case 15:
+			currentView->sendKey("o","<CTRL>");
+			return true;
+		case 12:
+			currentView->sendKey("l","<CTRL>");
+			return true;
+		case 18:
+			currentView->sendKey("r","<CTRL>" );
+			return true;
+	} // switch
+
+	if (keycodes.contains(c)) {
+		currentView->sendKey(keycodes[c],"");
+		return true;
 	}
+	// remaining cases
+	if ( c& KEY_CODE_YES ) { // ncurses special key
+		yzError(NYZIS) << "*************** Unhandled" <<
+			"ncurses key code, please report : " << (int) c << endl;
+		return true;
+	}
+	QString modifiers;
+	if ( c & 0200 ) {
+		// heuristic, alt-x is x|0200..
+		modifiers += "<ALT>";
+		c &= ~0200;
+	}
+	if ( c>=KEY_MAX) { // non-ascii key
+		yzError(NYZIS) << "*************** Unhandled" <<
+			"and very strange (>KEY_MAX) char received from ncurses, please report : " << (int) c << endl;
+		return true;
+	}
+	if ( c>127 ) { // non-ascii key
+		yzError(NYZIS) << "*************** Unhandled" <<
+			"non-ascii key, please report : " << (int) c << endl;
+		return true;
+	}
+	if ( iscntrl( c ) ) {
+		yzError(NYZIS) << "*************** Unhandled" <<
+			"control sequence " << c << " (discarded)" << endl;
+		return true;
+	}
+	if ( isupper( c ) ) { modifiers +="<SHIFT>"; }
+	//TODO: META
+	currentView->sendKey( QString( QChar( c ) ), modifiers );
+
+	return true;
 }
+
 
 void NYZFactory::quit( int errorCode ) {
 	exit( errorCode );

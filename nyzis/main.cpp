@@ -20,18 +20,6 @@
  */
 
 
-/* Qt */
-#include <qapplication.h>
-#include <qtranslator.h>
-#include <qtextcodec.h>
-
-/* X11 */
-#include <X11/Xlib.h>
-
-/* yzis */
-#include "debug.h"
-#include "factory.h"
-#include "libyzis/translator.h"
 /* std c */
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
@@ -43,7 +31,25 @@
 #include <cstdio>
 #include <csignal>
 
-       typedef void ( *sighandler_t )( int );
+/* Qt */
+#include <qapplication.h>
+#include <qtranslator.h>
+#include <qtextcodec.h>
+
+/* X11 */
+#include <X11/Xlib.h>
+
+
+/* libyzis */
+#include "libyzis/translator.h"
+
+/* yzis */
+#include "debug.h"
+#include "factory.h"
+#include "eventloop.h"
+
+
+typedef void ( *sighandler_t )( int );
 
 static void sigint(int sig);
 static void sigwinch(int sig);
@@ -63,19 +69,21 @@ main(int argc, char *argv[])
 #else
 	bool useGUI = TRUE;
 #endif
-	// until we find something better; this causes the printer to segfault
-	// useGUI = false;
+
+	// keep this one before QApplication creation, and doesn't declare it as "NYZEventLoop loop();", use new
+	( void ) new NYZEventLoop();
+
 	QApplication app( argc, argv, useGUI );
 
 	// Translator stuff
 	QTranslator qt(  0 );
 	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
 	app.installTranslator(  &qt );
-	QTranslator myapp(  0 );
+	QTranslator translator(  0 );
 	QString initialSendKeys;
-	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
+	translator.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
 	yzDebug(NYZIS) << "Locale " << QTextCodec::locale() << endl;
-	app.installTranslator(  &myapp );
+	app.installTranslator(  &translator );
 
 	// option stuff
 	int option_index = 0;
@@ -139,9 +147,7 @@ main(int argc, char *argv[])
 		cView->sendMultipleKey( initialSendKeys );
 	}
 
-	// let's go and loop
-	factory->event_loop();
-	yzFatal(NYZIS) << "Should never reach this point" << endl;
+	app.exec();
 }
 
 static void cleaning(void)

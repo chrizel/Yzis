@@ -34,11 +34,11 @@
 
 #define VERSION_MAJOR	0
 #define VERSION_MINOR	0
-#define VERSION_PATCH	1
+#define VERSION_PATCH	2
 
-#define VERSION_CHAR	"M1"
-#define VERSION_CHAR_LONG "Yzis Milestone 1"
-#define VERSION_CHAR_DATE "Released on may, 19th, 2004"
+#define VERSION_CHAR	"M1++"
+#define VERSION_CHAR_LONG "Yzis (from CVS)"
+#define VERSION_CHAR_DATE "CVS>2004-04-21"
 
 struct yzpoint {
 	int x;

@@ -1,3 +1,7 @@
+2003-09-27 mikmak
+  * libyzis/kyzis
+    fix destructors and references so that it no longer crash at exit
+
 2003-08-31 mikmak
   * libyzis
     support movement keys in all modes

@@ -287,7 +287,6 @@ void YZBuffer::mergeNextLine( unsigned int line ) {
 //                            Content Operations 
 // ------------------------------------------------------------------------
 
-//XXX this one is broken, IT DOES NOT CLEAR mText DUE TO CONST
 void YZBuffer::clearText() {
 	( ( QPtrList<YZLine> )mText ).clear();
 }
@@ -300,7 +299,7 @@ QString YZBuffer::textline( uint line ) const {
 void YZBuffer::clearIntro() {
 	yzDebug() << "ClearIntro"<< endl;
 	mIntro = false;
-	mText.clear();
+	clearText();
 	mUndoBuffer->setInsideUndo( true );
 	appendLine("");
 	mUndoBuffer->setInsideUndo( false );

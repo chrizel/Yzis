@@ -46,6 +46,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	mCurrentSearchItem = 0;
 	mExHistory.resize(200);
 	mSearchHistory.resize(200);
+	reverseSearch=false;
 }
 
 YZView::~YZView() {

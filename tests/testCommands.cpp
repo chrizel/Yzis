@@ -108,7 +108,7 @@ void TestYZCommands::testCharMovement()
     mView->sendText( "<Left>" );
     CHECK_CURSOR_POS( mView, 3, 2 );
   
-     mView->sendText( "<Up>" );
+    mView->sendText( "<Up>" );
     CHECK_CURSOR_POS( mView, 2, 2 );
 
     mView->sendText( "<Up>" );

@@ -19,11 +19,13 @@ INCLUDEPATH += cppunit/include cppunit/phil \
 HEADERS   =  testBuffer.h \
 			 testCommands.h \
 			 testUndo.h \
+			 testSearch.h \
 			 TView.h \
 			 TSession.h
 			 
 SOURCES   = testBuffer.cpp \
 			testCommands.cpp \
 			testUndo.cpp \
+			testSearch.cpp \
 			TView.cpp \
 			main.cpp

@@ -11,11 +11,11 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 	gui_manager = NULL;
 	buffer		= _b;
 	lines_vis	= _lines_vis;
+	cursor = new YZCursor(this);
 	current		= 0;
 	current_maxx = 0;
-	cursor_x = cursor_y = cursor_x_ghost = 0;
 	mode 		= YZ_VIEW_MODE_COMMAND;
-	QString line = buffer->find_line(cursor_y);
+	QString line = buffer->find_line(cursor->getY());
 	if (line) current_maxx = line.length()-1;
 
 	events_nb_begin = 0;
@@ -40,8 +40,9 @@ void YZView::send_char( QChar c)
 	QString lin;
 
 	if ('\033'==c) {
-		if (cursor_x>current_maxx) {
-			cursor_x = current_maxx;
+		//why do we check that ?
+		if (cursor->getX() > current_maxx) {
+			cursor->setX(current_maxx);
 			update_cursor();
 		}
 		mode = YZ_VIEW_MODE_COMMAND;
@@ -51,17 +52,17 @@ void YZView::send_char( QChar c)
 	switch(mode) {
 		case YZ_VIEW_MODE_INSERT:
 			/* handle adding a char */
-			buffer->add_char(cursor_x,cursor_y,c);
-			cursor_x++;
-			lin = buffer->find_line(cursor_y);
+			buffer->add_char(cursor->getX(),cursor->getY(),c);
+			cursor->incX();
+			lin = buffer->find_line(cursor->getY());
 			if ( lin ) current_maxx = lin.length()-1;
 			update_cursor();
 			return;
 		case YZ_VIEW_MODE_REPLACE:
 			/* handle replacing a char */
-			buffer->chg_char(cursor_x,cursor_y,c);
-			cursor_x++;
-			lin = buffer->find_line(cursor_y);
+			buffer->chg_char(cursor->getX(),cursor->getY(),c);
+			cursor->incX();
+			lin = buffer->find_line(cursor->getY());
 			if ( lin ) current_maxx = lin.length()-1;
 			update_cursor();
 			return;
@@ -80,10 +81,10 @@ void YZView::send_char( QChar c)
 			break;
 		case 'A': /* append -> insert mode */
 			/* go to end of line */
-			cursor_x = current_maxx;
+			cursor->setX(current_maxx);
 		/* pass through */
 		case 'a': /* append -> insert mode */
-			cursor_x ++;
+			cursor->incX();
 		/* pass through */
 		case 'i': /* insert mode */
 			mode = YZ_VIEW_MODE_INSERT;
@@ -95,44 +96,50 @@ void YZView::send_char( QChar c)
 			post_event(mk_event_setstatus("-- REPLACE --"));
 			break;
 		case 'j': /* move down */
-			if (cursor_y<buffer->text.count()-1) {
-				lin = buffer->find_line(++cursor_y);
-				if ( lin ) current_maxx = lin.length()-1;
-				cursor_x = cursor_x_ghost;
-				if (cursor_x>current_maxx) cursor_x = current_maxx;
-				if (cursor_x<0) cursor_x = 0;
+			if (cursor->getY() < buffer->text.count()-1) {
+				cursor->incY();
+				lin = buffer->find_line(cursor->getY());
+				//if ( lin ) current_maxx = lin.length()-1; 
+				//cursor->setX( cursor_x_ghost );
+				if (cursor->getX() > current_maxx) cursor->setX( current_maxx );
+				if (cursor->getX() < 0) cursor->setX( 0 );
 				update_cursor();
 			}
 			break;
 		case 'k': /* move up */
-			if (cursor_y>0) {
-				lin = buffer->find_line(--cursor_y);
-				if ( lin ) current_maxx = lin.length()-1;
-				cursor_x = cursor_x_ghost;
-				if (cursor_x>current_maxx) cursor_x = current_maxx;
-				if (cursor_x<0) cursor_x = 0;
+			if (cursor->getY() > 0) {
+				cursor->decY();
+				lin = buffer->find_line(cursor->getY());
+				//if ( lin ) current_maxx = lin.length()-1;
+				//cursor->setX( cursor_x_ghost );
+				if (cursor->getX() > current_maxx) cursor->setX( current_maxx );
+				if (cursor->getX() < 0) cursor->setX( 0 );
 				update_cursor();
 			}
 			break;
 		case 'h': /* move left */
-			if (cursor_x>0) {
-				cursor_x_ghost = --cursor_x;
+			if (cursor->getX() > 0) {
+				cursor->decX();
+				//cursor_x_ghost = cursor->getX();
 				update_cursor();
 			}
 			break;
 		case 'l': /* move right */
-			if (cursor_x<current_maxx) {
-				cursor_x_ghost = ++cursor_x;
+			if (cursor->getX() < current_maxx) {
+				cursor->incX();
+				//cursor_x_ghost = cursor->getX();
 				update_cursor();
 			}
 			break;
 		case '0': /* move beginning of line */
-			cursor_x_ghost = cursor_x = 0;
+			//cursor_x_ghost = 0;
+			cursor->setX( 0 );
 			update_cursor();
 			break;
 		case '$': /* move end of line */
-			if (! (current_maxx<0)) {
-				cursor_x_ghost = cursor_x = current_maxx;
+			if (! (current_maxx < 0)) {
+				//cursor_x_ghost = current_maxx;
+				cursor->setX( current_maxx );
 				update_cursor();
 			}
 			break;
@@ -141,9 +148,7 @@ void YZView::send_char( QChar c)
 
 void YZView::update_cursor(void)
 {
-	post_event( mk_event_setcursor(cursor_x,cursor_y-current));
-//	debug("posting event about moving cursor to %d,%d, maxx is %d", cursor_x,
-	//	cursor_y-current,current_maxx);
+	post_event( mk_event_setcursor(cursor->getX(),cursor->getY()-current));
 }
 
 yz_event *YZView::fetch_event(int idx)
@@ -164,12 +169,9 @@ yz_event *YZView::fetch_event(int idx)
 
 void YZView::post_event (yz_event e)
 {
-//	debug("post_event");
 	events[events_nb_last++] = e;
 	if (events_nb_last>=YZ_EVENT_EVENTS_MAX)
 		events_nb_last=0;
-//FIXME	if (events_nb_last==events_nb_begin)
-//		panic("YZ_EVENT_EVENTS_MAX exceeded");
 	if ( gui_manager )
 		gui_manager->postEvent( e );
 }

@@ -266,6 +266,8 @@ void NYZFactory::deleteView(int /*Id*/)
 		yzWarning(NYZIS)<<"nyzis can't handle not having any view/buffers, quitting" << endl;;
 		exitRequest(0);
 	}
+	v->setCommandLineText( "" );
+	v->refreshScreen();
 }
 
 bool NYZFactory::promptYesNo( const QString& /*title*/, const QString& /*message*/ ) {

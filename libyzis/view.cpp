@@ -97,7 +97,7 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 }
 
 QString YZView::buildCommand( const QString& key, int modifiers ) {
-	QString command;
+	QString command=mPreviousChars;
 	if ( modifiers & Qt::ControlButton ) command += "<CTRL>";
 	if ( modifiers & Qt::ShiftButton ) command += "<SHIFT>";
 	if ( modifiers & Qt::AltButton ) command += "<ALT>";
@@ -123,7 +123,7 @@ void YZView::sendKey( int c, int modifiers) {
 	
 	bool test = false;
 
-	QString mappedCommand = buildCommand(key, modifiers); //mm: do we need to add previousChar in this command ? (i believe no since I do not know any <CTRL>xxx command)
+	QString mappedCommand = buildCommand(key, modifiers);
 	yzDebug() << "MappedCommand " << mappedCommand << endl;
 
 	//ignore some keys
@@ -446,7 +446,7 @@ void YZView::sendKey( int c, int modifiers) {
 					break;
 				if ( error == 1 ) {
 					yzDebug() << "No matching command found at second pass. I give up..." << endl;
-					purgeInputBuffer(); // no matching command
+//					purgeInputBuffer(); // no matching command
 				}
 			}
 			break;

@@ -641,7 +641,7 @@ void YZBuffer::updateAllViews() {
 	yzDebug("YZBuffer") << "YZBuffer updateAllViews" << endl;
 	YZView *it;
 	for ( it = mViews.first(); it; it = mViews.next() ) {
-		it->refreshScreen();
+		it->sendPaintEvent( it->getDrawCurrentLeft(), it->getDrawCurrentTop(), it->getColumnsVisible(), it->getLinesVisible() );
 		it->syncViewInfo();
 	}
 }

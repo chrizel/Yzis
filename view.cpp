@@ -1919,10 +1919,16 @@ void YZView::commitPaintEvent() {
 	if ( --m_paintAutoCommit == 0 ) {
 		YZSelectionMap drawPool = selectionPool->layout( "DRAW" );
 		unsigned int size = drawPool.size();
+		unsigned int lastY = 0;
 		for ( unsigned int i = 0; i < size; i++ ) {
-			const YZCursor from = drawPool[ i ].from();
-			const YZCursor to = drawPool[ i ].to();
-			sendPaintEvent( dCurrentLeft, from.getY(), mColumnsVis, to.getY() - from.getY() + 1 );
+			unsigned int fY = drawPool[ i ].from().getY();
+			unsigned int tY = drawPool[ i ].to().getY();
+			if ( i > 0 && lastY == fY ) { // don't send two events on the same line
+				if ( fY == tY ) continue;
+				++fY;
+			}
+			lastY = tY;
+			sendPaintEvent( dCurrentLeft, fY, mColumnsVis, tY - fY + 1 );
 		}
 		abortPaintEvent();
 	}

@@ -1,3 +1,7 @@
+2004-08-06 mikmak
+  * libyzis
+    initial swapfile recovering support
+
 2004-07-30 mikmak
   * libyzis
   	support for recording/playing macros (q -> record, @->play)

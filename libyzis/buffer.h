@@ -225,8 +225,9 @@ public:
 	/**
 	 * Changes the filename
 	 * @param _path the new filename ( and path )
+	 * @param updateSwap whether or not to propagate the change to the swap file
 	 */
-	void setPath( const QString& _path );
+	void setPath( const QString& _path, bool updateSwap=false );
 
 	/**
 	 * Called whenever the filename is changed

@@ -452,7 +452,7 @@ void YZBuffer::load(const QString& file) {
 	yzDebug("YZBuffer") << "YZBuffer load " << file << endl;
 	QString oldPath = mPath;
 	if ( file.isNull() || file.isEmpty() ) return;
-	setPath(file);
+	setPath(file, false);
 	//hmm changing file :), update Session !!!!
 	mSession->updateBufferRecord( oldPath, mPath, this );
 	if ( mIntro ) clearIntro();
@@ -481,6 +481,7 @@ void YZBuffer::load(const QString& file) {
 		appendLine("");
 	mLoading=false;
 	mUndoBuffer->setInsideUndo( false );
+	setPath(file, true);
 	setChanged( false );
 	//reenable
 	mUpdateView=true;
@@ -631,7 +632,7 @@ void YZBuffer::makeAttribs() {
 
 }
 
-void YZBuffer::setPath( const QString& _path ) {
+void YZBuffer::setPath( const QString& _path, bool updateswap ) {
 	QString newPath = _path.stripWhiteSpace();
 	if (newPath[0] != '/') {
 		mPath = QDir::cleanDirPath(QDir::current().absPath()+"/"+newPath);
@@ -639,7 +640,8 @@ void YZBuffer::setPath( const QString& _path ) {
 	} else
 		mPath = newPath; 
 	mFileIsNew=false; 
-	mSwap->setFileName( mPath + ".ywp" );
+	if ( updateswap )
+		mSwap->setFileName( mPath + ".ywp" );
 	filenameChanged();
 }
 

@@ -67,6 +67,16 @@ class YZSwapFile {
 		 */
 		void init();
 
+		/**
+		 * Recover a buffer from a swap file
+		 */
+		void recover();
+
+		/**
+		 * Replay one event on the buffer during a recover
+		 */
+		void replay( YZBufferOperation::OperationType type, unsigned int col, unsigned int line, const QString& str );
+
 	private:
 		struct sE {
 			YZBufferOperation::OperationType type;
@@ -79,6 +89,7 @@ class YZSwapFile {
 		QValueList<swapEntry> mHistory;
 		YZBuffer *mParent;
 		QString mFilename;
+		bool mRecovering;
 };
 
 #endif

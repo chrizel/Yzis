@@ -131,15 +131,23 @@ QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
 	QRegExp rx2 ( "set(\\s*)no(.*)" ); //deactivate a bool option
 	QRegExp rx3 ( "set(\\s*)(.*)" ); //activate a bool option
 	if ( rx.exactMatch( inputs ) ) {
-		YZSession::setQStringOption(rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());
+		YZSession::mOptions.setGroup("General");
+		YZSession::setQStringOption( rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());
 	} else if ( rx2.exactMatch( inputs )) {
-		YZSession::setQStringOption(rx2.cap( 2 ).simplifyWhiteSpace(), "false");
+		YZSession::mOptions.setGroup("General");
+		YZSession::setBoolOption( rx2.cap( 2 ).simplifyWhiteSpace(), false);
 	} else if ( rx3.exactMatch( inputs ) ) {
-		YZSession::setQStringOption(rx3.cap( 2 ).simplifyWhiteSpace(), "true");
+		YZSession::mOptions.setGroup("General");
+		YZSession::setBoolOption( rx3.cap( 2 ).simplifyWhiteSpace(), true);
 	} else {
 		view->mySession()->popupMessage( tr( "Invalid option given" ) );
 	}
 
+	return QString::null;
+}
+
+QString YZExExecutor::mkyzisrc ( YZView *, const QString& ) {
+	YZSession::mOptions.saveTo( QDir::currentDirPath() + "/yzis.conf" );
 	return QString::null;
 }
 

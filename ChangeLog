@@ -1,3 +1,9 @@
+2004-04-28 mikmak
+  * libyzis
+    - new :mkyzisrc EX command to create an yzis.conf file in the current
+    directory
+    - add caching of HL information in ~/.yzis/hl.conf, should speed up start time
+
 2004-04-27 panard
   * libyzis
     wrap lines support

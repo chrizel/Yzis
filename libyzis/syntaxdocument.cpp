@@ -28,10 +28,13 @@
 */
 
 #include <qfile.h>
+#include <qdir.h>
 #include <qregexp.h>
 #include "syntaxdocument.h"
 #include "debug.h"
 #include "translator.h"
+#include "options.h"
+#include "session.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -530,22 +533,23 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
 /** Generate the list of hl modes, store them in myModeList
     force: if true forces to rebuild the Mode List from the xml files (instead of configfile)
 */
-void YzisSyntaxDocument::setupModeList (bool )
+void YzisSyntaxDocument::setupModeList (bool force)
 {
   // If there's something in myModeList the Mode List was already built so, don't do it again
   if (!myModeList.isEmpty())
     return;
 
   // We'll store the ModeList in katesyntaxhighlightingrc
-  /*KConfig config("katesyntaxhighlightingrc", false, false);
+  //KConfig config("katesyntaxhighlightingrc", false, false);
+  YZOption& config = YZSession::mOptions;
 
   // figure our if the kate install is too new
   config.setGroup ("General");
-  if (config.readNumEntry ("Version") > config.readNumEntry ("CachedVersion"))
+  if (config.readIntEntry ("Version") > config.readIntEntry ("CachedVersion"))
   {
-    config.writeEntry ("CachedVersion", config.readNumEntry ("Version"));
+    config.setIntOption ("CachedVersion", config.readIntEntry ("Version"));
     force = true;
-  }*/
+  }
 
   // Let's get a list of all the xml files for hl
   QStringList list = findAllResources("data",QString( PREFIX ) + "/share/yzis/syntax/*.xml",false,true);
@@ -553,8 +557,8 @@ void YzisSyntaxDocument::setupModeList (bool )
   // Let's iterate through the list and build the Mode List
   for ( QStringList::Iterator it = list.begin(); it != list.end(); ++it )
   {
-/*    // Each file has a group called:
-    QString Group="Cache "+*it;
+    // Each file has a group called:
+    QString Group="HL Cache "+*it;
 
     // If the group exist and we're not forced to read the xml file, let's build myModeList for katesyntax..rc
     if ((config.hasGroup(Group)) && (!force))
@@ -564,21 +568,21 @@ void YzisSyntaxDocument::setupModeList (bool )
 
       // Let's make a new YzisSyntaxModeListItem to instert in myModeList from the information in katesyntax..rc
       YzisSyntaxModeListItem *mli=new YzisSyntaxModeListItem;
-      mli->name       = config.readEntry("name"); // ### TODO: translation (bug #72220)
-      mli->section    = i18n("Language Section",config.readEntry("section").utf8());
-      mli->mimetype   = config.readEntry("mimetype");
-      mli->extension  = config.readEntry("extension");
-      mli->version    = config.readEntry("version");
-      mli->priority   = config.readEntry("priority");
-      mli->author    = config.readEntry("author");
-      mli->license   = config.readEntry("license");
+      mli->name       = config.readQStringEntry("name"); // ### TODO: translation (bug #72220)
+      mli->section    = config.readQStringEntry("section").utf8();
+      mli->mimetype   = config.readQStringEntry("mimetype");
+      mli->extension  = config.readQStringEntry("extension");
+      mli->version    = config.readQStringEntry("version");
+      mli->priority   = config.readQStringEntry("priority");
+      mli->author    = config.readQStringEntry("author");
+      mli->license   = config.readQStringEntry("license");
       mli->identifier = *it;
 
       // Apend the item to the list
       myModeList.append(mli);
     }
     else
-    {*/
+    {
       // We're forced to read the xml files or the mode doesn't exist in the katesyntax...rc
       QFile f(*it);
 
@@ -618,19 +622,19 @@ void YzisSyntaxDocument::setupModeList (bool )
               mli->identifier = *it;
 
               // Now let's write or overwrite (if force==true) the entry in katesyntax...rc
-/*              config.setGroup(Group);
-              config.writeEntry("name",mli->name);
+              config.setGroup(Group);
+              config.setQStringOption("name",mli->name);
               if (mli->section.isEmpty()) // ### TODO: can this happen at all?
-                config.writeEntry("section","Other");
+                config.setQStringOption("section","Other");
               else
-                config.writeEntry("section",mli->section);
-              config.writeEntry("mimetype",mli->mimetype);
-              config.writeEntry("extension",mli->extension);
-              config.writeEntry("version",mli->version);
-              config.writeEntry("priority",mli->priority);
-              config.writeEntry("author",mli->author);
-              config.writeEntry("license",mli->license);
-*/
+                config.setQStringOption("section",mli->section);
+              config.setQStringOption("mimetype",mli->mimetype);
+              config.setQStringOption("extension",mli->extension);
+              config.setQStringOption("version",mli->version);
+              config.setQStringOption("priority",mli->priority);
+              config.setQStringOption("author",mli->author);
+              config.setQStringOption("license",mli->license);
+
               // Now that the data is in the config file, translate section
               if (mli->section.isEmpty()) // ### TODO: can this happen at all?
                 mli->section    = "Language Section";
@@ -656,7 +660,8 @@ void YzisSyntaxDocument::setupModeList (bool )
           myModeList.append(emli);
         }
       }
-    //}
+    }
   }
+  config.saveTo( QDir::homeDirPath()+"/.yzis/hl.conf", "HL Cache" );
 }
 

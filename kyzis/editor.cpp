@@ -81,7 +81,7 @@ void KYZisEdit::setCursor(int c, int l) {
 
 void KYZisEdit::setTextLine(int , const QString &/*str*/) {
 	updateContents( 0, mCursorY * fontMetrics().lineSpacing(), width(),
-		YZSession::getBoolOption( "wrap" ) ? height() - mCursorY * fontMetrics().lineSpacing() : fontMetrics().lineSpacing() );
+		YZSession::getBoolOption( "General\\wrap" ) ? height() - mCursorY * fontMetrics().lineSpacing() : fontMetrics().lineSpacing() );
 }
 
 bool KYZisEdit::event(QEvent *e) {
@@ -131,7 +131,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
 	unsigned int my_marginLeft;
-	if ( YZSession::getBoolOption( "number" )) { // update marginLeft
+	if ( YZSession::getBoolOption( "General\\number" )) { // update marginLeft
 		my_marginLeft = 2 + QString::number( lineCount ).length();
 		lastLineNumber = 0;
 	} else {
@@ -154,7 +154,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 			if ( currentY >= ( uint )clipy ) {
 				unsigned int currentX = 0;
 
-				if ( YZSession::getBoolOption( "number" )) { // draw current line number
+				if ( YZSession::getBoolOption( "General\\number" )) { // draw current line number
 					QPen old_pen = p->pen( );
 
 					QRect clipNL (0, currentY * fontMetrics().lineSpacing(), ( marginLeft - 1 ) * fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
@@ -190,13 +190,13 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 				currentY += mParent->drawHeight( );
 				cliph -= mParent->lineHeight( );
 			} else {
-				if ( YZSession::getBoolOption( "wrap" ) ) while ( mParent->drawNextCol( ) ) mParent->drawChar( );
+				if ( YZSession::getBoolOption( "General\\wrap" ) ) while ( mParent->drawNextCol( ) ) mParent->drawChar( );
 				currentY += mParent->drawHeight( );
 				lastLineNumber = lineNumber;
 			}
 		}
 		p->setPen( Qt::white );
-		if ( YZSession::getBoolOption( "number" )) { // draw blank line
+		if ( YZSession::getBoolOption( "General\\number" )) { // draw blank line
 			p->drawLine( marginLeft * fontMetrics().maxWidth() - fontMetrics().maxWidth() / 2, clipy * fontMetrics().lineSpacing(), \
 					marginLeft * fontMetrics().maxWidth() - fontMetrics().maxWidth() / 2, ( currentY - clipy ) * fontMetrics().lineSpacing() );
 		}

@@ -29,7 +29,7 @@
 /* yzis */
 #include "debug.h"
 #include "factory.h"
-#include "translator.h"
+#include "libyzis/translator.h"
 /* std c */
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE

@@ -27,7 +27,7 @@
 #include <kstandarddirs.h>
 #include <qtranslator.h>
 #include <qtextcodec.h>
-#include "translator.h"
+#include "libyzis/translator.h"
 #include "debug.h"
 #include "yzis.h"
 

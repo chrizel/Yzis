@@ -444,14 +444,14 @@ void YZBuffer::load(const QString& file) {
 	mText.clear();
 	mFileIsNew=false;
 	
-	QFile fl( mPath );
-	int dp = mPath.findRev( ":" );
+
 	unsigned int scrollTo = 0;
-	if ( dp > 0 && ! fl.exists() && QFile::exists( mPath.left( dp ) ) ) {
-		scrollTo = mPath.mid( dp + 1 ).toUInt();
-		mPath = mPath.left( dp );
-		fl.setName( mPath );
+	QRegExp reg = QRegExp( "(.+):(\\d+):?" );
+	if ( reg.exactMatch( mPath ) && QFile::exists( reg.cap( 1 ) ) ) {
+		mPath = reg.cap( 1 );
+		scrollTo = reg.cap( 2 ).toUInt();
 	}
+	QFile fl( mPath );
 
 	//HL mode selection
 	detectHighLight();

@@ -78,6 +78,12 @@ public:
 	void delChar (unsigned int x, unsigned int y, unsigned int count = 1);
 
 	/**
+	 * Return the column of the first non-blank character in the line
+	 */
+	uint firstNonBlankChar( uint line );
+		
+
+	/**
 	 * Opens the file and fills the buffer with its content
 	 */
 	void load(const QString& file=QString::null);

@@ -47,6 +47,7 @@
 #include "commands.h"
 #include "session.h"
 #include "linesearch.h"
+#include "mapping.h"
 
 #define STICKY_COL_ENDLINE -1
 
@@ -89,6 +90,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	stickyCol = 0;
 
 	mPrevMode = mMode = YZ_VIEW_MODE_COMMAND;
+	mapMode = 0;
 	mCurrentLeft = 0;
 	mCurrentTop = 0;
 	dCurrentLeft = 0;
@@ -240,6 +242,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	bool test = false;
 
 	bool cindent = getLocalBoolOption( "cindent" );
+
+	/** rightleft mapping **/
 	if ( getLocalBoolOption( "rightleft" ) &&
 		( mMode == YZ_VIEW_MODE_COMMAND || mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE )
 	) {
@@ -250,7 +254,18 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		SWITCH_KEY( "h", "l" );
 	}
 
-	/** rightleft mapping **/
+	//check mappings
+	if ( mMode == YZ_VIEW_MODE_INSERT || mMode == YZ_VIEW_MODE_REPLACE )
+		mapMode = mapMode | insert;
+	else if ( mMode == YZ_VIEW_MODE_COMMAND || mMode == YZ_VIEW_MODE_INTRO || mMode == YZ_VIEW_MODE_OPEN )
+		mapMode = mapMode | normal;
+	else if ( mMode == YZ_VIEW_MODE_VISUAL || mMode == YZ_VIEW_MODE_VISUAL_LINE )
+		mapMode = mapMode | visual;
+	else if ( mMode == YZ_VIEW_MODE_EX || mMode == YZ_VIEW_MODE_SEARCH )
+		mapMode = mapMode | cmdline;
+
+	YZMapping::self()->applyMappings(key, mapMode);
+
 	switch(mMode) {
 		case YZ_VIEW_MODE_INSERT:
 			if ( key == "<HOME>" ) {
@@ -320,8 +335,10 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 						case CMD_OK:
 							purgeInputBuffer();
 							break;
+						case OPERATOR_PENDING:
+							mapMode = pendingop;
 						default:
-						break;
+							break;
 					}
 					return;
 				}
@@ -398,6 +415,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 						case CMD_OK:
 							purgeInputBuffer();
 							break;
+						case OPERATOR_PENDING:
+							mapMode = pendingop;
 						default:
 						break;
 					}
@@ -548,9 +567,13 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 //				yzDebug() << "Command " << mPreviousChars << " gave state: " << state << endl;
 				switch(state) {
 					case CMD_ERROR:
+						yzDebug() << "Error" << endl;
 					case CMD_OK:
 						purgeInputBuffer();
 						break;
+					case OPERATOR_PENDING:
+						yzDebug() << "Pending" << endl;
+						mapMode = pendingop;
 					default:
 						break;
 				}

@@ -36,6 +36,7 @@
 #include "ex_lua.h"
 #include "mark.h"
 #include "selection.h"
+#include "mapping.h"
 
 YZExCommandPool::YZExCommandPool() {
 	commands.clear();
@@ -74,6 +75,7 @@ void YZExCommandPool::initPool() {
 	commands.append( new YZExCommand( "preserve", &YZExCommandPool::preserve ) );
 	commands.append( new YZExCommand( "lua", &YZExCommandPool::lua ) );
 	commands.append( new YZExCommand( "source", &YZExCommandPool::source ) );
+	commands.append( new YZExCommand( "map", &YZExCommandPool::map ) );
 }
 
 QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -505,5 +507,14 @@ QString YZExCommandPool::lua( const YZExCommandArgs& args ) {
 
 QString YZExCommandPool::source( const YZExCommandArgs& args ) {
 	return YZExLua::instance()->source( args.view, args.arg );
+}
+
+QString YZExCommandPool::map( const YZExCommandArgs& args ) {
+	QRegExp rx("(.+)\\s+(.+)");
+	if ( rx.exactMatch(args.arg) ) {
+		yzDebug() << "Adding global mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
+		YZMapping::self()->addGlobalMapping(rx.cap(1), rx.cap(2));
+	}
+	return QString::null;
 }
 

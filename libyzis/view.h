@@ -146,7 +146,7 @@ class YZView {
 		 * Clean out the current buffer of inputs
 		 * Typically used after a command is recognized or when ESC is pressed
 		 */
-		void purgeInputBuffer() { mPreviousChars = ""; }
+		void purgeInputBuffer() { mPreviousChars = ""; mapMode = 0; }
 
 		/**
 		 * moves the cursor to x,y (buffer) and save sticky column )
@@ -358,6 +358,11 @@ class YZView {
 		} mMode,		/** mode of this view */
 			mPrevMode;	/** previous mode of this view */
 #define	YZ_VIEW_MODE_LAST (YZ_VIEW_MODE_VISUAL_LINE+1) // <-- update that if you touch the enum
+		
+		/**
+		 * Mode value for key mappings
+		 */
+		int mapMode;
 
 		/**
 		 * Get the text describing the mode

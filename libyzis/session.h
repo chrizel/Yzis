@@ -282,6 +282,7 @@ class YZSession {
 			YZSession::mOptions.setQColorOption( key, option );
 		}
 
+
 	protected:
 		//we map "filename"/buffer for buffers
 		QMap<QString,YZBuffer*> mBuffers;

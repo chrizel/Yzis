@@ -70,8 +70,6 @@ public:
 	 */
 	void registerManager ( Gui *mgr );
 
-	void updateCursor(int x=-1, int y=-1);
-
 	void centerView( unsigned int line );
 
 	void purgeInputBuffer() { previous_chars="";}
@@ -160,6 +158,7 @@ public:
 
 	void	gotoxy(int nextx, int nexty);
 protected:
+	void updateCursor(void);
 	
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */

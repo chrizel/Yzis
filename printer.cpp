@@ -209,7 +209,11 @@ void YZPrinter::doPrint( ) {
 				convertColor(Qt::black, red, green, blue);
 			PS_setcolor(doc, "fillstroke", "rgb", red, green, blue, 0.0);
 			char buf[2]={0, 0};
+#if QT_VERSION < 0x040000
 			buf[0]=mView->drawChar().latin1();
+#else
+			buf[0]=mView->drawChar().toLatin1();
+#endif
 			PS_show_xy(doc, buf, curX, curY);
 			curX += mView->drawLength( ) * maxwidth;
 		}

@@ -452,7 +452,11 @@ void YzisHlItem::dynamicSubstitute(QString &str, const QStringList *args)
   {
     if (str.at(i) == '%')
     {
+#if QT_VERSION < 0x040000
       char c = str.at(i + 1).latin1();
+#else
+      char c = str.at(i + 1).toLatin1();
+#endif
       if (c == '%')
         str.replace(i, 1, "");
       else if (c >= '0' && c <= '9')
@@ -490,7 +494,11 @@ int YzisHlCharDetect::checkHgl(const QString& text, int offset, int /*len*/)
 
 YzisHlItem *YzisHlCharDetect::clone(const QStringList *args)
 {
+#if QT_VERSION < 0x040000
   char c = sChar.latin1();
+#else
+  char c = sChar.toLatin1();
+#endif
 
   if (c < '0' || c > '9' || (unsigned)(c - '0') >= args->size())
     return this;
@@ -519,8 +527,13 @@ int YzisHl2CharDetect::checkHgl(const QString& text, int offset, int len)
 
 YzisHlItem *YzisHl2CharDetect::clone(const QStringList *args)
 {
+#if QT_VERSION < 0x040000
   char c1 = sChar1.latin1();
   char c2 = sChar2.latin1();
+#else
+  char c1 = sChar1.toLatin1();
+  char c2 = sChar2.toLatin1();
+#endif
 
   if (c1 < '0' || c1 > '9' || (unsigned)(c1 - '0') >= args->size())
     return this;
@@ -1050,7 +1063,7 @@ static int checkEscapedChar(const QString& text, int offset, int& len)
 #if QT_VERSION < 0x040000
     switch(text[offset])
 #else
-    switch(text[offset].ascii())
+    switch(text[offset].toAscii())
 #endif
     {
       case  'a': // checks for control chars
@@ -1080,7 +1093,7 @@ static int checkEscapedChar(const QString& text, int offset, int& len)
 #if QT_VERSION < 0x040000
         for (i = 0; (len > 0) && (i < 2) && (text[offset] >= '0' && text[offset] <= '9' || (text[offset] & 0xdf) >= 'A' && (text[offset] & 0xdf) <= 'F'); i++)
 #else
-        for (i = 0; (len > 0) && (i < 2) && (text[offset].ascii() >= '0' && text[offset].ascii() <= '9' || (text[offset].unicode() & 0xdf) >= 'A' && (text[offset].unicode() & 0xdf) <= 'F'); i++)
+        for (i = 0; (len > 0) && (i < 2) && (text[offset].toAscii() >= '0' && text[offset].toAscii() <= '9' || (text[offset].unicode() & 0xdf) >= 'A' && (text[offset].unicode() & 0xdf) <= 'F'); i++)
 #endif
         {
           offset++;
@@ -1097,7 +1110,7 @@ static int checkEscapedChar(const QString& text, int offset, int& len)
 #if QT_VERSION < 0x040000
         for (i = 0; (len > 0) && (i < 3) && (text[offset] >='0'&& text[offset] <='7'); i++)
 #else
-        for (i = 0; (len > 0) && (i < 3) && (text[offset].ascii() >='0'&& text[offset].ascii() <='7'); i++)
+        for (i = 0; (len > 0) && (i < 3) && (text[offset].toAscii() >='0'&& text[offset].toAscii() <='7'); i++)
 #endif
         {
           offset++;
@@ -2219,7 +2232,11 @@ QString YzisHighlighting::hlKeyForAttrib( int i ) const
     if ( i >= k )
       break;
   }
+#if QT_VERSION < 0x040000
   return it.data();
+#else
+  return it.value();
+#endif
 }
 
 bool YzisHighlighting::isInWord( QChar c, int attrib ) const
@@ -2228,7 +2245,7 @@ bool YzisHighlighting::isInWord( QChar c, int attrib ) const
 #if QT_VERSION < 0x040000
   return m_additionalData[ hlKeyForAttrib( attrib ) ]->deliminator.find(c) < 0 && sq.find(c) < 0;
 #else
-  return getCommentString(4, attrib).indexOf(c) < 0 && sq.indexOf(c) < 0;
+  return m_additionalData[ hlKeyForAttrib( attrib ) ]->deliminator.indexOf(c) < 0 && sq.indexOf(c) < 0;
 #endif
 }
 
@@ -2238,7 +2255,7 @@ bool YzisHighlighting::canBreakAt( QChar c, int attrib ) const
 #if QT_VERSION < 0x040000
   return (m_additionalData[ hlKeyForAttrib( attrib ) ]->wordWrapDeliminator.find(c) != -1) && (sq.find(c) == -1);
 #else
-  return (getCommentString(5, attrib).indexOf(c) != -1) && (sq.indexOf(c) == -1);
+  return (m_additionalData[ hlKeyForAttrib( attrib ) ]->wordWrapDeliminator.indexOf(c) != -1) && (sq.indexOf(c) == -1);
 #endif
 }
 
@@ -3020,8 +3037,8 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   folding = folding || m_foldingIndentationSensitive;
 
   //BEGIN Resolve multiline region if possible
-#if QT_VERSION < 0x040000
   if (!m_additionalData[ ident ]->multiLineRegion.isEmpty()) {
+#if QT_VERSION < 0x040000
     long commentregionid=RegionList.findIndex( m_additionalData[ ident ]->multiLineRegion );
 #else
     long commentregionid=RegionList.indexOf(QRegExp( m_additionalData[ ident ]->multiLineRegion ));

@@ -46,7 +46,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 }
 
 YZView::~YZView() {
-	// delete cursor ?
+	mBuffer->rmView(this); //make my buffer forget about me
 }
 
 void YZView::setVisibleLines(int nb) {

@@ -1672,9 +1672,10 @@ void YZView::leaveReplaceMode( ) {
 }
 
 void YZView::leaveVisualMode( ) {
-	YZInterval cur_sel = selectionPool->visual()->screenMap()[ 0 ];
+	setPaintAutoCommit( false );
+	sendPaintEvent( selectionPool->visual()->screenMap(), false );
 	selectionPool->visual()->clear();
-	sendPaintEvent( getCurrentLeft(), cur_sel.fromPos().getY(), mColumnsVis, cur_sel.toPos().getY() - cur_sel.fromPos().getY() + 1 );
+	commitPaintEvent();
 }
 
 void YZView::leaveCompletionMode() {

@@ -1,3 +1,8 @@
+2004-02-27 mikmak
+  * libyzis
+    basic support for options management
+    basic support for registers (copy/paste)
+
 2004-02-23 philippe
   * libyzis
   	add a YZASSERT() macro to report things that should not happen

@@ -150,7 +150,7 @@ void YZView::sendKey( int c, int modifiers) {
 					return;
 				case Qt::Key_Escape:
 					if (mCursor->getX() > 0) moveLeft();
-					gotoCommandMode( );
+					gotoPreviousMode();
 					return;
 				case Qt::Key_Return:
 					test = mCursor->getX() == 0;
@@ -215,7 +215,7 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Escape:
 					if ( mCursor->getX() == mBuffer->textline( mCursor->getY() ).length() ) 
 						moveToEndOfLine( );
-					gotoCommandMode( );
+					gotoPreviousMode();
 					return;
 				case Qt::Key_Return:
 					test = mCursor->getX() == 0;
@@ -266,7 +266,7 @@ void YZView::sendKey( int c, int modifiers) {
 					doSearch( getCommandLineText() );
 					setCommandLineText( "" );
 					mSession->setFocusMainWindow();
-					gotoCommandMode();
+					gotoPreviousMode();
 					return;
 				case Qt::Key_Down:
 					if(mSearchHistory[mCurrentSearchItem].isEmpty())
@@ -288,7 +288,7 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Escape:
 					setCommandLineText( "" );
 					mSession->setFocusMainWindow();
-					gotoCommandMode();
+					gotoPreviousMode();
 					return;
 				case Qt::Key_Backspace:
 				{
@@ -313,7 +313,7 @@ void YZView::sendKey( int c, int modifiers) {
 					mSession->getExPool()->execExCommand( this, getCommandLineText() );
 					setCommandLineText( "" );
 					mSession->setFocusMainWindow();
-					gotoCommandMode();
+					gotoPreviousMode();
 					return;
 				case Qt::Key_Down:
 					if(mExHistory[mCurrentExItem].isEmpty())
@@ -335,7 +335,7 @@ void YZView::sendKey( int c, int modifiers) {
 				case Qt::Key_Escape:
 					setCommandLineText( "" );
 					mSession->setFocusMainWindow();
-					gotoCommandMode();
+					gotoPreviousMode();
 					return;
 				case Qt::Key_Tab:
 					//ignore for now
@@ -345,7 +345,7 @@ void YZView::sendKey( int c, int modifiers) {
 					QString back = getCommandLineText();
 					if ( back.isEmpty() ) {
 						mSession->setFocusMainWindow();
-						gotoCommandMode( );
+						gotoPreviousMode();
 						return;
 						}
 					setCommandLineText(back.remove(back.length() - 1, 1));
@@ -364,7 +364,7 @@ void YZView::sendKey( int c, int modifiers) {
 					selectionPool->clear( "VISUAL" );
 					paintEvent( dCurrentLeft, cur_sel.drawFrom->getY(), mColumnsVis, cur_sel.drawTo->getY() - cur_sel.drawFrom->getY() + 1 );
 					purgeInputBuffer();
-					gotoCommandMode();
+					gotoPreviousMode();
 					return;
 			}
 		//dont break
@@ -433,6 +433,14 @@ void YZView::sendKey( int c, int modifiers) {
 			break;
 
 		case YZ_VIEW_MODE_OPEN:
+			switch (c) {
+				case ':':
+				case 'Q':
+					gotoExMode();
+					break;
+				default:
+					break;
+			}
 			break;
 		default:
 			yzDebug() << "Unknown MODE" << endl;
@@ -1094,57 +1102,85 @@ QString YZView::appendAtEOL ( const QString&, YZCommandArgs ) {
 	return QString::null;
 }
 
+void YZView::switchModes(int mode) {
+	if (mode != mMode) {
+		mPrevMode = mMode;
+		mMode = static_cast<modeType>(mode);
+		modeChanged();
+	}
+}
+
+QString YZView::gotoPreviousMode() {
+	yzDebug() << "previous mode is  : " << getPreviousMode() << endl;
+	if (getPreviousMode()==YZ_VIEW_MODE_OPEN)
+	{
+		yzDebug() << "switching to Open Mode" <<endl;
+		return gotoOpenMode();
+	}
+	else if (getCurrentMode()==YZ_VIEW_MODE_OPEN)
+	{
+		yzDebug() << "Not switching modes" << endl;
+		return QString::null;
+	}
+	yzDebug() << "switching to Command Mode" <<endl;
+	return gotoCommandMode();
+}
+
 QString YZView::gotoCommandMode( ) {
 	mBuffer->undoBuffer()->commitUndoItem(mCursor->getX(), mCursor->getY());
-	mMode = YZ_VIEW_MODE_COMMAND;
-	modeChanged();
+	switchModes(YZ_VIEW_MODE_COMMAND);
+	setVisibleArea(80, 24);
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoExMode(const QString&, YZCommandArgs ) {
-	mMode = YZ_VIEW_MODE_EX;
-	modeChanged();
+	switchModes(YZ_VIEW_MODE_EX);
 	mSession->setFocusCommandLine();
 	purgeInputBuffer();
 	setCommandLineText( "" );
 	return QString::null;
 }
 
+QString YZView::gotoOpenMode(const QString &, YZCommandArgs ) {
+	switchModes(YZ_VIEW_MODE_OPEN);
+	setVisibleArea(80, 1);
+	purgeInputBuffer();
+	setCommandLineText("");
+	yzDebug() << "successfully set open mode" <<endl;
+	return QString::null;
+}
+
 QString YZView::gotoInsertMode(const QString&, YZCommandArgs ) {
 	mBuffer->undoBuffer()->commitUndoItem(mCursor->getX(), mCursor->getY());
-	mMode = YZ_VIEW_MODE_INSERT;
-	modeChanged();
+	switchModes(YZ_VIEW_MODE_INSERT);
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoReplaceMode(const QString&, YZCommandArgs ) {
 	mBuffer->undoBuffer()->commitUndoItem(mCursor->getX(), mCursor->getY());
-	mMode = YZ_VIEW_MODE_REPLACE;
-	modeChanged();
+	switchModes(YZ_VIEW_MODE_REPLACE);
 	purgeInputBuffer();
 	return QString::null;
 }
 
 QString YZView::gotoSearchMode( const QString& inputsBuff, YZCommandArgs /*args */) {
 	reverseSearch = (inputsBuff[ 0 ] == '?' );
-	mMode = YZ_VIEW_MODE_SEARCH;
-	modeChanged();
+	switchModes(YZ_VIEW_MODE_SEARCH);
 	purgeInputBuffer();
 	setCommandLineText( "" );
 	return QString::null;
 }
 
 QString YZView::gotoVisualMode(const QString&, YZCommandArgs ) {
-	mMode = YZ_VIEW_MODE_VISUAL;
 	//store the from position
 	*mVisualCursor = *mCursor;
 	*dVisualCursor = *dCursor;
 	selectionPool->clear( "VISUAL" );
 	selectionPool->addSelection( "VISUAL", *mVisualCursor, *mVisualCursor, *dVisualCursor, *dVisualCursor );
 	yzDebug("Visual mode") << "Starting at " << *mCursor << endl;
-	modeChanged();
+	switchModes(YZ_VIEW_MODE_VISUAL);
 	purgeInputBuffer();
 	return QString::null;
 }

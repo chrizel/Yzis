@@ -168,7 +168,10 @@ void YZCommandPool::initExPool() {
 	NEW_EX_COMMAND("mkyzisrc", &YZExExecutor::mkyzisrc,true,0);
 	NEW_EX_COMMAND("substitute", &YZExExecutor::substitute,true,2);
 	NEW_EX_COMMAND("set", &YZExExecutor::set,true,1);
+	// FIXME: This conflicts with the POSIX command :print.
 	NEW_EX_COMMAND("print", &YZExExecutor::print,true,1);
+	NEW_EX_COMMAND("open", &YZExExecutor::gotoOpenMode,true,1);
+	NEW_EX_COMMAND("visual", &YZExExecutor::gotoCommandMode,true,1);
 	NEW_LUA_COMMAND("lua", &YZExLua::lua,true,0);
 	NEW_LUA_COMMAND("source", &YZExLua::loadFile,true,0);
 }

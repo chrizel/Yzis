@@ -2,9 +2,11 @@
 2004-02-24 orzel
   * all
     add a make rule for tests
+    change gg/G behaviour so that first line is '1' and not 0 from the user pov
   * nyzis
     fix misc stupid bugs
     makes EX works
+    catch ^C and sends an escape char to the core instead of stupidely quits
 
 2004-02-23 orzel
   * all 

@@ -18,13 +18,17 @@
 /**
  * $Id$
  */
+
+#include "debug.h"
+
 #include "factory.h"
 #include <cstdlib>
 #include <cstdio>
 #include <csignal>
 
-static void finish(int sig);
-static void finish2(void);
+
+static void catchsigint(int sig);
+static void cleaning(void);
 void nyz_init_screen(void);
 void handle_event(yz_event *);
 
@@ -32,29 +36,28 @@ int
 main(int argc, char *argv[])
 {
 
-	(void) signal(SIGINT, finish);      /* arrange interrupts to terminate */
-	atexit(finish2);
+	(void) signal(SIGINT, catchsigint);      /* arrange interrupts to terminate */
+	atexit(cleaning);
 
 	(new NYZFactory(argc,argv)) -> event_loop();
 
-//	error("should never reach this point");
-	finish(0);               /* we're done */
+	yzError() << "Should never reach this point" << endl;
 }
 
-static void finish2(void)
+static void cleaning(void)
 {
-	finish(0);
-}
+	yzDebug() << "end of nyzis, cleaning" << endl;
 
-static void finish(int /*sig*/)
-{
 	/* ncurses stuff */
 	endwin();
-
 	/* other */
-
-	/* exit */
-	exit(0);
+	printf("\n"); // prevent prompt to be badly placed after nyzis exits
 }
+
+static void catchsigint(int /*sig*/)
+{
+//	yzDebug() << "^C catched" << endl;
+	// ^c catched -> sends an escape char.. 
+	NYZFactory::currentView->sendKey( Qt::Key_Escape, 0); }
 
  

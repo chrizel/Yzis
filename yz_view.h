@@ -28,7 +28,7 @@ public:
 	 * that's the way the core is sending messages to the gui
 	 */
 	/* for the qt/kde gui, we should create QEvents from that? */
-	void	fetch_event(/* asasdfasf */);
+	yz_event *	fetch_event(/* asasdfasf */);
 
 	/**
 	  * returns the number of the line displayed on top of this view

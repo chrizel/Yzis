@@ -3234,6 +3234,7 @@ YzisHlManager::YzisHlManager()
 
     hlList.insert (insert, hl);
     hlDict.insert (hl->name(), hl);
+
   }
 
   // Normal HL
@@ -3259,10 +3260,33 @@ YzisHlManager::YzisHlManager()
   if (QFile::exists(QDir::homePath() + "/.yzis/hl.lua"))
     YZExLua::instance()->source( NULL, QDir::homePath() + "/.yzis/hl.lua" );
 #endif
+
+#ifndef WIN32
+  magicSet = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );
+  if ( magicSet == NULL ) {
+    magic_close(magicSet);
+  } else {
+    QString p = PREFIX;
+    p+= "/share/yzis/magic";
+#if QT_VERSION < 0x040000
+    if (magic_load( magicSet, p.latin1()  ) == -1) {
+#else
+    if (magic_load( magicSet, p.toLatin1()  ) == -1) {
+#endif
+      yzDebug() << "Magic error " << magic_error( magicSet ) << endl;
+      magic_close(magicSet);
+      magicSet = NULL;
+    }
+  }
+#else
+	magicSet = NULL;
+#endif
 }
 
 YzisHlManager::~YzisHlManager()
 {
+  if ( magicSet )
+    magic_close( magicSet );
   delete syntax;
 }
 
@@ -3419,33 +3443,16 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 
 QString YzisHlManager::findByContent( const QString& contents ) {
 // QString YzisHlManager::findByContent( const QByteArray& contents ) {
-#ifndef WIN32
-	struct magic_set *ms = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );
-	if ( ms == NULL ) {
-		magic_close(ms);
+	if ( magicSet == NULL )
 		return QString::null;
-	}
-	QString p = PREFIX;
-	p+= "/share/yzis/magic";
 #if QT_VERSION < 0x040000
-	if (magic_load( ms, p.latin1()  ) == -1) {
+	const char* magic_result = magic_file( magicSet, contents );
 #else
-	if (magic_load( ms, p.toLatin1()  ) == -1) {
+	const char* magic_result = magic_file( magicSet, contents.toUtf8() );
 #endif
-		yzDebug() << "Magic error " << magic_error( ms ) << endl;
-		magic_close(ms);
-		return QString::null;
-	}
-//	const char *magic_result = magic_buffer( ms, contents.utf8(), contents.length() );
-#if QT_VERSION < 0x040000
-	const char *magic_result = magic_file( ms, contents );
-#else
-	const char *magic_result = magic_file( ms, contents.toUtf8() );
-#endif
-	magic_close(ms);
 	if ( magic_result ) {
+		yzDebug() << "Magic for " << contents << " results " << magic_result << endl;
 		QString mime = QString( magic_result );
-		yzDebug() << "Magic result " << mime << endl;
 #if QT_VERSION < 0x040000
 		mime = mime.mid( 0, mime.find( ';' ) );
 #else
@@ -3453,8 +3460,7 @@ QString YzisHlManager::findByContent( const QString& contents ) {
 #endif
 		return mime;
 	}
-#endif
-		return QString::null;
+	return QString::null;
 }
 
 int YzisHlManager::mimeFind(const QString &contents)

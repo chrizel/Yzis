@@ -256,6 +256,11 @@ public:
 	bool introShown() { return mIntro; }
 
 	/**
+	 * Is this file a new file 
+	 */
+	bool fileIsNew() { return mFileIsNew; }
+
+	/**
 	 * Unique ID of the buffer
 	 */
 	unsigned int myId;

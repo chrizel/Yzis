@@ -38,6 +38,11 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 	return QString::null;
 }
 
+QString YZExExecutor::writeall( YZView *view, const QString& inputs ) {
+	view->mySession()->saveAll();
+	return QString::null;
+}
+
 QString YZExExecutor::buffernext( YZView *view, const QString& ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
 	YZView *v = view->mySession()->nextView();
@@ -59,9 +64,23 @@ QString YZExExecutor::bufferdelete ( YZView *view, const QString& ) {
 	view->mySession()->deleteView();
 	return QString::null;
 }
-QString YZExExecutor::quit ( YZView *view, const QString& ) {
-	//only for qall or last view ! XXX
-	view->mySession()->quit();
+QString YZExExecutor::quit ( YZView *view, const QString& inputs ) {
+	if ( inputs == "q" || inputs == "q!" ) {
+		//close current view, if it's the last one on a buffer , check it is saved or not
+		if ( view->myBuffer()->views().count() > 1 )
+			view->mySession()->deleteView();
+		else if ( view->myBuffer()->views().count() == 1 && view->mySession()->countBuffers() == 1)
+			view->mySession()->quit();
+		else if ( inputs.endsWith( "!" ) ) //close even if modified
+			view->mySession()->deleteView();
+		else //check it the buffer is modified before closing ! XXX
+			view->mySession()->deleteView();
+	} else if ( inputs == "qall!" ) {//just quit
+		view->mySession()->quit( );
+	} else if ( inputs == "qall" ) {
+		//check for modified buffers ! XXX
+		view->mySession()->quit( );
+	}
 	return QString::null;
 }
 

@@ -127,9 +127,12 @@ QChar KYZisView::currentChar() const {
 }
 
 void KYZisView::wheelEvent( QWheelEvent * e ) {
-	int n = - ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
-
-	scrollView( getCurrentTop() + n );
+	if ( e->orientation() == Qt::Vertical ) {
+		int n = - ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
+		scrollView( getCurrentTop() + n );
+	} else {
+		// TODO : scroll horizontally
+	}
 }
 
 void KYZisView::modeChanged (void) {

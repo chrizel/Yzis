@@ -21,8 +21,6 @@
  * This should also allow us to 'remap' commands, and dynamically add new ones :)
  */
 YZCommandPool::YZCommandPool() {
-	//this creates the default commands
-	initPool();
 }
 
 YZCommandPool::~YZCommandPool() {
@@ -101,7 +99,46 @@ void YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 			default:
 				break;
 		}
-	} else if ( !command.isEmpty() ) {
-		view->purgeInputBuffer();
 	}
 }
+
+void YZCommandPool::initExPool() {
+//	NEW_EX_COMMAND("w",&YZView::append,true);
+}
+
+void YZCommandPool::execExCommand(YZView *view, const QString& inputs) {
+	QString result,command;
+	int i=0;
+
+	//regexp ? //FIXME
+	//try to find the command we are looking for
+	//first remove any number at the beginning of command
+	//XXX 0 is itself a command !
+	while ( inputs[ i ].isDigit() )
+		i++; //go on
+	
+	//now take the command until another number
+	while ( !inputs[ i ].isDigit() && i<inputs.length() )
+		command += inputs[ i++ ];
+	//end FIXME
+	
+	//printf( "%s %s\n", inputs.latin1(), command.latin1() );
+
+	//try hard to find a correspondance
+	QMap<QString, YZCommand>::Iterator it = globalExCommands.end();
+	while ( command.length() > 0 && it == globalExCommands.end() ) {
+		it = globalExCommands.find(command);
+		if ( it==globalExCommands.end() ) command.truncate(command.length()-1);
+	} // should not end here FIXME
+	
+	if ( it!=globalExCommands.end() ) { //we got one match *ouf*
+		switch ( globalExCommands[ command ].obj ) {
+				case EX :
+					//result = ( *view.*(globalExCommands[ command ].exFunc )) (inputs) ;
+					break;
+			default:
+				break;
+		}
+	}
+}
+

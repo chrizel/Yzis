@@ -7,6 +7,8 @@
 #include <qstringlist.h>
 #include <qptrlist.h>
 #include "yz_events.h"
+#include "yzis.h"
+#include "yz_motion.h"
 
 class YZView;
 
@@ -39,6 +41,8 @@ public:
 	void addNewLine( int col, int line );
 
 	void deleteLine( int line );
+
+	yz_point motionPosition( int xstart, int ystart, YZMotion regexp );
 
 protected:
 	QString path;

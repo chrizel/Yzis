@@ -12,6 +12,7 @@
 #include "yz_buffer.h"
 #include "yz_view.h"
 #include "yz_commands.h"
+#include "yz_motionpool.h"
 
 class YZView;
 
@@ -32,6 +33,11 @@ class YZSession {
 		 * gives access to the pool of commands
 		 */
     YZCommandPool *getPool() { return pool; }
+    
+		/**
+		 * gives access to the pool of ex commands
+		 */
+		YZCommandPool *getExPool() { return expool; }
 
 		/**
 		 * Count the current buffers in this session
@@ -65,6 +71,8 @@ class YZSession {
 	private:
 		QString sessionName;
     YZCommandPool *pool;
+    YZCommandPool *expool;
+    YZMotionPool *motionpool;
 };
 
 #endif /* YZ_SESSION_H */

@@ -476,8 +476,7 @@ void YZView::gotodx( unsigned int nextx ) {
 	unsigned int shift = ( YZ_VIEW_MODE_REPLACE == mMode || YZ_VIEW_MODE_INSERT==mMode && sCurLine.length() > 0 ) ? 1 : 0;
 	if ( sCurLine.length() == 0 ) nextx = 0;
 	else if ( sCursor->getX() >= sCurLine.length() ) {
-		nextx = sCurLine.length() - 1 + shift;
-		gotox ( nextx );
+		gotox ( sCurLine.length() );
 		return;
 	}
 	while ( rCursor->getX() > nextx ) {
@@ -721,7 +720,7 @@ QString YZView::gotoLine(const QString& inputsBuff, YZCommandArgs ) {
 
 
 QString YZView::moveToEndOfLine( const QString&, YZCommandArgs ) {
-	gotoxy( mMaxX+10 , mCursor->getY());
+	gotoxy( mBuffer->textline( mCursor->getY() ).length( ) , mCursor->getY());
 	
 	purgeInputBuffer();
 	return QString::null;
@@ -995,6 +994,8 @@ void YZView::initDraw( unsigned int sLeft, unsigned int sTop,
 	sLineLength = 0;
 	sColLength = 0;
 
+	YZLine *yl = mBuffer->yzline( sCursor->getY() );
+	sCurLine = yl->data();
 }
 
 //EXPERIMENTAL
@@ -1089,7 +1090,6 @@ bool YZView::drawNextLine( ) {
 
 			sCursor->setX( 0 );
 			rCursor->setX( 0 );
-
 			while( rCursor->getX( ) < rCurrentLeft ) {
 				drawNextCol( );
 				drawChar( );
@@ -1108,7 +1108,6 @@ bool YZView::drawNextLine( ) {
 
 			rColLength = 0;
 			sColLength = 0;
-
 		}
 
 		if ( ( rCursor->getY() - rCurrentTop ) < mLinesVis ) {

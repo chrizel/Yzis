@@ -38,12 +38,6 @@ class YZView;
  */
 class YZCursor {
 		
-	friend	bool operator== ( YZCursor &left, const YZCursor &right );
-	friend	bool operator<= ( YZCursor &left, const YZCursor &right );
-	friend	bool operator>= ( YZCursor &left, const YZCursor &right );
-	friend	bool operator< ( YZCursor &left, const YZCursor &right );
-	friend	bool operator> ( YZCursor &left, const YZCursor &right );
-
 	public :
 		YZCursor(YZView *vp);
 		YZCursor(YZCursor *cursor);
@@ -62,6 +56,13 @@ class YZCursor {
 		void setCursor( YZCursor *cursor );
 
 		bool lt ( YZCursor *c );
+
+		bool operator== ( const YZCursor &right );
+		bool operator<= ( const YZCursor &right );
+		bool operator>= ( const YZCursor &right );
+		bool operator< ( const YZCursor &right );
+		bool operator> ( const YZCursor &right );
+
 
 /*
 		inline void incX(int nb=1) { x_pos+=nb; }

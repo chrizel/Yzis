@@ -64,17 +64,17 @@ void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
 	QSize s = ev->size();
 	int lines = s.height() / fontMetrics().lineSpacing();
 	int columns = s.width() / fontMetrics().maxWidth() - marginLeft;
+	viewport()->erase( );
 	mParent->setVisibleArea( columns, lines );
 }
 
 //c,l => draw positions
 void KYZisEdit::setCursor(int c, int l) {
-	int new_mCursorX = c - mParent->getDrawCurrentLeft () + marginLeft;
-	int new_mCursorY = l - mParent->getDrawCurrentTop ();
-	if( mCursorShown ) drawCursorAt( mCursorX, mCursorY );
-	drawCursorAt( new_mCursorX, new_mCursorY );
-	mCursorX = new_mCursorX;
-	mCursorY = new_mCursorY;
+//	yzDebug() << "KYZisEdit::setCursor: c=" << c << ";l=" << l << ";mCursorShown=" << mCursorShown << endl;
+	if ( mCursorShown ) drawCursorAt( mCursorX, mCursorY );
+	mCursorX = c - mParent->getDrawCurrentLeft () + marginLeft;
+	mCursorY = l - mParent->getDrawCurrentTop ();
+	drawCursorAt( mCursorX, mCursorY );
 	mCursorShown = true;
 }
 
@@ -127,6 +127,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 	unsigned int maxwidth = fontMetrics().maxWidth();
 	cliph = cliph ? cliph / linespace + ( int )ceil( cliph % linespace ): 0;
 	clipy = clipy ? clipy / linespace : 0;
+//	yzDebug() << "KYZisEdit::drawContents: clipy=" << clipy << "; cliph=" << cliph << endl;
 	QRect myRect;
 	bool number = YZSession::getBoolOption( "General\\number" );
 	bool wrap = YZSession::getBoolOption( "General\\wrap" );
@@ -152,13 +153,14 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 	}
 
 	unsigned int lineNumber = 0;
+	mCursorShown = true;
 
 	if ( ! mParent->myBuffer()->introShown() ) {
 		while ( mParent->drawNextLine( ) && cliph > 0 ) {
 			lineNumber = mParent->drawLineNumber();
 			if ( currentY >= ( uint )clipy ) {
-				if( currentY == ( uint )mCursorY ) mCursorShown = false; // we're erasing cursor
-				if( ! mCursorShown && currentY > ( uint )mCursorY ) setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
+				if ( currentY == ( uint )mCursorY ) mCursorShown = false; // we're erasing the cursor
+				if ( ! mCursorShown && currentY > ( uint )mCursorY ) setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
 				unsigned int currentX = 0;
 
 				if ( number ) { // draw current line number

@@ -618,32 +618,22 @@ QString YZView::gotoReplaceMode(const QString&, YZCommandArgs args) {
 
 QString YZView::copy( const QString& inputsBuff , YZCommandArgs args) {
 	//default register to use
-	QChar reg = '"';
-	int nb_lines = 1;
-	QRegExp ex ( "(\".)?([0-9]*)(y.|Y)" );
-	ex.exactMatch( inputsBuff );
-	QStringList ls = ex.capturedTexts();
-	yzDebug() << "view::copy " << ls << endl;
-	
-	if ( ls[ 1 ] != "" ) //got a register name ?
-		reg = ls[ 2 ][ 1 ];
-	if ( ls[ 2 ] != "" )  //number of lines ?
-		nb_lines = ls[ 2 ].toInt();
+	int nb_lines = args.count;
 	
 	QStringList list;
-	if ( ls[ 3 ] == "yy" ) {
+	if ( args.command == "yy" ) {
 		list << QString::null; //just a marker
 		for (int i = 0 ; i < nb_lines; i++ )
 			list << mBuffer->data(mCursor->getY()+i);
-	} else if ( ls[ 3 ] == "Y" ) {
+	} else if ( args.command == "Y" ) {
 		list << QString::null; //just a marker
 		for (int i = 0 ; i < nb_lines; i++ )
 			list << mBuffer->data(mCursor->getY()+i);
-	} else if ( ls[ 3 ] == "y$" ) {
+	} else if ( args.command == "y$" ) {
 		QString lin = mBuffer->data( mCursor->getY() );
 		list << lin.mid(mCursor->getX());
 	}
-	YZSession::mRegisters.setRegister( reg, list );
+	YZSession::mRegisters.setRegister( args.registr, list );
 
 	purgeInputBuffer();
 	return QString::null;
@@ -651,22 +641,13 @@ QString YZView::copy( const QString& inputsBuff , YZCommandArgs args) {
 
 QString YZView::paste( const QString& inputsBuff, YZCommandArgs args ) {
 	//default register to use
-	QRegExp ex("(\".)?(p|P)");
-	ex.exactMatch( inputsBuff );
-	QStringList ls = ex.capturedTexts();
-	yzDebug() << "view::paste " << ls << endl;
-
-	QChar reg = '"';
-	if ( ls[ 1 ] != "" ) //got a register name ?
-		reg = ls[ 1 ][ 1 ];
-
-	QStringList list = YZSession::mRegisters.getRegister( reg );
+	QStringList list = YZSession::mRegisters.getRegister( args.registr );
 	//save cursor pos
 	int curx = mCursor->getX();
 	int cury = mCursor->getY();
 
 	uint i = 0;
-	if ( ls[ 2 ] == "p" ) { //paste after current char
+	if ( args.command == "p" ) { //paste after current char
 		QString nl = mBuffer->data( mCursor->getY() );
 		if ( !list[ 0 ].isNull() ) {
 			yzDebug() << "First line not NULL !" << endl;
@@ -678,7 +659,7 @@ QString YZView::paste( const QString& inputsBuff, YZCommandArgs args ) {
 			mBuffer->insertLine(list[ i++ ], mCursor->getY()+1);
 			gotoxy( mCursor->getX(), mCursor->getY()+1 );
 		}
-	} else if ( ls[ 2 ] == "P" ) { //paste before current char
+	} else if ( args.command == "P" ) { //paste before current char
 		if ( list[ 0 ].isNull() )
 			i++;
 		while ( i < ( list[ 0 ].isNull() ? list.size() : list.size() - 1 ) ) {

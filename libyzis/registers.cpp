@@ -25,7 +25,7 @@ YZRegisters::YZRegisters() {
 
 void YZRegisters::setRegister( QChar c, const QStringList& value ) {
 	mRegisters[ c ] = value;
-	yzDebug() << "Register : " << value << endl;
+	yzDebug() << "Register : " << c.latin1() << " Value : " << value << endl;
 }
 
 QStringList& YZRegisters::getRegister( QChar c ) const {

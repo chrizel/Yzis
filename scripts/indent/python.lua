@@ -1,7 +1,7 @@
 -- Indentation plugin for python
 -- Author : Loic Pauleve <panard@inzenet.org>
 
-function Indent_Python( nbNextTabs, nbNextSpaces, nbPrevTabs, nbPrevSpaces, prevLine, nextLine )
+function Indent_python( nbNextTabs, nbNextSpaces, nbPrevTabs, nbPrevSpaces, prevLine, nextLine )
 	local nbtabs = nbPrevTabs
 	local nbspaces = nbPrevSpaces
 

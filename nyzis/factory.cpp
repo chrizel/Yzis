@@ -92,6 +92,9 @@ void NYZFactory::event_loop()
 			case 12:
 				currentView->sendKey('l',Qt::ControlButton );
 				continue;
+			case 18:
+				currentView->sendKey('r',Qt::ControlButton );
+				continue;
 		}
 		if (keycodes.contains(c)) {
 			currentView->sendKey(keycodes[c],0 );

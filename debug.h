@@ -100,4 +100,7 @@ YZDebugStream yzWarning( int area = 0 );
 YZDebugStream yzError( int area = 0 );
 YZDebugStream yzFatal( int area = 0 );
 
+// Assertion
+#define YZASSERT( assertion, msg ) { if (! (assertion) ) { yzError() << QString("%1:%2 assertion '%3' failed : %4\n").arg(__FILE__).arg( __LINE__).arg(#assertion).arg( msg ); } }
+
 #endif /* YZ_DEBUG_H */

@@ -115,10 +115,9 @@ main(int argc, char *argv[])
 			yzDebug(NYZIS)<< "nyzis : opening file " << argv[argc]<<endl;;
 			bf = factory->createBuffer();
 			bf->load( argv[ argc ] );
-			factory->createView(bf);
 		}
 	if ( !hasatleastone )
-		factory->createView(factory->createBuffer());
+		factory->createBuffer();
 
 	
 	// let's go and loop

@@ -42,6 +42,8 @@ NYZFactory::NYZFactory(const char *session_name)
 	(void) noecho();	/* echo input - in color */
 	(void) nodelay(stdscr, TRUE);
 
+	if ( has_colors() ) start_color();
+
 	if ( self ) {
 		yzError(NYZIS) << "Instanciating several NYZFactory, should Never happen, quitting..";
 		exit(1);
@@ -50,7 +52,7 @@ NYZFactory::NYZFactory(const char *session_name)
 
 	initialiseKeycodes();
 	screen = stdscr; // just an alias...
-	wattron(screen, A_BOLD);	// will be herited by subwin
+	wattron(screen, A_STANDOUT);	// will be herited by subwin
 }
 
 NYZFactory::~NYZFactory( )
@@ -111,23 +113,17 @@ void NYZFactory::changeCurrentView ( YZView * view  )
 YZView* NYZFactory::createView( YZBuffer* buffer )
 {
 	YZASSERT( buffer );
-	buffer->addView ( new NYZView( buffer ) );
+	NYZView *v = new NYZView( buffer );
+	YZASSERT_MSG(v, "NYZFactory::createView : failed creating a new KYZView");
+	buffer->addView ( v);
 	return currentView;
-	/*
-	if ( currentView )
-		currentView->unmap();
-	yzDebug(NYZIS) << "NYZFactory::createView , buffer is : " << ( int )buffer << endl;
-	currentView = new NYZView(buffer);
-	currentView->map();
-	currentViewChanged(currentView);
-	return currentView;
-	*/
 }
 
 NYZisDoc *NYZFactory::createBuffer(const QString&)
 {
 	NYZisDoc *b = new NYZisDoc();
 	YZASSERT_MSG(b, "NYZFactory::createBuffer failed creating new NYZisDoc");
+	createView( b );
 	return b;
 }
 

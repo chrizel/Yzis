@@ -18,6 +18,7 @@
  **/
 
 #include <qfileinfo.h>
+#include <qdir.h>
 #include "ex_lua.h"
 #include "debug.h"
 #include "view.h"
@@ -26,6 +27,7 @@
 #include "cursor.h"
 #include "session.h"
 #include "yzis.h"
+#include "translator.h"
 
 extern "C" {
 #include <lauxlib.h>
@@ -78,6 +80,16 @@ QString YZExLua::lua(YZView *, const QString& ) {
 //callers
 QString YZExLua::loadFile( YZView *, const QString& inputs ) {
 	QString filename = inputs.mid( inputs.find( " " ) +1 );
+	//find a matching file first
+	if ( !QFile::exists( filename ) ) {
+		if ( QFile::exists( QDir::currentDirPath()+"/"+filename ) ) filename.prepend( QDir::currentDirPath()+"/" );
+		else if ( QFile::exists( QDir::homeDirPath()+"/.yzis/scripts/"+filename ) ) filename.prepend( QDir::homeDirPath()+"/.yzis/scripts/" );
+		else if ( QFile::exists( QString( PREFIX )+"/share/yzis/scripts/"+filename ) ) filename.prepend( QString( PREFIX )+"/share/yzis/scripts/" );
+		else {
+			YZSession::me->popupMessage(tr("The file %1 could not be found in standard directories" ).arg( filename ));
+			return QString::null;
+		}
+	}
 	QFileInfo fi ( filename );
 	filename = fi.absFilePath();
 	yzDebug() << "LUA : sourcing file " << filename << endl;

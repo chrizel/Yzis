@@ -66,6 +66,8 @@ class YZModeVisual : public YZModeCommand {
 	  	void movetoInsertMode( const YZCommandArgs& args );
 	  	void escape( const YZCommandArgs& args );
 		void translateToVisualLine( const YZCommandArgs& args );
+		void changeWholeLines(const YZCommandArgs &args);
+		void deleteWholeLines(const YZCommandArgs &args);
 		void yankWholeLines(const YZCommandArgs &args);
 		void toUpperCase( const YZCommandArgs& args );
 		void toLowerCase( const YZCommandArgs& args );

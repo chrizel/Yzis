@@ -368,7 +368,7 @@ class YZView {
 		/**
 		 * draw char
 		 */
-		QChar drawChar( );
+		const QChar& drawChar( );
 
 		/**
 		 * char length
@@ -551,6 +551,10 @@ class YZView {
 		void YZView::gotodx( unsigned int );
 
 		bool wrapNextLine;
+		QChar lastChar;
+
+		//cached value of tabwidth option
+		unsigned int tabwidth;	
 };
 
 #endif /*  YZ_VIEW_H */

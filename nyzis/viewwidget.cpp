@@ -104,7 +104,7 @@ void NYZView::printVoid( unsigned int relline )
 void NYZView::printLine( int line )
 {
 
-	yzDebug(NYZIS)<< "printLine called("<< line << ")" << endl;
+//	yzDebug(NYZIS)<< "printLine called("<< line << ")" << endl;
 
 	unsigned int actuallen;
 	int sx,sy; // save x,y

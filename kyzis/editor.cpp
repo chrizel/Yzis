@@ -124,10 +124,13 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 	int flag = ( mParent->myBuffer()->introShown() ? Qt::AlignCenter : Qt::AlignLeft )| Qt::AlignVCenter | Qt::SingleLine;
 
-	cliph = cliph ? cliph / fontMetrics().lineSpacing() + ( int )ceil( cliph % fontMetrics().lineSpacing() ): 0;
-	clipy = clipy ? clipy / fontMetrics().lineSpacing() : 0;
-
-//	yzDebug() << "drawContents: clipy=" << clipy << ",cliph=" << cliph << endl;
+	unsigned int linespace = fontMetrics().lineSpacing();
+	unsigned int maxwidth = fontMetrics().maxWidth();
+	cliph = cliph ? cliph / linespace + ( int )ceil( cliph % linespace ): 0;
+	clipy = clipy ? clipy / linespace : 0;
+	QRect myRect;
+	bool number = YZSession::getBoolOption( "General\\number" );
+	bool wrap = YZSession::getBoolOption( "General\\wrap" );
 
 	unsigned int lineCount = mParent->myBuffer()->lineCount();
 	unsigned int my_marginLeft = 0;
@@ -137,7 +140,7 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 	}
 	if ( marginLeft != my_marginLeft ) {
 		marginLeft = my_marginLeft;
-		mParent->setVisibleArea( width() / fontMetrics().maxWidth() - marginLeft, height() / fontMetrics().lineSpacing() );
+		mParent->setVisibleArea( width() / maxwidth - marginLeft, height() / linespace );
 		return;
 	}
 
@@ -152,68 +155,68 @@ void KYZisEdit::drawContents(QPainter *p, int , int clipy, int , int cliph) {
 			if ( currentY >= ( uint )clipy ) {
 				unsigned int currentX = 0;
 
-				if ( YZSession::getBoolOption( "General\\number" )) { // draw current line number
+				myRect.setRect (0, currentY * linespace, width(), linespace );
+				p->eraseRect( myRect );
+				if ( number ) { // draw current line number
 					QPen old_pen = p->pen( );
 
-					QRect clipNL (0, currentY * fontMetrics().lineSpacing(), ( marginLeft - 1 ) * fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+//					myRect.setRect (0, currentY * linespace, ( marginLeft - 1 ) * maxwidth, linespace );
+//					p->eraseRect( myRect );
 					if ( lineNumber != lastLineNumber ) { // we don't draw it twice
 						p->setPen( Qt::yellow );
-						p->eraseRect( clipNL );
-						p->drawText( clipNL, flag, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
+						p->drawText( myRect, flag, QString::number( lineNumber ).rightJustify( marginLeft - 1, ' ' ) );
 						lastLineNumber = lineNumber;
-					} else p->eraseRect( clipNL );
+					}
 
 					currentX += marginLeft;
-					
 					p->setPen( old_pen );
 				}
 
 
 				while ( mParent->drawNextCol( ) ) {
-					QChar ch = mParent->drawChar( );
-					QRect clip2(currentX * fontMetrics().maxWidth(), currentY * fontMetrics().lineSpacing(), 
-							fontMetrics().maxWidth() * mParent->drawLength( ), fontMetrics().lineSpacing());
+					const QChar& ch = mParent->drawChar( );
+					myRect.setRect (currentX * maxwidth, currentY * linespace, 
+							maxwidth * mParent->drawLength( ), linespace);
 					QColor c = mParent->drawColor( );
-					if ( c.isValid() ) {
+					if ( c.isValid() )
 						p->setPen( c );
-					}
-					p->eraseRect( clip2 );
-					p->drawText(clip2, flag, ch );
+//					p->eraseRect( myRect );
+					p->drawText(myRect, flag, ch );
 					currentX += mParent->drawLength( );
 				}
 				// erase end of current line 
-				QRect clip(currentX * fontMetrics().maxWidth(), currentY * fontMetrics().lineSpacing(), width() - currentX * fontMetrics().maxWidth(), fontMetrics().lineSpacing());
-				p->eraseRect(clip);
+//				myRect.setRect (currentX * maxwidth, currentY * linespace, width() - currentX * maxwidth, linespace);
+//				p->eraseRect(myRect);
 
 				currentY += mParent->drawHeight( );
 				cliph -= mParent->lineHeight( );
 			} else {
-				if ( YZSession::getBoolOption( "General\\wrap" ) ) while ( mParent->drawNextCol( ) ) mParent->drawChar( );
+				if ( wrap ) while ( mParent->drawNextCol( ) ) mParent->drawChar( );
 				currentY += mParent->drawHeight( );
 				lastLineNumber = lineNumber;
 			}
 		}
 		p->setPen( Qt::white );
-		if ( YZSession::getBoolOption( "General\\number" )) { // draw blank line
-			p->drawLine( marginLeft * fontMetrics().maxWidth() - fontMetrics().maxWidth() / 2, clipy * fontMetrics().lineSpacing(), \
-					marginLeft * fontMetrics().maxWidth() - fontMetrics().maxWidth() / 2, ( currentY - clipy ) * fontMetrics().lineSpacing() );
+		if ( number ) { // draw blank line
+			p->drawLine( marginLeft * maxwidth - maxwidth / 2, clipy * linespace, \
+					marginLeft * maxwidth - maxwidth / 2, ( currentY - clipy ) * linespace );
 		}
-		while ( cliph > 0 && currentY < ( uint )( height() / fontMetrics().lineSpacing() ) ) {
-			QRect clip( 0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
-			p->eraseRect( clip );
-			p->drawText(clip,flag ,"~");
+		unsigned int fh = height() / linespace;
+		while ( cliph > 0 && currentY < fh ) {
+			myRect.setRect ( 0, currentY * linespace, width(), linespace );
+			p->eraseRect( myRect );
+			p->drawText(myRect,flag ,"~");
 			++currentY;
 			--cliph;
 		}
-		if ( mCursorShown ) {
+		if ( mCursorShown )
 			setCursor( mParent->getCursor()->getX(), mParent->getCursor()->getY() );
-		}
 	} else {
 		while ( currentY < lineCount ) {
-			QRect clip(0, currentY * fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing());
-			p->eraseRect(clip);
+			myRect.setRect (0, currentY * linespace, width(), linespace);
+			p->eraseRect(myRect);
 
-			p->drawText(clip,flag, mParent->myBuffer()->textline(currentY ) );
+			p->drawText(myRect,flag, mParent->myBuffer()->textline(currentY ) );
 
 			++currentY;
 		}

@@ -69,13 +69,13 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
     uint i=textHistory.count()-2;
 
     if (commandUndo) {
-        mView->sendText("<Esc>");
+        mView->sendMultipleKey("<ESC>");
     }
 
     yzDebug( "TestUndo" ) << "========== Starting Undo ===========" << endl;
     while( i > 0 ) {
         if (commandUndo) {
-            mView->sendText("u");
+            mView->sendMultipleKey("u");
         } else {
             ub->undo(mView);
         }
@@ -87,7 +87,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
     }
 
     if (commandUndo) {
-        mView->sendText("u");
+        mView->sendMultipleKey("u");
     } else {
         ub->undo( mView );
     }
@@ -101,7 +101,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
 
     while( ++i < textHistory.count()-1 ) {
         if (commandUndo) {
-            mView->sendText("<C-R>");
+            mView->sendMultipleKey("<CTRL>R");
         } else {
             ub->redo(mView);
         }
@@ -112,7 +112,7 @@ void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
     }
 
     if (commandUndo) {
-        mView->sendText("<C-R>");
+        mView->sendMultipleKey("<CTRL>R");
     } else {
         ub->redo(mView);
     }
@@ -265,25 +265,25 @@ void TestUndo::testRedoRemovesUndo()
     textHistory.append( mBuf->getWholeText() );
 
     yzDebug("TestUndo") << "step 1" << endl;
-    mView->sendText("i123\n456\n789<esc>");
+    mView->sendMultipleKey("i123<ENTER>456<ENTER>789<ESC>");
     textHistory.append( mBuf->getWholeText() );
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );
 
     yzDebug("TestUndo") << "step 2" << endl;
-    mView->sendText("u");
+    mView->sendMultipleKey("u");
     phCheckEquals( ub->mayUndo(), false );
     phCheckEquals( ub->mayRedo(), true );
     textHistory.pop_back();
 
     yzDebug("TestUndo") << "step 3" << endl;
-    mView->sendText("iaaa\nbbb<esc>");
+    mView->sendMultipleKey("iaaa<ENTER>bbb<ESC>");
     textHistory.append( mBuf->getWholeText() );
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );
 
     yzDebug("TestUndo") << "step 4" << endl;
-    mView->sendText("iccc\nddd<esc>");
+    mView->sendMultipleKey("iccc<ENTER>ddd<ESC>");
     textHistory.append( mBuf->getWholeText() );
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );
@@ -291,13 +291,13 @@ void TestUndo::testRedoRemovesUndo()
     performUndoRedo( textHistory, true );
 
     yzDebug("TestUndo") << "step 5" << endl;
-    mView->sendText("u");
+    mView->sendMultipleKey("u");
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), true );
     textHistory.pop_back();
 
     yzDebug("TestUndo") << "step 6" << endl;
-    mView->sendText("ieee\nfff<esc>");
+    mView->sendMultipleKey("ieee<ENTER>fff<ESC>");
     textHistory.append( mBuf->getWholeText() );
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );
@@ -311,7 +311,7 @@ void TestUndo::testCommandUndo()
     QStringList textHistory;
     textHistory.append( mBuf->getWholeText() );
 
-    mView->sendText("i123\n456\n789<esc>");
+    mView->sendMultipleKey("i123<ENTER>456<ENTER>789<ESC>");
     textHistory.append( mBuf->getWholeText() );
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );
@@ -323,7 +323,7 @@ void TestUndo::testCommandUndo()
 
     return;
 
-    mView->sendText("i123\n456\n789<esc>");
+    mView->sendMultipleKey("i123<ENTER>456<ENTER>789<ESC>");
     textHistory.append( mBuf->getWholeText() );
     phCheckEquals( ub->mayUndo(), true );
     phCheckEquals( ub->mayRedo(), false );

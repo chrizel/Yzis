@@ -134,6 +134,54 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 	}
 }
 
+void YZView::sendMultipleKey(const QString& keys) {
+	for ( unsigned int i = 0 ; i < keys.length(); i++ ) {
+		QString key = keys.mid( i );
+		if ( key.startsWith( "<CTRL>" ) ) {
+			sendKey (key.mid( 6,1 ), "<CTRL>" );
+			i+=6;
+			continue;
+		} else if ( key.startsWith( "<ALT>" ) ) {
+			sendKey (key.mid( 5,1 ), "<ALT>" );
+			i+=5;
+			continue;
+		} else if ( key.startsWith( "<SHIFT>" ) ) {
+			sendKey (key.mid( 7,1 ), "<SHIFT>" );
+			i+=7;
+			continue;
+		} else if ( key.startsWith( "<ESC>" ) ) {
+			sendKey ( "<ESC>" );
+			i+=4;
+			continue;
+		} else if ( key.startsWith( "<ENTER>" ) ) {
+			sendKey ( "<ENTER>" );
+			i+=6;
+			continue;
+		} else if ( key.startsWith( "<TAB>" ) ) {
+			sendKey ( "<TAB>" );
+			i+=4;
+			continue;
+		} else if ( key.startsWith( "<UP>" ) ) {
+			sendKey ( "<UP>" );
+			i+=3;
+			continue;
+		} else if ( key.startsWith( "<DOWN>" ) ) {
+			sendKey ( "<DOWN>" );
+			i+=5;
+			continue;
+		} else if ( key.startsWith( "<RIGHT>" ) ) {
+			sendKey ( "<RIGHT>" );
+			i+=6;
+			continue;
+		} else if ( key.startsWith( "<LEFT>" ) ) {
+			sendKey ( "<LEFT>" );
+			i+=5;
+			continue;
+		} else
+			sendKey( key.mid( 0,1 ) );
+	}
+}
+
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	yzDebug() << "sendKey : " << _key << " " << _modifiers << endl;
 	if ( mBuffer->introShown() ) {

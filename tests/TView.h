@@ -25,6 +25,7 @@
  */
 
 #include <libyzis/view.h>
+#include <libyzis/viewcursor.h>
 #include <libyzis/debug.h>
 
 class TYZView : public YZView
@@ -32,19 +33,10 @@ class TYZView : public YZView
 public:
 	TYZView(YZBuffer *buf, YZSession *sess, int lines);
 
-	/** Send text to the view, that will be sent as individual chars
-	  * with the sendKey()
-	  *
-	  * \t and \n are converted into the right keys. Upper case letters are
-	  * converted into lower case letters with a shift modifier.
-	  * <Esc>, <Tab>, <C-A> are also supported syntax.
-	  */
-	void sendText( QString text );
-
-	uint getCursorX() { return mCursor->getX(); }
-	uint getCursorY() { return mCursor->getY(); }
-	uint getCursorLine() { return mCursor->getY(); }
-	uint getCursorCol() { return mCursor->getX(); }
+	uint getCursorX() { return mainCursor->bufferX(); }
+	uint getCursorY() { return mainCursor->bufferY(); }
+	uint getCursorLine() { return mainCursor->bufferY(); }
+	uint getCursorCol() { return mainCursor->bufferX(); }
 
 	// Reimplemented to please compilation
 	
@@ -102,6 +94,12 @@ public:
 	}
 	virtual void scrollDown( int ) {
 		yzDebug( "TYZView") << "TYZView::scrollDown" << endl;
+	}
+	virtual unsigned int stringWidth(const QString&str) const {
+		return str.length();
+	}
+	virtual unsigned int charWidth(const QChar&) const {
+		return 1;
 	}
 
 protected:

@@ -69,6 +69,10 @@ public:
     virtual void quit( int ) {
         yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
     }
+	virtual bool promptYesNo(const QString&, const QString&) {
+	    yzDebug( AREA_TESTS) << "TYZSession::promptYesNo" << endl;
+		return true;
+	}
 };
 
 #endif // TYZ_SESSION_H

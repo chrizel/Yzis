@@ -69,27 +69,27 @@ void TestYZCommands::testCreateSession()
 
 void TestYZCommands::testInsertMode()
 {
-    mView->sendText( "i" );
+    mView->sendMultipleKey( "i" );
     phCheckEquals( mBuf->getWholeText(), "" );
     CHECK_MODE_INSERT( mView );
     CHECK_CURSOR_POS( mView, 0, 0 );
 
-    mView->sendText( "i23" );
+    mView->sendMultipleKey( "i23" );
     phCheckEquals( mBuf->getWholeText(), "i23\n" );
     CHECK_MODE_INSERT( mView );
     CHECK_CURSOR_POS( mView, 0, 3 );
 
-    mView->sendText( "\n456" );
+    mView->sendMultipleKey( "<ENTER>456" );
     phCheckEquals( mBuf->getWholeText(), "i23\n456\n" );
     CHECK_MODE_INSERT( mView );
     CHECK_CURSOR_POS( mView, 1, 3 );
 
-    mView->sendText( "<Esc>" );
+    mView->sendMultipleKey( "<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "i23\n456\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 1, 2 );
 
-    mView->sendText( "<Esc>" );
+    mView->sendMultipleKey( "<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "i23\n456\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 1, 2 );
@@ -97,141 +97,143 @@ void TestYZCommands::testInsertMode()
 
 void TestYZCommands::testCharMovement()
 {
-    mView->sendText( "i0123\n4567\n89AB\nCDEF<Esc>" );
+    mView->sendMultipleKey( "i0123<ENTER>4567<ENTER>89AB<ENTER>CDEF<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "0123\n4567\n89AB\nCDEF\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 3, 3 );
     yzDebug("testCharMovement") << "buffer : '" << mBuf->getWholeText() << "'" << endl;
     
-    mView->sendText( "<Right>" );
-    mView->sendText( "<Down>" );
+    mView->sendMultipleKey( "<RIGHT>" );
+    mView->sendMultipleKey( "<DOWN>" );
     CHECK_CURSOR_POS( mView, 3, 3 );
     
-    mView->sendText( "<Left>" );
+    mView->sendMultipleKey( "<LEFT>" );
     CHECK_CURSOR_POS( mView, 3, 2 );
   
-    mView->sendText( "<Up>" );
+    mView->sendMultipleKey( "<UP>" );
     CHECK_CURSOR_POS( mView, 2, 2 );
 
-    mView->sendText( "<Up>" );
-    mView->sendText( "<Up>" );
-    mView->sendText( "<Up>" );
+    mView->sendMultipleKey( "<UP>" );
+    mView->sendMultipleKey( "<UP>" );
+    mView->sendMultipleKey( "<UP>" );
     CHECK_CURSOR_POS( mView, 0, 2 );
-    mView->sendText( "<Up>" );
+    mView->sendMultipleKey( "<UP>" );
     CHECK_CURSOR_POS( mView, 0, 2 );
     
-    mView->sendText( "<Left>" );
-    mView->sendText( "<Left>" );
+    mView->sendMultipleKey( "<LEFT>" );
+    mView->sendMultipleKey( "<LEFT>" );
     CHECK_CURSOR_POS( mView, 0, 0 );
-    mView->sendText( "<Left>" );
+    mView->sendMultipleKey( "<LEFT>" );
     CHECK_CURSOR_POS( mView, 0, 0 );
-    mView->sendText( "<Down>" );
+    mView->sendMultipleKey( "<DOWN>" );
     CHECK_CURSOR_POS( mView, 1, 0 );          
 
-    mView->sendText( "2<Right>" );
-    mView->sendText( "<Right>" );
-    mView->sendText( "2<Down>" );
+    mView->sendMultipleKey( "2<RIGHT>" );
+    mView->sendMultipleKey( "<RIGHT>" );
+    mView->sendMultipleKey( "2<DOWN>" );
     CHECK_CURSOR_POS( mView, 3, 3 );
 
-    mView->sendText( "10<Left>" );
+    mView->sendMultipleKey( "10<LEFT>" );
     CHECK_CURSOR_POS( mView, 3, 0 );
-    mView->sendText( "10<Up>" );
+    mView->sendMultipleKey( "10<UP>" );
     CHECK_CURSOR_POS( mView, 0, 0 );
-    mView->sendText( "10<Right>" );
+    mView->sendMultipleKey( "10<RIGHT>" );
     CHECK_CURSOR_POS( mView, 0, 3 );
-    mView->sendText( "10<Down>" );
+    mView->sendMultipleKey( "10<DOWN>" );
     CHECK_CURSOR_POS( mView, 3, 3 );
 
     // now with hjkl
 
-    mView->sendText( "l" );
-    mView->sendText( "j" );
+    mView->sendMultipleKey( "l" );
+    mView->sendMultipleKey( "j" );
     CHECK_CURSOR_POS( mView, 3, 3 );
     
-    mView->sendText( "h" );
+    mView->sendMultipleKey( "h" );
     CHECK_CURSOR_POS( mView, 3, 2 );
   
-     mView->sendText( "k" );
+     mView->sendMultipleKey( "k" );
     CHECK_CURSOR_POS( mView, 2, 2 );
 
-    mView->sendText( "3k" );
+    mView->sendMultipleKey( "3k" );
     CHECK_CURSOR_POS( mView, 0, 2 );
-    mView->sendText( "k" );
+    mView->sendMultipleKey( "k" );
     CHECK_CURSOR_POS( mView, 0, 2 );
     
-    mView->sendText( "2h" );
+    mView->sendMultipleKey( "2h" );
     CHECK_CURSOR_POS( mView, 0, 0 );
-    mView->sendText( "h" );
+    mView->sendMultipleKey( "h" );
     CHECK_CURSOR_POS( mView, 0, 0 );
-    mView->sendText( "j" );
+    mView->sendMultipleKey( "j" );
     CHECK_CURSOR_POS( mView, 1, 0 );          
 
-    mView->sendText( "3l" );
-    mView->sendText( "2j" );
+    mView->sendMultipleKey( "3l" );
+    mView->sendMultipleKey( "2j" );
     CHECK_CURSOR_POS( mView, 3, 3 );
 }
 
 void TestYZCommands::testBeginEndCharMovement()
 {
-    mView->sendText( "i\t0123\n4567\n  89AB <Esc>" );
+    mView->sendMultipleKey( "i<TAB>0123<ENTER>4567<ENTER>  89AB <ESC>" );
     CHECK_CURSOR_POS( mView, 2, 6 );
     
     // test beginning and end of line movements
-    mView->sendText("^");
+    mView->sendMultipleKey("^");
     CHECK_CURSOR_POS( mView, 2, 2 );
-    mView->sendText("0");
+    mView->sendMultipleKey("0");
     CHECK_CURSOR_POS( mView, 2, 0 );
-    mView->sendText("$");
+    mView->sendMultipleKey("$");
     CHECK_CURSOR_POS( mView, 2, 6 );
 
-    mView->sendText("<up>");
-    mView->sendText("0");
+    mView->sendMultipleKey("<UP>");
+    mView->sendMultipleKey("0");
     CHECK_CURSOR_POS( mView, 1, 0 );
-    mView->sendText("^");
+    mView->sendMultipleKey("^");
     CHECK_CURSOR_POS( mView, 1, 0 );
-    mView->sendText("$");
+    mView->sendMultipleKey("$");
     CHECK_CURSOR_POS( mView, 1, 3 );
 
-    mView->sendText("<up>");
-    mView->sendText("0");
+    mView->sendMultipleKey("<UP>");
+    mView->sendMultipleKey("0");
     CHECK_CURSOR_POS( mView, 0, 0 );
-    mView->sendText("^");
+    mView->sendMultipleKey("^");
     CHECK_CURSOR_POS( mView, 0, 1 );
-    mView->sendText("$");
+    mView->sendMultipleKey("$");
     CHECK_CURSOR_POS( mView, 0, 4 );
 }
 
 void TestYZCommands::testLineMovement()
 {
-    mView->sendText( "i\t\t0123\n4567\n89AB\n CDEF<Esc>" );
+	//we test 'gg' like commands, make sure :set startofline=true first
+	YZSession::setBoolOption("startofline",true);	
+    mView->sendMultipleKey( "i<TAB><TAB>0123<ENTER>4567<ENTER>89AB<ENTER> CDEF<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "\t\t0123\n4567\n89AB\n CDEF\n" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 3, 4 );
     
-    mView->sendText( "gg" );
-    CHECK_CURSOR_POS( mView, 0, 2 );
-    mView->sendText( "<Right>" );
+    mView->sendMultipleKey( "gg" );
+    CHECK_CURSOR_POS( mView, 0, 2 ); //depends on :set startofline value
+    mView->sendMultipleKey( "<RIGHT>" );
     CHECK_CURSOR_POS( mView, 0, 3 );
-    mView->sendText( "gg" );
+    mView->sendMultipleKey( "gg" );
     CHECK_CURSOR_POS( mView, 0, 2 );
 
-    mView->sendText( "G" );
+    mView->sendMultipleKey( "G" );
     CHECK_CURSOR_POS( mView, 3, 1 );
-    mView->sendText( "<Right>" );
+    mView->sendMultipleKey( "<RIGHT>" );
     CHECK_CURSOR_POS( mView, 3, 2 );
-    mView->sendText( "G" );
+    mView->sendMultipleKey( "G" );
     CHECK_CURSOR_POS( mView, 3, 1 );
 
-    mView->sendText("0gg");
+    mView->sendMultipleKey("0gg");
     CHECK_CURSOR_POS( mView, 0, 2 );
-    mView->sendText( "300G" );
+    mView->sendMultipleKey( "300G" );
     CHECK_CURSOR_POS( mView, 3, 1 );
-    mView->sendText("2gg");
-    CHECK_CURSOR_POS( mView, 1, 0 );
-    mView->sendText( "300gg" );
+    mView->sendMultipleKey("2gg");
+    CHECK_CURSOR_POS( mView, 0, 2 );
+    mView->sendMultipleKey( "300gg" );
+    CHECK_CURSOR_POS( mView, 0, 2 );
+    mView->sendMultipleKey("3G");
     CHECK_CURSOR_POS( mView, 3, 1 );
-    mView->sendText("3G");
-    CHECK_CURSOR_POS( mView, 2, 0 );
 }
 
 /* ========================================================================= */

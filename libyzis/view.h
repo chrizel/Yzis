@@ -68,19 +68,15 @@ class YZView {
 		 * @arg resfresh if true, refreshView is called
 		 */
 		void setVisibleArea (int c, int l, bool refresh = true );
-
-		/**
-		 * transfer a key event from GUI to core
-		 * @arg c is the key value as in QKeyEvent::key()
-		 * @arg modifiers is ored Qt::ShiftButton, Qt::ControlButton, Qt::AltButton 
-		 * as in QKeyEvent::stat()
-		 */
-		void sendKey(int c, int modifiers);
-
 		/**
 		 * transfer key events from GUI to core
 		 */
-		void sendKey(const QString& key, const QString& modifiers);
+		void sendKey(const QString& key, const QString& modifiers="");
+
+		/**
+		 * Send multiple keys in one string
+		 */
+		void sendMultipleKey(const QString& keys);
 
 		/** 
 		 * Returns the index of the first line displayed on the view

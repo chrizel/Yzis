@@ -135,6 +135,7 @@ void YZCommandPool::initPool() {
 	commands.append( new YZCommand("<CTRL>[", &YZCommandPool::gotoCommandMode) );
 	commands.append( new YZCommand("<ESC>", &YZCommandPool::abort) );
 	commands.append( new YZCommand("<DEL>", &YZCommandPool::delkey) );
+	commands.append( new YZCommand("<ALT>:", &YZCommandPool::gotoExMode) );
 }
 
 cmd_state YZCommandPool::execCommand(YZView *view, const QString& inputs) {
@@ -383,13 +384,32 @@ YZCursor YZCommandPool::moveRightWrap( const YZNewMotionArgs & args ) {
 
 YZCursor YZCommandPool::moveDown(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveDown(&viewCursor, args.count, args.standalone );
+	if ( args.standalone )
+		args.view->moveDown(&viewCursor, args.count, true );
+	else {//LINEWISE
+		//update starting point
+		args.view->gotoxy( 0, viewCursor.bufferY(), false );
+		// end point
+		args.view->moveDown( &viewCursor, args.count + 1, false );
+		args.view->moveToStartOfLine( &viewCursor, true );
+	}
 	return *viewCursor.buffer();
 }
 
 YZCursor YZCommandPool::moveUp(const YZNewMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->moveUp(&viewCursor, args.count, args.standalone);
+	if ( args.standalone )
+		args.view->moveUp(&viewCursor, args.count, true );
+	else {//LINEWISE
+		//update starting point
+		if ( viewCursor.bufferY() == args.view->myBuffer()->lineCount() - 1 )
+			args.view->moveToEndOfLine( &viewCursor, false );
+		else
+			args.view->gotoxy( 0, viewCursor.bufferY() + 1, false );
+		// end point
+		args.view->moveUp( &viewCursor, args.count, false );
+		args.view->gotoxy ( &viewCursor, 0, viewCursor.bufferY(), true );
+	}
 	return *viewCursor.buffer();
 }
 

@@ -261,6 +261,11 @@ class YZView {
 		void leaveInsertMode( );
 
 		/**
+		 * Leave search mode
+		 */
+		void leaveSearchMode( );
+
+		/**
 		 * Leave replace mode
 		 */
 		void leaveReplaceMode( );

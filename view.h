@@ -196,6 +196,11 @@ class YZView {
 		QString copy( const QString& inputsBuff = QString::null );
   
 		/**
+		 * Pastes the content of default or given register
+		 */
+		QString paste( const QString& inputsBuff = QString::null );
+  
+		/**
 		 * A global UID for this view
 		 **/
 		unsigned int myId;

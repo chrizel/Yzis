@@ -96,6 +96,11 @@ public:
 	void addLine(const QString &l);
 
 	/**
+	 * Insert line @param l at position @param line
+	 */
+	void insertLine(const QString &l, unsigned int line);
+	
+	/**
 	 * Get the current filename of the buffer
 	 * @return the filename
 	 */

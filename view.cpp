@@ -581,8 +581,6 @@ QString YZView::copy( const QString& inputsBuff ) {
 	//check if the command starts by " which would select a register
 	int i = 0;
 	if ( inputsBuff[ 0 ] == '"' ) {
-		if ( !inputsBuff.contains( "yy" ) && !inputsBuff.contains( "Y" ) ) 
-			return QString::null; // don't do it now, we have not the full command, XXX needs a fix when motion is implemented
 		i+=2;
 		reg = inputsBuff[ 1 ];
 		QString r ( reg );
@@ -615,3 +613,38 @@ QString YZView::copy( const QString& inputsBuff ) {
 	return QString::null;
 }
 
+QString YZView::paste( const QString& inputsBuff ) {
+	//default register to use
+	QChar reg = '"';
+
+	//check if the command starts by " which would select a register
+	int i = 0;
+	if ( inputsBuff[ 0 ] == '"' ) {
+		i+=2;
+		reg = inputsBuff[ 1 ];
+		QString r ( reg );
+		yzDebug() << "View :: paste : pasting to register " << r << endl;
+	}
+	bool pastebefore=false;
+	if ( inputsBuff[ i ] == 'p' )
+		pastebefore=false;
+	else if ( inputsBuff[ i ] == 'P' )
+		pastebefore=true;
+	else {
+		purgeInputBuffer();
+		return QString::null; //wrong command !
+	}
+	i++;
+
+	//paste now
+	////get the strings and merge them in one single line
+	QString data = YZSession::mRegisters.getRegister( reg );
+	QStringList list = QStringList::split( "\n", data );
+	if ( pastebefore ) gotoxy( mCursor->getX(), mCursor->getY()-1 );
+	for ( QStringList::Iterator it = list.begin(); it!=list.end(); it++ ) {
+		mBuffer->insertLine(*it, mCursor->getY()+1);
+		gotoxy( mCursor->getX(), mCursor->getY()+1 );
+	}
+	purgeInputBuffer();
+	return QString::null;
+}

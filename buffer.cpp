@@ -169,9 +169,16 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	updateAllViews(); //hmm ...
 }
 
+void  YZBuffer::insertLine(const QString &l, unsigned int line) {
+	YZASSERT( l.contains('\n')==false, "YZBuffer::addLine() : adding a line with '\n' inside" );
+	mText.insert(line, new YZLine(l));
+	updateAllViews();
+}
+
 void  YZBuffer::addLine(const QString &l) {
 	YZASSERT( l.contains('\n')==false, "YZBuffer::addLine() : adding a line with '\n' inside" );
 	mText.append(new YZLine(l));
+	updateAllViews();
 }
 
 // ------------------------------------------------------------------------

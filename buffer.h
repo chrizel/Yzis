@@ -118,7 +118,6 @@ public:
 	 */
 	void replaceLine( const QString& l, unsigned int line );
 
-
 	// ----------------- Buffer content
 
 	/**
@@ -263,21 +262,6 @@ public:
 
 	YZViewMark* viewMarks() { return mViewMarks; }
 	YZDocMark* docMarks() { return mDocMarks; }
-
-	/**
-	 * Display a nice intro before first input and when no file is loaded
-	 */
-	void displayIntro();
-
-	/**
-	 * Remove the introduction text
-	 */
-	void clearIntro();
-
-	/**
-	 * Is the intro displayed ?
-	 */
-	bool introShown() { return mIntro; }
 
 	/**
 	 * Is this file a new file
@@ -452,8 +436,6 @@ protected:
 	bool mFileIsNew;
 	//used to prevent redrawing of views during some operations
 	bool mUpdateView;
-	//is the intro shown
-	bool mIntro;
 	//is the file modified
 	bool mModified;
 	//current highlight mode

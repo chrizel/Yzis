@@ -159,6 +159,11 @@ class YZInternalOptionPool {
 		 */
 		void createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, option_t visibility, value_t type );
 
+		/**
+		 * Update the keys depending on buffers file name when a buffer change his name
+		 */
+		void updateOptions(const QString& oldPath, const QString& newPath);
+
 	private:
 		void init();
 		void initConfFiles();

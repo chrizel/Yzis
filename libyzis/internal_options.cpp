@@ -441,3 +441,30 @@ void YZInternalOptionPool::createOption(const QString& optionName, const QString
 	mOptions[ group + "\\" + optionName ] = newoption;
 }
 
+void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& newPath) {
+	QMap<QString,YZInternalOption*> newoptions;
+	QStringList toDrop;
+
+	//create the list of new options to add
+	QMap<QString,YZInternalOption*>::Iterator it = mOptions.begin(), end = mOptions.end();
+	for ( ; it != end; ++it ) {
+		QString key = it.key();
+		if (it.key().startsWith(oldPath)) {
+			key.replace(oldPath,newPath);
+			newoptions[key] = it.data();
+			toDrop << it.key();
+		}
+	}
+
+	//drop old records
+	for ( QStringList::Iterator it = toDrop.begin(); it != toDrop.end(); ++it ) {
+		//dont delete the pointers, it is still used by the new option ;)
+		mOptions.remove(*it);
+	}
+
+	//add new options into the QMap now
+	it = newoptions.begin(), end = newoptions.end();
+	for ( ; it != end; ++it ) {
+		mOptions[it.key()] = it.data();
+	}
+}

@@ -130,13 +130,13 @@ QString YZExCommandPool::parseRange( const QString& inputs, YZView* view, int* r
 
 bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 	bool ret = false, matched;
-	int from, to;
+	int from, to, current;
 	YZView * it;
 	QString _input = inputs.stripWhiteSpace();
 	yzDebug() << "ExCommand : " << _input << endl;
 	_input = _input.replace( QRegExp( "^%" ), "1,$" );
 	// range
-	from = to = rangeCurrentLine( YZExRangeArgs( NULL, view, "." ) );
+	current = from = to = rangeCurrentLine( YZExRangeArgs( NULL, view, "." ) );
 
 	_input = parseRange( _input, view, &from, &matched );
 	if ( matched ) to = from;
@@ -173,7 +173,7 @@ bool YZExCommandPool::execCommand( YZView* view, const QString& inputs ) {
 				it->commitPaintEvent();
 		}
 	}
-	if ( from != to ) {
+	if ( current != to ) {
 		view->gotoxy( 0, to );
 		view->moveToFirstNonBlankOfLine();
 	}

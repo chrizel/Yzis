@@ -66,7 +66,6 @@ YZView::~YZView() {
 }
 
 void YZView::setVisibleArea(int c, int l) {
-	yzDebug() << "setVisibleArea : " << c << " " << l << endl;
 	mLinesVis = l;
 	mColumnsVis = c;
 	refreshScreen();
@@ -412,16 +411,17 @@ void YZView::updateCursor() {
 
 void YZView::centerViewHorizontally(unsigned int column) {
 	yzDebug() << "centerViewHorizontally " << column << endl;
-	unsigned int newcurrentLeft = column - mColumnsVis / 2;
 
-#if 0
-	if ( newcurrentLeft > ( mMaxX - mColumnsVis ) ) {
-		if ( column > mColumnsVis/2 )
-			newcurrentLeft = mMaxX - mColumnsVis;
-		else newcurrentLeft = 0;
+	unsigned int newcurrentLeft = 0;
+
+	if ( column > mMaxX ) {
+		column = mMaxX;
 	}
-	if ( newcurrentLeft == mCurrentLeft ) return;
-#endif
+
+	if ( column > mColumnsVis/2 ) {
+		newcurrentLeft = column - mColumnsVis / 2;
+	}
+
 	if (newcurrentLeft > 0) {
 		initDraw( 0, 0, 0, 0 );
 		while( sCursor->getY( ) < mCursor->getY( ))
@@ -486,8 +486,14 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty) {
 	if ( ( int )nextx < 0 ) nextx = 0;
 	mCursor->setX( nextx );
 
-	initDraw(0, 0, 0, 0);
+//	initDraw(0, 0, 0, 0);
+	while ( sCursor->getY() > mCursor->getY() ) drawPrevLine( );
 	while ( sCursor->getY() < mCursor->getY() ) drawNextLine( );
+	while ( sCursor->getX() > mCursor->getX() ) {
+		drawPrevCol( );
+		drawChar( );
+	}
+
 	while ( sCursor->getX() < mCursor->getX() ) {
 		drawNextCol( );
 		drawChar( );
@@ -947,7 +953,7 @@ bool YZView::drawPrevLine( ) {
 */
 			if (drawLength () > 1) {
 				rColLength = 1;
-				sCursor->setX (sCursor->getX () + 1);
+				sCursor->setX (sCursor->getX () - 1);
 			}
 		}
 
@@ -1048,7 +1054,7 @@ bool YZView::drawPrevCol( ) {
 
 	rHLa -= sColLength;
 
-	return ( rCursor->getX( ) - rCurrentLeft < mColumnsVis && sCursor->getX( ) < sCurLine.length() );
+	return ( rCursor->getX( ) >= rCurrentLeft );
 }
 
 bool YZView::drawNextCol( ) {

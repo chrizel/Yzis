@@ -239,10 +239,10 @@ void NYZFactory::popupMessage( const QString &message )
 	wrefresh(popup);
 	refresh();
 	
-	// Leave half-delay mode for a moment.
-	nocbreak();
+	nocbreak(); // Leave half-delay mode for a moment.
+	cbreak(); // Enter cbreak-mode. 
 	int c = wgetch(popup);
-	halfdelay(1);
+	halfdelay(1); // Go back to the halfdelay-mode.
 	
 	delwin( popup );
 	currentView->refreshScreen();

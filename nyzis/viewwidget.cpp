@@ -287,9 +287,9 @@ void NYZView::setCommandLineText( const QString& text )
 	commandline = text;
 	if ( !text.isEmpty() ) {
 #if QT_VERSION < 0x040000
-		waddstr(statusbar, text.utf8());
+		waddstr(statusbar, text.local8Bit());
 #else
-		waddstr(statusbar, text.toUtf8().data());
+		waddstr(statusbar, text.toLocal8Bit().data());
 #endif
 		waddch( statusbar, ' ' ); // when doing backspace...
 		waddch( statusbar, '\b' );
@@ -314,9 +314,9 @@ void NYZView::syncViewInfo( void )
 	wattron( infobar, COLOR_PAIR(2) );
 	wprintw( infobar, "%s", (const char*)
 #if QT_VERSION < 0x040000
-			m.utf8()
+			m.local8Bit()
 #else
-			m.toUtf8().data()
+			m.toLocal8Bit().data()
 #endif
 	);
 	wattroff( infobar, COLOR_PAIR(2) );
@@ -327,9 +327,9 @@ void NYZView::syncViewInfo( void )
 	            // it's rather unlikely..
 	wprintw( infobar, myfmt,
 #if QT_VERSION < 0x040000
-			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).utf8() ):( const char * )( mBuffer->fileName().utf8() ),
+			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).local8Bit() ):( const char * )( mBuffer->fileName().local8Bit() ),
 #else
-			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).toUtf8().data() ):( const char * )( mBuffer->fileName().toUtf8().data() ),
+			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).toLocal8Bit().data() ):( const char * )( mBuffer->fileName().toLocal8Bit().data() ),
 #endif
 			( mBuffer->fileIsModified() )?" [+]":""
 			);
@@ -345,9 +345,9 @@ void NYZView::syncViewInfo( void )
 		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
 	}
 #if QT_VERSION < 0x040000
-	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.utf8() );
+	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.local8Bit() );
 #else
-	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.toUtf8().data() );
+	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.toLocal8Bit().data() );
 #endif
 	wrefresh(infobar);
 
@@ -367,9 +367,9 @@ void NYZView::displayInfo( const QString& info )
 {
 	werase(statusbar);
 #if QT_VERSION < 0x040000
-	waddstr( statusbar, info.utf8() );
+	waddstr( statusbar, info.local8Bit() );
 #else
-	waddstr( statusbar, info.toUtf8().data() );
+	waddstr( statusbar, info.toLocal8Bit().data() );
 #endif
 	wrefresh(statusbar);
 	drawCursor();

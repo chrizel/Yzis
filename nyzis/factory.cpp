@@ -226,11 +226,11 @@ void NYZFactory::popupMessage( const QString &message )
 	box( popup, 0, 0 );
 
 #if QT_VERSION < 0x040000
-	mvwaddstr( popup, 2, 2, message.utf8() );
-	mvwaddstr( popup, 4, ((nc+4)-length)/2, anyKeyMsg.utf8() ); // Center the text.
+	mvwaddstr( popup, 2, 2, message.local8Bit() );
+	mvwaddstr( popup, 4, ((nc+4)-length)/2, anyKeyMsg.local8Bit() ); // Center the text.
 #else
-	mvwaddstr( popup, 2, 2, message.toUtf8().data() );
-	mvwaddstr( popup, 2, ((nc+4)-length)/2, anyKeyMsg.toUtf8().data() ); // Center the text.
+	mvwaddstr( popup, 2, 2, message.toLocal8Bit().data() );
+	mvwaddstr( popup, 2, ((nc+4)-length)/2, anyKeyMsg.toLocal8Bit().data() ); // Center the text.
 #endif
 	// TODO : use QString QString::section
 

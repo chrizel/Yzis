@@ -1,3 +1,7 @@
+2005-02-24 panard
+  * nyzis
+    use locale encoding to display messages
+
 2005-02-24 pholcer (patch)
   * libyzis
     new commands : W and B

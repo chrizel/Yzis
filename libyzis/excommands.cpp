@@ -619,13 +619,18 @@ QString YZExCommandPool::syntax( const YZExCommandArgs& args ) {
 QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
 // :highlight Defaults Comment fg= selfg= bg= selbg= italic nobold underline strikeout
 	QStringList list = QStringList::split(" ", args.arg, false);
+	QStringList::Iterator it = list.begin(), end = list.end();
 	yzDebug() << list << endl;
+	if (list.count() < 3) return QString::null; //at least 3 parameters...
 	QString style = list[0];
 	QString type = list[1];
-	QStringList::Iterator it = list.begin(), end = list.end();
-	it+=2;
-	int idx = 0;
+	list.remove(it++); list.remove(it++);
+	if (!list[0].contains("=") && !list[0].endsWith("bold") && !list[0].endsWith("italic") && !list[0].endsWith("underline") && !list[0].endsWith("strikeout"))
+	type += " " + list[0];
+	list.remove(it++);
+
 	//get the current settings for this option
+	int idx = 0;
 	if ( style == "Defaults" || style == "Default" ) style = "Default Item Styles - Schema ";
 	else { 
 		style = "Highlighting " + style.simplifyWhiteSpace() + " - Schema ";

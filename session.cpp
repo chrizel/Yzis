@@ -24,7 +24,6 @@
 
 #include "session.h"
 #include "debug.h"
-#include "motionpool.h"
 #include "ex_executor.h"
 #include "ex_lua.h"
 #include "schema.h"
@@ -49,8 +48,6 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mPool->initPool();
 	mExPool = new YZCommandPool();
 	mExPool->initExPool();
-	mMotionPool = new YZMotionPool();
-	mMotionPool->initPool();
 	mSessionName = _sessionName;
 	mCurView = 0;
 	me = this;
@@ -63,7 +60,6 @@ YZSession::~YZSession() {
 	delete executor;
 	delete lua_executor;
 	delete mSchemaManager;
-	delete mMotionPool;
 	delete mExPool;
 	delete mPool;
 }

@@ -33,7 +33,6 @@
 class YZView;
 class YZBuffer;
 class YzisSchemaManager;
-class YZMotionPool;
 class YZCommandPool;
 class YZOption;
 class YZRegisters;
@@ -69,11 +68,6 @@ class YZSession {
 		 * gives access to the pool of ex commands
 		 */
 		YZCommandPool *getExPool() { return mExPool; }
-
-		/**
-		 * gives access to the pool of motions
-		 */
-		YZMotionPool *getMotionPool() { return mMotionPool; }
 
 		/**
 		 * Add a buffer
@@ -300,7 +294,6 @@ class YZSession {
 		QString mSessionName;
 		YZCommandPool *mPool;
 		YZCommandPool *mExPool;
-		YZMotionPool *mMotionPool;
 		YZView* mCurView;
 		YzisSchemaManager *mSchemaManager;
 		YZExExecutor *executor;

@@ -41,7 +41,6 @@
 #include "mark.h"
 #include "action.h"
 #include "commands.h"
-#include "motionpool.h"
 #include "session.h"
 
 #define STICKY_COL_ENDLINE -1

@@ -268,16 +268,6 @@ class YZView {
 		virtual void setCommandLineText( const QString& ) = 0;
 
 		/**
-		 * Focus on the command line
-		 */
-		virtual void setFocusCommandLine() = 0;
-
-		/**
-		 * Focus on the main window
-		 */
-		virtual void setFocusMainWindow() = 0;
-
-		/**
 		 * Inform a view that a line was changed
 		 * @param line the line which was edited
 		 */

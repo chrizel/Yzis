@@ -952,9 +952,8 @@ QString YZCommandPool::macro( const YZCommandArgs &args ) {
 
 QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 	args.view->purgeInputBuffer();
-	for ( QValueList<QChar>::const_iterator it = args.regs.begin(); it != args.regs.end(); it++ ) {
+	for ( QValueList<QChar>::const_iterator it = args.regs.begin(); it != args.regs.end(); it++ )
 		args.view->sendMultipleKey(YZSession::mRegisters.getRegister(*it)[ 0 ]);
-	}
 	args.view->commitNextUndo();
 	return QString::null;
 }
@@ -962,9 +961,8 @@ QString YZCommandPool::replayMacro( const YZCommandArgs &args ) {
 QString YZCommandPool::deleteChar( const YZCommandArgs &args ) {
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL )
 		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
-	else {
+	else
 		args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
-	}
 	args.view->commitNextUndo();
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL )
 		args.view->leaveVisualMode();
@@ -986,6 +984,26 @@ QString YZCommandPool::replace( const YZCommandArgs &args ) {
 }
 
 QString YZCommandPool::completeKeywordForward( const YZCommandArgs &args ) {
-	YZCursor pos = args.view->getBufferCursor();		
+	YZCursor pos = args.view->getBufferCursor();
+	//what word do we want to complete ...
+	YZNewMotionArgs arg (args.view, 1);
+	YZCursor begin = moveWordBackward( arg );
+	QStringList list = args.view->myBuffer()->getText(begin, pos);
+	yzDebug() << "Completing word : " << list[0] << endl;
+	bool found = false;
+	unsigned int matchedLength = 0;
+	//regexp to search in the text
+	QString word = list[0] + "\\w*";
+	YZCursor result = args.view->myBuffer()->action()->search(args.view, word, pos, 
+		YZCursor(args.view, 0, args.view->myBuffer()->lineCount()+1), false, &matchedLength, &found);
+	//found something ?
+	if ( found && matchedLength > 0 )  {
+		YZCursor end (args.view, result.getX()+matchedLength-1, result.getY());
+		QStringList list2 = args.view->myBuffer()->getText(result, end );
+		yzDebug() << "Match : " << list2[0] << endl;
+		args.view->myBuffer()->action()->replaceText(args.view, begin, word.length(), list2[0]);
+		args.view->commitNextUndo();
+	}
+	return QString::null;
 }
 

@@ -354,7 +354,7 @@ void NYZView::initialiseAttributesMap()
 
 #undef MAP
 #define RAWMAP( nb, rawcolor, color, attributes )               \
-	YZASSERT( ERR != init_pair( nb, (color), COLOR_BLACK ) );    \
+	YZASSERT( ERR != init_pair( nb, (color), -1 /*COLOR_BLACK*/ ) );    \
 	mAttributesMap[(rawcolor)] = COLOR_PAIR((nb)) | (attributes);
 #define MAP( nb, qtcolor, color, attributes )               \
 		RAWMAP((nb),qtcolor.rgb()&RGB_MASK,(color),(attributes))

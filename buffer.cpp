@@ -197,7 +197,7 @@ void  YZBuffer::appendLine(const QString &l) {
 		m_highlight->doHighlight(( mText.count() >= 2 ? yzline( mText.count() - 2 ) : new YZLine()), yzline( mText.count() - 1 ), &foldingList, &ctxChanged );
 //		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
-	setModified( true );
+	setChanged( true );
 }
 
 
@@ -215,7 +215,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 		;	
 	mText.insert(it, new YZLine( l ));
 //	mText.insert(line, new YZLine(l));
-	setModified( true );
+	setChanged( true );
 }
 
 void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
@@ -279,7 +279,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 		setTextline(0,"");
 	}
 
-	setModified( true );
+	setChanged( true );
 }
 
 void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
@@ -296,7 +296,7 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 void YZBuffer::mergeNextLine( unsigned int line ) {
 	replaceLine( textline( line ) + textline( line+1 ), line );
 	deleteLine( line+1 );
-	setModified( true );
+	setChanged( true );
 }
 
 // ------------------------------------------------------------------------
@@ -373,7 +373,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 		}
 		if ( hlChanged ) updateAllViews( );
 	}
-	setModified( true );
+	setChanged( true );
 }
 
 bool YZBuffer::isEmpty() const {
@@ -447,7 +447,7 @@ void YZBuffer::load(const QString& file) {
 	if ( ! mText.count() )
 		appendLine("");
 	mUndoBuffer->setInsideUndo( false );
-	setModified( false );
+	setChanged( false );
 	//reenable
 	mUpdateView=true;
 	updateAllViews();
@@ -479,7 +479,7 @@ bool YZBuffer::save() {
 	YZView *it;
 	for ( it = mViews.first(); it ; it = mViews.next() )
 		it->displayInfo(tr("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
-	setModified( false );
+	setChanged( false );
 	filenameChanged();
 	//clear swap memory
 	mSwap->reset();
@@ -549,7 +549,7 @@ void YZBuffer::rmView(YZView *v) {
 //                            Undo/Redo Operations
 // ------------------------------------------------------------------------
 
-void YZBuffer::setModified( bool modif ) {
+void YZBuffer::setChanged( bool modif ) {
 	mModified = modif;
 	if ( !mUpdateView ) return;
 	statusChanged();

@@ -68,6 +68,18 @@ struct args {
 	QString command;
 	//the origin of inputs
 	YZView *view;
+
+	//constructor
+	args() {
+		registr = QChar();
+		count = 1;
+		motionStartX = 0;
+		motionStartY = 0;
+		motionEndX = 0;
+		motionEndY = 0;
+		command = "";
+		view = NULL;
+	}
 };
 
 typedef struct args YZCommandArgs;

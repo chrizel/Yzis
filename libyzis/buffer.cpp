@@ -410,6 +410,7 @@ void YZBuffer::updateAllViews() {
 	YZView *it;
 	for ( it = mViews.first(); it; it = mViews.next() ) {
 		it->redrawScreen();
+		it->updateCursor();
 	}
 }
 

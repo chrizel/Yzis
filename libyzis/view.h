@@ -298,12 +298,12 @@ class YZView {
 		 */
 		QString searchAgain( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
-	protected:
 		/**
 		 * Updates the position of the cursor
 		 */
 		void updateCursor();
 
+	protected:
 		/**
 		 * The buffer we depend on
 		 */

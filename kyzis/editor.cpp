@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003 Yzis Team <yzis-dev@yzis.org>
+ *  Copyright (C) 2004 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -49,15 +49,22 @@ KYZisEdit::~KYZisEdit() {
 }
 
 void KYZisEdit::viewportResizeEvent(QResizeEvent *ev) {
+	yzDebug() << "viewportResizeEvent" << endl;
 	QSize s = ev->size();
-	int lines=0;
-	lines = s.height() / fontMetrics().lineSpacing();
+	int lines = s.height() / fontMetrics().lineSpacing();
 	_parent->setVisibleLines( lines );
 }
 
 void KYZisEdit::setCursor(int c, int l) {
+	yzDebug() << "setCursor " << c << ", " << l << endl;
 	//undraw previous cursor
-	if ( cursor_shown ) drawCursorAt( cursorx,cursory );
+	if ( cursor_shown && ( c!= cursorx || l!=cursory ) ) {
+		yzDebug() << "Undraw previous cursor" << endl;
+		drawCursorAt( cursorx,cursory );
+	} else if ( cursor_shown ) {
+		yzDebug() << "Dont redraw cursor" << endl;
+		return;
+	}
 
 	cursorx = c;
 	cursory = l;
@@ -65,7 +72,7 @@ void KYZisEdit::setCursor(int c, int l) {
 	//draw new cursor
 	cursor_shown = true;
 	
-	//check it the line contains TABs
+	//check if the line contains TABs
 	QString currentLine = _parent->myBuffer()->data( cursory );
 	int s = fontMetrics().size( Qt::ExpandTabs|Qt::SingleLine, currentLine, c, 0, 0).width();
 	cursorx = s / fontMetrics().maxWidth();
@@ -90,7 +97,6 @@ bool KYZisEdit::event(QEvent *e) {
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	yzDebug()<< " Got key : " << e->key()<< " Got ASCII : " << e->ascii() << " Got Unicode : " << e->text() << endl;
 	if ( e->key() != 0 ) {
-		int modifiers=0;
 		ButtonState st = e->state();
 		if (e->key() != Qt::Key_unknown) _parent->sendKey(e->key(), st);
 		e->accept();
@@ -112,6 +118,7 @@ void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 }
 
 void KYZisEdit::drawCursorAt(int x, int y) {
+	yzDebug() << "drawCursorAt :" << x << ", " << y << endl;
 	bitBlt (
 			viewport(),
 			x*fontMetrics().maxWidth(),( y - _parent->getCurrent() ) *fontMetrics().lineSpacing(),
@@ -123,6 +130,7 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 }
 
 void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph) {
+	yzDebug() << "drawContents " << endl;
 	for ( unsigned int i=0; i < _parent->getLinesVisible() ; ++i ) {
 		if ( fontMetrics().lineSpacing() * i >= ( unsigned int )clipy && fontMetrics().lineSpacing() * i <= ( unsigned int ) ( clipy+cliph ) ) {
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
@@ -131,13 +139,13 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 				p->drawText(clip,Qt::ExpandTabs|Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->data(i + _parent->getCurrent()));
 			else 
 				p->drawText(clip,Qt::ExpandTabs|Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,"~");
+			if ( ( i + _parent->getCurrent() ) == cursory ) 
+				drawCursorAt( cursorx, cursory );
 		}
 	}
-
-	drawCursorAt(cursorx,cursory);
 }
 
-void KYZisEdit::focusInEvent (  QFocusEvent * ) {
+void KYZisEdit::focusInEvent ( QFocusEvent * ) {
 	yzDebug() << "Activate Window " << endl;
 	KYZisFactory::s_self->setCurrentView( _parent );
 }

@@ -213,7 +213,8 @@ void KYZisDoc::filenameChanged() {
 	for ( it = _views.first(); it; it = _views.next() ) {
 		KYZisView *yv = static_cast<KYZisView*>(it);
 		int id = yv->getkid();
-		KYZisFactory::mMainApp->setCaption(id,fileName());
+		if (KYZisFactory::mMainApp)
+			KYZisFactory::mMainApp->setCaption(id,fileName());
 	}
 }
 

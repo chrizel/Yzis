@@ -322,7 +322,7 @@ void YzisSchemaConfigColorTab::readConfig (const QString& config)
   m_iconborder->setColor(YZSession::mOptions.readQColorEntry("Color Icon Bar", tmp6));
   m_linenumber->setColor(YZSession::mOptions.readQColorEntry("Color Line Number", tmp7));
 
-#if KDE_VERSION >= 330
+#if KDE_IS_VERSION( 3,3,0 )
   // same std colors like in YzisDocument::markColor
   QValueVector <QColor> mark(KTextEditor::MarkInterface::reservedMarkersCount());
   Q_ASSERT(mark.size() > 6);
@@ -369,7 +369,7 @@ void YzisSchemaConfigColorTab::writeConfig (const QString& config)
   YZSession::mOptions.setQColorOption("Color Icon Bar", m_iconborder->color());
   YZSession::mOptions.setQColorOption("Color Line Number", m_linenumber->color());
 
-#if KDE_VERSION >= 330
+#if KDE_IS_VERSION( 3,3,0 )
   for (int i = 0; i < KTextEditor::MarkInterface::reservedMarkersCount(); i++)
   {
     YZSession::mOptions.setQColorOption(QString("Color MarkType%1").arg(i + 1), m_markerColors[i]);

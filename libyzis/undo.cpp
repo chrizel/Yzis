@@ -29,7 +29,7 @@
 #include "libyzis/buffer.h"
 #include "libyzis/debug.h"
 
-QString BufferOperation::toString() {
+QString YZBufferOperation::toString() {
 	QString ots;
 	switch( type ) {
 		case ADDTEXT: ots= "ADDTEXT"; break;
@@ -37,10 +37,10 @@ QString BufferOperation::toString() {
 		case ADDLINE: ots= "ADDLINE"; break;
 		case DELLINE: ots= "DELLINE"; break;
 	}
-	return QString("class BufferOperation: %1 '%2' line %3, col %4").arg(ots).arg(text).arg(line).arg(col) ;
+	return QString("class YZBufferOperation: %1 '%2' line %3, col %4").arg(ots).arg(text).arg(line).arg(col) ;
 }
 
-void BufferOperation::performOperation( YZBuffer * buf, bool opposite)
+void YZBufferOperation::performOperation( YZBuffer * buf, bool opposite)
 {
 	OperationType t = type;
 	if (opposite == true) {
@@ -67,11 +67,11 @@ void BufferOperation::performOperation( YZBuffer * buf, bool opposite)
 			break;
 	}
 
-	yzDebug() << "BufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
+	yzDebug() << "YZBufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
 }
 
 
-UndoBuffer::UndoBuffer( YZBuffer * buffer )
+YZUndoBuffer::YZUndoBuffer( YZBuffer * buffer )
 :  mBuffer(buffer), mFutureUndoItem( 0L )
 {
 	mCurrentIndex = 0;
@@ -80,7 +80,7 @@ UndoBuffer::UndoBuffer( YZBuffer * buffer )
 	commitUndoItem();
 }
 
-void UndoBuffer::commitUndoItem()
+void YZUndoBuffer::commitUndoItem()
 {
 	if (mInsideUndo == true) return;
 	removeUndoItemAfterCurrent();
@@ -93,13 +93,13 @@ void UndoBuffer::commitUndoItem()
 	//yzDebug() << "UndoItem::commitUndoItem" << toString() << endl;
 }
 
-void UndoBuffer::addBufferOperation( BufferOperation::OperationType type, 
+void YZUndoBuffer::addBufferOperation( YZBufferOperation::OperationType type, 
 									 const QString & text,
 									 uint col, uint line )
 {
 	if (mInsideUndo == true) return;
 	YZASSERT( mFutureUndoItem != NULL );
-	BufferOperation * bufOperation = new BufferOperation();
+	YZBufferOperation * bufOperation = new YZBufferOperation();
 	bufOperation->type = type;
 	bufOperation->text = text;
 	bufOperation->line = line;
@@ -108,16 +108,16 @@ void UndoBuffer::addBufferOperation( BufferOperation::OperationType type,
 	removeUndoItemAfterCurrent();
 }
 
-void UndoBuffer::removeUndoItemAfterCurrent()
+void YZUndoBuffer::removeUndoItemAfterCurrent()
 {
 	while( mUndoItemList.count() > mCurrentIndex ) {
 		mUndoItemList.removeLast();
 	}
 }
 
-void UndoBuffer::undo()
+void YZUndoBuffer::undo()
 {
-	BufferOperation * bufOp;
+	YZBufferOperation * bufOp;
 
 	if (mayUndo() == false) {
 		// notify the user that undo is not possible
@@ -135,9 +135,9 @@ void UndoBuffer::undo()
 	setInsideUndo( false );
 }
 
-void UndoBuffer::redo()
+void YZUndoBuffer::redo()
 {
-	BufferOperation * bufOp;
+	YZBufferOperation * bufOp;
 
 	if (mayRedo() == false) {
 		// notify the user that undo is not possible
@@ -154,28 +154,28 @@ void UndoBuffer::redo()
 	setInsideUndo( false );
 }
 
-bool UndoBuffer::mayRedo()
+bool YZUndoBuffer::mayRedo()
 {
 	bool ret;
 	ret = mCurrentIndex < mUndoItemList.count();
 	return ret;
 }
 	
-bool UndoBuffer::mayUndo()
+bool YZUndoBuffer::mayUndo()
 {
 	bool ret;
 	ret = mCurrentIndex > 0;
 	return ret;
 }
 
-QString UndoBuffer::undoItemToString( UndoItem * undoItem )
+QString YZUndoBuffer::undoItemToString( UndoItem * undoItem )
 {
 	QString s;
 	QString offsetS = "  ";
 	s += offsetS + offsetS + "UndoItem:\n";
 	if (! undoItem ) return s;
 	UndoItemIterator it( *undoItem );
-	BufferOperation * bufOp;
+	YZBufferOperation * bufOp;
 	while( (bufOp = it.current()) ) {
 		s += offsetS + offsetS + offsetS + bufOp->toString() + "\n";
 		++it;
@@ -183,9 +183,9 @@ QString UndoBuffer::undoItemToString( UndoItem * undoItem )
 	return s;
 }
 
-QString UndoBuffer::toString(QString msg)
+QString YZUndoBuffer::toString(QString msg)
 {
-	QString s = msg + " UndoBuffer:\n";
+	QString s = msg + " YZUndoBuffer:\n";
 	QString offsetS = "  ";
 	s += offsetS + "mUndoItemList\n";
 	QPtrListIterator<UndoItem> it( mUndoItemList );

@@ -48,7 +48,7 @@ void TestUndo::tearDown()
 
 void TestUndo::testUndoBufferCreation()
 {
-    UndoBuffer * ub = mBuf->undoBuffer();
+    YZUndoBuffer * ub = mBuf->undoBuffer();
     phCheckEquals( ub->mayRedo(), false );
     phCheckEquals( ub->mayUndo(), false );
     ub->undo();
@@ -61,7 +61,7 @@ void TestUndo::testUndoBufferCreation()
 
 void TestUndo::testUndoCharOperation()
 {
-    UndoBuffer * ub = mBuf->undoBuffer();
+    YZUndoBuffer * ub = mBuf->undoBuffer();
     QStringList textHistory;
     textHistory.append( mBuf->getWholeText() );
 

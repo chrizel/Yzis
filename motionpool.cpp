@@ -20,6 +20,9 @@
 #include "motionpool.h"
 #include "view.h"
 #include "cursor.h"
+#include "debug.h"
+
+static YZMotion nullMotion;
 
 YZMotionPool::YZMotionPool(){
 }
@@ -29,35 +32,51 @@ YZMotionPool::~YZMotionPool() {
 }
 
 void YZMotionPool::initPool() {
-	YZMotion t = { "\b.*\b", REGEXP, 0, 0};
-	addMotion (t, "([0-9]*)w" ); //drop the decimals ?
+	YZMotion t = { "\\b\\w+\\b", REGEXP, 0, 0};
+	addMotion (t, "[0-9]+w" );
 }
 
 void YZMotionPool::addMotion(const YZMotion& regexp, const QString& key){
 	pool.insert( key,regexp );
 }
 
-void YZMotionPool::findMotion ( const QString& inputs, YZMotion *motion ) {
+YZMotion& YZMotionPool::findMotion ( const QString& inputs ) {
 	QMap<QString,YZMotion>::iterator it;
 	for ( it = pool.begin(); it!=pool.end(); it++) {
-		YZMotion t = it.data();
+		YZMotion& t = it.data();
 		QRegExp rex ( it.key() );
-		if ( rex.exactMatch( inputs ) )
-			motion = &t;
+		if ( rex.exactMatch( inputs ) ) {
+			return t;
+		}
 	}
-	motion = NULL; //not found
+	return nullMotion;
 }
 
-void YZMotionPool::applyMotion( const YZMotion& motion, YZView *view ) {
-	YZCursor* cursor = new YZCursor( view->getCursor() );
+void YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCursor *result ) {
+	YZMotion& motion = findMotion(inputsMotion);
+	int counter = 1; //number of times we have to match
+	QRegExp rx ( "([0-9]+).*" );
+	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
+	yzDebug() << "Loop " << counter << " times" << endl;
 	QRegExp rex( motion.rex );
+	result->setX(view->getCursor()->getX());
+	result->setY(view->getCursor()->getY());
 	int idx=-1;
-	while ( idx == -1 ) {
-		const QString& current = view->myBuffer()->textline( cursor->getY() );
-		if ( current.isNull() ) return;
-		idx = rex.search( current, cursor->getX() );
-		cursor->setX( 0 );
-		cursor->setY( cursor->getY() + 1 );
+	int count = 0 ;
+	while (count < counter) {
+		const QString& current = view->myBuffer()->textline( result->getY() );
+		if ( current == QString::null ) return;
+		idx = rex.search( current, result->getX() );
+		if ( idx ) {
+			yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
+			count++; //one match
+			result->setX( idx + rex.matchedLength() + 1 );
+		} else {
+			result->setX( 0 );
+			result->setY( result->getY() + 1 );
+		}
 	}
+//	result->setX( idx + rex.matchedLength() + 1 );
+	yzDebug() << "Result of motion is : " << result->getX() << " " << result->getY() << endl;
 }
 

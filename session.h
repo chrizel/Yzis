@@ -65,6 +65,11 @@ class YZSession {
 		YZCommandPool *getExPool() { return mExPool; }
 
 		/**
+		 * gives access to the pool of motions
+		 */
+		YZMotionPool *getMotionPool() { return mMotionPool; }
+
+		/**
 		 * Add a buffer
 		 */
 		void addBuffer( YZBuffer * );
@@ -226,7 +231,6 @@ class YZSession {
 		static void setQStringOption( const QString& key, const QString& option ) {
 			YZSession::mOptions.setQStringOption( key, option );
 		}
-
 
 		/**
 		 * Retrieve a qstringlist option

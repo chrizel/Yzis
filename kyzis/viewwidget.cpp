@@ -59,6 +59,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	setupActions();
 	
 	buffer = doc;
+	editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 	editor->show();
 	status->show();
 	editor->setFocus();
@@ -88,13 +89,13 @@ void KYZisView::setFocusCommandLine() {
 	command->setFocus();
 }
 
-void KYZisView::scrollDown( int lines ) {
-	editor->scrollBy(0, lines * editor->fontMetrics().lineSpacing());
+void KYZisView::scrollDown( int ) {
+//	editor->scrollBy(0, lines * editor->fontMetrics().lineSpacing());
 	editor->update();
 }
 
-void KYZisView::scrollUp (int lines) {
-	editor->scrollBy(0, -1 * lines * editor->fontMetrics().lineSpacing());
+void KYZisView::scrollUp( int ) {
+//	editor->scrollBy(0, -1 * lines * editor->fontMetrics().lineSpacing());
 	editor->update();
 }
 
@@ -137,7 +138,7 @@ void KYZisView::syncViewInfo() {
 }
 
 void KYZisView::refreshScreen () {
-	editor->repaintContents( false );
+	editor->repaint( false );
 	updateCursor();
 }
 

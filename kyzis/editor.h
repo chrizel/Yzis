@@ -33,7 +33,7 @@ class KYZisView;
 /**
  * KYZis Painter Widget
  */
-class KYZisEdit : public QScrollView {
+class KYZisEdit : public QWidget {
 	Q_OBJECT
 
 	public :
@@ -56,11 +56,11 @@ class KYZisEdit : public QScrollView {
 		//intercept tabs
 		virtual bool event(QEvent*);
 		
-		//update view when the viewport gets resized
-		void viewportResizeEvent(QResizeEvent*);
+		void resizeEvent(QResizeEvent*);
+		void paintEvent(QPaintEvent*);
 
 		//entry point for drawing events
-		void drawContents(QPainter *p, int clipx, int clipy, int clipw, int cliph );
+		void drawContents( int clipx, int clipy, int clipw, int cliph );
 
 		//normal keypressEvents processing
 		void keyPressEvent (QKeyEvent *);

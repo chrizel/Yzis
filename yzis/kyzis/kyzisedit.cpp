@@ -1,5 +1,5 @@
 /**
- * $Id: kyzisedit.cpp,v 1.22 2003/04/25 12:45:28 mikmak Exp $
+ * $Id: kyzisedit.cpp,v 1.23 2003/04/25 13:50:29 mikmak Exp $
  */
 
 #include "kyzisedit.h"
@@ -39,8 +39,8 @@ void KYZisEdit::setCursor(int c, int l) {
 
 void KYZisEdit::setTextLine(int l, const QString &str){
 	mText.insert(l,str);
-	updateContents( 0, ( l-1 ) * fontMetrics().lineSpacing(),
-								width(), fontMetrics().lineSpacing() * 2 //yes i know, it's a 2, i don't think it will really affect 
+	updateContents( 0, ( l ) * fontMetrics().lineSpacing(),
+								width(), fontMetrics().lineSpacing()  //yes i know, it's a 2, i don't think it will really affect 
 																													// our performances
 								);
 }
@@ -63,9 +63,9 @@ void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
 void KYZisEdit::drawCursorAt(int x, int y) {
 	bitBlt (
 			viewport(),
-			x*fontMetrics().maxWidth(),( y /*-1*/ )*fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(),y *fontMetrics().lineSpacing(),
 			viewport(),
-			x*fontMetrics().maxWidth(),( y /*-1*/ )*fontMetrics().lineSpacing(),
+			x*fontMetrics().maxWidth(), y*fontMetrics().lineSpacing(),
 			fontMetrics().maxWidth(), fontMetrics().lineSpacing(),
 			Qt::NotROP,	    // raster Operation
 			true );		    // ignoreMask

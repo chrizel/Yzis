@@ -133,7 +133,6 @@ class YZExCommandPool {
 		int rangeLastLine( const YZExRangeArgs& args );
 		int rangeMark( const YZExRangeArgs& args );
 		int rangeVisual( const YZExRangeArgs& args );
-		int rangePair( const YZExRangeArgs& args );
 		int rangeSearch( const YZExRangeArgs& args );
 
 	public:

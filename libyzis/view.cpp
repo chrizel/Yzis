@@ -265,7 +265,6 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 					mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 				}
 				updateStickyCol( mainCursor );
-				commitNextUndo();
 				return;
 			} else if ( key == "<DOWN>" ) {
 				moveDown( );
@@ -305,7 +304,6 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 				mBuffer->action()->insertChar( this, mainCursor->buffer(), key );
 				if ( cindent && key == "}" )
 					reindent(mainCursor->bufferX()-1, mainCursor->bufferY());
-				commitNextUndo();
 				return;
 			}
 			break;

@@ -186,7 +186,7 @@ void KYZisEdit::drawCursorAt(int x, int y) {
 }
 
 void KYZisEdit::selectRect( unsigned int x, unsigned int y, unsigned int w, unsigned int h ) {
-	bitBlt( this, x, y, this, x, y, w, h );
+	bitBlt( this, x, y, this, x, y, w, h, Qt::NotROP, true );
 }
 
 void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
@@ -258,7 +258,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 					p.drawText(myRect, flag, mParent->drawChar( ) );
 
 					if ( mParent->drawSelected() ) {
-						selectRect( GETX( currentX ), currentY, GETX( mParent->drawLength() ), linespace );
+						selectRect( GETX( currentX ), currentY * linespace, GETX( mParent->drawLength() ), linespace );
 					}
 
 					currentX += mParent->drawLength( );

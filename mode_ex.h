@@ -168,11 +168,22 @@ class YZModeEx : public YZMode {
 		cmd_state map( const YZExCommandArgs& args );
 		cmd_state unmap( const YZExCommandArgs& args );
 		cmd_state imap( const YZExCommandArgs& args );
+		cmd_state iunmap( const YZExCommandArgs& args );
+		cmd_state omap( const YZExCommandArgs& args );
+		cmd_state ounmap( const YZExCommandArgs& args );
+		cmd_state vmap( const YZExCommandArgs& args );
+		cmd_state vunmap( const YZExCommandArgs& args );
+		cmd_state cmap( const YZExCommandArgs& args );
+		cmd_state cunmap( const YZExCommandArgs& args );
+		cmd_state nmap( const YZExCommandArgs& args );
+		cmd_state nunmap( const YZExCommandArgs& args );
 		cmd_state indent( const YZExCommandArgs& args );
 		cmd_state enew( const YZExCommandArgs& args );
 		cmd_state syntax( const YZExCommandArgs& args );
 		cmd_state highlight( const YZExCommandArgs& args );
 		cmd_state split( const YZExCommandArgs& args );
+		cmd_state genericMap( const YZExCommandArgs& args, int );
+		cmd_state genericUnmap( const YZExCommandArgs& args, int );
 };
 
 

@@ -172,6 +172,11 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "map", &YZModeEx::map, QStringList("map") ) );
 	commands.append( new YZExCommand( "unmap", &YZModeEx::unmap, QStringList("unmap") ) );
 	commands.append( new YZExCommand( "imap", &YZModeEx::imap, QStringList("imap") ) );
+	commands.append( new YZExCommand( "iunmap", &YZModeEx::iunmap, QStringList("iunmap") ) );
+	commands.append( new YZExCommand( "vmap", &YZModeEx::vmap, QStringList("vmap") ) );
+	commands.append( new YZExCommand( "vunmap", &YZModeEx::vunmap, QStringList("vunmap") ) );
+	commands.append( new YZExCommand( "omap", &YZModeEx::omap, QStringList("omap") ) );
+	commands.append( new YZExCommand( "ounmap", &YZModeEx::ounmap, QStringList("ounmap") ) );
 	commands.append( new YZExCommand( "[<>]", &YZModeEx::indent, QStringList(), false ));
 	commands.append( new YZExCommand( "ene(w)?", &YZModeEx::enew, QStringList("enew") ));
 	commands.append( new YZExCommand( "syn(tax)?", &YZModeEx::syntax, QStringList("syntax")));
@@ -810,11 +815,30 @@ cmd_state YZModeEx::source( const YZExCommandArgs& args ) {
 	return CMD_OK;
 }
 
-cmd_state YZModeEx::map( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::genericMap ( const YZExCommandArgs& args, int type) {
 	QRegExp rx("(\\S+)\\s+(.+)");
 	if ( rx.exactMatch(args.arg) ) {
-		yzDebug() << "Adding global mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
-		YZMapping::self()->addGlobalMapping(rx.cap(1), rx.cap(2));
+		yzDebug() << "Adding mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
+		switch (type) {
+			case 0://global
+				YZMapping::self()->addGlobalMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 1://insert
+				YZMapping::self()->addInsertMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 2://operator
+				YZMapping::self()->addPendingOpMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 3://visual
+				YZMapping::self()->addVisualMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 4://normal
+				YZMapping::self()->addNormalMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 5://cmdline
+				YZMapping::self()->addCmdLineMapping(rx.cap(1), rx.cap(2));
+				break;
+		}
 		if (rx.cap(1).startsWith("<CTRL>")) {
 			mModifierKeys << rx.cap(1);
 			for (int i = 0 ; i <= YZSession::mNbViews; i++) {
@@ -824,12 +848,31 @@ cmd_state YZModeEx::map( const YZExCommandArgs& args ) {
 			}
 		}
 	}
-	return CMD_OK;
+	return CMD_OK;	
 }
 
-cmd_state YZModeEx::unmap( const YZExCommandArgs& args ) {
-	yzDebug() << "Removing global mapping : " << args.arg << endl;
-	YZMapping::self()->deleteGlobalMapping(args.arg);
+cmd_state YZModeEx::genericUnmap ( const YZExCommandArgs& args, int type) {
+	yzDebug() << "Removing mapping : " << args.arg << endl;
+	switch (type) {
+		case 0://global
+			YZMapping::self()->deleteGlobalMapping(args.arg);
+			break;
+		case 1://insert
+			YZMapping::self()->deleteInsertMapping(args.arg);
+			break;
+		case 2://operator
+			YZMapping::self()->deletePendingOpMapping(args.arg);
+			break;
+		case 3://visual
+			YZMapping::self()->deleteVisualMapping(args.arg);
+			break;
+		case 4://normal
+			YZMapping::self()->deleteNormalMapping(args.arg);
+			break;
+		case 5://cmdline
+			YZMapping::self()->deleteCmdLineMapping(args.arg);
+			break;
+	}
 	if (args.arg.startsWith("<CTRL>")) {
 		mModifierKeys.remove(args.arg);
 		for (int i = 0 ; i <= YZSession::mNbViews; i++) {
@@ -838,25 +881,55 @@ cmd_state YZModeEx::unmap( const YZExCommandArgs& args ) {
 				v->unregisterModifierKeys(args.arg);
 		}
 	}
-	return CMD_OK;
+	return CMD_OK;	
 }
 
+cmd_state YZModeEx::map( const YZExCommandArgs& args ) {
+	return genericMap(args,0);
+}
+
+cmd_state YZModeEx::unmap( const YZExCommandArgs& args ) {
+	return genericUnmap(args,0);
+}
 
 cmd_state YZModeEx::imap( const YZExCommandArgs& args ) {
-	QRegExp rx("(\\S+)\\s+(.+)");
-	if ( rx.exactMatch(args.arg) ) {
-		yzDebug() << "Adding insert mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
-		YZMapping::self()->addInsertMapping(rx.cap(1), rx.cap(2));
-		if (rx.cap(1).startsWith("<CTRL>")) {
-			mModifierKeys << rx.cap(1);
-			for (int i = 0 ; i <= YZSession::mNbViews; i++) {
-				YZView *v = YZSession::me->findView(i);
-				if (v)
-					v->registerModifierKeys(rx.cap(1));
-			}
-		}
-	}
-	return CMD_OK;
+	return genericMap(args,1);
+}
+
+cmd_state YZModeEx::iunmap( const YZExCommandArgs& args ) {
+	return genericUnmap(args,1);
+}
+
+cmd_state YZModeEx::omap( const YZExCommandArgs& args ) {
+	return genericMap(args,2);
+}
+
+cmd_state YZModeEx::ounmap( const YZExCommandArgs& args ) {
+	return genericUnmap(args,2);
+}
+
+cmd_state YZModeEx::vmap( const YZExCommandArgs& args ) {
+	return genericMap(args,3);
+}
+
+cmd_state YZModeEx::vunmap( const YZExCommandArgs& args ) {
+	return genericUnmap(args,3);
+}
+
+cmd_state YZModeEx::nmap( const YZExCommandArgs& args ) {
+	return genericMap(args,4);
+}
+
+cmd_state YZModeEx::nunmap( const YZExCommandArgs& args ) {
+	return genericUnmap(args,4);
+}
+
+cmd_state YZModeEx::cmap( const YZExCommandArgs& args ) {
+	return genericMap(args,5);
+}
+
+cmd_state YZModeEx::cunmap( const YZExCommandArgs& args ) {
+	return genericUnmap(args,5);
 }
 
 cmd_state YZModeEx::indent( const YZExCommandArgs& args ) {

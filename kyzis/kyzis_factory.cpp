@@ -182,10 +182,6 @@ void KYZisFactory::scrollUp ( int lines ) {
 	currentView->editor->update();
 }
 
-YZSession *KYZisFactory::getCurrentSession() {
-	return sess;
-}
-
 void KYZisFactory::setCommandLineText( const QString& text ) {
 	currentView->command->setText( text );
 }

@@ -27,7 +27,6 @@ public:
 		void postEvent (yz_event);
 		void scrollDown( int l=1 );
 		void scrollUp( int l=1 );
-		YZSession *getCurrentSession();
 		void setCommandLineText( const QString& text );
 		QString getCommandLineText() const;
 		void setFocusCommandLine();

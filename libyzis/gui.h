@@ -22,12 +22,6 @@ class Gui {
 	public:
 
 		/**
-		 * The _unique_ session is created by the GUI. So give me a pointer to it
-		 * Nothing happens in the core yzis until we can get a pointer to this.
-		 */
-		virtual YZSession *getCurrentSession() = 0;
-
-		/**
 		 * libyzis posts events to the GUI
 		 */
 		virtual void postEvent(yz_event) = 0;

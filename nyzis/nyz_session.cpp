@@ -115,12 +115,6 @@ void NYZSession::scrollUp ( int /*lines*/ ) {
 
 }
 
-//hmmm XXX
-YZSession *NYZSession::getCurrentSession(void)
-{
-	return this;
-}
-
 void NYZSession::setCommandLineText( const QString& text ) {
 	commandline= text;
 }

@@ -44,15 +44,6 @@ void YZBuffer::addChar (int x, int y, const QString& c) {
 	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
 			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
 	}
-#if 0
-	yzDebug() << "list : " << view_list.count() << endl;
-	for ( QMap<int,YZView*>::iterator it=view_list.begin(); it!=view_list.end(); ++it ) {
-			YZView *v = static_cast<YZView *>( it.data() );
-			assert( v );
-			yzDebug() << "myId :" << v->myId << endl;
-			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
-	}
-#endif
 }
 
 void YZBuffer::chgChar (int x, int y, const QString& c) {
@@ -70,12 +61,6 @@ void YZBuffer::chgChar (int x, int y, const QString& c) {
 	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
 			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
 	}
-#if 0
-	for ( QMap<int,YZView*>::iterator it=view_list.begin(); it!=view_list.end(); it++ ) {
-			YZView *v = it.data();
-			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId, y ));
-	}
-#endif
 }
 
 void YZBuffer::delChar (int x, int y, int count) {
@@ -92,12 +77,6 @@ void YZBuffer::delChar (int x, int y, int count) {
 	for ( YZView *v = view_list.first();v;v=view_list.next() ) {
 			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId,y ));
 	}
-#if 0
-	for ( QMap<int,YZView*>::iterator it=view_list.begin(); it!=view_list.end(); it++ ) {
-			YZView *v = it.data();
-			session->postEvent(YZEvent::mkEventInvalidateLine( v->myId, y ));
-	}
-#endif
 }
 
 void YZBuffer::addNewLine( int col, int line ) {
@@ -132,16 +111,7 @@ void YZBuffer::addView (YZView *v) {
 }
 
 void YZBuffer::updateAllViews() {
-	/*QValueList<YZView*>::iterator it;
-	for ( it = view_list.begin(); it != view_list.end(); ++it ) {
-		( *it )->redrawScreen();
-	}*/
 	for ( YZView *v = view_list.first();v;v=view_list.next() ) v->redrawScreen();
-#if 0
-	for ( QMap<int,YZView*>::iterator it=view_list.begin(); it!=view_list.end(); it++ ) {
-		it.data()->redrawScreen();
-	}
-#endif
 	
 }
 
@@ -191,7 +161,6 @@ YZView* YZBuffer::findView( int uid ) {
 		if ( v->myId == uid ) return v;
 	}
 	return NULL;
-	//return ( YZView* )view_list[ uid ];
 }
 
 //motion calculations

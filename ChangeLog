@@ -1,5 +1,7 @@
 2003-10-01 mikmak
   * libyzis/kyzis
+    some cleanup 
+    make space work again 
     add support for the Meta key , nyzis seems has it since the beginning (it
     does not care about it)
 

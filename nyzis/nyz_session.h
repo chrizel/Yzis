@@ -26,7 +26,6 @@ class NYZSession : public YZSession, public Gui {
 
 		/* Gui */
 		virtual void postEvent(yz_event);
-		virtual YZSession *getCurrentSession(void);
 
 		virtual void scrollDown(int lines=1);
 		virtual void scrollUp(int lines=1);

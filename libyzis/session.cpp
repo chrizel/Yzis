@@ -110,8 +110,6 @@ void YZSession::setCurrentView( YZView* view ) {
 }
 
 YZView* YZSession::prevView() {
-	bool found = false;
-
 	if ( mCurView == 0 ) {
 		yzDebug() << "WOW, mCurview is NULL !" << endl;
 		return NULL;
@@ -125,8 +123,6 @@ YZView* YZSession::prevView() {
 }
 
 YZView* YZSession::nextView() {
-	bool found = false;
-
 	if ( mCurView == 0 ) {
 		yzDebug() << "WOW, mCurview is NULL !" << endl;
 		return NULL;

@@ -38,7 +38,6 @@ QString YZExExecutor::write( YZView *view, const QString& inputs ) {
 			view->mySession()->quit();
 		return QString::null;
 	}
-	//XXX support saving to current pwd
 	QRegExp rx ( "^(.*)\\s(.*)$");
 	rx.search( inputs );
 	if ( rx.cap(2) != QString::null ) 

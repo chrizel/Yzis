@@ -42,6 +42,7 @@ class YZCursor {
 	public :
 		YZCursor(YZView *vp);
 		YZCursor(YZView *vp, unsigned int X, unsigned int Y );
+		YZCursor( const YZCursor& cursor);
 		YZCursor(YZCursor *cursor);
 		~YZCursor();
 
@@ -49,13 +50,14 @@ class YZCursor {
 
 		inline void setY(unsigned int y) { y_pos = y; }
 
-		inline unsigned int getX() { return x_pos; }
+		inline unsigned int getX() const { return x_pos; }
 
-		inline unsigned int getY() { return y_pos; }
+		inline unsigned int getY() const { return y_pos; }
 
 		YZView* getParent() { return parentView; }
 
 		void setCursor( YZCursor *cursor );
+		void setCursor( const YZCursor& cursor );
 
 		bool operator== ( const YZCursor &right ) const;
 		bool operator<= ( const YZCursor &right ) const;

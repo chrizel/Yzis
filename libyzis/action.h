@@ -41,24 +41,24 @@ class YZAction {
 		YZAction( YZBuffer* buffer );
 		virtual ~YZAction( );
 
-		void insertChar( YZView* pView, YZCursor* pos, const QString& text );
+		void insertChar( YZView* pView, const YZCursor& pos, const QString& text );
 		void insertChar( YZView* pView, unsigned int X, unsigned int Y, const QString& text );
 
-		void replaceChar( YZView* pView, YZCursor* pos, const QString& text );
+		void replaceChar( YZView* pView, const YZCursor& pos, const QString& text );
 		void replaceChar( YZView* pView, unsigned int X, unsigned int Y, const QString& text );
 
-		void deleteChar( YZView* pView, YZCursor* pos, unsigned int len );
+		void deleteChar( YZView* pView, const YZCursor& pos, unsigned int len );
 		void deleteChar( YZView* pView, unsigned int X, unsigned int Y, unsigned int len );
 
-		void insertLine( YZView* pView, YZCursor* pos, const QString &text );
+		void insertLine( YZView* pView, const YZCursor& pos, const QString &text );
 		void insertLine( YZView* pView, unsigned int Y, const QString &text );
 
-		void insertNewLine( YZView* pView, YZCursor* pos );
+		void insertNewLine( YZView* pView, const YZCursor& pos );
 		void insertNewLine( YZView* pView, unsigned int X, unsigned int Y );
 
-		void deleteLine( YZView* pView, YZCursor* pos, unsigned int len );
+		void deleteLine( YZView* pView, const YZCursor& pos, unsigned int len );
 		void deleteLine( YZView* pView, unsigned int Y, unsigned int len );
-		void deleteLine( YZView* pView, YZCursor* begin, YZCursor* end, QChar& reg );
+		void deleteLine( YZView* pView, const YZCursor& begin, YZCursor& end, const QChar& reg );
 
 	private:
 		YZBuffer* mBuffer;

@@ -222,7 +222,7 @@ void YZView::sendKey( int c, int modifiers) {
 						joinLine( mCursor->getY() - 1 );
 						if ( mCursor->getX() ) moveRight();
 					} else if ( mCursor->getX() > 0 )
-						mBuffer->action()->deleteChar( this, mCursor, 1 );
+						mBuffer->action()->deleteChar( this, mCursor->getX() - 1, mCursor->getY(), 1 );
 					return;
 				case Qt::Key_Delete:
 					mBuffer->action()->deleteChar( this, mCursor, 1 );
@@ -887,19 +887,19 @@ QString YZView::moveToEndOfLine( const QString&, YZCommandArgs ) {
  * ACTIONS
  */
 
-void YZView::initChanges( YZCursor* pos ) {
+void YZView::initChanges( const YZCursor& pos ) {
 	origPos->setCursor( mCursor );
 	if ( wrap ) {
-		gotoxy( mBuffer->textline( pos->getY() ).length(), pos->getY(), false );
+		gotoxy( mBuffer->textline( pos.getY() ).length(), pos.getY(), false );
 		lineDY = dCursor->getY();
 	}
-	gotoxy( pos->getX(), pos->getY(), false );
+	gotoxy( pos.getX(), pos.getY(), false );
 }
 
-void YZView::applyChanges( YZCursor* pos, unsigned int len, bool applyCursor ) {
+void YZView::applyChanges( const YZCursor& pos, unsigned int len, bool applyCursor ) {
 	unsigned int dY = dCursor->getY();
 	if ( wrap ) {
-		gotoxy( mBuffer->textline( pos->getY() ).length(), pos->getY(), false );
+		gotoxy( mBuffer->textline( pos.getY() ).length(), pos.getY(), false );
 		if ( dCursor->getY() != lineDY )
 			paintEvent( dCurrentLeft, dY, mColumnsVis, mLinesVis - ( dY - dCurrentTop ) );
 		else
@@ -908,82 +908,80 @@ void YZView::applyChanges( YZCursor* pos, unsigned int len, bool applyCursor ) {
 		paintEvent( dCurrentLeft, dY, mColumnsVis, 1 );
 
 	if ( applyCursor ) 
-		gotoxy( pos->getX() + len, pos->getY() );
+		gotoxy( pos.getX() + len, pos.getY() );
 	else 
 		gotoxy( origPos->getX(), origPos->getY(), false );
 	stickyCol = dCursor->getX( );
 }
 
-void YZView::initInsertChar( YZCursor* pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
+void YZView::initInsertChar( const YZCursor& pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
 	initChanges( pos );
 }
 
-void YZView::applyInsertChar( YZCursor* pos, unsigned int len, bool applyCursor ) {
+void YZView::applyInsertChar( const YZCursor& pos, unsigned int len, bool applyCursor ) {
 	applyChanges( pos, len, applyCursor );
 }
 
-void YZView::initDeleteChar( YZCursor* pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
+void YZView::initDeleteChar( const YZCursor& pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
 	initChanges( pos );
 }
 
-void YZView::applyDeleteChar( YZCursor* pos, unsigned int /*len*/, bool applyCursor ) {
+void YZView::applyDeleteChar( const YZCursor& pos, unsigned int /*len*/, bool applyCursor ) {
 	applyChanges( pos, 0, applyCursor );
 }
 
-void YZView::initReplaceChar( YZCursor* pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
+void YZView::initReplaceChar( const YZCursor& pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
 	initChanges( pos );
 }
 
-void YZView::applyReplaceChar( YZCursor* pos, unsigned int len, bool applyCursor ) {
+void YZView::applyReplaceChar( const YZCursor& pos, unsigned int len, bool applyCursor ) {
 	applyChanges( pos, len, applyCursor );
 }
 
-void YZView::initInsertLine( YZCursor* pos, bool /*applyCursor*/ ) {
+void YZView::initInsertLine( const YZCursor& pos, bool /*applyCursor*/ ) {
 	origPos->setCursor( mCursor );
-	gotoxy( pos->getX(), pos->getY(), false );
+	gotoxy( pos.getX(), pos.getY(), false );
 }
 
-void YZView::applyInsertLine( YZCursor* pos, bool applyCursor ) { 
+void YZView::applyInsertLine( const YZCursor& pos, bool applyCursor ) { 
 	paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
 	if ( applyCursor )
-		gotoxy( 0, pos->getY() + ( pos->getX() ? 1 : 0 ) );
+		gotoxy( 0, pos.getY() + ( pos.getX() ? 1 : 0 ) );
 	else
 		gotoxy( origPos->getX(), origPos->getY() );
 	stickyCol = dCursor->getX( );
 }
 
-void YZView::initDeleteLine( YZCursor* pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
+void YZView::initDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool /*applyCursor*/ ) {
 	origPos->setCursor( mCursor );
-	gotoxy( 0, pos->getY() ? pos->getY() - 1 : pos->getY(), false );
+	gotoxy( 0, pos.getY() ? pos.getY() - 1 : pos.getY(), false );
 }
 
-void YZView::applyDeleteLine( YZCursor* pos, unsigned int /*len*/, bool applyCursor ) {
+void YZView::applyDeleteLine( const YZCursor& pos, unsigned int /*len*/, bool applyCursor ) {
 	paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
 	if ( applyCursor )
-		gotoxy( 0, pos->getY() );
+		gotoxy( 0, pos.getY() );
 	else
 		gotoxy( origPos->getX(), origPos->getY() );
 	stickyCol = dCursor->getX( );
 }
 
-void YZView::initDeleteLine( YZCursor* begin, YZCursor* end, bool /*applyCursor*/ ) {
+void YZView::initDeleteLine( const YZCursor& begin, const YZCursor& end, bool /*applyCursor*/ ) {
 	origPos->setCursor( mCursor );
-	bool lineDeleted = begin->getY() != end->getY();
-	if ( wrap && ! lineDeleted ) {
-		gotoxy( mBuffer->textline( begin->getY() ).length(), begin->getY(), false );
+	if ( wrap && begin.getY() == end.getY() ) {
+		gotoxy( mBuffer->textline( begin.getY() ).length(), begin.getY(), false );
 		lineDY = dCursor->getY();
 	}
-	gotoxy( begin->getX() ? begin->getX() - 1 : 0, begin->getY(), false );
+	gotoxy( begin.getX() ? begin.getX() - 1 : 0, begin.getY(), false );
 }
 
-void YZView::applyDeleteLine( YZCursor* begin, YZCursor* end, bool applyCursor ) {
-	bool lineDeleted = begin->getY() != end->getY();
-	if ( lineDeleted )
+void YZView::applyDeleteLine( const YZCursor& begin, const YZCursor& end, bool applyCursor ) {
+	if ( begin.getY() == end.getY() )
 		paintEvent( dCurrentLeft, dCursor->getY(), mColumnsVis, mLinesVis - ( dCursor->getY() - dCurrentTop ) );
 	else
 		applyDeleteLine( begin, 1, applyCursor );
 	if ( applyCursor )
-		gotoxy( begin->getX(), begin->getY() );
+		gotoxy( begin.getX(), begin.getY() );
 	else
 		gotoxy( origPos->getX(), origPos->getY() );
 	stickyCol = dCursor->getX( );
@@ -1019,7 +1017,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 	if (args.command.startsWith("d")) {
 		if ( ! mSession->getMotionPool()->isValid( args.motion ) ) return QString::null; //keep going waiting for new inputs
 		//ok we have a motion , so delete till the end of the motion :)
-		YZCursor *cursor = new YZCursor(this);
+		YZCursor cursor(this);
 		bool goBack = false;
 		bool success = mSession->getMotionPool()->applyMotion(args.motion, this, &goBack, cursor);
 		if ( !success ) {
@@ -1027,13 +1025,13 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 			return QString::null;
 		}
 		//delete to the cursor position now :)
-		yzDebug() << "Start of motion is : " << mCursor->getX() << " " << mCursor->getY() << endl;
-		yzDebug() << "End of motion is : " << cursor->getX() << " " << cursor->getY() << endl;
+		yzDebug() << "Start of motion is : " << *mCursor << endl;
+		yzDebug() << "End of motion is : " << cursor << endl;
 
 		if ( goBack ) {
-			mY = cursor->getY();
-			mX = cursor->getX();
-			cursor->setCursor( mCursor );
+			mY = cursor.getY();
+			mX = cursor.getX();
+			cursor.setCursor( mCursor );
 			gotoxy( mX, mY, false );
 		}
 

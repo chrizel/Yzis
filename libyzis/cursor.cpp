@@ -35,6 +35,9 @@ YZCursor::YZCursor(YZView *vp, unsigned int X, unsigned int Y ) {
 	y_pos=Y;
 }
 
+YZCursor::YZCursor( const YZCursor& c) {
+	setCursor( c );
+}
 YZCursor::YZCursor(YZCursor *c) {
 	setCursor( c );
 }
@@ -42,6 +45,11 @@ YZCursor::YZCursor(YZCursor *c) {
 YZCursor::~YZCursor() {
 }
 
+void YZCursor::setCursor( const YZCursor& c ) {
+	parentView = c.parentView;
+	x_pos = c.getX();
+	y_pos = c.getY();
+}
 void YZCursor::setCursor( YZCursor *c ) {
 	parentView = c->parentView;
 	x_pos = c->getX();

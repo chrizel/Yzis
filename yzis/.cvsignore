@@ -1,5 +1,10 @@
 *.o
 Makefile
+Makefile.in
+config.log
+config.status
+config.cache
+stamp*
 .svn
 diff
-
+config.h

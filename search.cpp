@@ -278,7 +278,8 @@ void YZSearch::highlightSearch( YZView* mView, YZSelectionMap searchMap ) {
 	vMap->clear();
 	if ( mView->getLocalBoolOption( "hlsearch" ) ) {
 		vMap->setMap( searchMap );
-		mView->sendPaintEvent( vMap->map(), false );
+		yzDebug() << "new search Map : " << *(vMap) << endl;
+		mView->sendPaintEvent( vMap->map() );
 	}
 	mView->commitPaintEvent();
 }

@@ -113,14 +113,6 @@ bool YZInterval::contains( const YZInterval& i ) const {
 	return mFrom <= i.from() && mTo >= i.to();
 }
 
-// operators on intervals
-bool operator<( const YZInterval& left, const YZBound& right ) {
-	return left.to() < right;
-}
-bool operator>( const YZInterval& left, const YZBound& right ) {
-	return left.from() > right;
-}
-	
 
 YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i ) {
 	if ( i.from().opened() )
@@ -229,8 +221,8 @@ int YZSelection::locatePosition( const YZBound& pos, bool* isSelected ) {
 	*isSelected = false;
 	unsigned int size = mMap.size( );
 	for ( i = 0; ! *isSelected && i < size; i++ ) {
-		if ( mMap[ i ] < pos ) break;
-		if ( mMap[ i ] > pos  ) continue;
+		if ( mMap[ i ].from() > pos ) break;
+		if ( mMap[ i ].to() < pos  ) continue;
 		*isSelected = true;
 	}
 	if ( *isSelected ) --i;

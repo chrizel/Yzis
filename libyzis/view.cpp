@@ -80,7 +80,7 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoCommandMode( );
 					return;
 				case Qt::Key_Return:
-					mBuffer->addNewLine(mCursor->getX(),mCursor->getY());
+					mBuffer->insertNewLine(mCursor->getX(),mCursor->getY());
 					gotoxy(0, mCursor->getY()+1 );
 					return;
 				case Qt::Key_Down:
@@ -123,7 +123,7 @@ void YZView::sendKey( int c, int modifiers) {
 					gotoCommandMode( );
 					return;
 				case Qt::Key_Return:
-					mBuffer->addNewLine(mCursor->getX(),mCursor->getY());
+					mBuffer->insertNewLine(mCursor->getX(),mCursor->getY());
 					gotoxy(0, mCursor->getY()+1 );
 					return;
 				case Qt::Key_Down:
@@ -467,7 +467,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 	} else if ( args.command == "D" || args.command == "d$"  ) { //delete to end of lines
 		QString b = mBuffer->data( mCursor->getY() );
 		buff << b;
-		mBuffer->replaceLine( mCursor->getY(), b.left( mCursor->getX() ) );
+		mBuffer->replaceLine( b.left( mCursor->getX() ), mCursor->getY());
 		gotoxy( mCursor->getX() - 1, mCursor->getY() );
 	}
 	YZSession::mRegisters.setRegister( reg, buff );
@@ -482,7 +482,7 @@ QString YZView::deleteLine ( const QString& /*inputsBuff*/, YZCommandArgs args )
 }
 
 QString YZView::openNewLineBefore ( const QString&, YZCommandArgs ) {
-	mBuffer->addNewLine(0,mCursor->getY());
+	mBuffer->insertNewLine(0,mCursor->getY());
 	//reset the input buffer
 	purgeInputBuffer();
 	gotoInsertMode();
@@ -495,7 +495,7 @@ QString YZView::openNewLineBefore ( const QString&, YZCommandArgs ) {
 }
 
 QString YZView::openNewLineAfter ( const QString&, YZCommandArgs ) {
-	mBuffer->addNewLine(0,mCursor->getY()+1);
+	mBuffer->insertNewLine(0,mCursor->getY()+1);
 	//reset the input buffer
 	purgeInputBuffer();
 	gotoInsertMode();
@@ -587,7 +587,7 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 		if ( !list[ 0 ].isNull() ) {
 			yzDebug() << "First line not NULL !" << endl;
 			nl = nl.left( mCursor->getX()+1 ) + list[ 0 ] + nl.mid( mCursor->getX()+1 );
-			mBuffer->replaceLine(mCursor->getY(), nl);
+			mBuffer->replaceLine(nl, mCursor->getY());
 		}
 		i++;
 		while ( i < list.size() ) {
@@ -604,7 +604,7 @@ QString YZView::paste( const QString& , YZCommandArgs args ) {
 		if ( !list[ 0 ].isNull() ) {
 			QString nl = mBuffer->data( mCursor->getY() );
 			nl = nl.left( mCursor->getX() ) + list[ list.size()-1 ] + nl.mid( mCursor->getX() );
-			mBuffer->replaceLine(mCursor->getY(), nl);
+			mBuffer->replaceLine(nl, mCursor->getY());
 		}
 	}
 	//restore cursor pos

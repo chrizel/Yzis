@@ -89,19 +89,21 @@ public:
 	 *
 	 * Note: the line is not supposed to contain '\n'
 	 */
-	void addLine(const QString &l);
+	void appendLine(const QString &l);
 
 	/**
-	 * Insert line @param l at position @param line
+	 * Insert the text l in the current line
+	 * @param l the text to insert
+	 * @param line the line which is changed
 	 */
 	void insertLine(const QString &l, unsigned int line);
 
 	/**
-	 * Opens a new line after the indicated position
+	 * Opens a new line at the indicated position
 	 * @param col the position in line where to add a \n
-	 * @param line the line preceding the new line
+	 * @param line is the line after which a new line is added
 	 */
-	void addNewLine( unsigned int col, unsigned int line );
+	void insertNewLine( unsigned int col, unsigned int line );
 
 	/**
 	 * Deletes the given line
@@ -112,9 +114,9 @@ public:
 	void deleteLine( unsigned int line );
 
 	/**
-	 * Replaces the @param y line with the given @param value
+	 * Replaces the @param line line with the given @param value
 	 */
-	void replaceLine( unsigned int y, const QString& value );
+	void replaceLine( const QString& l, unsigned int line );
 	
 
 	// ----------------- Buffer content
@@ -139,7 +141,7 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	YZLine *at(unsigned int no) { return mText.at(no); }
+	YZLine *at(unsigned int line) { return mText.at(line); }
 
 	/**
 	 * Number of lines in the buffer

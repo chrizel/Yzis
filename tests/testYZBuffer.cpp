@@ -76,17 +76,17 @@ void TestYZBuffer::testLineMethods()
     phCheckEquals( mBuf->data( 0 ), "" );
 
     // add 3 lines
-    mBuf->addLine( s1 );
+    mBuf->appendLine( s1 );
     phCheckEquals( mBuf->lineCount(), 2 );
     phCheckEquals( mBuf->data( 1 ), s1 );
     phCheckEquals( mBuf->at(1)->data(), s1 );
 
-    mBuf->addLine( s2 );
+    mBuf->appendLine( s2 );
     phCheckEquals( mBuf->lineCount(), 3 );
     phCheckEquals( mBuf->data(2), s2 );
     phCheckEquals( mBuf->at(2)->data(), s2 );
 
-    mBuf->addLine( s1 );
+    mBuf->appendLine( s1 );
     phCheckEquals( mBuf->lineCount(), 4 );
     phCheckEquals( mBuf->data( 3 ), s1 );
     phCheckEquals( mBuf->at(3)->data(), s1 );
@@ -113,9 +113,9 @@ void TestYZBuffer::testLineMethods()
     phCheckEquals( mBuf->data( 0 ), "" );
 
     // add 3 lines again
-    mBuf->addLine( s1 );
-    mBuf->addLine( s2 );
-    mBuf->addLine( s1 );
+    mBuf->appendLine( s1 );
+    mBuf->appendLine( s2 );
+    mBuf->appendLine( s1 );
     phCheckEquals( mBuf->lineCount(), 4 );
     phCheckEquals( mBuf->data( 0 ), "" );
     phCheckEquals( mBuf->data( 1 ), s1 );
@@ -137,9 +137,9 @@ void TestYZBuffer::testLineMethods()
     phCheckEquals( mBuf->data( 0 ), "" );
 
     // add 3 lines again
-    mBuf->addLine( s1 );
-    mBuf->addLine( s2 );
-    mBuf->addLine( s1 );
+    mBuf->appendLine( s1 );
+    mBuf->appendLine( s2 );
+    mBuf->appendLine( s1 );
     phCheckEquals( mBuf->lineCount(), 4 );
     phCheckEquals( mBuf->data( 0 ), "" );
     phCheckEquals( mBuf->data( 1 ), s1 );
@@ -164,11 +164,11 @@ void TestYZBuffer::testLineMethods()
     phCheckEquals( mBuf->getWholeText(), "" );
 	
 	//replace a non existing line should not do anything
-	mBuf->replaceLine( 10, s2 );
+	mBuf->replaceLine( s2 , 10);
     phCheckEquals( mBuf->getWholeText(), "" );
 
 	//replace first line
-	mBuf->replaceLine( 0, s2 );
+	mBuf->replaceLine( s2 , 0);
     phCheckEquals( mBuf->data( 0 ), s2 );
     phCheckEquals( mBuf->lineCount(), 1 );
     phCheckEquals( mBuf->getWholeText(), s2 );
@@ -177,12 +177,12 @@ void TestYZBuffer::testLineMethods()
     mBuf->deleteLine( 0 );
     phCheckEquals( mBuf->getWholeText(), "" );
 
-    // addNewLine on non existing line should not do anything
-    mBuf->addNewLine( 10, 10 ); 
+    // insertNewLine on non existing line should not do anything
+    mBuf->insertNewLine( 10, 10 ); 
     phCheckEquals( mBuf->getWholeText(), "" );
 
     // add new line to an empty buffer
-    mBuf->addNewLine( 0, 0 ); 
+    mBuf->insertNewLine( 0, 0 ); 
     phCheckEquals( mBuf->getWholeText(), "\n" );
 
     // empty buffer
@@ -190,17 +190,17 @@ void TestYZBuffer::testLineMethods()
     phCheckEquals( mBuf->getWholeText(), "" );
 
     // add new line on non existing column should not do anything
-    mBuf->replaceLine( 0, s1 );
+    mBuf->replaceLine( s1 , 0);
     phCheckEquals( mBuf->getWholeText(), s1);
-    mBuf->addNewLine( 30, 0 ); 
+    mBuf->insertNewLine( 30, 0 ); 
     phCheckEquals( mBuf->getWholeText(), s1 );
 
     // add new line in the middle of the existing line
-    mBuf->addNewLine( 5, 0 ); 
+    mBuf->insertNewLine( 5, 0 ); 
     phCheckEquals( mBuf->getWholeText(), "01234\n56789" );
-    mBuf->addNewLine( 5, 0 ); 
+    mBuf->insertNewLine( 5, 0 ); 
     phCheckEquals( mBuf->getWholeText(), "01234\n\n56789" );
-    mBuf->addNewLine( 0, 0 ); 
+    mBuf->insertNewLine( 0, 0 ); 
     phCheckEquals( mBuf->getWholeText(), "\n01234\n\n56789" );
 
 }
@@ -215,8 +215,8 @@ void TestYZBuffer::testGetWholeText()
     phCheckEquals( mBuf->data( 0 ), "" );
     phCheckEquals( mBuf->getWholeText(), "" );
 
-    mBuf->addLine( s1 );
-    mBuf->addLine( s2 );
+    mBuf->appendLine( s1 );
+    mBuf->appendLine( s2 );
     phCheckEquals( mBuf->lineCount(), 3 );
     phCheckEquals( mBuf->data( 0 ), "" );
     phCheckEquals( mBuf->data( 1 ), s1 );
@@ -244,8 +244,8 @@ void TestYZBuffer::testCharMethods()
     mBuf->delChar( 10, 10, 1 );
     phCheckEquals( mBuf->getWholeText(), text );
 
-    mBuf->addLine( s1 );
-    mBuf->addLine( s2 );
+    mBuf->appendLine( s1 );
+    mBuf->appendLine( s2 );
     mBuf->deleteLine( 0 );
     text = s1 + "\n" + s2;
     phCheckEquals( mBuf->getWholeText(), text );
@@ -294,8 +294,8 @@ void TestYZBuffer::testLoadSave()
     phCheckEquals( fi.size(), 0 );
 
     // save non empty buffer and check the file content
-    mBuf->addLine( "1" );
-    mBuf->addLine( "2" );
+    mBuf->appendLine( "1" );
+    mBuf->appendLine( "2" );
     text = mBuf->getWholeText();
     mBuf->save();
     QFile f( mBuf->fileName() );
@@ -339,9 +339,9 @@ void TestYZBuffer::testFirstNonBlankChar()
 {
     phCheckEquals( mBuf->firstNonBlankChar( 10 ), 0 );
     phCheckEquals( mBuf->firstNonBlankChar( 0 ), 0 );
-    mBuf->replaceLine( 0, "   123" );
-    mBuf->addLine( "\t\tabc" );
-    mBuf->addLine( " \t abc" );
+    mBuf->replaceLine( "   123" , 0);
+    mBuf->appendLine( "\t\tabc" );
+    mBuf->appendLine( " \t abc" );
     phCheckEquals( mBuf->firstNonBlankChar( 0 ), 3 );
     phCheckEquals( mBuf->firstNonBlankChar( 1 ), 2 );
     phCheckEquals( mBuf->firstNonBlankChar( 2 ), 3 );

@@ -432,7 +432,6 @@ void YZView::centerViewHorizontally(unsigned int column) {
 			drawPrevCol( );
 			drawChar( );
 		}
-
 		while ( sCursor->getX() < newcurrentLeft ) {
 			drawNextCol( );
 			drawChar( );
@@ -946,11 +945,10 @@ bool YZView::drawPrevLine( ) {
 			sCursor->setX( 0 );
 			rCursor->setX( 0 );
 
-			while( rCursor->getX( ) < rCurrentLeft - 1 ) {
+			while( rCursor->getX( ) < rCurrentLeft ) {
 				drawNextCol( );
 				drawChar( );
 			}
-
 			rSpaceFill = (rCurrentLeft % tabLength);
 
 /*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
@@ -958,10 +956,14 @@ bool YZView::drawPrevLine( ) {
 					<< ", rY:" << rCursor->getY() << ", sX:" << sCursor->getX( ) << ", sY:" << sCursor->getY ()
 					<< ", drawLength:" << drawLength() << endl; 
 */
-			if (drawLength () > 1) {
-				rColLength = 1;
-				sCursor->setX (sCursor->getX () - 1);
+			if ( rCursor->getX( ) > rCurrentLeft ) {
+//				yzDebug() << "cursor > left" << endl;
+				sCursor->setX( sCursor->getX() - 1 );
 			}
+
+			rColLength = 0;
+			sColLength = 0;
+
 		}
 
 		if ( ( rCursor->getY() - rCurrentTop ) < mLinesVis ) {
@@ -1002,7 +1004,7 @@ bool YZView::drawNextLine( ) {
 	rSpaceFill = 0;
 
 	if ( sCursor->getY() < mBuffer->lineCount() ) {
-		
+	
 		YZLine *yl = mBuffer->yzline( sCursor->getY() );
 		sCurLine = yl->data();
 		rCursor->setX( rCurrentLeft );
@@ -1011,11 +1013,10 @@ bool YZView::drawNextLine( ) {
 			sCursor->setX( 0 );
 			rCursor->setX( 0 );
 
-			while( rCursor->getX( ) < rCurrentLeft - 1 ) {
+			while( rCursor->getX( ) < rCurrentLeft ) {
 				drawNextCol( );
 				drawChar( );
 			}
-
 			rSpaceFill = (rCurrentLeft % tabLength);
 
 /*			yzDebug() << "Draw next line : spaceFill:" << rSpaceFill << ", rX(current):" << rCurrentLeft 
@@ -1023,10 +1024,14 @@ bool YZView::drawNextLine( ) {
 					<< ", rY:" << rCursor->getY() << ", sX:" << sCursor->getX( ) << ", sY:" << sCursor->getY ()
 					<< ", drawLength:" << drawLength() << endl; 
 */
-			if (drawLength () > 1) {
-				rColLength = 1;
-				sCursor->setX (sCursor->getX ());
+			if ( rCursor->getX( ) > rCurrentLeft ) {
+//				yzDebug() << "cursor > left" << endl;
+				sCursor->setX( sCursor->getX() - 1 );
 			}
+
+			rColLength = 0;
+			sColLength = 0;
+
 		}
 
 		if ( ( rCursor->getY() - rCurrentTop ) < mLinesVis ) {

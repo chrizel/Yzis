@@ -28,6 +28,7 @@ using namespace std;
 #include "testUndo.h"
 #include "TSession.h"
 #include "TBuffer.h"
+#include "TView.h"
 
 
 // register the suite so that it is run in the runner
@@ -40,6 +41,7 @@ void TestUndo::setUp()
     mSession = new TYZSession();
     mBuf = new TYZBuffer( mSession );
     mBuf->clearIntro();
+    mView = new TYZView( mBuf, mSession, 5 );
 }
 
 void TestUndo::tearDown()
@@ -61,14 +63,22 @@ void TestUndo::testUndoBufferCreation()
     phCheckEquals( ub->mayUndo(), false );
 }
 
-void TestUndo::performUndoRedo( QStringList & textHistory )
+void TestUndo::performUndoRedo( QStringList & textHistory, bool commandUndo )
 {
     YZUndoBuffer * ub = mBuf->undoBuffer();
     uint i=textHistory.count()-2;
 
+    if (commandUndo) {
+        mView->sendText("<Esc>");
+    }
+
     yzDebug() << "========== Starting Undo ===========" << endl;
     while( i > 0 ) {
-        ub->undo();
+        if (commandUndo) {
+            mView->sendText("u");
+        } else {
+            ub->undo();
+        }
         yzDebug() << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
         phCheckEquals( mBuf->getWholeText(), textHistory[i] );
         phCheckEquals( ub->mayUndo(), true );
@@ -76,7 +86,11 @@ void TestUndo::performUndoRedo( QStringList & textHistory )
         i--;
     }
 
-    ub->undo();
+    if (commandUndo) {
+        mView->sendText("u");
+    } else {
+        ub->undo();
+    }
     yzDebug() << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( mBuf->getWholeText(), textHistory[i] );
     phCheckEquals( ub->mayUndo(), false );
@@ -85,14 +99,22 @@ void TestUndo::performUndoRedo( QStringList & textHistory )
     yzDebug() << "========== Starting Redo ===========" << endl;
 
     while( ++i < textHistory.count()-1 ) {
-        ub->redo();
+        if (commandUndo) {
+            mView->sendText("<C-R>");
+        } else {
+            ub->redo();
+        }
         yzDebug() << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
         phCheckEquals( mBuf->getWholeText(), textHistory[i] );
         phCheckEquals( ub->mayUndo(), true );
         phCheckEquals( ub->mayRedo(), true );
     }
 
-    ub->redo();
+    if (commandUndo) {
+        mView->sendText("<C-R>");
+    } else {
+        ub->redo();
+    }
     yzDebug() << "buffer " << i << ": '" << mBuf->getWholeText() << "'" << endl;
     phCheckEquals( mBuf->getWholeText(), textHistory[i] );
     phCheckEquals( ub->mayUndo(), true );
@@ -245,6 +267,21 @@ void TestUndo::testRedoRemovesUndo()
     // undo some stuff
     // redo in the middle of undo
     // undo should not be available
+}
+
+void TestUndo::testCommandUndo()
+{
+    YZUndoBuffer * ub = mBuf->undoBuffer();
+    QStringList textHistory;
+    textHistory.append( mBuf->getWholeText() );
+
+    mView->sendText("i123\n456\n789<esc>");
+    textHistory.append( mBuf->getWholeText() );
+    phCheckEquals( ub->mayUndo(), true );
+    phCheckEquals( ub->mayRedo(), false );
+
+    performUndoRedo( textHistory, true );
+    performUndoRedo( textHistory, true );
 }
 
 

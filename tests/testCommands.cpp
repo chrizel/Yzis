@@ -48,7 +48,6 @@ void TestYZCommands::setUp()
     mBuf = new TYZBuffer( mSession );
     mBuf->clearIntro();
     mView = new TYZView( mBuf, mSession, mLines );
-
 }
 
 void TestYZCommands::tearDown()

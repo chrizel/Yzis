@@ -27,6 +27,7 @@
 
 class TYZSession;
 class TYZBuffer;
+class TYZView;
 
 class TestUndo : public CppUnit::TestCase
 {
@@ -44,6 +45,7 @@ public:
     CPPUNIT_TEST( testUndoInsertLine );
     CPPUNIT_TEST( testUndoDeleteLine );
     CPPUNIT_TEST( testRedoRemovesUndo );
+    CPPUNIT_TEST( testCommandUndo );
 
     CPPUNIT_TEST_SUITE_END();
 
@@ -53,11 +55,13 @@ public:
     void testUndoInsertLine();
     void testUndoDeleteLine();
     void testRedoRemovesUndo();
+    void testCommandUndo();
 
 protected:
-    void performUndoRedo( QStringList & textHistory );
+    void performUndoRedo( QStringList & textHistory, bool commandUndo=false );
     TYZSession * mSession;
     TYZBuffer *  mBuf;
+    TYZView * mView;
 };
 
 

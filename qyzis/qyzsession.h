@@ -1,7 +1,12 @@
 
+#include <qvbox.h>
+
 #include <libyzis/session.h>
 
-class QYZSession: public YZSession {
+class QWidgetStack;
+class QLineEdit;
+
+class QYZSession: public YZSession, public QVBox {
 public:
 	QYZSession();
 	virtual ~QYZSession();
@@ -18,4 +23,8 @@ public:
 	virtual void setFocusCommandLine();
 	virtual void setFocusMainWindow();
 	virtual void splitHorizontally ( YZView* );
+
+protected:
+	QWidgetStack * mViewStack;
+	QLineEdit    * mCommandLine;
 };

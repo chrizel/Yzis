@@ -23,12 +23,13 @@ void QYZBuffer::filenameChanged()
 {
 	// The name of the file name has changed, you should tell all the views
 	// so that if any is displaying the filename, it should update it.
-	// XXX: could be moved to libyzis
+	// XXXphil: could be moved to libyzis, by providing the method
+	// filenameChanged directly on the view
 }
 
 void QYZBuffer::highlightingChanged()
 {
-	// No need to put anything here, this is used only by kyzis
+	// XXXphil: this method does not need to be pure virtual
 }
 
 

@@ -32,6 +32,7 @@
 
 int main(int argc, char **argv) {
 	QApplication app( argc, argv );
+	QObject::connect( qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()) );
 
 	QTranslator qt(  0 );
 	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
@@ -40,9 +41,61 @@ int main(int argc, char **argv) {
 //	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
 	app.installTranslator(  &myapp );
 
-	QYZSession session;
-	QYZBuffer buffer(&session);
-	QYZView * w = new QYZView( &buffer, &session, 50 );
+	(new QYZSession())->show();
+	QString initialSendKeys;
+
+    // handle command line options
+	YZSession::mOptions.setGroup("Global");
+	bool splash = YZSession::getBoolOption("blocksplash");
+
+	/*
+	 * Open buffers
+	 */
+	bool hasatleastone = false;
+	QString s;
+
+	/** read options **/
+
+	for ( int i=1; i<argc; i++ ) {
+		if ( '-' != argv[i][0] ) {
+			hasatleastone = true;
+			yzDebug(QYZIS)<< "qyzis : opening file " << argv[i]<<endl;
+			QYZSession::me->createBuffer(argv[ i ]);
+		} else {
+			s = QString( argv[i] );
+			if (s == "-h" || s == "--help") {
+				printf("QYzis, yzis port of Yzis - http://www.yzis.org\n"
+					VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
+				printf("\nUsage : %s [--help|-h] [--version|-v] [filename1 [filename2] .... ]\n", argv[0]);
+				exit(0);
+			} else if (s == "-v" || s == "--version") {
+				printf("Nyzis, ncurses part of Yzis - http://www.yzis.org\n"
+					VERSION_CHAR_LONG " " VERSION_CHAR_DATE "\n");
+				exit(0);
+			} else if (s == "-c") {
+				QString optArg;
+				YZSession::setBoolOption("blocksplash", false);
+				if (s.length() > 2) optArg = argv[i]+2;
+				else if (i < argc-1) optArg = argv[i+1];
+				initialSendKeys = optArg;
+			} else {
+				printf("Unrecognised option: %s\n", argv[i] );
+				exit(-1);
+			}
+		}
+	}
+
+	if ( !hasatleastone ) {
+		QYZSession::me->createBuffer();
+		YZView* cView = YZSession::me->currentView();
+		cView->displayIntro();
+	}
+
+	if (initialSendKeys.length()) {
+		YZSession::me->sendMultipleKeys( initialSendKeys );
+		YZSession::setBoolOption("blocksplash", splash);
+	}
 
 	return app.exec();
 }
+

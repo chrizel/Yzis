@@ -1,6 +1,8 @@
 2004-02-22 mikmak
   * libyzis
     fix bugs and make :bp and :bn actually do something usefull
+  * kyzis
+    fix some repaint bugs
 
 2004-02-21 mikmak
   * all

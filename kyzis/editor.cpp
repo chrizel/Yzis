@@ -28,7 +28,7 @@
 #include "factory.h"
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
-: QScrollView( parent, name,WStaticContents | WRepaintNoErase | WResizeNoErase ) 
+: QScrollView( parent, name,WStaticContents | WNoAutoErase ) 
 {
 	setFont(KGlobalSettings::fixedFont());
 	_parent = parent;
@@ -113,9 +113,9 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 			QRect clip(0, i * fontMetrics().lineSpacing(), width(),fontMetrics().lineSpacing());
 			p->eraseRect(clip);
 			if (_parent->myBuffer()->lineCount() > i + _parent->getCurrent() )
-				p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->data(i + _parent->getCurrent()));
+				p->drawText(clip,/*Qt::ExpandTabs| <= needed in the future */Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,_parent->myBuffer()->data(i + _parent->getCurrent()));
 			else 
-				p->drawText(clip,Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,"~");
+				p->drawText(clip,/*Qt::ExpandTabs| */Qt::AlignLeft|Qt::DontClip|Qt::SingleLine ,"~");
 		}
 	}
 

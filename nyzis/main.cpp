@@ -94,6 +94,8 @@ main(int argc, char *argv[])
 	};
 
 	int c;
+	YZSession::mOptions.setGroup("Global");
+	bool splash = YZSession::getBoolOption("blocksplash");
 	while ( 1 ) {
 		c = getopt_long ( argc, argv, "hvc:", long_options, &option_index );
 		if ( -1 == c ) break; // end of parsing
@@ -110,6 +112,7 @@ main(int argc, char *argv[])
 				exit(0);
 				break;
 			case 'c':
+				YZSession::setBoolOption("blocksplash", false);
 				initialSendKeys = (const char *) optarg;
 				break;
 			default:
@@ -145,6 +148,7 @@ main(int argc, char *argv[])
 	if (initialSendKeys.length()) {
 		YZView* cView = YZSession::me->currentView();
 		cView->sendMultipleKey( initialSendKeys );
+		YZSession::setBoolOption("blocksplash", splash);
 	}
 
 	app.exec();

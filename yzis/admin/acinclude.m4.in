@@ -5344,3 +5344,23 @@ AC_DEFUN(KDE_CHECK_BINUTILS,
   AC_MSG_RESULT($kde_supports_versionmaps)
 ])
 
+AC_DEFUN(AC_PATH_TINYQ,
+		[
+		AC_MSG_CHECKING(for TinyQ)
+		AC_ARG_WITH(tinyq-dir, [  --with-tinyq-dir   Specify prefix of TinyQ files],
+			[
+			TINYQ="$withval"
+			TINYQ_INCLUDES="$withval"/include
+			TINYQ_LIBS="$withval"/lib
+			])
+
+		if test "x$TINYQ" = "x"; then
+		AC_MSG_ERROR(could not find TinyQ directory)
+		else
+		AC_MSG_RESULT(using TinyQ from $TINYQ)
+		fi
+		AC_SUBST(TINYQ)
+		AC_SUBST(TINYQ_INCLUDES)
+		AC_SUBST(TINYQ_LIBS)
+])
+

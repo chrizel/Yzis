@@ -664,6 +664,6 @@ void YzisSyntaxDocument::setupModeList (bool force)
       }
     }
   }
-  config.saveTo( QDir::homeDirPath()+"/.yzis/hl.conf", "HL Cache", true );
+  config.saveTo( QDir::homeDirPath()+"/.yzis/hl.conf", "HL Cache", "", true );
 }
 

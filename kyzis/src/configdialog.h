@@ -39,10 +39,12 @@ class KYZisConfigDialog : public KConfigDialog {
 	public slots:
 		void slotChanged();
 		void slotApply();
+		void slotOk();
 
 	private :
 		void setupPages();
 		YzisSchemaConfigPage *pageHL;
+		QWidget* pageAppearance;
 };
 
 #endif

@@ -82,7 +82,7 @@ class YZInternalOptionPool {
 		/**
 		 * Save settings to @param file
 		 */
-		void saveTo(const QString& file, const QString& what=QString::null, bool force=false);
+		void saveTo(const QString& file, const QString& what=QString::null, const QString& except=QString::null, bool force=false);
 
 		/**
 		 * return a QString option
@@ -127,7 +127,7 @@ class YZInternalOptionPool {
 		/**
 		 * return a QColor option
 		 */
-		const QColor& readQColorEntry( const QString& key, const QColor& def );
+		QColor readQColorEntry( const QString& key, const QColor& def );
 
 		/**
 		 * Sets a qcolor option

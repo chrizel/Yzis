@@ -57,7 +57,7 @@ void KYZisConfigDialog::setupPages() {
 	/**
 	 * Appearance
 	 */
-	QWidget* pageAppearance = new QWidget( this, "Appearance" );
+	pageAppearance = new QWidget( this, "Appearance" );
 	QGridLayout* layoutAppearance = new QGridLayout( pageAppearance, 2, 5, 0, 10 );
 
 	// Font
@@ -123,10 +123,18 @@ void KYZisConfigDialog::setupPages() {
 
 void KYZisConfigDialog::slotChanged() {
 	actionButton( KDialogBase::Apply )->setEnabled( true );
+	actionButton( KDialogBase::Default )->setEnabled( true );
 }
 
 void KYZisConfigDialog::slotApply() {
 	pageHL->apply();
+	actionButton( KDialogBase::Apply )->setEnabled( false );
+	actionButton( KDialogBase::Default )->setEnabled( false );
+}
+
+void KYZisConfigDialog::slotOk() {
+	slotApply();
+	accept();
 }
 
 #include "configdialog.moc"

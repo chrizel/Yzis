@@ -1,3 +1,7 @@
+2004-07-03 panard
+  * libyzis
+    added Visual Line mode
+
 2004-06-30 mikmak
   * libyzis
     add support for local buffer/view options

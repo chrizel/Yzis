@@ -14,7 +14,11 @@ dnl KDE_ENABLE_HIDDEN_VISIBILITY
 
 AC_PATH_LUA
 AC_PATH_LIBMAGIC
-AC_PATH_LIBGETTEXT
+
+case $host in *-*-freebsd* | *-*-netbsd* | *-*-openbsd*)
+	AC_PATH_LIBGETTEXT
+	;;
+esac
 
 AC_ARG_ENABLE(pslib, AC_HELP_STRING([--disable-pslib],[disable Pslib-support.]),, [enable_pslib="no"])
 if test "$enable_pslib" == "yes"; then

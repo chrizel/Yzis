@@ -85,7 +85,14 @@ void YZBuffer::update_view(int view_nb)
 	}
 
 	view->post_event(mk_event_setcursor(0,0));
-	view->post_event(mk_event_setstatus("Yzis Ready"));
+	
+//MM opening files may be done in different modes
+	//view->post_event(mk_event_setstatus("Yzis Ready"));
+}
+
+void YZBuffer::update_all_views()
+{
+	for ( int i = 0 ; i < view_nb ; i++) update_view(i);
 }
 
 void  YZBuffer::add_line(YZLine *l)
@@ -116,17 +123,17 @@ YZLine	*YZBuffer::find_line(int line)
 void YZBuffer::load(void)
 {
 	QFile file( path );
-	int counter=0;
 	if ( file.open( IO_ReadOnly ) ) {
 		QTextStream stream( &file );
 		YZLine *line;
 		int i = 1;
 		while ( !stream.atEnd() ) {
-			line = new YZLine(counter++, stream.readLine() ); // line of text excluding '\n'
+			line = new YZLine(lines_nb++, stream.readLine() ); // line of text excluding '\n'
 			add_line( line );
 		}
 		file.close();
 	}
+	update_all_views();
 }
 
 #if 0

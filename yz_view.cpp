@@ -4,7 +4,7 @@
  */
 
 #include <stdlib.h>
-#include <curses.h>
+//hmm hmm #include <curses.h>
 #include "yz_view.h"
 
 YZView::YZView(YZBuffer *_b, int _lines_vis)

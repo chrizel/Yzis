@@ -70,53 +70,56 @@ bool YZMotionPool::isValid( const QString& inputs ) {
 	return ok;
 }
 
-bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCursor& result ) {
+bool YZMotionPool::applyMotion( const QString &inputsMotion, YZView *view, YZCursor& from, YZCursor& to) {
 	bool ok = false;
 	YZMotion& motion = findMotion(inputsMotion, &ok);
 	if ( !ok ) return false;
 	switch ( motion.type ) {
 		case REGEXP :
-			return applyRegexpMotion( inputsMotion, motion, view, result );
+			return applyRegexpMotion( inputsMotion, motion, view, from, to);
 		case RELATIVE :
-			return applyRelativeMotion( inputsMotion, motion, view, result );
+			return applyRelativeMotion( inputsMotion, motion, view, from, to);
 		case NORMAL :
-			return applyNormalMotion( inputsMotion, motion, view, result );
+			return applyNormalMotion( inputsMotion, motion, view, from, to);
 	}
 	return false;
 }
 
-bool YZMotionPool::applyNormalMotion( const QString& inputsMotion, YZMotion& , YZView *view, YZCursor& result ) {
+bool YZMotionPool::applyNormalMotion( const QString& inputsMotion, YZMotion& , YZView *view, YZCursor& from, YZCursor& to) {
 	bool found = false;
 	if ( inputsMotion == "%" ) {
-		result = view->myBuffer()->action()->match( view, *( view->getBufferCursor() ), &found );
+		to = view->myBuffer()->action()->match( view, from, &found );
 		if ( found ) { //adjust the cursor
-			if ( *( view->getBufferCursor() ) < result )
-				result.setX( result.getX()+1 );
+			if ( from < to)
+				to.setX( to.getX()+1 );
+			else if ( from > to ) {
+				from.setX( from.getX() + 1 );
+			}
 		}
 		return found;
 	} else if ( inputsMotion.startsWith("`") || inputsMotion.startsWith("'") ) {
 		yzDebug() << "Delete to tag " << inputsMotion.mid( 1,1 ) << endl;
 		YZCursorPos pos = view->myBuffer()->marks()->get(inputsMotion.mid( 1, 1 ), &found);
-		result = pos.bPos;
-		result.setX(result.getX() ? result.getX() - 1 : 0);
+		to = pos.bPos;
+		to.setX(to.getX() ? to.getX() - 1 : 0);
 		return found;
 	}
 	return false;
 }
 
-bool YZMotionPool::applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& result ) {
+bool YZMotionPool::applyRelativeMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& from, YZCursor& to) {
 	int counter = 1; //number of times we have to match
 	QRegExp rx ( "([0-9]+).+" );
 	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
 	yzDebug() << "Loop " << counter << " times" << endl;
 	QRegExp rex( motion.rex );
-	result.setX(view->getBufferCursor()->getX());
-	result.setY(view->getBufferCursor()->getY());
+	to.setX(view->getBufferCursor()->getX());
+	to.setY(view->getBufferCursor()->getY());
 	int count = 0 ;
 
 	while (count < counter) {
-		result.setX( result.getX() + motion.x );
-		result.setY( result.getY() + motion.y );
+		to.setX( to.getX() + motion.x );
+		to.setY( to.getY() + motion.y );
 		count++;
 	}
 	if ( count ) return true;
@@ -124,52 +127,52 @@ bool YZMotionPool::applyRelativeMotion( const QString &inputsMotion, YZMotion& m
 	return false;
 }
 
-bool YZMotionPool::applyRegexpMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& result ) {
+bool YZMotionPool::applyRegexpMotion( const QString &inputsMotion, YZMotion& motion, YZView *view, YZCursor& from, YZCursor& to) {
 	int counter = 1; //number of times we have to match
 	QRegExp rx ( "([0-9]+).+" );
 	if ( rx.exactMatch( inputsMotion ) ) counter = rx.cap(1).toInt();
 	yzDebug() << "Loop " << counter << " times" << endl;
 	QRegExp rex( motion.rex );
-	result.setX(view->getBufferCursor()->getX());
-	result.setY(view->getBufferCursor()->getY());
+	to.setX(view->getBufferCursor()->getX());
+	to.setY(view->getBufferCursor()->getY());
 	int idx=-1;
 	int count = 0 ;
 	if ( ! motion.backward ) {
 		yzDebug() << "Forward motion" <<endl;
 		while (count < counter) {
-			const QString& current = view->myBuffer()->textline( result.getY() );
+			const QString& current = view->myBuffer()->textline( to.getY() );
 			if ( current.isNull() ) return false;
-			idx = rex.search( current, result.getX() + 1 );
+			idx = rex.search( current, to.getX() + 1 );
 			if ( idx != -1 ) {
 				yzDebug() << "Match at " << idx << " Matched length " << rex.matchedLength() << endl;
 				count++; //one match
-				result.setX( idx + ( motion.after ? rex.matchedLength() : 0 ) );
+				to.setX( idx + ( motion.after ? rex.matchedLength() : 0 ) );
 			} else {
-				if ( result.getY() >= view->myBuffer()->lineCount() ) break;
-				result.setX( 0 );
-				result.setY( result.getY() + 1 );
+				if ( to.getY() >= view->myBuffer()->lineCount() ) break;
+				to.setX( 0 );
+				to.setY( to.getY() + 1 );
 			}
 		}
 	} else {
 		yzDebug() << "Backward motion" <<endl;
 		while ( count < counter ) {
-			const QString& current = view->myBuffer()->textline( result.getY() );
+			const QString& current = view->myBuffer()->textline( to.getY() );
 			if ( current.isNull() ) return false;
-			idx = rex.searchRev( current, result.getX() >= 1 ? result.getX() - 1 : result.getX() );
+			idx = rex.searchRev( current, to.getX() >= 1 ? to.getX() - 1 : to.getX() );
 			if ( idx != -1 ) {
-				yzDebug() << "Match at " << idx << " on line " << result.getY() << " Matched length " << rex.matchedLength() << endl;
+				yzDebug() << "Match at " << idx << " on line " << to.getY() << " Matched length " << rex.matchedLength() << endl;
 				count++; //one match
 				yzDebug() << "Motion after " << motion.after << endl;
-				result.setX( idx + ( motion.after ? -1 : rex.matchedLength() ) );
+				to.setX( idx + ( motion.after ? -1 : rex.matchedLength() ) );
 			}
 			if ( count >= counter ) break;
 			if ( idx == -1 || idx == 0 ) { //no match or we matched at beginning of line => go to previous line for next search
-				yzDebug() << "Previous line " << result.getY() - 1 << endl;
-				if ( result.getY() == 0 ) break; //stop here
-				const QString& ncurrent = view->myBuffer()->textline( result.getY() - 1 );
+				yzDebug() << "Previous line " << to.getY() - 1 << endl;
+				if ( to.getY() == 0 ) break; //stop here
+				const QString& ncurrent = view->myBuffer()->textline( to.getY() - 1 );
 				if ( ncurrent.isNull() ) return false;
-				result.setX( ncurrent.length() );
-				result.setY( result.getY() - 1 );
+				to.setX( ncurrent.length() );
+				to.setY( to.getY() - 1 );
 			}
 		}
 	}

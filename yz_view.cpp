@@ -8,10 +8,6 @@
 #include <curses.h>
 #include "yz_view.h"
 
-/*
- * C++ api
- */
-
 YZView::YZView(YZBuffer *_b, int _lines_vis)
 {
 	buffer		= _b;
@@ -30,7 +26,7 @@ YZView::YZView(YZBuffer *_b, int _lines_vis)
 
 
 /* Used by the buffer to post events */
-void YZView::send_char( unicode_char_t c)
+void YZView::send_char( QChar c)
 {
 	if ('\033'==c) {
 		if (cursor_x>current_maxx) {
@@ -133,7 +129,8 @@ void YZView::send_char( unicode_char_t c)
 void YZView::update_cursor(void)
 {
 	post_event( mk_event_setcursor(cursor_x,cursor_y-current));
-	debug("posting event about moving cursor to %d,%d, maxx is %d", cursor_x, cursor_y-current,current_maxx);
+//	debug("posting event about moving cursor to %d,%d, maxx is %d", cursor_x,
+	//	cursor_y-current,current_maxx);
 }
 
 yz_event *YZView::fetch_event(/* asasdfasf */)
@@ -157,50 +154,7 @@ void YZView::post_event (yz_event e)
 	events[events_nb_last++] = e;
 	if (events_nb_last>=YZ_EVENT_EVENTS_MAX)
 		events_nb_last=0;
-	if (events_nb_last==events_nb_begin)
-		panic("YZ_EVENT_EVENTS_MAX exceeded");
+//FIXME	if (events_nb_last==events_nb_begin)
+//		panic("YZ_EVENT_EVENTS_MAX exceeded");
 }
-
-
-/*
- * C api
- */
-
-/*
- * constructors
- */
-yz_view create_view(yz_buffer b, int lines_vis)
-{
-	CHECK_BUFFER(b);
-	return (yz_view)(new YZView(buffer, lines_vis));
-}
-
-
-
-void yz_view_send_char(yz_view v, unicode_char_t c)
-{
-	CHECK_VIEW(v);
-	view->send_char(c);
-}
-
-yz_event * yz_view_fetch_event(yz_view v)
-{
-	CHECK_VIEW(v);
-	return view->fetch_event();
-}
-
-void yz_view_get_geometry(yz_view v, int *current, int *lines_vis)
-{
-	CHECK_VIEW(v);
-	*current	= view->get_current();
-	*lines_vis		= view->get_lines_visible();
-}
-
-void yz_view_post_event (yz_view v, yz_event e )
-{
-	CHECK_VIEW(v);
-	return view->post_event(e);
-}
-
-
 

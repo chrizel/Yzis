@@ -10,12 +10,7 @@
 #include "yz_events.h"
 #include "yz_view.h"
 
-
-/*
- * C++ api
- */
-
-YZBuffer::YZBuffer(char *_path)
+YZBuffer::YZBuffer(QString _path)
 {
 	path	= _path;
 	view_nb	= 0;
@@ -23,17 +18,16 @@ YZBuffer::YZBuffer(char *_path)
 
 	line_first = line_last = NULL; // linked lines
 
-	if (_path!=NULL) load();
+	if (!_path.isEmpty()) load();
 }
 
-void YZBuffer::add_char (int x, int y, unicode_char_t c)
+void YZBuffer::add_char (int x, int y, QChar c)
 {
 	/* brute force, we'll have events specific for that later on */
-	debug("addchar");
 	YZLine *l=find_line(y);
 
 	/* do the actual modification */
-	l->add_char(x, c);
+	l->insert(x, c);
 
 	/* inform the views */
 	yz_event e;
@@ -45,14 +39,14 @@ void YZBuffer::add_char (int x, int y, unicode_char_t c)
 }
 
 
-void YZBuffer::chg_char (int x, int y, unicode_char_t c)
+void YZBuffer::chg_char (int x, int y, QChar c)
 {
 	/* brute force, we'll have events specific for that later on */
-	debug("chgchar");
 	YZLine *l=find_line(y);
 
 	/* do the actual modification */
-	l->chg_char(x, c);
+	l->remove(x,1);
+	l->insert(x, c);
 
 	/* inform the views */
 	yz_event e;
@@ -77,8 +71,8 @@ void YZBuffer::post_event(yz_event e)
 
 void YZBuffer::add_view (YZView *v)
 {
-	if (view_nb>YZ_MAX_VIEW)
-		panic("no more rom for new view in YZBuffer");
+//FIXME	if (view_nb>YZ_MAX_VIEW)
+//		panic("no more rom for new view in YZBuffer");
 
 	//debug("adding view %p, number is %d", v, view_nb);
 	view_list[view_nb++] = v;
@@ -95,7 +89,7 @@ void YZBuffer::update_view(int view_nb)
 	for (y=view->get_current(); y<lines_nb && view->is_line_visible(y); y++) {
 
 		YZLine *l = find_line( view->get_current()+y);
-		yz_assert(l, "find_line failed");
+//		yz_assert(l, "find_line failed");
 		/* post an event about updating this line */
 
 		e.id			= YZ_EV_SETLINE;
@@ -151,7 +145,7 @@ void YZBuffer::load(void)
 	int dismiss=false;
 
 //	debug("entering");
-	if (!path) {
+	if (path.isEmpty()) {
 //		error("called though path is null, ignored");
 		return;
 	}
@@ -199,7 +193,7 @@ void YZBuffer::load(void)
 					break; // read some more data, the buffer is too small
 
 				/* this line is definetely too long */
-				YZLine *line = new YZLine(lines_nb++, buf, len-1); // ptr-buf == len, here
+				YZLine *line = new YZLine(lines_nb++, buf/*, len-1*/); // ptr-buf == len, here
 				len=0;
 				/* add the new line */
 				add_line(line);
@@ -210,11 +204,11 @@ void YZBuffer::load(void)
 			}
 
 
-			yz_assert( *ptr=='\n', "this should not happen, *ptr== %d, ", *ptr);
-			// here *ptr='\n'
+//			yz_assert( *ptr=='\n', "this should not happen, *ptr== %d, ", *ptr);
+			//			here *ptr='\n'
 			ptr++;
 			/* we found a whole line, use it */
-			YZLine *line = new YZLine(lines_nb++, buf, ptr-buf-1);
+			YZLine *line = new YZLine(lines_nb++, buf/*, ptr-buf-1*/);
 			len -= (ptr-buf); memcpy(buf, ptr, len); // remove handled part
 //			debug("removing %d bytes from buf", ptr-buf);
 			/* add the new line */
@@ -249,7 +243,7 @@ void YZBuffer::load(void)
 
 		if ( (ptr-buf)>=len && (ptr-buf)>=YZ_LINE_DEFAULT_LENGTH ) {
 			/* this line is definetely too long */
-			YZLine *line = new YZLine(lines_nb++, buf, len-1); // ptr-buf == len, here
+			YZLine *line = new YZLine(lines_nb++, buf/*, len-1*/); // ptr-buf == len, here
 			/* add the new line */
 			add_line(line);
 //			debug("adding a looooong YZLine");
@@ -258,9 +252,9 @@ void YZBuffer::load(void)
 
 
 		// everything left has no \n in it, and len should be >0
-		yz_assert(len>0, "oops, len is not >0 here, it should though");
+	//	yz_assert(len>0, "oops, len is not >0 here, it should though");
 		ptr++;
-		YZLine *line = new YZLine(lines_nb++, buf, len-1);
+		YZLine *line = new YZLine(lines_nb++, buf/*, len-1*/);
 		add_line(line);
 //		debug("adding a normal YZLine");
 	} // while (1)
@@ -273,51 +267,9 @@ void YZBuffer::load(void)
 
 void YZBuffer::save(void)
 {
-	if (!path) {
+	if (path.isEmpty()) {
 		//error("called though path is null, ignored");
 		return;
 	}
 }
-
-
-/*
- * C api
- */
-
-/*
- * constructors
- */
-yz_buffer create_empty_buffer(void) { return (yz_buffer)(new YZBuffer()); }
-yz_buffer create_buffer(char *_path) { return (yz_buffer)(new YZBuffer(_path)); }
-
-
-/*
- * functions
- */
-void buffer_add_char(yz_buffer b , int x, int y, unicode_char_t c)
-{
-	CHECK_BUFFER(b);
-	buffer->add_char(x,y,c);
-}
-
-
-void buffer_chg_char(yz_buffer b, int x, int y, unicode_char_t c)
-{
-	CHECK_BUFFER(b);
-	buffer->chg_char(x,y,c);
-}
-
-
-void buffer_load(yz_buffer b)
-{
-	CHECK_BUFFER(b);
-	buffer->load();
-}
-
-void buffer_save(yz_buffer b)
-{
-	CHECK_BUFFER(b);
-	buffer->save();
-}
-
 

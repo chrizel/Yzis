@@ -5,8 +5,10 @@
  */
 
 #include "yzis.h"
+#include <qstring.h>
 
 
+// that's needed ? //mik
 #ifndef NULL
 #define NULL 0
 #endif
@@ -29,36 +31,21 @@
  *  libc or curses, or... ?
  */
 
-/**
- *  fyi : there's a /usr/include/unicode.h from 'libunicode' package, from
- *  http://www.gnome.org/ 
- *  it's quite short  ~200 lines
- *  from unicode.h :
- */  
-
-	/* FIXME: assumes 32-bit int.  
-	typedef unsigned int unicode_char_t; */
-/* ugly, temporary */
-#define unicode_char_t char
-
-
+//to be removed with QString i think //mik
 #define YZ_LINE_MAX_LENGTH	4096
 #define YZ_LINE_DEFAULT_LENGTH	2048
 
 /* avec le color definit par rapport a une table de couleur, changeable bien sur, etc... */
-typedef struct { unicode_char_t letter; int color; } yz_char;
+typedef struct { QChar letter; int color; } yz_char;
 
-
-
-#ifdef __cplusplus
-class YZLine {
+class YZLine : public QString {
 public:
 
 	enum {
 		YZ_LINE_FLAG_TOO_LONG = 1	/* one bit per flag... */
 	};
 
-	YZLine(int size=YZ_LINE_DEFAULT_LENGTH);
+//	YZLine(int size=YZ_LINE_DEFAULT_LENGTH);
 	/**
 	  * @param line : line who corresponds in the file
 	  * @param init : the data to be stored in this YZLine
@@ -66,56 +53,34 @@ public:
 	  * @param size : initial size of this YZLine, the actual size will
 	  * be at least max(@param size, @param datalen)
 	  */
-	YZLine(int _line, char *init, int datalen, int size=YZ_LINE_DEFAULT_LENGTH);
+	YZLine(int _line, QString init);
 
 	~YZLine();
 
-	void write_to(int fd);
-	void append(char *data, int len);
+//	void write_to(int fd);
+//	void append(QString data, int len);
 
 	/* linked list handling */
+	// QPtrList ? //mik
 	YZLine * next(void) { return p_next; }
 	void	set_next(YZLine *n) { p_next = n; }
 
 
 	/* editing */
-	void add_char (int x, unicode_char_t c);
-	void chg_char (int x, unicode_char_t c);
+//	void add_char (int x, QChar c);
+//	void chg_char (int x, QChar c);
 
 	int	line;
-	char	*data;		// actual data
+//	QString data;		// actual data
 	char	*color;	// not used yet
 	int	len;		// current len
 protected:
 	YZLine * p_next;
-	void	expand(int newsize); // expand the internal buffer
+//	void	expand(int newsize); // expand the internal buffer
 
 	int	len_max;	// len of *data,*color
 	int	flags;
 };
-
-
-
-#endif /* __cplusplus */
-
-
-
-/*
- * C API
- */
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-
-
-typedef int *yz_line;
-
-
-
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-
 
 #endif /*  YZ_LINE_H */
 

@@ -503,7 +503,7 @@ YZCursor YZCommandPool::moveWordForward(const YZNewMotionArgs &args) {
 			yzDebug() << "Match at " << idx << " Matched length " << len << endl;
 			c++; //one match
 			result.setX( idx + len );
-			if ( args.standalone && result.getX() == current.length() && result.getY() < args.view->myBuffer()->lineCount() - 1) {
+			if ( ( c < args.count || args.standalone ) && result.getX() == current.length() && result.getY() < args.view->myBuffer()->lineCount() - 1) {
 				result.setY(result.getY() + 1);
 				ws.search(args.view->myBuffer()->textline( result.getY() ));
 				result.setX( QMAX( ws.matchedLength(), 0 ));

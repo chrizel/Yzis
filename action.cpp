@@ -157,7 +157,7 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 
 //copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
 void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
-	yzDebug() << "Copying from X " << beginCursor.getX() << " to X " << endCursor.getX() << endl;
+	yzDebug() << "Copying from " << beginCursor << " to " << endCursor << endl;
 
 	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
 		end(beginCursor <= endCursor ? endCursor : beginCursor);
@@ -221,7 +221,7 @@ void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCur
 //copyArea and deleteArea have very similar code, if you modify one, you probably need to check the other
 void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
 	CONFIGURE_VIEWS;
-	yzDebug() << "Deleting from X " << beginCursor.getX() << " to X " << endCursor.getX() << endl;
+	yzDebug() << "Deleting from " << beginCursor << " to " << endCursor << endl;
 	QStringList buff;
 
 	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
@@ -277,7 +277,7 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 		b = mBuffer->textline( curY );
 		buff << b.left( eX );
 		mBuffer->replaceLine( b.mid( eX ), curY );
-		if ( curY > 0 ) mergeNextLine( pView, curY - 1 );
+		if ( curY > 0 ) mergeNextLine( pView, curY - 1, false );
 	}
 	yzDebug() << "Deleted " << buff << endl;
 	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();

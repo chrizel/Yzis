@@ -29,6 +29,12 @@ YZCursor::YZCursor(YZView *vp) {
 	y_pos=0;
 }
 
+YZCursor::YZCursor(YZCursor *c) {
+	parentView=c->parentView;
+	x_pos=c->getX();
+	y_pos=c->getY();
+}
+
 YZCursor::~YZCursor() {
 }
 

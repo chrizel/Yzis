@@ -30,7 +30,7 @@ YZMotionPool::~YZMotionPool() {
 
 void YZMotionPool::initPool() {
 	YZMotion t = { "\b.*\b", REGEXP, 0, 0};
-	addMotion (t, "[0-9]*w" );
+	addMotion (t, "([0-9]*)w" ); //drop the decimals ?
 }
 
 void YZMotionPool::addMotion(const YZMotion& regexp, const QString& key){
@@ -49,7 +49,15 @@ void YZMotionPool::findMotion ( const QString& inputs, YZMotion *motion ) {
 }
 
 void YZMotionPool::applyMotion( const YZMotion& motion, YZView *view ) {
-	//get the current line
-	YZCursor* cursor = view->getCursor();
-	const QString& current = view->myBuffer()->data( cursor->getY() );
+	YZCursor* cursor = new YZCursor( view->getCursor() );
+	QRegExp rex( motion.rex );
+	int idx=-1;
+	while ( idx == -1 ) {
+		const QString& current = view->myBuffer()->data( cursor->getY() );
+		if ( current.isNull() ) return;
+		idx = rex.search( current, cursor->getX() );
+		cursor->setX( 0 );
+		cursor->setY( cursor->getY() + 1 );
+	}
 }
+

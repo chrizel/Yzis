@@ -38,6 +38,7 @@
 #include "selection.h"
 #include "mapping.h"
 #include "action.h"
+#include "schema.h"
 
 YZExRange::YZExRange( const QString& regexp, ExRangeMethod pm ) {
 	mKeySeq = regexp;
@@ -616,8 +617,68 @@ QString YZExCommandPool::syntax( const YZExCommandArgs& args ) {
 }
 
 QString YZExCommandPool::highlight( const YZExCommandArgs& args ) {
-//	YzisAttributeList *list = new YzisAttributeList();
-//	YzisHlManager::self()->getDefaults(0, list);
+// :highlight Defaults Comment fg= selfg= bg= selbg= italic nobold underline strikeout
+	QStringList list = QStringList::split(" ", args.arg, false);
+	yzDebug() << list << endl;
+	QString style = list[0];
+	QString type = list[1];
+	QStringList::Iterator it = list.begin(), end = list.end();
+	it+=2;
+	int idx = 0;
+	//get the current settings for this option
+	if ( style == "Defaults" || style == "Default" ) style = "Default Item Styles - Schema ";
+	else { 
+		style = "Highlighting " + style.simplifyWhiteSpace() + " - Schema ";
+		idx++;
+	}
+	style += YZSession::me->schemaManager()->name(0); //XXX make it use the 'current' schema
+	YZSession::mOptions.setGroup(style);
+	QStringList option = YZSession::mOptions.readQStringListEntry(type);
+	yzDebug() << "HIGHLIGHT : Current " << option << endl;
+	if (option.count() < 7) return QString::null; //just make sure it's fine ;)
+	
+	//and update it with parameters passed from user
+	QRegExp rx("(.*)=(.*)");
+	for (;it!=end; ++it) {
+		if ( rx.exactMatch(*it) ) { // fg=, selfg= ...
+			QColor col (rx.cap(2)); //can be a name or rgb
+			if ( rx.cap(1) == "fg" ) {
+				option[idx] = QString::number(col.rgb(),16);
+			} else if ( rx.cap(1) == "bg" ) {
+				option[6+idx] = QString::number(col.rgb(),16);
+			} else if ( rx.cap(1) == "selfg" ) {
+				option[1+idx] = QString::number(col.rgb(),16);
+			} else if ( rx.cap(1) == "selbg" ) {
+				option[7+idx] = QString::number(col.rgb(),16);
+			}
+		} else { // bold, noitalic ...
+			if ( *it=="bold" )
+				option[2+idx] = "1";
+			if ( *it=="nobold" )
+				option[2+idx] = "0";
+			if ( *it=="italic" )
+				option[3+idx] = "1";
+			if ( *it=="noitalic" )
+				option[3+idx] = "0";
+			if ( *it=="strikeout" )
+				option[4+idx] = "1";
+			if ( *it=="nostrikeout" )
+				option[4+idx] = "0";
+			if ( *it=="underline" )
+				option[5+idx] = "1";
+			if ( *it=="nounderline" )
+				option[5+idx] = "0";
+		}
+	}
+	yzDebug() << "HIGHLIGHT : Setting new " << option << endl;
+	YZSession::mOptions.setQStringListOption(type, option);
+	
+	YZSession::mOptions.setGroup("Global");
+	YzisHighlighting *yzis = args.view->myBuffer()->highlight();
+	if (yzis) {
+		args.view->myBuffer()->makeAttribs();
+		args.view->refreshScreen();
+	}
 
 	return QString::null;
 }

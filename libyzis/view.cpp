@@ -1597,7 +1597,6 @@ unsigned int YZView::drawLineNumber( ) {
 }
 
 unsigned int YZView::drawTotalHeight() {
-
 	unsigned int totalHeight = 0;
 
 	initDraw( 0, 0, 0, 0 );
@@ -1689,6 +1688,17 @@ QString YZView::match( const QString&, YZCommandArgs ) {
 	if ( found )
 		gotoxy( pos.getX(), pos.getY() );
 
+	purgeInputBuffer();
+	return QString::null;
+}
+
+QString YZView::gotoMark( const QString& inputsBuff, YZCommandArgs ) {
+	yzDebug() << "gotoMark " << inputsBuff.mid( 1,1 ) << endl;
+	bool found = false;
+	YZCursorPos pos = mBuffer->marks()->get(inputsBuff.mid( 1, 1 ), &found);
+	if ( found ) {
+		gotoxy(pos.bPos->getX(), pos.bPos->getY());
+	}
 	purgeInputBuffer();
 	return QString::null;
 }

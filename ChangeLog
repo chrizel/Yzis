@@ -1,6 +1,7 @@
 2004-06-03 mikmak
   * libyzis
     add % normal command
+    add ` and ' normal commands for markers
 
 2004-06-03 panard
   * libyzis

@@ -18,7 +18,7 @@
  **/
 
 /**
- * $Id: commands.h 335 2004-02-24 00:32:03Z orzel $
+ * $Id$
  */
 
 /**
@@ -35,11 +35,19 @@ class YZBuffer;
 struct buffer_operation
 {
 	enum OperationType {
-		ADDTEXT,
-		DELTEXT,
-		ADDLINE,
-		DELLINE
+		ADDTEXT, // insert some characters inside the line
+		DELTEXT, // delete some characters from the line
+		
+		// for ADDLINE and DELLINE, the arguments col and text are ignored.
+		ADDLINE, // insert a line before the specified line.
+		DELLINE  // delete the line from the buffer
+
 	};
+
+	/**  Perform the buffer operation on the buffer passed in argument.
+	  *  If opposite is true, perform the opposite operation (used for undo)
+	  */
+	void performOperation( YZBuffer * buf, bool opposite=false );
 
 	OperationType type;
 	QString text;
@@ -61,7 +69,7 @@ public:
 	 */
 	void commitUndoItem();
 
-	void addBufferOperation( BufferOperation::OperationType type, const QString & text, uint line, uint col );
+	void addBufferOperation( BufferOperation::OperationType type, const QString & text, uint col, uint line );
 
 	/** 
 	 * Undo the last operations on the buffer, move backward in the undo list.
@@ -79,9 +87,14 @@ public:
 	/*! Return whether it is possibe to issue an undo */
 	bool mayUndo();
 
-
 protected:
+	/** Sets this while performing undo and redo, so that the operations
+	 * are not registred as new buffer commands */
+	void setInsideUndo( bool set ) { mInsideUndo = true; }
+
+	/** purge the undo list after the current item */
 	void removeUndoItemAfterCurrent();
+
 	QString toString(QString msg="");
 	QString undoItemToString( UndoItem * item);
 
@@ -89,6 +102,7 @@ protected:
 	UndoItem * mFutureUndoItem;
 	QPtrList<UndoItem> mUndoItemList;
 	QPtrListIterator<UndoItem> mCurrentUndoItem;
+	bool mInsideUndo;
 };
 
 #endif // YZ_UNDO_H

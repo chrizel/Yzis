@@ -97,7 +97,7 @@ class YZExRange {
 class YZExCommand {
 
 	public :
-		YZExCommand( const QString& input, ExPoolMethod pm, bool word = true );
+		YZExCommand( const QString& input, ExPoolMethod pm, const QStringList& longName = QStringList(), bool word = true );
 		virtual ~YZExCommand() { }
 
 		const QString & keySeq() const { return mKeySeq; }
@@ -107,6 +107,7 @@ class YZExCommand {
 	private :
 		QRegExp mRegexp;
 		QString mKeySeq;
+		QStringList mLongName;
 		ExPoolMethod mPoolMethod;
 
 };

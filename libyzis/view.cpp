@@ -531,10 +531,10 @@ void YZView::gotodx( unsigned int nextx ) {
 		return;
 	}
 	*/
-	while ( workCursor->screenX() > nextx )
-		if ( ! drawPrevCol( ) ) break;
 	while ( workCursor->screenX() < nextx && workCursor->bufferX() < sCurLineLength - shift )
 		drawNextCol( );
+	while ( workCursor->screenX() > nextx )
+		if ( ! drawPrevCol( ) ) break;
 }
 
 void YZView::gotox( unsigned int nextx, bool forceGoBehindEOL ) {

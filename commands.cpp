@@ -599,6 +599,7 @@ QString YZCommandPool::append(const YZCommandArgs &args) {
 }
 
 QString YZCommandPool::change(const YZCommandArgs &args) {
+	YZCursor oldBufCursor = *args.view->getBufferCursor();
 	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
 		args.view->myBuffer()->action()->deleteArea(args.view, ( args.selection )[ 0 ].from(), ( args.selection )[ 0 ].to() , args.regs);
 	else {
@@ -606,9 +607,17 @@ QString YZCommandPool::change(const YZCommandArgs &args) {
 		args.view->myBuffer()->action()->deleteArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	}
 	args.view->commitNextUndo();
-	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) 
+	if ( args.view->getCurrentMode()>=YZView::YZ_VIEW_MODE_VISUAL ) {
 		args.view->leaveVisualMode();
-	args.view->append();
+		args.view->gotoInsertMode();
+	} else {
+		// if the cursor moved, that means that we were at the end of a line
+		// and it has been moved back during delete, thus we have to push it back
+		if(oldBufCursor == args.view->getBufferCursor())
+			args.view->gotoInsertMode();
+		else
+			args.view->append();
+	}
 	return QString::null;
 }
 

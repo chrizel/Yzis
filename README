@@ -8,3 +8,4 @@ In a near future we hope to drop TinyQ and just keep Qt (4.x), since Qt should b
 LICENSES
 kyzispart and libyzis are published under LGPL. See COPYING.LGPL for more details.
 kyzis and nyzis are published under GPL. See COPYING for more details.
+.

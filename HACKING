@@ -24,11 +24,15 @@ YZView is a view on a buffer. A view has a cursor but is not necessarily
 visible at all times (think MDI). A buffer may have multiple views on itself,
 like when a window is splitted, or even with multiple windows showing the same buffer.
 
-YZSession is the central managing point of Yzis. It dispatches the events of
-the core to the gui. One important concept in Yzis is that it only reacts on
-events. This is different from gvim, which blocks completely until it receives
-an event (this is one of the reason why we started yzis, see the link history
-on the web site).
+YZSession is the central managing point of Yzis. Session is responsible for
+creating the views and buffer. It dispatches the events of the core to the
+gui. One important concept in Yzis is that it only reacts on events. This is
+different from gvim, which blocks completely until it receives an event (this
+is one of the reason why we started yzis, see the link history on the web
+site).
+
+In order to start a new port of yzis, you need to subclass YZBuffer, YZView
+and YZSession and implement the pure virtuals functions.
 
 When a line is changed on a buffer, the YZBuffer notifies the gui with an
 InvalidateLine event. The views retrieve the event and repaint the line. When

@@ -19,6 +19,13 @@ For Kyzis , KDE 3.2 is required.
 
 You probably need to configure --with-lua-includes=... so that it finds your Lua 5.x installation.
 
+For QYzis on windows, you'll need a Qt non commercial license or a Qt
+educational license. You can get a Qt non commercial license for Qt 3.2.1 by
+buying the book "Programming with Qt".
+
+It might be possible to build QYZis on windows using mingw and the free port
+of qt3 to windows or cygwin-qt but we haven't tried yet.
+
 Licenses:
 =========
 libyzis is published under LGPL. See COPYING.LGPL for more

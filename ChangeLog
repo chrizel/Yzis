@@ -1,3 +1,8 @@
+2003-05-28 orzel
+  * some warning fixed
+  * yz_event_setstatus now uses a QString* instead of a char*, as does setline
+  * some code factorization -> gotoxy()
+
 2003-05-24 mikmak
   * migration to Subversion completed :)
 

@@ -1,3 +1,7 @@
+2004-06-27 mikmak
+  * libyzis
+    prepare for swapfile support
+
 2004-06-04 mikmak
   * libyzis
     add d`a like commands (delete to marks)

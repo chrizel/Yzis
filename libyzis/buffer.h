@@ -34,6 +34,7 @@
 #include "syntaxhighlight.h"
 #include "action.h"
 #include "mark.h"
+#include "swapfile.h"
 
 class YZView;
 class YZLine;
@@ -41,6 +42,7 @@ class YZSession;
 class YZUndoBuffer;
 class YZAction;
 class YZMark;
+class YZSwapFile;
 
 typedef QValueVector<YZLine*> YZBufferData;
 static QString myNull;
@@ -351,7 +353,16 @@ public:
 	 */
 	bool substitute( const QString& what, const QString& with, bool wholeline, unsigned int line );
 	
+	/**
+	 * Refresh all views
+	 */
 	void updateAllViews();
+
+	/**
+	 * Access to the swapfile
+	 * @return a pointer to the swap file
+	 */
+	YZSwapFile* getSwapFile() { return mSwap; }
 
 protected:
 	/** 
@@ -380,6 +391,7 @@ protected:
 private:
 	YZAction* mAction;
 	YZMark* mMarks;
+	YZSwapFile *mSwap;
 };
 
 #endif /*  YZ_BUFFER_H */

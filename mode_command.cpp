@@ -1206,7 +1206,7 @@ void YZModeCommand::indent( const YZCommandArgs& args ) {
 	YZInterval area = interval( args );
 	unsigned int fromY = area.fromPos().getY();
 	unsigned int toY = area.toPos().getY();
-	if ( area.to().opened() && area.toPos().getX() == 0 )
+	if ( toY > fromY && area.to().opened() && area.toPos().getX() == 0 )
 		--toY;
 	unsigned int maxY = args.view->myBuffer()->lineCount() - 1;
 	if ( toY > maxY ) toY = maxY;

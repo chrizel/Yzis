@@ -4,13 +4,14 @@
 #include <ktexteditor/view.h>
 #include "kyzisdoc.h"
 #include "kyzisedit.h"
+#include "kyziscommand.h"
 #include <yz_view.h>
 #include <kstatusbar.h>
 #include <qevent.h>
 #include <gui.h>
-#include <kcombobox.h>
 
 class KYZisEdit;
+class KYZisCommand;
 
 class KYZisView: public KTextEditor::View
 	, public YZView
@@ -34,9 +35,8 @@ class KYZisView: public KTextEditor::View
 		KYZisEdit *editor;
 		KYZisDoc *buffer;
 		KStatusBar *status;
-		int last_event_done;
 		YZSession *currentSession;
-		KComboBox *command;
+		KYZisCommand *command;
 };
 
 #endif

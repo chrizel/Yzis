@@ -153,8 +153,8 @@ public:
 
 	void redrawScreen();
 
-protected:
 	void	gotoxy(int nextx, int nexty);
+protected:
 	
 protected:
 	YZBuffer 	*buffer; 	/** buffer we use */
@@ -164,9 +164,10 @@ protected:
 	int		current_maxx;	/** maximum value for x, that s (lenght of current line -1), -1 means the line is empty */
 
 	enum {
-		YZ_VIEW_MODE_INSERT,
-		YZ_VIEW_MODE_REPLACE,
-		YZ_VIEW_MODE_COMMAND 
+		YZ_VIEW_MODE_INSERT, // insert
+		YZ_VIEW_MODE_REPLACE, // replace
+		YZ_VIEW_MODE_COMMAND, // normal
+		YZ_VIEW_MODE_EX //script 
 	}		mode;		/** mode of this view */
 
 	QValueList<yz_event> events;

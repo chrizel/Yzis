@@ -53,7 +53,7 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void KYZisEdit::contentsMousePressEvent ( QMouseEvent * e ) {
-	_parent->updateCursor(e->x()/fontMetrics().maxWidth() , e->y()/fontMetrics().lineSpacing() + _parent->getCurrent());
+	_parent->gotoxy(e->x()/fontMetrics().maxWidth() , e->y()/fontMetrics().lineSpacing() + _parent->getCurrent());
 }
 
 void KYZisEdit::drawCursorAt(int x, int y) {

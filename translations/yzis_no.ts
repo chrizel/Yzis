@@ -1,5 +1,12 @@
 <!DOCTYPE TS><TS>
 <context>
+    <name>KTextEditor</name>
+    <message>
+        <source>Yzis Ready</source>
+        <translation type="unfinished">Yzis klar</translation>
+    </message>
+</context>
+<context>
     <name>KYZisDoc</name>
     <message>
         <source>Yzis is not able to save remote files for now</source>
@@ -53,11 +60,59 @@
     </message>
     <message>
         <source>search hit TOP, continuing at BOTTOM</source>
-        <translation type="unfinished"></translation>
+        <translation>Søket traff TOPPEN, fortsetter fra BUNNEN</translation>
     </message>
     <message>
         <source>search hit BOTTOM, continuing at TOP</source>
+        <translation>Søket traff BUNNEN, fortsetter fra TOPPEN</translation>
+    </message>
+    <message>
+        <source>[ Awaiting Command ]</source>
+        <translation type="unfinished">[ Venter på kommando ]</translation>
+    </message>
+    <message>
+        <source>[ Introduction ]</source>
+        <translation type="unfinished">[ Introduksjon ]</translation>
+    </message>
+    <message>
+        <source>[ Ex ]</source>
+        <translation type="unfinished">[ Ex ]</translation>
+    </message>
+    <message>
+        <source>One file is modified! Save it first...</source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Insert ]</source>
+        <translation type="unfinished">[ Sett inn ]</translation>
+    </message>
+    <message>
+        <source>[ Replace ]</source>
+        <translation type="unfinished">[ Erstatt ]</translation>
+    </message>
+    <message>
+        <source>{ Completion }</source>
+        <translation type="unfinished">{ komplettering }</translation>
+    </message>
+    <message>
+        <source>[ Search ]</source>
+        <translation type="unfinished">[ Søk ]</translation>
+    </message>
+    <message>
+        <source>No match</source>
+        <translation type="unfinished">Ingen treff</translation>
+    </message>
+    <message>
+        <source>[ Search backward ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>[ Visual ]</source>
+        <translation type="unfinished">[ Visuell ]</translation>
+    </message>
+    <message>
+        <source>[ Visual Line ]</source>
+        <translation type="unfinished">[ Visuell linje ]</translation>
     </message>
 </context>
 <context>
@@ -68,18 +123,22 @@
     </message>
     <message>
         <source>A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?</source>
-        <translation>En swap-fil ble funnet for denne filen. Den ble antagelig laget fordi maskinen din eller yzis kræsjet, vil du starte gjenopprettelse av denne filen?</translation>
+        <translation type="obsolete">En swap-fil ble funnet for denne filen. Den ble antagelig laget fordi maskinen din eller yzis kræsjet. Vil du starte gjenopprettelse av denne filen?</translation>
     </message>
     <message>
         <source>Written %1 bytes to file %2</source>
         <translation>%1 bytes ble skrevet til filen %2</translation>
+    </message>
+    <message>
+        <source>A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>YZExLua</name>
     <message>
         <source>The file %1 could not be found in standard directories</source>
-        <translation>Filen %1 ble ikk funnet i standard-katalogene</translation>
+        <translation>Filen %1 ble ikke funnet i noen av standardkatalogene</translation>
     </message>
     <message>
         <source>Lua error when running file %1:
@@ -99,58 +158,58 @@
     </message>
     <message>
         <source>The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files.</source>
-        <translation>Swap-filen kunne ikke åpnes, det vil ikke være mulig å gjenopprette denne filen. Du vil kanskje sjekke filrettigheter.</translation>
+        <translation>Swap-filen kunne ikke åpnes, det vil ikke være mulig å gjenopprette denne filen. Du vil kanskje sjekke filrettighetene.</translation>
     </message>
 </context>
 <context>
     <name>YZView</name>
     <message>
         <source>[ Insert ]</source>
-        <translation>[ Sett inn ]</translation>
+        <translation type="obsolete">[ Sett inn ]</translation>
     </message>
     <message>
         <source>[ Replace ]</source>
-        <translation>[ Erstatt ]</translation>
+        <translation type="obsolete">[ Erstatt ]</translation>
     </message>
     <message>
         <source>[ Awaiting Command ]</source>
-        <translation>[ Venter på kommando ]</translation>
+        <translation type="obsolete">[ Venter på kommando ]</translation>
     </message>
     <message>
         <source>[ Ex ]</source>
-        <translation>[ Ex ]</translation>
+        <translation type="obsolete">[ Ex ]</translation>
     </message>
     <message>
         <source>[ Search ]</source>
-        <translation>[ Søk ]</translation>
+        <translation type="obsolete">[ Søk ]</translation>
     </message>
     <message>
         <source>[ Open ]</source>
-        <translation>[ Åpen ]</translation>
+        <translation type="obsolete">[ Åpen ]</translation>
     </message>
     <message>
         <source>[ Introduction ]</source>
-        <translation>[ Introduksjon ]</translation>
+        <translation type="obsolete">[ Introduksjon ]</translation>
     </message>
     <message>
         <source>{ Completion }</source>
-        <translation>{ komplettering }</translation>
+        <translation type="obsolete">{ komplettering }</translation>
     </message>
     <message>
         <source>[ Visual ]</source>
-        <translation>[ Visuell ]</translation>
+        <translation type="obsolete">[ Visuell ]</translation>
     </message>
     <message>
         <source>[ Visual Line ]</source>
-        <translation>[ Visuell linje ]</translation>
+        <translation type="obsolete">[ Visuell linje ]</translation>
     </message>
     <message>
         <source>Yzis Ready</source>
-        <translation>Yzis klar</translation>
+        <translation type="obsolete">Yzis klar</translation>
     </message>
     <message>
         <source>No match</source>
-        <translation>Ingen treff</translation>
+        <translation type="obsolete">Ingen treff</translation>
     </message>
     <message>
         <source>All</source>
@@ -166,11 +225,23 @@
     </message>
     <message>
         <source>To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode</source>
-        <translation>For å bruke Qt-printeren må du ha en X11-server kjørende og ha satt miljøvariabelen DISPLAY satt. I konsoll burde du prøve pslib</translation>
+        <translation>For å bruke Qt-printeren må du ha en X11-server kjørende og ha satt miljøvariabelen DISPLAY. I konsoll kan du prøve pslib</translation>
     </message>
     <message>
         <source> { Recording }</source>
         <translation>{ Spiller inn }</translation>
+    </message>
+    <message>
+        <source>File modified</source>
+        <translation>Det er gjort forandringer i filen</translation>
+    </message>
+    <message>
+        <source>This file has been modified, do you want to save it ?</source>
+        <translation type="obsolete">Det er gjort forandringer i filen, vil du lagre?</translation>
+    </message>
+    <message>
+        <source>This file has been modified, do you want to save it?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

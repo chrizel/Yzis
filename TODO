@@ -4,4 +4,6 @@
 - make yzDebug() works in nyzis !
 - merge last changes into nyzis ...
 - make EX works in nyzis
-- stop nyzis from grabbing the CPU for itself ;)
+- yzAssert()
+- tabas in nyzis
+- move events to Qt events

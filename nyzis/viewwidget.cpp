@@ -62,7 +62,8 @@ void NYZView::handle_event(yz_event e)
 				e.setcursor.c2+1,
 				e.setcursor.percentage
 				);
-			wmove(window, e.setcursor.l, e.setcursor.c - getCurrent()) ;
+			//yzAssert(isLineVisible(e.setcursor.c));
+			wmove(window, e.setcursor.l-getCurrent() , e.setcursor.c ) ;
 			wrefresh( window );
 //			debug("YZ_EV_SET_CURSOR: received");
 			break;

@@ -33,6 +33,7 @@ public:
 	  * Used by the buffer to post events
 	  */
 	void	post_event (yz_event );
+
 	/**
 	 * get a event to handle from the core.
 	 * that's the way the core is sending messages to the gui

@@ -27,8 +27,9 @@ void KYZisEdit::setCursor(int c, int l) {
 }
 
 void KYZisEdit::setTextLine(int l, const QString &str){
-//	drawText(0,l * fontMetrics().lineSpacing(),str);
 	mText.insert(l,str);
+	updateContents();
+// 	viewport()->repaint(); // the whole view
 }
 
 // INTERNAL API
@@ -49,9 +50,7 @@ void KYZisEdit::drawContents(QPainter *p, int clipx, int clipy, int clipw, int c
 	//XXX draw text inside the clip
 	KYZLine::iterator it;
 	for (it = mText.begin(); it!=mText.end(); ++it) {
-		if (clipy < fontMetrics().lineSpacing() * it.key() && cliph + clipy > fontMetrics().lineSpacing() * it.key() ) {
 			p->drawText(0,it.key() * fontMetrics().lineSpacing(),it.data());
-		}
 	}
 	
 	//XXX draw the cursor if needed

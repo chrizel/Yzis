@@ -127,14 +127,21 @@ void TestYZCommands::testCharMovement()
     mView->sendText( "<Down>" );
     CHECK_CURSOR_POS( mView, 1, 0 );          
 
+    mView->sendText( "2<Right>" );
     mView->sendText( "<Right>" );
-    mView->sendText( "<Right>" );
-    mView->sendText( "<Right>" );
-    mView->sendText( "<Down>" );
-    mView->sendText( "<Down>" );
+    mView->sendText( "2<Down>" );
     CHECK_CURSOR_POS( mView, 3, 3 );
 
-    // rerun the same tests using hjkl
+    mView->sendText( "10<Left>" );
+    CHECK_CURSOR_POS( mView, 3, 0 );
+    mView->sendText( "10<Up>" );
+    CHECK_CURSOR_POS( mView, 0, 0 );
+    mView->sendText( "10<Right>" );
+    CHECK_CURSOR_POS( mView, 0, 3 );
+    mView->sendText( "10<Down>" );
+    CHECK_CURSOR_POS( mView, 3, 3 );
+
+    // now with hjkl
 
     mView->sendText( "l" );
     mView->sendText( "j" );
@@ -146,26 +153,20 @@ void TestYZCommands::testCharMovement()
      mView->sendText( "k" );
     CHECK_CURSOR_POS( mView, 2, 2 );
 
-    mView->sendText( "k" );
-    mView->sendText( "k" );
-    mView->sendText( "k" );
+    mView->sendText( "3k" );
     CHECK_CURSOR_POS( mView, 0, 2 );
     mView->sendText( "k" );
     CHECK_CURSOR_POS( mView, 0, 2 );
     
-    mView->sendText( "h" );
-    mView->sendText( "h" );
+    mView->sendText( "2h" );
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendText( "h" );
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendText( "j" );
     CHECK_CURSOR_POS( mView, 1, 0 );          
 
-    mView->sendText( "l" );
-    mView->sendText( "l" );
-    mView->sendText( "l" );
-    mView->sendText( "j" );
-    mView->sendText( "j" );
+    mView->sendText( "3l" );
+    mView->sendText( "2j" );
     CHECK_CURSOR_POS( mView, 3, 3 );
 }
 

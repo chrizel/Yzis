@@ -227,6 +227,11 @@ class YZView {
 		QString appendAtEOL ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
 
 		/**
+		 * Join current and next line
+		 */
+		QString joinLine ( const QString& inputsBuff = QString::null, YZCommandArgs args = YZCommandArgs() );
+
+		/**
 		 * Moves the draw cursor to @arg nextx, @arg nexty
 		 */
 		void gotodxdy(unsigned int nextx, unsigned int nexty);

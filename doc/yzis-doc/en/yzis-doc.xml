@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.2//EN"
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN"
 "/usr/share/sgml/docbook/dtd/4.3/docbookx.dtd" [
 <!-- "/usr/share/sgml/docbook/xml-dtd-4.2/docbookx.dtd" [ -->
 	
@@ -20,7 +20,7 @@
 		<title>Yzis Documentation</title>
 		
 		<mediaobject>
-			<imageobject> <imagedata fileref="pics/yzis-logo.png" format="PNG" /> </imageobject>
+			<imageobject><imagedata fileref="pics/yzis-logo.png" format="PNG"/></imageobject>
 		</mediaobject>
 		
 	</bookinfo>

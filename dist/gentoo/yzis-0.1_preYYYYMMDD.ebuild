@@ -1,4 +1,4 @@
-# Copyright 1999-2004 Gentoo Foundation
+# Copyright 1999-2005 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
@@ -6,7 +6,7 @@ DESCRIPTION="Yzis - VI-like editor"
 HOMEPAGE="http://www.yzis.org/"
 LICENSE="LGPL-2 GPL-2"
 
-IUSE="kde ncurses pslib"
+IUSE="kde ncurses pslib arts"
 SLOT="0"
 KEYWORDS="~x86 ~amd64"
 
@@ -33,6 +33,9 @@ src_compile() {
 	if ! use kde; then
 		myconf="${myconf} --disable-kyzis"
 	fi
+	if ! use arts; then
+		myconf="${myconf} --without-arts"
+	fi
 	if ! use ncurses; then
 		myconf="${myconf} --disable-nyzis"
 	fi
@@ -58,7 +61,7 @@ src_compile() {
 }
 
 src_install() {
-	einstall
+	emake DESTDIR=${D} install
 	dodoc TODO README AUTHORS ChangeLog COPYING COPYING.LGPL doc/VI-COMPATIBILITY
 	insinto "usr/share/doc/${PF}"; doins -r doc/examples
 }

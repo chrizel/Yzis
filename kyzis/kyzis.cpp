@@ -234,10 +234,13 @@ void Kyzis::createBuffer(const QString& path) {
 }
 
 void Kyzis::setCaption( int tab, const QString& caption ) {
-	kdDebug() << "setCaption : " << caption << endl;
+	// Parse out the filename.
+	QString filename = caption.section("/", -1);
+	kdDebug() << "setCaption : " << filename << endl;
+	
 	if ( viewList.contains( tab ) ) {
-		viewList[ tab ].v->setCaption(caption);
-		viewList[ tab ].v->setTabCaption(caption);
+		viewList[ tab ].v->setCaption(filename);
+		viewList[ tab ].v->setTabCaption(filename);
 	}
 }
 

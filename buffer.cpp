@@ -533,7 +533,7 @@ void YZBuffer::load(const QString& file) {
 #if QT_VERSION < 0x040000
 	if ( fl.open( IO_ReadOnly ) ) {
 #else
-	if ( fl.open( QIODevice::ReadOnly ) ) {
+	if ( QFile::exists(mPath) && fl.open( QIODevice::ReadOnly ) ) {
 #endif
 		QTextCodec* codec;
 		if ( currentEncoding == "locale" ) {
@@ -561,7 +561,7 @@ void YZBuffer::load(const QString& file) {
 		while ( !stream.atEnd() )
 			appendLine( stream.readLine() );
 		fl.close();
-	} else {
+    } else if (QFile::exists(mPath)) {
 		YZSession::me->popupMessage(_("Failed opening file %1 for reading : %2").arg(mPath).arg(fl.errorString()));
 	}
 	if ( ! mText.count() )

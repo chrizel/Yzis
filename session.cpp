@@ -13,7 +13,6 @@ YZSession::YZSession( const QString& _sessionName ) {
 	motionpool->initPool();
 	sessionName = _sessionName;
 	curView = 0;
-	curBuffer = 0;
 }
 
 YZSession::~YZSession() {
@@ -56,6 +55,13 @@ YZBuffer *YZSession::createBuffer(const QString& path) {
 	return b;
 }
 
+#if 0
+YZView *YZSession::createView(YZBuffer *buffer) {
+	YZView *view = new YZView(buffer, this);
+	return view;
+}
+#endif
+
 void YZSession::addBuffer( YZBuffer *b ) {
 	buffers.insert(b->fileName(), b);
 }
@@ -84,16 +90,25 @@ void YZSession::setCurrentView( YZView* view ) {
 	gui_manager->setCurrentView( view );
 }
 
-void YZSession::setCurrentBuffer( YZBuffer* buffer) {
-	curBuffer = buffer;
-	//update the GUIs now
-	gui_manager->setCurrentBuffer( buffer );
+YZView* YZSession::nextView() {
+	QMap<QString,YZBuffer*>::Iterator it;
+	YZView *next = NULL;
+	bool found = false;
+
+	for ( it = buffers.begin(); !found && it!=buffers.end(); it++ ) {
+		YZBuffer* b = ( *it );
+		for ( QValueList<YZView*>::iterator vit = b->views().begin(); 
+				!found && vit != b->views().end(); ++vit ) {
+			YZView *idxv = ( *vit );
+			if ( next != NULL ) {
+				next = idxv;
+				found = true;
+				break;
+			}
+			if ( idxv == curView ) next = idxv;//fake,just make it change at next turn
+		}
+	}
+
+	return next;
 }
 
-YZBuffer* YZSession::nextBuffer() {
-	QMap<QString,YZBuffer*>::Iterator it;
-	for ( it = buffers.begin(); it!=buffers.end(); it++ ) {
-		while ( *it != curBuffer ) continue;
-		return *it;
-	}
-}

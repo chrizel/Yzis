@@ -83,14 +83,14 @@ class Gui {
 		virtual void quit(bool savePopup=true) = 0;
 
     /**
-     * Switch buffers
-     */
-    virtual void setCurrentBuffer( YZBuffer* ) = 0;
-
-    /**
      * Switch views
      */
     virtual void setCurrentView ( YZView* ) = 0;
+
+		/**
+		 * Create a new view
+		 */
+		virtual YZView* createView ( YZBuffer* ) = 0;
 };
 
 #endif // GUI_H

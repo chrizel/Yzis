@@ -26,8 +26,8 @@ public:
 	void chgChar (int x, int y, const QString& c);
 	void delChar (int x, int y, int count = 1);
 
-	void load(void);
-	void save(void);
+	void load();
+	void save();
 
 	void addLine(const QString &l);
 
@@ -52,11 +52,20 @@ public:
 
 	unsigned int getLines( void ) { return text.count(); }
 
+	/**
+	 * Change the filename
+	 */
+	void setPath( const QString& _path ) { path = _path; }
+
+	/**
+	 * Retrieve the path
+	 */
+	const QString& getPath() { return path; }
+
 	int myId;
 
 protected:
 	QString path;
-	//QPtrList<YZView> view_list;
 	QValueList<YZView*> view_list;
 
 	void	updateAllViews();

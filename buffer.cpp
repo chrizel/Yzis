@@ -611,7 +611,7 @@ QStringList YZBuffer::getText(YZCursor& from, YZCursor& to) {
 		list << textline( from.getY() ).mid( from.getX(), to.getX() - from.getX() + 1 );
 
 	//other lines
-	unsigned int i = from.getY();
+	unsigned int i = from.getY() + 1;
 	while ( i < to.getY() ) {
 		list << textline( i ); //the whole line	
 		i++;

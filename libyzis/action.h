@@ -64,6 +64,7 @@ class YZAction {
 		void replaceLine( YZView* pView, unsigned int Y, const QString &text );
 
 		YZCursor match( YZView* pView, YZCursor& mCursor, bool *found );
+		YZCursor search( YZView* pView, const QString& what, const YZCursor& mBegin, const YZCursor& mEnd, bool reverseSearch, unsigned int *matchlength, bool *found );
 
 	private:
 		YZBuffer* mBuffer;

@@ -246,6 +246,7 @@ private:
 	QString redisplay(const YZCommandArgs &args);
 	QString changeCase(const YZCommandArgs &args);
 	QString replace(const YZCommandArgs &args);
+	QString completeKeywordForward(const YZCommandArgs &args);
 
 	friend class YZNewMotion;
 };

@@ -36,7 +36,7 @@ YZDebugBackend * YZDebugBackend::_instance = NULL;
 
 YZDebugBackend::YZDebugBackend() 
 {
-	_output = stderr;
+	_output = fopen("/tmp/yzisdebug.log", "w" );
 	init();
 }
 

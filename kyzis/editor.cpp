@@ -335,6 +335,7 @@ void KYZisEdit::drawContents( int , int clipy, int , int cliph, bool ) {
 		while ( cliph > 0 && currentY < fh ) {
 			myRect.setRect ( 0, currentY * linespace, width(), linespace );
 			erase( myRect );
+			p.setPen( Qt::cyan );
 			p.drawText(myRect,flag ,"~");
 			++currentY;
 			--cliph;

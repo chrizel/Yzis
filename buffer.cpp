@@ -12,18 +12,17 @@
 #include "debug.h"
 #include <assert.h>
 
-//initialise buffer IDs counter (static)
-int YZBuffer::buffer_ids = 0;
-
 YZBuffer::YZBuffer(YZSession *sess, const QString& _path) {
-	myId = buffer_ids++;
+	myId = YZSession::nbBuffers++;
 	session = sess;
-	path	= _path;
+	if ( !_path.isNull() )
+		path = _path;
+	else path = "new" + myId;
 
 	if (!_path.isEmpty()) load();
 	else {
-		QString blah( "" );
-		addLine(blah);
+/*		QString blah( "" );
+		addLine(blah);*/
 	}
 	session->addBuffer( this );
 }
@@ -184,7 +183,10 @@ YZView* YZBuffer::findView( int uid ) {
 	QValueList<YZView*>::iterator it;
 	for ( it = view_list.begin(); it != view_list.end(); ++it ){
 		YZView* v = ( *it );
-		if ( v->myId == uid ) return v;
+		if ( v->myId == uid ) {
+			yzDebug() << "Buffer: View " << uid << " found" << endl;
+			return v;
+		}
 	}
 	return NULL;
 }

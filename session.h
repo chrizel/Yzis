@@ -55,7 +55,7 @@ class YZSession {
 		/**
 		 * Count the current buffers in this session
 		 */
-		int nbBuffers() { return buffers.count(); }
+//		int nbBuffers() { return buffers.count(); }
 
 		/**
 		 * Creates a new buffer
@@ -112,10 +112,14 @@ class YZSession {
 
 	private:
 		QString sessionName;
-    YZCommandPool *pool;
-    YZCommandPool *expool;
-    YZMotionPool *motionpool;
+		YZCommandPool *pool;
+		YZCommandPool *expool;
+		YZMotionPool *motionpool;
 		YZView* curView;
+
+	public:
+		static int nbViews;
+		static int nbBuffers;
 
 };
 

@@ -5,6 +5,9 @@
 #include "session.h"
 #include "debug.h"
 
+int YZSession::nbViews = 0;
+int YZSession::nbBuffers = 0;
+
 YZSession::YZSession( const QString& _sessionName ) {
 	pool = new YZCommandPool();
 	pool->initPool();

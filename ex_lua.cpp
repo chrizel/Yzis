@@ -120,6 +120,7 @@ YZExLua::YZExLua() {
 	lua_register(L,"newoption",newoption);
 	lua_register(L,"set",set);
 	lua_register(L,"imap",imap);
+	lua_register(L,"map",map);
 }
 
 YZExLua::~YZExLua() {
@@ -581,6 +582,16 @@ int YZExLua::newoption(lua_State *L ) {
 	value_t type = (value_t)(int)lua_tonumber ( L, 6 );
 
 	YZSession::mOptions.createOption(option, group, defaultvalue, value, visibility, type );
+
+	return 0;
+}
+
+int YZExLua::map(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, "map", "map keys in normal mode")) return 0;
+	QString key = ( char * )lua_tostring ( L, 1 );
+	QString mapp = ( char * )lua_tostring ( L, 2 );
+
+	YZMapping::self()->addGlobalMapping(key, mapp);
 
 	return 0;
 }

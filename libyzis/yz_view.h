@@ -79,52 +79,52 @@ public:
 	/**
 	 * moves the cursor of the current view down
 	 */
-	QString moveDown( QString inputsBuff = QString::null );
+	QString moveDown( const QString& inputsBuff = QString::null );
 
 	/**
 	 * moves the cursor of the current view up 
 	 */
-	QString moveUp( QString inputsBuff = QString::null );
+	QString moveUp( const QString& inputsBuff = QString::null );
 
 	/**
 	 * moves the cursor of the current view left
 	 */
-	QString moveLeft( QString inputsBuff = QString::null );
+	QString moveLeft( const QString& inputsBuff = QString::null );
 
 	/**
 	 * moves the cursor of the current view right
 	 */
-	QString moveRight( QString inputsBuff = QString::null );
+	QString moveRight( const QString& inputsBuff = QString::null );
 
 	/**
 	 * moves the cursor of the current view to the start of the current line
 	 */
-	QString moveToStartOfLine( QString inputsBuff = QString::null );
+	QString moveToStartOfLine( const QString& inputsBuff = QString::null );
 
 	/**
 	 * moves the cursor of the current view to the end of the current line
 	 */
-	QString moveToEndOfLine( QString inputsBuff = QString::null );
+	QString moveToEndOfLine( const QString& inputsBuff = QString::null );
 
 	/**
 	 * deletes the character under the cursor
 	 */
-	QString deleteCharacter( QString inputsBuff = QString::null );
+	QString deleteCharacter( const QString& inputsBuff = QString::null );
 
 	/**
 	 * Start insert mode
 	 */
-	QString gotoInsertMode( QString inputsBuff = QString::null );
+	QString gotoInsertMode( const QString& inputsBuff = QString::null );
 
 	/**
 	 * Start replace mode
 	 */
-	QString gotoReplaceMode( QString inputsBuff = QString::null );
+	QString gotoReplaceMode( const QString& inputsBuff = QString::null );
 
 	/**
 	 * Go to line of file
 	 */
-	QString gotoLine( QString inputsBuff = QString::null );
+	QString gotoLine( const QString& inputsBuff = QString::null );
 
 	void redrawScreen();
 

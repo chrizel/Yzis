@@ -170,7 +170,7 @@ void	YZView::gotoxy(int nextx, int nexty)
 	purgeInputBuffer();
 }
 
-QString YZView::moveDown( QString inputsBuff ) {
+QString YZView::moveDown( const QString& inputsBuff ) {
 	int nb_lines=1;//default : one line down
 
 	//check the arguments
@@ -190,7 +190,7 @@ QString YZView::moveDown( QString inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::moveUp( QString inputsBuff ) {
+QString YZView::moveUp( const QString& inputsBuff ) {
 	int nb_lines=1;//default : one line down
 
 	//check the arguments
@@ -210,7 +210,7 @@ QString YZView::moveUp( QString inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::moveLeft( QString inputsBuff ) {
+QString YZView::moveLeft( const QString& inputsBuff ) {
 	int nb_cols=1;//default : one line left
 
 	//check the arguments
@@ -230,7 +230,7 @@ QString YZView::moveLeft( QString inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::moveRight( QString inputsBuff ) {
+QString YZView::moveRight( const QString& inputsBuff ) {
 	int nb_cols=1;//default : one column right
 	
 	//check the arguments
@@ -250,7 +250,7 @@ QString YZView::moveRight( QString inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::moveToStartOfLine( QString ) {
+QString YZView::moveToStartOfLine( const QString& ) {
 	//execute the code
 	gotoxy(0 , cursor->getY());
 	
@@ -258,7 +258,7 @@ QString YZView::moveToStartOfLine( QString ) {
 	return QString::null;
 }
 
-QString YZView::gotoLine(QString inputsBuff) {
+QString YZView::gotoLine(const QString& inputsBuff) {
 	int line=0;
 	//check arguments
 	//can be : 'gg' (goto Top),'G' or a number with one of them
@@ -286,7 +286,7 @@ QString YZView::gotoLine(QString inputsBuff) {
 // end of goto-like command
 
 
-QString YZView::moveToEndOfLine( QString ) {
+QString YZView::moveToEndOfLine( const QString& ) {
 	QString lin;
 	
 	//execute the code
@@ -304,7 +304,7 @@ QString YZView::moveToEndOfLine( QString ) {
 	return QString::null;
 }
 
-QString YZView::deleteCharacter( QString inputsBuff ) {
+QString YZView::deleteCharacter( const QString& inputsBuff ) {
 	QString lin;
 	int nb_cols=1;//default : one row right
 	
@@ -327,14 +327,14 @@ QString YZView::deleteCharacter( QString inputsBuff ) {
 	return QString::null;
 }
 
-QString YZView::gotoInsertMode(QString) {
+QString YZView::gotoInsertMode(const QString&) {
 	mode = YZ_VIEW_MODE_INSERT;
 	postEvent(YZEvent::mkEventStatus("-- INSERT --"));
 	purgeInputBuffer();
 	return QString::null;
 }
 
-QString YZView::gotoReplaceMode(QString) {
+QString YZView::gotoReplaceMode(const QString&) {
 	mode = YZ_VIEW_MODE_REPLACE;
 	postEvent(YZEvent::mkEventStatus("-- REPLACE --") );
 	purgeInputBuffer();

@@ -47,11 +47,11 @@ void YZCommandPool::initPool() {
 	NEW_SESS_COMMAND("ZZ",&YZSession::saveBufferExit,true);
 }
 
-QString YZCommandPool::test(QString) {
+QString YZCommandPool::test(const QString&) {
 	return QString("testing");
 }
 
-void YZCommandPool::execCommand(YZView *view, QString inputs) {
+void YZCommandPool::execCommand(YZView *view, const QString& inputs) {
 	QString result,command;
 	int i=0;
 

@@ -20,7 +20,7 @@ class YZSession {
 		/**
 		 * Constructor. Give a session name to identify/save/load sessions.
 		 */
-		YZSession( QString _sessionName="Yzis" );
+		YZSession( const QString& _sessionName="Yzis" );
     virtual ~YZSession();
 
 		/**
@@ -41,7 +41,7 @@ class YZSession {
 		/**
 		 * Create a new buffer
 		 */
-		YZBuffer *createBuffer(QString path=QString::null);
+		YZBuffer *createBuffer(const QString& path=QString::null);
 
 		/**
 		 * Add a buffer
@@ -51,7 +51,7 @@ class YZSession {
 		/**
 		 * Save everything and get out
 		 */
-		QString saveBufferExit( QString inputsBuff = QString::null );
+		QString saveBufferExit( const QString& inputsBuff = QString::null );
 
 	protected:
 		/*

@@ -127,14 +127,18 @@ QString YZExExecutor::edit ( YZView *view, const QString& inputs ) {
 }
 
 QString YZExExecutor::set ( YZView *view, const QString& inputs ) {
-	QRegExp rx ( "set\s*(.*)=(.*)" );
-	bool idx = rx.exactMatch( inputs );
-	if ( !idx ) {
+	QRegExp rx ( "set(\\s*)(.*)=(.*)" ); //option with value
+	QRegExp rx2 ( "set(\\s*)no(.*)" ); //deactivate a bool option
+	QRegExp rx3 ( "set(\\s*)(.*)" ); //activate a bool option
+	if ( rx.exactMatch( inputs ) ) {
+		YZSession::setQStringOption(rx.cap( 2 ).simplifyWhiteSpace(), rx.cap( 3 ).simplifyWhiteSpace());
+	} else if ( rx2.exactMatch( inputs )) {
+		YZSession::setQStringOption(rx2.cap( 2 ).simplifyWhiteSpace(), "false");
+	} else if ( rx3.exactMatch( inputs ) ) {
+		YZSession::setQStringOption(rx3.cap( 2 ).simplifyWhiteSpace(), "true");
+	} else {
 		view->mySession()->popupMessage( tr( "Invalid option given" ) );
-		return QString::null;
 	}
-
-	YZSession::setQStringOption(rx.cap( 1 ).simplifyWhiteSpace(), rx.cap( 2 ).simplifyWhiteSpace());
 
 	return QString::null;
 }

@@ -70,12 +70,12 @@ class YZOption {
 		/**
 		 * Load settings from @param file
 		 */
-		static void loadFrom(const QString& file);
+		void loadFrom(const QString& file);
 
 		/**
 		 * Save settings to @param file
 		 */
-		static void saveTo(const QString& file);
+		void saveTo(const QString& file);
 
 		/**
 		 * return a QString option
@@ -134,6 +134,7 @@ class YZOption {
 		
 	private:
 		void init();
+		void initConfFiles();
 		
 		//QString here is == group/key
 		QMap<QString, KOption*> mOptions;

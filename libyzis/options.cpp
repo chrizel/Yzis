@@ -19,6 +19,9 @@
 
 #include "options.h"
 #include "debug.h"
+#include <qdir.h>
+#include <qfile.h>
+#include <qregexp.h>
 
 KOption::KOption( QString key, QString group, QString value, QString defaultValue) {
 	mKey = key;
@@ -61,8 +64,33 @@ YZOption::~YZOption() {
 YZOption::YZOption(const YZOption&) {
 }
 
-void YZOption::loadFrom(const QString& /* file */ ) {
-	
+void YZOption::loadFrom(const QString& file ) {
+	QFile f( file );
+
+	if ( !f.exists() ) return;
+
+	if ( f.open( IO_ReadOnly ) ) {
+		QTextStream stream( &f );
+		QRegExp rx("\\[(.*)\\]");
+		QRegExp rx2( "(.*)=(.*)" );
+		uint idx = 0;
+		while ( !stream.atEnd() ) {
+			QString line(stream.readLine() ); // line of text excluding '\n'
+			yzDebug() << "Parsing line : " << line << endl;
+			if ( rx.exactMatch( line ) )
+				setGroup(rx.cap(1).simplifyWhiteSpace());
+			else {
+				if ( rx2.exactMatch( line ) ) {
+					//we got an option there
+					setQStringOption(rx2.cap( 1 ).simplifyWhiteSpace(), rx2.cap( 2 ).simplifyWhiteSpace());
+					yzDebug() << "Setting option " << rx2.cap( 1 ).simplifyWhiteSpace() << " to " << rx2.cap( 2 ).simplifyWhiteSpace() << endl;
+				} else
+					yzDebug() << "Error parsing line " << idx << " of " << file << endl;
+			}
+			idx++;
+		}
+		f.close();
+	}
 }
 
 void YZOption::saveTo(const QString& /* file */ ) {
@@ -70,12 +98,15 @@ void YZOption::saveTo(const QString& /* file */ ) {
 }
 
 void YZOption::init() {
-	KOption *tabwidth = new KOption("tabwidth", "general", 4, 8 );
+	KOption *tabwidth = new KOption("tabwidth", "general", 8, 8 );
 	KOption *number = new KOption("number","general", false, false);
 
 	mOptions[ "general/tabwidth" ] = tabwidth;
 	mOptions[ "general/number" ] = number;
 	setGroup("general");
+
+	//read config files now
+	initConfFiles();
 }
 
 const QString& YZOption::readQStringEntry( const QString& key ) {
@@ -90,7 +121,6 @@ void YZOption::setQStringOption( const QString& key, const QString& option ) {
 		mOptions[ currentGroup + '/' + key ] = opt;
 	} else {
 		QMap<QString,KOption*>::Iterator it;
-		for ( it = mOptions.begin(); it!=mOptions.end() ; it++ ) yzDebug() << "LOOP : " << it.key() << endl;
 	}
 }
 
@@ -109,7 +139,7 @@ void YZOption::setIntOption( const QString& key, int option ) {
 
 bool YZOption::readBoolEntry( const QString& key ) {
 	const QString& s = mOptions[ currentGroup + '/' + key ]->getValue();
-	return s.toInt();
+	return s == "true" ? true : false;
 }
 
 void YZOption::setBoolOption( const QString& key, bool option ) {
@@ -152,3 +182,14 @@ void YZOption::setGroup( const QString& group ) {
 	currentGroup = group;
 }
 
+void YZOption::initConfFiles() {
+	//first, do we have a config directory ?
+	QDir homeConf( QDir::homeDirPath()+"/.yzis/" );
+	if ( !homeConf.exists( QDir::homeDirPath()+"/.yzis/" ) )
+		if ( !homeConf.mkdir(QDir::homeDirPath()+"/.yzis/", true) ) return;
+	
+	//do i have a main config file ?
+	QFile mainConf(QDir::homeDirPath()+"/.yzis/yzis.conf");
+	if ( mainConf.exists() )
+		loadFrom(QDir::homeDirPath()+"/.yzis/yzis.conf");
+}

@@ -188,8 +188,9 @@ void YZModeInsert::commandDel( YZView* mView, const QString& ) {
 	YZBuffer* mBuffer = mView->myBuffer();
 	if ( cur.x() == mBuffer->textline( cur.y() ).length() && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
 		mBuffer->action()->mergeNextLine( mView, cur.y() );
+	} else {
+		mBuffer->action()->deleteChar( mView, cur, 1 );
 	}
-	mBuffer->action()->deleteChar( mView, cur, 1 );
 }
 void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 	YZCursor cur = *mView->getBufferCursor();

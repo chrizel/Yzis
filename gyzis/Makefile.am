@@ -6,7 +6,7 @@ applnkediteurs_DATA = gyzis.desktop
 applnkediteursdir = $(kde_appsdir)/Editeurs
 
 bin_PROGRAMS = gyzis
-gyzis_SOURCES = main.cpp view.cpp document.cpp gyzis.cpp
+gyzis_SOURCES = main.cpp gview.cpp document.cpp gyzis.cpp
 gyzis_LDFLAGS = $(all_libraries) `pkg-config bakery-2.4 --libs`
 gyzis_LDADD = $(top_builddir)/libyzis/libqtyzis/libqtyzis.la
 

@@ -21,8 +21,9 @@
 #define DOCUMENT_H
 
 #include "bakery/bakery.h"
+#include "buffer.h"
 
-class Document : public Bakery::Document
+class Document : public Bakery::Document, public YZBuffer
 {
 	public:
 		Document();
@@ -34,6 +35,12 @@ class Document : public Bakery::Document
 
 		void set_something(const Glib::ustring& strSomething);
 		Glib::ustring get_something() const;
+
+		//YZBuffer
+		bool popupFileSaveAs() { return true;}
+		void filenameChanged() {}
+		void highlightingChanged() {}
+
 
 	protected:
 		Glib::ustring m_strSomething;

@@ -19,17 +19,20 @@
 
 #include "gyzis.h"
 
-GYzis::GYzis()
-  : Bakery::App_WithDoc_Gtk("WithDocView")
-{
+GYzis *GYzis::self = 0;
+
+GYzis::GYzis(const char *name) : Bakery::App_WithDoc_Gtk("WithDocView"), YZSession( name ) {
+	if ( self ) {
+		exitRequest( 1 );
+	}
+	self = this;
 }
 
-GYzis::~GYzis()
-{
+GYzis::~GYzis() {
+	self = 0;
 }
 
-void GYzis::init()
-{
+void GYzis::init() {
   type_vecStrings vecAuthors;
   vecAuthors.push_back("Mickael Marchand <marchand@kde.org>");
   set_about_information("M2", vecAuthors, "(C) 2004 Mickael Marchand <marchand@kde.org>", gettext("GNOME GUI of the Yzis editor."));
@@ -39,14 +42,12 @@ void GYzis::init()
   add(m_View);
 }
 
-Bakery::App* GYzis::new_instance()
-{
-  GYzis* pApp = new GYzis();
+Bakery::App* GYzis::new_instance() {
+  GYzis* pApp = new GYzis("test");
   return pApp;
 }
 
-void GYzis::init_create_document()
-{
+void GYzis::init_create_document() {
   if(!m_pDocument)
   {
     m_pDocument = new Document();

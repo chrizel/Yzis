@@ -17,8 +17,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#ifndef VIEW_H
-#define VIEW_H
+#ifndef GVIEW_H
+#define GVIEW_H
 
 #include <gtkmm/box.h>
 #include "document.h"

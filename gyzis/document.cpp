@@ -18,8 +18,9 @@
  **/
 
 #include "document.h"
+#include "gyzis.h"
 
-Document::Document() {
+Document::Document() : YZBuffer(GYzis::self) {
 	set_file_extension("bakery_withdocview");
 }
 

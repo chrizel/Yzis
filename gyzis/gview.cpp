@@ -17,7 +17,7 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include "view.h"
+#include "gview.h"
 
 View::View() {
 	pack_start(m_Entry, Gtk::PACK_EXPAND_WIDGET);

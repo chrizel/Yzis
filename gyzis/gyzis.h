@@ -22,22 +22,38 @@
 
 #include "bakery/bakery.h"
 #include "document.h"
-#include "view.h"
+#include "gview.h"
+#include "session.h"
 
-//Inherit from Bakery::App_WithDoc for Document support.
-class GYzis : public Bakery::App_WithDoc_Gtk
+class GYzis : public Bakery::App_WithDoc_Gtk, public YZSession
 {
-public:
-  GYzis();
-  virtual ~GYzis();
+	public:
+		static GYzis *self;
 
-  virtual void init();
+		GYzis(const char *);
+		virtual ~GYzis();
 
-protected:
-  virtual void init_create_document();
-  virtual App* new_instance();
+		virtual void init();
 
-  View m_View;
+		//YZSession
+		void changeCurrentView( YZView* ) {}
+		void deleteView ( int Id = -1 ) {}
+		void deleteBuffer( YZBuffer *b ) {}
+		void quit(int errorCode=0) {}
+		void popupMessage( const QString& message ) {}
+		bool promptYesNo(const QString& title, const QString& message) {}
+		YZBuffer *createBuffer(const QString& path=QString::null) {}
+		YZView* createView ( YZBuffer* ) {}
+		void setFocusCommandLine() {}
+		void setFocusMainWindow() {} 
+
+
+		
+	protected:
+		virtual void init_create_document();
+		virtual App* new_instance();
+
+		View m_View;
 };
 
 #endif

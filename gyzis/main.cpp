@@ -34,7 +34,7 @@ main(int argc, char* argv[])
 
   Bakery::init();
 
-  GYzis* pApp = new GYzis();
+  GYzis* pApp = new GYzis("test");
   GYzis::set_command_line_args(argc, argv);
   pApp->init(); //Sets it up and shows it.
 

@@ -58,6 +58,8 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	else if ( key == "<PDOWN>" ) commandPageDown( mView, key );
 	else if ( key == "<PUP>" ) commandPageUp( mView, key );
 	else if ( key == "<CTRL>x" ) commandCompletion( mView, key );
+	else if ( key == "<CTRL>n" ) commandCompletionNext( mView, key );
+	else if ( key == "<CTRL>p" ) commandCompletionPrevious( mView, key );
 	else if ( key == "<BS>" ) commandBackspace( mView, key );
 	else if ( key == "<ENTER>" ) commandEnter( mView, key );
 	else if ( key == "<DEL>" ) commandDel( mView, key );
@@ -91,6 +93,16 @@ void YZModeInsert::commandEx( YZView* mView, const QString& ) {
 }
 void YZModeInsert::commandCompletion( YZView* mView, const QString& ) {
 	mView->modePool()->push( MODE_COMPLETION );
+}
+void YZModeInsert::commandCompletionNext( YZView* mView, const QString& ) {
+	mView->modePool()->push( MODE_COMPLETION );
+	YZModeCompletion* c = static_cast<YZModeCompletion*>( mView->modePool()->current() );
+	c->execCommand(mView, "<CTRL>n");
+}
+void YZModeInsert::commandCompletionPrevious( YZView* mView, const QString& ) {
+	mView->modePool()->push( MODE_COMPLETION );
+	YZModeCompletion* c = static_cast<YZModeCompletion*>( mView->modePool()->current() );
+	c->execCommand(mView, "<CTRL>p");
 }
 void YZModeInsert::commandDown( YZView* mView, const QString& ) {
 	mView->moveDown();

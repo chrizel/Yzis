@@ -83,7 +83,7 @@
     </message>
     <message>
         <source>One file is modified ! Save it first ...</source>
-        <translation type="unfinished">Er is een bestand gewijzigd! Sla deze eerst op.</translation>
+        <translation type="obsolete">Er is een bestand gewijzigd! Sla deze eerst op.</translation>
     </message>
     <message>
         <source>No next buffer</source>
@@ -159,6 +159,14 @@
     </message>
     <message>
         <source>[ Visual Line ]</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Not an editor command: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One file is modified! Save it first...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

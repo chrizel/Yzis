@@ -1,6 +1,6 @@
 # this has all of the subdirectories that make will recurse into.  if
 # there are none, comment this out
-SUBDIRS = src pics .
+SUBDIRS = src pics po .
 
 # set the include path for X, qt and KDE
 INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/kyzis/src/ -I$(top_srcdir)/libyzis/ $(all_includes) $(LUA_INCLUDES)

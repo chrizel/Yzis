@@ -3,7 +3,7 @@
     <name>KTextEditor</name>
     <message>
         <source>Yzis Ready</source>
-        <translation type="unfinished"></translation>
+        <translation>Pret</translation>
     </message>
 </context>
 <context>
@@ -130,7 +130,7 @@
     </message>
     <message>
         <source>One file is modified ! Save it first ...</source>
-        <translation>Un fichier a été modifié ! Sauvegardez-le avant de quitter ...</translation>
+        <translation type="obsolete">Un fichier a été modifié ! Sauvegardez-le avant de quitter ...</translation>
     </message>
     <message>
         <source>No next buffer</source>
@@ -158,55 +158,63 @@
     </message>
     <message>
         <source>search hit TOP, continuing at BOTTOM</source>
-        <translation type="unfinished"></translation>
+        <translation>La recherche a atteint le debut du fichier, reprise a partir de la fin</translation>
     </message>
     <message>
         <source>search hit BOTTOM, continuing at TOP</source>
-        <translation type="unfinished"></translation>
+        <translation>La recherche a atteint la fin du fichier, reprise a partir du debut</translation>
     </message>
     <message>
         <source>[ Awaiting Command ]</source>
-        <translation type="unfinished">[ Entrez une commande ]</translation>
+        <translation>[ Entrez une commande ]</translation>
     </message>
     <message>
         <source>[ Introduction ]</source>
-        <translation type="unfinished">[ Introduction ]</translation>
+        <translation>[ Introduction ]</translation>
     </message>
     <message>
         <source>[ Ex ]</source>
-        <translation type="unfinished">[ Ex ]</translation>
+        <translation>[ Ex ]</translation>
     </message>
     <message>
         <source>[ Insert ]</source>
-        <translation type="unfinished">[ Insertion ]</translation>
+        <translation>[ Insertion ]</translation>
     </message>
     <message>
         <source>[ Replace ]</source>
-        <translation type="unfinished">[ Remplacement ]</translation>
+        <translation>[ Remplacement ]</translation>
     </message>
     <message>
         <source>{ Completion }</source>
-        <translation type="unfinished">{ Completion }</translation>
+        <translation>{ Completion }</translation>
     </message>
     <message>
         <source>[ Search ]</source>
-        <translation type="unfinished">[ Recherche ]</translation>
+        <translation>[ Recherche ]</translation>
     </message>
     <message>
         <source>No match</source>
-        <translation type="unfinished"></translation>
+        <translation>Pas de correspondance</translation>
     </message>
     <message>
         <source>[ Search backward ]</source>
-        <translation type="unfinished"></translation>
+        <translation>Recherche inversée</translation>
     </message>
     <message>
         <source>[ Visual ]</source>
-        <translation type="unfinished">[ Visuel ]</translation>
+        <translation>[ Visuel ]</translation>
     </message>
     <message>
         <source>[ Visual Line ]</source>
-        <translation type="unfinished">[ Visuel Ligne ]</translation>
+        <translation>[ Visuel Ligne ]</translation>
+    </message>
+    <message>
+        <source>Not an editor command: </source>
+        <translation>Commande invalide: </translation>
+    </message>
+    <message>
+        <source>One file is modified! Save it first...</source>
+        <translation>Un fichier a été modifié! Enregistrez-le d&apos;abord...</translation>
     </message>
 </context>
 <context>
@@ -402,11 +410,11 @@
     </message>
     <message>
         <source>File modified</source>
-        <translation type="unfinished"></translation>
+        <translation>Fichier modifié</translation>
     </message>
     <message>
         <source>This file has been modified, do you want to save it ?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ce fichier a été modifié, voulez-vous l&apos;enregistrer ?</translation>
     </message>
 </context>
 </TS>

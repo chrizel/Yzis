@@ -43,6 +43,8 @@ static KCmdLineOptions options[] = {
 };
 
 int main(int argc, char **argv) {
+	KLocale::setMainCatalogue("yzis");
+	
 	KAboutData about("kyzis", I18N_NOOP("Kyzis"), VERSION_CHAR, description, KAboutData::License_GPL_V2, 0, 0, "http://www.yzis.org", "bugs@bugs.yzis.org");
 	about.addAuthor( "Mickael Marchand", "Author", "mikmak@yzis.org" );
 	about.addAuthor( "Thomas Capricelli", "Author", "orzel@freehackers.org" );
@@ -60,9 +62,9 @@ int main(int argc, char **argv) {
 	KApplication app;
 
 
-	QTranslator qt(  0 );
+	QTranslator qt( 0 );
 	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
-	app.installTranslator(  &qt );
+	app.installTranslator( &qt );
 	QTranslator myapp(  0 );
 	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
 	app.installTranslator(  &myapp );

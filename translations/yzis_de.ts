@@ -98,7 +98,7 @@
     <name>QObject</name>
     <message>
         <source>One file is modified ! Save it first ...</source>
-        <translation type="unfinished">Eine Datei ist ungespeichert, bitte speichern Sie diese vorher.</translation>
+        <translation type="obsolete">Eine Datei ist ungespeichert, bitte speichern Sie diese vorher.</translation>
     </message>
     <message>
         <source>No next buffer</source>
@@ -179,6 +179,14 @@
     <message>
         <source>[ Visual Line ]</source>
         <translation type="unfinished">[ Visuelle Zeile ]</translation>
+    </message>
+    <message>
+        <source>Not an editor command: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>One file is modified! Save it first...</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

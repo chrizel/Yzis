@@ -1,0 +1,14 @@
+#! /bin/zsh
+
+setopt shwordsplit
+# List all the languages
+langs=`ls *.po`
+
+for lang in $langs
+do
+	echo $lang
+	msgfmt --statistics $lang
+done
+
+echo "Done."
+echo

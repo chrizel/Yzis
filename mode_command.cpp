@@ -5,6 +5,7 @@
  *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
  *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -176,7 +177,9 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("<CTRL>b", &YZModeCommand::scrollPageUp) );
 	commands.append( new YZCommand("<PDOWN>", &YZModeCommand::scrollPageDown) );
 	commands.append( new YZCommand("<CTRL>f", &YZModeCommand::scrollPageDown) );
+	commands.append( new YZCommand(".", &YZModeCommand::redoLastCommand) );
 }
+
 void YZModeCommand::initModifierKeys() {
 #if QT_VERSION < 0x040000
 	for ( commands.first(); commands.current(); commands.next() ) {
@@ -1491,5 +1494,10 @@ void YZModeCommand::indent( const YZCommandArgs& args ) {
 	}
 	args.view->commitNextUndo();
 	args.view->modePool()->pop();
+}
+
+void YZModeCommand::redoLastCommand( const YZCommandArgs & args ) {
+	YZView * view = args.view;
+	execCommand( view, view->getLastInputBuffer() );
 }
 

@@ -90,6 +90,7 @@ void YZSession::initModes() {
 	mModes[ YZMode::MODE_REPLACE ] = new YZModeReplace();
 	mModes[ YZMode::MODE_VISUAL ] = new YZModeVisual();
 	mModes[ YZMode::MODE_VISUAL_LINE ] = new YZModeVisualLine();
+	mModes[ YZMode::MODE_VISUAL_BLOCK ] = new YZModeVisualBlock();
 	mModes[ YZMode::MODE_SEARCH ] = new YZModeSearch();
 	mModes[ YZMode::MODE_SEARCH_BACKWARD ] = new YZModeSearchBackward();
 	mModes[ YZMode::MODE_COMPLETION ] = new YZModeCompletion();

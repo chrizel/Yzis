@@ -224,6 +224,7 @@ class YZModeCommand : public YZMode {
 		void gotoCommandMode(const YZCommandArgs &args);
 		void gotoReplaceMode(const YZCommandArgs &args);
 		void gotoVisualLineMode(const YZCommandArgs &args);
+		void gotoVisualBlockMode(const YZCommandArgs &args);
 		void gotoVisualMode(const YZCommandArgs &args);
 		void insertLineAfter(const YZCommandArgs &args);
 		void insertLineBefore(const YZCommandArgs &args);

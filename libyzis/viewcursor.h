@@ -59,6 +59,13 @@ class YZViewCursor {
 			return mScreen;
 		}
 
+		/**
+		 * curLineHeight : line height at current cursor position
+		 */
+		inline unsigned int curLineHeight() const {
+			return lineHeight;
+		}
+
 		YZViewCursor &operator=( const YZViewCursor &c );
 
 		void debug();

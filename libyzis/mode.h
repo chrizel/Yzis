@@ -59,6 +59,7 @@ class YZMode {
 			MODE_COMPLETION,
 			MODE_VISUAL,
 			MODE_VISUAL_LINE,
+			MODE_VISUAL_BLOCK,
 		};
 
 		YZMode();

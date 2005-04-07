@@ -1,3 +1,6 @@
+2005-04-07 Scott Newton (patch)
+  * implement '.' command
+
 2005-04-06 mikmak
   * libyzis
 	implement {, } motions

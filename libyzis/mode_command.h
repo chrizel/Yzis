@@ -4,6 +4,7 @@
  *  Copyright (C) 2003-2004 Philippe Fremy <phil@freehackers.org>
  *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -257,6 +258,7 @@ class YZModeCommand : public YZMode {
 		void indent( const YZCommandArgs& args );
 		void scrollPageUp( const YZCommandArgs &args );
 		void scrollPageDown( const YZCommandArgs &args );
+		void redoLastCommand( const YZCommandArgs & args );
 #if QT_VERSION < 0x040000
 		QPtrList<const YZCommand> commands;
 #else

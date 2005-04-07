@@ -1,6 +1,7 @@
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
  *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -166,6 +167,8 @@ class YZView {
 		 * Typically used after a command is recognized or when ESC is pressed
 		 */
 		void purgeInputBuffer() { mPreviousChars = ""; }
+		void saveInputBuffer();
+		QString getLastInputBuffer() { return mLastPreviousChars; }
 
 		QString getInputBuffer() { return mPreviousChars; }
 
@@ -664,6 +667,7 @@ class YZView {
 		 * this should allow us to have commands like : 100g or gg etc ...
 		 */
 		QString mPreviousChars;
+		QString mLastPreviousChars;
 
 
 		class  ViewInformation {

@@ -1,5 +1,6 @@
 /*  This file is part of the Yzis libraries
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -181,6 +182,7 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 			yzDebug() << "cmd_state = CMD_ERROR" << endl;
 			if (pendingMapp) break;
 		case CMD_OK:
+			mView->saveInputBuffer();
 			mView->purgeInputBuffer();
 			mapMode = 0;
 			break;

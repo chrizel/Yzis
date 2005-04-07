@@ -122,6 +122,7 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("R", &YZModeCommand::gotoReplaceMode) );
 	commands.append( new YZCommand("v", &YZModeCommand::gotoVisualMode) );
 	commands.append( new YZCommand("V", &YZModeCommand::gotoVisualLineMode) );
+	commands.append( new YZCommand("<CTRL>v", &YZModeCommand::gotoVisualBlockMode) );
 	commands.append( new YZCommand("z<ENTER>", &YZModeCommand::gotoLineAtTop) );
 	commands.append( new YZCommand("z+", &YZModeCommand::gotoLineAtTop) );
 	commands.append( new YZCommand("z.", &YZModeCommand::gotoLineAtCenter) );
@@ -1200,6 +1201,9 @@ void YZModeCommand::gotoVisualMode(const YZCommandArgs &args) {
 }
 void YZModeCommand::gotoVisualLineMode(const YZCommandArgs &args) {
 	args.view->modePool()->push( YZMode::MODE_VISUAL_LINE );
+}
+void YZModeCommand::gotoVisualBlockMode(const YZCommandArgs &args) {
+	args.view->modePool()->push( YZMode::MODE_VISUAL_BLOCK );
 }
 
 void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {

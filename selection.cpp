@@ -242,6 +242,78 @@ void YZSelection::clear() {
 	mMap.clear();
 }
 
+YZSelection YZSelection::diff( const YZSelection& _m1, const YZSelection& _m2 ) {
+	YZSelection ret( _m1.mName );
+	unsigned int i;
+	YZInterval iv;
+	YZBound b1, b2, n;
+	bool cb1, cb2;
+	int ib1, ib2;
+
+	YZSelection m1 = _m1;
+	YZSelection m2 = _m2;
+	for ( int k = 0; k <= 1; k++ ) {
+		YZSelectionMap s1 = m1.map();
+		YZSelectionMap s2 = m2.map();
+		unsigned int size1 = s1.size();
+		unsigned int size2 = s2.size();
+		for ( i = 0; i < size1; i++ ) {
+			b1 = s1[ i ].from();
+			b2 = s1[ i ].to();
+			ib1 = m2.locatePosition( b1, &cb1 );
+			ib2 = m2.locatePosition( b2, &cb2 );
+			if ( cb1 && cb2 && ib1 == ib2 ) {
+				continue;
+			} else if ( !cb1 && !cb2 && ib1 == ib2 ) {
+				iv.setFrom( b1 );
+				iv.setTo( b2 );
+				ret.addInterval( iv );
+			} else {
+				if ( cb1 ) {
+					b1 = s2[ ib1 ].to();
+					if ( b1.closed() ) {
+						b1.open();
+					} else {
+						b1.close();
+					}
+				}
+				if ( cb2 ) {
+					b2 = s2[ ib2 ].from();
+					if ( b1.opened() ) {
+						b2.close();
+					} else {
+						b2.open();
+					}
+				}
+				for ( int j = ib1 + 1; j < ib2; j++ ) {
+					n = s2[ j ].from();
+					if ( n.opened() )
+						n.close();
+					else
+						n.open();
+					iv.setFrom( b1 );
+					iv.setTo( n );
+					ret.addInterval( iv );
+					b1 = s2[ j ].to();
+					if ( b1.opened() )
+						b1.close();
+					else
+						b1.open();
+				}
+				iv.setFrom( b1 );
+				iv.setTo( b2 );
+				ret.addInterval( iv );
+			}
+		}
+		m1 = _m2;
+		m2 = _m1;
+	}
+
+//	yzDebug() << "YZSelection::diff : " << endl << _m1 << endl << _m2 << endl << " ====> " << ret << endl;
+
+	return ret;
+}
+
 // operators on selections
 YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s ) {
 	unsigned int size = s.mMap.size();

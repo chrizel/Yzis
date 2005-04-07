@@ -65,13 +65,15 @@ class YZModeVisual : public YZModeCommand {
 	  	void movetoExMode( const YZCommandArgs& args );
 	  	void movetoInsertMode( const YZCommandArgs& args );
 	  	void escape( const YZCommandArgs& args );
-		void translateToVisualLine( const YZCommandArgs& args );
 		void changeWholeLines(const YZCommandArgs &args);
 		void deleteWholeLines(const YZCommandArgs &args);
 		void yankWholeLines(const YZCommandArgs &args);
 		void yank(const YZCommandArgs &args);
 		void toUpperCase( const YZCommandArgs& args );
 		void toLowerCase( const YZCommandArgs& args );
+		void translateToVisual( const YZCommandArgs& args );
+		void translateToVisualLine( const YZCommandArgs& args );
+		void translateToVisualBlock( const YZCommandArgs& args );
 
 		virtual YZInterval interval(const YZCommandArgs &args);
 
@@ -85,12 +87,18 @@ class YZModeVisualLine : public YZModeVisual {
 		YZModeVisualLine();
 		virtual ~YZModeVisualLine();
 
-		virtual void initVisualCommandPool();
-
-		void translateToVisual( const YZCommandArgs& args );
-
 	protected:
 		virtual YZInterval buildInterval( const YZCursor& from, const YZCursor& to );
+};
+
+class YZModeVisualBlock : public YZModeVisual {
+	public:
+		YZModeVisualBlock();
+		virtual ~YZModeVisualBlock();
+
+		virtual void cursorMoved( YZView* mView );
+		virtual void toClipboard( YZView* mView );
+
 };
 
 #endif

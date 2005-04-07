@@ -111,6 +111,8 @@ class YZSelection {
 
 		void clear();
 
+		static YZSelection diff( const YZSelection& _m1, const YZSelection& _m2 );
+
 	private:
 		void insertInterval( unsigned int pos, const YZInterval& interval );
 		void removeInterval( unsigned int pos, unsigned int len );
@@ -130,6 +132,12 @@ class YZDoubleSelection {
 
 		YZSelectionMap screenMap();
 		YZSelectionMap bufferMap();
+		inline const YZSelection& screen() const {
+			return *bSelection;
+		}
+		inline const YZSelection& buffer() const {
+			return *sSelection;
+		}
 
 		void addInterval( const YZInterval& bi, const YZInterval& si );
 		void delInterval( const YZInterval& bi, const YZInterval& si );

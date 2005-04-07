@@ -82,7 +82,9 @@ void YZModeVisual::enter( YZView* mView ) {
 	YZViewCursor* visualCursor = mView->visualCursor();
 	YZDoubleSelection* visual = mView->getSelectionPool()->visual();
 
+	mView->setPaintAutoCommit( false );
 	if ( ! visual->isEmpty() ) {
+		mView->sendPaintEvent( visual->screenMap(), false );
 		cursorMoved( mView );
 	} else {
 		*visualCursor = mView->viewCursor();
@@ -93,6 +95,7 @@ void YZModeVisual::enter( YZView* mView ) {
 
 		toClipboard( mView );
 	}
+	mView->commitPaintEvent();
 	mView->emitSelectionChanged();
 }
 void YZModeVisual::leave( YZView* mView ) {
@@ -160,8 +163,18 @@ void YZModeVisual::initCommandPool() {
 	initVisualCommandPool();
 }
 void YZModeVisual::initVisualCommandPool() {
-	commands.append( new YZCommand("v", (PoolMethod) &YZModeVisual::escape) );
-	commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::translateToVisualLine) );
+	if ( type() == MODE_VISUAL ) 
+		commands.append( new YZCommand("v", (PoolMethod) &YZModeVisual::escape) );
+	else
+		commands.append( new YZCommand("v", (PoolMethod) &YZModeVisual::translateToVisual) );
+	if ( type() == MODE_VISUAL_LINE )
+		commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::escape) );
+	else
+		commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::translateToVisualLine) );
+	if ( type() == MODE_VISUAL_BLOCK ) 
+		commands.append( new YZCommand("<CTRL>v", (PoolMethod) &YZModeVisual::escape) );
+	else
+		commands.append( new YZCommand("<CTRL>v", (PoolMethod) &YZModeVisual::translateToVisualBlock) );
 }
 void YZModeVisual::commandAppend( const YZCommandArgs& args ) {
 	YZCursor pos = qMax( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
@@ -249,6 +262,12 @@ void YZModeVisual::yank( const YZCommandArgs& args ) {
 void YZModeVisual::translateToVisualLine( const YZCommandArgs& args ) {
 	args.view->modePool()->change( MODE_VISUAL_LINE, false ); // just translate (don't leave current mode)
 }
+void YZModeVisual::translateToVisual( const YZCommandArgs& args ) {
+	args.view->modePool()->change( MODE_VISUAL, false );
+}
+void YZModeVisual::translateToVisualBlock( const YZCommandArgs& args ) {
+	args.view->modePool()->change( MODE_VISUAL_BLOCK, false );
+}
 void YZModeVisual::escape( const YZCommandArgs& args ) {
 	args.view->modePool()->pop();
 }
@@ -277,13 +296,6 @@ YZModeVisualLine::YZModeVisualLine() : YZModeVisual() {
 }
 YZModeVisualLine::~YZModeVisualLine() {
 }
-void YZModeVisualLine::initVisualCommandPool() {
-	commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::escape) );
-	commands.append( new YZCommand("v", (PoolMethod) &YZModeVisualLine::translateToVisual) );
-}
-void YZModeVisualLine::translateToVisual( const YZCommandArgs& args ) {
-	args.view->modePool()->change( MODE_VISUAL, false );
-}
 
 YZInterval YZModeVisualLine::buildInterval( const YZCursor& from, const YZCursor& to ) {
 	YZBound bf( from );
@@ -292,6 +304,72 @@ YZInterval YZModeVisualLine::buildInterval( const YZCursor& from, const YZCursor
 	bt.setPos( 0, to.y() + 1 );
 	YZInterval ret( bf, bt );
 	return ret;
+}
+
+YZModeVisualBlock::YZModeVisualBlock() : YZModeVisual() {
+	mType = YZMode::MODE_VISUAL_BLOCK;
+	mString = _("[ Visual Block ]");
+}
+YZModeVisualBlock::~YZModeVisualBlock() {
+}
+
+void YZModeVisualBlock::cursorMoved( YZView* mView ) {
+	mView->setPaintAutoCommit( false );
+
+	YZDoubleSelection* visual = mView->getSelectionPool()->visual();
+	YZSelection old = visual->screen();
+//	mView->sendPaintEvent( visual->screenMap(), false );
+	visual->clear();
+
+	unsigned int fromLine = mView->visualCursor()->bufferY();
+	unsigned int toLine = mView->getBufferCursor()->y();
+	unsigned int fromCol = (mView->visualCursor()->curLineHeight()-1)*mView->getColumnsVisible() + mView->visualCursor()->screenX();
+	unsigned int toCol = (mView->viewCursor().curLineHeight()-1)*mView->getColumnsVisible() + mView->getCursor()->x();
+
+	YZViewCursor cur = *mView->visualCursor();
+	if ( fromCol > toCol ) {
+		unsigned int tmp = toCol;
+		toCol = fromCol;
+		fromCol = tmp;
+	}
+	if ( fromLine > toLine ) {
+		cur = mView->viewCursor();
+		unsigned int tmp = toLine;
+		toLine = fromLine;
+		fromLine = tmp;
+	}
+	YZInterval sI, bI;
+	for ( unsigned int i = fromLine; i <= toLine; i++ ) {
+		mView->gotodxy( &cur, fromCol, i );
+		if ( cur.screenX() < fromCol ) continue; // XXX handling tab is not easy
+		sI.setFromPos( cur.screen() );
+		bI.setFromPos( cur.buffer() );
+		mView->gotodxy( &cur, toCol, i );
+//		if ( cur.screenX() > toCol ) continue; // XXX handling tab is not easy
+		sI.setTo( YZBound(cur.screen()) );
+		bI.setTo( YZBound(cur.buffer()) );
+		visual->addInterval( bI, sI );
+//		yzDebug() << "visual block>" << bI << ", " << sI << endl;
+	}
+	YZSelection diff = YZSelection::diff( old, visual->screen() );
+	mView->sendPaintEvent( diff.map(), false );
+
+	mView->commitPaintEvent();
+	toClipboard( mView );
+	mView->emitSelectionChanged();
+}
+
+void YZModeVisualBlock::toClipboard( YZView* mView ) {
+	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
+#ifndef WIN32
+#if QT_VERSION < 0x040000
+	if ( QPaintDevice::x11AppDisplay() )
+#else
+	if ( QX11Info::display() )
+#endif
+#endif
+		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
+
 }
 
 

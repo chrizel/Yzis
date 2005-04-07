@@ -144,9 +144,8 @@ bool NYZFactory::process_one_event() {
 		return true;
 	}
 	if ( iscntrl( c ) ) {
-		yzError(NYZIS) << "*************** Unhandled" <<
-			"control sequence " << c << " (discarded)" << endl;
-		return true;
+		modifiers += "<CTRL>";
+		c+=96;
 	}
 	if ( isupper( c ) ) { modifiers +="<SHIFT>"; }
 	//yzDebug() << "sendKey < " << c << " (" << QString( QChar( c ) ) << ") modifiers=" << modifiers << endl;

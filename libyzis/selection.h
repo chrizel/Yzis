@@ -133,10 +133,10 @@ class YZDoubleSelection {
 		YZSelectionMap screenMap();
 		YZSelectionMap bufferMap();
 		inline const YZSelection& screen() const {
-			return *bSelection;
+			return *sSelection;
 		}
 		inline const YZSelection& buffer() const {
-			return *sSelection;
+			return *bSelection;
 		}
 
 		void addInterval( const YZInterval& bi, const YZInterval& si );

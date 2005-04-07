@@ -256,7 +256,7 @@ YZSelection YZSelection::diff( const YZSelection& _m1, const YZSelection& _m2 ) 
 		YZSelectionMap s1 = m1.map();
 		YZSelectionMap s2 = m2.map();
 		unsigned int size1 = s1.size();
-		unsigned int size2 = s2.size();
+//		unsigned int size2 = s2.size();
 		for ( i = 0; i < size1; i++ ) {
 			b1 = s1[ i ].from();
 			b2 = s1[ i ].to();
@@ -264,10 +264,6 @@ YZSelection YZSelection::diff( const YZSelection& _m1, const YZSelection& _m2 ) 
 			ib2 = m2.locatePosition( b2, &cb2 );
 			if ( cb1 && cb2 && ib1 == ib2 ) {
 				continue;
-			} else if ( !cb1 && !cb2 && ib1 == ib2 ) {
-				iv.setFrom( b1 );
-				iv.setTo( b2 );
-				ret.addInterval( iv );
 			} else {
 				if ( cb1 ) {
 					b1 = s2[ ib1 ].to();

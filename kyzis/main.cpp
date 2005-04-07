@@ -60,6 +60,7 @@ int main(int argc, char **argv) {
 	about.addCredit( "Erlend Hamberg", "View scrolling fixes", "ehamberg@online.no" );
 	about.addCredit( "Per Johansson", "Kyzis Tab caption improvement", "per.j@hjolug.org" );
 	about.addCredit( "Helder Correia", "Commands and bug fixes", "helder.correia@netcabo.pt" );
+	about.addCredit( "Scott Newton", "'.' command", "scottn@ihug.co.nz" );
 
 	KCmdLineArgs::init(argc, argv, &about);
 	KCmdLineArgs::addCmdLineOptions( options );

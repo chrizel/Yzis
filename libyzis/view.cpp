@@ -556,12 +556,20 @@ void YZView::gotox( unsigned int nextx, bool forceGoBehindEOL ) {
 			}
 		}
 	}
+	bool maywrap = wrap && rCurLineLength + shift > mColumnsVis;
 	while ( workCursor->bufferX() < nextx ) {
-		if ( ! wrap || rCurLineLength <= mColumnsVis - shift ) {
+		if ( !maywrap ) {
 			drawNextCol( );
 		} else {
 			while ( drawNextCol() && workCursor->bufferX() < nextx ) ;
-			if ( workCursor->wrapNextLine ) drawNextLine();
+			if ( workCursor->wrapNextLine ) { 
+				drawNextLine();
+				maywrap = rCurLineLength + shift > mColumnsVis;
+			} else if ( shift && workCursor->bufferX() == nextx && workCursor->screenX() == mColumnsVis ) {
+				workCursor->wrapNextLine = true;
+				drawNextLine();
+				maywrap = rCurLineLength + shift > mColumnsVis;
+			}
 		}
 	}
 }
@@ -1312,11 +1320,13 @@ bool YZView::drawNextCol( ) {
 		workCursor->setBufferX( 1 );
 	}
 
-	// can we go after the end of line buffer ?
-	unsigned int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 1 : 0;
-
-	// drawCursor is after end of area ?
-	workCursor->wrapNextLine = ( wrap && workCursor->screenX() + ( ret || ! drawMode ? 0 : workCursor->sColIncrement ) > mColumnsVis - nextLength && curx < sCurLineLength + shift );
+	if ( wrap ) {
+		// screen pos
+		unsigned int sx = workCursor->screenX() + nextLength + ( ret || ! drawMode ? 0 : workCursor->sColIncrement );
+		// buff pos
+		unsigned int bx = curx + ( drawMode ? 0 : workCursor->bColIncrement );
+		workCursor->wrapNextLine = sx > mColumnsVis && bx < sCurLineLength;
+	}
 
 	// only remember of case where wrapNextLine is true ( => we will wrap a tab next drawNextCol )
 	if ( workCursor->lastCharWasTab ) workCursor->lastCharWasTab = workCursor->wrapNextLine;

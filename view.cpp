@@ -1359,8 +1359,11 @@ unsigned int YZView::drawLength( ) {
 unsigned int YZView::drawHeight ( ) {
 	return workCursor->sLineIncrement;
 }
-unsigned int YZView::lineHeight ( ) {
+unsigned int YZView::lineIncrement() {
 	return workCursor->bLineIncrement;
+}
+unsigned int YZView::lineHeight() {
+	return workCursor->lineHeight;
 }
 bool YZView::drawSelected( ) {
 	return charSelected;

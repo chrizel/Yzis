@@ -424,12 +424,17 @@ class YZView {
 		unsigned int drawLength( );
 
 		/**
-		 * line height
+		 * line increment (on screen)
 		 */
 		unsigned int drawHeight( );
 
 		/**
-		 * line height
+		 * line increment (on buffer)
+		 */
+		 unsigned int lineIncrement( );
+
+		/**
+		 * current line height (on screen)
 		 */
 		 unsigned int lineHeight( );
 

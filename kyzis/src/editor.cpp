@@ -49,7 +49,6 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 	mParent = parent;
 
 	marginLeft = 0;
-	lastLineNumber = 0;
 
 	setFocusPolicy( StrongFocus );
 	QWidget::setCursor( IbeamCursor );
@@ -350,7 +349,6 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 	unsigned int my_marginLeft = 0;
 	if ( number ) { // update marginLeft
 		my_marginLeft = ( isFontFixed ? QString::number( lineCount ).length() + 2 : mParent->stringWidth( " " + QString::number( lineCount ) + "  " ) );
-		lastLineNumber = 0;
 	}
 	if ( marginLeft != my_marginLeft ) {
 		if ( mCursor->visible() ) {
@@ -384,12 +382,11 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 			}
 			erase( myRect );
 			QPen old_pen = p.pen( );
-			if ( lineNumber != lastLineNumber ) { // we don't draw it twice
+			if ( mParent->lineHeight() == 1 ) {
 				p.setPen( Qt::yellow );
 				p.setBackgroundMode( Qt::TransparentMode );
 				p.setFont(font());
 				p.drawText( myRect, (rightleft ? Qt::AlignLeft : Qt::AlignRight), QString::number( lineNumber ) );
-				lastLineNumber = lineNumber;
 			}
 			currentX += marginLeft;
 			p.setPen( old_pen );
@@ -461,10 +458,10 @@ void KYZisEdit::drawContents( int /*clipx*/, int clipy, int /*clipw*/, int cliph
 		}
 		if ( currentY == mY ) mCursor->refresh();
 		currentY += mParent->drawHeight( );
-		cliph -= mParent->lineHeight( );
+		cliph -= mParent->lineIncrement( );
 	}
 	p.setPen( Settings::colorFG() );
-	if ( number ) {
+	if ( number && clipy < currentY ) {
 		if ( rightleft )
 			w = width() - GETX( marginLeft ) + GETX( spaceWidth ) / 2;
 		else

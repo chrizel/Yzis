@@ -161,7 +161,6 @@ class KYZisEdit : public QWidget {
 		unsigned int marginLeft;
 
 		// last line number
-		unsigned int lastLineNumber;
 		QMap<int,QString> keys;
 		KRootPixmap *rootxpm;
 		bool mTransparent;

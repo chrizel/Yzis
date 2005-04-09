@@ -264,7 +264,7 @@ void NYZView::drawContents( int clipy, int cliph ) {
 		for( ; currentX < getColumnsVisible() + marginLeft; currentX++) 
 			mvwaddch( editor, currentY, rightleft ? width - currentX - 1: currentX, ' ' );
 		currentY += drawHeight( );
-		cliph -= lineHeight( );
+		cliph -= lineIncrement( );
 	}
 	while ( cliph > 0 && currentY < getLinesVisible() ) {
 		printVoid( currentY );

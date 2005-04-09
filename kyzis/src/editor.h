@@ -40,14 +40,16 @@ class KYZisCursor;
 
 struct KYZViewCell {
 	bool isValid;
+	int flag;
+	bool selected;
 	QFont font;
 	QString c;
 	QColor bg;
 	QColor fg;
-	bool selected;
-	int flag;
-	KYZViewCell() {
-		isValid = false;
+	KYZViewCell():
+		isValid( false ),
+		flag( 0 ),
+		selected ( false ), font(), c(), bg(), fg() {
 	}
 };
 typedef QMap<unsigned int,KYZViewCell> lineCell;

@@ -131,6 +131,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	tabstop = getLocalIntegerOption("tabstop");
 	wrap = getLocalBooleanOption( "wrap" );
 	rightleft = getLocalBooleanOption( "rightleft" );
+	listChar = getLocalBooleanOption( "list" );
 
 	//completion
 	m_completionStart = new YZCursor();

@@ -307,7 +307,8 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 			if ( mParent->modePool()->current()->isEditMode() ) {
 				QChar reg = '\"';
 				YZSession::mRegisters->setRegister( reg, QStringList::split( "\n", text ) );
-				mParent->paste( reg, true );
+				mParent->paste( reg, false );
+				mParent->moveRight();
 			}
 		}
 	}

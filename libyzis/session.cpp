@@ -275,3 +275,21 @@ void YZSession::sendMultipleKeys ( const QString& text) {
 /*	}*/
 }
 
+void YZSession::registerModifier ( const QString& mod ) {
+	for (int i = 0 ; i < mNbViews; i++ ) {
+		YZView *v = findView(i);
+		if (v) {
+			v->registerModifierKeys(mod);
+		}
+	}
+}
+
+void YZSession::unregisterModifier ( const QString& mod ) {
+	for (int i = 0 ; i < mNbViews; i++ ) {
+		YZView *v = findView(i);
+		if (v) {
+			v->unregisterModifierKeys(mod);
+		}
+	}
+}
+

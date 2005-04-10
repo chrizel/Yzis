@@ -1272,7 +1272,6 @@ void YZModeCommand::pasteBefore(const YZCommandArgs &args) {
 	for ( unsigned int i = 0 ; i < args.count ; i++ )
 		args.view->paste( args.regs[ 0 ], false );
 	args.view->commitNextUndo();
-	
 }
 
 void YZModeCommand::yankLine(const YZCommandArgs &args) {
@@ -1282,22 +1281,18 @@ void YZModeCommand::yankLine(const YZCommandArgs &args) {
 void YZModeCommand::yankToEOL(const YZCommandArgs &args) {
 	YZCursor to=move(args.view, "$", 1, false);
 	args.view->myBuffer()->action()->copyArea(args.view, *args.view->getBufferCursor(), to, args.regs);
-	
 }
 
 void YZModeCommand::closeWithoutSaving(const YZCommandArgs &/*args*/) {
 	YZSession::me->exitRequest( 0 );
-	
 }
 
 void YZModeCommand::saveAndClose(const YZCommandArgs &/*args*/) {
 	YZSession::me->saveBufferExit();
-	
 }
 
 void YZModeCommand::searchBackwards(const YZCommandArgs &args) {
 	args.view->modePool()->push( YZMode::MODE_SEARCH_BACKWARD );
-	
 }
 
 void YZModeCommand::searchForwards(const YZCommandArgs &args) {

@@ -276,6 +276,8 @@ class YZSession {
 		static QStringList getListOption( const QString& option ) {
 			return YZSession::mOptions->readListOption( option );
 		}
+		void registerModifier ( const QString& mod );
+		void unregisterModifier ( const QString& mod );
 
 	protected:
 		//we map "filename"/buffer for buffers

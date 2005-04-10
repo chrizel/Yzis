@@ -43,50 +43,62 @@ class YZMapping {
 		static YZMapping *self();
 
 		void addNormalMapping( const QString& key, const QString& map ) {
+			registerModifier(key);
 			mNormalMappings[key] = map;
 		}
 
 		void deleteNormalMapping( const QString& key ) {
+			unregisterModifier(key);
 			mNormalMappings.remove(key);	
 		}
 
 		void addVisualMapping( const QString& key, const QString& map ) {
+			registerModifier(key);
 			mVisualMappings[key] = map;
 		}
 
 		void deleteVisualMapping( const QString& key ) {
+			unregisterModifier(key);
 			mVisualMappings.remove(key);	
 		}
 
 		void addInsertMapping( const QString& key, const QString& map ) {
+			registerModifier(key);
 			mInsertMappings[key] = map;
 		}
 
 		void deleteInsertMapping( const QString& key ) {
+			unregisterModifier(key);
 			mInsertMappings.remove(key);	
 		}
 
 		void addCmdLineMapping( const QString& key, const QString& map ) {
+			registerModifier(key);
 			mCmdLineMappings[key] = map;
 		}
 
 		void deleteCmdLineMapping( const QString& key ) {
+			unregisterModifier(key);
 			mCmdLineMappings.remove(key);	
 		}
 
 		void addPendingOpMapping( const QString& key, const QString& map ) {
+			registerModifier(key);
 			mPendingOpMappings[key] = map;
 		}
 
 		void deletePendingOpMapping( const QString& key ) {
+			unregisterModifier(key);
 			mPendingOpMappings.remove(key);	
 		}
 	
 		void addGlobalMapping( const QString& key, const QString& map ) {
+			registerModifier(key);
 			mGlobalMappings[key] = map;
 		}
 
 		void deleteGlobalMapping( const QString& key ) {
+			unregisterModifier(key);
 			mGlobalMappings.remove(key);	
 		}
 		bool applyMappings( QString& text, int modes, bool *mapped );
@@ -96,6 +108,8 @@ class YZMapping {
 		bool applyInsertMappings( QString& text );
 		bool applyPendingOpMappings( QString& text );
 		bool applyGlobalMappings( QString& text );
+		void registerModifier(const QString& map);
+		void unregisterModifier(const QString& map);
 
 	protected:
 		YZMapping();

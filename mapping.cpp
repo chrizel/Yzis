@@ -24,6 +24,7 @@
 #include "yzis.h"
 #include "debug.h"
 #include "ex_lua.h"
+#include "session.h"
 
 YZMapping *YZMapping::me = 0L;
 
@@ -238,5 +239,13 @@ bool YZMapping::applyMappings( QString& text, int modes, bool *mapped ) {
 //	yzDebug() << "Text2: " << text << endl << "Pending mapping : " << pendingMapp << endl;
 	*mapped = old != text;
 	return pendingMapp;
+}
+
+void YZMapping::registerModifier(const QString& map) {
+	YZSession::me->registerModifier(map);
+}
+
+void YZMapping::unregisterModifier(const QString& map) {
+	YZSession::me->unregisterModifier(map);
 }
 

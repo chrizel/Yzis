@@ -13,7 +13,8 @@ DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 
-CFLAGS = -Wall -g
+DEB_BUILD_OPTIONS="noopt nostrip"
+CFLAGS = -Wall -g3
 
 ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
 	CFLAGS += -O0

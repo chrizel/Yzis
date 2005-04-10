@@ -238,7 +238,7 @@ bool YZSession::saveAll() {
 	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
 		if ( !b->fileIsNew() ) {
-			if ( !b->save() ) savedAll=false;
+			if ( b->fileIsModified() && !b->save() ) savedAll=false;
 		}
 	}
 	return savedAll;

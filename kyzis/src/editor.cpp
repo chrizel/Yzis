@@ -596,9 +596,11 @@ QString KYZisEdit::keysToShortcut( const QString& keys ) {
 }
 
 void KYZisEdit::registerModifierKeys( const QString& keys ) {
+	unregisterModifierKeys( keys );
 	KAction* k = new KAction( "", KShortcut( keysToShortcut( keys ) ), signalMapper, SLOT( map() ), actionCollection, keys );
 	signalMapper->setMapping( k, keys );
 }
+
 void KYZisEdit::unregisterModifierKeys( const QString& keys ) {
 	KAction* k = actionCollection->action( keys );
 	if ( k == NULL ) {
@@ -624,8 +626,7 @@ const QString& KYZisEdit::convertKey( int key ) {
 }
 
 // for InputMethod (OnTheSpot)
-void KYZisEdit::imStartEvent( QIMEvent *e )
-{
+void KYZisEdit::imStartEvent( QIMEvent *e ) {
 	if ( mParent->modePool()->current()->supportsInputMethod() ) {
 		mParent->modePool()->current()->imBegin( mParent );
 	}

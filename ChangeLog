@@ -1,3 +1,8 @@
+2005-04-18 mikmak
+  * libyzis [SECURITY FIX]
+    make sure files we create have proper file permissions (especially the
+    debug file which is hold in /tmp)
+    
 2005-04-07 Scott Newton (patch)
   * implement '.' command
 

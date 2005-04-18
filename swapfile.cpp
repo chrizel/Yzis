@@ -35,6 +35,7 @@
 #include <QTime>
 #endif
 #include <sys/types.h>
+#include <sys/stat.h>
 #include "portability.h"
 
 YZSwapFile::YZSwapFile(YZBuffer *b) {
@@ -61,8 +62,10 @@ void YZSwapFile::flush() {
 	QFile f( mFilename );
 #if QT_VERSION < 0x040000
 	if ( f.open( IO_WriteOnly | IO_Raw | IO_Append ) ) { //open at end of file
+		chmod( mFilename.local8Bit(), S_IRUSR | S_IWUSR );
 #else
 	if ( f.open( QIODevice::WriteOnly | QIODevice::Append ) ) { //open at end of file
+		chmod( mFilename.toLocal8Bit(), S_IRUSR | S_IWUSR );
 #endif
 		QTextStream stream( &f );
 		if ( !mHistory.empty() ) {
@@ -115,8 +118,10 @@ void YZSwapFile::init() {
 	QFile f( mFilename );
 #if QT_VERSION < 0x040000
 	if ( f.open( IO_WriteOnly | IO_Raw | IO_Truncate ) ) {
+		chmod( mFilename.local8Bit(), S_IRUSR | S_IWUSR );
 #else
 	if ( f.open( QIODevice::WriteOnly | QIODevice::Truncate ) ) {
+		chmod( mFilename.toLocal8Bit(), S_IRUSR | S_IWUSR );
 #endif
 		QTextStream stream( &f );
 		stream << "WARNING : do not edit, this file is a temporary file created by Yzis and used to recover files in case of crashes" << endl << endl;

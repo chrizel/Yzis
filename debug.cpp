@@ -28,6 +28,9 @@
 
 #include "debug.h"
 #include <ctype.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #ifndef WIN32
 #include <pwd.h>
 #endif
@@ -94,9 +97,11 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 	if ( QFile::exists( fileName ) )
 		QFile::remove ( fileName );
 #if QT_VERSION < 0x040000
-	setDebugOutput( fopen( fileName.latin1(), "w" ) );
+	setDebugOutput( fopen( fileName.local8Bit(), "w" ) );
+	chmod( fileName.latin1(), S_IRUSR | S_IWUSR );
 #else
-	setDebugOutput( fopen( fileName.toLatin1(), "w" ) );
+	setDebugOutput( fopen( fileName.toLocal8Bit(), "w" ) );
+	chmod( fileName.toLatin1(), S_IRUSR | S_IWUSR );
 #endif
 }
 

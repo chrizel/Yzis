@@ -183,7 +183,7 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 		text += line + "\n";
 	}
 	buff << QString::null;
-#ifndef WIN32
+#ifndef YZIS_WIN32_MSVC
 #if QT_VERSION < 0x040000
 	if ( QPaintDevice::x11AppDisplay() )
 #else
@@ -232,7 +232,7 @@ void YZAction::copyArea( YZView* pView, const YZInterval& i, const QList<QChar> 
 			buff << mBuffer->textline( eY ).left( eX );
 	}
 
-#ifndef WIN32
+#ifndef YZIS_WIN32_MSVC
 #if QT_VERSION < 0x040000
 	if ( QPaintDevice::x11AppDisplay() )
 #else

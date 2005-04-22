@@ -27,6 +27,7 @@
  * $Id$
  */
 
+#include "portability.h"
 #include "mode_command.h"
 
 #include <assert.h>

@@ -25,6 +25,7 @@
  * $Id$
  */
 
+#include "portability.h"
 #include "mode_ex.h"
 #include "buffer.h"
 #include "session.h"

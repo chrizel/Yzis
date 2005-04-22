@@ -657,7 +657,7 @@ int YZExLua::yzdebug( lua_State *L ) {
 	return 0;
 }
 
-int YZExLua::myprint(lua_State * /*L*/) {
+int YZExLua::yzprint(lua_State * /*L*/) {
 	// fetch string from the stack
 	// print it
 	return 0;

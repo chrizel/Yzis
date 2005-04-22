@@ -23,6 +23,7 @@
  * $Id$
  */
 
+#include "portability.h"
 #include "mode_visual.h"
 
 #include "debug.h"
@@ -62,7 +63,7 @@ YZModeVisual::~YZModeVisual() {
 
 void YZModeVisual::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-#ifndef WIN32
+#ifndef YZIS_WIN32_MSVC
 #if QT_VERSION < 0x040000
 	if ( QPaintDevice::x11AppDisplay() )
 #else
@@ -187,8 +188,8 @@ void YZModeVisual::commandInsert( const YZCommandArgs& args ) {
 	args.view->gotoxy( pos.x(), pos.y() );
 }
 void YZModeVisual::toLowerCase( const YZCommandArgs& args ) {
-	YZInterval i = interval( args );
-	QStringList t = args.view->myBuffer()->getText( i );
+	YZInterval inter = interval( args );
+	QStringList t = args.view->myBuffer()->getText( inter );
 	QStringList lt;
 	for( unsigned int i = 0; i < t.size(); i++ )
 #if QT_VERSION < 0x040000
@@ -196,12 +197,12 @@ void YZModeVisual::toLowerCase( const YZCommandArgs& args ) {
 #else
 		lt << t[i].toLower();
 #endif
-	args.view->myBuffer()->action()->replaceArea( args.view, i, lt );
+	args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
 	args.view->commitNextUndo();
 }
 void YZModeVisual::toUpperCase( const YZCommandArgs& args ) {
-	YZInterval i = interval( args );
-	QStringList t = args.view->myBuffer()->getText( i );
+	YZInterval inter = interval( args );
+	QStringList t = args.view->myBuffer()->getText( inter );
 	QStringList lt;
 	for( unsigned int i = 0; i < t.size(); i++ )
 #if QT_VERSION < 0x040000
@@ -209,7 +210,7 @@ void YZModeVisual::toUpperCase( const YZCommandArgs& args ) {
 #else
 		lt << t[i].toUpper();
 #endif
-	args.view->myBuffer()->action()->replaceArea( args.view, i, lt );
+	args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
 	args.view->commitNextUndo();
 }
 void YZModeVisual::changeWholeLines(const YZCommandArgs &args) {

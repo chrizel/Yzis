@@ -40,7 +40,7 @@
 
 #include "portability.h"
 
-#ifndef WIN32
+#ifndef YZIS_WIN32_MSVC
 #include "magic.h"
 #endif
 
@@ -3262,7 +3262,7 @@ YzisHlManager::YzisHlManager()
     YZExLua::instance()->source( NULL, QDir::homePath() + "/.yzis/hl.lua" );
 #endif
 
-#ifndef WIN32
+#ifndef YZIS_WIN32_MSVC
   magicSet = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );
   if ( magicSet == NULL ) {
     magic_close(magicSet);
@@ -3279,15 +3279,15 @@ YzisHlManager::YzisHlManager()
       magicSet = NULL;
     }
   }
-#else
-	magicSet = NULL;
 #endif
 }
 
 YzisHlManager::~YzisHlManager()
 {
+#ifndef YZIS_WIN32_MSVC
   if ( magicSet )
     magic_close( magicSet );
+#endif
   delete syntax;
 }
 
@@ -3443,6 +3443,7 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 }
 
 QString YzisHlManager::findByContent( const QString& contents ) {
+#ifndef YZIS_WIN32_MSVC
 // QString YzisHlManager::findByContent( const QByteArray& contents ) {
 	if ( magicSet == NULL )
 		return QString::null;
@@ -3461,6 +3462,7 @@ QString YzisHlManager::findByContent( const QString& contents ) {
 #endif
 		return mime;
 	}
+#endif
 	return QString::null;
 }
 

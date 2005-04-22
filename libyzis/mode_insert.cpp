@@ -23,6 +23,7 @@
  * $Id$
  */
 
+#include "portability.h"
 #include "mode_insert.h"
 
 #include "buffer.h"
@@ -30,7 +31,6 @@
 #include "action.h"
 #include "viewcursor.h"
 #include "mode_command.h"
-#include "libintl.h"
 
 YZModeInsert::YZModeInsert() : YZMode() {
 	mType = YZMode::MODE_INSERT;

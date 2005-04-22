@@ -29,7 +29,6 @@
 
 // for tildeExpand
 #include <sys/types.h>
-#include <pwd.h>
 
 #include <qfile.h>
 #include <qtextstream.h>
@@ -37,6 +36,7 @@
 #include <qdir.h>
 #include <qtextcodec.h>
 
+#include "portability.h"
 #include "buffer.h"
 #include "line.h"
 #include "view.h"
@@ -1093,7 +1093,9 @@ QString YZBuffer::tildeExpand( const QString& path ) {
 #else
 			ret = QDir::homePath() + path.mid( 1 );
 #endif
-		} else {
+		}
+#ifndef YZIS_WIN32_MSVC
+		  else {
 			int pos = path.find('/');
 			if ( pos < 0 ) // eg: ~username (without /)
 				pos = path.length() - 1;
@@ -1103,6 +1105,7 @@ QString YZBuffer::tildeExpand( const QString& path ) {
 				ret = QFile::decodeName( pw->pw_dir ) + path.mid( pos );
 			// else.. do nothing
 		}
+#endif
 	}
 	return ret;
 }

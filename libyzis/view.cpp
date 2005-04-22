@@ -1602,7 +1602,7 @@ QString YZView::getCharBelow( int delta ) {
 			--x;
 		QString l = mBuffer->textline( Y );
 		if ( x < l.length() )
-			ret = l[ x ];
+			ret = l.at( x );
 	}
 
 	// restore stickyCol

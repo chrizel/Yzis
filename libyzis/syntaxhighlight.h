@@ -50,7 +50,7 @@
 #include <QLinkedList>
 #endif
 
-#ifndef WIN32
+#ifndef YZIS_WIN32_MSVC
 #include "magic.h"
 #endif
 
@@ -464,7 +464,9 @@ class YzisHlManager : public QObject
     uint dynamicCtxsCount;
     QTime lastCtxsReset;
     bool forceNoDCReset;
+#ifndef YZIS_WIN32_MSVC
     magic_t magicSet;
+#endif
 };
 
 #endif

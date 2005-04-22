@@ -23,6 +23,7 @@
  */
 
 
+#include "portability.h"
 #include "search.h"
 #include "session.h"
 #include "buffer.h"

@@ -22,12 +22,25 @@
 #define PORTABILITY_H
 
 #ifdef YZIS_WIN32_MSVC
+
+// boah, we are on windows
+#include <windows.h>
 #define PREFIX ""
-#else
+
+// XXX Phil: I'll fix that later 
+static const char * gettext( const char * s) { return s; }
+#define chmod( fname , flag )
+#define S_IRUSR 0 
+#define S_IWUSR 0
+
+#else 
+// ahh, we are on unix
 #include <unistd.h>
 #include <dirent.h>
+#include <pwd.h>
 #include "config.h"
 #include "translator.h"
+#include "libintl.h"
 #endif
 
 #endif // PORTABILITY_H

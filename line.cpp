@@ -47,7 +47,7 @@ void YZLine::setData(const QString &data) {
 	if ( len == 0 ) len++; //make sure to return a non empty array ... (that sucks)
 	mAttributes.resize( len );
 	for ( uint i = 0; i < len; i++ )
-		mAttributes[i] = 0;
+		mAttributes.at(i) = 0;
 }
 
 int YZLine::firstChar() const {

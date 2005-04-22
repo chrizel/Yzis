@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "portability.h"
 #include "mode_search.h"
 
 #include "debug.h"

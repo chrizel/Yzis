@@ -77,7 +77,7 @@ class YZExLua : public QObject {
 		  * Replacement of lua print, allows to control the output of print
 		  * Just take one string argument
 		  */
-		static int myprint(lua_State *L);
+		static int yzprint(lua_State *L);
 
 		/**
 		 * Get one line of text:

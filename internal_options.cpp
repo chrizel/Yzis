@@ -17,6 +17,7 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+#include "portability.h"
 #include "internal_options.h"
 #include "debug.h"
 #include "session.h"
@@ -499,7 +500,7 @@ bool YZInternalOptionPool::hasOption( const QString& _key ) {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
-	return mOptions.contains( key ) > 0;
+	return (mOptions.contains( key ));
 }
 
 YZOptionValue* YZInternalOptionPool::getOption( const QString& option ) {
@@ -583,9 +584,9 @@ void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& 
 	}
 
 	//drop old records
-	for ( QStringList::Iterator it = toDrop.begin(); it != toDrop.end(); ++it ) {
+	for ( QStringList::Iterator it2 = toDrop.begin(); it2 != toDrop.end(); ++it2 ) {
 		//dont delete the pointers, it is still used by the new option ;)
-		mOptions.remove(*it);
+		mOptions.remove(*it2);
 	}
 
 	//add new mOptions into the QMap now

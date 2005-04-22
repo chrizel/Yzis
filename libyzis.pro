@@ -17,7 +17,7 @@
 #  Boston, MA 02111-1307, USA.
 
 
-# you must set LUAINCLUDE to the directory containing lua headers
+# you must set in your shell LUAINCLUDE to the directory containing lua headers
 # and LUALIB to the directory containing lua .so or lua .lib files
 
 TEMPLATE = lib
@@ -35,19 +35,16 @@ win32-msvc {
 HEADERS += action.h \
            attribute.h \
            buffer.h \
-           commands.h \
            cursor.h \
            debug.h \
            events.h \
            ex_lua.h \
-           excommands.h \
            internal_options.h \
            line.h \
            linesearch.h \
            mapping.h \
            mark.h \
            option.h \
-           plugin.h \
            printer.h \
            qtprinter.h \
            registers.h \
@@ -59,6 +56,12 @@ HEADERS += action.h \
            syntaxdocument.h \
            syntaxhighlight.h \
            undo.h \
+           mode.h \
+           mode_command.h \
+           mode_ex.h \
+           mode_insert.h \
+           mode_search.h \
+           mode_visual.h \
            view.h \
            viewcursor.h \
            portability.h \
@@ -67,12 +70,10 @@ HEADERS += action.h \
 SOURCES += action.cpp \
            attribute.cpp \
            buffer.cpp \
-           commands.cpp \
            cursor.cpp \
            debug.cpp \
            events.cpp \
            ex_lua.cpp \
-           excommands.cpp \
            internal_options.cpp \
            line.cpp \
            linesearch.cpp \
@@ -91,4 +92,10 @@ SOURCES += action.cpp \
            syntaxhighlight.cpp \
            undo.cpp \
            view.cpp \
+           mode.cpp \
+           mode_command.cpp \
+           mode_ex.cpp \
+           mode_insert.cpp \
+           mode_search.cpp \
+           mode_visual.cpp \
            viewcursor.cpp

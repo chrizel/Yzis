@@ -26,15 +26,11 @@
  */
 
 
+#include "portability.h"
 #include "debug.h"
 #include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
-#ifndef WIN32
-#include <pwd.h>
-#endif
-#include "portability.h"
 #if QT_VERSION < 0x040000
 #include <qstringlist.h>
 #include <qfile.h>
@@ -50,7 +46,7 @@ YZDebugBackend * YZDebugBackend::_instance = NULL;
 YZDebugBackend::YZDebugBackend()
 {
 	_output = NULL;
-#ifndef WIN32
+#ifndef YZIS_WIN32_MSVC
 	setDebugOutput( "/tmp/yzisdebug-" + QString(getpwuid(geteuid())->pw_name) + ".log" );
 #else
 	setDebugOutput( "/tmp/yzisdebug.log" );
@@ -117,6 +113,9 @@ void YZDebugBackend::flush( int level, const QString& area, const char * data )
 	}
 	*/
 	fflush( _output );
+#ifdef YZIS_WIN32_MSVC
+	OutputDebugStringA( data );
+#endif
 }
 
 void YZDebugBackend::parseRcfile(const char * filename)

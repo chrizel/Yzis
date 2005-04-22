@@ -382,6 +382,7 @@ bool YZOptionString::setValue( const QString& entry, YZOptionValue* value ) {
 	return ret;
 }
 
+
 YZOptionList::YZOptionList( const QString& name, const QStringList& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList values ) 
 	: YZOption( name, ctx, scope, m, aliases ) {
 	m_allValues = values;
@@ -396,8 +397,8 @@ bool YZOptionList::setValue( const QString& entry, YZOptionValue* value ) {
 	opt_action action;
 
 	QString v_s = readValue( entry, &action );
-	ret = action != opt_invalid;
-	if ( ret != opt_reset )
+	ret = (action != opt_invalid);
+	if ( action != opt_reset )
 		v = YZOptionValue::listFromString( &ret, v_s );
 	if ( ret ) {
 		if ( action == opt_reset ) {
@@ -440,8 +441,8 @@ bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value ) {
 	opt_action action;
 	
 	QString v_s = readValue( entry, &action );
-	ret = action != opt_invalid;
-	if ( ret != opt_reset )
+	ret = (action != opt_invalid);
+	if ( action != opt_reset )
 		v = YZOptionValue::mapFromString( &ret, v_s );
 	if ( ret ) {
 		if ( action == opt_reset ) {

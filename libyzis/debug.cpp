@@ -92,12 +92,25 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 
 	if ( QFile::exists( fileName ) )
 		QFile::remove ( fileName );
+	struct stat buf;
 #if QT_VERSION < 0x040000
 	setDebugOutput( fopen( fileName.local8Bit(), "w" ) );
-	chmod( fileName.latin1(), S_IRUSR | S_IWUSR );
+	int i = lstat( fileName.local8Bit(), &buf );
+	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() ) 
+		chmod( fileName.local8Bit(), S_IRUSR | S_IWUSR );
+	else {
+		fclose( _output );
+		_output = NULL;
+	}
 #else
 	setDebugOutput( fopen( fileName.toLocal8Bit(), "w" ) );
-	chmod( fileName.toLatin1(), S_IRUSR | S_IWUSR );
+	int i = lstat( fileName.toLocal8Bit(), &buf );
+	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() ) 
+		chmod( fileName.toLocal8Bit(), S_IRUSR | S_IWUSR );
+	else {
+		fclose( _output );
+		_output = NULL;
+	}
 #endif
 }
 

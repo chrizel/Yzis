@@ -29,6 +29,7 @@
 
 // for tildeExpand
 #include <sys/types.h>
+#include <sys/stat.h>
 
 #include <qfile.h>
 #include <qtextstream.h>
@@ -579,10 +580,19 @@ void YZBuffer::load(const QString& file) {
 	setChanged( false );
 	//check for a swap file left after a crash
 	mSwap->setFileName( mPath );
-	if ( QFile::exists( mSwap->filename() ) ) {//if it already exists, recover from it
-		if ( YZSession::me->promptYesNo(_("Recover"),_("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
-			if ( mSwap->recover() )
-				setChanged( true );
+	if ( QFile::exists( mSwap->filename() ) ) { //if it already exists, recover from it
+		struct stat buf;
+#if QT_VERSION < 0x040000
+		int i = stat( mPath.local8Bit(), &buf );
+		if ( i != -1 && S_ISREG( buf.st_mode ) && buf.st_uid == geteuid() ) {
+#else
+		int i = stat( mPath.toLocal8Bit(), &buf );
+		if ( i != -1 && S_ISREG( buf.st_mode ) && buf.st_uid == geteuid() ) {
+#endif
+			if ( YZSession::me->promptYesNo(_("Recover"),_("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
+				if ( mSwap->recover() )
+					setChanged( true );
+			}
 		}
 	}
 //	mSwap->init(); // whatever happened before, create a new swapfile

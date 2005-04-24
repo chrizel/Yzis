@@ -1,3 +1,8 @@
+2005-04-25 mikmak
+  * libyzis [SECURITY FIX]
+    improval with the previous patch
+    make sure debug and swap files dont go into linked files
+
 2005-04-18 mikmak
   * libyzis [SECURITY FIX]
     make sure files we create have proper file permissions (especially the

@@ -60,11 +60,14 @@ void YZSwapFile::flush() {
 	if ( mNotResetted ) init();
 	yzDebug() << "Flushing swap to " << mFilename << endl;
 	QFile f( mFilename );
+	struct stat buf;
 #if QT_VERSION < 0x040000
-	if ( f.open( IO_WriteOnly | IO_Raw | IO_Append ) ) { //open at end of file
+	int i = lstat( mFilename.local8Bit(), &buf );
+	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() && f.open( IO_WriteOnly | IO_Raw | IO_Append ) ) { //open at end of file
 		chmod( mFilename.local8Bit(), S_IRUSR | S_IWUSR );
 #else
-	if ( f.open( QIODevice::WriteOnly | QIODevice::Append ) ) { //open at end of file
+	int i = lstat( mFilename.toLocal8Bit(), &buf );
+	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() && f.open( QIODevice::WriteOnly | QIODevice::Append ) ) { //open at end of file
 		chmod( mFilename.toLocal8Bit(), S_IRUSR | S_IWUSR );
 #endif
 		QTextStream stream( &f );

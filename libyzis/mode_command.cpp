@@ -113,9 +113,10 @@ void YZModeCommand::initMotionPool() {
 	commands.append( new YZMotion("<ENTER>", &YZModeCommand::firstNonBlankNextLine, ARG_NONE) );
 	commands.append( new YZMotion("gg", &YZModeCommand::gotoLine, ARG_NONE) );
 	commands.append( new YZMotion("G", &YZModeCommand::gotoLine, ARG_NONE) );
-	commands.append( new YZMotion("{", &YZModeCommand::nextEmptyLine, ARG_NONE) );
-	commands.append( new YZMotion("}", &YZModeCommand::previousEmptyLine, ARG_NONE) );
+	commands.append( new YZMotion("}", &YZModeCommand::nextEmptyLine, ARG_NONE) );
+	commands.append( new YZMotion("{", &YZModeCommand::previousEmptyLine, ARG_NONE) );
 }
+
 void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("I", &YZModeCommand::insertAtSOL) );
 	commands.append( new YZCommand("i", &YZModeCommand::gotoInsertMode) );
@@ -613,9 +614,7 @@ YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 		}
 		start--;	
 	}
-	if (counter==count)
-		return YZCursor(0,start);
-	return from;
+	return YZCursor(0,start);
 }
 
 YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
@@ -629,9 +628,7 @@ YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
 		}
 		start++;	
 	}
-	if (counter==count)
-		return YZCursor(0,start-1);
-	return from;
+	return YZCursor(0,start-1);
 }
 
 YZCursor YZModeCommand::matchPair(const YZMotionArgs &args) {

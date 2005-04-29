@@ -248,7 +248,7 @@ void KYZisCodeCompletion::doComplete()
   emit filterInsertString(&(item->m_entry),&add);
 
   m_view->modePool()->push( YZMode::MODE_INSERT );
-  static_cast<KYZisDoc*>(m_view->document())->YZBuffer::action()->insertChar(m_view, YZCursor(m_colCursor,m_lineCursor), add);
+  static_cast<KYZisDoc*>(m_view->document())->YZBuffer::action()->insertChar(m_view, YZCursor(m_colCursor + currentComplText.length(),m_lineCursor), add);
 
   complete( item->m_entry );
   m_view->setFocus();

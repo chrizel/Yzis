@@ -1,6 +1,8 @@
 2005-04-29 Dmitry Suzdalev (patch)
   * libyzis, kyzis
 	support CTRL-C to work like ESC
+  * kyzis
+	second patch : fixes code completion in kdevelop
 
 2005-04-28 scottn
   * libyzis [Bug 163]

@@ -61,7 +61,7 @@ int main(int argc, char **argv) {
 	about.addCredit( "Per Johansson", "Kyzis Tab caption improvement", "per.j@hjolug.org" );
 	about.addCredit( "Helder Correia", "Commands and bug fixes", "helder.correia@netcabo.pt" );
 	about.addCredit( "Scott Newton", "'.' command", "scottn@ihug.co.nz" );
-	about.addCredit( "Dmitry Suzdalev", "Misc fixes and improvments", "dmitry@mail.ru" );
+	about.addCredit( "Dmitry Suzdalev", "Misc fixes and improvments", "dimsuz@mail.ru" );
 
 	KCmdLineArgs::init(argc, argv, &about);
 	KCmdLineArgs::addCmdLineOptions( options );

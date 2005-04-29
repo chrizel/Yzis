@@ -111,7 +111,7 @@ cmd_state YZModeSearch::execCommand( YZView* mView, const QString& _key ) {
 	} else if ( key == "<ALT>:" ) {
 		mView->modePool()->change( MODE_EX );
 		return CMD_OK;
-	} else if ( key == "<ESC>" ) {
+	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
 		if ( mView->getLocalBooleanOption( "incsearch" ) ) {
 			mView->gotoxy(mSearchBegin->x(), mSearchBegin->y());
 			mView->setPaintAutoCommit( false );

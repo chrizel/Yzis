@@ -140,6 +140,7 @@ void YZModeVisual::initCommandPool() {
 	commands.append( new YZCommand("<CTRL>l", &YZModeCommand::redisplay) );
 	commands.append( new YZCommand("<DEL>", &YZModeCommand::del) );
 	commands.append( new YZCommand("<ESC>", (PoolMethod) &YZModeVisual::escape) );
+	commands.append( new YZCommand("<CTRL>c", (PoolMethod) &YZModeVisual::escape) );
 	commands.append( new YZCommand(":", (PoolMethod) &YZModeVisual::gotoExMode ) );
 	commands.append( new YZCommand("A", (PoolMethod) &YZModeVisual::commandAppend ) );
 	commands.append( new YZCommand("D", (PoolMethod) &YZModeVisual::deleteWholeLines) );

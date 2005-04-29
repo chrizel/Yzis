@@ -121,7 +121,7 @@ cmd_state YZModeEx::execCommand( YZView* mView, const QString& key ) {
 
 		mView->mCurrentExItem--;
 		mView->setCommandLineText( mView->mExHistory[mView->mCurrentExItem] );
-	} else if ( key == "<ESC>" ) {
+	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
 		mView->modePool()->pop( MODE_COMMAND );
 	} else if ( key == "<TAB>" ) {
 		//ignore for now

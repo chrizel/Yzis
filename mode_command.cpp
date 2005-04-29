@@ -169,6 +169,7 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("<CTRL>l", &YZModeCommand::redisplay) );
 	commands.append( new YZCommand("<CTRL>[", &YZModeCommand::gotoCommandMode) );
 	commands.append( new YZCommand("<ESC>", &YZModeCommand::abort) );
+	commands.append( new YZCommand("<CTRL>c", &YZModeCommand::abort) );
 	commands.append( new YZCommand("<DEL>", &YZModeCommand::delkey) );
 	commands.append( new YZCommand("<ALT>:", &YZModeCommand::gotoExMode) );
 	commands.append( new YZCommand("gUU", &YZModeCommand::lineToUpperCase) );

@@ -42,7 +42,12 @@ void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 	if ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Up || e->key() == Qt::Key_Down || e->key() == Qt::Key_Escape) {
 		_parent->sendKey(_parent->editor()->convertKey( e->key() ), modifiers ) ;
 		e->accept();
-	} else KLineEdit::keyPressEvent( e );
+	} 
+	else if ( ( e->state() & Qt::ControlButton ) && e->key() == Qt::Key_C ) { // handle CTRL-C 
+		_parent->sendKey( "c" , modifiers ) ;
+		e->accept();
+	}
+	else KLineEdit::keyPressEvent( e );
 }
 
 void KYZisCommand::focusInEvent (QFocusEvent *) {

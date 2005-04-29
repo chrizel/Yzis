@@ -1,3 +1,7 @@
+2005-04-29 Dmitry Suzdalev (patch)
+  * libyzis, kyzis
+	support CTRL-C to work like ESC
+
 2005-04-28 scottn
   * libyzis [Bug 163]
     Fixed { and } commands

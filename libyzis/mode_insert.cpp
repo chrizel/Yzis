@@ -45,7 +45,7 @@ void YZModeInsert::leave( YZView* mView ) {
 }
 
 void YZModeInsert::initModifierKeys() {
-	mModifierKeys << "<CTRL>e" << "<CTRL>n" << "<CTRL>p" << "<CTRL>x" << "<CTRL>y" << "<ALT>:" << "<ALT>v";
+	mModifierKeys << "<CTRL>c" <<"<CTRL>e" << "<CTRL>n" << "<CTRL>p" << "<CTRL>x" << "<CTRL>y" << "<ALT>:" << "<ALT>v";
 }
 /*
  * if you add a command which use modifiers keys, add it in initModifierKeys too
@@ -55,7 +55,7 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	cmd_state ret = CMD_OK;
 	     if ( key == "<HOME>" ) commandHome( mView, key );
 	else if ( key == "<END>" ) commandEnd( mView, key );
-	else if ( key == "<ESC>" ) commandEscape( mView, key );
+	else if ( key == "<ESC>" || key == "<CTRL>c" ) commandEscape( mView, key );
 	else if ( key == "<INS>" ) commandInsert( mView, key );
 	else if ( key == "<ALT>:" ) commandEx( mView, key );
 	else if ( key == "<ALT>v" ) commandVisual( mView, key );

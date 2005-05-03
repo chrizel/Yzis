@@ -1,0 +1,551 @@
+# translation of ru.po to Russian
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Dmitry Suzdalev <dimsuz@mail.ru>, 2005.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ru\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2005-02-12 17:12+0100\n"
+"PO-Revision-Date: 2005-05-03 14:25+0400\n"
+"Last-Translator: Dmitry Suzdalev <dimsuz@mail.ru>\n"
+"Language-Team: Russian <i18n@yzis.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.3.1\n"
+
+#: ../kyzis/main.cpp:38
+msgid "KDE Frontend for the Yzis Editor"
+msgstr "KDE оболочка для редактора Yzis"
+
+#: ../kyzis/main.cpp:41
+msgid "Document to open."
+msgstr "Документ, который будет открыт."
+
+#: ../kyzis/main.cpp:42
+msgid "Execute command passed in argument"
+msgstr "Запустить команду, переданную в качестве аргумента"
+
+#: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:137
+msgid "Kyzis"
+msgstr "Kyzis"
+
+#: ../kyzis/src/configdialog.cpp:65
+msgid "Text font"
+msgstr "Шрифт текста"
+
+#: ../kyzis/src/configdialog.cpp:73
+msgid "Use a transparent background"
+msgstr "Включить прозрачность фона"
+
+#: ../kyzis/src/configdialog.cpp:81
+msgid "Background color opacity"
+msgstr "Плотность прозрачности фона"
+
+#: ../kyzis/src/configdialog.cpp:83
+msgid "Min"
+msgstr "Мин"
+
+#: ../kyzis/src/configdialog.cpp:85
+msgid "Max"
+msgstr "Макс"
+
+#: ../kyzis/src/configdialog.cpp:93
+msgid "Background Color"
+msgstr "Цвет фона"
+
+#: ../kyzis/src/configdialog.cpp:101
+msgid "Foreground Color"
+msgstr "Цвет текста"
+
+#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:364
+#: ../kyzis/src/document.cpp:368
+msgid "Syntax Highlighting"
+msgstr "Подсветка синтаксиса"
+
+#: ../kyzis/src/factory.cpp:66
+msgid "Kyzis Part"
+msgstr "Kyzis Part"
+
+#: ../kyzis/src/factory.cpp:66
+msgid "Embeddable vi-like editor component"
+msgstr "Встраиваимая компонента редактора vi-типа"
+
+#: ../kyzis/src/factory.cpp:66
+msgid "(c)2002-2005 The Kyzis Authors"
+msgstr "(c)2002-2005 Авторы Kyzis"
+
+#: ../kyzis/src/factory.cpp:138
+msgid "Kyzis - KDE Frontend for Yzis"
+msgstr "Kyzis - KDE оболочка для редактора Yzis"
+
+#: ../kyzis/src/factory.cpp:140
+msgid "(c) 2003-2005"
+msgstr "(c) 2003-2005"
+
+#: ../kyzis/src/factory.cpp:141 ../kyzis/src/factory.cpp:142
+#: ../kyzis/src/factory.cpp:143 ../kyzis/src/factory.cpp:144
+msgid "Initial Author"
+msgstr "Оригинальный автор"
+
+#: ../kyzis/src/factory.cpp:152
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr "Суздалев Дмитрий"
+
+#: ../kyzis/src/factory.cpp:152
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr "dimsuz@mail.ru"
+
+#: ../kyzis/src/hlconfig.cpp:186
+msgid "Text Area Background"
+msgstr "Фон области текста"
+
+#: ../kyzis/src/hlconfig.cpp:190
+msgid "Normal text:"
+msgstr "Обычный текст:"
+
+#: ../kyzis/src/hlconfig.cpp:196
+msgid "Selected text:"
+msgstr "Выделенный текст:"
+
+#: ../kyzis/src/hlconfig.cpp:202
+msgid "Current line:"
+msgstr "Текущая строка:"
+
+#: ../kyzis/src/hlconfig.cpp:211
+msgid "Bookmark"
+msgstr "Закладка"
+
+#: ../kyzis/src/hlconfig.cpp:212
+msgid "Active Breakpoint"
+msgstr "Активная точка останова"
+
+#: ../kyzis/src/hlconfig.cpp:213
+msgid "Reached Breakpoint"
+msgstr "Текущая точка останова"
+
+#: ../kyzis/src/hlconfig.cpp:214
+msgid "Disabled Breakpoint"
+msgstr "Выключенная точка останова"
+
+#: ../kyzis/src/hlconfig.cpp:215
+msgid "Execution"
+msgstr "Запуск"
+
+#: ../kyzis/src/hlconfig.cpp:224
+msgid "Additional Elements"
+msgstr "Дополнительные элементы"
+
+#: ../kyzis/src/hlconfig.cpp:228
+msgid "Left border background:"
+msgstr "Фон левой границы:"
+
+#: ../kyzis/src/hlconfig.cpp:234
+msgid "Line numbers:"
+msgstr "Номера строк:"
+
+#: ../kyzis/src/hlconfig.cpp:240
+msgid "Bracket highlight:"
+msgstr "Подсветка скобок:"
+
+#: ../kyzis/src/hlconfig.cpp:246
+msgid "Word wrap markers:"
+msgstr "Маркеры переноса слов:"
+
+#: ../kyzis/src/hlconfig.cpp:252
+msgid "Tab markers:"
+msgstr "Маркеры табуляции:"
+
+#: ../kyzis/src/hlconfig.cpp:264
+msgid "<p>Sets the background color of the editing area.</p>"
+msgstr "<p>Устанавливает цвет фона для области редактирования</p>"
+
+#: ../kyzis/src/hlconfig.cpp:265
+msgid ""
+"<p>Sets the background color of the selection.</p><p>To set the text color "
+"for selected text, use the \"<b>Configure Highlighting</b>\" dialog.</p>"
+msgstr "<p>Устанавливает цвет фона для выделения.</p><p>Для установки цвета выделенного текста используйте диалог \"<b>Настройка подсветки</b>\".</p>"
+
+#: ../kyzis/src/hlconfig.cpp:268
+msgid ""
+"<p>Sets the background color of the selected marker type.</p><p><b>Note</b>: "
+"The marker color is displayed lightly because of transparency.</p>"
+msgstr ""
+"<p>Устанавливает цвет фона для выбранного типа маркера.</p><p><b>Замечание</b>: "
+"Цвет маркера может отображаться более светлым из-за прозрачности.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:271
+msgid "<p>Select the marker type you want to change.</p>"
+msgstr "<p>Выберите тип маркера, который вы хотите изменить.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:272
+msgid ""
+"<p>Sets the background color of the currently active line, which means the "
+"line where your cursor is positioned.</p>"
+msgstr "<p>Устанавливает цвет фона текущей строки, то есть строки, на которой находится ваш курсор.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:275
+msgid ""
+"<p>This color will be used to draw the line numbers (if enabled) and the "
+"lines in the code-folding pane.</p>"
+msgstr "<p>Этот цвет будет использован для отрисовки номеров строк (если она включена) и .для отрисовки строк на панели сворачивания блоков кода</p>"
+
+#: ../kyzis/src/hlconfig.cpp:277
+msgid ""
+"<p>Sets the bracket matching color. This means, if you place the cursor e.g. "
+"at a <b>(</b>, the matching <b>)</b> will be highlighted with this color.</p>"
+msgstr "<p>Устанавливает цвет подсветки совпадающих скобок. Например, если вы поместите курсор на скобку <b>(</b>, то этот цвет будет использован для соответствующей скобки <b>)</b>.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:281
+msgid ""
+"<p>Sets the color of Word Wrap-related markers:</p><dl><dt>Static Word Wrap</"
+"dt><dd>A vertical line which shows the column where text is going to be "
+"wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the left of "
+"visually-wrapped lines</dd></dl>"
+msgstr ""
+"<p>Устанавливает цвет для маркеров, имеющих отношение к переносу слов:</p><dl><dt>Статический перенос слов</"
+"dt><dd>Вертикальная линия, показывающая столбец, в котором будет осуществлен перенос текста</dd><dt>Динамический перенос слов</dt><dd>Стрелка, отображенная слева от визуально перенесенных строк</dd></dl>"
+
+#: ../kyzis/src/hlconfig.cpp:287
+msgid "<p>Sets the color of the tabulator marks:</p>"
+msgstr "<p>Устанавливает цвет маркеров табуляции:</p>"
+
+#: ../kyzis/src/hlconfig.cpp:505
+msgid ""
+"This list displays the default styles for the current schema and offers the "
+"means to edit them. The style name reflects the current style settings.<p>To "
+"edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> and choose a "
+"property from the popup menu.<p>To edit the colors, click the colored "
+"squares, or select the color to edit from the popup menu.<p>You can unset "
+"the Background and Selected Background colors from the popup menu when "
+"appropriate."
+msgstr "Этот список отображает стили текущей схемы и предлагает средства для их редактирования. Имя стиля отражает текущие установки стиля<p>Для редактирования с помощью клавиатуры, нажмите <strong>&lt;ПРОБЕЛ&gt;</strong> и выберите свойство из выпадающего меню.<p>Для редактирования цвета, щёлкните по цветному квадрату или выберите нужный цвет из выпадающего меню.<p>Используя выпадающее меню, вы также можете сбросить цвета Фона и Фона выделения."
+
+#: ../kyzis/src/hlconfig.cpp:548
+msgid "H&ighlight:"
+msgstr "&Подсветка:"
+
+#: ../kyzis/src/hlconfig.cpp:569
+msgid ""
+"This list displays the contexts of the current syntax highlight mode and "
+"offers the means to edit them. The context name reflects the current style "
+"settings.<p>To edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> "
+"and choose a property from the popup menu.<p>To edit the colors, click the "
+"colored squares, or select the color to edit from the popup menu.<p>You can "
+"unset the Background and Selected Background colors from the context menu "
+"when appropriate."
+msgstr ""
+"Этот список отображает контексты текущей схемы подсветки и предлагает средства для их редактирования. Имя контекста отражает текущие настройки стиля. <p>Для редактирования с помощью клавиатуры, нажмите <strong>&lt;ПРОБЕЛ&gt;</strong> "
+"и выберите свойство из выпадающего меню.<p>Для редактирования цвета, щёлкните по цветному квадрату или выберите нужный цвет из выпадающего меню.<p>Используя выпадающее меню, вы также можете сбросить цвета Фона и Фона выделения."
+
+#: ../kyzis/src/hlconfig.cpp:688
+msgid "&Schema:"
+msgstr "&Схема:"
+
+#: ../kyzis/src/hlconfig.cpp:694
+msgid "&New..."
+msgstr "С&оздать..."
+
+#: ../kyzis/src/hlconfig.cpp:707
+msgid "Colors"
+msgstr "Цвета"
+
+#: ../kyzis/src/hlconfig.cpp:713
+msgid "Normal Text Styles"
+msgstr "Стили обычного текста"
+
+#: ../kyzis/src/hlconfig.cpp:717
+msgid "Highlighting Text Styles"
+msgstr "Стили подсветок текста"
+
+#: ../kyzis/src/hlconfig.cpp:722
+msgid "&Default schema for %1:"
+msgstr "С&хема по умолчанию для %1:"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "Name for New Schema"
+msgstr "Имя для новой схемы"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "Name:"
+msgstr "Имя:"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "New Schema"
+msgstr "Новая схема"
+
+#: ../kyzis/src/hlconfig.cpp:917
+msgid "Context"
+msgstr "Контекст"
+
+#: ../kyzis/src/hlconfig.cpp:922
+msgid "Normal"
+msgstr "Обычный"
+
+#: ../kyzis/src/hlconfig.cpp:923
+msgid "Selected"
+msgstr "Выделенный"
+
+#: ../kyzis/src/hlconfig.cpp:924
+msgid "Background"
+msgstr "Фон"
+
+#: ../kyzis/src/hlconfig.cpp:925
+msgid "Background Selected"
+msgstr "Фон выделения"
+
+#: ../kyzis/src/hlconfig.cpp:927
+msgid "Use Default Style"
+msgstr "Использовать стиль по умолчанию"
+
+#: ../kyzis/src/hlconfig.cpp:962
+msgid "&Bold"
+msgstr "&Жирный"
+
+#: ../kyzis/src/hlconfig.cpp:964
+msgid "&Italic"
+msgstr "&Курсив"
+
+#: ../kyzis/src/hlconfig.cpp:966
+msgid "&Underline"
+msgstr "&Подчеркнутый"
+
+#: ../kyzis/src/hlconfig.cpp:968
+msgid "S&trikeout"
+msgstr "Пере&черкнутый"
+
+#: ../kyzis/src/hlconfig.cpp:973
+msgid "Normal &Color..."
+msgstr "Обычный &цвет..."
+
+#: ../kyzis/src/hlconfig.cpp:974
+msgid "&Selected Color..."
+msgstr "Ц&вет выделения..."
+
+#: ../kyzis/src/hlconfig.cpp:975
+msgid "&Background Color..."
+msgstr "Ц&вет фона..."
+
+#: ../kyzis/src/hlconfig.cpp:976
+msgid "S&elected Background Color..."
+msgstr "Цв&ет фона выделения..."
+
+#: ../kyzis/src/hlconfig.cpp:987
+msgid "Unset Background Color"
+msgstr "Сбросить цвет фона"
+
+#: ../kyzis/src/hlconfig.cpp:989
+msgid "Unset Selected Background Color"
+msgstr "Сбросить цвет фона выделения"
+
+#: ../kyzis/src/hlconfig.cpp:994
+msgid "Use &Default Style"
+msgstr "Использовать С&тиль по умолчанию"
+
+#: ../kyzis/src/hlconfig.cpp:1210
+msgid ""
+"\"Use Default Style\" will be automatically unset when you change any style "
+"properties."
+msgstr "Параметр \"Использовать стиль по умолчанию\" будет автоматически сброшен после изменения любой из настроек стиля."
+
+#: ../kyzis/src/hlconfig.cpp:1211
+msgid "Yzis Styles"
+msgstr "Стили Yzis"
+
+#: ../kyzis/src/kyzis.cpp:116
+msgid "Opens recently opened file."
+msgstr "Открывает недавно редактировавшийся файл."
+
+#: ../kyzis/src/kyzis.cpp:125
+msgid "Show &Konsole"
+msgstr "Показать &Konsole"
+
+#: ../kyzis/src/kyzis.cpp:135
+msgid "&Window"
+msgstr "&Окно"
+
+#: ../kyzis/src/kyzis.cpp:324
+msgid "Terminal"
+msgstr "Терминал"
+
+#: ../libyzis/buffer.cpp:565
+msgid "Failed opening file %1 for reading : %2"
+msgstr "Не удалось открыть файл %1 для чтения: %2"
+
+#: ../libyzis/buffer.cpp:573
+msgid "Recover"
+msgstr "Восстановление"
+
+#: ../libyzis/buffer.cpp:573
+msgid ""
+"A swap file was found for this file, it was presumably created because your "
+"computer or yzis crashed, do you want to start the recovery of this file ?"
+msgstr "Был найден swap-файл для этого документа. Скорее всего, он был создан из-за сбоя в yzis или в вашем компьютере. Запустить процедуру восстановления файла?"
+
+#: ../libyzis/buffer.cpp:643
+msgid "Failed opening file %1 for writing : %2"
+msgstr "Не удалось открыть файл %1 для записи: %2"
+
+#: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
+msgid "Written %1 bytes to file %2"
+msgstr "Записано %1 байт в файл %2"
+
+#: ../libyzis/ex_lua.cpp:263
+msgid "The file %1 could not be found in standard directories"
+msgstr "Не удается найти файл %1 по стандартным путям"
+
+#: ../libyzis/ex_lua.cpp:274
+msgid "Lua error when running file %1:\n"
+msgstr "Ошибка Lua при выполнении файла %1:\n"
+
+#: ../libyzis/mode_command.cpp:53
+msgid "[ Awaiting Command ]"
+msgstr "[ Ожидание команды ]"
+
+#: ../libyzis/mode.cpp:79
+msgid "[ Introduction ]"
+msgstr "[ Вступление ]"
+
+#: ../libyzis/mode_ex.cpp:66
+msgid "[ Ex ]"
+msgstr "[ Ex ]"
+
+#: ../libyzis/mode_ex.cpp:293
+msgid "Not an editor command: "
+msgstr "Не является командой редактора:"
+
+#: ../libyzis/mode_ex.cpp:409 ../libyzis/mode_ex.cpp:422
+#: ../libyzis/mode_ex.cpp:429
+msgid "One file is modified! Save it first..."
+msgstr "Один из файлов изменен! Сначала сохраните его..."
+
+#: ../libyzis/mode_ex.cpp:442
+msgid "No next buffer"
+msgstr "Нет следующего буфера"
+
+#: ../libyzis/mode_ex.cpp:453
+msgid "No previous buffer"
+msgstr "Нет предыдущего буфера"
+
+#: ../libyzis/mode_ex.cpp:491 ../libyzis/mode_ex.cpp:791
+msgid "Please specify a filename"
+msgstr "Пожалуйста, укажите имя файла"
+
+#: ../libyzis/mode_ex.cpp:542 ../libyzis/mode_ex.cpp:680
+msgid "Invalid option given : "
+msgstr "Неверный параметр :"
+
+#: ../libyzis/mode_ex.cpp:567 ../libyzis/mode_ex.cpp:695
+msgid "This option cannot be switched this way, this is a boolean option."
+msgstr "Этот параметр не может быть установлен таким способом - он имеет тип boolean."
+
+#: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
+#: ../libyzis/mode_ex.cpp:629
+msgid "This option is a global option which cannot be changed with setlocal"
+msgstr "Этот параметр является глобальным и не может быть изменен с помощью setlocal"
+
+#: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
+#: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
+msgid "Invalid option given"
+msgstr "Неверный параметр"
+
+#: ../libyzis/mode_insert.cpp:35
+msgid "[ Insert ]"
+msgstr "[ Вставка ]"
+
+#: ../libyzis/mode_insert.cpp:182
+msgid "[ Replace ]"
+msgstr "[ Замена ]"
+
+#: ../libyzis/mode_insert.cpp:205
+msgid "{ Completion }"
+msgstr "{ Дополнение }"
+
+#: ../libyzis/mode_search.cpp:37
+msgid "[ Search ]"
+msgstr "[ Поиск ]"
+
+#: ../libyzis/mode_search.cpp:92
+msgid "No match"
+msgstr "Нет совпадений"
+
+#: ../libyzis/mode_search.cpp:156
+msgid "[ Search backward ]"
+msgstr "[ Поиск назад ]"
+
+#: ../libyzis/mode_visual.cpp:45
+#, fuzzy
+msgid "[ Visual ]"
+msgstr "[ Визуальный ]"
+
+#: ../libyzis/mode_visual.cpp:182
+#, fuzzy
+msgid "[ Visual Line ]"
+msgstr "[ Визуальный Линия ]"
+
+#: ../libyzis/search.cpp:102
+msgid "search hit TOP, continuing at BOTTOM"
+msgstr "Поиск достиг НАЧАЛА, продолжаем С КОНЦА"
+
+#: ../libyzis/search.cpp:104
+msgid "search hit BOTTOM, continuing at TOP"
+msgstr "Поиск достиг КОНЦА, продолжаем С НАЧАЛА"
+
+#: ../libyzis/swapfile.cpp:81
+msgid ""
+"Warning, the swapfile could not be opened maybe due to restrictive "
+"permissions."
+msgstr "Внимание, swap-файл не может быть открыт из-за ограниченных прав доступа."
+
+#: ../libyzis/swapfile.cpp:130
+msgid ""
+"Warning, the swapfile could not be created maybe due to restrictive "
+"permissions."
+msgstr "Внимание, swap-файл не может быть создан из-за ограниченных прав доступа."
+
+#: ../libyzis/swapfile.cpp:158
+msgid ""
+"The swap file could not be opened, there will be no recovering for this "
+"file, you might want to check permissions of files."
+msgstr "Не удается открыть swap-файл, восстановление данного файла будет невозможно. Советуем проверить права доступа к файлам."
+
+#: ../libyzis/view.cpp:179
+msgid "File modified"
+msgstr "Файл изменен"
+
+#: ../libyzis/view.cpp:179
+msgid "This file has been modified, do you want to save it ?"
+msgstr "Данный файл был изменен, хотите сохранить его?"
+
+#: ../libyzis/view.cpp:404 ../libyzis/view.cpp:412
+msgid "All"
+msgstr "Весь"
+
+#: ../libyzis/view.cpp:411
+msgid "Bot"
+msgstr "Кон"
+
+#: ../libyzis/view.cpp:1473
+msgid ""
+"To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
+"should try pslib in console mode"
+msgstr "Чтобы использовать принтер Qt, вам необходимо установить переменную X11 DISPLAY. Также попробуйте запустить pslib в консольном режиме."
+
+#: ../libyzis/view.cpp:1744
+msgid " { Recording }"
+msgstr "{ Запись }"
+
+#: ../nyzis/factory.cpp:197
+msgid "(Press any key)"
+msgstr "(Нажмите любую клавишу)"
+
+#: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
+msgid "[No File]"
+msgstr "[Нет файла]"
+

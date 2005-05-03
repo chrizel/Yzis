@@ -1,6 +1,7 @@
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2003-2005 Mickael Marchand <mikmak@yzis.org>,
  *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -31,6 +32,11 @@
 #include "events.h"
 #include "mode.h"
 #include "view.h"
+#include "viewcursor.h"
+#include "yzisinfo.h"
+#include "yzisinforecord.h"
+#include "yzisinforecordstartposition.h"
+#include "yzisinforecordsearchhistory.h"
 
 class YZView;
 class YZBuffer;
@@ -42,6 +48,11 @@ class YZEvents;
 class YZMode;
 class YZModeEx;
 class YZModeCommand;
+class YZViewCursor;
+class YZYzisinfo;
+class YZYzisinfoRecord;
+class YZYzisinfoRecordStartPosition;
+class YZYzisinfoRecordSearchPosition;
 
 /**
  * Contains data referring to an instance of yzis
@@ -51,6 +62,7 @@ class YZModeCommand;
  */
 
 typedef QMap<QString,YZBuffer*> YZBufferMap;
+typedef QValueVector<YZYzisinfoRecord*> YZYzisinfoList;
  
 class YZSession {
 	public:
@@ -68,6 +80,7 @@ class YZSession {
 		YZModeMap getModes();
 		YZModeEx* getExPool();
 		YZModeCommand* getCommandPool();
+		YZYzisinfo* getYzisinfo();
 
 		/**
 		 * search
@@ -279,6 +292,10 @@ class YZSession {
 		void registerModifier ( const QString& mod );
 		void unregisterModifier ( const QString& mod );
 
+		YZYzisinfoList yzisinfoList() const { return mYzisinfoList; }
+		void saveCursorPosition();
+		YZCursor * previousCursorPosition();
+
 	protected:
 		//we map "filename"/buffer for buffers
 		YZBufferMap mBuffers;
@@ -300,6 +317,10 @@ class YZSession {
 		static YZRegisters *mRegisters;
 		static YZSession *me;
 		static YZEvents *events;
+		static YZYzisinfo* mYzisinfo;
+		static int mYzisinfoCount;
+		static int mYzisinfoPosition;
+		static YZYzisinfoList mYzisinfoList; 
 };
 
 #endif /* YZ_SESSION_H */

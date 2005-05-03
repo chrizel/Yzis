@@ -181,6 +181,7 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("<PDOWN>", &YZModeCommand::scrollPageDown) );
 	commands.append( new YZCommand("<CTRL>f", &YZModeCommand::scrollPageDown) );
 	commands.append( new YZCommand(".", &YZModeCommand::redoLastCommand) );
+	commands.append( new YZCommand("<CTRL>o", &YZModeCommand::undoJump) );
 }
 
 void YZModeCommand::initModifierKeys() {
@@ -1495,3 +1496,8 @@ void YZModeCommand::redoLastCommand( const YZCommandArgs & args ) {
 	execCommand( view, view->getLastInputBuffer() );
 }
 
+void YZModeCommand::undoJump( const YZCommandArgs & args ) {
+   YZView * view = args.view;
+   YZCursor * cursor = YZSession::me->previousCursorPosition();
+   view->gotodxdy(cursor->x(), cursor->y(), true);
+}

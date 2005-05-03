@@ -163,6 +163,7 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 	//check mappings
 	mapMode |= current()->mapMode();
 	bool map = false;
+	mView->saveInputBuffer();
 	QString mapped = mView->getInputBuffer(); // + modifiers + key;
 //	yzDebug() << "Looking mappings for " << mapped << endl;
 	bool pendingMapp = YZMapping::self()->applyMappings( mapped, mapMode, &map );
@@ -182,7 +183,6 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 			yzDebug() << "cmd_state = CMD_ERROR" << endl;
 			if (pendingMapp) break;
 		case CMD_OK:
-			mView->saveInputBuffer();
 			mView->purgeInputBuffer();
 			mapMode = 0;
 			break;

@@ -2,6 +2,7 @@
  *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
  *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>,
  *  Copyright (C) 2003-2004 Philippe Fremy <pfremy@freehackers.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -612,6 +613,22 @@ void YZBuffer::load(const QString& file) {
 #endif
 	}
 	filenameChanged();
+
+	YZSession::me->getYzisinfo()->readYzisinfo();
+	YZCursor * tmp = YZSession::me->getYzisinfo()->startPosition();
+	
+#if QT_VERSION < 0x040000
+	YZView *hit;
+	for ( hit = mViews.first(); hit; hit = mViews.next() )
+		if ( tmp ) {
+			hit->gotodxdy(tmp->x(), tmp->y(), true );
+		}
+#else
+	for ( int ab = 0 ; ab < mViews.size(); ++ab )
+	if ( tmp ) {
+		mViews.at(ab)->gotodxdy(tmp->x(), tmp->y(), true );
+	}
+#endif
 }
 
 bool YZBuffer::save() {
@@ -681,6 +698,13 @@ bool YZBuffer::save() {
 	//clear swap memory
 	mSwap->reset();
 	mSwap->unlink();
+	
+	YZSession::me->getYzisinfo()->saveStartPosition( mPath, 
+                  (YZSession::me->currentView())->getCursor()->x(),
+                  (YZSession::me->currentView())->getCursor()->y() );
+				                  
+	YZSession::me->getYzisinfo()->writeYzisinfo();
+   
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);
 	if ( hlMode >= 0 && m_highlight != YzisHlManager::self()->getHl( hlMode ) )
 		setHighLight( hlMode );

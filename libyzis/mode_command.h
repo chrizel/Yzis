@@ -259,6 +259,8 @@ class YZModeCommand : public YZMode {
 		void scrollPageUp( const YZCommandArgs &args );
 		void scrollPageDown( const YZCommandArgs &args );
 		void redoLastCommand( const YZCommandArgs & args );
+		void undoJump( const YZCommandArgs & args );
+
 #if QT_VERSION < 0x040000
 		QPtrList<const YZCommand> commands;
 #else

@@ -1,6 +1,7 @@
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2003-2005 Mickael Marchand <mikmak@yzis.org>,
  *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -31,6 +32,7 @@
 #include "swapfile.h"
 #include "mapping.h"
 #include "ex_lua.h"
+
 #if QT_VERSION < 0x040000
 #include <qapplication.h>
 #include <qdir.h>
@@ -44,6 +46,7 @@
 #include "mode_insert.h"
 #include "mode_search.h"
 #include "mode_visual.h"
+#include "yzisinforecordsearchhistory.h"
 
 int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
@@ -51,6 +54,10 @@ YZInternalOptionPool *YZSession::mOptions = 0;
 YZRegisters *YZSession::mRegisters = 0;
 YZSession *YZSession::me = 0;
 YZEvents *YZSession::events = 0;
+YZYzisinfo *YZSession::mYzisinfo= 0;
+int YZSession::mYzisinfoCount = 0;
+int YZSession::mYzisinfoPosition = 0;
+YZYzisinfoList YZSession::mYzisinfoList = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
@@ -67,6 +74,9 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mSchemaManager = new YzisSchemaManager();
 	mOptions = new YZInternalOptionPool();
 	mRegisters = new YZRegisters();
+	mYzisinfo= new YZYzisinfo();
+	mYzisinfoCount = 0;
+	mYzisinfoPosition = 1;
 }
 
 YZSession::~YZSession() {
@@ -77,6 +87,7 @@ YZSession::~YZSession() {
 	delete events;
 	delete mRegisters;
 	delete mOptions;
+	delete mYzisinfo;
 	delete YZMapping::self();
 	delete YZExLua::instance();
 	delete YZDebugBackend::instance();
@@ -120,6 +131,11 @@ YZModeEx* YZSession::getExPool() {
 }
 YZModeCommand* YZSession::getCommandPool() {
 	return (YZModeCommand*)mModes[ YZMode::MODE_COMMAND ];
+}
+
+YZYzisinfo * YZSession::getYzisinfo()
+{
+	return mYzisinfo;
 }
 
 void YZSession::guiStarted() {
@@ -293,3 +309,26 @@ void YZSession::unregisterModifier ( const QString& mod ) {
 	}
 }
 
+void YZSession::saveCursorPosition() {
+	// Make sure we have a current view
+	if ( ! mCurView ) {
+		return;
+	}
+	
+	// Only record our cursor position if we are in search mode or 
+	// we are using the search keys
+	QString last = mCurView->getLastInputBuffer();
+	
+	if ( YZSession::me->currentView()->modePool()->currentType() == YZMode::MODE_SEARCH 
+	||   YZSession::me->currentView()->modePool()->currentType() == YZMode::MODE_SEARCH_BACKWARD 
+	|| last == "n"
+	|| last == "N" ) {
+		mYzisinfo->saveSearchPosition( YZSession::me->currentBuffer()->fileName(), YZSession::me->currentView()->getCursor()->x(), YZSession::me->currentView()->getCursor()->y() );
+	} else {
+		return;
+	}
+}
+
+YZCursor * YZSession::previousCursorPosition() {
+ 	return mYzisinfo->searchPosition();
+}

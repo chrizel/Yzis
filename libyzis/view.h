@@ -168,9 +168,8 @@ class YZView {
 		 */
 		void purgeInputBuffer() { mPreviousChars = ""; }
 		void saveInputBuffer();
-		QString getLastInputBuffer() { return mLastPreviousChars; }
-
 		QString getInputBuffer() { return mPreviousChars; }
+		QString getLastInputBuffer() { return mLastPreviousChars; }
 
 		/**
 		 * moves the cursor of the current view down
@@ -673,7 +672,6 @@ class YZView {
 		 */
 		QString mPreviousChars;
 		QString mLastPreviousChars;
-
 
 		class  ViewInformation {
 		public:

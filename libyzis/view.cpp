@@ -110,6 +110,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	viewInformation.l = viewInformation.c1 = viewInformation.c2 = 0;
 	viewInformation.percentage = "";
 	mPreviousChars = "";
+	mLastPreviousChars = "";
 
 	mPaintSelection = new YZSelection("PAINT");
 	selectionPool = new YZSelectionPool();
@@ -763,6 +764,7 @@ void YZView::gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int 
 	gotoy( nexty );
 	gotox( nextx, viewCursor != mainCursor );
 	applyGoto( viewCursor, applyCursor );
+	YZSession::me->saveCursorPosition();
 }
 
 void YZView::gotoxyAndStick( YZCursor* cursor ) {
@@ -1779,6 +1781,14 @@ QString YZView::mode() {
 }
 
 void YZView::saveInputBuffer() { 
+	// We don't need to remember ENTER or ESC or CTRL-C
+	if ( mPreviousChars == "<ENTER>" 
+	||   mPreviousChars == "<ESC>" 
+	||   mPreviousChars == "<CTRL>c" ) {
+		return;
+	}
+
+	// If we are repeating the command don't overwrite
 	if ( mPreviousChars != "." ) {
 		mLastPreviousChars = mPreviousChars; 
 	}

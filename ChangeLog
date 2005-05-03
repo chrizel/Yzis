@@ -1,3 +1,9 @@
+2005-05-03 scottn
+  * libyzis
+    start of yzisinfo framework
+    positioning of cursor on file open to place where last written
+    start of <CTRL>o support   
+
 2005-04-29 Dmitry Suzdalev (patch)
   * libyzis, kyzis
 	support CTRL-C to work like ESC
@@ -7,7 +13,7 @@
 2005-04-28 scottn
   * libyzis [Bug 163]
     Fixed { and } commands
-    
+
 2005-04-25 mikmak
   * libyzis [SECURITY FIX]
     improval with the previous patch

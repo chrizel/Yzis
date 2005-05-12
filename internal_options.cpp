@@ -203,6 +203,7 @@ void YZInternalOptionPool::init() {
 	options.append(new YZOptionBoolean("number",false, CXT_VIEW,local_scope, &refreshView, QStringList("nu")));
 	options.append(new YZOptionString("printer","qtprinter", CXT_VIEW,local_scope, &doNothing, QStringList(), QStringList::split(":","qtprinter:pslib")));
 	options.append(new YZOptionBoolean("rightleft",false, CXT_VIEW,local_scope, &recalcView, QStringList("rl")));
+	options.append(new YZOptionBoolean("expandtab",false, CXT_VIEW,local_scope, &recalcView, QStringList("et")));
 	options.append(new YZOptionInteger("schema",0, CXT_BUFFER,local_scope, &refreshView, QStringList(), 0));
 	options.append(new YZOptionString("syntax","", CXT_BUFFER,local_scope, &setSyntax, QStringList("syn"), QStringList())); // XXX put all name ofsyntaxes here
 	options.append(new YZOptionInteger("tabstop",8, CXT_VIEW,local_scope, &recalcView, QStringList("ts"), 1));

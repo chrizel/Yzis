@@ -75,7 +75,13 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	else if ( key == "<ENTER>" ) commandEnter( mView, key );
 	else if ( key == "<DEL>" ) commandDel( mView, key );
 	else {
-		if ( key == "<TAB>" ) key = "\t";
+		if ( key == "<TAB>" ) {
+			// expand a tab to [tabstop] spaces if 'expandtab' is set
+			if (mView->getLocalBooleanOption("expandtab"))
+				key.fill(' ', mView->getLocalIntegerOption("tabstop"));
+			else
+				key = "\t";
+		}
 		/* if ( key.startsWith("<CTRL>") ) // XXX no sense
 			ret = YZSession::me->getCommandPool()->execCommand(mView, key);
 		else*/

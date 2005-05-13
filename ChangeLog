@@ -1,3 +1,7 @@
+2005-05-13 Dawid Ciarkiewicz (patch)
+  * libyzis
+	fixed 'xp' command
+
 2005-05-03 Dmitry Suzdalev (patch)
   * translations
     added new Russian translation

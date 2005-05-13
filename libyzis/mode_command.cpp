@@ -1421,6 +1421,8 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 }
 
 void YZModeCommand::deleteChar( const YZCommandArgs &args ) {
+	YZCursor to( *args.view->getBufferCursor() );
+	args.view->myBuffer()->action()->copyArea(args.view, *args.view->getBufferCursor(), to, args.regs);
 	args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
 	args.view->commitNextUndo();
 }

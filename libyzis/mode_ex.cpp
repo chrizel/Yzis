@@ -156,6 +156,8 @@ void YZModeEx::initPool() {
 #else
 	commands.append( new YZExCommand( "q(uit|a(ll)?)?", &YZModeEx::quit, ( QStringList() << "quit" << "qall") ) );
 #endif
+        commands.append( new YZExCommand( "bf(irst)?", &YZModeEx::bufferfirst, QStringList("bfirst") ) );
+        commands.append( new YZExCommand( "bl(ast)?", &YZModeEx::bufferlast, QStringList("blast") ) );
 	commands.append( new YZExCommand( "bn(ext)?", &YZModeEx::buffernext, QStringList("bnext") ) );
 	commands.append( new YZExCommand( "bp(revious)?", &YZModeEx::bufferprevious, QStringList("bprevious") ) );
 	commands.append( new YZExCommand( "bd(elete)?", &YZModeEx::bufferdelete, QStringList("bdelete") ) );
@@ -434,6 +436,26 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 	return ret;
 }
 
+cmd_state YZModeEx::bufferfirst( const YZExCommandArgs& args ) {
+	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
+        YZView *v = args.view->mySession()->firstView();
+        if ( v )
+                args.view->mySession()->setCurrentView(v);
+        // else
+        //   ??? Info message?
+        return CMD_OK;
+}
+
+cmd_state YZModeEx::bufferlast( const YZExCommandArgs& args ) {
+	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
+        YZView *v = args.view->mySession()->lastView();
+        if ( v )
+                args.view->mySession()->setCurrentView(v);
+        // else
+        //   ??? Info message?
+        return CMD_OK;
+}
+
 cmd_state YZModeEx::buffernext( const YZExCommandArgs& args ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
 	YZView *v = args.view->mySession()->nextView();
@@ -441,7 +463,7 @@ cmd_state YZModeEx::buffernext( const YZExCommandArgs& args ) {
 	if ( v )
 		args.view->mySession()->setCurrentView(v);
 	else
-		args.view->mySession()->popupMessage( _( "No next buffer" ) );
+                bufferfirst( args ); // goto first buffer
 	return CMD_OK;
 }
 
@@ -452,7 +474,7 @@ cmd_state YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
 	if ( v )
 		args.view->mySession()->setCurrentView(v);
 	else
-		args.view->mySession()->popupMessage( _( "No previous buffer" ) );
+                bufferlast( args ); // goto lastbuffer
 
 	return CMD_OK;
 }

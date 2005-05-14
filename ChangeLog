@@ -1,3 +1,7 @@
+2005-05-13 Dmitry Suzdalev (patch)
+  * libyzis
+	added :blast/:bfirst
+
 2005-05-13 Dawid Ciarkiewicz (patch)
   * libyzis
 	fixed 'xp' command

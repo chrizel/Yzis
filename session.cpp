@@ -203,6 +203,45 @@ void YZSession::setCurrentView( YZView* view ) {
 	mCurBuffer->filenameChanged();
 }
 
+YZView* YZSession::firstView() {
+	if ( mCurView == 0 ) {
+		yzDebug() << "WOW, mCurview is NULL !" << endl;
+		return NULL;
+	}
+
+	YZView * v = NULL;
+	int i = 0;
+	// searching through all views
+	// findView(0) is not enough, // because there may be a hole  in the begining
+	// (for example, after bdel 0, bdel 1, etc )
+	while (!v && i <= mNbViews  ) {
+		v = findView( i );
+		i++;
+	}
+	return v;
+}
+
+YZView* YZSession::lastView() {
+	if ( mCurView == 0 ) {
+		yzDebug() << "WOW, mCurview is NULL !" << endl;
+		return NULL;
+	}
+
+	YZView * v = NULL;
+	int i = mNbViews;
+	// searching through all views backwards
+	// findView(0) is not enough, 
+	// because there may be a hole  in the end
+	// (for example, after bdel <mNbViews>, <mNbViews-1> etc)
+	while (!v && i >= 0  ) {
+		// NOTE: Maybe add an option to findView to search backwards?
+		v = findView( i );
+		i--;
+	}
+	return v;
+
+}
+
 YZView* YZSession::prevView() {
 	if ( mCurView == 0 ) {
 		yzDebug() << "WOW, mCurview is NULL !" << endl;
@@ -235,9 +274,9 @@ YZView* YZSession::nextView() {
 }
 
 YZBuffer* YZSession::findBuffer( const QString& path ) {
-	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	for ( ; it!=end; ++it ) {
-		YZBuffer* b = ( *it );
+		YZBuffer *b = ( *it );
 		if ( b->fileName() == path ) return b;
 	}
 	return NULL; //not found
@@ -249,7 +288,7 @@ void YZSession::updateBufferRecord( const QString& oldname, const QString& newna
 }
 
 bool YZSession::saveAll() {
-	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	bool savedAll=true;
 	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
@@ -261,7 +300,7 @@ bool YZSession::saveAll() {
 }
 
 bool YZSession::isOneBufferModified() {
-	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
 		if ( b->fileIsNew() ) return true;
@@ -272,7 +311,7 @@ bool YZSession::isOneBufferModified() {
 bool YZSession::exitRequest( int errorCode ) {
 	yzDebug() << "Preparing for final exit with code " << errorCode << endl;
 	//prompt unsaved files XXX
-/*	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
+/*	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	for ( ; it!=end; ++it ) {
 		YZBuffer* b = ( *it );
 		deleteBuffer( b );

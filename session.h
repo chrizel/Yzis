@@ -131,6 +131,14 @@ class YZSession {
 		 * Splits the screen vertically to show the 2 given views
 		 */
 //		virtual void splitVerticallyOnView( YZView*, YZView* ) = 0;
+		/**
+		 * Finds the first view
+		 */
+		YZView* firstView();
+		/**
+		 * Finds the last view
+		 */
+		YZView* lastView();
 
 		/**
 		 * Finds the next view relative to the current one

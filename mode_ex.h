@@ -151,6 +151,8 @@ class YZModeEx : public YZMode {
 		// commands
 		cmd_state write( const YZExCommandArgs& args );
 		cmd_state quit( const YZExCommandArgs& args );
+                cmd_state bufferfirst( const YZExCommandArgs& args );
+                cmd_state bufferlast( const YZExCommandArgs& args );
 		cmd_state buffernext( const YZExCommandArgs& args );
 		cmd_state bufferprevious( const YZExCommandArgs& args );
 		cmd_state bufferdelete( const YZExCommandArgs& args );

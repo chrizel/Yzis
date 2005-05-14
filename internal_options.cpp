@@ -1,5 +1,6 @@
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>
+ *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -179,6 +180,7 @@ void YZInternalOptionPool::init() {
 	// here you add new options
 	options.append(new YZOptionString("backspace","eol", CXT_SESSION,global_scope, &doNothing, QStringList("bs"), QStringList::split(":","eol:indent:start")));
 	options.append(new YZOptionBoolean("blocksplash",true, CXT_SESSION,global_scope, &doNothing, QStringList()));
+	options.append(new YZOptionBoolean("startofline",true, CXT_SESSION,global_scope, &doNothing, QStringList("sol")));
 	options.append(new YZOptionBoolean("cindent",false, CXT_BUFFER,local_scope, &doNothing, QStringList("cin")));
 	QStringList cursor_shape;
 	cursor_shape << "square" << "vbar" << "hbar";

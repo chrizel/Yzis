@@ -978,8 +978,11 @@ YZCursor YZModeCommand::gotoLine(const YZMotionArgs &args) {
 	yzDebug() << "gotoLine " << args.cmd << "," << args.count << endl;
 	if ( args.count > 0 ) line	= args.count - 1;
 
-	if ( args.cmd == "gg"  || ( args.cmd == "G" && args.usercount ) )
+	if ( args.cmd == "gg"  || ( args.cmd == "G" && args.usercount ) ) {
 		args.view->gotoLine( &viewCursor, line, args.standalone );
+		if (YZSession::getBooleanOption("startofline"))
+			args.view->moveToFirstNonBlankOfLine();
+	}
 	else {
 		if ( args.cmd == "G" )
 			args.view->gotoLastLine( &viewCursor, args.standalone );

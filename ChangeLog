@@ -1,3 +1,8 @@
+2005-05-13 morbuz
+  * libyzis
+	added 'startofline' option (default on), gg now uses this option and
+	behaves correctly
+
 2005-05-13 Dmitry Suzdalev (patch)
   * libyzis
 	added :blast/:bfirst

@@ -322,7 +322,11 @@ bool YZExLua::pcall( int nbArg, int nbReturn, int errLevel, const QString & erro
 	int lua_err = lua_pcall(L,nbArg,nbReturn,errLevel);
 	if (! lua_err) return true;
 	QString luaErrorMsg = lua_tostring(L,lua_gettop(L));
+#if QT_VERSION < 0x040000
 	printf("%s\n", luaErrorMsg.latin1() );
+#else
+	printf("%s\n", luaErrorMsg.toLatin1().data() );
+#endif
 //	YZSession::me->popupMessage(errorMsg + luaErrorMsg );
 	return false;
 }

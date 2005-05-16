@@ -22,7 +22,6 @@
  */
 
 #include <iostream>
-#include <qfileinfo.h>
 
 #include "debug.h"
 #include "session.h"
@@ -30,6 +29,13 @@
 #include "yzisinforecord.h"
 #include "yzisinforecordstartposition.h"
 #include "yzisinforecordsearchhistory.h"
+#if QT_VERSION < 0x040000
+#include <qfileinfo.h>
+#else
+#include <QFile>
+#include <QTextStream>
+#include <QTextCodec>
+#endif
 
 using namespace std;
 
@@ -39,16 +45,21 @@ YZYzisinfo::YZYzisinfo() {
 	
 #if QT_VERSION < 0x040000
 	QString path = QDir::homeDirPath() + "/.yzis";
+	mYzisinfo.setName( path + "/yzisinfo" );
 #else
 	QString path = QDir::homePath() + "/.yzis";
+	mYzisinfo.setFileName( path + "/yzisinfo" );
 #endif
 
-	mYzisinfo.setName( path + "/yzisinfo" );
 }
 
 YZYzisinfo::YZYzisinfo( const QString & path ) {
 	
+#if QT_VERSION < 0x040000
 	mYzisinfo.setName( path );
+#else
+	mYzisinfo.setFileName( path );
+#endif
 }
 
 YZYzisinfo::~YZYzisinfo() {
@@ -56,16 +67,28 @@ YZYzisinfo::~YZYzisinfo() {
 
 void YZYzisinfo::readYzisinfo() {
 	
+#if QT_VERSION < 0x040000
 	if ( mYzisinfo.open( IO_ReadOnly ) ) {
+#else
+	if ( mYzisinfo.open( QIODevice::ReadOnly ) ) {
+#endif
 		QTextStream stream( &mYzisinfo );
 		QString line;
 		
 		while ( !stream.atEnd() ) {
 			line = stream.readLine(); // line of text excluding '\n'
+#if QT_VERSION < 0x040000
 			line = line.stripWhiteSpace();
+#else
+			line = line.trimmed();
+#endif
 			
 			if ( ! line.isEmpty() ) {
+#if QT_VERSION < 0x040000
 				QStringList list = QStringList::split( QRegExp( "\\s" ), line, false );
+#else
+				QStringList list = line.split( QRegExp( "\\s" ), QString::SkipEmptyParts );
+#endif
 				if ( list[0] == "start_position" ) {
 					saveStartPosition( list[3], list[1].toInt(), list[2].toInt() );
 				}
@@ -78,16 +101,28 @@ void YZYzisinfo::readYzisinfo() {
 		
 		mYzisinfo.close();
 	} else {
+#if QT_VERSION < 0x040000
 		yzDebug() << "Unable to open file " << mYzisinfo.name() << endl;
+#else
+		yzDebug() << "Unable to open file " << mYzisinfo.fileName() << endl;
+#endif
 	}
 }
 
 void YZYzisinfo::writeYzisinfo() {
 	
+#if QT_VERSION < 0x040000
 	if ( mYzisinfo.open( IO_WriteOnly ) ) {
+#else
+	if ( mYzisinfo.open(QIODevice::WriteOnly) ) {
+#endif
 		YZYzisinfoRecord * record;
 		QTextStream write( &mYzisinfo );
+#if QT_VERSION < 0x040000
 		write.setEncoding( QTextStream::UnicodeUTF8 );
+#else
+		write.setCodec(QTextCodec::codecForName( "UTF-8" ) );
+#endif
 
 		for( int i = YZSession::mYzisinfoList.count(); i > 0; --i ) {
 			record = YZSession::mYzisinfoList[i - 1];

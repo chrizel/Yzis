@@ -85,6 +85,7 @@ void YZInternalOptionPool::loadFrom(const QString& file ) {
 				setGroup(rx.cap(1).trimmed());
 			else {
 				if ( rx2.exactMatch( line ) ) {
+					bool matched;
 					setOptionFromString( &matched, rx2.cap(1).trimmed()+'='+rx2.cap(2).trimmed() );
 					if ( ! matched ) { // this option is not known, probably a setting
 						setQStringEntry( rx2.cap(1).trimmed(), rx2.cap(2).trimmed() );
@@ -111,8 +112,13 @@ void YZInternalOptionPool::saveTo(const QString& file, const QString& what, cons
 	if ( f.open( QIODevice::WriteOnly ) ) {
 #endif
 		QTextStream stream( &f );
+#if QT_VERSION < 0x040000
 		QValueList<QString> keys = mOptions.keys();
 		qHeapSort( keys );
+#else
+		QList<QString> keys = mOptions.keys();
+		qSort( keys );
+#endif
 		QString cGroup = "";
 		for ( unsigned int i = 0; i < keys.size(); ++i ) {
 			QString myGroup = keys[i].section( "\\", 0, -2 );
@@ -178,7 +184,7 @@ void updateHLSearch( YZBuffer*, YZView* ) {
 
 void YZInternalOptionPool::init() {
 	// here you add new options
-	options.append(new YZOptionString("backspace","eol", CXT_SESSION,global_scope, &doNothing, QStringList("bs"), QStringList::split(":","eol:indent:start")));
+	options.append(new YZOptionString("backspace","eol", CXT_SESSION,global_scope, &doNothing, QStringList("bs"), QStringList("eol" ) << "indent" << "start"));
 	options.append(new YZOptionBoolean("blocksplash",true, CXT_SESSION,global_scope, &doNothing, QStringList()));
 	options.append(new YZOptionBoolean("startofline",true, CXT_SESSION,global_scope, &doNothing, QStringList("sol")));
 	options.append(new YZOptionBoolean("cindent",false, CXT_BUFFER,local_scope, &doNothing, QStringList("cin")));
@@ -203,7 +209,7 @@ void YZInternalOptionPool::init() {
 	options.append(new YZOptionMap("listchars",lc, CXT_VIEW,global_scope, &viewUpdateListChars, QStringList("lcs"), lc.keys(), QStringList()));
 	options.append(new YZOptionString("matchpairs","(){}[]", CXT_BUFFER,local_scope, &doNothing, QStringList("mps"), QStringList()));
 	options.append(new YZOptionBoolean("number",false, CXT_VIEW,local_scope, &refreshView, QStringList("nu")));
-	options.append(new YZOptionString("printer","qtprinter", CXT_VIEW,local_scope, &doNothing, QStringList(), QStringList::split(":","qtprinter:pslib")));
+	options.append(new YZOptionString("printer","qtprinter", CXT_VIEW,local_scope, &doNothing, QStringList(), QStringList("qtprinter" ) << "pslib"));
 	options.append(new YZOptionBoolean("rightleft",false, CXT_VIEW,local_scope, &recalcView, QStringList("rl")));
 	options.append(new YZOptionBoolean("expandtab",false, CXT_VIEW,local_scope, &recalcView, QStringList("et")));
 	options.append(new YZOptionInteger("schema",0, CXT_BUFFER,local_scope, &refreshView, QStringList(), 0));
@@ -256,8 +262,8 @@ void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t
 				for ( v = vs.first(); v; v = vs.next() )
 					option->apply( b, v );
 #else
-				for ( int i = 0; i < vs.size(); ++i )
-					option->apply( b, v.at(i) );
+				foreach ( YZView* v, vs )
+					option->apply( b, v );
 #endif
 			}
 		} else if ( v ) {
@@ -460,7 +466,7 @@ void YZInternalOptionPool::initConfFiles() {
 #else
 	QDir homeConf( QDir::homePath()+"/.yzis/" );
 	if ( !homeConf.exists( QDir::homePath()+"/.yzis/" ) )
-		if ( !homeConf.mkdir(QDir::homePath()+"/.yzis/", QDir::Recursive) ) return;
+		if ( !homeConf.mkpath(QDir::homePath()+"/.yzis/") ) return;
 
 	loadFrom(QDir::rootPath()+"/etc/yzis/yzis.conf");
 	loadFrom(QDir::homePath()+"/.yzis/yzis.conf");

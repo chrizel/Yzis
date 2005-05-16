@@ -48,7 +48,9 @@ YZQtPrinter::~YZQtPrinter( ) {
 }
 
 void YZQtPrinter::printToFile( const QString& path ) {
+#if QT_VERSION < 0x040000
 	setOutputToFile( true );
+#endif
 	setOutputFileName( path );
 }
 

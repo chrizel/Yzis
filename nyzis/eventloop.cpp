@@ -23,6 +23,7 @@
 #include <qapplication.h>
 #else
 #include <QApplication>
+#include <QAbstractEventDispatcher>
 #endif
 
 #include "debug.h"
@@ -75,8 +76,8 @@ bool NYZEventLoop::processEvents( QEventLoop::ProcessEventsFlags /*flags*/ )
 	if ( !qt_had_some && qApp->type() != QApplication::Tty && QEventLoop::hasPendingEvents() )
 		qt_had_some = QEventLoop::processEvents(QEventLoop::AllEvents/*flags*/);
 #else
-	if ( !qt_had_some && qApp->type() != QApplication::Tty && QEventDispatcherUNIX::hasPendingEvents() )
-		qt_had_some = QEventDispatcherUNIX::processEvents(QEventLoop::AllEvents/*flags*/);
+	if ( !qt_had_some && qApp->type() != QApplication::Tty && QAbstractEventDispatcher::instance()->hasPendingEvents() )
+		qt_had_some = QAbstractEventDispatcher::instance()->processEvents(QEventLoop::AllEvents/*flags*/);
 #endif
 
 	return /*true*/qt_had_some;

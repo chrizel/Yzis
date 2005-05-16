@@ -1,0 +1,267 @@
+if test -z "$kde_locale"; then
+   kde_locale='\${prefix}/share/locale'
+fi
+ 
+AC_DEFUN([AC_PATH_LIBGETTEXT], [
+
+	AC_ARG_WITH(gettext-dir,
+		AC_HELP_STRING([--with-gettext-dir=DIR],[where the root of gettext is installed]),
+		[
+		LIBGETTEXT="$withval"
+		LIBGETTEXT_INCLUDES=-I"$withval"/include
+		LIBGETTEXT_LIBS="-L$withval/lib" ])
+
+	AC_ARG_WITH(gettext-includes, 
+		AC_HELP_STRING([--with-gettext-includes=DIR],[where gettext includes are]),
+		[ LIBGETTEXT_INCLUDES="-I$withval" ])
+
+	AC_ARG_WITH(gettext-libraries,
+		AC_HELP_STRING([--with-gettext-libraries=DIR],[where the gettext library is installed]),
+		[
+		LIBGETTEXT_LIBS="-L$withval" ])
+
+
+	if ! test "x$LIBGETTEXT" = "x"; then
+		AC_MSG_RESULT(using gettext from $LIBGETTEXT)
+	fi
+	if ! test "x$LIBGETTEXT_LIBS" = "x"; then
+		AC_MSG_RESULT(using gettext libraries in $LIBGETTEXT_LIBS)
+	fi
+	if ! test "x$LIBGETTEXT_INCLUDES" = "x"; then
+		AC_MSG_RESULT(using gettext includes in $LIBGETTEXT_INCLUDES)
+	fi
+
+	dnl checking some headers first
+	ac_save_CFLAGS="$CFLAGS"
+	ac_save_CPPFLAGS="$CPPFLAGS"
+	ac_save_LDFLAGS="$LDFLAGS"
+	CFLAGS="$LIBGETTEXT_INCLUDES $CFLAGS"
+	CPPFLAGS="$LIBGETTEXT_INCLUDES $CPPFLAGS"
+	LDFLAGS="$LIBGETTEXT_LIBS $LDFLAGS"
+	
+	AC_CHECK_HEADER(libintl.h,,
+			[ AC_MSG_ERROR([libintl.h was not found or was not usable, gettext headers are required !]) ]
+			)
+
+	dnl find the libs name
+	AC_CHECK_LIB(intl,bindtextdomain, LIBGETTEXT_LIBS="$LIBGETTEXT_LIBS -lintl",
+				[ AC_MSG_ERROR([gettext library not found !]) ]
+		)
+
+	CFLAGS="$ac_save_CFLAGS"
+	CPPFLAGS="$ac_save_CPPFLAGS"
+	LDFLAGS="$ac_save_LDFLAGS"
+
+	AC_SUBST(LIBGETTEXT)
+	AC_SUBST(LIBGETTEXT_INCLUDES)
+	AC_SUBST(LIBGETTEXT_LIBS)
+])
+
+AC_DEFUN([AC_PATH_LIBMAGIC], [
+
+	AC_ARG_WITH(libmagic-dir,
+		AC_HELP_STRING([--with-libmagic-dir=DIR],[where the root of libmagic is installed]),
+		[
+		LIBMAGIC="$withval"
+		LIBMAGIC_INCLUDES=-I"$withval"/include
+		LIBMAGIC_LIBS="-L$withval/lib" ])
+
+	AC_ARG_WITH(libmagic-includes, 
+		AC_HELP_STRING([--with-libmagic-includes=DIR],[where libmagic includes are]),
+		[ LIBMAGIC_INCLUDES="-I$withval" ])
+
+	AC_ARG_WITH(libmagic-libraries,
+		AC_HELP_STRING([--with-libmagic-libraries=DIR],[where the libmagic library is installed]),
+		[
+		LIBMAGIC_LIBS="-L$withval" ])
+
+
+	if ! test "x$LIBMAGIC" = "x"; then
+		AC_MSG_RESULT(using libmagic from $LIBMAGIC)
+	fi
+	if ! test "x$LIBMAGIC_LIBS" = "x"; then
+		AC_MSG_RESULT(using libmagic libraries in $LIBMAGIC_LIBS)
+	fi
+	if ! test "x$LIBMAGIC_INCLUDES" = "x"; then
+		AC_MSG_RESULT(using libmagic includes in $LIBMAGIC_INCLUDES)
+	fi
+
+	dnl checking some headers first
+	ac_save_CFLAGS="$CFLAGS"
+	ac_save_CPPFLAGS="$CPPFLAGS"
+	ac_save_LDFLAGS="$LDFLAGS"
+	CFLAGS="$LIBMAGIC_INCLUDES $CFLAGS"
+	CPPFLAGS="$LIBMAGIC_INCLUDES $CPPFLAGS"
+	LDFLAGS="$LIBMAGIC_LIBS $LDFLAGS"
+	
+	AC_CHECK_HEADER(magic.h,,
+			[ AC_MSG_ERROR([magic.h was not found or was not usable, libmagic headers are required !]) ]
+			)
+
+	dnl find the libs name
+	AC_CHECK_LIB(magic,magic_open, LIBMAGIC_LIBS="$LIBMAGIC_LIBS -lmagic",
+				[ AC_MSG_ERROR([libmagic library not found !]) ]
+		)
+
+	CFLAGS="$ac_save_CFLAGS"
+	CPPFLAGS="$ac_save_CPPFLAGS"
+	LDFLAGS="$ac_save_LDFLAGS"
+
+	AC_SUBST(LIBMAGIC)
+	AC_SUBST(LIBMAGIC_INCLUDES)
+	AC_SUBST(LIBMAGIC_LIBS)
+
+])
+
+AC_DEFUN([AC_PATH_LUA], [
+
+dnl	AC_PATH_PROG(LUA_CONFIG, lua-config, no)
+
+dnl	if test "x$LUA_CONFIG" = "xno" ; then
+dnl		AC_PATH_PROG(LUA_CONFIG, lua-config50, no)
+dnl	fi
+dnl	if ! test "x$LUA_CONFIG" = "xno" ; then
+dnl		LUA_INCLUDES=`$LUA_CONFIG --include`
+dnl		LUA_LIBS=`$LUA_CONFIG --libs`
+dnl	fi
+	
+	AC_ARG_WITH(lua-dir,
+		AC_HELP_STRING([--with-lua-dir=DIR],[where the root of Lua 5.x is installed]),
+		[
+		LUA="$withval"
+		LUA_INCLUDES=-I"$withval"/include
+		LUA_LIBS="-L$withval/lib" ])
+
+	AC_ARG_WITH(lua-includes, 
+		AC_HELP_STRING([--with-lua-includes=DIR],[where the Lua includes are]),
+		[ LUA_INCLUDES="-I$withval" ])
+
+	AC_ARG_WITH(lua-libraries,
+		AC_HELP_STRING([--with-lua-libraries=DIR],[where the Lua library is installed]),
+		[
+		LUA_LIBS="-L$withval" ])
+
+
+	if ! test "x$LUA" = "x"; then
+		AC_MSG_RESULT(using Lua from $LUA)
+	fi
+	if ! test "x$LUA_LIBS" = "x"; then
+		AC_MSG_RESULT(using Lua libraries in $LUA_LIBS)
+	fi
+	if ! test "x$LUA_INCLUDES" = "x"; then
+		AC_MSG_RESULT(using Lua includes in $LUA_INCLUDES)
+	fi
+
+	dnl checking some headers first
+	ac_save_CFLAGS="$CFLAGS"
+	ac_save_CPPFLAGS="$CPPFLAGS"
+	ac_save_LDFLAGS="$LDFLAGS"
+	CFLAGS="$LUA_INCLUDES $CFLAGS"
+	CPPFLAGS="$LUA_INCLUDES $CPPFLAGS"
+	LDFLAGS="$LUA_LIBS $LDFLAGS"
+	
+	AC_CHECK_HEADER(lua.h,,
+			[ AC_MSG_ERROR([lua.h was not found or was not usable, Lua 5.0 headers are required !]) ]
+			)
+	AC_CHECK_HEADER(lualib.h,,
+			[ AC_MSG_ERROR([lualib.h was not found or was not usable, Lua 5.0 headers are required !]) ]
+			)
+
+	dnl find the libs name
+	AC_CHECK_LIB(lua50,lua_open, LUA_LIBS="$LUA_LIBS -llua50 -llualib50",
+			AC_CHECK_LIB(lua,lua_open, LUA_LIBS="$LUA_LIBS -llua -llualib",
+				[ AC_MSG_ERROR([Lua 5.0 libraries were not found !]) ]
+				)
+		)
+
+	CFLAGS="$ac_save_CFLAGS"
+	CPPFLAGS="$ac_save_CPPFLAGS"
+	LDFLAGS="$ac_save_LDFLAGS"
+
+	AC_SUBST(LUA)
+	AC_SUBST(LUA_INCLUDES)
+	AC_SUBST(LUA_LIBS)
+
+])
+
+AC_DEFUN([CF_CURSES_LIBS],[
+AC_CHECK_FUNC(initscr,,[
+case $host_os in #(vi
+freebsd*) #(vi
+	AC_CHECK_LIB(mytinfo,tgoto,[LIBS="-lmytinfo $LIBS"])
+	;;
+hpux10.*|hpux11.*)
+	AC_CHECK_LIB(cur_colr,initscr,[
+		LIBS="-lcur_colr $LIBS"
+		CFLAGS="-I/usr/include/curses_colr $CFLAGS"
+		ac_cv_func_initscr=yes
+		],[
+	AC_CHECK_LIB(Hcurses,initscr,[
+		# HP's header uses __HP_CURSES, but user claims _HP_CURSES.
+		LIBS="-lHcurses $LIBS"
+		CFLAGS="-D__HP_CURSES -D_HP_CURSES $CFLAGS"
+		ac_cv_func_initscr=yes
+		])])
+	;;
+linux*) # Suse Linux does not follow /usr/lib convention
+	LIBS="$LIBS -L/lib"
+	;;
+esac
+
+if test ".$With5lib" != ".no" ; then
+if test -d /usr/5lib ; then
+	# SunOS 3.x or 4.x
+	CPPFLAGS="$CPPFLAGS -I/usr/5include"
+	LIBS="$LIBS -L/usr/5lib"
+fi
+fi
+
+if test ".$ac_cv_func_initscr" != .yes ; then
+	cf_save_LIBS="$LIBS"
+	cf_term_lib=""
+	cf_curs_lib=""
+
+	# Check for library containing tgoto.  Do this before curses library
+	# because it may be needed to link the test-case for initscr.
+	AC_CHECK_FUNC(tgoto,[cf_term_lib=predefined],[
+		for cf_term_lib in termcap termlib unknown
+		do
+			AC_CHECK_LIB($cf_term_lib,tgoto,[break])
+		done
+	])
+
+	# Check for library containing initscr
+	test "$cf_term_lib" != predefined && test "$cf_term_lib" != unknown && LIBS="-l$cf_term_lib $cf_save_LIBS"
+	for cf_curs_lib in cursesX curses ncurses xcurses jcurses unknown
+	do
+		AC_CHECK_LIB($cf_curs_lib,initscr,[break])
+	done
+	test $cf_curs_lib = unknown && AC_ERROR(no curses library found)
+
+	LIBS="-l$cf_curs_lib $cf_save_LIBS"
+	if test "$cf_term_lib" = unknown ; then
+		AC_MSG_CHECKING(if we can link with $cf_curs_lib library)
+		AC_TRY_LINK([#include <${cf_cv_ncurses_header-curses.h}>],
+			[initscr()],
+			[cf_result=yes],
+			[cf_result=no])
+		AC_MSG_RESULT($cf_result)
+		test $cf_result = no && AC_ERROR(Cannot link curses library)
+	elif test "$cf_term_lib" != predefined ; then
+		AC_MSG_CHECKING(if we need both $cf_curs_lib and $cf_term_lib libraries)
+		AC_TRY_LINK([#include <${cf_cv_ncurses_header-curses.h}>],
+			[initscr(); tgoto((char *)0, 0, 0);],
+			[cf_result=no],
+			[
+			LIBS="-l$cf_curs_lib -l$cf_term_lib $cf_save_LIBS"
+			AC_TRY_LINK([#include <${cf_cv_ncurses_header-curses.h}>],
+				[initscr()],
+				[cf_result=yes],
+				[cf_result=error])
+			])
+		AC_MSG_RESULT($cf_result)
+	fi
+fi
+
+])])
+

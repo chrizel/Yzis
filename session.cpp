@@ -183,8 +183,8 @@ QString YZSession::saveBufferExit() {
 YZView* YZSession::findView( int uid ) {
 //	yzDebug() << " ========= " << endl;
 //	yzDebug() << "Session::findView " << uid << endl;
-	if ( uid<0 ) return NULL;
 	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	if ( uid<0 ) return NULL;
 	for ( ; it!=end; ++it ) {
 #if QT_VERSION < 0x040000
 		YZBuffer *b = ( it.data() );

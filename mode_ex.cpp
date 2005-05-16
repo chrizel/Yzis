@@ -28,7 +28,6 @@
 #include "portability.h"
 #include "mode_ex.h"
 #include "buffer.h"
-#include "registers.h"
 #include "session.h"
 #include "swapfile.h"
 #include "ex_lua.h"
@@ -189,7 +188,6 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "ene(w)?", &YZModeEx::enew, QStringList("enew") ));
 	commands.append( new YZExCommand( "syn(tax)?", &YZModeEx::syntax, QStringList("syntax")));
 	commands.append( new YZExCommand( "highlight", &YZModeEx::highlight, QStringList("highlight") ));
-	commands.append( new YZExCommand( "reg(isters)", &YZModeEx::registers, QStringList("registers" ) ));
 	commands.append( new YZExCommand( "split", &YZModeEx::split, QStringList("split") ));
 }
 
@@ -798,53 +796,6 @@ cmd_state YZModeEx::indent( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::enew( const YZExCommandArgs& ) {
 	YZSession::me->createBuffer();
-	return CMD_OK;
-}
-
-cmd_state YZModeEx::registers( const YZExCommandArgs& ) {
-	YZRegisters* regs = YZSession::me->mRegisters;
-	QString infoMessage(_("<qt><h3>Register Table</h3>")); // will contain register-value table
-	infoMessage += _("<table border=1><tr><th>Name</th><th>Contents</tr>");
-#if QT_VERSION < 0x040000
-	QValueList<QChar> keys = regs->keys();
-	QValueList<QChar>::ConstIterator it = keys.begin(), end = keys.end();
-	QString regContents;
-	for( ; it != end ; ++it )
-	{
-		infoMessage += QString("<tr><td>%1</td>").arg(*it);
-		// why I use space as separator? I don't know :)
-		// if you know what must be used here, fix it ;)
-		regContents = regs->getRegister( *it ).join(" ");
-		// FIXME dimsuz: maybe replace an abstract 27 with some predefined value?
-		if( regContents.length() >= 27 )
-		{
-			// if register contents is too large, truncate it a little
-			regContents.truncate( 27 );
-			regContents += "...";
-		}
-		infoMessage += QString("<td>%1</td></tr>").arg(regContents);
-	}
-#else
-	QList<QChar> keys = regs->keys();
-	QString regContents;
-	for ( int c = 0; c < keys.size(); ++c )
-	{
-		infoMessage += QString("<tr><td>%1</td>").arg(keys.at(c));
-		// why I use space as separator? I don't know :)
-		// if you know what must be used here, fix it ;)
-		regContents = regs->getRegister( keys.at(c) ).join(" ");
-		// FIXME dimsuz: maybe replace an abstract 27 with some predefined value?
-		if( regContents.length() >= 27 )
-		{
-			// if register contents is too large, truncate it a little
-			regContents.truncate( 27 );
-			regContents += "...";
-		}
-		infoMessage += QString("<td>%1</td></tr>").arg(regContents);
-	}
-#endif
-	infoMessage += "</table></qt>";
-	YZSession::me->popupMessage( infoMessage );
 	return CMD_OK;
 }
 

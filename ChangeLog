@@ -1,7 +1,3 @@
-2005-05-16 Dmitry Suzdalev
-  * libyzis
-	added :registers command
-
 2005-05-13 morbuz
   * libyzis
 	added 'startofline' option (default on), gg now uses this option and

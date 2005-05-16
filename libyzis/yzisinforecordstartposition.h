@@ -26,7 +26,6 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
-#include <qvaluevector.h>
 
 #include "cursor.h"
 #include "yzisinforecord.h"

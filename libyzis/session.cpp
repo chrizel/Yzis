@@ -57,7 +57,11 @@ YZEvents *YZSession::events = 0;
 YZYzisinfo *YZSession::mYzisinfo= 0;
 int YZSession::mYzisinfoCount = 0;
 int YZSession::mYzisinfoPosition = 0;
+#if QT_VERSION < 0x040000
 YZYzisinfoList YZSession::mYzisinfoList = 0;
+#else
+YZYzisinfoList YZSession::mYzisinfoList = YZYzisinfoList();
+#endif
 
 YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;

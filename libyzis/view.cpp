@@ -927,7 +927,7 @@ void YZView::initChanges( unsigned int x, unsigned int y ) {
 	origPos->setCursor( mainCursor->buffer() );
 	lineDY = 1;
 	if ( wrap && y < mBuffer->lineCount() ) {
-		gotoxy( qMax( 1, mBuffer->getLineLength( y ) ) - 1, y, false );
+		gotoxy( qMax( 1, ( int )mBuffer->getLineLength( y ) ) - 1, y, false );
 		lineDY = mainCursor->screenY();
 	}
 	gotoxy( x, y, false );
@@ -938,7 +938,7 @@ void YZView::applyChanges( unsigned int /*x*/, unsigned int y ) {
 		sendPaintEvent( scrollCursor->screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor->screenY() ) );
 	} else {
 		if ( wrap ) {
-			gotoxy( qMax( 1, mBuffer->getLineLength( y ) ) - 1, y, false );
+			gotoxy( qMax( 1, ( int )mBuffer->getLineLength( y ) ) - 1, y, false );
 			if ( mainCursor->screenY() != lineDY )
 				sendPaintEvent( scrollCursor->screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor->screenY() ) );
 			else

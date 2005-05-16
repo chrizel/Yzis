@@ -114,24 +114,12 @@ KDE_INIT_DOXYGEN([The Yzis API Reference], [Version $VERSION])
 
 AC_ARG_ENABLE(kyzis, AC_HELP_STRING([--disable-kyzis],[disable Kyzis compilation.]),, [enable_kyzis="yes"])
 AC_ARG_ENABLE(nyzis, AC_HELP_STRING([--disable-nyzis],[disable Nyzis compilation.]),, [enable_nyzis="yes"])
-AC_ARG_WITH(qt4-dir, AC_HELP_STRING([--with-qt4-dir=DIR],[Enable Qt4 support -- EXPERIMENTAL --]),[enable_qt4="yes"; QT_INCLUDES="-I$withval/include -I$withval/include/QtCore  -I$withval/include/QtXml -I$withval/include/QtGui"; QT_LIBS="-L$withval/lib"; QTDIR="$withval"],)
 
-if test "x$enable_qt4" != "xyes"; then
-	YZIS_QT3="libqtyzis"
-	NYZIS_DEP="libyzis/libqtyzis/libqtyzis.la"
-	YZIS_INCLUDES="$YZIS_INCLUDES $all_includes"
-else
-	YZIS_QT4="libqt4yzis"
-	NYZIS_DEP="libyzis/libqt4yzis/libqt4yzis.la"
-	YZIS_INCLUDES="$QT_INCLUDES $YZIS_INCLUDES"
-	MOC="$QTDIR/bin/moc"
-	AC_SUBST(MOC)
-fi
-AM_CONDITIONAL(use_libqt, test -n "$YZIS_QT3")
-AM_CONDITIONAL(use_libqt4, test -n "$YZIS_QT4")
+YZIS_QT="libqtyzis"
+NYZIS_DEP="libyzis/libqtyzis/libqtyzis.la"
+YZIS_INCLUDES="$YZIS_INCLUDES $all_includes"
 
-
-if test "x$have_kde" != "xyes" -o "x$enable_kyzis" != "xyes" -o "x$enable_qt4" = "xyes"; then
+if test "x$have_kde" != "xyes" -o "x$enable_kyzis" != "xyes"; then
 	DO_NOT_COMPILE="$DO_NOT_COMPILE kyzis kqcommon"
 fi
 if test "x$enable_nyzis" != "xyes"; then
@@ -140,10 +128,7 @@ fi
 
 DO_NOT_COMPILE="$DO_NOT_COMPILE tests gyzis"
 
-AC_SUBST(YZIS_QT3)
-AC_SUBST(YZIS_QT4)
 AC_SUBST(YZIS_INCLUDES)
-AC_SUBST(NYZIS_DEP)
 AC_SUBST(PS_LIBS)
 AC_SUBST(YZISLIBS)
 AC_SUBST(QT_LIBS)

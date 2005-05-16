@@ -548,11 +548,21 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 	YZBuffer* buff = NULL;
 	if ( args.view ) buff = args.view->myBuffer();
 	bool matched;
-	bool success = YZSession::mOptions->setOptionFromString( &matched, args.arg.simplifyWhiteSpace(), user_scope, buff, args.view );
+	bool success = YZSession::mOptions->setOptionFromString( &matched, 
+#if QT_VERSION < 0x040000
+	args.arg.simplifyWhiteSpace()
+#else
+	args.arg.simplified()
+#endif
+	, user_scope, buff, args.view );
 	
 	if ( ! matched ) {
 		ret = CMD_ERROR;
+#if QT_VERSION < 0x040000
 		YZSession::me->popupMessage( QString(_("Invalid option name : %1")).arg(args.arg.simplifyWhiteSpace()) );
+#else
+		YZSession::me->popupMessage( QString(_("Invalid option name : %1")).arg(args.arg.simplified()) );
+#endif
 	} else if ( ! success ) {
 		ret = CMD_ERROR;
 		YZSession::me->popupMessage( _("Bad value for option given") );

@@ -523,7 +523,11 @@ YZCursor YZAction::search( YZView* pView, const QString& _what, const YZCursor& 
 	}
 //	yzDebug() << " Casesensitive : " << cs << endl;
 	QRegExp ex( what );
+#if QT_VERSION < 0x040000
 	ex.setCaseSensitive(cs);
+#else
+	ex.setCaseSensitivity(cs ? Qt::CaseSensitive : Qt::CaseInsensitive );
+#endif
 
 	unsigned int currentMatchLine;
 	int currentMatchColumn;

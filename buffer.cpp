@@ -908,7 +908,11 @@ bool YZBuffer::substitute( const QString& _what, const QString& with, bool whole
 		cs = false;
 	}
 	QRegExp rx( what );
+#if QT_VERSION < 0x040000
 	rx.setCaseSensitive(cs);
+#else
+	rx.setCaseSensitivity(cs ? Qt::CaseSensitive : Qt::CaseInsensitive );
+#endif
 	bool changed = false;
 	int pos=0;
 	int offset=0;
@@ -1130,7 +1134,11 @@ QString YZBuffer::tildeExpand( const QString& path ) {
 		}
 #ifndef YZIS_WIN32_MSVC
 		  else {
+#if QT_VERSION < 0x040000
 			int pos = path.find('/');
+#else
+			int pos = path.indexOf('/');
+#endif
 			if ( pos < 0 ) // eg: ~username (without /)
 				pos = path.length() - 1;
 			QString user = path.left( pos ).mid( 1 );

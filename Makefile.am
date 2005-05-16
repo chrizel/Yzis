@@ -1,11 +1,4 @@
-if use_libqt
-	YZIS_QT3 = libqtyzis
-endif
-if use_libqt4
-	YZIS_QT4 = libqt4yzis
-endif
-
-SUBDIRS = . $(YZIS_QT3) $(YZIS_QT4)
+SUBDIRS = . libqtyzis
 
 INCLUDES = $(YZIS_INCLUDES) $(LUA_INCLUDES) $(LIBMAGIC_INCLUDES) $(LIBGETTEXT_INCLUDES)
 noinst_LTLIBRARIES = libyzis.la

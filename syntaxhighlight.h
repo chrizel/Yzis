@@ -48,6 +48,7 @@
 #include <QHash>
 #include <QTime>
 #include <QLinkedList>
+#include <QVector>
 #endif
 
 #ifndef YZIS_WIN32_MSVC

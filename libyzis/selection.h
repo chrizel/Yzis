@@ -101,16 +101,20 @@ class YZSelection {
 	public:
 		YZSelection( const QString& name );
 
-		YZSelectionMap map();
+		YZSelectionMap map() const;
 		void setMap( const YZSelectionMap& m );
+
+		void addMap( const YZSelectionMap& m );
 		void addInterval( const YZInterval& i );
 		void delInterval( const YZInterval& i );
 		bool contains( const YZCursor& pos );
 
-		bool isEmpty();
+		bool isEmpty() const;
 
 		void clear();
 
+		YZSelection clip( const YZInterval& bound );
+		
 		static YZSelection diff( const YZSelection& _m1, const YZSelection& _m2 );
 
 	private:

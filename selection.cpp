@@ -23,7 +23,9 @@
  */
 
 #include "selection.h"
+
 #include "debug.h"
+#include "yzis.h"
 
 /**
  * YZBound
@@ -142,13 +144,17 @@ void YZSelection::setMap( const YZSelectionMap& m ) {
 	clear();
 	mMap = m;
 }
-YZSelectionMap YZSelection::map() {
+YZSelectionMap YZSelection::map() const {
 	return mMap;
 }
-bool YZSelection::isEmpty() {
+bool YZSelection::isEmpty() const {
 	return mMap.isEmpty();
 }
 
+void YZSelection::addMap( const YZSelectionMap& m ) {
+	for ( unsigned int i = 0; i < m.size(); i++ )
+		addInterval( m[ i ] );
+}
 void YZSelection::addInterval( const YZInterval& i ) {
 	bool containsFrom;
 	bool containsTo;
@@ -240,6 +246,18 @@ bool YZSelection::contains( const YZCursor& pos ) {
 }
 void YZSelection::clear() {
 	mMap.clear();
+}
+
+YZSelection YZSelection::clip( const YZInterval& bound ) {
+	YZSelection ret( mName );
+	int size = mMap.size( );
+	bool test;
+	int i = locatePosition( bound.from(), &test );
+	if ( ! test ) ++i;
+	for( ; i < size && mMap[ i ].from() < bound.to(); ++i ) {
+		ret.addInterval( YZInterval( qMax( bound.from(), mMap[i].from() ), qMin( bound.to(), mMap[ i ].to() ) ) );
+	}
+	return ret;
 }
 
 YZSelection YZSelection::diff( const YZSelection& _m1, const YZSelection& _m2 ) {

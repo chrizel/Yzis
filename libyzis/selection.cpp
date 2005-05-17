@@ -250,13 +250,15 @@ void YZSelection::clear() {
 
 YZSelection YZSelection::clip( const YZInterval& bound ) {
 	YZSelection ret( mName );
-	int size = mMap.size( );
-	bool test;
-	int i = locatePosition( bound.from(), &test );
-	if ( ! test ) ++i;
-	for( ; i < size && mMap[ i ].from() < bound.to(); ++i ) {
-		ret.addInterval( YZInterval( qMax( bound.from(), mMap[i].from() ), qMin( bound.to(), mMap[ i ].to() ) ) );
-	}
+	if( isEmpty() ) 
+		return ret;
+	YZBound limitFrom( bound.fromPos(), !bound.from().opened() );
+	YZBound limitTo( bound.toPos(), !bound.to().opened() );
+	ret.setMap( mMap );
+	ret.delInterval( YZInterval( limitTo, mMap[ mMap.size() - 1 ].to() ) );
+	if ( ret.isEmpty() ) 
+		return ret;
+	ret.delInterval( YZInterval( ret.map()[ 0 ].from(), limitFrom ) );
 	return ret;
 }
 

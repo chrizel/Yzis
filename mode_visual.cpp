@@ -120,13 +120,8 @@ void YZModeVisual::cursorMoved( YZView* mView ) {
 	visual->addInterval( bufI, scrI );
 
 	YZSelection tmp("tmp");
-	if ( scrI.contains( curI ) ) {
-		tmp.addInterval( scrI );
-		tmp.delInterval( curI );
-	} else {
-		tmp.addInterval( curI );
-		tmp.delInterval( scrI );
-	}
+	tmp.addInterval( YZInterval( qMin( scrI.from(), curI.from() ), qMax( scrI.to(), curI.to() ) ) );
+	tmp.delInterval( YZInterval( qMax( scrI.from(), curI.from() ), qMin( scrI.to(), curI.to() ) ) );
 	mView->sendPaintEvent( tmp.map(), false );
 
 	toClipboard( mView );

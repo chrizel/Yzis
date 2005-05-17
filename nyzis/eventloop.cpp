@@ -31,24 +31,6 @@
 #include "eventloop.h"
 
 
-#if 0
-NYZEventLoop::NYZEventLoop (  QObject * parent, const char * name)
-#if QT_VERSION < 0x040000
-	:QEventLoop( parent,name )
-#else
-	:QEventDispatcherUNIX()
-#endif
-{
-	yzWarning( NYZIS ) << "constructing NYZEventLoop::NYZEventLoop" << endl;
-}
-
-
-
-NYZEventLoop::~NYZEventLoop ()
-{
-}
-#endif
-
 bool NYZEventLoop::processEvents( QEventLoop::ProcessEventsFlags /*flags*/ )
 {
 	// from Qt Doc :

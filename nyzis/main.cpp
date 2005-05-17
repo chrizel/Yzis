@@ -81,8 +81,12 @@ main(int argc, char *argv[])
 #endif
 
 	( void ) new NYZEventLoop();
-
+#if QT_VERSION < 0x040000
 	QApplication app( argc, argv, useGUI );
+#else
+	QCoreApplication app( argc, argv );
+#endif
+
 
 	QString initialSendKeys;
 

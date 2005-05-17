@@ -20,16 +20,36 @@
 #ifndef  YZIS_EVENT_LOOP
 #define  YZIS_EVENT_LOOP
 
+#if QT_VERSION < 0x040000
 #include <qeventloop.h> 
+#else
+#include <QAbstractEventDispatcher> 
+#endif
 
 
-class NYZEventLoop : public QEventLoop
+class NYZEventLoop : 
+#if QT_VERSION < 0x040000
+	public QEventLoop
+#else
+	public QAbstractEventDispatcher
+#endif
 {
 public:
 	inline NYZEventLoop () {}
 
 	virtual bool processEvents(  QEventLoop::ProcessEventsFlags flags );
-
+#if QT_VERSION >= 0x040000
+	virtual void flush () {}
+	virtual bool hasPendingEvents () { return true; }
+	virtual void interrupt () {}
+	virtual void registerSocketNotifier (  QSocketNotifier * notifier ) {}
+	virtual void registerTimer (  int timerId, int interval, QObject * object ) {}
+	virtual QList<TimerInfo> registeredTimers (  QObject * object ) const { return QList<TimerInfo>(); }
+	virtual void unregisterSocketNotifier (  QSocketNotifier * notifier ) { }
+	virtual bool unregisterTimer (  int timerId ) { return true; }
+	virtual bool unregisterTimers (  QObject * object ) { return true; }
+	virtual void wakeUp () { }
+#endif
 };
 
 

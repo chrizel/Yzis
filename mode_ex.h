@@ -182,6 +182,7 @@ class YZModeEx : public YZMode {
 		cmd_state enew( const YZExCommandArgs& args );
 		cmd_state syntax( const YZExCommandArgs& args );
 		cmd_state highlight( const YZExCommandArgs& args );
+		cmd_state registers( const YZExCommandArgs& args );
 		cmd_state split( const YZExCommandArgs& args );
 		cmd_state genericMap( const YZExCommandArgs& args, int );
 		cmd_state genericUnmap( const YZExCommandArgs& args, int );

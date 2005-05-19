@@ -102,9 +102,14 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 		mMainApp = 0;
 	}
 
-	QString kID, kvId;
-	kID = args[ 0 ];// buffer ID
-	kvId = args[ 1 ]; // view ID
+	//this is only usefull in kyzis, but we should not leak if we are not in kyzis ! :)
+	QString kID="0", kvId="0";
+	if ( args.count() > 0 ) {
+		kID = args[ 0 ];// buffer ID
+	}
+	if ( args.count() > 1 ) {
+		kvId = args[ 1 ]; // view ID
+	}
 
 	KYZisDoc *doc = new KYZisDoc (kID.toInt(), parentWidget, widgetname, parent, name );
 	//separate

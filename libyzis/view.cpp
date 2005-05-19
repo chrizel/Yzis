@@ -629,17 +629,17 @@ void YZView::gotody( unsigned int nexty ) {
 void YZView::gotoy( unsigned int nexty ) {
 	if ( ( int )nexty < 0 ) nexty = 0;
 	if ( nexty >= mBuffer->lineCount() ) nexty = qMax( 0, (int)(mBuffer->lineCount() - 1) );
-	if ( nexty == workCursor->bufferY() ) return;
 
 	/* some easy case */
 	if ( nexty == 0 ) {
-		initDraw( 0, 0, 0, 0, false );
+		initDraw( 0, 0, 0, 0, drawMode );
 		workCursor->lineHeight = workCursor->sLineIncrement = workCursor->bLineIncrement = 1;
 	} else if ( nexty == scrollCursor->bufferY() ) {
+		bool old_drawMode = drawMode;
 		initDraw( ); // XXX
-		drawMode = false;
+		drawMode = old_drawMode;
 		workCursor->lineHeight = workCursor->sLineIncrement = workCursor->bLineIncrement = 1;
-	} else {
+	} else if ( nexty != workCursor->bufferY() ) {
 		bool first = true;
 		while ( workCursor->bufferY() > nexty ) {
 			if ( first && wrap && rCurLineLength > mColumnsVis ) { // move to begin of line
@@ -1048,10 +1048,11 @@ void YZView::updateCurLine( ) {
 
 unsigned int YZView::initDrawContents( unsigned int clipy ) {
 	if ( ! wrap ) {
-		initDraw( getCurrentLeft(), getCurrentTop() + clipy, getDrawCurrentLeft(), getDrawCurrentTop() + clipy );
+		initDraw( getCurrentLeft(), clipy, getDrawCurrentLeft(), clipy, true );
 	} else {
-		unsigned int currentY = 0;
+		unsigned int currentY = getDrawCurrentTop();
 		initDraw();
+		drawMode = true;
 		while( currentY < clipy && drawNextLine() ) {
 			while( drawNextCol() );
 			currentY += drawHeight();
@@ -1682,7 +1683,12 @@ void YZView::commitPaintEvent() {
 			keepCursor->invalidate();
 			applyGoto( mainCursor );
 		}
-		sendPaintEvent( mPaintSelection->map(), false );
+		if ( ! mPaintSelection->isEmpty() ) {
+			YZCursor bottomRight = *scrollCursor->screen();
+			bottomRight.setX( bottomRight.x() + getColumnsVisible() );
+			bottomRight.setY( bottomRight.y() + getLinesVisible() );
+			paintEvent( mPaintSelection->clip( YZInterval( scrollCursor->screen(), bottomRight ) ) );
+		}
 		abortPaintEvent();
 	}
 }
@@ -1696,19 +1702,18 @@ void YZView::sendCursor( YZViewCursor* cursor ) {
 	*keepCursor = *cursor;
 }
 void YZView::sendPaintEvent( const YZCursor& from, const YZCursor& to ) {
-	sendPaintEvent( from.x(), from.y(), to.x() - to.x(), to.y() - from.y() + 1 );
+	setPaintAutoCommit( false );
+	mPaintSelection->addInterval( YZInterval( from, to ) );
+	commitPaintEvent();
 }
 void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
 	if ( curh == 0 ) {
 		yzDebug() << "Warning: YZView::sendPaintEvent with height = 0" << endl;
 		return;
 	}
-	if ( m_paintAutoCommit == 0 ) {
-		if ( (cury+curh) > getDrawCurrentTop() && cury < getDrawCurrentTop() + getLinesVisible() )
-			paintEvent( curx, cury, curw, curh );
-	} else {
-		mPaintSelection->addInterval( YZInterval(YZCursor(curx,cury),YZCursor(curx+curw,cury+curh-1)) );
-	}
+	setPaintAutoCommit( false );
+	mPaintSelection->addInterval( YZInterval(YZCursor(curx,cury),YZCursor(curx+curw,cury+curh-1)) );
+	commitPaintEvent();
 }
 void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 	unsigned int size = map.size();
@@ -1722,25 +1727,10 @@ void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 			map[ i ].setToPos( vCursor.screen() );
 		}
 	}
-	unsigned int lastY = 0;
-	for ( i = 0; i < size; i++ ) {
-		YZBound from = map[ i ].from();
-		YZBound to = map[ i ].to();
-		unsigned int fY = from.pos().y();
-		unsigned int tY = to.pos().y();
-		if ( to.opened() && to.pos().x() == 0 ) {
-			if ( tY == 0 ) continue;
-			--tY;
-		}
-		if ( i > 0 && lastY == fY ) { // don't send two events on the same line
-			if ( fY == tY ) continue;
-			++fY;
-		}
-		lastY = tY;
-		sendPaintEvent( getDrawCurrentLeft(), fY, getColumnsVisible(), tY - fY + 1 );
-	}
+	setPaintAutoCommit( false );
+	mPaintSelection->addMap( map );
+	commitPaintEvent();
 }
-
 void YZView::sendBufferPaintEvent( unsigned int line, unsigned int n ) {
 	YZViewCursor vCursor = viewCursor();
 	if ( wrap ) {
@@ -1793,3 +1783,4 @@ void YZView::saveInputBuffer() {
 		mLastPreviousChars = mPreviousChars; 
 	}
 }
+

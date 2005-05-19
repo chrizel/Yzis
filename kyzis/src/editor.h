@@ -70,7 +70,7 @@ class KYZisEdit : public QWidget {
 		//append text
 		void append ( const QString& );
 
-		void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
+		void paintEvent( const YZSelection& drawMap );
 
 		//move cursor to position column, line relative to viewport
 		void setCursor(int c,int l);
@@ -107,9 +107,6 @@ class KYZisEdit : public QWidget {
 
 		void resizeEvent(QResizeEvent*);
 		void paintEvent(QPaintEvent*);
-
-		//entry point for drawing events
-		void drawContents( int clipx, int clipy, int clipw, int cliph, bool );
 
 		//normal keypressEvents processing
 		void keyPressEvent (QKeyEvent *);

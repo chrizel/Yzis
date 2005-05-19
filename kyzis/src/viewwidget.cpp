@@ -117,9 +117,9 @@ void KYZisView::scrollUp( int n ) {
 	m_editor->scrollUp( n );
 }
 
-void KYZisView::paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) {
+void KYZisView::paintEvent( const YZSelection& drawMap ) {
 	mVScroll->setMaxValue( buffer->lineCount() - 1 );
-	m_editor->paintEvent( curx, cury, curw, curh );
+	m_editor->paintEvent( drawMap );
 }
 unsigned int KYZisView::stringWidth( const QString& str ) const {
 	return m_editor->fontMetrics().width( str );

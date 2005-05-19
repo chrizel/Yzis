@@ -306,7 +306,7 @@ class YZView {
 		 */
 		virtual void setCommandLineText( const QString& ) = 0;
 
-		virtual void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh ) = 0;
+		virtual void paintEvent( const YZSelection& drawMap ) = 0;
 
 		void sendCursor( YZViewCursor* cursor );
 		void sendPaintEvent( const YZCursor& from, const YZCursor& to );

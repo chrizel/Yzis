@@ -56,7 +56,7 @@ public:
 	virtual void refreshScreen();
 	virtual void syncViewInfo();
 	virtual void displayInfo(  const QString& info );
-	void paintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
+	void paintEvent( const YZSelection& drawMap );
 
 	void scrollUp( int );
 	void scrollDown( int );
@@ -93,12 +93,6 @@ private:
 	 * update visible area
 	 */
 	void updateVis( bool refresh=true );
-	/**
-	  * Display a line
-	  * @arg line is the line number, taken from the beginning of the file ( and not
-	  * the beginning of the displayed part )
-	  */
-	void drawContents( int , int );
 	/**
 	  * print a void line ( that is "~    " )
 	  * @arg line is the line # relative to the displayed screen, not the buffer ( as this

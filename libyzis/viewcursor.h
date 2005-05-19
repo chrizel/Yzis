@@ -52,10 +52,10 @@ class YZViewCursor {
 
 		bool valid() const;
 
-		inline YZCursor* buffer() {
+		inline YZCursor* buffer() const {
 			return mBuffer;
 		}
-		inline YZCursor* screen() {
+		inline YZCursor* screen() const {
 			return mScreen;
 		}
 

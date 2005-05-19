@@ -248,17 +248,55 @@ void YZSelection::clear() {
 	mMap.clear();
 }
 
-YZSelection YZSelection::clip( const YZInterval& bound ) {
-	YZSelection ret( mName );
-	if( isEmpty() ) 
-		return ret;
+YZSelection YZSelection::clip( const YZInterval& bound ) const {
+
+//	yzDebug() << "YZSelection::clip " << bound << endl << "*** INPUT ***" << endl << *this << "*** END INPUT ***" << endl;
+
 	YZBound limitFrom( bound.fromPos(), !bound.from().opened() );
 	YZBound limitTo( bound.toPos(), !bound.to().opened() );
-	ret.setMap( mMap );
-	ret.delInterval( YZInterval( limitTo, mMap[ mMap.size() - 1 ].to() ) );
-	if ( ret.isEmpty() ) 
-		return ret;
-	ret.delInterval( YZInterval( ret.map()[ 0 ].from(), limitFrom ) );
+
+	YZSelection tmp( mName );
+	tmp.setMap( mMap );
+	YZBound lastBound = mMap[ mMap.size() - 1 ].to();
+	YZBound firstBound = mMap[ 0 ].from();
+	if ( lastBound > limitTo )
+		tmp.delInterval( YZInterval( limitTo, lastBound ) );
+	if ( !tmp.isEmpty() && firstBound < limitFrom )
+		tmp.delInterval( YZInterval( firstBound, limitFrom ) );
+
+//	yzDebug() << "*** TMP ****" << endl << tmp << "*** END TMP ***" << endl;
+
+	YZSelection ret( mName );
+
+	unsigned int startX = bound.fromPos().x();
+	unsigned int endX = bound.toPos().x();
+	unsigned int fX, tX, fY, tY;
+	for( unsigned int i = 0; i < tmp.mMap.size(); ++i ) {
+		fX = tmp.mMap[ i ].fromPos().x();
+		fY = tmp.mMap[ i ].fromPos().y();
+		tX = tmp.mMap[ i ].toPos().x();
+		tY = tmp.mMap[ i ].toPos().y();
+		if ( !( fY == tY && ( fX > endX || tX < startX ) ) ) {
+			if ( fX <= endX ) {
+				fX = qMax( fX, startX );
+			} else {
+				++fY;
+				fX = startX;
+			}
+			if ( tX >= startX ) {
+				tX = qMin( tX, endX );
+			} else if ( fY < tY ) {
+				--tY;
+				tX = endX;
+			} else {
+				continue;
+			}
+			ret.addInterval( YZInterval( YZCursor( fX, fY ), YZCursor( tX, tY ) ) );
+		}
+	}
+
+//	yzDebug() << "#### result #####" << endl << ret << "#### end result ####" << endl;
+
 	return ret;
 }
 

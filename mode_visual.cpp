@@ -74,13 +74,14 @@ void YZModeVisual::toClipboard( YZView* mView ) {
 
 }
 
-YZInterval YZModeVisual::buildInterval( const YZCursor& from, const YZCursor& to ) {
-	YZInterval ret( from, to );
-	return ret;
+YZInterval YZModeVisual::buildBufferInterval( YZView*, const YZViewCursor& from, const YZViewCursor& to ) {
+	return YZInterval( *from.buffer(), *to.buffer() );
+}
+YZInterval YZModeVisual::buildScreenInterval( YZView*, const YZViewCursor& from, const YZViewCursor& to ) {
+	return YZInterval( *from.screen(), *to.screen() );
 }
 
 void YZModeVisual::enter( YZView* mView ) {
-	YZViewCursor* visualCursor = mView->visualCursor();
 	YZDoubleSelection* visual = mView->getSelectionPool()->visual();
 
 	mView->setPaintAutoCommit( false );
@@ -88,10 +89,9 @@ void YZModeVisual::enter( YZView* mView ) {
 		mView->sendPaintEvent( visual->screenMap(), false );
 		cursorMoved( mView );
 	} else {
-		*visualCursor = mView->viewCursor();
-		YZCursor buffer( *visualCursor->buffer() );
-		YZCursor screen( *visualCursor->screen() );
-		visual->addInterval( buildInterval(buffer,buffer), buildInterval(screen,screen) );
+		YZViewCursor pos = mView->viewCursor();
+		*mView->visualCursor() = pos;
+		visual->addInterval( buildBufferInterval( mView, pos, pos ), buildScreenInterval( mView, pos, pos ) );
 		mView->sendPaintEvent( visual->screenMap(), false );
 
 		toClipboard( mView );
@@ -110,10 +110,11 @@ void YZModeVisual::leave( YZView* mView ) {
 void YZModeVisual::cursorMoved( YZView* mView ) {
 	YZDoubleSelection* visual = mView->getSelectionPool()->visual();
 
-	YZInterval bufI = buildInterval(qMin(*mView->visualCursor()->buffer(),*mView->getBufferCursor()), 
-					qMax(*mView->visualCursor()->buffer(),*mView->getBufferCursor()) );
-	YZInterval scrI = buildInterval(qMin(*mView->visualCursor()->screen(),*mView->getCursor()), 
-					qMax(*mView->visualCursor()->screen(),*mView->getCursor()) );
+	YZViewCursor curPos = mView->viewCursor();
+	YZViewCursor visPos = *mView->visualCursor();
+	bool reverse = *visPos.buffer() > *curPos.buffer();
+	YZInterval bufI = buildBufferInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
+	YZInterval scrI = buildScreenInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
 	YZInterval curI = visual->screenMap()[0];
 
 	visual->clear();
@@ -294,14 +295,31 @@ YZModeVisualLine::YZModeVisualLine() : YZModeVisual() {
 YZModeVisualLine::~YZModeVisualLine() {
 }
 
-YZInterval YZModeVisualLine::buildInterval( const YZCursor& from, const YZCursor& to ) {
-	YZBound bf( from );
-	YZBound bt( to, true );
-	bf.setPos( 0, from.y() );
-	bt.setPos( 0, to.y() + 1 );
-	YZInterval ret( bf, bt );
-	return ret;
+YZInterval YZModeVisualLine::buildBufferInterval( YZView* , const YZViewCursor& from, const YZViewCursor& to ) {
+	YZBound bf( *from.buffer() );
+	YZBound bt( *to.buffer(), true );
+	bf.setPos( 0, from.bufferY() );
+	bt.setPos( 0, to.bufferY() + 1 );
+	return YZInterval( bf, bt );
 }
+YZInterval YZModeVisualLine::buildScreenInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to ) {
+	YZViewCursor pos = from;
+	mView->gotoxy( &pos, 0, from.bufferY() );
+	YZBound bf( pos.screen() );
+	YZBound bt( pos.screen(), true );
+	if ( to.bufferY() < mView->myBuffer()->lineCount() - 1 ) {
+		mView->gotoxy( &pos, 0, to.bufferY() + 1 );
+		bt.setPos( pos.screen() );
+	} else {
+		mView->gotoxy( &pos, mView->myBuffer()->getLineLength( to.bufferY() ) - 1, to.bufferY() );
+		bt.setPos( YZCursor( 0, pos.screenY() + 1 ) );
+	}
+	return YZInterval( bf, bt );
+}
+
+/**
+ * MODE VISUAL BLOCK
+ */
 
 YZModeVisualBlock::YZModeVisualBlock() : YZModeVisual() {
 	mType = YZMode::MODE_VISUAL_BLOCK;
@@ -315,7 +333,6 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 
 	YZDoubleSelection* visual = mView->getSelectionPool()->visual();
 	YZSelection old = visual->screen();
-//	mView->sendPaintEvent( visual->screenMap(), false );
 	visual->clear();
 
 	unsigned int fromLine = mView->visualCursor()->bufferY();

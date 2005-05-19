@@ -113,7 +113,7 @@ class YZSelection {
 
 		void clear();
 
-		YZSelection clip( const YZInterval& bound );
+		YZSelection clip( const YZInterval& bound ) const;
 		
 		static YZSelection diff( const YZSelection& _m1, const YZSelection& _m2 );
 

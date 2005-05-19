@@ -78,7 +78,8 @@ class YZModeVisual : public YZModeCommand {
 		virtual YZInterval interval(const YZCommandArgs &args);
 
 	protected:
-		virtual YZInterval buildInterval( const YZCursor& from, const YZCursor& to );
+		virtual YZInterval buildBufferInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to );
+		virtual YZInterval buildScreenInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to );
 		bool mEntireLines;
 };
 
@@ -88,7 +89,8 @@ class YZModeVisualLine : public YZModeVisual {
 		virtual ~YZModeVisualLine();
 
 	protected:
-		virtual YZInterval buildInterval( const YZCursor& from, const YZCursor& to );
+		virtual YZInterval buildBufferInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to );
+		virtual YZInterval buildScreenInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to );
 };
 
 class YZModeVisualBlock : public YZModeVisual {

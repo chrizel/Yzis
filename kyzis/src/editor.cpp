@@ -381,6 +381,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 
 	unsigned int shiftY = mParent->getDrawCurrentTop();
 	unsigned int shiftX = mParent->getDrawCurrentLeft();
+	unsigned int maxX = shiftX + mParent->getColumnsVisible();
 
 	unsigned int cursorY = mParent->getCursor()->y();
 //	unsigned int cursorX = mParent->getCursor()->x();
@@ -433,7 +434,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 			tY = map[ mapIdx ].toPos().y();
 		}
 
-		drawEntireLine = !( curY == fY || curY == tY );
+		drawEntireLine = !( curY == fY && fX > shiftX || curY == tY && tX < maxX );
 		drawIt = curY == fY && fX <= shiftX || fY < curY && curY <= tY;
 //		yzDebug() << curY << " : " << drawIt << "-" << drawEntireLine << endl;
 
@@ -466,7 +467,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 			} else {
 				if ( tY == curY ) {
 					myRect.setWidth( GETX( tX - shiftX + 1 ) );
-					for( mCellX = 0; mCellX < mCellKeys.size() && mCellKeys[ mCellX ] < tX; ++mCellX )
+					for( mCellX = 0; mCellX < mCellKeys.size() && mCellKeys[ mCellX ] <= (tX - shiftX); ++mCellX )
 						mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
 				} else {
 					myRect.setRight( width() );

@@ -164,6 +164,7 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 
 	unsigned int shiftY = getDrawCurrentTop();
 	unsigned int shiftX = getDrawCurrentLeft();
+	unsigned int maxX = shiftX + mParent->getColumnsVisible();
 
 	YZSelectionMap map = drawMap.map();
 	unsigned int size = map.size();
@@ -200,7 +201,7 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 			tY = map[ mapIdx ].toPos().y();
 		}
 
-		drawEntireLine = !( curY == fY || curY == tY );
+		drawEntireLine = !( curY == fY && fX > shiftX || curY == tY && tX < maxX );
 		drawIt = curY == fY && fX <= shiftX || fY < curY && curY <= tY;
 //		yzDebug() << curY << " : " << drawIt << "-" << drawEntireLine << endl;
 

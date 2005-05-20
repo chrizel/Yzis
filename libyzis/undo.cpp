@@ -129,7 +129,7 @@ void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY ) {
 		mFutureUndoItem->endCursorY = cursorY;
 		mUndoItemList.append( mFutureUndoItem );
 		mCurrentIndex = mUndoItemList.count();
-		yzDebug("YZUndoBuffer") << "UndoItem::commitUndoItem" << toString() << endl;
+//		yzDebug("YZUndoBuffer") << "UndoItem::commitUndoItem" << toString() << endl;
 	}
 	mFutureUndoItem = new UndoItem();
 #if QT_VERSION < 0x040000

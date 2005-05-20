@@ -27,13 +27,8 @@
 #define __YZIS_ATTRIBUTE_H__
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
 #include <qcolor.h>
 #include <qfont.h>
-#else
-#include <QFont>
-#include <QColor>
-#endif
 
 /**
  * The Attribute class incorporates all text decorations supported by Yzis.

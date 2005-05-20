@@ -26,14 +26,9 @@
  * $Id$
  */
 
-#if QT_VERSION < 0x040000
 #include <qvaluevector.h>
 #include <qapplication.h>
 #include <qstring.h>
-#else
-#include <QVector>
-#include <QCoreApplication>
-#endif
 #include "yzis.h"
 #include "syntaxhighlight.h"
 #include "line.h"
@@ -51,11 +46,7 @@ class YZSwapFile;
 class YZSession;
 class YZView;
 
-#if QT_VERSION < 0x040000
 typedef QValueVector<YZLine*> YZBufferData;
-#else
-typedef QVector<YZLine*> YZBufferData;
-#endif
 static QString myNull;
 
 /**
@@ -276,11 +267,7 @@ public:
 	 * The list of view for this buffer
 	 * @return a QValuelist of pointers to the views
 	 */
-#if QT_VERSION < 0x040000
 	QPtrList<YZView> views() { return mViews; }
-#else
-	QVector<YZView*> views() { return mViews; }
-#endif
 
 	/**
 	 * Find the first view of this buffer
@@ -453,11 +440,7 @@ protected:
 	bool isLineVisible(uint line);
 
 	QString mPath;
-#if QT_VERSION < 0x040000
 	QPtrList<YZView> mViews;
-#else
-	QVector<YZView*> mViews;
-#endif
 
 	YZBufferData mText;
 	YZSession *mSession;

@@ -188,11 +188,7 @@ class YZInternalOptionPool {
 		 */
 		void updateOptions(const QString& oldPath, const QString& newPath);
 
-#if QT_VERSION < 0x040000
 		QValueList<YZOption*> options;
-#else
-		QList<YZOption*> options;
-#endif
 
 	private:
 		void init();

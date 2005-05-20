@@ -124,11 +124,7 @@ class YZModeIntro : public YZMode {
 typedef YZMode::modeType modeType;
 
 typedef QMap<modeType, YZMode*> YZModeMap;
-#if QT_VERSION < 0x040000
 typedef QValueList<YZMode*> YZModeStack;
-#else
-typedef QList<YZMode*> YZModeStack;
-#endif
 
 class YZModePool {
 	public:

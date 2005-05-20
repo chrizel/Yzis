@@ -26,11 +26,7 @@
 
 #include <qstring.h>
 #include <qstringlist.h>
-#if QT_VERSION < 0x040000
 #include <qvaluevector.h>
-#else
-#include <QVector>
-#endif
 
 #include "cursor.h"
 #include "yzisinforecord.h"
@@ -54,11 +50,7 @@ class YZYzisinfoRecordSearchHistory : public YZYzisinfoRecord {
 	private:
 		QString mFilename;
 		int mIndex;
-#if QT_VERSION < 0x040000
 		QValueVector<YZCursor*> mCursorData;
-#else
-		QVector<YZCursor*> mCursorData;
-#endif
 };
 
 #endif // YZISINFORECORDSEARCHHISTORY_H

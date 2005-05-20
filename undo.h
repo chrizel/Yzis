@@ -30,14 +30,8 @@
 #define YZ_UNDO_H
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
 #include <qstring.h>
 #include <qptrlist.h>
-#else
-#include <QLinkedList>
-#include <QString>
-#include <QList>
-#endif
 
 class YZView;
 class YZBuffer;
@@ -69,13 +63,8 @@ struct buffer_operation
 };
 typedef struct buffer_operation YZBufferOperation;
 
-#if QT_VERSION < 0x040000
 typedef QPtrListIterator<YZBufferOperation> UndoItemContentIterator;
 typedef QPtrList<YZBufferOperation> UndoItemBase;
-#else
-typedef QLinkedListIterator<YZBufferOperation*> UndoItemContentIterator;
-typedef QLinkedList<YZBufferOperation*> UndoItemBase;
-#endif
 
 /** An UndoItem contains a list of individual buffer operations
   * and the two cursor positions: before and after the whole set of operations
@@ -142,11 +131,7 @@ protected:
 
 	YZBuffer * mBuffer;
 	UndoItem * mFutureUndoItem;
-#if QT_VERSION < 0x040000
 	QPtrList<UndoItem> mUndoItemList;
-#else
-	QList<UndoItem*> mUndoItemList;
-#endif
 	uint mCurrentIndex;
 	bool mInsideUndo;
 };

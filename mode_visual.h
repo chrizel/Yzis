@@ -31,14 +31,9 @@
 #include "mode_command.h"
 #include "view.h"
 
-#if QT_VERSION < 0x040000
 #include <qstring.h>
 #include <qmap.h>
 #include <qstringlist.h>
-#else
-#include <QList>
-#include <QStringList>
-#endif
 
 class YZCursor;
 class YZMode;

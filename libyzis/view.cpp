@@ -1274,7 +1274,7 @@ bool YZView::drawNextCol( ) {
 		mFillChar = ' ';
 		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
-			bool listChar = drawMode && opt_list && lastChar == ' ';
+			listChar = drawMode && opt_list && lastChar == ' ';
 			if ( listChar ) {
 				if ( stringHasOnlySpaces(sCurLine.mid(curx) ) && opt_listchars[ "trail" ].length() > 0 ) {
 					lastChar = opt_listchars["trail"][0];

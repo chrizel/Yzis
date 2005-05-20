@@ -33,15 +33,8 @@
 #include "selection.h"
 #include "viewcursor.h"
 
-#if QT_VERSION < 0x040000
 #include <qkeysequence.h>
 #include <qclipboard.h>
-#else
-#include <QX11Info>
-#include <QApplication>
-#include <QClipboard>
-#endif
-
 
 YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mType = YZMode::MODE_VISUAL;
@@ -49,26 +42,16 @@ YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mSelMode = true;
 	mMapMode = visual;
 	commands.clear();
-#if QT_VERSION < 0x040000
 	commands.setAutoDelete(true);
-#endif
 }
 YZModeVisual::~YZModeVisual() {
-#if QT_VERSION >= 0x040000
-	for ( int ab = 0 ; ab < commands.size(); ++ab)
-		delete commands.at(ab);
-#endif
 	commands.clear();
 }
 
 void YZModeVisual::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
 #ifndef YZIS_WIN32_MSVC
-#if QT_VERSION < 0x040000
 	if ( QPaintDevice::x11AppDisplay() )
-#else
-	if ( QX11Info::display() )
-#endif
 #endif
 		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
 
@@ -189,11 +172,7 @@ void YZModeVisual::toLowerCase( const YZCommandArgs& args ) {
 	QStringList t = args.view->myBuffer()->getText( inter );
 	QStringList lt;
 	for( unsigned int i = 0; i < t.size(); i++ )
-#if QT_VERSION < 0x040000
 		lt << t[i].lower();
-#else
-		lt << t[i].toLower();
-#endif
 	args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
 	args.view->commitNextUndo();
 }
@@ -202,11 +181,7 @@ void YZModeVisual::toUpperCase( const YZCommandArgs& args ) {
 	QStringList t = args.view->myBuffer()->getText( inter );
 	QStringList lt;
 	for( unsigned int i = 0; i < t.size(); i++ )
-#if QT_VERSION < 0x040000
 		lt << t[i].upper();
-#else
-		lt << t[i].toUpper();
-#endif
 	args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
 	args.view->commitNextUndo();
 }
@@ -376,11 +351,7 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 void YZModeVisualBlock::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
 #ifndef WIN32
-#if QT_VERSION < 0x040000
 	if ( QPaintDevice::x11AppDisplay() )
-#else
-	if ( QX11Info::display() )
-#endif
 #endif
 		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
 

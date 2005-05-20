@@ -25,13 +25,8 @@
  */
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
 #include <qstring.h>
 #include <qmap.h>
-#else
-#include <QMap>
-#include <QString>
-#endif
 
 /**
  * Handles key mappings

@@ -33,17 +33,10 @@
  */
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
 #include <qstring.h>
 #include <qfile.h>
 #include <qmap.h>
 class QCString;
-#else
-#include <QString>
-#include <cstdio>
-#include <QMap>
-#include <QFile>
-#endif
 
 class QStringList;
 
@@ -152,9 +145,7 @@ class YZDebugStream {
 		YZDebugStream& operator << (bool i);
 		YZDebugStream& operator << (char i);
 		YZDebugStream& operator << (unsigned char i);
-#if QT_VERSION < 0x040000
 		YZDebugStream& operator << (const QCString& string);
-#endif
 		YZDebugStream& operator << (const QString& string);
 		YZDebugStream& operator << (const QStringList& string);
 		YZDebugStream& operator << (const char* string);

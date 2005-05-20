@@ -26,14 +26,9 @@
 #define YZ_MARK_H
 
 #include "qglobal.h"
-#if QT_VERSION < 0x040000
 #include <qstring.h>
 #include <qmap.h>
 #include <qintdict.h>
-#else
-#include <QMap>
-#include <QString>
-#endif
 #include "cursor.h"
 
 struct YZCursorPos;

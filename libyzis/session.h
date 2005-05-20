@@ -37,10 +37,6 @@
 #include "yzisinforecord.h"
 #include "yzisinforecordstartposition.h"
 #include "yzisinforecordsearchhistory.h"
-#if QT_VERSION < 0x040000
-#else
-#include <QVector>
-#endif
 
 class YZView;
 class YZBuffer;
@@ -66,11 +62,7 @@ class YZYzisinfoRecordSearchPosition;
  */
 
 typedef QMap<QString,YZBuffer*> YZBufferMap;
-#if QT_VERSION < 0x040000
 typedef QValueVector<YZYzisinfoRecord*> YZYzisinfoList;
-#else
-typedef QVector<YZYzisinfoRecord*> YZYzisinfoList;
-#endif
  
 class YZSession {
 	public:

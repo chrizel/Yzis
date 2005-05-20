@@ -32,14 +32,9 @@
 #include "mode.h"
 #include "view.h"
 #include "cursor.h"
-#if QT_VERSION < 0x040000
 #include <qstring.h>
 #include <qmap.h>
 #include <qstringlist.h>
-#else
-#include <QList>
-#include <QStringList>
-#endif
 
 class YZBuffer;
 class YZView;
@@ -55,11 +50,7 @@ struct YZCommandArgs {
 	//the origin of inputs
 	YZView *view;
 	//the registers to operate upon
-#if QT_VERSION < 0x040000
 	QValueList<QChar> regs;
-#else
-	QList<QChar> regs;
-#endif
 	//exec this number of times the command
 	unsigned int count;
 	//was the count gave by the user
@@ -67,11 +58,7 @@ struct YZCommandArgs {
 	//the argument
 	QString arg;
 
-#if QT_VERSION < 0x040000
 	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, bool user, QString a) {
-#else
-	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, unsigned int c, bool user, QString a) {
-#endif
 		cmd=_cmd;
 		view=v;
 		regs=r;
@@ -79,11 +66,7 @@ struct YZCommandArgs {
 		arg=a;
 		usercount=user;
 	}
-#if QT_VERSION < 0x040000
 	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, bool user) {
-#else
-	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, unsigned int c, bool user) {
-#endif
 		cmd=_cmd;
 		view=v;
 		regs=r;
@@ -261,11 +244,7 @@ class YZModeCommand : public YZMode {
 		void redoLastCommand( const YZCommandArgs & args );
 		void undoJump( const YZCommandArgs & args );
 
-#if QT_VERSION < 0x040000
 		QPtrList<const YZCommand> commands;
-#else
-		QList<YZCommand*> commands;
-#endif
 		// this is not a QValueList because there is no constructor with no arguments for YZCommands
 		QStringList textObjects;
 

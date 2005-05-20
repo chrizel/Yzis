@@ -30,14 +30,8 @@
 #include "option.h"
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
 #include <qvaluevector.h>
 #include <qapplication.h>
-#else
-#include <QVector>
-#include <QCoreApplication>
-#include <QColor>
-#endif
 
 class YZViewCursor;
 class YZCursor;
@@ -52,11 +46,7 @@ class YZMode;
 class YZModeCompletion;
 class YZOptionValue;
 
-#if QT_VERSION < 0x040000
 typedef QValueVector<QString> StringVector;
-#else
-typedef QVector<QString> StringVector;
-#endif
 
 /**
  * MUST be reimplemented in the GUI. It's the basis to display the content of a buffer
@@ -594,11 +584,7 @@ class YZView {
 		/**
 		 * Start recording a macro into @param regs
 		 */
-#if QT_VERSION < 0x040000
 		void recordMacro( const QValueList<QChar> &regs );
-#else
-		void recordMacro( const QList<QChar> &regs );
-#endif
 
 		/**
 		 * Stop recording macros
@@ -610,11 +596,7 @@ class YZView {
 		 */
 		bool isRecording() { return mRegs.count() > 0; }
 
-#if QT_VERSION < 0x040000
 		const QValueList<QChar> registersRecorded() { return mRegs; }
-#else
-		const QList<QChar> registersRecorded() { return mRegs; }
-#endif
 
 		YZSelectionMap visualSelection();
 
@@ -808,11 +790,7 @@ class YZView {
 
 
 		//which regs to store macros in
-#if QT_VERSION < 0x040000
 		QValueList<QChar> mRegs;
-#else
-		QList<QChar> mRegs;
-#endif
 		unsigned int m_paintAutoCommit;
 		YZViewCursor* keepCursor;
 

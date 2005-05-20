@@ -286,7 +286,7 @@ YZInterval YZModeVisualLine::buildScreenInterval( YZView* mView, const YZViewCur
 		mView->gotoxy( &pos, 0, to.bufferY() + 1 );
 		bt.setPos( pos.screen() );
 	} else {
-		mView->gotoxy( &pos, mView->myBuffer()->getLineLength( to.bufferY() ) - 1, to.bufferY() );
+		mView->gotoxy( &pos, qMax( (unsigned int)1, mView->myBuffer()->getLineLength( to.bufferY() ) ) - 1, to.bufferY() );
 		bt.setPos( YZCursor( 0, pos.screenY() + 1 ) );
 	}
 	return YZInterval( bf, bt );

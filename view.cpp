@@ -180,10 +180,10 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 }
 
 void YZView::refreshScreen() {
-	sendRefreshEvent();
 	opt_schema = getLocalIntegerOption( "schema" );
 	opt_list = getLocalBooleanOption( "list" );
 	opt_listchars = getLocalMapOption( "listchars" );
+	sendRefreshEvent();
 }
 void YZView::recalcScreen( ) {
 	tabstop = getLocalIntegerOption( "tabstop" );

@@ -335,17 +335,12 @@ class YZView {
 		/**
 		 * Asks a redraw of the whole view
 		 */
-		virtual void refreshScreen() = 0;
+		void refreshScreen();
 
 		/**
 		 * recalcScreen refresh the screen and recalculate cursor position
 		 */
 		void recalcScreen();
-
-		/**
-		 * Internal use
-		 */
-		QString refreshScreenInternal();
 
 		/**
 		 * Displays an informational message
@@ -830,6 +825,13 @@ class YZView {
 		//the current attribute being used by the GUI
 		YzisAttribute * curAt;
 		YZModePool* mModePool;
+
+		/**
+		 * options cache
+		 */
+		int opt_schema;
+		bool opt_list;
+		MapOption opt_listchars;
 	
 		friend class YZModeCompletion;
 };

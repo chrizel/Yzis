@@ -132,7 +132,9 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	tabstop = getLocalIntegerOption("tabstop");
 	wrap = getLocalBooleanOption( "wrap" );
 	rightleft = getLocalBooleanOption( "rightleft" );
-	listChar = getLocalBooleanOption( "list" );
+	opt_schema = getLocalIntegerOption( "schema" );
+	opt_list = getLocalBooleanOption( "list" );
+	opt_listchars = getLocalMapOption( "listchars" );
 
 	//completion
 	m_completionStart = new YZCursor();
@@ -177,6 +179,12 @@ void YZView::setVisibleArea(int c, int l, bool refresh) {
 		recalcScreen();
 }
 
+void YZView::refreshScreen() {
+	sendRefreshEvent();
+	opt_schema = getLocalIntegerOption( "schema" );
+	opt_list = getLocalBooleanOption( "list" );
+	opt_listchars = getLocalMapOption( "listchars" );
+}
 void YZView::recalcScreen( ) {
 	tabstop = getLocalIntegerOption( "tabstop" );
 	wrap = getLocalBooleanOption( "wrap" );
@@ -1203,10 +1211,9 @@ bool YZView::drawNextLine( ) {
 			rHLa = rHLa + workCursor->bufferX() - 1;
 			rHLAttributes = 0L;
 			YzisHighlighting * highlight = mBuffer->highlight();
-			int schema = getLocalIntegerOption("schema");
 			if ( highlight )
-				rHLAttributes = highlight->attributes( schema )->data( );
-			rHLAttributesLen = rHLAttributes ? highlight->attributes( schema )->size() : 0;
+				rHLAttributes = highlight->attributes( opt_schema )->data( );
+			rHLAttributesLen = rHLAttributes ? highlight->attributes( opt_schema )->size() : 0;
 			return true;
 		}
 	} else {
@@ -1267,13 +1274,12 @@ bool YZView::drawNextCol( ) {
 		mFillChar = ' ';
 		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
-			listChar = drawMode && getLocalBooleanOption( "list" ) && lastChar == ' ';
+			bool listChar = drawMode && opt_list && lastChar == ' ';
 			if ( listChar ) {
-				MapOption lc = getLocalMapOption( "listchars" );
-				if ( stringHasOnlySpaces(sCurLine.mid(curx) ) && lc[ "trail" ].length() > 0 ) {
-					lastChar = lc["trail"][0];
-				} else if ( lc["space"].length() > 0 ) {
-					lastChar = lc["space"][0];
+				if ( stringHasOnlySpaces(sCurLine.mid(curx) ) && opt_listchars[ "trail" ].length() > 0 ) {
+					lastChar = opt_listchars["trail"][0];
+				} else if ( opt_listchars["space"].length() > 0 ) {
+					lastChar = opt_listchars["space"][0];
 				}
 			}
 			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
@@ -1281,13 +1287,12 @@ bool YZView::drawNextCol( ) {
 		} else {
 			workCursor->lastCharWasTab = true;
 			lastChar = ' ';
-			listChar = getLocalBooleanOption( "list" );
+			listChar = drawMode && opt_list;
 			if ( listChar ) {
-				MapOption lc = getLocalMapOption( "listchars" );
-				if ( lc["tab"].length() > 0 ) {
-					lastChar = lc["tab"][0];
-					if ( lc["tab"].length() > 1 )
-						mFillChar = lc["tab"][1];
+				if ( opt_listchars["tab"].length() > 0 ) {
+					lastChar = opt_listchars["tab"][0];
+					if ( opt_listchars["tab"].length() > 1 )
+						mFillChar = opt_listchars["tab"][1];
 				}
 			}
 			if ( workCursor->screenX( ) == scrollCursor->bufferX() )
@@ -1387,7 +1392,7 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 		YzisAttribute *list = highlight->attributes( schema )->data( ); //attributes defined by the syntax highlighting document
 		at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
 	}
-	if ( getLocalBooleanOption( "list" ) && ( yl->data().at(col) == ' ' || yl->data().at(col) == tabChar ) )
+	if ( opt_list && ( yl->data().at(col) == ' ' || yl->data().at(col) == tabChar ) )
 		return blue;
 	if ( at ) return at->textColor(); //textcolor :)
 	return fake;
@@ -1514,10 +1519,6 @@ void YZView::redo( unsigned int count ) {
 		mBuffer->undoBuffer()->redo( this );
 }
 
-QString YZView::refreshScreenInternal() {
-	refreshScreen();
-	return QString::null;
-}
 
 QString YZView::getLocalOptionKey() {
 	return mBuffer->fileName()+"-view-"+ QString::number(myId);

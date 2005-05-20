@@ -28,15 +28,9 @@
 #include "view.h"
 #include "cursor.h"
 #include <ncurses.h>
-#if QT_VERSION < 0x040000
 #include <qstringlist.h>
 #include <qmap.h>
 #include <qnamespace.h>
-#else
-#include <QMap>
-#include <QDataStream>
-#include <QStringList>
-#endif
 
 class NYZSession;
 
@@ -53,6 +47,7 @@ public:
 	virtual QString getCommandLineText(void) const {return commandline; }
 	virtual void setCommandLineText( const QString& );
 	virtual void modeChanged(void) { syncViewInfo(); }
+	virtual void refreshScreen();
 	virtual void syncViewInfo();
 	virtual void displayInfo(  const QString& info );
 	void paintEvent( const YZSelection& drawMap );

@@ -24,12 +24,8 @@
 #include <qtimer.h>
 #include "debug.h"
 /* Qt */
-#if QT_VERSION < 0x040000
 #include <qnamespace.h>
 #include <qcolor.h>
-#else
-#include <QColor>
-#endif
 
 #include <ctype.h>
 
@@ -353,11 +349,7 @@ void NYZView::setCommandLineText( const QString& text )
 	werase(statusbar);
 	commandline = text;
 	if ( !text.isEmpty() ) {
-#if QT_VERSION < 0x040000
 		waddstr(statusbar, text.local8Bit());
-#else
-		waddstr(statusbar, text.toLocal8Bit().data());
-#endif
 		waddch( statusbar, ' ' ); // when doing backspace...
 		waddch( statusbar, '\b' );
 	}
@@ -379,13 +371,7 @@ void NYZView::syncViewInfo( void )
 	wmove( infobar,0,0 );
 	QString m = mode();
 	wattron( infobar, COLOR_PAIR(2) );
-	wprintw( infobar, "%s", (const char*)
-#if QT_VERSION < 0x040000
-			m.local8Bit()
-#else
-			m.toLocal8Bit().data()
-#endif
-	);
+	wprintw( infobar, "%s", (const char*) m.local8Bit());
 	wattroff( infobar, COLOR_PAIR(2) );
 	waddch( infobar, ' ' );
 
@@ -393,11 +379,7 @@ void NYZView::syncViewInfo( void )
 	myfmt=( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if
 	            // it's rather unlikely..
 	wprintw( infobar, myfmt,
-#if QT_VERSION < 0x040000
 			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).local8Bit() ):( const char * )( mBuffer->fileName().local8Bit() ),
-#else
-			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).toLocal8Bit().data() ):( const char * )( mBuffer->fileName().toLocal8Bit().data() ),
-#endif
 			( mBuffer->fileIsModified() )?" [+]":""
 			);
 	// prevent  gcc to use string
@@ -411,11 +393,7 @@ void NYZView::syncViewInfo( void )
 		myfmt=( char * )"%d,%d";
 		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
 	}
-#if QT_VERSION < 0x040000
 	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.local8Bit() );
-#else
-	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.toLocal8Bit().data() );
-#endif
 	wrefresh(infobar);
 
 	drawCursor();
@@ -424,11 +402,7 @@ void NYZView::syncViewInfo( void )
 void NYZView::displayInfo( const QString& info )
 {
 	werase(statusbar);
-#if QT_VERSION < 0x040000
 	waddstr( statusbar, info.local8Bit() );
-#else
-	waddstr( statusbar, info.toLocal8Bit().data() );
-#endif
 	wrefresh(statusbar);
 	drawCursor();
 	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;
@@ -482,6 +456,12 @@ void NYZView::initialiseAttributesMap()
 	ALIASMAP(0xDD0000, 0xff0000); // red
 
 
+}
+
+void NYZView::refreshScreen() {
+	YZView::refreshScreen();
+	refresh();
+	updateCursor();
 }
 
 #if 0

@@ -19,12 +19,7 @@
  **/
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
 #include <qapplication.h>
-#else
-#include <QApplication>
-#include <QAbstractEventDispatcher>
-#endif
 
 #include "debug.h"
 #include "factory.h"
@@ -54,13 +49,8 @@ bool NYZEventLoop::processEvents( QEventLoop::ProcessEventsFlags /*flags*/ )
 	bool qt_had_some = false;
 //	yzDebug () << "Flags " << flags << " has events " << QEventLoop::hasPendingEvents() << endl;
 	qt_had_some =  NYZFactory::self->process_one_event();
-#if QT_VERSION < 0x040000
 	if ( !qt_had_some && qApp->type() != QApplication::Tty && QEventLoop::hasPendingEvents() )
 		qt_had_some = QEventLoop::processEvents(QEventLoop::AllEvents/*flags*/);
-#else
-	if ( !qt_had_some && qApp->type() != QApplication::Tty && QAbstractEventDispatcher::instance()->hasPendingEvents() )
-		qt_had_some = QAbstractEventDispatcher::instance()->processEvents(QEventLoop::AllEvents/*flags*/);
-#endif
 
 	return /*true*/qt_had_some;
 }

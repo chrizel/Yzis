@@ -44,15 +44,9 @@
 
 /* Qt */
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
 #include <qapplication.h>
 #include <qtranslator.h>
 #include <qtextcodec.h>
-#else
-#include <QApplication>
-#include <QTranslator>
-#include <QTextCodec>
-#endif
 
 /* X11 */
 #include <X11/Xlib.h>
@@ -81,22 +75,14 @@ main(int argc, char *argv[])
 #endif
 
 	( void ) new NYZEventLoop();
-#if QT_VERSION < 0x040000
 	QApplication app( argc, argv, useGUI );
-#else
-	QCoreApplication app( argc, argv );
-#endif
 
 
 	QString initialSendKeys;
 
 	setlocale( LC_ALL, "");
 	QString l = QString(PREFIX) + "/share/locale";
-#if QT_VERSION < 0x040000
 	bindtextdomain( "yzis", l);
-#else
-	bindtextdomain( "yzis", l.toUtf8() );
-#endif
 	bind_textdomain_codeset( "yzis", "UTF-8" );
 	textdomain( "yzis" );
 	// option stuff

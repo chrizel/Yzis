@@ -43,7 +43,7 @@
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
 
 KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
-: QWidget( parent, name)
+: QWidget( parent, name, /*Qt::WStaticContents | */ Qt::WNoAutoErase )
 {
 	mTransparent = false;
 	mParent = parent;
@@ -52,7 +52,6 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 	setFocusPolicy( StrongFocus );
 	QWidget::setCursor( IbeamCursor );
-	setWFlags( /*Qt::WStaticContents | */ Qt::WNoAutoErase );
 
 	rootxpm = new KRootPixmap( this );
 	setTransparent( false );

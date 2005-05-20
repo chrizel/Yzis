@@ -19,11 +19,7 @@
  * $Id$
  */
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
 #include <qfile.h> // this is needed so that strange things don't happen which I don't understand
-#else
-#include <QFile>
-#endif
 #include "document.h"
 #include "factory.h"
 
@@ -35,25 +31,15 @@ NYZisDoc::~NYZisDoc () {
 
 bool NYZisDoc::popupFileSaveAs() {
 	// TODO
-#if QT_VERSION < 0x040000
 	for (  YZView *it = mViews.first(); it; it = mViews.next() )
 		it->displayInfo ( "Save as not implemented yet, use :w<filename>" );
-#else
-	for ( int ab = 0 ; ab < mViews.size(); ++ab )
-		mViews.at(ab)->displayInfo ( "Save as not implemented yet, use :w<filename>");
-#endif
 	return false;
 }
 
 void NYZisDoc::filenameChanged()
 {
-#if QT_VERSION < 0x040000
 	for (  YZView *it = mViews.first(); it; it = mViews.next() )
 		it->displayInfo ( QString("\"%1\" %2L, %3C" ).arg(fileName()).arg(lineCount()).arg(getWholeTextLength()));
-#else
-	for ( int ab = 0 ; ab < mViews.size(); ++ab )
-		mViews.at(ab)->displayInfo ( QString("\"%1\" %2L, %3C" ).arg(fileName()).arg(lineCount()).arg(getWholeTextLength()));
-#endif
 
 }
 

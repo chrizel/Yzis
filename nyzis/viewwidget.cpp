@@ -164,7 +164,7 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 
 	unsigned int shiftY = getDrawCurrentTop();
 	unsigned int shiftX = getDrawCurrentLeft();
-	unsigned int maxX = shiftX + mParent->getColumnsVisible();
+	unsigned int maxX = shiftX + getColumnsVisible();
 
 	YZSelectionMap map = drawMap.map();
 	unsigned int size = map.size();

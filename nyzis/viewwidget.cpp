@@ -420,14 +420,6 @@ void NYZView::syncViewInfo( void )
 	drawCursor();
 }
 
-void NYZView::refreshScreen() {
-//	clear();
-	sendRefreshEvent();
-	refresh();
-	wrefresh(editor);
-	updateCursor();
-}
-
 void NYZView::displayInfo( const QString& info )
 {
 	werase(statusbar);

@@ -168,12 +168,6 @@ void KYZisView::emitSelectionChanged() {
 	buffer->emitSelectionChanged();
 }
 
-void KYZisView::refreshScreen () {
-	mVScroll->setMaxValue( buffer->lineCount() -1 );
-	abortPaintEvent();
-	m_editor->repaint( false );
-}
-
 void KYZisView::setupActions() {
 	KStdAction::save(this, SLOT(fileSave()), actionCollection());
 	KStdAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());

@@ -290,13 +290,10 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 			commandIsValid = true;
 		}
 	}
-	if ( current != to ) {
+	if ( _input.length() == 0 ) {
 		view->gotoxy( 0, to );
 		view->moveToFirstNonBlankOfLine();
-	}
-
-
-	if (!commandIsValid && _input.length() > 0) {
+	} else if ( !commandIsValid ) {
 		YZSession::me->popupMessage( _("Not an editor command: ") + _input);
 	}
 
@@ -613,21 +610,25 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 	QString options = args.input.mid( idxc+1 );
 
 	bool needsUpdate = false;
-	args.view->gotoxy( 0, args.fromLine );
-	args.view->moveToFirstNonBlankOfLine();
 	bool found;
 	if ( options.contains( "i" ) && !search.endsWith( "\\c" ) ) {
 		search.append("\\c");
 	}
-	YZSession::me->search()->forward( args.view, search, &found );
+	unsigned int lastLine;
+	YZCursor start( 0, args.fromLine );
+	YZSession::me->search()->forward( args.view, search, &found, &start );
 	if ( found ) {
 		for( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
-			if ( args.view->myBuffer()->substitute( search, replace, options.contains( "g" ), i ) )
+			if ( args.view->myBuffer()->substitute( search, replace, options.contains( "g" ), i ) ) {
 				needsUpdate = true;
+				lastLine = i;
+			}
 		}
 	}
 	if ( needsUpdate ) {
 		args.view->myBuffer()->updateAllViews();
+		args.view->gotoxy( 0, lastLine );
+		args.view->moveToFirstNonBlankOfLine();
 	}
 
 	return CMD_OK;
@@ -793,6 +794,8 @@ cmd_state YZModeEx::indent( const YZExCommandArgs& args ) {
 		args.view->myBuffer()->action()->indentLine( args.view, i, count );
 	}
 	args.view->commitNextUndo();
+	args.view->gotoxy( 0, args.toLine );
+	args.view->moveToFirstNonBlankOfLine();
 	return CMD_OK;
 }
 

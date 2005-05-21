@@ -56,10 +56,13 @@ void YZInternalOptionPool::loadFrom(const QString& file ) {
 				setGroup(rx.cap(1).simplifyWhiteSpace());
 			else {
 				if ( rx2.exactMatch( line ) ) {
-					bool matched;
-					setOptionFromString( &matched, rx2.cap(1).simplifyWhiteSpace()+'='+rx2.cap(2).simplifyWhiteSpace() );
-					if ( ! matched ) { // this option is not known, probably a setting
-						setQStringEntry( rx2.cap(1).simplifyWhiteSpace(), rx2.cap(2).simplifyWhiteSpace() );
+					bool matched=false;
+					if ( rx2.numCaptures() > 1 ) {
+						setOptionFromString( &matched, rx2.cap(1).simplifyWhiteSpace()+'='+rx2.cap(2).simplifyWhiteSpace() );
+						if ( ! matched ) // this option is not known, probably a setting
+							setQStringEntry( rx2.cap(1).simplifyWhiteSpace(), rx2.cap(2).simplifyWhiteSpace() );
+					} else {
+						setOptionFromString( line.simplifyWhiteSpace() );
 					}
 				} else
 					yzDebug( "YZInternalOptionPool" ) << "Error parsing line " << idx << " of " << file << endl;

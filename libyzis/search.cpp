@@ -118,14 +118,9 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 
 	YZSelectionMap searchMap;
 	for( ; it != it_end; it++ ) {
-#if QT_VERSION < 0x040000
 		YZView* v;
 		YZBuffer* b = it.data();
 		QPtrList<YZView> views = b->views();
-#else
-		YZBuffer* b = it.value();
-		QVector<YZView*> views = b->views();
-#endif
 
 		searchMap.clear();
 
@@ -154,13 +149,8 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 			} while ( found );
 		}
 
-#if QT_VERSION < 0x040000
 		for( v = views.first(); v; v = views.next() )
 			highlightSearch( v, searchMap );
-#else
-		for (int i = 0 ; i < views.size(); ++i )
-			highlightSearch( views.at(i), searchMap );
-#endif
 	}
 }
 
@@ -168,11 +158,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 	if ( mCurrentSearch.isNull() || mCurrentSearch.isEmpty() ) return;
 	bool doIt = YZSession::me->getBooleanOption( "hlsearch" );
 	if ( doIt ) {
-#if QT_VERSION < 0x040000
 		QPtrList<YZView> views = buffer->views();
-#else
-		QVector<YZView*> views = buffer->views();
-#endif
 		YZView* v = views.first();
 		YZCursor from( 0, line );
 		YZCursor cur( from );
@@ -196,26 +182,15 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 			}
 		} while ( found );
 
-#if QT_VERSION < 0x040000
 		for( v = views.first(); v; v = views.next() ) {
 			v->getSelectionPool()->setSearch( searchMap );
 			v->sendPaintEvent( 0, line, qMax( (int)(buffer->textline( line ).length() - 1), 0 ), line );
 		}
-#else
-		for (int i = 0 ; i < views.size(); ++i ) {
-			views.at(i)->getSelectionPool()->setSearch( searchMap );
-			views.at(i)->sendPaintEvent( 0, line, qMax( (int)(buffer->textline( line ).length() - 1), 0 ), line );
-		}
-#endif
 	}
 }
 
 void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shift ) {
-#if QT_VERSION < 0x040000
 	QPtrList<YZView> views = buffer->views();
-#else
-	QVector<YZView*> views = buffer->views();
-#endif
 	YZView* v = views.first();
 	if ( v ) {
 		YZSelectionMap searchMap = v->getSelectionPool()->search()->map();
@@ -234,13 +209,8 @@ void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shif
 			searchMap[ i ].setToPos( to );
 		}
 
-#if QT_VERSION < 0x040000
 		for( v = views.first(); v; v = views.next() )
 			highlightSearch( v, searchMap );
-#else
-		for (int i = 0 ; i < views.size(); ++i )
-			highlightSearch( views.at(i), searchMap );
-#endif
 	}
 }
 
@@ -270,20 +240,10 @@ void YZSearch::update() {
 		YZBufferMap buffers = YZSession::me->buffers();
 		YZBufferMap::Iterator it = buffers.begin(), it_end = buffers.end();
 		for( ; it != it_end; it++ ) {
-#if QT_VERSION < 0x040000
 			YZBuffer* b = it.data();
 			QPtrList<YZView> views = b->views();
-#else
-			YZBuffer* b = it.value();
-			QVector<YZView*> views = b->views();
-#endif
 			YZView* v;
-#if QT_VERSION < 0x040000
 			for( v = views.first(); v; v = views.next() ) {
-#else
-			for (int i = 0 ; i < views.size(); ++i ) {
-				v = views.at(i);
-#endif
 				highlightSearch( v, searchMap );
 			}
 		}

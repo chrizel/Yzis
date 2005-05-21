@@ -23,10 +23,7 @@
 #include "debug.h"
 #include "buffer.h"
 #include "linesearch.h"
-#if QT_VERSION < 0x040000
 #include <qstring.h>
-#else
-#endif
 
 class YZCursor;
 class YZBuffer;
@@ -54,11 +51,7 @@ YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int tim
 	int index = 0;
 	unsigned int nfound = 0;
 	while ( nfound < times && x < current.length() ) {
-#if QT_VERSION < 0x040000
 		index = current.find( ch, x );
-#else
-		index = current.indexOf( ch, x );
-#endif
 		if ( index < 0 )
 			break;
 		x = index + 1;
@@ -92,11 +85,7 @@ YZCursor YZLineSearch::reverse( const QString& ch, bool& found, unsigned int tim
 	int index = 0;
 	unsigned int nfound = 0;
 	while ( nfound < times && x > 0 ) {
-#if QT_VERSION < 0x040000
 		index = current.findRev( ch, x );
-#else
-		index = current.lastIndexOf( ch, x );
-#endif
 		if ( index < 0 )
 			break;
 		x = index - 1;

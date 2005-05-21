@@ -27,9 +27,6 @@
  */
 
 #include "undo.h"
-#if QT_VERSION < 0x040000
-#else
-#endif
 #include "buffer.h"
 #include "action.h"
 #include "view.h"
@@ -72,11 +69,7 @@ void YZBufferOperation::performOperation( YZView* pView, bool opposite)
 			pView->myBuffer()->action()->insertNewLine( pView, 0, line );
 			break;
 		case DELLINE:
-#if QT_VERSION < 0x040000
 			pView->myBuffer()->action()->deleteLine( pView, line, 1, QValueList<QChar>() );
-#else
-			pView->myBuffer()->action()->deleteLine( pView, line, 1, QList<QChar>() );
-#endif
 			break;
 	}
 
@@ -101,9 +94,7 @@ YZUndoBuffer::YZUndoBuffer( YZBuffer * buffer )
 :  mBuffer(buffer), mFutureUndoItem( 0L ) {
 	mCurrentIndex = 0;
 	mInsideUndo = false;
-#if QT_VERSION < 0x040000
 	mUndoItemList.setAutoDelete( true );
-#endif
 
 	// Create the mFutureUndoItem
 	commitUndoItem(0,0);
@@ -112,10 +103,6 @@ YZUndoBuffer::YZUndoBuffer( YZBuffer * buffer )
 YZUndoBuffer::~YZUndoBuffer() {
 	if ( mFutureUndoItem )
 		delete mFutureUndoItem;
-#if QT_VERSION >= 0x040000
-	for (int ab = 0 ; ab < mUndoItemList.size(); ++ab )
-		delete mUndoItemList.at(ab);
-#endif
 
 }
 
@@ -132,9 +119,7 @@ void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY ) {
 //		yzDebug("YZUndoBuffer") << "UndoItem::commitUndoItem" << toString() << endl;
 	}
 	mFutureUndoItem = new UndoItem();
-#if QT_VERSION < 0x040000
 	mFutureUndoItem->setAutoDelete( true );
-#endif
 	mFutureUndoItem->startCursorX = cursorX;
 	mFutureUndoItem->startCursorY = cursorY;
 }
@@ -171,18 +156,10 @@ void YZUndoBuffer::undo( YZView* pView ) {
 
 	UndoItem * undoItem = mUndoItemList.at(mCurrentIndex-1);
 	UndoItemContentIterator it( *undoItem );
-#if QT_VERSION < 0x040000
 	it.toLast();
 	while( (bufOp = it.current()) ) {
-#else
-	it.toBack();
-	while( it.hasPrevious() ) {
-		bufOp = it.previous();
-#endif
 		bufOp->performOperation( pView, true );
-#if QT_VERSION < 0x040000
 		--it;
-#endif
 	}
 	mCurrentIndex--;
 	pView->gotoxy(undoItem->endCursorX, undoItem->endCursorY);
@@ -203,17 +180,10 @@ void YZUndoBuffer::redo( YZView* pView ) {
 	++mCurrentIndex;
 	UndoItem * undoItem = mUndoItemList.at(mCurrentIndex-1);
 	UndoItemContentIterator it( *undoItem );
-#if QT_VERSION < 0x040000
 	while( (bufOp = it.current()) ) {
 		bufOp->performOperation( pView, false );
 		++it;
 	}
-#else
-	while( (it.hasNext()) ) {
-		bufOp = it.next();
-		bufOp->performOperation( pView, false );
-	}
-#endif
 	setInsideUndo( false );
 	pView->commitPaintEvent();
 }
@@ -238,17 +208,10 @@ QString YZUndoBuffer::undoItemToString( UndoItem * undoItem ) {
 	s += offsetS + offsetS + QString("start cursor: line %1 col %2\n").arg(undoItem->startCursorX).arg(undoItem->startCursorY);
 	UndoItemContentIterator it( *undoItem );
 	YZBufferOperation * bufOp;
-#if QT_VERSION < 0x040000
 	while( (bufOp = it.current()) ) {
 		s += offsetS + offsetS + offsetS + bufOp->toString() + "\n";
 		++it;
 	}
-#else
-	while( (it.hasNext()) ) {
-		bufOp = it.next();
-		s += offsetS + offsetS + offsetS + bufOp->toString() + "\n";
-	}
-#endif
 	s += offsetS + offsetS + QString("end cursor: line %1 col %2\n").arg(undoItem->endCursorX).arg(undoItem->endCursorY);
 	return s;
 }
@@ -258,19 +221,11 @@ QString YZUndoBuffer::toString(const QString& msg) {
 	QString offsetS = "  ";
 	s += offsetS + "mUndoItemList\n";
 	UndoItem * undoItem;
-#if QT_VERSION < 0x040000
 	QPtrListIterator<UndoItem> it( mUndoItemList );
 	while( (undoItem = it.current()) ) {
 		s += undoItemToString( undoItem );
 		++it;
 	}
-#else
-	QListIterator<UndoItem*> it( mUndoItemList );
-	while( (it.hasNext()) ) {
-		undoItem = it.next();
-		s += undoItemToString( undoItem );
-	}
-#endif
 	s += offsetS + "mFutureUndoItem\n";
 	s += undoItemToString( mFutureUndoItem );
 	s += offsetS + "current UndoItem\n";

@@ -97,11 +97,7 @@ QString YZOptionValue::listToString( const QStringList& value ) {
 }
 QString YZOptionValue::mapToString( const MapOption& value ) {
 	QString ret = "";
-#if QT_VERSION < 0x040000
 	QValueList<QString> keys = value.keys();
-#else
-	QList<QString> keys = value.keys();
-#endif
 	for( unsigned int i = 0; i < keys.size(); i++ ) {
 		if ( i > 0 ) ret += ",";
 		ret += keys[i] + ":" + value[ keys[i] ];
@@ -133,26 +129,14 @@ int YZOptionValue::integerFromString( bool* success, const QString& value ) {
 }
 QStringList YZOptionValue::listFromString( bool* success, const QString& value ) {
 	*success = true;
-#if QT_VERSION < 0x040000
 	return QStringList::split( ",", value, true );
-#else
-	return value.split( "," );
-#endif
 }
 MapOption YZOptionValue::mapFromString( bool* success, const QString& value ) {
 	*success = true;
 	MapOption ret;
-#if QT_VERSION < 0x040000
 	QStringList vs = QStringList::split( ",", value );
-#else
-	QStringList vs = value.split( ",", QString::SkipEmptyParts );
-#endif
 	for( unsigned int i = 0; *success && i < vs.size(); i++ ) {
-#if QT_VERSION < 0x040000
 		int idx_v = vs[i].find(':');
-#else
-		int idx_v = vs[i].indexOf(':');
-#endif
 		if ( idx_v < 0 ) {
 			*success = false;
 		} else {
@@ -428,11 +412,7 @@ bool YZOptionList::setValue( const QString& entry, YZOptionValue* value ) {
 		} else if ( action == opt_subtract ) {
 			QStringList mv = value->list();
 			for( unsigned int i = 0; i < v.size(); i++ )
-#if QT_VERSION < 0x040000
 				mv.remove( v[i] );
-#else
-				mv.removeAll( v[i] );
-#endif
 			v = mv;
 		}
 		if ( ret && m_allValues.size() > 0 ) {
@@ -471,43 +451,27 @@ bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value ) {
 			// nothing
 		} else if ( action == opt_append || action == opt_prepend ) {
 			MapOption mv = value->map();
-#if QT_VERSION < 0x040000
 			QValueList<QString> keys = v.keys();
-#else
-			QList<QString> keys = v.keys();
-#endif
 			for ( unsigned int i = 0; i < keys.size(); i++ )
 				mv[ keys[i] ] = v[ keys[i] ];
 			v = mv;
 		} else if ( action == opt_subtract ) {
 			MapOption mv = value->map();
-#if QT_VERSION < 0x040000
 			QValueList<QString> keys = v.keys();
-#else
-			QList<QString> keys = v.keys();
-#endif
 			for ( unsigned int i = 0; i < keys.size(); i++ )
 				mv.remove( keys[i] );
 			v = mv;
 		}
 		// check keys
 		if ( ret ) {
-#if QT_VERSION < 0x040000
 			QValueList<QString> keys = v.keys();
-#else
-			QList<QString> keys = v.keys();
-#endif
 			for( unsigned int i = 0; ret && i < keys.size(); i++ ) {
 				ret = m_allKeys.contains( keys[i] ) > 0;
 			}
 		}
 		// check values
 		if ( ret && m_allValues.size() > 0 ) {
-#if QT_VERSION < 0x040000
 			QValueList<QString> values = v.values();
-#else
-			QList<QString> values = v.values();
-#endif
 			for( unsigned int i = 0; ret && i < values.size(); i++ ) {
 				ret = m_allValues.contains( values[i] ) > 0;
 			}
@@ -528,11 +492,7 @@ YZOptionColor::~YZOptionColor() {
 bool YZOptionColor::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
 	QColor v = value->color();
-#if QT_VERSION < 0x040000
 	int idx = entry.find('=');
-#else
-	int idx = entry.indexOf('=');
-#endif
 	if ( idx >= 0 ) {
 		v = YZOptionValue::colorFromString( &ret, entry.mid( idx+1 ) );
 	}

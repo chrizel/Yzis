@@ -33,13 +33,8 @@
 #include "mapping.h"
 #include "ex_lua.h"
 
-#if QT_VERSION < 0x040000
 #include <qapplication.h>
 #include <qdir.h>
-#else
-#include <QApplication>
-#include <QDir>
-#endif
 
 #include "mode_command.h"
 #include "mode_ex.h"
@@ -57,11 +52,7 @@ YZEvents *YZSession::events = 0;
 YZYzisinfo *YZSession::mYzisinfo= 0;
 int YZSession::mYzisinfoCount = 0;
 int YZSession::mYzisinfoPosition = 0;
-#if QT_VERSION < 0x040000
 YZYzisinfoList YZSession::mYzisinfoList = 0;
-#else
-YZYzisinfoList YZSession::mYzisinfoList = YZYzisinfoList();
-#endif
 
 YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
@@ -111,20 +102,12 @@ void YZSession::initModes() {
 	mModes[ YZMode::MODE_COMPLETION ] = new YZModeCompletion();
 	YZModeMap::Iterator it;
 	for( it = mModes.begin(); it != mModes.end(); ++it )
-#if QT_VERSION < 0x040000
 		it.data()->init();
-#else
-		it.value()->init();
-#endif
 }
 void YZSession::endModes() {
 	YZModeMap::Iterator it;
 	for( it = mModes.begin(); it != mModes.end(); ++it )
-#if QT_VERSION < 0x040000
 		delete it.data();
-#else
-		delete it.value();
-#endif
 	mModes.clear();
 }
 YZModeMap YZSession::getModes() {
@@ -144,17 +127,10 @@ YZYzisinfo * YZSession::getYzisinfo()
 
 void YZSession::guiStarted() {
 	//read init files
-#if QT_VERSION < 0x040000
 	if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))
 		YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/init.lua" );
 	if (QFile::exists(QDir::homeDirPath() + "/.yzis/init.lua"))
 		YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/init.lua" );
-#else
-	if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
-		YZExLua::instance()->source( NULL, QDir::rootPath() + "/etc/yzis/init.lua" );
-	if (QFile::exists(QDir::homePath() + "/.yzis/init.lua"))
-		YZExLua::instance()->source( NULL, QDir::homePath() + "/.yzis/init.lua" );
-#endif
 }
 
 void YZSession::addBuffer( YZBuffer *b ) {
@@ -186,11 +162,7 @@ YZView* YZSession::findView( int uid ) {
 	if ( uid<0 ) return NULL;
 	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	for ( ; it!=end; ++it ) {
-#if QT_VERSION < 0x040000
 		YZBuffer *b = ( it.data() );
-#else
-		YZBuffer *b = ( it.value() );
-#endif
 //		yzDebug() << "Session::findView, checking buffer " << b->fileName() << endl;
 		YZView *v = b->findView( uid );
 		if ( v ) return v;

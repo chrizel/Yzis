@@ -47,11 +47,7 @@ void YZLine::setData(const QString &data) {
 	if ( len == 0 ) len++; //make sure to return a non empty array ... (that sucks)
 	mAttributes.resize( len );
 	for ( uint i = 0; i < len; i++ )
-#if QT_VERSION < 0x040000
 		mAttributes.at(i) = 0;
-#else
-		mAttributes.data()[ i ] = 0;
-#endif
 }
 
 int YZLine::firstChar() const {

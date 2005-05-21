@@ -404,11 +404,7 @@ bool KYZisDoc::hasSelection() const {
 QString KYZisDoc::selection() const {
 	YZView *v = dynamic_cast<YZView*>( ((KYZisDoc*)(this))->_views.first() );
 	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
-#if QT_VERSION < 0x040000
 	QValueList<QChar> regs;
-#else
-	QList<QChar> regs;
-#endif
 	YZInterval i = dynamic_cast<YZModeVisual*>( v->modePool()->current() )->interval( YZCommandArgs(NULL,v,regs,1,false) );
 	return ((YZBuffer*)this)->getText( i ).join("\n");
 }

@@ -208,11 +208,7 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 		QStringList results = YZSession::events->exec("INDENT_ON_ENTER", mView);
 		if (results.count() > 0 ) {
 			if (results[0].length()!=0) {
-#if QT_VERSION < 0x040000
 				mBuffer->action()->replaceLine( mView, cur.y()+1, results[0] + mBuffer->textline( cur.y()+1 ).stripWhiteSpace() );
-#else
-				mBuffer->action()->replaceLine( mView, cur.y()+1, results[0] + mBuffer->textline( cur.y()+1 ).trimmed() );
-#endif
 				mView->gotoxy(results[0].length(),cur.y()+1);
 			}
 		}

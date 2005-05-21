@@ -29,12 +29,8 @@
 #include "mapping.h"
 #include "portability.h"
 #include <stdarg.h>
-#if QT_VERSION < 0x040000
 #include <qfileinfo.h>
 #include <qdir.h>
-#else
-#include <QDir>
-#endif
 
 #include "mode_ex.h"
 
@@ -160,11 +156,7 @@ void YZExLua::exe(const QString& function, const char* sig, ...) {
 	int narg, nres;
 	
 	va_start(vl,sig);
-#if QT_VERSION < 0x040000
 	lua_getglobal(L, function.utf8());
-#else
-	lua_getglobal(L, function.toUtf8());
-#endif
 
 	narg=0;
 	while (*sig) {
@@ -222,11 +214,7 @@ void YZExLua::exe(const QString& function, const char* sig, ...) {
 }
 
 void YZExLua::execute(const QString& function, int nbArgs, int nbResults) { 
-#if QT_VERSION < 0x040000
 	lua_getglobal(L,function);
-#else
-	lua_getglobal(L,function.toUtf8());
-#endif
 	if (lua_pcall(L, nbArgs, nbResults, 0) != 0) {
 		yzDebug() << "error : " << lua_tostring(L, -1) << endl;
 	}
@@ -239,26 +227,16 @@ QString YZExLua::source( YZView *v, const QString& args ) {
 
 QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 	yzDebug() << "source : " << args << endl;
-#if QT_VERSION < 0x040000
 	QString filename = args.mid( args.find( " " ) +1 );
-#else
-	QString filename = args.mid( args.indexOf( " " ) +1 );
-#endif
 	if ( !filename.endsWith( ".lua" ) )
 		filename += ".lua";
 	filename = YZBuffer::tildeExpand( filename );
 	yzDebug() << "looking filename : " << filename << endl;
 	QStringList candidates;
 	candidates << filename 
-#if QT_VERSION < 0x040000
 	           << QDir::currentDirPath()+"/"+filename
 	           << QDir::homeDirPath()+"/.yzis/scripts/"+filename
 	           << QDir::homeDirPath()+"/.yzis/scripts/indent/"+filename
-#else
-	           << QDir::currentPath()+"/"+filename
-	           << QDir::homePath()+"/.yzis/scripts/"+filename
-	           << QDir::homePath()+"/.yzis/scripts/indent/"+filename
-#endif
 		       << QString( PREFIX )+"/share/yzis/scripts/"+filename
 		       << QString( PREFIX )+"/share/yzis/scripts/indent/"+filename;
 	QString found;
@@ -282,11 +260,7 @@ QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 
 	lua_pushstring(L,"dofile");
 	lua_gettable(L, LUA_GLOBALSINDEX);
-#if QT_VERSION < 0x040000
 	lua_pushstring(L,found.latin1());
-#else
-	lua_pushstring(L,found.toUtf8());
-#endif
 	pcall(1,1,0, _("Lua error when running file %1:\n").arg(found) );
 	return QString::null;
 }
@@ -294,11 +268,7 @@ QString YZExLua::source( YZView *, const QString& args, bool canPopup ) {
 int YZExLua::execInLua( const QString & luacode ) {
 	lua_pushstring(L, "loadstring" );
 	lua_gettable(L, LUA_GLOBALSINDEX);
-#if QT_VERSION < 0x040000
 	lua_pushstring(L, luacode );
-#else
-	lua_pushstring(L, luacode.toUtf8() );
-#endif
 //	print_lua_stack(L, "loadstring 0");
 	pcall(1,2,0, "");
 //	print_lua_stack(L, "loadstring 1");
@@ -322,22 +292,14 @@ bool YZExLua::pcall( int nbArg, int nbReturn, int errLevel, const QString & erro
 	int lua_err = lua_pcall(L,nbArg,nbReturn,errLevel);
 	if (! lua_err) return true;
 	QString luaErrorMsg = lua_tostring(L,lua_gettop(L));
-#if QT_VERSION < 0x040000
 	printf("%s\n", luaErrorMsg.latin1() );
-#else
-	printf("%s\n", luaErrorMsg.toLatin1().data() );
-#endif
 //	YZSession::me->popupMessage(errorMsg + luaErrorMsg );
 	return false;
 }
 
 void YZExLua::yzisprint(const QString & text)
 {
-#if QT_VERSION < 0x040000
 	printf("yzisprint:%s\n", text.latin1());
-#else
-	printf("yzisprint:%s\n", text.toUtf8().data());
-#endif
 }
 
 // ========================================================
@@ -354,11 +316,7 @@ int YZExLua::line(lua_State *L) {
 
 	YZView* cView = YZSession::me->currentView();
 	QString	t = cView->myBuffer()->textline( line );
-#if QT_VERSION < 0x040000
 	lua_pushstring( L, t ); // first result
-#else
-	lua_pushstring( L, t.toUtf8() ); // first result
-#endif
 	return 1; // one result
 }
 
@@ -369,11 +327,7 @@ int YZExLua::setline(lua_State *L) {
 
 	sLine = sLine ? sLine - 1 : 0;
 
-#if QT_VERSION < 0x040000
 	if (text.find("\n") != -1) {
-#else
-	if (text.indexOf("\n") != -1) {
-#endif
 		printf("setline with line containing \n");
 		return 0;
 	}
@@ -392,11 +346,7 @@ int YZExLua::insert(lua_State *L) {
 	sLine = sLine ? sLine - 1 : 0;
 
 	YZView* cView = YZSession::me->currentView();
-#if QT_VERSION < 0x040000
 	QStringList list = QStringList::split( "\n", text );
-#else
-	QStringList list = text.split( "\n" );
-#endif
 	QStringList::Iterator it = list.begin(), end = list.end();
 	for ( ; it != end; ++it ) {
 		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
@@ -433,11 +383,7 @@ int YZExLua::insertline(lua_State *L) {
 	sLine = sLine ? sLine - 1 : 0;
 
 	YZView* cView = YZSession::me->currentView();
-#if QT_VERSION < 0x040000
 	QStringList list = QStringList::split( "\n", text );
-#else
-	QStringList list = text.split( "\n" );
-#endif
 	QStringList::Iterator it = list.begin(), end = list.end();
 	for ( ; it != end; ++it ) {
 		YZBuffer * cBuffer = cView->myBuffer();
@@ -459,11 +405,7 @@ int YZExLua::appendline(lua_State *L) {
 	YZView* cView = YZSession::me->currentView();
 	YZBuffer * cBuffer = cView->myBuffer();
 	YZAction * cAction = cBuffer->action();
-#if QT_VERSION < 0x040000
 	QStringList list = QStringList::split( "\n", text );
-#else
-	QStringList list = text.split( "\n" );
-#endif
 	QStringList::Iterator it = list.begin(), end = list.end();
 	for ( ; it != end; ++it ) {
 		if (cBuffer->isEmpty()) {
@@ -485,11 +427,7 @@ int YZExLua::replace(lua_State *L) {
 	sCol = sCol ? sCol - 1 : 0;
 	sLine = sLine ? sLine - 1 : 0;
 
-#if QT_VERSION < 0x040000
 	if (text.find('\n') != -1) {
-#else
-	if (text.indexOf('\n') != -1) {
-#endif
 		// replace does not accept multiline strings, it is too strange
 		return 0;
 	}
@@ -577,11 +515,7 @@ int YZExLua::deleteline(lua_State *L) {
 	int sLine = ( int )lua_tonumber( L,1 );
 
 	YZView* cView = YZSession::me->currentView();
-#if QT_VERSION < 0x040000
 	QValueList<QChar> regs;
-#else
-	QList<QChar> regs;
-#endif
 	regs << QChar( '"' ) ;
 	cView->myBuffer()->action()->deleteLine( cView, sLine ? sLine - 1 : 0, 1, regs );
 
@@ -591,11 +525,7 @@ int YZExLua::deleteline(lua_State *L) {
 int YZExLua::filename(lua_State *L) {
 	if (!checkFunctionArguments(L, 0, "filename", "")) return 0;
 	YZView* cView = YZSession::me->currentView();
-#if QT_VERSION < 0x040000
 	const char *filename = cView->myBuffer()->fileName();
-#else
-	const char *filename = cView->myBuffer()->fileName().toUtf8().data();
-#endif
 
 	lua_pushstring( L, filename ); // first result
 	return 1; // one result
@@ -609,11 +539,7 @@ int YZExLua::color(lua_State *L) {
 	sLine = sLine ? sLine - 1 : 0;
 
 	YZView* cView = YZSession::me->currentView();
-#if QT_VERSION < 0x040000
 	const char *color = cView->drawColor( sCol, sLine ).name();
-#else
-	const char *color = cView->drawColor( sCol, sLine ).name().toUtf8().data();
-#endif
 
 //	yzDebug() << "Asked color : " << color.latin1() << endl;
 	lua_pushstring( L, color ); // first result
@@ -824,11 +750,7 @@ int YZExLua::mode(lua_State *L ) {
 	if (!checkFunctionArguments(L, 0, "mode", "return the current view mode")) return 0;
 	YZView *v = YZSession::me->currentView();
 	QString mode = v->mode();
-#if QT_VERSION < 0x040000
 	lua_pushstring(L,mode.latin1());
-#else
-	lua_pushstring(L,mode.toUtf8());
-#endif
 	return 1;
 }
 
@@ -847,11 +769,7 @@ bool YZExLua::checkFunctionArguments(lua_State*L, int argNb, const char * functi
 
 	QString errorMsg = QString("%1() called with %2 arguments but %3 expected: %4").arg(functionName).arg(n).arg(argNb).arg(functionArgDesc);
 #if 1
-#if QT_VERSION < 0x040000
 	lua_pushstring(L,errorMsg.latin1());
-#else
-	lua_pushstring(L,errorMsg.toUtf8().data());
-#endif
 	lua_error(L);
 #else
 	YZExLua::instance()->execInLua(QString("error(%1)").arg(errorMsg));

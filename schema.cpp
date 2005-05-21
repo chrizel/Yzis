@@ -55,13 +55,8 @@ void YzisSchemaManager::update (bool /*readfromfile*/)
  // m_schemas = m_config.groupList();
 //  m_schemas.sort ();
 
-#if QT_VERSION < 0x040000
   m_schemas.remove (printingSchema());
   m_schemas.remove (normalSchema());
-#else
-  m_schemas.removeAll (printingSchema());
-  m_schemas.removeAll (normalSchema());
-#endif
   m_schemas.prepend (printingSchema());
   m_schemas.prepend (normalSchema());
 }
@@ -118,11 +113,7 @@ uint YzisSchemaManager::number (const QString &name)
     return 1;
 
   int i;
-#if QT_VERSION < 0x040000
   if ((i = m_schemas.findIndex(name)) > -1)
-#else
-  if ((i = m_schemas.indexOf(name)) > -1)
-#endif
     return i;
 
   return 0;

@@ -28,14 +28,8 @@
 
 #include "view.h"
 
-#if QT_VERSION < 0x040000
 #include <qkeysequence.h>
 #include <qclipboard.h>
-#else
-#include <QX11Info>
-#include <QApplication>
-#include <QClipboard>
-#endif
 #include "portability.h"
 #include <cstdlib>
 #include <ctype.h>
@@ -299,20 +293,12 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
 
 	if ( mRegs.count() > 0 ) {
-#if QT_VERSION < 0x040000
 		QValueList<QChar>::iterator end = mRegs.end();
 		for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 			QStringList list;
 		   	list << YZSession::mRegisters->getRegister( *it )[ 0 ] + modifiers + _key;
 			YZSession::mRegisters->setRegister( *it, list);
 		}
-#else
-		for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
-			QStringList list;
-		   	list << YZSession::mRegisters->getRegister( mRegs.at(ab) )[ 0 ] + modifiers + _key;
-			YZSession::mRegisters->setRegister( mRegs.at(ab), list);
-		}
-#endif
 	}
 
 	/** rightleft mapping **/
@@ -325,11 +311,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	}
 
 	if ( modifiers.contains ("<SHIFT>")) {//usefull ?
-#if QT_VERSION < 0x040000
 		key = key.upper();
-#else
-		key = key.toUpper();
-#endif
 		modifiers.remove( "<SHIFT>" );
 	}
 
@@ -347,11 +329,7 @@ YZSelectionMap YZView::visualSelection() {
 void YZView::reindent( unsigned int X, unsigned int Y ) {
 	yzDebug() << "Reindent " << endl;
 	QRegExp rx("^(\\t*\\s*\\t*\\s*).*$"); //regexp to get all tabs and spaces
-#if QT_VERSION < 0x040000
 	QString currentLine = mBuffer->textline( Y ).stripWhiteSpace();
-#else
-	QString currentLine = mBuffer->textline( Y ).trimmed();
-#endif
 	bool found = false;
 	YZCursor cur( X, Y );
 	YZCursor match = mBuffer->action()->match(this, cur, &found);
@@ -379,11 +357,7 @@ void YZView::indent() {
 		return; //Shouldn't happen
 	}
 	QString indentString = rxLeadingWhiteSpace.cap( 1 );
-#if QT_VERSION < 0x040000
 	if ( mainCursor->bufferX() == currentLine.length() && currentLine.stripWhiteSpace().endsWith( indentMarker ) ) {
-#else
-	if ( mainCursor->bufferX() == currentLine.length() && currentLine.trimmed().endsWith( indentMarker ) ) {
-#endif
 		//yzDebug() << "Indent marker found" << endl;
 		// This should probably be tabstop...
 		indentString.append( "\t" );
@@ -391,11 +365,7 @@ void YZView::indent() {
 	//yzDebug() << "Indent string = \"" << indentString << "\"" << endl;
 	mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 	ypos++;
-#if QT_VERSION < 0x040000
 	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).stripWhiteSpace() );
-#else
-	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).trimmed() );
-#endif
 	gotoxy( indentString.length(), ypos );
 	//yzDebug() << "Leaving YZView::indent" << endl;
 }
@@ -1043,11 +1013,7 @@ unsigned int YZView::getDrawCurrentLeft() {
 void YZView::updateCurLine( ) {
 	sCurLineLength = sCurLine.length();
 	if ( wrap && ! drawMode ) {
-#if QT_VERSION < 0x040000
 		unsigned int nbTabs = sCurLine.contains( '\t' );
-#else
-		unsigned int nbTabs = sCurLine.count( '\t' );
-#endif
 		if ( isFontFixed ) rMinCurLineLength = sCurLineLength;
 		else rMinCurLineLength = GET_STRING_WIDTH( QString( sCurLine ).remove( '\t' ) ) + nbTabs * spaceWidth;
 		rCurLineLength = rMinCurLineLength + nbTabs * ( tablength - spaceWidth );
@@ -1632,23 +1598,14 @@ YZCursor *YZView::getBufferCursor() {
 	return mainCursor->buffer();
 }
 
-#if QT_VERSION < 0x040000
 void YZView::recordMacro( const QValueList<QChar> &regs ) {
 	mRegs = regs;
 	QValueList<QChar>::iterator end = mRegs.end();
 	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it )
 		YZSession::mRegisters->setRegister( *it, QStringList());
 }
-#else
-void YZView::recordMacro( const QList<QChar> &regs ) {
-	mRegs = regs;
-	for ( int ab = 0 ; ab < mRegs.size(); ++ab )
-		YZSession::mRegisters->setRegister( mRegs.at(ab), QStringList());
-}
-#endif
 
 void YZView::stopRecordMacro() {
-#if QT_VERSION < 0x040000
 	QValueList<QChar>::iterator end = mRegs.end();
 	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 		QStringList list;
@@ -1657,15 +1614,6 @@ void YZView::stopRecordMacro() {
 		YZSession::mRegisters->setRegister( *it, list);
 	}
 	mRegs = QValueList<QChar>();
-#else
-	for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
-		QStringList list;
-		QString ne = YZSession::mRegisters->getRegister(mRegs.at(ab))[0];
-		list << ne.mid( 0, ne.length() - 1 ); //remove the last 'q' which was recorded ;)
-		YZSession::mRegisters->setRegister( mRegs.at(ab), list);
-	}
-	mRegs = QList<QChar>();
-#endif
 }
 
 void YZView::setPaintAutoCommit( bool enable ) {

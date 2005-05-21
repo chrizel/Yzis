@@ -183,12 +183,8 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 		text += line + "\n";
 	}
 	buff << QString::null;
-#ifndef YZIS_WIN32_MSVC
-#if QT_VERSION < 0x040000
+#ifdef Q_WS_X11
 	if ( QPaintDevice::x11AppDisplay() )
-#else
-	if ( QX11Info::display() )
-#endif
 #endif
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	
@@ -232,12 +228,8 @@ void YZAction::copyArea( YZView* pView, const YZInterval& i, const QList<QChar> 
 			buff << mBuffer->textline( eY ).left( eX );
 	}
 
-#ifndef YZIS_WIN32_MSVC
-#if QT_VERSION < 0x040000
+#ifdef Q_WS_X11
 	if ( QPaintDevice::x11AppDisplay() )
-#else
-	if ( QX11Info::display() )
-#endif
 #endif
 		QApplication::clipboard()->setText( mBuffer->getText( i ).join("\n"), QClipboard::Clipboard );
 	

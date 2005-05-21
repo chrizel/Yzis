@@ -50,7 +50,7 @@ YZModeVisual::~YZModeVisual() {
 
 void YZModeVisual::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-#ifndef YZIS_WIN32_MSVC
+#ifdef Q_WS_X11
 	if ( QPaintDevice::x11AppDisplay() )
 #endif
 		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
@@ -350,7 +350,7 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 
 void YZModeVisualBlock::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-#ifndef WIN32
+#ifdef Q_WS_X11
 	if ( QPaintDevice::x11AppDisplay() )
 #endif
 		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );

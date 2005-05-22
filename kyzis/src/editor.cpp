@@ -481,7 +481,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 		while( mParent->drawNextCol() ) {
 			if ( ! drawEntireLine ) {
 				if ( !drawIt && curY == fY ) { // start drawing ?
-					drawIt = ( curX == fX );
+					drawIt = ( curX + mParent->drawLength() > fX );
 					if ( drawIt ) {
 						myRect.setLeft( GETX( marginLeft + curX - shiftX ) );
 						while( mCellX < mCellKeys.size() && mCellKeys[ mCellX ] < (fX - shiftX) )

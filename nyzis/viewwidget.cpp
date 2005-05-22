@@ -240,7 +240,7 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 		while( drawNextCol() ) {
 			if ( ! drawEntireLine ) {
 				if ( !drawIt && curY == fY ) { // start drawing ?
-					drawIt = ( curX == fX );
+					drawIt = ( curX + drawLength() > fX );
 					if ( drawIt ) {
 						x = marginLeft + curX - shiftX;
 						if ( tY == curY ) {

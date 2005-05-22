@@ -33,7 +33,6 @@
 #include <qdir.h>
 
 #include "mode_ex.h"
-#include "lua_regexp.h"
 
 /*
  * TODO:

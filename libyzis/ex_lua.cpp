@@ -33,6 +33,7 @@
 #include <qdir.h>
 
 #include "mode_ex.h"
+#include "lua_regexp.h"
 
 /*
  * TODO:
@@ -91,11 +92,23 @@ YZExLua * YZExLua::instance()
 YZExLua::YZExLua() {
 	L = lua_open();
 	luaopen_base(L);
+   /* 
+	* Flush the stack, by setting the top to 0, in order to
+	* ignore any result given by the library load function.
+	*/
+	lua_settop(L, 0);
+
 	luaopen_string( L );
+	lua_settop(L, 0);
 	luaopen_table( L );
+	lua_settop(L, 0);
 	luaopen_math( L );
+	lua_settop(L, 0);
 	luaopen_io( L );
+	lua_settop(L, 0);
 	luaopen_debug( L );
+	lua_settop(L, 0);
+
 	yzDebug() << lua_version() << " loaded" << endl;
 	lua_register(L,"line",line);
 	lua_register(L,"setline",setline);
@@ -138,6 +151,8 @@ YZExLua::YZExLua() {
 	lua_register(L,"cunmap",cunmap);
 	lua_register(L,"matchpair",matchpair);
 	lua_register(L,"mode",mode);
+
+	registerRegexp(L);
 }
 
 YZExLua::~YZExLua() {
@@ -803,3 +818,98 @@ QStringList YZExLua::getLastResult(int nb) {
 	yzDebug() << "LUA: Result " << list << endl;
 	return list;
 }
+
+void YZExLua::registerRegexp(lua_State * L)
+{
+	lua_register(L,"Regexp_create", Regexp_create);
+	lua_register(L,"Regexp_match", Regexp_match);
+	lua_register(L,"Regexp_userdata_finalize", Regexp_userdata_finalize);
+
+	QString regexpCode = ""
+"Regexp = { 					\n"
+"    create = Regexp_create,	\n"
+"    match = Regexp_match		\n"
+"}								\n"
+
+"Regexp_mt = { -- class			\n"
+"    __index = Regexp			\n"
+"}								\n";
+	execInLua( regexpCode );
+}
+
+int YZExLua::Regexp_create(lua_State *L)
+{
+	if (! checkFunctionArguments(L, 1, "Regexp.create", "Create a regexp")) return 0;
+	QString re = ( char * )lua_tostring ( L, 1 );
+
+	// create table
+	lua_newtable( L );
+	// stack: table
+
+		// store ud
+	lua_pushstring( L, "qregexp*" );
+	// stack: table, "qregexp*"
+	QRegExp **pRegExp = (QRegExp **) lua_newuserdata(L, sizeof( QRegExp * ) ); // store the pointer as userdata
+	*pRegExp = new QRegExp(re);
+	// stack: table, "qregexp*", userdata
+
+	// create userdata metatable and fill it
+	lua_newtable( L ); 
+	// stack: table, "qregexp*", userdata, table
+	lua_pushstring( L, "__gc" ); 
+	// stack: table, "qregexp*", ud, table, "__gc"
+	lua_pushstring(L,"Regexp_userdata_finalize"); 
+	// stack: table, "qregexp*",ud, table, "__gc", "Regexp_userdata_finalize"
+	lua_gettable(L, LUA_GLOBALSINDEX);
+	// stack: table, "qregexp*",ud, table, "__gc", function
+	lua_rawset(L, -3 );
+	// stack: table, "qregexp*",ud, table
+	lua_setmetatable(L, -2);
+	// stack: table, "qregexp*",ud
+	lua_rawset(L, -3 );
+	// stack: table
+
+	// set Regexp_mt as metatable
+	lua_pushstring(L, "Regexp_mt" );
+	// stack: table, "Regexp_mt"
+	lua_gettable( L, LUA_GLOBALSINDEX );
+	// stack: table, table Regexp_mt
+	lua_setmetatable(L, -2);
+	// stack: table
+
+	return 1;
+}
+
+int YZExLua::Regexp_userdata_finalize(lua_State *L)
+{
+	if (! YZExLua::checkFunctionArguments(L, 1, "Regexp.finalize", "Finalize Regexp")) return 0;
+
+	QRegExp ** pRegexp = (QRegExp **) lua_touserdata(L, -1);
+	QRegExp * regexp = *pRegexp;
+
+	//	printf("Finalizing %s\n", pRegexp->pattern().latin1() );
+
+	delete regexp;
+	*pRegexp = NULL;
+	
+	return 0;
+}
+
+
+int YZExLua::Regexp_match(lua_State *L)
+{
+	if (! YZExLua::checkFunctionArguments(L, 2, "Regexp.match", "Match a regexp with a string")) return 0;
+
+	QString s = ( char * ) lua_tostring ( L, 2 );
+
+	// extract userdata from table Regexp
+	lua_pushstring(L, "qregexp*" );
+	lua_gettable( L, 1);
+	QRegExp * regexp = *((QRegExp **) lua_touserdata(L, -1));
+
+	lua_pushnumber( L, regexp->search( s ) );
+	return 1;
+}
+
+
+

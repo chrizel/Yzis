@@ -23,6 +23,7 @@
 #include <qobject.h>
 extern "C" {
 #include <lua.h>
+#include <lauxlib.h>
 }
 
 class YZView;
@@ -301,16 +302,55 @@ class YZExLua : public QObject {
 		 */
 		static int mode(lua_State *L);
 
+
+		/** Register the regexp functions to lua */
+		void registerRegexp(lua_State *L);
+
+		/** 
+		 * Create a regexp (based on QRegexp)
+		 * Argument 1 : a string for the regexp
+		 * Returns: a table that can be used as a regexp object:
+		 *
+		 * Lua code example:
+		 * re = Regexp:create( 'my_re' )
+		 * print(re:match('my_re')) -- true
+		 * print(re:match('no match')) -- false
+		 */
+		static int Regexp_create(lua_State *L);
+
+		/** 
+		 * Match a regexp with a string.
+		 * Argument 1: string to match
+		 * Returns: true if matched, false else
+		 */
+		static int Regexp_match(lua_State *L);
+
+		/** 
+		  * Called by lua when the regexp is about to be deleted
+		 */
+		static int Regexp_userdata_finalize(lua_State *L);
+
+		/** 
+		  * Check that the lua stack contains the number of expected argument.
+		  * Calls lua_error() is that is not the case.
+		  *
+		  * argNb: number of expected argument
+		  * functionName: name of the function being checked (used when
+		  * 				reporting an error)
+		  * functionArgDesc: description of the function arguments (used when
+		  * 				reporting an error)
+		  */
+		static bool checkFunctionArguments(lua_State*L, 
+					int argNb,
+					const char * functionName, 
+					const char * functionArgDesc );
+
 	protected:
 		lua_State *L;
 
 		/** Private constructor for a singleton */
 		YZExLua();
 		static YZExLua * _instance;
-		static bool checkFunctionArguments(lua_State*L, 
-					int argNb,
-					const char * functionName, 
-					const char * functionArgDesc );
 };
 
 #endif

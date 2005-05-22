@@ -357,6 +357,19 @@ void KYZisDoc::clearMarks() {
 	docMarks()->clear();
 }
 
+/*
+ * KTextEditor::MarkInterfaceExtension
+ */
+void KYZisDoc::setPixmap(MarkInterface::MarkTypes, const QPixmap &) {
+}
+void KYZisDoc::setDescription(MarkInterface::MarkTypes, const QString &){
+}
+void KYZisDoc::setMarksUserChangable(uint ) {
+}
+void KYZisDoc::markChanged (KTextEditor::Mark , KTextEditor::MarkInterfaceExtension::MarkChangeAction ) {
+}
+
+
 uint KYZisDoc::configPages() const {
 	return 1;	
 }

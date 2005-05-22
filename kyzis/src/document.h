@@ -26,6 +26,7 @@
 #include <ktexteditor/undointerface.h>
 #include <ktexteditor/configinterface.h>
 #include <ktexteditor/markinterface.h>
+#include <ktexteditor/markinterfaceextension.h>
 #include <ktexteditor/configinterfaceextension.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/selectioninterfaceext.h>
@@ -40,6 +41,7 @@ class KYZisDoc : public KTextEditor::Document,
 		public KTextEditor::ConfigInterface, 
 		public KTextEditor::ConfigInterfaceExtension, 
 		public KTextEditor::MarkInterface,
+		public KTextEditor::MarkInterfaceExtension,
 		public KTextEditor::SelectionInterface,
 		public KTextEditor::SelectionInterfaceExt,
 		public YZBuffer {
@@ -131,6 +133,14 @@ class KYZisDoc : public KTextEditor::Document,
 		virtual int selEndCol();
 
 		void emitSelectionChanged();
+
+	
+		// KTextEditor::MarkInterfaceExtension
+		virtual void setPixmap(MarkInterface::MarkTypes, const QPixmap &);
+		virtual void setDescription(MarkInterface::MarkTypes, const QString &);
+		virtual void setMarksUserChangable(uint markMask);
+		virtual void markChanged (KTextEditor::Mark mark, KTextEditor::MarkInterfaceExtension::MarkChangeAction action);
+
 
 
 	public slots:

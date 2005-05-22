@@ -65,6 +65,10 @@ HEADERS += action.h \
            view.h \
            viewcursor.h \
            portability.h \
+           yzisinfo.h \
+           yzisinforecordsearchhistory.h \
+           yzisinforecordstartposition.h \
+           yzisinforecord.h \
            yzis.h
 
 SOURCES += action.cpp \
@@ -98,4 +102,8 @@ SOURCES += action.cpp \
            mode_insert.cpp \
            mode_search.cpp \
            mode_visual.cpp \
+           yzisinfo.cpp \
+           yzisinforecordsearchhistory.cpp \
+           yzisinforecordstartposition.cpp \
+           yzisinforecord.cpp \
            viewcursor.cpp

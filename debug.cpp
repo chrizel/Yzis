@@ -89,7 +89,7 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 	struct stat buf;
 	setDebugOutput( fopen( fileName.local8Bit(), "w" ) );
 	int i = lstat( fileName.local8Bit(), &buf );
-	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() ) 
+	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && CHECK_GETEUID( buf.st_uid ) ) 
 		chmod( fileName.local8Bit(), S_IRUSR | S_IWUSR );
 	else {
 		fclose( _output );

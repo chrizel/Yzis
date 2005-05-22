@@ -55,7 +55,7 @@ void YZSwapFile::flush() {
 	QFile f( mFilename );
 	struct stat buf;
 	int i = lstat( mFilename.local8Bit(), &buf );
-	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() && f.open( IO_WriteOnly | IO_Raw | IO_Append ) ) { //open at end of file
+	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && CHECK_GETEUID( buf.st_uid ) && f.open( IO_WriteOnly | IO_Raw | IO_Append ) ) { //open at end of file
 		chmod( mFilename.local8Bit(), S_IRUSR | S_IWUSR );
 		QTextStream stream( &f );
 		if ( !mHistory.empty() ) {

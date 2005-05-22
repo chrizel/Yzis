@@ -79,13 +79,13 @@ void YZYzisinfo::readYzisinfo() {
 }
 
 void YZYzisinfo::writeYzisinfo() {
-	
+	int i;	
 	if ( mYzisinfo.open( IO_WriteOnly ) ) {
 		YZYzisinfoRecord * record;
 		QTextStream write( &mYzisinfo );
 		write.setEncoding( QTextStream::UnicodeUTF8 );
 
-		for( int i = YZSession::mYzisinfoList.count(); i > 0; --i ) {
+		for( i = YZSession::mYzisinfoList.count(); i > 0; --i ) {
 			record = YZSession::mYzisinfoList[i - 1];
 
 			if ( record->keyword() == "start_position" ) {
@@ -98,7 +98,7 @@ void YZYzisinfo::writeYzisinfo() {
 			}
 		}
 		
-		for( int i = YZSession::mYzisinfoList.count(); i > 0; --i ) {
+		for( i = YZSession::mYzisinfoList.count(); i > 0; --i ) {
 			record = YZSession::mYzisinfoList[i - 1];
 			
 			if ( record->keyword() == "search_history" ) {

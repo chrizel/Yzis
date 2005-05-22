@@ -25,13 +25,25 @@
 
 // boah, we are on windows
 #include <windows.h>
-#define PREFIX ""
 
 // XXX Phil: I'll fix that later 
-static const char * gettext( const char * s) { return s; }
+#define PREFIX ""
+#define gettext( s ) (s) 
+
+// emulate chmod
 #define chmod( fname , flag )
 #define S_IRUSR 0 
 #define S_IWUSR 0
+
+// emulate lstat
+#define lstat	stat
+
+// make stat work
+#define S_ISLNK( v )		(0)
+#define S_ISREG( v )		(v & _S_IFREG)
+
+// make geteuid work
+#define CHECK_GETEUID( v )		(1)
 
 #else 
 // ahh, we are on unix
@@ -41,6 +53,8 @@ static const char * gettext( const char * s) { return s; }
 #include "config.h"
 #include "translator.h"
 #include "libintl.h"
+
+#define CHECK_GETEUID( v )		(v == geteuid())
 #endif
 
 #endif // PORTABILITY_H

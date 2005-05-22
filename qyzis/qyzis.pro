@@ -30,10 +30,14 @@ HEADERS += qyzview.h \
 		   qyzbuffer.h \
 		   qyzeditor.h \
 		   ../kqcommon/keyConverter.h \
+		   ../kqcommon/kcursor.h \
+		   ../kqcommon/editor.h \
 		   qyzsession.h
 
 SOURCES += main.cpp \
 		   ../kqcommon/keyConverter.cpp \
+		   ../kqcommon/kcursor.cpp \
+		   ../kqcommon/editor.cpp \
 			qyzview.cpp \
 			qyzeditor.cpp \
 			qyzbuffer.cpp \
@@ -61,19 +65,16 @@ unix {
 HEADERS += ../libyzis/action.h \
            ../libyzis/attribute.h \
            ../libyzis/buffer.h \
-           ../libyzis/commands.h \
            ../libyzis/cursor.h \
            ../libyzis/debug.h \
            ../libyzis/events.h \
            ../libyzis/ex_lua.h \
-           ../libyzis/excommands.h \
            ../libyzis/internal_options.h \
            ../libyzis/line.h \
            ../libyzis/linesearch.h \
            ../libyzis/mapping.h \
            ../libyzis/mark.h \
            ../libyzis/option.h \
-           ../libyzis/plugin.h \
            ../libyzis/printer.h \
            ../libyzis/qtprinter.h \
            ../libyzis/registers.h \
@@ -85,6 +86,12 @@ HEADERS += ../libyzis/action.h \
            ../libyzis/syntaxdocument.h \
            ../libyzis/syntaxhighlight.h \
            ../libyzis/undo.h \
+           ../libyzis/mode.h \
+           ../libyzis/mode_command.h \
+           ../libyzis/mode_ex.h \
+           ../libyzis/mode_insert.h \
+           ../libyzis/mode_search.h \
+           ../libyzis/mode_visual.h \
            ../libyzis/view.h \
            ../libyzis/viewcursor.h \
            ../libyzis/portability.h \
@@ -93,12 +100,10 @@ HEADERS += ../libyzis/action.h \
 SOURCES += ../libyzis/action.cpp \
            ../libyzis/attribute.cpp \
            ../libyzis/buffer.cpp \
-           ../libyzis/commands.cpp \
            ../libyzis/cursor.cpp \
            ../libyzis/debug.cpp \
            ../libyzis/events.cpp \
            ../libyzis/ex_lua.cpp \
-           ../libyzis/excommands.cpp \
            ../libyzis/internal_options.cpp \
            ../libyzis/line.cpp \
            ../libyzis/linesearch.cpp \
@@ -117,4 +122,10 @@ SOURCES += ../libyzis/action.cpp \
            ../libyzis/syntaxhighlight.cpp \
            ../libyzis/undo.cpp \
            ../libyzis/view.cpp \
+           ../libyzis/mode.cpp \
+           ../libyzis/mode_command.cpp \
+           ../libyzis/mode_ex.cpp \
+           ../libyzis/mode_insert.cpp \
+           ../libyzis/mode_search.cpp \
+           ../libyzis/mode_visual.cpp \
            ../libyzis/viewcursor.cpp

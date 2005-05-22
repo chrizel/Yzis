@@ -45,7 +45,7 @@ int main(int argc, char **argv) {
 	QString initialSendKeys;
 
     // handle command line options
-	YZSession::mOptions.setGroup("Global");
+//	YZSession::mOptions.setGroup("Global");
 	bool splash = YZSession::getBoolOption("blocksplash");
 
 	/*

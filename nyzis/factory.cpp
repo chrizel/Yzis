@@ -207,7 +207,7 @@ void NYZFactory::popupMessage( const QString &_message )
 	int nl,nc;
 	QString anyKeyMsg = _("(Press any key)");
 	int length = anyKeyMsg.length();
-	QString message = message.simplifyWhiteSpace();
+	QString message = _message.simplifyWhiteSpace();
 #if 0
 	int y;
 	message.simplifyWhiteSpace();

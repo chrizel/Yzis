@@ -4,7 +4,7 @@ bin_PROGRAMS = yzis
 METASOURCES = AUTO
 
 INCLUDES = -I$(top_srcdir)/libyzis/ $(YZIS_INCLUDES) $(LUA_INCLUDES) $(CURSES_INCLUDES)
-yzis_SOURCES = viewwidget.cpp factory.cpp document.cpp eventloop.cpp main.cpp
+yzis_SOURCES = viewwidget.cpp factory.cpp document.cpp main.cpp
 yzis_LDADD = $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(YZISLIBS)
 
 re : clean all

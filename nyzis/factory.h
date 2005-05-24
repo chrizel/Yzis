@@ -35,6 +35,9 @@ public:
 	static NYZFactory *self;
 	static NYZView *currentView;
 
+public slots:
+	bool processInput(int);
+
 public:
 	/**
 	 * Constructor. Give a session name to identify/save/load sessions.
@@ -42,7 +45,6 @@ public:
 	NYZFactory(const char *session_name = "default_nyzis_session", const QString& keys = QString::null );
 	virtual ~NYZFactory( );
 
-	bool process_one_event();
 
 	/*
 	 * YZSession interface :

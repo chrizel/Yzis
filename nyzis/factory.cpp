@@ -73,7 +73,7 @@ void NYZFactory::init() {
 	}
 }
 
-bool NYZFactory::process_one_event() {
+bool NYZFactory::processInput(int) {
 	YZASSERT_MSG( currentView, "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
 
 	wint_t c;

@@ -39,7 +39,6 @@
 
 /* yzis */
 #include "debug.h"
-#include "eventloop.h"
 #include "factory.h"
 
 /* Qt */
@@ -47,6 +46,7 @@
 #include <qapplication.h>
 #include <qtranslator.h>
 #include <qtextcodec.h>
+#include <qsocketnotifier.h>
 
 /* X11 */
 #include <X11/Xlib.h>
@@ -74,9 +74,8 @@ main(int argc, char *argv[])
 	bool useGUI = TRUE;
 #endif
 
-	( void ) new NYZEventLoop();
 	QApplication app( argc, argv, useGUI );
-
+	QSocketNotifier *socket = new QSocketNotifier(0,QSocketNotifier::Read);
 
 	QString initialSendKeys;
 
@@ -123,6 +122,7 @@ main(int argc, char *argv[])
 
 	// create factory
 	NYZFactory *factory = new NYZFactory("default_session", initialSendKeys);
+	QObject::connect( socket, SIGNAL( activated( int ) ),factory, SLOT( processInput( int ) ) );
 
 	// Signal handling
 	(void) signal(SIGINT, sigint);      /* arrange interrupts to terminate */

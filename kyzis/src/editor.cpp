@@ -171,11 +171,10 @@ void KYZisEdit::paintEvent( QPaintEvent* pe ) {
 		unsigned int maxwidth = fontMetrics().maxWidth();
 		fx /= maxwidth;
 		fy /= linespace;
-		int old_tx = tx, old_ty = ty;
 		tx /= maxwidth;
 		ty /= linespace;
-		if ( tx < old_tx ) ++tx;
-		if ( ty < old_ty ) ++ty;
+		++tx;
+		++ty;
 	}
 	fx = qMax( (int)marginLeft, fx ) - marginLeft;
 	tx = qMax( (int)marginLeft, tx ) - marginLeft;
@@ -214,11 +213,11 @@ QPoint KYZisEdit::cursorCoordinates( ) {
 void KYZisEdit::scrollUp( int n ) {
 	if ( ! mTransparent ) {
 		mCursor->hide();
+		unsigned int lv = mParent->getLinesVisible();
 		bitBlt( this, 0, n * fontMetrics().lineSpacing(),
 			this, 0, 0,
-			width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing(),
+			width(), ( lv - n ) * fontMetrics().lineSpacing(),
 			Qt::CopyROP, true );
-		unsigned int lv = mParent->getLinesVisible();
 		unsigned int i;
 		for( i = lv; (int)i >= n; i-- )
 			mCell[ i ] = mCell[ i - n ];
@@ -235,8 +234,7 @@ void KYZisEdit::scrollUp( int n ) {
 void KYZisEdit::scrollDown( int n ) {
 	if ( ! mTransparent ) {
 		mCursor->hide();
-		unsigned int lv = mParent->getLinesVisible();
-		unsigned int h = lv - (unsigned int)n;
+		unsigned int h = mParent->getLinesVisible() - (unsigned int)n;
 		bitBlt( this, 0, 0,
 			this, 0, n * fontMetrics().lineSpacing(),
 			width(), h * fontMetrics().lineSpacing(),
@@ -315,9 +313,9 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		}
 	} else if ( e->button() == Qt::MidButton ) {
 		QString text = QApplication::clipboard()->text( QClipboard::Selection );
-		if ( text.isNull() )
+		if ( text.isEmpty() )
 			text = QApplication::clipboard()->text( QClipboard::Clipboard );
-		if ( ! text.isNull() ) {
+		if ( ! text.isEmpty() ) {
 			if ( mParent->modePool()->current()->isEditMode() ) {
 				QChar reg = '\"';
 				YZSession::mRegisters->setRegister( reg, QStringList::split( "\n", text ) );
@@ -586,14 +584,15 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 		p.drawLine( w, (fromY - shiftY) * linespace, w, (curY - shiftY) * linespace );
 	}
 
-	unsigned int fh = shiftY + height() / linespace;
+	unsigned int fh = shiftY + mParent->getLinesVisible();
 	toY = qMin( toY, fh - 1 );
 	myRect.setLeft( 0 );
 	myRect.setHeight( linespace );
 	myRect.setWidth( width() );
+	p.setPen( Qt::cyan );
+	p.setBackgroundMode( Qt::TransparentMode );
 	for( ; curY <= toY; ++curY ) {
 		erase( myRect );
-		p.setPen( Qt::cyan );
 		p.drawText( myRect, flag, "~" );
 		myRect.moveBy( 0, linespace );
 	}

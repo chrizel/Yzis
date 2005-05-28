@@ -95,7 +95,6 @@ void YZYzisinfoRecordSearchHistory::setPosition( const unsigned int x, const uns
 #else
 	for ( QVector<YZCursor*>::Iterator it = mCursorData.begin(); it != mCursorData.end(); ++it ) {
 #endif
-		yzDebug() << (*it)->x() << ":" << (*it)->y() << " vs " << x << ":" << y << endl;
 		if ( ( (*it)->x() == x ) && ( (*it)->y() == y ) ) {
 			found = true;
 			break;

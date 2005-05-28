@@ -91,25 +91,25 @@ cmd_state YZModeEx::execCommand( YZView* mView, const QString& key ) {
 		if( mView->getCommandLineText().isEmpty()) {
 			mView->modePool()->pop();
 		} else {
-			QString cmd = mView->mExHistory[mView->mCurrentExItem] = mView->getCommandLineText();
-			mView->mCurrentExItem++;
+			QString cmd = YZSession::me->mExHistory[YZSession::me->mCurrentExItem] = mView->getCommandLineText();
+			YZSession::me->mCurrentExItem++;
 			ret = execExCommand( mView, cmd );
 			if ( ret != CMD_QUIT ) 
 				mView->modePool()->pop( MODE_COMMAND );
 		}
 	} else if ( key == "<DOWN>" ) {
-		if(mView->mExHistory[mView->mCurrentExItem].isEmpty())
+		if(YZSession::mExHistory[YZSession::mCurrentExItem].isEmpty())
 			return ret;
 
-		mView->mCurrentExItem++;
-		mView->setCommandLineText( mView->mExHistory[mView->mCurrentExItem] );
+		YZSession::me->mCurrentExItem++;
+		mView->setCommandLineText( YZSession::mExHistory[YZSession::mCurrentExItem] );
 	} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
 	} else if ( key == "<UP>" ) {
-		if(mView->mCurrentExItem == 0)
+		if(YZSession::me->mCurrentExItem == 0)
 			return ret;
 
-		mView->mCurrentExItem--;
-		mView->setCommandLineText( mView->mExHistory[mView->mCurrentExItem] );
+		YZSession::me->mCurrentExItem--;
+		mView->setCommandLineText( YZSession::mExHistory[YZSession::mCurrentExItem] );
 	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
 		mView->modePool()->pop( MODE_COMMAND );
 	} else if ( key == "<TAB>" ) {

@@ -52,6 +52,10 @@ YZEvents *YZSession::events = 0;
 YZYzisinfo *YZSession::mYzisinfo= 0;
 int YZSession::mYzisinfoCount = 0;
 int YZSession::mYzisinfoPosition = 0;
+unsigned int YZSession::mCurrentExItem = 0;
+unsigned int YZSession::mCurrentSearchItem = 0;
+StringVector YZSession::mExHistory = 0;
+StringVector YZSession::mSearchHistory = 0;
 YZYzisinfoList YZSession::mYzisinfoList = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
@@ -72,6 +76,8 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mYzisinfo= new YZYzisinfo();
 	mYzisinfoCount = 0;
 	mYzisinfoPosition = 1;
+	mExHistory.resize(200);
+	mSearchHistory.resize(200);
 }
 
 YZSession::~YZSession() {

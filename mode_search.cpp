@@ -1,6 +1,7 @@
 /*  This file is part of the Yzis libraries
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>,
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -80,7 +81,7 @@ cmd_state YZModeSearch::execCommand( YZView* mView, const QString& _key ) {
 		if ( what.isEmpty() ) {
 			pos = replaySearch( mView, &found );
 		} else {
-			mView->mSearchHistory[ mView->mCurrentSearchItem++ ] = what;
+			YZSession::mSearchHistory[ YZSession::mCurrentSearchItem++ ] = what;
 			pos = search( mView, what, &found );
 			if ( mView->getLocalBooleanOption( "incsearch" ) && mView->incSearchFound ) {
 				pos = *mView->incSearchResult;
@@ -95,18 +96,18 @@ cmd_state YZModeSearch::execCommand( YZView* mView, const QString& _key ) {
 		mView->modePool()->pop();
 		return CMD_OK;
 	} else if ( key == "<DOWN>" ) {
-		if (mView->mSearchHistory[mView->mCurrentSearchItem].isEmpty())
+		if (YZSession::mSearchHistory[YZSession::mCurrentSearchItem].isEmpty())
 			return CMD_OK;
-		mView->mCurrentSearchItem++;
-		mView->setCommandLineText( mView->mSearchHistory[mView->mCurrentSearchItem] );
+		YZSession::me->mCurrentSearchItem++;
+		mView->setCommandLineText( YZSession::mSearchHistory[YZSession::mCurrentSearchItem] );
 		return CMD_OK;
 	} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
 		return CMD_OK;
 	} else if ( key == "<UP>" ) {
-		if(mView->mCurrentSearchItem == 0)
+		if(YZSession::me->mCurrentSearchItem == 0)
 			return CMD_OK;
-		mView->mCurrentSearchItem--;
-		mView->setCommandLineText( mView->mSearchHistory[mView->mCurrentSearchItem] );
+		YZSession::me->mCurrentSearchItem--;
+		mView->setCommandLineText( YZSession::mSearchHistory[YZSession::mCurrentSearchItem] );
 		return CMD_OK;
 	} else if ( key == "<ALT>:" ) {
 		mView->modePool()->change( MODE_EX );

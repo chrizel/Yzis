@@ -62,7 +62,13 @@ class YZYzisinfoRecordSearchPosition;
  */
 
 typedef QMap<QString,YZBuffer*> YZBufferMap;
+#if QT_VERSION < 0x040000
+typedef QValueVector<QString> StringVector;
 typedef QValueVector<YZYzisinfoRecord*> YZYzisinfoList;
+#else
+typedef QVector<QString> StringVector;
+typedef QVector<YZYzisinfoRecord*> YZYzisinfoList;
+#endif
  
 class YZSession {
 	public:
@@ -329,6 +335,26 @@ class YZSession {
 		static int mYzisinfoCount;
 		static int mYzisinfoPosition;
 		static YZYzisinfoList mYzisinfoList; 
+	
+	   /**
+	    * search history
+	    */
+	    static StringVector mSearchHistory;
+	    
+	    /**
+	     * command history
+	     */
+	    static StringVector mExHistory;
+	     
+	    /**
+	     * current command history item
+	     */
+	    static unsigned int mCurrentExItem;
+	     
+	    /**
+	     * current search history item
+	     */
+	    static unsigned int mCurrentSearchItem;
 };
 
 #endif /* YZ_SESSION_H */

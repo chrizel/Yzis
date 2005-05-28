@@ -46,8 +46,6 @@ class YZMode;
 class YZModeCompletion;
 class YZOptionValue;
 
-typedef QValueVector<QString> StringVector;
-
 /**
  * MUST be reimplemented in the GUI. It's the basis to display the content of a buffer
  * One view is the display of some part of a buffer, it is used to receive inputs and displays
@@ -600,24 +598,6 @@ class YZView {
 
 		YZSelectionMap visualSelection();
 
-		/**
-		 * command history
-		 */
-		StringVector mExHistory;
-		/**
-		 * search history
-		 */
-		StringVector mSearchHistory;
-
-		/**
-		 * current command history item
-		 */
-		unsigned int mCurrentExItem;
-
-		/**
-		 * current search history item
-		 */
-		unsigned int mCurrentSearchItem;
 		//search mode cursors
 		YZCursor *mSearchBegin;
 

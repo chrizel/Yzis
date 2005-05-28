@@ -96,10 +96,6 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 	QString line = mBuffer->textline(scrollCursor->bufferY());
 
-	mCurrentExItem = 0;
-	mCurrentSearchItem = 0;
-	mExHistory.resize(200);
-	mSearchHistory.resize(200);
 	reverseSearch=false;
 	viewInformation.l = viewInformation.c1 = viewInformation.c2 = 0;
 	viewInformation.percentage = "";

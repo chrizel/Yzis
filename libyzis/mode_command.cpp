@@ -1312,7 +1312,7 @@ void YZModeCommand::redoLastCommand( const YZCommandArgs & args ) {
 }
 
 void YZModeCommand::undoJump( const YZCommandArgs & args ) {
-   YZView * view = args.view;
-   YZCursor * cursor = YZSession::me->previousCursorPosition();
-   view->gotodxdy(cursor->x(), cursor->y(), true);
+	YZView * view = args.view;
+	YZCursor * cursor = YZSession::me->previousCursorPosition();
+	view->gotodxdy(cursor->x(), cursor->y(), true);
 }

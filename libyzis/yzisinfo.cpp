@@ -66,6 +66,16 @@ void YZYzisinfo::readYzisinfo() {
 					saveStartPosition( list[3], list[1].toInt(), list[2].toInt() );
 				}
 				
+				if ( list[0] == "search_list" ) {
+					list.pop_front();
+					YZSession::mSearchHistory[ YZSession::mCurrentSearchItem++ ] = list.join(" ");
+				}
+				
+				if ( list[0] == "command_list" ) {
+					list.pop_front();
+					YZSession::mExHistory[ YZSession::mCurrentExItem++ ] = list.join(" ");
+				}
+				
 				if ( list[0] == "search_history" ) {
 					saveSearchPosition( list[3], list[1].toInt(), list[2].toInt() );
 				}
@@ -98,6 +108,9 @@ void YZYzisinfo::writeYzisinfo() {
 			}
 		}
 		
+		saveSearchHistory( write );
+		saveExHistory( write );
+	      
 		for( i = YZSession::mYzisinfoList.count(); i > 0; --i ) {
 			record = YZSession::mYzisinfoList[i - 1];
 			
@@ -114,7 +127,7 @@ void YZYzisinfo::writeYzisinfo() {
 				}
 			}
 		}
-	      
+		
 		write << endl;
 		mYzisinfo.close();
 	}
@@ -185,4 +198,30 @@ void YZYzisinfo::saveSearchPosition( const QString & filename, const int x, cons
 	}
 	
 	return;
+}
+
+void YZYzisinfo::saveSearchHistory( QTextStream & write ) {
+
+	int end = YZSession::mSearchHistory.count();
+	
+	for ( int i = 0; i < end || i < 50; ++i ) {
+		if ( ! YZSession::mSearchHistory[i].isEmpty() ) {
+			write << "search_list" << " ";
+			write << YZSession::mSearchHistory[i];
+			write << endl;
+		}
+	}
+}
+
+void YZYzisinfo::saveExHistory( QTextStream & write ) {
+
+	int end = YZSession::mExHistory.count();
+	
+	for ( int i = 0; i < end || i < 50; ++i ) {
+		if ( ! YZSession::mExHistory[i].isEmpty() ) {
+			write << "command_list" << " ";
+			write << YZSession::mExHistory[i];
+			write << endl;
+		}
+	}
 }

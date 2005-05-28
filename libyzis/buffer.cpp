@@ -689,7 +689,8 @@ void YZBuffer::setModified( bool ) {
 
 void YZBuffer::statusChanged() {
 	//update all views
-	for ( YZView *it = mViews.first(); it; it = mViews.next() )
+	YZView *it;
+	for ( it = mViews.first(); it; it = mViews.next() )
 		it->syncViewInfo();
 }
 

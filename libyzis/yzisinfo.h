@@ -40,6 +40,8 @@ class YZYzisinfo {
 		void saveStartPosition( const QString & filename, const int x, const int y );
 		YZCursor * searchPosition();
 		void saveSearchPosition( const QString & filename, const int x, const int y );
+		void saveSearchHistory( QTextStream & write );
+		void saveExHistory( QTextStream & write );
 		
 	private:
 		QFile mYzisinfo;

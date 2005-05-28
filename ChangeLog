@@ -1,3 +1,7 @@
+2005-05-28 scottn
+  * libyzis
+   added ex and search history to yzisinfo
+
 2005-05-13 morbuz
   * libyzis
 	added 'startofline' option (default on), gg now uses this option and

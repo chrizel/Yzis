@@ -89,8 +89,13 @@ void YZYzisinfoRecordSearchHistory::setFilename( const QString & filename ) {
 void YZYzisinfoRecordSearchHistory::setPosition( const unsigned int x, const unsigned int y ) {
 	
 	bool found = false;
-	
+
+#if QT_VERSION < 0x040000	
 	for ( QValueVector<YZCursor*>::Iterator it = mCursorData.begin(); it != mCursorData.end(); ++it ) {
+#else
+	for ( QVector<YZCursor*>::Iterator it = mCursorData.begin(); it != mCursorData.end(); ++it ) {
+#endif
+		yzDebug() << (*it)->x() << ":" << (*it)->y() << " vs " << x << ":" << y << endl;
 		if ( ( (*it)->x() == x ) && ( (*it)->y() == y ) ) {
 			found = true;
 			break;

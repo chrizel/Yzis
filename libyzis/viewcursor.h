@@ -23,6 +23,8 @@
 
 #include "cursor.h"
 
+class YZView;
+
 /**
  * $Id$
  */

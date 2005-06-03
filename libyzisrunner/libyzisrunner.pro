@@ -16,11 +16,26 @@
 #  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 #  Boston, MA 02111-1307, USA.
 
+##########################	Lua stuff
+# you must set LUAINCLUDE to the directory containing lua headers
+# and LUALIB to the directory containing lua .so or lua .lib files
+
+LUAINCLUDE = $$(LUAINCLUDE) 
+LUALIB	= $$(LUALIB)
+
+isEmpty( LUALIB ) {
+	error( "you need to set LUAINCLUDE and LUALIB in your environment before compiling with qmake. See INSTALL.qmake" )
+}
+isEmpty( LUAINCLUDE ) {
+	error( "you need to set LUAINCLUDE and LUALIB in your environment before compiling with qmake. See INSTALL.qmake" )
+}
+##########################	
+
+
 TEMPLATE = app
 INCLUDEPATH += . ../tests/cpp .. ../libyzis
 CONFIG    += console warn_on debug
 CONFIG    += rtti # necessary for dynamic cast
-#LIB  += ../libyzis.lib
 
 win32-msvc {
 	DESTDIR = ./
@@ -36,19 +51,14 @@ SOURCES += ../tests/cpp/TView.cpp \
 
 ####################### copy from libyzis
 
-# you must set LUAINCLUDE to the directory containing lua headers
-# and LUALIB to the directory containing lua .so or lua .lib files
-
-INCLUDEPATH += $$(LUAINCLUDE)
-
 win32-msvc {
 	DESTDIR = ./
 	LIBS += $$(LUALIB)/Lua.lib $$(LUALIB)/LuaLib.lib
 	DEFINES += YZIS_WIN32_MSVC
 }
 unix {
-	LIBS += $$(LUALIB)/liblua.so
-	LIBS += $$(LUALIB)/liblualib.so
+	LIBS += -L$$(LUALIB)
+	LIBS += -llualib50 -llua50
 	LIBS += -lmagic
 }
 

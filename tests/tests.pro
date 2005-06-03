@@ -1,2 +1,2 @@
 TEMPLATE = subdirs
-SUBDIRS = tests
+SUBDIRS = cpp

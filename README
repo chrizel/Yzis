@@ -21,7 +21,14 @@ You probably need to configure --with-lua-includes=... so that it finds your Lua
 
 For QYzis on windows, you'll need a Qt non commercial license or a Qt
 educational license. You can get a Qt non commercial license for Qt 3.2.1 by
-buying the book "Programming with Qt".
+buying the book "Programming with Qt". When Qt4 is out, things should change
+since Qt4 is GPL for windows.
+
+Libyzisrunner can be build using Miscrosoft Visual Studio (6.0) on windows
+with Qt non commercial.
+
+You can also build yzis with the qmake files but will have to setup a few
+environment variables.
 
 It might be possible to build QYZis on windows using mingw and the free port
 of qt3 to windows or cygwin-qt but we haven't tried yet.

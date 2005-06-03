@@ -1,2 +1,3 @@
 TEMPLATE = subdirs
-SUBDIRS = libyzis qyzis
+SUBDIRS = libyzis libyzisrunner
+# qyzis disabled for now

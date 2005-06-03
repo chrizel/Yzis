@@ -31,7 +31,7 @@
 class TYZView : public YZView
 {
 public:
-	TYZView(YZBuffer *buf, YZSession *sess, int lines);
+	TYZView(YZBuffer *buf, YZSession *sess, int lines=50);
 
 	uint getCursorX() { return mainCursor->bufferX(); }
 	uint getCursorY() { return mainCursor->bufferY(); }
@@ -42,6 +42,7 @@ public:
 
 	virtual void setCommandLineText( const QString& text) {
 		yzDebug( "TYZView") << "TYZView::setCommandLineText '" << text << "'\n";
+		mCommandLine = text;
 	}
 
 	virtual void setFocusCommandLine() {
@@ -54,7 +55,7 @@ public:
 
 	virtual QString getCommandLineText() const {
 		yzDebug( "TYZView") << "TYZView::getCommandLineText" << endl;
-		return QString::null;
+		return mCommandLine;
 	}
 
 	virtual void invalidateLine( unsigned int ) {
@@ -105,6 +106,9 @@ public:
 		return;
 	}
 
+	virtual void paintEvent( const YZSelection& drawMap ) {
+	}
+
 protected:
 	class Mapping {
 	public:
@@ -116,6 +120,7 @@ protected:
 		int key;
 	};
 
+	QString mCommandLine;
 	QValueList<Mapping> mKeyMap;
 };
 

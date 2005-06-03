@@ -17,13 +17,13 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include <unistd.h>
 #include <string>
 #include "philcppunit/PhilAsserts.h"
 using namespace CppUnit;
 using namespace std;
 
 #include "libyzis/debug.h"
+#include "libyzis/portability.h"
 
 #include "testDebugBackend.h"
 

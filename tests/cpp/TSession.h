@@ -20,7 +20,11 @@
 
 #ifndef TYZ_SESSION_H
 #define TYZ_SESSION_H
-/**
+
+#include "TView.h"
+#include "TBuffer.h"
+
+ /**
  * $Id: session.h 388 2004-03-03 23:44:13Z mikmak $
  */
 
@@ -33,23 +37,35 @@ public:
     : YZSession( sessionName )
     {}
 
-    virtual YZView* createView ( YZBuffer* ) {
+    virtual YZView* createView ( YZBuffer* buf) {
         yzDebug( AREA_TESTS) << "TYZSession::createView" << endl;
-        return NULL;
+        TYZView * view = new TYZView( buf, YZSession::me );
+        buf->addView( view );
+        return view;
     }
 
     virtual	YZBuffer *createBuffer(const QString& path=QString::null) {
         yzDebug( AREA_TESTS) << "TYZSession::createBuffer " << path << endl;
-        return NULL;
+        TYZBuffer * buf = new TYZBuffer( YZSession::me );
+        setCurrentView( createView( buf ) );
+        buf->load( path );
+        currentView()->refreshScreen();
+        return buf;
     }
 
     virtual void popupMessage( const QString& message) {
         yzDebug( AREA_TESTS) << "TYZSession::popupMessage: '" << message << "' \n";
+		printf("popupMessage:\n");
+		printf("============\n");
+		printf("%s\n\n", message.latin1() );
     }
 
     virtual void quit(bool /*savePopup=true */) {
         yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
+        qApp->closeAllWindows();
+        qApp->exit(0);
     }
+
     virtual void deleteView ( int  ) {
         yzDebug( AREA_TESTS) << "TYZSession::deleteView" << endl;
     }
@@ -66,8 +82,11 @@ public:
     virtual void setFocusMainWindow( ) {
         yzDebug( AREA_TESTS) << "TYZSession::setFocusMainWindow" << endl;
     }
-    virtual void quit( int ) {
+	virtual bool quit(int) {
         yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
+        qApp->closeAllWindows();
+        qApp->exit(0);
+		return true;
     }
 	virtual bool promptYesNo(const QString&, const QString&) {
 	    yzDebug( AREA_TESTS) << "TYZSession::promptYesNo" << endl;

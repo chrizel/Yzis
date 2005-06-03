@@ -21,7 +21,7 @@
 #include <qtranslator.h>
 #include <qtextcodec.h>
 #include <qapplication.h>
-#include "libyzis/translator.h"
+#include "libyzis/portability.h"
 #include "libyzis/debug.h"
 #include "testBuffer.h"
 #include "philcppunit/PhilTestRunner.h"

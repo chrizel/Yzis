@@ -16,9 +16,21 @@
 #  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 #  Boston, MA 02111-1307, USA.
 
-
-# you must set in your shell LUAINCLUDE to the directory containing lua headers
+##########################	Lua stuff
+# you must set LUAINCLUDE to the directory containing lua headers
 # and LUALIB to the directory containing lua .so or lua .lib files
+
+LUAINCLUDE = $$(LUAINCLUDE) 
+LUALIB	= $$(LUALIB)
+
+isEmpty( LUALIB ) {
+	error( "you need to set LUAINCLUDE and LUALIB in your environment before compiling with qmake. See INSTALL.qmake" )
+}
+isEmpty( LUAINCLUDE ) {
+	error( "you need to set LUAINCLUDE and LUALIB in your environment before compiling with qmake. See INSTALL.qmake" )
+}
+##########################	
+
 
 TEMPLATE = lib
 INCLUDEPATH += . ..  $$(LUAINCLUDE)

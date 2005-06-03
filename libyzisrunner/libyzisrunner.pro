@@ -23,6 +23,8 @@
 LUAINCLUDE = $$(LUAINCLUDE) 
 LUALIB	= $$(LUALIB)
 
+INCLUDEPATH += $$(LUAINCLUDE)
+
 isEmpty( LUALIB ) {
 	error( "you need to set LUAINCLUDE and LUALIB in your environment before compiling with qmake. See INSTALL.qmake" )
 }

@@ -30,7 +30,7 @@
 
 
 int main(int argc, char **argv) {
-	QApplication app( argc, argv );
+	QApplication app( argc, argv, false );
 	QObject::connect( qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()) );
 
 //	YZDebugBackend::instance()->enableDebugArea("TYZView", false );
@@ -64,13 +64,13 @@ int main(int argc, char **argv) {
 		} else {
 			s = QString( argv[i] );
 			if (s == "-h" || s == "--help") {
-				printf("Libyzis runner, tester for libyzis (see http://www.yzis.org)\n",
+				printf("Libyzis runner, tester for libyzis %s (see http://www.yzis.org)\n",
 					VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
 				printf("\nRun me just like you would run kyzis\n");
 				printf("%s -c <ex command>\n", argv[0]);
 				exit(0);
 			} else if (s == "-v" || s == "--version") {
-				printf("Libyzis runner, tester for libyzis (see http://www.yzis.org)\n",
+				printf("Libyzis runner, tester for libyzis %s (see http://www.yzis.org)\n",
 					VERSION_CHAR_LONG " " VERSION_CHAR_DATE "\n");
 				exit(0);
 			} else if (s == "-c") {

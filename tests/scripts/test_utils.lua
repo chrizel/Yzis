@@ -1,0 +1,32 @@
+
+require('utils')
+require('luaunit')
+
+TestUtils = {}
+function TestUtils:testInTable()
+    t = {}
+    t['a'] = '1'
+    t['b'] = '2'
+    assertEquals( inTable(t, 'X', 'Y' ), nil )
+    assertEquals( inTable(t, 'a', 'Y' ), 'a')
+    assertEquals( inTable(t, 'Y', 'b' ), 'b')
+end
+
+function TestUtils:testTokenizer()
+    tokens = {}
+    tokens['aa'] = true
+    tokens['bb'] = true
+    s = '1aXaaXbXaaa'
+    expected = {'1', 'a', 'X', 'aa', 'X', 'b', 'X', 'aa', 'a' }
+    result = tokenizer( tokens, s )
+    print("Result:")
+    table.foreachi( result, print )
+    table.foreachi( expected, function(idx,v)
+        assertEquals( result[idx], v )            
+        end 
+    )
+end
+
+if not _REQUIREDNAME then
+     LuaUnit:run() -- will execute all tests
+end

@@ -41,7 +41,13 @@ function assertEquals(expected, actual)
 			expected, actual = actual, expected
 		end
 
-		local errorMsg = "expected: "..wrapValue(expected)..", actual: "..wrapValue(actual)
+		local errorMsg
+		if type(expected) == 'string' then
+			errorMsg = "\nexpected: "..wrapValue(expected).."\n"..
+                             "actual  : "..wrapValue(actual).."\n"
+		else
+			errorMsg = "expected: "..wrapValue(expected)..", actual: "..wrapValue(actual)
+		end
 		print (errorMsg)
 		error( errorMsg, 2 )
 	end

@@ -31,12 +31,20 @@ isEmpty( LUAINCLUDE ) {
 }
 ##########################	
 
+########################## cppunit stuff
+SOURCES += \
+	philcppunit/PhilTestRunner.cpp \
+	philcppunit/PhilAsserts.cpp
+
+HEADERS += \
+	philcppunit/PhilTestRunner.h \
+	philcppunit/PhilAsserts.h
+##########################	
 
 TEMPLATE = app
 INCLUDEPATH += . ../.. ../../libyzis
 CONFIG    += console warn_on debug
 CONFIG    += rtti # necessary for dynamic cast
-#LIB  += ../libyzis.lib
 
 win32-msvc {
 	DESTDIR = ./
@@ -108,6 +116,10 @@ HEADERS += ../../libyzis/action.h \
            ../../libyzis/view.h \
            ../../libyzis/viewcursor.h \
            ../../libyzis/portability.h \
+           ../../libyzis/yzisinfo.h \
+           ../../libyzis/yzisinforecordsearchhistory.h \
+           ../../libyzis/yzisinforecordstartposition.h \
+           ../../libyzis/yzisinforecord.h \
            ../../libyzis/yzis.h
 
 SOURCES += ../../libyzis/action.cpp \
@@ -141,4 +153,8 @@ SOURCES += ../../libyzis/action.cpp \
            ../../libyzis/mode_insert.cpp \
            ../../libyzis/mode_search.cpp \
            ../../libyzis/mode_visual.cpp \
+           ../../libyzis/yzisinfo.cpp \
+           ../../libyzis/yzisinforecordsearchhistory.cpp \
+           ../../libyzis/yzisinforecordstartposition.cpp \
+           ../../libyzis/yzisinforecord.cpp \
            ../../libyzis/viewcursor.cpp

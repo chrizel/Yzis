@@ -474,6 +474,7 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 	yzDebug() << "New buffer / view : " << path << endl;
 	args.view->mySession()->createBuffer( path );
 	YZBuffer *bu = args.view->mySession()->findBuffer( path );
+	YZASSERT_MSG( bu != NULL, QString("Created buffer %1 was not found!").arg(path) );
 	YZSession::me->setCurrentView( bu->firstView() );
 	return CMD_OK;
 }

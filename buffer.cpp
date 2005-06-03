@@ -748,13 +748,8 @@ void YZBuffer::makeAttribs() {
 }
 
 void YZBuffer::setPath( const QString& _path ) {
-	QString newPath = _path.stripWhiteSpace();
 	QString oldPath = mPath;
-	if (newPath[0] != '/') {
-		mPath = QDir::cleanDirPath(QDir::current().absPath()+"/"+newPath);
-		yzDebug("YZBuffer") << "Changing path to absolute " << mPath << endl;
-	} else
-		mPath = newPath;
+	mPath = QFileInfo( _path.stripWhiteSpace() ).absFilePath();
 	mFileIsNew=false;
 	//hmm changing file :), update Session !!!!
 	mSession->updateBufferRecord( oldPath, mPath, this );

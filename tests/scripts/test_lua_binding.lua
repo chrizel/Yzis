@@ -180,7 +180,11 @@ TestLuaBinding = {} --class
         f2 = filename()
         print("filename: "..f2)
         assertEquals( string.len(f2) > 0, true )
-        assertEquals( f2, os.getenv('PWD')..'/toto.txt' )
+        if os.getenv('CYGWIN') then
+            assert(string.find(f2,'toto.txt'))
+        else
+            assertEquals( f2, os.getenv('PWD')..'/toto.txt' )
+        end
         assertEquals( f1 ~= f2, true )
         sendkeys( ':bd!<ENTER>' )
 
@@ -236,7 +240,7 @@ TestLuaBinding = {} --class
     end
 
     function TestLuaBinding:test_color()
-        sendkeys(':e runtests.sh<ENTER>')
+        --sendkeys(':e runtests.sh<ENTER>')
         color1 = color(1,1)
         print("color1 : "..color1)
         sendkeys("G")
@@ -283,7 +287,7 @@ TestLuaBinding = {} --class
 
 
 if not _REQUIREDNAME then
-    -- LuaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
+    --LuaUnit:run('TestLuaBinding:test_filename') -- will execute only one test
     -- LuaUnit:run('TestLuaBinding') -- will execute only one class of test
     LuaUnit:run() -- will execute all tests
 end

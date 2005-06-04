@@ -5,7 +5,7 @@ require('utils')
 
 TestVimRegexp = {} --class
 
-	function TestVimRegexp:test1()
+	function TestVimRegexp:test01()
 		--******
 		assertEquals(VimRegexp([[a*b]]):match('aaab'), true )
 		assertEquals(VimRegexp([[a*b]]):match('ab'), true )
@@ -13,7 +13,7 @@ TestVimRegexp = {} --class
 		assertEquals(VimRegexp([[a*b]]):match('a'), false )
 	end
 
-	function TestVimRegexp:test2()
+	function TestVimRegexp:test02()
 		--++++++
 		assertEquals(VimRegexp([[a\+b]]):match('aaab'), true )
 		assertEquals(VimRegexp([[a\+b]]):match('ab'), true )
@@ -21,7 +21,7 @@ TestVimRegexp = {} --class
 		assertEquals(VimRegexp([[a\+b]]):match('a'), false )
 	end
 
-	function TestVimRegexp:test3()
+	function TestVimRegexp:test03()
 		--======
 		assertEquals(VimRegexp([[a\=b]]):match('aaab'), true )
 		assertEquals(VimRegexp([[a\=b]]):match('ab'), true )
@@ -30,7 +30,7 @@ TestVimRegexp = {} --class
 		assertEquals(VimRegexp([[ab\=]]):match('abbb'), true )
 	end
 
-	function TestVimRegexp:test4()
+	function TestVimRegexp:test04()
 		--??????
 		assertEquals(VimRegexp([[a\?b]]):match('aaab'), true )
 		assertEquals(VimRegexp([[a\?b]]):match('ab'), true )
@@ -39,7 +39,7 @@ TestVimRegexp = {} --class
 		assertEquals(VimRegexp([[ab\?]]):match('abbb'), true )
 	end
 
-	function TestVimRegexp:test5()
+	function TestVimRegexp:test05()
 		--{{{{{{}}}}}}
 		assertEquals(VimRegexp([[a\{1}b]]):match('ab'), true )
 		assertEquals(VimRegexp([[a\{1}b]]):match('b'), false )
@@ -53,7 +53,7 @@ TestVimRegexp = {} --class
 		assertEquals(VimRegexp([[a\{}b]]):match('aab'), true )
 	end
 
-	function TestVimRegexp:test6()
+	function TestVimRegexp:test06()
 		--^^^
 		assertEquals(VimRegexp([[^aa]]):match('aa^bb'), true )
 		assertEquals(VimRegexp([[aa^]]):match('aa^bb'), true )
@@ -64,7 +64,7 @@ TestVimRegexp = {} --class
 		assertEquals(VimRegexp([[\^aa\^bb]]):match('^aa^bb'), true )
 	end
 
-	function TestVimRegexp:test7()
+	function TestVimRegexp:test07()
 		--[ [ [ ] ] ]
 		assertEquals(VimRegexp('[a]'):match('a'), true )
 		assertEquals(VimRegexp('[^a]'):match('a'), false )
@@ -76,7 +76,7 @@ TestVimRegexp = {} --class
 		assertEquals(VimRegexp([[\(^bb\)]]):match('aa^bb'), false )
 	end
 
-	function TestVimRegexp:test8()
+	function TestVimRegexp:test08()
 		--$$$$$
 		assertEquals(VimRegexp([[bb$]]):match('aa$bb'), true )
 		assertEquals(VimRegexp([[$bb]]):match('aa$bb'), true )
@@ -88,7 +88,7 @@ TestVimRegexp = {} --class
 		assertEquals(VimRegexp([[\(aa$\)]]):match('aa$bb'), false )
 	end
 
-	function TestVimRegexp:test9()
+	function TestVimRegexp:test09()
 		--<<<<
 		assertEquals(VimRegexp([[\<aa]]):match('aa bbccdd'), true )
 		assertEquals(VimRegexp([[\<bb]]):match('aa bbccdd'), true )

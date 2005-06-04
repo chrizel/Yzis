@@ -38,7 +38,7 @@ TestLuaUnit = {} --class
         assert( has_error == true )
     end
 
-    function TestLuaUnit:test_xpcall()
+    function TestLuaUnit:Xtest_xpcall()
         local function f() error("[this is a normal error]") end
         local function g() f() end
         g()

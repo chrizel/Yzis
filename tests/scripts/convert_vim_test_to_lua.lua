@@ -25,7 +25,7 @@ for line in io.lines(finput) do
 			io.write("\tend\n") 
 		end
 		function_started = 1
-		io.write('\n\tfunction TestVimRegexp:test' .. tostring(test_nb) .. '()\n' )
+		io.write('\n\tfunction TestVimRegexp:test' .. string.format('%02d',test_nb) .. '()\n' )
 		io.write("\t\t--" .. title .. "\n")
 	end
 	match, index, s, re, result = string.find(line,
@@ -59,7 +59,7 @@ then
 	for i = 1,test_nb do
 		io.write("\t")
 		if i > VALIDATED then io.write("--") end
-		io.write("LuaUnit:run('TestVimRegexp:test"..i.."') -- will execute only one test\n")
+		io.write("LuaUnit:run('TestVimRegexp:test"..string.format('%02d',i).."') -- will execute only one test\n")
 	end
 end
 io.write(

@@ -6,6 +6,7 @@ require('utils')
 TestLuaBinding = {} --class
     function TestLuaBinding:setUp() 
         clearBuffer()
+        sendkeys("<ESC>")
     end
 
     function TestLuaBinding:tearDown() 
@@ -193,6 +194,7 @@ TestLuaBinding = {} --class
     end
 
     function TestLuaBinding:test_goto_and_pos()
+        clearBuffer()
         assertEquals( winline(), 1 )
         assertEquals( wincol(), 1 )
         c,l = winpos(); assertEquals( l, 1); assertEquals( c, 1)
@@ -240,7 +242,7 @@ TestLuaBinding = {} --class
     end
 
     function TestLuaBinding:test_color()
-        --sendkeys(':e runtests.sh<ENTER>')
+        sendkeys(':e runtests.sh<ENTER>')
         color1 = color(1,1)
         print("color1 : "..color1)
         sendkeys("G")

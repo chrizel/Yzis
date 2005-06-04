@@ -57,102 +57,102 @@ function inTable( t, ... )
     return nil
 end
 
-VimSubstTable = {}
-VimSubstTable['\\+'] = '+'
-VimSubstTable['\\='] = '?'
-VimSubstTable['\\?'] = '?'
-VimSubstTable['\\{'] = '{'
-VimSubstTable['\\|'] = '|'
-VimSubstTable['|'  ] = '\\|'
-VimSubstTable['\\('] = '('
-VimSubstTable['('  ] = '\\('
-VimSubstTable[')'  ] = '\\)'
-VimSubstTable['\\)'] = ')'
-VimSubstTable['\\<'] = '\\b'
-VimSubstTable['\\>'] = '\\b'
-VimSubstTable['\\x'] = '[0-9a-fA-F]'
-VimSubstTable['\\X'] = '[^0-9a-fA-F]'
-VimSubstTable['\\o'] = '[0-7]'
-VimSubstTable['\\O'] = '[^0-7]'
-VimSubstTable['\\h'] = '[a-zA-Z_]'
-VimSubstTable['\\H'] = '[^a-zA-Z_]'
-VimSubstTable['\\a'] = '[a-zA-Z]'
-VimSubstTable['\\A'] = '[^a-zA-Z]'
-VimSubstTable['\\l'] = '[a-z]'
-VimSubstTable['\\L'] = '[^a-z]'
-VimSubstTable['\\u'] = '[A-Z]'
-VimSubstTable['\\U'] = '[^A-Z]'
-VimSubstTable['[:alnum:]'] = 'a-zA-Z0-9'
-VimSubstTable['[:alpha:]'] = 'a-zA-Z'
-VimSubstTable['[:blank:]'] = '\\s'
-VimSubstTable['[:digit:]'] = '0-9'
-VimSubstTable['[:xdigit:]'] = '0-9A-Fa-f'
-VimSubstTable['[:lower:]'] = 'a-z'
-VimSubstTable['[:upper:]'] = 'A-Z'
-VimSubstTable['[:space:]'] = ' '
-VimSubstTable['\\%('] = '(?:'
-VimSubstTable['\\_^'] = '^'
-VimSubstTable['\\^'] = '\\^'
-VimSubstTable['\\_$'] = '$'
-VimSubstTable['\\$'] = '\\$'
+local __vimRegexpSubstTable = {}
+__vimRegexpSubstTable['\\+'] = '+'
+__vimRegexpSubstTable['\\='] = '?'
+__vimRegexpSubstTable['\\?'] = '?'
+__vimRegexpSubstTable['\\{'] = '{'
+__vimRegexpSubstTable['\\|'] = '|'
+__vimRegexpSubstTable['|'  ] = '\\|'
+__vimRegexpSubstTable['\\('] = '('
+__vimRegexpSubstTable['('  ] = '\\('
+__vimRegexpSubstTable[')'  ] = '\\)'
+__vimRegexpSubstTable['\\)'] = ')'
+__vimRegexpSubstTable['\\<'] = '\\b'
+__vimRegexpSubstTable['\\>'] = '\\b'
+__vimRegexpSubstTable['\\x'] = '[0-9a-fA-F]'
+__vimRegexpSubstTable['\\X'] = '[^0-9a-fA-F]'
+__vimRegexpSubstTable['\\o'] = '[0-7]'
+__vimRegexpSubstTable['\\O'] = '[^0-7]'
+__vimRegexpSubstTable['\\h'] = '[a-zA-Z_]'
+__vimRegexpSubstTable['\\H'] = '[^a-zA-Z_]'
+__vimRegexpSubstTable['\\a'] = '[a-zA-Z]'
+__vimRegexpSubstTable['\\A'] = '[^a-zA-Z]'
+__vimRegexpSubstTable['\\l'] = '[a-z]'
+__vimRegexpSubstTable['\\L'] = '[^a-z]'
+__vimRegexpSubstTable['\\u'] = '[A-Z]'
+__vimRegexpSubstTable['\\U'] = '[^A-Z]'
+__vimRegexpSubstTable['[:alnum:]'] = 'a-zA-Z0-9'
+__vimRegexpSubstTable['[:alpha:]'] = 'a-zA-Z'
+__vimRegexpSubstTable['[:blank:]'] = '\\s'
+__vimRegexpSubstTable['[:digit:]'] = '0-9'
+__vimRegexpSubstTable['[:xdigit:]'] = '0-9A-Fa-f'
+__vimRegexpSubstTable['[:lower:]'] = 'a-z'
+__vimRegexpSubstTable['[:upper:]'] = 'A-Z'
+__vimRegexpSubstTable['[:space:]'] = ' '
+__vimRegexpSubstTable['\\%('] = '(?:'
+__vimRegexpSubstTable['\\_^'] = '^'
+__vimRegexpSubstTable['\\^'] = '\\^'
+__vimRegexpSubstTable['\\_$'] = '$'
+__vimRegexpSubstTable['\\$'] = '\\$'
 
-unsupportedTokens = {}
-unsupportedTokens[ '[:return:]' ] = true
-unsupportedTokens[ '[:tab:]'    ] = true
-unsupportedTokens[ '[:graph:]' ] = true
-unsupportedTokens[ '[:print:]' ] = true
-unsupportedTokens[ '[:punct:]' ] = true
-unsupportedTokens[ [[\&]] ] = true
-unsupportedTokens[ [[{-]] ] = true
-unsupportedTokens[ [[\@>]] ] = true
-unsupportedTokens[ [[\@=]] ] = true
-unsupportedTokens[ [[\@!]] ] = true
-unsupportedTokens[ [[\@<=]] ] = true
-unsupportedTokens[ [[\@<!]] ] = true
-unsupportedTokens[ [[\zs]] ] = true
-unsupportedTokens[ [[\ze]] ] = true
-unsupportedTokens[ [[\_.]] ] = true
-unsupportedTokens[ [[\%^]] ] = true
-unsupportedTokens[ [[\%$]] ] = true
-unsupportedTokens[ [[\%#]] ] = true
-unsupportedTokens[ [[\%23l]] ] = true
-unsupportedTokens[ [[\%23c]] ] = true
-unsupportedTokens[ [[\%23v]] ] = true
-unsupportedTokens[ [[\i]] ] = true
-unsupportedTokens[ [[\I]] ] = true
-unsupportedTokens[ [[\k]] ] = true
-unsupportedTokens[ [[\K]] ] = true
-unsupportedTokens[ [[\f]] ] = true
-unsupportedTokens[ [[\F]] ] = true
-unsupportedTokens[ [[\p]] ] = true
-unsupportedTokens[ [[\P]] ] = true
-unsupportedTokens[ [[\t]] ] = true
-unsupportedTokens[ [[\e]] ] = true
-unsupportedTokens[ [[\r]] ] = true
-unsupportedTokens[ [[\b]] ] = true
-unsupportedTokens[ [[\n]] ] = true
-unsupportedTokens[ [[\~]] ] = true
-unsupportedTokens[ [[\z1]] ] = true
-unsupportedTokens[ [[\z9]] ] = true
-unsupportedTokens[ [[\%[]] ] = true
-unsupportedTokens[ [[\c]] ] = true
-unsupportedTokens[ [[\C]] ] = true
-unsupportedTokens[ [[\Z]] ] = true
-unsupportedTokens[ [[\v]] ] = true
-unsupportedTokens[ [[\V]] ] = true
-unsupportedTokens[ [[\m]] ] = true
-unsupportedTokens[ [[\M]] ] = true
+local __vimRegexpUnsupported = {}
+__vimRegexpUnsupported[ '[:return:]' ] = true
+__vimRegexpUnsupported[ '[:tab:]'    ] = true
+__vimRegexpUnsupported[ '[:graph:]' ] = true
+__vimRegexpUnsupported[ '[:print:]' ] = true
+__vimRegexpUnsupported[ '[:punct:]' ] = true
+__vimRegexpUnsupported[ [[\&]] ] = true
+__vimRegexpUnsupported[ [[{-]] ] = true
+__vimRegexpUnsupported[ [[\@>]] ] = true
+__vimRegexpUnsupported[ [[\@=]] ] = true
+__vimRegexpUnsupported[ [[\@!]] ] = true
+__vimRegexpUnsupported[ [[\@<=]] ] = true
+__vimRegexpUnsupported[ [[\@<!]] ] = true
+__vimRegexpUnsupported[ [[\zs]] ] = true
+__vimRegexpUnsupported[ [[\ze]] ] = true
+__vimRegexpUnsupported[ [[\_.]] ] = true
+__vimRegexpUnsupported[ [[\%^]] ] = true
+__vimRegexpUnsupported[ [[\%$]] ] = true
+__vimRegexpUnsupported[ [[\%#]] ] = true
+__vimRegexpUnsupported[ [[\%23l]] ] = true
+__vimRegexpUnsupported[ [[\%23c]] ] = true
+__vimRegexpUnsupported[ [[\%23v]] ] = true
+__vimRegexpUnsupported[ [[\i]] ] = true
+__vimRegexpUnsupported[ [[\I]] ] = true
+__vimRegexpUnsupported[ [[\k]] ] = true
+__vimRegexpUnsupported[ [[\K]] ] = true
+__vimRegexpUnsupported[ [[\f]] ] = true
+__vimRegexpUnsupported[ [[\F]] ] = true
+__vimRegexpUnsupported[ [[\p]] ] = true
+__vimRegexpUnsupported[ [[\P]] ] = true
+__vimRegexpUnsupported[ [[\t]] ] = true
+__vimRegexpUnsupported[ [[\e]] ] = true
+__vimRegexpUnsupported[ [[\r]] ] = true
+__vimRegexpUnsupported[ [[\b]] ] = true
+__vimRegexpUnsupported[ [[\n]] ] = true
+__vimRegexpUnsupported[ [[\~]] ] = true
+__vimRegexpUnsupported[ [[\z1]] ] = true
+__vimRegexpUnsupported[ [[\z9]] ] = true
+__vimRegexpUnsupported[ [[\%[]] ] = true
+__vimRegexpUnsupported[ [[\c]] ] = true
+__vimRegexpUnsupported[ [[\C]] ] = true
+__vimRegexpUnsupported[ [[\Z]] ] = true
+__vimRegexpUnsupported[ [[\v]] ] = true
+__vimRegexpUnsupported[ [[\V]] ] = true
+__vimRegexpUnsupported[ [[\m]] ] = true
+__vimRegexpUnsupported[ [[\M]] ] = true
 
-tokens = {}
-tokens['\\^'] = true 
-tokens['[^'] = true 
+local __vimRegexpTokens = {}
+__vimRegexpTokens['\\^'] = true 
+__vimRegexpTokens['[^'] = true 
 
-table.foreach( VimSubstTable, function(idx, val)
-        tokens[idx] = val
+table.foreach( __vimRegexpSubstTable, function(idx, val)
+        __vimRegexpTokens[idx] = val
     end )
 
-table.foreach( unsupportedTokens, function(idx, val)
-        tokens[idx] = val
+table.foreach( __vimRegexpUnsupported, function(idx, val)
+        __vimRegexpTokens[idx] = val
     end )
 
 function tokenizer( tokens, s )
@@ -187,16 +187,16 @@ end
 function VimRegexp( re )
     -- transform re
     --print("Before: '"..re.."'")
-    out = ''
-    tokenizedRe = tokenizer( tokens, re )
+    local out = ''
+    local tokenizedRe = tokenizer( __vimRegexpTokens, re )
     --print("Tokenized re")
     --table.foreach( tokenizedRe, print )
     for i = 1, tokenizedRe['n']
     do
         token = tokenizedRe[i]
-        if VimSubstTable[token]
+        if __vimRegexpSubstTable[token]
         then
-            out = out .. VimSubstTable[token]        
+            out = out .. __vimRegexpSubstTable[token]        
 
         -- handle ^
         elseif (token == '^' and i ~= 1  
@@ -212,7 +212,7 @@ function VimRegexp( re )
         then
             out = out .. '\\$'
 
-        elseif unsupportedTokens[token]
+        elseif __vimRegexpUnsupported[token]
         then
             error("Token "..token.." is not supported")
         else

@@ -6,6 +6,7 @@ require('utils')
 TestMovements = {} --class
     function TestMovements:setUp() 
         clearBuffer()
+        sendkeys( "<ESC>" )
     end
 
     function TestMovements:tearDown() 
@@ -13,7 +14,6 @@ TestMovements = {} --class
     end
 
     function TestMovements:test_initial_state()
-        sendkeys( "<ESC>" )
         assertEquals(bufferContent(),"")
         assertPos(1,1)
         assertEquals(mode(), MODE_NORMAL)

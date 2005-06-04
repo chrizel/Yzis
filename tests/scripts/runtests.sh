@@ -8,13 +8,21 @@ if [ -n "$1" ];
 then
     testname=$1
 fi
+
+# save config file
 if [ -f ~/.yzis/yzis.conf ]; then
 	mv ~/.yzis/yzis.conf ~/.yzis/yzis.conf.old
 fi
 if [ -f ~/.yzis/init.lua ]; then
 	mv -f ~/.yzis/init.lua ~/.yzis/init.lua.old
 fi
-LANG=C kyzis -c ":source $testname <ENTER><ESC>:qall!<ENTER>"
+
+YZIS=kyzis
+YZIS=../../libyzisrunner/libyzisrunner
+
+LANG=C $YZIS -c ":source $testname <ENTER><ESC>:qall!<ENTER>"
+
+# restore config file
 if [ -f ~/.yzis/yzis.conf.old ]; then
 	mv ~/.yzis/yzis.conf.old ~/.yzis/yzis.conf
 fi

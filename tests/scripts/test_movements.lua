@@ -13,12 +13,13 @@ TestMovements = {} --class
     end
 
     function TestMovements:test_initial_state()
+        sendkeys( "<ESC>" )
         assertEquals(bufferContent(),"")
         assertPos(1,1)
         assertEquals(mode(), MODE_NORMAL)
 
         sendkeys( "i" )
-        printBufferContent()
+        --printBufferContent()
         assertEquals(mode(), MODE_INSERT)
         assertPos(1,1)
         assertEquals(bufferContent(),"")

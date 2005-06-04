@@ -19,8 +19,8 @@ function TestUtils:testTokenizer()
     s = '1aXaaXbXaaa'
     expected = {'1', 'a', 'X', 'aa', 'X', 'b', 'X', 'aa', 'a' }
     result = tokenizer( tokens, s )
-    print("Result:")
-    table.foreachi( result, print )
+    --print("Result:")
+    --table.foreachi( result, print )
     table.foreachi( expected, function(idx,v)
         assertEquals( result[idx], v )            
         end 

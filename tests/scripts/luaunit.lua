@@ -288,10 +288,17 @@ LuaUnit = {
 			if argv and argv.n > 0 then
 				table.foreachi(argv, LuaUnit.runTestClassByName )
 			else
-				for var, value in _G do
-					if string.sub(var,1,4) == 'Test' then 
-						LuaUnit:runTestClassByName(var)
+				-- create the list before. If you do not do it now, you
+				-- get undefined result because you modify _G while iterating
+				-- over it.
+				testClassList = {}
+				for key, val in _G do 
+					if string.sub(key,1,4) == 'Test' then 
+						table.insert( testClassList, key )
 					end
+				end
+				for i, val in testClassList do 
+						LuaUnit:runTestClassByName(val)
 				end
 			end
 		end

@@ -4,15 +4,15 @@ require('luaunit')
 require('utils')
 
 TestExCommands = {} --class
-    function TestMovements:setUp() 
+    function TestExCommands:setUp() 
         clearBuffer()
     end
 
-    function TestMovements:tearDown() 
+    function TestExCommands:tearDown() 
         clearBuffer()
     end
 
-    function TestMovements:test_initial_state()
+    function TestExCommands:test_initial_state()
         assertEquals(bufferContent(),"")
     end
 

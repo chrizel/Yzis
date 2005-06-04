@@ -49,7 +49,8 @@ int main(int argc, char **argv) {
 	QObject::connect( qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()) );
 
 //	YZDebugBackend::instance()->enableDebugArea("TYZView", false );
-//	YZDebugBackend::instance()->setDebugOutput( stderr );
+	YZDebugBackend::instance()->setDebugOutput( stderr );
+	YZDebugBackend::instance()->setDebugLevel( YZ_ERROR_LEVEL );
 
 	QTranslator qt(  0 );
 	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );

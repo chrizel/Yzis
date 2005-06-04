@@ -182,5 +182,6 @@ YZDebugStream yzFatal( const char * area = "" );
 // Assertion
 #define YZASSERT_MSG( assertion, msg ) { if (! (assertion) ) { yzError() << QString("%1:%2 assertion '%3' failed : %4\n").arg(__FILE__).arg( __LINE__).arg(#assertion).arg( msg ); } }
 #define YZASSERT( assertion ) YZASSERT_MSG( assertion, "" )
+#define YZASSERT_EQUALS( a, b ) { if (a != b) { yzError() << QString("%1:%2 - %3 == %4 failed : '%5' != '%6'\n").arg(__FILE__).arg( __LINE__).arg(#a).arg(#b).arg(a).arg(b); } }
 
 #endif /* YZ_DEBUG_H */

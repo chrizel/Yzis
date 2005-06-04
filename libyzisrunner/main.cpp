@@ -28,9 +28,24 @@
 
 #include "TSession.h"
 
+#ifdef Q_WS_X11
+/* X11 */
+#include <X11/Xlib.h>
+#endif
 
 int main(int argc, char **argv) {
-	QApplication app( argc, argv, false );
+#ifdef Q_WS_X11
+	bool useGUI = getenv(  "DISPLAY" ) != 0;
+	if (useGUI) {
+		Display *d = XOpenDisplay(NULL);
+		if (d == NULL) //woups we failed to connect to X
+			useGUI = false; // so don't try again later ;)
+	}
+#else
+	bool useGUI = TRUE;
+#endif
+
+	QApplication app( argc, argv, useGUI );
 	QObject::connect( qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()) );
 
 //	YZDebugBackend::instance()->enableDebugArea("TYZView", false );

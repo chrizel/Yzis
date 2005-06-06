@@ -41,7 +41,6 @@
 #include "mode_insert.h"
 #include "mode_search.h"
 #include "mode_visual.h"
-#include "yzisinforecordsearchhistory.h"
 
 int YZSession::mNbViews = 0;
 int YZSession::mNbBuffers = 0;
@@ -50,13 +49,13 @@ YZRegisters *YZSession::mRegisters = 0;
 YZSession *YZSession::me = 0;
 YZEvents *YZSession::events = 0;
 YZYzisinfo *YZSession::mYzisinfo= 0;
-int YZSession::mYzisinfoCount = 0;
-int YZSession::mYzisinfoPosition = 0;
 unsigned int YZSession::mCurrentExItem = 0;
 unsigned int YZSession::mCurrentSearchItem = 0;
+unsigned int YZSession::mCurrentJumpListItem = 0;
 StringVector YZSession::mExHistory = 0;
 StringVector YZSession::mSearchHistory = 0;
-YZYzisinfoList YZSession::mYzisinfoList = 0;
+JumpListVector YZSession::mJumpList = 0;
+StartPositionVector YZSession::mStartPosition = 0;
 
 YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
@@ -74,10 +73,8 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mOptions = new YZInternalOptionPool();
 	mRegisters = new YZRegisters();
 	mYzisinfo= new YZYzisinfo();
-	mYzisinfoCount = 0;
-	mYzisinfoPosition = 1;
-	mExHistory.resize(200);
-	mSearchHistory.resize(200);
+	mExHistory.resize(50);
+	mSearchHistory.resize(50);
 }
 
 YZSession::~YZSession() {
@@ -298,7 +295,15 @@ bool YZSession::exitRequest( int errorCode ) {
 		YZBuffer* b = ( *it );
 		deleteBuffer( b );
 	}
-	mBuffers.clear();*/
+	mBuffers.clear();
+	
+   YZSession::me->getYzisinfo()->updateStartPosition( 
+                  currentBuffer()->fileName(),
+                  (YZSession::me->currentView())->getCursor()->x(),
+                  (YZSession::me->currentView())->getCursor()->y() );
+                                       
+	YZSession::me->getYzisinfo()->writeYzisinfo();*/
+                                          
 	return quit( errorCode );
 }
 
@@ -344,12 +349,33 @@ void YZSession::saveCursorPosition() {
 	||   YZSession::me->currentView()->modePool()->currentType() == YZMode::MODE_SEARCH_BACKWARD 
 	|| last == "n"
 	|| last == "N" ) {
-		mYzisinfo->saveSearchPosition( YZSession::me->currentBuffer()->fileName(), YZSession::me->currentView()->getCursor()->x(), YZSession::me->currentView()->getCursor()->y() );
+		mYzisinfo->updateJumpList( YZSession::me->currentBuffer()->fileName(), YZSession::me->currentView()->getCursor()->x(), YZSession::me->currentView()->getCursor()->y() );
 	} else {
 		return;
 	}
 }
 
 YZCursor * YZSession::previousCursorPosition() {
- 	return mYzisinfo->searchPosition();
+	
+	if ( mCurrentJumpListItem == 0 ) {
+		mCurrentJumpListItem = mJumpList.count();
+	}
+	
+	--mCurrentJumpListItem;
+	
+	if ( mJumpList[mCurrentJumpListItem]->filename() == YZSession::me->currentBuffer()->fileName() ) {
+		return mJumpList[mCurrentJumpListItem]->position();
+	} else {
+		YZBuffer * b = findBuffer( mJumpList[mCurrentJumpListItem]->filename() );
+
+		if ( b ) {
+			setCurrentView( b->firstView() );
+		} else {
+			createBuffer( mJumpList[mCurrentJumpListItem]->filename() );
+		}
+
+		currentView()->gotodxdy(mJumpList[mCurrentJumpListItem]->position()->x(), mJumpList[mCurrentJumpListItem]->position()->y(), true);
+
+		return mJumpList[mCurrentJumpListItem]->position();
+	}
 }

@@ -34,9 +34,8 @@
 #include "view.h"
 #include "viewcursor.h"
 #include "yzisinfo.h"
-#include "yzisinforecord.h"
-#include "yzisinforecordstartposition.h"
-#include "yzisinforecordsearchhistory.h"
+#include "yzisinfojumplistrecord.h"
+#include "yzisinfostartpositionrecord.h"
 
 class YZView;
 class YZBuffer;
@@ -50,9 +49,8 @@ class YZModeEx;
 class YZModeCommand;
 class YZViewCursor;
 class YZYzisinfo;
-class YZYzisinfoRecord;
-class YZYzisinfoRecordStartPosition;
-class YZYzisinfoRecordSearchPosition;
+class YZYzisinfoJumpListRecord;
+class YZYzisinfoStartPositionRecord;
 
 /**
  * Contains data referring to an instance of yzis
@@ -64,28 +62,68 @@ class YZYzisinfoRecordSearchPosition;
 typedef QMap<QString,YZBuffer*> YZBufferMap;
 #if QT_VERSION < 0x040000
 typedef QValueVector<QString> StringVector;
-typedef QValueVector<YZYzisinfoRecord*> YZYzisinfoList;
+typedef QValueVector<YZYzisinfoJumpListRecord*> JumpListVector;
+typedef QValueVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
 #else
 typedef QVector<QString> StringVector;
-typedef QVector<YZYzisinfoRecord*> YZYzisinfoList;
+typedef QVector<YZYzisinfoJumpListRecord*> JumpListVector;
+typedef QVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
 #endif
  
 class YZSession {
 	public:
 		/**
 		 * Constructor. Give a session name to identify/save/load sessions.
+		 * 
+		 * @param _sessionName The global session name. Default is "Yzis"
 		 */
+		 
 		YZSession( const QString& _sessionName="Yzis" );
+		
+		/**
+		 * Destructor
+		 */
+		 
 		virtual ~YZSession();
 
 		/**
-		 * return the session name
+		 * Returns the session name
+		 * 
+		 * @return QString
 		 */
+		 
 		QString getSessionName() { return mSessionName; }
 
+		/**
+		 * Returns the mode map
+		 * 
+		 * @return YZModeMap
+		 */
+		 
 		YZModeMap getModes();
+		
+		/**
+		 * Returns the ex pool
+		 * 
+		 * @return YZModeEx*
+		 */
+		 
 		YZModeEx* getExPool();
+		
+		/**
+		 * Returns the command pool
+		 * 
+		 * @return YZModeCommand*
+		 */
+		 
 		YZModeCommand* getCommandPool();
+		
+		/**
+		 * Returns the yzisinfo list
+		 * 
+		 * @return YZYzisinfo*
+		 */
+		 
 		YZYzisinfo* getYzisinfo();
 
 		/**
@@ -306,7 +344,6 @@ class YZSession {
 		void registerModifier ( const QString& mod );
 		void unregisterModifier ( const QString& mod );
 
-		YZYzisinfoList yzisinfoList() const { return mYzisinfoList; }
 		void saveCursorPosition();
 		YZCursor * previousCursorPosition();
 
@@ -332,29 +369,48 @@ class YZSession {
 		static YZSession *me;
 		static YZEvents *events;
 		static YZYzisinfo* mYzisinfo;
-		static int mYzisinfoCount;
-		static int mYzisinfoPosition;
-		static YZYzisinfoList mYzisinfoList; 
-	
-	   /**
-	    * search history
-	    */
-	    static StringVector mSearchHistory;
-	    
+		
 	    /**
 	     * command history
 	     */
+	     
 	    static StringVector mExHistory;
 	     
 	    /**
 	     * current command history item
 	     */
-	    static unsigned int mCurrentExItem;
 	     
+	    static unsigned int mCurrentExItem;
+	
+	   /**
+	    * search history
+	    */
+	    
+	    static StringVector mSearchHistory;
+     
 	    /**
 	     * current search history item
 	     */
+	     
 	    static unsigned int mCurrentSearchItem;
+	    
+	    /**
+	     * start position history
+	     */
+	     
+	    static StartPositionVector mStartPosition;
+	    
+	    /**
+	     * jump list history
+	     */
+	     
+	    static JumpListVector mJumpList;
+	    
+	    /**
+	     * current jump list item
+	     */
+	     
+	    static unsigned int mCurrentJumpListItem;
 };
 
 #endif /* YZ_SESSION_H */

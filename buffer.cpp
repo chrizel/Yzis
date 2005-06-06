@@ -609,11 +609,11 @@ bool YZBuffer::save() {
 	//clear swap memory
 	mSwap->reset();
 	mSwap->unlink();
-	
-	YZSession::me->getYzisinfo()->saveStartPosition( mPath, 
+
+	YZSession::me->getYzisinfo()->updateStartPosition( mPath, 
                   (YZSession::me->currentView())->getCursor()->x(),
                   (YZSession::me->currentView())->getCursor()->y() );
-				                  
+
 	YZSession::me->getYzisinfo()->writeYzisinfo();
    
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);

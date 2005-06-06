@@ -109,6 +109,7 @@ void YZModeCommand::initMotionPool() {
 
 void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("I", &YZModeCommand::insertAtSOL) );
+	commands.append( new YZCommand("gI", &YZModeCommand::insertAtCol1) );
 	commands.append( new YZCommand("i", &YZModeCommand::gotoInsertMode) );
 	commands.append( new YZCommand("<INS>", &YZModeCommand::gotoInsertMode) );
 	commands.append( new YZCommand(":", &YZModeCommand::gotoExMode) );
@@ -140,6 +141,7 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("a", &YZModeCommand::append) );
 	commands.append( new YZCommand("A", &YZModeCommand::appendAtEOL) );
 	commands.append( new YZCommand("J", &YZModeCommand::joinLine) );
+	commands.append( new YZCommand("gJ", &YZModeCommand::joinLineWithoutSpace) );
 	commands.append( new YZCommand("<", &YZModeCommand::indent, ARG_MOTION ) );
 	commands.append( new YZCommand("<<", &YZModeCommand::indent ) );
 	commands.append( new YZCommand(">", &YZModeCommand::indent, ARG_MOTION ) );
@@ -994,6 +996,11 @@ void YZModeCommand::insertAtSOL(const YZCommandArgs &args) {
 	
 }
 
+void YZModeCommand::insertAtCol1(const YZCommandArgs &args) {
+	args.view->moveToStartOfLine();
+	args.view->modePool()->push( YZMode::MODE_INSERT );
+}
+
 void YZModeCommand::gotoCommandMode(const YZCommandArgs &args) {
 	args.view->modePool()->pop( YZMode::MODE_COMMAND );
 }
@@ -1092,6 +1099,12 @@ void YZModeCommand::insertLineBefore(const YZCommandArgs &args) {
 void YZModeCommand::joinLine(const YZCommandArgs &args) {
 	for ( unsigned int i = 0; i < args.count; i++ ) 
 		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor()->y(), true );
+	args.view->commitNextUndo();
+}
+
+void YZModeCommand::joinLineWithoutSpace(const YZCommandArgs &args) {
+	for ( unsigned int i = 0; i < args.count; i++ ) 
+		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor()->y(), false );
 	args.view->commitNextUndo();
 }
 

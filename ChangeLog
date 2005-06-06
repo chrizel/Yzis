@@ -1,3 +1,11 @@
+2005-06-07 scottn
+  * libyzis
+  added remembering of whether hlsearch is set or not
+  major tidy up of the yzisinfo file - now has format closer to the viminfo 
+  file and is more readable
+  tidy up of the reading and writing of the yzisinfo file
+  set limits to the number of entries for each type to remember
+  
 2005-06-06 Dmitry Suzdalev
   * libyzis
 	added gI,gJ commands

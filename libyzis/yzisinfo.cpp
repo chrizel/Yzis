@@ -22,18 +22,21 @@
  */
 
 #include <iostream>
+#include <qfileinfo.h>
 
 #include "debug.h"
 #include "session.h"
 #include "yzisinfo.h"
-#include "yzisinforecord.h"
-#include "yzisinforecordstartposition.h"
-#include "yzisinforecordsearchhistory.h"
-#include <qfileinfo.h>
+#include "yzisinfojumplistrecord.h"
+#include "yzisinfostartpositionrecord.h"
 
 using namespace std;
 
 class YZYzisinfoCursor;
+
+/**
+ * Constructor
+ */
 
 YZYzisinfo::YZYzisinfo() {
 	
@@ -42,13 +45,25 @@ YZYzisinfo::YZYzisinfo() {
 
 }
 
+/**
+ * Constructor
+ */
+
 YZYzisinfo::YZYzisinfo( const QString & path ) {
 	
 	mYzisinfo.setName( path );
 }
 
+/**
+ * Destructor
+ */
+
 YZYzisinfo::~YZYzisinfo() {
 }
+
+/**
+ * YZYsisinfo::readYzisinfo
+ */
 
 void YZYzisinfo::readYzisinfo() {
 	
@@ -60,25 +75,50 @@ void YZYzisinfo::readYzisinfo() {
 			line = stream.readLine(); // line of text excluding '\n'
 			line = line.stripWhiteSpace();
 			
-			if ( ! line.isEmpty() ) {
-				QStringList list = QStringList::split( QRegExp( "\\s" ), line, false );
-				if ( list[0] == "start_position" ) {
-					saveStartPosition( list[3], list[1].toInt(), list[2].toInt() );
+			// Ignore empty lines
+			
+			if ( line.isEmpty() ) {
+				continue;
+			}
+			
+			// Ignore comment lines
+
+			if ( line.startsWith("#") ) {
+				continue;
+			}
+			
+			// If we have got this far then we must have a line that is 
+			// a) Not a comment
+			// b) Not empty
+			// So split it into a list using whitespace as the separator
+			
+			QStringList list = QStringList::split( QRegExp( "\\s" ), line, false );
+			
+			if ( list[0] == "hlsearch" ) {
+				if ( list[1] == "on" ) {
+					bool on = true;
+					YZSession::mOptions->setOptionFromString( &on, "hlsearch" );
+				} else {
+					bool on = false; 
+					YZSession::mOptions->setOptionFromString( &on, "hlsearch" );
 				}
-				
-				if ( list[0] == "search_list" ) {
-					list.pop_front();
-					YZSession::mSearchHistory[ YZSession::mCurrentSearchItem++ ] = list.join(" ");
-				}
-				
-				if ( list[0] == "command_list" ) {
-					list.pop_front();
-					YZSession::mExHistory[ YZSession::mCurrentExItem++ ] = list.join(" ");
-				}
-				
-				if ( list[0] == "search_history" ) {
-					saveSearchPosition( list[3], list[1].toInt(), list[2].toInt() );
-				}
+			}
+			
+			if ( list[0].startsWith(":") || list[0] == "command_list" ) {
+				YZSession::mExHistory[ YZSession::mCurrentExItem++ ] = (list.join(" ")).remove(0, 1);
+			}
+			
+			if ( list[0].startsWith("?") || list[0] == "search_list" ) {
+				YZSession::mSearchHistory[ YZSession::mCurrentSearchItem++ ] = (list.join(" ")).remove(0, 1);
+			}
+			
+			if ( list[0].startsWith(">") || list[0] == "start_position" ) {
+				YZSession::mStartPosition.push_back( new YZYzisinfoStartPositionRecord( list[3], list[1].toInt(), list[2].toInt() ) );
+			}
+			
+			if ( list[0].startsWith("_") || list[0] == "search_history" ) {
+				YZSession::mJumpList.push_back( new YZYzisinfoJumpListRecord( list[3], list[1].toInt(), list[2].toInt() ) );
+				YZSession::mCurrentJumpListItem++;
 			}
 		}
 		
@@ -88,140 +128,221 @@ void YZYzisinfo::readYzisinfo() {
 	}
 }
 
-void YZYzisinfo::writeYzisinfo() {
-	int i;	
-	if ( mYzisinfo.open( IO_WriteOnly ) ) {
-		YZYzisinfoRecord * record;
-		QTextStream write( &mYzisinfo );
-		write.setEncoding( QTextStream::UnicodeUTF8 );
+/**
+ * YZYzisinfo::updateStartPosition
+ */
+ 
+void YZYzisinfo::updateStartPosition( const QString & filename, const int x, const int y ) {
+	bool found = false;
 
-		for( i = YZSession::mYzisinfoList.count(); i > 0; --i ) {
-			record = YZSession::mYzisinfoList[i - 1];
-
-			if ( record->keyword() == "start_position" ) {
-				write << "start_position ";
-				write << dynamic_cast<YZYzisinfoRecordStartPosition*>(record)->position()->x();
-				write << " "; 
-				write << dynamic_cast<YZYzisinfoRecordStartPosition*>(record)->position()->y();
-				write << " ";
-				write << dynamic_cast<YZYzisinfoRecordStartPosition*>(record)->filename() << endl;
-			}
-		}
-		
-		saveSearchHistory( write );
-		saveExHistory( write );
-	      
-		for( i = YZSession::mYzisinfoList.count(); i > 0; --i ) {
-			record = YZSession::mYzisinfoList[i - 1];
-			
-			if ( record->keyword() == "search_history" ) {
-				int end = dynamic_cast<YZYzisinfoRecordSearchHistory*>(record)->indexCount();
-				for( int j = 0; j < end; ++j ) {
-					write << "search_history ";
-					YZCursor * tmp = dynamic_cast<YZYzisinfoRecordSearchHistory*>(record)->previousSearchPosition();
-					write << tmp->x();
-					write << " ";
-					write << tmp->y();
-					write << " ";
-					write << dynamic_cast<YZYzisinfoRecordSearchHistory*>(record)->filename() << endl;
-				}
-			}
-		}
-		
-		write << endl;
-		mYzisinfo.close();
-	}
-}
-
-YZCursor * YZYzisinfo::startPosition() {
-	
-	for ( YZYzisinfoList::Iterator it = YZSession::mYzisinfoList.begin();
-	      it != YZSession::mYzisinfoList.end(); ++it ) {
-		if ( (*it)->keyword() == "start_position" 
-		&&   dynamic_cast<YZYzisinfoRecordStartPosition*>(*it)->filename() == YZSession::me->currentBuffer()->fileName() ) {
-			return dynamic_cast<YZYzisinfoRecordStartPosition*>(*it)->position();
-		}
-	}
-
-	return 0;
-}
-
-void YZYzisinfo::saveStartPosition( const QString & filename, const int x, const int y ) {
-
-	for ( YZYzisinfoList::Iterator it = YZSession::mYzisinfoList.begin();
-	      it != YZSession::mYzisinfoList.end(); ++it ) {
-		if ( (*it)->keyword() == "start_position"
-		&&   dynamic_cast<YZYzisinfoRecordStartPosition*>(*it)->filename() == filename ) {
-			dynamic_cast<YZYzisinfoRecordStartPosition*>(*it)->setPosition(x, y);
+	for ( StartPositionVector::Iterator it = YZSession::mStartPosition.begin(); it != YZSession::mStartPosition.end(); ++it ) {
+		if ( (*it)->filename() == filename ) {
+			found = true;
+			YZSession::mStartPosition.erase(it);
+			YZSession::mStartPosition.push_back( new YZYzisinfoStartPositionRecord( filename, x, y ) );
 			return;
 		}
 	}
-	
-	YZSession::mYzisinfoList.push_back( new YZYzisinfoRecordStartPosition( "start_position", filename, x, y ) ); 
+	         
+	if ( ! found ) {         
+		YZSession::mStartPosition.push_back( new YZYzisinfoStartPositionRecord( filename, x, y ) );
+	}
 	
 	return;
 }
 
-YZCursor * YZYzisinfo::searchPosition() {
-	
-	for ( YZYzisinfoList::Iterator it = YZSession::mYzisinfoList.begin();
-		   it != YZSession::mYzisinfoList.end(); ++it ) {
-		if ( (*it)->keyword() == "search_history" ) {
-			QString x = dynamic_cast<YZYzisinfoRecordSearchHistory*>(*it)->filename();
-		}
-		if ( (*it)->keyword() == "search_history" ) {
-			if ( dynamic_cast<YZYzisinfoRecordSearchHistory*>(*it)->filename() == YZSession::me->currentBuffer()->fileName() ) {
-				return dynamic_cast<YZYzisinfoRecordSearchHistory*>(*it)->previousSearchPosition();
-			}
-		}
-	}
-            
-	return new YZCursor( YZSession::me->currentView()->getBufferCursor() );
-}
-
-void YZYzisinfo::saveSearchPosition( const QString & filename, const int x, const int y ) { 
-
+/**
+ * YZYzisinfo::updateJumpList
+ */
+ 
+void YZYzisinfo::updateJumpList( const QString & filename, const int x, const int y ) {
 	bool found = false;
-	
-	for ( YZYzisinfoList::Iterator it = YZSession::mYzisinfoList.begin(); it != YZSession::mYzisinfoList.end(); ++it ) {
-		if ( (*it)->keyword() == "search_history" ) {
-			if ( dynamic_cast<YZYzisinfoRecordSearchHistory*>(*it)->filename() == filename ) {
+
+	for ( JumpListVector::Iterator it = YZSession::mJumpList.begin(); it != YZSession::mJumpList.end(); ++it ) {
+		if ( (*it)->filename() == filename ) {
+			if ( (*it)->position()->x() == static_cast<unsigned int>(x) && (*it)->position()->y() == static_cast<unsigned int>(y) ) {
 				found = true;
-				dynamic_cast<YZYzisinfoRecordSearchHistory*>(*it)->setPosition( x, y );
-				return;
+				break;
 			}
 		}
 	}
 	         
 	if ( ! found ) {         
-		YZSession::mYzisinfoList.push_back( new YZYzisinfoRecordSearchHistory( "search_history", filename, x, y ) );
+		YZSession::mJumpList.push_back( new YZYzisinfoJumpListRecord( filename, x, y ) );
 	}
 	
 	return;
 }
 
-void YZYzisinfo::saveSearchHistory( QTextStream & write ) {
+/**
+ * YZYzisinfo::writeYzisinfo
+ */
+ 
+void YZYzisinfo::writeYzisinfo() {
+	if ( mYzisinfo.open( IO_WriteOnly ) ) {
+		QTextStream write( &mYzisinfo );
+		write.setEncoding( QTextStream::UnicodeUTF8 );
+		
+		// Write header
+		
+		write << "# This yzisinfo file was generated by Yzis " << VERSION_CHAR << "." << endl;
+		write << "# You may edit it if you're careful!" << endl;
+		write << endl;
+		
+		// Write whether hlsearch is on or off
+		
+		write << "# Set hlsearch on or off:" << endl;
+		write << "hlsearch ";
+		if ( YZSession::me->getBooleanOption( "hlsearch") ) {
+			write << "on" << endl;
+		} else {
+			write << "off" << endl;
+		}
+		write << endl;
+		
+		write << "# Command Line History (oldest to newest):" << endl; 
+		saveExHistory( write );
+		write << endl;
+		
+		write << "# Search String History (oldest to newest):" << endl;		
+		saveSearchHistory( write );
+		write << endl;
+		
+		write << "# Position to start at when opening file (oldest to newest):" << endl;
+		saveStartPosition( write );
+		write << endl;
+		
+		write << "# Jump list (oldest to newest):" << endl;
+		saveJumpList( write );
+		write << endl;
+		
+		mYzisinfo.close();
+	}
+}
 
+/**
+ * YZYzisinfo::saveExHistory
+ */
+ 
+void YZYzisinfo::saveExHistory( QTextStream & write ) {
+
+	int start = 0;
+	int end = YZSession::mExHistory.count();
+	
+	if ( end > 50) {
+		start = end - 50;
+	}
+
+	for ( int i = start; i < end; ++i ) {
+		if ( ! YZSession::mExHistory[i].isEmpty() ) {
+			write << ":";
+			write << YZSession::mExHistory[i];
+			write << endl;
+		}
+	}
+}
+
+/**
+ * YZYzisinfo::saveSearchHistory
+ */
+ 
+void YZYzisinfo::saveSearchHistory( QTextStream & write ) {
+	
+	int start = 0;
 	int end = YZSession::mSearchHistory.count();
 	
-	for ( int i = 0; i < end || i < 50; ++i ) {
+	if ( end > 50) {
+		start = end - 50;
+	}
+
+	for ( int i = start; i < end; ++i ) {
 		if ( ! YZSession::mSearchHistory[i].isEmpty() ) {
-			write << "search_list" << " ";
+			write << "?";
 			write << YZSession::mSearchHistory[i];
 			write << endl;
 		}
 	}
 }
 
-void YZYzisinfo::saveExHistory( QTextStream & write ) {
+/**
+ * YZYzisinfo::saveStartPosition
+ */
+ 
+void YZYzisinfo::saveStartPosition( QTextStream & write ) {
 
-	int end = YZSession::mExHistory.count();
+	int start = 0;
+	int end = YZSession::mStartPosition.count();
 	
-	for ( int i = 0; i < end || i < 50; ++i ) {
-		if ( ! YZSession::mExHistory[i].isEmpty() ) {
-			write << "command_list" << " ";
-			write << YZSession::mExHistory[i];
-			write << endl;
-		}
+	if ( end > 100 ) {
+		start = end - 100;
+	}
+
+	for( int i = start; i < end; ++i ) {
+		write << "> ";
+		yzDebug() << (YZSession::mStartPosition[i])->position()->x();
+		write << (YZSession::mStartPosition[i])->position()->x();
+		write << " "; 
+		yzDebug() << (YZSession::mStartPosition[i])->position()->y();
+		write << (YZSession::mStartPosition[i])->position()->y();
+		write << " ";
+		yzDebug() << (YZSession::mStartPosition[i])->filename() << endl;
+		write << (YZSession::mStartPosition[i])->filename() << endl;
+	}
+}	
+
+/**
+ * YZYsisinfo::saveJumpList
+ */
+ 
+void YZYzisinfo::saveJumpList( QTextStream & write ) {
+
+	int start = 0;	
+	int end = YZSession::mJumpList.count();
+	
+	if ( end > 100 ) {
+		start = end - 100;
+	}
+	
+	for( int i = start; i < end; ++i ) {
+		write << "_" << " ";
+		write << YZSession::mJumpList[i]->position()->x();
+		write << " ";
+		write << YZSession::mJumpList[i]->position()->y();
+		write << " ";
+		write << YZSession::mJumpList[i]->filename() << endl;
 	}
 }
+
+/**
+ * YZYzisinfo::startPosition
+ */
+
+YZCursor * YZYzisinfo::startPosition() {
+
+	for ( StartPositionVector::Iterator it = YZSession::mStartPosition.begin(); it != YZSession::mStartPosition.end(); ++it ) {
+		if ( (*it)->filename() == YZSession::me->currentBuffer()->fileName() ) {
+			return (*it)->position();
+		}
+	}
+
+	return 0;
+}
+
+/**
+ * YZYzisinfo::searchPosition
+ */
+ 
+YZCursor * YZYzisinfo::searchPosition() {
+	
+	for ( JumpListVector::Iterator it = YZSession::mJumpList.begin(); it != YZSession::mJumpList.end(); ++it ) {
+		/*if ( (*it)->filename() == YZSession::me->currentBuffer()->fileName() ) {
+			return (*it)->previousSearchPosition();
+		}*/
+	}
+            
+	return new YZCursor( YZSession::me->currentView()->getBufferCursor() );
+}
+
+/*
+ * END OF FILE
+ */

@@ -1,3 +1,7 @@
+2005-06-06 Dmitry Suzdalev
+  * libyzis
+	added gI,gJ commands
+
 2005-05-28 scottn
   * libyzis
    added ex and search history to yzisinfo

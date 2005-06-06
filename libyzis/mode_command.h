@@ -204,6 +204,7 @@ class YZModeCommand : public YZMode {
 		void gotoLineAtCenter(const YZCommandArgs &args);
 		void gotoLineAtBottom(const YZCommandArgs &args);
 		void insertAtSOL(const YZCommandArgs &args);
+                void insertAtCol1(const YZCommandArgs &args);
 		void gotoInsertMode(const YZCommandArgs &args);
 		void gotoCommandMode(const YZCommandArgs &args);
 		void gotoReplaceMode(const YZCommandArgs &args);
@@ -213,6 +214,7 @@ class YZModeCommand : public YZMode {
 		void insertLineAfter(const YZCommandArgs &args);
 		void insertLineBefore(const YZCommandArgs &args);
 		void joinLine(const YZCommandArgs &args);
+                void joinLineWithoutSpace(const YZCommandArgs& args);
 		void pasteAfter(const YZCommandArgs &args);
 		void pasteBefore(const YZCommandArgs &args);
 		void yankLine(const YZCommandArgs &args);

@@ -5,6 +5,7 @@
   file and is more readable
   tidy up of the reading and writing of the yzisinfo file
   set limits to the number of entries for each type to remember
+  only allow the yzisinfo file to be read once per session
   
 2005-06-06 Dmitry Suzdalev
   * libyzis

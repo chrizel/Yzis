@@ -370,6 +370,12 @@ class YZSession {
 		static YZEvents *events;
 		static YZYzisinfo* mYzisinfo;
 		
+      /**
+       * yzisinfo initialized
+       */
+     
+       static bool mYzisinfoInitialized;
+     
 	    /**
 	     * command history
 	     */

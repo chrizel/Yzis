@@ -67,6 +67,12 @@ YZYzisinfo::~YZYzisinfo() {
 
 void YZYzisinfo::readYzisinfo() {
 	
+	if ( YZSession::me->mYzisinfoInitialized ) {
+		return;
+	}
+
+	YZSession::me->mYzisinfoInitialized = true;
+	
 	if ( mYzisinfo.open( IO_ReadOnly ) ) {
 		QTextStream stream( &mYzisinfo );
 		QString line;

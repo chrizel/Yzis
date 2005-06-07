@@ -74,8 +74,8 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mOptions = new YZInternalOptionPool();
 	mRegisters = new YZRegisters();
 	mYzisinfo= new YZYzisinfo();
-	mExHistory.resize(50);
-	mSearchHistory.resize(50);
+	mExHistory.resize(200);
+	mSearchHistory.resize(200);
 }
 
 YZSession::~YZSession() {

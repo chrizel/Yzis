@@ -738,7 +738,7 @@ void YZView::gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int 
 	gotoy( nexty );
 	gotox( nextx, viewCursor != mainCursor );
 	applyGoto( viewCursor, applyCursor );
-	YZSession::me->saveCursorPosition();
+	YZSession::me->saveJumpPosition();
 }
 
 void YZView::gotoxyAndStick( YZCursor* cursor ) {

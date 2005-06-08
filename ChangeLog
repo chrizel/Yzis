@@ -1,11 +1,18 @@
+2005-06-09 scottn
+  * libyzis
+   added the tag commands <CTRL>] and <CTRL>t
+   tagging uses the readtags.h and readtags.c from Exuburent Ctags library 
+   (http://ctags.sourceforge.net/)
+   tag file "tags" searched for from current working directory down to root.
+
 2005-06-07 scottn
   * libyzis
-  added remembering of whether hlsearch is set or not
-  major tidy up of the yzisinfo file - now has format closer to the viminfo 
-  file and is more readable
-  tidy up of the reading and writing of the yzisinfo file
-  set limits to the number of entries for each type to remember
-  only allow the yzisinfo file to be read once per session
+   added remembering of whether hlsearch is set or not
+   major tidy up of the yzisinfo file - now has format closer to the viminfo 
+   file and is more readable
+   tidy up of the reading and writing of the yzisinfo file
+   set limits to the number of entries for each type to remember
+   only allow the yzisinfo file to be read once per session
   
 2005-06-06 Dmitry Suzdalev
   * libyzis

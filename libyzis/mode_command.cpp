@@ -32,6 +32,7 @@
 
 #include <assert.h>
 
+#include <qdir.h>
 #include <qregexp.h>
 #include <qptrlist.h>
 
@@ -46,6 +47,7 @@
 #include "session.h"
 #include "view.h"
 #include "viewcursor.h"
+#include "readtags.h"
 
 YZModeCommand::YZModeCommand() : YZMode() {
 	mType = MODE_COMMAND;
@@ -173,6 +175,8 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("<PDOWN>", &YZModeCommand::scrollPageDown) );
 	commands.append( new YZCommand("<CTRL>f", &YZModeCommand::scrollPageDown) );
 	commands.append( new YZCommand(".", &YZModeCommand::redoLastCommand) );
+	commands.append( new YZCommand("<CTRL>]", &YZModeCommand::tagNext) );
+	commands.append( new YZCommand("<CTRL>t", &YZModeCommand::tagPrev) );
 	commands.append( new YZCommand("<CTRL>o", &YZModeCommand::undoJump) );
 }
 
@@ -1324,8 +1328,99 @@ void YZModeCommand::redoLastCommand( const YZCommandArgs & args ) {
 	execCommand( view, view->getLastInputBuffer() );
 }
 
+void YZModeCommand::tagNext( const YZCommandArgs & args ) {
+	YZView * view = args.view;
+	YZCursor from = view->getBufferCursor();
+	QString word = view->myBuffer()->getWordAt( from );
+	
+	if ( ! word.isNull() ) {
+		int pos = 0;
+		bool found = false;
+		QString tagfile = "";
+		QString path = YZSession::me->currentBuffer()->fileName();
+		int count = path.contains( QDir::separator() );
+		
+		for ( int i = 0; i < count; i++ ) {
+			pos = path.findRev( QDir::separator() );
+			tagfile = path.left( pos + 1 ) + "tags";
+			path = path.left( pos );
+			
+			if ( QFile::exists( tagfile ) ) {
+				found = true;
+				break;
+			}
+		}
+		
+		if ( ! found ) {
+			YZSession::me->popupMessage( _("Unable to find tag file") );
+			return;
+		}
+		
+		tagFileInfo * const info = new tagFileInfo;
+		tagFile * const file = tagsOpen( tagfile.latin1(), info );
+		
+		if ( file ) {
+			tagEntry * const entry = new tagEntry;
+			int tagResult = tagsFind( file, entry, word.latin1(), TAG_PARTIALMATCH);
+			if ( tagResult == TagSuccess ) {
+				YZBuffer * b;
+				YZSession::me->saveTagPosition();
+				YZSession::me->saveJumpPosition();
+				QString file = path + QDir::separator() + entry->file;
+				QString pattern = entry->address.pattern;
+   			if ( file == YZSession::me->currentBuffer()->fileName() ) {
+				   b = YZSession::me->currentBuffer();
+				} else {
+	      		b = YZSession::me->findBuffer( file );
+	      
+	            if ( b ) {
+		         	YZSession::me->setCurrentView( b->firstView() );
+	            } else {
+		         	YZSession::me->createBuffer( file );
+			         b = view->mySession()->findBuffer( file );
+			         YZASSERT_MSG( b != NULL, QString("Created buffer %1 was not found!").arg(file) );
+			         YZSession::me->setCurrentView( b->firstView() );
+	            }
+				}
+
+				pattern = pattern.mid( 2, pattern.length() - 4 );
+				yzDebug() << "mid = " << pattern << endl;
+				pattern = pattern.replace("\\", "");
+				pattern = pattern.replace("(", "\\(");
+				pattern = pattern.replace(")", "\\)");
+				pattern = pattern.replace("{", "\\{");
+				pattern = pattern.replace("}", "\\}");
+				pattern = pattern.replace("*", "\\*");
+				pattern = pattern.replace("/", "\\/");
+				yzDebug() << "After escaping = " << pattern << endl;
+				QRegExp rx(pattern);
+				
+				int lineCount = static_cast<int>( b->lineCount() );
+				
+				for( int i = 0; i < lineCount; i++ )
+				{
+					pos = rx.search(b->yzline(i)->data());
+					
+					if ( pos != -1 ) {
+						YZSession::me->currentView()->gotoxy( 0, i, true );
+						break;
+					}
+				}
+			}
+			
+			tagsClose( file );
+		}
+	}
+}
+
+void YZModeCommand::tagPrev( const YZCommandArgs & args ) {
+	YZView * view = args.view;
+	YZCursor * cursor = YZSession::me->previousTagPosition();
+	view->gotodxdy(cursor->x(), cursor->y(), true);
+}
+
 void YZModeCommand::undoJump( const YZCommandArgs & args ) {
 	YZView * view = args.view;
-	YZCursor * cursor = YZSession::me->previousCursorPosition();
+	YZCursor * cursor = YZSession::me->previousJumpPosition();
 	view->gotodxdy(cursor->x(), cursor->y(), true);
 }

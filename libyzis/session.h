@@ -24,7 +24,7 @@
 /**
  * $Id$
  */
-
+ 
 #include "syntaxhighlight.h"
 #include "internal_options.h"
 #include "registers.h"
@@ -62,10 +62,12 @@ class YZYzisinfoStartPositionRecord;
 typedef QMap<QString,YZBuffer*> YZBufferMap;
 #if QT_VERSION < 0x040000
 typedef QValueVector<QString> StringVector;
+typedef QValueVector<YZYzisinfoJumpListRecord*> TagListVector;
 typedef QValueVector<YZYzisinfoJumpListRecord*> JumpListVector;
 typedef QValueVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
 #else
 typedef QVector<QString> StringVector;
+typedef QVector<YZYzisinfoJumpListRecord*> TagListVector;
 typedef QVector<YZYzisinfoJumpListRecord*> JumpListVector;
 typedef QVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
 #endif
@@ -344,8 +346,11 @@ class YZSession {
 		void registerModifier ( const QString& mod );
 		void unregisterModifier ( const QString& mod );
 
-		void saveCursorPosition();
-		YZCursor * previousCursorPosition();
+		void saveJumpPosition();
+		YZCursor * previousJumpPosition();
+		
+		void saveTagPosition();
+		YZCursor * previousTagPosition();
 
 	protected:
 		//we map "filename"/buffer for buffers
@@ -417,6 +422,12 @@ class YZSession {
 	     */
 	     
 	    static unsigned int mCurrentJumpListItem;
+	    
+	    /**
+	     * tag list stack
+	     */
+	     
+		static TagListVector mTagList;
 };
 
 #endif /* YZ_SESSION_H */

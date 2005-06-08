@@ -55,6 +55,7 @@ unsigned int YZSession::mCurrentSearchItem = 0;
 unsigned int YZSession::mCurrentJumpListItem = 0;
 StringVector YZSession::mExHistory = 0;
 StringVector YZSession::mSearchHistory = 0;
+TagListVector YZSession::mTagList = 0;
 JumpListVector YZSession::mJumpList = 0;
 StartPositionVector YZSession::mStartPosition = 0;
 
@@ -336,7 +337,7 @@ void YZSession::unregisterModifier ( const QString& mod ) {
 	}
 }
 
-void YZSession::saveCursorPosition() {
+void YZSession::saveJumpPosition() {
 	// Make sure we have a current view
 	if ( ! mCurView ) {
 		return;
@@ -350,33 +351,88 @@ void YZSession::saveCursorPosition() {
 	||   YZSession::me->currentView()->modePool()->currentType() == YZMode::MODE_SEARCH_BACKWARD 
 	|| last == "n"
 	|| last == "N" ) {
-		mYzisinfo->updateJumpList( YZSession::me->currentBuffer()->fileName(), YZSession::me->currentView()->getCursor()->x(), YZSession::me->currentView()->getCursor()->y() );
+		mYzisinfo->updateJumpList( currentBuffer()->fileName(), currentView()->getCursor()->x(), currentView()->getCursor()->y() );
 	} else {
 		return;
 	}
 }
 
-YZCursor * YZSession::previousCursorPosition() {
+YZCursor * YZSession::previousJumpPosition() {
+
+	bool found = false;	
+	bool repeating = false;
+
+	while ( true ) {
+		if ( mCurrentJumpListItem == 0 ) {
+			// Make sure we don't end up in a endless loop
+			if ( repeating ) {
+				break;
+			}
+			
+			repeating = true;
+			mCurrentJumpListItem = mJumpList.count();
+		}
+		
+		--mCurrentJumpListItem;
 	
-	if ( mCurrentJumpListItem == 0 ) {
-		mCurrentJumpListItem = mJumpList.count();
+		if ( mJumpList[mCurrentJumpListItem]->filename() == currentBuffer()->fileName() ) {
+			found = true;
+			break;
+		}
 	}
 	
-	--mCurrentJumpListItem;
-	
-	if ( mJumpList[mCurrentJumpListItem]->filename() == YZSession::me->currentBuffer()->fileName() ) {
+	if ( found ) {
 		return mJumpList[mCurrentJumpListItem]->position();
 	} else {
-		YZBuffer * b = findBuffer( mJumpList[mCurrentJumpListItem]->filename() );
+		return currentView()->getCursor();
+	}
+}
+
+void YZSession::saveTagPosition() {
+	mTagList.push_back( new YZYzisinfoJumpListRecord( currentBuffer()->fileName(), currentView()->getCursor()->x(), currentView()->getCursor()->y() ) );	
+}
+
+YZCursor * YZSession::previousTagPosition() {
+	
+	if ( mTagList.isEmpty() ) {
+		currentView()->displayInfo( _("At bottom of tag stack") );
+		return currentView()->getCursor();
+	}
+
+	int top = mTagList.count() - 1;
+	
+	if ( mTagList[top]->filename() == YZSession::me->currentBuffer()->fileName() ) {
+		YZCursor * tmp = mTagList[top]->position();
+		mTagList.pop_back();
+		return tmp;
+	} else {
+		if ( currentView()->myBuffer()->fileIsModified() ) {
+			YZSession::me->popupMessage( _("File has been modified") );
+			return currentView()->getCursor();
+		}
+			
+		YZBuffer * b = findBuffer( mTagList[top]->filename() );
+		currentView()->setCommandLineText( "" );
+		currentView()->modePool()->push( YZMode::MODE_EX );
+		currentView()->setCommandLineText( "q" );
+		cmd_state ret = YZSession::me->getExPool()->execCommand( currentView(), "<ENTER>" );
+
+		if ( ret != CMD_QUIT ) {
+			return currentView()->getCursor(); 
+		}
 
 		if ( b ) {
 			setCurrentView( b->firstView() );
 		} else {
-			createBuffer( mJumpList[mCurrentJumpListItem]->filename() );
+			createBuffer( mTagList[top]->filename() );
+			b = YZSession::me->findBuffer( mTagList[top]->filename() );
+			YZASSERT_MSG( b != NULL, QString("Created buffer %1 was not found!").arg( mTagList[top]->filename() ) );
+			YZSession::me->setCurrentView( b->firstView() );
 		}
 
-		currentView()->gotodxdy(mJumpList[mCurrentJumpListItem]->position()->x(), mJumpList[mCurrentJumpListItem]->position()->y(), true);
-
-		return mJumpList[mCurrentJumpListItem]->position();
+		currentView()->gotodxdy(mTagList[top]->position()->x(), mTagList[top]->position()->y(), true);
+		YZCursor * tmp = mTagList[top]->position();
+		mTagList.pop_back();	
+		return tmp;
 	}
 }

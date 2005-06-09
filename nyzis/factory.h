@@ -18,6 +18,7 @@
 
 #ifndef NYZ_FACTORY_H
 #define NYZ_FACTORY_H
+
 /**
  * NYZFactory - Ncurses main class for the whole session
  */

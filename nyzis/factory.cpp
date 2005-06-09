@@ -121,6 +121,10 @@ bool NYZFactory::processInput(int) {
 			currentView->sendKey( QString( QChar( 0x60+c ) ),"<CTRL>" );
 			return true;
 	} // switch
+	
+	if ( c == 0x1d ) {
+		currentView->sendKey( "<CTRL>]" );
+	}
 
 	if (keycodes.contains(c)) {
 		currentView->sendKey(keycodes[c],"");

@@ -4,6 +4,8 @@
    tagging uses the readtags.h and readtags.c from Exuburent Ctags library 
    (http://ctags.sourceforge.net/)
    tag file "tags" searched for from current working directory down to root.
+   fix for nyzis to get it to recognise <CTRL>]
+   can use <CTRL>o as well as <CTRL>t to jump back 
 
 2005-06-07 scottn
   * libyzis

@@ -410,13 +410,12 @@ YZCursor * YZSession::previousTagPosition() {
 			YZSession::me->popupMessage( _("File has been modified") );
 			return currentView()->getCursor();
 		}
-			
+
 		YZBuffer * b = findBuffer( mTagList[top]->filename() );
 		currentView()->setCommandLineText( "" );
 		currentView()->modePool()->push( YZMode::MODE_EX );
 		currentView()->setCommandLineText( "q" );
 		cmd_state ret = YZSession::me->getExPool()->execCommand( currentView(), "<ENTER>" );
-
 		if ( ret != CMD_QUIT ) {
 			return currentView()->getCursor(); 
 		}
@@ -429,7 +428,7 @@ YZCursor * YZSession::previousTagPosition() {
 			YZASSERT_MSG( b != NULL, QString("Created buffer %1 was not found!").arg( mTagList[top]->filename() ) );
 			YZSession::me->setCurrentView( b->firstView() );
 		}
-
+ 
 		currentView()->gotodxdy(mTagList[top]->position()->x(), mTagList[top]->position()->y(), true);
 		YZCursor * tmp = mTagList[top]->position();
 		mTagList.pop_back();	

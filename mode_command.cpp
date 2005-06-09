@@ -1414,13 +1414,16 @@ void YZModeCommand::tagNext( const YZCommandArgs & args ) {
 }
 
 void YZModeCommand::tagPrev( const YZCommandArgs & args ) {
-	YZView * view = args.view;
+	if ( args.usercount ) {}	// To remove args not used warning
 	YZCursor * cursor = YZSession::me->previousTagPosition();
-	view->gotodxdy(cursor->x(), cursor->y(), true);
+	YZSession::me->currentView()->gotodxdy(cursor->x(), cursor->y(), true);
 }
 
 void YZModeCommand::undoJump( const YZCommandArgs & args ) {
-	YZView * view = args.view;
-	YZCursor * cursor = YZSession::me->previousJumpPosition();
-	view->gotodxdy(cursor->x(), cursor->y(), true);
+	if ( YZSession::me->mTagList.count() > 0 ) {
+		tagPrev( args );
+	} else {
+		YZCursor * cursor = YZSession::me->previousJumpPosition();
+		YZSession::me->currentView()->gotodxdy(cursor->x(), cursor->y(), true);
+	}
 }

@@ -320,6 +320,10 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 
 		for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
 			it->commitPaintEvent();
+			
+		if ( c->arg() == ARG_MARK ) {
+			YZSession::me->saveJumpPosition();
+		}
 
 	} else {
 		// keep the commands that match exactly
@@ -501,6 +505,9 @@ YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 		}
 		start--;	
 	}
+	
+	YZSession::me->saveJumpPosition( 0, start );
+	
 	return YZCursor(0,start);
 }
 
@@ -515,6 +522,9 @@ YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
 		}
 		start++;	
 	}
+	
+	YZSession::me->saveJumpPosition( 0, start - 1 );
+	
 	return YZCursor(0,start-1);
 }
 
@@ -523,10 +533,14 @@ YZCursor YZModeCommand::matchPair(const YZMotionArgs &args) {
 	bool found = false;
 	YZCursor pos = args.view->myBuffer()->action()->match( args.view, *viewCursor.buffer(), &found );
 	if ( found ) {
-		if ( args.standalone ) 
+		if ( args.standalone ) {
 			args.view->gotoxyAndStick( &pos );
+			YZSession::me->saveJumpPosition();
+		}
+		
 		return pos;
 	}
+	
 	return *viewCursor.buffer();
 }
 
@@ -802,9 +816,9 @@ YZCursor YZModeCommand::gotoMark( const YZMotionArgs &args ) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	bool found = false;
 	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg, &found );
-	if ( found )
+	if ( found ) {
 		return *pos.bPos;
-	else {
+	} else {
 		yzDebug() << "WARNING! mark " << args.arg << " not found" << endl;
 		return *viewCursor.buffer();
 	}
@@ -834,6 +848,9 @@ YZCursor YZModeCommand::gotoLine(const YZMotionArgs &args) {
 		else
 			args.view->gotoLine( &viewCursor, 0, args.standalone );
 	}
+
+	YZSession::me->saveJumpPosition();
+	
 	return *viewCursor.buffer();
 }
 
@@ -882,7 +899,12 @@ YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 			moved = true;
 		}
 	}
-	if ( args.standalone && moved ) args.view->gotoxyAndStick( &from );
+	
+	if ( args.standalone && moved ) {
+		args.view->gotoxyAndStick( &from );
+		YZSession::me->saveJumpPosition();
+	}
+	
 	return from;
 }
 
@@ -898,7 +920,12 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 			moved = true;
 		}
 	}
-	if ( args.standalone && moved ) args.view->gotoxyAndStick( &from );
+	
+	if ( args.standalone && moved ) {
+		args.view->gotoxyAndStick( &from );
+		YZSession::me->saveJumpPosition();
+	}
+	
 	return from;
 }
 
@@ -908,6 +935,7 @@ void YZModeCommand::execMotion( const YZCommandArgs &args ) {
 	const YZMotion *m=dynamic_cast<const YZMotion*>(args.cmd);
 	assert(m);
 	YZCursor to = (this->*(m->motionMethod()))(YZMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true));
+	//args.view->centerViewVertically( to.y() );
 	args.view->gotoxy(to.x(), to.y());
 	
 }
@@ -1402,7 +1430,9 @@ void YZModeCommand::tagNext( const YZCommandArgs & args ) {
 					pos = rx.search(b->yzline(i)->data());
 					
 					if ( pos != -1 ) {
+						YZSession::me->currentView()->centerViewVertically( i );
 						YZSession::me->currentView()->gotoxy( 0, i, true );
+						YZSession::me->saveJumpPosition();
 						break;
 					}
 				}
@@ -1416,14 +1446,12 @@ void YZModeCommand::tagNext( const YZCommandArgs & args ) {
 void YZModeCommand::tagPrev( const YZCommandArgs & args ) {
 	if ( args.usercount ) {}	// To remove args not used warning
 	YZCursor * cursor = YZSession::me->previousTagPosition();
-	YZSession::me->currentView()->gotodxdy(cursor->x(), cursor->y(), true);
+	YZSession::me->currentView()->centerViewVertically( cursor->y() );
+	YZSession::me->currentView()->gotodxdy( cursor->x(), cursor->y(), true );
 }
 
 void YZModeCommand::undoJump( const YZCommandArgs & args ) {
-	if ( YZSession::me->mTagList.count() > 0 ) {
-		tagPrev( args );
-	} else {
-		YZCursor * cursor = YZSession::me->previousJumpPosition();
-		YZSession::me->currentView()->gotodxdy(cursor->x(), cursor->y(), true);
-	}
+	YZCursor * cursor = YZSession::me->previousJumpPosition();
+	YZSession::me->currentView()->centerViewVertically( cursor->y() );
+	YZSession::me->currentView()->gotodxdy( cursor->x(), cursor->y(), true );
 }

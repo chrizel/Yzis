@@ -555,6 +555,7 @@ void YZBuffer::load(const QString& file) {
 	YZView *hit;
 	for ( hit = mViews.first(); hit; hit = mViews.next() )
 		if ( tmp ) {
+			hit->centerViewVertically( tmp->y() );
 			hit->gotodxdy(tmp->x(), tmp->y(), true );
 		}
 }

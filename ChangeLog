@@ -1,3 +1,8 @@
+2005-06-14 scottn
+  * libyzis
+   center view vertically when tagging
+   <CTRL>o support for "`", "'", "G", "/", "?", "n", "N", "%s", "{", "}" and <CTRL>]
+
 2005-06-09 scottn
   * libyzis
    added the tag commands <CTRL>] and <CTRL>t

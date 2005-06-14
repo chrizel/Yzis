@@ -347,6 +347,8 @@ class YZSession {
 		void unregisterModifier ( const QString& mod );
 
 		void saveJumpPosition();
+		void saveJumpPosition( const int x, const int y );
+		void saveJumpPosition( const YZCursor * cursor );
 		YZCursor * previousJumpPosition();
 		
 		void saveTagPosition();

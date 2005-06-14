@@ -338,23 +338,15 @@ void YZSession::unregisterModifier ( const QString& mod ) {
 }
 
 void YZSession::saveJumpPosition() {
-	// Make sure we have a current view
-	if ( ! mCurView ) {
-		return;
-	}
-	
-	// Only record our cursor position if we are in search mode or 
-	// we are using the search keys
-	QString last = mCurView->getLastInputBuffer();
-	
-	if ( YZSession::me->currentView()->modePool()->currentType() == YZMode::MODE_SEARCH 
-	||   YZSession::me->currentView()->modePool()->currentType() == YZMode::MODE_SEARCH_BACKWARD 
-	|| last == "n"
-	|| last == "N" ) {
-		mYzisinfo->updateJumpList( currentBuffer()->fileName(), currentView()->getCursor()->x(), currentView()->getCursor()->y() );
-	} else {
-		return;
-	}
+	mYzisinfo->updateJumpList( currentBuffer()->fileName(), currentView()->getCursor()->x(), currentView()->getCursor()->y() );
+}
+
+void YZSession::saveJumpPosition( const int x, const int y ) {
+	mYzisinfo->updateJumpList( currentBuffer()->fileName(), x, y );
+}
+
+void YZSession::saveJumpPosition( const YZCursor * cursor ) {
+	mYzisinfo->updateJumpList( currentBuffer()->fileName(), cursor->x(), cursor->y() );
 }
 
 YZCursor * YZSession::previousJumpPosition() {

@@ -1,6 +1,7 @@
 /*  This file is part of the Yzis libraries
  *  Copyright (C) 2004 Loic Pauleve <panard@inzenet.org>,
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -38,11 +39,19 @@ YZSearch::~YZSearch() {
 }
 
 YZCursor YZSearch::forward( YZView* mView, const QString& pattern, bool* found, YZCursor* from ) {
-	return doSearch( mView, from, pattern, false, false, found );
+	YZCursor tmp = doSearch( mView, from, pattern, false, false, found );
+	YZSession::me->saveJumpPosition( &tmp );
+	
+	return tmp;
 }
+
 YZCursor YZSearch::backward( YZView* mView, const QString& pattern, bool* found, YZCursor* from ) {
-	return doSearch( mView, from, pattern, true, false, found );
+	YZCursor tmp = doSearch( mView, from, pattern, true, false, found );
+	YZSession::me->saveJumpPosition( &tmp );
+	
+	return tmp;
 }
+
 YZCursor YZSearch::replayForward( YZView* mView, bool* found, YZCursor* from, bool skipline ) {
 	return doSearch( mView, from, mCurrentSearch, false, skipline, found );
 }

@@ -43,6 +43,10 @@ win32-msvc {
 	DEFINES += YZIS_WIN32_MSVC
 }
 
+unix {
+	OBJECTS_DIR = .libs
+}
+
 # Input
 HEADERS += action.h \
            attribute.h \
@@ -78,9 +82,9 @@ HEADERS += action.h \
            viewcursor.h \
            portability.h \
            yzisinfo.h \
-           yzisinforecordsearchhistory.h \
-           yzisinforecordstartposition.h \
-           yzisinforecord.h \
+           yzisinfostartpositionrecord.h \
+           yzisinfojumplistrecord.h \
+           readtags.h \
            yzis.h
 
 SOURCES += action.cpp \
@@ -115,7 +119,7 @@ SOURCES += action.cpp \
            mode_search.cpp \
            mode_visual.cpp \
            yzisinfo.cpp \
-           yzisinforecordsearchhistory.cpp \
-           yzisinforecordstartposition.cpp \
-           yzisinforecord.cpp \
+           yzisinfostartpositionrecord.cpp \
+           yzisinfojumplistrecord.cpp \
+           readtags.c \
            viewcursor.cpp

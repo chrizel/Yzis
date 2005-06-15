@@ -59,9 +59,14 @@ win32-msvc {
 	DEFINES += YZIS_WIN32_MSVC
 }
 unix {
+	OBJECTS_DIR = .libs
 	LIBS += -L$$(LUALIB)
 	LIBS += -llualib50 -llua50
 	LIBS += -lmagic
+}
+
+unix {
+	OBJECTS_DIR = .libs
 }
 
 # Input
@@ -99,9 +104,9 @@ HEADERS += ../libyzis/action.h \
            ../libyzis/viewcursor.h \
            ../libyzis/portability.h \
            ../libyzis/yzisinfo.h \
-           ../libyzis/yzisinforecordsearchhistory.h \
-           ../libyzis/yzisinforecordstartposition.h \
-           ../libyzis/yzisinforecord.h \
+           ../libyzis/yzisinfostartpositionrecord.h \
+           ../libyzis/yzisinfojumplistrecord.h \
+           ../libyzis/readtags.h \
            ../libyzis/yzis.h
 
 SOURCES += ../libyzis/action.cpp \
@@ -136,7 +141,7 @@ SOURCES += ../libyzis/action.cpp \
            ../libyzis/mode_search.cpp \
            ../libyzis/mode_visual.cpp \
            ../libyzis/yzisinfo.cpp \
-           ../libyzis/yzisinforecordsearchhistory.cpp \
-           ../libyzis/yzisinforecordstartposition.cpp \
-           ../libyzis/yzisinforecord.cpp \
+           ../libyzis/yzisinfostartpositionrecord.cpp \
+           ../libyzis/yzisinfojumplistrecord.cpp \
+           ../libyzis/readtags.c \
            ../libyzis/viewcursor.cpp

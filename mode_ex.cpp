@@ -175,6 +175,8 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "highlight", &YZModeEx::highlight, QStringList("highlight") ));
 	commands.append( new YZExCommand( "reg(isters)", &YZModeEx::registers, QStringList("registers" ) ));
 	commands.append( new YZExCommand( "split", &YZModeEx::split, QStringList("split") ));
+	commands.append( new YZExCommand( "cd", &YZModeEx::cd, QStringList("cd") ));
+	commands.append( new YZExCommand( "pwd", &YZModeEx::pwd, QStringList("pwd") ));
 }
 
 QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -832,3 +834,16 @@ cmd_state YZModeEx::split( const YZExCommandArgs& args ) {
 	return CMD_OK;
 }
 
+cmd_state YZModeEx::cd( const YZExCommandArgs& args ) {
+	if ( QDir::setCurrent(args.arg) ) {
+		return CMD_OK;
+	} else {
+		args.view->mySession()->popupMessage( _( "Cannot change to specified directory" ) );
+		return CMD_ERROR;
+	}
+}
+
+cmd_state YZModeEx::pwd( const YZExCommandArgs& args ) {
+	args.view->mySession()->popupMessage( _( QDir::current().absPath() ) );
+	return CMD_OK;
+}

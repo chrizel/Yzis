@@ -156,6 +156,7 @@ const KAboutData *KYZisFactory::aboutData() {
 	data->addCredit( "Alexander Dymo", "KTextEditor ConfigInterface", "adymo@mksat.net" );
 	data->addCredit( "Erlend Hamberg", "View scrolling fixes", "ehamberg@online.no" );
 	data->addCredit( "Per Johansson", "Kyzis Tab caption improvment", "per.j@hjolug.org" );
+	data->addCredit( "Craig Howard",":cd and :pwd commands", "<craig@choward.ca>" );
 	data->setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"), I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
 
 	return data;

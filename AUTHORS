@@ -18,3 +18,4 @@ Erlend Hamberg <hamberg@stud.ntnu.no>
 Scott Newton <scottn@ihug.co.nz>
 Dmitry Suzdalev <dimsuz@mail.ru> (misc fixes + improvments)
 Dawid Ciezarkiewicz <araelx@gmail.com> ('xp' fix)
+Craig Howard <craig@choward.ca> (:pwd and :cd commands)

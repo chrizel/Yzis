@@ -181,6 +181,8 @@ class YZModeEx : public YZMode {
 		cmd_state split( const YZExCommandArgs& args );
 		cmd_state genericMap( const YZExCommandArgs& args, int );
 		cmd_state genericUnmap( const YZExCommandArgs& args, int );
+		cmd_state cd( const YZExCommandArgs& args );
+		cmd_state pwd( const YZExCommandArgs& args );
 };
 
 

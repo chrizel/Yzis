@@ -52,7 +52,7 @@
 #include <pwd.h>
 #include "config.h"
 #include "translator.h"
-#include "libintl.h"
+#include <libintl.h>
 
 #define CHECK_GETEUID( v )		(v == geteuid())
 #endif

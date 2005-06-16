@@ -3,7 +3,7 @@
 SUBDIRS = src pics .
 
 # set the include path for X, qt and KDE
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/kyzis/src/ -I$(top_srcdir)/libyzis/ $(all_includes) $(LUA_INCLUDES)
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/kyzis/src/ -I$(top_srcdir)/libyzis/ -I$(top_builddir)/libyzis/ $(all_includes) $(LUA_INCLUDES)
 
 # let automoc handle all of the meta source files (moc)
 METASOURCES = AUTO

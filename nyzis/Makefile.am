@@ -3,7 +3,7 @@ bin_PROGRAMS = yzis
 # let automoc handle all of the meta source files (moc)
 METASOURCES = AUTO
 
-INCLUDES = -I$(top_srcdir)/libyzis/ $(YZIS_INCLUDES) $(LUA_INCLUDES) $(CURSES_INCLUDES)
+INCLUDES = -I$(top_srcdir)/libyzis/ -I$(top_builddir)/libyzis/ $(YZIS_INCLUDES) $(LUA_INCLUDES) $(CURSES_INCLUDES)
 yzis_SOURCES = viewwidget.cpp factory.cpp document.cpp main.cpp
 yzis_LDADD = $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(YZISLIBS)
 

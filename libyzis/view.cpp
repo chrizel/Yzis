@@ -115,7 +115,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 	rHLnoAttribs = false;
 	rHLAttributesLen = 0;
-	charSelected = false;
+	listChar = charSelected = false;
 	mFillChar = ' ';
 
 	lineDY = 0;

@@ -156,8 +156,9 @@ const KAboutData *KYZisFactory::aboutData() {
 	data->addCredit( "Alexander Dymo", "KTextEditor ConfigInterface", "adymo@mksat.net" );
 	data->addCredit( "Erlend Hamberg", "View scrolling fixes", "ehamberg@online.no" );
 	data->addCredit( "Per Johansson", "Kyzis Tab caption improvment", "per.j@hjolug.org" );
-	data->addCredit( "Craig Howard",":cd and :pwd commands", "<craig@choward.ca>" );
-	data->addCredit( "Lars Ivar Igesund","utf8 fixes for Lua strings", "<larsivar@igesund.net>" );
+	data->addCredit( "Craig Howard",":cd and :pwd commands", "craig@choward.ca" );
+	data->addCredit( "Lars Ivar Igesund","utf8 fixes for Lua strings", "larsivar@igesund.net" );
+	data->addCredit( "Christoph Cullmann","KDE4 porting help", "cullmann@kde.org" );
 	data->setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"), I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
 
 	return data;

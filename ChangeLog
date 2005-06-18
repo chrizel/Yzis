@@ -1,3 +1,7 @@
+2005-06-18 Lars Ivar Igesund (patch)
+  * libyzis
+    utf8 fixes when reading Lua strings
+
 2005-06-16 Craig Howard (patch)
   * libyzis
     add support for :pwd and :cd commands

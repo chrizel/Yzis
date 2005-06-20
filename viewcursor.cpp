@@ -90,10 +90,10 @@ bool YZViewCursor::valid() const {
 
 void YZViewCursor::debug() {
 	yzDebug() << "YZViewCursor : buffer = " << *mBuffer << " ; screen = " << *mScreen
-		<< " ; wrapNextLine = " << wrapNextLine << endl
+		<< " ; wrapNextLine = " << wrapNextLine << " ; wrapTab = " << wrapTab << endl
 		<< "               bLineIncrement = " << bLineIncrement << "; sLineIncrement = " << sLineIncrement
 		<< " ; lineHeight = " << lineHeight << endl
-		<< "               lastCharWasTab = " << lastCharWasTab << " ; sColIncrement = " << sColIncrement <<  endl;
+		<< "               lastCharWasTab = " << lastCharWasTab << " ; sColIncrement = " << sColIncrement << endl;
 }
 
 unsigned int YZViewCursor::bufferX() const {

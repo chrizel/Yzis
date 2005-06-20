@@ -1281,11 +1281,6 @@ bool YZView::drawNextCol( ) {
 		charSelected = selectionPool->isSelected( workCursor->buffer() );
 		workCursor->setScreenX( 1 );
 		workCursor->setBufferX( 1 );
-	} else if ( drawMode && lastCharWasTab ) { // we are wrapping a tab which is at EOL
-		yzDebug() << drawMode << " - " << *workCursor->buffer() << "," << *workCursor->screen() 
-				<< " wrapping a tab at EOL" << endl;
-		workCursor->wrapNextLine = true;
-		ret = false;
 	}
 
 	if ( wrap ) {
@@ -1306,12 +1301,6 @@ bool YZView::drawNextCol( ) {
 	// wrapNextLine is true, we are out of area ( ret is false ), last char was a tab => we are wrapping a tab
 	workCursor->wrapTab = false;
 	if ( workCursor->wrapNextLine ) {
-/*		if ( !drawMode && (workCursor->bufferY() == 12 || workCursor->bufferY() == 13) )
-			yzDebug() << __LINE__ << *workCursor->screen() << " We are wrapping a tab; " 
-				<< drawMode << ", ret=" << ret << ", lastCharWasTab=" << lastCharWasTab
-				<< "; w->lCWT=" << workCursor->lastCharWasTab << "; sX=" << workCursor->screenX()
-				<< "; mCV=" << mColumnsVis
-				<< endl; */
 		if ( drawMode )	{
 			workCursor->wrapTab = ! ret && lastCharWasTab;
 		} else {

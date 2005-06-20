@@ -62,9 +62,31 @@ K_EXPORT_COMPONENT_FACTORY( libkyzispart, KYZisPublicFactory)
 
 KYZisFactory *KYZisFactory::s_self = 0;
 
-KYZisFactory::KYZisFactory() :
-	m_aboutData("kyzispart", I18N_NOOP("Kyzis Part"), VERSION_CHAR, I18N_NOOP("Embeddable vi-like editor component"),KAboutData::License_LGPL_V2, I18N_NOOP("(c)2002-2005 The Kyzis Authors"),0,"http://www.yzis.org"),
-	m_instance( &m_aboutData ) {
+KYZisFactory::KYZisFactory() : 
+	m_aboutData("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR, I18N_NOOP("Embeddable vi-like editor component"),KAboutData::License_LGPL_V2, I18N_NOOP("(c)2002-2005 The Kyzis Authors"),0,"http://www.yzis.org"),
+	m_instance( &m_aboutData )
+{
+	m_aboutData.addAuthor ("Mickael Marchand", I18N_NOOP("Initial Author"), "marchand@kde.org");
+	m_aboutData.addAuthor ("Thomas Capricelli", I18N_NOOP("Initial Author"), "orzel@freehackers.org");
+	m_aboutData.addAuthor ("Philippe Fremy", I18N_NOOP("Initial Author"), "phil@freehackers.org");
+	m_aboutData.addAuthor ("Loic Pauleve", I18N_NOOP("Initial Author"), "panard@inzenet.org");
+	m_aboutData.addCredit( "Thomas Nagy", I18N_NOOP( "Icons, KSettings" ), "tnagy@eleve.emn.fr" );
+	m_aboutData.addCredit( "Lucijan Bush", I18N_NOOP( "EX mode history" ), "lucijan@kde.org" );
+	m_aboutData.addCredit( "Mathieu Kooiman", I18N_NOOP( "KTextEditor interfaces / Dutch translation" ), "M.Kooiman@map-is.nl" );
+	m_aboutData.addCredit( "Pascal Maillard", I18N_NOOP( "Commands and motion engine rewrite and cleanup" ), "pascalmaillard@web.de" );
+	m_aboutData.addCredit( "Alexander Dymo", I18N_NOOP( "KTextEditor ConfigInterface" ), "adymo@mksat.net" );
+	m_aboutData.addCredit( "Erlend Hamberg", I18N_NOOP( "View scrolling fixes" ), "ehamberg@online.no" );
+	m_aboutData.addCredit( "Per Johansson", I18N_NOOP( "Kyzis Tab caption improvment" ), "per.j@hjolug.org" );
+	m_aboutData.addCredit( "Helder Correia", I18N_NOOP( "Commands and bug fixes" ), "helder.correia@netcabo.pt" );
+	m_aboutData.addCredit( "Scott Newton", I18N_NOOP( "Yzisinfo file and tag commands" ), "scottn@ihug.co.nz" );
+	m_aboutData.addCredit( "Dmitry Suzdalev", I18N_NOOP( "Misc fixes and improvments" ), "dimsuz@mail.ru" );
+	m_aboutData.addCredit( "Dawid Ciezarkiewicz",I18N_NOOP( "Fixed 'xp' command" ), "araelx@gmail.com" );
+	m_aboutData.addCredit( "Craig Howard",I18N_NOOP( ":cd and :pwd commands" ), "craig@choward.ca" );
+	m_aboutData.addCredit( "Lars Ivar Igesund",I18N_NOOP( "utf8 fixes for Lua strings" ), "larsivar@igesund.net" );
+	m_aboutData.addCredit( "Christoph Cullmann",I18N_NOOP( "help to port to KDE4" ), "cullmann@kde.org" );
+	m_aboutData.addCredit( "Dawid Ciezarkiewicz",I18N_NOOP( "D language syntax highlight fixes" ), "araelx@gmail.com" );
+	m_aboutData.setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"), I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
+
 	s_self = this;
 	lastId = -1;
 	Settings::self()->readConfig();
@@ -141,27 +163,7 @@ void KYZisFactory::unregisterDoc( KYZisDoc *doc ) {
 }
 
 const KAboutData *KYZisFactory::aboutData() {
-	KAboutData *data = new KAboutData ("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR,
-					I18N_NOOP( "Kyzis - KDE Frontend for Yzis" ),
-					KAboutData::License_GPL_V2,
-					I18N_NOOP( "(c) 2003-2005" ), 0, "http://www.yzis.org");
-	data->addAuthor ("Mickael Marchand", I18N_NOOP("Initial Author"), "marchand@kde.org");
-	data->addAuthor ("Thomas Capricelli", I18N_NOOP("Initial Author"), "orzel@freehackers.org");
-	data->addAuthor ("Philippe Fremy", I18N_NOOP("Initial Author"), "phil@freehackers.org");
-	data->addAuthor ("Loic Pauleve", I18N_NOOP("Initial Author"), "panard@inzenet.org");
-	data->addCredit( "Thomas Nagy", "Icons, KSettings", "tnagy@eleve.emn.fr" );
-	data->addCredit( "Lucijan Bush", "EX mode history", "lucijan@kde.org" );
-	data->addCredit( "Mathieu Kooiman", "KTextEditor interfaces / Dutch translation", "M.Kooiman@map-is.nl" );
-	data->addCredit( "Pascal Maillard", "Commands and motion engine rewrite and cleanup", "pascalmaillard@web.de" );
-	data->addCredit( "Alexander Dymo", "KTextEditor ConfigInterface", "adymo@mksat.net" );
-	data->addCredit( "Erlend Hamberg", "View scrolling fixes", "ehamberg@online.no" );
-	data->addCredit( "Per Johansson", "Kyzis Tab caption improvment", "per.j@hjolug.org" );
-	data->addCredit( "Craig Howard",":cd and :pwd commands", "craig@choward.ca" );
-	data->addCredit( "Lars Ivar Igesund","utf8 fixes for Lua strings", "larsivar@igesund.net" );
-	data->addCredit( "Christoph Cullmann","KDE4 porting help", "cullmann@kde.org" );
-	data->setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"), I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
-
-	return data;
+	return &m_aboutData;
 }
 
 bool KYZisFactory::quit( int /*errorCode*/ ) {

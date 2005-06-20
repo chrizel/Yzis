@@ -38,7 +38,7 @@
    ========================================================================
 -->
 
-<language name="D" section="Sources" extensions="*.d;*.D" mimetype="text/x-dsrc" version="1.36" kateversion="2.2" casesensitive="true" author="Simon J Mackenzie (project.katedxml@smackoz.fastmail.fm)" license="LGPL">
+<language name="D" section="Sources" extensions="*.d;*.D" mimetype="text/x-dsrc" version="1.36.1" kateversion="2.2" casesensitive="true" author="Simon J Mackenzie (project.katedxml@smackoz.fastmail.fm)" license="LGPL">
   <highlighting>
     <list name="keywords">
       <item> abstract </item>
@@ -310,11 +310,11 @@
     </contexts>
     <itemDatas>
       <itemData name="Normal Text"    defStyleNum="dsNormal"/>
-      <itemData name="Keyword"        defStyleNum="dsKeyWord"  color="#000000" selColor="#ffffff" bold="1" italic="0"/>
+      <itemData name="Keyword"        defStyleNum="dsKeyWord"  color="#ffff00" selColor="#ffffff" bold="1" italic="0"/>
       <itemData name="Module"         defStyleNum="dsKeyWord"  color="#0000ff" selColor="#ffffff" bold="0" italic="0"/>
       <itemData name="Module Name"    defStyleNum="dsKeyWord"  color="#0000ff" selColor="#ffffff" bold="1" italic="1"/>
-      <itemData name="Type"           defStyleNum="dsDataType"/>
-      <itemData name="Phobos Library" defStyleNum="dsKeyWord"  color="#000000" selColor="#ffffff" bold="1" italic="1"/>
+      <itemData name="Type"           defStyleNum="dsDataType" color="#ffff00" selColor="#ffffff" bold="1" italic="0"/>
+      <itemData name="Phobos Library" defStyleNum="dsKeyWord"  color="#00ff00" selColor="#ffffff" bold="1" italic="1"/>
       <itemData name="Linkage"        defStyleNum="dsKeyWord"  color="#ff0000" selColor="#ffffff" bold="0" italic="0"/>
       <itemData name="Linkage Type"   defStyleNum="dsDataType" color="#ff0000" selColor="#ffffff" bold="1" italic="1"/>
       <itemData name="Debug"          defStyleNum="dsKeyWord"  color="#ff00ff" selColor="#ffffff" bold="0" italic="0"/>

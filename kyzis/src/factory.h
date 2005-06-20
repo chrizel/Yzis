@@ -37,7 +37,7 @@ public:
 
 	KParts::Part *createPartObject (QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args );
 
-	static const KAboutData *aboutData();
+	const KAboutData *aboutData();
 	static KYZisFactory* self();
 
 	inline KInstance* instance() { return &m_instance; }

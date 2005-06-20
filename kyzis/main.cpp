@@ -57,7 +57,7 @@ int main(int argc, char **argv) {
 	about.addCredit( "Mathieu Kooiman", "KTextEditor interfaces / Dutch translation", "M.Kooiman@map-is.nl" );
 	about.addCredit( "Pascal Maillard", "Commands and motion engine rewrite and cleanup", "pascalmaillard@web.de" );
 	about.addCredit( "Alexander Dymo", "KTextEditor ConfigInterface", "adymo@mksat.net" );
-	about.addCredit( "Erlend Hamberg", "View scrolling fixes", "ehamberg@online.no" );
+	about.addCredit( "Erlend Hamberg", "Misc fixes and improvements", "ehamberg@online.no" );
 	about.addCredit( "Per Johansson", "Kyzis Tab caption improvement", "per.j@hjolug.org" );
 	about.addCredit( "Helder Correia", "Commands and bug fixes", "helder.correia@netcabo.pt" );
 	about.addCredit( "Scott Newton", "Yzisinfo file and tag commands", "scottn@ihug.co.nz" );

@@ -1,3 +1,7 @@
+2005-06-21 morbuz
+  * libyzis
+    added :retab command
+
 2005-06-18 Lars Ivar Igesund (patch)
   * libyzis
     utf8 fixes when reading Lua strings

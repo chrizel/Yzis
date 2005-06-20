@@ -4,6 +4,7 @@
  *  Copyright (C) 2004 Philippe Fremy <phil@freehackers.org>,
  *  Copyright (C) 2004 Pascal "Poizon" Maillard <poizon@gmx.at>,
  *  Copyright (C) 2004-2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -179,6 +180,7 @@ class YZModeEx : public YZMode {
 		cmd_state highlight( const YZExCommandArgs& args );
 		cmd_state registers( const YZExCommandArgs& args );
 		cmd_state split( const YZExCommandArgs& args );
+		cmd_state retab( const YZExCommandArgs& args );
 		cmd_state genericMap( const YZExCommandArgs& args, int );
 		cmd_state genericUnmap( const YZExCommandArgs& args, int );
 		cmd_state cd( const YZExCommandArgs& args );

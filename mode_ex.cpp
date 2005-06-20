@@ -4,6 +4,7 @@
  *  Copyright (C) 2004 Philippe Fremy <phil@freehackers.org>,
  *  Copyright (C) 2004 Pascal "Poizon" Maillard <poizon@gmx.at>,
  *  Copyright (C) 2004-2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -177,6 +178,7 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "split", &YZModeEx::split, QStringList("split") ));
 	commands.append( new YZExCommand( "cd", &YZModeEx::cd, QStringList("cd") ));
 	commands.append( new YZExCommand( "pwd", &YZModeEx::pwd, QStringList("pwd") ));
+	commands.append( new YZExCommand( "ret(ab)?", &YZModeEx::retab, QStringList("retab") ));
 }
 
 QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -847,3 +849,118 @@ cmd_state YZModeEx::pwd( const YZExCommandArgs& args ) {
 	args.view->mySession()->popupMessage( _( QDir::current().absPath() ) );
 	return CMD_OK;
 }
+
+cmd_state YZModeEx::retab( const YZExCommandArgs& args ) {
+	YZBuffer *buffer = args.view->myBuffer();
+
+	// save the cursor's position on screen so it can be restored
+	int cursordx = args.view->viewCursor().screenX();
+	int cursordy = args.view->viewCursor().screenY();
+
+	int tabstop = args.view->getLocalIntegerOption("tabstop");
+	bool changed = false;
+	int numSpaces = 0;
+	int numTabs = 0;
+	bool gotTab = false;
+	int startCol = 0;
+	int startVcol = 0;
+	int len = 0;
+	int oldLen = 0;
+	QString oldLine;
+	QString newLine;
+
+	if (args.arg.length() > 0) { // we got an argument
+		if (args.arg.toInt() > 0) {
+			// set the value of 'tabstop' to the argument given
+			YZSession::mOptions->setOptionFromString( args.arg.simplifyWhiteSpace().insert(0, "tabstop="),
+					local_scope, args.view->myBuffer(), args.view );
+			tabstop = args.arg.toInt();
+		}
+		else {
+			// Value must be > 0 FIXME: The user should get an error message
+			return CMD_ERROR;
+		}
+	}
+
+	for (unsigned int lnum = 0; lnum < buffer->lineCount(); lnum++) {
+		oldLine = buffer->yzline(lnum)->data();
+		newLine = "";
+		int col = 0;
+		int vcol = 0;
+
+		for (;;) {
+			if (oldLine[col].isSpace()) {
+				if (!gotTab && numSpaces == 0) {
+					// First consecutive white-space
+					startVcol = vcol;
+					startCol = col;
+				}
+
+				if (oldLine[col] == ' ') {
+					numSpaces++;
+				}
+				else {
+					gotTab = true;
+				}
+			}
+			else {
+				if (gotTab || (args.force && numSpaces > 1)) {
+					// Retabulate this string of white-space
+
+					len = numSpaces = vcol - startVcol;
+					numTabs = 0;
+
+					if (!args.view->getLocalBooleanOption("expandtab")) {
+						if (numSpaces >= (tabstop - (startVcol % tabstop))) {
+							numSpaces -= (tabstop - (startVcol % tabstop));
+							numTabs++;
+						}
+						numTabs += numSpaces / tabstop;
+						numSpaces -= (numSpaces / tabstop) * tabstop;
+					}
+					if (args.view->getLocalBooleanOption("expandtab") || gotTab || (numSpaces + numTabs < len)) {
+						// len is actual number of white characters used
+						len = numSpaces + numTabs;
+						oldLen = oldLine.length();
+
+						if (startCol > 0)
+							newLine = oldLine.mid(0, startCol);
+						newLine.insert(startCol + len, oldLine.mid(col, oldLen - col +1));
+
+						for (col = 0; col < len; col++)
+							newLine[col+startCol] = (col < numTabs) ? '\t' : ' ';
+						if (newLine != oldLine) {
+							// replace the line and set changed to true
+							buffer->action()->replaceLine( args.view, lnum, newLine );
+							changed = true;
+						}
+						oldLine = newLine;
+						col = startCol + len;
+					}
+				}
+				gotTab = false;
+				numSpaces = 0;
+			}
+			if (oldLine[col] == QChar::null)
+				break;
+
+			if (oldLine[col] == '\t')
+				vcol += tabstop - (vcol % tabstop); // number of columns the tab fills
+			else
+				vcol++;
+
+			++col;
+		}
+	}
+
+	if (changed)
+		args.view->commitNextUndo();
+
+	// move the cursor to the same *screen* position it was at
+	args.view->gotodxdy(cursordx, cursordy);
+
+	args.view->recalcScreen();
+
+	return CMD_OK;
+}
+

@@ -1185,9 +1185,6 @@ bool YZView::drawNextLine( ) {
 	return false;
 }
 
-#define WATCHLINE 1
-#define DEBUG_LINE if ( drawMode && workCursor->bufferY() == WATCHLINE ) yzDebug()
-
 bool YZView::drawPrevCol( ) {
 	workCursor->wrapNextLine = false;
 	unsigned int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 1 : 0;
@@ -1204,7 +1201,6 @@ bool YZView::drawPrevCol( ) {
 			workCursor->bLineIncrement = workCursor->wrapNextLine ? 0 : 1;
 		} else {
 			/* go back to begin of line */
-//			DEBUG_LINE << "rLineHeight=" << rLineHeight << " at " << *rCursor << endl;
 			initDraw( 0, workCursor->bufferY(), 0, workCursor->screenY() - workCursor->lineHeight + 1, drawMode );
 			return false;
 		}
@@ -1213,22 +1209,17 @@ bool YZView::drawPrevCol( ) {
 }
 
 bool YZView::drawNextCol( ) {
-//	if ( drawMode ) yzDebug() << "drawNextCol at " << *sCursor << "," << *rCursor << endl;
 	bool ret = false;
+
 	unsigned int curx = workCursor->bufferX();
-	workCursor->wrapNextLine = false;
-
-//	DEBUG_LINE << "init drawNextCol b=" << *workCursor->buffer() << ";s=" << *workCursor->screen() << endl;
-
-	// keep value
 	bool lastCharWasTab = workCursor->lastCharWasTab;
 
-	unsigned int nextLength = 0;
-	if ( ! drawMode ) nextLength = spaceWidth;
+	unsigned int nextLength = ( drawMode ? 0 : spaceWidth );
 
 	workCursor->sColIncrement = spaceWidth;
-
+	workCursor->wrapNextLine = false;
 	workCursor->lastCharWasTab = false;
+
 	if ( curx < sCurLineLength ) {
 		unsigned int lenToTest;
 		lastChar = sCurLine.at( curx );
@@ -1254,6 +1245,8 @@ bool YZView::drawNextCol( ) {
 					lastChar = opt_listchars["tab"][0];
 					if ( opt_listchars["tab"].length() > 1 )
 						mFillChar = opt_listchars["tab"][1];
+					if ( workCursor->wrapTab )
+						lastChar = mFillChar;
 				}
 			}
 			if ( workCursor->screenX( ) == scrollCursor->bufferX() )
@@ -1282,12 +1275,17 @@ bool YZView::drawNextCol( ) {
 			// update HL
 			if ( drawMode ) rHLa += workCursor->bColIncrement;
 		}
-	} else if ( sCurLineLength == 0 && drawMode && curx == 0 ) {
+	} else if ( sCurLineLength == 0 && drawMode && curx == 0 ) { // empty line
 		ret = true;
 		lastChar = ' ';
 		charSelected = selectionPool->isSelected( workCursor->buffer() );
 		workCursor->setScreenX( 1 );
 		workCursor->setBufferX( 1 );
+	} else if ( drawMode && lastCharWasTab ) { // we are wrapping a tab which is at EOL
+		yzDebug() << drawMode << " - " << *workCursor->buffer() << "," << *workCursor->screen() 
+				<< " wrapping a tab at EOL" << endl;
+		workCursor->wrapNextLine = true;
+		ret = false;
 	}
 
 	if ( wrap ) {
@@ -1295,25 +1293,39 @@ bool YZView::drawNextCol( ) {
 		unsigned int sx = workCursor->screenX() + nextLength + ( ret || ! drawMode ? 0 : workCursor->sColIncrement );
 		// buff pos
 		unsigned int bx = curx + ( drawMode ? 0 : workCursor->bColIncrement );
-		workCursor->wrapNextLine = sx > mColumnsVis && bx < sCurLineLength;
+		workCursor->wrapNextLine = sx > mColumnsVis;
+		if ( bx == sCurLineLength ) // wrap a tab at EOL
+			workCursor->wrapNextLine &= ( drawMode ? lastCharWasTab : workCursor->lastCharWasTab );
+		else
+			workCursor->wrapNextLine &= bx < sCurLineLength;
 	}
 
 	// only remember of case where wrapNextLine is true ( => we will wrap a tab next drawNextCol )
-	if ( workCursor->lastCharWasTab ) workCursor->lastCharWasTab = workCursor->wrapNextLine;
+	workCursor->lastCharWasTab &= workCursor->wrapNextLine;
 
 	// wrapNextLine is true, we are out of area ( ret is false ), last char was a tab => we are wrapping a tab
+	workCursor->wrapTab = false;
 	if ( workCursor->wrapNextLine ) {
-		if ( drawMode )	workCursor->wrapTab = ! ret && lastCharWasTab;
-		else workCursor->wrapTab = workCursor->lastCharWasTab && workCursor->screenX() > mColumnsVis;
+/*		if ( !drawMode && (workCursor->bufferY() == 12 || workCursor->bufferY() == 13) )
+			yzDebug() << __LINE__ << *workCursor->screen() << " We are wrapping a tab; " 
+				<< drawMode << ", ret=" << ret << ", lastCharWasTab=" << lastCharWasTab
+				<< "; w->lCWT=" << workCursor->lastCharWasTab << "; sX=" << workCursor->screenX()
+				<< "; mCV=" << mColumnsVis
+				<< endl; */
+		if ( drawMode )	{
+			workCursor->wrapTab = ! ret && lastCharWasTab;
+		} else {
+			workCursor->wrapTab = workCursor->lastCharWasTab && workCursor->screenX() > mColumnsVis;
+		}
 	}
-
 	// do not increment line buffer if we are wrapping a line
 	workCursor->bLineIncrement = workCursor->wrapNextLine ? 0 : 1;
 
-//	if ( drawMode && scrollCursor->bufferX() > 0 )
-//		yzDebug() << "done drawNextCol s=" << *sCursor << ";r=" << *rCursor << ";ret=" << ret << ";wrapNextLine="
-//			<< wrapNextLine << ";rLastCharWasTab=" << rLastCharWasTab << ";wrapTab=" << wrapTab << endl;
-
+/*	if ( !drawMode && (workCursor->bufferY() == 12 || workCursor->bufferY() == 13 ) ) {
+		workCursor->debug();
+		yzDebug() << ret << endl;
+	}
+*/
 	return ret;
 }
 

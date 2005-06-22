@@ -166,7 +166,7 @@ void YZYzisinfo::updateJumpList( const QString & filename, const int x, const in
 
 	for ( JumpListVector::Iterator it = YZSession::mJumpList.begin(); it != YZSession::mJumpList.end(); ++it ) {
 		if ( (*it)->filename() == filename ) {
-			if ( (*it)->position()->x() == static_cast<unsigned int>(x) && (*it)->position()->y() == static_cast<unsigned int>(y) ) {
+			if ( (*it)->position().x() == static_cast<unsigned int>(x) && (*it)->position().y() == static_cast<unsigned int>(y) ) {
 				found = true;
 				break;
 			}
@@ -311,9 +311,9 @@ void YZYzisinfo::saveJumpList( QTextStream & write ) {
 	
 	for( int i = start; i < end; ++i ) {
 		write << "_" << " ";
-		write << YZSession::mJumpList[i]->position()->x();
+		write << YZSession::mJumpList[i]->position().x();
 		write << " ";
-		write << YZSession::mJumpList[i]->position()->y();
+		write << YZSession::mJumpList[i]->position().y();
 		write << " ";
 		write << YZSession::mJumpList[i]->filename() << endl;
 	}

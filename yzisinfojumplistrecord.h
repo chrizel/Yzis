@@ -64,7 +64,7 @@ class YZYzisinfoJumpListRecord {
 		 * @param copy The YZYzisinfoJumpListRecord instance to copy
 		 */
 		 
-		YZYzisinfoJumpListRecord( YZYzisinfoJumpListRecord & copy );
+		YZYzisinfoJumpListRecord( const YZYzisinfoJumpListRecord & copy );
 		
 		/**
 		 * Assignment operator
@@ -72,7 +72,7 @@ class YZYzisinfoJumpListRecord {
 		 * @param copy The YZYzisinfoJumpListRecord instance to assign from
 		 */
 		 
-		YZYzisinfoJumpListRecord & operator=( YZYzisinfoJumpListRecord & copy );
+		YZYzisinfoJumpListRecord & operator=( const YZYzisinfoJumpListRecord & copy );
 		
 		/**
 		 * Returns the current index position in the mCursorData vector
@@ -85,12 +85,14 @@ class YZYzisinfoJumpListRecord {
 		 */
 		 
 		QString & filename();
+		const QString &filename() const;
 		
 		/**
 		 * Returns the recorded cursor position
 		 */
 		 
-		YZCursor * position();
+		YZCursor & position();
+		const YZCursor & position() const;
 		
 		/**
 		 * Returns the previous recorded search cursor position
@@ -117,7 +119,7 @@ class YZYzisinfoJumpListRecord {
 
 	private:
 		QString mFilename;
-		YZCursor* mPosition;
+		YZCursor mPosition;
 };
 
 #endif // YZISINFOJUMPLISTRECORD_H

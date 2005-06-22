@@ -38,6 +38,7 @@
 #include "mapping.h"
 #include "action.h"
 #include "schema.h"
+#include "tags_interface.h"
 #include <qobject.h>
 #include <qfileinfo.h>
 #include <qdir.h>
@@ -178,6 +179,9 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "split", &YZModeEx::split, QStringList("split") ));
 	commands.append( new YZExCommand( "cd", &YZModeEx::cd, QStringList("cd") ));
 	commands.append( new YZExCommand( "pwd", &YZModeEx::pwd, QStringList("pwd") ));
+	commands.append( new YZExCommand( "tag", &YZModeEx::tag, QStringList("tag") ));
+	commands.append( new YZExCommand( "tn(ext)?", &YZModeEx::tagnext, QStringList("tnext") ));
+	commands.append( new YZExCommand( "tp(revious)?", &YZModeEx::tagprevious, QStringList("tprevious") ));
 	commands.append( new YZExCommand( "ret(ab)?", &YZModeEx::retab, QStringList("retab") ));
 }
 
@@ -838,6 +842,8 @@ cmd_state YZModeEx::split( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::cd( const YZExCommandArgs& args ) {
 	if ( QDir::setCurrent(args.arg) ) {
+		// we could be using a new tag file, so reset tags
+		tagReset();
 		return CMD_OK;
 	} else {
 		args.view->mySession()->popupMessage( _( "Cannot change to specified directory" ) );
@@ -847,6 +853,24 @@ cmd_state YZModeEx::cd( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::pwd( const YZExCommandArgs& args ) {
 	args.view->mySession()->popupMessage( _( QDir::current().absPath() ) );
+	return CMD_OK;
+}
+
+cmd_state YZModeEx::tag( const YZExCommandArgs& args ) {
+	tagJumpTo(args.arg);
+
+	return CMD_OK;
+}
+
+cmd_state YZModeEx::tagnext( const YZExCommandArgs& /*args*/ ) {
+	tagNext();
+
+	return CMD_OK;
+}
+
+cmd_state YZModeEx::tagprevious( const YZExCommandArgs& /*args*/ ) {
+	tagPrev();
+
 	return CMD_OK;
 }
 
@@ -963,4 +987,3 @@ cmd_state YZModeEx::retab( const YZExCommandArgs& args ) {
 
 	return CMD_OK;
 }
-

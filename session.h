@@ -51,6 +51,7 @@ class YZViewCursor;
 class YZYzisinfo;
 class YZYzisinfoJumpListRecord;
 class YZYzisinfoStartPositionRecord;
+class YZTagStack;
 
 /**
  * Contains data referring to an instance of yzis
@@ -349,10 +350,10 @@ class YZSession {
 		void saveJumpPosition();
 		void saveJumpPosition( const int x, const int y );
 		void saveJumpPosition( const YZCursor * cursor );
-		YZCursor * previousJumpPosition();
+		const YZCursor * previousJumpPosition();
 		
-		void saveTagPosition();
-		YZCursor * previousTagPosition();
+		YZTagStack &getTagStack();
+		const YZTagStack &getTagStack() const;
 
 	protected:
 		//we map "filename"/buffer for buffers
@@ -429,7 +430,7 @@ class YZSession {
 	     * tag list stack
 	     */
 	     
-		static TagListVector mTagList;
+		static YZTagStack mTagStack;
 };
 
 #endif /* YZ_SESSION_H */

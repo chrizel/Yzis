@@ -28,8 +28,6 @@
  */
 
 YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord() {
-	mFilename = "";
-	mPosition = 0L;
 }
 
 /**
@@ -52,23 +50,18 @@ YZYzisinfoJumpListRecord::~YZYzisinfoJumpListRecord() {
  * YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord
  */
  
-YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord( YZYzisinfoJumpListRecord & copy ) {
+YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord( const YZYzisinfoJumpListRecord & copy ) {
 	mFilename = copy.filename();
-	mPosition = new YZCursor( copy.position()->x(), copy.position()->y() );
+	mPosition = YZCursor( copy.position().x(), copy.position().y() );
 }
 
 /**
  * YZYzisinfoJumpListRecord::operator=
  */
  
-YZYzisinfoJumpListRecord & YZYzisinfoJumpListRecord::operator=( YZYzisinfoJumpListRecord & copy ) {
-		
-	if ( this == &copy ) {
-		return *this;
-	}
-	
+YZYzisinfoJumpListRecord & YZYzisinfoJumpListRecord::operator=( const YZYzisinfoJumpListRecord & copy ) {
 	mFilename = copy.filename();
-	mPosition = new YZCursor( copy.position()->x(), copy.position()->y() );
+	mPosition = YZCursor( copy.position().x(), copy.position().y() );
 	
 	return *this;
 }
@@ -85,7 +78,23 @@ QString & YZYzisinfoJumpListRecord::filename() {
  * YZYzisinfoJumpListRecord::position
  */
  
-YZCursor * YZYzisinfoJumpListRecord::position() {
+YZCursor & YZYzisinfoJumpListRecord::position() {
+	return mPosition;
+}
+
+/**
+ * YZYzisinfoJumpListRecord::filename
+ */
+ 
+const QString & YZYzisinfoJumpListRecord::filename() const {
+	return mFilename;
+}
+
+/**
+ * YZYzisinfoJumpListRecord::position
+ */
+ 
+const YZCursor & YZYzisinfoJumpListRecord::position() const {
 	return mPosition;
 }
 
@@ -117,8 +126,7 @@ void YZYzisinfoJumpListRecord::setFilename( const QString & filename ) {
  */
 
 void YZYzisinfoJumpListRecord::setPosition( const unsigned int x, const unsigned int y ) {
-	
-	mPosition = new YZCursor( x, y );
+	mPosition = YZCursor( x, y );
 }
 
 /*

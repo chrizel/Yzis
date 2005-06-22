@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ja\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-12 17:12+0100\n"
+"POT-Creation-Date: 2005-06-22 22:24+0200\n"
 "PO-Revision-Date: 2005-03-06 21:01+0900\n"
 "Last-Translator: Takumi ASAKI <asaki@kde.gr.jp>\n"
 "Language-Team: Japanese\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.9.1\n"
 
-#: ../kyzis/main.cpp:38
+#: ../kyzis/main.cpp:40
 msgid "KDE Frontend for the Yzis Editor"
 msgstr "YzisエディタのKDEフロントエンド"
 
-#: ../kyzis/main.cpp:41
+#: ../kyzis/main.cpp:43
 msgid "Document to open."
 msgstr "オープンするドキュメント"
 
-#: ../kyzis/main.cpp:42
+#: ../kyzis/main.cpp:44
 msgid "Execute command passed in argument"
 msgstr "引数で指定されたコマンドを実行"
 
-#: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:137
+#: ../kyzis/main.cpp:50 ../kyzis/src/factory.cpp:66
 msgid "Kyzis"
 msgstr "Kyzis"
 
@@ -61,14 +61,10 @@ msgstr "背景色"
 msgid "Foreground Color"
 msgstr "前景色"
 
-#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:364
-#: ../kyzis/src/document.cpp:368
+#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:382
+#: ../kyzis/src/document.cpp:386
 msgid "Syntax Highlighting"
 msgstr "強調表示"
-
-#: ../kyzis/src/factory.cpp:66
-msgid "Kyzis Part"
-msgstr "Kyzisパート"
 
 #: ../kyzis/src/factory.cpp:66
 msgid "Embeddable vi-like editor component"
@@ -78,26 +74,78 @@ msgstr "viライクな埋め込み可能なエディタコンポーネント"
 msgid "(c)2002-2005 The Kyzis Authors"
 msgstr "(c)2002-2005 Kyzisの作者"
 
-#: ../kyzis/src/factory.cpp:138
-msgid "Kyzis - KDE Frontend for Yzis"
-msgstr "Kyzis - YzisのKDEフロントエンド"
-
-#: ../kyzis/src/factory.cpp:140
-msgid "(c) 2003-2005"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:141 ../kyzis/src/factory.cpp:142
-#: ../kyzis/src/factory.cpp:143 ../kyzis/src/factory.cpp:144
+#: ../kyzis/src/factory.cpp:69 ../kyzis/src/factory.cpp:70
+#: ../kyzis/src/factory.cpp:71 ../kyzis/src/factory.cpp:72
 msgid "Initial Author"
 msgstr "最初の作者"
 
-#: ../kyzis/src/factory.cpp:152
+#: ../kyzis/src/factory.cpp:73
+msgid "Icons, KSettings"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:74
+msgid "EX mode history"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:75
+msgid "KTextEditor interfaces / Dutch translation"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:76
+msgid "Commands and motion engine rewrite and cleanup"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:77
+msgid "KTextEditor ConfigInterface"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:78
+msgid "View scrolling fixes"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:79
+msgid "Kyzis Tab caption improvement"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:80
+msgid "Commands and bug fixes"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:81
+msgid "Yzisinfo file and tag commands"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:82
+msgid "Misc fixes and improvements"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:83
+msgid "Fixed 'xp' command"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:84
+msgid ":cd and :pwd commands"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:85
+msgid "utf8 fixes for Lua strings"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:86
+msgid "help to port to KDE4"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:87
+msgid "D language syntax highlight fixes"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:88
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
 msgstr "Takumi ASAKI"
 
-#: ../kyzis/src/factory.cpp:152
+#: ../kyzis/src/factory.cpp:88
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
@@ -192,27 +240,23 @@ msgid ""
 "<p>Sets the background color of the currently active line, which means the "
 "line where your cursor is positioned.</p>"
 msgstr ""
-"<p>"
-"現在アクティブな行(現在カーソルがある行)の背景色をセ"
-"ットします。</p>"
+"<p>現在アクティブな行(現在カーソルがある行)の背景色をセットします。</p>"
 
 #: ../kyzis/src/hlconfig.cpp:275
 msgid ""
 "<p>This color will be used to draw the line numbers (if enabled) and the "
 "lines in the code-folding pane.</p>"
 msgstr ""
-"<p>"
-"この色は(可能であれば)行数とコード折りたたみペインの"
-"行を表示するのに使われます。</p>"
+"<p>この色は(可能であれば)行数とコード折りたたみペインの行を表示するのに使われ"
+"ます。</p>"
 
 #: ../kyzis/src/hlconfig.cpp:277
 msgid ""
 "<p>Sets the bracket matching color. This means, if you place the cursor e.g. "
 "at a <b>(</b>, the matching <b>)</b> will be highlighted with this color.</p>"
 msgstr ""
-"<p>カッコがマッチしたときの色をセットします。これは"
-"例えば <b>(</b> を配置すると マッチする "
-"<b>)</b>が色で強調表示されます。</p>"
+"<p>カッコがマッチしたときの色をセットします。これは例えば <b>(</b> を配置する"
+"と マッチする <b>)</b>が色で強調表示されます。</p>"
 
 #: ../kyzis/src/hlconfig.cpp:281
 msgid ""
@@ -239,17 +283,12 @@ msgid ""
 "the Background and Selected Background colors from the popup menu when "
 "appropriate."
 msgstr ""
-"このリストは現在のスキーマの標準のスタイルを表示し"
-"ており、 "
-"それらを編集する手段を提供しています。スタイル名は"
-"現在のスタイル設定を反映します。"
-"<p>キーボードを使って編集するには "
-"<strong>&lt;スペース&gt;</strong>を押してポップアップメニュ"
-"ーから設定を選択します。"
-"<p>色を編集するには色の付いた四角をクリックするか、 "
-"ポップアップメニューから編集する色を選択します。 "
-"<p>適切な場合には、ポップアップメニューから背景と "
-"選択された背景色の設定を解除することができます。"
+"このリストは現在のスキーマの標準のスタイルを表示しており、 それらを編集する手"
+"段を提供しています。スタイル名は現在のスタイル設定を反映します。<p>キーボード"
+"を使って編集するには <strong>&lt;スペース&gt;</strong>を押してポップアップメ"
+"ニューから設定を選択します。<p>色を編集するには色の付いた四角をクリックする"
+"か、 ポップアップメニューから編集する色を選択します。 <p>適切な場合には、ポッ"
+"プアップメニューから背景と 選択された背景色の設定を解除することができます。"
 
 #: ../kyzis/src/hlconfig.cpp:548
 msgid "H&ighlight:"
@@ -265,14 +304,11 @@ msgid ""
 "unset the Background and Selected Background colors from the context menu "
 "when appropriate."
 msgstr ""
-"このリストは現在の構文強調表示モードを表示し、編集"
-"する意味を要求しています。文脈名は現在のスタイル設"
-"定を反映します。"
-"<p>キーボードを使って編集するには<strong>"
-"&lt;スペース&gt;</strong>"
-"を押してポップアップメニューから設定を選択します。 "
-"<p>色を編集するには色の付いた四角をクリックするかポ"
-"ップアップメニューから編集する色を選択します。"
+"このリストは現在の構文強調表示モードを表示し、編集する意味を要求しています。"
+"文脈名は現在のスタイル設定を反映します。<p>キーボードを使って編集するには"
+"<strong>&lt;スペース&gt;</strong>を押してポップアップメニューから設定を選択し"
+"ます。 <p>色を編集するには色の付いた四角をクリックするかポップアップメニュー"
+"から編集する色を選択します。"
 
 #: ../kyzis/src/hlconfig.cpp:688
 msgid "&Schema:"
@@ -390,57 +426,72 @@ msgstr ""
 msgid "Yzis Styles"
 msgstr "Yzisスタイル"
 
-#: ../kyzis/src/kyzis.cpp:116
+#: ../kyzis/src/kyzis.cpp:123
 msgid "Opens recently opened file."
 msgstr "最近開いたファイルを開く"
 
-#: ../kyzis/src/kyzis.cpp:125
+#: ../kyzis/src/kyzis.cpp:132
 msgid "Show &Konsole"
 msgstr "コンソールの表示(&K)"
 
-#: ../kyzis/src/kyzis.cpp:135
+#: ../kyzis/src/kyzis.cpp:142
 msgid "&Window"
 msgstr "ウィンドウ(&W)"
 
-#: ../kyzis/src/kyzis.cpp:324
+#: ../kyzis/src/kyzis.cpp:330
 msgid "Terminal"
 msgstr "ターミナル"
 
-#: ../libyzis/buffer.cpp:565
+#: ../kyzis/src/viewwidget.cpp:51
+msgid "Yzis Ready"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:522
 msgid "Failed opening file %1 for reading : %2"
 msgstr ""
 
-#: ../libyzis/buffer.cpp:573
+#: ../libyzis/buffer.cpp:533
 msgid "Recover"
 msgstr ""
 
-#: ../libyzis/buffer.cpp:573
+#: ../libyzis/buffer.cpp:533
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
-msgstr "このファイルのスワップファイルが見つかりました。多分、あなたのコンピュータかyzisがクラッシュしたときに作成されたファイルです。このファイルの復旧を行いますか。"
+msgstr ""
+"このファイルのスワップファイルが見つかりました。多分、あなたのコンピュータか"
+"yzisがクラッシュしたときに作成されたファイルです。このファイルの復旧を行いま"
+"すか。"
 
-#: ../libyzis/buffer.cpp:643
+#: ../libyzis/buffer.cpp:600
 msgid "Failed opening file %1 for writing : %2"
 msgstr ""
 
-#: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
+#: ../libyzis/buffer.cpp:607
 msgid "Written %1 bytes to file %2"
 msgstr ""
 
-#: ../libyzis/ex_lua.cpp:263
+#: ../libyzis/ex_lua.cpp:274
 msgid "The file %1 could not be found in standard directories"
 msgstr ""
 
-#: ../libyzis/ex_lua.cpp:274
+#: ../libyzis/ex_lua.cpp:281
 msgid "Lua error when running file %1:\n"
 msgstr ""
 
-#: ../libyzis/mode_command.cpp:53
+#: ../libyzis/internal_options.cpp:114
+msgid "File modified"
+msgstr "ファイルは変更されています"
+
+#: ../libyzis/internal_options.cpp:114
+msgid "This file has been modified, do you want to save it ?"
+msgstr "ファイルが変更されています。 保存しますか。"
+
+#: ../libyzis/mode_command.cpp:54
 msgid "[ Awaiting Command ]"
 msgstr ""
 
-#: ../libyzis/mode.cpp:79
+#: ../libyzis/mode.cpp:94
 msgid "[ Introduction ]"
 msgstr ""
 
@@ -448,134 +499,168 @@ msgstr ""
 msgid "[ Ex ]"
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:293
+#: ../libyzis/mode_ex.cpp:259
 msgid "Not an editor command: "
 msgstr "エディタコマンドではありません"
 
-#: ../libyzis/mode_ex.cpp:409 ../libyzis/mode_ex.cpp:422
-#: ../libyzis/mode_ex.cpp:429
+#: ../libyzis/mode_ex.cpp:374 ../libyzis/mode_ex.cpp:388
+#: ../libyzis/mode_ex.cpp:394
 msgid "One file is modified! Save it first..."
 msgstr "ファイルが変更されています。まず保存してください。"
 
-#: ../libyzis/mode_ex.cpp:442
-msgid "No next buffer"
-msgstr "次のバッファーはありません"
-
-#: ../libyzis/mode_ex.cpp:453
-msgid "No previous buffer"
-msgstr "前のバッファーはありません"
-
-#: ../libyzis/mode_ex.cpp:491 ../libyzis/mode_ex.cpp:791
+#: ../libyzis/mode_ex.cpp:470 ../libyzis/mode_ex.cpp:566
 msgid "Please specify a filename"
 msgstr "ファイル名を指定してください"
 
-#: ../libyzis/mode_ex.cpp:542 ../libyzis/mode_ex.cpp:680
-msgid "Invalid option given : "
-msgstr ""
-
-#: ../libyzis/mode_ex.cpp:567 ../libyzis/mode_ex.cpp:695
-msgid "This option cannot be switched this way, this is a boolean option."
-msgstr "このオプションはブーリアンオプションです。その方法では変更できません。"
-
-#: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
-#: ../libyzis/mode_ex.cpp:629
-msgid "This option is a global option which cannot be changed with setlocal"
-msgstr "このオプションはグローバルオプションなので、setlocalでは変更できません。"
-
-#: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
-#: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
-msgid "Invalid option given"
+#: ../libyzis/mode_ex.cpp:507
+#, fuzzy
+msgid "Invalid option name : %1"
 msgstr "不正なオプションが渡されました"
 
-#: ../libyzis/mode_insert.cpp:35
+#: ../libyzis/mode_ex.cpp:510
+#, fuzzy
+msgid "Bad value for option given"
+msgstr "不正なオプションが渡されました"
+
+#: ../libyzis/mode_ex.cpp:728
+msgid "Registers:\n"
+msgstr ""
+
+#: ../libyzis/mode_ex.cpp:849
+msgid "Cannot change to specified directory"
+msgstr ""
+
+#: ../libyzis/mode_insert.cpp:37
 msgid "[ Insert ]"
 msgstr ""
 
-#: ../libyzis/mode_insert.cpp:182
+#: ../libyzis/mode_insert.cpp:256
 msgid "[ Replace ]"
 msgstr ""
 
-#: ../libyzis/mode_insert.cpp:205
+#: ../libyzis/mode_insert.cpp:279
 msgid "{ Completion }"
 msgstr ""
 
-#: ../libyzis/mode_search.cpp:37
+#: ../libyzis/mode_search.cpp:39
 msgid "[ Search ]"
 msgstr ""
 
-#: ../libyzis/mode_search.cpp:92
+#: ../libyzis/mode_search.cpp:94
 msgid "No match"
 msgstr "マッチしません"
 
-#: ../libyzis/mode_search.cpp:156
+#: ../libyzis/mode_search.cpp:158
 msgid "[ Search backward ]"
 msgstr ""
 
-#: ../libyzis/mode_visual.cpp:45
+#: ../libyzis/mode_visual.cpp:41
 msgid "[ Visual ]"
 msgstr ""
 
-#: ../libyzis/mode_visual.cpp:182
+#: ../libyzis/mode_visual.cpp:268
 msgid "[ Visual Line ]"
 msgstr ""
 
-#: ../libyzis/search.cpp:102
+#: ../libyzis/mode_visual.cpp:301
+msgid "[ Visual Block ]"
+msgstr ""
+
+#: ../libyzis/search.cpp:111
 msgid "search hit TOP, continuing at BOTTOM"
 msgstr "ファイルの先頭に到達しました。末尾から続けますか。"
 
-#: ../libyzis/search.cpp:104
+#: ../libyzis/search.cpp:113
 msgid "search hit BOTTOM, continuing at TOP"
 msgstr "ファイルの末尾に到達しました。先頭から続けますか。"
 
-#: ../libyzis/swapfile.cpp:81
+#: ../libyzis/swapfile.cpp:69
 msgid ""
 "Warning, the swapfile could not be opened maybe due to restrictive "
 "permissions."
 msgstr ""
 
-#: ../libyzis/swapfile.cpp:130
+#: ../libyzis/swapfile.cpp:115
 msgid ""
 "Warning, the swapfile could not be created maybe due to restrictive "
 "permissions."
-msgstr "警告: おそらく、パーミッションの制限のため、スワップファイルが作成できません。"
+msgstr ""
+"警告: おそらく、パーミッションの制限のため、スワップファイルが作成できませ"
+"ん。"
 
-#: ../libyzis/swapfile.cpp:158
+#: ../libyzis/swapfile.cpp:139
 msgid ""
 "The swap file could not be opened, there will be no recovering for this "
 "file, you might want to check permissions of files."
-msgstr "スワップファイルがオープンできないため、このファイルを復旧できません。ファイルのパーミッションを確認してください。"
+msgstr ""
+"スワップファイルがオープンできないため、このファイルを復旧できません。ファイ"
+"ルのパーミッションを確認してください。"
 
-#: ../libyzis/view.cpp:179
-msgid "File modified"
+#: ../libyzis/tags_interface.cpp:167
+#, fuzzy
+msgid "File has been modified"
 msgstr "ファイルは変更されています"
 
-#: ../libyzis/view.cpp:179
-msgid "This file has been modified, do you want to save it ?"
-msgstr "ファイルが変更されています。 保存しますか。"
+#: ../libyzis/tags_interface.cpp:232
+msgid "Unable to find tag file"
+msgstr ""
 
-#: ../libyzis/view.cpp:404 ../libyzis/view.cpp:412
+#: ../libyzis/tags_interface.cpp:272
+msgid "Could not find next tag"
+msgstr ""
+
+#: ../libyzis/tags_interface.cpp:285
+msgid "Could not find previous tag"
+msgstr ""
+
+#: ../libyzis/tags_interface.cpp:293
+msgid "At bottom of tag stack"
+msgstr ""
+
+#: ../libyzis/view.cpp:380 ../libyzis/view.cpp:388
 msgid "All"
 msgstr ""
 
-#: ../libyzis/view.cpp:411
+#: ../libyzis/view.cpp:387
 msgid "Bot"
 msgstr ""
 
-#: ../libyzis/view.cpp:1473
+#: ../libyzis/view.cpp:1462
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
-msgstr "Qtのプリンターを使用するためにはX11のDISPLAY環境変数をセットして実行する必要があります。コンソールモードではpslibを使用してください。"
+msgstr ""
+"Qtのプリンターを使用するためにはX11のDISPLAY環境変数をセットして実行する必要"
+"があります。コンソールモードではpslibを使用してください。"
 
-#: ../libyzis/view.cpp:1744
+#: ../libyzis/view.cpp:1714
 msgid " { Recording }"
 msgstr ""
 
-#: ../nyzis/factory.cpp:197
+#: ../nyzis/factory.cpp:212
 msgid "(Press any key)"
 msgstr "(何かキーを押してください)"
 
-#: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
+#: ../nyzis/viewwidget.cpp:382
 msgid "[No File]"
 msgstr ""
 
+#~ msgid "Kyzis Part"
+#~ msgstr "Kyzisパート"
+
+#~ msgid "Kyzis - KDE Frontend for Yzis"
+#~ msgstr "Kyzis - YzisのKDEフロントエンド"
+
+#~ msgid "No next buffer"
+#~ msgstr "次のバッファーはありません"
+
+#~ msgid "No previous buffer"
+#~ msgstr "前のバッファーはありません"
+
+#~ msgid "This option cannot be switched this way, this is a boolean option."
+#~ msgstr ""
+#~ "このオプションはブーリアンオプションです。その方法では変更できません。"
+
+#~ msgid "This option is a global option which cannot be changed with setlocal"
+#~ msgstr ""
+#~ "このオプションはグローバルオプションなので、setlocalでは変更できません。"

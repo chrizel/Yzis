@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Yzis\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-12 17:12+0100\n"
+"POT-Creation-Date: 2005-06-22 22:24+0200\n"
 "PO-Revision-Date: 2005-02-08 20:03+0100\n"
 "Last-Translator: Mickael Marchand <marchand@kde.org>\n"
 "Language-Team: <i18n@yzis.org>\n"
@@ -15,19 +15,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: ts2po\n"
 
-#: ../kyzis/main.cpp:38
+#: ../kyzis/main.cpp:40
 msgid "KDE Frontend for the Yzis Editor"
 msgstr ""
 
-#: ../kyzis/main.cpp:41
+#: ../kyzis/main.cpp:43
 msgid "Document to open."
 msgstr ""
 
-#: ../kyzis/main.cpp:42
+#: ../kyzis/main.cpp:44
 msgid "Execute command passed in argument"
 msgstr ""
 
-#: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:137
+#: ../kyzis/main.cpp:50 ../kyzis/src/factory.cpp:66
 msgid "Kyzis"
 msgstr ""
 
@@ -59,13 +59,9 @@ msgstr ""
 msgid "Foreground Color"
 msgstr ""
 
-#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:364
-#: ../kyzis/src/document.cpp:368
+#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:382
+#: ../kyzis/src/document.cpp:386
 msgid "Syntax Highlighting"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:66
-msgid "Kyzis Part"
 msgstr ""
 
 #: ../kyzis/src/factory.cpp:66
@@ -76,26 +72,78 @@ msgstr ""
 msgid "(c)2002-2005 The Kyzis Authors"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:138
-msgid "Kyzis - KDE Frontend for Yzis"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:140
-msgid "(c) 2003-2005"
-msgstr ""
-
-#: ../kyzis/src/factory.cpp:141 ../kyzis/src/factory.cpp:142
-#: ../kyzis/src/factory.cpp:143 ../kyzis/src/factory.cpp:144
+#: ../kyzis/src/factory.cpp:69 ../kyzis/src/factory.cpp:70
+#: ../kyzis/src/factory.cpp:71 ../kyzis/src/factory.cpp:72
 msgid "Initial Author"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:152
+#: ../kyzis/src/factory.cpp:73
+msgid "Icons, KSettings"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:74
+msgid "EX mode history"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:75
+msgid "KTextEditor interfaces / Dutch translation"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:76
+msgid "Commands and motion engine rewrite and cleanup"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:77
+msgid "KTextEditor ConfigInterface"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:78
+msgid "View scrolling fixes"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:79
+msgid "Kyzis Tab caption improvement"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:80
+msgid "Commands and bug fixes"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:81
+msgid "Yzisinfo file and tag commands"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:82
+msgid "Misc fixes and improvements"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:83
+msgid "Fixed 'xp' command"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:84
+msgid ":cd and :pwd commands"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:85
+msgid "utf8 fixes for Lua strings"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:86
+msgid "help to port to KDE4"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:87
+msgid "D language syntax highlight fixes"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:88
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
 msgstr ""
 
-#: ../kyzis/src/factory.cpp:152
+#: ../kyzis/src/factory.cpp:88
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
@@ -351,57 +399,69 @@ msgstr ""
 msgid "Yzis Styles"
 msgstr ""
 
-#: ../kyzis/src/kyzis.cpp:116
+#: ../kyzis/src/kyzis.cpp:123
 msgid "Opens recently opened file."
 msgstr ""
 
-#: ../kyzis/src/kyzis.cpp:125
+#: ../kyzis/src/kyzis.cpp:132
 msgid "Show &Konsole"
 msgstr ""
 
-#: ../kyzis/src/kyzis.cpp:135
+#: ../kyzis/src/kyzis.cpp:142
 msgid "&Window"
 msgstr ""
 
-#: ../kyzis/src/kyzis.cpp:324
+#: ../kyzis/src/kyzis.cpp:330
 msgid "Terminal"
 msgstr ""
 
-#: ../libyzis/buffer.cpp:565
+#: ../kyzis/src/viewwidget.cpp:51
+msgid "Yzis Ready"
+msgstr "Yzis klaar"
+
+#: ../libyzis/buffer.cpp:522
 msgid "Failed opening file %1 for reading : %2"
 msgstr ""
 
-#: ../libyzis/buffer.cpp:573
+#: ../libyzis/buffer.cpp:533
 msgid "Recover"
 msgstr ""
 
-#: ../libyzis/buffer.cpp:573
+#: ../libyzis/buffer.cpp:533
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
 msgstr ""
 
-#: ../libyzis/buffer.cpp:643
+#: ../libyzis/buffer.cpp:600
 msgid "Failed opening file %1 for writing : %2"
 msgstr ""
 
-#: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
+#: ../libyzis/buffer.cpp:607
 msgid "Written %1 bytes to file %2"
 msgstr "%1 bytes weggeschreven naar bestand %2"
 
-#: ../libyzis/ex_lua.cpp:263
+#: ../libyzis/ex_lua.cpp:274
 msgid "The file %1 could not be found in standard directories"
 msgstr ""
 
-#: ../libyzis/ex_lua.cpp:274
+#: ../libyzis/ex_lua.cpp:281
 msgid "Lua error when running file %1:\n"
 msgstr ""
 
-#: ../libyzis/mode_command.cpp:53
+#: ../libyzis/internal_options.cpp:114
+msgid "File modified"
+msgstr ""
+
+#: ../libyzis/internal_options.cpp:114
+msgid "This file has been modified, do you want to save it ?"
+msgstr ""
+
+#: ../libyzis/mode_command.cpp:54
 msgid "[ Awaiting Command ]"
 msgstr ""
 
-#: ../libyzis/mode.cpp:79
+#: ../libyzis/mode.cpp:94
 msgid "[ Introduction ]"
 msgstr ""
 
@@ -409,139 +469,142 @@ msgstr ""
 msgid "[ Ex ]"
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:293
+#: ../libyzis/mode_ex.cpp:259
 msgid "Not an editor command: "
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:409 ../libyzis/mode_ex.cpp:422
-#: ../libyzis/mode_ex.cpp:429
+#: ../libyzis/mode_ex.cpp:374 ../libyzis/mode_ex.cpp:388
+#: ../libyzis/mode_ex.cpp:394
 msgid "One file is modified! Save it first..."
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:442
-msgid "No next buffer"
-msgstr ""
-
-#: ../libyzis/mode_ex.cpp:453
-msgid "No previous buffer"
-msgstr ""
-
-#: ../libyzis/mode_ex.cpp:491 ../libyzis/mode_ex.cpp:791
+#: ../libyzis/mode_ex.cpp:470 ../libyzis/mode_ex.cpp:566
 msgid "Please specify a filename"
 msgstr "Geef een bestandsnaam op"
 
-#: ../libyzis/mode_ex.cpp:542 ../libyzis/mode_ex.cpp:680
-msgid "Invalid option given : "
+#: ../libyzis/mode_ex.cpp:507
+msgid "Invalid option name : %1"
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:567 ../libyzis/mode_ex.cpp:695
-msgid "This option cannot be switched this way, this is a boolean option."
+#: ../libyzis/mode_ex.cpp:510
+msgid "Bad value for option given"
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
-#: ../libyzis/mode_ex.cpp:629
-msgid "This option is a global option which cannot be changed with setlocal"
+#: ../libyzis/mode_ex.cpp:728
+msgid "Registers:\n"
 msgstr ""
 
-#: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
-#: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
-msgid "Invalid option given"
+#: ../libyzis/mode_ex.cpp:849
+msgid "Cannot change to specified directory"
 msgstr ""
 
-#: ../libyzis/mode_insert.cpp:35
+#: ../libyzis/mode_insert.cpp:37
 msgid "[ Insert ]"
 msgstr ""
 
-#: ../libyzis/mode_insert.cpp:182
+#: ../libyzis/mode_insert.cpp:256
 msgid "[ Replace ]"
 msgstr ""
 
-#: ../libyzis/mode_insert.cpp:205
+#: ../libyzis/mode_insert.cpp:279
 msgid "{ Completion }"
 msgstr ""
 
-#: ../libyzis/mode_search.cpp:37
+#: ../libyzis/mode_search.cpp:39
 msgid "[ Search ]"
 msgstr ""
 
-#: ../libyzis/mode_search.cpp:92
+#: ../libyzis/mode_search.cpp:94
 msgid "No match"
 msgstr ""
 
-#: ../libyzis/mode_search.cpp:156
+#: ../libyzis/mode_search.cpp:158
 msgid "[ Search backward ]"
 msgstr ""
 
-#: ../libyzis/mode_visual.cpp:45
+#: ../libyzis/mode_visual.cpp:41
 msgid "[ Visual ]"
 msgstr ""
 
-#: ../libyzis/mode_visual.cpp:182
+#: ../libyzis/mode_visual.cpp:268
 msgid "[ Visual Line ]"
 msgstr ""
 
-#: ../libyzis/search.cpp:102
+#: ../libyzis/mode_visual.cpp:301
+msgid "[ Visual Block ]"
+msgstr ""
+
+#: ../libyzis/search.cpp:111
 msgid "search hit TOP, continuing at BOTTOM"
 msgstr ""
 
-#: ../libyzis/search.cpp:104
+#: ../libyzis/search.cpp:113
 msgid "search hit BOTTOM, continuing at TOP"
 msgstr ""
 
-#: ../libyzis/swapfile.cpp:81
+#: ../libyzis/swapfile.cpp:69
 msgid ""
 "Warning, the swapfile could not be opened maybe due to restrictive "
 "permissions."
 msgstr ""
 
-#: ../libyzis/swapfile.cpp:130
+#: ../libyzis/swapfile.cpp:115
 msgid ""
 "Warning, the swapfile could not be created maybe due to restrictive "
 "permissions."
 msgstr ""
 
-#: ../libyzis/swapfile.cpp:158
+#: ../libyzis/swapfile.cpp:139
 msgid ""
 "The swap file could not be opened, there will be no recovering for this "
 "file, you might want to check permissions of files."
 msgstr ""
 
-#: ../libyzis/view.cpp:179
-msgid "File modified"
+#: ../libyzis/tags_interface.cpp:167
+msgid "File has been modified"
 msgstr ""
 
-#: ../libyzis/view.cpp:179
-msgid "This file has been modified, do you want to save it ?"
+#: ../libyzis/tags_interface.cpp:232
+msgid "Unable to find tag file"
 msgstr ""
 
-#: ../libyzis/view.cpp:404 ../libyzis/view.cpp:412
+#: ../libyzis/tags_interface.cpp:272
+msgid "Could not find next tag"
+msgstr ""
+
+#: ../libyzis/tags_interface.cpp:285
+msgid "Could not find previous tag"
+msgstr ""
+
+#: ../libyzis/tags_interface.cpp:293
+msgid "At bottom of tag stack"
+msgstr ""
+
+#: ../libyzis/view.cpp:380 ../libyzis/view.cpp:388
 msgid "All"
 msgstr "Alle"
 
-#: ../libyzis/view.cpp:411
+#: ../libyzis/view.cpp:387
 msgid "Bot"
 msgstr "Bot"
 
-#: ../libyzis/view.cpp:1473
+#: ../libyzis/view.cpp:1462
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
 msgstr ""
 
-#: ../libyzis/view.cpp:1744
+#: ../libyzis/view.cpp:1714
 msgid " { Recording }"
 msgstr ""
 
-#: ../nyzis/factory.cpp:197
+#: ../nyzis/factory.cpp:212
 msgid "(Press any key)"
 msgstr ""
 
-#: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
+#: ../nyzis/viewwidget.cpp:382
 msgid "[No File]"
 msgstr ""
-
-#~ msgid "Yzis Ready"
-#~ msgstr "Yzis klaar"
 
 #~ msgid "Yzis is not able to save remote files for now"
 #~ msgstr ""

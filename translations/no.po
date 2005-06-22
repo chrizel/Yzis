@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: no\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-02-12 17:12+0100\n"
+"POT-Creation-Date: 2005-06-22 22:24+0200\n"
 "PO-Revision-Date: 2005-02-15 02:20+0100\n"
 "Last-Translator: Erlend Hamberg <ehamberg@online.no>\n"
 "Language-Team:  <en@li.org>\n"
@@ -18,19 +18,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.9.1\n"
 
-#: ../kyzis/main.cpp:38
+#: ../kyzis/main.cpp:40
 msgid "KDE Frontend for the Yzis Editor"
 msgstr "KDE-grensesnitt for Yzis"
 
-#: ../kyzis/main.cpp:41
+#: ../kyzis/main.cpp:43
 msgid "Document to open."
 msgstr "Dokument som skal åpnes"
 
-#: ../kyzis/main.cpp:42
+#: ../kyzis/main.cpp:44
 msgid "Execute command passed in argument"
 msgstr "Eksekver kommandoen sendt som argument"
 
-#: ../kyzis/main.cpp:49 ../kyzis/src/factory.cpp:137
+#: ../kyzis/main.cpp:50 ../kyzis/src/factory.cpp:66
 msgid "Kyzis"
 msgstr "Kyzis"
 
@@ -62,14 +62,10 @@ msgstr "Bakgrunssfarge"
 msgid "Foreground Color"
 msgstr "Forgrunnsfarge"
 
-#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:364
-#: ../kyzis/src/document.cpp:368
+#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:382
+#: ../kyzis/src/document.cpp:386
 msgid "Syntax Highlighting"
 msgstr "Syntaksfarging"
-
-#: ../kyzis/src/factory.cpp:66
-msgid "Kyzis Part"
-msgstr "Kyzis-del"
 
 #: ../kyzis/src/factory.cpp:66
 msgid "Embeddable vi-like editor component"
@@ -79,34 +75,82 @@ msgstr "Vi-lik editor som kan innesluttes"
 msgid "(c)2002-2005 The Kyzis Authors"
 msgstr "(c)2002-2005, Yzis-utviklerene"
 
-#: ../kyzis/src/factory.cpp:138
-msgid "Kyzis - KDE Frontend for Yzis"
-msgstr "Kyzis - KDE-grensesnitt for Yzis"
-
-#: ../kyzis/src/factory.cpp:140
-msgid "(c) 2003-2005"
-msgstr "(c) 2003-2005"
-
-#: ../kyzis/src/factory.cpp:141 ../kyzis/src/factory.cpp:142
-#: ../kyzis/src/factory.cpp:143 ../kyzis/src/factory.cpp:144
+#: ../kyzis/src/factory.cpp:69 ../kyzis/src/factory.cpp:70
+#: ../kyzis/src/factory.cpp:71 ../kyzis/src/factory.cpp:72
 msgid "Initial Author"
 msgstr "Begynnende utvikler"
 
-#: ../kyzis/src/factory.cpp:152
+#: ../kyzis/src/factory.cpp:73
+msgid "Icons, KSettings"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:74
+msgid "EX mode history"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:75
+msgid "KTextEditor interfaces / Dutch translation"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:76
+msgid "Commands and motion engine rewrite and cleanup"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:77
+msgid "KTextEditor ConfigInterface"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:78
+msgid "View scrolling fixes"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:79
+msgid "Kyzis Tab caption improvement"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:80
+msgid "Commands and bug fixes"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:81
+msgid "Yzisinfo file and tag commands"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:82
+msgid "Misc fixes and improvements"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:83
+msgid "Fixed 'xp' command"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:84
+msgid ":cd and :pwd commands"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:85
+msgid "utf8 fixes for Lua strings"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:86
+msgid "help to port to KDE4"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:87
+msgid "D language syntax highlight fixes"
+msgstr ""
+
+#: ../kyzis/src/factory.cpp:88
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
-msgstr ""
-"NAVN PÅ OVERSETTERE "
-"Deres navn"
+msgstr "NAVN PÅ OVERSETTERE Deres navn"
 
-#: ../kyzis/src/factory.cpp:152
+#: ../kyzis/src/factory.cpp:88
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr ""
-"OVERSETTERNES EPOST "
-"Deres epost-adresser"
+msgstr "OVERSETTERNES EPOST Deres epost-adresser"
 
 #: ../kyzis/src/hlconfig.cpp:186
 msgid "Text Area Background"
@@ -176,7 +220,9 @@ msgstr "<p>Setter bakgrunnsfargen til redigeringsområdet</p>"
 msgid ""
 "<p>Sets the background color of the selection.</p><p>To set the text color "
 "for selected text, use the \"<b>Configure Highlighting</b>\" dialog.</p>"
-msgstr "<p>Setter bakgrunnsfargen til seleksjonen.</p><p>For å sette tekstfargen til valgt tekst, bruk \"<b>Konfigurer tekstfarging</b>\"-dialogen.</p>"
+msgstr ""
+"<p>Setter bakgrunnsfargen til seleksjonen.</p><p>For å sette tekstfargen til "
+"valgt tekst, bruk \"<b>Konfigurer tekstfarging</b>\"-dialogen.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:268
 msgid ""
@@ -194,19 +240,26 @@ msgstr "<p>Velg markørtypen du vil endre</p>"
 msgid ""
 "<p>Sets the background color of the currently active line, which means the "
 "line where your cursor is positioned.</p>"
-msgstr "<p>Setter bakgrunnsfargen for den aktive linjen, altså den linjen hvor pekeren er plassert.</p>"
+msgstr ""
+"<p>Setter bakgrunnsfargen for den aktive linjen, altså den linjen hvor "
+"pekeren er plassert.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:275
 msgid ""
 "<p>This color will be used to draw the line numbers (if enabled) and the "
 "lines in the code-folding pane.</p>"
-msgstr "<p>Denne fargen vil bli brukt for å tegne linjenummere (hvis aktivert), og linjene i kodefoldingspanelet.</p>"
+msgstr ""
+"<p>Denne fargen vil bli brukt for å tegne linjenummere (hvis aktivert), og "
+"linjene i kodefoldingspanelet.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:277
 msgid ""
 "<p>Sets the bracket matching color. This means, if you place the cursor e.g. "
 "at a <b>(</b>, the matching <b>)</b> will be highlighted with this color.</p>"
-msgstr "<p>Setter parantesmotstykkevisningsfarge. Dette betyr at hvis du for eksempel plasserer pekeren på en <b>(</b>, vil den tilhørende <b>)</b> bli markert med denne fargen.</p>"
+msgstr ""
+"<p>Setter parantesmotstykkevisningsfarge. Dette betyr at hvis du for "
+"eksempel plasserer pekeren på en <b>(</b>, vil den tilhørende <b>)</b> bli "
+"markert med denne fargen.</p>"
 
 #: ../kyzis/src/hlconfig.cpp:281
 msgid ""
@@ -214,7 +267,11 @@ msgid ""
 "dt><dd>A vertical line which shows the column where text is going to be "
 "wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the left of "
 "visually-wrapped lines</dd></dl>"
-msgstr "<p>Setter fargen til ordbrytingsrelaterte markører.</p><dl><dt>Statisk ordbryting</dt><dd>En vertikal linjen som viser kolonnen hvor teksten vil bli brutt</dd><dt>Dynamisk ordbryting</dt><dd>En pil som blir vist til venstre for visuelt brutte linjer</dd></dl>"
+msgstr ""
+"<p>Setter fargen til ordbrytingsrelaterte markører.</p><dl><dt>Statisk "
+"ordbryting</dt><dd>En vertikal linjen som viser kolonnen hvor teksten vil "
+"bli brutt</dd><dt>Dynamisk ordbryting</dt><dd>En pil som blir vist til "
+"venstre for visuelt brutte linjer</dd></dl>"
 
 #: ../kyzis/src/hlconfig.cpp:287
 msgid "<p>Sets the color of the tabulator marks:</p>"
@@ -229,7 +286,14 @@ msgid ""
 "squares, or select the color to edit from the popup menu.<p>You can unset "
 "the Background and Selected Background colors from the popup menu when "
 "appropriate."
-msgstr "Denne listen viser standardstiler for det aktive fargeskjemaet, og gir deg redigeringsmuligheter. Stilnavnet reflekterer den aktive stilsettingen.<p>For å redigere ved bruk av tastaturet, trykk <strong>&lt;MELLOMROM&gt;<strong> og velg en egenskap fra menyen.<p>For å redigere fargene, klikk de fargede firkantene eller velg en farge å redigere fra menyen.<p>Du kan velge bort bakgrunnen og valgte bakgrunnsfarger fra menyen når det er hensiktsmessig."
+msgstr ""
+"Denne listen viser standardstiler for det aktive fargeskjemaet, og gir deg "
+"redigeringsmuligheter. Stilnavnet reflekterer den aktive stilsettingen."
+"<p>For å redigere ved bruk av tastaturet, trykk <strong>&lt;MELLOMROM&gt;"
+"<strong> og velg en egenskap fra menyen.<p>For å redigere fargene, klikk de "
+"fargede firkantene eller velg en farge å redigere fra menyen.<p>Du kan velge "
+"bort bakgrunnen og valgte bakgrunnsfarger fra menyen når det er "
+"hensiktsmessig."
 
 #: ../kyzis/src/hlconfig.cpp:548
 msgid "H&ighlight:"
@@ -244,7 +308,14 @@ msgid ""
 "colored squares, or select the color to edit from the popup menu.<p>You can "
 "unset the Background and Selected Background colors from the context menu "
 "when appropriate."
-msgstr "Denne listen viser kontekstene til den aktive syntaksfargingsmoduset og gir deg redigeringsmuligheter. Kontekstnavnet reflekterer de aktive stilsettingene.<p>For å redigere ved bruk av tastaturet, trykk <strong>&lt;MELLOMROM&gt;<strong> og velg en egenskap fra menyen.<p>For å redigere fargene, klikk de fargede firkantene eller velg en farge å redigere fra menyen.<p>Du kan velge bort bakgrunnen og valgte bakgrunnsfarger fra menyen når det er hensiktsmessig."
+msgstr ""
+"Denne listen viser kontekstene til den aktive syntaksfargingsmoduset og gir "
+"deg redigeringsmuligheter. Kontekstnavnet reflekterer de aktive "
+"stilsettingene.<p>For å redigere ved bruk av tastaturet, trykk <strong>&lt;"
+"MELLOMROM&gt;<strong> og velg en egenskap fra menyen.<p>For å redigere "
+"fargene, klikk de fargede firkantene eller velg en farge å redigere fra "
+"menyen.<p>Du kan velge bort bakgrunnen og valgte bakgrunnsfarger fra menyen "
+"når det er hensiktsmessig."
 
 #: ../kyzis/src/hlconfig.cpp:688
 msgid "&Schema:"
@@ -354,37 +425,43 @@ msgstr "Bruk stan&dardstil"
 msgid ""
 "\"Use Default Style\" will be automatically unset when you change any style "
 "properties."
-msgstr "\"Bruk standardstil\" vil automatisk bli valgt bort når du forandrer stilegenskaper."
+msgstr ""
+"\"Bruk standardstil\" vil automatisk bli valgt bort når du forandrer "
+"stilegenskaper."
 
 #: ../kyzis/src/hlconfig.cpp:1211
 msgid "Yzis Styles"
 msgstr "Yzis-stiler"
 
-#: ../kyzis/src/kyzis.cpp:116
+#: ../kyzis/src/kyzis.cpp:123
 msgid "Opens recently opened file."
 msgstr "Åpner nylig åpnet fil."
 
-#: ../kyzis/src/kyzis.cpp:125
+#: ../kyzis/src/kyzis.cpp:132
 msgid "Show &Konsole"
 msgstr "Vis &Konsole"
 
-#: ../kyzis/src/kyzis.cpp:135
+#: ../kyzis/src/kyzis.cpp:142
 msgid "&Window"
 msgstr "&Vindu"
 
-#: ../kyzis/src/kyzis.cpp:324
+#: ../kyzis/src/kyzis.cpp:330
 msgid "Terminal"
 msgstr "Terminal"
 
-#: ../libyzis/buffer.cpp:565
+#: ../kyzis/src/viewwidget.cpp:51
+msgid "Yzis Ready"
+msgstr ""
+
+#: ../libyzis/buffer.cpp:522
 msgid "Failed opening file %1 for reading : %2"
 msgstr "Kunne ikke åpne filen %1 for lesing: %2"
 
-#: ../libyzis/buffer.cpp:573
+#: ../libyzis/buffer.cpp:533
 msgid "Recover"
 msgstr "Gjenopprett"
 
-#: ../libyzis/buffer.cpp:573
+#: ../libyzis/buffer.cpp:533
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
@@ -393,28 +470,36 @@ msgstr ""
 "maskinen din eller yzis kræsjet. Vil du starte gjenopprettelse av denne "
 "filen?"
 
-#: ../libyzis/buffer.cpp:643
+#: ../libyzis/buffer.cpp:600
 msgid "Failed opening file %1 for writing : %2"
 msgstr "Kunne ikke åpne filen %1 for skriving: %2"
 
-#: ../libyzis/buffer.cpp:651 ../libyzis/buffer.cpp:654
+#: ../libyzis/buffer.cpp:607
 msgid "Written %1 bytes to file %2"
 msgstr "%1 bytes ble skrevet til filen %2"
 
-#: ../libyzis/ex_lua.cpp:263
+#: ../libyzis/ex_lua.cpp:274
 msgid "The file %1 could not be found in standard directories"
 msgstr "Filen %1 ble ikke funnet i noen av standardkatalogene"
 
-#: ../libyzis/ex_lua.cpp:274
+#: ../libyzis/ex_lua.cpp:281
 #, fuzzy
 msgid "Lua error when running file %1:\n"
 msgstr "Lua-feil når filen %1 ble kjørt:"
 
-#: ../libyzis/mode_command.cpp:53
+#: ../libyzis/internal_options.cpp:114
+msgid "File modified"
+msgstr "Det er gjort forandringer i filen"
+
+#: ../libyzis/internal_options.cpp:114
+msgid "This file has been modified, do you want to save it ?"
+msgstr "Det er gjort forandringer i filen, vil du lagre?"
+
+#: ../libyzis/mode_command.cpp:54
 msgid "[ Awaiting Command ]"
 msgstr "[ Venter på kommando ]"
 
-#: ../libyzis/mode.cpp:79
+#: ../libyzis/mode.cpp:94
 msgid "[ Introduction ]"
 msgstr "[ Introduksjon ]"
 
@@ -422,87 +507,84 @@ msgstr "[ Introduksjon ]"
 msgid "[ Ex ]"
 msgstr "[ Ex ]"
 
-#: ../libyzis/mode_ex.cpp:293
+#: ../libyzis/mode_ex.cpp:259
 msgid "Not an editor command: "
 msgstr "Ikke en editor-kommando: "
 
-#: ../libyzis/mode_ex.cpp:409 ../libyzis/mode_ex.cpp:422
-#: ../libyzis/mode_ex.cpp:429
+#: ../libyzis/mode_ex.cpp:374 ../libyzis/mode_ex.cpp:388
+#: ../libyzis/mode_ex.cpp:394
 msgid "One file is modified! Save it first..."
 msgstr "En fil er forandret! Lagre først..."
 
-#: ../libyzis/mode_ex.cpp:442
-msgid "No next buffer"
-msgstr "Ingen buffere etter denne"
-
-#: ../libyzis/mode_ex.cpp:453
-msgid "No previous buffer"
-msgstr "Ingen buffere før denne"
-
-#: ../libyzis/mode_ex.cpp:491 ../libyzis/mode_ex.cpp:791
+#: ../libyzis/mode_ex.cpp:470 ../libyzis/mode_ex.cpp:566
 msgid "Please specify a filename"
 msgstr "Vennligst spesifiser et filnavn"
 
-#: ../libyzis/mode_ex.cpp:542 ../libyzis/mode_ex.cpp:680
-msgid "Invalid option given : "
+#: ../libyzis/mode_ex.cpp:507
+#, fuzzy
+msgid "Invalid option name : %1"
 msgstr "Ugyldig opsjon gitt:"
 
-#: ../libyzis/mode_ex.cpp:567 ../libyzis/mode_ex.cpp:695
-msgid "This option cannot be switched this way, this is a boolean option."
-msgstr "Denne opsjonen kan ikke bli satt til gitt verdi. Dette er en boolsk opsjon."
-
-#: ../libyzis/mode_ex.cpp:577 ../libyzis/mode_ex.cpp:598
-#: ../libyzis/mode_ex.cpp:629
-msgid "This option is a global option which cannot be changed with setlocal"
-msgstr "Dette er en global opsjon som ikke kan forandres med setlocal"
-
-#: ../libyzis/mode_ex.cpp:593 ../libyzis/mode_ex.cpp:624
-#: ../libyzis/mode_ex.cpp:649 ../libyzis/mode_ex.cpp:719
-msgid "Invalid option given"
+#: ../libyzis/mode_ex.cpp:510
+#, fuzzy
+msgid "Bad value for option given"
 msgstr "Ugyldig opsjon gitt"
 
-#: ../libyzis/mode_insert.cpp:35
+#: ../libyzis/mode_ex.cpp:728
+msgid "Registers:\n"
+msgstr ""
+
+#: ../libyzis/mode_ex.cpp:849
+msgid "Cannot change to specified directory"
+msgstr ""
+
+#: ../libyzis/mode_insert.cpp:37
 msgid "[ Insert ]"
 msgstr "[ Sett inn ]"
 
-#: ../libyzis/mode_insert.cpp:182
+#: ../libyzis/mode_insert.cpp:256
 msgid "[ Replace ]"
 msgstr "[ Erstatt ]"
 
-#: ../libyzis/mode_insert.cpp:205
+#: ../libyzis/mode_insert.cpp:279
 msgid "{ Completion }"
 msgstr "{ komplettering }"
 
-#: ../libyzis/mode_search.cpp:37
+#: ../libyzis/mode_search.cpp:39
 msgid "[ Search ]"
 msgstr "[ Søk ]"
 
-#: ../libyzis/mode_search.cpp:92
+#: ../libyzis/mode_search.cpp:94
 msgid "No match"
 msgstr "Ingen treff"
 
-#: ../libyzis/mode_search.cpp:156
+#: ../libyzis/mode_search.cpp:158
 #, fuzzy
 msgid "[ Search backward ]"
 msgstr "[ Søk ]"
 
-#: ../libyzis/mode_visual.cpp:45
+#: ../libyzis/mode_visual.cpp:41
 msgid "[ Visual ]"
 msgstr "[ Visuell ]"
 
-#: ../libyzis/mode_visual.cpp:182
+#: ../libyzis/mode_visual.cpp:268
 msgid "[ Visual Line ]"
 msgstr "[ Visuell linje ]"
 
-#: ../libyzis/search.cpp:102
+#: ../libyzis/mode_visual.cpp:301
+#, fuzzy
+msgid "[ Visual Block ]"
+msgstr "[ Visuell ]"
+
+#: ../libyzis/search.cpp:111
 msgid "search hit TOP, continuing at BOTTOM"
 msgstr "Søket traff TOPPEN, fortsetter fra BUNNEN"
 
-#: ../libyzis/search.cpp:104
+#: ../libyzis/search.cpp:113
 msgid "search hit BOTTOM, continuing at TOP"
 msgstr "Søket traff BUNNEN, fortsetter fra TOPPEN"
 
-#: ../libyzis/swapfile.cpp:81
+#: ../libyzis/swapfile.cpp:69
 msgid ""
 "Warning, the swapfile could not be opened maybe due to restrictive "
 "permissions."
@@ -510,7 +592,7 @@ msgstr ""
 "Advarsel! Swap-filen kunne ikke åpnes, muligens på grunn av restriktive "
 "filrettigheter."
 
-#: ../libyzis/swapfile.cpp:130
+#: ../libyzis/swapfile.cpp:115
 msgid ""
 "Warning, the swapfile could not be created maybe due to restrictive "
 "permissions."
@@ -518,7 +600,7 @@ msgstr ""
 "Advarsel! Swap-filen kunne ikke opprettes, muligens på grunn av restriktive "
 "filrettigheter."
 
-#: ../libyzis/swapfile.cpp:158
+#: ../libyzis/swapfile.cpp:139
 msgid ""
 "The swap file could not be opened, there will be no recovering for this "
 "file, you might want to check permissions of files."
@@ -526,23 +608,36 @@ msgstr ""
 "Swap-filen kunne ikke åpnes, det vil ikke være mulig å gjenopprette denne "
 "filen. Du vil kanskje sjekke filrettighetene."
 
-#: ../libyzis/view.cpp:179
-msgid "File modified"
+#: ../libyzis/tags_interface.cpp:167
+#, fuzzy
+msgid "File has been modified"
 msgstr "Det er gjort forandringer i filen"
 
-#: ../libyzis/view.cpp:179
-msgid "This file has been modified, do you want to save it ?"
-msgstr "Det er gjort forandringer i filen, vil du lagre?"
+#: ../libyzis/tags_interface.cpp:232
+msgid "Unable to find tag file"
+msgstr ""
 
-#: ../libyzis/view.cpp:404 ../libyzis/view.cpp:412
+#: ../libyzis/tags_interface.cpp:272
+msgid "Could not find next tag"
+msgstr ""
+
+#: ../libyzis/tags_interface.cpp:285
+msgid "Could not find previous tag"
+msgstr ""
+
+#: ../libyzis/tags_interface.cpp:293
+msgid "At bottom of tag stack"
+msgstr ""
+
+#: ../libyzis/view.cpp:380 ../libyzis/view.cpp:388
 msgid "All"
 msgstr "Alle"
 
-#: ../libyzis/view.cpp:411
+#: ../libyzis/view.cpp:387
 msgid "Bot"
 msgstr "Bunn"
 
-#: ../libyzis/view.cpp:1473
+#: ../libyzis/view.cpp:1462
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
@@ -550,15 +645,37 @@ msgstr ""
 "For å bruke Qt-printeren må du ha en X11-server kjørende og ha satt "
 "miljøvariabelen DISPLAY. I konsoll kan du prøve pslib"
 
-#: ../libyzis/view.cpp:1744
+#: ../libyzis/view.cpp:1714
 msgid " { Recording }"
 msgstr "{ Spiller inn }"
 
-#: ../nyzis/factory.cpp:197
+#: ../nyzis/factory.cpp:212
 msgid "(Press any key)"
 msgstr "(Trykk en tast)"
 
-#: ../nyzis/viewwidget.cpp:330 ../nyzis/viewwidget.cpp:332
+#: ../nyzis/viewwidget.cpp:382
 msgid "[No File]"
 msgstr "[Ingen fil]"
 
+#~ msgid "Kyzis Part"
+#~ msgstr "Kyzis-del"
+
+#~ msgid "Kyzis - KDE Frontend for Yzis"
+#~ msgstr "Kyzis - KDE-grensesnitt for Yzis"
+
+#~ msgid "(c) 2003-2005"
+#~ msgstr "(c) 2003-2005"
+
+#~ msgid "No next buffer"
+#~ msgstr "Ingen buffere etter denne"
+
+#~ msgid "No previous buffer"
+#~ msgstr "Ingen buffere før denne"
+
+#~ msgid "This option cannot be switched this way, this is a boolean option."
+#~ msgstr ""
+#~ "Denne opsjonen kan ikke bli satt til gitt verdi. Dette er en boolsk "
+#~ "opsjon."
+
+#~ msgid "This option is a global option which cannot be changed with setlocal"
+#~ msgstr "Dette er en global opsjon som ikke kan forandres med setlocal"

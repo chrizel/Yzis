@@ -774,12 +774,6 @@ class YZView {
 		unsigned int m_paintAutoCommit;
 		YZViewCursor* keepCursor;
 
-		YZCursor *m_completionStart;
-		YZCursor *m_completionCursor;
-		QString m_word2Complete;
-		QString m_lastMatch;
-		QStringList m_oldProposals;
-		bool m_lastCompletionDir;
 		//the current attribute being used by the GUI
 		YzisAttribute * curAt;
 		YZModePool* mModePool;
@@ -790,8 +784,6 @@ class YZView {
 		int opt_schema;
 		bool opt_list;
 		MapOption opt_listchars;
-	
-		friend class YZModeCompletion;
 };
 
 #endif /*  YZ_VIEW_H */

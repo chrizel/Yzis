@@ -79,18 +79,5 @@ class YZModeReplace : public YZModeInsert {
 		virtual void commandBackspace( YZView* mView, const QString& key );
 };
 
-class YZModeCompletion : public YZMode {
-	public :
-		YZModeCompletion();
-		virtual ~YZModeCompletion();
-
-		virtual void leave( YZView* mView );
-		virtual cmd_state execCommand( YZView* mView, const QString& _key );
-
-	protected :
-		QString doComplete( YZView* mView, bool forward );
-		bool initCompletion( YZView* mView );
-};
-
 #endif
 

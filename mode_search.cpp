@@ -60,7 +60,7 @@ YZCursor YZModeSearch::search( YZView* mView, const QString& s, bool* found ) {
 YZCursor YZModeSearch::search( YZView* mView, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found ) {
 	YZCursor end( 0, mView->myBuffer()->lineCount() - 1 );
 	end.setX( mView->myBuffer()->textline( end.y() ).length() );
-	return mView->myBuffer()->action()->search( mView, s, begin, end, false, matchlength, found );
+	return mView->myBuffer()->action()->search( mView->myBuffer(), s, begin, end, matchlength, found );
 }
 
 void YZModeSearch::initModifierKeys() {
@@ -170,7 +170,7 @@ YZCursor YZModeSearchBackward::search( YZView* mView, const QString& s, bool* fo
 }
 YZCursor YZModeSearchBackward::search( YZView* mView, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found ) {
 	YZCursor end( 0, 0 );
-	return mView->myBuffer()->action()->search( mView, s, begin, end, true, matchlength, found );
+	return mView->myBuffer()->action()->search( mView->myBuffer(), s, begin, end, matchlength, found );
 }
 
 

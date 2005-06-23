@@ -446,8 +446,10 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 }
 
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
-YZCursor YZAction::search( YZView* pView, const QString& _what, const YZCursor& mBegin, const YZCursor& mEnd, bool reverseSearch, unsigned int *matchlength, bool *found ) {
+// which makes reverseSearch redundant.  It's now calculated within the function based on a test of mEnd < mBegin
+YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCursor& mBegin, const YZCursor& mEnd, unsigned int *matchlength, bool *found ) {
 //	yzDebug() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
+	bool reverseSearch = mEnd < mBegin;
 	bool cs = true;
 	QString what = _what;
 	if ( what.endsWith("\\c") ) {
@@ -462,13 +464,13 @@ YZCursor YZAction::search( YZView* pView, const QString& _what, const YZCursor& 
 	int currentMatchColumn;
 	QString l;
 	
-	unsigned int i = reverseSearch ? qMin( (int)mBegin.y(), (int)(pView->myBuffer()->lineCount() - 1) ) 
+	unsigned int i = reverseSearch ? qMin( (int)mBegin.y(), (int)(pBuffer->lineCount() - 1) ) 
 					: qMax( (int)mBegin.y(), 0 );
 	unsigned int maxLine = reverseSearch ? qMax( (int)mEnd.y(), 0 ) : 
-						qMin( (int)mEnd.y(), (int)(pView->myBuffer()->lineCount() - 1) );
+						qMin( (int)mEnd.y(), (int)(pBuffer->lineCount() - 1) );
 	for ( ; ( reverseSearch && i >= maxLine ) || ( !reverseSearch && i <= maxLine ) ; reverseSearch ? i-- : i++ ) {
 		if ( i == ( unsigned int )( -1 ) ) break; //woups ;)
-		l = pView->myBuffer()->textline( i );
+		l = pBuffer->textline( i );
 
 		int idx;
 		if ( reverseSearch ) {

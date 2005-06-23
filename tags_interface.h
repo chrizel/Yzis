@@ -31,6 +31,7 @@
 #define YZ_TAGS_INTERFACE_H
 
 class QString;
+class QStringList;
 
 extern void tagReset();
 
@@ -38,5 +39,7 @@ extern void tagJumpTo(const QString &word);
 extern void tagNext();
 extern void tagPrev();
 extern void tagPop();
+
+extern void tagStartsWith(const QString &prefix, QStringList &list);
 
 #endif

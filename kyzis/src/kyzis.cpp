@@ -293,7 +293,11 @@ KParts::ReadWritePart* Kyzis::getCurrentPart() {
 			return it.data().p;
 		}
 	}
-	return viewList[ 0 ].p;
+	if ( viewList.size() > 0 ) {
+		return viewList[ 0 ].p;
+	} else {
+		return NULL;
+	}
 }
 
 void Kyzis::childWindowCloseRequest( KMdiChildView *v ) {

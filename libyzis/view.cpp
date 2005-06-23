@@ -126,10 +126,6 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 	opt_list = getLocalBooleanOption( "list" );
 	opt_listchars = getLocalMapOption( "listchars" );
 
-	//completion
-	m_completionStart = new YZCursor();
-	m_completionCursor = new YZCursor();
-
 	abortPaintEvent();
 
 	mModePool->change( YZMode::MODE_COMMAND );
@@ -149,8 +145,6 @@ YZView::~YZView() {
 	delete selectionPool;
 	delete mPaintSelection;
 	delete beginChanges;
-	delete m_completionStart;
-	delete m_completionCursor;
 	delete incSearchResult;
 	delete mLineSearch;
 	delete mSearchBegin;

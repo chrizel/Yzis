@@ -301,3 +301,23 @@ void tagPop () {
 
 	showNumMatches();
 }
+
+void tagStartsWith(const QString &prefix, QStringList &list)
+{
+	if ( !openTagFile() ) {
+		return;
+	}
+	
+	for ( unsigned int i = 0; i < tagfilelist.size(); ++i ) {
+		tagEntry entry;
+		int tagResult = tagsFind( tagfilelist[i], &entry, prefix, TAG_PARTIALMATCH );
+		
+		while ( tagResult == TagSuccess ) {
+			list.push_back( entry.name );
+			
+			tagResult = tagsFindNext( tagfilelist[i], &entry );
+		}
+	}
+		
+	closeTagFile();
+}

@@ -96,7 +96,7 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 
 	unsigned int matchedLength;
 //	yzDebug() << "begin = " << cur << endl;
-	YZCursor ret = mView->myBuffer()->action()->search( mView, pattern, cur, end, reverse, &matchedLength, found );
+	YZCursor ret = mView->myBuffer()->action()->search( mView->myBuffer(), pattern, cur, end, &matchedLength, found );
 	if ( ! *found ) {
 		yzDebug() << "search hits top or bottom" << endl;
 		end.setCursor( cur );
@@ -105,7 +105,7 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 		else 
 			cur.setCursor( top );
 //		yzDebug() << "begin = " << cur << ", end = " << end << endl;
-		ret = mView->myBuffer()->action()->search( mView, pattern, cur, end, reverse, &matchedLength, found );
+		ret = mView->myBuffer()->action()->search( mView->myBuffer(), pattern, cur, end, &matchedLength, found );
 		if ( *found ) {
 			if ( reverse )
 				mView->displayInfo( _("search hit TOP, continuing at BOTTOM") );
@@ -147,7 +147,7 @@ void YZSearch::setCurrentSearch( const QString& pattern ) {
 			unsigned int matchedLength = 0;
 			unsigned int pos = 0;
 			do {
-				from = b->action()->search( v, mCurrentSearch, cur, end, false, &matchedLength, &found );
+				from = b->action()->search( v->myBuffer(), mCurrentSearch, cur, end, &matchedLength, &found );
 				if ( found && matchedLength > 0 ) {
 					cur.setCursor( from );
 					cur.setX( cur.x() + matchedLength - 1 );
@@ -181,7 +181,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 		bool found;
 		unsigned int matchedLength = 0;
 		do {
-			from = buffer->action()->search( v, mCurrentSearch, cur, end, false, &matchedLength, &found );
+			from = buffer->action()->search( v->myBuffer(), mCurrentSearch, cur, end, &matchedLength, &found );
 			if ( found && matchedLength > 0 ) {
 				cur.setCursor( from );
 				cur.setX( cur.x() + matchedLength - 1 );

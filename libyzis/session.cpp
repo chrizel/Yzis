@@ -37,6 +37,7 @@
 #include <qdir.h>
 
 #include "mode_command.h"
+#include "mode_complete.h"
 #include "mode_ex.h"
 #include "mode_insert.h"
 #include "mode_search.h"

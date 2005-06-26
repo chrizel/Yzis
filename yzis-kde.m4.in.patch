@@ -1,5 +1,5 @@
---- acinclude.m4.in.orig	2005-06-26 14:38:05.000000000 +0200
-+++ acinclude.m4.in	2005-06-26 14:39:13.000000000 +0200
+--- acinclude.m4.in.orig	2005-06-26 23:12:24.000000000 +0200
++++ acinclude.m4.in	2005-06-26 23:12:12.000000000 +0200
 @@ -443,7 +443,7 @@
      kde_datadir='\${datadir}/apps'
    fi
@@ -33,12 +33,12 @@
                if test "$kde_qtsubver" -le 1; then
                  kde32ornewer=
                fi
--              if test "$kde_qtsubver" -le 2 -o `$KDECONFIG --version | grep KDE | sed 's/KDE: \(...\).*/\1/'` = 3.2; then
+-              if test "$kde_qtsubver" -le 2 -o `$KDECONFIG --version | grep KDE | sed 's/KDE: \(...\).*/\1/'` == 3.2; then
 +              if test "$kde_qtsubver" -le 2; then
                  kde33ornewer=
                fi
              fi
-@@ -1634,15 +1629,7 @@
+@@ -1644,15 +1639,7 @@
  
  AC_MSG_RESULT([$kde_cv_uic_plugins])
  if test "$kde_cv_uic_plugins" != yes; then
@@ -55,7 +55,7 @@
  fi
  fi
  ])
-@@ -1791,11 +1778,8 @@
+@@ -1801,11 +1788,8 @@
  ac_kde_includes="$kde_incdir"
  
  if test -n "$ac_kde_includes" && test ! -r "$ac_kde_includes/$kde_check_header"; then
@@ -68,7 +68,7 @@
  kde_libdirs="$kde_libs_prefix/lib${kdelibsuff} /usr/lib/kde/lib${kdelibsuff} /usr/local/kde/lib${kdelibsuff} /usr/kde/lib${kdelibsuff} /usr/lib${kdelibsuff}/kde /usr/lib${kdelibsuff}/kde3 /usr/lib${kdelibsuff} /usr/X11R6/lib${kdelibsuff} /usr/local/lib${kdelibsuff} /opt/kde3/lib${kdelibsuff} /opt/kde/lib${kdelibsuff} /usr/X11R6/kde/lib${kdelibsuff}"
  test -n "$KDEDIR" && kde_libdirs="$KDEDIR/lib${kdelibsuff} $KDEDIR $kde_libdirs"
  kde_libdirs="$ac_kde_libraries $libdir $kde_libdirs"
-@@ -1807,15 +1791,11 @@
+@@ -1817,15 +1801,11 @@
  AC_FIND_FILE("kde3/plugins/designer/kdewidgets.la", $kde_libdirs, kde_widgetdir)
  
  if test -n "$ac_kde_libraries" && test ! -r "$ac_kde_libraries/$kde_check_lib"; then
@@ -86,7 +86,7 @@
  fi
  
  if test -n "$kde_widgetdir"; then
-@@ -1892,7 +1872,9 @@
+@@ -1902,7 +1882,9 @@
  AC_SUBST(all_libraries)
  
  if test -z "$1"; then
@@ -97,7 +97,7 @@
  fi
  
  ac_kde_libraries="$kde_libdir"
-@@ -2945,6 +2927,7 @@
+@@ -2943,6 +2925,7 @@
  
  ])
  
@@ -105,7 +105,7 @@
  dnl AC_VALIDIFY_CXXFLAGS checks for forbidden flags the user may have given
  AC_DEFUN([AC_VALIDIFY_CXXFLAGS],
  [dnl
-@@ -4808,21 +4791,18 @@
+@@ -4801,21 +4784,18 @@
    KDE_SET_DEFAULT_BINDIRS
    if test "x$prefix" = "xNONE"; then
      dnl no prefix given: look for kde-config in the PATH and deduce the prefix from it

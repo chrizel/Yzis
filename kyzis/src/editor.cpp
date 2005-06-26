@@ -61,8 +61,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 	initKeys();
 	mCell.clear();
-	mCursor = new KYZisCursor( this, KYZisCursor::SQUARE );
-	updateCursor();
+	mCursor = new KYZisCursor( this, cursorShape() );
 
 	defaultCell.isValid = true;
 	defaultCell.selected = false;
@@ -149,7 +148,6 @@ void KYZisEdit::updateArea( ) {
 	isFontFixed = fontInfo().fixedPitch();
 	mParent->setFixedFont( isFontFixed );
 	spaceWidth = mParent->spaceWidth;
-	mCursor->resize( fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 	updateCursor();
 
 	int lines = height() / fontMetrics().lineSpacing();
@@ -517,7 +515,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 				cell.c = disp;
 
 				myRect.setLeft( GETX( marginLeft + curX - shiftX ) );
-				myRect.setWidth( GETX( mParent->drawLength() ) );
+				myRect.setWidth( GETX( mParent->drawLength() ) + 1 );
 				REVERSE_MYRECT_IF_RIGHTLEFT;
 
 				if ( rightleft )

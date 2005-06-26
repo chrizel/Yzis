@@ -46,7 +46,7 @@
 #define VERSION_CHAR_STATE3 "(preview release - Use for testing only)"
 //and change/use this one in the code
 #define VERSION_CHAR_ST VERSION_CHAR_STATE2
-#define VERSION_CHAR_DATE "SVN>2005-05-23"
+#define VERSION_CHAR_DATE "SVN>2005-06-25"
 
 #define qMax QMAX
 #define qMin QMIN

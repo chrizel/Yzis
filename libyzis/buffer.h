@@ -236,7 +236,7 @@ public:
 	 * Get the current filename of the buffer
 	 * @return the filename
 	 */
-	const QString& fileName() {return mPath;}
+	const QString& fileName() const {return mPath;}
 
 	/**
 	 * Changes the filename
@@ -294,12 +294,12 @@ public:
 	/**
 	 * Is this file a new file
 	 */
-	bool fileIsNew() { return mFileIsNew; }
+	bool fileIsNew() const { return mFileIsNew; }
 
 	/**
 	 * Is the file modified
 	 */
-	bool fileIsModified() { return mModified; }
+	bool fileIsModified() const { return mModified; }
 
 	/**
 	 * Change the modified flag of the file

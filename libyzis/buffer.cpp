@@ -550,7 +550,7 @@ void YZBuffer::load(const QString& file) {
 	filenameChanged();
 
 	YZSession::me->getYzisinfo()->readYzisinfo();
-	YZCursor * tmp = YZSession::me->getYzisinfo()->startPosition();
+	YZCursor * tmp = YZSession::me->getYzisinfo()->startPosition( this );
 	
 	YZView *hit;
 	for ( hit = mViews.first(); hit; hit = mViews.next() )
@@ -611,7 +611,7 @@ bool YZBuffer::save() {
 	mSwap->reset();
 	mSwap->unlink();
 
-	YZSession::me->getYzisinfo()->updateStartPosition( mPath, 
+	YZSession::me->getYzisinfo()->updateStartPosition( this, 
                   (YZSession::me->currentView())->getCursor()->x(),
                   (YZSession::me->currentView())->getCursor()->y() );
 

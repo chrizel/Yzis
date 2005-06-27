@@ -3,13 +3,14 @@ if test -z "$kde_locale"; then
 fi
  
 AC_DEFUN([AC_PATH_LIBGETTEXT], [
+	LIBGETTEXT_LIBS="-lgettextlib"
 
 	AC_ARG_WITH(gettext-dir,
 		AC_HELP_STRING([--with-gettext-dir=DIR],[where the root of gettext is installed]),
 		[
 		LIBGETTEXT="$withval"
 		LIBGETTEXT_INCLUDES=-I"$withval"/include
-		LIBGETTEXT_LIBS="-L$withval/lib" ])
+		LIBGETTEXT_LIBS="$LIBGETTEXT_LIBS -L$withval/lib" ])
 
 	AC_ARG_WITH(gettext-includes, 
 		AC_HELP_STRING([--with-gettext-includes=DIR],[where gettext includes are]),
@@ -18,7 +19,7 @@ AC_DEFUN([AC_PATH_LIBGETTEXT], [
 	AC_ARG_WITH(gettext-libraries,
 		AC_HELP_STRING([--with-gettext-libraries=DIR],[where the gettext library is installed]),
 		[
-		LIBGETTEXT_LIBS="-L$withval" ])
+		LIBGETTEXT_LIBS="$LIBGETTEXT_LIBS -L$withval" ])
 
 
 	if ! test "x$LIBGETTEXT" = "x"; then

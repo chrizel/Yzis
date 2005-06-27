@@ -15,7 +15,7 @@ dnl KDE_ENABLE_HIDDEN_VISIBILITY
 AC_PATH_LUA
 AC_PATH_LIBMAGIC
 
-case $host in *-*-freebsd* | *-*-netbsd* | *-*-openbsd*)
+case $host in *-*-darwin* | *-*-freebsd* | *-*-netbsd* | *-*-openbsd*)
 	AC_PATH_LIBGETTEXT
 	;;
 esac

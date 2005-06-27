@@ -303,7 +303,7 @@ bool YZSession::exitRequest( int errorCode ) {
 	mBuffers.clear();
 	
    YZSession::me->getYzisinfo()->updateStartPosition( 
-                  currentBuffer()->fileName(),
+                  mCurBuffer->fileName(),
                   (YZSession::me->currentView())->getCursor()->x(),
                   (YZSession::me->currentView())->getCursor()->y() );
                                        
@@ -341,15 +341,15 @@ void YZSession::unregisterModifier ( const QString& mod ) {
 }
 
 void YZSession::saveJumpPosition() {
-	mYzisinfo->updateJumpList( currentBuffer()->fileName(), currentView()->getCursor()->x(), currentView()->getCursor()->y() );
+	mYzisinfo->updateJumpList( mCurBuffer, currentView()->getCursor()->x(), currentView()->getCursor()->y() );
 }
 
 void YZSession::saveJumpPosition( const int x, const int y ) {
-	mYzisinfo->updateJumpList( currentBuffer()->fileName(), x, y );
+	mYzisinfo->updateJumpList( mCurBuffer, x, y );
 }
 
 void YZSession::saveJumpPosition( const YZCursor * cursor ) {
-	mYzisinfo->updateJumpList( currentBuffer()->fileName(), cursor->x(), cursor->y() );
+	mYzisinfo->updateJumpList( mCurBuffer, cursor->x(), cursor->y() );
 }
 
 const YZCursor * YZSession::previousJumpPosition() {
@@ -370,7 +370,7 @@ const YZCursor * YZSession::previousJumpPosition() {
 		
 		--mCurrentJumpListItem;
 	
-		if ( mJumpList[mCurrentJumpListItem]->filename() == currentBuffer()->fileName() ) {
+		if ( mJumpList[mCurrentJumpListItem]->filename() == mCurBuffer->fileName() ) {
 			found = true;
 			break;
 		}

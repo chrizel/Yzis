@@ -29,6 +29,8 @@
 
 #include "cursor.h"
 
+class YZBuffer;
+
 /**
  * Class YZYzisinfo
  * 
@@ -68,13 +70,13 @@ class YZYzisinfo {
 		 * Method to update the start position for the given file
 		 */
 		 
-		void updateStartPosition( const QString & filename, const int x, const int y );
+		void updateStartPosition( const YZBuffer *buffer, const int x, const int y );
 		
 		/**
 		 * Method to update the jump list for the given file
 		 */
 
-		void updateJumpList( const QString & filename, const int x, const int y );
+		void updateJumpList( const YZBuffer *buffer, const int x, const int y );
 		
 		/**
 		 * Method to write the yzisinfo file
@@ -123,13 +125,13 @@ class YZYzisinfo {
 		 * Method to return the start position for the current file
 		 */
 		
-		YZCursor * startPosition();
+		YZCursor * startPosition( const YZBuffer *buffer );
 		
 		/**
 		 * Method to return the previous search position for the current file
 		 */
 		 
-		YZCursor * searchPosition();
+		YZCursor * searchPosition( const YZBuffer *buffer );
 	
 	private:
 		QFile mYzisinfo;

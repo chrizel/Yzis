@@ -203,11 +203,6 @@ class YZSession {
 		YZView* currentView() { return mCurView; }
 
 		/**
-		 * Returns a pointer to the current buffer
-		 */
-		YZBuffer* currentBuffer() { return mCurBuffer; }
-
-		/**
 		 * Change the filename of a recorded buffer
 		 */
 		void updateBufferRecord( const QString& oldname, const QString& newname, YZBuffer *buffer );

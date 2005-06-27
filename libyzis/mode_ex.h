@@ -193,6 +193,7 @@ class YZModeEx : public YZMode {
 		cmd_state cd( const YZExCommandArgs& args );
 		cmd_state pwd( const YZExCommandArgs& args );
 		cmd_state tag( const YZExCommandArgs& args );
+		cmd_state pop( const YZExCommandArgs& args );
 		cmd_state tagnext( const YZExCommandArgs& args );
 		cmd_state tagprevious( const YZExCommandArgs& args );
 };

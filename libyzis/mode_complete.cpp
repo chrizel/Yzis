@@ -85,14 +85,24 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	
 	yzDebug() << "COMPLETION: mPrefix: " << mPrefix << endl;
 	
-	if ( forward ) {
-		completeFromBuffer( buffer, forward, mCompletionEnd, YZCursor(0, buffer->lineCount() + 1), true, mProposedCompletions );
-	} else {
-		completeFromBuffer( buffer, forward, mCompletionStart, YZCursor(0, 0), true, mProposedCompletions );
-	}
+	QStringList completeOption = YZSession::mOptions->readListOption("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i");
 	
-	completeFromOtherBuffers( buffer, mProposedCompletions );
-	completeFromTags( mProposedCompletions );
+	for ( unsigned int i = 0; i < completeOption.size(); ++i ) {
+		QString option = completeOption[ i ];
+
+		if ( option == "." && forward ) {
+			completeFromBuffer( buffer, forward, mCompletionEnd, YZCursor(0, buffer->lineCount() + 1), true, mProposedCompletions );
+		} else if ( option == "." && !forward ) {
+			completeFromBuffer( buffer, forward, mCompletionStart, YZCursor(0, 0), true, mProposedCompletions );
+		} else if ( option == "w" || option == "u" || option == "U" || option == "b" ) { 
+			// according to the VIM docs, these are separate, but I'm not distinguishing between
+			// them yet
+			completeFromOtherBuffers( buffer, mProposedCompletions );
+		} else if ( option == "t" || option == "]" ) {
+			// these options are the same according to the VIM docs
+			completeFromTags( mProposedCompletions );
+		}
+	}
 
 	return true;
 }
@@ -173,6 +183,11 @@ cmd_state YZModeCompletion::execCommand( YZView* view, const QString& _key ) {
 
 void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, bool forward, const YZCursor &initBegin, const YZCursor &initEnd, bool doWrap, QStringList &proposed )
 {
+	// Guardian for empty buffers
+	if ( buffer->isEmpty() || initBegin == initEnd ) {
+		return;
+	}
+	
 	unsigned int matchedLength;
 	bool found;
 	YZCursor matchCursor;

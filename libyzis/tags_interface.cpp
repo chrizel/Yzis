@@ -64,7 +64,7 @@ static bool doOpenTagFile( QString filename, tagFile *&tagfile ) {
 	// first, if the filename starts with ./, replace the dot with
 	// the current buffer's path
 	if ( filename.startsWith( QString(".") + QDir::separator() ) ) {
-		QFileInfo file( YZSession::me->currentBuffer()->fileName() );
+		QFileInfo file( YZSession::me->currentView()->myBuffer()->fileName() );
 		filename.replace( 0, 1, file.dirPath() );
 	}
 	
@@ -107,14 +107,14 @@ static void closeTagFile() {
 }
 
 static void doJumpToTag ( const YZTagStackItem &entry ) {
-	YZBuffer * b = YZSession::me->currentBuffer();
+	YZBuffer * b = YZSession::me->currentView()->myBuffer();
 
 	QFileInfo file( entry.filename );
 	QString filepath = file.absFilePath();
 	QString pattern = entry.pattern;
 	
 	// if the tag is in a different file, we have to change buffers
-	if ( filepath != YZSession::me->currentBuffer()->fileName() ) {
+	if ( filepath != YZSession::me->currentView()->myBuffer()->fileName() ) {
 		b = YZSession::me->findBuffer( filepath );
 
 		// check to see if we need to open the file
@@ -157,7 +157,7 @@ static void doJumpToTag ( const YZTagStackItem &entry ) {
 
 static bool jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 {	
-	YZBuffer *buffer = YZSession::me->currentBuffer();
+	YZBuffer *buffer = YZSession::me->currentView()->myBuffer();
 	
 	// check to see if we have to change buffers before jumping
 	if ( record->filename() != buffer->fileName() ) {

@@ -182,6 +182,8 @@ void YZInternalOptionPool::init() {
 	options.append(new YZOptionBoolean("wrap",true, CXT_VIEW,local_scope, &recalcView, QStringList()));
 	options.append(new YZOptionBoolean("startofline",true, CXT_VIEW,local_scope, &doNothing, QStringList("sol")));
 	options.append(new YZOptionList("tags", "tags", CXT_SESSION, global_scope, &doNothing, QStringList(), QStringList()));
+	options.append(new YZOptionList("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i", CXT_SESSION, global_scope, &doNothing, 
+						QStringList("cpt"), QStringList()));
 
 	for( unsigned int i = 0; i < options.size(); i++ ) {
 		mOptions[ "Global\\"+options[i]->name() ] = new YZOptionValue( *options[i]->defaultValue() );

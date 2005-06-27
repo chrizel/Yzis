@@ -186,6 +186,7 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "cd", &YZModeEx::cd, QStringList("cd") ));
 	commands.append( new YZExCommand( "pwd", &YZModeEx::pwd, QStringList("pwd") ));
 	commands.append( new YZExCommand( "tag", &YZModeEx::tag, QStringList("tag") ));
+	commands.append( new YZExCommand( "po(p)?", &YZModeEx::pop, QStringList("pop") ));
 	commands.append( new YZExCommand( "tn(ext)?", &YZModeEx::tagnext, QStringList("tnext") ));
 	commands.append( new YZExCommand( "tp(revious)?", &YZModeEx::tagprevious, QStringList("tprevious") ));
 	commands.append( new YZExCommand( "ret(ab)?", &YZModeEx::retab, QStringList("retab") ));
@@ -924,6 +925,12 @@ cmd_state YZModeEx::pwd( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::tag( const YZExCommandArgs& args ) {
 	tagJumpTo(args.arg);
+
+	return CMD_OK;
+}
+
+cmd_state YZModeEx::pop( const YZExCommandArgs& args ) {
+	tagPop();
 
 	return CMD_OK;
 }

@@ -155,7 +155,7 @@ static void doJumpToTag ( const YZTagStackItem &entry ) {
 	}
 } 
 
-static void jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
+static bool jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 {	
 	YZBuffer *buffer = YZSession::me->currentBuffer();
 	
@@ -165,7 +165,7 @@ static void jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 		// like it just gets in the way when using kyzis (nyzis may be another matter)
 		if ( buffer->fileIsModified() ) {
 			YZSession::me->popupMessage( _("File has been modified") );
-			return;
+			return false;
 		}
 		
 		YZBuffer *tagbuffer = YZSession::me->findBuffer( record->filename() );
@@ -182,6 +182,8 @@ static void jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 	const YZCursor &cursor = record->position();
 	YZSession::me->currentView()->centerViewVertically( cursor.y() );
 	YZSession::me->currentView()->gotodxdy( cursor.x(), cursor.y(), true );
+	
+	return true;
 }
 
 static void readAllMatchingTags( const YZTagStackItem &initialTag )
@@ -295,11 +297,11 @@ void tagPop () {
 	}
 	
 	const YZYzisinfoJumpListRecord *head = stack.getHead();
-	jumpToJumpRecord( head );
-	
-	stack.pop();
+	if ( jumpToJumpRecord( head ) ) {
+		stack.pop();
 
-	showNumMatches();
+		showNumMatches();
+	}
 }
 
 void tagStartsWith(const QString &prefix, QStringList &list)

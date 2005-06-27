@@ -1,0 +1,616 @@
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# translation of nn.po to Norsk (Nynorsk)
+# Lars Ivar Igesund <larsivar@igesund.net>, 2005.
+#: ../kyzis/main.cpp:40
+msgid ""
+msgstr ""
+"Last-Translator: Lars Ivar Igesund <larsivar@igesund.net>\n"
+"PO-Revision-Date: 2005-06-27 14:14+0200\n"
+"Project-Id-Version: nn\n"
+"Language-Team: Norsk (Nynorsk) <i18n-nn@lister.ping.uio.no>\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11\n"
+"MIME-Version: 1.0\n"
+
+#: ../kyzis/main.cpp:40
+msgid "KDE Frontend for the Yzis Editor"
+msgstr "KDE-grensesnitt til Yzis"
+
+#: ../kyzis/main.cpp:43
+msgid "Document to open."
+msgstr "Dokument som skal opnast."
+
+#: ../kyzis/main.cpp:44
+msgid "Execute command passed in argument"
+msgstr "Utfør kommando frå argument"
+
+#: ../kyzis/main.cpp:50 ../kyzis/src/factory.cpp:66
+msgid "Kyzis"
+msgstr "Kyzis"
+
+#: ../kyzis/src/configdialog.cpp:65
+msgid "Text font"
+msgstr "Tekstfont"
+
+#: ../kyzis/src/configdialog.cpp:73
+msgid "Use a transparent background"
+msgstr "Bruk bakgrunn med gjennomskin"
+
+#: ../kyzis/src/configdialog.cpp:81
+msgid "Background color opacity"
+msgstr "Bakgrunnsfargeopasitet"
+
+#: ../kyzis/src/configdialog.cpp:83
+msgid "Min"
+msgstr "Min"
+
+#: ../kyzis/src/configdialog.cpp:85
+msgid "Max"
+msgstr "Maks"
+
+#: ../kyzis/src/configdialog.cpp:93
+msgid "Background Color"
+msgstr "Bakgrunnsfarge"
+
+#: ../kyzis/src/configdialog.cpp:101
+msgid "Foreground Color"
+msgstr "Framgrunnsfarge"
+
+#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:382
+#: ../kyzis/src/document.cpp:386
+msgid "Syntax Highlighting"
+msgstr "Syntaksmerking"
+
+#: ../kyzis/src/factory.cpp:66
+msgid "Embeddable vi-like editor component"
+msgstr "Innkapslbar, vi-liknande redigeringskomponent"
+
+#: ../kyzis/src/factory.cpp:66
+msgid "(c)2002-2005 The Kyzis Authors"
+msgstr "(c)2002-2005 Kyzis-utviklarane"
+
+#: ../kyzis/src/factory.cpp:69 ../kyzis/src/factory.cpp:70
+#: ../kyzis/src/factory.cpp:71 ../kyzis/src/factory.cpp:72
+msgid "Initial Author"
+msgstr "Opphavleg utviklar"
+
+#: ../kyzis/src/factory.cpp:73
+msgid "Icons, KSettings"
+msgstr "Ikonar, KSettings"
+
+#: ../kyzis/src/factory.cpp:74
+msgid "EX mode history"
+msgstr "EX-modushistorie"
+
+#: ../kyzis/src/factory.cpp:75
+msgid "KTextEditor interfaces / Dutch translation"
+msgstr "KTextEditor-grensesnitt / Nederlandsk omsetjing"
+
+#: ../kyzis/src/factory.cpp:76
+msgid "Commands and motion engine rewrite and cleanup"
+msgstr "Kommandoar og omskriving / reingjering av flyttemotoren"
+
+#: ../kyzis/src/factory.cpp:77
+msgid "KTextEditor ConfigInterface"
+msgstr "KTextEditor ConfigInterface"
+
+#: ../kyzis/src/factory.cpp:78
+msgid "View scrolling fixes"
+msgstr "Fiks av visningsskrolling"
+
+#: ../kyzis/src/factory.cpp:79
+msgid "Kyzis Tab caption improvement"
+msgstr "Kyzis fanenamnsforbetringar"
+
+#: ../kyzis/src/factory.cpp:80
+msgid "Commands and bug fixes"
+msgstr "Kommandoar og bøggfiksar"
+
+#: ../kyzis/src/factory.cpp:81
+msgid "Yzisinfo file and tag commands"
+msgstr "Yzisinfofil og tag-kommandoar"
+
+#: ../kyzis/src/factory.cpp:82
+msgid "Misc fixes and improvements"
+msgstr "Ymse fiksar og forbetringar"
+
+#: ../kyzis/src/factory.cpp:83
+msgid "Fixed 'xp' command"
+msgstr "Fiksa 'xp'-kommando"
+
+#: ../kyzis/src/factory.cpp:84
+msgid ":cd and :pwd commands"
+msgstr ":cd- og :pwd-kommandoane"
+
+#: ../kyzis/src/factory.cpp:85
+msgid "utf8 fixes for Lua strings"
+msgstr "utf8-fiksar for Lua-strengar"
+
+#: ../kyzis/src/factory.cpp:86
+msgid "help to port to KDE4"
+msgstr "Hjelp med porting til KDE4"
+
+#: ../kyzis/src/factory.cpp:87
+msgid "D language syntax highlight fixes"
+msgstr "Fiksar for syntaksmerking i D"
+
+#: ../kyzis/src/factory.cpp:88
+msgid ""
+"_: NAME OF TRANSLATORS\n"
+"Your names"
+msgstr "Lars Ivar Igesund"
+
+#: ../kyzis/src/factory.cpp:88
+msgid ""
+"_: EMAIL OF TRANSLATORS\n"
+"Your emails"
+msgstr "larsivar@igesund.net"
+
+#: ../kyzis/src/hlconfig.cpp:186
+msgid "Text Area Background"
+msgstr "Bakgrunn tekstområde"
+
+#: ../kyzis/src/hlconfig.cpp:190
+msgid "Normal text:"
+msgstr "Vanleg tekst:"
+
+#: ../kyzis/src/hlconfig.cpp:196
+msgid "Selected text:"
+msgstr "Vald tekst:"
+
+#: ../kyzis/src/hlconfig.cpp:202
+msgid "Current line:"
+msgstr "Aktiv linje:"
+
+#: ../kyzis/src/hlconfig.cpp:211
+msgid "Bookmark"
+msgstr "Bokmerke"
+
+#: ../kyzis/src/hlconfig.cpp:212
+msgid "Active Breakpoint"
+msgstr "Aktivt brytpunkt"
+
+#: ../kyzis/src/hlconfig.cpp:213
+msgid "Reached Breakpoint"
+msgstr "Brytpunkt nådd"
+
+#: ../kyzis/src/hlconfig.cpp:214
+msgid "Disabled Breakpoint"
+msgstr "Brytpunkt deaktivert"
+
+#: ../kyzis/src/hlconfig.cpp:215
+msgid "Execution"
+msgstr "Utføring"
+
+#: ../kyzis/src/hlconfig.cpp:224
+msgid "Additional Elements"
+msgstr "Tilleggselement"
+
+#: ../kyzis/src/hlconfig.cpp:228
+msgid "Left border background:"
+msgstr "Bakgrunn venstre kant:"
+
+#: ../kyzis/src/hlconfig.cpp:234
+msgid "Line numbers:"
+msgstr "Linjenummer:"
+
+#: ../kyzis/src/hlconfig.cpp:240
+msgid "Bracket highlight:"
+msgstr "Parantesmerking:"
+
+#: ../kyzis/src/hlconfig.cpp:246
+msgid "Word wrap markers:"
+msgstr "Ordbrytningsmarkørar:"
+
+#: ../kyzis/src/hlconfig.cpp:252
+msgid "Tab markers:"
+msgstr "Fanemarkørar:"
+
+#: ../kyzis/src/hlconfig.cpp:264
+msgid "<p>Sets the background color of the editing area.</p>"
+msgstr "<p>Set bakgrunnsfargen til redigeringsområdet.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:265
+msgid ""
+"<p>Sets the background color of the selection.</p><p>To set the text color "
+"for selected text, use the \"<b>Configure Highlighting</b>\" dialog.</p>"
+msgstr "<p>Set bakgrunnsfargen til utvalet.</p><p>For å setje tekstfargen for vald tekst, bruk \"<b>Konfigurer merking</b>\"-dialogen.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:268
+msgid ""
+"<p>Sets the background color of the selected marker type.</p><p><b>Note</b>: "
+"The marker color is displayed lightly because of transparency.</p>"
+msgstr "<p>Set bakgrunnsfargen til den valde markørtypen.</p><p><b>Merk</b>: Markørfargen vert vist lyst grunna gjennomskin.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:271
+msgid "<p>Select the marker type you want to change.</p>"
+msgstr "<p>Vel markørtypen du ynskjerå endre.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:272
+msgid ""
+"<p>Sets the background color of the currently active line, which means the "
+"line where your cursor is positioned.</p>"
+msgstr "<p>Set bakgrunnsfargen til den aktive linja, altså linja der peikaren er plassert.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:275
+msgid ""
+"<p>This color will be used to draw the line numbers (if enabled) and the "
+"lines in the code-folding pane.</p>"
+msgstr "Denne fargen vil verte brukt til å teikne linjenummera (dersom aktivert) og linjene i kodefoldingspanelet.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:277
+msgid ""
+"<p>Sets the bracket matching color. This means, if you place the cursor e.g. "
+"at a <b>(</b>, the matching <b>)</b> will be highlighted with this color.</p>"
+msgstr "Set fargen for parantesar som høyrer saman. Dette tyder at dersom du plasserar peikaren på til dømes ein <b>(</b>, vil den tilhøyrande <b>)</b> verte merka med denne fargen.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:281
+msgid ""
+"<p>Sets the color of Word Wrap-related markers:</p><dl><dt>Static Word Wrap</"
+"dt><dd>A vertical line which shows the column where text is going to be "
+"wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the left of "
+"visually-wrapped lines</dd></dl>"
+msgstr "<p>Set fargen til ordbrytningsrelaterte markørar:</p><dl><dt>Statisk ordbryting</dt><dd>Ei vertikal linje som viser kolonna der tekst vil verte broten</dd><dt>Dynamisk ordbryting</dt><dd>Ei pil vist til venstre for visuelt brotne linjer.</dd></dl>"
+
+#: ../kyzis/src/hlconfig.cpp:287
+msgid "<p>Sets the color of the tabulator marks:</p>"
+msgstr "<p>Set fargen til tabulatormarkørane:</p>"
+
+#: ../kyzis/src/hlconfig.cpp:505
+msgid ""
+"This list displays the default styles for the current schema and offers the "
+"means to edit them. The style name reflects the current style settings.<p>To "
+"edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> and choose a "
+"property from the popup menu.<p>To edit the colors, click the colored "
+"squares, or select the color to edit from the popup menu.<p>You can unset "
+"the Background and Selected Background colors from the popup menu when "
+"appropriate."
+msgstr "Denne lista viser standardstilane for det aktive skjemaet og tilbyr måtar å redigere dei. Stilnamnet reflekterar innstillingane til den aktive stilen.<p>For å redigere med tastaturet, trykk <strong>&lt;MELLOMROM&gt;</strong> og vel eit punkt frå poppopp-menyen.<p>For å redigere fargane, klikk på dei farga kvadrata, eller vel ein farge å redigere frå poppopp-menyen.<p>Du kan deaktivere bakgrunnen og valde bakgrunnsfargar frå poppopp-menyen når det passar."
+
+#: ../kyzis/src/hlconfig.cpp:548
+msgid "H&ighlight:"
+msgstr "Merk&ing:"
+
+#: ../kyzis/src/hlconfig.cpp:569
+msgid ""
+"This list displays the contexts of the current syntax highlight mode and "
+"offers the means to edit them. The context name reflects the current style "
+"settings.<p>To edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> "
+"and choose a property from the popup menu.<p>To edit the colors, click the "
+"colored squares, or select the color to edit from the popup menu.<p>You can "
+"unset the Background and Selected Background colors from the context menu "
+"when appropriate."
+msgstr "Denne lista viser konteksten til den aktive syntaksmerkingsmodusen og tilbyr måtar å redigere dei. Kontekstnamnet reflekterar den aktive stilen.<p>For å redigere med tastaturet, trykk <strong>&lt;MELLOMROM&gt;</strong> og vel eit punkt frå poppopp-menyen.<p>For å redigere fargane, klikk dei farga kvadrata, eller vel ein farge å redigere frå poppopp-menyen.<p>Du kan deaktivere bakgrunns- og vald bakgrunnsfarge frå kontekstmenyen når det passar."
+
+#: ../kyzis/src/hlconfig.cpp:688
+msgid "&Schema:"
+msgstr "&Skjema:"
+
+#: ../kyzis/src/hlconfig.cpp:694
+msgid "&New..."
+msgstr "&Ny..."
+
+#: ../kyzis/src/hlconfig.cpp:707
+msgid "Colors"
+msgstr "Fargar"
+
+#: ../kyzis/src/hlconfig.cpp:713
+msgid "Normal Text Styles"
+msgstr "Vanlege tekststilar"
+
+#: ../kyzis/src/hlconfig.cpp:717
+msgid "Highlighting Text Styles"
+msgstr "Merkingstekststilar"
+
+#: ../kyzis/src/hlconfig.cpp:722
+msgid "&Default schema for %1:"
+msgstr "Stan&dard skjema for %1:"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "Name for New Schema"
+msgstr "Namn på nytt skjema"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "Name:"
+msgstr "Namn:"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "New Schema"
+msgstr "Nytt skjema"
+
+#: ../kyzis/src/hlconfig.cpp:917
+msgid "Context"
+msgstr "Kontekst"
+
+#: ../kyzis/src/hlconfig.cpp:922
+msgid "Normal"
+msgstr "Normal"
+
+#: ../kyzis/src/hlconfig.cpp:923
+msgid "Selected"
+msgstr "Vald"
+
+#: ../kyzis/src/hlconfig.cpp:924
+msgid "Background"
+msgstr "Bakgrunn"
+
+#: ../kyzis/src/hlconfig.cpp:925
+msgid "Background Selected"
+msgstr "Vald bakgrunn"
+
+#: ../kyzis/src/hlconfig.cpp:927
+msgid "Use Default Style"
+msgstr "Bruk standardstil"
+
+#: ../kyzis/src/hlconfig.cpp:962
+msgid "&Bold"
+msgstr "&Feit"
+
+#: ../kyzis/src/hlconfig.cpp:964
+msgid "&Italic"
+msgstr "Kurs&iv"
+
+#: ../kyzis/src/hlconfig.cpp:966
+msgid "&Underline"
+msgstr "&Understrek"
+
+#: ../kyzis/src/hlconfig.cpp:968
+msgid "S&trikeout"
+msgstr "S&tryk ut"
+
+#: ../kyzis/src/hlconfig.cpp:973
+msgid "Normal &Color..."
+msgstr "Normal farge..."
+
+#: ../kyzis/src/hlconfig.cpp:974
+msgid "&Selected Color..."
+msgstr "Vald farge..."
+
+#: ../kyzis/src/hlconfig.cpp:975
+msgid "&Background Color..."
+msgstr "&Bakgrunnsfarge..."
+
+#: ../kyzis/src/hlconfig.cpp:976
+msgid "S&elected Background Color..."
+msgstr "Vald bakgrunnsfarg&e..."
+
+#: ../kyzis/src/hlconfig.cpp:987
+msgid "Unset Background Color"
+msgstr "Deaktiver bakgrunnsfarge"
+
+#: ../kyzis/src/hlconfig.cpp:989
+msgid "Unset Selected Background Color"
+msgstr "Deaktiver vald bakgrunnsfarge"
+
+#: ../kyzis/src/hlconfig.cpp:994
+msgid "Use &Default Style"
+msgstr "Bruk stan&dardstil"
+
+#: ../kyzis/src/hlconfig.cpp:1210
+msgid ""
+"\"Use Default Style\" will be automatically unset when you change any style "
+"properties."
+msgstr "\"Bruk standardstil\" vil automatisk verte deaktivert når du endrar på stileigenskapane."
+
+#: ../kyzis/src/hlconfig.cpp:1211
+msgid "Yzis Styles"
+msgstr "Yzisstilar"
+
+#: ../kyzis/src/kyzis.cpp:123
+msgid "Opens recently opened file."
+msgstr "Opnar nyleg opna fil."
+
+#: ../kyzis/src/kyzis.cpp:132
+msgid "Show &Konsole"
+msgstr "Vis &Konsole"
+
+#: ../kyzis/src/kyzis.cpp:142
+msgid "&Window"
+msgstr "&Vindauge"
+
+#: ../kyzis/src/kyzis.cpp:332
+msgid "Terminal"
+msgstr "Terminal"
+
+#: ../kyzis/src/viewwidget.cpp:51
+msgid "Yzis Ready"
+msgstr "Yzis klar"
+
+#: ../libyzis/buffer.cpp:522
+msgid "Failed opening file %1 for reading : %2"
+msgstr "Feila under opning av fila %1 for lesing : %2"
+
+#: ../libyzis/buffer.cpp:533
+msgid "Recover"
+msgstr "Attopprett"
+
+#: ../libyzis/buffer.cpp:533
+msgid ""
+"A swap file was found for this file, it was presumably created because your "
+"computer or yzis crashed, do you want to start the recovery of this file ?"
+msgstr "Ei byttefil vart funne for denne fila, sannsynlegvis fordi datamaskina eller yzis krasja. Vil du starte attoppretting av denne fila?"
+
+#: ../libyzis/buffer.cpp:600
+msgid "Failed opening file %1 for writing : %2"
+msgstr "Feila under opning av fila %1 for skriving : %2"
+
+#: ../libyzis/buffer.cpp:607
+msgid "Written %1 bytes to file %2"
+msgstr "Skreiv %1 byte til fil %2"
+
+#: ../libyzis/ex_lua.cpp:280
+msgid "The file %1 could not be found in standard directories"
+msgstr "Fila %1 vart ikkje funne i standardkatalogane"
+
+#: ../libyzis/ex_lua.cpp:287
+msgid "Lua error when running file %1:\n"
+msgstr "Luafeil under køyring av fil %1:\n"
+
+#: ../libyzis/internal_options.cpp:114
+msgid "File modified"
+msgstr "Fil endra"
+
+#: ../libyzis/internal_options.cpp:114
+msgid "This file has been modified, do you want to save it ?"
+msgstr "Denne fila har vore endra, vil lagra den?"
+
+#: ../libyzis/mode_command.cpp:54
+msgid "[ Awaiting Command ]"
+msgstr "[ Ventar på kommando ]"
+
+#: ../libyzis/mode.cpp:94
+msgid "[ Introduction ]"
+msgstr "[ Introduksjon ]"
+
+#: ../libyzis/mode_ex.cpp:66
+msgid "[ Ex ]"
+msgstr "[ Ex ]"
+
+#: ../libyzis/mode_ex.cpp:265
+msgid "Not an editor command: "
+msgstr "Ikkje ein redigeringskommando:"
+
+#: ../libyzis/mode_ex.cpp:380 ../libyzis/mode_ex.cpp:394
+#: ../libyzis/mode_ex.cpp:400
+msgid "One file is modified! Save it first..."
+msgstr "Ei fil er endra! Lagre den først..."
+
+#: ../libyzis/mode_ex.cpp:476 ../libyzis/mode_ex.cpp:572
+msgid "Please specify a filename"
+msgstr "Spesifiser eit filnamn"
+
+#: ../libyzis/mode_ex.cpp:513
+msgid "Invalid option name : %1"
+msgstr "Ugyldig opsjon : %1"
+
+#: ../libyzis/mode_ex.cpp:516
+msgid "Bad value for option given"
+msgstr "Ugyldig verdi for opsjon"
+
+#: ../libyzis/mode_ex.cpp:796
+msgid "Registers:\n"
+msgstr "Register:\n"
+
+#: ../libyzis/mode_ex.cpp:917
+msgid "Cannot change to specified directory"
+msgstr "Kan ikkje endre spesifisert katalog"
+
+#: ../libyzis/mode_insert.cpp:37
+msgid "[ Insert ]"
+msgstr "[ Innsetjing ]"
+
+#: ../libyzis/mode_insert.cpp:256
+msgid "[ Replace ]"
+msgstr "[ Byt ut ]"
+
+#: ../libyzis/mode_insert.cpp:279
+msgid "{ Completion }"
+msgstr "{ Fullføring }"
+
+#: ../libyzis/mode_search.cpp:39
+msgid "[ Search ]"
+msgstr "[ Søk ]"
+
+#: ../libyzis/mode_search.cpp:94
+msgid "No match"
+msgstr "Ingen treff"
+
+#: ../libyzis/mode_search.cpp:158
+msgid "[ Search backward ]"
+msgstr "[ Søk bakover ]"
+
+#: ../libyzis/mode_visual.cpp:41
+msgid "[ Visual ]"
+msgstr "[ Visuell ]"
+
+#: ../libyzis/mode_visual.cpp:268
+msgid "[ Visual Line ]"
+msgstr "[ Visuell linje ]"
+
+#: ../libyzis/mode_visual.cpp:301
+msgid "[ Visual Block ]"
+msgstr "[ Visuell blokk ]"
+
+#: ../libyzis/search.cpp:111
+msgid "search hit TOP, continuing at BOTTOM"
+msgstr "søk traff TOPPEN, fortset på BOTNEN"
+
+#: ../libyzis/search.cpp:113
+msgid "search hit BOTTOM, continuing at TOP"
+msgstr "søk traff BOTNEN, fortset på TOPPEN"
+
+#: ../libyzis/swapfile.cpp:69
+msgid ""
+"Warning, the swapfile could not be opened maybe due to restrictive "
+"permissions."
+msgstr "Åtvaring, byttefila kunne ikkje opnast, grunnen kan vere redusert tilgang."
+
+#: ../libyzis/swapfile.cpp:115
+msgid ""
+"Warning, the swapfile could not be created maybe due to restrictive "
+"permissions."
+msgstr "Åtvaring, byttefila kunne ikkje opprettast, grunnen kan vere redusert tilgang."
+
+#: ../libyzis/swapfile.cpp:139
+msgid ""
+"The swap file could not be opened, there will be no recovering for this "
+"file, you might want to check permissions of files."
+msgstr "Byttefila kunne ikkje opnast, fila vil ikkje verte attoppretta. Du bør sjekke tilgangen til filene."
+
+#: ../libyzis/tags_interface.cpp:167
+msgid "File has been modified"
+msgstr "Fila har vorte endra"
+
+#: ../libyzis/tags_interface.cpp:232
+msgid "Unable to find tag file"
+msgstr "Kunne ikkje finne merkefil"
+
+#: ../libyzis/tags_interface.cpp:272
+msgid "Could not find next tag"
+msgstr "Kunne ikkje finne neste merke"
+
+#: ../libyzis/tags_interface.cpp:285
+msgid "Could not find previous tag"
+msgstr "Kunne ikkje finne forrige merke"
+
+#: ../libyzis/tags_interface.cpp:293
+msgid "At bottom of tag stack"
+msgstr "På botnen av merkestakk"
+
+#: ../libyzis/view.cpp:380 ../libyzis/view.cpp:388
+msgid "All"
+msgstr "Alle"
+
+#: ../libyzis/view.cpp:387
+msgid "Bot"
+msgstr "Bot"
+
+#: ../libyzis/view.cpp:1462
+msgid ""
+"To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
+"should try pslib in console mode"
+msgstr "For å nytte Qt-skrivaren, må du ha ein X11-skjerm som er aktivert og køyrer, prøv pslib i konsollmodus"
+
+#: ../libyzis/view.cpp:1714
+msgid " { Recording }"
+msgstr "{ Tek opp }"
+
+#: ../nyzis/factory.cpp:212
+msgid "(Press any key)"
+msgstr "(Trykk ein tast)"
+
+#: ../nyzis/viewwidget.cpp:382
+msgid "[No File]"
+msgstr "[Inga fil]"
+

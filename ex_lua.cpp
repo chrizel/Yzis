@@ -152,6 +152,12 @@ YZExLua::YZExLua() {
 	lua_register(L,"vunmap",vunmap);
 	lua_register(L,"cmap",cmap);
 	lua_register(L,"cunmap",cunmap);
+	lua_register(L,"noremap",noremap);
+	lua_register(L,"nnoremap",nnoremap);
+	lua_register(L,"vnoremap",vnoremap);
+	lua_register(L,"onoremap",onoremap);
+	lua_register(L,"inoremap",inoremap);
+	lua_register(L,"cnoremap",cnoremap);
 	lua_register(L,"matchpair",matchpair);
 	lua_register(L,"mode",mode);
 
@@ -762,6 +768,66 @@ int YZExLua::nunmap(lua_State *L ) {
 	if (!checkFunctionArguments(L, 1, 1, "nunmap", "key (string)")) return 0;
 	QString key = QString::fromUtf8( (  char * )lua_tostring (  L, 1 ) );
 	YZMapping::self()->deleteNormalMapping(key);
+	RET_LUA( 0 );
+}
+
+int YZExLua::noremap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, 2, "noremap", "key, text")) return 0;
+	QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
+	QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
+	
+	YZMapping::self()->addGlobalNoreMapping(key, mapp);
+	
+	RET_LUA( 0 );
+}
+
+int YZExLua::nnoremap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, 2, "nnoremap", "key, text")) return 0;
+	QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
+	QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
+	
+	YZMapping::self()->addNormalNoreMapping(key, mapp);
+	
+	RET_LUA( 0 );
+}
+
+int YZExLua::vnoremap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, 2, "vnoremap", "key, text")) return 0;
+	QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
+	QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
+	
+	YZMapping::self()->addVisualNoreMapping(key, mapp);
+	
+	RET_LUA( 0 );
+}
+
+int YZExLua::onoremap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, 2, "onoremap", "key, text")) return 0;
+	QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
+	QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
+	
+	YZMapping::self()->addPendingOpNoreMapping(key, mapp);
+	
+	RET_LUA( 0 );
+}
+
+int YZExLua::inoremap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, 2, "inoremap", "key, text")) return 0;
+	QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
+	QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
+	
+	YZMapping::self()->addInsertNoreMapping(key, mapp);
+	
+	RET_LUA( 0 );
+}
+
+int YZExLua::cnoremap(lua_State *L ) {
+	if (!checkFunctionArguments(L, 2, 2, "cnoremap", "key, text")) return 0;
+	QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
+	QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
+	
+	YZMapping::self()->addCmdLineNoreMapping(key, mapp);
+	
 	RET_LUA( 0 );
 }
 

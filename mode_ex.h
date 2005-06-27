@@ -174,6 +174,12 @@ class YZModeEx : public YZMode {
 		cmd_state cunmap( const YZExCommandArgs& args );
 		cmd_state nmap( const YZExCommandArgs& args );
 		cmd_state nunmap( const YZExCommandArgs& args );
+		cmd_state noremap( const YZExCommandArgs& args );
+		cmd_state onoremap( const YZExCommandArgs& args );
+		cmd_state vnoremap( const YZExCommandArgs& args );
+		cmd_state inoremap( const YZExCommandArgs& args );
+		cmd_state cnoremap( const YZExCommandArgs& args );
+		cmd_state nnoremap( const YZExCommandArgs& args );
 		cmd_state indent( const YZExCommandArgs& args );
 		cmd_state enew( const YZExCommandArgs& args );
 		cmd_state syntax( const YZExCommandArgs& args );
@@ -182,7 +188,8 @@ class YZModeEx : public YZMode {
 		cmd_state split( const YZExCommandArgs& args );
 		cmd_state retab( const YZExCommandArgs& args );
 		cmd_state genericMap( const YZExCommandArgs& args, int );
-		cmd_state genericUnmap( const YZExCommandArgs& args, int );
+		cmd_state genericUnmap( const YZExCommandArgs& args, int );		
+		cmd_state genericNoremap( const YZExCommandArgs& args, int );
 		cmd_state cd( const YZExCommandArgs& args );
 		cmd_state pwd( const YZExCommandArgs& args );
 		cmd_state tag( const YZExCommandArgs& args );

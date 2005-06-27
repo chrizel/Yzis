@@ -171,6 +171,12 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "nunmap", &YZModeEx::nunmap, QStringList("nunmap") ) );
 	commands.append( new YZExCommand( "cmap", &YZModeEx::cmap, QStringList("cmap") ) );
 	commands.append( new YZExCommand( "cunmap", &YZModeEx::cunmap, QStringList("cunmap") ) );
+	commands.append( new YZExCommand( "noremap", &YZModeEx::noremap, QStringList("noremap") ) );
+	commands.append( new YZExCommand( "nnoremap", &YZModeEx::nnoremap, QStringList("nnoremap") ) );	
+	commands.append( new YZExCommand( "vnoremap", &YZModeEx::vnoremap, QStringList("vnoremap") ) );	
+	commands.append( new YZExCommand( "inoremap", &YZModeEx::inoremap, QStringList("inoremap") ) );	
+	commands.append( new YZExCommand( "cnoremap", &YZModeEx::cnoremap, QStringList("cnoremap") ) );	
+	commands.append( new YZExCommand( "onoremap", &YZModeEx::onoremap, QStringList("onoremap") ) );
 	commands.append( new YZExCommand( "[<>]", &YZModeEx::indent, QStringList(), false ));
 	commands.append( new YZExCommand( "ene(w)?", &YZModeEx::enew, QStringList("enew") ));
 	commands.append( new YZExCommand( "syn(tax)?", &YZModeEx::syntax, QStringList("syntax")));
@@ -657,6 +663,42 @@ cmd_state YZModeEx::genericUnmap ( const YZExCommandArgs& args, int type) {
 	return CMD_OK;	
 }
 
+cmd_state YZModeEx::genericNoremap ( const YZExCommandArgs& args, int type) {
+	QRegExp rx("(\\S+)\\s+(.+)");
+	if ( rx.exactMatch(args.arg) ) {
+		// yzDebug() << "Adding noremapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
+		switch (type) {
+			case 0://global
+				YZMapping::self()->addGlobalNoreMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 1://insert
+				YZMapping::self()->addInsertNoreMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 2://operator
+				YZMapping::self()->addPendingOpNoreMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 3://visual
+				YZMapping::self()->addVisualNoreMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 4://normal
+				YZMapping::self()->addNormalNoreMapping(rx.cap(1), rx.cap(2));
+				break;
+			case 5://cmdline
+				YZMapping::self()->addCmdLineNoreMapping(rx.cap(1), rx.cap(2));
+				break;
+		}
+		if (rx.cap(1).startsWith("<CTRL>")) {
+			mModifierKeys << rx.cap(1);
+			for (int i = 0 ; i <= YZSession::mNbViews; i++) {
+				YZView *v = YZSession::me->findView(i);
+				if (v)
+					v->registerModifierKeys(rx.cap(1));
+			}
+		}
+	}
+	return CMD_OK;	
+}
+
 cmd_state YZModeEx::map( const YZExCommandArgs& args ) {
 	return genericMap(args,0);
 }
@@ -703,6 +745,30 @@ cmd_state YZModeEx::cmap( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::cunmap( const YZExCommandArgs& args ) {
 	return genericUnmap(args,5);
+}
+
+cmd_state YZModeEx::noremap( const YZExCommandArgs& args ) {
+	return genericNoremap(args,0);
+}
+
+cmd_state YZModeEx::inoremap( const YZExCommandArgs& args ) {
+	return genericNoremap(args,1);
+}
+
+cmd_state YZModeEx::onoremap( const YZExCommandArgs& args ) {
+	return genericNoremap(args,2);
+}
+
+cmd_state YZModeEx::vnoremap( const YZExCommandArgs& args ) {
+	return genericNoremap(args,3);
+}
+
+cmd_state YZModeEx::nnoremap( const YZExCommandArgs& args ) {
+	return genericNoremap(args,4);
+}
+
+cmd_state YZModeEx::cnoremap( const YZExCommandArgs& args ) {
+	return genericNoremap(args,5);
 }
 
 cmd_state YZModeEx::indent( const YZExCommandArgs& args ) {

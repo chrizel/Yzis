@@ -298,6 +298,36 @@ class YZExLua : public QObject {
 		static int nmap(lua_State *L);
 		static int nunmap(lua_State *L);
 
+		/**
+		 * Adds a new not remappable global mapping
+		 */
+		static int noremap(lua_State *L);
+
+		/**
+		 * Adds a new not remappable normal mapping
+		 */
+		static int nnoremap(lua_State *L);
+
+		/**
+		 * Adds a new not remappable visual mapping
+		 */
+		static int vnoremap(lua_State *L);
+		
+		/**
+		 * Adds a new not remappable pending op mapping
+		 */
+		static int onoremap(lua_State *L);
+
+		/**
+		 * Adds a new not remappable insert mapping
+		 */
+		static int inoremap(lua_State *L);
+
+		/**
+		 * Adds a new not remappable cmd line mapping
+		 */
+		static int cnoremap(lua_State *L);
+		
 		static int matchpair(lua_State *L);
 
 		/**

@@ -191,7 +191,7 @@ void YZView::sendMultipleKey(const QString& _keys) {
 		mModePool->change( YZMode::MODE_COMMAND );
 	}
 	QString keys = _keys;
-	yzDebug() << "sendMultipleKey " << keys << endl;
+	yzDebug() << "YZView::sendMultipleKey " << keys << endl;
 	for ( unsigned int i = 0 ; i < keys.length(); ) {
 		QString key = keys.mid( i );
 		yzDebug() << "Handling key : " << key << endl;

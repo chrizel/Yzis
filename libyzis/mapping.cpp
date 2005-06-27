@@ -34,15 +34,16 @@ YZMapping *YZMapping::self() {
 }
 
 YZMapping::YZMapping() {
+	mNoremap = false;
 }
 
 YZMapping::~YZMapping() {
 }
 
-bool YZMapping::applyNormalMappings( QString& text ) {
+bool YZMapping::applyMappings( QString& text, QMap<QString,QString>& mappings ) {
 	bool pendingMapp = false;
 	QString old = text;
-	QMap<QString,QString>::Iterator it = mNormalMappings.begin(), end = mNormalMappings.end();
+	QMap<QString,QString>::Iterator it = mappings.begin(), end = mappings.end();
 	bool match = false;
 	for (; it != end && !match ; ++it) {
 		match = text.contains( it.key() );
@@ -50,106 +51,9 @@ bool YZMapping::applyNormalMappings( QString& text ) {
 			char *result;
 			YZExLua::instance()->exe( (const char*)it.data().mid(8, it.data().length()-10), "s>s",  (const char*)it.key(), &result);
 			text.replace(it.key(), result);
-		} else if ( match ){
-			text.replace(it.key(), it.data());
-		} else {
-			pendingMapp = pendingMapp || it.key().startsWith(text);
-		}
-	}
-	return pendingMapp;
-}
-
-bool YZMapping::applyVisualMappings( QString& text ) {
-	bool pendingMapp = false;
-	QString old = text;
-	QMap<QString,QString>::Iterator it = mVisualMappings.begin(), end = mVisualMappings.end();
-	bool match = false;
-	for (; it != end && !match ; ++it) {
-		match = text.contains( it.key() );
-		if ( it.data().startsWith("<Script>") && match ) {
-			char *result;
-			YZExLua::instance()->exe( (const char*)it.data().mid(8, it.data().length()-10), "s>s",  (const char*)it.key(), &result);
-			text.replace(it.key(), result);
-		} else if ( match ){
-			text.replace(it.key(), it.data());
-		} else {
-			pendingMapp = pendingMapp || it.key().startsWith(text);
-		}
-	}
-	return pendingMapp;
-}
-
-bool YZMapping::applyCmdLineMappings( QString& text ) {
-	bool pendingMapp = false;
-	QString old = text;
-	QMap<QString,QString>::Iterator it = mCmdLineMappings.begin(), end = mCmdLineMappings.end();
-	bool match = false;
-	for (; it != end && !match ; ++it) {
-		match = text.contains( it.key() );
-		if ( it.data().startsWith("<Script>") && match ) {
-			char *result;
-			YZExLua::instance()->exe( (const char*)it.data().mid(8, it.data().length()-10), "s>s",  (const char*)it.key(), &result);
-			text.replace(it.key(), result);
-		} else if ( match ){
-			text.replace(it.key(), it.data());
-		} else {
-			pendingMapp = pendingMapp || it.key().startsWith(text);
-		}
-	}
-	return pendingMapp;
-}
-
-bool YZMapping::applyPendingOpMappings( QString& text ) {
-	bool pendingMapp = false;
-	QString old = text;
-	QMap<QString,QString>::Iterator it = mPendingOpMappings.begin(), end = mPendingOpMappings.end();
-	bool match = false;
-	for (; it != end && !match ; ++it) {
-		match = text.contains( it.key() );
-		if ( it.data().startsWith("<Script>") && match ) {
-			char *result;
-			YZExLua::instance()->exe( (const char*)it.data().mid(8, it.data().length()-10), "s>s",  (const char*)it.key(), &result);
-			text.replace(it.key(), result);
-		} else if ( match ){
-			text.replace(it.key(), it.data());
-		} else {
-			pendingMapp = pendingMapp || it.key().startsWith(text);
-		}
-	}
-	return pendingMapp;
-}
-
-bool YZMapping::applyInsertMappings( QString& text ) {
-	bool pendingMapp = false;
-	QString old = text;
-	QMap<QString,QString>::Iterator it = mInsertMappings.begin(), end = mInsertMappings.end();
-	bool match = false;
-	for (; it != end && !match ; ++it) {
-		match = text.contains( it.key() );
-		if ( it.data().startsWith("<Script>") && match ) {
-			char *result;
-			YZExLua::instance()->exe( (const char*)it.data().mid(8, it.data().length()-10), "s>s",  (const char*)it.key(), &result);
-			text.replace(it.key(), result);
-		} else if ( match ){
-			text.replace(it.key(), it.data());
-		} else {
-			pendingMapp = pendingMapp || it.key().startsWith(text);
-		}
-	}
-	return pendingMapp;
-}
-
-bool YZMapping::applyGlobalMappings( QString& text ) {
-	bool pendingMapp = false;
-	QString old = text;
-	QMap<QString,QString>::Iterator it = mGlobalMappings.begin(), end = mGlobalMappings.end();
-	bool match = false;
-	for (; it != end && !match ; ++it) {
-		match = text.contains( it.key() );
-		if ( it.data().startsWith("<Script>") && match ) {
-			char *result;
-			YZExLua::instance()->exe( (const char*)it.data().mid(8, it.data().length()-10), "s>s",  (const char*)it.key(), &result);
-			text.replace(it.key(), result);
+		} else if ( it.data().startsWith("<Noremap>") && match ) {
+			text.replace(it.key(), (const char*)it.data().right(it.data().length()-9));
+			mNoremap = true;
 		} else if ( match ){
 			text.replace(it.key(), it.data());
 		} else {
@@ -160,22 +64,23 @@ bool YZMapping::applyGlobalMappings( QString& text ) {
 }
 
 bool YZMapping::applyMappings( QString& text, int modes, bool *mapped ) {
-//	yzDebug() << "Text1: " << text << endl;
+	// yzDebug() << "Text1: " << text << endl;
 	bool pendingMapp = false;
 	QString old = text;
-	
-	if ( modes & normal || modes & visual || modes & pendingop)
-		pendingMapp = pendingMapp || applyGlobalMappings(text);
+	if (mNoremap) {
+		mNoremap = false;
+		return pendingMapp;
+	}
 	if ( modes & normal )
-		pendingMapp = pendingMapp || applyNormalMappings(text);
+		pendingMapp = pendingMapp || applyMappings(text, mNormalMappings);
 	if ( modes & pendingop )
-		pendingMapp = pendingMapp || applyPendingOpMappings(text);
+		pendingMapp = pendingMapp || applyMappings(text, mPendingOpMappings);
 	if ( modes & visual )
-		pendingMapp = pendingMapp || applyVisualMappings(text);
+		pendingMapp = pendingMapp || applyMappings(text, mVisualMappings);
 	if ( modes & insert )
-		pendingMapp = pendingMapp || applyInsertMappings(text);
+		pendingMapp = pendingMapp || applyMappings(text, mInsertMappings);
 	if ( modes & cmdline )
-		pendingMapp = pendingMapp || applyCmdLineMappings(text);
+		pendingMapp = pendingMapp || applyMappings(text, mCmdLineMappings);
 //	yzDebug() << "Text2: " << text << endl << "Pending mapping : " << pendingMapp << endl;
 	*mapped = old != text;
 	return pendingMapp;

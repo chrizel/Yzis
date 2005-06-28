@@ -908,7 +908,8 @@ cmd_state YZModeEx::split( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::cd( const YZExCommandArgs& args ) {
-	if ( QDir::setCurrent(args.arg) ) {
+        QString targetDir = YZBuffer::tildeExpand(args.arg);
+	if ( QDir::setCurrent(targetDir) ) {
 		// we could be using a new tag file, so reset tags
 		tagReset();
 		return CMD_OK;

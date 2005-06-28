@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: ru\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-06-22 22:24+0200\n"
-"PO-Revision-Date: 2005-05-04 19:20+0400\n"
+"PO-Revision-Date: 2005-06-28 11:53+0400\n"
 "Last-Translator: Dmitry Suzdalev <dimsuz@mail.ru>\n"
 "Language-Team: Russian <i18n@yzis.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.9\n"
+"X-Generator: KBabel 1.10\n"
 
 #: ../kyzis/main.cpp:40
 msgid "KDE Frontend for the Yzis Editor"
@@ -80,63 +80,63 @@ msgstr "Оригинальный автор"
 
 #: ../kyzis/src/factory.cpp:73
 msgid "Icons, KSettings"
-msgstr ""
+msgstr "Иконки, KSettings"
 
 #: ../kyzis/src/factory.cpp:74
 msgid "EX mode history"
-msgstr ""
+msgstr "История для EX-режима"
 
 #: ../kyzis/src/factory.cpp:75
 msgid "KTextEditor interfaces / Dutch translation"
-msgstr ""
+msgstr "Интерфейсы KTextEditor / Немецкий перевод"
 
 #: ../kyzis/src/factory.cpp:76
 msgid "Commands and motion engine rewrite and cleanup"
-msgstr ""
+msgstr "Новая реализация движка команд и перемещений, подчистка кода"
 
 #: ../kyzis/src/factory.cpp:77
 msgid "KTextEditor ConfigInterface"
-msgstr ""
+msgstr "Интерфейс конфигурации KTextEditor"
 
 #: ../kyzis/src/factory.cpp:78
 msgid "View scrolling fixes"
-msgstr ""
+msgstr "Исправления отображения при прокрутке"
 
 #: ../kyzis/src/factory.cpp:79
 msgid "Kyzis Tab caption improvement"
-msgstr ""
+msgstr "Улучшение заголовков закладок"
 
 #: ../kyzis/src/factory.cpp:80
 msgid "Commands and bug fixes"
-msgstr ""
+msgstr "Команды и исправления ошибок"
 
 #: ../kyzis/src/factory.cpp:81
 msgid "Yzisinfo file and tag commands"
-msgstr ""
+msgstr "Файл Yzisinfo и команды для работы с тэгами"
 
 #: ../kyzis/src/factory.cpp:82
 msgid "Misc fixes and improvements"
-msgstr ""
+msgstr "Различные улучшения и исправления ошибок"
 
 #: ../kyzis/src/factory.cpp:83
 msgid "Fixed 'xp' command"
-msgstr ""
+msgstr "Исправление ошибки в работе команды 'xp'"
 
 #: ../kyzis/src/factory.cpp:84
 msgid ":cd and :pwd commands"
-msgstr ""
+msgstr "Команды :cd и :pwd"
 
 #: ../kyzis/src/factory.cpp:85
 msgid "utf8 fixes for Lua strings"
-msgstr ""
+msgstr "Исправления ошибок для utf8-строк в Lua"
 
 #: ../kyzis/src/factory.cpp:86
 msgid "help to port to KDE4"
-msgstr ""
+msgstr "Помощь в портировании на KDE4"
 
 #: ../kyzis/src/factory.cpp:87
 msgid "D language syntax highlight fixes"
-msgstr ""
+msgstr "Файлы подсветки синтаксиса для языка D"
 
 #: ../kyzis/src/factory.cpp:88
 msgid ""
@@ -450,7 +450,7 @@ msgstr "Терминал"
 
 #: ../kyzis/src/viewwidget.cpp:51
 msgid "Yzis Ready"
-msgstr ""
+msgstr "Yzis готов"
 
 #: ../libyzis/buffer.cpp:522
 msgid "Failed opening file %1 for reading : %2"
@@ -518,22 +518,20 @@ msgid "Please specify a filename"
 msgstr "Пожалуйста, укажите имя файла"
 
 #: ../libyzis/mode_ex.cpp:507
-#, fuzzy
 msgid "Invalid option name : %1"
-msgstr "Неверный параметр :"
+msgstr "Неверное имя параметра: %1"
 
 #: ../libyzis/mode_ex.cpp:510
-#, fuzzy
 msgid "Bad value for option given"
-msgstr "Неверный параметр"
+msgstr "Неверная величина параметра"
 
 #: ../libyzis/mode_ex.cpp:728
 msgid "Registers:\n"
-msgstr ""
+msgstr "Регистры:\n"
 
 #: ../libyzis/mode_ex.cpp:849
 msgid "Cannot change to specified directory"
-msgstr ""
+msgstr "Невозможно перейти в указанную директорию"
 
 #: ../libyzis/mode_insert.cpp:37
 msgid "[ Insert ]"
@@ -568,9 +566,8 @@ msgid "[ Visual Line ]"
 msgstr "[ Визуальная строка ]"
 
 #: ../libyzis/mode_visual.cpp:301
-#, fuzzy
 msgid "[ Visual Block ]"
-msgstr "[ Визуальный режим ]"
+msgstr "[ Визуальный блок ]"
 
 #: ../libyzis/search.cpp:111
 msgid "search hit TOP, continuing at BOTTOM"
@@ -584,15 +581,13 @@ msgstr "Поиск достиг КОНЦА, продолжаем С НАЧАЛА
 msgid ""
 "Warning, the swapfile could not be opened maybe due to restrictive "
 "permissions."
-msgstr ""
-"Внимание, swap-файл не может быть открыт из-за ограниченных прав доступа."
+msgstr "Внимание, swap-файл не может быть открыт из-за ограниченных прав доступа."
 
 #: ../libyzis/swapfile.cpp:115
 msgid ""
 "Warning, the swapfile could not be created maybe due to restrictive "
 "permissions."
-msgstr ""
-"Внимание, swap-файл не может быть создан из-за ограниченных прав доступа."
+msgstr "Внимание, swap-файл не может быть создан из-за ограниченных прав доступа."
 
 #: ../libyzis/swapfile.cpp:139
 msgid ""
@@ -603,25 +598,24 @@ msgstr ""
 "Советуем проверить права доступа к файлам."
 
 #: ../libyzis/tags_interface.cpp:167
-#, fuzzy
 msgid "File has been modified"
-msgstr "Файл изменен"
+msgstr "Файл был изменен"
 
 #: ../libyzis/tags_interface.cpp:232
 msgid "Unable to find tag file"
-msgstr ""
+msgstr "Не удается найти файл с тэгами"
 
 #: ../libyzis/tags_interface.cpp:272
 msgid "Could not find next tag"
-msgstr ""
+msgstr "Не удается найти следующий тэг"
 
 #: ../libyzis/tags_interface.cpp:285
 msgid "Could not find previous tag"
-msgstr ""
+msgstr "Не удается найти предыдущий тэг"
 
 #: ../libyzis/tags_interface.cpp:293
 msgid "At bottom of tag stack"
-msgstr ""
+msgstr "Достигнут конец списка тэгов"
 
 #: ../libyzis/view.cpp:380 ../libyzis/view.cpp:388
 msgid "All"
@@ -651,27 +645,3 @@ msgstr "(Нажмите любую клавишу)"
 msgid "[No File]"
 msgstr "[Нет файла]"
 
-#~ msgid "Kyzis Part"
-#~ msgstr "Kyzis Part"
-
-#~ msgid "Kyzis - KDE Frontend for Yzis"
-#~ msgstr "Kyzis - KDE оболочка для редактора Yzis"
-
-#~ msgid "(c) 2003-2005"
-#~ msgstr "(c) 2003-2005"
-
-#~ msgid "No next buffer"
-#~ msgstr "Нет следующего буфера"
-
-#~ msgid "No previous buffer"
-#~ msgstr "Нет предыдущего буфера"
-
-#~ msgid "This option cannot be switched this way, this is a boolean option."
-#~ msgstr ""
-#~ "Этот параметр не может быть установлен таким способом - он имеет тип "
-#~ "boolean."
-
-#~ msgid "This option is a global option which cannot be changed with setlocal"
-#~ msgstr ""
-#~ "Этот параметр является глобальным и не может быть изменен с помощью "
-#~ "setlocal"

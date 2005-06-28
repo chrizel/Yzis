@@ -26,6 +26,14 @@
 
 #include "mode.h"
 
+#if QT_VERSION < 0x040000
+#include <qvaluelist.h>
+typedef QValueList<YZCursor> CursorList;
+#else
+#include <qlist.h>
+typedef QList<YZCursor> CursorList;
+#endif
+
 class YZBuffer;
 class YZCursor;
 
@@ -42,13 +50,13 @@ class YZModeCompletion : public YZMode {
 		bool initCompletion( YZView* mView, bool forward );
 		
 	private :
-		void completeFromBuffer( YZBuffer *buffer, bool forward, const YZCursor &initBegin, const YZCursor &initEnd, bool doWrap, QStringList &proposed );
+		void completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups = true, CursorList *cursors = NULL );
+		void completeFromCurrentBuffer( const YZCursor &cursor, bool forward, QStringList &proposed );
 		void completeFromOtherBuffers( YZBuffer *skip, QStringList &proposed );
 		void completeFromIncludes( QStringList &proposed );
 		void completeFromTags( QStringList &proposed );
 		void completeFromDictionary( QStringList &proposed );
 		void completeFromFileNames( QStringList &proposed );
-		
 		QString mPrefix;
 		YZCursor mCompletionStart;
 		YZCursor mCompletionEnd;

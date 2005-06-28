@@ -90,10 +90,8 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	for ( unsigned int i = 0; i < completeOption.size(); ++i ) {
 		QString option = completeOption[ i ];
 
-		if ( option == "." && forward ) {
-			completeFromBuffer( buffer, forward, mCompletionEnd, YZCursor(0, buffer->lineCount() + 1), true, mProposedCompletions );
-		} else if ( option == "." && !forward ) {
-			completeFromBuffer( buffer, forward, mCompletionStart, YZCursor(0, 0), true, mProposedCompletions );
+		if ( option == "."  ) {
+			completeFromCurrentBuffer( mCompletionStart, forward, mProposedCompletions );
 		} else if ( option == "w" || option == "u" || option == "U" || option == "b" ) { 
 			// according to the VIM docs, these are separate, but I'm not distinguishing between
 			// them yet
@@ -181,10 +179,10 @@ cmd_state YZModeCompletion::execCommand( YZView* view, const QString& _key ) {
 	return CMD_ERROR;
 }
 
-void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, bool forward, const YZCursor &initBegin, const YZCursor &initEnd, bool doWrap, QStringList &proposed )
+void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups /*=true*/, CursorList *cursors /*=NULL*/ )
 {
 	// Guardian for empty buffers
-	if ( buffer->isEmpty() || initBegin == initEnd ) {
+	if ( buffer->isEmpty() ) {
 		return;
 	}
 	
@@ -197,59 +195,36 @@ void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, bool forward, const
 	const QString pattern = "\\b" + mPrefix + "\\w*";
 	const YZCursor bufbegin(0, 0);
 	const YZCursor bufend(0, buffer->lineCount() + 1);
-	bool wrapped = !doWrap;
 	
 	yzDebug() << "COMPLETION: pattern: " << pattern << endl;
 	
 	// set the initial search start
-	nextCursor = initBegin;
-	endCursor = initEnd;
+	nextCursor = bufbegin;
+	endCursor = bufend;
 	
 	// loop through the buffer looking for matches
 	// at each match we set nextCursor to the place we would have scanned next if
 	// we didn't find the match.  This lets us continue through the entire buffer
 	do {
-		if ( forward ) {
-			// search from the end of the prefix to the end of the buffer
-			matchCursor = action->search(buffer, pattern, nextCursor, endCursor, &matchedLength, &found);
-			nextCursor = YZCursor( matchCursor.x() + matchedLength, matchCursor.y() );
-		} else {
-			// search from the beginning of the prefix to the beginning of the buffer
-			matchCursor = action->search(buffer, pattern, nextCursor, endCursor, &matchedLength, &found);
-			nextCursor = matchCursor;
-		}
+		// search from the end of the prefix to the end of the buffer
+		matchCursor = action->search(buffer, pattern, nextCursor, endCursor, &matchedLength, &found);
+		nextCursor = YZCursor( matchCursor.x() + matchedLength, matchCursor.y() );
 		
-		// check for wrap around
-		if ( !found && !wrapped ) {
-			wrapped = true;
-			found = true; // must set this to true to avoid leaving the loop IMPORTANT: nothing below here relies on found!
-			
-			// continue search from beginning of the buffer until
-			// just before the completion started
-			if ( forward ) {
-				nextCursor = bufbegin;
-				endCursor = mCompletionStart;
-			} 
-			// continue search from the end of the buffer until
-			// just after the completion ends
-			else {
-				nextCursor = bufend;
-				endCursor = mCompletionEnd;
-			}
-		} 
-		// no wrap around, possible match
-		else if ( found ) {
+		if ( found ) {
 			QString possible = buffer->getWordAt( matchCursor );
 			// add to the proposed 
 			// the contains check is to ensure we don't add duplicates
 			// This is O(n^2), but hopefully it won't kill us, since the
 			// sets are likely small
-			if ( proposed.contains( possible ) == 0 ) {
-				yzDebug() << "COMPLETION: Possible match: " << possible << endl;
+			// but only do the contains check if we're to eliminate duplicates
+			if ( !elimDups || elimDups && proposed.contains( possible ) == 0 ) {
 				proposed.push_back( possible );
+				if ( cursors ) {
+					cursors->push_back( matchCursor );
+				}
 			}
 		}
-	} while( found || !wrapped ); // don't quit until we've wrapped around and then not found any matches
+	} while( found );
 
 	yzDebug() << "COMPLETION: Found " << proposed.size() << " matches" << endl;
 }
@@ -267,8 +242,7 @@ void YZModeCompletion::completeFromOtherBuffers( YZBuffer *skip, QStringList &pr
 		// this is done so that one buffer (probably the current)
 		// has priority in the list
 		if ( cur != skip ) {
-			// always search forward
-			completeFromBuffer( cur, true, YZCursor(0, 0), YZCursor(0, cur->lineCount() + 1), false, proposed );
+			completeFromBuffer( cur, proposed );
 		}
 	}
 }
@@ -295,4 +269,39 @@ void YZModeCompletion::completeFromDictionary( QStringList &/*proposed*/ )
 
 void YZModeCompletion::completeFromFileNames( QStringList &/*proposed*/ )
 {
+}
+
+void YZModeCompletion::completeFromCurrentBuffer( const YZCursor &cursor, bool forward, QStringList &proposed )
+{
+	YZBuffer *buffer = YZSession::me->currentView()->myBuffer();
+	
+	QStringList matches;
+	CursorList cursorlist;
+	
+	completeFromBuffer( buffer, matches, false, &cursorlist );
+	
+	// ASSERTION: when scanning the current buffer, we must
+	// 		find the search pattern at least once, since
+	//			we'll find it where we typed
+	//			Therefore: cursor must appear exactly once in
+	//			the list cursors!
+	YZASSERT_MSG( cursorlist.contains( cursor ) == 1, "Current cursor not found in list of matched cursors" );
+	
+	// use the above fact to locate where in the cursors list
+	// we should start scanning from
+	unsigned int startidx = cursorlist.findIndex( cursor );
+
+	int delta = forward ? 1 : -1; // direction to search through the list
+	
+	// now add all elements in matches to proposed, starting with the element
+	// following startidx and wrapping all the way around
+	// we loop until we've added matches.size() - 1 elements, because
+	// we don't want to add the element at the cursor to the list
+	for ( unsigned int count = 0, i = ( startidx + delta ) % matches.size();
+			count < matches.size() - 1; 
+			++count, i = (i + delta) % matches.size() ) {
+		if ( !proposed.contains( matches[ i ] ) ) {
+			proposed.push_back( matches[ i ] );
+		}
+	}
 }

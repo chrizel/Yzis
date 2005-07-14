@@ -5,6 +5,7 @@
  *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
  *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
+ *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -202,6 +203,7 @@ class YZModeCommand : public YZMode {
 		void gotoExMode(const YZCommandArgs &args);
 		void gotoLineAtTop(const YZCommandArgs &args);
 		void gotoLineAtCenter(const YZCommandArgs &args);
+		void gotoLineAtCenterSOL(const YZCommandArgs &args);
 		void gotoLineAtBottom(const YZCommandArgs &args);
 		void insertAtSOL(const YZCommandArgs &args);
                 void insertAtCol1(const YZCommandArgs &args);

@@ -31,6 +31,7 @@
 #include "mode_command.h"
 
 #include <assert.h>
+#include <math.h>
 
 #include <qdir.h>
 #include <qregexp.h>
@@ -121,7 +122,8 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("<CTRL>v", &YZModeCommand::gotoVisualBlockMode) );
 	commands.append( new YZCommand("z<ENTER>", &YZModeCommand::gotoLineAtTop) );
 	commands.append( new YZCommand("z+", &YZModeCommand::gotoLineAtTop) );
-	commands.append( new YZCommand("z.", &YZModeCommand::gotoLineAtCenter) );
+	commands.append( new YZCommand("z.", &YZModeCommand::gotoLineAtCenterSOL) );
+	commands.append( new YZCommand("zz", &YZModeCommand::gotoLineAtCenter) );
 	commands.append( new YZCommand("z-", &YZModeCommand::gotoLineAtBottom) );
 	commands.append( new YZCommand("dd", &YZModeCommand::deleteLine) );
 	commands.append( new YZCommand("d", &YZModeCommand::del, ARG_MOTION) );
@@ -1040,7 +1042,8 @@ void YZModeCommand::gotoCommandMode(const YZCommandArgs &args) {
 void YZModeCommand::gotoLineAtTop(const YZCommandArgs &args) {
 	unsigned int line;
 
-	line = ( args.usercount ) ? args.count - 1 : args.view->drawLineNumber() - 1;
+	//line = ( args.usercount ) ? args.count - 1 : args.view->drawLineNumber() - 1;
+	line = ( args.usercount ) ? args.count - 1 : args.view->getBufferCursor()->y();
 	args.view->alignViewVertically( line );
 	args.view->gotoLine( line );
 	args.view->moveToFirstNonBlankOfLine();
@@ -1049,25 +1052,34 @@ void YZModeCommand::gotoLineAtTop(const YZCommandArgs &args) {
 
 void YZModeCommand::gotoLineAtCenter(const YZCommandArgs &args) {
 	unsigned int line;
-
-	line = ( args.usercount ) ? args.count - 1 : args.view->drawLineNumber() - 1;
-	args.view->centerViewVertically( line );
-	args.view->gotoLine( line );
-	args.view->moveToFirstNonBlankOfLine();
 	
+	line = ( args.usercount ) ? args.count - 1 : args.view->getBufferCursor()->y();
+	args.view->centerViewVertically( line );
+	args.view->gotoxy(args.view->viewCursor().bufferX(), line );
+}
+
+void YZModeCommand::gotoLineAtCenterSOL(const YZCommandArgs &args) {
+	gotoLineAtCenter(args);
+	args.view->moveToFirstNonBlankOfLine();
 }
 
 void YZModeCommand::gotoLineAtBottom(const YZCommandArgs &args) {
 	unsigned int line;
-	//unsigned int linesFromCenter;
 
-	line = ( args.usercount ) ? args.count - 1 : args.view->drawLineNumber() - 1;
-	//if ( line > linesFromCenter ) {
+	line = ( args.usercount ) ? args.count - 1 : args.view->getBufferCursor()->y();
+
+	if ( args.view->getLocalBooleanOption("wrap") ) {
+		// the textline could span several screen lines
+		YZViewCursor viewCursor = args.view->viewCursor();
+		viewCursor.setBufferY(line);
+		args.view->moveToEndOfLine(&viewCursor );
+		
+		args.view->bottomViewVertically( line + ( viewCursor.screenY() - line ) );
+	}
+	else
 		args.view->bottomViewVertically( line );
-	//}
+
 	args.view->gotoLine( line );
-	args.view->moveToFirstNonBlankOfLine();
-	
 }
 
 

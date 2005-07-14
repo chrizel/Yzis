@@ -1,3 +1,7 @@
+2005-07-14 Erlend Hamberg
+  * libyzis
+    Fixed cursor-relative scrolling commands. Added zz command.
+
 2005-06-21 morbuz
   * libyzis
     added :retab command

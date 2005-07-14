@@ -1,5 +1,5 @@
---- acinclude.m4.in.orig	2005-06-26 23:12:24.000000000 +0200
-+++ acinclude.m4.in	2005-06-26 23:12:12.000000000 +0200
+--- acinclude.m4.in.orig	2005-07-14 18:17:59.000000000 +0200
++++ acinclude.m4.in	2005-07-14 18:18:42.000000000 +0200
 @@ -443,7 +443,7 @@
      kde_datadir='\${datadir}/apps'
    fi
@@ -33,7 +33,7 @@
                if test "$kde_qtsubver" -le 1; then
                  kde32ornewer=
                fi
--              if test "$kde_qtsubver" -le 2 -o `$KDECONFIG --version | grep KDE | sed 's/KDE: \(...\).*/\1/'` == 3.2; then
+-              if test "$kde_qtsubver" -le 2 -o `$KDECONFIG --version | grep KDE | sed 's/KDE: \(...\).*/\1/'` = 3.2; then
 +              if test "$kde_qtsubver" -le 2; then
                  kde33ornewer=
                fi

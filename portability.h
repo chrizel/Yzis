@@ -50,7 +50,7 @@
 #include <unistd.h>
 #include <dirent.h>
 #include <pwd.h>
-#include "config.h"
+//#include "config.h"
 #include "translator.h"
 #include <libintl.h>
 

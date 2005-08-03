@@ -565,7 +565,11 @@ bool YZBuffer::save() {
 		return false;
 	if ( mFileIsNew ) {
 		//popup to ask a file name
-		if ( !popupFileSaveAs() )
+		// FIXME: can this be moved somewhere higher?
+		// having the low level buffer open popups
+		// seems wrong to me
+		YZView *view = firstView();
+		if ( !view || !view->popupFileSaveAs() )
 			return false; //dont try to save
 	}
 
@@ -966,4 +970,17 @@ QString YZBuffer::tildeExpand( const QString& path ) {
 	return ret;
 }
 
+void YZBuffer::filenameChanged()
+{
+	YZView *it;
+	for ( it = mViews.getFirst(); it; it = mViews.next() )
+		it->filenameChanged();
+}
+
+void YZBuffer::highlightingChanged()
+{
+	YZView *it;
+	for ( it = mViews.getFirst(); it; it = mViews.next() )
+		it->highlightingChanged();
+}
 

@@ -220,12 +220,6 @@ public:
 	bool save();
 
 	/**
-	* Ask the GUI to popup for a filename
-	* @return whether a file name was successfully chosen
-	*/
-	virtual bool popupFileSaveAs() = 0;
-
-	/**
 	 * Notification that some status of the file changed
 	 * Can be : file modified, file readonly ? , other ? XXX
 	 * This is only informational so that GUIs can display the correct information
@@ -247,7 +241,7 @@ public:
 	/**
 	 * Called whenever the filename is changed
 	 */
-	virtual void filenameChanged() = 0;
+	void filenameChanged();
 
 	// -------------------------- View Operations
 
@@ -328,7 +322,7 @@ public:
 	/**
 	 * Notify GUIs that HL changed
 	 */
-	virtual void highlightingChanged() = 0;
+	virtual void highlightingChanged();
 
 	/**
 	 * Finds the @ref YZLine pointer for a line in the buffer

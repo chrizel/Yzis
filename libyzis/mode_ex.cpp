@@ -309,9 +309,9 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 	if ( args.arg.length() == 1 ) {
 		yzDebug() << "rangeSearch : replay" << endl;
 		if ( reverse ) {
-			pos = YZSession::me->search()->replayBackward( args.view, &found, NULL, true );
+			pos = YZSession::me->search()->replayBackward( args.view->myBuffer(), &found, NULL, true );
 		} else {
-			pos = YZSession::me->search()->replayForward( args.view, &found, NULL, true );
+			pos = YZSession::me->search()->replayForward( args.view->myBuffer(), &found, NULL, true );
 		}
 	} else {
 		QString pat = args.arg.mid( 1, args.arg.length() - 2 );
@@ -320,7 +320,7 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 		else
 			pat.replace( "\\/", "/" );
 		yzDebug() << "rangeSearch : " << pat << endl;
-		pos = YZSession::me->search()->forward( args.view, pat, &found );
+		pos = YZSession::me->search()->forward( args.view->myBuffer(), pat, &found );
 	}
 
 	if ( found ) {
@@ -550,7 +550,7 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 	}
 	unsigned int lastLine;
 	YZCursor start( 0, args.fromLine );
-	YZSession::me->search()->forward( args.view, search, &found, &start );
+	YZSession::me->search()->forward( args.view->myBuffer(), search, &found, &start );
 	if ( found ) {
 		for( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
 			if ( args.view->myBuffer()->substitute( search, replace, options.contains( "g" ), i ) ) {

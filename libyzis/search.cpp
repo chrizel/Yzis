@@ -38,25 +38,25 @@ YZSearch::YZSearch() {
 YZSearch::~YZSearch() {
 }
 
-YZCursor YZSearch::forward( YZView* mView, const QString& pattern, bool* found, YZCursor* from ) {
-	YZCursor tmp = doSearch( mView, from, pattern, false, false, found );
+YZCursor YZSearch::forward( YZView* view, const QString& pattern, bool* found, YZCursor* from ) {
+	YZCursor tmp = doSearch( view, from, pattern, false, false, found );
 	YZSession::me->saveJumpPosition( &tmp );
 	
 	return tmp;
 }
 
-YZCursor YZSearch::backward( YZView* mView, const QString& pattern, bool* found, YZCursor* from ) {
-	YZCursor tmp = doSearch( mView, from, pattern, true, false, found );
+YZCursor YZSearch::backward( YZView* view, const QString& pattern, bool* found, YZCursor* from ) {
+	YZCursor tmp = doSearch( view, from, pattern, true, false, found );
 	YZSession::me->saveJumpPosition( &tmp );
 	
 	return tmp;
 }
 
-YZCursor YZSearch::replayForward( YZView* mView, bool* found, YZCursor* from, bool skipline ) {
-	return doSearch( mView, from, mCurrentSearch, false, skipline, found );
+YZCursor YZSearch::replayForward( YZView* view, bool* found, YZCursor* from, bool skipline ) {
+	return doSearch( view, from, mCurrentSearch, false, skipline, found );
 }
-YZCursor YZSearch::replayBackward( YZView* mView, bool* found, YZCursor* from, bool skipline ) {
-	return doSearch( mView, from, mCurrentSearch, true, skipline, found );
+YZCursor YZSearch::replayBackward( YZView* view, bool* found, YZCursor* from, bool skipline ) {
+	return doSearch( view, from, mCurrentSearch, true, skipline, found );
 }
 
 const QString& YZSearch::currentSearch() const {
@@ -66,7 +66,7 @@ bool YZSearch::active() {
 	return ! ( mCurrentSearch.isNull() || mCurrentSearch.isEmpty() );
 }
 
-YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& pattern, bool reverse, bool skipline, bool* found ) {
+YZCursor YZSearch::doSearch( YZView* view, YZCursor* from, const QString& pattern, bool reverse, bool skipline, bool* found ) {
 	yzDebug() << "YZSearch::doSearch " << pattern << ", " << reverse << ", " << endl;
 	*found = false;
 	setCurrentSearch( pattern );
@@ -76,27 +76,27 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 	if ( from != NULL )
 		cur.setCursor( from );
 	else
-		cur.setCursor( mView->getBufferCursor() );
+		cur.setCursor( view->getBufferCursor() );
 
 	if ( ! active() ) return cur;
 
 	if ( skipline ) {
 		cur.setX( 0 );
-		if ( ! reverse ) cur.setY( qMin( (int)(cur.y() + 1), (int)(mView->myBuffer()->lineCount() - 1) ) );
+		if ( ! reverse ) cur.setY( qMin( (int)(cur.y() + 1), (int)(view->myBuffer()->lineCount() - 1) ) );
 	} else {
 		cur.setX( qMax( (int)(cur.x() + direction), 0 ) );
 	}
 	YZCursor top( 0, 0 );
 	YZCursor bottom;
-	bottom.setY( mView->myBuffer()->lineCount() - 1 );
-	bottom.setX( qMax( (int)(mView->myBuffer()->textline( bottom.y() ).length() - 1), 0 ) );
+	bottom.setY( view->myBuffer()->lineCount() - 1 );
+	bottom.setX( qMax( (int)(view->myBuffer()->textline( bottom.y() ).length() - 1), 0 ) );
 
 	YZCursor end( bottom );
 	if ( reverse ) end.setCursor( top );
 
 	unsigned int matchedLength;
 //	yzDebug() << "begin = " << cur << endl;
-	YZCursor ret = mView->myBuffer()->action()->search( mView->myBuffer(), pattern, cur, end, &matchedLength, found );
+	YZCursor ret = view->myBuffer()->action()->search( view->myBuffer(), pattern, cur, end, &matchedLength, found );
 	if ( ! *found ) {
 		yzDebug() << "search hits top or bottom" << endl;
 		end.setCursor( cur );
@@ -105,12 +105,12 @@ YZCursor YZSearch::doSearch( YZView* mView, YZCursor* from, const QString& patte
 		else 
 			cur.setCursor( top );
 //		yzDebug() << "begin = " << cur << ", end = " << end << endl;
-		ret = mView->myBuffer()->action()->search( mView->myBuffer(), pattern, cur, end, &matchedLength, found );
+		ret = view->myBuffer()->action()->search( view->myBuffer(), pattern, cur, end, &matchedLength, found );
 		if ( *found ) {
 			if ( reverse )
-				mView->displayInfo( _("search hit TOP, continuing at BOTTOM") );
+				view->displayInfo( _("search hit TOP, continuing at BOTTOM") );
 			else
-				mView->displayInfo( _("search hit BOTTOM, continuing at TOP") );
+				view->displayInfo( _("search hit BOTTOM, continuing at TOP") );
 		}
 	}
 //	yzDebug() << "ret = " << ret << endl;
@@ -223,17 +223,17 @@ void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shif
 	}
 }
 
-void YZSearch::highlightSearch( YZView* mView, YZSelectionMap searchMap ) {
-	mView->setPaintAutoCommit( false );
-	YZSelection* vMap = mView->getSelectionPool()->search();
-	mView->sendPaintEvent( vMap->map(), false );
+void YZSearch::highlightSearch( YZView* view, YZSelectionMap searchMap ) {
+	view->setPaintAutoCommit( false );
+	YZSelection* vMap = view->getSelectionPool()->search();
+	view->sendPaintEvent( vMap->map(), false );
 	vMap->clear();
 	if ( YZSession::me->getBooleanOption( "hlsearch" ) ) {
 		vMap->setMap( searchMap );
 //		yzDebug() << "new search Map : " << *(vMap) << endl;
-		mView->sendPaintEvent( vMap->map() );
+		view->sendPaintEvent( vMap->map() );
 	}
-	mView->commitPaintEvent();
+	view->commitPaintEvent();
 }
 
 void YZSearch::update() {

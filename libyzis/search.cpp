@@ -34,7 +34,7 @@
 struct YZSearch::Private
 {		
 	void setCurrentSearch( const QString& pattern );
-	YZCursor doSearch( YZBuffer *buffer, const YZCursor *from, const QString& pattern, bool reverse, bool skipline, bool* found );
+	YZCursor doSearch( YZBuffer *buffer, const YZCursor &from, const QString& pattern, bool reverse, bool skipline, bool* found );
 	void highlightSearch( YZView *view, YZSelectionMap searchMap );
 	bool active();
 	
@@ -52,24 +52,24 @@ YZSearch::~YZSearch()
 	delete d;
 }
 
-YZCursor YZSearch::forward( YZBuffer *buffer, const QString& pattern, bool* found, YZCursor* from ) {
+YZCursor YZSearch::forward( YZBuffer *buffer, const QString& pattern, bool* found, const YZCursor &from ) {
 	YZCursor tmp = d->doSearch( buffer, from, pattern, false, false, found );
 	YZSession::me->saveJumpPosition( &tmp );
 	
 	return tmp;
 }
 
-YZCursor YZSearch::backward( YZBuffer *buffer, const QString& pattern, bool* found, YZCursor* from ) {
+YZCursor YZSearch::backward( YZBuffer *buffer, const QString& pattern, bool* found, const YZCursor &from ) {
 	YZCursor tmp = d->doSearch( buffer, from, pattern, true, false, found );
 	YZSession::me->saveJumpPosition( &tmp );
 	
 	return tmp;
 }
 
-YZCursor YZSearch::replayForward( YZBuffer *buffer, bool* found, YZCursor* from, bool skipline ) {
+YZCursor YZSearch::replayForward( YZBuffer *buffer, bool* found, const YZCursor &from, bool skipline /*=false*/) {
 	return d->doSearch( buffer, from, d->mCurrentSearch, false, skipline, found );
 }
-YZCursor YZSearch::replayBackward( YZBuffer *buffer, bool* found, YZCursor* from, bool skipline ) {
+YZCursor YZSearch::replayBackward( YZBuffer *buffer, bool* found, const YZCursor &from, bool skipline /*=false*/) {
 	return d->doSearch( buffer, from, d->mCurrentSearch, true, skipline, found );
 }
 
@@ -86,7 +86,7 @@ bool YZSearch::Private::active() {
 	return ! ( mCurrentSearch.isNull() || mCurrentSearch.isEmpty() );
 }
 
-YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor* from, const QString& pattern, bool reverse, bool skipline, bool* found ) {
+YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor &from, const QString& pattern, bool reverse, bool skipline, bool* found ) {
 	yzDebug() << "YZSearch::doSearch " << pattern << ", " << reverse << ", " << endl;
 	*found = false;
 	setCurrentSearch( pattern );
@@ -134,13 +134,12 @@ YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor* from, co
 		// repeat the search with the new bounds
 		ret = buffer->action()->search( buffer, pattern, cur, end, &matchedLength, found );
 		if ( *found ) {
-			/* TODO: figure out how to do displays
-			if ( reverse ) {
+			YZView *view = buffer->firstView();
+			if ( view && reverse ) {
 				view->displayInfo( _("search hit TOP, continuing at BOTTOM") );
-			} else {
+			} else if ( view ) {
 				view->displayInfo( _("search hit BOTTOM, continuing at TOP") );
 			}
-			*/
 		}
 	}
 //	yzDebug() << "ret = " << ret << endl;

@@ -36,7 +36,7 @@ class YZCursor {
 		YZCursor( );
 		YZCursor( unsigned int X, unsigned int Y );
 		YZCursor( const YZCursor& cursor );
-		YZCursor( YZCursor *cursor );
+		YZCursor( const YZCursor *cursor );
 		~YZCursor();
 
 		inline void setX(unsigned int x) { x_pos = x; }
@@ -45,7 +45,7 @@ class YZCursor {
 		inline unsigned int x() const { return x_pos; }
 		inline unsigned int y() const { return y_pos; }
 
-		void setCursor( YZCursor *cursor );
+		void setCursor( const YZCursor *cursor );
 		void setCursor( const YZCursor& cursor );
 
 		bool operator== ( const YZCursor &right ) const;

@@ -34,13 +34,13 @@ YZCursor::YZCursor( unsigned int X, unsigned int Y ) {
 YZCursor::YZCursor( const YZCursor& c) {
 	setCursor( c );
 }
-YZCursor::YZCursor(YZCursor* c) {
+YZCursor::YZCursor(const YZCursor* c) {
 	setCursor( c );
 }
 YZCursor::~YZCursor() {
 }
 
-void YZCursor::setCursor( YZCursor* c ) {
+void YZCursor::setCursor( const YZCursor* c ) {
 	x_pos = c->x();
 	y_pos = c->y();
 }

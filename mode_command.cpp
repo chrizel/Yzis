@@ -875,9 +875,9 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 		}
 		for ( unsigned int i = 0; found && i < args.count; i++ ) {
 			if ( args.cmd.contains('*') ) {
-				pos = YZSession::me->search()->forward( args.view, word, &found, &from );
+				pos = YZSession::me->search()->forward( args.view->myBuffer(), word, &found, &from );
 			} else {
-				pos = YZSession::me->search()->backward( args.view, word, &found, &from );
+				pos = YZSession::me->search()->backward( args.view->myBuffer(), word, &found, &from );
 			}
 			if ( found ) {
 				from.setCursor( pos );
@@ -895,7 +895,7 @@ YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 	bool found = true;
 	bool moved = true;
 	for ( unsigned int i = 0; found && i < args.count; i++ ) {
-		pos = YZSession::me->search()->replayForward( args.view, &found, &from );
+		pos = YZSession::me->search()->replayForward( args.view->myBuffer(), &found, &from );
 		if ( found ) {
 			from.setCursor( pos );
 			moved = true;
@@ -916,7 +916,7 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 	bool found = true;
 	bool moved = false;
 	for ( unsigned int i = 0; found && i < args.count; i++ ) {
-		pos = YZSession::me->search()->replayBackward( args.view, &found, &from );
+		pos = YZSession::me->search()->replayBackward( args.view->myBuffer(), &found, &from );
 		if ( found ) {
 			from.setCursor( pos );
 			moved = true;

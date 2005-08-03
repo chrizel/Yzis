@@ -38,15 +38,15 @@ class YZModeSearch : public YZMode {
 		YZModeSearch();
 		virtual ~YZModeSearch();
 
-		virtual void enter( YZView* mView );
-		virtual void leave( YZView* mView );
+		virtual void enter( YZView* view );
+		virtual void leave( YZView* view );
 		virtual void initModifierKeys();
 
-		virtual cmd_state execCommand( YZView* mView, const QString& key );
+		virtual cmd_state execCommand( YZView* view, const QString& key );
 
-		virtual YZCursor search( YZView* mView, const QString& s, bool* found );
-		virtual YZCursor search( YZView* mView, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found );
-		virtual YZCursor replaySearch( YZView* mView, bool* found );
+		virtual YZCursor search( YZView* view, const QString& s, bool* found );
+		virtual YZCursor search( YZView* view, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found );
+		virtual YZCursor replaySearch( YZView* view, bool* found );
 };
 
 
@@ -55,9 +55,9 @@ class YZModeSearchBackward : public YZModeSearch {
 		YZModeSearchBackward();
 		virtual ~YZModeSearchBackward();
 
-		virtual YZCursor search( YZView* mView, const QString& s, bool* found );
-		virtual YZCursor search( YZView* mView, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found );
-		virtual YZCursor replaySearch( YZView* mView, bool* found );
+		virtual YZCursor search( YZView* view, const QString& s, bool* found );
+		virtual YZCursor search( YZView* view, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found );
+		virtual YZCursor replaySearch( YZView* view, bool* found );
 };
 
 

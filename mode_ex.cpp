@@ -78,53 +78,53 @@ YZModeEx::~YZModeEx() {
 void YZModeEx::init() {
 	initPool();
 }
-void YZModeEx::enter( YZView* mView ) {
+void YZModeEx::enter( YZView* view ) {
 	YZSession::me->setFocusCommandLine();
-	mView->setCommandLineText( "" );
+	view->setCommandLineText( "" );
 }
-void YZModeEx::leave( YZView* mView ) {
-	mView->setCommandLineText( "" );
+void YZModeEx::leave( YZView* view ) {
+	view->setCommandLineText( "" );
 	YZSession::me->setFocusMainWindow();
 }
-cmd_state YZModeEx::execCommand( YZView* mView, const QString& key ) {
+cmd_state YZModeEx::execCommand( YZView* view, const QString& key ) {
 	yzDebug() << "YZModeEx::execCommand " << key << endl;
 	cmd_state ret = CMD_OK;
 	if ( key == "<ENTER>" ) {
-		if( mView->getCommandLineText().isEmpty()) {
-			mView->modePool()->pop();
+		if( view->getCommandLineText().isEmpty()) {
+			view->modePool()->pop();
 		} else {
-			QString cmd = YZSession::me->mExHistory[YZSession::me->mCurrentExItem] = mView->getCommandLineText();
+			QString cmd = YZSession::me->mExHistory[YZSession::me->mCurrentExItem] = view->getCommandLineText();
 			YZSession::me->mCurrentExItem++;
-			ret = execExCommand( mView, cmd );
+			ret = execExCommand( view, cmd );
 			if ( ret != CMD_QUIT ) 
-				mView->modePool()->pop( MODE_COMMAND );
+				view->modePool()->pop( MODE_COMMAND );
 		}
 	} else if ( key == "<DOWN>" ) {
 		if(YZSession::mExHistory[YZSession::mCurrentExItem].isEmpty())
 			return ret;
 
 		YZSession::me->mCurrentExItem++;
-		mView->setCommandLineText( YZSession::mExHistory[YZSession::mCurrentExItem] );
+		view->setCommandLineText( YZSession::mExHistory[YZSession::mCurrentExItem] );
 	} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
 	} else if ( key == "<UP>" ) {
 		if(YZSession::me->mCurrentExItem == 0)
 			return ret;
 
 		YZSession::me->mCurrentExItem--;
-		mView->setCommandLineText( YZSession::mExHistory[YZSession::mCurrentExItem] );
+		view->setCommandLineText( YZSession::mExHistory[YZSession::mCurrentExItem] );
 	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
-		mView->modePool()->pop( MODE_COMMAND );
+		view->modePool()->pop( MODE_COMMAND );
 	} else if ( key == "<TAB>" ) {
 		//ignore for now
 	} else if ( key == "<BS>" ) {
-		QString back = mView->getCommandLineText();
+		QString back = view->getCommandLineText();
 		if ( back.isEmpty() ) {
-			mView->modePool()->pop();
+			view->modePool()->pop();
 			return ret;
 		}
-		mView->setCommandLineText(back.remove(back.length() - 1, 1));
+		view->setCommandLineText(back.remove(back.length() - 1, 1));
 	} else {
-		mView->setCommandLineText( mView->getCommandLineText() + key );
+		view->setCommandLineText( view->getCommandLineText() + key );
 	}
 	return ret;
 }
@@ -143,8 +143,8 @@ void YZModeEx::initPool() {
 	commands.append( new YZExCommand( "(x|wq?)(a(ll)?)?", &YZModeEx::write ) );
 	commands.append( new YZExCommand( "w(rite)?", &YZModeEx::write , QStringList("write") ));
 	commands.append( new YZExCommand( "q(uit|a(ll)?)?", &YZModeEx::quit, QStringList::split(":","quit:qall") ) );
-        commands.append( new YZExCommand( "bf(irst)?", &YZModeEx::bufferfirst, QStringList("bfirst") ) );
-        commands.append( new YZExCommand( "bl(ast)?", &YZModeEx::bufferlast, QStringList("blast") ) );
+	commands.append( new YZExCommand( "bf(irst)?", &YZModeEx::bufferfirst, QStringList("bfirst") ) );
+	commands.append( new YZExCommand( "bl(ast)?", &YZModeEx::bufferlast, QStringList("blast") ) );
 	commands.append( new YZExCommand( "bn(ext)?", &YZModeEx::buffernext, QStringList("bnext") ) );
 	commands.append( new YZExCommand( "bp(revious)?", &YZModeEx::bufferprevious, QStringList("bprevious") ) );
 	commands.append( new YZExCommand( "bd(elete)?", &YZModeEx::bufferdelete, QStringList("bdelete") ) );
@@ -930,7 +930,7 @@ cmd_state YZModeEx::tag( const YZExCommandArgs& args ) {
 	return CMD_OK;
 }
 
-cmd_state YZModeEx::pop( const YZExCommandArgs& args ) {
+cmd_state YZModeEx::pop( const YZExCommandArgs& /*args*/ ) {
 	tagPop();
 
 	return CMD_OK;

@@ -320,7 +320,7 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 		else
 			pat.replace( "\\/", "/" );
 		yzDebug() << "rangeSearch : " << pat << endl;
-		pos = YZSession::me->search()->forward( args.view->myBuffer(), pat, &found );
+		pos = YZSession::me->search()->forward( args.view->myBuffer(), pat, &found, args.view->getBufferCursor() );
 	}
 
 	if ( found ) {

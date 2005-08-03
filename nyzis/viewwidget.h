@@ -66,6 +66,10 @@ public:
 	void unmap( void );
 	virtual void registerModifierKeys( const QString& ) { }
 	virtual void unregisterModifierKeys( const QString& ) { }
+	
+	bool popupFileSaveAs();
+	void filenameChanged();
+	void highlightingChanged();
 
 protected :
 

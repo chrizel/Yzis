@@ -511,3 +511,21 @@ void NYZView::refreshScreen() {
 
 #endif
 
+bool NYZView::popupFileSaveAs() {
+	// TODO
+	displayInfo ( "Save as not implemented yet, use :w<filename>" );
+	return false;
+}
+
+void NYZView::filenameChanged()
+{
+	QString filename = myBuffer()->fileName();
+	unsigned int lineCount = myBuffer()->lineCount();
+	int wholeLength = myBuffer()->getWholeTextLength();
+	displayInfo ( QString("\"%1\" %2L, %3C" ).arg(filename).arg(lineCount).arg(wholeLength));
+}
+
+void NYZView::highlightingChanged()
+{
+}
+

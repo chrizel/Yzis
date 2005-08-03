@@ -196,10 +196,10 @@ YZView* NYZFactory::createView( YZBuffer* buffer )
 	return currentView;
 }
 
-NYZisDoc *NYZFactory::createBuffer(const QString& filename)
+YZBuffer *NYZFactory::createBuffer(const QString& filename)
 {
-	NYZisDoc *b = new NYZisDoc();
-	YZASSERT_MSG(b, "NYZFactory::createBuffer failed creating new NYZisDoc");
+	YZBuffer *b = new YZBuffer(YZSession::me);
+	YZASSERT_MSG(b, "NYZFactory::createBuffer failed creating new YZBuffer");
 	setCurrentView( createView( b ) );
 	b->load( filename );
 	currentView->refreshScreen();

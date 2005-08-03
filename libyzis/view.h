@@ -609,6 +609,22 @@ class YZView {
 
 		void emitSelectionChanged() {}
 
+		/**
+		* Ask the GUI to popup for a filename
+		* @return whether a file name was successfully chosen
+		*/
+		virtual bool popupFileSaveAs() = 0;
+
+		/**
+		 * Called whenever the filename is changed
+		 */
+		virtual void filenameChanged() = 0;
+
+		/**
+		 * Notify GUIs that HL changed
+		 */
+		virtual void highlightingChanged() = 0;
+
 	public slots :
 		void sendMultipleKey( const QString& keys );
 

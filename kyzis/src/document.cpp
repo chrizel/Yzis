@@ -20,8 +20,6 @@
  * $Id$
  */
 
-#include <kfiledialog.h>
-#include <kmessagebox.h>
 #include <klocale.h>
 #include <dcopclient.h>
 #include <qcstring.h>
@@ -178,29 +176,6 @@ bool KYZisDoc::removeText (  uint startLine, uint startCol, uint endLine, uint e
 	YZView *v = dynamic_cast<YZView*>( _views.first() );
 	( ( YZBuffer* )( this ) )->action()->deleteArea( v, YZCursor( startCol, startLine ), YZCursor( endCol, endLine ), QValueList<QChar>());
 	return true;
-}
-
-bool KYZisDoc::popupFileSaveAs() {
-	KURL url =	KFileDialog::getSaveURL();
-	if ( url.isEmpty() ) return false;//canceled
-	else if ( !url.isLocalFile() ) {
-		KMessageBox::sorry(m_parent, tr("Yzis is not able to save remote files for now" ), tr( "Remote files"));
-		return false;
-	} else if ( ! url.isEmpty() ) {
-		setPath( url.path() );
-		return true;
-	}
-	return false;
-}
-
-void KYZisDoc::filenameChanged() {
-	KTextEditor::View *it;
-	for ( it = _views.first(); it; it = _views.next() ) {
-		KYZisView *yv = static_cast<KYZisView*>(it);
-		int id = yv->getkid();
-		if (KYZisFactory::mMainApp)
-			KYZisFactory::mMainApp->setCaption(id,fileName());
-	}
 }
 
 unsigned int KYZisDoc::hlMode () {

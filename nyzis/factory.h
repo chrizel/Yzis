@@ -24,7 +24,6 @@
  */
 
 #include "viewwidget.h"
-#include "document.h"
 #include "session.h"
 #include <ncurses.h>
 
@@ -53,7 +52,7 @@ public:
 	virtual bool quit ( int errorCode ) ;
 	virtual void changeCurrentView ( YZView * );
 	virtual YZView* createView( YZBuffer* );
-	virtual	NYZisDoc *createBuffer(const QString& path=QString::null);
+	virtual	YZBuffer *createBuffer(const QString& path=QString::null);
 	virtual void popupMessage( const QString& message );
 	virtual void deleteView(int Id);
 	virtual void deleteBuffer ( YZBuffer *b );

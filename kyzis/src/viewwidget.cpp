@@ -25,6 +25,8 @@
 #include <qpopupmenu.h>
 #include <kapplication.h>
 #include <kstdaction.h>
+#include <kfiledialog.h>
+#include <kmessagebox.h>
 #include <kxmlguifactory.h>
 #include <viewcursor.h>
 #include "viewwidget.h"
@@ -201,7 +203,7 @@ void KYZisView::fileSave() {
 }
 
 void KYZisView::fileSaveAs() {
-	if ( mBuffer->popupFileSaveAs() )
+	if ( popupFileSaveAs() )
 		mBuffer->save();
 }
 
@@ -337,6 +339,30 @@ void KYZisView::setupCodeCompletion() {
 
 QFontMetrics KYZisView::editorFontMetrics( ) {
 	return m_editor->fontMetrics();
+}
+
+bool KYZisView::popupFileSaveAs() {
+	KURL url =	KFileDialog::getSaveURL();
+	if ( url.isEmpty() ) return false;//canceled
+	else if ( !url.isLocalFile() ) {
+		KMessageBox::sorry(parentWidget(), tr("Yzis is not able to save remote files for now" ), tr( "Remote files"));
+		return false;
+	} else if ( ! url.isEmpty() ) {
+		myBuffer()->setPath( url.path() );
+		return true;
+	}
+	return false;
+}
+
+void KYZisView::filenameChanged() {
+	int id = getkid();
+	if (KYZisFactory::mMainApp)
+		KYZisFactory::mMainApp->setCaption(id, myBuffer()->fileName());
+}
+
+void KYZisView::highlightingChanged()
+{
+	sendRefreshEvent();
 }
 
 

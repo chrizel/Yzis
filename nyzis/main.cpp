@@ -132,7 +132,7 @@ main(int argc, char *argv[])
 	/*
 	 * Open buffers
 	 */
-	NYZisDoc *bf;
+	YZBuffer *bf;
 	bool hasatleastone = false;
 
 	for ( int i=1; i<argc; i++ ) {

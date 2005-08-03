@@ -71,8 +71,6 @@ class KYZisDoc : public KTextEditor::Document,
 		QString text (  uint startLine, uint startCol, uint endLine, uint endCol ) const;
 		bool setText (  const QString &text );
 		bool removeText (  uint startLine, uint startCol, uint endLine, uint endCol );
-		bool popupFileSaveAs();
-		void filenameChanged();
 		void highlightingChanged();
 
 		/*

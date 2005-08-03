@@ -107,6 +107,10 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		virtual void registerModifierKeys( const QString& keys );
 		virtual void unregisterModifierKeys( const QString& keys );
 		void emitSelectionChanged();
+		
+		bool popupFileSaveAs();
+		void filenameChanged();
+		void highlightingChanged();
 
 	public slots:
 		QPoint cursorCoordinates();

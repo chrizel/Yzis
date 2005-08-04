@@ -47,8 +47,7 @@
 
 KYZisDoc *KYZisFactory::currentDoc=0;
 Kyzis *KYZisFactory::mMainApp = 0;
-QPtrList<class KYZisDoc> KYZisFactory::s_documents;
-//QPtrList<class KYZisView> KYZisFactory::s_views;
+YZList<KYZisDoc*> KYZisFactory::s_documents;
 
 
 class KYZisPublicFactory : public KParts::Factory {
@@ -95,11 +94,11 @@ KYZisFactory::KYZisFactory() :
 
 KYZisFactory::~KYZisFactory() {
 	kdDebug() << "Factory gets destroyed !" << endl;
-	while ( KYZisDoc *doc=s_documents.first() ) {
+	
+	for ( YZList<KYZisDoc*>::Iterator itr = s_documents.begin(); itr != s_documents.end(); ++itr ) {
+		KYZisDoc *doc = *itr;
 		kdDebug() << "Deleting " << doc->fileName() << endl;
-	    s_self=this;
-	    delete doc;
-	    s_self=0;
+		delete doc;
 	}
 }
 
@@ -152,14 +151,16 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 
 void KYZisFactory::registerDoc( KYZisDoc *doc ) {
 	kdDebug() << "Register " << doc->fileName() << endl;
-	if ( !s_documents.contains( doc ) )
-		s_documents.append( doc );
+	if ( s_documents.find( doc ) == s_documents.end() ) {
+		s_documents.push_back( doc );
+	}
 }
 
 void KYZisFactory::unregisterDoc( KYZisDoc *doc ) {
 	kdDebug() << "Unregister " << doc->fileName() << endl;
-	if ( s_documents.contains( doc ) )
-		s_documents.removeRef( doc );
+	if ( s_documents.find( doc ) != s_documents.end() ) {
+		s_documents.remove( doc );
+	}
 }
 
 const KAboutData *KYZisFactory::aboutData() {
@@ -192,10 +193,9 @@ void KYZisFactory::applyConfig() {
 	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
 	for ( ; it!=end; ++it ) {
 		YZBuffer *b = ( it.data() );
-		QPtrList< YZView > l = b->views();
-		YZView* yit;
-		for ( yit = l.first(); yit; yit = l.next() ) {
-			KYZisView* yv = static_cast<KYZisView*>( yit );
+		YZList<YZView*> l = b->views();
+		for ( YZList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
+			KYZisView* yv = static_cast<KYZisView*>( *itr );
 			yv->applyConfig();
 		}
 	}

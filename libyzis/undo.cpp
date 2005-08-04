@@ -94,16 +94,22 @@ YZUndoBuffer::YZUndoBuffer( YZBuffer * buffer )
 :  mBuffer(buffer), mFutureUndoItem( 0L ) {
 	mCurrentIndex = 0;
 	mInsideUndo = false;
-	mUndoItemList.setAutoDelete( true );
 
 	// Create the mFutureUndoItem
 	commitUndoItem(0,0);
 }
 
 YZUndoBuffer::~YZUndoBuffer() {
-	if ( mFutureUndoItem )
+	if ( mFutureUndoItem ) {
+		for ( UndoItem::Iterator itr = mFutureUndoItem->begin(); itr != mFutureUndoItem->end(); ++itr ) {
+			delete *itr;
+		}
 		delete mFutureUndoItem;
-
+	}
+	
+	for ( YZList<UndoItem*>::Iterator itr = mUndoItemList.begin(); itr != mUndoItemList.end(); ++itr ) {
+		delete *itr;
+	}
 }
 
 void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY ) {
@@ -114,12 +120,11 @@ void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY ) {
 		removeUndoItemAfterCurrent();
 		mFutureUndoItem->endCursorX = cursorX;
 		mFutureUndoItem->endCursorY = cursorY;
-		mUndoItemList.append( mFutureUndoItem );
-		mCurrentIndex = mUndoItemList.count();
+		mUndoItemList.push_back( mFutureUndoItem );
+		mCurrentIndex = mUndoItemList.size();
 //		yzDebug("YZUndoBuffer") << "UndoItem::commitUndoItem" << toString() << endl;
 	}
 	mFutureUndoItem = new UndoItem();
-	mFutureUndoItem->setAutoDelete( true );
 	mFutureUndoItem->startCursorX = cursorX;
 	mFutureUndoItem->startCursorY = cursorY;
 }
@@ -134,19 +139,28 @@ void YZUndoBuffer::addBufferOperation( YZBufferOperation::OperationType type,
 	bufOperation->text = text;
 	bufOperation->line = line;
 	bufOperation->col = col;
-	mFutureUndoItem->append( bufOperation );
+	mFutureUndoItem->push_back( bufOperation );
 	removeUndoItemAfterCurrent();
 }
 
 void YZUndoBuffer::removeUndoItemAfterCurrent() {
-	while( mUndoItemList.count() > mCurrentIndex )
-		mUndoItemList.removeLast();
+	while( mUndoItemList.size() > mCurrentIndex )
+		mUndoItemList.pop_back();
 	//delete pointer XXX
 }
 
-void YZUndoBuffer::undo( YZView* pView ) {
-	YZBufferOperation * bufOp;
+template<typename T>
+static YZList<T> reverse(const YZList<T> &yzlist)
+{
+	YZList<T> rev;
+	for ( typename YZList<T>::ConstIterator itr = yzlist.begin(); itr != yzlist.end(); ++itr ) {
+		rev.push_front( *itr );
+	}
+	
+	return rev;
+}
 
+void YZUndoBuffer::undo( YZView* pView ) {
 	if (mayUndo() == false) {
 		// notify the user that undo is not possible
 		return;
@@ -154,6 +168,12 @@ void YZUndoBuffer::undo( YZView* pView ) {
 	setInsideUndo( true );
 	pView->setPaintAutoCommit(false);
 
+	UndoItem *item = mUndoItemList[ mCurrentIndex - 1 ];
+	UndoItemBase reversed = reverse( *item );
+	for ( UndoItem::Iterator itr = reversed.begin(); itr != reversed.end(); ++itr ) {
+		(*itr)->performOperation( pView, true );
+	}
+	/*
 	UndoItem * undoItem = mUndoItemList.at(mCurrentIndex-1);
 	UndoItemContentIterator it( *undoItem );
 	it.toLast();
@@ -161,15 +181,14 @@ void YZUndoBuffer::undo( YZView* pView ) {
 		bufOp->performOperation( pView, true );
 		--it;
 	}
+	*/
 	mCurrentIndex--;
-	pView->gotoxy(undoItem->endCursorX, undoItem->endCursorY);
+	pView->gotoxy(item->endCursorX, item->endCursorY);
 	pView->commitPaintEvent();
 	setInsideUndo( false );
 }
 
 void YZUndoBuffer::redo( YZView* pView ) {
-	YZBufferOperation * bufOp;
-
 	if (mayRedo() == false) {
 		// notify the user that undo is not possible
 		return;
@@ -178,12 +197,12 @@ void YZUndoBuffer::redo( YZView* pView ) {
 	pView->setPaintAutoCommit(false);
 
 	++mCurrentIndex;
-	UndoItem * undoItem = mUndoItemList.at(mCurrentIndex-1);
-	UndoItemContentIterator it( *undoItem );
-	while( (bufOp = it.current()) ) {
-		bufOp->performOperation( pView, false );
-		++it;
+	
+	UndoItem * undoItem = mUndoItemList[ mCurrentIndex - 1 ];
+	for ( UndoItem::Iterator itr = undoItem->begin(); itr != undoItem->end(); ++itr ) {
+		(*itr)->performOperation( pView, false );
 	}
+	
 	setInsideUndo( false );
 	pView->commitPaintEvent();
 }
@@ -206,13 +225,13 @@ QString YZUndoBuffer::undoItemToString( UndoItem * undoItem ) {
 	s += offsetS + offsetS + "UndoItem:\n";
 	if (! undoItem ) return s;
 	s += offsetS + offsetS + QString("start cursor: line %1 col %2\n").arg(undoItem->startCursorX).arg(undoItem->startCursorY);
-	UndoItemContentIterator it( *undoItem );
-	YZBufferOperation * bufOp;
-	while( (bufOp = it.current()) ) {
-		s += offsetS + offsetS + offsetS + bufOp->toString() + "\n";
-		++it;
+	
+	UndoItemContentIterator it = undoItem->begin();
+	for ( ; it != undoItem->end(); ++it ) {
+		s += offsetS + offsetS + offsetS + (*it)->toString() + "\n";
 	}
 	s += offsetS + offsetS + QString("end cursor: line %1 col %2\n").arg(undoItem->endCursorX).arg(undoItem->endCursorY);
+	
 	return s;
 }
 
@@ -220,16 +239,16 @@ QString YZUndoBuffer::toString(const QString& msg) {
 	QString s = msg + " YZUndoBuffer:\n";
 	QString offsetS = "  ";
 	s += offsetS + "mUndoItemList\n";
-	UndoItem * undoItem;
-	QPtrListIterator<UndoItem> it( mUndoItemList );
-	while( (undoItem = it.current()) ) {
-		s += undoItemToString( undoItem );
-		++it;
+
+	YZList<UndoItem*>::Iterator it = mUndoItemList.begin();
+	for ( ; it != mUndoItemList.end(); ++it ) {
+		s += undoItemToString( *it );
 	}
+
 	s += offsetS + "mFutureUndoItem\n";
 	s += undoItemToString( mFutureUndoItem );
 	s += offsetS + "current UndoItem\n";
-	s += (mCurrentIndex > 0) ? undoItemToString( mUndoItemList.at( mCurrentIndex-1 ) )
+	s += (mCurrentIndex > 0) ? undoItemToString( mUndoItemList[ mCurrentIndex-1 ] )
 		:offsetS + offsetS + "None\n";
 	s += "\n";
 	return s;

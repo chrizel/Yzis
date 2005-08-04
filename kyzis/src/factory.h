@@ -26,7 +26,9 @@
 #include <kinstance.h>
 #include "session.h"
 #include "kyzis.h"
-#include "document.h"
+
+class KYZisDoc;
+class KYZisView;
 
 class KYZisFactory : public KParts::Factory, public YZSession
 {
@@ -65,11 +67,9 @@ public slots :
 	void closeView();
 
 private:
-	//doh , QPtrList are evil , drop them ! XXX
-    static QPtrList<class KYZisDoc> s_documents;
-    static QPtrList<class KYZisView> s_views;
-
-    KAboutData m_aboutData;
+	static YZList<KYZisDoc*> s_documents;
+	
+	KAboutData m_aboutData;
 	KInstance m_instance;
 
 public:

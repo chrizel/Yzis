@@ -156,16 +156,15 @@ void YZSearch::Private::setCurrentSearch( const QString& pattern ) {
 
 	YZSelectionMap searchMap;
 	for( ; it != it_end; it++ ) {
-		YZView* v;
 		YZBuffer* b = it.data();
-		QPtrList<YZView> views = b->views();
+		YZList<YZView*> views = b->views();
 
 		searchMap.clear();
 
 		/** search all **/
 		bool doIt = YZSession::me->getBooleanOption( "hlsearch" );
 		if ( doIt ) {
-			YZView* v = views.first();
+			YZView* v = views.front();
 			YZCursor from( 0, 0 );
 			YZCursor cur( from );
 			YZCursor end;
@@ -187,8 +186,9 @@ void YZSearch::Private::setCurrentSearch( const QString& pattern ) {
 			} while ( found );
 		}
 
-		for( v = views.first(); v; v = views.next() )
-			highlightSearch( v, searchMap );
+		for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+			highlightSearch( *itr, searchMap );
+		}
 	}
 }
 
@@ -196,8 +196,8 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 	if ( d->mCurrentSearch.isNull() || d->mCurrentSearch.isEmpty() ) return;
 	bool doIt = YZSession::me->getBooleanOption( "hlsearch" );
 	if ( doIt ) {
-		QPtrList<YZView> views = buffer->views();
-		YZView* v = views.first();
+		YZList<YZView*> views = buffer->views();
+		YZView* v = views.front();
 		YZCursor from( 0, line );
 		YZCursor cur( from );
 		YZCursor end( buffer->textline( line ).length(), line );
@@ -220,16 +220,16 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 			}
 		} while ( found );
 
-		for( v = views.first(); v; v = views.next() ) {
-			v->getSelectionPool()->setSearch( searchMap );
-			v->sendPaintEvent( 0, line, qMax( (int)(buffer->textline( line ).length() - 1), 0 ), line );
+		for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+			(*itr)->getSelectionPool()->setSearch( searchMap );
+			(*itr)->sendPaintEvent( 0, line, qMax( (int)(buffer->textline( line ).length() - 1), 0 ), line );
 		}
 	}
 }
 
 void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shift ) {
-	QPtrList<YZView> views = buffer->views();
-	YZView* v = views.first();
+	YZList<YZView*> views = buffer->views();
+	YZView* v = views.front();
 	if ( v ) {
 		YZSelectionMap searchMap = v->getSelectionPool()->search()->map();
 
@@ -247,8 +247,9 @@ void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shif
 			searchMap[ i ].setToPos( to );
 		}
 
-		for( v = views.first(); v; v = views.next() )
-			d->highlightSearch( v, searchMap );
+		for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+			d->highlightSearch( *itr, searchMap );
+		}
 	}
 }
 
@@ -279,10 +280,9 @@ void YZSearch::update() {
 		YZBufferMap::Iterator it = buffers.begin(), it_end = buffers.end();
 		for( ; it != it_end; it++ ) {
 			YZBuffer* b = it.data();
-			QPtrList<YZView> views = b->views();
-			YZView* v;
-			for( v = views.first(); v; v = views.next() ) {
-				d->highlightSearch( v, searchMap );
+			YZList<YZView*> views = b->views();
+			for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+				d->highlightSearch( *itr, searchMap );
 			}
 		}
 	}

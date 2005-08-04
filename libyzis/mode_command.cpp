@@ -197,7 +197,6 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 	bool hadCount = false;
 	unsigned int i=0;
 	QValueList<QChar> regs;
-	YZView* it;
 
 	// read in the register operations and the counts
 	while(i<inputs.length()) {
@@ -313,15 +312,18 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 		default:
 			break;
 		}
-		// the argument is OK, go for it
 
-		for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
-			it->setPaintAutoCommit( false );
+		// the argument is OK, go for it
+		YZList<YZView*> views = view->myBuffer()->views();
+		for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+			(*itr)->setPaintAutoCommit( false );
+		}
 
 		(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, s));
 
-		for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
-			it->commitPaintEvent();
+		for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+			(*itr)->commitPaintEvent();
+		}
 			
 		if ( c->arg() == ARG_MARK ) {
 			YZSession::me->saveJumpPosition();
@@ -357,11 +359,15 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 			}
 			if(!c)
 				return CMD_ERROR;
-			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
-				it->setPaintAutoCommit( false );
+
+			YZList<YZView*> views = view->myBuffer()->views();
+			for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+				(*itr)->setPaintAutoCommit( false );
+			}
 			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
-			for ( it = view->myBuffer()->views().first(); it; it = view->myBuffer()->views().next() )
-				it->commitPaintEvent();
+			for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+				(*itr)->commitPaintEvent();
+			}
 		}
 	}
 

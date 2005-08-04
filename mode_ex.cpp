@@ -355,7 +355,6 @@ cmd_state YZModeEx::write( const YZExCommandArgs& args ) {
 	}
 	if ( args.arg.length() ) {
 		args.view->myBuffer()->setPath( args.arg ); //a filename was given as argument
-		args.view->myBuffer()->getSwapFile()->setFileName( args.view->myBuffer()->fileName() );
 	}
 	if ( quit && force ) {//check readonly ? XXX
 		args.view->myBuffer()->save();
@@ -452,9 +451,8 @@ cmd_state YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::bufferdelete ( const YZExCommandArgs& args ) {
-	yzDebug() << "Delete buffer " << args.view->myBuffer()->myId << endl;
+	yzDebug() << "Delete buffer " << args.view->myBuffer()->getId() << endl;
 
-	args.view->myBuffer()->clearSwap();
 	YZList<YZView*> l = args.view->myBuffer()->views();
 	for ( YZList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
 		args.view->mySession()->deleteView( (*itr)->myId );
@@ -585,7 +583,7 @@ cmd_state YZModeEx::hardcopy( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::preserve( const YZExCommandArgs& args  ) {
-	args.view->myBuffer()->getSwapFile()->flush();
+	args.view->myBuffer()->preserve();
 	return CMD_OK;
 }
 

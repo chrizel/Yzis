@@ -43,15 +43,7 @@
 #include "session.h"
 #include "tags_stack.h"
 
-#if QT_VERSION < 0x040000
-#include <qvaluevector.h>
-typedef QValueVector<tagFile*> FileListType;
-#else
-#include <qvector.h>
-typedef QVector<tagFile*> FileListType;
-#endif
-
-FileListType tagfilelist;
+YZVector<tagFile*> tagfilelist;
 // lastsearch is needed, since readtags does a pointer assignment to remember
 // the last search.  Otherwise, the temporary gets destroyed and tagNext fails.
 static QString lastsearch;
@@ -189,7 +181,7 @@ static bool jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 static void readAllMatchingTags( const YZTagStackItem &initialTag )
 {
 	int tagResult;
-	QValueVector<YZTagStackItem> tags;
+	YZVector<YZTagStackItem> tags;
 	tags.push_back( initialTag );
 	
 	for ( unsigned int i = 0; i < tagfilelist.size(); ++i ) {

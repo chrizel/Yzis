@@ -61,24 +61,13 @@ class YZTagStack {
 		unsigned int getNumMatchingTags() const;
 		unsigned int getNumCurMatchingTag() const;
 		
-#if QT_VERSION < 0x040000
-		void storeMatchingTags(const QValueVector<YZTagStackItem> &tags);
-#else
-		void storeMatchingTags(const QVector<YZTagStackItem> &tags);
-#endif
+		void storeMatchingTags(const YZVector<YZTagStackItem> &tags);
 		
 	private:
-#if QT_VERSION < 0x040000
-		typedef QValueVector<YZYzisinfoJumpListRecord> StackType;
-		typedef QValueVector<YZTagStackItem> MatchingTagsType;
+		typedef YZVector<YZYzisinfoJumpListRecord> StackType;
+		typedef YZVector<YZTagStackItem> MatchingTagsType;
 		typedef QPair<MatchingTagsType, unsigned int> MatchingStackItem;
-		typedef QValueVector<MatchingStackItem> MatchingStackType;
-#else
-		typedef QVector<YZYzisinfoJumpListRecord> StackType;
-		typedef QVector<YZTagStackItem> MatchingTagsType;
-		typedef QPair<MatchingTagsType, unsigned int> MatchingStackItem;
-		typedef QVector<MatchingStackItem> MatchingStackType;
-#endif
+		typedef YZVector<MatchingStackItem> MatchingStackType;
 		
 		StackType mStack;
 		MatchingStackType mCurrentTags;

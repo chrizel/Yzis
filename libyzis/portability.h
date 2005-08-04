@@ -23,38 +23,60 @@
 
 #ifdef YZIS_WIN32_MSVC
 
-// boah, we are on windows
-#include <windows.h>
-
-// XXX Phil: I'll fix that later 
-#define PREFIX ""
-#define gettext( s ) (s) 
-
-// emulate chmod
-#define chmod( fname , flag )
-#define S_IRUSR 0 
-#define S_IWUSR 0
-
-// emulate lstat
-#define lstat	stat
-
-// make stat work
-#define S_ISLNK( v )		(0)
-#define S_ISREG( v )		(v & _S_IFREG)
-
-// make geteuid work
-#define CHECK_GETEUID( v )		(1)
+	// boah, we are on windows
+	#include <windows.h>
+	
+	// XXX Phil: I'll fix that later 
+	#define PREFIX ""
+	#define gettext( s ) (s) 
+	
+	// emulate chmod
+	#define chmod( fname , flag )
+	#define S_IRUSR 0 
+	#define S_IWUSR 0
+	
+	// emulate lstat
+	#define lstat	stat
+	
+	// make stat work
+	#define S_ISLNK( v )		(0)
+	#define S_ISREG( v )		(v & _S_IFREG)
+	
+	// make geteuid work
+	#define CHECK_GETEUID( v )		(1)
 
 #else 
-// ahh, we are on unix
-#include <unistd.h>
-#include <dirent.h>
-#include <pwd.h>
-//#include "config.h"
-#include "translator.h"
-#include <libintl.h>
+	// ahh, we are on unix
+	#include <unistd.h>
+	#include <dirent.h>
+	#include <pwd.h>
+	//#include "config.h"
+	#include "translator.h"
+	#include <libintl.h>
+	
+	#define CHECK_GETEUID( v )		(v == geteuid())
+#endif
 
-#define CHECK_GETEUID( v )		(v == geteuid())
+// Qt4 check
+#include <qnamespace.h>
+
+// if Qt3
+#if QT_VERSION < 0x040000
+	#include <qvaluelist.h>
+	template<typename T>
+	class YZList : public QValueList<T> {}; 
+	
+	#include <qvaluevector.h>
+	template<typename T>
+	class YZVector : public QValueVector<T> {};
+#else // Qt4 then
+	#include <qlist.h>
+	template<typename T>
+	class YZList : public QList<T> {};
+	
+	#include <qvector.h>
+	template<typename T>
+	class YZVector : public QVector<T> {};
 #endif
 
 #endif // PORTABILITY_H

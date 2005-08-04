@@ -61,17 +61,8 @@ class YZTagStack;
  */
 
 typedef QMap<QString,YZBuffer*> YZBufferMap;
-#if QT_VERSION < 0x040000
-typedef QValueVector<QString> StringVector;
-typedef QValueVector<YZYzisinfoJumpListRecord*> TagListVector;
-typedef QValueVector<YZYzisinfoJumpListRecord*> JumpListVector;
-typedef QValueVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
-#else
-typedef QVector<QString> StringVector;
-typedef QVector<YZYzisinfoJumpListRecord*> TagListVector;
-typedef QVector<YZYzisinfoJumpListRecord*> JumpListVector;
-typedef QVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
-#endif
+typedef YZVector<YZYzisinfoJumpListRecord*> JumpListVector;
+typedef YZVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
  
 class YZSession {
 	public:
@@ -383,7 +374,7 @@ class YZSession {
 	     * command history
 	     */
 	     
-	    static StringVector mExHistory;
+	    static YZVector<QString> mExHistory;
 	     
 	    /**
 	     * current command history item
@@ -395,7 +386,7 @@ class YZSession {
 	    * search history
 	    */
 	    
-	    static StringVector mSearchHistory;
+	    static YZVector<QString> mSearchHistory;
      
 	    /**
 	     * current search history item

@@ -106,11 +106,7 @@ bool YZTagStack::empty() const
 	return mStack.empty();
 }
 
-#if QT_VERSION < 0x040000
-void YZTagStack::storeMatchingTags(const QValueVector<YZTagStackItem> &tags)
-#else
-void YZTagStack::storeMatchingTags(const QVector<YZTagStackItem> &tags)
-#endif
+void YZTagStack::storeMatchingTags(const YZVector<YZTagStackItem> &tags)
 {
 	MatchingStackItem &pair = mCurrentTags.back();
 	pair.first = tags;

@@ -56,10 +56,10 @@ bool YZSession::mYzisinfoInitialized = false;
 unsigned int YZSession::mCurrentExItem = 0;
 unsigned int YZSession::mCurrentSearchItem = 0;
 unsigned int YZSession::mCurrentJumpListItem = 0;
-StringVector YZSession::mExHistory = 0;
-StringVector YZSession::mSearchHistory = 0;
-JumpListVector YZSession::mJumpList = 0;
-StartPositionVector YZSession::mStartPosition = 0;
+YZVector<QString> YZSession::mExHistory;
+YZVector<QString> YZSession::mSearchHistory;
+JumpListVector YZSession::mJumpList;
+StartPositionVector YZSession::mStartPosition;
 YZTagStack YZSession::mTagStack;
 
 YZSession::YZSession( const QString& _sessionName ) {

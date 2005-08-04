@@ -275,7 +275,7 @@ void NYZFactory::deleteView(int /*Id*/)
 
 	// delete
 //	delete oldview;// wont work because the oldview is the current one used
-	oldview->myBuffer()->detach();
+	rmBuffer( oldview->myBuffer() );
 
 	if (mBuffers.isEmpty()) {
 		yzWarning(NYZIS)<<"nyzis can't handle not having any view/buffers, quitting" << endl;;

@@ -56,6 +56,10 @@ static QString myNull;
  */
 class YZBuffer {
 public:
+	//-------------------------------------------------------
+	// ----------------- Constructor/Destructor and Id
+	//-------------------------------------------------------
+	
 	/**
 	 * Creates a new buffer
 	 * @param sess the session to which the buffer belongs to
@@ -66,8 +70,16 @@ public:
 	 * Default destructor
 	 */
 	virtual ~YZBuffer();
+	
+	/**
+	 * Gets the unique identifier for this buffer
+	 * @return the unqiue identifier for this buffer
+	 */
+	unsigned int getId() const { return myId; }
 
+	//-------------------------------------------------------
 	// ----------------- Character Operations
+	//-------------------------------------------------------
 
 	/**
 	 * Inserts a character into the buffer
@@ -85,7 +97,9 @@ public:
 	 */
 	void delChar (unsigned int x, unsigned int y, unsigned int count);
 
+	//-------------------------------------------------------
 	// ----------------- Line Operations
+	//-------------------------------------------------------
 
 	/**
 	 * Appends a new line at the end of file
@@ -121,8 +135,78 @@ public:
 	 * Replaces the line at @param line with the given string @param l
 	 */
 	void replaceLine( const QString& l, unsigned int line );
+	
+	/**
+	 * Finds the @ref YZLine pointer for a line in the buffer
+	 * @param line the line to return
+	 * @return a YZLine pointer or 0 if none
+	 *
+	 * Note: the valid line numbers are between 0 and lineCount()-1
+	 */
+	inline YZLine * yzline(unsigned int line, bool noHL = true) {
+		//if you change this method, DO NOT FORGET TO CHANGE THE ONE AFTER !
+		if ( line >= mText.size() ) {
+			yzDebug() << "ERROR: you are asking for line " << line << " (max is " << mText.size() << ")" << endl;
+			// we will perhaps crash after that, but we don't want to disguise bugs!
+			// fix the one which call yzline ( or textline ) with a wrong line number instead.
+			return NULL;
+		}
+		YZLine *yl = mText.at( line );
+		if ( !noHL && yl && !yl->initialized() ) initHL( line );
+		return yl;
+	}
 
+	inline YZLine * yzline(unsigned int line) const {
+		//if you change this method, DO NOT FORGET TO CHANGE THE ONE BEFORE !
+		if ( line >= mText.size() ) {
+			yzDebug() << "ERROR: you are asking for line " << line << " (max is " << mText.size() << ")" << endl;
+			// we will perhaps crash after that, but we don't want to disguise bugs!
+			// fix the one which call yzline ( or textline ) with a wrong line number instead.
+			return NULL;
+		}
+		YZLine *yl = mText.at( line );
+		return yl;
+	}
+
+	/**
+	 * Replaces the given regexp @arg what with the given string @with on the specified @arg line
+	 * Repeat the change on the line if @arg wholeline is true
+	 * @return true if a change was done
+	 */
+	bool substitute( const QString& what, const QString& with, bool wholeline, unsigned int line );
+
+	/**
+	 * Get the length of a line
+	 * @param line the line number
+	 * @return a unsigned int with the length of the line
+	 *
+	 * Note: the valid line numbers are between 0 and lineCount()-1
+	 */
+	inline unsigned int getLineLength(unsigned int line) const {
+		// if line is >= lineCount(), we will crash. Read the note from yzline()
+		return yzline( line )->length();
+	}
+
+	/**
+	 * Finds a line in the buffer
+	 * @param line the line to search for
+	 * @return a QString reference on the line or NULL
+	 *
+	 * Note: the valid line numbers are between 0 and lineCount()-1
+	 */
+	inline const QString& textline(unsigned int line) const {
+		// if line is >= lineCount(), we will crash. Read the note from yzline()
+		return yzline( line )->data();
+	}
+
+	/**
+	 * Return the column of the first non-blank character in the line
+	 */
+	uint firstNonBlankChar( uint line ) const;
+
+	//-------------------------------------------------------
 	// ----------------- Buffer content
+	//-------------------------------------------------------
 
 	/**
 	 * Return true if the buffer is empty
@@ -142,18 +226,6 @@ public:
 	uint getWholeTextLength() const;
 
 	/**
-	 * Get the length of a line
-	 * @param line the line number
-	 * @return a unsigned int with the length of the line
-	 *
-	 * Note: the valid line numbers are between 0 and lineCount()-1
-	 */
-	inline unsigned int getLineLength(unsigned int line) const {
-		// if line is >= lineCount(), we will crash. Read the note from yzline()
-		return yzline( line )->length();
-	}
-
-	/**
 	 * Remove all text
 	 * @return void
 	 */
@@ -162,21 +234,9 @@ public:
 	void loadText( QString* content );
 
 	/**
-	 * Finds a line in the buffer
-	 * @param line the line to search for
-	 * @return a QString reference on the line or NULL
-	 *
-	 * Note: the valid line numbers are between 0 and lineCount()-1
-	 */
-	inline const QString& textline(unsigned int line) const {
-		// if line is >= lineCount(), we will crash. Read the note from yzline()
-		return yzline( line )->data();
-	}
-
-	/**
 	 * Extract the corresponding 'from' and 'to' YZCursor from the YZInterval i.
 	 */
-	void intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor* to );
+	void intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor* to ) const;
 
 	/**
 	 * Get a list of strings between two cursors
@@ -184,13 +244,13 @@ public:
 	 * @param to the end cursor
 	 * @return a list of strings
 	 */
-	QStringList getText(const YZCursor& from, const YZCursor& to);
-	QStringList getText(const YZInterval& i);
+	QStringList getText(const YZCursor& from, const YZCursor& to) const;
+	QStringList getText(const YZInterval& i) const;
 
 	/**
 	 * Get entire word at given cursor position. Currently behaves like '*' in vim
 	 */
-	QString getWordAt( const YZCursor& at );
+	QString getWordAt( const YZCursor& at ) const;
 
 	/**
 	 * Number of lines in the buffer
@@ -200,13 +260,9 @@ public:
 	 */
 	unsigned int lineCount() const { return mText.count(); }
 
-	/**
-	 * Return the column of the first non-blank character in the line
-	 */
-	uint firstNonBlankChar( uint line );
-
-
+	//-------------------------------------------------------
 	// --------------------- File Operations
+	//-------------------------------------------------------
 
 	/**
 	 * Opens the file and fills the buffer with its content
@@ -243,7 +299,34 @@ public:
 	 */
 	void filenameChanged();
 
+	/**
+	 * Is this file a new file
+	 */
+	bool fileIsNew() const { return mFileIsNew; }
+
+	/**
+	 * Is the file modified
+	 */
+	bool fileIsModified() const { return mModified; }
+
+	/**
+	 * Change the modified flag of the file
+	 */
+	void setChanged(bool v);
+	virtual void setModified( bool modified );
+
+	void setEncoding( const QString& name );
+	inline const QString& encoding() const { return currentEncoding; }
+	
+	/**	
+	 * Write all text for all buffers into swap file.  The
+	 * original file is no longer needed for recovery.
+	 */
+	void preserve();
+	
+	//-------------------------------------------------------
 	// -------------------------- View Operations
+	//-------------------------------------------------------
 
 	/**
 	 * Adds a new view to the buffer
@@ -261,51 +344,40 @@ public:
 	 * The list of view for this buffer
 	 * @return a QValuelist of pointers to the views
 	 */
-	YZList<YZView*> views() { return mViews; }
+	YZList<YZView*> views() const { return mViews; }
 
 	/**
 	 * Find the first view of this buffer
 	 * Temporary function
 	 */
-	YZView* firstView();
+	YZView* firstView() const;
 
 	/**
 	 * Finds a view by its UID
 	 * @param uid the unique ID of the view to search for
 	 * @return a pointer to the view or NULL
 	 */
-	YZView* findView(unsigned int uid);
+	YZView* findView(unsigned int uid) const;
 
-	// ------------ Undo
+	/**
+	 * Refresh all views
+	 */
+	void updateAllViews();
+
+	//-------------------------------------------------------
+	// ------------ Sub-object accessors
+	//-------------------------------------------------------
+	
 	YZUndoBuffer * undoBuffer() const { return mUndoBuffer; }
+	YZAction* action() const { return mAction; }
+	YZViewMark* viewMarks() const { return mViewMarks; }
+	YZDocMark* docMarks() const { return mDocMarks; }
+	YzisHighlighting *highlight() const { return m_highlight; }
 
-	// Action
-	YZAction* action() { return mAction; }
-
-	YZViewMark* viewMarks() { return mViewMarks; }
-	YZDocMark* docMarks() { return mDocMarks; }
-
-	/**
-	 * Is this file a new file
-	 */
-	bool fileIsNew() const { return mFileIsNew; }
-
-	/**
-	 * Is the file modified
-	 */
-	bool fileIsModified() const { return mModified; }
-
-	/**
-	 * Change the modified flag of the file
-	 */
-	void setChanged(bool v);
-	virtual void setModified( bool modified );
-
-	/**
-	 * Unique ID of the buffer
-	 */
-	unsigned int myId;
-
+	//-------------------------------------------------------
+	// ------------ Highlighting
+	//-------------------------------------------------------
+	
 	/**
 	 * Sets the highlighting mode for this buffer
 	 * @param mode the highlighting mode to use
@@ -313,8 +385,6 @@ public:
 	 */
 	void setHighLight(uint mode, bool warnGUI=true);
 	void setHighLight( const QString& name );
-
-	YzisHighlighting *highlight() { return m_highlight; }
 
 	bool updateHL( unsigned int line );
 	void initHL( unsigned int line );
@@ -325,101 +395,42 @@ public:
 	virtual void highlightingChanged();
 
 	/**
-	 * Finds the @ref YZLine pointer for a line in the buffer
-	 * @param line the line to return
-	 * @return a YZLine pointer or 0 if none
-	 *
-	 * Note: the valid line numbers are between 0 and lineCount()-1
-	 */
-	inline YZLine * yzline(unsigned int line, bool noHL = true) {
-		//if you change this method, DO NOT FORGET TO CHANGE THE ONE AFTER !
-		if ( line >= mText.size() ) {
-			yzDebug() << "ERROR: you are asking for line " << line << " (max is " << mText.size() << ")" << endl;
-			// we will perhaps crash after that, but we don't want to disguise bugs!
-			// fix the one which call yzline ( or textline ) with a wrong line number instead.
-			return NULL;
-		}
-		YZLine *yl = mText.at( line );
-		if ( !noHL && yl && !yl->initialized() ) initHL( line );
-		return yl;
-	}
-
-	inline YZLine * yzline(unsigned int line) const {
-		//if you change this method, DO NOT FORGET TO CHANGE THE ONE BEFORE !
-		if ( line >= mText.size() ) {
-			yzDebug() << "ERROR: you are asking for line " << line << " (max is " << mText.size() << ")" << endl;
-			// we will perhaps crash after that, but we don't want to disguise bugs!
-			// fix the one which call yzline ( or textline ) with a wrong line number instead.
-			return NULL;
-		}
-		YZLine *yl = mText.at( line );
-		return yl;
-	}
-
-	void makeAttribs();
-
-	/**
-	  * detach
-	  */
-	void detach(void);
-
-	/**
-	 * Replaces the given regexp @arg what with the given string @with on the specified @arg line
-	 * Repeat the change on the line if @arg wholeline is true
-	 * @return true if a change was done
-	 */
-	bool substitute( const QString& what, const QString& with, bool wholeline, unsigned int line );
-
-	/**
-	 * Refresh all views
-	 */
-	void updateAllViews();
-
-	/**
-	 * Access to the swapfile
-	 * @return a pointer to the swap file
-	 */
-	YZSwapFile* getSwapFile() { return mSwap; }
-
-	/**
-	 * Clear swap file on normal exits
-	 */
-	void clearSwap();
-
-	//Local Options management
-	/**
-	 * Retrieve an int option
-	 */
-	int getLocalIntegerOption( const QString& option );
-
-	/**
-	 * Retrieve a bool option
-	 */
-	bool getLocalBooleanOption( const QString& option );
-
-	/**
-	 * Retrieve a string option
-	 */
-	QString getLocalStringOption( const QString& option );
-
-	/**
-	 * Retrieve a qstringlist option
-	 */
-	QStringList getLocalListOption( const QString& option );
-
-	void setEncoding( const QString& name );
-
-	inline const QString& encoding() const {
-		return currentEncoding;
-	}
-	
-	/**
 	 * Detects the correct syntax highlighting for the current file
 	 */
 	void detectHighLight();
 
-	static QString tildeExpand( const QString& path );
+	void makeAttribs();
+	
+	//-------------------------------------------------------
+	// ------------ Local Options Management
+	//-------------------------------------------------------
+	
+	/**
+	 * Retrieve an int option
+	 */
+	int getLocalIntegerOption( const QString& option ) const;
 
+	/**
+	 * Retrieve a bool option
+	 */
+	bool getLocalBooleanOption( const QString& option ) const;
+
+	/**
+	 * Retrieve a string option
+	 */
+	QString getLocalStringOption( const QString& option ) const;
+
+	/**
+	 * Retrieve a qstringlist option
+	 */
+	QStringList getLocalListOption( const QString& option ) const;
+
+	//-------------------------------------------------------
+	// ------------ Static
+	//-------------------------------------------------------
+	
+	static QString tildeExpand( const QString& path );
+	
 protected:
 	/**
 	 * Sets the line @param line to @param l
@@ -431,31 +442,46 @@ protected:
 	/**
 	 * Is a line displayed in any view ?
 	 */
-	bool isLineVisible(uint line);
+	bool isLineVisible(uint line) const;
 
+	// The current filename (absolute path name)
 	QString mPath;
+	
+	// list of all views that are displaying this buffer
 	YZList<YZView*> mViews;
 
+	// data structure containing the actual text of the file
 	YZBufferData mText;
+	
 	YZSession *mSession;
+	
+	// pointers to sub-objects
 	YZUndoBuffer *mUndoBuffer;
+	YzisHighlighting *m_highlight;
+	
 	//if a file is new, this one is true ;) (used at saving time)
 	bool mFileIsNew;
 	//used to prevent redrawing of views during some operations
 	bool mUpdateView;
 	//is the file modified
 	bool mModified;
-	//current highlight mode
-	YzisHighlighting *m_highlight;
 	bool mLoading;
-	bool m_hlupdating;
+	
+	// flag to disable drawing of updates
+	mutable bool m_hlupdating;
 
 private:
+	// pointers to sub-objects
 	YZAction* mAction;
 	YZViewMark* mViewMarks;
 	YZDocMark* mDocMarks;
 	YZSwapFile *mSwap;
+	
+	// string containing encoding of the file
 	QString currentEncoding;
+	
+	// unique identifier of the buffer
+	unsigned int myId;
 };
 
 #endif /*  YZ_BUFFER_H */

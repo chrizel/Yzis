@@ -116,10 +116,6 @@ YZBuffer::~YZBuffer() {
 	// delete the temporary file if we haven't changed the file
 }
 
-void YZBuffer::detach() {
-	mSession->rmBuffer(this);
-}
-
 // ------------------------------------------------------------------------
 //                            Char Operations
 // ------------------------------------------------------------------------
@@ -390,9 +386,9 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 }
 
 // XXX Wrong
-bool YZBuffer::isLineVisible(uint line) {
+bool YZBuffer::isLineVisible(uint line) const {
 	bool shown=false;
-	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+	for ( YZList<YZView*>::ConstIterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
 		shown = shown || (*itr)->isLineVisible(line);
 	}
 	return shown;
@@ -423,7 +419,7 @@ uint YZBuffer::getWholeTextLength() const {
 	return length;
 }
 
-uint YZBuffer::firstNonBlankChar( uint line ) {
+uint YZBuffer::firstNonBlankChar( uint line ) const {
 	uint i=0;
 	QString s = textline(line);
 	if (s.isEmpty() ) return 0;
@@ -649,9 +645,9 @@ void YZBuffer::addView (YZView *v) {
 	mSession->setCurrentView( v );
 }
 
-YZView* YZBuffer::findView( unsigned int uid ) {
+YZView* YZBuffer::findView( unsigned int uid ) const {
 	yzDebug("YZBuffer") << "Buffer: findView " << uid << endl;
-	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+	for ( YZList<YZView*>::ConstIterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
 		if ( (*itr)->myId == uid )
 			return *itr;
 	}
@@ -668,7 +664,7 @@ void YZBuffer::updateAllViews() {
 	}
 }
 
-YZView* YZBuffer::firstView() {
+YZView* YZBuffer::firstView() const {
 	if (  mViews.first() != NULL )
 		return mViews.first();
 	else yzDebug("YZBuffer") << "No VIEW !!!" << endl;
@@ -678,9 +674,9 @@ YZView* YZBuffer::firstView() {
 void YZBuffer::rmView(YZView *v) {
 	mViews.remove(v);
 //	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
-	if ( mViews.isEmpty() )
-		detach();
-
+	if ( mViews.isEmpty() ) {
+		mSession->rmBuffer( this );
+	}
 }
 
 // ------------------------------------------------------------------------
@@ -763,6 +759,10 @@ void YZBuffer::setPath( const QString& _path ) {
 	//hmm changing file :), update Session !!!!
 	mSession->updateBufferRecord( oldPath, mPath, this );
 	YZSession::mOptions->updateOptions(oldPath, mPath);
+	
+	// update swap file too
+	mSwap->setFileName( _path );
+	
 	filenameChanged();
 }
 
@@ -792,7 +792,7 @@ bool YZBuffer::substitute( const QString& _what, const QString& with, bool whole
 	return false;
 }
 
-QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) {
+QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) const {
 	m_hlupdating=true; //override
 	//the first line
 	QStringList list;
@@ -815,13 +815,13 @@ QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) {
 	m_hlupdating=false; //override
 	return list;
 }
-QStringList YZBuffer::getText( const YZInterval& i ) {
+QStringList YZBuffer::getText( const YZInterval& i ) const {
 	YZCursor from, to;
 	intervalToCursors( i, &from, &to );
 	return getText( from, to );
 }
 
-void YZBuffer::intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor* to ) {
+void YZBuffer::intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor* to ) const {
 	*from = i.fromPos();
 	*to = i.toPos();
 	if ( i.from().opened() )
@@ -837,7 +837,7 @@ void YZBuffer::intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor*
 }
 
 
-QString YZBuffer::getWordAt( const YZCursor& at ) {
+QString YZBuffer::getWordAt( const YZCursor& at ) const {
 	QString l = textline( at.y() );
 	QRegExp reg( "\\b(\\w+)\\b" );
 	int idx = reg.searchRev( l, at.x() );
@@ -860,32 +860,28 @@ QString YZBuffer::getWordAt( const YZCursor& at ) {
 	return QString::null;
 }
 
-void YZBuffer::clearSwap() {
-	mSwap->unlink();
-}
-
-int YZBuffer::getLocalIntegerOption( const QString& option ) {
+int YZBuffer::getLocalIntegerOption( const QString& option ) const {
 	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) ) //find the local one ?
 		return YZSession::mOptions->readIntegerOption( mPath+"\\"+option, 0 );
 	else
 		return YZSession::mOptions->readIntegerOption( "Global\\" + option, 0 ); // else give the global default if any
 }
 
-bool YZBuffer::getLocalBooleanOption( const QString& option ) {
+bool YZBuffer::getLocalBooleanOption( const QString& option ) const {
 	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) )
 		return YZSession::mOptions->readBooleanOption( mPath+"\\"+option, false );
 	else
 		return YZSession::mOptions->readBooleanOption( "Global\\" + option, false );
 }
 
-QString YZBuffer::getLocalStringOption( const QString& option ) {
+QString YZBuffer::getLocalStringOption( const QString& option ) const {
 	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) )
 		return YZSession::mOptions->readStringOption( mPath+"\\"+option );
 	else
 		return YZSession::mOptions->readStringOption( "Global\\" + option );
 }
 
-QStringList YZBuffer::getLocalListOption( const QString& option ) {
+QStringList YZBuffer::getLocalListOption( const QString& option ) const {
 	if ( YZSession::mOptions->hasOption( mPath+"\\"+option ) )
 		return YZSession::mOptions->readListOption( mPath+"\\"+option, QStringList() );
 	else
@@ -986,5 +982,10 @@ void YZBuffer::highlightingChanged()
 	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
 		(*itr)->highlightingChanged();
 	}
+}
+
+void YZBuffer::preserve()
+{
+	mSwap->flush();
 }
 

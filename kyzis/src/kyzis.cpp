@@ -281,6 +281,7 @@ void Kyzis::closeView(int Id) {
 	if ( viewList.contains( Id ) ) {
 		kdDebug() << "Closing view from main app " << Id << endl;
 		closeWindow(viewList[Id].v);
+        viewList.remove( Id );
 	}
 }
 

@@ -261,7 +261,7 @@ public:
 	 * The list of view for this buffer
 	 * @return a QValuelist of pointers to the views
 	 */
-	QPtrList<YZView> views() { return mViews; }
+	YZList<YZView*> views() { return mViews; }
 
 	/**
 	 * Find the first view of this buffer
@@ -434,7 +434,7 @@ protected:
 	bool isLineVisible(uint line);
 
 	QString mPath;
-	QPtrList<YZView> mViews;
+	YZList<YZView*> mViews;
 
 	YZBufferData mText;
 	YZSession *mSession;

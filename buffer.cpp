@@ -129,15 +129,21 @@ void YZBuffer::detach() {
  * do _not_ use them directly, use action() ( actions.cpp ) instead.
  */
 	
+static void viewsInit( YZBuffer *buffer, unsigned int x, unsigned int y )
+{
+	YZList<YZView*> views = buffer->views();
+	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+		(*itr)->initChanges(x, y);
+	}
+}
 
-
-#define VIEWS_INIT( x, y ) \
-	{ for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
-	it->initChanges( x, y ); }
-
-#define VIEWS_APPLY( x, y ) \
-	{ for ( YZView *it = mViews.first(); it; it = mViews.next() ) \
-	it->applyChanges( x, y ); }
+static void viewsApply( YZBuffer *buffer, unsigned int x, unsigned int y )
+{
+	YZList<YZView*> views = buffer->views();
+	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+		(*itr)->applyChanges(x, y);
+	}
+}
 
 void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
 	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), c )
@@ -156,7 +162,7 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
 	}
 
 
-	VIEWS_INIT( x, y );
+	viewsInit( this, x, y );
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, c, x, y );
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, c, x, y );
@@ -164,7 +170,7 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
 	l.insert(x, c);
 	setTextline(y,l);
 
-	VIEWS_APPLY( x + c.length(), y );
+	viewsApply( this, x + c.length(), y );
 }
 
 void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count ) {
@@ -179,7 +185,7 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count ) {
 
 	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count),x,y)
 
-	VIEWS_INIT( x, y );
+	viewsInit( this, x, y );
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, l.mid(x,count), x, y );
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, l.mid( x,count ), x, y );
@@ -189,7 +195,7 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count ) {
 
 	setTextline(y,l);
 
-	VIEWS_APPLY( x, y );
+	viewsApply( this, x, y );
 }
 
 // ------------------------------------------------------------------------
@@ -229,7 +235,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::ADDTEXT, l, 0, line );
 
-	VIEWS_INIT( 0, line );
+	viewsInit( this, 0, line );
 
 	QValueVector<YZLine*>::iterator it = mText.begin(), end = mText.end();
 	uint idx=0;
@@ -243,7 +249,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 
 	setChanged( true );
 
-	VIEWS_APPLY( 0, line + 1 );
+	viewsApply( this, 0, line + 1 );
 }
 
 void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
@@ -259,7 +265,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 		line --;
 		col = textline(line).length();
 	}
-	VIEWS_INIT( col, line );
+	viewsInit( this, col, line );
 
 	if ( line >= lineCount() ) return;
 	QString l=textline(line);
@@ -296,7 +302,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	setTextline(line,l.left( col ));
 	updateHL( line + 1 );
 
-	VIEWS_APPLY( 0, line+1 );
+	viewsApply( this, 0, line+1 );
 }
 
 void YZBuffer::deleteLine( unsigned int line ) {
@@ -304,7 +310,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 	if (line >= lineCount()) return;
 
-	VIEWS_INIT( 0, line );
+	viewsInit( this, 0, line );
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
 	if ( !mLoading ) mSwap->addToSwap( YZBufferOperation::DELTEXT, textline( line ), 0, line );
 	if (lineCount() > 1) {
@@ -328,7 +334,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 
 	setChanged( true );
 
-	VIEWS_APPLY( 0, line + 1 );
+	viewsApply( this, 0, line + 1 );
 }
 
 void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
@@ -337,7 +343,7 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 
 	if ( line >= lineCount() ) return;
 	if ( textline( line ).isNull() ) return;
-	VIEWS_INIT( 0, line );
+	viewsInit( this, 0, line );
 
 	mUndoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
 	mUndoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );
@@ -347,7 +353,7 @@ void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
 	}
 	setTextline(line,l);
 
-	VIEWS_APPLY( l.length(), line );
+	viewsApply( this, l.length(), line );
 }
 
 // ------------------------------------------------------------------------
@@ -386,9 +392,9 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 // XXX Wrong
 bool YZBuffer::isLineVisible(uint line) {
 	bool shown=false;
-	YZView *it;
-	for ( it = mViews.first(); it && !shown; it = mViews.next() )
-		shown = shown || it->isLineVisible(line);
+	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+		shown = shown || (*itr)->isLineVisible(line);
+	}
 	return shown;
 }
 
@@ -543,21 +549,21 @@ void YZBuffer::load(const QString& file) {
 	mUpdateView=true;
 	updateAllViews();
 	if ( scrollTo > 0 ) {
-		YZView *it;
-		for ( it = mViews.first(); it; it = mViews.next() )
-			it->gotoStickyCol( scrollTo - 1 );
+		for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+			(*itr)->gotoStickyCol( scrollTo - 1 );
+		}
 	}
 	filenameChanged();
 
 	YZSession::me->getYzisinfo()->readYzisinfo();
 	YZCursor * tmp = YZSession::me->getYzisinfo()->startPosition( this );
 	
-	YZView *hit;
-	for ( hit = mViews.first(); hit; hit = mViews.next() )
+	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
 		if ( tmp ) {
-			hit->centerViewVertically( tmp->y() );
-			hit->gotodxdy(tmp->x(), tmp->y(), true );
+			(*itr)->centerViewVertically( tmp->y() );
+			(*itr)->gotodxdy(tmp->x(), tmp->y(), true );
 		}
+	}
 }
 
 bool YZBuffer::save() {
@@ -606,9 +612,9 @@ bool YZBuffer::save() {
 		return false;
 	}
 	m_hlupdating = false; //override so that it does not parse all lines
-	YZView *it;
-	for ( it = mViews.first(); it ; it = mViews.next() )
-		it->displayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
+	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+		(*itr)->displayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(mPath));
+	}
 	setChanged( false );
 	filenameChanged();
 	//clear swap memory
@@ -632,12 +638,12 @@ bool YZBuffer::save() {
 // ------------------------------------------------------------------------
 
 void YZBuffer::addView (YZView *v) {
-	YZView *it;
-	for ( it = mViews.first(); it; it=mViews.next() )
-		if ( it == v ) {
+	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+		if ( *itr == v ) {
 			yzWarning()<< "view " << v->myId << " added for the second time, discarding"<<endl;
 			return; // don't append twice
 		}
+	}
 	yzDebug("YZBuffer") << "BUFFER: addView" << endl;
 	mViews.append( v );
 	mSession->setCurrentView( v );
@@ -645,10 +651,9 @@ void YZBuffer::addView (YZView *v) {
 
 YZView* YZBuffer::findView( unsigned int uid ) {
 	yzDebug("YZBuffer") << "Buffer: findView " << uid << endl;
-	YZView *it;
-	for ( it = mViews.first(); it; it=mViews.next() ){
-		if ( it->myId == uid )
-			return it;
+	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+		if ( (*itr)->myId == uid )
+			return *itr;
 	}
 //	yzDebug("YZBuffer") << "buffer::findView " << uid << " returning NULL" << endl;
 	return NULL;
@@ -657,10 +662,9 @@ YZView* YZBuffer::findView( unsigned int uid ) {
 void YZBuffer::updateAllViews() {
 	if ( !mUpdateView ) return;
 	yzDebug("YZBuffer") << "YZBuffer updateAllViews" << endl;
-	YZView *it;
-	for ( it = mViews.first(); it; it = mViews.next() ) {
-		it->sendRefreshEvent();
-		it->syncViewInfo();
+	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+		(*itr)->sendRefreshEvent();
+		(*itr)->syncViewInfo();
 	}
 }
 
@@ -694,9 +698,9 @@ void YZBuffer::setModified( bool ) {
 
 void YZBuffer::statusChanged() {
 	//update all views
-	YZView *it;
-	for ( it = mViews.first(); it; it = mViews.next() )
-		it->syncViewInfo();
+	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+		(*itr)->syncViewInfo();
+	}
 }
 
 
@@ -918,9 +922,9 @@ bool YZBuffer::updateHL( unsigned int line ) {
 	if ( hlChanged ) {
 		unsigned int nToDraw = hlLine - line - nElines - 1;
 //		yzDebug() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
-		YZView *it;
-		for ( it = mViews.first(); it; it = mViews.next() )
-			it->sendBufferPaintEvent( line, nToDraw );
+		for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+			(*itr)->sendBufferPaintEvent( line, nToDraw );
+		}
 	}
 	return hlChanged;
 }
@@ -972,15 +976,15 @@ QString YZBuffer::tildeExpand( const QString& path ) {
 
 void YZBuffer::filenameChanged()
 {
-	YZView *it;
-	for ( it = mViews.getFirst(); it; it = mViews.next() )
-		it->filenameChanged();
+	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+		(*itr)->filenameChanged();
+	}
 }
 
 void YZBuffer::highlightingChanged()
 {
-	YZView *it;
-	for ( it = mViews.getFirst(); it; it = mViews.next() )
-		it->highlightingChanged();
+	for ( YZList<YZView*>::Iterator itr = mViews.begin(); itr != mViews.end(); ++itr ) {
+		(*itr)->highlightingChanged();
+	}
 }
 

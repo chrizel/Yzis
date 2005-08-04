@@ -67,13 +67,15 @@ YZModeEx::YZModeEx() : YZMode() {
 	mMapMode = cmdline;
 	commands.clear();
 	ranges.clear();
-	commands.setAutoDelete( true );
-	ranges.setAutoDelete( true );
 }
 
 YZModeEx::~YZModeEx() {
-	commands.clear();
-	ranges.clear();
+	for ( YZList<const YZExCommand*>::Iterator itr = commands.begin(); itr != commands.end(); ++itr ) {
+		delete *itr;
+	}
+	for ( YZList<const YZExRange*>::Iterator itr = ranges.begin(); itr != ranges.end(); ++itr ) {
+		delete *itr;
+	}
 }
 void YZModeEx::init() {
 	initPool();
@@ -131,78 +133,79 @@ cmd_state YZModeEx::execCommand( YZView* view, const QString& key ) {
 
 void YZModeEx::initPool() {
 	// ranges
-	ranges.append( new YZExRange( "\\d+", &YZModeEx::rangeLine ) );
-	ranges.append( new YZExRange( "\\.", &YZModeEx::rangeCurrentLine ) );
-	ranges.append( new YZExRange( "\\$", &YZModeEx::rangeLastLine ) );
-	ranges.append( new YZExRange( "'\\w", &YZModeEx::rangeMark ) );
-	ranges.append( new YZExRange( "'[<>]", &YZModeEx::rangeVisual ) );
-	ranges.append( new YZExRange( "/([^/]*/)?", &YZModeEx::rangeSearch ) );
-	ranges.append( new YZExRange( "\\?([^\\?]*\\?)?", &YZModeEx::rangeSearch ) );
+	ranges.push_back( new YZExRange( "\\d+", &YZModeEx::rangeLine ) );
+	ranges.push_back( new YZExRange( "\\.", &YZModeEx::rangeCurrentLine ) );
+	ranges.push_back( new YZExRange( "\\$", &YZModeEx::rangeLastLine ) );
+	ranges.push_back( new YZExRange( "'\\w", &YZModeEx::rangeMark ) );
+	ranges.push_back( new YZExRange( "'[<>]", &YZModeEx::rangeVisual ) );
+	ranges.push_back( new YZExRange( "/([^/]*/)?", &YZModeEx::rangeSearch ) );
+	ranges.push_back( new YZExRange( "\\?([^\\?]*\\?)?", &YZModeEx::rangeSearch ) );
 
 	// commands
-	commands.append( new YZExCommand( "(x|wq?)(a(ll)?)?", &YZModeEx::write ) );
-	commands.append( new YZExCommand( "w(rite)?", &YZModeEx::write , QStringList("write") ));
-	commands.append( new YZExCommand( "q(uit|a(ll)?)?", &YZModeEx::quit, QStringList::split(":","quit:qall") ) );
-	commands.append( new YZExCommand( "bf(irst)?", &YZModeEx::bufferfirst, QStringList("bfirst") ) );
-	commands.append( new YZExCommand( "bl(ast)?", &YZModeEx::bufferlast, QStringList("blast") ) );
-	commands.append( new YZExCommand( "bn(ext)?", &YZModeEx::buffernext, QStringList("bnext") ) );
-	commands.append( new YZExCommand( "bp(revious)?", &YZModeEx::bufferprevious, QStringList("bprevious") ) );
-	commands.append( new YZExCommand( "bd(elete)?", &YZModeEx::bufferdelete, QStringList("bdelete") ) );
-	commands.append( new YZExCommand( "e(dit)?", &YZModeEx::edit, QStringList("edit") ) );
-	commands.append( new YZExCommand( "mkyzisrc", &YZModeEx::mkyzisrc, QStringList("mkyzisrc") ) );
-	commands.append( new YZExCommand( "se(t)?", &YZModeEx::set, QStringList("set") ) );
-	commands.append( new YZExCommand( "setl(ocal)?", &YZModeEx::set, QStringList("setlocal") ) );
-	commands.append( new YZExCommand( "setg(lobal)?", &YZModeEx::set, QStringList("setglobal") ) );
-	commands.append( new YZExCommand( "s(ubstitute)?", &YZModeEx::substitute, QStringList("substitute") ) );
-	commands.append( new YZExCommand( "hardcopy", &YZModeEx::hardcopy, QStringList("hardcopy") ) );
-	commands.append( new YZExCommand( "visual", &YZModeEx::gotoCommandMode, QStringList("visual") ) );
-	commands.append( new YZExCommand( "preserve", &YZModeEx::preserve, QStringList("preserve") ) );
-	commands.append( new YZExCommand( "lua", &YZModeEx::lua, QStringList("lua" )) );
-	commands.append( new YZExCommand( "source", &YZModeEx::source, QStringList("source") ) );
-	commands.append( new YZExCommand( "map", &YZModeEx::map, QStringList("map") ) );
-	commands.append( new YZExCommand( "unmap", &YZModeEx::unmap, QStringList("unmap") ) );
-	commands.append( new YZExCommand( "imap", &YZModeEx::imap, QStringList("imap") ) );
-	commands.append( new YZExCommand( "iunmap", &YZModeEx::iunmap, QStringList("iunmap") ) );
-	commands.append( new YZExCommand( "vmap", &YZModeEx::vmap, QStringList("vmap") ) );
-	commands.append( new YZExCommand( "vunmap", &YZModeEx::vunmap, QStringList("vunmap") ) );
-	commands.append( new YZExCommand( "omap", &YZModeEx::omap, QStringList("omap") ) );
-	commands.append( new YZExCommand( "ounmap", &YZModeEx::ounmap, QStringList("ounmap") ) );
-	commands.append( new YZExCommand( "nmap", &YZModeEx::nmap, QStringList("nmap") ) );
-	commands.append( new YZExCommand( "nunmap", &YZModeEx::nunmap, QStringList("nunmap") ) );
-	commands.append( new YZExCommand( "cmap", &YZModeEx::cmap, QStringList("cmap") ) );
-	commands.append( new YZExCommand( "cunmap", &YZModeEx::cunmap, QStringList("cunmap") ) );
-	commands.append( new YZExCommand( "noremap", &YZModeEx::noremap, QStringList("noremap") ) );
-	commands.append( new YZExCommand( "nnoremap", &YZModeEx::nnoremap, QStringList("nnoremap") ) );	
-	commands.append( new YZExCommand( "vnoremap", &YZModeEx::vnoremap, QStringList("vnoremap") ) );	
-	commands.append( new YZExCommand( "inoremap", &YZModeEx::inoremap, QStringList("inoremap") ) );	
-	commands.append( new YZExCommand( "cnoremap", &YZModeEx::cnoremap, QStringList("cnoremap") ) );	
-	commands.append( new YZExCommand( "onoremap", &YZModeEx::onoremap, QStringList("onoremap") ) );
-	commands.append( new YZExCommand( "[<>]", &YZModeEx::indent, QStringList(), false ));
-	commands.append( new YZExCommand( "ene(w)?", &YZModeEx::enew, QStringList("enew") ));
-	commands.append( new YZExCommand( "syn(tax)?", &YZModeEx::syntax, QStringList("syntax")));
-	commands.append( new YZExCommand( "highlight", &YZModeEx::highlight, QStringList("highlight") ));
-	commands.append( new YZExCommand( "reg(isters)", &YZModeEx::registers, QStringList("registers" ) ));
-	commands.append( new YZExCommand( "split", &YZModeEx::split, QStringList("split") ));
-	commands.append( new YZExCommand( "cd", &YZModeEx::cd, QStringList("cd") ));
-	commands.append( new YZExCommand( "pwd", &YZModeEx::pwd, QStringList("pwd") ));
-	commands.append( new YZExCommand( "tag", &YZModeEx::tag, QStringList("tag") ));
-	commands.append( new YZExCommand( "po(p)?", &YZModeEx::pop, QStringList("pop") ));
-	commands.append( new YZExCommand( "tn(ext)?", &YZModeEx::tagnext, QStringList("tnext") ));
-	commands.append( new YZExCommand( "tp(revious)?", &YZModeEx::tagprevious, QStringList("tprevious") ));
-	commands.append( new YZExCommand( "ret(ab)?", &YZModeEx::retab, QStringList("retab") ));
+	commands.push_back( new YZExCommand( "(x|wq?)(a(ll)?)?", &YZModeEx::write ) );
+	commands.push_back( new YZExCommand( "w(rite)?", &YZModeEx::write , QStringList("write") ));
+	commands.push_back( new YZExCommand( "q(uit|a(ll)?)?", &YZModeEx::quit, QStringList::split(":","quit:qall") ) );
+	commands.push_back( new YZExCommand( "bf(irst)?", &YZModeEx::bufferfirst, QStringList("bfirst") ) );
+	commands.push_back( new YZExCommand( "bl(ast)?", &YZModeEx::bufferlast, QStringList("blast") ) );
+	commands.push_back( new YZExCommand( "bn(ext)?", &YZModeEx::buffernext, QStringList("bnext") ) );
+	commands.push_back( new YZExCommand( "bp(revious)?", &YZModeEx::bufferprevious, QStringList("bprevious") ) );
+	commands.push_back( new YZExCommand( "bd(elete)?", &YZModeEx::bufferdelete, QStringList("bdelete") ) );
+	commands.push_back( new YZExCommand( "e(dit)?", &YZModeEx::edit, QStringList("edit") ) );
+	commands.push_back( new YZExCommand( "mkyzisrc", &YZModeEx::mkyzisrc, QStringList("mkyzisrc") ) );
+	commands.push_back( new YZExCommand( "se(t)?", &YZModeEx::set, QStringList("set") ) );
+	commands.push_back( new YZExCommand( "setl(ocal)?", &YZModeEx::set, QStringList("setlocal") ) );
+	commands.push_back( new YZExCommand( "setg(lobal)?", &YZModeEx::set, QStringList("setglobal") ) );
+	commands.push_back( new YZExCommand( "s(ubstitute)?", &YZModeEx::substitute, QStringList("substitute") ) );
+	commands.push_back( new YZExCommand( "hardcopy", &YZModeEx::hardcopy, QStringList("hardcopy") ) );
+	commands.push_back( new YZExCommand( "visual", &YZModeEx::gotoCommandMode, QStringList("visual") ) );
+	commands.push_back( new YZExCommand( "preserve", &YZModeEx::preserve, QStringList("preserve") ) );
+	commands.push_back( new YZExCommand( "lua", &YZModeEx::lua, QStringList("lua" )) );
+	commands.push_back( new YZExCommand( "source", &YZModeEx::source, QStringList("source") ) );
+	commands.push_back( new YZExCommand( "map", &YZModeEx::map, QStringList("map") ) );
+	commands.push_back( new YZExCommand( "unmap", &YZModeEx::unmap, QStringList("unmap") ) );
+	commands.push_back( new YZExCommand( "imap", &YZModeEx::imap, QStringList("imap") ) );
+	commands.push_back( new YZExCommand( "iunmap", &YZModeEx::iunmap, QStringList("iunmap") ) );
+	commands.push_back( new YZExCommand( "vmap", &YZModeEx::vmap, QStringList("vmap") ) );
+	commands.push_back( new YZExCommand( "vunmap", &YZModeEx::vunmap, QStringList("vunmap") ) );
+	commands.push_back( new YZExCommand( "omap", &YZModeEx::omap, QStringList("omap") ) );
+	commands.push_back( new YZExCommand( "ounmap", &YZModeEx::ounmap, QStringList("ounmap") ) );
+	commands.push_back( new YZExCommand( "nmap", &YZModeEx::nmap, QStringList("nmap") ) );
+	commands.push_back( new YZExCommand( "nunmap", &YZModeEx::nunmap, QStringList("nunmap") ) );
+	commands.push_back( new YZExCommand( "cmap", &YZModeEx::cmap, QStringList("cmap") ) );
+	commands.push_back( new YZExCommand( "cunmap", &YZModeEx::cunmap, QStringList("cunmap") ) );
+	commands.push_back( new YZExCommand( "noremap", &YZModeEx::noremap, QStringList("noremap") ) );
+	commands.push_back( new YZExCommand( "nnoremap", &YZModeEx::nnoremap, QStringList("nnoremap") ) );	
+	commands.push_back( new YZExCommand( "vnoremap", &YZModeEx::vnoremap, QStringList("vnoremap") ) );	
+	commands.push_back( new YZExCommand( "inoremap", &YZModeEx::inoremap, QStringList("inoremap") ) );	
+	commands.push_back( new YZExCommand( "cnoremap", &YZModeEx::cnoremap, QStringList("cnoremap") ) );	
+	commands.push_back( new YZExCommand( "onoremap", &YZModeEx::onoremap, QStringList("onoremap") ) );
+	commands.push_back( new YZExCommand( "[<>]", &YZModeEx::indent, QStringList(), false ));
+	commands.push_back( new YZExCommand( "ene(w)?", &YZModeEx::enew, QStringList("enew") ));
+	commands.push_back( new YZExCommand( "syn(tax)?", &YZModeEx::syntax, QStringList("syntax")));
+	commands.push_back( new YZExCommand( "highlight", &YZModeEx::highlight, QStringList("highlight") ));
+	commands.push_back( new YZExCommand( "reg(isters)", &YZModeEx::registers, QStringList("registers" ) ));
+	commands.push_back( new YZExCommand( "split", &YZModeEx::split, QStringList("split") ));
+	commands.push_back( new YZExCommand( "cd", &YZModeEx::cd, QStringList("cd") ));
+	commands.push_back( new YZExCommand( "pwd", &YZModeEx::pwd, QStringList("pwd") ));
+	commands.push_back( new YZExCommand( "tag", &YZModeEx::tag, QStringList("tag") ));
+	commands.push_back( new YZExCommand( "po(p)?", &YZModeEx::pop, QStringList("pop") ));
+	commands.push_back( new YZExCommand( "tn(ext)?", &YZModeEx::tagnext, QStringList("tnext") ));
+	commands.push_back( new YZExCommand( "tp(revious)?", &YZModeEx::tagprevious, QStringList("tprevious") ));
+	commands.push_back( new YZExCommand( "ret(ab)?", &YZModeEx::retab, QStringList("retab") ));
 }
 
 QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
 	QString _input = inputs;
 	*matched = false;
-	for ( ranges.first(); ! *matched && ranges.current(); ranges.next() ) {
-		QRegExp reg( ranges.current()->regexp() );
+	for ( YZList<const YZExRange*>::Iterator itr = ranges.begin(); !*matched && itr != ranges.end(); ++itr ) {
+		const YZExRange *currentRange = *itr;
+		QRegExp reg( currentRange->regexp() );
 		*matched = reg.exactMatch( _input );
 		if ( *matched ) {
 			unsigned int nc = reg.numCaptures();
-			*range = (this->*( ranges.current()->poolMethod() )) (YZExRangeArgs( ranges.current(), view, reg.cap( 1 ) ));
+			*range = (this->*( currentRange->poolMethod() )) (YZExRangeArgs( currentRange, view, reg.cap( 1 ) ));
 			QString s_add = reg.cap( nc - 1 );
-			yzDebug() << "matched " << ranges.current()->keySeq() << " : " << *range << " and " << s_add << endl;
+			yzDebug() << "matched " << currentRange->keySeq() << " : " << *range << " and " << s_add << endl;
 			if ( s_add.length() > 0 ) { // a range can be followed by +/-nb
 				int add = 1;
 				if ( s_add.length() > 1 ) add = s_add.mid( 1 ).toUInt();
@@ -246,16 +249,17 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 	}
 
 	matched = false;
-	for ( commands.first(); ! matched && commands.current(); commands.next() ) {
-		QRegExp reg(commands.current()->regexp());
+	for ( YZList<const YZExCommand*>::Iterator itr = commands.begin(); !matched && itr != commands.end(); ++itr ) {
+		const YZExCommand *curCommand = *itr;
+		QRegExp reg(curCommand->regexp());
 		matched = reg.exactMatch( _input );
 		if ( matched ) {
 			unsigned int nc = reg.numCaptures();
-			yzDebug() << "matched " << commands.current()->keySeq() << " " << reg.cap( 1 ) << "," << reg.cap( nc ) << endl;
+			yzDebug() << "matched " << curCommand->keySeq() << " " << reg.cap( 1 ) << "," << reg.cap( nc ) << endl;
 			QString arg = reg.cap( nc );
 			bool force = arg[ 0 ] == '!';
 			if ( force ) arg = arg.mid( 1 );
-			ret = (this->*( commands.current()->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.stripWhiteSpace(), from, to, force ) );
+			ret = (this->*( curCommand->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.stripWhiteSpace(), from, to, force ) );
 			commandIsValid = true;
 		}
 	}
@@ -451,10 +455,10 @@ cmd_state YZModeEx::bufferdelete ( const YZExCommandArgs& args ) {
 	yzDebug() << "Delete buffer " << args.view->myBuffer()->myId << endl;
 
 	args.view->myBuffer()->clearSwap();
-	QPtrList<YZView> l = args.view->myBuffer()->views();
-	YZView *v;
-	for ( v = l.first(); v; v=l.next() )
-		args.view->mySession()->deleteView( args.view->myId );
+	YZList<YZView*> l = args.view->myBuffer()->views();
+	for ( YZList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
+		args.view->mySession()->deleteView( (*itr)->myId );
+	}
 
 	return CMD_QUIT;
 }

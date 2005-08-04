@@ -130,8 +130,8 @@ class YZModeEx : public YZMode {
 		cmd_state execExCommand( YZView* view, const QString& inputs );
 
 	private :
-		QPtrList<const YZExCommand> commands;
-		QPtrList<const YZExRange> ranges;
+		YZList<const YZExCommand*> commands;
+		YZList<const YZExRange*> ranges;
 
 		QString parseRange( const QString& inputs, YZView* view, int* range, bool* matched );
 

@@ -49,100 +49,108 @@ YZAction::YZAction( YZBuffer* buffer ) {
 YZAction::~YZAction( ) {
 }
 
-#define CONFIGURE_VIEWS \
-	{ for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
-	it->setPaintAutoCommit( false ); } 
+static void configureViews(YZBuffer *buffer)
+{
+	YZList<YZView*> views = buffer->views();
+	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+		(*itr)->setPaintAutoCommit( false );
+	}
+}
 
-#define COMMIT_VIEWS_CHANGES \
-	{ for ( YZView* it = mBuffer->views().first(); it; it = mBuffer->views().next() ) \
-	it->commitPaintEvent(); }
+static void commitViewsChanges(YZBuffer *buffer)
+{
+	YZList<YZView*> views = buffer->views();
+	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+		(*itr)->commitPaintEvent();
+	}
+}
 
 void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	if( pos.y() == mBuffer->lineCount() )
 		mBuffer->insertNewLine( pos.x(), pos.y() );
 	else if (pos.y() > mBuffer->lineCount() )
 		return; //can't insert on non existing lines
 	mBuffer->insertChar( pos.x(), pos.y(), text );
 	pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::replaceText( YZView* pView, const YZCursor& pos, unsigned int replacedLength, const QString& text ) {
 	yzDebug() << "replaceText :" << pos << " length : " << replacedLength << " text:" << text << endl;
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	mBuffer->delChar( pos.x(), pos.y(), replacedLength );
 	mBuffer->insertChar( pos.x(), pos.y(), text );
 	pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::replaceChar( YZView* pView, const YZCursor& pos, const QString& text ) {
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	mBuffer->delChar( pos.x(), pos.y(), text.length() );
 	mBuffer->insertChar( pos.x(), pos.y(), text );
 	pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::deleteChar( YZView* pView, const YZCursor& pos, unsigned int len ) {
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	mBuffer->delChar( pos.x(), pos.y(), len );
 	pView->gotoxyAndStick( pos.x(), pos.y() );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::appendLine( YZView* pView, const QString& text ) {
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	unsigned int y = mBuffer->lineCount();
 	mBuffer->insertNewLine( 0, y );
 	mBuffer->insertChar( 0, y, text );
 	pView->gotoxyAndStick( text.length(), y );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::insertNewLine( YZView* pView, const YZCursor& pos ) {
 	if( pos.y() > mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	mBuffer->insertNewLine( pos.x(), pos.y() );
 	pView->gotoxyAndStick( 0, pos.y() + 1 );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::replaceLine( YZView* pView, const YZCursor& pos, const QString &text ) {
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	mBuffer->replaceLine( text, pos.y() );
 	pView->gotoxyAndStick( text.length(), pos.y() );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &text ) {
 	if( pos.y() > mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	mBuffer->insertLine( text, pos.y() );
 	pView->gotoxyAndStick( text.length(), pos.y() );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	copyLine(pView, pos, len, reg);
 	if ( pos.y() + len > mBuffer->lineCount() )
 		len = mBuffer->lineCount() - pos.y();
 	for ( unsigned int i = 0; i < len && pos.y() < mBuffer->lineCount(); i++ )
 		mBuffer->deleteLine( pos.y() );
 	pView->gotoxyAndStick( 0, pos.y() - (pos.y() == mBuffer->lineCount() ? 1 : 0) );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
@@ -209,7 +217,7 @@ void YZAction::copyArea( YZView* /*pView*/, const YZInterval& i, const QValueLis
 }
 
 void YZAction::replaceArea( YZView* /*pView*/, const YZInterval& i, const QStringList& text ) {
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	QStringList t = text;
 
 	unsigned int bX = i.fromPos().x();
@@ -264,12 +272,12 @@ void YZAction::replaceArea( YZView* /*pView*/, const YZInterval& i, const QStrin
 		}
 	}
 	
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QValueList<QChar> &reg ) {
 	yzDebug() << "YZAction::deleteArea " << i << endl;
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 
 	QStringList buff = mBuffer->getText( i );
 
@@ -307,7 +315,7 @@ void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QValueList<
 
 	pView->gotoxyAndStick( bX, bY );
 
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
@@ -324,7 +332,7 @@ void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZC
 
 void YZAction::mergeNextLine( YZView* pView, unsigned int y, bool stripSpaces ) {
 	if ( y >= mBuffer->lineCount() - 1 ) return;
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	QString line = mBuffer->textline( y );
 	QString line2 = mBuffer->textline( y + 1 );
 	if ( stripSpaces ) {
@@ -336,12 +344,12 @@ void YZAction::mergeNextLine( YZView* pView, unsigned int y, bool stripSpaces ) 
 	mBuffer->replaceLine( line + line2, y );
 	mBuffer->deleteLine( y + 1 );
 	pView->gotoxyAndStick( line.length(), y );
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 void YZAction::indentLine( YZView* pView, unsigned int Y, int count ) {
 	if ( count == 0 ) return;
-	CONFIGURE_VIEWS;
+	configureViews(mBuffer);
 	QString line = mBuffer->textline( Y );
 	if ( count > 0 ) {
 		QString s;
@@ -356,7 +364,7 @@ void YZAction::indentLine( YZView* pView, unsigned int Y, int count ) {
 	}
 	replaceLine( pView, Y, line );
 	pView->moveToFirstNonBlankOfLine();
-	COMMIT_VIEWS_CHANGES;
+	commitViewsChanges(mBuffer);
 }
 
 

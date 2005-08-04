@@ -214,9 +214,10 @@ void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t
 			YZBufferMap::Iterator it = bs.begin(), end = bs.end();
 			for( ; it != end; ++it ) {
 				b = it.data();
-				QPtrList<YZView> vs = b->views();
-				for ( v = vs.first(); v; v = vs.next() )
-					option->apply( b, v );
+				YZList<YZView*> vs = b->views();
+				for ( YZList<YZView*>::Iterator itr = vs.begin(); itr != vs.end(); ++itr ) {
+					option->apply( b, *itr );
+				}	
 			}
 		} else if ( v ) {
 			option->apply( b, v );

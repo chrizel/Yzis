@@ -43,15 +43,19 @@
 #include "session.h"
 #include "tags_stack.h"
 
-YZVector<tagFile*> tagfilelist;
+static YZList<tagFile*> tagfilelist;
+static YZList<QString> tagfilenames;
 // lastsearch is needed, since readtags does a pointer assignment to remember
 // the last search.  Otherwise, the temporary gets destroyed and tagNext fails.
 static QString lastsearch;
 
-static bool doOpenTagFile( QString filename, tagFile *&tagfile ) {
-	bool found = false;
+static bool tagFileAlreadyOpen( QString filename ) {
+	return tagfilenames.find( filename ) != tagfilenames.end();
+}
 
-	YZASSERT_MSG( !tagfile, "Tried to open the tag file again");
+static tagFile* doOpenTagFile( QString filename ) {
+	tagFile *tagfile = NULL;
+	YZASSERT_MSG( !tagFileAlreadyOpen( filename ), "Tried to open the tag file again" );
 	
 	// first, if the filename starts with ./, replace the dot with
 	// the current buffer's path
@@ -61,7 +65,7 @@ static bool doOpenTagFile( QString filename, tagFile *&tagfile ) {
 	}
 	
 	QFileInfo tagfilename( filename );
-	found = tagfilename.exists();
+	bool found = tagfilename.exists();
 	
 	// if we found a tag file, open it
 	if ( found ) {
@@ -69,7 +73,7 @@ static bool doOpenTagFile( QString filename, tagFile *&tagfile ) {
 		tagfile = tagsOpen( filename, &info );
 	}
 
-	return found && tagfile;
+	return tagfile;
 }
 
 static bool openTagFile() {
@@ -77,11 +81,11 @@ static bool openTagFile() {
 	bool foundATagFile = false;
 	
 	for( unsigned int i = 0; i < tagsOption.size(); ++i ) {
-		tagFile *tagfile;
-		if ( doOpenTagFile( tagsOption[i], tagfile ) ) {
+		tagFile *tagfile = doOpenTagFile( tagsOption[i] );
+		if ( tagfile ) {
 			foundATagFile = true;
-			
 			tagfilelist.push_back( tagfile );
+			tagfilenames.push_back( tagsOption[i] );
 		}
 	}
 	
@@ -96,6 +100,7 @@ static void closeTagFile() {
 	}
 	
 	tagfilelist.clear();
+	tagfilenames.clear();
 }
 
 static void doJumpToTag ( const YZTagStackItem &entry ) {

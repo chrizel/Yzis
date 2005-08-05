@@ -61,6 +61,8 @@ public:
      */
     virtual ~Kyzis();
 
+    static Kyzis *me;
+
     /**
      * Use this method to load whatever file/URL you have
 	 * @param url the url to open

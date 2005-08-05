@@ -46,7 +46,6 @@
 #include "yzis.h"
 
 KYZisDoc *KYZisFactory::currentDoc=0;
-Kyzis *KYZisFactory::mMainApp = 0;
 YZList<KYZisDoc*> KYZisFactory::s_documents;
 
 
@@ -118,9 +117,9 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	yzDebug() << "Factory singleView  " << bSingleView << endl;
 
 	if ( parentWidget && parentWidget->inherits( "Kyzis" ) )
-		mMainApp = static_cast<Kyzis*>( parentWidget );
+		Kyzis::me = static_cast<Kyzis*>( parentWidget );
 	else {
-		mMainApp = 0;
+        Kyzis::me = 0;
 	}
 
 	//this is only usefull in kyzis, but we should not leak if we are not in kyzis ! :)
@@ -169,7 +168,7 @@ const KAboutData *KYZisFactory::aboutData() {
 
 bool KYZisFactory::quit( int /*errorCode*/ ) {
 	//a kpart CAN NOT exit the main app ;)
-	if (mMainApp) {
+	if (Kyzis::me) {
 		kapp->quit();
 	} else if (kapp->name() == QString::fromLatin1("kdevelop") ) {
 		for (int i = 0; i < YZSession::mNbViews; i++)
@@ -248,8 +247,8 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 	}
 	return findBuffer( path );
 #endif
-	if (mMainApp)
-		mMainApp->createBuffer(path);
+	if (Kyzis::me)
+		Kyzis::me->createBuffer(path);
 	return findBuffer( path );
 }
 
@@ -259,8 +258,8 @@ void KYZisFactory::popupMessage( const QString& message ) {
 }
 
 void KYZisFactory::closeView() {
-	if (mMainApp)
-		mMainApp->closeView(lastId);
+	if (Kyzis::me)
+		Kyzis::me->closeView(lastId);
 	else if (kapp->name() == QString::fromLatin1("kdevelop") ) {
 		yzDebug() << "Calling kdevelop" <<endl;
 		DCOPClient *client = kapp->dcopClient();
@@ -327,8 +326,8 @@ int KYZisFactory::promptYesNoCancel(const QString& title, const QString& message
 void KYZisFactory::splitHorizontally(YZView* /*view*/) {
 //	KYZisView *v = static_cast<KYZisView *>(view);
 //	KYZisDoc *doc = static_cast<KYZisDoc*>(v->document());
-	if (mMainApp)
-		mMainApp->createView();
+	if (Kyzis::me)
+		Kyzis::me->createView();
 }
 
 #include "factory.moc"

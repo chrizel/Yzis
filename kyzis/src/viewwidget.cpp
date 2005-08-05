@@ -356,8 +356,8 @@ bool KYZisView::popupFileSaveAs() {
 
 void KYZisView::filenameChanged() {
 	int id = getkid();
-	if (KYZisFactory::mMainApp)
-		KYZisFactory::mMainApp->setCaption(id, myBuffer()->fileName());
+	if (Kyzis::me)
+		Kyzis::me->setCaption(id, myBuffer()->fileName());
 }
 
 void KYZisView::highlightingChanged()

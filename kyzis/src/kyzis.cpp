@@ -51,6 +51,8 @@
 //#include "ktexteditor/document.h"
 //class KTextEditor::View;
 
+Kyzis *Kyzis::me = NULL;
+
 Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode, const QString& keys)
 	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
 	m_dockConfig( dockConfig ),
@@ -83,6 +85,7 @@ Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode, const QString& keys)
 	// init with more usefull size, stolen from konq :)
 //	if ( !initialGeometrySet() && !kapp->config()->hasGroup("MainWindow Settings"))
 
+    me = this;
 }
 
 Kyzis::~Kyzis() {

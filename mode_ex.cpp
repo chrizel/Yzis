@@ -983,7 +983,7 @@ cmd_state YZModeEx::retab( const YZExCommandArgs& args ) {
 	}
 
 	for (unsigned int lnum = 0; lnum < buffer->lineCount(); lnum++) {
-		oldLine = buffer->yzline(lnum)->data();
+		oldLine = buffer->textline(lnum);
 		newLine = "";
 		int col = 0;
 		int vcol = 0;

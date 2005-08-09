@@ -46,7 +46,7 @@ class YZSwapFile;
 class YZSession;
 class YZView;
 
-typedef QValueVector<YZLine*> YZBufferData;
+typedef YZVector<YZLine*> YZBufferData;
 static QString myNull;
 
 /**
@@ -143,30 +143,8 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	inline YZLine * yzline(unsigned int line, bool noHL = true) {
-		//if you change this method, DO NOT FORGET TO CHANGE THE ONE AFTER !
-		if ( line >= mText.size() ) {
-			yzDebug() << "ERROR: you are asking for line " << line << " (max is " << mText.size() << ")" << endl;
-			// we will perhaps crash after that, but we don't want to disguise bugs!
-			// fix the one which call yzline ( or textline ) with a wrong line number instead.
-			return NULL;
-		}
-		YZLine *yl = mText.at( line );
-		if ( !noHL && yl && !yl->initialized() ) initHL( line );
-		return yl;
-	}
-
-	inline YZLine * yzline(unsigned int line) const {
-		//if you change this method, DO NOT FORGET TO CHANGE THE ONE BEFORE !
-		if ( line >= mText.size() ) {
-			yzDebug() << "ERROR: you are asking for line " << line << " (max is " << mText.size() << ")" << endl;
-			// we will perhaps crash after that, but we don't want to disguise bugs!
-			// fix the one which call yzline ( or textline ) with a wrong line number instead.
-			return NULL;
-		}
-		YZLine *yl = mText.at( line );
-		return yl;
-	}
+	YZLine * yzline(unsigned int line, bool noHL = true);
+	const YZLine * yzline(unsigned int line) const;
 
 	/**
 	 * Replaces the given regexp @arg what with the given string @with on the specified @arg line
@@ -182,7 +160,7 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	inline unsigned int getLineLength(unsigned int line) const {
+	unsigned int getLineLength(unsigned int line) const {
 		// if line is >= lineCount(), we will crash. Read the note from yzline()
 		return yzline( line )->length();
 	}
@@ -194,7 +172,7 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	inline const QString& textline(unsigned int line) const {
+	const QString& textline(unsigned int line) const {
 		// if line is >= lineCount(), we will crash. Read the note from yzline()
 		return yzline( line )->data();
 	}
@@ -316,7 +294,7 @@ public:
 	virtual void setModified( bool modified );
 
 	void setEncoding( const QString& name );
-	inline const QString& encoding() const { return currentEncoding; }
+	const QString& encoding() const { return currentEncoding; }
 	
 	/**	
 	 * Write all text for all buffers into swap file.  The

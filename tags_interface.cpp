@@ -141,7 +141,7 @@ static void doJumpToTag ( const YZTagStackItem &entry ) {
 	
 	for( int i = 0; i < lineCount; i++ )
 	{
-		int pos = rx.search(b->yzline(i)->data());
+		int pos = rx.search(b->textline(i));
 		
 		if ( pos != -1 ) {
 			YZSession::me->currentView()->centerViewVertically( i );

@@ -508,7 +508,7 @@ YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 	int count = args.count > 0 ? args.count : 1;
 	int counter=0;
 	while ( start >= 1 && counter!=count) {
-		if (args.view->myBuffer()->yzline(start-1)->data() == "" ) {
+		if (args.view->myBuffer()->textline(start-1) == "" ) {
 			counter++;
 		}
 		start--;	
@@ -525,7 +525,7 @@ YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
 	int count = args.count > 0 ? args.count : 1;
 	int counter=0;
 	while ( start < args.view->myBuffer()->lineCount() && counter!=count ) {
-		if (args.view->myBuffer()->yzline(start)->data() == "" ) {
+		if (args.view->myBuffer()->textline(start) == "" ) {
 			counter++;
 		}
 		start++;	

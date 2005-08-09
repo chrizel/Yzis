@@ -73,7 +73,7 @@ public:
 	 * Gets the unique identifier for this buffer
 	 * @return the unqiue identifier for this buffer
 	 */
-	unsigned int getId() const { return myId; }
+	unsigned int getId() const;
 
 	//-------------------------------------------------------
 	// ----------------- Character Operations
@@ -256,7 +256,7 @@ public:
 	 * Get the current filename of the buffer
 	 * @return the filename
 	 */
-	const QString& fileName() const {return mPath;}
+	const QString& fileName() const;
 
 	/**
 	 * Changes the filename
@@ -272,12 +272,12 @@ public:
 	/**
 	 * Is this file a new file
 	 */
-	bool fileIsNew() const { return mFileIsNew; }
+	bool fileIsNew() const;
 
 	/**
 	 * Is the file modified
 	 */
-	bool fileIsModified() const { return mModified; }
+	bool fileIsModified() const;
 
 	/**
 	 * Change the modified flag of the file
@@ -286,7 +286,7 @@ public:
 	virtual void setModified( bool modified );
 
 	void setEncoding( const QString& name );
-	const QString& encoding() const { return currentEncoding; }
+	const QString& encoding() const;
 	
 	/**	
 	 * Write all text for all buffers into swap file.  The
@@ -314,7 +314,7 @@ public:
 	 * The list of view for this buffer
 	 * @return a QValuelist of pointers to the views
 	 */
-	YZList<YZView*> views() const { return mViews; }
+	YZList<YZView*> views() const;
 
 	/**
 	 * Find the first view of this buffer
@@ -338,11 +338,11 @@ public:
 	// ------------ Sub-object accessors
 	//-------------------------------------------------------
 	
-	YZUndoBuffer * undoBuffer() const { return mUndoBuffer; }
-	YZAction* action() const { return mAction; }
-	YZViewMark* viewMarks() const { return mViewMarks; }
-	YZDocMark* docMarks() const { return mDocMarks; }
-	YzisHighlighting *highlight() const { return m_highlight; }
+	YZUndoBuffer * undoBuffer() const;
+	YZAction* action() const;
+	YZViewMark* viewMarks() const;
+	YZDocMark* docMarks() const;
+	YzisHighlighting *highlight() const;
 
 	//-------------------------------------------------------
 	// ------------ Highlighting
@@ -429,44 +429,8 @@ protected:
 	bool isLineVisible(uint line) const;
 
 private:
-	// The current filename (absolute path name)
-	QString mPath;
-	
-	// list of all views that are displaying this buffer
-	YZList<YZView*> mViews;
-
-	// data structure containing the actual text of the file
-	YZBufferData mText;
-	
-	// pointers to sub-objects
-	YZUndoBuffer *mUndoBuffer;
-	YzisHighlighting *m_highlight;
-	
-	//if a file is new, this one is true ;) (used at saving time)
-	bool mFileIsNew;
-	//used to prevent redrawing of views during some operations
-	bool mUpdateView;
-	//is the file modified
-	bool mModified;
-	bool mLoading;
-	
-	// flag to disable drawing of updates
-	mutable bool m_hlupdating;
-
-	// pointers to sub-objects
-	YZAction* mAction;
-	YZViewMark* mViewMarks;
-	YZDocMark* mDocMarks;
-	YZSwapFile *mSwap;
-	
-	// string containing encoding of the file
-	QString currentEncoding;
-	
-	// unique identifier of the buffer
-	unsigned int myId;
-	
-	// buffer state
-	State mState;
+	struct Private;
+	Private *d;
 };
 
 #endif /*  YZ_BUFFER_H */

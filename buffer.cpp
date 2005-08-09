@@ -1035,3 +1035,14 @@ const QString& YZBuffer::textline(unsigned int line) const {
 		return QString::null;
 	}
 }
+
+void YZBuffer::setState( State state ) 
+{
+	mState = state;
+}
+
+YZBuffer::State YZBuffer::getState() const
+{
+	return mState;
+}
+

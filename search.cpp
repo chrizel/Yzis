@@ -151,12 +151,12 @@ void YZSearch::Private::setCurrentSearch( const QString& pattern ) {
 	if ( mCurrentSearch == pattern ) return;
 	mCurrentSearch = pattern;
 
-	YZBufferMap buffers = YZSession::me->buffers();
-	YZBufferMap::Iterator it = buffers.begin(), it_end = buffers.end();
+	YZBufferList buffers = YZSession::me->buffers();
+	YZBufferList::Iterator it = buffers.begin(), it_end = buffers.end();
 
 	YZSelectionMap searchMap;
 	for( ; it != it_end; it++ ) {
-		YZBuffer* b = it.data();
+		YZBuffer* b = *it;
 		YZList<YZView*> views = b->views();
 
 		searchMap.clear();
@@ -276,10 +276,10 @@ void YZSearch::update() {
 	} else {
 		YZSelectionMap searchMap;
 		// clear current hl search selection
-		YZBufferMap buffers = YZSession::me->buffers();
-		YZBufferMap::Iterator it = buffers.begin(), it_end = buffers.end();
+		YZBufferList buffers = YZSession::me->buffers();
+		YZBufferList::Iterator it = buffers.begin(), it_end = buffers.end();
 		for( ; it != it_end; it++ ) {
-			YZBuffer* b = it.data();
+			YZBuffer* b = *it;
 			YZList<YZView*> views = b->views();
 			for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
 				d->highlightSearch( *itr, searchMap );

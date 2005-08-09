@@ -232,8 +232,8 @@ void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &propos
 void YZModeCompletion::completeFromOtherBuffers( YZBuffer *skip, QStringList &proposed )
 {
 	// for each buffer, call completeFromBuffer
-	YZBufferMap buffers = YZSession::me->buffers();
-	for ( YZBufferMap::iterator itr = buffers.begin(); itr != buffers.end(); ++itr ) {
+	YZBufferList buffers = YZSession::me->buffers();
+	for ( YZBufferList::iterator itr = buffers.begin(); itr != buffers.end(); ++itr ) {
 		YZBuffer *cur = *itr;
 
 		yzDebug() << "COMPLETION: Inspecting another buffer" << endl;

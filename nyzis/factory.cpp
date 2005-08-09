@@ -159,12 +159,6 @@ bool NYZFactory::processInput(int) {
 
 
 bool NYZFactory::quit( int errorCode ) {
-	YZBufferList::ConstIterator it = buffers().begin();
-	YZBufferList::ConstIterator end = buffers().end();
-	for ( ; it != end; ++it ) {
-		YZBuffer* b = *it;
-		deleteBuffer( b );
-	}
 	exit( errorCode );
 	return true;
 }

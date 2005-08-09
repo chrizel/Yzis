@@ -50,6 +50,7 @@ public:
 	bool quit(int errorCode);
 	void changeCurrentView( YZView* );
 	void popupMessage( const QString& message );
+    YZBuffer* createBuffer ( const QString &path = QString::null );
 	void deleteBuffer ( YZBuffer *b );
 	void setFocusCommandLine();
 	void setFocusMainWindow();

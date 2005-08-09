@@ -52,6 +52,7 @@ class YZYzisinfo;
 class YZYzisinfoJumpListRecord;
 class YZYzisinfoStartPositionRecord;
 class YZTagStack;
+class YZViewId;
 
 /**
  * Contains data referring to an instance of yzis
@@ -60,7 +61,8 @@ class YZTagStack;
  * A buffer owns the views
  */
 
-typedef QMap<QString,YZBuffer*> YZBufferMap;
+typedef YZList<YZBuffer*> YZBufferList;
+typedef YZList<YZView*> YZViewList;
 typedef YZVector<YZYzisinfoJumpListRecord*> JumpListVector;
 typedef YZVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
  
@@ -143,7 +145,7 @@ class YZSession {
 		/**
 		 * Finds a view by its UID
 		 */
-		YZView* findView( int uid );
+		YZView* findView( const YZViewId &id );
 
 		/**
 		 * Finds a buffer by a filename
@@ -194,19 +196,14 @@ class YZSession {
 		YZView* currentView() { return mCurView; }
 
 		/**
-		 * Change the filename of a recorded buffer
-		 */
-		void updateBufferRecord( const QString& oldname, const QString& newname, YZBuffer *buffer );
-
-		/**
 		 * Called from GUI when the current view has been changed
 		 */
-		void currentViewChanged ( YZView *v ) { mCurView = v; mCurBuffer = v->myBuffer(); }
+		void currentViewChanged ( YZView *v );
 
 		/**
 		 * Delete the current view
 		 */
-		virtual void deleteView ( int Id = -1 ) = 0;
+		void deleteView ( const YZViewId &Id = YZViewId::invalid );
 
 		/**
 		 * Deletes the given buffer
@@ -250,7 +247,7 @@ class YZSession {
 		/**
 		 * Create a new view
 		 */
-		virtual YZView* createView ( YZBuffer* ) = 0;
+		YZView* createView ( YZBuffer* buffer );
 
 		/**
 		 * Splits horizontally the mainwindow area to create a new view on the current buffer
@@ -266,9 +263,9 @@ class YZSession {
 		/**
 		 * Count the number of buffers
 		 */
-		int countBuffers() { return mBuffers.count(); }
+		int countBuffers() { return mBufferList.count(); }
 
-		YZBufferMap buffers() const { return mBuffers; }
+		const YZBufferList &buffers() const { return mBufferList; }
 
 		/**
 		 * Check if one buffer is modified and not saved
@@ -340,10 +337,13 @@ class YZSession {
 		
 		YZTagStack &getTagStack();
 		const YZTagStack &getTagStack() const;
-
+		
 	protected:
-		//we map "filename"/buffer for buffers
-		YZBufferMap mBuffers;
+		virtual YZView *doCreateView( YZBuffer *buffer ) = 0;
+		virtual void doDeleteView ( YZView *view ) = 0;
+		
+		void addView( YZView *view );
+		void removeView( YZView *view );
 
 	private:
 		QString mSessionName;
@@ -352,6 +352,10 @@ class YZSession {
 		YzisSchemaManager *mSchemaManager;
 		YZSearch *mSearch;
 		YZModeMap mModes;
+		
+		YZBufferList mBufferList;
+		YZViewList mViewList;
+		
 		void initModes();
 		void endModes();
 

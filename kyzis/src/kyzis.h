@@ -26,7 +26,9 @@
 #include <kmdimainfrm.h>
 #include <dcopobject.h>
 #include <qmap.h>
+
 #include "konsole.h"
+#include "viewid.h"
 
 struct YV {
 	KMdiChildView* v;
@@ -92,12 +94,12 @@ k_dcop:
 	 * Closes the view
 	 * @param the unique ID of the view
 	 */
-	void closeView(int);
+	void closeView(const YZViewId &id);
 
 	/**
 	 * Sets the caption of the tab
 	 */
-	void setCaption( int tab, const QString& caption );
+	void setCaption( unsigned int tab, const QString& caption );
 
 public slots:
 	void childWindowCloseRequest( KMdiChildView *v );
@@ -136,10 +138,9 @@ private:
     KRecentFilesAction *m_openRecentAction;
 	QDomElement m_dockConfig;
 	int mBuffers;
-	int mViews;
+	unsigned int mViews;
 
-
-	QMap<int,KView> viewList;
+	QMap<YZViewId, KView> viewList;
 	Konsole *mConsole;
 	QString m_initialCommand;
 

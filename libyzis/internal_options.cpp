@@ -199,10 +199,10 @@ void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t
 		option->apply( NULL, NULL );
 	} else if ( ctx == CXT_BUFFER ) {
 		if ( scope == global_scope ) {
-			YZBufferMap bs = YZSession::me->buffers();
-			YZBufferMap::Iterator it = bs.begin(), end = bs.end();
+			YZBufferList bs = YZSession::me->buffers();
+			YZBufferList::Iterator it = bs.begin(), end = bs.end();
 			for( ; it != end; ++it ) {
-				b = it.data();
+				b = *it;
 				option->apply( b, v );
 			}
 		} else if ( b ) {
@@ -210,10 +210,10 @@ void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t
 		}
 	} else if ( ctx == CXT_VIEW ) {
 		if ( scope == global_scope ) {
-			YZBufferMap bs = YZSession::me->buffers();
-			YZBufferMap::Iterator it = bs.begin(), end = bs.end();
+			YZBufferList bs = YZSession::me->buffers();
+			YZBufferList::Iterator it = bs.begin(), end = bs.end();
 			for( ; it != end; ++it ) {
-				b = it.data();
+				b = *it;
 				YZList<YZView*> vs = b->views();
 				for ( YZList<YZView*>::Iterator itr = vs.begin(); itr != vs.end(); ++itr ) {
 					option->apply( b, *itr );

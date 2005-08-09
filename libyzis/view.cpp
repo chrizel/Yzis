@@ -65,9 +65,10 @@ static QColor blue( "blue" );
  * class YZView
  */
 
-YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
-	myId = YZSession::mNbViews++;
-	yzDebug() << "New View created with UID : " << myId << endl;
+YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) 
+	: id( YZSession::mNbViews++ )
+{
+	yzDebug() << "New View created with UID : " << id << endl;
 	YZASSERT( _b ); YZASSERT( sess );
 	mSession = sess;
 	mBuffer	= _b;
@@ -133,7 +134,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) {
 
 YZView::~YZView() {
 	mModePool->stop();
-//	yzDebug() << "YZView : Deleting view " << myId << endl;
+//	yzDebug() << "YZView : Deleting view " << id << endl;
 	mBuffer->rmView(this); //make my buffer forget about me
 
 	delete mainCursor;
@@ -1477,7 +1478,7 @@ void YZView::redo( unsigned int count ) {
 
 
 QString YZView::getLocalOptionKey() {
-	return mBuffer->fileName()+"-view-"+ QString::number(myId);
+	return mBuffer->fileName()+"-view-"+ QString::number(id.getNumber());
 }
 YZOptionValue* YZView::getLocalOption( const QString& option ) {
 	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
@@ -1723,3 +1724,7 @@ void YZView::saveInputBuffer() {
 	}
 }
 
+const YZViewId &YZView::getId() const
+{
+	return id;
+}

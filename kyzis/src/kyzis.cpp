@@ -43,7 +43,9 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 #include <kmultitabbar.h>
+
 #include "document.h"
+#include "viewid.h"
 
 // #include "configdialog.h"
 
@@ -253,7 +255,7 @@ QString Kyzis::createBuffer(const QString& path) {
 			part->widget()->setFocus();
 			addWindow( view );
 			KView v = { view , part };
-			viewList[mViews-1] = v;
+			viewList[YZViewId(mViews-1)] = v;
 			createGUI(part);
 		}
 		
@@ -275,34 +277,35 @@ void Kyzis::createView( /*const KTextEditor::Document &doc*/ ) {
 		addWindow( view );
 		KView v = { view , part };
 		kdDebug() << "Adding new view " << QString::number(mViews - 1) << endl;
-		viewList[mViews-1] = v;
+		viewList[YZViewId(mViews-1)] = v;
 		createGUI(part);
 }
 
-void Kyzis::setCaption( int tab, const QString& caption ) {
+void Kyzis::setCaption( unsigned int tab, const QString& caption ) {
 	// Parse out the filename.
 	QString filename = caption.section("/", -1);
+	YZViewId id( tab );
 	
-	if ( viewList.contains( tab ) ) {
-		viewList[ tab ].v->setCaption(filename);
-		viewList[ tab ].v->setTabCaption(filename);
+	if ( viewList.contains( id ) ) {
+		viewList[ id ].v->setCaption(filename);
+		viewList[ id ].v->setTabCaption(filename);
 	}
 	KMainWindow::setCaption( caption );
 }
 
-void Kyzis::closeView(int Id) {
+void Kyzis::closeView(const YZViewId &id) {
 //	closeActiveView();
-	kdDebug() << "Main : Close view " << Id << endl;
-	if ( viewList.contains( Id ) ) {
-		kdDebug() << "Closing view from main app " << Id << endl;
-		closeWindow(viewList[Id].v);
-        viewList.remove( Id );
+	kdDebug() << "Main : Close view " << id << endl;
+	if ( viewList.contains( id ) ) {
+		kdDebug() << "Closing view from main app " << id << endl;
+		closeWindow(viewList[id].v);
+        viewList.remove( id );
 	}
 }
 
 KParts::ReadWritePart* Kyzis::getCurrentPart() {
 	kdDebug() << "getCurrentPart" << endl;
-	QMap<int,KView>::Iterator it = viewList.begin(), end = viewList.end();
+	QMap<YZViewId, KView>::Iterator it = viewList.begin(), end = viewList.end();
 	for ( ; it != end; ++it ) {
 		if ( it.data().v == activeWindow() ) {
 			kdDebug() << "Found part at index " << it.key() << endl;
@@ -310,7 +313,7 @@ KParts::ReadWritePart* Kyzis::getCurrentPart() {
 		}
 	}
 	if ( viewList.size() > 0 ) {
-		return viewList[ 0 ].p;
+		return (*viewList.begin()).p;
 	} else {
 		return NULL;
 	}
@@ -318,7 +321,7 @@ KParts::ReadWritePart* Kyzis::getCurrentPart() {
 
 void Kyzis::childWindowCloseRequest( KMdiChildView *v ) {
 	kdDebug() << "childWindowCloseRequest" << endl;
-	QMap<int,KView>::Iterator it = viewList.begin(), end = viewList.end();
+	QMap<YZViewId, KView>::Iterator it = viewList.begin(), end = viewList.end();
 	for ( ; it != end; ++it ) {
 		if ( it.data().v == v ) {
 			kdDebug() << "Found view at index " << it.key() << endl;
@@ -329,7 +332,7 @@ void Kyzis::childWindowCloseRequest( KMdiChildView *v ) {
 }
 
 bool Kyzis::queryClose() {
-	QMap<int,KView>::Iterator it = viewList.begin(), end = viewList.end();
+	QMap<YZViewId, KView>::Iterator it = viewList.begin(), end = viewList.end();
 	for ( ; it != end; ++it ) {
 		if ( it.data().p->isModified() ) {
 			int msg = KMessageBox::warningYesNoCancel(this, QString("The file '%1' has been modified but not saved, do you want to save it ?" ).arg( it.data().p->url().prettyURL() ), "Close Document", KStdGuiItem::save(), KStdGuiItem::discard() );

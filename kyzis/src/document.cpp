@@ -71,7 +71,7 @@ void KYZisDoc::setupActions() {
 		return;
 
 	KYZisConfigDialog *dialog = new KYZisConfigDialog( m_parent, "configure_editor", Settings::self(), KDialogBase::TreeList );
-	connect( dialog, SIGNAL( settingsChanged() ), KYZisFactory::s_self, SLOT( writeConfig() ) );
+	connect( dialog, SIGNAL( settingsChanged() ), KYZisFactory::self(), SLOT( writeConfig() ) );
 	dialog->show();
 }*/
 
@@ -240,11 +240,11 @@ void KYZisDoc::setUndoSteps(unsigned int ) {
 //KTextEditor::ConfigInterface implementation
 
 void KYZisDoc::readConfig() {
-	KYZisFactory::s_self->readConfig();
+	KYZisFactory::self()->readConfig();
 }
 
 void KYZisDoc::writeConfig() {
-	KYZisFactory::s_self->writeConfig();
+	KYZisFactory::self()->writeConfig();
 }
 
 void KYZisDoc::readConfig( KConfig */*config*/ ) {
@@ -270,7 +270,7 @@ void KYZisDoc::configDialog() {
 		return;
 
 	KYZisConfigDialog *dialog = new KYZisConfigDialog( m_parent, "configure_editor", Settings::self(), KDialogBase::TreeList );
-	connect( dialog, SIGNAL( settingsChanged() ), KYZisFactory::s_self, SLOT( applyConfig() ) );
+	connect( dialog, SIGNAL( settingsChanged() ), KYZisFactory::self(), SLOT( applyConfig() ) );
 	dialog->exec();
 }
 

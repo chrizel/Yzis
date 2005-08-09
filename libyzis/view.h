@@ -28,6 +28,7 @@
 #include "selection.h"
 #include "mode.h"
 #include "option.h"
+#include "viewid.h"
 
 #include <qglobal.h>
 #include <qvaluevector.h>
@@ -276,7 +277,7 @@ class YZView {
 		/**
 		 * A global UID for this view
 		 **/
-		unsigned int myId;
+		const YZViewId& getId() const;
 
 		/**
 		 * Get the text describing the mode
@@ -800,6 +801,8 @@ class YZView {
 		int opt_schema;
 		bool opt_list;
 		MapOption opt_listchars;
+		
+		const YZViewId id;
 };
 
 #endif /*  YZ_VIEW_H */

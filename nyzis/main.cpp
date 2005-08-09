@@ -172,7 +172,7 @@ static void sigint(int /*sig*/)
 {
 //	yzDebug(NYZIS) << "^C catched" << endl;
 	// ^c catched -> sends an escape char..
-	NYZFactory::currentView->sendKey( "<ESC>","" );
+	YZSession::me->currentView()->sendKey( "<ESC>","" );
 }
 
 
@@ -181,9 +181,10 @@ static void sigwinch(int /*sig*/)
 //	yzDebug(NYZIS) << "sigwinch catched" << endl;
 	endwin();
 	refresh();
-	NYZFactory::currentView->unmap();
-	NYZFactory::currentView->map();
-	NYZFactory::currentView->refreshScreen();
+	NYZView *view = static_cast<NYZView*>(YZSession::me->currentView());
+	view->unmap();
+	view->map();
+	view->refreshScreen();
 }
 
 

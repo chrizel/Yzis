@@ -143,17 +143,16 @@ void YZSession::guiStarted() {
 
 void YZSession::addBuffer( YZBuffer *b ) {
 	yzDebug() << "Session : addBuffer " << b->fileName() << endl;
-	mBuffers.insert(b->fileName(), b);
-	mCurBuffer = b;
+	mBufferList.push_back( b );
 }
 
 void YZSession::rmBuffer( YZBuffer *b ) {
 //	yzDebug() << "Session : rmBuffer " << b->fileName() << endl;
-	if ( mBuffers.contains( b->fileName() ) ) {
-			mBuffers.remove( b->fileName() );
+	if ( mBufferList.find( b ) != mBufferList.end() ) {
+			mBufferList.remove( b );
 			deleteBuffer( b );
 	}
-	if ( mBuffers.isEmpty() )
+	if ( mBufferList.empty() )
 		exitRequest( );
 //	delete b; // kinda hot,no?
 }
@@ -164,130 +163,105 @@ QString YZSession::saveBufferExit() {
 	return QString::null;
 }
 
-YZView* YZSession::findView( int uid ) {
-//	yzDebug() << " ========= " << endl;
-//	yzDebug() << "Session::findView " << uid << endl;
-	if ( uid<0 ) return NULL;
-	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
-	for ( ; it!=end; ++it ) {
-		YZBuffer *b = ( it.data() );
-//		yzDebug() << "Session::findView, checking buffer " << b->fileName() << endl;
-		YZView *v = b->findView( uid );
-		if ( v ) return v;
+YZView* YZSession::findView( const YZViewId &id ) {
+	YZView *result = NULL;
+	
+	for ( YZViewList::Iterator i = mViewList.begin(); i != mViewList.end(); ++i ) {
+		if ( (*i)->getId() == id ) {
+			result = *i;
+			break;
+		}
 	}
-//	yzDebug() << "Session::findView " << uid << " not found !" << endl;
-	return NULL;
+	
+	return result;
 }
 
 void YZSession::setCurrentView( YZView* view ) {
 	yzDebug() << "Session : setCurrentView" << endl;
+	changeCurrentView( view );
+	
 	mCurView = view;
 	mCurBuffer = view->myBuffer();
-	changeCurrentView( view );
 	mCurBuffer->filenameChanged();
 }
 
 YZView* YZSession::firstView() {
-	if ( mCurView == 0 ) {
-		yzDebug() << "WOW, mCurview is NULL !" << endl;
-		return NULL;
-	}
-
-	YZView * v = NULL;
-	int i = 0;
-	// searching through all views
-	// findView(0) is not enough, // because there may be a hole  in the begining
-	// (for example, after bdel 0, bdel 1, etc )
-	while (!v && i <= mNbViews  ) {
-		v = findView( i );
-		i++;
-	}
-	return v;
+	return mViewList.front();
 }
 
 YZView* YZSession::lastView() {
-	if ( mCurView == 0 ) {
-		yzDebug() << "WOW, mCurview is NULL !" << endl;
-		return NULL;
-	}
-
-	YZView * v = NULL;
-	int i = mNbViews;
-	// searching through all views backwards
-	// findView(0) is not enough, 
-	// because there may be a hole  in the end
-	// (for example, after bdel <mNbViews>, <mNbViews-1> etc)
-	while (!v && i >= 0  ) {
-		// NOTE: Maybe add an option to findView to search backwards?
-		v = findView( i );
-		i--;
-	}
-	return v;
-
+	return mViewList.back();
 }
 
 YZView* YZSession::prevView() {
-	if ( mCurView == 0 ) {
-		yzDebug() << "WOW, mCurview is NULL !" << endl;
+	if ( currentView() == 0 ) {
+		yzDebug() << "WOW, current view is NULL !" << endl;
 		return NULL;
 	}
-//	yzDebug() << "Current view is " << mCurView->myId << endl;
 	
-	YZView * v = NULL;
-	int i = 1;
-	while (!v && i <= mNbViews  ) {
-		v = findView( mCurView->myId - i );
-		i++;
+	YZViewList::Iterator i = mViewList.find( currentView() );
+	
+	// handle wrap around
+	if ( i == mViewList.begin() ) {
+		i = mViewList.end();
 	}
-	return v;
+	
+	--i;
+	
+	return *i;
 }
 
 YZView* YZSession::nextView() {
-	if ( mCurView == 0 ) {
-		yzDebug() << "WOW, mCurview is NULL !" << endl;
+	if ( currentView() == 0 ) {
+		yzDebug() << "WOW, current view is NULL !" << endl;
 		return NULL;
 	}
-//	yzDebug() << "Current view is " << mCurView->myId << endl;
-	YZView * v = NULL;
-	int i = 1;
-	while (!v && i <= mNbViews) {
-		v = findView( mCurView->myId + i );
-		i++;
+	
+	YZViewList::Iterator i = ++mViewList.find( currentView() );
+	
+	// check for wrap around
+	if ( i == mViewList.end() ) {
+		i = mViewList.begin();
 	}
-	return v;
+	
+	return *i;
 }
 
 YZBuffer* YZSession::findBuffer( const QString& path ) {
-	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
-	for ( ; it!=end; ++it ) {
+	YZBufferList::Iterator it = mBufferList.begin();
+	YZBufferList::Iterator end = mBufferList.end();
+	for ( ; it != end; ++it ) {
 		YZBuffer *b = ( *it );
-		if ( b->fileName() == path ) return b;
+		if ( b->fileName() == path ) {
+			return b;
+		}
 	}
 	return NULL; //not found
 }
 
-void YZSession::updateBufferRecord( const QString& oldname, const QString& newname, YZBuffer *buffer ) {
-	mBuffers.remove( oldname );
-	mBuffers.insert( newname, buffer );
-}
-
 bool YZSession::saveAll() {
-	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	YZBufferList::Iterator it = mBufferList.begin();
+	YZBufferList::Iterator end = mBufferList.end();
 	bool savedAll=true;
 	for ( ; it!=end; ++it ) {
-		YZBuffer* b = ( *it );
+		YZBuffer* b = *it;
 		if ( !b->fileIsNew() ) {
-			if ( b->fileIsModified() && !b->save() ) savedAll=false;
+			if ( b->fileIsModified() && !b->save() ) {
+				savedAll=false;
+			}
 		}
 	}
 	return savedAll;
 }
 
 bool YZSession::isOneBufferModified() {
-	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
-	for ( ; it!=end; ++it ) {
+	YZBufferList::Iterator it = mBufferList.begin();
+	YZBufferList::Iterator end = mBufferList.end();
+	for ( ; it != end; ++it ) {
 		YZBuffer* b = ( *it );
-		if ( b->fileIsNew() ) return true;
+		if ( b->fileIsNew() ) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -323,20 +297,14 @@ void YZSession::sendMultipleKeys ( const QString& text) {
 }
 
 void YZSession::registerModifier ( const QString& mod ) {
-	for (int i = 0 ; i < mNbViews; i++ ) {
-		YZView *v = findView(i);
-		if (v) {
-			v->registerModifierKeys(mod);
-		}
+	for ( YZViewList::Iterator i = mViewList.begin(); i != mViewList.end(); ++i ) {
+		(*i)->registerModifierKeys( mod );
 	}
 }
 
 void YZSession::unregisterModifier ( const QString& mod ) {
-	for (int i = 0 ; i < mNbViews; i++ ) {
-		YZView *v = findView(i);
-		if (v) {
-			v->unregisterModifierKeys(mod);
-		}
+	for ( YZViewList::Iterator i = mViewList.begin(); i != mViewList.end(); ++i ) {
+		(*i)->unregisterModifierKeys( mod );
 	}
 }
 
@@ -386,4 +354,42 @@ const YZCursor * YZSession::previousJumpPosition() {
 YZTagStack &YZSession::getTagStack()
 {
 	return mTagStack;
+}
+
+YZView *YZSession::createView( YZBuffer *buffer )
+{
+	YZView *view = doCreateView( buffer );
+	
+	addView( view );
+	
+	return view;
+}
+
+void YZSession::deleteView( const YZViewId &id /*=YZViewId::invalid*/ )
+{
+	YZView *view = currentView();
+	
+	if ( id != YZViewId::invalid ) {
+		view = findView( id );
+	}
+	
+	doDeleteView( view );
+	
+	removeView( view );
+}
+
+void YZSession::currentViewChanged( YZView *v )
+{ 
+	mCurView = v; 
+	mCurBuffer = v->myBuffer(); 
+}
+
+void YZSession::addView( YZView *view )
+{
+	mViewList.push_back( view );
+}
+
+void YZSession::removeView( YZView *view )
+{
+	mViewList.remove( view );
 }

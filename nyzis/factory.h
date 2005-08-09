@@ -27,13 +27,14 @@
 #include "session.h"
 #include <ncurses.h>
 
+class YZViewId;
+
 class NYZFactory : public QObject, public YZSession
 {
 	Q_OBJECT
 
 public:
 	static NYZFactory *self;
-	static NYZView *currentView;
 
 public slots:
 	bool processInput(int);
@@ -51,16 +52,18 @@ public:
 	 */
 	virtual bool quit ( int errorCode ) ;
 	virtual void changeCurrentView ( YZView * );
-	virtual YZView* createView( YZBuffer* );
 	virtual	YZBuffer *createBuffer(const QString& path=QString::null);
 	virtual void popupMessage( const QString& message );
-	virtual void deleteView(int Id);
 	virtual void deleteBuffer ( YZBuffer *b );
 	virtual void setFocusCommandLine() {}
 	virtual void setFocusMainWindow() {}
 	virtual bool promptYesNo( const QString& title, const QString& message );
 	virtual int promptYesNoCancel( const QString& title, const QString& message );
 	virtual void splitHorizontally( YZView *view );
+	
+protected:
+	virtual YZView* doCreateView( YZBuffer* buffer );
+	virtual void doDeleteView( YZView *view );
 
 private:
 	/**

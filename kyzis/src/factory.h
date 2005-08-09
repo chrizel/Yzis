@@ -26,9 +26,11 @@
 #include <kinstance.h>
 #include "session.h"
 #include "kyzis.h"
+#include "viewid.h"
 
 class KYZisDoc;
 class KYZisView;
+class YZViewId;
 
 class KYZisFactory : public KParts::Factory, public YZSession
 {
@@ -47,10 +49,7 @@ public:
 	//GUI interface
 	bool quit(int errorCode);
 	void changeCurrentView( YZView* );
-	YZView *createView ( YZBuffer* );
-	YZBuffer *createBuffer(const QString& path = QString::null);
 	void popupMessage( const QString& message );
-	void deleteView (int Id);
 	void deleteBuffer ( YZBuffer *b );
 	void setFocusCommandLine();
 	void setFocusMainWindow();
@@ -59,6 +58,10 @@ public:
 	int promptYesNoCancel(const QString& title, const QString& message);
 	void registerDoc( KYZisDoc *doc );
 	void unregisterDoc( KYZisDoc *doc );
+	
+protected:
+	YZView *doCreateView( YZBuffer* buffer );
+	void doDeleteView( YZView *view );
 
 public slots :
 	void writeConfig();
@@ -67,15 +70,14 @@ public slots :
 	void closeView();
 
 private:
-	static YZList<KYZisDoc*> s_documents;
+	YZList<KYZisDoc*> documents;
 	
 	KAboutData m_aboutData;
 	KInstance m_instance;
 
 public:
-	static KYZisFactory *s_self;
 	static KYZisDoc *currentDoc;
-	int lastId;
+	YZViewId lastId;
 };
 
 #endif

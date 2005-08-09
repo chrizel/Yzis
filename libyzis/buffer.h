@@ -45,6 +45,7 @@ class YZViewMark;
 class YZCursor;
 class YZSwapFile;
 class YZView;
+class YZViewId;
 
 typedef YZVector<YZLine*> YZBufferData;
 
@@ -332,7 +333,7 @@ public:
 	 * @param uid the unique ID of the view to search for
 	 * @return a pointer to the view or NULL
 	 */
-	YZView* findView(unsigned int uid) const;
+	YZView* findView( const YZViewId &id ) const;
 
 	/**
 	 * Refresh all views

@@ -670,19 +670,18 @@ bool YZBuffer::save() {
 void YZBuffer::addView (YZView *v) {
 	for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
 		if ( *itr == v ) {
-			yzWarning()<< "view " << v->myId << " added for the second time, discarding"<<endl;
+			yzWarning()<< "view " << v->getId() << " added for the second time, discarding"<<endl;
 			return; // don't append twice
 		}
 	}
 	yzDebug("YZBuffer") << "BUFFER: addView" << endl;
 	d->views.append( v );
-	YZSession::me->setCurrentView( v );
 }
 
-YZView* YZBuffer::findView( unsigned int uid ) const {
-	yzDebug("YZBuffer") << "Buffer: findView " << uid << endl;
+YZView* YZBuffer::findView( const YZViewId &id ) const {
+	yzDebug("YZBuffer") << "Buffer: findView " << id << endl;
 	for ( YZList<YZView*>::ConstIterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		if ( (*itr)->myId == uid )
+		if ( (*itr)->getId() == id )
 			return *itr;
 	}
 //	yzDebug("YZBuffer") << "buffer::findView " << uid << " returning NULL" << endl;
@@ -789,9 +788,8 @@ void YZBuffer::makeAttribs() {
 void YZBuffer::setPath( const QString& _path ) {
 	QString oldPath = d->path;
 	d->path = QFileInfo( _path.stripWhiteSpace() ).absFilePath();
-	//hmm changing file :), update Session !!!!
+	
 	if ( oldPath != QString::null ) {
-		YZSession::me->updateBufferRecord( oldPath, d->path, this );
 		YZSession::mOptions->updateOptions(oldPath, d->path);
 	}
 	

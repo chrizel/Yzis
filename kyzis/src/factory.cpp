@@ -46,8 +46,6 @@
 #include "yzis.h"
 
 KYZisDoc *KYZisFactory::currentDoc=0;
-YZList<KYZisDoc*> KYZisFactory::s_documents;
-
 
 class KYZisPublicFactory : public KParts::Factory {
 	public :
@@ -58,11 +56,13 @@ class KYZisPublicFactory : public KParts::Factory {
 
 K_EXPORT_COMPONENT_FACTORY( libkyzispart, KYZisPublicFactory)
 
-KYZisFactory *KYZisFactory::s_self = 0;
-
-KYZisFactory::KYZisFactory() : 
-	m_aboutData("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR, I18N_NOOP("Embeddable vi-like editor component"),KAboutData::License_LGPL_V2, I18N_NOOP("(c)2002-2005 The Kyzis Authors"),0,"http://www.yzis.org"),
-	m_instance( &m_aboutData )
+KYZisFactory::KYZisFactory() :
+		KParts::Factory(Kyzis::me),
+		YZSession("kyzis"),
+		m_aboutData("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR, I18N_NOOP("Embeddable vi-like editor component"),
+		KAboutData::License_LGPL_V2, I18N_NOOP("(c)2002-2005 The Kyzis Authors"),0,"http://www.yzis.org"),
+		m_instance( &m_aboutData ),
+		lastId(YZViewId::invalid)
 {
 	m_aboutData.addAuthor ("Mickael Marchand", I18N_NOOP("Initial Author"), "marchand@kde.org");
 	m_aboutData.addAuthor ("Thomas Capricelli", I18N_NOOP("Initial Author"), "orzel@freehackers.org");
@@ -85,8 +85,6 @@ KYZisFactory::KYZisFactory() :
 	m_aboutData.addCredit( "Dawid Ciezarkiewicz",I18N_NOOP( "D language syntax highlight fixes" ), "araelx@gmail.com" );
 	m_aboutData.setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"), I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
 
-	s_self = this;
-	lastId = -1;
 	Settings::self()->readConfig();
 	guiStarted();
 }
@@ -94,7 +92,7 @@ KYZisFactory::KYZisFactory() :
 KYZisFactory::~KYZisFactory() {
 	kdDebug() << "Factory gets destroyed !" << endl;
 	
-	for ( YZList<KYZisDoc*>::Iterator itr = s_documents.begin(); itr != s_documents.end(); ++itr ) {
+	for ( YZList<KYZisDoc*>::Iterator itr = documents.begin(); itr != documents.end(); ++itr ) {
 		KYZisDoc *doc = *itr;
 		kdDebug() << "Deleting " << doc->fileName() << endl;
 		delete doc;
@@ -104,10 +102,13 @@ KYZisFactory::~KYZisFactory() {
 static KStaticDeleter<KYZisFactory> sdFactory;
 
 KYZisFactory *KYZisFactory::self() {
-	if ( !s_self )
-		sdFactory.setObject(s_self, new KYZisFactory());
+	static KYZisFactory *self = 0;
 
-	return s_self;
+	if ( !self ) {
+		self = new KYZisFactory;
+	}
+		
+	return self;
 }
 
 KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name, const char *_classname, const QStringList &args) {
@@ -142,6 +143,8 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 		doc->insertChildClient( view );
 		view->show();
 		doc->setBaseWidget( view );
+		
+		addView( yv );
 	}
 	doc->filenameChanged();
 
@@ -154,15 +157,15 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 
 void KYZisFactory::registerDoc( KYZisDoc *doc ) {
 	kdDebug() << "Register " << doc->fileName() << endl;
-	if ( s_documents.find( doc ) == s_documents.end() ) {
-		s_documents.push_back( doc );
+	if ( documents.find( doc ) == documents.end() ) {
+		documents.push_back( doc );
 	}
 }
 
 void KYZisFactory::unregisterDoc( KYZisDoc *doc ) {
 	kdDebug() << "Unregister " << doc->fileName() << endl;
-	if ( s_documents.find( doc ) != s_documents.end() ) {
-		s_documents.remove( doc );
+	if ( documents.find( doc ) != documents.end() ) {
+		documents.remove( doc );
 	}
 }
 
@@ -175,8 +178,10 @@ bool KYZisFactory::quit( int /*errorCode*/ ) {
 	if (Kyzis::me) {
 		kapp->quit();
 	} else if (kapp->name() == QString::fromLatin1("kdevelop") ) {
+		/*
 		for (int i = 0; i < YZSession::mNbViews; i++)
 			deleteView(i);
+		*/
 	} else if ( currentView() && currentView()->modePool()->currentType() == YZMode::MODE_EX 
 				&& !currentView()->getCommandLineText().isEmpty() ) {
 		return false;
@@ -193,9 +198,10 @@ void KYZisFactory::writeConfig() {
 
 void KYZisFactory::applyConfig() {
 	// apply new configuration to all views
-	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
-	for ( ; it!=end; ++it ) {
-		YZBuffer *b = ( it.data() );
+	YZBufferList::ConstIterator it = buffers().begin();
+	YZBufferList::ConstIterator end = buffers().end();
+	for ( ; it != end; ++it ) {
+		YZBuffer *b = *it;
 		YZList<YZView*> l = b->views();
 		for ( YZList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
 			KYZisView* yv = static_cast<KYZisView*>( *itr );
@@ -210,13 +216,13 @@ void KYZisFactory::readConfig( ) {
 }
 
 void KYZisFactory::changeCurrentView( YZView* view ) {
-	yzDebug() << "Kyzis : setCurrentView " << view->myId << endl;
+	yzDebug() << "Kyzis : setCurrentView " << view->getId() << endl;
 	KYZisView *v = static_cast<KYZisView*>(view);
 	v->setActiveWindow();
 	v->setFocus();
 }
 
-YZView* KYZisFactory::createView( YZBuffer *) {
+YZView* KYZisFactory::doCreateView( YZBuffer *) {
 	//DCOP call which returns the UID of the created view ?
 #if 0
 	DCOPClient *client = kapp->dcopClient();
@@ -264,8 +270,11 @@ void KYZisFactory::popupMessage( const QString& message ) {
 }
 
 void KYZisFactory::closeView() {
-	if (Kyzis::me)
+	if (Kyzis::me) {
 		Kyzis::me->closeView(lastId);
+		
+		removeView( findView( lastId ) );
+	}
 	else if (kapp->name() == QString::fromLatin1("kdevelop") ) {
 		yzDebug() << "Calling kdevelop" <<endl;
 		DCOPClient *client = kapp->dcopClient();
@@ -281,11 +290,11 @@ void KYZisFactory::closeView() {
 		}
 			
 	}
-	lastId = -1;
+	lastId = YZViewId::invalid;
 }
 
-void KYZisFactory::deleteView( int Id ) {
-	lastId = Id;
+void KYZisFactory::doDeleteView( YZView *view ) {
+	lastId = view->getId();
 	QTimer::singleShot(10, this, SLOT( closeView() ));
 #if 0
 	DCOPClient *client = kapp->dcopClient();

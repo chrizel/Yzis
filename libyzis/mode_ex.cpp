@@ -358,11 +358,11 @@ cmd_state YZModeEx::write( const YZExCommandArgs& args ) {
 	}
 	if ( quit && force ) {//check readonly ? XXX
 		args.view->myBuffer()->save();
-		args.view->mySession()->deleteView( args.view->myId );
+		args.view->mySession()->deleteView( args.view->getId() );
 		ret = CMD_QUIT;
 	} else if ( quit ) {
 		if ( args.view->myBuffer()->save() ) {
-			args.view->mySession()->deleteView( args.view->myId );
+			args.view->mySession()->deleteView( args.view->getId() );
 			ret = CMD_QUIT;
 		}
 	} else if ( ! force ) {
@@ -386,7 +386,7 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( args.view->myBuffer()->views().count() > 1 ) {
 			ret = CMD_QUIT;
-			args.view->mySession()->deleteView( args.view->myId );
+			args.view->mySession()->deleteView( args.view->getId() );
 		} else if ( args.view->myBuffer()->views().count() == 1 && args.view->mySession()->countBuffers() == 1) {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
 				if ( args.view->mySession()->exitRequest() )
@@ -399,7 +399,7 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 		} else {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
 				ret = CMD_QUIT;
-				args.view->mySession()->deleteView(args.view->myId);
+				args.view->mySession()->deleteView(args.view->getId());
 			}
 			else args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
 		}
@@ -429,23 +429,30 @@ cmd_state YZModeEx::bufferlast( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::buffernext( const YZExCommandArgs& args ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
-	YZView *v = args.view->mySession()->nextView();
+	
+	YZView *v = YZSession::me->nextView();
 	YZASSERT( v!=args.view );
-	if ( v )
-		args.view->mySession()->setCurrentView(v);
-	else
-                bufferfirst( args ); // goto first buffer
+	
+	if ( v ) {
+		YZSession::me->setCurrentView(v);
+	} else {
+		bufferfirst( args ); // goto first buffer
+	}
+	
 	return CMD_OK;
 }
 
 cmd_state YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
-	YZView *v = args.view->mySession()->prevView();
+	
+	YZView *v = YZSession::me->prevView();
 	YZASSERT( v!=args.view );
-	if ( v )
-		args.view->mySession()->setCurrentView(v);
-	else
-                bufferlast( args ); // goto lastbuffer
+	
+	if ( v ) {
+		YZSession::me->setCurrentView(v);
+	} else {
+		bufferlast( args ); // goto lastbuffer
+	}
 
 	return CMD_OK;
 }
@@ -455,7 +462,7 @@ cmd_state YZModeEx::bufferdelete ( const YZExCommandArgs& args ) {
 
 	YZList<YZView*> l = args.view->myBuffer()->views();
 	for ( YZList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
-		args.view->mySession()->deleteView( (*itr)->myId );
+		args.view->mySession()->deleteView( (*itr)->getId() );
 	}
 
 	return CMD_QUIT;
@@ -623,11 +630,13 @@ cmd_state YZModeEx::genericMap ( const YZExCommandArgs& args, int type) {
 		}
 		if (rx.cap(1).startsWith("<CTRL>")) {
 			mModifierKeys << rx.cap(1);
+			/*
 			for (int i = 0 ; i <= YZSession::mNbViews; i++) {
 				YZView *v = YZSession::me->findView(i);
 				if (v)
 					v->registerModifierKeys(rx.cap(1));
 			}
+			*/
 		}
 	}
 	return CMD_OK;	
@@ -657,11 +666,13 @@ cmd_state YZModeEx::genericUnmap ( const YZExCommandArgs& args, int type) {
 	}
 	if (args.arg.startsWith("<CTRL>")) {
 		mModifierKeys.remove(args.arg);
+		/*
 		for (int i = 0 ; i <= YZSession::mNbViews; i++) {
 			YZView *v = YZSession::me->findView(i);
 			if (v)
 				v->unregisterModifierKeys(args.arg);
 		}
+		*/
 	}
 	return CMD_OK;	
 }
@@ -692,11 +703,13 @@ cmd_state YZModeEx::genericNoremap ( const YZExCommandArgs& args, int type) {
 		}
 		if (rx.cap(1).startsWith("<CTRL>")) {
 			mModifierKeys << rx.cap(1);
+			/*
 			for (int i = 0 ; i <= YZSession::mNbViews; i++) {
 				YZView *v = YZSession::me->findView(i);
 				if (v)
 					v->registerModifierKeys(rx.cap(1));
 			}
+			*/
 		}
 	}
 	return CMD_OK;	

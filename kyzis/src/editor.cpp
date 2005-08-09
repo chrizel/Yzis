@@ -623,7 +623,7 @@ void KYZisEdit::drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rec
 }
 
 void KYZisEdit::focusInEvent ( QFocusEvent * ) {
-	KYZisFactory::s_self->setCurrentView( mParent );
+	KYZisFactory::self()->setCurrentView( mParent );
 	updateCursor();
 }
 void KYZisEdit::focusOutEvent ( QFocusEvent * ) {

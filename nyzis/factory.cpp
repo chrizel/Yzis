@@ -26,7 +26,6 @@
 #include <ctype.h>
 
 NYZFactory *NYZFactory::self = 0;
-NYZView *NYZFactory::currentView=0;
 QMap<int,QString> NYZFactory::keycodes; // map Ncurses to Qt codes
 
 
@@ -64,7 +63,6 @@ NYZFactory::NYZFactory(const char *session_name, const QString& keys)
 NYZFactory::~NYZFactory( )
 {
 	self = 0;
-	currentView = 0;
 }
 
 void NYZFactory::init() {
@@ -74,7 +72,7 @@ void NYZFactory::init() {
 }
 
 bool NYZFactory::processInput(int) {
-	YZASSERT_MSG( currentView, "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
+	YZASSERT_MSG( currentView(), "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
 
 	wint_t c;
 
@@ -118,16 +116,16 @@ bool NYZFactory::processInput(int) {
 		case 0x18: // ^x // important, tested
 		case 0x19: // ^y
 		case 0x1a: // ^z
-			currentView->sendKey( QString( QChar( 0x60+c ) ),"<CTRL>" );
+			currentView()->sendKey( QString( QChar( 0x60+c ) ),"<CTRL>" );
 			return true;
 	} // switch
 	
 	if ( c == 0x1d ) {
-		currentView->sendKey( "<CTRL>]" );
+		currentView()->sendKey( "<CTRL>]" );
 	}
 
 	if (keycodes.contains(c)) {
-		currentView->sendKey(keycodes[c],"");
+		currentView()->sendKey(keycodes[c],"");
 		return true;
 	}
 	// remaining cases
@@ -154,46 +152,46 @@ bool NYZFactory::processInput(int) {
 	if ( isupper( c ) ) { modifiers +="<SHIFT>"; }
 	//yzDebug() << "sendKey < " << c << " (" << QString( QChar( c ) ) << ") modifiers=" << modifiers << endl;
 	//TODO: META
-	currentView->sendKey( QString( QChar( c ) ), modifiers );
+	currentView()->sendKey( QString( QChar( c ) ), modifiers );
 
 	return true;
 }
 
 
 bool NYZFactory::quit( int errorCode ) {
-	QMap<QString,YZBuffer*>::Iterator it = mBuffers.begin(), end = mBuffers.end();
-	for ( ; it!=end; ++it ) {
-		YZBuffer* b = ( *it );
+	YZBufferList::ConstIterator it = buffers().begin();
+	YZBufferList::ConstIterator end = buffers().end();
+	for ( ; it != end; ++it ) {
+		YZBuffer* b = *it;
 		deleteBuffer( b );
 	}
-	mBuffers.clear();
 	exit( errorCode );
 	return true;
 }
 
 void NYZFactory::changeCurrentView ( YZView * view  )
 {
+	NYZView *cur = static_cast<NYZView*>(currentView());
 	NYZView *v = static_cast<NYZView*>(view);
 	YZASSERT( view );
-	if ( currentView == v ){
+	if ( cur == v ){
 		yzWarning(NYZIS) << "changeCurrentView() called with same view.."<<endl;
 		return;
 	}
-	if ( currentView )
-		currentView->unmap();
-	currentView = v;
-	currentViewChanged(view);
-	currentView->map();
-	currentView->refreshScreen();
+	if ( cur )
+		cur->unmap();
+	
+	v->map();
+	v->refreshScreen();
 }
 
-YZView* NYZFactory::createView( YZBuffer* buffer )
+YZView* NYZFactory::doCreateView( YZBuffer* buffer )
 {
 	YZASSERT( buffer );
 	NYZView *v = new NYZView( buffer );
 	YZASSERT_MSG(v, "NYZFactory::createView : failed creating a new NYZView");
 	buffer->addView ( v);
-	return currentView;
+	return v;
 }
 
 YZBuffer *NYZFactory::createBuffer(const QString& filename)
@@ -201,9 +199,11 @@ YZBuffer *NYZFactory::createBuffer(const QString& filename)
 	YZBuffer *b = new YZBuffer();
 	b->setState( YZBuffer::ACTIVE );
 	YZASSERT_MSG(b, "NYZFactory::createBuffer failed creating new YZBuffer");
-	setCurrentView( createView( b ) );
+	YZView *view = createView( b );
+	setCurrentView( view );
 	b->load( filename );
-	currentView->refreshScreen();
+	view->refreshScreen();
+	addBuffer( b );
 	addBuffer( b );
 	return b;
 }
@@ -253,38 +253,34 @@ void NYZFactory::popupMessage( const QString &_message )
 	halfdelay(1); // Go back to the halfdelay-mode.
 	
 	delwin( popup );
-	currentView->refreshScreen();
+	currentView()->refreshScreen();
 }
 
 void NYZFactory::deleteBuffer(YZBuffer *b) {
 	delete b;
 }
 
-void NYZFactory::deleteView(int /*Id*/)
+void NYZFactory::doDeleteView( YZView *view )
 {
-	NYZView *oldview = currentView;
-
-	// find next one
-	YZView *v = nextView();
-	if ( !v ) v = prevView();
-// ideally would be : but we delteView on quitting, hence looping delete/create..
-// TODO
-//	if ( !v ) v = createView(createBuffer());
-	if ( !v ) exitRequest( 0 );
-
-	// switch
-	setCurrentView(v);
-
-	// delete
-//	delete oldview;// wont work because the oldview is the current one used
-	rmBuffer( oldview->myBuffer() );
-
-	if (mBuffers.isEmpty()) {
-		yzWarning(NYZIS)<<"nyzis can't handle not having any view/buffers, quitting" << endl;;
-		exitRequest(0);
+	YZView *newview = currentView();
+	
+	// if we're deleting the current view, then change views
+	if ( view == currentView() ) {
+		newview = prevView();
+		
+		// if the next view is the ourself, that means there
+		// was only one view and we should exit
+		if ( newview != view ) {
+			setCurrentView( newview );
+		} else {
+			exitRequest( 0 );
+		}
 	}
-	v->setCommandLineText( "" );
-	v->refreshScreen();
+	
+	rmBuffer( view->myBuffer() );
+	
+	newview->setCommandLineText( "" );
+	newview->refreshScreen();
 }
 
 bool NYZFactory::promptYesNo( const QString& /*title*/, const QString& /*message*/ ) {

@@ -29,6 +29,7 @@
 #include <qvaluevector.h>
 #include <qapplication.h>
 #include <qstring.h>
+
 #include "yzis.h"
 #include "syntaxhighlight.h"
 #include "line.h"
@@ -43,11 +44,9 @@ class YZDocMark;
 class YZViewMark;
 class YZCursor;
 class YZSwapFile;
-class YZSession;
 class YZView;
 
 typedef YZVector<YZLine*> YZBufferData;
-static QString myNull;
 
 /**
  * A buffer is the implementation of the content of a file
@@ -62,9 +61,8 @@ public:
 	
 	/**
 	 * Creates a new buffer
-	 * @param sess the session to which the buffer belongs to
 	 */
-	YZBuffer(YZSession *sess);
+	YZBuffer();
 
 	/**
 	 * Default destructor
@@ -160,10 +158,7 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	unsigned int getLineLength(unsigned int line) const {
-		// if line is >= lineCount(), we will crash. Read the note from yzline()
-		return yzline( line )->length();
-	}
+	unsigned int getLineLength(unsigned int line) const;
 
 	/**
 	 * Finds a line in the buffer
@@ -172,10 +167,7 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	const QString& textline(unsigned int line) const {
-		// if line is >= lineCount(), we will crash. Read the note from yzline()
-		return yzline( line )->data();
-	}
+	const QString& textline(unsigned int line) const;
 
 	/**
 	 * Return the column of the first non-blank character in the line
@@ -236,7 +228,7 @@ public:
 	 *
 	 * Note that empty buffer always have one empty line.
 	 */
-	unsigned int lineCount() const { return mText.count(); }
+	unsigned int lineCount() const;
 
 	//-------------------------------------------------------
 	// --------------------- File Operations
@@ -422,6 +414,7 @@ protected:
 	 */
 	bool isLineVisible(uint line) const;
 
+private:
 	// The current filename (absolute path name)
 	QString mPath;
 	
@@ -430,8 +423,6 @@ protected:
 
 	// data structure containing the actual text of the file
 	YZBufferData mText;
-	
-	YZSession *mSession;
 	
 	// pointers to sub-objects
 	YZUndoBuffer *mUndoBuffer;
@@ -448,7 +439,6 @@ protected:
 	// flag to disable drawing of updates
 	mutable bool m_hlupdating;
 
-private:
 	// pointers to sub-objects
 	YZAction* mAction;
 	YZViewMark* mViewMarks;

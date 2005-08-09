@@ -38,7 +38,7 @@
 #include "hlconfig.h"
 
 KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *parent, const char *name)
-	: KTextEditor::Document(parent,name), YZBuffer(KYZisFactory::s_self) {
+	: KTextEditor::Document(parent,name), YZBuffer() {
 
 		setInstance(KYZisFactory::self()->instance());
 		KYZisFactory::self()->registerDoc( this );

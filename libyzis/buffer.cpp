@@ -66,11 +66,10 @@
 #define ASSERT_PREV_COL_LINE_EXISTS( functionname, col, line ) \
 	YZASSERT_MSG( col <= textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
 
-YZBuffer::YZBuffer(YZSession *sess) {
+YZBuffer::YZBuffer() {
 	yzDebug("YZBuffer") << "YZBuffer()" << endl;
 	myId = YZSession::mNbBuffers++;
 	mUpdateView=true;
-	mSession = sess;
 	mModified=false;
 	m_highlight = 0L;
 	m_hlupdating = false;
@@ -642,7 +641,7 @@ void YZBuffer::addView (YZView *v) {
 	}
 	yzDebug("YZBuffer") << "BUFFER: addView" << endl;
 	mViews.append( v );
-	mSession->setCurrentView( v );
+	YZSession::me->setCurrentView( v );
 }
 
 YZView* YZBuffer::findView( unsigned int uid ) const {
@@ -675,7 +674,7 @@ void YZBuffer::rmView(YZView *v) {
 	mViews.remove(v);
 //	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
 	if ( mViews.isEmpty() ) {
-		mSession->rmBuffer( this );
+		YZSession::me->rmBuffer( this );
 	}
 }
 
@@ -757,7 +756,7 @@ void YZBuffer::setPath( const QString& _path ) {
 	mPath = QFileInfo( _path.stripWhiteSpace() ).absFilePath();
 	mFileIsNew=false;
 	//hmm changing file :), update Session !!!!
-	mSession->updateBufferRecord( oldPath, mPath, this );
+	YZSession::me->updateBufferRecord( oldPath, mPath, this );
 	YZSession::mOptions->updateOptions(oldPath, mPath);
 	
 	// update swap file too
@@ -991,7 +990,10 @@ void YZBuffer::preserve()
 
 YZLine * YZBuffer::yzline(unsigned int line, bool noHL /*= true*/) 
 {
-	YZLine *yl = const_cast<YZLine*>( yzline( line, noHL ) );
+	// call the const version of ::yzline().  Make the const
+	// explicit, so we don't end up with infinite recursion
+	const YZBuffer *const_this = this;
+	YZLine *yl = const_cast<YZLine*>( const_this->yzline( line ) );
 	if ( !noHL && yl && !yl->initialized() ) {
 		initHL( line );
 	}
@@ -1009,4 +1011,27 @@ const YZLine * YZBuffer::yzline(unsigned int line) const
 	}
 	const YZLine *yl = mText.at( line );
 	return yl;
+}
+
+unsigned int YZBuffer::lineCount() const 
+{ 
+	return mText.count(); 
+}
+
+unsigned int YZBuffer::getLineLength(unsigned int line) const {
+	unsigned int length = 0;
+	
+	if ( line < lineCount() ) {
+		length = yzline( line )->length();
+	}
+	
+	return length;
+}
+
+const QString& YZBuffer::textline(unsigned int line) const {
+	if ( line < lineCount() ) {
+		return yzline( line )->data();
+	} else {
+		return QString::null;
+	}
 }

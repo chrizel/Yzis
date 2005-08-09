@@ -198,7 +198,7 @@ YZView* NYZFactory::createView( YZBuffer* buffer )
 
 YZBuffer *NYZFactory::createBuffer(const QString& filename)
 {
-	YZBuffer *b = new YZBuffer(YZSession::me);
+	YZBuffer *b = new YZBuffer();
 	YZASSERT_MSG(b, "NYZFactory::createBuffer failed creating new YZBuffer");
 	setCurrentView( createView( b ) );
 	b->load( filename );

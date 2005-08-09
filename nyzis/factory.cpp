@@ -198,7 +198,6 @@ YZBuffer *NYZFactory::createBuffer(const QString& filename)
 	b->load( filename );
 	view->refreshScreen();
 	addBuffer( b );
-	addBuffer( b );
 	return b;
 }
 

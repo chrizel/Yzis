@@ -396,6 +396,20 @@ public:
 	QStringList getLocalListOption( const QString& option ) const;
 
 	//-------------------------------------------------------
+	// ------------ Buffer State
+	//-------------------------------------------------------
+	
+	enum State
+	{
+		ACTIVE,
+		HIDDEN,
+		INACTIVE
+	};
+	
+	void setState( State state );
+	State getState() const;
+	
+	//-------------------------------------------------------
 	// ------------ Static
 	//-------------------------------------------------------
 	
@@ -450,6 +464,9 @@ private:
 	
 	// unique identifier of the buffer
 	unsigned int myId;
+	
+	// buffer state
+	State mState;
 };
 
 #endif /*  YZ_BUFFER_H */

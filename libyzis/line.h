@@ -41,7 +41,7 @@ class YZLine
 
 		const QString& data() const { return mData; }
 		void setData(const QString &data);
-		int length() { return mData.length(); }
+		int length() const { return mData.length(); }
 		inline const QMemArray<short> &ctxArray () const { return m_ctx; };
 		inline void setContext (QMemArray<short> &val) { m_ctx.assign (val); }
 		inline bool hlLineContinue () const { return m_flags & YZLine::flagHlContinue; }
@@ -54,7 +54,7 @@ class YZLine
 
 
 		inline uchar *attributes () { return mAttributes.data(); }
-		bool initialized() { return m_initialized; }
+		bool initialized() const { return m_initialized; }
 
 		int firstChar() const;
 		int lastChar() const;

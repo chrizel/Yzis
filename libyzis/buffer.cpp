@@ -989,3 +989,24 @@ void YZBuffer::preserve()
 	mSwap->flush();
 }
 
+YZLine * YZBuffer::yzline(unsigned int line, bool noHL /*= true*/) 
+{
+	YZLine *yl = const_cast<YZLine*>( yzline( line, noHL ) );
+	if ( !noHL && yl && !yl->initialized() ) {
+		initHL( line );
+	}
+	
+	return yl;
+}
+
+const YZLine * YZBuffer::yzline(unsigned int line) const
+{
+	if ( line >= lineCount() ) {
+		yzDebug() << "ERROR: you are asking for line " << line << " (max is " << lineCount() << ")" << endl;
+		// we will perhaps crash after that, but we don't want to disguise bugs!
+		// fix the one which call yzline ( or textline ) with a wrong line number instead.
+		return NULL;
+	}
+	const YZLine *yl = mText.at( line );
+	return yl;
+}

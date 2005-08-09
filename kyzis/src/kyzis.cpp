@@ -224,12 +224,12 @@ void Kyzis::openURL(const KURL &url)
 	}
 }
 
-void Kyzis::createBuffer(const QString& path) {
+QString Kyzis::createBuffer(const QString& path) {
 		kdDebug() << "Kyzis::createBuffer " << path << endl;
 		KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
 		if (!factory) {
 			kdDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
-			return;
+			return QString::null;
 		}
 		// now that the Part is loaded, we cast it to a Part to get
 		// our hands on it
@@ -237,18 +237,30 @@ void Kyzis::createBuffer(const QString& path) {
 		//buffer number , view number
 		list << QString::number( mBuffers++ ) << QString::number( mViews++ );
 
-		KParts::ReadWritePart * m_part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart", list ));
+		KParts::ReadWritePart * part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart", list ));
+		KYZisDoc *doc = static_cast<KYZisDoc*>(part);
 
-		if (m_part)
+		if (part)
 		{
+			if ( path == QString::null ) {
+				doc->openNewFile();
+			} else {
+				doc->load( path );
+			}
+			
 			kdDebug() << "Yzis part successfully loaded" << endl;
-			KMdiChildView *view = createWrapper( m_part->widget(), QString::number( mViews ), path );
-			m_part->widget()->setFocus();
+			KMdiChildView *view = createWrapper( part->widget(), QString::number( mViews ), doc->fileName() );
+			part->widget()->setFocus();
 			addWindow( view );
-			KView v = { view , m_part };
+			KView v = { view , part };
 			viewList[mViews-1] = v;
-			createGUI(m_part);
-			load( KURL( path ) );
+			createGUI(part);
+		}
+		
+		if ( doc ) {
+			return doc->fileName();
+		} else {
+			return QString::null;
 		}
 }
 

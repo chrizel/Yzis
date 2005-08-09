@@ -35,6 +35,7 @@
 #include "libyzis/view.h"
 #include "debug.h"
 #include "yzis.h"
+#include "factory.h"
 
 static const char *description =
 I18N_NOOP("KDE Frontend for the Yzis Editor");
@@ -90,9 +91,10 @@ int main(int argc, char **argv) {
 		Kyzis *widget = new Kyzis(dockConfig,KMdi::IDEAlMode, initialSendKeys);
 		kapp->setMainWidget( widget );
 		widget->show();
-
+		
 		if ( args->count() == 0 ) {
-			widget->createBuffer();
+			YZBuffer *buffer = KYZisFactory::self()->createBuffer();
+			buffer->openNewFile();
 		} else {
 			int i = 0;
 			for (; i < args->count(); i++ )

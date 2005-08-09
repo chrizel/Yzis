@@ -48,7 +48,7 @@ public:
 	bool quit(int errorCode);
 	void changeCurrentView( YZView* );
 	YZView *createView ( YZBuffer* );
-	YZBuffer *createBuffer(const QString& path);
+	YZBuffer *createBuffer(const QString& path = QString::null);
 	void popupMessage( const QString& message );
 	void deleteView (int Id);
 	void deleteBuffer ( YZBuffer *b );

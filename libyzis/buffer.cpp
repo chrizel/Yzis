@@ -68,6 +68,8 @@
 	
 struct YZBuffer::Private
 {
+	Private() : id(YZSession::mNbBuffers++) {}
+	
 	// The current filename (absolute path name)
 	QString path;
 	
@@ -75,7 +77,7 @@ struct YZBuffer::Private
 	YZList<YZView*> views;
 
 	// data structure containing the actual text of the file
-	YZBufferData text;
+	YZBufferData *text;
 	
 	// pointers to sub-objects
 	YZUndoBuffer *undoBuffer;
@@ -102,7 +104,7 @@ struct YZBuffer::Private
 	QString currentEncoding;
 	
 	// unique identifier of the buffer
-	unsigned int id;
+	const unsigned int id;
 	
 	// buffer state
 	State state;
@@ -112,51 +114,36 @@ YZBuffer::YZBuffer()
 	: d(new Private)
 {
 	yzDebug("YZBuffer") << "YZBuffer()" << endl;
-	d->id = YZSession::mNbBuffers++;
-	d->enableUpdateView=true;
-	d->isModified=false;
-	d->highlight = 0L;
+	
+	// flags
+	d->enableUpdateView = false;
+	d->isModified = false;
 	d->isHLUpdating = false;
-	// buffer at creation time should use a non existing temp filename
-	// find a tmp file that does not exist
-	do {
-		d->path = QString("/tmp/yzisnew%1").arg(rand());
-	} while ( QFileInfo( d->path ).exists() == true );
-	// there is still a possible race condition here...
 	d->isFileNew = true;
-	d->undoBuffer = new YZUndoBuffer( this );
-	d->action = new YZAction( this );
-	d->viewMarks = new YZViewMark( );
-	d->docMarks = new YZDocMark( );
-	d->currentEncoding = getLocalStringOption( "encoding" );
-	YZSession::me->addBuffer( this );
-	d->swapFile = new YZSwapFile( this );
 	d->isLoading = false;
-	d->text.append( new YZLine() );
-	setHighLight( 0, false );
+	
+	// sub-objects
+	d->highlight = NULL;
+	d->undoBuffer = NULL;
+	d->action = NULL;
+	d->viewMarks = NULL;
+	d->docMarks = NULL;
+	d->swapFile = NULL;
+	d->text = NULL;
+	
+	// Default to an INACTIVE buffer
+	// other actions will make it ACTIVE later
+	setState( INACTIVE );
+	
 	yzDebug("YZBuffer") << "NEW BUFFER CREATED : " << d->path << endl;
 }
 
 YZBuffer::~YZBuffer() {
-	//remove swap file
-	d->swapFile->unlink();
-	delete d->swapFile;
-	if ( d->highlight != 0L )
-		d->highlight->release();
+	setState( INACTIVE );
 
-	QValueVector<YZLine*>::iterator it = d->text.begin(), end = d->text.end();
-	for ( ; it != end; ++it )
-		delete ( *it );
-	d->text.clear();
-	delete d->undoBuffer;
-	delete d->action;
+	// These two aren't deleted when the buffer is made INACTIVE
 	delete d->docMarks;
 	delete d->viewMarks;
-	//clear views
-//	YZView *it;
-//	for ( it = d->views.first(); it ; it = d->views.next() )
-//		delete it;
-	// delete the temporary file if we haven't changed the file
 }
 
 // ------------------------------------------------------------------------
@@ -251,16 +238,16 @@ void  YZBuffer::appendLine(const QString &l) {
 		d->swapFile->addToSwap( YZBufferOperation::ADDTEXT, l, 0, lineCount() );
 	}
 
-	d->text.append(new YZLine(l));
+	d->text->append(new YZLine(l));
 	if ( !d->isLoading && d->highlight != 0L ) {
 		bool ctxChanged = false;
 		QMemArray<uint> foldingList;
 		YZLine *l = new YZLine();
-		d->highlight->doHighlight(( d->text.count() >= 2 ? yzline( d->text.count() - 2 ) : l), yzline( d->text.count() - 1 ), &foldingList, &ctxChanged );
+		d->highlight->doHighlight(( d->text->count() >= 2 ? yzline( d->text->count() - 2 ) : l), yzline( d->text->count() - 1 ), &foldingList, &ctxChanged );
 		delete l;
 //		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
-	YZSession::me->search()->highlightLine( this, d->text.count() - 1 );
+	YZSession::me->search()->highlightLine( this, d->text->count() - 1 );
 
 	setChanged( true );
 }
@@ -276,11 +263,11 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 
 	viewsInit( this, 0, line );
 
-	QValueVector<YZLine*>::iterator it = d->text.begin(), end = d->text.end();
+	QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 	uint idx=0;
 	for ( ; idx < line && it != end; ++it, ++idx )
 		;
-	d->text.insert(it, new YZLine( l ));
+	d->text->insert(it, new YZLine( l ));
 
 	YZSession::me->search()->shiftHighlight( this, line, 1 );
 	YZSession::me->search()->highlightLine( this, line );
@@ -329,11 +316,11 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	}
 
 	//add new line
-	QValueVector<YZLine*>::iterator it = d->text.begin(), end = d->text.end();
+	QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 	uint idx=0;
 	for ( ; idx < line+1 && it != end; ++it, ++idx )
 		;
-	d->text.insert(it, new YZLine( newline ));
+	d->text->insert(it, new YZLine( newline ));
 
 	YZSession::me->search()->shiftHighlight( this, line+1, 1 );
 	YZSession::me->search()->highlightLine( this, line+1 );
@@ -355,12 +342,12 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	if (lineCount() > 1) {
 		d->undoBuffer->addBufferOperation( YZBufferOperation::DELLINE, "", 0, line );
 		if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::DELLINE, "", 0, line );
-		QValueVector<YZLine*>::iterator it = d->text.begin(), end = d->text.end();
+		QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 		uint idx=0;
 		for ( ; idx < line && it != end; ++it, ++idx )
 			;
 		delete (*it);
-		d->text.erase(it);
+		d->text->erase(it);
 
 		YZSession::me->search()->shiftHighlight( this, line+1, -1 );
 		YZSession::me->search()->highlightLine( this, line );
@@ -406,11 +393,11 @@ void YZBuffer::clearText() {
 	 * operation.
 	 */
 	//clear is fine but better _delete_ all yzlines too ;)
-	QValueVector<YZLine*>::iterator it = d->text.begin(), end = d->text.end();
+	QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 	for ( ; it != end; ++it )
 		delete ( *it );
-	d->text.clear(); //remove the _pointers_ now
-	d->text.append(new YZLine());
+	d->text->clear(); //remove the _pointers_ now
+	d->text->append(new YZLine());
 }
 
 void YZBuffer::setTextline( uint line , const QString & l) {
@@ -438,7 +425,7 @@ bool YZBuffer::isLineVisible(uint line) const {
 }
 
 bool YZBuffer::isEmpty() const {
-	return ( d->text.count() == 1 && textline(0).isEmpty() );
+	return ( d->text->count() == 1 && textline(0).isEmpty() );
 }
 
 
@@ -495,7 +482,7 @@ void YZBuffer::setEncoding( const QString& name ) {
 		fromCodec = QTextCodec::codecForName( d->currentEncoding );
 	}
 	if ( ! isEmpty() ) {
-		QValueVector<YZLine*>::iterator it = d->text.begin(), end = d->text.end();
+		QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 		for ( ; it != end; ++it ) {
 			(*it)->setData( destCodec->toUnicode( fromCodec->fromUnicode( (*it)->data() ) ) );
 		}
@@ -504,24 +491,28 @@ void YZBuffer::setEncoding( const QString& name ) {
 }
 
 void YZBuffer::loadText( QString* content ) {
-	d->text.clear(); //remove the _pointers_ now
+	d->text->clear(); //remove the _pointers_ now
 	QTextStream stream( content, IO_ReadOnly );
-	while ( !stream.atEnd() )
+	while ( !stream.atEnd() ) {
 		appendLine( stream.readLine() );
+	}
+
+	d->isFileNew = true;
 }
 
 void YZBuffer::load(const QString& file) {
 	yzDebug("YZBuffer") << "YZBuffer load " << file << endl;
 	if ( file.isNull() || file.isEmpty() ) return;
 	setPath(file);
+	d->isFileNew = false;
 
 	//stop redraws
 	d->enableUpdateView=false;
 
-	QValueVector<YZLine*>::iterator it = d->text.begin(), end = d->text.end();
+	QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 	for ( ; it != end; ++it )
 		delete ( *it );
-	d->text.clear();
+	d->text->clear();
 	d->isFileNew=false;
 	
 
@@ -566,7 +557,7 @@ void YZBuffer::load(const QString& file) {
     } else if (QFile::exists(d->path)) {
 		YZSession::me->popupMessage(_("Failed opening file %1 for reading : %2").arg(d->path).arg(fl.errorString()));
 	}
-	if ( ! d->text.count() )
+	if ( ! d->text->count() )
 		appendLine("");
 	setChanged( false );
 	//check for a swap file left after a crash
@@ -639,7 +630,7 @@ bool YZBuffer::save() {
 		// do not save empty buffer to avoid creating a file
 		// with only a '\n' while the buffer is emtpy
 		if ( isEmpty() == false) {
-			QValueVector<YZLine*>::iterator it = d->text.begin(), end = d->text.end();
+			QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 			for ( ; it != end; ++it ) {
 				stream << (*it )->data() << "\n";
 			}
@@ -798,10 +789,11 @@ void YZBuffer::makeAttribs() {
 void YZBuffer::setPath( const QString& _path ) {
 	QString oldPath = d->path;
 	d->path = QFileInfo( _path.stripWhiteSpace() ).absFilePath();
-	d->isFileNew=false;
 	//hmm changing file :), update Session !!!!
-	YZSession::me->updateBufferRecord( oldPath, d->path, this );
-	YZSession::mOptions->updateOptions(oldPath, d->path);
+	if ( oldPath != QString::null ) {
+		YZSession::me->updateBufferRecord( oldPath, d->path, this );
+		YZSession::mOptions->updateOptions(oldPath, d->path);
+	}
 	
 	// update swap file too
 	d->swapFile->setFileName( _path );
@@ -1053,13 +1045,13 @@ const YZLine * YZBuffer::yzline(unsigned int line) const
 		// fix the one which call yzline ( or textline ) with a wrong line number instead.
 		return NULL;
 	}
-	const YZLine *yl = d->text.at( line );
+	const YZLine *yl = d->text->at( line );
 	return yl;
 }
 
 unsigned int YZBuffer::lineCount() const 
 { 
-	return d->text.count(); 
+	return d->text->count(); 
 }
 
 unsigned int YZBuffer::getLineLength(unsigned int line) const {
@@ -1082,6 +1074,66 @@ const QString& YZBuffer::textline(unsigned int line) const {
 
 void YZBuffer::setState( State state ) 
 {
+	// if we're making the buffer active or hidden, we have to ensure
+	// that all the support stuff has been created
+	if ( state == ACTIVE || state == HIDDEN ) {
+		if ( !d->highlight ) {
+			d->highlight = NULL;
+		}
+		
+		if ( !d->undoBuffer ) {
+			d->undoBuffer = new YZUndoBuffer( this );
+		}
+		
+		if ( !d->action ) {
+			d->action = new YZAction( this );
+		}
+		
+		if ( !d->viewMarks ) {
+			d->viewMarks = new YZViewMark( );
+		}
+		
+		if ( !d->docMarks ) {
+			d->docMarks = new YZDocMark( );
+		}
+		
+		if ( !d->swapFile ) {
+			d->swapFile = new YZSwapFile( this );
+		}
+		
+		if ( !d->text ) {
+			d->text = new YZBufferData;
+			d->text->append( new YZLine() );
+		}
+	}
+	// if we're making the buffer inactive, we have to
+	// do some cleanup
+	else if ( state == INACTIVE ) {
+		if ( d->swapFile ) {
+			d->swapFile->unlink();
+			delete d->swapFile;
+			d->swapFile = NULL;
+		}
+		
+		if ( d->text ) {
+			for ( YZBufferData::iterator itr = d->text->begin(); itr != d->text->end(); ++itr ) {
+				delete *itr;
+			}
+			delete d->text;
+			d->text = NULL;
+		}
+		
+		delete d->undoBuffer;
+		d->undoBuffer = NULL;
+		
+		delete d->action;
+		d->action = NULL;
+		
+		if ( d->highlight ) {
+			d->highlight->release();
+		}
+	}
+	
 	d->state = state;
 }
 
@@ -1101,4 +1153,18 @@ bool YZBuffer::fileIsNew() const { return d->isFileNew; }
 const QString& YZBuffer::fileName() const {return d->path;}
 unsigned int YZBuffer::getId() const { return d->id; }
 YZList<YZView*> YZBuffer::views() const { return d->views; }
+
+void YZBuffer::openNewFile()
+{
+	QString filename;
+	// buffer at creation time should use a non existing temp filename
+	// find a tmp file that does not exist
+	do {
+		filename = QString("/tmp/yzisnew%1").arg(rand());
+	} while ( QFileInfo( filename ).exists() );
+	
+	setState( ACTIVE );
+	setPath( filename );
+	d->isFileNew = true;
+}
 

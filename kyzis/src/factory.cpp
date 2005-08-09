@@ -132,6 +132,7 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	}
 
 	KYZisDoc *doc = new KYZisDoc (kID.toInt(), parentWidget, widgetname, parent, name );
+	doc->setState( YZBuffer::ACTIVE );
 	//separate
 	if ( bSingleView ) {
 		yzDebug() << "Factory creates single view ..." << endl;
@@ -145,6 +146,9 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	doc->filenameChanged();
 
 	doc->setReadWrite( true );
+	
+	addBuffer( doc );
+	
 	return doc;
 }
 
@@ -231,7 +235,7 @@ YZView* KYZisFactory::createView( YZBuffer *) {
 	return NULL;
 }
 
-YZBuffer *KYZisFactory::createBuffer(const QString& path) {
+YZBuffer *KYZisFactory::createBuffer(const QString& path /*=QString::null*/) {
 #if 0
 	DCOPClient *client = kapp->dcopClient();
 	QByteArray data;
@@ -247,9 +251,11 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path) {
 	}
 	return findBuffer( path );
 #endif
+	QString createdPath;
+
 	if (Kyzis::me)
-		Kyzis::me->createBuffer(path);
-	return findBuffer( path );
+		createdPath = Kyzis::me->createBuffer(path);
+	return findBuffer( createdPath );
 }
 
 void KYZisFactory::popupMessage( const QString& message ) {

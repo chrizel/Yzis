@@ -35,6 +35,8 @@ struct YV {
 
 typedef struct YV KView;
 
+class KYZisDoc;
+
 
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
@@ -77,8 +79,9 @@ k_dcop:
 	/**
 	 * Opens a new buffer
 	 * @param path file to which the buffer is linked
+	 * @return the filename of the actual created buffer
 	 */
-    void createBuffer(const QString& path=QString::null);
+	QString createBuffer(const QString& path=QString::null);
 	
 	/**
 	 * Creates a new view on an existing buffer

@@ -145,6 +145,7 @@ main(int argc, char *argv[])
 
 	if ( !hasatleastone ) {
 		bf = factory->createBuffer();
+		bf->openNewFile();
 		YZView* cView = YZSession::me->currentView();
 		cView->displayIntro();
 	}

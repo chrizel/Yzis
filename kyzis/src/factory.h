@@ -57,8 +57,6 @@ public:
 	void splitHorizontally(YZView *view);
 	bool promptYesNo(const QString& title, const QString& message);
 	int promptYesNoCancel(const QString& title, const QString& message);
-	void registerDoc( KYZisDoc *doc );
-	void unregisterDoc( KYZisDoc *doc );
 	
 protected:
 	YZView *doCreateView( YZBuffer* buffer );
@@ -71,8 +69,6 @@ public slots :
 	void closeView();
 
 private:
-	YZList<KYZisDoc*> documents;
-	
 	KAboutData m_aboutData;
 	KInstance m_instance;
 

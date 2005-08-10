@@ -91,12 +91,6 @@ KYZisFactory::KYZisFactory() :
 
 KYZisFactory::~KYZisFactory() {
 	kdDebug() << "Factory gets destroyed !" << endl;
-	
-	for ( YZList<KYZisDoc*>::Iterator itr = documents.begin(); itr != documents.end(); ++itr ) {
-		KYZisDoc *doc = *itr;
-		kdDebug() << "Deleting " << doc->fileName() << endl;
-		delete doc;
-	}
 }
 
 static KStaticDeleter<KYZisFactory> sdFactory;
@@ -153,20 +147,6 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	addBuffer( doc );
 	
 	return doc;
-}
-
-void KYZisFactory::registerDoc( KYZisDoc *doc ) {
-	kdDebug() << "Register " << doc->fileName() << endl;
-	if ( documents.find( doc ) == documents.end() ) {
-		documents.push_back( doc );
-	}
-}
-
-void KYZisFactory::unregisterDoc( KYZisDoc *doc ) {
-	kdDebug() << "Unregister " << doc->fileName() << endl;
-	if ( documents.find( doc ) != documents.end() ) {
-		documents.remove( doc );
-	}
 }
 
 const KAboutData *KYZisFactory::aboutData() {

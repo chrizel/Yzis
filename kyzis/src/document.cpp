@@ -41,7 +41,6 @@ KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *paren
 	: KTextEditor::Document(parent,name), YZBuffer() {
 
 		setInstance(KYZisFactory::self()->instance());
-		KYZisFactory::self()->registerDoc( this );
 		m_parent = parentWidget;
 		mkId = kId;
 
@@ -49,7 +48,6 @@ KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *paren
 }
 
 KYZisDoc::~KYZisDoc () {
-	KYZisFactory::self()->unregisterDoc( this );
 }
 
 
@@ -58,7 +56,6 @@ KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *) {
 	KYZisView *v = new KYZisView (this, parent);
 	//FIXME : two lists
 	addView(v);
-	_views.append( v );
 	return v;
 }
 
@@ -80,7 +77,8 @@ void KYZisDoc::removeView( KTextEditor::View * v ) {
 	if ( !v )
 		return;
 
-	_views.removeRef( v );
+	KYZisView *kview = static_cast<KYZisView*>( v );
+	YZSession::me->deleteView( kview->getId() );
 }
 
 bool KYZisDoc::openFile () {
@@ -173,7 +171,7 @@ bool KYZisDoc::setText (  const QString &text ) {
 }
 
 bool KYZisDoc::removeText (  uint startLine, uint startCol, uint endLine, uint endCol) {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	( ( YZBuffer* )( this ) )->action()->deleteArea( v, YZCursor( startCol, startLine ), YZCursor( endCol, endLine ), QValueList<QChar>());
 	return true;
 }
@@ -204,12 +202,12 @@ void KYZisDoc::highlightingChanged( ) {
 }
 
 void KYZisDoc::undo() {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	undoBuffer()->undo(v);
 }
 
 void KYZisDoc::redo() {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	undoBuffer()->redo(v);
 }
 
@@ -277,9 +275,8 @@ void KYZisDoc::configDialog() {
 void KYZisDoc::setModified( bool modified ) {
 	if ( KTextEditor::Document::isModified() != modified ) {
 		KTextEditor::Document::setModified( modified );
-		for (QPtrList<KTextEditor::View>::const_iterator it = _views.constBegin();
-			it != _views.constEnd(); ++it)
-		{
+		YZList<YZView*> views = YZBuffer::views();
+		for ( YZList<YZView*>::const_iterator it = views.begin(); it != views.end(); ++it ) { 
 			KYZisView *kv = dynamic_cast<KYZisView *>(*it);
 			if (kv)
 				kv->emitNewStatus();
@@ -369,7 +366,7 @@ QPixmap KYZisDoc::configPagePixmap ( uint /*number*/, int /*size*/ ) const {
  * KTextEditor::SelectionInterface
  */
 bool KYZisDoc::setSelection( unsigned int startLine, unsigned int startCol, unsigned int endLine, unsigned int endCol ) {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	v->setPaintAutoCommit( false );
 	if ( v->modePool()->current()->isSelMode() ) // leave it
 		v->modePool()->pop();
@@ -380,24 +377,24 @@ bool KYZisDoc::setSelection( unsigned int startLine, unsigned int startCol, unsi
 	return true;
 }
 bool KYZisDoc::clearSelection() {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
 	v->modePool()->pop();
 	return true;
 }
 bool KYZisDoc::hasSelection() const {
-	YZView *v = dynamic_cast<YZView*>( ((KYZisDoc*)(this))->_views.first() );
+	YZView *v = YZBuffer::firstView();
 	return !(v->getSelectionPool()->visual()->isEmpty());
 }
 QString KYZisDoc::selection() const {
-	YZView *v = dynamic_cast<YZView*>( ((KYZisDoc*)(this))->_views.first() );
+	YZView *v = YZBuffer::firstView();
 	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
 	QValueList<QChar> regs;
 	YZInterval i = dynamic_cast<YZModeVisual*>( v->modePool()->current() )->interval( YZCommandArgs(NULL,v,regs,1,false) );
 	return ((YZBuffer*)this)->getText( i ).join("\n");
 }
 bool KYZisDoc::removeSelectedText() {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
 	dynamic_cast<YZModeVisual*>( v->modePool()->current() )->execCommand( v, "d" );
 	return true;
@@ -412,28 +409,41 @@ bool KYZisDoc::selectAll() {
  * KTextEditor::SelectionInterfaceSel
  */
 int KYZisDoc::selStartLine() {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
 	return visual->bufferMap()[ 0 ].fromPos().y();
 }
 int KYZisDoc::selStartCol() {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
 	return visual->bufferMap()[ 0 ].fromPos().x();
 }
 int KYZisDoc::selEndLine() {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
 	return visual->bufferMap()[ 0 ].toPos().y();
 }
 int KYZisDoc::selEndCol() {
-	YZView *v = dynamic_cast<YZView*>( _views.first() );
+	YZView *v = YZBuffer::firstView();
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
 	return visual->bufferMap()[ 0 ].toPos().x();
+}
+
+QPtrList<KTextEditor::View> KYZisDoc::views() const
+{
+	YZList<YZView*> views = YZBuffer::views();
+	QPtrList<KTextEditor::View> result;
+	
+	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
+		KYZisView *kview = static_cast<KYZisView*>(*itr);
+		result.append( kview );
+	}
+	
+	return result;
 }
 
 #include "document.moc"

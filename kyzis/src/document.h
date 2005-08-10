@@ -52,7 +52,7 @@ class KYZisDoc : public KTextEditor::Document,
 		virtual ~KYZisDoc ();
 
 		KTextEditor::View *createView ( QWidget *parent, const char *name = 0 );
-		QPtrList<KTextEditor::View> views() const { return _views; }
+		QPtrList<KTextEditor::View> views() const;
 		void removeView( KTextEditor::View * v );
 		QWidget *parentWidget() { return m_parent; }
 		void setBaseWidget(QWidget *w) { setWidget(w); }
@@ -167,7 +167,6 @@ class KYZisDoc : public KTextEditor::Document,
 		void emitChars(int a, int b, const QString& c) { emit charactersInteractivelyInserted(a,b,c); }
 
 	private:
-		QPtrList<KTextEditor::View> _views;
 		QWidget *m_parent;
 		//KMdi identifier , used for DCOP communication to identify a buffer/view
 		int mkId;

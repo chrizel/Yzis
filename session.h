@@ -68,6 +68,10 @@ typedef YZVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
  
 class YZSession {
 	public:
+		//-------------------------------------------------------
+		// ----------------- Constructor/Destructor and Name
+		//-------------------------------------------------------
+	
 		/**
 		 * Constructor. Give a session name to identify/save/load sessions.
 		 * 
@@ -90,6 +94,10 @@ class YZSession {
 		 
 		QString getSessionName() { return mSessionName; }
 
+		//-------------------------------------------------------
+		// ----------------- Sub-Objects
+		//-------------------------------------------------------
+		
 		/**
 		 * Returns the mode map
 		 * 
@@ -127,6 +135,30 @@ class YZSession {
 		 */
 		YZSearch *search() { return mSearch; }
 
+		YZTagStack &getTagStack();
+		const YZTagStack &getTagStack() const;
+		
+		/**
+		 * Get a pointer on the schema manager for syntax highlighting
+		 */
+		YzisSchemaManager *schemaManager() { return mSchemaManager; }
+
+		//-------------------------------------------------------
+		// ----------------- Buffer Creation/Destruction
+		//-------------------------------------------------------
+		/**
+		 * Creates a new buffer
+		 */
+		virtual	YZBuffer *createBuffer(const QString& path=QString::null) = 0;
+
+		/**
+		 * Deletes the given buffer
+		 */
+		virtual void deleteBuffer( YZBuffer *b ) = 0;
+
+		//-------------------------------------------------------
+		// ----------------- Buffer List Management
+		//-------------------------------------------------------
 		/**
 		 * Add a buffer
 		 */
@@ -138,19 +170,59 @@ class YZSession {
 		void rmBuffer( YZBuffer * );
 
 		/**
-		 * Save everything and get out
+		 * Count the number of buffers
 		 */
-		QString saveBufferExit();
+		unsigned int countBuffers() { return mBufferList.count(); }
 
 		/**
-		 * Finds a view by its UID
+		 * Returns a const reference to the buffer list
+		 * Designed to be used for operations that have to occur
+		 * for each buffer
 		 */
-		YZView* findView( const YZViewId &id );
+		const YZBufferList &buffers() const { return mBufferList; }
 
+		//-------------------------------------------------------
+		// ----------------- Buffer Navigation
+		//-------------------------------------------------------
 		/**
 		 * Finds a buffer by a filename
 		 */
 		YZBuffer* findBuffer( const QString& path );
+
+		//-------------------------------------------------------
+		// ----------------- Buffer Misc. Operations
+		//-------------------------------------------------------
+		/**
+		 * Check if one buffer is modified and not saved
+		 * @returns whether a buffer has been modified and not saved since
+		 */
+		bool isOneBufferModified();
+
+		//-------------------------------------------------------
+		// ----------------- View Creation/Destruction
+		//-------------------------------------------------------
+		/**
+		 * Create a new view
+		 */
+		YZView* createView ( YZBuffer* buffer );
+
+		/**
+		 * Delete the current view
+		 */
+		void deleteView ( const YZViewId &Id = YZViewId::invalid );
+
+		//-------------------------------------------------------
+		// ----------------- Current View
+		//-------------------------------------------------------
+		/**
+		 * Returns a pointer to the current view
+		 */
+		YZView* currentView() { return mCurView; }
+
+		/**
+		 * Called from GUI when the current view has been changed
+		 */
+		void currentViewChanged ( YZView *v );
 
 		/**
 		 * Change the current view ( unassigned )
@@ -162,19 +234,19 @@ class YZSession {
 		 */
 		virtual void changeCurrentView( YZView* ) = 0;
 
+		//-------------------------------------------------------
+		// ----------------- View Navigation
+		//-------------------------------------------------------
 		/**
-		 * Splits the screen vertically showing the 2 given views
+		 * Finds a view by its UID
 		 */
-//		virtual void splitHorizontallyWithViews( YZView*, YZView* ) = 0;
+		YZView* findView( const YZViewId &id );
 
-		/**
-		 * Splits the screen vertically to show the 2 given views
-		 */
-//		virtual void splitVerticallyOnView( YZView*, YZView* ) = 0;
 		/**
 		 * Finds the first view
 		 */
 		YZView* firstView();
+		
 		/**
 		 * Finds the last view
 		 */
@@ -190,26 +262,27 @@ class YZSession {
 		 */
 		YZView* prevView();
 
+		//-------------------------------------------------------
+		// ----------------- View Modification
+		//-------------------------------------------------------
 		/**
-		 * Returns a pointer to the current view
+		 * Splits horizontally the mainwindow area to create a new view on the current buffer
 		 */
-		YZView* currentView() { return mCurView; }
+		virtual void splitHorizontally ( YZView* ) = 0;
 
 		/**
-		 * Called from GUI when the current view has been changed
+		 * Splits the screen vertically showing the 2 given views
 		 */
-		void currentViewChanged ( YZView *v );
+//		virtual void splitHorizontallyWithViews( YZView*, YZView* ) = 0;
 
 		/**
-		 * Delete the current view
+		 * Splits the screen vertically to show the 2 given views
 		 */
-		void deleteView ( const YZViewId &Id = YZViewId::invalid );
-
-		/**
-		 * Deletes the given buffer
-		 */
-		virtual void deleteBuffer( YZBuffer *b ) = 0;
-
+//		virtual void splitVerticallyOnView( YZView*, YZView* ) = 0;
+		
+		//-------------------------------------------------------
+		// ----------------- Application Termination
+		//-------------------------------------------------------
 		/**
 		 * Ask to quit the app
 		 */
@@ -223,6 +296,14 @@ class YZSession {
 		 */
 		bool exitRequest(int errorCode=0);
 
+		/**
+		 * Save everything and get out
+		 */
+		QString saveBufferExit();
+
+		//-------------------------------------------------------
+		// ----------------- GUI Prompts
+		//-------------------------------------------------------
 		/**
 		 * Display the specified error/information message
 		 */
@@ -240,39 +321,14 @@ class YZSession {
 		virtual int promptYesNoCancel(const QString& title, const QString& message) = 0;
 
 		/**
-		 * Creates a new buffer
-		 */
-		virtual	YZBuffer *createBuffer(const QString& path=QString::null) = 0;
-
-		/**
-		 * Create a new view
-		 */
-		YZView* createView ( YZBuffer* buffer );
-
-		/**
-		 * Splits horizontally the mainwindow area to create a new view on the current buffer
-		 */
-		 virtual void splitHorizontally ( YZView* ) = 0;
-
-		/**
 		 * Saves all buffers with a filename set
 		 * @return whether all buffers were saved correctly
 		 */
 		bool saveAll();
 
-		/**
-		 * Count the number of buffers
-		 */
-		int countBuffers() { return mBufferList.count(); }
-
-		const YZBufferList &buffers() const { return mBufferList; }
-
-		/**
-		 * Check if one buffer is modified and not saved
-		 * @returns whether a buffer has been modified and not saved since
-		 */
-		bool isOneBufferModified();
-
+		//-------------------------------------------------------
+		// ----------------- Focus
+		//-------------------------------------------------------
 		/**
 		 * Focus on the command line of the current view
 		 */
@@ -283,24 +339,9 @@ class YZSession {
 		 */
 		virtual void setFocusMainWindow() = 0;
 
-		/**
-		 * Get a pointer on the schema manager for syntax highlighting
-		 */
-		YzisSchemaManager *schemaManager() { return mSchemaManager; }
-
-		/**
-		 * Send multiple key sequence to yzis.
-		 * This method is preferred to the one used in YZView since it will handle
-		 * view changes caused by commands like :bd :bn etc
-		 */
-		void sendMultipleKeys ( const QString& text);
-
-		/**
-		 * To be called by the GUI once it has been initialised
-		 */
-		void guiStarted();
-		
-		//HELPERS
+		//-------------------------------------------------------
+		// ----------------- Options
+		//-------------------------------------------------------
 		/**
 		 * Retrieve an int option
 		 */
@@ -327,6 +368,22 @@ class YZSession {
 		static QStringList getListOption( const QString& option ) {
 			return YZSession::mOptions->readListOption( option );
 		}
+		
+		//-------------------------------------------------------
+		// ----------------- Miscellaneous
+		//-------------------------------------------------------
+		/**
+		 * Send multiple key sequence to yzis.
+		 * This method is preferred to the one used in YZView since it will handle
+		 * view changes caused by commands like :bd :bn etc
+		 */
+		void sendMultipleKeys ( const QString& text );
+
+		/**
+		 * To be called by the GUI once it has been initialised
+		 */
+		void guiStarted();
+		
 		void registerModifier ( const QString& mod );
 		void unregisterModifier ( const QString& mod );
 
@@ -335,14 +392,21 @@ class YZSession {
 		void saveJumpPosition( const YZCursor * cursor );
 		const YZCursor * previousJumpPosition();
 		
-		YZTagStack &getTagStack();
-		const YZTagStack &getTagStack() const;
-		
 	protected:
 		virtual YZView *doCreateView( YZBuffer *buffer ) = 0;
 		virtual void doDeleteView ( YZView *view ) = 0;
 		
+		//-------------------------------------------------------
+		// ----------------- View List Management
+		//-------------------------------------------------------
+		/**
+		 * Add a view to the view list
+		 */
 		void addView( YZView *view );
+		
+		/**
+		 * Remove a view from the view list
+		 */
 		void removeView( YZView *view );
 
 	private:

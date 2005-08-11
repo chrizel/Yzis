@@ -671,7 +671,7 @@ int YZExLua::newoption(lua_State *L ) {
 	context_t visibility = (context_t)(int)lua_tonumber ( L, 5 );
 	value_t type = (value_t)(int)lua_tonumber ( L, 6 );
 
-	YZSession::mOptions->createOption(option, group, defaultvalue, value, visibility, type );
+	YZSession::me->getOptions()->createOption(option, group, defaultvalue, value, visibility, type );
 
 	RET_LUA( 0 );
 }

@@ -392,19 +392,19 @@ void YZSession::removeView( YZView *view )
 }
 		
 int YZSession::getIntegerOption( const QString& option ) {
-	return YZSession::mOptions->readIntegerOption( option );
+	return YZSession::me->getOptions()->readIntegerOption( option );
 }
 
 bool YZSession::getBooleanOption( const QString& option ) {
-	return YZSession::mOptions->readBooleanOption( option );
+	return YZSession::me->getOptions()->readBooleanOption( option );
 }
 
 QString YZSession::getStringOption( const QString& option ) {
-	return YZSession::mOptions->readStringOption( option );
+	return YZSession::me->getOptions()->readStringOption( option );
 }
 
 QStringList YZSession::getListOption( const QString& option ) {
-	return YZSession::mOptions->readListOption( option );
+	return YZSession::me->getOptions()->readListOption( option );
 }
 
 void YZSession::eventConnect( const QString& event, const QString& function )
@@ -415,4 +415,9 @@ void YZSession::eventConnect( const QString& event, const QString& function )
 QStringList YZSession::eventCall( const QString& event, YZView *view /*=NULL*/ )
 {
 	return events->exec( event, view );
+}
+
+YZInternalOptionPool *YZSession::getOptions()
+{
+	return mOptions;
 }

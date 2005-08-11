@@ -104,10 +104,10 @@ void YZYzisinfo::readYzisinfo() {
 			if ( list[0] == "hlsearch" ) {
 				if ( list[1] == "on" ) {
 					bool on = true;
-					YZSession::mOptions->setOptionFromString( &on, "hlsearch" );
+					YZSession::me->getOptions()->setOptionFromString( &on, "hlsearch" );
 				} else {
 					bool on = false; 
-					YZSession::mOptions->setOptionFromString( &on, "hlsearch" );
+					YZSession::me->getOptions()->setOptionFromString( &on, "hlsearch" );
 				}
 			}
 			

@@ -49,7 +49,6 @@
 
 #include "tags_stack.h"
 
-int YZSession::mNbViews = 0;
 YZInternalOptionPool *YZSession::mOptions = 0;
 YZRegisters *YZSession::mRegisters = 0;
 YZSession *YZSession::me = 0;
@@ -434,5 +433,21 @@ QStringList& YZSession::getRegister ( QChar r )
 QValueList<QChar> YZSession::getRegisters() 
 { 
 	return mRegisters->keys(); 
+}
+
+const YZViewList YZSession::getAllViews() const
+{
+	YZViewList result;
+	
+	for ( YZBufferList::const_iterator itr = mBufferList.begin(); itr != mBufferList.end(); ++itr ) {
+		YZBuffer *buf = *itr;
+		const YZViewList views = buf->views();
+		
+		for ( YZViewList::const_iterator vitr = views.begin(); vitr != views.end(); ++vitr ) {
+			result.push_back( *vitr );
+		}
+	}
+	
+	return result;
 }
 

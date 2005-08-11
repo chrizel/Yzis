@@ -268,6 +268,14 @@ class YZSession {
 //		virtual void splitVerticallyOnView( YZView*, YZView* ) = 0;
 		
 		//-------------------------------------------------------
+		// ----------------- View List
+		//-------------------------------------------------------
+		/**
+		 * Gets a list of all YZViews active in the system
+		 */
+		const YZViewList getAllViews() const;
+				
+		//-------------------------------------------------------
 		// ----------------- Application Termination
 		//-------------------------------------------------------
 		/**
@@ -447,8 +455,6 @@ class YZSession {
 		static YZYzisinfo* mYzisinfo;
 
 	public:
-		static int mNbViews;
-		
 	    /**
 	     * command history
 	     */

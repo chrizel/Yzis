@@ -46,7 +46,6 @@
 #include "tags_stack.h"
 
 int YZSession::mNbViews = 0;
-int YZSession::mNbBuffers = 0;
 YZInternalOptionPool *YZSession::mOptions = 0;
 YZRegisters *YZSession::mRegisters = 0;
 YZSession *YZSession::me = 0;

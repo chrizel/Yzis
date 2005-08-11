@@ -92,7 +92,7 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 		ret = commandDefault( mView, key );
 		QStringList ikeys = mView->myBuffer()->getLocalListOption("indentkeys");
 		if ( ikeys.contains(key) )
-			YZSession::events->exec("INDENT_ON_KEY", mView);
+			YZSession::me->eventCall("INDENT_ON_KEY", mView);
 	}
 	return ret;
 }
@@ -209,7 +209,7 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 		mView->indent();
 	} else {
 		mBuffer->action()->insertNewLine( mView, cur );
-		QStringList results = YZSession::events->exec("INDENT_ON_ENTER", mView);
+		QStringList results = YZSession::me->eventCall("INDENT_ON_ENTER", mView);
 		if (results.count() > 0 ) {
 			if (results[0].length()!=0) {
 				mBuffer->action()->replaceLine( mView, cur.y()+1, results[0] + mBuffer->textline( cur.y()+1 ).stripWhiteSpace() );

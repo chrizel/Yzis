@@ -50,6 +50,8 @@
 #include "swapfile.h"
 #include "session.h"
 #include "ex_lua.h"
+#include "search.h"
+#include "yzisinfo.h"
 
 #define ASSERT_TEXT_WITHOUT_NEWLINE( functionname, text ) \
 	YZASSERT_MSG( text .contains('\n')==false, QString("%1 - text contains newline").arg(text) )

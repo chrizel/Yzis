@@ -32,6 +32,7 @@
 #include "viewcursor.h"
 #include "mode_command.h"
 #include "tags_interface.h"
+#include "internal_options.h"
 
 /**
  * YZModeCompletion

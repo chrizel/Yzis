@@ -32,6 +32,7 @@
 #include "viewcursor.h"
 #include "mode_command.h"
 #include "mode_complete.h"
+#include "events.h"
 
 YZModeInsert::YZModeInsert() : YZMode() {
 	mType = YZMode::MODE_INSERT;

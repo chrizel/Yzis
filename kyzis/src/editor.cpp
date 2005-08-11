@@ -26,6 +26,7 @@
 #include "debug.h"
 #include "yzis.h"
 #include "factory.h"
+#include "registers.h"
 
 #include <kglobalsettings.h>
 #include <math.h>

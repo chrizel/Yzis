@@ -39,6 +39,7 @@
 
 #include "debug.h"
 
+#include "internal_options.h"
 #include "readtags.h"
 #include "session.h"
 #include "tags_stack.h"

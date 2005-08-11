@@ -63,6 +63,7 @@
 #include <qvaluevector.h>
 #include "session.h"
 #include "schema.h"
+#include "internal_options.h"
 //END
 
 //BEGIN YzisStyleListViewItem decl

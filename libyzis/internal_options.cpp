@@ -22,6 +22,8 @@
 #include "internal_options.h"
 #include "debug.h"
 #include "session.h"
+#include "search.h"
+
 #include <qdir.h>
 #include <qfile.h>
 #include <qregexp.h>

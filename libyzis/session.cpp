@@ -31,6 +31,10 @@
 #include "registers.h"
 #include "swapfile.h"
 #include "mapping.h"
+#include "search.h"
+#include "events.h"
+#include "internal_options.h"
+#include "yzisinfo.h"
 #include "ex_lua.h"
 
 #include <qapplication.h>
@@ -391,4 +395,20 @@ void YZSession::addView( YZView *view )
 void YZSession::removeView( YZView *view )
 {
 	mViewList.remove( view );
+}
+		
+int YZSession::getIntegerOption( const QString& option ) {
+	return YZSession::mOptions->readIntegerOption( option );
+}
+
+bool YZSession::getBooleanOption( const QString& option ) {
+	return YZSession::mOptions->readBooleanOption( option );
+}
+
+QString YZSession::getStringOption( const QString& option ) {
+	return YZSession::mOptions->readStringOption( option );
+}
+
+QStringList YZSession::getListOption( const QString& option ) {
+	return YZSession::mOptions->readListOption( option );
 }

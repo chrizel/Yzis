@@ -64,9 +64,11 @@ static QColor blue( "blue" );
 /**
  * class YZView
  */
+ 
+static unsigned int nextId = 1;
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) 
-	: id( YZSession::mNbViews++ )
+	: id( nextId++ )
 {
 	yzDebug() << "New View created with UID : " << id << endl;
 	YZASSERT( _b ); YZASSERT( sess );

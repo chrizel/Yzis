@@ -634,13 +634,11 @@ cmd_state YZModeEx::genericMap ( const YZExCommandArgs& args, int type) {
 		}
 		if (rx.cap(1).startsWith("<CTRL>")) {
 			mModifierKeys << rx.cap(1);
-			/*
-			for (int i = 0 ; i <= YZSession::mNbViews; i++) {
-				YZView *v = YZSession::me->findView(i);
-				if (v)
-					v->registerModifierKeys(rx.cap(1));
+			YZViewList views = YZSession::me->getAllViews();
+			for ( YZViewList::const_iterator itr = views.begin(); itr != views.end(); ++itr ) {
+				YZView *v = *itr;
+				v->registerModifierKeys( rx.cap( 1 ) );
 			}
-			*/
 		}
 	}
 	return CMD_OK;	
@@ -670,13 +668,11 @@ cmd_state YZModeEx::genericUnmap ( const YZExCommandArgs& args, int type) {
 	}
 	if (args.arg.startsWith("<CTRL>")) {
 		mModifierKeys.remove(args.arg);
-		/*
-		for (int i = 0 ; i <= YZSession::mNbViews; i++) {
-			YZView *v = YZSession::me->findView(i);
-			if (v)
-				v->unregisterModifierKeys(args.arg);
+		YZViewList views = YZSession::me->getAllViews();
+		for ( YZViewList::const_iterator itr = views.begin(); itr != views.end(); ++itr ) {
+			YZView *v = *itr;
+			v->unregisterModifierKeys( args.arg );
 		}
-		*/
 	}
 	return CMD_OK;	
 }
@@ -707,13 +703,11 @@ cmd_state YZModeEx::genericNoremap ( const YZExCommandArgs& args, int type) {
 		}
 		if (rx.cap(1).startsWith("<CTRL>")) {
 			mModifierKeys << rx.cap(1);
-			/*
-			for (int i = 0 ; i <= YZSession::mNbViews; i++) {
-				YZView *v = YZSession::me->findView(i);
-				if (v)
-					v->registerModifierKeys(rx.cap(1));
+			YZViewList views = YZSession::me->getAllViews();
+			for ( YZViewList::const_iterator itr = views.begin(); itr != views.end(); ++itr ) {
+				YZView *v = *itr;
+				v->registerModifierKeys( rx.cap( 1 ) );
 			}
-			*/
 		}
 	}
 	return CMD_OK;	

@@ -449,12 +449,6 @@ class YZSession {
 	public:
 		static int mNbViews;
 		
-      /**
-       * yzisinfo initialized
-       */
-     
-       static bool mYzisinfoInitialized;
-     
 	    /**
 	     * command history
 	     */

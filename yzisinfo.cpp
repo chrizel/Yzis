@@ -120,7 +120,7 @@ void YZYzisinfo::readYzisinfo() {
 			}
 			
 			if ( list[0].startsWith(">") || list[0] == "start_position" ) {
-				YZSession::mStartPosition.push_back( new YZYzisinfoStartPositionRecord( list[3], list[1].toInt(), list[2].toInt() ) );
+				mStartPosition.push_back( new YZYzisinfoStartPositionRecord( list[3], list[1].toInt(), list[2].toInt() ) );
 			}
 			
 			if ( list[0].startsWith("_") || list[0] == "search_history" ) {
@@ -142,17 +142,17 @@ void YZYzisinfo::readYzisinfo() {
 void YZYzisinfo::updateStartPosition( const YZBuffer *buffer, const int x, const int y ) {
 	bool found = false;
 
-	for ( StartPositionVector::Iterator it = YZSession::mStartPosition.begin(); it != YZSession::mStartPosition.end(); ++it ) {
+	for ( StartPositionVector::Iterator it = mStartPosition.begin(); it != mStartPosition.end(); ++it ) {
 		if ( (*it)->filename() == buffer->fileName() ) {
 			found = true;
-			YZSession::mStartPosition.erase(it);
-			YZSession::mStartPosition.push_back( new YZYzisinfoStartPositionRecord( buffer->fileName(), x, y ) );
+			mStartPosition.erase(it);
+			mStartPosition.push_back( new YZYzisinfoStartPositionRecord( buffer->fileName(), x, y ) );
 			return;
 		}
 	}
 	         
 	if ( ! found ) {         
-		YZSession::mStartPosition.push_back( new YZYzisinfoStartPositionRecord( buffer->fileName(), x, y ) );
+		mStartPosition.push_back( new YZYzisinfoStartPositionRecord( buffer->fileName(), x, y ) );
 	}
 	
 	return;
@@ -278,7 +278,7 @@ void YZYzisinfo::saveSearchHistory( QTextStream & write ) {
 void YZYzisinfo::saveStartPosition( QTextStream & write ) {
 
 	int start = 0;
-	int end = YZSession::mStartPosition.count();
+	int end = mStartPosition.count();
 	
 	if ( end > 100 ) {
 		start = end - 100;
@@ -286,14 +286,14 @@ void YZYzisinfo::saveStartPosition( QTextStream & write ) {
 
 	for( int i = start; i < end; ++i ) {
 		write << "> ";
-		yzDebug() << (YZSession::mStartPosition[i])->position()->x();
-		write << (YZSession::mStartPosition[i])->position()->x();
+		yzDebug() << (mStartPosition[i])->position()->x();
+		write << (mStartPosition[i])->position()->x();
 		write << " "; 
-		yzDebug() << (YZSession::mStartPosition[i])->position()->y();
-		write << (YZSession::mStartPosition[i])->position()->y();
+		yzDebug() << (mStartPosition[i])->position()->y();
+		write << (mStartPosition[i])->position()->y();
 		write << " ";
-		yzDebug() << (YZSession::mStartPosition[i])->filename() << endl;
-		write << (YZSession::mStartPosition[i])->filename() << endl;
+		yzDebug() << (mStartPosition[i])->filename() << endl;
+		write << (mStartPosition[i])->filename() << endl;
 	}
 }	
 
@@ -326,7 +326,7 @@ void YZYzisinfo::saveJumpList( QTextStream & write ) {
 
 YZCursor * YZYzisinfo::startPosition( const YZBuffer *buffer ) {
 
-	for ( StartPositionVector::Iterator it = YZSession::mStartPosition.begin(); it != YZSession::mStartPosition.end(); ++it ) {
+	for ( StartPositionVector::Iterator it = mStartPosition.begin(); it != mStartPosition.end(); ++it ) {
 		if ( (*it)->filename() == buffer->fileName() ) {
 			return (*it)->position();
 		}

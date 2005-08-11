@@ -60,7 +60,6 @@ unsigned int YZSession::mCurrentJumpListItem = 0;
 YZVector<QString> YZSession::mExHistory;
 YZVector<QString> YZSession::mSearchHistory;
 JumpListVector YZSession::mJumpList;
-StartPositionVector YZSession::mStartPosition;
 YZTagStack YZSession::mTagStack;
 
 YZSession::YZSession( const QString& _sessionName ) {

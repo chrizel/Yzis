@@ -25,18 +25,10 @@
  * $Id$
  */
  
-#include "syntaxhighlight.h"
-#include "internal_options.h"
-#include "registers.h"
-#include "search.h"
-#include "events.h"
-#include "mode.h"
-#include "view.h"
-#include "viewcursor.h"
-#include "yzisinfo.h"
-#include "yzisinfojumplistrecord.h"
-#include "yzisinfostartpositionrecord.h"
+#include "yzis.h"
 
+#include "mode.h"  // for YZModeMap
+ 
 class YZView;
 class YZBuffer;
 class YzisSchemaManager;
@@ -345,29 +337,22 @@ class YZSession {
 		/**
 		 * Retrieve an int option
 		 */
-		static int getIntegerOption( const QString& option ) {
-			return YZSession::mOptions->readIntegerOption( option );
-		}
+		static int getIntegerOption( const QString& option );
 
 		/**
 		 * Retrieve a bool option
 		 */
-		static bool getBooleanOption( const QString& option ) {
-			return YZSession::mOptions->readBooleanOption( option );
-		}
+		static bool getBooleanOption( const QString& option );
 
 		/**
 		 * Retrieve a string option
 		 */
-		static QString getStringOption( const QString& option ) {
-			return YZSession::mOptions->readStringOption( option );
-		}
+		static QString getStringOption( const QString& option );
+		
 		/**
 		 * Retrieve a qstringlist option
 		 */
-		static QStringList getListOption( const QString& option ) {
-			return YZSession::mOptions->readListOption( option );
-		}
+		static QStringList getListOption( const QString& option );
 		
 		//-------------------------------------------------------
 		// ----------------- Miscellaneous

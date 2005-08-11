@@ -28,6 +28,9 @@
 #include "yzis.h"
 #include "mapping.h"
 #include "portability.h"
+#include "internal_options.h"
+#include "events.h"
+
 #include <stdarg.h>
 #include <qfileinfo.h>
 #include <qdir.h>

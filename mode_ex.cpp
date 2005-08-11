@@ -39,6 +39,10 @@
 #include "action.h"
 #include "schema.h"
 #include "tags_interface.h"
+#include "search.h"
+#include "internal_options.h"
+#include "viewcursor.h"
+
 #include <qobject.h>
 #include <qfileinfo.h>
 #include <qdir.h>

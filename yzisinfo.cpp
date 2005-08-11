@@ -25,6 +25,7 @@
 #include <qfileinfo.h>
 
 #include "debug.h"
+#include "internal_options.h"
 #include "session.h"
 #include "yzisinfo.h"
 #include "yzisinfojumplistrecord.h"

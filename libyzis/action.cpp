@@ -174,7 +174,7 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 	
 	QValueList<QChar>::const_iterator it = reg.begin(), end = reg.end();
 	for ( ; it != end; ++it )
-		YZSession::mRegisters->setRegister( *it, buff );
+		YZSession::me->setRegister( *it, buff );
 }
 
 
@@ -211,7 +211,7 @@ void YZAction::copyArea( YZView* /*pView*/, const YZInterval& i, const QValueLis
 	yzDebug() << "Copied " << buff << endl;
 	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
 	for ( ; it != endd; ++it )
-		YZSession::mRegisters->setRegister( *it, buff );
+		YZSession::me->setRegister( *it, buff );
 
 
 }
@@ -311,7 +311,7 @@ void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QValueList<
 
 	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
 	for ( ; it != endd; ++it )
-		YZSession::mRegisters->setRegister( *it, buff );
+		YZSession::me->setRegister( *it, buff );
 
 	pView->gotoxyAndStick( bX, bY );
 

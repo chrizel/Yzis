@@ -810,9 +810,8 @@ cmd_state YZModeEx::enew( const YZExCommandArgs& ) {
 }
 
 cmd_state YZModeEx::registers( const YZExCommandArgs& ) {
-	YZRegisters* regs = YZSession::me->mRegisters;
 	QString infoMessage(_("Registers:\n")); // will contain register-value table
-	QValueList<QChar> keys = regs->keys();
+	QValueList<QChar> keys = YZSession::me->getRegisters();
 	QValueList<QChar>::ConstIterator it = keys.begin(), end = keys.end();
 	QString regContents;
 	for( ; it != end ; ++it )
@@ -820,7 +819,7 @@ cmd_state YZModeEx::registers( const YZExCommandArgs& ) {
 		infoMessage += QString("\"") + (*it) + "  ";
 		// why I use space as separator? I don't know :)
 		// if you know what must be used here, fix it ;)
-		regContents = regs->getRegister( *it ).join(" ");
+		regContents = YZSession::me->getRegister( *it ).join(" ");
 		// FIXME dimsuz: maybe replace an abstract 27 with some predefined value?
 		if( regContents.length() >= 27 )
 		{

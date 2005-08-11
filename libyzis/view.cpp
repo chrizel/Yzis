@@ -287,8 +287,8 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		QValueList<QChar>::iterator end = mRegs.end();
 		for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 			QStringList list;
-		   	list << YZSession::mRegisters->getRegister( *it )[ 0 ] + modifiers + _key;
-			YZSession::mRegisters->setRegister( *it, list);
+		   	list << YZSession::me->getRegister( *it )[ 0 ] + modifiers + _key;
+			YZSession::me->setRegister( *it, list);
 		}
 	}
 
@@ -928,7 +928,7 @@ void YZView::commitUndoItem() {
 }
 
 void YZView::paste( QChar registr, bool after ) {
-	QStringList list = YZSession::mRegisters->getRegister( registr );
+	QStringList list = YZSession::me->getRegister( registr );
 	if ( list.isEmpty() ) return;
 
 	YZCursor pos( mainCursor->buffer() );
@@ -1593,16 +1593,16 @@ void YZView::recordMacro( const QValueList<QChar> &regs ) {
 	mRegs = regs;
 	QValueList<QChar>::iterator end = mRegs.end();
 	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it )
-		YZSession::mRegisters->setRegister( *it, QStringList());
+		YZSession::me->setRegister( *it, QStringList());
 }
 
 void YZView::stopRecordMacro() {
 	QValueList<QChar>::iterator end = mRegs.end();
 	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
 		QStringList list;
-		QString ne = YZSession::mRegisters->getRegister( *it )[ 0 ];
+		QString ne = YZSession::me->getRegister( *it )[ 0 ];
 		list << ne.mid( 0, ne.length() - 1 ); //remove the last 'q' which was recorded ;)
-		YZSession::mRegisters->setRegister( *it, list);
+		YZSession::me->setRegister( *it, list);
 	}
 	mRegs = QValueList<QChar>();
 }

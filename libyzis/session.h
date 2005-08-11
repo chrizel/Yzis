@@ -363,6 +363,25 @@ class YZSession {
 		QStringList eventCall(const QString& event, YZView *view=NULL);
 		
 		//-------------------------------------------------------
+		// ----------------- Registers
+		//-------------------------------------------------------
+		/**
+		 * Fills the register @param r with the @param value
+		 */
+		void setRegister( QChar r, const QStringList& value );
+
+		/**
+		 * Gets the value of register @param r
+		 * Returns a QString containing the register content
+		 */
+		QStringList& getRegister ( QChar r );
+
+		/**
+		 * Gets the list of registers
+		 */
+		QValueList<QChar> getRegisters();
+
+		//-------------------------------------------------------
 		// ----------------- Miscellaneous
 		//-------------------------------------------------------
 		/**
@@ -424,10 +443,10 @@ class YZSession {
 	private:
 		static YZEvents *events;
 		static YZInternalOptionPool *mOptions;
+		static YZRegisters *mRegisters;
 
 	public:
 		static int mNbViews;
-		static YZRegisters *mRegisters;
 		static YZYzisinfo* mYzisinfo;
 		
       /**

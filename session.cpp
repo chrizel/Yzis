@@ -56,10 +56,8 @@ YZEvents *YZSession::events = 0;
 YZYzisinfo *YZSession::mYzisinfo= 0;
 unsigned int YZSession::mCurrentExItem = 0;
 unsigned int YZSession::mCurrentSearchItem = 0;
-unsigned int YZSession::mCurrentJumpListItem = 0;
 YZVector<QString> YZSession::mExHistory;
 YZVector<QString> YZSession::mSearchHistory;
-JumpListVector YZSession::mJumpList;
 YZTagStack YZSession::mTagStack;
 
 YZSession::YZSession( const QString& _sessionName ) {
@@ -321,34 +319,7 @@ void YZSession::saveJumpPosition( const YZCursor * cursor ) {
 }
 
 const YZCursor * YZSession::previousJumpPosition() {
-
-	bool found = false;	
-	bool repeating = false;
-
-	while ( true ) {
-		if ( mCurrentJumpListItem == 0 ) {
-			// Make sure we don't end up in a endless loop
-			if ( repeating ) {
-				break;
-			}
-			
-			repeating = true;
-			mCurrentJumpListItem = mJumpList.count();
-		}
-		
-		--mCurrentJumpListItem;
-	
-		if ( mJumpList[mCurrentJumpListItem]->filename() == mCurBuffer->fileName() ) {
-			found = true;
-			break;
-		}
-	}
-	
-	if ( found ) {
-		return &mJumpList[mCurrentJumpListItem]->position();
-	} else {
-		return currentView()->getCursor();
-	}
+	return mYzisinfo->previousJumpPosition();
 }
 
 YZTagStack &YZSession::getTagStack()

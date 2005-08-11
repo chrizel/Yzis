@@ -124,8 +124,8 @@ void YZYzisinfo::readYzisinfo() {
 			}
 			
 			if ( list[0].startsWith("_") || list[0] == "search_history" ) {
-				YZSession::mJumpList.push_back( new YZYzisinfoJumpListRecord( list[3], list[1].toInt(), list[2].toInt() ) );
-				YZSession::mCurrentJumpListItem++;
+				mJumpList.push_back( new YZYzisinfoJumpListRecord( list[3], list[1].toInt(), list[2].toInt() ) );
+				mCurrentJumpListItem++;
 			}
 		}
 		
@@ -165,7 +165,7 @@ void YZYzisinfo::updateStartPosition( const YZBuffer *buffer, const int x, const
 void YZYzisinfo::updateJumpList( const YZBuffer *buffer, const int x, const int y ) {
 	bool found = false;
 
-	for ( JumpListVector::Iterator it = YZSession::mJumpList.begin(); it != YZSession::mJumpList.end(); ++it ) {
+	for ( JumpListVector::Iterator it = mJumpList.begin(); it != mJumpList.end(); ++it ) {
 		if ( (*it)->filename() == buffer->fileName() ) {
 			if ( (*it)->position().x() == static_cast<unsigned int>(x) && (*it)->position().y() == static_cast<unsigned int>(y) ) {
 				found = true;
@@ -175,7 +175,7 @@ void YZYzisinfo::updateJumpList( const YZBuffer *buffer, const int x, const int 
 	}
 	         
 	if ( ! found ) {         
-		YZSession::mJumpList.push_back( new YZYzisinfoJumpListRecord( buffer->fileName(), x, y ) );
+		mJumpList.push_back( new YZYzisinfoJumpListRecord( buffer->fileName(), x, y ) );
 	}
 	
 	return;
@@ -304,7 +304,7 @@ void YZYzisinfo::saveStartPosition( QTextStream & write ) {
 void YZYzisinfo::saveJumpList( QTextStream & write ) {
 
 	int start = 0;	
-	int end = YZSession::mJumpList.count();
+	int end = mJumpList.count();
 	
 	if ( end > 100 ) {
 		start = end - 100;
@@ -312,11 +312,11 @@ void YZYzisinfo::saveJumpList( QTextStream & write ) {
 	
 	for( int i = start; i < end; ++i ) {
 		write << "_" << " ";
-		write << YZSession::mJumpList[i]->position().x();
+		write << mJumpList[i]->position().x();
 		write << " ";
-		write << YZSession::mJumpList[i]->position().y();
+		write << mJumpList[i]->position().y();
 		write << " ";
-		write << YZSession::mJumpList[i]->filename() << endl;
+		write << mJumpList[i]->filename() << endl;
 	}
 }
 
@@ -341,7 +341,7 @@ YZCursor * YZYzisinfo::startPosition( const YZBuffer *buffer ) {
  
 YZCursor * YZYzisinfo::searchPosition( const YZBuffer */*buffer*/) {
 	
-	for ( JumpListVector::Iterator it = YZSession::mJumpList.begin(); it != YZSession::mJumpList.end(); ++it ) {
+	for ( JumpListVector::Iterator it = mJumpList.begin(); it != mJumpList.end(); ++it ) {
 		/*if ( (*it)->filename() == buffer->fileName() ) {
 			return (*it)->previousSearchPosition();
 		}*/
@@ -349,6 +349,38 @@ YZCursor * YZYzisinfo::searchPosition( const YZBuffer */*buffer*/) {
             
 	return new YZCursor( YZSession::me->currentView()->getBufferCursor() );
 }
+
+const YZCursor * YZYzisinfo::previousJumpPosition() {
+
+	bool found = false;	
+	bool repeating = false;
+
+	while ( true ) {
+		if ( mCurrentJumpListItem == 0 ) {
+			// Make sure we don't end up in a endless loop
+			if ( repeating ) {
+				break;
+			}
+			
+			repeating = true;
+			mCurrentJumpListItem = mJumpList.count();
+		}
+		
+		--mCurrentJumpListItem;
+	
+		if ( mJumpList[mCurrentJumpListItem]->filename() == YZSession::me->currentView()->myBuffer()->fileName() ) {
+			found = true;
+			break;
+		}
+	}
+	
+	if ( found ) {
+		return &mJumpList[mCurrentJumpListItem]->position();
+	} else {
+		return YZSession::me->currentView()->getCursor();
+	}
+}
+
 
 /*
  * END OF FILE

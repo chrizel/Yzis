@@ -30,6 +30,7 @@
 
 #include "action.h"
 #include "buffer.h"
+#include "history.h"
 #include "search.h"
 #include "selection.h"
 #include "session.h"
@@ -38,8 +39,10 @@ YZModeSearch::YZModeSearch() : YZMode() {
 	mType = YZMode::MODE_SEARCH;
 	mString = _( "[ Search ]" );
 	mMapMode = cmdline;
+	mHistory = new YZHistory;
 }
 YZModeSearch::~YZModeSearch() {
+	delete mHistory;
 }
 void YZModeSearch::enter( YZView* view ) {
 	YZSession::me->setFocusCommandLine();
@@ -81,7 +84,7 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 		if ( what.isEmpty() ) {
 			pos = replaySearch( view, &found );
 		} else {
-			YZSession::mSearchHistory[ YZSession::mCurrentSearchItem++ ] = what;
+			mHistory->addEntry( what );
 			pos = search( view, what, &found );
 			if ( view->getLocalBooleanOption( "incsearch" ) && view->incSearchFound ) {
 				pos = *view->incSearchResult;
@@ -96,18 +99,14 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 		view->modePool()->pop();
 		return CMD_OK;
 	} else if ( key == "<DOWN>" ) {
-		if (YZSession::mSearchHistory[YZSession::mCurrentSearchItem].isEmpty())
-			return CMD_OK;
-		YZSession::me->mCurrentSearchItem++;
-		view->setCommandLineText( YZSession::mSearchHistory[YZSession::mCurrentSearchItem] );
+		mHistory->goForwardInTime();
+		view->setCommandLineText( mHistory->getEntry() );
 		return CMD_OK;
 	} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
 		return CMD_OK;
 	} else if ( key == "<UP>" ) {
-		if(YZSession::me->mCurrentSearchItem == 0)
-			return CMD_OK;
-		YZSession::me->mCurrentSearchItem--;
-		view->setCommandLineText( YZSession::mSearchHistory[YZSession::mCurrentSearchItem] );
+		mHistory->goBackInTime();
+		view->setCommandLineText( mHistory->getEntry() );
 		return CMD_OK;
 	} else if ( key == "<ALT>:" ) {
 		view->modePool()->change( MODE_EX );

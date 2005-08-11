@@ -115,6 +115,8 @@ class YZExCommand {
 
 };
 
+class YZHistory;
+
 class YZModeEx : public YZMode {
 
 	public :
@@ -128,10 +130,13 @@ class YZModeEx : public YZMode {
 		void initPool();
 		cmd_state execCommand( YZView* mView, const QString& key );
 		cmd_state execExCommand( YZView* view, const QString& inputs );
+		
+		YZHistory *getHistory();
 
 	private :
 		YZList<const YZExCommand*> commands;
 		YZList<const YZExRange*> ranges;
+		YZHistory *mHistory;
 
 		QString parseRange( const QString& inputs, YZView* view, int* range, bool* matched );
 

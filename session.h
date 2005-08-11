@@ -450,32 +450,7 @@ class YZSession {
 		static YZRegisters *mRegisters;
 		static YZYzisinfo* mYzisinfo;
 		static YZTagStack mTagStack;
-
-	public:
-	    /**
-	     * command history
-	     */
-	     
-	    static YZVector<QString> mExHistory;
-	     
-	    /**
-	     * current command history item
-	     */
-	     
-	    static unsigned int mCurrentExItem;
-	
-	   /**
-	    * search history
-	    */
-	    
-	    static YZVector<QString> mSearchHistory;
-     
-	    /**
-	     * current search history item
-	     */
-	     
-	    static unsigned int mCurrentSearchItem;
-	    
+		
 	public:
 		static YZSession *me;
 };

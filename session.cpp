@@ -421,3 +421,19 @@ YZInternalOptionPool *YZSession::getOptions()
 {
 	return mOptions;
 }
+
+void YZSession::setRegister( QChar r, const QStringList& value )
+{
+	mRegisters->setRegister( r, value );
+}
+
+QStringList& YZSession::getRegister ( QChar r )
+{
+	return mRegisters->getRegister( r );
+}
+
+QValueList<QChar> YZSession::getRegisters() 
+{ 
+	return mRegisters->keys(); 
+}
+

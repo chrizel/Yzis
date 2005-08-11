@@ -1292,7 +1292,7 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 	for ( unsigned int i = 0; i < args.count; i++ ) {
 		QValueList<QChar>::const_iterator it = args.regs.begin(), end = args.regs.end();
 		for ( ; it != end; ++it )
-			args.view->sendMultipleKey(YZSession::mRegisters->getRegister(*it)[ 0 ]);
+			args.view->sendMultipleKey(YZSession::me->getRegister(*it)[ 0 ]);
 	}
 
 	args.view->commitNextUndo();

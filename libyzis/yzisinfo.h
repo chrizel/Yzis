@@ -31,8 +31,10 @@
 
 class YZBuffer;
 class YZYzisinfoStartPositionRecord;
+class YZYzisinfoJumpListRecord;
 
 typedef YZVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
+typedef YZVector<YZYzisinfoJumpListRecord*> JumpListVector;
 
 /**
  * Class YZYzisinfo
@@ -135,7 +137,12 @@ class YZYzisinfo {
 		 */
 		 
 		YZCursor * searchPosition( const YZBuffer *buffer );
-	
+		
+		/**
+		 * Returns the previous jump position
+		 */
+		const YZCursor * previousJumpPosition();
+
 	private:
 		QFile mYzisinfo;
 		bool mYzisinfoInitialized; // is yzisinfo initialized
@@ -145,6 +152,18 @@ class YZYzisinfo {
 		 */
      
 		StartPositionVector mStartPosition;  
+		
+	    /**
+		 * jump list history
+		 */
+	     
+		JumpListVector mJumpList;
+	    
+	    /**
+		 * current jump list item
+		 */
+	     
+		unsigned int mCurrentJumpListItem;	    
 };
 
 #endif // YZISINFO_H

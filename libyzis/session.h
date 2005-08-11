@@ -41,7 +41,6 @@ class YZModeEx;
 class YZModeCommand;
 class YZViewCursor;
 class YZYzisinfo;
-class YZYzisinfoJumpListRecord;
 class YZTagStack;
 class YZViewId;
 
@@ -54,7 +53,6 @@ class YZViewId;
 
 typedef YZList<YZBuffer*> YZBufferList;
 typedef YZList<YZView*> YZViewList;
-typedef YZVector<YZYzisinfoJumpListRecord*> JumpListVector;
  
 class YZSession {
 	public:
@@ -477,18 +475,6 @@ class YZSession {
 	     */
 	     
 	    static unsigned int mCurrentSearchItem;
-	    
-	    /**
-	     * jump list history
-	     */
-	     
-	    static JumpListVector mJumpList;
-	    
-	    /**
-	     * current jump list item
-	     */
-	     
-	    static unsigned int mCurrentJumpListItem;
 	    
 	public:
 		static YZSession *me;

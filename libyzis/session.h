@@ -453,6 +453,7 @@ class YZSession {
 		static YZInternalOptionPool *mOptions;
 		static YZRegisters *mRegisters;
 		static YZYzisinfo* mYzisinfo;
+		static YZTagStack mTagStack;
 
 	public:
 	    /**
@@ -497,12 +498,6 @@ class YZSession {
 	     
 	    static unsigned int mCurrentJumpListItem;
 	    
-	    /**
-	     * tag list stack
-	     */
-	     
-		static YZTagStack mTagStack;
-
 	public:
 		static YZSession *me;
 };

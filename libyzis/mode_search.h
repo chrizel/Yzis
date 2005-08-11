@@ -27,11 +27,9 @@
 
 #include "mode.h"
 
-#include "view.h"
-#include "cursor.h"
-
 class YZView;
 class YZCursor;
+class YZHistory;
 
 class YZModeSearch : public YZMode {
 	public:
@@ -47,6 +45,11 @@ class YZModeSearch : public YZMode {
 		virtual YZCursor search( YZView* view, const QString& s, bool* found );
 		virtual YZCursor search( YZView* view, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found );
 		virtual YZCursor replaySearch( YZView* view, bool* found );
+		
+		YZHistory *getHistory() { return mHistory; }
+		
+	private:
+		YZHistory *mHistory;
 };
 
 

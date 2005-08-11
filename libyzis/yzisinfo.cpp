@@ -25,7 +25,10 @@
 #include <qfileinfo.h>
 
 #include "debug.h"
+#include "history.h"
 #include "internal_options.h"
+#include "mode_ex.h"
+#include "mode_search.h"
 #include "session.h"
 #include "yzisinfo.h"
 #include "yzisinfojumplistrecord.h"
@@ -112,11 +115,17 @@ void YZYzisinfo::readYzisinfo() {
 			}
 			
 			if ( list[0].startsWith(":") || list[0] == "command_list" ) {
-				YZSession::mExHistory[ YZSession::mCurrentExItem++ ] = (list.join(" ")).remove(0, 1);
+				YZModeEx *ex = YZSession::me->getExPool();
+				YZHistory *history = ex->getHistory();
+				
+				history->addEntry( (list.join(" ")).remove(0, 1) );
 			}
 			
 			if ( list[0].startsWith("?") || list[0] == "search_list" ) {
-				YZSession::mSearchHistory[ YZSession::mCurrentSearchItem++ ] = (list.join(" ")).remove(0, 1);
+				YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::me->getModes()[ YZMode::MODE_SEARCH ]);
+				YZHistory *history = search->getHistory();
+				
+				history->addEntry( (list.join(" ")).remove(0, 1) );
 			}
 			
 			if ( list[0].startsWith(">") || list[0] == "start_position" ) {
@@ -232,21 +241,8 @@ void YZYzisinfo::writeYzisinfo() {
  */
  
 void YZYzisinfo::saveExHistory( QTextStream & write ) {
-
-	int start = 0;
-	int end = YZSession::mExHistory.count();
-	
-	if ( end > 50) {
-		start = end - 50;
-	}
-
-	for ( int i = start; i < end; ++i ) {
-		if ( ! YZSession::mExHistory[i].isEmpty() ) {
-			write << ":";
-			write << YZSession::mExHistory[i];
-			write << endl;
-		}
-	}
+	YZHistory *history = YZSession::me->getExPool()->getHistory();
+	history->writeToStream( write );
 }
 
 /**
@@ -254,21 +250,9 @@ void YZYzisinfo::saveExHistory( QTextStream & write ) {
  */
  
 void YZYzisinfo::saveSearchHistory( QTextStream & write ) {
-	
-	int start = 0;
-	int end = YZSession::mSearchHistory.count();
-	
-	if ( end > 50) {
-		start = end - 50;
-	}
-
-	for ( int i = start; i < end; ++i ) {
-		if ( ! YZSession::mSearchHistory[i].isEmpty() ) {
-			write << "?";
-			write << YZSession::mSearchHistory[i];
-			write << endl;
-		}
-	}
+	YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::me->getModes()[ YZMode::MODE_SEARCH ] );
+	YZHistory *history = search->getHistory();
+	history->writeToStream( write );
 }
 
 /**

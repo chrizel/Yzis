@@ -42,6 +42,7 @@
 #include "search.h"
 #include "internal_options.h"
 #include "viewcursor.h"
+#include "history.h"
 
 #include <qobject.h>
 #include <qfileinfo.h>
@@ -71,6 +72,7 @@ YZModeEx::YZModeEx() : YZMode() {
 	mMapMode = cmdline;
 	commands.clear();
 	ranges.clear();
+	mHistory = new YZHistory;
 }
 
 YZModeEx::~YZModeEx() {
@@ -80,6 +82,8 @@ YZModeEx::~YZModeEx() {
 	for ( YZList<const YZExRange*>::Iterator itr = ranges.begin(); itr != ranges.end(); ++itr ) {
 		delete *itr;
 	}
+	
+	delete mHistory;
 }
 void YZModeEx::init() {
 	initPool();
@@ -99,25 +103,19 @@ cmd_state YZModeEx::execCommand( YZView* view, const QString& key ) {
 		if( view->getCommandLineText().isEmpty()) {
 			view->modePool()->pop();
 		} else {
-			QString cmd = YZSession::me->mExHistory[YZSession::me->mCurrentExItem] = view->getCommandLineText();
-			YZSession::me->mCurrentExItem++;
+			QString cmd = view->getCommandLineText();
+			mHistory->addEntry( cmd );
 			ret = execExCommand( view, cmd );
 			if ( ret != CMD_QUIT ) 
 				view->modePool()->pop( MODE_COMMAND );
 		}
 	} else if ( key == "<DOWN>" ) {
-		if(YZSession::mExHistory[YZSession::mCurrentExItem].isEmpty())
-			return ret;
-
-		YZSession::me->mCurrentExItem++;
-		view->setCommandLineText( YZSession::mExHistory[YZSession::mCurrentExItem] );
+		mHistory->goForwardInTime();
+		view->setCommandLineText( mHistory->getEntry() );
 	} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
 	} else if ( key == "<UP>" ) {
-		if(YZSession::me->mCurrentExItem == 0)
-			return ret;
-
-		YZSession::me->mCurrentExItem--;
-		view->setCommandLineText( YZSession::mExHistory[YZSession::mCurrentExItem] );
+		mHistory->goBackInTime();
+		view->setCommandLineText( mHistory->getEntry() );
 	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
 		view->modePool()->pop( MODE_COMMAND );
 	} else if ( key == "<TAB>" ) {
@@ -1072,4 +1070,9 @@ cmd_state YZModeEx::retab( const YZExCommandArgs& args ) {
 	args.view->recalcScreen();
 
 	return CMD_OK;
+}
+
+YZHistory *YZModeEx::getHistory()
+{
+	return mHistory;
 }

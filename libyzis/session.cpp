@@ -54,10 +54,6 @@ YZRegisters *YZSession::mRegisters = 0;
 YZSession *YZSession::me = 0;
 YZEvents *YZSession::events = 0;
 YZYzisinfo *YZSession::mYzisinfo= 0;
-unsigned int YZSession::mCurrentExItem = 0;
-unsigned int YZSession::mCurrentSearchItem = 0;
-YZVector<QString> YZSession::mExHistory;
-YZVector<QString> YZSession::mSearchHistory;
 YZTagStack YZSession::mTagStack;
 
 YZSession::YZSession( const QString& _sessionName ) {
@@ -76,8 +72,6 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mOptions = new YZInternalOptionPool();
 	mRegisters = new YZRegisters();
 	mYzisinfo= new YZYzisinfo();
-	mExHistory.resize(200);
-	mSearchHistory.resize(200);
 }
 
 YZSession::~YZSession() {

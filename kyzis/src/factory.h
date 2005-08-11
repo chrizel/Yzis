@@ -48,7 +48,6 @@ public:
 
 	//GUI interface
 	bool quit(int errorCode);
-	void changeCurrentView( YZView* );
 	void popupMessage( const QString& message );
     YZBuffer* createBuffer ( const QString &path = QString::null );
 	void deleteBuffer ( YZBuffer *b );
@@ -71,6 +70,8 @@ public slots :
 private:
 	KAboutData m_aboutData;
 	KInstance m_instance;
+	
+	void changeCurrentView( YZView* );
 
 public:
 	static KYZisDoc *currentDoc;

@@ -212,19 +212,9 @@ class YZSession {
 		YZView* currentView() { return mCurView; }
 
 		/**
-		 * Called from GUI when the current view has been changed
-		 */
-		void currentViewChanged ( YZView *v );
-
-		/**
 		 * Change the current view ( unassigned )
 		 */
 		void setCurrentView( YZView* );
-
-		/**
-		 * Notify the change of current view
-		 */
-		virtual void changeCurrentView( YZView* ) = 0;
 
 		//-------------------------------------------------------
 		// ----------------- View Navigation
@@ -407,6 +397,11 @@ class YZSession {
 		
 		void initModes();
 		void endModes();
+
+		/**
+		 * Notify the change of current view
+		 */
+		virtual void changeCurrentView( YZView* ) = 0;
 
 	public:
 		static int mNbViews;

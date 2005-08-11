@@ -381,12 +381,6 @@ void YZSession::deleteView( const YZViewId &id /*=YZViewId::invalid*/ )
 	removeView( view );
 }
 
-void YZSession::currentViewChanged( YZView *v )
-{ 
-	mCurView = v; 
-	mCurBuffer = v->myBuffer(); 
-}
-
 void YZSession::addView( YZView *view )
 {
 	mViewList.push_back( view );

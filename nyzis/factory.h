@@ -51,7 +51,6 @@ public:
 	 * YZSession interface :
 	 */
 	virtual bool quit ( int errorCode ) ;
-	virtual void changeCurrentView ( YZView * );
 	virtual	YZBuffer *createBuffer(const QString& path=QString::null);
 	virtual void popupMessage( const QString& message );
 	virtual void deleteBuffer ( YZBuffer *b );
@@ -70,6 +69,9 @@ private:
 	 * Fill the map of keycodes ncurses->Qt
 	 */
 	void initialiseKeycodes();
+	
+	virtual void changeCurrentView ( YZView * );
+	
 	/**
 	  * mapping ncurses->qt for keycodes
 	  */

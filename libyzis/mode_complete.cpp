@@ -86,7 +86,7 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	
 	yzDebug() << "COMPLETION: mPrefix: " << mPrefix << endl;
 	
-	QStringList completeOption = YZSession::mOptions->readListOption("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i");
+	QStringList completeOption = YZSession::me->getOptions()->readListOption("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i");
 	
 	for ( unsigned int i = 0; i < completeOption.size(); ++i ) {
 		QString option = completeOption[ i ];

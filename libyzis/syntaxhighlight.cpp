@@ -1566,7 +1566,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
 
 void YzisHighlighting::loadWildcards()
 {
-	YZInternalOptionPool* config = YZSession::mOptions;
+	YZInternalOptionPool* config = YZSession::me->getOptions();
 	config->setGroup("Highlighting " + iName);
 	QString extensionString = config->readQStringEntry("Highlighting " + iName + "/Wildcards", iWildcards);
 
@@ -1603,14 +1603,14 @@ QStringList& YzisHighlighting::getPlainExtensions()
 
 QString YzisHighlighting::getMimetypes()
 {
-	YZInternalOptionPool* config = YZSession::mOptions;
+	YZInternalOptionPool* config = YZSession::me->getOptions();
 	config->setGroup("Highlighting " + iName);
 	return config->readQStringEntry("Highlighting " + iName + "/Mimetypes", iMimetypes);
 }
 
 int YzisHighlighting::priority()
 {
-	YZInternalOptionPool* config = YZSession::mOptions;
+	YZInternalOptionPool* config = YZSession::me->getOptions();
 	config->setGroup("Highlighting " + iName);
 
 	return config->readIntEntry("Highlighting " + iName + "/Priority", m_priority);
@@ -1645,7 +1645,7 @@ void YzisHighlighting::setData(YzisHlData *)
 
 void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &list)
 {
-  YZInternalOptionPool* config = YZSession::mOptions;
+  YZInternalOptionPool* config = YZSession::me->getOptions();
   config->setGroup("Highlighting " + iName + " - Schema " + YZSession::me->schemaManager()->name(schema));
 
   list.clear();
@@ -1697,7 +1697,7 @@ void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &l
  */
 void YzisHighlighting::setYzisHlItemDataList(uint schema, YzisHlItemDataList& list)
 {
-  YZInternalOptionPool* config = YZSession::mOptions;
+  YZInternalOptionPool* config = YZSession::me->getOptions();
   config->setGroup("Highlighting " + iName + " - Schema " + YZSession::me->schemaManager()->name( schema ));
 
   QStringList settings;
@@ -3268,7 +3268,7 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   error->setSelectedTextColor(Qt::red);
   list.append(error);
 
-  YZInternalOptionPool* config = YZSession::mOptions;
+  YZInternalOptionPool* config = YZSession::me->getOptions();
   config->setGroup("Default Item Styles - Schema " + YZSession::me->schemaManager()->name( schema ));
 
   for (uint z = 0; z < defaultStyles(); z++)
@@ -3322,7 +3322,7 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 
 void YzisHlManager::setDefaults(uint schema, YzisAttributeList &list)
 {
-  YZInternalOptionPool* config = YZSession::mOptions;
+  YZInternalOptionPool* config = YZSession::me->getOptions();
   config->setGroup("Default Item Styles - Schema " + YZSession::me->schemaManager()->name(schema));
 
   for (uint z = 0; z < defaultStyles(); z++)

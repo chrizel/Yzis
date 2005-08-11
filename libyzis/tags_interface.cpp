@@ -78,7 +78,7 @@ static tagFile* doOpenTagFile( QString filename ) {
 }
 
 static bool openTagFile() {
-	QStringList tagsOption = YZSession::mOptions->readListOption("tags", "tags");
+	QStringList tagsOption = YZSession::me->getOptions()->readListOption("tags", "tags");
 	bool foundATagFile = false;
 	
 	for( unsigned int i = 0; i < tagsOption.size(); ++i ) {

@@ -796,7 +796,7 @@ void YZBuffer::setPath( const QString& _path ) {
 	d->path = QFileInfo( _path.stripWhiteSpace() ).absFilePath();
 	
 	if ( oldPath != QString::null ) {
-		YZSession::mOptions->updateOptions(oldPath, d->path);
+		YZSession::me->getOptions()->updateOptions(oldPath, d->path);
 	}
 	
 	// update swap file too
@@ -900,31 +900,31 @@ QString YZBuffer::getWordAt( const YZCursor& at ) const {
 }
 
 int YZBuffer::getLocalIntegerOption( const QString& option ) const {
-	if ( YZSession::mOptions->hasOption( d->path+"\\"+option ) ) //find the local one ?
-		return YZSession::mOptions->readIntegerOption( d->path+"\\"+option, 0 );
+	if ( YZSession::me->getOptions()->hasOption( d->path+"\\"+option ) ) //find the local one ?
+		return YZSession::me->getOptions()->readIntegerOption( d->path+"\\"+option, 0 );
 	else
-		return YZSession::mOptions->readIntegerOption( "Global\\" + option, 0 ); // else give the global default if any
+		return YZSession::me->getOptions()->readIntegerOption( "Global\\" + option, 0 ); // else give the global default if any
 }
 
 bool YZBuffer::getLocalBooleanOption( const QString& option ) const {
-	if ( YZSession::mOptions->hasOption( d->path+"\\"+option ) )
-		return YZSession::mOptions->readBooleanOption( d->path+"\\"+option, false );
+	if ( YZSession::me->getOptions()->hasOption( d->path+"\\"+option ) )
+		return YZSession::me->getOptions()->readBooleanOption( d->path+"\\"+option, false );
 	else
-		return YZSession::mOptions->readBooleanOption( "Global\\" + option, false );
+		return YZSession::me->getOptions()->readBooleanOption( "Global\\" + option, false );
 }
 
 QString YZBuffer::getLocalStringOption( const QString& option ) const {
-	if ( YZSession::mOptions->hasOption( d->path+"\\"+option ) )
-		return YZSession::mOptions->readStringOption( d->path+"\\"+option );
+	if ( YZSession::me->getOptions()->hasOption( d->path+"\\"+option ) )
+		return YZSession::me->getOptions()->readStringOption( d->path+"\\"+option );
 	else
-		return YZSession::mOptions->readStringOption( "Global\\" + option );
+		return YZSession::me->getOptions()->readStringOption( "Global\\" + option );
 }
 
 QStringList YZBuffer::getLocalListOption( const QString& option ) const {
-	if ( YZSession::mOptions->hasOption( d->path+"\\"+option ) )
-		return YZSession::mOptions->readListOption( d->path+"\\"+option, QStringList() );
+	if ( YZSession::me->getOptions()->hasOption( d->path+"\\"+option ) )
+		return YZSession::me->getOptions()->readListOption( d->path+"\\"+option, QStringList() );
 	else
-		return YZSession::mOptions->readListOption( "Global\\" + option, QStringList() );
+		return YZSession::me->getOptions()->readListOption( "Global\\" + option, QStringList() );
 }
 
 bool YZBuffer::updateHL( unsigned int line ) {

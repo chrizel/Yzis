@@ -1481,40 +1481,40 @@ QString YZView::getLocalOptionKey() {
 	return mBuffer->fileName()+"-view-"+ QString::number(id.getNumber());
 }
 YZOptionValue* YZView::getLocalOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
-		return YZSession::mOptions->getOption( getLocalOptionKey() + "\\" + option );
+	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
+		return YZSession::me->getOptions()->getOption( getLocalOptionKey() + "\\" + option );
 	else
-		return YZSession::mOptions->getOption( "Global\\"+option );
+		return YZSession::me->getOptions()->getOption( "Global\\"+option );
 }
 int YZView::getLocalIntegerOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
-		return YZSession::mOptions->readIntegerOption( getLocalOptionKey()+ "\\" + option );
+	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
+		return YZSession::me->getOptions()->readIntegerOption( getLocalOptionKey()+ "\\" + option );
 	else
-		return YZSession::mOptions->readIntegerOption( "Global\\" + option ); // else give the global default if any
+		return YZSession::me->getOptions()->readIntegerOption( "Global\\" + option ); // else give the global default if any
 }
 bool YZView::getLocalBooleanOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
-		return YZSession::mOptions->readBooleanOption( getLocalOptionKey()+"\\"+option );
+	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
+		return YZSession::me->getOptions()->readBooleanOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::mOptions->readBooleanOption( "Global\\" + option );
+		return YZSession::me->getOptions()->readBooleanOption( "Global\\" + option );
 }
 QString YZView::getLocalStringOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
-		return YZSession::mOptions->readStringOption( getLocalOptionKey()+"\\"+option );
+	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
+		return YZSession::me->getOptions()->readStringOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::mOptions->readStringOption( "Global\\" + option );
+		return YZSession::me->getOptions()->readStringOption( "Global\\" + option );
 }
 QStringList YZView::getLocalListOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
-		return YZSession::mOptions->readListOption( getLocalOptionKey()+"\\"+option );
+	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
+		return YZSession::me->getOptions()->readListOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::mOptions->readListOption( "Global\\" + option );
+		return YZSession::me->getOptions()->readListOption( "Global\\" + option );
 }
 MapOption YZView::getLocalMapOption( const QString& option ) {
-	if ( YZSession::mOptions->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
-		return YZSession::mOptions->readMapOption( getLocalOptionKey()+"\\"+option );
+	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
+		return YZSession::me->getOptions()->readMapOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::mOptions->readMapOption( "Global\\" + option );
+		return YZSession::me->getOptions()->readMapOption( "Global\\" + option );
 }
 
 void YZView::gotoStickyCol( unsigned int Y ) {

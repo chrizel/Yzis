@@ -171,8 +171,8 @@ void TestYZCommands::testCharMovement()
 
 void TestYZCommands::testBeginEndCharMovement()
 {
-	YZSession::mOptions->setGroup("Global");
-	YZSession::mOptions->getOption("cindent")->setBoolean(false);
+	YZSession::me->getOptions()->setGroup("Global");
+	YZSession::me->getOptions()->getOption("cindent")->setBoolean(false);
     mView->sendMultipleKey( "i<TAB>0123<ENTER>4567<ENTER>  89AB <ESC>" );
     CHECK_CURSOR_POS( mView, 2, 6 );
 
@@ -204,8 +204,8 @@ void TestYZCommands::testBeginEndCharMovement()
 void TestYZCommands::testLineMovement()
 {
 	//we test 'gg' like commands, make sure :set startofline=true first
-	YZSession::mOptions->setGroup("Global");
-	YZSession::mOptions->getOption("startofline")->setBoolean(true);
+	YZSession::me->getOptions()->setGroup("Global");
+	YZSession::me->getOptions()->getOption("startofline")->setBoolean(true);
     mView->sendMultipleKey( "i<TAB><TAB>0123<ENTER>4567<ENTER>89AB<ENTER> CDEF<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "\t\t0123\n4567\n89AB\n CDEF\n" );
     CHECK_MODE_COMMAND( mView );
@@ -242,7 +242,7 @@ void TestYZCommands::testLineMovement()
     CHECK_CURSOR_POS( mView, 2, 0 );
 
     //tests with startofline to false now
-	YZSession::mOptions->getOption("startofline")->setBoolean(false);
+	YZSession::me->getOptions()->getOption("startofline")->setBoolean(false);
     mView->sendMultipleKey("gg");
     CHECK_CURSOR_POS( mView, 0, 0 );
     mView->sendMultipleKey("G");
@@ -250,7 +250,7 @@ void TestYZCommands::testLineMovement()
 }
 
 void TestYZCommands::testMotionMovement() {
-	YZSession::mOptions->getOption("startofline")->setBoolean(true);
+	YZSession::me->getOptions()->getOption("startofline")->setBoolean(true);
     //tests with spaces on one line
     mView->sendMultipleKey( "iword1 word02 word03 word4 word05<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "word1 word02 word03 word4 word05\n" );
@@ -329,7 +329,7 @@ void TestYZCommands::testMotionMovement() {
     CHECK_CURSOR_POS( mView, 0, 0 );
 
     //tests with delimiters on multiple lines
-	YZSession::mOptions->getOption("cindent")->setBoolean(false);
+	YZSession::me->getOptions()->getOption("cindent")->setBoolean(false);
     mView->sendMultipleKey( "ggVGd" );
     mView->sendMultipleKey( "itest/function(test)/class::method()/<ENTER><TAB>void yzis::method(test()){<ENTER><TAB><TAB>printf(truc);<ESC>" );
     phCheckEquals( mBuf->getWholeText(), "test/function(test)/class::method()/\n\tvoid yzis::method(test()){\n\t\tprintf(truc);\n" );

@@ -134,6 +134,11 @@ class YZSession {
 		 * Get a pointer on the schema manager for syntax highlighting
 		 */
 		YzisSchemaManager *schemaManager() { return mSchemaManager; }
+		
+		/**
+		 * Get the Internal Option Pool
+		 */
+		YZInternalOptionPool *getOptions();
 
 		//-------------------------------------------------------
 		// ----------------- Buffer Creation/Destruction
@@ -418,10 +423,10 @@ class YZSession {
 		
 	private:
 		static YZEvents *events;
+		static YZInternalOptionPool *mOptions;
 
 	public:
 		static int mNbViews;
-		static YZInternalOptionPool *mOptions;
 		static YZRegisters *mRegisters;
 		static YZYzisinfo* mYzisinfo;
 		

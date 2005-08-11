@@ -518,7 +518,7 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 	YZBuffer* buff = NULL;
 	if ( args.view ) buff = args.view->myBuffer();
 	bool matched;
-	bool success = YZSession::mOptions->setOptionFromString( &matched, 
+	bool success = YZSession::me->getOptions()->setOptionFromString( &matched, 
 	args.arg.simplifyWhiteSpace()
 	, user_scope, buff, args.view );
 	
@@ -533,7 +533,7 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::mkyzisrc ( const YZExCommandArgs& args ) {
-	YZSession::mOptions->saveTo( QDir::currentDirPath() + "/yzis.conf", "", "HL Cache", args.force );
+	YZSession::me->getOptions()->saveTo( QDir::currentDirPath() + "/yzis.conf", "", "HL Cache", args.force );
 	return CMD_OK;
 }
 
@@ -866,8 +866,8 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 		idx++;
 	}
 	style += YZSession::me->schemaManager()->name(0); //XXX make it use the 'current' schema
-	YZSession::mOptions->setGroup(style);
-	QStringList option = YZSession::mOptions->readListOption(type);
+	YZSession::me->getOptions()->setGroup(style);
+	QStringList option = YZSession::me->getOptions()->readListOption(type);
 	yzDebug() << "HIGHLIGHT : Current " << type << " : " << option << endl;
 	if (option.count() < 7) return CMD_ERROR; //just make sure it's fine ;)
 
@@ -907,8 +907,8 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 		}
 	}
 	yzDebug() << "HIGHLIGHT : Setting new " << option << endl;
-	YZSession::mOptions->getOption( type )->setList( option );
-	YZSession::mOptions->setGroup("Global");
+	YZSession::me->getOptions()->getOption( type )->setList( option );
+	YZSession::me->getOptions()->setGroup("Global");
 
 	if ( args.view && args.view->myBuffer() ) {
 		YzisHighlighting *yzis = args.view->myBuffer()->highlight();
@@ -989,7 +989,7 @@ cmd_state YZModeEx::retab( const YZExCommandArgs& args ) {
 	if (args.arg.length() > 0) { // we got an argument
 		if (args.arg.toInt() > 0) {
 			// set the value of 'tabstop' to the argument given
-			YZSession::mOptions->setOptionFromString( args.arg.simplifyWhiteSpace().insert(0, "tabstop="),
+			YZSession::me->getOptions()->setOptionFromString( args.arg.simplifyWhiteSpace().insert(0, "tabstop="),
 					local_scope, args.view->myBuffer(), args.view );
 			tabstop = args.arg.toInt();
 		}

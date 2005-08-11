@@ -345,6 +345,19 @@ class YZSession {
 		static QStringList getListOption( const QString& option );
 		
 		//-------------------------------------------------------
+		// ----------------- Event plugins
+		//-------------------------------------------------------
+		/**
+		 * Connect an event to a lua function
+		 */
+		void eventConnect( const QString& event, const QString& function );
+		
+		/**
+		 * call a lua event
+		 */
+		QStringList eventCall(const QString& event, YZView *view=NULL);
+		
+		//-------------------------------------------------------
 		// ----------------- Miscellaneous
 		//-------------------------------------------------------
 		/**
@@ -402,13 +415,14 @@ class YZSession {
 		 * Notify the change of current view
 		 */
 		virtual void changeCurrentView( YZView* ) = 0;
+		
+	private:
+		static YZEvents *events;
 
 	public:
 		static int mNbViews;
 		static YZInternalOptionPool *mOptions;
 		static YZRegisters *mRegisters;
-		static YZSession *me;
-		static YZEvents *events;
 		static YZYzisinfo* mYzisinfo;
 		
       /**
@@ -464,6 +478,9 @@ class YZSession {
 	     */
 	     
 		static YZTagStack mTagStack;
+
+	public:
+		static YZSession *me;
 };
 
 #endif /* YZ_SESSION_H */

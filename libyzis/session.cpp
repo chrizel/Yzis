@@ -406,3 +406,13 @@ QString YZSession::getStringOption( const QString& option ) {
 QStringList YZSession::getListOption( const QString& option ) {
 	return YZSession::mOptions->readListOption( option );
 }
+
+void YZSession::eventConnect( const QString& event, const QString& function )
+{
+	events->connect( event, function );
+}
+
+QStringList YZSession::eventCall( const QString& event, YZView *view /*=NULL*/ )
+{
+	return events->exec( event, view );
+}

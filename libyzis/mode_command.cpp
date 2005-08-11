@@ -1115,7 +1115,7 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 	unsigned int y = args.view->getBufferCursor()->y();
 	YZBuffer *mBuffer = args.view->myBuffer();
 	mBuffer->action()->insertNewLine( args.view, mBuffer->textline( y ).length(), y );
-	QStringList results = YZSession::events->exec("INDENT_ON_ENTER", args.view);
+	QStringList results = YZSession::me->eventCall("INDENT_ON_ENTER", args.view);
 	if (results.count() > 0 ) {
 		if (results[0].length()!=0) {
 			mBuffer->action()->replaceLine( args.view, y+1, results[0] + mBuffer->textline( y+1 ).stripWhiteSpace() );
@@ -1125,7 +1125,7 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 	for ( unsigned int i = 1 ; i < args.count ; i++ ) {
 		y = args.view->getBufferCursor()->y();
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
-		results = YZSession::events->exec("INDENT_ON_ENTER", args.view);
+		results = YZSession::me->eventCall("INDENT_ON_ENTER", args.view);
 		if (results.count() > 0 ) {
 			if (results[0].length()!=0) {
 				mBuffer->action()->replaceLine( args.view, y+1, results[0] + mBuffer->textline( y+1 ).stripWhiteSpace() );

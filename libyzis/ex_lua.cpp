@@ -638,7 +638,7 @@ int YZExLua::connect(lua_State *L ) {
 	QString event = QString::fromUtf8( (  char * )lua_tostring (  L, 1 ) );
 	QString function = QString::fromUtf8( (  char * )lua_tostring (  L, 2 ) );
 
-	YZSession::events->connect(event,function);
+	YZSession::me->eventConnect(event,function);
 	
 	RET_LUA( 0 );
 }

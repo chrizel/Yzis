@@ -30,6 +30,9 @@
 #include "cursor.h"
 
 class YZBuffer;
+class YZYzisinfoStartPositionRecord;
+
+typedef YZVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
 
 /**
  * Class YZYzisinfo
@@ -136,6 +139,12 @@ class YZYzisinfo {
 	private:
 		QFile mYzisinfo;
 		bool mYzisinfoInitialized; // is yzisinfo initialized
+	    
+		/**
+		 * start position history
+		 */
+     
+		StartPositionVector mStartPosition;  
 };
 
 #endif // YZISINFO_H

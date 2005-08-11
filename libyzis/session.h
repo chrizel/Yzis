@@ -42,7 +42,6 @@ class YZModeCommand;
 class YZViewCursor;
 class YZYzisinfo;
 class YZYzisinfoJumpListRecord;
-class YZYzisinfoStartPositionRecord;
 class YZTagStack;
 class YZViewId;
 
@@ -56,7 +55,6 @@ class YZViewId;
 typedef YZList<YZBuffer*> YZBufferList;
 typedef YZList<YZView*> YZViewList;
 typedef YZVector<YZYzisinfoJumpListRecord*> JumpListVector;
-typedef YZVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
  
 class YZSession {
 	public:
@@ -479,12 +477,6 @@ class YZSession {
 	     */
 	     
 	    static unsigned int mCurrentSearchItem;
-	    
-	    /**
-	     * start position history
-	     */
-	     
-	    static StartPositionVector mStartPosition;
 	    
 	    /**
 	     * jump list history

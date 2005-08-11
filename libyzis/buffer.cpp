@@ -68,7 +68,9 @@
 	
 struct YZBuffer::Private
 {
-	Private() : id(YZSession::mNbBuffers++) {}
+	static unsigned int nextId;
+	
+	Private() : id(nextId++) {}
 	
 	// The current filename (absolute path name)
 	QString path;
@@ -110,6 +112,8 @@ struct YZBuffer::Private
 	State state;
 };
 
+unsigned int YZBuffer::Private::nextId = 1;
+	
 YZBuffer::YZBuffer() 
 	: d(new Private)
 {

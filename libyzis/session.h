@@ -425,7 +425,6 @@ class YZSession {
 
 	public:
 		static int mNbViews;
-		static int mNbBuffers;
 		static YZInternalOptionPool *mOptions;
 		static YZRegisters *mRegisters;
 		static YZSession *me;

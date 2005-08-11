@@ -135,6 +135,7 @@ class YZYzisinfo {
 	
 	private:
 		QFile mYzisinfo;
+		bool mYzisinfoInitialized; // is yzisinfo initialized
 };
 
 #endif // YZISINFO_H

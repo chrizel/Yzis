@@ -43,7 +43,7 @@ YZYzisinfo::YZYzisinfo() {
 	
 	QString path = QDir::homeDirPath() + "/.yzis";
 	mYzisinfo.setName( path + "/yzisinfo" );
-
+	mYzisinfoInitialized = false;
 }
 
 /**
@@ -68,11 +68,11 @@ YZYzisinfo::~YZYzisinfo() {
 
 void YZYzisinfo::readYzisinfo() {
 	
-	if ( YZSession::me->mYzisinfoInitialized ) {
+	if ( mYzisinfoInitialized ) {
 		return;
 	}
 
-	YZSession::me->mYzisinfoInitialized = true;
+	mYzisinfoInitialized = true;
 	
 	if ( mYzisinfo.open( IO_ReadOnly ) ) {
 		QTextStream stream( &mYzisinfo );

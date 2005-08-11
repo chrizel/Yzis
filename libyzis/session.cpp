@@ -49,12 +49,7 @@
 
 #include "tags_stack.h"
 
-YZInternalOptionPool *YZSession::mOptions = 0;
-YZRegisters *YZSession::mRegisters = 0;
 YZSession *YZSession::me = 0;
-YZEvents *YZSession::events = 0;
-YZYzisinfo *YZSession::mYzisinfo= 0;
-YZTagStack YZSession::mTagStack;
 
 YZSession::YZSession( const QString& _sessionName ) {
 	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
@@ -72,6 +67,7 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mOptions = new YZInternalOptionPool();
 	mRegisters = new YZRegisters();
 	mYzisinfo= new YZYzisinfo();
+	mTagStack = new YZTagStack;
 }
 
 YZSession::~YZSession() {
@@ -86,6 +82,7 @@ YZSession::~YZSession() {
 	delete YZMapping::self();
 	delete YZExLua::instance();
 	delete YZDebugBackend::instance();
+	delete mTagStack;
 }
 
 void YZSession::initModes() {
@@ -318,7 +315,7 @@ const YZCursor * YZSession::previousJumpPosition() {
 
 YZTagStack &YZSession::getTagStack()
 {
-	return mTagStack;
+	return *mTagStack;
 }
 
 YZView *YZSession::createView( YZBuffer *buffer )

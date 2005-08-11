@@ -445,11 +445,11 @@ class YZSession {
 		virtual void changeCurrentView( YZView* ) = 0;
 		
 	private:
-		static YZEvents *events;
-		static YZInternalOptionPool *mOptions;
-		static YZRegisters *mRegisters;
-		static YZYzisinfo* mYzisinfo;
-		static YZTagStack mTagStack;
+		YZEvents *events;
+		YZInternalOptionPool *mOptions;
+		YZRegisters *mRegisters;
+		YZYzisinfo* mYzisinfo;
+		YZTagStack *mTagStack;
 		
 	public:
 		static YZSession *me;

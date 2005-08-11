@@ -444,10 +444,10 @@ class YZSession {
 		static YZEvents *events;
 		static YZInternalOptionPool *mOptions;
 		static YZRegisters *mRegisters;
+		static YZYzisinfo* mYzisinfo;
 
 	public:
 		static int mNbViews;
-		static YZYzisinfo* mYzisinfo;
 		
       /**
        * yzisinfo initialized

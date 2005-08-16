@@ -130,7 +130,7 @@ unsigned int KYZisView::charWidth( const QChar& ch ) const {
 	return m_editor->fontMetrics().width( ch );
 }
 QChar KYZisView::currentChar() const {
-	return mBuffer->textline( mainCursor->bufferY() ).at( mainCursor->bufferX() );
+	return myBuffer()->textline( viewCursor().bufferY() ).at( viewCursor().bufferX() );
 }
 
 void KYZisView::wheelEvent( QWheelEvent * e ) {
@@ -150,7 +150,7 @@ void KYZisView::modeChanged (void) {
 
 void KYZisView::syncViewInfo() {
 //	yzDebug() << "KYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
-	m_editor->setCursor( mainCursor->screenX(), mainCursor->screenY() );
+	m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
 	if (viewInformation.c1!=viewInformation.c2)
 		status->changeItem( QString("%1,%2-%3 (%4)").arg(viewInformation.l+1 ).arg( viewInformation.c1+1 ).arg( viewInformation.c2+1 ).arg( viewInformation.percentage),99 );
 	else

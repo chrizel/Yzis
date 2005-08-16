@@ -33,10 +33,10 @@ class TYZView : public YZView
 public:
 	TYZView(YZBuffer *buf, YZSession *sess, int lines=50);
 
-	uint getCursorX() { return mainCursor->bufferX(); }
-	uint getCursorY() { return mainCursor->bufferY(); }
-	uint getCursorLine() { return mainCursor->bufferY(); }
-	uint getCursorCol() { return mainCursor->bufferX(); }
+	uint getCursorX() { return viewCursor()->bufferX(); }
+	uint getCursorY() { return viewCursor()->bufferY(); }
+	uint getCursorLine() { return viewCursor()->bufferY(); }
+	uint getCursorCol() { return viewCursor()->bufferX(); }
 
 	// Reimplemented to please compilation
 

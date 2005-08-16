@@ -116,6 +116,7 @@ class YZView {
 		 * Returm my current buffer
 		 */
 		YZBuffer *myBuffer() { return mBuffer; }
+		const YZBuffer *myBuffer() const { return mBuffer; }
 
 		/**
 		 * Return my current session
@@ -345,7 +346,7 @@ class YZView {
 		 * Get the view cursor
 		 * @return a constant ref to the view cursor ( YZViewCursor )
 		 */
-		const YZViewCursor &viewCursor() { return *mainCursor; }
+		const YZViewCursor &viewCursor() const { return *mainCursor; }
 
 		/**
 		 * Get the current cursor information
@@ -651,12 +652,12 @@ class YZView {
 
 		ViewInformation viewInformation;
 		
+	private:
+
 		/**
-		 * This is the main cursor, the one which is displayed
+	 	 * This is the main cursor, the one which is displayed
 		 */
 		YZViewCursor* mainCursor;
-
-	private:
 
 		/* screen top-left cursor */
 		YZViewCursor* scrollCursor;

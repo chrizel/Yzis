@@ -40,14 +40,19 @@ YZModeSearch::YZModeSearch() : YZMode() {
 	mString = _( "[ Search ]" );
 	mMapMode = cmdline;
 	mHistory = new YZHistory;
+	mSearchBegin = new YZCursor;
+	incSearchFound = false;
+	incSearchResult = new YZCursor;
 }
 YZModeSearch::~YZModeSearch() {
 	delete mHistory;
+	delete mSearchBegin;
+	delete incSearchResult;
 }
 void YZModeSearch::enter( YZView* view ) {
 	YZSession::me->setFocusCommandLine();
 	view->setCommandLineText( "" );
-	view->mSearchBegin->setCursor( view->getBufferCursor() );
+	mSearchBegin->setCursor( view->getBufferCursor() );
 }
 void YZModeSearch::leave( YZView* view ) {
 	view->setCommandLineText( "" );
@@ -71,8 +76,8 @@ void YZModeSearch::initModifierKeys() {
 }
 cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 	QString key = _key;
-	YZCursor* mSearchBegin = view->mSearchBegin;
-	YZCursor* incSearchResult = view->incSearchResult;
+	YZCursor* mSearchBegin = mSearchBegin;
+	YZCursor* incSearchResult = incSearchResult;
 	YZSelection* searchSelection = view->getSelectionPool()->search();
 
 	if ( key == "<ENTER>" ) {
@@ -86,9 +91,9 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 		} else {
 			mHistory->addEntry( what );
 			pos = search( view, what, &found );
-			if ( view->getLocalBooleanOption( "incsearch" ) && view->incSearchFound ) {
-				pos = *view->incSearchResult;
-				view->incSearchFound = false;
+			if ( view->getLocalBooleanOption( "incsearch" ) && incSearchFound ) {
+				pos = *incSearchResult;
+				incSearchFound = false;
 			}
 		}
 		if ( found ) {
@@ -115,7 +120,7 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 		if ( view->getLocalBooleanOption( "incsearch" ) ) {
 			view->gotoxy(mSearchBegin->x(), mSearchBegin->y());
 			view->setPaintAutoCommit( false );
-			view->incSearchFound = false;
+			incSearchFound = false;
 			view->sendPaintEvent( searchSelection->map() );
 			searchSelection->clear();
 			view->commitPaintEvent();
@@ -132,8 +137,8 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 	if ( view->getLocalBooleanOption("incsearch") ) {
 		view->setPaintAutoCommit( false );
 		unsigned int matchlength;
-		incSearchResult->setCursor( search(view, view->getCommandLineText(), *mSearchBegin, &matchlength, &(view->incSearchFound)) );
-		if ( view->incSearchFound ) {
+		incSearchResult->setCursor( search(view, view->getCommandLineText(), *mSearchBegin, &matchlength, &(incSearchFound)) );
+		if ( incSearchFound ) {
 			if ( view->getLocalBooleanOption("hlsearch") ) {
 				YZCursor endResult( incSearchResult );
 				endResult.setX( endResult.x() + matchlength - 1 );

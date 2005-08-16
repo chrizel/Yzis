@@ -50,6 +50,12 @@ class YZModeSearch : public YZMode {
 		
 	private:
 		YZHistory *mHistory;
+		
+		//search mode cursors
+		YZCursor *mSearchBegin;
+
+		bool incSearchFound;
+		YZCursor* incSearchResult;
 };
 
 

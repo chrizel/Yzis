@@ -257,19 +257,6 @@ void NYZFactory::doDeleteView( YZView *view )
 {
 	YZView *newview = currentView();
 	
-	// if we're deleting the current view, then change views
-	if ( view == currentView() ) {
-		newview = prevView();
-		
-		// if the next view is the ourself, that means there
-		// was only one view and we should exit
-		if ( newview != view ) {
-			setCurrentView( newview );
-		} else {
-			exitRequest( 0 );
-		}
-	}
-	
 	rmBuffer( view->myBuffer() );
 	
 	newview->setCommandLineText( "" );

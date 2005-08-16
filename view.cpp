@@ -1724,3 +1724,24 @@ const YZViewId &YZView::getId() const
 {
 	return id;
 }
+
+QString YZView::getLineStatusString() const
+{
+	QString status;
+	
+	if (viewInformation.c1 != viewInformation.c2) {
+		status = QString("%1,%2-%3 (%4)")
+				.arg(viewInformation.l + 1 )
+				.arg( viewInformation.c1 + 1 )
+				.arg( viewInformation.c2 + 1 )
+				.arg( viewInformation.percentage);
+	} else {
+		status = QString("%1,%2 (%3)")
+				.arg(viewInformation.l + 1 )
+				.arg( viewInformation.c1 + 1 )
+				.arg( viewInformation.percentage );
+	}
+	
+	return status;
+}
+

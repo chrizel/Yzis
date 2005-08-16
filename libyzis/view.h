@@ -648,14 +648,24 @@ class YZView {
 		QString mLastPreviousChars;
 
 		class  ViewInformation {
-		public:
-			int l;  //buffer line
-			int c1; //buffer column
-			int c2; //buffer column as drawn
-			QString percentage;
+			public:
+				int l;  //buffer line
+				int c1; //buffer column
+				int c2; //buffer column as drawn
+				QString percentage;
 		};
-		ViewInformation viewInformation;
 
+		ViewInformation viewInformation;
+		
+		/**
+		 * This is the main cursor, the one which is displayed
+		 */
+		YZViewCursor* mainCursor;
+
+	private:
+
+		/* screen top-left cursor */
+		YZViewCursor* scrollCursor;
 
 		/**
 		 * Searching backward
@@ -666,16 +676,6 @@ class YZView {
 		 * is font used fixed ?
 		 */
 		bool isFontFixed;
-
-		/**
-		 * This is the main cursor, the one which is displayed
-		 */
-		YZViewCursor* mainCursor;
-
-		/* screen top-left cursor */
-		YZViewCursor* scrollCursor;
-
-	private:
 
 		/**
 		 * The current session, provided by the GUI

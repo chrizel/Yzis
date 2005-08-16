@@ -105,7 +105,7 @@ KYZisFactory *KYZisFactory::self() {
 	return self;
 }
 
-KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name, const char *_classname, const QStringList &args) {
+KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name, const char *_classname, const QStringList &/*args*/) {
 	yzDebug() << "Factory::createPartObject" << endl;
 	QCString classname (_classname);
 	bool bSingleView = (classname!="KTextEditor::Document");
@@ -115,15 +115,6 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 		Kyzis::me = static_cast<Kyzis*>( parentWidget );
 	else {
         Kyzis::me = 0;
-	}
-
-	//this is only usefull in kyzis, but we should not leak if we are not in kyzis ! :)
-	QString kID="0", kvId="0";
-	if ( args.count() > 0 ) {
-		kID = args[ 0 ];// buffer ID
-	}
-	if ( args.count() > 1 ) {
-		kvId = args[ 1 ]; // view ID
 	}
 
 	KYZisDoc *doc = new KYZisDoc (parentWidget, widgetname, parent, name );

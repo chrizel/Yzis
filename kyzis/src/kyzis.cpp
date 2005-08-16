@@ -233,13 +233,8 @@ QString Kyzis::createBuffer(const QString& path) {
 			kdDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
 			return QString::null;
 		}
-		// now that the Part is loaded, we cast it to a Part to get
-		// our hands on it
-		QStringList list;
-		//buffer number , view number
-		list << QString::number( mBuffers++ ) << QString::number( mViews++ );
-
-		KParts::ReadWritePart * part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart", list ));
+		
+		KParts::ReadWritePart * part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart"));
 		KYZisDoc *doc = static_cast<KYZisDoc*>(part);
 
 		if (part)

@@ -251,11 +251,14 @@ QString Kyzis::createBuffer(const QString& path) {
 			}
 			
 			kdDebug() << "Yzis part successfully loaded" << endl;
-			KMdiChildView *view = createWrapper( part->widget(), QString::number( mViews ), doc->fileName() );
+			KMdiChildView *mdi = createWrapper( part->widget(), QString::number( mViews ), doc->fileName() );
 			part->widget()->setFocus();
-			addWindow( view );
-			KView v = { view , part };
-			viewList[YZViewId(mViews-1)] = v;
+			addWindow( mdi );
+
+            // doc already had a view associated with it in factory->create()
+            YZView *view = doc->firstView();
+			KView v = { mdi , part };
+			viewList[view->getId()] = v;
 			createGUI(part);
 		}
 		

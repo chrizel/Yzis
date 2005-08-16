@@ -13,7 +13,7 @@
     </keywords>
     <projectdirectory>.</projectdirectory>
     <absoluteprojectpath>false</absoluteprojectpath>
-    <description></description>
+    <description/>
     <ignoreparts>
       <part>kdevsecurity</part>
     </ignoreparts>
@@ -76,11 +76,11 @@
   <kdevdebugger>
     <general>
       <dbgshell>libtool</dbgshell>
-      <programargs></programargs>
-      <gdbpath></gdbpath>
-      <configGdbScript></configGdbScript>
-      <runShellScript></runShellScript>
-      <runGdbScript></runGdbScript>
+      <programargs/>
+      <gdbpath/>
+      <configGdbScript/>
+      <runShellScript/>
+      <runGdbScript/>
       <breakonloadinglibs>true</breakonloadinglibs>
       <separatetty>false</separatetty>
       <floatingtoolbar>false</floatingtoolbar>
@@ -115,13 +115,13 @@
       <directoryradio>build</directoryradio>
       <customdirectory>/</customdirectory>
       <mainprogram>kyzis/kyzis</mainprogram>
-      <programargs></programargs>
+      <programargs/>
       <terminal>false</terminal>
       <autocompile>true</autocompile>
       <envvars/>
     </run>
     <general>
-      <useconfiguration>default</useconfiguration>
+      <useconfiguration>craig</useconfiguration>
     </general>
     <configurations>
       <mikmak>
@@ -178,6 +178,23 @@
         <cxxflags/>
         <f77flags/>
       </mikmak-qt4>
+      <craig>
+        <envvars/>
+        <configargs>--enable-debug=full  --with-lua-includes=/usr/include/lua50</configargs>
+        <builddir>craig</builddir>
+        <topsourcedir/>
+        <cppflags/>
+        <ldflags/>
+        <ccompiler>kdevgccoptions</ccompiler>
+        <cxxcompiler>kdevgppoptions</cxxcompiler>
+        <f77compiler>kdevpgf77options</f77compiler>
+        <ccompilerbinary>/home/craig/bin/ccache/gcc</ccompilerbinary>
+        <cxxcompilerbinary>/home/craig/bin/ccache/g++</cxxcompilerbinary>
+        <f77compilerbinary/>
+        <cflags/>
+        <cxxflags/>
+        <f77flags/>
+      </craig>
     </configurations>
   </kdevautoproject>
   <cppsupportpart>
@@ -201,7 +218,7 @@
     </codecompletion>
     <references/>
     <creategettersetter>
-      <prefixGet></prefixGet>
+      <prefixGet/>
       <prefixSet>set</prefixSet>
       <prefixVariable>m_,_</prefixVariable>
       <parameterName>theValue</parameterName>

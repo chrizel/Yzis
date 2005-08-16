@@ -55,19 +55,34 @@ class YZOptionValue;
 class YZView {
 
 	public:
+		//-------------------------------------------------------
+		// ----------------- Constructor/Destructor and ID
+		//-------------------------------------------------------
 		/**
 		 * Each view is bound to a buffer, @arg lines is the initial
 		 * number of lines that this view can display
 		 */
 		YZView(YZBuffer *_b, YZSession *sess, int lines);
+		
 		virtual ~YZView();
 
+		/**
+		 * A global UID for this view
+		 **/
+		const YZViewId& getId() const;
+
+		//-------------------------------------------------------
+		// ----------------- Fonts
+		//-------------------------------------------------------
 		/**
 		 * set font mode ( fixed or not )
 		 * @arg fixed is true if used font is fixed
 		 */
 		void setFixedFont( bool fixed );
 
+		//-------------------------------------------------------
+		// ----------------- Visible Areas
+		//-------------------------------------------------------
 		/**
 		 * Updates the number of visible @arg c columns and @arg l lines
 		 * @arg c is the number of columns ( fixed fonts ) or width in pixel ( non-fixed fonts ) of the Area
@@ -75,11 +90,18 @@ class YZView {
 		 * @arg resfresh if true, refreshView is called
 		 */
 		void setVisibleArea (int c, int l, bool refresh = true );
+		
+		//-------------------------------------------------------
+		// ----------------- Send events to GUI
+		//-------------------------------------------------------
 		/**
 		 * transfer key events from GUI to core
 		 */
 		void sendKey(const QString& key, const QString& modifiers="");
 
+		//-------------------------------------------------------
+		// ----------------- Line Visibility
+		//-------------------------------------------------------
 		/**
 		 * Returns the index of the first line displayed on the view
 		 */
@@ -112,8 +134,11 @@ class YZView {
 		 */
 		bool	isColumnVisible(unsigned int column, unsigned int line);
 
+		//-------------------------------------------------------
+		// ----------------- Associated Objects
+		//-------------------------------------------------------
 		/**
-		 * Returm my current buffer
+		 * Return my current buffer
 		 */
 		YZBuffer *myBuffer() { return mBuffer; }
 		const YZBuffer *myBuffer() const { return mBuffer; }
@@ -126,8 +151,18 @@ class YZView {
 		/**
 		 * Return my current line search
 		 */
-		 YZLineSearch* myLineSearch() { return mLineSearch; }
+		YZLineSearch* myLineSearch() { return mLineSearch; }
+		
+		YZModePool* modePool() { return mModePool; }
+		YZSelectionPool* getSelectionPool() const { return selectionPool; }
+		
+		const QValueList<QChar> registersRecorded() { return mRegs; }
+		
+		YZSelectionMap visualSelection();
 
+		//-------------------------------------------------------
+		// ----------------- Scrolling
+		//-------------------------------------------------------
 		/**
 		 * Adjust view vertically to show @arg line on bottom
 		 */
@@ -147,11 +182,18 @@ class YZView {
 		 * align view vertically on the given buffer @arg line
 		 */
 		void alignViewBufferVertically(unsigned int line);
+		
 		/**
 		 * align view vertically on the given screen @arg line
 		 */
 		void alignViewVertically(unsigned int line);
 
+		virtual void scrollUp( int ) = 0;
+		virtual void scrollDown( int ) = 0;
+
+		//-------------------------------------------------------
+		// ----------------- Command Input Buffer
+		//-------------------------------------------------------
 		/**
 		 * Clean out the current buffer of inputs
 		 * Typically used after a command is recognized or when ESC is pressed
@@ -161,6 +203,9 @@ class YZView {
 		QString getInputBuffer() { return mPreviousChars; }
 		QString getLastInputBuffer() { return mLastPreviousChars; }
 
+		//-------------------------------------------------------
+		// ----------------- Cursor Motion
+		//-------------------------------------------------------
 		/**
 		 * moves the cursor of the current view down
 		 */
@@ -204,42 +249,6 @@ class YZView {
 		QString moveToEndOfLine();
 		QString moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor = true );
 
-		/* Prepend enough spaces to string so line is "centered" */
-		QString centerLine( const QString& );
-
-		/* Display Intro text message */
-		void displayIntro();
-
-		void commitUndoItem();
-		/**
-		 * Go to line of file
-		 */
-		void gotoLine( unsigned int line );
-		void gotoLine( YZViewCursor* viewCursor, unsigned int line, bool applyCursor = true );
-
-		/**
-		 * Go to last line of the file
-		 */
-		void gotoLastLine();
-		void gotoLastLine( YZViewCursor* viewCursor, bool applyCursor = true );
-
-		/**
-		 * Append after current character
-		 */
-		QString append ( );
-
-		/**
-		 * Undo last action
-		 */
-		void undo ( unsigned int count = 1 );
-
-		/**
-		 * Redo last undoed action
-		 */
-		void redo ( unsigned int count = 1 );
-
-		virtual void printToFile( const QString& path );
-
 		/**
 		 * Moves the draw cursor to @arg nextx, @arg nexty
 		 */
@@ -271,102 +280,26 @@ class YZView {
 		void gotoxyAndStick( unsigned int x, unsigned int y );
 
 		/**
-		 * Pastes the content of default or given register
+		 * Go to line of file
 		 */
-		void paste( QChar registr, bool after = true );
+		void gotoLine( unsigned int line );
+		void gotoLine( YZViewCursor* viewCursor, unsigned int line, bool applyCursor = true );
 
 		/**
-		 * A global UID for this view
-		 **/
-		const YZViewId& getId() const;
-
-		/**
-		 * Get the text describing the mode
+		 * Go to last line of the file
 		 */
-		QString mode();
+		void gotoLastLine();
+		void gotoLastLine( YZViewCursor* viewCursor, bool applyCursor = true );
 
-		//GUI
 		/**
-		 * Retrieve the text from command line
+		 * move the cursor to the sticky column
 		 */
-		virtual QString getCommandLineText() const = 0;
+		void gotoStickyCol( unsigned int Y );
+		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor = true );
 
-		/**
-		 * Sets the command line text
-		 */
-		virtual void setCommandLineText( const QString& ) = 0;
-
-		virtual void paintEvent( const YZSelection& drawMap ) = 0;
-
-		void sendCursor( YZViewCursor* cursor );
-		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
-		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
-		void sendPaintEvent( YZSelectionMap map, bool isBufferMap = true );
-
-		// ask to draw from buffer line @arg line to @arg line + @arg n
-		void sendBufferPaintEvent( unsigned int line, unsigned int n );
-
-		/**
-		 * Ask for refresh screen
-		 */
-		void sendRefreshEvent();
-
-		void removePaintEvent( const YZCursor& from, const YZCursor& to );
-		void setPaintAutoCommit( bool enable = true );
-		void abortPaintEvent();
-		void commitPaintEvent();
-
-		/**
-		  * called when the mode is changed, so that gui can
-		  * update information diplayed to the user
-		  */
-		virtual void modeChanged() {};
-
-		/**
-		 * Asks a redraw of the whole view
-		 */
-		void refreshScreen();
-
-		/**
-		 * recalcScreen refresh the screen and recalculate cursor position
-		 */
-		void recalcScreen();
-
-		/**
-		 * Displays an informational message
-		 */
-		virtual void displayInfo( const QString& info ) = 0;
-
-		/**
-		 * Display informational status about the current file and cursor
-		 */
-		virtual void syncViewInfo() = 0;
-
-		/**
-		 * Get the view cursor
-		 * @return a constant ref to the view cursor ( YZViewCursor )
-		 */
-		const YZViewCursor &viewCursor() const { return *mainCursor; }
-
-		/**
-		 * Get the current cursor information
-		 * @return a reference on the current cursor
-		 */
-		YZCursor* getCursor();
-
-		/**
-		 * Get the current buffer cursor information
-		 * @return a reference on the current buffer cursor
-		 */
-		YZCursor* getBufferCursor();
-
-		YZViewCursor* visualCursor() { return mVisualCursor; }
-
-		/**
-		 * Updates the position of the cursor
-		 */
-		void updateCursor();
-
+		//-------------------------------------------------------
+		// ----------------- Drawing
+		//-------------------------------------------------------
 		/**
 		 * init r and s Cursor
 		 */
@@ -385,17 +318,15 @@ class YZView {
 		 */
 		bool drawNextLine( );
 
-		/*
+		/**
 		 * go to prev col
 		 */
 		bool drawPrevCol( );
 
-		/*
+		/**
 		 * go to next col
 		 */
 		bool drawNextCol( );
-
-		const QChar& fillChar() const;
 
 		/**
 		 * draw char
@@ -411,16 +342,6 @@ class YZView {
 		 * line increment (on screen)
 		 */
 		unsigned int drawHeight( );
-
-		/**
-		 * line increment (on buffer)
-		 */
-		 unsigned int lineIncrement( );
-
-		/**
-		 * current line height (on screen)
-		 */
-		 unsigned int lineHeight( );
 
 		/**
 		 * char color
@@ -485,14 +406,105 @@ class YZView {
 		/**
 		 * total height ( draw )
 		 */
-		 unsigned int drawTotalHeight();
+		unsigned int drawTotalHeight();
 
 		bool drawSelected();
 
-		virtual void scrollUp( int ) = 0;
-		virtual void scrollDown( int ) = 0;
+		//-------------------------------------------------------
+		// ----------------- Undo
+		//-------------------------------------------------------
+		/**
+		 * Commit undo item
+		 */
+		void commitUndoItem();
+		
+		/**
+		 * Undo last action
+		 */
+		void undo ( unsigned int count = 1 );
 
-		//Local Options management
+		/**
+		 * Redo last undoed action
+		 */
+		void redo ( unsigned int count = 1 );
+
+		/**
+		 * Prepares to record next undo item
+		 */
+		void commitNextUndo();
+
+		//-------------------------------------------------------
+		// ----------------- GUI Status Notifications
+		//-------------------------------------------------------
+		/**
+		 * Retrieve the text from command line
+		 */
+		virtual QString getCommandLineText() const = 0;
+
+		/**
+		 * Sets the command line text
+		 */
+		virtual void setCommandLineText( const QString& ) = 0;
+
+		/**
+		 * Displays an informational message
+		 */
+		virtual void displayInfo( const QString& info ) = 0;
+
+		/**
+		 * Display informational status about the current file and cursor
+		 */
+		virtual void syncViewInfo() = 0;
+
+		//-------------------------------------------------------
+		// ----------------- Macros
+		//-------------------------------------------------------
+		/**
+		 * Start recording a macro into @param regs
+		 */
+		void recordMacro( const QValueList<QChar> &regs );
+
+		/**
+		 * Stop recording macros
+		 */
+		void stopRecordMacro();
+
+		/**
+		 * Are macros being recorded
+		 */
+		bool isRecording() { return mRegs.count() > 0; }
+
+		//-------------------------------------------------------
+		// ----------------- Buffer Modification
+		//-------------------------------------------------------
+		/**
+		 * Append after current character
+		 */
+		QString append ( );
+
+		/**
+		 * Pastes the content of default or given register
+		 */
+		void paste( QChar registr, bool after = true );
+
+		/**
+		 * Reindent given line ( cindent )
+		 */
+		void reindent( unsigned int X, unsigned int Y );
+
+		/**
+		 * Create new indented line
+		 */
+		void indent();
+
+		/**
+		 * Prepend enough spaces to string so line is "centered" 
+		 */
+		QString centerLine( const QString& );
+
+		//-------------------------------------------------------
+		// ----------------- Options
+		//-------------------------------------------------------
 		QString getLocalOptionKey();
 
 		YZOptionValue* getLocalOption( const QString& option );
@@ -522,6 +534,98 @@ class YZView {
 		 */
 		MapOption getLocalMapOption( const QString& option );
 
+		//-------------------------------------------------------
+		// ----------------- Paint Events
+		//-------------------------------------------------------
+		virtual void paintEvent( const YZSelection& drawMap ) = 0;
+
+		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
+		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
+		void sendPaintEvent( YZSelectionMap map, bool isBufferMap = true );
+
+		/**
+		 * ask to draw from buffer line @arg line to @arg line + @arg n
+		 */
+		void sendBufferPaintEvent( unsigned int line, unsigned int n );
+
+		/**
+		 * Ask for refresh screen
+		 */
+		void sendRefreshEvent();
+
+		void removePaintEvent( const YZCursor& from, const YZCursor& to );
+		void setPaintAutoCommit( bool enable = true );
+		void abortPaintEvent();
+		void commitPaintEvent();
+
+		/**
+		 * Asks a redraw of the whole view
+		 */
+		void refreshScreen();
+
+		/**
+		 * recalcScreen refresh the screen and recalculate cursor position
+		 */
+		void recalcScreen();
+
+		//-------------------------------------------------------
+		// ----------------- Cursors
+		//-------------------------------------------------------
+		void sendCursor( YZViewCursor* cursor );
+		
+		/**
+		 * Get the view cursor
+		 * @return a constant ref to the view cursor ( YZViewCursor )
+		 */
+		const YZViewCursor &viewCursor() const { return *mainCursor; }
+
+		/**
+		 * Get the current cursor information
+		 * @return a reference on the current cursor
+		 */
+		YZCursor* getCursor();
+
+		/**
+		 * Get the current buffer cursor information
+		 * @return a reference on the current buffer cursor
+		 */
+		YZCursor* getBufferCursor();
+
+		YZViewCursor* visualCursor() { return mVisualCursor; }
+
+		/**
+		 * Updates the position of the cursor
+		 */
+		void updateCursor();
+
+		//-------------------------------------------------------
+		// ----------------- Sticky
+		//-------------------------------------------------------
+		/**
+		 * Updates stickyCol
+		 */
+		void setStickyCol( unsigned int col ) { stickyCol = col; }
+
+		void updateStickyCol( );
+		
+		/**
+		 * update stickCol to according to viewCursor
+		 */
+		void updateStickyCol( YZViewCursor* viewCursor );
+
+		//-------------------------------------------------------
+		// ----------------- Dimensions
+		//-------------------------------------------------------
+		/**
+		 * line increment (on buffer)
+		 */
+		unsigned int lineIncrement( );
+
+		/**
+		 * current line height (on screen)
+		 */
+		unsigned int lineHeight( );
+
 		/**
 		 * width of a space ( in pixel or in cols )
 		 */
@@ -539,76 +643,27 @@ class YZView {
 		 */
 		virtual unsigned int charWidth( const QChar& ch ) const = 0;
 
+		//-------------------------------------------------------
+		// ----------------- Mode
+		//-------------------------------------------------------
 		/**
-		 * Reindent given line ( cindent )
+		 * Get the text describing the mode
 		 */
-		void reindent( unsigned int X, unsigned int Y );
+		QString mode();
 
 		/**
-		 * Create new indented line
+		 * called when the mode is changed, so that gui can
+		 * update information diplayed to the user
 		 */
-		void indent();
+		virtual void modeChanged() {};
 
+		//-------------------------------------------------------
+		// ----------------- GUI Notifications
+		//-------------------------------------------------------
 		/**
-		 * move the cursor to the sticky column
+		 * Ask the GUI to popup for a filename
+		 * @return whether a file name was successfully chosen
 		 */
-		void gotoStickyCol( unsigned int Y );
-		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor = true );
-
-		YZModePool* modePool() { return mModePool; }
-		YZSelectionPool* getSelectionPool() const { return selectionPool; }
-
-		/**
-		 * Updates stickyCol
-		 */
-		void setStickyCol( unsigned int col ) { stickyCol = col; }
-
-		void updateStickyCol( );
-		/**
-		 * update stickCol to according to viewCursor
-		 */
-		void updateStickyCol( YZViewCursor* viewCursor );
-
-		QString getCharBelow( int delta );
-
-		/**
-		 * Prepares to record next undo item
-		 */
-		void commitNextUndo();
-
-		/* inform view for init changes starting at x,y */
-		void initChanges( unsigned int x, unsigned int y );
-		/* inform view for apply changes ending at x,y */
-		void applyChanges( unsigned int x, unsigned int y );
-
-		/**
-		 * Start recording a macro into @param regs
-		 */
-		void recordMacro( const QValueList<QChar> &regs );
-
-		/**
-		 * Stop recording macros
-		 */
-		void stopRecordMacro();
-
-		/**
-		 * Are macros being recorded
-		 */
-		bool isRecording() { return mRegs.count() > 0; }
-
-		const QValueList<QChar> registersRecorded() { return mRegs; }
-
-		YZSelectionMap visualSelection();
-
-		virtual void registerModifierKeys( const QString& ) {}
-		virtual void unregisterModifierKeys( const QString& ) {}
-
-		void emitSelectionChanged() {}
-
-		/**
-		* Ask the GUI to popup for a filename
-		* @return whether a file name was successfully chosen
-		*/
 		virtual bool popupFileSaveAs() = 0;
 
 		/**
@@ -620,6 +675,39 @@ class YZView {
 		 * Notify GUIs that HL changed
 		 */
 		virtual void highlightingChanged() = 0;
+
+		void emitSelectionChanged() {}
+
+		//-------------------------------------------------------
+		// ----------------- Modifier Keys
+		//-------------------------------------------------------
+		virtual void registerModifierKeys( const QString& ) {}
+		virtual void unregisterModifierKeys( const QString& ) {}
+
+		//-------------------------------------------------------
+		// ----------------- Changes occurred around (x, y)
+		//-------------------------------------------------------
+		/**
+		 * initChanges and applyChanges are called by the buffer to inform the view that there are
+		 * changes around x,y. Each view have to find what they have to redraw, depending
+		 * of the wrap option, and of course window size.
+		 */
+		void initChanges( unsigned int x, unsigned int y );
+		void applyChanges( unsigned int x, unsigned int y );
+
+		//-------------------------------------------------------
+		// ----------------- Miscellaneous
+		//-------------------------------------------------------
+		/**
+		 * Display Intro text message 
+		 */
+		void displayIntro();
+
+		virtual void printToFile( const QString& path );
+
+		const QChar& fillChar() const;
+
+		QString getCharBelow( int delta );
 
 	public slots :
 		void sendMultipleKey( const QString& keys );

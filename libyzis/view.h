@@ -630,6 +630,10 @@ class YZView {
 
 		bool stringHasOnlySpaces ( const QString& what );
 		
+		QString getLineStatusString() const;
+		
+	private:
+
 		class  ViewInformation {
 			public:
 				int l;  //buffer line
@@ -640,8 +644,6 @@ class YZView {
 
 		ViewInformation viewInformation;
 		
-	private:
-
 		/**
 		 * Used to store previous keystrokes which are not recognised as a command,
 		 * this should allow us to have commands like : 100g or gg etc ...

@@ -383,17 +383,7 @@ void NYZView::syncViewInfo( void )
 			( myBuffer()->fileIsModified() )?" [+]":""
 			);
 	// prevent  gcc to use string
-	if ( viewInformation.c1!=viewInformation.c2 ) {
-		myfmt=( char* )"%d,%d-%d";
-		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt,
-				viewInformation.l+1,
-				viewInformation.c1+1,
-				viewInformation.c2+1 );
-	} else {
-		myfmt=( char * )"%d,%d";
-		mvwprintw( infobar, 0, getColumnsVisible()-20, myfmt, viewInformation.l+1,viewInformation.c1+1 );
-	}
-	mvwaddstr( infobar, 0, getColumnsVisible()-9, viewInformation.percentage.local8Bit() );
+	mvwprintw( infobar, 0, getColumnsVisible() - 20, getLineStatusString() );
 	wrefresh(infobar);
 
 	drawCursor();

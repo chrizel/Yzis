@@ -89,11 +89,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines)
 	mVisualCursor = new YZViewCursor( this );
 
 	origPos = new YZCursor();
-	mSearchBegin = new YZCursor();
 	beginChanges = new YZCursor();
-
-	incSearchFound = false;
-	incSearchResult = new YZCursor();
 
 	stickyCol = 0;
 
@@ -148,9 +144,7 @@ YZView::~YZView() {
 	delete selectionPool;
 	delete mPaintSelection;
 	delete beginChanges;
-	delete incSearchResult;
 	delete mLineSearch;
-	delete mSearchBegin;
 	delete mModePool;
 }
 

@@ -599,12 +599,6 @@ class YZView {
 
 		YZSelectionMap visualSelection();
 
-		//search mode cursors
-		YZCursor *mSearchBegin;
-
-		bool incSearchFound;
-		YZCursor* incSearchResult;
-
 		virtual void registerModifierKeys( const QString& ) {}
 		virtual void unregisterModifierKeys( const QString& ) {}
 

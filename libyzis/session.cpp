@@ -329,10 +329,21 @@ YZView *YZSession::createView( YZBuffer *buffer )
 
 void YZSession::deleteView( const YZViewId &id /*=YZViewId::invalid*/ )
 {
+	// Guardian, if we're deleting the last view, close the app
+	if ( mViewList.size() == 1 ) {
+		exitRequest( 0 );
+		return;
+	}
+	
 	YZView *view = currentView();
 	
 	if ( id != YZViewId::invalid ) {
 		view = findView( id );
+	}
+	
+	// if we're deleting the current view, then we have to switch views
+	if ( view == currentView() ) {
+		setCurrentView( prevView() );
 	}
 	
 	doDeleteView( view );

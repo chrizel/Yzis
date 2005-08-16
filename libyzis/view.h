@@ -525,7 +525,7 @@ class YZView {
 		/**
 		 * width of a space ( in pixel or in cols )
 		 */
-		unsigned int spaceWidth;
+		unsigned int getSpaceWidth() const;
 
 		/**
 		 * Returns pixel width of given string str, must be implemented in ui.
@@ -725,6 +725,8 @@ class YZView {
 		 */
 		unsigned int rCurrentTop;
 
+		unsigned int spaceWidth;
+		
 		const uchar* rHLa;
 
 		bool rHLnoAttribs;

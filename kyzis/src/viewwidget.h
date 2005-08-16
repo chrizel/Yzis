@@ -33,6 +33,7 @@
 #include "document.h"
 #include "editor.h"
 #include "commandwidget.h"
+#include "view.h"
 
 class KYZisEdit;
 class KYZisCommand;

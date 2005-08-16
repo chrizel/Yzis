@@ -81,7 +81,7 @@ void KYZisEdit::updateArea( ) {
 
 	isFontFixed = fontInfo().fixedPitch();
 	mParent->setFixedFont( isFontFixed );
-	spaceWidth = mParent->spaceWidth;
+	spaceWidth = mParent->getSpaceWidth();
 	mCursor->resize( fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 	if ( isFontFixed )
 		mCursor->setCursorType( KYZisCursor::KYZ_CURSOR_SQUARE );

@@ -27,6 +27,7 @@
 #include "yzis.h"
 #include "factory.h"
 #include "registers.h"
+#include "viewwidget.h"
 
 #include <kglobalsettings.h>
 #include <math.h>
@@ -148,7 +149,7 @@ void KYZisEdit::updateArea( ) {
 
 	isFontFixed = fontInfo().fixedPitch();
 	mParent->setFixedFont( isFontFixed );
-	spaceWidth = mParent->spaceWidth;
+	spaceWidth = mParent->getSpaceWidth();
 	updateCursor();
 
 	int lines = height() / fontMetrics().lineSpacing();

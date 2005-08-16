@@ -99,7 +99,7 @@ k_dcop:
 	/**
 	 * Sets the caption of the tab
 	 */
-	void setCaption( unsigned int tab, const QString& caption );
+	void setCaption( const YZViewId &id, const QString& caption );
 
 public slots:
 	void childWindowCloseRequest( KMdiChildView *v );

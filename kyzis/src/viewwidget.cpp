@@ -352,9 +352,9 @@ bool KYZisView::popupFileSaveAs() {
 }
 
 void KYZisView::filenameChanged() {
-	int id = getkid();
-	if (Kyzis::me)
-		Kyzis::me->setCaption(id, myBuffer()->fileName());
+	if (Kyzis::me) {
+		Kyzis::me->setCaption(getId(), myBuffer()->fileName());
+	}
 }
 
 void KYZisView::highlightingChanged()

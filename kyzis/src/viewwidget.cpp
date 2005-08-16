@@ -79,7 +79,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	status->show();
 	m_editor->setFocus();
 	setFocusProxy( m_editor );
-	mBuffer->statusChanged();
+	myBuffer()->statusChanged();
 	mVScroll->setMaxValue( buffer->lineCount() - 1 );
 
 	setupCodeCompletion();
@@ -157,8 +157,8 @@ void KYZisView::syncViewInfo() {
 		status->changeItem( QString("%1,%2 (%3)").arg(viewInformation.l+1 ).arg( viewInformation.c1+1 ).arg( viewInformation.percentage),99 );
 
 	QString fileInfo;
-	fileInfo +=( mBuffer->fileIsNew() )?"N":" ";
-	fileInfo +=( mBuffer->fileIsModified() )?"M":" ";
+	fileInfo +=( myBuffer()->fileIsNew() )?"N":" ";
+	fileInfo +=( myBuffer()->fileIsModified() )?"M":" ";
 
 	status->changeItem(fileInfo, 90);
 	if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->draggingSlider())
@@ -199,12 +199,12 @@ void KYZisView::applyConfig( bool refresh ) {
 }
 
 void KYZisView::fileSave() {
-	mBuffer->save();
+	myBuffer()->save();
 }
 
 void KYZisView::fileSaveAs() {
 	if ( popupFileSaveAs() )
-		mBuffer->save();
+		myBuffer()->save();
 }
 
 /* Implementation of KTextEditor::ViewCursorInterface */

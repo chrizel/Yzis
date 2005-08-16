@@ -631,11 +631,6 @@ class YZView {
 		bool stringHasOnlySpaces ( const QString& what );
 		
 		/**
-		 * The buffer we depend on
-		 */
-		YZBuffer *mBuffer;
-
-		/**
 		 * Used to store previous keystrokes which are not recognised as a command,
 		 * this should allow us to have commands like : 100g or gg etc ...
 		 */
@@ -653,6 +648,11 @@ class YZView {
 		ViewInformation viewInformation;
 		
 	private:
+
+		/**
+		 * The buffer we depend on
+		 */
+		YZBuffer *mBuffer;
 
 		/**
 	 	 * This is the main cursor, the one which is displayed

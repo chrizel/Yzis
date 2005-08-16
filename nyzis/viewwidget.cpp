@@ -379,8 +379,8 @@ void NYZView::syncViewInfo( void )
 	myfmt=( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if
 	            // it's rather unlikely..
 	wprintw( infobar, myfmt,
-			( mBuffer->fileIsNew() )?( const char* )( _( "[No File]" ).local8Bit() ):( const char * )( mBuffer->fileName().local8Bit() ),
-			( mBuffer->fileIsModified() )?" [+]":""
+			( myBuffer()->fileIsNew() )?( const char* )( _( "[No File]" ).local8Bit() ):( const char * )( myBuffer()->fileName().local8Bit() ),
+			( myBuffer()->fileIsModified() )?" [+]":""
 			);
 	// prevent  gcc to use string
 	if ( viewInformation.c1!=viewInformation.c2 ) {

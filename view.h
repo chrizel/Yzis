@@ -676,7 +676,7 @@ class YZView {
 		 */
 		virtual void highlightingChanged() = 0;
 
-		void emitSelectionChanged() {}
+		virtual void emitSelectionChanged() {}
 
 		//-------------------------------------------------------
 		// ----------------- Modifier Keys

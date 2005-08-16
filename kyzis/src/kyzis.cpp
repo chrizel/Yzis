@@ -46,6 +46,7 @@
 
 #include "document.h"
 #include "viewid.h"
+#include "viewwidget.h"
 
 // #include "configdialog.h"
 
@@ -251,9 +252,9 @@ QString Kyzis::createBuffer(const QString& path) {
 			addWindow( mdi );
 
             // doc already had a view associated with it in factory->create()
-            YZView *view = doc->firstView();
-			KView v = { mdi , part };
-			viewList[view->getId()] = v;
+			KYZisView *view = static_cast<KYZisView*>(doc->firstView());
+			view->setMdiChildView( mdi );
+			view->setKPart( part );
 			createGUI(part);
 		}
 		
@@ -273,9 +274,9 @@ void Kyzis::createView( /*const KTextEditor::Document &doc*/ ) {
 		KMdiChildView *view = createWrapper( kv, QString::number( mViews - 1 ), filename );
 		kv->setFocus();
 		addWindow( view );
-		KView v = { view , part };
+		//KView v = { view , part };
 		kdDebug() << "Adding new view " << QString::number(mViews - 1) << endl;
-		viewList[YZViewId(mViews-1)] = v;
+		//viewList[YZViewId(mViews-1)] = v;
 		createGUI(part);
 }
 
@@ -283,59 +284,57 @@ void Kyzis::setCaption( const YZViewId &id, const QString& caption ) {
 	// Parse out the filename.
 	QString filename = caption.section("/", -1);
 	
-	if ( viewList.contains( id ) ) {
-		viewList[ id ].v->setCaption(filename);
-		viewList[ id ].v->setTabCaption(filename);
+	KYZisView *view = dynamic_cast<KYZisView*>(YZSession::me->findView( id ));
+	
+	if( view && view->getMdiChildView() ) {
+		view->getMdiChildView()->setCaption(filename);
+		view->getMdiChildView()->setTabCaption(filename);
 	}
+	
 	KMainWindow::setCaption( caption );
 }
 
 void Kyzis::closeView(const YZViewId &id) {
 //	closeActiveView();
 	kdDebug() << "Main : Close view " << id << endl;
-	if ( viewList.contains( id ) ) {
+	
+	KYZisView *view = dynamic_cast<KYZisView*>(YZSession::me->findView( id ));
+	
+	if( view ) {
 		kdDebug() << "Closing view from main app " << id << endl;
-		closeWindow(viewList[id].v);
-        viewList.remove( id );
+		closeWindow(view->getMdiChildView());
 	}
 }
 
 KParts::ReadWritePart* Kyzis::getCurrentPart() {
 	kdDebug() << "getCurrentPart" << endl;
-	QMap<YZViewId, KView>::Iterator it = viewList.begin(), end = viewList.end();
-	for ( ; it != end; ++it ) {
-		if ( it.data().v == activeWindow() ) {
-			kdDebug() << "Found part at index " << it.key() << endl;
-			return it.data().p;
-		}
-	}
-	if ( viewList.size() > 0 ) {
-		return (*viewList.begin()).p;
-	} else {
-		return NULL;
-	}
-}
-
-void Kyzis::childWindowCloseRequest( KMdiChildView *v ) {
-	kdDebug() << "childWindowCloseRequest" << endl;
-	QMap<YZViewId, KView>::Iterator it = viewList.begin(), end = viewList.end();
-	for ( ; it != end; ++it ) {
-		if ( it.data().v == v ) {
-			kdDebug() << "Found view at index " << it.key() << endl;
-			viewList.remove( it ); //remove the corresponding part (no delete here)
-		}
-	}
-	KMdiMainFrm::childWindowCloseRequest( v );
+	
+	KYZisView *view = dynamic_cast<KYZisView*>(YZSession::me->currentView());
+	return view->getKPart();
 }
 
 bool Kyzis::queryClose() {
-	QMap<YZViewId, KView>::Iterator it = viewList.begin(), end = viewList.end();
-	for ( ; it != end; ++it ) {
-		if ( it.data().p->isModified() ) {
-			int msg = KMessageBox::warningYesNoCancel(this, QString("The file '%1' has been modified but not saved, do you want to save it ?" ).arg( it.data().p->url().prettyURL() ), "Close Document", KStdGuiItem::save(), KStdGuiItem::discard() );
-			if ( msg == KMessageBox::Cancel ) return false;
-			if ( msg == KMessageBox::Yes )
-				it.data().p->save(); //automatically popups saveAs dialog if needed
+	const YZBufferList &buffers = YZSession::me->buffers();
+	
+	for ( YZBufferList::const_iterator it = buffers.begin(); it != buffers.end(); ++it ) {
+		YZBuffer *buf = *it;
+		
+		if ( buf->fileIsModified() ) {
+			int msg = KMessageBox::warningYesNoCancel
+					(
+						this, 
+						QString("The file '%1' has been modified but not saved, do you want to save it ?" )
+								.arg( buf->fileName() ), 
+						"Close Document", 
+						KStdGuiItem::save(), 
+						KStdGuiItem::discard()
+					);
+			if ( msg == KMessageBox::Cancel ) {
+				return false;
+			}
+			if ( msg == KMessageBox::Yes ) {
+				buf->save(); //automatically popups saveAs dialog if needed
+			}
 		}
 	}
 

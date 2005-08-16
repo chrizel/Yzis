@@ -42,6 +42,9 @@
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::self(), 10), m_popup(0)
 {
+	m_part = 0;
+	m_mdi = 0;
+	
 	m_editor = new KYZisEdit (this,"editor");
 	status = new KStatusBar (this, "status");
 	command = new KYZisCommand (this, "command");

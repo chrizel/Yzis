@@ -35,6 +35,8 @@
 #include "commandwidget.h"
 #include "view.h"
 
+class KMdiChildView;
+
 class KYZisEdit;
 class KYZisCommand;
 class KYZisCodeCompletion;
@@ -100,6 +102,11 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		bool popupFileSaveAs();
 		void filenameChanged();
 		void highlightingChanged();
+		
+		void setKPart( KParts::ReadWritePart *part ) { m_part = part; }
+		KParts::ReadWritePart *getKPart() const { return m_part; }
+		void setMdiChildView( KMdiChildView *view ) { m_mdi = view; }
+		KMdiChildView *getMdiChildView() const { return m_mdi; }
 
 	public slots:
 		QPoint cursorCoordinates();
@@ -132,6 +139,9 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		KYZisCodeCompletion *m_codeCompletion;
 		QGridLayout *g ;
 		KSqueezedTextLabel *m_central;
+		
+		KParts::ReadWritePart *m_part;
+		KMdiChildView *m_mdi;
 };
 
 #endif

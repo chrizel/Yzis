@@ -30,15 +30,7 @@
 #include "konsole.h"
 #include "viewid.h"
 
-struct YV {
-	KMdiChildView* v;
-	KParts::ReadWritePart *p;
-};
-
-typedef struct YV KView;
-
 class KYZisDoc;
-
 
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
@@ -102,8 +94,6 @@ k_dcop:
 	void setCaption( const YZViewId &id, const QString& caption );
 
 public slots:
-	void childWindowCloseRequest( KMdiChildView *v );
-
 	/**
 	 * Enables/disables the konsole
 	 */
@@ -140,7 +130,6 @@ private:
 	int mBuffers;
 	unsigned int mViews;
 
-	QMap<YZViewId, KView> viewList;
 	Konsole *mConsole;
 	QString m_initialCommand;
 

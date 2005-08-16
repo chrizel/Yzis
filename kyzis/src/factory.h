@@ -31,6 +31,7 @@
 class KYZisDoc;
 class KYZisView;
 class YZViewId;
+class KMdiChildView;
 
 class KYZisFactory : public KParts::Factory, public YZSession
 {
@@ -75,7 +76,7 @@ private:
 
 public:
 	static KYZisDoc *currentDoc;
-	YZViewId lastId;
+	KMdiChildView *lastMdi;
 };
 
 #endif

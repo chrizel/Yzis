@@ -72,20 +72,8 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		virtual void syncViewInfo();
 		void displayInfo( const QString& info );
 
-		/**
-		 * @internal
-		 * Sets the Kmdi Id of this view, used for DCOP communications
-		 */
-		void setkid( int kId ) { mkId = kId; }
-
 		void KYZisView::wheelEvent( QWheelEvent * e );
 		void KYZisView::contextMenuEvent( QContextMenuEvent * e );
-
-		/**
-		 * @internal
-		 * Get the Kmdi Id of this view
-		 */
-		int getkid() { return mkId; }
 
 		void applyConfig( bool refresh = true );
 
@@ -144,8 +132,6 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		KYZisCodeCompletion *m_codeCompletion;
 		QGridLayout *g ;
 		KSqueezedTextLabel *m_central;
-		// internal ID used for DCOP communications
-		int mkId;
 };
 
 #endif

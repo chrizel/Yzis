@@ -48,7 +48,7 @@ class KYZisDoc : public KTextEditor::Document,
 	Q_OBJECT
 
 	public:
-		KYZisDoc (int kId, QWidget *parentWidget = 0, const char *widgetName=0, QObject *parent=0, const char *name=0);
+		KYZisDoc (QWidget *parentWidget = 0, const char *widgetName=0, QObject *parent=0, const char *name=0);
 		virtual ~KYZisDoc ();
 
 		KTextEditor::View *createView ( QWidget *parent, const char *name = 0 );
@@ -72,12 +72,6 @@ class KYZisDoc : public KTextEditor::Document,
 		bool setText (  const QString &text );
 		bool removeText (  uint startLine, uint startCol, uint endLine, uint endCol );
 		void highlightingChanged();
-
-		/*
-		 * @internal
-		 * @return the KMdi identifier to be used during DCOP internal communications
-		 */
-		int getkid() { return mkId; }
 
 		void applyConfig( );
 
@@ -168,8 +162,6 @@ class KYZisDoc : public KTextEditor::Document,
 
 	private:
 		QWidget *m_parent;
-		//KMdi identifier , used for DCOP communication to identify a buffer/view
-		int mkId;
 
 	signals:
 		void hlChanged();

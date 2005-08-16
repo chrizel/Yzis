@@ -126,14 +126,13 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 		kvId = args[ 1 ]; // view ID
 	}
 
-	KYZisDoc *doc = new KYZisDoc (kID.toInt(), parentWidget, widgetname, parent, name );
+	KYZisDoc *doc = new KYZisDoc (parentWidget, widgetname, parent, name );
 	doc->setState( YZBuffer::ACTIVE );
 	//separate
 	if ( bSingleView ) {
 		yzDebug() << "Factory creates single view ..." << endl;
 		KTextEditor::View *view = doc->createView( parentWidget, widgetname );
 		KYZisView *yv = static_cast<KYZisView*>( view );
-		yv->setkid( kvId.toInt() );
 		doc->insertChildClient( view );
 		view->show();
 		doc->setBaseWidget( view );

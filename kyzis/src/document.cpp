@@ -37,12 +37,11 @@
 #include "configdialog.h"
 #include "hlconfig.h"
 
-KYZisDoc::KYZisDoc (int kId, QWidget *parentWidget, const char *, QObject *parent, const char *name)
+KYZisDoc::KYZisDoc (QWidget *parentWidget, const char *, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name), YZBuffer() {
 
 		setInstance(KYZisFactory::self()->instance());
 		m_parent = parentWidget;
-		mkId = kId;
 
 		setupActions();
 }

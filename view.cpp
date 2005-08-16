@@ -1745,3 +1745,7 @@ QString YZView::getLineStatusString() const
 	return status;
 }
 
+unsigned int YZView::getSpaceWidth() const
+{
+	return spaceWidth;
+}

@@ -193,40 +193,10 @@ void KYZisFactory::changeCurrentView( YZView* view ) {
 }
 
 YZView* KYZisFactory::doCreateView( YZBuffer *) {
-	//DCOP call which returns the UID of the created view ?
-#if 0
-	DCOPClient *client = kapp->dcopClient();
-	QByteArray data;
-	QDataStream arg(data, IO_WriteOnly);
-	arg << buffer->fileName();
-	bool w = client->send(client->appId(), "Kyzis", "createView(QString)", data);
-	if (w) {
-		yzDebug() << "DCOP call successful for " << client->appId() << " to create view on " << buffer->fileName() << endl;
-	} else {
-		yzDebug() << "DCOP call failed for " << client->appId() << endl;
-		sess->mGUI->popupMessage( "DCOP communication is broken ! KYzis is not able to create new views" );
-		return NULL;
-	}
-#endif
 	return NULL;
 }
 
 YZBuffer *KYZisFactory::createBuffer(const QString& path /*=QString::null*/) {
-#if 0
-	DCOPClient *client = kapp->dcopClient();
-	QByteArray data;
-	QDataStream arg(data, IO_WriteOnly);
-	arg << path;
-	bool w = client->send(client->appId(), "Kyzis", "createBuffer(QString)", data);
-	if (w) {
-		yzDebug() << "DCOP call successful for " << client->appId() << " to create buffer on " << path << endl;
-	} else {
-		yzDebug() << "DCOP call failed for " << client->appId() << endl;
-		popupMessage( "DCOP communication is broken ! KYzis is not able to create new buffers" );
-		return NULL; //we failed
-	}
-	return findBuffer( path );
-#endif
 	QString createdPath;
 
 	if (Kyzis::me)
@@ -267,20 +237,6 @@ void KYZisFactory::doDeleteView( YZView *view ) {
 		lastMdi = kview->getMdiChildView();
 		QTimer::singleShot(0, this, SLOT( closeView() ));
 	}
-#if 0
-	DCOPClient *client = kapp->dcopClient();
-	QByteArray data;
-	QDataStream arg(data, IO_WriteOnly);
-	arg << Id;
-	bool w = client->send(client->appId(), "Kyzis", "closeView(int)", data);
-	if (w) {
-		yzDebug() << "DCOP call successful for " << client->appId() << " to delete view " << endl;
-	} else {
-		yzDebug() << "DCOP call failed for " << client->appId() << endl;
-		popupMessage( "DCOP communication is broken ! KYzis is not able to delete the current view" );
-		return; //we failed
-	}
-#endif
 }
 
 void KYZisFactory::deleteBuffer(YZBuffer* /*b*/) {
@@ -310,10 +266,6 @@ int KYZisFactory::promptYesNoCancel(const QString& title, const QString& message
 }
 
 void KYZisFactory::splitHorizontally(YZView* /*view*/) {
-//	KYZisView *v = static_cast<KYZisView *>(view);
-//	KYZisDoc *doc = static_cast<KYZisDoc*>(v->document());
-	if (Kyzis::me)
-		Kyzis::me->createView();
 }
 
 #include "factory.moc"

@@ -265,21 +265,6 @@ QString Kyzis::createBuffer(const QString& path) {
 		}
 }
 
-void Kyzis::createView( /*const KTextEditor::Document &doc*/ ) {
-		KParts::ReadWritePart *part = getCurrentPart();
-		KTextEditor::Document *doc = static_cast<KTextEditor::Document*>(part);
-		KYZisDoc *kdoc = static_cast<KYZisDoc*>(doc);
-		KTextEditor::View *kv = doc->createView(this,"view"+QString::number(mViews++));
-		QString filename = kdoc->fileName().section("/", -1);
-		KMdiChildView *view = createWrapper( kv, QString::number( mViews - 1 ), filename );
-		kv->setFocus();
-		addWindow( view );
-		//KView v = { view , part };
-		kdDebug() << "Adding new view " << QString::number(mViews - 1) << endl;
-		//viewList[YZViewId(mViews-1)] = v;
-		createGUI(part);
-}
-
 void Kyzis::setCaption( const YZViewId &id, const QString& caption ) {
 	// Parse out the filename.
 	QString filename = caption.section("/", -1);

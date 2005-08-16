@@ -78,11 +78,6 @@ k_dcop:
 	QString createBuffer(const QString& path=QString::null);
 	
 	/**
-	 * Creates a new view on an existing buffer
-	 */
-	void createView( /*const KTextEditor::Document &doc*/ );
-
-	/**
 	 * Closes the view
 	 * @param the unique ID of the view
 	 */

@@ -423,3 +423,23 @@ const YZViewList YZSession::getAllViews() const
 	return result;
 }
 
+YZBuffer *YZSession::createBuffer( const QString &path /*=QString::null*/ )
+{
+	YZBuffer *buffer = doCreateBuffer();
+	buffer->setState( YZBuffer::ACTIVE );
+	
+	if ( path != QString::null ) {
+		buffer->load( path );
+	} else {
+		buffer->openNewFile();
+	}
+	
+	YZView *view = createView( buffer );
+	setCurrentView( view );
+	view->refreshScreen();
+	
+	addBuffer( buffer );
+	
+	return buffer;
+}
+

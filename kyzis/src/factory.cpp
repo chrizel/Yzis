@@ -119,19 +119,7 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 
 	KYZisDoc *doc = new KYZisDoc (parentWidget, widgetname, parent, name );
 	doc->setState( YZBuffer::ACTIVE );
-	//separate
-	if ( bSingleView ) {
-		yzDebug() << "Factory creates single view ..." << endl;
-		KTextEditor::View *view = doc->createView( parentWidget, widgetname );
-		KYZisView *yv = static_cast<KYZisView*>( view );
-		doc->insertChildClient( view );
-		view->show();
-		doc->setBaseWidget( view );
-		
-		addView( yv );
-	}
 	doc->filenameChanged();
-
 	doc->setReadWrite( true );
 	
 	addBuffer( doc );
@@ -192,8 +180,29 @@ void KYZisFactory::changeCurrentView( YZView* view ) {
 	v->setFocus();
 }
 
-YZView* KYZisFactory::doCreateView( YZBuffer *) {
-	return NULL;
+YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
+	KYZisDoc *doc = dynamic_cast<KYZisDoc*>(buffer);
+	KYZisView *view = 0;
+	
+	if ( doc ) {
+		view = new KYZisView( doc, Kyzis::me, doc->fileName() + "-view" );
+		doc->addView( view );
+		
+		doc->insertChildClient( view );
+		doc->setBaseWidget( view );
+	
+		KMdiChildView *mdi = Kyzis::me->createWrapper( view, doc->fileName(), doc->fileName() );
+		view->setFocus();
+		Kyzis::me->addWindow( mdi );
+
+		view->setMdiChildView( mdi );
+		view->setKPart( doc );
+		Kyzis::me->createKPartGUI( doc );
+	
+		view->show();
+	}
+	
+	return view;
 }
 
 YZBuffer *KYZisFactory::createBuffer(const QString& path /*=QString::null*/) {
@@ -215,15 +224,9 @@ YZBuffer *KYZisFactory::createBuffer(const QString& path /*=QString::null*/) {
 		}
 			
 		kdDebug() << "Yzis part successfully loaded" << endl;
-		KMdiChildView *mdi = Kyzis::me->createWrapper( part->widget(), doc->fileName(), doc->fileName() );
-		part->widget()->setFocus();
-		Kyzis::me->addWindow( mdi );
-
-            // doc already had a view associated with it in factory->create()
-		KYZisView *view = static_cast<KYZisView*>(doc->firstView());
-		view->setMdiChildView( mdi );
-		view->setKPart( part );
-		Kyzis::me->createKPartGUI( part );
+		
+		YZView *view = createView( doc );
+		setCurrentView( view );
 	}
 		
 	return doc;

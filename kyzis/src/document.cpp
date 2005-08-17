@@ -50,12 +50,9 @@ KYZisDoc::~KYZisDoc () {
 }
 
 
-KTextEditor::View *KYZisDoc::createView ( QWidget *parent, const char *) {
-	//backport to Factory ? XXX
-	KYZisView *v = new KYZisView (this, parent);
-	//FIXME : two lists
-	addView(v);
-	return v;
+KTextEditor::View *KYZisDoc::createView ( QWidget *, const char * ) {
+	KYZisView *kview = dynamic_cast<KYZisView*>(YZSession::me->createView( this ));
+	return kview;
 }
 
 void KYZisDoc::setupActions() {

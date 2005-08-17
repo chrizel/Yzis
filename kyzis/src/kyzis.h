@@ -68,21 +68,10 @@ public:
 	KParts::ReadWritePart* getCurrentPart();
 
 	KMdiToolViewAccessor *addToolView(KDockWidget::DockPosition position, QWidget *widget, const QPixmap& icon, const QString& sname, const QString& tabToolTip = 0, const QString& tabCaption = 0);
+	
+	void createKPartGUI( KParts::ReadWritePart *part ) { createGUI( part ); }
 
 k_dcop:
-	/**
-	 * Opens a new buffer
-	 * @param path file to which the buffer is linked
-	 * @return the filename of the actual created buffer
-	 */
-	QString createBuffer(const QString& path=QString::null);
-	
-	/**
-	 * Closes the view
-	 * @param the unique ID of the view
-	 */
-	void closeView(const YZViewId &id);
-
 	/**
 	 * Sets the caption of the tab
 	 */

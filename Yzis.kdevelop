@@ -121,7 +121,7 @@
       <envvars/>
     </run>
     <general>
-      <useconfiguration>craig</useconfiguration>
+      <useconfiguration>default</useconfiguration>
     </general>
     <configurations>
       <mikmak>

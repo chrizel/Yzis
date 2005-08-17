@@ -96,9 +96,8 @@ int main(int argc, char **argv) {
 			YZBuffer *buffer = KYZisFactory::self()->createBuffer();
 			buffer->openNewFile();
 		} else {
-			int i = 0;
-			for (; i < args->count(); i++ )
-				widget->createBuffer( args->url( i ).url() );
+			for ( int i = 0; i < args->count(); i++ )
+				widget->load( args->url( i ) );
 		}
 
 		QTimer::singleShot(0, widget, SLOT( init() ));

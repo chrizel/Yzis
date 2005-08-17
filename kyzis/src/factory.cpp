@@ -197,11 +197,36 @@ YZView* KYZisFactory::doCreateView( YZBuffer *) {
 }
 
 YZBuffer *KYZisFactory::createBuffer(const QString& path /*=QString::null*/) {
-	QString createdPath;
+	kdDebug() << "Kyzis::createBuffer " << path << endl;
+	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
+	if (!factory) {
+		kdDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
+		return 0;
+	}
+		
+	KParts::ReadWritePart * part = static_cast<KParts::ReadWritePart *>(factory->create(Kyzis::me, "kyzispart", "KParts::ReadWritePart"));
+	KYZisDoc *doc = static_cast<KYZisDoc*>(part);
 
-	if (Kyzis::me)
-		createdPath = Kyzis::me->createBuffer(path);
-	return findBuffer( createdPath );
+	if (part) {
+		if ( path == QString::null ) {
+			doc->openNewFile();
+		} else {
+			doc->load( path );
+		}
+			
+		kdDebug() << "Yzis part successfully loaded" << endl;
+		KMdiChildView *mdi = Kyzis::me->createWrapper( part->widget(), doc->fileName(), doc->fileName() );
+		part->widget()->setFocus();
+		Kyzis::me->addWindow( mdi );
+
+            // doc already had a view associated with it in factory->create()
+		KYZisView *view = static_cast<KYZisView*>(doc->firstView());
+		view->setMdiChildView( mdi );
+		view->setKPart( part );
+		Kyzis::me->createKPartGUI( part );
+	}
+		
+	return doc;
 }
 
 void KYZisFactory::popupMessage( const QString& message ) {

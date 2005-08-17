@@ -50,13 +50,19 @@ public:
 	//GUI interface
 	bool quit(int errorCode);
 	void popupMessage( const QString& message );
-    YZBuffer* createBuffer ( const QString &path = QString::null );
 	void deleteBuffer ( YZBuffer *b );
 	void setFocusCommandLine();
 	void setFocusMainWindow();
 	void splitHorizontally(YZView *view);
 	bool promptYesNo(const QString& title, const QString& message);
 	int promptYesNoCancel(const QString& title, const QString& message);
+	
+	/**
+	 * Opens a new buffer
+	 * @param path file to which the buffer is linked
+	 * @return the filename of the actual created buffer
+	 */
+	YZBuffer* createBuffer ( const QString &path = QString::null );
 	
 protected:
 	YZView *doCreateView( YZBuffer* buffer );

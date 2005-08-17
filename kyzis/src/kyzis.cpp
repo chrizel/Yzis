@@ -159,7 +159,7 @@ void Kyzis::fileNew() {
 	// in its initial state.  This is what we do here..
 //	if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
 //			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
-			createBuffer();
+	YZSession::me->createBuffer();
 //	};
 }
 
@@ -223,46 +223,8 @@ void Kyzis::openURL(const KURL &url)
 		// we open the file in this window...
 		load( url );
 	} else {
-		createBuffer( url.url() );
+		YZSession::me->createBuffer( url.url() );
 	}
-}
-
-QString Kyzis::createBuffer(const QString& path) {
-		kdDebug() << "Kyzis::createBuffer " << path << endl;
-		KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
-		if (!factory) {
-			kdDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
-			return QString::null;
-		}
-		
-		KParts::ReadWritePart * part = static_cast<KParts::ReadWritePart *>(factory->create(this, "kyzispart", "KParts::ReadWritePart"));
-		KYZisDoc *doc = static_cast<KYZisDoc*>(part);
-
-		if (part)
-		{
-			if ( path == QString::null ) {
-				doc->openNewFile();
-			} else {
-				doc->load( path );
-			}
-			
-			kdDebug() << "Yzis part successfully loaded" << endl;
-			KMdiChildView *mdi = createWrapper( part->widget(), QString::number( mViews ), doc->fileName() );
-			part->widget()->setFocus();
-			addWindow( mdi );
-
-            // doc already had a view associated with it in factory->create()
-			KYZisView *view = static_cast<KYZisView*>(doc->firstView());
-			view->setMdiChildView( mdi );
-			view->setKPart( part );
-			createGUI(part);
-		}
-		
-		if ( doc ) {
-			return doc->fileName();
-		} else {
-			return QString::null;
-		}
 }
 
 void Kyzis::setCaption( const YZViewId &id, const QString& caption ) {
@@ -277,18 +239,6 @@ void Kyzis::setCaption( const YZViewId &id, const QString& caption ) {
 	}
 	
 	KMainWindow::setCaption( caption );
-}
-
-void Kyzis::closeView(const YZViewId &id) {
-//	closeActiveView();
-	kdDebug() << "Main : Close view " << id << endl;
-	
-	KYZisView *view = dynamic_cast<KYZisView*>(YZSession::me->findView( id ));
-	
-	if( view ) {
-		kdDebug() << "Closing view from main app " << id << endl;
-		closeWindow(view->getMdiChildView());
-	}
 }
 
 KParts::ReadWritePart* Kyzis::getCurrentPart() {

@@ -117,12 +117,8 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
         Kyzis::me = 0;
 	}
 
-	KYZisDoc *doc = new KYZisDoc (parentWidget, widgetname, parent, name );
-	doc->setState( YZBuffer::ACTIVE );
-	doc->filenameChanged();
+	KYZisDoc *doc = new KYZisDoc( parentWidget, widgetname, parent, name );
 	doc->setReadWrite( true );
-	
-	addBuffer( doc );
 	
 	return doc;
 }

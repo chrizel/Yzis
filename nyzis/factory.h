@@ -51,7 +51,6 @@ public:
 	 * YZSession interface :
 	 */
 	virtual bool quit ( int errorCode ) ;
-	virtual	YZBuffer *createBuffer(const QString& path=QString::null);
 	virtual void popupMessage( const QString& message );
 	virtual void deleteBuffer ( YZBuffer *b );
 	virtual void setFocusCommandLine() {}
@@ -63,6 +62,7 @@ public:
 protected:
 	virtual YZView* doCreateView( YZBuffer* buffer );
 	virtual void doDeleteView( YZView *view );
+	virtual	YZBuffer *doCreateBuffer();
 
 private:
 	/**

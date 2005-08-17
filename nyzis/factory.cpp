@@ -188,17 +188,9 @@ YZView* NYZFactory::doCreateView( YZBuffer* buffer )
 	return v;
 }
 
-YZBuffer *NYZFactory::createBuffer(const QString& filename)
+YZBuffer *NYZFactory::doCreateBuffer()
 {
-	YZBuffer *b = new YZBuffer();
-	b->setState( YZBuffer::ACTIVE );
-	YZASSERT_MSG(b, "NYZFactory::createBuffer failed creating new YZBuffer");
-	YZView *view = createView( b );
-	setCurrentView( view );
-	b->load( filename );
-	view->refreshScreen();
-	addBuffer( b );
-	return b;
+	return new YZBuffer;
 }
 
 void NYZFactory::popupMessage( const QString &_message )

@@ -57,16 +57,16 @@ public:
 	bool promptYesNo(const QString& title, const QString& message);
 	int promptYesNoCancel(const QString& title, const QString& message);
 	
+protected:
+	YZView *doCreateView( YZBuffer* buffer );
+	void doDeleteView( YZView *view );
+	
 	/**
 	 * Opens a new buffer
 	 * @param path file to which the buffer is linked
 	 * @return the filename of the actual created buffer
 	 */
-	YZBuffer* createBuffer ( const QString &path = QString::null );
-	
-protected:
-	YZView *doCreateView( YZBuffer* buffer );
-	void doDeleteView( YZView *view );
+	YZBuffer* doCreateBuffer();
 
 public slots :
 	void writeConfig();

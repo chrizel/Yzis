@@ -142,7 +142,7 @@ class YZSession {
 		/**
 		 * Creates a new buffer
 		 */
-		virtual	YZBuffer *createBuffer(const QString& path=QString::null) = 0;
+		YZBuffer *createBuffer(const QString& path=QString::null);
 
 		/**
 		 * Deletes the given buffer
@@ -412,6 +412,8 @@ class YZSession {
 		virtual YZView *doCreateView( YZBuffer *buffer ) = 0;
 		virtual void doDeleteView ( YZView *view ) = 0;
 		
+		virtual	YZBuffer *doCreateBuffer() = 0;
+
 		//-------------------------------------------------------
 		// ----------------- View List Management
 		//-------------------------------------------------------

@@ -205,31 +205,17 @@ YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
 	return view;
 }
 
-YZBuffer *KYZisFactory::createBuffer(const QString& path /*=QString::null*/) {
-	kdDebug() << "Kyzis::createBuffer " << path << endl;
+YZBuffer *KYZisFactory::doCreateBuffer() {
+	kdDebug() << "Kyzis::createBuffer " << endl;
 	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
 	if (!factory) {
 		kdDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
 		return 0;
 	}
-		
-	KParts::ReadWritePart * part = static_cast<KParts::ReadWritePart *>(factory->create(Kyzis::me, "kyzispart", "KParts::ReadWritePart"));
-	KYZisDoc *doc = static_cast<KYZisDoc*>(part);
-
-	if (part) {
-		if ( path == QString::null ) {
-			doc->openNewFile();
-		} else {
-			doc->load( path );
-		}
-			
-		kdDebug() << "Yzis part successfully loaded" << endl;
-		
-		YZView *view = createView( doc );
-		setCurrentView( view );
-	}
-		
-	return doc;
+	
+	QObject *obj = factory->create(Kyzis::me, "kyzispart", "KParts::ReadWritePart");
+	
+	return dynamic_cast<KYZisDoc*>(obj);
 }
 
 void KYZisFactory::popupMessage( const QString& message ) {

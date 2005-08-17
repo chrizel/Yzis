@@ -44,15 +44,14 @@
 #include <ktexteditor/view.h>
 #include <kmultitabbar.h>
 
-#include "document.h"
+#include "ktexteditoriface.h"
 #include "session.h"
 #include "viewid.h"
 #include "viewwidget.h"
 
 // #include "configdialog.h"
 
-//#include "kyzis/document.h"
-//#include "ktexteditor/document.h"
+//#include "ktexteditor/ktexteditoriface.h"
 //class KTextEditor::View;
 
 Kyzis *Kyzis::me = NULL;

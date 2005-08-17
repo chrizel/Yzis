@@ -21,7 +21,7 @@
 #define __KATE_SCHEMA_H__
 
 #include "syntaxhighlight.h"
-#include "document.h"
+#include "ktexteditoriface.h"
 #include "viewwidget.h"
 
 #include <qstringlist.h>

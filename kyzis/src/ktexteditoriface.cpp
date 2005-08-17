@@ -27,7 +27,7 @@
 #include <kstdaction.h>
 #include <kaction.h>
 
-#include "document.h"
+#include "ktexteditoriface.h"
 #include "viewwidget.h"
 #include "factory.h"
 #include "debug.h"
@@ -444,4 +444,4 @@ QPtrList<KTextEditor::View> KYZTextEditorIface::views() const
 	return result;
 }
 
-#include "document.moc"
+#include "ktexteditoriface.moc"

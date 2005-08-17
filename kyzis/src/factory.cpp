@@ -40,7 +40,7 @@
 
 #include "settings.h"
 #include "factory.h"
-#include "document.h"
+#include "ktexteditoriface.h"
 #include "viewwidget.h"
 #include "debug.h"
 #include "yzis.h"

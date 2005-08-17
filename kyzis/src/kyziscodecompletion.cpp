@@ -30,7 +30,7 @@
 #include "kyziscodecompletion.moc"
 
 #include "viewwidget.h"
-#include "document.h"
+#include "ktexteditoriface.h"
 
 #include <kdebug.h>
 

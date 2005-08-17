@@ -119,7 +119,7 @@ static void doJumpToTag ( const YZTagStackItem &entry ) {
       if ( b ) {
       	YZSession::me->setCurrentView( b->firstView() );
       } else {
-      	YZSession::me->createBuffer( filepath );
+      	YZSession::me->createBufferAndView( filepath );
          b = YZSession::me->findBuffer( filepath );
          YZASSERT_MSG( b != NULL, QString("Created buffer %1 was not found!").arg( filepath ) );
          YZSession::me->setCurrentView( b->firstView() );
@@ -167,14 +167,17 @@ static bool jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 		}
 		
 		YZBuffer *tagbuffer = YZSession::me->findBuffer( record->filename() );
+		YZView *tagview = NULL;
 		
 		// if the buffer isn't already open, we have to open it first
 		if ( !tagbuffer ) {
-			tagbuffer = YZSession::me->createBuffer( record->filename() );
+			tagview = YZSession::me->createBufferAndView( record->filename() );
+		} else {
+			tagview = tagbuffer->firstView();
 		}
 
 		// now we're guaranteed the switch will work
-		YZSession::me->setCurrentView( tagbuffer->firstView() );
+		YZSession::me->setCurrentView( tagview );
 	}
 	
 	const YZCursor &cursor = record->position();

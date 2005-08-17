@@ -132,22 +132,20 @@ main(int argc, char *argv[])
 	/*
 	 * Open buffers
 	 */
-	YZBuffer *bf;
 	bool hasatleastone = false;
 
 	for ( int i=1; i<argc; i++ ) {
 		if ( '-' != argv[i][0] ) {
 			hasatleastone = true;
 			yzDebug(NYZIS)<< "nyzis : opening file " << argv[i]<<endl;
-			bf = factory->createBuffer(argv[ i ]);
+			factory->createBufferAndView(argv[ i ]);
 		}
 	}
 
 	if ( !hasatleastone ) {
-		bf = factory->createBuffer();
-		bf->openNewFile();
-		YZView* cView = YZSession::me->currentView();
-		cView->displayIntro();
+		YZView *view = factory->createBufferAndView();
+		view->myBuffer()->openNewFile();
+		view->displayIntro();
 	}
 
 	QTimer::singleShot( 0, factory, SLOT( init() ) );

@@ -434,12 +434,18 @@ YZBuffer *YZSession::createBuffer( const QString &path /*=QString::null*/ )
 		buffer->openNewFile();
 	}
 	
-	YZView *view = createView( buffer );
-	setCurrentView( view );
-	view->refreshScreen();
-	
 	addBuffer( buffer );
 	
 	return buffer;
 }
 
+YZView *YZSession::createBufferAndView( const QString &path /*=QString::null*/ )
+{
+	YZBuffer *buffer = createBuffer( path );
+	
+	YZView *view = createView( buffer );
+	setCurrentView( view );
+	view->refreshScreen();
+	
+	return view;
+}

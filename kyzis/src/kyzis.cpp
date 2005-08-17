@@ -159,7 +159,7 @@ void Kyzis::fileNew() {
 	// in its initial state.  This is what we do here..
 //	if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
 //			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
-	YZSession::me->createBuffer();
+	YZSession::me->createBufferAndView();
 //	};
 }
 
@@ -223,7 +223,7 @@ void Kyzis::openURL(const KURL &url)
 		// we open the file in this window...
 		load( url );
 	} else {
-		YZSession::me->createBuffer( url.url() );
+		YZSession::me->createBufferAndView( url.url() );
 	}
 }
 

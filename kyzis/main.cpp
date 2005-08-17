@@ -93,8 +93,8 @@ int main(int argc, char **argv) {
 		widget->show();
 		
 		if ( args->count() == 0 ) {
-			YZBuffer *buffer = KYZisFactory::self()->createBuffer();
-			buffer->openNewFile();
+			YZView *view = KYZisFactory::self()->createBufferAndView();
+			view->myBuffer()->openNewFile();
 		} else {
 			for ( int i = 0; i < args->count(); i++ )
 				widget->load( args->url( i ) );

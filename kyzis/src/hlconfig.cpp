@@ -677,7 +677,7 @@ void YzisSchemaConfigHighlightTab::apply ()
 //END YzisSchemaConfigHighlightTab
 
 //BEGIN YzisSchemaConfigPage
-YzisSchemaConfigPage::YzisSchemaConfigPage( QWidget *parent, KYZisDoc *doc )
+YzisSchemaConfigPage::YzisSchemaConfigPage( QWidget *parent, KYZTextEditorIface *doc )
   : YzisConfigPage( parent ),
     m_lastSchema (-1)
 {

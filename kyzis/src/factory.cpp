@@ -46,7 +46,7 @@
 #include "yzis.h"
 #include "kyzis.h"
 
-KYZisDoc *KYZisFactory::currentDoc=0;
+KYZTextEditorIface *KYZisFactory::currentDoc=0;
 
 class KYZisPublicFactory : public KParts::Factory {
 	public :
@@ -118,7 +118,7 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
         Kyzis::me = 0;
 	}
 
-	KYZisDoc *doc = new KYZisDoc( NULL, parentWidget, widgetname, parent, name );
+	KYZTextEditorIface *doc = new KYZTextEditorIface( NULL, parentWidget, widgetname, parent, name );
 	doc->setReadWrite( true );
 	
 	return doc;
@@ -178,7 +178,7 @@ void KYZisFactory::changeCurrentView( YZView* view ) {
 }
 
 YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
-	KYZisDoc *doc = bufferToDoc[ buffer ];
+	KYZTextEditorIface *doc = bufferToDoc[ buffer ];
 	KYZisView *view = 0;
 	
 	if ( doc ) {
@@ -211,7 +211,7 @@ YZBuffer *KYZisFactory::doCreateBuffer() {
 	}
 	
 	QObject *obj = factory->create(Kyzis::me, "kyzispart", "KParts::ReadWritePart");
-	KYZisDoc *doc = dynamic_cast<KYZisDoc*>(obj);
+	KYZTextEditorIface *doc = dynamic_cast<KYZTextEditorIface*>(obj);
 	YZBuffer *buffer = new YZBuffer;
 	doc->setBuffer( buffer );
 	

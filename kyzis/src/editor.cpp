@@ -282,7 +282,7 @@ void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 
 	mParent->sendKey(k, modifiers);
 	if ( lmode == YZMode::MODE_INSERT || lmode == YZMode::MODE_REPLACE ) {
-		KYZisDoc *d = static_cast<KYZisDoc*>(mParent->document());
+		KYZTextEditorIface *d = static_cast<KYZTextEditorIface*>(mParent->document());
 		emit d->emitChars(mCursor->y(), mCursor->x(),k);
 	}
 	e->accept();

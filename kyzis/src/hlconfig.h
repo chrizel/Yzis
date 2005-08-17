@@ -248,7 +248,7 @@ class YzisSchemaConfigPage : public YzisConfigPage
   Q_OBJECT
 
   public:
-    YzisSchemaConfigPage ( QWidget *parent, class KYZisDoc *doc=0 );
+    YzisSchemaConfigPage ( QWidget *parent, class KYZTextEditorIface *doc=0 );
     ~YzisSchemaConfigPage ();
 
   public slots:

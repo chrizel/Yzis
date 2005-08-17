@@ -30,7 +30,7 @@
 #include "session.h"
 #include "viewid.h"
 
-class KYZisDoc;
+class KYZTextEditorIface;
 class YZBuffer;
 class KYZisView;
 class YZViewId;
@@ -81,12 +81,12 @@ private:
 	KAboutData m_aboutData;
 	KInstance m_instance;
 	
-	QMap<YZBuffer*, KYZisDoc*> bufferToDoc;
+	QMap<YZBuffer*, KYZTextEditorIface*> bufferToDoc;
 	
 	void changeCurrentView( YZView* );
 
 public:
-	static KYZisDoc *currentDoc;
+	static KYZTextEditorIface *currentDoc;
 	KMdiChildView *lastMdi;
 };
 

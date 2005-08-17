@@ -33,7 +33,7 @@
 
 class YZBuffer;
 
-class KYZisDoc : public KTextEditor::Document, 
+class KYZTextEditorIface : public KTextEditor::Document, 
 		public KTextEditor::EditInterface, 
 		public KTextEditor::HighlightingInterface, 
 		public KTextEditor::UndoInterface, 
@@ -46,12 +46,12 @@ class KYZisDoc : public KTextEditor::Document,
 	Q_OBJECT
 
 	public:
-		KYZisDoc(YZBuffer *buffer, 
+		KYZTextEditorIface(YZBuffer *buffer, 
 				 QWidget *parentWidget = 0, 
 				 const char *widgetName=0, 
 				 QObject *parent=0, 
 				 const char *name=0);
-		virtual ~KYZisDoc ();
+		virtual ~KYZTextEditorIface ();
 
 		KTextEditor::View *createView ( QWidget *parent, const char *name = 0 );
 		QPtrList<KTextEditor::View> views() const;

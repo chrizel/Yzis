@@ -30,7 +30,7 @@
 #include "konsole.h"
 #include "viewid.h"
 
-class KYZisDoc;
+class KYZTextEditorIface;
 
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and

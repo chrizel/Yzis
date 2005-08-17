@@ -137,7 +137,7 @@ KYZisCodeCompletion::KYZisCodeCompletion( KYZisView* view )
 }
 
 KYZisCodeCompletion::~KYZisCodeCompletion( ) {
-	delete m_completionPopup; 
+    delete m_completionPopup; 
 }
 
 bool KYZisCodeCompletion::codeCompletionVisible () {
@@ -237,8 +237,8 @@ void KYZisCodeCompletion::doComplete()
   if( item == 0 )
     return;
   QString text = item->m_entry.text;
-  //QString currentLine = static_cast<KYZisDoc*>(m_view->document())->textLine(m_view->cursorLine());
-  QString currentLine = static_cast<KYZisDoc*>(m_view->document())->textLine(m_lineCursor);
+  //QString currentLine = static_cast<KYZTextEditorIface*>(m_view->document())->textLine(m_view->cursorLine());
+  QString currentLine = static_cast<KYZTextEditorIface*>(m_view->document())->textLine(m_lineCursor);
   int len = m_view->cursorColumnReal() - m_colCursor;
   QString currentComplText = currentLine.mid(m_colCursor,len);
   QString add = text.mid(currentComplText.length());
@@ -248,7 +248,7 @@ void KYZisCodeCompletion::doComplete()
   emit filterInsertString(&(item->m_entry),&add);
 
   m_view->modePool()->push( YZMode::MODE_INSERT );
-  KYZisDoc *document = dynamic_cast<KYZisDoc*>(m_view->document());
+  KYZTextEditorIface *document = dynamic_cast<KYZTextEditorIface*>(m_view->document());
   YZBuffer *buffer = document->getBuffer();
   buffer->action()->insertChar(m_view, YZCursor(m_colCursor + currentComplText.length(),m_lineCursor), add);
 
@@ -277,7 +277,7 @@ void KYZisCodeCompletion::updateBox( bool )
 {
   m_completionListBox->clear();
 
-  QString currentLine = static_cast<KYZisDoc*>(m_view->document())->textLine(m_view->cursorLine());
+  QString currentLine = static_cast<KYZTextEditorIface*>(m_view->document())->textLine(m_view->cursorLine());
   int len = m_view->cursorColumnReal() - m_colCursor;
   QString currentComplText = currentLine.mid(m_colCursor,len);
 /* No-one really badly wants those, or?
@@ -463,7 +463,7 @@ void KYZisArgHint::cursorPositionChanged( KYZisView* view, int line, int col )
     int nCountDelimiter = 0;
     int count = 0;
 
-    QString currentTextLine = static_cast<KYZisDoc*>(view->document())->textLine( line );
+    QString currentTextLine = static_cast<KYZTextEditorIface*>(view->document())->textLine( line );
     QString text = currentTextLine.mid( m_currentCol, col - m_currentCol );
     QRegExp strconst_rx( "\"[^\"]*\"" );
     QRegExp chrconst_rx( "'[^']*'" );

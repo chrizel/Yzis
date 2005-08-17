@@ -41,7 +41,7 @@
 #include "kyziscodecompletion.h"
 #include "kyzis.h"
 
-KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
+KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *name )
 	: KTextEditor::View (doc, parent, name), YZView(doc->getBuffer(), KYZisFactory::self(), 10), m_popup(0)
 {
 	m_part = 0;

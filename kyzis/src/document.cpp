@@ -39,7 +39,7 @@
 #include "configdialog.h"
 #include "hlconfig.h"
 
-KYZisDoc::KYZisDoc(YZBuffer *buffer, QWidget *parentWidget, const char *, QObject *parent, const char *name)
+KYZTextEditorIface::KYZTextEditorIface(YZBuffer *buffer, QWidget *parentWidget, const char *, QObject *parent, const char *name)
 	: KTextEditor::Document(parent,name) {
 		m_buffer = buffer;
 		setInstance(KYZisFactory::self()->instance());
@@ -48,19 +48,19 @@ KYZisDoc::KYZisDoc(YZBuffer *buffer, QWidget *parentWidget, const char *, QObjec
 		setupActions();
 }
 
-KYZisDoc::~KYZisDoc () {
+KYZTextEditorIface::~KYZTextEditorIface () {
 }
 
 
-KTextEditor::View *KYZisDoc::createView ( QWidget *, const char * ) {
+KTextEditor::View *KYZTextEditorIface::createView ( QWidget *, const char * ) {
 	KYZisView *kview = dynamic_cast<KYZisView*>(YZSession::me->createView( m_buffer ));
 	return kview;
 }
 
-void KYZisDoc::setupActions() {
+void KYZTextEditorIface::setupActions() {
 }
 
-/*void KYZisDoc::configureEditor() {
+/*void KYZTextEditorIface::configureEditor() {
 
 	if ( KConfigDialog::showDialog( "configure_editor" ) )
 		return;
@@ -70,7 +70,7 @@ void KYZisDoc::setupActions() {
 	dialog->show();
 }*/
 
-void KYZisDoc::removeView( KTextEditor::View * v ) {
+void KYZTextEditorIface::removeView( KTextEditor::View * v ) {
 //	yzDebug() << "Document : removeView" << endl;
 	if ( !v )
 		return;
@@ -79,30 +79,30 @@ void KYZisDoc::removeView( KTextEditor::View * v ) {
 	YZSession::me->deleteView( kview->getId() );
 }
 
-bool KYZisDoc::openFile () {
+bool KYZTextEditorIface::openFile () {
 	yzDebug() << "openFile " << m_file << endl;
 	m_buffer->load(m_file);
 	return true;
 }
 
-bool KYZisDoc::saveFile () {
+bool KYZTextEditorIface::saveFile () {
 	return m_buffer->save();
 }
 
 /* Implementation of KTextEditor */
 
-QString KYZisDoc::text() const
+QString KYZTextEditorIface::text() const
 {
 	return m_buffer->getWholeText();
 }
 
 
-uint KYZisDoc::numLines() const
+uint KYZTextEditorIface::numLines() const
 {
 	return m_buffer->lineCount();
 }
 
-bool KYZisDoc::insertLine(unsigned int line, const QString &s)
+bool KYZTextEditorIface::insertLine(unsigned int line, const QString &s)
 {
 	m_buffer->insertLine(s, line);
 
@@ -113,7 +113,7 @@ bool KYZisDoc::insertLine(unsigned int line, const QString &s)
 	return true;
 }
 
-bool KYZisDoc::removeLine(unsigned int line)
+bool KYZTextEditorIface::removeLine(unsigned int line)
 {
 	m_buffer->deleteLine(line);
 
@@ -122,7 +122,7 @@ bool KYZisDoc::removeLine(unsigned int line)
 	return true;
 }
 
-QString KYZisDoc::textLine(unsigned int line) const
+QString KYZTextEditorIface::textLine(unsigned int line) const
 {
 	//Quanta crashes when it asks for the last line, I am not sure whether our lineCount() is wrong
 	//or if it's just quanta which does not count properly (it asks textLine from 0 to 218 in my test file,
@@ -131,137 +131,137 @@ QString KYZisDoc::textLine(unsigned int line) const
 	return m_buffer->textline(line);
 }
 
-uint KYZisDoc::length() const
+uint KYZTextEditorIface::length() const
 {
 	uint textlength = m_buffer->getWholeTextLength();
 
 	return textlength;
 }
 
-int KYZisDoc::lineLength(unsigned int line) const
+int KYZTextEditorIface::lineLength(unsigned int line) const
 {
 	uint length = m_buffer->textline(line).length();
 
 	return length;
 }
 
-bool KYZisDoc::clear()
+bool KYZTextEditorIface::clear()
 {
 	m_buffer->clearText();
 	return true;
 }
 
-bool KYZisDoc::insertText( uint line, uint col, const QString &s)
+bool KYZTextEditorIface::insertText( uint line, uint col, const QString &s)
 {
 	m_buffer->insertChar(col, line, s);
 
 	return true;
 }
 
-QString KYZisDoc::text (  uint startLine, uint startCol, uint endLine, uint endCol ) const {
+QString KYZTextEditorIface::text (  uint startLine, uint startCol, uint endLine, uint endCol ) const {
 	return m_buffer->getText( YZCursor(startCol,startLine), YZCursor(endCol,endLine) ).join("\n");
 }
 
-bool KYZisDoc::setText (  const QString &text ) {
+bool KYZTextEditorIface::setText (  const QString &text ) {
 	QString content = text;
 	m_buffer->loadText( &content );
 	return true;
 }
 
-bool KYZisDoc::removeText (  uint startLine, uint startCol, uint endLine, uint endCol) {
+bool KYZTextEditorIface::removeText (  uint startLine, uint startCol, uint endLine, uint endCol) {
 	YZView *v = m_buffer->firstView();
 	m_buffer->action()->deleteArea( v, YZCursor( startCol, startLine ), YZCursor( endCol, endLine ), QValueList<QChar>());
 	return true;
 }
 
-unsigned int KYZisDoc::hlMode () {
+unsigned int KYZTextEditorIface::hlMode () {
 	return YzisHlManager::self()->findHl( m_buffer->highlight() );
 }
 
-bool KYZisDoc::setHlMode (unsigned int mode) {
+bool KYZTextEditorIface::setHlMode (unsigned int mode) {
 	m_buffer->setHighLight( mode );
 	return true;
 }
 
-unsigned int KYZisDoc::hlModeCount () {
+unsigned int KYZTextEditorIface::hlModeCount () {
 	return YzisHlManager::self()->highlights();
 }
 
-QString KYZisDoc::hlModeName (unsigned int mode) {
+QString KYZTextEditorIface::hlModeName (unsigned int mode) {
 	return YzisHlManager::self()->hlName( mode );
 }
 
-QString KYZisDoc::hlModeSectionName (unsigned int mode) {
+QString KYZTextEditorIface::hlModeSectionName (unsigned int mode) {
 	return YzisHlManager::self()->hlSection( mode );
 }
 
-void KYZisDoc::highlightingChanged( ) {
+void KYZTextEditorIface::highlightingChanged( ) {
 	emit hlChanged();
 }
 
-void KYZisDoc::undo() {
+void KYZTextEditorIface::undo() {
 	YZView *v = m_buffer->firstView();
 	m_buffer->undoBuffer()->undo(v);
 }
 
-void KYZisDoc::redo() {
+void KYZTextEditorIface::redo() {
 	YZView *v = m_buffer->firstView();
 	m_buffer->undoBuffer()->redo(v);
 }
 
-void KYZisDoc::clearUndo() {
+void KYZTextEditorIface::clearUndo() {
 	m_buffer->undoBuffer()->clearUndo();
 }
 
-void KYZisDoc::clearRedo() {
+void KYZTextEditorIface::clearRedo() {
 	m_buffer->undoBuffer()->clearRedo();
 }
 
-unsigned int KYZisDoc::undoCount() const {
+unsigned int KYZTextEditorIface::undoCount() const {
 	return m_buffer->undoBuffer()->undoCount();
 }
 
-unsigned int KYZisDoc::redoCount() const {
+unsigned int KYZTextEditorIface::redoCount() const {
 	return m_buffer->undoBuffer()->redoCount();
 }
 
-unsigned int KYZisDoc::undoSteps() const {
+unsigned int KYZTextEditorIface::undoSteps() const {
 	return 0;
 }
 
-void KYZisDoc::setUndoSteps(unsigned int ) {
+void KYZTextEditorIface::setUndoSteps(unsigned int ) {
 	//nothing
 }
 
 //KTextEditor::ConfigInterface implementation
 
-void KYZisDoc::readConfig() {
+void KYZTextEditorIface::readConfig() {
 	KYZisFactory::self()->readConfig();
 }
 
-void KYZisDoc::writeConfig() {
+void KYZTextEditorIface::writeConfig() {
 	KYZisFactory::self()->writeConfig();
 }
 
-void KYZisDoc::readConfig( KConfig */*config*/ ) {
+void KYZTextEditorIface::readConfig( KConfig */*config*/ ) {
 	//how to use another config file with kconfigxt?
 }
 
-void KYZisDoc::writeConfig( KConfig */*config*/ ) {
+void KYZTextEditorIface::writeConfig( KConfig */*config*/ ) {
 	//how to use another config file with kconfigxt?
 }
 
-void KYZisDoc::readSessionConfig( KConfig *config ) {
+void KYZTextEditorIface::readSessionConfig( KConfig *config ) {
 	KURL url(config->readEntry("URL"));
 	if (!url.isEmpty() && url.isValid())
 		openURL(url);
 }
 
-void KYZisDoc::writeSessionConfig( KConfig *config ) {
+void KYZTextEditorIface::writeSessionConfig( KConfig *config ) {
 	config->writeEntry("URL", url().prettyURL());
 }
 
-void KYZisDoc::configDialog() {
+void KYZTextEditorIface::configDialog() {
 	if ( KConfigDialog::showDialog( "configure_editor" ) )
 		return;
 
@@ -270,7 +270,7 @@ void KYZisDoc::configDialog() {
 	dialog->exec();
 }
 
-void KYZisDoc::setModified( bool modified ) {
+void KYZTextEditorIface::setModified( bool modified ) {
 	if ( KTextEditor::Document::isModified() != modified ) {
 		KTextEditor::Document::setModified( modified );
 		YZList<YZView*> views = m_buffer->views();
@@ -283,34 +283,34 @@ void KYZisDoc::setModified( bool modified ) {
 	if ( modified )
 		emit textChanged();
 }
-void KYZisDoc::emitSelectionChanged() {
+void KYZTextEditorIface::emitSelectionChanged() {
 	emit selectionChanged();
 }
 
 
 //KTextEditor::MarkInterface slots
 
-uint KYZisDoc::mark( uint line ) {
+uint KYZTextEditorIface::mark( uint line ) {
 	return m_buffer->docMarks()->get(line);
 }
 
-void KYZisDoc::setMark( uint line, uint markType ) {
+void KYZTextEditorIface::setMark( uint line, uint markType ) {
 	m_buffer->docMarks()->add(line, markType);
 }
 
-void KYZisDoc::clearMark( uint line ) {
+void KYZTextEditorIface::clearMark( uint line ) {
 	m_buffer->docMarks()->del(line);
 }
 
-void KYZisDoc::addMark( uint line, uint markType ) {
+void KYZTextEditorIface::addMark( uint line, uint markType ) {
 	m_buffer->docMarks()->add(line, markType);
 }
 
-void KYZisDoc::removeMark( uint line, uint markType ) {
+void KYZTextEditorIface::removeMark( uint line, uint markType ) {
 	m_buffer->docMarks()->del(line, markType);
 }
 
-QPtrList<KTextEditor::Mark> KYZisDoc::marks() {
+QPtrList<KTextEditor::Mark> KYZTextEditorIface::marks() {
 	QPtrList<KTextEditor::Mark> marks;
 	const YZDocMarker &marker = m_buffer->docMarks()->getMarker();
 	for (YZDocMarker::const_iterator it = marker.constBegin(); it != marker.constEnd(); ++it)
@@ -323,47 +323,47 @@ QPtrList<KTextEditor::Mark> KYZisDoc::marks() {
 	return marks;
 }
 
-void KYZisDoc::clearMarks() {
+void KYZTextEditorIface::clearMarks() {
 	m_buffer->docMarks()->clear();
 }
 
 /*
  * KTextEditor::MarkInterfaceExtension
  */
-void KYZisDoc::setPixmap(MarkInterface::MarkTypes, const QPixmap &) {
+void KYZTextEditorIface::setPixmap(MarkInterface::MarkTypes, const QPixmap &) {
 }
-void KYZisDoc::setDescription(MarkInterface::MarkTypes, const QString &){
+void KYZTextEditorIface::setDescription(MarkInterface::MarkTypes, const QString &){
 }
-void KYZisDoc::setMarksUserChangable(uint ) {
+void KYZTextEditorIface::setMarksUserChangable(uint ) {
 }
-void KYZisDoc::markChanged (KTextEditor::Mark , KTextEditor::MarkInterfaceExtension::MarkChangeAction ) {
+void KYZTextEditorIface::markChanged (KTextEditor::Mark , KTextEditor::MarkInterfaceExtension::MarkChangeAction ) {
 }
 
 
-uint KYZisDoc::configPages() const {
+uint KYZTextEditorIface::configPages() const {
 	return 1;	
 }
 
-KTextEditor::ConfigPage *KYZisDoc::configPage ( uint /*number*/, QWidget *parent, const char */*name*/ ) {
+KTextEditor::ConfigPage *KYZTextEditorIface::configPage ( uint /*number*/, QWidget *parent, const char */*name*/ ) {
 	return new YzisSchemaConfigPage( parent, this );
 }
 
-QString KYZisDoc::configPageName ( uint /*number*/ ) const {
+QString KYZTextEditorIface::configPageName ( uint /*number*/ ) const {
 	return i18n("Syntax Highlighting");
 }
 
-QString KYZisDoc::configPageFullName ( uint /*number*/) const {
+QString KYZTextEditorIface::configPageFullName ( uint /*number*/) const {
 	return i18n("Syntax Highlighting");
 }
 
-QPixmap KYZisDoc::configPagePixmap ( uint /*number*/, int /*size*/ ) const {
+QPixmap KYZTextEditorIface::configPagePixmap ( uint /*number*/, int /*size*/ ) const {
 	return 0;
 }
 
 /*
  * KTextEditor::SelectionInterface
  */
-bool KYZisDoc::setSelection( unsigned int startLine, unsigned int startCol, unsigned int endLine, unsigned int endCol ) {
+bool KYZTextEditorIface::setSelection( unsigned int startLine, unsigned int startCol, unsigned int endLine, unsigned int endCol ) {
 	YZView *v = m_buffer->firstView();
 	v->setPaintAutoCommit( false );
 	if ( v->modePool()->current()->isSelMode() ) // leave it
@@ -374,30 +374,30 @@ bool KYZisDoc::setSelection( unsigned int startLine, unsigned int startCol, unsi
 	v->commitPaintEvent();
 	return true;
 }
-bool KYZisDoc::clearSelection() {
+bool KYZTextEditorIface::clearSelection() {
 	YZView *v = m_buffer->firstView();
 	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
 	v->modePool()->pop();
 	return true;
 }
-bool KYZisDoc::hasSelection() const {
+bool KYZTextEditorIface::hasSelection() const {
 	YZView *v = m_buffer->firstView();
 	return !(v->getSelectionPool()->visual()->isEmpty());
 }
-QString KYZisDoc::selection() const {
+QString KYZTextEditorIface::selection() const {
 	YZView *v = m_buffer->firstView();
 	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
 	QValueList<QChar> regs;
 	YZInterval i = dynamic_cast<YZModeVisual*>( v->modePool()->current() )->interval( YZCommandArgs(NULL,v,regs,1,false) );
 	return ((YZBuffer*)this)->getText( i ).join("\n");
 }
-bool KYZisDoc::removeSelectedText() {
+bool KYZTextEditorIface::removeSelectedText() {
 	YZView *v = m_buffer->firstView();
 	YZASSERT_MSG( v->modePool()->current()->isSelMode(), "There is no selection" );
 	dynamic_cast<YZModeVisual*>( v->modePool()->current() )->execCommand( v, "d" );
 	return true;
 }
-bool KYZisDoc::selectAll() {
+bool KYZTextEditorIface::selectAll() {
 	if ( m_buffer->lineCount() == 0 )
 		return true;
 	return setSelection( 0, 0, m_buffer->lineCount() - 1, qMax( (int)(m_buffer->textline( m_buffer->lineCount() - 1 ).length() - 1), 0 ) );
@@ -406,32 +406,32 @@ bool KYZisDoc::selectAll() {
 /*
  * KTextEditor::SelectionInterfaceSel
  */
-int KYZisDoc::selStartLine() {
+int KYZTextEditorIface::selStartLine() {
 	YZView *v = m_buffer->firstView();
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
 	return visual->bufferMap()[ 0 ].fromPos().y();
 }
-int KYZisDoc::selStartCol() {
+int KYZTextEditorIface::selStartCol() {
 	YZView *v = m_buffer->firstView();
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
 	return visual->bufferMap()[ 0 ].fromPos().x();
 }
-int KYZisDoc::selEndLine() {
+int KYZTextEditorIface::selEndLine() {
 	YZView *v = m_buffer->firstView();
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
 	return visual->bufferMap()[ 0 ].toPos().y();
 }
-int KYZisDoc::selEndCol() {
+int KYZTextEditorIface::selEndCol() {
 	YZView *v = m_buffer->firstView();
 	YZDoubleSelection* visual = v->getSelectionPool()->visual();
 	YZASSERT_MSG( visual->isEmpty(), "There is no selection" );
 	return visual->bufferMap()[ 0 ].toPos().x();
 }
 
-QPtrList<KTextEditor::View> KYZisDoc::views() const
+QPtrList<KTextEditor::View> KYZTextEditorIface::views() const
 {
 	YZList<YZView*> views = m_buffer->views();
 	QPtrList<KTextEditor::View> result;

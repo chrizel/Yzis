@@ -59,7 +59,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		void filterInsertString(KTextEditor::CompletionEntry *, QString *);
 
 	public:
-		KYZisView(KYZisDoc *doc, QWidget *parent, const char *name=0);
+		KYZisView(KYZTextEditorIface *doc, QWidget *parent, const char *name=0);
 	 	virtual ~KYZisView();
 		KTextEditor::Document *document () const { return buffer; }
 		void setCommandLineText( const QString& text );
@@ -131,7 +131,7 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 
 	private:
 		KYZisEdit *m_editor;
-		KYZisDoc *buffer;
+		KYZTextEditorIface *buffer;
 		KStatusBar *status;
 		KYZisCommand *command;
 		QScrollBar *mVScroll; //vertical scroll

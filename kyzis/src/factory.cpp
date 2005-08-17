@@ -44,6 +44,7 @@
 #include "viewwidget.h"
 #include "debug.h"
 #include "yzis.h"
+#include "kyzis.h"
 
 KYZisDoc *KYZisFactory::currentDoc=0;
 
@@ -117,7 +118,7 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
         Kyzis::me = 0;
 	}
 
-	KYZisDoc *doc = new KYZisDoc( parentWidget, widgetname, parent, name );
+	KYZisDoc *doc = new KYZisDoc( NULL, parentWidget, widgetname, parent, name );
 	doc->setReadWrite( true );
 	
 	return doc;
@@ -177,17 +178,17 @@ void KYZisFactory::changeCurrentView( YZView* view ) {
 }
 
 YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
-	KYZisDoc *doc = dynamic_cast<KYZisDoc*>(buffer);
+	KYZisDoc *doc = bufferToDoc[ buffer ];
 	KYZisView *view = 0;
 	
 	if ( doc ) {
-		view = new KYZisView( doc, Kyzis::me, doc->fileName() + "-view" );
-		doc->addView( view );
+		view = new KYZisView( doc, Kyzis::me, buffer->fileName() + "-view" );
+		buffer->addView( view );
 		
 		doc->insertChildClient( view );
 		doc->setBaseWidget( view );
 	
-		KMdiChildView *mdi = Kyzis::me->createWrapper( view, doc->fileName(), doc->fileName() );
+		KMdiChildView *mdi = Kyzis::me->createWrapper( view, buffer->fileName(), buffer->fileName() );
 		view->setFocus();
 		Kyzis::me->addWindow( mdi );
 
@@ -210,8 +211,13 @@ YZBuffer *KYZisFactory::doCreateBuffer() {
 	}
 	
 	QObject *obj = factory->create(Kyzis::me, "kyzispart", "KParts::ReadWritePart");
+	KYZisDoc *doc = dynamic_cast<KYZisDoc*>(obj);
+	YZBuffer *buffer = new YZBuffer;
+	doc->setBuffer( buffer );
 	
-	return dynamic_cast<KYZisDoc*>(obj);
+	bufferToDoc[ buffer ] = doc;
+	
+	return buffer;
 }
 
 void KYZisFactory::popupMessage( const QString& message ) {
@@ -249,7 +255,8 @@ void KYZisFactory::doDeleteView( YZView *view ) {
 	}
 }
 
-void KYZisFactory::deleteBuffer(YZBuffer* /*b*/) {
+void KYZisFactory::deleteBuffer(YZBuffer* b) {
+	delete b;
 }
 
 void KYZisFactory::setFocusMainWindow() {

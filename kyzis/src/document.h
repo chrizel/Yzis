@@ -30,9 +30,8 @@
 #include <ktexteditor/configinterfaceextension.h>
 #include <ktexteditor/selectioninterface.h>
 #include <ktexteditor/selectioninterfaceext.h>
-#include <buffer.h>
-#include <view.h>
-#include <session.h>
+
+class YZBuffer;
 
 class KYZisDoc : public KTextEditor::Document, 
 		public KTextEditor::EditInterface, 
@@ -43,12 +42,15 @@ class KYZisDoc : public KTextEditor::Document,
 		public KTextEditor::MarkInterface,
 		public KTextEditor::MarkInterfaceExtension,
 		public KTextEditor::SelectionInterface,
-		public KTextEditor::SelectionInterfaceExt,
-		public YZBuffer {
+		public KTextEditor::SelectionInterfaceExt {
 	Q_OBJECT
 
 	public:
-		KYZisDoc (QWidget *parentWidget = 0, const char *widgetName=0, QObject *parent=0, const char *name=0);
+		KYZisDoc(YZBuffer *buffer, 
+				 QWidget *parentWidget = 0, 
+				 const char *widgetName=0, 
+				 QObject *parent=0, 
+				 const char *name=0);
 		virtual ~KYZisDoc ();
 
 		KTextEditor::View *createView ( QWidget *parent, const char *name = 0 );
@@ -74,7 +76,9 @@ class KYZisDoc : public KTextEditor::Document,
 		void highlightingChanged();
 
 		void applyConfig( );
-
+		
+		YZBuffer *getBuffer() const { return m_buffer; }
+		void setBuffer( YZBuffer *buffer ) { m_buffer = buffer; }
 
 		//HL interface
 		unsigned int highlightingInterfaceNumber () const ;
@@ -162,6 +166,7 @@ class KYZisDoc : public KTextEditor::Document,
 
 	private:
 		QWidget *m_parent;
+		YZBuffer *m_buffer;
 
 	signals:
 		void hlChanged();

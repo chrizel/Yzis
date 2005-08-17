@@ -24,11 +24,14 @@
 #include <kparts/factory.h>
 #include <kaboutdata.h>
 #include <kinstance.h>
+
+#include <qmap.h>
+
 #include "session.h"
-#include "kyzis.h"
 #include "viewid.h"
 
 class KYZisDoc;
+class YZBuffer;
 class KYZisView;
 class YZViewId;
 class KMdiChildView;
@@ -77,6 +80,8 @@ public slots :
 private:
 	KAboutData m_aboutData;
 	KInstance m_instance;
+	
+	QMap<YZBuffer*, KYZisDoc*> bufferToDoc;
 	
 	void changeCurrentView( YZView* );
 

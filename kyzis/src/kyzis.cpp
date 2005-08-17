@@ -45,6 +45,7 @@
 #include <kmultitabbar.h>
 
 #include "document.h"
+#include "session.h"
 #include "viewid.h"
 #include "viewwidget.h"
 

@@ -29,18 +29,20 @@
 #include <kmessagebox.h>
 #include <kxmlguifactory.h>
 #include <viewcursor.h>
-#include "viewwidget.h"
-#include "factory.h"
-#include "debug.h"
-#include "kyziscodecompletion.h"
 #include <qtimer.h>
 
 #include <kdebug.h>
 
+#include "viewwidget.h"
+
 #include "settings.h"
+#include "factory.h"
+#include "debug.h"
+#include "kyziscodecompletion.h"
+#include "kyzis.h"
 
 KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
-	: KTextEditor::View (doc, parent, name), YZView(doc, KYZisFactory::self(), 10), m_popup(0)
+	: KTextEditor::View (doc, parent, name), YZView(doc->getBuffer(), KYZisFactory::self(), 10), m_popup(0)
 {
 	m_part = 0;
 	m_mdi = 0;
@@ -83,7 +85,7 @@ KYZisView::KYZisView ( KYZisDoc *doc, QWidget *parent, const char *name )
 	m_editor->setFocus();
 	setFocusProxy( m_editor );
 	myBuffer()->statusChanged();
-	mVScroll->setMaxValue( buffer->lineCount() - 1 );
+	mVScroll->setMaxValue( buffer->numLines() - 1 );
 
 	setupCodeCompletion();
 
@@ -123,7 +125,7 @@ void KYZisView::scrollUp( int n ) {
 }
 
 void KYZisView::paintEvent( const YZSelection& drawMap ) {
-	mVScroll->setMaxValue( buffer->lineCount() - 1 );
+	mVScroll->setMaxValue( buffer->numLines() - 1 );
 	m_editor->paintEvent( drawMap );
 }
 unsigned int KYZisView::stringWidth( const QString& str ) const {
@@ -277,8 +279,8 @@ void KYZisView::scrollLineDown() {
 
 void KYZisView::scrollView( int value ) {
 	if ( value < 0 ) value = 0;
-	else if ( (unsigned int)value > buffer->lineCount() - 1 )
-		value = buffer->lineCount() - 1;
+	else if ( (unsigned int)value > buffer->numLines() - 1 )
+		value = buffer->numLines() - 1;
 
 	// only redraw if the view actually moves
 	if ((unsigned int)value != getCurrentTop()) {

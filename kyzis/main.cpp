@@ -95,6 +95,7 @@ int main(int argc, char **argv) {
 		if ( args->count() == 0 ) {
 			YZView *view = KYZisFactory::self()->createBufferAndView();
 			view->myBuffer()->openNewFile();
+			view->displayIntro();
 		} else {
 			for ( int i = 0; i < args->count(); i++ )
 				widget->load( args->url( i ) );

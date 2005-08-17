@@ -498,7 +498,7 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 		return CMD_OK;
 	}
 	yzDebug() << "New buffer / view : " << path << endl;
-	args.view->mySession()->createBuffer( path );
+	args.view->mySession()->createBufferAndView( path );
 	YZBuffer *bu = args.view->mySession()->findBuffer( path );
 	YZASSERT_MSG( bu != NULL, QString("Created buffer %1 was not found!").arg(path) );
 	YZSession::me->setCurrentView( bu->firstView() );
@@ -797,7 +797,7 @@ cmd_state YZModeEx::indent( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::enew( const YZExCommandArgs& ) {
-	YZSession::me->createBuffer();
+	YZSession::me->createBufferAndView();
 	return CMD_OK;
 }
 

@@ -143,6 +143,12 @@ class YZSession {
 		 * Creates a new buffer
 		 */
 		YZBuffer *createBuffer(const QString& path=QString::null);
+		
+		/**
+		 * Creates a new buffer and puts it in a new view
+		 * To get the created buffer, call YZView::myBuffer()
+		 */
+		YZView *createBufferAndView( const QString &path = QString::null );
 
 		/**
 		 * Deletes the given buffer

@@ -59,6 +59,15 @@ public:
 	
 	KYZTextEditorIface *createTextEditorIface();
 	
+	/**
+	 * Sets the parent widget for all created KYZisView
+	 * This is an ugly hack to get around the deep calls into
+	 * YZSession in order to create Views.  These calls cannot
+	 * have parent information passed around.  createPartObject
+	 * can look in this field to get a parent
+	 */
+	void setViewParentWidget( QWidget *viewParent ) { m_viewParent = viewParent; }
+	
 protected:
 	YZView *doCreateView( YZBuffer* buffer );
 	void doDeleteView( YZView *view );
@@ -85,6 +94,7 @@ private:
 public:
 	static KYZTextEditorIface *currentDoc;
 	KYZisView *lastView;
+	QWidget *m_viewParent;
 };
 
 #endif

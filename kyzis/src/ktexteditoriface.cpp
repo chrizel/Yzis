@@ -35,6 +35,7 @@
 #include "mark.h"
 #include "mode_visual.h"
 #include "buffer.h"
+#include "kyzis.h"
 
 #include "configdialog.h"
 #include "hlconfig.h"
@@ -52,7 +53,13 @@ KYZTextEditorIface::~KYZTextEditorIface () {
 }
 
 
-KTextEditor::View *KYZTextEditorIface::createView ( QWidget *, const char * ) {
+KTextEditor::View *KYZTextEditorIface::createView ( QWidget *parent, const char * ) {
+	// if we're running as a KPart, remember the parent widget for this view
+	if ( !Kyzis::me ) {
+		KYZisFactory *factory = dynamic_cast<KYZisFactory*>(YZSession::me);
+		factory->setViewParentWidget( parent );
+	}
+	
 	KYZisView *kview = dynamic_cast<KYZisView*>(YZSession::me->createView( buffer() ));
 	return kview;
 }

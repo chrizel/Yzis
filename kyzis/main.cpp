@@ -97,8 +97,11 @@ int main(int argc, char **argv) {
 			view->myBuffer()->openNewFile();
 			view->displayIntro();
 		} else {
-			for ( int i = 0; i < args->count(); i++ )
+			for ( int i = 0; i < args->count(); i++ ) {
+				YZView *view = KYZisFactory::self()->createBufferAndView();
+				YZSession::me->setCurrentView(view);
 				widget->load( args->url( i ) );
+			}
 		}
 
 		QTimer::singleShot(0, widget, SLOT( init() ));

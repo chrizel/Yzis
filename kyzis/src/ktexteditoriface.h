@@ -166,6 +166,8 @@ class KYZTextEditorIface : public KTextEditor::Document,
 	private:
 		QWidget *m_parent;
 		YZBuffer *m_buffer;
+		
+		YZBuffer *buffer();
 
 	signals:
 		void hlChanged();

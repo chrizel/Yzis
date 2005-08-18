@@ -116,7 +116,7 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	if ( parentWidget && parentWidget->inherits( "Kyzis" ) )
 		Kyzis::me = static_cast<Kyzis*>( parentWidget );
 	else {
-        Kyzis::me = 0;
+		Kyzis::me = 0;
 	}
 
 	KYZTextEditorIface *doc = new KYZTextEditorIface( NULL, parentWidget, widgetname, parent, name );
@@ -187,14 +187,18 @@ YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
 		view = new KYZisView( doc, Kyzis::me, buffer->fileName() + "-view" );
 		buffer->addView( view );
 		
-		KMdiChildView *mdi = Kyzis::me->createWrapper( view, buffer->fileName(), buffer->fileName() );
-		view->setFocus();
-		Kyzis::me->addWindow( mdi );
+		if ( Kyzis::me ) {
+			KMdiChildView *mdi = Kyzis::me->createWrapper( view, buffer->fileName(), buffer->fileName() );
+			view->setMdiChildView( mdi );
+			
+			Kyzis::me->addWindow( mdi );
+			Kyzis::me->createKPartGUI( doc );
+		} else {
+			view->setMdiChildView( 0 );
+		}
 
-		view->setMdiChildView( mdi );
+		view->setFocus();
 		view->setKPart( doc );
-		Kyzis::me->createKPartGUI( doc );
-	
 		view->show();
 	}
 	

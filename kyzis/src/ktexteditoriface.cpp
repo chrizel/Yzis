@@ -53,7 +53,7 @@ KYZTextEditorIface::~KYZTextEditorIface () {
 
 
 KTextEditor::View *KYZTextEditorIface::createView ( QWidget *, const char * ) {
-	KYZisView *kview = dynamic_cast<KYZisView*>(YZSession::me->createView( m_buffer ));
+	KYZisView *kview = dynamic_cast<KYZisView*>(YZSession::me->createView( buffer() ));
 	return kview;
 }
 
@@ -79,9 +79,18 @@ void KYZTextEditorIface::removeView( KTextEditor::View * v ) {
 	YZSession::me->deleteView( kview->getId() );
 }
 
+YZBuffer *KYZTextEditorIface::buffer()
+{
+	if ( !m_buffer ) {
+		m_buffer = YZSession::me->createBuffer();
+	}
+	
+	return m_buffer;
+}
+
 bool KYZTextEditorIface::openFile () {
 	yzDebug() << "openFile " << m_file << endl;
-	m_buffer->load(m_file);
+	buffer()->load(m_file);
 	return true;
 }
 

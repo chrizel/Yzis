@@ -64,7 +64,7 @@ KYZisFactory::KYZisFactory() :
 		m_aboutData("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR, I18N_NOOP("Embeddable vi-like editor component"),
 		KAboutData::License_LGPL_V2, I18N_NOOP("(c)2002-2005 The Kyzis Authors"),0,"http://www.yzis.org"),
 		m_instance( &m_aboutData ),
-		lastMdi(0)
+		lastView(0)
 {
 	m_aboutData.addAuthor ("Mickael Marchand", I18N_NOOP("Initial Author"), "marchand@kde.org");
 	m_aboutData.addAuthor ("Thomas Capricelli", I18N_NOOP("Initial Author"), "orzel@freehackers.org");
@@ -228,7 +228,7 @@ void KYZisFactory::popupMessage( const QString& message ) {
 
 void KYZisFactory::closeView() {
 	if (Kyzis::me) {
-		Kyzis::me->closeWindow( lastMdi );
+		Kyzis::me->closeWindow( lastView->getMdiChildView() );
 	}
 	else if (kapp->name() == QString::fromLatin1("kdevelop") ) {
 		yzDebug() << "Calling kdevelop" <<endl;
@@ -244,14 +244,16 @@ void KYZisFactory::closeView() {
 			popupMessage( "DCOP communication is broken !" );
 		}
 			
+	} else {
+		lastView->close( true );
 	}
-	lastMdi = 0;
+	lastView = 0;
 }
 
 void KYZisFactory::doDeleteView( YZView *view ) {
 	KYZisView *kview = dynamic_cast<KYZisView*>(view);
-	if ( kview && Kyzis::me ) {
-		lastMdi = kview->getMdiChildView();
+	if ( kview ) {
+		lastView = kview;
 		QTimer::singleShot(0, this, SLOT( closeView() ));
 	}
 }

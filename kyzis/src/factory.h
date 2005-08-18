@@ -32,7 +32,6 @@ class KYZTextEditorIface;
 class YZBuffer;
 class KYZisView;
 class YZViewId;
-class KMdiChildView;
 
 class KYZisFactory : public KParts::Factory, public YZSession
 {
@@ -85,7 +84,7 @@ private:
 
 public:
 	static KYZTextEditorIface *currentDoc;
-	KMdiChildView *lastMdi;
+	KYZisView *lastView;
 };
 
 #endif

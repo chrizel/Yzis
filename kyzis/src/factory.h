@@ -25,8 +25,6 @@
 #include <kaboutdata.h>
 #include <kinstance.h>
 
-#include <qmap.h>
-
 #include "session.h"
 #include "viewid.h"
 
@@ -80,8 +78,6 @@ public slots :
 private:
 	KAboutData m_aboutData;
 	KInstance m_instance;
-	
-	QMap<YZBuffer*, KYZTextEditorIface*> bufferToDoc;
 	
 	void changeCurrentView( YZView* );
 

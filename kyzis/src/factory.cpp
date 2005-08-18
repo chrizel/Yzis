@@ -45,6 +45,7 @@
 #include "debug.h"
 #include "yzis.h"
 #include "kyzis.h"
+#include "kyzisbuffer.h"
 
 KYZTextEditorIface *KYZisFactory::currentDoc=0;
 
@@ -178,7 +179,8 @@ void KYZisFactory::changeCurrentView( YZView* view ) {
 }
 
 YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
-	KYZTextEditorIface *doc = bufferToDoc[ buffer ];
+	KYZisBuffer *kbuffer = dynamic_cast<KYZisBuffer*>(buffer);
+	KYZTextEditorIface *doc = kbuffer->getTextEditorIface();
 	KYZisView *view = 0;
 	
 	if ( doc ) {
@@ -212,10 +214,9 @@ YZBuffer *KYZisFactory::doCreateBuffer() {
 	
 	QObject *obj = factory->create(Kyzis::me, "kyzispart", "KParts::ReadWritePart");
 	KYZTextEditorIface *doc = dynamic_cast<KYZTextEditorIface*>(obj);
-	YZBuffer *buffer = new YZBuffer;
+	KYZisBuffer *buffer = new KYZisBuffer;
 	doc->setBuffer( buffer );
-	
-	bufferToDoc[ buffer ] = doc;
+	buffer->setTextEditorIface( doc );
 	
 	return buffer;
 }

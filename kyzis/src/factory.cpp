@@ -187,9 +187,6 @@ YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
 		view = new KYZisView( doc, Kyzis::me, buffer->fileName() + "-view" );
 		buffer->addView( view );
 		
-		doc->insertChildClient( view );
-		doc->setBaseWidget( view );
-	
 		KMdiChildView *mdi = Kyzis::me->createWrapper( view, buffer->fileName(), buffer->fileName() );
 		view->setFocus();
 		Kyzis::me->addWindow( mdi );
@@ -204,8 +201,8 @@ YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
 	return view;
 }
 
-YZBuffer *KYZisFactory::doCreateBuffer() {
-	kdDebug() << "Kyzis::createBuffer " << endl;
+KYZTextEditorIface *KYZisFactory::createTextEditorIface()
+{
 	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
 	if (!factory) {
 		kdDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
@@ -213,12 +210,11 @@ YZBuffer *KYZisFactory::doCreateBuffer() {
 	}
 	
 	QObject *obj = factory->create(Kyzis::me, "kyzispart", "KParts::ReadWritePart");
-	KYZTextEditorIface *doc = dynamic_cast<KYZTextEditorIface*>(obj);
-	KYZisBuffer *buffer = new KYZisBuffer;
-	doc->setBuffer( buffer );
-	buffer->setTextEditorIface( doc );
-	
-	return buffer;
+	return dynamic_cast<KYZTextEditorIface*>(obj);
+}
+
+YZBuffer *KYZisFactory::doCreateBuffer() {
+	return new KYZisBuffer;
 }
 
 void KYZisFactory::popupMessage( const QString& message ) {

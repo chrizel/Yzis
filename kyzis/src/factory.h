@@ -58,6 +58,8 @@ public:
 	bool promptYesNo(const QString& title, const QString& message);
 	int promptYesNoCancel(const QString& title, const QString& message);
 	
+	KYZTextEditorIface *createTextEditorIface();
+	
 protected:
 	YZView *doCreateView( YZBuffer* buffer );
 	void doDeleteView( YZView *view );

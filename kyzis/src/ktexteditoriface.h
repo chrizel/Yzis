@@ -57,7 +57,6 @@ class KYZTextEditorIface : public KTextEditor::Document,
 		QPtrList<KTextEditor::View> views() const;
 		void removeView( KTextEditor::View * v );
 		QWidget *parentWidget() { return m_parent; }
-		void setBaseWidget(QWidget *w) { setWidget(w); }
 
 		uint numLines() const;
 		QString text() const;

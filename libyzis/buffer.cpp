@@ -714,7 +714,7 @@ void YZBuffer::rmView(YZView *v) {
 	d->views.remove(v);
 //	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
 	if ( d->views.isEmpty() ) {
-		YZSession::me->rmBuffer( this );
+		setState( HIDDEN );
 	}
 }
 
@@ -1136,6 +1136,15 @@ void YZBuffer::setState( State state )
 		if ( d->highlight ) {
 			d->highlight->release();
 		}
+	}
+	
+	// call virtual functions to allow subclasses to do special things
+	if  ( state == ACTIVE ) {
+		makeActive();
+	} else if ( state == HIDDEN ) {
+		makeHidden();
+	} else {
+		makeInactive();
 	}
 	
 	d->state = state;

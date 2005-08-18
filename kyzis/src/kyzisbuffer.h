@@ -31,6 +31,10 @@ public:
 	const KYZTextEditorIface *getTextEditorIface() const { return m_iface; }
 
 private:
+	virtual void makeActive();
+	virtual void makeHidden();
+	virtual void makeInactive();
+	
 	KYZTextEditorIface *m_iface;
 };
 

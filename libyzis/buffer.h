@@ -435,6 +435,24 @@ protected:
 	bool isLineVisible(uint line) const;
 
 private:
+	/**
+	 * This function is to be overridden by subclasses that have
+	 * extra work to do when the state is changed to INACTIVE
+	 */
+	virtual void makeInactive() {}
+	
+	/**
+	 * This function is to be overridden by subclasses that have
+	 * extra work to do when the state is changed to HIDDEN
+	 */
+	virtual void makeHidden() {}
+	
+	/**
+	 * This function is to be overridden by subclasses that have
+	 * extra work to do when the state is changed to ACTIVE
+	 */
+	virtual void makeActive() {}
+	
 	struct Private;
 	Private *d;
 };

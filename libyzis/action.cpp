@@ -397,15 +397,15 @@ void YZAction::replaceLine( YZView* pView, unsigned int Y, const QString& text )
 	replaceLine( pView, pos, text );
 }
 
-YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
+YZCursor YZAction::match( YZView* pView, const YZCursor& cursor, bool *found ) {
 	QString matchers = pView->myBuffer()->getLocalStringOption("matchpairs");
 
-	QString current = pView->myBuffer()->textline( mCursor.y() );
-	QChar cchar = current.at(mCursor.x());
+	QString current = pView->myBuffer()->textline( cursor.y() );
+	QChar cchar = current.at(cursor.x());
 
 	int i = 0;
 	unsigned int j = 0;
-	unsigned int curY = mCursor.y();
+	unsigned int curY = cursor.y();
 	int count = 1;
 	bool back = false;
 	unsigned int start = 0;
@@ -417,15 +417,15 @@ YZCursor YZAction::match( YZView* pView, YZCursor& mCursor, bool *found ) {
 			//now do the real search
 			while ( curY < pView->myBuffer()->lineCount() && count > 0 ) {
 				current = pView->myBuffer()->textline( curY );
-				if ( back && mCursor.y() == curY ) {
-					if ( mCursor.x() == 0) {
+				if ( back && cursor.y() == curY ) {
+					if ( cursor.x() == 0) {
 						curY--;
 						current = pView->myBuffer()->textline( curY );
 						start = current.length() - 1;
 					} else
-						start = mCursor.x()-1;
-				} else if ( !back && mCursor.y() == curY )
-					start =  mCursor.x()+1;
+						start = cursor.x()-1;
+				} else if ( !back && cursor.y() == curY )
+					start =  cursor.x()+1;
 				else
 					start = back ? current.length() -1 : 0 ;
 

@@ -32,26 +32,20 @@
 
 YZViewCursor::YZViewCursor( YZView* parent ) {
 	mParent = parent;
-	mBuffer = new YZCursor();
-	mScreen = new YZCursor();
 	reset();
 }
 
 YZViewCursor::YZViewCursor( const YZViewCursor &c ) {
-	mBuffer = new YZCursor();
-	mScreen = new YZCursor();
-	*this = c;
+    copyFields( c );
 }
 
 YZViewCursor::~YZViewCursor( ) {
-	delete mBuffer;
-	delete mScreen;
 }
 
-YZViewCursor &YZViewCursor::operator=( const YZViewCursor& c ) {
-	mValid = true;
-	*mScreen = *c.mScreen;
-	*mBuffer = *c.mBuffer;
+void YZViewCursor::copyFields( const YZViewCursor &c )
+{
+	mScreen = c.mScreen;
+	mBuffer = c.mBuffer;
 	spaceFill = c.spaceFill;
 	bColIncrement = c.bColIncrement;
 	bLineIncrement = c.bLineIncrement;
@@ -61,6 +55,11 @@ YZViewCursor &YZViewCursor::operator=( const YZViewCursor& c ) {
 	lastCharWasTab = c.lastCharWasTab;
 	wrapTab = c.wrapTab;
 	wrapNextLine = c.wrapNextLine;
+}
+
+YZViewCursor &YZViewCursor::operator=( const YZViewCursor& c ) {
+	mValid = true;
+    copyFields( c );
 	return *this;
 }
 
@@ -75,10 +74,10 @@ void YZViewCursor::reset() {
 	lastCharWasTab = false;
 	wrapNextLine = false;
 	wrapTab = false;
-	mBuffer->setX( 0 );
-	mBuffer->setY( 0 );
-	mScreen->setX( 0 );
-	mScreen->setY( 0 );
+	mBuffer.setX( 0 );
+	mBuffer.setY( 0 );
+	mScreen.setX( 0 );
+	mScreen.setY( 0 );
 }
 
 void YZViewCursor::invalidate() {
@@ -89,7 +88,7 @@ bool YZViewCursor::valid() const {
 }
 
 void YZViewCursor::debug() {
-	yzDebug() << "YZViewCursor : buffer = " << *mBuffer << " ; screen = " << *mScreen
+	yzDebug() << "YZViewCursor : buffer = " << mBuffer << " ; screen = " << mScreen
 		<< " ; wrapNextLine = " << wrapNextLine << " ; wrapTab = " << wrapTab << endl
 		<< "               bLineIncrement = " << bLineIncrement << "; sLineIncrement = " << sLineIncrement
 		<< " ; lineHeight = " << lineHeight << endl
@@ -97,35 +96,35 @@ void YZViewCursor::debug() {
 }
 
 unsigned int YZViewCursor::bufferX() const {
-	return mBuffer->x();
+	return mBuffer.x();
 }
 unsigned int YZViewCursor::bufferY() const {
-	return mBuffer->y();
+	return mBuffer.y();
 }
 unsigned int YZViewCursor::screenX() const {
-	return mScreen->x();
+	return mScreen.x();
 }
 unsigned int YZViewCursor::screenY() const {
-	return mScreen->y();
+	return mScreen.y();
 }
 
 void YZViewCursor::setBuffer( const YZCursor& value ) {
-	*mBuffer = value;
+	mBuffer = value;
 }
 void YZViewCursor::setScreen( const YZCursor& value ) {
-	*mScreen = value;
+	mScreen = value;
 }
 void YZViewCursor::setBufferX( unsigned int value ) {
-	mBuffer->setX( value );
+	mBuffer.setX( value );
 }
 void YZViewCursor::setBufferY( unsigned int value ) {
-	mBuffer->setY( value );
+	mBuffer.setY( value );
 }
 void YZViewCursor::setScreenX( unsigned int value ) {
-	mScreen->setX( value );
+	mScreen.setX( value );
 }
 void YZViewCursor::setScreenY( unsigned int value ) {
-	mScreen->setY( value );
+	mScreen.setY( value );
 }
 
 

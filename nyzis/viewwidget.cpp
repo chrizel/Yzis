@@ -338,9 +338,9 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 	drawCursor();
 }
 void NYZView::drawCursor() {
-	unsigned int x = getCursor()->x() - getDrawCurrentLeft () + marginLeft;
+	unsigned int x = getCursor().x() - getDrawCurrentLeft () + marginLeft;
 	if ( getLocalBooleanOption( "rightleft" ) ) x = width - x - 1;
-	wmove( editor, getCursor()->y() - getDrawCurrentTop (), x );
+	wmove( editor, getCursor().y() - getDrawCurrentTop (), x );
 	wrefresh( editor );
 }
 

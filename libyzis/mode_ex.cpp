@@ -285,7 +285,7 @@ int YZModeEx::rangeLine( const YZExRangeArgs& args ) {
 	return l;
 }
 int YZModeEx::rangeCurrentLine( const YZExRangeArgs& args ) {
-	return args.view->getBufferCursor()->y();
+	return args.view->getBufferCursor().y();
 }
 int YZModeEx::rangeLastLine( const YZExRangeArgs& args ) {
 	return qMax( (int)args.view->myBuffer()->lineCount() - 1, 0 );
@@ -326,7 +326,7 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 		else
 			pat.replace( "\\/", "/" );
 		yzDebug() << "rangeSearch : " << pat << endl;
-		pos = YZSession::me->search()->forward( args.view->myBuffer(), pat, &found, *args.view->getBufferCursor() );
+		pos = YZSession::me->search()->forward( args.view->myBuffer(), pat, &found, args.view->getBufferCursor() );
 	}
 
 	if ( found ) {

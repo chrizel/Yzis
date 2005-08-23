@@ -71,28 +71,28 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 				if ( QString::compare(event, "INDENT_ON_KEY") == 0 ) {
 					const char *inputs = view->getInputBuffer();
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
-					QString curLine = view->myBuffer()->textline(view->getBufferCursor()->y());
+					QString curLine = view->myBuffer()->textline(view->getBufferCursor().y());
 					rx.exactMatch(curLine);
 					int nbCurTabs = rx.cap(1).contains("\t");
 					int nbCurSpaces = rx.cap(1).contains(" ");
 					QString nextLine;
-					if (view->getBufferCursor()->y()+1 < view->myBuffer()->lineCount())
-						nextLine = view->myBuffer()->textline(view->getBufferCursor()->y()+1);
+					if (view->getBufferCursor().y()+1 < view->myBuffer()->lineCount())
+						nextLine = view->myBuffer()->textline(view->getBufferCursor().y()+1);
 					rx.exactMatch(nextLine);
 					int nbNextTabs = rx.cap(1).contains("\t");
 					int nbNextSpaces = rx.cap(1).contains(" ");
-					QString prevLine = view->myBuffer()->textline(view->getBufferCursor()->y()-1);
+					QString prevLine = view->myBuffer()->textline(view->getBufferCursor().y()-1);
 					rx.exactMatch(prevLine);
 					int nbPrevTabs = rx.cap(1).contains("\t");
 					int nbPrevSpaces = rx.cap(1).contains(" ");
 					YZExLua::instance()->exe(*it2, "siiiiiisss", inputs,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,(const char*)curLine,(const char*)prevLine,(const char*)nextLine);
 				} else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
-					QString nextLine = view->myBuffer()->textline(view->getBufferCursor()->y());
+					QString nextLine = view->myBuffer()->textline(view->getBufferCursor().y());
 					rx.exactMatch(nextLine);
 					int nbNextTabs = rx.cap(1).contains("\t");
 					int nbNextSpaces = rx.cap(1).contains(" ");
-					QString prevLine = view->myBuffer()->textline(view->getBufferCursor()->y()-1);
+					QString prevLine = view->myBuffer()->textline(view->getBufferCursor().y()-1);
 					rx.exactMatch(prevLine);
 					int nbPrevTabs = rx.cap(1).contains("\t");
 					int nbPrevSpaces = rx.cap(1).contains(" ");

@@ -221,7 +221,7 @@ void KYZisEdit::scrollUp( int n ) {
 		unsigned int i;
 		for( i = lv; (int)i >= n; i-- )
 			mCell[ i ] = mCell[ i - n ];
-		setCursor( mParent->getCursor()->x(), mParent->getCursor()->y() );
+		setCursor( mParent->getCursor().x(), mParent->getCursor().y() );
 		unsigned int top = mParent->getDrawCurrentTop();
 		unsigned int left = mParent->getDrawCurrentLeft();
 		mParent->sendPaintEvent( YZCursor( left , top ), YZCursor( left + mParent->getColumnsVisible(), top + n ) );
@@ -242,7 +242,7 @@ void KYZisEdit::scrollDown( int n ) {
 		unsigned int i;
 		for( i = 0; i < h; i++ )
 			mCell[ i ] = mCell[ i + n ];
-		setCursor( mParent->getCursor()->x(), mParent->getCursor()->y() );
+		setCursor( mParent->getCursor().x(), mParent->getCursor().y() );
 		h += mParent->getDrawCurrentTop();
 		unsigned int left = mParent->getDrawCurrentLeft();
 		mParent->sendPaintEvent( YZCursor( left, h ), YZCursor( left + mParent->getColumnsVisible(), h + n ) );
@@ -338,7 +338,7 @@ void KYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 			unsigned int newY = e->y() / fontMetrics().lineSpacing()
 				+ mParent->getDrawCurrentTop();
 
-			if (newX != mParent->getCursor()->x() || newY != mParent->getCursor()->y()) {
+			if (newX != mParent->getCursor().x() || newY != mParent->getCursor().y()) {
 				mParent->gotodxdy( newX, newY );
 			}
 		}
@@ -380,7 +380,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 	unsigned int shiftX = mParent->getDrawCurrentLeft();
 	unsigned int maxX = shiftX + mParent->getColumnsVisible();
 
-	unsigned int cursorY = mParent->getCursor()->y();
+	unsigned int cursorY = mParent->getCursor().y();
 //	unsigned int cursorX = mParent->getCursor()->x();
 	bool refreshCursor = false;
 

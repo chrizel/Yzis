@@ -217,14 +217,14 @@ QPoint KYZisView::cursorCoordinates()
 
 void KYZisView::cursorPosition ( unsigned int *line, unsigned int *col )
 {
-	*line = getBufferCursor()->y();
-	*col  = getCursor()->x();
+	*line = getBufferCursor().y();
+	*col  = getCursor().x();
 }
 
 void KYZisView::cursorPositionReal ( unsigned int *line, unsigned int *col )
 {
-	*line = getBufferCursor()->y();
-	*col  = getBufferCursor()->x();
+	*line = getBufferCursor().y();
+	*col  = getBufferCursor().x();
 }
 
 bool KYZisView::setCursorPosition ( unsigned int line, unsigned int col)
@@ -242,17 +242,17 @@ bool KYZisView::setCursorPositionReal ( unsigned int line, unsigned int col)
 
 unsigned int KYZisView::cursorLine()
 {
-	return getBufferCursor()->y();
+	return getBufferCursor().y();
 }
 
 unsigned int KYZisView::cursorColumn()
 {
-	return getCursor()->x();
+	return getCursor().x();
 }
 
 unsigned int KYZisView::cursorColumnReal()
 {
-	return getBufferCursor()->x();
+	return getBufferCursor().x();
 }
 
 void KYZisView::resetInfo() {

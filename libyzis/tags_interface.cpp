@@ -104,6 +104,20 @@ static void closeTagFile() {
 	tagfilenames.clear();
 }
 
+static void switchToViewOfFilename( const QString &filename )
+{
+	YZBuffer *buffer = YZSession::me->findBuffer( filename );
+	YZView *view = YZSession::me->findViewByBuffer( buffer );
+	
+	if ( !buffer && !view ) {
+		view = YZSession::me->createBufferAndView( filename );
+	} else if ( !view ) {
+		view = YZSession::me->createView( buffer );
+	}
+	
+	YZSession::me->setCurrentView( view );
+}
+
 static void doJumpToTag ( const YZTagStackItem &entry ) {
 	YZBuffer * b = YZSession::me->currentView()->myBuffer();
 
@@ -113,17 +127,7 @@ static void doJumpToTag ( const YZTagStackItem &entry ) {
 	
 	// if the tag is in a different file, we have to change buffers
 	if ( filepath != YZSession::me->currentView()->myBuffer()->fileName() ) {
-		b = YZSession::me->findBuffer( filepath );
-
-		// check to see if we need to open the file
-      if ( b ) {
-      	YZSession::me->setCurrentView( b->firstView() );
-      } else {
-      	YZSession::me->createBufferAndView( filepath );
-         b = YZSession::me->findBuffer( filepath );
-         YZASSERT_MSG( b != NULL, QString("Created buffer %1 was not found!").arg( filepath ) );
-         YZSession::me->setCurrentView( b->firstView() );
-      }
+		switchToViewOfFilename( filepath );
 	}
 
 	pattern = pattern.mid( 2, pattern.length() - 4 );
@@ -166,18 +170,7 @@ static bool jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 			return false;
 		}
 		
-		YZBuffer *tagbuffer = YZSession::me->findBuffer( record->filename() );
-		YZView *tagview = NULL;
-		
-		// if the buffer isn't already open, we have to open it first
-		if ( !tagbuffer ) {
-			tagview = YZSession::me->createBufferAndView( record->filename() );
-		} else {
-			tagview = tagbuffer->firstView();
-		}
-
-		// now we're guaranteed the switch will work
-		YZSession::me->setCurrentView( tagview );
+		switchToViewOfFilename( record->filename() );
 	}
 	
 	const YZCursor &cursor = record->position();

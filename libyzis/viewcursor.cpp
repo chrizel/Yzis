@@ -110,10 +110,10 @@ unsigned int YZViewCursor::screenY() const {
 }
 
 void YZViewCursor::setBuffer( const YZCursor& value ) {
-	mBuffer->setCursor( value );
+	*mBuffer = value;
 }
 void YZViewCursor::setScreen( const YZCursor& value ) {
-	mScreen->setCursor( value );
+	*mScreen = value;
 }
 void YZViewCursor::setBufferX( unsigned int value ) {
 	mBuffer->setX( value );

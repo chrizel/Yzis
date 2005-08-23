@@ -326,7 +326,7 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 		else
 			pat.replace( "\\/", "/" );
 		yzDebug() << "rangeSearch : " << pat << endl;
-		pos = YZSession::me->search()->forward( args.view->myBuffer(), pat, &found, args.view->getBufferCursor() );
+		pos = YZSession::me->search()->forward( args.view->myBuffer(), pat, &found, *args.view->getBufferCursor() );
 	}
 
 	if ( found ) {
@@ -566,7 +566,7 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 	}
 	unsigned int lastLine;
 	YZCursor start( 0, args.fromLine );
-	YZSession::me->search()->forward( args.view->myBuffer(), search, &found, &start );
+	YZSession::me->search()->forward( args.view->myBuffer(), search, &found, start );
 	if ( found ) {
 		for( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
 			if ( args.view->myBuffer()->substitute( search, replace, options.contains( "g" ), i ) ) {

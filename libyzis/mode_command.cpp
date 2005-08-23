@@ -629,7 +629,7 @@ YZCursor YZModeCommand::gotoEOL(const YZMotionArgs &args) {
 
 YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	YZCursor result( viewCursor.buffer() );
+	YZCursor result( *viewCursor.buffer() );
 	unsigned int c = 0;
 	QRegExp rex1("^\\w+\\s*");//a word with boundaries
 	QRegExp rex2("^[^\\w\\s]+\\s*");//non-word chars with boundaries
@@ -681,7 +681,7 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 
 YZCursor YZModeCommand::moveSWordForward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	YZCursor result( viewCursor.buffer() );
+	YZCursor result( *viewCursor.buffer() );
 	unsigned int c = 0;
 	QRegExp ws("\\s+");//whitespace
 
@@ -727,7 +727,7 @@ QString invertQString( const QString& from ) {
 
 YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	YZCursor result( viewCursor.buffer() );
+	YZCursor result( *viewCursor.buffer() );
 	unsigned int c = 0;
 	QRegExp rex1("^(\\w+)\\s*");//a word with boundaries
 	QRegExp rex2("^([^\\w\\s]+)\\s*");//non-word chars with boundaries
@@ -782,7 +782,7 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 
 YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	YZCursor result( viewCursor.buffer() );
+	YZCursor result( *viewCursor.buffer() );
 	unsigned int c = 0;
 	QRegExp rex1("([\\S]+)\\s*"); //
 
@@ -884,12 +884,12 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 		}
 		for ( unsigned int i = 0; found && i < args.count; i++ ) {
 			if ( args.cmd.contains('*') ) {
-				pos = YZSession::me->search()->forward( args.view->myBuffer(), word, &found, &from );
+				pos = YZSession::me->search()->forward( args.view->myBuffer(), word, &found, from );
 			} else {
-				pos = YZSession::me->search()->backward( args.view->myBuffer(), word, &found, &from );
+				pos = YZSession::me->search()->backward( args.view->myBuffer(), word, &found, from );
 			}
 			if ( found ) {
-				from.setCursor( pos );
+				from = pos;
 				moved = true;
 			}
 		}
@@ -904,9 +904,9 @@ YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 	bool found = true;
 	bool moved = true;
 	for ( unsigned int i = 0; found && i < args.count; i++ ) {
-		pos = YZSession::me->search()->replayForward( args.view->myBuffer(), &found, &from );
+		pos = YZSession::me->search()->replayForward( args.view->myBuffer(), &found, from );
 		if ( found ) {
-			from.setCursor( pos );
+			from = pos;
 			moved = true;
 		}
 	}
@@ -925,9 +925,9 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 	bool found = true;
 	bool moved = false;
 	for ( unsigned int i = 0; found && i < args.count; i++ ) {
-		pos = YZSession::me->search()->replayBackward( args.view->myBuffer(), &found, &from );
+		pos = YZSession::me->search()->replayBackward( args.view->myBuffer(), &found, from );
 		if ( found ) {
-			from.setCursor( pos );
+			from = pos;
 			moved = true;
 		}
 	}
@@ -956,8 +956,8 @@ YZInterval YZModeCommand::interval(const YZCommandArgs& args) {
 	YZCursor to = move( args.view, args.arg, args.count, args.usercount );
 	if ( from > to ) {
 		YZCursor tmp( from );
-		from.setCursor( to );
-		to.setCursor( tmp );
+		from = to;
+		to = tmp;
 	}
 	bool entireLines = ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') );
 	if ( entireLines ) {
@@ -1302,12 +1302,12 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 void YZModeCommand::deleteChar( const YZCommandArgs &args ) {
 	YZCursor to( *args.view->getBufferCursor() );
 	args.view->myBuffer()->action()->copyArea(args.view, *args.view->getBufferCursor(), to, args.regs);
-	args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
+	args.view->myBuffer()->action()->deleteChar( args.view, *args.view->getBufferCursor(), args.count );
 	args.view->commitNextUndo();
 }
 
 void YZModeCommand::deleteCharBackwards( const YZCommandArgs &args ) {
-	YZCursor pos = args.view->getBufferCursor();
+	YZCursor pos = *args.view->getBufferCursor();
 	int oldX = pos.x();
 	int newX = oldX - args.count;
 	if( newX < 0 )
@@ -1321,9 +1321,9 @@ void YZModeCommand::deleteCharBackwards( const YZCommandArgs &args ) {
 }
 
 void YZModeCommand::substitute( const YZCommandArgs &args ) {
-	YZCursor cur = args.view->getBufferCursor();
+	YZCursor cur = *args.view->getBufferCursor();
 
-	args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
+	args.view->myBuffer()->action()->deleteChar( args.view, *args.view->getBufferCursor(), args.count );
 	args.view->commitNextUndo();
 
 	// start insert mode, append if at EOL
@@ -1339,7 +1339,7 @@ void YZModeCommand::redisplay( const YZCommandArgs &args ) {
 }
 
 void YZModeCommand::replace( const YZCommandArgs &args ) {
-	YZCursor pos = args.view->getBufferCursor();
+	YZCursor pos = *args.view->getBufferCursor();
 	args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg );
 	args.view->gotoxy(pos.x(),pos.y(),true);
 	args.view->updateStickyCol();
@@ -1379,7 +1379,7 @@ void YZModeCommand::redoLastCommand( const YZCommandArgs & args ) {
 
 void YZModeCommand::tagNext( const YZCommandArgs & args ) {
 	YZView * view = args.view;
-	YZCursor from = view->getBufferCursor();
+	YZCursor from = *view->getBufferCursor();
 	QString word = view->myBuffer()->getWordAt( from );
 	
 	tagJumpTo(word);

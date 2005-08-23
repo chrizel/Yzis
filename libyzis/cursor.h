@@ -29,39 +29,37 @@
  * Simple cursor
  */
 class YZCursor {
+public :
+    YZCursor();
+    explicit YZCursor( unsigned int x, unsigned int y );
+    YZCursor( const YZCursor& cursor );
 
-	friend YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
+    YZCursor &operator=( const YZCursor &rhs );
 
-	public :
-		YZCursor( );
-		YZCursor( unsigned int X, unsigned int Y );
-		YZCursor( const YZCursor& cursor );
-		YZCursor( const YZCursor *cursor );
-		~YZCursor();
+    inline void setX(unsigned int x) { x_pos = x; }
+    inline void setY(unsigned int y) { y_pos = y; }
 
-		inline void setX(unsigned int x) { x_pos = x; }
-		inline void setY(unsigned int y) { y_pos = y; }
+    inline unsigned int x() const { return x_pos; }
+    inline unsigned int y() const { return y_pos; }
 
-		inline unsigned int x() const { return x_pos; }
-		inline unsigned int y() const { return y_pos; }
-
-		void setCursor( const YZCursor *cursor );
-		void setCursor( const YZCursor& cursor );
-
-		bool operator== ( const YZCursor &right ) const;
-		bool operator<= ( const YZCursor &right ) const;
-		bool operator>= ( const YZCursor &right ) const;
-		bool operator< ( const YZCursor &right ) const;
-		bool operator> ( const YZCursor &right ) const;
-
-	private :
-		unsigned int x_pos;
-		unsigned int y_pos;
+private :
+    unsigned int x_pos;
+    unsigned int y_pos;
 };
 
+extern bool operator==( const YZCursor &lhs, const YZCursor &rhs );
+extern bool operator< ( const YZCursor &lhs, const YZCursor &rhs );
+
+inline bool operator<=( const YZCursor &lhs, const YZCursor &rhs ) { return lhs == rhs || lhs < rhs; }
+inline bool operator> ( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs == rhs) && !(lhs < rhs); }
+inline bool operator>=( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs < rhs); }
+inline bool operator!=( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs == rhs); }
+
+extern YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
+
 struct YZCursorPos {
-       YZCursor* bPos; /* buffer position */
-       YZCursor* dPos; /* draw position */
+    YZCursor* bPos; /* buffer position */
+    YZCursor* dPos; /* draw position */
 };
 
 #endif

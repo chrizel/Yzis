@@ -23,49 +23,43 @@
 
 #include "cursor.h"
 
-YZCursor::YZCursor( ) {
-	x_pos=0;
-	y_pos=0;
+YZCursor::YZCursor() 
+    : x_pos( 0 )
+    , y_pos( 0 )
+{
 }
-YZCursor::YZCursor( unsigned int X, unsigned int Y ) {
-	x_pos=X;
-	y_pos=Y;
-}
-YZCursor::YZCursor( const YZCursor& c) {
-	setCursor( c );
-}
-YZCursor::YZCursor(const YZCursor* c) {
-	setCursor( c );
-}
-YZCursor::~YZCursor() {
+YZCursor::YZCursor( unsigned int x, unsigned int y )
+    : x_pos( x )
+    , y_pos( y )
+{
 }
 
-void YZCursor::setCursor( const YZCursor* c ) {
-	x_pos = c->x();
-	y_pos = c->y();
-}
-void YZCursor::setCursor( const YZCursor& c ) {
-	x_pos = c.x();
-	y_pos = c.y();
+YZCursor::YZCursor( const YZCursor& c) 
+    : x_pos( c.x_pos )
+    , y_pos( c.y_pos )
+{
 }
 
-bool YZCursor::operator<= ( const YZCursor & right ) const {
-	return ( y_pos < right.y_pos || y_pos == right.y_pos && x_pos <= right.x_pos );
+YZCursor &YZCursor::operator=( const YZCursor &rhs )
+{
+    x_pos = rhs.x_pos;
+    y_pos = rhs.y_pos;
+
+    return *this;
 }
-bool YZCursor::operator>= ( const YZCursor & right ) const {
-	return ( y_pos > right.y_pos || y_pos == right.y_pos && x_pos >= right.x_pos );
+
+bool operator==( const YZCursor &lhs, const YZCursor &rhs )
+{
+    return lhs.x() == rhs.x() && lhs.y() == rhs.y();
 }
-bool YZCursor::operator< ( const YZCursor & right ) const {
-	return ( y_pos < right.y_pos || y_pos == right.y_pos && x_pos < right.x_pos );
+
+bool operator<( const YZCursor &lhs, const YZCursor &rhs )
+{
+	return ( lhs.y() < rhs.y() || lhs.y() == rhs.y() && lhs.x() < rhs.x() );
 }
-bool YZCursor::operator> ( const YZCursor & right ) const {
-	return ( y_pos > right.y_pos || y_pos == right.y_pos && x_pos > right.x_pos );
-}
-bool YZCursor::operator== ( const YZCursor & right ) const {
-	return ( x_pos == right.x_pos && y_pos == right.y_pos );
-}
+
 YZDebugStream &operator<< ( YZDebugStream &out, const YZCursor & c ) {
-	out << "(" << c.x_pos << "," << c.y_pos << ")";
+	out << "(" << c.x() << "," << c.y() << ")";
 	return out;
 }
 

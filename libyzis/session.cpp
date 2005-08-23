@@ -165,6 +165,19 @@ YZView* YZSession::findView( const YZViewId &id ) {
 	return result;
 }
 
+YZView* YZSession::findViewByBuffer( const YZBuffer *buffer ) {
+	YZView *result = NULL;
+	
+	for ( YZViewList::Iterator i = mViewList.begin(); i != mViewList.end(); ++i ) {
+		if ( (*i)->myBuffer() == buffer ) {
+			result = *i;
+			break;
+		}
+	}
+	
+	return result;
+}
+
 void YZSession::setCurrentView( YZView* view ) {
 	yzDebug() << "Session : setCurrentView" << endl;
 	changeCurrentView( view );

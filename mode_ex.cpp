@@ -315,9 +315,9 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 	if ( args.arg.length() == 1 ) {
 		yzDebug() << "rangeSearch : replay" << endl;
 		if ( reverse ) {
-			pos = YZSession::me->search()->replayBackward( args.view->myBuffer(), &found, NULL, true );
+			pos = YZSession::me->search()->replayBackward( args.view->myBuffer(), &found, args.view->myBuffer()->end(), true );
 		} else {
-			pos = YZSession::me->search()->replayForward( args.view->myBuffer(), &found, NULL, true );
+			pos = YZSession::me->search()->replayForward( args.view->myBuffer(), &found, args.view->myBuffer()->begin(), true );
 		}
 	} else {
 		QString pat = args.arg.mid( 1, args.arg.length() - 2 );

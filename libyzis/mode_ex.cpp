@@ -483,25 +483,30 @@ cmd_state YZModeEx::gotoOpenMode( const YZExCommandArgs& /*args*/ ) {
 }
 
 cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
-	QString path = args.arg; //extract the path
-	if ( path.length() == 0 ) {
+	// Guardian for no arguments
+	// TODO: in this case Vim reloads the current buffer
+	if ( args.arg.length() == 0 ) {
 		args.view->mySession()->popupMessage( _( "Please specify a filename" ) );
 		return CMD_ERROR;
 	}
-	path = YZBuffer::tildeExpand( path );
-	QFileInfo fi ( path );
-	path = fi.absFilePath();
-	YZBuffer *b =args.view->mySession()->findBuffer(path);
-	if (b) {
-		yzDebug() << "Buffer already loaded" << endl;
-		args.view->mySession()->setCurrentView(b->firstView());
+
+	QFileInfo fi ( args.arg );
+	QString path = fi.absFilePath();
+	YZBuffer *b = YZSession::me->findBuffer(path);
+	YZView *v = YZSession::me->findViewByBuffer(b);
+	if ( b && v ) {
+		YZSession::me->setCurrentView( v );
+		return CMD_OK;
+	} else if ( b ) {
+		v = YZSession::me->createView( b );
+		YZSession::me->setCurrentView( v );
 		return CMD_OK;
 	}
+	
 	yzDebug() << "New buffer / view : " << path << endl;
-	args.view->mySession()->createBufferAndView( path );
-	YZBuffer *bu = args.view->mySession()->findBuffer( path );
-	YZASSERT_MSG( bu != NULL, QString("Created buffer %1 was not found!").arg(path) );
-	YZSession::me->setCurrentView( bu->firstView() );
+	v = YZSession::me->createBufferAndView( path );
+	YZSession::me->setCurrentView( v );
+
 	return CMD_OK;
 }
 

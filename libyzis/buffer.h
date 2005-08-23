@@ -232,6 +232,20 @@ public:
 	unsigned int lineCount() const;
 
 	//-------------------------------------------------------
+	// --------------------- Cursors
+	//-------------------------------------------------------
+
+    /**
+     * Returns a cursor at the beginning of the buffer
+     */
+    YZCursor begin();
+
+    /**
+     * Returns a cursor at the end of the buffer
+     */
+    YZCursor end();
+
+	//-------------------------------------------------------
 	// --------------------- File Operations
 	//-------------------------------------------------------
 

@@ -331,7 +331,7 @@ YZCursor * YZYzisinfo::searchPosition( const YZBuffer */*buffer*/) {
 		}*/
 	}
             
-	return new YZCursor( YZSession::me->currentView()->getBufferCursor() );
+	return new YZCursor( *YZSession::me->currentView()->getBufferCursor() );
 }
 
 const YZCursor * YZYzisinfo::previousJumpPosition() {

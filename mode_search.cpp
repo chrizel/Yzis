@@ -52,7 +52,7 @@ YZModeSearch::~YZModeSearch() {
 void YZModeSearch::enter( YZView* view ) {
 	YZSession::me->setFocusCommandLine();
 	view->setCommandLineText( "" );
-	mSearchBegin->setCursor( view->getBufferCursor() );
+	*mSearchBegin = *view->getBufferCursor();
 }
 void YZModeSearch::leave( YZView* view ) {
 	view->setCommandLineText( "" );
@@ -137,10 +137,10 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 	if ( view->getLocalBooleanOption("incsearch") ) {
 		view->setPaintAutoCommit( false );
 		unsigned int matchlength;
-		incSearchResult->setCursor( search(view, view->getCommandLineText(), *mSearchBegin, &matchlength, &(incSearchFound)) );
+		*incSearchResult = search(view, view->getCommandLineText(), *mSearchBegin, &matchlength, &(incSearchFound));
 		if ( incSearchFound ) {
 			if ( view->getLocalBooleanOption("hlsearch") ) {
-				YZCursor endResult( incSearchResult );
+				YZCursor endResult( *incSearchResult );
 				endResult.setX( endResult.x() + matchlength - 1 );
 				searchSelection->addInterval( YZInterval(*incSearchResult, endResult) );
 				view->sendPaintEvent( searchSelection->map() );
@@ -165,12 +165,12 @@ YZModeSearchBackward::~YZModeSearchBackward() {
 }
 
 YZCursor YZModeSearchBackward::replaySearch( YZView* view, bool * found ) {
-	return YZSession::me->search()->replayBackward( view->myBuffer(), found, view->getBufferCursor() );
+	return YZSession::me->search()->replayBackward( view->myBuffer(), found, *view->getBufferCursor() );
 }
 YZCursor YZModeSearchBackward::search( YZView* view, const QString& s, bool* found ) {
 	YZCursor buffer = *view->getBufferCursor();
 	view->gotoxy( buffer.x() + 1, buffer.y(), false );
-	return YZSession::me->search()->backward( view->myBuffer(), s, found, view->getBufferCursor() );
+	return YZSession::me->search()->backward( view->myBuffer(), s, found, *view->getBufferCursor() );
 }
 YZCursor YZModeSearchBackward::search( YZView* view, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found ) {
 	YZCursor end( 0, 0 );

@@ -350,7 +350,7 @@ void YZView::indent() {
 		indentString.append( "\t" );
 	}
 	//yzDebug() << "Indent string = \"" << indentString << "\"" << endl;
-	mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
+	mBuffer->action()->insertNewLine( this, *mainCursor->buffer() );
 	ypos++;
 	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).stripWhiteSpace() );
 	gotoxy( indentString.length(), ypos );
@@ -888,7 +888,7 @@ QString YZView::moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
 void YZView::initChanges( unsigned int x, unsigned int y ) {
 	beginChanges->setX( x );
 	beginChanges->setY( y );
-	origPos->setCursor( mainCursor->buffer() );
+	*origPos = *mainCursor->buffer();
 	lineDY = 1;
 	if ( wrap && y < mBuffer->lineCount() ) {
 		gotoxy( qMax( 1, ( int )mBuffer->getLineLength( y ) ) - 1, y, false );
@@ -927,7 +927,7 @@ void YZView::paste( QChar registr, bool after ) {
 	QStringList list = YZSession::me->getRegister( registr );
 	if ( list.isEmpty() ) return;
 
-	YZCursor pos( mainCursor->buffer() );
+	YZCursor pos( *mainCursor->buffer() );
 	uint i = 0;
 	bool copyWholeLinesOnly = list[ 0 ].isNull();
 	QString copy = mBuffer->textline( pos.y() );
@@ -1215,7 +1215,7 @@ bool YZView::drawNextCol( ) {
 		unsigned int lenToTest;
 		lastChar = sCurLine.at( curx );
 		mFillChar = ' ';
-		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
+		if ( drawMode ) charSelected = selectionPool->isSelected( *workCursor->buffer() );
 		if ( lastChar != tabChar ) {
 			listChar = drawMode && opt_list && lastChar == ' ';
 			if ( listChar ) {
@@ -1269,7 +1269,7 @@ bool YZView::drawNextCol( ) {
 	} else if ( sCurLineLength == 0 && drawMode && curx == 0 ) { // empty line
 		ret = true;
 		lastChar = ' ';
-		charSelected = selectionPool->isSelected( workCursor->buffer() );
+		charSelected = selectionPool->isSelected( *workCursor->buffer() );
 		workCursor->setScreenX( 1 );
 		workCursor->setBufferX( 1 );
 	}
@@ -1623,7 +1623,7 @@ void YZView::commitPaintEvent() {
 			YZCursor bottomRight = *scrollCursor->screen();
 			bottomRight.setX( bottomRight.x() + getColumnsVisible() );
 			bottomRight.setY( bottomRight.y() + getLinesVisible() );
-			paintEvent( mPaintSelection->clip( YZInterval( scrollCursor->screen(), bottomRight ) ) );
+			paintEvent( mPaintSelection->clip( YZInterval( *scrollCursor->screen(), bottomRight ) ) );
 		}
 		abortPaintEvent();
 	}
@@ -1658,9 +1658,9 @@ void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 		YZViewCursor vCursor = viewCursor();
 		for ( i = 0; i < size; i++ ) {
 			gotoxy( &vCursor, map[ i ].fromPos().x(), map[ i ].fromPos().y() );
-			map[ i ].setFromPos( vCursor.screen() );
+			map[ i ].setFromPos( *vCursor.screen() );
 			gotoxy( &vCursor, map[ i ].toPos().x(), map[ i ].toPos().y() );
-			map[ i ].setToPos( vCursor.screen() );
+			map[ i ].setToPos( *vCursor.screen() );
 		}
 	}
 	setPaintAutoCommit( false );

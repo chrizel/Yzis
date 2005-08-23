@@ -111,7 +111,7 @@ YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor &from, co
 
 	// cursor for the end of the search range
 	YZCursor end( bottom );
-	if ( reverse ) end.setCursor( top );
+	if ( reverse ) end = top;
 
 	// use an action to do the search
 	unsigned int matchedLength;
@@ -123,11 +123,11 @@ YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor &from, co
 		yzDebug() << "search hits top or bottom" << endl;
 		
 		// adjust the cursors for the next search
-		end.setCursor( cur );
+		end = cur;
 		if ( reverse ) {
-			cur.setCursor( bottom );
+			cur = bottom;
 		} else {
-			cur.setCursor( top );
+			cur = top;
 		}
 //		yzDebug() << "begin = " << cur << ", end = " << end << endl;
 	
@@ -177,7 +177,7 @@ void YZSearch::Private::setCurrentSearch( const QString& pattern ) {
 			do {
 				from = b->action()->search( v->myBuffer(), mCurrentSearch, cur, end, &matchedLength, &found );
 				if ( found && matchedLength > 0 ) {
-					cur.setCursor( from );
+					cur = from;
 					cur.setX( cur.x() + matchedLength - 1 );
 					YZInterval sel( from, cur );
 					cur.setX( cur.x() + 1 );
@@ -212,7 +212,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 		do {
 			from = buffer->action()->search( v->myBuffer(), d->mCurrentSearch, cur, end, &matchedLength, &found );
 			if ( found && matchedLength > 0 ) {
-				cur.setCursor( from );
+				cur = from;
 				cur.setX( cur.x() + matchedLength - 1 );
 				searchMap->addInterval( YZInterval( from, cur ) );
 				cur.setX( cur.x() + 1 );

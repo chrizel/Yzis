@@ -838,7 +838,7 @@ int YZExLua::matchpair(lua_State *L ) {
 	if (!checkFunctionArguments(L, 0, 0, "matchpair", "")) return 0;
 	bool found = false;
 	YZView *v = YZSession::me->currentView();
-	YZCursor s (v->getBufferCursor());
+	YZCursor s (*v->getBufferCursor());
 	YZCursor c = v->myBuffer()->action()->match(v, s, &found);
 	lua_pushboolean(L , found);
 	lua_pushnumber(L, c.x());

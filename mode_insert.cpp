@@ -220,7 +220,7 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 	mView->updateStickyCol();
 }
 cmd_state YZModeInsert::commandDefault( YZView* mView, const QString& key ) {
-	mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
+	mView->myBuffer()->action()->insertChar( mView, *mView->getBufferCursor(), key );
 	if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
 		mView->reindent( mView->getBufferCursor()->x() - 1, mView->getBufferCursor()->y() );
 	return CMD_OK;
@@ -266,7 +266,7 @@ void YZModeReplace::commandBackspace( YZView* mView, const QString& key ) {
 }
 
 cmd_state YZModeReplace::commandDefault( YZView* mView, const QString& key ) {
-	mView->myBuffer()->action()->replaceChar( mView, mView->getBufferCursor(), key );
+	mView->myBuffer()->action()->replaceChar( mView, *mView->getBufferCursor(), key );
 	return CMD_OK;
 }
 

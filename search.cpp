@@ -134,7 +134,7 @@ YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor &from, co
 		// repeat the search with the new bounds
 		ret = buffer->action()->search( buffer, pattern, cur, end, &matchedLength, found );
 		if ( *found ) {
-			YZView *view = buffer->firstView();
+			YZView *view = YZSession::me->findViewByBuffer( buffer );
 			if ( view && reverse ) {
 				view->displayInfo( _("search hit TOP, continuing at BOTTOM") );
 			} else if ( view ) {

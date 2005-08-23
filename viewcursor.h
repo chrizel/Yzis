@@ -37,10 +37,12 @@ class YZViewCursor {
 
 	friend class YZView;
 
-	public :
-		YZViewCursor( YZView* parent );
+	public:
+		explicit YZViewCursor( YZView* parent );
 		YZViewCursor( const YZViewCursor &c);
 		virtual ~YZViewCursor();
+
+		YZViewCursor &operator=( const YZViewCursor &c );
 
 		void reset();
 
@@ -54,10 +56,10 @@ class YZViewCursor {
 
 		bool valid() const;
 
-		inline YZCursor* buffer() const {
+		inline const YZCursor &buffer() const {
 			return mBuffer;
 		}
-		inline YZCursor* screen() const {
+		inline const YZCursor &screen() const {
 			return mScreen;
 		}
 
@@ -67,8 +69,6 @@ class YZViewCursor {
 		inline unsigned int curLineHeight() const {
 			return lineHeight;
 		}
-
-		YZViewCursor &operator=( const YZViewCursor &c );
 
 		void debug();
 
@@ -81,6 +81,8 @@ class YZViewCursor {
 		void setScreenY( unsigned int value );
 
 	private :
+        void copyFields( const YZViewCursor &rhs );
+        
 		/**
 		 * parent view
 		 */
@@ -89,12 +91,12 @@ class YZViewCursor {
 		/**
 		 * buffer cursor
 		 */
-		YZCursor* mBuffer;
+		YZCursor mBuffer;
 
 		/**
 		 * screen cursor
 		 */
-		YZCursor* mScreen;
+		YZCursor mScreen;
 
 		/**
 		 * spaceFill is the shift for starting tabs

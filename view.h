@@ -583,13 +583,13 @@ class YZView {
 		 * Get the current cursor information
 		 * @return a reference on the current cursor
 		 */
-		YZCursor* getCursor();
+		const YZCursor &getCursor();
 
 		/**
 		 * Get the current buffer cursor information
 		 * @return a reference on the current buffer cursor
 		 */
-		YZCursor* getBufferCursor();
+		const YZCursor &getBufferCursor();
 
 		YZViewCursor* visualCursor() { return mVisualCursor; }
 

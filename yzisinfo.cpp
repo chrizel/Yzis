@@ -331,7 +331,7 @@ YZCursor * YZYzisinfo::searchPosition( const YZBuffer */*buffer*/) {
 		}*/
 	}
             
-	return new YZCursor( *YZSession::me->currentView()->getBufferCursor() );
+	return new YZCursor( YZSession::me->currentView()->getBufferCursor() );
 }
 
 const YZCursor * YZYzisinfo::previousJumpPosition() {
@@ -361,7 +361,7 @@ const YZCursor * YZYzisinfo::previousJumpPosition() {
 	if ( found ) {
 		return &mJumpList[mCurrentJumpListItem]->position();
 	} else {
-		return YZSession::me->currentView()->getCursor();
+		return &YZSession::me->currentView()->getCursor();
 	}
 }
 

@@ -311,7 +311,7 @@ void YZSession::unregisterModifier ( const QString& mod ) {
 }
 
 void YZSession::saveJumpPosition() {
-	mYzisinfo->updateJumpList( mCurBuffer, currentView()->getCursor()->x(), currentView()->getCursor()->y() );
+	mYzisinfo->updateJumpList( mCurBuffer, currentView()->getCursor().x(), currentView()->getCursor().y() );
 }
 
 void YZSession::saveJumpPosition( const int x, const int y ) {

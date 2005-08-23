@@ -42,7 +42,7 @@ YZModeInsert::YZModeInsert() : YZMode() {
 	mMapMode = insert;
 }
 void YZModeInsert::leave( YZView* mView ) {
-	if ( mView->getBufferCursor()->x() > 0 )
+	if ( mView->getBufferCursor().x() > 0 )
 		mView->moveLeft();
 }
 
@@ -184,7 +184,7 @@ void YZModeInsert::commandPageUp( YZView* mView, const QString& ) {
 	}
 }
 void YZModeInsert::commandBackspace( YZView* mView, const QString& ) {
-	YZCursor cur = *mView->getBufferCursor();
+	YZCursor cur = mView->getBufferCursor();
 	YZBuffer* mBuffer = mView->myBuffer();
 	if ( cur.x() == 0 && cur.y() > 0 && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
 		mBuffer->action()->mergeNextLine( mView, cur.y() - 1 );
@@ -194,7 +194,7 @@ void YZModeInsert::commandBackspace( YZView* mView, const QString& ) {
 	}
 }
 void YZModeInsert::commandDel( YZView* mView, const QString& ) {
-	YZCursor cur = *mView->getBufferCursor();
+	YZCursor cur = mView->getBufferCursor();
 	YZBuffer* mBuffer = mView->myBuffer();
 	if ( cur.x() == mBuffer->textline( cur.y() ).length() && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
 		mBuffer->action()->mergeNextLine( mView, cur.y(), false );
@@ -203,7 +203,7 @@ void YZModeInsert::commandDel( YZView* mView, const QString& ) {
 	}
 }
 void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
-	YZCursor cur = *mView->getBufferCursor();
+	YZCursor cur = mView->getBufferCursor();
 	YZBuffer* mBuffer = mView->myBuffer();
 	if ( mView->getLocalBooleanOption("cindent") ) {
 		mView->indent();
@@ -220,9 +220,9 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 	mView->updateStickyCol();
 }
 cmd_state YZModeInsert::commandDefault( YZView* mView, const QString& key ) {
-	mView->myBuffer()->action()->insertChar( mView, *mView->getBufferCursor(), key );
+	mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
 	if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
-		mView->reindent( mView->getBufferCursor()->x() - 1, mView->getBufferCursor()->y() );
+		mView->reindent( mView->getBufferCursor().x() - 1, mView->getBufferCursor().y() );
 	return CMD_OK;
 }
 
@@ -231,7 +231,7 @@ void YZModeInsert::imBegin( YZView* ) {
 }
 void YZModeInsert::imCompose( YZView* mView, const QString& entry ) {
 	if ( !m_imPreedit.isEmpty() ) { // replace current one
-		YZCursor pos = *mView->getBufferCursor();
+		YZCursor pos = mView->getBufferCursor();
 		unsigned int len = m_imPreedit.length();
 		if ( pos.x() >= len )
 			pos.setX( pos.x() - len );
@@ -266,7 +266,7 @@ void YZModeReplace::commandBackspace( YZView* mView, const QString& key ) {
 }
 
 cmd_state YZModeReplace::commandDefault( YZView* mView, const QString& key ) {
-	mView->myBuffer()->action()->replaceChar( mView, *mView->getBufferCursor(), key );
+	mView->myBuffer()->action()->replaceChar( mView, mView->getBufferCursor(), key );
 	return CMD_OK;
 }
 

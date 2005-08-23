@@ -54,7 +54,7 @@ void YZModeCompletion::leave( YZView* /*view*/ ) {
 bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	YZBuffer* buffer = view->myBuffer();
 	YZMotionArgs arg(view, 1);
-	YZCursor cur = *view->getBufferCursor();
+	YZCursor cur = view->getBufferCursor();
 	QString line = buffer->textline(cur.y());
 	
 	//we cant complete from col 0, neither if the line is empty, neither if the word does not end with a letter or number ;)
@@ -122,7 +122,7 @@ void YZModeCompletion::doComplete( YZView* view, bool forward ) {
 	// replace text
 	QString proposal = mProposedCompletions[ mCurrentProposal ];
 	YZAction *action = view->myBuffer()->action();
-	YZCursor currentCursor = *view->getBufferCursor();
+	YZCursor currentCursor = view->getBufferCursor();
 	action->replaceText( view, mCompletionStart, currentCursor.x() - mCompletionStart.x(), proposal );
 	view->gotoxy( mCompletionStart.x() + proposal.length(), currentCursor.y() );
 	
@@ -137,7 +137,6 @@ void YZModeCompletion::doComplete( YZView* view, bool forward ) {
 }
 
 cmd_state YZModeCompletion::execCommand( YZView* view, const QString& _key ) {
-	YZCursor cur = *view->getBufferCursor();
 	bool initOK = true;
 	
 	// if we're to cycle through the potential matches, do the cycling

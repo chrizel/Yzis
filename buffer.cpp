@@ -658,8 +658,8 @@ bool YZBuffer::save() {
 	d->swapFile->unlink();
 
 	YZSession::me->getYzisinfo()->updateStartPosition( this, 
-                  (YZSession::me->currentView())->getCursor()->x(),
-                  (YZSession::me->currentView())->getCursor()->y() );
+                  (YZSession::me->currentView())->getCursor().x(),
+                  (YZSession::me->currentView())->getCursor().y() );
 
 	YZSession::me->getYzisinfo()->writeYzisinfo();
    

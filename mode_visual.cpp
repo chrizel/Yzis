@@ -58,10 +58,10 @@ void YZModeVisual::toClipboard( YZView* mView ) {
 }
 
 YZInterval YZModeVisual::buildBufferInterval( YZView*, const YZViewCursor& from, const YZViewCursor& to ) {
-	return YZInterval( *from.buffer(), *to.buffer() );
+	return YZInterval( from.buffer(), to.buffer() );
 }
 YZInterval YZModeVisual::buildScreenInterval( YZView*, const YZViewCursor& from, const YZViewCursor& to ) {
-	return YZInterval( *from.screen(), *to.screen() );
+	return YZInterval( from.screen(), to.screen() );
 }
 
 void YZModeVisual::enter( YZView* mView ) {
@@ -95,7 +95,7 @@ void YZModeVisual::cursorMoved( YZView* mView ) {
 
 	YZViewCursor curPos = mView->viewCursor();
 	YZViewCursor visPos = *mView->visualCursor();
-	bool reverse = *visPos.buffer() > *curPos.buffer();
+	bool reverse = visPos.buffer() > curPos.buffer();
 	YZInterval bufI = buildBufferInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
 	YZInterval scrI = buildScreenInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
 	YZInterval curI = visual->screenMap()[0];
@@ -158,12 +158,12 @@ void YZModeVisual::initVisualCommandPool() {
 		commands.append( new YZCommand("<CTRL>v", (PoolMethod) &YZModeVisual::translateToVisualBlock) );
 }
 void YZModeVisual::commandAppend( const YZCommandArgs& args ) {
-	YZCursor pos = qMax( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
+	YZCursor pos = qMax( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
 	args.view->modePool()->change( MODE_INSERT );
 	args.view->gotoxy( pos.x(), pos.y() );
 }
 void YZModeVisual::commandInsert( const YZCommandArgs& args ) {
-	YZCursor pos = qMin( *args.view->visualCursor()->buffer(), *args.view->getBufferCursor() );
+	YZCursor pos = qMin( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
 	args.view->modePool()->change( MODE_INSERT );
 	args.view->gotoxy( pos.x(), pos.y() );
 }
@@ -271,8 +271,8 @@ YZModeVisualLine::~YZModeVisualLine() {
 }
 
 YZInterval YZModeVisualLine::buildBufferInterval( YZView* , const YZViewCursor& from, const YZViewCursor& to ) {
-	YZBound bf( *from.buffer() );
-	YZBound bt( *to.buffer(), true );
+	YZBound bf( from.buffer() );
+	YZBound bt( to.buffer(), true );
 	bf.setPos( 0, from.bufferY() );
 	bt.setPos( 0, to.bufferY() + 1 );
 	return YZInterval( bf, bt );
@@ -280,11 +280,11 @@ YZInterval YZModeVisualLine::buildBufferInterval( YZView* , const YZViewCursor& 
 YZInterval YZModeVisualLine::buildScreenInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to ) {
 	YZViewCursor pos = from;
 	mView->gotoxy( &pos, 0, from.bufferY() );
-	YZBound bf( *pos.screen() );
-	YZBound bt( *pos.screen(), true );
+	YZBound bf( pos.screen() );
+	YZBound bt( pos.screen(), true );
 	if ( to.bufferY() < mView->myBuffer()->lineCount() - 1 ) {
 		mView->gotoxy( &pos, 0, to.bufferY() + 1 );
-		bt.setPos( *pos.screen() );
+		bt.setPos( pos.screen() );
 	} else {
 		mView->gotoxy( &pos, qMax( (unsigned int)1, mView->myBuffer()->getLineLength( to.bufferY() ) ) - 1, to.bufferY() );
 		bt.setPos( YZCursor( 0, pos.screenY() + 1 ) );
@@ -311,9 +311,9 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 	visual->clear();
 
 	unsigned int fromLine = mView->visualCursor()->bufferY();
-	unsigned int toLine = mView->getBufferCursor()->y();
+	unsigned int toLine = mView->getBufferCursor().y();
 	unsigned int fromCol = (mView->visualCursor()->curLineHeight()-1)*mView->getColumnsVisible() + mView->visualCursor()->screenX();
-	unsigned int toCol = (mView->viewCursor().curLineHeight()-1)*mView->getColumnsVisible() + mView->getCursor()->x();
+	unsigned int toCol = (mView->viewCursor().curLineHeight()-1)*mView->getColumnsVisible() + mView->getCursor().x();
 
 	YZViewCursor cur = *mView->visualCursor();
 	if ( fromCol > toCol ) {
@@ -331,12 +331,12 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 	for ( unsigned int i = fromLine; i <= toLine; i++ ) {
 		mView->gotodxy( &cur, fromCol, i );
 		if ( cur.screenX() < fromCol ) continue; // XXX handling tab is not easy
-		sI.setFromPos( *cur.screen() );
-		bI.setFromPos( *cur.buffer() );
+		sI.setFromPos( cur.screen() );
+		bI.setFromPos( cur.buffer() );
 		mView->gotodxy( &cur, toCol, i );
 //		if ( cur.screenX() > toCol ) continue; // XXX handling tab is not easy
-		sI.setTo( YZBound(*cur.screen()) );
-		bI.setTo( YZBound(*cur.buffer()) );
+		sI.setTo( YZBound(cur.screen()) );
+		bI.setTo( YZBound(cur.buffer()) );
 		visual->addInterval( bI, sI );
 //		yzDebug() << "visual block>" << bI << ", " << sI << endl;
 	}

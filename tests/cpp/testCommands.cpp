@@ -59,7 +59,7 @@ void TestYZCommands::tearDown()
 void TestYZCommands::testCreateSession()
 {
     phCheckEquals( mBuf->views().count(), 1 );
-    phCheckEquals( mBuf->firstView(), (YZView *) mView );
+    phCheckEquals( mSession->findViewByBuffer( mBuf ), (YZView *) mView );
     phCheckEquals( mBuf->getWholeText(), "" );
     CHECK_MODE_COMMAND( mView );
     CHECK_CURSOR_POS( mView, 0, 0 );

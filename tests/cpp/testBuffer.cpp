@@ -55,7 +55,7 @@ void TestYZBuffer::testCreateEmptyBuffer()
     buf = new TYZBuffer( mSession );
 
     phCheckEquals( buf->views().count(), 0 );
-    phCheckEquals( buf->firstView(), NULL );
+    phCheckEquals( mSession->findViewByBuffer( buf ), NULL );
     // an empty buffer has one line ?
     phCheckEquals( buf->lineCount(), 1 );
     phCheckEquals( mBuf->textline( 0 ), "" );

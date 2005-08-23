@@ -610,7 +610,7 @@ bool YZBuffer::save() {
 		// FIXME: can this be moved somewhere higher?
 		// having the low level buffer open popups
 		// seems wrong to me
-		YZView *view = firstView();
+		YZView *view = YZSession::me->findViewByBuffer( this );
 		if ( !view || !view->popupFileSaveAs() )
 			return false; //dont try to save
 	}

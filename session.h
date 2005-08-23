@@ -230,6 +230,11 @@ class YZSession {
 		 * Finds a view by its UID
 		 */
 		YZView* findView( const YZViewId &id );
+		
+		/**
+		 * Find a view containing the buffer
+		 */
+		YZView *findViewByBuffer( const YZBuffer *buffer );
 
 		/**
 		 * Finds the first view

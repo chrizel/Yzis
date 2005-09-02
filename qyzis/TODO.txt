@@ -1,7 +1,0 @@
-- add the exception license to qyzis
-- create a default template to start a new gui
-- create first implementation
-
-Suggestion:
-- when a view is created on a buffer, let the view automatically add itself to
-  the buffer instead of doing it manually

@@ -1,3 +1,3 @@
 SUBDIRS = indent
 scriptsdir = $(prefix)/share/yzis/scripts/
-scripts_DATA = 2html.lua clevertab.lua
+scripts_DATA = 2html.lua clevertab.lua switch.lua

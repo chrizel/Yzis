@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -25,12 +25,15 @@
 #include "cursor.h"
 #include "editor.h"
 
+#include <QPaintEngine>
+
 KYZisCursor::KYZisCursor( KYZisEdit* parent, shape type ) {
 	mParent = parent;
 	shown = false;
 	bg = new QPixmap();
 	cursor = new QPixmap();
 	setCursorType( type );
+	mX = mY = 0;
 }
 
 KYZisCursor::~KYZisCursor() {
@@ -70,15 +73,15 @@ void KYZisCursor::hide() {
 	p.end();
 	shown = false;
 }
-void KYZisCursor::refresh() {
-	move( mX, mY );
+void KYZisCursor::refresh( QPainter* p ) {
+	move( mX, mY, p );
 }
-void KYZisCursor::move( unsigned int x, unsigned int y ) {
+void KYZisCursor::move( unsigned int x, unsigned int y, QPainter* p ) {
 	if ( shown ) hide();
 	mX = x;
 	mY = y;
 	if ( prepareCursors() ) {
-		drawCursor( cursor );
+		drawCursor( cursor, p );
 		shown = true;
 	}
 }
@@ -90,10 +93,10 @@ const KYZViewCell& KYZisCursor::cell() const {
 
 bool KYZisCursor::prepareCursors() {
 	bool ret = true;
-	bitBlt( bg, 0, 0, mParent, mX, mY, bg->width(), bg->height(), Qt::CopyROP, true );
-	bitBlt( cursor, 0, 0, bg );
+	bg->fill( mParent, 0, 0 );
+	*cursor = *bg;
 	QPainter p( cursor );
-	QRect rect( 0, 0, cursor->width(), cursor->height() );
+	QRect rect = cursor->rect();
 	switch( mCursorType ) {
 		case SQUARE :
 			mParent->drawCell( &p, cell(), rect, true );
@@ -115,7 +118,20 @@ bool KYZisCursor::prepareCursors() {
 	return ret;
 }
 
-void KYZisCursor::drawCursor( QPixmap* orig ) {
-	bitBlt( mParent, mX, mY, orig );
+void KYZisCursor::drawCursor( QPixmap* orig, QPainter* p ) {
+	bool isPainting = ( p != NULL );
+	if ( !isPainting ) {
+		if ( mParent->paintingActive() ) {
+			yzDebug() << "KYZisCursor::drawCursor !!! paintingActive but no painter provided !!! - aborting" << endl;
+			return;
+		}
+		p = new QPainter();
+		p->begin( mParent );
+	}
+	p->drawPixmap( mX, mY, *orig );
+	if ( !isPainting ) {
+		p->end();
+		delete p;
+	}
 }
 

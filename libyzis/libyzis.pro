@@ -13,8 +13,8 @@
 #
 #  You should have received a copy of the GNU Library General Public License
 #  along with this library; see the file COPYING.LIB.  If not, write to
-#  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-#  Boston, MA 02111-1307, USA.
+#  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+#  Boston, MA 02110-1301, USA.
 
 ##########################	Lua stuff
 # you must set LUAINCLUDE to the directory containing lua headers
@@ -36,15 +36,17 @@ TEMPLATE = lib
 INCLUDEPATH += . ..  $$(LUAINCLUDE)
 CONFIG    += console warn_on debug dll
 CONFIG    += rtti # necessary for dynamic cast
+QT += xml
 
+win32-g++ {
+	DESTDIR = ./
+	LIBS += $$(LUALIB)/liblua.a $$(LUALIB)/liblualib.a
+	DEFINES += YZIS_WIN32_MSVC
+}
 win32-msvc {
 	DESTDIR = ./
 	LIBS += $$(LUALIB)/Lua.lib $$(LUALIB)/LuaLib.lib
 	DEFINES += YZIS_WIN32_MSVC
-}
-
-unix {
-	OBJECTS_DIR = .libs
 }
 
 # Input
@@ -81,10 +83,6 @@ HEADERS += action.h \
            view.h \
            viewcursor.h \
            portability.h \
-           yzisinfo.h \
-           yzisinfostartpositionrecord.h \
-           yzisinfojumplistrecord.h \
-           readtags.h \
            yzis.h
 
 SOURCES += action.cpp \
@@ -118,8 +116,4 @@ SOURCES += action.cpp \
            mode_insert.cpp \
            mode_search.cpp \
            mode_visual.cpp \
-           yzisinfo.cpp \
-           yzisinfostartpositionrecord.cpp \
-           yzisinfojumplistrecord.cpp \
-           readtags.c \
-           viewcursor.cpp
+           viewcursor.cpp yzisinfo.cpp yzisinfostartpositionrecord.cpp yzisinfojumplistrecord.cpp readtags.c tags_interface.cpp tags_stack.cpp mode_complete.cpp   folding.cpp 

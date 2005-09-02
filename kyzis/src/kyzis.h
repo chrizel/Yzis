@@ -12,7 +12,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #ifndef KYZIS_H
@@ -23,12 +23,11 @@
 #endif
 
 #include <kapplication.h>
-#include <kmdimainfrm.h>
 #include <dcopobject.h>
 #include <qmap.h>
 
-#include "konsole.h"
 #include "viewid.h"
+#include "dmainwindow.h"
 
 class KYZTextEditorIface;
 
@@ -40,7 +39,8 @@ class KYZTextEditorIface;
  * @author Yzis Team <yzis-dev@yzis.org>
  */
 class KRecentFilesAction;
-class Kyzis : public KMdiMainFrm, public DCOPObject
+
+class Kyzis : public DMainWindow, public DCOPObject
 {
 	K_DCOP
     Q_OBJECT
@@ -50,7 +50,7 @@ public:
 	 * @param dockConfig the configuration of dock widgets
 	 * @param mode the startup MDI mode
      */
-    Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode, const QString& initialKeys);
+    Kyzis(QWidget *w, const QString& initialKeys);
 
     /**
      * Default Destructor
@@ -67,9 +67,19 @@ public:
 
 	KParts::ReadWritePart* getCurrentPart();
 
-	KMdiToolViewAccessor *addToolView(KDockWidget::DockPosition position, QWidget *widget, const QPixmap& icon, const QString& sname, const QString& tabToolTip = 0, const QString& tabCaption = 0);
-	
 	void createKPartGUI( KParts::ReadWritePart *part ) { createGUI( part ); }
+
+	virtual void embedPartView(QWidget *view, const QString &title, const QString& toolTip = QString());
+    virtual void embedSelectView(QWidget *view, const QString &title, const QString &toolTip);
+    virtual void embedOutputView(QWidget *view, const QString &title, const QString &toolTip);
+    virtual void embedSelectViewRight(QWidget* view, const QString& title, const QString &toolTip);
+
+    virtual void removeView(QWidget *view);
+    virtual void setViewAvailable(QWidget *pView, bool bEnabled);
+    virtual void raiseView(QWidget *view);
+    virtual void lowerView(QWidget *view);
+    virtual KMainWindow *main();
+
 
 k_dcop:
 	/**
@@ -78,19 +88,9 @@ k_dcop:
 	void setCaption( const YZViewId &id, const QString& caption );
 
 public slots:
-	/**
-	 * Enables/disables the konsole
-	 */
-	void showKonsole();
-
 	void init();
-
-
-protected slots:
-
-protected:
-	virtual void resizeEvent( QResizeEvent *e );
-	void setWindowMenu();
+	void closeTab(QWidget *);
+    void closeTab();
 
 private slots:
     void fileNew();
@@ -102,20 +102,30 @@ private slots:
     void optionsConfigureToolbars();
     void applyNewToolbarConfig();
     void preferences();
+    void gotoNextWindow();
+    void gotoPreviousWindow();
+//    void gotoFirstWindow();
+    void gotoLastWindow();
+//    void raiseEditor();
+
+private:
+    void setupWindowMenu();
+
 
 private:
     void setupActions();
 	virtual bool queryClose();
 
     KToggleAction *m_toolbarAction;
-    KToggleAction *m_konsoleAction;
     KRecentFilesAction *m_openRecentAction;
-	QDomElement m_dockConfig;
 	int mBuffers;
 	unsigned int mViews;
 
-	Konsole *mConsole;
 	QString m_initialCommand;
+	QMap<QWidget*, DDockWindow::Position> m_docks;
+	KPopupMenu *m_windowMenu;
+	typedef QPair<int, KURL> WinInfo;
+	QList<WinInfo> m_windowList;
 
 };
 

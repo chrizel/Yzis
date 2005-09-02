@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -25,8 +25,12 @@
 #ifndef YZIS_LINE_H
 #define YZIS_LINE_H
 
+#if QT_VERSION < 0x040000
 #include <qobject.h>
 #include <qmap.h>
+#else
+#include <QVector>
+#endif
 
 /**
  * this class represents a line in the buffer
@@ -42,8 +46,13 @@ class YZLine
 		const QString& data() const { return mData; }
 		void setData(const QString &data);
 		int length() const { return mData.length(); }
+#if QT_VERSION < 0x040000
 		inline const QMemArray<short> &ctxArray () const { return m_ctx; };
 		inline void setContext (QMemArray<short> &val) { m_ctx.assign (val); }
+#else
+		inline const QVector<short> &ctxArray () const { return m_ctx; };
+		inline void setContext (QVector<short> &val) { m_ctx = val; }
+#endif
 		inline bool hlLineContinue () const { return m_flags & YZLine::flagHlContinue; }
 
 		inline void setHlLineContinue (bool cont)
@@ -51,6 +60,9 @@ class YZLine
 			if (cont) m_flags = m_flags | YZLine::flagHlContinue;
 			else m_flags = m_flags & ~ YZLine::flagHlContinue;
 		}
+
+		void clearAttributes() { mAttributesList.clear(); }
+		void addAttribute ( int start, int length, int attribute );
 
 
 		inline uchar *attributes () { return mAttributes.data(); }
@@ -73,9 +85,10 @@ class YZLine
 		QString mData;
 
 		//rendering settings for each char
-		QMemArray<uchar> mAttributes;
+		QVector<uchar> mAttributes;
+		QVector<int> mAttributesList;
 		//contexts for HL
-		QMemArray<short> m_ctx;
+		QVector<short> m_ctx;
 		/**
 		  Some bools packed
 		  */

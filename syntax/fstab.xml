@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+
+<language
+	  name="fstab"
+	  version="1.00"
+	  kateversion="2.4"
+	  section="Configuration"
+	  extensions="fstab;mtab"
+	  author="Diego Iastrubni (elcuco@kde.org)"
+	  license="Public Domain"
+	  >
+	
+	<highlighting>
+		<list name="valid_fs">
+			<item> ext2 </item>
+			<item> ext3 </item>
+			<item> fat </item>
+			<item> vfat </item>
+			<item> reiser </item>
+			<item> proc </item>
+			<item> none </item>
+			<item> sysfs </item>
+			<item> ntfs </item>
+			<item> umsdos </item>
+			<item> swap </item>
+			<item> minix </item>
+			<item> iso9660 </item>
+		</list>
+		
+		<contexts>
+			<!-- <file system> <mount point> <type> <options> <dump>  <pass>  -->
+			<context name="device" attribute="ID_device" endLineContenxt="device">
+				<DetectChar context="comment"  char="#" firstNonSpace="1" />
+				<RegExpr context="mount_point" String="[\s]*" />
+			</context>
+						
+			<context name="mount_point" attribute="ID_mountPoint" lineEndContext="device" >
+				<DetectChar context="comment"  char="#" firstNonSpace="1" />
+				<RegExpr context="_type" String="[\s]*" />
+			</context>
+						
+			<context name="_type" attribute="ID_normal" lineEndContext="device" >
+				<DetectChar context="comment"  char="#" firstNonSpace="1" />
+				<RegExpr context="type" String="[\S]*" />
+			</context>
+			
+			<context name="type" attribute="ID_type" lineEndContext="device" >
+				<DetectChar context="comment"  char="#" firstNonSpace="1" />
+				<keyword    context="#stay"  attribute="ID_validFS" String="valid_fs" />
+				<RegExpr context="options" String="[\s]*"/>
+			</context>
+				
+			<context name="options" attribute="ID_options" lineEndContext="device" >
+				<DetectChar context="comment"  char="#" firstNonSpace="1" />
+				<RegExpr context="dump" String="[\s]*"/>
+			</context>
+			
+			<context name="dump" attribute="ID_dump" lineEndContext="device" >
+				<DetectChar context="comment"  char="#" firstNonSpace="1" />
+				<RegExpr context="pass" String="[\s]*"/>
+			</context>
+			
+			<context name="pass" attribute="ID_pass" lineEndContext="device" >
+				<DetectChar context="comment"  char="#" firstNonSpace="1" />
+				<RegExpr context="__error" String="[\s]*"/>
+			</context>
+			
+			<context name="__error" attribute="ID_pass" lineEndContext="device" >
+				<DetectChar context="comment"  char="#" />
+				<RegExpr context="error" String="[\S]*"/>
+			</context>
+			
+			<!-- error -->
+			<context name="error" attribute="ID_ERROR" lineEndContext="device" >
+			</context>
+			
+			<!-- comment -->
+			<context name="comment" attribute="ID_comment" lineEndContext="#pop" >
+			</context>
+		</contexts>
+		
+		<itemDatas>
+			<itemData name="ID_device"     defStyleNum="dsKeyword" />
+			<itemData name="ID_mountPoint" defStyleNum="dsDataType"  />
+			<itemData name="ID_type"       defStyleNum="dsFunction"  />
+			<itemData name="ID_options"    defStyleNum="dsKeyword"  />
+			<itemData name="ID_dump"       defStyleNum="dsDecVal"  />
+			<itemData name="ID_pass"       defStyleNum="dsDecVal"  />
+			
+			<itemData name="ID_validFS"    defStyleNum="dsDataType" italic="1"/>
+			
+			<itemData name="ID_normal"     defStyleNum="dsNormal" />
+			<itemData name="ID_comment"    defStyleNum="dsComment" />
+			<itemData name="ID_ERROR"      defStyleNum="dsError" />
+		</itemDatas>
+	</highlighting>
+	
+	<general>
+		<comments>
+			<comment name="singleLine" start="#" />
+		</comments>
+	</general>
+</language>
+

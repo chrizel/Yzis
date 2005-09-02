@@ -13,7 +13,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 /**
@@ -26,6 +26,14 @@
 #define _GNU_SOURCE
 #endif
 #include <qtimer.h>
+/* Qt */
+#include <qglobal.h>
+#include <QWidget>
+#include <QCoreApplication>
+#include <QApplication>
+#include <QTextCodec>
+#include <QSocketNotifier>
+
 #include <getopt.h> // getopt
 #include <locale.h>
 
@@ -40,13 +48,6 @@
 /* yzis */
 #include "debug.h"
 #include "factory.h"
-
-/* Qt */
-#include <qglobal.h>
-#include <qapplication.h>
-#include <qtranslator.h>
-#include <qtextcodec.h>
-#include <qsocketnotifier.h>
 
 /* X11 */
 #include <X11/Xlib.h>
@@ -74,14 +75,19 @@ main(int argc, char *argv[])
 	bool useGUI = TRUE;
 #endif
 
-	QApplication app( argc, argv, useGUI );
+	QCoreApplication *app;
+if ( useGUI )
+	app = ( QCoreApplication* )new QApplication( argc, argv );
+else
+	app = new QCoreApplication( argc,argv );
+
 	QSocketNotifier *socket = new QSocketNotifier(0,QSocketNotifier::Read);
 
 	QString initialSendKeys;
 
 	setlocale( LC_ALL, "");
 	QString l = QString(PREFIX) + "/share/locale";
-	bindtextdomain( "yzis", l);
+	bindtextdomain( "yzis", l.toUtf8() );
 	bind_textdomain_codeset( "yzis", "UTF-8" );
 	textdomain( "yzis" );
 	// option stuff
@@ -122,6 +128,7 @@ main(int argc, char *argv[])
 
 	// create factory
 	NYZFactory *factory = new NYZFactory("default_session", initialSendKeys);
+
 	QObject::connect( socket, SIGNAL( activated( int ) ),factory, SLOT( processInput( int ) ) );
 
 	// Signal handling
@@ -152,7 +159,7 @@ main(int argc, char *argv[])
 
 	YZSession::me->guiStarted();
 
-	return app.exec();
+	return app->exec();
 }
 
 static void cleaning(void)

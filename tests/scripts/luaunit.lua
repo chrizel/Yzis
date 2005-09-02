@@ -10,12 +10,14 @@ Changes between 1.1 and 1.0:
 - internal variables are not global anymore
 - you can choose between assertEquals( actual, expected) or assertEquals(
   expected, actual )
-- you can assert for an error: assertError( f, a, b ) will assert that calling
-  the function f(a,b) generates an error
+- you can assert for an error: assertError( f, a, b ) will assert that f(a,b)
+  generates an error
 - display the calling stack when an error is spotted
 - a dedicated class collects and displays the result, to provide easy
   customisation
 - two verbosity level, like in python unittest
+
+
 ]]--
 
 argv = arg

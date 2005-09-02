@@ -14,7 +14,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 /**
@@ -24,8 +24,7 @@
 #include <qtimer.h>
 #include "debug.h"
 /* Qt */
-#include <qnamespace.h>
-#include <qcolor.h>
+#include <QColor>
 
 #include <ctype.h>
 
@@ -41,6 +40,7 @@ static const QChar spaceChar( ' ' );
 #define attribRed    mAttributesMap[0xff0000]
 #define attribWhite  mAttributesMap[0xffffff]
 #define attribYellow mAttributesMap[0xffff00]
+#define attribMarker	attribRed
 #define attribBlue mAttributesMap[0x0000ff]
 #define attribIntro mAttributesMap[0x00ff00]
 
@@ -213,12 +213,14 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 					} else {
 						num = num.rightJustify( marginLeft - 1, ' ' );
 					}
-					mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, marginLeft - 1 ), num );
+					mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, marginLeft - 1 ), num.toUtf8().data() );
 					wattroff( editor, attribYellow );
 					x = marginLeft - 1;
-					mvwaddch( editor, y, REVERSE_IF_RIGHTLEFT( x, 1 ), ' ' );
+					wattron( editor, attribMarker );
+					mvwaddch( editor, y, REVERSE_IF_RIGHTLEFT( x, 1 ), drawLineMarker().toLatin1() );
+					wattroff( editor, attribMarker );
 				} else {
-					mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, marginLeft ), fillNum );
+					mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, marginLeft ), fillNum.toUtf8().data() );
 				}
 			}
 		}
@@ -231,7 +233,7 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 				if ( tY == curY ) {
 					QString erase;
 					erase.fill( ' ', tX - shiftX );
-					mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, erase.length() ), erase );
+					mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, erase.length() ), erase.toUtf8().data() );
 				} else {
 					cleartoeol = true;
 				}
@@ -240,13 +242,13 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 		while( drawNextCol() ) {
 			if ( ! drawEntireLine ) {
 				if ( !drawIt && curY == fY ) { // start drawing ?
-					drawIt = ( curX + drawLength() > fX );
+					drawIt = ( curX == fX );
 					if ( drawIt ) {
 						x = marginLeft + curX - shiftX;
 						if ( tY == curY ) {
 							QString erase;
 							erase.fill( ' ', tX - curX + 1 );
-							mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, erase.length() ), erase );
+							mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, erase.length() ), erase.toUtf8().data() );
 						} else {
 							cleartoeol = true;
 						}
@@ -267,7 +269,7 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 				}
 			}
 			if ( drawIt ) {
-				QString disp = drawChar();
+				QString disp = QString( drawChar() );
 				if ( rightleft )
 					disp = disp.rightJustify( drawLength(), fillChar() );
 				else
@@ -298,9 +300,9 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 				if ( drawSelected() ) mAttributes |= A_REVERSE;
 				if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
 
-				QCString my_char = disp.local8Bit();
+				QByteArray my_char = disp.toLocal8Bit();
 				char* from_char = new char[ my_char.length() + 1 ];
-				strcpy( from_char, (const char *)my_char );
+				strcpy( from_char, my_char.constData() );
 				size_t needed = mbstowcs( NULL, from_char, strlen(from_char) )+1;
 				wchar_t* wide_char = (wchar_t*)malloc( needed * sizeof(wchar_t) );
 				mbstowcs( wide_char, from_char, strlen( from_char ) );
@@ -317,14 +319,9 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 			curX += drawLength();
 		}
 		if ( cleartoeol ) {
-			if ( !rightleft ) {
-				wmove( editor, y, x );
-				wclrtoeol( editor );
-			} else {
-				QString erase;
-				erase.fill( ' ', width - x );
-				mvwaddstr( editor, y, 0, erase );
-			}
+			QString erase;
+			erase.fill( drawLineFiller(), width - x );
+			mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, erase.length() ), erase.toUtf8().data() );
 		}
 		curY += drawHeight();
 		++y;
@@ -349,7 +346,7 @@ void NYZView::setCommandLineText( const QString& text )
 	werase(statusbar);
 	commandline = text;
 	if ( !text.isEmpty() ) {
-		waddstr(statusbar, text.local8Bit());
+		waddstr(statusbar, text.toLocal8Bit().constData());
 		waddch( statusbar, ' ' ); // when doing backspace...
 		waddch( statusbar, '\b' );
 	}
@@ -371,7 +368,7 @@ void NYZView::syncViewInfo( void )
 	wmove( infobar,0,0 );
 	QString m = mode();
 	wattron( infobar, COLOR_PAIR(2) );
-	wprintw( infobar, "%s", (const char*) m.local8Bit());
+	wprintw( infobar, "%s", m.toLocal8Bit().constData() );
 	wattroff( infobar, COLOR_PAIR(2) );
 	waddch( infobar, ' ' );
 
@@ -379,11 +376,11 @@ void NYZView::syncViewInfo( void )
 	myfmt=( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if
 	            // it's rather unlikely..
 	wprintw( infobar, myfmt,
-			( myBuffer()->fileIsNew() )?( const char* )( _( "[No File]" ).local8Bit() ):( const char * )( myBuffer()->fileName().local8Bit() ),
+			( myBuffer()->fileIsNew() )? ( _( "[No File]" ).toLocal8Bit().constData() ) : ( myBuffer()->fileName().toLocal8Bit().constData() ),
 			( myBuffer()->fileIsModified() )?" [+]":""
 			);
 	// prevent  gcc to use string
-	mvwprintw( infobar, 0, getColumnsVisible() - 20, getLineStatusString() );
+	mvwprintw( infobar, 0, getColumnsVisible() - 20, getLineStatusString().toUtf8().constData() );
 	wrefresh(infobar);
 
 	drawCursor();
@@ -392,7 +389,7 @@ void NYZView::syncViewInfo( void )
 void NYZView::displayInfo( const QString& info )
 {
 	werase(statusbar);
-	waddstr( statusbar, info.local8Bit() );
+	waddstr( statusbar, info.toLocal8Bit().constData() );
 	wrefresh(statusbar);
 	drawCursor();
 	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;

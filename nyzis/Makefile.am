@@ -5,7 +5,7 @@ METASOURCES = AUTO
 
 INCLUDES = -I$(top_srcdir)/libyzis/ -I$(top_builddir)/libyzis/ $(YZIS_INCLUDES) $(LUA_INCLUDES) $(CURSES_INCLUDES)
 yzis_SOURCES = viewwidget.cpp factory.cpp main.cpp
-yzis_LDADD = $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(YZISLIBS)
+yzis_LDADD = $(top_builddir)/libyzis/libyzis.la $(YZISLIBS)
 
 re : clean all
 uncore :

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Qyzis
+Exec=Qyzis %u
+Icon=Qyzis
+Type=Application
+DocPath=qyzis/qyzis.html
+GenericName=Yzis Frontend for Qt
+Terminal=0
+Categories=Qt;TextEditor
+MimeType=text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;text/rdf;

@@ -15,8 +15,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -33,8 +33,12 @@
 #include "selection.h"
 #include "viewcursor.h"
 
-#include <qkeysequence.h>
-#include <qclipboard.h>
+#ifdef Q_WS_X11
+#include <QX11Info>
+#endif
+#include <QApplication>
+#include <QClipboard>
+
 
 YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mType = YZMode::MODE_VISUAL;
@@ -42,16 +46,17 @@ YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mSelMode = true;
 	mMapMode = visual;
 	commands.clear();
-	commands.setAutoDelete(true);
 }
 YZModeVisual::~YZModeVisual() {
+	for ( int ab = 0 ; ab < commands.size(); ++ab)
+		delete commands.at(ab);
 	commands.clear();
 }
 
 void YZModeVisual::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
 #ifdef Q_WS_X11
-	if ( QPaintDevice::x11AppDisplay() )
+	if ( QX11Info::display() )
 #endif
 		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
 
@@ -171,8 +176,8 @@ void YZModeVisual::toLowerCase( const YZCommandArgs& args ) {
 	YZInterval inter = interval( args );
 	QStringList t = args.view->myBuffer()->getText( inter );
 	QStringList lt;
-	for( unsigned int i = 0; i < t.size(); i++ )
-		lt << t[i].lower();
+	for( int i = 0; i < t.size(); i++ )
+		lt << t[i].toLower();
 	args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
 	args.view->commitNextUndo();
 }
@@ -180,8 +185,8 @@ void YZModeVisual::toUpperCase( const YZCommandArgs& args ) {
 	YZInterval inter = interval( args );
 	QStringList t = args.view->myBuffer()->getText( inter );
 	QStringList lt;
-	for( unsigned int i = 0; i < t.size(); i++ )
-		lt << t[i].upper();
+	for( int i = 0; i < t.size(); i++ )
+		lt << t[i].toUpper();
 	args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
 	args.view->commitNextUndo();
 }
@@ -351,7 +356,7 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 void YZModeVisualBlock::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
 #ifdef Q_WS_X11
-	if ( QPaintDevice::x11AppDisplay() )
+	if ( QX11Info::display() )
 #endif
 		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
 

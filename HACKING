@@ -5,7 +5,23 @@ class names are LikeThatClass
 class members are mMyMember
 class structures are mystructure
 
-Preferred indentation ?
+Preferred indentation :
+void Class::myFunction( int param, int param2 ) {
+	if ( firstcheck == true ) {
+
+	} else {
+
+	}
+	
+	switch ( param ) {
+		case 0 :
+			break;
+		default :
+	}
+	
+	if ( good )
+		dosomething();
+}
 
 You have to add a comment for every function you add (doxygen format)
 You have to add a test for every new method of a class that already has a test

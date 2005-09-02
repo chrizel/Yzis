@@ -18,8 +18,8 @@
 
    You should have received a copy of the GNU Library General Public License
    along with this library; see the file COPYING.LIB.  If not, write to
-   the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
-   Boston, MA 02111-1307, USA.
+   the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+   Boston, MA 02110-1301, USA.
 */
 
 /******** Partly based on the ArgHintWidget of Qt3 by Trolltech AS *********/
@@ -35,8 +35,6 @@
 #include <kdebug.h>
 
 #include <qwhatsthis.h>
-#include <qvbox.h>
-#include <qlistbox.h>
 #include <qtimer.h>
 #include <qtooltip.h>
 #include <qapplication.h>
@@ -44,6 +42,9 @@
 #include <qfontmetrics.h>
 #include <qlayout.h>
 #include <qregexp.h>
+#include <Q3ListBox>
+#include <QDesktopWidget>
+#include <QKeyEvent>
 
 /**
  * This class is used as the codecompletion listbox. It can be resized according to its contents,
@@ -51,14 +52,14 @@
  *@short Listbox showing codecompletion
  *@author Jonas B. Jacobi <j.jacobi@gmx.de>
  */
-class KYZisCCListBox : public QListBox
+class KYZisCCListBox : public Q3ListBox
 {
   public:
     /**
       @short Create a new CCListBox
       @param view The KYZisView, CCListBox is displayed in
     */
-    KYZisCCListBox (QWidget* parent = 0, const char* name = 0, WFlags f = 0):QListBox(parent, name, f)
+    KYZisCCListBox (QWidget* parent = 0, const char* name = 0, Qt::WFlags f = 0):Q3ListBox(parent, name, f)
     {
     }
 
@@ -91,42 +92,42 @@ class KYZisCCListBox : public QListBox
     }
 };
 
-class KYZisCompletionItem : public QListBoxText
+class KYZisCompletionItem : public Q3ListBoxText
 {
   public:
-    KYZisCompletionItem( QListBox* lb, KTextEditor::CompletionEntry entry )
-      : QListBoxText( lb )
-      , m_entry( entry )
+    KYZisCompletionItem( Q3ListBox* lb, KYZisCodeCompletion::CompletionItem item, Q3ListBoxItem *after )
+      : Q3ListBoxText( lb, "", after )
+      , m_item ( item )
     {
-      if( entry.postfix == "()" ) { // should be configurable
-        setText( entry.prefix + " " + entry.text + entry.postfix );
+      if( item.item().postfix() == "()" ) { // should be configurable
+        setText( item.item().prefix() + " " + item.text() + item.item().postfix() );
       } else {
-        setText( entry.prefix + " " + entry.text + " " + entry.postfix);
+        setText( item.item().prefix() + " " + item.text() + " " + item.item().postfix());
       }
     }
 
-    KTextEditor::CompletionEntry m_entry;
+    KYZisCodeCompletion::CompletionItem m_item;
 };
 
 
 KYZisCodeCompletion::KYZisCodeCompletion( KYZisView* view )
-  : QObject( view, "KYZis Code Completion" )
+  : QObject( view, "KYzis Code Completion" )
   , m_view( view )
   , m_commentLabel( 0 )
 {
-  m_completionPopup = new QVBox( 0, 0, WType_Popup );
-  m_completionPopup->setFrameStyle( QFrame::Box | QFrame::Plain );
+  m_completionPopup = new Q3VBox( 0, 0, Qt::WType_Popup );
+  m_completionPopup->setFrameStyle( Q3Frame::Box | Q3Frame::Plain );
   m_completionPopup->setLineWidth( 1 );
 
   m_completionListBox = new KYZisCCListBox( m_completionPopup );
-  m_completionListBox->setFrameStyle( QFrame::NoFrame );
-  m_completionListBox->setCornerWidget( new QSizeGrip( m_completionListBox) );
+  m_completionListBox->setFrameStyle( Q3Frame::NoFrame );
+  //m_completionListBox->setCornerWidget( new QSizeGrip( m_completionListBox) );
+//#kde4 : fixme ?  m_completionListBox->setFocusProxy( m_view->m_viewInternal );
 
   m_completionListBox->installEventFilter( this );
-
   m_completionPopup->resize(m_completionListBox->sizeHint() + QSize(2,2));
   m_completionPopup->installEventFilter( this );
-  m_completionPopup->setFocusProxy( m_completionListBox );
+//#kde4 : fixme ?  m_completionPopup->setFocusProxy( m_view->m_viewInternal );
 
   m_pArgHint = new KYZisArgHint( m_view );
   connect( m_pArgHint, SIGNAL(argHintHidden()),
@@ -136,41 +137,90 @@ KYZisCodeCompletion::KYZisCodeCompletion( KYZisView* view )
            this, SLOT(slotCursorPosChanged()) );
 }
 
-KYZisCodeCompletion::~KYZisCodeCompletion( ) {
-    delete m_completionPopup; 
-}
-
 bool KYZisCodeCompletion::codeCompletionVisible () {
   return m_completionPopup->isVisible();
 }
 
-void KYZisCodeCompletion::showCompletionBox(
-    QValueList<KTextEditor::CompletionEntry> complList, int offset, bool casesensitive )
-{
-  kdDebug(13035) << "showCompletionBox " << endl;
+void KYZisCodeCompletion::buildItemList() {
+  kdDebug()<<"buildItemList"<<endl;
+  m_items.clear();
+  foreach (const KTextEditor::CompletionData& data,m_data) {
+//     //kdDebug(13034)<<"buildItemList:1"<<endl;
+    const QList<KTextEditor::CompletionItem>&  list=data.items();
+    for(int i=0;i<list.count();i++) {
+      //kdDebug(13034)<<"buildItemList:2"<<endl;
+      m_items.append(CompletionItem(&data,i));
+    }
+  }
+  qSort(m_items);
+#if 0
+  kdDebug()<<"------------"<<endl;
+  foreach (const CompletionItem& item,m_items)
+    kdDebug()<<item.text()<<endl;
+  kdDebug()<<"------------"<<endl;
+#endif
+}
 
-  m_caseSensitive = casesensitive;
-  m_complList = complList;
-  m_offset = offset;
-  m_view->cursorPositionReal( &m_lineCursor, &m_colCursor );
-  m_colCursor -= offset;
-
-  updateBox( true );
+void KYZisCodeCompletion::showCompletion(const KTextEditor::Cursor &position,const QLinkedList<KTextEditor::CompletionData> &data) {
+  kdDebug()<<"KateCodeCompletion::showCompletion"<<endl;
+  kdDebug()<<"data.size()=="<<data.size()<<endl;
+  if (data.isEmpty() && m_data.isEmpty()) return;
+  else if (m_data.isEmpty()) { // new completion
+    m_data=data;
+    kdDebug()<<"m_data was empty"<<endl;
+    buildItemList();
+    updateBox();
+  } else if (data.isEmpty()) {  // abort completion, no providers anymore
+    m_data.clear();
+    kdDebug()<<"data is empty"<<endl;
+    buildItemList();
+    updateBox();
+    return;
+    //do abort here
+  } else { //update completion
+    if (data.size()!=m_data.size()) { // different provider count
+      m_data=data;
+      kdDebug()<<"different size"<<endl;
+      buildItemList();
+      updateBox();
+    } else {
+      bool equal=true;
+      for (QLinkedList<KTextEditor::CompletionData>::const_iterator it1=data.constBegin(),
+          it2=m_data.constBegin();it1!=data.constEnd();++it1,++it2) {
+          if (!((*it1)==(*it2))) {equal=false; kdDebug()<<(*it1).id()<<" "<<(*it2).id()<<endl; break;}
+      }
+      if (equal) return;
+      kdDebug()<<"not equal"<<endl;
+      m_data=data;
+      buildItemList();
+      updateBox();
+    }
+  }
 }
 
 bool KYZisCodeCompletion::eventFilter( QObject *o, QEvent *e )
 {
+  kdDebug()<<"KateCodeCompletion::eventFilter"<<endl;
   if ( o != m_completionPopup &&
        o != m_completionListBox &&
-       o != m_completionListBox->viewport() )
+       o != m_completionListBox->viewport()
+       #if 0 
+       && o != m_view /*TEST*/ &&
+       o != m_view->m_viewInternal /*TEST*/
+ #endif
+    )
     return false;
 
-   if( e->type() == QEvent::FocusOut )
+/* Is this really needed? abortCompletion will hide this thing, 
+   aborting here again will send abort signal even on successfull completion */
+/* JOWENN: Yes it is, for mouse click triggered aborting of code completion*/
+   if( (e->type() == QEvent::Hide) && (m_completionPopup==o) )
    {
-     abortCompletion();
-     m_view->setFocus();
+     if (!m_blockEvents)
+      abortCompletion();
      return false;
    }
+
 
    if ( e->type() == QEvent::MouseButtonDblClick  ) {
     doComplete();
@@ -182,77 +232,78 @@ bool KYZisCodeCompletion::eventFilter( QObject *o, QEvent *e )
     return false;
    }
 
-   if ( e->type() == QEvent::KeyPress ) {
-    QKeyEvent *ke = (QKeyEvent*)e;
-    if( /*(ke->key() == Key_Left)  || (ke->key() == Key_Right) ||*///what are <- and -> used for??
-        (ke->key() == Key_Up)    || (ke->key() == Key_Down ) ||
-        (ke->key() == Key_Home ) || (ke->key() == Key_End)   ||
-        (ke->key() == Key_Prior) || (ke->key() == Key_Next )) {
-      QTimer::singleShot(0,this,SLOT(showComment()));
-      return false;
-    }
-    if( ke->key() == Key_Enter || ke->key() == Key_Return ) {
-      doComplete();
-      return false;
-    }
-
-    if( ke->key() == Key_Escape ) {
-      abortCompletion();
-      m_view->setFocus();
-      return false;
-    }
-
-//    int qtKeyCode = ke->key() | ((ke->state() & Qt::ShiftButton) ? Qt::SHIFT : 0) | ((ke->state() & Qt::ControlButton) ? Qt::CTRL : 0) | ((ke->state() & Qt::AltButton) ? Qt::ALT : 0) | ((ke->state() & Qt::MetaButton) ? Qt::META : 0);
-
-    // redirect the event to the editor
-/*    if( ke->key() == Key_Backspace) {
-      m_view->backspace();
-    } else if (qtKeyCode == m_view->m_editUndo->shortcut().keyCodeQt()) {
-      m_view->m_editUndo->activate();
-    } else {*/
-      QApplication::sendEvent( m_view->editor()/*->m_viewInternal*/, e );
-//     }
-
-    if( m_colCursor > m_view->cursorColumnReal() ) {
-      // the cursor is too far left
-      kdDebug(13035) << "Aborting Codecompletion after sendEvent" << endl;
-      kdDebug(13035) << m_view->cursorColumnReal() << endl;
-      abortCompletion();
-      m_view->setFocus();
-      return true;
-    }
-
-    updateBox();
-    return true;
+  if ((e->type()==QEvent::KeyPress) || (e->type()==QEvent::KeyRelease)) 
+  {
+    QApplication::sendEvent(m_view,e);
+    if (!e->isAccepted()) QApplication::sendEvent(m_view->window(),e);
+  }
+  if ((e->type()==QEvent::Shortcut) || (e->type()==QEvent::ShortcutOverride) ||
+	(e->type()==QEvent::Accel) )  
+  {
+    QApplication::sendEvent(m_view->window(),e);
   }
 
+  kdDebug()<<"e->type()=="<<e->type()<<endl;
   return false;
+}
+
+void KYZisCodeCompletion::handleKey (QKeyEvent *e)
+{
+  kdDebug()<<"KateCodeCompletion::handleKey"<<endl;
+  // close completion if you move out of range
+  if ((e->key() == Qt::Key_Up) && (m_completionListBox->currentItem() == 0))
+  {
+    abortCompletion();
+    m_view->setFocus();
+    return;
+  }
+
+  // keyboard movement
+  if( (e->key() == Qt::Key_Up)    || (e->key() == Qt::Key_Down ) ||
+        (e->key() == Qt::Key_Home ) || (e->key() == Qt::Key_End)   ||
+        (e->key() == Qt::Key_PageUp) || (e->key() == Qt::Key_PageDown ))
+  {
+    QTimer::singleShot(0,this,SLOT(showComment()));
+    QApplication::sendEvent( m_completionListBox, (QEvent*)e );
+    return;
+  }
+
+  // update the box
+  updateBox();
 }
 
 void KYZisCodeCompletion::doComplete()
 {
+#if 0
+  foreach (const KTextEditor::CompletionData& data,m_data) {
+    kdDebug()<<"datalist="<<&data<<endl;
+  }
+  kdDebug()<<"doComplete------------"<<endl;
+  foreach (const CompletionItem& item,m_items)
+    kdDebug()<<item.text()<<endl;
+  kdDebug()<<"doComplete------------"<<endl;
+#endif
+
   KYZisCompletionItem* item = static_cast<KYZisCompletionItem*>(
      m_completionListBox->item(m_completionListBox->currentItem()));
 
   if( item == 0 )
     return;
-  QString text = item->m_entry.text;
-  //QString currentLine = static_cast<KYZTextEditorIface*>(m_view->document())->textLine(m_view->cursorLine());
-  QString currentLine = static_cast<KYZTextEditorIface*>(m_view->document())->textLine(m_lineCursor);
-  int len = m_view->cursorColumnReal() - m_colCursor;
-  QString currentComplText = currentLine.mid(m_colCursor,len);
-  QString add = text.mid(currentComplText.length());
-  if( item->m_entry.postfix == "()" )
-    add += "(";
 
-  emit filterInsertString(&(item->m_entry),&add);
+  if (item->m_item.item().provider()) {
+      m_view->completingInProgress(true);
+      item->m_item.item().provider()->doComplete(m_view,*(item->m_item.data),item->m_item.item());
+      m_view->completingInProgress(false);
+  } else {
+    QString text = item->m_item.text();
+//    QString currentLine = m_view->text(m_view->getBufferCursor().y());
+    int alreadyThere = m_view->cursorPosition().column() - item->m_item.data->matchStart().column();
+    //QString currentComplText = currentLine.mid(m_colCursor,len);
+    QString add = text.mid(alreadyThere);
+    if( item->m_item.item().postfix() == "()" )
+      add += "(";
+  }
 
-  m_view->modePool()->push( YZMode::MODE_INSERT );
-  KYZTextEditorIface *document = dynamic_cast<KYZTextEditorIface*>(m_view->document());
-  YZBuffer *buffer = document->getBuffer();
-  buffer->action()->insertChar(m_view, YZCursor(m_colCursor + currentComplText.length(),m_lineCursor), add);
-
-  complete( item->m_entry );
   m_view->setFocus();
 }
 
@@ -261,68 +312,107 @@ void KYZisCodeCompletion::abortCompletion()
   m_completionPopup->hide();
   delete m_commentLabel;
   m_commentLabel = 0;
-  emit completionAborted();
+  m_items.clear();
+  m_data.clear();
+  m_view->completionAborted();
+/*  emit completionAborted();*/
 }
 
-void KYZisCodeCompletion::complete( KTextEditor::CompletionEntry entry )
+void KYZisCodeCompletion::complete( KTextEditor::CompletionItem entry )
 {
+  kdDebug()<<"KateCodeCompletion::completion=============about to close completion box"<<endl;
+  m_blockEvents=true;
   m_completionPopup->hide();
   delete m_commentLabel;
   m_commentLabel = 0;
+  m_items.clear();
+  m_data.clear();
+  m_view->completionDone();;
+
+/*
   emit completionDone( entry );
-  emit completionDone();
+  emit completionDone();*/
 }
 
 void KYZisCodeCompletion::updateBox( bool )
 {
-  m_completionListBox->clear();
-
-  QString currentLine = static_cast<KYZTextEditorIface*>(m_view->document())->textLine(m_view->cursorLine());
-  int len = m_view->cursorColumnReal() - m_colCursor;
-  QString currentComplText = currentLine.mid(m_colCursor,len);
-/* No-one really badly wants those, or?
-  kdDebug(13035) << "Column: " << m_colCursor << endl;
-  kdDebug(13035) << "Line: " << currentLine << endl;
-  kdDebug(13035) << "CurrentColumn: " << m_view->cursorColumnReal() << endl;
-  kdDebug(13035) << "Len: " << len << endl;
-  kdDebug(13035) << "Text: '" << currentComplText << "'" << endl;
-  kdDebug(13035) << "Count: " << m_complList.count() << endl;
-*/
-  QValueList<KTextEditor::CompletionEntry>::Iterator it = m_complList.begin(), end = m_complList.end();
-  if( m_caseSensitive ) {
-    for( ; it != end; ++it ) {
-      if( (*it).text.startsWith(currentComplText) ) {
-        new KYZisCompletionItem(m_completionListBox,*it);
-      }
-    }
-  } else {
-    currentComplText = currentComplText.upper();
-    for( ; it != end; ++it ) {
-      if( (*it).text.upper().startsWith(currentComplText) ) {
-        new KYZisCompletionItem(m_completionListBox,*it);
-      }
-    }
-  }
-
-  if( m_completionListBox->count() == 0 ||
-      ( m_completionListBox->count() == 1 && // abort if we equaled the last item
-        currentComplText == m_completionListBox->text(0).stripWhiteSpace() ) ) {
+  m_blockEvents=false;
+#if 0
+  if( m_colCursor > m_view->cursorPosition().column() ) {
+    // the cursor is too far left
+    kdDebug(13035) << "Aborting Codecompletion after sendEvent" << endl;
+    kdDebug(13035) << m_view->cursorPosition().column() << endl;
     abortCompletion();
     m_view->setFocus();
     return;
   }
+#endif 
+  m_completionListBox->clear();
+  kdDebug()<<"m_items.size():"<<m_items.size()<<endl;;
+  if (m_items.size()==0)
+  {
+    if (codeCompletionVisible())
+    {
+      abortCompletion();
+      m_view->setFocus();
+    }
+    return;
+  }
 
-    kdDebug(13035)<<"KYZisCodeCompletion::updateBox: Resizing widget"<<endl;
+  QString currentLine = m_view->myBuffer()->textline(m_view->getBufferCursor().y());
+/*  int len = m_view->cursorPosition().column() - m_colCursor;
+  QString currentComplText = currentLine.mid(m_colCursor,len); */
+  QList<CompletionItem>::Iterator it;
+
+  int currentCol=m_view->cursorPosition().column();
+  int len=-1;
+  QString currComp;
+  Q3ListBoxItem *afteritem=0;
+  if( m_caseSensitive ) {
+    for( it = m_items.begin(); it != m_items.end(); ++it ) {
+      if ((len<0) || ((currentCol-(it->data->matchStart().column()))!=len)) {
+        int tmp=(currentCol-(it->data->matchStart().column()));
+        if (tmp<0) continue;
+        len=tmp;
+        currComp=currentLine.mid(it->data->matchStart().column(),len);
+      }
+      if( (*it).text().startsWith(currComp) ) {
+        afteritem=new KYZisCompletionItem(m_completionListBox,*it,afteritem);
+      }
+    }
+  } else {
+    for( it = m_items.begin(); it != m_items.end(); ++it ) {
+      if ((len<0) || ((currentCol-(it->data->matchStart().column()))!=len)) {
+        int tmp=(currentCol-(it->data->matchStart().column()));
+        if (tmp<0) continue;
+        len=tmp;
+        currComp=currentLine.mid(it->data->matchStart().column(),len).upper();
+      }
+      if( (*it).text().upper().startsWith(currComp) ) {
+        afteritem=new KYZisCompletionItem(m_completionListBox,*it,afteritem);
+      }
+    }
+  }
+
+  if( m_completionListBox->count() == 0 ) 
+#warning fixme
+/*||
+
+      ( m_completionListBox->count() == 1 && // abort if we equaled the last item
+        currentComplText == m_completionListBox->text(0).stripWhiteSpace() ) ) */{
+    abortCompletion();
+    m_view->setFocus();
+    return;
+  }
+    kdDebug(13035)<<"KateCodeCompletion::updateBox: Resizing widget"<<endl;
         m_completionPopup->resize(m_completionListBox->sizeHint() + QSize(2,2));
-    QPoint p = m_view->mapToGlobal( m_view->cursorCoordinates() );
+    QPoint p = m_view->mapToGlobal( m_view->cursorPositionCoordinates() );
         int x = p.x();
         int y = p.y() ;
-        kdDebug() << "x: " << x << endl
-          << "y: " << y << endl;
-        if ( y + m_completionPopup->height() + m_view->editorFontMetrics( ).height() > QApplication::desktop()->height() )
+        if ( y + m_completionPopup->height() + m_view->fontMetrics( ).height() > QApplication::desktop()->height() )
                 y -= (m_completionPopup->height() );
-         else
-                y += m_view->editorFontMetrics( ).height();
+        else
+                y += m_view->fontMetrics( ).height();
 
         if (x + m_completionPopup->width() > QApplication::desktop()->width())
                 x = QApplication::desktop()->width() - m_completionPopup->width();
@@ -339,8 +429,8 @@ void KYZisCodeCompletion::updateBox( bool )
 
 void KYZisCodeCompletion::showArgHint ( QStringList functionList, const QString& strWrapping, const QString& strDelimiter )
 {
-  unsigned int line, col;
-  m_view->cursorPositionReal( &line, &col );
+  int line, col;
+  m_view->cursorPosition().position( line, col );
   m_pArgHint->reset( line, col );
   m_pArgHint->setArgMarkInfos( strWrapping, strDelimiter );
 
@@ -355,13 +445,13 @@ void KYZisCodeCompletion::showArgHint ( QStringList functionList, const QString&
     nNum++;
   }
 
-  m_pArgHint->move(m_view->mapToGlobal(m_view->cursorCoordinates() + QPoint(0,m_view->editorFontMetrics( ).height())) );
+  m_pArgHint->move(m_view->mapToGlobal(m_view->cursorPositionCoordinates() + QPoint(0,m_view->editorFontMetrics( ).height())) );
   m_pArgHint->show();
 }
 
 void KYZisCodeCompletion::slotCursorPosChanged()
 {
-  m_pArgHint->cursorPositionChanged ( m_view, m_view->cursorLine(), m_view->cursorColumnReal() );
+  m_pArgHint->cursorPositionChanged ( m_view, m_view->getBufferCursor().y(), m_view->getBufferCursor().x() );
 }
 
 void KYZisCodeCompletion::showComment()
@@ -374,12 +464,12 @@ void KYZisCodeCompletion::showComment()
   if( !item )
     return;
 
-  if( item->m_entry.comment.isEmpty() )
+  if( item->m_item.item().comment().isEmpty() )
     return;
 
   delete m_commentLabel;
-  m_commentLabel = new KYZisCodeCompletionCommentLabel( 0, item->m_entry.comment );
-  m_commentLabel->setFont(QToolTip::font());
+  m_commentLabel = new KYZisCodeCompletionCommentLabel( 0, item->m_item.item().comment() );
+//XXX kde4 port  m_commentLabel->setFont(QToolTip::font());
   m_commentLabel->setPalette(QToolTip::palette());
 
   QPoint rightPoint = m_completionPopup->mapToGlobal(QPoint(m_completionPopup->width(),0));
@@ -402,9 +492,9 @@ void KYZisCodeCompletion::showComment()
 }
 
 KYZisArgHint::KYZisArgHint( KYZisView* parent, const char* name )
-    : QFrame( parent, name, WType_Popup )
+    : Q3Frame( parent, name, Qt::WType_Popup )
 {
-    setBackgroundColor( black );
+    setBackgroundColor( Qt::black );
 
     labelDict.setAutoDelete( true );
     layout = new QVBoxLayout( this, 1, 2 );
@@ -413,7 +503,7 @@ KYZisArgHint::KYZisArgHint( KYZisView* parent, const char* name )
 
     m_markCurrentFunction = true;
 
-    setFocusPolicy( StrongFocus );
+    setFocusPolicy( Qt::StrongFocus );
     setFocusProxy( parent );
 
     reset( -1, -1 );
@@ -535,7 +625,7 @@ void KYZisArgHint::setCurrentFunction( int currentFunction )
 
 void KYZisArgHint::show()
 {
-    QFrame::show();
+    Q3Frame::show();
     adjustSize();
 }
 
@@ -543,14 +633,14 @@ bool KYZisArgHint::eventFilter( QObject*, QEvent* e )
 {
     if( isVisible() && e->type() == QEvent::KeyPress ){
         QKeyEvent* ke = static_cast<QKeyEvent*>( e );
-        if( (ke->state() & ControlButton) && ke->key() == Key_Left ){
+        if( (ke->state() & Qt::ControlButton) && ke->key() == Qt::Key_Left ){
             setCurrentFunction( currentFunction() - 1 );
             ke->accept();
             return true;
-        } else if( ke->key() == Key_Escape ){
+        } else if( ke->key() == Qt::Key_Escape ){
             slotDone(false);
             return false;
-        } else if( (ke->state() & ControlButton) && ke->key() == Key_Right ){
+        } else if( (ke->state() & Qt::ControlModifier) && ke->key() == Qt::Key_Right ){
             setCurrentFunction( currentFunction() + 1 );
             ke->accept();
             return true;

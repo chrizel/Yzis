@@ -16,8 +16,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #ifndef YZ_BUFFER_H
@@ -25,10 +25,6 @@
 /**
  * $Id$
  */
-
-#include <qvaluevector.h>
-#include <qapplication.h>
-#include <qstring.h>
 
 #include "yzis.h"
 #include "syntaxhighlight.h"
@@ -50,7 +46,8 @@ class YZViewId;
 typedef YZVector<YZLine*> YZBufferData;
 
 /**
- * A buffer is the implementation of the content of a file
+ * A buffer is the implementation of the content of a file.
+ * 
  * A buffer can have multiple views. Every buffer is registered in a
  * @ref YZSession
  */
@@ -72,7 +69,7 @@ public:
 	
 	/**
 	 * Gets the unique identifier for this buffer
-	 * @return the unqiue identifier for this buffer
+	 * @return the unique identifier for this buffer
 	 */
 	unsigned int getId() const;
 
@@ -168,7 +165,7 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	const QString& textline(unsigned int line) const;
+	const QString textline(unsigned int line) const;
 
 	/**
 	 * Return the column of the first non-blank character in the line
@@ -268,10 +265,16 @@ public:
 	void statusChanged();
 
 	/**
-	 * Get the current filename of the buffer
+	 * Get the absolute filename of the buffer
 	 * @return the filename
 	 */
 	const QString& fileName() const;
+
+	/**
+	 * Get the filename of the buffer ( not the path )
+	 * @return the filename
+	 */
+	const QString fileNameShort() const;
 
 	/**
 	 * Changes the filename

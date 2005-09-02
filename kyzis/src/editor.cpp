@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -37,6 +37,7 @@
 #include <qsignalmapper.h>
 #include <kshortcut.h>
 #include <ctype.h>
+#include <QApplication>
 
 #include <kaccel.h>
 
@@ -44,16 +45,17 @@
 
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
 
-KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
-: QWidget( parent, name, /*Qt::WStaticContents | */ Qt::WNoAutoErase )
+KYZisEdit::KYZisEdit(KYZisView *parent, const char* /*name*/)
+: QWidget( parent, /*Qt::WStaticContents | */ Qt::WNoAutoErase )
 {
 	mTransparent = false;
 	mParent = parent;
 
 	marginLeft = 0;
 
-	setFocusPolicy( StrongFocus );
-	QWidget::setCursor( IbeamCursor );
+	setFocusPolicy( Qt::StrongFocus );
+	setAttribute ( Qt::WA_PaintOutsidePaintEvent );
+	QWidget::setCursor( Qt::IBeamCursor );
 
 	rootxpm = new KRootPixmap( this );
 	setTransparent( false );
@@ -63,7 +65,8 @@ KYZisEdit::KYZisEdit(KYZisView *parent, const char *name)
 
 	initKeys();
 	mCell.clear();
-	mCursor = new KYZisCursor( this, cursorShape() );
+	mCursor = new KYZisCursor( this, KYZisCursor::SQUARE );
+	updateCursor();
 
 	defaultCell.isValid = true;
 	defaultCell.selected = false;
@@ -150,6 +153,7 @@ void KYZisEdit::updateArea( ) {
 	isFontFixed = fontInfo().fixedPitch();
 	mParent->setFixedFont( isFontFixed );
 	spaceWidth = mParent->getSpaceWidth();
+	mCursor->resize( fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 	updateCursor();
 
 	int lines = height() / fontMetrics().lineSpacing();
@@ -171,10 +175,11 @@ void KYZisEdit::paintEvent( QPaintEvent* pe ) {
 		unsigned int maxwidth = fontMetrics().maxWidth();
 		fx /= maxwidth;
 		fy /= linespace;
+		int old_tx = tx, old_ty = ty;
 		tx /= maxwidth;
 		ty /= linespace;
-		++tx;
-		++ty;
+		if ( tx < old_tx ) ++tx;
+		if ( ty < old_ty ) ++ty;
 	}
 	fx = qMax( (int)marginLeft, fx ) - marginLeft;
 	tx = qMax( (int)marginLeft, tx ) - marginLeft;
@@ -202,7 +207,7 @@ void KYZisEdit::setCursor( int c, int l ) {
 	mCursor->move( x, l * fontMetrics().lineSpacing() );
 
 	// need for InputMethod (OverTheSpot)
-	setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
+//	setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
 }
 
 QPoint KYZisEdit::cursorCoordinates( ) {
@@ -211,13 +216,13 @@ QPoint KYZisEdit::cursorCoordinates( ) {
 }
 
 void KYZisEdit::scrollUp( int n ) {
+	mCursor->hide();
+	scroll( 0, n * fontMetrics().lineSpacing() );
+#if 0
 	if ( ! mTransparent ) {
 		mCursor->hide();
+		bitBlt( this, 0, n * fontMetrics().lineSpacing(), this, 0, 0, width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing() );
 		unsigned int lv = mParent->getLinesVisible();
-		bitBlt( this, 0, n * fontMetrics().lineSpacing(),
-			this, 0, 0,
-			width(), ( lv - n ) * fontMetrics().lineSpacing(),
-			Qt::CopyROP, true );
 		unsigned int i;
 		for( i = lv; (int)i >= n; i-- )
 			mCell[ i ] = mCell[ i - n ];
@@ -229,16 +234,17 @@ void KYZisEdit::scrollUp( int n ) {
 		mCell.clear();
 		mParent->sendRefreshEvent();
 	}
+#endif
 }
 
 void KYZisEdit::scrollDown( int n ) {
+	mCursor->hide();
+	scroll( 0, -n * fontMetrics().lineSpacing() );
+#if 0
 	if ( ! mTransparent ) {
 		mCursor->hide();
 		unsigned int h = mParent->getLinesVisible() - (unsigned int)n;
-		bitBlt( this, 0, 0,
-			this, 0, n * fontMetrics().lineSpacing(),
-			width(), h * fontMetrics().lineSpacing(),
-			Qt::CopyROP, true );
+		bitBlt( this, 0, 0, this, 0, n * fontMetrics().lineSpacing(), width(), h * fontMetrics().lineSpacing() );
 		unsigned int i;
 		for( i = 0; i < h; i++ )
 			mCell[ i ] = mCell[ i + n ];
@@ -250,12 +256,13 @@ void KYZisEdit::scrollDown( int n ) {
 		mCell.clear();
 		mParent->sendRefreshEvent();
 	}
+#endif
 }
 
 bool KYZisEdit::event(QEvent *e) {
 	if ( e->type() == QEvent::KeyPress ) {
 		QKeyEvent *ke = (QKeyEvent *)e;
-		if ( ke->key() == Key_Tab ) {
+		if ( ke->key() == Qt::Key_Tab ) {
 			keyPressEvent(ke);
 			return TRUE;
 		}
@@ -264,7 +271,7 @@ bool KYZisEdit::event(QEvent *e) {
 }
 
 void KYZisEdit::keyPressEvent ( QKeyEvent * e ) {
-	ButtonState st = e->state();
+	Qt::KeyboardModifiers st = e->modifiers();
 	QString modifiers;
 	if ( st & Qt::ShiftButton )
 		modifiers = "<SHIFT>";
@@ -313,13 +320,13 @@ void KYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		}
 	} else if ( e->button() == Qt::MidButton ) {
 		QString text = QApplication::clipboard()->text( QClipboard::Selection );
-		if ( text.isEmpty() )
+		if ( text.isNull() )
 			text = QApplication::clipboard()->text( QClipboard::Clipboard );
-		if ( ! text.isEmpty() ) {
+		if ( ! text.isNull() ) {
 			if ( mParent->modePool()->current()->isEditMode() ) {
 				QChar reg = '\"';
 				YZSession::me->setRegister( reg, QStringList::split( "\n", text ) );
-				mParent->paste( reg, false );
+				mParent->pasteContent( reg, false );
 				mParent->moveRight();
 			}
 		}
@@ -364,7 +371,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 	}
 	if ( marginLeft != my_marginLeft ) {
 		if ( mCursor->visible() ) {
-			mCursor->move( mCursor->x() + GETX( marginLeft - my_marginLeft ), mCursor->y() );
+			mCursor->move( qMax( (int)( mCursor->x() + GETX( marginLeft - my_marginLeft ) ), 0 ), mCursor->y() );
 		}
 		marginLeft = my_marginLeft;
 		updateArea();
@@ -373,8 +380,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 
 	defaultCell.flag = flag;
 
-	QPainter p;
-	p.begin( this );
+	QPainter p( this );
 
 	unsigned int shiftY = mParent->getDrawCurrentTop();
 	unsigned int shiftX = mParent->getDrawCurrentLeft();
@@ -411,8 +417,8 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 
 	KYZViewCell cell = defaultCell;
 	unsigned int mCellY;
-	unsigned int mCellX;
-	QValueList<unsigned int> mCellKeys;
+	int mCellX;
+	QList<unsigned int> mCellKeys;
 
 	bool drawEntireLine;
 
@@ -479,7 +485,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 		while( mParent->drawNextCol() ) {
 			if ( ! drawEntireLine ) {
 				if ( !drawIt && curY == fY ) { // start drawing ?
-					drawIt = ( curX + mParent->drawLength() > fX );
+					drawIt = ( curX == fX );
 					if ( drawIt ) {
 						myRect.setLeft( GETX( marginLeft + curX - shiftX ) );
 						while( mCellX < mCellKeys.size() && mCellKeys[ mCellX ] < (fX - shiftX) )
@@ -513,11 +519,11 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 				}
 			}
 			if ( drawIt ) {
-				QString disp = mParent->drawChar();
+				QString disp = QString( mParent->drawChar() );
 				cell.c = disp;
 
 				myRect.setLeft( GETX( marginLeft + curX - shiftX ) );
-				myRect.setWidth( GETX( mParent->drawLength() ) + 1 );
+				myRect.setWidth( GETX( mParent->drawLength() ) );
 				REVERSE_MYRECT_IF_RIGHTLEFT;
 
 				if ( rightleft )
@@ -569,7 +575,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 		myRect.moveBy( 0, linespace );
 
 		if ( refreshCursor ) {
-			mCursor->refresh();
+			mCursor->refresh( &p );
 			refreshCursor = false;
 		}
 	}
@@ -584,20 +590,17 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 		p.drawLine( w, (fromY - shiftY) * linespace, w, (curY - shiftY) * linespace );
 	}
 
-	unsigned int fh = shiftY + mParent->getLinesVisible();
+	unsigned int fh = shiftY + height() / linespace;
 	toY = qMin( toY, fh - 1 );
 	myRect.setLeft( 0 );
 	myRect.setHeight( linespace );
 	myRect.setWidth( width() );
-	p.setPen( Qt::cyan );
-	p.setBackgroundMode( Qt::TransparentMode );
 	for( ; curY <= toY; ++curY ) {
 		erase( myRect );
+		p.setPen( Qt::cyan );
 		p.drawText( myRect, flag, "~" );
 		myRect.moveBy( 0, linespace );
 	}
-
-	p.end();
 }
 
 void KYZisEdit::drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rect, bool reversed  ) {
@@ -715,11 +718,12 @@ QString KYZisEdit::keysToShortcut( const QString& keys ) {
 }
 
 void KYZisEdit::registerModifierKeys( const QString& keys ) {
-	KAction* k = new KAction( "", KShortcut( keysToShortcut( keys ) ), signalMapper, SLOT( map() ), actionCollection, keys );
+	KAction* k = new KAction( "", KShortcut( keysToShortcut( keys ) ), signalMapper, SLOT( map() ), actionCollection, keys.ascii() );
 	signalMapper->setMapping( k, keys );
 }
 void KYZisEdit::unregisterModifierKeys( const QString& keys ) {
-	KAction* k = actionCollection->action( keys );
+	QByteArray ke = keys.toUtf8();
+	KAction* k = actionCollection->action( ke.data() );
 	if ( k == NULL ) {
 		yzDebug() << "No KAction for " << keys << endl;
 		return;
@@ -742,16 +746,26 @@ const QString& KYZisEdit::convertKey( int key ) {
 	return keys[ key ];
 }
 
+void KYZisEdit::inputMethodEvent ( QInputMethodEvent * ) {
+	//TODO
+}
+
+QVariant KYZisEdit::inputMethodQuery ( Qt::InputMethodQuery query ) {
+	return QWidget::inputMethodQuery( query );
+}
+
 // for InputMethod (OnTheSpot)
+/*
 void KYZisEdit::imStartEvent( QIMEvent *e )
 {
 	if ( mParent->modePool()->current()->supportsInputMethod() ) {
 		mParent->modePool()->current()->imBegin( mParent );
 	}
 	e->accept();
-}
+}*/
 
 // for InputMethod (OnTheSpot)
+/*
 void KYZisEdit::imComposeEvent( QIMEvent *e ) {
 	//yzDebug() << "KYZisEdit::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
 	if ( mParent->modePool()->current()->supportsInputMethod() ) {
@@ -760,9 +774,10 @@ void KYZisEdit::imComposeEvent( QIMEvent *e ) {
 	} else {
 		e->ignore();
 	}
-}
+}*/
 
 // for InputMethod (OnTheSpot)
+/*
 void KYZisEdit::imEndEvent( QIMEvent *e ) {
 //	yzDebug() << "KYZisEdit::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
 	if ( mParent->modePool()->current()->supportsInputMethod() ) {
@@ -771,6 +786,6 @@ void KYZisEdit::imEndEvent( QIMEvent *e ) {
 		mParent->sendKey( e->text() );
 	}
 	e->accept();
-}
+}*/
 
 #include "editor.moc"

@@ -13,8 +13,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #include "events.h"
@@ -52,12 +52,12 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 	QString hlName;
 	if ( view->myBuffer()->highlight() )
 		hlName = view->myBuffer()->highlight()->name();
-	hlName = hlName.lower();
+	hlName = hlName.toLower();
 	hlName.replace("+","p");
 	for ( ; it != end; ++it ) {
 		yzDebug() << "Comparing " << it.key() << " to " << event << endl;
 		if ( QString::compare(it.key(), event) == 0 ) {
-			QStringList list = it.data();
+			QStringList list = it.value();
 			yzDebug() << "Matched " << list << endl;
 			QStringList::Iterator it2 = list.begin(), end2 = list.end();
 			for ( ; it2 != end2; ++it2 ) { 
@@ -69,35 +69,41 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 
 				//special handling for indent
 				if ( QString::compare(event, "INDENT_ON_KEY") == 0 ) {
-					const char *inputs = view->getInputBuffer();
+					QByteArray b = view->getInputBuffer().toUtf8();
+					const char *inputs = b.data();
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
 					QString curLine = view->myBuffer()->textline(view->getBufferCursor().y());
 					rx.exactMatch(curLine);
-					int nbCurTabs = rx.cap(1).contains("\t");
-					int nbCurSpaces = rx.cap(1).contains(" ");
+					int nbCurTabs = rx.cap(1).count("\t");
+					int nbCurSpaces = rx.cap(1).count(" ");
 					QString nextLine;
 					if (view->getBufferCursor().y()+1 < view->myBuffer()->lineCount())
 						nextLine = view->myBuffer()->textline(view->getBufferCursor().y()+1);
 					rx.exactMatch(nextLine);
-					int nbNextTabs = rx.cap(1).contains("\t");
-					int nbNextSpaces = rx.cap(1).contains(" ");
+					int nbNextTabs = rx.cap(1).count("\t");
+					int nbNextSpaces = rx.cap(1).count(" ");
 					QString prevLine = view->myBuffer()->textline(view->getBufferCursor().y()-1);
 					rx.exactMatch(prevLine);
-					int nbPrevTabs = rx.cap(1).contains("\t");
-					int nbPrevSpaces = rx.cap(1).contains(" ");
-					YZExLua::instance()->exe(*it2, "siiiiiisss", inputs,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,(const char*)curLine,(const char*)prevLine,(const char*)nextLine);
+					int nbPrevTabs = rx.cap(1).count("\t");
+					int nbPrevSpaces = rx.cap(1).count(" ");
+					QByteArray cur = curLine.toUtf8();
+					QByteArray prev = prevLine.toUtf8();
+					QByteArray next = nextLine.toUtf8();
+					YZExLua::instance()->exe(*it2, "siiiiiisss", inputs,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,cur.data(),prev.data(),next.data());
 				} else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
 					QString nextLine = view->myBuffer()->textline(view->getBufferCursor().y());
 					rx.exactMatch(nextLine);
-					int nbNextTabs = rx.cap(1).contains("\t");
-					int nbNextSpaces = rx.cap(1).contains(" ");
+					int nbNextTabs = rx.cap(1).count("\t");
+					int nbNextSpaces = rx.cap(1).count(" ");
 					QString prevLine = view->myBuffer()->textline(view->getBufferCursor().y()-1);
 					rx.exactMatch(prevLine);
-					int nbPrevTabs = rx.cap(1).contains("\t");
-					int nbPrevSpaces = rx.cap(1).contains(" ");
+					int nbPrevTabs = rx.cap(1).count("\t");
+					int nbPrevSpaces = rx.cap(1).count(" ");
 					char *result;
-					YZExLua::instance()->exe(*it2, "iiiiss>s",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, (const char*)prevLine, (const char*)nextLine, &result);
+					QByteArray prev = prevLine.toUtf8();
+					QByteArray next = nextLine.toUtf8();
+					YZExLua::instance()->exe(*it2, "iiiiss>s",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, prev.data(), next.data(), &result);
 					yzDebug() << "Got INDENT_ON_ENTER response : (" << result << ")" << endl;
 					results << QString(result);
 				} else {

@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -40,8 +40,11 @@
 
 #include <stdlib.h>
 #include <assert.h>
-#include <qclipboard.h>
-#include <qpaintdevice.h>
+#ifdef Q_WS_X11
+#include <QX11Info>
+#endif
+#include <QApplication>
+#include <QClipboard>
 
 YZAction::YZAction( YZBuffer* buffer ) {
 	mBuffer = buffer;
@@ -142,7 +145,7 @@ void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &te
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
+void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len, const QList<QChar> &reg ) {
 	configureViews(mBuffer);
 	copyLine(pView, pos, len, reg);
 	if ( pos.y() + len > mBuffer->lineCount() )
@@ -153,7 +156,7 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, unsigned int len,
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const QValueList<QChar> &reg ) {
+void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const QList<QChar> &reg ) {
 	YZCursor mPos( pos );
 
 	unsigned int bY = mPos.y();
@@ -168,17 +171,16 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 	}
 	buff << QString::null;
 #ifdef Q_WS_X11
-	if ( QPaintDevice::x11AppDisplay() )
+	if ( QX11Info::display() )
 #endif
 		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
 	
-	QValueList<QChar>::const_iterator it = reg.begin(), end = reg.end();
-	for ( ; it != end; ++it )
-		YZSession::me->setRegister( *it, buff );
+	for ( int ab = 0 ; ab < reg.size(); ++ab )
+		YZSession::me->setRegister( reg.at(ab), buff );
 }
 
 
-void YZAction::copyArea( YZView* /*pView*/, const YZInterval& i, const QValueList<QChar> &reg ) {
+void YZAction::copyArea( YZView* , const YZInterval& i, const QList<QChar> &reg ) {
 	QStringList buff;
 	unsigned int bX = i.fromPos().x();
 	unsigned int bY = i.fromPos().y();
@@ -204,16 +206,13 @@ void YZAction::copyArea( YZView* /*pView*/, const YZInterval& i, const QValueLis
 	}
 
 #ifdef Q_WS_X11
-	if ( QPaintDevice::x11AppDisplay() )
+	if ( QX11Info::display() )
 #endif
 		QApplication::clipboard()->setText( mBuffer->getText( i ).join("\n"), QClipboard::Clipboard );
 	
 	yzDebug() << "Copied " << buff << endl;
-	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
-	for ( ; it != endd; ++it )
-		YZSession::me->setRegister( *it, buff );
-
-
+	for ( int ab = 0 ; ab < reg.size(); ++ab )
+		YZSession::me->setRegister( reg.at(ab), buff );
 }
 
 void YZAction::replaceArea( YZView* /*pView*/, const YZInterval& i, const QStringList& text ) {
@@ -275,7 +274,7 @@ void YZAction::replaceArea( YZView* /*pView*/, const YZInterval& i, const QStrin
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QValueList<QChar> &reg ) {
+void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg ) {
 	yzDebug() << "YZAction::deleteArea " << i << endl;
 	configureViews(mBuffer);
 
@@ -309,22 +308,21 @@ void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QValueList<
 		mBuffer->deleteLine( cLine );
 	mBuffer->replaceLine( bL + eL, bY );
 
-	QValueList<QChar>::const_iterator it = reg.begin(), endd = reg.end();
-	for ( ; it != endd; ++it )
-		YZSession::me->setRegister( *it, buff );
+	for ( int ab = 0 ; ab < reg.size(); ++ab )
+		YZSession::me->setRegister( reg.at(ab), buff );
 
 	pView->gotoxyAndStick( bX, bY );
 
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
 	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
 		end(beginCursor <= endCursor ? endCursor : beginCursor);
 	copyArea( pView, YZInterval(begin, end), reg );
 }
 
-void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QValueList<QChar> &reg ) {
+void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
 	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
 		end(beginCursor <= endCursor ? endCursor : beginCursor);
 	deleteArea( pView, YZInterval(begin, end), reg );
@@ -388,7 +386,8 @@ void YZAction::insertNewLine( YZView* pView, unsigned int X, unsigned int Y ) {
 	YZCursor pos( X, Y );
 	insertNewLine( pView, pos );
 }
-void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len, const QValueList<QChar>& regs ) {
+
+void YZAction::deleteLine( YZView* pView, unsigned int Y, unsigned int len, const QList<QChar>& regs ) {
 	YZCursor pos( 0, Y );
 	deleteLine( pView, pos, len, regs );
 }
@@ -404,7 +403,7 @@ YZCursor YZAction::match( YZView* pView, const YZCursor& cursor, bool *found ) {
 	QChar cchar = current.at(cursor.x());
 
 	int i = 0;
-	unsigned int j = 0;
+	int j = 0;
 	unsigned int curY = cursor.y();
 	int count = 1;
 	bool back = false;
@@ -429,7 +428,7 @@ YZCursor YZAction::match( YZView* pView, const YZCursor& cursor, bool *found ) {
 				else
 					start = back ? current.length() -1 : 0 ;
 
-				for ( j = start; ( j < current.length() ) && ( count > 0 ) ; back ? j-- : j++ ) { //parse current line
+				for ( j = start; ( j < current.length() ) && ( count > 0 ) && (j>=0) ; back ? j-- : j++ ) { //parse current line
 					if ( current.at( j ) == cchar ) {
 						count++;
 					} else if ( current.at( j ) == c ) {
@@ -466,7 +465,7 @@ YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCurs
 	}
 //	yzDebug() << " Casesensitive : " << cs << endl;
 	QRegExp ex( what );
-	ex.setCaseSensitive(cs);
+	ex.setCaseSensitivity(cs ? Qt::CaseSensitive : Qt::CaseInsensitive );
 
 	unsigned int currentMatchLine;
 	int currentMatchColumn;
@@ -489,7 +488,7 @@ YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCurs
 			} else if ( i == mEnd.y() ) {
 				l = l.mid( mEnd.x() );
 			}
-			idx = ex.searchRev( l, currentMatchColumn );
+			idx = ex.lastIndexIn( l, currentMatchColumn );
 			if ( i == mBegin.y() && idx >= (int)mBegin.x() ) idx = -1;
 //			yzDebug() << "searchRev on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
 		} else {
@@ -499,7 +498,7 @@ YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCurs
 			} else if ( i == mEnd.y() ) {
 				l = l.left( mEnd.x() );
 			}
-			idx = ex.search( l, currentMatchColumn );
+			idx = ex.indexIn( l, currentMatchColumn );
 //			yzDebug() << "search on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
 		}
 

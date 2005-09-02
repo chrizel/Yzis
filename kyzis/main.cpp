@@ -12,7 +12,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 /**
@@ -72,7 +72,7 @@ int main(int argc, char **argv) {
 	KApplication app;
 
 	setlocale( LC_ALL, "");
-	bindtextdomain( "yzis", QString( PREFIX ) + "/share/locale" );
+	bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
 	bind_textdomain_codeset( "yzis", "UTF-8" );
 	textdomain( "yzis" );
 	// see if we are starting with session management
@@ -82,13 +82,10 @@ int main(int argc, char **argv) {
 	{
 		// no session.. just start up normally
 		KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
-		QDomDocument domDoc;
-		QDomElement dockConfig = domDoc.createElement("dockConfig");
-		domDoc.appendChild( dockConfig );
 
 		QString initialSendKeys = args->getOption("c");
 
-		Kyzis *widget = new Kyzis(dockConfig,KMdi::IDEAlMode, initialSendKeys);
+		Kyzis *widget = new Kyzis(0, initialSendKeys);
 		kapp->setMainWidget( widget );
 		widget->show();
 		

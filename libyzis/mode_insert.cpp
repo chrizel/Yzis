@@ -15,8 +15,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -78,11 +78,9 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	else if ( key == "<DEL>" ) commandDel( mView, key );
 	else {
 		if ( key == "<TAB>" ) {
-			// expand a tab to [tabstop - (column % tabstop)] spaces if 'expandtab' is set
-			if (mView->getLocalBooleanOption("expandtab")) {
-				key.fill(' ', mView->getLocalIntegerOption("tabstop") -
-						(mView->viewCursor().bufferX() % mView->getLocalIntegerOption("tabstop")));
-			}
+			// expand a tab to [tabstop] spaces if 'expandtab' is set
+			if (mView->getLocalBooleanOption("expandtab"))
+				key.fill(' ', mView->getLocalIntegerOption("tabstop"));
 			else
 				key = "\t";
 		}
@@ -196,7 +194,8 @@ void YZModeInsert::commandBackspace( YZView* mView, const QString& ) {
 void YZModeInsert::commandDel( YZView* mView, const QString& ) {
 	YZCursor cur = mView->getBufferCursor();
 	YZBuffer* mBuffer = mView->myBuffer();
-	if ( cur.x() == mBuffer->textline( cur.y() ).length() && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+	if ( cur.x() == ( uint )mBuffer->textline( cur.y() ).length() 
+			&& mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
 		mBuffer->action()->mergeNextLine( mView, cur.y(), false );
 	} else {
 		mBuffer->action()->deleteChar( mView, cur, 1 );
@@ -212,7 +211,7 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 		QStringList results = YZSession::me->eventCall("INDENT_ON_ENTER", mView);
 		if (results.count() > 0 ) {
 			if (results[0].length()!=0) {
-				mBuffer->action()->replaceLine( mView, cur.y()+1, results[0] + mBuffer->textline( cur.y()+1 ).stripWhiteSpace() );
+				mBuffer->action()->replaceLine( mView, cur.y()+1, results[0] + mBuffer->textline( cur.y()+1 ).trimmed() );
 				mView->gotoxy(results[0].length(),cur.y()+1);
 			}
 		}
@@ -269,5 +268,4 @@ cmd_state YZModeReplace::commandDefault( YZView* mView, const QString& key ) {
 	mView->myBuffer()->action()->replaceChar( mView, mView->getBufferCursor(), key );
 	return CMD_OK;
 }
-
 

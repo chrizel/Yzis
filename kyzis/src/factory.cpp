@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -32,7 +32,7 @@
 #include <kapplication.h>
 #include <dcopclient.h>
 #include <qstring.h>
-#include <ktexteditor/document.h>
+#include <ktexteditor/factory.h>
 #include <kmessagebox.h>
 #include <kstaticdeleter.h>
 #include <qtimer.h>
@@ -49,17 +49,88 @@
 
 KYZTextEditorIface *KYZisFactory::currentDoc=0;
 
-class KYZisPublicFactory : public KParts::Factory {
-	public :
-		KParts::Part *createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args ) {
-			return KYZisFactory::self()->createPartObject( parentWidget, widgetName, parent, name, classname, args );
-		}
-};
+KYZisPublicFactory::KYZisPublicFactory( QObject* parent, const char * ) : 
+	KTextEditor::Factory( parent ), 
+	KTextEditor::Editor(0) 
+{ 
+}
 
-K_EXPORT_COMPONENT_FACTORY( libkyzispart, KYZisPublicFactory)
+KParts::Part *KYZisPublicFactory::createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args ) {
+	return KYZisFactory::self()->createPartObject( parentWidget, widgetName, parent, name, classname, args );
+}
+
+KTextEditor::Editor *KYZisPublicFactory::editor() {
+	return this;
+}
+
+KYZisPublicFactory* KYZisPublicFactory::self() {
+	static KYZisPublicFactory *self = 0;
+	if ( !self ) {
+		self = new KYZisPublicFactory;
+	}
+
+	return self;
+}
+
+KTextEditor::Document *KYZisPublicFactory::createDocument(QObject*parent) { 
+	return KYZisFactory::self()->createDocument(parent); 
+}
+
+const QList<KTextEditor::Document*> &KYZisPublicFactory::documents () { 
+	return KYZisFactory::self()->documents(); 
+}
+
+const KAboutData* KYZisPublicFactory::aboutData() const { 
+	return KYZisFactory::self()->aboutData(); 
+}
+
+void KYZisPublicFactory::writeConfig() { 
+	KYZisFactory::self()->writeConfig(); 
+}
+
+void KYZisPublicFactory::readConfig() { 
+	KYZisFactory::self()->readConfig(); 
+}
+
+void KYZisPublicFactory::writeConfig(KConfig *c) { 
+	KYZisFactory::self()->writeConfig(c); 
+}
+
+void KYZisPublicFactory::readConfig(KConfig *c) { 
+	KYZisFactory::self()->readConfig(c); 
+}
+
+void KYZisPublicFactory::configDialog ( QWidget *w ) { 
+	KYZisFactory::self()->configDialog(w); 
+}
+
+bool KYZisPublicFactory::configDialogSupported() const { 
+	return KYZisFactory::self()->configDialogSupported(); 
+}
+
+int KYZisPublicFactory::configPages () const { 
+	return KYZisFactory::self()->configPages(); 
+}
+
+KTextEditor::ConfigPage *KYZisPublicFactory::configPage ( int number, QWidget *parent ) { 
+	return KYZisFactory::self()->configPage(number,parent); 
+}
+
+QString KYZisPublicFactory::configPageName ( int number ) const { 
+	return KYZisFactory::self()->configPageName(number); 
+}
+
+QString KYZisPublicFactory::configPageFullName ( int number ) const { 
+	return KYZisFactory::self()->configPageFullName(number); 
+}
+
+QPixmap KYZisPublicFactory::configPagePixmap ( int number, int size ) const { 
+	return KYZisFactory::self()->configPagePixmap(number, size); 
+}
+
+K_EXPORT_COMPONENT_FACTORY( libkyzispart, KYZisPublicFactory )
 
 KYZisFactory::KYZisFactory() :
-		KParts::Factory(Kyzis::me),
 		YZSession("kyzis"),
 		m_aboutData("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR, I18N_NOOP("Embeddable vi-like editor component"),
 		KAboutData::License_LGPL_V2, I18N_NOOP("(c)2002-2005 The Kyzis Authors"),0,"http://www.yzis.org"),
@@ -110,7 +181,7 @@ KYZisFactory *KYZisFactory::self() {
 
 KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char *widgetname, QObject *parent, const char *name, const char *_classname, const QStringList &/*args*/) {
 	yzDebug() << "Factory::createPartObject" << endl;
-	QCString classname (_classname);
+	QByteArray classname (_classname);
 	bool bSingleView = (classname!="KTextEditor::Document");
 	yzDebug() << "Factory singleView  " << bSingleView << endl;
 
@@ -134,10 +205,6 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	return doc;
 }
 
-const KAboutData *KYZisFactory::aboutData() {
-	return &m_aboutData;
-}
-
 bool KYZisFactory::quit( int /*errorCode*/ ) {
 	//a kpart CAN NOT exit the main app ;)
 	if (Kyzis::me) {
@@ -150,7 +217,7 @@ bool KYZisFactory::quit( int /*errorCode*/ ) {
 	} else if ( currentView() && currentView()->modePool()->currentType() == YZMode::MODE_EX 
 				&& !currentView()->getCommandLineText().isEmpty() ) {
 		return false;
-	}		
+	}
 
 
 	return true;
@@ -193,17 +260,14 @@ YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
 	KYZisView *view = 0;
 	
 	if ( doc ) {
-		view = new KYZisView( doc, m_viewParent, buffer->fileName() + "-view" );
+		view = new KYZisView( doc, m_viewParent, QString(buffer->fileName() + "-view").toUtf8().constData() );
 		buffer->addView( view );
 		
 		if ( Kyzis::me ) {
-			KMdiChildView *mdi = Kyzis::me->createWrapper( view, buffer->fileName(), buffer->fileName() );
-			view->setMdiChildView( mdi );
-			
-			Kyzis::me->addWindow( mdi );
+			Kyzis::me->embedPartView( view, view->document()->documentName(), view->document()->documentName() );
 			Kyzis::me->createKPartGUI( doc );
 		} else {
-			view->setMdiChildView( 0 );
+//?			view->setMdiChildView( 0 );
 		}
 
 		view->setFocus();
@@ -214,8 +278,7 @@ YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
 	return view;
 }
 
-KYZTextEditorIface *KYZisFactory::createTextEditorIface()
-{
+KYZTextEditorIface *KYZisFactory::createTextEditorIface() {
 	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
 	if (!factory) {
 		kdDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
@@ -237,22 +300,21 @@ void KYZisFactory::popupMessage( const QString& message ) {
 
 void KYZisFactory::closeView() {
 	if (Kyzis::me) {
-		Kyzis::me->closeWindow( lastView->getMdiChildView() );
-	}
-	else if (kapp->name() == QString::fromLatin1("kdevelop") ) {
+		Kyzis::me->closeTab();
+	} else if (kapp->name() == QString::fromLatin1("kdevelop") ) {
 		yzDebug() << "Calling kdevelop" <<endl;
 		DCOPClient *client = kapp->dcopClient();
 		QByteArray data;
-		QDataStream arg(data, IO_WriteOnly);
-		arg << QCString("file_close");
+		QDataStream arg(&data, QIODevice::IO_WriteOnly);
+		arg << DCOPCString("file_close");
 		bool w = client->send(client->appId(), "MainWindow", "activateAction(QCString)", data);
 		if (w) {
-			yzDebug() << "DCOP call successful for " << client->appId() << " to close view in kdevelop" << endl;
+			yzDebug() << "DCOP call successful for " << QString( client->appId() ) << " to close view in kdevelop" << endl;
 		} else {
-			yzDebug() << "DCOP call failed for " << client->appId() << endl;
+			yzDebug() << "DCOP call failed for " << QString( client->appId() ) << endl;
 			popupMessage( "DCOP communication is broken !" );
 		}
-			
+
 	} else {
 		lastView->close( true );
 	}
@@ -295,6 +357,13 @@ int KYZisFactory::promptYesNoCancel(const QString& title, const QString& message
 }
 
 void KYZisFactory::splitHorizontally(YZView* /*view*/) {
+}
+
+
+KTextEditor::Document *KYZisFactory::createDocument(QObject*parent) {
+	KYZTextEditorIface *doc = new KYZTextEditorIface(0/*for now ?*/, 0, 0, parent, 0 );
+
+	return doc;
 }
 
 #include "factory.moc"

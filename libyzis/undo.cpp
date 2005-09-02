@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -69,7 +69,7 @@ void YZBufferOperation::performOperation( YZView* pView, bool opposite)
 			pView->myBuffer()->action()->insertNewLine( pView, 0, line );
 			break;
 		case DELLINE:
-			pView->myBuffer()->action()->deleteLine( pView, line, 1, QValueList<QChar>() );
+			pView->myBuffer()->action()->deleteLine( pView, line, 1, QList<QChar>() );
 			break;
 	}
 
@@ -144,7 +144,7 @@ void YZUndoBuffer::addBufferOperation( YZBufferOperation::OperationType type,
 }
 
 void YZUndoBuffer::removeUndoItemAfterCurrent() {
-	while( mUndoItemList.size() > mCurrentIndex )
+	while( (uint)mUndoItemList.size() > mCurrentIndex )
 		mUndoItemList.pop_back();
 	//delete pointer XXX
 }
@@ -176,10 +176,10 @@ void YZUndoBuffer::undo( YZView* pView ) {
 	/*
 	UndoItem * undoItem = mUndoItemList.at(mCurrentIndex-1);
 	UndoItemContentIterator it( *undoItem );
-	it.toLast();
-	while( (bufOp = it.current()) ) {
+	it.toBack();
+	while( it.hasPrevious() ) {
+		bufOp = it.previous();
 		bufOp->performOperation( pView, true );
-		--it;
 	}
 	*/
 	mCurrentIndex--;
@@ -209,7 +209,7 @@ void YZUndoBuffer::redo( YZView* pView ) {
 
 bool YZUndoBuffer::mayRedo() {
 	bool ret;
-	ret = mCurrentIndex < mUndoItemList.count();
+	ret = mCurrentIndex < (uint)mUndoItemList.count();
 	return ret;
 }
 

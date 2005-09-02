@@ -13,8 +13,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -46,9 +46,9 @@ class KYZisCursor {
 
 		void setCursorType( shape type );
 		void resize( unsigned int w, unsigned int h );
-		void move( unsigned int x, unsigned int y );
+		void move( unsigned int x, unsigned int y, QPainter* p = NULL );
 		void hide();
-		void refresh();
+		void refresh( QPainter* p = NULL );
 
 		unsigned int width() const;
 		unsigned int height() const;
@@ -62,7 +62,7 @@ class KYZisCursor {
 
 	private :
 
-		void drawCursor( QPixmap* orig );
+		void drawCursor( QPixmap* orig, QPainter* p = NULL );
 		bool prepareCursors();
 
 		KYZisEdit* mParent;

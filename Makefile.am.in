@@ -45,3 +45,8 @@ apidox:
 	echo "EXTRACT_ALL         = YES" >> yzis.doxyfile ; \
 	doxygen yzis.doxyfile
 
+
+tags: FORCE
+	rm -f $@
+	find -name '*.cpp' -o -name '*.h' -o -name '*.c' | xargs ctags -a
+

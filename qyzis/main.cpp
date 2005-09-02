@@ -1,5 +1,5 @@
 /*
-    Copyright (c) 2004 Philippe Fremy <phil@freehackers.org>
+    Copyright (c) 2003-2005 Mickael Marchand <marchand@kde.org>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public
@@ -12,90 +12,67 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 /**
- * $Id: main.cpp 1272 2004-10-16 22:41:00Z mikmak $
+ * $Id: main.cpp 2071 2005-08-31 09:39:49Z mikmak $
  */
-
 #include <qapplication.h>
+//#include <ktempfile.h>
 #include <qtranslator.h>
 #include <qtextcodec.h>
-#include "libyzis/portability.h"
+#include <qtimer.h>
+#include <libintl.h>
+#include <locale.h>
+#include "libyzis/translator.h"
 #include "libyzis/session.h"
 #include "libyzis/view.h"
-#include "qyzview.h"
-#include "qyzsession.h"
-#include "qyzbuffer.h"
+#include "debug.h"
+#include "yzis.h"
+#include "qyzis.h"
+#include "factory.h"
 
 
 int main(int argc, char **argv) {
-	QApplication app( argc, argv );
-	QObject::connect( qApp, SIGNAL(lastWindowClosed()), qApp, SLOT(quit()) );
+	QApplication app(argc, argv);
 
-	QTranslator qt(  0 );
-	qt.load(  QString(  "qt_" ) + QTextCodec::locale(), "." );
-	app.installTranslator(  &qt );
-	QTranslator myapp(  0 );
-//	myapp.load(  QString(  "yzis_" ) + QTextCodec::locale(), QString( PREFIX ) + "/share/yzis/locale/" );
-	app.installTranslator(  &myapp );
+	setlocale( LC_ALL, "");
+	bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
+	bind_textdomain_codeset( "yzis", "UTF-8" );
+	textdomain( "yzis" );
 
-	(new QYZSession())->show();
-	QString initialSendKeys;
-
-    // handle command line options
-//	YZSession::mOptions.setGroup("Global");
-	bool splash = YZSession::getBoolOption("blocksplash");
-
-	/*
-	 * Open buffers
-	 */
-	bool hasatleastone = false;
-	QString s;
-
-	/** read options **/
-
-	for ( int i=1; i<argc; i++ ) {
-		if ( '-' != argv[i][0] ) {
-			hasatleastone = true;
-			yzDebug(QYZIS)<< "qyzis : opening file " << argv[i]<<endl;
-			QYZSession::me->createBuffer(argv[ i ]);
+	// see if we are starting with session management
+//	if (app.isRestored())
+//				RESTORE(Kyzis)
+//	else
+	{
+		// no session.. just start up normally
+		Qyzis *widget = new Qyzis(0);
+		qApp->setMainWidget( widget );
+		widget->show();
+		
+		/* TODO : handles remaining argc/argv 
+		if ( args->count() == 0 ) {
+			YZView *view = QYZisFactory::self()->createBufferAndView();
+			view->myBuffer()->openNewFile();
+			view->displayIntro();
 		} else {
-			s = QString( argv[i] );
-			if (s == "-h" || s == "--help") {
-				printf("QYzis, yzis port of Yzis - http://www.yzis.org\n"
-					VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
-				printf("\nUsage : %s [--help|-h] [--version|-v] [filename1 [filename2] .... ]\n", argv[0]);
-				exit(0);
-			} else if (s == "-v" || s == "--version") {
-				printf("Nyzis, ncurses part of Yzis - http://www.yzis.org\n"
-					VERSION_CHAR_LONG " " VERSION_CHAR_DATE "\n");
-				exit(0);
-			} else if (s == "-c") {
-				QString optArg;
-				YZSession::setBoolOption("blocksplash", false);
-				if (s.length() > 2) optArg = argv[i]+2;
-				else if (i < argc-1) optArg = argv[i+1];
-				initialSendKeys = optArg;
-			} else {
-				printf("Unrecognised option: %s\n", argv[i] );
-				exit(-1);
+			for ( int i = 0; i < args->count(); i++ ) {
+				YZView *view = QYZisFactory::self()->createBufferAndView();
+				YZSession::me->setCurrentView(view);
+				widget->load( args->url( i ) );
 			}
 		}
-	}
+		*/
+		YZView *view = QYZisFactory::self()->createBufferAndView();
+		view->myBuffer()->openNewFile();
+		view->displayIntro();
 
-	if ( !hasatleastone ) {
-		QYZSession::me->createBuffer();
-		YZView* cView = YZSession::me->currentView();
-		cView->displayIntro();
-	}
+		QTimer::singleShot(0, widget, SLOT( init() ));
 
-	if (initialSendKeys.length()) {
-		YZSession::me->sendMultipleKeys( initialSendKeys );
-		YZSession::setBoolOption("blocksplash", splash);
+		//args->clear();
 	}
 
 	return app.exec();
 }
-

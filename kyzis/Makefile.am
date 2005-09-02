@@ -3,7 +3,7 @@
 SUBDIRS = src pics .
 
 # set the include path for X, qt and KDE
-INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/kyzis/src/ -I$(top_srcdir)/libyzis/ -I$(top_builddir)/libyzis/ $(all_includes) $(LUA_INCLUDES)
+INCLUDES = -I$(top_srcdir) -I$(top_srcdir)/kyzis/src/newui/ -I$(top_srcdir)/kyzis/src/ -I$(top_srcdir)/libyzis/ -I$(top_builddir)/libyzis/ $(all_includes) $(LUA_INCLUDES)
 
 # let automoc handle all of the meta source files (moc)
 METASOURCES = AUTO
@@ -13,7 +13,7 @@ bin_PROGRAMS = kyzis
 # the application source, library search path, and link libraries
 kyzis_SOURCES = main.cpp
 kyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
-kyzis_LDADD = -lktexteditor -lkmdi $(LIB_KPARTS) $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(top_builddir)/kyzis/src/libinternkyzis.la
+kyzis_LDADD = -lktexteditor $(LIB_KPARTS) $(top_builddir)/libyzis/libyzis.la $(top_builddir)/kyzis/src/libinternkyzis.la
 
 # this is where the desktop file will go 
 shelldesktopdir   = $(kde_appsdir)/Editors
@@ -29,7 +29,7 @@ kde_module_LTLIBRARIES = libkyzispart.la
 # the Part's source, library search path, and link libraries
 libkyzispart_la_SOURCES = dummy.cpp
 libkyzispart_la_LDFLAGS = -module $(KDE_PLUGIN) $(all_libraries)
-libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lkmdi -lktexteditor $(top_builddir)/libyzis/libqtyzis/libqtyzis.la $(top_builddir)/kyzis/src/libinternkyzis.la
+libkyzispart_la_LIBADD  = $(LIB_KPARTS) $(LIB_KFILE) -lktexteditor $(top_builddir)/libyzis/libyzis.la $(top_builddir)/kyzis/src/libinternkyzis.la
 
 # this is where the desktop file will go 
 partdesktopdir   = $(kde_servicesdir)

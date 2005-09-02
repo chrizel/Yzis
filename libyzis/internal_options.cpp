@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #include "portability.h"
@@ -27,6 +27,7 @@
 #include <qdir.h>
 #include <qfile.h>
 #include <qregexp.h>
+#include <QTextStream>
 
 YZInternalOptionPool::YZInternalOptionPool() {
 	init();
@@ -46,25 +47,25 @@ void YZInternalOptionPool::loadFrom(const QString& file ) {
 
 	if ( !f.exists() ) return;
 
-	if ( f.open( IO_ReadOnly ) ) {
+	if ( f.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
 		QTextStream stream( &f );
 		QRegExp rx("\\[(.*)\\]");
 		QRegExp rx2( "(.*)=(.*)" );
 		uint idx = 0;
 		while ( !stream.atEnd() ) {
 			QString line(stream.readLine() ); // line of text excluding '\n'
-			if ( line.simplifyWhiteSpace().startsWith( "#" ) || line.isEmpty() ) continue; //skip comment and empty lines
-			if ( rx.exactMatch( line ) )
-				setGroup(rx.cap(1).simplifyWhiteSpace());
-			else {
+			if ( line.trimmed().startsWith( "#" ) || line.isEmpty() ) continue; //skip comment and empty lines
+			if ( rx.exactMatch( line ) ) {
+				setGroup(rx.cap(1).trimmed());
+			} else {
 				if ( rx2.exactMatch( line ) ) {
 					bool matched=false;
 					if ( rx2.numCaptures() > 1 ) {
-						setOptionFromString( &matched, rx2.cap(1).simplifyWhiteSpace()+'='+rx2.cap(2).simplifyWhiteSpace() );
-						if ( ! matched ) // this option is not known, probably a setting
-							setQStringEntry( rx2.cap(1).simplifyWhiteSpace(), rx2.cap(2).simplifyWhiteSpace() );
+						setOptionFromString( &matched, rx2.cap(1).trimmed()+'='+rx2.cap(2).trimmed() );
+						if ( !matched ) // this option is not known, probably a setting
+							setQStringEntry( rx2.cap(1).trimmed(), rx2.cap(2).trimmed() );
 					} else {
-						setOptionFromString( line.simplifyWhiteSpace() );
+						setOptionFromString( line.trimmed() );
 					}
 				} else
 					yzDebug( "YZInternalOptionPool" ) << "Error parsing line " << idx << " of " << file << endl;
@@ -80,12 +81,12 @@ void YZInternalOptionPool::saveTo(const QString& file, const QString& what, cons
 
 	if ( f.exists() && !force ) return;
 
-	if ( f.open( IO_WriteOnly ) ) {
+	if ( f.open( QIODevice::WriteOnly ) ) {
 		QTextStream stream( &f );
-		QValueList<QString> keys = mOptions.keys();
-		qHeapSort( keys );
+		QList<QString> keys = mOptions.keys();
+		qSort( keys );
 		QString cGroup = "";
-		for ( unsigned int i = 0; i < keys.size(); ++i ) {
+		for ( int i = 0; i < keys.size(); ++i ) {
 			QString myGroup = keys[i].section( "\\", 0, -2 );
 			if ( !what.isEmpty() && !myGroup.startsWith( what ) ) continue; //filter !
 			if ( !except.isEmpty() && myGroup.startsWith( except ) ) continue; //filter
@@ -183,11 +184,11 @@ void YZInternalOptionPool::init() {
 	options.append(new YZOptionInteger("updatecount",200, CXT_SESSION,global_scope, &doNothing, QStringList("uc"), 1));
 	options.append(new YZOptionBoolean("wrap",true, CXT_VIEW,local_scope, &recalcView, QStringList()));
 	options.append(new YZOptionBoolean("startofline",true, CXT_VIEW,local_scope, &doNothing, QStringList("sol")));
-	options.append(new YZOptionList("tags", "tags", CXT_SESSION, global_scope, &doNothing, QStringList(), QStringList()));
+	options.append(new YZOptionList("tags", QStringList( "tags" ), CXT_SESSION, global_scope, &doNothing, QStringList(), QStringList()));
 	options.append(new YZOptionList("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i", CXT_SESSION, global_scope, &doNothing, 
 						QStringList("cpt"), QStringList()));
 
-	for( unsigned int i = 0; i < options.size(); i++ ) {
+	for( int i = 0; i < options.size(); i++ ) {
 		mOptions[ "Global\\"+options[i]->name() ] = new YZOptionValue( *options[i]->defaultValue() );
 	}
 	setGroup("Global");
@@ -233,7 +234,7 @@ bool YZInternalOptionPool::setOptionFromString( const QString& entry, scope_t us
 bool YZInternalOptionPool::setOptionFromString( bool* matched, const QString& entry, scope_t user_scope, YZBuffer* b, YZView* v ) {
 	bool ret = false;
 	*matched = false;
-	unsigned int i;
+	int i;
 	for ( i = 0; !(*matched) && i < options.size(); i++ ) {
 		*matched = options[ i ]->context() != CXT_CONFIG && options[ i ]->match( entry );
 	}
@@ -374,7 +375,7 @@ QColor YZInternalOptionPool::readQColorEntry( const QString& key, const QColor& 
 
 void YZInternalOptionPool::setQStringEntry( const QString& name, const QString& value ) {
 	bool found = false, success = false;
-	unsigned int i;
+	int i;
 	YZOption* opt = NULL;
 	for ( i = 0; !found && i < options.size(); i++ )
 		found = options[ i ]->name() == name;
@@ -408,31 +409,29 @@ void YZInternalOptionPool::setGroup( const QString& group ) {
 
 void YZInternalOptionPool::initConfFiles() {
 	//first, do we have a config directory ?
-	QDir homeConf( QDir::homeDirPath()+"/.yzis/" );
-	if ( !homeConf.exists( QDir::homeDirPath()+"/.yzis/" ) )
-		if ( !homeConf.mkdir(QDir::homeDirPath()+"/.yzis/", true) ) return;
+	QDir homeConf( QDir::homePath()+"/.yzis/" );
+	if ( !homeConf.exists( QDir::homePath()+"/.yzis/" ) )
+		if ( !homeConf.mkpath(QDir::homePath()+"/.yzis/") ) return;
 
-	loadFrom(QDir::rootDirPath()+"/etc/yzis/yzis.conf");
-	loadFrom(QDir::homeDirPath()+"/.yzis/yzis.conf");
+	loadFrom(QDir::rootPath()+"/etc/yzis/yzis.conf");
+	loadFrom(QDir::homePath()+"/.yzis/yzis.conf");
 
 	//load cache files
-	loadFrom(QDir::homeDirPath()+"/.yzis/hl.conf");
+	loadFrom(QDir::homePath()+"/.yzis/hl.conf");
 }
 
 bool YZInternalOptionPool::hasGroup( const QString& group ) {
-	QValueList<QString> keys = mOptions.keys();
-//	qHeapSort( keys );
-	QValueList<QString>::iterator it = keys.begin(), end=keys.end();
-	for (; it != end ; ++it)
-		if ( QStringList::split( "\\", ( *it ) )[ 0 ] == group ) return true;
+	QList<QString> keys = mOptions.keys();
+	for (int ab = 0 ; ab < keys.size() ; ++ab)
+		if ( keys.at(ab).split( "\\" )[ 0 ] == group ) return true;
 	return false;
 }
 
 void YZInternalOptionPool::cleanup() {
 	QMap<QString,YZOptionValue*>::Iterator it = mOptions.begin(), end = mOptions.end();
 	for ( ; it != end; ++it )
-		delete it.data();
-	for( unsigned int i = 0; i < options.size(); i++ ) {
+		delete it.value();
+	for( int i = 0; i < options.size(); i++ ) {
 		delete options[i];
 	}
 }
@@ -458,7 +457,7 @@ void YZInternalOptionPool::createOption(const QString& optionName, const QString
 	scope_t scope = local_scope;
 	// we search for an alread existing option :
 	bool found;
-	unsigned int i;
+	int i;
 	for ( i = 0; !found && i < options.size(); i++ ) {
 		found = options[ i ]->name() == optionName;
 	}
@@ -515,7 +514,7 @@ void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& 
 		QString key = it.key();
 		if (it.key().startsWith(oldPath)) {
 			key.replace(oldPath,newPath);
-			newoptions[key] = it.data();
+			newoptions[key] = it.value();
 			toDrop << it.key();
 		}
 	}
@@ -529,7 +528,7 @@ void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& 
 	//add new mOptions into the QMap now
 	it = newoptions.begin(), end = newoptions.end();
 	for ( ; it != end; ++it ) {
-		mOptions[it.key()] = it.data();
+		mOptions[it.key()] = it.value();
 	}
 }
 

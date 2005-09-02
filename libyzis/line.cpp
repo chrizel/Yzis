@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -47,7 +47,7 @@ void YZLine::setData(const QString &data) {
 	if ( len == 0 ) len++; //make sure to return a non empty array ... (that sucks)
 	mAttributes.resize( len );
 	for ( uint i = 0; i < len; i++ )
-		mAttributes.at(i) = 0;
+		mAttributes.data()[ i ] = 0;
 }
 
 int YZLine::firstChar() const {
@@ -68,12 +68,27 @@ int YZLine::nextNonSpaceChar(uint pos) const {
 }
 
 int YZLine::previousNonSpaceChar(uint pos) const {
-	if (pos >= mData.length())
+	if (pos >= ( uint )mData.length())
 		pos = mData.length() - 1;
 	for (int i = pos; i>=0; --i) {
 		if (!mData[i].isSpace())
 			return i;
 	}
 	return -1;
+}
+
+void YZLine::addAttribute ( int start, int length, int attribute ) {
+	if ((mAttributesList.size() > 2) && (mAttributesList[mAttributesList.size()-1] == attribute)
+			&& (mAttributesList[mAttributesList.size()-3]+mAttributesList[mAttributesList.size()-2]
+				== start))
+	{
+		mAttributesList[mAttributesList.size()-2] += length;
+		return;
+	}
+
+	mAttributesList.resize (mAttributesList.size()+3);
+	mAttributesList[mAttributesList.size()-3] = start;
+	mAttributesList[mAttributesList.size()-2] = length;
+	mAttributesList[mAttributesList.size()-1] = attribute;
 }
 

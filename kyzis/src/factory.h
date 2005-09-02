@@ -13,17 +13,22 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 
 #ifndef KYZIS_FACTORY_H
 #define KYZIS_FACTORY_H
 
-#include <kparts/factory.h>
+#include <ktexteditor/document.h>
+#include <ktexteditor/editor.h>
+#include <ktexteditor/factory.h>
+#include <ktexteditor/configpage.h>
 #include <kaboutdata.h>
 #include <kinstance.h>
+#include <kparts/factory.h>
+#include <QMap>
 
 #include "session.h"
 #include "viewid.h"
@@ -33,7 +38,33 @@ class YZBuffer;
 class KYZisView;
 class YZViewId;
 
-class KYZisFactory : public KParts::Factory, public YZSession
+class KYZisPublicFactory : public KTextEditor::Factory, 
+						   public KTextEditor::Editor {
+	Q_OBJECT
+	
+	public :
+		KYZisPublicFactory( QObject* parent = 0, const char * = 0 );
+
+		KParts::Part *createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args ) ;
+		KTextEditor::Editor *editor() ;
+		static KYZisPublicFactory* self() ;
+		KTextEditor::Document *createDocument(QObject*parent);
+		const QList<KTextEditor::Document*> &documents ();
+		const KAboutData* aboutData() const;
+		void writeConfig();
+		void readConfig();
+		void writeConfig(KConfig *);
+		void readConfig(KConfig *);
+		void configDialog ( QWidget * );
+		bool configDialogSupported() const;
+		int configPages () const;
+		KTextEditor::ConfigPage *configPage ( int number, QWidget *parent );
+		QString configPageName ( int number ) const;
+		QString configPageFullName ( int number ) const;
+		QPixmap configPagePixmap ( int number, int size = KIcon::SizeSmall ) const;
+};
+
+class KYZisFactory : public YZSession
 {
 	Q_OBJECT
 public:
@@ -42,7 +73,6 @@ public:
 
 	KParts::Part *createPartObject (QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args );
 
-	const KAboutData *aboutData();
 	static KYZisFactory* self();
 
 	inline KInstance* instance() { return &m_instance; }
@@ -67,8 +97,10 @@ public:
 	 * can look in this field to get a parent
 	 */
 	void setViewParentWidget( QWidget *viewParent ) { m_viewParent = viewParent; }
-	
-protected:
+		//Editor Interface
+	const QList<KTextEditor::Document*> &documents () { return QList<KTextEditor::Document*>(); } //FIXME
+	const KAboutData* aboutData() const { return &m_aboutData; }
+	KTextEditor::Document *createDocument(QObject*parent);
 	YZView *doCreateView( YZBuffer* buffer );
 	void doDeleteView( YZView *view );
 	
@@ -79,9 +111,21 @@ protected:
 	 */
 	YZBuffer* doCreateBuffer();
 
-public slots :
+
 	void writeConfig();
-	void readConfig();
+	void readConfig(); 
+	void writeConfig(KConfig *) {}
+	void readConfig(KConfig *) {}
+	void configDialog ( QWidget * ) { } //for now FIXME TODO FIXME TODO
+	bool configDialogSupported() const { return false;} 
+	int configPages () const { return 0; }
+	KTextEditor::ConfigPage *configPage ( int /*number*/, QWidget */*parent*/ ) { return NULL; }
+	QString configPageName ( int /*number*/ ) const { return ""; } 
+	QString configPageFullName ( int /*number*/ ) const { return ""; }
+	QPixmap configPagePixmap ( int /*number*/, int /*size*/ = KIcon::SizeSmall ) const { return QPixmap(); }
+	
+
+public slots:
 	void applyConfig();
 	void closeView();
 

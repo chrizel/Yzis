@@ -16,8 +16,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -54,19 +54,21 @@
 #include "yzisinfo.h"
 
 #define ASSERT_TEXT_WITHOUT_NEWLINE( functionname, text ) \
-	YZASSERT_MSG( text .contains('\n')==false, QString("%1 - text contains newline").arg(text) )
+	YZASSERT_MSG( text.contains('\n')==false, QString("%1 - text contains newline").arg(text) )
 
 #define ASSERT_LINE_EXISTS( functionname, line ) \
-	YZASSERT_MSG( line < lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
+	YZASSERT_MSG( line < ( uint )lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
 
 #define ASSERT_NEXT_LINE_EXISTS( functionname, line ) \
-	YZASSERT_MSG( line <= lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
+	YZASSERT_MSG( line <= ( uint )lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
 
 #define ASSERT_COL_LINE_EXISTS( functionname, col, line ) \
-	YZASSERT_MSG( col < textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
+	YZASSERT_MSG( col < ( uint )textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
 
 #define ASSERT_PREV_COL_LINE_EXISTS( functionname, col, line ) \
-	YZASSERT_MSG( col <= textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
+	YZASSERT_MSG( col <= ( uint )textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
+
+static QString Null = QString::null;
 	
 struct YZBuffer::Private
 {
@@ -187,7 +189,7 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
 
 	ASSERT_PREV_COL_LINE_EXISTS( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c),x,y)
 
-	if (x > l.length()) {
+	if (x > ( uint )l.length()) {
 		// if we let Qt proceed, it would append spaces to extend the line
 		// and we do not want that
 		return;
@@ -212,7 +214,7 @@ void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count ) {
 	QString l=textline(y);
 	if (l.isNull()) return;
 
-	if (x >= l.length())
+	if (x >= ( uint )l.length())
 		return;
 
 	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count),x,y)
@@ -247,7 +249,7 @@ void  YZBuffer::appendLine(const QString &l) {
 	d->text->append(new YZLine(l));
 	if ( !d->isLoading && d->highlight != 0L ) {
 		bool ctxChanged = false;
-		QMemArray<uint> foldingList;
+		QVector<uint> foldingList;
 		YZLine *l = new YZLine();
 		d->highlight->doHighlight(( d->text->count() >= 2 ? yzline( d->text->count() - 2 ) : l), yzline( d->text->count() - 1 ), &foldingList, &ctxChanged );
 		delete l;
@@ -269,7 +271,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 
 	viewsInit( this, 0, line );
 
-	QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
+	QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 	uint idx=0;
 	for ( ; idx < line && it != end; ++it, ++idx )
 		;
@@ -305,7 +307,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 
 	ASSERT_PREV_COL_LINE_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),col,line )
 
-	if (col > l.length() ) return;
+	if (col > ( uint )l.length() ) return;
 
 	QString newline = l.mid( col );
 	if ( newline.isNull() ) newline = QString( "" );
@@ -322,7 +324,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	}
 
 	//add new line
-	QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
+	QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 	uint idx=0;
 	for ( ; idx < line+1 && it != end; ++it, ++idx )
 		;
@@ -348,7 +350,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	if (lineCount() > 1) {
 		d->undoBuffer->addBufferOperation( YZBufferOperation::DELLINE, "", 0, line );
 		if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::DELLINE, "", 0, line );
-		QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
+		QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 		uint idx=0;
 		for ( ; idx < line && it != end; ++it, ++idx )
 			;
@@ -399,7 +401,7 @@ void YZBuffer::clearText() {
 	 * operation.
 	 */
 	//clear is fine but better _delete_ all yzlines too ;)
-	QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
+	QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 	for ( ; it != end; ++it )
 		delete ( *it );
 	d->text->clear(); //remove the _pointers_ now
@@ -459,7 +461,7 @@ uint YZBuffer::firstNonBlankChar( uint line ) const {
 	uint i=0;
 	QString s = textline(line);
 	if (s.isEmpty() ) return 0;
-	while( s.at(i).isSpace() && i < s.length())
+	while( s.at(i).isSpace() && i < ( uint )s.length())
 		i++;
 	return i;
 }
@@ -498,7 +500,7 @@ void YZBuffer::setEncoding( const QString& name ) {
 
 void YZBuffer::loadText( QString* content ) {
 	d->text->clear(); //remove the _pointers_ now
-	QTextStream stream( content, IO_ReadOnly );
+	QTextStream stream( content, QIODevice::ReadOnly );
 	while ( !stream.atEnd() ) {
 		appendLine( stream.readLine() );
 	}
@@ -515,7 +517,7 @@ void YZBuffer::load(const QString& file) {
 	//stop redraws
 	d->enableUpdateView=false;
 
-	QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
+	QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 	for ( ; it != end; ++it )
 		delete ( *it );
 	d->text->clear();
@@ -537,7 +539,7 @@ void YZBuffer::load(const QString& file) {
 	d->undoBuffer->setInsideUndo( true );
 	d->isLoading=true;
 	d->currentEncoding = getLocalStringOption( "encoding" );
-	if ( fl.open( IO_ReadOnly ) ) {
+	if ( QFile::exists(d->path) && fl.open( QIODevice::ReadOnly ) ) {
 		QTextCodec* codec;
 		if ( d->currentEncoding == "locale" ) {
 			codec = QTextCodec::codecForLocale();
@@ -553,7 +555,7 @@ void YZBuffer::load(const QString& file) {
 				setLocalQStringOption("fileencoding", c->name());
 			}*/ //not reliable enough
 		} else {
-			codec = QTextCodec::codecForName( d->currentEncoding );
+			codec = QTextCodec::codecForName( d->currentEncoding.toLatin1() );
 		}
 		QTextStream stream( &fl );
 		stream.setCodec( codec );
@@ -623,20 +625,20 @@ bool YZBuffer::save() {
 	if ( codecName == "locale" ) {
 		codec = QTextCodec::codecForLocale();
 	} else {
-		codec = QTextCodec::codecForName( codecName );
+		codec = QTextCodec::codecForName( codecName.toLatin1() );
 	}
 	// XXX: we have to test if codec is null, then  alert the user (like we have to do with null yzline()
 
 	QFile file( d->path );
 	d->isHLUpdating = true; //override so that it does not parse all lines
 	yzDebug("YZBuffer") << "Saving file to " << d->path << endl;
-	if ( codec && file.open( IO_WriteOnly ) ) {
+	if ( codec && file.open( QIODevice::WriteOnly ) ) {
 		QTextStream stream( &file );
 		stream.setCodec( codec );
 		// do not save empty buffer to avoid creating a file
 		// with only a '\n' while the buffer is emtpy
 		if ( isEmpty() == false) {
-			QValueVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
+			QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 			for ( ; it != end; ++it ) {
 				stream << (*it )->data() << "\n";
 			}
@@ -763,7 +765,7 @@ void YZBuffer::setHighLight( uint mode, bool warnGUI ) {
 		//XXX should we check whether it was already loaded ?
 		QString hlName = h->name();
 		hlName.replace("+","p");
-		YZExLua::instance()->source(NULL, hlName.lower(),false);
+		YZExLua::instance()->source(NULL, hlName.toLower(),false);
 	}
 }
 
@@ -781,7 +783,7 @@ void YZBuffer::makeAttribs() {
 	unsigned int hlLine = 0;
 	if ( !d->isLoading )
 		while ( hlLine < lineCount()) {
-			QMemArray<uint> foldingList;
+			QVector<uint> foldingList;
 			YZLine *l = new YZLine();
 			d->highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : l), yzline( hlLine ), &foldingList, &ctxChanged );
 			delete l;
@@ -814,11 +816,11 @@ bool YZBuffer::substitute( const QString& _what, const QString& with, bool whole
 		cs = false;
 	}
 	QRegExp rx( what );
-	rx.setCaseSensitive(cs);
+	rx.setCaseSensitivity(cs ? Qt::CaseSensitive : Qt::CaseInsensitive );
 	bool changed = false;
 	int pos=0;
 	int offset=0;
-	while ( ( pos = rx.search( l,offset ) ) != -1 ) {
+	while ( ( pos = rx.indexIn( l,offset ) ) != -1 ) {
 		l = l.replace( pos, rx.matchedLength(), with );
 		changed = true;
 		offset = pos + with.length();
@@ -879,15 +881,15 @@ void YZBuffer::intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor*
 QString YZBuffer::getWordAt( const YZCursor& at ) const {
 	QString l = textline( at.y() );
 	QRegExp reg( "\\b(\\w+)\\b" );
-	int idx = reg.searchRev( l, at.x() );
-	if ( idx == -1 || idx + reg.cap( 1 ).length() <= at.x() ) {
-		idx = reg.search( l, at.x() );
+	int idx = reg.lastIndexIn( l, at.x() );
+	if ( idx == -1 || idx + reg.cap( 1 ).length() <= ( int )at.x() ) {
+		idx = reg.indexIn( l, at.x() );
 		if ( idx >= 0 ) return reg.cap( 1 );
 		else {
 			reg.setPattern( "(^|[\\s\\w])([^\\s\\w]+)([\\s\\w]|$)" );
-			idx = reg.searchRev( l, at.x() );
-			if ( idx == -1 || idx + reg.cap( 1 ).length() + reg.cap( 2 ).length() <= at.x() ) {
-				idx = reg.search( l, at.x() );
+			idx = reg.lastIndexIn( l, at.x() );
+			if ( idx == -1 || idx + reg.cap( 1 ).length() + reg.cap( 2 ).length() <= ( int )at.x() ) {
+				idx = reg.indexIn( l, at.x() );
 				if ( idx >= 0 ) return reg.cap( 2 );
 			} else {
 				return reg.cap( 2 );
@@ -941,7 +943,7 @@ bool YZBuffer::updateHL( unsigned int line ) {
 	if ( d->highlight == 0L ) return false;
 	while ( ctxChanged && hlLine < maxLine ) {
 		yl = yzline( hlLine );
-		QMemArray<uint> foldingList;
+		QVector<uint> foldingList;
 		YZLine *l = new YZLine();
 		d->highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : l), yl, &foldingList, &ctxChanged );
 		delete l;
@@ -971,7 +973,7 @@ void YZBuffer::initHL( unsigned int line ) {
 	if ( d->highlight != 0L ) {
 		uint hlLine = line;
 		bool ctxChanged = true;
-		QMemArray<uint> foldingList;
+		QVector<uint> foldingList;
 		YZLine *l = new YZLine();
 		d->highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : l), yzline( hlLine ), &foldingList, &ctxChanged );
 		delete l;
@@ -991,11 +993,11 @@ QString YZBuffer::tildeExpand( const QString& path ) {
 	QString ret = path;
 	if ( path[0] == '~' ) {
 		if ( path[1] == '/' || path.length() == 1 ) {
-			ret = QDir::homeDirPath() + path.mid( 1 );
+			ret = QDir::homePath() + path.mid( 1 );
 		}
 #ifndef YZIS_WIN32_MSVC
 		  else {
-			int pos = path.find('/');
+			int pos = path.indexOf('/');
 			if ( pos < 0 ) // eg: ~username (without /)
 				pos = path.length() - 1;
 			QString user = path.left( pos ).mid( 1 );
@@ -1014,6 +1016,11 @@ void YZBuffer::filenameChanged()
 	for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
 		(*itr)->filenameChanged();
 	}
+}
+
+const QString YZBuffer::fileNameShort() const {
+	QFileInfo fi ( d->path );
+	return fi.fileName();
 }
 
 void YZBuffer::highlightingChanged()
@@ -1053,8 +1060,7 @@ const YZLine * YZBuffer::yzline(unsigned int line) const
 	return yl;
 }
 
-unsigned int YZBuffer::lineCount() const 
-{ 
+unsigned int YZBuffer::lineCount() const { 
 	return d->text->count(); 
 }
 
@@ -1068,16 +1074,15 @@ unsigned int YZBuffer::getLineLength(unsigned int line) const {
 	return length;
 }
 
-const QString& YZBuffer::textline(unsigned int line) const {
+const QString YZBuffer::textline(unsigned int line) const {
 	if ( line < lineCount() ) {
 		return yzline( line )->data();
 	} else {
-		return QString::null;
+		return Null;
 	}
 }
 
-void YZBuffer::setState( State state ) 
-{
+void YZBuffer::setState( State state ) {
 	// if we're making the buffer active or hidden, we have to ensure
 	// that all the support stuff has been created
 	if ( state == ACTIVE || state == HIDDEN ) {

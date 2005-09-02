@@ -1,6 +1,6 @@
---- acinclude.m4.in.orig	2005-07-23 16:11:42.000000000 +0200
-+++ acinclude.m4.in	2005-07-23 16:11:34.000000000 +0200
-@@ -443,7 +443,7 @@
+--- acinclude.m4.in.orig	2005-08-28 19:41:32.883312904 +0200
++++ acinclude.m4.in	2005-08-28 19:41:38.431469456 +0200
+@@ -412,7 +412,7 @@
      kde_datadir='\${datadir}/apps'
    fi
    if test -z "$kde_locale"; then
@@ -9,7 +9,7 @@
    fi
    if test -z "$kde_cgidir"; then
      kde_cgidir='\${exec_prefix}/cgi-bin'
-@@ -531,17 +531,12 @@
+@@ -486,17 +486,12 @@
  
  AC_DEFUN([KDE_MISSING_PROG_ERROR],
  [
@@ -29,16 +29,7 @@
  ])
  
  AC_DEFUN([KDE_SET_DEFAULT_BINDIRS],
-@@ -590,7 +585,7 @@
-               if test "$kde_qtsubver" -le 1; then
-                 kde32ornewer=
-               fi
--              if test "$kde_qtsubver" -le 2 -o `$KDECONFIG --version | grep KDE | sed 's/KDE: \(...\).*/\1/'` = 3.2; then
-+              if test "$kde_qtsubver" -le 2; then
-                 kde33ornewer=
-               fi
-             fi
-@@ -1642,15 +1637,7 @@
+@@ -1393,15 +1388,7 @@
  
  AC_MSG_RESULT([$kde_cv_uic_plugins])
  if test "$kde_cv_uic_plugins" != yes; then
@@ -47,7 +38,7 @@
 -
 -If you did install kdelibs, then the Qt version that is picked up by
 -this configure is not the same version you used to compile kdelibs. 
--The Qt Plugin installed by kdelibs is *ONLY* loadable if it is the 
+-The Qt Plugin installed by kdelibs is *ONLY* loadable if it is the
 -_same Qt version_, compiled with the _same compiler_ and the same Qt
 -configuration settings.
 -])
@@ -55,7 +46,7 @@
  fi
  fi
  ])
-@@ -1799,11 +1786,8 @@
+@@ -1545,9 +1532,7 @@
  ac_kde_includes="$kde_incdir"
  
  if test -n "$ac_kde_includes" && test ! -r "$ac_kde_includes/$kde_check_header"; then
@@ -64,12 +55,10 @@
 -So, check this please and use another prefix!])
 +	have_kde="no"
  fi
--
- kde_libdirs="$kde_libs_prefix/lib${kdelibsuff} /usr/lib/kde/lib${kdelibsuff} /usr/local/kde/lib${kdelibsuff} /usr/kde/lib${kdelibsuff} /usr/lib${kdelibsuff}/kde /usr/lib${kdelibsuff}/kde3 /usr/lib${kdelibsuff} /usr/X11R6/lib${kdelibsuff} /usr/local/lib${kdelibsuff} /opt/kde3/lib${kdelibsuff} /opt/kde/lib${kdelibsuff} /usr/X11R6/kde/lib${kdelibsuff}"
- test -n "$KDEDIR" && kde_libdirs="$KDEDIR/lib${kdelibsuff} $KDEDIR $kde_libdirs"
- kde_libdirs="$ac_kde_libraries $libdir $kde_libdirs"
-@@ -1815,15 +1799,11 @@
- AC_FIND_FILE("kde3/plugins/designer/kdewidgets.la", $kde_libdirs, kde_widgetdir)
+ 
+ kde_libdirs="$kde_libs_prefix/lib${kdelibsuff} /usr/lib/kde/lib${kdelibsuff} /usr/local/kde/lib${kdelibsuff} /usr/kde/lib${kdelibsuff} /usr/lib${kdelibsuff}/kde /usr/lib${kdelibsuff}/kde4 /usr/lib${kdelibsuff} /usr/X11R6/lib${kdelibsuff} /usr/local/lib${kdelibsuff} /opt/kde4/lib${kdelibsuff} /opt/kde/lib${kdelibsuff} /usr/X11R6/kde/lib${kdelibsuff}"
+@@ -1561,15 +1546,11 @@
+ AC_FIND_FILE("kde4/plugins/designer/kdewidgets.la", $kde_libdirs, kde_widgetdir)
  
  if test -n "$ac_kde_libraries" && test ! -r "$ac_kde_libraries/$kde_check_lib"; then
 -AC_MSG_ERROR([
@@ -78,7 +67,7 @@
 +	have_kde="no"
  fi
  
- if test -n "$kde_widgetdir" && test ! -r "$kde_widgetdir/kde3/plugins/designer/kdewidgets.la"; then
+ if test -n "$kde_widgetdir" && test ! -r "$kde_widgetdir/kde4/plugins/designer/kdewidgets.la"; then
 -AC_MSG_ERROR([
 -I can't find the designer plugins. These are required and should have been installed
 -by kdelibs])
@@ -86,7 +75,7 @@
  fi
  
  if test -n "$kde_widgetdir"; then
-@@ -1900,7 +1880,9 @@
+@@ -1646,7 +1627,9 @@
  AC_SUBST(all_libraries)
  
  if test -z "$1"; then
@@ -97,7 +86,7 @@
  fi
  
  ac_kde_libraries="$kde_libdir"
-@@ -2948,6 +2930,7 @@
+@@ -2655,6 +2638,7 @@
  
  ])
  
@@ -105,7 +94,7 @@
  dnl AC_VALIDIFY_CXXFLAGS checks for forbidden flags the user may have given
  AC_DEFUN([AC_VALIDIFY_CXXFLAGS],
  [dnl
-@@ -4830,21 +4813,18 @@
+@@ -4515,21 +4499,18 @@
    KDE_SET_DEFAULT_BINDIRS
    if test "x$prefix" = "xNONE"; then
      dnl no prefix given: look for kde-config in the PATH and deduce the prefix from it

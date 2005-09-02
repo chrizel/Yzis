@@ -13,7 +13,6 @@
 #define VIEWID_H
 
 class YZDebugStream;
-class kdbgstream;
 class QDataStream;
 
 /**
@@ -43,6 +42,5 @@ extern bool operator<( const YZViewId &lhs, const YZViewId &rhs );
 
 extern QDataStream &operator>>( QDataStream &lhs, YZViewId &rhs );
 extern YZDebugStream &operator<<( YZDebugStream &lhs, const YZViewId &rhs );
-extern kdbgstream &operator<<( kdbgstream &lhs, const YZViewId &rhs );
 
 #endif

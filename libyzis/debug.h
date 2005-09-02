@@ -13,8 +13,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -33,10 +33,17 @@
  */
 
 #include <qglobal.h>
+#if QT_VERSION < 0x040000
 #include <qstring.h>
 #include <qfile.h>
 #include <qmap.h>
 class QCString;
+#else
+#include <QString>
+#include <cstdio>
+#include <QMap>
+#include <QFile>
+#endif
 
 class QStringList;
 
@@ -145,7 +152,9 @@ class YZDebugStream {
 		YZDebugStream& operator << (bool i);
 		YZDebugStream& operator << (char i);
 		YZDebugStream& operator << (unsigned char i);
+#if QT_VERSION < 0x040000
 		YZDebugStream& operator << (const QCString& string);
+#endif
 		YZDebugStream& operator << (const QString& string);
 		YZDebugStream& operator << (const QStringList& string);
 		YZDebugStream& operator << (const char* string);

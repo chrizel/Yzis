@@ -13,7 +13,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 /**
@@ -30,7 +30,7 @@ QMap<int,QString> NYZFactory::keycodes; // map Ncurses to Qt codes
 
 
 NYZFactory::NYZFactory(const char *session_name, const QString& keys)
-	:QObject(), YZSession( session_name )
+	: YZSession( session_name )
 {
 	m_initialCommand = keys;
 	/* init screen */
@@ -66,12 +66,13 @@ NYZFactory::~NYZFactory( )
 }
 
 void NYZFactory::init() {
+	yzDebug() << "INIT " << endl;
 	if (m_initialCommand.length()) {
 		YZSession::me->sendMultipleKeys(m_initialCommand);
 	}
 }
 
-bool NYZFactory::processInput(int) {
+bool NYZFactory::processInput(int /*fd*/) {
 	YZASSERT_MSG( currentView(), "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
 
 	wint_t c;
@@ -198,7 +199,7 @@ void NYZFactory::popupMessage( const QString &_message )
 	int nl,nc;
 	QString anyKeyMsg = _("(Press any key)");
 	int length = anyKeyMsg.length();
-	QString message = _message.simplifyWhiteSpace();
+	QString message = _message.simplified();
 #if 0
 	int y;
 	message.simplifyWhiteSpace();
@@ -223,8 +224,8 @@ void NYZFactory::popupMessage( const QString &_message )
 	WINDOW *popup = newwin(nl, nc+4, ( LINES-nl )/2, (COLS-nc)/2);
 	box( popup, 0, 0 );
 
-	mvwaddstr( popup, 2, 2, message.local8Bit() );
-	mvwaddstr( popup, 4, ((nc+4)-length)/2, anyKeyMsg.local8Bit() ); // Center the text.
+	mvwaddstr( popup, 2, 2, message.toLocal8Bit().constData() );
+	mvwaddstr( popup, 4, ((nc+4)-length)/2, anyKeyMsg.toLocal8Bit().constData() ); // Center the text.
 	// TODO : use QString QString::section
 
 #endif

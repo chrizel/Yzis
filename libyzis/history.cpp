@@ -12,6 +12,9 @@
 #include "history.h"
 
 #include <qstringlist.h>
+#include <QTextStream>
+
+static QString Null = QString::null;
 
 struct YZHistory::Private
 {
@@ -64,17 +67,12 @@ bool YZHistory::atEnd() const
 	return d->current == d->entries.end();
 }
 
-QString &YZHistory::getEntry()
-{
-	return const_cast<QString&>(static_cast<const YZHistory*>(this)->getEntry());
-}
-
-const QString &YZHistory::getEntry() const
+const QString YZHistory::getEntry() const
 {
 	if ( d->current != d->entries.end() ) {
 		return *d->current;
 	} else {
-		return QString::null;
+		return Null;
 	}
 }
 

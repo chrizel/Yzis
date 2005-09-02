@@ -15,8 +15,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #ifndef YZ_VIEW_H
@@ -31,8 +31,14 @@
 #include "viewid.h"
 
 #include <qglobal.h>
+#if QT_VERSION < 0x040000
 #include <qvaluevector.h>
 #include <qapplication.h>
+#else
+#include <QVector>
+#include <QCoreApplication>
+#include <QColor>
+#endif
 
 class YZViewCursor;
 class YZCursor;
@@ -46,11 +52,16 @@ class YZModePool;
 class YZMode;
 class YZModeCompletion;
 class YZOptionValue;
+class YZFoldPool;
 
 /**
- * MUST be reimplemented in the GUI. It's the basis to display the content of a buffer
+ * MUST be reimplemented in the GUI. 
+ * It's the basis to display the content of a buffer.
  * One view is the display of some part of a buffer, it is used to receive inputs and displays
- * corresponding outputs
+ * corresponding outputs.
+ * Each @ref YZBuffer can have multiple views.
+ * @ref YZBuffer will take care of synchronizing every views so updates are propagated to all views.
+ * 
  */
 class YZView {
 
@@ -64,7 +75,17 @@ class YZView {
 		 */
 		YZView(YZBuffer *_b, YZSession *sess, int lines);
 		
+		/**
+		 * The destructor
+		 */
 		virtual ~YZView();
+
+		/**
+		 * Accessor to the list of foldings
+		 */
+		inline YZFoldPool* folds() const {
+			return mFoldPool;
+		}
 
 		/**
 		 * A global UID for this view
@@ -109,9 +130,15 @@ class YZView {
 		unsigned int getDrawCurrentTop();
 
 		/**
-		 * Returns the index of the first column displayed on the view
+		 * Returns the index of the first "buffer" column displayed on the view
+		 * (does not care about tabs, wrapping ...)
 		 */
 		unsigned int getCurrentLeft();
+
+		/**
+		 * Returns the index of the first "screen" column displayed on the view
+		 * (does care about tabs, wrapping ...)
+		 */
 		unsigned int getDrawCurrentLeft();
 
 		/**
@@ -120,12 +147,13 @@ class YZView {
 		unsigned int getLinesVisible() { return mLinesVis; }
 
 		/**
-		 * returns the number of line this view can display
+		 * returns the number of lines this view can display
+		 * @return the number of visible lines
 		 */
 		unsigned int getColumnsVisible() { return mColumnsVis; }
 
 		/**
-		 * Returns true if the line @arg l is visible. False otherwise
+		 * Returns true if the line @arg l is visible. False otherwise.
 		 */
 		bool	isLineVisible(unsigned int l);
 
@@ -140,8 +168,8 @@ class YZView {
 		/**
 		 * Return my current buffer
 		 */
-		YZBuffer *myBuffer() { return mBuffer; }
-		const YZBuffer *myBuffer() const { return mBuffer; }
+		YZBuffer *myBuffer() const { return mBuffer; }
+//		const YZBuffer *myBuffer() const { return mBuffer; }
 
 		/**
 		 * Return my current session
@@ -153,10 +181,22 @@ class YZView {
 		 */
 		YZLineSearch* myLineSearch() { return mLineSearch; }
 		
-		YZModePool* modePool() { return mModePool; }
+		/**
+		 * Accessor to the list of availables modes
+		 * @return a QMap of @ref YZMode
+		 */
+		YZModePool* modePool() const { return mModePool; }
+		
+		/**
+		 * Accessor to the list of current selections
+		 */
 		YZSelectionPool* getSelectionPool() const { return selectionPool; }
 		
-		const QValueList<QChar> registersRecorded() { return mRegs; }
+		/**
+		 * Accessor to the list of recorded registers
+		 * @return a QList of @ref YZRegisters
+		 */
+		const QList<QChar> registersRecorded() { return mRegs; }
 		
 		YZSelectionMap visualSelection();
 
@@ -328,40 +368,45 @@ class YZView {
 		 */
 		bool drawNextCol( );
 
+		const QChar& drawLineFiller() const;
+		const QChar& drawLineMarker() const;
+
+		const QChar& fillChar() const;
+
 		/**
 		 * draw char
 		 */
-		const QChar& drawChar( );
+		const QChar& drawChar() const;
 
 		/**
 		 * char length
 		 */
-		unsigned int drawLength( );
+		unsigned int drawLength() const;
 
 		/**
 		 * line increment (on screen)
 		 */
-		unsigned int drawHeight( );
+		unsigned int drawHeight() const;
 
 		/**
 		 * char color
 		 */
-		const QColor& drawColor( );
+		const QColor& drawColor();
 
 		/**
 		 * char color if selected
 		 */
-		const QColor& drawSelColor( );
+		const QColor& drawSelColor();
 
 		/**
 		 * char background color
 		 */
-		const QColor& drawBgColor( );
+		const QColor& drawBgColor();
 
 		/**
 		 * char background color if selected
 		 */
-		const QColor& drawBgSelColor( );
+		const QColor& drawBgSelColor();
 
 		/**
 		 * current char is bold
@@ -396,19 +441,19 @@ class YZView {
 		/**
 		 * Character color at column line
 		 */
-		const QColor& drawColor ( unsigned int col, unsigned int line );
+		const QColor& drawColor ( unsigned int col, unsigned int line ) const;
 
 		/**
 		 * return current buffer line
 		 */
-		unsigned int drawLineNumber( );
+		unsigned int drawLineNumber() const;
 
 		/**
 		 * total height ( draw )
 		 */
 		unsigned int drawTotalHeight();
 
-		bool drawSelected();
+		bool drawSelected() const;
 
 		//-------------------------------------------------------
 		// ----------------- Undo
@@ -462,7 +507,7 @@ class YZView {
 		/**
 		 * Start recording a macro into @param regs
 		 */
-		void recordMacro( const QValueList<QChar> &regs );
+		void recordMacro( const QList<QChar> &regs );
 
 		/**
 		 * Stop recording macros
@@ -485,7 +530,7 @@ class YZView {
 		/**
 		 * Pastes the content of default or given register
 		 */
-		void paste( QChar registr, bool after = true );
+		void pasteContent( QChar registr, bool after = true );
 
 		/**
 		 * Reindent given line ( cindent )
@@ -505,34 +550,34 @@ class YZView {
 		//-------------------------------------------------------
 		// ----------------- Options
 		//-------------------------------------------------------
-		QString getLocalOptionKey();
+		QString getLocalOptionKey() const;
 
-		YZOptionValue* getLocalOption( const QString& option );
+		YZOptionValue* getLocalOption( const QString& option ) const;
 		
 		/**
 		 * Retrieve an int option
 		 */
-		int getLocalIntegerOption( const QString& option );
+		int getLocalIntegerOption( const QString& option ) const;
 
 		/**
 		 * Retrieve a bool option
 		 */
-		bool getLocalBooleanOption( const QString& option );
+		bool getLocalBooleanOption( const QString& option ) const;
 
 		/**
 		 * Retrieve a string option
 		 */
-		QString getLocalStringOption( const QString& option );
+		QString getLocalStringOption( const QString& option ) const;
 
 		/**
 		 * Retrieve a qstringlist option
 		 */
-		QStringList getLocalListOption( const QString& option );
+		QStringList getLocalListOption( const QString& option ) const;
 
 		/**
 		 * Retrieve a map option
 		 */
-		MapOption getLocalMapOption( const QString& option );
+		MapOption getLocalMapOption( const QString& option ) const;
 
 		//-------------------------------------------------------
 		// ----------------- Paint Events
@@ -583,13 +628,13 @@ class YZView {
 		 * Get the current cursor information
 		 * @return a reference on the current cursor
 		 */
-		const YZCursor &getCursor();
+		const YZCursor &getCursor() const;
 
 		/**
 		 * Get the current buffer cursor information
 		 * @return a reference on the current buffer cursor
 		 */
-		const YZCursor &getBufferCursor();
+		const YZCursor &getBufferCursor() const;
 
 		YZViewCursor* visualCursor() { return mVisualCursor; }
 
@@ -619,12 +664,12 @@ class YZView {
 		/**
 		 * line increment (on buffer)
 		 */
-		unsigned int lineIncrement( );
+		unsigned int lineIncrement( ) const;
 
 		/**
 		 * current line height (on screen)
 		 */
-		unsigned int lineHeight( );
+		unsigned int lineHeight( ) const;
 
 		/**
 		 * width of a space ( in pixel or in cols )
@@ -704,8 +749,6 @@ class YZView {
 		void displayIntro();
 
 		virtual void printToFile( const QString& path );
-
-		const QChar& fillChar() const;
 
 		QString getCharBelow( int delta );
 
@@ -847,6 +890,10 @@ class YZView {
 		bool charSelected;
 		bool listChar;
 
+		QChar m_lineFiller;
+		QChar m_lineMarker;
+
+
 		YZCursor* origPos;
 		unsigned int lineDY;
 
@@ -874,7 +921,11 @@ class YZView {
 
 
 		//which regs to store macros in
+#if QT_VERSION < 0x040000
 		QValueList<QChar> mRegs;
+#else
+		QList<QChar> mRegs;
+#endif
 		unsigned int m_paintAutoCommit;
 		YZViewCursor* keepCursor;
 
@@ -888,6 +939,7 @@ class YZView {
 		int opt_schema;
 		bool opt_list;
 		MapOption opt_listchars;
+		YZFoldPool* mFoldPool;
 		
 		const YZViewId id;
 };

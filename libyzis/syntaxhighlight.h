@@ -12,8 +12,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /* This file was taken from the Kate editor which is part of KDE
@@ -29,17 +29,13 @@
 
 #include "attribute.h"
 
-#include <qptrlist.h>
-#include <qvaluelist.h>
-#include <qvaluevector.h>
-#include <qregexp.h>
-#include <qdict.h>
-#include <qintdict.h>
-#include <qmap.h>
-#include <qobject.h>
-#include <qstringlist.h>
-#include <qguardedptr.h>
-#include <qdatetime.h>
+#include <QPair>
+#include <QString>
+#include <QMap>
+#include <QHash>
+#include <QTime>
+#include <QLinkedList>
+#include <QVector>
 
 #ifndef YZIS_WIN32_MSVC
 #include "magic.h"
@@ -69,11 +65,11 @@ class YzisEmbeddedHlInfo
 };
 
 // some typedefs
-typedef QPtrList<YzisAttribute> YzisAttributeList;
-typedef QValueList<YzisHlIncludeRule*> YzisHlIncludeRules;
-typedef QPtrList<YzisHlItemData> YzisHlItemDataList;
-typedef QPtrList<YzisHlData> YzisHlDataList;
-typedef QValueList<int> IntList;
+typedef QList<YzisAttribute*> YzisAttributeList;
+typedef QLinkedList<YzisHlIncludeRule*> YzisHlIncludeRules;
+typedef QList<YzisHlItemData*> YzisHlItemDataList;
+typedef QList<YzisHlData*> YzisHlDataList;
+typedef QList<int> IntList;
 typedef QMap<QString,YzisEmbeddedHlInfo> YzisEmbeddedHlInfos;
 typedef QMap<int*,QString> YzisHlUnresolvedCtxRefs;
 
@@ -97,7 +93,7 @@ class YzisHlItemData : public YzisAttribute
       dsAlert,
       dsFunction,
       dsRegionMarker,
-      dsError	};
+      dsError  };
 
   public:
     const QString name;
@@ -122,14 +118,17 @@ class YzisHighlighting
     YzisHighlighting(const YzisSyntaxModeListItem *def);
     ~YzisHighlighting();
 
+  private:
+	void cleanup();
+
   public:
     void doHighlight ( YZLine *prevLine,
                        YZLine *textLine,
-                       QMemArray<uint> *foldingList,
+                       QVector<uint> *foldingList,
                        bool *ctxChanged );
 
     void loadWildcards();
-    QValueList<QRegExp>& getRegexpExtensions();
+    QList<QRegExp>& getRegexpExtensions();
     QStringList& getPlainExtensions();
 
     QString getMimetypes();
@@ -199,6 +198,17 @@ class YzisHighlighting
      */
     QString getCommentSingleLineStart( int attrib=0 ) const;
 
+	/**
+	 * This enum is used for storing the information where a single line comment marker should be inserted
+	 */
+	enum CSLPos { CSLPosColumn0=0,CSLPosAfterWhitespace=1};
+
+	/**
+	 * @return the single comment marker position for the highlight corresponding
+	 * to @p attrib.
+	 */
+	CSLPos getCommentSingleLinePosition(  int attrib=0 ) const;
+
     /**
     * @return the attribute for @p context.
     */
@@ -206,7 +216,7 @@ class YzisHighlighting
 
     void clearAttributeArrays ();
 
-    QMemArray<YzisAttribute> *attributes (uint schema);
+    QVector<YzisAttribute> *attributes (uint schema);
 
     inline bool noHighlighting () const { return noHl; };
 
@@ -235,7 +245,7 @@ class YzisHighlighting
     void readFoldingConfig ();
 
     // manipulates the ctxs array directly ;)
-    void generateContextStack(int *ctxNum, int ctx, QMemArray<short> *ctxs, int *posPrevLine);
+    void generateContextStack(int *ctxNum, int ctx, QVector<short> *ctxs, int *posPrevLine);
 
     YzisHlItem *createYzisHlItem(YzisSyntaxContextData *data, YzisHlItemDataList &iDl, QStringList *RegionList, QStringList *ContextList);
     int lookupAttrName(const QString& name, YzisHlItemDataList &iDl);
@@ -250,8 +260,8 @@ class YzisHighlighting
 
     YzisHlItemDataList internalIDList;
 
-    QValueVector<YzisHlContext*> m_contexts;
-    inline YzisHlContext *contextNum (uint n) { if (n < (uint)m_contexts.size()) return m_contexts[n]; return 0; }
+    QVector<YzisHlContext*> m_contexts;
+    inline YzisHlContext *contextNum (int n) { if (n >= 0 && n < m_contexts.size()) return m_contexts[n]; return 0; }
 
     QMap< QPair<YzisHlContext *, QString>, short> dynamicCtxs;
 
@@ -291,7 +301,7 @@ class YzisHighlighting
     YzisHlIncludeRules includeRules;
     bool m_foldingIndentationSensitive;
 
-    QIntDict< QMemArray<YzisAttribute> > m_attributeArrays;
+    QHash<int, QVector<YzisAttribute>* > m_attributeArrays;
 
     /**
      * This class holds the additional properties for one highlight
@@ -311,6 +321,7 @@ class YzisHighlighting
         QString multiLineCommentStart;
         QString multiLineCommentEnd;
         QString multiLineRegion;
+		CSLPos  singleLineCommentPosition;
         QString deliminator;
         QString wordWrapDeliminator;
     };
@@ -319,7 +330,7 @@ class YzisHighlighting
      * Highlight properties for each included highlight definition.
      * The key is the identifier
      */
-    QDict<HighlightPropertyBag> m_additionalData;
+    QHash<QString,HighlightPropertyBag*> m_additionalData;
 
     /**
      * Fast lookup of hl properties, based on attribute index
@@ -330,7 +341,7 @@ class YzisHighlighting
 
 
     QString extensionSource;
-    QValueList<QRegExp> regexpExtensions;
+    QList<QRegExp> regexpExtensions;
     QStringList plainExtensions;
 
   public:
@@ -338,10 +349,8 @@ class YzisHighlighting
     inline bool allowsFolding(){return folding;}
 };
 
-class YzisHlManager : public QObject
+class YzisHlManager
 {
-  Q_OBJECT
-
   private:
     YzisHlManager();
 
@@ -357,7 +366,7 @@ class YzisHlManager : public QObject
 
     int detectHighlighting (class YZBuffer *doc);
 
-    int findHl(YzisHighlighting *h) {return hlList.find(h);}
+    int findHl(YzisHighlighting *h) {return hlList.indexOf(h);}
     QString identifierForName(const QString&);
 
     // methodes to get the default style count + names
@@ -394,8 +403,8 @@ class YzisHlManager : public QObject
   private:
     friend class YzisHighlighting;
 
-    QPtrList<YzisHighlighting> hlList;
-    QDict<YzisHighlighting> hlDict;
+    QList<YzisHighlighting*> hlList;
+    QHash<QString,YzisHighlighting*> hlDict;
 
     static YzisHlManager *s_self;
 

@@ -15,8 +15,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #ifndef YZ_SESSION_H
@@ -26,6 +26,7 @@
  */
  
 #include "yzis.h"
+#include <QVector>
 
 #include "mode.h"  // for YZModeMap
  
@@ -54,7 +55,9 @@ class YZViewId;
 typedef YZList<YZBuffer*> YZBufferList;
 typedef YZList<YZView*> YZViewList;
  
-class YZSession {
+class YZSession : public QObject {
+	Q_OBJECT
+	
 	public:
 		//-------------------------------------------------------
 		// ----------------- Constructor/Destructor and Name
@@ -394,7 +397,7 @@ class YZSession {
 		/**
 		 * Gets the list of registers
 		 */
-		QValueList<QChar> getRegisters();
+		QList<QChar> getRegisters();
 
 		//-------------------------------------------------------
 		// ----------------- Miscellaneous

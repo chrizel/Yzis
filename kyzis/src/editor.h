@@ -13,8 +13,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #ifndef KYZISEDIT_H
@@ -22,7 +22,6 @@
 
 #include "cursor.h"
 #include "viewwidget.h"
-#include <qscrollview.h>
 #include <qpainter.h>
 #include <qevent.h>
 #include <qmap.h>
@@ -97,6 +96,8 @@ class KYZisEdit : public QWidget {
 
 		QMap<unsigned int,lineCell> mCell;
 
+		QVariant inputMethodQuery ( Qt::InputMethodQuery query );
+
 	public slots :
 		void sendMultipleKey( const QString& keys );
 
@@ -136,9 +137,7 @@ class KYZisEdit : public QWidget {
 		virtual void focusOutEvent( QFocusEvent * );
 
 		// for InputMethod
-		void imStartEvent( QIMEvent * );
-		void imComposeEvent( QIMEvent * );
-		void imEndEvent( QIMEvent * );
+		void inputMethodEvent ( QInputMethodEvent * );
 
 	private :
 		void initKeys();

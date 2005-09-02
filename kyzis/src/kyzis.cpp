@@ -12,7 +12,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 /*
@@ -39,15 +39,17 @@
 #include <kstandarddirs.h>
 #include <klocale.h>
 
-#include <ktexteditor/configinterface.h>
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 #include <kmultitabbar.h>
+#include <kpopupmenu.h>
+#include <kmenubar.h>
 
 #include "ktexteditoriface.h"
 #include "session.h"
 #include "viewid.h"
 #include "viewwidget.h"
+#include "dtabwidget.h"
 
 // #include "configdialog.h"
 
@@ -56,57 +58,30 @@
 
 Kyzis *Kyzis::me = NULL;
 
-Kyzis::Kyzis(QDomElement& dockConfig, KMdi::MdiMode mode, const QString& keys)
-	: KMdiMainFrm(0L,"mdiApp",mode), DCOPObject( "Kyzis" ),
-	m_dockConfig( dockConfig ),
+Kyzis::Kyzis(QWidget *w, const QString& keys)
+	: DMainWindow(w), DCOPObject( "Kyzis" ),
 	mBuffers( 0 ), mViews( 0 )
 {
 	m_initialCommand = keys;
-	resize( 700, 480 );
-//	setMinimumSize( 200, 200 );
-	mConsole = NULL;
-//	setToolviewStyle(KMultiTabBar::KDEV3ICON);
-	dockManager->setReadDockConfigMode(KDockManager::RestoreAllDockwidgets);
-
-	if ( m_dockConfig.hasChildNodes() ) {
-		readDockConfig(m_dockConfig);
-	}
-
-	dockManager->finishReadDockConfig();
-	setMenuForSDIModeSysButtons( menuBar() );
-	setManagedDockPositionModeEnabled(true);
+	resize( 800, 600 );
 
 	setXMLFile( "kyzis_shell.rc" );
 	setupActions();
 	createShellGUI( true );
-	setWindowMenu();
 
-	//setAutoSaveSettings();
 	// call it as last thing, must be sure everything is already set up ;)
 	setAutoSaveSettings ("MainWindow Settings");
-
-	// init with more usefull size, stolen from konq :)
-//	if ( !initialGeometrySet() && !kapp->config()->hasGroup("MainWindow Settings"))
 
     me = this;
 }
 
 Kyzis::~Kyzis() {
-	writeDockConfig(m_dockConfig);
-	//delete m_toolbarAction;
-	delete m_konsoleAction;
-	delete mConsole;
 }
 
 void Kyzis::init () {
 	if (m_initialCommand.length()) {
 		YZSession::me->sendMultipleKeys(m_initialCommand);
 	}
-}
-
-void Kyzis::resizeEvent( QResizeEvent *e) {
-   KMdiMainFrm::resizeEvent( e );
-   setSysButtonsAtMenuPosition();
 }
 
 void Kyzis::load(const KURL& url) {
@@ -128,24 +103,6 @@ void Kyzis::setupActions() {
 		actionCollection() );
 	m_openRecentAction->setWhatsThis( i18n("Opens recently opened file.") );
 	m_openRecentAction->loadEntries( kapp->config(), "RecentFiles" );
-
-	if ( !isFakingSDIApplication() ) {
-//		menuBar()->insertItem(i18n( "&Window" ), windowMenu(), -1, menuBar()->count()-2);
-//		menuBar()->insertItem("&Docking", dockHideShowMenu() );//, -1 , menuBar()->count()-2);
-	}
-
-	//m_toolbarAction = KStdAction::showToolbar(this, SLOT(optionsShowToolbar()), actionCollection());
-	m_konsoleAction = new KToggleAction( i18n("Show &Konsole"), SmallIcon( "konsole" ), 0, this, SLOT(showKonsole()), actionCollection(), "show_konsole" );
-
-	//KStdAction::keyBindings(this, SLOT(optionsConfigureKeys()), actionCollection());
-	//KStdAction::configureToolbars(this, SLOT(optionsConfigureToolbars()), actionCollection());
-}
-
-void Kyzis::setWindowMenu() {
-	QPopupMenu *menu = ( QPopupMenu* ) menuBar()->child(  "window", "KPopupMenu" );
-	if ( menu )
-		QObject::connect( menu , SIGNAL( aboutToShow() ), this, SLOT( fillWindowMenu() ) );
-	else menuBar()->insertItem(i18n( "&Window" ), windowMenu(), -1, menuBar()->count()-1);
 }
 
 void Kyzis::fileNew() {
@@ -203,8 +160,7 @@ void Kyzis::fileOpen() {
 	openURL(url);
 }
 
-void Kyzis::openURL(const KURL &url)
-{
+void Kyzis::openURL(const KURL &url) {
 	if (url.isEmpty())
 	{
 		fileOpen();
@@ -218,25 +174,19 @@ void Kyzis::openURL(const KURL &url)
 	// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
 	// says that it should open a new window if the document is _not_
 	// in its initial state.  This is what we do here..
-	if ( getCurrentPart() && getCurrentPart()->url().isEmpty() && ! getCurrentPart()->isModified() )
-	{
-		// we open the file in this window...
-		load( url );
-	} else {
-		YZSession::me->createBufferAndView( url.url() );
-	}
+	YZSession::me->createBufferAndView( url.url() );
 }
 
 void Kyzis::setCaption( const YZViewId &id, const QString& caption ) {
 	// Parse out the filename.
 	QString filename = caption.section("/", -1);
 	
-	KYZisView *view = dynamic_cast<KYZisView*>(YZSession::me->findView( id ));
-	
-	if( view && view->getMdiChildView() ) {
-		view->getMdiChildView()->setCaption(filename);
-		view->getMdiChildView()->setTabCaption(filename);
-	}
+	QWidget *view = dynamic_cast<QWidget*>(YZSession::me->findView( id ));
+    if (view && m_widgetTabs.contains(view)) {
+        DTabWidget *tab = m_widgetTabs[view];
+		if (tab)
+			tab->setTabLabel(view,filename);
+    }
 	
 	KMainWindow::setCaption( caption );
 }
@@ -276,33 +226,146 @@ bool Kyzis::queryClose() {
 	return true;
 }
 
-void Kyzis::showKonsole() {
-	if ( m_konsoleAction->isChecked() ) {
-		if ( mConsole ) mConsole->parentWidget()->show();
-		else {
-			mConsole = new Konsole(this, "konsole");
-			addToolView(KDockWidget::DockBottom, mConsole, SmallIcon("konsole"), i18n("Terminal"));
-		}
-	} else {
-		if ( mConsole ) {
-			deleteToolWindow(mConsole);
-			mConsole=0;
-		}
-	}
-}
-
-KMdiToolViewAccessor * Kyzis::addToolView(KDockWidget::DockPosition position, QWidget *widget, const QPixmap& icon, const QString& sname, const QString& tabToolTip, const QString& tabCaption) {
-	widget->setIcon(icon);
-	widget->setCaption(sname);
-	return addToolWindow(widget,position,getMainDockWidget(), 25, tabToolTip, tabCaption);
-}
-
 void Kyzis::preferences() {
-    KTextEditor::ConfigInterface *conf = dynamic_cast<KTextEditor::ConfigInterface*>(getCurrentPart());
-    if (!conf)
+    KTextEditor::Editor *edit = dynamic_cast<KTextEditor::Document*>( getCurrentPart() )->editor();
+    if (!edit)
         return;
-    conf->configDialog();
-    conf->writeConfig();
+    edit->configDialog(this);
+    edit->writeConfig();
+}
+
+void Kyzis::embedPartView(QWidget *view, const QString &title, const QString& toolTip) {
+	if (!view)
+		return;
+
+	addWidget(view, title);
+	view->show();
+//	splitVertical();
+}
+
+void Kyzis::embedSelectView(QWidget *view, const QString &title, const QString &/*toolTip*/) {
+	toolWindow(DDockWindow::Left)->addWidget(title, view);
+	m_docks[view] = DDockWindow::Left;
+}
+
+void Kyzis::embedOutputView(QWidget *view, const QString &title, const QString &/*toolTip*/) {
+	toolWindow(DDockWindow::Bottom)->addWidget(title, view);
+	m_docks[view] = DDockWindow::Bottom;
+	toolWindow(DDockWindow::Bottom)->show();
+}
+
+void Kyzis::embedSelectViewRight(QWidget *view, const QString &title, const QString &/*toolTip*/) {
+	toolWindow(DDockWindow::Right)->addWidget(title, view);
+	m_docks[view] = DDockWindow::Right;
+}
+
+void Kyzis::removeView(QWidget *view) {
+	if (!view)
+		return;
+
+	//try to remove it from all parts of main window
+	//@fixme This method needs to be divided in two - one for docks and one for part views
+	if (m_docks.contains(view))
+		toolWindow(m_docks[view])->removeWidget(view);
+	else
+		removeWidget(view);
+}
+
+void Kyzis::setViewAvailable(QWidget *pView, bool bEnabled) {
+    DDockWindow *dock;
+    if (m_docks.contains(pView))
+        dock = toolWindow(m_docks[pView]);
+    else
+        return;
+
+    bEnabled ? dock->showWidget(pView) : dock->hideWidget(pView);
+}
+
+void Kyzis::raiseView(QWidget *view) {
+    //adymo: a workaround to make editor wrappers work:
+    //editor view is passed to this function but the ui library knows only
+    //of its parent which is an editor wrapper, simply replacing the view
+    //by its wrapper helps here
+    if (view->parent() && view->parent()->isA("EditorWrapper"))
+    {
+//         kdDebug() << "parent is editor wrapper: " <<
+//             static_cast<EditorWrapper*>(view->parent()) << endl;
+        view = (QWidget*)view->parent();
+    }
+
+    if (m_docks.contains(view))
+    {
+        DDockWindow *dock = toolWindow(m_docks[view]);
+        dock->raiseWidget(view);
+    }
+    else if (m_widgets.contains(view) && m_widgetTabs.contains(view))
+        m_widgetTabs[view]->showPage(view);
+}
+
+void Kyzis::lowerView(QWidget * /*view*/) {
+    //nothing to do
+}
+
+void Kyzis::gotoNextWindow() {
+    if ((m_activeTabWidget->currentPageIndex() + 1) < m_activeTabWidget->count())
+        m_activeTabWidget->setCurrentPage(m_activeTabWidget->currentPageIndex() + 1);
+    else
+        m_activeTabWidget->setCurrentPage(0);
+}
+
+void Kyzis::gotoPreviousWindow() {
+    if ((m_activeTabWidget->currentPageIndex() - 1) >= 0)
+        m_activeTabWidget->setCurrentPage(m_activeTabWidget->currentPageIndex() - 1);
+    else
+        m_activeTabWidget->setCurrentPage(m_activeTabWidget->count() - 1);
+}
+
+void Kyzis::gotoLastWindow() {
+    //@todo implement
+}
+
+void Kyzis::closeTab() {
+    actionCollection()->action("file_close")->activate();
+}
+
+void Kyzis::setupWindowMenu() {
+    // get the xmlgui created one instead
+    m_windowMenu = qFindChild<KPopupMenu *>(main(), QLatin1String("window"));
+
+    if (!m_windowMenu)
+    {
+        kdDebug() << "Couldn't find the XMLGUI window menu. Creating new." << endl;
+
+        m_windowMenu = new KPopupMenu(main(), "window");
+        menuBar()->insertItem(i18n("&Window"), m_windowMenu);
+    }
+
+    actionCollection()->action("file_close")->plug(m_windowMenu);
+    actionCollection()->action("file_close_all")->plug(m_windowMenu);
+    actionCollection()->action("file_closeother")->plug(m_windowMenu);
+
+    QObject::connect(m_windowMenu, SIGNAL(activated(int)), this, SLOT(openURL(int)));
+    QObject::connect(m_windowMenu, SIGNAL(aboutToShow()), this, SLOT(fillWindowMenu()));
+}
+
+void Kyzis::closeTab(QWidget *w) {
+	//TODO
+/*    const Q3PtrList<KParts::Part> *partlist = PartController::getInstance()->parts();
+    Q3PtrListIterator<KParts::Part> it(*partlist);
+    while (KParts::Part* part = it.current())
+    {
+        QWidget *widget = EditorProxy::getInstance()->topWidgetForPart(part);
+        if (widget && widget == w)
+        {
+            PartController::getInstance()->closePart(part);
+            return;
+        }
+        ++it;
+    }*/
+}
+
+KMainWindow *Kyzis::main() {
+    return this;
 }
 
 #include "kyzis.moc"

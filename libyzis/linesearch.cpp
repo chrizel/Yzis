@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #include "cursor.h"
@@ -23,7 +23,10 @@
 #include "debug.h"
 #include "buffer.h"
 #include "linesearch.h"
+#if QT_VERSION < 0x040000
 #include <qstring.h>
+#else
+#endif
 
 class YZCursor;
 class YZBuffer;
@@ -45,13 +48,13 @@ YZLineSearch::~YZLineSearch() {
 
 YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int times ) {
 	YZCursor cur = mView->getBufferCursor();
-	unsigned int x = cur.x() + 1; // Start search after cursor pos
-	unsigned int y = cur.y();
+	int x = cur.x() + 1; // Start search after cursor pos
+	int y = cur.y();
 	const QString& current = mView->myBuffer()->textline( y );
 	int index = 0;
 	unsigned int nfound = 0;
 	while ( nfound < times && x < current.length() ) {
-		index = current.find( ch, x );
+		index = current.indexOf( ch, x );
 		if ( index < 0 )
 			break;
 		x = index + 1;
@@ -85,7 +88,11 @@ YZCursor YZLineSearch::reverse( const QString& ch, bool& found, unsigned int tim
 	int index = 0;
 	unsigned int nfound = 0;
 	while ( nfound < times && x > 0 ) {
+#if QT_VERSION < 0x040000
 		index = current.findRev( ch, x );
+#else
+		index = current.lastIndexOf( ch, x );
+#endif
 		if ( index < 0 )
 			break;
 		x = index - 1;

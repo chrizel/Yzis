@@ -12,8 +12,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -33,13 +33,11 @@
 #include "session.h"
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <qfile.h>
-#include <qdir.h>
-#include <qregexp.h>
+#include <QDir>
+#include <QFile>
 
-static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
-static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique);
-
+static void lookupPrefix( const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique );
+static void lookupDirectory( const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique );
 
 YzisSyntaxDocument::YzisSyntaxDocument(bool force)
   : QDomDocument()
@@ -49,7 +47,7 @@ YzisSyntaxDocument::YzisSyntaxDocument(bool force)
 
 YzisSyntaxDocument::~YzisSyntaxDocument()
 {
-  for (uint i=0; i < myModeList.size(); i++)
+  for (int i=0; i < myModeList.size(); i++)
     delete myModeList[i];
 }
 
@@ -65,7 +63,7 @@ bool YzisSyntaxDocument::setIdentifier(const QString& identifier)
     // let's open the new file
     QFile f( identifier );
 
-    if ( f.open(IO_ReadOnly) )
+    if ( f.open(QIODevice::ReadOnly) )
     {
       // Let's parse the contets of the xml file
       /* The result of this function should be check for robustness,
@@ -220,7 +218,7 @@ bool YzisSyntaxDocument::getElement (QDomElement &element, const QString &mainGr
   QDomNodeList nodes = documentElement().childNodes();
 
   // Loop over all these child nodes looking for mainGroupName
-  for (unsigned int i=0; i<nodes.count(); i++)
+  for (int i=0; i<nodes.count(); i++)
   {
     QDomElement elem = nodes.item(i).toElement();
     if (elem.tagName() == mainGroupName)
@@ -229,7 +227,7 @@ bool YzisSyntaxDocument::getElement (QDomElement &element, const QString &mainGr
       QDomNodeList subNodes = elem.childNodes();
 
       // ... so now loop looking for config
-      for (unsigned int j=0; j<subNodes.count(); j++)
+      for (int j=0; j<subNodes.count(); j++)
       {
         QDomElement subElem = subNodes.item(j).toElement();
         if (subElem.tagName() == config)
@@ -298,16 +296,16 @@ QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QStrin
       yzDebug()<<"\""<<mainGroup<<"\" found."<<endl;
       QDomNodeList nodelist1 = elem.elementsByTagName("list");
 
-      for (uint l=0; l<nodelist1.count(); l++)
+      for (int l=0; l<nodelist1.count(); l++)
       {
         if (nodelist1.item(l).toElement().attribute("name") == type)
         {
           yzDebug()<<"List with attribute name=\""<<type<<"\" found."<<endl;
           QDomNodeList childlist = nodelist1.item(l).toElement().childNodes();
 
-          for (uint i=0; i<childlist.count(); i++)
+          for (int i=0; i<childlist.count(); i++)
           {
-            QString element = childlist.item(i).toElement().text().stripWhiteSpace();
+            QString element = childlist.item(i).toElement().text().simplified();
             if (element.isEmpty())
               continue;
 #ifndef NDEBUG
@@ -346,7 +344,7 @@ YzisSyntaxDocument::findAllResources( const char *,
 
     if (filter.length())
     {
-       int slash = filter.findRev('/');
+       int slash = filter.lastIndexOf('/');
        if (slash < 0)
 	   filterFile = filter;
        else {
@@ -370,7 +368,7 @@ YzisSyntaxDocument::findAllResources( const char *,
     if (filterFile.isEmpty())
 	filterFile = "*";
 
-    QRegExp regExp(filterFile, true, true);
+    QRegExp regExp(filterFile, Qt::CaseSensitive, QRegExp::Wildcard);
 
     for (QStringList::ConstIterator it = candidates.begin();
          it != candidates.end(); it++)
@@ -470,7 +468,7 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
 
     if (relpath.length())
     {
-       int slash = relpath.find('/');
+       int slash = relpath.indexOf('/');
        if (slash < 0)
 	   rest = relpath.left(relpath.length() - 1);
        else {
@@ -485,7 +483,7 @@ static void lookupPrefix(const QString& prefix, const QString& relpath, const QS
 
     if (path.contains('*') || path.contains('?')) {
 
-	QRegExp pathExp(path, true, true);
+	QRegExp pathExp(path, Qt::CaseSensitive, QRegExp::Wildcard);
 	DIR *dp = opendir( QFile::encodeName(prefix) );
 	if (!dp) {
 	    return;
@@ -548,7 +546,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
   // Let's get a list of all the xml files for hl
   QStringList list = findAllResources("data",QString( PREFIX ) + "/share/yzis/syntax/*.xml",false,true);
-  list += findAllResources("data", QDir::homeDirPath() + "/.yzis/syntax/*.xml", false, true);
+  list += findAllResources("data", QDir::homePath() + "/.yzis/syntax/*.xml", false, true);
 
   // Let's iterate through the list and build the Mode List
   QStringList::Iterator it = list.begin(), end = list.end();
@@ -571,8 +569,8 @@ void YzisSyntaxDocument::setupModeList (bool force)
       // Let's make a new YzisSyntaxModeListItem to instert in myModeList from the information in katesyntax..rc
       YzisSyntaxModeListItem *mli=new YzisSyntaxModeListItem;
       mli->name       = config->readQStringEntry("name");
-      //mli->nameTranslated = i18n("Language",mli->name.utf8());
-      mli->section    = config->readQStringEntry("section").utf8();
+      mli->nameTranslated = _(mli->name.toUtf8());
+      mli->section    = config->readQStringEntry("section").toUtf8();
       mli->mimetype   = config->readQStringEntry("mimetype");
       mli->extension  = config->readQStringEntry("extension");
       mli->version    = config->readQStringEntry("version");
@@ -593,7 +591,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
       // We're forced to read the xml files or the mode doesn't exist in the katesyntax...rc
       QFile f(*it);
 
-      if (f.open(IO_ReadOnly))
+      if (f.open(QIODevice::ReadOnly))
       {
         // Ok we opened the file, let's read the contents and close the file
         /* the return of setContent should be checked because a false return shows a parsing error */
@@ -646,8 +644,8 @@ void YzisSyntaxDocument::setupModeList (bool force)
               config->setIntEntry("lastModified", sbuf.st_mtime);
 
               // Now that the data is in the config file, translate section
-			  mli->section    = "Language Section"; // We need the i18n context for when reading again the config
-              //mli->nameTranslated = i18n("Language",mli->name.utf8());
+			  mli->section    = _( "Language Section"); // We need the i18n context for when reading again the config
+              mli->nameTranslated = _(mli->name.toUtf8());
 
               // Append the new item to the list.
               myModeList.append(mli);
@@ -658,12 +656,12 @@ void YzisSyntaxDocument::setupModeList (bool force)
         {
           YzisSyntaxModeListItem *emli=new YzisSyntaxModeListItem;
 
-          emli->section="Errors!";
+          emli->section=_( "Errors!" );
           emli->mimetype="invalid_file/invalid_file";
           emli->extension="invalid_file.invalid_file";
           emli->version="1.";
           emli->name=QString ("Error: %1").arg(*it); // internal
-          //emli->nameTranslated=i18n("Error: %1").arg(*it); // translated
+          emli->nameTranslated=QString("Error: %1").arg(*it); // translated
           emli->identifier=(*it);
 
           myModeList.append(emli);
@@ -671,6 +669,6 @@ void YzisSyntaxDocument::setupModeList (bool force)
       }
     }
   }
-  config->saveTo( QDir::homeDirPath()+"/.yzis/hl.conf", "HL Cache", "", true );
+  config->saveTo( QDir::homePath()+"/.yzis/hl.conf", "HL Cache", "", true );
 }
 

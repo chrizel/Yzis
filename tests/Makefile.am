@@ -1,2 +1,2 @@
-SUBDIRS = cpp
+SUBDIRS = libyzisrunner
 

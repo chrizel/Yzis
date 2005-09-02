@@ -13,7 +13,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 /**
@@ -28,9 +28,15 @@
 #include "view.h"
 #include "cursor.h"
 #include <ncurses.h>
+#if QT_VERSION < 0x040000
 #include <qstringlist.h>
 #include <qmap.h>
 #include <qnamespace.h>
+#else
+#include <QMap>
+#include <QDataStream>
+#include <QStringList>
+#endif
 
 class NYZSession;
 

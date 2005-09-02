@@ -13,7 +13,6 @@
 
 #include <climits>
 
-#include <kdebug.h>
 #include <qdatastream.h>
 
 #include "debug.h"
@@ -62,11 +61,6 @@ bool operator<(const YZViewId &lhs, const YZViewId &rhs)
 }
 
 YZDebugStream &operator<<( YZDebugStream &lhs, const YZViewId &rhs ) 
-{ 
-	return lhs << rhs.getNumber(); 
-}
-
-kdbgstream &operator<<( kdbgstream &lhs, const YZViewId &rhs ) 
 { 
 	return lhs << rhs.getNumber(); 
 }

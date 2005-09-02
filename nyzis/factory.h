@@ -13,7 +13,7 @@
 
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+    Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #ifndef NYZ_FACTORY_H
@@ -29,7 +29,7 @@
 
 class YZViewId;
 
-class NYZFactory : public QObject, public YZSession
+class NYZFactory : public YZSession
 {
 	Q_OBJECT
 
@@ -37,7 +37,7 @@ public:
 	static NYZFactory *self;
 
 public slots:
-	bool processInput(int);
+	bool processInput( int );
 
 public:
 	/**
@@ -45,7 +45,6 @@ public:
 	 */
 	NYZFactory(const char *session_name = "default_nyzis_session", const QString& keys = QString::null );
 	virtual ~NYZFactory( );
-
 
 	/*
 	 * YZSession interface :

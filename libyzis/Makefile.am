@@ -1,7 +1,5 @@
-SUBDIRS = . libqtyzis
-
-INCLUDES = $(YZIS_INCLUDES) $(LUA_INCLUDES) $(LIBMAGIC_INCLUDES) $(LIBGETTEXT_INCLUDES) -I$(top_srcdir)/libyzis -I$(top_builddir)/libyzis
-noinst_LTLIBRARIES = libyzis.la
+INCLUDES = $(YZIS_INCLUDES) $(LUA_INCLUDES) $(LIBMAGIC_INCLUDES) $(LIBGETTEXT_INCLUDES) -I$(top_srcdir)/libyzis -I$(top_builddir)/libyzis $(all_includes)
+lib_LTLIBRARIES = libyzis.la
 
 libyzis_la_SOURCES = session.cpp mode.cpp mode_command.cpp mode_search.cpp \
 		mode_visual.cpp mode_ex.cpp mode_insert.cpp view.cpp search.cpp mark.cpp action.cpp \
@@ -10,7 +8,10 @@ libyzis_la_SOURCES = session.cpp mode.cpp mode_command.cpp mode_search.cpp \
 		schema.cpp viewcursor.cpp printer.cpp mapping.cpp events.cpp syntaxdocument.cpp \
 		syntaxhighlight.cpp attribute.cpp yzisinfo.cpp yzisinfostartpositionrecord.cpp \
 		yzisinfojumplistrecord.cpp readtags.c tags_interface.cpp tags_stack.cpp mode_complete.cpp \
-		viewid.cpp history.cpp
+		viewid.cpp history.cpp folding.cpp
+libyzis_la_LIBADD = $(LIB_QT) $(all_libraries) $(LUA_LIBS) $(PS_LIBS) $(LIBMAGIC_LIBS) $(LIBGETTEXT_LIBS) -lQtXml_debug
+libyzis_la_LDFLAGS = -version-info 0:0:0 -no-undefined
+
 libyzis_la_PCH = AUTO
 
 libyzismimedir = $(prefix)/share/yzis

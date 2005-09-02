@@ -13,24 +13,21 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #ifndef YZ_EX_LUA
 #define YZ_EX_LUA
 
-#include <qobject.h>
+#include <QString>
 extern "C" {
 #include <lua.h>
-#include <lauxlib.h>
 }
 
 class YZView;
 
-class YZExLua : public QObject {
-	Q_OBJECT
-
+class YZExLua {
 	public:
 		/** Get the pointer to the singleton YZExLua */
 		static YZExLua * instance();
@@ -47,6 +44,11 @@ class YZExLua : public QObject {
 		 * Execute a lua command
 		 */
 		QString lua(YZView *view, const QString& args);
+
+		/**
+		 * Cleanup the stack
+		 */
+		void cleanup();
 
 		/** Execute the given lua code */
 		int execInLua( const QString & luacode );
@@ -334,7 +336,11 @@ class YZExLua : public QObject {
 		 * Returns the current view mode
 		 */
 		static int mode(lua_State *L);
-
+		
+		/**
+		 * Create a new buffer/view for the given file
+		 */
+		 static int edit(lua_State *L);
 
 		/** Register the regexp functions to lua */
 		void registerRegexp(lua_State *L);
@@ -439,6 +445,10 @@ class YZExLua : public QObject {
 		/** Private constructor for a singleton */
 		YZExLua();
 		static YZExLua * _instance;
+		static bool checkFunctionArguments(lua_State*L, 
+					int argNb,
+					const char * functionName, 
+					const char * functionArgDesc );
 };
 
 #endif

@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #ifndef YZIS_H
@@ -39,17 +39,18 @@
 
 //let's use the patch number since it exists ...
 #define VERSION_CHAR	"M3++"
+#if QT_VERSION < 0x040000
 #define VERSION_CHAR_LONG "Yzis "VERSION_CHAR" for Qt3"
+#else
+#define VERSION_CHAR_LONG "Yzis "VERSION_CHAR" for Qt4"
+#endif
 //dont change these 2 and dont use them in the code
 #define VERSION_CHAR_STATE1 "(stable release)"
 #define VERSION_CHAR_STATE2 "(development release - Use for testing only)"
 #define VERSION_CHAR_STATE3 "(preview release - Use for testing only)"
 //and change/use this one in the code
 #define VERSION_CHAR_ST VERSION_CHAR_STATE2
-#define VERSION_CHAR_DATE "SVN>2005-06-25"
-
-#define qMax QMAX
-#define qMin QMIN
+#define VERSION_CHAR_DATE "SVN>2005-08-28"
 
 #define _(a) QString::fromUtf8(gettext(a))
 

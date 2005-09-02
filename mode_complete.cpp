@@ -15,8 +15,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -80,7 +80,7 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	mPrefix = list[0];
 	mCompletionEnd = cur;
 	
-	mProposedCompletions = mPrefix;
+	mProposedCompletions = QStringList( mPrefix );
 	mCurrentProposal = 0;
 	mLastMatch = "";
 	
@@ -88,7 +88,7 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	
 	QStringList completeOption = YZSession::me->getOptions()->readListOption("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i");
 	
-	for ( unsigned int i = 0; i < completeOption.size(); ++i ) {
+	for ( int i = 0; i < completeOption.size(); ++i ) {
 		QString option = completeOption[ i ];
 
 		if ( option == "."  ) {
@@ -109,7 +109,7 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 void YZModeCompletion::doComplete( YZView* view, bool forward ) {
 	// move iterator
 	// first do bounds check.  Do wrap around.
-	if ( forward && mCurrentProposal == mProposedCompletions.size() - 1 ) {
+	if ( forward && (int)mCurrentProposal == mProposedCompletions.size() - 1 ) {
 		mCurrentProposal = 0;
 	} else if ( !forward && mCurrentProposal == 0 ) {
 		mCurrentProposal = mProposedCompletions.size() - 1;
@@ -256,7 +256,7 @@ void YZModeCompletion::completeFromTags( QStringList &proposed )
 	QStringList tags;
 	tagStartsWith( mPrefix, tags );
 	
-	for ( unsigned int i = 0; i < tags.size(); ++i ) {
+	for ( int i = 0; i < tags.size(); ++i ) {
 		if ( proposed.contains( tags[i] ) == 0 ) {
 			proposed.push_back( tags[i] );
 		}
@@ -289,7 +289,7 @@ void YZModeCompletion::completeFromCurrentBuffer( const YZCursor &cursor, bool f
 	
 	// use the above fact to locate where in the cursors list
 	// we should start scanning from
-	unsigned int startidx = cursorlist.findIndex( cursor );
+	unsigned int startidx = cursorlist.indexOf( cursor );
 
 	int delta = forward ? 1 : -1; // direction to search through the list
 	
@@ -297,8 +297,8 @@ void YZModeCompletion::completeFromCurrentBuffer( const YZCursor &cursor, bool f
 	// following startidx and wrapping all the way around
 	// we loop until we've added matches.size() - 1 elements, because
 	// we don't want to add the element at the cursor to the list
-	for ( unsigned int count = 0, i = ( startidx + delta ) % matches.size();
-			count < matches.size() - 1; 
+	for ( int count = 0, i = ( startidx + delta ) % matches.size();
+			count < matches.size() - 1 && i>=0; 
 			++count, i = (i + delta) % matches.size() ) {
 		if ( !proposed.contains( matches[ i ] ) ) {
 			proposed.push_back( matches[ i ] );

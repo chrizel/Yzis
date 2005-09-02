@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -26,7 +26,11 @@
 #define YZ_QTPRINTER_H
 
 #include "view.h"
+#if QT_VERSION < 0x040000
 #include <qprinter.h>
+#else
+#include <QPrinter>
+#endif
 
 class YZView;
 

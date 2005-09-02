@@ -33,8 +33,7 @@ public:
 	 * this should be the most commonly used access method,
 	 * not getEntryByIdx()
 	 */
-	QString &getEntry();
-	const QString &getEntry() const;
+	const QString getEntry() const;
 	
 	/**
 	 * move back in time one command

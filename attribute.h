@@ -12,8 +12,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 /**
  * This file was originally taken from Kate, KDE editor
@@ -27,8 +27,13 @@
 #define __YZIS_ATTRIBUTE_H__
 
 #include <qglobal.h>
+#if QT_VERSION < 0x040000
 #include <qcolor.h>
 #include <qfont.h>
+#else
+#include <QFont>
+#include <QColor>
+#endif
 
 /**
  * The Attribute class incorporates all text decorations supported by Yzis.

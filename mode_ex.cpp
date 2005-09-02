@@ -18,8 +18,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -29,6 +29,7 @@
 #include "portability.h"
 #include "mode_ex.h"
 #include "buffer.h"
+#include "folding.h"
 #include "registers.h"
 #include "session.h"
 #include "swapfile.h"
@@ -47,6 +48,8 @@
 #include <qobject.h>
 #include <qfileinfo.h>
 #include <qdir.h>
+
+#include <QDir>
 
 
 YZExRange::YZExRange( const QString& regexp, ExRangeMethod pm ) {
@@ -97,7 +100,7 @@ void YZModeEx::leave( YZView* view ) {
 	YZSession::me->setFocusMainWindow();
 }
 cmd_state YZModeEx::execCommand( YZView* view, const QString& key ) {
-	yzDebug() << "YZModeEx::execCommand " << key << endl;
+//	yzDebug() << "YZModeEx::execCommand " << key << endl;
 	cmd_state ret = CMD_OK;
 	if ( key == "<ENTER>" ) {
 		if( view->getCommandLineText().isEmpty()) {
@@ -194,6 +197,9 @@ void YZModeEx::initPool() {
 	commands.push_back( new YZExCommand( "tn(ext)?", &YZModeEx::tagnext, QStringList("tnext") ));
 	commands.push_back( new YZExCommand( "tp(revious)?", &YZModeEx::tagprevious, QStringList("tprevious") ));
 	commands.push_back( new YZExCommand( "ret(ab)?", &YZModeEx::retab, QStringList("retab") ));
+	
+	// folding
+	commands.push_back( new YZExCommand( "fo(ld)?", &YZModeEx::foldCreate, QStringList("fold") ));
 }
 
 QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
@@ -211,7 +217,7 @@ QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, b
 			if ( s_add.length() > 0 ) { // a range can be followed by +/-nb
 				int add = 1;
 				if ( s_add.length() > 1 ) add = s_add.mid( 1 ).toUInt();
-				if ( s_add[ 0 ] == '-' ) add = add * -1;
+				if ( s_add[ 0 ] == '-' ) add = -add;
 				*range += add;
 			}
 			_input = reg.cap( nc );
@@ -226,7 +232,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 	bool matched;
 	bool commandIsValid = false;
 	int from, to, current;
-	QString _input = inputs.stripWhiteSpace();
+	QString _input = inputs.trimmed();
 	yzDebug() << "ExCommand : " << _input << endl;
 	_input = _input.replace( QRegExp( "^%" ), "1,$" );
 	// range
@@ -489,9 +495,8 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 		args.view->mySession()->popupMessage( _( "Please specify a filename" ) );
 		return CMD_ERROR;
 	}
-
 	QFileInfo fi ( args.arg );
-	QString path = fi.absFilePath();
+	QString path = fi.absoluteFilePath();
 	YZBuffer *b = YZSession::me->findBuffer(path);
 	YZView *v = YZSession::me->findViewByBuffer(b);
 	if ( b && v ) {
@@ -522,12 +527,12 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 	if ( args.view ) buff = args.view->myBuffer();
 	bool matched;
 	bool success = YZSession::me->getOptions()->setOptionFromString( &matched, 
-	args.arg.simplifyWhiteSpace()
+	args.arg.simplified()
 	, user_scope, buff, args.view );
 	
 	if ( ! matched ) {
 		ret = CMD_ERROR;
-		YZSession::me->popupMessage( QString(_("Invalid option name : %1")).arg(args.arg.simplifyWhiteSpace()) );
+		YZSession::me->popupMessage( QString(_("Invalid option name : %1")).arg(args.arg.simplified()) );
 	} else if ( ! success ) {
 		ret = CMD_ERROR;
 		YZSession::me->popupMessage( _("Bad value for option given") );
@@ -536,15 +541,15 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::mkyzisrc ( const YZExCommandArgs& args ) {
-	YZSession::me->getOptions()->saveTo( QDir::currentDirPath() + "/yzis.conf", "", "HL Cache", args.force );
+	YZSession::me->getOptions()->saveTo( QDir::currentPath() + "/yzis.conf", "", "HL Cache", args.force );
 	return CMD_OK;
 }
 
 cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
-	unsigned int idx = args.input.find("substitute");
+	unsigned int idx = args.input.indexOf("substitute");
 	unsigned int len = 10;
 	if (static_cast<unsigned int>(-1)==idx) {
-		idx = args.input.find("s");
+		idx = args.input.indexOf("s");
 		len = 1;
 	}
 	unsigned int idxb,idxc;
@@ -552,9 +557,9 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 	QChar c;
 	while ((c = args.input.at(tidx)).isSpace())
 		tidx++;
-	idx = args.input.find(c, tidx);
-	idxb = args.input.find(c, idx+1);
-	idxc = args.input.find(c, idxb+1);
+	idx = args.input.indexOf(c, tidx);
+	idxb = args.input.indexOf(c, idx+1);
+	idxc = args.input.indexOf(c, idxb+1);
 	QString search = args.input.mid( idx+1, idxb-idx-1 );
 	QString replace = args.input.mid( idxb+1, idxc-idxb-1 );
 	QString options = args.input.mid( idxc+1 );
@@ -564,7 +569,7 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 	if ( options.contains( "i" ) && !search.endsWith( "\\c" ) ) {
 		search.append("\\c");
 	}
-	unsigned int lastLine;
+	unsigned int lastLine=0;
 	YZCursor start( 0, args.fromLine );
 	YZSession::me->search()->forward( args.view->myBuffer(), search, &found, start );
 	if ( found ) {
@@ -574,11 +579,11 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 				lastLine = i;
 			}
 		}
-	}
-	if ( needsUpdate ) {
-		args.view->myBuffer()->updateAllViews();
-		args.view->gotoxy( 0, lastLine );
-		args.view->moveToFirstNonBlankOfLine();
+		if ( needsUpdate ) {
+			args.view->myBuffer()->updateAllViews();
+			args.view->gotoxy( 0, lastLine );
+			args.view->moveToFirstNonBlankOfLine();
+		}
 	}
 
 	return CMD_OK;
@@ -591,7 +596,7 @@ cmd_state YZModeEx::hardcopy( const YZExCommandArgs& args ) {
 	}
 	QString path = args.arg;
 	QFileInfo fi ( path );
-	path = fi.absFilePath( );
+	path = fi.absoluteFilePath( );
 	args.view->printToFile( path );
 	return CMD_OK;
 }
@@ -670,7 +675,7 @@ cmd_state YZModeEx::genericUnmap ( const YZExCommandArgs& args, int type) {
 			break;
 	}
 	if (args.arg.startsWith("<CTRL>")) {
-		mModifierKeys.remove(args.arg);
+		mModifierKeys.removeAll(args.arg);
 		YZViewList views = YZSession::me->getAllViews();
 		for ( YZViewList::const_iterator itr = views.begin(); itr != views.end(); ++itr ) {
 			YZView *v = *itr;
@@ -808,8 +813,8 @@ cmd_state YZModeEx::enew( const YZExCommandArgs& ) {
 
 cmd_state YZModeEx::registers( const YZExCommandArgs& ) {
 	QString infoMessage(_("Registers:\n")); // will contain register-value table
-	QValueList<QChar> keys = YZSession::me->getRegisters();
-	QValueList<QChar>::ConstIterator it = keys.begin(), end = keys.end();
+	QList<QChar> keys = YZSession::me->getRegisters();
+	QList<QChar>::ConstIterator it = keys.begin(), end = keys.end();
 	QString regContents;
 	for( ; it != end ; ++it )
 	{
@@ -841,16 +846,16 @@ cmd_state YZModeEx::syntax( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 // :highlight Defaults Comment fg= selfg= bg= selbg= italic nobold underline strikeout
-	QStringList list = QStringList::split(" ", args.arg);
+	QStringList list = args.arg.split(" ");
 	QStringList::Iterator it = list.begin(), end = list.end();
 	yzDebug() << list << endl;
 	if (list.count() < 3) return CMD_ERROR; //at least 3 parameters...
 	QString style = list[0];
 	QString type = list[1];
-	list.remove(it++); list.remove(it++);
+	list.erase(it++); list.erase(it++);
 	if (!list[0].contains("=") && !list[0].endsWith("bold") && !list[0].endsWith("italic") && !list[0].endsWith("underline") && !list[0].endsWith("strikeout")) {
 		type += " " + list[0];
-		list.remove(it++);
+		list.erase(it++);
 	}
 
 	//get the current settings for this option
@@ -858,7 +863,7 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 	if ( style == "Defaults" || style == "Default" ) 
 		style = "Default Item Styles - Schema ";
 	else { 
-		style = "Highlighting " + style.simplifyWhiteSpace() + " - Schema ";
+		style = "Highlighting " + style.trimmed() + " - Schema ";
 		idx++;
 	}
 	style += YZSession::me->schemaManager()->name(0); //XXX make it use the 'current' schema
@@ -922,6 +927,11 @@ cmd_state YZModeEx::split( const YZExCommandArgs& args ) {
 	return CMD_OK;
 }
 
+cmd_state YZModeEx::foldCreate( const YZExCommandArgs& args ) {
+	args.view->folds()->create( args.fromLine, args.toLine );
+	return CMD_OK;
+}
+
 cmd_state YZModeEx::cd( const YZExCommandArgs& args ) {
         QString targetDir = YZBuffer::tildeExpand(args.arg);
 	if ( QDir::setCurrent(targetDir) ) {
@@ -935,7 +945,7 @@ cmd_state YZModeEx::cd( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::pwd( const YZExCommandArgs& args ) {
-	args.view->mySession()->popupMessage( _( QDir::current().absPath() ) );
+	args.view->mySession()->popupMessage( QDir::current().absolutePath().toUtf8().data() );
 	return CMD_OK;
 }
 
@@ -985,7 +995,7 @@ cmd_state YZModeEx::retab( const YZExCommandArgs& args ) {
 	if (args.arg.length() > 0) { // we got an argument
 		if (args.arg.toInt() > 0) {
 			// set the value of 'tabstop' to the argument given
-			YZSession::me->getOptions()->setOptionFromString( args.arg.simplifyWhiteSpace().insert(0, "tabstop="),
+			YZSession::me->getOptions()->setOptionFromString( args.arg.trimmed().insert(0, "tabstop="),
 					local_scope, args.view->myBuffer(), args.view );
 			tabstop = args.arg.toInt();
 		}
@@ -1054,7 +1064,7 @@ cmd_state YZModeEx::retab( const YZExCommandArgs& args ) {
 				gotTab = false;
 				numSpaces = 0;
 			}
-			if (oldLine[col] == QChar::null)
+			if (oldLine[col].isNull())
 				break;
 
 			if (oldLine[col] == '\t')

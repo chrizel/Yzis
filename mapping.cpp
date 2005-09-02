@@ -13,8 +13,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -47,15 +47,16 @@ bool YZMapping::applyMappings( QString& text, QMap<QString,QString>& mappings ) 
 	bool match = false;
 	for (; it != end && !match ; ++it) {
 		match = text.contains( it.key() );
-		if ( it.data().startsWith("<Script>") && match ) {
+		if ( it.value().startsWith("<Script>") && match ) {
 			char *result;
-			YZExLua::instance()->exe( (const char*)it.data().mid(8, it.data().length()-10), "s>s",  (const char*)it.key(), &result);
+			QByteArray t = it.key().toUtf8();
+			YZExLua::instance()->exe( it.value().mid(8, it.value().length()-10), "s>s",  t.data(), &result);
 			text.replace(it.key(), result);
-		} else if ( it.data().startsWith("<Noremap>") && match ) {
-			text.replace(it.key(), (const char*)it.data().right(it.data().length()-9));
+		} else if ( it.value().startsWith("<Noremap>") && match ) {
+			text.replace(it.key(), it.value().right(it.value().length()-9));
 			mNoremap = true;
 		} else if ( match ){
-			text.replace(it.key(), it.data());
+			text.replace(it.key(), it.value());
 		} else {
 			pendingMapp = pendingMapp || it.key().startsWith(text);
 		}

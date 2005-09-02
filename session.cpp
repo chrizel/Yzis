@@ -15,8 +15,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /*
@@ -37,8 +37,13 @@
 #include "yzisinfo.h"
 #include "ex_lua.h"
 
+#if QT_VERSION < 0x040000
 #include <qapplication.h>
 #include <qdir.h>
+#else
+#include <QApplication>
+#include <QDir>
+#endif
 
 #include "mode_command.h"
 #include "mode_complete.h"
@@ -99,12 +104,12 @@ void YZSession::initModes() {
 	mModes[ YZMode::MODE_COMPLETION ] = new YZModeCompletion();
 	YZModeMap::Iterator it;
 	for( it = mModes.begin(); it != mModes.end(); ++it )
-		it.data()->init();
+		it.value()->init();
 }
 void YZSession::endModes() {
 	YZModeMap::Iterator it;
 	for( it = mModes.begin(); it != mModes.end(); ++it )
-		delete it.data();
+		delete it.value();
 	mModes.clear();
 }
 YZModeMap YZSession::getModes() {
@@ -124,10 +129,10 @@ YZYzisinfo * YZSession::getYzisinfo()
 
 void YZSession::guiStarted() {
 	//read init files
-	if (QFile::exists(QDir::rootDirPath() + "/etc/yzis/init.lua"))
-		YZExLua::instance()->source( NULL, QDir::rootDirPath() + "/etc/yzis/init.lua" );
-	if (QFile::exists(QDir::homeDirPath() + "/.yzis/init.lua"))
-		YZExLua::instance()->source( NULL, QDir::homeDirPath() + "/.yzis/init.lua" );
+	if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
+		YZExLua::instance()->source( NULL, QDir::rootPath() + "/etc/yzis/init.lua" );
+	if (QFile::exists(QDir::homePath() + "/.yzis/init.lua"))
+		YZExLua::instance()->source( NULL, QDir::homePath() + "/.yzis/init.lua" );
 }
 
 void YZSession::addBuffer( YZBuffer *b ) {
@@ -232,9 +237,10 @@ YZView* YZSession::nextView() {
 YZBuffer* YZSession::findBuffer( const QString& path ) {
 	YZBufferList::Iterator it = mBufferList.begin();
 	YZBufferList::Iterator end = mBufferList.end();
+	QFileInfo fi (path);
 	for ( ; it != end; ++it ) {
 		YZBuffer *b = ( *it );
-		if ( b->fileName() == path ) {
+		if ( b->fileName() == fi.absoluteFilePath()) {
 			return b;
 		}
 	}
@@ -326,13 +332,11 @@ const YZCursor * YZSession::previousJumpPosition() {
 	return mYzisinfo->previousJumpPosition();
 }
 
-YZTagStack &YZSession::getTagStack()
-{
+YZTagStack &YZSession::getTagStack() {
 	return *mTagStack;
 }
 
-YZView *YZSession::createView( YZBuffer *buffer )
-{
+YZView *YZSession::createView( YZBuffer *buffer ) {
 	YZView *view = doCreateView( buffer );
 	
 	addView( view );
@@ -340,8 +344,7 @@ YZView *YZSession::createView( YZBuffer *buffer )
 	return view;
 }
 
-void YZSession::deleteView( const YZViewId &id /*=YZViewId::invalid*/ )
-{
+void YZSession::deleteView( const YZViewId &id /*=YZViewId::invalid*/ ) {
 	// Guardian, if we're deleting the last view, close the app
 	if ( mViewList.size() == 1 ) {
 		exitRequest( 0 );
@@ -364,13 +367,11 @@ void YZSession::deleteView( const YZViewId &id /*=YZViewId::invalid*/ )
 	removeView( view );
 }
 
-void YZSession::addView( YZView *view )
-{
+void YZSession::addView( YZView *view ) {
 	mViewList.push_back( view );
 }
 
-void YZSession::removeView( YZView *view )
-{
+void YZSession::removeView( YZView *view ) {
 	mViewList.remove( view );
 }
 		
@@ -390,38 +391,31 @@ QStringList YZSession::getListOption( const QString& option ) {
 	return YZSession::me->getOptions()->readListOption( option );
 }
 
-void YZSession::eventConnect( const QString& event, const QString& function )
-{
+void YZSession::eventConnect( const QString& event, const QString& function ) {
 	events->connect( event, function );
 }
 
-QStringList YZSession::eventCall( const QString& event, YZView *view /*=NULL*/ )
-{
+QStringList YZSession::eventCall( const QString& event, YZView *view /*=NULL*/ ) {
 	return events->exec( event, view );
 }
 
-YZInternalOptionPool *YZSession::getOptions()
-{
+YZInternalOptionPool *YZSession::getOptions() {
 	return mOptions;
 }
 
-void YZSession::setRegister( QChar r, const QStringList& value )
-{
+void YZSession::setRegister( QChar r, const QStringList& value ) {
 	mRegisters->setRegister( r, value );
 }
 
-QStringList& YZSession::getRegister ( QChar r )
-{
+QStringList& YZSession::getRegister ( QChar r ) {
 	return mRegisters->getRegister( r );
 }
 
-QValueList<QChar> YZSession::getRegisters() 
-{ 
+QList<QChar> YZSession::getRegisters() { 
 	return mRegisters->keys(); 
 }
 
-const YZViewList YZSession::getAllViews() const
-{
+const YZViewList YZSession::getAllViews() const {
 	YZViewList result;
 	
 	for ( YZBufferList::const_iterator itr = mBufferList.begin(); itr != mBufferList.end(); ++itr ) {
@@ -436,9 +430,14 @@ const YZViewList YZSession::getAllViews() const
 	return result;
 }
 
-YZBuffer *YZSession::createBuffer( const QString &path /*=QString::null*/ )
-{
-	YZBuffer *buffer = doCreateBuffer();
+YZBuffer *YZSession::createBuffer( const QString &path /*=QString::null*/ ) {
+	//make sure we don't have a buffer of this path yet
+	YZBuffer *buffer = findBuffer(path);
+	if (buffer) { //already open !
+		return buffer;
+	}
+	
+	buffer = doCreateBuffer();
 	buffer->setState( YZBuffer::ACTIVE );
 	
 	if ( path != QString::null ) {
@@ -452,13 +451,24 @@ YZBuffer *YZSession::createBuffer( const QString &path /*=QString::null*/ )
 	return buffer;
 }
 
-YZView *YZSession::createBufferAndView( const QString &path /*=QString::null*/ )
-{
-	YZBuffer *buffer = createBuffer( path );
+YZView *YZSession::createBufferAndView( const QString &path /*=QString::null*/ ) {
+	YZBuffer *buffer = findBuffer(path);
+	bool alreadyopen = true;
+	if (!buffer) {
+		alreadyopen=false;
+		buffer = createBuffer( path );
+	}
 	
-	YZView *view = createView( buffer );
+	YZView *view;
+	if (!alreadyopen) {
+		view = createView( buffer );
+	} else {
+		view = findViewByBuffer(buffer);
+	}
 	setCurrentView( view );
 	view->refreshScreen();
 	
 	return view;
 }
+
+#include "session.moc"

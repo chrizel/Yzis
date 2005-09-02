@@ -12,8 +12,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /* This file was taken from the Kate editor which is part of KDE
@@ -55,8 +55,8 @@ void YzisSchemaManager::update (bool /*readfromfile*/)
  // m_schemas = m_config.groupList();
 //  m_schemas.sort ();
 
-  m_schemas.remove (printingSchema());
-  m_schemas.remove (normalSchema());
+  m_schemas.removeAll (printingSchema());
+  m_schemas.removeAll (normalSchema());
   m_schemas.prepend (printingSchema());
   m_schemas.prepend (normalSchema());
 }
@@ -67,7 +67,7 @@ void YzisSchemaManager::update (bool /*readfromfile*/)
 //
 QString YzisSchemaManager::schema (uint number)
 {
-  if ((number>1) && (number < m_schemas.count()))
+  if ((number>1) && (number < ( uint )m_schemas.count()))
     return m_schemas[number];
   else if (number == 1)
     return printingSchema();
@@ -85,7 +85,7 @@ void YzisSchemaManager::addSchema (const QString &/*t*/)
 
 void YzisSchemaManager::removeSchema (uint number)
 {
-  if (number >= m_schemas.count())
+  if (number >= ( uint )m_schemas.count())
     return;
 
   if (number < 2)
@@ -98,7 +98,7 @@ void YzisSchemaManager::removeSchema (uint number)
 
 bool YzisSchemaManager::validSchema (uint number)
 {
-  if (number < m_schemas.count())
+  if (number < ( uint )m_schemas.count())
     return true;
 
   return false;
@@ -113,7 +113,7 @@ uint YzisSchemaManager::number (const QString &name)
     return 1;
 
   int i;
-  if ((i = m_schemas.findIndex(name)) > -1)
+  if ((i = m_schemas.indexOf(name)) > -1)
     return i;
 
   return 0;
@@ -121,7 +121,7 @@ uint YzisSchemaManager::number (const QString &name)
 
 QString YzisSchemaManager::name (uint number)
 {
-  if ((number>1) && (number < m_schemas.count()))
+  if ((number>1) && (number < ( uint )m_schemas.count()))
     return m_schemas[number];
   else if (number == 1)
     return printingSchema();

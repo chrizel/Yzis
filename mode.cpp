@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -211,13 +211,21 @@ void YZModePool::registerModifierKeys() {
 	QStringList mModifierKeys;
 	YZModeMap::Iterator it;
 	for( it = mModes.begin(); it != mModes.end(); ++it ) {
+#if QT_VERSION < 0x040000
 		mModifierKeys += it.data()->modifierKeys();
+#else
+		mModifierKeys += it.value()->modifierKeys();
+#endif
 	}
 	mModifierKeys.sort();
 	unsigned int size = mModifierKeys.size();
 	QString last, current;
 	for ( unsigned int i = 0; i < size; i++ ) {
+#if QT_VERSION < 0x040000
 		current = *mModifierKeys.at(i);
+#else
+		current = mModifierKeys.at(i);
+#endif
 		if ( current != last ) {
 			mView->registerModifierKeys( current );
 			last = current;
@@ -233,7 +241,11 @@ void YZModePool::registerModifierKeys() {
 	unsigned int size = keys.size();
 	yzDebug() << "register keys " << keys << endl;
 	for( unsigned i = 0; i < size; i++ )
+#if QT_VERSION < 0x040000
 		mView->registerModifierKeys( (*keys.at(i)) );
+#else
+		mView->registerModifierKeys( keys.at(i) );
+#endif
 	stack.front()->setRegistered( true );
 #endif
 }
@@ -244,7 +256,11 @@ void YZModePool::unregisterModifierKeys() {
 	unsigned int size = keys.size();
 	yzDebug() << "unregister keys " << keys << endl;
 	for( unsigned i = 0; i < size; i++ )
+#if QT_VERSION < 0x040000
 		mView->unregisterModifierKeys( (*keys.at(i)) );
+#else
+		mView->unregisterModifierKeys( keys.at(i) );
+#endif
 	stack.front()->setRegistered( false );
 }
 
@@ -284,7 +300,11 @@ void YZModePool::pop( modeType mode ) {
 	mView->commitUndoItem();
 	mView->purgeInputBuffer();
 	// do not leave two times the same mode
+#if QT_VERSION < 0x040000
 	QValueList<YZMode*> leaved;
+#else
+	QList<YZMode*> leaved;
+#endif
 	while ( stack.size() > 0 && stack.front()->type() != mode ) {
 		if ( ! leaved.contains( stack.front() ) ) {
 			yzDebug() << "leaving mode " << stack.front()->toString() << endl;

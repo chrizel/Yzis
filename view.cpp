@@ -18,8 +18,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -28,8 +28,8 @@
 
 #include "view.h"
 
-#include <qkeysequence.h>
-#include <qclipboard.h>
+#include <QApplication>
+#include <QClipboard>
 #include "portability.h"
 #include <cstdlib>
 #include <ctype.h>
@@ -51,6 +51,7 @@
 #include "session.h"
 #include "linesearch.h"
 #include "mapping.h"
+#include "folding.h"
 
 #define STICKY_COL_ENDLINE -1
 
@@ -87,6 +88,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines)
 	scrollCursor = new YZViewCursor( this );
 	/* start of visual mode */
 	mVisualCursor = new YZViewCursor( this );
+
+	mFoldPool = new YZFoldPool( this );
 
 	origPos = new YZCursor();
 	beginChanges = new YZCursor();
@@ -146,6 +149,7 @@ YZView::~YZView() {
 	delete beginChanges;
 	delete mLineSearch;
 	delete mModePool;
+	delete mFoldPool;
 }
 
 void YZView::setupKeys() {
@@ -189,7 +193,7 @@ void YZView::sendMultipleKey(const QString& _keys) {
 	}
 	QString keys = _keys;
 	yzDebug() << "YZView::sendMultipleKey " << keys << endl;
-	for ( unsigned int i = 0 ; i < keys.length(); ) {
+	for ( int i = 0 ; i < keys.length(); ) {
 		QString key = keys.mid( i );
 		yzDebug() << "Handling key : " << key << endl;
 		//exception : in SEARCH, SEARCH_BACKWARD and EX mode we dont send keys immediately
@@ -280,11 +284,12 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
 
 	if ( mRegs.count() > 0 ) {
-		QValueList<QChar>::iterator end = mRegs.end();
-		for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
-			QStringList list;
-		   	list << YZSession::me->getRegister( *it )[ 0 ] + modifiers + _key;
-			YZSession::me->setRegister( *it, list);
+		for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
+			QString newReg = modifiers + _key;
+			QStringList curReg = YZSession::me->getRegister( mRegs.at(ab) );
+			if ( curReg.size() > 0 )
+				newReg.prepend( curReg[ 0 ] );
+			YZSession::me->setRegister( mRegs.at(ab), QStringList( newReg ) );
 		}
 	}
 
@@ -298,7 +303,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	}
 
 	if ( modifiers.contains ("<SHIFT>")) {//usefull ?
-		key = key.upper();
+		key = key.toUpper();
 		modifiers.remove( "<SHIFT>" );
 	}
 
@@ -316,7 +321,7 @@ YZSelectionMap YZView::visualSelection() {
 void YZView::reindent( unsigned int X, unsigned int Y ) {
 	yzDebug() << "Reindent " << endl;
 	QRegExp rx("^(\\t*\\s*\\t*\\s*).*$"); //regexp to get all tabs and spaces
-	QString currentLine = mBuffer->textline( Y ).stripWhiteSpace();
+	QString currentLine = mBuffer->textline( Y ).trimmed();
 	bool found = false;
 	YZCursor cur( X, Y );
 	YZCursor match = mBuffer->action()->match(this, cur, &found);
@@ -344,7 +349,7 @@ void YZView::indent() {
 		return; //Shouldn't happen
 	}
 	QString indentString = rxLeadingWhiteSpace.cap( 1 );
-	if ( mainCursor->bufferX() == currentLine.length() && currentLine.stripWhiteSpace().endsWith( indentMarker ) ) {
+	if ( mainCursor->bufferX() == ( uint )currentLine.length() && currentLine.trimmed().endsWith( indentMarker ) ) {
 		//yzDebug() << "Indent marker found" << endl;
 		// This should probably be tabstop...
 		indentString.append( "\t" );
@@ -352,14 +357,14 @@ void YZView::indent() {
 	//yzDebug() << "Indent string = \"" << indentString << "\"" << endl;
 	mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 	ypos++;
-	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).stripWhiteSpace() );
+	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).trimmed() );
 	gotoxy( indentString.length(), ypos );
 	//yzDebug() << "Leaving YZView::indent" << endl;
 }
 
 QString YZView::centerLine( const QString& s ) {
 	QString spacer = "";
-	unsigned int nspaces = mColumnsVis > s.length() ? mColumnsVis - s.length() : 0;
+	unsigned int nspaces = mColumnsVis > ( uint )s.length() ? mColumnsVis - s.length() : 0;
 	nspaces /= 2;
 	spacer.fill( ' ', nspaces );
 	spacer.append( s );
@@ -704,7 +709,7 @@ void YZView::gotodxy( unsigned int nextx, unsigned int nexty, bool applyCursor )
 }
 void YZView::gotodxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int nexty, bool applyCursor ) {
 	initGoto( viewCursor );
-	gotoy( nexty );
+	gotoy( mFoldPool->lineHeadingFold( nexty ) );
 	gotodx( nextx );
 	applyGoto( viewCursor, applyCursor );
 }
@@ -726,7 +731,7 @@ void YZView::gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor ) {
 }
 void YZView::gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int nexty, bool applyCursor ) {
 	initGoto( viewCursor );
-	gotoy( nexty );
+	gotoy( mFoldPool->lineHeadingFold( nexty ) );
 	gotox( nextx, viewCursor != mainCursor );
 	applyGoto( viewCursor, applyCursor );
 }
@@ -743,7 +748,7 @@ QString YZView::moveDown( unsigned int nb_lines, bool applyCursor ) {
 	return moveDown( mainCursor, nb_lines, applyCursor );
 }
 QString YZView::moveDown( YZViewCursor* viewCursor, unsigned int nb_lines, bool applyCursor ) {
-	gotoStickyCol( viewCursor, qMin( viewCursor->bufferY() + nb_lines, mBuffer->lineCount() - 1 ), applyCursor );
+	gotoStickyCol( viewCursor, qMin( mFoldPool->lineAfterFold( viewCursor->bufferY() + nb_lines ), mBuffer->lineCount() - 1 ), applyCursor );
 	return QString::null;
 }
 QString YZView::moveUp( unsigned int nb_lines, bool applyCursor ) {
@@ -794,7 +799,7 @@ QString YZView::moveRight( YZViewCursor* viewCursor, int nb_cols, bool wrap, boo
 	unsigned int x=viewCursor->bufferX();
 	unsigned int y=viewCursor->bufferY();
 	x+=nb_cols;
-	if(x>=myBuffer()->textline(y).length()) {
+	if(x>=( uint )myBuffer()->textline(y).length()) {
 		if(wrap) {
 			int line_length=myBuffer()->textline(y).length();
 			int diff=x-line_length+1; // the number of columns we moved too far
@@ -923,12 +928,12 @@ void YZView::commitUndoItem() {
 	mBuffer->undoBuffer()->commitUndoItem(mainCursor->bufferX(), mainCursor->bufferY());
 }
 
-void YZView::paste( QChar registr, bool after ) {
+void YZView::pasteContent( QChar registr, bool after ) {
 	QStringList list = YZSession::me->getRegister( registr );
 	if ( list.isEmpty() ) return;
 
 	YZCursor pos( mainCursor->buffer() );
-	uint i = 0;
+	int i = 0;
 	bool copyWholeLinesOnly = list[ 0 ].isNull();
 	QString copy = mBuffer->textline( pos.y() );
 	if ( after || ! copyWholeLinesOnly ) { //paste after current char
@@ -999,7 +1004,7 @@ unsigned int YZView::getDrawCurrentLeft() {
 void YZView::updateCurLine( ) {
 	sCurLineLength = sCurLine.length();
 	if ( wrap && ! drawMode ) {
-		unsigned int nbTabs = sCurLine.contains( '\t' );
+		unsigned int nbTabs = sCurLine.count( '\t' );
 		if ( isFontFixed ) rMinCurLineLength = sCurLineLength;
 		else rMinCurLineLength = GET_STRING_WIDTH( QString( sCurLine ).remove( '\t' ) ) + nbTabs * spaceWidth;
 		rCurLineLength = rMinCurLineLength + nbTabs * ( tablength - spaceWidth );
@@ -1073,7 +1078,7 @@ bool YZView::drawPrevLine( ) {
 			workCursor->lineHeight = 1;
 		}
 		workCursor->setBufferX( sCurrentLeft );
-		workCursor->setBufferY( workCursor->bufferY() - workCursor->sLineIncrement );
+		workCursor->setBufferY( mFoldPool->lineHeadingFold( workCursor->bufferY() - workCursor->sLineIncrement ) );
 		workCursor->setScreenX( rCurrentLeft );
 		if ( workCursor->sLineIncrement == 0 && workCursor->bLineIncrement > 0 ) {
 			workCursor->sLineIncrement = 1;
@@ -1113,7 +1118,7 @@ bool YZView::drawPrevLine( ) {
 bool YZView::drawNextLine( ) {
 	if ( ! workCursor->wrapNextLine ) {
 		workCursor->setBufferX( sCurrentLeft );
-		workCursor->setBufferY( workCursor->bufferY() + workCursor->bLineIncrement );
+		workCursor->setBufferY( mFoldPool->lineAfterFold( workCursor->bufferY() + workCursor->bLineIncrement ) );
 		workCursor->setScreenX( rCurrentLeft );
 		if ( workCursor->sLineIncrement == 0 && workCursor->bLineIncrement > 0 ) {
 			// this is need when drawNextCol is called before drawNextLine ( when scrolling )
@@ -1156,6 +1161,12 @@ bool YZView::drawNextLine( ) {
 			}
 		}
 		if ( drawMode && ( workCursor->screenY() - rCurrentTop ) < mLinesVis ) {
+			m_lineFiller = ' ';
+			m_lineMarker = ' ';
+			if ( mFoldPool->isHead( workCursor->bufferY() ) ) {
+				m_lineFiller = '-';
+				m_lineMarker = '+';
+			}
 			rHLa = NULL;
 			if ( yl->length() != 0 )
 				rHLa = yl->attributes();
@@ -1312,26 +1323,32 @@ bool YZView::drawNextCol( ) {
 const QChar& YZView::fillChar() const {
 	return mFillChar;
 }
-const QChar& YZView::drawChar( ) {
+const QChar& YZView::drawChar() const {
 	return lastChar;
 }
-unsigned int YZView::drawLength( ) {
+const QChar& YZView::drawLineFiller() const {
+	return m_lineFiller;
+}
+const QChar& YZView::drawLineMarker() const {
+	return m_lineMarker;
+}
+unsigned int YZView::drawLength() const {
 	return workCursor->sColIncrement;
 }
-unsigned int YZView::drawHeight ( ) {
+unsigned int YZView::drawHeight() const {
 	return workCursor->sLineIncrement;
 }
-unsigned int YZView::lineIncrement() {
+unsigned int YZView::lineIncrement() const {
 	return workCursor->bLineIncrement;
 }
-unsigned int YZView::lineHeight() {
+unsigned int YZView::lineHeight() const {
 	return workCursor->lineHeight;
 }
-bool YZView::drawSelected( ) {
+bool YZView::drawSelected() const {
 	return charSelected;
 }
 
-const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
+const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) const {
 	YZLine *yl = mBuffer->yzline( line );
 	YzisHighlighting * highlight = mBuffer->highlight();
 	const uchar* hl=NULL;
@@ -1351,7 +1368,7 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) {
 	return fake;
 }
 
-const QColor& YZView::drawColor ( ) {
+const QColor& YZView::drawColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return blue; //XXX make custom
@@ -1359,7 +1376,7 @@ const QColor& YZView::drawColor ( ) {
 	else return fake;
 }
 
-const QColor& YZView::drawSelColor ( ) {
+const QColor& YZView::drawSelColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
@@ -1367,7 +1384,7 @@ const QColor& YZView::drawSelColor ( ) {
 	else return fake;
 }
 
-const QColor& YZView::drawBgColor ( ) {
+const QColor& YZView::drawBgColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
@@ -1375,7 +1392,7 @@ const QColor& YZView::drawBgColor ( ) {
 	else return fake;
 }
 
-const QColor& YZView::drawBgSelColor ( ) {
+const QColor& YZView::drawBgSelColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
@@ -1418,7 +1435,7 @@ bool YZView::drawStrikeOutLine() {
 	return false;	
 }
 
-const QColor& YZView::drawOutline ( ) {
+const QColor& YZView::drawOutline() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
@@ -1426,7 +1443,7 @@ const QColor& YZView::drawOutline ( ) {
 	else return fake;
 }
 
-unsigned int YZView::drawLineNumber( ) {
+unsigned int YZView::drawLineNumber() const {
 	return workCursor->bufferY( ) + 1;
 }
 
@@ -1473,40 +1490,40 @@ void YZView::redo( unsigned int count ) {
 }
 
 
-QString YZView::getLocalOptionKey() {
+QString YZView::getLocalOptionKey() const {
 	return mBuffer->fileName()+"-view-"+ QString::number(id.getNumber());
 }
-YZOptionValue* YZView::getLocalOption( const QString& option ) {
+YZOptionValue* YZView::getLocalOption( const QString& option ) const {
 	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
 		return YZSession::me->getOptions()->getOption( getLocalOptionKey() + "\\" + option );
 	else
 		return YZSession::me->getOptions()->getOption( "Global\\"+option );
 }
-int YZView::getLocalIntegerOption( const QString& option ) {
+int YZView::getLocalIntegerOption( const QString& option ) const {
 	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
 		return YZSession::me->getOptions()->readIntegerOption( getLocalOptionKey()+ "\\" + option );
 	else
 		return YZSession::me->getOptions()->readIntegerOption( "Global\\" + option ); // else give the global default if any
 }
-bool YZView::getLocalBooleanOption( const QString& option ) {
+bool YZView::getLocalBooleanOption( const QString& option ) const {
 	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
 		return YZSession::me->getOptions()->readBooleanOption( getLocalOptionKey()+"\\"+option );
 	else
 		return YZSession::me->getOptions()->readBooleanOption( "Global\\" + option );
 }
-QString YZView::getLocalStringOption( const QString& option ) {
+QString YZView::getLocalStringOption( const QString& option ) const {
 	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
 		return YZSession::me->getOptions()->readStringOption( getLocalOptionKey()+"\\"+option );
 	else
 		return YZSession::me->getOptions()->readStringOption( "Global\\" + option );
 }
-QStringList YZView::getLocalListOption( const QString& option ) {
+QStringList YZView::getLocalListOption( const QString& option ) const {
 	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
 		return YZSession::me->getOptions()->readListOption( getLocalOptionKey()+"\\"+option );
 	else
 		return YZSession::me->getOptions()->readListOption( "Global\\" + option );
 }
-MapOption YZView::getLocalMapOption( const QString& option ) {
+MapOption YZView::getLocalMapOption( const QString& option ) const {
 	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
 		return YZSession::me->getOptions()->readMapOption( getLocalOptionKey()+"\\"+option );
 	else
@@ -1558,7 +1575,7 @@ QString YZView::getCharBelow( int delta ) {
 		if ( vc.screenX() > dx && x > 0 ) // tab
 			--x;
 		QString l = mBuffer->textline( Y );
-		if ( x < l.length() )
+		if ( x < ( uint )l.length() )
 			ret = l.at( x );
 	}
 
@@ -1578,29 +1595,27 @@ void YZView::commitNextUndo() {
 	mBuffer->undoBuffer()->commitUndoItem( mainCursor->bufferX(), mainCursor->bufferY() );
 }
 
-const YZCursor &YZView::getCursor() {
+const YZCursor &YZView::getCursor() const {
 	return mainCursor->screen();
 }
-const YZCursor &YZView::getBufferCursor() {
+const YZCursor &YZView::getBufferCursor() const {
 	return mainCursor->buffer();
 }
 
-void YZView::recordMacro( const QValueList<QChar> &regs ) {
+void YZView::recordMacro( const QList<QChar> &regs ) {
 	mRegs = regs;
-	QValueList<QChar>::iterator end = mRegs.end();
-	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it )
-		YZSession::me->setRegister( *it, QStringList());
+	for ( int ab = 0 ; ab < mRegs.size(); ++ab )
+		YZSession::me->setRegister( mRegs.at(ab), QStringList());
 }
 
 void YZView::stopRecordMacro() {
-	QValueList<QChar>::iterator end = mRegs.end();
-	for ( QValueList<QChar>::iterator it = mRegs.begin(); it != end; ++it ) {
+	for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
 		QStringList list;
-		QString ne = YZSession::me->getRegister( *it )[ 0 ];
+		QString ne = YZSession::me->getRegister(mRegs.at(ab))[0];
 		list << ne.mid( 0, ne.length() - 1 ); //remove the last 'q' which was recorded ;)
-		YZSession::me->setRegister( *it, list);
+		YZSession::me->setRegister( mRegs.at(ab), list);
 	}
-	mRegs = QValueList<QChar>();
+	mRegs = QList<QChar>();
 }
 
 void YZView::setPaintAutoCommit( bool enable ) {
@@ -1692,7 +1707,7 @@ void YZView::removePaintEvent( const YZCursor& from, const YZCursor& to ) {
 }
 
 bool YZView::stringHasOnlySpaces ( const QString& what ) {
-	for (unsigned int i = 0 ; i < what.length(); i++)
+	for (int i = 0 ; i < what.length(); i++)
 		if ( !what.at(i).isSpace() ) {
 			return false;
 		}

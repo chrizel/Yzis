@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -152,7 +152,7 @@ bool YZSelection::isEmpty() const {
 }
 
 void YZSelection::addMap( const YZSelectionMap& m ) {
-	for ( unsigned int i = 0; i < m.size(); i++ )
+	for ( int i = 0; i < m.size(); i++ )
 		addInterval( m[ i ] );
 }
 void YZSelection::addInterval( const YZInterval& i ) {
@@ -271,7 +271,7 @@ YZSelection YZSelection::clip( const YZInterval& bound ) const {
 	unsigned int startX = bound.fromPos().x();
 	unsigned int endX = bound.toPos().x();
 	unsigned int fX, tX, fY, tY;
-	for( unsigned int i = 0; i < tmp.mMap.size(); ++i ) {
+	for( int i = 0; i < tmp.mMap.size(); ++i ) {
 		fX = tmp.mMap[ i ].fromPos().x();
 		fY = tmp.mMap[ i ].fromPos().y();
 		tX = tmp.mMap[ i ].toPos().x();

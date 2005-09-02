@@ -12,8 +12,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -30,10 +30,9 @@
 #define __YZ_SYNTAXDOCUMENT_H__
 
 #include <qglobal.h>
-#include <qdom.h>
-#include <qstringlist.h>
-#include <qapplication.h>
-#include <qobject.h>
+#include <QtXml/QDomElement>
+#include <QList>
+#include <QStringList>
 
 /**
  * Information about each syntax hl Mode
@@ -57,7 +56,7 @@ class YzisSyntaxModeListItem
 /**
  * List of the YzisSyntaxModeListItems holding all the syntax mode list items
  */
-typedef QValueList<YzisSyntaxModeListItem*> YzisSyntaxModeList;
+typedef QList<YzisSyntaxModeListItem*> YzisSyntaxModeList;
 
 /**
  * Class holding the data around the current QDomElement

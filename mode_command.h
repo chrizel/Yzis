@@ -5,7 +5,6 @@
  *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
  *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
- *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -19,8 +18,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -33,9 +32,8 @@
 #include "mode.h"
 #include "view.h"
 #include "cursor.h"
-#include <qstring.h>
-#include <qmap.h>
-#include <qstringlist.h>
+#include <QList>
+#include <QStringList>
 
 class YZBuffer;
 class YZView;
@@ -51,7 +49,7 @@ struct YZCommandArgs {
 	//the origin of inputs
 	YZView *view;
 	//the registers to operate upon
-	QValueList<QChar> regs;
+	QList<QChar> regs;
 	//exec this number of times the command
 	unsigned int count;
 	//was the count gave by the user
@@ -59,7 +57,7 @@ struct YZCommandArgs {
 	//the argument
 	QString arg;
 
-	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, bool user, QString a) {
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, unsigned int c, bool user, QString a) {
 		cmd=_cmd;
 		view=v;
 		regs=r;
@@ -67,7 +65,7 @@ struct YZCommandArgs {
 		arg=a;
 		usercount=user;
 	}
-	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QValueList<QChar> &r, unsigned int c, bool user) {
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, unsigned int c, bool user) {
 		cmd=_cmd;
 		view=v;
 		regs=r;
@@ -203,7 +201,6 @@ class YZModeCommand : public YZMode {
 		void gotoExMode(const YZCommandArgs &args);
 		void gotoLineAtTop(const YZCommandArgs &args);
 		void gotoLineAtCenter(const YZCommandArgs &args);
-		void gotoLineAtCenterSOL(const YZCommandArgs &args);
 		void gotoLineAtBottom(const YZCommandArgs &args);
 		void insertAtSOL(const YZCommandArgs &args);
                 void insertAtCol1(const YZCommandArgs &args);
@@ -250,7 +247,11 @@ class YZModeCommand : public YZMode {
 		void tagPrev( const YZCommandArgs & args );
 		void undoJump( const YZCommandArgs & args );
 
+#if QT_VERSION < 0x040000
 		QPtrList<const YZCommand> commands;
+#else
+		QList<YZCommand*> commands;
+#endif
 		// this is not a QValueList because there is no constructor with no arguments for YZCommands
 		QStringList textObjects;
 

@@ -20,8 +20,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -74,7 +74,7 @@ const YZTagStackItem *YZTagStack::moveToNext()
 	const YZTagStackItem *result = NULL;
 	MatchingStackItem &pair = mCurrentTags.back();
 	
-	if ( pair.second < pair.first.size() - 1 ) {
+	if ( pair.second < ( unsigned )pair.first.size() - 1 ) {
 		++pair.second;
 		result = &pair.first[ pair.second ];
 	}

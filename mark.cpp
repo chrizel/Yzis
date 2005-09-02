@@ -14,8 +14,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -35,8 +35,13 @@ YZViewMark::~YZViewMark( ) {
 void YZViewMark::clear( ) {
 	YZViewMarker::Iterator it = marker.begin(), end = marker.end();
 	for( ; it != end; ++it ) {
+#if QT_VERSION < 0x040000
 		delete it.data().bPos;
 		delete it.data().dPos;
+#else
+		delete it.value().bPos;
+		delete it.value().dPos;
+#endif
 	}
 	marker.clear( );
 }
@@ -51,8 +56,13 @@ void YZViewMark::add( const QString& mark, const YZCursor& bPos, const YZCursor&
 void YZViewMark::del( const QString& mark ) {
 	YZViewMarker::Iterator it = marker.find( mark );
 	if ( it != marker.end() ) {
+#if QT_VERSION < 0x040000
 		delete it.data().bPos;
 		delete it.data().dPos;
+#else
+		delete it.value().bPos;
+		delete it.value().dPos;
+#endif
 	}
 	marker.remove( mark );
 }
@@ -60,7 +70,11 @@ void YZViewMark::del( const QString& mark ) {
 YZCursorPos YZViewMark::get( const QString& mark, bool * found ) {
 	YZViewMarker::Iterator it = marker.find( mark );
 	*found = it != marker.end();
+#if QT_VERSION < 0x040000
 	return it.data();
+#else
+	return it.value();
+#endif
 }
 
 

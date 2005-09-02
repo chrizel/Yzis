@@ -20,8 +20,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -36,6 +36,7 @@
 #include <qdir.h>
 #include <qfileinfo.h>
 #include <qstringlist.h>
+#include <QVector>
 
 #include "debug.h"
 
@@ -62,7 +63,7 @@ static tagFile* doOpenTagFile( QString filename ) {
 	// the current buffer's path
 	if ( filename.startsWith( QString(".") + QDir::separator() ) ) {
 		QFileInfo file( YZSession::me->currentView()->myBuffer()->fileName() );
-		filename.replace( 0, 1, file.dirPath() );
+		filename.replace( 0, 1, file.absoluteDir().absolutePath() );
 	}
 	
 	QFileInfo tagfilename( filename );
@@ -71,17 +72,17 @@ static tagFile* doOpenTagFile( QString filename ) {
 	// if we found a tag file, open it
 	if ( found ) {
 		tagFileInfo info;
-		tagfile = tagsOpen( filename, &info );
+		tagfile = tagsOpen( filename.toUtf8().data(), &info );
 	}
 
 	return tagfile;
 }
 
 static bool openTagFile() {
-	QStringList tagsOption = YZSession::me->getOptions()->readListOption("tags", "tags");
+	QStringList tagsOption = YZSession::me->getOptions()->readListOption("tags", QStringList("tags"));
 	bool foundATagFile = false;
 	
-	for( unsigned int i = 0; i < tagsOption.size(); ++i ) {
+	for( int i = 0; i < tagsOption.size(); ++i ) {
 		tagFile *tagfile = doOpenTagFile( tagsOption[i] );
 		if ( tagfile ) {
 			foundATagFile = true;
@@ -96,7 +97,7 @@ static bool openTagFile() {
 static void closeTagFile() {
 	YZASSERT_MSG( tagfilelist.size() > 0, "Tried to close an already closed tag file");
 	
-	for( unsigned int i = 0; i < tagfilelist.size(); ++i ) {
+	for( int i = 0; i < tagfilelist.size(); ++i ) {
 		tagsClose( tagfilelist[i] );
 	}
 	
@@ -122,7 +123,7 @@ static void doJumpToTag ( const YZTagStackItem &entry ) {
 	YZBuffer * b = YZSession::me->currentView()->myBuffer();
 
 	QFileInfo file( entry.filename );
-	QString filepath = file.absFilePath();
+	QString filepath = file.absoluteFilePath();
 	QString pattern = entry.pattern;
 	
 	// if the tag is in a different file, we have to change buffers
@@ -146,7 +147,7 @@ static void doJumpToTag ( const YZTagStackItem &entry ) {
 	
 	for( int i = 0; i < lineCount; i++ )
 	{
-		int pos = rx.search(b->textline(i));
+		int pos = rx.indexIn(b->textline(i));
 		
 		if ( pos != -1 ) {
 			YZSession::me->currentView()->centerViewVertically( i );
@@ -186,7 +187,7 @@ static void readAllMatchingTags( const YZTagStackItem &initialTag )
 	YZVector<YZTagStackItem> tags;
 	tags.push_back( initialTag );
 	
-	for ( unsigned int i = 0; i < tagfilelist.size(); ++i ) {
+	for ( int i = 0; i < tagfilelist.size(); ++i ) {
 		for ( ;; ) {
 			tagEntry entry;
 			tagResult = tagsFindNext( tagfilelist[i], &entry );
@@ -230,13 +231,13 @@ void tagJumpTo ( const QString &word ) {
 	}
 	
 	tagEntry entry;
-	lastsearch = word.latin1();
+	lastsearch = word.toUtf8();
 	int tagResult;
 	
 	// look through each tag file in order for the tag
 	// if we find one, don't search the rest of the tag files
-	for ( unsigned int i = 0; i < tagfilelist.size(); ++i) {
-		tagResult = tagsFind( tagfilelist[i], &entry, lastsearch, TAG_FULLMATCH );
+	for ( int i = 0; i < tagfilelist.size(); ++i) {
+		tagResult = tagsFind( tagfilelist[i], &entry, lastsearch.toUtf8(), TAG_FULLMATCH );
 		
 		if ( tagResult == TagSuccess ) {
 			YZTagStack &stack = YZSession::me->getTagStack();
@@ -304,9 +305,9 @@ void tagStartsWith(const QString &prefix, QStringList &list)
 		return;
 	}
 	
-	for ( unsigned int i = 0; i < tagfilelist.size(); ++i ) {
+	for ( int i = 0; i < tagfilelist.size(); ++i ) {
 		tagEntry entry;
-		int tagResult = tagsFind( tagfilelist[i], &entry, prefix, TAG_PARTIALMATCH );
+		int tagResult = tagsFind( tagfilelist[i], &entry, prefix.toUtf8(), TAG_PARTIALMATCH );
 		
 		while ( tagResult == TagSuccess ) {
 			list.push_back( entry.name );

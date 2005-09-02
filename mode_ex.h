@@ -18,8 +18,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
@@ -195,6 +195,7 @@ class YZModeEx : public YZMode {
 		cmd_state genericMap( const YZExCommandArgs& args, int );
 		cmd_state genericUnmap( const YZExCommandArgs& args, int );		
 		cmd_state genericNoremap( const YZExCommandArgs& args, int );
+		cmd_state foldCreate( const YZExCommandArgs& args );
 		cmd_state cd( const YZExCommandArgs& args );
 		cmd_state pwd( const YZExCommandArgs& args );
 		cmd_state tag( const YZExCommandArgs& args );

@@ -13,8 +13,8 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
  
 #include "option.h"
@@ -97,8 +97,8 @@ QString YZOptionValue::listToString( const QStringList& value ) {
 }
 QString YZOptionValue::mapToString( const MapOption& value ) {
 	QString ret = "";
-	QValueList<QString> keys = value.keys();
-	for( unsigned int i = 0; i < keys.size(); i++ ) {
+	QList<QString> keys = value.keys();
+	for( int i = 0; i < keys.size(); i++ ) {
 		if ( i > 0 ) ret += ",";
 		ret += keys[i] + ":" + value[ keys[i] ];
 	}
@@ -129,14 +129,14 @@ int YZOptionValue::integerFromString( bool* success, const QString& value ) {
 }
 QStringList YZOptionValue::listFromString( bool* success, const QString& value ) {
 	*success = true;
-	return QStringList::split( ",", value, true );
+	return value.split( "," );
 }
 MapOption YZOptionValue::mapFromString( bool* success, const QString& value ) {
 	*success = true;
 	MapOption ret;
-	QStringList vs = QStringList::split( ",", value );
-	for( unsigned int i = 0; *success && i < vs.size(); i++ ) {
-		int idx_v = vs[i].find(':');
+	QStringList vs = value.split( ",", QString::SkipEmptyParts );
+	for( int i = 0; *success && i < vs.size(); i++ ) {
+		int idx_v = vs[i].indexOf(':');
 		if ( idx_v < 0 ) {
 			*success = false;
 		} else {
@@ -225,7 +225,7 @@ void YZOption::apply( YZBuffer* b, YZView* v ) {
 	m_apply( b, v );
 }
 bool YZOption::match( const QString& entry ) {
-	for( unsigned int i = 0; i < m_aliases.size(); i++ ) {
+	for( int i = 0; i < m_aliases.size(); i++ ) {
 		if ( entry.startsWith( m_aliases[ i ] ) && !entry.mid( m_aliases[ i ].length() )[0].isLetter() )
 			return true;
 	}
@@ -234,7 +234,7 @@ bool YZOption::match( const QString& entry ) {
 QString YZOption::readValue( const QString& entry, opt_action* action ) {
 	*action = opt_invalid;
 	QString value = entry;
-	for( unsigned int i = 0; *action == opt_invalid && i < m_aliases.size(); i++ ) {
+	for( int i = 0; *action == opt_invalid && i < m_aliases.size(); i++ ) {
 		if ( entry.startsWith( m_aliases[ i ] ) && ! entry.mid( m_aliases[ i ].length() )[ 0 ].isLetter() ) {
 			QString data = entry.mid( m_aliases[ i ].length() );
 			unsigned int idx = 1;
@@ -270,7 +270,7 @@ YZOptionBoolean::~YZOptionBoolean() {
 bool YZOptionBoolean::match( const QString& entry ) {
 	bool ret = YZOption::match( entry );
 	if ( !ret ) {
-		for( unsigned int i = 0; !ret && i < m_aliases.size(); i++ ) {
+		for( int i = 0; !ret && i < m_aliases.size(); i++ ) {
 			if ( entry == m_aliases[i] || entry == "no" + m_aliases[i] \
 					|| entry == m_aliases[i] + "!" || entry == "inv" + m_aliases[i] )
 				ret = true;
@@ -286,7 +286,7 @@ bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value ) {
 
 	QString v_s = readValue( entry, &action );
 	if ( action == opt_invalid ) {
-		for( unsigned int i = 0; !ret && i < m_aliases.size(); i++ ) {
+		for( int i = 0; !ret && i < m_aliases.size(); i++ ) {
 			if ( entry == m_aliases[i] ) {
 				v = true;
 				ret = true;
@@ -411,12 +411,12 @@ bool YZOptionList::setValue( const QString& entry, YZOptionValue* value ) {
 			v = v + value->list();
 		} else if ( action == opt_subtract ) {
 			QStringList mv = value->list();
-			for( unsigned int i = 0; i < v.size(); i++ )
-				mv.remove( v[i] );
+			for( int i = 0; i < v.size(); i++ )
+				mv.removeAll( v[i] );
 			v = mv;
 		}
 		if ( ret && m_allValues.size() > 0 ) {
-			for( unsigned int i = 0; ret && i < v.size(); i++ ) {
+			for( int i = 0; ret && i < v.size(); i++ ) {
 				ret = m_allValues.contains( v[i] ) > 0;
 			}
 		}
@@ -451,28 +451,28 @@ bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value ) {
 			// nothing
 		} else if ( action == opt_append || action == opt_prepend ) {
 			MapOption mv = value->map();
-			QValueList<QString> keys = v.keys();
-			for ( unsigned int i = 0; i < keys.size(); i++ )
+			QList<QString> keys = v.keys();
+			for ( int i = 0; i < keys.size(); i++ )
 				mv[ keys[i] ] = v[ keys[i] ];
 			v = mv;
 		} else if ( action == opt_subtract ) {
 			MapOption mv = value->map();
-			QValueList<QString> keys = v.keys();
-			for ( unsigned int i = 0; i < keys.size(); i++ )
+			QList<QString> keys = v.keys();
+			for ( int i = 0; i < keys.size(); i++ )
 				mv.remove( keys[i] );
 			v = mv;
 		}
 		// check keys
 		if ( ret ) {
-			QValueList<QString> keys = v.keys();
-			for( unsigned int i = 0; ret && i < keys.size(); i++ ) {
+			QList<QString> keys = v.keys();
+			for( int i = 0; ret && i < keys.size(); i++ ) {
 				ret = m_allKeys.contains( keys[i] ) > 0;
 			}
 		}
 		// check values
 		if ( ret && m_allValues.size() > 0 ) {
-			QValueList<QString> values = v.values();
-			for( unsigned int i = 0; ret && i < values.size(); i++ ) {
+			QList<QString> values = v.values();
+			for( int i = 0; ret && i < values.size(); i++ ) {
 				ret = m_allValues.contains( values[i] ) > 0;
 			}
 		}
@@ -492,7 +492,7 @@ YZOptionColor::~YZOptionColor() {
 bool YZOptionColor::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
 	QColor v = value->color();
-	int idx = entry.find('=');
+	int idx = entry.indexOf('=');
 	if ( idx >= 0 ) {
 		v = YZOptionValue::colorFromString( &ret, entry.mid( idx+1 ) );
 	}

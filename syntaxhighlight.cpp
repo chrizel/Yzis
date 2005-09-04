@@ -1864,15 +1864,15 @@ void YzisHighlighting::addToYzisHlItemDataList()
             getDefStyleNum(YzisHlManager::self()->syntax->groupData(data,QString("defStyleNum"))));
 
     /* here the custom style overrides are specified, if needed */
-    if (!color.isEmpty()) newData->setTextColor(QColor(color));
-    if (!selColor.isEmpty()) newData->setSelectedTextColor(QColor(selColor));
+    if (!color.isEmpty()) newData->setTextColor(YZColor(color));
+    if (!selColor.isEmpty()) newData->setSelectedTextColor(YZColor(selColor));
     if (!bold.isEmpty()) newData->setBold( IS_TRUE(bold) );
     if (!italic.isEmpty()) newData->setItalic( IS_TRUE(italic) );
     // new attributes for the new rendering view
     if (!underline.isEmpty()) newData->setUnderline( IS_TRUE(underline) );
     if (!strikeOut.isEmpty()) newData->setStrikeOut( IS_TRUE(strikeOut) );
-    if (!bgColor.isEmpty()) newData->setBGColor(QColor(bgColor));
-    if (!selBgColor.isEmpty()) newData->setSelectedBGColor(QColor(selBgColor));
+    if (!bgColor.isEmpty()) newData->setBGColor(YZColor(bgColor));
+    if (!selBgColor.isEmpty()) newData->setSelectedBGColor(YZColor(selBgColor));
 
     internalIDList.append(newData);
   }
@@ -3289,7 +3289,7 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 
   YzisAttribute* string = new YzisAttribute();
   //string->setTextColor(Qt::magenta/*red*/);
-  string->setTextColor(QColor::QColor("#D00"));
+  string->setTextColor(YZColor("#D00"));
   string->setSelectedTextColor(Qt::red);
   list.append(string);
 
@@ -3306,9 +3306,9 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 
   YzisAttribute* alert = new YzisAttribute();
   alert->setTextColor(Qt::lightGray);
-  alert->setSelectedTextColor( QColor::QColor("#FCC") );
+  alert->setSelectedTextColor( YZColor("#FCC") );
   alert->setBold(true);
-  alert->setBGColor( QColor::QColor("red") );
+  alert->setBGColor( YZColor("red") );
   list.append(alert);
 
   YzisAttribute* functionAttribute = new YzisAttribute();

@@ -104,7 +104,7 @@ QString YZOptionValue::mapToString( const MapOption& value ) {
 	}
 	return ret;
 }
-QString YZOptionValue::colorToString( const QColor& value ) {
+QString YZOptionValue::colorToString( const YZColor& value ) {
 	return value.name();
 }
 
@@ -145,8 +145,8 @@ MapOption YZOptionValue::mapFromString( bool* success, const QString& value ) {
 	}
 	return ret;
 }
-QColor YZOptionValue::colorFromString( bool* success, const QString& value ) {
-	QColor ret( value );
+YZColor YZOptionValue::colorFromString( bool* success, const QString& value ) {
+	YZColor ret( value );
 	*success = ret.isValid();
 	return ret;
 }
@@ -171,7 +171,7 @@ void YZOptionValue::setMap( const MapOption& value ) {
 	v_map = value;
 	m_type = map_t;
 }
-void YZOptionValue::setColor( const QColor& value ) {
+void YZOptionValue::setColor( const YZColor& value ) {
 	v_color = value;
 	m_type = color_t;
 }
@@ -191,7 +191,7 @@ const QStringList& YZOptionValue::list() const {
 const MapOption& YZOptionValue::map() const {
 	return v_map;
 }
-const QColor& YZOptionValue::color() const {
+const YZColor& YZOptionValue::color() const {
 	return v_color;
 }
 
@@ -482,7 +482,7 @@ bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value ) {
 	return ret;
 }
 
-YZOptionColor::YZOptionColor( const QString& name, const QColor& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases ) 
+YZOptionColor::YZOptionColor( const QString& name, const YZColor& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases ) 
 	: YZOption( name, ctx, scope, m, aliases ) {
 	v_default->setColor( v );
 }
@@ -491,7 +491,7 @@ YZOptionColor::~YZOptionColor() {
 
 bool YZOptionColor::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
-	QColor v = value->color();
+	YZColor v = value->color();
 	int idx = entry.indexOf('=');
 	if ( idx >= 0 ) {
 		v = YZOptionValue::colorFromString( &ret, entry.mid( idx+1 ) );

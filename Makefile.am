@@ -4,12 +4,16 @@ lib_LTLIBRARIES = libyzis.la
 libyzis_la_SOURCES = session.cpp mode.cpp mode_command.cpp mode_search.cpp \
 		mode_visual.cpp mode_ex.cpp mode_insert.cpp view.cpp search.cpp mark.cpp action.cpp \
 		cursor.cpp selection.cpp line.cpp buffer.cpp linesearch.cpp debug.cpp \
-		internal_options.cpp option.cpp registers.cpp undo.cpp ex_lua.cpp qtprinter.cpp swapfile.cpp \
-		schema.cpp viewcursor.cpp printer.cpp mapping.cpp events.cpp syntaxdocument.cpp \
+		internal_options.cpp option.cpp registers.cpp undo.cpp ex_lua.cpp swapfile.cpp \
+		schema.cpp viewcursor.cpp mapping.cpp events.cpp syntaxdocument.cpp \
 		syntaxhighlight.cpp attribute.cpp yzisinfo.cpp yzisinfostartpositionrecord.cpp \
 		yzisinfojumplistrecord.cpp readtags.c tags_interface.cpp tags_stack.cpp mode_complete.cpp \
-		viewid.cpp history.cpp folding.cpp
-libyzis_la_LIBADD = $(LIB_QT) $(all_libraries) $(LUA_LIBS) $(PS_LIBS) $(LIBMAGIC_LIBS) $(LIBGETTEXT_LIBS) -lQtXml_debug
+		viewid.cpp history.cpp \
+		color.cpp \
+		folding.cpp \
+		font.cpp
+
+libyzis_la_LIBADD = $(LIB_QT) $(LIB_QTXML) $(all_libraries) $(LUA_LIBS) $(PS_LIBS) $(LIBMAGIC_LIBS) $(LIBGETTEXT_LIBS)
 libyzis_la_LDFLAGS = -version-info 0:0:0 -no-undefined
 
 libyzis_la_PCH = AUTO

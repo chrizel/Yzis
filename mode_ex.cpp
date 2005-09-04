@@ -878,7 +878,7 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 	for (it=list.begin();it!=end; ++it) {
 		yzDebug() << "Testing " << *it << endl;
 		if ( rx.exactMatch(*it) ) { // fg=, selfg= ...
-			QColor col (rx.cap(2)); //can be a name or rgb
+			YZColor col (rx.cap(2)); //can be a name or rgb
 			if ( rx.cap(1) == "fg" ) {
 				option[idx] = QString::number(col.rgb(),16);
 			} else if ( rx.cap(1) == "bg" ) {

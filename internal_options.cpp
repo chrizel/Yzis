@@ -328,7 +328,7 @@ MapOption YZInternalOptionPool::readMapOption( const QString& _key ) {
 	} 
 	return ret;
 }
-QColor YZInternalOptionPool::readColorOption( const QString& _key, const QColor& def ) {
+YZColor YZInternalOptionPool::readColorOption( const QString& _key, const YZColor& def ) {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -365,7 +365,7 @@ QStringList YZInternalOptionPool::readQStringListEntry( const QString& key, cons
 		return YZOptionValue::listFromString( &test, mOptions[ _key ]->string() );
 	return def;
 }
-QColor YZInternalOptionPool::readQColorEntry( const QString& key, const QColor& def ) {
+YZColor YZInternalOptionPool::readYZColorEntry( const QString& key, const YZColor& def ) {
 	QString _key = currentGroup+"\\"+key;
 	bool test;
 	if ( mOptions.contains( _key ) )
@@ -399,7 +399,7 @@ void YZInternalOptionPool::setIntEntry( const QString& name, int value ) {
 void YZInternalOptionPool::setQStringListEntry( const QString& name, const QStringList& value ) {
 	setQStringEntry( name, YZOptionValue::listToString( value ) );
 }
-void YZInternalOptionPool::setQColorEntry( const QString& name, const QColor& value ) {
+void YZInternalOptionPool::setYZColorEntry( const QString& name, const YZColor& value ) {
 	setQStringEntry( name, YZOptionValue::colorToString( value ) );
 }
 
@@ -486,7 +486,7 @@ void YZInternalOptionPool::createOption(const QString& optionName, const QString
 			if ( success )
 				opt = new YZOptionMap( optionName, d_v, ctx,scope, &doNothing, QStringList(), d_v.keys(), QStringList() );
 		} else if ( type == color_t ) {
-			QColor d_v = YZOptionValue::colorFromString( &success, defaultValue );
+			YZColor d_v = YZOptionValue::colorFromString( &success, defaultValue );
 			if ( success )
 				opt = new YZOptionColor( optionName, d_v, ctx,scope, &doNothing, QStringList() );
 		}

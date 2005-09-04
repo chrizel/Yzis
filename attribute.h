@@ -26,14 +26,10 @@
 #ifndef __YZIS_ATTRIBUTE_H__
 #define __YZIS_ATTRIBUTE_H__
 
+#include "color.h"
+#include "font.h"
+
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
-#include <qcolor.h>
-#include <qfont.h>
-#else
-#include <QFont>
-#include <QColor>
-#endif
 
 /**
  * The Attribute class incorporates all text decorations supported by Yzis.
@@ -58,7 +54,7 @@ public:
   YzisAttribute();
   virtual ~YzisAttribute();
 
-  QFont font(const QFont& ref);
+  YZFont font(const YZFont& ref);
 
   inline bool itemSet(int item) const
   { return item & m_itemsSet; };
@@ -78,7 +74,7 @@ public:
   void setWeight(int weight);
 
   inline bool bold() const
-  { return weight() >= QFont::Bold; };
+  { return weight() >= YZFont::Bold; };
 
   void setBold(bool enable = true);
 
@@ -102,30 +98,30 @@ public:
 
   void setStrikeOut(bool enable = true);
 
-  inline const QColor& outline() const
+  inline const YZColor& outline() const
   { return m_outline; };
 
-  void setOutline(const QColor& color);
+  void setOutline(const YZColor& color);
 
-  inline const QColor& textColor() const
+  inline const YZColor& textColor() const
   { return m_textColor; };
 
-  void setTextColor(const QColor& color);
+  void setTextColor(const YZColor& color);
 
-  inline const QColor& selectedTextColor() const
+  inline const YZColor& selectedTextColor() const
   { return m_selectedTextColor; };
 
-  void setSelectedTextColor(const QColor& color);
+  void setSelectedTextColor(const YZColor& color);
 
-  inline const QColor& bgColor() const
+  inline const YZColor& bgColor() const
   { return m_bgColor; };
 
-  void setBGColor(const QColor& color);
+  void setBGColor(const YZColor& color);
 
-  inline const QColor& selectedBGColor() const
+  inline const YZColor& selectedBGColor() const
   { return m_selectedBGColor; };
 
-  void setSelectedBGColor(const QColor& color);
+  void setSelectedBGColor(const YZColor& color);
 
   YzisAttribute& operator+=(const YzisAttribute& a);
 
@@ -140,7 +136,7 @@ public:
 private:
   int m_weight;
   bool m_italic, m_underline, m_overline, m_strikeout, m_changed;
-  QColor m_outline, m_textColor, m_selectedTextColor, m_bgColor, m_selectedBGColor;
+  YZColor m_outline, m_textColor, m_selectedTextColor, m_bgColor, m_selectedBGColor;
   int m_itemsSet;
 };
 

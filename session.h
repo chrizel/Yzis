@@ -54,6 +54,13 @@ class YZViewId;
 
 typedef YZList<YZBuffer*> YZBufferList;
 typedef YZList<YZView*> YZViewList;
+
+namespace Clipboard {
+	enum Mode {
+		Clipboard,
+		Selection
+	};
+};
  
 class YZSession : public QObject {
 	Q_OBJECT
@@ -398,6 +405,11 @@ class YZSession : public QObject {
 		 * Gets the list of registers
 		 */
 		QList<QChar> getRegisters();
+
+		//-------------------------------------------------------
+		// ----------------- Clipboard
+		//-------------------------------------------------------
+		virtual void setClipboardText( const QString& text, Clipboard::Mode mode ) = 0;
 
 		//-------------------------------------------------------
 		// ----------------- Miscellaneous

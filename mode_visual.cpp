@@ -31,13 +31,10 @@
 #include "action.h"
 #include "buffer.h"
 #include "selection.h"
+#include "session.h"
 #include "viewcursor.h"
 
-#ifdef Q_WS_X11
-#include <QX11Info>
-#endif
 #include <QApplication>
-#include <QClipboard>
 
 
 YZModeVisual::YZModeVisual() : YZModeCommand() {
@@ -55,11 +52,7 @@ YZModeVisual::~YZModeVisual() {
 
 void YZModeVisual::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-#ifdef Q_WS_X11
-	if ( QX11Info::display() )
-#endif
-		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
-
+	YZSession::me->setClipboardText( mView->myBuffer()->getText( interval ).join( "\n" ), Clipboard::Selection );
 }
 
 YZInterval YZModeVisual::buildBufferInterval( YZView*, const YZViewCursor& from, const YZViewCursor& to ) {
@@ -355,10 +348,14 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 
 void YZModeVisualBlock::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
+	YZSession::me->setClipboardText( mView->myBuffer()->getText( interval ).join( "\n" ), Clipboard::Selection );
+
+/*
 #ifdef Q_WS_X11
 	if ( QX11Info::display() )
 #endif
 		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
+*/
 
 }
 

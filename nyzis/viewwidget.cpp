@@ -21,15 +21,17 @@
  * $Id$
  */
 
+#include <Qt>
 #include <qtimer.h>
 #include "debug.h"
-/* Qt */
-#include <QColor>
 
 #include <ctype.h>
 
 #include "viewwidget.h"
 #include "factory.h"
+#include "color.h"
+
+const QRgb  RGB_MASK    = 0x00ffffff;                // masks RGB values
 
 static const QChar tabChar( '\t' );
 static const QChar spaceChar( ' ' );
@@ -277,9 +279,9 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 
 				x = marginLeft + curX - shiftX;
 
-				QColor c = drawColor( );
-				if ( ! c.isValid() )
-					c = Qt::white; // XXX
+				YZColor c = drawColor();
+				if ( !c.isValid() )
+					c = YZColor( Qt::white ); // XXX
 				int mAttributes;
 				int rawcolor = c.rgb() & RGB_MASK;
 				if ( mAttributesMap.contains( rawcolor ) ) {
@@ -419,7 +421,7 @@ void NYZView::initialiseAttributesMap()
 	YZASSERT( ERR != init_pair( nb, (color), -1 /*COLOR_BLACK*/ ) );    \
 	mAttributesMap[(rawcolor)] = COLOR_PAIR((nb)) | (attributes);
 #define MAP( nb, qtcolor, color, attributes )               \
-		RAWMAP((nb),((QColor)qtcolor).rgb() & RGB_MASK,(color),(attributes))
+		RAWMAP((nb),YZColor(qtcolor).rgb() & RGB_MASK,(color),(attributes))
 // first arg is the new rawcolor, second arg is the one that should be used
 #define ALIASMAP(rawcolor1,rawcolor2) \
 	YZASSERT( ! mAttributesMap.contains( rawcolor1) ); \

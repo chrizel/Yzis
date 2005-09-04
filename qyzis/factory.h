@@ -49,6 +49,7 @@ public:
 	void splitHorizontally(YZView *view);
 	bool promptYesNo(const QString& title, const QString& message);
 	int promptYesNoCancel(const QString& title, const QString& message);
+	virtual void setClipboardText( const QString& text, Clipboard::Mode mode );
 	
 	/**
 	 * Sets the parent widget for all created QYZisView

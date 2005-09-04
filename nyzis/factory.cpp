@@ -158,6 +158,9 @@ bool NYZFactory::processInput(int /*fd*/) {
 	return true;
 }
 
+void NYZFactory::setClipboardText( const QString& text, Clipboard::Mode mode ) {
+	// XXX
+}
 
 bool NYZFactory::quit( int errorCode ) {
 	exit( errorCode );

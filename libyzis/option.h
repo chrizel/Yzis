@@ -25,13 +25,13 @@
 #include <qstring.h>
 #include <qmap.h>
 #include <qstringlist.h>
-#include <qcolor.h>
 #include <limits.h> // for INT_MAX and INT_MIN
 
 typedef QMap<QString,QString> MapOption;
 
 #include "buffer.h"
 #include "view.h"
+#include "color.h"
 
 /**
  * Options Handling in libyzis
@@ -60,14 +60,14 @@ class YZOptionValue {
 		void setInteger( int value );
 		void setList( const QStringList& value );
 		void setMap( const MapOption& value );
-		void setColor( const QColor& value );
+		void setColor( const YZColor& value );
 
 		bool boolean() const;
 		const QString& string() const;
 		int integer() const;
 		const QStringList& list() const;
 		const MapOption& map() const;
-		const QColor& color() const;
+		const YZColor& color() const;
 		
 		// the YZOption from which I'm the value
 		YZOption* parent() const;
@@ -80,14 +80,14 @@ class YZOptionValue {
 		static int integerFromString( bool* success, const QString& value );
 		static QStringList listFromString( bool* success, const QString& value );
 		static MapOption mapFromString( bool* success, const QString& value );
-		static QColor colorFromString( bool* success, const QString& value );
+		static YZColor colorFromString( bool* success, const QString& value );
 
 		static QString booleanToString( bool value );
 		static QString stringToString( const QString& value );
 		static QString integerToString( int value );
 		static QString listToString( const QStringList& value );
 		static QString mapToString( const MapOption& value );
-		static QString colorToString( const QColor& value );
+		static QString colorToString( const YZColor& value );
 
 	private :
 		YZOption* m_parent;
@@ -96,7 +96,7 @@ class YZOptionValue {
 		int v_int;
 		QStringList v_list;
 		MapOption v_map;
-		QColor v_color;
+		YZColor v_color;
 		value_t m_type;
 };
 
@@ -193,7 +193,7 @@ class YZOptionMap : public YZOption {
 
 class YZOptionColor : public YZOption {
 	public :
-		YZOptionColor( const QString& name, const QColor& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases );
+		YZOptionColor( const QString& name, const YZColor& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases );
 		virtual ~YZOptionColor();
 
 		virtual bool setValue( const QString& entry, YZOptionValue* value );

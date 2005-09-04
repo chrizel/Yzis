@@ -301,6 +301,16 @@ void KYZTextEditorIface::clearMarks() {
 	m_buffer->docMarks()->clear();
 }
 
+
+void setMarkPixmap(KTextEditor::MarkInterface::MarkTypes /*type*/, const QPixmap &/*pix*/) {
+} //TODO
+void setMarkDescription(KTextEditor::MarkInterface::MarkTypes /*type*/, const QString &/*d*/) {
+} //TODO
+void markChanged ( KTextEditor::Document* /*document*/, KTextEditor::Mark /*mark*/, KTextEditor::MarkInterface::MarkChangeAction /*action*/ ) {
+} //TODO
+void marksChanged (KTextEditor::Document* /*document*/ ) {
+} //TODO
+
 QString KYZTextEditorIface::mimeType() {
 	KMimeType::Ptr result = KMimeType::defaultMimeTypePtr();
 	  

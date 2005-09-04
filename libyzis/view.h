@@ -25,20 +25,15 @@
  * $Id$
  */
 
+#include "color.h"
 #include "selection.h"
 #include "mode.h"
 #include "option.h"
 #include "viewid.h"
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
-#include <qvaluevector.h>
-#include <qapplication.h>
-#else
 #include <QVector>
 #include <QCoreApplication>
-#include <QColor>
-#endif
 
 class YZViewCursor;
 class YZCursor;
@@ -391,22 +386,22 @@ class YZView {
 		/**
 		 * char color
 		 */
-		const QColor& drawColor();
+		const YZColor& drawColor();
 
 		/**
 		 * char color if selected
 		 */
-		const QColor& drawSelColor();
+		const YZColor& drawSelColor();
 
 		/**
 		 * char background color
 		 */
-		const QColor& drawBgColor();
+		const YZColor& drawBgColor();
 
 		/**
 		 * char background color if selected
 		 */
-		const QColor& drawBgSelColor();
+		const YZColor& drawBgSelColor();
 
 		/**
 		 * current char is bold
@@ -436,12 +431,12 @@ class YZView {
 		/**
 		 * current char outline color
 		 */
-		const QColor& drawOutline();
+		const YZColor& drawOutline();
 
 		/**
 		 * Character color at column line
 		 */
-		const QColor& drawColor ( unsigned int col, unsigned int line ) const;
+		const YZColor& drawColor ( unsigned int col, unsigned int line ) const;
 
 		/**
 		 * return current buffer line

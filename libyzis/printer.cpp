@@ -35,13 +35,8 @@ extern "C" {
 #include "buffer.h"
 #include "session.h"
 #include "debug.h"
-#if QT_VERSION < 0x040000
-#include <qpainter.h>
-#include <qpaintdevicemetrics.h>
-#else
 #include <QPaintDevice>
 #include <QPainter>
-#endif
 
 YZPrinter::YZPrinter( YZView *view ) /*: QPrinter(QPrinter::PrinterResolution) */{
 	PS_mp_init();

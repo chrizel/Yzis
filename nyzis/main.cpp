@@ -30,7 +30,6 @@
 #include <qglobal.h>
 #include <QWidget>
 #include <QCoreApplication>
-#include <QApplication>
 #include <QTextCodec>
 #include <QSocketNotifier>
 
@@ -76,9 +75,9 @@ main(int argc, char *argv[])
 #endif
 
 	QCoreApplication *app;
-if ( useGUI )
+/*if ( useGUI )
 	app = ( QCoreApplication* )new QApplication( argc, argv );
-else
+else */
 	app = new QCoreApplication( argc,argv );
 
 	QSocketNotifier *socket = new QSocketNotifier(0,QSocketNotifier::Read);

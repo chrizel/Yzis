@@ -38,9 +38,9 @@
 #include "debug.h"
 #include "undo.h"
 #ifdef HAVE_LIBPS
-#include "printer.h"
+//#include "printer.h"
 #endif
-#include "qtprinter.h"
+//#include "qtprinter.h"
 #include "cursor.h"
 #include "internal_options.h"
 #include "registers.h"
@@ -59,8 +59,8 @@
 #define GET_CHAR_WIDTH( c ) ( isFontFixed ? 1 : charWidth( c ) )
 
 static const QChar tabChar( '\t' );
-static QColor fake/*( "white" )*/;
-static QColor blue( "blue" );
+static YZColor fake;
+static YZColor blue( "blue" );
 
 /**
  * class YZView
@@ -1348,7 +1348,7 @@ bool YZView::drawSelected() const {
 	return charSelected;
 }
 
-const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) const {
+const YZColor& YZView::drawColor ( unsigned int col, unsigned int line ) const {
 	YZLine *yl = mBuffer->yzline( line );
 	YzisHighlighting * highlight = mBuffer->highlight();
 	const uchar* hl=NULL;
@@ -1368,7 +1368,7 @@ const QColor& YZView::drawColor ( unsigned int col, unsigned int line ) const {
 	return fake;
 }
 
-const QColor& YZView::drawColor() {
+const YZColor& YZView::drawColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return blue; //XXX make custom
@@ -1376,7 +1376,7 @@ const QColor& YZView::drawColor() {
 	else return fake;
 }
 
-const QColor& YZView::drawSelColor() {
+const YZColor& YZView::drawSelColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
@@ -1384,7 +1384,7 @@ const QColor& YZView::drawSelColor() {
 	else return fake;
 }
 
-const QColor& YZView::drawBgColor() {
+const YZColor& YZView::drawBgColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
@@ -1392,7 +1392,7 @@ const QColor& YZView::drawBgColor() {
 	else return fake;
 }
 
-const QColor& YZView::drawBgSelColor() {
+const YZColor& YZView::drawBgSelColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
@@ -1435,7 +1435,7 @@ bool YZView::drawStrikeOutLine() {
 	return false;	
 }
 
-const QColor& YZView::drawOutline() {
+const YZColor& YZView::drawOutline() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
 	if ( listChar ) return fake; //XXX make custom
@@ -1460,7 +1460,8 @@ unsigned int YZView::drawTotalHeight() {
 	return totalHeight;
 }
 
-void YZView::printToFile( const QString& path ) {
+void YZView::printToFile( const QString& /*path*/ ) {
+#if 0
 	if ( YZSession::getStringOption("printer") != "pslib" ) {
 		if ( getenv( "DISPLAY" ) ) {
 			YZQtPrinter qtprinter( this );
@@ -1476,6 +1477,7 @@ void YZView::printToFile( const QString& path ) {
 	YZPrinter printer( this );
 	printer.printToFile( path );
 	printer.run( );
+#endif
 #endif
 }
 

@@ -110,7 +110,7 @@ class KYZisView: public KTextEditor::View,
 		QFontMetrics editorFontMetrics();
 		virtual bool registerCompletionProvider(KTextEditor::CompletionProvider */*provider*/) { return false; }
 		virtual bool unregisterCompletionProvider(KTextEditor::CompletionProvider*) { return true; }
-		virtual void invokeCompletion(enum KTextEditor::CompletionType type) {} //TODO
+		virtual void invokeCompletion(enum KTextEditor::CompletionType /*type*/) {} //TODO
 		void invokeCompletion(KTextEditor::CompletionProvider*,enum KTextEditor::CompletionType) {} //TODO
 		void completionAborted() {} //TODO
 		void completionDone() {} //TODO

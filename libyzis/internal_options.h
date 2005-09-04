@@ -23,9 +23,9 @@
 #include <qstring.h>
 #include <qmap.h>
 #include <qstringlist.h>
-#include <qcolor.h>
 #include "yzis.h"
 
+#include "color.h"
 #include "option.h"
 
 /**
@@ -104,7 +104,7 @@ class YZInternalOptionPool {
 		/**
 		 * return a color option
 		 */
-		QColor readColorOption( const QString& key, const QColor& def = QColor() );
+		YZColor readColorOption( const QString& key, const YZColor& def = YZColor() );
 
 		
 		/**
@@ -148,14 +148,14 @@ class YZInternalOptionPool {
 		void setQStringListEntry( const QString& key, const QStringList& value );
 
 		/**
-		 * return a QColor option
+		 * return a YZColor option
 		 */
-		QColor readQColorEntry( const QString& key, const QColor& def );
+		YZColor readYZColorEntry( const QString& key, const YZColor& def );
 
 		/**
-		 * Sets a qcolor option
+		 * Sets a YZColor option
 		 */
-		void setQColorEntry( const QString& key, const QColor& value );
+		void setYZColorEntry( const QString& key, const YZColor& value );
 
 
 		/**

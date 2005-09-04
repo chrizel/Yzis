@@ -329,14 +329,13 @@ bool KYZisView::clearSelection() {
 	modePool()->pop();
 	return true;
 }
+bool KYZisView::selection() const {
+	return !getSelectionPool()->visual()->isEmpty();
+}
 
 const KTextEditor::Range& KYZisView::selectionRange() const {
 	YZInterval i = getSelectionPool()->visual()->bufferMap()[ 0 ];
 	return KTextEditor::Range(i.fromPos().x(), i.fromPos().y(), i.toPos().x(), i.toPos().y());
-}
-
-bool KYZisView::selection() const {
-	return !getSelectionPool()->visual()->isEmpty();
 }
 
 QString KYZisView::selectionText() const {

@@ -31,6 +31,7 @@
 
 #include <QPair>
 #include <QString>
+#include <QStringList>
 #include <QMap>
 #include <QHash>
 #include <QTime>

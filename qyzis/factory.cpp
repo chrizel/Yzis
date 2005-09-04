@@ -29,6 +29,10 @@
 #include <qmessagebox.h>
 #include <qtimer.h>
 #include <qtextcodec.h>
+#include <QClipboard>
+#ifdef Q_WS_X11
+#include <QX11Info>
+#endif
 
 #include "factory.h"
 #include "viewwidget.h"
@@ -61,6 +65,13 @@ QYZisFactory *QYZisFactory::self() {
 	}
 		
 	return self;
+}
+
+void QYZisFactory::setClipboardText( const QString& text, Clipboard::Mode mode ) {
+#ifdef Q_WS_X11
+	if ( QX11Info::display() )
+#endif
+		QApplication::clipboard()->setText( text, mode == Clipboard::Clipboard ? QClipboard::Clipboard : QClipboard::Selection );
 }
 
 bool QYZisFactory::quit( int /*errorCode*/ ) {

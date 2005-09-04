@@ -37,6 +37,10 @@
 #include <kstaticdeleter.h>
 #include <qtimer.h>
 #include <qtextcodec.h>
+#include <QClipboard>
+#ifdef Q_WS_X11
+#include <QX11Info>
+#endif
 
 #include "settings.h"
 #include "factory.h"
@@ -203,6 +207,13 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	doc->setReadWrite( true );
 	
 	return doc;
+}
+
+void KYZisFactory::setClipboardText( const QString& text, Clipboard::Mode mode ) {
+#ifdef Q_WS_X11
+	if ( QX11Info::display() )
+#endif
+		QApplication::clipboard()->setText( text, mode == Clipboard::Clipboard ? QClipboard::Clipboard : QClipboard::Selection );
 }
 
 bool KYZisFactory::quit( int /*errorCode*/ ) {

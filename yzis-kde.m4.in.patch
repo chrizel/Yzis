@@ -1,5 +1,5 @@
---- acinclude.m4.in.orig	2005-08-28 19:41:32.883312904 +0200
-+++ acinclude.m4.in	2005-08-28 19:41:38.431469456 +0200
+--- acinclude.m4.in-orig	2005-09-02 00:37:33.000000000 +0200
++++ acinclude.m4.in	2005-09-02 00:39:22.000000000 +0200
 @@ -412,7 +412,7 @@
      kde_datadir='\${datadir}/apps'
    fi
@@ -29,6 +29,29 @@
  ])
  
  AC_DEFUN([KDE_SET_DEFAULT_BINDIRS],
+@@ -1161,8 +1156,8 @@
+   fi
+ fi
+ 
+-LIBQT="-lQtGui_debug"
+-kde_int_qt="-lQtGui_debug"
++LIBQT="-lQtCore_debug"
++kde_int_qt="-lQtCore_debug"
+ 
+ AC_REQUIRE([AC_FIND_PNG])
+ AC_REQUIRE([AC_FIND_JPEG])
+@@ -1311,9 +1306,9 @@
+ AC_SUBST(qt_includes)
+ 
+ if test "$qt_includes" = "$x_includes" || test -z "$qt_includes"; then
+- QT_INCLUDES="-I$qt_includes/Qt -I$qt_includes/QtCore -I$qt_includes/QtGui -I$qt_includes/Qt3Support"
++ QT_INCLUDES="-I$qt_includes/Qt -I$qt_includes/QtCore -I$qt_includes/Qt3Support"
+ else
+- QT_INCLUDES="-I$qt_includes -I$qt_includes/Qt -I$qt_includes/QtCore -I$qt_includes/QtGui -I$qt_includes/Qt3Support"
++ QT_INCLUDES="-I$qt_includes -I$qt_includes/Qt -I$qt_includes/QtCore -I$qt_includes/Qt3Support"
+  all_includes="$QT_INCLUDES $all_includes"
+ fi
+ 
 @@ -1393,15 +1388,7 @@
  
  AC_MSG_RESULT([$kde_cv_uic_plugins])

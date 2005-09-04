@@ -531,9 +531,9 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 				else
 					disp = disp.leftJustify( mParent->drawLength(), mParent->fillChar() );
 
-				QColor c = mParent->drawColor( );
+				QColor c( mParent->drawColor().rgb() );
 				cell.fg = c.isValid() ? c : defaultCell.fg;
-				c = mParent->drawBgColor();
+				c.setRgb( mParent->drawBgColor().rgb() );
 				cell.bg = c.isValid() ? c : defaultCell.bg;
 				cell.selected = mParent->drawSelected();
 

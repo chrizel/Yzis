@@ -99,10 +99,10 @@ class KYZTextEditorIface : public KTextEditor::Document,
 		virtual QString hlModeSectionName (unsigned int mode);
 		
 		//mark interface
-		virtual void setMarkPixmap(KTextEditor::MarkInterface::MarkTypes /*type*/, const QPixmap &/*pix*/) {} //TODO
-		virtual void setMarkDescription(KTextEditor::MarkInterface::MarkTypes /*type*/, const QString &/*d*/) {} //TODO
-	    virtual void markChanged ( KTextEditor::Document* document, KTextEditor::Mark mark, KTextEditor::MarkInterface::MarkChangeAction action) {} //TODO
-		virtual void marksChanged (KTextEditor::Document* document) {} //TODO
+		virtual void setMarkPixmap(KTextEditor::MarkInterface::MarkTypes type, const QPixmap &pix);
+		virtual void setMarkDescription(KTextEditor::MarkInterface::MarkTypes type, const QString &d);
+		virtual void markChanged ( KTextEditor::Document* document, KTextEditor::Mark mark, KTextEditor::MarkInterface::MarkChangeAction action);
+		virtual void marksChanged (KTextEditor::Document* document);
 
 	public slots:
 		/*state modification changes - to comply with undocumented kate features

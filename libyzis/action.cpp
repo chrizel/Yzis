@@ -44,7 +44,6 @@
 #include <QX11Info>
 #endif
 #include <QApplication>
-#include <QClipboard>
 
 YZAction::YZAction( YZBuffer* buffer ) {
 	mBuffer = buffer;
@@ -170,11 +169,7 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, unsigned int len, const 
 		text += line + "\n";
 	}
 	buff << QString::null;
-#ifdef Q_WS_X11
-	if ( QX11Info::display() )
-#endif
-		QApplication::clipboard()->setText( text, QClipboard::Clipboard );
-	
+	YZSession::me->setClipboardText( text, Clipboard::Clipboard );
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
 		YZSession::me->setRegister( reg.at(ab), buff );
 }
@@ -205,10 +200,7 @@ void YZAction::copyArea( YZView* , const YZInterval& i, const QList<QChar> &reg 
 			buff << mBuffer->textline( eY ).left( eX );
 	}
 
-#ifdef Q_WS_X11
-	if ( QX11Info::display() )
-#endif
-		QApplication::clipboard()->setText( mBuffer->getText( i ).join("\n"), QClipboard::Clipboard );
+	YZSession::me->setClipboardText( mBuffer->getText( i ).join("\n"), Clipboard::Clipboard );
 	
 	yzDebug() << "Copied " << buff << endl;
 	for ( int ab = 0 ; ab < reg.size(); ++ab )

@@ -19,7 +19,7 @@ qyzis_SOURCES = main.cpp  viewwidget.cpp factory.cpp \
 	cursor.cpp qyzis.cpp 
 qyzis_LDFLAGS = $(KDE_RPATH) $(all_libraries)
 #qyzis_LDADD =  $(LIB_KPARTS) $(top_builddir)/libyzis/libyzis.la   $(top_builddir)/qyzis/newui/libd.la
-qyzis_LDADD =   $(top_builddir)/libyzis/libyzis.la # $(top_builddir)/qyzis/newui/libd.la
+qyzis_LDADD =   $(LIB_QTGUI) $(top_builddir)/libyzis/libyzis.la # $(top_builddir)/qyzis/newui/libd.la
 
 # this is where the desktop file will go 
 shelldesktopdir   = $(kde_appsdir)/Editors

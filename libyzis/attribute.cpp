@@ -28,7 +28,7 @@
 #include "attribute.h"
 
 YzisAttribute::YzisAttribute()
-  : m_weight(QFont::Normal)
+  : m_weight(YZFont::Normal)
   , m_italic(false)
   , m_underline(false)
   , m_overline(false)
@@ -82,9 +82,9 @@ YzisAttribute& YzisAttribute::operator+=(const YzisAttribute& a)
   return *this;
 }
 
-QFont YzisAttribute::font(const QFont& ref)
+YZFont YzisAttribute::font(const YZFont& ref)
 {
-  QFont ret = ref;
+  YZFont ret = ref;
 
   if (itemSet(Weight))
     ret.setWeight(weight());
@@ -114,7 +114,7 @@ void YzisAttribute::setWeight(int weight)
 
 void YzisAttribute::setBold(bool enable)
 {
-  setWeight(enable ? QFont::Bold : QFont::Normal);
+  setWeight(enable ? YZFont::Bold : YZFont::Normal);
 }
 
 void YzisAttribute::setItalic(bool enable)
@@ -165,7 +165,7 @@ void YzisAttribute::setStrikeOut(bool enable)
   }
 }
 
-void YzisAttribute::setOutline(const QColor& color)
+void YzisAttribute::setOutline(const YZColor& color)
 {
   if (!(m_itemsSet & Outline) || m_outline != color)
   {
@@ -177,7 +177,7 @@ void YzisAttribute::setOutline(const QColor& color)
   }
 }
 
-void YzisAttribute::setTextColor(const QColor& color)
+void YzisAttribute::setTextColor(const YZColor& color)
 {
   if (!(m_itemsSet & TextColor) || m_textColor != color)
   {
@@ -189,7 +189,7 @@ void YzisAttribute::setTextColor(const QColor& color)
   }
 }
 
-void YzisAttribute::setSelectedTextColor(const QColor& color)
+void YzisAttribute::setSelectedTextColor(const YZColor& color)
 {
   if (!(m_itemsSet & SelectedTextColor) || m_selectedTextColor != color)
   {
@@ -201,7 +201,7 @@ void YzisAttribute::setSelectedTextColor(const QColor& color)
   }
 }
 
-void YzisAttribute::setBGColor(const QColor& color)
+void YzisAttribute::setBGColor(const YZColor& color)
 {
   if (!(m_itemsSet & BGColor) || m_bgColor != color)
   {
@@ -213,7 +213,7 @@ void YzisAttribute::setBGColor(const QColor& color)
   }
 }
 
-void YzisAttribute::setSelectedBGColor(const QColor& color)
+void YzisAttribute::setSelectedBGColor(const YZColor& color)
 {
   if (!(m_itemsSet & SelectedBGColor) || m_selectedBGColor != color)
   {

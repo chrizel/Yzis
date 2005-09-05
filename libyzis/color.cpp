@@ -256,9 +256,9 @@ void YZColor::invalidate() {
 }
 
 void YZColor::setRgb( QRgb rgb ) {
-	m_red = ( rgb >> 16 ) & 0xff;
-	m_green = ( rgb >> 8 ) & 0xff;
-	m_blue = ( rgb ) & 0xff;
+	m_red = ( ( rgb >> 16 ) & 0xff ) * 0x101;
+	m_green = ( ( rgb >> 8 ) & 0xff ) * 0x101;
+	m_blue = ( ( rgb ) & 0xff ) * 0x101;
 }
 
 void YZColor::setNamedColor( const QString& name ) {
@@ -315,12 +315,21 @@ bool YZColor::isValid() const {
 	return m_valid;
 }
 QRgb YZColor::rgb() const {
-	return qRgb( m_red, m_green, m_blue );
+	return qRgb( red(), green(), blue() );
 }
 QString YZColor::name() const {
 	QString s;
-	s.sprintf("#%02x%02x%02x", m_red, m_green, m_blue );
+	s.sprintf("#%02x%02x%02x", red(), green(), blue() );
 	return s;
+}
+int YZColor::red() const {
+	return m_red >> 8;
+}
+int YZColor::green() const {
+	return m_green >> 8;
+}
+int YZColor::blue() const {
+	return m_blue >> 8;
 }
 
 bool YZColor::operator!=( const YZColor& color ) const {

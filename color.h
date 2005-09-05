@@ -53,6 +53,9 @@ class YZColor {
 		QRgb rgb() const;
 		/* #RRGGBB */
 		QString name() const;
+		int red() const;
+		int green() const;
+		int blue() const;
 
 		bool operator!=( const YZColor& color ) const;
 	

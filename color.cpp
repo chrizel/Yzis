@@ -258,7 +258,7 @@ void YZColor::invalidate() {
 void YZColor::setRgb( QRgb rgb ) {
 	m_red = ( rgb >> 16 ) & 0xff;
 	m_green = ( rgb >> 8 ) & 0xff;
-	m_blue = ( rgb ) && 0xff;
+	m_blue = ( rgb ) & 0xff;
 }
 
 void YZColor::setNamedColor( const QString& name ) {

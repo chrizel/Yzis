@@ -60,7 +60,7 @@ class KYZisEdit : public QWidget {
 	Q_OBJECT
 
 	public :
-		KYZisEdit(KYZisView *parent=0, const char *name=0);
+		KYZisEdit(KYZisView *parent=0);
 		virtual ~KYZisEdit();
 
 		//erase all text, and set new text

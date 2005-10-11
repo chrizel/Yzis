@@ -16,7 +16,7 @@ noinst_LTLIBRARIES = libinternkyzis.la
 libinternkyzis_la_SOURCES = ktexteditoriface.cpp viewwidget.cpp factory.cpp \
 	settings.kcfgc editor.cpp commandwidget.cpp kyziscodecompletion.cpp \
 	cursor.cpp kyzis.cpp kyzis.skel konsole.cpp kyzisbuffer.cpp 
-libinternkyzis_la_LIBADD = $(top_builddir)/kyzis/src/newui/libd.la
+libinternkyzis_la_LIBADD = $(top_builddir)/kyzis/src/newui/libd.la -lktexteditor
 
 kde_kcfg_DATA = kyzis.kcfg
  

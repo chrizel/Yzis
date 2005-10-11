@@ -39,11 +39,12 @@ class KYZisView;
 class YZViewId;
 
 class KYZisPublicFactory : public KTextEditor::Factory, 
-						   public KTextEditor::Editor {
+	public KTextEditor::Editor {
 	Q_OBJECT
 	
 	public :
 		KYZisPublicFactory( QObject* parent = 0, const char * = 0 );
+		virtual ~KYZisPublicFactory();
 
 		KParts::Part *createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args ) ;
 		KTextEditor::Editor *editor() ;

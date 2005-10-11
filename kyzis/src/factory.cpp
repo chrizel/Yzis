@@ -59,6 +59,10 @@ KYZisPublicFactory::KYZisPublicFactory( QObject* parent, const char * ) :
 { 
 }
 
+KYZisPublicFactory::~KYZisPublicFactory() {
+
+}
+
 KParts::Part *KYZisPublicFactory::createPartObject( QWidget *parentWidget, const char *widgetName, QObject *parent, const char *name, const char *classname, const QStringList &args ) {
 	return KYZisFactory::self()->createPartObject( parentWidget, widgetName, parent, name, classname, args );
 }

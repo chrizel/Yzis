@@ -42,7 +42,7 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/view.h>
 #include <kmultitabbar.h>
-#include <kpopupmenu.h>
+#include <kmenu.h>
 #include <kmenubar.h>
 
 #include "ktexteditoriface.h"
@@ -330,13 +330,13 @@ void Kyzis::closeTab() {
 
 void Kyzis::setupWindowMenu() {
     // get the xmlgui created one instead
-    m_windowMenu = qFindChild<KPopupMenu *>(main(), QLatin1String("window"));
+    m_windowMenu = qFindChild<KMenu *>(main(), QLatin1String("window"));
 
     if (!m_windowMenu)
     {
         kdDebug() << "Couldn't find the XMLGUI window menu. Creating new." << endl;
 
-        m_windowMenu = new KPopupMenu(main(), "window");
+        m_windowMenu = new KMenu(main());
         menuBar()->insertItem(i18n("&Window"), m_windowMenu);
     }
 

@@ -284,17 +284,17 @@ void KYZTextEditorIface::removeMark( int line, uint markType ) {
 	m_buffer->docMarks()->del(line, markType);
 }
 
-Q3PtrList<KTextEditor::Mark> KYZTextEditorIface::marks() {
-	Q3PtrList<KTextEditor::Mark> marks;
+QHash<int, KTextEditor::Mark*> & KYZTextEditorIface::marks() {
+	qDeleteAll(m_marks);
 	const YZDocMarker &marker = m_buffer->docMarks()->getMarker();
 	for (YZDocMarker::const_iterator it = marker.constBegin(); it != marker.constEnd(); ++it)
 	{
 		KTextEditor::Mark *m = new KTextEditor::Mark;
 		m->line = it.key();
 		m->type = it.data();
-		marks.append(m);
+		m_marks.insert(m->line, m);
 	}
-	return marks;
+	return m_marks;
 }
 
 void KYZTextEditorIface::clearMarks() {
@@ -302,13 +302,13 @@ void KYZTextEditorIface::clearMarks() {
 }
 
 
-void setMarkPixmap(KTextEditor::MarkInterface::MarkTypes /*type*/, const QPixmap &/*pix*/) {
+void KYZTextEditorIface::setMarkPixmap(KTextEditor::MarkInterface::MarkTypes /*type*/, const QPixmap &/*pix*/) {
 } //TODO
-void setMarkDescription(KTextEditor::MarkInterface::MarkTypes /*type*/, const QString &/*d*/) {
+void KYZTextEditorIface::setMarkDescription(KTextEditor::MarkInterface::MarkTypes /*type*/, const QString &/*d*/) {
 } //TODO
-void markChanged ( KTextEditor::Document* /*document*/, KTextEditor::Mark /*mark*/, KTextEditor::MarkInterface::MarkChangeAction /*action*/ ) {
+void KYZTextEditorIface::markChanged ( KTextEditor::Document* /*document*/, KTextEditor::Mark /*mark*/, KTextEditor::MarkInterface::MarkChangeAction /*action*/ ) {
 } //TODO
-void marksChanged (KTextEditor::Document* /*document*/ ) {
+void KYZTextEditorIface::marksChanged (KTextEditor::Document* /*document*/ ) {
 } //TODO
 
 QString KYZTextEditorIface::mimeType() {

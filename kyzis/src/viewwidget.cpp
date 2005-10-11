@@ -49,10 +49,10 @@ KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
 	m_part = 0;
 	buffer = doc;
 	
-	m_editor = new KYZisEdit (this,"editor");
-	status = new KStatusBar (this, "status");
-	command = new KYZisCommand (this, "command");
-	mVScroll = new QScrollBar( this, "vscroll" );
+	m_editor = new KYZisEdit (this);
+	status = new KStatusBar (this);
+	command = new KYZisCommand (this);
+	mVScroll = new QScrollBar( this );
 	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
 	connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
 	connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );

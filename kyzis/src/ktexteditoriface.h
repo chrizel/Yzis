@@ -115,7 +115,7 @@ class KYZTextEditorIface : public KTextEditor::Document,
 		void clearMark( int line );
 		void addMark( int line, uint markType );
 		void removeMark( int line, uint markType );
-		Q3PtrList<KTextEditor::Mark> marks();
+		QHash<int, KTextEditor::Mark*> &marks();
 		void clearMarks();
 		void setPixmap( MarkTypes, const QPixmap & ) {} //TODO
 		void setDescription( MarkTypes, const QString & ) {} //TODO
@@ -143,6 +143,7 @@ class KYZTextEditorIface : public KTextEditor::Document,
 
 	private:
 		QList<KDocument::View*> _views;
+		QHash<int, KTextEditor::Mark*> m_marks;
 		QWidget *m_parent;
 		YZBuffer *m_buffer;
 		

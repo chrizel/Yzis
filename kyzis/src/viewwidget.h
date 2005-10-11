@@ -24,6 +24,7 @@
 #include <ktexteditor/codecompletioninterface.h>
 #include <kstatusbar.h>
 #include <ksqueezedtextlabel.h>
+#include <klocale.h>
 #include <qevent.h>
 #include <qscrollbar.h>
 #include <qlayout.h>

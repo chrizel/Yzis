@@ -43,7 +43,7 @@ class KRecentFilesAction;
 class Kyzis : public DMainWindow, public DCOPObject
 {
 	K_DCOP
-    Q_OBJECT
+	Q_OBJECT
 public:
     /**
 	 * Constructs a Kyzis widget
@@ -123,7 +123,7 @@ private:
 
 	QString m_initialCommand;
 	QMap<QWidget*, DDockWindow::Position> m_docks;
-	KPopupMenu *m_windowMenu;
+	KMenu *m_windowMenu;
 	typedef QPair<int, KURL> WinInfo;
 	QList<WinInfo> m_windowList;
 

@@ -25,8 +25,8 @@
 #include "debug.h"
 #include "view.h"
 
-KYZisCommand::KYZisCommand(KYZisView *parent, const char *name)
-	: KLineEdit( parent, name ) {
+KYZisCommand::KYZisCommand(KYZisView *parent)
+	: KLineEdit( parent ) {
 		_parent = parent;
 }
 

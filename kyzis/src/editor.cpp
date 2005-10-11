@@ -45,7 +45,7 @@
 
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
 
-KYZisEdit::KYZisEdit(KYZisView *parent, const char* /*name*/)
+KYZisEdit::KYZisEdit(KYZisView *parent)
 : QWidget( parent, /*Qt::WStaticContents | */ Qt::WNoAutoErase )
 {
 	mTransparent = false;

@@ -62,7 +62,7 @@ void Konsole::loadConsoleIfNeeded()
           part = static_cast<KParts::ReadOnlyPart *>(factory->create(this,"libkonsolepart",	"KParts::ReadOnlyPart"));
 	  if (part)
 	    {
-              KGlobal::locale()->insertCatalogue("konsole");
+              KGlobal::locale()->insertCatalog(QString::fromLatin1("konsole"));
               part->widget()->show();
               lo->addWidget(part->widget());
               connect ( part, SIGNAL(destroyed()), this, SLOT(slotDestroyed()) );

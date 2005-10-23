@@ -148,6 +148,36 @@ void YZYzisinfo::readYzisinfo() {
 				mJumpList.push_back( new YZYzisinfoJumpListRecord( list[3], list[1].toInt(), list[2].toInt() ) );
 				mCurrentJumpListItem++;
 			}
+			
+			if ( list[0].startsWith("\"") ) {
+				QChar key = list[0].at(1);
+				
+				QString line;
+				QStringList contents;
+				int length = list[3].toInt();
+				
+				if ( list[1] == "CHAR" ) {
+					for ( int i = 0; i < length; ++i ) {
+						contents << stream.readLine();
+					}
+				} else {
+					contents << QString::null;
+				
+					for ( int i = 0; i < length; ++i ) {
+						contents << stream.readLine();
+					}
+				
+					contents << QString::null;
+				}
+				
+				yzDebug() << "Key:<" << key.toAscii() << ">" << endl;
+				yzDebug() << "Length:<" << contents.size() << ">" << endl;
+				for ( int i = 0; i < contents.size(); ++i ) {
+					yzDebug() << "<" << contents.at(i) << ">" << endl;
+				}
+				
+				YZSession::me->setRegister( key, contents );	
+			}
 		}
 		
 		mYzisinfo.close();
@@ -247,6 +277,10 @@ void YZYzisinfo::writeYzisinfo() {
 		saveJumpList( write );
 		write << endl;
 		
+		write << "# Registers:" << endl;
+		saveRegistersList( write );
+		write << endl;
+		
 		mYzisinfo.close();
 	}
 }
@@ -316,6 +350,35 @@ void YZYzisinfo::saveJumpList( QTextStream & write ) {
 		write << mJumpList[i]->position().y();
 		write << " ";
 		write << mJumpList[i]->filename() << endl;
+	}
+}
+
+/**
+ * YZYzisinfo::saveRegisters
+ */
+ 
+void YZYzisinfo::saveRegistersList( QTextStream & write ) {
+
+	QList<QChar> list = YZSession::me->getRegisters();	
+	
+	for ( int i = 0; i < list.size(); ++i ) {
+		QStringList contents = YZSession::me->getRegister( list.at(i) );
+		
+		write << "\"" << list.at(i) << " ";
+		
+		if ( contents.size() >= 3 ) {
+			write << "LINE  " << contents.size() - 2 << endl;
+		} else {
+			write << "CHAR  " << contents.size() << endl;
+		}
+		
+		for ( int j = 0; j < contents.size(); ++j ) {
+			if ( ( contents.at(j) ).isNull() ) {
+				continue;
+			}
+			
+			write << contents.at(j) << "\n";
+		}
 	}
 }
 

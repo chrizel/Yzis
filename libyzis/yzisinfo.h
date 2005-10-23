@@ -128,6 +128,15 @@ class YZYzisinfo {
 		void saveJumpList( QTextStream & write );
 		
 		/**
+		 * Method to save the registers list to the yzisinfo file
+		 * 
+		 * @param write The text stream to use to write the information to the
+		 * yzisinfo file
+		 */
+		  
+		void saveRegistersList( QTextStream & write );
+		
+		/**
 		 * Method to return the start position for the current file
 		 */
 		

@@ -1,6 +1,7 @@
 /*
     Copyright (c) 2003-2005 Mickael Marchand <marchand@kde.org>
     Copyright (c) 2004 Alexander Dymo <adymo@mksat.net>
+    Copyright (c) 2004 Scott Newton <scottn@ihug.co.nz>
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of version 2 of the GNU General Public
@@ -125,6 +126,19 @@ bool KYZTextEditorIface::insertLine(unsigned int line, const QString &s) {
 	return true;
 }
 
+bool KYZTextEditorIface::insertLines(int line, const QStringList &s) {
+	for( int i = 0; i < s.size(); ++i ) {
+		m_buffer->insertLine(s.at(i), line);
+		++line;
+	}
+
+	/* YZBuffer::insertLine() is a void function, apparently it can't fail.
+	 * Return true
+	 */
+
+	return true;
+}
+
 bool KYZTextEditorIface::removeLine(unsigned int line) {
 	m_buffer->deleteLine(line);
 
@@ -166,6 +180,15 @@ bool KYZTextEditorIface::insertText( const KTextEditor::Cursor &position, const 
 	return true;
 }
 
+bool KYZTextEditorIface::insertText( const KTextEditor::Cursor &position, const QStringList &s, bool block) {
+	for( int i = 0; i < s.size(); ++ i) {
+		//block ??????
+		m_buffer->insertChar(position.column(), position.line(), s.at(i));
+	}
+
+	return true;
+}
+
 QString KYZTextEditorIface::text(const KTextEditor::Range& r, bool visual) const {
 	if (visual) { //not sure that's what Kate people meant ...
 		YZInterval i = m_buffer->firstView()->getSelectionPool()->visual()->bufferMap()[ 0 ];
@@ -174,9 +197,27 @@ QString KYZTextEditorIface::text(const KTextEditor::Range& r, bool visual) const
 	return m_buffer->getText( YZCursor(r.start().column(),r.start().line()), YZCursor(r.end().column(),r.end().line()) ).join("\n");
 }
 
+QStringList KYZTextEditorIface::textLines(const KTextEditor::Range& r, bool visual) const {
+	if (visual) { //not sure that's what Kate people meant ...
+		YZInterval i = m_buffer->firstView()->getSelectionPool()->visual()->bufferMap()[ 0 ];
+		return m_buffer->getText(i);
+	}
+	
+	return m_buffer->getText( YZCursor(r.start().column(),r.start().line()), YZCursor(r.end().column(),r.end().line()) );
+}
+
 bool KYZTextEditorIface::setText (  const QString &text ) {
 	QString content = text;
 	m_buffer->loadText( &content );
+	return true;
+}
+
+bool KYZTextEditorIface::setText( const QStringList &text ) {
+	for( int i = 0; i < text.size(); ++i ) {
+		QString content = text.at(i);
+		m_buffer->loadText( &content );
+	}
+	
 	return true;
 }
 

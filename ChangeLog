@@ -1,3 +1,8 @@
+2005-10-28 Scott Newton
+  * kyzis
+    Intial rough implementation of new KTextEditor::Document functions which
+    allows kyzis to compile with kdelibs4-snapshot of 2005-10-26.
+
 2005-10-23 Scott Newton
   * libyzis
     Save registers to yzisinfo file.

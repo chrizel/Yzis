@@ -1,5 +1,6 @@
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
+ *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -69,6 +70,14 @@ class KYZTextEditorIface : public KTextEditor::Document,
 		QString text(const KTextEditor::Range&, bool) const;
 		bool insertText(const KTextEditor::Cursor&, const QString&, bool);
 		bool removeText(const KTextEditor::Range&, bool);
+	
+		QChar character(const KTextEditor::Cursor&) const { return 0; } //TODO
+		QStringList textLines(const KTextEditor::Range&, bool) const;
+		KTextEditor::Cursor documentEnd() const { return KTextEditor::Cursor( ((YZBuffer*) this)->end().x(), ((YZBuffer*) this)->end().y());}
+		int totalCharacters() const { return 0; } //TODO
+		bool setText(const QStringList&);
+		bool insertText(const KTextEditor::Cursor&, const QStringList&, bool);
+		bool insertLines(int, const QStringList&);
 
 		int lines() const { return m_buffer->lineCount(); }
 		QString text() const;

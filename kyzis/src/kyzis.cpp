@@ -102,7 +102,7 @@ void Kyzis::setupActions() {
 	m_openRecentAction = KStdAction::openRecent(this, SLOT(openURL(const KURL&)),
 		actionCollection() );
 	m_openRecentAction->setWhatsThis( i18n("Opens recently opened file.") );
-	m_openRecentAction->loadEntries( kapp->config(), "RecentFiles" );
+	m_openRecentAction->loadEntries( kapp->sessionConfig(), "RecentFiles" );
 }
 
 void Kyzis::fileNew() {
@@ -168,7 +168,7 @@ void Kyzis::openURL(const KURL &url) {
 	}
 
 	m_openRecentAction->addURL(url);
-	m_openRecentAction->saveEntries( kapp->config(), "RecentFiles" );
+	m_openRecentAction->saveEntries( kapp->sessionConfig(), "RecentFiles" );
 
 	// About this function, the style guide (
 	// http://developer.kde.org/documentation/standards/kde/style/basics/index.html )

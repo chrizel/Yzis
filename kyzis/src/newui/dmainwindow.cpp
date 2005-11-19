@@ -45,7 +45,7 @@ DMainWindow::DMainWindow(QWidget *parent, const char *name)
 
 void DMainWindow::loadSettings()
 {
-    KConfig *config = kapp->config();
+    KConfig *config = kapp->sessionConfig();
     config->setGroup("UI");
     m_openTabAfterCurrent = config->readBoolEntry("OpenNewTabAfterCurrent", true);
     m_showIconsOnTabs = config->readBoolEntry("ShowTabIcons", false);

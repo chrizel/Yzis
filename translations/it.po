@@ -1,31 +1,32 @@
-# Translation of kyzis to Portuguese.
-# Copyright (C) 2005 kyzis development team
-# This file is distributed under the same license as the kyzis package.
-# Helder Correia <helder.correia@netcabo.pt>, 2005.
+# translation of it.po to
+# This file is distributed under the same license as the PACKAGE package.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
+# Andrea Santilli <yawara@quipo.it>, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: kyzis M3\n"
+"Project-Id-Version: it\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-12-06 00:36+0100\n"
-"PO-Revision-Date: 2005-02-08 23:54+0000\n"
-"Last-Translator: Helder Correia <helder.correia@netcabo.pt>\n"
-"Language-Team: Portuguese <helder.correia@netcabo.pt>\n"
+"PO-Revision-Date: 2005-11-18 18:42+0000\n"
+"Last-Translator: Andrea Santilli <yawara@quipo.it>\n"
+"Language-Team:  <it@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.10.2\n"
 
 #: ../kyzis/main.cpp:41
 msgid "KDE Frontend for the Yzis Editor"
-msgstr "Interface KDE para o editor Yzis"
+msgstr "Frontend per l'editor Yzis per KDE"
 
 #: ../kyzis/main.cpp:44
 msgid "Document to open."
-msgstr "Documento para abrir"
+msgstr "Documento da aprire."
 
 #: ../kyzis/main.cpp:45
 msgid "Execute command passed in argument"
-msgstr "Executar o comando passado como argumento"
+msgstr "Comando di esecuzione passato come argomento"
 
 #: ../kyzis/main.cpp:51 ../kyzis/src/factory.cpp:143
 msgid "Kyzis"
@@ -33,16 +34,16 @@ msgstr "Kyzis"
 
 #: ../kyzis/src/factory.cpp:143
 msgid "Embeddable vi-like editor component"
-msgstr "Componente de editor embebido"
+msgstr "Componente integrabile come l'editor vi"
 
 #: ../kyzis/src/factory.cpp:144
 msgid "(c)2002-2005 The Kyzis Authors"
-msgstr "(c) 2002-2005 Os autores do Kyzis"
+msgstr "(c)2002-2005 Gli Autori di Kyzis"
 
 #: ../kyzis/src/factory.cpp:149 ../kyzis/src/factory.cpp:150
 #: ../kyzis/src/factory.cpp:151 ../kyzis/src/factory.cpp:152
 msgid "Initial Author"
-msgstr "Autor inicial"
+msgstr "Autore iniziale"
 
 #: ../kyzis/src/factory.cpp:153
 msgid "Icons, KSettings"
@@ -108,25 +109,21 @@ msgstr ""
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
-msgstr ""
-"_: \n"
-"Your names"
+msgstr "Andrea Santilli"
 
 #: ../kyzis/src/factory.cpp:168
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
-msgstr ""
-"_: EMAIL OF TRANSLATORS\n"
-"Your emails"
+msgstr "yawara _at_ quipo _dot_ it"
 
 #: ../kyzis/src/kyzis.cpp:104
 msgid "Opens recently opened file."
-msgstr "Abre"
+msgstr "Apri file aperti di recente."
 
 #: ../kyzis/src/kyzis.cpp:340
 msgid "&Window"
-msgstr "&Janela"
+msgstr "&Finestra"
 
 #: ../kyzis/src/viewwidget.cpp:60
 msgid "Yzis Ready"
@@ -134,60 +131,60 @@ msgstr ""
 
 #: ../kyzis/src/viewwidget.h:139 ../libyzis/syntaxhighlight.cpp:3230
 msgid "Normal"
-msgstr "Normal"
+msgstr "Normale"
 
 #: ../libyzis/buffer.cpp:566
 msgid "Failed opening file %1 for reading : %2"
-msgstr "Erro ao abrir o ficheiro %1 para leitura : %2"
+msgstr "Apertura del file %1 fallita per la lettura : %2"
 
 #: ../libyzis/buffer.cpp:577
 msgid "Recover"
-msgstr "Recuperar"
+msgstr "Recupera"
 
 #: ../libyzis/buffer.cpp:577
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
 msgstr ""
-"Foi encontrado um ficheiro temporário correspondente para este ficheiro. "
-"Provavelmente, foi criado devido a uma interrupção abrupta e anormal do seu "
-"sistema ou do Yzis. Quer iniciar a recuperação deste ficheiro?"
+"Un file di swap è stato trovato per questo file; esso è stato creato "
+"probabilmente perché il computer o Yzis sono andati in crash. Vuoi iniziare "
+"il recupero di questo file?"
 
 #: ../libyzis/buffer.cpp:648
 msgid "Failed opening file %1 for writing : %2"
-msgstr "Erro ao abrir o ficheiro %1 para leitura : %2"
+msgstr "Apertura del file %1 fallita per la scrittura : %2"
 
 #: ../libyzis/buffer.cpp:654
 msgid "Written %1 bytes to file %2"
-msgstr "Gravados %1 B para o ficheiro %2"
+msgstr "Scritti %1 bytes nel file %2"
 
 #: ../libyzis/ex_lua.cpp:275
 msgid "The file %1 could not be found in standard directories"
-msgstr "O ficheiro %1 não foi encontrado nas pastas padrão"
+msgstr "Il file %1 potrebbe non è stato trovato nelle directory standard"
 
 #: ../libyzis/ex_lua.cpp:282
 msgid "Lua error when running file %1:\n"
-msgstr "Lua: erro ao executar o ficheiro %1:\n"
+msgstr "Errore lua durante l'avvio del file %1:\n"
 
 #: ../libyzis/internal_options.cpp:117
 msgid "File modified"
-msgstr "Ficheiro modificado"
+msgstr "File modificato"
 
 #: ../libyzis/internal_options.cpp:117
 msgid "This file has been modified, do you want to save it ?"
-msgstr "Este ficheiro foi modificado, deseja gravá-lo?"
+msgstr "Questo file è stato modificato, vuoi salvarlo?"
 
 #: ../libyzis/mode.cpp:94
 msgid "[ Introduction ]"
-msgstr "[ Introdução ]"
+msgstr "[ Introduzione ]"
 
 #: ../libyzis/mode_command.cpp:55
 msgid "[ Awaiting Command ]"
-msgstr "[ A aguardar comando ]"
+msgstr "[ Attesa Comando ]"
 
 #: ../libyzis/mode_complete.cpp:43
 msgid "{ Completion }"
-msgstr "{ Completação }"
+msgstr "[ Completamento ]"
 
 #: ../libyzis/mode_complete.cpp:130
 msgid "Match %1"
@@ -203,26 +200,26 @@ msgstr "[ Ex ]"
 
 #: ../libyzis/mode_ex.cpp:278
 msgid "Not an editor command: "
-msgstr "Não é um comando do editor: "
+msgstr "Non è un comando dell'editor:"
 
 #: ../libyzis/mode_ex.cpp:392 ../libyzis/mode_ex.cpp:406
 #: ../libyzis/mode_ex.cpp:412
 msgid "One file is modified! Save it first..."
-msgstr "Um ficheiro foi modificado! Grave-o primeiro..."
+msgstr "Un file è stato modificato! Salvalo prima..."
 
 #: ../libyzis/mode_ex.cpp:495 ../libyzis/mode_ex.cpp:594
 msgid "Please specify a filename"
-msgstr "Por favor, especifique um nome de ficheiro"
+msgstr "Per favore specifica il nome del file"
 
 #: ../libyzis/mode_ex.cpp:535
 #, fuzzy
 msgid "Invalid option name : %1"
-msgstr "Opção inválida dada: "
+msgstr "Opzione non valida:"
 
 #: ../libyzis/mode_ex.cpp:538
 #, fuzzy
 msgid "Bad value for option given"
-msgstr "Opção inválida dada"
+msgstr "Opzione non valida"
 
 #: ../libyzis/mode_ex.cpp:815
 msgid "Registers:\n"
@@ -234,69 +231,68 @@ msgstr ""
 
 #: ../libyzis/mode_insert.cpp:39
 msgid "[ Insert ]"
-msgstr "[ Inserção ]"
+msgstr "[ Inserisci ]"
 
 #: ../libyzis/mode_insert.cpp:257
 msgid "[ Replace ]"
-msgstr "[ Substituição ]"
+msgstr "[ Sostituisci ]"
 
 #: ../libyzis/mode_search.cpp:40
 msgid "[ Search ]"
-msgstr "[ Pesquisa ]"
+msgstr "[ Cerca ]"
 
 #: ../libyzis/mode_search.cpp:102
 msgid "No match"
-msgstr "Sem correspondência"
+msgstr "Non trovata"
 
 #: ../libyzis/mode_search.cpp:162
 msgid "[ Search backward ]"
-msgstr "[ Pesquisa invertida ]"
+msgstr "[ Cerca indietro ]"
 
 #: ../libyzis/mode_visual.cpp:42
 msgid "[ Visual ]"
-msgstr "[ Visual ]"
+msgstr "[ Visuale ]"
 
 #: ../libyzis/mode_visual.cpp:266
 msgid "[ Visual Line ]"
-msgstr "[ Linha visual ]"
+msgstr "[ Linea Visuale ]"
 
 #: ../libyzis/mode_visual.cpp:299
 #, fuzzy
 msgid "[ Visual Block ]"
-msgstr "[ Visual ]"
+msgstr "[ Visuale ]"
 
 #: ../libyzis/search.cpp:139
 msgid "search hit TOP, continuing at BOTTOM"
-msgstr "a pesquisa atingiu o topo, a continuar no fundo"
+msgstr "La ricerca ha raggiunto l'INIZIO, continuo dalla FINE"
 
 #: ../libyzis/search.cpp:141
 msgid "search hit BOTTOM, continuing at TOP"
-msgstr "a pesquisa atingiu o fundo, a continuar no topo"
+msgstr "La ricerca ha raggiunto la FINE, continuo dall'INIZIO"
 
 #: ../libyzis/swapfile.cpp:81
 msgid ""
 "Warning, the swapfile could not be opened maybe due to restrictive "
 "permissions."
 msgstr ""
-"Aviso: não foi possível abrir o ficheiro de recuperação, talvez devido a "
-"permissões restritivas."
+"Attenzione, il file di scambio non può essere aperto forse a causa di "
+"permessi restrittivi."
 
 #: ../libyzis/swapfile.cpp:132
 msgid ""
 "Warning, the swapfile could not be created maybe due to restrictive "
 "permissions."
 msgstr ""
-"Aviso: não foi possível criar o ficheiro de recuperação, talvez devido a "
-"permissões restritivas."
+"Attenzione, il file di scambio non può essere creato forse a causa di "
+"permessi restrittivi."
 
 #: ../libyzis/swapfile.cpp:160
 msgid ""
 "The swap file could not be opened, there will be no recovering for this "
 "file, you might want to check permissions of files."
 msgstr ""
-"Não foi possível abrir o ficheiro de recuperação. Não haverá recuperação "
-"possível para este ficheiro. Deverá querer verificar as permissões dos "
-"ficheiros."
+"Il file di scambio non può essere aperto, non ci sarà nessun recupero del "
+"file; potresti voler controllare i permessi dei file."
 
 #: ../libyzis/syntaxdocument.cpp:647
 msgid "Language Section"
@@ -313,7 +309,7 @@ msgstr ""
 #: ../libyzis/syntaxhighlight.cpp:1829
 #, fuzzy
 msgid "Normal Text"
-msgstr "Texto normal:"
+msgstr "Testo normale:"
 
 #: ../libyzis/syntaxhighlight.cpp:3231
 msgid "Keyword"
@@ -366,7 +362,7 @@ msgstr ""
 #: ../libyzis/tags_interface.cpp:170
 #, fuzzy
 msgid "File has been modified"
-msgstr "Ficheiro modificado"
+msgstr "File modificato"
 
 #: ../libyzis/tags_interface.cpp:229
 msgid "Unable to find tag file"
@@ -386,142 +382,152 @@ msgstr ""
 
 #: ../libyzis/view.cpp:376 ../libyzis/view.cpp:384
 msgid "All"
-msgstr "Todo"
+msgstr "Tutto"
 
 #: ../libyzis/view.cpp:383
 msgid "Bot"
-msgstr "Fundo"
+msgstr "Fine"
 
 #: ../libyzis/view.cpp:1471
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
 msgstr ""
-"Para usar a impressão Qt, necessita ter um ecrã X11 configurado e a "
-"executar. Deveria tentar pslib na consola"
+"Per usare la stampante Qt, devi avere un DISPLAY X11 configurato e in "
+"funzione. Dovresti provare pslib in modalità console"
 
 #: ../libyzis/view.cpp:1722
 msgid " { Recording }"
-msgstr " { A gravar }"
+msgstr "{ Registrazione }"
 
 #: ../nyzis/factory.cpp:203
 msgid "(Press any key)"
-msgstr "(Pressione qualquer tecla)"
+msgstr "(Premi un tasto)"
 
 #: ../nyzis/viewwidget.cpp:381
 msgid "[No File]"
-msgstr "[Nenhum ficheiro]"
+msgstr "[Nessun file]"
 
 #~ msgid "Text font"
-#~ msgstr "Tipo de letra"
+#~ msgstr "Caratteri del testo"
 
 #~ msgid "Use a transparent background"
-#~ msgstr "Fundo transparente"
+#~ msgstr "Usa uno sfondo trasparente"
 
 #~ msgid "Background color opacity"
-#~ msgstr "Opacidade da cor de fundo"
+#~ msgstr "Opacità del colore dello sfondo"
 
 #~ msgid "Min"
-#~ msgstr "Mínima"
+#~ msgstr "Min"
 
 #~ msgid "Max"
-#~ msgstr "Máxima"
+#~ msgstr "Max"
 
 #~ msgid "Background Color"
-#~ msgstr "Cor de fundo"
+#~ msgstr "Colore dello sfondo"
 
 #~ msgid "Foreground Color"
-#~ msgstr "Cor de primeiro plano"
+#~ msgstr "Colore in primo piano"
 
 #~ msgid "Syntax Highlighting"
-#~ msgstr "Realce"
+#~ msgstr "Evidenziamento della sintassi"
+
+#~ msgid "Kyzis Part"
+#~ msgstr "KPrt di Kyzis"
+
+#~ msgid "Kyzis - KDE Frontend for Yzis"
+#~ msgstr "Kyzis - Frontend per l'editor Yzis per KDE"
+
+#~ msgid "(c) 2003-2005"
+#~ msgstr "(c) 2003-2005"
 
 #~ msgid "Text Area Background"
-#~ msgstr "Fundo da área de texto"
+#~ msgstr "Sfondo dell'area del testo"
 
 #~ msgid "Selected text:"
-#~ msgstr "Texto seleccionado:"
+#~ msgstr "Testo selezionato:"
 
 #~ msgid "Current line:"
-#~ msgstr "Linha corrente:"
+#~ msgstr "Riga corrente:"
 
 #~ msgid "Bookmark"
-#~ msgstr "Marcador"
+#~ msgstr "Segnalibro"
 
 #~ msgid "Active Breakpoint"
-#~ msgstr "Ponto de pausa activo"
+#~ msgstr "Punto di interruzione attivo"
 
 #~ msgid "Reached Breakpoint"
-#~ msgstr "Ponto de pausa alcançado"
+#~ msgstr "Punto di interruzione raggiunto"
 
 #~ msgid "Disabled Breakpoint"
-#~ msgstr "Ponto de pausa desactivado"
+#~ msgstr "Punto di interruzione disabilitato"
 
 #~ msgid "Execution"
-#~ msgstr "Execução"
+#~ msgstr "Esecuzione"
 
 #~ msgid "Additional Elements"
-#~ msgstr "Elementos adicionais"
+#~ msgstr "Elementi aggiuntivi"
 
 #~ msgid "Left border background:"
-#~ msgstr "Fundo da margem esquerda:"
+#~ msgstr "Sfondo del bordo sinistro:"
 
 #~ msgid "Line numbers:"
-#~ msgstr "Número de linha:"
+#~ msgstr "Numeri delle righe:"
 
 #~ msgid "Bracket highlight:"
-#~ msgstr "Realce de parêntesis:"
+#~ msgstr "Evidenziamento parentesi:"
 
 #~ msgid "Word wrap markers:"
-#~ msgstr "Marcadores de corte de palavras:"
+#~ msgstr "Indicatori a capo automatico:"
 
 #~ msgid "Tab markers:"
-#~ msgstr "Marcadores de tabulação:"
+#~ msgstr "Etichette delle linguette"
 
 #~ msgid "<p>Sets the background color of the editing area.</p>"
-#~ msgstr "<p>Define a cor de fundo da área de edição.</p>"
+#~ msgstr "<p>Selezione il colore di sfondo dell'area di modifica</p>"
 
 #~ msgid ""
 #~ "<p>Sets the background color of the selection.</p><p>To set the text "
 #~ "color for selected text, use the \"<b>Configure Highlighting</b>\" dialog."
 #~ "</p>"
 #~ msgstr ""
-#~ "<p>Define a cor de fundo do texto seleccionado.</p><p>Para definir a cor "
-#~ "do texto seleccionado, use a caixa de diálogo \"<b>Configuração de "
-#~ "realce</b>\".</p>"
+#~ "<p>Imposta il colore di sfondo della selezione.</p><p>Per imposta il "
+#~ "colore del testo selezionato, usa la \"<b>Finestra di dialogo "
+#~ "evidenziamento</b>\".</p>"
 
 #~ msgid ""
 #~ "<p>Sets the background color of the selected marker type.</p><p><b>Note</"
 #~ "b>: The marker color is displayed lightly because of transparency.</p>"
 #~ msgstr ""
-#~ "<p>Define a cor de fundo do tipo de marcador seleccionado.</p><p><b>Nota</"
-#~ "b>: a cor do marcador é clareada devido à transparência.</p>"
+#~ "<p>Imposta il colore di sfondo del marcatore selezionato.</p><p><b>Nota</"
+#~ "b>: Il colore del marcatore è visualizzato in chiaro a causa della sua "
+#~ "trasparenza.</p>"
 
 #~ msgid "<p>Select the marker type you want to change.</p>"
-#~ msgstr "<p>Seleccione o tipo de marcador que deseja alterar.</p>"
+#~ msgstr "<p>Seleziona il tipo di marcatore che vuoi cambiare.</p>"
 
 #~ msgid ""
 #~ "<p>Sets the background color of the currently active line, which means "
 #~ "the line where your cursor is positioned.</p>"
 #~ msgstr ""
-#~ "<p> Define a cor de fundo da actual linha activa, ou seja, a linha onde "
-#~ "se encontra o cursor.</p>"
+#~ "<p>Imposta il colore di sfondo della riga correntemente attiva, cioè "
+#~ "quella su cui è posizionato il tuo cursore.</p>"
 
 #~ msgid ""
 #~ "<p>This color will be used to draw the line numbers (if enabled) and the "
 #~ "lines in the code-folding pane.</p>"
 #~ msgstr ""
-#~ "<p>Esta cor será usada para desenhar os números de linha (se activados) e "
-#~ "as linhas na placa de dobragem de código.</p>"
+#~ "<p>Questo colore sarà usato per disegnare i numeri di riga (se abilitati) "
+#~ "e le righe nel pannello di raggruppamento del codice.</p>"
 
 #~ msgid ""
 #~ "<p>Sets the bracket matching color. This means, if you place the cursor e."
 #~ "g. at a <b>(</b>, the matching <b>)</b> will be highlighted with this "
 #~ "color.</p>"
 #~ msgstr ""
-#~ "<p>Define a cor de correspondência de parêntesis. Isto é, se colocar o "
-#~ "cursor num <b>(</b>, o <b>)</b> correspondente será realçado com esta cor."
-#~ "</p>"
+#~ "<p>Imposta il colore delle parentesi corrispondenti. Ciò significa che "
+#~ "se, per esempio, sposti il cursore su una <b>(</b>, la corrispondente <b>)"
+#~ "</b> verrà evidenziata con questo colore.</p>"
 
 #~ msgid ""
 #~ "<p>Sets the color of Word Wrap-related markers:</p><dl><dt>Static Word "
@@ -529,13 +535,14 @@ msgstr "[Nenhum ficheiro]"
 #~ "to be wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the "
 #~ "left of visually-wrapped lines</dd></dl>"
 #~ msgstr ""
-#~ "<p>Define a cor de marcadores relativos a cortes de palavras:</"
-#~ "p><dl><dt>Corte estático</dt><dd>Uma linha vertical que mostra a coluna "
-#~ "onde o texto será cortado</dd><dt>Corte dinâmico</dt><dd>Uma seta "
-#~ "mostrada à esquerda das linhas visualmente cortadas</dd></dl>"
+#~ "<p>Imposta il colore degli indicatori relativi all'a capo automatico:</"
+#~ "p><dl><dt>A capo automatico statico</dt><dd>Una riga verticale che mostra "
+#~ "la colonna a cui il testo viene mandato a capo</dd><dt>A capo automatico "
+#~ "dinamico</dt><dd>Una freccia alla sinistra delle righe che continuano "
+#~ "dalle riga superiore</dd></dl>"
 
 #~ msgid "<p>Sets the color of the tabulator marks:</p>"
-#~ msgstr "<p>Define a cor das marcas de tabulação.</p>"
+#~ msgstr "<p>Imposta il colore dei marcatori di tabulazione:</p>"
 
 #~ msgid ""
 #~ "This list displays the default styles for the current schema and offers "
@@ -546,16 +553,16 @@ msgstr "[Nenhum ficheiro]"
 #~ "menu.<p>You can unset the Background and Selected Background colors from "
 #~ "the popup menu when appropriate."
 #~ msgstr ""
-#~ "Esta lista exibe os estilos predefinidos para o esquema actual e oferece "
-#~ "os meios para editá-los. O nome do estilo reflecte as preferências do "
-#~ "estilo actual.<p> Para editar usando o teclado, pressione <strong>&lt;"
-#~ "ESPAÇO&gt;</strong> e escolha uma propriedade a partir do menu.<p>Para "
-#~ "editar as cores, clique nos quadrados coloridos ou seleccione a cor a "
-#~ "editar a partir do menu.<p>Pode marcar como indefinidas as cores de fundo "
-#~ "a partir do menu de contexto, quando apropriado."
+#~ "Questa lista mostra gli stili predefiniti dello schema corrente e "
+#~ "permette di modificarli. Il nome dello stile rispecchia le attuali "
+#~ "impostazioni di stile.<p>Per modificarli usando la tastiera, premi "
+#~ "<strong><SPAZIO></strong> e scegli un proprietà dal menù a comparsa."
+#~ "<p>Per modificare i colori, fai clic sui riquadri colorati, o seleziona "
+#~ "il colore da modificare nel menù a comparsa.<p>Puoi rimuovere lo sfondo o "
+#~ "i colori di sfondo selezionati dal menù a comparsa quando appropriato."
 
 #~ msgid "H&ighlight:"
-#~ msgstr "&Realce:"
+#~ msgstr "Eviden&ziamento:"
 
 #~ msgid ""
 #~ "This list displays the contexts of the current syntax highlight mode and "
@@ -566,124 +573,117 @@ msgstr "[Nenhum ficheiro]"
 #~ "popup menu.<p>You can unset the Background and Selected Background colors "
 #~ "from the context menu when appropriate."
 #~ msgstr ""
-#~ "Esta lista exibe os contextos do modo de realce actual e oferece os meios "
-#~ "para editá-los. O nome do contexto reflecte as preferências do estilo "
-#~ "actual.<p>Para editar usando o teclado, pressione <strong>&lt;ESPAÇO&gt;</"
-#~ "strong> e escolha uma propriedade a partir do menu.<p>Para editar as "
-#~ "cores, clique nos quadrados coloridos ou seleccione a cor a editar a "
-#~ "partir do menu.<p>Pode marcar como indefinidas as cores de fundo a partir "
-#~ "do menu de contexto, quando apropriado."
+#~ "Questa lista mostra i contesti della modalità di evidenziamento corrente "
+#~ "e permette di modificarli. Il nome del contesto riflette le impostazioni "
+#~ "di stile correnti.<p>Per modificarli usando la tastiera, premi "
+#~ "<strong><SPAZIO></strong> e scegli un proprietà dal menù a comparsa."
+#~ "<p>Per modificare i colori, fai clic sui riquadri colorati, o seleziona "
+#~ "il colore da modificare nel menù a comparsa.<p>Puoi rimuovere lo sfondo o "
+#~ "i colori di sfondo selezionati dal menù a comparsa quando appropriato."
 
 #~ msgid "&Schema:"
-#~ msgstr "&Esquema:"
+#~ msgstr "&Schema:"
 
 #~ msgid "&New..."
-#~ msgstr "&Novo..."
+#~ msgstr "&Nuovo:"
 
 #~ msgid "Colors"
-#~ msgstr "Cores"
+#~ msgstr "Colori"
 
 #~ msgid "Normal Text Styles"
-#~ msgstr "Estilos de texto normal"
+#~ msgstr "Stili del testo normale"
 
 #~ msgid "Highlighting Text Styles"
-#~ msgstr "Estilos de texto realçado"
+#~ msgstr "Stili del testo evidenziato"
 
 #~ msgid "&Default schema for %1:"
-#~ msgstr "Esquema &predefinido para %1:"
+#~ msgstr "Schema pre&definito per %1:"
 
 #~ msgid "Name for New Schema"
-#~ msgstr "Nome do novo esquema"
+#~ msgstr "Nome del nuovo schema"
 
 #~ msgid "Name:"
 #~ msgstr "Nome:"
 
 #~ msgid "New Schema"
-#~ msgstr "Novo esquema"
+#~ msgstr "Nuovo schema"
 
 #~ msgid "Context"
-#~ msgstr "Contexto"
+#~ msgstr "Contesto"
 
 #~ msgid "Selected"
-#~ msgstr "Seleccionado"
+#~ msgstr "Selezionato"
 
 #~ msgid "Background"
-#~ msgstr "Fundo"
+#~ msgstr "Sfondo"
 
 #~ msgid "Background Selected"
-#~ msgstr "Fundo da selecção"
+#~ msgstr "Sfondo selezione"
 
 #~ msgid "Use Default Style"
-#~ msgstr "Usar o estilo predefinido"
+#~ msgstr "Usa lo stile predefinito"
 
 #~ msgid "&Bold"
-#~ msgstr "&Negrito"
+#~ msgstr "Grassetto"
 
 #~ msgid "&Italic"
-#~ msgstr "&Itálico"
+#~ msgstr "Corsivo"
 
 #~ msgid "&Underline"
-#~ msgstr "&Sublinhado"
+#~ msgstr "Sottolineato"
 
 #~ msgid "S&trikeout"
-#~ msgstr "&Traçado"
+#~ msgstr "Barrato"
 
 #~ msgid "Normal &Color..."
-#~ msgstr "&Cor normal..."
+#~ msgstr "&Colore normale..."
 
 #~ msgid "&Selected Color..."
-#~ msgstr "Cor de texto se&leacionado..."
+#~ msgstr "Colore &selezionato..."
 
 #~ msgid "&Background Color..."
-#~ msgstr "Cor de &fundo..."
+#~ msgstr "Colore dello sfondo..."
 
 #~ msgid "S&elected Background Color..."
-#~ msgstr "Cor de fundo da s&elecção..."
+#~ msgstr "Colore di sfondo selezione..."
 
 #~ msgid "Unset Background Color"
-#~ msgstr "Marcar como indefinida a cor de fundo"
+#~ msgstr "Rimuovi il colore di sfondo"
 
 #~ msgid "Unset Selected Background Color"
-#~ msgstr "Marcar como indefinida a cor de fundo da selecção"
+#~ msgstr "Rimuovi il colore di sfondo selezione"
 
 #~ msgid "Use &Default Style"
-#~ msgstr "Usar o est&ilo predefinido"
+#~ msgstr "Usa lo stile pre&definito"
 
 #~ msgid ""
 #~ "\"Use Default Style\" will be automatically unset when you change any "
 #~ "style properties."
 #~ msgstr ""
-#~ "\"Usar o est&ilo predefinido\" será automaticamente indefinido quando "
-#~ "alterar quaisquer propriedades de estilo."
+#~ "\"Usa lo stile predefinito\" sarà automaticamente rimosso quando "
+#~ "cambierai ogni proprietà di stile."
 
 #~ msgid "Yzis Styles"
-#~ msgstr "Estilos do Yzis"
+#~ msgstr "Stili di Yzis"
 
 #~ msgid "Show &Konsole"
-#~ msgstr "Mostrar a consola (&Konsole)"
+#~ msgstr "Mostra &Konsole"
 
 #~ msgid "Terminal"
-#~ msgstr "Terminal"
-
-#~ msgid "Kyzis Part"
-#~ msgstr "Parte Kyzis"
-
-#~ msgid "Kyzis - KDE Frontend for Yzis"
-#~ msgstr "Kyzis - Interface KDE para o Yzis"
-
-#~ msgid "(c) 2003-2005"
-#~ msgstr "(c) 2003-2005"
+#~ msgstr "Terminale"
 
 #~ msgid "No next buffer"
-#~ msgstr "Não há ficheiro seguinte"
+#~ msgstr "Nessun buffer successivo"
 
 #~ msgid "No previous buffer"
-#~ msgstr "Não há ficheiro anterior"
+#~ msgstr "Nessun buffer precedente"
 
 #~ msgid "This option cannot be switched this way, this is a boolean option."
 #~ msgstr ""
-#~ "Esta opção não pode ser definida assim, trata-se de uma opção lógica "
-#~ "(booleana)."
+#~ "Questa opzione non può essere configurata in questa maniera, è un'opzione "
+#~ "booleana."
 
 #~ msgid "This option is a global option which cannot be changed with setlocal"
-#~ msgstr "Esta opção é global, não pode ser alterada com 'setlocal'"
+#~ msgstr ""
+#~ "Questa opzione è un'opzione globale che non può essere modificata con "
+#~ "setlocal"

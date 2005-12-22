@@ -174,8 +174,10 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("gugu", &YZModeCommand::lineToLowerCase) );
 	commands.append( new YZCommand("<PUP>", &YZModeCommand::scrollPageUp) );
 	commands.append( new YZCommand("<CTRL>b", &YZModeCommand::scrollPageUp) );
+	commands.append( new YZCommand("<CTRL>y", &YZModeCommand::scrollLineUp) );
 	commands.append( new YZCommand("<PDOWN>", &YZModeCommand::scrollPageDown) );
 	commands.append( new YZCommand("<CTRL>f", &YZModeCommand::scrollPageDown) );
+	commands.append( new YZCommand("<CTRL>e", &YZModeCommand::scrollLineDown) );
 	commands.append( new YZCommand(".", &YZModeCommand::redoLastCommand) );
 	commands.append( new YZCommand("<CTRL>]", &YZModeCommand::tagNext) );
 	commands.append( new YZCommand("<CTRL>t", &YZModeCommand::tagPrev) );
@@ -480,6 +482,17 @@ void YZModeCommand::scrollPageUp(const YZCommandArgs &args) {
 	}
 }
 
+void YZModeCommand::scrollLineUp(const YZCommandArgs &args) {
+	int line = args.view->getCurrentTop() - 1;
+
+	if (line < 0)
+		line = 0;
+
+	if (line != (int)args.view->getCurrentTop()) {
+		args.view->alignViewBufferVertically( line );
+	}
+}
+
 void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
 	unsigned int line = args.view->getCurrentTop() + args.view->getLinesVisible();
 	YZView *view = args.view;
@@ -487,6 +500,26 @@ void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
 	if (view->getLocalBooleanOption("wrap")) {
 		YZViewCursor temp = view->viewCursor();
 		view->gotodxdy( &temp, view->getDrawCurrentLeft(), view->getDrawCurrentTop() + view->getLinesVisible() );
+
+		line = temp.bufferY();
+	}
+
+	// don't scroll below the last line of the buffer
+	if (line > view->myBuffer()->lineCount())
+		line = view->myBuffer()->lineCount();
+
+	if (line != view->getCurrentTop()) {
+		view->alignViewBufferVertically( line );
+	}
+}
+
+void YZModeCommand::scrollLineDown(const YZCommandArgs &args) {
+	unsigned int line = args.view->getCurrentTop() + args.view->getLinesVisible();
+	YZView *view = args.view;
+
+	if (view->getLocalBooleanOption("wrap")) {
+		YZViewCursor temp = view->viewCursor();
+		view->gotodxdy( &temp, view->getDrawCurrentLeft(), view->getDrawCurrentTop() + 1 );
 
 		line = temp.bufferY();
 	}

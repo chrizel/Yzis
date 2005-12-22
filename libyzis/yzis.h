@@ -39,18 +39,14 @@
 
 //let's use the patch number since it exists ...
 #define VERSION_CHAR	"M3++"
-#if QT_VERSION < 0x040000
-#define VERSION_CHAR_LONG "Yzis "VERSION_CHAR" for Qt3"
-#else
 #define VERSION_CHAR_LONG "Yzis "VERSION_CHAR" for Qt4"
-#endif
 //dont change these 2 and dont use them in the code
 #define VERSION_CHAR_STATE1 "(stable release)"
 #define VERSION_CHAR_STATE2 "(development release - Use for testing only)"
 #define VERSION_CHAR_STATE3 "(preview release - Use for testing only)"
 //and change/use this one in the code
 #define VERSION_CHAR_ST VERSION_CHAR_STATE2
-#define VERSION_CHAR_DATE "SVN>2005-08-28"
+#define VERSION_CHAR_DATE "SVN>2005-12-22"
 
 #define _(a) QString::fromUtf8(gettext(a))
 

@@ -242,6 +242,8 @@ class YZModeCommand : public YZMode {
 		void indent( const YZCommandArgs& args );
 		void scrollPageUp( const YZCommandArgs &args );
 		void scrollPageDown( const YZCommandArgs &args );
+		void scrollLineUp( const YZCommandArgs &args );
+		void scrollLineDown( const YZCommandArgs &args );
 		void redoLastCommand( const YZCommandArgs & args );
 		void tagNext( const YZCommandArgs & args );
 		void tagPrev( const YZCommandArgs & args );

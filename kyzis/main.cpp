@@ -63,9 +63,10 @@ int main(int argc, char **argv) {
 	about.addCredit( "Helder Correia", "Commands and bug fixes", "helder.correia@netcabo.pt" );
 	about.addCredit( "Scott Newton", "Yzisinfo file and tag commands", "scottn@ihug.co.nz" );
 	about.addCredit( "Dmitry Suzdalev", "Misc fixes and improvments", "dimsuz@mail.ru" );
-	about.addCredit( "Dawid Ciezarkiewicz","Fixed 'xp' command", "<araelx@gmail.com>" );
-	about.addCredit( "Craig Howard",":cd and :pwd commands", "<craig@choward.ca>" );
-	about.addCredit( "Lars Ivar Igesund","utf8 fixes for Lua strings", "<larsivar@igesund.net>" );
+	about.addCredit( "Dawid Ciezarkiewicz","Fixed 'xp' command", "araelx@gmail.com" );
+	about.addCredit( "Craig Howard",":cd and :pwd commands", "craig@choward.ca" );
+	about.addCredit( "Lars Ivar Igesund","utf8 fixes for Lua strings", "larsivar@igesund.net" );
+	about.addCredit( "Rob Merrell","CTRL+e/CTRL+y commands", "robholio@gmail.com" );
 
 	KCmdLineArgs::init(argc, argv, &about);
 	KCmdLineArgs::addCmdLineOptions( options );

@@ -165,6 +165,7 @@ KYZisFactory::KYZisFactory() :
 	m_aboutData.addCredit( "Lars Ivar Igesund",I18N_NOOP( "utf8 fixes for Lua strings" ), "larsivar@igesund.net" );
 	m_aboutData.addCredit( "Christoph Cullmann",I18N_NOOP( "help to port to KDE4" ), "cullmann@kde.org" );
 	m_aboutData.addCredit( "Dawid Ciezarkiewicz",I18N_NOOP( "D language syntax highlight fixes" ), "araelx@gmail.com" );
+	m_aboutData.addCredit( "Rob Merrell",I18N_NOOP( "CTRL+e/CTRL+y commands" ), "robholio@gmail.com" );
 	m_aboutData.setTranslator(I18N_NOOP("_: NAME OF TRANSLATORS\nYour names"), I18N_NOOP("_: EMAIL OF TRANSLATORS\nYour emails"));
 
 	Settings::self()->readConfig();

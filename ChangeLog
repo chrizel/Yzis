@@ -1,3 +1,7 @@
+2005-12-22 Rob Merrell (patch)
+  * libyzis
+    added CTRL+e/CTRL+y commands
+
 2005-10-28 Scott Newton
   * kyzis
     Intial rough implementation of new KTextEditor::Document functions which

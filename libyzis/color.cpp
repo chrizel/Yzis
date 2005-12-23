@@ -42,7 +42,9 @@ static int hex2int(QChar hexchar)
 	return v;
 }
 
-#define qRgb(r,g,b) (0xff000000 | (r << 16) |  (g << 8) | b)
+//#define qRgb(r,g,b) (0xff000000 | (r << 16) |  (g << 8) | b)
+
+#define qRgb(r,g,b) ((0xff << 24) | ((r & 0xff) << 16) | ((g & 0xff) << 8) | (b & 0xff) )
 
 static const struct RGBData {
 	const char *name;
@@ -256,9 +258,9 @@ void YZColor::invalidate() {
 }
 
 void YZColor::setRgb( QRgb rgb ) {
-	m_red = ( ( rgb >> 16 ) & 0xff ) * 0x101;
-	m_green = ( ( rgb >> 8 ) & 0xff ) * 0x101;
-	m_blue = ( ( rgb ) & 0xff ) * 0x101;
+	m_red = ( rgb >> 16 ) * 0x101;
+	m_green = ( rgb >> 8 ) * 0x101;
+	m_blue = ( rgb ) * 0x101;
 }
 
 void YZColor::setNamedColor( const QString& name ) {
@@ -266,27 +268,30 @@ void YZColor::setNamedColor( const QString& name ) {
 	if ( !name.isEmpty() ) {
 		const char* n = name.toLatin1();
 		int len = qstrlen( n );
+		int r,g,b;
 		if (name[0] == '#') {
 			++n;
 			--len;
 			m_red = m_green = m_blue = 0;
 			m_valid = true;
 			if (len == 12) {
-				m_red = (hex2int(name[0]) << 4) + hex2int(name[1]);
-				m_green = (hex2int(name[4]) << 4) + hex2int(name[5]);
-				m_blue = (hex2int(name[8]) << 4) + hex2int(name[9]);
+				m_red = ((hex2int(n[0]) << 4) + hex2int(n[1])) * 0x101;
+				m_green = ((hex2int(n[4]) << 4) + hex2int(n[5])) * 0x101;
+				m_blue = ((hex2int(n[8]) << 4) + hex2int(n[9])) * 0x101;
 			} else if (len == 9) {
-				m_red = (hex2int(name[0]) << 4) + hex2int(name[1]);
-				m_green = (hex2int(name[3]) << 4) + hex2int(name[4]);
-				m_blue = (hex2int(name[6]) << 4) + hex2int(name[7]);
+				m_red = ((hex2int(n[0]) << 4) + hex2int(n[1])) * 0x101;
+				m_green = ((hex2int(n[3]) << 4) + hex2int(n[4])) * 0x101;
+				m_blue = ((hex2int(n[6]) << 4) + hex2int(n[7])) * 0x101;
 			} else if (len == 6) {
-				m_red = (hex2int(name[0]) << 4) + hex2int(name[1]);
-				m_green = (hex2int(name[2]) << 4) + hex2int(name[3]);
-				m_blue = (hex2int(name[4]) << 4) + hex2int(name[5]);
+				m_red = ((hex2int(n[0]) << 4) + hex2int(n[1])) * 0x101;
+				m_green = ((hex2int(n[2]) << 4) + hex2int(n[3])) * 0x101;
+				m_blue = ((hex2int(n[4]) << 4) + hex2int(n[5])) * 0x101;
+				setRgb(qRgb(m_red,m_green,m_blue));
 			} else if (len == 3) {
-				m_red = (hex2int(name[0]) << 4) + hex2int(name[0]);
-				m_green = (hex2int(name[1]) << 4) + hex2int(name[1]);
-				m_blue = (hex2int(name[2]) << 4) + hex2int(name[2]);
+				r = /*((hex2int(n[0]) << 4) +*/ hex2int(n[0]) << 4;
+				g = /*((hex2int(n[1]) << 4) +*/ hex2int(n[1]) << 4;
+				b = /*((hex2int(n[2]) << 4) +*/ hex2int(n[2]) << 4;
+				setRgb(qRgb(r,g,b));
 			} else {
 				m_valid = false;
 			}

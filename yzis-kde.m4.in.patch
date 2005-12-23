@@ -1,5 +1,5 @@
---- acinclude.m4.in.orig	2005-10-22 14:32:42.000000000 +0200
-+++ acinclude.m4.in	2005-10-22 14:32:36.000000000 +0200
+--- acinclude.m4.in.orig	2005-12-23 12:32:03.000000000 +0100
++++ acinclude.m4.in	2005-12-23 12:31:31.000000000 +0100
 @@ -412,7 +412,7 @@
      kde_datadir='\${datadir}/apps'
    fi
@@ -60,12 +60,12 @@
 -you need to install kdelibs first.
 -
 -If you did install kdelibs, then the Qt version that is picked up by
--this configure is not the same version you used to compile kdelibs. 
+-this configure is not the same version you used to compile kdelibs.
 -The Qt Plugin installed by kdelibs is *ONLY* loadable if it is the
 -_same Qt version_, compiled with the _same compiler_ and the same Qt
 -configuration settings.
 -])
-+ 	have_kde="no"
++	have_kde="no"
  fi
  fi
  ])
@@ -117,7 +117,7 @@
  dnl AC_VALIDIFY_CXXFLAGS checks for forbidden flags the user may have given
  AC_DEFUN([AC_VALIDIFY_CXXFLAGS],
  [dnl
-@@ -4518,21 +4502,18 @@
+@@ -4543,21 +4527,18 @@
    KDE_SET_DEFAULT_BINDIRS
    if test "x$prefix" = "xNONE"; then
      dnl no prefix given: look for kde-config in the PATH and deduce the prefix from it

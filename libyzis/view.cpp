@@ -59,8 +59,8 @@
 #define GET_CHAR_WIDTH( c ) ( isFontFixed ? 1 : charWidth( c ) )
 
 static const QChar tabChar( '\t' );
-static YZColor fake;
-static YZColor blue( "blue" );
+static YZColor fake ( Qt::white );
+static YZColor blue( Qt::blue );
 
 /**
  * class YZView

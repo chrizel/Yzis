@@ -3288,8 +3288,8 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   list.append(charAttribute);
 
   YzisAttribute* string = new YzisAttribute();
-  //string->setTextColor(Qt::magenta/*red*/);
-  string->setTextColor(YZColor("#D00"));
+  string->setTextColor(Qt::red);
+//  string->setTextColor(YZColor("#D00"));
   string->setSelectedTextColor(Qt::red);
   list.append(string);
 

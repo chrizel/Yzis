@@ -1,146 +1,440 @@
+# translation of pl.po to
 # This file is distributed under the same license as the PACKAGE package.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER.
 # Mickael Marchand <marchand@kde.org>, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Yzis\n"
+"Project-Id-Version: pl\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-06 00:36+0100\n"
-"PO-Revision-Date: 2005-02-08 20:03+0100\n"
-"Last-Translator: Mickael Marchand <marchand@kde.org>\n"
-"Language-Team: <i18n@yzis.org>\n"
+"POT-Creation-Date: 2005-06-22 22:24+0200\n"
+"PO-Revision-Date: 2005-12-25 00:27+0100\n"
+"Last-Translator: \n"
+"Language-Team:  <en@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: ts2po\n"
+"X-Generator: KBabel 1.11\n"
 
-#: ../kyzis/main.cpp:41
+#: ../kyzis/main.cpp:40
 msgid "KDE Frontend for the Yzis Editor"
-msgstr ""
+msgstr "Frontend KDE dla edytora Yzis"
+
+#: ../kyzis/main.cpp:43
+msgid "Document to open."
+msgstr "Dokument do otwarcia"
 
 #: ../kyzis/main.cpp:44
-msgid "Document to open."
-msgstr ""
-
-#: ../kyzis/main.cpp:45
 msgid "Execute command passed in argument"
-msgstr ""
+msgstr "Wykonaj komendę podaną w argumencie"
 
-#: ../kyzis/main.cpp:51 ../kyzis/src/factory.cpp:143
+#: ../kyzis/main.cpp:50 ../kyzis/src/factory.cpp:66
 msgid "Kyzis"
-msgstr ""
+msgstr "Kyzis"
 
-#: ../kyzis/src/factory.cpp:143
+#: ../kyzis/src/configdialog.cpp:65
+msgid "Text font"
+msgstr "Czcionka tekstu"
+
+#: ../kyzis/src/configdialog.cpp:73
+msgid "Use a transparent background"
+msgstr "Użyj przeźroczystego tła"
+
+#: ../kyzis/src/configdialog.cpp:81
+msgid "Background color opacity"
+msgstr "Nieprzeźroczystość koloru tła"
+
+#: ../kyzis/src/configdialog.cpp:83
+msgid "Min"
+msgstr "Min"
+
+#: ../kyzis/src/configdialog.cpp:85
+msgid "Max"
+msgstr "Max"
+
+#: ../kyzis/src/configdialog.cpp:93
+msgid "Background Color"
+msgstr "Kolor tła"
+
+#: ../kyzis/src/configdialog.cpp:101
+msgid "Foreground Color"
+msgstr "Kolor przedniego planu"
+
+#: ../kyzis/src/configdialog.cpp:114 ../kyzis/src/document.cpp:382
+#: ../kyzis/src/document.cpp:386
+msgid "Syntax Highlighting"
+msgstr "Kolorowanie składni"
+
+#: ../kyzis/src/factory.cpp:66
 msgid "Embeddable vi-like editor component"
-msgstr ""
+msgstr "Zintegrowany komponent edytora vi-podobnego."
 
-#: ../kyzis/src/factory.cpp:144
+#: ../kyzis/src/factory.cpp:66
 msgid "(c)2002-2005 The Kyzis Authors"
-msgstr ""
+msgstr "(c)2002-2005 Autorzy Kyzis"
 
-#: ../kyzis/src/factory.cpp:149 ../kyzis/src/factory.cpp:150
-#: ../kyzis/src/factory.cpp:151 ../kyzis/src/factory.cpp:152
+#: ../kyzis/src/factory.cpp:69 ../kyzis/src/factory.cpp:70
+#: ../kyzis/src/factory.cpp:71 ../kyzis/src/factory.cpp:72
 msgid "Initial Author"
-msgstr ""
+msgstr "Początkowy autor"
 
-#: ../kyzis/src/factory.cpp:153
+#: ../kyzis/src/factory.cpp:73
 msgid "Icons, KSettings"
-msgstr ""
+msgstr "Ikony, KUstawienia"
 
-#: ../kyzis/src/factory.cpp:154
+#: ../kyzis/src/factory.cpp:74
 msgid "EX mode history"
-msgstr ""
+msgstr "Historia trybu EX"
 
-#: ../kyzis/src/factory.cpp:155
+#: ../kyzis/src/factory.cpp:75
 msgid "KTextEditor interfaces / Dutch translation"
-msgstr ""
+msgstr "Interface'y KTextEditor / Holenderskie tłumaczenie"
 
-#: ../kyzis/src/factory.cpp:156
+#: ../kyzis/src/factory.cpp:76
 msgid "Commands and motion engine rewrite and cleanup"
-msgstr ""
+msgstr "Przepisanie i porzadki w silniku komend i ruchu"
 
-#: ../kyzis/src/factory.cpp:157
+#: ../kyzis/src/factory.cpp:77
 msgid "KTextEditor ConfigInterface"
-msgstr ""
+msgstr "ConfigInterface KTextEditor'a"
 
-#: ../kyzis/src/factory.cpp:158
+#: ../kyzis/src/factory.cpp:78
 msgid "View scrolling fixes"
-msgstr ""
+msgstr "Poprawki w przewijaniu widoku "
 
-#: ../kyzis/src/factory.cpp:159
+#: ../kyzis/src/factory.cpp:79
 msgid "Kyzis Tab caption improvement"
-msgstr ""
+msgstr "Poprawki w nagłówkach zakładek Kyzis'a"
 
-#: ../kyzis/src/factory.cpp:160
+#: ../kyzis/src/factory.cpp:80
 msgid "Commands and bug fixes"
-msgstr ""
+msgstr "Komendy i poprawki"
 
-#: ../kyzis/src/factory.cpp:161
+#: ../kyzis/src/factory.cpp:81
 msgid "Yzisinfo file and tag commands"
-msgstr ""
+msgstr "Plik Yzisinfo i komendy tagów"
 
-#: ../kyzis/src/factory.cpp:162
+#: ../kyzis/src/factory.cpp:82
 msgid "Misc fixes and improvements"
-msgstr ""
+msgstr "Pozostałe poprawki i udogodnienia"
 
-#: ../kyzis/src/factory.cpp:163
+#: ../kyzis/src/factory.cpp:83
 msgid "Fixed 'xp' command"
-msgstr ""
+msgstr "Naprawa komendy 'xp'"
 
-#: ../kyzis/src/factory.cpp:164
+#: ../kyzis/src/factory.cpp:84
 msgid ":cd and :pwd commands"
-msgstr ""
+msgstr "Komendy :cd i :pwd"
 
-#: ../kyzis/src/factory.cpp:165
+#: ../kyzis/src/factory.cpp:85
 msgid "utf8 fixes for Lua strings"
-msgstr ""
+msgstr "poprawki utf-8 w ciagach znaków języka Lua"
 
-#: ../kyzis/src/factory.cpp:166
+#: ../kyzis/src/factory.cpp:86
 msgid "help to port to KDE4"
-msgstr ""
+msgstr "pomoc w portowaniu do KDE4"
 
-#: ../kyzis/src/factory.cpp:167
+#: ../kyzis/src/factory.cpp:87
 msgid "D language syntax highlight fixes"
-msgstr ""
+msgstr "Poprawki w kolorowaniu składni języka D"
 
-#: ../kyzis/src/factory.cpp:168
+#: ../kyzis/src/factory.cpp:88
 msgid ""
 "_: NAME OF TRANSLATORS\n"
 "Your names"
 msgstr ""
+"_: NAZWISKA TŁUMACZY\n"
+"Wasze nazwiska"
 
-#: ../kyzis/src/factory.cpp:168
+#: ../kyzis/src/factory.cpp:88
 msgid ""
 "_: EMAIL OF TRANSLATORS\n"
 "Your emails"
 msgstr ""
+"_: EMAILE TŁUMACZY\n"
+"Wasze emaile"
 
-#: ../kyzis/src/kyzis.cpp:104
+#: ../kyzis/src/hlconfig.cpp:186
+msgid "Text Area Background"
+msgstr "Tło pola tekstowego"
+
+#: ../kyzis/src/hlconfig.cpp:190
+msgid "Normal text:"
+msgstr "Normalny tekst:"
+
+#: ../kyzis/src/hlconfig.cpp:196
+msgid "Selected text:"
+msgstr "Zaznaczony tekst:"
+
+#: ../kyzis/src/hlconfig.cpp:202
+msgid "Current line:"
+msgstr "Bieżąca linia:"
+
+#: ../kyzis/src/hlconfig.cpp:211
+msgid "Bookmark"
+msgstr "Zakładka"
+
+#: ../kyzis/src/hlconfig.cpp:212
+msgid "Active Breakpoint"
+msgstr "Aktywny Breakpoint:"
+
+#: ../kyzis/src/hlconfig.cpp:213
+msgid "Reached Breakpoint"
+msgstr "Osiągnięty Breakpoint:"
+
+#: ../kyzis/src/hlconfig.cpp:214
+msgid "Disabled Breakpoint"
+msgstr "Wyłączony Breakpoint:"
+
+#: ../kyzis/src/hlconfig.cpp:215
+msgid "Execution"
+msgstr "Wykonanie"
+
+#: ../kyzis/src/hlconfig.cpp:224
+msgid "Additional Elements"
+msgstr "Dodatkowe Elementy"
+
+#: ../kyzis/src/hlconfig.cpp:228
+msgid "Left border background:"
+msgstr "Tło lewego obramowania:"
+
+#: ../kyzis/src/hlconfig.cpp:234
+msgid "Line numbers:"
+msgstr "Numery lini:"
+
+#: ../kyzis/src/hlconfig.cpp:240
+msgid "Bracket highlight:"
+msgstr "Kolorowanie nawiasów:"
+
+#: ../kyzis/src/hlconfig.cpp:246
+msgid "Word wrap markers:"
+msgstr "Markery zawijania lini:"
+
+#: ../kyzis/src/hlconfig.cpp:252
+msgid "Tab markers:"
+msgstr "Markery tabulacji:"
+
+#: ../kyzis/src/hlconfig.cpp:264
+msgid "<p>Sets the background color of the editing area.</p>"
+msgstr "<p>Ustawia kolor tła obszaru edycji.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:265
+msgid ""
+"<p>Sets the background color of the selection.</p><p>To set the text color "
+"for selected text, use the \"<b>Configure Highlighting</b>\" dialog.</p>"
+msgstr "<p>Ustawia kolor tła zaznaczenia.</p><p>Aby ustawić kolor tekstu zaznaczonego, użyj dialogu\"<b>Konfiguracja Kolorowania</b>\".</p>"
+
+#: ../kyzis/src/hlconfig.cpp:268
+msgid ""
+"<p>Sets the background color of the selected marker type.</p><p><b>Note</b>: "
+"The marker color is displayed lightly because of transparency.</p>"
+msgstr ""
+"<p>Ustawia kolor tła typu zaznaczonego markera.</p><p><b>Note</b>: "
+"Wyświetlany kolor markera jest bardzo delikatny z powodu przeźroczystości</p>"
+
+#: ../kyzis/src/hlconfig.cpp:271
+msgid "<p>Select the marker type you want to change.</p>"
+msgstr "<p>Wybierz typ markera do zmiany.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:272
+msgid ""
+"<p>Sets the background color of the currently active line, which means the "
+"line where your cursor is positioned.</p>"
+msgstr "<p>Ustawia kolor tła bieżącej aktywnej lini ( tej na której znajduje się kursor ).</p>"
+
+#: ../kyzis/src/hlconfig.cpp:275
+msgid ""
+"<p>This color will be used to draw the line numbers (if enabled) and the "
+"lines in the code-folding pane.</p>"
+msgstr "<p>Ten kolor będzie używany do rysowania numerów linii oraz samych linii w okienku zwijania kodu.</p>"
+
+#: ../kyzis/src/hlconfig.cpp:277
+msgid ""
+"<p>Sets the bracket matching color. This means, if you place the cursor e.g. "
+"at a <b>(</b>, the matching <b>)</b> will be highlighted with this color.</p>"
+msgstr "<p>Ustawia kolor dobierania nawiasów. Gdy ustawisz kursor na znaku <b>(</b>, to odpowiadający mu <b>)</b> zostanie zaznaczony tym kolorem."
+
+#: ../kyzis/src/hlconfig.cpp:281
+msgid ""
+"<p>Sets the color of Word Wrap-related markers:</p><dl><dt>Static Word Wrap</"
+"dt><dd>A vertical line which shows the column where text is going to be "
+"wrapped</dd><dt>Dynamic Word Wrap</dt><dd>An arrow shown to the left of "
+"visually-wrapped lines</dd></dl>"
+msgstr "<p>Ustawia kolor markerów zwijania lini:</p><dl><dt>Statyczne zwijanie linii</dt><dd>Pionowa linia która pokazuje columnę po przekroczeniu której linia zostanie zawinięta</dd><dt>Dynamiczne zwijanie linii</dt><dd>Strzałka pojawiająca się po lewej stronie wizualnie zawiniętych lini</dd></dl>"
+
+#: ../kyzis/src/hlconfig.cpp:287
+msgid "<p>Sets the color of the tabulator marks:</p>"
+msgstr "<p>Ustawia kolor markerów tabulacji:</p>"
+
+#: ../kyzis/src/hlconfig.cpp:505
+msgid ""
+"This list displays the default styles for the current schema and offers the "
+"means to edit them. The style name reflects the current style settings.<p>To "
+"edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> and choose a "
+"property from the popup menu.<p>To edit the colors, click the colored "
+"squares, or select the color to edit from the popup menu.<p>You can unset "
+"the Background and Selected Background colors from the popup menu when "
+"appropriate."
+msgstr "Ta lista ukazuje domyślne style dla bieżącego schematu i oferuje środki do ich edycji. Nazwa stylu odzwierciedla ustawienia bieżącego stylu.<p>Aby edytować za pomocą klawiatury, wciśnij <strong>&lt;SPACE&gt;</strong> i wybierz właściwość z wyskakującego menu.<p>Aby edytować kolory, kliknij na pokolorowane kwadraty, albo wybierz kolor do edycji z wyskakującego menu.<p>Możesz zrezygnować z ustawionych kolorów dla Tła i Wybranego Tła w wyskakującym menu kiedy tylko będzie to porządane."
+
+#: ../kyzis/src/hlconfig.cpp:548
+msgid "H&ighlight:"
+msgstr "Kolorowan&ie:"
+
+#: ../kyzis/src/hlconfig.cpp:569
+msgid ""
+"This list displays the contexts of the current syntax highlight mode and "
+"offers the means to edit them. The context name reflects the current style "
+"settings.<p>To edit using the keyboard, press <strong>&lt;SPACE&gt;</strong> "
+"and choose a property from the popup menu.<p>To edit the colors, click the "
+"colored squares, or select the color to edit from the popup menu.<p>You can "
+"unset the Background and Selected Background colors from the context menu "
+"when appropriate."
+msgstr "Ta lista ukazuje konteksty bieżącego trybu kolorowania składni i oferuje sposoby ich edycji. Nazwa kontekstu odzwierciedla ustawienia bieżącego stylu.<p>Aby edytować je przy pomocy klawiatury, wciśnij <strong>&lt;SPACE&gt;</strong> i wybierz właściwość z wyskakującego menu.<p>Aby edytować kolory, kliknij na kolorowe kwadraty, lub wybierz kolor do edycji z wyskakującego menu.<p>Możesz zrezygnować z ustawień koloru Tła i Wybranego Tła z menu kontekstu kiedy tylko będzie to porządane."
+
+#: ../kyzis/src/hlconfig.cpp:688
+msgid "&Schema:"
+msgstr "&Schemat:"
+
+#: ../kyzis/src/hlconfig.cpp:694
+msgid "&New..."
+msgstr "&Nowy..."
+
+#: ../kyzis/src/hlconfig.cpp:707
+msgid "Colors"
+msgstr "Kolory"
+
+#: ../kyzis/src/hlconfig.cpp:713
+msgid "Normal Text Styles"
+msgstr "Normalne Style Tekstu"
+
+#: ../kyzis/src/hlconfig.cpp:717
+msgid "Highlighting Text Styles"
+msgstr "Pokolorowane Style Tekstu"
+
+#: ../kyzis/src/hlconfig.cpp:722
+msgid "&Default schema for %1:"
+msgstr "&Domyślny schemat dla %1:"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "Name for New Schema"
+msgstr "Nazwa dla Nowego Schematu"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "Name:"
+msgstr "Nazwa:"
+
+#: ../kyzis/src/hlconfig.cpp:817
+msgid "New Schema"
+msgstr "Nowy Schemat"
+
+#: ../kyzis/src/hlconfig.cpp:917
+msgid "Context"
+msgstr "Kontekst"
+
+#: ../kyzis/src/hlconfig.cpp:922
+msgid "Normal"
+msgstr "Normalny"
+
+#: ../kyzis/src/hlconfig.cpp:923
+msgid "Selected"
+msgstr "Wybrany"
+
+#: ../kyzis/src/hlconfig.cpp:924
+msgid "Background"
+msgstr "Tło"
+
+#: ../kyzis/src/hlconfig.cpp:925
+msgid "Background Selected"
+msgstr "Zaznaczone tło"
+
+#: ../kyzis/src/hlconfig.cpp:927
+msgid "Use Default Style"
+msgstr "Użyj domyślnego stylu"
+
+#: ../kyzis/src/hlconfig.cpp:962
+msgid "&Bold"
+msgstr "Pogru&biony"
+
+#: ../kyzis/src/hlconfig.cpp:964
+msgid "&Italic"
+msgstr "&Kursywa"
+
+#: ../kyzis/src/hlconfig.cpp:966
+msgid "&Underline"
+msgstr "P&odkreślony"
+
+#: ../kyzis/src/hlconfig.cpp:968
+msgid "S&trikeout"
+msgstr "P&rzekreślony"
+
+#: ../kyzis/src/hlconfig.cpp:973
+msgid "Normal &Color..."
+msgstr "&Normalny Kolor"
+
+#: ../kyzis/src/hlconfig.cpp:974
+msgid "&Selected Color..."
+msgstr "&Wybrany Kolor"
+
+#: ../kyzis/src/hlconfig.cpp:975
+msgid "&Background Color..."
+msgstr "Kolor &Tła"
+
+#: ../kyzis/src/hlconfig.cpp:976
+msgid "S&elected Background Color..."
+msgstr "Kolor W&ybranego Tła"
+
+#: ../kyzis/src/hlconfig.cpp:987
+msgid "Unset Background Color"
+msgstr "Wymaż Koloru Tła"
+
+#: ../kyzis/src/hlconfig.cpp:989
+msgid "Unset Selected Background Color"
+msgstr "Wymaż Kolor Zaznaczonego Tła"
+
+#: ../kyzis/src/hlconfig.cpp:994
+msgid "Use &Default Style"
+msgstr "Użyj &Domyślnego Stylu"
+
+#: ../kyzis/src/hlconfig.cpp:1210
+msgid ""
+"\"Use Default Style\" will be automatically unset when you change any style "
+"properties."
+msgstr "\"Użyj Domyślnego Stylu\" będzie automatycznie wyłączony kiedy zmieni się jakąkolwiek właściwość stylu."
+
+#: ../kyzis/src/hlconfig.cpp:1211
+msgid "Yzis Styles"
+msgstr "Style Yzis"
+
+#: ../kyzis/src/kyzis.cpp:123
 msgid "Opens recently opened file."
-msgstr ""
+msgstr "Otwiera ostatnio otwarty plik."
 
-#: ../kyzis/src/kyzis.cpp:340
+#: ../kyzis/src/kyzis.cpp:132
+msgid "Show &Konsole"
+msgstr "Pokaż &Konsole"
+
+#: ../kyzis/src/kyzis.cpp:142
 msgid "&Window"
-msgstr ""
+msgstr "&Okno"
 
-#: ../kyzis/src/viewwidget.cpp:60
+#: ../kyzis/src/kyzis.cpp:330
+msgid "Terminal"
+msgstr "Terminal"
+
+#: ../kyzis/src/viewwidget.cpp:51
 msgid "Yzis Ready"
 msgstr "Yzis Gotowy"
 
-#: ../kyzis/src/viewwidget.h:139 ../libyzis/syntaxhighlight.cpp:3230
-msgid "Normal"
-msgstr ""
-
-#: ../libyzis/buffer.cpp:566
+#: ../libyzis/buffer.cpp:522
 msgid "Failed opening file %1 for reading : %2"
-msgstr ""
+msgstr "Błąd otwarcia pliku %1 do odczytu: %2"
 
-#: ../libyzis/buffer.cpp:577
+#: ../libyzis/buffer.cpp:533
 msgid "Recover"
 msgstr "Odzyskać"
 
-#: ../libyzis/buffer.cpp:577
+#: ../libyzis/buffer.cpp:533
 msgid ""
 "A swap file was found for this file, it was presumably created because your "
 "computer or yzis crashed, do you want to start the recovery of this file ?"
@@ -148,129 +442,116 @@ msgstr ""
 "Znaleziono plik tymczasowy, został on stworzony prawdopodobnie dlatego, że "
 "twój komputer lub yzis zawiesił się, czy chcesz odzyskać ten plik?"
 
-#: ../libyzis/buffer.cpp:648
+#: ../libyzis/buffer.cpp:600
 msgid "Failed opening file %1 for writing : %2"
-msgstr ""
+msgstr "Błąd otwarcia pliku %1 do zapisu : %2"
 
-#: ../libyzis/buffer.cpp:654
+#: ../libyzis/buffer.cpp:607
 msgid "Written %1 bytes to file %2"
 msgstr "Zapisano %1 byte'ów do pliku %2"
 
-#: ../libyzis/ex_lua.cpp:275
+#: ../libyzis/ex_lua.cpp:274
 msgid "The file %1 could not be found in standard directories"
 msgstr "Plik %1 nie został znaleziony w standardowych katalogach"
 
-#: ../libyzis/ex_lua.cpp:282
+#: ../libyzis/ex_lua.cpp:281
 msgid "Lua error when running file %1:\n"
-msgstr ""
+msgstr "Błąd interpretatora Lua podczas wykonywania pliku %1:\n"
 
-#: ../libyzis/internal_options.cpp:117
+#: ../libyzis/internal_options.cpp:114
 msgid "File modified"
-msgstr ""
+msgstr "Plik zmieniony"
 
-#: ../libyzis/internal_options.cpp:117
+#: ../libyzis/internal_options.cpp:114
 msgid "This file has been modified, do you want to save it ?"
-msgstr ""
+msgstr "Ten plik został zmieniony, czy chcesz go zapisać ?"
 
-#: ../libyzis/mode.cpp:94
-#, fuzzy
-msgid "[ Introduction ]"
-msgstr "[ Wklej ]"
-
-#: ../libyzis/mode_command.cpp:55
+#: ../libyzis/mode_command.cpp:54
 msgid "[ Awaiting Command ]"
 msgstr "[ Oczekuje na Rozkaz ]"
 
-#: ../libyzis/mode_complete.cpp:43
-msgid "{ Completion }"
-msgstr ""
+#: ../libyzis/mode.cpp:94
+msgid "[ Introduction ]"
+msgstr "[ Wprowadzenie ]"
 
-#: ../libyzis/mode_complete.cpp:130
-msgid "Match %1"
-msgstr ""
-
-#: ../libyzis/mode_complete.cpp:133
-msgid "Back at original"
-msgstr ""
-
-#: ../libyzis/mode_ex.cpp:74
+#: ../libyzis/mode_ex.cpp:66
 msgid "[ Ex ]"
 msgstr "[ Ex ]"
 
-#: ../libyzis/mode_ex.cpp:278
+#: ../libyzis/mode_ex.cpp:259
 msgid "Not an editor command: "
-msgstr ""
+msgstr "To nie jest komenda edytora: "
 
-#: ../libyzis/mode_ex.cpp:392 ../libyzis/mode_ex.cpp:406
-#: ../libyzis/mode_ex.cpp:412
+#: ../libyzis/mode_ex.cpp:374 ../libyzis/mode_ex.cpp:388
+#: ../libyzis/mode_ex.cpp:394
 msgid "One file is modified! Save it first..."
-msgstr ""
+msgstr "Jeden plik jest zmieniony! Zapisz go najpierw..."
 
-#: ../libyzis/mode_ex.cpp:495 ../libyzis/mode_ex.cpp:594
+#: ../libyzis/mode_ex.cpp:470 ../libyzis/mode_ex.cpp:566
 msgid "Please specify a filename"
 msgstr "Proszę podaj nazwę pliku"
 
-#: ../libyzis/mode_ex.cpp:535
-#, fuzzy
+#: ../libyzis/mode_ex.cpp:507
 msgid "Invalid option name : %1"
-msgstr "Podano nieprawidłową opcję :"
+msgstr "Podano nieprawidłową nazwę opcji : %1"
 
-#: ../libyzis/mode_ex.cpp:538
-#, fuzzy
+#: ../libyzis/mode_ex.cpp:510
 msgid "Bad value for option given"
-msgstr "Podano nieprawidłową opcję"
+msgstr "Podano nieprawidłową wartość dla opcji"
 
-#: ../libyzis/mode_ex.cpp:815
+#: ../libyzis/mode_ex.cpp:728
 msgid "Registers:\n"
-msgstr ""
+msgstr "Rejestry:\n"
 
-#: ../libyzis/mode_ex.cpp:942
+#: ../libyzis/mode_ex.cpp:849
 msgid "Cannot change to specified directory"
-msgstr ""
+msgstr "Nie można przejść do wyznaczonego katalogu"
 
-#: ../libyzis/mode_insert.cpp:39
+#: ../libyzis/mode_insert.cpp:37
 msgid "[ Insert ]"
 msgstr "[ Wklej ]"
 
-#: ../libyzis/mode_insert.cpp:257
+#: ../libyzis/mode_insert.cpp:256
 msgid "[ Replace ]"
 msgstr "[ Zamień ]"
 
-#: ../libyzis/mode_search.cpp:40
+#: ../libyzis/mode_insert.cpp:279
+msgid "{ Completion }"
+msgstr "{ Uzupełnianie }"
+
+#: ../libyzis/mode_search.cpp:39
 msgid "[ Search ]"
 msgstr "[ Szukaj ]"
 
-#: ../libyzis/mode_search.cpp:102
+#: ../libyzis/mode_search.cpp:94
 msgid "No match"
-msgstr ""
+msgstr "Nie znaleziono"
 
-#: ../libyzis/mode_search.cpp:162
-#, fuzzy
+#: ../libyzis/mode_search.cpp:158
 msgid "[ Search backward ]"
-msgstr "[ Szukaj ]"
+msgstr "[ Szukaj w tył ]"
 
-#: ../libyzis/mode_visual.cpp:42
+#: ../libyzis/mode_visual.cpp:41
 msgid "[ Visual ]"
 msgstr "[ Wizualny ]"
 
-#: ../libyzis/mode_visual.cpp:266
+#: ../libyzis/mode_visual.cpp:268
 msgid "[ Visual Line ]"
 msgstr "[ Wizualna Linia ]"
 
-#: ../libyzis/mode_visual.cpp:299
-#, fuzzy
+#: ../libyzis/mode_visual.cpp:301
 msgid "[ Visual Block ]"
-msgstr "[ Wizualny ]"
+msgstr "[ Wizualny Blok ]"
 
-#: ../libyzis/search.cpp:139
+#: ../libyzis/search.cpp:111
 msgid "search hit TOP, continuing at BOTTOM"
-msgstr ""
+msgstr "Wyszukiwanie dobiegło do końca, kontynułuje od początku"
 
-#: ../libyzis/search.cpp:141
+#: ../libyzis/search.cpp:113
 msgid "search hit BOTTOM, continuing at TOP"
-msgstr ""
+msgstr "Wyszukiwanie dobiegło do początku, kontynułuje od końca."
 
-#: ../libyzis/swapfile.cpp:81
+#: ../libyzis/swapfile.cpp:69
 msgid ""
 "Warning, the swapfile could not be opened maybe due to restrictive "
 "permissions."
@@ -278,7 +559,7 @@ msgstr ""
 "Uwaga, nie można otworzyć pliku tymczasowego, prawdopodobnie z powodu zbyt "
 "restrykcyjnych praw dostępu."
 
-#: ../libyzis/swapfile.cpp:132
+#: ../libyzis/swapfile.cpp:115
 msgid ""
 "Warning, the swapfile could not be created maybe due to restrictive "
 "permissions."
@@ -286,7 +567,7 @@ msgstr ""
 "Uwaga, nie można stworzyć pliku tymczasowego, możliwe że powodem są zbyt "
 "restrykcyjne prawa dostępu."
 
-#: ../libyzis/swapfile.cpp:160
+#: ../libyzis/swapfile.cpp:139
 msgid ""
 "The swap file could not be opened, there will be no recovering for this "
 "file, you might want to check permissions of files."
@@ -294,100 +575,35 @@ msgstr ""
 "Nie można otworzyć pliku tymczasowego, nie będzie można odzyskać tego pliku, "
 "możesz spróbować sprawdzić prawa dostępu do plików."
 
-#: ../libyzis/syntaxdocument.cpp:647
-msgid "Language Section"
-msgstr ""
-
-#: ../libyzis/syntaxdocument.cpp:659
-#, fuzzy
-msgid "Errors!"
-msgstr "Błąd"
-
-#: ../libyzis/syntaxhighlight.cpp:1188
-msgid "None"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:1829
-msgid "Normal Text"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3231
-msgid "Keyword"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3232
-msgid "Data Type"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3233
-msgid "Decimal/Value"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3234
-msgid "Base-N Integer"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3235
-msgid "Floating Point"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3236
-msgid "Character"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3237
-msgid "String"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3238
-msgid "Comment"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3239
-msgid "Others"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3240
-msgid "Alert"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3241
-msgid "Function"
-msgstr ""
-
-#: ../libyzis/syntaxhighlight.cpp:3243
-msgid "Region Marker"
-msgstr ""
-
-#: ../libyzis/tags_interface.cpp:170
+#: ../libyzis/tags_interface.cpp:167
 msgid "File has been modified"
-msgstr ""
+msgstr "Plik został zmieniony"
 
-#: ../libyzis/tags_interface.cpp:229
+#: ../libyzis/tags_interface.cpp:232
 msgid "Unable to find tag file"
-msgstr ""
+msgstr "Nie można znaleźć pliku z tagami"
 
-#: ../libyzis/tags_interface.cpp:269
+#: ../libyzis/tags_interface.cpp:272
 msgid "Could not find next tag"
-msgstr ""
+msgstr "Nie mogę znaleźć następnego tagu"
 
-#: ../libyzis/tags_interface.cpp:282
+#: ../libyzis/tags_interface.cpp:285
 msgid "Could not find previous tag"
-msgstr ""
+msgstr "Nie moge znaleźć poprzedniego tagu"
 
-#: ../libyzis/tags_interface.cpp:290
+#: ../libyzis/tags_interface.cpp:293
 msgid "At bottom of tag stack"
-msgstr ""
+msgstr "Spód stosu z tagami"
 
-#: ../libyzis/view.cpp:376 ../libyzis/view.cpp:384
+#: ../libyzis/view.cpp:380 ../libyzis/view.cpp:388
 msgid "All"
 msgstr "Wszystko"
 
-#: ../libyzis/view.cpp:383
+#: ../libyzis/view.cpp:387
 msgid "Bot"
 msgstr "Doł"
 
-#: ../libyzis/view.cpp:1471
+#: ../libyzis/view.cpp:1462
 msgid ""
 "To use the Qt printer, you need to have an X11 DISPLAY set and running, you "
 "should try pslib in console mode"
@@ -395,31 +611,15 @@ msgstr ""
 "Aby używać drukarki Qt, musisz mieć otwarty i ustawiony ekran X11, pod "
 "konsolą tekstową możesz spróbować pslib'a"
 
-#: ../libyzis/view.cpp:1722
+#: ../libyzis/view.cpp:1714
 msgid " { Recording }"
-msgstr ""
+msgstr "{ Nagrywanie }"
 
-#: ../nyzis/factory.cpp:203
+#: ../nyzis/factory.cpp:212
 msgid "(Press any key)"
-msgstr ""
+msgstr "(Wciśnij dowolny klawisz)"
 
-#: ../nyzis/viewwidget.cpp:381
+#: ../nyzis/viewwidget.cpp:382
 msgid "[No File]"
-msgstr ""
+msgstr "[Brak pliku]"
 
-#~ msgid "This option cannot be switched this way, this is a boolean option."
-#~ msgstr ""
-#~ "Ta opcja nie może być ustawiona w ten sposób, to jest wartość tak/nie."
-
-#~ msgid "This option is a global option which cannot be changed with setlocal"
-#~ msgstr ""
-#~ "Ta opcja jest opcją globalną, i nie może być zmieniona za pomocą setlocal"
-
-#~ msgid "Yzis is not able to save remote files for now"
-#~ msgstr "Yzis nie może zapisać plików znajdujących się na innym komputerze"
-
-#~ msgid "Remote files"
-#~ msgstr "Pliki znajdujące się na innym komputerze"
-
-#~ msgid "Top"
-#~ msgstr "Góra"

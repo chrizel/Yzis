@@ -227,7 +227,7 @@ bool KYZTextEditorIface::removeText(const KTextEditor::Range& r, bool remove) {
 		KTextEditor::View* vi = dynamic_cast<KTextEditor::View*>(v);
 		vi->removeSelectionText();
 	}
-	m_buffer->action()->deleteArea( v, YZCursor( r.start().column(), r.start().line()), YZCursor( r.end().column(), r.end().line()), Q3ValueList<QChar>());
+	m_buffer->action()->deleteArea( v, YZCursor( r.start().column(), r.start().line()), YZCursor( r.end().column(), r.end().line()), QList<QChar>());
 	return true;
 }
 

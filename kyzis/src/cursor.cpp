@@ -52,32 +52,45 @@ KYZisCursor::shape KYZisCursor::type() const {
 }
 
 void KYZisCursor::setCursorType( shape type ) {
-	if ( shown ) hide();
+	if ( shown ) 
+		hide();
 	mCursorType = type;
 	unsigned width = mParent->fontMetrics().maxWidth();
 	unsigned height = mParent->fontMetrics().lineSpacing();
-	if ( mCursorType == VBAR ) width = 2;
+	if ( mCursorType == VBAR ) 
+		width = 2;
 	resize( width, height );
 }
 void KYZisCursor::resize( unsigned int w, unsigned int h ) {
-	if ( shown ) hide();
+	if ( shown ) 
+		hide();
 	bg->resize( w, h );
 	cursor->resize( w, h );
 }
-void KYZisCursor::hide() {
-	if ( ! shown ) return;
+void KYZisCursor::hide(QPainter *parentPainter) {
+	if ( !shown ) 
+		return;
 	QRect rect( mX, mY, bg->width(), bg->height() );
-	QPainter p( mParent );
-	mParent->erase( rect );
-	mParent->drawCell( &p, cell(), rect );
-	p.end();
+	QPainter *p;
+	if (parentPainter) 
+		p = parentPainter;
+	else 
+		p = new QPainter(mParent);
+	p->eraseRect( rect );
+	mParent->drawCell( p, cell(), rect );
+	if ( !parentPainter ) {
+		if (p->isActive())
+			p->end();
+		delete p;
+	}
 	shown = false;
 }
 void KYZisCursor::refresh( QPainter* p ) {
 	move( mX, mY, p );
 }
 void KYZisCursor::move( unsigned int x, unsigned int y, QPainter* p ) {
-	if ( shown ) hide();
+	if ( shown ) 
+		hide(p);
 	mX = x;
 	mY = y;
 	if ( prepareCursors() ) {
@@ -87,8 +100,7 @@ void KYZisCursor::move( unsigned int x, unsigned int y, QPainter* p ) {
 }
 
 const KYZViewCell& KYZisCursor::cell() const {
-	return mParent->mCell[ mY / mParent->fontMetrics().lineSpacing() ][ 
-					mParent->mParent->getLocalBooleanOption("rightleft") ? mX + width() : mX ];
+	return mParent->mCell[ mY / mParent->fontMetrics().lineSpacing() ][ mParent->mParent->getLocalBooleanOption("rightleft") ? mX + width() : mX ];
 }
 
 bool KYZisCursor::prepareCursors() {
@@ -114,7 +126,8 @@ bool KYZisCursor::prepareCursors() {
 			p.fillRect( rect, QBrush( mParent->foregroundColor() ) );
 			break;
 	}
-	p.end();
+	if (p.isActive())
+		p.end();
 	return ret;
 }
 

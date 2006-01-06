@@ -47,7 +47,7 @@ class KYZisCursor {
 		void setCursorType( shape type );
 		void resize( unsigned int w, unsigned int h );
 		void move( unsigned int x, unsigned int y, QPainter* p = NULL );
-		void hide();
+		void hide(QPainter *parentPainter=NULL);
 		void refresh( QPainter* p = NULL );
 
 		unsigned int width() const;

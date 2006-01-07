@@ -31,6 +31,7 @@
 typedef unsigned int QRgb;
 #endif
 
+#define YzqRgb(r,g,b) (0xff000000 | (r << 16) |  (g << 8) | b)
 
 class YZColor {
 

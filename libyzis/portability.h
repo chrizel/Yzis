@@ -58,26 +58,14 @@
 	#define CHECK_GETEUID( v )		(v == geteuid())
 #endif
 
-// Qt4 check
 #include <qnamespace.h>
 
-// if Qt3
-#if QT_VERSION < 0x040000
-	#include <qvaluelist.h>
-	template<typename T>
-	class YZList : public QValueList<T> {}; 
-	
-	#include <qvaluevector.h>
-	template<typename T>
-	class YZVector : public QValueVector<T> {};
-#else // Qt4 then
-	#include <qlist.h>
-	template<typename T>
-	class YZList : public QList<T> {};
-	
-	#include <qvector.h>
-	template<typename T>
-	class YZVector : public QVector<T> {};
-#endif
+#include <qlist.h>
+template<typename T>
+class YZList : public QList<T> {};
+
+#include <qvector.h>
+template<typename T>
+class YZVector : public QVector<T> {};
 
 #endif // PORTABILITY_H

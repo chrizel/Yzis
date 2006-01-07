@@ -451,7 +451,17 @@ YZBuffer *YZSession::createBuffer( const QString &path /*=QString::null*/ ) {
 	return buffer;
 }
 
-YZView *YZSession::createBufferAndView( const QString &path /*=QString::null*/ ) {
+YZView *YZSession::createBufferAndView( const QString &_path /*=QString::null*/ ) {
+	QString path = _path;
+
+	//check for file:line_number syntax
+	unsigned int scrollTo = 0;
+	QRegExp reg = QRegExp( "(.+):(\\d+):?" );
+	if ( !QFile::exists( path ) && reg.exactMatch( path ) && QFile::exists( reg.cap( 1 ) ) ) {
+		path = reg.cap( 1 );
+		scrollTo = reg.cap( 2 ).toUInt();
+	}
+
 	YZBuffer *buffer = findBuffer(path);
 	bool alreadyopen = true;
 	if (!buffer) {
@@ -466,6 +476,10 @@ YZView *YZSession::createBufferAndView( const QString &path /*=QString::null*/ )
 		view = findViewByBuffer(buffer);
 	}
 	setCurrentView( view );
+	if ( scrollTo > 0 ) {
+		view->gotoStickyCol( scrollTo - 1 );
+		view->centerViewVertically( scrollTo - 1 );
+	}
 	view->refreshScreen();
 	
 	return view;

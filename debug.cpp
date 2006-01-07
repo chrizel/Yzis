@@ -31,15 +31,9 @@
 #include <ctype.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#if QT_VERSION < 0x040000
-#include <qstringlist.h>
-#include <qfile.h>
-#include <qregexp.h>
-#else
 #include <QTextStream>
 #include <QRegExp>
 #include <QStringList>
-#endif
 
 YZDebugBackend * YZDebugBackend::_instance = NULL;
 

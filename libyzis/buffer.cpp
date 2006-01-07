@@ -526,7 +526,7 @@ void YZBuffer::load(const QString& file) {
 
 	unsigned int scrollTo = 0;
 	QRegExp reg = QRegExp( "(.+):(\\d+):?" );
-	if ( reg.exactMatch( d->path ) && QFile::exists( reg.cap( 1 ) ) ) {
+	if ( !QFile::exists ( d->path ) && reg.exactMatch( d->path ) && QFile::exists( reg.cap( 1 ) ) ) {
 		d->path = reg.cap( 1 );
 		scrollTo = reg.cap( 2 ).toUInt();
 	}
@@ -589,6 +589,7 @@ void YZBuffer::load(const QString& file) {
 	if ( scrollTo > 0 ) {
 		for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
 			(*itr)->gotoStickyCol( scrollTo - 1 );
+			(*itr)->centerViewVertically( scrollTo - 1 );
 		}
 	}
 	filenameChanged();

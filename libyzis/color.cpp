@@ -216,6 +216,7 @@ YZColor::YZColor() {
 }
 YZColor::YZColor( QRgb rgb ) {
 	setRgb( rgb );
+	m_valid=true;
 }
 YZColor::YZColor( const QString& name ) {
 	setNamedColor( name );

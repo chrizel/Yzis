@@ -51,10 +51,20 @@ KYZisEdit::KYZisEdit(KYZisView *parent)
 	mTransparent = false;
 	mParent = parent;
 
-	marginLeft = 0;
 
 	setFocusPolicy( Qt::StrongFocus );
-	setAttribute ( Qt::WA_PaintOutsidePaintEvent );
+
+	/*   Makes it possible to use QPainter to paint on the widget outside paintEvent(). This is not supported on Mac OS X. We recommend that you use this attribute only when porting Qt 3 code to Qt 4.  */
+	setAttribute ( Qt::WA_PaintOutsidePaintEvent ); /*XXX*/
+
+	 /* Indicates that the widget has no background, i.e. when the widget receives paint events, the background is not automatically repainted. NOTE: Unlike WA_NoBackground, newly exposed areas are never filled with the background (e.g after showing a window for the first time the user can see "through" it until the application processes the paint events). Setting this flag implicitly disables double buffering for the widget. This is set/cleared by the widget's author.
+	 */
+	setAttribute( Qt::WA_NoSystemBackground );
+
+	 /*   Indicates that the widget contents are north-west aligned and static. On resize, such a widget will receive paint events only for the newly visible part of itself. This is set/cleared by the widget's author.
+	 */
+	setAttribute( Qt::WA_StaticContents );
+
 	QWidget::setCursor( Qt::IBeamCursor );
 	isFontFixed = fontInfo().fixedPitch();
 
@@ -73,6 +83,8 @@ KYZisEdit::KYZisEdit(KYZisView *parent)
 	defaultCell.selected = false;
 	defaultCell.c = " ";
 	defaultCell.flag = 0;
+
+	marginLeft = 0;
 }
 
 

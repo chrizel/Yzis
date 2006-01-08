@@ -114,6 +114,7 @@ KDE_INIT_DOXYGEN([The Yzis API Reference], [Version $VERSION])
 
 AC_ARG_ENABLE(kyzis, AC_HELP_STRING([--disable-kyzis],[disable Kyzis compilation.]),, [enable_kyzis="yes"])
 AC_ARG_ENABLE(nyzis, AC_HELP_STRING([--disable-nyzis],[disable Nyzis compilation.]),, [enable_nyzis="yes"])
+AC_ARG_ENABLE(qyzis, AC_HELP_STRING([--disable-qyzis],[disable Qyzis compilation.]),, [enable_qyzis="yes"])
 
 YZIS_QT="libqtyzis"
 NYZIS_DEP="libyzis/libqtyzis/libqtyzis.la"
@@ -124,6 +125,9 @@ if test "x$have_kde" != "xyes" -o "x$enable_kyzis" != "xyes"; then
 fi
 if test "x$enable_nyzis" != "xyes"; then
 	DO_NOT_COMPILE="$DO_NOT_COMPILE nyzis"
+fi
+if test "x$enable_qyzis" != "xyes"; then
+	DO_NOT_COMPILE="$DO_NOT_COMPILE qyzis"
 fi
 
 DO_NOT_COMPILE="$DO_NOT_COMPILE tests gyzis"

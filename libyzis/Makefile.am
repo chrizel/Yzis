@@ -10,8 +10,9 @@ libyzis_la_SOURCES = session.cpp mode.cpp mode_command.cpp mode_search.cpp \
 		yzisinfojumplistrecord.cpp readtags.c tags_interface.cpp tags_stack.cpp mode_complete.cpp \
 		viewid.cpp history.cpp \
 		color.cpp \
+		drawbuffer.cpp \
 		folding.cpp \
-		font.cpp
+		font.cpp \
 
 libyzis_la_LIBADD = $(LIB_QT) $(LIB_QTXML) $(all_libraries) $(LUA_LIBS) $(PS_LIBS) $(LIBMAGIC_LIBS) $(LIBGETTEXT_LIBS)
 libyzis_la_LDFLAGS = -version-info 0:0:0 -no-undefined

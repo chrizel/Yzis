@@ -73,7 +73,7 @@ DDockWindow::DDockWindow(QWidget *parent, Position position)
 
     KConfig *config = kapp->sessionConfig();
     config->setGroup("UI");
-    int mode = config->readNumEntry("MDIStyle", 3);
+    int mode = config->readEntry("MDIStyle", 3);
     Ideal::ButtonMode buttonMode = Ideal::Text;
     if (mode == 0)
         buttonMode = Ideal::Icons;
@@ -123,12 +123,12 @@ void DDockWindow::setExpanded(bool v)
         int size = 0;
         if (m_position == DDockWindow::Bottom)
         {
-            size = config->readNumEntry("ViewWidth", m_internalLayout->sizeHint().height());
+            size = config->readEntry("ViewWidth", m_internalLayout->sizeHint().height());
             setFixedExtentHeight(size);
         }
         else
         {
-            size = config->readNumEntry("ViewWidth", m_internalLayout->sizeHint().width());
+            size = config->readEntry("ViewWidth", m_internalLayout->sizeHint().width());
             setFixedExtentWidth(size);
         }
     }
@@ -151,7 +151,7 @@ void DDockWindow::saveSettings()
     int invisibleWidth = 0;
     config->setGroup(group);
     if (config->hasKey("ViewWidth"))
-        invisibleWidth = config->readNumEntry("ViewWidth");
+        invisibleWidth = config->readEntry("ViewWidth").toInt();
     config->deleteEntry("ViewWidth");
     config->deleteEntry("ViewLastWidget");
     if (m_toggledButton && m_expanded)
@@ -282,7 +282,7 @@ void DDockWindow::showWidget(QWidget *widget)
     widget->show();
 }
 
-void DDockWindow::setMovingEnabled(bool b)
+void DDockWindow::setMovingEnabled(bool )
 {
     //some operations on KMainWindow cause moving to be enabled
     //but we always don't want DDockWindow instances to be movable

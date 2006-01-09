@@ -228,7 +228,7 @@ void ButtonBar::deshrink(int preferredDimension, int actualDimension)
     m_shrinked = true;
 
     uint textLength = 0;
-    QList<uint> texts;
+    QList<int> texts;
     uint maxLength = 0;
     foreach (Button *button, m_buttons)
     {
@@ -249,7 +249,7 @@ void ButtonBar::deshrink(int preferredDimension, int actualDimension)
         newTextLength = 0;
         for (int i = 0; i < texts.count(); ++i)
         {
-            uint &length = texts[i];
+            int &length = texts[i];
             if (m_buttons.at(i)->text().contains("..."))
                 length++;
             newTextLength += length;

@@ -47,8 +47,8 @@ void DMainWindow::loadSettings()
 {
     KConfig *config = kapp->sessionConfig();
     config->setGroup("UI");
-    m_openTabAfterCurrent = config->readBoolEntry("OpenNewTabAfterCurrent", true);
-    m_showIconsOnTabs = config->readBoolEntry("ShowTabIcons", false);
+    m_openTabAfterCurrent = config->readEntry("OpenNewTabAfterCurrent", true);
+    m_showIconsOnTabs = config->readEntry("ShowTabIcons", false);
 }
 
 DMainWindow::~DMainWindow()

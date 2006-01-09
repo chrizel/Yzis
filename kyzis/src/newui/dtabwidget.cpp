@@ -26,8 +26,8 @@
 #include <kiconloader.h>
 #include <kapplication.h>
 
-DTabWidget::DTabWidget(QWidget *parent, const char *name)
-    :KTabWidget(parent, name), m_closeButton(0)
+DTabWidget::DTabWidget(QWidget *parent)
+    :KTabWidget(parent), m_closeButton(0)
 {
     setFocusPolicy(Qt::NoFocus);
     setMargin(0);

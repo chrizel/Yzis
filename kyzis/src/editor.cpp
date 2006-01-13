@@ -53,9 +53,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent)
 
 	setFocusPolicy( Qt::StrongFocus );
 
-	 /* Indicates that the widget has no background, i.e. when the widget receives paint events, the background is not automatically repainted. NOTE: Unlike WA_NoBackground, newly exposed areas are never filled with the background (e.g after showing a window for the first time the user can see "through" it until the application processes the paint events). Setting this flag implicitly disables double buffering for the widget. This is set/cleared by the widget's author.
-	 */
-	setAttribute( Qt::WA_NoSystemBackground );
+	setAutoFillBackground( true );
 
 	/* show an edit cursor */
 	QWidget::setCursor( Qt::IBeamCursor );
@@ -81,16 +79,13 @@ KYZisEdit::~KYZisEdit() {
 	delete actionCollection;
 }
 
-void KYZisEdit::setTransparent ( bool t, double opacity, const QColor& color ) {
-	/*
-	if ( opacity == 1 )	
-		t = false;	// opactity is max, let use scroll optimisation
-	mTransparent = t;
-	if ( t ) {
-		rootxpm->setFadeEffect( opacity, color );
-		rootxpm->start();
-	} else 
-		rootxpm->stop();*/
+void KYZisEdit::setPalette( const QColor& fg, const QColor& bg, double opacity ) {
+	yzDebug() << "setPalette : " << fg.name() << ", " << bg.name() << ", " << opacity << endl;
+	QPalette p = palette();
+	p.setColor( QPalette::WindowText, fg );
+	p.setColor( QPalette::Window, bg );
+	QWidget::setPalette( p );
+	setWindowOpacity( opacity );
 }
 
 KYZisCursor::shape KYZisEdit::cursorShape() {
@@ -259,7 +254,6 @@ void KYZisEdit::focusOutEvent ( QFocusEvent * ) {
 
 
 void KYZisEdit::resizeEvent(QResizeEvent* e) {
-	yzDebug() << "KYzisEdit < QResizeEvent" << endl;
 	e->accept();
 	updateArea();
 }
@@ -581,7 +575,8 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 
 void KYZisEdit::drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, QPainter* p ) {
 	yzDebug() << "drawCell at ("<<x<<","<<y<<") : '" << cell.c << "'" << endl;
-	p->setPen( cell.fg.rgb() );
+	if ( cell.fg.isValid() )
+		p->setPen( cell.fg.rgb() );
 	p->drawText( GETX(x), (y+1) * fontMetrics().lineSpacing(), cell.c );
 }
 

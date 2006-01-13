@@ -110,7 +110,7 @@ void YZDrawBuffer::newline( bool overwrite ) {
 }
 
 void YZDrawBuffer::append_line() {
-	m_content.append( YZViewSection() );
+	m_content.append( YZDrawSection() );
 	m_line =& m_content.last();
 }
 void YZDrawBuffer::append_section() {

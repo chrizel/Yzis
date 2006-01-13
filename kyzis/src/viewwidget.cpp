@@ -199,16 +199,17 @@ void KYZisView::unregisterModifierKeys( const QString& keys ) {
 
 void KYZisView::applyConfig( bool refresh ) {
 	m_editor->setFont( Settings::font() );
-	m_editor->setBackgroundMode( Qt::PaletteBase );
-	m_editor->setBackgroundColor( Settings::colorBG() );
-	m_editor->setPaletteForegroundColor( Settings::colorFG() );
-	m_editor->setTransparent( Settings::transparency(), (double)Settings::opacity() / 100., Settings::colorBG() );
+
+	double opacity = 1.;
+	if ( Settings::transparency() )
+		opacity = (double)Settings::opacity() / 100.;
+	m_editor->setPalette( Settings::colorFG(), Settings::colorBG(), opacity );
+
 	YzisHighlighting *yzis = myBuffer()->highlight();
 	if (yzis) {
 		myBuffer()->makeAttribs();
 		repaint(true);
-	}
-	if ( refresh ) {
+	} else if ( refresh ) {
 		m_editor->updateArea( );
 	}
 }

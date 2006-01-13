@@ -55,8 +55,6 @@ class KYZisEdit : public QWidget {
 		//append text
 		void append ( const QString& );
 
-		void paintEvent( const YZSelection& drawMap );
-
 		//move cursor to position column, line relative to viewport
 		void setCursor(int c,int l);
 		void scrollUp( int );
@@ -67,8 +65,7 @@ class KYZisEdit : public QWidget {
 		// update text area
 		void updateArea( );
 
-		void setTransparent( bool t, double opacity = 0, const QColor& color = Qt::black );
-
+		void setPalette( const QColor& fg, const QColor& bg, double opacity );
 
 		const QString& convertKey( int key );
 

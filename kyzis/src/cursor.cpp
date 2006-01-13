@@ -70,6 +70,7 @@ void KYZisCursor::resize( unsigned int w, unsigned int h ) {
 void KYZisCursor::hide(QPainter *parentPainter) {
 	if ( !shown ) 
 		return;
+	/*
 	QRect rect( mX, mY, bg->width(), bg->height() );
 	QPainter *p;
 	if (parentPainter) 
@@ -82,7 +83,7 @@ void KYZisCursor::hide(QPainter *parentPainter) {
 		if (p->isActive())
 			p->end();
 		delete p;
-	}
+	}*/
 	shown = false;
 }
 void KYZisCursor::refresh( QPainter* p ) {
@@ -99,12 +100,9 @@ void KYZisCursor::move( unsigned int x, unsigned int y, QPainter* p ) {
 	}
 }
 
-const KYZViewCell& KYZisCursor::cell() const {
-	return mParent->mCell[ mY / mParent->fontMetrics().lineSpacing() ][ mParent->mParent->getLocalBooleanOption("rightleft") ? mX + width() : mX ];
-}
-
 bool KYZisCursor::prepareCursors() {
 	bool ret = true;
+/*
 	bg->fill( mParent, 0, 0 );
 	*cursor = *bg;
 	QPainter p( cursor );
@@ -128,10 +126,12 @@ bool KYZisCursor::prepareCursors() {
 	}
 	if (p.isActive())
 		p.end();
+*/
 	return ret;
 }
 
 void KYZisCursor::drawCursor( QPixmap* orig, QPainter* p ) {
+	/*
 	bool isPainting = ( p != NULL );
 	if ( !isPainting ) {
 		if ( mParent->paintingActive() ) {
@@ -145,6 +145,6 @@ void KYZisCursor::drawCursor( QPixmap* orig, QPainter* p ) {
 	if ( !isPainting ) {
 		p->end();
 		delete p;
-	}
+	} */
 }
 

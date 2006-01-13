@@ -38,28 +38,12 @@
 class KYZisView;
 class KYZisCursor;
 
-
-struct KYZViewCell {
-	bool isValid;
-	int flag;
-	bool selected;
-	QFont font;
-	QString c;
-	QColor bg;
-	QColor fg;
-	KYZViewCell():
-		isValid( false ),
-		flag( 0 ),
-		selected ( false ), font(), c(), bg(), fg() {
-	}
-};
-typedef QMap<unsigned int,KYZViewCell> lineCell;
-
 /**
  * KYZis Painter Widget
  */
 class KYZisEdit : public QWidget {
 	Q_OBJECT
+	
 
 	public :
 		KYZisEdit(KYZisView *parent=0);
@@ -85,8 +69,6 @@ class KYZisEdit : public QWidget {
 
 		void setTransparent( bool t, double opacity = 0, const QColor& color = Qt::black );
 
-		void drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rect, bool reversed = false );
-		void drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, QPainter* p );
 
 		const QString& convertKey( int key );
 
@@ -97,8 +79,6 @@ class KYZisEdit : public QWidget {
 
 		QPoint cursorCoordinates( );
 
-		QMap<unsigned int,lineCell> mCell;
-
 		QVariant inputMethodQuery ( Qt::InputMethodQuery query );
 
 	public slots :
@@ -106,6 +86,7 @@ class KYZisEdit : public QWidget {
 
 
 	protected:
+		void drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, QPainter* p );
 		//intercept tabs
 		virtual bool event(QEvent*);
 
@@ -164,10 +145,9 @@ class KYZisEdit : public QWidget {
 		// last line number
 		QMap<int,QString> keys;
 		KRootPixmap *rootxpm;
-		bool mTransparent;
-		KYZViewCell defaultCell;
 
 	friend class KYZisCursor;
+	friend class KYZisView;
 };
 
 #endif

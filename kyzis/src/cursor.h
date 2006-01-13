@@ -28,7 +28,6 @@
 #include <qpixmap.h>
 
 class KYZisEdit;
-struct KYZViewCell;
 
 class KYZisCursor {
 
@@ -47,14 +46,12 @@ class KYZisCursor {
 		void setCursorType( shape type );
 		void resize( unsigned int w, unsigned int h );
 		void move( unsigned int x, unsigned int y, QPainter* p = NULL );
-		void hide(QPainter *parentPainter=NULL);
+		void hide(QPainter*parentPainter=NULL);
 		void refresh( QPainter* p = NULL );
 
 		unsigned int width() const;
 		unsigned int height() const;
 		shape type() const;
-
-		const KYZViewCell& cell() const;
 
 		inline unsigned int x() const { return mX; }
 		inline unsigned int y() const { return mY; }

@@ -69,7 +69,7 @@ static YZColor blue( Qt::blue );
 static unsigned int nextId = 1;
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) 
-	: id( nextId++ )
+	:  m_drawBuffer(), id( nextId++ )
 {
 	yzDebug() << "New View created with UID : " << id << endl;
 	YZASSERT( _b ); YZASSERT( sess );
@@ -1766,3 +1766,217 @@ unsigned int YZView::getSpaceWidth() const
 {
 	return spaceWidth;
 }
+
+
+void YZView::preparePaintEvent( unsigned int y_min, unsigned int y_max ) {
+	yzDebug() << "YZView::preparePaintEvent( " << y_min << ", " << y_max << " );" << endl;
+}
+void YZView::endPaintEvent() {
+}
+void YZView::drawCell( unsigned int , unsigned int , const YZDrawCell& , void* ) {
+}
+
+/**
+ * default implementation for paintEvent
+ */
+
+void YZView::paintEvent( const YZSelection& drawMap ) {
+	if ( drawMap.isEmpty() )
+		return;
+
+	bool number = getLocalBooleanOption( "number" );
+	bool rightleft = getLocalBooleanOption( "rightleft" );
+
+	int flag = (rightleft ? Qt::AlignRight : Qt::AlignLeft);
+
+	unsigned int lineCount = myBuffer()->lineCount();
+	unsigned int my_marginLeft = 0;
+	/*
+	if ( number ) { // update marginLeft
+		my_marginLeft = ( isFontFixed ? QString::number( lineCount ).length() + 2 : mParent->stringWidth( " " + QString::number( lineCount ) + "  " ) );
+	}
+	if ( marginLeft != my_marginLeft ) {
+		if ( mCursor->visible() ) {
+			mCursor->move( qMax( (int)( mCursor->x() + GETX( marginLeft - my_marginLeft ) ), 0 ), mCursor->y() );
+		}
+		marginLeft = my_marginLeft;
+		updateArea();
+		return;
+	}
+*/
+
+	unsigned int shiftY = getDrawCurrentTop();
+	unsigned int shiftX = getDrawCurrentLeft();
+	unsigned int maxX = shiftX + getColumnsVisible();
+
+	unsigned int cursorY = getCursor().y();
+//	unsigned int cursorX = getCursor()->x();
+	bool refreshCursor = false;
+
+	YZSelectionMap map = drawMap.map();
+	unsigned int size = map.size();
+
+	unsigned int fromY = map[ 0 ].fromPos().y();
+	unsigned int toY = map[ size - 1 ].toPos().y();
+	preparePaintEvent( fromY, toY );
+
+	bool drawIt = false;
+	unsigned int mapIdx = 0;
+
+	unsigned int fX = map[ mapIdx ].fromPos().x();
+	unsigned int fY = map[ mapIdx ].fromPos().y();
+	unsigned int tX = map[ mapIdx ].toPos().x();
+	unsigned int tY = map[ mapIdx ].toPos().y();
+
+	unsigned int curY = initDrawContents( fromY );
+	unsigned int curX = 0;
+
+	bool drawEntireLine;
+
+	m_drawBuffer.reset();
+	while( curY <= toY && drawNextLine() ) {
+		curX = shiftX;
+
+		if ( tY < curY ) {
+			++mapIdx;
+			fX = map[ mapIdx ].fromPos().x();
+			fY = map[ mapIdx ].fromPos().y();
+			tX = map[ mapIdx ].toPos().x();
+			tY = map[ mapIdx ].toPos().y();
+		}
+
+		drawEntireLine = !( curY == fY && fX > shiftX || curY == tY && tX < maxX );
+		drawIt = curY == fY && fX <= shiftX || fY < curY && curY <= tY;
+//		yzDebug() << curY << " : " << drawIt << "-" << drawEntireLine << endl;
+
+		m_drawBuffer.newline();
+
+		/*
+		if ( drawIt || !drawEntireLine && !drawIt ) { // this line will be drawn
+			refreshCursor = ( curY == cursorY );
+			mCellKeys = mCell[ mCellY ].keys();
+			
+			if ( number ) {
+				myRect.setWidth( GETX( marginLeft - spaceWidth ) );
+				REVERSE_MYRECT_IF_RIGHTLEFT;
+				p.eraseRect( myRect );
+
+				if ( lineHeight() == 1 ) {
+					p.setPen( Qt::yellow ); // XXX: custom
+					p.setBackgroundMode( Qt::TransparentMode );
+					p.setFont( font() );
+					p.drawText( myRect, (rightleft ? Qt::AlignLeft : Qt::AlignRight), QString::number( drawLineNumber() ) );
+				}
+			}
+		}
+		*/
+		/*
+		if ( drawIt ) {
+			myRect.setLeft( GETX( marginLeft ) );
+			if ( drawEntireLine ) {
+				myRect.setRight( width() );
+				mCell[ mCellY ].clear();
+			} else {
+				if ( tY == curY ) {
+					myRect.setWidth( GETX( tX - shiftX + 1 ) );
+					for( mCellX = 0; mCellX < mCellKeys.size() && mCellKeys[ mCellX ] <= (tX - shiftX); ++mCellX )
+						mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
+				} else {
+					myRect.setRight( width() );
+					for( mCellX = 0; mCellX < mCellKeys.size(); ++mCellX )
+						mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
+				}
+			}
+//			yzDebug() << "erase1(" << myRect.top() << "," << myRect.left() << "," << myRect.bottom() << "," << myRect.right() << ")" << endl;
+			p.eraseRect( myRect );
+		}
+		*/
+		while( drawNextCol() ) {
+			if ( ! drawEntireLine ) {
+				if ( !drawIt && curY == fY ) { // start drawing ?
+					drawIt = ( curX == fX );
+					if ( drawIt ) {
+				/* XXX		myRect.setLeft( GETX( marginLeft + curX - shiftX ) );
+						while( mCellX < mCellKeys.size() && mCellKeys[ mCellX ] < (fX - shiftX) )
+							++mCellX;
+						if ( tY == curY ) {
+							myRect.setRight( GETX( marginLeft + tX - shiftX + 1 ) - 1 );
+							for( ; mCellX < mCellKeys.size() && mCellKeys[ mCellX ] <= (tX - shiftX); ++mCellX )
+								mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
+						} else {
+							myRect.setRight( width() );
+							for( ; mCellX < mCellKeys.size(); ++mCellX )
+								mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
+						}
+//						yzDebug() << "erase2(" << myRect.top() << "," << myRect.left() << "," << myRect.bottom() << "," << myRect.right() << ")" << endl;
+						p.eraseRect( myRect );
+						*/
+					}
+				} else if ( drawIt && curY == tY ) { // stop drawing ?
+					drawIt = !( curX > tX );
+					if ( ! drawIt ) {
+						++mapIdx;
+						if ( mapIdx != size ) {
+							fX = map[ mapIdx ].fromPos().x();
+							fY = map[ mapIdx ].fromPos().y();
+							tX = map[ mapIdx ].toPos().x();
+							tY = map[ mapIdx ].toPos().y();
+						} else {
+							fX = fY = tX = tY = 0;
+						}
+					}
+				}
+			}
+			if ( drawIt ) {
+				QString disp = QString( drawChar() );
+				if ( !rightleft )
+					disp = disp.leftJustify( drawLength(), fillChar() );
+				else
+					disp = disp.rightJustify( drawLength(), fillChar() );
+
+				m_drawBuffer.setColor( drawColor() );
+
+				m_drawBuffer.push( disp );
+			}
+			curX += drawLength();
+		}
+		curY += drawHeight();
+
+		/*
+		if ( refreshCursor ) {
+			mCursor->refresh( &p );
+			refreshCursor = false;
+		}
+		*/
+	}
+
+	/*
+	if ( number && fromY < curY ) {
+		p.setPen( Settings::colorFG() );
+		unsigned int w;
+		if ( rightleft )
+			w = width() - GETX( marginLeft ) + GETX( spaceWidth ) / 2;
+		else
+			w = GETX( marginLeft ) - GETX( spaceWidth ) / 2;
+		p.drawLine( w, (fromY - shiftY) * linespace, w, (curY - shiftY) * linespace );
+	}
+
+	unsigned int fh = shiftY + height() / linespace;
+	toY = qMin( toY, fh - 1 );
+	myRect.setLeft( 0 );
+	myRect.setHeight( linespace );
+	myRect.setWidth( width() );
+	for( ; curY <= toY; ++curY ) {
+		p.eraseRect( myRect );
+		p.setPen( Qt::cyan );
+		p.drawText( myRect, flag, "~" );
+		myRect.moveBy( 0, linespace );
+	}
+	*/
+	m_drawBuffer.flush();
+
+	endPaintEvent();
+}
+
+
+

@@ -22,6 +22,8 @@
 
 #include "cursor.h"
 #include "viewwidget.h"
+#include <libyzis/drawbuffer.h>
+
 #include <qpainter.h>
 #include <qevent.h>
 #include <qmap.h>
@@ -84,6 +86,7 @@ class KYZisEdit : public QWidget {
 		void setTransparent( bool t, double opacity = 0, const QColor& color = Qt::black );
 
 		void drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rect, bool reversed = false );
+		void drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, QPainter* p );
 
 		const QString& convertKey( int key );
 

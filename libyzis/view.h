@@ -35,6 +35,10 @@
 #include <QVector>
 #include <QCoreApplication>
 
+#include "drawbuffer.h"
+class YZDrawBuffer;
+struct YZDrawCell;
+
 class YZViewCursor;
 class YZCursor;
 class YZBuffer;
@@ -59,6 +63,8 @@ class YZFoldPool;
  * 
  */
 class YZView {
+
+	friend class YZDrawBuffer;
 
 	public:
 		//-------------------------------------------------------
@@ -577,7 +583,7 @@ class YZView {
 		//-------------------------------------------------------
 		// ----------------- Paint Events
 		//-------------------------------------------------------
-		virtual void paintEvent( const YZSelection& drawMap ) = 0;
+		virtual void paintEvent( const YZSelection& drawMap );
 
 		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
 		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
@@ -757,6 +763,15 @@ class YZView {
 		bool stringHasOnlySpaces ( const QString& what );
 		
 		QString getLineStatusString() const;
+
+		/*
+		 * painting
+		 */
+		virtual void preparePaintEvent( unsigned int y_min, unsigned int y_max );
+		virtual void endPaintEvent();
+		virtual void drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, void* arg );
+
+		YZDrawBuffer m_drawBuffer;
 		
 	private:
 

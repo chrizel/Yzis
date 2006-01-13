@@ -23,11 +23,12 @@
 
 
 #include "drawbuffer.h"
+#include "view.h"
 
 #include <debug.h>
 
-YZDrawBuffer::YZDrawBuffer( void(*callback)(const YZViewCell&, void*) ) : m_content() {
-	m_callback = callback;
+YZDrawBuffer::YZDrawBuffer() : m_content() {
+	m_view = NULL;
 	m_callback_arg = NULL;
 	m_line = NULL;
 	m_cell = NULL;
@@ -36,28 +37,36 @@ YZDrawBuffer::YZDrawBuffer( void(*callback)(const YZViewCell&, void*) ) : m_cont
 YZDrawBuffer::~YZDrawBuffer() {
 }
 
+void YZDrawBuffer::setCallback( YZView* v ) {
+	m_view = v;
+}
 void YZDrawBuffer::setCallbackArgument( void* callback_arg ) {
 	m_callback_arg = callback_arg;
 }
 
 void YZDrawBuffer::reset() {
 	m_xi = m_x = m_y = 0;
+	m_valid = false;
 	m_content.clear();
 	changed = false;
-	append_line();
-	append_section();
 }
 
 void YZDrawBuffer::flush() {
+	if ( !m_valid )
+		return;
 	/* call callback with the undrawed part of section */
 	QString keep( m_cell->c );
 	m_cell->c = m_cell->c.mid( m_x - m_xi );
-	m_callback( *m_cell, m_callback_arg );
+	callback( m_x, m_y, *m_cell );
 	changed = false;
 
 	/* move cursor */
 	m_x += m_cell->c.length();
 	m_cell->c = keep;
+}
+
+void YZDrawBuffer::callback( unsigned int x, unsigned int y, const YZDrawCell& cell ) {
+	m_view->drawCell( x, y, cell, m_callback_arg );
 }
 
 void YZDrawBuffer::setFont( const YZFont& f ) {
@@ -84,9 +93,11 @@ void YZDrawBuffer::push( const QString& c, bool /*overwrite*/ ) {
 	m_cell->c.append( c );
 }
 
-void YZDrawBuffer::linebreak( bool overwrite ) {
+void YZDrawBuffer::newline( bool overwrite ) {
 	flush();
-	m_y += 1;
+	if ( m_valid )
+		m_y += 1;
+	m_valid = true;
 	m_x = 0;
 	m_xi = 0;
 	if ( overwrite && (int)m_y < m_content.size() ) {
@@ -103,7 +114,7 @@ void YZDrawBuffer::append_line() {
 	m_line =& m_content.last();
 }
 void YZDrawBuffer::append_section() {
-	YZViewCell n;
+	YZDrawCell n;
 	/* copy the new properties */
 	n.fg.setRgb( m_cur.fg.rgb() );
 	m_line->append( n );

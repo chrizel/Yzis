@@ -27,65 +27,71 @@
 #include <QString>
 #include <QVector>
 
-#include "font.h"
 #include "color.h"
+#include "font.h"
 
-class YZFont;
-class YZColor;
+class YZView;
 
-struct YZViewCell {
+struct YZDrawCell {
 	bool isValid;
 	int flag;
 	YZFont font;
 	QString c;
 	YZColor bg;
 	YZColor fg;
-	YZViewCell():
+	YZDrawCell():
 		isValid( false ),
 		flag( 0 ),
 		font(), c(), bg(), fg() {
 	}
 };
 
-typedef QVector<YZViewCell> YZViewSection;
+typedef QVector<YZDrawCell> YZViewSection;
 typedef QVector<YZViewSection> YZViewLine;
+
+
+//typedef void(YZView::*drawCellCallback)(unsigned int x, unsigned int y, const YZDrawCell&, void*);
 
 class YZDrawBuffer {
 
 	public:
-		YZDrawBuffer( void(*callback)(const YZViewCell&, void*) );
+		YZDrawBuffer();
 		~YZDrawBuffer();
 
+		void setCallback( YZView* v );
 		void setCallbackArgument( void* callback_arg );
 		
 		void reset();
 		//void seek( unsigned int x, unsigned int y );
 
 		void push( const QString& c, bool overwrite = true );
+		void newline( bool overwrite = true );
 		void flush();
-		void linebreak( bool overwrite = true );
 		
 		void setFont( const YZFont& f );
 		void setColor( const YZColor& c );
 	
-		//const YZViewCell& at( unsigned int x, unsigned int y );
+		//const YZDrawCell& at( unsigned int x, unsigned int y );
 	
 	private :
 		void append_section();
 		void append_line();
 
+		void callback( unsigned int x, unsigned int y, const YZDrawCell& cell );
+
 		YZViewLine m_content;
 		YZViewSection* m_line;
-		YZViewCell* m_cell;
+		YZDrawCell* m_cell;
 
 		unsigned int m_x;
 		unsigned int m_xi;
 		unsigned int m_y;
 
 		bool changed;
-		YZViewCell m_cur;
+		bool m_valid;
+		YZDrawCell m_cur;
 
-		void(*m_callback)(const YZViewCell&, void*);
+		YZView* m_view;
 		void* m_callback_arg;
 
 };

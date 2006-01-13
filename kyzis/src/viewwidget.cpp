@@ -35,6 +35,8 @@
 
 #include "viewwidget.h"
 
+#include <libyzis/drawbuffer.h>
+
 #include "settings.h"
 #include "yzis.h"
 #include "mode_visual.h"
@@ -48,6 +50,8 @@ KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
 {
 	m_part = 0;
 	buffer = doc;
+
+	m_drawBuffer.setCallback( this );
 	
 	m_editor = new KYZisEdit (this);
 	status = new KStatusBar (this);
@@ -93,6 +97,7 @@ KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
 	applyConfig();
 	setupKeys();
 
+
 }
 
 KYZisView::~KYZisView () {
@@ -125,9 +130,19 @@ void KYZisView::scrollUp( int n ) {
 	m_editor->scrollUp( n );
 }
 
+void KYZisView::preparePaintEvent( unsigned int, unsigned int ) {
+	m_painter = new QPainter( m_editor );
+	m_drawBuffer.setCallbackArgument( m_painter );
+}
+void KYZisView::endPaintEvent() {
+	delete m_painter;
+}
 void KYZisView::paintEvent( const YZSelection& drawMap ) {
 	mVScroll->setMaxValue( buffer->lines() - 1 );
-	m_editor->paintEvent( drawMap );
+	YZView::paintEvent( drawMap );
+}
+void KYZisView::drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, void* arg ) {
+	m_editor->drawCell( x, y, cell, (QPainter*)arg );
 }
 unsigned int KYZisView::stringWidth( const QString& str ) const {
 	return m_editor->fontMetrics().width( str );
@@ -248,7 +263,7 @@ void KYZisView::scrollLineDown() {
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
 void KYZisView::scrollView( int value ) {
 	if ( value < 0 ) value = 0;
-	else if ( (unsigned int)value > buffer->lines() - 1 )
+	else if ( value > buffer->lines() - 1 )
 		value = buffer->lines() - 1;
 
 	// only redraw if the view actually moves

@@ -1,7 +1,9 @@
 INCLUDES = $(YZIS_INCLUDES) $(LUA_INCLUDES) $(LIBMAGIC_INCLUDES) $(LIBGETTEXT_INCLUDES) -I$(top_srcdir)/libyzis -I$(top_builddir)/libyzis $(all_includes)
 lib_LTLIBRARIES = libyzis.la
 
-libyzis_la_SOURCES = session.cpp mode.cpp mode_command.cpp mode_search.cpp \
+libyzis_la_SOURCES = \
+		drawbuffer.cpp \
+		session.cpp mode.cpp mode_command.cpp mode_search.cpp \
 		mode_visual.cpp mode_ex.cpp mode_insert.cpp view.cpp search.cpp mark.cpp action.cpp \
 		cursor.cpp selection.cpp line.cpp buffer.cpp linesearch.cpp debug.cpp \
 		internal_options.cpp option.cpp registers.cpp undo.cpp ex_lua.cpp swapfile.cpp \
@@ -10,7 +12,6 @@ libyzis_la_SOURCES = session.cpp mode.cpp mode_command.cpp mode_search.cpp \
 		yzisinfojumplistrecord.cpp readtags.c tags_interface.cpp tags_stack.cpp mode_complete.cpp \
 		viewid.cpp history.cpp \
 		color.cpp \
-		drawbuffer.cpp \
 		folding.cpp \
 		font.cpp \
 

@@ -367,6 +367,8 @@ void KYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 	}
 }
 
+
+#if 0
 void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 //	yzDebug() << "KYZisEdit::paintEvent (top=" << mParent->getDrawCurrentTop()<< ",left="<< mParent->getDrawCurrentLeft() << ")" << endl << drawMap;
 	if ( drawMap.isEmpty() )
@@ -619,6 +621,14 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 	if ( p.isActive() )
 		p.end();
 }
+#endif
+
+void KYZisEdit::drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, QPainter* p ) {
+	yzDebug() << "drawCell at ("<<x<<","<<y<<") : '" << cell.c << "'" << endl;
+	p->setPen( cell.fg.rgb() );
+	p->drawText( GETX(x), (y+1) * fontMetrics().lineSpacing(), cell.c );
+}
+
 
 void KYZisEdit::drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rect, bool reversed  ) {
 	if (!p->isActive()) 

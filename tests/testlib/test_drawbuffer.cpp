@@ -34,7 +34,9 @@ void test_drawbuffer() {
 	buf.push( "s" );
 	buf.push( "t" );
 	buf.linebreak();
-	buf.push( "_" );
+	buf.push( " " );
+	buf.push( " " );
+	buf.push( " " );
 	buf.setColor( YZColor( "yellow" ) );
 	buf.push( "d" );
 	buf.push( "e" );

@@ -190,6 +190,11 @@ class KYZisView: public KTextEditor::View,
 	protected:
 		void setupActions();
 		void setupCodeCompletion() {} //TODO
+
+		virtual void preparePaintEvent( unsigned int y_min, unsigned int y_max );
+		virtual void endPaintEvent();
+		virtual void drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, void* arg );
+
 	signals:
 		void gotFocus(  KTextEditor::View* );
 		void lostFocus(  KTextEditor::View* );
@@ -213,6 +218,8 @@ class KYZisView: public KTextEditor::View,
 		KSqueezedTextLabel *m_central;
 		
 		KParts::ReadWritePart *m_part;
+
+		QPainter* m_painter;
 };
 
 #endif

@@ -72,7 +72,6 @@ KYZisEdit::KYZisEdit(KYZisView *parent)
 
 
 KYZisEdit::~KYZisEdit() {
-	delete mCursor;
 	delete signalMapper;
 	for( int i = actionCollection->count() - 1; i>= 0; --i )
 		delete actionCollection->take( actionCollection->action(i) );
@@ -80,7 +79,6 @@ KYZisEdit::~KYZisEdit() {
 }
 
 void KYZisEdit::setPalette( const QColor& fg, const QColor& bg, double opacity ) {
-	yzDebug() << "setPalette : " << fg.name() << ", " << bg.name() << ", " << opacity << endl;
 	QPalette p = palette();
 	p.setColor( QPalette::WindowText, fg );
 	p.setColor( QPalette::Window, bg );
@@ -125,11 +123,7 @@ KYZisCursor::shape KYZisEdit::cursorShape() {
 	return s;
 }
 void KYZisEdit::updateCursor() {
-	KYZisCursor::shape s = cursorShape();
-	if ( s != mCursor->type() ) {
-		mCursor->setCursorType( s );
-		mCursor->refresh();
-	}
+	mCursor->setCursorType( cursorShape() );
 }
 
 
@@ -144,7 +138,7 @@ void KYZisEdit::updateArea( ) {
 	int lines = height() / fontMetrics().lineSpacing();
 	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget
 	int columns = width() / GETX( 1 ) - marginLeft;
-	erase();
+	//erase();
 	mParent->setVisibleArea( columns, lines );
 }
 
@@ -264,6 +258,8 @@ void KYZisEdit::paintEvent( QPaintEvent* pe ) {
 	int tx = r.right();
 	int ty = r.bottom();
 	yzDebug() << "KYzisEdit < QPaintEvent( " << fx << "," << fy << " -> " << tx << "," << ty << " )" << endl;
+	mParent->sendRefreshEvent();
+	/*
 	if ( isFontFixed ) {
 		unsigned int linespace = fontMetrics().lineSpacing();
 		unsigned int maxwidth = fontMetrics().maxWidth();
@@ -287,7 +283,7 @@ void KYZisEdit::paintEvent( QPaintEvent* pe ) {
 			mParent->sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, fy ) );
 		}
 		mParent->commitPaintEvent();
-	}
+	}*/
 	yzDebug() << "KYzisEdit > QPaintEvent" << endl;
 }
 
@@ -312,6 +308,7 @@ QPoint KYZisEdit::cursorCoordinates( ) {
 void KYZisEdit::scrollUp( int n ) {
 	mCursor->hide();
 	scroll( 0, n * fontMetrics().lineSpacing() );
+	mCursor->show();
 }
 void KYZisEdit::scrollDown( int n ) {
 	scrollUp( -n );
@@ -573,7 +570,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 }
 #endif
 
-void KYZisEdit::drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, QPainter* p ) {
+void KYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	yzDebug() << "drawCell at ("<<x<<","<<y<<") : '" << cell.c << "'" << endl;
 	if ( cell.fg.isValid() )
 		p->setPen( cell.fg.rgb() );

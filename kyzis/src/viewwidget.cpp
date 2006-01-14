@@ -130,18 +130,20 @@ void KYZisView::scrollUp( int n ) {
 	m_editor->scrollUp( n );
 }
 
-void KYZisView::preparePaintEvent( unsigned int, unsigned int ) {
+void KYZisView::preparePaintEvent( int, int ) {
+	yzDebug() << "KYZisView::preparePaintEvent" << endl;
 	m_painter = new QPainter( m_editor );
 	m_drawBuffer.setCallbackArgument( m_painter );
 }
 void KYZisView::endPaintEvent() {
 	delete m_painter;
+	yzDebug() << "KYZisView::endPaintEvent" << endl;
 }
 void KYZisView::paintEvent( const YZSelection& drawMap ) {
 	mVScroll->setMaxValue( buffer->lines() - 1 );
 	YZView::paintEvent( drawMap );
 }
-void KYZisView::drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, void* arg ) {
+void KYZisView::drawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
 	m_editor->drawCell( x, y, cell, (QPainter*)arg );
 }
 unsigned int KYZisView::stringWidth( const QString& str ) const {

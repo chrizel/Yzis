@@ -45,6 +45,7 @@ class KYZisView: public KTextEditor::View,
 	Q_OBJECT
 
 	friend class KYZisFactory;
+	friend class KYZisCursor;
 
 	signals :
 		void cursorPositionChanged();
@@ -191,9 +192,9 @@ class KYZisView: public KTextEditor::View,
 		void setupActions();
 		void setupCodeCompletion() {} //TODO
 
-		virtual void preparePaintEvent( unsigned int y_min, unsigned int y_max );
+		virtual void preparePaintEvent( int y_min, int y_max );
 		virtual void endPaintEvent();
-		virtual void drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, void* arg );
+		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
 
 	signals:
 		void gotFocus(  KTextEditor::View* );

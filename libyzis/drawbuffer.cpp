@@ -65,7 +65,7 @@ void YZDrawBuffer::flush() {
 	m_cell->c = keep;
 }
 
-void YZDrawBuffer::callback( unsigned int x, unsigned int y, const YZDrawCell& cell ) {
+void YZDrawBuffer::callback( int x, int y, const YZDrawCell& cell ) {
 	m_view->drawCell( x, y, cell, m_callback_arg );
 }
 
@@ -119,6 +119,26 @@ void YZDrawBuffer::append_section() {
 	n.fg.setRgb( m_cur.fg.rgb() );
 	m_line->append( n );
 	m_cell =& m_line->last();
+}
+
+YZDrawCell YZDrawBuffer::at( const YZCursor& pos ) {
+	YZDrawCell n;
+	int i, x;
+
+	if ( (int)pos.y() < m_content.size() ) {
+		const YZDrawSection& l = m_content.at(pos.y());
+		x = 0;
+		for( i = 0; i < l.size(); ++i ) {
+			const YZDrawCell& cell = l.at(i);
+			if ( (x + cell.c.length()) > (int)pos.x() ) {
+				n = cell;
+				n.c = n.c.mid( pos.x() - x, 1 );
+				break;
+			}
+			x += cell.c.length();
+		}
+	}
+	return n;
 }
 
 

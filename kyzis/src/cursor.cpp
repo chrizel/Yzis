@@ -22,129 +22,68 @@
  * $Id$
  */
 
+#include <libyzis/drawbuffer.h>
+
 #include "cursor.h"
 #include "editor.h"
+#include "viewwidget.h"
 
-#include <QPaintEngine>
-
-KYZisCursor::KYZisCursor( KYZisEdit* parent, shape type ) {
-	mParent = parent;
-	shown = false;
-	bg = new QPixmap();
-	cursor = new QPixmap();
+KYZisCursor::KYZisCursor( KYZisEdit* parent, shape type )
+	: QWidget( parent ){
+	move( 0, 0 );
 	setCursorType( type );
-	mX = mY = 0;
 }
 
 KYZisCursor::~KYZisCursor() {
-	delete bg;
-	delete cursor;
 }
 
-unsigned int KYZisCursor::width() const {
-	return bg->width();
-}
-unsigned int KYZisCursor::height() const {
-	return bg->height();
-}
 KYZisCursor::shape KYZisCursor::type() const {
 	return mCursorType;
 }
-
 void KYZisCursor::setCursorType( shape type ) {
-	if ( shown ) 
-		hide();
-	mCursorType = type;
-	unsigned width = mParent->fontMetrics().maxWidth();
-	unsigned height = mParent->fontMetrics().lineSpacing();
-	if ( mCursorType == VBAR ) 
-		width = 2;
-	resize( width, height );
-}
-void KYZisCursor::resize( unsigned int w, unsigned int h ) {
-	if ( shown ) 
-		hide();
-	bg->resize( w, h );
-	cursor->resize( w, h );
-}
-void KYZisCursor::hide(QPainter *parentPainter) {
-	if ( !shown ) 
+	if ( type == mCursorType )
 		return;
-	/*
-	QRect rect( mX, mY, bg->width(), bg->height() );
-	QPainter *p;
-	if (parentPainter) 
-		p = parentPainter;
-	else 
-		p = new QPainter(mParent);
-	p->eraseRect( rect );
-	mParent->drawCell( p, cell(), rect );
-	if ( !parentPainter ) {
-		if (p->isActive())
-			p->end();
-		delete p;
-	}*/
-	shown = false;
-}
-void KYZisCursor::refresh( QPainter* p ) {
-	move( mX, mY, p );
-}
-void KYZisCursor::move( unsigned int x, unsigned int y, QPainter* p ) {
-	if ( shown ) 
-		hide(p);
-	mX = x;
-	mY = y;
-	if ( prepareCursors() ) {
-		drawCursor( cursor, p );
-		shown = true;
-	}
+	mCursorType = type;
+	int w = parentWidget()->fontMetrics().maxWidth();
+	int h = parentWidget()->fontMetrics().lineSpacing();
+	if ( mCursorType == VBAR ) 
+		w = 2;
+	resize( w, h );
 }
 
-bool KYZisCursor::prepareCursors() {
-	bool ret = true;
-/*
-	bg->fill( mParent, 0, 0 );
-	*cursor = *bg;
-	QPainter p( cursor );
-	QRect rect = cursor->rect();
-	switch( mCursorType ) {
+void KYZisCursor::paintEvent( QPaintEvent* ) {
+	QPainter p( this );
+
+#define GET_cell \
+	KYZisView* yzview = dynamic_cast<KYZisView*>( parentWidget()->parentWidget() ); \
+	YZDrawCell cell = yzview->m_drawBuffer.at( yzview->getCursor() - YZCursor(yzview->getDrawCurrentLeft(),yzview->getDrawCurrentTop()) )
+#define SET_pen \
+	p.setPen( cell.bg.isValid() ? QBrush( cell.bg.rgb() ) : parentWidget()->palette().window() );
+
+	switch( type() ) {
 		case SQUARE :
-			mParent->drawCell( &p, cell(), rect, true );
+			{
+			GET_cell;
+			SET_pen;
+			p.setBackground( cell.fg.isValid() ? QBrush( cell.fg.rgb() ) : parentWidget()->palette().text() );
+			p.eraseRect( rect() );
+			p.drawText( 0, height(), cell.c );
+			}
 			break;
 		case RECT :
-			p.setPen( mParent->foregroundColor() );
-			p.drawRect( rect );
+			{
+			GET_cell;
+			SET_pen;
+			p.drawRect( rect() );
+			}
 			break;
 		case VBAR :
-			rect.setRight( 2 );
-			p.fillRect( rect, QBrush( mParent->foregroundColor() ) );
+			p.fillRect( rect(), parentWidget()->palette().text() );
 			break;
 		case HBAR :
-			rect.setTop( cursor->height() - 2 );
-			p.fillRect( rect, QBrush( mParent->foregroundColor() ) );
+			p.fillRect( rect(), parentWidget()->palette().text() );
 			break;
 	}
-	if (p.isActive())
-		p.end();
-*/
-	return ret;
 }
 
-void KYZisCursor::drawCursor( QPixmap* orig, QPainter* p ) {
-	/*
-	bool isPainting = ( p != NULL );
-	if ( !isPainting ) {
-		if ( mParent->paintingActive() ) {
-			yzDebug() << "KYZisCursor::drawCursor !!! paintingActive but no painter provided !!! - aborting" << endl;
-			return;
-		}
-		p = new QPainter();
-		p->begin( mParent );
-	}
-	p->drawPixmap( mX, mY, *orig );
-	if ( !isPainting ) {
-		p->end();
-		delete p;
-	} */
-}
-
+#include "cursor.moc"

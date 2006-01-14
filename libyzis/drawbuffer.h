@@ -29,6 +29,7 @@
 
 #include "color.h"
 #include "font.h"
+#include "cursor.h"
 
 class YZView;
 
@@ -66,13 +67,13 @@ class YZDrawBuffer {
 		void setFont( const YZFont& f );
 		void setColor( const YZColor& c );
 
-		//const YZDrawCell& at( unsigned int x, unsigned int y );
+		YZDrawCell at( const YZCursor& pos );
 
 	private :
 		void append_section();
 		void append_line();
 
-		void callback( unsigned int x, unsigned int y, const YZDrawCell& cell );
+		void callback( int x, int y, const YZDrawCell& cell );
 
 		/* buffer content */
 		YZDrawLine m_content;
@@ -82,9 +83,9 @@ class YZDrawBuffer {
 		/* current cell */
 		YZDrawCell* m_cell;
 
-		unsigned int m_x;
-		unsigned int m_xi;
-		unsigned int m_y;
+		int m_x;
+		int m_xi;
+		int m_y;
 
 		bool changed;
 		bool m_valid;

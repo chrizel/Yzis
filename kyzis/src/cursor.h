@@ -26,13 +26,14 @@
 
 //#include "editor.h"
 #include <qpixmap.h>
+#include <QWidget>
 
 class KYZisEdit;
 
-class KYZisCursor {
+class KYZisCursor : public QWidget {
+	Q_OBJECT
 
 	public :
-
 		enum shape {
 			SQUARE,
 			VBAR,
@@ -44,32 +45,24 @@ class KYZisCursor {
 		virtual ~KYZisCursor();
 
 		void setCursorType( shape type );
-		void resize( unsigned int w, unsigned int h );
+		shape type() const;
+
+/*		void resize( unsigned int w, unsigned int h );
 		void move( unsigned int x, unsigned int y, QPainter* p = NULL );
 		void hide(QPainter*parentPainter=NULL);
 		void refresh( QPainter* p = NULL );
 
 		unsigned int width() const;
 		unsigned int height() const;
-		shape type() const;
 
 		inline unsigned int x() const { return mX; }
 		inline unsigned int y() const { return mY; }
 		inline unsigned int visible() const { return shown; }
+*/
+	protected :
+		virtual void paintEvent( QPaintEvent* event );
 
 	private :
-
-		void drawCursor( QPixmap* orig, QPainter* p = NULL );
-		bool prepareCursors();
-
-		KYZisEdit* mParent;
-
-		QPixmap* bg;
-		QPixmap* cursor;
-
-		unsigned int mX;
-		unsigned int mY;
-		bool shown;
 		shape mCursorType;
 
 };

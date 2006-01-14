@@ -1768,12 +1768,11 @@ unsigned int YZView::getSpaceWidth() const
 }
 
 
-void YZView::preparePaintEvent( unsigned int y_min, unsigned int y_max ) {
-	yzDebug() << "YZView::preparePaintEvent( " << y_min << ", " << y_max << " );" << endl;
+void YZView::preparePaintEvent( int y_min, int y_max ) {
 }
 void YZView::endPaintEvent() {
 }
-void YZView::drawCell( unsigned int , unsigned int , const YZDrawCell& , void* ) {
+void YZView::drawCell( int , int , const YZDrawCell& , void* ) {
 }
 
 /**
@@ -1929,10 +1928,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			}
 			if ( drawIt ) {
 				QString disp = QString( drawChar() );
-				if ( !rightleft )
-					disp = disp.leftJustify( drawLength(), fillChar() );
-				else
-					disp = disp.rightJustify( drawLength(), fillChar() );
+				disp = disp.leftJustify( drawLength(), fillChar() );
 
 				m_drawBuffer.setColor( drawColor() );
 

@@ -83,7 +83,7 @@ class KYZisEdit : public QWidget {
 
 
 	protected:
-		void drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, QPainter* p );
+		void drawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
 		//intercept tabs
 		virtual bool event(QEvent*);
 

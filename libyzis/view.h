@@ -767,9 +767,9 @@ class YZView {
 		/*
 		 * painting
 		 */
-		virtual void preparePaintEvent( unsigned int y_min, unsigned int y_max );
+		virtual void preparePaintEvent( int y_min, int y_max );
 		virtual void endPaintEvent();
-		virtual void drawCell( unsigned int x, unsigned int y, const YZDrawCell& cell, void* arg );
+		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
 
 		YZDrawBuffer m_drawBuffer;
 		

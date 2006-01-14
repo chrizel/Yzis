@@ -49,6 +49,7 @@ private :
 
 extern bool operator==( const YZCursor &lhs, const YZCursor &rhs );
 extern bool operator< ( const YZCursor &lhs, const YZCursor &rhs );
+extern const YZCursor operator- (const YZCursor& l, const YZCursor& r );
 
 inline bool operator<=( const YZCursor &lhs, const YZCursor &rhs ) { return lhs == rhs || lhs < rhs; }
 inline bool operator> ( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs == rhs) && !(lhs < rhs); }

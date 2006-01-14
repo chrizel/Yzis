@@ -30,10 +30,12 @@
 #include "color.h"
 #include "font.h"
 #include "cursor.h"
+#include "selection.h"
 
 class YZView;
 
 struct YZDrawCell {
+	bool valid;
 	int flag;
 	YZFont font;
 	QString c;
@@ -51,6 +53,11 @@ typedef QVector<YZDrawSection> YZDrawLine;
 class YZDrawBuffer {
 
 	public:
+
+		enum whence {
+			YZ_SEEK_SET, // absolute position
+		};
+		
 		YZDrawBuffer();
 		~YZDrawBuffer();
 
@@ -60,20 +67,29 @@ class YZDrawBuffer {
 		/* clear the buffer */
 		void reset();
 
-		void push( const QString& c, bool overwrite = true );
-		void newline( bool overwrite = true );
+		void push( const QString& c );
+		void newline( int y = -1 );
 		void flush();
 
 		void setFont( const YZFont& f );
 		void setColor( const YZColor& c );
 
-		YZDrawCell at( const YZCursor& pos );
+		bool seek( const YZCursor& pos, YZDrawBuffer::whence w );
+
+		YZDrawCell at( const YZCursor& pos ) const;
+
+		void replace( const YZInterval& interval );
+
 
 	private :
-		void append_section();
-		void append_line();
+		void insert_section( int pos = -1 );
+		void insert_line( int pos = -1 );
 
 		void callback( int x, int y, const YZDrawCell& cell );
+
+		bool find( const YZCursor& pos, int* x, int* y, int* vx ) const;
+
+		void applyPosition();
 
 		/* buffer content */
 		YZDrawLine m_content;
@@ -83,17 +99,23 @@ class YZDrawBuffer {
 		/* current cell */
 		YZDrawCell* m_cell;
 
-		int m_x;
-		int m_xi;
-		int m_y;
+		int v_xi; /* column of the current section */
+		int v_x; /* current draw column */
+
+		int m_x; /* current section index */
+		int m_y; /* current line index == current draw line */
 
 		bool changed;
-		bool m_valid;
 		YZDrawCell m_cur;
 
 		YZView* m_view;
 		void* m_callback_arg;
+	
+	friend YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff );
 
 };
+
+YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff );
+
 
 #endif

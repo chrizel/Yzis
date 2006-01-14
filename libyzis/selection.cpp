@@ -82,6 +82,9 @@ bool operator<=( const YZCursor& left, const YZBound& right ) {
 	return right >= left;
 }
 
+const YZBound operator-( const YZBound& left, const YZCursor& right ) {
+	return YZBound( left.pos() - right, left.opened() );
+}
 /**
  * YZInterval
  */
@@ -118,6 +121,9 @@ bool YZInterval::contains( const YZInterval& i ) const {
 	return mFrom <= i.from() && mTo >= i.to();
 }
 
+const YZInterval operator- ( const YZInterval& l, const YZCursor& r ) {
+	return YZInterval( l.from() - r, l.to() - r );
+}
 
 YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i ) {
 	if ( i.from().opened() )

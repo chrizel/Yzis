@@ -62,6 +62,7 @@ bool operator>=( const YZBound& left, const YZCursor& right );
 bool operator<=( const YZBound& left, const YZCursor& right );
 bool operator>=( const YZCursor& left, const YZBound& right );
 bool operator<=( const YZCursor& left, const YZBound& right );
+const YZBound operator-( const YZBound& left, const YZCursor& right );
 
 class YZInterval {
 
@@ -91,6 +92,7 @@ class YZInterval {
 		YZBound mFrom;
 		YZBound mTo;
 };
+const YZInterval operator-( const YZInterval& l, const YZCursor& r );
 
 typedef QMap<unsigned int, YZInterval> YZSelectionMap;
 

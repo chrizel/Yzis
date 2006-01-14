@@ -1768,7 +1768,7 @@ unsigned int YZView::getSpaceWidth() const
 }
 
 
-void YZView::preparePaintEvent( int y_min, int y_max ) {
+void YZView::preparePaintEvent( int , int ) {
 }
 void YZView::endPaintEvent() {
 }
@@ -1782,6 +1782,8 @@ void YZView::drawCell( int , int , const YZDrawCell& , void* ) {
 void YZView::paintEvent( const YZSelection& drawMap ) {
 	if ( drawMap.isEmpty() )
 		return;
+	yzDebug() << "YZView::paintEvent" << drawMap;
+	/*
 
 	bool number = getLocalBooleanOption( "number" );
 	bool rightleft = getLocalBooleanOption( "rightleft" );
@@ -1790,7 +1792,6 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 
 	unsigned int lineCount = myBuffer()->lineCount();
 	unsigned int my_marginLeft = 0;
-	/*
 	if ( number ) { // update marginLeft
 		my_marginLeft = ( isFontFixed ? QString::number( lineCount ).length() + 2 : mParent->stringWidth( " " + QString::number( lineCount ) + "  " ) );
 	}
@@ -1804,57 +1805,66 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	}
 */
 
-	unsigned int shiftY = getDrawCurrentTop();
+	/* to calculate relative position */
+	unsigned int shiftY = getDrawCurrentTop(); 
 	unsigned int shiftX = getDrawCurrentLeft();
 	unsigned int maxX = shiftX + getColumnsVisible();
 
-	unsigned int cursorY = getCursor().y();
-//	unsigned int cursorX = getCursor()->x();
-	bool refreshCursor = false;
-
 	YZSelectionMap map = drawMap.map();
-	unsigned int size = map.size();
+	int size = map.size();
 
-	unsigned int fromY = map[ 0 ].fromPos().y();
-	unsigned int toY = map[ size - 1 ].toPos().y();
-	preparePaintEvent( fromY, toY );
+	unsigned int fromY = map[ 0 ].fromPos().y(); /* first line */
+	unsigned int toY = map[ size - 1 ].toPos().y(); /* last line */
 
-	bool drawIt = false;
-	unsigned int mapIdx = 0;
-
-	unsigned int fX = map[ mapIdx ].fromPos().x();
-	unsigned int fY = map[ mapIdx ].fromPos().y();
-	unsigned int tX = map[ mapIdx ].toPos().x();
-	unsigned int tY = map[ mapIdx ].toPos().y();
-
+	 /* where the draw begins */
 	unsigned int curY = initDrawContents( fromY );
 	unsigned int curX = 0;
 
-	bool drawEntireLine;
+	/* inform the view we want to paint from line <fromY> to <toY> */
+	preparePaintEvent( curY - shiftY, toY - shiftY );
 
-	m_drawBuffer.reset();
+	int mapIdx = 0; /* first interval */
+
+	unsigned int fX = map[ mapIdx ].fromPos().x(); /* first col of interval */
+	unsigned int fY = map[ mapIdx ].fromPos().y(); /* first line of interval */
+	unsigned int tX = map[ mapIdx ].toPos().x(); /* last col of interval */
+	unsigned int tY = map[ mapIdx ].toPos().y(); /* last line of interval */
+
+	bool drawIt; /* if we are inside the interval */
+
+	bool drawLine; /* if we have to paint a part of line */
+	bool drawEntireLine; /* if we have to paint the entire line */
+
+	bool drawStartAfterBOL; /* if we don't have to draw from the begin of line */
+	bool drawStopBeforeEOL; /* if we don't have to draw until the end of line */
+
+	bool interval_changed  = true;
+
 	while( curY <= toY && drawNextLine() ) {
 		curX = shiftX;
 
-		if ( tY < curY ) {
+		while( tY < curY ) { /* next interval */
 			++mapIdx;
 			fX = map[ mapIdx ].fromPos().x();
 			fY = map[ mapIdx ].fromPos().y();
 			tX = map[ mapIdx ].toPos().x();
 			tY = map[ mapIdx ].toPos().y();
+			interval_changed = true;
+		}
+		if ( interval_changed ) {
+			m_drawBuffer.replace( map[ mapIdx ] - scrollCursor->screen() );
+			interval_changed = false;
 		}
 
-		drawEntireLine = !( curY == fY && fX > shiftX || curY == tY && tX < maxX );
-		drawIt = curY == fY && fX <= shiftX || fY < curY && curY <= tY;
-//		yzDebug() << curY << " : " << drawIt << "-" << drawEntireLine << endl;
+		drawStartAfterBOL = ( curY == fY && fX > shiftX );
+		drawStopBeforeEOL = ( curY == tY && tX < maxX );
 
-		m_drawBuffer.newline();
+		drawLine = fY <= curY; // curY <= tY always true */
+		drawIt = drawLine && !drawStartAfterBOL;
+		drawEntireLine = drawIt && !drawStopBeforeEOL;
 
-		/*
-		if ( drawIt || !drawEntireLine && !drawIt ) { // this line will be drawn
-			refreshCursor = ( curY == cursorY );
-			mCellKeys = mCell[ mCellY ].keys();
-			
+		/* XXX :set nu
+		if ( drawLine ) {
 			if ( number ) {
 				myRect.setWidth( GETX( marginLeft - spaceWidth ) );
 				REVERSE_MYRECT_IF_RIGHTLEFT;
@@ -1869,48 +1879,13 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			}
 		}
 		*/
-		/*
 		if ( drawIt ) {
-			myRect.setLeft( GETX( marginLeft ) );
-			if ( drawEntireLine ) {
-				myRect.setRight( width() );
-				mCell[ mCellY ].clear();
-			} else {
-				if ( tY == curY ) {
-					myRect.setWidth( GETX( tX - shiftX + 1 ) );
-					for( mCellX = 0; mCellX < mCellKeys.size() && mCellKeys[ mCellX ] <= (tX - shiftX); ++mCellX )
-						mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
-				} else {
-					myRect.setRight( width() );
-					for( mCellX = 0; mCellX < mCellKeys.size(); ++mCellX )
-						mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
-				}
-			}
-//			yzDebug() << "erase1(" << myRect.top() << "," << myRect.left() << "," << myRect.bottom() << "," << myRect.right() << ")" << endl;
-			p.eraseRect( myRect );
+			m_drawBuffer.newline( curY - shiftY );
 		}
-		*/
 		while( drawNextCol() ) {
-			if ( ! drawEntireLine ) {
+			if ( !drawEntireLine ) { /* we have to care of starting/stoping to draw on that line */
 				if ( !drawIt && curY == fY ) { // start drawing ?
 					drawIt = ( curX == fX );
-					if ( drawIt ) {
-				/* XXX		myRect.setLeft( GETX( marginLeft + curX - shiftX ) );
-						while( mCellX < mCellKeys.size() && mCellKeys[ mCellX ] < (fX - shiftX) )
-							++mCellX;
-						if ( tY == curY ) {
-							myRect.setRight( GETX( marginLeft + tX - shiftX + 1 ) - 1 );
-							for( ; mCellX < mCellKeys.size() && mCellKeys[ mCellX ] <= (tX - shiftX); ++mCellX )
-								mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
-						} else {
-							myRect.setRight( width() );
-							for( ; mCellX < mCellKeys.size(); ++mCellX )
-								mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
-						}
-//						yzDebug() << "erase2(" << myRect.top() << "," << myRect.left() << "," << myRect.bottom() << "," << myRect.right() << ")" << endl;
-						p.eraseRect( myRect );
-						*/
-					}
 				} else if ( drawIt && curY == tY ) { // stop drawing ?
 					drawIt = !( curX > tX );
 					if ( ! drawIt ) {
@@ -1920,6 +1895,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 							fY = map[ mapIdx ].fromPos().y();
 							tX = map[ mapIdx ].toPos().x();
 							tY = map[ mapIdx ].toPos().y();
+							m_drawBuffer.replace( map[ mapIdx ] - scrollCursor->screen() );
 						} else {
 							fX = fY = tX = tY = 0;
 						}
@@ -1937,39 +1913,20 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			curX += drawLength();
 		}
 		curY += drawHeight();
-
-		/*
-		if ( refreshCursor ) {
-			mCursor->refresh( &p );
-			refreshCursor = false;
-		}
-		*/
 	}
 
-	/*
-	if ( number && fromY < curY ) {
-		p.setPen( Settings::colorFG() );
-		unsigned int w;
-		if ( rightleft )
-			w = width() - GETX( marginLeft ) + GETX( spaceWidth ) / 2;
-		else
-			w = GETX( marginLeft ) - GETX( spaceWidth ) / 2;
-		p.drawLine( w, (fromY - shiftY) * linespace, w, (curY - shiftY) * linespace );
-	}
-
-	unsigned int fh = shiftY + height() / linespace;
+	/* out of file lines (~) */
+	unsigned int fh = shiftY + getLinesVisible();
 	toY = qMin( toY, fh - 1 );
-	myRect.setLeft( 0 );
-	myRect.setHeight( linespace );
-	myRect.setWidth( width() );
+/*	m_drawBuffer.setColor( Qt::cyan );
 	for( ; curY <= toY; ++curY ) {
-		p.eraseRect( myRect );
-		p.setPen( Qt::cyan );
-		p.drawText( myRect, flag, "~" );
-		myRect.moveBy( 0, linespace );
+		m_drawBuffer.newline( curY - shiftY );
+		m_drawBuffer.push( "~" );
 	}
-	*/
+*/
 	m_drawBuffer.flush();
+
+	yzDebug() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
 
 	endPaintEvent();
 }

@@ -67,7 +67,7 @@ void KYZisCursor::paintEvent( QPaintEvent* ) {
 			SET_pen;
 			p.setBackground( cell.fg.isValid() ? QBrush( cell.fg.rgb() ) : parentWidget()->palette().text() );
 			p.eraseRect( rect() );
-			p.drawText( 0, height(), cell.c );
+			p.drawText( rect(), cell.c );
 			}
 			break;
 		case RECT :

@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2004-2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2004-2006 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -47,18 +47,6 @@ class KYZisCursor : public QWidget {
 		void setCursorType( shape type );
 		shape type() const;
 
-/*		void resize( unsigned int w, unsigned int h );
-		void move( unsigned int x, unsigned int y, QPainter* p = NULL );
-		void hide(QPainter*parentPainter=NULL);
-		void refresh( QPainter* p = NULL );
-
-		unsigned int width() const;
-		unsigned int height() const;
-
-		inline unsigned int x() const { return mX; }
-		inline unsigned int y() const { return mY; }
-		inline unsigned int visible() const { return shown; }
-*/
 	protected :
 		virtual void paintEvent( QPaintEvent* event );
 

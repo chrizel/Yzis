@@ -57,6 +57,9 @@ bool operator<( const YZCursor &lhs, const YZCursor &rhs )
 {
 	return ( lhs.y() < rhs.y() || lhs.y() == rhs.y() && lhs.x() < rhs.x() );
 }
+const YZCursor operator+( const YZCursor& l, const YZCursor& r ) {
+	return YZCursor( l.x() + r.x(), l.y() + r.y() );
+}
 const YZCursor operator-( const YZCursor& l, const YZCursor& r ) {
 	return YZCursor( l.x() - r.x(), l.y() - r.y() );
 }

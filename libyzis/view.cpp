@@ -1918,15 +1918,15 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	/* out of file lines (~) */
 	unsigned int fh = shiftY + getLinesVisible();
 	toY = qMin( toY, fh - 1 );
-/*	m_drawBuffer.setColor( Qt::cyan );
+	m_drawBuffer.setColor( Qt::cyan );
 	for( ; curY <= toY; ++curY ) {
 		m_drawBuffer.newline( curY - shiftY );
 		m_drawBuffer.push( "~" );
 	}
-*/
+
 	m_drawBuffer.flush();
 
-	yzDebug() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
+//	yzDebug() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
 
 	endPaintEvent();
 }

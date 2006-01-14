@@ -58,6 +58,7 @@ NYZView::NYZView(YZBuffer *b)
 	YZASSERT( b );
 	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << b->getId() << endl;
 	window = NULL;
+	m_drawBuffer.setCallback( this );
 }
 
 NYZView::~NYZView(){
@@ -110,15 +111,6 @@ void NYZView::updateVis( bool refresh ) {
 	setVisibleArea( width - marginLeft, height - 2, refresh );
 }
 
-void NYZView::printVoid( unsigned int relline )
-{
-	bool rightleft = getLocalBooleanOption( "rightleft" );
-	if ( relline > getLinesVisible() ) return;
-	wmove( editor, relline, 0 );
-	wclrtoeol( editor );
-	mvwaddch(editor,relline, rightleft ? width - 1 : 0, attribBlue|'~');
-}
-
 void NYZView::scrollUp( int n ) {
 	scrollok( editor, true );
 	wscrl( editor, - n );
@@ -137,203 +129,50 @@ void NYZView::scrollDown( int n ) {
 	sendPaintEvent( YZCursor( left, top ), YZCursor( left + getColumnsVisible(), top + n ) );
 }
 
+void NYZView::drawCell( int x, int y, const YZDrawCell& cell, void* ) {
+	YZColor c = cell.fg;
+	if ( !c.isValid() )
+		c.setNamedColor( "#ffffff" );
+
+	int mAttributes;
+	int rawcolor = c.rgb() & RGB_MASK;
+	if ( mAttributesMap.contains( rawcolor ) ) {
+		mAttributes = mAttributesMap[ rawcolor ];
+	} else {
+		mAttributes = attribWhite;
+		/*yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
+			rawcolor << " (" <<
+			qRed( rawcolor ) << "," <<
+			qGreen( rawcolor ) << "," <<
+			qBlue( rawcolor ) << ") or (" <<
+
+			c.red() << "," <<
+			c.green() << "," <<
+			c.blue() << ")" <<
+			endl;*/
+	}
+	//if ( drawSelected() ) mAttributes |= A_REVERSE;
+	//if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
+
+	QByteArray my_char = cell.c.toLocal8Bit();
+	char* from_char = new char[ my_char.length() + 1 ];
+	strcpy( from_char, my_char.constData() );
+	size_t needed = mbstowcs( NULL, from_char, strlen(from_char) )+1;
+	wchar_t* wide_char = (wchar_t*)malloc( needed * sizeof(wchar_t) );
+	mbstowcs( wide_char, from_char, strlen( from_char ) );
+	wide_char[needed-1] = '\0';
+
+	wattron( editor, mAttributes );
+	mvwaddwstr( editor, y, x, wide_char );
+	wattroff( editor, mAttributes );
+	free( wide_char );
+	delete[] from_char;
+}
+
 void NYZView::paintEvent( const YZSelection& drawMap ) {
 	if (!editor)	// Avoid segfaults and infinite recursion.
 		return;
-//	yzDebug() << "NYZView::paintEvent (top=" << getDrawCurrentTop()<< ",left="<< getDrawCurrentLeft() << ")" << endl << drawMap;
-	if ( drawMap.isEmpty() )
-		return;
-
-	bool number = getLocalBooleanOption( "number" );
-	bool rightleft = getLocalBooleanOption( "rightleft" );
-	unsigned int lineCount = myBuffer()->lineCount();
-	unsigned int my_marginLeft = 0;
-	if ( number ) { // update marginLeft
-		my_marginLeft = 2 + QString::number( lineCount ).length();
-		lastLineNumber = 0;
-	}
-	if ( marginLeft != my_marginLeft ) {
-		marginLeft = my_marginLeft;
-		updateVis();
-		return;
-	}
-	QString fillNum;
-	fillNum.fill( ' ', marginLeft );
-
-	unsigned int shiftY = getDrawCurrentTop();
-	unsigned int shiftX = getDrawCurrentLeft();
-	unsigned int maxX = shiftX + getColumnsVisible();
-
-	YZSelectionMap map = drawMap.map();
-	unsigned int size = map.size();
-
-	unsigned int fromY = map[ 0 ].fromPos().y();
-	unsigned int toY = map[ size - 1 ].toPos().y();
-
-	bool drawIt = false;
-	unsigned int mapIdx = 0;
-
-	unsigned int fX = map[ mapIdx ].fromPos().x();
-	unsigned int fY = map[ mapIdx ].fromPos().y();
-	unsigned int tX = map[ mapIdx ].toPos().x();
-	unsigned int tY = map[ mapIdx ].toPos().y();
-
-	unsigned int curY = initDrawContents( fromY );
-	unsigned int curX = 0;
-
-	unsigned int x = 0, y = curY - shiftY;
-
-	bool drawEntireLine;
-	bool cleartoeol;
-
-#define REVERSE_IF_RIGHTLEFT( pos, len ) (rightleft ? width - (pos) - (len) : pos)
-
-	while( curY <= toY && drawNextLine() ) {
-		curX = shiftX;
-
-		if ( tY < curY ) {
-			++mapIdx;
-			fX = map[ mapIdx ].fromPos().x();
-			fY = map[ mapIdx ].fromPos().y();
-			tX = map[ mapIdx ].toPos().x();
-			tY = map[ mapIdx ].toPos().y();
-		}
-
-		drawEntireLine = !( curY == fY && fX > shiftX || curY == tY && tX < maxX );
-		drawIt = curY == fY && fX <= shiftX || fY < curY && curY <= tY;
-//		yzDebug() << curY << " : " << drawIt << "-" << drawEntireLine << endl;
-
-		x = 0;
-
-		if ( drawIt || !drawEntireLine && !drawIt ) { // this line will be drawn
-			if ( number ) {
-				if ( lineHeight() == 1 ) {
-					wattron( editor, attribYellow );
-					QString num = QString::number( drawLineNumber() );
-					if ( rightleft ) {
-						num = num.leftJustify( marginLeft - 1, ' ' );
-					} else {
-						num = num.rightJustify( marginLeft - 1, ' ' );
-					}
-					mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, marginLeft - 1 ), num.toUtf8().data() );
-					wattroff( editor, attribYellow );
-					x = marginLeft - 1;
-					wattron( editor, attribMarker );
-					mvwaddch( editor, y, REVERSE_IF_RIGHTLEFT( x, 1 ), drawLineMarker().toLatin1() );
-					wattroff( editor, attribMarker );
-				} else {
-					mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, marginLeft ), fillNum.toUtf8().data() );
-				}
-			}
-		}
-		cleartoeol = false;
-		if ( drawIt ) {
-			x = marginLeft;
-			if ( drawEntireLine ) {
-				cleartoeol = true;
-			} else {
-				if ( tY == curY ) {
-					QString erase;
-					erase.fill( ' ', tX - shiftX );
-					mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, erase.length() ), erase.toUtf8().data() );
-				} else {
-					cleartoeol = true;
-				}
-			}
-		}
-		while( drawNextCol() ) {
-			if ( ! drawEntireLine ) {
-				if ( !drawIt && curY == fY ) { // start drawing ?
-					drawIt = ( curX == fX );
-					if ( drawIt ) {
-						x = marginLeft + curX - shiftX;
-						if ( tY == curY ) {
-							QString erase;
-							erase.fill( ' ', tX - curX + 1 );
-							mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, erase.length() ), erase.toUtf8().data() );
-						} else {
-							cleartoeol = true;
-						}
-					}
-				} else if ( drawIt && curY == tY ) { // stop drawing ?
-					drawIt = !( curX > tX );
-					if ( ! drawIt ) {
-						++mapIdx;
-						if ( mapIdx != size ) {
-							fX = map[ mapIdx ].fromPos().x();
-							fY = map[ mapIdx ].fromPos().y();
-							tX = map[ mapIdx ].toPos().x();
-							tY = map[ mapIdx ].toPos().y();
-						} else {
-							fX = fY = tX = tY = 0;
-						}
-					}
-				}
-			}
-			if ( drawIt ) {
-				QString disp = QString( drawChar() );
-				if ( rightleft )
-					disp = disp.rightJustify( drawLength(), fillChar() );
-				else
-					disp = disp.leftJustify( drawLength(), fillChar() );
-
-				x = marginLeft + curX - shiftX;
-
-				YZColor c = drawColor();
-				if ( !c.isValid() )
-					c = YZColor( Qt::white ); // XXX
-				int mAttributes;
-				int rawcolor = c.rgb() & RGB_MASK;
-				if ( mAttributesMap.contains( rawcolor ) ) {
-					mAttributes = mAttributesMap[ rawcolor ];
-				} else {
-					mAttributes = attribWhite;
-					/*yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
-						rawcolor << " (" <<
-						qRed( rawcolor ) << "," <<
-						qGreen( rawcolor ) << "," <<
-						qBlue( rawcolor ) << ") or (" <<
-
-						c.red() << "," <<
-						c.green() << "," <<
-						c.blue() << ")" <<
-						endl;*/
-				}
-				if ( drawSelected() ) mAttributes |= A_REVERSE;
-				if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
-
-				QByteArray my_char = disp.toLocal8Bit();
-				char* from_char = new char[ my_char.length() + 1 ];
-				strcpy( from_char, my_char.constData() );
-				size_t needed = mbstowcs( NULL, from_char, strlen(from_char) )+1;
-				wchar_t* wide_char = (wchar_t*)malloc( needed * sizeof(wchar_t) );
-				mbstowcs( wide_char, from_char, strlen( from_char ) );
-				wide_char[needed-1] = '\0';
-
-				wattron( editor, mAttributes );
-				mvwaddwstr( editor, y, REVERSE_IF_RIGHTLEFT(x,drawLength()), wide_char );
-				wattroff( editor, mAttributes );
-				free( wide_char );
-				delete[] from_char;
-
-				x += drawLength();
-			}
-			curX += drawLength();
-		}
-		if ( cleartoeol ) {
-			QString erase;
-			erase.fill( drawLineFiller(), width - x );
-			mvwaddstr( editor, y, REVERSE_IF_RIGHTLEFT( x, erase.length() ), erase.toUtf8().data() );
-		}
-		curY += drawHeight();
-		++y;
-	}
-
-	unsigned int fh = shiftY + getLinesVisible();
-	toY = qMin( toY, fh - 1 );
-	for( ; curY <= toY; ++curY ) {
-		printVoid( curY - shiftY );
-	}
+	YZView::paintEvent( drawMap );
 	drawCursor();
 }
 void NYZView::drawCursor() {

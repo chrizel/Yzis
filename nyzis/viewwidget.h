@@ -28,15 +28,11 @@
 #include "view.h"
 #include "cursor.h"
 #include <ncurses.h>
-#if QT_VERSION < 0x040000
-#include <qstringlist.h>
-#include <qmap.h>
-#include <qnamespace.h>
-#else
 #include <QMap>
 #include <QDataStream>
 #include <QStringList>
-#endif
+
+#include <drawbuffer.h>
 
 class NYZSession;
 
@@ -90,6 +86,8 @@ public slots:
 			return 1;
 		}
 
+		void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
+
 
 private:
 	WINDOW		*window;	/* ncurses window to write to */
@@ -97,12 +95,6 @@ private:
 	 * update visible area
 	 */
 	void updateVis( bool refresh=true );
-	/**
-	  * print a void line ( that is "~    " )
-	  * @arg line is the line # relative to the displayed screen, not the buffer ( as this
-	  * doesn't belong to the buffer anyway..)
-	  */
-	void printVoid( unsigned int line );
 
 	/**
 	  * draw cursor

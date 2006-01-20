@@ -489,12 +489,31 @@ cmd_state YZModeEx::gotoOpenMode( const YZExCommandArgs& /*args*/ ) {
 }
 
 cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
-	// Guardian for no arguments
-	// TODO: in this case Vim reloads the current buffer
-	if ( args.arg.length() == 0 ) {
-		args.view->mySession()->popupMessage( _( "Please specify a filename" ) );
+	bool force = args.force;
+
+	// check if the file needs to be saved
+	if ( !force && args.view->myBuffer()->fileIsModified() ) {
+		args.view->mySession()->popupMessage( _( "No write since last change (add ! to override)" ) );
 		return CMD_ERROR;
 	}
+	
+	// Guardian for no arguments
+	// in this case Vim reloads the current buffer
+	if ( args.arg.length() == 0 ) {
+		YZBuffer *buff = args.view->myBuffer();
+		YZCursor cur = args.view->getCursor();
+		
+		// clear the text and reload the file
+		buff->clearText();
+		buff->load( buff->fileName() );
+
+		// keep the current cursor y position
+		args.view->centerViewVertically( cur.y() );
+		args.view->gotoxy( 0, cur.y(), true );
+					
+		return CMD_OK;
+	}
+
 	QFileInfo fi ( args.arg );
 	QString path = fi.absoluteFilePath();
 	YZBuffer *b = YZSession::me->findBuffer(path);

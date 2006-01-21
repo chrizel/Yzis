@@ -64,12 +64,6 @@ KYZisEdit::KYZisEdit(KYZisView *parent)
 	 /*   Indicates that the widget contents are north-west aligned and static. On resize, such a widget will receive paint events only for the newly visible part of itself. This is set/cleared by the widget's author.
 	 */
 	setAttribute( Qt::WA_StaticContents );
-	
-	QPalette pal;
-	pal.setColor ( QPalette::Base, Qt::black );
-	pal.setColor ( QPalette::AlternateBase, Qt::black );
-	pal.setColor ( QPalette::Window, Qt::black );
-	setPalette(pal);
 
 	QWidget::setCursor( Qt::IBeamCursor );
 	isFontFixed = fontInfo().fixedPitch();

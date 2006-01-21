@@ -27,6 +27,7 @@
 
 #include "cursor.h"
 #include "selection.h"
+#include "yzismacros.h"
 
 #include <qstring.h>
 
@@ -34,7 +35,7 @@ class YZBuffer;
 class YZView;
 class YZCursor;
 
-class YZAction {
+class YZIS_EXPORT YZAction {
 
 	public:
 		YZAction( YZBuffer* buffer );

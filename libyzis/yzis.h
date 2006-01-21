@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <qglobal.h>
+#include <yzismacros.h>
 #include "portability.h"
 
 #define VERSION_MAJOR	0

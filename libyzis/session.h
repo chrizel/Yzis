@@ -62,7 +62,7 @@ namespace Clipboard {
 	};
 };
  
-class YZSession : public QObject {
+class YZIS_EXPORT YZSession : public QObject {
 	Q_OBJECT
 	
 	public:

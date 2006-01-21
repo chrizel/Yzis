@@ -28,7 +28,7 @@
 /**
  * Simple cursor
  */
-class YZCursor {
+class YZIS_EXPORT YZCursor {
 public :
     YZCursor();
     explicit YZCursor( unsigned int x, unsigned int y );

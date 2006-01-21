@@ -33,6 +33,7 @@
 
 #include "mode.h"
 #include "view.h"
+#include "yzismacros.h"
 
 class YZView;
 class YZExCommand;
@@ -80,7 +81,7 @@ struct YZExCommandArgs {
 typedef cmd_state (YZModeEx::*ExPoolMethod) (const YZExCommandArgs&);
 typedef int (YZModeEx::*ExRangeMethod) (const YZExRangeArgs&);
 
-class YZExRange {
+class YZIS_EXPORT YZExRange {
 
 	public :
 		YZExRange( const QString& regexp, ExRangeMethod pm );
@@ -97,7 +98,7 @@ class YZExRange {
 
 };
 
-class YZExCommand {
+class YZIS_EXPORT YZExCommand {
 
 	public :
 		YZExCommand( const QString& input, ExPoolMethod pm, const QStringList& longName = QStringList(), bool word = true );
@@ -117,7 +118,7 @@ class YZExCommand {
 
 class YZHistory;
 
-class YZModeEx : public YZMode {
+class YZIS_EXPORT YZModeEx : public YZMode {
 
 	public :
 		YZModeEx();

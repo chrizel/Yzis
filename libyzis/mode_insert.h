@@ -26,11 +26,12 @@
 
 #include "mode.h"
 #include "view.h"
+#include "yzismacros.h"
 
 class YZMode;
 class YZView;
 
-class YZModeInsert : public YZMode {
+class YZIS_EXPORT YZModeInsert : public YZMode {
 	public:
 		YZModeInsert();
 		virtual ~YZModeInsert() {}
@@ -69,7 +70,7 @@ class YZModeInsert : public YZMode {
 		QString m_imPreedit;
 };
 
-class YZModeReplace : public YZModeInsert {
+class YZIS_EXPORT YZModeReplace : public YZModeInsert {
 	public :
 		YZModeReplace();
 		virtual ~YZModeReplace() {}

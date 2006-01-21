@@ -1892,7 +1892,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			if ( !drawEntireLine ) { /* we have to care of starting/stoping to draw on that line */
 				if ( !drawIt && curY == fY ) { // start drawing ?
 					drawIt = ( curX == fX );
-					clearToEOL = tY = curY;
+					clearToEOL = drawIt && curY != tY;
 				} else if ( drawIt && curY == tY ) { // stop drawing ?
 					drawIt = !( curX > tX );
 					if ( ! drawIt ) {

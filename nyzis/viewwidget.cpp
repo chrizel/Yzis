@@ -59,6 +59,7 @@ NYZView::NYZView(YZBuffer *b)
 	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << b->getId() << endl;
 	window = NULL;
 	m_drawBuffer.setCallback( this );
+	fakeLine = false;
 }
 
 NYZView::~NYZView(){
@@ -67,6 +68,7 @@ NYZView::~NYZView(){
 
 void NYZView::map( void )
 {
+	yzDebug() << "NYZView::map" << endl;
 	marginLeft = 0;
 	updateVis(false);
 
@@ -134,6 +136,11 @@ void NYZView::drawCell( int x, int y, const YZDrawCell& cell, void* ) {
 	if ( !c.isValid() )
 		c.setNamedColor( "#ffffff" );
 
+	if ( !fakeLine ) {
+		/* if this line is a fake, don't apply margins */
+		x += marginLeft;
+	}
+
 	int mAttributes;
 	int rawcolor = c.rgb() & RGB_MASK;
 	if ( mAttributesMap.contains( rawcolor ) ) {
@@ -183,6 +190,7 @@ void NYZView::drawCursor() {
 }
 
 void NYZView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
+	x += marginLeft;
 	if ( clearChar == ' ' ) {
 		/* optimisation */
 		wmove( editor, y, x );
@@ -193,6 +201,28 @@ void NYZView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
 		mvwaddstr( editor, y, x, erase.toLocal8Bit().constData() );
 	}
 }
+
+void NYZView::drawSetMaxLineNumber( int max ) {
+	int my_marginLeft = 2 + QString::number( max ).length();
+	if ( my_marginLeft != marginLeft ) {
+		marginLeft = my_marginLeft;
+		updateVis();
+	}
+}
+void NYZView::drawSetLineNumber( int y, int n ) {
+
+	fakeLine = n <= 0;
+	QString num;
+	if ( !fakeLine )
+		num = QString::number( n );
+	num = num.rightJustified( marginLeft - 1, ' ' ) + ' ';
+
+	wattron( editor, attribYellow );
+	mvwaddstr( editor, y, 0, num.toLocal8Bit().constData() );
+	wattroff( editor, attribYellow );
+}
+
+
 
 void NYZView::setCommandLineText( const QString& text )
 {

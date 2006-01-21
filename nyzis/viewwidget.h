@@ -86,9 +86,13 @@ public slots:
 			return 1;
 		}
 
-		void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
+		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
 
-		void drawClearToEOL( int x, int y, const QChar& clearChar );
+		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
+		virtual void drawSetMaxLineNumber( int max );
+		virtual void drawSetLineNumber( int y, int n );
+
+		bool fakeLine; /* true if current line is a fake one (eg: ~) */
 
 
 private:
@@ -114,10 +118,9 @@ private:
 	  * special widget for that
 	  */
 	QString commandline;
-	unsigned int lastLineNumber;
-	unsigned int marginLeft;
-	unsigned int height;
-	unsigned int width;
+		int marginLeft;
+		int height;
+		int width;
 
 	void initialiseAttributesMap();
 	static int attributesMapInitialised;

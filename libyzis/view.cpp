@@ -1443,7 +1443,7 @@ const YZColor& YZView::drawOutline() {
 	else return fake;
 }
 
-unsigned int YZView::drawLineNumber() const {
+int YZView::drawLineNumber() const {
 	return workCursor->bufferY( ) + 1;
 }
 
@@ -1776,6 +1776,10 @@ void YZView::drawCell( int , int , const YZDrawCell& , void* ) {
 }
 void YZView::drawClearToEOL( int, int, const QChar& ) {
 }
+void YZView::drawSetMaxLineNumber( int ) {
+}
+void YZView::drawSetLineNumber( int, int ) {
+}
 
 /**
  * default implementation for paintEvent
@@ -1785,9 +1789,13 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	if ( drawMap.isEmpty() )
 		return;
 	yzDebug() << "YZView::paintEvent" << drawMap;
-	/*
 
 	bool number = getLocalBooleanOption( "number" );
+	if ( number ) {
+		drawSetMaxLineNumber( myBuffer()->lineCount() );
+	}
+	/*
+
 	bool rightleft = getLocalBooleanOption( "rightleft" );
 
 	int flag = (rightleft ? Qt::AlignRight : Qt::AlignLeft);
@@ -1869,22 +1877,10 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 
 		clearToEOL = drawEntireLine || drawIt && curY != tY;
 
-		/* XXX :set nu
-		if ( drawLine ) {
-			if ( number ) {
-				myRect.setWidth( GETX( marginLeft - spaceWidth ) );
-				REVERSE_MYRECT_IF_RIGHTLEFT;
-				p.eraseRect( myRect );
-
-				if ( lineHeight() == 1 ) {
-					p.setPen( Qt::yellow ); // XXX: custom
-					p.setBackgroundMode( Qt::TransparentMode );
-					p.setFont( font() );
-					p.drawText( myRect, (rightleft ? Qt::AlignLeft : Qt::AlignRight), QString::number( drawLineNumber() ) );
-				}
-			}
+		if ( drawLine && number && lineHeight() == 1 ) { /* lineHeight() == 1 => we are on the first line of the line */
+			drawSetLineNumber( curY - shiftY, drawLineNumber() );
 		}
-		*/
+
 		if ( drawIt ) {
 			m_drawBuffer.newline( curY - shiftY );
 		}
@@ -1930,6 +1926,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	toY = qMin( toY, fh - 1 );
 	m_drawBuffer.setColor( Qt::cyan );
 	for( ; curY <= toY; ++curY ) {
+		if ( number ) drawSetLineNumber( curY - shiftY, 0 );
 		m_drawBuffer.newline( curY - shiftY );
 		m_drawBuffer.push( "~" );
 		drawClearToEOL( 1, curY - shiftY, ' ' );

@@ -447,7 +447,7 @@ class YZView {
 		/**
 		 * return current buffer line
 		 */
-		unsigned int drawLineNumber() const;
+		int drawLineNumber() const;
 
 		/**
 		 * total height ( draw )
@@ -771,6 +771,8 @@ class YZView {
 		virtual void endPaintEvent();
 		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
 		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
+		virtual void drawSetMaxLineNumber( int max );
+		virtual void drawSetLineNumber( int y, int n );
 
 		YZDrawBuffer m_drawBuffer;
 

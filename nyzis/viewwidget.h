@@ -88,6 +88,8 @@ public slots:
 
 		void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
 
+		void drawClearToEOL( int x, int y, const QChar& clearChar );
+
 
 private:
 	WINDOW		*window;	/* ncurses window to write to */

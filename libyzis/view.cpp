@@ -1774,6 +1774,8 @@ void YZView::endPaintEvent() {
 }
 void YZView::drawCell( int , int , const YZDrawCell& , void* ) {
 }
+void YZView::drawClearToEOL( int, int, const QChar& ) {
+}
 
 /**
  * default implementation for paintEvent
@@ -1838,6 +1840,8 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	bool drawStartAfterBOL; /* if we don't have to draw from the begin of line */
 	bool drawStopBeforeEOL; /* if we don't have to draw until the end of line */
 
+	bool clearToEOL; /* if we have to clear the rest of line */
+
 	bool interval_changed  = true;
 
 	while( curY <= toY && drawNextLine() ) {
@@ -1863,6 +1867,8 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 		drawIt = drawLine && !drawStartAfterBOL;
 		drawEntireLine = drawIt && !drawStopBeforeEOL;
 
+		clearToEOL = drawEntireLine || drawIt && curY != tY;
+
 		/* XXX :set nu
 		if ( drawLine ) {
 			if ( number ) {
@@ -1886,6 +1892,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			if ( !drawEntireLine ) { /* we have to care of starting/stoping to draw on that line */
 				if ( !drawIt && curY == fY ) { // start drawing ?
 					drawIt = ( curX == fX );
+					clearToEOL = tY = curY;
 				} else if ( drawIt && curY == tY ) { // stop drawing ?
 					drawIt = !( curX > tX );
 					if ( ! drawIt ) {
@@ -1912,6 +1919,9 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			}
 			curX += drawLength();
 		}
+		if ( clearToEOL ) {
+			drawClearToEOL( curX - shiftX, curY - shiftY, drawLineFiller() );
+		}
 		curY += drawHeight();
 	}
 
@@ -1922,6 +1932,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	for( ; curY <= toY; ++curY ) {
 		m_drawBuffer.newline( curY - shiftY );
 		m_drawBuffer.push( "~" );
+		drawClearToEOL( 1, curY - shiftY, ' ' );
 	}
 
 	m_drawBuffer.flush();

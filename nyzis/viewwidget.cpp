@@ -182,6 +182,18 @@ void NYZView::drawCursor() {
 	wrefresh( editor );
 }
 
+void NYZView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
+	if ( clearChar == ' ' ) {
+		/* optimisation */
+		wmove( editor, y, x );
+		wclrtoeol( editor );
+	} else {
+		QString erase;
+		erase.fill( clearChar, width - x );
+		mvwaddstr( editor, y, x, erase.toLocal8Bit().constData() );
+	}
+}
+
 void NYZView::setCommandLineText( const QString& text )
 {
 	werase(statusbar);

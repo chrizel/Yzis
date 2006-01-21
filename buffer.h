@@ -51,7 +51,7 @@ typedef YZVector<YZLine*> YZBufferData;
  * A buffer can have multiple views. Every buffer is registered in a
  * @ref YZSession
  */
-class YZBuffer {
+class YZIS_EXPORT YZBuffer {
 public:
 	//-------------------------------------------------------
 	// ----------------- Constructor/Destructor and Id

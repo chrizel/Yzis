@@ -26,15 +26,10 @@
 #define YZ_MARK_H
 
 #include "qglobal.h"
-#if QT_VERSION < 0x040000
-#include <qstring.h>
-#include <qmap.h>
-#include <qintdict.h>
-#else
 #include <QMap>
 #include <QString>
-#endif
 #include "cursor.h"
+#include "yzismacros.h"
 
 struct YZCursorPos;
 class YZCursor;
@@ -54,7 +49,7 @@ typedef QMap<uint, uint> YZDocMarker;
 
 
 /**Contains view marks (strings)*/
-class YZViewMark {
+class YZIS_EXPORT YZViewMark {
 
 	public:
 		YZViewMark( );
@@ -73,7 +68,7 @@ class YZViewMark {
 };
 
 /**Contains document marks (integers) like KTE bookmarks, breakpoints, etc.*/
-class YZDocMark {
+class YZIS_EXPORT YZDocMark {
 
 	public:
 		YZDocMark( ) {}

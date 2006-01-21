@@ -58,7 +58,7 @@ class YZFoldPool;
  * @ref YZBuffer will take care of synchronizing every views so updates are propagated to all views.
  * 
  */
-class YZView {
+class YZIS_EXPORT YZView {
 
 	public:
 		//-------------------------------------------------------
@@ -916,11 +916,7 @@ class YZView {
 
 
 		//which regs to store macros in
-#if QT_VERSION < 0x040000
-		QValueList<QChar> mRegs;
-#else
 		QList<QChar> mRegs;
-#endif
 		unsigned int m_paintAutoCommit;
 		YZViewCursor* keepCursor;
 

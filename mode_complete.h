@@ -25,11 +25,12 @@
 #define YZ_MODE_COMPLETE_H
 
 #include "mode.h"
+#include "yzismacros.h"
 
 class YZBuffer;
 class YZCursor;
 
-class YZModeCompletion : public YZMode {
+class YZIS_EXPORT YZModeCompletion : public YZMode {
 	public :
 		YZModeCompletion();
 		virtual ~YZModeCompletion();

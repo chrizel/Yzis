@@ -22,6 +22,7 @@
 #define YZ_VIEWCURSOR_H
 
 #include "cursor.h"
+#include "yzismacros.h"
 class YZView;
 
 class YZView;
@@ -34,7 +35,7 @@ class YZView;
  * class YZViewCursor : buffer and screen cursor with all members that YZView needs to move it.
  * this is only an interface, it doesn't have to know how move itself ( this is YZView stuff )
  */
-class YZViewCursor {
+class YZIS_EXPORT YZViewCursor {
 
 	friend class YZView;
 

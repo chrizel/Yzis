@@ -190,7 +190,8 @@ void NYZView::drawCursor() {
 }
 
 void NYZView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
-	x += marginLeft;
+	if ( !fakeLine )
+		x += marginLeft;
 	if ( clearChar == ' ' ) {
 		/* optimisation */
 		wmove( editor, y, x );

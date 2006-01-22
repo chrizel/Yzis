@@ -84,6 +84,12 @@ class KYZisEdit : public QWidget {
 
 	protected:
 		void drawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
+		void drawSetMaxLineNumber( int max );
+		void drawSetLineNumber( int y, int n, QPainter* p );
+
+		void drawMarginLeft( int min_y, int max_y, QPainter* p );
+		
+
 		//intercept tabs
 		virtual bool event(QEvent*);
 
@@ -120,6 +126,8 @@ class KYZisEdit : public QWidget {
 		// for InputMethod
 		void inputMethodEvent ( QInputMethodEvent * );
 
+		bool fakeLine;
+
 	private :
 		void initKeys();
 		KActionCollection* actionCollection;
@@ -137,7 +145,7 @@ class KYZisEdit : public QWidget {
 		/**
 		 * size of the left margin (used to draw line number)
 		 */
-		unsigned int marginLeft;
+		int marginLeft;
 
 		// last line number
 		QMap<int,QString> keys;

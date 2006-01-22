@@ -33,9 +33,6 @@
 
 const QRgb  RGB_MASK    = 0x00ffffff;                // masks RGB values
 
-static const QChar tabChar( '\t' );
-static const QChar spaceChar( ' ' );
-
 /*
  * some color used internally
  */
@@ -192,7 +189,7 @@ void NYZView::drawCursor() {
 void NYZView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
 	if ( !fakeLine )
 		x += marginLeft;
-	if ( clearChar == ' ' ) {
+	if ( clearChar.isSpace() ) {
 		/* optimisation */
 		wmove( editor, y, x );
 		wclrtoeol( editor );

@@ -50,6 +50,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent)
 {
 	mParent = parent;
 
+	setAttribute ( Qt::WA_PaintOutsidePaintEvent ); /*XXX*/
 
 	setFocusPolicy( Qt::StrongFocus );
 
@@ -313,10 +314,49 @@ void KYZisEdit::scrollDown( int n ) {
 }
 
 void KYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
-	yzDebug() << "drawCell at ("<<x<<","<<y<<") : '" << cell.c << "'" << endl;
+	p->save();
 	if ( cell.fg.isValid() )
 		p->setPen( cell.fg.rgb() );
-	p->drawText( QRect( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() ), cell.c );
+	if ( !fakeLine )
+		x += marginLeft;
+	QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
+	p->eraseRect( r );
+	p->drawText( r, cell.c );
+	p->restore();
+}
+void KYZisEdit::drawSetMaxLineNumber( int max ) {
+	int my_marginLeft = 2 + QString::number( max ).length();
+	if ( my_marginLeft != marginLeft ) {
+		marginLeft = my_marginLeft;
+		updateArea();
+	}
+}
+void KYZisEdit::drawSetLineNumber( int y, int n, QPainter* p ) {
+
+	fakeLine = n <= 0;
+	QString num;
+	if ( !fakeLine )
+		num = QString::number( n );
+	num = num.rightJustified( marginLeft - 1, ' ' );
+
+	p->save();
+	p->setPen( Qt::yellow );
+
+	QRect r( 0, y*fontMetrics().lineSpacing(), GETX(marginLeft - spaceWidth), fontMetrics().lineSpacing() );
+	p->eraseRect( r );
+	p->drawText( r, num );
+
+	p->restore();
+}
+
+void KYZisEdit::drawMarginLeft( int min_y, int max_y, QPainter* p ) {
+	if ( marginLeft > 0 ) {
+		int x = GETX( marginLeft ) - GETX( spaceWidth )/2;
+		p->save();
+		p->setPen( Settings::colorFG() );
+		p->drawLine( x, min_y*fontMetrics().lineSpacing(), x, max_y*fontMetrics().lineSpacing() );
+		p->restore();
+	}
 }
 
 void KYZisEdit::initKeys() {

@@ -8,7 +8,7 @@
 - implement a C-like Timer (SIGALARM) to dump swapfiles ?
 - yz configure -> G, should be slow, but gg then G should be faster (no ?) //mm
 
-- paintEvent: stop drawing if refreshScreen is called
+- YZView::paintEvent: stop drawing if refreshScreen is called
 - find a way to inform the view that :set number is set to false/true
 
 drawBuffer:
@@ -17,7 +17,6 @@ drawBuffer:
   - marker
 
 kyzis:
-  - drawSetMaxLineNumber / drawSetLineNumber
   - update() when lib wants redraw something (without endless loop;)
 qyzis:
   - move to drawBuffer API

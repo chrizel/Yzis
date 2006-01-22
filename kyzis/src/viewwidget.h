@@ -128,6 +128,11 @@ class KYZisView: public KTextEditor::View,
 		void setKPart( KParts::ReadWritePart *part ) { m_part = part; }
 		KParts::ReadWritePart *getKPart() const { return m_part; }
 
+	protected :
+		void drawSetMaxLineNumber( int max );
+		void drawSetLineNumber( int y, int n );
+		
+
   // KTextEditor::View Stuff
   public:
     /**

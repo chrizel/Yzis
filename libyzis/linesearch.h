@@ -70,7 +70,7 @@ public:
 	/**
 	 * Searches for previously searched character in opposite direction
 	 */
-	YZCursor YZLineSearch::searchAgainOpposite( bool &found, unsigned int times );
+	YZCursor searchAgainOpposite( bool &found, unsigned int times );
 	
 	/**
 	 * Defines types of searches for history

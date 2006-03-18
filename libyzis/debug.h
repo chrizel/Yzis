@@ -18,7 +18,7 @@
  **/
 
 /**
- * This file was mostly inspired from the kdelibs kdDebug class distributed under LGPL by
+ * This file was mostly inspired from the kdelibs kdDebug class distributed under LGPL
  * by the KDE project.
  * Here are the corresponding copyrights owner :
  * 1997 Matthias Kalle Dalheimer ( kalle@kde.org )
@@ -33,17 +33,11 @@
  */
 
 #include <qglobal.h>
-#if QT_VERSION < 0x040000
-#include <qstring.h>
-#include <qfile.h>
-#include <qmap.h>
-class QCString;
-#else
 #include <QString>
 #include <cstdio>
 #include <QMap>
 #include <QFile>
-#endif
+#include "yzismacros.h"
 
 class QStringList;
 
@@ -138,7 +132,7 @@ typedef YZDebugStream & (*YDBGFUNC)(YZDebugStream &); // manipulator function
  * THE debug class ;)
  */
 
-class YZDebugStream {
+class YZIS_EXPORT YZDebugStream {
 	public:
 		// where to output the debug
 		YZDebugStream(const char * area="", int level=0);
@@ -152,9 +146,6 @@ class YZDebugStream {
 		YZDebugStream& operator << (bool i);
 		YZDebugStream& operator << (char i);
 		YZDebugStream& operator << (unsigned char i);
-#if QT_VERSION < 0x040000
-		YZDebugStream& operator << (const QCString& string);
-#endif
 		YZDebugStream& operator << (const QString& string);
 		YZDebugStream& operator << (const QStringList& string);
 		YZDebugStream& operator << (const char* string);
@@ -183,10 +174,10 @@ inline YZDebugStream &endl( YZDebugStream& s ) { s << "\n"; return s; }
 inline YZDebugStream& flush( YZDebugStream& s ) { s.flush(); return s; }
 
 //global functions (if it reminds you KDE it's not pure hasard :)
-YZDebugStream yzDebug( const char * area = "" );
-YZDebugStream yzWarning( const char * area = "" );
-YZDebugStream yzError( const char * area = "" );
-YZDebugStream yzFatal( const char * area = "" );
+YZIS_EXPORT YZDebugStream yzDebug( const char * area = "" );
+YZIS_EXPORT YZDebugStream yzWarning( const char * area = "" );
+YZIS_EXPORT YZDebugStream yzError( const char * area = "" );
+YZIS_EXPORT YZDebugStream yzFatal( const char * area = "" );
 
 // Assertion
 #define YZASSERT_MSG( assertion, msg ) { if (! (assertion) ) { yzError() << QString("%1:%2 assertion '%3' failed : %4\n").arg(__FILE__).arg( __LINE__).arg(#assertion).arg( msg ); } }

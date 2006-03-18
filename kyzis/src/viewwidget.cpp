@@ -31,6 +31,8 @@
 #include <qtimer.h>
 #include <QMenu>
 
+#include <ktexteditor/cursor.h>
+
 #include <kdebug.h>
 
 #include "viewwidget.h"
@@ -46,7 +48,8 @@
 #include "kyzis.h"
 
 KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
-	: KTextEditor::View (parent), YZView(doc->getBuffer(), KYZisFactory::self(), 10), m_popup(0)
+	: KTextEditor::View (parent), YZView(doc->getBuffer(), KYZisFactory::self(), 10), m_popup(0),
+	m_range()
 {
 	m_part = 0;
 	buffer = doc;
@@ -72,7 +75,7 @@ KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
 	status->insertItem("",90,1);
 	status->setItemAlignment(90,Qt::AlignRight);
 
-	status->insertItem("",99,0,true);
+	status->insertItem("",99,0); //XXX: permanent = true
 	status->setItemAlignment(99,Qt::AlignRight);
 
 	g = new QGridLayout(this,1,1);
@@ -96,8 +99,6 @@ KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
 
 	applyConfig();
 	setupKeys();
-
-
 }
 
 KYZisView::~KYZisView () {
@@ -130,6 +131,11 @@ void KYZisView::scrollUp( int n ) {
 	m_editor->scrollUp( n );
 }
 
+void KYZisView::refreshScreen() {
+	if ( m_editor->marginLeft > 0 && !getLocalBooleanOption("number") )
+		m_editor->marginLeft = 0;
+	YZView::refreshScreen();
+}
 void KYZisView::preparePaintEvent( int min_y, int max_y ) {
 	yzDebug() << "KYZisView::preparePaintEvent" << endl;
 	m_painter = new QPainter( m_editor );
@@ -141,13 +147,17 @@ void KYZisView::endPaintEvent() {
 	yzDebug() << "KYZisView::endPaintEvent" << endl;
 }
 void KYZisView::paintEvent( const YZSelection& drawMap ) {
-	mVScroll->setMaxValue( buffer->lines() - 1 );
-	YZView::paintEvent( drawMap );
+	if ( m_editor->m_insidePaintEvent ) {
+		YZView::paintEvent( drawMap );
+	} else {
+		m_editor->paintEvent( drawMap );
+	}
 }
 void KYZisView::drawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
 	m_editor->drawCell( x, y, cell, (QPainter*)arg );
 }
 void KYZisView::drawSetMaxLineNumber( int max ) {
+	mVScroll->setMaxValue( max );
 	m_editor->drawSetMaxLineNumber( max );
 }
 void KYZisView::drawSetLineNumber( int y, int n ) {
@@ -358,9 +368,13 @@ bool KYZisView::selection() const {
 	return !getSelectionPool()->visual()->isEmpty();
 }
 
+void KYZisView::emitSelectionChanged() {
+	YZInterval i = visualSelection()[0];
+	m_range.setRange( KTextEditor::Cursor(i.fromPos().x(),i.fromPos().y()), KTextEditor::Cursor(i.toPos().x(),i.toPos().y()) );
+}
+
 const KTextEditor::Range& KYZisView::selectionRange() const {
-	YZInterval i = getSelectionPool()->visual()->bufferMap()[ 0 ];
-	return KTextEditor::Range(i.fromPos().x(), i.fromPos().y(), i.toPos().x(), i.toPos().y());
+	return m_range;
 }
 
 QString KYZisView::selectionText() const {
@@ -383,7 +397,7 @@ bool KYZisView::selectAll() {
 	return setSelection( KTextEditor::Range(KTextEditor::Cursor(0, 0),KTextEditor::Cursor(buffer->lines() - 1, qMax( (int)(myBuffer()->textline( buffer->lines() - 1 ).length() - 1), 0 ))));
 }
 bool KYZisView::popupFileSaveAs() {
-	KURL url =	KFileDialog::getSaveURL();
+	KUrl url =	KFileDialog::getSaveURL();
 	if ( url.isEmpty() ) return false;//canceled
 	else if ( !url.isLocalFile() ) {
 		KMessageBox::sorry(parentWidget(), tr("Yzis is not able to save remote files for now" ), tr( "Remote files"));
@@ -428,19 +442,13 @@ KTextEditor::Cursor KYZisView::cursorPositionVirtual() const {
 }
 
 bool KYZisView::removeSelection() {
-
+	// TODO
+	return true;
 }
 
 bool KYZisView::removeSelectionText() {
-
-}
-
-const KTextEditor::Cursor& KYZisView::selectionStart() const {
-
-}
-
-const KTextEditor::Cursor& KYZisView::selectionEnd() const {
-
+	// TODO
+	return true;
 }
 
 void KYZisView::filenameChanged() {
@@ -451,6 +459,18 @@ void KYZisView::filenameChanged() {
 
 void KYZisView::highlightingChanged() {
 	sendRefreshEvent();
+}
+
+QPoint KYZisView::cursorToCoordinate(const KTextEditor::Cursor&/* cursor*/) const {
+	// TODO
+	return QPoint(0,0);
+}
+
+bool KYZisView::mouseTrackingEnabled() const {
+	return false;
+}
+bool KYZisView::setMouseTrackingEnabled( bool/* enabled */) {
+	return false;
 }
 
 #include "viewwidget.moc"

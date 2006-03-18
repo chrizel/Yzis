@@ -142,37 +142,37 @@ bool KYZisCodeCompletion::codeCompletionVisible () {
 }
 
 void KYZisCodeCompletion::buildItemList() {
-  kdDebug()<<"buildItemList"<<endl;
+  kDebug()<<"buildItemList"<<endl;
   m_items.clear();
   foreach (const KTextEditor::CompletionData& data,m_data) {
-//     //kdDebug(13034)<<"buildItemList:1"<<endl;
+//     //kDebug(13034)<<"buildItemList:1"<<endl;
     const QList<KTextEditor::CompletionItem>&  list=data.items();
     for(int i=0;i<list.count();i++) {
-      //kdDebug(13034)<<"buildItemList:2"<<endl;
+      //kDebug(13034)<<"buildItemList:2"<<endl;
       m_items.append(CompletionItem(&data,i));
     }
   }
   qSort(m_items);
 #if 0
-  kdDebug()<<"------------"<<endl;
+  kDebug()<<"------------"<<endl;
   foreach (const CompletionItem& item,m_items)
-    kdDebug()<<item.text()<<endl;
-  kdDebug()<<"------------"<<endl;
+    kDebug()<<item.text()<<endl;
+  kDebug()<<"------------"<<endl;
 #endif
 }
 
 void KYZisCodeCompletion::showCompletion(const KTextEditor::Cursor &position,const QLinkedList<KTextEditor::CompletionData> &data) {
-  kdDebug()<<"KateCodeCompletion::showCompletion"<<endl;
-  kdDebug()<<"data.size()=="<<data.size()<<endl;
+  kDebug()<<"KateCodeCompletion::showCompletion"<<endl;
+  kDebug()<<"data.size()=="<<data.size()<<endl;
   if (data.isEmpty() && m_data.isEmpty()) return;
   else if (m_data.isEmpty()) { // new completion
     m_data=data;
-    kdDebug()<<"m_data was empty"<<endl;
+    kDebug()<<"m_data was empty"<<endl;
     buildItemList();
     updateBox();
   } else if (data.isEmpty()) {  // abort completion, no providers anymore
     m_data.clear();
-    kdDebug()<<"data is empty"<<endl;
+    kDebug()<<"data is empty"<<endl;
     buildItemList();
     updateBox();
     return;
@@ -180,17 +180,17 @@ void KYZisCodeCompletion::showCompletion(const KTextEditor::Cursor &position,con
   } else { //update completion
     if (data.size()!=m_data.size()) { // different provider count
       m_data=data;
-      kdDebug()<<"different size"<<endl;
+      kDebug()<<"different size"<<endl;
       buildItemList();
       updateBox();
     } else {
       bool equal=true;
       for (QLinkedList<KTextEditor::CompletionData>::const_iterator it1=data.constBegin(),
           it2=m_data.constBegin();it1!=data.constEnd();++it1,++it2) {
-          if (!((*it1)==(*it2))) {equal=false; kdDebug()<<(*it1).id()<<" "<<(*it2).id()<<endl; break;}
+          if (!((*it1)==(*it2))) {equal=false; kDebug()<<(*it1).id()<<" "<<(*it2).id()<<endl; break;}
       }
       if (equal) return;
-      kdDebug()<<"not equal"<<endl;
+      kDebug()<<"not equal"<<endl;
       m_data=data;
       buildItemList();
       updateBox();
@@ -200,7 +200,7 @@ void KYZisCodeCompletion::showCompletion(const KTextEditor::Cursor &position,con
 
 bool KYZisCodeCompletion::eventFilter( QObject *o, QEvent *e )
 {
-  kdDebug()<<"KateCodeCompletion::eventFilter"<<endl;
+  kDebug()<<"KateCodeCompletion::eventFilter"<<endl;
   if ( o != m_completionPopup &&
        o != m_completionListBox &&
        o != m_completionListBox->viewport()
@@ -243,13 +243,13 @@ bool KYZisCodeCompletion::eventFilter( QObject *o, QEvent *e )
     QApplication::sendEvent(m_view->window(),e);
   }
 
-  kdDebug()<<"e->type()=="<<e->type()<<endl;
+  kDebug()<<"e->type()=="<<e->type()<<endl;
   return false;
 }
 
 void KYZisCodeCompletion::handleKey (QKeyEvent *e)
 {
-  kdDebug()<<"KateCodeCompletion::handleKey"<<endl;
+  kDebug()<<"KateCodeCompletion::handleKey"<<endl;
   // close completion if you move out of range
   if ((e->key() == Qt::Key_Up) && (m_completionListBox->currentItem() == 0))
   {
@@ -276,12 +276,12 @@ void KYZisCodeCompletion::doComplete()
 {
 #if 0
   foreach (const KTextEditor::CompletionData& data,m_data) {
-    kdDebug()<<"datalist="<<&data<<endl;
+    kDebug()<<"datalist="<<&data<<endl;
   }
-  kdDebug()<<"doComplete------------"<<endl;
+  kDebug()<<"doComplete------------"<<endl;
   foreach (const CompletionItem& item,m_items)
-    kdDebug()<<item.text()<<endl;
-  kdDebug()<<"doComplete------------"<<endl;
+    kDebug()<<item.text()<<endl;
+  kDebug()<<"doComplete------------"<<endl;
 #endif
 
   KYZisCompletionItem* item = static_cast<KYZisCompletionItem*>(
@@ -320,7 +320,7 @@ void KYZisCodeCompletion::abortCompletion()
 
 void KYZisCodeCompletion::complete( KTextEditor::CompletionItem entry )
 {
-  kdDebug()<<"KateCodeCompletion::completion=============about to close completion box"<<endl;
+  kDebug()<<"KateCodeCompletion::completion=============about to close completion box"<<endl;
   m_blockEvents=true;
   m_completionPopup->hide();
   delete m_commentLabel;
@@ -340,15 +340,15 @@ void KYZisCodeCompletion::updateBox( bool )
 #if 0
   if( m_colCursor > m_view->cursorPosition().column() ) {
     // the cursor is too far left
-    kdDebug(13035) << "Aborting Codecompletion after sendEvent" << endl;
-    kdDebug(13035) << m_view->cursorPosition().column() << endl;
+    kDebug(13035) << "Aborting Codecompletion after sendEvent" << endl;
+    kDebug(13035) << m_view->cursorPosition().column() << endl;
     abortCompletion();
     m_view->setFocus();
     return;
   }
 #endif 
   m_completionListBox->clear();
-  kdDebug()<<"m_items.size():"<<m_items.size()<<endl;;
+  kDebug()<<"m_items.size():"<<m_items.size()<<endl;;
   if (m_items.size()==0)
   {
     if (codeCompletionVisible())
@@ -404,7 +404,7 @@ void KYZisCodeCompletion::updateBox( bool )
     m_view->setFocus();
     return;
   }
-    kdDebug(13035)<<"KateCodeCompletion::updateBox: Resizing widget"<<endl;
+    kDebug(13035)<<"KateCodeCompletion::updateBox: Resizing widget"<<endl;
         m_completionPopup->resize(m_completionListBox->sizeHint() + QSize(2,2));
     QPoint p = m_view->mapToGlobal( m_view->cursorPositionCoordinates() );
         int x = p.x();
@@ -438,7 +438,7 @@ void KYZisCodeCompletion::showArgHint ( QStringList functionList, const QString&
   QStringList::Iterator it = functionList.begin(), end = functionList.end();
   for( ; it != end; ++it )
   {
-    kdDebug(13035) << "Insert function text: " << *it << endl;
+    kDebug(13035) << "Insert function text: " << *it << endl;
 
     m_pArgHint->addFunction( nNum, ( *it ) );
 

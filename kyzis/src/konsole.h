@@ -36,7 +36,7 @@ class Konsole : public QWidget
     Konsole (QWidget* parent, const char* name);
     ~Konsole ();
 
-    void cd (KURL url=KURL());
+    void cd (KUrl url=KUrl());
 
     void sendInput( const QString& text );
 

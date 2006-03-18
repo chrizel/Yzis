@@ -1,6 +1,6 @@
 /*
     Copyright (c) 2003-2004 Thomas Capricelli <orzel@freehackers.org>,
-    Copyright (c) 2003-2004 Loic Pauleve <panard@inzenet.org>
+    Copyright (c) 2003-2006 Loic Pauleve <panard@inzenet.org>
     Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 
     This program is free software; you can redistribute it and/or
@@ -327,6 +327,8 @@ void NYZView::initialiseAttributesMap()
 }
 
 void NYZView::refreshScreen() {
+	if ( marginLeft > 0 && !getLocalBooleanOption("number") )
+		marginLeft = 0;
 	YZView::refreshScreen();
 	refresh();
 	updateCursor();

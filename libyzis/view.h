@@ -62,7 +62,7 @@ class YZFoldPool;
  * @ref YZBuffer will take care of synchronizing every views so updates are propagated to all views.
  * 
  */
-class YZView {
+class YZIS_EXPORT YZView {
 
 	friend class YZDrawBuffer;
 
@@ -607,7 +607,7 @@ class YZView {
 		/**
 		 * Asks a redraw of the whole view
 		 */
-		void refreshScreen();
+		virtual void refreshScreen();
 
 		/**
 		 * recalcScreen refresh the screen and recalculate cursor position
@@ -896,6 +896,8 @@ class YZView {
 		void initGoto( YZViewCursor* viewCursor );
 		void updateCurLine( );
 
+		bool m_paintAll;
+
 		int stickyCol;
 
 		QChar mFillChar;
@@ -934,11 +936,7 @@ class YZView {
 
 
 		//which regs to store macros in
-#if QT_VERSION < 0x040000
-		QValueList<QChar> mRegs;
-#else
 		QList<QChar> mRegs;
-#endif
 		unsigned int m_paintAutoCommit;
 		YZViewCursor* keepCursor;
 

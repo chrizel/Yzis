@@ -45,7 +45,7 @@ enum cmd_state {
 	CMD_QUIT,
 };
 
-class YZMode {
+class YZIS_EXPORT YZMode {
 	public:
 		enum modeType {
 			MODE_INSERT,
@@ -124,13 +124,9 @@ class YZModeIntro : public YZMode {
 typedef YZMode::modeType modeType;
 
 typedef QMap<modeType, YZMode*> YZModeMap;
-#if QT_VERSION < 0x040000
-typedef QValueList<YZMode*> YZModeStack;
-#else
 typedef QList<YZMode*> YZModeStack;
-#endif
 
-class YZModePool {
+class YZIS_EXPORT YZModePool {
 	public:
 		YZModePool( YZView* view );
 		virtual ~YZModePool();

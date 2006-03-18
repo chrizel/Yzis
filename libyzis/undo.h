@@ -35,6 +35,7 @@
 #include <QLinkedList>
 #include <QString>
 #include <QList>
+#include "yzismacros.h"
 
 class YZView;
 class YZBuffer;
@@ -84,7 +85,7 @@ public:
 /** This class contains all the UndoItem. It stores them (commitUndoItem), do
   * or undo them.
   */
-class YZUndoBuffer {
+class YZIS_EXPORT YZUndoBuffer {
 public:
 	YZUndoBuffer( YZBuffer * );
 	virtual ~YZUndoBuffer();

@@ -26,12 +26,13 @@
 #define YZ_MODE_SEARCH_H
 
 #include "mode.h"
+#include "yzismacros.h"
 
 class YZView;
 class YZCursor;
 class YZHistory;
 
-class YZModeSearch : public YZMode {
+class YZIS_EXPORT YZModeSearch : public YZMode {
 	public:
 		YZModeSearch();
 		virtual ~YZModeSearch();
@@ -59,7 +60,7 @@ class YZModeSearch : public YZMode {
 };
 
 
-class YZModeSearchBackward : public YZModeSearch {
+class YZIS_EXPORT YZModeSearchBackward : public YZModeSearch {
 	public :
 		YZModeSearchBackward();
 		virtual ~YZModeSearchBackward();

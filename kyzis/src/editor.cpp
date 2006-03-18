@@ -50,11 +50,9 @@ KYZisEdit::KYZisEdit(KYZisView *parent)
 {
 	mParent = parent;
 
-	setAttribute ( Qt::WA_PaintOutsidePaintEvent ); /*XXX*/
-
 	setFocusPolicy( Qt::StrongFocus );
 
-	setAutoFillBackground( true );
+	setAutoFillBackground( false );
 
 	/* show an edit cursor */
 	QWidget::setCursor( Qt::IBeamCursor );
@@ -259,9 +257,10 @@ void KYZisEdit::paintEvent( QPaintEvent* pe ) {
 	int tx = r.right();
 	int ty = r.bottom();
 	yzDebug() << "KYzisEdit < QPaintEvent( " << fx << "," << fy << " -> " << tx << "," << ty << " )" << endl;
+	m_insidePaintEvent = true;
 	if ( isFontFixed ) {
-		unsigned int linespace = fontMetrics().lineSpacing();
-		unsigned int maxwidth = fontMetrics().maxWidth();
+		int linespace = fontMetrics().lineSpacing();
+		int maxwidth = fontMetrics().maxWidth();
 		fx /= maxwidth;
 		fy /= linespace;
 		int old_tx = tx, old_ty = ty;
@@ -270,8 +269,8 @@ void KYZisEdit::paintEvent( QPaintEvent* pe ) {
 		if ( tx < old_tx ) ++tx;
 		if ( ty < old_ty ) ++ty;
 	}
-	fx = qMax( (int)marginLeft, fx ) - marginLeft;
-	tx = qMax( (int)marginLeft, tx ) - marginLeft;
+	fx = qMax( marginLeft, fx ) - marginLeft;
+	tx = qMax( marginLeft, tx ) - marginLeft;
 	fy += mParent->getDrawCurrentTop();
 	ty += mParent->getDrawCurrentTop();
 	if ( fx == (int)mParent->getDrawCurrentLeft() && tx - fx == (int)(mParent->getColumnsVisible() + 1) ) {
@@ -283,7 +282,21 @@ void KYZisEdit::paintEvent( QPaintEvent* pe ) {
 		}
 		mParent->commitPaintEvent();
 	}
+	m_insidePaintEvent = false;
 	yzDebug() << "KYzisEdit > QPaintEvent" << endl;
+}
+void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
+	yzDebug() << "KYZisEdit::paintEvent" << endl;
+	YZSelectionMap m = drawMap.map();
+	for( int i = 0; i < m.size(); ++i ) {
+		int left = GETX( qMin( m[i].fromPos().x(), m[i].toPos().x() ) );
+		int right = GETX( qMax( m[i].fromPos().x(), m[i].toPos().x() ) );
+		int top = qMin( m[i].fromPos().y(), m[i].toPos().y() ) * fontMetrics().lineSpacing();
+		int bottom = qMax( m[i].fromPos().y(), m[i].toPos().y() ) * fontMetrics().lineSpacing();
+		
+		update( QRect(left, top, right - left, bottom - top) );
+	}
+	yzDebug() << "KYZisEdit::paintEvent ends" << endl;
 }
 
 void KYZisEdit::setCursor( int c, int l ) {

@@ -28,6 +28,7 @@
 #define __KATE_HIGHLIGHT_H__
 
 #include "attribute.h"
+#include "yzismacros.h"
 
 #include <QPair>
 #include <QString>
@@ -350,7 +351,7 @@ class YzisHighlighting
     inline bool allowsFolding(){return folding;}
 };
 
-class YzisHlManager
+class YZIS_EXPORT YzisHlManager
 {
   private:
     YzisHlManager();

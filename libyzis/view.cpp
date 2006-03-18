@@ -372,13 +372,13 @@ QString YZView::centerLine( const QString& s ) {
 }
 
 void YZView::updateCursor() {
-	static unsigned int lasty = 1<<31; // small speed optimisation
+	int lasty = -1;
 	viewInformation.percentage = _( "All" );
-	unsigned int y = mainCursor->bufferY();
+	int y = mainCursor->bufferY();
 
 	if ( y != lasty ) {
-		unsigned int nblines = mBuffer->lineCount();
-		viewInformation.percentage = QString("%1%").arg( ( unsigned int )( y*100/ ( nblines==0 ? 1 : nblines )));
+		int nblines = mBuffer->lineCount();
+		viewInformation.percentage = QString("%1%").arg( (int)( y*100/ ( nblines==0 ? 1 : nblines )));
 		if ( scrollCursor->bufferY() < 1 )  viewInformation.percentage=_( "Top" );
 		if ( scrollCursor->bufferY()+mLinesVis >= nblines )  viewInformation.percentage=_( "Bot" );
 		if ( (scrollCursor->bufferY()<1 ) &&  ( scrollCursor->bufferY()+mLinesVis >= nblines ) ) viewInformation.percentage=_( "All" );
@@ -1655,6 +1655,7 @@ void YZView::sendCursor( YZViewCursor* cursor ) {
 	*keepCursor = *cursor;
 }
 void YZView::sendPaintEvent( const YZCursor& from, const YZCursor& to ) {
+	m_paintAll = false;
 	setPaintAutoCommit( false );
 	mPaintSelection->addInterval( YZInterval( from, to ) );
 	commitPaintEvent();
@@ -1664,9 +1665,7 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 		yzDebug() << "Warning: YZView::sendPaintEvent with height = 0" << endl;
 		return;
 	}
-	setPaintAutoCommit( false );
-	mPaintSelection->addInterval( YZInterval(YZCursor(curx,cury),YZCursor(curx+curw,cury+curh-1)) );
-	commitPaintEvent();
+	sendPaintEvent( YZCursor(curx,cury),YZCursor(curx+curw,cury+curh-1) );
 }
 void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 	unsigned int size = map.size();
@@ -1701,10 +1700,12 @@ void YZView::sendBufferPaintEvent( unsigned int line, unsigned int n ) {
 
 void YZView::sendRefreshEvent( ) {
 	mPaintSelection->clear();
+	m_paintAll = true;
 	sendPaintEvent( getDrawCurrentLeft(), getDrawCurrentTop(), getColumnsVisible(), getLinesVisible() );
 }
 
 void YZView::removePaintEvent( const YZCursor& from, const YZCursor& to ) {
+	m_paintAll = false;
 	mPaintSelection->delInterval( YZInterval( from, to ) );
 }
 
@@ -1793,6 +1794,10 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	bool number = getLocalBooleanOption( "number" );
 	if ( number ) {
 		drawSetMaxLineNumber( myBuffer()->lineCount() );
+	}
+	if ( m_paintAll ) {
+		/* entire screen has been updated already */
+		return;
 	}
 	/*
 

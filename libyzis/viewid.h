@@ -12,13 +12,15 @@
 #ifndef VIEWID_H
 #define VIEWID_H
 
+#include "yzismacros.h"
+
 class YZDebugStream;
 class QDataStream;
 
 /**
 	@author Craig Howard <craig@choward.ca>
 */
-class YZViewId {
+class YZIS_EXPORT YZViewId {
 public:
 	explicit YZViewId();
 	explicit YZViewId( unsigned int id );
@@ -40,7 +42,7 @@ extern bool operator==( const YZViewId &lhs, const YZViewId &rhs );
 extern bool operator!=( const YZViewId &lhs, const YZViewId &rhs );
 extern bool operator<( const YZViewId &lhs, const YZViewId &rhs );
 
-extern QDataStream &operator>>( QDataStream &lhs, YZViewId &rhs );
-extern YZDebugStream &operator<<( YZDebugStream &lhs, const YZViewId &rhs );
+extern YZIS_EXPORT QDataStream &operator>>( QDataStream &lhs, YZViewId &rhs );
+extern YZIS_EXPORT YZDebugStream &operator<<( YZDebugStream &lhs, const YZViewId &rhs );
 
 #endif

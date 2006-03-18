@@ -26,6 +26,7 @@
 
 #include <Qt>
 #include <QString>
+#include "yzismacros.h"
 
 #ifndef QRgb
 typedef unsigned int QRgb;
@@ -33,7 +34,7 @@ typedef unsigned int QRgb;
 
 #define YzqRgb(r,g,b) (0xff000000 | (r << 16) |  (g << 8) | b)
 
-class YZColor {
+class YZIS_EXPORT YZColor {
 
 	public:
 		YZColor();

@@ -83,6 +83,7 @@ class KYZisEdit : public QWidget {
 
 
 	protected:
+		void paintEvent( const YZSelection& drawMap );
 		void drawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
 		void drawSetMaxLineNumber( int max );
 		void drawSetLineNumber( int y, int n, QPainter* p );
@@ -142,6 +143,8 @@ class KYZisEdit : public QWidget {
 		QFontMetrics *standardBoldItalic;
 
 		bool isFontFixed;
+
+		bool m_insidePaintEvent;
 		/**
 		 * size of the left margin (used to draw line number)
 		 */

@@ -31,6 +31,7 @@
 #include "font.h"
 #include "cursor.h"
 #include "selection.h"
+#include "yzismacros.h"
 
 class YZView;
 
@@ -50,7 +51,7 @@ struct YZDrawCell {
 typedef QVector<YZDrawCell> YZDrawSection;
 typedef QVector<YZDrawSection> YZDrawLine;
 
-class YZDrawBuffer {
+class YZIS_EXPORT YZDrawBuffer {
 
 	public:
 

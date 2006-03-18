@@ -82,13 +82,11 @@ class KYZisView: public KTextEditor::View,
 		// KTextEditor::View
 		bool removeSelection();
 		bool removeSelectionText();
-		const KTextEditor::Cursor& selectionStart() const;
-		const KTextEditor::Cursor& selectionEnd() const;
 		enum KTextEditor::View::EditMode viewEditMode() const {return KTextEditor::View::EditInsert;} //FIXME
 		bool setSelection(const KTextEditor::Range&);
 		bool clearSelection();
 		bool selection() const;
-		const KTextEditor::Range& KYZisView::selectionRange() const;
+		const KTextEditor::Range& selectionRange() const;
 		QString selectionText() const;
 		bool removeSelectedText();
 		bool selectAll();
@@ -101,6 +99,10 @@ class KYZisView: public KTextEditor::View,
 		void copy () const {}; //TODO
 		void cut() {} ; //TODO
 		void paste() {}; //TODO
+		QPoint cursorToCoordinate(const KTextEditor::Cursor& cursor) const;
+
+		bool mouseTrackingEnabled() const;
+		bool setMouseTrackingEnabled(bool enabled);
 
 
 		//KTextEditor::MenuInterface and support functions
@@ -124,9 +126,13 @@ class KYZisView: public KTextEditor::View,
 		bool popupFileSaveAs();
 		void filenameChanged();
 		void highlightingChanged();
+
+		void refreshScreen();
 		
 		void setKPart( KParts::ReadWritePart *part ) { m_part = part; }
 		KParts::ReadWritePart *getKPart() const { return m_part; }
+
+		void emitSelectionChanged();
 
 	protected :
 		void drawSetMaxLineNumber( int max );
@@ -224,6 +230,8 @@ class KYZisView: public KTextEditor::View,
 		KSqueezedTextLabel *m_central;
 		
 		KParts::ReadWritePart *m_part;
+
+		KTextEditor::Range m_range;
 
 		QPainter* m_painter;
 };

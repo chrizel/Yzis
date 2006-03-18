@@ -32,6 +32,7 @@
 #include "mode.h"
 #include "view.h"
 #include "cursor.h"
+#include "yzismacros.h"
 #include <QList>
 #include <QStringList>
 
@@ -88,7 +89,7 @@ enum cmd_arg {
 /** Contains all the necessary information that makes up a normal command. @ref YZModeCommand
  * creates a list of them at startup. Note that the members of the command cannot be changed
  * after initialization. */
-class YZCommand {
+class YZIS_EXPORT YZCommand {
 public:
 	YZCommand( const QString &keySeq, PoolMethod pm, cmd_arg a=ARG_NONE) {
 		mKeySeq=keySeq;
@@ -116,7 +117,7 @@ protected:
 class YZMotionArgs;
 
 
-class YZMotionArgs {
+class YZIS_EXPORT YZMotionArgs {
 	public:
 		YZMotionArgs(YZView *v, unsigned int cnt=1, QString a=QString::null,QString c=QString::null, bool uc = false, bool s=false) {
 			cmd = c;
@@ -137,7 +138,7 @@ class YZMotionArgs {
 
 typedef YZCursor (YZModeCommand::*MotionMethod) (const YZMotionArgs&);
 
-class YZModeCommand : public YZMode {
+class YZIS_EXPORT YZModeCommand : public YZMode {
 
 	friend class YZMotion;
 
@@ -270,7 +271,7 @@ class YZModeCommand : public YZMode {
  * YZModeCommand::execMotion() is called which itself calls the function pointed
  * to by mMotionMethod.
  */
-class YZMotion : public YZCommand {
+class YZIS_EXPORT YZMotion : public YZCommand {
 public:
 	YZMotion(const QString &keySeq, MotionMethod mm, cmd_arg a=ARG_NONE)
 	: YZCommand(keySeq, &YZModeCommand::execMotion, a) {

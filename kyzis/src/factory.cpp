@@ -140,11 +140,12 @@ K_EXPORT_COMPONENT_FACTORY( libkyzispart, KYZisPublicFactory )
 
 KYZisFactory::KYZisFactory() :
 		YZSession("kyzis"),
+		lastView(0),
+		m_viewParent(0),
 		m_aboutData("kyzispart", I18N_NOOP("Kyzis"), VERSION_CHAR, I18N_NOOP("Embeddable vi-like editor component"),
 		KAboutData::License_LGPL_V2, I18N_NOOP("(c)2002-2005 The Kyzis Authors"),0,"http://www.yzis.org"),
 		m_instance( &m_aboutData ),
-		lastView(0),
-		m_viewParent(0)
+		m_document()
 {
 	m_aboutData.addAuthor ("Mickael Marchand", I18N_NOOP("Initial Author"), "marchand@kde.org");
 	m_aboutData.addAuthor ("Thomas Capricelli", I18N_NOOP("Initial Author"), "orzel@freehackers.org");
@@ -173,7 +174,7 @@ KYZisFactory::KYZisFactory() :
 }
 
 KYZisFactory::~KYZisFactory() {
-	kdDebug() << "Factory gets destroyed !" << endl;
+	kDebug() << "Factory gets destroyed !" << endl;
 }
 
 static KStaticDeleter<KYZisFactory> sdFactory;
@@ -258,6 +259,10 @@ void KYZisFactory::applyConfig() {
 	}
 }
 
+const QList<KTextEditor::Document*>& KYZisFactory::documents() {
+	return m_document;
+}
+
 void KYZisFactory::readConfig( ) {
 	Settings::self()->readConfig();
 	applyConfig();
@@ -297,7 +302,7 @@ YZView* KYZisFactory::doCreateView( YZBuffer *buffer ) {
 KYZTextEditorIface *KYZisFactory::createTextEditorIface() {
 	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
 	if (!factory) {
-		kdDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
+		kDebug() << "Kyzis::createBuffer() called with no factory, discarding" << endl;
 		return 0;
 	}
 	

@@ -30,21 +30,16 @@
 #include "mode.h"
 #include "mode_command.h"
 #include "view.h"
+#include "yzismacros.h"
 
-#if QT_VERSION < 0x040000
-#include <qstring.h>
-#include <qmap.h>
-#include <qstringlist.h>
-#else
 #include <QList>
 #include <QStringList>
-#endif
 
 class YZCursor;
 class YZMode;
 class YZView;
 
-class YZModeVisual : public YZModeCommand {
+class YZIS_EXPORT YZModeVisual : public YZModeCommand {
 	public:
 		YZModeVisual();
 		virtual ~YZModeVisual();

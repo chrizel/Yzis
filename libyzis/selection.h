@@ -27,10 +27,11 @@
 
 #include <qmap.h>
 #include "cursor.h"
+#include "yzismacros.h"
 
 class YZCursor;
 
-class YZBound {
+class YZIS_EXPORT YZBound {
 	public:
 		YZBound( const YZBound& bound ) : mPos( bound.pos() ) {
 			mOpen = bound.opened();
@@ -64,7 +65,7 @@ bool operator>=( const YZCursor& left, const YZBound& right );
 bool operator<=( const YZCursor& left, const YZBound& right );
 const YZBound operator-( const YZBound& left, const YZCursor& right );
 
-class YZInterval {
+class YZIS_EXPORT YZInterval {
 
 	friend YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i );
 
@@ -96,7 +97,7 @@ const YZInterval operator-( const YZInterval& l, const YZCursor& r );
 
 typedef QMap<unsigned int, YZInterval> YZSelectionMap;
 
-class YZSelection {
+class YZIS_EXPORT YZSelection {
 
 	friend YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s );
 
@@ -128,7 +129,7 @@ class YZSelection {
 		YZSelectionMap mMap;
 };
 
-class YZDoubleSelection {
+class YZIS_EXPORT YZDoubleSelection {
 
 	friend YZDebugStream& operator<<( YZDebugStream& out, const YZDoubleSelection& s );
 
@@ -157,7 +158,7 @@ class YZDoubleSelection {
 		YZSelection* sSelection;
 };
 
-class YZSelectionPool {
+class YZIS_EXPORT YZSelectionPool {
 	public:
 		YZSelectionPool();
 		virtual ~YZSelectionPool();

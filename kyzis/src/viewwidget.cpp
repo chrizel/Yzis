@@ -54,8 +54,6 @@ KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
 	m_part = 0;
 	buffer = doc;
 
-	m_drawBuffer.setCallback( this );
-	
 	m_editor = new KYZisEdit (this);
 	status = new KStatusBar (this);
 	command = new KYZisCommand (this);
@@ -155,6 +153,9 @@ void KYZisView::paintEvent( const YZSelection& drawMap ) {
 }
 void KYZisView::drawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
 	m_editor->drawCell( x, y, cell, (QPainter*)arg );
+}
+void KYZisView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
+	m_editor->drawClearToEOL( x, y, clearChar, m_painter );
 }
 void KYZisView::drawSetMaxLineNumber( int max ) {
 	mVScroll->setMaxValue( max );

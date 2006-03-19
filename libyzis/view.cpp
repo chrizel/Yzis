@@ -94,6 +94,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines)
 	origPos = new YZCursor();
 	beginChanges = new YZCursor();
 
+	m_drawBuffer.setCallback( this );
+
 	stickyCol = 0;
 
 	QString line = mBuffer->textline(scrollCursor->bufferY());
@@ -1763,23 +1765,9 @@ unsigned int YZView::getSpaceWidth() const
 	return spaceWidth;
 }
 
-void YZView::preparePaintEvent( int , int ) {
-}
-void YZView::endPaintEvent() {
-}
-void YZView::drawCell( int , int , const YZDrawCell& , void* ) {
-}
-void YZView::drawClearToEOL( int, int, const QChar& ) {
-}
-void YZView::drawSetMaxLineNumber( int ) {
-}
-void YZView::drawSetLineNumber( int, int ) {
-}
-
 /**
  * default implementation for paintEvent
  */
-
 void YZView::paintEvent( const YZSelection& drawMap ) {
 	if ( drawMap.isEmpty() )
 		return;

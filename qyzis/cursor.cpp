@@ -14,116 +14,76 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
- * $Id: cursor.cpp 2072 2005-09-01 11:01:40Z mikmak $
+ * $Id: cursor.cpp 2116 2006-01-14 19:19:01Z panard $
  */
+
+#include <libyzis/drawbuffer.h>
 
 #include "cursor.h"
 #include "editor.h"
+#include "viewwidget.h"
 
-#include <QPaintEngine>
-
-QYZisCursor::QYZisCursor( QYZisEdit* parent, shape type ) {
-	mParent = parent;
-	shown = false;
-	bg = new QPixmap();
-	cursor = new QPixmap();
+QYZisCursor::QYZisCursor( QWidget* parent, shape type )
+	: QWidget( parent ){
+	move( 0, 0 );
 	setCursorType( type );
-	mX = mY = 0;
 }
 
 QYZisCursor::~QYZisCursor() {
-	delete bg;
-	delete cursor;
 }
 
-unsigned int QYZisCursor::width() const {
-	return bg->width();
-}
-unsigned int QYZisCursor::height() const {
-	return bg->height();
-}
 QYZisCursor::shape QYZisCursor::type() const {
 	return mCursorType;
 }
-
 void QYZisCursor::setCursorType( shape type ) {
-	if ( shown ) hide();
+	if ( type == mCursorType )
+		return;
 	mCursorType = type;
-	unsigned width = mParent->fontMetrics().maxWidth();
-	unsigned height = mParent->fontMetrics().lineSpacing();
-	if ( mCursorType == VBAR ) width = 2;
-	resize( width, height );
-}
-void QYZisCursor::resize( unsigned int w, unsigned int h ) {
-	if ( shown ) hide();
-	bg->resize( w, h );
-	cursor->resize( w, h );
-}
-void QYZisCursor::hide() {
-	if ( ! shown ) return;
-	QRect rect( mX, mY, bg->width(), bg->height() );
-	QPainter p( mParent );
-	mParent->erase( rect );
-	mParent->drawCell( &p, cell(), rect );
-	p.end();
-	shown = false;
-}
-void QYZisCursor::refresh() {
-	move( mX, mY );
-}
-void QYZisCursor::move( unsigned int x, unsigned int y ) {
-	if ( shown ) hide();
-	mX = x;
-	mY = y;
-	if ( prepareCursors() ) {
-		drawCursor( cursor );
-		shown = true;
-	}
+	int w = parentWidget()->fontMetrics().maxWidth();
+	int h = parentWidget()->fontMetrics().lineSpacing();
+	if ( mCursorType == VBAR ) 
+		w = 2;
+	resize( w, h );
 }
 
-const QYZViewCell& QYZisCursor::cell() const {
-	return mParent->mCell[ mY / mParent->fontMetrics().lineSpacing() ][ 
-					mParent->mParent->getLocalBooleanOption("rightleft") ? mX + width() : mX ];
-}
+void QYZisCursor::paintEvent( QPaintEvent* ) {
+	QPainter p( this );
 
-bool QYZisCursor::prepareCursors() {
-	bool ret = true;
-	bg->fill( mParent, 0, 0 );
-	*cursor = *bg;
-	QPainter p( cursor );
-	QRect rect = cursor->rect();
-	switch( mCursorType ) {
+#define GET_cell \
+	QYZisView* yzview = dynamic_cast<QYZisView*>( parentWidget()->parentWidget() ); \
+	YZDrawCell cell = yzview->m_drawBuffer.at( yzview->getCursor() - YZCursor(yzview->getDrawCurrentLeft(),yzview->getDrawCurrentTop()) )
+#define SET_pen \
+	p.setPen( cell.bg.isValid() ? QBrush( cell.bg.rgb() ) : parentWidget()->palette().window() );
+
+	switch( type() ) {
 		case SQUARE :
-			mParent->drawCell( &p, cell(), rect, true );
+			{
+			GET_cell;
+			SET_pen;
+			p.setBackground( cell.fg.isValid() ? QBrush( cell.fg.rgb() ) : parentWidget()->palette().text() );
+			p.eraseRect( rect() );
+			p.drawText( rect(), cell.c );
+			}
 			break;
 		case RECT :
-			p.setPen( mParent->foregroundColor() );
-			p.drawRect( rect );
+			{
+			GET_cell;
+			SET_pen;
+			p.drawRect( rect() );
+			}
 			break;
 		case VBAR :
-			rect.setRight( 2 );
-			p.fillRect( rect, QBrush( mParent->foregroundColor() ) );
+			p.fillRect( rect(), parentWidget()->palette().text() );
 			break;
 		case HBAR :
-			rect.setTop( cursor->height() - 2 );
-			p.fillRect( rect, QBrush( mParent->foregroundColor() ) );
+			p.fillRect( rect(), parentWidget()->palette().text() );
 			break;
 	}
-	p.end();
-	return ret;
 }
 
-void QYZisCursor::drawCursor( QPixmap* orig ) {
-/*	if ( mParent->paintingActive() ) {
-		mParent->paintEngine()->drawPixmap( QRect( mX, mY, orig->width(), orig->height() ), QPixmap(*orig), orig->rect() );
-	} else {*/
-		QPainter p( mParent );
-		p.drawPixmap( mX, mY, *orig );
-//	}
-}
-
+#include "cursor.moc"

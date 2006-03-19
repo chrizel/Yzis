@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2004-2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2004-2006 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -13,27 +13,25 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 /**
- * $Id: cursor.h 1737 2005-03-14 22:12:59Z panard $
+ * $Id: cursor.h 2116 2006-01-14 19:19:01Z panard $
  */
 
 #ifndef QYZISCURSOR_H
 #define QYZISCURSOR_H
 
-//#include "editor.h"
-#include <qpixmap.h>
+#include <QWidget>
 
 class QYZisEdit;
-struct QYZViewCell;
 
-class QYZisCursor {
+class QYZisCursor : public QWidget {
+	Q_OBJECT
 
 	public :
-
 		enum shape {
 			SQUARE,
 			VBAR,
@@ -41,38 +39,16 @@ class QYZisCursor {
 			RECT,
 		};
 
-		QYZisCursor( QYZisEdit* parent, shape type );
+		QYZisCursor( QWidget* parent, shape type );
 		virtual ~QYZisCursor();
 
 		void setCursorType( shape type );
-		void resize( unsigned int w, unsigned int h );
-		void move( unsigned int x, unsigned int y );
-		void hide();
-		void refresh();
-
-		unsigned int width() const;
-		unsigned int height() const;
 		shape type() const;
 
-		const QYZViewCell& cell() const;
-
-		inline unsigned int x() const { return mX; }
-		inline unsigned int y() const { return mY; }
-		inline unsigned int visible() const { return shown; }
+	protected :
+		virtual void paintEvent( QPaintEvent* event );
 
 	private :
-
-		void drawCursor( QPixmap* orig );
-		bool prepareCursors();
-
-		QYZisEdit* mParent;
-
-		QPixmap* bg;
-		QPixmap* cursor;
-
-		unsigned int mX;
-		unsigned int mY;
-		bool shown;
 		shape mCursorType;
 
 };

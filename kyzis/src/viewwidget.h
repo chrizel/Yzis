@@ -206,6 +206,7 @@ class KYZisView: public KTextEditor::View,
 		virtual void preparePaintEvent( int y_min, int y_max );
 		virtual void endPaintEvent();
 		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
+		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
 
 	signals:
 		void gotFocus(  KTextEditor::View* );

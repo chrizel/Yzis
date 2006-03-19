@@ -44,14 +44,13 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	: YZView( _buffer, QYZisFactory::self(), 10 ), buffer( _buffer ), m_popup( 0 )
 
 {
-	
-	m_editor = new QYZisEdit (this,"editor");
-	status = new QStatusBar (this, "status");
+	m_editor = new QYZisEdit( this );
+	status = new QStatusBar (this);
 	command = new QYZisCommand (this, "command");
 	mVScroll = new QScrollBar( this, "vscroll" );
 	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
-	connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
-	connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
+	//connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
+	//connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
 
 	l_mode = new QLabel( _("QYzis Ready"), this);
 	m_central = new QLabel(this);
@@ -89,9 +88,9 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 
 //	setupCodeCompletion();
 
-	applyConfig();
 	setupKeys();
 
+	applyConfig();
 }
 
 QYZisView::~QYZisView () {
@@ -124,9 +123,40 @@ void QYZisView::scrollUp( int n ) {
 	m_editor->scrollUp( n );
 }
 
+void QYZisView::refreshScreen() {
+	if ( m_editor->marginLeft > 0 && !getLocalBooleanOption("number") )
+		m_editor->marginLeft = 0;
+	YZView::refreshScreen();
+}
+void QYZisView::preparePaintEvent( int min_y, int max_y ) {
+	yzDebug() << "QYZisView::preparePaintEvent" << endl;
+	m_painter = new QPainter( m_editor );
+	m_drawBuffer.setCallbackArgument( m_painter );
+	m_editor->drawMarginLeft( min_y, max_y, m_painter );
+}
+void QYZisView::endPaintEvent() {
+	delete m_painter;
+	yzDebug() << "QYZisView::endPaintEvent" << endl;
+}
 void QYZisView::paintEvent( const YZSelection& drawMap ) {
-	mVScroll->setMaxValue( buffer->lineCount() - 1 );
-	m_editor->paintEvent( drawMap );
+	if ( m_editor->m_insidePaintEvent ) {
+		YZView::paintEvent( drawMap );
+	} else {
+		m_editor->paintEvent( drawMap );
+	}
+}
+void QYZisView::drawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
+	m_editor->drawCell( x, y, cell, (QPainter*)arg );
+}
+void QYZisView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
+	m_editor->drawClearToEOL( x, y, clearChar, m_painter );
+}
+void QYZisView::drawSetMaxLineNumber( int max ) {
+	mVScroll->setMaxValue( max );
+	m_editor->drawSetMaxLineNumber( max );
+}
+void QYZisView::drawSetLineNumber( int y, int n ) {
+	m_editor->drawSetLineNumber( y, n, m_painter );
 }
 unsigned int QYZisView::stringWidth( const QString& str ) const {
 	return m_editor->fontMetrics().width( str );
@@ -184,19 +214,14 @@ void QYZisView::unregisterModifierKeys( const QString& keys ) {
 }
 
 void QYZisView::applyConfig( bool refresh ) {
-	/*
-	m_editor->setFont( Settings::font() );
-	m_editor->setBackgroundMode( Qt::PaletteBase );
-	m_editor->setBackgroundColor( Settings::colorBG() );
-	m_editor->setPaletteForegroundColor( Settings::colorFG() );
-	m_editor->setTransparent( Settings::transparency(), (double)Settings::opacity() / 100., Settings::colorBG() );
-	*/
+	m_editor->setFont( QFont("Fixed",8) ); /* XXX setting */
+	m_editor->setPalette( Qt::white, Qt::black, 1. );
+
 	YzisHighlighting *yzis = myBuffer()->highlight();
 	if (yzis) {
 		myBuffer()->makeAttribs();
 		repaint(true);
-	}
-	if ( refresh ) {
+	} else if ( refresh ) {
 		m_editor->updateArea( );
 	}
 }

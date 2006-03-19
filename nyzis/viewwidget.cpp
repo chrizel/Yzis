@@ -55,7 +55,6 @@ NYZView::NYZView(YZBuffer *b)
 	YZASSERT( b );
 	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << b->getId() << endl;
 	window = NULL;
-	m_drawBuffer.setCallback( this );
 	fakeLine = false;
 }
 
@@ -126,6 +125,11 @@ void NYZView::scrollDown( int n ) {
 	unsigned int top = getDrawCurrentTop() + getLinesVisible() - n;
 	unsigned int left = getDrawCurrentLeft();
 	sendPaintEvent( YZCursor( left, top ), YZCursor( left + getColumnsVisible(), top + n ) );
+}
+
+void NYZView::preparePaintEvent(int, int) {
+}
+void NYZView::endPaintEvent() {
 }
 
 void NYZView::drawCell( int x, int y, const YZDrawCell& cell, void* ) {

@@ -765,12 +765,12 @@ class YZIS_EXPORT YZView {
 		/*
 		 * painting
 		 */
-		virtual void preparePaintEvent( int y_min, int y_max );
-		virtual void endPaintEvent();
-		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
-		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
-		virtual void drawSetMaxLineNumber( int max );
-		virtual void drawSetLineNumber( int y, int n );
+		virtual void preparePaintEvent( int y_min, int y_max ) = 0;
+		virtual void endPaintEvent() = 0;
+		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg ) = 0;
+		virtual void drawClearToEOL( int x, int y, const QChar& clearChar ) = 0;
+		virtual void drawSetMaxLineNumber( int max ) = 0;
+		virtual void drawSetLineNumber( int y, int n ) = 0;
 
 		YZDrawBuffer m_drawBuffer;
 

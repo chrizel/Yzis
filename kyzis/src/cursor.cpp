@@ -28,7 +28,7 @@
 #include "editor.h"
 #include "viewwidget.h"
 
-KYZisCursor::KYZisCursor( KYZisEdit* parent, shape type )
+KYZisCursor::KYZisCursor( QWidget* parent, shape type )
 	: QWidget( parent ){
 	move( 0, 0 );
 	setCursorType( type );

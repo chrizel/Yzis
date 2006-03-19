@@ -88,6 +88,8 @@ public slots:
 
 		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
 
+		void preparePaintEvent(int, int);
+		void endPaintEvent();
 		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
 		virtual void drawSetMaxLineNumber( int max );
 		virtual void drawSetLineNumber( int y, int n );

@@ -85,6 +85,7 @@ class KYZisEdit : public QWidget {
 	protected:
 		void paintEvent( const YZSelection& drawMap );
 		void drawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
+		void drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p );
 		void drawSetMaxLineNumber( int max );
 		void drawSetLineNumber( int y, int n, QPainter* p );
 
@@ -152,7 +153,6 @@ class KYZisEdit : public QWidget {
 
 		// last line number
 		QMap<int,QString> keys;
-		KRootPixmap *rootxpm;
 
 	friend class KYZisCursor;
 	friend class KYZisView;

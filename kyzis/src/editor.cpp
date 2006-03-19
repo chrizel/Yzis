@@ -53,6 +53,7 @@ KYZisEdit::KYZisEdit(KYZisView *parent)
 	setFocusPolicy( Qt::StrongFocus );
 
 	setAutoFillBackground( false );
+	setAttribute ( Qt::WA_PaintOutsidePaintEvent ); /* XXX */
 
 	/* show an edit cursor */
 	QWidget::setCursor( Qt::IBeamCursor );
@@ -332,11 +333,17 @@ void KYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 		p->setPen( cell.fg.rgb() );
 	if ( !fakeLine )
 		x += marginLeft;
-	QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
+	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 	p->eraseRect( r );
 	p->drawText( r, cell.c );
 	p->restore();
 }
+
+void KYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
+	QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
+	p->eraseRect( r );
+}
+
 void KYZisEdit::drawSetMaxLineNumber( int max ) {
 	int my_marginLeft = 2 + QString::number( max ).length();
 	if ( my_marginLeft != marginLeft ) {

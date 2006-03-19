@@ -13,12 +13,16 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- *  Boston, MA 02111-1307, USA.
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
  **/
 
 #ifndef QYZISEDIT_H
 #define QYZISEDIT_H
+
+#include "cursor.h"
+#include "viewwidget.h"
+#include <libyzis/drawbuffer.h>
 
 #include <qpainter.h>
 #include <qevent.h>
@@ -27,39 +31,22 @@
 #include <qfont.h>
 #include <action.h>
 #include <qnamespace.h>
+#include <krootpixmap.h>
 #include <qsignalmapper.h>
-
-#include "cursor.h"
-#include "viewwidget.h"
+#include <kactioncollection.h>
 
 class QYZisView;
 class QYZisCursor;
-
-
-struct QYZViewCell {
-	bool isValid;
-	int flag;
-	bool selected;
-	QFont font;
-	QString c;
-	QColor bg;
-	QColor fg;
-	QYZViewCell():
-		isValid( false ),
-		flag( 0 ),
-		selected ( false ), font(), c(), bg(), fg() {
-	}
-};
-typedef QMap<unsigned int,QYZViewCell> lineCell;
 
 /**
  * QYZis Painter Widget
  */
 class QYZisEdit : public QWidget {
 	Q_OBJECT
+	
 
 	public :
-		QYZisEdit(QYZisView *parent=0, const char *name=0);
+		QYZisEdit(QYZisView *parent=0);
 		virtual ~QYZisEdit();
 
 		//erase all text, and set new text
@@ -67,8 +54,6 @@ class QYZisEdit : public QWidget {
 
 		//append text
 		void append ( const QString& );
-
-		void paintEvent( const YZSelection& drawMap );
 
 		//move cursor to position column, line relative to viewport
 		void setCursor(int c,int l);
@@ -80,7 +65,7 @@ class QYZisEdit : public QWidget {
 		// update text area
 		void updateArea( );
 
-		void drawCell( QPainter* p, const QYZViewCell& cell, const QRect& rect, bool reversed = false );
+		void setPalette( const QColor& fg, const QColor& bg, double opacity );
 
 		const QString& convertKey( int key );
 
@@ -91,8 +76,6 @@ class QYZisEdit : public QWidget {
 
 		QPoint cursorCoordinates( );
 
-		QMap<unsigned int,lineCell> mCell;
-
 		QVariant inputMethodQuery ( Qt::InputMethodQuery query );
 
 	public slots :
@@ -100,6 +83,15 @@ class QYZisEdit : public QWidget {
 
 
 	protected:
+		void paintEvent( const YZSelection& drawMap );
+		void drawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
+		void drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p );
+		void drawSetMaxLineNumber( int max );
+		void drawSetLineNumber( int y, int n, QPainter* p );
+
+		void drawMarginLeft( int min_y, int max_y, QPainter* p );
+		
+
 		//intercept tabs
 		virtual bool event(QEvent*);
 
@@ -136,6 +128,8 @@ class QYZisEdit : public QWidget {
 		// for InputMethod
 		void inputMethodEvent ( QInputMethodEvent * );
 
+		bool fakeLine;
+
 	private :
 		void initKeys();
 		QSignalMapper* signalMapper;
@@ -149,17 +143,18 @@ class QYZisEdit : public QWidget {
 		QFontMetrics *standardBoldItalic;
 
 		bool isFontFixed;
+
+		bool m_insidePaintEvent;
 		/**
 		 * size of the left margin (used to draw line number)
 		 */
-		unsigned int marginLeft;
+		int marginLeft;
 
 		// last line number
 		QMap<int,QString> keys;
-		bool mTransparent;
-		QYZViewCell defaultCell;
 
 	friend class QYZisCursor;
+	friend class QYZisView;
 };
 
 #endif

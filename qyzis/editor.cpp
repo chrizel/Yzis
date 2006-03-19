@@ -357,17 +357,18 @@ void QYZisEdit::drawSetMaxLineNumber( int max ) {
 void QYZisEdit::drawSetLineNumber( int y, int n, int h, QPainter* p ) {
 	fakeLine = n <= 0;
 
-	QString num;
-	if ( !fakeLine && h == 0 )
-		num = QString::number( n );
-	num = num.rightJustified( marginLeft - 1, ' ' );
-
 	QRect r( 0, y*fontMetrics().lineSpacing(), GETX(marginLeft - spaceWidth), fontMetrics().lineSpacing() );
 	p->eraseRect( r );
 	if ( h == 0 ) {
 		p->save();
 		p->setPen( Qt::yellow ); // XXX Setting
+
+		QString num;
+		if ( !fakeLine && h == 0 )
+			num = QString::number( n );
+		num = num.rightJustified( marginLeft - 1, ' ' );
 		p->drawText( r, num );
+
 		p->restore();
 	}
 }

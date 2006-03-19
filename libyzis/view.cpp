@@ -1895,8 +1895,8 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	toY = qMin( toY, fh - 1 );
 	m_drawBuffer.setColor( Qt::cyan );
 	for( ; curY <= toY; ++curY ) {
-		if ( number ) drawSetLineNumber( curY - shiftY, 0, 0 );
 		m_drawBuffer.newline( curY - shiftY );
+		if ( number ) drawSetLineNumber( curY - shiftY, 0, 0 );
 		m_drawBuffer.push( "~" );
 		drawClearToEOL( 1, curY - shiftY, ' ' );
 	}

@@ -74,8 +74,8 @@ class KYZisView: public KTextEditor::View, public KTextEditor::ViewCursorInterfa
 		virtual void syncViewInfo();
 		void displayInfo( const QString& info );
 
-		void KYZisView::wheelEvent( QWheelEvent * e );
-		void KYZisView::contextMenuEvent( QContextMenuEvent * e );
+		void wheelEvent( QWheelEvent * e );
+		void contextMenuEvent( QContextMenuEvent * e );
 
 		void applyConfig( bool refresh = true );
 

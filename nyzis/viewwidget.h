@@ -92,7 +92,7 @@ public slots:
 		void endPaintEvent();
 		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
 		virtual void drawSetMaxLineNumber( int max );
-		virtual void drawSetLineNumber( int y, int n );
+		virtual void drawSetLineNumber( int y, int n, int h );
 
 		bool fakeLine; /* true if current line is a fake one (eg: ~) */
 

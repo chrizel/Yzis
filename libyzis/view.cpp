@@ -28,8 +28,6 @@
 
 #include "view.h"
 
-#include <QApplication>
-#include <QClipboard>
 #include "portability.h"
 #include <cstdlib>
 #include <ctype.h>
@@ -1848,8 +1846,8 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 
 		clearToEOL = drawEntireLine || drawIt && curY != tY;
 
-		if ( drawLine && number && lineHeight() == 1 ) { /* lineHeight() == 1 => we are on the first line of the line */
-			drawSetLineNumber( curY - shiftY, drawLineNumber() );
+		if ( drawLine && number ) {
+			drawSetLineNumber( curY - shiftY, drawLineNumber(), lineHeight() - 1 );
 		}
 
 		if ( drawIt ) {
@@ -1897,7 +1895,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	toY = qMin( toY, fh - 1 );
 	m_drawBuffer.setColor( Qt::cyan );
 	for( ; curY <= toY; ++curY ) {
-		if ( number ) drawSetLineNumber( curY - shiftY, 0 );
+		if ( number ) drawSetLineNumber( curY - shiftY, 0, 0 );
 		m_drawBuffer.newline( curY - shiftY );
 		m_drawBuffer.push( "~" );
 		drawClearToEOL( 1, curY - shiftY, ' ' );

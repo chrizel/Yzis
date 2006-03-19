@@ -161,8 +161,8 @@ void KYZisView::drawSetMaxLineNumber( int max ) {
 	mVScroll->setMaxValue( max );
 	m_editor->drawSetMaxLineNumber( max );
 }
-void KYZisView::drawSetLineNumber( int y, int n ) {
-	m_editor->drawSetLineNumber( y, n, m_painter );
+void KYZisView::drawSetLineNumber( int y, int n, int h ) {
+	m_editor->drawSetLineNumber( y, n, h, m_painter );
 }
 unsigned int KYZisView::stringWidth( const QString& str ) const {
 	return m_editor->fontMetrics().width( str );

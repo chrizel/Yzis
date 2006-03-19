@@ -351,11 +351,11 @@ void KYZisEdit::drawSetMaxLineNumber( int max ) {
 		updateArea();
 	}
 }
-void KYZisEdit::drawSetLineNumber( int y, int n, QPainter* p ) {
-
+void KYZisEdit::drawSetLineNumber( int y, int n, int h, QPainter* p ) {
 	fakeLine = n <= 0;
+
 	QString num;
-	if ( !fakeLine )
+	if ( !fakeLine && h == 0 )
 		num = QString::number( n );
 	num = num.rightJustified( marginLeft - 1, ' ' );
 

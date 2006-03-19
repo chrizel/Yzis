@@ -136,7 +136,7 @@ class KYZisView: public KTextEditor::View,
 
 	protected :
 		void drawSetMaxLineNumber( int max );
-		void drawSetLineNumber( int y, int n );
+		void drawSetLineNumber( int y, int n, int h );
 		
 
   // KTextEditor::View Stuff

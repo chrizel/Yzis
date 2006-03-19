@@ -34,9 +34,6 @@
 #include "session.h"
 #include "viewcursor.h"
 
-#include <QApplication>
-
-
 YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mType = YZMode::MODE_VISUAL;
 	mString = _( "[ Visual ]" );

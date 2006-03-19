@@ -85,7 +85,7 @@ class QYZisView: public QWidget, public YZView
 	
 	protected:
 		void drawSetMaxLineNumber( int max );
-		void drawSetLineNumber( int y, int n );
+		void drawSetLineNumber( int y, int n, int h );
 		virtual void preparePaintEvent( int y_min, int y_max );
 		virtual void endPaintEvent();
 		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );

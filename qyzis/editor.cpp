@@ -354,22 +354,22 @@ void QYZisEdit::drawSetMaxLineNumber( int max ) {
 		updateArea();
 	}
 }
-void QYZisEdit::drawSetLineNumber( int y, int n, QPainter* p ) {
-
+void QYZisEdit::drawSetLineNumber( int y, int n, int h, QPainter* p ) {
 	fakeLine = n <= 0;
+
 	QString num;
-	if ( !fakeLine )
+	if ( !fakeLine && h == 0 )
 		num = QString::number( n );
 	num = num.rightJustified( marginLeft - 1, ' ' );
 
-	p->save();
-
 	QRect r( 0, y*fontMetrics().lineSpacing(), GETX(marginLeft - spaceWidth), fontMetrics().lineSpacing() );
-//	p->eraseRect( r );
-	p->setPen( Qt::yellow ); // XXX Setting
-	p->drawText( r, num );
-
-	p->restore();
+	p->eraseRect( r );
+	if ( h == 0 ) {
+		p->save();
+		p->setPen( Qt::yellow ); // XXX Setting
+		p->drawText( r, num );
+		p->restore();
+	}
 }
 
 void QYZisEdit::drawMarginLeft( int min_y, int max_y, QPainter* p ) {
@@ -379,7 +379,7 @@ void QYZisEdit::drawMarginLeft( int min_y, int max_y, QPainter* p ) {
 
 		int x = GETX( marginLeft - spaceWidth );
 		yzDebug() << "::drawMarginLeft bg : " << p->background().color().name() << endl;
-		p->eraseRect( 0, min_y, GETX(spaceWidth), max_y - min_y );
+		p->eraseRect( x, min_y, GETX(spaceWidth), max_y - min_y );
 
 		x += GETX(spaceWidth) / 2;
 		p->drawLine( x, min_y, x, max_y );

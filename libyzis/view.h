@@ -770,7 +770,7 @@ class YZIS_EXPORT YZView {
 		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg ) = 0;
 		virtual void drawClearToEOL( int x, int y, const QChar& clearChar ) = 0;
 		virtual void drawSetMaxLineNumber( int max ) = 0;
-		virtual void drawSetLineNumber( int y, int n ) = 0;
+		virtual void drawSetLineNumber( int y, int n, int h ) = 0;
 
 		YZDrawBuffer m_drawBuffer;
 

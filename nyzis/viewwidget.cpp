@@ -220,11 +220,11 @@ void NYZView::drawSetMaxLineNumber( int max ) {
 		updateVis();
 	}
 }
-void NYZView::drawSetLineNumber( int y, int n ) {
-
+void NYZView::drawSetLineNumber( int y, int n, int h ) {
 	fakeLine = n <= 0;
+
 	QString num;
-	if ( !fakeLine )
+	if ( !fakeLine && h == 0 )
 		num = QString::number( n );
 	num = num.rightJustified( marginLeft - 1, ' ' ) + ' ';
 

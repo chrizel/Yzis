@@ -138,6 +138,14 @@ void NYZView::drawCell( int x, int y, const YZDrawCell& cell, void* ) {
 		x += marginLeft;
 	}
 
+	/*
+	 * XXX: reverse bg/fg... but... how set bg ? 
+	if ( cell.sel & YZSelectionPool::Visual ) {
+	 }
+	 */
+
+		
+
 	int mAttributes;
 	int rawcolor = c.rgb() & RGB_MASK;
 	if ( mAttributesMap.contains( rawcolor ) ) {
@@ -155,9 +163,10 @@ void NYZView::drawCell( int x, int y, const YZDrawCell& cell, void* ) {
 			c.blue() << ")" <<
 			endl;*/
 	}
-	//if ( drawSelected() ) mAttributes |= A_REVERSE;
+	if ( cell.sel ) mAttributes |= A_REVERSE; // XXX, reverse bg/fg
 	//if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
 
+	/* convert string to wide_char */
 	QByteArray my_char = cell.c.toLocal8Bit();
 	char* from_char = new char[ my_char.length() + 1 ];
 	strcpy( from_char, my_char.constData() );

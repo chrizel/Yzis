@@ -102,6 +102,7 @@ class YZIS_EXPORT YZSelection {
 	friend YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s );
 
 	public:
+		YZSelection();
 		YZSelection( const QString& name );
 
 		YZSelectionMap map() const;
@@ -118,6 +119,12 @@ class YZIS_EXPORT YZSelection {
 
 		YZSelection clip( const YZInterval& bound ) const;
 		
+		/** 
+		 * operators
+		 */
+		/* shift the entier selection */
+		const YZSelection operator-( const YZCursor& pos ) const;
+
 		static YZSelection diff( const YZSelection& _m1, const YZSelection& _m2 );
 
 	private:
@@ -160,6 +167,12 @@ class YZIS_EXPORT YZDoubleSelection {
 
 class YZIS_EXPORT YZSelectionPool {
 	public:
+		enum Layout_enum {
+			None	= 0x00000000,
+			Visual	= 0x00000001,
+			Search	= 0x00000002,
+		};
+
 		YZSelectionPool();
 		virtual ~YZSelectionPool();
 

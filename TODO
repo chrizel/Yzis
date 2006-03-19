@@ -9,9 +9,14 @@
 - yz configure -> G, should be slow, but gg then G should be faster (no ?) //mm
 
 drawBuffer:
+  - font properties
   - selection
   - :set rightleft
+  - non-fixed fonts
   - marker
+
+nyzis:
+  - support bg color
 
 kyzis:
   - update() when lib wants redraw something (without endless loop;)

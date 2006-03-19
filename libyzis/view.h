@@ -454,8 +454,6 @@ class YZIS_EXPORT YZView {
 		 */
 		unsigned int drawTotalHeight();
 
-		bool drawSelected() const;
-
 		//-------------------------------------------------------
 		// ----------------- Undo
 		//-------------------------------------------------------
@@ -902,7 +900,6 @@ class YZIS_EXPORT YZView {
 
 		QChar mFillChar;
 		QChar lastChar;
-		bool charSelected;
 		bool listChar;
 
 		QChar m_lineFiller;

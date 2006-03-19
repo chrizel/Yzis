@@ -21,13 +21,15 @@
  * $Id$
  */
 
+#include <debug.h>
 
 #include "drawbuffer.h"
 #include "view.h"
 
-#include <debug.h>
-
-YZDrawBuffer::YZDrawBuffer() : m_content() {
+YZDrawBuffer::YZDrawBuffer() : 
+	m_content(),
+	m_sel()
+{
 	m_view = NULL;
 	m_callback_arg = NULL;
 	m_line = NULL;
@@ -81,8 +83,20 @@ void YZDrawBuffer::setColor( const YZColor& c ) {
 		changed = true;
 	}
 }
+void YZDrawBuffer::setBackgroundColor( const YZColor& c ) {
+	if ( c.rgb() != m_cur.bg.rgb() ) {
+		m_cur.bg.setRgb( c.rgb() );
+		changed = true;
+	}
+}
+void YZDrawBuffer::setSelection( int sel ) {
+	if ( sel != m_cur.sel ) {
+		m_cur.sel = sel;
+		changed = true;
+	}
+}
 
-void YZDrawBuffer::push( const QString& c ) {
+void YZDrawBuffer::push( const QChar& c ) {
 	if ( changed ) {
 		/* flush last vector */
 		flush();
@@ -91,6 +105,24 @@ void YZDrawBuffer::push( const QString& c ) {
 		insert_section();
 	}
 	m_cell->c.append( c );
+}
+
+void YZDrawBuffer::push( const QString& c ) {
+	YZCursor pos( v_xi + m_cell->c.length(), m_y );
+	YZCursor step(1,0);
+	for ( int i = 0; i < c.length(); ++i ) {
+		int sel = YZSelectionPool::None;
+		foreach( YZSelectionPool::Layout_enum layout, m_sel.keys() ) {
+			if ( m_sel[layout].contains(pos) )
+				sel |= layout;
+		}
+		if ( sel ) {
+			yzDebug() << "" << pos << " => sel : " << sel << endl;
+		}
+		setSelection( sel );
+		push( c[i] );
+		pos = pos + step;
+	}
 }
 
 void YZDrawBuffer::newline( int y ) {
@@ -125,6 +157,8 @@ void YZDrawBuffer::insert_section( int pos ) {
 	/* copy properties */
 	YZDrawCell n;
 	n.fg.setRgb( m_cur.fg.rgb() );
+	n.bg.setRgb( m_cur.bg.rgb() );
+	n.sel = m_cur.sel;
 
 	if ( pos >= m_line->size() ) {
 		m_line->resize( pos + 1 );
@@ -264,6 +298,11 @@ void YZDrawBuffer::replace( const YZInterval& interval ) {
 		}
 	}
 //	yzDebug() << "after replace:" << endl << (*this) << "----" << endl;
+}
+
+void YZDrawBuffer::setSelectionLayout( YZSelectionPool::Layout_enum layout, const YZSelection& selection ) {
+	m_sel[ layout ].setMap( selection.map() );
+	yzDebug() << "setSelection: " << layout << "=" << m_sel[layout] << endl;
 }
 
 YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff ) {

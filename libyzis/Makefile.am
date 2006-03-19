@@ -3,9 +3,11 @@ lib_LTLIBRARIES = libyzis.la
 
 libyzis_la_SOURCES = \
 		drawbuffer.cpp \
+		view.cpp \
+		selection.cpp \
 		session.cpp mode.cpp mode_command.cpp mode_search.cpp \
-		mode_visual.cpp mode_ex.cpp mode_insert.cpp view.cpp search.cpp mark.cpp action.cpp \
-		cursor.cpp selection.cpp line.cpp buffer.cpp linesearch.cpp debug.cpp \
+		mode_visual.cpp mode_ex.cpp mode_insert.cpp search.cpp mark.cpp action.cpp \
+		cursor.cpp line.cpp buffer.cpp linesearch.cpp debug.cpp \
 		internal_options.cpp option.cpp registers.cpp undo.cpp ex_lua.cpp swapfile.cpp \
 		schema.cpp viewcursor.cpp mapping.cpp events.cpp syntaxdocument.cpp \
 		syntaxhighlight.cpp attribute.cpp yzisinfo.cpp yzisinfostartpositionrecord.cpp \

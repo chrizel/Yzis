@@ -346,17 +346,3 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 	mView->emitSelectionChanged();
 }
 
-void YZModeVisualBlock::toClipboard( YZView* mView ) {
-	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-	YZSession::me->setClipboardText( mView->myBuffer()->getText( interval ).join( "\n" ), Clipboard::Selection );
-
-/*
-#ifdef Q_WS_X11
-	if ( QX11Info::display() )
-#endif
-		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
-*/
-
-}
-
-

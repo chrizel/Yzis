@@ -117,7 +117,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines)
 
 	rHLnoAttribs = false;
 	rHLAttributesLen = 0;
-	listChar = charSelected = false;
+	listChar = false;
 	mFillChar = ' ';
 
 	lineDY = 0;
@@ -1226,7 +1226,6 @@ bool YZView::drawNextCol( ) {
 		unsigned int lenToTest;
 		lastChar = sCurLine.at( curx );
 		mFillChar = ' ';
-		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
 			listChar = drawMode && opt_list && lastChar == ' ';
 			if ( listChar ) {
@@ -1280,7 +1279,6 @@ bool YZView::drawNextCol( ) {
 	} else if ( sCurLineLength == 0 && drawMode && curx == 0 ) { // empty line
 		ret = true;
 		lastChar = ' ';
-		charSelected = selectionPool->isSelected( workCursor->buffer() );
 		workCursor->setScreenX( 1 );
 		workCursor->setBufferX( 1 );
 	}
@@ -1343,9 +1341,6 @@ unsigned int YZView::lineIncrement() const {
 }
 unsigned int YZView::lineHeight() const {
 	return workCursor->lineHeight;
-}
-bool YZView::drawSelected() const {
-	return charSelected;
 }
 
 const YZColor& YZView::drawColor ( unsigned int col, unsigned int line ) const {
@@ -1768,7 +1763,6 @@ unsigned int YZView::getSpaceWidth() const
 	return spaceWidth;
 }
 
-
 void YZView::preparePaintEvent( int , int ) {
 }
 void YZView::endPaintEvent() {
@@ -1799,26 +1793,6 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 		/* entire screen has been updated already */
 		return;
 	}
-	/*
-
-	bool rightleft = getLocalBooleanOption( "rightleft" );
-
-	int flag = (rightleft ? Qt::AlignRight : Qt::AlignLeft);
-
-	unsigned int lineCount = myBuffer()->lineCount();
-	unsigned int my_marginLeft = 0;
-	if ( number ) { // update marginLeft
-		my_marginLeft = ( isFontFixed ? QString::number( lineCount ).length() + 2 : mParent->stringWidth( " " + QString::number( lineCount ) + "  " ) );
-	}
-	if ( marginLeft != my_marginLeft ) {
-		if ( mCursor->visible() ) {
-			mCursor->move( qMax( (int)( mCursor->x() + GETX( marginLeft - my_marginLeft ) ), 0 ), mCursor->y() );
-		}
-		marginLeft = my_marginLeft;
-		updateArea();
-		return;
-	}
-*/
 
 	/* to calculate relative position */
 	unsigned int shiftY = getDrawCurrentTop(); 
@@ -1856,6 +1830,10 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	bool clearToEOL; /* if we have to clear the rest of line */
 
 	bool interval_changed  = true;
+
+	/* set selection layouts */
+	m_drawBuffer.setSelectionLayout( YZSelectionPool::Search, *getSelectionPool()->search() - scrollCursor->screen() ); //XXX: search map is buffer only
+	m_drawBuffer.setSelectionLayout( YZSelectionPool::Visual, getSelectionPool()->visual()->screen() - scrollCursor->screen() );
 
 	while( curY <= toY && drawNextLine() ) {
 		curX = shiftX;
@@ -1943,6 +1921,4 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 
 	endPaintEvent();
 }
-
-
 

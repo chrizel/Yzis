@@ -35,6 +35,8 @@
 
 class YZView;
 
+typedef QMap<YZSelectionPool::Layout_enum, YZSelection> YZSelectionLayout;
+
 struct YZDrawCell {
 	bool valid;
 	int flag;
@@ -42,6 +44,7 @@ struct YZDrawCell {
 	QString c;
 	YZColor bg;
 	YZColor fg;
+	int sel;
 	YZDrawCell():
 		flag( 0 ),
 		font(), c(), bg(), fg() {
@@ -74,6 +77,8 @@ class YZIS_EXPORT YZDrawBuffer {
 
 		void setFont( const YZFont& f );
 		void setColor( const YZColor& c );
+		void setBackgroundColor( const YZColor& c );
+		void setSelection( int sel );
 
 		bool seek( const YZCursor& pos, YZDrawBuffer::whence w );
 
@@ -81,10 +86,13 @@ class YZIS_EXPORT YZDrawBuffer {
 
 		void replace( const YZInterval& interval );
 
+		void setSelectionLayout( YZSelectionPool::Layout_enum layout, const YZSelection& selection );
 
 	private :
 		void insert_section( int pos = -1 );
 		void insert_line( int pos = -1 );
+
+		void push( const QChar& c );
 
 		void callback( int x, int y, const YZDrawCell& cell );
 
@@ -99,6 +107,9 @@ class YZIS_EXPORT YZDrawBuffer {
 		YZDrawSection* m_line;
 		/* current cell */
 		YZDrawCell* m_cell;
+
+		/* current selection layouts */
+		YZSelectionLayout m_sel;
 
 		int v_xi; /* column of the current section */
 		int v_x; /* current draw column */

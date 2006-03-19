@@ -122,7 +122,7 @@ bool YZInterval::contains( const YZInterval& i ) const {
 }
 
 const YZInterval operator- ( const YZInterval& l, const YZCursor& r ) {
-	return YZInterval( l.from() - r, l.to() - r );
+	return YZInterval( qMax(l.from()-r,YZBound(YZCursor(0,0))), qMax(l.to()-r,YZBound(YZCursor(0,0),true)) );
 }
 
 YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i ) {
@@ -142,6 +142,9 @@ YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i ) {
 /**
  * YZSelection
  */
+YZSelection::YZSelection() {
+	mMap.clear();
+}
 YZSelection::YZSelection( const QString& name ) {
 	mName = name;
 	mMap.clear();
@@ -381,7 +384,17 @@ YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s ) {
 		out << "(" << s.mName << " " << i << ") " << s.mMap[ i ] << endl;
 	return out;
 }
-
+const YZSelection YZSelection::operator-( const YZCursor& pos ) const {
+	YZSelection ret( mName );
+	int i;
+	int size = mMap.size();
+	for ( i = 0; i < size && mMap[i].to() < pos; ++i )
+		;
+	for ( ; i < size; ++i ) {
+		ret.addInterval( mMap[i] - pos );
+	}
+	return ret;
+}
 
 YZDoubleSelection::YZDoubleSelection( const QString& name ) {
 	bSelection = new YZSelection( name + " buffer" );

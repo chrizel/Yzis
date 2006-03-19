@@ -131,10 +131,11 @@ void YZDrawBuffer::insert_line( int pos ) {
 	if ( pos == -1 )
 		pos = m_y + 1;
 
-	if ( pos <= m_content.size() )
+//XXX make sure of that
+//	if ( pos <= m_content.size() )
 		m_content.resize( pos + 1 );
-	else
-		m_content.insert( pos, YZDrawSection() );
+//	else
+//		m_content.insert( pos, YZDrawSection() );
 
 	m_y = pos;
 	m_line =& m_content[m_y];

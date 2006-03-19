@@ -325,16 +325,19 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 		toLine = fromLine;
 		fromLine = tmp;
 	}
+	yzDebug() << "visual block : from " << fromCol << "," << fromLine << " to " << toCol << "," << toLine << endl;
 	YZInterval sI, bI;
 	for ( unsigned int i = fromLine; i <= toLine; i++ ) {
+
 		mView->gotodxy( &cur, fromCol, i );
-		if ( cur.screenX() < fromCol ) continue; // too far, skip this line
 		sI.setFromPos( YZCursor(fromCol,cur.screenY()) );
 		bI.setFromPos( cur.buffer() );
+
 		mView->gotodxy( &cur, toCol, i );
-//		if ( cur.screenX() > toCol ) continue; // XXX handling tab is not easy
+		if ( cur.screenX() < fromCol ) continue; // too far, skip this line
 		sI.setTo( YZBound(YZCursor(toCol,cur.screenY())) );
 		bI.setTo( YZBound(cur.buffer()) );
+
 		visual->addInterval( bI, sI );
 //		yzDebug() << "visual block>" << bI << ", " << sI << endl;
 	}

@@ -116,9 +116,6 @@ void YZDrawBuffer::push( const QString& c ) {
 			if ( m_sel[layout].contains(pos) )
 				sel |= layout;
 		}
-		if ( sel ) {
-			yzDebug() << "" << pos << " => sel : " << sel << endl;
-		}
 		setSelection( sel );
 		push( c[i] );
 		pos = pos + step;

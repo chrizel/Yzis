@@ -3,18 +3,16 @@ project(yzis)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-find_package(KDE4 REQUIRED)
+#non-required
+find_package(KDE4)
 
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
-add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-
-link_directories(${KDE4_LIB_DIR})
+add_definitions(${QT_DEFINITIONS})
 
 include(ConvenienceLibs.cmake)
 
 #include(ManualStuff.cmake)
-
 #include(ConfigureChecks.cmake)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h )
@@ -24,67 +22,17 @@ macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/config.h ${CMAKE_CURRE
 
 add_subdirectory( libyzis )
 add_subdirectory( nyzis )
+add_subdirectory( qyzis )
+
+#conditional KDE build
+if (KDE4_FOUND)
+	add_definitions(${KDE4_DEFINITIONS})
+	link_directories(${KDE4_LIB_DIR})
+	include_directories( ${KDE4_INCLUDE_DIR} )
+	add_subdirectory( kyzis )
+endif (KDE4_FOUND)
+
 add_subdirectory( translations )
 
-#message(STATUS "${CMAKE_CURRENT_SOURCE_DIR}: skipped subdir $(TOPSUBDIRS)")
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
+include_directories( ${QT_INCLUDES} )
 
-
-########### install files ###############
-
-
-#original Makefile.am contents follow:
-
-#COMPILE_FIRST = libyzis translations
-#
-#localedir = $(DESTDIR)$(prefix)/share/yzis/locale
-#
-#$(top_srcdir)/configure.in: configure.in.in $(top_srcdir)/subdirs
-#	cd $(top_srcdir) && $(MAKE) -f admin/Makefile.common configure.in ;
-#
-#$(top_srcdir)/subdirs:
-#	cd $(top_srcdir) && $(MAKE) -f admin/Makefile.common subdirs
-#
-#$(top_srcdir)/acinclude.m4: $(top_srcdir)/yzis-kde.m4.in.patch $(top_srcdir)/admin/acinclude.m4.in $(top_srcdir)/admin/libtool.m4.in $(top_srcdir)/yzis.m4.in
-#	@cd $(top_srcdir) && cp -f admin/acinclude.m4.in . && cat yzis-kde.m4.in.patch | patch -p0 && cat acinclude.m4.in admin/libtool.m4.in yzis.m4.in > acinclude.m4 && rm -f acinclude.m4.in
-#
-#MAINTAINERCLEANFILES = subdirs configure.in acinclude.m4 configure.files 
-#
-#package-messages:
-#	$(MAKE) -f admin/Makefile.common package-messages
-#	$(MAKE) -C po merge
-#
-#EXTRA_DIST = admin 
-#
-#dist-hook:
-#	cd $(top_distdir) && perl admin/am_edit -padmin
-#	cd $(top_distdir) && $(MAKE) -f admin/Makefile.common subdirs
-#
-#apidox:
-#	$(mkinstalldirs) doc/api; \
-#	if test ! -x doc/common; then \
-#	$(LN_S) $(kde_libs_htmldir)/en/common doc/common ; \
-#	fi; \
-#	cp $(top_srcdir)/admin/Doxyfile.global yzis.doxyfile; \
-#	echo "PROJECT_NAME        = Yzis" >> yzis.doxyfile; \
-#	echo "PROJECT_NUMBER      = \"Version M3\"" >> yzis.doxyfile; \
-#	echo "INPUT               = $(srcdir)" >> yzis.doxyfile; \
-#	echo "OUTPUT_DIRECTORY    = doc/api" >> yzis.doxyfile; \
-#	echo "HTML_OUTPUT         = html" >> yzis.doxyfile; \
-#	echo "GENERATE_HTML       = YES" >> yzis.doxyfile ; \
-#	echo "GENERATE_MAN        = NO" >> yzis.doxyfile ; \
-#	echo "GENERATE_LATEX      = NO" >> yzis.doxyfile ; \
-#	echo "HTML_HEADER         = doc/common/header.html" >> yzis.doxyfile ; \
-#	echo "HTML_FOOTER         = " >> yzis.doxyfile ; \
-#	echo "HTML_STYLESHEET     = doc/common/doxygen.css" >> yzis.doxyfile ; \
-#	echo "FILE_PATTERNS       = *.h" >> yzis.doxyfile ; \
-#	echo "PREDEFINED          = DO_NOT_DOCUMENT" >> yzis.doxyfile ; \
-#	echo "EXTRACT_ALL         = YES" >> yzis.doxyfile ; \
-#	doxygen yzis.doxyfile
-#
-#
-#tags: FORCE
-#	rm -f $@
-#	find -name '*.cpp' -o -name '*.h' -o -name '*.c' | xargs ctags -a
-#
-#SUBDIRS=$(TOPSUBDIRS)

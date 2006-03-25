@@ -4,9 +4,12 @@ set(prefix              ${CMAKE_INSTALL_PREFIX})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/translator.h.in ${CMAKE_CURRENT_BINARY_DIR}/translator.h @ONLY)
 
+find_package(LibLua50 REQUIRED)
+find_package(LibLuaLib50 REQUIRED)
+
 macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/translator.h )
 
-include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/libyzis ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
+include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/libyzis ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} )
 
 
 ########### next target ###############
@@ -61,7 +64,7 @@ kde4_automoc(${yzis_LIB_SRCS})
 
 kde4_add_library(yzis SHARED ${yzis_LIB_SRCS})
 
-target_link_libraries(yzis  ${KDE4_KDECORE_LIBS} )
+target_link_libraries(yzis  ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${LIBLUA50_LIBRARIES} ${LIBLUALIB50_LIBRARIES} )
 
 set_target_properties(yzis PROPERTIES VERSION 0.0.0 SOVERSION 0 )
 install_targets(${LIB_INSTALL_DIR} yzis )

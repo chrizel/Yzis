@@ -25,7 +25,7 @@
 
 #include "viewwidget.h"
 #include "session.h"
-#include <ncurses.h>
+#include <ncursesw/ncurses.h>
 
 class YZViewId;
 
@@ -35,11 +35,6 @@ class NYZFactory : public YZSession
 
 public:
 	static NYZFactory *self;
-
-public slots:
-	bool processInput( int );
-
-public:
 	/**
 	 * Constructor. Give a session name to identify/save/load sessions.
 	 */
@@ -78,8 +73,9 @@ private:
 	static QMap<int,QString> keycodes; // map Ncurses to Qt codes
 	QString m_initialCommand;
 
-public slots:
+public Q_SLOTS:
 	void init();
+	bool processInput( int );
 
 };
 

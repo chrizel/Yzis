@@ -21,8 +21,14 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yzismacros.h.in ${CMAKE_CURRENT_BINAR
 macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/config.h ${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h )
 
 add_subdirectory( libyzis )
-add_subdirectory( nyzis )
-add_subdirectory( qyzis )
+
+find_package(Ncurses)
+if (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+	message (STATUS "The ncurses library does not support wide-character, nyzis will not be compiled.")
+else (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+	add_subdirectory( nyzis )
+endif (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+
 
 #conditional KDE build
 if (KDE4_FOUND)
@@ -33,6 +39,7 @@ if (KDE4_FOUND)
 endif (KDE4_FOUND)
 
 add_subdirectory( translations )
+add_subdirectory( qyzis )
 
 include_directories( ${QT_INCLUDES} )
 

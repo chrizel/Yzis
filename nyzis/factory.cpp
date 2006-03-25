@@ -395,4 +395,4 @@ void NYZFactory::initialiseKeycodes()
 		keycodes[ KEY_MAX ] = ;*/
 }
 
-
+#include "factory.moc"

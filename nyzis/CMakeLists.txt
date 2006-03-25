@@ -1,19 +1,19 @@
 kde4_header()
 
-include_directories( ${CMAKE_SOURCE_DIR}/libyzis/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
+include_directories( ${NCURSES_INCLUDE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/libyzis/ ${CMAKE_BINARY_DIR}/libyzis/ ${QT_INCLUDES} )
 
 
 ########### next target ###############
 
-set(yzis_SRCS viewwidget.cpp factory.cpp main.cpp )
+set(nyzis_SRCS viewwidget.cpp factory.cpp main.cpp )
 
-kde4_automoc(${yzis_SRCS})
+kde4_automoc(${nyzis_SRCS})
+kde4_add_executable(nyzis ${nyzis_SRCS})
 
-kde4_add_executable(yzis ${yzis_SRCS})
+add_definitions("-DQT3_SUPPORT")
+target_link_libraries(nyzis ${NCURSES_LIBRARIES} ${QT_QTCORE_LIBRARY} yzis )
 
-target_link_libraries(yzis  ${KDE4_KDECORE_LIBS} yzis )
-
-install_targets(/bin yzis )
+install_targets(/bin nyzis )
 
 
 ########### install files ###############

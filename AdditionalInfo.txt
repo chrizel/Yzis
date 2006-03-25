@@ -1,0 +1,7 @@
+.h.in-Files
+config.h.in
+yzismacros.h.in
+libyzis/translator.h.in
+
+.in.in-Files
+configure.in.in

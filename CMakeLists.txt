@@ -10,7 +10,8 @@ find_package(Magic REQUIRED)
 
 macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/translator.h )
 
-include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/libyzis ${KDE4_INCLUDE_DIR} ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR} )
+add_definitions("-DQT3_SUPPORT")
+include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/libyzis ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR} )
 
 
 ########### next target ###############
@@ -65,7 +66,7 @@ kde4_automoc(${yzis_LIB_SRCS})
 
 kde4_add_library(yzis SHARED ${yzis_LIB_SRCS})
 
-target_link_libraries(yzis  ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${LIBLUA50_LIBRARIES} ${LIBLUALIB50_LIBRARIES} ${MAGIC_LIBRARIES} )
+target_link_libraries(yzis  ${QT_QT3SUPPORT_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${LIBLUA50_LIBRARIES} ${LIBLUALIB50_LIBRARIES} ${MAGIC_LIBRARIES} )
 
 set_target_properties(yzis PROPERTIES VERSION 0.0.0 SOVERSION 0 )
 install_targets(${LIB_INSTALL_DIR} yzis )

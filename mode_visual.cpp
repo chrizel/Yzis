@@ -34,9 +34,6 @@
 #include "session.h"
 #include "viewcursor.h"
 
-#include <QApplication>
-
-
 YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mType = YZMode::MODE_VISUAL;
 	mString = _( "[ Visual ]" );
@@ -325,16 +322,19 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 		toLine = fromLine;
 		fromLine = tmp;
 	}
+	yzDebug() << "visual block : from " << fromCol << "," << fromLine << " to " << toCol << "," << toLine << endl;
 	YZInterval sI, bI;
 	for ( unsigned int i = fromLine; i <= toLine; i++ ) {
+
 		mView->gotodxy( &cur, fromCol, i );
-		if ( cur.screenX() < fromCol ) continue; // XXX handling tab is not easy
-		sI.setFromPos( cur.screen() );
+		sI.setFromPos( YZCursor(fromCol,cur.screenY()) );
 		bI.setFromPos( cur.buffer() );
+
 		mView->gotodxy( &cur, toCol, i );
-//		if ( cur.screenX() > toCol ) continue; // XXX handling tab is not easy
-		sI.setTo( YZBound(cur.screen()) );
+		if ( cur.screenX() < fromCol ) continue; // too far, skip this line
+		sI.setTo( YZBound(YZCursor(toCol,cur.screenY())) );
 		bI.setTo( YZBound(cur.buffer()) );
+
 		visual->addInterval( bI, sI );
 //		yzDebug() << "visual block>" << bI << ", " << sI << endl;
 	}
@@ -345,18 +345,4 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 	toClipboard( mView );
 	mView->emitSelectionChanged();
 }
-
-void YZModeVisualBlock::toClipboard( YZView* mView ) {
-	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-	YZSession::me->setClipboardText( mView->myBuffer()->getText( interval ).join( "\n" ), Clipboard::Selection );
-
-/*
-#ifdef Q_WS_X11
-	if ( QX11Info::display() )
-#endif
-		QApplication::clipboard()->setText( mView->myBuffer()->getText( interval ).join( "\n" ), QClipboard::Selection );
-*/
-
-}
-
 

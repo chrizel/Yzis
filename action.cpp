@@ -40,10 +40,6 @@
 
 #include <stdlib.h>
 #include <assert.h>
-#ifdef Q_WS_X11
-#include <QX11Info>
-#endif
-#include <QApplication>
 
 YZAction::YZAction( YZBuffer* buffer ) {
 	mBuffer = buffer;

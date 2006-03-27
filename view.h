@@ -35,6 +35,10 @@
 #include <QVector>
 #include <QCoreApplication>
 
+#include "drawbuffer.h"
+class YZDrawBuffer;
+struct YZDrawCell;
+
 class YZViewCursor;
 class YZCursor;
 class YZBuffer;
@@ -59,6 +63,8 @@ class YZFoldPool;
  * 
  */
 class YZIS_EXPORT YZView {
+
+	friend class YZDrawBuffer;
 
 	public:
 		//-------------------------------------------------------
@@ -441,14 +447,12 @@ class YZIS_EXPORT YZView {
 		/**
 		 * return current buffer line
 		 */
-		unsigned int drawLineNumber() const;
+		int drawLineNumber() const;
 
 		/**
 		 * total height ( draw )
 		 */
 		unsigned int drawTotalHeight();
-
-		bool drawSelected() const;
 
 		//-------------------------------------------------------
 		// ----------------- Undo
@@ -577,7 +581,7 @@ class YZIS_EXPORT YZView {
 		//-------------------------------------------------------
 		// ----------------- Paint Events
 		//-------------------------------------------------------
-		virtual void paintEvent( const YZSelection& drawMap ) = 0;
+		virtual void paintEvent( const YZSelection& drawMap );
 
 		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
 		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
@@ -601,7 +605,7 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Asks a redraw of the whole view
 		 */
-		void refreshScreen();
+		virtual void refreshScreen();
 
 		/**
 		 * recalcScreen refresh the screen and recalculate cursor position
@@ -757,7 +761,19 @@ class YZIS_EXPORT YZView {
 		bool stringHasOnlySpaces ( const QString& what );
 		
 		QString getLineStatusString() const;
-		
+
+		/*
+		 * painting
+		 */
+		virtual void preparePaintEvent( int y_min, int y_max ) = 0;
+		virtual void endPaintEvent() = 0;
+		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg ) = 0;
+		virtual void drawClearToEOL( int x, int y, const QChar& clearChar ) = 0;
+		virtual void drawSetMaxLineNumber( int max ) = 0;
+		virtual void drawSetLineNumber( int y, int n, int h ) = 0;
+
+		YZDrawBuffer m_drawBuffer;
+
 	private:
 
 		class  ViewInformation {
@@ -878,11 +894,12 @@ class YZIS_EXPORT YZView {
 		void initGoto( YZViewCursor* viewCursor );
 		void updateCurLine( );
 
+		bool m_paintAll;
+
 		int stickyCol;
 
 		QChar mFillChar;
 		QChar lastChar;
-		bool charSelected;
 		bool listChar;
 
 		QChar m_lineFiller;

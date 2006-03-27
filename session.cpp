@@ -37,13 +37,8 @@
 #include "yzisinfo.h"
 #include "ex_lua.h"
 
-#if QT_VERSION < 0x040000
-#include <qapplication.h>
-#include <qdir.h>
-#else
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDir>
-#endif
 
 #include "mode_command.h"
 #include "mode_complete.h"
@@ -300,7 +295,7 @@ void YZSession::sendMultipleKeys ( const QString& text) {
 	for (; it != end; ++it) {*/
 		YZView* cView = YZSession::me->currentView();
 		cView->sendMultipleKey(/* *it + "<ENTER>" */ text);
-		qApp->processEvents();
+		QCoreApplication::instance()->processEvents();
 /*	}*/
 }
 

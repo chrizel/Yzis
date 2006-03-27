@@ -31,9 +31,13 @@
 #include <qtimer.h>
 #include <QMenu>
 
+#include <ktexteditor/cursor.h>
+
 #include <kdebug.h>
 
 #include "viewwidget.h"
+
+#include <libyzis/drawbuffer.h>
 
 #include "settings.h"
 #include "yzis.h"
@@ -44,11 +48,12 @@
 #include "kyzis.h"
 
 KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
-	: KTextEditor::View (parent), YZView(doc->getBuffer(), KYZisFactory::self(), 10), m_popup(0)
+	: KTextEditor::View (parent), YZView(doc->getBuffer(), KYZisFactory::self(), 10), m_popup(0),
+	m_range()
 {
 	m_part = 0;
 	buffer = doc;
-	
+
 	m_editor = new KYZisEdit (this);
 	status = new KStatusBar (this);
 	command = new KYZisCommand (this);
@@ -68,7 +73,7 @@ KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
 	status->insertItem("",90,1);
 	status->setItemAlignment(90,Qt::AlignRight);
 
-	status->insertItem("",99,0,true);
+	status->insertItem("",99,0); //XXX: permanent = true
 	status->setItemAlignment(99,Qt::AlignRight);
 
 	g = new QGridLayout(this,1,1);
@@ -92,7 +97,6 @@ KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
 
 	applyConfig();
 	setupKeys();
-
 }
 
 KYZisView::~KYZisView () {
@@ -125,9 +129,40 @@ void KYZisView::scrollUp( int n ) {
 	m_editor->scrollUp( n );
 }
 
+void KYZisView::refreshScreen() {
+	if ( m_editor->marginLeft > 0 && !getLocalBooleanOption("number") )
+		m_editor->marginLeft = 0;
+	YZView::refreshScreen();
+}
+void KYZisView::preparePaintEvent( int min_y, int max_y ) {
+	yzDebug() << "KYZisView::preparePaintEvent" << endl;
+	m_painter = new QPainter( m_editor );
+	m_drawBuffer.setCallbackArgument( m_painter );
+	m_editor->drawMarginLeft( min_y, max_y, m_painter );
+}
+void KYZisView::endPaintEvent() {
+	delete m_painter;
+	yzDebug() << "KYZisView::endPaintEvent" << endl;
+}
 void KYZisView::paintEvent( const YZSelection& drawMap ) {
-	mVScroll->setMaxValue( buffer->lines() - 1 );
-	m_editor->paintEvent( drawMap );
+	if ( m_editor->m_insidePaintEvent ) {
+		YZView::paintEvent( drawMap );
+	} else {
+		m_editor->paintEvent( drawMap );
+	}
+}
+void KYZisView::drawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
+	m_editor->drawCell( x, y, cell, (QPainter*)arg );
+}
+void KYZisView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
+	m_editor->drawClearToEOL( x, y, clearChar, m_painter );
+}
+void KYZisView::drawSetMaxLineNumber( int max ) {
+	mVScroll->setMaxValue( max );
+	m_editor->drawSetMaxLineNumber( max );
+}
+void KYZisView::drawSetLineNumber( int y, int n, int h ) {
+	m_editor->drawSetLineNumber( y, n, h, m_painter );
 }
 unsigned int KYZisView::stringWidth( const QString& str ) const {
 	return m_editor->fontMetrics().width( str );
@@ -184,16 +219,17 @@ void KYZisView::unregisterModifierKeys( const QString& keys ) {
 
 void KYZisView::applyConfig( bool refresh ) {
 	m_editor->setFont( Settings::font() );
-	m_editor->setBackgroundMode( Qt::PaletteBase );
-	m_editor->setBackgroundColor( Settings::colorBG() );
-	m_editor->setPaletteForegroundColor( Settings::colorFG() );
-	m_editor->setTransparent( Settings::transparency(), (double)Settings::opacity() / 100., Settings::colorBG() );
+
+	double opacity = 1.;
+	if ( Settings::transparency() )
+		opacity = (double)Settings::opacity() / 100.;
+	m_editor->setPalette( Settings::colorFG(), Settings::colorBG(), opacity );
+
 	YzisHighlighting *yzis = myBuffer()->highlight();
 	if (yzis) {
 		myBuffer()->makeAttribs();
 		repaint(true);
-	}
-	if ( refresh ) {
+	} else if ( refresh ) {
 		m_editor->updateArea( );
 	}
 }
@@ -248,7 +284,7 @@ void KYZisView::scrollLineDown() {
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
 void KYZisView::scrollView( int value ) {
 	if ( value < 0 ) value = 0;
-	else if ( (unsigned int)value > buffer->lines() - 1 )
+	else if ( value > buffer->lines() - 1 )
 		value = buffer->lines() - 1;
 
 	// only redraw if the view actually moves
@@ -333,9 +369,13 @@ bool KYZisView::selection() const {
 	return !getSelectionPool()->visual()->isEmpty();
 }
 
+void KYZisView::emitSelectionChanged() {
+	YZInterval i = visualSelection()[0];
+	m_range.setRange( KTextEditor::Cursor(i.fromPos().x(),i.fromPos().y()), KTextEditor::Cursor(i.toPos().x(),i.toPos().y()) );
+}
+
 const KTextEditor::Range& KYZisView::selectionRange() const {
-	YZInterval i = getSelectionPool()->visual()->bufferMap()[ 0 ];
-	return KTextEditor::Range(i.fromPos().x(), i.fromPos().y(), i.toPos().x(), i.toPos().y());
+	return m_range;
 }
 
 QString KYZisView::selectionText() const {
@@ -358,7 +398,7 @@ bool KYZisView::selectAll() {
 	return setSelection( KTextEditor::Range(KTextEditor::Cursor(0, 0),KTextEditor::Cursor(buffer->lines() - 1, qMax( (int)(myBuffer()->textline( buffer->lines() - 1 ).length() - 1), 0 ))));
 }
 bool KYZisView::popupFileSaveAs() {
-	KURL url =	KFileDialog::getSaveURL();
+	KUrl url =	KFileDialog::getSaveURL();
 	if ( url.isEmpty() ) return false;//canceled
 	else if ( !url.isLocalFile() ) {
 		KMessageBox::sorry(parentWidget(), tr("Yzis is not able to save remote files for now" ), tr( "Remote files"));
@@ -403,19 +443,13 @@ KTextEditor::Cursor KYZisView::cursorPositionVirtual() const {
 }
 
 bool KYZisView::removeSelection() {
-
+	// TODO
+	return true;
 }
 
 bool KYZisView::removeSelectionText() {
-
-}
-
-const KTextEditor::Cursor& KYZisView::selectionStart() const {
-
-}
-
-const KTextEditor::Cursor& KYZisView::selectionEnd() const {
-
+	// TODO
+	return true;
 }
 
 void KYZisView::filenameChanged() {
@@ -426,6 +460,18 @@ void KYZisView::filenameChanged() {
 
 void KYZisView::highlightingChanged() {
 	sendRefreshEvent();
+}
+
+QPoint KYZisView::cursorToCoordinate(const KTextEditor::Cursor&/* cursor*/) const {
+	// TODO
+	return QPoint(0,0);
+}
+
+bool KYZisView::mouseTrackingEnabled() const {
+	return false;
+}
+bool KYZisView::setMouseTrackingEnabled( bool/* enabled */) {
+	return false;
 }
 
 #include "viewwidget.moc"

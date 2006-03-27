@@ -41,7 +41,7 @@
 //#include "configdialog.h"
 //#include "hlconfig.h"
 
-KYZTextEditorIface::KYZTextEditorIface(YZBuffer *buff, QWidget *parentWidget, const char *, QObject *parent, const char *name)
+KYZTextEditorIface::KYZTextEditorIface(YZBuffer *buff, QWidget *parentWidget, const char *, QObject *parent, const char* /*name*/)
 	: KTextEditor::Document(parent) {
 		if (!buff) {
 			buffer();

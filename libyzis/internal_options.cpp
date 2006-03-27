@@ -456,7 +456,7 @@ void YZInternalOptionPool::createOption(const QString& optionName, const QString
 	// TODO add scope_t parameter
 	scope_t scope = local_scope;
 	// we search for an alread existing option :
-	bool found;
+	bool found = false;
 	int i;
 	for ( i = 0; !found && i < options.size(); i++ ) {
 		found = options[ i ]->name() == optionName;

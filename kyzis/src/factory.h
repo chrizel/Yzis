@@ -100,7 +100,7 @@ public:
 	 */
 	void setViewParentWidget( QWidget *viewParent ) { m_viewParent = viewParent; }
 		//Editor Interface
-	const QList<KTextEditor::Document*> &documents () { return QList<KTextEditor::Document*>(); } //FIXME
+	const QList<KTextEditor::Document*> &documents(); // { return QList<KTextEditor::Document*>(); } //FIXME
 	const KAboutData* aboutData() const { return &m_aboutData; }
 	KTextEditor::Document *createDocument(QObject*parent);
 	YZView *doCreateView( YZBuffer* buffer );
@@ -126,6 +126,9 @@ public:
 	QString configPageFullName ( int /*number*/ ) const { return ""; }
 	QPixmap configPagePixmap ( int /*number*/, int /*size*/ = KIcon::SizeSmall ) const { return QPixmap(); }
 	
+	static KYZTextEditorIface *currentDoc;
+	KYZisView *lastView;
+	QWidget *m_viewParent;
 
 public slots:
 	void applyConfig();
@@ -137,10 +140,7 @@ private:
 	
 	void changeCurrentView( YZView* );
 
-public:
-	static KYZTextEditorIface *currentDoc;
-	KYZisView *lastView;
-	QWidget *m_viewParent;
+	QList<KTextEditor::Document*> m_document;
 };
 
 #endif

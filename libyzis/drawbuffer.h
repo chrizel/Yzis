@@ -27,67 +27,107 @@
 #include <QString>
 #include <QVector>
 
-#include "font.h"
 #include "color.h"
+#include "font.h"
+#include "cursor.h"
+#include "selection.h"
+#include "yzismacros.h"
 
-class YZFont;
-class YZColor;
+class YZView;
 
-struct YZViewCell {
-	bool isValid;
+typedef QMap<YZSelectionPool::Layout_enum, YZSelection> YZSelectionLayout;
+
+struct YZDrawCell {
+	bool valid;
 	int flag;
 	YZFont font;
 	QString c;
 	YZColor bg;
 	YZColor fg;
-	YZViewCell():
-		isValid( false ),
+	int sel;
+	YZDrawCell():
 		flag( 0 ),
 		font(), c(), bg(), fg() {
 	}
 };
 
-typedef QVector<YZViewCell> YZViewSection;
-typedef QVector<YZViewSection> YZViewLine;
+typedef QVector<YZDrawCell> YZDrawSection;
+typedef QVector<YZDrawSection> YZDrawLine;
 
-class YZDrawBuffer {
+class YZIS_EXPORT YZDrawBuffer {
 
 	public:
-		YZDrawBuffer( void(*callback)(const YZViewCell&, void*) );
+
+		enum whence {
+			YZ_SEEK_SET, // absolute position
+		};
+		
+		YZDrawBuffer();
 		~YZDrawBuffer();
 
+		void setCallback( YZView* v );
 		void setCallbackArgument( void* callback_arg );
-		
-		void reset();
-		//void seek( unsigned int x, unsigned int y );
 
-		void push( const QString& c, bool overwrite = true );
+		/* clear the buffer */
+		void reset();
+
+		void push( const QString& c );
+		void newline( int y = -1 );
 		void flush();
-		void linebreak( bool overwrite = true );
-		
+
 		void setFont( const YZFont& f );
 		void setColor( const YZColor& c );
-	
-		//const YZViewCell& at( unsigned int x, unsigned int y );
-	
+		void setBackgroundColor( const YZColor& c );
+		void setSelection( int sel );
+
+		bool seek( const YZCursor& pos, YZDrawBuffer::whence w );
+
+		YZDrawCell at( const YZCursor& pos ) const;
+
+		void replace( const YZInterval& interval );
+
+		void setSelectionLayout( YZSelectionPool::Layout_enum layout, const YZSelection& selection );
+
 	private :
-		void append_section();
-		void append_line();
+		void insert_section( int pos = -1 );
+		void insert_line( int pos = -1 );
 
-		YZViewLine m_content;
-		YZViewSection* m_line;
-		YZViewCell* m_cell;
+		void push( const QChar& c );
 
-		unsigned int m_x;
-		unsigned int m_xi;
-		unsigned int m_y;
+		void callback( int x, int y, const YZDrawCell& cell );
+
+		bool find( const YZCursor& pos, int* x, int* y, int* vx ) const;
+
+		void applyPosition();
+
+		/* buffer content */
+		YZDrawLine m_content;
+
+		/* current line */
+		YZDrawSection* m_line;
+		/* current cell */
+		YZDrawCell* m_cell;
+
+		/* current selection layouts */
+		YZSelectionLayout m_sel;
+
+		int v_xi; /* column of the current section */
+		int v_x; /* current draw column */
+
+		int m_x; /* current section index */
+		int m_y; /* current line index == current draw line */
 
 		bool changed;
-		YZViewCell m_cur;
+		YZDrawCell m_cur;
 
-		void(*m_callback)(const YZViewCell&, void*);
+		YZView* m_view;
 		void* m_callback_arg;
+	
+	friend YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff );
 
 };
+
+YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff );
+
 
 #endif

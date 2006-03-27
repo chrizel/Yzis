@@ -216,7 +216,6 @@ YZColor::YZColor() {
 }
 YZColor::YZColor( QRgb rgb ) {
 	setRgb( rgb );
-	m_valid=true;
 }
 YZColor::YZColor( const QString& name ) {
 	setNamedColor( name );
@@ -246,7 +245,6 @@ YZColor::YZColor( Qt::GlobalColor color ) {
 		qRgb(0, 0, 0)    //             transparent
 	};
 
-	m_valid = true;
 	setRgb( global_colors[color] );
 }
 YZColor::~YZColor() {
@@ -261,6 +259,7 @@ void YZColor::setRgb( QRgb rgb ) {
 	m_red = ( ( rgb >> 16 ) & 0xff ) * 0x101;
 	m_green = ( ( rgb >> 8 ) & 0xff ) * 0x101;
 	m_blue = ( ( rgb ) & 0xff ) * 0x101;
+	m_valid=true;
 }
 
 void YZColor::setNamedColor( const QString& name ) {

@@ -32,6 +32,8 @@
 #include <QDataStream>
 #include <QStringList>
 
+#include <drawbuffer.h>
+
 class NYZSession;
 
 class NYZView : public YZView {
@@ -84,6 +86,16 @@ public slots:
 			return 1;
 		}
 
+		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
+
+		void preparePaintEvent(int, int);
+		void endPaintEvent();
+		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
+		virtual void drawSetMaxLineNumber( int max );
+		virtual void drawSetLineNumber( int y, int n, int h );
+
+		bool fakeLine; /* true if current line is a fake one (eg: ~) */
+
 
 private:
 	WINDOW		*window;	/* ncurses window to write to */
@@ -91,12 +103,6 @@ private:
 	 * update visible area
 	 */
 	void updateVis( bool refresh=true );
-	/**
-	  * print a void line ( that is "~    " )
-	  * @arg line is the line # relative to the displayed screen, not the buffer ( as this
-	  * doesn't belong to the buffer anyway..)
-	  */
-	void printVoid( unsigned int line );
 
 	/**
 	  * draw cursor
@@ -114,10 +120,9 @@ private:
 	  * special widget for that
 	  */
 	QString commandline;
-	unsigned int lastLineNumber;
-	unsigned int marginLeft;
-	unsigned int height;
-	unsigned int width;
+		int marginLeft;
+		int height;
+		int width;
 
 	void initialiseAttributesMap();
 	static int attributesMapInitialised;

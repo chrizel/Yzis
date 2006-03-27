@@ -28,8 +28,6 @@
 
 #include "view.h"
 
-#include <QApplication>
-#include <QClipboard>
 #include "portability.h"
 #include <cstdlib>
 #include <ctype.h>
@@ -69,7 +67,7 @@ static YZColor blue( Qt::blue );
 static unsigned int nextId = 1;
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) 
-	: id( nextId++ )
+	:  m_drawBuffer(), id( nextId++ )
 {
 	yzDebug() << "New View created with UID : " << id << endl;
 	YZASSERT( _b ); YZASSERT( sess );
@@ -94,6 +92,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines)
 	origPos = new YZCursor();
 	beginChanges = new YZCursor();
 
+	m_drawBuffer.setCallback( this );
+
 	stickyCol = 0;
 
 	QString line = mBuffer->textline(scrollCursor->bufferY());
@@ -117,7 +117,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines)
 
 	rHLnoAttribs = false;
 	rHLAttributesLen = 0;
-	listChar = charSelected = false;
+	listChar = false;
 	mFillChar = ' ';
 
 	lineDY = 0;
@@ -372,13 +372,13 @@ QString YZView::centerLine( const QString& s ) {
 }
 
 void YZView::updateCursor() {
-	static unsigned int lasty = 1<<31; // small speed optimisation
+	int lasty = -1;
 	viewInformation.percentage = _( "All" );
-	unsigned int y = mainCursor->bufferY();
+	int y = mainCursor->bufferY();
 
 	if ( y != lasty ) {
-		unsigned int nblines = mBuffer->lineCount();
-		viewInformation.percentage = QString("%1%").arg( ( unsigned int )( y*100/ ( nblines==0 ? 1 : nblines )));
+		int nblines = mBuffer->lineCount();
+		viewInformation.percentage = QString("%1%").arg( (int)( y*100/ ( nblines==0 ? 1 : nblines )));
 		if ( scrollCursor->bufferY() < 1 )  viewInformation.percentage=_( "Top" );
 		if ( scrollCursor->bufferY()+mLinesVis >= nblines )  viewInformation.percentage=_( "Bot" );
 		if ( (scrollCursor->bufferY()<1 ) &&  ( scrollCursor->bufferY()+mLinesVis >= nblines ) ) viewInformation.percentage=_( "All" );
@@ -1226,7 +1226,6 @@ bool YZView::drawNextCol( ) {
 		unsigned int lenToTest;
 		lastChar = sCurLine.at( curx );
 		mFillChar = ' ';
-		if ( drawMode ) charSelected = selectionPool->isSelected( workCursor->buffer() );
 		if ( lastChar != tabChar ) {
 			listChar = drawMode && opt_list && lastChar == ' ';
 			if ( listChar ) {
@@ -1280,7 +1279,6 @@ bool YZView::drawNextCol( ) {
 	} else if ( sCurLineLength == 0 && drawMode && curx == 0 ) { // empty line
 		ret = true;
 		lastChar = ' ';
-		charSelected = selectionPool->isSelected( workCursor->buffer() );
 		workCursor->setScreenX( 1 );
 		workCursor->setBufferX( 1 );
 	}
@@ -1343,9 +1341,6 @@ unsigned int YZView::lineIncrement() const {
 }
 unsigned int YZView::lineHeight() const {
 	return workCursor->lineHeight;
-}
-bool YZView::drawSelected() const {
-	return charSelected;
 }
 
 const YZColor& YZView::drawColor ( unsigned int col, unsigned int line ) const {
@@ -1443,7 +1438,7 @@ const YZColor& YZView::drawOutline() {
 	else return fake;
 }
 
-unsigned int YZView::drawLineNumber() const {
+int YZView::drawLineNumber() const {
 	return workCursor->bufferY( ) + 1;
 }
 
@@ -1655,6 +1650,7 @@ void YZView::sendCursor( YZViewCursor* cursor ) {
 	*keepCursor = *cursor;
 }
 void YZView::sendPaintEvent( const YZCursor& from, const YZCursor& to ) {
+	m_paintAll = false;
 	setPaintAutoCommit( false );
 	mPaintSelection->addInterval( YZInterval( from, to ) );
 	commitPaintEvent();
@@ -1664,9 +1660,7 @@ void YZView::sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int 
 		yzDebug() << "Warning: YZView::sendPaintEvent with height = 0" << endl;
 		return;
 	}
-	setPaintAutoCommit( false );
-	mPaintSelection->addInterval( YZInterval(YZCursor(curx,cury),YZCursor(curx+curw,cury+curh-1)) );
-	commitPaintEvent();
+	sendPaintEvent( YZCursor(curx,cury),YZCursor(curx+curw,cury+curh-1) );
 }
 void YZView::sendPaintEvent( YZSelectionMap map, bool isBufferMap ) {
 	unsigned int size = map.size();
@@ -1701,10 +1695,12 @@ void YZView::sendBufferPaintEvent( unsigned int line, unsigned int n ) {
 
 void YZView::sendRefreshEvent( ) {
 	mPaintSelection->clear();
+	m_paintAll = true;
 	sendPaintEvent( getDrawCurrentLeft(), getDrawCurrentTop(), getColumnsVisible(), getLinesVisible() );
 }
 
 void YZView::removePaintEvent( const YZCursor& from, const YZCursor& to ) {
+	m_paintAll = false;
 	mPaintSelection->delInterval( YZInterval( from, to ) );
 }
 
@@ -1766,3 +1762,149 @@ unsigned int YZView::getSpaceWidth() const
 {
 	return spaceWidth;
 }
+
+/**
+ * default implementation for paintEvent
+ */
+void YZView::paintEvent( const YZSelection& drawMap ) {
+	if ( drawMap.isEmpty() )
+		return;
+	yzDebug() << "YZView::paintEvent" << drawMap;
+
+	bool number = getLocalBooleanOption( "number" );
+	if ( number ) {
+		drawSetMaxLineNumber( myBuffer()->lineCount() );
+	}
+	if ( m_paintAll ) {
+		/* entire screen has been updated already */
+		return;
+	}
+
+	/* to calculate relative position */
+	unsigned int shiftY = getDrawCurrentTop(); 
+	unsigned int shiftX = getDrawCurrentLeft();
+	unsigned int maxX = shiftX + getColumnsVisible();
+
+	YZSelectionMap map = drawMap.map();
+	int size = map.size();
+
+	unsigned int fromY = map[ 0 ].fromPos().y(); /* first line */
+	unsigned int toY = map[ size - 1 ].toPos().y(); /* last line */
+
+	 /* where the draw begins */
+	unsigned int curY = initDrawContents( fromY );
+	unsigned int curX = 0;
+
+	/* inform the view we want to paint from line <fromY> to <toY> */
+	preparePaintEvent( curY - shiftY, toY - shiftY );
+
+	int mapIdx = 0; /* first interval */
+
+	unsigned int fX = map[ mapIdx ].fromPos().x(); /* first col of interval */
+	unsigned int fY = map[ mapIdx ].fromPos().y(); /* first line of interval */
+	unsigned int tX = map[ mapIdx ].toPos().x(); /* last col of interval */
+	unsigned int tY = map[ mapIdx ].toPos().y(); /* last line of interval */
+
+	bool drawIt; /* if we are inside the interval */
+
+	bool drawLine; /* if we have to paint a part of line */
+	bool drawEntireLine; /* if we have to paint the entire line */
+
+	bool drawStartAfterBOL; /* if we don't have to draw from the begin of line */
+	bool drawStopBeforeEOL; /* if we don't have to draw until the end of line */
+
+	bool clearToEOL; /* if we have to clear the rest of line */
+
+	bool interval_changed  = true;
+
+	/* set selection layouts */
+	m_drawBuffer.setSelectionLayout( YZSelectionPool::Search, *getSelectionPool()->search() - scrollCursor->screen() ); //XXX: search map is buffer only
+	m_drawBuffer.setSelectionLayout( YZSelectionPool::Visual, getSelectionPool()->visual()->screen() - scrollCursor->screen() );
+
+	while( curY <= toY && drawNextLine() ) {
+		curX = shiftX;
+
+		while( tY < curY ) { /* next interval */
+			++mapIdx;
+			fX = map[ mapIdx ].fromPos().x();
+			fY = map[ mapIdx ].fromPos().y();
+			tX = map[ mapIdx ].toPos().x();
+			tY = map[ mapIdx ].toPos().y();
+			interval_changed = true;
+		}
+		if ( interval_changed ) {
+			m_drawBuffer.replace( map[ mapIdx ] - scrollCursor->screen() );
+			interval_changed = false;
+		}
+
+		drawStartAfterBOL = ( curY == fY && fX > shiftX );
+		drawStopBeforeEOL = ( curY == tY && tX < maxX );
+
+		drawLine = fY <= curY; // curY <= tY always true */
+		drawIt = drawLine && !drawStartAfterBOL;
+		drawEntireLine = drawIt && !drawStopBeforeEOL;
+
+		clearToEOL = drawEntireLine || drawIt && curY != tY;
+
+		if ( drawLine && number ) {
+			drawSetLineNumber( curY - shiftY, drawLineNumber(), lineHeight() - 1 );
+		}
+
+		if ( drawIt ) {
+			m_drawBuffer.newline( curY - shiftY );
+		}
+		while( drawNextCol() ) {
+			if ( !drawEntireLine ) { /* we have to care of starting/stoping to draw on that line */
+				if ( !drawIt && curY == fY ) { // start drawing ?
+					drawIt = ( curX == fX );
+					clearToEOL = drawIt && curY != tY;
+				} else if ( drawIt && curY == tY ) { // stop drawing ?
+					drawIt = !( curX > tX );
+					if ( ! drawIt ) {
+						++mapIdx;
+						if ( mapIdx != size ) {
+							fX = map[ mapIdx ].fromPos().x();
+							fY = map[ mapIdx ].fromPos().y();
+							tX = map[ mapIdx ].toPos().x();
+							tY = map[ mapIdx ].toPos().y();
+							m_drawBuffer.replace( map[ mapIdx ] - scrollCursor->screen() );
+						} else {
+							fX = fY = tX = tY = 0;
+						}
+					}
+				}
+			}
+			if ( drawIt ) {
+				QString disp = QString( drawChar() );
+				disp = disp.leftJustify( drawLength(), fillChar() );
+
+				m_drawBuffer.setColor( drawColor() );
+
+				m_drawBuffer.push( disp );
+			}
+			curX += drawLength();
+		}
+		if ( clearToEOL ) {
+			drawClearToEOL( curX - shiftX, curY - shiftY, drawLineFiller() );
+		}
+		curY += drawHeight();
+	}
+
+	/* out of file lines (~) */
+	unsigned int fh = shiftY + getLinesVisible();
+	toY = qMin( toY, fh - 1 );
+	m_drawBuffer.setColor( Qt::cyan );
+	for( ; curY <= toY; ++curY ) {
+		m_drawBuffer.newline( curY - shiftY );
+		if ( number ) drawSetLineNumber( curY - shiftY, 0, 0 );
+		m_drawBuffer.push( "~" );
+		drawClearToEOL( 1, curY - shiftY, ' ' );
+	}
+
+	m_drawBuffer.flush();
+
+//	yzDebug() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
+
+	endPaintEvent();
+}
+

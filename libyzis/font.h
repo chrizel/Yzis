@@ -24,7 +24,9 @@
 #ifndef YZ_FONT_H
 #define YZ_FONT_H
 
-class YZFont {
+#include "yzismacros.h"
+
+class YZIS_EXPORT YZFont {
 
 	public :
 		enum Weight {

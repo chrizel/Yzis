@@ -25,6 +25,7 @@
 #include <kconfig.h>
 #include <kurl.h>
 
+#include <ktoolbar.h>
 #include <kedittoolbar.h>
 
 #include <kaction.h>
@@ -84,8 +85,8 @@ void Kyzis::init () {
 	}
 }
 
-void Kyzis::load(const KURL& url) {
-	kdDebug() << "load " << url << endl;
+void Kyzis::load(const KUrl& url) {
+	kDebug() << "load " << url << endl;
 	KParts::ReadWritePart *p = getCurrentPart();
 	if ( p ) p->openURL(url);
 	//XXX else
@@ -99,7 +100,7 @@ void Kyzis::setupActions() {
 
 	KStdAction::preferences(this, SLOT(preferences()), actionCollection());
 
-	m_openRecentAction = KStdAction::openRecent(this, SLOT(openURL(const KURL&)),
+	m_openRecentAction = KStdAction::openRecent(this, SLOT(openURL(const KUrl&)),
 		actionCollection() );
 	m_openRecentAction->setWhatsThis( i18n("Opens recently opened file.") );
 	m_openRecentAction->loadEntries( kapp->sessionConfig(), "RecentFiles" );
@@ -154,13 +155,13 @@ void Kyzis::fileOpen() {
 	// this slot is called whenever the File->Open menu is selected,
 	// the Open shortcut is pressed (usually CTRL+O) or the Open toolbar
 	// button is clicked
-	KURL url = KFileDialog::getOpenURL( QString::null, QString::null, this );
+	KUrl url = KFileDialog::getOpenURL( QString::null, QString::null, this );
 	if (url.isEmpty())
 		return;
 	openURL(url);
 }
 
-void Kyzis::openURL(const KURL &url) {
+void Kyzis::openURL(const KUrl &url) {
 	if (url.isEmpty())
 	{
 		fileOpen();
@@ -192,7 +193,7 @@ void Kyzis::setCaption( const YZViewId &id, const QString& caption ) {
 }
 
 KParts::ReadWritePart* Kyzis::getCurrentPart() {
-	kdDebug() << "getCurrentPart" << endl;
+	kDebug() << "getCurrentPart" << endl;
 	
 	KYZisView *view = dynamic_cast<KYZisView*>(YZSession::me->currentView());
 	return view->getKPart();
@@ -234,7 +235,7 @@ void Kyzis::preferences() {
     edit->writeConfig();
 }
 
-void Kyzis::embedPartView(QWidget *view, const QString &title, const QString& toolTip) {
+void Kyzis::embedPartView(QWidget *view, const QString &title, const QString&/*toolTip*/) {
 	if (!view)
 		return;
 
@@ -288,7 +289,7 @@ void Kyzis::raiseView(QWidget *view) {
     //by its wrapper helps here
     if (view->parent() && view->parent()->isA("EditorWrapper"))
     {
-//         kdDebug() << "parent is editor wrapper: " <<
+//         kDebug() << "parent is editor wrapper: " <<
 //             static_cast<EditorWrapper*>(view->parent()) << endl;
         view = (QWidget*)view->parent();
     }
@@ -334,7 +335,7 @@ void Kyzis::setupWindowMenu() {
 
     if (!m_windowMenu)
     {
-        kdDebug() << "Couldn't find the XMLGUI window menu. Creating new." << endl;
+        kDebug() << "Couldn't find the XMLGUI window menu. Creating new." << endl;
 
         m_windowMenu = new KMenu(main());
         menuBar()->insertItem(i18n("&Window"), m_windowMenu);
@@ -348,7 +349,7 @@ void Kyzis::setupWindowMenu() {
     QObject::connect(m_windowMenu, SIGNAL(aboutToShow()), this, SLOT(fillWindowMenu()));
 }
 
-void Kyzis::closeTab(QWidget *w) {
+void Kyzis::closeTab(QWidget* /*w*/) {
 	//TODO
 /*    const Q3PtrList<KParts::Part> *partlist = PartController::getInstance()->parts();
     Q3PtrListIterator<KParts::Part> it(*partlist);

@@ -1,5 +1,5 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2004-2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2004-2006 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -24,16 +24,13 @@
 #ifndef KYZISCURSOR_H
 #define KYZISCURSOR_H
 
-//#include "editor.h"
 #include <qpixmap.h>
+#include <QWidget>
 
-class KYZisEdit;
-struct KYZViewCell;
-
-class KYZisCursor {
+class KYZisCursor : public QWidget {
+	Q_OBJECT
 
 	public :
-
 		enum shape {
 			SQUARE,
 			VBAR,
@@ -41,38 +38,16 @@ class KYZisCursor {
 			RECT,
 		};
 
-		KYZisCursor( KYZisEdit* parent, shape type );
+		KYZisCursor( QWidget* parent, shape type );
 		virtual ~KYZisCursor();
 
 		void setCursorType( shape type );
-		void resize( unsigned int w, unsigned int h );
-		void move( unsigned int x, unsigned int y, QPainter* p = NULL );
-		void hide(QPainter *parentPainter=NULL);
-		void refresh( QPainter* p = NULL );
-
-		unsigned int width() const;
-		unsigned int height() const;
 		shape type() const;
 
-		const KYZViewCell& cell() const;
-
-		inline unsigned int x() const { return mX; }
-		inline unsigned int y() const { return mY; }
-		inline unsigned int visible() const { return shown; }
+	protected :
+		virtual void paintEvent( QPaintEvent* event );
 
 	private :
-
-		void drawCursor( QPixmap* orig, QPainter* p = NULL );
-		bool prepareCursors();
-
-		KYZisEdit* mParent;
-
-		QPixmap* bg;
-		QPixmap* cursor;
-
-		unsigned int mX;
-		unsigned int mY;
-		bool shown;
 		shape mCursorType;
 
 };

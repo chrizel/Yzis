@@ -68,7 +68,7 @@ void Konsole::loadConsoleIfNeeded()
               connect ( part, SIGNAL(destroyed()), this, SLOT(slotDestroyed()) );
 /*	      if (m_kvm->activeView())
 	      	if (m_kvm->activeView()->getDoc()->url().isValid())
-			cd(KURL( m_kvm->activeView()->getDoc()->url().path() ));*/
+			cd(KUrl( m_kvm->activeView()->getDoc()->url().path() ));*/
             }
         }
 }
@@ -79,7 +79,7 @@ void Konsole::showEvent(QShowEvent *)
     loadConsoleIfNeeded();
 }
 
-void Konsole::cd (KURL url)
+void Konsole::cd (KUrl url)
 {
   if (!part)
     return;

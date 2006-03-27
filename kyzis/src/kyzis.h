@@ -63,7 +63,7 @@ public:
      * Use this method to load whatever file/URL you have
 	 * @param url the url to open
      */
-    void load(const KURL& url);
+    void load(const KUrl& url);
 
 	KParts::ReadWritePart* getCurrentPart();
 
@@ -95,7 +95,7 @@ public slots:
 private slots:
     void fileNew();
     void fileOpen();
-    void openURL( const KURL& );
+    void openURL( const KUrl& );
     void fileQuit();
     void optionsShowToolbar();
     void optionsConfigureKeys();
@@ -124,7 +124,7 @@ private:
 	QString m_initialCommand;
 	QMap<QWidget*, DDockWindow::Position> m_docks;
 	KMenu *m_windowMenu;
-	typedef QPair<int, KURL> WinInfo;
+	typedef QPair<int, KUrl> WinInfo;
 	QList<WinInfo> m_windowList;
 
 };

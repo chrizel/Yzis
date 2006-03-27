@@ -419,7 +419,7 @@ class YZExLua {
 		static int Regexp_replace(lua_State *L);
 
 		/** Return the pattern of the regexp as a string */
-		static int YZExLua::Regexp_pattern(lua_State *L);
+		static int Regexp_pattern(lua_State *L);
 
 		/** 
 		  * Check that the lua stack contains the number of expected argument.

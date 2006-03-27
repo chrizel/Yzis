@@ -40,18 +40,6 @@
  
  AC_REQUIRE([AC_FIND_PNG])
  AC_REQUIRE([AC_FIND_JPEG])
-@@ -1311,9 +1306,9 @@
- AC_SUBST(qt_includes)
- 
- if test "$qt_includes" = "$x_includes" || test -z "$qt_includes"; then
-- QT_INCLUDES="-I$qt_includes/Qt -I$qt_includes/QtCore -I$qt_includes/QtGui -I$qt_includes/QtXml -I$qt_includes/Qt3Support"
-+ QT_INCLUDES="-I$qt_includes/Qt -I$qt_includes/QtCore -I$qt_includes/QtXml -I$qt_includes/Qt3Support"
- else
-- QT_INCLUDES="-I$qt_includes -I$qt_includes/Qt -I$qt_includes/QtCore -I$qt_includes/QtGui -I$qt_includes/QtXml -I$qt_includes/Qt3Support"
-+ QT_INCLUDES="-I$qt_includes -I$qt_includes/Qt -I$qt_includes/QtCore -I$qt_includes/QtXml -I$qt_includes/Qt3Support"
-  all_includes="$QT_INCLUDES $all_includes"
- fi
- 
 @@ -1393,15 +1388,7 @@
  
  AC_MSG_RESULT([$kde_cv_uic_plugins])

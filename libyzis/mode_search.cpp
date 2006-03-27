@@ -76,8 +76,6 @@ void YZModeSearch::initModifierKeys() {
 }
 cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 	QString key = _key;
-	YZCursor* mSearchBegin = mSearchBegin;
-	YZCursor* incSearchResult = incSearchResult;
 	YZSelection* searchSelection = view->getSelectionPool()->search();
 
 	if ( key == "<ENTER>" ) {

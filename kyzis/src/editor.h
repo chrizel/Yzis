@@ -22,6 +22,8 @@
 
 #include "cursor.h"
 #include "viewwidget.h"
+#include <libyzis/drawbuffer.h>
+
 #include <qpainter.h>
 #include <qevent.h>
 #include <qmap.h>
@@ -36,28 +38,12 @@
 class KYZisView;
 class KYZisCursor;
 
-
-struct KYZViewCell {
-	bool isValid;
-	int flag;
-	bool selected;
-	QFont font;
-	QString c;
-	QColor bg;
-	QColor fg;
-	KYZViewCell():
-		isValid( false ),
-		flag( 0 ),
-		selected ( false ), font(), c(), bg(), fg() {
-	}
-};
-typedef QMap<unsigned int,KYZViewCell> lineCell;
-
 /**
  * KYZis Painter Widget
  */
 class KYZisEdit : public QWidget {
 	Q_OBJECT
+	
 
 	public :
 		KYZisEdit(KYZisView *parent=0);
@@ -69,8 +55,6 @@ class KYZisEdit : public QWidget {
 		//append text
 		void append ( const QString& );
 
-		void paintEvent( const YZSelection& drawMap );
-
 		//move cursor to position column, line relative to viewport
 		void setCursor(int c,int l);
 		void scrollUp( int );
@@ -81,9 +65,7 @@ class KYZisEdit : public QWidget {
 		// update text area
 		void updateArea( );
 
-		void setTransparent( bool t, double opacity = 0, const QColor& color = Qt::black );
-
-		void drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rect, bool reversed = false );
+		void setPalette( const QColor& fg, const QColor& bg, double opacity );
 
 		const QString& convertKey( int key );
 
@@ -94,8 +76,6 @@ class KYZisEdit : public QWidget {
 
 		QPoint cursorCoordinates( );
 
-		QMap<unsigned int,lineCell> mCell;
-
 		QVariant inputMethodQuery ( Qt::InputMethodQuery query );
 
 	public slots :
@@ -103,6 +83,15 @@ class KYZisEdit : public QWidget {
 
 
 	protected:
+		void paintEvent( const YZSelection& drawMap );
+		void drawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
+		void drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p );
+		void drawSetMaxLineNumber( int max );
+		void drawSetLineNumber( int y, int n, int h, QPainter* p );
+
+		void drawMarginLeft( int min_y, int max_y, QPainter* p );
+		
+
 		//intercept tabs
 		virtual bool event(QEvent*);
 
@@ -139,6 +128,8 @@ class KYZisEdit : public QWidget {
 		// for InputMethod
 		void inputMethodEvent ( QInputMethodEvent * );
 
+		bool fakeLine;
+
 	private :
 		void initKeys();
 		KActionCollection* actionCollection;
@@ -153,18 +144,18 @@ class KYZisEdit : public QWidget {
 		QFontMetrics *standardBoldItalic;
 
 		bool isFontFixed;
+
+		bool m_insidePaintEvent;
 		/**
 		 * size of the left margin (used to draw line number)
 		 */
-		unsigned int marginLeft;
+		int marginLeft;
 
 		// last line number
 		QMap<int,QString> keys;
-		KRootPixmap *rootxpm;
-		bool mTransparent;
-		KYZViewCell defaultCell;
 
 	friend class KYZisCursor;
+	friend class KYZisView;
 };
 
 #endif

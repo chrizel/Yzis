@@ -94,8 +94,6 @@ class YZModeVisualBlock : public YZModeVisual {
 		virtual ~YZModeVisualBlock();
 
 		virtual void cursorMoved( YZView* mView );
-		virtual void toClipboard( YZView* mView );
-
 };
 
 #endif

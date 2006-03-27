@@ -46,73 +46,44 @@
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
 
 KYZisEdit::KYZisEdit(KYZisView *parent)
-: QWidget( parent, /*Qt::WStaticContents | */ Qt::WNoAutoErase )
+: QWidget( parent )
 {
-	mTransparent = false;
 	mParent = parent;
-
 
 	setFocusPolicy( Qt::StrongFocus );
 
-	/*   Makes it possible to use QPainter to paint on the widget outside paintEvent(). This is not supported on Mac OS X. We recommend that you use this attribute only when porting Qt 3 code to Qt 4.  */
-	setAttribute ( Qt::WA_PaintOutsidePaintEvent ); /*XXX*/
+	setAutoFillBackground( false );
+	setAttribute ( Qt::WA_PaintOutsidePaintEvent ); /* XXX */
 
-	 /* Indicates that the widget has no background, i.e. when the widget receives paint events, the background is not automatically repainted. NOTE: Unlike WA_NoBackground, newly exposed areas are never filled with the background (e.g after showing a window for the first time the user can see "through" it until the application processes the paint events). Setting this flag implicitly disables double buffering for the widget. This is set/cleared by the widget's author.
-	 */
-	setAttribute( Qt::WA_NoSystemBackground );
-
-	 /*   Indicates that the widget contents are north-west aligned and static. On resize, such a widget will receive paint events only for the newly visible part of itself. This is set/cleared by the widget's author.
-	 */
-	setAttribute( Qt::WA_StaticContents );
-
+	/* show an edit cursor */
 	QWidget::setCursor( Qt::IBeamCursor );
-	isFontFixed = fontInfo().fixedPitch();
 
-//	rootxpm = new KRootPixmap( this );
-	setTransparent( false );
+	isFontFixed = fontInfo().fixedPitch();
 
 	// for Input Method
 	setInputMethodEnabled( true );
 
-	initKeys();
-	mCell.clear();
 	mCursor = new KYZisCursor( this, KYZisCursor::SQUARE );
-	updateCursor();
 
-	defaultCell.isValid = true;
-	defaultCell.selected = false;
-	defaultCell.c = " ";
-	defaultCell.flag = 0;
+	initKeys();
 
 	marginLeft = 0;
 }
 
 
 KYZisEdit::~KYZisEdit() {
-	delete mCursor;
-	mCell.clear();
 	delete signalMapper;
-	// dont delete rootxpm, this is done by KDE ;)
-//	delete rootxpm;
 	for( int i = actionCollection->count() - 1; i>= 0; --i )
 		delete actionCollection->take( actionCollection->action(i) );
 	delete actionCollection;
 }
 
-void KYZisEdit::setTransparent ( bool t, double opacity, const QColor& color ) {
-	/*
-	if ( opacity == 1 )	
-		t = false;	// opactity is max, let use scroll optimisation
-	mTransparent = t;
-	if ( t ) {
-		rootxpm->setFadeEffect( opacity, color );
-		rootxpm->start();
-	} else 
-		rootxpm->stop();*/
-}
-
-void KYZisEdit::resizeEvent(QResizeEvent* ) {
-	updateArea();
+void KYZisEdit::setPalette( const QColor& fg, const QColor& bg, double opacity ) {
+	QPalette p = palette();
+	p.setColor( QPalette::WindowText, fg );
+	p.setColor( QPalette::Window, bg );
+	QWidget::setPalette( p );
+	setWindowOpacity( opacity );
 }
 
 KYZisCursor::shape KYZisEdit::cursorShape() {
@@ -152,18 +123,11 @@ KYZisCursor::shape KYZisEdit::cursorShape() {
 	return s;
 }
 void KYZisEdit::updateCursor() {
-	KYZisCursor::shape s = cursorShape();
-	if ( s != mCursor->type() ) {
-		mCursor->setCursorType( s );
-		mCursor->refresh();
-	}
+	mCursor->setCursorType( cursorShape() );
 }
 
 
 void KYZisEdit::updateArea( ) {
-	defaultCell.bg = Settings::colorBG();//backgroundColor();
-	defaultCell.fg = Settings::colorFG();//foregroundColor();
-	defaultCell.font = font();
 
 	isFontFixed = fontInfo().fixedPitch();
 	mParent->setFixedFont( isFontFixed );
@@ -174,106 +138,13 @@ void KYZisEdit::updateArea( ) {
 	int lines = height() / fontMetrics().lineSpacing();
 	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget
 	int columns = width() / GETX( 1 ) - marginLeft;
-	erase();
-	mCell.clear();
+	//erase();
 	mParent->setVisibleArea( columns, lines );
 }
 
-void KYZisEdit::paintEvent( QPaintEvent* pe ) {
-	QRect r = pe->rect();
-	int fx = r.left();
-	int fy = r.top();
-	int tx = r.right();
-	int ty = r.bottom();
-	if ( isFontFixed ) {
-		unsigned int linespace = fontMetrics().lineSpacing();
-		unsigned int maxwidth = fontMetrics().maxWidth();
-		fx /= maxwidth;
-		fy /= linespace;
-		int old_tx = tx, old_ty = ty;
-		tx /= maxwidth;
-		ty /= linespace;
-		if ( tx < old_tx ) ++tx;
-		if ( ty < old_ty ) ++ty;
-	}
-	fx = qMax( (int)marginLeft, fx ) - marginLeft;
-	tx = qMax( (int)marginLeft, tx ) - marginLeft;
-	fy += mParent->getDrawCurrentTop();
-	ty += mParent->getDrawCurrentTop();
-	if ( fx == (int)mParent->getDrawCurrentLeft() && tx - fx == (int)(mParent->getColumnsVisible() + 1) ) {
-		mParent->sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, ty ) );
-	} else {
-		mParent->setPaintAutoCommit( false );
-		for( ; fy <= ty; ++fy ) {
-			mParent->sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, fy ) );
-		}
-		mParent->commitPaintEvent();
-	}
-}
-
-void KYZisEdit::setCursor( int c, int l ) {
-//	yzDebug() << "setCursor" << endl;
-	c = c - mParent->getDrawCurrentLeft() + marginLeft;
-	l -= mParent->getDrawCurrentTop();
-	unsigned int x = GETX( c );
-	if ( mParent->getLocalBooleanOption( "rightleft" ) ) {
-		x = width() - x - mCursor->width();
-	}
-	mCursor->move( x, l * fontMetrics().lineSpacing() );
-
-	// need for InputMethod (OverTheSpot)
-//	setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
-}
-
-QPoint KYZisEdit::cursorCoordinates( ) {
-	QPoint position( mCursor->x(), mCursor->y() );
-	return position;
-}
-
-void KYZisEdit::scrollUp( int n ) {
-	mCursor->hide();
-	scroll( 0, n * fontMetrics().lineSpacing() );
-#if 0
-	if ( ! mTransparent ) {
-		mCursor->hide();
-		bitBlt( this, 0, n * fontMetrics().lineSpacing(), this, 0, 0, width(), ( mParent->getLinesVisible() - n ) * fontMetrics().lineSpacing() );
-		unsigned int lv = mParent->getLinesVisible();
-		unsigned int i;
-		for( i = lv; (int)i >= n; i-- )
-			mCell[ i ] = mCell[ i - n ];
-		setCursor( mParent->getCursor().x(), mParent->getCursor().y() );
-		unsigned int top = mParent->getDrawCurrentTop();
-		unsigned int left = mParent->getDrawCurrentLeft();
-		mParent->sendPaintEvent( YZCursor( left , top ), YZCursor( left + mParent->getColumnsVisible(), top + n ) );
-	} else {
-		mCell.clear();
-		mParent->sendRefreshEvent();
-	}
-#endif
-}
-
-void KYZisEdit::scrollDown( int n ) {
-	mCursor->hide();
-	scroll( 0, -n * fontMetrics().lineSpacing() );
-#if 0
-	if ( ! mTransparent ) {
-		mCursor->hide();
-		unsigned int h = mParent->getLinesVisible() - (unsigned int)n;
-		bitBlt( this, 0, 0, this, 0, n * fontMetrics().lineSpacing(), width(), h * fontMetrics().lineSpacing() );
-		unsigned int i;
-		for( i = 0; i < h; i++ )
-			mCell[ i ] = mCell[ i + n ];
-		setCursor( mParent->getCursor().x(), mParent->getCursor().y() );
-		h += mParent->getDrawCurrentTop();
-		unsigned int left = mParent->getDrawCurrentLeft();
-		mParent->sendPaintEvent( YZCursor( left, h ), YZCursor( left + mParent->getColumnsVisible(), h + n ) );
-	} else {
-		mCell.clear();
-		mParent->sendRefreshEvent();
-	}
-#endif
-}
-
+/**
+ * QWidget event handling
+ */
 bool KYZisEdit::event(QEvent *e) {
 	if ( e->type() == QEvent::KeyPress ) {
 		QKeyEvent *ke = (QKeyEvent *)e;
@@ -367,293 +238,145 @@ void KYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 	}
 }
 
-void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
-//	yzDebug() << "KYZisEdit::paintEvent (top=" << mParent->getDrawCurrentTop()<< ",left="<< mParent->getDrawCurrentLeft() << ")" << endl << drawMap;
-	if ( drawMap.isEmpty() )
-		return;
-
-	unsigned int linespace = fontMetrics().lineSpacing();
-	QRect myRect;
-	bool number = mParent->getLocalBooleanOption( "number" );
-	bool rightleft = mParent->getLocalBooleanOption( "rightleft" );
-
-	int flag = (rightleft ? Qt::AlignRight : Qt::AlignLeft);
-
-	unsigned int lineCount = mParent->myBuffer()->lineCount();
-	unsigned int my_marginLeft = 0;
-	if ( number ) { // update marginLeft
-		my_marginLeft = ( isFontFixed ? QString::number( lineCount ).length() + 2 : mParent->stringWidth( " " + QString::number( lineCount ) + "  " ) );
-	}
-	if ( marginLeft != my_marginLeft ) {
-		if ( mCursor->visible() ) {
-			mCursor->move( qMax( (int)( mCursor->x() + GETX( marginLeft - my_marginLeft ) ), 0 ), mCursor->y() );
-		}
-		marginLeft = my_marginLeft;
-		updateArea();
-		return;
-	}
-
-	defaultCell.flag = flag;
-
-	QPainter p(this);
-
-	unsigned int shiftY = mParent->getDrawCurrentTop();
-	unsigned int shiftX = mParent->getDrawCurrentLeft();
-	unsigned int maxX = shiftX + mParent->getColumnsVisible();
-
-	unsigned int cursorY = mParent->getCursor().y();
-//	unsigned int cursorX = mParent->getCursor()->x();
-	bool refreshCursor = false;
-
-	YZSelectionMap map = drawMap.map();
-	unsigned int size = map.size();
-
-	unsigned int fromY = map[ 0 ].fromPos().y();
-	unsigned int toY = map[ size - 1 ].toPos().y();
-
-	bool drawIt = false;
-	unsigned int mapIdx = 0;
-
-	unsigned int fX = map[ mapIdx ].fromPos().x();
-	unsigned int fY = map[ mapIdx ].fromPos().y();
-	unsigned int tX = map[ mapIdx ].toPos().x();
-	unsigned int tY = map[ mapIdx ].toPos().y();
-
-	unsigned int curY = mParent->initDrawContents( fromY );
-	unsigned int curX = 0;
-
-	myRect.setTop( ( curY - shiftY ) * linespace );
-	myRect.setHeight( linespace );
-
-#define REVERSE_MYRECT_IF_RIGHTLEFT \
-	{ if ( rightleft ) \
-		myRect.moveRight( width() - myRect.x() ); \
-	}
-
-	KYZViewCell cell = defaultCell;
-	unsigned int mCellY;
-	int mCellX;
-	QList<unsigned int> mCellKeys;
-
-	bool drawEntireLine;
-
-	while( curY <= toY && mParent->drawNextLine() ) {
-		curX = shiftX;
-
-		mCellY = curY - shiftY;
-		mCellX = 0;
-		mCellKeys.clear();
-
-		if ( tY < curY ) {
-			++mapIdx;
-			fX = map[ mapIdx ].fromPos().x();
-			fY = map[ mapIdx ].fromPos().y();
-			tX = map[ mapIdx ].toPos().x();
-			tY = map[ mapIdx ].toPos().y();
-		}
-
-		drawEntireLine = !( curY == fY && fX > shiftX || curY == tY && tX < maxX );
-		drawIt = curY == fY && fX <= shiftX || fY < curY && curY <= tY;
-//		yzDebug() << curY << " : " << drawIt << "-" << drawEntireLine << endl;
-
-		myRect.setLeft( 0 );
-
-		if ( drawIt || !drawEntireLine && !drawIt ) { // this line will be drawn
-			refreshCursor = ( curY == cursorY );
-			mCellKeys = mCell[ mCellY ].keys();
-			
-			if ( number ) {
-				myRect.setWidth( GETX( marginLeft - spaceWidth ) );
-				REVERSE_MYRECT_IF_RIGHTLEFT;
-				p.eraseRect( myRect );
-
-				if ( mParent->lineHeight() == 1 ) {
-					p.setPen( Qt::yellow ); // XXX: custom
-					p.setBackgroundMode( Qt::TransparentMode );
-					p.setFont( font() );
-					p.drawText( myRect, (rightleft ? Qt::AlignLeft : Qt::AlignRight), QString::number( mParent->drawLineNumber() ) );
-				}
-			}
-		}
-		if ( drawIt ) {
-			myRect.setLeft( GETX( marginLeft ) );
-			if ( drawEntireLine ) {
-				myRect.setRight( width() );
-				mCell[ mCellY ].clear();
-			} else {
-				if ( tY == curY ) {
-					myRect.setWidth( GETX( tX - shiftX + 1 ) );
-					for( mCellX = 0; mCellX < mCellKeys.size() && mCellKeys[ mCellX ] <= (tX - shiftX); ++mCellX )
-						mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
-				} else {
-					myRect.setRight( width() );
-					for( mCellX = 0; mCellX < mCellKeys.size(); ++mCellX )
-						mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
-				}
-			}
-			REVERSE_MYRECT_IF_RIGHTLEFT;
-//			yzDebug() << "erase1(" << myRect.top() << "," << myRect.left() << "," << myRect.bottom() << "," << myRect.right() << ")" << endl;
-			p.eraseRect( myRect );
-		}
-		while( mParent->drawNextCol() ) {
-			if ( ! drawEntireLine ) {
-				if ( !drawIt && curY == fY ) { // start drawing ?
-					drawIt = ( curX == fX );
-					if ( drawIt ) {
-						myRect.setLeft( GETX( marginLeft + curX - shiftX ) );
-						while( mCellX < mCellKeys.size() && mCellKeys[ mCellX ] < (fX - shiftX) )
-							++mCellX;
-						if ( tY == curY ) {
-							myRect.setRight( GETX( marginLeft + tX - shiftX + 1 ) - 1 );
-							for( ; mCellX < mCellKeys.size() && mCellKeys[ mCellX ] <= (tX - shiftX); ++mCellX )
-								mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
-						} else {
-							myRect.setRight( width() );
-							for( ; mCellX < mCellKeys.size(); ++mCellX )
-								mCell[ mCellY ].remove( mCellKeys[ mCellX ] );
-						}
-						REVERSE_MYRECT_IF_RIGHTLEFT;
-//						yzDebug() << "erase2(" << myRect.top() << "," << myRect.left() << "," << myRect.bottom() << "," << myRect.right() << ")" << endl;
-						p.eraseRect( myRect );
-					}
-				} else if ( drawIt && curY == tY ) { // stop drawing ?
-					drawIt = !( curX > tX );
-					if ( ! drawIt ) {
-						++mapIdx;
-						if ( mapIdx != size ) {
-							fX = map[ mapIdx ].fromPos().x();
-							fY = map[ mapIdx ].fromPos().y();
-							tX = map[ mapIdx ].toPos().x();
-							tY = map[ mapIdx ].toPos().y();
-						} else {
-							fX = fY = tX = tY = 0;
-						}
-					}
-				}
-			}
-			if ( drawIt ) {
-				QString disp = QString( mParent->drawChar() );
-				cell.c = disp;
-
-				myRect.setLeft( GETX( marginLeft + curX - shiftX ) );
-				myRect.setWidth( GETX( mParent->drawLength() ) );
-				REVERSE_MYRECT_IF_RIGHTLEFT;
-
-				if ( rightleft )
-					disp = disp.rightJustify( mParent->drawLength(), mParent->fillChar() );
-				else
-					disp = disp.leftJustify( mParent->drawLength(), mParent->fillChar() );
-
-				QColor fg( mParent->drawColor().rgb() );
-				cell.fg = fg.isValid() ? fg : defaultCell.fg;
-				QColor bg( mParent->drawBgColor().rgb() );
-				cell.bg = bg.isValid() ? bg : defaultCell.bg;
-				cell.selected = mParent->drawSelected();
-
-				QFont myFont(font());
-				if ( mParent->drawItalic() )
-					myFont.setItalic( true );
-				if ( mParent->drawBold() )
-					myFont.setBold( true );
-				myFont.setOverline( mParent->drawOverline() );
-				myFont.setStrikeOut( mParent->drawStrikeOutLine() );
-				myFont.setUnderline( mParent->drawUnderline() );
-				cell.font = myFont;
-				if (!p.isActive())
-					p.begin(this);
-				p.setFont( cell.font );
-
-				if ( cell.selected ) {
-					p.setPen( cell.bg );
-					p.setBackgroundMode( Qt::OpaqueMode );
-					p.setBackgroundColor( cell.fg );
-					p.eraseRect( myRect );
-				} else {
-					p.setPen( cell.fg );
-					if ( cell.bg != backgroundColor() ) {
-						p.setBackgroundMode( Qt::OpaqueMode );
-						p.setBackgroundColor( cell.bg );
-						p.eraseRect( myRect );
-					} else {
-						p.setBackgroundMode( Qt::TransparentMode );
-						if ( curX == tX && mParent->drawLength() > 1 )
-							p.eraseRect( myRect );
-					}
-				}
-				p.drawText( myRect, flag, disp );
-
-				mCell[ mCellY ][ rightleft ? myRect.right() : myRect.left() ] = cell;
-			}
-			curX += mParent->drawLength();
-		}
-		curY += mParent->drawHeight();
-		myRect.moveBy( 0, linespace );
-
-		if ( refreshCursor ) {
-			mCursor->refresh( &p );
-			refreshCursor = false;
-		}
-	}
-
-	if ( number && fromY < curY ) {
-		p.setPen( Settings::colorFG() );
-		unsigned int w;
-		if ( rightleft )
-			w = width() - GETX( marginLeft ) + GETX( spaceWidth ) / 2;
-		else
-			w = GETX( marginLeft ) - GETX( spaceWidth ) / 2;
-		p.drawLine( w, (fromY - shiftY) * linespace, w, (curY - shiftY) * linespace );
-	}
-
-	unsigned int fh = shiftY + height() / linespace;
-	toY = qMin( toY, fh - 1 );
-	myRect.setLeft( 0 );
-	myRect.setHeight( linespace );
-	myRect.setWidth( width() );
-	for( ; curY <= toY; ++curY ) {
-		p.eraseRect( myRect );
-		p.setPen( Qt::cyan );
-		p.drawText( myRect, flag, "~" );
-		myRect.moveBy( 0, linespace );
-	}
-	if ( p.isActive() )
-		p.end();
-}
-
-void KYZisEdit::drawCell( QPainter* p, const KYZViewCell& cell, const QRect& rect, bool reversed  ) {
-	if (!p->isActive()) 
-		p->begin(this);
-	if ( ! cell.isValid ) {
-		drawCell( p, defaultCell, rect, reversed );
-		return;
-	}
-	p->setFont( cell.font );
-	if ( cell.selected || reversed ) {
-		p->setPen( cell.bg );
-		p->setBackgroundMode( Qt::OpaqueMode );
-		p->setBackgroundColor( cell.fg );
-		p->eraseRect( rect );
-	} else {
-		p->setPen( cell.fg );
-		if ( cell.bg != backgroundColor() ) {
-			p->setBackgroundMode( Qt::OpaqueMode );
-			p->setBackgroundColor( cell.bg );
-			p->eraseRect( rect );
-		} else {
-			p->setBackgroundMode( Qt::TransparentMode );
-		}
-	}
-	p->drawText( rect, cell.flag, cell.c );
-	if ( p->isActive() )
-		p->end();
-}
-
 void KYZisEdit::focusInEvent ( QFocusEvent * ) {
 	KYZisFactory::self()->setCurrentView( mParent );
 	updateCursor();
 }
 void KYZisEdit::focusOutEvent ( QFocusEvent * ) {
 	updateCursor();
+}
+
+
+void KYZisEdit::resizeEvent(QResizeEvent* e) {
+	e->accept();
+	updateArea();
+}
+void KYZisEdit::paintEvent( QPaintEvent* pe ) {
+	QRect r = pe->rect();
+	int fx = r.left();
+	int fy = r.top();
+	int tx = r.right();
+	int ty = r.bottom();
+	yzDebug() << "KYzisEdit < QPaintEvent( " << fx << "," << fy << " -> " << tx << "," << ty << " )" << endl;
+	m_insidePaintEvent = true;
+	if ( isFontFixed ) {
+		int linespace = fontMetrics().lineSpacing();
+		int maxwidth = fontMetrics().maxWidth();
+		fx /= maxwidth;
+		fy /= linespace;
+		int old_tx = tx, old_ty = ty;
+		tx /= maxwidth;
+		ty /= linespace;
+		if ( tx < old_tx ) ++tx;
+		if ( ty < old_ty ) ++ty;
+	}
+	fx = qMax( marginLeft, fx ) - marginLeft;
+	tx = qMax( marginLeft, tx ) - marginLeft;
+	fy += mParent->getDrawCurrentTop();
+	ty += mParent->getDrawCurrentTop();
+	if ( fx == (int)mParent->getDrawCurrentLeft() && tx - fx == (int)(mParent->getColumnsVisible() + 1) ) {
+		mParent->sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, ty ) );
+	} else {
+		mParent->setPaintAutoCommit( false );
+		for( ; fy <= ty; ++fy ) {
+			mParent->sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, fy ) );
+		}
+		mParent->commitPaintEvent();
+	}
+	m_insidePaintEvent = false;
+	yzDebug() << "KYzisEdit > QPaintEvent" << endl;
+}
+void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
+	yzDebug() << "KYZisEdit::paintEvent" << endl;
+	YZSelectionMap m = drawMap.map();
+	for( int i = 0; i < m.size(); ++i ) {
+		int left = GETX( qMin( m[i].fromPos().x(), m[i].toPos().x() ) );
+		int right = GETX( qMax( m[i].fromPos().x(), m[i].toPos().x() ) );
+		int top = qMin( m[i].fromPos().y(), m[i].toPos().y() ) * fontMetrics().lineSpacing();
+		int bottom = qMax( m[i].fromPos().y(), m[i].toPos().y() ) * fontMetrics().lineSpacing();
+		
+		update( QRect(left, top, right - left, bottom - top) );
+	}
+	yzDebug() << "KYZisEdit::paintEvent ends" << endl;
+}
+
+void KYZisEdit::setCursor( int c, int l ) {
+//	yzDebug() << "setCursor" << endl;
+	c = c - mParent->getDrawCurrentLeft() + marginLeft;
+	l -= mParent->getDrawCurrentTop();
+	unsigned int x = GETX( c );
+	if ( mParent->getLocalBooleanOption( "rightleft" ) ) {
+		x = width() - x - mCursor->width();
+	}
+	mCursor->move( x, l * fontMetrics().lineSpacing() );
+
+	// need for InputMethod (OverTheSpot)
+//	setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
+}
+
+QPoint KYZisEdit::cursorCoordinates( ) {
+	return QPoint( mCursor->x(), mCursor->y() );
+}
+
+void KYZisEdit::scrollUp( int n ) {
+	mCursor->hide();
+	scroll( 0, n * fontMetrics().lineSpacing() );
+	mCursor->show();
+}
+void KYZisEdit::scrollDown( int n ) {
+	scrollUp( -n );
+}
+
+void KYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
+	p->save();
+	if ( cell.fg.isValid() )
+		p->setPen( cell.fg.rgb() );
+	if ( !fakeLine )
+		x += marginLeft;
+	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+	p->eraseRect( r );
+	p->drawText( r, cell.c );
+	p->restore();
+}
+
+void KYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
+	QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
+	p->eraseRect( r );
+}
+
+void KYZisEdit::drawSetMaxLineNumber( int max ) {
+	int my_marginLeft = 2 + QString::number( max ).length();
+	if ( my_marginLeft != marginLeft ) {
+		marginLeft = my_marginLeft;
+		updateArea();
+	}
+}
+void KYZisEdit::drawSetLineNumber( int y, int n, int h, QPainter* p ) {
+	fakeLine = n <= 0;
+
+	QString num;
+	if ( !fakeLine && h == 0 )
+		num = QString::number( n );
+	num = num.rightJustified( marginLeft - 1, ' ' );
+
+	p->save();
+	p->setPen( Qt::yellow );
+
+	QRect r( 0, y*fontMetrics().lineSpacing(), GETX(marginLeft - spaceWidth), fontMetrics().lineSpacing() );
+	p->eraseRect( r );
+	p->drawText( r, num );
+
+	p->restore();
+}
+
+void KYZisEdit::drawMarginLeft( int min_y, int max_y, QPainter* p ) {
+	if ( marginLeft > 0 ) {
+		int x = GETX( marginLeft ) - GETX( spaceWidth )/2;
+		p->save();
+		p->setPen( Settings::colorFG() );
+		p->drawLine( x, min_y*fontMetrics().lineSpacing(), x, max_y*fontMetrics().lineSpacing() );
+		p->restore();
+	}
 }
 
 void KYZisEdit::initKeys() {

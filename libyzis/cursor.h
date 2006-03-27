@@ -47,15 +47,17 @@ private :
     unsigned int y_pos;
 };
 
-extern bool operator==( const YZCursor &lhs, const YZCursor &rhs );
-extern bool operator< ( const YZCursor &lhs, const YZCursor &rhs );
+extern YZIS_EXPORT bool operator==( const YZCursor &lhs, const YZCursor &rhs );
+extern YZIS_EXPORT bool operator< ( const YZCursor &lhs, const YZCursor &rhs );
+extern YZIS_EXPORT const YZCursor operator- (const YZCursor& l, const YZCursor& r );
+extern YZIS_EXPORT const YZCursor operator+ (const YZCursor& l, const YZCursor& r );
 
-inline bool operator<=( const YZCursor &lhs, const YZCursor &rhs ) { return lhs == rhs || lhs < rhs; }
-inline bool operator> ( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs == rhs) && !(lhs < rhs); }
-inline bool operator>=( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs < rhs); }
-inline bool operator!=( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs == rhs); }
+inline YZIS_EXPORT bool operator<=( const YZCursor &lhs, const YZCursor &rhs ) { return lhs == rhs || lhs < rhs; }
+inline YZIS_EXPORT bool operator> ( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs == rhs) && !(lhs < rhs); }
+inline YZIS_EXPORT bool operator>=( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs < rhs); }
+inline YZIS_EXPORT bool operator!=( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs == rhs); }
 
-extern YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
+extern YZIS_EXPORT YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
 
 struct YZCursorPos {
     YZCursor* bPos; /* buffer position */

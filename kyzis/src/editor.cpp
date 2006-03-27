@@ -448,7 +448,7 @@ void KYZisEdit::initKeys() {
 //	keys[ Qt::Key_BracketRight ] = "]";
 
 
-	actionCollection = new KActionCollection( this, mParent );
+	actionCollection = new KActionCollection( this );
 	signalMapper = new QSignalMapper( this );
 	connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMultipleKey( const QString& ) ) );
 }
@@ -473,11 +473,14 @@ void KYZisEdit::unregisterModifierKeys( const QString& keys ) {
 		return;
 	}
 	actionCollection->take( k );
+#warning port to KDE4 API
+#if 0
 	KAccel* accel = actionCollection->kaccel();
 	if ( accel ) {
 		accel->remove( keys );
 		accel->updateConnections();
 	}
+#endif
 	signalMapper->removeMappings( k );
 	delete k;
 }

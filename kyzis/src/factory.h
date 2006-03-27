@@ -62,7 +62,7 @@ class KYZisPublicFactory : public KTextEditor::Factory,
 		KTextEditor::ConfigPage *configPage ( int number, QWidget *parent );
 		QString configPageName ( int number ) const;
 		QString configPageFullName ( int number ) const;
-		QPixmap configPagePixmap ( int number, int size = KIcon::SizeSmall ) const;
+		QPixmap configPagePixmap ( int number, int size = K3Icon::SizeSmall ) const;
 };
 
 class KYZisFactory : public YZSession
@@ -124,7 +124,7 @@ public:
 	KTextEditor::ConfigPage *configPage ( int /*number*/, QWidget */*parent*/ ) { return NULL; }
 	QString configPageName ( int /*number*/ ) const { return ""; } 
 	QString configPageFullName ( int /*number*/ ) const { return ""; }
-	QPixmap configPagePixmap ( int /*number*/, int /*size*/ = KIcon::SizeSmall ) const { return QPixmap(); }
+	QPixmap configPagePixmap ( int /*number*/, int /*size*/ = K3Icon::SizeSmall ) const { return QPixmap(); }
 	
 	static KYZTextEditorIface *currentDoc;
 	KYZisView *lastView;

@@ -61,15 +61,15 @@ public:
 
     /**
      * Use this method to load whatever file/URL you have
-	 * @param url the url to open
+     * @param url the url to open
      */
     void load(const KUrl& url);
 
-	KParts::ReadWritePart* getCurrentPart();
+    KParts::ReadWritePart* getCurrentPart();
 
-	void createKPartGUI( KParts::ReadWritePart *part ) { createGUI( part ); }
+    void createKPartGUI( KParts::ReadWritePart *part ) { createGUI( part ); }
 
-	virtual void embedPartView(QWidget *view, const QString &title, const QString& toolTip = QString());
+    virtual void embedPartView(QWidget *view, const QString &title, const QString& toolTip = QString());
     virtual void embedSelectView(QWidget *view, const QString &title, const QString &toolTip);
     virtual void embedOutputView(QWidget *view, const QString &title, const QString &toolTip);
     virtual void embedSelectViewRight(QWidget* view, const QString& title, const QString &toolTip);

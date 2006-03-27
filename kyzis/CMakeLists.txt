@@ -3,7 +3,7 @@ kde4_header()
 add_subdirectory( src )
 add_subdirectory( pics )
 
-include_directories( ${CMAKE_SOURCE_DIR}/kyzis/src/newui/ ${CMAKE_SOURCE_DIR}/kyzis/src/ ${CMAKE_SOURCE_DIR}/libyzis/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
+include_directories( ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/kyzis/src/newui/ ${CMAKE_SOURCE_DIR}/kyzis/src/ ${CMAKE_SOURCE_DIR}/libyzis/ ${CMAKE_BINARY_DIR}/libyzis/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
 
 
 ########### next target ###############
@@ -14,7 +14,7 @@ kde4_automoc(${kyzis_SRCS})
 
 kde4_add_executable(kyzis ${kyzis_SRCS})
 
-target_link_libraries(kyzis  ${KDE4_KDECORE_LIBS} ktexteditor ${KDE4_KPARTS_LIBS} yzis internkyzis )
+target_link_libraries(kyzis  ${KDE4_KDECORE_LIBS} ktexteditor ${KDE4_KPARTS_LIBS} yzis internkyzis d)
 
 install_targets(/bin kyzis )
 

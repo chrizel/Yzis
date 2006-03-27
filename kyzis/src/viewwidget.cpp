@@ -73,7 +73,7 @@ KYZisView::KYZisView ( KYZTextEditorIface *doc, QWidget *parent, const char *)
 	status->insertItem("",90,1);
 	status->setItemAlignment(90,Qt::AlignRight);
 
-	status->insertItem("",99,0); //XXX: permanent = true
+	status->insertItem("",99,0);
 	status->setItemAlignment(99,Qt::AlignRight);
 
 	g = new QGridLayout(this,1,1);

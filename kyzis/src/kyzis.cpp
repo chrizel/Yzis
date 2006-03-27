@@ -45,6 +45,7 @@
 #include <kmultitabbar.h>
 #include <kmenu.h>
 #include <kmenubar.h>
+#include <ktoolbar.h>
 
 #include "ktexteditoriface.h"
 #include "session.h"
@@ -168,7 +169,7 @@ void Kyzis::openURL(const KUrl &url) {
 		return;
 	}
 
-	m_openRecentAction->addURL(url);
+	m_openRecentAction->addUrl(url);
 	m_openRecentAction->saveEntries( kapp->sessionConfig(), "RecentFiles" );
 
 	// About this function, the style guide (
@@ -326,7 +327,7 @@ void Kyzis::gotoLastWindow() {
 }
 
 void Kyzis::closeTab() {
-    actionCollection()->action("file_close")->activate();
+    actionCollection()->action("file_close")->trigger();
 }
 
 void Kyzis::setupWindowMenu() {

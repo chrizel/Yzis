@@ -50,6 +50,7 @@ class KYZisView: public KTextEditor::View,
 	signals :
 		void cursorPositionChanged();
 		void newStatus();
+		void mousePositionChanged (KTextEditor::View *view, const KTextEditor::Cursor& newPosition);
 
 	public:
 		KYZisView(KYZTextEditorIface *doc, QWidget *parent, const char *name=0);
@@ -99,6 +100,8 @@ class KYZisView: public KTextEditor::View,
 		void copy () const {}; //TODO
 		void cut() {} ; //TODO
 		void paste() {}; //TODO
+		bool setMouseTrackingEnabled(bool enabled) { return false; }
+		bool mouseTrackingEnabled() const { return false; }
 		QPoint cursorToCoordinate(const KTextEditor::Cursor& cursor) const;
 
 		bool mouseTrackingEnabled() const;

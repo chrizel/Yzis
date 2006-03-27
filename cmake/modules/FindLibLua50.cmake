@@ -13,23 +13,30 @@ INCLUDE(UsePkgConfig)
 
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
+#debian
 PKGCONFIG(lua50 _libLua50IncDir _libLua50LinkDir _libLua50LinkFlags _libLua50Cflags)
+#gentoo
+PKGCONFIG(lua _libLuaIncDir _libLuaLinkDir _libLuaLinkFlags _libLuaCflags)
+#any other distrib to blame for using common naming ?
+#
 
-set(LIBLUA50_DEFINITIONS ${_libLua50Cflags})
+set(LIBLUA50_DEFINITIONS ${_libLua50Cflags} ${_libLuaCflags} )
 
 # under windows, try to find the base gnuwin32 directory, do nothing under UNIX
 FIND_PACKAGE(GNUWIN32)
 
 FIND_PATH(LIBLUA50_INCLUDE_DIR lua.h
    ${_libLua50IncDir}/lua50
+   ${_libLuaIncDir}
    /usr/include/lua50
    /usr/local/include/lua50
    ${GNUWIN32_DIR}/include
 )
 
-FIND_LIBRARY(LIBLUA50_LIBRARIES NAMES lua50
+FIND_LIBRARY(LIBLUA50_LIBRARIES NAMES lua50 lua
    PATHS
    ${_libLua50LinkDir}
+   ${_libLuaLinkDir}
    /usr/lib
    /usr/local/lib
    ${GNUWIN32_DIR}/lib
@@ -43,11 +50,11 @@ endif (LIBLUA50_INCLUDE_DIR AND LIBLUA50_LIBRARIES)
 
 if (LIBLUA50_FOUND)
    if (NOT LibLua50_FIND_QUIETLY)
-      message(STATUS "Found liblua50: ${LIBLUA50_LIBRARIES}")
+      message(STATUS "Found liblua(50): ${LIBLUA50_LIBRARIES}")
    endif (NOT LibLua50_FIND_QUIETLY)
 else (LIBLUA50_FOUND)
    if (LibLua50_FIND_REQUIRED)
-      message(FATAL_ERROR "Could NOT find liblua50")
+      message(FATAL_ERROR "Could NOT find liblua(50)")
    endif (LibLua50_FIND_REQUIRED)
 endif (LIBLUA50_FOUND)
 

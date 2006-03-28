@@ -74,7 +74,7 @@ install_targets(${LIB_INSTALL_DIR} yzis )
 
 ########### install files ###############
 
-install_files(  FILES  magic.mime )
+install_files(/share/yzis FILES magic.mime )
 
 kde4_footer()
 

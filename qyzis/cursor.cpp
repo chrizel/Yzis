@@ -86,4 +86,3 @@ void QYZisCursor::paintEvent( QPaintEvent* ) {
 	}
 }
 
-#include "cursor.moc"

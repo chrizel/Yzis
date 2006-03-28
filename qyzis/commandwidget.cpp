@@ -68,4 +68,3 @@ void QYZisCommand::focusOutEvent (QFocusEvent *e) {
 	QWidget::focusOutEvent(e);
 }
 
-#include "commandwidget.moc"

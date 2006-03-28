@@ -23,6 +23,7 @@
 #endif
 
 #include <Q3DockWindow>
+#include <Q3PopupMenu>
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qmap.h>
@@ -103,7 +104,7 @@ private:
 
 	QString m_initialCommand;
 //	QMap<QWidget*, Q3DockWindow::Position> m_docks;
-	QPopupMenu *m_windowMenu;
+	Q3PopupMenu *m_windowMenu;
 	typedef QPair<int, QString> WinInfo;
 	QList<WinInfo> m_windowList;
 

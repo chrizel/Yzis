@@ -75,7 +75,7 @@ add_library(yzis SHARED ${yzis_LIB_SRCS} ${yzis_LIB_MOC_SRCS} )
 target_link_libraries(yzis ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${LIBLUA50_LIBRARIES} ${LIBLUALIB50_LIBRARIES} ${MAGIC_LIBRARIES} )
 
 set_target_properties(yzis PROPERTIES VERSION 0.0.0 SOVERSION 0 )
-install_targets(${LIB_INSTALL_DIR} yzis )
+install_targets(/lib yzis )
 
 
 ########### install files ###############

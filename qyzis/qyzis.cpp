@@ -310,4 +310,3 @@ QMainWindow *Qyzis::main()
     return this;
 }
 
-#include "qyzis.moc"

@@ -285,4 +285,3 @@ void QYZisView::scrollView( int value ) {
 
 
 
-#include "viewwidget.moc"

@@ -36,7 +36,6 @@
 #include <math.h>
 #include <qclipboard.h>
 #include <qcursor.h>
-#include <kshortcut.h>
 #include <ctype.h>
 
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
@@ -544,4 +543,3 @@ void QYZisEdit::imEndEvent( QIMEvent *e ) {
 	e->accept();
 }*/
 
-#include "editor.moc"

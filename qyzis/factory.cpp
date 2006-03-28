@@ -203,4 +203,3 @@ void QYZisFactory::splitHorizontally(YZView* /*view*/) {
 }
 
 
-#include "factory.moc"

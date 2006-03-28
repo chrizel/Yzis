@@ -31,9 +31,7 @@
 #include <qfont.h>
 #include <action.h>
 #include <qnamespace.h>
-#include <krootpixmap.h>
 #include <qsignalmapper.h>
-#include <kactioncollection.h>
 
 class QYZisView;
 class QYZisCursor;

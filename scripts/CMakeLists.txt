@@ -1,11 +1,11 @@
-kde4_header()
+#kde4_header()
 
 add_subdirectory( indent )
 
 ########### install files ###############
 
 install_files( /share/yzis/scripts  FILES  2html.lua clevertab.lua switch.lua )
-kde4_footer()
+#kde4_footer()
 
 
 

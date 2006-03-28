@@ -572,7 +572,7 @@ void YZBuffer::load(const QString& file) {
 	d->swapFile->setFileName( d->path );
 	if ( QFile::exists( d->swapFile->filename() ) ) { //if it already exists, recover from it
 		struct stat buf;
-		int i = stat( d->path.local8Bit(), &buf );
+		int i = stat( d->path.toLocal8Bit(), &buf );
 		if ( i != -1 && S_ISREG( buf.st_mode ) && CHECK_GETEUID( buf.st_uid )  ) {
 			if ( YZSession::me->promptYesNo(_("Recover"),_("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
 				if ( d->swapFile->recover() )
@@ -714,7 +714,7 @@ YZView* YZBuffer::firstView() const {
 }
 
 void YZBuffer::rmView(YZView *v) {
-	d->views.remove(v);
+	d->views.removeAll(v);
 //	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
 	if ( d->views.isEmpty() ) {
 		setState( HIDDEN );
@@ -796,7 +796,7 @@ void YZBuffer::makeAttribs() {
 
 void YZBuffer::setPath( const QString& _path ) {
 	QString oldPath = d->path;
-	d->path = QFileInfo( _path.stripWhiteSpace() ).absFilePath();
+	d->path = QFileInfo( _path.trimmed() ).absoluteFilePath();
 	
 	if ( oldPath != QString::null ) {
 		YZSession::me->getOptions()->updateOptions(oldPath, d->path);

@@ -149,7 +149,7 @@ void YZModeEx::initPool() {
 	// commands
 	commands.push_back( new YZExCommand( "(x|wq?)(a(ll)?)?", &YZModeEx::write ) );
 	commands.push_back( new YZExCommand( "w(rite)?", &YZModeEx::write , QStringList("write") ));
-	commands.push_back( new YZExCommand( "q(uit|a(ll)?)?", &YZModeEx::quit, QStringList::split(":","quit:qall") ) );
+	commands.push_back( new YZExCommand( "q(uit|a(ll)?)?", &YZModeEx::quit, QString("quit:qall").split(":") ) );
 	commands.push_back( new YZExCommand( "bf(irst)?", &YZModeEx::bufferfirst, QStringList("bfirst") ) );
 	commands.push_back( new YZExCommand( "bl(ast)?", &YZModeEx::bufferlast, QStringList("blast") ) );
 	commands.push_back( new YZExCommand( "bn(ext)?", &YZModeEx::buffernext, QStringList("bnext") ) );
@@ -267,7 +267,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 			QString arg = reg.cap( nc );
 			bool force = arg[ 0 ] == '!';
 			if ( force ) arg = arg.mid( 1 );
-			ret = (this->*( curCommand->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.stripWhiteSpace(), from, to, force ) );
+			ret = (this->*( curCommand->poolMethod() )) (YZExCommandArgs( view, _input, reg.cap( 1 ), arg.trimmed(), from, to, force ) );
 			commandIsValid = true;
 		}
 	}

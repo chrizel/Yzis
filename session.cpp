@@ -137,8 +137,8 @@ void YZSession::addBuffer( YZBuffer *b ) {
 
 void YZSession::rmBuffer( YZBuffer *b ) {
 //	yzDebug() << "Session : rmBuffer " << b->fileName() << endl;
-	if ( mBufferList.find( b ) != mBufferList.end() ) {
-			mBufferList.remove( b );
+	if ( mBufferList.indexOf( b ) >= 0 ) {
+			mBufferList.removeAll( b );
 			deleteBuffer( b );
 	}
 	if ( mBufferList.empty() )
@@ -200,17 +200,15 @@ YZView* YZSession::prevView() {
 		yzDebug() << "WOW, current view is NULL !" << endl;
 		return NULL;
 	}
-	
-	YZViewList::Iterator i = mViewList.find( currentView() );
-	
-	// handle wrap around
-	if ( i == mViewList.begin() ) {
-		i = mViewList.end();
+	int idx = mViewList.indexOf( currentView() );
+	if ( idx == -1 ) {
+		yzDebug() << "WOW, current view is not in mViewList !" << endl;
+		return NULL;
 	}
-	
-	--i;
-	
-	return *i;
+
+	if ( idx == 0 )
+		idx = mViewList.size();
+	return mViewList.value( idx - 1 );
 }
 
 YZView* YZSession::nextView() {
@@ -219,14 +217,12 @@ YZView* YZSession::nextView() {
 		return NULL;
 	}
 	
-	YZViewList::Iterator i = ++mViewList.find( currentView() );
-	
-	// check for wrap around
-	if ( i == mViewList.end() ) {
-		i = mViewList.begin();
+	int idx = mViewList.indexOf( currentView() );
+	if ( idx == -1 ) {
+		yzDebug() << "WOW, current view is not in mViewList !" << endl;
+		return NULL;
 	}
-	
-	return *i;
+	return mViewList.value( (idx+1)%mViewList.size() );
 }
 
 YZBuffer* YZSession::findBuffer( const QString& path ) {
@@ -367,7 +363,7 @@ void YZSession::addView( YZView *view ) {
 }
 
 void YZSession::removeView( YZView *view ) {
-	mViewList.remove( view );
+	mViewList.removeAll( view );
 }
 		
 int YZSession::getIntegerOption( const QString& option ) {

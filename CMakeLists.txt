@@ -5,6 +5,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 #non-required
 find_package(KDE4)
+find_package(Perl REQUIRED)
 
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 
@@ -40,7 +41,9 @@ endif (KDE4_FOUND)
 
 add_subdirectory( translations )
 add_subdirectory( qyzis )
-#add_subdirectory( tests )
+add_subdirectory( syntax )
+add_subdirectory( scripts )
+add_subdirectory( tests )
 
 include_directories( ${QT_INCLUDES} )
 

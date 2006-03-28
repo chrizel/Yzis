@@ -7,7 +7,7 @@ include_directories( ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}
 set(libyzisrunner_SRCS main.cpp)
 kde4_automoc(${libyzisrunner_SRCS})
 kde4_add_executable(libyzisrunner ${libyzisrunner_SRCS})
-target_link_libraries(libyzisrunner yzis ${X11_LIBRARIES} ${QT_QTCORE_LIBRARY} )
+target_link_libraries(libyzisrunner yzis ${X11_LIBRARIES} ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} )
 install_targets(/bin libyzisrunner )
 
 

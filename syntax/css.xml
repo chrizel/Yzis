@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language SYSTEM "language.dtd">
-<language name="CSS" version="1.98" kateversion="2.4" section="Markup" extensions="*.css" mimetype="text/css" author="Wilbert Berendsen (wilbert@kde.nl)" license="LGPL">
+<language name="CSS" version="1.99" kateversion="2.4" section="Markup" extensions="*.css" mimetype="text/css" author="Wilbert Berendsen (wilbert@kde.nl)" license="LGPL">
 
   <highlighting>
     <list name="properties">
@@ -129,6 +129,11 @@
       <item> word-spacing </item>
       <item> z-index </item>
 
+      <!-- CSS3 -->
+      <item> box-sizing </item>
+      <item> opacity </item>
+      <item> text-shadow </item>
+
       <!-- konq specific -->
       <item> konq_bgpos_x </item>
       <item> konq_bgpos_y </item>
@@ -219,6 +224,7 @@
       <item> disc </item>
       <item> circle </item>
       <item> square </item>
+      <item> box </item>
       <item> decimal </item>
       <item> decimal-leading-zero </item>
       <item> lower-roman </item>
@@ -313,6 +319,8 @@
       <item> overline </item>
       <item> portrait </item>
       <item> pre </item>
+      <item> pre-line </item>
+      <item> pre-wrap </item>
       <item> relative </item>
       <item> rtl </item>
       <item> scroll </item>
@@ -338,6 +346,8 @@
       <item> cursive </item>
       <item> fantasy </item>
       <item> monospace </item>
+      <item> border-box </item>
+      <item> content-box </item>
     </list>
 
 
@@ -421,16 +431,29 @@
       <item> active </item>
       <item> focus </item>
       <item> first-child </item>
+      <item> last-child </item>
+      <item> only-child </item>
+      <item> first-of-type </item>
+      <item> last-of-type </item>
+      <item> only-of-type </item>
       <item> first-letter </item>
       <item> first-line </item>
       <item> before </item>
       <item> after </item>
+      <item> selection </item>
+      <item> root </item>
+      <item> empty </item>
+      <item> target </item>
+      <item> enabled </item>
+      <item> disabled </item>
+      <item> checked </item>
+      <item> indeterminate </item>
     </list>
 
     <contexts>
       <context attribute="Normal Text" lineEndContext="#stay" name="Base">
-      <lineContinue context="#stay"/>
-        <DetectSpace/>
+        <LineContinue/>
+        <DetectSpaces/>
 	<IncludeRules context="FindRuleSets" />
       </context>
 
@@ -474,7 +497,7 @@
       <!-- other contexts -->
       <context attribute="Normal Text" lineEndContext="#stay" name="Media">
         <DetectChar attribute="Media" context="Media2" char="{" beginRegion="media" />
-	<keyword attribute="Media" context="#stay" String="mediatypes" insensitive="1" />
+	<keyword attribute="Media" context="#stay" String="mediatypes" />
 	<DetectChar attribute="Media" context="#stay" char="," />
 	<IncludeRules context="FindComments" />
 	<RegExpr attribute="Error" context="#stay" String="\S+" />
@@ -497,14 +520,14 @@
 
       <context attribute="Normal Text" lineEndContext="#stay" name="Import">
       	<DetectChar attribute="At Rule" context="#pop" char=";" />
-	<keyword attribute="Media" context="#stay" String="mediatypes" insensitive="1" />
+	<keyword attribute="Media" context="#stay" String="mediatypes" />
 	<IncludeRules context="FindValues" />
 	<IncludeRules context="FindStrings" />
 	<IncludeRules context="FindComments" />
       </context>
 
       <context attribute="Comment" lineEndContext="#stay" name="Comment">
-	<DetectSpace/>
+	<DetectSpaces/>
         <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" endRegion="comment" />
         <IncludeRules context="##Alerts" />
 	<DetectIdentifier/>

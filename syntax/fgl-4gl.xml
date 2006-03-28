@@ -356,7 +356,7 @@
     <comments>
       <comment name="multiLine" start="{" end="}" />
     </comments>
-    <keywords casesensitive="0rt="
+    <keywords casesensitive="0" />
   </general>
 </language>
 

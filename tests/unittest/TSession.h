@@ -60,7 +60,7 @@ public:
         yzDebug( AREA_TESTS) << "TYZSession::popupMessage: '" << message << "' \n";
 		printf("popupMessage:\n");
 		printf("============\n");
-		printf("%s\n\n", message.latin1() );
+		printf("%s\n\n", message.toLatin1().constData() );
     }
 
     virtual void quit(bool /*savePopup=true */) {

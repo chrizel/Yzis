@@ -1,44 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE language>
 <!-- Python syntax highlightning v0.9 by Per Wigren -->
-<language name="Python" version="1.22" kateversion="2.1" section="Scripts" extensions="*.py;*.pyw" mimetype="application/x-python;text/x-python" casesensitive="1" author="Per Wigren" license="">
+<!-- Python syntax highlighting v1.9 by Michael Bueker (improved keyword differentiation) -->
+<language name="Python" version="1.93" kateversion="2.4.1" section="Scripts" extensions="*.py;*.pyw" mimetype="application/x-python;text/x-python" casesensitive="1" author="Michael Bueker" license="">
 	<highlighting>
 		<list name="prep">
 			<item> import </item>
 			<item> from </item>
 			<item> as </item>
 		</list>
-
-		<list name="statements">
-      <item> and </item>
-			<item> assert </item>
-			<item> break </item>
+		<list name="defs">
 			<item> class </item>
-			<item> continue </item>
 			<item> def </item>
 			<item> del </item>
+			<item> global </item>
+			<item> lambda </item>
+		</list>
+		<list name="operators">
+			<item> and </item>
+			<item> assert </item>
+			<item> in </item>
+			<item> is </item>
+			<item> not </item>
+			<item> or </item>
+		</list>
+		<list name="commands">
+			<item> exec </item>
+			<item> print </item>
+		</list>
+		<list name="flow">
+			<item> break </item>
+			<item> continue </item>
 			<item> elif </item>
 			<item> else </item>
 			<item> except </item>
-			<item> exec </item>
 			<item> finally </item>
 			<item> for </item>
-			<item> global </item>
 			<item> if </item>
-			<item> in </item>
-			<item> is </item>
-			<item> lambda </item>
-			<item> not </item>
-			<item> or </item>
 			<item> pass </item>
-			<item> print </item>
 			<item> raise </item>
 			<item> return </item>
 			<item> try </item>
 			<item> while </item>
 			<item> yield </item>
 		</list>
-
 		<list name="builtinfuncs">
 			<item> abs </item>
 			<item> apply </item>
@@ -101,7 +106,6 @@
 			<item> xrange </item>
 			<item> zip </item>
 		</list>
-
 		<list name="specialvars">
 			<item> None </item>
 			<item> self </item>
@@ -110,11 +114,13 @@
 			<item> NotImplemented </item>
 			<item> Ellipsis </item>
 		</list>
-
 		<contexts>
 			<context name="Normal" attribute="Normal Text" lineEndContext="#stay">
 				<keyword attribute="Preprocessor" String="prep" context="#stay"/>
-				<keyword attribute="Keyword" String="statements" context="#stay"/>
+				<keyword attribute="Definition Keyword" String="defs" context="#stay"/>
+				<keyword attribute="Operator" String="operators" context="#stay"/>
+				<keyword attribute="Command Keyword" String="commands" context="#stay"/>
+				<keyword attribute="Flow Control Keyword" String="flow" context="#stay"/>
 				<keyword attribute="Builtin Function" String="builtinfuncs" context="#stay"/>
 				<keyword attribute="Special Variable" String="specialvars" context="#stay"/>
 				<RegExpr attribute="Normal" String="[a-zA-Z_][a-zA-Z_0-9]+" context="#stay"/>
@@ -138,13 +144,13 @@
 				<DetectChar attribute="String" char="'" context="Single A-string"/>
 				<DetectChar attribute="String" char="&quot;" context="Single Q-string"/>
 
-				<RegExpr attribute="Operator" String="[+*/\(\)%\|\[\]\{\}:=;\!&lt;&gt;!^&amp;~-]" context="#stay"/>
+				<RegExpr attribute="Operator" String="[+*/%\|=;\!&lt;&gt;!^&amp;~-]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%[a-zA-Z]" context="#stay"/>
 
 			</context>
 
 			<context name="Tripple A-comment" attribute="Comment" lineEndContext="#stay">
-				<HlCChar attribute="Comment" context="#stay"/>
-				<RegExpr attribute="Comment" String="'''" context="#pop"/>
+				<StringDetect attribute="Comment" String="'''" context="#pop"/>
 			</context>
 
 			<context name="Tripple Q-comment" attribute="Comment" lineEndContext="#stay">
@@ -154,13 +160,15 @@
 
 			<context name="Tripple A-string" attribute="String" lineEndContext="#stay">
 				<HlCChar attribute="String" context="#stay"/>
-				<RegExpr attribute="Operator" String="%[a-zA-Z]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%\([a-zA-Z0-9_]+\)[a-zA-Z]" context="#stay"/> 
+				<RegExpr attribute="String Substitution" String="%[a-zA-Z]" context="#stay"/>
 				<RegExpr attribute="String" String="'''" context="#pop"/>
 			</context>
 
 			<context name="Tripple Q-string" attribute="String" lineEndContext="#stay">
 				<HlCStringChar attribute="String" context="#stay"/>
-				<RegExpr attribute="Operator" String="%[a-zA-Z]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%\([a-zA-Z0-9_]+\)[a-zA-Z]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%[a-zA-Z]" context="#stay"/>
 				<RegExpr attribute="String" String="&quot;&quot;&quot;" context="#pop"/>
 			</context>
 
@@ -176,23 +184,29 @@
 
 			<context name="Single A-string" attribute="String" lineEndContext="#stay">
 				<HlCStringChar attribute="String" context="#stay"/>
-				<RegExpr attribute="Operator" String="%[a-zA-Z]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%\([a-zA-Z0-9_]+\)[a-zA-Z]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%[a-zA-Z]" context="#stay"/>
 				<DetectChar attribute="String" char="'" context="#pop"/>
 			</context>
 
 			<context name="Single Q-string" attribute="String" lineEndContext="#stay">
 				<HlCStringChar attribute="String" context="#stay"/>
-				<RegExpr attribute="Operator" String="%[a-zA-Z]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%\([a-zA-Z0-9_]+\)[a-zA-Z]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%[a-zA-Z]" context="#stay"/>
 				<DetectChar attribute="String" char="&quot;" context="#pop"/>
 			</context>
 
 			<context name="Raw A-string" attribute="Raw String" lineEndContext="#stay">
 				<HlCStringChar attribute="Raw String" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%\([a-zA-Z0-9_]+\)[a-zA-Z]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%[a-zA-Z]" context="#stay"/>
 				<DetectChar attribute="Raw String" char="'" context="#pop"/>
 			</context>
 
 			<context name="Raw Q-string" attribute="Raw String" lineEndContext="#stay">
 				<HlCStringChar attribute="Raw String" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%\([a-zA-Z0-9_]+\)[a-zA-Z]" context="#stay"/>
+				<RegExpr attribute="String Substitution" String="%[a-zA-Z]" context="#stay"/>
 				<DetectChar attribute="Raw String" char="&quot;" context="#pop"/>
 			</context>
 
@@ -200,8 +214,11 @@
 		</contexts>
 		<itemDatas>
 			<itemData name="Normal Text" defStyleNum="dsNormal"/>
-			<itemData name="Operator" defStyleNum="dsChar"/>
-			<itemData name="Keyword" defStyleNum="dsKeyword"/>
+			<itemData name="Definition Keyword" defStyleNum="dsDefinition"/>
+			<itemData name="Operator" defStyleNum="dsOperator"/>
+			<itemData name="String Substitution" defStyleNum="dsStringSubst"/>
+			<itemData name="Command Keyword" defStyleNum="dsKeyword"/>
+			<itemData name="Flow Control Keyword" defStyleNum="dsFlow"/>
 			<itemData name="Builtin Function" defStyleNum="dsDataType"/>
 			<itemData name="Special Variable" defStyleNum="dsOthers"/>
 			<itemData name="Preprocessor" defStyleNum="dsChar"/>
@@ -218,8 +235,12 @@
 	</highlighting>
    <general>
      <folding indentationsensitive="1" />
-		 <comments>
-       <comment name="singleLine" start="#" />
+     <emptyLines>
+       <emptyLine regexpr="\s+" casesensitive="false"/>
+       <emptyLine regexpr="\s*#.*$" casesensitive="false"/>
+     </emptyLines>
+     <comments>
+        <comment name="singleLine" start="#" position="afterwhitespace"/>
      </comments>
      <keywords casesensitive="1" />
    </general>

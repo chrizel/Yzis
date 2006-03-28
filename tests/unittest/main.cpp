@@ -20,6 +20,7 @@
  */
 
 #include <QtTest/qtest.h>
+#include <QApplication>
 #include <QCoreApplication>
 #include <qtextcodec.h>
 #include "portability.h"
@@ -49,79 +50,79 @@ int main(int argc, char **argv) {
 #endif
 
     QCoreApplication *app;
-/*    if ( useGUI )
+    if ( useGUI ) {
         app = ( QCoreApplication* )new QApplication( argc, argv );
-    else*/
+	QObject::connect( app, SIGNAL(lastWindowClosed()), app, SLOT(quit()) );
+    } else
         app = new QCoreApplication( argc,argv );
 
-	QObject::connect( app, SIGNAL(lastWindowClosed()), app, SLOT(quit()) );
-
-//	YZDebugBackend::instance()->enableDebugArea("TYZView", false );
-	YZDebugBackend::instance()->setDebugOutput( stderr );
-	YZDebugBackend::instance()->setDebugLevel( YZ_ERROR_LEVEL );
+    //YZDebugBackend::instance()->enableDebugArea("TYZView", false );
+    YZDebugBackend::instance()->setDebugOutput( stderr );
+    YZDebugBackend::instance()->setDebugLevel( YZ_ERROR_LEVEL );
 
     setlocale( LC_ALL, "");
     QString l = QString(PREFIX) + "/share/locale";
     bindtextdomain( "yzis", l.toUtf8() );
     bind_textdomain_codeset( "yzis", "UTF-8" );
     textdomain( "yzis" );
-	TYZSession *session = new TYZSession();
-	YZSession::me->getOptions()->setGroup("Global");
-	YZOptionValue* o_splash = YZSession::me->getOptions()->getOption("blocksplash");
-	bool splash = o_splash->boolean();
-	QString initialSendKeys;
+    
+    TYZSession *session = new TYZSession();
+    YZSession::me->getOptions()->setGroup("Global");
+    YZOptionValue* o_splash = YZSession::me->getOptions()->getOption("blocksplash");
+    bool splash = o_splash->boolean();
+    QString initialSendKeys;
 
-	/*
-	 * Open buffers
-	 */
-	bool hasatleastone = false;
-	QString s;
+    /*
+     * Open buffers
+     */
+    bool hasatleastone = false;
+    QString s;
 
-	/** read options **/
-	for ( int i=1; i<argc; i++ ) {
-		if ( '-' != argv[i][0] ) {
-			hasatleastone = true;
-			yzDebug(QYZIS)<< "qyzis : opening file " << argv[i]<<endl;
-			TYZSession::me->createBuffer(argv[ i ]);
-		} else {
-			s = QString( argv[i] );
-			if (s == "-h" || s == "--help") {
-				printf("Libyzis unit tests, tester for libyzis %s (see http://www.yzis.org)\n",
-					VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
-				printf("\nRun me just like you would run kyzis\n");
-				printf("%s -c <ex command>\n", argv[0]);
-				exit(0);
-			} else if (s == "-v" || s == "--version") {
-				printf("Libyzis unit tests, tester for libyzis %s (see http://www.yzis.org)\n",
-					VERSION_CHAR_LONG " " VERSION_CHAR_DATE "\n");
-				exit(0);
-			} else if (s == "-c") {
-				QString optArg;
-				o_splash->setBoolean( false );
-				if (s.length() > 2) optArg = argv[i]+2;
-				else if (i < argc-1) optArg = argv[++i];
-				initialSendKeys = optArg;
-			} else {
-				printf("Unrecognised option: %s\n", argv[i] );
-				exit(-1);
-			}
-		}
-	}
+    /** read options **/
+    for ( int i=1; i<argc; i++ ) {
+	    if ( '-' != argv[i][0] ) {
+		    hasatleastone = true;
+		    yzDebug(QYZIS)<< "qyzis : opening file " << argv[i]<<endl;
+		    TYZSession::me->createBuffer(argv[ i ]);
+	    } else {
+		    s = QString( argv[i] );
+		    if (s == "-h" || s == "--help") {
+			    printf("Libyzis unit tests, tester for libyzis %s (see http://www.yzis.org)\n",
+					    VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
+			    printf("\nRun me just like you would run kyzis\n");
+			    printf("%s -c <ex command>\n", argv[0]);
+			    exit(0);
+		    } else if (s == "-v" || s == "--version") {
+			    printf("Libyzis unit tests, tester for libyzis %s (see http://www.yzis.org)\n",
+					    VERSION_CHAR_LONG " " VERSION_CHAR_DATE "\n");
+			    exit(0);
+		    } else if (s == "-c") {
+			    QString optArg;
+			    o_splash->setBoolean( false );
+			    if (s.length() > 2) optArg = argv[i]+2;
+			    else if (i < argc-1) optArg = argv[++i];
+			    initialSendKeys = optArg;
+		    } else {
+			    printf("Unrecognised option: %s\n", argv[i] );
+			    exit(-1);
+		    }
+	    }
+    }
 
-	if ( !hasatleastone ) {
-		YZView *cView = YZSession::me->createBufferAndView();
-		cView->displayIntro();
-	}
+    if ( !hasatleastone ) {
+	    YZView *cView = YZSession::me->createBufferAndView();
+	    cView->displayIntro();
+    }
 
-/*	if (initialSendKeys.length()) {
-		YZSession::me->sendMultipleKeys( initialSendKeys );
-		o_splash->setBoolean( splash );
+    /*	if (initialSendKeys.length()) {
+	YZSession::me->sendMultipleKeys( initialSendKeys );
+	o_splash->setBoolean( splash );
 	} else {
-		printf("You must pass at least an yzis command with:\n%s -c <yzis keystroke>\n", argv[0] );
-		printf("Example: libyzisrunner -c ':source test_all.lua <ENTER><ESC>:qall!<ENTER>'\n" );
-		exit(0);
+	printf("You must pass at least an yzis command with:\n%s -c <yzis keystroke>\n", argv[0] );
+	printf("Example: libyzisrunner -c ':source test_all.lua <ENTER><ESC>:qall!<ENTER>'\n" );
+	exit(0);
 	}
-*/
-	return QTest::qExec(session,argc,argv);
+	*/
+    return QTest::qExec(session,argc,argv);
 }
 

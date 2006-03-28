@@ -8,7 +8,7 @@ include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
 set(yzistest_SRCS main.cpp TSession.cpp )
 kde4_automoc(${yzistest_SRCS})
 kde4_add_executable(yzistest ${yzistest_SRCS})
-target_link_libraries(yzistest yzis ${QT_QTTEST_LIBRARY} ${X11_LIBRARIES} )
+target_link_libraries(yzistest yzis ${QT_QTTEST_LIBRARY} ${QT_QTGUI_LIBRARY} ${X11_LIBRARIES} )
 install_targets(/bin yzistest )
 
 

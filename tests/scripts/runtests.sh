@@ -18,7 +18,7 @@ if [ -f ~/.yzis/init.lua ]; then
 fi
 
 YZIS=kyzis
-YZIS=../../libyzisrunner/libyzisrunner
+YZIS=libyzisrunner
 
 LANG=C $YZIS -c ":source $testname <ENTER><ESC>:qall!<ENTER>"
 

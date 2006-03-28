@@ -19,11 +19,11 @@
  *                                                                    *
  * You should have received a copy of the GNU Library General Public  *
  * License along with this library; if not, write to the              *
- * Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,       *
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,       *
  * Boston, MA  02110-1301, USA.                                       *
  **********************************************************************
  -->
-<language name="Doxygen" version="1.20" kateversion="2.4" section="Markup" extensions="*.dox;*.doxygen" mimetype="text/x-doxygen" author="Dominik Haumann (dhdev@gmx.de)" license="LGPL">
+<language name="Doxygen" version="1.25" kateversion="2.4" section="Markup" extensions="*.dox;*.doxygen" mimetype="text/x-doxygen" author="Dominik Haumann (dhdev@gmx.de)" license="LGPL">
   <highlighting>
     <!-- note: all tags may begin with a \ or @ char
          so if you add/change tags you have to do it twice -->
@@ -65,7 +65,6 @@
       <item> \note </item>
       <item> \only </item>
       <item> \par </item>
-      <item> \p </item>
       <item> \post </item>
       <item> \pre </item>
       <item> \remarks </item>
@@ -118,7 +117,6 @@
       <item> @note </item>
       <item> @only </item>
       <item> @par </item>
-      <item> @p </item>
       <item> @post </item>
       <item> @pre </item>
       <item> @remarks </item>
@@ -160,6 +158,7 @@
       <item> \include </item>
       <item> \link </item>
       <item> \namespace </item>
+      <item> \p </item>
       <item> \package </item>
       <item> \param </item>
       <item> \ref </item>
@@ -196,6 +195,7 @@
       <item> @include </item>
       <item> @link </item>
       <item> @namespace </item>
+      <item> @p </item>
       <item> @package </item>
       <item> @param </item>
       <item> @ref </item>
@@ -280,9 +280,8 @@
       @tag <word> rest_of_line : TagWordString
     -->
       <context attribute="Normal Text" lineEndContext="#stay" name="Normal">
-        <RegExpr attribute="Comment" context="LineComment" String="//(?:/(?=[^/]|$)|!)&lt;?"/>
-        <StringDetect attribute="Comment" context="#stay" String="/**/"/>
-        <RegExpr attribute="Comment" context="BlockComment" String="/\*(?:\*(?=[^\*]|$)|!)&lt;?" beginRegion="BlockComment"/>
+        <RegExpr attribute="Comment" context="LineComment" String="//(!|(/(?=[^/]|$)))&lt;?"/>
+        <RegExpr attribute="Comment" context="BlockComment" String="/\*(\*[^*/]|!|\*$)&lt;?" beginRegion="BlockComment"/>
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="LineComment">
         <DetectSpaces />
@@ -319,24 +318,24 @@
       <!-- tag contexts -->
       <context attribute="Comment" lineEndContext="#pop" name="ML_TagWord">
         <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" lookAhead="true"/>
-        <RegExpr attribute="Word" context="#stay" String="\s*" />
+        <DetectSpaces />
         <RegExpr attribute="Word" context="#pop" String="\S\s" />
         <RegExpr attribute="Word" context="#stay" String="\S" />
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="ML_TagWordWord">
         <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" lookAhead="true"/>
-        <RegExpr attribute="Word" context="#stay" String="\s*" />
-        <RegExpr attribute="Word" context="ML_Tag2ndWord" String="\S\s" />
+        <DetectSpaces />
+        <RegExpr attribute="Word" context="#pop" String="\S\s" />
         <RegExpr attribute="Word" context="#stay" String="\S" />
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="ML_Tag2ndWord">
         <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" lookAhead="true"/>
-        <RegExpr attribute="Word" context="#stay" String="\s*" />
-        <RegExpr attribute="Word" context="#pop#pop" String="\S\s" />
+        <DetectSpaces />
+        <RegExpr attribute="Word" context="#pop" String="\S\s" />
         <RegExpr attribute="Word" context="#stay" String="\S" />
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="ML_TagString">
-        <RegExpr attribute="Comment" context="#stay" String="\s*"/>
+        <DetectSpaces />
         <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" lookAhead="true"/>
         <StringDetect attribute="HTML Comment" context="ML_htmlcomment" String="&lt;!--" />
         <Detect2Chars attribute="Comment" context="#stay" char="&lt;" char1="&lt;" />
@@ -345,8 +344,8 @@
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="ML_TagWordString">
         <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/" lookAhead="true"/>
-        <RegExpr attribute="Word" context="#stay" String="\s*" />
-        <RegExpr attribute="Word" context="ML_TagString" String="\S\s" />
+        <DetectSpaces />
+        <RegExpr attribute="Word" context="#pop" String="\S\s" />
         <RegExpr attribute="Word" context="#stay" String="\S" />
       </context>
 
@@ -380,30 +379,30 @@
 <!-- NOTE: all contexts beginning with SL_ are for singleline comments -->
       <!-- tag contexts -->
       <context attribute="Comment" lineEndContext="#pop" name="SL_TagWord">
-        <RegExpr attribute="Word" context="#stay" String="\s*" />
+        <DetectSpaces />
         <RegExpr attribute="Word" context="#pop" String="\S\s" />
         <RegExpr attribute="Word" context="#stay" String="\S" />
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="SL_TagWordWord">
-        <RegExpr attribute="Word" context="#stay" String="\s*" />
-        <RegExpr attribute="Word" context="SL_Tag2ndWord" String="\S\s" />
+        <DetectSpaces />
+        <RegExpr attribute="Word" context="#pop" String="\S\s" />
         <RegExpr attribute="Word" context="#stay" String="\S" />
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="SL_Tag2ndWord">
-        <RegExpr attribute="Word" context="#stay" String="\s*" />
-        <RegExpr attribute="Word" context="#pop#pop" String="\S\s" />
+        <DetectSpaces />
+        <RegExpr attribute="Word" context="#pop" String="\S\s" />
         <RegExpr attribute="Word" context="#stay" String="\S" />
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="SL_TagString">
-        <RegExpr attribute="Comment" context="#stay" String="\s*"/>
+        <DetectSpaces />
         <StringDetect attribute="HTML Comment" context="SL_htmlcomment" String="&lt;!--" />
         <Detect2Chars attribute="Comment" context="#stay" char="&lt;" char1="&lt;" />
         <RegExpr attribute="HTML Tag" context="SL_htmltag" String="&lt;\s*\/?\s*[a-zA-Z_:][a-zA-Z0-9._:-]*" />
         <RegExpr attribute="Description" context="#stay" String="." />
       </context>
       <context attribute="Comment" lineEndContext="#pop" name="SL_TagWordString">
-        <RegExpr attribute="Word" context="#stay" String="\s*" />
-        <RegExpr attribute="Word" context="SL_TagString" String="\S\s" />
+        <DetectSpaces />
+        <RegExpr attribute="Word" context="#pop" String="\S\s" />
         <RegExpr attribute="Word" context="#stay" String="\S" />
       </context>
 

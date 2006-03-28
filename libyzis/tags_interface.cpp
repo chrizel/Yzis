@@ -52,7 +52,7 @@ static YZList<QString> tagfilenames;
 static QString lastsearch;
 
 static bool tagFileAlreadyOpen( QString filename ) {
-	return tagfilenames.find( filename ) != tagfilenames.end();
+	return tagfilenames.indexOf( filename ) != -1;
 }
 
 static tagFile* doOpenTagFile( QString filename ) {

@@ -1876,7 +1876,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			}
 			if ( drawIt ) {
 				QString disp = QString( drawChar() );
-				disp = disp.leftJustify( drawLength(), fillChar() );
+				disp = disp.leftJustified( drawLength(), fillChar() );
 
 				m_drawBuffer.setColor( drawColor() );
 

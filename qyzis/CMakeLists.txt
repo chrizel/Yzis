@@ -20,7 +20,7 @@ kde4_automoc(${qyzis_SRCS})
 
 kde4_add_executable(qyzis ${qyzis_SRCS})
 
-target_link_libraries(qyzis  ${KDE4_KDECORE_LIBS} yzis )
+target_link_libraries(qyzis ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} yzis )
 
 install_targets(/bin qyzis )
 

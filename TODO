@@ -21,6 +21,3 @@ nyzis:
 kyzis:
   - update() when lib wants redraw something (without endless loop;)
 
-qyzis:
-  - move to drawBuffer API
-

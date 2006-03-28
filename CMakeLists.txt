@@ -1,4 +1,4 @@
-kde4_header()
+#kde4_header()
 
 set(prefix              ${CMAKE_INSTALL_PREFIX})
 
@@ -61,9 +61,16 @@ set(yzis_LIB_SRCS
    font.cpp 
    )
 
-kde4_automoc(${yzis_LIB_SRCS})
+#add files needing MOC here :)
+set(yzis_LIB_MOCS 
+   session.h
+)
 
-kde4_add_library(yzis SHARED ${yzis_LIB_SRCS})
+#kde4_automoc(${yzis_LIB_SRCS})
+QT4_WRAP_CPP(yzis_LIB_MOC_SRCS ${yzis_LIB_MOCS} )
+
+#kde4_add_library(yzis SHARED ${yzis_LIB_SRCS} )
+add_library(yzis SHARED ${yzis_LIB_SRCS} ${yzis_LIB_MOC_SRCS} )
 
 target_link_libraries(yzis ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${LIBLUA50_LIBRARIES} ${LIBLUALIB50_LIBRARIES} ${MAGIC_LIBRARIES} )
 
@@ -75,5 +82,5 @@ install_targets(${LIB_INSTALL_DIR} yzis )
 
 install_files(/share/yzis FILES magic.mime )
 
-kde4_footer()
+#kde4_footer()
 

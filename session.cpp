@@ -476,4 +476,3 @@ YZView *YZSession::createBufferAndView( const QString &_path /*=QString::null*/ 
 	return view;
 }
 
-#include "session.moc"

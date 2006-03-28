@@ -30,7 +30,7 @@ void TYZSession::testCursor2() {
 
 void TYZSession::testCursor() { 
 	YZViewCursor *v = new YZViewCursor(YZSession::me->currentView()); 
-	VERIFY(v->bufferX()==1);
+	QVERIFY(v->bufferX()==1);
 }
 
 void TYZSession::cleanupTestCase() {

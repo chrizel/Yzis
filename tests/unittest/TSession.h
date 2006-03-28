@@ -21,9 +21,9 @@
 #ifndef TYZ_SESSION_H
 #define TYZ_SESSION_H
 
-#include <QtTest/QtTest>
-#include <QApplication>
+#include <QCoreApplication>
 #include "TView.h"
+#include <QtTest/qtestcase.h>
 
  /**
  * $Id: session.h 388 2004-03-03 23:44:13Z mikmak $
@@ -65,52 +65,51 @@ public:
 
     virtual void quit(bool /*savePopup=true */) {
         yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
-        qApp->closeAllWindows();
-        qApp->exit(0);
+	QCoreApplication::exit(0);
     }
 
     virtual void deleteView ( int  ) {
         yzDebug( AREA_TESTS) << "TYZSession::deleteView" << endl;
     }
     virtual void deleteBuffer ( YZBuffer * ) {
-        yzDebug( AREA_TESTS) << "TYZSession::deleteBuffer" << endl;
+	    yzDebug( AREA_TESTS) << "TYZSession::deleteBuffer" << endl;
     }
     virtual void changeCurrentView( YZView* ) {
-        // notification
-        yzDebug( AREA_TESTS) << "TYZSession::changeCurrentView" << endl;
+	    // notification
+	    yzDebug( AREA_TESTS) << "TYZSession::changeCurrentView" << endl;
     }
     virtual void setFocusCommandLine( ) {
-        yzDebug( AREA_TESTS) << "TYZSession::setFocusCommandLine" << endl;
+	    yzDebug( AREA_TESTS) << "TYZSession::setFocusCommandLine" << endl;
     }
     virtual void setFocusMainWindow( ) {
-        yzDebug( AREA_TESTS) << "TYZSession::setFocusMainWindow" << endl;
+	    yzDebug( AREA_TESTS) << "TYZSession::setFocusMainWindow" << endl;
     }
-	virtual bool quit(int) {
-        yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
-        qApp->closeAllWindows();
-        qApp->exit(0);
-		return true;
+    virtual bool quit(int) {
+	    yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
+	    QCoreApplication::exit(0);
+	    return true;
     }
-	virtual bool promptYesNo(const QString&, const QString&) {
+    virtual bool promptYesNo(const QString&, const QString&) {
 	    yzDebug( AREA_TESTS) << "TYZSession::promptYesNo" << endl;
-		return true;
-	}
-	virtual int promptYesNoCancel( const QString&, const QString& ) {
+	    return true;
+    }
+    virtual int promptYesNoCancel( const QString&, const QString& ) {
 	    yzDebug( AREA_TESTS) << "TYZSession::promptYesNoCancel" << endl;
-		return 0;
-	}
-	virtual void splitHorizontally(YZView*) {
-        yzDebug( AREA_TESTS) << "TYZSession::splitHorizontally" << endl;
-	}
-	virtual YZView *doCreateView(YZBuffer*b) { return new TYZView(b,YZSession::me); }
-	virtual void doDeleteView(YZView*v) { delete v; } 
-	virtual YZBuffer* doCreateBuffer() { return new YZBuffer(); }
+	    return 0;
+    }
+    virtual void splitHorizontally(YZView*) {
+	    yzDebug( AREA_TESTS) << "TYZSession::splitHorizontally" << endl;
+    }
+    virtual YZView *doCreateView(YZBuffer*b) { return new TYZView(b,YZSession::me); }
+    virtual void doDeleteView(YZView*v) { delete v; } 
+    virtual YZBuffer* doCreateBuffer() { return new YZBuffer(); }
+    virtual void setClipboardText(const QString&, Clipboard::Mode) {};
 
-	private slots:
-		void initTestCase();
-		void testCursor();
-		void testCursor2();
-		void cleanupTestCase();
+    private slots:
+	    void initTestCase();
+	    void testCursor();
+	    void testCursor2();
+	    void cleanupTestCase();
 };
 
 #endif // TYZ_SESSION_H

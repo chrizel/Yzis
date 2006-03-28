@@ -61,8 +61,7 @@ public:
 
     virtual void quit(bool /*savePopup=true */) {
         yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
-        qApp->closeAllWindows();
-        qApp->exit(0);
+	QCoreApplication::exit(0);
     }
 
     virtual void deleteView ( int  ) {
@@ -83,8 +82,7 @@ public:
     }
 	virtual bool quit(int) {
         yzDebug( AREA_TESTS) << "TYZSession::quit" << endl;
-        qApp->closeAllWindows();
-        qApp->exit(0);
+	QCoreApplication::exit(0);
 		return true;
     }
 	virtual bool promptYesNo(const QString&, const QString&) {
@@ -101,6 +99,7 @@ public:
 	virtual YZView *doCreateView(YZBuffer*b) { return new TYZView(b,YZSession::me); }
 	virtual void doDeleteView(YZView*v) { delete v; } 
 	virtual YZBuffer* doCreateBuffer() { return new YZBuffer(); }
+	virtual void setClipboardText(const QString&, Clipboard::Mode) {}
 };
 
 #endif // TYZ_SESSION_H

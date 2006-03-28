@@ -112,6 +112,12 @@ public:
 	virtual bool popupFileSaveAs() { return false; }
 	virtual void filenameChanged() {}
 	virtual void highlightingChanged() {}
+	virtual void preparePaintEvent(int, int) {}
+	virtual void endPaintEvent() {}
+	virtual void drawCell(int, int, const YZDrawCell&, void*) {}
+	virtual void drawClearToEOL(int, int, const QChar&) {}
+	virtual void drawSetMaxLineNumber(int) {}
+	virtual void drawSetLineNumber(int, int, int) {}
 	
 protected:
 	class Mapping {

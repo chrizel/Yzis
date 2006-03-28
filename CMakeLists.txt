@@ -40,6 +40,7 @@ endif (KDE4_FOUND)
 
 add_subdirectory( translations )
 add_subdirectory( qyzis )
+#add_subdirectory( tests )
 
 include_directories( ${QT_INCLUDES} )
 

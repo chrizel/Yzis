@@ -20,7 +20,6 @@
  */
 
 #include <QCoreApplication>
-#include <QApplication>
 #include <qtextcodec.h>
 #include "libyzis/portability.h"
 #include "libyzis/session.h"
@@ -49,9 +48,9 @@ int main(int argc, char **argv) {
 #endif
 
     QCoreApplication *app;
-    if ( useGUI )
+/*    if ( useGUI )
         app = ( QCoreApplication* )new QApplication( argc, argv );
-    else
+    else*/
         app = new QCoreApplication( argc,argv );
 
 	QObject::connect( app, SIGNAL(lastWindowClosed()), app, SLOT(quit()) );

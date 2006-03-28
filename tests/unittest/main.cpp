@@ -19,8 +19,8 @@
  * $Id: main.cpp 1272 2004-10-16 22:41:00Z mikmak $
  */
 
+#include <QtTest/qtest.h>
 #include <QCoreApplication>
-#include <QApplication>
 #include <qtextcodec.h>
 #include "portability.h"
 #include "session.h"
@@ -49,9 +49,9 @@ int main(int argc, char **argv) {
 #endif
 
     QCoreApplication *app;
-    if ( useGUI )
+/*    if ( useGUI )
         app = ( QCoreApplication* )new QApplication( argc, argv );
-    else
+    else*/
         app = new QCoreApplication( argc,argv );
 
 	QObject::connect( app, SIGNAL(lastWindowClosed()), app, SLOT(quit()) );
@@ -122,7 +122,6 @@ int main(int argc, char **argv) {
 		exit(0);
 	}
 */
-//	int ret = app.exec();
-	return QtTest::exec(session,argc,argv);
+	return QTest::qExec(session,argc,argv);
 }
 

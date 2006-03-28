@@ -1,18 +1,8 @@
 kde4_header()
 
 add_subdirectory( libyzisrunner )
-
-include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
-
+add_subdirectory( unittest )
 
 ########### install files ###############
-
-
 kde4_footer()
 
-
-
-#original Makefile.am contents follow:
-
-#SUBDIRS = libyzisrunner
-#

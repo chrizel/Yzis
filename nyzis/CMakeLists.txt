@@ -10,7 +10,7 @@ set(nyzis_SRCS viewwidget.cpp factory.cpp main.cpp )
 kde4_automoc(${nyzis_SRCS})
 kde4_add_executable(nyzis ${nyzis_SRCS})
 
-target_link_libraries(nyzis ${NCURSES_LIBRARIES} ${X11_X11_LIB} ${QT_QTCORE_LIBRARY} yzis )
+target_link_libraries(nyzis ${NCURSES_LIBRARIES} ${X11_LIBRARIES} ${QT_QTCORE_LIBRARY} yzis )
 
 install_targets(/bin nyzis )
 

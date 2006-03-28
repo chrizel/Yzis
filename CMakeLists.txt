@@ -2,16 +2,16 @@ kde4_header()
 
 set(prefix              ${CMAKE_INSTALL_PREFIX})
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/translator.h.in ${CMAKE_CURRENT_BINARY_DIR}/translator.h @ONLY)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/translator.h.in ${CMAKE_CURRENT_BINARY_DIR}/translator.h)
 
 find_package(LibLua50 REQUIRED)
 find_package(LibLuaLib50 REQUIRED)
 find_package(Magic REQUIRED)
 
-macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/translator.h )
+#macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/translator.h )
 
 add_definitions("-DQT3_SUPPORT")
-include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/libyzis ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR} )
+include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/libyzis ${CMAKE_SOURCE_DIR}/libyzis ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR} )
 
 
 ########### next target ###############

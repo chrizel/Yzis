@@ -1,4 +1,4 @@
-kde4_header()
+#kde4_header()
 
 ########### install files ###############
 
@@ -38,5 +38,5 @@ install_files( ${DATA_INSTALL_DIR}/yzis/syntax FILES language.dtd syntax.templat
                ${CMAKE_CURRENT_BINARY_DIR}/html-php.xml ${CMAKE_CURRENT_BINARY_DIR}/css-php.xml ${CMAKE_CURRENT_BINARY_DIR}/javascript-php.xml
                )
 
-kde4_footer()
+#kde4_footer()
 

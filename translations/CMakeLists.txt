@@ -1,4 +1,4 @@
-kde4_header()
+#kde4_header()
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
 
@@ -6,7 +6,7 @@ include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
 ########### install files ###############
 
 
-kde4_footer()
+#kde4_footer()
 
 
 

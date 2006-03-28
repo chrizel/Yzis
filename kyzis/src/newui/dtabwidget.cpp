@@ -25,10 +25,12 @@
 #include <kconfig.h>
 #include <kiconloader.h>
 #include <kapplication.h>
+#include <kglobal.h>
 
-DTabWidget::DTabWidget(QWidget *parent)
+DTabWidget::DTabWidget(QWidget *parent, const char *name)
     :KTabWidget(parent), m_closeButton(0)
 {
+    setObjectName( name );
     setFocusPolicy(Qt::NoFocus);
     setMargin(0);
 
@@ -55,12 +57,12 @@ DTabWidget::DTabWidget(QWidget *parent)
 
 void DTabWidget::loadSettings()
 {
-    KConfig *config = kapp->sessionConfig();
+    KConfig *config = KGlobal::config();
     config->setGroup("UI");
 //    m_tabBarShown = config->readBoolEntry("TabBarShown", true);
-    m_tabBarShown = ! config->readEntry("TabWidgetVisibility", (QVariant)false).toBool();
-    m_closeOnHover = config->readEntry("CloseOnHover", (QVariant)false).toBool();
-    m_closeButtonShown = config->readEntry("ShowCloseTabsButton", true);
+    m_tabBarShown = ! config->readNumEntry("TabWidgetVisibility", 0);
+    m_closeOnHover = config->readBoolEntry("CloseOnHover", false);
+    m_closeButtonShown = config->readBoolEntry("ShowCloseTabsButton", true);
     //we do not delay hover close buttons - that looks and feels ugly
     setHoverCloseButtonDelayed(false);
 }

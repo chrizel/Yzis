@@ -27,7 +27,7 @@ class QToolButton;
 class DTabWidget: public KTabWidget {
     Q_OBJECT
 public:
-    DTabWidget(QWidget *parent=0);
+    DTabWidget(QWidget *parent=0, const char *name=0);
 
     /**@return The close button at the top right corner.
     May be 0 if the configuration do not allow close buttons or the tabbar.*/

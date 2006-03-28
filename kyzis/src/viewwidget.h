@@ -100,13 +100,9 @@ class KYZisView: public KTextEditor::View,
 		void copy () const {}; //TODO
 		void cut() {} ; //TODO
 		void paste() {}; //TODO
-		bool setMouseTrackingEnabled(bool enabled) { return false; }
-		bool mouseTrackingEnabled() const { return false; }
-		QPoint cursorToCoordinate(const KTextEditor::Cursor& cursor) const;
-
-		bool mouseTrackingEnabled() const;
 		bool setMouseTrackingEnabled(bool enabled);
-
+		bool mouseTrackingEnabled() const;
+		QPoint cursorToCoordinate(const KTextEditor::Cursor& cursor) const;
 
 		//KTextEditor::MenuInterface and support functions
 		void emitNewStatus();

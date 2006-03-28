@@ -246,19 +246,19 @@ void Kyzis::embedPartView(QWidget *view, const QString &title, const QString&/*t
 }
 
 void Kyzis::embedSelectView(QWidget *view, const QString &title, const QString &/*toolTip*/) {
-	toolWindow(DDockWindow::Left)->addWidget(title, view);
-	m_docks[view] = DDockWindow::Left;
+	toolWindow(Qt::LeftDockWidgetArea)->addWidget(title, view);
+	m_docks[view] = Qt::LeftDockWidgetArea;
 }
 
 void Kyzis::embedOutputView(QWidget *view, const QString &title, const QString &/*toolTip*/) {
-	toolWindow(DDockWindow::Bottom)->addWidget(title, view);
-	m_docks[view] = DDockWindow::Bottom;
-	toolWindow(DDockWindow::Bottom)->show();
+	toolWindow(Qt::BottomDockWidgetArea)->addWidget(title, view);
+	m_docks[view] = Qt::BottomDockWidgetArea;
+	toolWindow(Qt::BottomDockWidgetArea)->show();
 }
 
 void Kyzis::embedSelectViewRight(QWidget *view, const QString &title, const QString &/*toolTip*/) {
-	toolWindow(DDockWindow::Right)->addWidget(title, view);
-	m_docks[view] = DDockWindow::Right;
+	toolWindow(Qt::RightDockWidgetArea)->addWidget(title, view);
+	m_docks[view] = Qt::RightDockWidgetArea;
 }
 
 void Kyzis::removeView(QWidget *view) {
@@ -274,7 +274,7 @@ void Kyzis::removeView(QWidget *view) {
 }
 
 void Kyzis::setViewAvailable(QWidget *pView, bool bEnabled) {
-    DDockWindow *dock;
+    DDockWidget *dock;
     if (m_docks.contains(pView))
         dock = toolWindow(m_docks[pView]);
     else
@@ -297,7 +297,7 @@ void Kyzis::raiseView(QWidget *view) {
 
     if (m_docks.contains(view))
     {
-        DDockWindow *dock = toolWindow(m_docks[view]);
+        DDockWidget *dock = toolWindow(m_docks[view]);
         dock->raiseWidget(view);
     }
     else if (m_widgets.contains(view) && m_widgetTabs.contains(view))

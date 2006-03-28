@@ -122,7 +122,7 @@ private:
 	unsigned int mViews;
 
 	QString m_initialCommand;
-	QMap<QWidget*, DDockWindow::Position> m_docks;
+	QMap<QWidget*, Qt::DockWidgetArea> m_docks;
 	KMenu *m_windowMenu;
 	typedef QPair<int, KUrl> WinInfo;
 	QList<WinInfo> m_windowList;

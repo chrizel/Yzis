@@ -28,6 +28,7 @@
 //Added by qt3to4:
 #include <QPixmap>
 #include <QEvent>
+#include <kglobal.h>
 
 #include "dtabwidget.h"
 #include "docksplitter.h"
@@ -45,10 +46,10 @@ DMainWindow::DMainWindow(QWidget *parent, const char *name)
 
 void DMainWindow::loadSettings()
 {
-    KConfig *config = kapp->sessionConfig();
+    KConfig *config = KGlobal::config();
     config->setGroup("UI");
     m_openTabAfterCurrent = config->readEntry("OpenNewTabAfterCurrent", true);
-    m_showIconsOnTabs = config->readEntry("ShowTabIcons", (QVariant)false).toBool();
+    m_showIconsOnTabs = config->readEntry("ShowTabIcons", false);
 }
 
 DMainWindow::~DMainWindow()
@@ -57,24 +58,21 @@ DMainWindow::~DMainWindow()
         removeWidget(*it);*/
 }
 
-DDockWindow *DMainWindow::toolWindow(DDockWindow::Position position) const
+DDockWidget *DMainWindow::toolWindow(Qt::DockWidgetArea area) const
 {
-    switch (position) {
-        case DDockWindow::Bottom: return m_bottomDock;
-        case DDockWindow::Left: return m_leftDock;
-        case DDockWindow::Right: return m_rightDock;
+    switch (area) {
+        case Qt::BottomDockWidgetArea: return m_bottomDock;
+        case Qt::LeftDockWidgetArea: return m_leftDock;
+        case Qt::RightDockWidgetArea: return m_rightDock;
     }
     return 0;
 }
 
 void DMainWindow::createToolWindows()
 {
-    m_bottomDock = new DDockWindow(this, DDockWindow::Bottom);
-    moveDockWindow(m_bottomDock, Qt::DockBottom);
-    m_leftDock = new DDockWindow(this, DDockWindow::Left);
-    moveDockWindow(m_leftDock, Qt::DockLeft);
-    m_rightDock = new DDockWindow(this, DDockWindow::Right);
-    moveDockWindow(m_rightDock, Qt::DockRight);
+    m_bottomDock = new DDockWidget(Qt::BottomDockWidgetArea, this);
+    m_leftDock = new DDockWidget(Qt::LeftDockWidgetArea, this);
+    m_rightDock = new DDockWidget(Qt::RightDockWidgetArea, this);
 }
 
 void DMainWindow::addWidget(QWidget *widget, const QString &title)
@@ -143,7 +141,7 @@ void DMainWindow::removeWidget(QWidget *widget)
                 {
                     if (m_activeTabWidget->currentPage())
                     {
-                        kdDebug() << "trying best!" << endl;
+                        kDebug() << "trying best!" << endl;
                         m_activeTabWidget->currentPage()->setFocus();
                     }
                 }
@@ -174,21 +172,21 @@ DTabWidget *DMainWindow::splitVertical()
 void DMainWindow::invalidateActiveTabWidget()
 {
 /*    QWidget *focused = m_central->focusWidget();
-    kdDebug() << "invalidate: " << focused << endl;
+    kDebug() << "invalidate: " << focused << endl;
     if (focused == 0)
         return;
     if (!m_widgets.contains(focused))
     {
-        kdDebug() << "    focused is not in m_widgets" << endl;
+        kDebug() << "    focused is not in m_widgets" << endl;
         return;
     }
     if (m_widgetTabs.contains(focused))
     {
-        kdDebug() << "    focused is in m_widgets and m_widgetTabs" << endl;
+        kDebug() << "    focused is in m_widgets and m_widgetTabs" << endl;
         DTabWidget *tab = m_widgetTabs[focused];
         if (tab->indexOf(focused) >= 0)
             m_activeTabWidget = tab;
-        kdDebug() << "    tab: " << tab << endl;
+        kDebug() << "    tab: " << tab << endl;
     }*/
 }
 
@@ -206,11 +204,13 @@ DTabWidget *DMainWindow::createTab()
 
 bool DMainWindow::eventFilter(QObject *obj, QEvent *ev)
 {
+    return false;
     QWidget *w = (QWidget*)obj;
+
     if (!m_widgets.contains(w))
         return KParts::MainWindow::eventFilter(obj, ev);
 
-    if ((m_currentWidget != w) && (ev->type() == QEvent::FocusIn))
+    if ((m_currentWidget != w) && (ev->type() == QEvent::Show))
     {
         m_currentWidget = w;
         emit widgetChanged(w);
@@ -225,7 +225,7 @@ bool DMainWindow::eventFilter(QObject *obj, QEvent *ev)
     }
     else if (ev->type() == QEvent::WindowTitleChange)
     {
-        kdDebug() << "caption change" << endl;
+        kDebug() << "caption change" << endl;
     }
 
     return KParts::MainWindow::eventFilter(obj, ev);

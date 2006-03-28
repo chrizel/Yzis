@@ -2,7 +2,7 @@ kde4_header()
 
 add_subdirectory( pics )
 
-include_directories( ${CMAKE_SOURCE_DIR}/qyzis/ ${CMAKE_SOURCE_DIR}/libyzis/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
+include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/libyzis ${CMAKE_SOURCE_DIR}/qyzis/ ${CMAKE_SOURCE_DIR}/libyzis/ ${QT_INCLUDES}  )
 
 
 ########### next target ###############

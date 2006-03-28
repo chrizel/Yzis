@@ -49,7 +49,6 @@ int main(int argc, char **argv) {
 	{
 		// no session.. just start up normally
 		Qyzis *widget = new Qyzis(0);
-		qApp->setMainWidget( widget );
 		widget->show();
 		
 		/* TODO : handles remaining argc/argv 

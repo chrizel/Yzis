@@ -58,7 +58,7 @@ QYZisEdit::QYZisEdit(QYZisView *parent)
 	isFontFixed = fontInfo().fixedPitch();
 
 	// for Input Method
-	setInputMethodEnabled( true );
+	setAttribute(Qt::WA_InputMethodEnabled, true);
 
 	mCursor = new QYZisCursor( this, QYZisCursor::SQUARE );
 
@@ -204,7 +204,7 @@ void QYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		if ( ! text.isNull() ) {
 			if ( mParent->modePool()->current()->isEditMode() ) {
 				QChar reg = '\"';
-				YZSession::me->setRegister( reg, QStringList::split( "\n", text ) );
+				YZSession::me->setRegister( reg, text.split("\n") );
 				mParent->pasteContent( reg, false );
 				mParent->moveRight();
 			}
@@ -213,7 +213,8 @@ void QYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 }
 
 void QYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
-	if (e->state() == Qt::LeftButton) {
+	//if (e->state() == Qt::LeftButton) {
+	if (e->buttons() == Qt::LeftButton) {
 		if (mParent->modePool()->currentType() == YZMode::MODE_COMMAND) {
 			// start visual mode when user makes a selection with the left mouse button
 			mParent->modePool()->push( YZMode::MODE_VISUAL );

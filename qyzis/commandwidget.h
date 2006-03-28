@@ -31,7 +31,7 @@ class QYZisCommand : public QLineEdit {
 	Q_OBJECT
 
 	public :
-		QYZisCommand(QYZisView *parent=0, const char *name=0);
+		QYZisCommand(QYZisView *parent=0);
 		virtual ~QYZisCommand();
 
 	protected:

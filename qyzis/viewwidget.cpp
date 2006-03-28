@@ -46,8 +46,8 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 {
 	m_editor = new QYZisEdit( this );
 	status = new QStatusBar (this);
-	command = new QYZisCommand (this, "command");
-	mVScroll = new QScrollBar( this, "vscroll" );
+	command = new QYZisCommand (this);
+	mVScroll = new QScrollBar( this);
 	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
 	//connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
 	//connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
@@ -70,11 +70,11 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	status->addWidget(l_linestatus, 0); // was status->insertItem("",99,0,true);
 //	status->setItemAlignment(99,Qt::AlignRight);
 
-	g = new QGridLayout(this,1,1);
+	g = new QGridLayout(this);
 	g->addWidget(m_editor,0,0);
 	g->addWidget(mVScroll,0,1);
-	g->addMultiCellWidget(command,1,1,0,1);
-	g->addMultiCellWidget(status,2,2,0,1);
+	g->addWidget(command,1,0,1,2);
+	g->addWidget(status,2,0,1,2);
 
 //	setupActions();
 
@@ -84,7 +84,7 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	m_editor->setFocus();
 	setFocusProxy( m_editor );
 	myBuffer()->statusChanged();
-	mVScroll->setMaxValue( buffer->lineCount() - 1 );
+	mVScroll->setMaximum( buffer->lineCount() - 1 );
 
 //	setupCodeCompletion();
 
@@ -152,7 +152,7 @@ void QYZisView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
 	m_editor->drawClearToEOL( x, y, clearChar, m_painter );
 }
 void QYZisView::drawSetMaxLineNumber( int max ) {
-	mVScroll->setMaxValue( max );
+	mVScroll->setMaximum( max );
 	m_editor->drawSetMaxLineNumber( max );
 }
 void QYZisView::drawSetLineNumber( int y, int n, int h ) {
@@ -170,7 +170,7 @@ QChar QYZisView::currentChar() const {
 
 void QYZisView::wheelEvent( QWheelEvent * e ) {
 	if ( e->orientation() == Qt::Vertical ) {
-		int n = - ( e->delta() * mVScroll->lineStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
+		int n = - ( e->delta() * mVScroll->singleStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
 		scrollView( getCurrentTop() + n );
 	} else {
 		// TODO : scroll horizontally
@@ -193,7 +193,7 @@ void QYZisView::syncViewInfo() {
 	fileInfo +=( myBuffer()->fileIsModified() )?"M":" ";
 
 	l_fileinfo->setText( fileInfo );
-	if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->draggingSlider())
+	if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->isSliderDown())
 		mVScroll->setValue( getCurrentTop() );
 	emit cursorPositionChanged();
 	modeChanged();
@@ -220,7 +220,7 @@ void QYZisView::applyConfig( bool refresh ) {
 	YzisHighlighting *yzis = myBuffer()->highlight();
 	if (yzis) {
 		myBuffer()->makeAttribs();
-		repaint(true);
+		repaint();
 	} else if ( refresh ) {
 		m_editor->updateArea( );
 	}
@@ -238,7 +238,7 @@ void QYZisView::fileSaveAs() {
 void QYZisView::filenameChanged() {
 	if (Qyzis::me) {
 		//Qyzis::me->setCaption(getId(), myBuffer()->fileName());
-		Qyzis::me->setCaption( myBuffer()->fileName());
+		Qyzis::me->setWindowTitle( myBuffer()->fileName());
 	} else
 		yzWarning() << "QYZisView::filenameChanged : couldn't find Qyzis::me.. is that ok ?";
 
@@ -277,7 +277,7 @@ void QYZisView::scrollView( int value ) {
 	if ((unsigned int)value != getCurrentTop()) {
 		alignViewBufferVertically( value );
 
-		if (!mVScroll->draggingSlider())
+		if (!mVScroll->isSliderDown())
 			mVScroll->setValue( value );
 	}
 }

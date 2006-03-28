@@ -75,14 +75,8 @@ void QYZisFactory::setClipboardText( const QString& text, Clipboard::Mode mode )
 }
 
 bool QYZisFactory::quit( int /*errorCode*/ ) {
-	//a kpart CAN NOT exit the main app ;)
 	if (Qyzis::me) {
 		qApp->quit();
-	} else if (qApp->name() == QString::fromLatin1("kdevelop") ) {
-		/*
-		for (int i = 0; i < YZSession::mNbViews; i++)
-			deleteView(i);
-		*/
 	} else if ( currentView() && currentView()->modePool()->currentType() == YZMode::MODE_EX 
 				&& !currentView()->getCommandLineText().isEmpty() ) {
 		return false;
@@ -119,7 +113,7 @@ void QYZisFactory::readConfig( ) {
 void QYZisFactory::changeCurrentView( YZView* view ) {
 	yzDebug() << "QyzisFactory : setCurrentView " << view->getId() << endl;
 	QYZisView *v = static_cast<QYZisView*>(view);
-	v->setActiveWindow();
+	v->activateWindow();
 	v->setFocus();
 }
 
@@ -168,7 +162,7 @@ void QYZisFactory::closeView() {
 	if (Qyzis::me) {
 		Qyzis::me->closeTab();
 	} else {
-		lastView->close( true );
+		lastView->close();
 	}
 	lastView = 0;
 }

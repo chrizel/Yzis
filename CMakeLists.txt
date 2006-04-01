@@ -14,7 +14,13 @@ endif (NOT KDE4_FOUND)
 
 find_package(Perl REQUIRED)
 
-#set(CMAKE_VERBOSE_MAKEFILE ON)
+if (NOT APPLNK_INSTALL_DIR)
+	set(APPLNK_INSTALL_DIR /share/applnk)
+endif (NOT APPLNK_INSTALL_DIR)
+
+if (NOT ICON_INSTALL_DIR)
+	set(ICON_INSTALL_DIR share/icons)
+endif (NOT ICON_INSTALL_DIR)
 
 add_definitions(${QT_DEFINITIONS})
 

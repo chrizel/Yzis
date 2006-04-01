@@ -28,7 +28,5 @@ target_link_libraries(qyzis ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} yzis )
 install_targets(/bin qyzis )
 
 ########### install files ###############
-if (KDE4_FOUND)
-	install_files( ${APPLNK_INSTALL_DIR}/Editors FILES  qyzis.desktop )
-endif (KDE4_FOUND)
+install_files( ${APPLNK_INSTALL_DIR}/Editors FILES qyzis.desktop )
 

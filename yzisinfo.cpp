@@ -386,15 +386,18 @@ void YZYzisinfo::saveRegistersList( QTextStream & write ) {
  * YZYzisinfo::startPosition
  */
 
-YZCursor * YZYzisinfo::startPosition( const YZBuffer *buffer ) {
+YZCursor * YZYzisinfo::startPosition( const QString& filename ) const {
 
-	for ( StartPositionVector::Iterator it = mStartPosition.begin(); it != mStartPosition.end(); ++it ) {
-		if ( (*it)->filename() == buffer->fileName() ) {
+	for ( StartPositionVector::ConstIterator it = mStartPosition.begin(); it != mStartPosition.end(); ++it ) {
+		if ( (*it)->filename() == filename ) {
 			return (*it)->position();
 		}
 	}
 
 	return 0;
+}
+YZCursor * YZYzisinfo::startPosition( const YZBuffer *buffer ) const {
+	return startPosition( buffer->fileName() );
 }
 
 /**

@@ -573,7 +573,7 @@ YZCursor YZModeCommand::matchPair(const YZMotionArgs &args) {
 	YZCursor pos = args.view->myBuffer()->action()->match( args.view, viewCursor.buffer(), &found );
 	if ( found ) {
 		if ( args.standalone ) {
-			args.view->gotoxyAndStick( &pos );
+			args.view->gotoxyAndStick( pos );
 			YZSession::me->saveJumpPosition();
 		}
 		
@@ -589,7 +589,7 @@ YZCursor YZModeCommand::findNext(const YZMotionArgs &args) {
 	YZCursor pos = finder->forward( args.arg, found, args.count );
 	if ( found ) {
 		if ( args.standalone ) 
-			args.view->gotoxyAndStick( &pos );
+			args.view->gotoxyAndStick( pos );
 		return pos;
 	}
 	return args.view->getBufferCursor();
@@ -601,7 +601,7 @@ YZCursor YZModeCommand::findBeforeNext(const YZMotionArgs &args) {
 	YZCursor pos = finder->forwardBefore( args.arg, found, args.count );
 	if ( found ) {
 		if ( args.standalone ) 
-			args.view->gotoxyAndStick( &pos );
+			args.view->gotoxyAndStick( pos );
 		return pos;
 	}
 	return args.view->getBufferCursor();
@@ -613,7 +613,7 @@ YZCursor YZModeCommand::findPrevious(const YZMotionArgs &args) {
 	YZCursor pos = finder->reverse( args.arg, found, args.count );
 	if ( found ) {
 		if ( args.standalone ) 
-			args.view->gotoxyAndStick( &pos );
+			args.view->gotoxyAndStick( pos );
 		return pos;
 	}
 	return args.view->getBufferCursor();
@@ -625,7 +625,7 @@ YZCursor YZModeCommand::findAfterPrevious(const YZMotionArgs &args) {
 	YZCursor pos = finder->reverseAfter( args.arg, found, args.count );
 	if ( found ) {
 		if ( args.standalone ) 
-			args.view->gotoxyAndStick( &pos );
+			args.view->gotoxyAndStick( pos );
 		return pos;
 	}
 	return args.view->getBufferCursor();
@@ -637,7 +637,7 @@ YZCursor YZModeCommand::repeatFind(const YZMotionArgs &args) {
 	YZCursor pos = finder->searchAgain( found, args.count );
 	if ( found ) {
 		if ( args.standalone ) 
-			args.view->gotoxyAndStick( &pos );
+			args.view->gotoxyAndStick( pos );
 		return pos;
 	}
 	return args.view->getBufferCursor();
@@ -703,7 +703,7 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 
 	}
 	if ( args.standalone )
-		args.view->gotoxyAndStick( &result );
+		args.view->gotoxyAndStick( result );
 
 	return result;
 }
@@ -744,7 +744,7 @@ YZCursor YZModeCommand::moveSWordForward(const YZMotionArgs &args) {
 
 	}
 	if ( args.standalone )
-		args.view->gotoxyAndStick( &result );
+		args.view->gotoxyAndStick( result );
 
 	return result;
 }
@@ -806,7 +806,7 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 	}
 
 	if ( args.standalone )
-		args.view->gotoxyAndStick( &result );
+		args.view->gotoxyAndStick( result );
 
 	return result;
 }
@@ -844,7 +844,7 @@ YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args) {
 	}
 
 	if ( args.standalone )
-		args.view->gotoxyAndStick( &result );
+		args.view->gotoxyAndStick( result );
 
 	return result;
 }
@@ -925,7 +925,7 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 				moved = true;
 			}
 		}
-		if ( args.standalone && moved ) args.view->gotoxyAndStick( &from );
+		if ( args.standalone && moved ) args.view->gotoxyAndStick( from );
 	}
 	return from;
 }
@@ -944,7 +944,7 @@ YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 	}
 	
 	if ( args.standalone && moved ) {
-		args.view->gotoxyAndStick( &from );
+		args.view->gotoxyAndStick( from );
 		YZSession::me->saveJumpPosition();
 	}
 	
@@ -965,7 +965,7 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 	}
 	
 	if ( args.standalone && moved ) {
-		args.view->gotoxyAndStick( &from );
+		args.view->gotoxyAndStick( from );
 		YZSession::me->saveJumpPosition();
 	}
 	
@@ -1023,7 +1023,7 @@ void YZModeCommand::change(const YZCommandArgs &args) {
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->myBuffer()->lineCount() );
 		args.view->modePool()->change( YZMode::MODE_INSERT );
 	} else {
-		args.view->gotoxyAndStick( cur.x(), cur.y() );
+		args.view->gotoxyAndStick( cur );
 		// start insert mode, append if at EOL
 		if ( cur.x() < args.view->myBuffer()->getLineLength( cur.y() ) )
 			args.view->modePool()->change( YZMode::MODE_INSERT );
@@ -1236,7 +1236,7 @@ void YZModeCommand::del(const YZCommandArgs &args) {
 void YZModeCommand::yank(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->copyArea( args.view, interval( args ), args.regs );
 	YZCursor to = move( args.view, args.arg, args.count, args.usercount );
-	args.view->gotoxyAndStick( to.x(), to.y() );
+	args.view->gotoxyAndStick( to );
 	args.view->modePool()->pop();
 }
 

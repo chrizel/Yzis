@@ -52,6 +52,7 @@
 #include "ex_lua.h"
 #include "search.h"
 #include "yzisinfo.h"
+#include "viewcursor.h"
 
 #define ASSERT_TEXT_WITHOUT_NEWLINE( functionname, text ) \
 	YZASSERT_MSG( text.contains('\n')==false, QString("%1 - text contains newline").arg(text) )
@@ -498,6 +499,34 @@ void YZBuffer::setEncoding( const QString& name ) {
 	d->currentEncoding = name; */
 }
 
+QString YZBuffer::parseFilename( const QString& filename, YZCursor* gotoPos ) {
+	if ( filename.isEmpty() ) {
+		return filename;
+	}
+	QString r_filename = filename;
+	if ( !QFile::exists( filename ) ) {
+		/* match /file/name:line:col */
+		QRegExp reg = QRegExp( "(.+):(\\d+):(\\d+):?" );
+		if ( reg.exactMatch( filename ) && QFile::exists( reg.cap(1) ) ) {
+			r_filename = reg.cap(1);
+			if ( gotoPos != NULL ) {
+				gotoPos->setY( qMax(0,reg.cap(2).toInt()-1) );
+				gotoPos->setX( qMax(0,reg.cap(3).toInt()-1) );
+			}
+		} else {
+			/* match /file/name:line */
+			reg.setPattern( "(.+):(\\d+):?" );
+			if ( reg.exactMatch( filename ) && QFile::exists( reg.cap(1) ) ) {
+				r_filename = reg.cap(1);
+				if ( gotoPos != NULL ) {
+					gotoPos->setY( qMax(0,reg.cap(2).toInt()-1) );
+				}
+			}
+		}
+	}
+	return r_filename;
+}
+
 void YZBuffer::loadText( QString* content ) {
 	d->text->clear(); //remove the _pointers_ now
 	QTextStream stream( content, QIODevice::ReadOnly );
@@ -511,8 +540,6 @@ void YZBuffer::loadText( QString* content ) {
 void YZBuffer::load(const QString& file) {
 	yzDebug("YZBuffer") << "YZBuffer load " << file << endl;
 	if ( file.isNull() || file.isEmpty() ) return;
-	setPath(file);
-	d->isFileNew = false;
 
 	//stop redraws
 	d->enableUpdateView=false;
@@ -522,14 +549,9 @@ void YZBuffer::load(const QString& file) {
 		delete ( *it );
 	d->text->clear();
 	d->isFileNew=false;
-	
 
-	unsigned int scrollTo = 0;
-	QRegExp reg = QRegExp( "(.+):(\\d+):?" );
-	if ( !QFile::exists ( d->path ) && reg.exactMatch( d->path ) && QFile::exists( reg.cap( 1 ) ) ) {
-		d->path = reg.cap( 1 );
-		scrollTo = reg.cap( 2 ).toUInt();
-	}
+	setPath( file );
+
 	QFile fl( d->path );
 
 	//HL mode selection
@@ -562,7 +584,7 @@ void YZBuffer::load(const QString& file) {
 		while ( !stream.atEnd() )
 			appendLine( stream.readLine() );
 		fl.close();
-    } else if (QFile::exists(d->path)) {
+	} else if (QFile::exists(d->path)) {
 		YZSession::me->popupMessage(_("Failed opening file %1 for reading : %2").arg(d->path).arg(fl.errorString()));
 	}
 	if ( ! d->text->count() )
@@ -586,23 +608,7 @@ void YZBuffer::load(const QString& file) {
 	//reenable
 	d->enableUpdateView=true;
 	updateAllViews();
-	if ( scrollTo > 0 ) {
-		for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-			(*itr)->gotoStickyCol( scrollTo - 1 );
-			(*itr)->centerViewVertically( scrollTo - 1 );
-		}
-	}
 	filenameChanged();
-
-	YZSession::me->getYzisinfo()->readYzisinfo();
-	YZCursor * tmp = YZSession::me->getYzisinfo()->startPosition( this );
-	
-	for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		if ( tmp ) {
-			(*itr)->centerViewVertically( tmp->y() );
-			(*itr)->gotodxdy(tmp->x(), tmp->y(), true );
-		}
-	}
 }
 
 bool YZBuffer::save() {
@@ -660,16 +666,41 @@ bool YZBuffer::save() {
 	d->swapFile->reset();
 	d->swapFile->unlink();
 
-	YZSession::me->getYzisinfo()->updateStartPosition( this, 
-                  (YZSession::me->currentView())->getCursor().x(),
-                  (YZSession::me->currentView())->getCursor().y() );
-
-	YZSession::me->getYzisinfo()->writeYzisinfo();
+	saveYzisInfo();
    
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);
 	if ( hlMode >= 0 && d->highlight != YzisHlManager::self()->getHl( hlMode ) )
 		setHighLight( hlMode );
 	return true;
+}
+
+void YZBuffer::saveYzisInfo() {
+	/* save screen cursor */
+	YZSession::me->getYzisinfo()->updateStartPosition( this, 
+                  (YZSession::me->currentView())->getCursor().x(),
+                  (YZSession::me->currentView())->getCursor().y() );
+
+	YZSession::me->getYzisinfo()->writeYzisinfo();
+}
+
+YZCursor YZBuffer::getStartPosition( const QString& filename, bool parseFilename ) {
+	YZCursor infilename_pos;
+	YZCursor yzisinfo_pos;
+	QString r_filename = filename;
+	if ( parseFilename ) {
+		r_filename = YZBuffer::parseFilename( filename, &infilename_pos );
+	}
+	if ( infilename_pos.y() > 0 ) { // XXX: make YZCursor signed -> >= 0
+		return infilename_pos;
+	} else {
+		YZSession::me->getYzisinfo()->readYzisinfo();
+		YZCursor* tmp = YZSession::me->getYzisinfo()->startPosition( r_filename );
+		if ( tmp ) {
+			return *tmp;
+		} else {
+			return YZCursor();
+		}
+	}
 }
 
 // ------------------------------------------------------------------------

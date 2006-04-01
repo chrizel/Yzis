@@ -140,7 +140,8 @@ class YZYzisinfo {
 		 * Method to return the start position for the current file
 		 */
 		
-		YZCursor * startPosition( const YZBuffer *buffer );
+		YZCursor * startPosition( const QString& filename ) const;
+		YZCursor * startPosition( const YZBuffer *buffer ) const;
 		
 		/**
 		 * Method to return the previous search position for the current file

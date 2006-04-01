@@ -143,7 +143,7 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 				searchSelection->addInterval( YZInterval(*incSearchResult, endResult) );
 				view->sendPaintEvent( searchSelection->map() );
 			}
-			view->gotoxyAndStick( incSearchResult );
+			view->gotoxyAndStick( *incSearchResult );
 		} else {
 			view->gotoxy( mSearchBegin->x(), mSearchBegin->y() );
 			view->sendPaintEvent( searchSelection->map() );

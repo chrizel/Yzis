@@ -490,46 +490,45 @@ cmd_state YZModeEx::gotoOpenMode( const YZExCommandArgs& /*args*/ ) {
 
 cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 	bool force = args.force;
+	QString filename;
 
 	// check if the file needs to be saved
 	if ( !force && args.view->myBuffer()->fileIsModified() ) {
 		args.view->mySession()->popupMessage( _( "No write since last change (add ! to override)" ) );
 		return CMD_ERROR;
 	}
+
+	filename = args.arg;
 	
 	// Guardian for no arguments
 	// in this case Vim reloads the current buffer
-	if ( args.arg.length() == 0 ) {
+	if ( filename.isEmpty() ) {
 		YZBuffer *buff = args.view->myBuffer();
-		YZCursor cur = args.view->getCursor();
-		
-		// clear the text and reload the file
-		buff->clearText();
-		buff->load( buff->fileName() );
+		buff->saveYzisInfo();
+		filename = buff->fileName();
 
-		// keep the current cursor y position
-		args.view->centerViewVertically( cur.y() );
-		args.view->gotoxy( 0, cur.y(), true );
-					
+		buff->clearText();
+		buff->load( filename );
+
+		args.view->applyStartPosition( YZBuffer::getStartPosition(filename,false) );
+
 		return CMD_OK;
 	}
 
-	QFileInfo fi ( args.arg );
-	QString path = fi.absoluteFilePath();
-	YZBuffer *b = YZSession::me->findBuffer(path);
+	filename = YZBuffer::parseFilename(filename);
+	YZBuffer *b = YZSession::me->findBuffer(filename);
 	YZView *v = YZSession::me->findViewByBuffer(b);
 	if ( b && v ) {
 		YZSession::me->setCurrentView( v );
-		return CMD_OK;
 	} else if ( b ) {
 		v = YZSession::me->createView( b );
 		YZSession::me->setCurrentView( v );
-		return CMD_OK;
+	} else {
+		yzDebug() << "New buffer / view : " << filename << endl;
+		v = YZSession::me->createBufferAndView( args.arg );
+		YZSession::me->setCurrentView( v );
 	}
-	
-	yzDebug() << "New buffer / view : " << path << endl;
-	v = YZSession::me->createBufferAndView( path );
-	YZSession::me->setCurrentView( v );
+	v->applyStartPosition( YZBuffer::getStartPosition(args.arg) );
 
 	return CMD_OK;
 }

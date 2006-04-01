@@ -404,8 +404,10 @@ void YZView::centerViewHorizontally(unsigned int column) {
 	}
 }
 
-void YZView::centerViewVertically(unsigned int line) {
-	unsigned int newcurrent = 0;
+void YZView::centerViewVertically( int line ) {
+	if ( line == -1 )
+		line = mainCursor->screenY();
+	int newcurrent = 0;
 	if ( line > mLinesVis / 2 ) newcurrent = line - mLinesVis / 2;
 	alignViewVertically ( newcurrent );
 }
@@ -736,12 +738,20 @@ void YZView::gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int 
 	applyGoto( viewCursor, applyCursor );
 }
 
-void YZView::gotoxyAndStick( YZCursor* cursor ) {
-	gotoxyAndStick( cursor->x(), cursor->y() );
-}
-void YZView::gotoxyAndStick( unsigned int x, unsigned int y ) {
-	gotoxy( x, y );
+void YZView::gotodxdyAndStick( const YZCursor& pos ) {
+	gotodxdy( mainCursor, pos.x(), pos.y(), true );
 	updateStickyCol( mainCursor );
+}
+void YZView::gotodxdyAndStick( int x, int y ) {
+	gotodxdyAndStick( YZCursor(x,y) );
+}
+
+void YZView::gotoxyAndStick( const YZCursor& pos ) {
+	gotoxy( mainCursor, pos.x(), pos.y() );
+	updateStickyCol( mainCursor );
+}
+void YZView::gotoxyAndStick( int x, int y ) {
+	gotoxyAndStick( YZCursor(x,y) );
 }
 
 QString YZView::moveDown( unsigned int nb_lines, bool applyCursor ) {
@@ -884,6 +894,18 @@ QString YZView::moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
 	return QString::null;
 }
 
+void YZView::applyStartPosition( const YZCursor& pos ) {
+	if ( pos.y() > 0 ) { // XXX make YZCursor signed -> >= 0
+		//setPaintAutoCommit(false);
+		if ( pos.x() > 0 ) { // XXX make YZCursor signed -> >= 0
+			gotoxyAndStick( pos );
+		} else {
+			gotoLine( pos.y() );
+		}
+		centerViewVertically();
+		//commitPaintEvent(); XXX keepCursor issue...
+	}
+}
 
 /**
  * initChanges and applyChanges are called by the buffer to inform the view that there are

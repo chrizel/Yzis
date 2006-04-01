@@ -421,18 +421,18 @@ const YZViewList YZSession::getAllViews() const {
 	return result;
 }
 
-YZBuffer *YZSession::createBuffer( const QString &path /*=QString::null*/ ) {
+YZBuffer *YZSession::createBuffer( const QString &filename /*=QString::null*/ ) {
 	//make sure we don't have a buffer of this path yet
-	YZBuffer *buffer = findBuffer(path);
+	YZBuffer *buffer = findBuffer( filename );
 	if (buffer) { //already open !
 		return buffer;
 	}
-	
+
 	buffer = doCreateBuffer();
 	buffer->setState( YZBuffer::ACTIVE );
 	
-	if ( path != QString::null ) {
-		buffer->load( path );
+	if ( !filename.isEmpty() ) {
+		buffer->load( filename );
 	} else {
 		buffer->openNewFile();
 	}
@@ -442,24 +442,15 @@ YZBuffer *YZSession::createBuffer( const QString &path /*=QString::null*/ ) {
 	return buffer;
 }
 
-YZView *YZSession::createBufferAndView( const QString &_path /*=QString::null*/ ) {
-	QString path = _path;
-
-	//check for file:line_number syntax
-	unsigned int scrollTo = 0;
-	QRegExp reg = QRegExp( "(.+):(\\d+):?" );
-	if ( !QFile::exists( path ) && reg.exactMatch( path ) && QFile::exists( reg.cap( 1 ) ) ) {
-		path = reg.cap( 1 );
-		scrollTo = reg.cap( 2 ).toUInt();
-	}
-
-	YZBuffer *buffer = findBuffer(path);
+YZView *YZSession::createBufferAndView( const QString& path /*=QString::null*/ ) {
+	QString filename = YZBuffer::parseFilename(path);
+	YZBuffer *buffer = findBuffer( filename );
 	bool alreadyopen = true;
 	if (!buffer) {
 		alreadyopen=false;
-		buffer = createBuffer( path );
+		buffer = createBuffer( filename );
 	}
-	
+
 	YZView *view;
 	if (!alreadyopen) {
 		view = createView( buffer );
@@ -467,12 +458,9 @@ YZView *YZSession::createBufferAndView( const QString &_path /*=QString::null*/ 
 		view = findViewByBuffer(buffer);
 	}
 	setCurrentView( view );
-	if ( scrollTo > 0 ) {
-		view->gotoStickyCol( scrollTo - 1 );
-		view->centerViewVertically( scrollTo - 1 );
-	}
-	view->refreshScreen();
-	
+
+	view->applyStartPosition( YZBuffer::getStartPosition(path) );
+
 	return view;
 }
 

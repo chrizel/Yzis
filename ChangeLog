@@ -1,3 +1,6 @@
+2006-04-01 Mickael Marchand
+  * not an april fish : dropping automake/autoconf support
+
 2005-12-22 Rob Merrell (patch)
   * libyzis
     added CTRL+e/CTRL+y commands

@@ -2,6 +2,7 @@ project(yzis)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_COLOR_MAKEFILE ON)
 
 #KDE4 non-required
 find_package(KDE4)

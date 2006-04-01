@@ -1,7 +1,0 @@
-dnl put here things which have to be done after all usual autoconf macros
-dnl have been run, but before the Makefiles are created
-
-dnl all_includes='-I$(top_srcdir)/dcop -I$(top_srcdir)/libltdl -I$(top_srcdir)/kdefx -I$(top_builddir)/kdecore -I$(top_srcdir)/kdecore -I$(top_srcdir)/kdeui -I$(top_srcdir)/kio -I$(top_srcdir)/kio/kio -I$(top_srcdir)/kio/kfile -I$(top_srcdir) $(QT_INCLUDES) $(X_INCLUDES) $(KDE_INCLUDES) $(USER_INCLUDES)'
-AC_SUBST(all_includes)
-
-CXXFLAGS="$CXXFLAGS $KDE_DEFAULT_CXXFLAGS"

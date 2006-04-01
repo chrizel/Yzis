@@ -51,6 +51,8 @@
 
 #define _(a) QString::fromUtf8(gettext(a))
 
+namespace yzis {
+
 enum scope_t {
 	default_scope,
 	global_scope,
@@ -82,6 +84,8 @@ enum mapping_t {
 	visual = 4, // in visual mode
 	pendingop = 8, // waiting for an operator
 	insert = 16, // insert mode
+};
+
 };
 
 #endif /* YZIS_H */

@@ -26,6 +26,8 @@
 #include "ex_lua.h"
 #include "session.h"
 
+using namespace yzis;
+
 YZMapping *YZMapping::me = 0L;
 
 YZMapping *YZMapping::self() {

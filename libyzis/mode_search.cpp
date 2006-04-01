@@ -35,6 +35,8 @@
 #include "selection.h"
 #include "session.h"
 
+using namespace yzis;
+
 YZModeSearch::YZModeSearch() : YZMode() {
 	mType = YZMode::MODE_SEARCH;
 	mString = _( "[ Search ]" );

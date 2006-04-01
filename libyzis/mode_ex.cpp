@@ -51,6 +51,7 @@
 
 #include <QDir>
 
+using namespace yzis;
 
 YZExRange::YZExRange( const QString& regexp, ExRangeMethod pm ) {
 	mKeySeq = regexp;

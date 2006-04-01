@@ -31,6 +31,8 @@
 #include "session.h"
 #include "undo.h"
 
+using namespace yzis;
+
 YZMode::YZMode() {
 	mString = "if you see me, there is a problem :)";
 	mEditMode = false;

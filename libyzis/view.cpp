@@ -51,6 +51,8 @@
 #include "mapping.h"
 #include "folding.h"
 
+using namespace yzis;
+
 #define STICKY_COL_ENDLINE -1
 
 #define GET_STRING_WIDTH( s ) ( isFontFixed ? s.length() : stringWidth( s ) )
@@ -377,7 +379,7 @@ void YZView::updateCursor() {
 	int y = mainCursor->bufferY();
 
 	if ( y != lasty ) {
-		int nblines = mBuffer->lineCount();
+		uint nblines = mBuffer->lineCount();
 		viewInformation.percentage = QString("%1%").arg( (int)( y*100/ ( nblines==0 ? 1 : nblines )));
 		if ( scrollCursor->bufferY() < 1 )  viewInformation.percentage=_( "Top" );
 		if ( scrollCursor->bufferY()+mLinesVis >= nblines )  viewInformation.percentage=_( "Bot" );

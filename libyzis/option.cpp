@@ -19,6 +19,8 @@
  
 #include "option.h"
 
+using namespace yzis;
+
 YZOptionValue::YZOptionValue( YZOption* o ) {
 	m_parent = o;
 	m_type = invalid_t;
@@ -26,13 +28,13 @@ YZOptionValue::YZOptionValue( YZOption* o ) {
 YZOptionValue::YZOptionValue( const YZOptionValue& ov ) {
 	m_parent = ov.parent();
 	switch( ov.type() ) {
-		case boolean_t :
+		case yzis::boolean_t :
 			setBoolean( ov.boolean() );
 			break;
 		case string_t :
 			setString( ov.string() );
 			break;
-		case integer_t :
+		case yzis::integer_t :
 			setInteger( ov.integer() );
 			break;
 		case list_t :
@@ -60,13 +62,13 @@ value_t YZOptionValue::type() const {
 QString YZOptionValue::toString() {
 	QString ret = QString::null;
 	switch( type() ) {
-		case boolean_t :
+		case yzis::boolean_t :
 			ret = booleanToString( v_bool );
 			break;
 		case string_t :
 			ret = stringToString( v_str );
 			break;
-		case integer_t :
+		case yzis::integer_t :
 			ret = integerToString( v_int );
 			break;
 		case list_t :
@@ -153,7 +155,7 @@ YZColor YZOptionValue::colorFromString( bool* success, const QString& value ) {
 
 void YZOptionValue::setBoolean( bool value ) {
 	v_bool = value;
-	m_type = boolean_t;
+	m_type = yzis::boolean_t;
 }
 void YZOptionValue::setString( const QString& value ) {
 	v_str = value;
@@ -161,7 +163,7 @@ void YZOptionValue::setString( const QString& value ) {
 }
 void YZOptionValue::setInteger( int value ) {
 	v_int = value;
-	m_type = integer_t;
+	m_type = yzis::integer_t;
 }
 void YZOptionValue::setList( const QStringList& value ) {
 	v_list = value;

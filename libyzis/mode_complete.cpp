@@ -38,6 +38,8 @@
  * YZModeCompletion
  */
 
+using namespace yzis;
+
 YZModeCompletion::YZModeCompletion() : YZMode() {
 	mType = MODE_COMPLETION;
 	mString = _("{ Completion }");

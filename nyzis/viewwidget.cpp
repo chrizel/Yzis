@@ -56,6 +56,7 @@ NYZView::NYZView(YZBuffer *b)
 	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << b->getId() << endl;
 	window = NULL;
 	fakeLine = false;
+	m_focus = w_editor;
 }
 
 NYZView::~NYZView(){
@@ -233,22 +234,38 @@ void NYZView::drawSetLineNumber( int y, int n, int h ) {
 }
 
 
-
-void NYZView::setCommandLineText( const QString& text )
-{
-	werase(statusbar);
-	commandline = text;
-	if ( !text.isEmpty() ) {
-		waddstr(statusbar, text.toLocal8Bit().constData());
-		waddch( statusbar, ' ' ); // when doing backspace...
-		waddch( statusbar, '\b' );
+void NYZView::setFocusMainWindow() {
+	m_focus = w_editor;
+	drawCursor();
+}
+void NYZView::setFocusCommandLine() {
+	m_focus = w_statusbar;
+	wmove(statusbar, 0, getCommandLineText().length() );
+	wrefresh(statusbar);
+}
+void NYZView::restoreFocus() {
+	switch( m_focus ) {
+		case w_editor :
+			setFocusMainWindow();
+			break;
+		case w_statusbar :
+			setFocusCommandLine();
+			break;
 	}
+}
+
+void NYZView::setCommandLineText( const QString& text ) {
+	yzDebug() << "NYZView::setCommandLineText: " << text << endl;
+	commandline = text;
+	werase(statusbar);
+	waddstr(statusbar, commandline.toLocal8Bit().constData());
 	wrefresh(statusbar);
 }
 
 
 void NYZView::syncViewInfo( void )
 {
+	yzDebug() << "syncViewInfo" << endl;
 	// older versions of ncurses want non const..
 	char * myfmt;
 
@@ -276,7 +293,7 @@ void NYZView::syncViewInfo( void )
 	mvwprintw( infobar, 0, getColumnsVisible() - 20, getLineStatusString().toUtf8().constData() );
 	wrefresh(infobar);
 
-	drawCursor();
+	restoreFocus();
 }
 
 void NYZView::displayInfo( const QString& info )

@@ -168,9 +168,9 @@ class YZIS_EXPORT YZDoubleSelection {
 class YZIS_EXPORT YZSelectionPool {
 	public:
 		enum Layout_enum {
-			None	= 0x00000000,
-			Visual	= 0x00000001,
-			Search	= 0x00000002,
+			None	= 0x0,
+			Visual	= 0x1,
+			Search	= 0x2,
 		};
 
 		YZSelectionPool();

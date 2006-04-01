@@ -167,6 +167,16 @@ bool NYZFactory::quit( int errorCode ) {
 	return true;
 }
 
+void NYZFactory::setFocusMainWindow() {
+	NYZView *yv = static_cast<NYZView*>( currentView() );
+	yv->setFocusMainWindow();
+}
+
+void NYZFactory::setFocusCommandLine() {
+	NYZView *yv = static_cast<NYZView*>( currentView() );
+	yv->setFocusCommandLine();
+}
+
 void NYZFactory::changeCurrentView ( YZView * view  )
 {
 	NYZView *cur = static_cast<NYZView*>(currentView());

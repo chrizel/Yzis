@@ -73,6 +73,10 @@ public:
 	void filenameChanged();
 	void highlightingChanged();
 
+	void setFocusCommandLine();
+	void setFocusMainWindow();
+	void restoreFocus();
+
 protected :
 
 public slots:
@@ -114,6 +118,11 @@ private:
 	WINDOW		*infobar;	// the white one with filename/size/position...
 	WINDOW		*statusbar;	// the one we show in which mode we are
 	WINDOW          *fileInfo;     // the one with info about current file (modified..)
+	
+	enum e_focusable {
+		w_editor,
+		w_statusbar
+	};
 
 	/**
 	  * used to implement set/get CommandLine, as we have no
@@ -131,6 +140,9 @@ private:
 	  * mAttributesMap[ QRgb ] is the # of the corresponding pair in ncurses
 	  */
 	static QMap<QRgb,unsigned long int> mAttributesMap;
+
+	e_focusable m_focus;
+
 };
 
 #endif // NYZ_VIEW_H

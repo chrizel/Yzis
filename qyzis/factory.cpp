@@ -42,7 +42,7 @@
 #include "debug.h"
 
 QYZisFactory::QYZisFactory() :
-		YZSession("kyzis"),
+		YZSession("qyzis"),
 		lastView(0),
 		m_viewParent(0)
 {

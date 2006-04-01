@@ -47,8 +47,8 @@ public:
 	virtual bool quit ( int errorCode ) ;
 	virtual void popupMessage( const QString& message );
 	virtual void deleteBuffer ( YZBuffer *b );
-	virtual void setFocusCommandLine() {}
-	virtual void setFocusMainWindow() {}
+	virtual void setFocusCommandLine();
+	virtual void setFocusMainWindow();
 	virtual bool promptYesNo( const QString& title, const QString& message );
 	virtual int promptYesNoCancel( const QString& title, const QString& message );
 	virtual void splitHorizontally( YZView *view );

@@ -52,10 +52,10 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	//connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
 	//connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
 
-	l_mode = new QLabel( _("QYzis Ready"), this);
-	m_central = new QLabel(this);
-	l_fileinfo = new QLabel("", this);
-	l_linestatus = new QLabel("", this);
+	l_mode = new QLabel( _("QYzis Ready") );
+	m_central = new QLabel();
+	l_fileinfo = new QLabel();
+	l_linestatus = new QLabel();
 
 	status->addWidget(l_mode, 1); // was : status->insertItem(_("Yzis Ready"),0,1);
 	//status->setItemAlignment(0,Qt::AlignLeft);
@@ -94,7 +94,6 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 }
 
 QYZisView::~QYZisView () {
-//	delete m_editor;
 //	yzDebug() << "QYZisView::~QYZisView" << endl;
 //	if ( buffer ) buffer->removeView(this);
 }

@@ -39,12 +39,14 @@ macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/config.h ${CMAKE_CURRE
 
 add_subdirectory( libyzis )
 
-find_package(Ncurses)
-if (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
-	message (STATUS "The ncurses library does not support wide-character, nyzis will not be compiled.")
-else (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
-	add_subdirectory( nyzis )
-endif (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+if (ENABLE_NYZIS)
+	find_package(Ncurses)
+	if (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+		message (STATUS "The ncurses library does not support wide-character, nyzis will not be compiled.")
+	else (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+		add_subdirectory( nyzis )
+	endif (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+endif (ENABLE_NYZIS)
 
 
 #conditional KDE build

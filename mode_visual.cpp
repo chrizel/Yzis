@@ -34,6 +34,8 @@
 #include "session.h"
 #include "viewcursor.h"
 
+using namespace yzis;
+
 YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mType = YZMode::MODE_VISUAL;
 	mString = _( "[ Visual ]" );

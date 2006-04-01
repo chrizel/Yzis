@@ -75,7 +75,7 @@ class YZIS_EXPORT YZMode {
 
 		modeType type() const;
 		const QString& toString() const;
-		mapping_t mapMode() const;
+		yzis::mapping_t mapMode() const;
 		bool registered() const;
 		void setRegistered( bool registered );
 		QStringList modifierKeys();
@@ -105,7 +105,7 @@ class YZIS_EXPORT YZMode {
 		bool mEditMode;
 		bool mSelMode;
 		bool mIM;
-		mapping_t mMapMode;
+		yzis::mapping_t mMapMode;
 		QStringList mModifierKeys;
 		bool mRegistered;
 };

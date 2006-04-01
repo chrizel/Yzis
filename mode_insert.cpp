@@ -34,6 +34,8 @@
 #include "mode_complete.h"
 #include "events.h"
 
+using namespace yzis;
+
 YZModeInsert::YZModeInsert() : YZMode() {
 	mType = YZMode::MODE_INSERT;
 	mString = _( "[ Insert ]" );

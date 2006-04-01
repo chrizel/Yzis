@@ -29,6 +29,8 @@
 #include <qregexp.h>
 #include <QTextStream>
 
+using namespace yzis;
+
 YZInternalOptionPool::YZInternalOptionPool() {
 	init();
 	setGroup("Global");
@@ -465,7 +467,7 @@ void YZInternalOptionPool::createOption(const QString& optionName, const QString
 		// create a new YZOption
 		YZOption* opt = NULL;
 		bool success = false;
-		if ( type == boolean_t ) {
+		if ( type == yzis::boolean_t ) {
 			bool d_v = YZOptionValue::booleanFromString( &success, defaultValue );
 			if ( success )
 				opt = new YZOptionBoolean( optionName, d_v, ctx,scope, &doNothing, QStringList() );
@@ -473,7 +475,7 @@ void YZInternalOptionPool::createOption(const QString& optionName, const QString
 			QString d_v = YZOptionValue::stringFromString( &success, defaultValue );
 			if ( success ) 
 				opt = new YZOptionString( optionName, d_v, ctx,scope, &doNothing, QStringList(), QStringList() );
-		} else if ( type == integer_t ) {
+		} else if ( type == yzis::integer_t ) {
 			int d_v = YZOptionValue::integerFromString( &success, defaultValue );
 			if ( success )
 				opt = new YZOptionInteger( optionName, d_v, ctx, scope, &doNothing, QStringList() );

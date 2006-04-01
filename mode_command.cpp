@@ -50,6 +50,8 @@
 #include "view.h"
 #include "viewcursor.h"
 
+using namespace yzis;
+
 YZModeCommand::YZModeCommand() : YZMode() {
 	mType = MODE_COMMAND;
 	mString = _( "[ Awaiting Command ]" );

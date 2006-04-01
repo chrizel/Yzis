@@ -61,6 +61,8 @@ extern "C" {
 	YZASSERT_EQUALS( lua_gettop(L), n ); \
 	return n;
 
+using namespace yzis;
+
 void print_lua_stack_value(lua_State*L, int index)
 {
 	printf("stack %d ", index );

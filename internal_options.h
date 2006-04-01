@@ -50,8 +50,8 @@ class YZInternalOptionPool {
 		 * returns true if we succed to set the value
 		 *  => matched && returns false => option found, but the value given in the entry is bad.
 		 */
-		bool setOptionFromString( bool* matched, const QString& entry, scope_t user_scope = default_scope, YZBuffer* b = NULL, YZView* v = NULL );
-		bool setOptionFromString( const QString& entry, scope_t user_scope = default_scope, YZBuffer* b = NULL, YZView* v = NULL );
+		bool setOptionFromString( bool* matched, const QString& entry, yzis::scope_t user_scope = yzis::default_scope, YZBuffer* b = NULL, YZView* v = NULL );
+		bool setOptionFromString( const QString& entry, yzis::scope_t user_scope = yzis::default_scope, YZBuffer* b = NULL, YZView* v = NULL );
 
 		
 		/**
@@ -181,7 +181,7 @@ class YZInternalOptionPool {
 		/**
 		 * Dynamically creates a new option for yzis
 		 */
-		void createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, context_t ctx, value_t type );
+		void createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, yzis::context_t ctx, yzis::value_t type );
 
 		/**
 		 * Update the keys depending on buffers file name when a buffer change his name
@@ -193,7 +193,7 @@ class YZInternalOptionPool {
 	private:
 		void init();
 		void initConfFiles();
-		void applyOption( YZOption* option, context_t ctx, scope_t scope, YZBuffer* b, YZView* v );
+		void applyOption( YZOption* option, yzis::context_t ctx, yzis::scope_t scope, YZBuffer* b, YZView* v );
 
 		bool fillOptionFromString( YZOption* opt, const QString& entry );
 

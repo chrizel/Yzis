@@ -77,13 +77,13 @@ class YZYzisinfoStartPositionRecord {
 		 * Returns the current filename
 		 */ 
 		 
-		QString & filename();
+		const QString & filename() const;
 		
 		/** 
 		 * Returns the recorded start position for the current filename
 		 */
 		 
-		YZCursor * position();
+		YZCursor * position() const;
 		
 		/**
 		 * Sets the current filename

@@ -96,9 +96,8 @@ int main(int argc, char **argv) {
 			view->displayIntro();
 		} else {
 			for ( int i = 0; i < args->count(); i++ ) {
-				YZView *view = KYZisFactory::self()->createBufferAndView();
+				YZView *view = KYZisFactory::self()->createBufferAndView( args->url(i));
 				YZSession::me->setCurrentView(view);
-				widget->load( args->url( i ) );
 			}
 		}
 

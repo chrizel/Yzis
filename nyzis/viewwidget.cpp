@@ -296,13 +296,12 @@ void NYZView::syncViewInfo( void )
 	restoreFocus();
 }
 
-void NYZView::displayInfo( const QString& info )
-{
+void NYZView::displayInfo( const QString& info ) {
+	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;
 	werase(statusbar);
 	waddstr( statusbar, info.toLocal8Bit().constData() );
 	wrefresh(statusbar);
-	drawCursor();
-	yzDebug(NYZIS)<< "NYZView::displayInfo message is : " << info << endl;
+	restoreFocus();
 }
 
 

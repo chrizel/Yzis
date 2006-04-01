@@ -77,7 +77,7 @@ YZYzisinfoStartPositionRecord & YZYzisinfoStartPositionRecord::operator=( YZYzis
  * YZYzisinfoStartPositionRecord::filename
  */
  
-QString & YZYzisinfoStartPositionRecord::filename() {
+const QString& YZYzisinfoStartPositionRecord::filename() const {
 	return mFilename;
 }
 
@@ -85,7 +85,7 @@ QString & YZYzisinfoStartPositionRecord::filename() {
  * YZYzisinfoStartPositionRecord::position
  */
  
-YZCursor * YZYzisinfoStartPositionRecord::position() {
+YZCursor * YZYzisinfoStartPositionRecord::position() const {
 	return mPosition;
 }
 

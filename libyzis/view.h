@@ -211,8 +211,9 @@ class YZIS_EXPORT YZView {
 
 		/**
 		 * Center view vertically on the given @arg line
+		 * if line == -1, then center on the current line
 		 */
-		void centerViewVertically( unsigned int line );
+		void centerViewVertically( int line = -1 );
 
 		/**
 		 * Center view horizontally on the given @arg column
@@ -317,8 +318,10 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Moves the buffer cursor to @arg cursor and stick the column
 		 */
-		void gotoxyAndStick( YZCursor* cursor );
-		void gotoxyAndStick( unsigned int x, unsigned int y );
+		void gotoxyAndStick( const YZCursor& cursor );
+		void gotoxyAndStick( int x, int y );
+		void gotodxdyAndStick( const YZCursor& cursor );
+		void gotodxdyAndStick( int x, int y );
 
 		/**
 		 * Go to line of file
@@ -337,6 +340,8 @@ class YZIS_EXPORT YZView {
 		 */
 		void gotoStickyCol( unsigned int Y );
 		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor = true );
+
+		void applyStartPosition( const YZCursor& pos );
 
 		//-------------------------------------------------------
 		// ----------------- Drawing

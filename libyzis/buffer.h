@@ -431,13 +431,21 @@ public:
 	
 	void setState( State state );
 	State getState() const;
+
+	void saveYzisInfo();
 	
 	//-------------------------------------------------------
 	// ------------ Static
 	//-------------------------------------------------------
 	
 	static QString tildeExpand( const QString& path );
-	
+
+	/**
+	 * handle /file/name:line:col syntax
+	 */
+	static QString parseFilename( const QString& filename, YZCursor* gotoPos = NULL );
+	static YZCursor getStartPosition( const QString& filename, bool parseFilename = true );
+
 protected:
 	/**
 	 * Sets the line @param line to @param l

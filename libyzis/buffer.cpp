@@ -675,10 +675,10 @@ bool YZBuffer::save() {
 }
 
 void YZBuffer::saveYzisInfo() {
-	/* save screen cursor */
+	/* save buffer cursor */
 	YZSession::me->getYzisinfo()->updateStartPosition( this, 
-                  (YZSession::me->currentView())->getCursor().x(),
-                  (YZSession::me->currentView())->getCursor().y() );
+                  (YZSession::me->currentView())->getBufferCursor().x(),
+                  (YZSession::me->currentView())->getBufferCursor().y() );
 
 	YZSession::me->getYzisinfo()->writeYzisinfo();
 }

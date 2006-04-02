@@ -51,6 +51,12 @@
 
 #define _(a) QString::fromUtf8(gettext(a))
 
+#ifdef SAFE_MODE
+#define YZIS_SAFE_MODE
+#else
+#define YZIS_SAFE_MODE if(0)
+#endif
+
 namespace yzis {
 
 enum scope_t {

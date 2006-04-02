@@ -9,6 +9,8 @@ option(ENABLE_QYZIS "enable qyzis compilation" ON)
 option(ENABLE_NYZIS "enable nyzis compilation" ON)
 option(ENABLE_TESTS "enable tests compilation" OFF)
 
+option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
+
 #KDE4 non-required
 find_package(KDE4)
 #but we still need qt4 ;)
@@ -28,6 +30,10 @@ if (NOT ICON_INSTALL_DIR)
 endif (NOT ICON_INSTALL_DIR)
 
 add_definitions(${QT_DEFINITIONS})
+
+if (ENABLE_SAFE_MODE)
+	add_definitions("-DSAFE_MODE")
+endif (ENABLE_SAFE_MODE)
 
 include(ConvenienceLibs.cmake)
 include(ConfigureChecks.cmake)

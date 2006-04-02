@@ -1080,13 +1080,17 @@ YZLine * YZBuffer::yzline(int line, bool noHL /*= true*/)
 
 const YZLine * YZBuffer::yzline(int line) const
 {
+	const YZLine* yl = NULL;
 	if ( line >= lineCount() ) {
 		yzDebug() << "ERROR: you are asking for line " << line << " (max is " << lineCount() << ")" << endl;
+		YZIS_SAFE_MODE {
+			yl = new YZLine();
+		}
 		// we will perhaps crash after that, but we don't want to disguise bugs!
 		// fix the one which call yzline ( or textline ) with a wrong line number instead.
-		return NULL;
+	} else {
+		yl = d->text->at( line );
 	}
-	const YZLine *yl = d->text->at( line );
 	return yl;
 }
 

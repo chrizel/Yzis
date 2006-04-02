@@ -380,8 +380,8 @@ void YZView::updateCursor() {
 	int y = mainCursor->bufferY();
 
 	if ( y != lasty ) {
-		uint nblines = mBuffer->lineCount();
-		viewInformation.percentage = QString("%1%").arg( (int)( y*100/ ( nblines==0 ? 1 : nblines )));
+		int nblines = mBuffer->lineCount();
+		viewInformation.percentage = QString("%1%").arg( ( y*100/ ( nblines==0 ? 1 : nblines )));
 		if ( scrollCursor->bufferY() < 1 )  viewInformation.percentage=_( "Top" );
 		if ( scrollCursor->bufferY()+mLinesVis >= nblines )  viewInformation.percentage=_( "Bot" );
 		if ( (scrollCursor->bufferY()<1 ) &&  ( scrollCursor->bufferY()+mLinesVis >= nblines ) ) viewInformation.percentage=_( "All" );
@@ -500,7 +500,10 @@ void YZView::alignViewVertically( int line ) {
 
 /* PRIVATE */
 void YZView::gotodx( int nextx ) {
-	if ( ( int )nextx < 0 ) nextx = 0;
+	YZASSERT( nextx >= 0 );
+	YZIS_SAFE_MODE {
+		if ( nextx < 0 ) nextx = 0;
+	}
 	int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 0 : 1;
 	if ( sCurLineLength == 0 ) nextx = 0;
 
@@ -517,7 +520,10 @@ void YZView::gotodx( int nextx ) {
 }
 
 void YZView::gotox( int nextx, bool forceGoBehindEOL ) {
-	if ( ( int )nextx < 0 ) nextx = 0;
+	YZASSERT( nextx >= 0 );
+	YZIS_SAFE_MODE {
+		if ( nextx < 0 ) nextx = 0;
+	}
 	int shift = (!drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0) || forceGoBehindEOL ? 1 : 0;
 	if ( nextx >= sCurLineLength ) {
 		if ( sCurLineLength == 0 ) nextx = 0;
@@ -552,8 +558,11 @@ void YZView::gotox( int nextx, bool forceGoBehindEOL ) {
 }
 
 void YZView::gotody( int nexty ) {
-	if ( ( int )nexty < 0 ) nexty = 0;
-	if ( workCursor->bufferY() >= mBuffer->lineCount() ) nexty = qMax( 0, (int)(mBuffer->lineCount() - 1) );
+	YZASSERT( nexty >= 0 );
+	YZIS_SAFE_MODE {
+		if ( nexty < 0 ) nexty = 0;
+	}
+	if ( workCursor->bufferY() >= mBuffer->lineCount() ) nexty = qMax( 0, mBuffer->lineCount() - 1 );
 
 	/* some easy case */
 	if ( nexty == 0 ) {
@@ -602,8 +611,11 @@ void YZView::gotody( int nexty ) {
 }
 
 void YZView::gotoy( int nexty ) {
-	if ( ( int )nexty < 0 ) nexty = 0;
-	if ( nexty >= mBuffer->lineCount() ) nexty = qMax( 0, (int)(mBuffer->lineCount() - 1) );
+	YZASSERT( nexty >= 0 );
+	YZIS_SAFE_MODE {
+		if ( nexty < 0 ) nexty = 0;
+	}
+	if ( nexty >= mBuffer->lineCount() ) nexty = qMax( 0, mBuffer->lineCount() - 1 );
 
 	/* some easy case */
 	if ( nexty == 0 ) {
@@ -921,7 +933,7 @@ void YZView::initChanges( int x, int y ) {
 	*origPos = mainCursor->buffer();
 	lineDY = 1;
 	if ( wrap && y < mBuffer->lineCount() ) {
-		gotoxy( qMax( 1, ( int )mBuffer->getLineLength( y ) ) - 1, y, false );
+		gotoxy( qMax( 1, mBuffer->getLineLength( y ) ) - 1, y, false );
 		lineDY = mainCursor->screenY();
 	}
 	gotoxy( x, y, false );
@@ -932,7 +944,7 @@ void YZView::applyChanges( int /*x*/, int y ) {
 		sendPaintEvent( scrollCursor->screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor->screenY() ) );
 	} else {
 		if ( wrap ) {
-			gotoxy( qMax( 1, ( int )mBuffer->getLineLength( y ) ) - 1, y, false );
+			gotoxy( qMax( 1, mBuffer->getLineLength( y ) ) - 1, y, false );
 			if ( mainCursor->screenY() != lineDY )
 				sendPaintEvent( scrollCursor->screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor->screenY() ) );
 			else
@@ -1582,7 +1594,7 @@ void YZView::gotoStickyCol( YZViewCursor* viewCursor, int Y, bool applyCursor ) 
 QString YZView::getCharBelow( int delta ) {
 	YZViewCursor vc = viewCursor();
 	int Y = vc.bufferY();
-	if ( delta < 0 && Y >= (int)(-delta) || delta >= 0 && ( Y + (int)delta ) < mBuffer->lineCount() )
+	if ( delta < 0 && Y >= -delta || delta >= 0 && ( Y + delta ) < mBuffer->lineCount() )
 		Y += delta;
 	else
 		return QString::null;

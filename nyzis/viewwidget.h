@@ -83,10 +83,10 @@ public slots:
 
 	protected  :
 
-		inline unsigned int stringWidth( const QString& /*str*/ ) const {
+		inline int stringWidth( const QString& /*str*/ ) const {
 			return 1;
 		}
-		inline unsigned int charWidth( const QChar& /*ch*/ ) const {
+		inline int charWidth( const QChar& /*ch*/ ) const {
 			return 1;
 		}
 

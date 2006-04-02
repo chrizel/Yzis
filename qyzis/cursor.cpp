@@ -56,7 +56,7 @@ void QYZisCursor::paintEvent( QPaintEvent* ) {
 
 #define GET_cell \
 	QYZisView* yzview = dynamic_cast<QYZisView*>( parentWidget()->parentWidget() ); \
-	YZDrawCell cell = yzview->m_drawBuffer.at( yzview->getCursor() - YZCursor(yzview->getDrawCurrentLeft(),yzview->getDrawCurrentTop()) )
+	YZDrawCell cell = yzview->m_drawBuffer.at( (QPoint)yzview->getCursor() - YZCursor(yzview->getDrawCurrentLeft(),yzview->getDrawCurrentTop()) )
 #define SET_pen \
 	p.setPen( cell.bg.isValid() ? cell.bg.rgb() : parentWidget()->palette().window().color() );
 

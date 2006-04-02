@@ -505,7 +505,7 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 	// in this case Vim reloads the current buffer
 	if ( filename.isEmpty() ) {
 		YZBuffer *buff = args.view->myBuffer();
-		buff->saveYzisInfo();
+		buff->saveYzisInfo( args.view );
 		filename = buff->fileName();
 
 		buff->clearText();
@@ -1024,7 +1024,7 @@ cmd_state YZModeEx::retab( const YZExCommandArgs& args ) {
 		}
 	}
 
-	for (unsigned int lnum = 0; lnum < buffer->lineCount(); lnum++) {
+	for (int lnum = 0; lnum < buffer->lineCount(); lnum++) {
 		oldLine = buffer->textline(lnum);
 		newLine = "";
 		int col = 0;

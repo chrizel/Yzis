@@ -58,22 +58,22 @@
 	YZASSERT_MSG( text.contains('\n')==false, QString("%1 - text contains newline").arg(text) )
 
 #define ASSERT_LINE_EXISTS( functionname, line ) \
-	YZASSERT_MSG( line < ( uint )lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
+	YZASSERT_MSG( line < lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
 
 #define ASSERT_NEXT_LINE_EXISTS( functionname, line ) \
-	YZASSERT_MSG( line <= ( uint )lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
+	YZASSERT_MSG( line <= lineCount(), QString("%1 - line %2 does not exist, buffer has %3 lines").arg(functionname).arg(line).arg(lineCount()) )
 
 #define ASSERT_COL_LINE_EXISTS( functionname, col, line ) \
-	YZASSERT_MSG( col < ( uint )textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
+	YZASSERT_MSG( col < textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
 
 #define ASSERT_PREV_COL_LINE_EXISTS( functionname, col, line ) \
-	YZASSERT_MSG( col <= ( uint )textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
+	YZASSERT_MSG( col <= textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
 
 static QString Null = QString::null;
 	
 struct YZBuffer::Private
 {
-	static unsigned int nextId;
+	static int nextId;
 	
 	Private() : id(nextId++) {}
 	
@@ -111,13 +111,13 @@ struct YZBuffer::Private
 	QString currentEncoding;
 	
 	// unique identifier of the buffer
-	const unsigned int id;
+	const int id;
 	
 	// buffer state
 	State state;
 };
 
-unsigned int YZBuffer::Private::nextId = 1;
+int YZBuffer::Private::nextId = 1;
 	
 YZBuffer::YZBuffer() 
 	: d(new Private)
@@ -164,7 +164,7 @@ YZBuffer::~YZBuffer() {
  * do _not_ use them directly, use action() ( actions.cpp ) instead.
  */
 	
-static void viewsInit( YZBuffer *buffer, unsigned int x, unsigned int y )
+static void viewsInit( YZBuffer *buffer, int x, int y )
 {
 	YZList<YZView*> views = buffer->views();
 	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
@@ -172,7 +172,7 @@ static void viewsInit( YZBuffer *buffer, unsigned int x, unsigned int y )
 	}
 }
 
-static void viewsApply( YZBuffer *buffer, unsigned int x, unsigned int y )
+static void viewsApply( YZBuffer *buffer, int x, int y )
 {
 	YZList<YZView*> views = buffer->views();
 	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
@@ -180,7 +180,7 @@ static void viewsApply( YZBuffer *buffer, unsigned int x, unsigned int y )
 	}
 }
 
-void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
+void YZBuffer::insertChar(int x, int y, const QString& c ) {
 	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), c )
 	ASSERT_LINE_EXISTS( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c), y )
 
@@ -190,7 +190,7 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
 
 	ASSERT_PREV_COL_LINE_EXISTS( QString("YZBuffer::insertChar(%1,%2,%3)").arg(x).arg(y).arg(c),x,y)
 
-	if (x > ( uint )l.length()) {
+	if (x > l.length()) {
 		// if we let Qt proceed, it would append spaces to extend the line
 		// and we do not want that
 		return;
@@ -208,14 +208,14 @@ void YZBuffer::insertChar(unsigned int x, unsigned int y, const QString& c ) {
 	viewsApply( this, x + c.length(), y );
 }
 
-void YZBuffer::delChar (unsigned int x, unsigned int y, unsigned int count ) {
+void YZBuffer::delChar (int x, int y, int count ) {
 	ASSERT_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count), y )
 
 	/* brute force, we'll have events specific for that later on */
 	QString l=textline(y);
 	if (l.isNull()) return;
 
-	if (x >= ( uint )l.length())
+	if (x >= l.length())
 		return;
 
 	ASSERT_COL_LINE_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(x).arg(y).arg(count),x,y)
@@ -262,7 +262,7 @@ void  YZBuffer::appendLine(const QString &l) {
 }
 
 
-void  YZBuffer::insertLine(const QString &l, unsigned int line) {
+void  YZBuffer::insertLine(const QString &l, int line) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::insertLine(%1,%2)").arg(l).arg(line),l)
 	ASSERT_NEXT_LINE_EXISTS(QString("YZBuffer::insertLine(%1,%2)").arg(l).arg(line),line)
 	d->undoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, QString(), 0, line );
@@ -273,7 +273,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	viewsInit( this, 0, line );
 
 	QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
-	uint idx=0;
+	int idx=0;
 	for ( ; idx < line && it != end; ++it, ++idx )
 		;
 	d->text->insert(it, new YZLine( l ));
@@ -287,7 +287,7 @@ void  YZBuffer::insertLine(const QString &l, unsigned int line) {
 	viewsApply( this, 0, line + 1 );
 }
 
-void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
+void YZBuffer::insertNewLine( int col, int line ) {
 	if (line == lineCount()) {
 		YZASSERT_MSG(line==lineCount() && col==0, QString("YZBuffer::insertNewLine on last line is only possible on col 0").arg(col).arg(line));
 	} else {
@@ -308,7 +308,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 
 	ASSERT_PREV_COL_LINE_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),col,line )
 
-	if (col > ( uint )l.length() ) return;
+	if (col > l.length() ) return;
 
 	QString newline = l.mid( col );
 	if ( newline.isNull() ) newline = QString( "" );
@@ -326,7 +326,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 
 	//add new line
 	QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
-	uint idx=0;
+	int idx=0;
 	for ( ; idx < line+1 && it != end; ++it, ++idx )
 		;
 	d->text->insert(it, new YZLine( newline ));
@@ -340,7 +340,7 @@ void YZBuffer::insertNewLine( unsigned int col, unsigned int line ) {
 	viewsApply( this, 0, line+1 );
 }
 
-void YZBuffer::deleteLine( unsigned int line ) {
+void YZBuffer::deleteLine( int line ) {
 	ASSERT_LINE_EXISTS(QString("YZBuffer::deleteLine(%1)").arg(line),line)
 
 	if (line >= lineCount()) return;
@@ -352,7 +352,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 		d->undoBuffer->addBufferOperation( YZBufferOperation::DELLINE, "", 0, line );
 		if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::DELLINE, "", 0, line );
 		QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
-		uint idx=0;
+		int idx=0;
 		for ( ; idx < line && it != end; ++it, ++idx )
 			;
 		delete (*it);
@@ -372,7 +372,7 @@ void YZBuffer::deleteLine( unsigned int line ) {
 	viewsApply( this, 0, line + 1 );
 }
 
-void YZBuffer::replaceLine( const QString& l, unsigned int line ) {
+void YZBuffer::replaceLine( const QString& l, int line ) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),l)
 	ASSERT_LINE_EXISTS(QString("YZBuffer::replaceLine(%1,%2)").arg(l).arg(line),line)
 
@@ -409,7 +409,7 @@ void YZBuffer::clearText() {
 	d->text->append(new YZLine());
 }
 
-void YZBuffer::setTextline( uint line , const QString & l) {
+void YZBuffer::setTextline( int line , const QString & l) {
 	ASSERT_TEXT_WITHOUT_NEWLINE( QString("YZBuffer::setTextline(%1,%2)").arg(line).arg(l), l );
 	ASSERT_LINE_EXISTS( QString("YZBuffer::setTextline(%1,%2)").arg(line).arg(l), line );
 	if (yzline(line)) {
@@ -425,7 +425,7 @@ void YZBuffer::setTextline( uint line , const QString & l) {
 }
 
 // XXX Wrong
-bool YZBuffer::isLineVisible(uint line) const {
+bool YZBuffer::isLineVisible(int line) const {
 	bool shown=false;
 	for ( YZList<YZView*>::ConstIterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
 		shown = shown || (*itr)->isLineVisible(line);
@@ -442,27 +442,27 @@ QString YZBuffer::getWholeText() const {
 	if ( isEmpty() ) { return QString(""); }
 
 	QString wholeText;
-	for ( uint i = 0 ; i < lineCount() ; i++ )
+	for ( int i = 0 ; i < lineCount() ; i++ )
 		wholeText += textline(i) + "\n";
 	return wholeText;
 }
 
-uint YZBuffer::getWholeTextLength() const {
+int YZBuffer::getWholeTextLength() const {
 	if ( isEmpty() ) { return 0; }
 
-	uint length = 0;
-	for ( uint i = 0 ; i < lineCount() ; i++ ) {
+	int length = 0;
+	for ( int i = 0 ; i < lineCount() ; i++ ) {
 		length += textline(i).length() + 1;
 	}
 
 	return length;
 }
 
-uint YZBuffer::firstNonBlankChar( uint line ) const {
-	uint i=0;
+int YZBuffer::firstNonBlankChar( int line ) const {
+	int i=0;
 	QString s = textline(line);
 	if (s.isEmpty() ) return 0;
-	while( s.at(i).isSpace() && i < ( uint )s.length())
+	while( s.at(i).isSpace() && i < ( int )s.length())
 		i++;
 	return i;
 }
@@ -666,7 +666,7 @@ bool YZBuffer::save() {
 	d->swapFile->reset();
 	d->swapFile->unlink();
 
-	saveYzisInfo();
+	saveYzisInfo( firstView() );
    
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);
 	if ( hlMode >= 0 && d->highlight != YzisHlManager::self()->getHl( hlMode ) )
@@ -674,12 +674,10 @@ bool YZBuffer::save() {
 	return true;
 }
 
-void YZBuffer::saveYzisInfo() {
+void YZBuffer::saveYzisInfo( YZView* view ) {
+	YZASSERT( view->myBuffer() == this );
 	/* save buffer cursor */
-	YZSession::me->getYzisinfo()->updateStartPosition( this, 
-                  (YZSession::me->currentView())->getBufferCursor().x(),
-                  (YZSession::me->currentView())->getBufferCursor().y() );
-
+	YZSession::me->getYzisinfo()->updateStartPosition( this, view->getBufferCursor().x(), view->getBufferCursor().y() );
 	YZSession::me->getYzisinfo()->writeYzisinfo();
 }
 
@@ -690,7 +688,7 @@ YZCursor YZBuffer::getStartPosition( const QString& filename, bool parseFilename
 	if ( parseFilename ) {
 		r_filename = YZBuffer::parseFilename( filename, &infilename_pos );
 	}
-	if ( infilename_pos.y() > 0 ) { // XXX: make YZCursor signed -> >= 0
+	if ( infilename_pos.y() >= 0 ) {
 		return infilename_pos;
 	} else {
 		YZSession::me->getYzisinfo()->readYzisinfo();
@@ -777,7 +775,7 @@ void YZBuffer::statusChanged() {
 //                            Syntax Highlighting
 // ------------------------------------------------------------------------
 
-void YZBuffer::setHighLight( uint mode, bool warnGUI ) {
+void YZBuffer::setHighLight( int mode, bool warnGUI ) {
 	YzisHighlighting *h = YzisHlManager::self()->getHl( mode );
 
 	if ( h != d->highlight ) { //HL is changing
@@ -812,7 +810,7 @@ void YZBuffer::makeAttribs() {
 	d->highlight->clearAttributeArrays();
 
 	bool ctxChanged = true;
-	unsigned int hlLine = 0;
+	int hlLine = 0;
 	if ( !d->isLoading )
 		while ( hlLine < lineCount()) {
 			QVector<uint> foldingList;
@@ -839,7 +837,7 @@ void YZBuffer::setPath( const QString& _path ) {
 	filenameChanged();
 }
 
-bool YZBuffer::substitute( const QString& _what, const QString& with, bool wholeline, unsigned int line ) {
+bool YZBuffer::substitute( const QString& _what, const QString& with, bool wholeline, int line ) {
 	QString l = textline( line );
 	bool cs = true;
 	QString what = _what;
@@ -875,7 +873,7 @@ QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) const {
 		list << textline( from.y() ).mid( from.x(), to.x() - from.x() + 1 );
 
 	//other lines
-	unsigned int i = from.y() + 1;
+	int i = from.y() + 1;
 	while ( i < to.y() ) {
 		list << textline( i ); //the whole line
 		i++;
@@ -961,15 +959,15 @@ QStringList YZBuffer::getLocalListOption( const QString& option ) const {
 		return YZSession::me->getOptions()->readListOption( "Global\\" + option, QStringList() );
 }
 
-bool YZBuffer::updateHL( unsigned int line ) {
+bool YZBuffer::updateHL( int line ) {
 //	yzDebug() << "updateHL " << line << endl;
 	if ( d->isLoading ) return false;
-	unsigned int hlLine = line, nElines = 0;
+	int hlLine = line, nElines = 0;
 	bool ctxChanged = true;
 	bool hlChanged = false;
 	YZLine* yl = NULL;
-	unsigned int maxLine = lineCount();
-/*	for ( unsigned int i = hlLine; i < maxLine; i++ ) {
+	int maxLine = lineCount();
+/*	for ( int i = hlLine; i < maxLine; i++ ) {
 		YZSession::me->search()->highlightLine( this, i );
 	}*/
 	if ( d->highlight == 0L ) return false;
@@ -989,7 +987,7 @@ bool YZBuffer::updateHL( unsigned int line ) {
 		hlLine++;
 	}
 	if ( hlChanged ) {
-		unsigned int nToDraw = hlLine - line - nElines - 1;
+		int nToDraw = hlLine - line - nElines - 1;
 //		yzDebug() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
 		for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
 			(*itr)->sendBufferPaintEvent( line, nToDraw );
@@ -998,12 +996,12 @@ bool YZBuffer::updateHL( unsigned int line ) {
 	return hlChanged;
 }
 
-void YZBuffer::initHL( unsigned int line ) {
+void YZBuffer::initHL( int line ) {
 	if ( d->isHLUpdating ) return;
 //	yzDebug() << "initHL " << line << endl;
 	d->isHLUpdating = true;
 	if ( d->highlight != 0L ) {
-		uint hlLine = line;
+		int hlLine = line;
 		bool ctxChanged = true;
 		QVector<uint> foldingList;
 		YZLine *l = new YZLine();
@@ -1067,7 +1065,7 @@ void YZBuffer::preserve()
 	d->swapFile->flush();
 }
 
-YZLine * YZBuffer::yzline(unsigned int line, bool noHL /*= true*/) 
+YZLine * YZBuffer::yzline(int line, bool noHL /*= true*/) 
 {
 	// call the const version of ::yzline().  Make the const
 	// explicit, so we don't end up with infinite recursion
@@ -1080,7 +1078,7 @@ YZLine * YZBuffer::yzline(unsigned int line, bool noHL /*= true*/)
 	return yl;
 }
 
-const YZLine * YZBuffer::yzline(unsigned int line) const
+const YZLine * YZBuffer::yzline(int line) const
 {
 	if ( line >= lineCount() ) {
 		yzDebug() << "ERROR: you are asking for line " << line << " (max is " << lineCount() << ")" << endl;
@@ -1092,21 +1090,19 @@ const YZLine * YZBuffer::yzline(unsigned int line) const
 	return yl;
 }
 
-unsigned int YZBuffer::lineCount() const { 
+int YZBuffer::lineCount() const { 
 	return d->text->count(); 
 }
 
-unsigned int YZBuffer::getLineLength(unsigned int line) const {
-	unsigned int length = 0;
-	
+int YZBuffer::getLineLength(int line) const {
+	int length = 0;
 	if ( line < lineCount() ) {
 		length = yzline( line )->length();
 	}
-	
 	return length;
 }
 
-const QString YZBuffer::textline(unsigned int line) const {
+const QString YZBuffer::textline(int line) const {
 	if ( line < lineCount() ) {
 		return yzline( line )->data();
 	} else {
@@ -1201,7 +1197,7 @@ const QString& YZBuffer::encoding() const { return d->currentEncoding; }
 bool YZBuffer::fileIsModified() const { return d->isModified; }
 bool YZBuffer::fileIsNew() const { return d->isFileNew; }
 const QString& YZBuffer::fileName() const {return d->path;}
-unsigned int YZBuffer::getId() const { return d->id; }
+int YZBuffer::getId() const { return d->id; }
 YZList<YZView*> YZBuffer::views() const { return d->views; }
 
 void YZBuffer::openNewFile()

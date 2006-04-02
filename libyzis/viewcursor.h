@@ -23,7 +23,6 @@
 
 #include "cursor.h"
 #include "yzismacros.h"
-class YZView;
 
 class YZView;
 
@@ -48,10 +47,10 @@ class YZIS_EXPORT YZViewCursor {
 
 		void reset();
 
-		unsigned int bufferX() const;
-		unsigned int bufferY() const;
-		unsigned int screenX() const;
-		unsigned int screenY() const;
+		int bufferX() const;
+		int bufferY() const;
+		int screenX() const;
+		int screenY() const;
 
 		// toggle valid token to false
 		void invalidate();
@@ -68,7 +67,7 @@ class YZIS_EXPORT YZViewCursor {
 		/**
 		 * curLineHeight : line height at current cursor position
 		 */
-		inline unsigned int curLineHeight() const {
+		inline int curLineHeight() const {
 			return lineHeight;
 		}
 
@@ -77,10 +76,10 @@ class YZIS_EXPORT YZViewCursor {
 		void setBuffer( const YZCursor& value );
 		void setScreen( const YZCursor& value );
 
-		void setBufferX( unsigned int value );
-		void setBufferY( unsigned int value );
-		void setScreenX( unsigned int value );
-		void setScreenY( unsigned int value );
+		void setBufferX( int value );
+		void setBufferY( int value );
+		void setScreenX( int value );
+		void setScreenY( int value );
 
 	private :
         void copyFields( const YZViewCursor &rhs );
@@ -104,32 +103,32 @@ class YZIS_EXPORT YZViewCursor {
 		 * spaceFill is the shift for starting tabs
 		 * ( when wrapping a line, or scrolling horizontally )
 		 */
-		unsigned int spaceFill;
+		int spaceFill;
 
 		/**
 		 * buffer column increment
 		 */
-		unsigned int bColIncrement;
+		int bColIncrement;
 
 		/**
 		 * buffer line increment
 		 */
-		unsigned int bLineIncrement;
+		int bLineIncrement;
 
 		/**
 		 * screen column increment
 		 */
-		unsigned int sColIncrement;
+		int sColIncrement;
 
 		/**
 		 * screen line increment
 		 */
-		unsigned int sLineIncrement;
+		int sLineIncrement;
 
 		/**
 		 * current line height
 		 */
-		unsigned int lineHeight;
+		int lineHeight;
 
 		/**
 		 * last char was a tab ?

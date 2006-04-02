@@ -127,41 +127,41 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Returns the index of the first line displayed on the view
 		 */
-		unsigned int getCurrentTop();
-		unsigned int getDrawCurrentTop();
+		int getCurrentTop();
+		int getDrawCurrentTop();
 
 		/**
 		 * Returns the index of the first "buffer" column displayed on the view
 		 * (does not care about tabs, wrapping ...)
 		 */
-		unsigned int getCurrentLeft();
+		int getCurrentLeft();
 
 		/**
 		 * Returns the index of the first "screen" column displayed on the view
 		 * (does care about tabs, wrapping ...)
 		 */
-		unsigned int getDrawCurrentLeft();
+		int getDrawCurrentLeft();
 
 		/**
 		 * returns the number of line this view can display
 		 */
-		unsigned int getLinesVisible() { return mLinesVis; }
+		int getLinesVisible() { return mLinesVis; }
 
 		/**
 		 * returns the number of lines this view can display
 		 * @return the number of visible lines
 		 */
-		unsigned int getColumnsVisible() { return mColumnsVis; }
+		int getColumnsVisible() { return mColumnsVis; }
 
 		/**
 		 * Returns true if the line @arg l is visible. False otherwise.
 		 */
-		bool	isLineVisible(unsigned int l);
+		bool	isLineVisible(int l);
 
 		/**
 		 * Returns true if the column @arg c is visible for @arg line ( expanding TABs ). False otherwise
 		 */
-		bool	isColumnVisible(unsigned int column, unsigned int line);
+		bool	isColumnVisible(int column, int line);
 
 		//-------------------------------------------------------
 		// ----------------- Associated Objects
@@ -207,7 +207,7 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Adjust view vertically to show @arg line on bottom
 		 */
-		void bottomViewVertically( unsigned int line );
+		void bottomViewVertically( int line );
 
 		/**
 		 * Center view vertically on the given @arg line
@@ -218,17 +218,17 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Center view horizontally on the given @arg column
 		 */
-		void centerViewHorizontally( unsigned int column );
+		void centerViewHorizontally( int column );
 
 		/**
 		 * align view vertically on the given buffer @arg line
 		 */
-		void alignViewBufferVertically(unsigned int line);
+		void alignViewBufferVertically(int line);
 		
 		/**
 		 * align view vertically on the given screen @arg line
 		 */
-		void alignViewVertically(unsigned int line);
+		void alignViewVertically(int line);
 
 		virtual void scrollUp( int ) = 0;
 		virtual void scrollDown( int ) = 0;
@@ -251,14 +251,14 @@ class YZIS_EXPORT YZView {
 		/**
 		 * moves the cursor of the current view down
 		 */
-		QString moveDown( unsigned int nb_lines = 1, bool applyCursor = true );
-		QString moveDown( YZViewCursor* viewCursor, unsigned int nb_lines = 1, bool applyCursor = true );
+		QString moveDown( int nb_lines = 1, bool applyCursor = true );
+		QString moveDown( YZViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
 
 		/**
 		 * moves the cursor of the current view up
 		 */
-		QString moveUp( unsigned int nb_lines = 1, bool applyCursor = true );
-		QString moveUp( YZViewCursor* viewCursor,  unsigned int nb_lines = 1, bool applyCursor = true );
+		QString moveUp( int nb_lines = 1, bool applyCursor = true );
+		QString moveUp( YZViewCursor* viewCursor,  int nb_lines = 1, bool applyCursor = true );
 
 		/**
 		 * moves the cursor of the current view to the left
@@ -294,26 +294,26 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Moves the draw cursor to @arg nextx, @arg nexty
 		 */
-		void gotodxdy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
-		void gotodxdy( YZViewCursor* viewCursor,unsigned int nextx, unsigned int nexty, bool applyCursor = true );
+		void gotodxdy(int nextx, int nexty, bool applyCursor = true );
+		void gotodxdy( YZViewCursor* viewCursor,int nextx, int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the cursor to @arg buffer nextx, @arg draw nexty
 		 */
-		void gotoxdy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
-		void gotoxdy( YZViewCursor* viewCursor,unsigned int nextx, unsigned int nexty, bool applyCursor = true );
+		void gotoxdy(int nextx, int nexty, bool applyCursor = true );
+		void gotoxdy( YZViewCursor* viewCursor,int nextx, int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the cursor to @arg draw nextx, @arg buffer nexty
 		 */
-		void gotodxy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
-		void gotodxy( YZViewCursor* viewCursor,unsigned int nextx, unsigned int nexty, bool applyCursor = true );
+		void gotodxy(int nextx, int nexty, bool applyCursor = true );
+		void gotodxy( YZViewCursor* viewCursor,int nextx, int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the buffer cursor to @arg nextx, @arg nexty
 		 */
-		void gotoxy(unsigned int nextx, unsigned int nexty, bool applyCursor = true );
-		void gotoxy( YZViewCursor* viewCursor, unsigned int nextx, unsigned int nexty, bool applyCursor = true );
+		void gotoxy(int nextx, int nexty, bool applyCursor = true );
+		void gotoxy( YZViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
 
 		/**
 		 * Moves the buffer cursor to @arg cursor and stick the column
@@ -326,8 +326,8 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Go to line of file
 		 */
-		void gotoLine( unsigned int line );
-		void gotoLine( YZViewCursor* viewCursor, unsigned int line, bool applyCursor = true );
+		void gotoLine( int line );
+		void gotoLine( YZViewCursor* viewCursor, int line, bool applyCursor = true );
 
 		/**
 		 * Go to last line of the file
@@ -338,8 +338,8 @@ class YZIS_EXPORT YZView {
 		/**
 		 * move the cursor to the sticky column
 		 */
-		void gotoStickyCol( unsigned int Y );
-		void gotoStickyCol( YZViewCursor* viewCursor, unsigned int Y, bool applyCursor = true );
+		void gotoStickyCol( int Y );
+		void gotoStickyCol( YZViewCursor* viewCursor, int Y, bool applyCursor = true );
 
 		void applyStartPosition( const YZCursor& pos );
 
@@ -350,9 +350,9 @@ class YZIS_EXPORT YZView {
 		 * init r and s Cursor
 		 */
 		void initDraw( );
-		void initDraw( unsigned int sLeft, unsigned int sTop, unsigned int rLeft, unsigned int rTop, bool draw = true );
+		void initDraw( int sLeft, int sTop, int rLeft, int rTop, bool draw = true );
 
-		unsigned int initDrawContents( unsigned int clipy );
+		int initDrawContents( int clipy );
 
 		/**
 		 * go to previous line
@@ -387,12 +387,12 @@ class YZIS_EXPORT YZView {
 		/**
 		 * char length
 		 */
-		unsigned int drawLength() const;
+		int drawLength() const;
 
 		/**
 		 * line increment (on screen)
 		 */
-		unsigned int drawHeight() const;
+		int drawHeight() const;
 
 		/**
 		 * char color
@@ -447,7 +447,7 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Character color at column line
 		 */
-		const YZColor& drawColor ( unsigned int col, unsigned int line ) const;
+		const YZColor& drawColor ( int col, int line ) const;
 
 		/**
 		 * return current buffer line
@@ -457,7 +457,7 @@ class YZIS_EXPORT YZView {
 		/**
 		 * total height ( draw )
 		 */
-		unsigned int drawTotalHeight();
+		int drawTotalHeight();
 
 		//-------------------------------------------------------
 		// ----------------- Undo
@@ -470,12 +470,12 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Undo last action
 		 */
-		void undo ( unsigned int count = 1 );
+		void undo ( int count = 1 );
 
 		/**
 		 * Redo last undoed action
 		 */
-		void redo ( unsigned int count = 1 );
+		void redo ( int count = 1 );
 
 		/**
 		 * Prepares to record next undo item
@@ -539,7 +539,7 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Reindent given line ( cindent )
 		 */
-		void reindent( unsigned int X, unsigned int Y );
+		void reindent( int X, int Y );
 
 		/**
 		 * Create new indented line
@@ -589,13 +589,13 @@ class YZIS_EXPORT YZView {
 		virtual void paintEvent( const YZSelection& drawMap );
 
 		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
-		void sendPaintEvent( unsigned int curx, unsigned int cury, unsigned int curw, unsigned int curh );
+		void sendPaintEvent( int curx, int cury, int curw, int curh );
 		void sendPaintEvent( YZSelectionMap map, bool isBufferMap = true );
 
 		/**
 		 * ask to draw from buffer line @arg line to @arg line + @arg n
 		 */
-		void sendBufferPaintEvent( unsigned int line, unsigned int n );
+		void sendBufferPaintEvent( int line, int n );
 
 		/**
 		 * Ask for refresh screen
@@ -653,7 +653,7 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Updates stickyCol
 		 */
-		void setStickyCol( unsigned int col ) { stickyCol = col; }
+		void setStickyCol( int col ) { stickyCol = col; }
 
 		void updateStickyCol( );
 		
@@ -668,29 +668,29 @@ class YZIS_EXPORT YZView {
 		/**
 		 * line increment (on buffer)
 		 */
-		unsigned int lineIncrement( ) const;
+		int lineIncrement( ) const;
 
 		/**
 		 * current line height (on screen)
 		 */
-		unsigned int lineHeight( ) const;
+		int lineHeight( ) const;
 
 		/**
 		 * width of a space ( in pixel or in cols )
 		 */
-		unsigned int getSpaceWidth() const;
+		int getSpaceWidth() const;
 
 		/**
 		 * Returns pixel width of given string str, must be implemented in ui.
 		 * Used only with non-Fixed fonts
 		 */
-		virtual unsigned int stringWidth( const QString& str ) const = 0;
+		virtual int stringWidth( const QString& str ) const = 0;
 
 		/**
 		 * Returns pixel width of given char ch, must be implemented in ui.
 		 * Used only with non-Fixed fonts
 		 */
-		virtual unsigned int charWidth( const QChar& ch ) const = 0;
+		virtual int charWidth( const QChar& ch ) const = 0;
 
 		//-------------------------------------------------------
 		// ----------------- Mode
@@ -741,8 +741,8 @@ class YZIS_EXPORT YZView {
 		 * changes around x,y. Each view have to find what they have to redraw, depending
 		 * of the wrap option, and of course window size.
 		 */
-		void initChanges( unsigned int x, unsigned int y );
-		void applyChanges( unsigned int x, unsigned int y );
+		void initChanges( int x, int y );
+		void applyChanges( int x, int y );
 
 		//-------------------------------------------------------
 		// ----------------- Miscellaneous
@@ -845,56 +845,56 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Number of visible lines on the view
 		 */
-		unsigned int mLinesVis;
+		int mLinesVis;
 
 		/**
 		 * Number of visible columns on the view
 		 */
-		unsigned int mColumnsVis;
+		int mColumnsVis;
 
 		/**
 		 * Index of the first visible line (buffer)
 		 */
-		unsigned int sCurrentTop;
+		int sCurrentTop;
 
 		/**
 		 * Index of the first visible line (buffer)
 		 */
-		unsigned int sCurrentLeft;
+		int sCurrentLeft;
 
 		/**
 		 * Index of the first visible column (draw)
 		 */
-		unsigned int rCurrentLeft;
+		int rCurrentLeft;
 
 		/**
 		 * Index of the first visible line (draw)
 		 */
-		unsigned int rCurrentTop;
+		int rCurrentTop;
 
-		unsigned int spaceWidth;
+		int spaceWidth;
 		
 		const uchar* rHLa;
 
 		bool rHLnoAttribs;
 
-		unsigned int rHLAttributesLen;
+		int rHLAttributesLen;
 
 		YzisAttribute *rHLAttributes;
 
 		// current line
 		QString  sCurLine;
 		// current line length
-		unsigned int sCurLineLength;
+		int sCurLineLength;
 		// current line max width ( tab is 8 spaces )
-		unsigned int rCurLineLength;
+		int rCurLineLength;
 		// current line min width( tab is 1 space )
-		unsigned int rMinCurLineLength;
+		int rMinCurLineLength;
 
-		void gotoy( unsigned int );
-		void gotody( unsigned int );
-		void gotox( unsigned int, bool forceGoBehindEOL = false );
-		void gotodx( unsigned int );
+		void gotoy( int y );
+		void gotody( int y );
+		void gotox( int x, bool forceGoBehindEOL = false );
+		void gotodx( int x );
 		void applyGoto( YZViewCursor* viewCursor, bool applyCursor = true );
 		void initGoto( YZViewCursor* viewCursor );
 		void updateCurLine( );
@@ -912,20 +912,20 @@ class YZIS_EXPORT YZView {
 
 
 		YZCursor* origPos;
-		unsigned int lineDY;
+		int lineDY;
 
 		YZCursor* beginChanges;
 
 		//cached value of tabstop option
-		unsigned int tabstop;
+		int tabstop;
 		bool wrap;
 		bool rightleft;
 
 		// tabstop * spaceWidth
-		unsigned int tablength;
+		int tablength;
 
 		// tablength to wrap
-		unsigned int areaModTab;
+		int areaModTab;
 
 		// if true, do not check for cursor visibility
 		bool adjust;
@@ -939,7 +939,7 @@ class YZIS_EXPORT YZView {
 
 		//which regs to store macros in
 		QList<QChar> mRegs;
-		unsigned int m_paintAutoCommit;
+		int m_paintAutoCommit;
 		YZViewCursor* keepCursor;
 
 		//the current attribute being used by the GUI

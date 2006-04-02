@@ -4,7 +4,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_COLOR_MAKEFILE ON)
 
-option(ENABLE_KYZIS "enable kyzis compilation" ON)
+option(ENABLE_KYZIS "enable kyzis compilation" OFF)
 option(ENABLE_QYZIS "enable qyzis compilation" ON)
 option(ENABLE_NYZIS "enable nyzis compilation" ON)
 option(ENABLE_TESTS "enable tests compilation" OFF)

@@ -24,39 +24,30 @@
 #ifndef YZIS_CURSOR
 #define YZIS_CURSOR
 
+#include <QPoint>
+
 #include "debug.h"
-/**
- * Simple cursor
- */
-class YZIS_EXPORT YZCursor {
-public :
-    YZCursor();
-    explicit YZCursor( unsigned int x, unsigned int y );
-    YZCursor( const YZCursor& cursor );
 
-    YZCursor &operator=( const YZCursor &rhs );
+class YZIS_EXPORT YZCursor : public QPoint {
 
-    inline void setX(unsigned int x) { x_pos = x; }
-    inline void setY(unsigned int y) { y_pos = y; }
+	public :
+		YZCursor();
+		YZCursor( const QPoint& c );
+		YZCursor( const YZCursor& c );
+		YZCursor(int x, int y);
+		virtual ~YZCursor();
 
-    inline unsigned int x() const { return x_pos; }
-    inline unsigned int y() const { return y_pos; }
+		void setXY( int x, int y );
 
-private :
-    unsigned int x_pos;
-    unsigned int y_pos;
+		/*
+		 * operators
+		 */
+		bool operator< ( const YZCursor& right ) const;
+		bool operator<= ( const YZCursor& right ) const;
+		bool operator> ( const YZCursor& right ) const;
+		bool operator>= ( const YZCursor& right ) const;
+
 };
-
-extern YZIS_EXPORT bool operator==( const YZCursor &lhs, const YZCursor &rhs );
-extern YZIS_EXPORT bool operator< ( const YZCursor &lhs, const YZCursor &rhs );
-extern YZIS_EXPORT const YZCursor operator- (const YZCursor& l, const YZCursor& r );
-extern YZIS_EXPORT const YZCursor operator+ (const YZCursor& l, const YZCursor& r );
-
-inline YZIS_EXPORT bool operator<=( const YZCursor &lhs, const YZCursor &rhs ) { return lhs == rhs || lhs < rhs; }
-inline YZIS_EXPORT bool operator> ( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs == rhs) && !(lhs < rhs); }
-inline YZIS_EXPORT bool operator>=( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs < rhs); }
-inline YZIS_EXPORT bool operator!=( const YZCursor &lhs, const YZCursor &rhs ) { return !(lhs == rhs); }
-
 extern YZIS_EXPORT YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
 
 struct YZCursorPos {

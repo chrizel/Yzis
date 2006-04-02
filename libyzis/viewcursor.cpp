@@ -95,16 +95,16 @@ void YZViewCursor::debug() {
 		<< "               lastCharWasTab = " << lastCharWasTab << " ; sColIncrement = " << sColIncrement << endl;
 }
 
-unsigned int YZViewCursor::bufferX() const {
+int YZViewCursor::bufferX() const {
 	return mBuffer.x();
 }
-unsigned int YZViewCursor::bufferY() const {
+int YZViewCursor::bufferY() const {
 	return mBuffer.y();
 }
-unsigned int YZViewCursor::screenX() const {
+int YZViewCursor::screenX() const {
 	return mScreen.x();
 }
-unsigned int YZViewCursor::screenY() const {
+int YZViewCursor::screenY() const {
 	return mScreen.y();
 }
 
@@ -114,16 +114,16 @@ void YZViewCursor::setBuffer( const YZCursor& value ) {
 void YZViewCursor::setScreen( const YZCursor& value ) {
 	mScreen = value;
 }
-void YZViewCursor::setBufferX( unsigned int value ) {
+void YZViewCursor::setBufferX( int value ) {
 	mBuffer.setX( value );
 }
-void YZViewCursor::setBufferY( unsigned int value ) {
+void YZViewCursor::setBufferY( int value ) {
 	mBuffer.setY( value );
 }
-void YZViewCursor::setScreenX( unsigned int value ) {
+void YZViewCursor::setScreenX( int value ) {
 	mScreen.setX( value );
 }
-void YZViewCursor::setScreenY( unsigned int value ) {
+void YZViewCursor::setScreenY( int value ) {
 	mScreen.setY( value );
 }
 

@@ -23,48 +23,36 @@
 
 #include "cursor.h"
 
-YZCursor::YZCursor() 
-    : x_pos( 0 )
-    , y_pos( 0 )
-{
+YZCursor::YZCursor() : QPoint(-1,-1) {
 }
-YZCursor::YZCursor( unsigned int x, unsigned int y )
-    : x_pos( x )
-    , y_pos( y )
-{
+YZCursor::YZCursor( const QPoint& c ) : QPoint( c.x(), c.y() ) {
 }
-
-YZCursor::YZCursor( const YZCursor& c) 
-    : x_pos( c.x_pos )
-    , y_pos( c.y_pos )
-{
+YZCursor::YZCursor( const YZCursor& c ) : QPoint( c.x(), c.y() ) {
+}
+YZCursor::YZCursor(int x, int y) : QPoint(x,y) {
+}
+YZCursor::~YZCursor() {
 }
 
-YZCursor &YZCursor::operator=( const YZCursor &rhs )
-{
-    x_pos = rhs.x_pos;
-    y_pos = rhs.y_pos;
-
-    return *this;
+void YZCursor::setXY( int x, int y ) {
+	setX(x);
+	setY(y);
 }
 
-bool operator==( const YZCursor &lhs, const YZCursor &rhs )
-{
-    return lhs.x() == rhs.x() && lhs.y() == rhs.y();
+bool YZCursor::operator< (const YZCursor& right ) const {
+	return y() < right.y() || y() == right.y() && x() < right.x();
+}
+bool YZCursor::operator<= (const YZCursor& right ) const {
+	return *this == right || *this < right;
+}
+bool YZCursor::operator> (const YZCursor& right ) const {
+	return *this != right && !(*this < right);
+}
+bool YZCursor::operator>= (const YZCursor& right ) const {
+	return right <= *this;
 }
 
-bool operator<( const YZCursor &lhs, const YZCursor &rhs )
-{
-	return ( lhs.y() < rhs.y() || lhs.y() == rhs.y() && lhs.x() < rhs.x() );
-}
-const YZCursor operator+( const YZCursor& l, const YZCursor& r ) {
-	return YZCursor( l.x() + r.x(), l.y() + r.y() );
-}
-const YZCursor operator-( const YZCursor& l, const YZCursor& r ) {
-	return YZCursor( l.x() - r.x(), l.y() - r.y() );
-}
-
-YZDebugStream &operator<< ( YZDebugStream &out, const YZCursor & c ) {
+YZDebugStream& operator<< ( YZDebugStream& out, const YZCursor& c ) {
 	out << "(" << c.x() << "," << c.y() << ")";
 	return out;
 }

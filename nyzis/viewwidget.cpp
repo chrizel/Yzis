@@ -114,8 +114,8 @@ void NYZView::scrollUp( int n ) {
 	scrollok( editor, true );
 	wscrl( editor, - n );
 	scrollok( editor, false );
-	unsigned int top = getDrawCurrentTop();
-	unsigned int left = getDrawCurrentLeft();
+	int top = getDrawCurrentTop();
+	int left = getDrawCurrentLeft();
 	sendPaintEvent( YZCursor( left, top ), YZCursor( left + getColumnsVisible(), top + n ) );
 }
 
@@ -123,8 +123,8 @@ void NYZView::scrollDown( int n ) {
 	scrollok( editor, true );
 	wscrl( editor, n );
 	scrollok( editor, false );
-	unsigned int top = getDrawCurrentTop() + getLinesVisible() - n;
-	unsigned int left = getDrawCurrentLeft();
+	int top = getDrawCurrentTop() + getLinesVisible() - n;
+	int left = getDrawCurrentLeft();
 	sendPaintEvent( YZCursor( left, top ), YZCursor( left + getColumnsVisible(), top + n ) );
 }
 
@@ -194,7 +194,7 @@ void NYZView::paintEvent( const YZSelection& drawMap ) {
 	drawCursor();
 }
 void NYZView::drawCursor() {
-	unsigned int x = getCursor().x() - getDrawCurrentLeft () + marginLeft;
+	int x = getCursor().x() - getDrawCurrentLeft () + marginLeft;
 	wmove( editor, getCursor().y() - getDrawCurrentTop (), x );
 	wrefresh( editor );
 }
@@ -418,7 +418,7 @@ bool NYZView::popupFileSaveAs() {
 void NYZView::filenameChanged()
 {
 	QString filename = myBuffer()->fileName();
-	unsigned int lineCount = myBuffer()->lineCount();
+	int lineCount = myBuffer()->lineCount();
 	int wholeLength = myBuffer()->getWholeTextLength();
 	displayInfo ( QString("\"%1\" %2L, %3C" ).arg(filename).arg(lineCount).arg(wholeLength));
 }

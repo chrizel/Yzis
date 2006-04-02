@@ -66,12 +66,12 @@ class YZSearch {
 		/**
 		 * Highlight given line
 		 */
-		void highlightLine( YZBuffer* buffer, unsigned int line );
+		void highlightLine( YZBuffer* buffer, int line );
 
 		/**
 		 * Shift @arg shift lines to the bottom the search highlight layout from @ærg line line
 		 */
-		void shiftHighlight( YZBuffer* buffer, unsigned int line, int shift );
+		void shiftHighlight( YZBuffer* buffer, int line, int shift );
 
 		/**
 		 * return current search

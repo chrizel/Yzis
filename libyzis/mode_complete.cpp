@@ -188,7 +188,7 @@ void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &propos
 		return;
 	}
 	
-	unsigned int matchedLength;
+	int matchedLength;
 	bool found;
 	YZCursor matchCursor;
 	YZCursor nextCursor;
@@ -291,7 +291,7 @@ void YZModeCompletion::completeFromCurrentBuffer( const YZCursor &cursor, bool f
 	
 	// use the above fact to locate where in the cursors list
 	// we should start scanning from
-	unsigned int startidx = cursorlist.indexOf( cursor );
+	int startidx = cursorlist.indexOf( cursor );
 
 	int delta = forward ? 1 : -1; // direction to search through the list
 	

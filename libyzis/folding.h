@@ -29,7 +29,7 @@
 #include "view.h"
 
 struct YZFold {
-	unsigned int to;
+	int to;
 	bool opened;
 };
 
@@ -44,38 +44,38 @@ class YZFoldPool {
 		/**
 		 * create a new fold
 		 */
-		void create( unsigned int from, unsigned int to );
+		void create( int from, int to );
 
 		/**
 		 * returns true if line is the head of a fold
 		 */
-		bool isHead( unsigned int line ) const;
+		bool isHead( int line ) const;
 		
 		/**
 		 * returns true if line is inside a fold (head excluded)
 		 * if head is not NULL, it will contains the line heading the fold
 		 */
-		bool contains( unsigned int line, unsigned int* head = NULL ) const;
+		bool contains( int line, int* head = NULL ) const;
 
 		/**
 		 * same as contains && fold is closed 
 		 *  => line should be hidden
 		 */
-		bool isFolded( unsigned int line, unsigned int* head = NULL ) const;
+		bool isFolded( int line, int* head = NULL ) const;
 
 		/**
 		 * returns the line number under the fold containing line. If line isn't inside a fold, returns line
 		 */
-		unsigned int lineAfterFold( unsigned int line ) const;
+		int lineAfterFold( int line ) const;
 
 		/**
 		 * returns the head of the fold containing line. If line isn't inside a fold, returns line
 		 */
-		unsigned int lineHeadingFold( unsigned int line ) const;
+		int lineHeadingFold( int line ) const;
 
 	private:
 		YZView* m_view;
-		QMap<unsigned int, YZFold> m_folds;
+		QMap<int, YZFold> m_folds;
 
 };
 

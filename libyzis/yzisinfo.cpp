@@ -222,7 +222,7 @@ void YZYzisinfo::updateJumpList( const YZBuffer *buffer, const int x, const int 
 
 	for ( JumpListVector::Iterator it = mJumpList.begin(); it != mJumpList.end(); ++it ) {
 		if ( (*it)->filename() == buffer->fileName() ) {
-			if ( (*it)->position().x() == static_cast<unsigned int>(x) && (*it)->position().y() == static_cast<unsigned int>(y) ) {
+			if ( (*it)->position().x() == x && (*it)->position().y() == y ) {
 				found = true;
 				break;
 			}

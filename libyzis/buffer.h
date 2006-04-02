@@ -71,7 +71,7 @@ public:
 	 * Gets the unique identifier for this buffer
 	 * @return the unique identifier for this buffer
 	 */
-	unsigned int getId() const;
+	int getId() const;
 
 	//-------------------------------------------------------
 	// ----------------- Character Operations
@@ -83,7 +83,7 @@ public:
 	 * @param y line where the character is to be added
 	 * @param c the character to add
 	 */
-	void insertChar (unsigned int x, unsigned int y, const QString& c);
+	void insertChar (int x, int y, const QString& c);
 
 	/**
 	 * Deletes a character in the buffer
@@ -91,7 +91,7 @@ public:
 	 * @param y line where the character is to be deleted
 	 * @param count number of characters to delete
 	 */
-	void delChar (unsigned int x, unsigned int y, unsigned int count);
+	void delChar (int x, int y, int count);
 
 	//-------------------------------------------------------
 	// ----------------- Line Operations
@@ -110,14 +110,14 @@ public:
 	 * @param l the text to insert
 	 * @param line the line which is changed
 	 */
-	void insertLine(const QString &l, unsigned int line);
+	void insertLine(const QString &l, int line);
 
 	/**
 	 * Opens a new line at the indicated position
 	 * @param col the position in line where to add a \n
 	 * @param line is the line after which a new line is added
 	 */
-	void insertNewLine( unsigned int col, unsigned int line);
+	void insertNewLine( int col, int line);
 
 	/**
 	 * Deletes the given line
@@ -125,12 +125,12 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	void deleteLine( unsigned int line );
+	void deleteLine( int line );
 
 	/**
 	 * Replaces the line at @param line with the given string @param l
 	 */
-	void replaceLine( const QString& l, unsigned int line );
+	void replaceLine( const QString& l, int line );
 	
 	/**
 	 * Finds the @ref YZLine pointer for a line in the buffer
@@ -139,24 +139,24 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	YZLine * yzline(unsigned int line, bool noHL = true);
-	const YZLine * yzline(unsigned int line) const;
+	YZLine * yzline(int line, bool noHL = true);
+	const YZLine * yzline(int line) const;
 
 	/**
 	 * Replaces the given regexp @arg what with the given string @with on the specified @arg line
 	 * Repeat the change on the line if @arg wholeline is true
 	 * @return true if a change was done
 	 */
-	bool substitute( const QString& what, const QString& with, bool wholeline, unsigned int line );
+	bool substitute( const QString& what, const QString& with, bool wholeline, int line );
 
 	/**
 	 * Get the length of a line
 	 * @param line the line number
-	 * @return a unsigned int with the length of the line
+	 * @return a int with the length of the line
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	unsigned int getLineLength(unsigned int line) const;
+	int getLineLength(int line) const;
 
 	/**
 	 * Finds a line in the buffer
@@ -165,12 +165,12 @@ public:
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
 	 */
-	const QString textline(unsigned int line) const;
+	const QString textline(int line) const;
 
 	/**
 	 * Return the column of the first non-blank character in the line
 	 */
-	uint firstNonBlankChar( uint line ) const;
+	int firstNonBlankChar( int line ) const;
 
 	//-------------------------------------------------------
 	// ----------------- Buffer content
@@ -189,9 +189,9 @@ public:
 
 	/**
 	 * Get the length of the entire buffer
-	 * @return an unsigned int with the lenght of the buffer
+	 * @return an int with the lenght of the buffer
 	 */
-	uint getWholeTextLength() const;
+	int getWholeTextLength() const;
 
 	/**
 	 * Remove all text
@@ -226,7 +226,7 @@ public:
 	 *
 	 * Note that empty buffer always have one empty line.
 	 */
-	unsigned int lineCount() const;
+	int lineCount() const;
 
 	//-------------------------------------------------------
 	// --------------------- Cursors
@@ -376,11 +376,11 @@ public:
 	 * @param mode the highlighting mode to use
 	 * @param warnGUI emit signal to GUI so they can reload the view if necessary
 	 */
-	void setHighLight(uint mode, bool warnGUI=true);
+	void setHighLight(int mode, bool warnGUI=true);
 	void setHighLight( const QString& name );
 
-	bool updateHL( unsigned int line );
-	void initHL( unsigned int line );
+	bool updateHL( int line );
+	void initHL( int line );
 
 	/**
 	 * Notify GUIs that HL changed
@@ -432,7 +432,7 @@ public:
 	void setState( State state );
 	State getState() const;
 
-	void saveYzisInfo();
+	void saveYzisInfo( YZView* view );
 	
 	//-------------------------------------------------------
 	// ------------ Static
@@ -452,12 +452,12 @@ protected:
 	 * @param line is between 0 and lineCount()-1
 	 * @param l may not contain '\n'
 	 */
-	void setTextline( uint line, const QString & l );
+	void setTextline( int line, const QString & l );
 
 	/**
 	 * Is a line displayed in any view ?
 	 */
-	bool isLineVisible(uint line) const;
+	bool isLineVisible(int line) const;
 
 private:
 	/**

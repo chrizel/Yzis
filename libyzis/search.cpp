@@ -114,7 +114,7 @@ YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor &from, co
 	if ( reverse ) end = top;
 
 	// use an action to do the search
-	unsigned int matchedLength;
+	int matchedLength;
 //	yzDebug() << "begin = " << cur << endl;
 	YZCursor ret = buffer->action()->search( buffer, pattern, cur, end, &matchedLength, found );
 
@@ -172,8 +172,8 @@ void YZSearch::Private::setCurrentSearch( const QString& pattern ) {
 			end.setX( qMax( (int)(b->textline( end.y() ).length() - 1), 0 ) );
 
 			bool found = true;
-			unsigned int matchedLength = 0;
-			unsigned int pos = 0;
+			int matchedLength = 0;
+			int pos = 0;
 			do {
 				from = b->action()->search( v->myBuffer(), mCurrentSearch, cur, end, &matchedLength, &found );
 				if ( found && matchedLength > 0 ) {
@@ -192,7 +192,7 @@ void YZSearch::Private::setCurrentSearch( const QString& pattern ) {
 	}
 }
 
-void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
+void YZSearch::highlightLine( YZBuffer* buffer, int line ) {
 	if ( d->mCurrentSearch.isNull() || d->mCurrentSearch.isEmpty() ) return;
 	bool doIt = YZSession::me->getBooleanOption( "hlsearch" );
 	if ( doIt ) {
@@ -208,7 +208,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 		if ( end.x() > 0 ) end.setX( end.x() - 1 );
 
 		bool found;
-		unsigned int matchedLength = 0;
+		int matchedLength = 0;
 		do {
 			from = buffer->action()->search( v->myBuffer(), d->mCurrentSearch, cur, end, &matchedLength, &found );
 			if ( found && matchedLength > 0 ) {
@@ -227,15 +227,15 @@ void YZSearch::highlightLine( YZBuffer* buffer, unsigned int line ) {
 	}
 }
 
-void YZSearch::shiftHighlight( YZBuffer* buffer, unsigned int fromLine, int shift ) {
+void YZSearch::shiftHighlight( YZBuffer* buffer, int fromLine, int shift ) {
 	YZList<YZView*> views = buffer->views();
 	YZView* v = views.front();
 	if ( v ) {
 		YZSelectionMap searchMap = v->getSelectionPool()->search()->map();
 
 		if ( ( ( int )( shift + fromLine ) ) < 0 ) fromLine = -shift;
-		unsigned int size = searchMap.size();
-		for ( unsigned int i = 0; i < size; i++ ) {
+		int size = searchMap.size();
+		for ( int i = 0; i < size; i++ ) {
 			YZCursor to = searchMap[ i ].toPos();
 			if ( to.y() < fromLine ) continue;
 

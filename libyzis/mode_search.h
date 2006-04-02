@@ -44,7 +44,7 @@ class YZIS_EXPORT YZModeSearch : public YZMode {
 		virtual cmd_state execCommand( YZView* view, const QString& key );
 
 		virtual YZCursor search( YZView* view, const QString& s, bool* found );
-		virtual YZCursor search( YZView* view, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found );
+		virtual YZCursor search( YZView* view, const QString& s, const YZCursor& begin, int* matchlength, bool* found );
 		virtual YZCursor replaySearch( YZView* view, bool* found );
 		
 		YZHistory *getHistory() { return mHistory; }
@@ -66,7 +66,7 @@ class YZIS_EXPORT YZModeSearchBackward : public YZModeSearch {
 		virtual ~YZModeSearchBackward();
 
 		virtual YZCursor search( YZView* view, const QString& s, bool* found );
-		virtual YZCursor search( YZView* view, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found );
+		virtual YZCursor search( YZView* view, const QString& s, const YZCursor& begin, int* matchlength, bool* found );
 		virtual YZCursor replaySearch( YZView* view, bool* found );
 };
 

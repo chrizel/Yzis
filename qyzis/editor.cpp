@@ -218,10 +218,8 @@ void QYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 			mParent->modePool()->push( YZMode::MODE_VISUAL );
 		} else if (mParent->modePool()->current()->isSelMode() ) {
 			// already in visual mode - move cursor if the mouse pointer has moved over a new char
-			unsigned int newX = e->x() / ( isFontFixed ? fontMetrics().maxWidth() : 1 )
-				+ mParent->getDrawCurrentLeft() - marginLeft;
-			unsigned int newY = e->y() / fontMetrics().lineSpacing()
-				+ mParent->getDrawCurrentTop();
+			int newX = e->x() / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + mParent->getDrawCurrentLeft() - marginLeft;
+			int newY = e->y() / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop();
 
 			if (newX != mParent->getCursor().x() || newY != mParent->getCursor().y()) {
 				mParent->gotodxdy( newX, newY );

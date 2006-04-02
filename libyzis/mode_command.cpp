@@ -402,7 +402,7 @@ bool YZMotion::matches(const QString &s, bool fully) const {
 	return false;
 }
 
-YZCursor YZModeCommand::move(YZView *view, const QString &inputs, unsigned int count, bool usercount) {
+YZCursor YZModeCommand::move(YZView *view, const QString &inputs, int count, bool usercount) {
 	for (int ab = 0 ; ab < commands.size(); ++ab ) {
 		const YZMotion *m=dynamic_cast<const YZMotion*>(commands.at(ab));
 		if(m && m->matches(inputs)) {
@@ -496,7 +496,7 @@ void YZModeCommand::scrollLineUp(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
-	unsigned int line = args.view->getCurrentTop() + args.view->getLinesVisible();
+	int line = args.view->getCurrentTop() + args.view->getLinesVisible();
 	YZView *view = args.view;
 
 	if (view->getLocalBooleanOption("wrap")) {
@@ -516,7 +516,7 @@ void YZModeCommand::scrollPageDown(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::scrollLineDown(const YZCommandArgs &args) {
-	unsigned int line = args.view->getCurrentTop() + args.view->getLinesVisible();
+	int line = args.view->getCurrentTop() + args.view->getLinesVisible();
 	YZView *view = args.view;
 
 	if (view->getLocalBooleanOption("wrap")) {
@@ -537,7 +537,7 @@ void YZModeCommand::scrollLineDown(const YZCommandArgs &args) {
 
 YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 	YZCursor from = args.view->getBufferCursor();
-	unsigned int start = from.y();
+	int start = from.y();
 	int count = args.count > 0 ? args.count : 1;
 	int counter=0;
 	while ( start >= 1 && counter!=count) {
@@ -554,7 +554,7 @@ YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 
 YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
 	YZCursor from = args.view->getBufferCursor();
-	unsigned int start = from.y()+1;
+	int start = from.y()+1;
 	int count = args.count > 0 ? args.count : 1;
 	int counter=0;
 	while ( start < args.view->myBuffer()->lineCount() && counter!=count ) {
@@ -660,7 +660,7 @@ YZCursor YZModeCommand::gotoEOL(const YZMotionArgs &args) {
 YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
-	unsigned int c = 0;
+	int c = 0;
 	QRegExp rex1("^\\w+\\s*");//a word with boundaries
 	QRegExp rex2("^[^\\w\\s]+\\s*");//non-word chars with boundaries
 	QRegExp ws("^\\s+");//whitespace
@@ -687,7 +687,7 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 			c++; //one match
 			result.setX( idx + len );
 			if ( ( c < args.count || args.standalone ) 
-					&& result.x() == ( uint )current.length() 
+					&& result.x() == current.length() 
 					&& result.y() < args.view->myBuffer()->lineCount() - 1) {
 				result.setY(result.y() + 1);
 				ws.indexIn(args.view->myBuffer()->textline( result.y() ));
@@ -714,7 +714,7 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 YZCursor YZModeCommand::moveSWordForward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
-	unsigned int c = 0;
+	int c = 0;
 	QRegExp ws("\\s+");//whitespace
 
 	while ( c < args.count ) { //for each word
@@ -729,7 +729,7 @@ YZCursor YZModeCommand::moveSWordForward(const YZMotionArgs &args) {
 			c++; //one match
 			result.setX( idx + len );
 			if ( ( c < args.count || args.standalone ) 
-					&& result.x() == ( uint ) current.length() 
+					&& result.x() == current.length() 
 					&& result.y() < args.view->myBuffer()->lineCount() - 1) {
 				result.setY(result.y() + 1);
 				ws.indexIn(args.view->myBuffer()->textline( result.y() ));
@@ -762,7 +762,7 @@ QString invertQString( const QString& from ) {
 YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
-	unsigned int c = 0;
+	int c = 0;
 	QRegExp rex1("^(\\w+)\\s*");//a word with boundaries
 	QRegExp rex2("^([^\\w\\s]+)\\s*");//non-word chars with boundaries
 	QRegExp rex3("^\\s+([^\\w\\s$]+|\\w+)");//whitespace
@@ -817,7 +817,7 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	YZCursor result( viewCursor.buffer() );
-	unsigned int c = 0;
+	int c = 0;
 	QRegExp rex1("([\\S]+)\\s*"); //
 
 	while ( c < args.count ) { //for each word
@@ -878,7 +878,7 @@ YZCursor YZModeCommand::firstNonBlankNextLine( const YZMotionArgs &args ) {
 
 YZCursor YZModeCommand::gotoLine(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	unsigned int line = 0;
+	int line = 0;
 	yzDebug() << "gotoLine " << args.cmd << "," << args.count << endl;
 	if ( args.count > 0 ) line	= args.count - 1;
 
@@ -916,7 +916,7 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 				word = word + "(?=[\\s\\w]|$)";
 //				word = "(?=^|[\\s\\w])" + word + "(?=[\\s\\w]|$)"; seems that positive lookahead cannot work together...
 		}
-		for ( unsigned int i = 0; found && i < args.count; i++ ) {
+		for ( int i = 0; found && i < args.count; i++ ) {
 			if ( args.cmd.contains('*') ) {
 				pos = YZSession::me->search()->forward( args.view->myBuffer(), word, &found, from );
 			} else {
@@ -937,7 +937,7 @@ YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 	YZCursor pos;
 	bool found = true;
 	bool moved = true;
-	for ( unsigned int i = 0; found && i < args.count; i++ ) {
+	for ( int i = 0; found && i < args.count; i++ ) {
 		pos = YZSession::me->search()->replayForward( args.view->myBuffer(), &found, from );
 		if ( found ) {
 			from = pos;
@@ -958,7 +958,7 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 	YZCursor pos;
 	bool found = true;
 	bool moved = false;
-	for ( unsigned int i = 0; found && i < args.count; i++ ) {
+	for ( int i = 0; found && i < args.count; i++ ) {
 		pos = YZSession::me->search()->replayBackward( args.view->myBuffer(), &found, from );
 		if ( found ) {
 			from = pos;
@@ -1083,7 +1083,7 @@ void YZModeCommand::gotoCommandMode(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::gotoLineAtTop(const YZCommandArgs &args) {
-	unsigned int line;
+	int line;
 
 	line = ( args.usercount ) ? args.count - 1 : args.view->getBufferCursor().y();
 	args.view->alignViewVertically( line );
@@ -1093,15 +1093,15 @@ void YZModeCommand::gotoLineAtTop(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::gotoLineAtCenter(const YZCommandArgs &args) {
-	unsigned int line;
+	int line;
 	line = ( args.usercount ) ? args.count - 1 : args.view->getBufferCursor().y();
 	args.view->centerViewVertically( line );
 	args.view->gotoxy(args.view->viewCursor().bufferX(), line );
 }
 
 void YZModeCommand::gotoLineAtBottom(const YZCommandArgs &args) {
-	unsigned int line;
-	//unsigned int linesFromCenter;
+	int line;
+	//int linesFromCenter;
 
 	line = ( args.usercount ) ? args.count - 1 : args.view->getBufferCursor().y();
 
@@ -1142,7 +1142,7 @@ void YZModeCommand::gotoVisualBlockMode(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
-	unsigned int y = args.view->getBufferCursor().y();
+	int y = args.view->getBufferCursor().y();
 	YZBuffer *mBuffer = args.view->myBuffer();
 	mBuffer->action()->insertNewLine( args.view, mBuffer->textline( y ).length(), y );
 	QStringList results = YZSession::me->eventCall("INDENT_ON_ENTER", args.view);
@@ -1152,7 +1152,7 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 			args.view->gotoxy(results[0].length(),y+1);
 		}
 	}
-	for ( unsigned int i = 1 ; i < args.count ; i++ ) {
+	for ( int i = 1 ; i < args.count ; i++ ) {
 		y = args.view->getBufferCursor().y();
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
 		results = YZSession::me->eventCall("INDENT_ON_ENTER", args.view);
@@ -1170,8 +1170,8 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::insertLineBefore(const YZCommandArgs &args) {
-	unsigned int y = args.view->getBufferCursor().y();
-	for ( unsigned int i = 0 ; i < args.count ; i++ )
+	int y = args.view->getBufferCursor().y();
+	for ( int i = 0 ; i < args.count ; i++ )
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
 	args.view->moveUp();
 	args.view->modePool()->push( YZMode::MODE_INSERT );
@@ -1180,26 +1180,26 @@ void YZModeCommand::insertLineBefore(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::joinLine(const YZCommandArgs &args) {
-	for ( unsigned int i = 0; i < args.count; i++ ) 
+	for ( int i = 0; i < args.count; i++ ) 
 		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor().y(), true );
 	args.view->commitNextUndo();
 }
 
 void YZModeCommand::joinLineWithoutSpace(const YZCommandArgs &args) {
-	for ( unsigned int i = 0; i < args.count; i++ ) 
+	for ( int i = 0; i < args.count; i++ ) 
 		args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor().y(), false );
 	args.view->commitNextUndo();
 }
 
 void YZModeCommand::pasteAfter(const YZCommandArgs &args) {
-	for ( unsigned int i = 0 ; i < args.count ; i++ )
+	for ( int i = 0 ; i < args.count ; i++ )
 		args.view->pasteContent( args.regs[ 0 ], true );
 	args.view->commitNextUndo();
 	
 }
 
 void YZModeCommand::pasteBefore(const YZCommandArgs &args) {
-	for ( unsigned int i = 0 ; i < args.count ; i++ )
+	for ( int i = 0 ; i < args.count ; i++ )
 		args.view->pasteContent( args.regs[ 0 ], false );
 	args.view->commitNextUndo();
 }
@@ -1259,8 +1259,8 @@ void YZModeCommand::changeCase( const YZCommandArgs &args ) {
 	YZCursor pos = args.view->getBufferCursor();
 	const QString line = args.view->myBuffer()->textline( pos.y() );
 	if ( ! line.isNull() ) {
-		unsigned int length = line.length();
-		unsigned int end = pos.x() + args.count;
+		int length = line.length();
+		int end = pos.x() + args.count;
 		for ( ; pos.x() < length && pos.x() < end; pos.setX( pos.x() + 1 ) ) {
 			QString ch = QString(line.at( pos.x() ));
 			if ( ch != ch.toLower() )
@@ -1276,7 +1276,7 @@ void YZModeCommand::changeCase( const YZCommandArgs &args ) {
 
 void YZModeCommand::lineToUpperCase( const YZCommandArgs &args ) {
 	YZCursor pos = args.view->getBufferCursor();
-	uint i = 0;
+	int i = 0;
 	while ( i < args.count ) {
 		const QString line = args.view->myBuffer()->textline( pos.y() + i );
 		if ( ! line.isNull() ) {
@@ -1290,7 +1290,7 @@ void YZModeCommand::lineToUpperCase( const YZCommandArgs &args ) {
 
 void YZModeCommand::lineToLowerCase( const YZCommandArgs &args ) {
 	YZCursor pos = args.view->getBufferCursor();
-	uint i = 0;
+	int i = 0;
 	while ( i < args.count ) {
 		const QString line = args.view->myBuffer()->textline( pos.y() + i );
 		if ( ! line.isNull() ) {
@@ -1319,7 +1319,7 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 			return;
 	}
 
-	for ( unsigned int i = 0; i < args.count; i++ ) {
+	for ( int i = 0; i < args.count; i++ ) {
 		for ( int ab = 0 ; ab < args.regs.size(); ++ab)
 			args.view->sendMultipleKey(YZSession::me->getRegister(args.regs.at(ab))[0]);
 	}
@@ -1356,7 +1356,7 @@ void YZModeCommand::substitute( const YZCommandArgs &args ) {
 	args.view->commitNextUndo();
 
 	// start insert mode, append if at EOL
-	if ( (unsigned int)cur.x() != args.view->myBuffer()->getLineLength( cur.y() ) )
+	if ( cur.x() != args.view->myBuffer()->getLineLength( cur.y() ) )
 		args.view->modePool()->push( YZMode::MODE_INSERT );
 	else
 		args.view->append();
@@ -1387,14 +1387,14 @@ void YZModeCommand::delkey( const YZCommandArgs &args ) {
 
 void YZModeCommand::indent( const YZCommandArgs& args ) {
 	YZInterval area = interval( args );
-	unsigned int fromY = area.fromPos().y();
-	unsigned int toY = area.toPos().y();
+	int fromY = area.fromPos().y();
+	int toY = area.toPos().y();
 	if ( toY > fromY && area.to().opened() && area.toPos().x() == 0 )
 		--toY;
-	unsigned int maxY = args.view->myBuffer()->lineCount() - 1;
+	int maxY = args.view->myBuffer()->lineCount() - 1;
 	if ( toY > maxY ) toY = maxY;
 	int factor = ( args.cmd->keySeq()[0] == '<' ? -1 : 1 ) * args.count;
-	for ( unsigned int l = fromY; l <= toY; l++ ) {
+	for ( int l = fromY; l <= toY; l++ ) {
 		args.view->myBuffer()->action()->indentLine( args.view, l, factor );
 	}
 	args.view->commitNextUndo();

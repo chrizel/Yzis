@@ -157,10 +157,10 @@ void QYZisView::drawSetMaxLineNumber( int max ) {
 void QYZisView::drawSetLineNumber( int y, int n, int h ) {
 	m_editor->drawSetLineNumber( y, n, h, m_painter );
 }
-unsigned int QYZisView::stringWidth( const QString& str ) const {
+int QYZisView::stringWidth( const QString& str ) const {
 	return m_editor->fontMetrics().width( str );
 }
-unsigned int QYZisView::charWidth( const QChar& ch ) const {
+int QYZisView::charWidth( const QChar& ch ) const {
 	return m_editor->fontMetrics().width( ch );
 }
 QChar QYZisView::currentChar() const {
@@ -269,11 +269,11 @@ void QYZisView::displayInfo( const QString& info ) {
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
 void QYZisView::scrollView( int value ) {
 	if ( value < 0 ) value = 0;
-	else if ( (unsigned int)value > buffer->lineCount() - 1 )
+	else if ( value > buffer->lineCount() - 1 )
 		value = buffer->lineCount() - 1;
 
 	// only redraw if the view actually moves
-	if ((unsigned int)value != getCurrentTop()) {
+	if (value != getCurrentTop()) {
 		alignViewBufferVertically( value );
 
 		if (!mVScroll->isSliderDown())

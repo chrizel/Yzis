@@ -67,7 +67,7 @@ YZCursor YZModeSearch::replaySearch( YZView* view, bool* found ) {
 YZCursor YZModeSearch::search( YZView* view, const QString& s, bool* found ) {
 	return YZSession::me->search()->forward( view->myBuffer(), s, found, view->getBufferCursor() );
 }
-YZCursor YZModeSearch::search( YZView* view, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found ) {
+YZCursor YZModeSearch::search( YZView* view, const QString& s, const YZCursor& begin, int* matchlength, bool* found ) {
 	YZCursor end( 0, view->myBuffer()->lineCount() - 1 );
 	end.setX( view->myBuffer()->textline( end.y() ).length() );
 	return view->myBuffer()->action()->search( view->myBuffer(), s, begin, end, matchlength, found );
@@ -136,7 +136,7 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 
 	if ( view->getLocalBooleanOption("incsearch") ) {
 		view->setPaintAutoCommit( false );
-		unsigned int matchlength;
+		int matchlength;
 		*incSearchResult = search(view, view->getCommandLineText(), *mSearchBegin, &matchlength, &(incSearchFound));
 		if ( incSearchFound ) {
 			if ( view->getLocalBooleanOption("hlsearch") ) {
@@ -172,7 +172,7 @@ YZCursor YZModeSearchBackward::search( YZView* view, const QString& s, bool* fou
 	view->gotoxy( buffer.x() + 1, buffer.y(), false );
 	return YZSession::me->search()->backward( view->myBuffer(), s, found, view->getBufferCursor() );
 }
-YZCursor YZModeSearchBackward::search( YZView* view, const QString& s, const YZCursor& begin, unsigned int* matchlength, bool* found ) {
+YZCursor YZModeSearchBackward::search( YZView* view, const QString& s, const YZCursor& begin, int* matchlength, bool* found ) {
 	YZCursor end( 0, 0 );
 	return view->myBuffer()->action()->search( view->myBuffer(), s, begin, end, matchlength, found );
 }

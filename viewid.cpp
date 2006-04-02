@@ -67,7 +67,6 @@ YZDebugStream &operator<<( YZDebugStream &lhs, const YZViewId &rhs )
 
 QDataStream &operator>>( QDataStream &lhs, YZViewId &rhs )
 {
-	unsigned int id;
-	rhs.myId = id;
+	lhs >> rhs.myId;
 	return lhs;
 }

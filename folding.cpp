@@ -31,9 +31,9 @@ YZFoldPool::YZFoldPool( YZView* view ) {
 YZFoldPool::~YZFoldPool() {
 }
 
-void YZFoldPool::create( unsigned int from, unsigned int to ) {
+void YZFoldPool::create( int from, int to ) {
 	yzDebug() << "FOLDING: create from " << from << " to " << to << endl;
-	unsigned int head = from;
+	int head = from;
 	bool need_update = true;
 	if ( isHead( from ) || contains( from, &head ) ) {
 		if ( m_folds[ head ].to < to ) {
@@ -53,12 +53,12 @@ void YZFoldPool::create( unsigned int from, unsigned int to ) {
 	yzDebug() << "" << *this;
 }
 
-bool YZFoldPool::isHead( unsigned int line ) const {
+bool YZFoldPool::isHead( int line ) const {
 	return m_folds.contains( line );
 }
-bool YZFoldPool::contains( unsigned int line, unsigned int* head ) const {
+bool YZFoldPool::contains( int line, int* head ) const {
 	bool contains = false;
-	QList<unsigned int> keys = m_folds.keys();
+	QList<int> keys = m_folds.keys();
 	if ( keys.size() > 0 ) {
 		int i;
 		for( i = keys.size() - 1; !contains && i >= 0 && m_folds[ keys[ i ] ].to >= line; --i )
@@ -68,24 +68,24 @@ bool YZFoldPool::contains( unsigned int line, unsigned int* head ) const {
 	}
 	return contains;
 }
-bool YZFoldPool::isFolded( unsigned int line, unsigned int* head ) const {
-	unsigned int fh;
+bool YZFoldPool::isFolded( int line, int* head ) const {
+	int fh;
 	bool ret = contains( line, &fh );
 	if ( head != NULL )
 		*head = fh;
 	return ret && !m_folds[ fh ].opened;
 }
 
-unsigned int YZFoldPool::lineAfterFold( unsigned int line ) const {
-	unsigned int head;
+int YZFoldPool::lineAfterFold( int line ) const {
+	int head;
 	if ( contains( line, &head ) ) {
 		if ( !m_folds[ head ].opened )
 			return m_folds[ head ].to + 1;
 	}
 	return line;
 }
-unsigned int YZFoldPool::lineHeadingFold( unsigned int line ) const {
-	unsigned int head;
+int YZFoldPool::lineHeadingFold( int line ) const {
+	int head;
 	if ( contains( line, &head ) ) {
 		return head;
 	}
@@ -93,7 +93,7 @@ unsigned int YZFoldPool::lineHeadingFold( unsigned int line ) const {
 }
 
 YZDebugStream& operator<<( YZDebugStream& out, const YZFoldPool& f ) {
-	QList<unsigned int> keys = f.m_folds.keys();
+	QList<int> keys = f.m_folds.keys();
 	for( int i = 0; i < keys.size(); ++i ) {
 		out << "fold from line " << keys[ i ] 
 			<< " to line " << f.m_folds[ keys[ i ] ].to

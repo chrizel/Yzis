@@ -375,7 +375,7 @@ int YZExLua::insert(lua_State *L) {
 	QStringList list = text.split( "\n" );
 	QStringList::Iterator it = list.begin(), end = list.end();
 	for ( ; it != end; ++it ) {
-		if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
+		if ( sLine >= cView->myBuffer()->lineCount() ) cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
 		cView->myBuffer()->action()->insertChar( cView, sCol, sLine, *it );
 		sCol=0;
 		sLine++;
@@ -463,7 +463,7 @@ int YZExLua::replace(lua_State *L) {
 	}
 
 	YZView* cView = YZSession::me->currentView();
-	if ( ( unsigned int )sLine >= cView->myBuffer()->lineCount() ) {
+	if ( sLine >= cView->myBuffer()->lineCount() ) {
 		cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
 		sCol = 0;
 	}

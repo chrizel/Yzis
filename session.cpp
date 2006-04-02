@@ -268,11 +268,11 @@ bool YZSession::isOneBufferModified() {
 bool YZSession::exitRequest( int errorCode ) {
 	yzDebug() << "Preparing for final exit with code " << errorCode << endl;
 	//prompt unsaved files XXX
-/*	YZBufferMap::Iterator it = mBuffers.begin(), end = mBuffers.end();
+	YZBufferList::Iterator it = mBufferList.begin(), end = mBufferList.end();
 	for ( ; it!=end; ++it ) {
-		YZBuffer* b = ( *it );
-		deleteBuffer( b );
+		(*it)->saveYzisInfo( (*it)->firstView() );
 	}
+	/*
 	mBuffers.clear();
 	
    YZSession::me->getYzisinfo()->updateStartPosition( 

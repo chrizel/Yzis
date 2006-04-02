@@ -83,7 +83,7 @@ bool operator<=( const YZCursor& left, const YZBound& right ) {
 }
 
 const YZBound operator-( const YZBound& left, const YZCursor& right ) {
-	return YZBound( left.pos() - right, left.opened() );
+	return YZBound( (QPoint)left.pos() - right, left.opened() );
 }
 /**
  * YZInterval

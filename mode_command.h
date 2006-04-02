@@ -52,13 +52,13 @@ struct YZCommandArgs {
 	//the registers to operate upon
 	QList<QChar> regs;
 	//exec this number of times the command
-	unsigned int count;
+	int count;
 	//was the count gave by the user
 	bool usercount;
 	//the argument
 	QString arg;
 
-	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, unsigned int c, bool user, QString a) {
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, int c, bool user, QString a) {
 		cmd=_cmd;
 		view=v;
 		regs=r;
@@ -66,7 +66,7 @@ struct YZCommandArgs {
 		arg=a;
 		usercount=user;
 	}
-	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, unsigned int c, bool user) {
+	YZCommandArgs(const YZCommand *_cmd, YZView *v, const QList<QChar> &r, int c, bool user) {
 		cmd=_cmd;
 		view=v;
 		regs=r;
@@ -119,7 +119,7 @@ class YZMotionArgs;
 
 class YZIS_EXPORT YZMotionArgs {
 	public:
-		YZMotionArgs(YZView *v, unsigned int cnt=1, QString a=QString::null,QString c=QString::null, bool uc = false, bool s=false) {
+		YZMotionArgs(YZView *v, int cnt=1, QString a=QString::null,QString c=QString::null, bool uc = false, bool s=false) {
 			cmd = c;
 			view=v;
 			count=cnt;
@@ -129,7 +129,7 @@ class YZIS_EXPORT YZMotionArgs {
 		}
 
 		YZView *view;
-		unsigned int count;
+		int count;
 		QString arg;
 		bool standalone;
 		bool usercount;
@@ -157,7 +157,7 @@ class YZIS_EXPORT YZModeCommand : public YZMode {
 
 		/** Parses the string inputs, which must be a valid motion + argument,
 		 * and executes the corresponding motion function. */
-		YZCursor move(YZView *view, const QString &inputs, unsigned int count, bool usercount );
+		YZCursor move(YZView *view, const QString &inputs, int count, bool usercount );
 
 		// methods implementing motions
 		YZCursor moveLeft(const YZMotionArgs &args);

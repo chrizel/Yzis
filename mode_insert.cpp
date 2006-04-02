@@ -151,7 +151,7 @@ void YZModeInsert::commandRight( YZView* mView, const QString& ) {
 	mView->moveRight();
 }
 void YZModeInsert::commandPageDown( YZView* mView, const QString& ) {
-	unsigned int line = mView->getCurrentTop() + mView->getLinesVisible();
+	int line = mView->getCurrentTop() + mView->getLinesVisible();
 
 	if (mView->getLocalBooleanOption("wrap")) {
 		YZViewCursor temp = mView->viewCursor();
@@ -196,7 +196,7 @@ void YZModeInsert::commandBackspace( YZView* mView, const QString& ) {
 void YZModeInsert::commandDel( YZView* mView, const QString& ) {
 	YZCursor cur = mView->getBufferCursor();
 	YZBuffer* mBuffer = mView->myBuffer();
-	if ( cur.x() == ( uint )mBuffer->textline( cur.y() ).length() 
+	if ( cur.x() == mBuffer->textline( cur.y() ).length() 
 			&& mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
 		mBuffer->action()->mergeNextLine( mView, cur.y(), false );
 	} else {
@@ -233,7 +233,7 @@ void YZModeInsert::imBegin( YZView* ) {
 void YZModeInsert::imCompose( YZView* mView, const QString& entry ) {
 	if ( !m_imPreedit.isEmpty() ) { // replace current one
 		YZCursor pos = mView->getBufferCursor();
-		unsigned int len = m_imPreedit.length();
+		int len = m_imPreedit.length();
 		if ( pos.x() >= len )
 			pos.setX( pos.x() - len );
 		else

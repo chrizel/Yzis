@@ -283,7 +283,7 @@ YZInterval YZModeVisualLine::buildScreenInterval( YZView* mView, const YZViewCur
 		mView->gotoxy( &pos, 0, to.bufferY() + 1 );
 		bt.setPos( pos.screen() );
 	} else {
-		mView->gotoxy( &pos, qMax( (unsigned int)1, mView->myBuffer()->getLineLength( to.bufferY() ) ) - 1, to.bufferY() );
+		mView->gotoxy( &pos, qMax( 1, mView->myBuffer()->getLineLength( to.bufferY() ) ) - 1, to.bufferY() );
 		bt.setPos( YZCursor( 0, pos.screenY() + 1 ) );
 	}
 	return YZInterval( bf, bt );
@@ -307,26 +307,26 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 	YZSelection old = visual->screen();
 	visual->clear();
 
-	unsigned int fromLine = mView->visualCursor()->bufferY();
-	unsigned int toLine = mView->getBufferCursor().y();
-	unsigned int fromCol = (mView->visualCursor()->curLineHeight()-1)*mView->getColumnsVisible() + mView->visualCursor()->screenX();
-	unsigned int toCol = (mView->viewCursor().curLineHeight()-1)*mView->getColumnsVisible() + mView->getCursor().x();
+	int fromLine = mView->visualCursor()->bufferY();
+	int toLine = mView->getBufferCursor().y();
+	int fromCol = (mView->visualCursor()->curLineHeight()-1)*mView->getColumnsVisible() + mView->visualCursor()->screenX();
+	int toCol = (mView->viewCursor().curLineHeight()-1)*mView->getColumnsVisible() + mView->getCursor().x();
 
 	YZViewCursor cur = *mView->visualCursor();
 	if ( fromCol > toCol ) {
-		unsigned int tmp = toCol;
+		int tmp = toCol;
 		toCol = fromCol;
 		fromCol = tmp;
 	}
 	if ( fromLine > toLine ) {
 		cur = mView->viewCursor();
-		unsigned int tmp = toLine;
+		int tmp = toLine;
 		toLine = fromLine;
 		fromLine = tmp;
 	}
 	yzDebug() << "visual block : from " << fromCol << "," << fromLine << " to " << toCol << "," << toLine << endl;
 	YZInterval sI, bI;
-	for ( unsigned int i = fromLine; i <= toLine; i++ ) {
+	for ( int i = fromLine; i <= toLine; i++ ) {
 
 		mView->gotodxy( &cur, fromCol, i );
 		sI.setFromPos( YZCursor(fromCol,cur.screenY()) );

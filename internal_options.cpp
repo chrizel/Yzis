@@ -498,6 +498,7 @@ void YZInternalOptionPool::createOption(const QString& optionName, const QString
 			success = opt->setValue( value, ov );
 			if ( ! success ) { // bad value, we cannot add that new option. Delete the ov and the option itself.
 				delete ov;
+				options.removeLast();
 				delete opt;
 			} else {
 				mOptions[ group + "\\" + opt->name() ] = ov;

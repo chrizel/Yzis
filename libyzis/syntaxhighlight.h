@@ -40,7 +40,7 @@
 #include <QVector>
 
 #ifndef YZIS_WIN32_MSVC
-#include "magic.h"
+#include <magic.h>
 #endif
 
 class YzisHlContext;

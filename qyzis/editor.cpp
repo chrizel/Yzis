@@ -155,11 +155,11 @@ bool QYZisEdit::event(QEvent *e) {
 void QYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	Qt::KeyboardModifiers st = e->modifiers();
 	QString modifiers;
-	if ( st & Qt::ShiftButton )
+	if ( st & Qt::ShiftModifier )
 		modifiers = "<SHIFT>";
-	if ( st & Qt::AltButton )
+	if ( st & Qt::AltModifier )
 		modifiers += "<ALT>";
-	if ( st & Qt::ControlButton )
+	if ( st & Qt::ControlModifier )
 		modifiers += "<CTRL>";
 
 	QString k;
@@ -404,8 +404,6 @@ void QYZisEdit::initKeys() {
 	keys[ Qt::Key_Up ] = "<UP>" ;
 	keys[ Qt::Key_Right ] = "<RIGHT>" ;
 	keys[ Qt::Key_Down ] = "<DOWN>" ;
-	keys[ Qt::Key_Prior ] = "<PUP>" ;
-	keys[ Qt::Key_Next ] = "<PDOWN>" ;
 	keys[ Qt::Key_PageUp ] = "<PUP>" ;
 	keys[ Qt::Key_PageDown ] = "<PDOWN>" ;
 	keys[ Qt::Key_Shift ] = "<SHIFT>" ;

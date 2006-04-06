@@ -37,14 +37,14 @@ QYZisCommand::~QYZisCommand() {
 void QYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 	yzDebug()<< " QYZisCommand Got key : " << e->key()<< " Got ASCII : " << e->text().toLatin1().constData() << " Got Unicode : " << e->text() << endl;
 	QString modifiers;
-	if ( e->QInputEvent::modifiers() & Qt::ShiftButton ) modifiers += "<SHIFT>";
-	if ( e->QInputEvent::modifiers() & Qt::AltButton ) modifiers += "<ALT>";
-	if ( e->QInputEvent::modifiers() & Qt::ControlButton ) modifiers += "<CTRL>";
+	if ( e->QInputEvent::modifiers() & Qt::ShiftModifier ) modifiers += "<SHIFT>";
+	if ( e->QInputEvent::modifiers() & Qt::AltModifier ) modifiers += "<ALT>";
+	if ( e->QInputEvent::modifiers() & Qt::ControlModifier ) modifiers += "<CTRL>";
 	if ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Up || e->key() == Qt::Key_Down || e->key() == Qt::Key_Escape) {
 		_parent->sendKey(_parent->editor()->convertKey( e->key() ), modifiers ) ;
 		e->accept();
 	} 
-	else if ( ( e->QInputEvent::modifiers() & Qt::ControlButton ) && e->key() == Qt::Key_C ) { // handle CTRL-C 
+	else if ( ( e->QInputEvent::modifiers() & Qt::ControlModifier ) && e->key() == Qt::Key_C ) { // handle CTRL-C 
 		_parent->sendKey( "c" , modifiers ) ;
 		e->accept();
 	}

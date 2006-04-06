@@ -11,6 +11,15 @@ option(ENABLE_TESTS "enable tests compilation" OFF)
 
 option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
 
+find_package(Magic REQUIRED)
+find_package(LibLua50 REQUIRED)
+find_package(LibLuaLib50 REQUIRED)
+find_package(Gettext REQUIRED)
+# XXX: workaround intl for Mac OSX
+if (APPLE)
+	set(GETTEXT_LIBRARIES ${LIBINTL_LIBRARY})
+endif(APPLE)
+
 #KDE4 non-required
 find_package(KDE4)
 #but we still need qt4 ;)
@@ -29,6 +38,13 @@ if (NOT ICON_INSTALL_DIR)
 	set(ICON_INSTALL_DIR share/icons)
 endif (NOT ICON_INSTALL_DIR)
 
+# XXX how deal with macosx bundles?
+if (APPLE)
+	if (NOT APPLE_APPLICATION_DIR)
+		set(APPLE_APPLICATION_DIR /Applications)
+	endif (NOT APPLE_APPLICATION_DIR)
+endif (APPLE)
+
 add_definitions(${QT_DEFINITIONS})
 
 if (ENABLE_SAFE_MODE)
@@ -37,6 +53,8 @@ endif (ENABLE_SAFE_MODE)
 
 include(ConvenienceLibs.cmake)
 include(ConfigureChecks.cmake)
+
+set(YZIS_INCLUDES ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR})
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 

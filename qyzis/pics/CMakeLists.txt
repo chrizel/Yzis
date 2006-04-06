@@ -7,3 +7,8 @@ else (KDE4_FOUND)
 	endforeach(dimension)
 endif (KDE4_FOUND)
 
+if (APPLE)
+	# install icon for bundle
+	install(FILES qyzis.icns DESTINATION ${APPLE_APPLICATION_DIR}/qyzis.app/Contents/Resources)
+endif (APPLE)
+

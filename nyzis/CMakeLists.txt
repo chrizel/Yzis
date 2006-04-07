@@ -2,7 +2,11 @@
 include_directories( ${NCURSES_INCLUDE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/libyzis/ ${CMAKE_BINARY_DIR}/libyzis/ ${QT_INCLUDES} )
 
 ########### next target ###############
-set(nyzis_SRCS viewwidget.cpp factory.cpp main.cpp )
+set(nyzis_SRCS
+   factory.cpp
+   main.cpp
+   viewwidget.cpp
+)
 #kde4_automoc(${nyzis_SRCS})
 #kde4_add_executable(nyzis ${nyzis_SRCS})
 #MOC files

@@ -13,50 +13,50 @@ include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/libyzis ${CMAKE_SOU
 ########### next target ###############
 
 set(yzis_LIB_SRCS 
-   session.cpp 
-   mode.cpp 
-   mode_command.cpp 
-   mode_search.cpp 
-   mode_visual.cpp 
-   mode_ex.cpp 
-   mode_insert.cpp 
-   view.cpp 
-   search.cpp 
-   mark.cpp 
    action.cpp 
-   cursor.cpp 
-   selection.cpp 
-   line.cpp 
-   buffer.cpp 
-   linesearch.cpp 
-   debug.cpp 
-   internal_options.cpp 
-   option.cpp 
-   registers.cpp 
-   undo.cpp 
-   ex_lua.cpp 
-   swapfile.cpp 
-   schema.cpp 
-   viewcursor.cpp 
-   mapping.cpp 
-   events.cpp 
-   syntaxdocument.cpp 
-   syntaxhighlight.cpp 
    attribute.cpp 
-   yzisinfo.cpp 
-   yzisinfostartpositionrecord.cpp 
-   yzisinfojumplistrecord.cpp 
-   readtags.c 
-   tags_interface.cpp 
-   tags_stack.cpp 
-   mode_complete.cpp 
-   viewid.cpp 
-   history.cpp 
+   buffer.cpp 
    color.cpp 
+   cursor.cpp 
+   debug.cpp 
    drawbuffer.cpp 
+   events.cpp 
+   ex_lua.cpp 
    folding.cpp 
    font.cpp 
-   )
+   history.cpp 
+   internal_options.cpp 
+   line.cpp 
+   linesearch.cpp 
+   mapping.cpp 
+   mark.cpp 
+   mode_command.cpp 
+   mode_complete.cpp 
+   mode.cpp 
+   mode_ex.cpp 
+   mode_insert.cpp 
+   mode_search.cpp 
+   mode_visual.cpp 
+   option.cpp 
+   readtags.c 
+   registers.cpp 
+   schema.cpp 
+   search.cpp 
+   selection.cpp 
+   session.cpp 
+   swapfile.cpp 
+   syntaxdocument.cpp 
+   syntaxhighlight.cpp 
+   tags_interface.cpp 
+   tags_stack.cpp 
+   undo.cpp 
+   view.cpp 
+   viewcursor.cpp 
+   viewid.cpp 
+   yzisinfo.cpp 
+   yzisinfojumplistrecord.cpp 
+   yzisinfostartpositionrecord.cpp 
+)
 
 #add files needing MOC here :)
 set(yzis_LIB_MOCS 

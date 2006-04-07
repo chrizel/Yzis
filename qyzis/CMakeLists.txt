@@ -4,13 +4,14 @@ include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
 ########### next target ###############
 
 set(qyzis_SRCS 
-   main.cpp 
-   viewwidget.cpp 
-   factory.cpp 
-   editor.cpp 
    commandwidget.cpp 
    cursor.cpp 
-   qyzis.cpp )
+   editor.cpp 
+   factory.cpp 
+   main.cpp 
+   qyzis.cpp
+   viewwidget.cpp 
+)
 
 set(qyzis_MOC
    commandwidget.h

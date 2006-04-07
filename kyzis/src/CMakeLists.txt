@@ -2,12 +2,26 @@ kde4_header()
 
 add_subdirectory( newui )
 
-include_directories( ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/kyzis/src/newui/ ${CMAKE_SOURCE_DIR}/libyzis/ ${CMAKE_BINARY_DIR}/libyzis/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
+include_directories( ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}
+${CMAKE_SOURCE_DIR}/kyzis/src/newui/ ${CMAKE_SOURCE_DIR}/libyzis/
+${CMAKE_BINARY_DIR}/libyzis/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}
+${YZIS_INCLUDES} )
 
 
 ########### next target ###############
 add_definitions("-DQT3_SUPPORT")
-SET(internkyzis_SRCS ktexteditoriface.cpp viewwidget.cpp factory.cpp editor.cpp commandwidget.cpp kyziscodecompletion.cpp cursor.cpp kyzis.cpp konsole.cpp kyzisbuffer.cpp)
+SET(internkyzis_SRCS
+   commandwidget.cpp
+   cursor.cpp
+   editor.cpp
+   factory.cpp
+   konsole.cpp
+   ktexteditoriface.cpp
+   kyzisbuffer.cpp
+   kyziscodecompletion.cpp
+   kyzis.cpp
+   viewwidget.cpp
+)
 
 KDE4_AUTOMOC (${internkyzis_SRCS})
 KDE4_ADD_DCOP_SKELS (internkyzis_SRCS kyzis.h)

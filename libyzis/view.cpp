@@ -1322,14 +1322,15 @@ bool YZView::drawNextCol( ) {
 
 	if ( wrap ) {
 		// screen pos
-		int sx = workCursor->screenX() + nextLength + ( ret || ! drawMode ? 0 : workCursor->sColIncrement );
+		int sx = workCursor->screenX() + nextLength + ( (ret || !drawMode) ? 0 : workCursor->sColIncrement );
 		// buff pos
 		int bx = curx + ( drawMode ? 0 : workCursor->bColIncrement );
 		workCursor->wrapNextLine = sx > mColumnsVis;
-		if ( bx == sCurLineLength ) // wrap a tab at EOL
+		if ( bx == sCurLineLength ) { // wrap a tab at EOL
 			workCursor->wrapNextLine &= ( drawMode ? lastCharWasTab : workCursor->lastCharWasTab );
-		else
+		} else {
 			workCursor->wrapNextLine &= bx < sCurLineLength;
+		}
 	}
 
 	// only remember of case where wrapNextLine is true ( => we will wrap a tab next drawNextCol )

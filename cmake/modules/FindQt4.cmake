@@ -167,48 +167,57 @@ FIND_PROGRAM(QT_QMAKE_EXECUTABLE NAMES qmake qmake-qt4 PATHS
   $ENV{QTDIR}/bin
 )
 
+SET(QT4_INSTALLED_VERSION_TOO_OLD FALSE)
+
+
 IF (QT_QMAKE_EXECUTABLE)
+
+   SET(QT4_QMAKE_FOUND FALSE)
+   
    EXEC_PROGRAM(${QT_QMAKE_EXECUTABLE} ARGS "-query QT_VERSION" OUTPUT_VARIABLE QTVERSION)
 
-   # we need at least version 4.0.0
-   IF (NOT QT_MIN_VERSION)
-      SET(QT_MIN_VERSION "4.0.0")
-   ENDIF (NOT QT_MIN_VERSION)
+   # check that we found the Qt4 qmake, Qt3 qmake output won't match here
+   STRING(REGEX MATCH "^[0-9]+\\.[0-9]+\\.[0-9]+$" qt_version_tmp "${QTVERSION}")
+   IF (qt_version_tmp)
 
-   SET(QT4_QMAKE_FOUND TRUE)
-   IF (QT_MIN_VERSION)
+      # we need at least version 4.0.0
+      IF (NOT QT_MIN_VERSION)
+         SET(QT_MIN_VERSION "4.0.0")
+      ENDIF (NOT QT_MIN_VERSION)
+   
       #now parse the parts of the user given version string into variables
       STRING(REGEX MATCH "^[0-9]+\\.[0-9]+\\.[0-9]+$" req_qt_major_vers "${QT_MIN_VERSION}")
       IF (NOT req_qt_major_vers)
-        MESSAGE( FATAL_ERROR "Invalid Qt version string given: \"${QT_MIN_VERSION}\", expected e.g. \"4.0.1\"")
+         MESSAGE( FATAL_ERROR "Invalid Qt version string given: \"${QT_MIN_VERSION}\", expected e.g. \"4.0.1\"")
       ENDIF (NOT req_qt_major_vers)
-
-
+   
       # now parse the parts of the user given version string into variables
       STRING(REGEX REPLACE "([0-9]+)\\.[0-9]+\\.[0-9]+" "\\1" req_qt_major_vers "${QT_MIN_VERSION}")
       STRING(REGEX REPLACE "[0-9]+\\.([0-9])+\\.[0-9]+" "\\1" req_qt_minor_vers "${QT_MIN_VERSION}")
       STRING(REGEX REPLACE "[0-9]+\\.[0-9]+\\.([0-9]+)" "\\1" req_qt_patch_vers "${QT_MIN_VERSION}")
-
+   
       IF (NOT req_qt_major_vers EQUAL 4)
-        MESSAGE( FATAL_ERROR "Invalid Qt version string given: \"${QT_MIN_VERSION}\", major version 4 is required, e.g. \"4.0.1\"")
+         MESSAGE( FATAL_ERROR "Invalid Qt version string given: \"${QT_MIN_VERSION}\", major version 4 is required, e.g. \"4.0.1\"")
       ENDIF (NOT req_qt_major_vers EQUAL 4)
-
+   
       # and now the version string given by qmake
       STRING(REGEX REPLACE "([0-9]+)\\.[0-9]+\\.[0-9]+" "\\1" found_qt_major_vers "${QTVERSION}")
       STRING(REGEX REPLACE "[0-9]+\\.([0-9])+\\.[0-9]+" "\\1" found_qt_minor_vers "${QTVERSION}")
       STRING(REGEX REPLACE "[0-9]+\\.[0-9]+\\.([0-9]+)" "\\1" found_qt_patch_vers "${QTVERSION}")
-
+   
       # compute an overall version number which can be compared at once
       MATH(EXPR req_vers "${req_qt_major_vers}*10000 + ${req_qt_minor_vers}*100 + ${req_qt_patch_vers}")
       MATH(EXPR found_vers "${found_qt_major_vers}*10000 + ${found_qt_minor_vers}*100 + ${found_qt_patch_vers}")
-
+   
       IF (found_vers LESS req_vers)
-         SET(Qt4_QMAKE_FOUND NO)
+         SET(QT4_QMAKE_FOUND FALSE)
+         SET(QT4_INSTALLED_VERSION_TOO_OLD TRUE)
       ELSE (found_vers LESS req_vers)
-         SET(Qt4_QMAKE_FOUND YES)
+         SET(QT4_QMAKE_FOUND TRUE)
       ENDIF (found_vers LESS req_vers)
 
-      ENDIF (QT_MIN_VERSION)
+   ENDIF (qt_version_tmp)
+
 ENDIF (QT_QMAKE_EXECUTABLE)
 
 IF (QT4_QMAKE_FOUND)
@@ -627,7 +636,7 @@ IF (QT4_QMAKE_FOUND)
      ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
         COMMAND ${QT_MOC_EXECUTABLE}
         ARGS ${moc_includes} -o ${outfile} ${infile}
-        MAIN_DEPENDENCY ${infile})
+        DEPENDS ${infile})
   ENDMACRO (QT4_GENERATE_MOC)
 
 
@@ -646,7 +655,7 @@ IF (QT4_QMAKE_FOUND)
       ADD_CUSTOM_COMMAND(OUTPUT ${outfile}
         COMMAND ${QT_MOC_EXECUTABLE}
         ARGS ${moc_includes} -o ${outfile} ${it}
-        MAIN_DEPENDENCY ${it})
+        DEPENDS ${it})
       SET(${outfiles} ${${outfiles}} ${outfile})
     ENDFOREACH(it)
 
@@ -818,11 +827,16 @@ IF (QT4_QMAKE_FOUND)
 
 ELSE(QT4_QMAKE_FOUND)
 
-  IF(QT_QMAKE_EXECUTABLE)
-    MESSAGE("QT_QMAKE_EXECUTABLE set to qmake version: QTVERSION = ${QTVERSION}\nQT_QMAKE_EXECUTABLE = ${QT_QMAKE_EXECUTABLE}, please set to path to qmake from qt4.")
-  ENDIF(QT_QMAKE_EXECUTABLE)
-  IF( Qt4_FIND_REQUIRED)
-     MESSAGE( FATAL_ERROR "Qt qmake not found!")
-  ENDIF( Qt4_FIND_REQUIRED)
-
+   IF(Qt4_FIND_REQUIRED)
+      IF(QT4_INSTALLED_VERSION_TOO_OLD)
+         MESSAGE(FATAL_ERROR "The installed Qt version ${QTVERSION} is too old, at least version ${QT_MIN_VERSION} is required")
+      ELSE(QT4_INSTALLED_VERSION_TOO_OLD)
+         MESSAGE( FATAL_ERROR "Qt qmake not found!")
+      ENDIF(QT4_INSTALLED_VERSION_TOO_OLD)
+   ELSE(Qt4_FIND_REQUIRED)
+      IF(QT4_INSTALLED_VERSION_TOO_OLD AND NOT Qt4_FIND_QUIETLY)
+         MESSAGE(STATUS "The installed Qt version ${QTVERSION} is too old, at least version ${QT_MIN_VERSION} is required")
+      ENDIF(QT4_INSTALLED_VERSION_TOO_OLD AND NOT Qt4_FIND_QUIETLY)
+   ENDIF(Qt4_FIND_REQUIRED)
+ 
 ENDIF (QT4_QMAKE_FOUND)

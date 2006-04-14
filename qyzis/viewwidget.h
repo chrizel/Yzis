@@ -35,6 +35,8 @@ class QLabel;
 class QYZisCommand;
 class QYZisCodeCompletion;
 
+class QSettings;
+
 class QYZisView: public QWidget, public YZView
 {
 	Q_OBJECT
@@ -65,7 +67,7 @@ class QYZisView: public QWidget, public YZView
 		void wheelEvent( QWheelEvent * e );
 //		void contextMenuEvent( QContextMenuEvent * e );
 
-		void applyConfig( bool refresh = true );
+		void applyConfig( const QSettings& settings, bool refresh = true );
 
 		// return string and char width in pixels
 		int stringWidth( const QString& str ) const;

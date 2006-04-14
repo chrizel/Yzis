@@ -70,19 +70,6 @@ public:
 	 */
 	YZBuffer* doCreateBuffer();
 
-
-	void writeConfig();
-	void readConfig(); 
-//	void writeConfig(KConfig *) {}
-//	void readConfig(KConfig *) {}
-	void configDialog ( QWidget * ) { } //for now FIXME TODO FIXME TODO
-	bool configDialogSupported() const { return false;} 
-	int configPages () const { return 0; }
-//	QString configPageName ( int /*number*/ ) const { return ""; } 
-//	QString configPageFullName ( int /*number*/ ) const { return ""; }
-//	QPixmap configPagePixmap ( int /*number*/, int /*size*/ = KIcon::SizeSmall ) const { return QPixmap(); }
-	
-
 public slots:
 	void applyConfig();
 	void closeView();

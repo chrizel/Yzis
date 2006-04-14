@@ -37,6 +37,10 @@
 int main(int argc, char **argv) {
 	QApplication app(argc, argv);
 
+	QCoreApplication::setOrganizationName("Yzis");
+	QCoreApplication::setOrganizationDomain("yzis.org");
+	QCoreApplication::setApplicationName("QYzis");
+
 	setlocale( LC_ALL, "");
 	bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
 	bind_textdomain_codeset( "yzis", "UTF-8" );

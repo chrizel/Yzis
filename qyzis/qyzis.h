@@ -39,7 +39,6 @@ class QYZTextEditorIface;
  * @short Application Shell
  * @author Yzis Team <yzis-dev@yzis.org>
  */
-class KRecentFilesAction;
 
 class Qyzis : public QMainWindow
 {

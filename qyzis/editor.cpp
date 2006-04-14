@@ -38,6 +38,8 @@
 #include <qcursor.h>
 #include <ctype.h>
 
+#include "qyzis.h"
+
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
 
 QYZisEdit::QYZisEdit(QYZisView *parent)
@@ -48,7 +50,7 @@ QYZisEdit::QYZisEdit(QYZisView *parent)
 	setFocusPolicy( Qt::StrongFocus );
 
 	setAutoFillBackground( true );
-//	setAttribute( Qt::WA_NoSystemBackground );
+	setAttribute( Qt::WA_NoSystemBackground, false );
 
 	// for Input Method
 	setAttribute(Qt::WA_InputMethodEnabled, true);
@@ -75,12 +77,10 @@ QYZisEdit::~QYZisEdit() {
 	*/
 }
 
-void QYZisEdit::setPalette( const QColor& fg, const QColor& bg, double opacity ) {
-	QPalette p = palette();
-	p.setColor( QPalette::WindowText, fg );
-	p.setColor( QPalette::Window, bg );
+void QYZisEdit::setPalette( const QPalette& p, qreal opacity ) {
 	QWidget::setPalette( p );
-	setWindowOpacity( opacity );
+	//setWindowOpacity( opacity ); XXX doesn't work...
+	Qyzis::me->setWindowOpacity(opacity);
 }
 
 QYZisCursor::shape QYZisEdit::cursorShape() {

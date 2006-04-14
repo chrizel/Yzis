@@ -22,13 +22,14 @@
  * $Id: viewwidget.cpp 2072 2005-09-01 11:01:40Z mikmak $
  */
 
-#include <QFileDialog>
 #include <QEvent>
+#include <QFileDialog>
+#include <QLabel>
+#include <QMenu>
+#include <QSettings>
+#include <QTimer>
 #include <qapplication.h>
 #include <viewcursor.h>
-#include <qtimer.h>
-#include <qlabel.h>
-#include <QMenu>
 
 #include <debug.h>
 
@@ -90,7 +91,8 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 
 	setupKeys();
 
-	applyConfig();
+	QSettings settings;
+	applyConfig( settings ); // XXX factory role
 }
 
 QYZisView::~QYZisView () {
@@ -212,9 +214,15 @@ void QYZisView::unregisterModifierKeys( const QString& keys ) {
 	m_editor->unregisterModifierKeys( keys );
 }
 
-void QYZisView::applyConfig( bool refresh ) {
-	m_editor->setFont( QFont("Fixed",8) ); /* XXX setting */
-	m_editor->setPalette( Qt::white, Qt::black, 1. );
+void QYZisView::applyConfig( const QSettings& settings, bool refresh ) {
+
+	m_editor->setFont( settings.value("appearance/font", QFont("Fixed")).value<QFont>() );
+	QPalette default_palette;
+	default_palette.setColor( QPalette::Window, QColor(0,0,0));
+	default_palette.setColor( QPalette::WindowText, Qt::white );
+	QPalette my_palette = settings.value("appearance/palette",default_palette).value<QPalette>();
+	qreal opacity = settings.value("appearance/opacity",0.5).value<qreal>();
+	m_editor->setPalette( my_palette, opacity );
 
 	YzisHighlighting *yzis = myBuffer()->highlight();
 	if (yzis) {

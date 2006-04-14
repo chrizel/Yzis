@@ -28,6 +28,7 @@ if (NOT APPLE)
 	install_targets(/bin qyzis)
 else (NOT APPLE)
 	# Mac OSX Bundle
+	set(MACOSX_BUNDLE_BUNDLE_NAME QYzis)
 	set(MACOSX_BUNDLE_GUI_IDENTIFIER QYzis)
 	set(MACOSX_BUNDLE_ICON_FILE qyzis.icns)
 	add_executable(qyzis MACOSX_BUNDLE ${qyzis_SRCS} ${qyzis_MOC_SRCS} )

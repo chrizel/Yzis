@@ -63,7 +63,7 @@ class QYZisEdit : public QWidget {
 		// update text area
 		void updateArea( );
 
-		void setPalette( const QColor& fg, const QColor& bg, double opacity );
+		void setPalette( const QPalette& p, qreal opacity );
 
 		const QString& convertKey( int key );
 

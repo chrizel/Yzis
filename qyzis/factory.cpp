@@ -30,6 +30,7 @@
 #include <qtimer.h>
 #include <qtextcodec.h>
 #include <QClipboard>
+#include <QSettings>
 #ifdef Q_WS_X11
 #include <QX11Info>
 #endif
@@ -46,8 +47,6 @@ QYZisFactory::QYZisFactory() :
 		lastView(0),
 		m_viewParent(0)
 {
-
-	//Settings::self()->readConfig();
 	guiStarted();
 }
 
@@ -86,12 +85,8 @@ bool QYZisFactory::quit( int /*errorCode*/ ) {
 	return true;
 }
 
-void QYZisFactory::writeConfig() {
-	//Settings::self()->writeConfig();
-	applyConfig();
-}
-
 void QYZisFactory::applyConfig() {
+	QSettings settings;
 	// apply new configuration to all views
 	YZBufferList::ConstIterator it = buffers().begin();
 	YZBufferList::ConstIterator end = buffers().end();
@@ -100,14 +95,9 @@ void QYZisFactory::applyConfig() {
 		YZList<YZView*> l = b->views();
 		for ( YZList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
 			QYZisView* yv = static_cast<QYZisView*>( *itr );
-			yv->applyConfig();
+			yv->applyConfig( settings );
 		}
 	}
-}
-
-void QYZisFactory::readConfig( ) {
-	//Settings::self()->readConfig();
-	applyConfig();
 }
 
 void QYZisFactory::changeCurrentView( YZView* view ) {

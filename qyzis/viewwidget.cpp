@@ -78,8 +78,13 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	g->addWidget(status,2,0,1,2);
 
 //	setupActions();
+	setupKeys();
 
 	m_editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+
+	QSettings settings;
+	applyConfig( settings ); // XXX factory role
+
 	m_editor->show();
 	status->show();
 	m_editor->setFocus();
@@ -88,11 +93,6 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	mVScroll->setMaximum( buffer->lineCount() - 1 );
 
 //	setupCodeCompletion();
-
-	setupKeys();
-
-	QSettings settings;
-	applyConfig( settings ); // XXX factory role
 }
 
 QYZisView::~QYZisView () {
@@ -216,19 +216,24 @@ void QYZisView::unregisterModifierKeys( const QString& keys ) {
 
 void QYZisView::applyConfig( const QSettings& settings, bool refresh ) {
 
-	m_editor->setFont( settings.value("appearance/font", QFont("Fixed")).value<QFont>() );
+	QFont default_font;
+	default_font.setStyleHint(QFont::TypeWriter);
+	default_font.setFamily("Courier");
+	m_editor->setFont( settings.value("appearance/font", default_font).value<QFont>() );
+
 	QPalette default_palette;
 	default_palette.setColor( QPalette::Window, QColor(0,0,0));
 	default_palette.setColor( QPalette::WindowText, Qt::white );
 	QPalette my_palette = settings.value("appearance/palette",default_palette).value<QPalette>();
-	qreal opacity = settings.value("appearance/opacity",0.5).value<qreal>();
+	qreal opacity = settings.value("appearance/opacity",1.).value<qreal>();
 	m_editor->setPalette( my_palette, opacity );
 
 	YzisHighlighting *yzis = myBuffer()->highlight();
 	if (yzis) {
 		myBuffer()->makeAttribs();
-		repaint();
-	} else if ( refresh ) {
+		//repaint();
+	} 
+	if ( refresh ) {
 		m_editor->updateArea( );
 	}
 }

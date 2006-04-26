@@ -1,10 +1,10 @@
 project(yzis)
 
-include(CheckCXXSourceCompiles)
-
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_COLOR_MAKEFILE ON)
+
+include(CheckCXXCompilerFlag)
 
 option(ENABLE_KYZIS "enable kyzis compilation" OFF)
 option(ENABLE_QYZIS "enable qyzis compilation" ON)
@@ -31,13 +31,12 @@ if (NOT KDE4_FOUND)
 endif (NOT KDE4_FOUND)
 
 # visibility support
-set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
-set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -fvisibility=hidden")
-CHECK_CXX_SOURCE_COMPILES("int main() { return 0; }" __YZIS_HAVE_GCC_VISIBILITY)
-if (__YZIS_HAVE_GCC_VISIBILITY)
-     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
-endif (__YZIS_HAVE_GCC_VISIBILITY)
-set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
+if (CMAKE_COMPILER_IS_GNUCXX)
+	check_cxx_compiler_flag(-fvisibility=hidden __YZIS_HAVE_GCC_VISIBILITY)
+	if (__YZIS_HAVE_GCC_VISIBILITY)
+	     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+	endif (__YZIS_HAVE_GCC_VISIBILITY)
+endif (CMAKE_COMPILER_IS_GNUCXX)
 
 find_package(Perl REQUIRED)
 

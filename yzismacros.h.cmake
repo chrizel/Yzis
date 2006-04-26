@@ -2,10 +2,9 @@
 #ifndef YZISMACROS_H
 #define YZISMACROS_H
 
-/* Set by configure */
-#undef __KDE_HAVE_GCC_VISIBILITY
+#cmakedefine __YZIS_HAVE_GCC_VISIBILITY
 
-#ifdef __KDE_HAVE_GCC_VISIBILITY
+#ifdef __YZIS_HAVE_GCC_VISIBILITY
 #define YZIS_NO_EXPORT __attribute__ ((visibility("hidden")))
 #define YZIS_EXPORT __attribute__ ((visibility("default")))
 #elif defined(_WIN32) || defined(_WIN64)

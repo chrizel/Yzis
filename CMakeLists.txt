@@ -1,5 +1,7 @@
 project(yzis)
 
+include(CheckCXXSourceCompiles)
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_COLOR_MAKEFILE ON)
@@ -27,6 +29,15 @@ if (NOT KDE4_FOUND)
 	find_package(Qt4 REQUIRED)
 	include(MacroAdditionalCleanFiles)
 endif (NOT KDE4_FOUND)
+
+# visibility support
+set(SAFE_CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS}")
+set(CMAKE_REQUIRED_FLAGS "${CMAKE_REQUIRED_FLAGS} -fvisibility=hidden")
+CHECK_CXX_SOURCE_COMPILES("int main() { return 0; }" __YZIS_HAVE_GCC_VISIBILITY)
+if (__YZIS_HAVE_GCC_VISIBILITY)
+     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+endif (__YZIS_HAVE_GCC_VISIBILITY)
+set(CMAKE_REQUIRED_FLAGS "${SAFE_CMAKE_REQUIRED_FLAGS}")
 
 find_package(Perl REQUIRED)
 
@@ -58,7 +69,7 @@ set(YZIS_INCLUDES ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_D
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yzismacros.h.in ${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h )
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yzismacros.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h )
 macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/config.h ${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h )
 
 add_subdirectory( libyzis )

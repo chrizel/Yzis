@@ -1,5 +1,9 @@
+
+project(qyzis)
+
+include_directories(${YZIS_INCLUDES}) # ${CMAKE_SOURCE_DIR}/libyzis
+
 add_subdirectory( pics )
-include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/libyzis ${CMAKE_SOURCE_DIR}/qyzis/ ${CMAKE_SOURCE_DIR}/libyzis/ ${QT_INCLUDES}  ${YZIS_INCLUDES} )
 
 ########### next target ###############
 

@@ -1,9 +1,13 @@
 kde4_header()
 
+project(kyzis)
+
 add_subdirectory( src )
 add_subdirectory( pics )
 
-include_directories( ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/kyzis/src/newui/ ${CMAKE_SOURCE_DIR}/kyzis/src/ ${CMAKE_SOURCE_DIR}/libyzis/ ${CMAKE_BINARY_DIR}/libyzis/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
+include_directories(${YZIS_INCLUDES} ${KDE4_INCLUDE_DIR} ${CMAKE_SOURCE_DIR}/kyzis/src/newui ${CMAKE_SOURCE_DIR}/kyzis/src)
+add_definitions(${KDE4_DEFINITIONS})
+link_directories(${KDE4_LIB_DIR})
 
 ########### next target ###############
 

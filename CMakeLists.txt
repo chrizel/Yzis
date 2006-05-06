@@ -1,10 +1,12 @@
 project(yzis)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_COLOR_MAKEFILE ON)
 
 include(CheckCXXCompilerFlag)
+include(ConfigureChecks.cmake)
+include(ConvenienceLibs.cmake)
+include(MacroAdditionalCleanFiles)
 
 option(ENABLE_KYZIS "enable kyzis compilation" OFF)
 option(ENABLE_QYZIS "enable qyzis compilation" ON)
@@ -17,29 +19,33 @@ find_package(Magic REQUIRED)
 find_package(LibLua50 REQUIRED)
 find_package(LibLuaLib50 REQUIRED)
 find_package(Gettext REQUIRED)
-# XXX: workaround intl for Mac OSX
-if (APPLE)
+if (APPLE) # XXX: workaround intl for Mac OSX
 	set(GETTEXT_LIBRARIES ${LIBINTL_LIBRARY})
 endif(APPLE)
 
-#KDE4 non-required
-find_package(KDE4)
-#but we still need qt4 ;)
-if (NOT KDE4_FOUND)
-	find_package(Qt4 REQUIRED)
-	include(MacroAdditionalCleanFiles)
-endif (NOT KDE4_FOUND)
+# libyzis dependencies :
+find_package(Qt4 REQUIRED)
 
-# visibility support
-if (CMAKE_COMPILER_IS_GNUCXX)
-	check_cxx_compiler_flag(-fvisibility=hidden __YZIS_HAVE_GCC_VISIBILITY)
-	if (__YZIS_HAVE_GCC_VISIBILITY)
-	     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
-	endif (__YZIS_HAVE_GCC_VISIBILITY)
-endif (CMAKE_COMPILER_IS_GNUCXX)
-
+# for syntax files
 find_package(Perl REQUIRED)
 
+
+# optional packages dependencies :
+
+if (ENABLE_KYZIS)
+	find_package(KDE4 REQUIRED)
+endif (ENABLE_KYZIS)
+
+if (ENABLE_NYZIS)
+	find_package(Ncurses)
+	if (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+		message(FATAL_ERROR "The ncurses library does not support wide-character.")
+	endif (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+endif (ENABLE_NYZIS)
+
+#
+# define some variables
+#
 if (NOT APPLNK_INSTALL_DIR)
 	set(APPLNK_INSTALL_DIR /share/applnk)
 endif (NOT APPLNK_INSTALL_DIR)
@@ -55,53 +61,52 @@ if (APPLE)
 	endif (NOT APPLE_APPLICATION_DIR)
 endif (APPLE)
 
+
+#
+# build instructions
+#
+
+# visibility support
+if (CMAKE_COMPILER_IS_GNUCXX)
+	check_cxx_compiler_flag(-fvisibility=hidden __YZIS_HAVE_GCC_VISIBILITY)
+	if (__YZIS_HAVE_GCC_VISIBILITY)
+	     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+	endif (__YZIS_HAVE_GCC_VISIBILITY)
+endif (CMAKE_COMPILER_IS_GNUCXX)
+
+# libyzis dependencies includes
+set(YZIS_INCLUDES ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR})
+# libyzis includes
+set(YZIS_INCLUDES ${YZIS_INCLUDES} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/libyzis ${CMAKE_SOURCE_DIR}/libyzis)
+
 add_definitions(${QT_DEFINITIONS})
 
 if (ENABLE_SAFE_MODE)
 	add_definitions("-DSAFE_MODE")
 endif (ENABLE_SAFE_MODE)
 
-include(ConvenienceLibs.cmake)
-include(ConfigureChecks.cmake)
-
-set(YZIS_INCLUDES ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR})
-
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
-
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yzismacros.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h )
 macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/config.h ${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h )
 
+#
+# subdirectories to compile
+#
 add_subdirectory( libyzis )
 
 if (ENABLE_NYZIS)
-	find_package(Ncurses)
-	if (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
-		message (STATUS "The ncurses library does not support wide-character, nyzis will not be compiled.")
-	else (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
-		add_subdirectory( nyzis )
-	endif (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
+	add_subdirectory( nyzis )
 endif (ENABLE_NYZIS)
-
-
-#conditional KDE build
-if (KDE4_FOUND)
-	add_definitions(${KDE4_DEFINITIONS})
-	link_directories(${KDE4_LIB_DIR})
-	include_directories( ${KDE4_INCLUDE_DIR} )
-	if (ENABLE_KYZIS)
-		add_subdirectory( kyzis )
-	endif (ENABLE_KYZIS)
-	if (ENABLE_TESTS)
-		add_subdirectory( tests )
-	endif (ENABLE_TESTS)
-endif (KDE4_FOUND)
-
 if (ENABLE_QYZIS)
 	add_subdirectory( qyzis )
 endif (ENABLE_QYZIS)
+if (ENABLE_KYZIS)
+	add_subdirectory( kyzis )
+endif (ENABLE_KYZIS)
+if (ENABLE_TESTS)
+	add_subdirectory( tests )
+endif (ENABLE_TESTS)
 add_subdirectory( translations )
 add_subdirectory( syntax )
 add_subdirectory( scripts )
-
-include_directories( ${QT_INCLUDES} )
 

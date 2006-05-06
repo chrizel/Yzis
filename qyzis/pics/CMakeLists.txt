@@ -1,4 +1,4 @@
-########### install files ###############
+
 if (KDE4_FOUND)
 	kde4_install_icons( ${ICON_INSTALL_DIR}  hicolor )
 else (KDE4_FOUND)

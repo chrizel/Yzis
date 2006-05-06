@@ -1,14 +1,10 @@
-#kde4_header()
 
-set(prefix              ${CMAKE_INSTALL_PREFIX})
+project(libyzis)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/translator.h.in ${CMAKE_CURRENT_BINARY_DIR}/translator.h)
-
-
 #macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/translator.h )
 
-include_directories( ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/libyzis ${CMAKE_SOURCE_DIR}/libyzis ${YZIS_INCLUDES} )
-
+include_directories(${YZIS_INCLUDES})
 
 ########### next target ###############
 
@@ -63,21 +59,14 @@ set(yzis_LIB_MOCS
    session.h
 )
 
-#kde4_automoc(${yzis_LIB_SRCS})
-QT4_WRAP_CPP(yzis_LIB_MOC_SRCS ${yzis_LIB_MOCS} )
+qt4_wrap_cpp(yzis_LIB_MOC_SRCS ${yzis_LIB_MOCS})
 
-#kde4_add_library(yzis SHARED ${yzis_LIB_SRCS} )
 add_library(yzis SHARED ${yzis_LIB_SRCS} ${yzis_LIB_MOC_SRCS} )
 
 target_link_libraries(yzis ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${LIBLUA50_LIBRARIES} ${LIBLUALIB50_LIBRARIES} ${MAGIC_LIBRARIES} ${GETTEXT_LIBRARIES})
 
 set_target_properties(yzis PROPERTIES VERSION 0.0.0 SOVERSION 0 )
-install_targets(/lib yzis )
 
-
-########### install files ###############
-
-install_files(/share/yzis FILES magic.mime )
-
-#kde4_footer()
+install(TARGETS yzis DESTINATION lib)
+install(FILES magic.mime DESTINATION share/yzis)
 

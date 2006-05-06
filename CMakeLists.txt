@@ -1,5 +1,7 @@
 project(yzis)
 
+cmake_minimum_required(VERSION 2.4.1 FATAL_ERROR)
+
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(CMAKE_COLOR_MAKEFILE ON)
 
@@ -70,7 +72,7 @@ endif (APPLE)
 if (CMAKE_COMPILER_IS_GNUCXX)
 	check_cxx_compiler_flag(-fvisibility=hidden __YZIS_HAVE_GCC_VISIBILITY)
 	if (__YZIS_HAVE_GCC_VISIBILITY)
-	     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden")
+	     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fvisibility=hidden -fvisibility-inlines-hidden")
 	endif (__YZIS_HAVE_GCC_VISIBILITY)
 endif (CMAKE_COMPILER_IS_GNUCXX)
 

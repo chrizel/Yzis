@@ -67,10 +67,10 @@ enum scope_t {
 
 //visibility of the option
 enum context_t {
-    CXT_CONFIG, // simple entry
-    CXT_SESSION,
-    CXT_BUFFER,
-    CXT_VIEW,
+	ctx_none,
+	ctx_session,
+	ctx_buffer,
+	ctx_view
 };
 
 //kind of value stored by the option

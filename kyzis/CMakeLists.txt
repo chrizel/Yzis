@@ -1,5 +1,3 @@
-kde4_header()
-
 project(kyzis)
 
 add_subdirectory( src )
@@ -33,8 +31,6 @@ install_files( ${SERVICES_INSTALL_DIR} FILES  kyzispart.desktop )
 install_files( ${DATA_INSTALL_DIR}/kyzispart FILES  kyzispart.rc )
 install_files( ${DATA_INSTALL_DIR}/kyzis FILES  kyzis_shell.rc )
 install_files( ${APPLNK_INSTALL_DIR}/Editors FILES  kyzis.desktop )
-
-kde4_footer()
 
 #
 #install-exec-hook:

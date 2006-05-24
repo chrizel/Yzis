@@ -1,4 +1,3 @@
-kde4_header()
 
 add_subdirectory( newui )
 
@@ -32,6 +31,4 @@ ADD_LIBRARY(internkyzis STATIC ${internkyzis_SRCS} )
 ########### install files ###############
 
 install_files( ${KCFG_INSTALL_DIR} FILES  kyzis.kcfg )
-
-kde4_footer()
 

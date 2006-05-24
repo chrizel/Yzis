@@ -1,5 +1,3 @@
-kde4_header()
-
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
 
 
@@ -11,8 +9,3 @@ KDE4_AUTOMOC (${d_SRCS})
 
 ADD_LIBRARY(d STATIC ${d_SRCS} )
 
-
-########### install files ###############
-
-
-kde4_footer()

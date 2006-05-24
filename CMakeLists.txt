@@ -2,8 +2,9 @@ project(yzis)
 
 cmake_minimum_required(VERSION 2.4.1 FATAL_ERROR)
 
-set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(CMAKE_COLOR_MAKEFILE ON)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 include(CheckCXXCompilerFlag)
 include(ConfigureChecks.cmake)
@@ -89,7 +90,10 @@ endif (ENABLE_SAFE_MODE)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yzismacros.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h )
-macro_additional_clean_files( ${CMAKE_CURRENT_BINARY_DIR}/config.h ${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h )
+macro_additional_clean_files(
+	${CMAKE_CURRENT_BINARY_DIR}/config.h
+	${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h
+)
 
 #
 # subdirectories to compile

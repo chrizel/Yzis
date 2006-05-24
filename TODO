@@ -8,16 +8,23 @@
 - implement a C-like Timer (SIGALARM) to dump swapfiles ?
 - yz configure -> G, should be slow, but gg then G should be faster (no ?) //mm
 
-drawBuffer:
-  - font properties
-  - selection
-  - :set rightleft
-  - non-fixed fonts
-  - marker
+cmake:
+  - messages
+
+libyzis:
+  drawBuffer:
+    - font properties
+    - :set rightleft
+    - non-fixed fonts
+    - marker
 
 nyzis:
   - support bg color
 
-kyzis:
+qyzis:
   - update() when lib wants redraw something (without endless loop;)
+  - use a different widget for line number displaying
+  - configuration dialog
+=> apply changes to kyzis
 
+# vi:et sw=2 ts=2:

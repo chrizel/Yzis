@@ -1,3 +1,12 @@
+--[[
+
+Description: Test the search feature of yzis
+
+Author: Philippe Fremy
+Version: $Id$
+License: LGPL
+
+]]--
 require('luaunit')
 require('utils')
 

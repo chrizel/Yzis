@@ -1,4 +1,14 @@
+--[[ =======================================================================
 
+Utilities useful for Yzis lua scripting.
+
+Author : Philippe Fremy
+License: LGPL
+Version: $Id$
+
+======================================================================== ]]--
+
+-- Returns a string containing all the lines of the current buffer
 function bufferContent()
     local i,s
     i = 2
@@ -10,6 +20,7 @@ function bufferContent()
     return s
 end
 
+-- Display the complete buffer content
 function printBufferContent()
     local i=1
     print("Buffer content:")
@@ -19,6 +30,7 @@ function printBufferContent()
     end
 end
 
+-- Clear all the lines of the current buffer
 function clearBuffer()
     while linecount() > 1 do
         deleteline(1)
@@ -26,10 +38,13 @@ function clearBuffer()
     deleteline(1)
 end
 
+-- Assertion for line,col
 function assertPos(line,col)
     assertEquals( winline(), line )
     assertEquals( wincol(), col )
 end
+
+
 function assertScrPos(line,col)
     assertEquals( scrline(), line )
     assertEquals( scrcol(), col )
@@ -38,6 +53,16 @@ end
 MODE_NORMAL = "[ Awaiting Command ]"
 MODE_INSERT = "[ Insert ]"
 MODE_COMMAND = "[ Ex ]"
+
+
+--[[ ======================================================================
+
+                        VimRegexp utilities
+
+All the following functions are here for the support of VimRegexp.
+
+====================================================================== ]]--
+
 
 function inTable( t, ... )
     -- check whether the values passed in argument are keys of table t
@@ -182,8 +207,13 @@ function tokenizer( tokens, s )
 end
 
 
---TestTokenizer()
+--[[
+A class that supports Vim Regexp. Within Yzis, we normally use the class
+Regexp that supports perl compatible regexp.
 
+VimRegexp supports the same operator as Regexp but the Regexp is converted
+from vim syntax to perl syntax before being used.
+]]--
 function VimRegexp( re )
     -- transform re
     --print("Before: '"..re.."'")

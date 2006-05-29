@@ -1,3 +1,12 @@
+--[[
+
+Description: Test the utils.lua script.
+
+Author: Philippe Fremy
+Version: $Id$
+License: LGPL
+
+]]--
 
 require('utils')
 require('luaunit')

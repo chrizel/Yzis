@@ -1,3 +1,12 @@
+--[[
+
+Description: Test all the different ways of moving inside a buffer in yzis.
+
+Author: Philippe Fremy
+Version: $Id$
+License: LGPL
+
+]]--
 
 require('luaunit')
 require('utils')

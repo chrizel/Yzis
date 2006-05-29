@@ -1,3 +1,14 @@
+--[[
+
+Description: Test all the funcitons of the lua binding by calling them at
+least once and checking the result type.
+
+Author: Philippe Fremy
+Version: $Id$
+License: LGPL
+
+]]--
+
 
 -- Unit testing starts
 require('luaunit')

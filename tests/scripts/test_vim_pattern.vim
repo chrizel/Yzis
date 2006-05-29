@@ -1,4 +1,7 @@
 " Build some test patterns for Vim Regexp
+" This file contains a lot of Regexp patterns from Vim as a self-test. We use
+" it to validate that the regexp support of Vim work as expected.
+" Then, we use all the patterns to test the VimRegexp function.
 
 set magic
 set noignorecase

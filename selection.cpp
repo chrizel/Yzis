@@ -121,6 +121,20 @@ bool YZInterval::contains( const YZInterval& i ) const {
 	return mFrom <= i.from() && mTo >= i.to();
 }
 
+QRect YZInterval::boundingRect() const {
+	QRect r;
+	if ( mFrom.pos().x() >= mTo.pos().x() ) {
+		r.setLeft( mFrom.pos().x() );
+		r.setRight( mTo.pos().x() );
+	} else {
+		r.setLeft( mTo.pos().x() );
+		r.setRight( mFrom.pos().x() );
+	}
+	r.setTop( mFrom.pos().y() );
+	r.setBottom( mTo.pos().y() );
+	return r;
+}
+
 const YZInterval operator- ( const YZInterval& l, const YZCursor& r ) {
 	return YZInterval( qMax(l.from()-r,YZBound(YZCursor(0,0))), qMax(l.to()-r,YZBound(YZCursor(0,0),true)) );
 }
@@ -375,6 +389,14 @@ YZSelection YZSelection::diff( const YZSelection& _m1, const YZSelection& _m2 ) 
 //	yzDebug() << "YZSelection::diff : " << endl << _m1 << endl << _m2 << endl << " ====> " << ret << endl;
 
 	return ret;
+}
+
+QRect YZSelection::boundingRect() const {
+	QRect r;
+	for ( int i = 0; i < mMap.size(); ++i ) {
+		r |= mMap[i].boundingRect();
+	}
+	return r;
 }
 
 // operators on selections

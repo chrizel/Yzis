@@ -92,6 +92,8 @@ public slots:
 
 		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
 
+		virtual void notifyContentChanged( const YZSelection& s );
+
 		void preparePaintEvent(int, int);
 		void endPaintEvent();
 		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );

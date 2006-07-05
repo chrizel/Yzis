@@ -72,9 +72,12 @@ class QYZisEdit : public QWidget {
 		void registerModifierKeys( const QString& keys );
 		void unregisterModifierKeys( const QString& keys );
 
+		QPoint translatePositionToReal( int x, int y ) const;
+		YZCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
+
 		QPoint cursorCoordinates( );
 
-		QVariant inputMethodQuery ( Qt::InputMethodQuery query );
+		QVariant inputMethodQuery ( Qt::InputMethodQuery query ) const;
 
 	public slots :
 		void sendMultipleKey( const QString& keys );
@@ -142,7 +145,6 @@ class QYZisEdit : public QWidget {
 
 		bool isFontFixed;
 
-		bool m_insidePaintEvent;
 		/**
 		 * size of the left margin (used to draw line number)
 		 */

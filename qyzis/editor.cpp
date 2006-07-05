@@ -50,7 +50,6 @@ QYZisEdit::QYZisEdit(QYZisView *parent)
 	setFocusPolicy( Qt::StrongFocus );
 
 	setAutoFillBackground( true );
-	setAttribute( Qt::WA_NoSystemBackground, false );
 
 	// for Input Method
 	setAttribute(Qt::WA_InputMethodEnabled, true);
@@ -63,8 +62,6 @@ QYZisEdit::QYZisEdit(QYZisView *parent)
 	mCursor = new QYZisCursor( this, QYZisCursor::SQUARE );
 
 	initKeys();
-
-	marginLeft = 0;
 }
 
 
@@ -75,6 +72,28 @@ QYZisEdit::~QYZisEdit() {
 		delete actionCollection->take( actionCollection->action(i) );
 	delete actionCollection;
 	*/
+}
+
+QPoint QYZisEdit::translatePositionToReal( int x, int y ) const {
+	return QPoint( GETX(x), y * fontMetrics().lineSpacing() );
+}
+YZCursor QYZisEdit::translateRealToPosition( const QPoint& p, bool ceil ) const {
+	int height = fontMetrics().lineSpacing();
+	int width = isFontFixed ? fontMetrics().maxWidth() : 1;
+
+	int x_r = p.x() % width;
+	int x = p.x() / width;
+	int y_r = p.y() % height;
+	int y = p.y() / height;
+	if ( ceil ) {
+		if ( y_r )
+			++y;
+		if ( x_r )
+			++x;
+	}
+	x += mParent->getDrawCurrentLeft();
+	y += mParent->getDrawCurrentTop();
+	return YZCursor( x, y );
 }
 
 void QYZisEdit::setPalette( const QPalette& p, qreal opacity ) {
@@ -134,7 +153,7 @@ void QYZisEdit::updateArea( ) {
 
 	int lines = height() / fontMetrics().lineSpacing();
 	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget
-	int columns = width() / GETX(1) - marginLeft;
+	int columns = width() / GETX(1);
 	mParent->setVisibleArea( columns, lines );
 }
 
@@ -146,7 +165,7 @@ bool QYZisEdit::event(QEvent *e) {
 		QKeyEvent *ke = (QKeyEvent *)e;
 		if ( ke->key() == Qt::Key_Tab ) {
 			keyPressEvent(ke);
-			return TRUE;
+			return true;
 		}
 	}
 	return QWidget::event(e);
@@ -190,10 +209,8 @@ void QYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		mParent->modePool()->pop();
 	
 	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
-		if (mParent->modePool()->currentType() != YZMode::MODE_EX) {
-			mParent->gotodxdy( e->x() / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + mParent->getDrawCurrentLeft( ) - marginLeft,
-						e->y() / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
-			mParent->updateStickyCol();
+		if ( mParent->modePool()->currentType() != YZMode::MODE_EX ) {
+			mParent->gotodxdyAndStick( translateRealToPosition( e->pos() ) );
 		}
 	} else if ( e->button() == Qt::MidButton ) {
 		QString text = QApplication::clipboard()->text( QClipboard::Selection );
@@ -211,18 +228,15 @@ void QYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 }
 
 void QYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
-	//if (e->state() == Qt::LeftButton) {
 	if (e->buttons() == Qt::LeftButton) {
 		if (mParent->modePool()->currentType() == YZMode::MODE_COMMAND) {
 			// start visual mode when user makes a selection with the left mouse button
 			mParent->modePool()->push( YZMode::MODE_VISUAL );
 		} else if (mParent->modePool()->current()->isSelMode() ) {
 			// already in visual mode - move cursor if the mouse pointer has moved over a new char
-			int newX = e->x() / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + mParent->getDrawCurrentLeft() - marginLeft;
-			int newY = e->y() / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop();
-
-			if (newX != mParent->getCursor().x() || newY != mParent->getCursor().y()) {
-				mParent->gotodxdy( newX, newY );
+			YZCursor pos = translateRealToPosition( e->pos() );
+			if ( pos != mParent->getCursor() ) {
+				mParent->gotodxdy( pos.x(), pos.y() );
 			}
 		}
 	}
@@ -236,58 +250,21 @@ void QYZisEdit::focusOutEvent ( QFocusEvent * ) {
 	updateCursor();
 }
 
-
 void QYZisEdit::resizeEvent(QResizeEvent* e) {
 	e->accept();
 	updateArea();
 }
+
 void QYZisEdit::paintEvent( QPaintEvent* pe ) {
+	// convert QPaintEvent rect to yzis coordinate
 	QRect r = pe->rect();
-	int fx = r.left();
-	int fy = r.top();
-	int tx = r.right();
-	int ty = r.bottom();
-	yzDebug() << "QYZisEdit < QPaintEvent( " << fx << "," << fy << " -> " << tx << "," << ty << " )" << endl;
-	m_insidePaintEvent = true;
-	if ( isFontFixed ) {
-		int linespace = fontMetrics().lineSpacing();
-		int maxwidth = fontMetrics().maxWidth();
-		fx /= maxwidth;
-		fy /= linespace;
-		int old_tx = tx, old_ty = ty;
-		tx /= maxwidth;
-		ty /= linespace;
-		if ( tx < old_tx ) ++tx;
-		if ( ty < old_ty ) ++ty;
-	}
-	fx = qMax( marginLeft, fx ) - marginLeft;
-	tx = qMax( marginLeft, tx ) - marginLeft;
-	fy += mParent->getDrawCurrentTop();
-	ty += mParent->getDrawCurrentTop();
-	if ( fx == (int)mParent->getDrawCurrentLeft() && tx - fx == (int)(mParent->getColumnsVisible() + 1) ) {
-		mParent->sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, ty ) );
-	} else {
-		mParent->setPaintAutoCommit( false );
-		for( ; fy <= ty; ++fy ) {
-			mParent->sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, fy ) );
-		}
-		mParent->commitPaintEvent();
-	}
-	m_insidePaintEvent = false;
-	yzDebug() << "QYZisEdit > QPaintEvent" << endl;
-}
-void QYZisEdit::paintEvent( const YZSelection& drawMap ) {
-	yzDebug() << "QYZisEdit::paintEvent" << endl;
-	YZSelectionMap m = drawMap.map();
-	for( int i = 0; i < m.size(); ++i ) {
-		int left = GETX( qMin( m[i].fromPos().x(), m[i].toPos().x() ) );
-		int right = GETX( qMax( m[i].fromPos().x(), m[i].toPos().x() ) );
-		int top = qMin( m[i].fromPos().y(), m[i].toPos().y() ) * fontMetrics().lineSpacing();
-		int bottom = qMax( m[i].fromPos().y(), m[i].toPos().y() ) * fontMetrics().lineSpacing();
-		
-		update( QRect(left, top, right - left, bottom - top) );
-	}
-	yzDebug() << "QYZisEdit::paintEvent ends" << endl;
+	r.setTopLeft( translateRealToPosition( r.topLeft(), false ) );
+	r.setBottomRight( translateRealToPosition( r.bottomRight(), true ) );
+	// make that rect a selection
+	YZSelection s;
+	s.addInterval( r );
+	// ask for drawing it
+	mParent->paintEvent( s );
 }
 
 void QYZisEdit::setCursor( int c, int l ) {
@@ -319,6 +296,9 @@ void QYZisEdit::scrollDown( int n ) {
 
 void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	p->save();
+	yzDebug() << "cell: "  << cell.c << endl << "cell.fg: " << cell.fg.isValid() << " => " << cell.fg.rgb() << endl;
+	yzDebug() << "cell.bg: " << cell.bg.isValid() << " => " << cell.bg.rgb() << endl;
+	bool has_bg = false;
 	if ( !cell.sel ) {
 		if ( cell.fg.isValid() )
 			p->setPen( cell.fg.rgb() );
@@ -327,33 +307,34 @@ void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	} else if ( cell.sel & YZSelectionPool::Visual ) {
 		p->setBackground( QColor(181, 24, 181)  ); //XXX setting
 	} else {
-		p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
-		p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
+//		p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
+//		p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
 	}
-	if ( !fakeLine )
-		x += marginLeft;
 	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
-	p->eraseRect( r );
+	
+	if ( has_bg )
+		p->eraseRect( r ); 
 	p->drawText( r, cell.c );
 	p->restore();
 }
 
 void QYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
-	if ( !fakeLine )
-		x += marginLeft;
-	QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
-	yzDebug() << "::drawClearToEOL bg : " << p->background().color().name() << endl;
-	p->eraseRect( r );
+	if ( clearChar.isSpace() ) {
+		// not needed as we called qt for repainting this widget, and autoFillBackground = True
+		return;
+	} else {
+		QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
+		yzDebug() << "::drawClearToEOL bg : " << p->background().color().name() << endl;
+		p->eraseRect( r );
+	}
 }
 
 void QYZisEdit::drawSetMaxLineNumber( int max ) {
-	int my_marginLeft = 2 + QString::number( max ).length();
-	if ( my_marginLeft != marginLeft ) {
-		marginLeft = my_marginLeft;
-		updateArea();
-	}
+	// XXX do it in an other QWidget
 }
 void QYZisEdit::drawSetLineNumber( int y, int n, int h, QPainter* p ) {
+	// XXX do it in an other QWidget
+#if 0
 	fakeLine = n <= 0;
 
 	QRect r( 0, y*fontMetrics().lineSpacing(), GETX(marginLeft - spaceWidth), fontMetrics().lineSpacing() );
@@ -370,9 +351,12 @@ void QYZisEdit::drawSetLineNumber( int y, int n, int h, QPainter* p ) {
 
 		p->restore();
 	}
+#endif
 }
 
 void QYZisEdit::drawMarginLeft( int min_y, int max_y, QPainter* p ) {
+	// XXX do it in an other QWidget
+#if 0
 	if ( marginLeft > 0 ) {
 		min_y *= fontMetrics().lineSpacing();
 		max_y *= fontMetrics().lineSpacing();
@@ -384,6 +368,7 @@ void QYZisEdit::drawMarginLeft( int min_y, int max_y, QPainter* p ) {
 		x += GETX(spaceWidth) / 2;
 		p->drawLine( x, min_y, x, max_y );
 	}
+#endif
 }
 
 void QYZisEdit::initKeys() {
@@ -502,7 +487,7 @@ void QYZisEdit::inputMethodEvent ( QInputMethodEvent * ) {
 	//TODO
 }
 
-QVariant QYZisEdit::inputMethodQuery ( Qt::InputMethodQuery query ) {
+QVariant QYZisEdit::inputMethodQuery ( Qt::InputMethodQuery query ) const {
 	return QWidget::inputMethodQuery( query );
 }
 

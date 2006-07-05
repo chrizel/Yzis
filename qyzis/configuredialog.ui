@@ -1,0 +1,2054 @@
+<ui version="4.0" >
+ <class>ConfigureDialog</class>
+ <widget class="QDialog" name="ConfigureDialog" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>916</width>
+    <height>453</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Configuration</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset/>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QTreeWidget" name="configureSelect" >
+       <property name="alternatingRowColors" >
+        <bool>true</bool>
+       </property>
+       <property name="selectionBehavior" >
+        <enum>QAbstractItemView::SelectItems</enum>
+       </property>
+       <column>
+        <property name="text" >
+         <string>Configuration</string>
+        </property>
+       </column>
+       <item>
+        <property name="text" >
+         <string>Editor</string>
+        </property>
+        <item>
+         <property name="text" >
+          <string>Appearance</string>
+         </property>
+        </item>
+       </item>
+      </widget>
+     </item>
+     <item>
+      <widget class="QStackedWidget" name="configurePane" >
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>5</hsizetype>
+         <vsizetype>5</vsizetype>
+         <horstretch>1</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="currentIndex" >
+        <number>0</number>
+       </property>
+       <widget class="QWidget" name="editor_appearance" >
+        <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>9</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QGroupBox" name="groupBox" >
+           <property name="title" >
+            <string>Default Appearance</string>
+           </property>
+           <layout class="QVBoxLayout" >
+            <property name="margin" >
+             <number>9</number>
+            </property>
+            <property name="spacing" >
+             <number>6</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label" >
+              <property name="text" >
+               <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;/head>&lt;body style=" white-space: pre-wrap; font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">&lt;span style=" font-weight:600;">Background&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_2" >
+                <property name="text" >
+                 <string>Color : </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="bgColor" >
+                <property name="sizePolicy" >
+                 <sizepolicy>
+                  <hsizetype>0</hsizetype>
+                  <vsizetype>0</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize" >
+                 <size>
+                  <width>50</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text" >
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_3" >
+                <property name="text" >
+                 <string>Opacity : </string>
+                </property>
+                <property name="margin" >
+                 <number>0</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSlider" name="bgOpacity" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_4" >
+              <property name="text" >
+               <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:Sans Serif; font-size:9pt; font-weight:400; font-style:normal; text-decoration:none;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:Sans;">&lt;span style=" font-weight:600;">Text&lt;/span>&lt;/p>&lt;/body>&lt;/html></string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_5" >
+                <property name="text" >
+                 <string>Color : </string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="fgColor" >
+                <property name="sizePolicy" >
+                 <sizepolicy>
+                  <hsizetype>0</hsizetype>
+                  <vsizetype>0</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize" >
+                 <size>
+                  <width>50</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <property name="text" >
+                 <string/>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QHBoxLayout" >
+              <property name="margin" >
+               <number>0</number>
+              </property>
+              <property name="spacing" >
+               <number>6</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="label_6" >
+                <property name="text" >
+                 <string>Font :</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QFontComboBox" name="fgFont" >
+                <item>
+                 <property name="text" >
+                  <string>Agate</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Ahem</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AlfredDrake</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Andale Mono</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Aneirin</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Ann</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Apollo</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL KaitiM Big5</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL KaitiM GB</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL Mingti2L Big5</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL ShanHeiSun Uni</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL SungtiL GB</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL ZenKai Uni</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Arial</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Arial Black</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>ArnoldBoecklin</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baekmuk Batang</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baekmuk Dotum</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baekmuk Gulim</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baekmuk Headline</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baskerville</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Batang</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Becker</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bitstream Charter</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bitstream Vera Sans</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bitstream Vera Sans Mono</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bitstream Vera Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>BlackForest</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Blippo</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Blood Of Dracula</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Blood Omen</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>BloodFeast</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bloodgutter 99</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bloody</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bloody Shrapnel?</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Blooshooz</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>BODIDLYbold</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bodoni</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Braille HC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Brushstroke</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Burgundian</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Caligula</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>CarrickCaps</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>CartWright</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Century Schoolbook L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Cheq</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>ClassicHeavy</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Comic Sans MS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Comics</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Cooper</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Coronet</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Courier</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Courier 10 Pitch</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Courier New</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Crackling</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Crillee</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>CuneiFont</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DavysBigKeyCaps</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DavysDingbats</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DavysOtherDingbats</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Sans</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Sans Condensed</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Sans Mono</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Serif Condensed</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Dingbats</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Dobkin</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Dragonwick</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Duncan</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Elizabeth</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Engraver</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras Black</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras Light</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras Medium</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras UltraBlk</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Exmouth</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Fixed [Misc]</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Fixed [KC]</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Florence</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>FrizQuadrata</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Futura_Poster</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Garamond</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>GenoaItalic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>GenoaRoman</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Gentium</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>GentiumAlt</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Georgia</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>GoodCityModern</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Goudy Old Style</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Green</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Gulim</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Helvetica</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Gothic English</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Gothic German</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Gothic Italian</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Plain Duplex</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Plain Duplex Italic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Plain Triplex</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Plain Triplex Italic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Script Complex</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Script Simplex</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>IglooLaser</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Impact</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Kochi Gothic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Kochi Mincho</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>LauraMc</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Linotext</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Luxembourg</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Luxi Mono</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Luxi Sans</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Luxi Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Manzanita</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Mazama</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>MesozoicGothic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Monospace</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Muriel</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>New Century Schoolbook</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Nimbus Mono L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Nimbus Roman No9 L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Nimbus Sans L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Old Town [urw]</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Old Town [unknown]</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Old TownCnd</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Old TownExt</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>OSWALDblack</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>ParkAvenue</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Perry</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Polo SemiScript</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>PostAntiqua</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>President</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Rechtman</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Romeodn</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>RoostHeavy</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Rudelsberg</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Salter</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Sans Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Shalom</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Sharktooth</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Shohl</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Sinaloa</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Slogan</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Spooky</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Standard Symbols L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Sumdumgoi</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Tekton Display SSi</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>TempoFont</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>TempoFontItalic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Times</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Times New Roman</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Trebuchet MS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Tribeca</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>twmoe_kai</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>UpperWestSide</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>URW Bookman L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>URW Chancery L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>URW Gothic L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>URW Palladio L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Utopia</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Verdana</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Victoriana Display SSi</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Webdings</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>WesternSlant</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>WindsorDemi</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>ZaleskiCaps</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>∞Í¶rº–∑«ß∫≈È</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Agate</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Ahem</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AlfredDrake</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Andale Mono</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Aneirin</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Ann</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Apollo</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL KaitiM Big5</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL KaitiM GB</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL Mingti2L Big5</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL ShanHeiSun Uni</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL SungtiL GB</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>AR PL ZenKai Uni</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Arial</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Arial Black</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>ArnoldBoecklin</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baekmuk Batang</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baekmuk Dotum</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baekmuk Gulim</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baekmuk Headline</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Baskerville</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Batang</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Becker</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bitstream Charter</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bitstream Vera Sans</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bitstream Vera Sans Mono</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bitstream Vera Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>BlackForest</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Blippo</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Blood Of Dracula</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Blood Omen</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>BloodFeast</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bloodgutter 99</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bloody</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bloody Shrapnel?</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Blooshooz</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>BODIDLYbold</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bodoni</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Braille HC</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Brushstroke</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Burgundian</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Caligula</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>CarrickCaps</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>CartWright</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Century Schoolbook L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Cheq</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>ClassicHeavy</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Comic Sans MS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Comics</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Cooper</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Coronet</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Courier</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Courier 10 Pitch</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Courier New</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Crackling</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Crillee</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>CuneiFont</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DavysBigKeyCaps</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DavysDingbats</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DavysOtherDingbats</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Sans</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Sans Condensed</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Sans Mono</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>DejaVu Serif Condensed</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Dingbats</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Dobkin</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Dragonwick</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Duncan</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Elizabeth</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Engraver</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras Black</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras Light</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras Medium</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Eras UltraBlk</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Exmouth</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Fixed [Misc]</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Fixed [KC]</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Florence</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>FrizQuadrata</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Futura_Poster</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Garamond</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>GenoaItalic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>GenoaRoman</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Gentium</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>GentiumAlt</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Georgia</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>GoodCityModern</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Goudy Old Style</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Green</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Gulim</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Helvetica</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Gothic English</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Gothic German</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Gothic Italian</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Plain Duplex</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Plain Duplex Italic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Plain Triplex</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Plain Triplex Italic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Script Complex</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Hershey Script Simplex</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>IglooLaser</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Impact</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Kochi Gothic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Kochi Mincho</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>LauraMc</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Linotext</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Luxembourg</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Luxi Mono</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Luxi Sans</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Luxi Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Manzanita</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Mazama</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>MesozoicGothic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Monospace</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Muriel</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>New Century Schoolbook</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Nimbus Mono L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Nimbus Roman No9 L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Nimbus Sans L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Old Town [urw]</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Old Town [unknown]</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Old TownCnd</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Old TownExt</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>OSWALDblack</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>ParkAvenue</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Perry</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Polo SemiScript</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>PostAntiqua</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>President</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Rechtman</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Romeodn</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>RoostHeavy</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Rudelsberg</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Salter</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Sans Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Serif</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Shalom</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Sharktooth</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Shohl</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Sinaloa</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Slogan</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Spooky</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Standard Symbols L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Sumdumgoi</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Tekton Display SSi</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>TempoFont</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>TempoFontItalic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Times</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Times New Roman</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Trebuchet MS</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Tribeca</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>twmoe_kai</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>UpperWestSide</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>URW Bookman L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>URW Chancery L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>URW Gothic L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>URW Palladio L</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Utopia</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Verdana</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Victoriana Display SSi</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Webdings</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>WesternSlant</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>WindsorDemi</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>ZaleskiCaps</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>∞Í¶rº–∑«ß∫≈È</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QLabel" name="label_7" >
+                <property name="text" >
+                 <string>Size :</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="fgFontSize" />
+              </item>
+              <item>
+               <widget class="QLabel" name="label_8" >
+                <property name="text" >
+                 <string>Style :</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QComboBox" name="fgFontStyle" >
+                <item>
+                 <property name="text" >
+                  <string>Normal</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Italic</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Bold</string>
+                 </property>
+                </item>
+                <item>
+                 <property name="text" >
+                  <string>Italic + Bold</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>0</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>520</width>
+                <height>31</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons" >
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ConfigureDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>227</x>
+     <y>431</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ConfigureDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>295</x>
+     <y>437</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

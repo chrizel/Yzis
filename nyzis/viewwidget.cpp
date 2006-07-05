@@ -128,6 +128,9 @@ void NYZView::scrollDown( int n ) {
 	sendPaintEvent( YZCursor( left, top ), YZCursor( left + getColumnsVisible(), top + n ) );
 }
 
+void NYZView::notifyContentChanged( const YZSelection& s ) {
+	paintEvent( s );
+}
 void NYZView::preparePaintEvent(int, int) {
 }
 void NYZView::endPaintEvent() {

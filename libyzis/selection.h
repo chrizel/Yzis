@@ -25,7 +25,9 @@
 #ifndef YZ_SELECTION_H
 #define YZ_SELECTION_H
 
+#include <QRect>
 #include <qmap.h>
+
 #include "cursor.h"
 #include "yzismacros.h"
 
@@ -74,6 +76,7 @@ class YZIS_EXPORT YZInterval {
 		YZInterval( const YZCursor& from, const YZCursor& to ) : mFrom( from ), mTo( to ) {}
 		YZInterval( const YZBound& from, const YZCursor& to ) : mFrom( from ), mTo( to ) {}
 		YZInterval( const YZCursor& from, const YZBound& to ) : mFrom( from ), mTo( to ) {}
+		YZInterval( const QRect& r ) : mFrom( YZCursor(r.left(),r.top()) ), mTo( YZCursor(r.right(),r.bottom()) ) {}
 		YZInterval(){}
 
 		void setFrom( const YZBound& bound );
@@ -88,6 +91,8 @@ class YZIS_EXPORT YZInterval {
 
 		bool contains( const YZCursor& pos ) const;
 		bool contains( const YZInterval& pos ) const;
+
+		QRect boundingRect() const;
 
 	private:
 		YZBound mFrom;
@@ -118,6 +123,8 @@ class YZIS_EXPORT YZSelection {
 		void clear();
 
 		YZSelection clip( const YZInterval& bound ) const;
+
+		QRect boundingRect() const;
 		
 		/** 
 		 * operators

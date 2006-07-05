@@ -1673,7 +1673,7 @@ void YZView::commitPaintEvent() {
 			YZCursor bottomRight = scrollCursor->screen();
 			bottomRight.setX( bottomRight.x() + getColumnsVisible() );
 			bottomRight.setY( bottomRight.y() + getLinesVisible() );
-			paintEvent( mPaintSelection->clip( YZInterval( scrollCursor->screen(), bottomRight ) ) );
+			notifyContentChanged( mPaintSelection->clip( YZInterval( scrollCursor->screen(), bottomRight ) ) );
 		}
 		abortPaintEvent();
 	}

@@ -43,6 +43,7 @@ class QYZisView: public QWidget, public YZView
 
 	friend class QYZisFactory;
 	friend class QYZisCursor;
+	friend class QYZisEdit;
 
 	signals :
 		void cursorPositionChanged();
@@ -59,7 +60,6 @@ class QYZisView: public QWidget, public YZView
 		void scrollDown( int l=1 );
 		void scrollUp( int l=1 );
 
-		void paintEvent( const YZSelection& drawMap );
 		virtual void modeChanged(void);
 		virtual void syncViewInfo();
 		void displayInfo( const QString& info );
@@ -93,6 +93,11 @@ class QYZisView: public QWidget, public YZView
 		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
 		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
 
+		void paintEvent( const YZSelection& s );
+
+
+		virtual void notifyContentChanged( const YZSelection& i );
+
     /**
      * Get the screen coordinates of the cursor position
      * @return cursor screen coordinates
@@ -121,9 +126,10 @@ class QYZisView: public QWidget, public YZView
 		QMenu *m_popup;
 		QYZisCodeCompletion *m_codeCompletion;
 		QGridLayout *g ;
-//		KSqueezedTextLabel *m_central;
 		QLabel *m_central;
 		QLabel *l_mode, *l_fileinfo, *l_linestatus;
+
+		QVBoxLayout* m_lineNumber;
 
 		QPainter* m_painter;
 };

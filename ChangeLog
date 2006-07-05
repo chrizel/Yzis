@@ -1,3 +1,25 @@
+2006-07-05 panard
+  * libyzis/selection.cpp :
+    new methods :
+            QRect YZInterval::boundingRect() const
+            QRect YZSelection::boudingRect() const
+    new constructor for YZInterval :
+            YZInterval( const QRect& r )
+
+  * libyzis/view.cpp :
+    When commiting a paint event, instead of directly
+    calling paintEvent(YZSelection&), call
+            notifyContentChanged( YZSelection& )
+    gui have to manage what to do with this notification
+
+  * QYzis :
+    - editor: remove marginLeft and any line number drawing related stuff
+      => we will draw line numbers in a separate QWidget (TODO)
+    - tranlatePostionToReal and translateRealToPosition: helpers for
+	  converting yzis coordinate to QWidget
+    - introduce a configuration dialog. not working at all. just playing with
+	  qtdesigner ;)
+
 2006-04-01 Mickael Marchand
   * not an april fish : dropping automake/autoconf support
 

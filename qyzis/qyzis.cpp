@@ -31,6 +31,7 @@
 #include "qyzis.h"
 #include "debug.h"
 
+#include "configuredialog.h"
 
 Qyzis *Qyzis::me = NULL;
 
@@ -185,13 +186,8 @@ bool Qyzis::queryClose() {
 }
 
 void Qyzis::preferences() {
-	/* removed by orzel while porting to Qt
-    KTextEditor::Editor *edit = dynamic_cast<KTextEditor::Document*>( getCurrentPart() )->editor();
-    if (!edit)
-        return;
-    edit->configDialog(this);
-    edit->writeConfig();
-    */
+	QYZConfigureDialog* w = new QYZConfigureDialog(this);
+	w->exec();
 }
 
 void Qyzis::embedPartView(QWidget *view, const QString &, const QString& ) {

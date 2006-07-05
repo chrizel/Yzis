@@ -761,6 +761,8 @@ class YZIS_EXPORT YZView {
 
 	protected:
 
+		virtual void notifyContentChanged( const YZSelection& s ) = 0;
+
 		void setupKeys();
 
 		bool stringHasOnlySpaces ( const QString& what );

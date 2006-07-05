@@ -71,11 +71,16 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	status->addWidget(l_linestatus, 0); // was status->insertItem("",99,0,true);
 //	status->setItemAlignment(99,Qt::AlignRight);
 
+	m_lineNumber = new QVBoxLayout();
+
 	g = new QGridLayout(this);
-	g->addWidget(m_editor,0,0);
-	g->addWidget(mVScroll,0,1);
-	g->addWidget(command,1,0,1,2);
-	g->addWidget(status,2,0,1,2);
+	g->addLayout( m_lineNumber, 0, 0 );
+	g->addWidget( m_editor, 0, 1 );
+	g->addWidget( mVScroll, 0, 2 );
+	g->addWidget( command, 1, 0, 1, g->columnCount() );
+	g->addWidget( status, 2, 0, 1, g->columnCount() );
+
+	//m_lineNumber->hide();
 
 //	setupActions();
 	setupKeys();
@@ -125,27 +130,44 @@ void QYZisView::scrollUp( int n ) {
 }
 
 void QYZisView::refreshScreen() {
-	if ( m_editor->marginLeft > 0 && !getLocalBooleanOption("number") )
-		m_editor->marginLeft = 0;
+	bool o_number = getLocalBooleanOption("number");
+	//if ( o_number != m_lineNumber.isVisible() ) {
+	//	m_lineNumber.setVisible(o_number);
+	//}
 	YZView::refreshScreen();
 }
+
+void QYZisView::notifyContentChanged( const YZSelection& s ) {
+	// content has changed, ask qt to repaint changed parts
+
+	YZSelectionMap m = s.map();
+	// convert each interval to QWidget coordinates and update
+	for( int i = 0; i < m.size(); ++i ) {
+		QRect r = m[i].boundingRect();
+		r.setBottomRight( m_editor->translatePositionToReal( r.right(), r.bottom() ) );
+		r.setTopLeft( m_editor->translatePositionToReal( r.left(), r.top() ) );
+		m_editor->update( r );
+	}
+}
+
 void QYZisView::preparePaintEvent( int min_y, int max_y ) {
 	yzDebug() << "QYZisView::preparePaintEvent" << endl;
 	m_painter = new QPainter( m_editor );
 	m_drawBuffer.setCallbackArgument( m_painter );
-	m_editor->drawMarginLeft( min_y, max_y, m_painter );
+	//m_editor->drawMarginLeft( min_y, max_y, m_painter );
 }
 void QYZisView::endPaintEvent() {
 	delete m_painter;
 	yzDebug() << "QYZisView::endPaintEvent" << endl;
 }
-void QYZisView::paintEvent( const YZSelection& drawMap ) {
-	if ( m_editor->m_insidePaintEvent ) {
-		YZView::paintEvent( drawMap );
-	} else {
-		m_editor->paintEvent( drawMap );
-	}
+
+void QYZisView::paintEvent( const YZSelection& s ) {
+	YZView::paintEvent( s );
 }
+
+/*
+ * View painting methods
+ */
 void QYZisView::drawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
 	m_editor->drawCell( x, y, cell, (QPainter*)arg );
 }
@@ -154,10 +176,15 @@ void QYZisView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
 }
 void QYZisView::drawSetMaxLineNumber( int max ) {
 	mVScroll->setMaximum( max );
-	m_editor->drawSetMaxLineNumber( max );
+/*	m_editor->drawSetMaxLineNumber( max ); */
 }
 void QYZisView::drawSetLineNumber( int y, int n, int h ) {
-	m_editor->drawSetLineNumber( y, n, h, m_painter );
+	return;
+	for ( int i = m_lineNumber->count(); i <= y; ++i ) {
+		m_lineNumber->addWidget( new QLabel() );
+	}
+	QLabel* ln = dynamic_cast<QLabel*>(m_lineNumber->itemAt( y )->widget());
+	ln->setText( h == 0 ? QString::number(n) : ""  );
 }
 int QYZisView::stringWidth( const QString& str ) const {
 	return m_editor->fontMetrics().width( str );
@@ -222,17 +249,12 @@ void QYZisView::applyConfig( const QSettings& settings, bool refresh ) {
 	m_editor->setFont( settings.value("appearance/font", default_font).value<QFont>() );
 
 	QPalette default_palette;
-	default_palette.setColor( QPalette::Window, QColor(0,0,0));
+	default_palette.setColor( QPalette::Window, Qt::black );
 	default_palette.setColor( QPalette::WindowText, Qt::white );
 	QPalette my_palette = settings.value("appearance/palette",default_palette).value<QPalette>();
 	qreal opacity = settings.value("appearance/opacity",1.).value<qreal>();
 	m_editor->setPalette( my_palette, opacity );
 
-	YzisHighlighting *yzis = myBuffer()->highlight();
-	if (yzis) {
-		myBuffer()->makeAttribs();
-		//repaint();
-	} 
 	if ( refresh ) {
 		m_editor->updateArea( );
 	}

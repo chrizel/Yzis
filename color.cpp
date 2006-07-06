@@ -17,10 +17,6 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-/**
- * $Id$
- */
-
 #include "color.h"
 
 #include <stdlib.h>

@@ -19,10 +19,6 @@
  **/
 
 /**
- * $Id$
- */
-
-/**
   YZAction: 
   	Here are all buffer modifications methods. 
 	If you need to add a buffer modification method, you are at the _RIGHT_ place.

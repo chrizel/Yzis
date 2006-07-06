@@ -18,10 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #ifndef YZ_SELECTION_H
 #define YZ_SELECTION_H
 

@@ -17,10 +17,6 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-/**
- * $Id$
- */
-
 #ifndef YZ_COLOR_H
 #define YZ_COLOR_H
 

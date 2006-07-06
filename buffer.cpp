@@ -20,10 +20,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 
 #include <assert.h>
 #include <cstdlib>

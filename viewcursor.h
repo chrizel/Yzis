@@ -27,10 +27,6 @@
 class YZView;
 
 /**
- * $Id$
- */
-
-/**
  * class YZViewCursor : buffer and screen cursor with all members that YZView needs to move it.
  * this is only an interface, it doesn't have to know how move itself ( this is YZView stuff )
  */

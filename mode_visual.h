@@ -19,10 +19,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #ifndef YZ_MODE_VISUAL_H
 #define YZ_MODE_VISUAL_H
 

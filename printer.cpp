@@ -19,10 +19,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #include "printer.h"
 #ifdef HAVE_LIBPS
 #include <math.h>

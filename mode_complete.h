@@ -17,10 +17,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id: /yzis/trunk/libyzis/mode_insert.h 142 2005-06-03T19:19:14.776723Z svm  $
- */
-
 #ifndef YZ_MODE_COMPLETE_H
 #define YZ_MODE_COMPLETE_H
 

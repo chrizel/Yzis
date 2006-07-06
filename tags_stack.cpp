@@ -24,10 +24,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id: mode_command.cpp 1927 2005-06-14 09:10:34Z scottn $
- */
-
 #include "portability.h"
 
 #include "tags_stack.h"

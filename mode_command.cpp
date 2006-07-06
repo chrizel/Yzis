@@ -23,10 +23,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #include "portability.h"
 #include "mode_command.h"
 

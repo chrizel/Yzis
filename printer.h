@@ -18,10 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #include "portability.h"
 #ifdef HAVE_LIBPS
 #ifndef YZ_PRINTER_H

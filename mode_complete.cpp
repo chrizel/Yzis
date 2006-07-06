@@ -19,10 +19,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id: /yzis/trunk/libyzis/mode_insert.cpp 167 2005-06-17T02:15:33.665919Z morbuz  $
- */
-
 #include "portability.h"
 #include "mode_complete.h"
 

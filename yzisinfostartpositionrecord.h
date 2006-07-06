@@ -17,10 +17,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #ifndef YZISINFOSTARTPOSITIONRECORD_H
 #define YZISINFOSTARTPOSITIONRECORD_H
 

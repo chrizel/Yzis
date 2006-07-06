@@ -100,6 +100,12 @@ class YZIS_EXPORT YZDrawBuffer {
 
 		void applyPosition();
 
+		/*
+		 * copy YZColor @param c into YZColor* @param dest.
+		 * Returns true if *dest has changed, false else
+		 */
+		static bool updateColor( YZColor* dest, const YZColor& c );
+
 		/* buffer content */
 		YZDrawLine m_content;
 

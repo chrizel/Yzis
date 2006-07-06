@@ -59,7 +59,8 @@ using namespace yzis;
 #define GET_CHAR_WIDTH( c ) ( isFontFixed ? 1 : charWidth( c ) )
 
 static const QChar tabChar( '\t' );
-static YZColor fake ( Qt::white );
+
+static YZColor color_null;
 static YZColor blue( Qt::blue );
 
 /**
@@ -1398,7 +1399,7 @@ const YZColor& YZView::drawColor ( int col, int line ) const {
 	if ( opt_list && ( yl->data().at(col) == ' ' || yl->data().at(col) == tabChar ) )
 		return blue;
 	if ( at ) return at->textColor(); //textcolor :)
-	return fake;
+	return color_null;
 }
 
 const YZColor& YZView::drawColor() {
@@ -1406,31 +1407,31 @@ const YZColor& YZView::drawColor() {
 
 	if ( listChar ) return blue; //XXX make custom
 	else if ( curAt ) return curAt->textColor();
-	else return fake;
+	else return color_null;
 }
 
 const YZColor& YZView::drawSelColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
-	if ( listChar ) return fake; //XXX make custom
+	if ( listChar ) return color_null; //XXX make custom
 	else if ( curAt ) return (*curAt).selectedTextColor();
-	else return fake;
+	else return color_null;
 }
 
 const YZColor& YZView::drawBgColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
-	if ( listChar ) return fake; //XXX make custom
+	if ( listChar ) return color_null; //XXX make custom
 	else if ( curAt ) return (*curAt).bgColor();
-	else return fake;
+	else return color_null;
 }
 
 const YZColor& YZView::drawBgSelColor() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
-	if ( listChar ) return fake; //XXX make custom
+	if ( listChar ) return color_null; //XXX make custom
 	else if ( curAt ) return (*curAt).selectedBGColor();
-	else return fake;
+	else return color_null;
 }
 
 bool YZView::drawBold() {
@@ -1471,9 +1472,9 @@ bool YZView::drawStrikeOutLine() {
 const YZColor& YZView::drawOutline() {
 	curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
 
-	if ( listChar ) return fake; //XXX make custom
+	if ( listChar ) return color_null; //XXX make custom
 	else if ( curAt ) return (*curAt).outline();
-	else return fake;
+	else return color_null;
 }
 
 int YZView::drawLineNumber() const {

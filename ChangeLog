@@ -1,3 +1,15 @@
+2006-07-06 panard
+  * libyzis/color.cpp :
+	- promote invalidate() to public
+  * libyzis/view.cpp :
+	- make fake YZColor an invalid color, and rename it to color_null
+  * libyzis/drawbuffer.cpp :
+	- add static bool updateColor( YZColor* dest, const YZColor& c ) :
+	  copy c into dest, returns true if *dest has changed
+	  supports invalid colors
+	- make set*Color and update_section use updateColor : fix use of invalid
+      colors into drawbuffer
+
 2006-07-05 panard
   * libyzis/selection.cpp :
     new methods :

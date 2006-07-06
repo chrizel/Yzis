@@ -138,8 +138,9 @@ void NYZView::endPaintEvent() {
 
 void NYZView::drawCell( int x, int y, const YZDrawCell& cell, void* ) {
 	YZColor c = cell.fg;
-	if ( !c.isValid() )
-		c.setNamedColor( "#ffffff" );
+	if ( !c.isValid() ) {
+		c.setNamedColor( "#fff" );
+	}
 
 	if ( !fakeLine ) {
 		/* if this line is a fake, don't apply margins */
@@ -160,16 +161,7 @@ void NYZView::drawCell( int x, int y, const YZDrawCell& cell, void* ) {
 		mAttributes = mAttributesMap[ rawcolor ];
 	} else {
 		mAttributes = attribWhite;
-		/*yzWarning() << "Unknown color from libyzis, c.rgb() is " <<
-			rawcolor << " (" <<
-			qRed( rawcolor ) << "," <<
-			qGreen( rawcolor ) << "," <<
-			qBlue( rawcolor ) << ") or (" <<
-
-			c.red() << "," <<
-			c.green() << "," <<
-			c.blue() << ")" <<
-			endl;*/
+		yzWarning() << "Unknown color from libyzis, c.name() is " << c.name() << endl;
 	}
 	if ( cell.sel ) mAttributes |= A_REVERSE; // XXX, reverse bg/fg
 	//if ( drawUnderline() ) mAttributes |= A_UNDERLINE;

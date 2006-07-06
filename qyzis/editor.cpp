@@ -296,19 +296,17 @@ void QYZisEdit::scrollDown( int n ) {
 
 void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	p->save();
-	yzDebug() << "cell: "  << cell.c << endl << "cell.fg: " << cell.fg.isValid() << " => " << cell.fg.rgb() << endl;
-	yzDebug() << "cell.bg: " << cell.bg.isValid() << " => " << cell.bg.rgb() << endl;
 	bool has_bg = false;
 	if ( !cell.sel ) {
 		if ( cell.fg.isValid() )
 			p->setPen( cell.fg.rgb() );
-//		if ( cell.bg.isValid() )
-//			p->setBackground( QColor(cell.bg.rgb()) );
+		if ( cell.bg.isValid() )
+			p->setBackground( QColor(cell.bg.rgb()) );
 	} else if ( cell.sel & YZSelectionPool::Visual ) {
 		p->setBackground( QColor(181, 24, 181)  ); //XXX setting
 	} else {
-//		p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
-//		p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
+		p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
+		p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
 	}
 	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 	

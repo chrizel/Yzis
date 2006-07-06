@@ -28,9 +28,6 @@
 
 #ifndef YZ_DEBUG_H
 #define YZ_DEBUG_H
-/**
- * $Id$
- */
 
 #include <qglobal.h>
 #include <QString>

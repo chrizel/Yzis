@@ -1,4 +1,3 @@
--- $Id: /yzis/qt4-work/scripts/clevertab.lua 1887 2005-05-17T21:41:18.259587Z mikmak  $
 -- Author : Mickael Marchand <mikmak@yzis.org>
 
 

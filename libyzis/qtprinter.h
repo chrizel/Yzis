@@ -18,10 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id: printer.h 714 2004-05-25 19:34:25Z panard $
- */
-
 #ifndef YZ_QTPRINTER_H
 #define YZ_QTPRINTER_H
 

@@ -4,7 +4,7 @@ Test the vim_to_lua converter with many extracts of the script vst.vim.
 
 Description: A unit testing framework
 Author: Philippe Fremy <phil@freehackers.org>
-Version: $Id$
+Version: 0.1
 
 ]]--
 

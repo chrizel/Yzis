@@ -15,10 +15,6 @@
     Foundation, Inc., 51 Franklin Steet, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-/**
- * $Id: main.cpp 1272 2004-10-16 22:41:00Z mikmak $
- */
-
 #include <QtTest/qtest.h>
 #include <QApplication>
 #include <QCoreApplication>

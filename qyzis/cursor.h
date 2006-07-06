@@ -17,10 +17,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id: cursor.h 2116 2006-01-14 19:19:01Z panard $
- */
-
 #ifndef QYZISCURSOR_H
 #define QYZISCURSOR_H
 

@@ -18,10 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id: cursor.cpp 2116 2006-01-14 19:19:01Z panard $
- */
-
 #include <libyzis/drawbuffer.h>
 
 #include "cursor.h"

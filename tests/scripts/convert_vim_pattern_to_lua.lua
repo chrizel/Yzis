@@ -5,7 +5,7 @@ file.
 
 Author : Philippe Fremy
 License: LGPL
-Version: $Id$
+Version: 0.1
 
 ======================================================================== ]]--
 

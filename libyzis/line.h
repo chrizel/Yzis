@@ -18,10 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #ifndef YZIS_LINE_H
 #define YZIS_LINE_H
 

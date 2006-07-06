@@ -22,9 +22,6 @@
 
 #ifndef YZ_BUFFER_H
 #define YZ_BUFFER_H
-/**
- * $Id$
- */
 
 #include "yzis.h"
 #include "syntaxhighlight.h"

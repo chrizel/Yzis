@@ -17,10 +17,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #include "cursor.h"
 
 YZCursor::YZCursor() : QPoint(-1,-1) {

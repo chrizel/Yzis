@@ -23,10 +23,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id: mode_command.h 1920 2005-06-08 22:45:07Z scottn $
- */
-
 #ifndef YZ_TAGS_STACK_H
 #define YZ_TAGS_STACK_H
 

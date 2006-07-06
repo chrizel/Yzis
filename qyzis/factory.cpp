@@ -18,10 +18,6 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-/**
- * $Id: factory.cpp 2072 2005-09-01 11:01:40Z mikmak $
- */
-
 #include <assert.h>
 #include <unistd.h>
 #include <qapplication.h>

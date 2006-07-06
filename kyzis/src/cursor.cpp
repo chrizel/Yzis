@@ -18,10 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #include <libyzis/drawbuffer.h>
 
 #include "cursor.h"

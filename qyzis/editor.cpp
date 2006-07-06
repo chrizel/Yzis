@@ -18,10 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id: editor.cpp 2128 2006-03-18 21:42:15Z panard $
- */
-
 #include <QApplication>
 #include <QSignalMapper>
 #include <QWidget>

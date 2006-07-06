@@ -22,10 +22,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
-
 #include "view.h"
 
 #include "portability.h"

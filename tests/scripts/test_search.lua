@@ -3,7 +3,7 @@
 Description: Test the search feature of yzis
 
 Author: Philippe Fremy
-Version: $Id$
+Version: 0.1
 License: LGPL
 
 ]]--

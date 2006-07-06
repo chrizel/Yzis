@@ -18,10 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id: printer.cpp 761 2004-05-30 18:02:55Z bmc $
- */
-
 #include <math.h>
 
 #include "qtprinter.h"

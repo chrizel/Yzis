@@ -1,6 +1,4 @@
 /*
-*   $Id: readtags.c,v 1.24 2003/07/20 18:46:30 darren Exp $
-*
 *   Copyright (c) 1996-2003, Darren Hiebert
 *
 *   This source code is released into the public domain.

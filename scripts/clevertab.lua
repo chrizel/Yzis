@@ -1,4 +1,3 @@
--- $Id$
 -- Author : Mickael Marchand <mikmak@yzis.org>
 
 

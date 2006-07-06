@@ -15,9 +15,6 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-/**
- * $Id: main.cpp 2071 2005-08-31 09:39:49Z mikmak $
- */
 #include <qapplication.h>
 //#include <ktempfile.h>
 #include <qtranslator.h>

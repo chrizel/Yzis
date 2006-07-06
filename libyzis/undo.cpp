@@ -19,10 +19,6 @@
  **/
 
 /**
- * $Id$
- */
-
-/**
  * This file contains the classes necessary to handle undo/redo
  */
 

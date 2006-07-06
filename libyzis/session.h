@@ -21,9 +21,6 @@
 
 #ifndef YZ_SESSION_H
 #define YZ_SESSION_H
-/**
- * $Id$
- */
  
 #include "yzis.h"
 #include <QVector>

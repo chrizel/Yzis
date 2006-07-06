@@ -20,10 +20,6 @@
 #ifndef YZ_MAPPING_H
 #define YZ_MAPPING_H
 
-/**
- * $Id$
- */
-
 #include <qglobal.h>
 #include <QMap>
 #include <QString>

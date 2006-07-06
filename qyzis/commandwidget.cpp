@@ -17,10 +17,6 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-/**
- * $Id: kyzisedit.cpp 218 2003-05-29 23:06:22Z mikmak $
- */
-
 #include "viewwidget.h"
 #include "commandwidget.h"
 #include "debug.h"

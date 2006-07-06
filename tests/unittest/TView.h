@@ -20,9 +20,6 @@
 
 #ifndef TYZ_VIEW_H
 #define TYZ_VIEW_H
-/**
- * $Id: session.h 388 2004-03-03 23:44:13Z mikmak $
- */
 
 #include "libyzis/view.h"
 #include "libyzis/viewcursor.h"

@@ -15,10 +15,6 @@
     Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 */
 
-/*
- * $Id: kyzis.cpp 2072 2005-09-01 11:01:40Z mikmak $
- */
-
 
 #include <QMenu>
 #include <QFileDialog>

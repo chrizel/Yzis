@@ -18,9 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
 #include <qevent.h>
 #include <kapplication.h>
 #include <kstdaction.h>

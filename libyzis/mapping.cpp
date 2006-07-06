@@ -17,9 +17,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
- * $Id$
- */
 #include "mapping.h"
 #include "yzis.h"
 #include "debug.h"

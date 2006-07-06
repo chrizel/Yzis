@@ -21,9 +21,6 @@
 
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
-/**
- * $Id$
- */
 
 #include "color.h"
 #include "selection.h"

@@ -3,7 +3,7 @@
 Description: Test all the different ways of moving inside a buffer in yzis.
 
 Author: Philippe Fremy
-Version: $Id$
+Version: 0.1
 License: LGPL
 
 ]]--

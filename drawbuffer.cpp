@@ -77,17 +77,27 @@ void YZDrawBuffer::setFont( const YZFont& f ) {
 /*		changed = true;
 	} */
 }
-void YZDrawBuffer::setColor( const YZColor& c ) {
-	if ( c.rgb() != m_cur.fg.rgb() ) {
-		m_cur.fg.setRgb( c.rgb() );
+
+bool YZDrawBuffer::updateColor( YZColor* dest, const YZColor& c ) {
+	bool changed = false;
+	bool was_valid = dest->isValid();
+	bool is_valid = c.isValid();
+	if ( was_valid != is_valid || is_valid && c.rgb() != dest->rgb() ) {
 		changed = true;
+		if ( is_valid ) {
+			dest->setRgb( c.rgb() );
+		} else {
+			dest->invalidate();
+		}
 	}
+	return changed;
+}
+
+void YZDrawBuffer::setColor( const YZColor& c ) {
+	changed = updateColor( &m_cur.fg, c );
 }
 void YZDrawBuffer::setBackgroundColor( const YZColor& c ) {
-	if ( c.rgb() != m_cur.bg.rgb() ) {
-		m_cur.bg.setRgb( c.rgb() );
-		changed = true;
-	}
+	changed = updateColor( &m_cur.bg, c );
 }
 void YZDrawBuffer::setSelection( int sel ) {
 	if ( sel != m_cur.sel ) {
@@ -153,8 +163,8 @@ void YZDrawBuffer::insert_section( int pos ) {
 
 	/* copy properties */
 	YZDrawCell n;
-	n.fg.setRgb( m_cur.fg.rgb() );
-	n.bg.setRgb( m_cur.bg.rgb() );
+	updateColor( &n.fg, m_cur.fg );
+	updateColor( &n.bg, m_cur.bg );
 	n.sel = m_cur.sel;
 
 	if ( pos >= m_line->size() ) {

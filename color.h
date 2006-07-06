@@ -52,6 +52,11 @@ class YZIS_EXPORT YZColor {
 
 		bool isValid() const;
 
+		/*
+		 * mark the color as not valid
+		 */
+		void invalidate();
+
 		QRgb rgb() const;
 		/* #RRGGBB */
 		QString name() const;
@@ -62,7 +67,6 @@ class YZIS_EXPORT YZColor {
 		bool operator!=( const YZColor& color ) const;
 	
 	private:
-		void invalidate();
 		
 		// rgb
 		int m_red;

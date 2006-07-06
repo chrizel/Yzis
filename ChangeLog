@@ -1,4 +1,7 @@
 2006-07-06 panard
+  * qyzis/factory.cpp :
+  	fix factory intanciated twice
+  * remove svn:keywords Id
   * libyzis/color.cpp :
 	- promote invalidate() to public
   * libyzis/view.cpp :

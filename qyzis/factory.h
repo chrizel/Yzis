@@ -77,6 +77,7 @@ public slots:
 private:
 	
 	void changeCurrentView( YZView* );
+	static QYZisFactory* m_instance;
 
 public:
 	QYZisView *lastView;

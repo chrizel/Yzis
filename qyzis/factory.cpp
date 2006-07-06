@@ -38,28 +38,27 @@
 #include "qyzis.h"
 #include "debug.h"
 
+QYZisFactory* QYZisFactory::m_instance = NULL;
+
 QYZisFactory::QYZisFactory() :
 		YZSession("qyzis"),
 		lastView(0),
 		m_viewParent(0)
 {
+	m_instance = this;
 	guiStarted();
 }
 
 QYZisFactory::~QYZisFactory() {
-	yzDebug() << "Factory gets destroyed !" << endl;
+	yzDebug() << "QYZisFactory gets destroyed !" << endl;
+	m_instance = NULL;
 }
 
-static QYZisFactory sdFactory;
-
-QYZisFactory *QYZisFactory::self() {
-	static QYZisFactory *self = 0;
-
-	if ( !self ) {
-		self = new QYZisFactory;
+QYZisFactory* QYZisFactory::self() {
+	if ( !m_instance ) {
+		new QYZisFactory();
 	}
-		
-	return self;
+	return m_instance;
 }
 
 void QYZisFactory::setClipboardText( const QString& text, Clipboard::Mode mode ) {

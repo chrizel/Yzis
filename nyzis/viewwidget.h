@@ -123,6 +123,8 @@ private:
 		w_statusbar
 	};
 
+	bool statusbarHasCommand; // true if status bar contains a command
+
 	/**
 	  * used to implement set/get CommandLine, as we have no
 	  * special widget for that

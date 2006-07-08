@@ -4,6 +4,9 @@
   * qyzis :
   	fix QRect calculations for painting
 	fix cursor
+  * nyzis :
+	show a ':' in command line mode
+	'nyzis file1 file2' shows file1 first
 
 2006-07-06 panard
   * qyzis/factory.cpp :

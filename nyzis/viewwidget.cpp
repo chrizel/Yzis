@@ -46,6 +46,7 @@ QMap<QRgb,unsigned long int> NYZView::mAttributesMap;
 NYZView::NYZView(YZBuffer *b)
 	: YZView(b,NYZFactory::self,0), editor(0)
 {
+	statusbarHasCommand = false;
 
 	if ( !attributesMapInitialised ) initialiseAttributesMap();
 	YZASSERT( b );
@@ -88,6 +89,7 @@ void NYZView::map( void )
 	wattrset(statusbar, A_NORMAL|A_BOLD );
 	if (has_colors())
 		wattron(statusbar, attribWhite );
+	statusbarHasCommand = false;
 
 }
 
@@ -226,12 +228,16 @@ void NYZView::drawSetLineNumber( int y, int n, int h ) {
 
 
 void NYZView::setFocusMainWindow() {
+	if ( statusbarHasCommand ) {
+		werase(statusbar);
+		wrefresh(statusbar);
+	}
 	m_focus = w_editor;
 	drawCursor();
 }
 void NYZView::setFocusCommandLine() {
 	m_focus = w_statusbar;
-	wmove(statusbar, 0, getCommandLineText().length() );
+	wmove(statusbar, 0, getCommandLineText().length() + 1 );
 	wrefresh(statusbar);
 }
 void NYZView::restoreFocus() {
@@ -249,8 +255,9 @@ void NYZView::setCommandLineText( const QString& text ) {
 	yzDebug() << "NYZView::setCommandLineText: " << text << endl;
 	commandline = text;
 	werase(statusbar);
-	waddstr(statusbar, commandline.toLocal8Bit().constData());
+	waddstr(statusbar, (':'+commandline).toLocal8Bit().constData());
 	wrefresh(statusbar);
+	statusbarHasCommand = true;
 }
 
 
@@ -292,6 +299,7 @@ void NYZView::displayInfo( const QString& info ) {
 	werase(statusbar);
 	waddstr( statusbar, info.toLocal8Bit().constData() );
 	wrefresh(statusbar);
+	statusbarHasCommand = false;
 	restoreFocus();
 }
 

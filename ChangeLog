@@ -1,3 +1,9 @@
+2006-07-08 panard
+  * libyzis/selection.cpp :
+  	fix YZInterval::boudingRect()
+  * qyzis :
+  	fix QRect calculations for painting
+
 2006-07-06 panard
   * qyzis/factory.cpp :
   	fix factory intanciated twice

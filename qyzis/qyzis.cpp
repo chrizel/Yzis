@@ -38,7 +38,6 @@ Qyzis::Qyzis(QWidget *w, const QString& keys)
 	m_initialCommand = keys;
 	resize( 800, 600 );
 
-	//setXMLFile( "kyzis_shell.rc" );
 	setupActions();
 	//createShellGUI( true );
 

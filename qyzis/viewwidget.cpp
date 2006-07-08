@@ -139,22 +139,37 @@ void QYZisView::notifyContentChanged( const YZSelection& s ) {
 	YZSelectionMap m = s.map();
 	// convert each interval to QWidget coordinates and update
 	for( int i = 0; i < m.size(); ++i ) {
-		QRect r = m[i].boundingRect();
-		r.setBottomRight( m_editor->translatePositionToReal( r.right(), r.bottom() ) );
-		r.setTopLeft( m_editor->translatePositionToReal( r.left(), r.top() ) );
+		YZInterval interval = m[i];
+		QRect r;
+		if ( interval.fromPos().y() == interval.toPos().y() ) {
+			r = interval.boundingRect();
+			r.setBottom( r.bottom() + 1 );
+			r.setRight( r.right() + 1 );
+		} else {
+			// XXX optimise : split into multiple qrect
+			r.setTop( interval.fromPos().y() );
+			r.setBottom( interval.toPos().y() + 1 );
+			r.setLeft( 0 );
+			r.setRight( getColumnsVisible() );
+		}
+//		yzDebug() << "notifiyContentChanged: interval=" << interval.fromPos() << "," << interval.toPos() 
+//					<< ", r=" << r.topLeft() << "," << r.bottomRight();
+		r.setBottomRight( m_editor->translatePositionToReal( r.bottomRight() ) );
+		r.setTopLeft( m_editor->translatePositionToReal( r.topLeft() ) );
+//		yzDebug() << " => " << r.topLeft() << "," << r.bottomRight() << endl;
 		m_editor->update( r );
 	}
 }
 
 void QYZisView::preparePaintEvent( int min_y, int max_y ) {
-	yzDebug() << "QYZisView::preparePaintEvent" << endl;
+//	yzDebug() << "QYZisView::preparePaintEvent" << endl;
 	m_painter = new QPainter( m_editor );
 	m_drawBuffer.setCallbackArgument( m_painter );
 	//m_editor->drawMarginLeft( min_y, max_y, m_painter );
 }
 void QYZisView::endPaintEvent() {
 	delete m_painter;
-	yzDebug() << "QYZisView::endPaintEvent" << endl;
+//	yzDebug() << "QYZisView::endPaintEvent" << endl;
 }
 
 void QYZisView::paintEvent( const YZSelection& s ) {

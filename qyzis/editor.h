@@ -72,7 +72,7 @@ class QYZisEdit : public QWidget {
 		void registerModifierKeys( const QString& keys );
 		void unregisterModifierKeys( const QString& keys );
 
-		QPoint translatePositionToReal( int x, int y ) const;
+		QPoint translatePositionToReal( const YZCursor& c ) const;
 		YZCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
 
 		QPoint cursorCoordinates( );

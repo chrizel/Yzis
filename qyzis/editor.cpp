@@ -70,8 +70,8 @@ QYZisEdit::~QYZisEdit() {
 	*/
 }
 
-QPoint QYZisEdit::translatePositionToReal( int x, int y ) const {
-	return QPoint( GETX(x), y * fontMetrics().lineSpacing() );
+QPoint QYZisEdit::translatePositionToReal( const YZCursor& c ) const {
+	return QPoint( GETX(c.x()), c.y() * fontMetrics().lineSpacing() );
 }
 YZCursor QYZisEdit::translateRealToPosition( const QPoint& p, bool ceil ) const {
 	int height = fontMetrics().lineSpacing();
@@ -259,6 +259,8 @@ void QYZisEdit::paintEvent( QPaintEvent* pe ) {
 	// make that rect a selection
 	YZSelection s;
 	s.addInterval( r );
+//	yzDebug() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() << " => "
+//									<< r.topLeft() << "," << r.bottomRight() << endl;
 	// ask for drawing it
 	mParent->paintEvent( s );
 }
@@ -291,21 +293,27 @@ void QYZisEdit::scrollDown( int n ) {
 }
 
 void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
+//	yzDebug() << "QYZisEdit::drawCell(" << x << "," << y <<"," << cell.c << ")" << endl;
 	p->save();
 	bool has_bg = false;
 	if ( !cell.sel ) {
 		if ( cell.fg.isValid() )
 			p->setPen( cell.fg.rgb() );
-		if ( cell.bg.isValid() )
+		if ( cell.bg.isValid() ) {
+			has_bg = true;
 			p->setBackground( QColor(cell.bg.rgb()) );
+		}
 	} else if ( cell.sel & YZSelectionPool::Visual ) {
 		p->setBackground( QColor(181, 24, 181)  ); //XXX setting
+		has_bg = true;
 	} else {
 		p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
+		has_bg = true;
 		p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
 	}
 	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
-	
+
+//	yzDebug() << "drawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
 	if ( has_bg )
 		p->eraseRect( r ); 
 	p->drawText( r, cell.c );
@@ -313,13 +321,17 @@ void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 }
 
 void QYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
+//	yzDebug() << "QYZisEdit::drawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
 	if ( clearChar.isSpace() ) {
 		// not needed as we called qt for repainting this widget, and autoFillBackground = True
 		return;
 	} else {
-		QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
-		yzDebug() << "::drawClearToEOL bg : " << p->background().color().name() << endl;
-		p->eraseRect( r );
+		QRect r;
+		r.setTopLeft( translatePositionToReal( YZCursor(x,y) ) );
+		r.setRight( width() );
+		r.setHeight( fontMetrics().lineSpacing() );
+		int nb_char = mParent->getColumnsVisible() - x;
+		p->drawText( r, QString(nb_char, clearChar) );
 	}
 }
 

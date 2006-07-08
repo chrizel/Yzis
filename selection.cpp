@@ -119,7 +119,7 @@ bool YZInterval::contains( const YZInterval& i ) const {
 
 QRect YZInterval::boundingRect() const {
 	QRect r;
-	if ( mFrom.pos().x() >= mTo.pos().x() ) {
+	if ( mFrom.pos().x() <= mTo.pos().x() ) {
 		r.setLeft( mFrom.pos().x() );
 		r.setRight( mTo.pos().x() );
 	} else {

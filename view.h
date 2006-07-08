@@ -753,6 +753,11 @@ class YZIS_EXPORT YZView {
 
 		QString getCharBelow( int delta );
 
+		/*
+		 * @returns curren srcreen YZCursor relative to top-left screen corner
+		 */
+		YZCursor getRelativeScreenCursor() const;
+
 	public slots :
 		void sendMultipleKey( const QString& keys );
 

@@ -1633,6 +1633,9 @@ const YZCursor &YZView::getCursor() const {
 const YZCursor &YZView::getBufferCursor() const {
 	return mainCursor->buffer();
 }
+YZCursor YZView::getRelativeScreenCursor() const {
+	return (QPoint)mainCursor->screen() - scrollCursor->screen();
+}
 
 void YZView::recordMacro( const QList<QChar> &regs ) {
 	mRegs = regs;

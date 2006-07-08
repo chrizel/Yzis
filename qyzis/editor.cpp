@@ -70,6 +70,10 @@ QYZisEdit::~QYZisEdit() {
 	*/
 }
 
+QYZisView* QYZisEdit::view() const {
+	return mParent;
+}
+
 QPoint QYZisEdit::translatePositionToReal( const YZCursor& c ) const {
 	return QPoint( GETX(c.x()), c.y() * fontMetrics().lineSpacing() );
 }
@@ -136,6 +140,7 @@ QYZisCursor::shape QYZisEdit::cursorShape() {
 }
 void QYZisEdit::updateCursor() {
 	mCursor->setCursorType( cursorShape() );
+	mCursor->update();
 }
 
 
@@ -144,7 +149,6 @@ void QYZisEdit::updateArea( ) {
 	isFontFixed = fontInfo().fixedPitch();
 	mParent->setFixedFont( isFontFixed );
 	spaceWidth = mParent->getSpaceWidth();
-	mCursor->resize( fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 	updateCursor();
 
 	int lines = height() / fontMetrics().lineSpacing();
@@ -267,7 +271,7 @@ void QYZisEdit::paintEvent( QPaintEvent* pe ) {
 
 void QYZisEdit::setCursor( int c, int l ) {
 //	yzDebug() << "setCursor" << endl;
-	c = c - mParent->getDrawCurrentLeft() + marginLeft;
+	c = c - mParent->getDrawCurrentLeft();
 	l -= mParent->getDrawCurrentTop();
 	unsigned int x = GETX( c );
 	if ( mParent->getLocalBooleanOption( "rightleft" ) ) {

@@ -23,6 +23,7 @@
 #include <QWidget>
 
 class QYZisEdit;
+class QYZisView;
 
 class QYZisCursor : public QWidget {
 	Q_OBJECT
@@ -35,7 +36,7 @@ class QYZisCursor : public QWidget {
 			RECT,
 		};
 
-		QYZisCursor( QWidget* parent, shape type );
+		QYZisCursor( QYZisEdit* parent, shape type );
 		virtual ~QYZisCursor();
 
 		void setCursorType( shape type );
@@ -46,6 +47,8 @@ class QYZisCursor : public QWidget {
 
 	private :
 		shape mCursorType;
+		QYZisEdit* mEditor;
+		QYZisView* mView;
 
 };
 

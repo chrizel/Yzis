@@ -24,8 +24,12 @@
 #include "editor.h"
 #include "viewwidget.h"
 
-QYZisCursor::QYZisCursor( QWidget* parent, shape type )
-	: QWidget( parent ){
+QYZisCursor::QYZisCursor( QYZisEdit* edit, shape type ) : QWidget( edit )  {
+	mEditor = edit;
+	mView = edit->view();
+
+	setAutoFillBackground( false );
+
 	move( 0, 0 );
 	setCursorType( type );
 }
@@ -51,17 +55,16 @@ void QYZisCursor::paintEvent( QPaintEvent* ) {
 	QPainter p( this );
 
 #define GET_cell \
-	QYZisView* yzview = dynamic_cast<QYZisView*>( parentWidget()->parentWidget() ); \
-	YZDrawCell cell = yzview->m_drawBuffer.at( (QPoint)yzview->getCursor() - YZCursor(yzview->getDrawCurrentLeft(),yzview->getDrawCurrentTop()) )
+	YZDrawCell cell = mView->m_drawBuffer.at( mView->getRelativeScreenCursor() );
 #define SET_pen \
-	p.setPen( cell.bg.isValid() ? cell.bg.rgb() : parentWidget()->palette().window().color() );
+	p.setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : parentWidget()->palette().color(QPalette::Window) );
 
 	switch( type() ) {
 		case SQUARE :
 			{
 			GET_cell;
 			SET_pen;
-			p.setBackground( cell.fg.isValid() ? QBrush( cell.fg.rgb() ) : parentWidget()->palette().text() );
+			p.setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : parentWidget()->palette().color(QPalette::WindowText) );
 			p.eraseRect( rect() );
 			p.drawText( rect(), cell.c );
 			}

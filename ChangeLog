@@ -3,6 +3,7 @@
   	fix YZInterval::boudingRect()
   * qyzis :
   	fix QRect calculations for painting
+	fix cursor
 
 2006-07-06 panard
   * qyzis/factory.cpp :

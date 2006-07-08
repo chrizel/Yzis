@@ -79,6 +79,8 @@ class QYZisEdit : public QWidget {
 
 		QVariant inputMethodQuery ( Qt::InputMethodQuery query ) const;
 
+		QYZisView* view() const;
+
 	public slots :
 		void sendMultipleKey( const QString& keys );
 
@@ -144,11 +146,6 @@ class QYZisEdit : public QWidget {
 		QFontMetrics *standardBoldItalic;
 
 		bool isFontFixed;
-
-		/**
-		 * size of the left margin (used to draw line number)
-		 */
-		int marginLeft;
 
 		// last line number
 		QMap<int,QString> keys;

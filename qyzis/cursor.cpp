@@ -54,11 +54,12 @@ void QYZisCursor::setCursorType( shape type ) {
 	resize( w, h );
 }
 
-void QYZisCursor::paintEvent( QPaintEvent* ) {
+void QYZisCursor::paintEvent( QPaintEvent* pe ) {
+	Q_UNUSED(pe);
 	QPainter p( this );
 
 #define GET_cell \
-	YZDrawCell cell = mView->m_drawBuffer.at( mView->getRelativeScreenCursor() );
+	const YZDrawCell cell = mView->m_drawBuffer.at( mEditor->translateRealToPosition(pos()) );
 #define SET_pen \
 	p.setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : parentWidget()->palette().color(QPalette::Window) );
 

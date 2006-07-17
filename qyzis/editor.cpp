@@ -1,6 +1,6 @@
-/* This file is part of the Yzis libraries
+/* This file is part of the QYzis
  *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>,
- *  Copyright (C) 2004-2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2004-2006 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -42,6 +42,8 @@ QYZisEdit::QYZisEdit(QYZisView *parent)
 : QWidget( parent )
 {
 	mParent = parent;
+
+	m_useArea.setCoords(0,0,0,0);
 
 	setFocusPolicy( Qt::StrongFocus );
 
@@ -161,6 +163,8 @@ void QYZisEdit::updateArea( ) {
 
 	yzDebug() << "lines = " << lines;
 
+	m_useArea.setBottomRight( QPoint(GETX(columns), lines * fontMetrics().lineSpacing()) );
+
 	mParent->setVisibleArea( columns, lines );
 }
 
@@ -267,8 +271,8 @@ void QYZisEdit::paintEvent( QPaintEvent* pe ) {
 	QRect r = pe->rect();
 	r.setTopLeft( translateRealToAbsolutePosition( r.topLeft() ) );
 	r.setBottomRight( translateRealToAbsolutePosition( r.bottomRight() ) );
-	yzDebug() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() << 
-					" => " << r.topLeft() << "," << r.bottomRight() << endl;
+	//yzDebug() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() << 
+	//				" => " << r.topLeft() << "," << r.bottomRight() << endl;
 	// paint it
 	mParent->paintEvent( mParent->clipSelection( YZSelection( r ) ) );
 }
@@ -282,17 +286,24 @@ void QYZisEdit::setCursor( int c, int l ) {
 		x = width() - x - mCursor->width();
 	}
 	mCursor->move( x, l * fontMetrics().lineSpacing() );
+	mCursor->show();
 
 	// need for InputMethod (OverTheSpot)
 //	setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
 }
 
 void QYZisEdit::scroll( int dx, int dy ) {
-	QWidget::scroll( GETX(dx), dy * fontMetrics().lineSpacing() );
+	int rx = GETX(dx);
+	int ry = dy * fontMetrics().lineSpacing();
+	mCursor->hide();
+	QRect cursorRect = mCursor->rect();
+	cursorRect.moveTo( mCursor->pos() );
+	update(cursorRect);
+	QWidget::scroll( rx, ry, m_useArea );
 }
 
 void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
-	yzDebug() << "QYZisEdit::drawCell(" << x << "," << y <<"," << cell.c << ")" << endl;
+	//yzDebug() << "QYZisEdit::drawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
 	p->save();
 	bool has_bg = false;
 	if ( !cell.sel ) {
@@ -313,7 +324,7 @@ void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	}
 	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 
-	yzDebug() << "drawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
+	//yzDebug() << "drawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
 	//yzDebug() << "drawCell: fg=" << p->pen().color().name() << endl;
 	if ( has_bg )
 		p->eraseRect( r ); 
@@ -322,7 +333,7 @@ void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 }
 
 void QYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
-	yzDebug() << "QYZisEdit::drawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
+	//yzDebug() << "QYZisEdit::drawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
 	if ( clearChar.isSpace() ) {
 		// not needed as we called qt for repainting this widget, and autoFillBackground = True
 		return;

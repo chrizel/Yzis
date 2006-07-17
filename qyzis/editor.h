@@ -1,4 +1,5 @@
-/* This file is part of the Yzis libraries
+/* This file is part of QYzis
+ *  Copyright (C) 2006 Loic Pauleve <panard@inzenet.org>
  *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -120,9 +121,6 @@ class QYZisEdit : public QWidget {
 		//replace a char at idx on line ....
 		void replaceCharAt( QChar,int );
 
-		//number of lines
-		long lines();
-
 		virtual void focusInEvent( QFocusEvent * );
 		virtual void focusOutEvent( QFocusEvent * );
 
@@ -136,16 +134,14 @@ class QYZisEdit : public QWidget {
 		QSignalMapper* signalMapper;
 		QString keysToShortcut( const QString& keys );
 
+		/* area to use */
+		QRect m_useArea;
+
 		QYZisView *mParent;
 		QYZisCursor* mCursor;
 
-		QFontMetrics *standard;
-		QFontMetrics *standardBold;
-		QFontMetrics *standardBoldItalic;
-
 		bool isFontFixed;
 
-		// last line number
 		QMap<int,QString> keys;
 
 	friend class QYZisCursor;

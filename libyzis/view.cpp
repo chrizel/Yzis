@@ -1820,7 +1820,7 @@ void YZView::internalScroll( int dx, int dy ) {
 void YZView::paintEvent( const YZSelection& drawMap ) {
 	if ( drawMap.isEmpty() )
 		return;
-	yzDebug() << "YZView::paintEvent" << drawMap;
+	//yzDebug() << "YZView::paintEvent" << drawMap;
 
 	bool number = getLocalBooleanOption( "number" );
 	if ( number ) {
@@ -1883,8 +1883,8 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			tY = map[ mapIdx ].toPos().y();
 			interval_changed = true;
 		}
-		yzDebug("painting") << curX << "," << curY << ":painting interval " << map[ mapIdx ] 
-								<< " (changed=" << interval_changed << ")" << endl;
+		//yzDebug("painting") << curX << "," << curY << ":painting interval " << map[ mapIdx ] 
+		//						<< " (changed=" << interval_changed << ")" << endl;
 		if ( interval_changed ) {
 			m_drawBuffer.replace( map[ mapIdx ] - scrollCursor->screen() );
 			interval_changed = false;

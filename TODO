@@ -10,6 +10,7 @@
 
 cmake:
   - messages
+  - use INSTALL()
 
 libyzis:
   drawBuffer:
@@ -22,8 +23,9 @@ nyzis:
   - support bg color
 
 qyzis:
-  - use a different widget for line number displaying
   - configuration dialog
-=> apply changes to kyzis
+
+kyzis:
+  - extends qyzis
 
 # vi:et sw=2 ts=2:

@@ -34,6 +34,7 @@ class YZBuffer;
 class QLabel;
 class QYZisCommand;
 class QYZisCodeCompletion;
+class QYZisLineNumbers;
 
 class QSettings;
 
@@ -58,6 +59,8 @@ class QYZisView: public QWidget, public YZView
 		void setFocusCommandLine();
 		void setFocusMainWindow();
 		void scroll( int dx, int dy );
+
+		void setVisibleArea( int columns, int lines );
 
 		virtual void modeChanged(void);
 		virtual void syncViewInfo();
@@ -128,7 +131,7 @@ class QYZisView: public QWidget, public YZView
 		QLabel *m_central;
 		QLabel *l_mode, *l_fileinfo, *l_linestatus;
 
-		QVBoxLayout* m_lineNumber;
+		QYZisLineNumbers* m_lineNumbers;
 
 		QPainter* m_painter;
 };

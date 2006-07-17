@@ -286,7 +286,8 @@ void QYZisEdit::setCursor( int c, int l ) {
 		x = width() - x - mCursor->width();
 	}
 	mCursor->move( x, l * fontMetrics().lineSpacing() );
-	mCursor->show();
+	if ( !mCursor->isVisible() )
+		mCursor->show();
 
 	// need for InputMethod (OverTheSpot)
 //	setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
@@ -345,48 +346,6 @@ void QYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* 
 		int nb_char = mParent->getColumnsVisible() - x;
 		p->drawText( r, QString(nb_char, clearChar) );
 	}
-}
-
-void QYZisEdit::drawSetMaxLineNumber( int max ) {
-	// XXX do it in an other QWidget
-}
-void QYZisEdit::drawSetLineNumber( int y, int n, int h, QPainter* p ) {
-	// XXX do it in an other QWidget
-#if 0
-	fakeLine = n <= 0;
-
-	QRect r( 0, y*fontMetrics().lineSpacing(), GETX(marginLeft - spaceWidth), fontMetrics().lineSpacing() );
-	p->eraseRect( r );
-	if ( h == 0 ) {
-		p->save();
-		p->setPen( Qt::yellow ); // XXX Setting
-
-		QString num;
-		if ( !fakeLine && h == 0 )
-			num = QString::number( n );
-		num = num.rightJustified( marginLeft - 1, ' ' );
-		p->drawText( r, num );
-
-		p->restore();
-	}
-#endif
-}
-
-void QYZisEdit::drawMarginLeft( int min_y, int max_y, QPainter* p ) {
-	// XXX do it in an other QWidget
-#if 0
-	if ( marginLeft > 0 ) {
-		min_y *= fontMetrics().lineSpacing();
-		max_y *= fontMetrics().lineSpacing();
-
-		int x = GETX( marginLeft - spaceWidth );
-		yzDebug() << "::drawMarginLeft bg : " << p->background().color().name() << endl;
-		p->eraseRect( x, min_y, GETX(spaceWidth), max_y - min_y );
-
-		x += GETX(spaceWidth) / 2;
-		p->drawLine( x, min_y, x, max_y );
-	}
-#endif
 }
 
 void QYZisEdit::initKeys() {

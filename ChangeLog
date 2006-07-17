@@ -12,6 +12,7 @@
   * qyzis :
   	- start parsing command line
   	- lot of fixes for paint
+	- display line numbers in a separate widget
 
 2006-07-08 panard
   * libyzis/selection.cpp :

@@ -36,6 +36,7 @@
 #include "factory.h"
 #include "debug.h"
 #include "qyzis.h"
+#include "linenumbers.h"
 
 QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	: YZView( _buffer, QYZisFactory::self(), 10 ), buffer( _buffer ), m_popup( 0 )
@@ -67,16 +68,21 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	status->addWidget(l_linestatus, 0); // was status->insertItem("",99,0,true);
 //	status->setItemAlignment(99,Qt::AlignRight);
 
-	m_lineNumber = new QVBoxLayout();
+	m_lineNumbers = new QYZisLineNumbers(this);
 
-	g = new QGridLayout(this);
-	g->addLayout( m_lineNumber, 0, 0 );
-	g->addWidget( m_editor, 0, 1 );
-	g->addWidget( mVScroll, 0, 2 );
-	g->addWidget( command, 1, 0, 1, g->columnCount() );
-	g->addWidget( status, 2, 0, 1, g->columnCount() );
+	QHBoxLayout* editorLayout = new QHBoxLayout();
+	editorLayout->setMargin(0);
+	editorLayout->setSpacing(0);
+	editorLayout->addWidget( m_lineNumbers );
+	editorLayout->addWidget( m_editor );
+	editorLayout->addWidget( mVScroll );
 
-	//m_lineNumber->hide();
+	QVBoxLayout* viewLayout = new QVBoxLayout( this );
+	viewLayout->setMargin(0);
+	viewLayout->setSpacing(0);
+	viewLayout->addLayout( editorLayout );
+	viewLayout->addWidget( command );
+	viewLayout->addWidget( status );
 
 //	setupActions();
 	setupKeys();
@@ -121,11 +127,16 @@ void QYZisView::scroll( int dx, int dy ) {
 	m_editor->scroll( dx, dy );
 }
 
+void QYZisView::setVisibleArea( int columns, int lines ) {
+	m_lineNumbers->setLineCount( lines );
+	YZView::setVisibleArea( columns, lines );
+}
+
 void QYZisView::refreshScreen() {
 	bool o_number = getLocalBooleanOption("number");
-	//if ( o_number != m_lineNumber.isVisible() ) {
-	//	m_lineNumber.setVisible(o_number);
-	//}
+	if ( o_number != m_lineNumbers->isVisible() ) {
+		m_lineNumbers->setVisible(o_number);
+	}
 	YZView::refreshScreen();
 }
 
@@ -183,15 +194,10 @@ void QYZisView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
 }
 void QYZisView::drawSetMaxLineNumber( int max ) {
 	mVScroll->setMaximum( max );
-/*	m_editor->drawSetMaxLineNumber( max ); */
+	m_lineNumbers->setMaxLineNumber( max );
 }
 void QYZisView::drawSetLineNumber( int y, int n, int h ) {
-	return;
-	for ( int i = m_lineNumber->count(); i <= y; ++i ) {
-		m_lineNumber->addWidget( new QLabel() );
-	}
-	QLabel* ln = dynamic_cast<QLabel*>(m_lineNumber->itemAt( y )->widget());
-	ln->setText( h == 0 ? QString::number(n) : ""  );
+	m_lineNumbers->setLineNumber( y, h, n );
 }
 int QYZisView::stringWidth( const QString& str ) const {
 	return m_editor->fontMetrics().width( str );
@@ -253,7 +259,9 @@ void QYZisView::applyConfig( const QSettings& settings, bool refresh ) {
 	QFont default_font;
 	default_font.setStyleHint(QFont::TypeWriter);
 	default_font.setFamily("Courier");
-	m_editor->setFont( settings.value("appearance/font", default_font).value<QFont>() );
+	QFont user_font = settings.value("appearance/font", default_font).value<QFont>();
+	m_editor->setFont( user_font );
+	m_lineNumbers->setFont( user_font );
 
 	QPalette default_palette;
 	default_palette.setColor( QPalette::Window, Qt::black );

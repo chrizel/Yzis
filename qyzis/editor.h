@@ -88,11 +88,6 @@ class QYZisEdit : public QWidget {
 		void paintEvent( const YZSelection& drawMap );
 		void drawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
 		void drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p );
-		void drawSetMaxLineNumber( int max );
-		void drawSetLineNumber( int y, int n, int h, QPainter* p );
-
-		void drawMarginLeft( int min_y, int max_y, QPainter* p );
-		
 
 		//intercept tabs
 		virtual bool event(QEvent*);
@@ -126,8 +121,6 @@ class QYZisEdit : public QWidget {
 
 		// for InputMethod
 		void inputMethodEvent ( QInputMethodEvent * );
-
-		bool fakeLine;
 
 	private :
 		void initKeys();

@@ -17,6 +17,7 @@ set(qyzis_SRCS
    cursor.cpp 
    editor.cpp 
    factory.cpp 
+   linenumbers.cpp 
    main.cpp 
    qyzis.cpp
    viewwidget.cpp 
@@ -28,6 +29,7 @@ set(qyzis_MOC
    cursor.h
    editor.h
    factory.h
+   linenumbers.h
    qyzis.h
    viewwidget.h
 )

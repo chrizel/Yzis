@@ -159,6 +159,9 @@ YZSelection::YZSelection( const QString& name ) {
 	mName = name;
 	mMap.clear();
 }
+YZSelection::YZSelection( const YZInterval& i ) {
+	addInterval( i );
+}
 void YZSelection::setMap( const YZSelectionMap& m ) {
 	clear();
 	mMap = m;

@@ -94,17 +94,18 @@ class YZIS_EXPORT YZInterval {
 		YZBound mFrom;
 		YZBound mTo;
 };
-const YZInterval operator-( const YZInterval& l, const YZCursor& r );
+YZIS_EXPORT const YZInterval operator-( const YZInterval& l, const YZCursor& r );
 
 typedef QMap<unsigned int, YZInterval> YZSelectionMap;
 
 class YZIS_EXPORT YZSelection {
 
-	friend YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s );
+	friend YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s );
 
 	public:
 		YZSelection();
 		YZSelection( const QString& name );
+		YZSelection( const YZInterval& i );
 
 		YZSelectionMap map() const;
 		void setMap( const YZSelectionMap& m );

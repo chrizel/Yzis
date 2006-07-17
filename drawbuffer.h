@@ -82,6 +82,9 @@ class YZIS_EXPORT YZDrawBuffer {
 
 		void replace( const YZInterval& interval );
 
+		/* scroll dx to the right and dy downward */
+		void scroll( int dx, int dy );
+
 		void setSelectionLayout( YZSelectionPool::Layout_enum layout, const YZSelection& selection );
 
 	private :

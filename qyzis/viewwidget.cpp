@@ -117,12 +117,8 @@ void QYZisView::setFocusCommandLine() {
 	command->setFocus();
 }
 
-void QYZisView::scrollDown( int n ) {
-	m_editor->scrollDown( n );
-}
-
-void QYZisView::scrollUp( int n ) {
-	m_editor->scrollUp( n );
+void QYZisView::scroll( int dx, int dy ) {
+	m_editor->scroll( dx, dy );
 }
 
 void QYZisView::refreshScreen() {
@@ -139,7 +135,7 @@ void QYZisView::notifyContentChanged( const YZSelection& s ) {
 	YZSelectionMap m = s.map();
 	// convert each interval to QWidget coordinates and update
 	for( int i = 0; i < m.size(); ++i ) {
-		YZInterval interval = m[i];
+		YZInterval interval = m[i] - getScreenPosition();
 		QRect r;
 		if ( interval.fromPos().y() == interval.toPos().y() ) {
 			r = interval.boundingRect();

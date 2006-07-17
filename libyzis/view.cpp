@@ -1,7 +1,7 @@
 /* This file is part of the Yzis libraries
  *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
  *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>.
- *  Copyright (C) 2003-2005 Loic Pauleve <panard@inzenet.org>
+ *  Copyright (C) 2003-2006 Loic Pauleve <panard@inzenet.org>
  *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
  *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
  *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
@@ -31,10 +31,6 @@
 #include "viewcursor.h"
 #include "debug.h"
 #include "undo.h"
-#ifdef HAVE_LIBPS
-//#include "printer.h"
-#endif
-//#include "qtprinter.h"
 #include "cursor.h"
 #include "internal_options.h"
 #include "registers.h"
@@ -432,10 +428,12 @@ void YZView::alignViewBufferVertically( int line ) {
 	} else {
 		scrollCursor->reset();
 	}
-	if ( old_dCurrentTop > scrollCursor->screenY() && old_dCurrentTop - scrollCursor->screenY() < mLinesVis ) {
-		scrollUp( old_dCurrentTop - scrollCursor->screenY() );
-	} else if ( old_dCurrentTop < scrollCursor->screenY() && scrollCursor->screenY() - old_dCurrentTop < mLinesVis ) {
-		scrollDown( scrollCursor->screenY() - old_dCurrentTop );
+	if ( old_dCurrentTop == scrollCursor->screenY() ) {
+		/* nothing has changed */
+		return;
+	} else if ( qAbs(old_dCurrentTop - scrollCursor->screenY()) < mLinesVis ) {
+		/* optimisation: we can scroll */
+		internalScroll( 0, old_dCurrentTop - scrollCursor->screenY() );
 	} else {
 		sendRefreshEvent();
 	}
@@ -482,10 +480,12 @@ void YZView::alignViewVertically( int line ) {
 		scrollCursor->reset();
 	}
 
-	if ( old_dCurrentTop > scrollCursor->screenY() && old_dCurrentTop - scrollCursor->screenY() < mLinesVis ) {
-		scrollUp( old_dCurrentTop - scrollCursor->screenY() );
-	} else if ( old_dCurrentTop < scrollCursor->screenY() && scrollCursor->screenY() - old_dCurrentTop < mLinesVis ) {
-		scrollDown( scrollCursor->screenY() - old_dCurrentTop );
+	if ( old_dCurrentTop == scrollCursor->screenY() ) {
+		/* nothing has changed */
+		return;
+	} else if ( qAbs(old_dCurrentTop - scrollCursor->screenY()) < mLinesVis ) {
+		/* optimisation: we can scroll */
+		internalScroll( 0, old_dCurrentTop - scrollCursor->screenY() );
 	} else {
 		sendRefreshEvent();
 	}
@@ -1014,22 +1014,22 @@ void YZView::setFixedFont( bool fixed ) {
 	spaceWidth = GET_CHAR_WIDTH( ' ' );
 }
 
-bool YZView::isColumnVisible( int column, int  ) {
+bool YZView::isColumnVisible( int column, int  ) const {
 	return ! (column < scrollCursor->screenX() || column >= (scrollCursor->screenX() + mColumnsVis));
 }
-bool YZView::isLineVisible( int l ) { 
+bool YZView::isLineVisible( int l ) const {
 	return ( ( l >= scrollCursor->screenY() ) && ( l < mLinesVis + scrollCursor->screenY() ) );
 }
-int YZView::getCurrentTop() { 
+int YZView::getCurrentTop() const { 
 	return scrollCursor->bufferY(); 
 }
-int YZView::getDrawCurrentTop() {
+int YZView::getDrawCurrentTop() const {
 	return scrollCursor->screenY();
 }
-int YZView::getCurrentLeft() { 
+int YZView::getCurrentLeft() const {
 	return scrollCursor->bufferX();
 }
-int YZView::getDrawCurrentLeft() {
+int YZView::getDrawCurrentLeft() const {
 	return scrollCursor->screenX();
 }
 
@@ -1636,6 +1636,9 @@ const YZCursor &YZView::getBufferCursor() const {
 YZCursor YZView::getRelativeScreenCursor() const {
 	return (QPoint)mainCursor->screen() - scrollCursor->screen();
 }
+YZCursor YZView::getScreenPosition() const {
+	return scrollCursor->screen();
+}
 
 void YZView::recordMacro( const QList<QChar> &regs ) {
 	mRegs = regs;
@@ -1651,6 +1654,11 @@ void YZView::stopRecordMacro() {
 		YZSession::me->setRegister( mRegs.at(ab), list);
 	}
 	mRegs = QList<QChar>();
+}
+
+YZSelection YZView::clipSelection( const YZSelection& sel ) const {
+	YZCursor bottomRight = scrollCursor->screen() + YZCursor(getColumnsVisible()-1,getLinesVisible()-1);
+	return sel.clip( YZInterval(scrollCursor->screen(),bottomRight) );
 }
 
 void YZView::setPaintAutoCommit( bool enable ) {
@@ -1673,7 +1681,7 @@ void YZView::commitPaintEvent() {
 			YZCursor bottomRight = scrollCursor->screen();
 			bottomRight.setX( bottomRight.x() + getColumnsVisible() );
 			bottomRight.setY( bottomRight.y() + getLinesVisible() );
-			notifyContentChanged( mPaintSelection->clip( YZInterval( scrollCursor->screen(), bottomRight ) ) );
+			notifyContentChanged( clipSelection(*mPaintSelection) );
 		}
 		abortPaintEvent();
 	}
@@ -1801,6 +1809,11 @@ int YZView::getSpaceWidth() const
 	return spaceWidth;
 }
 
+void YZView::internalScroll( int dx, int dy ) {
+	m_drawBuffer.scroll( dx, dy );
+	scroll( dx, dy );
+}
+
 /**
  * default implementation for paintEvent
  */
@@ -1870,6 +1883,8 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			tY = map[ mapIdx ].toPos().y();
 			interval_changed = true;
 		}
+		yzDebug("painting") << curX << "," << curY << ":painting interval " << map[ mapIdx ] 
+								<< " (changed=" << interval_changed << ")" << endl;
 		if ( interval_changed ) {
 			m_drawBuffer.replace( map[ mapIdx ] - scrollCursor->screen() );
 			interval_changed = false;
@@ -1888,7 +1903,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			drawSetLineNumber( curY - shiftY, drawLineNumber(), lineHeight() - 1 );
 		}
 
-		if ( drawIt ) {
+		if ( drawIt && curY > fY ) {
 			m_drawBuffer.newline( curY - shiftY );
 		}
 		while( drawNextCol() ) {

@@ -55,8 +55,7 @@ class QYZisEdit : public QWidget {
 
 		//move cursor to position column, line relative to viewport
 		void setCursor(int c,int l);
-		void scrollUp( int );
-		void scrollDown( int );
+		void scroll( int dx, int dy );
 
 		QYZisCursor::shape cursorShape();
 		void updateCursor();
@@ -74,8 +73,7 @@ class QYZisEdit : public QWidget {
 
 		QPoint translatePositionToReal( const YZCursor& c ) const;
 		YZCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
-
-		QPoint cursorCoordinates( );
+		YZCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
 
 		QVariant inputMethodQuery ( Qt::InputMethodQuery query ) const;
 

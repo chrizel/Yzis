@@ -121,19 +121,6 @@ YZView* QYZisFactory::doCreateView( YZBuffer *buffer ) {
 	return view;
 }
 
-/*
-QYZTextEditorIface *QYZisFactory::createTextEditorIface() {
-	KLibFactory *factory = KLibLoader::self()->factory("libkyzispart");
-	if (!factory) {
-		yzDebug() << "QyzisFactory::createBuffer() called with no factory, discarding" << endl;
-		return 0;
-	}
-	
-	QObject *obj = factory->create(Qyzis::me, "kyzispart", "KParts::ReadWritePart");
-	return dynamic_cast<QYZTextEditorIface*>(obj);
-}
-*/
-
 YZBuffer *QYZisFactory::doCreateBuffer() {
 	return new YZBuffer;
 }

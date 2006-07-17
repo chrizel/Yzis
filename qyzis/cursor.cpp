@@ -29,6 +29,9 @@ QYZisCursor::QYZisCursor( QYZisEdit* edit, shape type ) : QWidget( edit )  {
 	mView = edit->view();
 
 	setAutoFillBackground( false );
+	setAttribute( Qt::WA_NoSystemBackground );
+	setAttribute( Qt::WA_PaintOnScreen );
+	setAttribute( Qt::WA_OpaquePaintEvent );
 
 	move( 0, 0 );
 	setCursorType( type );

@@ -81,19 +81,18 @@ YZCursor QYZisEdit::translateRealToPosition( const QPoint& p, bool ceil ) const 
 	int height = fontMetrics().lineSpacing();
 	int width = isFontFixed ? fontMetrics().maxWidth() : 1;
 
-	int x_r = p.x() % width;
 	int x = p.x() / width;
-	int y_r = p.y() % height;
 	int y = p.y() / height;
 	if ( ceil ) {
-		if ( y_r )
+		if ( p.y() % height )
 			++y;
-		if ( x_r )
+		if ( p.x() % width )
 			++x;
 	}
-	x += mParent->getDrawCurrentLeft();
-	y += mParent->getDrawCurrentTop();
 	return YZCursor( x, y );
+}
+YZCursor QYZisEdit::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const {
+	return translateRealToPosition( p, ceil ) + mParent->getScreenPosition();
 }
 
 void QYZisEdit::setPalette( const QPalette& p, qreal opacity ) {
@@ -151,9 +150,17 @@ void QYZisEdit::updateArea( ) {
 	spaceWidth = mParent->getSpaceWidth();
 	updateCursor();
 
+	yzDebug() << "isFontFixed = " << isFontFixed << endl;
+	yzDebug() << "lineheight = " << fontMetrics().lineSpacing() << endl;
+	yzDebug() << "maxwidth = " << fontMetrics().maxWidth() << endl;
+	yzDebug() << "height = " << height();
+
 	int lines = height() / fontMetrics().lineSpacing();
 	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget
 	int columns = width() / GETX(1);
+
+	yzDebug() << "lines = " << lines;
+
 	mParent->setVisibleArea( columns, lines );
 }
 
@@ -210,7 +217,7 @@ void QYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 	
 	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
 		if ( mParent->modePool()->currentType() != YZMode::MODE_EX ) {
-			mParent->gotodxdyAndStick( translateRealToPosition( e->pos() ) );
+			mParent->gotodxdyAndStick( translateRealToAbsolutePosition( e->pos() ) );
 		}
 	} else if ( e->button() == Qt::MidButton ) {
 		QString text = QApplication::clipboard()->text( QClipboard::Selection );
@@ -234,7 +241,7 @@ void QYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 			mParent->modePool()->push( YZMode::MODE_VISUAL );
 		} else if (mParent->modePool()->current()->isSelMode() ) {
 			// already in visual mode - move cursor if the mouse pointer has moved over a new char
-			YZCursor pos = translateRealToPosition( e->pos() );
+			YZCursor pos = translateRealToAbsolutePosition( e->pos() );
 			if ( pos != mParent->getCursor() ) {
 				mParent->gotodxdy( pos.x(), pos.y() );
 			}
@@ -258,15 +265,12 @@ void QYZisEdit::resizeEvent(QResizeEvent* e) {
 void QYZisEdit::paintEvent( QPaintEvent* pe ) {
 	// convert QPaintEvent rect to yzis coordinate
 	QRect r = pe->rect();
-	r.setTopLeft( translateRealToPosition( r.topLeft(), false ) );
-	r.setBottomRight( translateRealToPosition( r.bottomRight(), true ) );
-	// make that rect a selection
-	YZSelection s;
-	s.addInterval( r );
-//	yzDebug() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() << " => "
-//									<< r.topLeft() << "," << r.bottomRight() << endl;
-	// ask for drawing it
-	mParent->paintEvent( s );
+	r.setTopLeft( translateRealToAbsolutePosition( r.topLeft() ) );
+	r.setBottomRight( translateRealToAbsolutePosition( r.bottomRight() ) );
+	yzDebug() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() << 
+					" => " << r.topLeft() << "," << r.bottomRight() << endl;
+	// paint it
+	mParent->paintEvent( mParent->clipSelection( YZSelection( r ) ) );
 }
 
 void QYZisEdit::setCursor( int c, int l ) {
@@ -283,21 +287,12 @@ void QYZisEdit::setCursor( int c, int l ) {
 //	setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
 }
 
-QPoint QYZisEdit::cursorCoordinates( ) {
-	return QPoint( mCursor->x(), mCursor->y() );
-}
-
-void QYZisEdit::scrollUp( int n ) {
-	mCursor->hide();
-	scroll( 0, n * fontMetrics().lineSpacing() );
-	mCursor->show();
-}
-void QYZisEdit::scrollDown( int n ) {
-	scrollUp( -n );
+void QYZisEdit::scroll( int dx, int dy ) {
+	QWidget::scroll( GETX(dx), dy * fontMetrics().lineSpacing() );
 }
 
 void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
-//	yzDebug() << "QYZisEdit::drawCell(" << x << "," << y <<"," << cell.c << ")" << endl;
+	yzDebug() << "QYZisEdit::drawCell(" << x << "," << y <<"," << cell.c << ")" << endl;
 	p->save();
 	bool has_bg = false;
 	if ( !cell.sel ) {
@@ -308,16 +303,18 @@ void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 			p->setBackground( QColor(cell.bg.rgb()) );
 		}
 	} else if ( cell.sel & YZSelectionPool::Visual ) {
+		has_bg = true;
 		p->setBackground( QColor(181, 24, 181)  ); //XXX setting
-		has_bg = true;
+		p->setPen( Qt::white );
 	} else {
-		p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
 		has_bg = true;
+		p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
 		p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
 	}
 	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 
-//	yzDebug() << "drawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
+	yzDebug() << "drawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
+	//yzDebug() << "drawCell: fg=" << p->pen().color().name() << endl;
 	if ( has_bg )
 		p->eraseRect( r ); 
 	p->drawText( r, cell.c );
@@ -325,7 +322,7 @@ void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 }
 
 void QYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
-//	yzDebug() << "QYZisEdit::drawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
+	yzDebug() << "QYZisEdit::drawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
 	if ( clearChar.isSpace() ) {
 		// not needed as we called qt for repainting this widget, and autoFillBackground = True
 		return;

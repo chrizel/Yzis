@@ -57,8 +57,7 @@ class QYZisView: public QWidget, public YZView
 		QString getCommandLineText() const;
 		void setFocusCommandLine();
 		void setFocusMainWindow();
-		void scrollDown( int l=1 );
-		void scrollUp( int l=1 );
+		void scroll( int dx, int dy );
 
 		virtual void modeChanged(void);
 		virtual void syncViewInfo();

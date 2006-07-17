@@ -55,15 +55,16 @@ void YZDrawBuffer::reset() {
 void YZDrawBuffer::flush() {
 	changed = false;
 
-	if ( m_cell == NULL || m_cell->c.length() == 0 )
+	if ( m_cell == NULL || m_cell->c.isEmpty() )
 		return;
 	/* call callback with the undrawed part of section */
 	QString keep( m_cell->c );
 	m_cell->c = m_cell->c.mid( v_x - v_xi );
-	callback( v_x, m_y, *m_cell );
-
-	/* move cursor */
-	v_x += m_cell->c.length();
+	if ( !m_cell->c.isEmpty() ) {
+		callback( v_x, m_y, *m_cell );
+		/* move cursor */
+		v_x += m_cell->c.length();
+	}
 	m_cell->c = keep;
 }
 
@@ -129,6 +130,7 @@ void YZDrawBuffer::push( const QString& c ) {
 }
 
 void YZDrawBuffer::newline( int y ) {
+	yzDebug("drawbuffer") << "YZDrawBuffer::newline " << y << endl;
 	flush();
 	insert_line( y );
 }
@@ -236,7 +238,7 @@ void YZDrawBuffer::applyPosition() {
 
 void YZDrawBuffer::replace( const YZInterval& interval ) {
 	flush();
-//	yzDebug() << "replace " << interval << endl;
+	yzDebug() << "YZDrawBuffer::replace " << interval << endl;
 //	yzDebug() << "before replace:" << endl << (*this) << "----" << endl;
 	int fx = interval.fromPos().x();
 	int fy = interval.fromPos().y();
@@ -301,6 +303,23 @@ void YZDrawBuffer::replace( const YZInterval& interval ) {
 		}
 	}
 //	yzDebug() << "after replace:" << endl << (*this) << "----" << endl;
+}
+
+void YZDrawBuffer::scroll( int dx, int dy ) {
+	// TODO: implement scroll to the left/right
+	if ( dy < 0 ) {
+		// remove top lines
+		m_content.remove(0,qAbs(dy));
+	} else if ( dy > 0 ) {
+		// add empty top lines
+		for ( int i = 0; i < dy; ++i )
+			insert_line(0);
+		// clip
+		int max = m_view->getLinesVisible();
+		if ( m_content.size() > max ) {
+			m_content.remove( max, m_content.size() - max );
+		}
+	}
 }
 
 void YZDrawBuffer::setSelectionLayout( YZSelectionPool::Layout_enum layout, const YZSelection& selection ) {

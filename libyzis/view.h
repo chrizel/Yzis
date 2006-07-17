@@ -124,41 +124,41 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Returns the index of the first line displayed on the view
 		 */
-		int getCurrentTop();
-		int getDrawCurrentTop();
+		int getCurrentTop() const;
+		int getDrawCurrentTop() const;
 
 		/**
 		 * Returns the index of the first "buffer" column displayed on the view
 		 * (does not care about tabs, wrapping ...)
 		 */
-		int getCurrentLeft();
+		int getCurrentLeft() const;
 
 		/**
 		 * Returns the index of the first "screen" column displayed on the view
 		 * (does care about tabs, wrapping ...)
 		 */
-		int getDrawCurrentLeft();
+		int getDrawCurrentLeft() const;
 
 		/**
 		 * returns the number of line this view can display
 		 */
-		int getLinesVisible() { return mLinesVis; }
+		int getLinesVisible() const { return mLinesVis; }
 
 		/**
 		 * returns the number of lines this view can display
 		 * @return the number of visible lines
 		 */
-		int getColumnsVisible() { return mColumnsVis; }
+		int getColumnsVisible() const { return mColumnsVis; }
 
 		/**
 		 * Returns true if the line @arg l is visible. False otherwise.
 		 */
-		bool	isLineVisible(int l);
+		bool	isLineVisible(int l) const;
 
 		/**
 		 * Returns true if the column @arg c is visible for @arg line ( expanding TABs ). False otherwise
 		 */
-		bool	isColumnVisible(int column, int line);
+		bool	isColumnVisible(int column, int line) const;
 
 		//-------------------------------------------------------
 		// ----------------- Associated Objects
@@ -227,8 +227,10 @@ class YZIS_EXPORT YZView {
 		 */
 		void alignViewVertically(int line);
 
-		virtual void scrollUp( int ) = 0;
-		virtual void scrollDown( int ) = 0;
+		/**
+		 * scroll dx to the right and dy downward
+		 */
+		virtual void scroll( int dx, int dy ) = 0;
 
 		//-------------------------------------------------------
 		// ----------------- Command Input Buffer
@@ -754,9 +756,19 @@ class YZIS_EXPORT YZView {
 		QString getCharBelow( int delta );
 
 		/*
-		 * @returns curren srcreen YZCursor relative to top-left screen corner
+		 * @returns screen top-left corner position
+		 */
+		YZCursor getScreenPosition() const;
+
+		/*
+		 * @returns current screen YZCursor relative to top-left screen corner
 		 */
 		YZCursor getRelativeScreenCursor() const;
+
+		/**
+		 * returns a YZSelection which fit view
+		 */
+		YZSelection clipSelection( const YZSelection& sel ) const;
 
 	public slots :
 		void sendMultipleKey( const QString& keys );
@@ -784,6 +796,11 @@ class YZIS_EXPORT YZView {
 		YZDrawBuffer m_drawBuffer;
 
 	private:
+
+		/*
+		 * scroll draw buffer and view
+		 */
+		void internalScroll( int dx, int dy );
 
 		class  ViewInformation {
 			public:

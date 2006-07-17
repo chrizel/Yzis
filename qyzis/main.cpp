@@ -15,13 +15,12 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <qapplication.h>
-//#include <ktempfile.h>
-#include <qtranslator.h>
-#include <qtextcodec.h>
-#include <qtimer.h>
+#include <QApplication>
+#include <QTimer>
+
 #include <libintl.h>
 #include <locale.h>
+
 #include "libyzis/translator.h"
 #include "libyzis/session.h"
 #include "libyzis/view.h"
@@ -34,45 +33,40 @@
 int main(int argc, char **argv) {
 	QApplication app(argc, argv);
 
-	QCoreApplication::setOrganizationName("Yzis");
-	QCoreApplication::setOrganizationDomain("yzis.org");
-	QCoreApplication::setApplicationName("QYzis");
+	app.setOrganizationName("Yzis");
+	app.setOrganizationDomain("yzis.org");
+	app.setApplicationName("QYzis");
 
 	setlocale( LC_ALL, "");
 	bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
 	bind_textdomain_codeset( "yzis", "UTF-8" );
 	textdomain( "yzis" );
 
-	// see if we are starting with session management
-//	if (app.isRestored())
-//				RESTORE(Kyzis)
-//	else
-	{
-		// no session.. just start up normally
-		Qyzis *widget = new Qyzis(0);
-		widget->show();
-		
-		/* TODO : handles remaining argc/argv 
-		if ( args->count() == 0 ) {
-			YZView *view = QYZisFactory::self()->createBufferAndView();
-			view->myBuffer()->openNewFile();
-			view->displayIntro();
-		} else {
-			for ( int i = 0; i < args->count(); i++ ) {
-				YZView *view = QYZisFactory::self()->createBufferAndView();
-				YZSession::me->setCurrentView(view);
-				widget->load( args->url( i ) );
-			}
+	Qyzis* mw = new Qyzis();
+	mw->show();
+
+	QStringList args = app.arguments();
+
+	YZView* first = NULL;
+	YZView* v;
+	for ( int i = 1; i < args.count(); ++i ) {
+		if ( args.at(i)[0] != '-' ) {
+			v = QYZisFactory::self()->createBufferAndView( args.at(i) );
+			if ( !first) 
+				first = v;
 		}
-		*/
-		YZView *view = QYZisFactory::self()->createBufferAndView();
-		view->myBuffer()->openNewFile();
-		view->displayIntro();
-
-		QTimer::singleShot(0, widget, SLOT( init() ));
-
-		//args->clear();
 	}
+	if ( !first ) {
+		/* no view opened */
+		first = QYZisFactory::self()->createBufferAndView();
+		first->myBuffer()->openNewFile();
+		first->displayIntro();
+	}
+
+	QYZisFactory::self()->setCurrentView( first );
+
+	QTimer::singleShot(0, mw, SLOT( init() ));
 
 	return app.exec();
 }
+

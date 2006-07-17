@@ -1,3 +1,18 @@
+2006-07-17 panard
+  * libyzis/drawbuffer.cpp :
+  	- scroll(int dx,int dy) (dx not implemented)
+	- don't send empty draw cells
+  * libyzis/selection.cpp :
+  	- YZSelection( const YZInterval& ) ctor
+  * libyzis/view.cpp :
+    - make sure scrolling calls drawbuffer.scroll before
+	- some const-ify
+	- clipSelection( const YZSelection& ) : clip selection to fit the view
+	- merge scrollUp and scrollDown into generic scroll(int dx,int dy)
+  * qyzis :
+  	- start parsing command line
+  	- lot of fixes for paint
+
 2006-07-08 panard
   * libyzis/selection.cpp :
   	fix YZInterval::boudingRect()

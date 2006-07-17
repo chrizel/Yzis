@@ -25,6 +25,8 @@
 #include "view.h"
 #include "cursor.h"
 #include <ncursesw/ncurses.h>
+#define curses_scroll scroll
+#undef scroll
 #include <QMap>
 #include <QDataStream>
 #include <QStringList>
@@ -51,8 +53,7 @@ public:
 	virtual void displayInfo(  const QString& info );
 	void paintEvent( const YZSelection& drawMap );
 
-	void scrollUp( int );
-	void scrollDown( int );
+	void scroll( int dx, int dy );
 
 	/**
 	  * Used when this view becomes viewable, that

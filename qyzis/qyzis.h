@@ -22,15 +22,11 @@
 #include <config.h>
 #endif
 
-//#include <Q3DockWindow>
-//#include <Q3PopupMenu>
 #include <qapplication.h>
 #include <qmainwindow.h>
 #include <qmap.h>
 
 #include "viewid.h"
-
-class QYZTextEditorIface;
 
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
@@ -49,7 +45,7 @@ public:
 	 * @param dockConfig the configuration of dock widgets
 	 * @param mode the startup MDI mode
      */
-    Qyzis(QWidget *w, const QString& initialKeys=QString::null);
+    Qyzis(QWidget *w = 0, const QString& initialKeys=QString::null);
 
     /**
      * Default Destructor

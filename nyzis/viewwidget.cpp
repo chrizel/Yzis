@@ -108,21 +108,18 @@ void NYZView::updateVis( bool refresh ) {
 	setVisibleArea( width - marginLeft, height - 2, refresh );
 }
 
-void NYZView::scrollUp( int n ) {
+void NYZView::scroll( int dx, int dy ) {
 	scrollok( editor, true );
-	wscrl( editor, - n );
+	wscrl( editor, -dy );
 	scrollok( editor, false );
-	int top = getDrawCurrentTop();
-	int left = getDrawCurrentLeft();
-	sendPaintEvent( YZCursor( left, top ), YZCursor( left + getColumnsVisible(), top + n ) );
-}
 
-void NYZView::scrollDown( int n ) {
-	scrollok( editor, true );
-	wscrl( editor, n );
-	scrollok( editor, false );
-	int top = getDrawCurrentTop() + getLinesVisible() - n;
 	int left = getDrawCurrentLeft();
+	int top = getDrawCurrentTop();
+	int n = qAbs(dy);
+	if ( dy < 0 ) {
+		/* redraw the new bottom */
+		top += getLinesVisible() - n;
+	}
 	sendPaintEvent( YZCursor( left, top ), YZCursor( left + getColumnsVisible(), top + n ) );
 }
 

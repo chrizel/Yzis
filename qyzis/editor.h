@@ -135,7 +135,7 @@ class QYZisEdit : public QWidget {
 
 		bool isFontFixed;
 
-		QMap<int,QString> keys;
+		static QMap<int,QString> keys;
 
 	friend class QYZisCursor;
 	friend class QYZisView;

@@ -183,22 +183,27 @@ bool QYZisEdit::event(QEvent *e) {
 }
 
 void QYZisEdit::keyPressEvent ( QKeyEvent * e ) {
+	//yzDebug() << "keyPressEvent: text=" << e->text() << ", key=" << e->key() << ", mod=" << e->modifiers() << endl;
 	Qt::KeyboardModifiers st = e->modifiers();
 	QString modifiers;
-	if ( st & Qt::ShiftModifier )
+	if ( st & Qt::ShiftModifier ) {
 		modifiers = "<SHIFT>";
-	if ( st & Qt::AltModifier )
+	}
+	if ( st & Qt::AltModifier ) {
 		modifiers += "<ALT>";
-	if ( st & Qt::ControlModifier )
+	}
+	if ( st & Qt::ControlModifier ) {
 		modifiers += "<CTRL>";
+	}
+	QString text;
+	if ( !keys.contains(e->key()) ) {
+		text = e->text();
+	} else {
+		text = keys[ e->key() ];
+	}
+	//yzDebug() << "====> modifiers = " << modifiers << ", text=" << text << endl;
 
-	QString k;
-	if ( keys.contains( e->key() ) ) //to handle some special keys
-		k = keys[ e->key() ];
-	else
-		k = e->text();
-
-	mParent->sendKey(k, modifiers);
+	mParent->sendKey(text, modifiers);
 	e->accept();
 }
 
@@ -349,72 +354,99 @@ void QYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* 
 }
 
 void QYZisEdit::initKeys() {
-	keys[ Qt::Key_Escape ] = "<ESC>" ;
-	keys[ Qt::Key_Tab ] = "<TAB>" ;
-	keys[ Qt::Key_Backtab ] = "<BTAB>" ;
-	keys[ Qt::Key_Backspace ] = "<BS>" ;
-	keys[ Qt::Key_Return ] = "<ENTER>" ;
-	keys[ Qt::Key_Enter ] = "<ENTER>" ;
-	keys[ Qt::Key_Insert ] = "<INS>" ;
-	keys[ Qt::Key_Delete ] = "<DEL>" ;
-	keys[ Qt::Key_Pause ] = "<PAUSE>" ;
-	keys[ Qt::Key_Print ] = "<PRINT>" ;
-	keys[ Qt::Key_SysReq ] = "<SYSREQ>" ;
-	keys[ Qt::Key_Home ] = "<HOME>" ;
-	keys[ Qt::Key_End ] = "<END>" ;
-	keys[ Qt::Key_Left ] = "<LEFT>" ;
-	keys[ Qt::Key_Up ] = "<UP>" ;
-	keys[ Qt::Key_Right ] = "<RIGHT>" ;
-	keys[ Qt::Key_Down ] = "<DOWN>" ;
-	keys[ Qt::Key_PageUp ] = "<PUP>" ;
-	keys[ Qt::Key_PageDown ] = "<PDOWN>" ;
-	keys[ Qt::Key_Shift ] = "<SHIFT>" ;
-	keys[ Qt::Key_Control ] = "<CTRL>" ;
-	keys[ Qt::Key_Meta ] = "<META>" ;
-	keys[ Qt::Key_Alt ] = "<ALT>" ;
-//hmm ignore it	keys[ Qt::Key_CapsLock ] = "<CAPSLOCK>" ;
-//hmm ignore it	keys[ Qt::Key_NumLock ] = "<NUMLOCK>" ;
-//hmm ignore it	keys[ Qt::Key_ScrollLock ] = "<SCROLLLOCK>" ;
-	keys[ Qt::Key_Clear ] = "<CLEAR>" ;
-	keys[ Qt::Key_F1 ] = "<F1>" ;
-	keys[ Qt::Key_F2 ] = "<F2>" ;
-	keys[ Qt::Key_F3 ] = "<F3>" ;
-	keys[ Qt::Key_F4 ] = "<F4>" ;
-	keys[ Qt::Key_F5 ] = "<F5>" ;
-	keys[ Qt::Key_F6 ] = "<F6>" ;
-	keys[ Qt::Key_F7 ] = "<F7>" ;
-	keys[ Qt::Key_F8 ] = "<F8>" ;
-	keys[ Qt::Key_F9 ] = "<F9>" ;
-	keys[ Qt::Key_F10 ] = "<F10>" ;
-	keys[ Qt::Key_F11 ] = "<F11>" ;
-	keys[ Qt::Key_F12 ] = "<F12>" ;
-	keys[ Qt::Key_F13 ] = "<F13>" ;
-	keys[ Qt::Key_F14 ] = "<F14>" ;
-	keys[ Qt::Key_F15 ] = "<F15>" ;
-	keys[ Qt::Key_F16 ] = "<F16>" ;
-	keys[ Qt::Key_F17 ] = "<F17>" ;
-	keys[ Qt::Key_F18 ] = "<F18>" ;
-	keys[ Qt::Key_F19 ] = "<F19>" ;
-	keys[ Qt::Key_F20 ] = "<F20>" ;
-	keys[ Qt::Key_F21 ] = "<F21>" ;
-	keys[ Qt::Key_F22 ] = "<F22>" ;
-	keys[ Qt::Key_F23 ] = "<F23>" ;
-	keys[ Qt::Key_F24 ] = "<F24>" ;
-	keys[ Qt::Key_F25 ] = "<F25>" ;
-	keys[ Qt::Key_F26 ] = "<F26>" ;
-	keys[ Qt::Key_F27 ] = "<F27>" ;
-	keys[ Qt::Key_F28 ] = "<F28>" ;
-	keys[ Qt::Key_F29 ] = "<F29>" ;
-	keys[ Qt::Key_F30 ] = "<F30>" ;
-	keys[ Qt::Key_F31 ] = "<F31>" ;
-	keys[ Qt::Key_F32 ] = "<F32>" ;
-	keys[ Qt::Key_F33 ] = "<F33>" ;
-	keys[ Qt::Key_F34 ] = "<F34>" ;
-	keys[ Qt::Key_F35 ] = "<F35>" ;
-//	keys[ Qt::Key_BracketLeft ] = "[";
-//	keys[ Qt::Key_BracketRight ] = "]";
-
-
+	if ( keys.empty() ) {
+		/* initialize keys */
+		keys[ Qt::Key_A ] = "a";
+		keys[ Qt::Key_B ] = "b";
+		keys[ Qt::Key_C ] = "c";
+		keys[ Qt::Key_D ] = "d";
+		keys[ Qt::Key_E ] = "e";
+		keys[ Qt::Key_F ] = "f";
+		keys[ Qt::Key_G ] = "g";
+		keys[ Qt::Key_H ] = "h";
+		keys[ Qt::Key_I ] = "i";
+		keys[ Qt::Key_J ] = "j";
+		keys[ Qt::Key_K ] = "k";
+		keys[ Qt::Key_L ] = "l";
+		keys[ Qt::Key_M ] = "m";
+		keys[ Qt::Key_N ] = "n";
+		keys[ Qt::Key_O ] = "o";
+		keys[ Qt::Key_P ] = "p";
+		keys[ Qt::Key_Q ] = "q";
+		keys[ Qt::Key_R ] = "r";
+		keys[ Qt::Key_S ] = "s";
+		keys[ Qt::Key_T ] = "t";
+		keys[ Qt::Key_U ] = "u";
+		keys[ Qt::Key_V ] = "v";
+		keys[ Qt::Key_W ] = "w";
+		keys[ Qt::Key_X ] = "x";
+		keys[ Qt::Key_Y ] = "y";
+		keys[ Qt::Key_Z ] = "z";
+		keys[ Qt::Key_Escape ] = "<ESC>";
+		keys[ Qt::Key_Tab ] = "<TAB>" ;
+		keys[ Qt::Key_Backtab ] = "<BTAB>" ;
+		keys[ Qt::Key_Backspace ] = "<BS>" ;
+		keys[ Qt::Key_Return ] = "<ENTER>" ;
+		keys[ Qt::Key_Enter ] = "<ENTER>" ;
+		keys[ Qt::Key_Insert ] = "<INS>" ;
+		keys[ Qt::Key_Delete ] = "<DEL>" ;
+		keys[ Qt::Key_Pause ] = "<PAUSE>" ;
+		keys[ Qt::Key_Print ] = "<PRINT>" ;
+		keys[ Qt::Key_SysReq ] = "<SYSREQ>" ;
+		keys[ Qt::Key_Home ] = "<HOME>" ;
+		keys[ Qt::Key_End ] = "<END>" ;
+		keys[ Qt::Key_Left ] = "<LEFT>" ;
+		keys[ Qt::Key_Up ] = "<UP>" ;
+		keys[ Qt::Key_Right ] = "<RIGHT>" ;
+		keys[ Qt::Key_Down ] = "<DOWN>" ;
+		keys[ Qt::Key_PageUp ] = "<PUP>" ;
+		keys[ Qt::Key_PageDown ] = "<PDOWN>" ;
+		keys[ Qt::Key_Shift ] = "<SHIFT>" ;
+		keys[ Qt::Key_Control ] = "<CTRL>" ;
+		keys[ Qt::Key_Meta ] = "<META>" ;
+		keys[ Qt::Key_Alt ] = "<ALT>" ;
+	//hmm ignore it	keys[ Qt::Key_CapsLock ] = "<CAPSLOCK>" ;
+	//hmm ignore it	keys[ Qt::Key_NumLock ] = "<NUMLOCK>" ;
+	//hmm ignore it	keys[ Qt::Key_ScrollLock ] = "<SCROLLLOCK>" ;
+		keys[ Qt::Key_Clear ] = "<CLEAR>" ;
+		keys[ Qt::Key_F1 ] = "<F1>" ;
+		keys[ Qt::Key_F2 ] = "<F2>" ;
+		keys[ Qt::Key_F3 ] = "<F3>" ;
+		keys[ Qt::Key_F4 ] = "<F4>" ;
+		keys[ Qt::Key_F5 ] = "<F5>" ;
+		keys[ Qt::Key_F6 ] = "<F6>" ;
+		keys[ Qt::Key_F7 ] = "<F7>" ;
+		keys[ Qt::Key_F8 ] = "<F8>" ;
+		keys[ Qt::Key_F9 ] = "<F9>" ;
+		keys[ Qt::Key_F10 ] = "<F10>" ;
+		keys[ Qt::Key_F11 ] = "<F11>" ;
+		keys[ Qt::Key_F12 ] = "<F12>" ;
+		keys[ Qt::Key_F13 ] = "<F13>" ;
+		keys[ Qt::Key_F14 ] = "<F14>" ;
+		keys[ Qt::Key_F15 ] = "<F15>" ;
+		keys[ Qt::Key_F16 ] = "<F16>" ;
+		keys[ Qt::Key_F17 ] = "<F17>" ;
+		keys[ Qt::Key_F18 ] = "<F18>" ;
+		keys[ Qt::Key_F19 ] = "<F19>" ;
+		keys[ Qt::Key_F20 ] = "<F20>" ;
+		keys[ Qt::Key_F21 ] = "<F21>" ;
+		keys[ Qt::Key_F22 ] = "<F22>" ;
+		keys[ Qt::Key_F23 ] = "<F23>" ;
+		keys[ Qt::Key_F24 ] = "<F24>" ;
+		keys[ Qt::Key_F25 ] = "<F25>" ;
+		keys[ Qt::Key_F26 ] = "<F26>" ;
+		keys[ Qt::Key_F27 ] = "<F27>" ;
+		keys[ Qt::Key_F28 ] = "<F28>" ;
+		keys[ Qt::Key_F29 ] = "<F29>" ;
+		keys[ Qt::Key_F30 ] = "<F30>" ;
+		keys[ Qt::Key_F31 ] = "<F31>" ;
+		keys[ Qt::Key_F32 ] = "<F32>" ;
+		keys[ Qt::Key_F33 ] = "<F33>" ;
+		keys[ Qt::Key_F34 ] = "<F34>" ;
+		keys[ Qt::Key_F35 ] = "<F35>" ;
+		keys[ Qt::Key_BracketLeft ] = "[";
+		keys[ Qt::Key_BracketRight ] = "]";
+	}
 	signalMapper = new QSignalMapper( this );
 	connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMultipleKey( const QString& ) ) );
 }
@@ -501,4 +533,7 @@ void QYZisEdit::imEndEvent( QIMEvent *e ) {
 	}
 	e->accept();
 }*/
+
+
+QMap<int,QString> QYZisEdit::keys;
 

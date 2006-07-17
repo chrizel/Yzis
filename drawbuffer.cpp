@@ -130,7 +130,7 @@ void YZDrawBuffer::push( const QString& c ) {
 }
 
 void YZDrawBuffer::newline( int y ) {
-	yzDebug("drawbuffer") << "YZDrawBuffer::newline " << y << endl;
+//	yzDebug("drawbuffer") << "YZDrawBuffer::newline " << y << endl;
 	flush();
 	insert_line( y );
 }
@@ -238,7 +238,7 @@ void YZDrawBuffer::applyPosition() {
 
 void YZDrawBuffer::replace( const YZInterval& interval ) {
 	flush();
-	yzDebug() << "YZDrawBuffer::replace " << interval << endl;
+//	yzDebug() << "YZDrawBuffer::replace " << interval << endl;
 //	yzDebug() << "before replace:" << endl << (*this) << "----" << endl;
 	int fx = interval.fromPos().x();
 	int fy = interval.fromPos().y();
@@ -324,7 +324,7 @@ void YZDrawBuffer::scroll( int dx, int dy ) {
 
 void YZDrawBuffer::setSelectionLayout( YZSelectionPool::Layout_enum layout, const YZSelection& selection ) {
 	m_sel[ layout ].setMap( selection.map() );
-	yzDebug() << "setSelection: " << layout << "=" << m_sel[layout] << endl;
+//	yzDebug() << "setSelection: " << layout << "=" << m_sel[layout] << endl;
 }
 
 YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff ) {

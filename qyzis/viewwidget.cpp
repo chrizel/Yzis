@@ -125,6 +125,7 @@ void QYZisView::setFocusCommandLine() {
 
 void QYZisView::scroll( int dx, int dy ) {
 	m_editor->scroll( dx, dy );
+	m_lineNumbers->scroll( dy );
 }
 
 void QYZisView::setVisibleArea( int columns, int lines ) {

@@ -1,0 +1,159 @@
+
+% pdflatex book template
+% this file is part of the kdissert templates
+% http://freehackers.org/~tnagy/kdissert/index.html
+% created by Thomas Nagy <tnagy2^8@yahoo.fr> in 2004
+%
+% permission is granted to redistribute copies and
+% derivated work of this file without restrictions
+%
+
+% main latex includes
+\documentclass[a4paper,12pt]{report}
+%\usepackage[T1]{fontenc} % on some systems T1 looks ugly
+%\usepackage[cyr]{aeguill}
+
+\usepackage[pdftex]{graphicx}
+\DeclareGraphicsExtensions{.png,.pdf,.jpg,.jpeg}
+
+\usepackage[pdftex,
+bookmarks=true,
+bookmarksnumbered=true,
+pdfpagemode=None,
+pdfstartview=FitH,
+pdfpagelayout=SinglePage,
+colorlinks=true,
+urlcolor=magenta,
+pdfborder={0 0 0}
+]{hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%interesting settings for the page layout
+
+%\setlength{\hoffset}{-18pt}
+%\setlength{\oddsidemargin}{0pt}  % left margin, odd pages
+%\setlength{\evensidemargin}{9pt}  % left margin, even pages
+%\setlength{\marginparwidth}{54pt} 
+%\setlength{\textwidth}{481pt}  % set the text width to about 17cm
+%\setlength{\marginparsep}{7pt}
+%\setlength{\topmargin}{0pt}  % no margin on top
+%\setlength{\headheight}{13pt}
+%\setlength{\headsep}{10pt} 
+%\setlength{\footskip}{27pt}
+%\setlength{\textheight}{700pt}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% miscalleneous packages
+
+% \usepackage[frenchb]{babel} % use this if you are French
+% \usepackage{verbatim} % include eg: source code easily
+% \usepackage[utf8]{inputenc} or \usepackage[latin1]{inputenc}
+
+% If you are on Fedora Core you may have problems with accents
+% in this case replace the accentuated characters like this :
+%
+%  é -> \'e
+%  è -> \`e
+%  ê -> \^e and so on
+%
+% To automate the replacement you can make yourself a script
+% here is a handy command-line for doing this :
+% perl -pi -e "s/é/\\\'e/g" main.tex
+
+\usepackage{amsmath}
+% math extension - one probably wants to use symbols like '[' (written as '$[$')
+% or $\epsilon$
+
+% see mymacros.sty - print nice chapter headers
+
+\makeatletter
+\def\@makechapterhead#1{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \interlinepenalty\@M
+    \ifnum \c@secnumdepth >\m@ne
+        \Huge\bfseries \thechapter\quad
+    \fi
+    \Huge \bfseries #1\par\nobreak
+    \vskip 40\p@
+  }}
+
+\def\@makeschapterhead#1{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright
+    \normalfont
+    \interlinepenalty\@M
+    \Huge \bfseries  #1\par\nobreak
+    \vskip 40\p@
+  }}
+\makeatother
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% headers and footers for your document
+\usepackage{fancyheadings}
+
+% count the number of pages for display on footer
+\usepackage{lastpage}
+
+% width of the line for headers and footers
+\headrulewidth 0.5pt
+\footrulewidth 0.5pt
+%\addtolength{\headwidth}{\marginparsep}
+
+% uncomment the following lines for headers
+% the following command need picture files : "logo-school.jpg" 
+% and "logo-company.jpg" in the project directory
+%
+%        \lhead{\sl \includegraphics[height=1.1cm]{logo-school}}
+%        \chead{}
+%        \rhead{\sl \includegraphics[height=1.2cm]{logo-company}}
+
+
+\usepackage{ucs}
+\usepackage[utf8]{inputenc}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%document headers and footers
+\lhead{}
+\chead{}
+\rhead{}
+\lfoot{The Yzis Development team}
+\cfoot{\thepage/\pageref{LastPage}}
+\rfoot{ \today } % -> \rfoot{\number\month/\number\day/\number\year} 
+\pagestyle{fancyplain}
+
+
+
+\title{The Yzis User Handbook}
+\date{\today}
+\author{The Yzis Development team}
+
+\begin{document}
+\maketitle
+\tableofcontents
+
+% 
+
+
+\chapter{Introduction}
+
+
+
+\chapter{Frequently Asked Questions}
+
+
+
+\chapter{Command Reference}
+
+
+
+\chapter{Incompatibilities with Vi and Vim}
+
+
+
+\end{document}
+

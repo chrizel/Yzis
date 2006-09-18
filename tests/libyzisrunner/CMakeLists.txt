@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/libyzis/ ${CMAKE_SOURCE_DIR}/libyzis/ ${QT_INCLUDES}  )
 
@@ -12,5 +11,3 @@ install_targets(/bin libyzisrunner )
 
 
 ########### install files ###############
-kde4_footer()
-

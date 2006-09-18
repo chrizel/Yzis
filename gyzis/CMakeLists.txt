@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( ${CMAKE_SOURCE_DIR}/libyzis/ ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
 
@@ -23,9 +22,6 @@ install_targets(/bin gyzis )
 ########### install files ###############
 
 install_files( ${APPLNK_INSTALL_DIR}/Editeurs FILES  gyzis.desktop )
-
-kde4_footer()
-
 
 
 #original Makefile.am contents follow:

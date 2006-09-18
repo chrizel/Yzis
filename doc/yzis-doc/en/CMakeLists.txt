@@ -1,13 +1,31 @@
-kde4_header()
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
 
+#	for i in $(top_srcdir)/doc/yzis-doc/en/*.xml; do \
+#		xmlto pdf -o $(top_builddir)/doc/yzis-doc/en/pdf $$i; \
+#	done
+ADD_CUSTOM_COMMAND( 
+	OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/faq.pdf
+	COMMAND   xmlto
+	ARGS      pdf -o ${CMAKE_CURRENT_SOURCE_DIR}/yzis-doc.xml
+	DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/yzis-doc.xml
+	COMMENT   "xmlto"
+)
 
-########### install files ###############
 
+ADD_CUSTOM_COMMAND( 
+	OUTPUT    ${CMAKE_CURRENT_BINARY_DIR}/faq.pdf
+	COMMAND   docbook2pdf
+	ARGS      ${CMAKE_CURRENT_SOURCE_DIR}/faq.docbook
+	DEPENDS   ${CMAKE_CURRENT_SOURCE_DIR}/faq.docbook
+	COMMENT   "docbook2pdf"
+)
 
-kde4_footer()
+add_custom_target(docbook ALL echo
+	DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/faq.pdf
+)
 
+#faq.docbook introduction.docbook reference.docbook commandref.docbook incompabilities.docbook userguide.docbook
 
 
 #original Makefile.am contents follow:

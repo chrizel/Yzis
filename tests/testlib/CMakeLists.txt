@@ -1,4 +1,3 @@
-kde4_header()
 
 include_directories( ${KDE4_INCLUDE_DIR} ${QT_INCLUDES}  )
 
@@ -30,10 +29,6 @@ install_targets(/bin test_drawbuffer )
 
 
 ########### install files ###############
-
-
-kde4_footer()
-
 
 
 #original Makefile.am contents follow:

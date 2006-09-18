@@ -1,5 +1,23 @@
 project(yzis)
 
+#enable_testing()
+#include(CTest)
+
+# Always include srcdir and builddir in include path
+# This saves typing ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY} in about every subdir
+# since cmake 2.4.0
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+# put the include dirs which are in the source or build tree
+# before all other include dirs, so the headers in the sources
+# are prefered over the already installed ones
+# since cmake 2.4.1
+set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
+
+# Use colored output
+# since cmake 2.4.0
+set(CMAKE_COLOR_MAKEFILE ON)
+
 cmake_minimum_required(VERSION 2.4.1 FATAL_ERROR)
 
 set(CMAKE_COLOR_MAKEFILE ON)
@@ -115,4 +133,5 @@ endif (ENABLE_TESTS)
 add_subdirectory( translations )
 add_subdirectory( syntax )
 add_subdirectory( scripts )
+add_subdirectory( doc )
 

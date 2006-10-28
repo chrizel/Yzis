@@ -261,8 +261,8 @@ void YZColor::setRgb( QRgb rgb ) {
 void YZColor::setNamedColor( const QString& name ) {
 	invalidate();
 	if ( !name.isEmpty() ) {
-		const char* n = name.toLatin1();
-		int len = qstrlen( n );
+		QByteArray n = name.toLatin1();
+		int len = qstrlen(  n.constData() );
 		if (name[0] == '#') {
 			QString hex( name.mid(1) );
 			--len;

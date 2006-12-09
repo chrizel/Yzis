@@ -234,8 +234,7 @@ Classes in the core \verb+libyzis+ are prefixed with \emph{YZ} like in
 \verb+YZBuffer+ or \verb+YZView+.
 Classes in client specific code have yet another letter prefixed. The
 letter are \emph{G}, \emph{Q}, \emph{K}, \emph{N} for Gtk, Qt, KDE
-and ncurses clients, respectively. So for example you'll find 
-\verb++
+and ncurses clients, respectively.
 
 \section{Source code tree}
 Here's a brief description of yzis source code :
@@ -330,6 +329,24 @@ Phil ?
 
 Phil ?
 
+you can use the following macros
+\begin{verbatim}
+YZASSERT_MSG( assertion, msg )
+YZASSERT( assertion )
+YZASSERT_EQUALS( a, b )
+\end{verbatim}
+
+If you want to write some debugging message, please use the following
+stream. You can add an argument(text, as in "rendering", for example) to specify an debug area.
+\begin{verbatim}
+yzDebug() yzWarning() yzError() yzFatal()
+\end{verbatim}
+Example~:
+\begin{verbatim}
+yzDebug("rendering") << "my message" << endl;
+\end{verbatim}
+
+
 \section{Scripting}
 
 who ?
@@ -341,6 +358,17 @@ Thomas.
 \chapter{qyzis, Qt-only client}
 
 Thomas.
+
+\chapter{Developer FAQ}
+
+What's the mess with symbol \verb+scroll+ ?
+
+The ncurses library (only used by nyzis) defines a MACRO with such a name.
+This creates big clashes with Qt API as some classes (QWidget for example)
+have methods with this name. Nyzis handles this using some hack (see
+viewWidget.h), but to ease handling this, the word \verb+scroll+ should
+just not be used anywhere in libyzis.
+
 
 \end{document}
 

@@ -30,7 +30,7 @@
 #include "debug.h"
 #include "yzis.h"
 #include "qyzis.h"
-#include "session.h"
+#include "qsession.h"
 
 
 int main(int argc, char **argv) {

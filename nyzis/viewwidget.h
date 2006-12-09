@@ -22,14 +22,21 @@
  * ncurses-based GUI for yzis
  */
 
-#include "view.h"
-#include "cursor.h"
+/* Std */
 #include <ncursesw/ncurses.h>
+// This is an ugly hack preventing the compiler to shock on scroll (used in
+// both Qt API and (as a macro!) in ncurwses
 #define curses_scroll scroll
 #undef scroll
+
+/* Qt */
 #include <QMap>
 #include <QDataStream>
 #include <QStringList>
+
+/* Yzis */
+#include "view.h"
+#include "cursor.h"
 
 #include <drawbuffer.h>
 
@@ -53,7 +60,7 @@ public:
 	virtual void displayInfo(  const QString& info );
 	void paintEvent( const YZSelection& drawMap );
 
-	void scroll( int dx, int dy );
+	void Scroll( int dx, int dy );
 
 	/**
 	  * Used when this view becomes viewable, that

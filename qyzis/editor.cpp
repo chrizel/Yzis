@@ -32,7 +32,7 @@
 #include "editor.h"
 #include "debug.h"
 #include "yzis.h"
-#include "session.h"
+#include "qsession.h"
 #include "registers.h"
 #include "viewwidget.h"
 

@@ -35,7 +35,7 @@
 #endif
 
 /* Yzis */
-#include "session.h"
+#include "qsession.h"
 #include "viewwidget.h"
 #include "debug.h"
 #include "yzis.h"

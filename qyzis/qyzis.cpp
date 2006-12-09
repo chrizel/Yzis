@@ -21,7 +21,7 @@
 #include <QMessageBox>
 #include <qmenubar.h>
 
-#include "session.h"
+#include "qsession.h"
 #include "viewid.h"
 #include "viewwidget.h"
 #include "qyzis.h"

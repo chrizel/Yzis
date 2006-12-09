@@ -16,7 +16,7 @@ set(qyzis_SRCS
    configuredialog.cpp
    cursor.cpp 
    editor.cpp 
-   session.cpp 
+   qsession.cpp 
    linenumbers.cpp 
    main.cpp 
    qyzis.cpp
@@ -28,7 +28,7 @@ set(qyzis_MOC
    configuredialog.h
    cursor.h
    editor.h
-   session.h
+   qsession.h
    linenumbers.h
    qyzis.h
    viewwidget.h

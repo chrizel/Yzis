@@ -43,7 +43,7 @@
 
 /* nyzis */
 #include "debug.h"
-#include "session.h"
+#include "nsession.h"
 
 /* X11 */
 #include <X11/Xlib.h>

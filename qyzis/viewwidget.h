@@ -57,7 +57,7 @@ class QYZisView: public QWidget, public YZView
 		QString getCommandLineText() const;
 		void setFocusCommandLine();
 		void setFocusMainWindow();
-		void scroll( int dx, int dy );
+		void Scroll( int dx, int dy );
 
 		void setVisibleArea( int columns, int lines );
 

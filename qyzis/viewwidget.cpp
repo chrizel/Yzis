@@ -33,7 +33,7 @@
 
 #include "yzis.h"
 #include "mode_visual.h"
-#include "session.h"
+#include "qsession.h"
 #include "debug.h"
 #include "qyzis.h"
 #include "linenumbers.h"
@@ -123,7 +123,7 @@ void QYZisView::setFocusCommandLine() {
 	command->setFocus();
 }
 
-void QYZisView::scroll( int dx, int dy ) {
+void QYZisView::Scroll( int dx, int dy ) {
 	m_editor->scroll( dx, dy );
 	m_lineNumbers->scroll( dy );
 }

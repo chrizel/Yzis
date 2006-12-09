@@ -28,7 +28,7 @@
 
 /* yzis */
 #include "viewwidget.h"
-#include "session.h"
+#include "nsession.h"
 #include "color.h"
 
 const QRgb  RGB_MASK    = 0x00ffffff;                // masks RGB values
@@ -112,7 +112,7 @@ void NYZView::updateVis( bool refresh ) {
 	setVisibleArea( width - marginLeft, height - 2, refresh );
 }
 
-void NYZView::scroll( int dx, int dy ) {
+void NYZView::Scroll( int dx, int dy ) {
 	scrollok( editor, true );
 	wscrl( editor, -dy );
 	scrollok( editor, false );

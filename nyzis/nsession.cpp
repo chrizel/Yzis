@@ -24,7 +24,7 @@
 #include "debug.h"
 
 /* nyzis */
-#include "session.h"
+#include "nsession.h"
 
 NYZSession *NYZSession::self = 0;
 QMap<int,QString> NYZSession::keycodes; // map Ncurses to Qt codes

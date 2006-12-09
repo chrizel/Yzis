@@ -246,11 +246,7 @@ class YZIS_EXPORT YZModeCommand : public YZMode {
 		void tagPrev( const YZCommandArgs & args );
 		void undoJump( const YZCommandArgs & args );
 
-#if QT_VERSION < 0x040000
-		QPtrList<const YZCommand> commands;
-#else
 		QList<YZCommand*> commands;
-#endif
 		// this is not a QValueList because there is no constructor with no arguments for YZCommands
 		QStringList textObjects;
 

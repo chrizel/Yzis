@@ -21,14 +21,8 @@
 #define YZ_EVENTS
 
 #include "view.h"
-#if QT_VERSION < 0x040000
-#include <qstringlist.h>
-#include <qmap.h>
-#include <qobject.h>
-#else
 #include <QMap>
 #include <QStringList>
-#endif
 
 class YZEvents  {
 	public:

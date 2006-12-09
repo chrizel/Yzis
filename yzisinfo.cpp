@@ -55,11 +55,7 @@ YZYzisinfo::YZYzisinfo() {
 
 YZYzisinfo::YZYzisinfo( const QString & path ) {
 	
-#if QT_VERSION < 0x040000
-	mYzisinfo.setName( path );
-#else
 	mYzisinfo.setFileName( path );
-#endif
 }
 
 /**
@@ -87,11 +83,7 @@ void YZYzisinfo::readYzisinfo() {
 		
 		while ( !stream.atEnd() ) {
 			line = stream.readLine(); // line of text excluding '\n'
-#if QT_VERSION < 0x040000
-			line = line.stripWhiteSpace();
-#else
 			line = line.trimmed();
-#endif
 			
 			// Ignore empty lines
 			
@@ -178,11 +170,7 @@ void YZYzisinfo::readYzisinfo() {
 		
 		mYzisinfo.close();
 	} else {
-#if QT_VERSION < 0x040000
-		yzDebug() << "Unable to open file " << mYzisinfo.name() << endl;
-#else
 		yzDebug() << "Unable to open file " << mYzisinfo.fileName() << endl;
-#endif
 	}
 }
 

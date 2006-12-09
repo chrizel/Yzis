@@ -22,11 +22,7 @@
 #define YZ_QTPRINTER_H
 
 #include "view.h"
-#if QT_VERSION < 0x040000
-#include <qprinter.h>
-#else
 #include <QPrinter>
-#endif
 
 class YZView;
 

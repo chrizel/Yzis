@@ -22,12 +22,14 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "view.h"
-
-#include "portability.h"
+/* System */
 #include <cstdlib>
 #include <ctype.h>
 #include <math.h>
+
+/* Yzis */
+#include "view.h"
+#include "portability.h"
 #include "viewcursor.h"
 #include "debug.h"
 #include "undo.h"
@@ -35,6 +37,7 @@
 #include "internal_options.h"
 #include "registers.h"
 #include "buffer.h"
+#include "line.h"
 #include "swapfile.h"
 #include "mark.h"
 #include "action.h"

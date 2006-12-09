@@ -21,6 +21,7 @@
 #include <ctype.h>
 
 /* libyzis */
+#include "buffer.h"
 #include "debug.h"
 
 /* nyzis */

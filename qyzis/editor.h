@@ -22,7 +22,6 @@
 #define QYZISEDIT_H
 
 #include "cursor.h"
-#include "viewwidget.h"
 #include <libyzis/drawbuffer.h>
 
 #include <qpainter.h>

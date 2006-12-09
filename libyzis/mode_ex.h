@@ -25,11 +25,14 @@
 #ifndef YZ_MODE_EX_H
 #define YZ_MODE_EX_H
 
+/* Qt */
 #include <qregexp.h>
 
+/* yzis */
 #include "mode.h"
 #include "view.h"
 #include "yzismacros.h"
+#include "portability.h"
 
 class YZView;
 class YZExCommand;

@@ -23,13 +23,10 @@
 #ifndef YZ_BUFFER_H
 #define YZ_BUFFER_H
 
-#include "yzis.h"
 #include "syntaxhighlight.h"
-#include "line.h"
 #include "debug.h"
-#include "option.h"
-#include "view.h"
 #include "selection.h"
+#include "portability.h"
 
 class YZUndoBuffer;
 class YZAction;
@@ -37,6 +34,7 @@ class YZDocMark;
 class YZViewMark;
 class YZCursor;
 class YZSwapFile;
+class YZLine;
 class YZView;
 class YZViewId;
 

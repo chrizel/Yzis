@@ -25,7 +25,6 @@
 #include <qscrollbar.h>
 #include <qlayout.h>
 #include "cursor.h"
-#include "editor.h"
 #include "commandwidget.h"
 #include "view.h"
 

@@ -18,6 +18,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+
+/* Qt */
 #include <QEvent>
 #include <QFileDialog>
 #include <QLabel>
@@ -25,18 +27,19 @@
 #include <QSettings>
 #include <QTimer>
 #include <qapplication.h>
-#include <viewcursor.h>
 
-#include <debug.h>
-
+/* yzis */
 #include "viewwidget.h"
-
+#include "viewcursor.h"
 #include "yzis.h"
 #include "mode_visual.h"
 #include "qsession.h"
 #include "debug.h"
+#include "editor.h"
 #include "qyzis.h"
 #include "linenumbers.h"
+#include "buffer.h"
+#include <debug.h>
 
 QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	: YZView( _buffer, QYZisSession::self(), 10 ), buffer( _buffer ), m_popup( 0 )

@@ -20,18 +20,21 @@
 #ifndef YZ_OPTION
 #define YZ_OPTION
 
-#include "yzis.h"
+/* System */
+#include <limits.h> // for INT_MAX and INT_MIN
 
+/* Qt */
 #include <qstring.h>
 #include <qmap.h>
 #include <qstringlist.h>
-#include <limits.h> // for INT_MAX and INT_MIN
+
+/* yzis */
+#include "color.h"
+#include "yzis.h"
+
+
 
 typedef QMap<QString,QString> MapOption;
-
-#include "buffer.h"
-#include "view.h"
-#include "color.h"
 
 /**
  * Options Handling in libyzis
@@ -48,6 +51,8 @@ enum opt_action {
 };
 
 class YZOption;
+class YZView;
+class YZBuffer;
 
 class YZOptionValue {
 	public :

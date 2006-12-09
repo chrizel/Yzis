@@ -24,21 +24,24 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "portability.h"
-#include "tags_interface.h"
-
+/* System */
 #include <assert.h>
 
+/* Qt */
 #include <qdir.h>
 #include <qfileinfo.h>
 #include <qstringlist.h>
 #include <QVector>
 
-#include "debug.h"
-
+/* Yzis */
 #include "internal_options.h"
 #include "readtags.h"
+#include "portability.h"
+#include "tags_interface.h"
 #include "session.h"
+#include "debug.h"
+#include "view.h"
+#include "buffer.h"
 #include "tags_stack.h"
 
 static YZList<tagFile*> tagfilelist;

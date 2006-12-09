@@ -38,8 +38,6 @@
 #include "view.h"
 #include "cursor.h"
 
-#include <drawbuffer.h>
-
 class NYZSession;
 
 class NYZView : public YZView {

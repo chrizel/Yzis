@@ -26,7 +26,7 @@
 #include "viewwidget.h"
 #include "qyzis.h"
 #include "debug.h"
-
+#include "buffer.h"
 #include "configuredialog.h"
 
 Qyzis *Qyzis::me = NULL;

@@ -25,7 +25,6 @@
 #include <qmap.h>
 
 #include "cursor.h"
-#include "yzismacros.h"
 
 class YZCursor;
 

@@ -20,7 +20,9 @@
 #ifndef YZ_MODE_COMPLETE_H
 #define YZ_MODE_COMPLETE_H
 
+/* yzis */
 #include "mode.h"
+#include "cursor.h"
 #include "yzismacros.h"
 
 class YZBuffer;

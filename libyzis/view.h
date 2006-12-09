@@ -22,19 +22,14 @@
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
 
-#include "color.h"
-#include "selection.h"
-#include "mode.h"
-#include "option.h"
-#include "viewid.h"
-
-#include <qglobal.h>
-#include <QVector>
+/* Qt */
 #include <QCoreApplication>
 
+/* yzis */
+//#include "mode.h"
+#include "option.h"
+#include "viewid.h"
 #include "drawbuffer.h"
-class YZDrawBuffer;
-struct YZDrawCell;
 
 class YZViewCursor;
 class YZCursor;
@@ -49,6 +44,7 @@ class YZMode;
 class YZModeCompletion;
 class YZOptionValue;
 class YZFoldPool;
+struct YZDrawCell;
 
 /**
  * MUST be reimplemented in the GUI. 

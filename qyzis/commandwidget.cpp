@@ -20,6 +20,8 @@
 #include "viewwidget.h"
 #include "commandwidget.h"
 #include "debug.h"
+#include "editor.h"
+#include "mode.h"
 #include "view.h"
 
 QYZisCommand::QYZisCommand(QYZisView *parent)

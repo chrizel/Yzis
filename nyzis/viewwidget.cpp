@@ -22,13 +22,12 @@
 #include <ctype.h>
 
 /* Qt */
-#include <Qt>
 #include <qtimer.h>
 #include "debug.h"
 
 /* yzis */
-#include "viewwidget.h"
 #include "nsession.h"
+#include "buffer.h"
 #include "color.h"
 
 const QRgb  RGB_MASK    = 0x00ffffff;                // masks RGB values

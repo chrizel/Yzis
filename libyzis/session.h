@@ -22,10 +22,13 @@
 #ifndef YZ_SESSION_H
 #define YZ_SESSION_H
  
-#include "yzis.h"
-#include <QVector>
+/* Qt */
 
+/* yzis */
+//#include "yzis.h"
 #include "mode.h"  // for YZModeMap
+#include "viewid.h"
+#include "portability.h"
  
 class YZView;
 class YZBuffer;
@@ -35,6 +38,7 @@ class YZRegisters;
 class YZSearch;
 class YZEvents;
 class YZMode;
+class YZCursor;
 class YZModeEx;
 class YZModeCommand;
 class YZViewCursor;

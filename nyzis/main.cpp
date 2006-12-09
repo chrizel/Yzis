@@ -17,11 +17,16 @@
 */
 
 
-/* std c */
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
-#include <qtimer.h>
+
+/* System */
+#include <getopt.h> // getopt
+#include <locale.h>
+#include <cstdlib>
+#include <cstdio>
+#include <csignal>
 
 /* Qt */
 #include <qglobal.h>
@@ -29,17 +34,11 @@
 #include <QCoreApplication>
 #include <QTextCodec>
 #include <QSocketNotifier>
-
-#include <getopt.h> // getopt
-#include <locale.h>
-
-/* std c++ */
-#include <cstdlib>
-#include <cstdio>
-#include <csignal>
+#include <qtimer.h>
 
 /* libyzis */
 #include "libyzis/translator.h"
+#include "buffer.h"
 
 /* nyzis */
 #include "debug.h"
@@ -48,6 +47,7 @@
 /* X11 */
 #include <X11/Xlib.h>
 #include <libintl.h>
+
 
 typedef void ( *sighandler_t )( int );
 

@@ -40,6 +40,8 @@
 #include "debug.h"
 #include "yzis.h"
 #include "qyzis.h"
+#include "view.h"
+#include "buffer.h"
 #include "debug.h"
 
 QYZisSession* QYZisSession::m_instance = NULL;

@@ -31,6 +31,7 @@
 #include "yzis.h"
 #include "qyzis.h"
 #include "qsession.h"
+#include "buffer.h"
 
 
 int main(int argc, char **argv) {

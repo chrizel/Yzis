@@ -18,8 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <libyzis/drawbuffer.h>
-
 #include "cursor.h"
 #include "editor.h"
 #include "viewwidget.h"

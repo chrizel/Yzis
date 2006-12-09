@@ -18,8 +18,11 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+/* Std */
 #include <assert.h>
 #include <unistd.h>
+
+/* Qt */
 #include <qapplication.h>
 #include <qstring.h>
 #include <qmessagebox.h>
@@ -31,7 +34,8 @@
 #include <QX11Info>
 #endif
 
-#include "factory.h"
+/* Yzis */
+#include "session.h"
 #include "viewwidget.h"
 #include "debug.h"
 #include "yzis.h"

@@ -33,7 +33,7 @@
 
 #include "yzis.h"
 #include "mode_visual.h"
-#include "factory.h"
+#include "session.h"
 #include "debug.h"
 #include "qyzis.h"
 #include "linenumbers.h"

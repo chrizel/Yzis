@@ -17,14 +17,18 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+
+/* Std */
+#include <ctype.h>
+
+/* Qt */
 #include <Qt>
 #include <qtimer.h>
 #include "debug.h"
 
-#include <ctype.h>
-
+/* yzis */
 #include "viewwidget.h"
-#include "factory.h"
+#include "session.h"
 #include "color.h"
 
 const QRgb  RGB_MASK    = 0x00ffffff;                // masks RGB values

@@ -16,10 +16,15 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include "factory.h"
+/* Std */
 #include <unistd.h>
-#include "debug.h"
 #include <ctype.h>
+
+/* libyzis */
+#include "debug.h"
+
+/* nyzis */
+#include "session.h"
 
 NYZSession *NYZSession::self = 0;
 QMap<int,QString> NYZSession::keycodes; // map Ncurses to Qt codes

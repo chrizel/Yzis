@@ -5,11 +5,11 @@ include_directories(${YZIS_INCLUDES} ${NCURSES_INCLUDE_DIR})
 
 ########### next target ###############
 set(nyzis_SRCS
-   factory.cpp
+   session.cpp
    main.cpp
    viewwidget.cpp
 )
-set(nyzis_MOC factory.h)
+set(nyzis_MOC session.h)
 
 qt4_wrap_cpp( nyzis_MOC_SRCS ${nyzis_MOC} )
 add_executable(nyzis ${nyzis_SRCS} ${nyzis_MOC_SRCS} )

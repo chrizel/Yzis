@@ -15,19 +15,22 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#include <QApplication>
-#include <QTimer>
-
+/* St */
 #include <libintl.h>
 #include <locale.h>
 
+/* Qt */
+#include <QApplication>
+#include <QTimer>
+
+/* Yzis */
 #include "libyzis/translator.h"
 #include "libyzis/session.h"
 #include "libyzis/view.h"
 #include "debug.h"
 #include "yzis.h"
 #include "qyzis.h"
-#include "factory.h"
+#include "session.h"
 
 
 int main(int argc, char **argv) {

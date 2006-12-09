@@ -23,9 +23,12 @@
  * NYZSession - Ncurses main class for the whole session
  */
 
+/* curses */
+#include <ncursesw/ncurses.h>
+
+/* yzis */
 #include "viewwidget.h"
 #include "session.h"
-#include <ncursesw/ncurses.h>
 
 class YZViewId;
 

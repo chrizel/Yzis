@@ -22,6 +22,7 @@
 #define _GNU_SOURCE
 #endif
 #include <qtimer.h>
+
 /* Qt */
 #include <qglobal.h>
 #include <QWidget>
@@ -40,13 +41,12 @@
 /* libyzis */
 #include "libyzis/translator.h"
 
-/* yzis */
+/* nyzis */
 #include "debug.h"
-#include "factory.h"
+#include "session.h"
 
 /* X11 */
 #include <X11/Xlib.h>
-
 #include <libintl.h>
 
 typedef void ( *sighandler_t )( int );

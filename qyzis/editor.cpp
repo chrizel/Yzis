@@ -18,21 +18,24 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+/* Std */
+#include <math.h>
+#include <ctype.h>
+
+/* Qt */
 #include <QApplication>
 #include <QSignalMapper>
 #include <QWidget>
+#include <qclipboard.h>
+#include <qcursor.h>
 
 #include "editor.h"
 #include "debug.h"
 #include "yzis.h"
-#include "factory.h"
+#include "session.h"
 #include "registers.h"
 #include "viewwidget.h"
 
-#include <math.h>
-#include <qclipboard.h>
-#include <qcursor.h>
-#include <ctype.h>
 
 #include "qyzis.h"
 

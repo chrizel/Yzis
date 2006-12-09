@@ -306,6 +306,42 @@ such, it depends on both, as the constructor (asking for both
 \verb+YZSession+ and \verb+YZBuffer+). This is the class where rendering is
 done, closely with the core.
 
+\section{Data path}
+In this section, we describe the paths followed by the data (file,
+keyboard) among \emph{Yzis} architecture.
+
+During initialisation of the program, an instance of \verb+YZSession+ is
+created (or a subclass, most probably). This instance is unique, and is
+always present. Most of high level API is here (create/delete other
+important instances).
+For example, if you want to open a file, and create an associated view, you
+can use
+\begin{verbatim}
+session->createBufferAndView( myname);
+\end{verbatim}
+
+At every time, the session has a 'current view', which is the one receiving
+user input. For example in nyzis, there's only one view displayed at any
+time, this is the current view. In Qyzis or Kyzis, on the other way,
+several views are displayed, but only one window has the focus : this is
+the current view in the sens of \verb+YZSession+.
+
+The client handles the event loop. When a key event is received, it is sent
+to the \verb+libyzis+ core using the current view. For example in
+\verb+nyzis/nsession.cpp+ we can read :
+\begin{verbatim}
+currentView()->sendKey( QString( QChar( c ) ), modifiers );
+currentView()->sendKey( "<CTRL>]" );
+\end{verbatim}
+
+The core will do all what is needed : store the character in appropriate
+buffer, update all views for this buffer, if the character is \emph{enter},
+then some action might be taken, such as executing a command or whatever,
+depending on the current mode.
+
+Yzis core will use the API to call the upper GUI layer to display. (details
+are in section \ref{rendering}).
+
 
 
 \chapter{Componants description}
@@ -314,6 +350,7 @@ done, closely with the core.
 
 
 \section{Rendering}
+\label{rendering}
 
 Loic ?
 
@@ -346,6 +383,13 @@ Example~:
 yzDebug("rendering") << "my message" << endl;
 \end{verbatim}
 
+Most clients are graphical GUIs, and as such,
+they can use the \verb+stdout+ or \verb+stderr+ to print debugging
+messagse. But nyzis is using the console for user interaction, and this
+is not possible. This is why yzis debug messages are written in a file such
+as \verb+/tmp/yzisdebug-orzel.log+. To see them, I recommand the following
+command (use an alias) : \verb+tail --follow=name /tmp/yzisdebug-orzel.log+,
+that you start from another console.
 
 \section{Scripting}
 

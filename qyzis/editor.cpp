@@ -259,7 +259,7 @@ void QYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 }
 
 void QYZisEdit::focusInEvent ( QFocusEvent * ) {
-	QYZisFactory::self()->setCurrentView( mParent );
+	QYZisSession::self()->setCurrentView( mParent );
 	updateCursor();
 }
 void QYZisEdit::focusOutEvent ( QFocusEvent * ) {

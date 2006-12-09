@@ -18,8 +18,8 @@
  **/
 
 
-#ifndef QYZIS_FACTORY_H
-#define QYZIS_FACTORY_H
+#ifndef QYZIS_SESSION_H
+#define QYZIS_SESSION_H
 
 #include <QMap>
 
@@ -30,15 +30,15 @@ class YZBuffer;
 class QYZisView;
 class YZViewId;
 
-class QYZisFactory : public YZSession
+class QYZisSession : public YZSession
 {
 	Q_OBJECT
 public:
-	QYZisFactory();
-	virtual ~QYZisFactory();
+	QYZisSession();
+	virtual ~QYZisSession();
 
 
-	static QYZisFactory* self();
+	static QYZisSession* self();
 
 	//GUI interface
 	bool quit(int errorCode);
@@ -77,11 +77,12 @@ public slots:
 private:
 	
 	void changeCurrentView( YZView* );
-	static QYZisFactory* m_instance;
+	static QYZisSession* m_instance;
 
 public:
 	QYZisView *lastView;
 	QWidget *m_viewParent;
 };
 
-#endif
+#endif // QYZIS_SESSION_H
+

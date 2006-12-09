@@ -51,19 +51,19 @@ int main(int argc, char **argv) {
 	YZView* v;
 	for ( int i = 1; i < args.count(); ++i ) {
 		if ( args.at(i)[0] != '-' ) {
-			v = QYZisFactory::self()->createBufferAndView( args.at(i) );
+			v = QYZisSession::self()->createBufferAndView( args.at(i) );
 			if ( !first) 
 				first = v;
 		}
 	}
 	if ( !first ) {
 		/* no view opened */
-		first = QYZisFactory::self()->createBufferAndView();
+		first = QYZisSession::self()->createBufferAndView();
 		first->myBuffer()->openNewFile();
 		first->displayIntro();
 	}
 
-	QYZisFactory::self()->setCurrentView( first );
+	QYZisSession::self()->setCurrentView( first );
 
 	QTimer::singleShot(0, mw, SLOT( init() ));
 

@@ -21,11 +21,11 @@
 #include "debug.h"
 #include <ctype.h>
 
-NYZFactory *NYZFactory::self = 0;
-QMap<int,QString> NYZFactory::keycodes; // map Ncurses to Qt codes
+NYZSession *NYZSession::self = 0;
+QMap<int,QString> NYZSession::keycodes; // map Ncurses to Qt codes
 
 
-NYZFactory::NYZFactory(const char *session_name, const QString& keys)
+NYZSession::NYZSession(const char *session_name, const QString& keys)
 	: YZSession( session_name )
 {
 	m_initialCommand = keys;
@@ -48,7 +48,7 @@ NYZFactory::NYZFactory(const char *session_name, const QString& keys)
 	if ( has_colors() ) start_color();
 
 	if ( self ) {
-		yzFatal(NYZIS) << "Instanciating several NYZFactory, should Never happen, quitting..";
+		yzFatal(NYZIS) << "Instanciating several NYZSession, should Never happen, quitting..";
 		exitRequest(1);
 	}
 	self = this;
@@ -56,20 +56,20 @@ NYZFactory::NYZFactory(const char *session_name, const QString& keys)
 	initialiseKeycodes();
 }
 
-NYZFactory::~NYZFactory( )
+NYZSession::~NYZSession( )
 {
 	self = 0;
 }
 
-void NYZFactory::init() {
+void NYZSession::init() {
 	yzDebug() << "INIT " << endl;
 	if (m_initialCommand.length()) {
 		YZSession::me->sendMultipleKeys(m_initialCommand);
 	}
 }
 
-bool NYZFactory::processInput(int /*fd*/) {
-	YZASSERT_MSG( currentView(), "NYZFactory::event_loop : arghhhhhhh event_loop called with no currentView" );
+bool NYZSession::processInput(int /*fd*/) {
+	YZASSERT_MSG( currentView(), "NYZSession::event_loop : arghhhhhhh event_loop called with no currentView" );
 
 	wint_t c;
 
@@ -154,26 +154,26 @@ bool NYZFactory::processInput(int /*fd*/) {
 	return true;
 }
 
-void NYZFactory::setClipboardText( const QString& text, Clipboard::Mode mode ) {
+void NYZSession::setClipboardText( const QString& text, Clipboard::Mode mode ) {
 	// XXX
 }
 
-bool NYZFactory::quit( int errorCode ) {
+bool NYZSession::quit( int errorCode ) {
 	exit( errorCode );
 	return true;
 }
 
-void NYZFactory::setFocusMainWindow() {
+void NYZSession::setFocusMainWindow() {
 	NYZView *yv = static_cast<NYZView*>( currentView() );
 	yv->setFocusMainWindow();
 }
 
-void NYZFactory::setFocusCommandLine() {
+void NYZSession::setFocusCommandLine() {
 	NYZView *yv = static_cast<NYZView*>( currentView() );
 	yv->setFocusCommandLine();
 }
 
-void NYZFactory::changeCurrentView ( YZView * view  )
+void NYZSession::changeCurrentView ( YZView * view  )
 {
 	NYZView *cur = static_cast<NYZView*>(currentView());
 	NYZView *v = static_cast<NYZView*>(view);
@@ -189,21 +189,21 @@ void NYZFactory::changeCurrentView ( YZView * view  )
 	v->refreshScreen();
 }
 
-YZView* NYZFactory::doCreateView( YZBuffer* buffer )
+YZView* NYZSession::doCreateView( YZBuffer* buffer )
 {
 	YZASSERT( buffer );
 	NYZView *v = new NYZView( buffer );
-	YZASSERT_MSG(v, "NYZFactory::createView : failed creating a new NYZView");
+	YZASSERT_MSG(v, "NYZSession::createView : failed creating a new NYZView");
 	buffer->addView ( v);
 	return v;
 }
 
-YZBuffer *NYZFactory::doCreateBuffer()
+YZBuffer *NYZSession::doCreateBuffer()
 {
 	return new YZBuffer;
 }
 
-void NYZFactory::popupMessage( const QString &_message )
+void NYZSession::popupMessage( const QString &_message )
 {
 	int nl,nc;
 	QString anyKeyMsg = _("(Press any key)");
@@ -251,11 +251,11 @@ void NYZFactory::popupMessage( const QString &_message )
 	currentView()->refreshScreen();
 }
 
-void NYZFactory::deleteBuffer(YZBuffer *b) {
+void NYZSession::deleteBuffer(YZBuffer *b) {
 	delete b;
 }
 
-void NYZFactory::doDeleteView( YZView *view )
+void NYZSession::doDeleteView( YZView *view )
 {
 	YZView *newview = currentView();
 	
@@ -265,21 +265,21 @@ void NYZFactory::doDeleteView( YZView *view )
 	newview->refreshScreen();
 }
 
-bool NYZFactory::promptYesNo( const QString& /*title*/, const QString& /*message*/ ) {
+bool NYZSession::promptYesNo( const QString& /*title*/, const QString& /*message*/ ) {
 //TODO
 	return true;
 }
 
-int NYZFactory::promptYesNoCancel( const QString& /*title*/, const QString& /*message*/ ) {
+int NYZSession::promptYesNoCancel( const QString& /*title*/, const QString& /*message*/ ) {
 //TODO
 	return 0;//return yes for now...
 }
 
-void NYZFactory::splitHorizontally ( YZView* /*view*/ ) {
+void NYZSession::splitHorizontally ( YZView* /*view*/ ) {
 	//TODO
 }
 
-void NYZFactory::initialiseKeycodes()
+void NYZSession::initialiseKeycodes()
 {
 	keycodes.clear();
 

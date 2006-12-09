@@ -42,7 +42,6 @@ class QYZisView: public QWidget, public YZView
 {
 	Q_OBJECT
 
-	friend class QYZisFactory;
 	friend class QYZisCursor;
 	friend class QYZisEdit;
 

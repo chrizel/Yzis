@@ -121,10 +121,10 @@ else */
 
 	};
 
-	// create factory
-	NYZFactory *factory = new NYZFactory("default_session", initialSendKeys);
+	// create session
+	NYZSession *session = new NYZSession("default_session", initialSendKeys);
 
-	QObject::connect( socket, SIGNAL( activated( int ) ),factory, SLOT( processInput( int ) ) );
+	QObject::connect( socket, SIGNAL( activated( int ) ),session, SLOT( processInput( int ) ) );
 
 	// Signal handling
 	(void) signal(SIGINT, sigint);      /* arrange interrupts to terminate */
@@ -140,21 +140,21 @@ else */
 	for ( int i=1; i<argc; i++ ) {
 		if ( '-' != argv[i][0] ) {
 			yzDebug(NYZIS)<< "nyzis : opening file " << argv[i]<<endl;
-			v = factory->createBufferAndView(argv[ i ]);
+			v = session->createBufferAndView(argv[ i ]);
 			if ( !first )
 				first = v;
 		}
 	}
 
 	if ( !first ) {
-		first = factory->createBufferAndView();
+		first = session->createBufferAndView();
 		first->myBuffer()->openNewFile();
 		first->displayIntro();
 	}
 
-	factory->setCurrentView( first );
+	session->setCurrentView( first );
 
-	QTimer::singleShot( 0, factory, SLOT( init() ) );
+	QTimer::singleShot( 0, session, SLOT( init() ) );
 
 	YZSession::me->guiStarted();
 

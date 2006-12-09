@@ -16,11 +16,11 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef NYZ_FACTORY_H
-#define NYZ_FACTORY_H
+#ifndef NYZ_SESSION_H
+#define NYZ_SESSION_H
 
 /**
- * NYZFactory - Ncurses main class for the whole session
+ * NYZSession - Ncurses main class for the whole session
  */
 
 #include "viewwidget.h"
@@ -29,17 +29,17 @@
 
 class YZViewId;
 
-class NYZFactory : public YZSession
+class NYZSession : public YZSession
 {
 	Q_OBJECT
 
 public:
-	static NYZFactory *self;
+	static NYZSession *self;
 	/**
 	 * Constructor. Give a session name to identify/save/load sessions.
 	 */
-	NYZFactory(const char *session_name = "default_nyzis_session", const QString& keys = QString::null );
-	virtual ~NYZFactory( );
+	NYZSession(const char *session_name = "default_nyzis_session", const QString& keys = QString::null );
+	virtual ~NYZSession( );
 
 	/*
 	 * YZSession interface :
@@ -79,5 +79,5 @@ public Q_SLOTS:
 
 };
 
-#endif // NYZ_FACTORY_H
+#endif // NYZ_SESSION_H
 

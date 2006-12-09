@@ -1810,8 +1810,8 @@ int YZView::getSpaceWidth() const
 }
 
 void YZView::internalScroll( int dx, int dy ) {
-	m_drawBuffer.scroll( dx, dy );
-	scroll( dx, dy );
+	m_drawBuffer.Scroll( dx, dy );
+	Scroll( dx, dy );
 }
 
 /**

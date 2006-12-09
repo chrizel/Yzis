@@ -305,7 +305,7 @@ void YZDrawBuffer::replace( const YZInterval& interval ) {
 //	yzDebug() << "after replace:" << endl << (*this) << "----" << endl;
 }
 
-void YZDrawBuffer::scroll( int dx, int dy ) {
+void YZDrawBuffer::Scroll( int dx, int dy ) {
 	// TODO: implement scroll to the left/right
 	if ( dy < 0 ) {
 		// remove top lines

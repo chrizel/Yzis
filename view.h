@@ -230,7 +230,7 @@ class YZIS_EXPORT YZView {
 		/**
 		 * scroll dx to the right and dy downward
 		 */
-		virtual void scroll( int dx, int dy ) = 0;
+		virtual void Scroll( int dx, int dy ) = 0;
 
 		//-------------------------------------------------------
 		// ----------------- Command Input Buffer

@@ -83,14 +83,8 @@ void YZPrinter::doPrint( ) {
 	f.setStyleHint( QFont::TypeWriter );
 	p.setFont( f );
 
-#if QT_VERSION < 0x040000
-	QPaintDeviceMetrics pdm( &lpr );
-	unsigned int height = pdm.height();
-	unsigned int width = pdm.width();
-#else
 	unsigned int height = lpr.height();
 	unsigned int width = lpr.width();
-#endif
 
 	unsigned int linespace = p.fontMetrics().lineSpacing();
 	unsigned int maxwidth = p.fontMetrics().maxWidth();

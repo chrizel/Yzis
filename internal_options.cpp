@@ -18,16 +18,21 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+/* Qt */
+#include <qdir.h>
+#include <qfile.h>
+#include <qregexp.h>
+#include <QTextStream>
+
+/* yzis */
 #include "portability.h"
 #include "internal_options.h"
 #include "debug.h"
 #include "session.h"
 #include "search.h"
+#include "view.h"
+#include "buffer.h"
 
-#include <qdir.h>
-#include <qfile.h>
-#include <qregexp.h>
-#include <QTextStream>
 
 using namespace yzis;
 

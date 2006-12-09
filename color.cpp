@@ -213,7 +213,7 @@ YZColor::YZColor() {
 YZColor::YZColor( QRgb rgb ) {
 	setRgb( rgb );
 }
-YZColor::YZColor( const QString& name ) {
+YZColor::YZColor( const QString name ) {
 	setNamedColor( name );
 }
 YZColor::YZColor( Qt::GlobalColor color ) {
@@ -258,7 +258,7 @@ void YZColor::setRgb( QRgb rgb ) {
 	m_valid=true;
 }
 
-void YZColor::setNamedColor( const QString& name ) {
+void YZColor::setNamedColor( const QString name ) {
 	invalidate();
 	if ( !name.isEmpty() ) {
 		QByteArray n = name.toLatin1();

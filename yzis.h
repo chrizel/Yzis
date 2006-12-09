@@ -27,12 +27,12 @@
  *
  */
 
+/* System */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <qglobal.h>
-#include <yzismacros.h>
-#include "portability.h"
+/* Qt */
+
+/* yzis */
+#include "yzismacros.h"
 
 #define VERSION_MAJOR	0
 #define VERSION_MINOR	0

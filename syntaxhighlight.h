@@ -27,11 +27,8 @@
 #ifndef __KATE_HIGHLIGHT_H__
 #define __KATE_HIGHLIGHT_H__
 
-#include "attribute.h"
-#include "yzismacros.h"
-
+/* Qt */
 #include <QPair>
-#include <QString>
 #include <QStringList>
 #include <QMap>
 #include <QHash>
@@ -42,6 +39,9 @@
 #ifndef YZIS_WIN32_MSVC
 #include <magic.h>
 #endif
+
+/* yzis */
+#include "attribute.h"
 
 class YzisHlContext;
 class YzisHlItem;

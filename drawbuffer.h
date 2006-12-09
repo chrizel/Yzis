@@ -20,14 +20,13 @@
 #ifndef DRAWBUFFER_H
 #define DRAWBUFFER_H
 
-#include <QString>
+/* Qt */
 #include <QVector>
 
+/* Yzis */
 #include "color.h"
 #include "font.h"
-#include "cursor.h"
 #include "selection.h"
-#include "yzismacros.h"
 
 class YZView;
 

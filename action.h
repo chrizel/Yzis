@@ -21,11 +21,12 @@
 #ifndef YZ_ACTION_H
 #define YZ_ACTION_H
 
-#include "cursor.h"
-#include "selection.h"
-#include "yzismacros.h"
-
+/* Qt */
 #include <qstring.h>
+
+/* yzis */
+#include "selection.h"
+
 
 class YZBuffer;
 class YZView;

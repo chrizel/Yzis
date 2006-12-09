@@ -20,12 +20,9 @@
 #ifndef YZ_INTERNAL_OPTIONS
 #define YZ_INTERNAL_OPTIONS
 
-#include <qstring.h>
-#include <qmap.h>
-#include <qstringlist.h>
-#include "yzis.h"
+/* Qt */
 
-#include "color.h"
+/* yzis */
 #include "option.h"
 
 /**

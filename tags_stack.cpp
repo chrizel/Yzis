@@ -32,6 +32,7 @@
 
 #include "buffer.h"
 #include "cursor.h"
+#include "view.h"
 #include "session.h"
 #include "yzisinfojumplistrecord.h"
 

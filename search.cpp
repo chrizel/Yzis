@@ -22,6 +22,7 @@
 
 #include "portability.h"
 #include "search.h"
+#include "view.h"
 #include "session.h"
 #include "buffer.h"
 #include "selection.h"

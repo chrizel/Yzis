@@ -20,11 +20,13 @@
 #ifndef YZ_MODE_H
 #define YZ_MODE_H
 
-#include "yzis.h"
-#include "view.h"
-
+/* Qt */
 #include <qstringlist.h>
 #include <qmap.h>
+
+/* Yzis */
+#include "yzis.h"
+
 
 class YZView;
 class YZModePool;

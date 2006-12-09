@@ -17,21 +17,26 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+/* System */
 #include <iostream>
-#include <qfileinfo.h>
 
+/* Qt */
+#include <qfileinfo.h>
+#include <QFile>
+#include <QTextStream>
+#include <QTextCodec>
+
+/* yzis */
 #include "debug.h"
 #include "history.h"
 #include "internal_options.h"
 #include "mode_ex.h"
+#include "buffer.h"
 #include "mode_search.h"
 #include "session.h"
 #include "yzisinfo.h"
 #include "yzisinfojumplistrecord.h"
 #include "yzisinfostartpositionrecord.h"
-#include <QFile>
-#include <QTextStream>
-#include <QTextCodec>
 
 using namespace std;
 

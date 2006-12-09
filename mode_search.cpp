@@ -23,8 +23,8 @@
 #include "mode_search.h"
 
 #include "debug.h"
-
 #include "action.h"
+#include "view.h"
 #include "buffer.h"
 #include "history.h"
 #include "search.h"

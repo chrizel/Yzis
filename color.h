@@ -20,8 +20,10 @@
 #ifndef YZ_COLOR_H
 #define YZ_COLOR_H
 
-#include <Qt>
+/* Qt */
 #include <QString>
+
+/* yzis */
 #include "yzismacros.h"
 
 #ifndef QRgb
@@ -36,7 +38,7 @@ class YZIS_EXPORT YZColor {
 		YZColor();
 		YZColor( QRgb rgb );
 		YZColor( Qt::GlobalColor color );
-		YZColor( const QString& name );
+		YZColor( const QString name );
 		virtual ~YZColor();
 
 		void setRgb( QRgb );
@@ -44,7 +46,7 @@ class YZIS_EXPORT YZColor {
 		 * #RGB
 		 * #RRGGBB
 		 */
-		void setNamedColor( const QString& name );
+		void setNamedColor( const QString name );
 
 		bool isValid() const;
 

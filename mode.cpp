@@ -26,6 +26,7 @@
 #include "mapping.h"
 #include "session.h"
 #include "undo.h"
+#include "view.h"
 
 using namespace yzis;
 

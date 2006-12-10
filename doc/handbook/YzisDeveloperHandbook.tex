@@ -93,14 +93,14 @@ pdfborder={0 0 0}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % headers and footers for your document
-\usepackage{fancyheadings}
+\usepackage{fancyhdr}
 
 % count the number of pages for display on footer
 \usepackage{lastpage}
 
 % width of the line for headers and footers
-\headrulewidth 0.5pt
-\footrulewidth 0.5pt
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
 %\addtolength{\headwidth}{\marginparsep}
 
 % uncomment the following lines for headers
@@ -264,7 +264,7 @@ As of december 2006, the purpose is to first make the \emph{Qt only}
 version available, then the \emph{KDE} client and embedable component, and
 then others.
 
-\section{Which part handle what ?}
+\section{Which part handles what ?}
 
 The \verb+libyzis+ core handles files (loading/modifying/saving), command
 interpretation, script interpretation (lua, highlighting), and lot of
@@ -302,8 +302,8 @@ both views and buffers (see \verb+createView()+, \verb+createBufferAndView()+,
 \verb+YZView+
 
 A view is a GUI component displaying part of a file, within a session. As
-such, it depends on both, as the constructor (asking for both
-\verb+YZSession+ and \verb+YZBuffer+). This is the class where rendering is
+such, it depends on both~: the constructor needs both a
+\verb+YZSession+ and a \verb+YZBuffer+. This is the class where rendering is
 done, closely with the core.
 
 \section{Data path}
@@ -313,7 +313,7 @@ keyboard) among \emph{Yzis} architecture.
 During initialisation of the program, an instance of \verb+YZSession+ is
 created (or a subclass, most probably). This instance is unique, and is
 always present. Most of high level API is here (create/delete other
-important instances).
+important objects).
 For example, if you want to open a file, and create an associated view, you
 can use
 \begin{verbatim}

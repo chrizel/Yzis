@@ -93,14 +93,14 @@ pdfborder={0 0 0}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % headers and footers for your document
-\usepackage{fancyheadings}
+\usepackage{fancyhdr}
 
 % count the number of pages for display on footer
 \usepackage{lastpage}
 
 % width of the line for headers and footers
-\headrulewidth 0.5pt
-\footrulewidth 0.5pt
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0.5pt}
 %\addtolength{\headwidth}{\marginparsep}
 
 % uncomment the following lines for headers

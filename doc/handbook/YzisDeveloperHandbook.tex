@@ -181,7 +181,7 @@ See http://www.doxygen.org/
 \section{Qt}
 Yzis is built on top of the \emph{Qt} C++ library, which provides some
 generic useful classes and some optional GUI widgets. \emph{Qt} is most
-widely known as the basis for \emph{KDE}
+widely known as the basis for \emph{KDE}.
 See http://www.trolltech.com for more details.
 
 \section{Lua}
@@ -196,7 +196,7 @@ Yzis source.
 First you need to get the source. Of course, you could use the latest
 tarball released, but it's probably outdated already. Moreover, you will
 not be able to follow the changes made by the Yzis team.
-Better use a svn checkout. 
+Better use a svn checkout~:
 
 \begin{verbatim}
 svn co svn://svn.freenux.org/yzis/trunk yzis-trunk
@@ -219,8 +219,10 @@ documentation available~: (from within the main directory \verb+yzis-trunk+)
 doxygen yzis.doxy
 \end{verbatim}
 
-Then open a browser in the \verb+yzis-trunk/html/+ directory to get the
-pages.
+Then open a browser on the page \verb+yzis-trunk/apidoc/index.html+ and you
+have the full API documented. PLEASE update this documentation whenever you
+can while coding : document things you add, complete existing
+documentation, fix documentation when you find an error..
 
 Before digging into the source, you should probably read the architecture
 overview. And then.. go and read the source!
@@ -260,9 +262,9 @@ So, code-wise, you basically have a common core, found in the dir
 code. Then, each client has its own directory, with the GUI dependant code,
 which links against \verb+libyzis+ to create the executable.
 
-As of december 2006, the purpose is to first make the \emph{Qt only}
-version available, then the \emph{KDE} client and embedable component, and
-then others.
+As of december 2006, the purpose is to first make the \emph{ncurses} client
+and the \emph{Qt only} client available, then the \emph{KDE} client and
+embedable component, and then others.
 
 \section{Which part handles what ?}
 
@@ -306,7 +308,7 @@ such, it depends on both~: the constructor needs both a
 \verb+YZSession+ and a \verb+YZBuffer+. This is the class where rendering is
 done, closely with the core.
 
-\section{Data path}
+\section{Data paths}
 In this section, we describe the paths followed by the data (file,
 keyboard) among \emph{Yzis} architecture.
 
@@ -344,7 +346,7 @@ are in section \ref{rendering}).
 
 
 
-\chapter{Componants description}
+\chapter{Components description}
 
 \section{Modes}
 

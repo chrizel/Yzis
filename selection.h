@@ -112,7 +112,7 @@ class YZIS_EXPORT YZSelection {
 		void addMap( const YZSelectionMap& m );
 		void addInterval( const YZInterval& i );
 		void delInterval( const YZInterval& i );
-		bool contains( const YZCursor& pos );
+		bool contains( const YZCursor& pos ) const;
 
 		bool isEmpty() const;
 
@@ -133,7 +133,7 @@ class YZIS_EXPORT YZSelection {
 	private:
 		void insertInterval( unsigned int pos, const YZInterval& interval );
 		void removeInterval( unsigned int pos, unsigned int len );
-		int locatePosition( const YZBound& pos, bool* isSelected );
+		int locatePosition( const YZBound& pos, bool* isSelected ) const;
 		
 		QString mName;
 		YZSelectionMap mMap;
@@ -147,8 +147,8 @@ class YZIS_EXPORT YZDoubleSelection {
 		YZDoubleSelection( const QString& name );
 		virtual ~YZDoubleSelection();
 
-		YZSelectionMap screenMap();
-		YZSelectionMap bufferMap();
+		YZSelectionMap screenMap() const;
+		YZSelectionMap bufferMap() const;
 		inline const YZSelection& screen() const {
 			return *sSelection;
 		}
@@ -159,9 +159,9 @@ class YZIS_EXPORT YZDoubleSelection {
 		void addInterval( const YZInterval& bi, const YZInterval& si );
 		void delInterval( const YZInterval& bi, const YZInterval& si );
 
-		bool contains( const YZCursor& pos );
+		bool contains( const YZCursor& pos ) const;
 
-		bool isEmpty();
+		bool isEmpty() const;
 		void clear();
 	private:
 		YZSelection* bSelection;
@@ -179,7 +179,7 @@ class YZIS_EXPORT YZSelectionPool {
 		YZSelectionPool();
 		virtual ~YZSelectionPool();
 
-		bool isSelected( const YZCursor& pos );
+		bool isSelected( const YZCursor& pos ) const;
 
 		void setSearch( YZSelection* s );
 

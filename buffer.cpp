@@ -1214,12 +1214,12 @@ void YZBuffer::openNewFile()
 	d->isFileNew = true;
 }
 
-YZCursor YZBuffer::begin()
+YZCursor YZBuffer::begin() const
 {
     return YZCursor( 0, 0 );
 }
 
-YZCursor YZBuffer::end()
+YZCursor YZBuffer::end() const
 {
     return YZCursor( getLineLength( lineCount() - 1 ), lineCount() );
 }

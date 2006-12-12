@@ -249,7 +249,7 @@ void YZSelection::removeInterval( unsigned int pos, unsigned int len ) {
 	}
 }
 
-int YZSelection::locatePosition( const YZBound& pos, bool* isSelected ) {
+int YZSelection::locatePosition( const YZBound& pos, bool* isSelected ) const {
 	unsigned int i;
 	*isSelected = false;
 	unsigned int size = mMap.size( );
@@ -261,7 +261,8 @@ int YZSelection::locatePosition( const YZBound& pos, bool* isSelected ) {
 	if ( *isSelected ) --i;
 	return i;
 }
-bool YZSelection::contains( const YZCursor& pos ) {
+
+bool YZSelection::contains( const YZCursor& pos ) const {
 	bool ret = false;
 	locatePosition( pos, &ret );
 	return ret;
@@ -425,13 +426,13 @@ YZDoubleSelection::~YZDoubleSelection() {
 	delete bSelection;
 	delete sSelection;
 }
-YZSelectionMap YZDoubleSelection::bufferMap() {
+YZSelectionMap YZDoubleSelection::bufferMap() const {
 	return bSelection->map();
 }
-YZSelectionMap YZDoubleSelection::screenMap() {
+YZSelectionMap YZDoubleSelection::screenMap() const {
 	return sSelection->map();
 }
-bool YZDoubleSelection::isEmpty() {
+bool YZDoubleSelection::isEmpty() const {
 	return bSelection->isEmpty();
 }
 
@@ -444,7 +445,7 @@ void YZDoubleSelection::delInterval( const YZInterval& bi, const YZInterval& si 
 	sSelection->delInterval( si );
 }
 
-bool YZDoubleSelection::contains( const YZCursor& pos ) {
+bool YZDoubleSelection::contains( const YZCursor& pos ) const {
 	return bSelection->contains( pos );
 }
 void YZDoubleSelection::clear() {
@@ -480,7 +481,7 @@ YZSelection* YZSelectionPool::search() {
 YZDoubleSelection* YZSelectionPool::visual() {
 	return mVisual;
 }
-bool YZSelectionPool::isSelected( const YZCursor& pos ) {
+bool YZSelectionPool::isSelected( const YZCursor& pos ) const {
 	return mSearch->contains( pos ) || mVisual->contains( pos );
 }
 

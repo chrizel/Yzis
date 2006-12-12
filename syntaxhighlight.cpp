@@ -84,7 +84,7 @@ class YzisHlItem
     // bool linestart isn't needed, this is equivalent to offset == 0.
     virtual int checkHgl(const QString& text, int offset, int len) = 0;
 
-    virtual bool lineContinue(){return false;}
+    virtual bool lineContinue() const {return false;}
 
     virtual QStringList *capturedTexts() {return 0;}
     virtual YzisHlItem *clone(const QStringList *) {return this;}

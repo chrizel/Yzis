@@ -75,8 +75,8 @@ class YZIS_EXPORT YZAction {
 
 		void indentLine( YZView* pView, int Y, int count ); // if count is < 0, unindent line
 		
-		YZCursor match( YZView* pView, const YZCursor& cursor, bool *found );
-		YZCursor search( YZBuffer* pBuffer, const QString& what, const YZCursor& mBegin, const YZCursor& mEnd, int *matchlength, bool *found );
+		YZCursor match( YZView* pView, const YZCursor& cursor, bool *found ) const;
+		YZCursor search( YZBuffer* pBuffer, const QString& what, const YZCursor& mBegin, const YZCursor& mEnd, int *matchlength, bool *found ) const;
 
 	private:
 		YZBuffer* mBuffer;

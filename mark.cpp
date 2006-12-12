@@ -53,8 +53,8 @@ void YZViewMark::del( const QString& mark ) {
 	marker.remove( mark );
 }
 
-YZCursorPos YZViewMark::get( const QString& mark, bool * found ) {
-	YZViewMarker::Iterator it = marker.find( mark );
+YZCursorPos YZViewMark::get( const QString& mark, bool * found ) const {
+	YZViewMarker::ConstIterator it = marker.find( mark );
 	*found = it != marker.end();
 	return it.value();
 }
@@ -90,6 +90,6 @@ void YZDocMark::del( uint line ) {
 	marker.remove(line);
 }
 
-uint YZDocMark::get( uint line ) {
+uint YZDocMark::get( uint line ) const {
 	return marker[line];
 }

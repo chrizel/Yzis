@@ -78,7 +78,7 @@ class YZOptionValue {
 		YZOption* parent() const;
 	
 		yzis::value_t type() const;
-		QString toString();
+		QString toString() const;
 
 		static bool booleanFromString( bool* success, const QString& value );
 		static QString stringFromString( bool* success, const QString& value );

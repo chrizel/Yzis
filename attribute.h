@@ -54,7 +54,7 @@ public:
   YzisAttribute();
   virtual ~YzisAttribute();
 
-  YZFont font(const YZFont& ref);
+  YZFont font(const YZFont& ref) const;
 
   inline bool itemSet(int item) const
   { return item & m_itemsSet; };

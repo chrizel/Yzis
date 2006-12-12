@@ -42,7 +42,7 @@ class YzisSchemaManager
     /**
      * return kconfig with right group set or set to Normal if not there
      */
-    QString schema (uint number);
+    QString schema (uint number) const;
 
     void addSchema (const QString &t);
 
@@ -51,22 +51,22 @@ class YzisSchemaManager
     /**
      * is this schema valid ? (does it exist ?)
      */
-    bool validSchema (uint number);
+    bool validSchema (uint number) const;
 
     /**
      * if not found, defaults to 0
      */
-    uint number (const QString &name);
+    uint number (const QString &name) const;
 
     /**
      * group names in the end, no i18n involved
      */
-    QString name (uint number);
+    QString name (uint number) const;
 
     /**
      * Don't modify, list with the names of the schemas (i18n name for the default ones)
      */
-    const QStringList &list () { return m_schemas; }
+    const QStringList &list () const { return m_schemas; }
 
     static QString normalSchema ();
     static QString printingSchema ();

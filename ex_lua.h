@@ -59,7 +59,7 @@ class YZExLua {
 		/**
 		 * Return the results of the last Lua method invoked
 		 */
-		QStringList getLastResult(int nb);
+		QStringList getLastResult(int nb) const;
 
 		void execute(const QString& function, int nbArgs, int nbResults);
 		

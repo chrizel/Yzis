@@ -91,7 +91,7 @@ class YZIS_EXPORT YZSession : public QObject {
 		 * @return QString
 		 */
 		 
-		QString getSessionName() { return mSessionName; }
+		QString getSessionName() const { return mSessionName; }
 
 		//-------------------------------------------------------
 		// ----------------- Sub-Objects
@@ -103,7 +103,7 @@ class YZIS_EXPORT YZSession : public QObject {
 		 * @return YZModeMap
 		 */
 		 
-		YZModeMap getModes();
+		YZModeMap getModes() const;
 		
 		/**
 		 * Returns the ex pool
@@ -182,7 +182,7 @@ class YZIS_EXPORT YZSession : public QObject {
 		/**
 		 * Count the number of buffers
 		 */
-		unsigned int countBuffers() { return mBufferList.count(); }
+		unsigned int countBuffers() const { return mBufferList.count(); }
 
 		/**
 		 * Returns a const reference to the buffer list
@@ -206,7 +206,7 @@ class YZIS_EXPORT YZSession : public QObject {
 		 * Check if one buffer is modified and not saved
 		 * @returns whether a buffer has been modified and not saved since
 		 */
-		bool isOneBufferModified();
+		bool isOneBufferModified() const;
 
 		//-------------------------------------------------------
 		// ----------------- View Creation/Destruction
@@ -405,7 +405,7 @@ class YZIS_EXPORT YZSession : public QObject {
 		/**
 		 * Gets the list of registers
 		 */
-		QList<QChar> getRegisters();
+		QList<QChar> getRegisters() const;
 
 		//-------------------------------------------------------
 		// ----------------- Clipboard

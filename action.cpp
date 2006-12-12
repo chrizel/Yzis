@@ -380,7 +380,7 @@ void YZAction::replaceLine( YZView* pView, int Y, const QString& text ) {
 	replaceLine( pView, pos, text );
 }
 
-YZCursor YZAction::match( YZView* pView, const YZCursor& cursor, bool *found ) {
+YZCursor YZAction::match( YZView* pView, const YZCursor& cursor, bool *found ) const {
 	QString matchers = pView->myBuffer()->getLocalStringOption("matchpairs");
 
 	QString current = pView->myBuffer()->textline( cursor.y() );
@@ -438,7 +438,7 @@ YZCursor YZAction::match( YZView* pView, const YZCursor& cursor, bool *found ) {
 
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
 // which makes reverseSearch redundant.  It's now calculated within the function based on a test of mEnd < mBegin
-YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCursor& mBegin, const YZCursor& mEnd, int *matchlength, bool *found ) {
+YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCursor& mBegin, const YZCursor& mEnd, int *matchlength, bool *found ) const {
 //	yzDebug() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
 	bool reverseSearch = mEnd < mBegin;
 	bool cs = true;

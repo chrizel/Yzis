@@ -288,7 +288,7 @@ bool YZInternalOptionPool::fillOptionFromString( YZOption* opt, const QString& e
 	return ret;
 }
 
-const QString& YZInternalOptionPool::readStringOption( const QString& _key, const QString& def ) {
+const QString& YZInternalOptionPool::readStringOption( const QString& _key, const QString& def ) const {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -297,7 +297,7 @@ const QString& YZInternalOptionPool::readStringOption( const QString& _key, cons
 	} else return def;
 }
 
-int YZInternalOptionPool::readIntegerOption( const QString& _key, int def ) {
+int YZInternalOptionPool::readIntegerOption( const QString& _key, int def ) const {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -306,7 +306,7 @@ int YZInternalOptionPool::readIntegerOption( const QString& _key, int def ) {
 	} else return def;
 }
 
-bool YZInternalOptionPool::readBooleanOption( const QString& _key, bool def ) {
+bool YZInternalOptionPool::readBooleanOption( const QString& _key, bool def ) const {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -316,7 +316,7 @@ bool YZInternalOptionPool::readBooleanOption( const QString& _key, bool def ) {
 	return def;
 }
 
-QStringList YZInternalOptionPool::readListOption( const QString& _key, const QStringList& def ) {
+QStringList YZInternalOptionPool::readListOption( const QString& _key, const QStringList& def ) const {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -325,7 +325,7 @@ QStringList YZInternalOptionPool::readListOption( const QString& _key, const QSt
 	} 
 	return def;
 }
-MapOption YZInternalOptionPool::readMapOption( const QString& _key ) {
+MapOption YZInternalOptionPool::readMapOption( const QString& _key ) const {
 	MapOption ret;
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
@@ -335,7 +335,7 @@ MapOption YZInternalOptionPool::readMapOption( const QString& _key ) {
 	} 
 	return ret;
 }
-YZColor YZInternalOptionPool::readColorOption( const QString& _key, const YZColor& def ) {
+YZColor YZInternalOptionPool::readColorOption( const QString& _key, const YZColor& def ) const {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -345,34 +345,34 @@ YZColor YZInternalOptionPool::readColorOption( const QString& _key, const YZColo
 	return def;
 }
 
-const QString& YZInternalOptionPool::readQStringEntry( const QString& key , const QString& def ) {
+const QString& YZInternalOptionPool::readQStringEntry( const QString& key , const QString& def ) const {
 	QString _key = currentGroup+"\\"+key;
 	if ( mOptions.contains( _key ) )
 		return mOptions[ _key ]->string();
 	return def;
 }
-int YZInternalOptionPool::readIntEntry( const QString& key, int def ) {
+int YZInternalOptionPool::readIntEntry( const QString& key, int def ) const {
 	QString _key = currentGroup+"\\"+key;
 	bool test;
 	if ( mOptions.contains( _key ) )
 		return YZOptionValue::integerFromString( &test, mOptions[ _key ]->string() );
 	return def;
 }
-bool YZInternalOptionPool::readBoolEntry( const QString& key , bool def ) {
+bool YZInternalOptionPool::readBoolEntry( const QString& key , bool def ) const {
 	QString _key = currentGroup+"\\"+key;
 	bool test;
 	if ( mOptions.contains( _key ) )
 		return YZOptionValue::booleanFromString( &test, mOptions[ _key ]->string() );
 	return def;
 }
-QStringList YZInternalOptionPool::readQStringListEntry( const QString& key, const QStringList& def ) {
+QStringList YZInternalOptionPool::readQStringListEntry( const QString& key, const QStringList& def ) const {
 	QString _key = currentGroup+"\\"+key;
 	bool test;
 	if ( mOptions.contains( _key ) )
 		return YZOptionValue::listFromString( &test, mOptions[ _key ]->string() );
 	return def;
 }
-YZColor YZInternalOptionPool::readYZColorEntry( const QString& key, const YZColor& def ) {
+YZColor YZInternalOptionPool::readYZColorEntry( const QString& key, const YZColor& def ) const {
 	QString _key = currentGroup+"\\"+key;
 	bool test;
 	if ( mOptions.contains( _key ) )
@@ -427,7 +427,7 @@ void YZInternalOptionPool::initConfFiles() {
 	loadFrom(QDir::homePath()+"/.yzis/hl.conf");
 }
 
-bool YZInternalOptionPool::hasGroup( const QString& group ) {
+bool YZInternalOptionPool::hasGroup( const QString& group ) const {
 	QList<QString> keys = mOptions.keys();
 	for (int ab = 0 ; ab < keys.size() ; ++ab)
 		if ( keys.at(ab).split( "\\" )[ 0 ] == group ) return true;
@@ -443,7 +443,7 @@ void YZInternalOptionPool::cleanup() {
 	}
 }
 
-bool YZInternalOptionPool::hasOption( const QString& _key ) {
+bool YZInternalOptionPool::hasOption( const QString& _key ) const {
 	QString key = _key;
 	if ( ! key.contains( '\\' ) )
 		key.prepend( currentGroup+'\\' );
@@ -462,7 +462,7 @@ YZOptionValue* YZInternalOptionPool::getOption( const QString& option ) {
 void YZInternalOptionPool::createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, context_t ctx, value_t type ) {
 	// TODO add scope_t parameter
 	scope_t scope = local_scope;
-	// we search for an alread existing option :
+	// we search for an already existing option :
 	bool found = false;
 	int i;
 	for ( i = 0; !found && i < options.size(); i++ ) {

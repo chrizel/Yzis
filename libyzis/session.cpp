@@ -106,7 +106,7 @@ void YZSession::endModes() {
 		delete it.value();
 	mModes.clear();
 }
-YZModeMap YZSession::getModes() {
+YZModeMap YZSession::getModes() const {
 	return mModes;
 }
 YZModeEx* YZSession::getExPool() {
@@ -252,9 +252,9 @@ bool YZSession::saveAll() {
 	return savedAll;
 }
 
-bool YZSession::isOneBufferModified() {
-	YZBufferList::Iterator it = mBufferList.begin();
-	YZBufferList::Iterator end = mBufferList.end();
+bool YZSession::isOneBufferModified() const {
+	YZBufferList::ConstIterator it = mBufferList.begin();
+	YZBufferList::ConstIterator end = mBufferList.end();
 	for ( ; it != end; ++it ) {
 		YZBuffer* b = ( *it );
 		if ( b->fileIsNew() ) {
@@ -401,7 +401,7 @@ QStringList& YZSession::getRegister ( QChar r ) {
 	return mRegisters->getRegister( r );
 }
 
-QList<QChar> YZSession::getRegisters() { 
+QList<QChar> YZSession::getRegisters() const { 
 	return mRegisters->keys(); 
 }
 

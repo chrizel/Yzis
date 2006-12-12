@@ -71,7 +71,7 @@ public:
 	  */
 	void setDebugLevel( int level ) { _level = level; }
 
-	int debugLevel() { return _level; }
+	int debugLevel() const { return _level; }
 
 	/** All debug will be logged to the open file descriptor file.
 	  * stdout and stderr are perfectly valid file descriptors. */
@@ -87,7 +87,7 @@ public:
 
 	/** Return whether an area is enabled. All area are enalbed by default
 	  */
-	bool isAreaEnabled( const QString& area ) {
+	bool isAreaEnabled( const QString& area ) const {
 		if (_areaOutput.contains( area )) {
 			return _areaOutput[area];
 		} else {

@@ -59,7 +59,7 @@ YZOption* YZOptionValue::parent() const {
 value_t YZOptionValue::type() const {
 	return m_type;
 }
-QString YZOptionValue::toString() {
+QString YZOptionValue::toString() const {
 	QString ret = QString::null;
 	switch( type() ) {
 		case yzis::boolean_t :

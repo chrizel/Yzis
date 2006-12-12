@@ -313,7 +313,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	commitPaintEvent();
 }
 
-YZSelectionMap YZView::visualSelection() {
+YZSelectionMap YZView::visualSelection() const {
 	return selectionPool->visual()->bufferMap();
 }
 
@@ -1761,7 +1761,7 @@ bool YZView::stringHasOnlySpaces ( const QString& what ) {
 	return true;
 }
 
-QString YZView::mode() {
+QString YZView::mode() const {
 	QString ret = mModePool->current()->toString();
 	if ( isRecording() ) 
 		ret += _(" { Recording }");

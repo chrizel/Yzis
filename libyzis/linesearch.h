@@ -31,7 +31,7 @@ public:
 	/**
 	 * Each search is bound to a view
 	 */
-	YZLineSearch( YZView *_view );
+	YZLineSearch( const YZView *_view );
 	~YZLineSearch();
 
 	/**
@@ -88,7 +88,7 @@ private:
 	/**
 	 * View we are working for
 	 */
-	YZView* mView;
+	const YZView* mView;
 	
 	/**
 	 * Have we searched for anything yet?

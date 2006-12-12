@@ -82,7 +82,7 @@ YzisAttribute& YzisAttribute::operator+=(const YzisAttribute& a)
   return *this;
 }
 
-YZFont YzisAttribute::font(const YZFont& ref)
+YZFont YzisAttribute::font(const YZFont& ref) const
 {
   YZFont ret = ref;
 

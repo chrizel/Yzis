@@ -28,7 +28,7 @@
 #include "view.h"
 #include "debug.h"
 
-QString YZBufferOperation::toString() {
+QString YZBufferOperation::toString() const {
 	QString ots;
 	switch( type ) {
 		case ADDTEXT: ots= "ADDTEXT"; break;
@@ -203,19 +203,19 @@ void YZUndoBuffer::redo( YZView* pView ) {
 	pView->commitPaintEvent();
 }
 
-bool YZUndoBuffer::mayRedo() {
+bool YZUndoBuffer::mayRedo() const {
 	bool ret;
 	ret = mCurrentIndex < (uint)mUndoItemList.count();
 	return ret;
 }
 
-bool YZUndoBuffer::mayUndo() {
+bool YZUndoBuffer::mayUndo() const {
 	bool ret;
 	ret = mCurrentIndex > 0;
 	return ret;
 }
 
-QString YZUndoBuffer::undoItemToString( UndoItem * undoItem ) {
+QString YZUndoBuffer::undoItemToString( UndoItem * undoItem ) const {
 	QString s;
 	QString offsetS = "  ";
 	s += offsetS + offsetS + "UndoItem:\n";
@@ -231,12 +231,12 @@ QString YZUndoBuffer::undoItemToString( UndoItem * undoItem ) {
 	return s;
 }
 
-QString YZUndoBuffer::toString(const QString& msg) {
+QString YZUndoBuffer::toString(const QString& msg) const {
 	QString s = msg + " YZUndoBuffer:\n";
 	QString offsetS = "  ";
 	s += offsetS + "mUndoItemList\n";
 
-	YZList<UndoItem*>::Iterator it = mUndoItemList.begin();
+	YZList<UndoItem*>::ConstIterator it = mUndoItemList.begin();
 	for ( ; it != mUndoItemList.end(); ++it ) {
 		s += undoItemToString( *it );
 	}

@@ -59,7 +59,7 @@ struct buffer_operation
 	uint line;
 	uint col;
 
-	QString toString();
+	QString toString() const;
 };
 typedef struct buffer_operation YZBufferOperation;
 
@@ -106,17 +106,17 @@ public:
 	void redo( YZView* pView );
 
 	/*! Return whether it is possibe to issue a redo */
-	bool mayRedo();
+	bool mayRedo() const;
 
 	/*! Return whether it is possibe to issue an undo */
-	bool mayUndo();
+	bool mayUndo() const;
 
-	QString toString(const QString& msg="");
+	QString toString(const QString& msg="") const;
 
 	/** Sets this while performing undo and redo, so that the operations
 	 * are not registred as new buffer commands */
 	void setInsideUndo( bool set ) { mInsideUndo = set; }
-	bool isInsideUndo() { return mInsideUndo; }
+	bool isInsideUndo() const { return mInsideUndo; }
 
 	void clearUndo() { mUndoItemList.clear(); }
 	void clearRedo() { removeUndoItemAfterCurrent(); }
@@ -127,7 +127,7 @@ protected:
 	/** purge the undo list after the current item */
 	void removeUndoItemAfterCurrent();
 
-	QString undoItemToString( UndoItem * item);
+	QString undoItemToString( UndoItem * item) const;
 
 	YZBuffer * mBuffer;
 	UndoItem * mFutureUndoItem;

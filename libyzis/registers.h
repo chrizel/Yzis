@@ -46,12 +46,12 @@ class YZRegisters {
 		/**
 		 * Gets the list of registers
 		 */
-		QList<QChar> keys() { return mRegisters.keys(); }
+		QList<QChar> keys() const { return mRegisters.keys(); }
 
 		/**
 		 * Gets the list of values
 		 */
-		QList<QStringList> values() { return mRegisters.values(); }
+		QList<QStringList> values() const { return mRegisters.values(); }
 
 	private:
 		QMap<QChar,QStringList> mRegisters;

@@ -190,9 +190,9 @@ class YZIS_EXPORT YZView {
 		 * Accessor to the list of recorded registers
 		 * @return a QList of @ref YZRegisters
 		 */
-		const QList<QChar> registersRecorded() { return mRegs; }
+		const QList<QChar> registersRecorded() const { return mRegs; }
 		
-		YZSelectionMap visualSelection();
+		YZSelectionMap visualSelection() const;
 
 		//-------------------------------------------------------
 		// ----------------- Scrolling
@@ -237,8 +237,8 @@ class YZIS_EXPORT YZView {
 		 */
 		void purgeInputBuffer() { mPreviousChars = ""; }
 		void saveInputBuffer();
-		QString getInputBuffer() { return mPreviousChars; }
-		QString getLastInputBuffer() { return mLastPreviousChars; }
+		QString getInputBuffer() const { return mPreviousChars; }
+		QString getLastInputBuffer() const { return mLastPreviousChars; }
 
 		//-------------------------------------------------------
 		// ----------------- Cursor Motion
@@ -516,7 +516,7 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Are macros being recorded
 		 */
-		bool isRecording() { return mRegs.count() > 0; }
+		bool isRecording() const { return mRegs.count() > 0; }
 
 		//-------------------------------------------------------
 		// ----------------- Buffer Modification
@@ -693,7 +693,7 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Get the text describing the mode
 		 */
-		QString mode();
+		QString mode() const;
 
 		/**
 		 * called when the mode is changed, so that gui can

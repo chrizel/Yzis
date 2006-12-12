@@ -909,7 +909,7 @@ bool YZExLua::checkFunctionArguments(lua_State*L, int argNbMin, int argNbMax, co
 	return false;
 }
 
-QStringList YZExLua::getLastResult(int nb) {
+QStringList YZExLua::getLastResult(int nb) const {
 	int n = lua_gettop( L );
 	yzDebug() << "LUA: Stack has " << n << " entries" << endl;
 	QStringList list;

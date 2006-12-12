@@ -56,7 +56,7 @@ bool YZMode::supportsInputMethod() const {
 mapping_t YZMode::mapMode() const {
 	return mMapMode;
 }
-QStringList YZMode::modifierKeys() {
+QStringList YZMode::modifierKeys() const {
 	return mModifierKeys;
 }
 bool YZMode::registered() const {
@@ -198,10 +198,10 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 void YZModePool::replayKey() {
 	mView->sendKey( mKey, mModifiers );
 }
-YZMode* YZModePool::current() {
+YZMode* YZModePool::current() const {
 	return stack.front();
 }
-modeType YZModePool::currentType() {
+modeType YZModePool::currentType() const {
 	return current()->type();
 }
 void YZModePool::registerModifierKeys() {

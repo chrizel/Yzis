@@ -31,7 +31,7 @@ class YZView;
 /**
  * class YZLineSearch
  */
-YZLineSearch::YZLineSearch( YZView *_view ) {
+YZLineSearch::YZLineSearch( const YZView *_view ) {
 	yzDebug() << "YZLineSearch Constructor" << endl;
  	mView = _view;
 	mFirstTime = true;

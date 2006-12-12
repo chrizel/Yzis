@@ -56,7 +56,7 @@ class YZIS_EXPORT YZViewMark {
 		void add( const QString& mark, const YZCursor& bPos, const YZCursor& dPos );
 		void del( const QString& mark );
 
-		YZCursorPos get( const QString& mark, bool * found );
+		YZCursorPos get( const QString& mark, bool * found ) const;
 
 	private:
 		YZViewMarker marker;
@@ -75,9 +75,9 @@ class YZIS_EXPORT YZDocMark {
 		void del( uint line, uint mark );
 		void del( uint line );
 
-		uint get( uint line );
+		uint get( uint line ) const;
 
-		const YZDocMarker &getMarker() { return marker; }
+		const YZDocMarker &getMarker() const { return marker; }
 
 	private:
 		YZDocMarker marker;

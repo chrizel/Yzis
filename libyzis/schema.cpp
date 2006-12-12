@@ -65,7 +65,7 @@ void YzisSchemaManager::update (bool /*readfromfile*/)
 // get the right group
 // special handling of the default schemas ;)
 //
-QString YzisSchemaManager::schema (uint number)
+QString YzisSchemaManager::schema (uint number) const
 {
   if ((number>1) && (number < ( uint )m_schemas.count()))
     return m_schemas[number];
@@ -96,7 +96,7 @@ void YzisSchemaManager::removeSchema (uint number)
   update (false);
 }
 
-bool YzisSchemaManager::validSchema (uint number)
+bool YzisSchemaManager::validSchema (uint number) const
 {
   if (number < ( uint )m_schemas.count())
     return true;
@@ -104,7 +104,7 @@ bool YzisSchemaManager::validSchema (uint number)
   return false;
 }
 
-uint YzisSchemaManager::number (const QString &name)
+uint YzisSchemaManager::number (const QString &name) const
 {
   if (name == normalSchema())
     return 0;
@@ -119,7 +119,7 @@ uint YzisSchemaManager::number (const QString &name)
   return 0;
 }
 
-QString YzisSchemaManager::name (uint number)
+QString YzisSchemaManager::name (uint number) const
 {
   if ((number>1) && (number < ( uint )m_schemas.count()))
     return m_schemas[number];

@@ -230,12 +230,12 @@ public:
     /**
      * Returns a cursor at the beginning of the buffer
      */
-    YZCursor begin();
+    YZCursor begin() const;
 
     /**
      * Returns a cursor at the end of the buffer
      */
-    YZCursor end();
+    YZCursor end() const;
 
 	//-------------------------------------------------------
 	// --------------------- File Operations

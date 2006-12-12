@@ -45,6 +45,7 @@ if (APPLE) # XXX: workaround intl for Mac OSX
 endif(APPLE)
 
 # libyzis dependencies :
+set(QT_MIN_VERSION "4.2.0")
 find_package(Qt4 REQUIRED)
 
 # for syntax files

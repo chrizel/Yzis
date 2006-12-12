@@ -76,38 +76,38 @@ class YZInternalOptionPool {
 		/**
 		 * return a QString option
 		 */
-		const QString& readStringOption( const QString& key , const QString& def = QString::null );
+		const QString& readStringOption( const QString& key , const QString& def = QString::null ) const;
 
 		/**
 		 * return an int option
 		 */
-		int readIntegerOption( const QString& key, int def = 0 );
+		int readIntegerOption( const QString& key, int def = 0 ) const;
 
 		/**
 		 * return a bool option
 		 */
-		bool readBooleanOption( const QString& key , bool def = false );
+		bool readBooleanOption( const QString& key , bool def = false ) const;
 
 		/**
 		 * return a list option
 		 */
-		QStringList readListOption( const QString& key, const QStringList& def = QStringList() );
+		QStringList readListOption( const QString& key, const QStringList& def = QStringList() ) const;
 
 		/**
 		 * returns a map option
 		 */
-		MapOption readMapOption( const QString& key );
+		MapOption readMapOption( const QString& key ) const;
 
 		/**
 		 * return a color option
 		 */
-		YZColor readColorOption( const QString& key, const YZColor& def = YZColor() );
+		YZColor readColorOption( const QString& key, const YZColor& def = YZColor() ) const;
 
 		
 		/**
 		 * return a QString option
 		 */
-		const QString& readQStringEntry( const QString& key , const QString& def = QString::null );
+		const QString& readQStringEntry( const QString& key , const QString& def = QString::null ) const;
 
 		/**
 		 * Sets a qstring option
@@ -117,7 +117,7 @@ class YZInternalOptionPool {
 		/**
 		 * return an int option
 		 */
-		int readIntEntry( const QString& key, int def = 0 );
+		int readIntEntry( const QString& key, int def = 0 ) const;
 
 		/**
 		 * Sets an int option
@@ -127,7 +127,7 @@ class YZInternalOptionPool {
 		/**
 		 * return a bool option
 		 */
-		bool readBoolEntry( const QString& key , bool def = false );
+		bool readBoolEntry( const QString& key , bool def = false ) const;
 
 		/**
 		 * Sets a bool option
@@ -137,7 +137,7 @@ class YZInternalOptionPool {
 		/**
 		 * return a list option
 		 */
-		QStringList readQStringListEntry( const QString& key, const QStringList& def = QStringList() );// QStringList::split("","") );
+		QStringList readQStringListEntry( const QString& key, const QStringList& def = QStringList() ) const;// QStringList::split("","") );
 
 		/**
 		 * Sets a qstringlist option
@@ -147,7 +147,7 @@ class YZInternalOptionPool {
 		/**
 		 * return a YZColor option
 		 */
-		YZColor readYZColorEntry( const QString& key, const YZColor& def );
+		YZColor readYZColorEntry( const QString& key, const YZColor& def ) const;
 
 		/**
 		 * Sets a YZColor option
@@ -163,12 +163,12 @@ class YZInternalOptionPool {
 		/**
 		 * Does this group already exists ?
 		 */
-		bool hasGroup ( const QString& group );
+		bool hasGroup ( const QString& group ) const;
 
 		/**
 		 * Check the existence of an option
 		 */
-		bool hasOption ( const QString& key );
+		bool hasOption ( const QString& key ) const;
 
 		/**
 		 * Return a pointer on a specific option

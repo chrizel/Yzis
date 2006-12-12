@@ -76,7 +76,7 @@ class YZIS_EXPORT YZMode {
 		yzis::mapping_t mapMode() const;
 		bool registered() const;
 		void setRegistered( bool registered );
-		QStringList modifierKeys();
+		QStringList modifierKeys() const;
 
 		virtual bool isEditMode() const;
 
@@ -156,8 +156,8 @@ class YZIS_EXPORT YZModePool {
 		void unregisterModifierKeys();
 		void stop();
 
-		YZMode* current();
-		modeType currentType();
+		YZMode* current() const;
+		modeType currentType() const;
 	
 	private :
 		YZView* mView;

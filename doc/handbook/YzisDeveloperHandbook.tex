@@ -50,14 +50,14 @@ pdfborder={0 0 0}
 % \usepackage[utf8]{inputenc} or \usepackage[latin1]{inputenc}
 
 % If you are on Fedora Core you may have problems with accents
-% in this case replace the accentuated characters like this :
+% in this case replace the accentuated characters like this:
 %
 %  é -> \'e
 %  è -> \`e
 %  ê -> \^e and so on
 %
 % To automate the replacement you can make yourself a script
-% here is a handy command-line for doing this :
+% here is a handy command-line for doing this:
 % perl -pi -e "s/é/\\\'e/g" main.tex
 
 \usepackage{amsmath}
@@ -104,7 +104,7 @@ pdfborder={0 0 0}
 %\addtolength{\headwidth}{\marginparsep}
 
 % uncomment the following lines for headers
-% the following command need picture files : "logo-school.jpg" 
+% the following command need picture files: "logo-school.jpg" 
 % and "logo-company.jpg" in the project directory
 %
 %        \lhead{\sl \includegraphics[height=1.1cm]{logo-school}}
@@ -154,40 +154,41 @@ all of those in this chapter.
 \section{cmake}
 cmake is a replacement for the autotools ( autoconf/automake and such). We
 decided to switch to cmake because the autotools are evil, and, moreover,
-KDE officially switched to cmake. Yzis is quite close to kde, and follow
-KDE decisions on such topic.
-You can find more information about cmake on http://www.cmake.org
+KDE officially switched to cmake. Yzis is quite close to kde, and follows
+KDE decisions on this topic.
+You can find more information about cmake on \texttt{http://www.cmake.org}.
+Yzis requires cmake version 2.4.1 or newer.
 
 \section{subversion}
 Subversion is a Software Configuration Management(SCM), or Source Control,
 or Revision Control, or Version Control System (VCS). That is, subversion
 is used to handle source files. It keeps the history of the changes to the
 file and help the team to share the source.
-Check out the subversion book to know more about this tool.
+Check out the subversion book to learn more about this tool.
 
-Useful links~:
+Useful links:
 \begin{itemize}
-\item http://en.wikipedia.org/wiki/SCM
-\item http://en.wikipedia.org/wiki/Revision\_control
-\item http://subversion.tigris.org/
-\item http://svnbook.red-bean.com/
+\item \texttt{http://en.wikipedia.org/wiki/SCM}
+\item \texttt{http://en.wikipedia.org/wiki/Revision\_control}
+\item \texttt{http://subversion.tigris.org/}
+\item \texttt{http://svnbook.red-bean.com/}
 \end{itemize}
 
 \section{Doxygen}
 Doxygen is a tool which generates documentation from text inserted in the
 code itself. This typically used to describe APIs.
-See http://www.doxygen.org/
+See \texttt{http://www.doxygen.org}.
 
 \section{Qt}
 Yzis is built on top of the \emph{Qt} C++ library, which provides some
 generic useful classes and some optional GUI widgets. \emph{Qt} is most
 widely known as the basis for \emph{KDE}.
-See http://www.trolltech.com for more details.
+See \texttt{http://www.trolltech.com} for more details.
 
 \section{Lua}
 Lua is a small footprint script language designed to be easily embedded in
 applications. Yzis uses \emph{lua} for its main scripting language. See
-http://www.lua.org.
+\texttt{http://www.lua.org}.
 
 \section{\TeX}
 We use {\TeX} for documentation. You need a rather modern {\TeX} distribution.
@@ -197,39 +198,57 @@ For example, this is known to work with TeTeX 3.0 and not with TeTeX 2.0.2.
 This chapter explains how to get a fully usable environment to play with
 Yzis source.
 
+\section{Getting the source}
 First you need to get the source. Of course, you could use the latest
 tarball released, but it's probably outdated already. Moreover, you will
 not be able to follow the changes made by the Yzis team.
-Better use a svn checkout~:
+Better use a svn checkout:
 
 \begin{verbatim}
 svn co svn://svn.freenux.org/yzis/trunk yzis-trunk
+\end{verbatim}
+
+Updating your local copy of the yzis source code is easy:
+
+\begin{verbatim}
+svn up
+\end{verbatim}
+
+\section{Configuring and building the project}
+
+To build yzis, enter the source directory, create a build directory and use
+cmake to configure the project before building:
+
+\begin{verbatim}
 cd yzis-trunk
 mkdir build
 cd build
-cmake ../ -DCMAKE\_INSTALL\_PREFIX=/opt/kde4 -DCMAKE\_BUILD\_TYPE=debugfull
+cmake .. -DCMAKE\_INSTALL\_PREFIX=/opt/kde4 -DCMAKE\_BUILD\_TYPE=debugfull
 make
 sudo make install
 \end{verbatim}
 
-You can use \verb+ccmake ../+ instead of the \verb+cmake+ line to get an
+You can use \verb+ccmake ..+ instead of the \verb+cmake+ line to get an
 interface where you can configure variables.
 Now, you should have the latest yzis compiled and installed.
 
+\section{API documentation}
+
 If you intend to develop, it's probably a good idea to have the source
-documentation available~: (from within the main directory \verb+yzis-trunk+)
+documentation available. From within the main directory \verb+yzis-trunk+, issue
+this command:
 
 \begin{verbatim}
 doxygen yzis.doxy
 \end{verbatim}
 
-Then open a browser on the page \verb+yzis-trunk/apidoc/index.html+ and you
-have the full API documented. PLEASE update this documentation whenever you
-can while coding : document things you add, complete existing
-documentation, fix documentation when you find an error..
+Then open the page \verb+apidoc/index.html+ in a browser and you
+have the full API documentation. PLEASE update this documentation whenever you
+can while coding. Document things you add, complete existing documentation, fix
+documentation when you find an error\ldots{}
 
 Before digging into the source, you should probably read the architecture
-overview. And then.. go and read the source!
+overview. And then -- go and read the source!
 
 \chapter{Architecture overview}
 
@@ -271,7 +290,7 @@ As of december 2006, the purpose is to first make the \emph{ncurses} client
 and the \emph{Qt only} client available, then the \emph{KDE} client and
 embedable component, and then others.
 
-\section{Which part handles what ?}
+\section{Which part handles what?}
 
 The \verb+libyzis+ core handles files (loading/modifying/saving), commands
 interpretation, scripts interpretation (lua, highlighting), and lot of
@@ -309,7 +328,7 @@ both views and buffers (see \verb+createView()+, \verb+createBufferAndView()+,
 \verb+YZView+
 
 A view is a GUI component displaying part of a file, within a session. As
-such, it depends on both~: the constructor needs both a
+such, it depends on both: the constructor needs both a
 \verb+YZSession+ and a \verb+YZBuffer+. This is the class where rendering is
 done, closely with the core.
 
@@ -331,18 +350,18 @@ At every time, the session has a 'current view', which is the one receiving
 user input. For example in nyzis, if you haven't use the \emph{spilt}
 feature, there's only one view displayed at any time, even if several
 files are opened.  This is the current view. In Qyzis or Kyzis, on the
-other way, several views are displayed, but only one window has the focus :
-this is the current view from \verb+YZSession+ point of view.
+other way, several views are displayed, but only one window has the focus:
+this is the current view from \verb+YZSession+'s point of view.
 
 The \emph{client} handles the event loop. When a key event is received, it is sent
 to the \verb+libyzis+ core using the current view. For example in
-\verb+nyzis/nsession.cpp+ we can read :
+\verb+nyzis/nsession.cpp+ we can read:
 \begin{verbatim}
 currentView()->sendKey( QString( QChar( c ) ), modifiers );
 currentView()->sendKey( "<CTRL>]" );
 \end{verbatim}
 
-The core will do all what is needed : store the character in appropriate
+The core will do all what is needed: store the character in appropriate
 buffer, update all views for this buffer, if the character is \emph{enter},
 then some action might be taken, such as executing a command or whatever,
 depending on the current mode.
@@ -360,19 +379,19 @@ are in section \ref{rendering}).
 \section{Rendering}
 \label{rendering}
 
-Loic ?
+Loic?
 
-plan : global overview, messages exchanged between core and client.
+plan: global overview, messages exchanged between core and client.
 
-TODO : interval, cursors, color, highlighting.
+TODO: interval, cursors, color, highlighting.
 
 \section{Unit testing}
 
-Phil ?
+Phil?
 
 \section{Debugging and logging}
 
-Phil ?
+Phil?
 
 you can use the following macros
 \begin{verbatim}
@@ -382,11 +401,15 @@ YZASSERT_EQUALS( a, b )
 \end{verbatim}
 
 If you want to write some debugging message, please use the following
-stream. You can add an optional (text) argument to specify a debug area.
+streams:
+
 \begin{verbatim}
 yzDebug() yzWarning() yzError() yzFatal()
 \end{verbatim}
-Example~:
+
+You can add an argument(text, as in "rendering", for example) to specify an
+debug area. Example:
+
 \begin{verbatim}
 yzDebug("rendering") << "my message" << endl;
 \end{verbatim}
@@ -396,15 +419,18 @@ they can use the \verb+stdout+ or \verb+stderr+ to print debugging
 messagse. But nyzis is using the console for user interaction, and this
 is not possible. This is why yzis debug messages are written in a file such
 as \verb+/tmp/yzisdebug-orzel.log+. To see them, I recommand the following
-command (use an alias) :
+command (use an alias):
+
 \begin{verbatim}
-tail --follow=name /tmp/yzisdebug-orzel.log ,
+tail --follow=name /tmp/yzisdebug-orzel.log
 \end{verbatim}
-that you start from another console.
+
+Use this command from another console. This will give you an constantly updating
+view of the log file.
 
 \section{Scripting}
 
-who ?
+who?
 
 \chapter{nyzis, ncurses client}
 
@@ -416,7 +442,7 @@ Thomas.
 
 \chapter{Developer FAQ}
 
-What's the mess with symbol \verb+scroll+ ?
+\section{What's the mess with symbol \texttt{scroll}?}
 
 The ncurses library (only used by nyzis) defines a MACRO with such a name.
 This creates big clashes with Qt API as some classes (QWidget for example)

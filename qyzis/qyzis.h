@@ -42,8 +42,9 @@ class Qyzis : public QMainWindow
 public:
     /**
 	 * Constructs a Qyzis widget
-	 * @param dockConfig the configuration of dock widgets
-	 * @param mode the startup MDI mode
+	 * @param w parent widget
+     * @param initialKeys key sequence to be executed by yzis upon startup.
+     * Very useful for testing.
      */
     Qyzis(QWidget *w = 0, const QString& initialKeys=QString::null);
 

@@ -43,8 +43,8 @@ class YZIS_EXPORT YZColor {
 
 		void setRgb( QRgb );
 		/**
-		 * #RGB
-		 * #RRGGBB
+		 * @arg name can take the form:
+		 * "#RGB" or "#RRGGBB" or "#RRRGGGBBB" or "#RRRRGGGGBBBB"
 		 */
 		void setNamedColor( const QString name );
 

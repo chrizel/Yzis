@@ -42,6 +42,8 @@ class YZEvents  {
 		/**
 		 * Call plugins for event
 		 * @param event the event to execute plugins for
+		 * @param view view is the YZView in which to execute the event string
+		 * (can be different from the current view)
 		 */
 		 QStringList exec(const QString& event, YZView *view=NULL);
 

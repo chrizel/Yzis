@@ -46,11 +46,12 @@ void YZEvents::connect(const QString& event, const QString& function) {
 
 
 QStringList YZEvents::exec(const QString& event, YZView *view) {
+	/* XXX when view is NULL, what shall we do ? */
 	yzDebug() << "Executing event " << event << endl;
 	QMap<QString,QStringList>::Iterator it = mEvents.begin(), end = mEvents.end();
 	QStringList results;
 	QString hlName;
-	if ( view->myBuffer()->highlight() )
+	if ( view && view->myBuffer()->highlight() )
 		hlName = view->myBuffer()->highlight()->name();
 	hlName = hlName.toLower();
 	hlName.replace("+","p");

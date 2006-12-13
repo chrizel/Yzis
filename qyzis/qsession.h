@@ -65,8 +65,7 @@ public:
 	
 	/**
 	 * Opens a new buffer
-	 * @param path file to which the buffer is linked
-	 * @return the filename of the actual created buffer
+	 * @return the newly created buffer
 	 */
 	YZBuffer* doCreateBuffer();
 

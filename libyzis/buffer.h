@@ -130,6 +130,7 @@ public:
 	/**
 	 * Finds the @ref YZLine pointer for a line in the buffer
 	 * @param line the line to return
+	 * @param noHL if set to false, the highlighting of the line is initialised XXX (need proof-reading)
 	 * @return a YZLine pointer or 0 if none
 	 *
 	 * Note: the valid line numbers are between 0 and lineCount()-1
@@ -138,7 +139,7 @@ public:
 	const YZLine * yzline(int line) const;
 
 	/**
-	 * Replaces the given regexp @arg what with the given string @with on the specified @arg line
+	 * Replaces the given regexp @arg what with the given string @arg with on the specified @arg line
 	 * Repeat the change on the line if @arg wholeline is true
 	 * @return true if a change was done
 	 */
@@ -342,7 +343,7 @@ public:
 
 	/**
 	 * Finds a view by its UID
-	 * @param uid the unique ID of the view to search for
+	 * @param id the unique ID of the view to search for
 	 * @return a pointer to the view or NULL
 	 */
 	YZView* findView( const YZViewId &id ) const;

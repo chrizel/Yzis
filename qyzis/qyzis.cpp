@@ -31,11 +31,11 @@
 
 Qyzis *Qyzis::me = NULL;
 
-Qyzis::Qyzis(QWidget *w, const QString& keys)
+Qyzis::Qyzis(QWidget *w, const QString& initialKeys)
 	: QMainWindow(w),
 	mBuffers( 0 ), mViews( 0 )
 {
-	m_initialCommand = keys;
+	m_initialCommand = initialKeys;
 	resize( 800, 600 );
 
 	setupActions();

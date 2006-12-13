@@ -1337,7 +1337,7 @@ void YzisHighlighting::dropDynamicContexts()
  *
  * @param prevLine The previous line, the context array is picked up from that if present.
  * @param textLine The text line to parse
- * @param foldinglist will be filled
+ * @param foldingList will be filled
  * @param ctxChanged will be set to reflect if the context changed
  */
 void YzisHighlighting::doHighlight ( YZLine *prevLine,

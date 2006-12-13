@@ -58,6 +58,13 @@ class YZInternalOptionPool {
 
 		/**
 		 * Save settings to @param file
+		 * @param what if not empty, only the settings that start with this
+		 * prefix will be saved
+		 * @param except if not empty, all the settings starting with except
+		 * will not be saved
+		 * @param force if file already exists and force is set, the file will
+		 * be overwritten. Else the saving is aborted.
+		 *
 		 */
 		void saveTo(const QString& file, const QString& what=QString::null, const QString& except=QString::null, bool force=false);
 

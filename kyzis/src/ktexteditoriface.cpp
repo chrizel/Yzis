@@ -282,7 +282,7 @@ unsigned int KYZTextEditorIface::undoSteps() const {
 	return 0;
 }
 
-void KYZTextEditorIface::setUndoSteps(unsigned int ) {
+void KYZTextEditorIface::setUndoSteps( uint ) {
 	//nothing
 }
 

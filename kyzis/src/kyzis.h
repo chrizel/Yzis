@@ -47,8 +47,9 @@ class Kyzis : public DMainWindow, public DCOPObject
 public:
     /**
 	 * Constructs a Kyzis widget
-	 * @param dockConfig the configuration of dock widgets
-	 * @param mode the startup MDI mode
+	 * @param w the parent widget
+	 * @param initialKeys the string if initial key strokes, very useful for
+     * testing.
      */
     Kyzis(QWidget *w, const QString& initialKeys);
 

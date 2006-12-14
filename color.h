@@ -38,7 +38,7 @@ class YZIS_EXPORT YZColor {
 		YZColor();
 		YZColor( QRgb rgb );
 		YZColor( Qt::GlobalColor color );
-		YZColor( const QString name );
+		YZColor( const QString &name ) { setNamedColor( name ); }
 		virtual ~YZColor();
 
 		void setRgb( QRgb );
@@ -46,7 +46,7 @@ class YZIS_EXPORT YZColor {
 		 * @arg name can take the form:
 		 * "#RGB" or "#RRGGBB" or "#RRRGGGBBB" or "#RRRRGGGGBBBB"
 		 */
-		void setNamedColor( const QString name );
+		void setNamedColor( const QString &name );
 
 		bool isValid() const;
 

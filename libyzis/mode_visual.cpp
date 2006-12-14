@@ -28,6 +28,7 @@
 #include "buffer.h"
 #include "selection.h"
 #include "session.h"
+#include "view.h"
 #include "viewcursor.h"
 
 using namespace yzis;

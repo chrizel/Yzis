@@ -20,10 +20,8 @@
 #ifndef YZ_MAPPING_H
 #define YZ_MAPPING_H
 
-#include <qglobal.h>
 #include <QMap>
 #include <QString>
-#include "debug.h"
 
 /**
  * Handles key mappings

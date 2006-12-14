@@ -29,11 +29,8 @@
 #ifndef YZ_DEBUG_H
 #define YZ_DEBUG_H
 
-#include <qglobal.h>
 #include <QString>
-#include <cstdio>
 #include <QMap>
-#include <QFile>
 #include "yzismacros.h"
 
 class QStringList;

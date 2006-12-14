@@ -34,6 +34,7 @@
 #include <QTextStream>
 #include <QRegExp>
 #include <QStringList>
+#include <QFile>
 
 YZDebugBackend * YZDebugBackend::_instance = NULL;
 

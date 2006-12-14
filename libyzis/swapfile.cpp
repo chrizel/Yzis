@@ -16,6 +16,12 @@
  *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
  **/
+#include <QFile>
+#include <QTextStream>
+#include <QDate>
+#include <QTime>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "debug.h"
 #include "swapfile.h"
@@ -24,12 +30,7 @@
 #include "buffer.h"
 #include "action.h"
 #include "view.h"
-#include <QFile>
-#include <QTextStream>
-#include <QDate>
-#include <QTime>
-#include <sys/types.h>
-#include <sys/stat.h>
+#include "session.h"
 #include "portability.h"
 
 YZSwapFile::YZSwapFile(YZBuffer *b) {

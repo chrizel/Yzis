@@ -29,7 +29,6 @@
 #ifndef __YZ_SYNTAXDOCUMENT_H__
 #define __YZ_SYNTAXDOCUMENT_H__
 
-#include <qglobal.h>
 #include <QtXml/QDomElement>
 #include <QList>
 #include <QStringList>

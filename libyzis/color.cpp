@@ -19,11 +19,6 @@
 
 #include "color.h"
 
-#include <stdlib.h>
-
-#include "QtCore/qglobal.h"
-#include "debug.h"
-
 /** helper functions from qt ( gui/painting/qcolor_p.cpp ) **/
 static int hex2int(QChar hexchar)
 {

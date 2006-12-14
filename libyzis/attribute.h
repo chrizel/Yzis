@@ -29,8 +29,6 @@
 #include "color.h"
 #include "font.h"
 
-#include <qglobal.h>
-
 /**
  * The Attribute class incorporates all text decorations supported by Yzis.
  */

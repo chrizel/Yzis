@@ -20,7 +20,6 @@
 #ifndef YZ_SWAPFILE
 #define YZ_SWAPFILE
 
-#include "session.h"
 #include "undo.h"
 
 class YZBuffer;

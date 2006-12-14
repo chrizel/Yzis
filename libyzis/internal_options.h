@@ -25,6 +25,9 @@
 /* yzis */
 #include "option.h"
 
+class YZBuffer;
+class YZView;
+
 /**
  * Class to handle the internal options.
  *

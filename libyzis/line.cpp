@@ -20,7 +20,6 @@
 
 #include <qregexp.h>
 #include "line.h"
-#include "syntaxdocument.h"
 #include "debug.h"
 
 YZLine::YZLine(const QString &l) :

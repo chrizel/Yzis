@@ -17,9 +17,8 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include <debug.h>
-
 #include "drawbuffer.h"
+#include "debug.h"
 #include "view.h"
 
 YZDrawBuffer::YZDrawBuffer() : 

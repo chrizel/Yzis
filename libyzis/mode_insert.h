@@ -21,7 +21,6 @@
 #define YZ_MODE_INSERT_H
 
 #include "mode.h"
-#include "view.h"
 #include "yzismacros.h"
 
 class YZMode;

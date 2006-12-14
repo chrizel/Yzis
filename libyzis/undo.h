@@ -27,10 +27,7 @@
 
 #include "portability.h"
 
-#include <qglobal.h>
-#include <QLinkedList>
 #include <QString>
-#include <QList>
 #include "yzismacros.h"
 
 class YZView;

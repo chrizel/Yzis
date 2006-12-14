@@ -22,13 +22,11 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "portability.h"
+#include "debug.h"
 #include "mode_ex.h"
 #include "buffer.h"
 #include "folding.h"
-#include "registers.h"
 #include "session.h"
-#include "swapfile.h"
 #include "ex_lua.h"
 #include "mark.h"
 #include "selection.h"
@@ -38,12 +36,12 @@
 #include "tags_interface.h"
 #include "search.h"
 #include "internal_options.h"
+#include "view.h"
 #include "viewcursor.h"
 #include "history.h"
 
-#include <qobject.h>
-#include <qfileinfo.h>
-#include <qdir.h>
+#include <QFileInfo>
+#include <QDir>
 
 #include <QDir>
 

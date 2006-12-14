@@ -16,14 +16,11 @@
  *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
  **/
-
-#include <qglobal.h>
-#include <QChar>
-#include <QStringList>
-#include <QMap>
-
 #ifndef YZ_REGISTERS
 #define YZ_REGISTERS
+
+#include <QStringList>
+#include <QMap>
 
 class YZRegisters {
 	public:

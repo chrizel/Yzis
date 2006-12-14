@@ -17,7 +17,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <iostream>
 #include "ex_lua.h"
 #include "debug.h"
 #include "view.h"
@@ -31,7 +30,6 @@
 #include "internal_options.h"
 #include "events.h"
 
-#include <stdarg.h>
 #include <QDir>
 
 #include "mode_ex.h"

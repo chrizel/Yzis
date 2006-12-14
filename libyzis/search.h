@@ -21,8 +21,7 @@
 #ifndef YZ_SEARCH_H
 #define YZ_SEARCH_H
 
-#include <qstring.h>
-
+class QString;
 class YZCursor;
 class YZBuffer;
 

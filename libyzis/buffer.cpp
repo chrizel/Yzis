@@ -21,20 +21,12 @@
  **/
 
 
-#include <assert.h>
-#include <cstdlib>
-
 // for tildeExpand
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#include <qfile.h>
-#include <qtextstream.h>
-#include <qfileinfo.h>
-#include <qdir.h>
-#include <qtextcodec.h>
+#include <QTextCodec>
 
-#include "portability.h"
 #include "buffer.h"
 #include "line.h"
 #include "view.h"
@@ -45,10 +37,10 @@
 #include "mark.h"
 #include "swapfile.h"
 #include "session.h"
+#include "syntaxhighlight.h"
 #include "ex_lua.h"
 #include "search.h"
 #include "yzisinfo.h"
-#include "viewcursor.h"
 
 #define ASSERT_TEXT_WITHOUT_NEWLINE( functionname, text ) \
 	YZASSERT_MSG( text.contains('\n')==false, QString("%1 - text contains newline").arg(text) )

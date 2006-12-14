@@ -22,15 +22,12 @@
 #define YZ_ACTION_H
 
 /* Qt */
-#include <qstring.h>
-
-/* yzis */
-#include "selection.h"
-
+#include <QString>
 
 class YZBuffer;
 class YZView;
 class YZCursor;
+class YZInterval;
 
 class YZIS_EXPORT YZAction {
 

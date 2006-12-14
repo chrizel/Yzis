@@ -26,7 +26,6 @@
 #include "yzismacros.h"
 
 class YZBuffer;
-class YZCursor;
 
 class YZIS_EXPORT YZModeCompletion : public YZMode {
 	public :

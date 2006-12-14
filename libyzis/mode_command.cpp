@@ -26,8 +26,6 @@
 #include "portability.h"
 #include "mode_command.h"
 
-#include <assert.h>
-
 #include <QRegExp>
 
 #include "debug.h"
@@ -35,12 +33,9 @@
 #include "action.h"
 #include "buffer.h"
 #include "cursor.h"
-#include "events.h"
 #include "linesearch.h"
 #include "mark.h"
-#include "registers.h"
 #include "search.h"
-#include "selection.h"
 #include "session.h"
 #include "tags_interface.h"
 #include "view.h"
@@ -974,7 +969,7 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 
 void YZModeCommand::execMotion( const YZCommandArgs &args ) {
 	const YZMotion *m=dynamic_cast<const YZMotion*>(args.cmd);
-	assert(m);
+	YZASSERT(m);
 	YZCursor to = (this->*(m->motionMethod()))(YZMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true));
 	//args.view->centerViewVertically( to.y() );
 	args.view->gotoxy(to.x(), to.y());

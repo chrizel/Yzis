@@ -23,8 +23,6 @@
  **/
 
 /* System */
-#include <cstdlib>
-#include <ctype.h>
 #include <math.h>
 
 /* Yzis */
@@ -35,15 +33,13 @@
 #include "undo.h"
 #include "cursor.h"
 #include "internal_options.h"
-#include "registers.h"
 #include "buffer.h"
 #include "line.h"
-#include "swapfile.h"
 #include "mark.h"
 #include "action.h"
 #include "session.h"
+#include "syntaxhighlight.h"
 #include "linesearch.h"
-#include "mapping.h"
 #include "folding.h"
 
 using namespace yzis;

@@ -20,7 +20,7 @@
 #ifndef YZISINFOJUMPLISTRECORD_H
 #define YZISINFOJUMPLISTRECORD_H
 
-#include <qstring.h>
+#include <QString>
 
 #include "cursor.h"
 

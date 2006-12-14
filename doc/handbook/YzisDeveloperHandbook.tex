@@ -192,7 +192,9 @@ applications. Yzis uses \emph{lua} for its main scripting language. See
 
 \section{\TeX}
 We use {\TeX} for documentation. You need a rather modern {\TeX} distribution.
-For example, this is known to work with TeTeX 3.0 and not with TeTeX 2.0.2.
+For example, this is known to work with TeTeX 3.0 or Tex Live 2005, but not with
+TeTeX 2.0.2. See \texttt{http://www.tug.org/tetex/}\footnote{Not longer
+maintained} or \texttt{http://www.tug.org/texlive/}.
 
 \chapter{Startup guide}
 This chapter explains how to get a fully usable environment to play with
@@ -449,6 +451,38 @@ This creates big clashes with Qt API as some classes (QWidget for example)
 have methods with this name. Nyzis handles this using some hack (see
 viewWidget.h), but to ease handling this, the word \verb+scroll+ should
 just not be used anywhere in libyzis.
+
+\appendix
+
+\chapter{How to set up set your distribution for building yzis}
+
+\section{(K)ubuntu 6.10 (Edgy Eft)}
+
+First of all, if you haven't already done so, you have to add the
+\emph{universe} repository by uncommenting the appropriate lines in
+\texttt{/etc/apt/sources.list}. This is needed to install cmake.
+
+\subsection{Essential tools}
+To build yzis from source code You'll need to install the the following packages
+and their dependencies using apt-get:
+
+\texttt{sudo apt-get install subversion cmake build-essential libqt4-dev liblua50-dev
+liblualib50-dev libncursesw5-dev liblualib50-dev libmagic-dev}
+
+\subsection{\TeX}
+
+Yzis uses the \LaTeX document preparation system for documentation. To be able
+to build this documentation you'll need to install these \TeX{} Live packages
+with dependencies:
+
+\texttt{sudo apt-get install texlive-base texlive-base-bin texlive-doc-base
+texlive-fonts-recommended texlive-latex-base texlive-latex-recommended
+texlive-pdfetex texlive-latex-extra}
+
+\subsection{Doxygen}
+To be able to build the API documentation with oxygen, install doxygen:
+
+\texttt{sudo apt-get install doxygen}
 
 
 \end{document}

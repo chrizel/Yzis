@@ -21,12 +21,13 @@
 
 
 #include "portability.h"
+#include "debug.h"
+#include "action.h"
 #include "search.h"
 #include "view.h"
 #include "session.h"
 #include "buffer.h"
 #include "selection.h"
-#include "action.h"
 
 struct YZSearch::Private
 {		

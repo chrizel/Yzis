@@ -21,7 +21,6 @@
 #ifndef YZ_QTPRINTER_H
 #define YZ_QTPRINTER_H
 
-#include "view.h"
 #include <QPrinter>
 
 class YZView;

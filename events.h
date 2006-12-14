@@ -20,9 +20,10 @@
 #ifndef YZ_EVENTS
 #define YZ_EVENTS
 
-#include "view.h"
 #include <QMap>
 #include <QStringList>
+
+class YZView;
 
 class YZEvents  {
 	public:

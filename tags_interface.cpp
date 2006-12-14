@@ -43,6 +43,7 @@
 #include "view.h"
 #include "buffer.h"
 #include "tags_stack.h"
+#include "yzisinfojumplistrecord.h"
 
 static YZList<tagFile*> tagfilelist;
 static YZList<QString> tagfilenames;

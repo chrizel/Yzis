@@ -25,18 +25,18 @@
 #ifndef YZ_MODE_COMMAND_H
 #define YZ_MODE_COMMAND_H
 
-#include "mode.h"
-#include "view.h"
-#include "cursor.h"
-#include "yzismacros.h"
 #include <QList>
 #include <QStringList>
+
+#include "mode.h"
+#include "cursor.h"
+#include "selection.h"
+#include "yzismacros.h"
 
 class YZBuffer;
 class YZView;
 class YZCursor;
 class YZCommand;
-class YZMode;
 class YZModeCommand;
 
 /** holds the arguments a command needs in order to execute */

@@ -20,7 +20,7 @@
 #ifndef YZISINFOSTARTPOSITIONRECORD_H
 #define YZISINFOSTARTPOSITIONRECORD_H
 
-#include <qstring.h>
+#include <QString>
 #include "cursor.h"
 
 /**

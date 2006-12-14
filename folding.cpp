@@ -18,7 +18,7 @@
  **/
 
 #include "folding.h"
-
+#include "view.h"
 #include "debug.h"
 
 YZFoldPool::YZFoldPool( YZView* view ) {

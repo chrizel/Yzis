@@ -26,11 +26,7 @@
 #ifndef YZ_TAGS_STACK_H
 #define YZ_TAGS_STACK_H
 
-#include "readtags.h"
-#include "yzisinfojumplistrecord.h"
-
-#include <qpair.h>
-#include <QVector>
+#include <QPair>
 
 class YZYzisinfoJumpListRecord;
 

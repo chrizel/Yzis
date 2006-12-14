@@ -30,7 +30,6 @@
 
 /* yzis */
 #include "mode.h"
-#include "view.h"
 #include "yzismacros.h"
 #include "portability.h"
 

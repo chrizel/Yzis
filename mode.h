@@ -21,8 +21,8 @@
 #define YZ_MODE_H
 
 /* Qt */
-#include <qstringlist.h>
-#include <qmap.h>
+#include <QMap>
+#include <QStringList>
 
 /* Yzis */
 #include "yzis.h"

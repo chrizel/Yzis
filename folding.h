@@ -22,7 +22,9 @@
 
 #include <QMap>
 
-#include "view.h"
+class YZView;
+
+class YZDebugStream;
 
 struct YZFold {
 	int to;

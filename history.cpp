@@ -11,7 +11,7 @@
 //
 #include "history.h"
 
-#include <qstringlist.h>
+#include <QStringList>
 #include <QTextStream>
 
 static QString Null = QString::null;

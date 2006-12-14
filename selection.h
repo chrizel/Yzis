@@ -21,12 +21,11 @@
 #ifndef YZ_SELECTION_H
 #define YZ_SELECTION_H
 
+#include <QMap>
+#include <QString>
 #include <QRect>
-#include <qmap.h>
 
 #include "cursor.h"
-
-class YZCursor;
 
 class YZIS_EXPORT YZBound {
 	public:

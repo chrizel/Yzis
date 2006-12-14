@@ -18,6 +18,7 @@
  **/
 
 #include "cursor.h"
+#include "debug.h"
 
 YZCursor::YZCursor() : QPoint(-1,-1) {
 }

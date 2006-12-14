@@ -21,6 +21,7 @@
  **/
 
 #include "viewcursor.h"
+#include "debug.h"
 
 /**
  * class YZViewCursor

@@ -20,15 +20,14 @@
 #ifndef YZISINFO_H
 #define YZISINFO_H
 
-#include <qdir.h>
-#include <qfile.h>
+#include <QDir>
+#include <QFile>
 #include <QTextStream>
-
-#include "cursor.h"
 
 class YZBuffer;
 class YZYzisinfoStartPositionRecord;
 class YZYzisinfoJumpListRecord;
+class YZCursor;
 
 typedef YZVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
 typedef YZVector<YZYzisinfoJumpListRecord*> JumpListVector;

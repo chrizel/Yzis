@@ -23,10 +23,10 @@
 #ifndef YZ_BUFFER_H
 #define YZ_BUFFER_H
 
-#include "syntaxhighlight.h"
-#include "debug.h"
-#include "selection.h"
+#include <QStringList>
+
 #include "portability.h"
+#include "yzismacros.h"
 
 class YZUndoBuffer;
 class YZAction;
@@ -37,6 +37,9 @@ class YZSwapFile;
 class YZLine;
 class YZView;
 class YZViewId;
+class YZInterval;
+
+class YzisHighlighting;
 
 typedef YZVector<YZLine*> YZBufferData;
 
@@ -361,7 +364,7 @@ public:
 	YZAction* action() const;
 	YZViewMark* viewMarks() const;
 	YZDocMark* docMarks() const;
-	YzisHighlighting *highlight() const;
+	YzisHighlighting* highlight() const;
 
 	//-------------------------------------------------------
 	// ------------ Highlighting

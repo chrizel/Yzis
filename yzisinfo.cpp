@@ -34,6 +34,7 @@
 #include "buffer.h"
 #include "mode_search.h"
 #include "session.h"
+#include "view.h"
 #include "yzisinfo.h"
 #include "yzisinfojumplistrecord.h"
 #include "yzisinfostartpositionrecord.h"

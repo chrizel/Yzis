@@ -22,16 +22,17 @@
 #ifndef YZ_VIEW_H
 #define YZ_VIEW_H
 
-/* Qt */
-#include <QCoreApplication>
+#include <QString>
 
 /* yzis */
-//#include "mode.h"
+#include "yzismacros.h"
+#include "selection.h"
 #include "option.h"
-#include "viewid.h"
 #include "drawbuffer.h"
+#include "viewid.h"
 
 class YZViewCursor;
+class YZColor;
 class YZCursor;
 class YZBuffer;
 class YZSession;

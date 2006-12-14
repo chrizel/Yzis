@@ -22,18 +22,12 @@
 #ifndef YZ_MODE_VISUAL_H
 #define YZ_MODE_VISUAL_H
 
-#include "cursor.h"
-#include "mode.h"
 #include "mode_command.h"
-#include "view.h"
 #include "yzismacros.h"
 
-#include <QList>
-#include <QStringList>
-
-class YZCursor;
 class YZMode;
 class YZView;
+class YZViewCursor;
 
 class YZIS_EXPORT YZModeVisual : public YZModeCommand {
 	public:

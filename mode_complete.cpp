@@ -21,12 +21,13 @@
 
 #include "portability.h"
 #include "mode_complete.h"
+#include "mode_command.h"
 
 #include "buffer.h"
+#include "debug.h"
 #include "session.h"
 #include "action.h"
-#include "viewcursor.h"
-#include "mode_command.h"
+#include "view.h"
 #include "tags_interface.h"
 #include "internal_options.h"
 

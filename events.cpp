@@ -21,8 +21,8 @@
 #include "debug.h"
 #include "ex_lua.h"
 #include "buffer.h"
-
-class YZView;
+#include "syntaxhighlight.h"
+#include "view.h"
 
 YZEvents::YZEvents() {
 }

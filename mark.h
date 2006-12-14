@@ -21,10 +21,8 @@
 #ifndef YZ_MARK_H
 #define YZ_MARK_H
 
-#include "qglobal.h"
 #include <QMap>
 #include <QString>
-#include "cursor.h"
 #include "yzismacros.h"
 
 struct YZCursorPos;

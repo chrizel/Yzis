@@ -18,6 +18,8 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include <QPainter>
+#include <QPaintDevice>
 #include <math.h>
 
 #include "qtprinter.h"
@@ -25,8 +27,7 @@
 #include "debug.h"
 #include "session.h"
 #include "buffer.h"
-#include <QPainter>
-#include <QPaintDevice>
+#include "view.h"
 
 YZQtPrinter::YZQtPrinter( YZView *view ) : QPrinter(QPrinter::PrinterResolution) {
 	mView = view;

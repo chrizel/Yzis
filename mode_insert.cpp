@@ -26,9 +26,8 @@
 #include "session.h"
 #include "action.h"
 #include "viewcursor.h"
-#include "mode_command.h"
 #include "mode_complete.h"
-#include "events.h"
+#include "view.h"
 
 using namespace yzis;
 

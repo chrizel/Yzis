@@ -28,14 +28,8 @@
 #include "view.h"
 #include "action.h"
 #include "debug.h"
-#include "registers.h"
-#include "cursor.h"
-#include "internal_options.h"
 #include "buffer.h"
 #include "session.h"
-
-#include <stdlib.h>
-#include <assert.h>
 
 YZAction::YZAction( YZBuffer* buffer ) {
 	mBuffer = buffer;

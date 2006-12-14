@@ -25,11 +25,11 @@
 #include "schema.h"
 #include "buffer.h"
 #include "registers.h"
-#include "swapfile.h"
 #include "mapping.h"
 #include "search.h"
 #include "events.h"
 #include "internal_options.h"
+#include "view.h"
 #include "yzisinfo.h"
 #include "ex_lua.h"
 

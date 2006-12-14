@@ -21,8 +21,9 @@
 #define YZIS_CURSOR
 
 #include <QPoint>
+#include "yzismacros.h"
 
-#include "debug.h"
+class YZDebugStream;
 
 class YZIS_EXPORT YZCursor : public QPoint {
 
@@ -44,6 +45,7 @@ class YZIS_EXPORT YZCursor : public QPoint {
 		bool operator>= ( const YZCursor& right ) const;
 
 };
+
 extern YZIS_EXPORT YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
 
 struct YZCursorPos {

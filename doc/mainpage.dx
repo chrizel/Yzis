@@ -1,0 +1,21 @@
+
+/*! \mainpage Yzis Developer Book
+ 
+\section intro Introduction
+
+Some intro
+
+\subpage technologies
+
+\subpage startup_guide
+
+\subpage arch_overview
+
+\subpage components_desc
+
+\subpage scripting
+ 
+ */
+
+
+

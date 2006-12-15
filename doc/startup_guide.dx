@@ -1,0 +1,27 @@
+
+
+/** \page startup_guide Startup Guide
+  *
+  *
+  * \section step1 Step 1
+  * first get it from svn
+  *
+  * \subsection step1_1 Step 1.1
+  * how to use svn
+  *
+  * \subsubsection step1_1_1 Step 1.1.1
+  *
+  *     What is svn all about
+  *
+  * \subsubsection step1_1_2 Step 1.1.2
+  *
+  *     CVS sucks !
+  *
+  * \subsection  step1_2 Step 1.2
+  * ssh or http ?
+  *
+  * \section step2 Step 2
+  * compile it
+  *
+  */
+

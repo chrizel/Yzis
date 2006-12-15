@@ -1,0 +1,292 @@
+
+/** \page scripting Yzis Scripting support
+
+
+\section Introduction
+
+Yzis features a scripting language, lua. Lua was chosen because it is a small
+yet powerful scripting language. Integration was easy, scripting power is
+quite good and memory overhead is quite small.
+
+
+\section scripting_lua_integration How lua is integrated
+
+There is a layer to manage the lua engine.
+
+There are lua functions available when you script in lua
+
+There are additional functions for working nicely in a lua environement
+
+There are functions to start yzis with lua directly or to run a lua command.
+
+
+\section lua_engine Lua engine
+
+YZExLua is a singleton instance that managees the lua engine.
+
+All lua needs for its engine is a state which is traditionally stored as
+variable lua_State * L. In our case, this variable is a protected variable of
+the YzExLua instance. This variable is going to be the first argument of every
+lua function, in a traditional C oriented programming.
+
+During YZExLua construction, the lua engine is initialised. The lua state L is
+created and a few lua libraries are opened:
+\code
+YZExLua::YZExLua() {
+	L = lua_open();
+	luaopen_base(L);
+	luaopen_string( L );
+    /* more lua_open ... */
+\endcode
+
+The next step is to register all lua functions that will be available for yzis
+scripting:
+\code
+	lua_register(L,"line",line);
+	lua_register(L,"setline",setline);
+	lua_register(L,"insert",insert);
+    /* more lua_register ... */
+\endcode
+
+Now, yzis is ready to be used with lua.
+
+Upon closing, the lua state is closed:
+\code
+YZExLua::~YZExLua() {
+	lua_close(L);
+}
+\endcode
+
+Fairly simple, isn't it ? Now, you know why we chose lua.
+
+\section calling_lua Calling lua
+
+Some content
+
+\section func_for_lua Making a function available in lua:
+
+In this chapter, we will see how to make a function available in lua.
+
+To be usable by lua, the function should be either a function or a static
+method, taking one unique argument in the form of a lua_State * L and
+returning an int. All yzis lua functions are static methods of YzExLua.
+
+Lua exchanges information by using the stack. When the function is
+called, all the arguments of the function are pushed onto the stack. The size
+of the stack tells you the number of elements that were pushed. The results of
+the call should be on the stack when the call is finished and the function
+should return the number of elements that are returned by the function.
+Note that lua allows to return multiple arguments from a function call.
+
+A lua function always performs the following actions:
+<ol>
+<li> Check that the right number and type of arguments have been provided to the function
+<li> Pop each argument from the stack and convert it to the right type
+<li> perform what the function is meant to do
+<li> push the function result on the stack and return the number of elements
+contained in the result.
+</ol>
+
+\subsection first_example First real example
+
+The line() function of lua takes a line number argument and returns the
+content of the line of the current buffer as a string.
+
+The prototype is a static method:
+\code
+class YzExLua { 
+    /* ... */
+
+    static int line(lua_State *L);
+
+};
+
+int YZExLua::line(lua_State *L) {
+    /* ... */
+}
+\endcode
+
+
+The implementation should first check the arguments:
+\code
+int YZExLua::line(lua_State *L) {
+	if (!checkFunctionArguments(L, 1, 1, "line", "line number")) return 0;
+	int line = ( int )lua_tonumber( L,1 );
+	lua_pop(L,1);
+
+    /* ... */
+\endcode
+
+checkFunctionArguments is a helper function with the following signature:
+\code
+bool YZExLua::checkFunctionArguments(lua_State*L, 
+    int argNbMin, 
+    int argNbMax, 
+    const char * functionName, 
+    const char * functionArgDesc );
+\endcode
+
+It will check that the number of arguments provided to the functions are
+between argNbMin and argNbMax. If not it will print a friendly error message
+in lua using the description provided in functionName and functionArgDesc
+and return false.
+
+If the checkFunctionArguments() returns true, you can process to the next
+step, which is to retrieve your arguments. They should be read from the
+stack and popped.
+
+lua_pop(L,n) will pop (remove) n elements from the stack.
+
+Now that we have our argument, we should process the function. We need to
+adjust the line number count (in yzis as in vim, line are numbered starting
+from 1), then fetch the current view, then fetch the content of the line.	
+\code
+int YZExLua::line(lua_State *L) {
+	if (!checkFunctionArguments(L, 1, 1, "line", "line number")) return 0;
+	int line = ( int )lua_tonumber( L,1 );
+	lua_pop(L,1);
+
+	line = line ? line - 1 : 0;
+	YZView* cView = YZSession::me->currentView();
+	QString	t = cView->myBuffer()->textline( line );
+
+    /* ... */
+}
+\endcode
+
+Finally, we should push the string on the stack and check that the stack
+contains only the variables that we are returning. If the stack contains more
+variables, lua will not generate any error but the stack will grow at each
+function call, until it exhausts the memory. This is a memory
+leak. To avoid this, assert that the stack contains the right number of
+elements prior to returning to lua. Then return the number of elements that
+your function put on the stack.
+
+lua_gettop() return the number of elements contained on the lua stack.
+
+\code
+int YZExLua::line(lua_State *L) {
+	if (!checkFunctionArguments(L, 1, 1, "line", "line number")) return 0;
+	int line = ( int )lua_tonumber( L,1 );
+	lua_pop(L,1);
+
+	line = line ? line - 1 : 0;
+	YZView* cView = YZSession::me->currentView();
+	QString	t = cView->myBuffer()->textline( line );
+
+	lua_pushstring( L, t.toUtf8() ); // first result
+	YZASSERT_EQUALS( lua_gettop(L), 1 );
+	return 1;
+}
+\endcode
+
+\subsection second_example Second Example
+
+The winpos() function takes no argument but rerturn two values, the current
+line and current column of the cursor.
+
+\code
+int YZExLua::winpos(lua_State *L) {
+	if (!checkFunctionArguments(L, 0, 0, "winpos", "")) return 0;
+
+	YZView* cView = YZSession::me->currentView();
+	uint line = cView->getBufferCursor().y() + 1;
+	uint col = cView->getBufferCursor().x() + 1;
+
+	lua_pushnumber( L, col ); 
+	lua_pushnumber( L, line ); 
+	YZASSERT_EQUALS( lua_gettop(L), 2 );
+	return 2;
+}
+\endcode
+
+\subsection third_example Third Example
+
+The goto() function takes two arguments and moves the cursor to the position
+specified. It returns nothing. 
+
+\code
+int YZExLua::_goto(lua_State *L) {
+	if (!checkFunctionArguments(L, 2, 2, "goto", "line, col")) return 0;
+	int sCol = ( int )lua_tonumber( L, 1 );
+	int sLine = ( int )lua_tonumber( L,2 );
+	lua_pop(L,2);
+
+	YZView* cView = YZSession::me->currentView();
+	cView->gotoxy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
+
+	YZASSERT_EQUALS( lua_gettop(L), 0 );
+	return 0;
+}
+\endcode
+
+Finally, to make a function available in lua, it should be registered to the lua engine with
+\code
+	lua_register(L,"line",line);
+	lua_register(L,"winpos",winpos);
+	lua_register(L,"goto",_goto);
+\endcode
+
+First argument is the lua_State *, the second is the name of the function that
+will be available in lua, the third one is a function pointer to the actual
+function.  Since goto is a reserved keyword of C/C++, we named the
+implementation _goto() although it is registered to lua as goto().
+
+Yzis provides a convenient print_lua_stack() function to help you pinpoint
+stack problems.
+
+\subsection more_lua More about lua
+
+Lua supports the following types: nil, number, boolean, string, table,
+functions. Table is both a list and a dictionnary (in lua, a list is a mapping
+from a number - the index - to a value).
+
+Popping from the lua stack:
+\li float  lua_tonumber (lua_State * L, int index));
+\li int    lua_toboolean(lua_State * L, int index));
+\li char * lua_tostring (lua_State * L, int index));
+
+Putting on the lua stack:
+\li void lua_pushnumber( lua_State * L, int val );
+\li void lua_pushstring( lua_State * L, char * s );
+\li void lua_pushboolean( lua_State * L, int b );
+
+Lua strings are encoded in utf8. The appropriate method of QString should be
+used to deal with them:
+\code
+    QString text, text2;
+	text = QString::fromUtf8( (char *) lua_tostring ( L, 1 ) );
+    /* ... */
+	lua_pushstring(L, text2.toUtf8());
+\endcode
+
+other useful lua functions:
+\li int lua_getteop(lua_State * L) : number of elements of the stack
+\li int lua_type(lua_State * L, int idx)) : type of the element at index idx
+\li int lua_isxyz( lua_State * L, int idx ) : with xyz being number, string, boolan; return 1 if the element in the stack is of type xyz
+
+For a more detailed information of how to use lua, please check:
+file:///D:/program/lua-5.0.2/doc/manual.html#3
+
+Summary: 
+
+To write a good lua function:
+\li use only simple types (int, strings, boolean)
+\li always check your input arguments number and types
+\li always provide friendly error messages 
+\li always document what your function does
+\li always check that the stack contains the right number of element when
+  returning.
+
+If you do this, script developers will find it easy to use your function in
+their scripts.
+
+
+\section using_lua_in_yzis Using lua in Yzis
+
+\section writing_yzis_lua_test Writing an yzis test with lua:
+
+
+*/
+
+

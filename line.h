@@ -59,6 +59,7 @@ class YZLine
 		int nextNonSpaceChar(uint pos) const;
 		int previousNonSpaceChar(uint pos) const;
 
+	private:
 		enum Flags
 		{
 			flagNoOtherData = 0x1, // ONLY INTERNAL USE, NEVER EVER SET THAT !!!!
@@ -66,8 +67,6 @@ class YZLine
 			flagVisible = 0x4,
 			flagAutoWrapped = 0x8
 		};
-
-	private:
 		QString mData;
 
 		//rendering settings for each char

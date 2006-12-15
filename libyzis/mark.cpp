@@ -21,48 +21,18 @@
 #include "mark.h"
 #include "cursor.h"
 
-YZViewMark::YZViewMark( ) {
-	clear( );
-}
-YZViewMark::~YZViewMark( ) {
-	clear( );
-}
-
-void YZViewMark::clear( ) {
-	YZViewMarker::Iterator it = marker.begin(), end = marker.end();
-	for( ; it != end; ++it ) {
-		delete it.value().bPos;
-		delete it.value().dPos;
-	}
-	marker.clear( );
-}
-
 void YZViewMark::add( const QString& mark, const YZCursor& bPos, const YZCursor& dPos ) {
 	YZCursorPos pos;
-	pos.bPos = new YZCursor( bPos );
-	pos.dPos = new YZCursor( dPos );
+	pos.bPos = bPos;
+	pos.dPos = dPos;
 	marker.insert( mark, pos );
 }
 
-void YZViewMark::del( const QString& mark ) {
-	YZViewMarker::Iterator it = marker.find( mark );
-	if ( it != marker.end() ) {
-		delete it.value().bPos;
-		delete it.value().dPos;
-	}
-	marker.remove( mark );
-}
 
 YZCursorPos YZViewMark::get( const QString& mark, bool * found ) const {
 	YZViewMarker::ConstIterator it = marker.find( mark );
 	*found = it != marker.end();
 	return it.value();
-}
-
-
-
-void YZDocMark::clear( ) {
-	marker.clear();
 }
 
 void YZDocMark::add( uint line, uint mark ) {

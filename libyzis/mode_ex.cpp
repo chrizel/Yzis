@@ -295,7 +295,7 @@ int YZModeEx::rangeMark( const YZExRangeArgs& args ) {
 	bool found = false;
 	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg.mid( 1 ), &found );
 	if ( found )
-		return pos.bPos->y();
+		return pos.bPos.y();
 	return -1;
 }
 int YZModeEx::rangeVisual( const YZExRangeArgs& args ) {

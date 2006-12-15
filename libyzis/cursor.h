@@ -28,13 +28,13 @@ class YZDebugStream;
 class YZIS_EXPORT YZCursor : public QPoint {
 
 	public :
-		YZCursor();
-		YZCursor( const QPoint& c );
-		YZCursor( const YZCursor& c );
-		YZCursor(int x, int y);
-		virtual ~YZCursor();
+		YZCursor() : QPoint(-1,-1) { }
+		YZCursor( const QPoint& c ) : QPoint( c.x(), c.y() ) { }
+		YZCursor( const YZCursor& c ) : QPoint( c.x(), c.y() ) { }
+		YZCursor(int x, int y) : QPoint(x,y) { }
+		virtual ~YZCursor() {};
 
-		void setXY( int x, int y );
+		void setXY( int x, int y ) { setX(x); setY(y); }
 
 		/*
 		 * operators
@@ -49,8 +49,8 @@ class YZIS_EXPORT YZCursor : public QPoint {
 extern YZIS_EXPORT YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
 
 struct YZCursorPos {
-    YZCursor* bPos; /* buffer position */
-    YZCursor* dPos; /* draw position */
+    YZCursor bPos; /* buffer position */
+    YZCursor dPos; /* draw position */
 };
 
 #endif

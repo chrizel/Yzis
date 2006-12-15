@@ -19,6 +19,12 @@
 
 #include "color.h"
 
+/* 
+ * Most of the code here has been copy/pasted from the Qt3 QColor class.
+ * If some things looks weird, complain to Trolltech.
+ */
+
+
 /** helper functions from qt ( gui/painting/qcolor_p.cpp ) **/
 static int hex2int(QChar hexchar)
 {
@@ -262,33 +268,24 @@ void YZColor::setNamedColor( const QString &name ) {
 			--len;
 			m_red = m_green = m_blue = 0;
 			m_valid = true;
-			if (len == 12) {
-				m_red = (hex2int(hex[0]) << 4) + hex2int(hex[1]);
-				m_green = (hex2int(hex[4]) << 4) + hex2int(hex[5]);
-				m_blue = (hex2int(hex[8]) << 4) + hex2int(hex[9]);
-			} else if (len == 9) {
-				m_red = (hex2int(hex[0]) << 4) + hex2int(hex[1]);
-				m_green = (hex2int(hex[3]) << 4) + hex2int(hex[4]);
-				m_blue = (hex2int(hex[6]) << 4) + hex2int(hex[7]);
-			} else if (len == 6) {
-				m_red = (hex2int(hex[0]) << 4) + hex2int(hex[1]);
+			if (len == 6) {
+				m_red =   (hex2int(hex[0]) << 4) + hex2int(hex[1]);
 				m_green = (hex2int(hex[2]) << 4) + hex2int(hex[3]);
-				m_blue = (hex2int(hex[4]) << 4) + hex2int(hex[5]);
+				m_blue =  (hex2int(hex[4]) << 4) + hex2int(hex[5]);
 			} else if (len == 3) {
-				m_red = (hex2int(hex[0]) << 4) + hex2int(hex[0]);
+				m_red =   (hex2int(hex[0]) << 4) + hex2int(hex[0]);
 				m_green = (hex2int(hex[1]) << 4) + hex2int(hex[1]);
-				m_blue = (hex2int(hex[2]) << 4) + hex2int(hex[2]);
+				m_blue =  (hex2int(hex[2]) << 4) + hex2int(hex[2]);
 			} else {
 				m_valid = false;
 			}
 			if ( m_valid ) {
-				m_red |= (m_red << 8);
+				m_red   |= (m_red << 8);
 				m_green |= (m_green << 8);
-				m_blue |= (m_blue << 8);
+				m_blue  |= (m_blue << 8);
 			}
 		} else { // find a color name
 			++len;
-//			int len = int(strlen(name))+1;
 			char *name_no_space = (char *)malloc( len );
 			for(int o = 0, i = 0; i < len; i++) {
 				if(n[i] != '\t' && n[i] != ' ')

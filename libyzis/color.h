@@ -32,6 +32,13 @@ typedef unsigned int QRgb;
 
 #define YzqRgb(r,g,b) (0xff000000 | (r << 16) |  (g << 8) | b)
 
+/** Class to store the concept of color, for our syntax highlighting code.
+  *
+  * Colors are stored as triplets of red,green,blue byte values.
+  *
+  * The YZColor class is basically a stripped down version of QColor. We can
+  * not use QColor in libyzis since it is part of QtGui.
+  */
 class YZIS_EXPORT YZColor {
 
 	public:
@@ -44,7 +51,9 @@ class YZIS_EXPORT YZColor {
 		void setRgb( QRgb );
 		/**
 		 * @arg name can take the form:
-		 * "#RGB" or "#RRGGBB" or "#RRRGGGBBB" or "#RRRRGGGGBBBB"
+		 * "#RGB" or "#RRGGBB"
+		 * 
+		 * #123 yields the color #112233
 		 */
 		void setNamedColor( const QString &name );
 

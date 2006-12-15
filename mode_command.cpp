@@ -847,7 +847,7 @@ YZCursor YZModeCommand::gotoMark( const YZMotionArgs &args ) {
 	bool found = false;
 	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg, &found );
 	if ( found ) {
-		return *pos.bPos;
+		return pos.bPos;
 	} else {
 		yzDebug() << "WARNING! mark " << args.arg << " not found" << endl;
 		return viewCursor.buffer();

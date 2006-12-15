@@ -46,13 +46,13 @@ typedef QMap<uint, uint> YZDocMarker;
 class YZIS_EXPORT YZViewMark {
 
 	public:
-		YZViewMark( );
-		virtual ~YZViewMark( );
+		YZViewMark(){ marker.clear(); }
+		virtual ~YZViewMark() { marker.clear(); }
 
-		void clear( );
+		void clear( ) { marker.clear( ); }
 
 		void add( const QString& mark, const YZCursor& bPos, const YZCursor& dPos );
-		void del( const QString& mark );
+		void del( const QString& mark ) {marker.remove( mark );}
 
 		YZCursorPos get( const QString& mark, bool * found ) const;
 
@@ -67,7 +67,7 @@ class YZIS_EXPORT YZDocMark {
 	public:
 		YZDocMark( ) {}
 
-		void clear( );
+		void clear( ) { marker.clear(); }
 
 		void add( uint line, uint mark );
 		void del( uint line, uint mark );

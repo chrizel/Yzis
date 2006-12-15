@@ -20,21 +20,6 @@
 #include "cursor.h"
 #include "debug.h"
 
-YZCursor::YZCursor() : QPoint(-1,-1) {
-}
-YZCursor::YZCursor( const QPoint& c ) : QPoint( c.x(), c.y() ) {
-}
-YZCursor::YZCursor( const YZCursor& c ) : QPoint( c.x(), c.y() ) {
-}
-YZCursor::YZCursor(int x, int y) : QPoint(x,y) {
-}
-YZCursor::~YZCursor() {
-}
-
-void YZCursor::setXY( int x, int y ) {
-	setX(x);
-	setY(y);
-}
 
 bool YZCursor::operator< (const YZCursor& right ) const {
 	return y() < right.y() || y() == right.y() && x() < right.x();

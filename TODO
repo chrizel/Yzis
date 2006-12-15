@@ -18,6 +18,7 @@ libyzis:
     - :set rightleft
     - non-fixed fonts
     - marker
+  use http://doc.trolltech.com/4.2/qundostack.html ?
 
 nyzis:
   - support bg color

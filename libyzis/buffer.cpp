@@ -154,18 +154,14 @@ YZBuffer::~YZBuffer() {
 	
 static void viewsInit( YZBuffer *buffer, int x, int y )
 {
-	YZList<YZView*> views = buffer->views();
-	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
-		(*itr)->initChanges(x, y);
-	}
+	foreach( YZView *view, buffer->views() )
+		view->initChanges(x, y);
 }
 
 static void viewsApply( YZBuffer *buffer, int x, int y )
 {
-	YZList<YZView*> views = buffer->views();
-	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
-		(*itr)->applyChanges(x, y);
-	}
+	foreach( YZView *view, buffer->views() )
+		view->applyChanges(x, y);
 }
 
 void YZBuffer::insertChar(int x, int y, const QString& c ) {
@@ -415,9 +411,8 @@ void YZBuffer::setTextline( int line , const QString & l) {
 // XXX Wrong
 bool YZBuffer::isLineVisible(int line) const {
 	bool shown=false;
-	for ( YZList<YZView*>::ConstIterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		shown = shown || (*itr)->isLineVisible(line);
-	}
+	foreach( YZView *view, d->views )
+		shown = shown | view->isLineVisible(line);
 	return shown;
 }
 
@@ -645,9 +640,8 @@ bool YZBuffer::save() {
 		return false;
 	}
 	d->isHLUpdating = false; //override so that it does not parse all lines
-	for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		(*itr)->displayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
-	}
+	foreach( YZView *view, d->views )
+		view->displayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
 	setChanged( false );
 	filenameChanged();
 	//clear swap memory
@@ -694,11 +688,9 @@ YZCursor YZBuffer::getStartPosition( const QString& filename, bool parseFilename
 // ------------------------------------------------------------------------
 
 void YZBuffer::addView (YZView *v) {
-	for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		if ( *itr == v ) {
+	if ( d->views.contains( v ) ) {
 			yzWarning()<< "view " << v->getId() << " added for the second time, discarding"<<endl;
 			return; // don't append twice
-		}
 	}
 	yzDebug("YZBuffer") << "BUFFER: addView" << endl;
 	d->views.append( v );
@@ -706,10 +698,9 @@ void YZBuffer::addView (YZView *v) {
 
 YZView* YZBuffer::findView( const YZViewId &id ) const {
 	yzDebug("YZBuffer") << "Buffer: findView " << id << endl;
-	for ( YZList<YZView*>::ConstIterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		if ( (*itr)->getId() == id )
-			return *itr;
-	}
+	foreach( YZView *view, d->views )
+		if ( view->getId() == id )
+			return view;
 //	yzDebug("YZBuffer") << "buffer::findView " << uid << " returning NULL" << endl;
 	return NULL;
 }
@@ -717,9 +708,9 @@ YZView* YZBuffer::findView( const YZViewId &id ) const {
 void YZBuffer::updateAllViews() {
 	if ( !d->enableUpdateView ) return;
 	yzDebug("YZBuffer") << "YZBuffer updateAllViews" << endl;
-	for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		(*itr)->sendRefreshEvent();
-		(*itr)->syncViewInfo();
+	foreach( YZView *view, d->views ) {
+		view->sendRefreshEvent();
+		view->syncViewInfo();
 	}
 }
 
@@ -753,9 +744,8 @@ void YZBuffer::setModified( bool ) {
 
 void YZBuffer::statusChanged() {
 	//update all views
-	for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		(*itr)->syncViewInfo();
-	}
+	foreach( YZView *view, d->views )
+		view->syncViewInfo();
 }
 
 
@@ -977,9 +967,8 @@ bool YZBuffer::updateHL( int line ) {
 	if ( hlChanged ) {
 		int nToDraw = hlLine - line - nElines - 1;
 //		yzDebug() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
-		for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-			(*itr)->sendBufferPaintEvent( line, nToDraw );
-		}
+		foreach( YZView *view, d->views )
+			view->sendBufferPaintEvent( line, nToDraw );
 	}
 	return hlChanged;
 }
@@ -1031,9 +1020,8 @@ QString YZBuffer::tildeExpand( const QString& path ) {
 
 void YZBuffer::filenameChanged()
 {
-	for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		(*itr)->filenameChanged();
-	}
+	foreach( YZView *view, d->views )
+		view->filenameChanged();
 }
 
 const QString YZBuffer::fileNameShort() const {
@@ -1043,9 +1031,8 @@ const QString YZBuffer::fileNameShort() const {
 
 void YZBuffer::highlightingChanged()
 {
-	for ( YZList<YZView*>::Iterator itr = d->views.begin(); itr != d->views.end(); ++itr ) {
-		(*itr)->highlightingChanged();
-	}
+	foreach( YZView *view, d->views )
+		view->highlightingChanged();
 }
 
 void YZBuffer::preserve()

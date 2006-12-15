@@ -209,26 +209,16 @@ void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t
 		option->apply( NULL, NULL );
 	} else if ( ctx == ctx_buffer ) {
 		if ( scope == global_scope ) {
-			YZBufferList bs = YZSession::me->buffers();
-			YZBufferList::Iterator it = bs.begin(), end = bs.end();
-			for( ; it != end; ++it ) {
-				b = *it;
-				option->apply( b, v );
-			}
+			foreach( YZBuffer *buffer, YZSession::me->buffers() )
+				option->apply( buffer, v );
 		} else if ( b ) {
 			option->apply( b, v );
 		}
 	} else if ( ctx == ctx_view ) {
 		if ( scope == global_scope ) {
-			YZBufferList bs = YZSession::me->buffers();
-			YZBufferList::Iterator it = bs.begin(), end = bs.end();
-			for( ; it != end; ++it ) {
-				b = *it;
-				YZList<YZView*> vs = b->views();
-				for ( YZList<YZView*>::Iterator itr = vs.begin(); itr != vs.end(); ++itr ) {
-					option->apply( b, *itr );
-				}	
-			}
+			foreach( YZBuffer *buffer, YZSession::me->buffers() )
+				foreach(  YZView *view, buffer->views() )
+					option->apply( buffer, view );
 		} else if ( v ) {
 			option->apply( b, v );
 		}

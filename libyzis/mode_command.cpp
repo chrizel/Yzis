@@ -308,16 +308,13 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 		}
 
 		// the argument is OK, go for it
-		YZList<YZView*> views = view->myBuffer()->views();
-		for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
-			(*itr)->setPaintAutoCommit( false );
-		}
+		foreach( YZView *v, view->myBuffer()->views() )
+			v->setPaintAutoCommit( false );
 
 		(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, s));
 
-		for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
-			(*itr)->commitPaintEvent();
-		}
+		foreach( YZView *v, view->myBuffer()->views() )
+			v->commitPaintEvent();
 			
 		if ( c->arg() == ARG_MARK ) {
 			YZSession::me->saveJumpPosition();
@@ -354,14 +351,11 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 			if(!c)
 				return CMD_ERROR;
 
-			YZList<YZView*> views = view->myBuffer()->views();
-			for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
-				(*itr)->setPaintAutoCommit( false );
-			}
+			foreach( YZView *v, view->myBuffer()->views() )
+				view->setPaintAutoCommit( false );
 			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
-			for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
-				(*itr)->commitPaintEvent();
-			}
+			foreach( YZView *v, view->myBuffer()->views() )
+				view->commitPaintEvent();
 		}
 	}
 

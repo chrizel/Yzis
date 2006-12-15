@@ -1,3 +1,14 @@
+2006-12-15 orzel
+  * all : we are now qt4 only, no more ifdefs
+	(there is a yzis-qt3 branch though)
+  * libyzis : cleanings
+  * doc : New Developer handbook (nightly built at
+    http://orzel.freehackers.org/yzis )
+
+2006-09    orzel
+  * cmake files udpated to latest cmake / qt / kde, and checked
+  * doxygen file for API documentation
+
 2006-07-17 panard
   * libyzis/drawbuffer.cpp :
   	- scroll(int dx,int dy) (dx not implemented)

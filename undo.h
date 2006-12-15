@@ -61,7 +61,6 @@ struct buffer_operation
 typedef struct buffer_operation YZBufferOperation;
 
 typedef YZList<YZBufferOperation*> UndoItemBase;
-typedef UndoItemBase::Iterator UndoItemContentIterator;
 
 /** An UndoItem contains a list of individual buffer operations
   * and the two cursor positions: before and after the whole set of operations

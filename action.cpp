@@ -39,18 +39,14 @@ YZAction::~YZAction( ) {
 
 static void configureViews(YZBuffer *buffer)
 {
-	YZList<YZView*> views = buffer->views();
-	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
-		(*itr)->setPaintAutoCommit( false );
-	}
+	foreach( YZView *view, buffer->views() )
+		view->setPaintAutoCommit( false );
 }
 
 static void commitViewsChanges(YZBuffer *buffer)
 {
-	YZList<YZView*> views = buffer->views();
-	for ( YZList<YZView*>::Iterator itr = views.begin(); itr != views.end(); ++itr ) {
-		(*itr)->commitPaintEvent();
-	}
+	foreach( YZView *view, buffer->views() )
+		view->commitPaintEvent();
 }
 
 void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {

@@ -152,29 +152,17 @@ QString YZSession::saveBufferExit() {
 }
 
 YZView* YZSession::findView( const YZViewId &id ) {
-	YZView *result = NULL;
-	
-	for ( YZViewList::Iterator i = mViewList.begin(); i != mViewList.end(); ++i ) {
-		if ( (*i)->getId() == id ) {
-			result = *i;
-			break;
-		}
-	}
-	
-	return result;
+	foreach(  YZView *view, mViewList )
+		if ( view->getId() == id )
+			return view;
+	return NULL;
 }
 
 YZView* YZSession::findViewByBuffer( const YZBuffer *buffer ) {
-	YZView *result = NULL;
-	
-	for ( YZViewList::Iterator i = mViewList.begin(); i != mViewList.end(); ++i ) {
-		if ( (*i)->myBuffer() == buffer ) {
-			result = *i;
-			break;
-		}
-	}
-	
-	return result;
+	foreach(  YZView *view, mViewList )
+		if ( view->myBuffer() == buffer )
+			return view;
+	return NULL;
 }
 
 void YZSession::setCurrentView( YZView* view ) {
@@ -225,52 +213,36 @@ YZView* YZSession::nextView() {
 }
 
 YZBuffer* YZSession::findBuffer( const QString& path ) {
-	YZBufferList::Iterator it = mBufferList.begin();
-	YZBufferList::Iterator end = mBufferList.end();
 	QFileInfo fi (path);
-	for ( ; it != end; ++it ) {
-		YZBuffer *b = ( *it );
-		if ( b->fileName() == fi.absoluteFilePath()) {
+	foreach( YZBuffer *b, mBufferList )
+		if ( b->fileName() == fi.absoluteFilePath())
 			return b;
-		}
-	}
 	return NULL; //not found
 }
 
 bool YZSession::saveAll() {
-	YZBufferList::Iterator it = mBufferList.begin();
-	YZBufferList::Iterator end = mBufferList.end();
 	bool savedAll=true;
-	for ( ; it!=end; ++it ) {
-		YZBuffer* b = *it;
-		if ( !b->fileIsNew() ) {
-			if ( b->fileIsModified() && !b->save() ) {
+	foreach( YZBuffer *b, mBufferList )
+		if ( !b->fileIsNew() )
+			if ( b->fileIsModified() && !b->save() )
 				savedAll=false;
-			}
-		}
-	}
 	return savedAll;
 }
 
 bool YZSession::isOneBufferModified() const {
 	YZBufferList::ConstIterator it = mBufferList.begin();
 	YZBufferList::ConstIterator end = mBufferList.end();
-	for ( ; it != end; ++it ) {
-		YZBuffer* b = ( *it );
-		if ( b->fileIsNew() ) {
+	for ( ; it != end; ++it )
+		if ( (*it)->fileIsNew() )
 			return true;
-		}
-	}
 	return false;
 }
 
 bool YZSession::exitRequest( int errorCode ) {
 	yzDebug() << "Preparing for final exit with code " << errorCode << endl;
 	//prompt unsaved files XXX
-	YZBufferList::Iterator it = mBufferList.begin(), end = mBufferList.end();
-	for ( ; it!=end; ++it ) {
-		(*it)->saveYzisInfo( (*it)->firstView() );
-	}
+	foreach( YZBuffer *b, mBufferList )
+		b->saveYzisInfo( b->firstView() );
 	/*
 	mBuffers.clear();
 	
@@ -295,15 +267,13 @@ void YZSession::sendMultipleKeys ( const QString& text) {
 }
 
 void YZSession::registerModifier ( const QString& mod ) {
-	for ( YZViewList::Iterator i = mViewList.begin(); i != mViewList.end(); ++i ) {
-		(*i)->registerModifierKeys( mod );
-	}
+	foreach(  YZView *view, mViewList )
+		view->registerModifierKeys( mod );
 }
 
 void YZSession::unregisterModifier ( const QString& mod ) {
-	for ( YZViewList::Iterator i = mViewList.begin(); i != mViewList.end(); ++i ) {
-		(*i)->unregisterModifierKeys( mod );
-	}
+	foreach(  YZView *view, mViewList )
+		view->unregisterModifierKeys( mod );
 }
 
 void YZSession::saveJumpPosition() {

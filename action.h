@@ -22,12 +22,12 @@
 #define YZ_ACTION_H
 
 /* Qt */
-#include <QString>
 
 class YZBuffer;
 class YZView;
 class YZCursor;
 class YZInterval;
+class QString;
 
 class YZIS_EXPORT YZAction {
 

@@ -6,7 +6,8 @@ class members are mMyMember
 class structures are mystructure
 
 Preferred indentation :
-void Class::myFunction( int param, int param2 ) {
+void Class::myFunction( int param, int param2 )
+{
 	if ( firstcheck == true ) {
 
 	} else {

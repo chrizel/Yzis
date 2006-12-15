@@ -156,7 +156,7 @@ cmake is a replacement for the autotools ( autoconf/automake and such). We
 decided to switch to cmake because the autotools are evil, and, moreover,
 KDE officially switched to cmake. Yzis is quite close to kde, and follows
 KDE decisions on this topic.
-You can find more information about cmake on \texttt{http://www.cmake.org}.
+You can find more information about cmake on \url{http://www.cmake.org}.
 Yzis requires cmake version 2.4.1 or newer.
 
 \section{subversion}
@@ -168,33 +168,33 @@ Check out the subversion book to learn more about this tool.
 
 Useful links:
 \begin{itemize}
-\item \texttt{http://en.wikipedia.org/wiki/SCM}
-\item \texttt{http://en.wikipedia.org/wiki/Revision\_control}
-\item \texttt{http://subversion.tigris.org/}
-\item \texttt{http://svnbook.red-bean.com/}
+\item \url{http://en.wikipedia.org/wiki/SCM}
+\item \url{http://en.wikipedia.org/wiki/Revision\_control}
+\item \url{http://subversion.tigris.org/}
+\item \url{http://svnbook.red-bean.com/}
 \end{itemize}
 
 \section{Doxygen}
 Doxygen is a tool which generates documentation from text inserted in the
 code itself. This typically used to describe APIs.
-See \texttt{http://www.doxygen.org}.
+See \url{http://www.doxygen.org}.
 
 \section{Qt}
 Yzis is built on top of the \emph{Qt} C++ library, which provides some
 generic useful classes and some optional GUI widgets. \emph{Qt} is most
 widely known as the basis for \emph{KDE}.
-See \texttt{http://www.trolltech.com} for more details.
+See \url{http://www.trolltech.com} for more details.
 
 \section{Lua}
 Lua is a small footprint script language designed to be easily embedded in
 applications. Yzis uses \emph{lua} for its main scripting language. See
-\texttt{http://www.lua.org}.
+\url{http://www.lua.org}.
 
 \section{\TeX}
 We use {\TeX} for documentation. You need a rather modern {\TeX} distribution
 (TeTex 3.0 or Tex Live 2005 are ok) and the package \emph{latex-unicode}.
-See \texttt{http://www.tug.org/tetex/}\footnote{Not longer
-maintained} or \texttt{http://www.tug.org/texlive/}.
+See \url{http://www.tug.org/tetex/}\footnote{Not longer
+maintained} or \url{http://www.tug.org/texlive/}.
 
 \chapter{Startup guide}
 This chapter explains how to get a fully usable environment to play with
@@ -251,6 +251,60 @@ documentation when you find an error\ldots{}
 
 Before digging into the source, you should probably read the architecture
 overview. And then -- go and read the source!
+
+\section{Coding style}
+
+\begin{description}
+	\item[Class names:] \verb+MyClass+
+	\item[Class methods:] \verb+myMethod()+
+	\item[Class members:] \verb+myMember+
+	\item[Class structures:] \verb+mystructure+
+\end{description}
+
+Preferred indentation is shown below. Tabs are used for indentation, shown here
+with tabstop=4:
+\begin{verbatim}
+void Class::myFunction( int param, int param2 )
+{
+    if ( firstcheck == true ) {
+        dothis();
+    } else {
+        dothat();
+    }
+    
+    switch ( param ) {
+        case 0:
+            dothis();
+            break;
+        default:
+            dothat();
+    }
+    
+    if ( good )
+        dosomething();
+}
+\end{verbatim}
+
+\section{Mailing lists}
+
+Yzis has 5 mailing lists:
+\begin{description}
+    \item[yzis-announce@yzis.org:] Announces Yzis releases and other news.\\
+        \url{http://lists.yzis.org/sympa/subrequest/yzis-announce}
+    \item[yzis-dev@yzis.org:] Development discussions and questions.\\
+        \url{http://lists.yzis.org/sympa/subrequest/yzis-dev}
+    \item[yzis-svn@yzis.org:] Subversion commits.\\
+        \url{http://lists.yzis.org/sympa/subrequest/yzis-svn}
+    \item[i18n@yzis.org:] Translators mailing list.\\
+        \url{http://lists.yzis.org/sympa/subrequest/i18n}
+    \item[yzis-users@yzis.org:] Users list.\\
+        \url{http://lists.yzis.org/sympa/subrequest/yzis-users}
+\end{description}
+
+\texttt{yzis-dev} and \texttt{yzis-users} are also available through Gmane:
+\url{http://gmane.org/find.php?list=yzis}.
+
+Mailing lists are usually write-restricted, but you still can post to them without being subscribed. Your message will get through moderation within a few hours/days.
 
 \chapter{Architecture overview}
 

@@ -126,8 +126,8 @@ void YZModeCompletion::doComplete( YZView* view, bool forward ) {
 	view->gotoxy( mCompletionStart.x() + proposal.length(), currentCursor.y() );
 	
 	// display match number in the display bar
-	QString msg( _("Match %1") );
-	msg = msg.arg( mCurrentProposal );
+	QString msg( _("Match %1 of %2") );
+	msg = msg.arg( mCurrentProposal ).arg( mProposedCompletions.size() - 1 );
 	if ( mCurrentProposal == 0 ) {
 		msg = _("Back at original");
 	}

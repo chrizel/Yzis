@@ -201,6 +201,7 @@ This chapter explains how to get a fully usable environment to play with
 Yzis source.
 
 \section{Getting the source}
+\label{checkout}
 First you need to get the source. Of course, you could use the latest
 tarball released, but it's probably outdated already. Moreover, you will
 not be able to follow the changes made by the Yzis team.
@@ -538,6 +539,64 @@ To be able to build the API documentation with oxygen, install doxygen:
 
 \texttt{sudo apt-get install doxygen}
 
+\section{Gentoo}
+There are two ways for installing the latest yzis version on your system.
+
+\begin{enumerate}
+	\item You can download the yzis ebuild from the Gentoo bug database:
+
+\url{http://bugs.gentoo.org/show\_bug.cgi?id=48552}
+
+Installing this ebuild (and updating the date in the ebuild's name) you will
+always have the newest yzis development snapshot installed.
+
+If you need instructions on installing custom ebuilds, please refer to:
+
+\url{http://linuxreviews.org/gentoo/ebuilds/} or
+\url{http://gentoo-wiki.com/HOWTO\_Installing\_3rd\_Party\_Ebuilds}
+
+\item You can also check out the sources directly from the yzis svn repository and
+compile them on your own. See section \ref{checkout}.
+\end{enumerate}
+
+\subsection{Essential tools}
+To build yzis you'll need to have the following packages installed on your system:
+
+\begin{itemize}
+\item $>$=x11-libs/qt-4.2
+\item sys-devel/gettext
+\item =dev-lang/lua-5*
+\item sys-apps/file         
+\item $>$=sys-libs/ncurses-5.4
+\item $>$=dev-util/cmake-2.4.1
+\item dev-util/subversion
+\end{itemize}
+
+If you are installing yzis using the custom ebuild (first method), it will check for the necessary dependencies, except for subversion. If you are compiling the sources on your own (second method), you can easily check for the needed tools with the \texttt{eix} command.
+
+If you need to install any missing tool (e.g. subversion) you can do as follows:
+
+\texttt{emerge -av subversion}
+
+It is also advisable to have a subversion client installed, e.g kdesvn, esvn, etc. for easier handling of the subversion repository and sandbox.
+
+It can happen that some required tool versions are masked in portage. In this case you can unmask them  with the following command:
+
+\texttt{echo =<category>/<package>-<version> >> \\\
+/etc/portage/package.keywords}
+
+\subsection{\TeX}
+
+Yzis uses the \LaTeX document preparation system for documentation. To be able
+to build this documentation you'll need to install these \TeX{} Live packages
+with its dependencies. Since the texlive package is currently hardmasked on Gentoo, we suggest you to use the tetex package, which will also do the job:
+
+\texttt{emerge -av tetex}
+
+\subsection{Doxygen}
+To be able to build the API documentation with oxygen, install doxygen:
+
+\texttt{emerge -av doxygen}
 
 \end{document}
 

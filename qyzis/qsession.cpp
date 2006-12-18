@@ -30,6 +30,7 @@
 #include <qtextcodec.h>
 #include <QClipboard>
 #include <QSettings>
+#include <QList>
 #ifdef Q_WS_X11
 #include <QX11Info>
 #endif
@@ -93,8 +94,8 @@ void QYZisSession::applyConfig() {
 	YZBufferList::ConstIterator end = buffers().end();
 	for ( ; it != end; ++it ) {
 		YZBuffer *b = *it;
-		YZList<YZView*> l = b->views();
-		for ( YZList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
+		QList<YZView*> l = b->views();
+		for ( QList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
 			QYZisView* yv = static_cast<QYZisView*>( *itr );
 			yv->applyConfig( settings );
 		}

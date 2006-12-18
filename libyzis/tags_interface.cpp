@@ -28,15 +28,15 @@
 #include <assert.h>
 
 /* Qt */
-#include <qdir.h>
-#include <qfileinfo.h>
-#include <qstringlist.h>
+#include <QDir>
+#include <QFileInfo>
+#include <QStringList>
+#include <QList>
 #include <QVector>
 
 /* Yzis */
 #include "internal_options.h"
 #include "readtags.h"
-#include "portability.h"
 #include "tags_interface.h"
 #include "session.h"
 #include "debug.h"
@@ -45,8 +45,8 @@
 #include "tags_stack.h"
 #include "yzisinfojumplistrecord.h"
 
-static YZList<tagFile*> tagfilelist;
-static YZList<QString> tagfilenames;
+static QList<tagFile*> tagfilelist;
+static QList<QString> tagfilenames;
 // lastsearch is needed, since readtags does a pointer assignment to remember
 // the last search.  Otherwise, the temporary gets destroyed and tagNext fails.
 static QString lastsearch;
@@ -184,7 +184,7 @@ static bool jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 static void readAllMatchingTags( const YZTagStackItem &initialTag )
 {
 	int tagResult;
-	YZVector<YZTagStackItem> tags;
+	QVector<YZTagStackItem> tags;
 	tags.push_back( initialTag );
 	
 	for ( int i = 0; i < tagfilelist.size(); ++i ) {

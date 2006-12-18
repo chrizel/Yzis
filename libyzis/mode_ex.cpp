@@ -74,10 +74,10 @@ YZModeEx::YZModeEx() : YZMode() {
 }
 
 YZModeEx::~YZModeEx() {
-	for ( YZList<const YZExCommand*>::Iterator itr = commands.begin(); itr != commands.end(); ++itr ) {
+	for ( QList<const YZExCommand*>::Iterator itr = commands.begin(); itr != commands.end(); ++itr ) {
 		delete *itr;
 	}
-	for ( YZList<const YZExRange*>::Iterator itr = ranges.begin(); itr != ranges.end(); ++itr ) {
+	for ( QList<const YZExRange*>::Iterator itr = ranges.begin(); itr != ranges.end(); ++itr ) {
 		delete *itr;
 	}
 	
@@ -200,7 +200,7 @@ void YZModeEx::initPool() {
 QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
 	QString _input = inputs;
 	*matched = false;
-	for ( YZList<const YZExRange*>::Iterator itr = ranges.begin(); !*matched && itr != ranges.end(); ++itr ) {
+	for ( QList<const YZExRange*>::Iterator itr = ranges.begin(); !*matched && itr != ranges.end(); ++itr ) {
 		const YZExRange *currentRange = *itr;
 		QRegExp reg( currentRange->regexp() );
 		*matched = reg.exactMatch( _input );
@@ -252,7 +252,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 	}
 
 	matched = false;
-	for ( YZList<const YZExCommand*>::Iterator itr = commands.begin(); !matched && itr != commands.end(); ++itr ) {
+	for ( QList<const YZExCommand*>::Iterator itr = commands.begin(); !matched && itr != commands.end(); ++itr ) {
 		const YZExCommand *curCommand = *itr;
 		QRegExp reg(curCommand->regexp());
 		matched = reg.exactMatch( _input );
@@ -463,8 +463,8 @@ cmd_state YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
 cmd_state YZModeEx::bufferdelete ( const YZExCommandArgs& args ) {
 	yzDebug() << "Delete buffer " << args.view->myBuffer()->getId() << endl;
 
-	YZList<YZView*> l = args.view->myBuffer()->views();
-	for ( YZList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
+	QList<YZView*> l = args.view->myBuffer()->views();
+	for ( QList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
 		args.view->mySession()->deleteView( (*itr)->getId() );
 	}
 

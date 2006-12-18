@@ -20,6 +20,9 @@
 #ifndef YZ_MODE_COMPLETE_H
 #define YZ_MODE_COMPLETE_H
 
+/* Qt */
+#include <QList>
+
 /* yzis */
 #include "mode.h"
 #include "cursor.h"
@@ -40,7 +43,7 @@ class YZIS_EXPORT YZModeCompletion : public YZMode {
 		bool initCompletion( YZView* mView, bool forward );
 		
 	private :
-		void completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups = true, YZList<YZCursor> *cursors = NULL );
+		void completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups = true, QList<YZCursor> *cursors = NULL );
 		void completeFromCurrentBuffer( const YZCursor &cursor, bool forward, QStringList &proposed );
 		void completeFromOtherBuffers( YZBuffer *skip, QStringList &proposed );
 		void completeFromIncludes( QStringList &proposed );

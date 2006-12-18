@@ -29,7 +29,7 @@
 
 class YZViewId;
 
-class NYZSession : public YZSession
+class NYZSession : public QObject, public YZSession
 {
 	Q_OBJECT
 

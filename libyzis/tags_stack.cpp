@@ -24,8 +24,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "portability.h"
-
 #include "tags_stack.h"
 
 #include "debug.h"
@@ -103,7 +101,7 @@ bool YZTagStack::empty() const
 	return mStack.empty();
 }
 
-void YZTagStack::storeMatchingTags(const YZVector<YZTagStackItem> &tags)
+void YZTagStack::storeMatchingTags(const QVector<YZTagStackItem> &tags)
 {
 	MatchingStackItem &pair = mCurrentTags.back();
 	pair.first = tags;

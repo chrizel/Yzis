@@ -25,7 +25,6 @@
 #include <QTextStream>
 
 /* yzis */
-#include "portability.h"
 #include "internal_options.h"
 #include "debug.h"
 #include "session.h"

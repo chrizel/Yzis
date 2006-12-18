@@ -144,9 +144,9 @@ void YZUndoBuffer::removeUndoItemAfterCurrent() {
 }
 
 template<typename T>
-static YZList<T> reverse(const YZList<T> &yzlist)
+static QList<T> reverse(const QList<T> &yzlist)
 {
-	YZList<T> rev;
+	QList<T> rev;
 	foreach( T t, yzlist )
 		rev.push_front(t);
 	

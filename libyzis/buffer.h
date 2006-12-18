@@ -24,8 +24,9 @@
 #define YZ_BUFFER_H
 
 #include <QStringList>
+#include <QVector>
+#include <QList>
 
-#include "portability.h"
 #include "yzismacros.h"
 
 class YZUndoBuffer;
@@ -41,7 +42,7 @@ class YZInterval;
 
 class YzisHighlighting;
 
-typedef YZVector<YZLine*> YZBufferData;
+typedef QVector<YZLine*> YZBufferData;
 
 /**
  * A buffer is the implementation of the content of a file.
@@ -336,7 +337,7 @@ public:
 	 * The list of view for this buffer
 	 * @return a QValuelist of pointers to the views
 	 */
-	YZList<YZView*> views() const;
+	QList<YZView*> views() const;
 
 	/**
 	 * Find the first view of this buffer

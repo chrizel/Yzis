@@ -30,7 +30,7 @@ class YZBuffer;
 class QYZisView;
 class YZViewId;
 
-class QYZisSession : public YZSession
+class QYZisSession : public QObject, public YZSession
 {
 	Q_OBJECT
 public:

@@ -19,8 +19,8 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include <QList>
 
-#include "portability.h"
 #include "debug.h"
 #include "action.h"
 #include "search.h"
@@ -151,7 +151,7 @@ void YZSearch::Private::setCurrentSearch( const QString& pattern ) {
 
 	YZSelectionMap searchMap;
 	foreach( YZBuffer *b, YZSession::me->buffers() ) {
-		YZList<YZView*> views = b->views();
+		QList<YZView*> views = b->views();
 
 		searchMap.clear();
 
@@ -189,7 +189,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, int line ) {
 	if ( d->mCurrentSearch.isNull() || d->mCurrentSearch.isEmpty() ) return;
 	bool doIt = YZSession::me->getBooleanOption( "hlsearch" );
 	if ( doIt ) {
-		YZList<YZView*> views = buffer->views();
+		QList<YZView*> views = buffer->views();
 		YZView* v = views.front();
 		YZCursor from( 0, line );
 		YZCursor cur( from );
@@ -221,7 +221,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, int line ) {
 }
 
 void YZSearch::shiftHighlight( YZBuffer* buffer, int fromLine, int shift ) {
-	YZList<YZView*> views = buffer->views();
+	QList<YZView*> views = buffer->views();
 	YZView* v = views.front();
 	if ( v ) {
 		YZSelectionMap searchMap = v->getSelectionPool()->search()->map();

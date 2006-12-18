@@ -23,14 +23,15 @@
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
+#include <QVector>
 
 class YZBuffer;
 class YZYzisinfoStartPositionRecord;
 class YZYzisinfoJumpListRecord;
 class YZCursor;
 
-typedef YZVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
-typedef YZVector<YZYzisinfoJumpListRecord*> JumpListVector;
+typedef QVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
+typedef QVector<YZYzisinfoJumpListRecord*> JumpListVector;
 
 /**
  * Class YZYzisinfo

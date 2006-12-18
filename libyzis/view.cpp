@@ -27,7 +27,6 @@
 
 /* Yzis */
 #include "view.h"
-#include "portability.h"
 #include "viewcursor.h"
 #include "debug.h"
 #include "undo.h"

@@ -19,7 +19,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "portability.h"
 #include "mode_complete.h"
 #include "mode_command.h"
 
@@ -178,7 +177,7 @@ cmd_state YZModeCompletion::execCommand( YZView* view, const QString& _key ) {
 	return CMD_ERROR;
 }
 
-void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups /*=true*/, YZList<YZCursor> *cursors /*=NULL*/ )
+void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups /*=true*/, QList<YZCursor> *cursors /*=NULL*/ )
 {
 	// Guardian for empty buffers
 	if ( buffer->isEmpty() ) {
@@ -275,7 +274,7 @@ void YZModeCompletion::completeFromCurrentBuffer( const YZCursor &cursor, bool f
 	YZBuffer *buffer = YZSession::me->currentView()->myBuffer();
 	
 	QStringList matches;
-	YZList<YZCursor> cursorlist;
+	QList<YZCursor> cursorlist;
 	
 	completeFromBuffer( buffer, matches, false, &cursorlist );
 	

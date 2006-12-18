@@ -27,6 +27,7 @@
 #define YZ_TAGS_STACK_H
 
 #include <QPair>
+#include <QVector>
 
 class YZYzisinfoJumpListRecord;
 
@@ -53,13 +54,13 @@ class YZTagStack {
 		unsigned int getNumMatchingTags() const;
 		unsigned int getNumCurMatchingTag() const;
 		
-		void storeMatchingTags(const YZVector<YZTagStackItem> &tags);
+		void storeMatchingTags(const QVector<YZTagStackItem> &tags);
 		
 	private:
-		typedef YZVector<YZYzisinfoJumpListRecord> StackType;
-		typedef YZVector<YZTagStackItem> MatchingTagsType;
+		typedef QVector<YZYzisinfoJumpListRecord> StackType;
+		typedef QVector<YZTagStackItem> MatchingTagsType;
 		typedef QPair<MatchingTagsType, unsigned int> MatchingStackItem;
-		typedef YZVector<MatchingStackItem> MatchingStackType;
+		typedef QVector<MatchingStackItem> MatchingStackType;
 		
 		StackType mStack;
 		MatchingStackType mCurrentTags;

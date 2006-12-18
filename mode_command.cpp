@@ -23,7 +23,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "portability.h"
 #include "mode_command.h"
 
 #include <QRegExp>

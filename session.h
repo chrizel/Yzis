@@ -23,12 +23,12 @@
 #define YZ_SESSION_H
  
 /* Qt */
+#include <QList>
 
 /* yzis */
 //#include "yzis.h"
 #include "mode.h"  // for YZModeMap
 #include "viewid.h"
-#include "portability.h"
  
 class YZView;
 class YZBuffer;
@@ -53,8 +53,8 @@ class YZViewId;
  * A buffer owns the views
  */
 
-typedef YZList<YZBuffer*> YZBufferList;
-typedef YZList<YZView*> YZViewList;
+typedef QList<YZBuffer*> YZBufferList;
+typedef QList<YZView*> YZViewList;
 
 namespace Clipboard {
 	enum Mode {
@@ -63,9 +63,7 @@ namespace Clipboard {
 	};
 };
  
-class YZIS_EXPORT YZSession : public QObject {
-	Q_OBJECT
-	
+class YZIS_EXPORT YZSession {
 	public:
 		//-------------------------------------------------------
 		// ----------------- Constructor/Destructor and Name

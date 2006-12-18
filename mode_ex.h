@@ -26,12 +26,12 @@
 #define YZ_MODE_EX_H
 
 /* Qt */
-#include <qregexp.h>
+#include <QRegExp>
+#include <QList>
 
 /* yzis */
 #include "mode.h"
 #include "yzismacros.h"
-#include "portability.h"
 
 class YZView;
 class YZExCommand;
@@ -133,8 +133,8 @@ class YZIS_EXPORT YZModeEx : public YZMode {
 		YZHistory *getHistory();
 
 	private :
-		YZList<const YZExCommand*> commands;
-		YZList<const YZExRange*> ranges;
+		QList<const YZExCommand*> commands;
+		QList<const YZExRange*> ranges;
 		YZHistory *mHistory;
 
 		QString parseRange( const QString& inputs, YZView* view, int* range, bool* matched );

@@ -41,6 +41,7 @@
 #include "ex_lua.h"
 #include "search.h"
 #include "yzisinfo.h"
+#include "portability.h"
 
 #define ASSERT_TEXT_WITHOUT_NEWLINE( functionname, text ) \
 	YZASSERT_MSG( text.contains('\n')==false, QString("%1 - text contains newline").arg(text) )
@@ -69,7 +70,7 @@ struct YZBuffer::Private
 	QString path;
 	
 	// list of all views that are displaying this buffer
-	YZList<YZView*> views;
+	QList<YZView*> views;
 
 	// data structure containing the actual text of the file
 	YZBufferData *text;
@@ -1177,7 +1178,7 @@ bool YZBuffer::fileIsModified() const { return d->isModified; }
 bool YZBuffer::fileIsNew() const { return d->isFileNew; }
 const QString& YZBuffer::fileName() const {return d->path;}
 int YZBuffer::getId() const { return d->id; }
-YZList<YZView*> YZBuffer::views() const { return d->views; }
+QList<YZView*> YZBuffer::views() const { return d->views; }
 
 void YZBuffer::openNewFile()
 {

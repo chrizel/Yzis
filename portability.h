@@ -58,14 +58,4 @@
 	#define CHECK_GETEUID( v )		(v == geteuid())
 #endif
 
-#include <qnamespace.h>
-
-#include <qlist.h>
-template<typename T>
-class YZList : public QList<T> {};
-
-#include <qvector.h>
-template<typename T>
-class YZVector : public QVector<T> {};
-
 #endif // PORTABILITY_H

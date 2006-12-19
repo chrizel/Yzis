@@ -264,6 +264,10 @@ void QYZisView::applyConfig( const QSettings& settings, bool refresh ) {
 	default_font.setStyleHint(QFont::TypeWriter);
 	default_font.setFamily("Courier");
 	QFont user_font = settings.value("appearance/font", default_font).value<QFont>();
+	// TODO: support non-fixed fonts
+	if ( !user_font.fixedPitch() ) {
+		user_font = default_font;
+	}
 	m_editor->setFont( user_font );
 	m_lineNumbers->setFont( user_font );
 

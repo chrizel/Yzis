@@ -33,6 +33,9 @@
 #include <QDir>
 
 #include "mode_ex.h"
+extern "C" {
+#include <lua.h>
+}
 
 /*
  * TODO:

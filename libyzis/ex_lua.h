@@ -21,11 +21,9 @@
 #define YZ_EX_LUA
 
 #include <QString>
-extern "C" {
-#include <lua.h>
-}
 
 class YZView;
+struct lua_State;
 
 class YZExLua {
 	public:

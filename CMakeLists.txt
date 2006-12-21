@@ -17,7 +17,9 @@ set(yzis_LIB_SRCS
    debug.cpp 
    drawbuffer.cpp 
    events.cpp 
-   ex_lua.cpp 
+   luaengine.cpp 
+   luaregexp.cpp 
+   luafuncs.cpp 
    folding.cpp 
    font.cpp 
    history.cpp 

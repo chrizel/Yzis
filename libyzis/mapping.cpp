@@ -20,7 +20,7 @@
 #include "mapping.h"
 #include "yzis.h"
 #include "debug.h"
-#include "ex_lua.h"
+#include "luaengine.h"
 #include "session.h"
 
 using namespace yzis;
@@ -49,7 +49,7 @@ bool YZMapping::applyMappings( QString& text, QMap<QString,QString>& mappings ) 
 		if ( it.value().startsWith("<Script>") && match ) {
 			char *result;
 			QByteArray t = it.key().toUtf8();
-			YZExLua::instance()->exe( it.value().mid(8, it.value().length()-10), "s>s",  t.data(), &result);
+			YZLuaEngine::self()->exe( it.value().mid(8, it.value().length()-10), "s>s",  t.data(), &result);
 			text.replace(it.key(), result);
 		} else if ( it.value().startsWith("<Noremap>") && match ) {
 			text.replace(it.key(), it.value().right(it.value().length()-9));

@@ -25,12 +25,12 @@
 class YZView;
 struct lua_State;
 
-class YZExLua {
+class YZLuaEngine {
 	public:
-		/** Get the pointer to the singleton YZExLua */
-		static YZExLua * instance();
+		/** Get the pointer to the singleton YZLuaEngine */
+		static YZLuaEngine * self();
 
-		~YZExLua();
+		~YZLuaEngine();
 
 		/**
 		 * Source a lua file
@@ -64,12 +64,21 @@ class YZExLua {
 		void exe(const QString& function, const char* sig, ...);
 	
 	protected:
-		/** Protected call to lua, popups an error window in case of
-		  * failure. 
+		/** Wrapper around lua_pcall()
 		  *
+		  * Takes the same arguments as lua_pcall(). Returns true if the lua
+		  * call is successful.
+		  *
+		  * In case of error, the functions displays a popup with the error
+		  * content.
+		  *
+		  *  @param nbArg number of arguments for the function call
+		  *  @param nbReturn number of expected results from the function call
+		  *  @param context string describing the context of the call,
+		  *  displayed when an error occurs.
 		  * Return true if the call is without error 
 		  */
-		bool yzpcall( int nbArg, int nbReturn, int errLevel, const QString & errorMsg );
+		bool yzpcall( int nbArg, int nbReturn, const QString & context=QString::null );
 
 		// ========================================================
 		//
@@ -224,7 +233,7 @@ class YZExLua {
 
 		/**
 		* Command to customize syntax highlighting settings
-		* Arguments : 3 strings
+		* Arguments : style, type, ...
 		* Returns nothing
 		*/
 		static int highlight(lua_State *L);
@@ -441,8 +450,8 @@ class YZExLua {
 		lua_State *L;
 
 		/** Private constructor for a singleton */
-		YZExLua();
-		static YZExLua * _instance;
+		YZLuaEngine();
+		static YZLuaEngine * me;
 		static bool checkFunctionArguments(lua_State*L, 
 					int argNb,
 					const char * functionName, 

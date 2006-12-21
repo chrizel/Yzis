@@ -27,7 +27,7 @@
 #include "buffer.h"
 #include "folding.h"
 #include "session.h"
-#include "ex_lua.h"
+#include "luaengine.h"
 #include "mark.h"
 #include "selection.h"
 #include "mapping.h"
@@ -620,12 +620,13 @@ cmd_state YZModeEx::preserve( const YZExCommandArgs& args  ) {
 }
 
 cmd_state YZModeEx::lua( const YZExCommandArgs& args ) {
-	YZExLua::instance()->lua( args.view, args.arg );
+	YZLuaEngine::self()->lua( args.view, args.arg );
 	return CMD_OK;
 }
 
 cmd_state YZModeEx::source( const YZExCommandArgs& args ) {
-	YZExLua::instance()->source( args.view, args.arg );
+	QString filename = args.arg.left( args.arg.indexOf( " " ));
+	YZLuaEngine::self()->source( filename );
 	return CMD_OK;
 }
 

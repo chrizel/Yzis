@@ -41,7 +41,7 @@ YZDebugBackend * YZDebugBackend::_instance = NULL;
 YZDebugBackend::YZDebugBackend()
 {
 	_output = NULL;
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
 	setDebugOutput( "/tmp/yzisdebug-" + QString(getpwuid(geteuid())->pw_name) + ".log" );
 #else
 	setDebugOutput( "/tmp/yzisdebug.log" );
@@ -89,7 +89,7 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 		QFile::remove ( fileName );
 	struct stat buf;
 	setDebugOutput( fopen( fileName.toLocal8Bit(), "w" ) );
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
 	int i = lstat( fileName.toLocal8Bit(), &buf );
 	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() ) 
 		chmod( fileName.toLocal8Bit(), S_IRUSR | S_IWUSR );

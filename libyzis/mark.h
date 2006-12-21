@@ -24,9 +24,7 @@
 #include <QMap>
 #include <QString>
 #include "yzismacros.h"
-
-struct YZCursorPos;
-class YZCursor;
+#include "cursor.h"
 
 typedef QMap<QString, YZCursorPos> YZViewMarker;
 

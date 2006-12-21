@@ -31,7 +31,7 @@
 #include "internal_options.h"
 #include "view.h"
 #include "yzisinfo.h"
-#include "ex_lua.h"
+#include "luaengine.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -79,7 +79,7 @@ YZSession::~YZSession() {
 	delete mOptions;
 	delete mYzisinfo;
 	delete YZMapping::self();
-	delete YZExLua::instance();
+	delete YZLuaEngine::self();
 	delete YZDebugBackend::instance();
 	delete mTagStack;
 }
@@ -124,9 +124,9 @@ YZYzisinfo * YZSession::getYzisinfo()
 void YZSession::guiStarted() {
 	//read init files
 	if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
-		YZExLua::instance()->source( NULL, QDir::rootPath() + "/etc/yzis/init.lua" );
+		YZLuaEngine::self()->source( QDir::rootPath() + "/etc/yzis/init.lua" );
 	if (QFile::exists(QDir::homePath() + "/.yzis/init.lua"))
-		YZExLua::instance()->source( NULL, QDir::homePath() + "/.yzis/init.lua" );
+		YZLuaEngine::self()->source( QDir::homePath() + "/.yzis/init.lua" );
 }
 
 void YZSession::addBuffer( YZBuffer *b ) {

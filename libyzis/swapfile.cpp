@@ -56,14 +56,14 @@ void YZSwapFile::flush() {
 	yzDebug() << "Flushing swap to " << mFilename << endl;
 	QFile f( mFilename );
 	struct stat buf;
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
 	int i = lstat( mFilename.toLocal8Bit(), &buf );
 	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() 
 #else
 	if ( true
 #endif
 		&& f.open( QIODevice::WriteOnly | QIODevice::Append ) ) { //open at end of file
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
 		chmod( mFilename.toLocal8Bit(), S_IRUSR | S_IWUSR );
 #endif
 		QTextStream stream( &f );

@@ -36,7 +36,7 @@
 #include <QLinkedList>
 #include <QVector>
 
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
 #include <magic.h>
 #endif
 
@@ -417,7 +417,7 @@ class YZIS_EXPORT YzisHlManager
     uint dynamicCtxsCount;
     QTime lastCtxsReset;
     bool forceNoDCReset;
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
     magic_t magicSet;
 #endif
 };

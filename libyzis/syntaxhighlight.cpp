@@ -40,11 +40,11 @@
 
 #include "portability.h"
 
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
 #include "magic.h"
 #endif
 
-#include "ex_lua.h"
+#include "luaengine.h"
 #include <QDir>
 #include <QSet>
 #include <QTextStream>
@@ -2973,11 +2973,11 @@ YzisHlManager::YzisHlManager()
 	  delete a;
   //read init files
   if (QFile::exists(QDir::rootPath() + "/etc/yzis/hl.lua"))
-    YZExLua::instance()->source( NULL, QDir::rootPath() + "/etc/yzis/hl.lua" );
+    YZLuaEngine::self()->source( QDir::rootPath() + "/etc/yzis/hl.lua" );
   if (QFile::exists(QDir::homePath() + "/.yzis/hl.lua"))
-    YZExLua::instance()->source( NULL, QDir::homePath() + "/.yzis/hl.lua" );
+    YZLuaEngine::self()->source( QDir::homePath() + "/.yzis/hl.lua" );
 
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
   magicSet = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );
   if ( magicSet == NULL ) {
     magic_close(magicSet);
@@ -2995,7 +2995,7 @@ YzisHlManager::YzisHlManager()
 
 YzisHlManager::~YzisHlManager()
 {
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
   if ( magicSet )
     magic_close( magicSet );
 #endif
@@ -3140,7 +3140,7 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 }
 
 QString YzisHlManager::findByContent( const QString& contents ) {
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
 // QString YzisHlManager::findByContent( const QByteArray& contents ) {
     if ( magicSet == NULL )
     	return QString::null;

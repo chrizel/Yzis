@@ -23,7 +23,6 @@
 TEMPLATE = lib
 INCLUDEPATH += ../.. $$(LUAINCLUDE)
 QT        += xml 
-QT        -= gui
 CONFIG    += console warn_on debug dll
 CONFIG    += rtti # necessary for dynamic cast
 

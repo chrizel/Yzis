@@ -21,6 +21,7 @@
 
 #include <QList>
 
+#include "portability.h"
 #include "debug.h"
 #include "action.h"
 #include "search.h"

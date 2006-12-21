@@ -24,6 +24,7 @@
  **/
 
 #include "mode_command.h"
+#include "portability.h"
 
 #include <QRegExp>
 

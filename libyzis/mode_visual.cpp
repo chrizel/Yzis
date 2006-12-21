@@ -23,6 +23,7 @@
 
 #include "debug.h"
 
+#include "portability.h"
 #include "action.h"
 #include "buffer.h"
 #include "selection.h"

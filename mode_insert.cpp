@@ -20,6 +20,7 @@
  **/
 
 #include "mode_insert.h"
+#include "portability.h"
 
 #include "buffer.h"
 #include "session.h"

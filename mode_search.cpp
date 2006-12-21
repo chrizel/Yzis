@@ -22,6 +22,7 @@
 #include "mode_search.h"
 
 #include "debug.h"
+#include "portability.h"
 #include "action.h"
 #include "view.h"
 #include "buffer.h"

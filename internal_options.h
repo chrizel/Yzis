@@ -23,6 +23,7 @@
 /* Qt */
 
 /* yzis */
+#include "portability.h"
 #include "option.h"
 
 class YZBuffer;

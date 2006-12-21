@@ -121,7 +121,7 @@ void YZQtPrinter::doPrint( ) {
 		}
 		curX = marginLeft * maxwidth;
 		while ( mView->drawNextCol( ) ) {
-			QColor c = mView->drawColor( );
+			QColor c = mView->drawColor( ).rgb();
 			if ( c.isValid() && c != Qt::white ) p.setPen( c );
 			else p.setPen( Qt::black );
 			QString disp = QString(mView->drawChar());

@@ -38,7 +38,7 @@
 #include "swapfile.h"
 #include "session.h"
 #include "syntaxhighlight.h"
-#include "ex_lua.h"
+#include "luaengine.h"
 #include "search.h"
 #include "yzisinfo.h"
 #include "portability.h"
@@ -774,7 +774,7 @@ void YZBuffer::setHighLight( int mode, bool warnGUI ) {
 		//XXX should we check whether it was already loaded ?
 		QString hlName = h->name();
 		hlName.replace("+","p");
-		YZExLua::instance()->source(NULL, hlName.toLower(),false);
+		YZLuaEngine::self()->source(hlName.toLower());
 	}
 }
 
@@ -1003,7 +1003,7 @@ QString YZBuffer::tildeExpand( const QString& path ) {
 		if ( path[1] == '/' || path.length() == 1 ) {
 			ret = QDir::homePath() + path.mid( 1 );
 		}
-#ifndef YZIS_WIN32_MSVC
+#ifndef YZIS_WIN32_GCC
 		  else {
 			int pos = path.indexOf('/');
 			if ( pos < 0 ) // eg: ~username (without /)

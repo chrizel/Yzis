@@ -22,8 +22,7 @@
 #define PORTABILITY_H
 
 #ifdef YZIS_WIN32_MSVC
-
-	// boah, we are on windows
+	// boah, we are on windows with Visual
 	#include <windows.h>
 	
 	// XXX Phil: I'll fix that later 
@@ -45,6 +44,30 @@
 	// make geteuid work
 	#define CHECK_GETEUID( v )		(1)
 #define PREFIX ""
+
+#elif YZIS_WIN32_GCC
+	// ooh, we are on windows with gcc
+	
+	// XXX Phil: I'll fix that later 
+	#define PREFIX ""
+	#define gettext( s ) (s) 
+
+/*	
+	// emulate chmod
+	#define chmod( fname , flag )
+	#define S_IRUSR 0 
+	#define S_IWUSR 0
+	
+	// emulate lstat
+	#define lstat	stat
+	
+	// make stat work
+	#define S_ISLNK( v )		(0)
+	#define S_ISREG( v )		(v & _S_IFREG)
+*/
+	
+	// make geteuid work
+	#define CHECK_GETEUID( v )		(1)
 
 #else 
 	// ahh, we are on unix

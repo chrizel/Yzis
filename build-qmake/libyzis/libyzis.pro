@@ -21,7 +21,7 @@
 # and LUALIB to the directory containing lua .so or lua .lib files
 
 TEMPLATE = lib
-INCLUDEPATH += ../.. $$(LUAINCLUDE)
+INCLUDEPATH += ../ ../.. $$(LUAINCLUDE)
 QT        += xml 
 CONFIG    += console warn_on debug dll
 CONFIG    += rtti # necessary for dynamic cast

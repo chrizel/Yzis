@@ -26,16 +26,16 @@ QT        += xml
 CONFIG    += console warn_on debug dll
 CONFIG    += rtti # necessary for dynamic cast
 
-win32-msvc {
-	DESTDIR = ./
-	LIBS += $$(LUALIB)/Lua.lib $$(LUALIB)/LuaLib.lib
-}
-
 win32-g++ {
-	DESTDIR = ./
 	LIBS += $$(LUALIB)/Lua.lib $$(LUALIB)/LuaLib.lib
     DEFINES += YZIS_WIN32_GCC
 }
+
+linux-g++ {
+	LIBS += -llua -llualib -lmagic
+}
+
+DESTDIR = ../bin
 
 # Input
 HEADERS += \

@@ -1,5 +1,5 @@
 TEMPLATE      = subdirs
-SUBDIRS       = libyzis
+SUBDIRS       = libyzis libyzisrunner
 
 include( luacheck.pro )
 

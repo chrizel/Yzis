@@ -29,32 +29,48 @@ include(ConfigureChecks.cmake)
 include(ConvenienceLibs.cmake)
 include(MacroAdditionalCleanFiles)
 
+########################## options for compilation
+#
+if (WIN32)
+    option(ENABLE_QYZIS "enable qyzis compilation" OFF)
+    option(ENABLE_NYZIS "enable nyzis compilation" OFF)
+else(WIN32)
+    option(ENABLE_QYZIS "enable qyzis compilation" ON)
+    option(ENABLE_NYZIS "enable nyzis compilation" ON)
+endif(WIN32)
+
 option(ENABLE_KYZIS "enable kyzis compilation" OFF)
-option(ENABLE_QYZIS "enable qyzis compilation" ON)
-option(ENABLE_NYZIS "enable nyzis compilation" ON)
+option(ENABLE_LIBYZISRUNNER "enable libyzisrunner compilation" ON)
 option(ENABLE_TESTS "enable tests compilation" OFF)
 option(ENABLE_DOCUMENTATION "enable handbook generation" OFF)
 
 option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
 
-find_package(Magic REQUIRED)
-find_package(LibLua50 REQUIRED)
-find_package(LibLuaLib50 REQUIRED)
-find_package(Gettext REQUIRED)
+########################## platform specific stuff
+#
+if (WIN32)
+	add_definitions("-DYZIS_WIN32_GCC")
+else(WIN32)
+    find_package(Magic REQUIRED)
+    find_package(Gettext REQUIRED)
+endif(WIN32)
+
 if (APPLE) # XXX: workaround intl for Mac OSX
 	set(GETTEXT_LIBRARIES ${LIBINTL_LIBRARY})
 endif(APPLE)
 
-# libyzis dependencies :
-set(QT_MIN_VERSION "4.2.0")
+### lua
+find_package(LibLua50 REQUIRED)
+find_package(LibLuaLib50 REQUIRED)
+
+### Qt
+set(QT_MIN_VERSION "4.1.0")
 find_package(Qt4 REQUIRED)
 
 # for syntax files
 find_package(Perl REQUIRED)
 
-
 # optional packages dependencies :
-
 if (ENABLE_KYZIS)
 	find_package(KDE4 REQUIRED)
 endif (ENABLE_KYZIS)
@@ -85,8 +101,7 @@ if (APPLE)
 endif (APPLE)
 
 
-#
-# build instructions
+############################# build instructions
 #
 
 # visibility support
@@ -115,11 +130,13 @@ macro_additional_clean_files(
 	${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h
 )
 
-#
-# subdirectories to compile
+####################### subdirectories to compile
 #
 add_subdirectory( libyzis )
 
+if (ENABLE_LIBYZISRUNNER)
+	# add_subdirectory( libyzisrunner )
+endif (ENABLE_LIBYZISRUNNER)
 if (ENABLE_NYZIS)
 	add_subdirectory( nyzis )
 endif (ENABLE_NYZIS)

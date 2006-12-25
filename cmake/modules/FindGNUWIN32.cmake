@@ -1,8 +1,7 @@
 if (WIN32)
 
-INCLUDE(MacroGetenvWinPath)
-
-MACRO_GETENV_WIN_PATH(_progFiles PROGRAMFILES)
+# INCLUDE(MacroGetenvWinPath)
+# MACRO_GETENV_WIN_PATH(_progFiles PROGRAMFILES)
 
 FIND_FILE(GNUWIN32_DIR gnuwin32
    ${_progFiles}

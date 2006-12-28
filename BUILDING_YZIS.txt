@@ -11,7 +11,7 @@ CMake will start to look for the dependencies. If all of them are satisfied,
 it will generate Makefiles.
 
 You can pass options and variables to CMAKE with the -D flag:
-cmake -DENABLE_NYZIS=false to disable for example the nyzis building.
+cmake -DENABLE_NYZIS=off to disable for example the nyzis building.
 
 This list of available options are:
 - ENABLE_NYZIS: build the ncurses based frontend
@@ -22,6 +22,11 @@ This list of available options are:
   what cmake is actually doing.
 - ENABLE_DOCUMENTATION: generate the documentation when building (doxygen
   apidoc)
+
+You can choose between debug or release configuration with:
+-DCMAKE_BUILD_TYPE=Debug
+or
+-DCMAKE_BUILD_TYPE=Release
 
 Yzis depends on the following libraries:
 - Qt, for its engine (the gui part of Qt is not used)
@@ -52,6 +57,5 @@ cmake -G "MinGW Makefiles" ..
 You will probably need to specify the lua libraries explicitely. My build
 line on windows look like this:
 
-cmake -G "MinGW Makefiles" -DLIBLUA50_LIBRARIES="D:/program/Lua/LibLua.lib" -DLIBLUA50_INCLUDE_DIR="D:/program/Lua" -D LIBLUALIB50_INCLUDE_DIR="D:/program/Lua" -DLIBLUALIB50_LIBRARIES="d:/program/Lua/LibLuaLib.lib" -DENABLE_NYZIS=false -DENABLE_QYZIS=false -DCMAKE_VERBOSE_MAKEFILE=true ..
-
+cmake -G "MinGW Makefiles" -DLIBLUA50_LIBRARIES="D:/program/Lua/LibLua.lib" -DLIBLUA50_INCLUDE_DIR="D:/program/Lua" -D LIBLUALIB50_INCLUDE_DIR="D:/program/Lua" -DLIBLUALIB50_LIBRARIES="d:/program/Lua/LibLuaLib.lib" -DENABLE_NYZIS=off -DENABLE_QYZIS=off -DCMAKE_VERBOSE_MAKEFILE=on ..
 

@@ -237,32 +237,36 @@ int YZLuaEngine::execInLua( const QString & luacode ) {
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	lua_pushstring(L, luacode.toUtf8() );
 //	print_lua_stack(L, "loadstring 0");
-	if (! yzpcall(1,2, QString("Executing following code in lua:\n%1").arg(luacode) )) {
+	if (yzpcall(1,2, QString("Executing following code in lua:\n%1").arg(luacode) )) {
+        // Call was successful
 		return 0;
 	}
-//	print_lua_stack(L, "loadstring 1");
-	if (lua_isnil(L,-2) && lua_isstring(L,-1)) {
-		QString luaErrorMsg = QString::fromUtf8( (  char * ) lua_tostring( L,-1 ) );
-		lua_pop(L,2);
-		YZSession::me->popupMessage(luaErrorMsg );
-//		printf("execInLua - %s\n", luaErrorMsg.latin1() );
-		return 0;
-	} else if (lua_isfunction(L,-2)) {
-		lua_pop(L,1);
-		yzpcall(0,0, "");
-	} else { // big errror
-//		print_lua_stack(L, "loadstring returns strange things" );
-		YZSession::me->popupMessage("Unknown lua return type");
-	}
-	return 0;
+
+    return 1;
 }
 
 bool YZLuaEngine::yzpcall( int nbArg, int nbReturn, const QString & context ) {
 	int lua_err = lua_pcall(L,nbArg,nbReturn, 0);
-	if (! lua_err) return true;
-	QString luaErrorMsg = QString::fromUtf8( ( char * ) lua_tostring( L,lua_gettop( L ) ) );
-	QByteArray err = luaErrorMsg.toLatin1();
-	printf("pCall error: %s\n", err.data() );
+    QString luaErrorMsg;
+
+	if (! lua_err) return true; // call is successful
+
+	if (lua_isstring(L,-1)) {
+        // an error message on the stack
+        luaErrorMsg = QString::fromUtf8( ( char * ) lua_tostring( L,lua_gettop( L ) ) );
+	} else if (lua_isfunction(L,-2)) {
+        // error handler function on the stack at position -2
+		lua_pop(L,1);
+		yzpcall(0,0, "error handling function called from within yzpcall");
+	} else { 
+        // big error, we do not grok what happend
+		print_lua_stack(L, "loadstring returns strange things" );
+        luaErrorMsg = "Unknown lua return type after loadstring";
+	}
+
+    QByteArray err = luaErrorMsg.toLatin1();
+    printf("pCall error: %s\n", err.data() );
+
 	YZSession::me->popupMessage(context + "\n" + luaErrorMsg );
 	return false;
 }

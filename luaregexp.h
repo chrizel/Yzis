@@ -27,17 +27,22 @@ extern "C" {
 /** Regexp class for lua.
  *
  * Lua does not feature a builtin regexp support, so this class provides one.
- * The support is entirely based on Qt QRegexp. We use lua syntaxic sugar to
- * build an object like interface on top of a table.
+ * The support is entirely based on Qt <a
+ * href="http://doc.trolltech.com/4.2/qregexp.html">QRegexp</a>. We use lua
+ * syntaxic sugar to build an object like interface on top of a table.
  *
- * See \ref QRegexp for the regexp syntax.
+ * See <a href="http://doc.trolltech.com/4.2/qregexp.html">QRegexp</a> for the
+ * regexp syntax.
  *
  * Lua code example:
+ * \code
  * re = Regexp:create( 'my_re' )
  * print(re:match('XXmy_re')) --> true
  * print(re:match('no match')) --> false
  * print(re:matchIndex('XXmy_re')) --> 2
  * print(re:matchIndex('no match')) --> -1
+ * \endcode
+ *
  */
 class YZLuaRegexp {
 

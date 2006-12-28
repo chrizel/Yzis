@@ -28,7 +28,35 @@ extern "C" {
 
 class YZView;
 
-
+/** This class is the main interface for the lua engine.
+  *
+  * YZLuaEngine is the central point of interaction with the lua engine. It is
+  * responsible for initialising the lua engine, and provides all the
+  * facilities needed to deal with lua.
+  *
+  * The class is a singleton and initialises the lua engine upon
+  * instancing. The instance pointer is available via self().
+  *
+  * All code related to the lua engine and lua stack should go in this class.
+  * Implmentation of the actual lua functions (the binding) is done in \ref
+  * YZLuaFuncs. The functions are registered to lua by the call to 
+  * YZLuaFuncs::registerLuaFuncs(),
+  * performed during the class instancing.
+  *
+  * The function that are useful when dealing with lua in the libyzis are:
+  * - source(): sourcs a lua file
+  * - lua(): execute some lua code
+  * - exe(): calls a lua function
+  *
+  * When implementing a lua function, the interesting functions are:
+  * - yzpcall(): calls lua with arguments already on the stack, raises a popup
+  * in case of error.
+  * - checkFunctionArguments(): check that the right number of arguments are
+  * provided to a lua function
+  * - print_lua_stack(): print the content of the lua stack on the debug
+  * interface
+  *
+  */
 class YZLuaEngine {
 	public:
 		/** Get the pointer to the singleton YZLuaEngine */
@@ -43,8 +71,8 @@ class YZLuaEngine {
          * - the current path
          * - ~/.yzis/scripts
          * - ~/.yzis/scripts/indent
-         * - <install_dir>/share/yzis/scripts
-         * - <install_dir>/share/yzis/scripts/indent
+         * - [install_dir]/share/yzis/scripts
+         * - [install_dir]/share/yzis/scripts/indent
          *
          * @param filename the name of the lua file, with or without .lua
          * extension.
@@ -53,57 +81,157 @@ class YZLuaEngine {
 		QString source( const QString& filename );
 
 		/**
-		 * Execute a lua command
+		 * Execute some lua code.
+         *
+         * This method is an easy entry point, usable directly
+         * by the Ex function binder.
+         *
+         * The method will call execInLua().
 		 */
 		QString lua(YZView *view, const QString& args);
 
-		/**
-		 * Cleanup the stack
-		 */
-		static void cleanLuaStack( lua_State * L );
+        /** Calls a lua function.
+          *
+          * This function uses yzpcall() to call the function.
+          *
+          * XXX The arguments are supposed to be already on the stack, which
+          * is a bit strange since there is no function to put them.
+          *
+          * The function is used by the event stuff, which actually does not
+          * put any stuff on the stack.
+          */
+		void execute(const QString& function, int nbArgs, int nbResults);
 
-		/** Execute the given lua code */
+		/**
+		 * Return the results of the last Lua method invoked.
+         *
+         * If you execute some lua code with execInLua or exe or execute, the
+         * results of the function call will remain on the lua stack.
+         *
+         * This function will pop @param nb results and put them in a string
+         * list. If the result is neither a string or a number, an empty
+         * string is pushed in the list.
+         *
+         * The list is constructed so that the last element of the list is the
+         * topmost element of the stack.
+         *
+         * @param nb number of items to pop from the stack
+         * @return a string list containing all @param nb elements.
+         *
+         * XXX the code of the function is inconsistent if nb != number of
+         * elements of the stack. It will pop the topmost element but put the
+         * bottom element in the string list.
+         *
+         * XXX What happens if there is not enough entries to pop ?
+         *
+		 */
+		QStringList getLastResult(int nb) const;
+
+        /** Calls a lua function.
+          *
+          * The function allows to call any lua function with any number
+          * argument and to get the results.
+          *
+          * The arguments being passed and expected in the result should \b
+          * exactly described in the function signature
+          * else - quoting from the man page of stdarg -
+          * <i>random things may happen</i>.
+          *
+          * The signature of the function is described in \p sig:
+          * - d: argument passed is double
+          * - i: argument passed is a number
+          * - s: argument passed is char *
+          * - >: now describing the return values of the function
+          *
+          * For return values, the meaning is the same:
+          * - d: double return value expected 
+          * - i: int return value expected
+          * - s: char * return value expected
+          *
+          * The return values are fetched by passing pointers to the expected
+          * type.
+          *
+          * Example:
+          * Calling a function that takes as argument two ints, one string and
+          * one double, and returns a double and a string.
+          * \code
+          * int a1, a2;
+          * char * s3 = "toto";
+          * double d4 = 3.1415927;
+          * double ret1d;
+          * char * ret2s;
+          *
+          * exe( "some_lua_function", "iisd>ds", a1, a2, s3, d4, &ret1d, &ret2s );
+          *
+          * printf("returns %f %s\n", ret1d, ret2s );
+          *
+          * \endcode
+          *
+          *
+          * @param function function to call
+          * @param sig signature of the function
+          */		
+		void exe(const QString& function, const char* sig, ...);
+	
+		/** Execute the given lua code.
+          *
+          * This function will use the lua function \e loadstring() to execute
+          * the lua code that is passed in argument.
+          *
+          * The lua code could contain multiple statements.
+          *
+          * The stack is not cleaned after this call, so any return value
+          * will stay on the stack.
+          *
+          * Internally, this will call yzpcall(), which in other things
+          * can popup with an error message.
+          *
+          * @param luacode lua code to execute
+          * @return 0 in case of success, 1 in case of error
+          */
 		int execInLua( const QString & luacode );
 
 		/** Called when lua wants to print */
 		void yzisprint(const QString & text);
 
 		/**
-		 * Return the results of the last Lua method invoked
+		 * Empty the lua stack. Normally, you should not need
+         * this function because you should pop the lua stack items by items
+         * and you should know exactly how many items were put on the stack.
 		 */
-		QStringList getLastResult(int nb) const;
+		static void cleanLuaStack( lua_State * L );
 
-		void execute(const QString& function, int nbArgs, int nbResults);
-		
-		void exe(const QString& function, const char* sig, ...);
-	
 		/** Wrapper around lua_pcall()
 		  *
 		  * Takes the same arguments as lua_pcall(). Returns true if the lua
 		  * call is successful.
 		  *
 		  * In case of error, the functions displays a popup with the error
-		  * content.
+		  * message.
 		  *
 		  *  @param nbArg number of arguments for the function call
 		  *  @param nbReturn number of expected results from the function call
 		  *  @param context string describing the context of the call,
 		  *  displayed when an error occurs.
-		  * Return true if the call is without error 
+		  *  @return true if the call is without error 
 		  */
 		bool yzpcall( int nbArg, int nbReturn, const QString & context=QString::null );
 
 		/** 
 		  * Check that the lua stack contains the number of expected argument.
-		  * Calls lua_error() is that is not the case with a description of
-		  * what the argument should be
+          *
+		  * Calls lua_error() if the stack does not contain the right
+          * arguments.
 		  *
-		  * argNbMin: minimum number of expected argument
-		  * argNbMax: maximum number of expected argument
-		  * functionName: name of the function being checked (used when
+		  * @param L the lua state
+		  * @param argNbMin minimum number of expected argument
+		  * @param argNbMax maximum number of expected argument
+		  * @param functionName name of the function being checked (used when
 		  * 				reporting an error)
-		  * functionArgDesc: description of the function arguments (used when
-		  * 				reporting an error)
+          * @param functionArgDesc description of the function arguments (used
+          * when reporting an error)
+          *
+          * @return true if everything is correct.
 		  */
 		static bool checkFunctionArguments(lua_State*L, 
 					int argNbMin,
@@ -111,21 +239,36 @@ class YZLuaEngine {
 					const char * functionName, 
 					const char * functionArgDesc );
 
-		static bool checkFunctionArguments(lua_State*L, 
-					int argNb,
-					const char * functionName, 
-					const char * functionArgDesc );
-
-		static void print_lua_stack_value(lua_State*L, int index);
-
-		static void print_lua_stack(lua_State *L, const char * msg="");
-
 	protected:
 		lua_State *L;
 
 		/** Private constructor for a singleton */
 		YZLuaEngine();
 		static YZLuaEngine * me;
+
+        /** Debugging function.
+          *
+          * Print the lua stack item \p index on the debug interface.
+          * The index is passed directly to the lua function, so can be
+          * positive or negative.
+          *
+          * @param L the lua state
+          * @param index the depth of the element in the stack
+          */
+		static void print_lua_stack_value(lua_State*L, int index);
+
+        /** Debugging function.
+          *
+          * Print the content of the lua stack on the debug interface. When
+          * \p msg is specified, it is displayed as well. Use \p msg to
+          * hint the context of the call.
+          *
+          * @param L the lua state
+          * @param msg a message describing the context in which this function
+          * is called. 
+          */
+		static void print_lua_stack(lua_State *L, const char * msg="");
+
 };
 
 #endif // YZ_LUA_ENGINE

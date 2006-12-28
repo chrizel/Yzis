@@ -6,33 +6,31 @@
 
 Yzis features a scripting language, lua. Lua was chosen because it is a small
 yet powerful scripting language. Integration was easy, scripting power is
-quite good and memory overhead is quite small.
+quite good and memory overhead is really small.
 
 
 \section scripting_lua_integration How lua is integrated
 
-There is a layer to manage the lua engine.
-
-There are lua functions available when you script in lua
-
-There are additional functions for working nicely in a lua environement
-
-There are functions to start yzis with lua directly or to run a lua command.
+Yzis contains a lua engine, which initialied upon startup. Inside, yzis, it is
+possible to call any lua function with:
+- :lua &lt;some lua code&gt;
+- :call some_function()
+- :some_function()
 
 
 \section lua_engine Lua engine
 
-YZExLua is a singleton instance that managees the lua engine.
+YZLuaEngine is a singleton instance that managees the lua engine.
 
 All lua needs for its engine is a state which is traditionally stored as
 variable lua_State * L. In our case, this variable is a protected variable of
-the YzExLua instance. This variable is going to be the first argument of every
+the YZLuaEngine instance. This variable is going to be the first argument of every
 lua function, in a traditional C oriented programming.
 
-During YZExLua construction, the lua engine is initialised. The lua state L is
+During YZLuaEngine construction, the lua engine is initialised. The lua state L is
 created and a few lua libraries are opened:
 \code
-YZExLua::YZExLua() {
+YZLuaEngine::YZLuaEngine() {
 	L = lua_open();
 	luaopen_base(L);
 	luaopen_string( L );
@@ -52,7 +50,7 @@ Now, yzis is ready to be used with lua.
 
 Upon closing, the lua state is closed:
 \code
-YZExLua::~YZExLua() {
+YZLuaEngine::~YZLuaEngine() {
 	lua_close(L);
 }
 \endcode
@@ -69,7 +67,7 @@ In this chapter, we will see how to make a function available in lua.
 
 To be usable by lua, the function should be either a function or a static
 method, taking one unique argument in the form of a lua_State * L and
-returning an int. All yzis lua functions are static methods of YzExLua.
+returning an int. All yzis lua functions are static methods of YZLuaFuncs.
 
 Lua exchanges information by using the stack. When the function is
 called, all the arguments of the function are pushed onto the stack. The size
@@ -94,14 +92,14 @@ content of the line of the current buffer as a string.
 
 The prototype is a static method:
 \code
-class YzExLua { 
+class YZLuaFuncs { 
     /* ... */
 
     static int line(lua_State *L);
 
 };
 
-int YZExLua::line(lua_State *L) {
+int YZLuaFuncs::line(lua_State *L) {
     /* ... */
 }
 \endcode
@@ -109,7 +107,7 @@ int YZExLua::line(lua_State *L) {
 
 The implementation should first check the arguments:
 \code
-int YZExLua::line(lua_State *L) {
+int YZLuaFuncs::line(lua_State *L) {
 	if (!checkFunctionArguments(L, 1, 1, "line", "line number")) return 0;
 	int line = ( int )lua_tonumber( L,1 );
 	lua_pop(L,1);
@@ -119,7 +117,7 @@ int YZExLua::line(lua_State *L) {
 
 checkFunctionArguments is a helper function with the following signature:
 \code
-bool YZExLua::checkFunctionArguments(lua_State*L, 
+bool YZLuaEngine::checkFunctionArguments(lua_State*L, 
     int argNbMin, 
     int argNbMax, 
     const char * functionName, 
@@ -141,7 +139,7 @@ Now that we have our argument, we should process the function. We need to
 adjust the line number count (in yzis as in vim, line are numbered starting
 from 1), then fetch the current view, then fetch the content of the line.	
 \code
-int YZExLua::line(lua_State *L) {
+int YZLuaFuncs::line(lua_State *L) {
 	if (!checkFunctionArguments(L, 1, 1, "line", "line number")) return 0;
 	int line = ( int )lua_tonumber( L,1 );
 	lua_pop(L,1);
@@ -165,7 +163,7 @@ your function put on the stack.
 lua_gettop() return the number of elements contained on the lua stack.
 
 \code
-int YZExLua::line(lua_State *L) {
+int YZLuaFuncs::line(lua_State *L) {
 	if (!checkFunctionArguments(L, 1, 1, "line", "line number")) return 0;
 	int line = ( int )lua_tonumber( L,1 );
 	lua_pop(L,1);
@@ -186,7 +184,7 @@ The winpos() function takes no argument but rerturn two values, the current
 line and current column of the cursor.
 
 \code
-int YZExLua::winpos(lua_State *L) {
+int YZLuaFuncs::winpos(lua_State *L) {
 	if (!checkFunctionArguments(L, 0, 0, "winpos", "")) return 0;
 
 	YZView* cView = YZSession::me->currentView();
@@ -206,7 +204,7 @@ The goto() function takes two arguments and moves the cursor to the position
 specified. It returns nothing. 
 
 \code
-int YZExLua::_goto(lua_State *L) {
+int YZLuaFuncs::_goto(lua_State *L) {
 	if (!checkFunctionArguments(L, 2, 2, "goto", "line, col")) return 0;
 	int sCol = ( int )lua_tonumber( L, 1 );
 	int sLine = ( int )lua_tonumber( L,2 );
@@ -237,14 +235,15 @@ stack problems.
 
 \subsection more_lua More about lua
 
-Lua supports the following types: nil, number, boolean, string, table,
+The lua types relevant to Yzis are: nil, number, boolean, string, table,
 functions. Table is both a list and a dictionnary (in lua, a list is a mapping
-from a number - the index - to a value).
+from a number - the index - to a value). Since lua is coded in C, boolean are
+actually int. A number in lua is a double.
 
 Popping from the lua stack:
-\li float  lua_tonumber (lua_State * L, int index));
+\li double lua_tonumber (lua_State * L, int index));
 \li int    lua_toboolean(lua_State * L, int index));
-\li char * lua_tostring (lua_State * L, int index));
+\li const char * lua_tostring (lua_State * L, int index));
 
 Putting on the lua stack:
 \li void lua_pushnumber( lua_State * L, int val );
@@ -263,10 +262,10 @@ used to deal with them:
 other useful lua functions:
 \li int lua_getteop(lua_State * L) : number of elements of the stack
 \li int lua_type(lua_State * L, int idx)) : type of the element at index idx
-\li int lua_isxyz( lua_State * L, int idx ) : with xyz being number, string, boolan; return 1 if the element in the stack is of type xyz
+\li int lua_isxyz( lua_State * L, int idx ) : with xyz being 'number', 'string', 'boolean'; return 1 if the element in the stack is of type xyz
 
 For a more detailed information of how to use lua, please check:
-file:///D:/program/lua-5.0.2/doc/manual.html#3
+"/doc/manual.html#3"
 
 Summary: 
 
@@ -281,12 +280,20 @@ To write a good lua function:
 If you do this, script developers will find it easy to use your function in
 their scripts.
 
-
-\section using_lua_in_yzis Using lua in Yzis
-
 \section writing_yzis_lua_test Writing an yzis test with lua:
+
+:lua [some lua code]
+YZExLua::execInLua( "any lua code" )
+YZExLua::lua( YZView *, const QString & args ) --> used for ex mode, calls
+execinlua
+YZExLua::exe( function, signature, ... ) --> execute any lua function
+YZExLua::execute( functions, nbargs, results ) 
+YZExLua::source( View, args ) 
+YZExLua::yzpcall( :
+
 
 
 */
+
 
 

@@ -49,21 +49,28 @@ public:
 	static int yzprint(lua_State *L);
 
 	/**
-	 * Get one line of text:
-	 * Arguments:
-	 * - the line number
+	 * Get one line of text.
+     *
+	 * \b Arguments:
+	 * - int, the line number
 	 *
-	 * Returns a string
+     * \b Returns:
+     * - string: the content of the line 
 	 */
 	static int line(lua_State *L);
 
 	/**
-	 * Get one line of text:
-	 * Arguments:
-	 * - the line number
-	 * - line content
-	 *
-	 * Returns a string
+	 * Set one line of text.
+     *
+	 * \b Arguments:
+	 * - int, the line number
+     * - string, the text to set
+     *
+     *
+     * 
+     *
+     * 
+     * \b Returns: nothing
 	 */
 	static int setline(lua_State *L);
 
@@ -72,7 +79,7 @@ public:
 	 * Arguments:
 	 * startCol,startLine,text
 	 *
-	 * Returns nothing.
+     * \b Returns: nothing
 	 */
 	static int insert(lua_State *L);
 
@@ -80,6 +87,10 @@ public:
 	 * Remove the given number of caracters
 	 * Arguments :
 	 * col, line, number
+     *
+     *
+     * 
+     * \b Returns: nothing
 	 */
 	static int remove(lua_State *L);
 
@@ -88,7 +99,7 @@ public:
 	 * Arguments:
 	 * line,text
 	 *
-	 * Returns nothing.
+     * \b Returns: nothing
 	 */
 	static int insertline(lua_State *L);
 
@@ -97,7 +108,7 @@ public:
 	 * Arguments:
 	 * text
 	 *
-	 * Returns nothing.
+     * \b Returns: nothing
 	 */
 	static int appendline(lua_State *L);
 
@@ -106,7 +117,7 @@ public:
 	 * Arguments:
 	 * startCol,startLine, text to replace
 	 *
-	 * Returns nothing.
+     * \b Returns: nothing
 	 */
 	static int replace(lua_State *L);
 
@@ -152,7 +163,9 @@ public:
 
 	/**
 	 * Deletes the given line.
-	 * Returns nothing
+     *
+     * 
+     * \b Returns: nothing
 	 */
 	static int deleteline(lua_State *L);
 
@@ -183,27 +196,33 @@ public:
 	 * by the user.
 	 *
 	 * Arguments: string
-	 * Returns nothing
+     *
+     * \b Returns: nothing
 	 */
 	static int sendkeys(lua_State *L);
 
 	/**
-	* Command to customize syntax highlighting settings
-	* Arguments : style, type, ...
-	* Returns nothing
-	*/
+	 * Command to customize syntax highlighting settings
+	 * Arguments : style, type, ...
+     *
+     * 
+     * \b Returns: nothing
+	 */
 	static int highlight(lua_State *L);
 
 	/**
 	 * Plugins main registration point
 	 * Arguments : the event name, the lua function to call
-	 * Returns nothing
+     *
+     * \b Returns: nothing
 	 */
 	static int connect(lua_State *L);
 
 	/**
 	 * Find a file in standard yzis plugin directories
 	 * and source it
+     *
+     *
 	 */
 	static int source(lua_State *L);
 

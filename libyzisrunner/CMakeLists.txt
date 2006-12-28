@@ -13,10 +13,13 @@ set(libyzisrunner_SRCS
    main.cpp
 )
 
-set(CMAKE_EXE_LINKER_FLAGS 
-    "-Wl,-enable-stdcall-fixup,-enable-auto-import,-enable-runtime-pseudo-reloc " 
-    ${CMAKE_EXE_LINKER_FLAGS}
-    )
+if (WIN32)
+    set(CMAKE_EXE_LINKER_FLAGS 
+        "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc " 
+        ${CMAKE_EXE_LINKER_FLAGS}
+        )
+endif (WIN32)
+
 
 if (UNIX OR WIN32)
 	add_executable(libyzisrunner ${libyzisrunner_SRCS})

@@ -135,7 +135,7 @@ macro_additional_clean_files(
 add_subdirectory( libyzis )
 
 if (ENABLE_LIBYZISRUNNER)
-	# add_subdirectory( libyzisrunner )
+	add_subdirectory( libyzisrunner )
 endif (ENABLE_LIBYZISRUNNER)
 if (ENABLE_NYZIS)
 	add_subdirectory( nyzis )

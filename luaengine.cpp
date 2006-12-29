@@ -61,8 +61,7 @@ extern "C" {
 
 using namespace yzis;
 
-void YZLuaEngine::print_lua_stack_value(lua_State*L, int index)
-{
+void YZLuaEngine::print_lua_stack_value(lua_State*L, int index) {
 	printf("stack %d ", index );
 	switch(lua_type(L,index)) {
 		case LUA_TNIL: printf("nil\n"); break;
@@ -79,20 +78,19 @@ void YZLuaEngine::print_lua_stack_value(lua_State*L, int index)
 	}
 }
 
-void YZLuaEngine::print_lua_stack(lua_State *L, const char * msg) 
-{
+void YZLuaEngine::print_lua_stack(lua_State *L, const char * msg) {
 	printf("stack - %s\n", msg );
 	for(int i=1; i<=lua_gettop(L); i++) {
 		print_lua_stack_value(L,i);
 	}
 }
 
-YZLuaEngine * YZLuaEngine::me = 0L;
+YZLuaEngine * YZLuaEngine::me = 0;
 
-YZLuaEngine * YZLuaEngine::self()
-{
-	if (YZLuaEngine::me == NULL) { 
+YZLuaEngine * YZLuaEngine::self() {
+	if (YZLuaEngine::me == 0) { 
 		YZLuaEngine::me = new YZLuaEngine();
+		YZLuaEngine::self()->init();
 	}
 	return YZLuaEngine::me;
 }
@@ -106,7 +104,9 @@ YZLuaEngine::YZLuaEngine() {
 	luaopen_io( L );
 	luaopen_debug( L );
 	yzDebug() << lua_version() << " loaded" << endl;
+}
 
+void YZLuaEngine::init() {
 	YZLuaFuncs::registerLuaFuncs( L );
 	YZLuaRegexp::registerLuaRegexp( L );
 }
@@ -194,21 +194,20 @@ void YZLuaEngine::execute(const QString& function, int nbArgs, int nbResults) {
 	yzpcall(nbArgs, nbResults, QString("YZLuaEngine::execute function %1").arg(function)); 
 }
 
-QString YZLuaEngine::source( const QString& filename ) 
-{
+QString YZLuaEngine::source( const QString& filename ) {
     QString fname = filename;
 	if ( !fname.endsWith( ".lua" ) ) fname += ".lua";
 
 	yzDebug() << "source : " << fname << endl;
 	fname = YZBuffer::tildeExpand( fname );
-	yzDebug() << "looking filename : " << filename << endl;
+	yzDebug() << "looking filename : " << fname << endl;
 	QStringList candidates;
-	candidates << filename 
-	           << QDir::currentPath()+"/"+filename
-	           << QDir::homePath()+"/.yzis/scripts/"+filename
-	           << QDir::homePath()+"/.yzis/scripts/indent/"+filename
-		       << QString( PREFIX )+"/share/yzis/scripts/"+filename
-		       << QString( PREFIX )+"/share/yzis/scripts/indent/"+filename;
+	candidates << fname 
+	           << QDir::currentPath()+"/"+fname
+	           << QDir::homePath()+"/.yzis/scripts/"+fname
+	           << QDir::homePath()+"/.yzis/scripts/indent/"+fname
+		       << QString( PREFIX )+"/share/yzis/scripts/"+fname
+		       << QString( PREFIX )+"/share/yzis/scripts/indent/"+fname;
 
 	QString found;
 	QStringList::iterator it = candidates.begin(), end = candidates.end();

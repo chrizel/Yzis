@@ -116,8 +116,7 @@ YZModeCommand* YZSession::getCommandPool() {
 	return (YZModeCommand*)mModes[ YZMode::MODE_COMMAND ];
 }
 
-YZYzisinfo * YZSession::getYzisinfo()
-{
+YZYzisinfo * YZSession::getYzisinfo() {
 	return mYzisinfo;
 }
 

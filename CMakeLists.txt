@@ -29,6 +29,12 @@ include(ConfigureChecks.cmake)
 include(ConvenienceLibs.cmake)
 include(MacroAdditionalCleanFiles)
 
+set( CCMAKE_CXX_FLAGS_RELEASE "-O3" )
+set( CCMAKE_C_FLAGS_RELEASE "-O3" )
+
+set( CMAKE_CXX_FLAGS_DEBUG "-g3 -Wall" )
+set( CMAKE_C_FLAGS_DEBUG "-g3 -Wall" )
+
 ########################## options for compilation
 #
 if (WIN32)

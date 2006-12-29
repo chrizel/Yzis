@@ -246,6 +246,11 @@ class YZLuaEngine {
 		YZLuaEngine();
 		static YZLuaEngine * me;
 
+		/**
+		 * Init core lua stuff (functions, regexps...)
+		 */
+		void init();
+
         /** Debugging function.
           *
           * Print the lua stack item \p index on the debug interface.

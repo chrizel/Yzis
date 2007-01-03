@@ -211,7 +211,7 @@ end
 A class that supports Vim Regexp. Within Yzis, we normally use the class
 Regexp that supports perl compatible regexp.
 
-VimRegexp supports the same operator as Regexp but the Regexp is converted
+VimRegexp supports the same operators as Regexp but the Regexp is converted
 from vim syntax to perl syntax before being used.
 ]]--
 function VimRegexp( re )

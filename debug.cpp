@@ -29,12 +29,17 @@
 #include "portability.h"
 #include "debug.h"
 #include <ctype.h>
+#include <stdarg.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <QTextStream>
 #include <QRegExp>
 #include <QStringList>
 #include <QFile>
+
+#define dbg()    yzDebug("YZDebugBackend")
+#define err()    yzError("YZDebugBackend")
+
 
 YZDebugBackend * YZDebugBackend::_instance = NULL;
 
@@ -57,8 +62,16 @@ YZDebugBackend::~YZDebugBackend() {
 void YZDebugBackend::init()
 {
 	_level = 0;
-	clear();
-	parseRcfile( FILENAME_DEBUGRC );
+	clearArea();
+    _levelByName["debug"] = YZ_DEBUG_LEVEL;
+    _levelByName["warning"] = YZ_WARNING_LEVEL;
+    _levelByName["error"] = YZ_ERROR_LEVEL;
+    _levelByName["fatal"] = YZ_FATAL_LEVEL;
+
+    _nameByLevel[YZ_DEBUG_LEVEL] = "debug";
+    _nameByLevel[YZ_WARNING_LEVEL] = "warning";
+    _nameByLevel[YZ_ERROR_LEVEL] = "error";
+    _nameByLevel[YZ_FATAL_LEVEL] = "fatal";
 }
 
 YZDebugBackend * YZDebugBackend::instance()
@@ -87,9 +100,9 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 
 	if ( QFile::exists( fileName ) )
 		QFile::remove ( fileName );
-	struct stat buf;
 	setDebugOutput( fopen( fileName.toLocal8Bit(), "w" ) );
 #ifndef YZIS_WIN32_GCC
+	struct stat buf;
 	int i = lstat( fileName.toLocal8Bit(), &buf );
 	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() ) 
 		chmod( fileName.toLocal8Bit(), S_IRUSR | S_IWUSR );
@@ -105,58 +118,135 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 
 void YZDebugBackend::flush( int level, const QString& area, const char * data )
 {
-	if (level < _level) return;
-	if (isAreaEnabled( area ) == false) return;
+    int areaLevel = _areaLevel.value(area, _level);
+
+	if (level < areaLevel) return;
 
 	fprintf( _output, "%s", data );
-	/*
-	if (data[strlen(data)-1] != '\n') {
-		fprintf( _output, "\n" );
-	}
-	*/
 	fflush( _output );
-#ifdef YZIS_WIN32_MSVC
-	OutputDebugStringA( data );
-#endif
 }
+
+
 
 void YZDebugBackend::parseRcfile(const char * filename)
 {
-	flush( YZ_DEBUG_LEVEL,"YZDebugBackend", QString("parseRcfile(%1)\n").arg(filename).toLatin1() );
-	QFile f( filename );
-	if (f.open( QIODevice::ReadOnly ) == false) return;
-	QTextStream ts(&f);
+    dbg().sprintf("parseRcfile(%s)\n", filename );
+    QFile f( filename );
+    if (f.open( QIODevice::ReadOnly ) == false) {
+        err() << "Could not open rcfile '" << filename << "'" << endl;
+        return;
+    }
+    QTextStream ts(&f);
 
-	/* One can imagine more control of the output, like whether to use a file
-	 * or not, which is the default debug level.
-	 */
-	QRegExp enableRe("enable:(\\w+)");
-	QRegExp disableRe("disable:(\\w+)");
-	QString l, area;
-	while( ts.atEnd() == false) {
-		l = ts.readLine();
-		//flush( YZ_DEBUG_LEVEL, "YZDebugBackend", QString("line '%1'\n").arg(l).latin1() );
-		if (enableRe.indexIn(l) == 0) {
-			area = enableRe.cap(1);
-			//flush( YZ_DEBUG_LEVEL, "YZDebugBackend", QString("enable '%1'\n").arg(area).latin1() );
-			enableDebugArea(area, true );
-		} else if (disableRe.indexIn(l) == 0) {
-			area = disableRe.cap(1);
-			//flush( YZ_DEBUG_LEVEL, "YZDebugBackend", QString("disable '%1'\n").arg(area).latin1() );
-			enableDebugArea(area, false );
-		}
-	}
+    /* One can imagine more control of the output, like whether to use a file
+     * or not, which is the default debug level.
+     */
+    QRegExp lineRe( "^\\s*(\\w+)\\s*:\\s*(\\w+)\\s*$" );
+
+    QString l, area;
+    while( ts.atEnd() == false) {
+        l = ts.readLine();
+        dbg() << "l='" << l << "'" << endl;
+        if (!lineRe.exactMatch(l)) continue;
+        QString keyword = lineRe.cap(1).trimmed().toLower();
+        QString action  = lineRe.cap(2).trimmed().toLower();
+        if (keyword == "output") {
+            if (action == "stderr") {
+                setDebugOutput( stderr );
+            } else if (action == "stdout") {
+                setDebugOutput( stdout );
+            } else {
+                // this is a filename
+                setDebugOutput( action );
+            }
+        } else if (keyword == "level") {
+            if (! _levelByName.contains(action)) {
+                err() << "Unknown debug level in " << filename << ": " << action << endl; 
+            } else {
+                setDebugLevel( _levelByName[action] );
+            }
+        } else { // keyword is area
+            if (! _levelByName.contains(action)) {
+                err() << "Unknown debug level in " << filename << "for area " << keyword << " : " << action << endl; 
+            } else {
+                setAreaLevel( keyword, _levelByName[action] );
+            }
+        }
+    }
 }
 
+
+void YZDebugBackend::parseArgv( int & argc, char ** argv )
+{
+    QRegExp reLevelOpt("--level=(\\w+)");
+    QRegExp reAreaOpt("--area-level=(\\w+),(\\w+)");
+    for(int i=1; i<argc; i++) {
+        dbg() << "argv[i]='" << argv[i] << "'" << endl;  
+        QString myargv=QString(argv[i]).trimmed();
+        dbg() << "myargv='" << myargv << "'" << endl;  
+        if (reLevelOpt.exactMatch(myargv)) {
+            QString sLevel = reLevelOpt.cap(1);
+            dbg() << "sLevel='" << sLevel << "'" << endl;
+            if ( _levelByName.contains(sLevel) == false) {
+                err().sprintf("global debug level unrecognised: %s", qp(sLevel));
+            } else {
+                setDebugLevel( _levelByName[sLevel] );
+            }
+        } else if (reAreaOpt.exactMatch(myargv)) {
+            QString sArea  = reAreaOpt.cap(1);
+            QString sLevel = reAreaOpt.cap(2);
+            dbg() << "sLevel='" << sLevel << "'" << endl;
+            dbg() << "sArea='" << sArea << "'" << endl;
+            if ( _levelByName.contains(sLevel) == false) {
+                yzError("YZDebugBackend").sprintf("debug level unrecognised for area %s: %s", qp(sArea), qp(sLevel));
+            } else {
+                setAreaLevel( sArea, _levelByName[sLevel] );
+            }
+        }
+    }
+}
+
+QString YZDebugBackend::toString()
+{
+    QString s;
+
+    
+    s += QString("Debug level: %1\n").arg(_nameByLevel[ debugLevel() ]);
+    foreach( QString area, _areaLevel.keys() ) {
+        s += QString("%1:%2\n").arg(area).arg(_nameByLevel[_areaLevel.value(area)]);
+    }
+    return s;
+}
+
+// ================================================================
+//                          
+//                          YZDebugStream
+//                          
+// ================================================================
 
 YZDebugStream::YZDebugStream( const char * _area, int _level ) {
 	area = _area;
 	level = _level;
+    if (strlen(_area)) output=QString(_area)+":";
 }
 
 YZDebugStream::~YZDebugStream() {
 	if ( !output.isEmpty() )
 		*this << "\n"; //flush
+}
+
+void YZDebugStream::sprintf( const char * fmt, ... )
+{
+    static char buf[256];
+
+    va_list ap;
+    va_start( ap, fmt );
+    vsnprintf( buf, 256, fmt, ap );
+    va_end(ap);
+    buf[255] = '\0';
+    output += buf;
+    if (output.right(1) != "\n") output += '\n';
+    flush();
 }
 
 YZDebugStream& YZDebugStream::operator << (const QString& string) {

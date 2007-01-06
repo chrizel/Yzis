@@ -150,6 +150,7 @@ YZModePool::YZModePool( YZView* view ) {
 	mStop = false;
 }
 YZModePool::~YZModePool() {
+	stop();
 }
 void YZModePool::stop() {
 	mStop = true;

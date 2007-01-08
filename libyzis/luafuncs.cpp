@@ -256,6 +256,7 @@ int YZLuaFuncs::replace(lua_State *L) {
 
 	if (text.indexOf('\n') != -1) {
 		// replace does not accept multiline strings, it is too strange
+        // XXX raises an error
 		YZASSERT_EQUALS( lua_gettop(L),  0  );
 		return  0 ;
 	}
@@ -446,7 +447,7 @@ int YZLuaFuncs::yzdebug( lua_State *L ) {
 	QString text = QString::fromUtf8( (  char * )lua_tostring (  L, 1 ) );
 	lua_pop(L,1);
 
-	yzDebug() << "Lua debug : " << text << endl;	
+	yzDebug("Lua.exec") << text << endl;	
 
 	YZASSERT_EQUALS( lua_gettop(L),  0  );
 	return  0 ;

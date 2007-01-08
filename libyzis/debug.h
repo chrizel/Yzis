@@ -83,7 +83,7 @@ class QStringList;
   * - command line arguments: see parseArgv()
   * - .yzdebugrc file in the current directory: see parseRcfile()
   *
-  * The calls to parseArgv() and parseRcfile() need to be explicit, the
+  * The call to parseArgv() and parseRcfile() need to be explicit, the
   * framework does not do any automatic action.
   *
   * By default, the debug framework will start with no areas, debug level set
@@ -103,7 +103,7 @@ class QStringList;
   * \code
   * #define dbgHl() (yzDebug("SyntaxHighlighting"))
   *
-  * dbgHl() << "some debug intput";
+  * dbgHl() << "some debug data";
   * \endcode
   *
   */
@@ -131,7 +131,7 @@ public:
 	  */
 	void setDebugLevel( int level ) { _level = level; }
 
-    /** Current debugging level */ 
+    /** Current global debugging level */ 
 	int debugLevel() const { return _level; }
 
 	/** All debug will be logged to the open file descriptor \p file.
@@ -143,27 +143,38 @@ public:
 	/** Same as above, but just specifies a file name that 
       * will be opened instead of a file descriptor. 
       */
-	void setDebugOutput( const QString& );
+	void setDebugOutput( const QString& fileName);
 
 	/** Set the debug \p level of an \p area 
       *
       * Once the debug level of an area has been set, it no longer
       * obeys the global debugging level.
       *
+      * It is possible to use area and subarea. For example, "area1.subarea1"
+      * is a sub-area of "area1". Subarea obeys the debugging level of the
+      * area unless they are set individually.
+      *
+      * Example:
+      * After:
+      * setAreaLevel( "area1", YZ_WARNING_LEVEL );
+      * setAreaLevel( "area1.subarea2", YZ_DEBUG_LEVEL );
+      *
+      * we have:
+      * "area1": warning
+      * "area1.area1": warning
+      * "area1.area2": debug
+      *
       * You can remove an area level with removeArea()
       */
-	void setAreaLevel( const QString& area, int level ) {
-		_areaLevel[area] = level;
-	}
+	void setAreaLevel( const QString& area, int level );
 
 	/** Returns the debugging level of an \p area. 
       *
       * If the area has not been assigned an individual debugging level,
-      * returns the global level.
+      * returns the upmost area matching the beginning of area or if non
+      * matches, the global level.
       */
-	int areaLevel( const QString& area ) const {
-        return _areaLevel.value(area, debugLevel());
-	}
+	int areaLevel( const QString& area ) const;
 
     /** Remove the individual debugging level of this area.
       *

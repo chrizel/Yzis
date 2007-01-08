@@ -118,10 +118,7 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 
 void YZDebugBackend::flush( int level, const QString& area, const char * data )
 {
-    int areaLevel = _areaLevel.value(area, _level);
-
-	if (level < areaLevel) return;
-
+	if (level < areaLevel(area)) return;
 	fprintf( _output, "%s", data );
 	fflush( _output );
 }
@@ -205,6 +202,27 @@ void YZDebugBackend::parseArgv( int & argc, char ** argv )
         }
     }
 }
+void YZDebugBackend::setAreaLevel( const QString& area, int level ) 
+{
+    _areaLevel[area] = level;
+}
+
+int YZDebugBackend::areaLevel( const QString& area ) const
+{
+    // you can not debug here with dbg(), else there is a recursive loop
+    QString found;
+    int areaLevel = debugLevel();
+    foreach( QString itArea, _areaLevel.keys() ) {
+        if (area.startsWith( itArea )
+            && found.length() < itArea.length() ) {
+            // found a better matching area
+            found = itArea;
+            areaLevel = _areaLevel[itArea];
+        }
+    }
+    return areaLevel;
+}
+
 
 QString YZDebugBackend::toString()
 {

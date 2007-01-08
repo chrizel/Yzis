@@ -14,14 +14,20 @@ You can pass options and variables to CMAKE with the -D flag:
 cmake -DENABLE_NYZIS=off to disable for example the nyzis building.
 
 This list of available options are:
-- ENABLE_NYZIS: build the ncurses based frontend
-- ENABLE_QYZIS: build the Qt frontend
-- ENABLE_LIBYZISRUNNER: build the frontend used to test the library
-- CMAKE_VERBOSE_MAKEFILE: default is not set, allows to see the exact
+- ENABLE_NYZIS: build the ncurses based frontend. Default is ON when ncurses
+  is found. 
+- ENABLE_QYZIS: build the Qt frontend. Default is ON on linux when Qt is
+  found, and OFF on windows (until I can make it compile on windows).
+- ENABLE_LIBYZISRUNNER: build the frontend used to test the library. Default
+  is ON.
+- CMAKE_VERBOSE_MAKEFILE: default is OFF, allows to see the exact
   compilation lines. Very useful when something does not work, to understand
-  what cmake is actually doing.
+  what cmake is actually doing. You can still get verbose output by typing
+VERBOSE=1 make
+when executing make.
 - ENABLE_DOCUMENTATION: generate the documentation when building (doxygen
-  apidoc)
+  needed), default OFF
+- ENABLE_TESTS: generate an executable to run the unit tests, default is ON.
 
 You can choose between debug or release configuration with:
 -DCMAKE_BUILD_TYPE=Debug

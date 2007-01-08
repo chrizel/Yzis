@@ -65,10 +65,6 @@ public:
 	 * \b Arguments:
 	 * - int, the line number
      * - string, the text to set
-     *
-     *
-     * 
-     *
      * 
      * \b Returns: nothing
 	 */
@@ -76,8 +72,10 @@ public:
 
 	/**
 	 * Insert text inside a line:
-	 * Arguments:
-	 * startCol,startLine,text
+	 * \b Arguments:
+	 * - int, the starting column
+     * - int, the starting line
+     * - string, the text to be inserted
 	 *
      * \b Returns: nothing
 	 */
@@ -85,10 +83,12 @@ public:
 
 	/**
 	 * Remove the given number of caracters
-	 * Arguments :
-	 * col, line, number
+	 * \b Arguments :
+	 * - int, the starting column
+     * - int, the starting line
+     * - int, the number of characters to remove
      *
-     *
+     * XXX check if can remove endline ?
      * 
      * \b Returns: nothing
 	 */
@@ -96,8 +96,9 @@ public:
 
 	/**
 	 * Insert a new line
-	 * Arguments:
-	 * line,text
+	 * \b Arguments:
+	 * - int, line number before which to insert
+     * - string, text of the new line
 	 *
      * \b Returns: nothing
 	 */
@@ -105,17 +106,22 @@ public:
 
 	/**
 	 * Append line at the end of the buffer
-	 * Arguments:
-	 * text
+	 * \b Arguments:
+	 * - string, text to append
 	 *
      * \b Returns: nothing
 	 */
 	static int appendline(lua_State *L);
 
 	/**
-	 * Replace text on view.
-	 * Arguments:
-	 * startCol,startLine, text to replace
+	 * Replace text on a given line.
+     *
+     * Does not accept multi-line strings.
+     *
+	 * \b Arguments:
+	 * - int, starting column
+     * - int, starting line 
+     * - string, new text of the line
 	 *
      * \b Returns: nothing
 	 */
@@ -123,79 +129,134 @@ public:
 
 	/**
 	 * Returns the current column position in buffer
+     *
+	 * \b Arguments: None
+	 *
+     * \b Returns: int, current column of the cursor of the view
 	 */
 	static int wincol(lua_State *L);
 
 	/**
 	 * Returns the current line position in buffer
+     *
+	 * \b Arguments: None
+	 *
+     * \b Returns: int, current line of the cursor of the view
 	 */
 	static int winline(lua_State *L);
 
 	/**
 	 * Returns the current cursor position: col, line
+     *
+	 * \b Arguments: None
+	 *
+     * \b Returns: 
+     * - int, current column of the cursor of the view
+     * - int, current line of the cursor of the view
 	 */
 	static int winpos(lua_State *L);
 
 	/**
 	 * Moves the cursor to the given position
-	 * Arguments: col, line
+	 * \b Arguments: 
+     * - int, destination column
+     * - int, destination line 
 	 *
-	 * Note: the underscore is necessary because the name is already
-	 * reserved in C++
+	 * Note: the underscore is necessary because the name "goto" is already
+	 * reserved in C/C++ but the lua function is really named "goto".
 	 */
 	static int _goto(lua_State *L);
 
 	/**
 	 * Returns the current column position on screen
+     *
+	 * \b Arguments: None
+	 *
+     * \b Returns: int, current column of the cursor of the screen
+     *
+     * XXX what is the difference between screen and buffer ?
 	 */
 	static int scrcol(lua_State *L);
 
 	/**
 	 * Returns the current line position on screen
-	 */
+     *
+	 * \b Arguments: None
+	 *
+     * \b Returns: int, current line of the cursor of the view
+     */
 	static int scrline(lua_State *L);
 
 	/**
 	 * Moves the cursor to the given position on screen
-	 * Arguments: col, line
+	 * \b Arguments: 
+     * - int, destination column
+     * - int, destination line 
+     *
+     * \b Returns: nothing
 	 */
 	static int scrgoto(lua_State *L);
 
 	/**
 	 * Deletes the given line.
      *
-     * 
+	 * \b Arguments:
+     * - int, line to delete
+	 *
      * \b Returns: nothing
 	 */
 	static int deleteline(lua_State *L);
 
 	/**
-	 * Return the current lua filename
+	 * Return the current buffer filename
+     *
+	 * \b Arguments: nothing
+	 *
+     * \b Returns: string, the filename
 	 */
 	static int filename(lua_State *L);
 
 	/**
-	 * Return current's syntax highlighting color for given column,line
-	 * Arguments: col, line
-	 * Returns a color string
+	 * Return current syntax highlighting color for given column,line
+     *
+	 * \b Arguments: 
+     * - int, target column
+     * - int, target line
+     *
+     * \b Returns: string, the color name
 	 */
 	static int color(lua_State *L);
 
 	/**
 	 * Returns the number of lines of the current buffer.
+     *
+	 * Note that empty buffer always have one empty line.
+     *
+	 * \b Arguments: nothing
+	 *
+     * \b Returns: int, current number of lines
 	 */
 	static int linecount(lua_State *L);
 
 	/**
 	 * Returns the yzis version string
+     *
+	 * \b Arguments: nothing
+	 *
+     * \b Returns: string, the current version. See \ref VERSION_CHAR
 	 */
 	static int version(lua_State *L);
 
 	/**
 	 * Send a set of keys contained in a string asif they were typed
 	 * by the user.
+     *
+     * This function is the most important one for testing. You can simulate
+     * just any user behavior with this.
+     *
+     * Special keys like <ESC> and <ENTER> are recognised.
 	 *
-	 * Arguments: string
+	 * \b Arguments: string, list of key stroke
      *
      * \b Returns: nothing
 	 */
@@ -203,16 +264,23 @@ public:
 
 	/**
 	 * Command to customize syntax highlighting settings
-	 * Arguments : style, type, ...
-     *
+	 * \b Arguments : 
+     * - string, style
+     * - string, type
+     * - more strings
      * 
      * \b Returns: nothing
 	 */
 	static int highlight(lua_State *L);
 
 	/**
-	 * Plugins main registration point
-	 * Arguments : the event name, the lua function to call
+	 * Register a lua function to call when a specific event occurs.
+     *
+     * This is the main entry point for plugins.
+     *
+	 * \b Arguments : 
+     * - string, the event name, 
+     * - string, the name of the lua function to call
      *
      * \b Returns: nothing
 	 */
@@ -220,107 +288,292 @@ public:
 
 	/**
 	 * Find a file in standard yzis plugin directories
-	 * and source it
+	 * and source it.
      *
+	 * \b Arguments:
+     * - string, filename to source, with or without ".lua" extension.
+	 *
+     * \b Returns: nothing
      *
 	 */
 	static int source(lua_State *L);
 
 	/**
-	 * Sends a string to debug output
+	 * Sends a string to debug output from lua.
+     *
+     * See \ref YZDebugBackend for more information about debugging.
+     *
+     * The debug is in the area "Lua.exec".
+     *
+	 * \b Arguments:
+     * - string, the text to add to debug output
+	 *
+     * \b Returns: nothing
 	 */
 	static int yzdebug(lua_State *L);
 
 	/**
-	 * Set local options
+	 * Set an option as local
+     *
+	 * \b Arguments:
+     * - string, option name
+     *
+     * XXX need better documentation
+	 *
+     * \b Returns: nothing
 	 */
 	static int setlocal(lua_State *L);
 
 	/**
 	 * Set global options
+     *
+	 * \b Arguments:
+     * - string, the option to set
+	 *
+     * XXX need better documentation
+     *
+     * \b Returns: nothing
 	 */
 	static int set(lua_State *L);
 
 	/**
 	 * Create a new option
+     *
+	 * \b Arguments:
+     * - string, option name, 
+     * - string, group name, 
+     * - string, default value, 
+     * - string, value, 
+     * - int, visibility
+     * - int, type
+	 *
+     * \b Returns: nothing
 	 */
 	static int newoption(lua_State *L);
 
 	/**
 	 * Adds a new global mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int map(lua_State *L);
+
+	/**
+	 * Removes a global mapping
+     *
+	 * \b Arguments:
+     * - string, key
+	 *
+     * \b Returns: nothing
+	 */
 	static int unmap(lua_State *L);
 
 	/**
 	 * Adds new insert mappings
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int imap(lua_State *L);
+	/**
+	 * Remove an insert mappings
+     *
+	 * \b Arguments:
+     * - string, key
+	 *
+     * \b Returns: nothing
+	 */
 	static int iunmap(lua_State *L);
 
 	/**
 	 * Adds a new visual mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int vmap(lua_State *L);
+	/**
+	 * Remove a visual mapping
+     *
+	 * \b Arguments:
+     * - string, key
+	 *
+     * \b Returns: nothing
+	 */
 	static int vunmap(lua_State *L);
 
 	/**
 	 * Adds a new cmdline mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int cmap(lua_State *L);
+	/**
+	 * Removes a cmdline mapping
+     *
+	 * \b Arguments:
+     * - string, key
+	 *
+     * \b Returns: nothing
+	 */
 	static int cunmap(lua_State *L);
 
 	/**
 	 * Adds a new pending op mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int omap(lua_State *L);
+	/**
+	 * Removes a new pending op mapping
+     *
+	 * \b Arguments:
+     * - string, key
+	 *
+     * \b Returns: nothing
+	 */
 	static int ounmap(lua_State *L);
 
 	/**
 	 * Adds a new normal mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int nmap(lua_State *L);
+
+	/**
+	 * Removes a normal mapping
+     *
+     *
+	 * \b Arguments:
+     * - string, key
+	 *
+     * \b Returns: nothing
+	 */
 	static int nunmap(lua_State *L);
+
 
 	/**
 	 * Adds a new not remappable global mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int noremap(lua_State *L);
 
 	/**
 	 * Adds a new not remappable normal mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int nnoremap(lua_State *L);
 
 	/**
 	 * Adds a new not remappable visual mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int vnoremap(lua_State *L);
 	
 	/**
 	 * Adds a new not remappable pending op mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int onoremap(lua_State *L);
 
 	/**
 	 * Adds a new not remappable insert mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int inoremap(lua_State *L);
 
 	/**
 	 * Adds a new not remappable cmd line mapping
+     *
+	 * \b Arguments:
+     * - string, key
+     * - string, mapping
+	 *
+     * \b Returns: nothing
 	 */
 	static int cnoremap(lua_State *L);
-	
+
+    /** Find matching pair (parenthesis, brackets, ...)
+     *
+     * If a matching pair is found, the cursor is moved to this new position.
+     * The pairs that can be matched are described in the option 'matchpairs'
+     *
+	 * \b Arguments: nothing
+	 *
+     * \b Returns: nothing
+     * - boolean: whether the pair was found or not
+     * - int: current column of the cursor (new position if the pair was found)
+     * - int: current line of the cursor (new position if the pair was found)
+     */
 	static int matchpair(lua_State *L);
 
 	/**
 	 * Returns the current view mode
+     *
+	 * \b Arguments: nothing
+	 *
+     * \b Returns: 
+     * - string,  a string describing the current view.
+     *
+     * XXX needs more doc
 	 */
 	static int mode(lua_State *L);
 	
 	/**
 	 * Create a new buffer/view for the given file
+     *
+	 * \b Arguments:
+     * - string, name of the file to open
+	 *
+     * \b Returns: nothing
 	 */
 	 static int edit(lua_State *L);
 };

@@ -57,39 +57,42 @@
 #define YZIS_SAFE_MODE if(0)
 #endif
 
+/** Standard namespace for yzis special types */
 namespace yzis {
 
+/** Possible scope of an option */
 enum scope_t {
-	default_scope,
-	global_scope,
-	local_scope,
+	default_scope, //!< XXX ???
+	global_scope,  //!< global to all buffers
+	local_scope,   //!< local to a buffer or a view
 };
 
-//visibility of the option
+/** visibility of an option */
 enum context_t {
-	ctx_none,
-	ctx_session,
-	ctx_buffer,
-	ctx_view
+	ctx_none,   //!< no visibility
+	ctx_session,//!< session visibility (global)
+	ctx_buffer, //!< visbility to the buffer
+	ctx_view    //!< visiblity to the view
 };
 
-//kind of value stored by the option
+/** kind of value stored by an option */
 enum value_t {
-	invalid_t,
-	integer_t,
-	string_t,
-	list_t,
-	boolean_t,
-	map_t,
-	color_t,
+	invalid_t,  //!< No value yet
+	integer_t,  //!< Integer
+	string_t,   //!< String
+	list_t,     //!< List of string
+	boolean_t,  //!< Boolean
+	map_t,      //!< Dictionnary of string to string
+	color_t,    //!< Color
 };
 
+/** Different modes available for a mapping */
 enum mapping_t {
-	normal = 1, // in normal mode
-	cmdline = 2, // on command line
-	visual = 4, // in visual mode
-	pendingop = 8, // waiting for an operator
-	insert = 16, // insert mode
+	normal      = 1, //!< in normal mode
+	cmdline     = 2, //!< on command line
+	visual      = 4, //!< in visual mode
+	pendingop   = 8, //!< waiting for an operator
+	insert      = 16,//!< insert mode
 };
 
 };

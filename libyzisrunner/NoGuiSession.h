@@ -29,74 +29,29 @@
 class NoGuiSession : public YZSession
 {
 	public:
-		NoGuiSession( const QString & sessionName="TestSession" )
-			: YZSession( sessionName )
-			{}
+		NoGuiSession( const QString & sessionName="TestSession" );
 
-		virtual YZView* createView ( YZBuffer* buf) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::createView" << endl;
-			NoGuiView * view = new NoGuiView( buf, YZSession::me );
-			buf->addView( view );
-			return view;
-		}
+		virtual YZView* createView ( YZBuffer* buf);
 
-		virtual	YZBuffer *createBuffer(const QString& path=QString::null) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::createBuffer " << path << endl;
-			YZBuffer * buf = new YZBuffer();
-			setCurrentView( createView( buf ) );
-			buf->load( path );
-			currentView()->refreshScreen();
-			return buf;
-		}
+		virtual	YZBuffer *createBuffer(const QString& path=QString::null);
 
-		virtual void popupMessage( const QString& message) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::popupMessage: '" << message << "' \n";
-			printf("popupMessage:\n");
-			printf("============\n");
-			printf("%s\n\n", message.toLatin1().constData() );
-		}
+		virtual void popupMessage( const QString& message);
 
-		virtual void quit(bool /*savePopup=true */) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::quit" << endl;
-			QCoreApplication::exit(0);
-		}
+		virtual void quit(bool /*savePopup=true */);
 
-		virtual void deleteView ( int  ) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::deleteView" << endl;
-		}
-		virtual void deleteBuffer ( YZBuffer * ) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::deleteBuffer" << endl;
-		}
-		virtual void changeCurrentView( YZView* ) {
-			// notification
-			yzDebug( AREA_TESTS) << "NoGuiSession::changeCurrentView" << endl;
-		}
-		virtual void setFocusCommandLine( ) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::setFocusCommandLine" << endl;
-		}
-		virtual void setFocusMainWindow( ) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::setFocusMainWindow" << endl;
-		}
-		virtual bool quit(int) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::quit" << endl;
-			QCoreApplication::exit(0);
-			return true;
-		}
-		virtual bool promptYesNo(const QString&, const QString&) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::promptYesNo" << endl;
-			return true;
-		}
-		virtual int promptYesNoCancel( const QString&, const QString& ) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::promptYesNoCancel" << endl;
-			return 0;
-		}
-		virtual void splitHorizontally(YZView*) {
-			yzDebug( AREA_TESTS) << "NoGuiSession::splitHorizontally" << endl;
-		}
-		virtual YZView *doCreateView(YZBuffer*b) { return new NoGuiView(b,YZSession::me); }
-		virtual void doDeleteView(YZView*v) { delete v; } 
-		virtual YZBuffer* doCreateBuffer() { return new YZBuffer(); }
-		virtual void setClipboardText(const QString&, Clipboard::Mode) {}
+		virtual void deleteView ( int  );
+		virtual void deleteBuffer ( YZBuffer * );
+		virtual void changeCurrentView( YZView* );
+		virtual void setFocusCommandLine( );
+		virtual void setFocusMainWindow( );
+		virtual bool quit(int);
+		virtual bool promptYesNo(const QString&, const QString&);
+		virtual int promptYesNoCancel( const QString&, const QString& );
+		virtual void splitHorizontally(YZView*);
+		virtual YZView *doCreateView(YZBuffer*b);
+		virtual void doDeleteView(YZView*v);
+		virtual YZBuffer* doCreateBuffer();
+		virtual void setClipboardText(const QString&, Clipboard::Mode);
 };
 
 #endif // NOGUI_YZ_SESSION_H

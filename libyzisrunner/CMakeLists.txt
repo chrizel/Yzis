@@ -6,6 +6,8 @@ include_directories(${YZIS_INCLUDES}) # ${CMAKE_SOURCE_DIR}/libyzis
 ########### next target ###############
 
 set(libyzisrunner_SRCS 
+    NoGuiSession.cpp
+    NoGuiView.cpp
     ../libyzis/debug.cpp
     ../libyzis/option.cpp
     ../libyzis/internal_options.cpp

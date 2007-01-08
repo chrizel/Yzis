@@ -29,101 +29,60 @@
 class NoGuiView : public YZView
 {
 public:
-	NoGuiView(YZBuffer *buf, YZSession *sess, int lines=50) : YZView(buf,sess,lines) {}
+	NoGuiView(YZBuffer *buf, YZSession *sess, int lines=50);
 
-	uint getCursorX() { return viewCursor().bufferX(); }
-	uint getCursorY() { return viewCursor().bufferY(); }
-	uint getCursorLine() { return viewCursor().bufferY(); }
-	uint getCursorCol() { return viewCursor().bufferX(); }
+	uint getCursorX();
+	uint getCursorY();
+	uint getCursorLine();
+	uint getCursorCol();
 
 	// Reimplemented to please compilation
 
-	virtual void setCommandLineText( const QString& text) {
-		yzDebug( "NoGuiView") << "NoGuiView::setCommandLineText '" << text << "'\n";
-		mCommandLine = text;
-	}
+	virtual void setCommandLineText( const QString& text);
 
-	virtual void setFocusCommandLine() {
-		yzDebug( "NoGuiView") << "NoGuiView::setFocusCommandLine" << endl;
-	}
+	virtual void setFocusCommandLine();
 
-	virtual void setFocusMainWindow() {
-		yzDebug( "NoGuiView") << "NoGuiView::setFocusMainWindow" << endl;
-	}
+	virtual void setFocusMainWindow();
 
-	virtual QString getCommandLineText() const {
-		yzDebug( "NoGuiView") << "NoGuiView::getCommandLineText" << endl;
-		return mCommandLine;
-	}
+	virtual QString getCommandLineText() const;
 
-	virtual void invalidateLine( unsigned int ) {
-		yzDebug( "NoGuiView") << "NoGuiView::invalidateLine" << endl;
-	}
+	virtual void invalidateLine( unsigned int );
 
-	virtual void setStatusBar( const QString& ) {
-		yzDebug( "NoGuiView") << "NoGuiView::setStatusBar" << endl;
-	}
+	virtual void setStatusBar( const QString& );
 
-	virtual void updateCursor( unsigned int, unsigned int, unsigned int, const QString& ) {
-		yzDebug( "NoGuiView") << "NoGuiView::updateCursor" << endl;
-	}
+	virtual void updateCursor( unsigned int, unsigned int, unsigned int, const QString& );
 
-	virtual void refreshScreen( ) {
-		yzDebug( "NoGuiView") << "NoGuiView::refreshScreen" << endl;
-	}
+	virtual void refreshScreen( );
 
-	virtual void syncViewInfo( ) {
-		yzDebug( "NoGuiView") << "NoGuiView::syncViewInfo" << endl;
-	}
+	virtual void syncViewInfo( );
 
-	virtual void displayInfo( const QString& ) {
-		yzDebug( "NoGuiView") << "NoGuiView::displayInfo" << endl;
-	}
+	virtual void displayInfo( const QString& );
 
-	virtual void modeChanged( ) {
-		yzDebug( "NoGuiView") << "NoGuiView::modeChanged" << endl;
-	}
+	virtual void modeChanged( );
 
-	virtual void paintEvent( unsigned int /*curx*/, unsigned int /*cury*/, unsigned int /*curw*/, unsigned int /*curh*/ ) {
-		yzDebug( "NoGuiView") << "NoGuiView::paintEvent" << endl;
-	}
+	virtual void paintEvent( unsigned int /*curx*/, unsigned int /*cury*/, unsigned int /*curw*/, unsigned int /*curh*/ );
 
-	virtual void scrollUp( int ) {
-		yzDebug( "NoGuiView") << "NoGuiView::scrollUp" << endl;
-	}
-	virtual void scrollDown( int ) {
-		yzDebug( "NoGuiView") << "NoGuiView::scrollDown" << endl;
-	}
-	virtual int stringWidth(const QString&str) const {
-		return str.length();
-	}
-	virtual int charWidth(const QChar&) const {
-		return 1;
-	}
-	virtual void registerModifierKeys(const QString&) {
-		return;
-	}
+	virtual void scrollUp( int );
+	virtual void scrollDown( int );
+	virtual int stringWidth(const QString&str) const;
+	virtual int charWidth(const QChar & c) const;
+	virtual void registerModifierKeys(const QString& s);
 
-	virtual void paintEvent( const YZSelection& ) {
-	}
+	virtual void paintEvent( const YZSelection& );
 	
-    virtual void Scroll( int dx, int dy ) {
-		yzDebug( "NoGuiView") << "NoGuiView::Scroll" << dx << dy << endl;
-    }
+    virtual void Scroll( int dx, int dy );
 
-    virtual void notifyContentChanged( const YZSelection& s ) {
-		yzDebug( "NoGuiView") << "NoGuiView::notifyContentChanged" << endl;
-    }
+    virtual void notifyContentChanged( const YZSelection& s );
 
-	virtual bool popupFileSaveAs() { return false; }
-	virtual void filenameChanged() {}
-	virtual void highlightingChanged() {}
-	void preparePaintEvent(int, int) {}
-	void endPaintEvent() {}
-	void drawCell(int, int, const YZDrawCell&, void*) {}
-	void drawClearToEOL(int, int, const QChar&) {}
-	void drawSetMaxLineNumber(int) {}
-	void drawSetLineNumber(int, int, int) {}
+	virtual bool popupFileSaveAs();
+	virtual void filenameChanged();
+	virtual void highlightingChanged();
+	void preparePaintEvent(int, int);
+	void endPaintEvent();
+	void drawCell(int, int, const YZDrawCell&, void*);
+	void drawClearToEOL(int, int, const QChar&);
+	void drawSetMaxLineNumber(int);
+	void drawSetLineNumber(int, int, int);
 	
 protected:
 	class Mapping {

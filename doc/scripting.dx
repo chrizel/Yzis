@@ -236,7 +236,7 @@ stack problems.
 \subsection more_lua More about lua
 
 The lua types relevant to Yzis are: nil, number, boolean, string, table,
-functions. Table is both a list and a dictionnary (in lua, a list is a mapping
+functions. Table is both a list and a dictionary (in lua, a list is a mapping
 from a number - the index - to a value). Since lua is coded in C, boolean are
 actually int. A number in lua is a double.
 

@@ -82,7 +82,7 @@ enum value_t {
 	string_t,   //!< String
 	list_t,     //!< List of string
 	boolean_t,  //!< Boolean
-	map_t,      //!< Dictionnary of string to string
+	map_t,      //!< Dictionary of string to string
 	color_t,    //!< Color
 };
 

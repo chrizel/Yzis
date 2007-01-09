@@ -38,7 +38,7 @@
  */
 
 
-/** Shortcut for a dictionnary of string keys and values */
+/** Shortcut for a dictionary of string keys and values */
 typedef QMap<QString,QString> MapOption;
 
 /** Actions that can be done on an option */
@@ -62,7 +62,7 @@ class YZBuffer;
   * - string
   * - integer
   * - list of string
-  * - dictionnary of string keys and values (map)
+  * - dictionary of string keys and values (map)
   * - color
   *
   * The YZOptionValue class contains member to convert the different
@@ -95,7 +95,7 @@ class YZOptionValue {
         /** Assign option value from a list of string \p value */
 		void setList( const QStringList& value );
 
-        /** Assign option value from a dictionnary \p value */
+        /** Assign option value from a dictionary \p value */
 		void setMap( const MapOption& value );
 
         /** Assign option value from a color \p value */
@@ -105,7 +105,7 @@ class YZOptionValue {
 		const QString& string() const;  //!< string value of the option
 		int integer() const;            //!< integer value of the option
 		const QStringList& list() const;//!< list value of the option
-		const MapOption& map() const;   //!< dictionnary value of the option
+		const MapOption& map() const;   //!< dictionary value of the option
 		const YZColor& color() const;   //!< color value of the option
 		
 		//! The YZOption from which I'm the value
@@ -128,8 +128,8 @@ class YZOptionValue {
         /** Convert a string containing items separated by a comma into a list
           * of strings */
 		static QStringList listFromString( bool* success, const QString& value );
-        /** Convert a dictionnary containing items separated by a comma and
-          * colon into a dictionnary of strings */
+        /** Convert a dictionary containing items separated by a comma and
+          * colon into a dictionary of strings */
 		static MapOption mapFromString( bool* success, const QString& value );
         /** Convert a string into a color. 
           * See YZColor() for the ways of expressing a color with a string */
@@ -149,7 +149,7 @@ class YZOptionValue {
         /** Convert a list of strings into a string.
           * Separate each entry by a comma (",") */
 		static QString listToString( const QStringList& value );
-        /** Convert a dictionnary of strings into a string.
+        /** Convert a dictionary of strings into a string.
           * Separate each key-value pair by a comma (",") and each key
           * from its value by a colon (":") */
 		static QString mapToString( const MapOption& value );
@@ -344,7 +344,7 @@ class YZOptionList : public YZOption {
 		virtual bool setValue( const QString& entry, YZOptionValue* value );
 };
 
-/** An option containing a dictionnary with key and values being strings */
+/** An option containing a dictionary with key and values being strings */
 class YZOptionMap : public YZOption {
 	public :
         /** Constructor.

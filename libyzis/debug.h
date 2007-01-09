@@ -17,7 +17,7 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
+/** \file debug.h
  * This file was mostly inspired from the kdelibs kdDebug class distributed under LGPL
  * by the KDE project.
  * Here are the corresponding copyrights owner :
@@ -35,25 +35,28 @@
 
 class QStringList;
 
-/**
- * Level of debug
- */
-#define YZ_DEBUG_LEVEL 0
-#define YZ_WARNING_LEVEL 1
-#define YZ_ERROR_LEVEL 2
-#define YZ_FATAL_LEVEL 3
+//! \name Debug levels
+//! @{
+#define YZ_DEBUG_LEVEL 0        //!< debuggging level
+#define YZ_WARNING_LEVEL 1      //!< warning level
+#define YZ_ERROR_LEVEL 2        //!< error level
+#define YZ_FATAL_LEVEL 3        //!< fatal level
+//! @}
 
-/**
- * Areas of debug
- */
-#define UNSPECIFIED 	""
-#define CORE 			"libyzis"
-#define KYZIS 			"kyzis"
-#define NYZIS 			"nyzis"
-#define QYZIS 			"qyzis"
-#define AREA_TESTS 		"tests"
+//! \name Debug areas
+//! @{
+#define UNSPECIFIED 	""          //!< unspecified debug area
+#define CORE 			"libyzis"   //!< libyzis debug area
+#define KYZIS 			"kyzis"     //!< kyzis debug area
+#define NYZIS 			"nyzis"     //!< nyzis debug area
+#define QYZIS 			"qyzis"     //!< qyzis debug area
+#define AREA_TESTS 		"tests"     //!< tests debug area
+//! @} 
 
-#define FILENAME_DEBUGRC ".yzdebugrc"
+/** default file name for controlling which area are enabled or not.
+  * \see YZDebugBackend::parseRcfile()
+  */
+#define FILENAME_DEBUGRC ".yzdebugrc" 
 
 /** Log system used for debugging.
   *
@@ -223,51 +226,97 @@ public:
     QString toString();
 
 private:
+    /** Initialise the YZDebugBackend(), set a few internal variables
+      * (dictionaries, ...)
+      */
     void init();
 
+    /** Private constuctors for a singleton */
 	YZDebugBackend();
+
+    /** Singleton instance holder */
 	static YZDebugBackend * _instance;
 
-	QMap<QString,int> _areaLevel;
+    /** debug level assigned to each area */
+	QMap<QString,int> _areaLevel; 
+
+    /** dictionnary from area string to area level */
 	QMap<QString,int> _levelByName;
+
+    /** dictionnary from area level to area string */
 	QMap<int,QString> _nameByLevel;
+
+    /** Global debugging level */
 	int _level;
+
+    /** File output of the debugging (may be stderr, stdout or any open file
+      * descriptor */ 
 	FILE * _output;
 };
 
 
 class YZDebugStream;
 
-typedef YZDebugStream & (*YDBGFUNC)(YZDebugStream &); // manipulator function
+/** A function that manipulates the debug stream */
+typedef YZDebugStream & (*YDBGFUNC)(YZDebugStream &);
 
 /**
- * THE debug class ;)
+ * A Stream to send debug output.
+ *
+ * The output is stored internally in the YZDebugStream::output and flushed
+ * using flush() when a '\\n' is sent or when a string ending in '\\n' is sent.
  */
-
 class YZIS_EXPORT YZDebugStream {
 	public:
-		// where to output the debug
+		/** Constrctor for the stream.
+          *
+          * The debug \p area and debug \p level are fixed by stream. */
 		YZDebugStream(const char * area="", int level=0);
-/*		YZDebugStream(YZDebugStream& str ) :
-			output( str.output ), area( str.area ),level( str.level ) { str.output.truncate( 0 ); }
-		YZDebugStream(const& YZDebugStream& str ) :
-			output( str.output ), area( str.area ),level( str.level ) { }*/
+
+        /** Destructor */
 		~YZDebugStream();
 
-		//operators
+		/** Operator to output a boolean */
 		YZDebugStream& operator << (bool i);
+
+		/** Operator to output a char */
 		YZDebugStream& operator << (char i);
+
+		/** Operator to output an unsigned char */
 		YZDebugStream& operator << (unsigned char i);
+
+		/** Operator to output a string */
 		YZDebugStream& operator << (const QString& string);
+
+		/** Operator to output a string list */
 		YZDebugStream& operator << (const QStringList& string);
+
+		/** Operator to output a string list */
 		YZDebugStream& operator << (const char* string);
+
+		/** Operator to output an int */
 		YZDebugStream& operator << (int i);
+
+		/** Operator to output an unsigned int */
 		YZDebugStream& operator << (unsigned int i);
+
+		/** Operator to output a long */
 		YZDebugStream& operator << (long i);
+
+		/** Operator to output an unsigned long */
 		YZDebugStream& operator << (unsigned long i);
+
+		/** Operator to output a short */
 		YZDebugStream& operator << (short i);
+
+		/** Operator to output a unsigned short */
 		YZDebugStream& operator << (unsigned short i);
+
+		/** Operator to output a unsigned double */
 		YZDebugStream& operator << (double d);
+
+		/** Operator that execute the YZDebugStream() manipulator function \p
+          * f */
 		YZDebugStream& operator << (YDBGFUNC f) {
 			return ( *f )( *this );
 		}
@@ -275,37 +324,90 @@ class YZIS_EXPORT YZDebugStream {
         /** Convenient sprintf function on debug streams */
         void sprintf( const char * fmt, ... );
 
+        /** Flushes the current debug text to the debug output. 
+          *
+          * Most operator<<() will flush the output if it ends with '\\n'.
+          * If not the output is stored internally in \ref output.
+          */
 		void flush();
 
 	private:
-		QString output;
-		int level;
-		QString area;
+		QString output;     //!< Temporary stored the debug output
+		int level;          //!< debugging level of the stream
+		QString area;       //!< debugging area of the stream
 
 };
 
-inline YZDebugStream &endl( YZDebugStream& s ) { s << "\n"; return s; }
+/** Output a \\n */
+inline YZDebugStream & endl( YZDebugStream& s ) { s << "\n"; return s; }
+
+/** Flush the debug stream */
 inline YZDebugStream& flush( YZDebugStream& s ) { s.flush(); return s; }
 
-//global functions (if it reminds you KDE it's not pure hasard :)
+/** Convenient function to build a debug stream.
+  *
+  * To use with: 
+  * \code
+  * yzDebug("some_area") << some_debug << some_more_debug << endl;
+  * \endcode
+  */
 YZIS_EXPORT YZDebugStream yzDebug( const char * area = "" );
+
+/** Convenient function to build a warning stream. */
 YZIS_EXPORT YZDebugStream yzWarning( const char * area = "" );
+
+/** Convenient function to build an error stream. */
 YZIS_EXPORT YZDebugStream yzError( const char * area = "" );
+
+/** Convenient function to build an fatal stream. */
 YZIS_EXPORT YZDebugStream yzFatal( const char * area = "" );
 
-// Assertion
+
+//! \name Assertion macros
+//! @{
+
+/** Truth assertion with custom message.
+  *
+  * The assertion will automatically include file:line information and
+  * copy of the assertion.
+  *
+  * If the assertion fails, an error is displayed in the empty area.
+  */
 #define YZASSERT_MSG( assertion, msg ) { if (! (assertion) ) { yzError() << QString("%1:%2 assertion '%3' failed : %4\n").arg(__FILE__).arg( __LINE__).arg(#assertion).arg( msg ); } }
+
+/** Truth assertion with empty message.
+  *
+  * The assertion will automatically include file:line information and
+  * copy of the assertion.
+  *
+  * If the assertion fails, an error is displayed in the empty area.
+  */
 #define YZASSERT( assertion ) YZASSERT_MSG( assertion, "" )
+
+
+/** Equality assertion
+  *
+  * The assertion will automatically include file:line information and
+  * copy of the assertion.
+  *
+  * If the assertion fails, an error is displayed in the empty area.
+  */
 #define YZASSERT_EQUALS( a, b ) { if (a != b) { yzError() << QString("%1:%2 - %3 == %4 failed : '%5' != '%6'\n").arg(__FILE__).arg( __LINE__).arg(#a).arg(#b).arg(a).arg(b); } }
 
+//! @}
+
+//! \name Convenient macros for debugging
+//! @{
 /** qPrintable shortcut, convenient when debugging. */
 #define qp(s)   qPrintable(s)
 
 /** Function + line, very convenient when debugging */
 #define HERE() qp(QString("%1:%2 ").arg(__PRETTY_FUNCTION__).arg(__LINE__))
 
-/** File + line location, convenient when debugging */
+/** File + line location, convenient when debugging.
+  * It makes anyting printable, from a QString to a QDate. */
 #define LOCATION() qp(QString("%1:%2 ").arg(__FILE__).arg(__LINE__))
 
+//! @}
 
 #endif /* YZ_DEBUG_H */

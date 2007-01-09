@@ -97,6 +97,7 @@ void YZSession::initModes() {
 	mModes[ YZMode::MODE_SEARCH_BACKWARD ] = new YZModeSearchBackward();
 	mModes[ YZMode::MODE_COMPLETION ] = new YZModeCompletion();
 	YZModeMap::Iterator it;
+	// XXX orzel : why isn't that done in YZMode ctor or YZMode* ctors ?
 	for( it = mModes.begin(); it != mModes.end(); ++it )
 		it.value()->init();
 }

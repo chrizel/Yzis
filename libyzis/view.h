@@ -812,7 +812,10 @@ class YZIS_EXPORT YZView {
 			/** buffer column */
 			int c1;
 
-			/** buffer column as drawn */
+			/** the virtual column of the cursor.  This is counting screen
+			 * cells from the left side of the window.  The leftmost column is
+			 * one. This will be the same as c1 if no tab characters are
+			 * present on this line. (1 tab = several screen columns) */
 			int c2;
 
 			/** how much of the buffer that is being displayed. */

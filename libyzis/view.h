@@ -799,13 +799,25 @@ class YZIS_EXPORT YZView {
 		 */
 		void internalScroll( int dx, int dy );
 
+		/**
+		 * Information about the view. Used internally in @ref YZView to create
+		 * the text for the statusbar displaying line/column numbers and how
+		 * much of the buffer that's being displayed.
+		 */
 		class  ViewInformation {
-			public:
-				int l;  //buffer line
-				int c1; //buffer column
-				int c2; //buffer column as drawn
-				QString percentage;
-		};
+		public:
+			/** buffer line */
+			int l;  
+
+			/** buffer column */
+			int c1;
+
+			/** buffer column as drawn */
+			int c2;
+
+			/** how much of the buffer that is being displayed. */
+			QString percentage;
+        };
 
 		ViewInformation viewInformation;
 		

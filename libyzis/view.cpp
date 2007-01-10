@@ -381,7 +381,7 @@ void YZView::updateCursor() {
 
 	viewInformation.l = y;
 	viewInformation.c1 = mainCursor->bufferX();
-	viewInformation.c2 = mainCursor->screenX(); // XXX pas du tout, c'est c1 mais en remplacant les tabs par 'tablenght' <-- avec le QRegexp() mais je l'ai perdu
+	viewInformation.c2 = mainCursor->screenX(); // XXX pas du tout, c'est c1 mais en remplacant les tabs par 'tablenght' <-- avec le QRegexp() mais je l'ai perdu <--- English, please :)
 
 	syncViewInfo();
 }

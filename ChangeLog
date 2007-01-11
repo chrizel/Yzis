@@ -1,3 +1,42 @@
+2007-01-09 bluebird
+  * full doxygen documentation for options.h, no more warnings
+  * full doxygen documentation for debug.h, no more warnings
+
+2007-01-08 bluebird
+  * unit tests revived with qtunit:
+    - moved old tests of color to qtunit
+    - add tests for the debug fonctionality
+    - tests are now compiled by default
+    - cleanup all test code
+  * debugging: can now manage sub-areas
+  * scripting: all scripting functions are now properly doxy-documented
+
+2007-01-05 bluebird
+  * improved debugging support:
+    - you can define debug areas, which can be individually enabled or
+      disabled
+    - debug areas can be controlled by argc/argv or by .yzdebugrc file
+    - a few useful macro to help debugging
+
+2006-12-25 bluebird
+  * better cmake building
+  * compilation on windows now works great with cmake
+  * updated build instructions
+
+2006-12-22 bluebird
+  * non-gui libyzisrunner revived (useful for testing)
+
+2006-12-21 bluebird
+  * better organisation of the scripting code
+
+2006-12-15 bluebird
+  * developer handbook now partially available in doxygen
+  * full documentation on how to create functions for scripting
+
+2006-12-14 bluebird
+  * updated installation instructions for CMake
+  * less documentation warnings
+
 2006-12-15 orzel
   * all : we are now qt4 only, no more ifdefs
 	(there is a yzis-qt3 branch though)

@@ -77,6 +77,7 @@ else (ENABLE_QYZIS)
     set(QT_MIN_VERSION "4.1.0")
 endif (ENABLE_QYZIS)
 find_package(Qt4 REQUIRED)
+include( FixQt4DebugBuild )
 
 # for syntax files
 find_package(Perl REQUIRED)
@@ -140,6 +141,7 @@ macro_additional_clean_files(
 	${CMAKE_CURRENT_BINARY_DIR}/config.h
 	${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h
 )
+
 
 ####################### subdirectories to compile
 #

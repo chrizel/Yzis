@@ -29,6 +29,7 @@
 #include <qapplication.h>
 
 /* yzis */
+#include "portability.h"
 #include "viewwidget.h"
 #include "viewcursor.h"
 #include "yzis.h"

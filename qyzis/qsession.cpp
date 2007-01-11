@@ -36,6 +36,7 @@
 #endif
 
 /* Yzis */
+#include "portability.h"
 #include "qsession.h"
 #include "viewwidget.h"
 #include "debug.h"

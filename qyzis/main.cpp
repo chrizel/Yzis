@@ -16,7 +16,9 @@
 */
 
 /* St */
+#ifndef YZIS_WIN32_GCC
 #include <libintl.h>
+#endif
 #include <locale.h>
 
 /* Qt */
@@ -42,9 +44,12 @@ int main(int argc, char **argv) {
 	app.setApplicationName("QYzis");
 
 	setlocale( LC_ALL, "");
+
+#ifndef YZIS_WIN32_GCC
 	bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
 	bind_textdomain_codeset( "yzis", "UTF-8" );
 	textdomain( "yzis" );
+#endif
 
 	Qyzis* mw = new Qyzis();
 	mw->show();

@@ -38,7 +38,7 @@ set( CMAKE_C_FLAGS_DEBUG "-g3 -Wall" )
 ########################## options for compilation
 #
 if (WIN32)
-    option(ENABLE_QYZIS "enable qyzis compilation" OFF)
+    option(ENABLE_QYZIS "enable qyzis compilation" ON)
     option(ENABLE_NYZIS "enable nyzis compilation" OFF)
 else(WIN32)
     option(ENABLE_QYZIS "enable qyzis compilation" ON)
@@ -70,7 +70,12 @@ find_package(LibLua50 REQUIRED)
 find_package(LibLuaLib50 REQUIRED)
 
 ### Qt
-set(QT_MIN_VERSION "4.1.0")
+if (ENABLE_QYZIS)
+    # QYzis requires Qt 4.2
+    set(QT_MIN_VERSION "4.2.0")
+else (ENABLE_QYZIS)
+    set(QT_MIN_VERSION "4.1.0")
+endif (ENABLE_QYZIS)
 find_package(Qt4 REQUIRED)
 
 # for syntax files

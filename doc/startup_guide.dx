@@ -59,10 +59,10 @@ overview. And then -- go and read the source!
 
 \section style Coding style
 
-	- [Class names:] MyClass
-	- [Class methods:] myMethod()
-	- [Class members:] myMember
-	- [Class structures:] mystructure
+- Class names: \b MyClass
+- Class methods: \b myMethod()
+- Class members: \b myMember
+- Class structures: \b mystructure
 
 Preferred indentation is shown below. Tabs are used for indentation, shown here
 with tabstop=4:
@@ -91,23 +91,23 @@ void Class::myFunction( int param, int param2 )
 \section lists Mailing lists
 
 Yzis has 5 mailing lists:
-    - [yzis-announce@yzis.org:] Announces Yzis releases and other news. \n
-         \url http://lists.yzis.org/sympa/subrequest/yzis-announce 
+- yzis-announce@yzis.org: Announces Yzis releases and other news.\n
+    \url http://lists.yzis.org/sympa/subrequest/yzis-announce 
 
-    - [yzis-dev@yzis.org:] Development discussions and questions. \n
-        \url http://lists.yzis.org/sympa/subrequest/yzis-dev 
+- yzis-dev@yzis.org: Development discussions and questions.\n
+   \url http://lists.yzis.org/sympa/subrequest/yzis-dev 
 
-    - [yzis-svn@yzis.org:] Subversion commits. \n
-        \url http://lists.yzis.org/sympa/subrequest/yzis-svn 
+- yzis-svn@yzis.org: Subversion commits.\n
+   \url http://lists.yzis.org/sympa/subrequest/yzis-svn 
 
-    - [i18n@yzis.org:] Translators mailing list. \n
-        \url http://lists.yzis.org/sympa/subrequest/i18n 
+- i18n@yzis.org: Translators mailing list.\n
+   \url http://lists.yzis.org/sympa/subrequest/i18n 
 
-    - [yzis-users@yzis.org:] Users list. \n
-        \url http://lists.yzis.org/sympa/subrequest/yzis-users 
+- yzis-users@yzis.org: Users list.\n
+    \url http://lists.yzis.org/sympa/subrequest/yzis-users 
 
 \e yzis-dev and \e yzis-users are also available through Gmane:
-\url http://gmane.org/find.php?list=yzis .
+\url http://gmane.org/find.php?list=yzis
 
 Mailing lists are usually write-restricted, but you still can post to them without being subscribed. Your message will get through moderation within a few hours/days.
 

@@ -103,7 +103,7 @@ YZLuaEngine::YZLuaEngine() {
 	luaopen_math( L );
 	luaopen_io( L );
 	luaopen_debug( L );
-	yzDebug() << lua_version() << " loaded" << endl;
+	yzDebug() << LUA_RELEASE << " loaded" << endl;
 }
 
 void YZLuaEngine::init() {

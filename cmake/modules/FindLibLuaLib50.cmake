@@ -30,7 +30,7 @@ FIND_PATH(LIBLUALIB50_INCLUDE_DIR lualib.h
    ${GNUWIN32_DIR}/include
 )
 
-FIND_LIBRARY(LIBLUALIB50_LIBRARIES NAMES lualib50 lualib
+FIND_LIBRARY(LIBLUALIB50_LIBRARIES NAMES lualib50 lualib lua
    PATHS
    ${_libLualib50LinkDir}
    ${_libLualibLinkDir}

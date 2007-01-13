@@ -1,3 +1,6 @@
+2007-01-13 panard
+  * drop non-fixed fonts support
+
 2007-01-09 bluebird
   * full doxygen documentation for options.h, no more warnings
   * full doxygen documentation for debug.h, no more warnings

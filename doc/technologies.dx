@@ -2,16 +2,47 @@
 
 /** \page technologies Technologies used in Yzis
 
-Yzis uses many technologies
+Yzis is not doing all of its own. Some external tools are used to help
+build yzis. Yzis is built on top of some other software components. We describe
+all of those in this chapter.
+
+\section cmake Cmake
+cmake is a replacement for the autotools ( autoconf/automake and such). We
+decided to switch to cmake because the autotools are evil, and, moreover,
+KDE officially switched to cmake. Yzis is quite close to kde, and follows
+KDE decisions on this topic.
+You can find more information about cmake on \url http://www.cmake.org .
+Yzis requires cmake version 2.4.1 or newer.
+
+\section subversion Subversion
+Subversion is a Software Configuration Management(SCM), or Source Control,
+or Revision Control, or Version Control System (VCS). That is, subversion
+is used to handle source files. It keeps the history of the changes to the
+file and help the team to share the source.
+Check out the subversion book to learn more about this tool.
+
+Useful links:
+- \url http://en.wikipedia.org/wiki/SCM
+- \url http://en.wikipedia.org/wiki/Revision\_control
+- \url http://subversion.tigris.org/
+- \url http://svnbook.red-bean.com/
+
+\section Doxygen Doxygen
+Doxygen is a tool which generates documentation from text inserted in the
+code itself. This typically used to describe APIs.
+See \url http://www.doxygen.org.
 
 \section qt Qt
-
-blah blah Qt
+Yzis is built on top of the \e Qt C++ library, which provides some
+generic useful classes and some optional GUI widgets. \e Qt  is most
+widely known as the basis for \e KDE .
+See \url http://www.trolltech.com for more details.
 
 \section lua Lua
-
-
-blah blah Lua
+Lua is a small footprint script language designed to be easily embedded in
+applications. Yzis uses \e lua for its main scripting language. See
+\url http://www.lua.org.
 
 */
+
 

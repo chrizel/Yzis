@@ -89,7 +89,11 @@ void Qyzis::setupActions() {
 	connect( a, SIGNAL( triggered() ), this, SLOT( preferences() ) );
 	m->addAction(a);
 
-	mb->addMenu( _( "&Help" ) );
+	m = mb->addMenu( _( "&Help" ) );
+
+        a = new QAction(  _( "&About Qyzis" ), this );
+	connect( a, SIGNAL( triggered() ), this, SLOT( about() ) );
+	m->addAction(a);
 
 	/*
 	m_openRecentAction = KStdAction::openRecent(this, SLOT(openURL(const QString&)), actionCollection() );
@@ -184,6 +188,12 @@ bool Qyzis::queryClose() {
 void Qyzis::preferences() {
 	QYZConfigureDialog* w = new QYZConfigureDialog(this);
 	w->exec();
+}
+
+void Qyzis::about() {
+	QMessageBox::about(this, _("About Qyzis"),
+			_("Qt frontend for the yzis text editor\n\n"\
+				"http://www.yzis.org"));
 }
 
 void Qyzis::embedPartView(QWidget *view, const QString &, const QString& ) {

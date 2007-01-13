@@ -85,6 +85,7 @@ private slots:
     void openURL( const QString & );
     void fileQuit();
     void preferences();
+	void about();
 //    void gotoNextWindow();
 //    void gotoPreviousWindow();
 //    void gotoFirstWindow();

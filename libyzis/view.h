@@ -88,20 +88,11 @@ class YZIS_EXPORT YZView {
 		const YZViewId& getId() const;
 
 		//-------------------------------------------------------
-		// ----------------- Fonts
-		//-------------------------------------------------------
-		/**
-		 * set font mode ( fixed or not )
-		 * @arg fixed is true if used font is fixed
-		 */
-		void setFixedFont( bool fixed );
-
-		//-------------------------------------------------------
 		// ----------------- Visible Areas
 		//-------------------------------------------------------
 		/**
 		 * Updates the number of visible @arg c columns and @arg l lines
-		 * @arg c is the number of columns ( fixed fonts ) or width in pixel ( non-fixed fonts ) of the Area
+		 * @arg c is the number of columns
 		 * @arg l is the number of lines
 		 * @arg resfresh if true, refreshView is called
 		 */
@@ -671,23 +662,6 @@ class YZIS_EXPORT YZView {
 		 */
 		int lineHeight( ) const;
 
-		/**
-		 * width of a space ( in pixel or in cols )
-		 */
-		int getSpaceWidth() const;
-
-		/**
-		 * Returns pixel width of given string str, must be implemented in ui.
-		 * Used only with non-Fixed fonts
-		 */
-		virtual int stringWidth( const QString& str ) const = 0;
-
-		/**
-		 * Returns pixel width of given char ch, must be implemented in ui.
-		 * Used only with non-Fixed fonts
-		 */
-		virtual int charWidth( const QChar& ch ) const = 0;
-
 		//-------------------------------------------------------
 		// ----------------- Mode
 		//-------------------------------------------------------
@@ -848,11 +822,6 @@ class YZIS_EXPORT YZView {
 		 * Searching backward
 		 */
 		bool reverseSearch;
-
-		/**
-		 * is font used fixed ?
-		 */
-		bool isFontFixed;
 
 		/**
 		 * The current session, provided by the GUI

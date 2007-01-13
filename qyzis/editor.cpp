@@ -39,8 +39,6 @@
 
 #include "qyzis.h"
 
-#define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
-
 QYZisEdit::QYZisEdit(QYZisView *parent)
 : QWidget( parent )
 {
@@ -57,8 +55,6 @@ QYZisEdit::QYZisEdit(QYZisView *parent)
 
 	/* show an edit cursor */
 	QWidget::setCursor( Qt::IBeamCursor );
-
-	isFontFixed = fontInfo().fixedPitch();
 
 	mCursor = new QYZisCursor( this, QYZisCursor::SQUARE );
 
@@ -80,11 +76,11 @@ QYZisView* QYZisEdit::view() const {
 }
 
 QPoint QYZisEdit::translatePositionToReal( const YZCursor& c ) const {
-	return QPoint( GETX(c.x()), c.y() * fontMetrics().lineSpacing() );
+	return QPoint( c.x() * fontMetrics().maxWidth(), c.y() * fontMetrics().lineSpacing() );
 }
 YZCursor QYZisEdit::translateRealToPosition( const QPoint& p, bool ceil ) const {
 	int height = fontMetrics().lineSpacing();
-	int width = isFontFixed ? fontMetrics().maxWidth() : 1;
+	int width = fontMetrics().maxWidth();
 
 	int x = p.x() / width;
 	int y = p.y() / height;
@@ -108,37 +104,33 @@ void QYZisEdit::setPalette( const QPalette& p, qreal opacity ) {
 
 QYZisCursor::shape QYZisEdit::cursorShape() {
 	QYZisCursor::shape s;
-	if ( !isFontFixed ) {
+	QString shape;
+	YZMode::modeType m = mParent->modePool()->current()->type();
+	switch( m ) {
+		case YZMode::MODE_INSERT :
+			shape = mParent->getLocalStringOption("cursorinsert");
+			break;
+		case YZMode::MODE_REPLACE :
+			shape = mParent->getLocalStringOption("cursorreplace");
+			break;
+		case YZMode::MODE_COMPLETION :
+			shape = "keep";
+			break;
+		default :
+			shape = mParent->getLocalStringOption("cursor");
+			break;
+	}
+	if ( shape == "hbar" ) {
+		s = QYZisCursor::HBAR;
+	} else if ( shape == "vbar" ) {
 		s = QYZisCursor::VBAR;
+	} else if ( shape == "keep" ) {
+		s = mCursor->type();
 	} else {
-		QString shape;
-		YZMode::modeType m = mParent->modePool()->current()->type();
-		switch( m ) {
-			case YZMode::MODE_INSERT :
-				shape = mParent->getLocalStringOption("cursorinsert");
-				break;
-			case YZMode::MODE_REPLACE :
-				shape = mParent->getLocalStringOption("cursorreplace");
-				break;
-			case YZMode::MODE_COMPLETION :
-				shape = "keep";
-				break;
-			default :
-				shape = mParent->getLocalStringOption("cursor");
-				break;
-		}
-		if ( shape == "hbar" ) {
-			s = QYZisCursor::HBAR;
-		} else if ( shape == "vbar" ) {
-			s = QYZisCursor::VBAR;
-		} else if ( shape == "keep" ) {
-			s = mCursor->type();
-		} else {
-			if ( hasFocus() ) 
-				s = QYZisCursor::SQUARE;
-			else
-				s = QYZisCursor::RECT;
-		}
+		if ( hasFocus() ) 
+			s = QYZisCursor::SQUARE;
+		else
+			s = QYZisCursor::RECT;
 	}
 	return s;
 }
@@ -150,23 +142,19 @@ void QYZisEdit::updateCursor() {
 
 void QYZisEdit::updateArea( ) {
 
-	isFontFixed = fontInfo().fixedPitch();
-	mParent->setFixedFont( isFontFixed );
-	spaceWidth = mParent->getSpaceWidth();
 	updateCursor();
 
-	yzDebug() << "isFontFixed = " << isFontFixed << endl;
+	yzDebug() << "fixedPitch = " << fontInfo().fixedPitch() << endl;
 	yzDebug() << "lineheight = " << fontMetrics().lineSpacing() << endl;
 	yzDebug() << "maxwidth = " << fontMetrics().maxWidth() << endl;
 	yzDebug() << "height = " << height();
 
 	int lines = height() / fontMetrics().lineSpacing();
-	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget
-	int columns = width() / GETX(1);
+	int columns = width() / fontMetrics().maxWidth();
 
 	yzDebug() << "lines = " << lines;
 
-	m_useArea.setBottomRight( QPoint(GETX(columns), lines * fontMetrics().lineSpacing()) );
+	m_useArea.setBottomRight( QPoint( columns * fontMetrics().maxWidth(), lines * fontMetrics().lineSpacing()) );
 
 	mParent->setVisibleArea( columns, lines );
 }
@@ -289,7 +277,7 @@ void QYZisEdit::setCursor( int c, int l ) {
 //	yzDebug() << "setCursor" << endl;
 	c = c - mParent->getDrawCurrentLeft();
 	l -= mParent->getDrawCurrentTop();
-	unsigned int x = GETX( c );
+	unsigned int x = c * fontMetrics().maxWidth();
 	if ( mParent->getLocalBooleanOption( "rightleft" ) ) {
 		x = width() - x - mCursor->width();
 	}
@@ -302,7 +290,7 @@ void QYZisEdit::setCursor( int c, int l ) {
 }
 
 void QYZisEdit::scroll( int dx, int dy ) {
-	int rx = GETX(dx);
+	int rx = dx * fontMetrics().maxWidth();
 	int ry = dy * fontMetrics().lineSpacing();
 	mCursor->hide();
 	QRect cursorRect = mCursor->rect();
@@ -331,7 +319,7 @@ void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 		p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
 		p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
 	}
-	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+	QRect r( x*fontMetrics().maxWidth(), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 
 	//yzDebug() << "drawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
 	//yzDebug() << "drawCell: fg=" << p->pen().color().name() << endl;

@@ -86,13 +86,6 @@ public slots:
 
 	protected  :
 
-		inline int stringWidth( const QString& /*str*/ ) const {
-			return 1;
-		}
-		inline int charWidth( const QChar& /*ch*/ ) const {
-			return 1;
-		}
-
 		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
 
 		virtual void notifyContentChanged( const YZSelection& s );

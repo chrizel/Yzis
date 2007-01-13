@@ -204,12 +204,6 @@ void QYZisView::drawSetMaxLineNumber( int max ) {
 void QYZisView::drawSetLineNumber( int y, int n, int h ) {
 	m_lineNumbers->setLineNumber( y, h, n );
 }
-int QYZisView::stringWidth( const QString& str ) const {
-	return m_editor->fontMetrics().width( str );
-}
-int QYZisView::charWidth( const QChar& ch ) const {
-	return m_editor->fontMetrics().width( ch );
-}
 QChar QYZisView::currentChar() const {
 	return myBuffer()->textline( viewCursor().bufferY() ).at( viewCursor().bufferX() );
 }

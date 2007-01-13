@@ -69,9 +69,6 @@ class QYZisView: public QWidget, public YZView
 
 		void applyConfig( const QSettings& settings, bool refresh = true );
 
-		// return string and char width in pixels
-		int stringWidth( const QString& str ) const;
-		int charWidth( const QChar& ch ) const;
 		QChar currentChar() const;
 
 		QYZisEdit *editor() { return m_editor; }

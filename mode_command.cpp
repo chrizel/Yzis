@@ -352,10 +352,10 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 				return CMD_ERROR;
 
 			foreach( YZView *v, view->myBuffer()->views() )
-				view->setPaintAutoCommit( false );
+				v->setPaintAutoCommit( false );
 			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
 			foreach( YZView *v, view->myBuffer()->views() )
-				view->commitPaintEvent();
+				v->commitPaintEvent();
 		}
 	}
 

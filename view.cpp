@@ -45,9 +45,6 @@ using namespace yzis;
 
 #define STICKY_COL_ENDLINE -1
 
-#define GET_STRING_WIDTH( s ) ( isFontFixed ? s.length() : stringWidth( s ) )
-#define GET_CHAR_WIDTH( c ) ( isFontFixed ? 1 : charWidth( c ) )
-
 static const QChar tabChar( '\t' );
 
 static YZColor color_null;
@@ -99,7 +96,6 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines)
 
 	mPaintSelection = new YZSelection("PAINT");
 	selectionPool = new YZSelectionPool();
-	setFixedFont( true );
 
 	drawMode = false;
 	rHLnoAttribs = false;
@@ -1007,11 +1003,6 @@ void YZView::pasteContent( QChar registr, bool after ) {
  * Drawing engine
  */
 
-void YZView::setFixedFont( bool fixed ) {
-	isFontFixed = fixed;
-	spaceWidth = GET_CHAR_WIDTH( ' ' );
-}
-
 bool YZView::isColumnVisible( int column, int  ) const {
 	return ! (column < scrollCursor->screenX() || column >= (scrollCursor->screenX() + mColumnsVis));
 }
@@ -1037,9 +1028,8 @@ void YZView::updateCurLine( ) {
 	sCurLineLength = sCurLine.length();
 	if ( wrap && ! drawMode ) {
 		int nbTabs = sCurLine.count( '\t' );
-		if ( isFontFixed ) rMinCurLineLength = sCurLineLength;
-		else rMinCurLineLength = GET_STRING_WIDTH( QString( sCurLine ).remove( '\t' ) ) + nbTabs * spaceWidth;
-		rCurLineLength = rMinCurLineLength + nbTabs * ( tablength - spaceWidth );
+		rMinCurLineLength = sCurLineLength;
+		rCurLineLength = rMinCurLineLength + nbTabs * ( tablength - 1 );
 	}
 }
 
@@ -1087,7 +1077,7 @@ void YZView::initDraw( int sLeft, int sTop, int rLeft, int rTop, bool draw ) {
 
 	adjust = false;
 
-	tablength = tabstop * spaceWidth;
+	tablength = tabstop;
 	areaModTab = ( tablength - mColumnsVis % tablength ) % tablength;
 
 	workCursor->wrapNextLine = false;
@@ -1227,7 +1217,7 @@ bool YZView::drawPrevCol( ) {
 		workCursor->setBufferX( curx );
 		lastChar = sCurLine.at( curx );
 		if ( lastChar != tabChar ) {
-			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
+			workCursor->sColIncrement = 1;
 			if ( workCursor->screenX() >= workCursor->sColIncrement )
 				workCursor->setScreenX( workCursor->screenX() - workCursor->sColIncrement );
 			else
@@ -1248,9 +1238,9 @@ bool YZView::drawNextCol( ) {
 	int curx = workCursor->bufferX();
 	bool lastCharWasTab = workCursor->lastCharWasTab;
 
-	int nextLength = ( drawMode ? 0 : spaceWidth );
+	int nextLength = ( drawMode ? 0 : 1 );
 
-	workCursor->sColIncrement = spaceWidth;
+	workCursor->sColIncrement = 1;
 	workCursor->wrapNextLine = false;
 	workCursor->lastCharWasTab = false;
 
@@ -1267,7 +1257,7 @@ bool YZView::drawNextCol( ) {
 					lastChar = opt_listchars["space"][0];
 				}
 			}
-			workCursor->sColIncrement = GET_CHAR_WIDTH( lastChar );
+			workCursor->sColIncrement = 1;
 			lenToTest = workCursor->sColIncrement;
 		} else {
 			workCursor->lastCharWasTab = true;
@@ -1290,13 +1280,11 @@ bool YZView::drawNextCol( ) {
 				if ( workCursor->screenX() >= mySpaceFill )
 					workCursor->sColIncrement = ( ( workCursor->screenX() - mySpaceFill ) / tablength  + 1 ) * tablength + mySpaceFill - workCursor->screenX();
 				else
-					workCursor->sColIncrement = mySpaceFill + spaceWidth - workCursor->screenX();
+					workCursor->sColIncrement = mySpaceFill + 1 - workCursor->screenX();
 			}
-			if ( drawMode ) lenToTest = spaceWidth;
+			if ( drawMode ) lenToTest = 1;
 			else lenToTest = workCursor->sColIncrement;
 		}
-		if ( ! drawMode && ! isFontFixed && workCursor->bufferX() + workCursor->bColIncrement < sCurLineLength )
-			nextLength = GET_CHAR_WIDTH( sCurLine.at( workCursor->bufferX() + workCursor->bColIncrement ) );
 
 		// will our new char appear in the area ?
 		ret = adjust || workCursor->screenX() + lenToTest - scrollCursor->screenX() <= mColumnsVis - nextLength;
@@ -1800,11 +1788,6 @@ QString YZView::getLineStatusString() const
 	}
 	
 	return status;
-}
-
-int YZView::getSpaceWidth() const
-{
-	return spaceWidth;
 }
 
 void YZView::internalScroll( int dx, int dy ) {

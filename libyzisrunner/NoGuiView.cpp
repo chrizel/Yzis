@@ -110,14 +110,6 @@ void NoGuiView::scrollUp( int ) {
 void NoGuiView::scrollDown( int ) {
     dbg() << "NoGuiView::scrollDown" << endl;
 }
-int NoGuiView::stringWidth(const QString&str) const {
-    dbg() << "NoGuiView::stringWidth(" << str << ")" << endl;
-    return str.length();
-}
-int NoGuiView::charWidth(const QChar & c) const {
-    dbg() << "NoGuiView::stringWidth( QChar c=" << c << ")" << endl;
-    return 1;
-}
 void NoGuiView::registerModifierKeys(const QString& s) {
     dbg() << "NoGuiView::registerModifierKeys(" << s << ")" << endl;
     return;

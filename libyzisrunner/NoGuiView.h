@@ -64,8 +64,6 @@ public:
 
 	virtual void scrollUp( int );
 	virtual void scrollDown( int );
-	virtual int stringWidth(const QString&str) const;
-	virtual int charWidth(const QChar & c) const;
 	virtual void registerModifierKeys(const QString& s);
 
 	virtual void paintEvent( const YZSelection& );

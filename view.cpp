@@ -56,7 +56,7 @@ static YZColor blue( Qt::blue );
  
 static int nextId = 1;
 
-YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) 
+YZView::YZView(YZBuffer *_b, YZSession *sess, int cols, int lines) 
 	:  m_drawBuffer(), id(nextId++)
 {
 	yzDebug() << "New View created with UID : " << getId() << endl;
@@ -65,7 +65,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int lines)
 	mBuffer	= _b;
 	mLineSearch = new YZLineSearch( this );
 	mLinesVis = lines;
-	mColumnsVis = 0;
+	mColumnsVis = cols;
 
 	mModePool = new YZModePool( this );
 

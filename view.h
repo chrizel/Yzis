@@ -66,9 +66,10 @@ class YZIS_EXPORT YZView {
 		//-------------------------------------------------------
 		/**
 		 * Each view is bound to a buffer, @arg lines is the initial
+		 * number of columns and @arg lines the initial
 		 * number of lines that this view can display
 		 */
-		YZView(YZBuffer *_b, YZSession *sess, int lines);
+		YZView(YZBuffer *_b, YZSession *sess, int cols, int lines);
 		
 		/**
 		 * The destructor

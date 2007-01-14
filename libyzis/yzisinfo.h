@@ -35,6 +35,8 @@ typedef QVector<YZYzisinfoJumpListRecord*> JumpListVector;
 
 /**
  * Class YZYzisinfo
+ *
+ * @short Handle the yzisinfo file.
  * 
  * Contains all the necessary methods to read and write the yzisinfo file. 
  * This file is the equivalent of the .viminfo file in vim

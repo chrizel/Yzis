@@ -28,6 +28,9 @@ class YZView;
 class YZCursor;
 class YZHistory;
 
+/**
+  * @short (forward) search is handled by a special mode.
+  */
 class YZIS_EXPORT YZModeSearch : public YZMode {
 	public:
 		YZModeSearch();
@@ -56,6 +59,9 @@ class YZIS_EXPORT YZModeSearch : public YZMode {
 };
 
 
+/**
+  * @short Backward search is a special mode.
+  */
 class YZIS_EXPORT YZModeSearchBackward : public YZModeSearch {
 	public :
 		YZModeSearchBackward();

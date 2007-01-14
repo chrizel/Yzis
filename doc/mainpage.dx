@@ -16,10 +16,11 @@ This is aimed at developers wanting to work on Yzis code. There is a \e
 User \e Handbook if you only intend to use Yzis.
 
 We will explain here how to dig into the Yzis code, architecture
-details and explanations about the tools we use.
+details and give explanations about the tools we use.
 
 
 \subpage technologies
+:
 
 \subpage startup_guide
 

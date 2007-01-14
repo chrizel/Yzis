@@ -31,6 +31,9 @@
 
 class YZYzisinfoJumpListRecord;
 
+/**
+  * @short In-memory representation of a tag
+  */
 struct YZTagStackItem {
 	YZTagStackItem() {}
 	YZTagStackItem(const YZTagStackItem &o) : pattern(o.pattern), filename(o.filename) {}
@@ -39,6 +42,10 @@ struct YZTagStackItem {
 	QString filename;
 };
 
+/**
+  * @short Handle the content of a tag file.
+  * It is only used as part of YZSession
+  */
 class YZTagStack {
 	public:
 		YZTagStack();

@@ -54,6 +54,7 @@ struct YZDrawCell;
  * corresponding outputs.
  * Each @ref YZBuffer can have multiple views.
  * @ref YZBuffer will take care of synchronizing every views so updates are propagated to all views.
+ * @short Abstract object for a view.
  * 
  */
 class YZIS_EXPORT YZView {

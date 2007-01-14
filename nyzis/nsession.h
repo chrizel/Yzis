@@ -29,6 +29,9 @@
 
 class YZViewId;
 
+/**
+  * @short Implementation of YZSession for the NCurses frontend.
+  */
 class NYZSession : public QObject, public YZSession
 {
 	Q_OBJECT

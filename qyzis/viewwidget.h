@@ -37,6 +37,11 @@ class QYZisLineNumbers;
 
 class QSettings;
 
+/**
+  * @short Implementation of YZView for the Qt GUI
+  *
+  * In QYzis, the view is implemented using a QWidget
+  */
 class QYZisView: public QWidget, public YZView
 {
 	Q_OBJECT

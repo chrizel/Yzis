@@ -78,13 +78,12 @@ class YZSwapFile {
 		void replay( YZBufferOperation::OperationType type, unsigned int col, unsigned int line, const QString& str );
 
 	private:
-		struct sE {
+		struct swapEntry {
 			YZBufferOperation::OperationType type;
 			unsigned int col;
 			unsigned int line;
 			QString str;
 		} sE;
-		typedef struct sE swapEntry;
 
 		QList<swapEntry> mHistory;
 		YZBuffer *mParent;

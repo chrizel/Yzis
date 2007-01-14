@@ -60,12 +60,11 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 		if ( QString::compare(it.key(), event) == 0 ) {
 			QStringList list = it.value();
 			yzDebug() << "Matched " << list << endl;
-			QStringList::Iterator it2 = list.begin(), end2 = list.end();
-			for ( ; it2 != end2; ++it2 ) { 
+			foreach( QString action, list ) {
 				int nbArgs = 0, nbResults = 0;
-				if ( event == "INDENT_ON_ENTER" && *it2 != "Indent_" + hlName ) 
+				if ( event == "INDENT_ON_ENTER" && action != "Indent_" + hlName ) 
 					continue; //skip it (it's not the right plugin for indent according to the current highlight name)
-				else if ( event == "INDENT_ON_KEY" && *it2 != "Indent_OnKey_" + hlName )
+				else if ( event == "INDENT_ON_KEY" && action != "Indent_OnKey_" + hlName )
 					continue; //skip it (it's not the right plugin for indent according to the current highlight name)
 
 				//special handling for indent
@@ -90,7 +89,7 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					QByteArray cur = curLine.toUtf8();
 					QByteArray prev = prevLine.toUtf8();
 					QByteArray next = nextLine.toUtf8();
-					YZLuaEngine::self()->exe(*it2, "siiiiiisss", inputs,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,cur.data(),prev.data(),next.data());
+					YZLuaEngine::self()->exe(action, "siiiiiisss", inputs,nbPrevTabs,nbPrevSpaces,nbCurTabs,nbCurSpaces,nbNextTabs,nbNextSpaces,cur.data(),prev.data(),next.data());
 				} else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
 					QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
 					QString nextLine = view->myBuffer()->textline(view->getBufferCursor().y());
@@ -104,12 +103,12 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					char *result;
 					QByteArray prev = prevLine.toUtf8();
 					QByteArray next = nextLine.toUtf8();
-					YZLuaEngine::self()->exe(*it2, "iiiiss>s",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, prev.data(), next.data(), &result);
+					YZLuaEngine::self()->exe(action, "iiiiss>s",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, prev.data(), next.data(), &result);
 					yzDebug() << "Got INDENT_ON_ENTER response : (" << result << ")" << endl;
 					results << QString(result);
 				} else {
-					yzDebug() << "Executing plugin " << *it2 << " with " << nbArgs << " arguments and " << nbResults << " results" << endl;
-					YZLuaEngine::self()->execute(*it2,nbArgs,nbResults);
+					yzDebug() << "Executing plugin " << action << " with " << nbArgs << " arguments and " << nbResults << " results" << endl;
+					YZLuaEngine::self()->execute(action,nbArgs,nbResults);
 					results += YZLuaEngine::self()->getLastResult(1);
 				}
 			}

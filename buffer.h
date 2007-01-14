@@ -49,6 +49,7 @@ typedef QVector<YZLine*> YZBufferData;
  * 
  * A buffer can have multiple views. Every buffer is registered in a
  * @ref YZSession
+ * @short An abstract class to handle the content of a file.
  */
 class YZIS_EXPORT YZBuffer {
 public:

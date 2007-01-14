@@ -30,6 +30,9 @@
 
 class YZBuffer;
 
+/**
+  * @short Completion mode.
+  */
 class YZIS_EXPORT YZModeCompletion : public YZMode {
 	public :
 		YZModeCompletion();

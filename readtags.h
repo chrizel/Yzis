@@ -100,7 +100,7 @@ typedef struct {
 
 } tagExtensionField;
 
-/* This structure contains information about a specific tag. */
+/** @short This structure contains information about a specific tag. */
 typedef struct {
 
 	    /* name of tag */

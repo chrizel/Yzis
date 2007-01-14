@@ -38,6 +38,8 @@ typedef unsigned int QRgb;
   *
   * The YZColor class is basically a stripped down version of QColor. We can
   * not use QColor in libyzis since it is part of QtGui.
+  *
+  * @short Color Handling for Yzis
   */
 class YZIS_EXPORT YZColor {
 

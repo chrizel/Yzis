@@ -25,6 +25,10 @@
 
 class YZView;
 
+/**
+  * Each View has one YZEvents, and this is the only place where this is
+  * used.
+  */
 class YZEvents  {
 	public:
 		/**
@@ -35,8 +39,8 @@ class YZEvents  {
 
 		/**
 		 * Connect a Lua function to a specific event
-		 * @param function the Lua function to be called by the event
 		 * @param event the event to listen for
+		 * @param function the Lua function to be called by the event
 		 */
 		void connect(const QString& event, const QString& function);
 

@@ -96,6 +96,9 @@ class YZIS_EXPORT YZExRange {
 
 };
 
+/**
+  * Command in exution mode ( as ":w" or ":q")
+  */
 class YZIS_EXPORT YZExCommand {
 
 	public :
@@ -116,6 +119,9 @@ class YZIS_EXPORT YZExCommand {
 
 class YZHistory;
 
+/**
+  * @short Execution mode ( "command ':').
+  */
 class YZIS_EXPORT YZModeEx : public YZMode {
 
 	public :

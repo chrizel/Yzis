@@ -29,6 +29,9 @@ class YZMode;
 class YZView;
 class YZViewCursor;
 
+/**
+  * @short Visual mode ( selecting with control-v )
+  */
 class YZIS_EXPORT YZModeVisual : public YZModeCommand {
 	public:
 		YZModeVisual();

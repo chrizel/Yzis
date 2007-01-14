@@ -22,6 +22,11 @@
 #include <QStringList>
 #include <QMap>
 
+/**
+  * @short registers are used to store macro.
+  * Macro are a recorded sequence of keystroke, that you can replay.
+  * This class is only used in YZSession.
+  */
 class YZRegisters {
 	public:
 		/**

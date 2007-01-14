@@ -24,11 +24,9 @@
 #include <QMap>
 
 #include "session.h"
-#include "viewid.h"
 
 class YZBuffer;
 class QYZisView;
-class YZViewId;
 
 class QYZisSession : public QObject, public YZSession
 {

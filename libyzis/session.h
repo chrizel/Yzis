@@ -28,7 +28,6 @@
 /* yzis */
 //#include "yzis.h"
 #include "mode.h"  // for YZModeMap
-#include "viewid.h"
  
 class YZView;
 class YZBuffer;
@@ -44,7 +43,6 @@ class YZModeCommand;
 class YZViewCursor;
 class YZYzisinfo;
 class YZTagStack;
-class YZViewId;
 
 /**
  * Contains data referring to an instance of yzis
@@ -217,7 +215,7 @@ class YZIS_EXPORT YZSession {
 		/**
 		 * Delete the current view
 		 */
-		void deleteView ( const YZViewId &Id = YZViewId::invalid );
+		void deleteView ( YZView* v );
 
 		//-------------------------------------------------------
 		// ----------------- Current View
@@ -235,10 +233,6 @@ class YZIS_EXPORT YZSession {
 		//-------------------------------------------------------
 		// ----------------- View Navigation
 		//-------------------------------------------------------
-		/**
-		 * Finds a view by its UID
-		 */
-		YZView* findView( const YZViewId &id );
 		
 		/**
 		 * Find a view containing the buffer

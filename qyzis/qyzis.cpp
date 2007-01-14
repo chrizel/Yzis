@@ -23,7 +23,6 @@
 
 #include "portability.h"
 #include "qsession.h"
-#include "viewid.h"
 #include "viewwidget.h"
 #include "qyzis.h"
 #include "debug.h"
@@ -145,16 +144,6 @@ void Qyzis::openURL(const QString &url) {
 
 	YZSession::me->createBufferAndView( url );
 }
-
-/* dcop stuff from Kyzis, removed by orzel, we dont care in qyzis
-void Qyzis::setCaption( const YZViewId &id, const QString& caption ) {
-	// Parse out the filename.
-	QString filename = caption.section("/", -1);
-	
-	QYZisView *view = dynamic_cast<QYZisView*>(YZSession::me->findView( id ));
-	
-}
-*/
 
 bool Qyzis::queryClose() {
 	const YZBufferList &buffers = YZSession::me->buffers();

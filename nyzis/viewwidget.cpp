@@ -53,7 +53,7 @@ NYZView::NYZView(YZBuffer *b)
 
 	if ( !attributesMapInitialised ) initialiseAttributesMap();
 	YZASSERT( b );
-	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << b->getId() << endl;
+	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << (long int)b << endl;
 	window = NULL;
 	fakeLine = false;
 	m_focus = w_editor;

@@ -357,11 +357,11 @@ cmd_state YZModeEx::write( const YZExCommandArgs& args ) {
 	}
 	if ( quit && force ) {//check readonly ? XXX
 		args.view->myBuffer()->save();
-		args.view->mySession()->deleteView( args.view->getId() );
+		args.view->mySession()->deleteView( args.view );
 		ret = CMD_QUIT;
 	} else if ( quit ) {
 		if ( args.view->myBuffer()->save() ) {
-			args.view->mySession()->deleteView( args.view->getId() );
+			args.view->mySession()->deleteView( args.view );
 			ret = CMD_QUIT;
 		}
 	} else if ( ! force ) {
@@ -385,7 +385,7 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 		//close current view, if it's the last one on a buffer , check it is saved or not
 		if ( args.view->myBuffer()->views().count() > 1 ) {
 			ret = CMD_QUIT;
-			args.view->mySession()->deleteView( args.view->getId() );
+			args.view->mySession()->deleteView( args.view );
 		} else if ( args.view->myBuffer()->views().count() == 1 && args.view->mySession()->countBuffers() == 1) {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
 				if ( args.view->mySession()->exitRequest() )
@@ -398,7 +398,7 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 		} else {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
 				ret = CMD_QUIT;
-				args.view->mySession()->deleteView(args.view->getId());
+				args.view->mySession()->deleteView(args.view);
 			}
 			else args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
 		}
@@ -457,11 +457,11 @@ cmd_state YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::bufferdelete ( const YZExCommandArgs& args ) {
-	yzDebug() << "Delete buffer " << args.view->myBuffer()->getId() << endl;
+	yzDebug() << "Delete buffer " << (long int)args.view->myBuffer() << endl;
 
 	QList<YZView*> l = args.view->myBuffer()->views();
 	foreach ( YZView *v, l )
-		args.view->mySession()->deleteView( v->getId() );
+		args.view->mySession()->deleteView( v );
 
 	return CMD_QUIT;
 }

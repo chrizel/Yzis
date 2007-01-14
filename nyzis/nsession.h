@@ -27,8 +27,6 @@
 #include "viewwidget.h"
 #include "session.h"
 
-class YZViewId;
-
 /**
   * @short Implementation of YZSession for the NCurses frontend.
   */

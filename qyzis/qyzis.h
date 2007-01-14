@@ -26,8 +26,6 @@
 #include <qmainwindow.h>
 #include <qmap.h>
 
-#include "viewid.h"
-
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
  * statusbar but relies on the "Part" to do all the real work.

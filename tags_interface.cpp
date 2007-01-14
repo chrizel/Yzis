@@ -4,7 +4,7 @@
  *  Copyright (C) 2003-2004 Philippe Fremy <phil@freehackers.org>
  *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
- *  Copyright (C) 2005 Erlend Hamberg <ehamberg@online.no>
+ *  Copyright (C) 2005 Erlend Hamberg <hamberg@stud.ntnu.no>
  *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *  Copyright (C) 2005 Craig Howard	<craig@choward.ca>
  *

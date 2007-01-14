@@ -74,12 +74,10 @@ YZModeEx::YZModeEx() : YZMode() {
 }
 
 YZModeEx::~YZModeEx() {
-	for ( QList<const YZExCommand*>::Iterator itr = commands.begin(); itr != commands.end(); ++itr ) {
-		delete *itr;
-	}
-	for ( QList<const YZExRange*>::Iterator itr = ranges.begin(); itr != ranges.end(); ++itr ) {
-		delete *itr;
-	}
+	foreach( const YZExCommand *c, commands )
+		delete c;
+	foreach( const YZExRange *r, ranges )
+		delete r;
 	
 	delete mHistory;
 }
@@ -200,8 +198,7 @@ void YZModeEx::initPool() {
 QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, bool* matched ) {
 	QString _input = inputs;
 	*matched = false;
-	for ( QList<const YZExRange*>::Iterator itr = ranges.begin(); !*matched && itr != ranges.end(); ++itr ) {
-		const YZExRange *currentRange = *itr;
+	foreach( const YZExRange *currentRange, ranges ) {
 		QRegExp reg( currentRange->regexp() );
 		*matched = reg.exactMatch( _input );
 		if ( *matched ) {
@@ -252,8 +249,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 	}
 
 	matched = false;
-	for ( QList<const YZExCommand*>::Iterator itr = commands.begin(); !matched && itr != commands.end(); ++itr ) {
-		const YZExCommand *curCommand = *itr;
+	foreach(  const YZExCommand *curCommand, commands ) {
 		QRegExp reg(curCommand->regexp());
 		matched = reg.exactMatch( _input );
 		if ( matched ) {
@@ -464,9 +460,8 @@ cmd_state YZModeEx::bufferdelete ( const YZExCommandArgs& args ) {
 	yzDebug() << "Delete buffer " << args.view->myBuffer()->getId() << endl;
 
 	QList<YZView*> l = args.view->myBuffer()->views();
-	for ( QList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
-		args.view->mySession()->deleteView( (*itr)->getId() );
-	}
+	foreach ( YZView *v, l )
+		args.view->mySession()->deleteView( v->getId() );
 
 	return CMD_QUIT;
 }
@@ -657,10 +652,8 @@ cmd_state YZModeEx::genericMap ( const YZExCommandArgs& args, int type) {
 		if (rx.cap(1).startsWith("<CTRL>")) {
 			mModifierKeys << rx.cap(1);
 			YZViewList views = YZSession::me->getAllViews();
-			for ( YZViewList::const_iterator itr = views.begin(); itr != views.end(); ++itr ) {
-				YZView *v = *itr;
+			foreach ( YZView *v, views )
 				v->registerModifierKeys( rx.cap( 1 ) );
-			}
 		}
 	}
 	return CMD_OK;	
@@ -828,14 +821,12 @@ cmd_state YZModeEx::enew( const YZExCommandArgs& ) {
 cmd_state YZModeEx::registers( const YZExCommandArgs& ) {
 	QString infoMessage(_("Registers:\n")); // will contain register-value table
 	QList<QChar> keys = YZSession::me->getRegisters();
-	QList<QChar>::ConstIterator it = keys.begin(), end = keys.end();
 	QString regContents;
-	for( ; it != end ; ++it )
-	{
-		infoMessage += QString("\"") + (*it) + "  ";
+	foreach ( QChar c, keys ) {
+		infoMessage += QString("\"") + c + "  ";
 		// why I use space as separator? I don't know :)
 		// if you know what must be used here, fix it ;)
-		regContents = YZSession::me->getRegister( *it ).join(" ");
+		regContents = YZSession::me->getRegister( c ).join(" ");
 		// FIXME dimsuz: maybe replace an abstract 27 with some predefined value?
 		if( regContents.length() >= 27 )
 		{

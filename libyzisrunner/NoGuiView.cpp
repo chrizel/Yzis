@@ -22,8 +22,8 @@
 
 #define dbg() yzDebug("NoGuiView")
 
-NoGuiView::NoGuiView(YZBuffer *buf, YZSession *sess, int lines) 
-    : YZView(buf,sess,lines) 
+NoGuiView::NoGuiView(YZBuffer *buf, YZSession *sess, int cols, int lines) 
+    : YZView(buf,sess,cols,lines) 
 {
     dbg() << HERE() << endl;
 }

@@ -29,7 +29,7 @@
 class NoGuiView : public YZView
 {
 public:
-	NoGuiView(YZBuffer *buf, YZSession *sess, int lines=50);
+	NoGuiView(YZBuffer *buf, YZSession *sess, int cols=50, int lines=50);
 
 	uint getCursorX();
 	uint getCursorY();

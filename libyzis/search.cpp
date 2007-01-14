@@ -223,11 +223,13 @@ void YZSearch::highlightLine( YZBuffer* buffer, int line ) {
 
 void YZSearch::shiftHighlight( YZBuffer* buffer, int fromLine, int shift ) {
 	QList<YZView*> views = buffer->views();
+	if ( views.isEmpty() ) // no views
+		return;
 	YZView* v = views.front();
 	if ( v ) {
 		YZSelectionMap searchMap = v->getSelectionPool()->search()->map();
 
-		if ( ( ( int )( shift + fromLine ) ) < 0 ) fromLine = -shift;
+		if ( shift+fromLine < 0 ) fromLine = -shift;
 		int size = searchMap.size();
 		for ( int i = 0; i < size; i++ ) {
 			YZCursor to = searchMap[ i ].toPos();

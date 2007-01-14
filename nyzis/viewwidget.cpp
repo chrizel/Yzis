@@ -47,7 +47,7 @@ QMap<QRgb,unsigned long int> NYZView::mAttributesMap;
 
 
 NYZView::NYZView(YZBuffer *b)
-	: YZView(b,NYZSession::self,0), editor(0)
+	: YZView(b,NYZSession::self,0,0), editor(0)
 {
 	statusbarHasCommand = false;
 

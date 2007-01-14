@@ -43,7 +43,7 @@
 #include <debug.h>
 
 QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
-	: YZView( _buffer, QYZisSession::self(), 10 ), buffer( _buffer ), m_popup( 0 )
+	: YZView( _buffer, QYZisSession::self(), 0, 0 ), buffer( _buffer ), m_popup( 0 )
 
 {
 	m_editor = new QYZisEdit( this );

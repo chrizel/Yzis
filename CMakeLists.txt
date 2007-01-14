@@ -50,7 +50,6 @@ set(yzis_LIB_SRCS
    undo.cpp 
    view.cpp 
    viewcursor.cpp 
-   viewid.cpp 
    yzisinfo.cpp 
    yzisinfojumplistrecord.cpp 
    yzisinfostartpositionrecord.cpp 

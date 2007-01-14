@@ -67,12 +67,6 @@ public:
 	 */
 	virtual ~YZBuffer();
 	
-	/**
-	 * Gets the unique identifier for this buffer
-	 * @return the unique identifier for this buffer
-	 */
-	int getId() const;
-
 	//-------------------------------------------------------
 	// ----------------- Character Operations
 	//-------------------------------------------------------
@@ -345,13 +339,6 @@ public:
 	 * Temporary function
 	 */
 	YZView* firstView() const;
-
-	/**
-	 * Finds a view by its UID
-	 * @param id the unique ID of the view to search for
-	 * @return a pointer to the view or NULL
-	 */
-	YZView* findView( const YZViewId &id ) const;
 
 	/**
 	 * Refresh all views

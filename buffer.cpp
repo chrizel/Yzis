@@ -62,9 +62,7 @@ static QString Null = QString::null;
 	
 struct YZBuffer::Private
 {
-	static int nextId;
-	
-	Private() : id(nextId++) {}
+	Private() {}
 	
 	// The current filename (absolute path name)
 	QString path;
@@ -99,15 +97,10 @@ struct YZBuffer::Private
 	// string containing encoding of the file
 	QString currentEncoding;
 	
-	// unique identifier of the buffer
-	const int id;
-	
 	// buffer state
 	State state;
 };
 
-int YZBuffer::Private::nextId = 1;
-	
 YZBuffer::YZBuffer() 
 	: d(new Private)
 {
@@ -697,15 +690,6 @@ void YZBuffer::addView (YZView *v) {
 	d->views.append( v );
 }
 
-YZView* YZBuffer::findView( const YZViewId &id ) const {
-	yzDebug("YZBuffer") << "Buffer: findView " << id << endl;
-	foreach( YZView *view, d->views )
-		if ( view->getId() == id )
-			return view;
-//	yzDebug("YZBuffer") << "buffer::findView " << uid << " returning NULL" << endl;
-	return NULL;
-}
-
 void YZBuffer::updateAllViews() {
 	if ( !d->enableUpdateView ) return;
 	yzDebug("YZBuffer") << "YZBuffer updateAllViews" << endl;
@@ -1177,7 +1161,6 @@ const QString& YZBuffer::encoding() const { return d->currentEncoding; }
 bool YZBuffer::fileIsModified() const { return d->isModified; }
 bool YZBuffer::fileIsNew() const { return d->isFileNew; }
 const QString& YZBuffer::fileName() const {return d->path;}
-int YZBuffer::getId() const { return d->id; }
 QList<YZView*> YZBuffer::views() const { return d->views; }
 
 void YZBuffer::openNewFile()

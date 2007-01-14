@@ -29,7 +29,6 @@
 #include "selection.h"
 #include "option.h"
 #include "drawbuffer.h"
-#include "viewid.h"
 
 class YZViewCursor;
 class YZColor;
@@ -85,8 +84,9 @@ class YZIS_EXPORT YZView {
 
 		/**
 		 * A global UID for this view
+		 *   only used for local options (<filename>-view-<id>)
 		 **/
-		const YZViewId& getId() const;
+		const int getId() const;
 
 		//-------------------------------------------------------
 		// ----------------- Visible Areas
@@ -957,7 +957,7 @@ class YZIS_EXPORT YZView {
 		MapOption opt_listchars;
 		YZFoldPool* mFoldPool;
 		
-		const YZViewId id;
+		const int id;
 };
 
 #endif /*  YZ_VIEW_H */

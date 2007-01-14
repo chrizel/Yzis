@@ -151,13 +151,6 @@ QString YZSession::saveBufferExit() {
 	return QString::null;
 }
 
-YZView* YZSession::findView( const YZViewId &id ) {
-	foreach(  YZView *view, mViewList )
-		if ( view->getId() == id )
-			return view;
-	return NULL;
-}
-
 YZView* YZSession::findViewByBuffer( const YZBuffer *buffer ) {
 	foreach(  YZView *view, mViewList )
 		if ( view->myBuffer() == buffer )
@@ -304,26 +297,25 @@ YZView *YZSession::createView( YZBuffer *buffer ) {
 	return view;
 }
 
-void YZSession::deleteView( const YZViewId &id /*=YZViewId::invalid*/ ) {
+void YZSession::deleteView( YZView* view ) {
+	if ( !mViewList.contains(view) ) {
+		yzError() << "trying to remove an unknown view " << view->getId() << endl;
+		return;
+	}
+
 	// Guardian, if we're deleting the last view, close the app
 	if ( mViewList.size() == 1 ) {
 		exitRequest( 0 );
 		return;
 	}
-	
-	YZView *view = currentView();
-	
-	if ( id != YZViewId::invalid ) {
-		view = findView( id );
-	}
-	
+
 	// if we're deleting the current view, then we have to switch views
 	if ( view == currentView() ) {
 		setCurrentView( prevView() );
 	}
 	
+	// remove it
 	doDeleteView( view );
-	
 	removeView( view );
 }
 

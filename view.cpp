@@ -57,9 +57,9 @@ static YZColor blue( Qt::blue );
 static int nextId = 1;
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int lines) 
-	:  m_drawBuffer(), id( nextId++ )
+	:  m_drawBuffer(), id(nextId++)
 {
-	yzDebug() << "New View created with UID : " << id << endl;
+	yzDebug() << "New View created with UID : " << getId() << endl;
 	YZASSERT( _b ); YZASSERT( sess );
 	mSession = sess;
 	mBuffer	= _b;
@@ -1509,7 +1509,7 @@ void YZView::redo( int count ) {
 
 
 QString YZView::getLocalOptionKey() const {
-	return mBuffer->fileName()+"-view-"+ QString::number(id.getNumber());
+	return mBuffer->fileName()+"-view-"+ QString::number(getId());
 }
 YZOptionValue* YZView::getLocalOption( const QString& option ) const {
 	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
@@ -1765,8 +1765,7 @@ void YZView::saveInputBuffer() {
 	}
 }
 
-const YZViewId &YZView::getId() const
-{
+const int YZView::getId() const {
 	return id;
 }
 

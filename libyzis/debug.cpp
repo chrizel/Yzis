@@ -46,6 +46,7 @@ YZDebugBackend * YZDebugBackend::_instance = NULL;
 YZDebugBackend::YZDebugBackend()
 {
 	_output = NULL;
+
 #ifndef YZIS_WIN32_GCC
 	setDebugOutput( "/tmp/yzisdebug-" + QString(getpwuid(geteuid())->pw_name) + ".log" );
 #else
@@ -61,7 +62,12 @@ YZDebugBackend::~YZDebugBackend() {
 
 void YZDebugBackend::init()
 {
-	_level = 0;
+#ifdef DEBUG
+	_level = YZ_DEBUG_LEVEL;
+#else
+	_level = YZ_WARNING_LEVEL;
+#endif
+
 	clearArea();
     _levelByName["debug"] = YZ_DEBUG_LEVEL;
     _levelByName["warning"] = YZ_WARNING_LEVEL;

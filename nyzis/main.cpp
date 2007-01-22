@@ -33,6 +33,7 @@
 #include <QWidget>
 #include <QCoreApplication>
 #include <QTextCodec>
+#include <QDateTime>
 #include <QSocketNotifier>
 #include <qtimer.h>
 
@@ -69,6 +70,10 @@ main(int argc, char *argv[])
 #else
 	bool useGUI = TRUE;
 #endif
+
+    YZDebugBackend::instance()->parseRcfile( DEBUGRC_FNAME );
+    YZDebugBackend::instance()->parseArgv( argc, argv );
+    yzDebug() << QDateTime::currentDateTime().toString() << endl;
 
 	QCoreApplication *app;
 /*if ( useGUI )

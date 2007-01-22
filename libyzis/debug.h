@@ -110,7 +110,7 @@ class QStringList;
   * \endcode
   *
   */
-class YZDebugBackend {
+class YZIS_EXPORT YZDebugBackend {
 public:
 	~YZDebugBackend();
 

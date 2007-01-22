@@ -24,6 +24,7 @@
 /* Qt */
 #include <QApplication>
 #include <QTimer>
+#include <QDateTime>
 
 /* Yzis */
 #include "libyzis/translator.h"
@@ -55,6 +56,11 @@ int main(int argc, char **argv) {
 	mw->show();
 
 	QStringList args = app.arguments();
+
+    YZDebugBackend::instance()->parseRcfile( DEBUGRC_FNAME );
+    YZDebugBackend::instance()->parseArgv( args );
+    yzDebug() << QDateTime::currentDateTime().toString() << endl;
+
 
 	YZView* first = NULL;
 	YZView* v;

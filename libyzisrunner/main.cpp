@@ -41,9 +41,9 @@ int main(int argc, char **argv) {
     for( int i=0; i<argc; i++) {
         slArgv << argv[i];
     }
-    yzDebug() << QDateTime::currentDateTime().toString() << endl;
     YZDebugBackend::instance()->parseRcfile( DEBUGRC_FNAME );
     YZDebugBackend::instance()->parseArgv( slArgv );
+    yzDebug() << QDateTime::currentDateTime().toString() << endl;
 
     setlocale( LC_ALL, "");
     QString l = QString(PREFIX) + "/share/locale";
@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
 			    else if (i < slArgv.count()-1) optArg = slArgv[++i];
 			    initialSendKeys = optArg;
 		    } else {
-			    printf("Unrecognised option: %s\n", slArgv[i] );
+			    printf("Unrecognised option: %s\n", qp(slArgv[i]) );
 			    exit(-1);
 		    }
 	    }
@@ -100,7 +100,7 @@ int main(int argc, char **argv) {
 	    YZSession::me->sendMultipleKeys( initialSendKeys );
 	    o_splash->setBoolean( splash );
     } else {
-	    printf("You must pass at least an yzis command with:\n%s -c <yzis keystroke>\n", slArgv[0] );
+	    printf("You must pass at least an yzis command with:\n%s -c <yzis keystroke>\n", qp(slArgv[0]) );
 	    printf("Example: libyzisrunner -c ':source test_all.lua <ENTER><ESC>:qall!<ENTER>'\n" );
 	    goto proper_exit;
     }

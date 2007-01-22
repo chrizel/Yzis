@@ -16,6 +16,7 @@ private slots:
     void testSprintf();
     void testWhere();
     void testParseArgv();
+    void testParseArgv2();
     void testParseRcFile();
 };
 

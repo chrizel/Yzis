@@ -109,6 +109,23 @@ void TestYZDebugBackend::testParseArgv()
     QCOMPARE( dbe->areaLevel("b"), YZ_DEBUG_LEVEL );
 }
 
+void TestYZDebugBackend::testParseArgv2()
+{
+    YZDebugBackend * dbe = YZDebugBackend::instance();
+    dbe->clearArea();
+    dbe->setDebugLevel( YZ_DEBUG_LEVEL );
+    QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
+    QCOMPARE( dbe->areaLevel("a"), YZ_DEBUG_LEVEL );
+
+    QStringList argv;
+    argv << "nyzis" << "--level=debug" << "--toto" << "titi" << "--area-level=b,warning";
+    dbe->parseArgv( argv );
+    QString s = argv.join("|");
+    QCOMPARE( qp(s), "nyzis|--toto|titi" );
+}
+
+
+
 
 void TestYZDebugBackend::testParseRcFile()
 {

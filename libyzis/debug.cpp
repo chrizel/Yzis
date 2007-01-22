@@ -99,10 +99,20 @@ void YZDebugBackend::setDebugOutput( FILE * file )
 
 void YZDebugBackend::setDebugOutput( const QString& fileName )
 {
-	if ( _output != NULL ) {
-		fclose( _output );
+	if ( _output != NULL) {
+        if (_output != stdout && _output != stderr ) {
+            fclose( _output );
+        }
 		_output = NULL;
 	}
+
+    if (fileName == "stdout") {
+        setDebugOutput( stdout );
+        return;
+    } else if (fileName == "stderr") {
+        setDebugOutput( stderr );
+        return;
+    }
 
 	if ( QFile::exists( fileName ) )
 		QFile::remove ( fileName );
@@ -154,14 +164,7 @@ void YZDebugBackend::parseRcfile(const char * filename)
         QString keyword = lineRe.cap(1).trimmed().toLower();
         QString action  = lineRe.cap(2).trimmed().toLower();
         if (keyword == "output") {
-            if (action == "stderr") {
-                setDebugOutput( stderr );
-            } else if (action == "stdout") {
-                setDebugOutput( stdout );
-            } else {
-                // this is a filename
-                setDebugOutput( action );
-            }
+            setDebugOutput( action );
         } else if (keyword == "level") {
             if (! _levelByName.contains(action)) {
                 err() << "Unknown debug level in " << filename << ": " << action << endl; 
@@ -179,17 +182,29 @@ void YZDebugBackend::parseRcfile(const char * filename)
 }
 
 
-void YZDebugBackend::parseArgv( int & argc, char ** argv )
+void YZDebugBackend::parseArgv(int argc, char ** argv)
+{
+    QStringList argvSl;
+    for( int i=0; i<argc; i++) {
+        argvSl << argv[i];
+    }
+    parseArgv( argvSl );
+}
+
+void YZDebugBackend::parseArgv( QStringList & argv )
 {
     QRegExp reLevelOpt("--level=(\\w+)");
     QRegExp reAreaOpt("--area-level=(\\w+),(\\w+)");
-    for(int i=1; i<argc; i++) {
+    QRegExp reDebugOutput("--debug-output=(\\w+)");
+    dbg() << "argv='" << argv << "'" << endl;  
+    for(int i=argv.count()-1; i>=1; i--) {
         dbg() << "argv[i]='" << argv[i] << "'" << endl;  
         QString myargv=QString(argv[i]).trimmed();
         dbg() << "myargv='" << myargv << "'" << endl;  
         if (reLevelOpt.exactMatch(myargv)) {
             QString sLevel = reLevelOpt.cap(1);
             dbg() << "sLevel='" << sLevel << "'" << endl;
+            argv.removeAt( i );
             if ( _levelByName.contains(sLevel) == false) {
                 err().sprintf("global debug level unrecognised: %s", qp(sLevel));
             } else {
@@ -200,11 +215,17 @@ void YZDebugBackend::parseArgv( int & argc, char ** argv )
             QString sLevel = reAreaOpt.cap(2);
             dbg() << "sLevel='" << sLevel << "'" << endl;
             dbg() << "sArea='" << sArea << "'" << endl;
+            argv.removeAt( i );
             if ( _levelByName.contains(sLevel) == false) {
                 yzError("YZDebugBackend").sprintf("debug level unrecognised for area %s: %s", qp(sArea), qp(sLevel));
             } else {
                 setAreaLevel( sArea, _levelByName[sLevel] );
             }
+        } else if (reDebugOutput.exactMatch(myargv)) {
+            QString sFilename = reDebugOutput.cap(1);
+            dbg() << "sFilename='" << sFilename << "'" << endl;
+            argv.removeAt( i );
+            setDebugOutput( sFilename );
         }
     }
 }

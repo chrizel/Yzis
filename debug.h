@@ -56,7 +56,7 @@ class QStringList;
 /** default file name for controlling which area are enabled or not.
   * \see YZDebugBackend::parseRcfile()
   */
-#define FILENAME_DEBUGRC ".yzdebugrc" 
+#define DEBUGRC_FNAME ".yzdebugrc" 
 
 /** Log system used for debugging.
   *
@@ -210,16 +210,28 @@ public:
 	void parseRcfile();
 
 
-    /** Parses argc/argv to check for debug directives.
+    /** Parses argv to check for debug directives.
+      *
+      * \p argv must be converted into a string list. The argument that
+      * are recognised are removed from the list so that further parsing by 
+      * other modules can happen.
       *
       * Allowed directives are:
       * --level=debug|warning|error|fatal
       * --area-level=[area name],debug|warning|error|fatal
+      * --debug-output=[filename]|stdout|stderr
       *
       * Example:
       * nyzis --level=warning --area-level=LuaEngine,debug --area-level=YZSession,debug
       */
-    void parseArgv(int & argc, char ** argv);
+    void parseArgv( QStringList & argv );
+
+    /** Parses argc/argv to check for debug directives.
+      *
+      * The argument list is not modified. Internally, a QStringList
+      * is build and the previous function is called
+      */
+    void parseArgv(int argc, char ** argv);
 
     /** Returns a string describing the YZDebugBackend current configuration
       */

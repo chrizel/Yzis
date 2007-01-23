@@ -72,6 +72,7 @@ public:
 
 	/**
 	 * Insert text inside a line:
+     *
 	 * \b Arguments:
 	 * - int, the starting column
      * - int, the starting line
@@ -83,6 +84,7 @@ public:
 
 	/**
 	 * Remove the given number of caracters
+     *
 	 * \b Arguments :
 	 * - int, the starting column
      * - int, the starting line
@@ -158,6 +160,7 @@ public:
 
 	/**
 	 * Moves the cursor to the given position
+     *
 	 * \b Arguments: 
      * - int, destination column
      * - int, destination line 
@@ -189,6 +192,7 @@ public:
 
 	/**
 	 * Moves the cursor to the given position on screen
+     *
 	 * \b Arguments: 
      * - int, destination column
      * - int, destination line 
@@ -264,6 +268,7 @@ public:
 
 	/**
 	 * Command to customize syntax highlighting settings
+     *
 	 * \b Arguments : 
      * - string, style
      * - string, type

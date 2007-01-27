@@ -592,8 +592,23 @@ class YZIS_EXPORT YZView {
 		void sendRefreshEvent();
 
 		void removePaintEvent( const YZCursor& from, const YZCursor& to );
+
+		/**
+		 * @arg enable is true, future paint events will be directly applied
+		 * @arg enable is false, paint events will wait a commit to be applied
+		 */
 		void setPaintAutoCommit( bool enable = true );
+
+		/**
+		 * drop all pending paint events and returns into autocommit mode
+		 */
 		void abortPaintEvent();
+
+		/**
+		 * If the number of calls of commitPaintEvent is equals to the number of 
+		 * calls of setPaintAutoCommit(false), pending events are applied, and returns
+		 * in autocommit mode.
+		 */
 		void commitPaintEvent();
 
 		/**

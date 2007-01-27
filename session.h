@@ -60,7 +60,12 @@ namespace Clipboard {
 		Selection
 	};
 };
- 
+
+/** The YZSession is managing all global attributes and method of Yzis. 
+  *
+  * The session is a singleton responsible for everything that is not local to
+  * a YZBuffer or YZView.
+  */
 class YZIS_EXPORT YZSession {
 	public:
 		//-------------------------------------------------------

@@ -2,36 +2,23 @@ Introduction:
 =============
 Yzis is a vi-compatible editor that is composed of a generic vi engine and 
 independant GUI. It is developped in C++ and relies on Qt for the some of the
-background classes (lists and strings mainly). A KDE GUI and a ncurses based
-GUI are available.
+background classes (lists and strings mainly). A KDE, Qt and ncurses gui
+are available.
 
 Requirements:
 =============
--> Qt 3.x or Qt 4.0(strictly superior a beta1 :)
+-> Qt 4.0
 -> Lua 5.x
 -> For kyzis : KDE 3.2.x
 -> For nyzis : NCurses 5 _WITH_ wide characters support (USE unicode on gentoo)
 -> Optionnally : pslib (pslib.sf.net)
 
-Building Yzis:
+Documentation: 
 ==============
-For Kyzis , KDE 3.2 is required.
+There is a developer handbook and a full API documentation avilable at
+http://doc.yzis.org
 
-You probably need to configure --with-lua-includes=... so that it finds your Lua 5.x installation.
-
-For QYzis on windows, you'll need a Qt non commercial license or a Qt
-educational license. You can get a Qt non commercial license for Qt 3.2.1 by
-buying the book "Programming with Qt". When Qt4 is out, things should change
-since Qt4 is GPL for windows.
-
-Libyzisrunner can be build using Miscrosoft Visual Studio (6.0) on windows
-with Qt non commercial.
-
-You can also build yzis with the qmake files but will have to setup a few
-environment variables.
-
-It might be possible to build QYZis on windows using mingw and the free port
-of qt3 to windows or cygwin-qt but we haven't tried yet.
+The developer handbook includes instructions on how to build yzis.
 
 Licenses:
 =========

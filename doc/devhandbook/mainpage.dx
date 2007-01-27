@@ -19,12 +19,22 @@ API documentation links:
 - <a href="../kyzis/index.html">KYzis</a>: KDE frontend
 
 
+\subsection bzzzzzzz Note: problem with the scroll symbol
+
+The ncurses library (only used by nyzis) defines a MACRO scroll .
+This creates big clashes with Qt API as some classes (QWidget for example)
+have methods with this name as well. NYzis handles this using some hack (see
+ viewwidget.h ), but to ease handling this, the word \e scroll should
+just not be used anywhere in libyzis.
+
 We will now explain here how to dig into the Yzis code, architecture
 details and give explanations about the tools we use.
 
 \subpage technologies
 
 \subpage startup_guide
+
+\subpage building_yzis
 
 \subpage arch_overview
 

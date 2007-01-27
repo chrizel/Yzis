@@ -25,7 +25,7 @@
 /* Std */
 #include <ncursesw/ncurses.h>
 // This is an ugly hack preventing the compiler to shock on scroll (used in
-// both Qt API and (as a macro!) in ncurwses
+// both Qt API and (as a macro!) in ncurses
 #define curses_scroll scroll
 #undef scroll
 
@@ -39,6 +39,9 @@
 #include "cursor.h"
 
 class NYZSession;
+
+/** \file viewwidget.h 
+  */
 
 class NYZView : public YZView {
 

@@ -1,7 +1,78 @@
 
 /** \page rendering Rendering engine
 
+The goal of the rendering engine is to display the content of the YZBuffer attached to the current YZView.
 
-To Be Done
+User may configure it through some options like wrap, tabstop, etc...
+
+\section buffer_view Buffer / View separation
+
+\image html buffer_view_separation.png "There may be a big difference between buffer and view coordinates"
+
+\section cursors Cursors
+To handle buffer/view synchronization, we use a YZViewCursor.
+YZViewCursor contains the buffer and view coordinates, and a list of counters indicating different kind of positions (line height, current column, etc...).
+When performing operations on a YZView, you have to create a YZViewCursor and ask the view to move it where you want :
+\li YZView::gotodxdy(YZViewCursor* cursor, int x, int y, bool)    will move cursor at (x,y) on view
+\li YZView::gotodxy(YZViewCursor* cursor, int x, int y, bool)    will move cursor at line y on buffer and column x on view
+\li YZView::gotoxdy(YZViewCursor* cursor, int x, int y, bool)    will move cursor at line y on view and character x on buffer
+\li YZView::gotoxy(YZViewCursor* cursor, int x, int y, bool)    will move cursor at (x,y) on buffer
+
+Please note the last bool argument is always ignored when cursor is not the main cursor.
+
+The main cursor is the cursor refering to the current position of the user in the file.
+
+Moving a cursor may be an heavy operation, especially when the wrap mode is enabled. So to minimize the deplacement of the cursor, it is a good practice to move a cursor which is not so far from the targeted position.
+That's why we provide two methods for creating a new YZViewCursor :
+\li by calling YZViewCursor::YZViewCursor(YZView*), it will create a cursor at (0,0)
+\li by calling YZView::viewCursor(), it will copy the main cursor
+
+In almost every case of use, we perform operations around the main cursor.
+
+
+The following example will calculate the total height of the buffer on view :
+\code
+YZViewCursor myCursor = view->viewCursor();
+view->gotoxy(&myCursor, buffer->textline(buffer->lineCount()-1).length()-1, buffer->lineCount()-1);
+int totalHeight = myCursor->screenY() + 1;
+\endcode
+
+
+\subsection importantcursors Important cursors
+
+\li YZView::mainCursor : the main cursor, the one which is displayed
+\li YZView::scrollCursor : view top-left cursor
+\li YZView::workCursor : pointer to the current moving cursor
+\li YZView::keepCursor : pending position for the main cursor (set with YZView::sendCursor(YZViewCursor*)) : will become the main cursor when YZView::commitPaintEvent will be called.
+
+
+\section lowlevelgoto Low level operations
+
+TODO (drawNextLine, etc, gotox, etc, )
+
+\section drawbuffer The draw buffer
+
+TODO
+
+\section api Updating a view
+
+When modifing buffer, resizing a window, etc.. the view has to be re-synchronized with the buffer.
+
+\subsection autocommit Disable autocommit
+You may want to group update requests (aka paint events) for the view (to avoid flickering) :
+\li YZView::setPaintAutoCommit( bool enable ) : if enable is false, it will wait for an explicit commit
+\li YZView::commitPaintEvent() : commit update requests
+
+It supports recursion :
+\code
+view->setPaintAutoCommit(false);
+//.. do some stuff ..
+   view->setPaintAutoCommit(false);
+   //.. other stuff ..
+   view->commitPaintEvent(); // nothing is commited
+view->commitPaintEvent(); // changes are applied
+\endcode
+
+TODO : sendPaintEvent, buffer operations auto update the views
 
 */

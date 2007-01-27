@@ -11,37 +11,45 @@ cmake is a replacement for the autotools ( autoconf/automake and such). We
 decided to switch to cmake because the autotools are evil, and, moreover,
 KDE officially switched to cmake. Yzis is quite close to kde, and follows
 KDE decisions on this topic.
-You can find more information about cmake on \url http://www.cmake.org .
+You can find more information about cmake on http://www.cmake.org .
 Yzis requires cmake version 2.4.1 or newer.
 
 \section subversion Subversion
 Subversion is a Software Configuration Management(SCM), or Source Control,
 or Revision Control, or Version Control System (VCS). That is, subversion
 is used to handle source files. It keeps the history of the changes to the
-file and help the team to share the source.
+file and help the team to share the source. 
 Check out the subversion book to learn more about this tool.
 
 Useful links:
-- \url http://en.wikipedia.org/wiki/SCM
-- \url http://en.wikipedia.org/wiki/Revision\_control
-- \url http://subversion.tigris.org/
-- \url http://svnbook.red-bean.com/
+- http://en.wikipedia.org/wiki/SCM
+- http://en.wikipedia.org/wiki/Revision_control
+- http://subversion.tigris.org/
+- http://svnbook.red-bean.com/
 
 \section Doxygen Doxygen
 Doxygen is a tool which generates documentation from text inserted in the
 code itself. This typically used to describe APIs.
-See \url http://www.doxygen.org.
+See http://www.doxygen.org.
+
+We also use Doxygen to write this very handbook.
 
 \section qt Qt
 Yzis is built on top of the \e Qt C++ library, which provides some
 generic useful classes and some optional GUI widgets. \e Qt  is most
-widely known as the basis for \e KDE .
-See \url http://www.trolltech.com for more details.
+widely known as the basis for \e KDE . The version of Qt separates the library
+into multiple components: QtCore, QtGui, QtXml, ... We use QtCore for libyzis
+and QtGui for QYzis.
+
+See http://www.trolltech.com for more details, and especially
+http://doc.trolltech.com/
 
 \section lua Lua
 Lua is a small footprint script language designed to be easily embedded in
 applications. Yzis uses \e lua for its main scripting language. See
-\url http://www.lua.org.
+http://www.lua.org.
+
+We might move to a more advanced scripting framework in the future.
 
 */
 

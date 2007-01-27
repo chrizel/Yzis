@@ -13,10 +13,10 @@ There is also an API documentation available for the yzis engine and each of
 its frontend. The documentation contains information about each class, each function, each variable and is extensively referenced by the developer handbook.
 
 API documentation links:
-- <a href="../libyzis/index.html">libyzis</a>: yzis engine
-- <a href="../nyzis/index.html">NYzis</a>: ncurses frontend
-- <a href="../qyzis/index.html">QYzis</a>: Qt frontend
-- <a href="../kyzis/index.html">KYzis</a>: KDE frontend
+- <a href="libyzis/index.html">libyzis</a>: yzis engine
+- <a href="nyzis/index.html">NYzis</a>: ncurses frontend
+- <a href="qyzis/index.html">QYzis</a>: Qt frontend
+- <a href="kyzis/index.html">KYzis</a>: KDE frontend
 
 
 \subsection bzzzzzzz Note: problem with the scroll symbol

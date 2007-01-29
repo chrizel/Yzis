@@ -21,20 +21,15 @@
 #include "luafuncs.h"
 #include "luaregexp.h"
 #include "debug.h"
-#include "view.h"
 #include "buffer.h"
-#include "action.h"
-#include "cursor.h"
 #include "session.h"
 #include "yzis.h"
-#include "mapping.h"
 #include "portability.h"
-#include "internal_options.h"
-#include "events.h"
-#include "mode_ex.h"
 
 #include <QDir>
 
+
+class YZView;
 
 /*
  * TODO:

@@ -37,6 +37,11 @@
 #include <QStringList>
 #include <QFile>
 
+#ifdef YZIS_WIN32_GCC
+// to use OutputDebugString
+#include <windows.h>
+#endif
+
 #define dbg()    yzDebug("YZDebugBackend")
 #define err()    yzError("YZDebugBackend")
 
@@ -62,6 +67,12 @@ YZDebugBackend::~YZDebugBackend() {
 
 void YZDebugBackend::init()
 {
+    // our message handler does not manage to display all messages. So,
+    // it is better left off disabled at the moment. The last one gets lost
+    // and the last one is the most interesting one.
+
+    // qInstallMsgHandler( yzisMsgHandler );
+
 #ifdef DEBUG
 	_level = YZ_DEBUG_LEVEL;
 #else
@@ -94,6 +105,7 @@ void YZDebugBackend::setDebugOutput( FILE * file )
 		flush( YZ_WARNING_LEVEL, 0, "YZDebugBackend: setting output to a NULL file descriptor\n" );
 		return;
 	}
+    setvbuf( file, NULL, _IONBF, 0 ); // disable buffering
 	_output = file;
 }
 
@@ -116,7 +128,10 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 
 	if ( QFile::exists( fileName ) )
 		QFile::remove ( fileName );
-	setDebugOutput( fopen( fileName.toLocal8Bit(), "w" ) );
+
+    FILE * f = fopen( fileName.toLocal8Bit(), "w" );
+	setDebugOutput( f );
+
 #ifndef YZIS_WIN32_GCC
 	struct stat buf;
 	int i = lstat( fileName.toLocal8Bit(), &buf );
@@ -134,12 +149,15 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 
 void YZDebugBackend::flush( int level, const QString& area, const char * data )
 {
+    //printf("flush: arealevel=%d, level=%d, area=%s, data=%s\n", areaLevel(area), level, qp(area), data );
 	if (level < areaLevel(area)) return;
 	fprintf( _output, "%s", data );
 	fflush( _output );
+#ifdef YZIS_WIN32_GCC
+    _flushall();
+    OutputDebugString( data );
+#endif
 }
-
-
 
 void YZDebugBackend::parseRcfile(const char * filename)
 {
@@ -261,6 +279,37 @@ QString YZDebugBackend::toString()
         s += QString("%1:%2\n").arg(area).arg(_nameByLevel[_areaLevel.value(area)]);
     }
     return s;
+}
+
+void YZDebugBackend::yzisMsgHandler( QtMsgType msgType, const char * msg )
+{
+    // It does not seem to be working. We do not display the last message
+    // send by Qt when a qFatal() or Q_ASSERT() failure occurs.
+    // So, I recommend to disable it.
+
+    /*
+    printf("========== Qt yzisMsgHandler called!\n");
+    printf("========== type %d\n", (int) msgType );
+    printf("========== msg %s\n", msg );
+    dbg() << HERE() << msg << endl;
+    */
+    switch (msgType) {
+        case QtDebugMsg:
+            yzDebug("Qt") << msg << endl;
+            break;
+        case QtWarningMsg:
+            yzWarning("Qt") << msg << endl;
+            break;
+        case QtCriticalMsg:
+            yzError("Qt") << msg << endl;
+            break;
+        case QtFatalMsg:
+            yzFatal("Qt") << msg << endl;
+            break;
+        default:
+            yzDebug("Qt") << msg << endl;
+            break;
+    }
 }
 
 // ================================================================

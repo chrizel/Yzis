@@ -237,6 +237,13 @@ public:
       */
     QString toString();
 
+    /** A message handler for yzis to capture the error messages of Qt.
+      *
+      * The messages of Qt are printed on yzis log system, in the area
+      * Qt, with the appropriate debugging level.
+      */
+    static void yzisMsgHandler( QtMsgType msgType, const char * text );
+
 private:
     /** Initialise the YZDebugBackend(), set a few internal variables
       * (dictionaries, ...)

@@ -113,22 +113,22 @@ void YZYzisinfo::readYzisinfo() {
 			if ( list[0] == "hlsearch" ) {
 				if ( list[1] == "on" ) {
 					bool on = true;
-					YZSession::me->getOptions()->setOptionFromString( &on, "hlsearch" );
+					YZSession::self()->getOptions()->setOptionFromString( &on, "hlsearch" );
 				} else {
 					bool on = false; 
-					YZSession::me->getOptions()->setOptionFromString( &on, "hlsearch" );
+					YZSession::self()->getOptions()->setOptionFromString( &on, "hlsearch" );
 				}
 			}
 			
 			if ( list[0].startsWith(":") || list[0] == "command_list" ) {
-				YZModeEx *ex = YZSession::me->getExPool();
+				YZModeEx *ex = YZSession::self()->getExPool();
 				YZHistory *history = ex->getHistory();
 				
 				history->addEntry( (list.join(" ")).remove(0, 1) );
 			}
 			
 			if ( list[0].startsWith("?") || list[0] == "search_list" ) {
-				YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::me->getModes()[ YZMode::MODE_SEARCH ]);
+				YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::self()->getModes()[ YZMode::MODE_SEARCH ]);
 				YZHistory *history = search->getHistory();
 				
 				history->addEntry( (list.join(" ")).remove(0, 1) );
@@ -170,7 +170,7 @@ void YZYzisinfo::readYzisinfo() {
 					yzDebug() << "<" << contents.at(i) << ">" << endl;
 				}
 				
-				YZSession::me->setRegister( key, contents );	
+				YZSession::self()->setRegister( key, contents );	
 			}
 		}
 		
@@ -244,7 +244,7 @@ void YZYzisinfo::writeYzisinfo() {
 		
 		write << "# Set hlsearch on or off:" << endl;
 		write << "hlsearch ";
-		if ( YZSession::me->getBooleanOption( "hlsearch") ) {
+		if ( YZSession::self()->getBooleanOption( "hlsearch") ) {
 			write << "on" << endl;
 		} else {
 			write << "off" << endl;
@@ -280,7 +280,7 @@ void YZYzisinfo::writeYzisinfo() {
  */
  
 void YZYzisinfo::saveExHistory( QTextStream & write ) {
-	YZHistory *history = YZSession::me->getExPool()->getHistory();
+	YZHistory *history = YZSession::self()->getExPool()->getHistory();
 	history->writeToStream( write );
 }
 
@@ -289,7 +289,7 @@ void YZYzisinfo::saveExHistory( QTextStream & write ) {
  */
  
 void YZYzisinfo::saveSearchHistory( QTextStream & write ) {
-	YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::me->getModes()[ YZMode::MODE_SEARCH ] );
+	YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::self()->getModes()[ YZMode::MODE_SEARCH ] );
 	YZHistory *history = search->getHistory();
 	history->writeToStream( write );
 }
@@ -349,10 +349,10 @@ void YZYzisinfo::saveJumpList( QTextStream & write ) {
  
 void YZYzisinfo::saveRegistersList( QTextStream & write ) {
 
-	QList<QChar> list = YZSession::me->getRegisters();	
+	QList<QChar> list = YZSession::self()->getRegisters();	
 	
 	for ( int i = 0; i < list.size(); ++i ) {
-		QStringList contents = YZSession::me->getRegister( list.at(i) );
+		QStringList contents = YZSession::self()->getRegister( list.at(i) );
 		
 		write << "\"" << list.at(i) << " ";
 		
@@ -402,7 +402,7 @@ YZCursor * YZYzisinfo::searchPosition( const YZBuffer */*buffer*/) {
 		}*/
 	}
             
-	return new YZCursor( YZSession::me->currentView()->getBufferCursor() );
+	return new YZCursor( YZSession::self()->currentView()->getBufferCursor() );
 }
 
 const YZCursor * YZYzisinfo::previousJumpPosition() {
@@ -423,7 +423,7 @@ const YZCursor * YZYzisinfo::previousJumpPosition() {
 		
 		--mCurrentJumpListItem;
 	
-		if ( mJumpList[mCurrentJumpListItem]->filename() == YZSession::me->currentView()->myBuffer()->fileName() ) {
+		if ( mJumpList[mCurrentJumpListItem]->filename() == YZSession::self()->currentView()->myBuffer()->fileName() ) {
 			found = true;
 			break;
 		}
@@ -432,7 +432,7 @@ const YZCursor * YZYzisinfo::previousJumpPosition() {
 	if ( found ) {
 		return &mJumpList[mCurrentJumpListItem]->position();
 	} else {
-		return &YZSession::me->currentView()->getCursor();
+		return &YZSession::self()->currentView()->getCursor();
 	}
 }
 

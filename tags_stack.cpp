@@ -36,8 +36,8 @@
 
 static YZYzisinfoJumpListRecord getRecord()
 {
-	YZBuffer *buffer = YZSession::me->currentView()->myBuffer();
-	const YZCursor &cursor = YZSession::me->currentView()->getCursor();
+	YZBuffer *buffer = YZSession::self()->currentView()->myBuffer();
+	const YZCursor &cursor = YZSession::self()->currentView()->getCursor();
 	return YZYzisinfoJumpListRecord( buffer->fileName(), cursor.x(), cursor.y() );
 }
 

@@ -151,9 +151,9 @@ void YZAction::copyLine( YZView* , const YZCursor& pos, int len, const QList<QCh
 		text += line + "\n";
 	}
 	buff << QString::null;
-	YZSession::me->setClipboardText( text, Clipboard::Clipboard );
+	YZSession::self()->setClipboardText( text, Clipboard::Clipboard );
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
-		YZSession::me->setRegister( reg.at(ab), buff );
+		YZSession::self()->setRegister( reg.at(ab), buff );
 }
 
 
@@ -182,11 +182,11 @@ void YZAction::copyArea( YZView* , const YZInterval& i, const QList<QChar> &reg 
 			buff << mBuffer->textline( eY ).left( eX );
 	}
 
-	YZSession::me->setClipboardText( mBuffer->getText( i ).join("\n"), Clipboard::Clipboard );
+	YZSession::self()->setClipboardText( mBuffer->getText( i ).join("\n"), Clipboard::Clipboard );
 	
 	yzDebug() << "Copied " << buff << endl;
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
-		YZSession::me->setRegister( reg.at(ab), buff );
+		YZSession::self()->setRegister( reg.at(ab), buff );
 }
 
 void YZAction::replaceArea( YZView* /*pView*/, const YZInterval& i, const QStringList& text ) {
@@ -283,7 +283,7 @@ void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QList<QChar
 	mBuffer->replaceLine( bL + eL, bY );
 
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
-		YZSession::me->setRegister( reg.at(ab), buff );
+		YZSession::self()->setRegister( reg.at(ab), buff );
 
 	pView->gotoxyAndStick( bX, bY );
 

@@ -234,7 +234,7 @@ void  YZBuffer::appendLine(const QString &l) {
 		delete l;
 //		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
-	YZSession::me->search()->highlightLine( this, d->text->count() - 1 );
+	YZSession::self()->search()->highlightLine( this, d->text->count() - 1 );
 
 	setChanged( true );
 }
@@ -256,8 +256,8 @@ void  YZBuffer::insertLine(const QString &l, int line) {
 		;
 	d->text->insert(it, new YZLine( l ));
 
-	YZSession::me->search()->shiftHighlight( this, line, 1 );
-	YZSession::me->search()->highlightLine( this, line );
+	YZSession::self()->search()->shiftHighlight( this, line, 1 );
+	YZSession::self()->search()->highlightLine( this, line );
 	updateHL( line );
 
 	setChanged( true );
@@ -309,8 +309,8 @@ void YZBuffer::insertNewLine( int col, int line ) {
 		;
 	d->text->insert(it, new YZLine( newline ));
 
-	YZSession::me->search()->shiftHighlight( this, line+1, 1 );
-	YZSession::me->search()->highlightLine( this, line+1 );
+	YZSession::self()->search()->shiftHighlight( this, line+1, 1 );
+	YZSession::self()->search()->highlightLine( this, line+1 );
 	//replace old line
 	setTextline(line,l.left( col ));
 	updateHL( line + 1 );
@@ -336,8 +336,8 @@ void YZBuffer::deleteLine( int line ) {
 		delete (*it);
 		d->text->erase(it);
 
-		YZSession::me->search()->shiftHighlight( this, line+1, -1 );
-		YZSession::me->search()->highlightLine( this, line );
+		YZSession::self()->search()->shiftHighlight( this, line+1, -1 );
+		YZSession::self()->search()->highlightLine( this, line );
 		updateHL( line );
 	} else {
 		d->undoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, "", 0, line );
@@ -398,7 +398,7 @@ void YZBuffer::setTextline( int line , const QString & l) {
 		}
 	}
 	updateHL( line );
-	YZSession::me->search()->highlightLine( this, line );
+	YZSession::self()->search()->highlightLine( this, line );
 	setChanged( true );
 }
 
@@ -562,7 +562,7 @@ void YZBuffer::load(const QString& file) {
 			appendLine( stream.readLine() );
 		fl.close();
 	} else if (QFile::exists(d->path)) {
-		YZSession::me->popupMessage(_("Failed opening file %1 for reading : %2").arg(d->path).arg(fl.errorString()));
+		YZSession::self()->popupMessage(_("Failed opening file %1 for reading : %2").arg(d->path).arg(fl.errorString()));
 	}
 	if ( ! d->text->count() )
 		appendLine("");
@@ -573,7 +573,7 @@ void YZBuffer::load(const QString& file) {
 		struct stat buf;
 		int i = stat( d->path.toLocal8Bit(), &buf );
 		if ( i != -1 && S_ISREG( buf.st_mode ) && CHECK_GETEUID( buf.st_uid )  ) {
-			if ( YZSession::me->promptYesNo(_("Recover"),_("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
+			if ( YZSession::self()->promptYesNo(_("Recover"),_("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
 				if ( d->swapFile->recover() )
 					setChanged( true );
 			}
@@ -596,7 +596,7 @@ bool YZBuffer::save() {
 		// FIXME: can this be moved somewhere higher?
 		// having the low level buffer open popups
 		// seems wrong to me
-		YZView *view = YZSession::me->findViewByBuffer( this );
+		YZView *view = YZSession::self()->findViewByBuffer( this );
 		if ( !view || !view->popupFileSaveAs() )
 			return false; //dont try to save
 	}
@@ -629,7 +629,7 @@ bool YZBuffer::save() {
 		}
 		file.close();
 	} else {
-		YZSession::me->popupMessage(_("Failed opening file %1 for writing : %2").arg(d->path).arg(file.errorString()));
+		YZSession::self()->popupMessage(_("Failed opening file %1 for writing : %2").arg(d->path).arg(file.errorString()));
 		d->isHLUpdating = true;
 		return false;
 	}
@@ -653,8 +653,8 @@ bool YZBuffer::save() {
 void YZBuffer::saveYzisInfo( YZView* view ) {
 	YZASSERT( view->myBuffer() == this );
 	/* save buffer cursor */
-	YZSession::me->getYzisinfo()->updateStartPosition( this, view->getBufferCursor().x(), view->getBufferCursor().y() );
-	YZSession::me->getYzisinfo()->writeYzisinfo();
+	YZSession::self()->getYzisinfo()->updateStartPosition( this, view->getBufferCursor().x(), view->getBufferCursor().y() );
+	YZSession::self()->getYzisinfo()->writeYzisinfo();
 }
 
 YZCursor YZBuffer::getStartPosition( const QString& filename, bool parseFilename ) {
@@ -667,8 +667,8 @@ YZCursor YZBuffer::getStartPosition( const QString& filename, bool parseFilename
 	if ( infilename_pos.y() >= 0 ) {
 		return infilename_pos;
 	} else {
-		YZSession::me->getYzisinfo()->readYzisinfo();
-		YZCursor* tmp = YZSession::me->getYzisinfo()->startPosition( r_filename );
+		YZSession::self()->getYzisinfo()->readYzisinfo();
+		YZCursor* tmp = YZSession::self()->getYzisinfo()->startPosition( r_filename );
 		if ( tmp ) {
 			return *tmp;
 		} else {
@@ -791,7 +791,7 @@ void YZBuffer::setPath( const QString& _path ) {
 	d->path = QFileInfo( _path.trimmed() ).absoluteFilePath();
 	
 	if ( oldPath != QString::null ) {
-		YZSession::me->getOptions()->updateOptions(oldPath, d->path);
+		YZSession::self()->getOptions()->updateOptions(oldPath, d->path);
 	}
 	
 	// update swap file too
@@ -895,31 +895,31 @@ QString YZBuffer::getWordAt( const YZCursor& at ) const {
 }
 
 int YZBuffer::getLocalIntegerOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( d->path+"\\"+option ) ) //find the local one ?
-		return YZSession::me->getOptions()->readIntegerOption( d->path+"\\"+option, 0 );
+	if ( YZSession::self()->getOptions()->hasOption( d->path+"\\"+option ) ) //find the local one ?
+		return YZSession::self()->getOptions()->readIntegerOption( d->path+"\\"+option, 0 );
 	else
-		return YZSession::me->getOptions()->readIntegerOption( "Global\\" + option, 0 ); // else give the global default if any
+		return YZSession::self()->getOptions()->readIntegerOption( "Global\\" + option, 0 ); // else give the global default if any
 }
 
 bool YZBuffer::getLocalBooleanOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( d->path+"\\"+option ) )
-		return YZSession::me->getOptions()->readBooleanOption( d->path+"\\"+option, false );
+	if ( YZSession::self()->getOptions()->hasOption( d->path+"\\"+option ) )
+		return YZSession::self()->getOptions()->readBooleanOption( d->path+"\\"+option, false );
 	else
-		return YZSession::me->getOptions()->readBooleanOption( "Global\\" + option, false );
+		return YZSession::self()->getOptions()->readBooleanOption( "Global\\" + option, false );
 }
 
 QString YZBuffer::getLocalStringOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( d->path+"\\"+option ) )
-		return YZSession::me->getOptions()->readStringOption( d->path+"\\"+option );
+	if ( YZSession::self()->getOptions()->hasOption( d->path+"\\"+option ) )
+		return YZSession::self()->getOptions()->readStringOption( d->path+"\\"+option );
 	else
-		return YZSession::me->getOptions()->readStringOption( "Global\\" + option );
+		return YZSession::self()->getOptions()->readStringOption( "Global\\" + option );
 }
 
 QStringList YZBuffer::getLocalListOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( d->path+"\\"+option ) )
-		return YZSession::me->getOptions()->readListOption( d->path+"\\"+option, QStringList() );
+	if ( YZSession::self()->getOptions()->hasOption( d->path+"\\"+option ) )
+		return YZSession::self()->getOptions()->readListOption( d->path+"\\"+option, QStringList() );
 	else
-		return YZSession::me->getOptions()->readListOption( "Global\\" + option, QStringList() );
+		return YZSession::self()->getOptions()->readListOption( "Global\\" + option, QStringList() );
 }
 
 bool YZBuffer::updateHL( int line ) {
@@ -931,7 +931,7 @@ bool YZBuffer::updateHL( int line ) {
 	YZLine* yl = NULL;
 	int maxLine = lineCount();
 /*	for ( int i = hlLine; i < maxLine; i++ ) {
-		YZSession::me->search()->highlightLine( this, i );
+		YZSession::self()->search()->highlightLine( this, i );
 	}*/
 	if ( d->highlight == 0L ) return false;
 	while ( ctxChanged && hlLine < maxLine ) {

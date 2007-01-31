@@ -48,7 +48,7 @@ YZModeVisual::~YZModeVisual() {
 
 void YZModeVisual::toClipboard( YZView* mView ) {
 	YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-	YZSession::me->setClipboardText( mView->myBuffer()->getText( interval ).join( "\n" ), Clipboard::Selection );
+	YZSession::self()->setClipboardText( mView->myBuffer()->getText( interval ).join( "\n" ), Clipboard::Selection );
 }
 
 YZInterval YZModeVisual::buildBufferInterval( YZView*, const YZViewCursor& from, const YZViewCursor& to ) {

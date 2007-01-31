@@ -214,7 +214,7 @@ QString YZLuaEngine::source( const QString& filename ) {
 	}
 
 	if (found.isEmpty()) {
-        YZSession::me->popupMessage(_("The file %1 could not be found in standard directories" ).arg( filename ));
+        YZSession::self()->popupMessage(_("The file %1 could not be found in standard directories" ).arg( filename ));
 		return QString::null;
 	}
 
@@ -261,7 +261,7 @@ bool YZLuaEngine::yzpcall( int nbArg, int nbReturn, const QString & context ) {
     QByteArray err = luaErrorMsg.toLatin1();
     printf("pCall error: %s\n", err.data() );
 
-	YZSession::me->popupMessage(context + "\n" + luaErrorMsg );
+	YZSession::self()->popupMessage(context + "\n" + luaErrorMsg );
 	return false;
 }
 

@@ -73,7 +73,7 @@ void YZSwapFile::flush() {
 		}
 		f.close();
 	} else {
-		YZSession::me->popupMessage(_( "Warning, the swapfile could not be opened maybe due to restrictive permissions." ));
+		YZSession::self()->popupMessage(_( "Warning, the swapfile could not be opened maybe due to restrictive permissions." ));
 		mNotResetted = true;//dont try again ...
 	}
 	mHistory.clear(); //clear previous history
@@ -119,7 +119,7 @@ void YZSwapFile::init() {
 		stream << endl << endl << endl;
 		f.close();
 	} else {
-		YZSession::me->popupMessage(_( "Warning, the swapfile could not be created maybe due to restrictive permissions." ));
+		YZSession::self()->popupMessage(_( "Warning, the swapfile could not be created maybe due to restrictive permissions." ));
 		mNotResetted = true;
 		return;
 	}
@@ -143,7 +143,7 @@ bool YZSwapFile::recover() {
 		}
 		f.close();
 	} else {
-		YZSession::me->popupMessage(_( "The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files." ));
+		YZSession::self()->popupMessage(_( "The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files." ));
 		mRecovering=false;
 		return false;
 	}

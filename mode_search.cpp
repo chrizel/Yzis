@@ -48,20 +48,20 @@ YZModeSearch::~YZModeSearch() {
 	delete incSearchResult;
 }
 void YZModeSearch::enter( YZView* view ) {
-	YZSession::me->setFocusCommandLine();
+	YZSession::self()->setFocusCommandLine();
 	view->setCommandLineText( "" );
 	*mSearchBegin = view->getBufferCursor();
 }
 void YZModeSearch::leave( YZView* view ) {
 	view->setCommandLineText( "" );
-	YZSession::me->setFocusMainWindow();
+	YZSession::self()->setFocusMainWindow();
 }
 
 YZCursor YZModeSearch::replaySearch( YZView* view, bool* found ) {
-	return YZSession::me->search()->replayForward( view->myBuffer(), found, view->getBufferCursor() );
+	return YZSession::self()->search()->replayForward( view->myBuffer(), found, view->getBufferCursor() );
 }
 YZCursor YZModeSearch::search( YZView* view, const QString& s, bool* found ) {
-	return YZSession::me->search()->forward( view->myBuffer(), s, found, view->getBufferCursor() );
+	return YZSession::self()->search()->forward( view->myBuffer(), s, found, view->getBufferCursor() );
 }
 YZCursor YZModeSearch::search( YZView* view, const QString& s, const YZCursor& begin, int* matchlength, bool* found ) {
 	YZCursor end( 0, view->myBuffer()->lineCount() - 1 );
@@ -161,12 +161,12 @@ YZModeSearchBackward::~YZModeSearchBackward() {
 }
 
 YZCursor YZModeSearchBackward::replaySearch( YZView* view, bool * found ) {
-	return YZSession::me->search()->replayBackward( view->myBuffer(), found, view->getBufferCursor() );
+	return YZSession::self()->search()->replayBackward( view->myBuffer(), found, view->getBufferCursor() );
 }
 YZCursor YZModeSearchBackward::search( YZView* view, const QString& s, bool* found ) {
 	YZCursor buffer = view->getBufferCursor();
 	view->gotoxy( buffer.x() + 1, buffer.y(), false );
-	return YZSession::me->search()->backward( view->myBuffer(), s, found, view->getBufferCursor() );
+	return YZSession::self()->search()->backward( view->myBuffer(), s, found, view->getBufferCursor() );
 }
 YZCursor YZModeSearchBackward::search( YZView* view, const QString& s, const YZCursor& begin, int* matchlength, bool* found ) {
 	YZCursor end( 0, 0 );

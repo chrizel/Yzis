@@ -99,9 +99,16 @@ class YZIS_EXPORT YZExRange {
 /**
   * Command in exution mode ( as ":w" or ":q")
   */
-class YZIS_EXPORT YZExCommand {
-
+class YZIS_EXPORT YZExCommand
+{
 	public :
+		/**
+		  * Constructor. It creates a commands
+		  * @arg input is the string that is to be matched to recognise this command
+		  * @arg pm is the ( static ) function that gets executed when this command is entered.
+		  * @arg longName is a list of names for this command. (to be displayed to the user )
+		  * @arg word is.. ?? ( used in some regexp thinguy )
+		 */
 		YZExCommand( const QString& input, ExPoolMethod pm, const QStringList& longName = QStringList(), bool word = true );
 		virtual ~YZExCommand() { }
 

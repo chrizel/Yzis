@@ -68,24 +68,12 @@ namespace Clipboard {
   */
 class YZIS_EXPORT YZSession {
 	public:
-		//-------------------------------------------------------
-		// ----------------- Constructor/Destructor and Name
-		//-------------------------------------------------------
-	
 		/**
-		 * Constructor. Give a session name to identify/save/load sessions.
-		 * 
-		 * @param _sessionName The global session name. Default is "Yzis"
+		 *  @return one and the only instance of YZSession
+		 *  @see setInstance
 		 */
-		 
-		YZSession( const QString& _sessionName="Yzis" );
+		static YZSession* self() { return mInstance; }
 		
-		/**
-		 * Destructor
-		 */
-		 
-		virtual ~YZSession();
-
 		/**
 		 * Returns the session name
 		 * 
@@ -450,8 +438,52 @@ class YZIS_EXPORT YZSession {
 		 * Remove a view from the view list
 		 */
 		void removeView( YZView *view );
-
+	protected:
+		/**
+		 * Constructor. Protected, because YZSession is a singleton.
+		 * Set a session name to identify/save/load sessions.
+		 * 
+		 * @param _sessionName The global session name. Default is "Yzis"
+		 */
+		YZSession(const QString& _sessionName="Yzis");
+		/**
+		 * Destructor. Protected, because YZSession is a singleton.
+		 */
+		virtual ~YZSession();
+		/**
+		 *  Sets the session instance object.
+		 *  It MUST be called from concrete class which inherits from YZSession.
+		 *
+		 *  Example from QYZisSession:
+		 *  \code
+		 *  void QYZisSession::createInstance() // static function
+		 *  {
+		 *  	static QYZisSession instance;
+		 *  	setInstance(&instance);
+		 *  }
+		 *  \endcode
+		 *
+		 *  And then QYZisSession::createInstance() is called from main
+		 *  before any other libyzis object gets created
+		 *
+		 *  @see QYZisSession::createInstance()
+		 *  @see NYZSession::createInstance()
+		 */
+		static void setInstance(YZSession* instance) { mInstance = instance; }
 	private:
+		/**
+		 *  Copy constructor. Disable copy by declaring it as private
+		 */
+		YZSession(const YZSession&);
+		/**
+		 *  Copy operator. Disable copy by declaring it as private
+		 */
+		YZSession& operator=(const YZSession&);
+		/**
+		 *  Single instance of YZSession
+		 */
+		static YZSession* mInstance;
+
 		QString mSessionName;
 		YZView* mCurView;
 		YZBuffer* mCurBuffer;
@@ -476,9 +508,6 @@ class YZIS_EXPORT YZSession {
 		YZRegisters *mRegisters;
 		YZYzisinfo* mYzisinfo;
 		YZTagStack *mTagStack;
-		
-	public:
-		static YZSession *me;
 };
 
 #endif /* YZ_SESSION_H */

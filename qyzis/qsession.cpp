@@ -46,27 +46,25 @@
 #include "buffer.h"
 #include "debug.h"
 
-QYZisSession* QYZisSession::m_instance = NULL;
+void QYZisSession::createInstance()
+{
+	// such allocation (i.e. not "new QYZisSession") will ensure that
+	// "instance" object will be properly and automatically deleted 
+	// when program exits
+	static QYZisSession instance;
+	setInstance(&instance);
+}
 
 QYZisSession::QYZisSession() :
 		YZSession("qyzis"),
 		lastView(0),
 		m_viewParent(0)
 {
-	m_instance = this;
 	guiStarted();
 }
 
 QYZisSession::~QYZisSession() {
 	yzDebug() << "QYZisSession gets destroyed !" << endl;
-	m_instance = NULL;
-}
-
-QYZisSession* QYZisSession::self() {
-	if ( !m_instance ) {
-		new QYZisSession();
-	}
-	return m_instance;
 }
 
 void QYZisSession::setClipboardText( const QString& text, Clipboard::Mode mode ) {

@@ -56,9 +56,9 @@ set(yzis_LIB_SRCS
 )
 
 #add files needing MOC here :)
-set(yzis_LIB_MOCS 
-   session.h
-)
+#set(yzis_LIB_MOCS 
+#   fileneedingmoc.cpp
+#)
 
 qt4_wrap_cpp(yzis_LIB_MOC_SRCS ${yzis_LIB_MOCS})
 

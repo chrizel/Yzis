@@ -45,9 +45,9 @@
 
 #include "tags_stack.h"
 
-YZSession *YZSession::me = 0;
+YZSession* YZSession::mInstance = 0;
 
-YZSession::YZSession( const QString& _sessionName ) {
+YZSession::YZSession(const QString& _sessionName) {
 	YZIS_SAFE_MODE {
 		yzDebug() << "Yzis SAFE MODE enabled." << endl;
 	}
@@ -60,7 +60,6 @@ YZSession::YZSession( const QString& _sessionName ) {
 	mSessionName = _sessionName;
 	mCurView = 0;
 	mCurBuffer = 0;
-	me = this;
 	events = new YZEvents();
 	mSchemaManager = new YzisSchemaManager();
 	mOptions = new YZInternalOptionPool();
@@ -239,12 +238,12 @@ bool YZSession::exitRequest( int errorCode ) {
 	/*
 	mBuffers.clear();
 	
-   YZSession::me->getYzisinfo()->updateStartPosition( 
+	getYzisinfo()->updateStartPosition( 
                   mCurBuffer->fileName(),
-                  (YZSession::me->currentView())->getCursor()->x(),
-                  (YZSession::me->currentView())->getCursor()->y() );
+                  (currentView())->getCursor()->x(),
+                  (currentView())->getCursor()->y() );
                                        
-	YZSession::me->getYzisinfo()->writeYzisinfo();*/
+	getYzisinfo()->writeYzisinfo();*/
                                           
 	return quit( errorCode );
 }
@@ -253,7 +252,7 @@ void YZSession::sendMultipleKeys ( const QString& text) {
 //	QStringList list = QStringList::split("<ENTER>", text);
 /*	QStringList::Iterator it = list.begin(), end = list.end();
 	for (; it != end; ++it) {*/
-		YZView* cView = YZSession::me->currentView();
+		YZView* cView = currentView();
 		cView->sendMultipleKey(/* *it + "<ENTER>" */ text);
 		QCoreApplication::instance()->processEvents();
 /*	}*/
@@ -328,19 +327,19 @@ void YZSession::removeView( YZView *view ) {
 }
 		
 int YZSession::getIntegerOption( const QString& option ) {
-	return YZSession::me->getOptions()->readIntegerOption( option );
+	return YZSession::self()->getOptions()->readIntegerOption( option );
 }
 
 bool YZSession::getBooleanOption( const QString& option ) {
-	return YZSession::me->getOptions()->readBooleanOption( option );
+	return YZSession::self()->getOptions()->readBooleanOption( option );
 }
 
 QString YZSession::getStringOption( const QString& option ) {
-	return YZSession::me->getOptions()->readStringOption( option );
+	return YZSession::self()->getOptions()->readStringOption( option );
 }
 
 QStringList YZSession::getListOption( const QString& option ) {
-	return YZSession::me->getOptions()->readListOption( option );
+	return YZSession::self()->getOptions()->readListOption( option );
 }
 
 void YZSession::eventConnect( const QString& event, const QString& function ) {

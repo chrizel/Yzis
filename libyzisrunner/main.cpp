@@ -49,8 +49,8 @@ int main(int argc, char **argv) {
     QString l = QString(PREFIX) + "/share/locale";
 
     new NoGuiSession();
-    YZSession::me->getOptions()->setGroup("Global");
-    YZOptionValue* o_splash = YZSession::me->getOptions()->getOption("blocksplash");
+    YZSession::self()->getOptions()->setGroup("Global");
+    YZOptionValue* o_splash = YZSession::self()->getOptions()->getOption("blocksplash");
     bool splash = o_splash->boolean();
     QString initialSendKeys;
 
@@ -65,7 +65,7 @@ int main(int argc, char **argv) {
 	    if ( '-' != slArgv[i][0] ) {
 		    hasatleastone = true;
 		    yzDebug("NoGuiYzis")<< "NoGuiYzis : opening file " << slArgv[i]<<endl;
-		    NoGuiSession::me->createBuffer(slArgv[ i ]);
+		    NoGuiSession::self()->createBuffer(slArgv[ i ]);
 	    } else {
 		    s = slArgv[i];
 		    if (s == "-h" || s == "--help") {
@@ -92,12 +92,12 @@ int main(int argc, char **argv) {
     }
 
     if ( !hasatleastone ) {
-	    YZView *cView = YZSession::me->createBufferAndView();
+	    YZView *cView = YZSession::self()->createBufferAndView();
 	    cView->displayIntro();
     }
 
     if (initialSendKeys.length()) {
-	    YZSession::me->sendMultipleKeys( initialSendKeys );
+	    YZSession::self()->sendMultipleKeys( initialSendKeys );
 	    o_splash->setBoolean( splash );
     } else {
 	    printf("You must pass at least an yzis command with:\n%s -c <yzis keystroke>\n", qp(slArgv[0]) );

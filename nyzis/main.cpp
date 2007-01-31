@@ -127,7 +127,9 @@ else */
 	};
 
 	// create session
-	NYZSession *session = new NYZSession("default_session", initialSendKeys);
+	NYZSession::createInstance( "default_session", initialSendKeys );
+
+	NYZSession *session = static_cast<NYZSession*>(NYZSession::self());
 
 	QObject::connect( socket, SIGNAL( activated( int ) ),session, SLOT( processInput( int ) ) );
 
@@ -161,7 +163,7 @@ else */
 
 	QTimer::singleShot( 0, session, SLOT( init() ) );
 
-	YZSession::me->guiStarted();
+	session->guiStarted();
 
 	return app->exec();
 }
@@ -181,7 +183,7 @@ static void sigint(int /*sig*/)
 {
 //	yzDebug(NYZIS) << "^C catched" << endl;
 	// ^c catched -> sends an escape char..
-	YZSession::me->currentView()->sendKey( "<ESC>","" );
+	NYZSession::self()->currentView()->sendKey( "<ESC>","" );
 }
 
 
@@ -190,7 +192,7 @@ static void sigwinch(int /*sig*/)
 //	yzDebug(NYZIS) << "sigwinch catched" << endl;
 	endwin();
 	refresh();
-	NYZView *view = static_cast<NYZView*>(YZSession::me->currentView());
+	NYZView *view = static_cast<NYZView*>(NYZSession::self()->currentView());
 	view->unmap();
 	view->map();
 	view->refreshScreen();

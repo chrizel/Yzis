@@ -52,6 +52,8 @@ int main(int argc, char **argv) {
 	textdomain( "yzis" );
 #endif
 
+	QYZisSession::createInstance();
+
 	Qyzis* mw = new Qyzis();
 	mw->show();
 

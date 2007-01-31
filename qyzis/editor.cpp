@@ -226,7 +226,7 @@ void QYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		if ( ! text.isNull() ) {
 			if ( mParent->modePool()->current()->isEditMode() ) {
 				QChar reg = '\"';
-				YZSession::me->setRegister( reg, text.split("\n") );
+				YZSession::self()->setRegister( reg, text.split("\n") );
 				mParent->pasteContent( reg, false );
 				mParent->moveRight();
 			}

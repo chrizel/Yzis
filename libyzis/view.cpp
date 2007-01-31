@@ -276,10 +276,10 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 	if ( mRegs.count() > 0 ) {
 		for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
 			QString newReg = modifiers + _key;
-			QStringList curReg = YZSession::me->getRegister( mRegs.at(ab) );
+			QStringList curReg = YZSession::self()->getRegister( mRegs.at(ab) );
 			if ( curReg.size() > 0 )
 				newReg.prepend( curReg[ 0 ] );
-			YZSession::me->setRegister( mRegs.at(ab), QStringList( newReg ) );
+			YZSession::self()->setRegister( mRegs.at(ab), QStringList( newReg ) );
 		}
 	}
 
@@ -957,7 +957,7 @@ void YZView::commitUndoItem() {
 }
 
 void YZView::pasteContent( QChar registr, bool after ) {
-	QStringList list = YZSession::me->getRegister( registr );
+	QStringList list = YZSession::self()->getRegister( registr );
 	if ( list.isEmpty() ) return;
 
 	YZCursor pos( mainCursor->buffer() );
@@ -1484,7 +1484,7 @@ void YZView::printToFile( const QString& /*path*/ ) {
 			qtprinter.printToFile( path );
 			qtprinter.run( );
 		} else {
-			YZSession::me->popupMessage( _("To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode") );
+			YZSession::self()->popupMessage( _("To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode") );
 		}
 		return;
 	}
@@ -1512,40 +1512,40 @@ QString YZView::getLocalOptionKey() const {
 	return mBuffer->fileName()+"-view-"+ QString::number(getId());
 }
 YZOptionValue* YZView::getLocalOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
-		return YZSession::me->getOptions()->getOption( getLocalOptionKey() + "\\" + option );
+	if ( YZSession::self()->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
+		return YZSession::self()->getOptions()->getOption( getLocalOptionKey() + "\\" + option );
 	else
-		return YZSession::me->getOptions()->getOption( "Global\\"+option );
+		return YZSession::self()->getOptions()->getOption( "Global\\"+option );
 }
 int YZView::getLocalIntegerOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
-		return YZSession::me->getOptions()->readIntegerOption( getLocalOptionKey()+ "\\" + option );
+	if ( YZSession::self()->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
+		return YZSession::self()->getOptions()->readIntegerOption( getLocalOptionKey()+ "\\" + option );
 	else
-		return YZSession::me->getOptions()->readIntegerOption( "Global\\" + option ); // else give the global default if any
+		return YZSession::self()->getOptions()->readIntegerOption( "Global\\" + option ); // else give the global default if any
 }
 bool YZView::getLocalBooleanOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
-		return YZSession::me->getOptions()->readBooleanOption( getLocalOptionKey()+"\\"+option );
+	if ( YZSession::self()->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) )//find the local one ?
+		return YZSession::self()->getOptions()->readBooleanOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::me->getOptions()->readBooleanOption( "Global\\" + option );
+		return YZSession::self()->getOptions()->readBooleanOption( "Global\\" + option );
 }
 QString YZView::getLocalStringOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
-		return YZSession::me->getOptions()->readStringOption( getLocalOptionKey()+"\\"+option );
+	if ( YZSession::self()->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
+		return YZSession::self()->getOptions()->readStringOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::me->getOptions()->readStringOption( "Global\\" + option );
+		return YZSession::self()->getOptions()->readStringOption( "Global\\" + option );
 }
 QStringList YZView::getLocalListOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
-		return YZSession::me->getOptions()->readListOption( getLocalOptionKey()+"\\"+option );
+	if ( YZSession::self()->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
+		return YZSession::self()->getOptions()->readListOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::me->getOptions()->readListOption( "Global\\" + option );
+		return YZSession::self()->getOptions()->readListOption( "Global\\" + option );
 }
 MapOption YZView::getLocalMapOption( const QString& option ) const {
-	if ( YZSession::me->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
-		return YZSession::me->getOptions()->readMapOption( getLocalOptionKey()+"\\"+option );
+	if ( YZSession::self()->getOptions()->hasOption( getLocalOptionKey() + "\\" + option ) ) //find the local one ?
+		return YZSession::self()->getOptions()->readMapOption( getLocalOptionKey()+"\\"+option );
 	else
-		return YZSession::me->getOptions()->readMapOption( "Global\\" + option );
+		return YZSession::self()->getOptions()->readMapOption( "Global\\" + option );
 }
 
 void YZView::gotoStickyCol( int Y ) {
@@ -1629,15 +1629,15 @@ YZCursor YZView::getScreenPosition() const {
 void YZView::recordMacro( const QList<QChar> &regs ) {
 	mRegs = regs;
 	for ( int ab = 0 ; ab < mRegs.size(); ++ab )
-		YZSession::me->setRegister( mRegs.at(ab), QStringList());
+		YZSession::self()->setRegister( mRegs.at(ab), QStringList());
 }
 
 void YZView::stopRecordMacro() {
 	for ( int ab = 0 ; ab < mRegs.size(); ++ab ) {
 		QStringList list;
-		QString ne = YZSession::me->getRegister(mRegs.at(ab))[0];
+		QString ne = YZSession::self()->getRegister(mRegs.at(ab))[0];
 		list << ne.mid( 0, ne.length() - 1 ); //remove the last 'q' which was recorded ;)
-		YZSession::me->setRegister( mRegs.at(ab), list);
+		YZSession::self()->setRegister( mRegs.at(ab), list);
 	}
 	mRegs = QList<QChar>();
 }

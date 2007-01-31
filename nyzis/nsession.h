@@ -35,12 +35,12 @@ class NYZSession : public QObject, public YZSession
 	Q_OBJECT
 
 public:
-	static NYZSession *self;
 	/**
-	 * Constructor. Give a session name to identify/save/load sessions.
+	 *  Creates one and the only session instance.
+	 *  Should be called from main() before any other yzis object
+	 *  construction.
 	 */
-	NYZSession(const char *session_name = "default_nyzis_session", const QString& keys = QString::null );
-	virtual ~NYZSession( );
+	static void createInstance(const QString& name, const QString& keys);
 
 	/*
 	 * YZSession interface :
@@ -61,6 +61,14 @@ protected:
 	virtual	YZBuffer *doCreateBuffer();
 
 private:
+	/**
+	 * Constructor. Give a session name to identify/save/load sessions.
+	 */
+	NYZSession(const QString& session_name = "default_nyzis_session", const QString& keys = QString::null );
+	NYZSession(const NYZSession&); // disable copy
+	NYZSession& operator=(const NYZSession&); // disable copy
+	virtual ~NYZSession( );
+
 	/**
 	 * Fill the map of keycodes ncurses->Qt
 	 */

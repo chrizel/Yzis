@@ -317,7 +317,7 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 			v->commitPaintEvent();
 			
 		if ( c->arg() == ARG_MARK ) {
-			YZSession::me->saveJumpPosition();
+			YZSession::self()->saveJumpPosition();
 		}
 
 	} else {
@@ -532,7 +532,7 @@ YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 		start--;	
 	}
 	
-	YZSession::me->saveJumpPosition( 0, start );
+	YZSession::self()->saveJumpPosition( 0, start );
 	
 	return YZCursor(0,start);
 }
@@ -549,7 +549,7 @@ YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
 		start++;	
 	}
 	
-	YZSession::me->saveJumpPosition( 0, start - 1 );
+	YZSession::self()->saveJumpPosition( 0, start - 1 );
 	
 	return YZCursor(0,start-1);
 }
@@ -561,7 +561,7 @@ YZCursor YZModeCommand::matchPair(const YZMotionArgs &args) {
 	if ( found ) {
 		if ( args.standalone ) {
 			args.view->gotoxyAndStick( pos );
-			YZSession::me->saveJumpPosition();
+			YZSession::self()->saveJumpPosition();
 		}
 		
 		return pos;
@@ -879,7 +879,7 @@ YZCursor YZModeCommand::gotoLine(const YZMotionArgs &args) {
 			args.view->gotoLine( &viewCursor, 0, args.standalone );
 	}
 
-	YZSession::me->saveJumpPosition();
+	YZSession::self()->saveJumpPosition();
 	
 	return viewCursor.buffer();
 }
@@ -903,9 +903,9 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 		}
 		for ( int i = 0; found && i < args.count; i++ ) {
 			if ( args.cmd.contains('*') ) {
-				pos = YZSession::me->search()->forward( args.view->myBuffer(), word, &found, from );
+				pos = YZSession::self()->search()->forward( args.view->myBuffer(), word, &found, from );
 			} else {
-				pos = YZSession::me->search()->backward( args.view->myBuffer(), word, &found, from );
+				pos = YZSession::self()->search()->backward( args.view->myBuffer(), word, &found, from );
 			}
 			if ( found ) {
 				from = pos;
@@ -923,7 +923,7 @@ YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 	bool found = true;
 	bool moved = true;
 	for ( int i = 0; found && i < args.count; i++ ) {
-		pos = YZSession::me->search()->replayForward( args.view->myBuffer(), &found, from );
+		pos = YZSession::self()->search()->replayForward( args.view->myBuffer(), &found, from );
 		if ( found ) {
 			from = pos;
 			moved = true;
@@ -932,7 +932,7 @@ YZCursor YZModeCommand::searchNext(const YZMotionArgs &args) {
 	
 	if ( args.standalone && moved ) {
 		args.view->gotoxyAndStick( from );
-		YZSession::me->saveJumpPosition();
+		YZSession::self()->saveJumpPosition();
 	}
 	
 	return from;
@@ -944,7 +944,7 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 	bool found = true;
 	bool moved = false;
 	for ( int i = 0; found && i < args.count; i++ ) {
-		pos = YZSession::me->search()->replayBackward( args.view->myBuffer(), &found, from );
+		pos = YZSession::self()->search()->replayBackward( args.view->myBuffer(), &found, from );
 		if ( found ) {
 			from = pos;
 			moved = true;
@@ -953,7 +953,7 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args) {
 	
 	if ( args.standalone && moved ) {
 		args.view->gotoxyAndStick( from );
-		YZSession::me->saveJumpPosition();
+		YZSession::self()->saveJumpPosition();
 	}
 	
 	return from;
@@ -1130,7 +1130,7 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 	int y = args.view->getBufferCursor().y();
 	YZBuffer *mBuffer = args.view->myBuffer();
 	mBuffer->action()->insertNewLine( args.view, mBuffer->textline( y ).length(), y );
-	QStringList results = YZSession::me->eventCall("INDENT_ON_ENTER", args.view);
+	QStringList results = YZSession::self()->eventCall("INDENT_ON_ENTER", args.view);
 	if (results.count() > 0 ) {
 		if (results[0].length()!=0) {
 			mBuffer->action()->replaceLine( args.view, y+1, results[0] + mBuffer->textline( y+1 ).trimmed() );
@@ -1140,7 +1140,7 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 	for ( int i = 1 ; i < args.count ; i++ ) {
 		y = args.view->getBufferCursor().y();
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
-		results = YZSession::me->eventCall("INDENT_ON_ENTER", args.view);
+		results = YZSession::self()->eventCall("INDENT_ON_ENTER", args.view);
 		if (results.count() > 0 ) {
 			if (results[0].length()!=0) {
 				mBuffer->action()->replaceLine( args.view, y+1, results[0] + mBuffer->textline( y+1 ).trimmed() );
@@ -1199,11 +1199,11 @@ void YZModeCommand::yankToEOL(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::closeWithoutSaving(const YZCommandArgs &/*args*/) {
-	YZSession::me->exitRequest( 0 );
+	YZSession::self()->exitRequest( 0 );
 }
 
 void YZModeCommand::saveAndClose(const YZCommandArgs &/*args*/) {
-	YZSession::me->saveBufferExit();
+	YZSession::self()->saveBufferExit();
 }
 
 void YZModeCommand::searchBackwards(const YZCommandArgs &args) {
@@ -1306,7 +1306,7 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 
 	for ( int i = 0; i < args.count; i++ ) {
 		for ( int ab = 0 ; ab < args.regs.size(); ++ab)
-			args.view->sendMultipleKey(YZSession::me->getRegister(args.regs.at(ab))[0]);
+			args.view->sendMultipleKey(YZSession::self()->getRegister(args.regs.at(ab))[0]);
 	}
 
 	args.view->commitNextUndo();
@@ -1404,7 +1404,7 @@ void YZModeCommand::tagPrev( const YZCommandArgs & /*args*/ ) {
 }
 
 void YZModeCommand::undoJump( const YZCommandArgs & /*args*/ ) {
-	const YZCursor * cursor = YZSession::me->previousJumpPosition();
-	YZSession::me->currentView()->centerViewVertically( cursor->y() );
-	YZSession::me->currentView()->gotodxdy( cursor->x(), cursor->y(), true );
+	const YZCursor * cursor = YZSession::self()->previousJumpPosition();
+	YZSession::self()->currentView()->centerViewVertically( cursor->y() );
+	YZSession::self()->currentView()->gotodxdy( cursor->x(), cursor->y(), true );
 }

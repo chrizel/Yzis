@@ -27,12 +27,19 @@
 /* nyzis */
 #include "nsession.h"
 
-NYZSession *NYZSession::self = 0;
 QMap<int,QString> NYZSession::keycodes; // map Ncurses to Qt codes
 
+void NYZSession::createInstance(const QString& name, const QString& keys)
+{
+	// such allocation (i.e. not "new NYZSession") will ensure that
+	// "instance" object will be properly and automatically deleted 
+	// when program exits
+	static NYZSession instance(name,keys);
+	setInstance(&instance);
+}
 
-NYZSession::NYZSession(const char *session_name, const QString& keys)
-	: YZSession( session_name )
+NYZSession::NYZSession(const QString& session_name, const QString& keys)
+	: YZSession(session_name)
 {
 	m_initialCommand = keys;
 	/* init screen */
@@ -53,24 +60,17 @@ NYZSession::NYZSession(const char *session_name, const QString& keys)
 
 	if ( has_colors() ) start_color();
 
-	if ( self ) {
-		yzFatal(NYZIS) << "Instanciating several NYZSession, should Never happen, quitting..";
-		exitRequest(1);
-	}
-	self = this;
-
 	initialiseKeycodes();
 }
 
 NYZSession::~NYZSession( )
 {
-	self = 0;
 }
 
 void NYZSession::init() {
 	yzDebug() << "INIT " << endl;
 	if (m_initialCommand.length()) {
-		YZSession::me->sendMultipleKeys(m_initialCommand);
+		sendMultipleKeys(m_initialCommand);
 	}
 }
 

@@ -31,7 +31,7 @@ NoGuiSession::NoGuiSession( const QString & sessionName )
 
 YZView* NoGuiSession::createView ( YZBuffer* buf) {
     dbg() << HERE() << endl;
-    NoGuiView * view = new NoGuiView( buf, YZSession::me );
+    NoGuiView * view = new NoGuiView( buf, YZSession::self() );
     buf->addView( view );
     return view;
 }
@@ -111,7 +111,7 @@ void  NoGuiSession::splitHorizontally(YZView*)
 YZView * NoGuiSession::doCreateView(YZBuffer*b) 
 { 
     dbg() << HERE() << endl;
-    return new NoGuiView(b,YZSession::me); 
+    return new NoGuiView(b,YZSession::self()); 
 }
 
 void  NoGuiSession::doDeleteView(YZView*v) 

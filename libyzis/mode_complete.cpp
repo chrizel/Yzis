@@ -62,7 +62,7 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 		return false;
 	}
 	
-	mCompletionStart = YZSession::me->getCommandPool()->moveWordBackward( arg );
+	mCompletionStart = YZSession::self()->getCommandPool()->moveWordBackward( arg );
 	YZCursor stop( cur.x()-1, cur.y() );
 	yzDebug() << "Start : " << mCompletionStart << ", End:" << stop << endl;
 	QStringList list = buffer->getText(mCompletionStart, stop);
@@ -84,7 +84,7 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	
 	yzDebug() << "COMPLETION: mPrefix: " << mPrefix << endl;
 	
-	QStringList completeOption = YZSession::me->getOptions()->readListOption("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i");
+	QStringList completeOption = YZSession::self()->getOptions()->readListOption("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i");
 	
 	for ( int i = 0; i < completeOption.size(); ++i ) {
 		QString option = completeOption[ i ];
@@ -230,7 +230,7 @@ void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &propos
 void YZModeCompletion::completeFromOtherBuffers( YZBuffer *skip, QStringList &proposed )
 {
 	// for each buffer, call completeFromBuffer
-	YZBufferList buffers = YZSession::me->buffers();
+	YZBufferList buffers = YZSession::self()->buffers();
 	for ( YZBufferList::iterator itr = buffers.begin(); itr != buffers.end(); ++itr ) {
 		YZBuffer *cur = *itr;
 
@@ -271,7 +271,7 @@ void YZModeCompletion::completeFromFileNames( QStringList &/*proposed*/ )
 
 void YZModeCompletion::completeFromCurrentBuffer( const YZCursor &cursor, bool forward, QStringList &proposed )
 {
-	YZBuffer *buffer = YZSession::me->currentView()->myBuffer();
+	YZBuffer *buffer = YZSession::self()->currentView()->myBuffer();
 	
 	QStringList matches;
 	QList<YZCursor> cursorlist;

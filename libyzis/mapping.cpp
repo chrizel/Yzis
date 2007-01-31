@@ -87,10 +87,10 @@ bool YZMapping::applyMappings( QString& text, int modes, bool *mapped ) {
 }
 
 void YZMapping::registerModifier(const QString& map) {
-	YZSession::me->registerModifier(map);
+	YZSession::self()->registerModifier(map);
 }
 
 void YZMapping::unregisterModifier(const QString& map) {
-	YZSession::me->unregisterModifier(map);
+	YZSession::self()->unregisterModifier(map);
 }
 

@@ -32,11 +32,12 @@ class QYZisSession : public QObject, public YZSession
 {
 	Q_OBJECT
 public:
-	QYZisSession();
-	virtual ~QYZisSession();
-
-
-	static QYZisSession* self();
+	/**
+	 *  Creates one and the only session instance.
+	 *  Should be called from main() before any other yzis object
+	 *  construction.
+	 */
+	static void createInstance();
 
 	//GUI interface
 	bool quit(int errorCode);
@@ -72,10 +73,12 @@ public slots:
 	void closeView();
 
 private:
-	
-	void changeCurrentView( YZView* );
-	static QYZisSession* m_instance;
+	QYZisSession();
+	QYZisSession(const QYZisSession&); // disable copy
+	QYZisSession& operator=(const QYZisSession&); // disable copy
+	virtual ~QYZisSession();
 
+	void changeCurrentView( YZView* );
 public:
 	QYZisView *lastView;
 	QWidget *m_viewParent;

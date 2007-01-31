@@ -52,7 +52,7 @@ Qyzis::~Qyzis() {
 
 void Qyzis::init () {
 	if (m_initialCommand.length()) {
-		YZSession::me->sendMultipleKeys(m_initialCommand);
+		QYZisSession::self()->sendMultipleKeys(m_initialCommand);
 	}
 }
 
@@ -112,7 +112,7 @@ void Qyzis::fileNew() {
 	// in its initial state.  This is what we do here..
 //	if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
 //			KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
-	YZSession::me->createBufferAndView();
+	QYZisSession::self()->createBufferAndView();
 //	};
 }
 
@@ -142,11 +142,11 @@ void Qyzis::openURL(const QString &url) {
 	m_openRecentAction->saveEntries( kapp->config(), "RecentFiles" );
 	*/
 
-	YZSession::me->createBufferAndView( url );
+	QYZisSession::self()->createBufferAndView( url );
 }
 
 bool Qyzis::queryClose() {
-	const YZBufferList &buffers = YZSession::me->buffers();
+	const YZBufferList &buffers = QYZisSession::self()->buffers();
 	
 	for ( YZBufferList::const_iterator it = buffers.begin(); it != buffers.end(); ++it ) {
 		YZBuffer *buf = *it;

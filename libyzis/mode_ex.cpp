@@ -85,12 +85,12 @@ void YZModeEx::init() {
 	initPool();
 }
 void YZModeEx::enter( YZView* view ) {
-	YZSession::me->setFocusCommandLine();
+	YZSession::self()->setFocusCommandLine();
 	view->setCommandLineText( "" );
 }
 void YZModeEx::leave( YZView* view ) {
 	view->setCommandLineText( "" );
-	YZSession::me->setFocusMainWindow();
+	YZSession::self()->setFocusMainWindow();
 }
 cmd_state YZModeEx::execCommand( YZView* view, const QString& key ) {
 //	yzDebug() << "YZModeEx::execCommand " << key << endl;
@@ -266,7 +266,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 		view->gotoxy( 0, to );
 		view->moveToFirstNonBlankOfLine();
 	} else if ( !commandIsValid ) {
-		YZSession::me->popupMessage( _("Not an editor command: ") + _input);
+		YZSession::self()->popupMessage( _("Not an editor command: ") + _input);
 	}
 
 	return ret;
@@ -312,9 +312,9 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 	if ( args.arg.length() == 1 ) {
 		yzDebug() << "rangeSearch : replay" << endl;
 		if ( reverse ) {
-			pos = YZSession::me->search()->replayBackward( args.view->myBuffer(), &found, args.view->myBuffer()->end(), true );
+			pos = YZSession::self()->search()->replayBackward( args.view->myBuffer(), &found, args.view->myBuffer()->end(), true );
 		} else {
-			pos = YZSession::me->search()->replayForward( args.view->myBuffer(), &found, args.view->myBuffer()->begin(), true );
+			pos = YZSession::self()->search()->replayForward( args.view->myBuffer(), &found, args.view->myBuffer()->begin(), true );
 		}
 	} else {
 		QString pat = args.arg.mid( 1, args.arg.length() - 2 );
@@ -323,7 +323,7 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 		else
 			pat.replace( "\\/", "/" );
 		yzDebug() << "rangeSearch : " << pat << endl;
-		pos = YZSession::me->search()->forward( args.view->myBuffer(), pat, &found, args.view->getBufferCursor() );
+		pos = YZSession::self()->search()->forward( args.view->myBuffer(), pat, &found, args.view->getBufferCursor() );
 	}
 
 	if ( found ) {
@@ -429,11 +429,11 @@ cmd_state YZModeEx::bufferlast( const YZExCommandArgs& args ) {
 cmd_state YZModeEx::buffernext( const YZExCommandArgs& args ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
 	
-	YZView *v = YZSession::me->nextView();
+	YZView *v = YZSession::self()->nextView();
 	YZASSERT( v!=args.view );
 	
 	if ( v ) {
-		YZSession::me->setCurrentView(v);
+		YZSession::self()->setCurrentView(v);
 	} else {
 		bufferfirst( args ); // goto first buffer
 	}
@@ -444,11 +444,11 @@ cmd_state YZModeEx::buffernext( const YZExCommandArgs& args ) {
 cmd_state YZModeEx::bufferprevious ( const YZExCommandArgs& args ) {
 	yzDebug() << "Switching buffers (actually sw views) ..." << endl;
 	
-	YZView *v = YZSession::me->prevView();
+	YZView *v = YZSession::self()->prevView();
 	YZASSERT( v!=args.view );
 	
 	if ( v ) {
-		YZSession::me->setCurrentView(v);
+		YZSession::self()->setCurrentView(v);
 	} else {
 		bufferlast( args ); // goto lastbuffer
 	}
@@ -506,17 +506,17 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 	}
 
 	filename = YZBuffer::parseFilename(filename);
-	YZBuffer *b = YZSession::me->findBuffer(filename);
-	YZView *v = YZSession::me->findViewByBuffer(b);
+	YZBuffer *b = YZSession::self()->findBuffer(filename);
+	YZView *v = YZSession::self()->findViewByBuffer(b);
 	if ( b && v ) {
-		YZSession::me->setCurrentView( v );
+		YZSession::self()->setCurrentView( v );
 	} else if ( b ) {
-		v = YZSession::me->createView( b );
-		YZSession::me->setCurrentView( v );
+		v = YZSession::self()->createView( b );
+		YZSession::self()->setCurrentView( v );
 	} else {
 		yzDebug() << "New buffer / view : " << filename << endl;
-		v = YZSession::me->createBufferAndView( args.arg );
-		YZSession::me->setCurrentView( v );
+		v = YZSession::self()->createBufferAndView( args.arg );
+		YZSession::self()->setCurrentView( v );
 	}
 	v->applyStartPosition( YZBuffer::getStartPosition(args.arg) );
 
@@ -534,22 +534,22 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 	YZBuffer* buff = NULL;
 	if ( args.view ) buff = args.view->myBuffer();
 	bool matched;
-	bool success = YZSession::me->getOptions()->setOptionFromString( &matched, 
+	bool success = YZSession::self()->getOptions()->setOptionFromString( &matched, 
 	args.arg.simplified()
 	, user_scope, buff, args.view );
 	
 	if ( ! matched ) {
 		ret = CMD_ERROR;
-		YZSession::me->popupMessage( QString(_("Invalid option name : %1")).arg(args.arg.simplified()) );
+		YZSession::self()->popupMessage( QString(_("Invalid option name : %1")).arg(args.arg.simplified()) );
 	} else if ( ! success ) {
 		ret = CMD_ERROR;
-		YZSession::me->popupMessage( _("Bad value for option given") );
+		YZSession::self()->popupMessage( _("Bad value for option given") );
 	}
 	return ret;
 }
 
 cmd_state YZModeEx::mkyzisrc ( const YZExCommandArgs& args ) {
-	YZSession::me->getOptions()->saveTo( QDir::currentPath() + "/yzis.conf", "", "HL Cache", args.force );
+	YZSession::self()->getOptions()->saveTo( QDir::currentPath() + "/yzis.conf", "", "HL Cache", args.force );
 	return CMD_OK;
 }
 
@@ -579,7 +579,7 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 	}
 	unsigned int lastLine=0;
 	YZCursor start( 0, args.fromLine );
-	YZSession::me->search()->forward( args.view->myBuffer(), search, &found, start );
+	YZSession::self()->search()->forward( args.view->myBuffer(), search, &found, start );
 	if ( found ) {
 		for( unsigned int i = args.fromLine; i <= args.toLine; i++ ) {
 			if ( args.view->myBuffer()->substitute( search, replace, options.contains( "g" ), i ) ) {
@@ -651,7 +651,7 @@ cmd_state YZModeEx::genericMap ( const YZExCommandArgs& args, int type) {
 		}
 		if (rx.cap(1).startsWith("<CTRL>")) {
 			mModifierKeys << rx.cap(1);
-			YZViewList views = YZSession::me->getAllViews();
+			YZViewList views = YZSession::self()->getAllViews();
 			foreach ( YZView *v, views )
 				v->registerModifierKeys( rx.cap( 1 ) );
 		}
@@ -683,7 +683,7 @@ cmd_state YZModeEx::genericUnmap ( const YZExCommandArgs& args, int type) {
 	}
 	if (args.arg.startsWith("<CTRL>")) {
 		mModifierKeys.removeAll(args.arg);
-		YZViewList views = YZSession::me->getAllViews();
+		YZViewList views = YZSession::self()->getAllViews();
 		for ( YZViewList::const_iterator itr = views.begin(); itr != views.end(); ++itr ) {
 			YZView *v = *itr;
 			v->unregisterModifierKeys( args.arg );
@@ -718,7 +718,7 @@ cmd_state YZModeEx::genericNoremap ( const YZExCommandArgs& args, int type) {
 		}
 		if (rx.cap(1).startsWith("<CTRL>")) {
 			mModifierKeys << rx.cap(1);
-			YZViewList views = YZSession::me->getAllViews();
+			YZViewList views = YZSession::self()->getAllViews();
 			for ( YZViewList::const_iterator itr = views.begin(); itr != views.end(); ++itr ) {
 				YZView *v = *itr;
 				v->registerModifierKeys( rx.cap( 1 ) );
@@ -814,19 +814,19 @@ cmd_state YZModeEx::indent( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::enew( const YZExCommandArgs& ) {
-	YZSession::me->createBufferAndView();
+	YZSession::self()->createBufferAndView();
 	return CMD_OK;
 }
 
 cmd_state YZModeEx::registers( const YZExCommandArgs& ) {
 	QString infoMessage(_("Registers:\n")); // will contain register-value table
-	QList<QChar> keys = YZSession::me->getRegisters();
+	QList<QChar> keys = YZSession::self()->getRegisters();
 	QString regContents;
 	foreach ( QChar c, keys ) {
 		infoMessage += QString("\"") + c + "  ";
 		// why I use space as separator? I don't know :)
 		// if you know what must be used here, fix it ;)
-		regContents = YZSession::me->getRegister( c ).join(" ");
+		regContents = YZSession::self()->getRegister( c ).join(" ");
 		// FIXME dimsuz: maybe replace an abstract 27 with some predefined value?
 		if( regContents.length() >= 27 )
 		{
@@ -836,7 +836,7 @@ cmd_state YZModeEx::registers( const YZExCommandArgs& ) {
 		}
 		infoMessage += regContents + "\n";
 	}
-	YZSession::me->popupMessage( infoMessage );
+	YZSession::self()->popupMessage( infoMessage );
 	return CMD_OK;
 }
 
@@ -871,9 +871,9 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 		style = "Highlighting " + style.trimmed() + " - Schema ";
 		idx++;
 	}
-	style += YZSession::me->schemaManager()->name(0); //XXX make it use the 'current' schema
-	YZSession::me->getOptions()->setGroup(style);
-	QStringList option = YZSession::me->getOptions()->readListOption(type);
+	style += YZSession::self()->schemaManager()->name(0); //XXX make it use the 'current' schema
+	YZSession::self()->getOptions()->setGroup(style);
+	QStringList option = YZSession::self()->getOptions()->readListOption(type);
 	yzDebug() << "HIGHLIGHT : Current " << type << " : " << option << endl;
 	if (option.count() < 7) return CMD_ERROR; //just make sure it's fine ;)
 
@@ -913,8 +913,8 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 		}
 	}
 	yzDebug() << "HIGHLIGHT : Setting new " << option << endl;
-	YZSession::me->getOptions()->getOption( type )->setList( option );
-	YZSession::me->getOptions()->setGroup("Global");
+	YZSession::self()->getOptions()->getOption( type )->setList( option );
+	YZSession::self()->getOptions()->setGroup("Global");
 
 	if ( args.view && args.view->myBuffer() ) {
 		YzisHighlighting *yzis = args.view->myBuffer()->highlight();
@@ -928,7 +928,7 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::split( const YZExCommandArgs& args ) {
-	YZSession::me->splitHorizontally(args.view);
+	YZSession::self()->splitHorizontally(args.view);
 	return CMD_OK;
 }
 
@@ -1000,7 +1000,7 @@ cmd_state YZModeEx::retab( const YZExCommandArgs& args ) {
 	if (args.arg.length() > 0) { // we got an argument
 		if (args.arg.toInt() > 0) {
 			// set the value of 'tabstop' to the argument given
-			YZSession::me->getOptions()->setOptionFromString( args.arg.trimmed().insert(0, "tabstop="),
+			YZSession::self()->getOptions()->setOptionFromString( args.arg.trimmed().insert(0, "tabstop="),
 					local_scope, args.view->myBuffer(), args.view );
 			tabstop = args.arg.toInt();
 		}

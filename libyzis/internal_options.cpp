@@ -120,7 +120,7 @@ void changeEncoding( YZBuffer* b, YZView* v ) {
 	if ( b ) {
 		QString enc = b->getLocalStringOption("encoding");
 		if ( enc != b->encoding() ) {
-			if (b->fileIsModified() && YZSession::me->promptYesNo(_("File modified"), _("This file has been modified, do you want to save it ?"))){
+			if (b->fileIsModified() && YZSession::self()->promptYesNo(_("File modified"), _("This file has been modified, do you want to save it ?"))){
 				b->save();
 			}
 			b->setEncoding( enc );
@@ -150,7 +150,7 @@ void setSyntax( YZBuffer* b, YZView* v ) {
 		b->setHighLight( b->getLocalStringOption("syntax") );
 }
 void updateHLSearch( YZBuffer*, YZView* ) {
-	YZSession::me->search()->update();
+	YZSession::self()->search()->update();
 }
 
 
@@ -208,14 +208,14 @@ void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t
 		option->apply( NULL, NULL );
 	} else if ( ctx == ctx_buffer ) {
 		if ( scope == global_scope ) {
-			foreach( YZBuffer *buffer, YZSession::me->buffers() )
+			foreach( YZBuffer *buffer, YZSession::self()->buffers() )
 				option->apply( buffer, v );
 		} else if ( b ) {
 			option->apply( b, v );
 		}
 	} else if ( ctx == ctx_view ) {
 		if ( scope == global_scope ) {
-			foreach( YZBuffer *buffer, YZSession::me->buffers() )
+			foreach( YZBuffer *buffer, YZSession::self()->buffers() )
 				foreach(  YZView *view, buffer->views() )
 					option->apply( buffer, view );
 		} else if ( v ) {

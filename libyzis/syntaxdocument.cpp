@@ -534,7 +534,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
   // We'll store the ModeList in katesyntaxhighlightingrc
   //KConfig config("katesyntaxhighlightingrc", false, false);
-  YZInternalOptionPool* config = YZSession::me->getOptions();
+  YZInternalOptionPool* config = YZSession::self()->getOptions();
 
   // figure our if the kate install is too new
   config->setGroup ("General");

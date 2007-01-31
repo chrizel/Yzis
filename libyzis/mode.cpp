@@ -144,7 +144,7 @@ cmd_state YZModeIntro::execCommand( YZView* mView, const QString& ) {
 
 YZModePool::YZModePool( YZView* view ) {
 	mView = view;
-	mModes = YZSession::me->getModes();
+	mModes = YZSession::self()->getModes();
 	mapMode = 0;
 	mRegisterKeys = false;
 	mStop = false;

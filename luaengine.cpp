@@ -152,7 +152,7 @@ void YZLuaEngine::exe(const QString& function, const char* sig, ...) {
 	} endwhile:
 
 	nres = strlen(sig);
-	if (! yzpcall(narg,nres, QString("Executing function %1").arg(function))) {
+	if (! yzpcall(narg,nres, _("Executing function %1").arg(function))) {
 		va_end(vl);
 		return;
 	}
@@ -186,7 +186,7 @@ void YZLuaEngine::exe(const QString& function, const char* sig, ...) {
 
 void YZLuaEngine::execute(const QString& function, int nbArgs, int nbResults) { 
 	lua_getglobal(L,function.toUtf8());
-	yzpcall(nbArgs, nbResults, QString("YZLuaEngine::execute function %1").arg(function)); 
+	yzpcall(nbArgs, nbResults, _("YZLuaEngine::execute function %1").arg(function)); 
 }
 
 QString YZLuaEngine::source( const QString& filename ) {
@@ -231,7 +231,7 @@ int YZLuaEngine::execInLua( const QString & luacode ) {
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	lua_pushstring(L, luacode.toUtf8() );
 //	print_lua_stack(L, "loadstring 0");
-	if (yzpcall(1,2, QString("Executing following code in lua:\n%1").arg(luacode) )) {
+	if (yzpcall(1,2, _("Executing following code in lua:\n%1").arg(luacode) )) {
         // Call was successful
 		return 0;
 	}
@@ -251,7 +251,7 @@ bool YZLuaEngine::yzpcall( int nbArg, int nbReturn, const QString & context ) {
 	} else if (lua_isfunction(L,-2)) {
         // error handler function on the stack at position -2
 		lua_pop(L,1);
-		yzpcall(0,0, "error handling function called from within yzpcall");
+		yzpcall(0,0, _("error handling function called from within yzpcall"));
 	} else { 
         // big error, we do not grok what happend
 		print_lua_stack(L, "loadstring returns strange things" );

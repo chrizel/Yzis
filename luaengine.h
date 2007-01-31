@@ -240,11 +240,16 @@ class YZLuaEngine {
 					const char * functionArgDesc );
 
 	protected:
+        /** Lua state.
+          *
+          * The lua state is created in init() and destroyed in the destructor
+          */
 		lua_State *L;
 
 		/** Private constructor for a singleton */
 		YZLuaEngine();
-		static YZLuaEngine * me;
+
+		static YZLuaEngine * me; //!< Singleton instance holder
 
 		/**
 		 * Init core lua stuff (functions, regexps...)

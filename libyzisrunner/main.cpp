@@ -41,8 +41,8 @@ int main(int argc, char **argv) {
     for( int i=0; i<argc; i++) {
         slArgv << argv[i];
     }
-    YZDebugBackend::instance()->parseRcfile( DEBUGRC_FNAME );
-    YZDebugBackend::instance()->parseArgv( slArgv );
+    YZDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );
+    YZDebugBackend::self()->parseArgv( slArgv );
     yzDebug() << QDateTime::currentDateTime().toString() << endl;
 
     setlocale( LC_ALL, "");

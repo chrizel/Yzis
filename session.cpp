@@ -80,7 +80,7 @@ YZSession::~YZSession() {
 	delete mYzisinfo;
 	delete YZMapping::self();
 	delete YZLuaEngine::self();
-	delete YZDebugBackend::instance();
+	delete YZDebugBackend::self();
 	delete mTagStack;
 }
 

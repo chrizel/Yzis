@@ -115,7 +115,7 @@ public:
 	~YZDebugBackend();
 
     /** The singleton constructor */
-	static YZDebugBackend * instance();
+	static YZDebugBackend * self();
 
 	/** Write data to the debug backend. 
       *
@@ -254,7 +254,7 @@ private:
 	YZDebugBackend();
 
     /** Singleton instance holder */
-	static YZDebugBackend * _instance;
+	static YZDebugBackend * me;
 
     /** debug level assigned to each area */
 	QMap<QString,int> _areaLevel; 

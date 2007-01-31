@@ -258,7 +258,7 @@ public:
      * This function is the most important one for testing. You can simulate
      * just any user behavior with this.
      *
-     * Special keys like <ESC> and <ENTER> are recognised.
+     * Special keys like &lt;ESC&gt; and &lt;ENTER&gt; are recognised.
 	 *
 	 * \b Arguments: string, list of key stroke
      *

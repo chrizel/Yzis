@@ -3,7 +3,7 @@
 
 void TestYZDebugBackend::testAreaLevel()
 {
-    YZDebugBackend * dbe = YZDebugBackend::instance();
+    YZDebugBackend * dbe = YZDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
@@ -29,7 +29,7 @@ void TestYZDebugBackend::testAreaLevel()
 
 void TestYZDebugBackend::testSubAreaLevel()
 {
-    YZDebugBackend * dbe = YZDebugBackend::instance();
+    YZDebugBackend * dbe = YZDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
@@ -70,7 +70,7 @@ void TestYZDebugBackend::testWhere()
 
 void TestYZDebugBackend::testParseArgv()
 {
-    YZDebugBackend * dbe = YZDebugBackend::instance();
+    YZDebugBackend * dbe = YZDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
@@ -111,7 +111,7 @@ void TestYZDebugBackend::testParseArgv()
 
 void TestYZDebugBackend::testParseArgv2()
 {
-    YZDebugBackend * dbe = YZDebugBackend::instance();
+    YZDebugBackend * dbe = YZDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
@@ -129,7 +129,7 @@ void TestYZDebugBackend::testParseArgv2()
 
 void TestYZDebugBackend::testParseRcFile()
 {
-    YZDebugBackend * dbe = YZDebugBackend::instance();
+    YZDebugBackend * dbe = YZDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );

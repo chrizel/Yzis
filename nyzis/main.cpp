@@ -71,8 +71,8 @@ main(int argc, char *argv[])
 	bool useGUI = TRUE;
 #endif
 
-    YZDebugBackend::instance()->parseRcfile( DEBUGRC_FNAME );
-    YZDebugBackend::instance()->parseArgv( argc, argv );
+    YZDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );
+    YZDebugBackend::self()->parseArgv( argc, argv );
     yzDebug() << QDateTime::currentDateTime().toString() << endl;
 
 	QCoreApplication *app;

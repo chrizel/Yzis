@@ -57,8 +57,8 @@ int main(int argc, char **argv) {
 
 	QStringList args = app.arguments();
 
-    YZDebugBackend::instance()->parseRcfile( DEBUGRC_FNAME );
-    YZDebugBackend::instance()->parseArgv( args );
+    YZDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );
+    YZDebugBackend::self()->parseArgv( args );
     yzDebug() << QDateTime::currentDateTime().toString() << endl;
 
 

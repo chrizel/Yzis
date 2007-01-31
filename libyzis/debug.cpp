@@ -46,7 +46,7 @@
 #define err()    yzError("YZDebugBackend")
 
 
-YZDebugBackend * YZDebugBackend::_instance = NULL;
+YZDebugBackend * YZDebugBackend::me = NULL;
 
 YZDebugBackend::YZDebugBackend()
 {
@@ -91,12 +91,12 @@ void YZDebugBackend::init()
     _nameByLevel[YZ_FATAL_LEVEL] = "fatal";
 }
 
-YZDebugBackend * YZDebugBackend::instance()
+YZDebugBackend * YZDebugBackend::self()
 {
-	if (_instance == NULL) {
-		_instance = new YZDebugBackend();
+	if (me == NULL) {
+		me = new YZDebugBackend();
 	}
-	return _instance;
+	return me;
 }
 
 void YZDebugBackend::setDebugOutput( FILE * file )
@@ -433,7 +433,7 @@ YZDebugStream& YZDebugStream::operator << (double d) {
 
 void YZDebugStream::flush() {
 	if ( output.isEmpty() ) return;
-	YZDebugBackend::instance()->flush(level, area, output.toUtf8());
+	YZDebugBackend::self()->flush(level, area, output.toUtf8());
 	output=QString::null;
 }
 

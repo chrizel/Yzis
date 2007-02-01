@@ -47,6 +47,31 @@
 
 using namespace yzis;
 
+#define dbg() yzDebug("YZModeEx")
+#define err() yzError("YZModeEx")
+	
+YZExCommandArgs::YZExCommandArgs( YZView* _view, const QString& _input, const QString& _cmd, const QString& _arg, unsigned int _fromLine, unsigned int _toLine, bool _force ) {
+    input = _input;
+    cmd = _cmd;
+    arg = _arg;
+    view = _view;
+    fromLine = _fromLine;
+    toLine = _toLine;
+    force = _force;
+}
+
+QString YZExCommandArgs::toString() const {
+    QString s;
+    s += "YZExCommandArgs:\n";
+    s += QString().sprintf("view=%p\n",view);
+    s += QString("input=%1\n").arg(input);
+    s += QString("cmd=%1\n").arg(cmd);
+    s += QString("arg=%1\n").arg(arg);
+    s += QString("fromLine=%1 toLine=%2\n").arg(fromLine).arg(toLine);
+    s += QString("force=%1\n").arg(force);
+    return s;
+}
+
 YZExRange::YZExRange( const QString& regexp, ExRangeMethod pm ) {
 	mKeySeq = regexp;
 	mPoolMethod = pm;
@@ -620,8 +645,11 @@ cmd_state YZModeEx::lua( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::source( const YZExCommandArgs& args ) {
+    dbg() << "source( " << args.toString() << " ) " << endl;
 	QString filename = args.arg.left( args.arg.indexOf( " " ));
+    dbg().sprintf( "source() filename=%s", qp(filename) );
 	YZLuaEngine::self()->source( filename );
+    dbg() << "source() done" << endl;
 	return CMD_OK;
 }
 

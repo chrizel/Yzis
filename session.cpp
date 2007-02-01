@@ -45,13 +45,32 @@
 
 #include "tags_stack.h"
 
+#define dbg()    yzDebug("YZSession")
+#define err()    yzError("YZSession")
+#define ftl()    yzFatal("YZSession")
+
 YZSession* YZSession::mInstance = 0;
+
+YZSession * YZSession::self()
+{
+    if (mInstance == 0L) {
+        err() << "YZSession::setInstance() has not been called" << endl;
+        err() << "There is currently no instance of the session" << endl;
+        ftl() << "Exepct SEGFAULT as the next thing to happen!" << endl;
+    }
+    return mInstance;
+}
+
+void YZSession::setInstance(YZSession* instance) 
+{ 
+    mInstance = instance; 
+}
 
 YZSession::YZSession(const QString& _sessionName) {
 	YZIS_SAFE_MODE {
-		yzDebug() << "Yzis SAFE MODE enabled." << endl;
+		dbg() << "Yzis SAFE MODE enabled." << endl;
 	}
-	yzDebug() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
+	dbg() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
 	//if ( me != 0 ) int t = 5/( me - me );
 	//FIXME
 
@@ -79,7 +98,6 @@ YZSession::~YZSession() {
 	delete mYzisinfo;
 	delete YZMapping::self();
 	delete YZLuaEngine::self();
-	delete YZDebugBackend::self();
 	delete mTagStack;
 }
 
@@ -129,12 +147,12 @@ void YZSession::guiStarted() {
 }
 
 void YZSession::addBuffer( YZBuffer *b ) {
-	yzDebug() << "Session : addBuffer " << b->fileName() << endl;
+	dbg() << "Session : addBuffer " << b->fileName() << endl;
 	mBufferList.push_back( b );
 }
 
 void YZSession::rmBuffer( YZBuffer *b ) {
-//	yzDebug() << "Session : rmBuffer " << b->fileName() << endl;
+//	dbg() << "Session : rmBuffer " << b->fileName() << endl;
 	if ( mBufferList.indexOf( b ) >= 0 ) {
 			mBufferList.removeAll( b );
 			deleteBuffer( b );
@@ -158,7 +176,7 @@ YZView* YZSession::findViewByBuffer( const YZBuffer *buffer ) {
 }
 
 void YZSession::setCurrentView( YZView* view ) {
-	yzDebug() << "Session : setCurrentView" << endl;
+	dbg() << "Session : setCurrentView" << endl;
 	changeCurrentView( view );
 	
 	mCurView = view;
@@ -176,12 +194,12 @@ YZView* YZSession::lastView() {
 
 YZView* YZSession::prevView() {
 	if ( currentView() == 0 ) {
-		yzDebug() << "WOW, current view is NULL !" << endl;
+		dbg() << "WOW, current view is NULL !" << endl;
 		return NULL;
 	}
 	int idx = mViewList.indexOf( currentView() );
 	if ( idx == -1 ) {
-		yzDebug() << "WOW, current view is not in mViewList !" << endl;
+		dbg() << "WOW, current view is not in mViewList !" << endl;
 		return NULL;
 	}
 
@@ -192,13 +210,13 @@ YZView* YZSession::prevView() {
 
 YZView* YZSession::nextView() {
 	if ( currentView() == 0 ) {
-		yzDebug() << "WOW, current view is NULL !" << endl;
+		dbg() << "WOW, current view is NULL !" << endl;
 		return NULL;
 	}
 	
 	int idx = mViewList.indexOf( currentView() );
 	if ( idx == -1 ) {
-		yzDebug() << "WOW, current view is not in mViewList !" << endl;
+		dbg() << "WOW, current view is not in mViewList !" << endl;
 		return NULL;
 	}
 	return mViewList.value( (idx+1)%mViewList.size() );
@@ -231,7 +249,7 @@ bool YZSession::isOneBufferModified() const {
 }
 
 bool YZSession::exitRequest( int errorCode ) {
-	yzDebug() << "Preparing for final exit with code " << errorCode << endl;
+	dbg() << "exitRequest() Preparing for final exit with code " << errorCode << endl;
 	//prompt unsaved files XXX
 	foreach( YZBuffer *b, mBufferList )
 		b->saveYzisInfo( b->firstView() );
@@ -422,5 +440,17 @@ YZView *YZSession::createBufferAndView( const QString& path /*=QString::null*/ )
 	view->applyStartPosition( YZBuffer::getStartPosition(path) );
 
 	return view;
+}
+
+void * YZSession::operator new( size_t tSize )
+{
+    printf("YZSession::new( %d )\n", tSize );
+	return yzmalloc( tSize );
+}
+
+void YZSession::operator delete( void *p )
+{
+    printf("YZSession::delete %p\n", p );
+	yzfree(p);
 }
 

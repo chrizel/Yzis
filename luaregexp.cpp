@@ -24,23 +24,8 @@
 #include "luaregexp.h"
 #include "debug.h"
 
-
-/*
- * TODO:
- * - invert line/col arguments
- * - test every argument of the functions
- * - find how to add file:line info to error messages
- * - override print() in lua for yzis
- * - clear the lua stack properly
- * - arguments to :source must be passed as argv
- * - add missing function from vim
- * - clean up all the lua calling functions
- * - yzpcall does not need to take nresult argument
- * - use correct printf api
- * - yzpcall should display the type of lua error when error occurs
- * - understand and document the highlight command
- *
- */
+#define dbg()    yzDebug("YZLuaRegexp")
+#define err()    yzError("YZLuaRegexp")
 
 extern "C" {
 #include <lauxlib.h>
@@ -95,6 +80,7 @@ void YZLuaRegexp::registerLuaRegexp(lua_State * L)
 " 								\n"
 ;
 	YZLuaEngine::self()->execInLua( regexpLuaCode );
+    dbg() << HERE() << " done" << endl;
 }
 
 int YZLuaRegexp::Regexp_create(lua_State *L)

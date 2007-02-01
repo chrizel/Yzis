@@ -30,6 +30,8 @@
 #include "debug.h"
 #include <ctype.h>
 #include <stdarg.h>
+#include <strings.h>
+#include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <QTextStream>
@@ -50,36 +52,32 @@ YZDebugBackend * YZDebugBackend::me = NULL;
 
 YZDebugBackend::YZDebugBackend()
 {
-	_output = NULL;
+    qDebug("YZDebugBackend::YZDebugBackend() constructor");
+    _output = NULL;
+    _outputFname = "";
+}
 
-#ifndef YZIS_WIN32_GCC
-	setDebugOutput( "/tmp/yzisdebug-" + QString(getpwuid(geteuid())->pw_name) + ".log" );
-#else
-	setDebugOutput( "/tmp/yzisdebug.log" );
-#endif
-	init();
+YZDebugBackend::YZDebugBackend( YZDebugBackend & other)
+{
+    qFatal("YZDebugBackend copy constructor used %s", HERE());
+}
+
+YZDebugBackend & YZDebugBackend::operator=( YZDebugBackend & other )
+{
+    qFatal("YZDebugBackend operator = used %s", HERE());
+    return *this;
 }
 
 YZDebugBackend::~YZDebugBackend() {
-	if ( _output != NULL )
-		fclose( _output );
+    dbg() << "~YZDebugBackend()" << endl;
+    if ( _output != NULL ) {
+        fclose( _output );
+    }
 }
 
 void YZDebugBackend::init()
 {
-    // our message handler does not manage to display all messages. So,
-    // it is better left off disabled at the moment. The last one gets lost
-    // and the last one is the most interesting one.
-
-    // qInstallMsgHandler( yzisMsgHandler );
-
-#ifdef DEBUG
-	_level = YZ_DEBUG_LEVEL;
-#else
-	_level = YZ_WARNING_LEVEL;
-#endif
-
-	clearArea();
+    clearArea();
     _levelByName["debug"] = YZ_DEBUG_LEVEL;
     _levelByName["warning"] = YZ_WARNING_LEVEL;
     _levelByName["error"] = YZ_ERROR_LEVEL;
@@ -89,74 +87,112 @@ void YZDebugBackend::init()
     _nameByLevel[YZ_WARNING_LEVEL] = "warning";
     _nameByLevel[YZ_ERROR_LEVEL] = "error";
     _nameByLevel[YZ_FATAL_LEVEL] = "fatal";
+
+#ifdef DEBUG
+    _level = YZ_DEBUG_LEVEL;
+#else
+    _level = YZ_WARNING_LEVEL;
+#endif
+
+#ifndef YZIS_WIN32_GCC
+    setDebugOutput( "/tmp/yzisdebug-" + QString(getpwuid(geteuid())->pw_name) + ".log" );
+#else
+    setDebugOutput( "/tmp/yzisdebug.log" );
+#endif
+
+    // our message handler does not manage to display all messages. So,
+    // it is better left off disabled at the moment. The last one gets lost
+    // and the last one is the most interesting one.
+
+    qInstallMsgHandler( yzisMsgHandler );
+
 }
 
 YZDebugBackend * YZDebugBackend::self()
 {
-	if (me == NULL) {
-		me = new YZDebugBackend();
-	}
-	return me;
+    //printf("YZDebugBackend::self() me = %p\n", YZDebugBackend::me );
+    if (YZDebugBackend::me == NULL) {
+        me = new YZDebugBackend();
+        //printf("YZDebugBackend::self() me set to %p\n", me );
+        me->init();
+    }
+    return me;
 }
 
 void YZDebugBackend::setDebugOutput( FILE * file )
 {
-	if (file == NULL) {
-		flush( YZ_WARNING_LEVEL, 0, "YZDebugBackend: setting output to a NULL file descriptor\n" );
-		return;
-	}
+    if (file == NULL) {
+        flush( YZ_WARNING_LEVEL, 0, "YZDebugBackend: setting output to a NULL file descriptor\n" );
+        return;
+    }
     setvbuf( file, NULL, _IONBF, 0 ); // disable buffering
-	_output = file;
+    _output = file;
 }
 
 void YZDebugBackend::setDebugOutput( const QString& fileName )
 {
-	if ( _output != NULL) {
+    if ( _output != NULL) {
+        dbg().sprintf( "setDebugOutput( %s )", qp( fileName ) );
+
         if (_output != stdout && _output != stderr ) {
             fclose( _output );
         }
-		_output = NULL;
-	}
+        _output = NULL;
+        _outputFname = "";
+    }
+
+    _outputFname = fileName;
 
     if (fileName == "stdout") {
         setDebugOutput( stdout );
+        dbg() << "Debug output set to stdout" << endl;
         return;
     } else if (fileName == "stderr") {
         setDebugOutput( stderr );
+        dbg() << "Debug output set to stderr" << endl;
         return;
     }
 
-	if ( QFile::exists( fileName ) )
-		QFile::remove ( fileName );
+    if ( QFile::exists( fileName ) ) {
+        QFile::remove ( fileName );
+    }
 
     FILE * f = fopen( fileName.toLocal8Bit(), "w" );
-	setDebugOutput( f );
+    setDebugOutput( f );
+    dbg().sprintf( "_output set to file %s: FILE * = %p\n", qp(fileName), f );
 
 #ifndef YZIS_WIN32_GCC
-	struct stat buf;
-	int i = lstat( fileName.toLocal8Bit(), &buf );
-	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() ) 
-		chmod( fileName.toLocal8Bit(), S_IRUSR | S_IWUSR );
+    struct stat buf;
+    int i = lstat( fileName.toLocal8Bit(), &buf );
+    if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() ) 
+        chmod( fileName.toLocal8Bit(), S_IRUSR | S_IWUSR );
 #else
-	if ( true )
-		;
+    if ( true )
+        ;
 #endif
-	else {
-		fclose( _output );
-		_output = NULL;
-	}
+    else {
+        fclose( _output );
+        _output = NULL;
+        _outputFname = "";
+    }
 }
 
 void YZDebugBackend::flush( int level, const QString& area, const char * data )
 {
-    //printf("flush: arealevel=%d, level=%d, area=%s, data=%s\n", areaLevel(area), level, qp(area), data );
-	if (level < areaLevel(area)) return;
-	fprintf( _output, "%s", data );
-	fflush( _output );
+#if 0
+    printf("flush: output=%p arealevel=%d, level=%d, area=%s, data='%s'\n", _output, areaLevel(area), level, qp(area), data );
+    printf("flush: this=%p _output=%p stdout=%p stderr=%p \n", this, _output, stdout, stderr );
+#endif
+    if (level < areaLevel(area)) return;
+    Q_ASSERT_X( _output != NULL, HERE(), "Output stream should not be NULL" );
+    if (_output == NULL) return;
+    fprintf( _output, "%s\n", data ); // data never ends with \n
+    fflush( _output );
 #ifdef YZIS_WIN32_GCC
     _flushall();
     OutputDebugString( data );
 #endif
+    // printf("flush done\n");
 }
 
 void YZDebugBackend::parseRcfile(const char * filename)
@@ -178,9 +214,11 @@ void YZDebugBackend::parseRcfile(const char * filename)
     while( ts.atEnd() == false) {
         l = ts.readLine();
         dbg() << "l='" << l << "'" << endl;
+        if (l.isEmpty()) continue;
+        if (l.at(0) == (char) '#' ) continue;
         if (!lineRe.exactMatch(l)) continue;
-        QString keyword = lineRe.cap(1).trimmed().toLower();
-        QString action  = lineRe.cap(2).trimmed().toLower();
+        QString keyword = lineRe.cap(1).trimmed();
+        QString action  = lineRe.cap(2).trimmed();
         if (keyword == "output") {
             setDebugOutput( action );
         } else if (keyword == "level") {
@@ -197,6 +235,9 @@ void YZDebugBackend::parseRcfile(const char * filename)
             }
         }
     }
+    f.close();
+    dbg().sprintf("Parsing done for %s\n", filename );
+    dbg() << toString();
 }
 
 
@@ -218,7 +259,6 @@ void YZDebugBackend::parseArgv( QStringList & argv )
     for(int i=argv.count()-1; i>=1; i--) {
         dbg() << "argv[i]='" << argv[i] << "'" << endl;  
         QString myargv=QString(argv[i]).trimmed();
-        dbg() << "myargv='" << myargv << "'" << endl;  
         if (reLevelOpt.exactMatch(myargv)) {
             QString sLevel = reLevelOpt.cap(1);
             dbg() << "sLevel='" << sLevel << "'" << endl;
@@ -246,9 +286,11 @@ void YZDebugBackend::parseArgv( QStringList & argv )
             setDebugOutput( sFilename );
         }
     }
+    dbg() << toString();
 }
 void YZDebugBackend::setAreaLevel( const QString& area, int level ) 
 {
+    dbg() << "setAreaLevel(" << area << ", " << _nameByLevel[level] << ")" << endl;
     _areaLevel[area] = level;
 }
 
@@ -272,9 +314,10 @@ int YZDebugBackend::areaLevel( const QString& area ) const
 QString YZDebugBackend::toString()
 {
     QString s;
-
-    
-    s += QString("Debug level: %1\n").arg(_nameByLevel[ debugLevel() ]);
+   
+    s += QString("YZDebugBackend content:\n"); 
+    s += QString("level: %1\n").arg(_nameByLevel[ debugLevel() ]);
+    s += QString("output: %1\n").arg(_outputFname);
     foreach( QString area, _areaLevel.keys() ) {
         s += QString("%1:%2\n").arg(area).arg(_nameByLevel[_areaLevel.value(area)]);
     }
@@ -312,6 +355,29 @@ void YZDebugBackend::yzisMsgHandler( QtMsgType msgType, const char * msg )
     }
 }
 
+void * yzmalloc( size_t tSize )
+{
+    return malloc( tSize );
+}
+
+void yzfree( void * p )
+{
+    free(p);
+}
+
+void * YZDebugBackend::operator new( size_t tSize )
+{
+    printf("YZDebugBackend::new( %d )\n", tSize );
+	return yzmalloc( tSize );
+}
+
+void YZDebugBackend::operator delete( void *p )
+{
+    printf("YZDebugBackend::delete %p\n", p );
+	yzfree(p);
+}
+
+
 // ================================================================
 //                          
 //                          YZDebugStream
@@ -319,134 +385,140 @@ void YZDebugBackend::yzisMsgHandler( QtMsgType msgType, const char * msg )
 // ================================================================
 
 YZDebugStream::YZDebugStream( const char * _area, int _level ) {
-	area = _area;
-	level = _level;
+    area = _area;
+    level = _level;
     if (strlen(_area)) output=QString(_area)+":";
 }
 
 YZDebugStream::~YZDebugStream() {
-	if ( !output.isEmpty() )
-		*this << "\n"; //flush
+    if ( !output.isEmpty() )
+        *this << "\n"; //flush
 }
 
 void YZDebugStream::sprintf( const char * fmt, ... )
 {
-    static char buf[256];
+    static char buf[1024];
 
     va_list ap;
     va_start( ap, fmt );
-    vsnprintf( buf, 256, fmt, ap );
+    vsnprintf( buf, 1024, fmt, ap );
     va_end(ap);
-    buf[255] = '\0';
+    buf[1023] = '\0';
     output += buf;
-    if (output.right(1) != "\n") output += '\n';
     flush();
 }
 
 YZDebugStream& YZDebugStream::operator << (const QString& string) {
-	output+=string;
-	if ( output.endsWith("\n") )
-		flush();
-	return *this;
+    output+=string;
+    if ( output.endsWith("\n") ) {
+        flush();
+    }
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (const QStringList& string) {
-	*this << "(";
-	*this << string.join( "," );
-	*this << ")";
-	return *this;
+    *this << "(";
+    *this << string.join( "," );
+    *this << ") ";
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (const char* string) {
-	output+=QString::fromUtf8( string );
-//	if ( output.at( output.length() - 1 ) == '\n' )
-		flush();
-	return *this;
+    output+=QString::fromUtf8( string );
+    if ( output.at( output.length() - 1 ) == '\n' ) {
+        flush();
+    } else {
+        output += " ";
+    }
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (bool i) {
-	output+=QString::fromLatin1(i ? "true" : "false");
-	return *this;
+    output+=QString::fromLatin1(i ? "true " : "false ");
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (char i) {
-	if ( isprint( i ) )
-		output+= "\\x" + QString::number(static_cast<uint>( i )+0x100,16 ).right( 2 );
-	else
-		output+= i;
-	if ( i == '\n' ) flush();
-	return *this;
+    if ( isprint( i ) ) {
+        output+= "\\x" + QString::number(static_cast<uint>( i )+0x100,16 ).right( 2 );
+    } else {
+        output+= i;
+    }
+    if ( i == '\n' ) flush();
+    else output += " ";
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (unsigned char i) {
-	return operator<<(static_cast<char>(i));
+    return operator<<(static_cast<char>(i));
 }
 
 YZDebugStream& YZDebugStream::operator << (unsigned short i) {
-	QString tmp;
-	tmp.setNum( i );
-	output+=tmp;
-	return *this;
+    QString tmp;
+    tmp.setNum( i );
+    output+=tmp + " ";
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (short i) {
-	QString tmp;
-	tmp.setNum( i );
-	output+=tmp;
-	return *this;
+    QString tmp;
+    tmp.setNum( i );
+    output+=tmp + " ";
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (unsigned int i) {
-	QString tmp;
-	tmp.setNum( i );
-	output+=tmp;
-	return *this;
+    QString tmp;
+    tmp.setNum( i );
+    output+=tmp + " ";
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (int i) {
-	QString tmp;
-	tmp.setNum( i );
-	output+=tmp;
-	return *this;
+    QString tmp;
+    tmp.setNum( i );
+    output+=tmp + " ";
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (unsigned long i) {
-	QString tmp;
-	tmp.setNum( i );
-	output+=tmp;
-	return *this;
+    QString tmp;
+    tmp.setNum( i );
+    output+=tmp + " ";
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (long i) {
-	QString tmp;
-	tmp.setNum( i );
-	output+=tmp;
-	return *this;
+    QString tmp;
+    tmp.setNum( i );
+    output+=tmp + " ";
+    return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (double d) {
-	QString tmp;
-	tmp.setNum( d );
-	output+=tmp;
-	return *this;
+    QString tmp;
+    tmp.setNum( d );
+    output+=tmp + " ";
+    return *this;
 }
 
 void YZDebugStream::flush() {
-	if ( output.isEmpty() ) return;
-	YZDebugBackend::self()->flush(level, area, output.toUtf8());
-	output=QString::null;
+    if ( output.right(1) == "\n" ) output = output.left( output.length()-1 );
+    if ( output.isEmpty() ) return;
+    YZDebugBackend::self()->flush(level, area, output.toUtf8());
+    output=QString::null;
 }
 
 YZDebugStream yzDebug( const char * area ) {
-	return YZDebugStream( area, YZ_DEBUG_LEVEL );
+    return YZDebugStream( area, YZ_DEBUG_LEVEL );
 }
 YZDebugStream yzWarning( const char * area ) {
-	return YZDebugStream( area, YZ_WARNING_LEVEL );
+    return YZDebugStream( area, YZ_WARNING_LEVEL );
 }
 YZDebugStream yzError( const char * area ) {
-	return YZDebugStream( area, YZ_ERROR_LEVEL );
+    return YZDebugStream( area, YZ_ERROR_LEVEL );
 }
 YZDebugStream yzFatal( const char * area ) {
-	return YZDebugStream( area, YZ_FATAL_LEVEL );
+    return YZDebugStream( area, YZ_FATAL_LEVEL );
 }
 

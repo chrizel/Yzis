@@ -23,6 +23,16 @@
 
 #define dbg() yzDebug("NoGuiSession")
 
+void NoGuiSession::createInstance()
+{
+	// such allocation (i.e. not "new QYZisSession") will ensure that
+	// "instance" object will be properly and automatically deleted 
+	// when program exits
+    
+	static NoGuiSession instance;
+	setInstance(&instance);
+}
+
 NoGuiSession::NoGuiSession( const QString & sessionName )
 : YZSession( sessionName )
 {
@@ -56,7 +66,7 @@ void  NoGuiSession::popupMessage( const QString& message)
 
 void  NoGuiSession::quit(bool savePopup) 
 {
-    dbg() << "NoGuiSession::quit(" <<savePopup << ")" << endl;
+    dbg() << "NoGuiSession::quit(" << savePopup << ")" << endl;
     QCoreApplication::exit(0);
 }
 

@@ -65,15 +65,8 @@ struct YZExCommandArgs {
 	// !
 	bool force;
 
-	YZExCommandArgs( YZView* _view, const QString& _input, const QString& _cmd, const QString& _arg, unsigned int _fromLine, unsigned int _toLine, bool _force ) {
-		input = _input;
-		cmd = _cmd;
-		arg = _arg;
-		view = _view;
-		fromLine = _fromLine;
-		toLine = _toLine;
-		force = _force;
-	}
+	YZExCommandArgs( YZView* _view, const QString& _input, const QString& _cmd, const QString& _arg, unsigned int _fromLine, unsigned int _toLine, bool _force );
+    QString toString() const;
 };
 
 typedef cmd_state (YZModeEx::*ExPoolMethod) (const YZExCommandArgs&);

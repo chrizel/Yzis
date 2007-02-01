@@ -29,7 +29,8 @@
 class NoGuiSession : public YZSession
 {
 	public:
-		NoGuiSession( const QString & sessionName="TestSession" );
+        static void createInstance();
+
 
 		virtual YZView* createView ( YZBuffer* buf);
 
@@ -52,6 +53,10 @@ class NoGuiSession : public YZSession
 		virtual void doDeleteView(YZView*v);
 		virtual YZBuffer* doCreateBuffer();
 		virtual void setClipboardText(const QString&, Clipboard::Mode);
+
+    private:
+		NoGuiSession( const QString & sessionName="NoGuiSession" );
+
 };
 
 #endif // NOGUI_YZ_SESSION_H

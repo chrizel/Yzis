@@ -139,6 +139,7 @@ void TestYZDebugBackend::testParseRcFile()
     QFile f(fname);
     QTextStream ts;
 
+    // test start
     QVERIFY( f.open( QFile::ReadWrite ) );
     ts.setDevice(&f);
     ts << "   level: warning \n";
@@ -150,6 +151,7 @@ void TestYZDebugBackend::testParseRcFile()
     QCOMPARE( dbe->debugLevel(), YZ_WARNING_LEVEL );
     QCOMPARE( dbe->areaLevel("a"), YZ_ERROR_LEVEL );
 
+    // test start
     QVERIFY( f.open( QFile::ReadWrite ) );
     ts.setDevice(&f);
     ts << "   level: error \n";
@@ -161,6 +163,7 @@ void TestYZDebugBackend::testParseRcFile()
     QCOMPARE( dbe->debugLevel(), YZ_ERROR_LEVEL );
     QCOMPARE( dbe->areaLevel("a"), YZ_DEBUG_LEVEL );
 
+    // test start
     QVERIFY( f.open( QFile::ReadWrite ) );
     ts.setDevice(&f);
     ts << "   level: debug \n";
@@ -171,6 +174,20 @@ void TestYZDebugBackend::testParseRcFile()
     dbe->parseRcfile( fname );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->areaLevel("a"), YZ_WARNING_LEVEL );
+
+    // test start
+    QVERIFY( f.open( QFile::ReadWrite ) );
+    ts.setDevice(&f);
+    ts << "   level: debug \n";
+    ts << " a : warning \n";
+    ts << " AA : error \n";
+    f.close();
+    QVERIFY( QFile::exists( fname ) );
+
+    dbe->parseRcfile( fname );
+    QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
+    QCOMPARE( dbe->areaLevel("a"), YZ_WARNING_LEVEL );
+    QCOMPARE( dbe->areaLevel("AA"), YZ_ERROR_LEVEL );
 
     QFile::remove( fname );
 }

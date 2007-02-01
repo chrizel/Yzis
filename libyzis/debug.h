@@ -32,6 +32,7 @@
 #include <QString>
 #include <QMap>
 #include "yzismacros.h"
+#include "noncopyable.h"
 
 class QStringList;
 
@@ -110,9 +111,9 @@ class QStringList;
   * \endcode
   *
   */
-class YZIS_EXPORT YZDebugBackend {
+class YZIS_EXPORT YZDebugBackend : private boost::noncopyable {
+
 public:
-	~YZDebugBackend();
 
     /** The singleton constructor */
 	static YZDebugBackend * self();
@@ -244,6 +245,14 @@ public:
       */
     static void yzisMsgHandler( QtMsgType msgType, const char * text );
 
+    /** Because of windows, we need to have new defined in the
+      * shared library. */
+	void * operator new( size_t tSize );
+
+    /** Because of windows, we need to have delete defined in the
+      * shared library. */
+	void  operator delete( void* p );
+
 private:
     /** Initialise the YZDebugBackend(), set a few internal variables
       * (dictionaries, ...)
@@ -252,6 +261,15 @@ private:
 
     /** Private constuctors for a singleton */
 	YZDebugBackend();
+
+    /** Private copy constuctors for a singleton */
+	YZDebugBackend( YZDebugBackend & other);
+
+    /** Private copy assignment for a singleton */
+	YZDebugBackend & operator=( YZDebugBackend & other );
+
+    /** Private destructor for a singleton */
+	~YZDebugBackend();
 
     /** Singleton instance holder */
 	static YZDebugBackend * me;
@@ -271,8 +289,13 @@ private:
     /** File output of the debugging (may be stderr, stdout or any open file
       * descriptor */ 
 	FILE * _output;
+
+    /** File name of the output */
+    QString _outputFname;
 };
 
+void * yzmalloc( size_t tSize );
+void yzfree( void * p );
 
 class YZDebugStream;
 

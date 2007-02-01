@@ -36,6 +36,9 @@
 
 #include "luaengine.h"
 
+#define dbg()    yzDebug("YZLuaFuncs")
+#define err()    yzError("YZLuaFuncs")
+
 /*
  * TODO:
  * - invert line/col arguments
@@ -117,6 +120,7 @@ void YZLuaFuncs::registerLuaFuncs(lua_State *L)
 	lua_register(L,"matchpair",matchpair);
 	lua_register(L,"mode",mode);
 	lua_register(L,"edit",edit);
+    dbg() << HERE() << " done." << endl;
 }
 
 

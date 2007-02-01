@@ -41,14 +41,20 @@ int main(int argc, char **argv) {
     for( int i=0; i<argc; i++) {
         slArgv << argv[i];
     }
-    YZDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );
-    YZDebugBackend::self()->parseArgv( slArgv );
-    yzDebug() << QDateTime::currentDateTime().toString() << endl;
+
+    QList<int> ll;
+    foreach( int s, ll ) qDebug("s=%d", s );
+    qFatal("bye bye");
 
     setlocale( LC_ALL, "");
     QString l = QString(PREFIX) + "/share/locale";
 
-    new NoGuiSession();
+    YZDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );
+    YZDebugBackend::self()->parseArgv( slArgv );
+    yzDebug() << " ==============[ libyzisrunner started at: " << QDateTime::currentDateTime().toString() << "]====================" << endl;
+
+	NoGuiSession::createInstance();
+
     YZSession::self()->getOptions()->setGroup("Global");
     YZOptionValue* o_splash = YZSession::self()->getOptions()->getOption("blocksplash");
     bool splash = o_splash->boolean();

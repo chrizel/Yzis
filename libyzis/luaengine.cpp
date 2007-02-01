@@ -53,6 +53,9 @@ extern "C" {
 #include <lualib.h>
 }
 
+#define dbg()    yzDebug("YZLuaEngine")
+#define err()    yzError("YZLuaEngine")
+
 
 using namespace yzis;
 
@@ -104,10 +107,12 @@ YZLuaEngine::YZLuaEngine() {
 void YZLuaEngine::init() {
 	YZLuaFuncs::registerLuaFuncs( L );
 	YZLuaRegexp::registerLuaRegexp( L );
+    dbg() << HERE() << " done" << endl;
 }
 
 YZLuaEngine::~YZLuaEngine() {
 	lua_close(L);
+    dbg() << HERE() << " done" << endl;
 }
 
 void YZLuaEngine::cleanLuaStack( lua_State * L ) {
@@ -190,12 +195,13 @@ void YZLuaEngine::execute(const QString& function, int nbArgs, int nbResults) {
 }
 
 QString YZLuaEngine::source( const QString& filename ) {
+    dbg().sprintf( "source( '%s' )\n", qp(filename) );
     QString fname = filename;
 	if ( !fname.endsWith( ".lua" ) ) fname += ".lua";
 
-	yzDebug() << "source : " << fname << endl;
+	yzDebug() << "source() fname='" << fname << "'" << endl;
 	fname = YZBuffer::tildeExpand( fname );
-	yzDebug() << "looking filename : " << fname << endl;
+	yzDebug() << "source() fname='" << fname << "'" << endl;
 	QStringList candidates;
 	candidates << fname 
 	           << QDir::currentPath()+"/"+fname
@@ -212,6 +218,7 @@ QString YZLuaEngine::source( const QString& filename ) {
             break;
         }
 	}
+    dbg().sprintf( "source() found='%s'\n", qp(found) );
 
 	if (found.isEmpty()) {
         YZSession::self()->popupMessage(_("The file %1 could not be found in standard directories" ).arg( filename ));

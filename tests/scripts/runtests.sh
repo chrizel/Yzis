@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/sh 
 # Usage:
 # ./runtests.sh ["nocopy"] [Yzis frontend] [test name]
 # Copies from the build tree the latest versions of nyzis, qyzis, libyzis and
@@ -16,6 +16,7 @@
 # ./runtests.sh libyzisrunner --> execute tests with no gui yzis frontend
 
 export TMP="d:/tmp"
+export TEMP="d:/tmp"
 
 if [ "X$1" != "Xnocopy" ];
 then
@@ -36,19 +37,24 @@ else
     shift
 fi
 
-YZIS=libyzisrunner
+YZIS="libyzisrunner"
 
-if [ "$1" == "qyzis" ]
-then
-    shift
-    YZIS=qyzis
-else
-    if [ "$1" == "libyzisrunner" ]
-    then
+case "x$1" in
+    ("xqyzis")
         shift
-        YZIS=libyzisrunner
-    fi
-fi
+        YZIS="qyzis"
+        ;;
+
+    ("xlibyzisrunner")
+        shift
+        YZIS="libyzisrunner"
+        ;;
+
+    ("xgdb")
+        shift
+        YZIS="gdb"
+        ;;
+esac
 
 testname='test_all.lua'
 if [ -n "$*" ]; 
@@ -56,8 +62,8 @@ then
     testname=$*
 fi
 
-# save config file
-if [ -n "$CYGWIN" ]; then
+# save config file on linux
+if [ -z "$CYGWIN" ]; then
     if [ -f ~/.yzis/yzis.conf ]; then
         mv ~/.yzis/yzis.conf ~/.yzis/yzis.conf.old
     fi
@@ -68,10 +74,21 @@ fi
 
 echo "Testing with: $YZIS $testname"
 
-LANG=C ./$YZIS -c ":source $testname <ENTER><ESC>:qall!<ENTER>"
+yzis_arg1="-c"
+yzis_arg2="\":source $testname <ENTER><ESC>:qall!<ENTER>\""
 
-# restore config file
-if [ -n "$CYGWIN" ]; then
+if [ "$YZIS" == "gdb" ];
+then
+    # execution in gdb
+    LANG=C gdb libyzisrunner.exe -w -ex "set args $yzis_arg1 $yzis_arg2"
+else
+    # normal execution
+    echo LANG=C ./$YZIS $yzis_arg1 $yzis_arg2
+    LANG=C ./$YZIS $yzis_arg1 "$yzis_arg2"
+fi
+
+# restore config file on linux
+if [ -z "$CYGWIN" ]; then
     if [ -f ~/.yzis/yzis.conf.old ]; then
         mv ~/.yzis/yzis.conf.old ~/.yzis/yzis.conf
     fi

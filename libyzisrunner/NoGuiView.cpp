@@ -55,7 +55,7 @@ uint NoGuiView::getCursorCol()
 // Reimplemented to please compilation
 
 void NoGuiView::setCommandLineText( const QString& text) {
-    dbg() << "NoGuiView::setCommandLineText '" << text << "'\n";
+    dbg() << "NoGuiView::setCommandLineText( text='" << text << "') \n";
     mCommandLine = text;
 }
 
@@ -68,7 +68,7 @@ void NoGuiView::setFocusMainWindow() {
 }
 
 QString NoGuiView::getCommandLineText() const {
-    dbg() << "NoGuiView::getCommandLineText" << endl;
+    // dbg() << "NoGuiView::getCommandLineText" << endl;
     return mCommandLine;
 }
 

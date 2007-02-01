@@ -50,6 +50,9 @@ static const QChar tabChar( '\t' );
 static YZColor color_null;
 static YZColor blue( Qt::blue );
 
+#define dbg() yzDebug("YZView")
+#define err() yzError("YZView")
+
 /**
  * class YZView
  */
@@ -59,7 +62,7 @@ static int nextId = 1;
 YZView::YZView(YZBuffer *_b, YZSession *sess, int cols, int lines) 
 	:  m_drawBuffer(), id(nextId++)
 {
-	yzDebug() << "New View created with UID : " << getId() << endl;
+	dbg() << "New View created with UID : " << getId() << endl;
 	YZASSERT( _b ); YZASSERT( sess );
 	mSession = sess;
 	mBuffer	= _b;
@@ -123,8 +126,8 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int cols, int lines)
 }
 
 YZView::~YZView() {
+	dbg() << "~YZView(): Deleting view " << id << endl;
 	mModePool->stop();
-//	yzDebug() << "YZView : Deleting view " << id << endl;
 	mBuffer->saveYzisInfo(this);
 	mBuffer->rmView(this); //make my buffer forget about me
 
@@ -147,7 +150,7 @@ void YZView::setupKeys() {
 }
 
 void YZView::setVisibleArea(int c, int l, bool refresh) {
-	yzDebug() << "YZView::setVisibleArea(" << c << "," << l << ");" << endl;
+	dbg() << "YZView::setVisibleArea(" << c << "," << l << ");" << endl;
 	mLinesVis = l;
 	mColumnsVis = c;
 	if( refresh )
@@ -182,10 +185,10 @@ void YZView::sendMultipleKey(const QString& _keys) {
 		mModePool->change( YZMode::MODE_COMMAND );
 	}
 	QString keys = _keys;
-	yzDebug() << "YZView::sendMultipleKey " << keys << endl;
+	dbg() << "YZView::sendMultipleKey " << keys << endl;
 	for ( int i = 0 ; i < keys.length(); ) {
 		QString key = keys.mid( i );
-		yzDebug() << "Handling key : " << key << endl;
+		dbg() << "Handling key : " << key << endl;
 		//exception : in SEARCH, SEARCH_BACKWARD and EX mode we dont send keys immediately
 		if (mModePool->current()->mapMode() & cmdline) {
 			if ( key.startsWith( "<ESC>" ) ) {
@@ -205,13 +208,12 @@ void YZView::sendMultipleKey(const QString& _keys) {
 				continue;
 			} else {
 				setCommandLineText( getCommandLineText() + key.mid(0,1) );
-				yzDebug() << "Set commandline : " << getCommandLineText() + key.mid( 0,1 ) << endl;
 				i++;
 				continue;
 			}
 		}
 		if ( key.startsWith( "<CTRL>" ) ) {
-			yzDebug() << "Sending " << key.mid(6,1) << endl;
+			dbg() << "Sending " << key.mid(6,1) << endl;
 			sendKey (key.mid( 6,1 ), "<CTRL>" );
 			i+=7;
 			continue;
@@ -267,7 +269,7 @@ void YZView::displayIntro() {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-//	yzDebug() << "YZView :: sendKey : " << _key << " mod=" << _modifiers << endl;
+//	dbg() << "YZView :: sendKey : " << _key << " mod=" << _modifiers << endl;
 
 	QString key=_key;
 	QString modifiers=_modifiers;
@@ -309,14 +311,14 @@ YZSelectionMap YZView::visualSelection() const {
 }
 
 void YZView::reindent( int X, int Y ) {
-	yzDebug() << "Reindent " << endl;
+	dbg() << "Reindent " << endl;
 	QRegExp rx("^(\\t*\\s*\\t*\\s*).*$"); //regexp to get all tabs and spaces
 	QString currentLine = mBuffer->textline( Y ).trimmed();
 	bool found = false;
 	YZCursor cur( X, Y );
 	YZCursor match = mBuffer->action()->match(this, cur, &found);
 	if ( !found ) return;
-	yzDebug() << "Match found on line " << match.y() << endl;
+	dbg() << "Match found on line " << match.y() << endl;
 	QString matchLine = mBuffer->textline( match.y() );
 	if ( rx.exactMatch( matchLine ) )
 		currentLine.prepend( rx.cap( 1 ) ); //that should have all tabs and spaces from the previous line
@@ -330,7 +332,7 @@ void YZView::reindent( int X, int Y ) {
 * rather than giving consistent depth changes/composition based on user settings.
 */
 void YZView::indent() {
-	//yzDebug() << "Entered YZView::indent" << endl;
+	//dbg() << "Entered YZView::indent" << endl;
 	QString indentMarker = "{"; // Just use open brace for now user defined (BEGIN or whatever) later
 	int ypos = mainCursor->bufferY();
 	QString currentLine = mBuffer->textline( ypos );
@@ -340,16 +342,16 @@ void YZView::indent() {
 	}
 	QString indentString = rxLeadingWhiteSpace.cap( 1 );
 	if ( mainCursor->bufferX() == currentLine.length() && currentLine.trimmed().endsWith( indentMarker ) ) {
-		//yzDebug() << "Indent marker found" << endl;
+		//dbg() << "Indent marker found" << endl;
 		// This should probably be tabstop...
 		indentString.append( "\t" );
 	}
-	//yzDebug() << "Indent string = \"" << indentString << "\"" << endl;
+	//dbg() << "Indent string = \"" << indentString << "\"" << endl;
 	mBuffer->action()->insertNewLine( this, mainCursor->buffer() );
 	ypos++;
 	mBuffer->action()->replaceLine( this, ypos, indentString + mBuffer->textline( ypos ).trimmed() );
 	gotoxy( indentString.length(), ypos );
-	//yzDebug() << "Leaving YZView::indent" << endl;
+	//dbg() << "Leaving YZView::indent" << endl;
 }
 
 QString YZView::centerLine( const QString& s ) {
@@ -383,7 +385,7 @@ void YZView::updateCursor() {
 }
 
 void YZView::centerViewHorizontally( int column) {
-//	yzDebug() << "YZView::centerViewHorizontally " << column << endl;
+//	dbg() << "YZView::centerViewHorizontally " << column << endl;
 	int newcurrentLeft = 0;
 	if ( column > mColumnsVis/2 ) newcurrentLeft = column - mColumnsVis / 2;
 	if ( newcurrentLeft != scrollCursor->bufferX() ) {
@@ -409,7 +411,7 @@ void YZView::bottomViewVertically( int line ) {
 }
 
 void YZView::alignViewBufferVertically( int line ) {
-//	yzDebug() << "YZView::alignViewBufferVertically " << line << endl;
+//	dbg() << "YZView::alignViewBufferVertically " << line << endl;
 	int newcurrent = line;
 	int old_dCurrentTop = scrollCursor->screenY();
 	if ( newcurrent > 0 ) {
@@ -451,7 +453,7 @@ void YZView::alignViewBufferVertically( int line ) {
 }
 
 void YZView::alignViewVertically( int line ) {
-//	yzDebug() << "YZView::alignViewVertically " << line << endl;
+//	dbg() << "YZView::alignViewVertically " << line << endl;
 	int newcurrent = line;
 	int screenX = scrollCursor->screenX();
 	int old_dCurrentTop = scrollCursor->screenY();
@@ -666,7 +668,7 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 	*viewCursor = *workCursor;
 
 	if ( applyCursor && viewCursor != mainCursor ) { // do not apply if this isn't the mainCursor
-//		yzDebug() << "THIS IS NOT THE MAINCURSOR" << endl;
+//		dbg() << "THIS IS NOT THE MAINCURSOR" << endl;
 		applyCursor = false;
 	} else if ( applyCursor && m_paintAutoCommit > 0 ) {
 		sendCursor( viewCursor );
@@ -674,10 +676,10 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 	}
 	
 
-/*	yzDebug() << "applyGoto : "
+/*	dbg() << "applyGoto : "
 			<< "dColLength=" << dColLength << "; dLineLength=" << dLineLength << "; mLineLength=" << mLineLength
 			<< "; dWrapNextLine=" << dWrapNextLine << "; dWrapTab=" << dWrapTab << endl;
-	yzDebug() << "mCursor:" << *mCursor << "; dCursor:" << *dCursor << endl; */
+	dbg() << "mCursor:" << *mCursor << "; dCursor:" << *dCursor << endl; */
 
 	if ( applyCursor ) {
 
@@ -791,7 +793,7 @@ QString YZView::moveLeft( YZViewCursor* viewCursor, int nb_cols, bool wrap, bool
 			while(diff>0 && y>=1) {
 				// go one line up
 				line_length = myBuffer()->textline(--y).length();
-				yzDebug() << "line length: " << line_length << endl;
+				dbg() << "line length: " << line_length << endl;
 				diff-=line_length+1;
 			}
 			// if we moved too far, go back
@@ -1333,7 +1335,7 @@ bool YZView::drawNextCol( ) {
 
 /*	if ( !drawMode && (workCursor->bufferY() == 12 || workCursor->bufferY() == 13 ) ) {
 		workCursor->debug();
-		yzDebug() << ret << endl;
+		dbg() << ret << endl;
 	}
 */
 	return ret;
@@ -1689,7 +1691,7 @@ void YZView::sendPaintEvent( const YZCursor& from, const YZCursor& to ) {
 }
 void YZView::sendPaintEvent( int curx, int cury, int curw, int curh ) {
 	if ( curh == 0 ) {
-		yzDebug() << "Warning: YZView::sendPaintEvent with height = 0" << endl;
+		dbg() << "Warning: YZView::sendPaintEvent with height = 0" << endl;
 		return;
 	}
 	sendPaintEvent( YZCursor(curx,cury),YZCursor(curx+curw,cury+curh-1) );
@@ -1800,7 +1802,7 @@ void YZView::internalScroll( int dx, int dy ) {
 void YZView::paintEvent( const YZSelection& drawMap ) {
 	if ( drawMap.isEmpty() )
 		return;
-	//yzDebug() << "YZView::paintEvent" << drawMap;
+	//dbg() << "YZView::paintEvent" << drawMap;
 
 	bool number = getLocalBooleanOption( "number" );
 	if ( number ) {
@@ -1936,7 +1938,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 
 	m_drawBuffer.flush();
 
-//	yzDebug() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
+//	dbg() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
 
 	endPaintEvent();
 }

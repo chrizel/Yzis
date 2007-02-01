@@ -1,3 +1,8 @@
+Aborting before end of test:
+- test_lua_binding
+- test_search
+
+
 
 Yzis tests:
 ===========

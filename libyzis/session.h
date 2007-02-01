@@ -72,7 +72,7 @@ class YZIS_EXPORT YZSession {
 		 *  @return one and the only instance of YZSession
 		 *  @see setInstance
 		 */
-		static YZSession* self() { return mInstance; }
+		static YZSession * self();
 		
 		/**
 		 * Returns the session name
@@ -419,6 +419,15 @@ class YZIS_EXPORT YZSession {
 		void saveJumpPosition( const int x, const int y );
 		void saveJumpPosition( const YZCursor * cursor );
 		const YZCursor * previousJumpPosition();
+
+        /** Because of windows, we need to have new defined in the
+          * shared library. */
+        void * operator new( size_t tSize );
+
+        /** Because of windows, we need to have delete defined in the
+          * shared library. */
+        void  operator delete( void* p );
+
 		
 	protected:
 		virtual YZView *doCreateView( YZBuffer *buffer ) = 0;
@@ -438,6 +447,7 @@ class YZIS_EXPORT YZSession {
 		 * Remove a view from the view list
 		 */
 		void removeView( YZView *view );
+
 	protected:
 		/**
 		 * Constructor. Protected, because YZSession is a singleton.
@@ -469,7 +479,8 @@ class YZIS_EXPORT YZSession {
 		 *  @see QYZisSession::createInstance()
 		 *  @see NYZSession::createInstance()
 		 */
-		static void setInstance(YZSession* instance) { mInstance = instance; }
+		static void setInstance(YZSession* instance);
+
 	private:
 		/**
 		 *  Copy constructor. Disable copy by declaring it as private

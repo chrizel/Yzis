@@ -246,10 +246,6 @@ class YZLuaEngine {
           */
 		lua_State *L;
 
-		/** Private constructor for a singleton */
-		YZLuaEngine();
-
-		static YZLuaEngine * me; //!< Singleton instance holder
 
 		/**
 		 * Init core lua stuff (functions, regexps...)
@@ -278,6 +274,12 @@ class YZLuaEngine {
           * is called. 
           */
 		static void print_lua_stack(lua_State *L, const char * msg="");
+
+    private:
+		/** Private constructor for a singleton */
+		YZLuaEngine();
+		static YZLuaEngine * me; //!< Singleton instance holder
+
 
 };
 

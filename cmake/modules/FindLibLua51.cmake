@@ -14,7 +14,7 @@ INCLUDE(UsePkgConfig)
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
 #debian
-PKGCONFIG(lua51 _libLua51IncDir _libLua51LinkDir _libLua51LinkFlags _libLua51Cflags)
+PKGCONFIG(lua5.1 _libLua51IncDir _libLua51LinkDir _libLua51LinkFlags _libLua51Cflags)
 #gentoo
 PKGCONFIG(lua _libLuaIncDir _libLuaLinkDir _libLuaLinkFlags _libLuaCflags)
 #any other distrib to blame for using common naming ?
@@ -28,8 +28,8 @@ FIND_PACKAGE(GNUWIN32)
 FIND_PATH(LIBLUA51_INCLUDE_DIR lua.h
    ${_libLua51IncDir}/lua
    ${_libLuaIncDir}
-   /usr/include/lua
-   /usr/local/include/lua
+   /usr/include/lua5.1
+   /usr/local/include/lua5.1
    ${GNUWIN32_DIR}/include
 )
 

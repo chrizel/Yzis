@@ -126,7 +126,7 @@
     <configurations>
       <mikmak>
         <envvars/>
-        <configargs>--prefix=/opt/kde --enable-debug=full --with-lua-includes=/usr/include/lua50</configargs>
+        <configargs>--prefix=/opt/kde --enable-debug=full --with-lua-includes=/usr/include/lua5.1</configargs>
         <builddir>mm</builddir>
         <topsourcedir/>
         <cppflags/>
@@ -143,7 +143,7 @@
       </mikmak>
       <default>
         <envvars/>
-        <configargs>--enable-debug=full  --with-lua-includes=/usr/include/lua50</configargs>
+        <configargs>--enable-debug=full  --with-lua-includes=/usr/include/lua5.1</configargs>
         <builddir/>
         <topsourcedir/>
         <cppflags/>
@@ -163,7 +163,7 @@
           <envvar value="/opt/qt4/bin:$PATH" name="PATH" />
           <envvar value="/opt/qt4" name="QTDIR" />
         </envvars>
-        <configargs>--prefix=/opt/kde --enable-debug=full --with-lua-includes=/usr/include/lua50 --with-qt-dir=/opt/qt-copy --with-qt4-dir=/opt/qt4</configargs>
+        <configargs>--prefix=/opt/kde --enable-debug=full --with-lua-includes=/usr/include/lua5.1 --with-qt-dir=/opt/qt-copy --with-qt4-dir=/opt/qt4</configargs>
         <builddir>mikmak-qt4</builddir>
         <topsourcedir/>
         <cppflags/>
@@ -180,7 +180,7 @@
       </mikmak-qt4>
       <craig>
         <envvars/>
-        <configargs>--enable-debug=full  --with-lua-includes=/usr/include/lua50</configargs>
+        <configargs>--enable-debug=full  --with-lua-includes=/usr/include/lua5.1</configargs>
         <builddir>craig</builddir>
         <topsourcedir/>
         <cppflags/>

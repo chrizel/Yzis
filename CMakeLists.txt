@@ -66,8 +66,7 @@ if (APPLE) # XXX: workaround intl for Mac OSX
 endif(APPLE)
 
 ### lua
-find_package(LibLua50 REQUIRED)
-find_package(LibLuaLib50 REQUIRED)
+find_package(LibLua51 REQUIRED)
 
 ### Qt
 if (ENABLE_QYZIS)
@@ -125,7 +124,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
 # libyzis dependencies includes
-set(YZIS_INCLUDES ${QT_INCLUDES} ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR})
+set(YZIS_INCLUDES ${QT_INCLUDES} ${LIBLUA51_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR})
 # libyzis includes
 set(YZIS_INCLUDES ${YZIS_INCLUDES} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/libyzis ${CMAKE_SOURCE_DIR}/libyzis)
 

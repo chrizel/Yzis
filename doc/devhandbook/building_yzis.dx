@@ -37,7 +37,7 @@ First of all, if you haven't already done so, you have to add the
 
 You need to install the the following packages and their dependencies using apt-get:
 \verbatim
-sudo apt-get install subversion cmake build-essential libqt4-dev liblua50-dev liblualib50-dev libncursesw5-dev libmagic-dev doxygen
+sudo apt-get install subversion cmake build-essential libqt4-dev liblua5.1-0-dev libncursesw5-dev libmagic-dev doxygen
 \endverbatim
 
 If you want the pdf documentation, you need LaTeX as well:
@@ -123,8 +123,8 @@ You can get lua binaries from:
 http://luaforge.net/frs/?group_id=110
 
 You need:
-- lua5_0_3_Win32_mingw3_lib.zip
-- lua5_0_3_Win32_bin.zip
+- lua5_1_1_Win32_mingw3_lib.zip
+- lua5_1_1_Win32_bin.zip
 
 Unzip them in a directory
 
@@ -175,10 +175,8 @@ so that CMake finds it.
 
 For Lua, you need to have it installed in /usr/lib or /usr/local/lib, or to
 specify it with the following CMake variables:
-- LIBLUA50_INCLUDE_DIR: place to find lua.h
-- LIBLUALIB50_INCLUDE_DIR: place to find lualib.h (usually, the same)
-- LIBLUA50_LIBRARIES: place to find liblua.so
-- LIBLUALIB50_LIBRARIES: place to find liblualib.so (usually, the same)
+- LIBLUA51_INCLUDE_DIR: place to find lua.h
+- LIBLUA51_LIBRARIES: place to find liblua.so
 
 \subsection windows_notes Special Notes on windows:
 
@@ -196,9 +194,7 @@ line on windows look like this:
 
 \verbatim
 cmake -G "MinGW Makefiles" -DLIBLUA50_LIBRARIES="D:/program/Lua/LibLua.lib" 
--DLIBLUA50_INCLUDE_DIR="D:/program/Lua" 
--D LIBLUALIB50_INCLUDE_DIR="D:/program/Lua" 
--DLIBLUALIB50_LIBRARIES="d:/program/Lua/LibLuaLib.lib" 
+-DLIBLUA51_INCLUDE_DIR="D:/program/Lua" 
 -DENABLE_NYZIS=off 
 -DENABLE_QYZIS=on 
 -DCMAKE_VERBOSE_MAKEFILE=off 

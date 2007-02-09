@@ -73,32 +73,12 @@ TestRegexp = {} --class
 
 	function TestRegexp:test_matchIndex()
         re = Regexp( '(aa) (bb) (cc)' )
-        i1, i2, i3, i4, i5 = re:matchIndex('aa bb cc')
-        assertEquals( i1, 0 )
-        assertEquals( i2, 0 )
-        assertEquals( i3, 3 )
-        assertEquals( i4, 6 )
-        assertEquals( i5, nil )
+        i1 = re:matchIndex('XX aa bb cc')
+        assertEquals( i1, 3 )
 
-        i1, i2 = re:matchResult('XX')
+        i1 = re:matchIndex('XX')
         assertEquals( i1, -1 )
-        assertEquals( i2, nil )
 	end
-
-	function TestRegexp:test_matchResult()
-        re = Regexp( '(aa) (bb) (cc)' )
-        s1, s2, s3, s4, s5 = re:matchResult('aa bb cc')
-        assertEquals( s1, 'aa bb cc' )
-        assertEquals( s2, 'aa' )
-        assertEquals( s3, 'bb' )
-        assertEquals( s4, 'cc' )
-        assertEquals( s5, nil )
-
-        s1, s2 = re:matchResult('XX')
-        assertEquals( s1, '' )
-        assertEquals( s2, nil )
-	end
-
 
     function TestRegexp:Xtest_display_regexp_content()
         print("Regexp table: ")
@@ -272,7 +252,7 @@ TestRegexp = {} --class
         re = Regexp( 'a+' )
         assertEquals( re:matchIndex( '   aaa' ), 3 )
         assertEquals( re:captured(0),  'aaa' )
-        assertEquals( re:captured(1),  nil )
+        assertEquals( re:captured(1),  '' )
         assertEquals( re:numCaptures(),  0 )
         assertEquals( re:pos(0),  3 )
         assertEquals( re:pos(1),  -1 )
@@ -283,7 +263,7 @@ TestRegexp = {} --class
         assertEquals( re:captured(1),  'aabb' )
         assertEquals( re:captured(2),  'aa' )
         assertEquals( re:captured(3),  'bb' )
-        assertEquals( re:captured(4),  nil )
+        assertEquals( re:captured(4),  '' )
         assertEquals( re:numCaptures(),  3 )
         assertEquals( re:pos(0),  3 )
         assertEquals( re:pos(1),  3 )
@@ -319,35 +299,93 @@ TestRegexp = {} --class
         expected = 'x bbb x bbb x'
         assertEquals( result, expected )
 
-        result = re:replace( s, 'x', 1 )
-        expected = 'x bbb aaa bbb aaa'
-        assertEquals( result, expected )
-
-        result = re:replace( s, 'x', 2 )
-        expected = 'x bbb x bbb aaa'
-        assertEquals( result, expected )
-
-        result = re:replace( s, 'x', 3 )
-        expected = 'x bbb x bbb x'
-        assertEquals( result, expected )
-
-        result = re:replace( s, 'x', 4 )
-        expected = 'x bbb x bbb x'
-        assertEquals( result, expected )
-
         s = 'aaaa'
         result = Regexp('aa'):replace( s, 'XX' )
         expected = 'XXXX'
         assertEquals( result, expected )
 
         -- no change in case of failure
-        result = Regexp('XXX'):replace( s, '', 4 )
+        result = Regexp('XXX'):replace( s, '' )
         expected = s
         assertEquals( result, expected )
     end
 
+    function TestRegexp:test_doc_examples()
+        -- Regexp_create
+        re = Regexp( 'my_re' )
+        assertEquals( (re:match('XXmy_re')), true )
+        assertEquals( (re:match('no match')), false )
+
+        -- Regexp_match
+        re = Regexp( 'my_re' )
+        assertEquals( (re:match('XXmy_re')), true )
+        assertEquals( (re:match('no match')), false )
+
+        -- Regexp_matchIndex
+        re = Regexp( 'my_re' )
+        assertEquals( (re:matchIndex('XXmy_re')), 2 )
+        assertEquals( (re:matchIndex('no match')), -1 )
+
+        -- Regexp_pos
+        re = Regexp( '(aa) (bb)' )
+        assertEquals( (re:match('  aa bb  ')), true )
+        assertEquals( (re:pos(0)), 2 )
+        assertEquals( (re:pos(1)), 2 )
+        assertEquals( (re:pos(2)), 5 )
+        assertEquals( (re:pos(3)), -1)
+
+        -- Regexp_numCaptures
+        re = Regexp( '(a+)(b*)(c+)' )
+        assertEquals( re:numCaptures(),  3 )
+
+        -- Regexp_captured
+        re = Regexp( '(a+)(b*)(c+)' )
+        assertEquals( re:match( '   aabbcc  ' ), true )
+        assertEquals( re:captured(0),  'aabbcc' )
+        assertEquals( re:captured(1),  'aa' )
+        assertEquals( re:captured(2),  'bb' )
+        assertEquals( re:captured(3),  'cc' )
+        assertEquals( re:captured(4),  '' )
+
+        assertEquals( re:match( '  aacc  ' ), true )
+        assertEquals( re:captured(0),  'aacc' )
+        assertEquals( re:captured(1),  'aa' )
+        assertEquals( re:captured(2),  '' )
+        assertEquals( re:captured(3),  'cc' )
+        assertEquals( re:captured(4),  '' )
+
+        assertEquals( re:match( '  XXX  ' ), false )
+        assertEquals( re:captured(0),  '' )
+
+        -- Regexp_replace
+        re = Regexp('(aaa) (bbb) (ccc)')
+        s = "aaa bbb ccc"
+        result = re:replace( s, "\\3 \\2 \\1" )
+        expected = 'ccc bbb aaa'
+        assertEquals( result, expected )
+
+        -- Regexp_pattern
+        pat = '(aaa) (bbb) (ccc)'
+        re = Regexp(pat)
+        assertEquals( re:pattern(), pat )
+
+        -- Regexp_setMinimal
+        re = Regexp( 'a+' )
+        assertEquals( re:matchIndex( '   aaa' ), 3 )
+        assertEquals( re:captured(0), 'aaa' )
+        re:setMinimal( true )
+        assertEquals( re:matchIndex( '   aaa' ), 3 )
+        assertEquals( re:captured(0), 'a' )
+
+        -- Regexp_setCaseSensitive
+        re = Regexp( 'a+' )
+        assertEquals( re:matchIndex( 'xxxAAA' ), -1 )
+        re:setCaseSensitive( false )
+        assertEquals( re:matchIndex( 'xxxAAA' ), 3 )
+    end
+
 if not _REQUIREDNAME then
-    -- LuaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
+    -- LuaUnit:run('TestRegexp:test_usage') -- will execute only one test
     -- LuaUnit:run('TestLuaBinding') -- will execute only one class of test
     LuaUnit:run() -- will execute all tests
 end

@@ -66,7 +66,22 @@ if (APPLE) # XXX: workaround intl for Mac OSX
 endif(APPLE)
 
 ### lua
-find_package(LibLua51 REQUIRED)
+find_package(LibLua51 )
+if (LIBLUA51_FOUND)
+    set(LIBLUA_INCLUDE_DIR ${LIBLUA51_INCLUDE_DIR})
+    set(LIBLUA_LIBRARIES ${LIBLUA51_LIBRARIES})
+else (LIBLUA51_FOUND)
+    find_package(LibLua50 )
+    find_package(LibLuaLib50 )
+    if (LIBLUA50_FOUND)
+        set(LIBLUA_INCLUDE_DIR ${LIBLUA50_INCLUDE_DIR} ${LIBLUALIB50_INCLUDE_DIR} )
+        set(LIBLUA_LIBRARIES ${LIBLUA50_LIBRARIES} ${LIBLUALIB50_LIBRARIES})
+    else (LIBLUA50_FOUND)
+        message(FATAL_ERROR "Lua 5.0 or Lua 5.1 is required but was not
+found!" )
+    endif (LIBLUA50_FOUND)
+endif (LIBLUA51_FOUND)
+
 
 ### Qt
 if (ENABLE_QYZIS)
@@ -124,7 +139,7 @@ if (CMAKE_COMPILER_IS_GNUCXX)
 endif (CMAKE_COMPILER_IS_GNUCXX)
 
 # libyzis dependencies includes
-set(YZIS_INCLUDES ${QT_INCLUDES} ${LIBLUA51_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR})
+set(YZIS_INCLUDES ${QT_INCLUDES} ${LIBLUA_INCLUDE_DIR} ${MAGIC_INCLUDE_DIR})
 # libyzis includes
 set(YZIS_INCLUDES ${YZIS_INCLUDES} ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR}/libyzis ${CMAKE_SOURCE_DIR}/libyzis)
 

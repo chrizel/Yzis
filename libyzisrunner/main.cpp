@@ -42,9 +42,10 @@ int main(int argc, char **argv) {
         slArgv << argv[i];
     }
 
+    /*
     QList<int> ll;
     foreach( int s, ll ) qDebug("s=%d", s );
-    qFatal("bye bye");
+    */
 
     setlocale( LC_ALL, "");
     QString l = QString(PREFIX) + "/share/locale";

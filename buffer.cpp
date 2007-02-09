@@ -43,6 +43,9 @@
 #include "yzisinfo.h"
 #include "portability.h"
 
+#define dbg()    yzDebug("YZBuffer")
+#define err()    yzError("YZBuffer")
+
 #define ASSERT_TEXT_WITHOUT_NEWLINE( functionname, text ) \
 	YZASSERT_MSG( text.contains('\n')==false, QString("%1 - text contains newline").arg(text) )
 
@@ -700,10 +703,12 @@ void YZBuffer::updateAllViews() {
 }
 
 YZView* YZBuffer::firstView() const {
-	if (  d->views.first() != NULL )
-		return d->views.first();
-	else yzDebug("YZBuffer") << "No VIEW !!!" << endl;
-	return NULL;//crash me :)
+    if ( d->views.isEmpty() ) {
+        err().sprintf("firstView() - no view to return, returning NULL" );
+        return NULL;//crash me :)
+    }
+
+    return d->views.first();
 }
 
 void YZBuffer::rmView(YZView *v) {

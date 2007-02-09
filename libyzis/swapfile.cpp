@@ -33,6 +33,9 @@
 #include "session.h"
 #include "portability.h"
 
+#define dbg()    yzDebug("YZSwapFile")
+#define err()    yzError("YZSwapFile")
+
 YZSwapFile::YZSwapFile(YZBuffer *b) {
 	mParent = b;
 	mRecovering = false;
@@ -43,17 +46,17 @@ YZSwapFile::YZSwapFile(YZBuffer *b) {
 }
 
 void YZSwapFile::setFileName( const QString& fname ) {
+	dbg() << "setFileName( " << fname << ")" << endl;
 	unlink();
-	yzDebug() << "orig " << fname << endl;
 	mFilename = fname.section( '/', 0, -2 ) + "/." + fname.section( '/', -1 ) + ".ywp";
-	yzDebug() << "Swap change filename " << mFilename << endl;
+	dbg() << "Swap filename = " << mFilename << endl;
 }
 
 void YZSwapFile::flush() {
 	if ( mRecovering ) return;
 	if ( mParent->getLocalIntegerOption("updatecount") == 0 ) return;
 	if ( mNotResetted ) init();
-	yzDebug() << "Flushing swap to " << mFilename << endl;
+	dbg() << "Flushing swap to " << mFilename << endl;
 	QFile f( mFilename );
 	struct stat buf;
 #ifndef YZIS_WIN32_GCC
@@ -92,16 +95,16 @@ void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString
 }
 
 void YZSwapFile::unlink() {
-//	yzDebug() << "Unlink swap file " << mFilename << endl;
+	dbg() << "Unlink swap file " << mFilename << endl;
 	if ( ! mFilename.isNull() && QFile::exists( mFilename ) )
 		QFile::remove ( mFilename );
 	mNotResetted=true;
 }
 
 void YZSwapFile::init() {
-	yzDebug() << "Swap : init file " << mFilename << endl;
+	dbg() << "init() mFilename=" << mFilename << endl;
 	if ( QFile::exists( mFilename ) ) {
-		yzDebug() << "Swap file already EXISTS ! " << endl;
+		dbg() << "Swap file already EXISTS ! " << endl;
 		//that should really not happen ...
 		mNotResetted = true; //don't try to access that file later ...
 		return;
@@ -138,7 +141,7 @@ bool YZSwapFile::recover() {
 			if ( rx.exactMatch( line ) ) {
 				replay( ( YZBufferOperation::OperationType )rx.cap( 1 ).toInt(), rx.cap( 2 ).toUInt(), rx.cap( 3 ).toUInt(), rx.cap( 4 ) );
 			} else {
-				yzDebug() << "Error replaying line : " << line << endl;
+				dbg() << "Error replaying line : " << line << endl;
 			}
 		}
 		f.close();

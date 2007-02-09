@@ -416,20 +416,20 @@ YZDebugStream& YZDebugStream::operator << (const QString& string) {
     return *this;
 }
 
-YZDebugStream& YZDebugStream::operator << (const QStringList& string) {
-    *this << "(";
-    *this << string.join( "," );
-    *this << ") ";
-    return *this;
-}
-
 YZDebugStream& YZDebugStream::operator << (const char* string) {
     output+=QString::fromUtf8( string );
     if ( output.at( output.length() - 1 ) == '\n' ) {
         flush();
     } else {
-        output += " ";
+        // output += " ";
     }
+    return *this;
+}
+
+YZDebugStream& YZDebugStream::operator << (const QStringList& string) {
+    *this << "(";
+    *this << string.join( "," );
+    *this << ") ";
     return *this;
 }
 

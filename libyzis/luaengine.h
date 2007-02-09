@@ -20,6 +20,8 @@
 #ifndef YZ_LUA_ENGINE
 #define YZ_LUA_ENGINE
 
+#include "yzismacros.h"
+
 extern "C" {
 #include <lua.h>
 }
@@ -57,7 +59,7 @@ class YZView;
   * interface
   *
   */
-class YZLuaEngine {
+class YZIS_EXPORT YZLuaEngine {
 	public:
 		/** Get the pointer to the singleton YZLuaEngine */
 		static YZLuaEngine * self();
@@ -239,6 +241,53 @@ class YZLuaEngine {
 					const char * functionName, 
 					const char * functionArgDesc );
 
+        /** Print one stack element on the debug interface.
+          *
+          * Print the lua stack item \p index on the debug interface.
+          * The index is passed directly to the lua function, so can be
+          * positive or negative.
+          *
+          * @param L the lua state
+          * @param index the position of the element on the stack
+          * @param type_only whether to output table content (false) or just the type name (true)
+          */
+		static void print_lua_stack_value(lua_State*L, int index, bool type_only=false);
+
+        /** Print the content of the stack on the debug interface.
+          *
+          * Print the content of the lua stack on the debug interface. When
+          * \p msg is specified, it is displayed as well. Use \p msg to
+          * hint the context of the call.
+          *
+          * @param L the lua state
+          * @param msg a message describing the context in which this function
+          * is called. 
+          * @param type_only whether to output table content (false) or just the type name (true)
+          */
+		static void print_lua_stack(lua_State *L, const char * msg, bool type_only=false);
+
+        /** Convert an element of the stack into a string.
+          *
+          * The method is used by print_lua_stack_value().
+          *
+          * @param L the lua state
+          * @param depth indentation added to the content of the element
+          * @param type_only whether to output table content (false) or just the type name (true)
+          * @param index the position of the element on the stack
+          */
+        static QString lua_value_to_string(lua_State*L, int index, int depth=0, bool type_only=false);
+
+        /** Convert a lua table on the stack into a string.
+          *
+          * The method is used by lua_value_to_string() when type_only is set
+          * to false. If type_only is set to true, this method is not called.
+          *
+          * @param L the lua state
+          * @param index the position of the element on the stack
+          * @param depth indentation added to the content of the element
+          */
+        static QString lua_table_to_string(lua_State*L, int index, int depth);
+
 	protected:
         /** Lua state.
           *
@@ -251,29 +300,6 @@ class YZLuaEngine {
 		 * Init core lua stuff (functions, regexps...)
 		 */
 		void init();
-
-        /** Debugging function.
-          *
-          * Print the lua stack item \p index on the debug interface.
-          * The index is passed directly to the lua function, so can be
-          * positive or negative.
-          *
-          * @param L the lua state
-          * @param index the depth of the element in the stack
-          */
-		static void print_lua_stack_value(lua_State*L, int index);
-
-        /** Debugging function.
-          *
-          * Print the content of the lua stack on the debug interface. When
-          * \p msg is specified, it is displayed as well. Use \p msg to
-          * hint the context of the call.
-          *
-          * @param L the lua state
-          * @param msg a message describing the context in which this function
-          * is called. 
-          */
-		static void print_lua_stack(lua_State *L, const char * msg="");
 
     private:
 		/** Private constructor for a singleton */

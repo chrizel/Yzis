@@ -68,9 +68,17 @@ target_link_libraries(yzis ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} ${LIBLUA_LIB
 
 set_target_properties(yzis PROPERTIES VERSION 0.0.0 SOVERSION 0 )
 
-install(TARGETS yzis 
-        RUNTIME DESTINATION bin
-        LIBRARY DESTINATION lib
-        )
+if (WIN32)
+    install(TARGETS yzis 
+            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION bin
+            LIBRARY DESTINATION lib
+            )
+else (WIN32)
+    install(TARGETS yzis 
+            RUNTIME DESTINATION bin
+            LIBRARY DESTINATION lib
+            )
+endif (WIN32)
 install(FILES magic.mime DESTINATION share/yzis)
 

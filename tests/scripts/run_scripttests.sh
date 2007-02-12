@@ -37,14 +37,6 @@ else
     shift
 fi
 
-if [ -n "$CYGWIN" ]; 
-then
-    exe='.exe'
-else
-    exe=''
-fi
-
-
 YZIS="libyzisrunner"
 
 case "x$1" in
@@ -88,7 +80,7 @@ yzis_arg2="\":source $testname <ENTER><ESC>:qall!<ENTER>\""
 if [ "$YZIS" == "gdb" ];
 then
     # execution in gdb
-    LANG=C gdb libyzisrunner$exe -w -ex "set args $yzis_arg1 $yzis_arg2"
+    LANG=C gdb libyzisrunner.exe -w -ex "set args $yzis_arg1 $yzis_arg2"
 else
     # normal execution
     echo LANG=C ./$YZIS $yzis_arg1 $yzis_arg2

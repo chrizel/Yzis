@@ -1,14 +1,6 @@
 
-include_directories( 
-    ${CMAKE_BINARY_DIR} 
-    ${CMAKE_SOURCE_DIR} 
-    ${CMAKE_BINARY_DIR}/libyzis/ 
-    ${CMAKE_SOURCE_DIR}/libyzis/ 
-    ${QT_INCLUDES}  
-    )
-
 # sources
-set(yzistest_SRCS 
+set(yzis_unittest_SRCS 
     main.cpp 
     testDebug.cpp 
     testColor.cpp 
@@ -17,19 +9,31 @@ set(yzistest_SRCS
     )
 
 # files needing moc
-set(yzistest_MOCS 
+set(yzis_unittest_MOCS 
    testDebug.h
    testColor.h
 )
 
-qt4_wrap_cpp(yzistest_MOC_SRCS ${yzistest_MOCS})
+qt4_wrap_cpp(yzis_unittest_MOC_SRCS ${yzis_unittest_MOCS})
 
-add_executable(yzistest ${yzistest_SRCS} ${yzistest_MOC_SRCS} )
+add_executable(yzis_unittest ${yzis_unittest_SRCS} ${yzis_unittest_MOC_SRCS} )
 
-target_link_libraries(yzistest 
-    ${QT_QTTEST_LIBRARY} 
-    ${QT_QTCORE_LIBRARY}
+include_directories( 
+    ${CMAKE_BINARY_DIR} 
+    ${CMAKE_SOURCE_DIR} 
+    ${CMAKE_BINARY_DIR}/libyzis/ 
+    ${CMAKE_SOURCE_DIR}/libyzis/ 
+    ${QT_INCLUDES}  
+    ${LIBLUA_INCLUDE_DIR}
     )
 
-install(TARGETS yzistest DESTINATION bin)
+target_link_libraries(yzis_unittest 
+    ${QT_QTTEST_LIBRARY} 
+    ${QT_QTCORE_LIBRARY}
+    ${LIBLUA_LIBRARIES}
+    yzis
+    )
+
+install(TARGETS yzis_unittest DESTINATION bin)
+
 

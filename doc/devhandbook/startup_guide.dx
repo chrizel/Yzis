@@ -30,7 +30,7 @@ cmake to configure the project before building:
 cd yzis-trunk
 mkdir build
 cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/opt/kde4 -DCMAKE_BUILD_TYPE=Debug
+cmake .. -DCMAKE_INSTALL_PREFIX=/opt/kde4 -DCMAKE_BUILD_TYPE=Debug -DENABLE_DOCUMENTATION=ON
 make
 sudo make install
 \endcode
@@ -42,17 +42,14 @@ Now, you should have the latest yzis compiled and installed.
 \section apidoc API documentation
 
 If you intend to develop, it's probably a good idea to have the source
-documentation available. From within the main directory \e yzis-trunk , issue
-this command:
+documentation available. The cmake command you used above will build this
+documentation as long as you have doxygen installed.
 
-\code
-doxygen yzis.doxy
-\endcode
-
-Then open the page \e apidoc/index.html in a browser and you
-have the full API documentation. PLEASE update this documentation whenever you
-can while coding. Document things you add, complete existing documentation, fix
-documentation when you find an error.
+The documentation can be found in the apidoc directory in your source folder.
+Open \e apidoc/index.html in a browser and you have the full API documentation.
+PLEASE update this documentation whenever you can while coding. Document things
+you add, complete existing documentation, fix documentation when you find an
+error.
 
 Before digging into the source, you should probably read the architecture
 overview. And then -- go and read the source!

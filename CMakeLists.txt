@@ -48,7 +48,7 @@ endif(WIN32)
 option(ENABLE_KYZIS "enable kyzis compilation" OFF)
 option(ENABLE_LIBYZISRUNNER "enable libyzisrunner compilation" ON)
 option(ENABLE_TESTS "enable tests compilation" ON)
-option(ENABLE_DOCUMENTATION "enable handbook generation" OFF)
+option(ENABLE_DOCUMENTATION "generate doxygen documentation" OFF)
 
 option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
 

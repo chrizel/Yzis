@@ -200,7 +200,6 @@ YZView* NYZSession::doCreateView( YZBuffer* buffer )
 	YZASSERT( buffer );
 	NYZView *v = new NYZView( buffer );
 	YZASSERT_MSG(v, "NYZSession::createView : failed creating a new NYZView");
-	buffer->addView ( v);
 	return v;
 }
 

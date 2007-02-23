@@ -112,7 +112,6 @@ YZView* QYZisSession::doCreateView( YZBuffer *buffer ) {
 	QYZisView *view;
 
 	view = new QYZisView( buffer, m_viewParent, QString(buffer->fileName() + "-view").toUtf8().constData() );
-	buffer->addView( view );
 
 	if ( Qyzis::me ) {
 		Qyzis::me->embedPartView( view, buffer->fileName(), buffer->fileName() );

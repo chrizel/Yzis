@@ -42,7 +42,6 @@ NoGuiSession::NoGuiSession( const QString & sessionName )
 YZView* NoGuiSession::createView ( YZBuffer* buf) {
     dbg() << HERE() << endl;
     NoGuiView * view = new NoGuiView( buf, YZSession::self() );
-    buf->addView( view );
     return view;
 }
 

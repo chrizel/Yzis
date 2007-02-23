@@ -25,7 +25,7 @@
 NoGuiView::NoGuiView(YZBuffer *buf, YZSession *sess, int cols, int lines) 
     : YZView(buf,sess,cols,lines) 
 {
-    dbg() << HERE() << endl;
+    dbg().sprintf("NoGuiView( %s, cols=%d, lines=%d )", qp(buf->toString()), cols, lines );
 }
 
 uint NoGuiView::getCursorX() 
@@ -55,7 +55,7 @@ uint NoGuiView::getCursorCol()
 // Reimplemented to please compilation
 
 void NoGuiView::setCommandLineText( const QString& text) {
-    dbg() << "NoGuiView::setCommandLineText( text='" << text << "') \n";
+    // dbg() << "NoGuiView::setCommandLineText( text='" << text << "') \n";
     mCommandLine = text;
 }
 

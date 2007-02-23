@@ -30,6 +30,15 @@
 
 using namespace yzis;
 
+// ====================================================================
+//
+//                          YZMode
+//
+// ====================================================================
+
+#define dbg() yzDebug("YZMode")
+#define err() yzError("YZMode")
+
 YZMode::YZMode() {
 	mString = "if you see me, there is a problem :)";
 	mEditMode = false;
@@ -84,9 +93,16 @@ void YZMode::imEnd( YZView*, const QString& ) {
 }
 
 
-/**
- * YZModeIntro
- */
+// ====================================================================
+//
+//                          YZModeIntro
+//
+// ====================================================================
+
+#undef dbg
+#undef err
+#define dbg() yzDebug("YZMode")
+#define err() yzError("YZMode")
 
 YZModeIntro::YZModeIntro() : YZMode() {
 	mType = MODE_INTRO;
@@ -137,10 +153,16 @@ cmd_state YZModeIntro::execCommand( YZView* mView, const QString& ) {
 	return CMD_OK;
 }
 
+// ====================================================================
+//
+//                          YZModeIntro
+//
+// ====================================================================
 
-/**
- * YZModePool
- */
+#undef dbg
+#undef err
+#define dbg() yzDebug("YZModePool")
+#define err() yzError("YZModePool")
 
 YZModePool::YZModePool( YZView* view ) {
 	mView = view;
@@ -150,11 +172,13 @@ YZModePool::YZModePool( YZView* view ) {
 	mStop = false;
 }
 YZModePool::~YZModePool() {
+    // dbg() << HERE() << endl;
 	stop();
 }
 void YZModePool::stop() {
+    // dbg() << HERE() << endl;
 	mStop = true;
-//	yzDebug() << "YZModePool stopped for view " << mView->myId << endl;
+//	dbg() << "YZModePool stopped for view " << mView->myId << endl;
 }
 void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 	mKey = key;
@@ -165,12 +189,12 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 	bool map = false;
 	mView->saveInputBuffer();
 	QString mapped = mView->getInputBuffer(); // + modifiers + key;
-//	yzDebug() << "Looking mappings for " << mapped << endl;
+//	dbg() << "Looking mappings for " << mapped << endl;
 	bool pendingMapp = YZMapping::self()->applyMappings( mapped, mapMode, &map );
 //	if (pendingMapp)
-//		yzDebug() << "Pending mapping on " << mapped << endl;
+//		dbg() << "Pending mapping on " << mapped << endl;
 	if ( map ) {
-//		yzDebug() << "input buffer was remapped to : " << mapped << endl;
+//		dbg() << "input buffer was remapped to : " << mapped << endl;
 		mView->purgeInputBuffer();
 		mapMode = 0;
 		mView->sendMultipleKey( mapped );
@@ -180,18 +204,18 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 	if ( mStop ) return;
 	switch(state) {
 		case CMD_ERROR: 
-			yzDebug() << "cmd_state = CMD_ERROR" << endl;
+			dbg() << "cmd_state = CMD_ERROR" << endl;
 			if (pendingMapp) break;
 		case CMD_OK:
 			mView->purgeInputBuffer();
 			mapMode = 0;
 			break;
 		case OPERATOR_PENDING:
-			yzDebug() << "cmd_state = OPERATOR_PENDING" << endl;
+			dbg() << "cmd_state = OPERATOR_PENDING" << endl;
 			mapMode = pendingop;
 			break;
 		case CMD_QUIT:
-			yzDebug() << "cmd_state = CMD_QUIT" << endl;
+			dbg() << "cmd_state = CMD_QUIT" << endl;
 		default:
 			break;
 	}
@@ -231,7 +255,7 @@ void YZModePool::registerModifierKeys() {
 	if ( stack.isEmpty() || stack.front()->registered() ) return;
 	QStringList keys = stack.front()->modifierKeys();
 	unsigned int size = keys.size();
-	yzDebug() << "register keys " << keys << endl;
+	dbg() << "register keys " << keys << endl;
 	for( unsigned i = 0; i < size; i++ )
 		mView->registerModifierKeys( keys.at(i) );
 	stack.front()->setRegistered( true );
@@ -242,7 +266,7 @@ void YZModePool::unregisterModifierKeys() {
 	if ( stack.isEmpty() || !stack.front()->registered() ) return;
 	QStringList keys = stack.front()->modifierKeys();
 	unsigned int size = keys.size();
-	yzDebug() << "unregister keys " << keys << endl;
+	dbg() << "unregister keys " << keys << endl;
 	for( unsigned i = 0; i < size; i++ )
 		mView->unregisterModifierKeys( keys.at(i) );
 	stack.front()->setRegistered( false );
@@ -256,7 +280,7 @@ void YZModePool::push( modeType mode ) {
 //	unregisterModifierKeys();
 	stack.push_front( mModes[ mode ] );
 	if (mRegisterKeys) registerModifierKeys();
-	yzDebug() << "entering mode " << stack.front()->toString() << endl;
+	dbg() << "entering mode " << stack.front()->toString() << endl;
 	stack.front()->enter( mView );
 	mView->modeChanged();
 }
@@ -267,7 +291,7 @@ void YZModePool::pop( bool leave_me ) {
 //	unregisterModifierKeys();
 	if ( ! stack.isEmpty() ) {
 		if ( leave_me ) {
-			yzDebug() << "leaving mode " << stack.front()->toString() << endl;
+			dbg() << "leaving mode " << stack.front()->toString() << endl;
 			stack.front()->leave( mView );
 		}
 		stack.pop_front();
@@ -287,7 +311,7 @@ void YZModePool::pop( modeType mode ) {
 	QList<YZMode*> leaved;
 	while ( stack.size() > 0 && stack.front()->type() != mode ) {
 		if ( ! leaved.contains( stack.front() ) ) {
-			yzDebug() << "leaving mode " << stack.front()->toString() << endl;
+			dbg() << "leaving mode " << stack.front()->toString() << endl;
 			stack.front()->leave( mView );
 			leaved.append( stack.front() );
 		}

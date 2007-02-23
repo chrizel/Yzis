@@ -43,15 +43,18 @@ using namespace std;
 
 class YZYzisinfoCursor;
 
+#define dbg() yzDebug("YZYzisinfo")
+#define err() yzError("YZYzisinfo")
+
 /**
  * Constructor
  */
 
-YZYzisinfo::YZYzisinfo() {
-	
+YZYzisinfo::YZYzisinfo() 
+{
+    dbg() << HERE() << endl;	
 	QString path = QDir::homePath() + "/.yzis";
 	mYzisinfo.setFileName( path + "/yzisinfo" );
-
 	mYzisinfoInitialized = false;
 }
 
@@ -59,8 +62,9 @@ YZYzisinfo::YZYzisinfo() {
  * Constructor
  */
 
-YZYzisinfo::YZYzisinfo( const QString & path ) {
-	
+YZYzisinfo::YZYzisinfo( const QString & path ) 
+{
+    dbg() << HERE() << endl;	
 	mYzisinfo.setFileName( path );
 }
 
@@ -69,13 +73,16 @@ YZYzisinfo::YZYzisinfo( const QString & path ) {
  */
 
 YZYzisinfo::~YZYzisinfo() {
+    dbg() << HERE() << endl;	
 }
 
 /**
  * YZYsisinfo::readYzisinfo
  */
 
-void YZYzisinfo::readYzisinfo() {
+void YZYzisinfo::readYzisinfo() 
+{
+    dbg() << HERE() << endl;
 	
 	if ( mYzisinfoInitialized ) {
 		return;
@@ -164,10 +171,10 @@ void YZYzisinfo::readYzisinfo() {
 					contents << QString::null;
 				}
 				
-				yzDebug() << "Key:<" << key.toAscii() << ">" << endl;
-				yzDebug() << "Length:<" << contents.size() << ">" << endl;
+				dbg() << "Key:<" << key.toAscii() << ">" << endl;
+				dbg() << "Length:<" << contents.size() << ">" << endl;
 				for ( int i = 0; i < contents.size(); ++i ) {
-					yzDebug() << "<" << contents.at(i) << ">" << endl;
+					dbg() << "<" << contents.at(i) << ">" << endl;
 				}
 				
 				YZSession::self()->setRegister( key, contents );	
@@ -176,7 +183,7 @@ void YZYzisinfo::readYzisinfo() {
 		
 		mYzisinfo.close();
 	} else {
-		yzDebug() << "Unable to open file " << mYzisinfo.fileName() << endl;
+		dbg() << "Unable to open file " << mYzisinfo.fileName() << endl;
 	}
 }
 
@@ -230,7 +237,9 @@ void YZYzisinfo::updateJumpList( const YZBuffer *buffer, const int x, const int 
  * YZYzisinfo::writeYzisinfo
  */
  
-void YZYzisinfo::writeYzisinfo() {
+void YZYzisinfo::writeYzisinfo() 
+{
+    dbg() << HERE() << endl;
 	if ( mYzisinfo.open( QIODevice::WriteOnly ) ) {
 		QTextStream write( &mYzisinfo );
 		write.setCodec( QTextCodec::codecForName("utf8"));
@@ -280,6 +289,7 @@ void YZYzisinfo::writeYzisinfo() {
  */
  
 void YZYzisinfo::saveExHistory( QTextStream & write ) {
+    dbg() << HERE() << endl;
 	YZHistory *history = YZSession::self()->getExPool()->getHistory();
 	history->writeToStream( write );
 }
@@ -289,6 +299,7 @@ void YZYzisinfo::saveExHistory( QTextStream & write ) {
  */
  
 void YZYzisinfo::saveSearchHistory( QTextStream & write ) {
+    dbg() << HERE() << endl;
 	YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::self()->getModes()[ YZMode::MODE_SEARCH ] );
 	YZHistory *history = search->getHistory();
 	history->writeToStream( write );
@@ -299,6 +310,7 @@ void YZYzisinfo::saveSearchHistory( QTextStream & write ) {
  */
  
 void YZYzisinfo::saveStartPosition( QTextStream & write ) {
+    dbg() << HERE() << endl;
 
 	int start = 0;
 	int end = mStartPosition.count();
@@ -309,13 +321,13 @@ void YZYzisinfo::saveStartPosition( QTextStream & write ) {
 
 	for( int i = start; i < end; ++i ) {
 		write << "> ";
-		yzDebug() << (mStartPosition[i])->position()->x();
+		dbg() << (mStartPosition[i])->position()->x();
 		write << (mStartPosition[i])->position()->x();
 		write << " "; 
-		yzDebug() << (mStartPosition[i])->position()->y();
+		dbg() << (mStartPosition[i])->position()->y();
 		write << (mStartPosition[i])->position()->y();
 		write << " ";
-		yzDebug() << (mStartPosition[i])->filename() << endl;
+		dbg() << (mStartPosition[i])->filename() << endl;
 		write << (mStartPosition[i])->filename() << endl;
 	}
 }	
@@ -325,6 +337,7 @@ void YZYzisinfo::saveStartPosition( QTextStream & write ) {
  */
  
 void YZYzisinfo::saveJumpList( QTextStream & write ) {
+    dbg() << HERE() << endl;
 
 	int start = 0;	
 	int end = mJumpList.count();
@@ -348,6 +361,7 @@ void YZYzisinfo::saveJumpList( QTextStream & write ) {
  */
  
 void YZYzisinfo::saveRegistersList( QTextStream & write ) {
+    dbg() << HERE() << endl;
 
 	QList<QChar> list = YZSession::self()->getRegisters();	
 	
@@ -394,7 +408,7 @@ YZCursor * YZYzisinfo::startPosition( const YZBuffer *buffer ) const {
  * YZYzisinfo::searchPosition
  */
  
-YZCursor * YZYzisinfo::searchPosition( const YZBuffer */*buffer*/) {
+YZCursor * YZYzisinfo::searchPosition( const YZBuffer * ) {
 	
 	for ( JumpListVector::Iterator it = mJumpList.begin(); it != mJumpList.end(); ++it ) {
 		/*if ( (*it)->filename() == buffer->fileName() ) {

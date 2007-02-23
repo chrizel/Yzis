@@ -40,6 +40,7 @@ enum cmd_state {
 	OPERATOR_PENDING,
 	/** The command has been successfully executed. */
 	CMD_OK,
+	/** It is time to leave the event loop */
 	CMD_QUIT,
 };
 

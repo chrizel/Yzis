@@ -54,7 +54,7 @@ typedef QVector<YZLine*> YZBufferData;
 class YZIS_EXPORT YZBuffer {
 public:
 	//-------------------------------------------------------
-	// ----------------- Constructor/Destructor and Id
+	// ----------------- Constructor/Destructor 
 	//-------------------------------------------------------
 	
 	/**
@@ -66,6 +66,14 @@ public:
 	 * Default destructor
 	 */
 	virtual ~YZBuffer();
+
+    /** Return a string description of the buffer.
+      *
+      * The string description contains:
+      * - the filename
+      * - whether the buffer is currently modified.
+      */
+    QString toString() const;
 	
 	//-------------------------------------------------------
 	// ----------------- Character Operations

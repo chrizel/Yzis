@@ -140,6 +140,24 @@ YZBuffer::~YZBuffer() {
 	delete d->viewMarks;
 }
 
+QString YZBuffer::toString() const
+{
+    QString s;
+
+    QString sViewlist;
+    foreach( YZView * v, d->views ) {
+        QString tmp;
+        tmp.sprintf("%p", v);
+        sViewlist += tmp + ",";
+    }
+    sViewlist.chop(1);
+
+    s.sprintf("Buffer(this=%p filename='%s' views=%s modif=%d new=%d",
+        this, qp(fileName()), qp(sViewlist), d->isModified, d->isFileNew
+         );
+    return s;
+}
+
 // ------------------------------------------------------------------------
 //                            Char Operations
 // ------------------------------------------------------------------------
@@ -685,11 +703,11 @@ YZCursor YZBuffer::getStartPosition( const QString& filename, bool parseFilename
 // ------------------------------------------------------------------------
 
 void YZBuffer::addView (YZView *v) {
+    dbg().sprintf("addView( %s )", qp(v->toString() ) );
 	if ( d->views.contains( v ) ) {
-			yzWarning()<< "view " << v->getId() << " added for the second time, discarding"<<endl;
+			err()<< "view " << v->getId() << " added for the second time, discarding" << endl;
 			return; // don't append twice
 	}
-	yzDebug("YZBuffer") << "BUFFER: addView" << endl;
 	d->views.append( v );
 }
 
@@ -712,6 +730,7 @@ YZView* YZBuffer::firstView() const {
 }
 
 void YZBuffer::rmView(YZView *v) {
+    dbg().sprintf("rmView( %s )", qp(v->toString() ) );
 	d->views.removeAll(v);
 //	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
 	if ( d->views.isEmpty() ) {
@@ -1010,6 +1029,7 @@ QString YZBuffer::tildeExpand( const QString& path ) {
 
 void YZBuffer::filenameChanged()
 {
+    dbg() << HERE() << endl;
 	foreach( YZView *view, d->views )
 		view->filenameChanged();
 }
@@ -1027,6 +1047,7 @@ void YZBuffer::highlightingChanged()
 
 void YZBuffer::preserve()
 {
+    dbg() << HERE() << endl;
 	d->swapFile->flush();
 }
 

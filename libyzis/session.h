@@ -81,6 +81,14 @@ class YZIS_EXPORT YZSession {
 		 */
 		 
 		QString getSessionName() const { return mSessionName; }
+        /** Return a string description of the current session:
+          *
+          * The description contains:
+          * - the list of every view
+          * - the list of every buffer
+          */
+        QString toString() const;
+
 
 		//-------------------------------------------------------
 		// ----------------- Sub-Objects

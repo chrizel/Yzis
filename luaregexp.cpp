@@ -143,9 +143,11 @@ int YZLuaRegexp::Regexp_create(lua_State *L)
 	return 1;
 }
 
+#define dbgf() yzDebug("YZLuaRegexp.Regexp_userdata_finalize")
+
 int YZLuaRegexp::Regexp_userdata_finalize(lua_State *L)
 {
-    dbg() << "Regexp_userdata_finalize()" << endl;
+    dbgf() << "called" << endl;
 	if (! YZLuaEngine::checkFunctionArguments(L, 1, 1, "Regexp.finalize", "Regexp object")) return 0;
 
     // stack: userdata
@@ -154,12 +156,12 @@ int YZLuaRegexp::Regexp_userdata_finalize(lua_State *L)
 	lua_pop(L, 1);
     // stack: / 
 
-    dbg() << "Regexp_userdata_finalize for " << regexp->pattern() << endl;
+    dbgf() << "regexp='" << regexp->pattern() << "'" << endl;
 
 	delete regexp;
 	*pRegexp = NULL;
 	
-    dbg() << "Regexp_userdata_finalize() done" << endl;
+    dbgf() << "done" << endl;
 	YZASSERT_EQUALS( lua_gettop(L),  0  );
 	return  0 ;
 }

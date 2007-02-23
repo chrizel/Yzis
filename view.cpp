@@ -67,7 +67,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int cols, int lines)
 	YZASSERT( _b ); YZASSERT( sess );
 	mSession = sess;
 	mBuffer	= _b;
-    // _b->addView( this );
+    _b->addView( this );
 	mLineSearch = new YZLineSearch( this );
 	mLinesVis = lines;
 	mColumnsVis = cols;

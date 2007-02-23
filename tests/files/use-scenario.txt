@@ -1,0 +1,36 @@
+
+Scenario are to be run with nyzis and qyzis
+
+Family: no file
+=======
+
+Scenario:
+- launch yzis with no file
+- quit yzis with ":q"
+
+Scenario:
+- launch yzis with no file
+- modify the file
+- try to quit with ":q" yzis refuses
+- quit with ":q!"
+
+Scenario:
+- launch yzis with no file
+- modify the file
+- write the file with ":w some_name"
+- quit yzis with ":q"
+
+Family: one file
+=======
+Scenario:
+- launch yzis with one file
+- quit yzis with ":q"
+
+Scenario:
+- launch yzis with one file
+- modify the file
+- try to quit with ":q" yzis refuses
+- quit with ":q!"
+
+
+

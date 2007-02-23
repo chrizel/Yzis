@@ -56,7 +56,7 @@ YZSession * YZSession::self()
     if (mInstance == 0L) {
         err() << "YZSession::setInstance() has not been called" << endl;
         err() << "There is currently no instance of the session" << endl;
-        ftl() << "Exepct SEGFAULT as the next thing to happen!" << endl;
+        err() << "Exepct SEGFAULT as the next thing to happen!" << endl;
     }
     return mInstance;
 }
@@ -85,6 +85,22 @@ YZSession::YZSession(const QString& _sessionName) {
 	mRegisters = new YZRegisters();
 	mYzisinfo= new YZYzisinfo();
 	mTagStack = new YZTagStack;
+}
+
+
+QString YZSession::toString() const
+{
+    QString s;
+    s += "Session Content: \n";
+    s += "- Buffer list: \n";
+    foreach( YZBuffer * b, mBufferList ) {
+        s += "  + " + b->toString() + "\n";
+    }
+    s += "- View list: \n";
+    foreach( YZView * v, mViewList ) {
+        s += "  + " + v->toString() + "\n";
+    }
+    return s;
 }
 
 YZSession::~YZSession() {
@@ -139,6 +155,7 @@ YZYzisinfo * YZSession::getYzisinfo() {
 }
 
 void YZSession::guiStarted() {
+    dbg() << toString() << endl;
 	//read init files
 	if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
 		YZLuaEngine::self()->source( QDir::rootPath() + "/etc/yzis/init.lua" );

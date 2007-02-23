@@ -89,6 +89,16 @@ class YZIS_EXPORT YZView {
 		 **/
 		const int getId() const;
 
+        /** Return a string description of the view.
+          *
+          * The string description contains:
+          * - the id
+          * - the buffer filename
+          * - the this pointer
+          *
+          */
+        QString toString() const;
+
 		//-------------------------------------------------------
 		// ----------------- Visible Areas
 		//-------------------------------------------------------

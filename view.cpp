@@ -62,10 +62,12 @@ static int nextId = 1;
 YZView::YZView(YZBuffer *_b, YZSession *sess, int cols, int lines) 
 	:  m_drawBuffer(), id(nextId++)
 {
-	dbg() << "New View created with UID : " << getId() << endl;
+	dbg().sprintf("YZView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
+    dbg() << "New View created with UID : " << getId() << endl;
 	YZASSERT( _b ); YZASSERT( sess );
 	mSession = sess;
 	mBuffer	= _b;
+    // _b->addView( this );
 	mLineSearch = new YZLineSearch( this );
 	mLinesVis = lines;
 	mColumnsVis = cols;
@@ -143,6 +145,13 @@ YZView::~YZView() {
 	delete mLineSearch;
 	delete mModePool;
 	delete mFoldPool;
+}
+
+QString YZView::toString() const
+{
+    QString s;
+    s.sprintf("View(this=%p id=%d buffer='%s')", this, getId(), qp(myBuffer()->fileName()) );
+    return s;
 }
 
 void YZView::setupKeys() {

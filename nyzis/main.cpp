@@ -139,8 +139,11 @@ else */
 	(void)signal(SIGWINCH, sigwinch);// ncurses SHOULD handle that
 
 	/*
-	 * Open buffers
+	 * Open buffers. Create an empty view that will show error messages
+	 * in case something goes wrong when opening a file.
 	 */
+        
+	YZView* errorBuffer = session->createBufferAndView();
 	YZView* first = NULL;
 	YZView* v;
 
@@ -158,8 +161,9 @@ else */
 		first->myBuffer()->openNewFile();
 		first->displayIntro();
 	}
-
+		
 	session->setCurrentView( first );
+	session->deleteView(errorBuffer);
 
 	QTimer::singleShot( 0, session, SLOT( init() ) );
 

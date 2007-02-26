@@ -91,7 +91,12 @@ if (ENABLE_KYZIS)
 endif (ENABLE_KYZIS)
 
 if (ENABLE_NYZIS)
+
 	find_package(Ncurses)
+	if (NOT NCURSES_FOUND)
+		message(FATAL_ERROR, "Could not find ncurses library.")
+	endif (NOT NCURSES_FOUND)
+
 	if (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)
 		message(FATAL_ERROR "The ncurses library does not support wide-character.")
 	endif (NOT NCURSESW_FOUND AND NOT HAVE_NCURSESW)

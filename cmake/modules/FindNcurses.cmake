@@ -16,28 +16,36 @@ FIND_LIBRARY(NCURSES_LIBRARIES NAMES ncursesw
    /usr/lib
    /usr/local/lib
 )
+
 if (NOT NCURSES_LIBRARIES) 
    set(NCURSESW_FOUND FALSE)
-   #then try to find one called 'ncurses' only
+   # we don't have ncursesw but we can still have ncurses compiled
+   # with wide-charcter support.
+
    FIND_LIBRARY(NCURSES_LIBRARIES NAMES ncurses
 	PATHS
 	/usr/lib
 	/usr/local/lib
    )
+
+    if(NCURSES_LIBRARIES)
+       set(NCURSES_FOUND TRUE)
+    else(NCURSES_LIBRARIES)
+       set(NCURSES_FOUND FALSE)
+    endif(NCURSES_LIBRARIES)
+
 else (NOT NCURSES_LIBRARIES)
    set(NCURSESW_FOUND TRUE)
-endif (NOT NCURSES_LIBRARIES)
-
-if(NCURSES_INCLUDE_DIR AND NCURSES_LIBRARIES)
    set(NCURSES_FOUND TRUE)
-endif(NCURSES_INCLUDE_DIR AND NCURSES_LIBRARIES)
+endif (NOT NCURSES_LIBRARIES)
 
 #make sure that libncurses.so (not being called libncursesw) is wide-character-enabled
 #we should find a way to add the link directory
-if (NOT NCURSESW_FOUND)
+
+if (NOT NCURSESW_FOUND AND NCURSES_FOUND)
    INCLUDE (CheckLibraryExists)
    CHECK_LIBRARY_EXISTS(ncurses mvwaddwstr "" HAVE_NCURSESW)
-endif (NOT NCURSESW_FOUND)
+endif (NOT NCURSESW_FOUND AND NCURSES_FOUND)
 
 if(NCURSES_FOUND)
    if(NOT NCURSES_FIND_QUIETLY)

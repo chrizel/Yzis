@@ -11,6 +11,8 @@
 
 INCLUDE(UsePkgConfig)
 
+message(STATUS "Looking for liblua(50)")
+
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
 #debian
@@ -26,6 +28,7 @@ set(LIBLUA50_DEFINITIONS ${_libLua50Cflags} ${_libLuaCflags} )
 FIND_PACKAGE(GNUWIN32)
 
 FIND_PATH(LIBLUA50_INCLUDE_DIR lua.h
+   ${WITH_LUA_HOME}/include
    ${_libLua50IncDir}/lua50
    ${_libLuaIncDir}
    /usr/include/lua50
@@ -35,6 +38,7 @@ FIND_PATH(LIBLUA50_INCLUDE_DIR lua.h
 
 FIND_LIBRARY(LIBLUA50_LIBRARIES NAMES lua50 lua
    PATHS
+   ${WITH_LUA_HOME}/lib
    ${_libLua50LinkDir}
    ${_libLuaLinkDir}
    /usr/lib
@@ -50,11 +54,11 @@ endif (LIBLUA50_INCLUDE_DIR AND LIBLUA50_LIBRARIES)
 
 if (LIBLUA50_FOUND)
    if (NOT LibLua50_FIND_QUIETLY)
-      message(STATUS "Found liblua(50): ${LIBLUA50_LIBRARIES}")
+      message(STATUS "Looking for liblua(50) - found: ${LIBLUA50_LIBRARIES}")
    endif (NOT LibLua50_FIND_QUIETLY)
 else (LIBLUA50_FOUND)
    if (LibLua50_FIND_REQUIRED)
-      message(FATAL_ERROR "Could NOT find liblua(50)")
+      message(FATAL_ERROR "Looking for liblua(50) - not found")
    endif (LibLua50_FIND_REQUIRED)
 endif (LIBLUA50_FOUND)
 

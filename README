@@ -8,7 +8,7 @@ are available.
 Requirements:
 =============
 -> Qt 4.0
--> Lua 5.x
+-> Lua 5.0
 -> For kyzis : KDE 3.2.x
 -> For nyzis : NCurses 5 _WITH_ wide characters support (USE unicode on gentoo)
 -> Optionnally : pslib (pslib.sf.net)

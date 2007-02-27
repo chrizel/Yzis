@@ -175,8 +175,13 @@ so that CMake finds it.
 
 For Lua, you need to have it installed in /usr/lib or /usr/local/lib, or to
 specify it with the following CMake variables:
-- LIBLUA51_INCLUDE_DIR: place to find lua.h
-- LIBLUA51_LIBRARIES: place to find liblua.so
+- LIBLUA50_INCLUDE_DIR: place to find lua.h
+- LIBLUA50_LIBRARIES: place to find liblua.so
+You can specify the lua install prefix insteed with the CMake variable
+WITH_LUA_HOME
+
+Please note: Lua 5.1 support is broken at the moment. You have to use 
+lua 5.0
 
 \subsection windows_notes Special Notes on windows:
 

@@ -11,6 +11,8 @@
 
 INCLUDE(UsePkgConfig)
 
+message(STATUS "Looking for liblualib(50)")
+
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
 PKGCONFIG(lualib50 _libLualib50IncDir _libLualib50LinkDir _libLualib50LinkFlags _libLualib50Cflags)
@@ -23,6 +25,7 @@ set(LIBLUALIB50_DEFINITIONS ${_libLualib50Cflags} ${_libLualibCflags} )
 FIND_PACKAGE(GNUWIN32)
 
 FIND_PATH(LIBLUALIB50_INCLUDE_DIR lualib.h
+   ${WITH_LUA_HOME}/include
    ${_libLualib50IncDir}/lua50
    ${_libLualibIncDir}
    /usr/include/lua50
@@ -32,6 +35,7 @@ FIND_PATH(LIBLUALIB50_INCLUDE_DIR lualib.h
 
 FIND_LIBRARY(LIBLUALIB50_LIBRARIES NAMES lualib50 lualib lua
    PATHS
+   ${WITH_LUA_HOME}/lib
    ${_libLualib50LinkDir}
    ${_libLualibLinkDir}
    /usr/lib
@@ -47,11 +51,11 @@ endif (LIBLUALIB50_INCLUDE_DIR AND LIBLUALIB50_LIBRARIES)
 
 if (LIBLUALIB50_FOUND)
    if (NOT LibLuaLib50_FIND_QUIETLY)
-      message(STATUS "Found liblualib(50): ${LIBLUALIB50_LIBRARIES}")
+      message(STATUS "Looking for liblualib(50) - found: ${LIBLUALIB50_LIBRARIES}")
    endif (NOT LibLuaLib50_FIND_QUIETLY)
 else (LIBLUALIB50_FOUND)
    if (LibLuaLib50_FIND_REQUIRED)
-      message(FATAL_ERROR "Could NOT find liblualib(50)")
+      message(FATAL_ERROR "Looking for liblualib(50) - not found")
    endif (LibLuaLib50_FIND_REQUIRED)
 endif (LIBLUALIB50_FOUND)
 

@@ -5,10 +5,14 @@
 #  NCURSES_INCLUDE_DIR - the libncurses include directory
 #  NCURSES_LIBRARIES - libncurses(w) library
 
+message(STATUS "Looking for libncurses(w)")
+
 #to be completed I guess ...
-FIND_PATH(NCURSES_INCLUDE_DIR ncursesw/cursesw.h
+FIND_PATH(NCURSES_INCLUDE_DIR cursesw.h ncurses.h
    /usr/include/
    /usr/local/include/
+   /usr/include/ncursesw/
+   /usr/local/include/ncursesw/
 )
 
 FIND_LIBRARY(NCURSES_LIBRARIES NAMES ncursesw
@@ -27,30 +31,33 @@ if (NOT NCURSES_LIBRARIES)
 	/usr/lib
 	/usr/local/lib
    )
-
-    if(NCURSES_LIBRARIES)
-       set(NCURSES_FOUND TRUE)
-    else(NCURSES_LIBRARIES)
-       set(NCURSES_FOUND FALSE)
-    endif(NCURSES_LIBRARIES)
-
 else (NOT NCURSES_LIBRARIES)
    set(NCURSESW_FOUND TRUE)
-   set(NCURSES_FOUND TRUE)
 endif (NOT NCURSES_LIBRARIES)
 
-#make sure that libncurses.so (not being called libncursesw) is wide-character-enabled
-#we should find a way to add the link directory
+if (NCURSES_LIBRARIES AND NCURSES_INCLUDE_DIR)
+  set(NCURSES_FOUND TRUE)
+else (NCURSES_LIBRARIES AND NCURSES_INCLUDE_DIR)
+  set(NCURSES_FOUND FALSE)
+  set(NCURSESW_FOUND FALSE)
+endif (NCURSES_LIBRARIES AND NCURSES_INCLUDE_DIR)
 
-if (NOT NCURSESW_FOUND AND NCURSES_FOUND)
+# make sure that libncurses.so (not being called libncursesw) is
+# wide-character-enabled we should find a way to add the link
+# directory.
+if (NCURSES_FOUND AND NOT NCURSESW_FOUND)
    INCLUDE (CheckLibraryExists)
    CHECK_LIBRARY_EXISTS(ncurses mvwaddwstr "" HAVE_NCURSESW)
-endif (NOT NCURSESW_FOUND AND NCURSES_FOUND)
+endif (NCURSES_FOUND AND NOT NCURSESW_FOUND)
 
 if(NCURSES_FOUND)
    if(NOT NCURSES_FIND_QUIETLY)
-      message(STATUS "Found libncurses(w): ${NCURSES_LIBRARIES}")
+      message(STATUS "Looking for libncurses(w) - found")
    endif(NOT NCURSES_FIND_QUIETLY)
-endif(NCURSES_FOUND)
+else(NCURSES_FOUND)
+   if(NOT NCURSES_FIND_QUIETLY)
+      message(STATUS "Looking for libncurses(w) - not found")
+   endif (NOT NCURSES_FIND_QUIETLY)
+endif (NCURSES_FOUND)
 
 MARK_AS_ADVANCED(NCURSES_INCLUDE_DIR NCURSES_LIBRARIES)

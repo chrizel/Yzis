@@ -7,6 +7,7 @@ To build yzis from source code You'll need to install the following packages:
 - subversion for fetching the code
 - cmake, for building
 - qt, for libyzis and QYzis
+- lua 5.0 for scripting (lua 5.1 is *not* supported)
 - KDE, for KYzis
 - ncurses, for NYzis
 - doxygen, for the documentation
@@ -120,13 +121,12 @@ make
 - Lua
 
 You can get lua binaries from:
-http://luaforge.net/frs/?group_id=110
+http://luabinaries.luaforge.net/
 
-You need:
-- lua5_1_1_Win32_mingw3_lib.zip
-- lua5_1_1_Win32_bin.zip
+The one to download is:
+http://luaforge.net/frs/download.php/1884/lua5_0_3_Win32_dll_lib.zip
 
-Unzip them in a directory
+Unzip it in a directory
 
 - CMake
 
@@ -198,8 +198,8 @@ You will probably need to specify the lua libraries explicitely. My build
 line on windows look like this:
 
 \verbatim
-cmake -G "MinGW Makefiles" -DLIBLUA50_LIBRARIES="D:/program/Lua/LibLua.lib" 
--DLIBLUA51_INCLUDE_DIR="D:/program/Lua" 
+cmake -G "MinGW Makefiles" -DLIBLUA50_LIBRARIES="D:/program/luabin/lua50/LibLua.lib" 
+-DLIBLUA51_INCLUDE_DIR="D:/program/luabin/lua50/include" 
 -DENABLE_NYZIS=off 
 -DENABLE_QYZIS=on 
 -DCMAKE_VERBOSE_MAKEFILE=off 

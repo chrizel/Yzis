@@ -11,7 +11,7 @@
 
 INCLUDE(UsePkgConfig)
 
-message(STATUS "Looking for liblua(50)")
+message(STATUS "Looking for liblua (version 5.0)")
 
 # use pkg-config to get the directories and then use these values
 # in the FIND_PATH() and FIND_LIBRARY() calls
@@ -47,20 +47,34 @@ FIND_LIBRARY(LIBLUA50_LIBRARIES NAMES lua50 lua
 )
 
 
+# We have found something that looks like lua 5
+# disambiguate between lua 5.0 and lua 5.1
 if (LIBLUA50_INCLUDE_DIR AND LIBLUA50_LIBRARIES)
-   set(LIBLUA50_FOUND TRUE)
+    # LUA_VERSION_NUM is only present in lua.h of version 5.1
+    SET( CMAKE_REQUIRED_INCLUDES ${LIBLUA50_INCLUDE_DIR} )
+    CHECK_INCLUDE_FILES( luaconf.h HAVE_LUACONF_FOR_51_H )
+    if ( HAVE_LUACONF_FOR_51_H )
+       set(LIBLUA51_FOUND TRUE)
+    else ( HAVE_LUACONF_FOR_51_H )
+       set(LIBLUA50_FOUND TRUE)
+    endif ( HAVE_LUACONF_FOR_51_H )
 endif (LIBLUA50_INCLUDE_DIR AND LIBLUA50_LIBRARIES)
 
+# uh uh, the wrong version is installed
+if (LIBLUA51_FOUND)
+   message(STATUS "Looking for liblua (version 5.0) but liblua (version 5.1) was found : ${LIBLUA50_LIBRARIES}")
+endif (LIBLUA51_FOUND)
 
 if (LIBLUA50_FOUND)
    if (NOT LibLua50_FIND_QUIETLY)
       message(STATUS "Looking for liblua(50) - found: ${LIBLUA50_LIBRARIES}")
    endif (NOT LibLua50_FIND_QUIETLY)
 else (LIBLUA50_FOUND)
-   if (LibLua50_FIND_REQUIRED)
-      message(FATAL_ERROR "Looking for liblua(50) - not found")
-   endif (LibLua50_FIND_REQUIRED)
+    if (LibLua50_FIND_REQUIRED)
+       message(FATAL_ERROR "Looking for liblua (version 5.0) - not found")
+    endif (LibLua50_FIND_REQUIRED)
 endif (LIBLUA50_FOUND)
 
 MARK_AS_ADVANCED(LIBLUA50_INCLUDE_DIR LIBLUA50_LIBRARIES)
+
 

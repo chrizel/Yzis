@@ -199,6 +199,8 @@ void YZSession::setCurrentView( YZView* view ) {
 	mCurView = view;
 	mCurBuffer = view->myBuffer();
 	mCurBuffer->filenameChanged();
+	
+	setFocusMainWindow();
 }
 
 YZView* YZSession::firstView() {

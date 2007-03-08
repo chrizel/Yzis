@@ -254,8 +254,22 @@ void NYZView::restoreFocus() {
 void NYZView::setCommandLineText( const QString& text ) {
 	yzDebug() << "NYZView::setCommandLineText: " << text << endl;
 	commandline = text;
+	static QChar modeChar = ':';
+	switch (modePool()->current()->type()) {
+		case YZMode::MODE_EX:
+			modeChar = ':';
+			break;
+		case YZMode::MODE_SEARCH:
+			modeChar = '/';
+			break;
+		case YZMode::MODE_SEARCH_BACKWARD:
+			modeChar = '?';
+			break;
+		default:
+			modeChar = ' ';
+	}
 	werase(statusbar);
-	waddstr(statusbar, (':'+commandline).toLocal8Bit().constData());
+	waddstr(statusbar, (modeChar + commandline).toLocal8Bit().constData());
 	wrefresh(statusbar);
 	statusbarHasCommand = true;
 }

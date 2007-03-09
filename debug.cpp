@@ -367,7 +367,7 @@ void yzfree( void * p )
 
 void * YZDebugBackend::operator new( size_t tSize )
 {
-    printf("YZDebugBackend::new( %d )\n", tSize );
+    printf("YZDebugBackend::new( %ld )\n", long(tSize));
 	return yzmalloc( tSize );
 }
 

@@ -53,10 +53,10 @@ class YZIS_EXPORT YZViewCursor {
 
 		bool valid() const;
 
-		inline const YZCursor &buffer() const {
+		inline const YZCursor buffer() const {
 			return mBuffer;
 		}
-		inline const YZCursor &screen() const {
+		inline const YZCursor screen() const {
 			return mScreen;
 		}
 
@@ -69,8 +69,8 @@ class YZIS_EXPORT YZViewCursor {
 
 		void debug();
 
-		void setBuffer( const YZCursor& value );
-		void setScreen( const YZCursor& value );
+		void setBuffer( const YZCursor value ) { mBuffer = value; }
+		void setScreen( const YZCursor value ) { mScreen = value; }
 
 		void setBufferX( int value );
 		void setBufferY( int value );

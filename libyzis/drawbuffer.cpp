@@ -179,7 +179,7 @@ void YZDrawBuffer::insert_section( int pos ) {
 	m_cell =& (*m_line)[m_x];
 }
 
-bool YZDrawBuffer::find( const YZCursor& pos, int* x, int* y, int* vx ) const {
+bool YZDrawBuffer::find( const YZCursor pos, int* x, int* y, int* vx ) const {
 	bool found = false;
 	int i, cx;
 
@@ -204,7 +204,7 @@ bool YZDrawBuffer::find( const YZCursor& pos, int* x, int* y, int* vx ) const {
 	return found;
 }
 
-YZDrawCell YZDrawBuffer::at( const YZCursor& pos ) const {
+YZDrawCell YZDrawBuffer::at( const YZCursor pos ) const {
 	YZDrawCell n;
 	int x,y,vx;
 	if ( find( pos, &x, &y, &vx ) ) {
@@ -214,7 +214,7 @@ YZDrawCell YZDrawBuffer::at( const YZCursor& pos ) const {
 	return n;
 }
 
-bool YZDrawBuffer::seek( const YZCursor& pos, YZDrawBuffer::whence w ) {
+bool YZDrawBuffer::seek( const YZCursor pos, YZDrawBuffer::whence w ) {
 	YZCursor rpos;
 	switch( w ) {
 		case YZDrawBuffer::YZ_SEEK_SET :

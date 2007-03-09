@@ -105,12 +105,7 @@ int YZViewCursor::screenY() const {
 	return mScreen.y();
 }
 
-void YZViewCursor::setBuffer( const YZCursor& value ) {
-	mBuffer = value;
-}
-void YZViewCursor::setScreen( const YZCursor& value ) {
-	mScreen = value;
-}
+
 void YZViewCursor::setBufferX( int value ) {
 	mBuffer.setX( value );
 }

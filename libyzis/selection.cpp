@@ -27,7 +27,7 @@
  * YZBound
  */
 
-void YZBound::setPos( const YZCursor& pos ) {
+void YZBound::setPos( const YZCursor pos ) {
 	mPos = pos;
 }
 void YZBound::setPos( unsigned int x, unsigned int y ) {
@@ -40,7 +40,7 @@ void YZBound::open() {
 void YZBound::close() {
 	mOpen = false;
 }
-const YZCursor& YZBound::pos() const {
+const YZCursor YZBound::pos() const {
 	return mPos;
 }
 bool YZBound::opened() const {
@@ -65,20 +65,20 @@ bool operator>=( const YZBound& left, const YZBound& right ) {
 bool operator<=( const YZBound& left, const YZBound& right ) {
 	return left.pos() < right.pos() || left.pos() == right.pos() && ( left.opened() || !right.opened() );
 }
-bool operator>=( const YZBound& left, const YZCursor& right ) {
+bool operator>=( const YZBound& left, const YZCursor right ) {
 	return left.pos() > right || !left.opened() && left.pos() == right;
 }
-bool operator<=( const YZBound& left, const YZCursor& right ) {
+bool operator<=( const YZBound& left, const YZCursor right ) {
 	return left.pos() < right || !left.opened() && left.pos() == right;
 }
-bool operator>=( const YZCursor& left, const YZBound& right ) {
+bool operator>=( const YZCursor left, const YZBound& right ) {
 	return right <= left;
 }
-bool operator<=( const YZCursor& left, const YZBound& right ) {
+bool operator<=( const YZCursor left, const YZBound& right ) {
 	return right >= left;
 }
 
-const YZBound operator-( const YZBound& left, const YZCursor& right ) {
+const YZBound operator-( const YZBound& left, const YZCursor right ) {
 	return YZBound( (QPoint)left.pos() - right, left.opened() );
 }
 /**
@@ -91,10 +91,10 @@ void YZInterval::setFrom( const YZBound& bound ) {
 void YZInterval::setTo( const YZBound& bound ) {
 	mTo = bound;
 }
-void YZInterval::setFromPos( const YZCursor& pos ) {
+void YZInterval::setFromPos( const YZCursor pos ) {
 	mFrom.setPos( pos );
 }
-void YZInterval::setToPos( const YZCursor& pos ) {
+void YZInterval::setToPos( const YZCursor pos ) {
 	mTo.setPos( pos );
 }
 const YZBound& YZInterval::from() const {
@@ -103,14 +103,14 @@ const YZBound& YZInterval::from() const {
 const YZBound& YZInterval::to() const {
 	return mTo;
 }
-const YZCursor& YZInterval::fromPos() const {
+const YZCursor YZInterval::fromPos() const {
 	return mFrom.pos();
 }
-const YZCursor& YZInterval::toPos() const {
+const YZCursor YZInterval::toPos() const {
 	return mTo.pos();
 }
 
-bool YZInterval::contains( const YZCursor& pos ) const {
+bool YZInterval::contains( const YZCursor pos ) const {
 	return mFrom >= pos && pos <= mTo;
 }
 bool YZInterval::contains( const YZInterval& i ) const {
@@ -131,7 +131,7 @@ QRect YZInterval::boundingRect() const {
 	return r;
 }
 
-const YZInterval operator- ( const YZInterval& l, const YZCursor& r ) {
+const YZInterval operator- ( const YZInterval& l, const YZCursor r ) {
 	return YZInterval( qMax(l.from()-r,YZBound(YZCursor(0,0))), qMax(l.to()-r,YZBound(YZCursor(0,0),true)) );
 }
 
@@ -262,7 +262,7 @@ int YZSelection::locatePosition( const YZBound& pos, bool* isSelected ) const {
 	return i;
 }
 
-bool YZSelection::contains( const YZCursor& pos ) const {
+bool YZSelection::contains( const YZCursor pos ) const {
 	bool ret = false;
 	locatePosition( pos, &ret );
 	return ret;
@@ -406,7 +406,7 @@ YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s ) {
 		out << "(" << s.mName << " " << i << ") " << s.mMap[ i ] << endl;
 	return out;
 }
-const YZSelection YZSelection::operator-( const YZCursor& pos ) const {
+const YZSelection YZSelection::operator-( const YZCursor pos ) const {
 	YZSelection ret( mName );
 	int i;
 	int size = mMap.size();
@@ -445,7 +445,7 @@ void YZDoubleSelection::delInterval( const YZInterval& bi, const YZInterval& si 
 	sSelection->delInterval( si );
 }
 
-bool YZDoubleSelection::contains( const YZCursor& pos ) const {
+bool YZDoubleSelection::contains( const YZCursor pos ) const {
 	return bSelection->contains( pos );
 }
 void YZDoubleSelection::clear() {
@@ -481,7 +481,7 @@ YZSelection* YZSelectionPool::search() {
 YZDoubleSelection* YZSelectionPool::visual() {
 	return mVisual;
 }
-bool YZSelectionPool::isSelected( const YZCursor& pos ) const {
+bool YZSelectionPool::isSelected( const YZCursor pos ) const {
 	return mSearch->contains( pos ) || mVisual->contains( pos );
 }
 

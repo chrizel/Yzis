@@ -203,7 +203,9 @@ void YZInternalOptionPool::init() {
 	initConfFiles();
 }
 
-void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t scope, YZBuffer* b, YZView* v ) {
+void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t scope, YZBuffer* b, YZView* v )
+{
+	YZASSERT(option);
 	if ( ctx == ctx_session ) {
 		option->apply( NULL, NULL );
 	} else if ( ctx == ctx_buffer ) {

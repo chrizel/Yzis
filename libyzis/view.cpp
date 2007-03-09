@@ -755,7 +755,7 @@ void YZView::gotoxy( YZViewCursor* viewCursor, int nextx, int nexty, bool applyC
 	applyGoto( viewCursor, applyCursor );
 }
 
-void YZView::gotodxdyAndStick( const YZCursor& pos ) {
+void YZView::gotodxdyAndStick( const YZCursor pos ) {
 	gotodxdy( mainCursor, pos.x(), pos.y(), true );
 	updateStickyCol( mainCursor );
 }
@@ -763,7 +763,7 @@ void YZView::gotodxdyAndStick( int x, int y ) {
 	gotodxdyAndStick( YZCursor(x,y) );
 }
 
-void YZView::gotoxyAndStick( const YZCursor& pos ) {
+void YZView::gotoxyAndStick( const YZCursor pos ) {
 	gotoxy( mainCursor, pos.x(), pos.y() );
 	updateStickyCol( mainCursor );
 }
@@ -911,7 +911,7 @@ QString YZView::moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
 	return QString::null;
 }
 
-void YZView::applyStartPosition( const YZCursor& pos ) {
+void YZView::applyStartPosition( const YZCursor pos ) {
 	if ( pos.y() >= 0 ) {
 		//setPaintAutoCommit(false);
 		if ( pos.x() >= 0 ) {
@@ -1623,11 +1623,10 @@ void YZView::updateStickyCol( YZViewCursor* viewCursor ) {
 void YZView::commitNextUndo() {
 	mBuffer->undoBuffer()->commitUndoItem( mainCursor->bufferX(), mainCursor->bufferY() );
 }
-
-const YZCursor &YZView::getCursor() const {
+const YZCursor YZView::getCursor() const {
 	return mainCursor->screen();
 }
-const YZCursor &YZView::getBufferCursor() const {
+const YZCursor YZView::getBufferCursor() const {
 	return mainCursor->buffer();
 }
 YZCursor YZView::getRelativeScreenCursor() const {
@@ -1692,7 +1691,7 @@ void YZView::abortPaintEvent() {
 void YZView::sendCursor( YZViewCursor* cursor ) {
 	*keepCursor = *cursor;
 }
-void YZView::sendPaintEvent( const YZCursor& from, const YZCursor& to ) {
+void YZView::sendPaintEvent( const YZCursor from, const YZCursor to ) {
 	m_paintAll = false;
 	setPaintAutoCommit( false );
 	mPaintSelection->addInterval( YZInterval( from, to ) );
@@ -1742,7 +1741,7 @@ void YZView::sendRefreshEvent( ) {
 	sendPaintEvent( getDrawCurrentLeft(), getDrawCurrentTop(), getColumnsVisible(), getLinesVisible() );
 }
 
-void YZView::removePaintEvent( const YZCursor& from, const YZCursor& to ) {
+void YZView::removePaintEvent( const YZCursor from, const YZCursor to ) {
 	m_paintAll = false;
 	mPaintSelection->delInterval( YZInterval( from, to ) );
 }

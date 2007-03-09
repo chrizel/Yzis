@@ -674,8 +674,8 @@ bool YZBuffer::save() {
 void YZBuffer::saveYzisInfo( YZView* view ) {
 	YZASSERT( view->myBuffer() == this );
 	/* save buffer cursor */
-	YZSession::self()->getYzisinfo()->updateStartPosition( this, view->getBufferCursor().x(), view->getBufferCursor().y() );
-	YZSession::self()->getYzisinfo()->writeYzisinfo();
+	YZSession::self()->getYzisinfo()->updateStartPosition( this, view->getBufferCursor() );
+	YZSession::self()->getYzisinfo()->write();
 }
 
 YZCursor YZBuffer::getStartPosition( const QString& filename, bool parseFilename ) {
@@ -687,15 +687,8 @@ YZCursor YZBuffer::getStartPosition( const QString& filename, bool parseFilename
 	}
 	if ( infilename_pos.y() >= 0 ) {
 		return infilename_pos;
-	} else {
-		YZSession::self()->getYzisinfo()->readYzisinfo();
-		YZCursor* tmp = YZSession::self()->getYzisinfo()->startPosition( r_filename );
-		if ( tmp ) {
-			return *tmp;
-		} else {
-			return YZCursor();
-		}
-	}
+	} else
+		return YZSession::self()->getYzisinfo()->startPosition( r_filename );
 }
 
 // ------------------------------------------------------------------------
@@ -850,7 +843,7 @@ bool YZBuffer::substitute( const QString& _what, const QString& with, bool whole
 	return false;
 }
 
-QStringList YZBuffer::getText(const YZCursor& from, const YZCursor& to) const {
+QStringList YZBuffer::getText(const YZCursor from, const YZCursor to) const {
 	d->isHLUpdating=true; //override
 	//the first line
 	QStringList list;
@@ -895,7 +888,7 @@ void YZBuffer::intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor*
 }
 
 
-QString YZBuffer::getWordAt( const YZCursor& at ) const {
+QString YZBuffer::getWordAt( const YZCursor at ) const {
 	QString l = textline( at.y() );
 	QRegExp reg( "\\b(\\w+)\\b" );
 	int idx = reg.lastIndexIn( l, at.x() );

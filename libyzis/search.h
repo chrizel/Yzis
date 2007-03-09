@@ -41,22 +41,22 @@ class YZSearch {
 		/**
 		 * search after current cursor position
 		 */
-		YZCursor forward( YZBuffer* buffer, const QString& pattern, bool* found, const YZCursor &from );
+		YZCursor forward( YZBuffer* buffer, const QString& pattern, bool* found, const YZCursor from );
 
 		/**
 		 * search before current cursor position
 		 */
-		YZCursor backward( YZBuffer *buffer, const QString& pattern, bool* found, const YZCursor &from );
+		YZCursor backward( YZBuffer *buffer, const QString& pattern, bool* found, const YZCursor from );
 
 		/**
 		 * replay search forward
 		 */
-		YZCursor replayForward( YZBuffer *buffer, bool* found, const YZCursor &from, bool skipline = false );
+		YZCursor replayForward( YZBuffer *buffer, bool* found, const YZCursor from, bool skipline = false );
 
 		/**
 		 * replay search backward
 		 */
-		YZCursor replayBackward( YZBuffer *buffer, bool* found, const YZCursor &from, bool skipline = false );
+		YZCursor replayBackward( YZBuffer *buffer, bool* found, const YZCursor from, bool skipline = false );
 
 		/**
 		 * Highlight given line

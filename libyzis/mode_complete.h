@@ -47,7 +47,7 @@ class YZIS_EXPORT YZModeCompletion : public YZMode {
 		
 	private :
 		void completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups = true, QList<YZCursor> *cursors = NULL );
-		void completeFromCurrentBuffer( const YZCursor &cursor, bool forward, QStringList &proposed );
+		void completeFromCurrentBuffer( const YZCursor cursor, bool forward, QStringList &proposed );
 		void completeFromOtherBuffers( YZBuffer *skip, QStringList &proposed );
 		void completeFromIncludes( QStringList &proposed );
 		void completeFromTags( QStringList &proposed );

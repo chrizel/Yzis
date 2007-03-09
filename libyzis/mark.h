@@ -49,7 +49,7 @@ class YZIS_EXPORT YZViewMark {
 
 		void clear( ) { marker.clear( ); }
 
-		void add( const QString& mark, const YZCursor& bPos, const YZCursor& dPos );
+		void add( const QString& mark, const YZCursor bPos, const YZCursor dPos );
 		void del( const QString& mark ) {marker.remove( mark );}
 
 		YZCursorPos get( const QString& mark, bool * found ) const;

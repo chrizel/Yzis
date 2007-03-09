@@ -317,9 +317,9 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Moves the buffer cursor to @arg cursor and stick the column
 		 */
-		void gotoxyAndStick( const YZCursor& cursor );
+		void gotoxyAndStick( const YZCursor cursor );
 		void gotoxyAndStick( int x, int y );
-		void gotodxdyAndStick( const YZCursor& cursor );
+		void gotodxdyAndStick( const YZCursor cursor );
 		void gotodxdyAndStick( int x, int y );
 
 		/**
@@ -340,7 +340,7 @@ class YZIS_EXPORT YZView {
 		void gotoStickyCol( int Y );
 		void gotoStickyCol( YZViewCursor* viewCursor, int Y, bool applyCursor = true );
 
-		void applyStartPosition( const YZCursor& pos );
+		void applyStartPosition( const YZCursor pos );
 
 		//-------------------------------------------------------
 		// ----------------- Drawing
@@ -587,7 +587,7 @@ class YZIS_EXPORT YZView {
 		//-------------------------------------------------------
 		virtual void paintEvent( const YZSelection& drawMap );
 
-		void sendPaintEvent( const YZCursor& from, const YZCursor& to );
+		void sendPaintEvent( const YZCursor from, const YZCursor to );
 		void sendPaintEvent( int curx, int cury, int curw, int curh );
 		void sendPaintEvent( YZSelectionMap map, bool isBufferMap = true );
 
@@ -601,7 +601,7 @@ class YZIS_EXPORT YZView {
 		 */
 		void sendRefreshEvent();
 
-		void removePaintEvent( const YZCursor& from, const YZCursor& to );
+		void removePaintEvent( const YZCursor from, const YZCursor to );
 
 		/**
 		 * @arg enable is true, future paint events will be directly applied
@@ -646,13 +646,13 @@ class YZIS_EXPORT YZView {
 		 * Get the current cursor information
 		 * @return a reference on the current cursor
 		 */
-		const YZCursor &getCursor() const;
+		const YZCursor getCursor() const;
 
 		/**
 		 * Get the current buffer cursor information
 		 * @return a reference on the current buffer cursor
 		 */
-		const YZCursor &getBufferCursor() const;
+		const YZCursor getBufferCursor() const;
 
 		YZViewCursor* visualCursor() { return mVisualCursor; }
 

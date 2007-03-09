@@ -1404,7 +1404,7 @@ void YZModeCommand::tagPrev( const YZCommandArgs & /*args*/ ) {
 }
 
 void YZModeCommand::undoJump( const YZCommandArgs & /*args*/ ) {
-	const YZCursor * cursor = YZSession::self()->previousJumpPosition();
-	YZSession::self()->currentView()->centerViewVertically( cursor->y() );
-	YZSession::self()->currentView()->gotodxdy( cursor->x(), cursor->y(), true );
+	const YZCursor cursor = YZSession::self()->previousJumpPosition();
+	YZSession::self()->currentView()->centerViewVertically( cursor.y() );
+	YZSession::self()->currentView()->gotodxdy( cursor.x(), cursor.y(), true );
 }

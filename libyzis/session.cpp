@@ -71,8 +71,7 @@ YZSession::YZSession(const QString& _sessionName) {
 		dbg() << "Yzis SAFE MODE enabled." << endl;
 	}
 	dbg() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
-	//if ( me != 0 ) int t = 5/( me - me );
-	//FIXME
+	YZASSERT_MSG(mInstance==0, "YZSession called while an instance is already registered, shouldn't happen");
 
 	initModes();
 	mSearch = new YZSearch();
@@ -85,6 +84,7 @@ YZSession::YZSession(const QString& _sessionName) {
 	mRegisters = new YZRegisters();
 	mYzisinfo= new YZYzisinfo();
 	mTagStack = new YZTagStack;
+//	mYzisinfo->read(this);
 }
 
 
@@ -104,6 +104,7 @@ QString YZSession::toString() const
 }
 
 YZSession::~YZSession() {
+	mYzisinfo->write(); // save yzisinfo
 	endModes();
 	delete YzisHlManager::self();
 	delete mSchemaManager;
@@ -277,8 +278,7 @@ bool YZSession::exitRequest( int errorCode ) {
 	
 	getYzisinfo()->updateStartPosition( 
                   mCurBuffer->fileName(),
-                  (currentView())->getCursor()->x(),
-                  (currentView())->getCursor()->y() );
+                  (currentView())->getCursor());
                                        
 	getYzisinfo()->writeYzisinfo();*/
                                           
@@ -313,11 +313,11 @@ void YZSession::saveJumpPosition( const int x, const int y ) {
 	mYzisinfo->updateJumpList( mCurBuffer, x, y );
 }
 
-void YZSession::saveJumpPosition( const YZCursor * cursor ) {
-	mYzisinfo->updateJumpList( mCurBuffer, cursor->x(), cursor->y() );
+void YZSession::saveJumpPosition( const YZCursor cursor ) {
+	mYzisinfo->updateJumpList( mCurBuffer, cursor.x(), cursor.y() );
 }
 
-const YZCursor * YZSession::previousJumpPosition() {
+const YZCursor YZSession::previousJumpPosition() {
 	return mYzisinfo->previousJumpPosition();
 }
 
@@ -463,13 +463,13 @@ YZView *YZSession::createBufferAndView( const QString& path /*=QString::null*/ )
 
 void * YZSession::operator new( size_t tSize )
 {
-    printf("YZSession::new( %d )\n", tSize );
+	dbg() << "YZSession::new()" << tSize << endl;
 	return yzmalloc( tSize );
 }
 
 void YZSession::operator delete( void *p )
 {
-    printf("YZSession::delete %p\n", p );
+	dbg() << "YZSession::delete()" << p << endl;
 	yzfree(p);
 }
 

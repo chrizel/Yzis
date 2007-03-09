@@ -29,55 +29,56 @@ class YZCursor;
 class YZInterval;
 class QString;
 
-class YZIS_EXPORT YZAction {
+class YZIS_EXPORT YZAction
+{
 
-	public:
-		YZAction( YZBuffer* buffer );
-		virtual ~YZAction( );
+public:
+	YZAction( YZBuffer* buffer );
+	virtual ~YZAction( );
 
-		void insertChar( YZView* pView, const YZCursor& pos, const QString& text );
-		void insertChar( YZView* pView, int X, int Y, const QString& text );
+	void insertChar( YZView* pView, const YZCursor pos, const QString& text );
+	void insertChar( YZView* pView, int X, int Y, const QString& text );
 
-		void replaceChar( YZView* pView, const YZCursor& pos, const QString& text );
-		void replaceChar( YZView* pView, int X, int Y, const QString& text );
+	void replaceChar( YZView* pView, const YZCursor pos, const QString& text );
+	void replaceChar( YZView* pView, int X, int Y, const QString& text );
 
-		void deleteChar( YZView* pView, const YZCursor& pos, int len );
-		void deleteChar( YZView* pView, int X, int Y, int len );
+	void deleteChar( YZView* pView, const YZCursor pos, int len );
+	void deleteChar( YZView* pView, int X, int Y, int len );
 
-		void insertLine( YZView* pView, const YZCursor& pos, const QString &text );
-		void insertLine( YZView* pView, int Y, const QString &text );
+	void insertLine( YZView* pView, const YZCursor pos, const QString &text );
+	void insertLine( YZView* pView, int Y, const QString &text );
 
-		void mergeNextLine( YZView* pView, int Y, bool stripSpaces = true );
+	void mergeNextLine( YZView* pView, int Y, bool stripSpaces = true );
 
-		void appendLine( YZView* pView, const QString& text );
+	void appendLine( YZView* pView, const QString& text );
 
-		void insertNewLine( YZView* pView, const YZCursor& pos );
-		void insertNewLine( YZView* pView, int X, int Y );
+	void insertNewLine( YZView* pView, const YZCursor pos );
+	void insertNewLine( YZView* pView, int X, int Y );
 
-		void deleteLine( YZView* pView, const YZCursor& pos, int len, const QList<QChar> &reg );
-		void deleteLine( YZView* pView, int Y, int len , const QList<QChar> &reg );
-		void deleteArea( YZView* pView, const YZCursor& begin, const YZCursor& end, const QList<QChar> &reg );
-		void deleteArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg );
+	void deleteLine( YZView* pView, const YZCursor pos, int len, const QList<QChar> &reg );
+	void deleteLine( YZView* pView, int Y, int len , const QList<QChar> &reg );
+	void deleteArea( YZView* pView, const YZCursor begin, const YZCursor end, const QList<QChar> &reg );
+	void deleteArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg );
 
-		void copyLine( YZView* pView, const YZCursor& pos, int len, const QList<QChar> &reg );
-		void copyArea( YZView* pView, const YZCursor& begin,const YZCursor& end, const QList<QChar> &reg );
-		void copyArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg );
+	void copyLine( YZView* pView, const YZCursor pos, int len, const QList<QChar> &reg );
+	void copyArea( YZView* pView, const YZCursor begin,const YZCursor end, const QList<QChar> &reg );
+	void copyArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg );
 
-		void replaceArea( YZView* pView, const YZInterval& i, const QStringList& text );
+	void replaceArea( YZView* pView, const YZInterval& i, const QStringList& text );
 
-		void replaceLine( YZView* pView, const YZCursor& pos, const QString &text );
-		void replaceLine( YZView* pView, int Y, const QString &text );
+	void replaceLine( YZView* pView, const YZCursor pos, const QString &text );
+	void replaceLine( YZView* pView, int Y, const QString &text );
 
-		void replaceText( YZView* pView, const YZCursor& pos, int replacedLength, const QString& text );
+	void replaceText( YZView* pView, const YZCursor pos, int replacedLength, const QString& text );
 
-		void indentLine( YZView* pView, int Y, int count ); // if count is < 0, unindent line
-		
-		YZCursor match( YZView* pView, const YZCursor& cursor, bool *found ) const;
-		YZCursor search( YZBuffer* pBuffer, const QString& what, const YZCursor& mBegin, const YZCursor& mEnd, int *matchlength, bool *found ) const;
+	void indentLine( YZView* pView, int Y, int count ); // if count is < 0, unindent line
+	
+	YZCursor match( YZView* pView, const YZCursor cursor, bool *found ) const;
+	YZCursor search( YZBuffer* pBuffer, const QString& what, const YZCursor mBegin, const YZCursor mEnd, int *matchlength, bool *found ) const;
 
-	private:
-		YZBuffer* mBuffer;
-		YZCursor* mPos;
+private:
+	YZBuffer* mBuffer;
+	YZCursor* mPos;
 
 };
 

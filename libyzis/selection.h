@@ -32,16 +32,16 @@ class YZIS_EXPORT YZBound {
 		YZBound( const YZBound& bound ) : mPos( bound.pos() ) {
 			mOpen = bound.opened();
 		}
-		YZBound( const YZCursor& pos, bool open = false ) : mPos( pos ) {
+		YZBound( const YZCursor pos, bool open = false ) : mPos( pos ) {
 			mOpen = open;
 		}
 		YZBound(){}
 
-		void setPos( const YZCursor& pos );
+		void setPos( const YZCursor pos );
 		void setPos( unsigned int x, unsigned int y );
 		void open();
 		void close();
-		const YZCursor& pos() const;
+		const YZCursor pos() const;
 		bool opened() const;
 		bool closed() const;
 
@@ -55,11 +55,11 @@ bool operator>( const YZBound& left, const YZBound& right );
 bool operator<( const YZBound& left, const YZBound& right );
 bool operator>=( const YZBound& left, const YZBound& right );
 bool operator<=( const YZBound& left, const YZBound& right );
-bool operator>=( const YZBound& left, const YZCursor& right );
-bool operator<=( const YZBound& left, const YZCursor& right );
-bool operator>=( const YZCursor& left, const YZBound& right );
-bool operator<=( const YZCursor& left, const YZBound& right );
-const YZBound operator-( const YZBound& left, const YZCursor& right );
+bool operator>=( const YZBound& left, const YZCursor right );
+bool operator<=( const YZBound& left, const YZCursor right );
+bool operator>=( const YZCursor left, const YZBound& right );
+bool operator<=( const YZCursor left, const YZBound& right );
+const YZBound operator-( const YZBound& left, const YZCursor right );
 
 class YZIS_EXPORT YZInterval {
 
@@ -67,9 +67,9 @@ class YZIS_EXPORT YZInterval {
 
 	public:
 		YZInterval( const YZBound& from, const YZBound& to ) : mFrom( from ), mTo( to ) {}
-		YZInterval( const YZCursor& from, const YZCursor& to ) : mFrom( from ), mTo( to ) {}
-		YZInterval( const YZBound& from, const YZCursor& to ) : mFrom( from ), mTo( to ) {}
-		YZInterval( const YZCursor& from, const YZBound& to ) : mFrom( from ), mTo( to ) {}
+		YZInterval( const YZCursor from, const YZCursor to ) : mFrom( from ), mTo( to ) {}
+		YZInterval( const YZBound& from, const YZCursor to ) : mFrom( from ), mTo( to ) {}
+		YZInterval( const YZCursor from, const YZBound& to ) : mFrom( from ), mTo( to ) {}
 		YZInterval( const QRect& r ) : mFrom( YZCursor(r.left(),r.top()) ), mTo( YZCursor(r.right(),r.bottom()) ) {}
 		YZInterval(){}
 
@@ -78,12 +78,12 @@ class YZIS_EXPORT YZInterval {
 		const YZBound& from() const;
 		const YZBound& to() const;
 
-		void setFromPos( const YZCursor& pos );
-		void setToPos( const YZCursor& pos );
-		const YZCursor& fromPos() const;
-		const YZCursor& toPos() const;
+		void setFromPos( const YZCursor pos );
+		void setToPos( const YZCursor pos );
+		const YZCursor fromPos() const;
+		const YZCursor toPos() const;
 
-		bool contains( const YZCursor& pos ) const;
+		bool contains( const YZCursor pos ) const;
 		bool contains( const YZInterval& pos ) const;
 
 		QRect boundingRect() const;
@@ -92,7 +92,7 @@ class YZIS_EXPORT YZInterval {
 		YZBound mFrom;
 		YZBound mTo;
 };
-YZIS_EXPORT const YZInterval operator-( const YZInterval& l, const YZCursor& r );
+YZIS_EXPORT const YZInterval operator-( const YZInterval& l, const YZCursor r );
 
 typedef QMap<unsigned int, YZInterval> YZSelectionMap;
 
@@ -111,7 +111,7 @@ class YZIS_EXPORT YZSelection {
 		void addMap( const YZSelectionMap& m );
 		void addInterval( const YZInterval& i );
 		void delInterval( const YZInterval& i );
-		bool contains( const YZCursor& pos ) const;
+		bool contains( const YZCursor pos ) const;
 
 		bool isEmpty() const;
 
@@ -125,7 +125,7 @@ class YZIS_EXPORT YZSelection {
 		 * operators
 		 */
 		/* shift the entier selection */
-		const YZSelection operator-( const YZCursor& pos ) const;
+		const YZSelection operator-( const YZCursor pos ) const;
 
 		static YZSelection diff( const YZSelection& _m1, const YZSelection& _m2 );
 
@@ -158,7 +158,7 @@ class YZIS_EXPORT YZDoubleSelection {
 		void addInterval( const YZInterval& bi, const YZInterval& si );
 		void delInterval( const YZInterval& bi, const YZInterval& si );
 
-		bool contains( const YZCursor& pos ) const;
+		bool contains( const YZCursor pos ) const;
 
 		bool isEmpty() const;
 		void clear();
@@ -178,7 +178,7 @@ class YZIS_EXPORT YZSelectionPool {
 		YZSelectionPool();
 		virtual ~YZSelectionPool();
 
-		bool isSelected( const YZCursor& pos ) const;
+		bool isSelected( const YZCursor pos ) const;
 
 		void setSearch( YZSelection* s );
 

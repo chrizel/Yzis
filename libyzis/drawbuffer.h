@@ -75,9 +75,9 @@ class YZIS_EXPORT YZDrawBuffer {
 		void setBackgroundColor( const YZColor& c );
 		void setSelection( int sel );
 
-		bool seek( const YZCursor& pos, YZDrawBuffer::whence w );
+		bool seek( const YZCursor pos, YZDrawBuffer::whence w );
 
-		YZDrawCell at( const YZCursor& pos ) const;
+		YZDrawCell at( const YZCursor pos ) const;
 
 		void replace( const YZInterval& interval );
 
@@ -94,7 +94,7 @@ class YZIS_EXPORT YZDrawBuffer {
 
 		void callback( int x, int y, const YZDrawCell& cell );
 
-		bool find( const YZCursor& pos, int* x, int* y, int* vx ) const;
+		bool find( const YZCursor pos, int* x, int* y, int* vx ) const;
 
 		void applyPosition();
 

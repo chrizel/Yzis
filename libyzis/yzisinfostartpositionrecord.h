@@ -42,11 +42,12 @@ class YZYzisinfoStartPositionRecord {
 		 * Constructor
 		 * 
 		 * @param filename The filename of the current file
-		 * @param x The x position of the cursor in the current file 
-		 * @param y The y position of the cursor in the current file
+		 * @param c The cursor for the start position in the current file 
 		 */
 		 
-		YZYzisinfoStartPositionRecord( const QString & filename, const unsigned int x, const unsigned int y );
+		YZYzisinfoStartPositionRecord( const QString & filename, const YZCursor c );
+		
+
 		
 		/**
 		 * Destructor
@@ -79,7 +80,7 @@ class YZYzisinfoStartPositionRecord {
 		 * Returns the recorded start position for the current filename
 		 */
 		 
-		YZCursor * position() const;
+		YZCursor position() const;
 		
 		/**
 		 * Sets the current filename
@@ -96,11 +97,11 @@ class YZYzisinfoStartPositionRecord {
 		 * @param y The y coordinate of the cursor position
 		 */
 		 
-		void setPosition( const unsigned int x, const unsigned int y );
+		void setPosition( const YZCursor c){ mPosition = c ;}
 
 	private:
 		QString mFilename;
-		YZCursor * mPosition;
+		YZCursor mPosition;
 };
 
 #endif // YZISINFOSTARTPOSITIONRECORD_H

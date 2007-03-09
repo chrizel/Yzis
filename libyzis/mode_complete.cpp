@@ -269,7 +269,7 @@ void YZModeCompletion::completeFromFileNames( QStringList &/*proposed*/ )
 {
 }
 
-void YZModeCompletion::completeFromCurrentBuffer( const YZCursor &cursor, bool forward, QStringList &proposed )
+void YZModeCompletion::completeFromCurrentBuffer( const YZCursor cursor, bool forward, QStringList &proposed )
 {
 	YZBuffer *buffer = YZSession::self()->currentView()->myBuffer();
 	

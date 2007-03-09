@@ -49,7 +49,7 @@ static void commitViewsChanges(YZBuffer *buffer)
 		view->commitPaintEvent();
 }
 
-void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& text ) {
+void YZAction::insertChar( YZView* pView, const YZCursor pos, const QString& text ) {
 	configureViews(mBuffer);
 	if( pos.y() == mBuffer->lineCount() )
 		mBuffer->insertNewLine( pos.x(), pos.y() );
@@ -60,7 +60,7 @@ void YZAction::insertChar( YZView* pView, const YZCursor& pos, const QString& te
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::replaceText( YZView* pView, const YZCursor& pos, int replacedLength, const QString& text ) {
+void YZAction::replaceText( YZView* pView, const YZCursor pos, int replacedLength, const QString& text ) {
 	yzDebug() << "replaceText :" << pos << " length : " << replacedLength << " text:" << text << endl;
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
@@ -71,7 +71,7 @@ void YZAction::replaceText( YZView* pView, const YZCursor& pos, int replacedLeng
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::replaceChar( YZView* pView, const YZCursor& pos, const QString& text ) {
+void YZAction::replaceChar( YZView* pView, const YZCursor pos, const QString& text ) {
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	configureViews(mBuffer);
@@ -81,7 +81,7 @@ void YZAction::replaceChar( YZView* pView, const YZCursor& pos, const QString& t
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::deleteChar( YZView* pView, const YZCursor& pos, int len ) {
+void YZAction::deleteChar( YZView* pView, const YZCursor pos, int len ) {
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	configureViews(mBuffer);
@@ -99,7 +99,7 @@ void YZAction::appendLine( YZView* pView, const QString& text ) {
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::insertNewLine( YZView* pView, const YZCursor& pos ) {
+void YZAction::insertNewLine( YZView* pView, const YZCursor pos ) {
 	if( pos.y() > mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	configureViews(mBuffer);
@@ -108,7 +108,7 @@ void YZAction::insertNewLine( YZView* pView, const YZCursor& pos ) {
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::replaceLine( YZView* pView, const YZCursor& pos, const QString &text ) {
+void YZAction::replaceLine( YZView* pView, const YZCursor pos, const QString &text ) {
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	configureViews(mBuffer);
@@ -117,7 +117,7 @@ void YZAction::replaceLine( YZView* pView, const YZCursor& pos, const QString &t
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &text ) {
+void YZAction::insertLine( YZView* pView, const YZCursor pos, const QString &text ) {
 	if( pos.y() > mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	configureViews(mBuffer);
@@ -126,7 +126,7 @@ void YZAction::insertLine( YZView* pView, const YZCursor& pos, const QString &te
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::deleteLine( YZView* pView, const YZCursor& pos, int len, const QList<QChar> &reg ) {
+void YZAction::deleteLine( YZView* pView, const YZCursor pos, int len, const QList<QChar> &reg ) {
 	configureViews(mBuffer);
 	copyLine(pView, pos, len, reg);
 	if ( pos.y() + len > mBuffer->lineCount() )
@@ -137,7 +137,7 @@ void YZAction::deleteLine( YZView* pView, const YZCursor& pos, int len, const QL
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::copyLine( YZView* , const YZCursor& pos, int len, const QList<QChar> &reg ) {
+void YZAction::copyLine( YZView* , const YZCursor pos, int len, const QList<QChar> &reg ) {
 	YZCursor mPos( pos );
 
 	int bY = mPos.y();
@@ -290,13 +290,13 @@ void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QList<QChar
 	commitViewsChanges(mBuffer);
 }
 
-void YZAction::copyArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
+void YZAction::copyArea( YZView* pView, const YZCursor beginCursor, const YZCursor endCursor, const QList<QChar> &reg ) {
 	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
 		end(beginCursor <= endCursor ? endCursor : beginCursor);
 	copyArea( pView, YZInterval(begin, end), reg );
 }
 
-void YZAction::deleteArea( YZView* pView, const YZCursor& beginCursor, const YZCursor& endCursor, const QList<QChar> &reg ) {
+void YZAction::deleteArea( YZView* pView, const YZCursor beginCursor, const YZCursor endCursor, const QList<QChar> &reg ) {
 	YZCursor begin(beginCursor <= endCursor ? beginCursor : endCursor),
 		end(beginCursor <= endCursor ? endCursor : beginCursor);
 	deleteArea( pView, YZInterval(begin, end), reg );
@@ -370,7 +370,7 @@ void YZAction::replaceLine( YZView* pView, int Y, const QString& text ) {
 	replaceLine( pView, pos, text );
 }
 
-YZCursor YZAction::match( YZView* pView, const YZCursor& cursor, bool *found ) const {
+YZCursor YZAction::match( YZView* pView, const YZCursor cursor, bool *found ) const {
 	QString matchers = pView->myBuffer()->getLocalStringOption("matchpairs");
 
 	QString current = pView->myBuffer()->textline( cursor.y() );
@@ -428,7 +428,7 @@ YZCursor YZAction::match( YZView* pView, const YZCursor& cursor, bool *found ) c
 
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
 // which makes reverseSearch redundant.  It's now calculated within the function based on a test of mEnd < mBegin
-YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCursor& mBegin, const YZCursor& mEnd, int *matchlength, bool *found ) const {
+YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCursor mBegin, const YZCursor mEnd, int *matchlength, bool *found ) const {
 //	yzDebug() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
 	bool reverseSearch = mEnd < mBegin;
 	bool cs = true;

@@ -215,13 +215,13 @@ public:
 	 * @param to the end cursor
 	 * @return a list of strings
 	 */
-	QStringList getText(const YZCursor& from, const YZCursor& to) const;
+	QStringList getText(const YZCursor from, const YZCursor to) const;
 	QStringList getText(const YZInterval& i) const;
 
 	/**
 	 * Get entire word at given cursor position. Currently behaves like '*' in vim
 	 */
-	QString getWordAt( const YZCursor& at ) const;
+	QString getWordAt( const YZCursor at ) const;
 
 	/**
 	 * Number of lines in the buffer

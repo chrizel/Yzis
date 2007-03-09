@@ -9,10 +9,11 @@ message(STATUS "Looking for libncurses(w)")
 
 #to be completed I guess ...
 FIND_PATH(NCURSES_INCLUDE_DIR cursesw.h ncurses.h
+   /usr/include/ncursesw/
    /usr/include/
    /usr/local/include/
-   /usr/include/ncursesw/
    /usr/local/include/ncursesw/
+    NO_DEFAULT_PATH
 )
 
 FIND_LIBRARY(NCURSES_LIBRARIES NAMES ncursesw

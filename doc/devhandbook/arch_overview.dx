@@ -69,7 +69,7 @@ Being a file editor, \e Yzis code is centered around a class handling
 files. They are either empty file (like when you start "nyzis"), or a file on
 the filesystem ("nyzis foo.c").
 This class is responsible for loading, saving, and modifying the file
- YZBuffer::insertChar() for example). It keeps track of all
+(YZBuffer::insertChar() for example). It keeps track of all
 views on this file, if the file is modified or not, filesystem names, and so
 on.
 

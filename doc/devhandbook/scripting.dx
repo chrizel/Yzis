@@ -11,8 +11,8 @@ quite good and memory overhead is really small.
 
 \section scripting_lua_integration How lua is integrated
 
-Yzis contains a lua engine, which initialied upon startup. Inside, yzis, it is
-possible to call any lua function with:
+Yzis contains a lua engine, which is initialied upon startup. From any yzis client, you
+can call any lua function, example:
 - :lua &lt;some lua code&gt;
 - :call some_function()
 - :some_function()
@@ -20,7 +20,7 @@ possible to call any lua function with:
 
 \section lua_engine Lua engine
 
-YZLuaEngine is a singleton instance that managees the lua engine.
+YZLuaEngine is a singleton instance that manages the lua engine.
 
 All lua needs for its engine is a state which is traditionally stored as
 variable lua_State * L. In our case, this variable is a protected variable of

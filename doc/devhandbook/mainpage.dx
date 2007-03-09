@@ -3,14 +3,14 @@
  
 \section intro Introduction
 
-The developr handbook gathers all documentation available for Yzis.
+The developer handbook gathers all documentation available for Yzis.
 
-The book is organised in different modules, that each describe a fonctionality of the Yzis core. This is aimed at developers wanting to work on Yzis code. 
+The book is organised in different modules. Each module describes a fonctionality of the Yzis core (\e libizis\e ). This is
+aimed towards developers wanting to work on Yzis code. 
 
-There is a \e User \e Handbook if you only intend to use Yzis.
+There is a separate \e User \e Handbook if you only intend to use Yzis.
 
-There is also an API documentation available for the yzis engine and each of
-its frontend. The documentation contains information about each class, each function, each variable and is extensively referenced by the developer handbook.
+There is also an API documentation available for the yzis engine and each frontend. The documentation contains information about each class, method, variable and is extensively referenced by the developer handbook.
 
 API documentation links:
 - <a href="libyzis/index.html">libyzis</a>: yzis engine
@@ -27,8 +27,9 @@ have methods with this name as well. NYzis handles this using some hack (see
  viewwidget.h ), but to ease handling this, the word \e scroll should
 just not be used anywhere in libyzis.
 
-We will now explain here how to dig into the Yzis code, architecture
-details and give explanations about the tools we use.
+
+\section moduleslist Module description
+
 
 \subpage technologies
 

@@ -35,10 +35,10 @@ See http://www.doxygen.org.
 We also use Doxygen to write this very handbook.
 
 \section qt Qt
-Yzis is built on top of the \e Qt C++ library, which provides some
+Yzis is built on top of the \e Qt-4 C++ library, which provides some
 generic useful classes and some optional GUI widgets. \e Qt  is most
-widely known as the basis for \e KDE . The version of Qt separates the library
-into multiple components: QtCore, QtGui, QtXml, ... We use QtCore for libyzis
+widely known as the basis for \e KDE . There are separates libraries for
+the different Qt components : QtCore, QtGui, QtXml, ... We use QtCore for libyzis
 and QtGui for QYzis.
 
 See http://www.trolltech.com for more details, and especially

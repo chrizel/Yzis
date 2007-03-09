@@ -15,7 +15,8 @@ Better use a svn checkout:
 svn co svn://svn.freenux.org/yzis/trunk yzis-trunk
 \endcode
 
-Updating your local copy of the yzis source code is easy:
+Updating your local copy of the yzis source code is easy, do this from your
+local copy (yzis-trunk in this example):
 
 \code
 svn up

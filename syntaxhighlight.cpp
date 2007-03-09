@@ -1462,7 +1462,9 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
       if (item->region2)
       {
         // kdDebug(13010)<<QString("Region mark 2 detected: %1").arg(item->region2)<<endl;
-        if ( !foldingList->isEmpty() && ((item->region2 < 0) && (*foldingList)[foldingList->size()-2] == -item->region2 ) )
+        if ( !foldingList->isEmpty() &&
+			((item->region2 < 0) &&
+			 (*foldingList)[foldingList->size()-2] == (uint)(-item->region2)) )
         {
           foldingList->resize (foldingList->size()-2);
         }

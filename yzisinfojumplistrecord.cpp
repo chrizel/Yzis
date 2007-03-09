@@ -74,7 +74,7 @@ QString & YZYzisinfoJumpListRecord::filename() {
  * YZYzisinfoJumpListRecord::position
  */
  
-YZCursor & YZYzisinfoJumpListRecord::position() {
+YZCursor  YZYzisinfoJumpListRecord::position() {
 	return mPosition;
 }
 
@@ -90,7 +90,7 @@ const QString & YZYzisinfoJumpListRecord::filename() const {
  * YZYzisinfoJumpListRecord::position
  */
  
-const YZCursor & YZYzisinfoJumpListRecord::position() const {
+const YZCursor  YZYzisinfoJumpListRecord::position() const {
 	return mPosition;
 }
 

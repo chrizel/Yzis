@@ -80,15 +80,13 @@ YZYzisinfo::~YZYzisinfo() {
  * YZYsisinfo::readYzisinfo
  */
 
-void YZYzisinfo::readYzisinfo() 
+void YZYzisinfo::read(YZSession *session) 
 {
     dbg() << HERE() << endl;
 	
 	if ( mYzisinfoInitialized ) {
 		return;
 	}
-
-	mYzisinfoInitialized = true;
 	
 	if ( mYzisinfo.open( QIODevice::ReadOnly ) ) {
 		QTextStream stream( &mYzisinfo );
@@ -118,31 +116,26 @@ void YZYzisinfo::readYzisinfo()
 			QStringList list = line.split( QRegExp( "\\s" ));
 			
 			if ( list[0] == "hlsearch" ) {
-				if ( list[1] == "on" ) {
-					bool on = true;
-					YZSession::self()->getOptions()->setOptionFromString( &on, "hlsearch" );
-				} else {
-					bool on = false; 
-					YZSession::self()->getOptions()->setOptionFromString( &on, "hlsearch" );
-				}
+				bool on = (list[1] == "on" );
+				session->getOptions()->setOptionFromString( &on, "hlsearch" );
 			}
 			
 			if ( list[0].startsWith(":") || list[0] == "command_list" ) {
-				YZModeEx *ex = YZSession::self()->getExPool();
+				YZModeEx *ex = session->getExPool();
 				YZHistory *history = ex->getHistory();
 				
 				history->addEntry( (list.join(" ")).remove(0, 1) );
 			}
 			
 			if ( list[0].startsWith("?") || list[0] == "search_list" ) {
-				YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::self()->getModes()[ YZMode::MODE_SEARCH ]);
+				YZModeSearch *search = dynamic_cast<YZModeSearch*>(session->getModes()[ YZMode::MODE_SEARCH ]);
 				YZHistory *history = search->getHistory();
 				
 				history->addEntry( (list.join(" ")).remove(0, 1) );
 			}
 			
 			if ( list[0].startsWith(">") || list[0] == "start_position" ) {
-				mStartPosition.push_back( new YZYzisinfoStartPositionRecord( list[3], list[1].toInt(), list[2].toInt() ) );
+				mStartPosition.push_back( new YZYzisinfoStartPositionRecord( list[3], YZCursor(list[1].toInt(), list[2].toInt())) );
 			}
 			
 			if ( list[0].startsWith("_") || list[0] == "search_history" ) {
@@ -177,7 +170,7 @@ void YZYzisinfo::readYzisinfo()
 					dbg() << "<" << contents.at(i) << ">" << endl;
 				}
 				
-				YZSession::self()->setRegister( key, contents );	
+				session->setRegister( key, contents );	
 			}
 		}
 		
@@ -185,26 +178,28 @@ void YZYzisinfo::readYzisinfo()
 	} else {
 		dbg() << "Unable to open file " << mYzisinfo.fileName() << endl;
 	}
+
+	mYzisinfoInitialized = true;
 }
 
 /**
  * YZYzisinfo::updateStartPosition
  */
  
-void YZYzisinfo::updateStartPosition( const YZBuffer *buffer, const int x, const int y ) {
+void YZYzisinfo::updateStartPosition( const YZBuffer *buffer, const YZCursor cursor) {
 	bool found = false;
 
 	for ( StartPositionVector::Iterator it = mStartPosition.begin(); it != mStartPosition.end(); ++it ) {
 		if ( (*it)->filename() == buffer->fileName() ) {
 			found = true;
 			mStartPosition.erase(it);
-			mStartPosition.push_back( new YZYzisinfoStartPositionRecord( buffer->fileName(), x, y ) );
+			mStartPosition.push_back( new YZYzisinfoStartPositionRecord( buffer->fileName(), cursor ) );
 			return;
 		}
 	}
 	         
 	if ( ! found ) {         
-		mStartPosition.push_back( new YZYzisinfoStartPositionRecord( buffer->fileName(), x, y ) );
+		mStartPosition.push_back( new YZYzisinfoStartPositionRecord( buffer->fileName(), cursor ) );
 	}
 	
 	return;
@@ -234,10 +229,10 @@ void YZYzisinfo::updateJumpList( const YZBuffer *buffer, const int x, const int 
 }
 
 /**
- * YZYzisinfo::writeYzisinfo
+ * YZYzisinfo::write
  */
  
-void YZYzisinfo::writeYzisinfo() 
+void YZYzisinfo::write() 
 {
     dbg() << HERE() << endl;
 	if ( mYzisinfo.open( QIODevice::WriteOnly ) ) {
@@ -321,11 +316,11 @@ void YZYzisinfo::saveStartPosition( QTextStream & write ) {
 
 	for( int i = start; i < end; ++i ) {
 		write << "> ";
-		dbg() << (mStartPosition[i])->position()->x();
-		write << (mStartPosition[i])->position()->x();
+		dbg() << (mStartPosition[i])->position().x();
+		write << (mStartPosition[i])->position().x();
 		write << " "; 
-		dbg() << (mStartPosition[i])->position()->y();
-		write << (mStartPosition[i])->position()->y();
+		dbg() << (mStartPosition[i])->position().y();
+		write << (mStartPosition[i])->position().y();
 		write << " ";
 		dbg() << (mStartPosition[i])->filename() << endl;
 		write << (mStartPosition[i])->filename() << endl;
@@ -390,7 +385,7 @@ void YZYzisinfo::saveRegistersList( QTextStream & write ) {
  * YZYzisinfo::startPosition
  */
 
-YZCursor * YZYzisinfo::startPosition( const QString& filename ) const {
+YZCursor YZYzisinfo::startPosition( const QString& filename ) const {
 
 	for ( StartPositionVector::ConstIterator it = mStartPosition.begin(); it != mStartPosition.end(); ++it ) {
 		if ( (*it)->filename() == filename ) {
@@ -398,9 +393,9 @@ YZCursor * YZYzisinfo::startPosition( const QString& filename ) const {
 		}
 	}
 
-	return 0;
+	return YZCursor(0,0);
 }
-YZCursor * YZYzisinfo::startPosition( const YZBuffer *buffer ) const {
+YZCursor YZYzisinfo::startPosition( const YZBuffer *buffer ) const {
 	return startPosition( buffer->fileName() );
 }
 
@@ -408,7 +403,7 @@ YZCursor * YZYzisinfo::startPosition( const YZBuffer *buffer ) const {
  * YZYzisinfo::searchPosition
  */
  
-YZCursor * YZYzisinfo::searchPosition( const YZBuffer * ) {
+YZCursor YZYzisinfo::searchPosition( const YZBuffer * ) {
 	
 	for ( JumpListVector::Iterator it = mJumpList.begin(); it != mJumpList.end(); ++it ) {
 		/*if ( (*it)->filename() == buffer->fileName() ) {
@@ -416,10 +411,10 @@ YZCursor * YZYzisinfo::searchPosition( const YZBuffer * ) {
 		}*/
 	}
             
-	return new YZCursor( YZSession::self()->currentView()->getBufferCursor() );
+	return YZSession::self()->currentView()->getBufferCursor();
 }
 
-const YZCursor * YZYzisinfo::previousJumpPosition() {
+const YZCursor YZYzisinfo::previousJumpPosition() {
 
 	bool found = false;	
 	bool repeating = false;
@@ -444,9 +439,9 @@ const YZCursor * YZYzisinfo::previousJumpPosition() {
 	}
 	
 	if ( found ) {
-		return &mJumpList[mCurrentJumpListItem]->position();
+		return mJumpList[mCurrentJumpListItem]->position();
 	} else {
-		return &YZSession::self()->currentView()->getCursor();
+		return YZSession::self()->currentView()->getCursor();
 	}
 }
 

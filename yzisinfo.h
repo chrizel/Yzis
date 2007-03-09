@@ -20,15 +20,18 @@
 #ifndef YZISINFO_H
 #define YZISINFO_H
 
+/* Qt */
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
 #include <QVector>
 
+/* Project */
+#include "cursor.h"
+
 class YZBuffer;
 class YZYzisinfoStartPositionRecord;
 class YZYzisinfoJumpListRecord;
-class YZCursor;
 
 typedef QVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
 typedef QVector<YZYzisinfoJumpListRecord*> JumpListVector;
@@ -36,22 +39,24 @@ typedef QVector<YZYzisinfoJumpListRecord*> JumpListVector;
 /**
  * Class YZYzisinfo
  *
- * @short Handle the yzisinfo file.
+ * @short Handle the ~/.yzisinfo file.
  * 
- * Contains all the necessary methods to read and write the yzisinfo file. 
- * This file is the equivalent of the .viminfo file in vim
+ * Contains all the necessary methods to read and write the ~/.yzisinfo file. 
+ * This file is the equivalent of the ~/.viminfo file in vim
  */
 
 class YZYzisinfo {
 	public:
 		/**
-		 * Constructor
+		 * Default Constructor.  Set the filename to
+		 * ~/.yzis/fileinfo, but doesn't try to read the file yet.
 		 */
 		 
 		YZYzisinfo();
 		
 		/**
-		 * Constructor
+		 * Constructor. Set the filename to path, but doesn't try
+		 * to read the file yet.
 		 * 
 		 * @param path The full path to the yzisinfo file
 		 */
@@ -59,22 +64,22 @@ class YZYzisinfo {
 		YZYzisinfo( const QString & path );
 		
 		/**
-		 * Destructor
+		 * Destructor. Does nothing.
 		 */
 		 
 		~YZYzisinfo();
 		
 		/**
-		 * Method to read the yzisinfo file
+		 * Actually read the yzisinfo file.
 		 */
 		 
-		void readYzisinfo();
+		void read(YZSession *);
 		
 		/**
 		 * Method to update the start position for the given file
 		 */
 		 
-		void updateStartPosition( const YZBuffer *buffer, const int x, const int y );
+		void updateStartPosition( const YZBuffer *buffer, const YZCursor cursor );
 		
 		/**
 		 * Method to update the jump list for the given file
@@ -86,17 +91,7 @@ class YZYzisinfo {
 		 * Method to write the yzisinfo file
 		 */
 		 
-		void writeYzisinfo();
-	
-		/**
-		 * Method to save the ex history to the yzisinfo file
-		 * 
-		 * @param write The text stream to use to write the information to the
-		 * yzisinfo file
-		 */
-		 
-		void saveExHistory( QTextStream & write );
-		
+		void write();
 	
 		/**
 		 * Method to save the search history to the yzisinfo file
@@ -138,21 +133,31 @@ class YZYzisinfo {
 		 * Method to return the start position for the current file
 		 */
 		
-		YZCursor * startPosition( const QString& filename ) const;
-		YZCursor * startPosition( const YZBuffer *buffer ) const;
+		YZCursor startPosition( const QString& filename ) const;
+		YZCursor startPosition( const YZBuffer *buffer ) const;
 		
 		/**
 		 * Method to return the previous search position for the current file
 		 */
 		 
-		YZCursor * searchPosition( const YZBuffer *buffer );
+		YZCursor searchPosition( const YZBuffer *buffer );
 		
 		/**
 		 * Returns the previous jump position
 		 */
-		const YZCursor * previousJumpPosition();
+		const YZCursor previousJumpPosition();
 
 	private:
+		/**
+		 * Method to save the ex history to the yzisinfo file
+		 * 
+		 * @param write The text stream to use to write the information to the
+		 * yzisinfo file
+		 */
+		 
+		void saveExHistory( QTextStream & write );
+		
+
 		QFile mYzisinfo;
 		bool mYzisinfoInitialized; // is yzisinfo initialized
 	    

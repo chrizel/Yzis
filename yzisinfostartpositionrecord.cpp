@@ -25,24 +25,25 @@
 
 YZYzisinfoStartPositionRecord::YZYzisinfoStartPositionRecord() {
 	mFilename = "";
-	setPosition( 0, 0 );
+	setPosition( YZCursor( 0, 0 ));
 }
 
 /**
  * YZYzisinfoStartPositionRecord::YZYzisinfoStartPositionRecord
  */
  
-YZYzisinfoStartPositionRecord::YZYzisinfoStartPositionRecord( const QString & filename, const unsigned int x, const unsigned int y ) {
+YZYzisinfoStartPositionRecord::YZYzisinfoStartPositionRecord( const QString & filename, const YZCursor c) {
 	mFilename = filename;
-	setPosition( x, y );
+	mPosition = c;
 }
+
+
 
 /**
  * YZYzisinfoStartPositionRecord::~YZYzsinfoStartPositionRecord
  */
  
 YZYzisinfoStartPositionRecord::~YZYzisinfoStartPositionRecord() {
-	delete mPosition;
 }
 
 /**
@@ -51,7 +52,7 @@ YZYzisinfoStartPositionRecord::~YZYzisinfoStartPositionRecord() {
 
 YZYzisinfoStartPositionRecord::YZYzisinfoStartPositionRecord( YZYzisinfoStartPositionRecord & copy ) {
 	mFilename = copy.filename();
-	setPosition( copy.position()->x(), copy.position()->y() );
+	setPosition( copy.position() );
 }
 
 /**
@@ -64,7 +65,7 @@ YZYzisinfoStartPositionRecord & YZYzisinfoStartPositionRecord::operator=( YZYzis
 	}
 	
 	mFilename = copy.filename();
-	setPosition( copy.position()->x(), copy.position()->y() );
+	setPosition( copy.position() );
 	
 	return *this;
 }
@@ -81,7 +82,7 @@ const QString& YZYzisinfoStartPositionRecord::filename() const {
  * YZYzisinfoStartPositionRecord::position
  */
  
-YZCursor * YZYzisinfoStartPositionRecord::position() const {
+YZCursor YZYzisinfoStartPositionRecord::position() const {
 	return mPosition;
 }
 
@@ -91,14 +92,6 @@ YZCursor * YZYzisinfoStartPositionRecord::position() const {
  
 void YZYzisinfoStartPositionRecord::setFilename( const QString & filename ) {
 	mFilename = filename;
-}
-
-/**
- * YZYzisinfoStartPositionRecord::setPosition
- */
- 
-void YZYzisinfoStartPositionRecord::setPosition( const unsigned int x, const unsigned int y ) {
-	mPosition = new YZCursor( x, y );
 }
 
 /*

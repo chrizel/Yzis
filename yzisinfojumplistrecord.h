@@ -87,8 +87,8 @@ class YZYzisinfoJumpListRecord {
 		 * Returns the recorded cursor position
 		 */
 		 
-		YZCursor & position();
-		const YZCursor & position() const;
+		YZCursor  position();
+		const YZCursor  position() const;
 		
 		/**
 		 * Returns the previous recorded search cursor position

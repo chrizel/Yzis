@@ -21,7 +21,7 @@
 #include "mark.h"
 #include "cursor.h"
 
-void YZViewMark::add( const QString& mark, const YZCursor& bPos, const YZCursor& dPos ) {
+void YZViewMark::add( const QString& mark, const YZCursor bPos, const YZCursor dPos ) {
 	YZCursorPos pos;
 	pos.bPos = bPos;
 	pos.dPos = dPos;

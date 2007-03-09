@@ -26,7 +26,7 @@
 #include <QList>
 
 /* yzis */
-//#include "yzis.h"
+#include "cursor.h"
 #include "mode.h"  // for YZModeMap
  
 class YZView;
@@ -37,7 +37,6 @@ class YZRegisters;
 class YZSearch;
 class YZEvents;
 class YZMode;
-class YZCursor;
 class YZModeEx;
 class YZModeCommand;
 class YZViewCursor;
@@ -69,7 +68,7 @@ namespace Clipboard {
 class YZIS_EXPORT YZSession {
 	public:
 		/**
-		 *  @return one and the only instance of YZSession
+		 *  @return the one and only one instance of YZSession
 		 *  @see setInstance
 		 */
 		static YZSession * self();
@@ -425,8 +424,8 @@ class YZIS_EXPORT YZSession {
 
 		void saveJumpPosition();
 		void saveJumpPosition( const int x, const int y );
-		void saveJumpPosition( const YZCursor * cursor );
-		const YZCursor * previousJumpPosition();
+		void saveJumpPosition( const YZCursor cursor );
+		const YZCursor previousJumpPosition();
 
         /** Because of windows, we need to have new defined in the
           * shared library. */

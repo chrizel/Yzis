@@ -21,20 +21,20 @@
 #include "debug.h"
 
 
-bool YZCursor::operator< (const YZCursor& right ) const {
+bool YZCursor::operator< (const YZCursor right ) const {
 	return y() < right.y() || y() == right.y() && x() < right.x();
 }
-bool YZCursor::operator<= (const YZCursor& right ) const {
+bool YZCursor::operator<= (const YZCursor right ) const {
 	return *this == right || *this < right;
 }
-bool YZCursor::operator> (const YZCursor& right ) const {
+bool YZCursor::operator> (const YZCursor right ) const {
 	return *this != right && !(*this < right);
 }
-bool YZCursor::operator>= (const YZCursor& right ) const {
+bool YZCursor::operator>= (const YZCursor right ) const {
 	return right <= *this;
 }
 
-YZDebugStream& operator<< ( YZDebugStream& out, const YZCursor& c ) {
+YZDebugStream& operator<< ( YZDebugStream& out, const YZCursor c ) {
 	out << "(" << c.x() << "," << c.y() << ")";
 	return out;
 }

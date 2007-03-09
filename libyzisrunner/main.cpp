@@ -31,7 +31,7 @@ int main(int argc, char **argv) {
 
     QCoreApplication *app;
     if ( useGUI ) {
-        app = ( QCoreApplication* )new QApplication( argc, argv );
+        app = new QApplication( argc, argv );
         QObject::connect( app, SIGNAL(lastWindowClosed()), app, SLOT(quit()) );
     } else {
         app = new QCoreApplication( argc,argv );

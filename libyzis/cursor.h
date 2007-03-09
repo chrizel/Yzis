@@ -34,21 +34,20 @@ class YZIS_EXPORT YZCursor : public QPoint {
 		YZCursor() : QPoint(-1,-1) { }
 		YZCursor( const QPoint& c ) : QPoint( c.x(), c.y() ) { }
 		YZCursor(const int x, const int y) : QPoint(x,y) { }
-		virtual ~YZCursor() {};
 
 		void setXY( int x, int y ) { setX(x); setY(y); }
 
 		/*
 		 * operators
 		 */
-		bool operator< ( const YZCursor& right ) const;
-		bool operator<= ( const YZCursor& right ) const;
-		bool operator> ( const YZCursor& right ) const;
-		bool operator>= ( const YZCursor& right ) const;
+		bool operator< ( const YZCursor right ) const;
+		bool operator<= ( const YZCursor right ) const;
+		bool operator> ( const YZCursor right ) const;
+		bool operator>= ( const YZCursor right ) const;
 
 };
 
-extern YZIS_EXPORT YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor & c );
+extern YZIS_EXPORT YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor c );
 
 /**
   * @short Handle both buffer/drawing cursors

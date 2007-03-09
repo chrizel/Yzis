@@ -6,7 +6,6 @@
 #  MAGIC_LIBRARIES - libmagic library
 
 FIND_PATH(MAGIC_INCLUDE_DIR magic.h
-   /usr/include
    /usr/local/include
 )
 

@@ -29,6 +29,7 @@
 #include <qclipboard.h>
 #include <qcursor.h>
 
+/* Yzis */
 #include "editor.h"
 #include "debug.h"
 #include "yzis.h"
@@ -36,7 +37,7 @@
 #include "registers.h"
 #include "viewwidget.h"
 
-
+/* QYzis */
 #include "qyzis.h"
 
 QYZisEdit::QYZisEdit(QYZisView *parent)

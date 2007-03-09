@@ -18,9 +18,9 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "cursor.h"
 #include "editor.h"
 #include "viewwidget.h"
+#include "qyziscursor.h"
 
 QYZisCursor::QYZisCursor( QYZisEdit* edit, shape type ) : QWidget( edit )  {
 	mEditor = edit;

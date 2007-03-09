@@ -79,7 +79,6 @@ void QYZisLineNumbers::setFont( const QFont& f ) {
 
 void QYZisLineNumbers::scroll( int dy ) {
 	setUpdatesEnabled(false);
-	QLayoutItem* row;
 	if ( dy < 0 ) {
 		for ( int i = dy; i < 0; ++i ) {
 			// remove top

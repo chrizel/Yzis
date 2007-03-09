@@ -26,39 +26,41 @@
 
 class QYZisView;
 
-class LineNumber : public QLabel {
+class LineNumber : public QLabel
+{
 	Q_OBJECT
 
-	public :
-		LineNumber( const QFont& f );
-		virtual ~LineNumber();
+public :
+	LineNumber( const QFont& f );
+	virtual ~LineNumber();
 
-		void setNumber( int n );
-		void setFont( const QFont& );
+	void setNumber( int n );
+	void setFont( const QFont& );
 };
 
 
-class QYZisLineNumbers : public QWidget {
+class QYZisLineNumbers : public QWidget
+{
 	Q_OBJECT
 
-	public :
-		QYZisLineNumbers( QYZisView* parent );
-		virtual ~QYZisLineNumbers();
+public :
+	QYZisLineNumbers( QYZisView* parent );
+	virtual ~QYZisLineNumbers();
 
-		void setLineNumber( int y, int h, int line );
-		void setMaxLineNumber( int line );
+	void setLineNumber( int y, int h, int line );
+	void setMaxLineNumber( int line );
 
-		void setFont( const QFont& f );
-		void scroll( int dy );
+	void setFont( const QFont& f );
+	void scroll( int dy );
 
-		void setLineCount( int lines );
-	
-	protected :
-		QVBoxLayout* rows;
+	void setLineCount( int lines );
 
-	private :
+protected :
+	QVBoxLayout* rows;
 
-		QYZisView* m_view;
+private :
+
+	QYZisView* m_view;
 
 };
 

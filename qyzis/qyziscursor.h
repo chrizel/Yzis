@@ -25,30 +25,31 @@
 class QYZisEdit;
 class QYZisView;
 
-class QYZisCursor : public QWidget {
+class QYZisCursor : public QWidget
+{
 	Q_OBJECT
 
-	public :
-		enum shape {
-			SQUARE,
-			VBAR,
-			HBAR,
-			RECT,
-		};
+public :
+	enum shape {
+		SQUARE,
+		VBAR,
+		HBAR,
+		RECT,
+	};
 
-		QYZisCursor( QYZisEdit* parent, shape type );
-		virtual ~QYZisCursor();
+	QYZisCursor( QYZisEdit* parent, shape type );
+	virtual ~QYZisCursor();
 
-		void setCursorType( shape type );
-		shape type() const;
+	void setCursorType( shape type );
+	shape type() const;
 
-	protected :
-		virtual void paintEvent( QPaintEvent* event );
+protected :
+	virtual void paintEvent( QPaintEvent* event );
 
-	private :
-		shape mCursorType;
-		QYZisEdit* mEditor;
-		QYZisView* mView;
+private :
+	shape mCursorType;
+	QYZisEdit* mEditor;
+	QYZisView* mView;
 
 };
 

@@ -73,7 +73,7 @@ class YZYzisinfo {
 		 * Actually read the yzisinfo file.
 		 */
 		 
-		void read(YZSession *);
+		void read(void);
 		
 		/**
 		 * Method to update the start position for the given file

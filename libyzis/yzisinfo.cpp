@@ -80,7 +80,7 @@ YZYzisinfo::~YZYzisinfo() {
  * YZYsisinfo::readYzisinfo
  */
 
-void YZYzisinfo::read(YZSession *session) 
+void YZYzisinfo::read(void) 
 {
     dbg() << HERE() << endl;
 	
@@ -117,18 +117,18 @@ void YZYzisinfo::read(YZSession *session)
 			
 			if ( list[0] == "hlsearch" ) {
 				bool on = (list[1] == "on" );
-				session->getOptions()->setOptionFromString( &on, "hlsearch" );
+				YZSession::self()->getOptions()->setOptionFromString( &on, "hlsearch" );
 			}
 			
 			if ( list[0].startsWith(":") || list[0] == "command_list" ) {
-				YZModeEx *ex = session->getExPool();
+				YZModeEx *ex = YZSession::self()->getExPool();
 				YZHistory *history = ex->getHistory();
 				
 				history->addEntry( (list.join(" ")).remove(0, 1) );
 			}
 			
 			if ( list[0].startsWith("?") || list[0] == "search_list" ) {
-				YZModeSearch *search = dynamic_cast<YZModeSearch*>(session->getModes()[ YZMode::MODE_SEARCH ]);
+				YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::self()->getModes()[ YZMode::MODE_SEARCH ]);
 				YZHistory *history = search->getHistory();
 				
 				history->addEntry( (list.join(" ")).remove(0, 1) );
@@ -170,7 +170,7 @@ void YZYzisinfo::read(YZSession *session)
 					dbg() << "<" << contents.at(i) << ">" << endl;
 				}
 				
-				session->setRegister( key, contents );	
+				YZSession::self()->setRegister( key, contents );	
 			}
 		}
 		

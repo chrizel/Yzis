@@ -28,11 +28,11 @@
 #include <QList>
 
 #include "yzismacros.h"
+#include "mark.h"
 
 class YZUndoBuffer;
 class YZAction;
 class YZDocMark;
-class YZViewMark;
 class YZCursor;
 class YZSwapFile;
 class YZLine;
@@ -359,7 +359,7 @@ public:
 	
 	YZUndoBuffer * undoBuffer() const;
 	YZAction* action() const;
-	YZViewMark* viewMarks() const;
+	YZViewMarker* viewMarks() const;
 	YZDocMark* docMarks() const;
 	YzisHighlighting* highlight() const;
 

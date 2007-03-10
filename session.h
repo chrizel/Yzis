@@ -43,13 +43,6 @@ class YZViewCursor;
 class YZYzisinfo;
 class YZTagStack;
 
-/**
- * Contains data referring to an instance of yzis
- * This may also be used to "transfer" a session from a GUI to another
- * A session owns the buffers
- * A buffer owns the views
- */
-
 typedef QList<YZBuffer*> YZBufferList;
 typedef QList<YZView*> YZViewList;
 
@@ -60,10 +53,19 @@ namespace Clipboard {
 	};
 };
 
-/** The YZSession is managing all global attributes and method of Yzis. 
+/**
+  * Class YZSession
   *
-  * The session is a singleton responsible for everything that is not local to
-  * a YZBuffer or YZView.
+  * @short Singleton class representing an Yzis application.
+  *
+  * The YZSession is managing all global attributes and method of Yzis. 
+  *
+  * It takes care of everything that is not local to a YZBuffer or YZView.
+  *
+  * Contains data referring to an instance of yzis
+  * This may also be used to "transfer" a session from a GUI to another
+  * A session owns the buffers
+  * A buffer owns the views
   */
 class YZIS_EXPORT YZSession {
 	public:

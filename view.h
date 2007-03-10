@@ -789,6 +789,13 @@ class YZIS_EXPORT YZView {
 		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg ) = 0;
 		virtual void drawClearToEOL( int x, int y, const QChar& clearChar ) = 0;
 		virtual void drawSetMaxLineNumber( int max ) = 0;
+		/*!
+		 * This method is called by the backend to change the line
+		 * number displayed.
+		 * @arg y the y-coordinate within the view where to display the line number
+		 * @arg n the actual number to display
+		 * @arg h ??? it seems to be some kind of boolean..
+		 */
 		virtual void drawSetLineNumber( int y, int n, int h ) = 0;
 
 		YZDrawBuffer m_drawBuffer;

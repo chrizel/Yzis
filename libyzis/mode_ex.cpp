@@ -313,10 +313,9 @@ int YZModeEx::rangeLastLine( const YZExRangeArgs& args ) {
 	return qMax( (int)args.view->myBuffer()->lineCount() - 1, 0 );
 }
 int YZModeEx::rangeMark( const YZExRangeArgs& args ) {
-	bool found = false;
-	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg.mid( 1 ), &found );
-	if ( found )
-		return pos.bPos.y();
+	YZViewMarker *mark = args.view->myBuffer()->viewMarks();
+	if ( mark->contains(args.arg.mid(1)))
+		return mark->value(args.arg.mid(1)).mBuffer.y();
 	return -1;
 }
 int YZModeEx::rangeVisual( const YZExRangeArgs& args ) {

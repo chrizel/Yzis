@@ -842,13 +842,13 @@ YZCursor YZModeCommand::firstNonBlank(const YZMotionArgs &args) {
 	return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::gotoMark( const YZMotionArgs &args ) {
+YZCursor YZModeCommand::gotoMark( const YZMotionArgs &args )
+{
 	YZViewCursor viewCursor = args.view->viewCursor();
-	bool found = false;
-	YZCursorPos pos = args.view->myBuffer()->viewMarks()->get( args.arg, &found );
-	if ( found ) {
-		return pos.bPos;
-	} else {
+	YZViewMarker *mark = args.view->myBuffer()->viewMarks();
+	if ( mark->contains(args.arg))
+		return mark->value(args.arg).mBuffer;
+	else {
 		yzDebug() << "WARNING! mark " << args.arg << " not found" << endl;
 		return viewCursor.buffer();
 	}
@@ -1229,7 +1229,7 @@ void YZModeCommand::yank(const YZCommandArgs &args) {
 
 void YZModeCommand::mark(const YZCommandArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
-	args.view->myBuffer()->viewMarks()->add( args.arg, viewCursor.buffer(), viewCursor.screen() );
+	args.view->myBuffer()->viewMarks()->insert( args.arg, viewCursor );
 }
 
 void YZModeCommand::undo(const YZCommandArgs &args) {

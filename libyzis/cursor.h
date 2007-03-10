@@ -27,6 +27,9 @@ class YZDebugStream;
 
 /**
   * @short Store a cursor position
+  *
+  * An YZCursor is nothing more than a QPoint with some more methods needed
+  * by Yzis.
   */
 class YZIS_EXPORT YZCursor : public QPoint {
 
@@ -48,14 +51,6 @@ class YZIS_EXPORT YZCursor : public QPoint {
 };
 
 extern YZIS_EXPORT YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor c );
-
-/**
-  * @short Handle both buffer/drawing cursors
-  */
-struct YZCursorPos {
-    YZCursor bPos; /* buffer position */
-    YZCursor dPos; /* draw position */
-};
 
 #endif
 

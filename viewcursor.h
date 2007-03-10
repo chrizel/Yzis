@@ -27,10 +27,23 @@
 class YZView;
 
 /**
+  * @short Handle both buffer/drawing cursors
+  *
+  * Coumpound object containing a YZCursor for the buffer, and another one
+  * for the display
+  */
+struct YZCursorPos {
+    YZCursor mBuffer;  /* buffer position */
+    YZCursor mScreen; /* display position */
+};
+
+
+
+/**
  * class YZViewCursor : buffer and screen cursor with all members that YZView needs to move it.
  * this is only an interface, it doesn't have to know how move itself ( this is YZView stuff )
  */
-class YZIS_EXPORT YZViewCursor {
+class YZIS_EXPORT YZViewCursor : public YZCursorPos {
 
 	friend class YZView;
 
@@ -84,16 +97,6 @@ class YZIS_EXPORT YZViewCursor {
 		 * parent view
 		 */
 		YZView* mParent;
-
-		/**
-		 * buffer cursor
-		 */
-		YZCursor mBuffer;
-
-		/**
-		 * screen cursor
-		 */
-		YZCursor mScreen;
 
 		/**
 		 * spaceFill is the shift for starting tabs

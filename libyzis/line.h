@@ -62,7 +62,7 @@ class YZLine
 	private:
 		enum Flags
 		{
-			flagNoOtherData = 0x1, // ONLY INTERNAL USE, NEVER EVER SET THAT !!!!
+//			flagNoOtherData = 0x1, // ONLY INTERNAL USE, NEVER EVER SET THAT !!!!
 			flagHlContinue = 0x2,
 			flagVisible = 0x4,
 			flagAutoWrapped = 0x8

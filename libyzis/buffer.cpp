@@ -34,12 +34,12 @@
 #include "debug.h"
 #include "action.h"
 #include "internal_options.h"
-#include "mark.h"
 #include "swapfile.h"
 #include "session.h"
 #include "syntaxhighlight.h"
 #include "luaengine.h"
 #include "search.h"
+#include "mark.h"
 #include "yzisinfo.h"
 #include "portability.h"
 
@@ -93,7 +93,7 @@ struct YZBuffer::Private
 
 	// pointers to sub-objects
 	YZAction* action;
-	YZViewMark* viewMarks;
+	YZViewMarker* viewMarks;
 	YZDocMark* docMarks;
 	YZSwapFile *swapFile;
 	
@@ -1110,7 +1110,7 @@ void YZBuffer::setState( State state ) {
 		}
 		
 		if ( !d->viewMarks ) {
-			d->viewMarks = new YZViewMark( );
+			d->viewMarks = new YZViewMarker( );
 		}
 		
 		if ( !d->docMarks ) {
@@ -1173,7 +1173,7 @@ YZBuffer::State YZBuffer::getState() const
 
 YZUndoBuffer * YZBuffer::undoBuffer() const { return d->undoBuffer; }
 YZAction* YZBuffer::action() const { return d->action; }
-YZViewMark* YZBuffer::viewMarks() const { return d->viewMarks; }
+YZViewMarker* YZBuffer::viewMarks() const { return d->viewMarks; }
 YZDocMark* YZBuffer::docMarks() const { return d->docMarks; }
 YzisHighlighting *YZBuffer::highlight() const { return d->highlight; }
 const QString& YZBuffer::encoding() const { return d->currentEncoding; }

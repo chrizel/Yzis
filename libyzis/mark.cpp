@@ -21,23 +21,10 @@
 #include "mark.h"
 #include "cursor.h"
 
-void YZViewMark::add( const QString& mark, const YZCursor bPos, const YZCursor dPos ) {
-	YZCursorPos pos;
-	pos.bPos = bPos;
-	pos.dPos = dPos;
-	marker.insert( mark, pos );
-}
 
-
-YZCursorPos YZViewMark::get( const QString& mark, bool * found ) const {
-	YZViewMarker::ConstIterator it = marker.find( mark );
-	*found = it != marker.end();
-	return it.value();
-}
-
-void YZDocMark::add( uint line, uint mark ) {
-	if (marker.contains(line))
-	{
+void YZDocMark::add( uint line, uint mark )
+{
+	if (marker.contains(line)) {
 		mark &= ~marker[line];
 		if (mark == 0)
 			return;
@@ -47,7 +34,8 @@ void YZDocMark::add( uint line, uint mark ) {
 		marker[line] = mark;
 }
 
-void YZDocMark::del( uint line, uint mark ) {
+void YZDocMark::del( uint line, uint mark )
+{
 	mark &= marker[line];
 	if (mark == 0)
 		return;

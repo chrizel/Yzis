@@ -40,13 +40,13 @@ class YZView;
   * instancing. The instance pointer is available via self().
   *
   * All code related to the lua engine and lua stack should go in this class.
-  * Implmentation of the actual lua functions (the binding) is done in \ref
+  * Implementation of actual lua functions (the binding) is done in \ref
   * YZLuaFuncs. The functions are registered to lua by the call to 
   * YZLuaFuncs::registerLuaFuncs(),
   * performed during the class instancing.
   *
   * The function that are useful when dealing with lua in the libyzis are:
-  * - source(): sourcs a lua file
+  * - source(): source a lua file
   * - lua(): execute some lua code
   * - exe(): calls a lua function
   *
@@ -134,8 +134,8 @@ class YZIS_EXPORT YZLuaEngine {
           * The function allows to call any lua function with any number
           * argument and to get the results.
           *
-          * The arguments being passed and expected in the result should \b
-          * exactly described in the function signature
+          * The arguments being passed and expected in the result should be \b
+          * exactly as described in the function signature
           * else - quoting from the man page of stdarg -
           * <i>random things may happen</i>.
           *

@@ -113,23 +113,23 @@ protected:
 class YZMotionArgs;
 
 
-class YZIS_EXPORT YZMotionArgs {
-	public:
-		YZMotionArgs(YZView *v, int cnt=1, QString a=QString::null,QString c=QString::null, bool uc = false, bool s=false) {
-			cmd = c;
-			view=v;
-			count=cnt;
-			arg=a;
-			standalone=s;
-			usercount = uc;
-		}
-
-		YZView *view;
-		int count;
-		QString arg;
-		bool standalone;
-		bool usercount;
-		QString cmd;
+class YZIS_EXPORT YZMotionArgs
+{
+public:
+	YZMotionArgs(YZView *v, int cnt=1, QString a=QString::null,QString c=QString::null, bool uc = false, bool s=false) {
+		cmd = c;
+		view=v;
+		count=cnt;
+		arg=a;
+		standalone=s;
+		usercount = uc;
+	}
+	YZView *view;
+	int count;
+	QString arg;
+	bool standalone;
+	bool usercount;
+	QString cmd;
 };
 
 typedef YZCursor (YZModeCommand::*MotionMethod) (const YZMotionArgs&);

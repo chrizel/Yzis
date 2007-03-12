@@ -14,9 +14,13 @@
 # ./runtests.sh test_movements.lua -> execute only test_movements.lua
 # ./runtests.sh qyzis --> execute tests with qyzis frontend
 # ./runtests.sh libyzisrunner --> execute tests with no gui yzis frontend
+# ./runtests.sh gdb --> execute tests with in gdb with libyzisrunner
+# ./runtests.sh gdb test_movements.lua --> execute tests with in gdb with libyzisrunner with test_movements.lua as argument
 
-export TMP="d:/tmp"
-export TEMP="d:/tmp"
+if [ -n "$CYGWIN" ]; then
+    export TMP="d:/tmp"
+    export TEMP="d:/tmp"
+fi
 
 if [ "X$1" != "Xnocopy" ];
 then

@@ -2,6 +2,7 @@
 
 require('luaunit')
 require('utils')
+require('vimregexp')
 
 TestVimRegexp = {} --class
 

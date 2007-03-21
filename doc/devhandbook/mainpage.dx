@@ -32,28 +32,53 @@ just not be used anywhere in libyzis.
 
 
 \subpage technologies
+Brief description of the technologies used in Yzis
 
 \subpage startup_guide
+Get you started with Yzis development
 
 \subpage building_yzis
+How to build Yzis and deal with cmake
 
 \subpage arch_overview
+An overview of some important compononents of Yzis
+
+\subpage debugging
+Tips to make your debug life in yzis easier
+
+\subpage scripting_in_lua
+How to write scripts in lua, for non regression testing or for other purposes.
+
+\subpage testing
+TODO 
+How to test yzis, from the C++ side or from the script side.
+    + you can test from c++ with unit tests
+    + you can test without any knowledge of C++, just lua is needed
+        --> see scripting in lua
+
+\subpage integrating_lua
+How the lua engine is integrated in Yzis
 
 \subpage rendering
-
-\subpage scripting
+A description of how a buffer is rendered on screen in a view (wrapping and
+tab handling)
 
 \subpage option_system
+TODO How the option system works in Yzis
 
 \subpage completion
+TODO How to implement completion
 
 \subpage undo_redo
+TODO How to manage undo/redo in Yzis
 
 \subpage swap_file
+TODO How the swap file is handled
 
 \subpage syntax_highlighting
+TODO How a file is syntax highlighted
  
- */
+*/
 
 
 

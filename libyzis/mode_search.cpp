@@ -121,6 +121,10 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 		return CMD_OK;
 	} else if ( key == "<BS>" ) {
 		QString back = view->getCommandLineText();
+		if ( back.isEmpty() ) {
+			view->modePool()->pop();
+			return CMD_OK;
+		}
 		view->setCommandLineText(back.remove(back.length() - 1, 1));
 	} else {
 		view->setCommandLineText( view->getCommandLineText() + key );

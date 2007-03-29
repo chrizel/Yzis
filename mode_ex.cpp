@@ -866,7 +866,7 @@ cmd_state YZModeEx::registers( const YZExCommandArgs& ) {
 			regContents.truncate( 27 );
 			regContents += "...";
 		}
-		infoMessage += regContents + "\n";
+		infoMessage += regContents + '\n';
 	}
 	YZSession::self()->popupMessage( infoMessage );
 	return CMD_OK;
@@ -891,7 +891,7 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 	QString type = list[1];
 	list.erase(it++); list.erase(it++);
 	if (!list[0].contains("=") && !list[0].endsWith("bold") && !list[0].endsWith("italic") && !list[0].endsWith("underline") && !list[0].endsWith("strikeout")) {
-		type += " " + list[0];
+		type += ' ' + list[0];
 		list.erase(it++);
 	}
 

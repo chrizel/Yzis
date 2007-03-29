@@ -101,8 +101,8 @@ void YZQtPrinter::doPrint( ) {
 			if ( pageNumber ) newPage( );
 			++pageNumber;
 			p.setPen( Qt::black );
-			p.drawText( titleRect, Qt::AlignLeft | Qt::AlignVCenter, " " + mView->myBuffer()->fileName() );
-			p.drawText( titleRect, Qt::AlignRight | Qt::AlignVCenter, QString::number( pageNumber ) + "/" + QString::number( nbPages ) + " " );
+			p.drawText( titleRect, Qt::AlignLeft | Qt::AlignVCenter, ' ' + mView->myBuffer()->fileName() );
+			p.drawText( titleRect, Qt::AlignRight | Qt::AlignVCenter, QString::number( pageNumber ) + '/' + QString::number( nbPages ) + ' ' );
 		}
 		if ( number ) {
 			unsigned int lineNumber = mView->drawLineNumber();

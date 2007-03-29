@@ -94,11 +94,11 @@ QString YZSession::toString() const
     s += "Session Content: \n";
     s += "- Buffer list: \n";
     foreach( YZBuffer * b, mBufferList ) {
-        s += "  + " + b->toString() + "\n";
+        s += "  + " + b->toString() + '\n';
     }
     s += "- View list: \n";
     foreach( YZView * v, mViewList ) {
-        s += "  + " + v->toString() + "\n";
+        s += "  + " + v->toString() + '\n';
     }
     return s;
 }

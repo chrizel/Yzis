@@ -148,7 +148,7 @@ QString YZBuffer::toString() const
     foreach( YZView * v, d->views ) {
         QString tmp;
         tmp.sprintf("%p", v);
-        sViewlist += tmp + ",";
+        sViewlist += tmp + ',';
     }
     sViewlist.chop(1);
 
@@ -441,7 +441,7 @@ QString YZBuffer::getWholeText() const {
 
 	QString wholeText;
 	for ( int i = 0 ; i < lineCount() ; i++ )
-		wholeText += textline(i) + "\n";
+		wholeText += textline(i) + '\n';
 	return wholeText;
 }
 

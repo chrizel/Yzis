@@ -148,11 +148,11 @@ void YZPrinter::doPrint( ) {
 			++pageNumber;
 			convertColor(Qt::black, red, green, blue);
 			PS_setcolor(doc, "fillstroke", "rgb", red, green, blue, 0.0);
-			QByteArray n = ( " "+mView->myBuffer()->fileName() ).toLatin1();
+			QByteArray n = ( ' ' + mView->myBuffer()->fileName() ).toLatin1();
 			PS_show_boxed(doc, n.data(),
 					titleRect.x(), titleRect.y(), titleRect.width(),
 					titleRect.height(), "left", "");
-			QByteArray nb = ( QString::number( pageNumber )+"/"+QString::number( nbPages )+" " ).toLatin1();
+			QByteArray nb = ( QString::number( pageNumber )+'/'+QString::number( nbPages )+' ' ).toLatin1();
 			PS_show_boxed(doc,
 					nb.data(),
 					titleRect.x(), titleRect.y(), titleRect.width(),

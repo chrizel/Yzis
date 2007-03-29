@@ -387,7 +387,7 @@ void YZDebugBackend::operator delete( void *p )
 YZDebugStream::YZDebugStream( const char * _area, int _level ) {
     area = _area;
     level = _level;
-    if (strlen(_area)) output=QString(_area)+":";
+    if (strlen(_area)) output=QString(_area)+':';
 }
 
 YZDebugStream::~YZDebugStream() {
@@ -445,7 +445,7 @@ YZDebugStream& YZDebugStream::operator << (char i) {
         output+= i;
     }
     if ( i == '\n' ) flush();
-    else output += " ";
+    else output += ' ';
     return *this;
 }
 
@@ -456,49 +456,49 @@ YZDebugStream& YZDebugStream::operator << (unsigned char i) {
 YZDebugStream& YZDebugStream::operator << (unsigned short i) {
     QString tmp;
     tmp.setNum( i );
-    output+=tmp + " ";
+    output+=tmp + ' ';
     return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (short i) {
     QString tmp;
     tmp.setNum( i );
-    output+=tmp + " ";
+    output+=tmp + ' ';
     return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (unsigned int i) {
     QString tmp;
     tmp.setNum( i );
-    output+=tmp + " ";
+    output+=tmp + ' ';
     return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (int i) {
     QString tmp;
     tmp.setNum( i );
-    output+=tmp + " ";
+    output+=tmp + ' ';
     return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (unsigned long i) {
     QString tmp;
     tmp.setNum( i );
-    output+=tmp + " ";
+    output+=tmp + ' ';
     return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (long i) {
     QString tmp;
     tmp.setNum( i );
-    output+=tmp + " ";
+    output+=tmp + ' ';
     return *this;
 }
 
 YZDebugStream& YZDebugStream::operator << (double d) {
     QString tmp;
     tmp.setNum( d );
-    output+=tmp + " ";
+    output+=tmp + ' ';
     return *this;
 }
 

@@ -68,7 +68,7 @@ main(int argc, char *argv[])
 			useGUI = false; // so don't try again later ;)
 	}
 #else
-	bool useGUI = TRUE;
+	bool useGUI = true;
 #endif
 
     YZDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );

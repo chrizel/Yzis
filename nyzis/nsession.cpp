@@ -45,15 +45,15 @@ NYZSession::NYZSession(const QString& session_name, const QString& keys)
 	/* init screen */
 
 	(void) initscr();	/* initialize the curses library */
-	keypad(stdscr, TRUE);	/* enable keyboard mapping */
+	keypad(stdscr, true);	/* enable keyboard mapping */
 	(void) nonl();		/* tell curses not to do NL->CR/NL on output */
 	(void) cbreak();	/* take input chars one at a time, no wait for \n */
 	(void) noecho();	/* echo input - in color */
-	intrflush( stdscr, FALSE );
+	intrflush( stdscr, false );
 
-//	notimeout( stdscr, TRUE ); // XXX conflict with nodelay ?? if you want to test half or no delay, comment this line.
+//	notimeout( stdscr, true ); // XXX conflict with nodelay ?? if you want to test half or no delay, comment this line.
 	halfdelay( 1 );
-//	nodelay( stdscr, TRUE );
+//	nodelay( stdscr, true );
 
 	wattron(stdscr, A_STANDOUT);	// will be herited by subwin
 	use_default_colors();

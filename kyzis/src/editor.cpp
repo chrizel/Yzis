@@ -146,7 +146,7 @@ bool KYZisEdit::event(QEvent *e) {
 		QKeyEvent *ke = (QKeyEvent *)e;
 		if ( ke->key() == Qt::Key_Tab ) {
 			keyPressEvent(ke);
-			return TRUE;
+			return true;
 		}
 	}
 	return QWidget::event(e);

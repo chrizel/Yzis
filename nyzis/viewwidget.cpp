@@ -329,7 +329,7 @@ void NYZView::initialiseAttributesMap()
 		yzWarning() << "Terminal doesn't have color capabilities, disabling syntax highlighting" <<endl;
 		return;
 	}
-	bool changecolorok = (can_change_color() == TRUE);
+	bool changecolorok = (can_change_color() == true);
 	yzWarning() << "Terminal can";
 	if (!changecolorok)
 		yzWarning() << " _not_";

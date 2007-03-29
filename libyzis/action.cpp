@@ -148,7 +148,7 @@ void YZAction::copyLine( YZView* , const YZCursor pos, int len, const QList<QCha
 	for ( int i = 0; i < len && (bY + i) < mBuffer->lineCount(); i++ ) {
 		line = mBuffer->textline( bY + i );
 		buff << line;
-		text += line + "\n";
+		text += line + '\n';
 	}
 	buff << QString::null;
 	YZSession::self()->setClipboardText( text, Clipboard::Clipboard );

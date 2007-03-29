@@ -270,7 +270,7 @@ YzisSyntaxContextData* YzisSyntaxDocument::getConfig(const QString& mainGroupNam
 YzisSyntaxContextData* YzisSyntaxDocument::getGroupInfo(const QString& mainGroupName, const QString &group)
 {
   QDomElement element;
-  if (getElement(element, mainGroupName, group+"s"))
+  if (getElement(element, mainGroupName, group+'s'))
   {
     YzisSyntaxContextData *data = new YzisSyntaxContextData;
     data->parent = element;

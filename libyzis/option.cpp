@@ -101,8 +101,8 @@ QString YZOptionValue::mapToString( const MapOption& value ) {
 	QString ret = "";
 	QList<QString> keys = value.keys();
 	for( int i = 0; i < keys.size(); i++ ) {
-		if ( i > 0 ) ret += ",";
-		ret += keys[i] + ":" + value[ keys[i] ];
+		if ( i > 0 ) ret += ',';
+		ret += keys[i] + ':' + value[ keys[i] ];
 	}
 	return ret;
 }
@@ -274,7 +274,7 @@ bool YZOptionBoolean::match( const QString& entry ) {
 	if ( !ret ) {
 		for( int i = 0; !ret && i < m_aliases.size(); i++ ) {
 			if ( entry == m_aliases[i] || entry == "no" + m_aliases[i] \
-					|| entry == m_aliases[i] + "!" || entry == "inv" + m_aliases[i] )
+					|| entry == m_aliases[i] + '!' || entry == "inv" + m_aliases[i] )
 				ret = true;
 		}
 	}
@@ -295,7 +295,7 @@ bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value ) {
 			} else if ( entry == "no" + m_aliases[i] ) {
 				v = false;
 				ret = true;
-			} else if ( entry == "inv" + m_aliases[i] || entry == m_aliases[i] + "!" ) {
+			} else if ( entry == "inv" + m_aliases[i] || entry == m_aliases[i] + '!' ) {
 				v = ! v;
 				ret = true;
 			}

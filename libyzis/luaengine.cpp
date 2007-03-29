@@ -127,7 +127,7 @@ QString YZLuaEngine::lua_table_to_string(lua_State*L, int index, int depth)
     QList<QString> keys = content.keys();
     qSort( keys );
     foreach( QString key, keys ) {
-        s += prefix + "  " + key + " -> " + content[key] + "\n";
+        s += prefix + "  " + key + " -> " + content[key] + '\n';
     }
     s += prefix + "} ";
     // dbg().sprintf( "lua_table_to_string done - depth=%d stack_size=%d\n",  depth, lua_gettop(L) );
@@ -278,7 +278,7 @@ QString YZLuaEngine::source( const QString& filename ) {
 	yzDebug() << "source() fname='" << fname << "'" << endl;
 	QStringList candidates;
 	candidates << fname 
-	           << QDir::currentPath()+"/"+fname
+	           << QDir::currentPath()+'/'+fname
 	           << QDir::homePath()+"/.yzis/scripts/"+fname
 	           << QDir::homePath()+"/.yzis/scripts/indent/"+fname
 		       << QString( PREFIX )+"/share/yzis/scripts/"+fname
@@ -375,7 +375,7 @@ bool YZLuaEngine::yzpcall( int nbArg, int nbReturn, const QString & context ) {
     QByteArray err = luaErrorMsg.toLatin1();
     err().sprintf("pCall error: %s\n", err.data() );
 
-	YZSession::self()->popupMessage(context + "\n" + luaErrorMsg );
+	YZSession::self()->popupMessage(context + '\n' + luaErrorMsg );
 	return false;
 }
 

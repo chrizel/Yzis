@@ -33,7 +33,7 @@ LineNumber::LineNumber( const QFont& f ) : QLabel() {
 LineNumber::~LineNumber() {
 }
 void LineNumber::setNumber( int n ) {
-	setText( " " + QString::number(n) + " " );
+	setText( ' ' + QString::number(n) + ' ' );
 }
 void LineNumber::setFont( const QFont& f ) {
 	setFixedHeight( QFontMetrics(f).lineSpacing() );
@@ -111,6 +111,6 @@ void QYZisLineNumbers::setLineNumber( int y, int h, int line ) {
 }
 
 void QYZisLineNumbers::setMaxLineNumber( int line ) {
-	setFixedWidth( fontMetrics().width( " " + QString::number(line) + " " ) );
+	setFixedWidth( fontMetrics().width( ' ' + QString::number(line) + ' ' ) );
 }
 

@@ -219,7 +219,7 @@ QString YZUndoBuffer::undoItemToString( UndoItem * undoItem ) const {
 	s += offsetS + offsetS + QString("start cursor: line %1 col %2\n").arg(undoItem->startCursorX).arg(undoItem->startCursorY);
 	
 	foreach ( YZBufferOperation*operation, *undoItem )
-		s += offsetS + offsetS + offsetS + operation->toString() + "\n";
+		s += offsetS + offsetS + offsetS + operation->toString() + '\n';
 	s += offsetS + offsetS + QString("end cursor: line %1 col %2\n").arg(undoItem->endCursorX).arg(undoItem->endCursorY);
 	
 	return s;
@@ -238,7 +238,7 @@ QString YZUndoBuffer::toString(const QString& msg) const {
 	s += offsetS + "current UndoItem\n";
 	s += (mCurrentIndex > 0) ? undoItemToString( mUndoItemList[ mCurrentIndex-1 ] )
 		:offsetS + offsetS + "None\n";
-	s += "\n";
+	s += '\n';
 	return s;
 }
 

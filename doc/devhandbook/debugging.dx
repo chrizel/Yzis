@@ -4,9 +4,74 @@
 
 \page debugging Debugging Yzis
 
-TO BE DONE
+\section debug_build Building yzis with debugging support
+
+Make sure you build yzis with debugging enabled. Follow the instructions at the
+\subpage building_yzis page, and you should be fine.
+
+\section tools Tools you need
+
+First of all you need a recent version of gdb, the text ui used in the example
+below requires gdb version 5.1 or newer.
+
+You should also download the gdb macros from the KDE project:
+
+\verbatim
+wget "http://websvn.kde.org/*checkout*/trunk/KDE/kdesdk/scripts/kde-devel-gdb"
+\endverbatim
+
+Put this file in a smart place and source it in your ~/.gdbinit:
+
+\verbatim
+source /path/to/kde-devel-gdb
+\endverbatim
+
+This enables you to print the contents of QStrings and other Qt objects.
+
+\section using_gdb Using the GNU debugger (gdb) to debug yzis
+
+This is not an gdb tutorial, if you want to learn to use gdb you can find plenty
+of tutorials by googling.
+In this example I will use gdb's text ui and debug a qyzis session.
+
+To start debugging, type
+\verbatim
+gdbtui qyzis
+\endverbatim
+
+Your screen should now look something like this:
+
+\image html gdb1.png "main()"
+
+The basic commands are:
+
+- \b b
+Sets a breakpoint
+- \b run
+Starts the program with given parameters
+- \b cont
+Continues execution to the next breakpoint (if any) after stopping at a breakpoint
+- \b bt
+Prints a backtrace of all stack frames. This is what you will use to track down
+segfaults ;-)
+- \b p
+Prints the value of a variable or a function/method. This lets you examine the
+value of ints, strings etc. Note: this doesn't work very well for QString
+objects, to print the contents of a QString, use the <b>printq4string</b> macro defined
+in kde-devel-gdb
+- \b n
+Continues to the next line of code as shown on screen. If a subroutine is
+called, you won't step in it
+- \b step
+Steps exactly one line of code, including subroutines. If you are on a line
+containing "int a = foo()", this will take you in to the function foo(), while n
+would have skipped to the next line on screen
+
+To switch between the source code view and the command line in the text ui,
+press <b>control+x</b> and then <b>control+o</b>.
 
 */
+
 
 
 

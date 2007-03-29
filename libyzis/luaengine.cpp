@@ -199,7 +199,7 @@ QString YZLuaEngine::lua(YZView *, const QString& args) {
 
 //see Lua's PIL chapter 25.3 for how to use this :)
 void YZLuaEngine::exe(const QString& function, const char* sig, ...) {
-    yzDebug() << "YZLuaEngine::exe( " << function << " ) sig : " << sig << endl;
+    yzDebug() << "YZLuaEngine::exe( " << function << " ) sig: " << sig << endl;
 	va_list vl;
 	int narg, nres;
 	
@@ -407,7 +407,7 @@ QStringList YZLuaEngine::getLastResult(int nb) const {
 	QStringList list;
 	for (int i = - nb ; i < 0 ; ++i ) {
 		int type = lua_type(L,i);
-		dbg() << "Type for index " << i << " : " << type << endl;
+		dbg() << "Type for index " << i << ": " << type << endl;
 		switch (type) {
 			case LUA_TNUMBER:
 				list << QString::number(lua_tonumber(L,i));

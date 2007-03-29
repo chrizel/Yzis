@@ -61,7 +61,7 @@ void YZAction::insertChar( YZView* pView, const YZCursor pos, const QString& tex
 }
 
 void YZAction::replaceText( YZView* pView, const YZCursor pos, int replacedLength, const QString& text ) {
-	yzDebug() << "replaceText :" << pos << " length : " << replacedLength << " text:" << text << endl;
+	yzDebug() << "replaceText :" << pos << " length: " << replacedLength << " text:" << text << endl;
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; //dont try on non existing lines
 	configureViews(mBuffer);
@@ -419,7 +419,7 @@ YZCursor YZAction::match( YZView* pView, const YZCursor cursor, bool *found ) co
 	}
 	if ( count == 0 ) {//found it !
 		*found = true;
-		yzDebug() << "Result action : " << ( back ? j+1 : j-1 ) << ", " << curY << endl;
+		yzDebug() << "Result action: " << ( back ? j+1 : j-1 ) << ", " << curY << endl;
 		return YZCursor( ( back ? j + 1 : j - 1 ), curY );
 	}
 	*found=false;
@@ -429,7 +429,7 @@ YZCursor YZAction::match( YZView* pView, const YZCursor cursor, bool *found ) co
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
 // which makes reverseSearch redundant.  It's now calculated within the function based on a test of mEnd < mBegin
 YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCursor mBegin, const YZCursor mEnd, int *matchlength, bool *found ) const {
-//	yzDebug() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
+//	yzDebug() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse: " << reverseSearch << endl;
 	bool reverseSearch = mEnd < mBegin;
 	bool cs = true;
 	QString what = _what;
@@ -437,7 +437,7 @@ YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCurs
 		what.truncate(what.length()-2);
 		cs = false;
 	}
-//	yzDebug() << " Casesensitive : " << cs << endl;
+//	yzDebug() << " Casesensitive: " << cs << endl;
 	QRegExp ex( what );
 	ex.setCaseSensitivity(cs ? Qt::CaseSensitive : Qt::CaseInsensitive );
 

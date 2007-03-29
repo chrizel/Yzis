@@ -194,7 +194,7 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 //	if (pendingMapp)
 //		dbg() << "Pending mapping on " << mapped << endl;
 	if ( map ) {
-//		dbg() << "input buffer was remapped to : " << mapped << endl;
+//		dbg() << "input buffer was remapped to: " << mapped << endl;
 		mView->purgeInputBuffer();
 		mapMode = 0;
 		mView->sendMultipleKey( mapped );

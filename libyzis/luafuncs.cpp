@@ -393,7 +393,7 @@ int YZLuaFuncs::color(lua_State *L) {
 	QByteArray c = cView->drawColor(  sCol, sLine ).name().toUtf8();
 	const char *color = c.data();
 
-//	yzDebug() << "Asked color : " << color.latin1() << endl;
+//	yzDebug() << "Asked color: " << color.latin1() << endl;
 	lua_pushstring( L, color );
 	YZASSERT_EQUALS( lua_gettop(L),  1  );
 	return  1 ; // one result

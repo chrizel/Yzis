@@ -129,7 +129,7 @@ YZBuffer::YZBuffer()
 	// other actions will make it ACTIVE later
 	setState( INACTIVE );
 	
-	yzDebug("YZBuffer") << "NEW BUFFER CREATED : " << d->path << endl;
+	yzDebug("YZBuffer") << "NEW BUFFER CREATED: " << d->path << endl;
 }
 
 YZBuffer::~YZBuffer() {

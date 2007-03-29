@@ -255,7 +255,7 @@ void YZSearch::Private::highlightSearch( YZView *view, YZSelectionMap searchMap 
 	vMap->clear();
 	if ( YZSession::self()->getBooleanOption( "hlsearch" ) ) {
 		vMap->setMap( searchMap );
-//		yzDebug() << "new search Map : " << *(vMap) << endl;
+//		yzDebug() << "new search Map: " << *(vMap) << endl;
 		view->sendPaintEvent( vMap->map() );
 	}
 	view->commitPaintEvent();

@@ -81,7 +81,7 @@ bool YZMapping::applyMappings( QString& text, int modes, bool *mapped ) {
 		pendingMapp = pendingMapp || applyMappings(text, mInsertMappings);
 	if ( modes & cmdline )
 		pendingMapp = pendingMapp || applyMappings(text, mCmdLineMappings);
-//	yzDebug() << "Text2: " << text << endl << "Pending mapping : " << pendingMapp << endl;
+//	yzDebug() << "Text2: " << text << endl << "Pending mapping: " << pendingMapp << endl;
 	*mapped = old != text;
 	return pendingMapp;
 }

@@ -386,7 +386,7 @@ YZSelection YZSelection::diff( const YZSelection& _m1, const YZSelection& _m2 ) 
 		m2 = _m1;
 	}
 
-//	yzDebug() << "YZSelection::diff : " << endl << _m1 << endl << _m2 << endl << " ====> " << ret << endl;
+//	yzDebug() << "YZSelection::diff: " << endl << _m1 << endl << _m2 << endl << " ====> " << ret << endl;
 
 	return ret;
 }

@@ -63,7 +63,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int cols, int lines)
 	:  m_drawBuffer(), id(nextId++)
 {
 	dbg().sprintf("YZView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
-	dbg() << "New View created with UID : " << getId() << endl;
+	dbg() << "New View created with UID: " << getId() << endl;
 	YZASSERT( _b ); YZASSERT( sess );
 	mSession = sess;
 	mBuffer	= _b;
@@ -197,7 +197,7 @@ void YZView::sendMultipleKey(const QString& _keys) {
 	dbg() << "YZView::sendMultipleKey " << keys << endl;
 	for ( int i = 0 ; i < keys.length(); ) {
 		QString key = keys.mid( i );
-		dbg() << "Handling key : " << key << endl;
+		dbg() << "Handling key: " << key << endl;
 		//exception : in SEARCH, SEARCH_BACKWARD and EX mode we dont send keys immediately
 		if (mModePool->current()->mapMode() & cmdline) {
 			if ( key.startsWith( "<ESC>" ) ) {
@@ -278,7 +278,7 @@ void YZView::displayIntro() {
 }
 
 void YZView::sendKey( const QString& _key, const QString& _modifiers) {
-//	dbg() << "YZView :: sendKey : " << _key << " mod=" << _modifiers << endl;
+//	dbg() << "YZView :: sendKey: " << _key << " mod=" << _modifiers << endl;
 
 	QString key=_key;
 	QString modifiers=_modifiers;
@@ -685,7 +685,7 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 	}
 	
 
-/*	dbg() << "applyGoto : "
+/*	dbg() << "applyGoto: "
 			<< "dColLength=" << dColLength << "; dLineLength=" << dLineLength << "; mLineLength=" << mLineLength
 			<< "; dWrapNextLine=" << dWrapNextLine << "; dWrapTab=" << dWrapTab << endl;
 	dbg() << "mCursor:" << *mCursor << "; dCursor:" << *dCursor << endl; */

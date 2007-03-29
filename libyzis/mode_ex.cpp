@@ -230,7 +230,7 @@ QString YZModeEx::parseRange( const QString& inputs, YZView* view, int* range, b
 			unsigned int nc = reg.numCaptures();
 			*range = (this->*( currentRange->poolMethod() )) (YZExRangeArgs( currentRange, view, reg.cap( 1 ) ));
 			QString s_add = reg.cap( nc - 1 );
-			dbg() << "matched " << currentRange->keySeq() << " : " << *range << " and " << s_add << endl;
+			dbg() << "matched " << currentRange->keySeq() << ": " << *range << " and " << s_add << endl;
 			if ( s_add.length() > 0 ) { // a range can be followed by +/-nb
 				int add = 1;
 				if ( s_add.length() > 1 ) add = s_add.mid( 1 ).toUInt();
@@ -250,7 +250,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 	bool commandIsValid = false;
 	int from, to, current;
 	QString _input = inputs.trimmed();
-	dbg() << "ExCommand : " << _input << endl;
+	dbg() << "ExCommand: " << _input << endl;
 	_input = _input.replace( QRegExp( "^%" ), "1,$" );
 	// range
 	current = from = to = rangeCurrentLine( YZExRangeArgs( NULL, view, "." ) );
@@ -267,7 +267,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 		to = from;
 		from = tmp;
 	}
-	dbg() << "ExCommand : naked command : " << _input << "; range " << from << "," << to << endl;
+	dbg() << "ExCommand : naked command: " << _input << "; range " << from << "," << to << endl;
 	if ( from < 0 || to < 0 ) {
 		dbg() << "ExCommand : ERROR! < 0 range" << endl;
 		return ret;
@@ -346,7 +346,7 @@ int YZModeEx::rangeSearch( const YZExRangeArgs& args ) {
 			pat.replace( "\\?", "?" );
 		else
 			pat.replace( "\\/", "/" );
-		dbg() << "rangeSearch : " << pat << endl;
+		dbg() << "rangeSearch: " << pat << endl;
 		pos = YZSession::self()->search()->forward( args.view->myBuffer(), pat, &found, args.view->getBufferCursor() );
 	}
 
@@ -543,7 +543,7 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 		v = YZSession::self()->createView( b );
 		YZSession::self()->setCurrentView( v );
 	} else {
-		dbg() << "New buffer / view : " << filename << endl;
+		dbg() << "New buffer / view: " << filename << endl;
 		v = YZSession::self()->createBufferAndView( args.arg );
 		YZSession::self()->setCurrentView( v );
 	}
@@ -660,7 +660,7 @@ cmd_state YZModeEx::source( const YZExCommandArgs& args ) {
 cmd_state YZModeEx::genericMap ( const YZExCommandArgs& args, int type) {
 	QRegExp rx("(\\S+)\\s+(.+)");
 	if ( rx.exactMatch(args.arg) ) {
-		dbg() << "Adding mapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
+		dbg() << "Adding mapping: " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		switch (type) {
 			case 0://global
 				YZMapping::self()->addGlobalMapping(rx.cap(1), rx.cap(2));
@@ -692,7 +692,7 @@ cmd_state YZModeEx::genericMap ( const YZExCommandArgs& args, int type) {
 }
 
 cmd_state YZModeEx::genericUnmap ( const YZExCommandArgs& args, int type) {
-	dbg() << "Removing mapping : " << args.arg << endl;
+	dbg() << "Removing mapping: " << args.arg << endl;
 	switch (type) {
 		case 0://global
 			YZMapping::self()->deleteGlobalMapping(args.arg);
@@ -727,7 +727,7 @@ cmd_state YZModeEx::genericUnmap ( const YZExCommandArgs& args, int type) {
 cmd_state YZModeEx::genericNoremap ( const YZExCommandArgs& args, int type) {
 	QRegExp rx("(\\S+)\\s+(.+)");
 	if ( rx.exactMatch(args.arg) ) {
-		// dbg() << "Adding noremapping : " << rx.cap(1) << " to " << rx.cap(2) << endl;
+		// dbg() << "Adding noremapping: " << rx.cap(1) << " to " << rx.cap(2) << endl;
 		switch (type) {
 			case 0://global
 				YZMapping::self()->addGlobalNoreMapping(rx.cap(1), rx.cap(2));
@@ -906,7 +906,7 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 	style += YZSession::self()->schemaManager()->name(0); //XXX make it use the 'current' schema
 	YZSession::self()->getOptions()->setGroup(style);
 	QStringList option = YZSession::self()->getOptions()->readListOption(type);
-	dbg() << "HIGHLIGHT : Current " << type << " : " << option << endl;
+	dbg() << "HIGHLIGHT : Current " << type << ": " << option << endl;
 	if (option.count() < 7) return CMD_ERROR; //just make sure it's fine ;)
 
 	end = list.end();

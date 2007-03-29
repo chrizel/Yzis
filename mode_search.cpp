@@ -74,7 +74,7 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 
 	if ( key == "<ENTER>" ) {
 		QString what = view->getCommandLineText();
-		yzDebug() << "Current search : " << what;
+		yzDebug() << "Current search: " << what;
 
 		bool found = false;
 		YZCursor pos;

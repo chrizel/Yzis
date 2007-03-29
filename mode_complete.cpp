@@ -64,9 +64,9 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	
 	mCompletionStart = YZSession::self()->getCommandPool()->moveWordBackward( arg );
 	YZCursor stop( cur.x()-1, cur.y() );
-	yzDebug() << "Start : " << mCompletionStart << ", End:" << stop << endl;
+	yzDebug() << "Start: " << mCompletionStart << ", End:" << stop << endl;
 	QStringList list = buffer->getText(mCompletionStart, stop);
-	yzDebug() << "Completing word : " << list[0] << endl;
+	yzDebug() << "Completing word: " << list[0] << endl;
 	
 	// if there's nothing to complete, abort
 	if (list[0].isEmpty()) {

@@ -187,7 +187,7 @@ void YZModeCommand::initModifierKeys() {
 }
 
 cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
-//	yzDebug() << "ExecCommand : " << inputs << endl;
+//	yzDebug() << "ExecCommand: " << inputs << endl;
 	int count=1;
 	bool hadCount = false;
 	int i=0;
@@ -762,15 +762,15 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 
 		int idx = rex1.indexIn( current, offset , QRegExp::CaretAtOffset );
 		int len = rex1.cap( 1 ).length();
-		yzDebug() << "rex1 : " << idx << "," << len << endl;
+		yzDebug() << "rex1: " << idx << "," << len << endl;
 		if ( idx == -1 ) {
 			idx = rex2.indexIn( current, offset, QRegExp::CaretAtOffset );
 			len = rex2.cap( 1 ).length();
-			yzDebug() << "rex2 : " << idx << "," << len << endl;
+			yzDebug() << "rex2: " << idx << "," << len << endl;
 			if ( idx == -1 ) {
 				idx = rex3.indexIn( current, offset, QRegExp::CaretAtOffset );
 				len = rex3.matchedLength();
-				yzDebug() << "rex3 : " << idx << "," << len << endl;
+				yzDebug() << "rex3: " << idx << "," << len << endl;
 			}
 		}
 		if ( wrapped && lineLength == 0 ) {
@@ -815,7 +815,7 @@ YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args) {
 		int idx = rex1.indexIn( current, offset , QRegExp::CaretAtOffset );
 		int len = rex1.cap( 1 ).length();
 
-		yzDebug() << "rex1 : " << idx << "," << len << endl;
+		yzDebug() << "rex1: " << idx << "," << len << endl;
 		if ( idx != -1 ) {
 			yzDebug() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
 			c++; //one match
@@ -889,7 +889,7 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 
 	QString word = args.view->myBuffer()->getWordAt( from );
 	if ( ! word.isNull() ) {
-		yzDebug() << "searchWord : " << word << endl;
+		yzDebug() << "searchWord: " << word << endl;
 		YZCursor pos;
 		bool found = true;
 		bool moved = true;

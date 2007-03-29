@@ -229,7 +229,7 @@ void YZDebugBackend::parseRcfile(const char * filename)
             }
         } else { // keyword is area
             if (! _levelByName.contains(action)) {
-                err() << "Unknown debug level in " << filename << "for area " << keyword << " : " << action << endl; 
+                err() << "Unknown debug level in " << filename << "for area " << keyword << ": " << action << endl; 
             } else {
                 setAreaLevel( keyword, _levelByName[action] );
             }

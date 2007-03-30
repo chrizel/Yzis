@@ -69,7 +69,7 @@ class YZIS_EXPORT YZLuaEngine {
 		/**
 		 * Source a lua file.
          *
-         * The file is looked into:
+         * The file is looked for in:
          * - the current path
          * - ~/.yzis/scripts
          * - ~/.yzis/scripts/indent
@@ -78,9 +78,10 @@ class YZIS_EXPORT YZLuaEngine {
          *
          * @param filename the name of the lua file, with or without .lua
          * extension.
+         * \return 1 if file isn't found, 0 otherwise
          *
 		 */
-		QString source( const QString& filename );
+		int source( const QString& filename );
 
 		/**
 		 * Execute some lua code.

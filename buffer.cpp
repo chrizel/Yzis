@@ -775,7 +775,9 @@ void YZBuffer::setHighLight( int mode, bool warnGUI ) {
 		//XXX should we check whether it was already loaded ?
 		QString hlName = h->name();
 		hlName.replace("+","p");
-		YZLuaEngine::self()->source(hlName.toLower());
+		if (YZLuaEngine::self()->source(hlName.toLower()) != 0) {
+			YZSession::self()->popupMessage(_("Couldn't fine the indent file for %1 in standard directories" ).arg( hlName.toLower() ));
+		}
 	}
 }
 

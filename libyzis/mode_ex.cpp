@@ -652,7 +652,8 @@ cmd_state YZModeEx::source( const YZExCommandArgs& args ) {
     dbg() << "source( " << args.toString() << " ) " << endl;
 	QString filename = args.arg.left( args.arg.indexOf( " " ));
     dbg().sprintf( "source() filename=%s", qp(filename) );
-	YZLuaEngine::self()->source( filename );
+	if (YZLuaEngine::self()->source( filename ) != 0)
+		YZSession::self()->popupMessage(_("The file %1 could not be found" ).arg( filename ));
     dbg() << "source() done" << endl;
 	return CMD_OK;
 }

@@ -268,7 +268,7 @@ void YZLuaEngine::execute(const QString& function, int nbArgs, int nbResults) {
 	yzpcall(nbArgs, nbResults, _("YZLuaEngine::execute function %1").arg(function)); 
 }
 
-QString YZLuaEngine::source( const QString& filename ) {
+int YZLuaEngine::source( const QString& filename ) {
     dbg().sprintf( "source( '%s' )\n", qp(filename) );
     QString fname = filename;
 	if ( !fname.endsWith( ".lua" ) ) fname += ".lua";
@@ -295,8 +295,7 @@ QString YZLuaEngine::source( const QString& filename ) {
     dbg().sprintf( "source() found='%s'\n", qp(found) );
 
 	if (found.isEmpty()) {
-        YZSession::self()->popupMessage(_("The file %1 could not be found in standard directories" ).arg( filename ));
-		return QString::null;
+		return 1;
 	}
 
 	lua_pushstring(L,"dofile");
@@ -304,7 +303,7 @@ QString YZLuaEngine::source( const QString& filename ) {
 	lua_pushstring(L,found.toUtf8());
 	yzpcall(1,1, _("Lua error when running file %1:\n").arg(found) );
 	cleanLuaStack( L ); // in case sourcing the file left something on the stack
-	return QString::null;
+	return 0;
 }
 
 int YZLuaEngine::execInLua( const QString & luacode ) {

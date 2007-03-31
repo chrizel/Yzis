@@ -39,7 +39,7 @@
 YZSwapFile::YZSwapFile(YZBuffer *b) {
 	mParent = b;
 	mRecovering = false;
-	mFilename = QString::null;
+	mFilename = QString();
 	setFileName( b->fileName() );
 	mNotResetted=true;
 	//init();

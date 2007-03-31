@@ -43,7 +43,7 @@ struct YZSearch::Private
 YZSearch::YZSearch() 
 	: d(new Private)
 {
-	d->mCurrentSearch = QString::null;
+	d->mCurrentSearch = QString();
 }
 
 YZSearch::~YZSearch() 

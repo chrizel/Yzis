@@ -70,7 +70,7 @@ class YZInternalOptionPool {
 		 * be overwritten. Else the saving is aborted.
 		 *
 		 */
-		void saveTo(const QString& file, const QString& what=QString::null, const QString& except=QString::null, bool force=false);
+		void saveTo(const QString& file, const QString& what=QString(), const QString& except=QString(), bool force=false);
 
 
 		/**
@@ -87,7 +87,7 @@ class YZInternalOptionPool {
 		/**
 		 * return a QString option
 		 */
-		const QString& readStringOption( const QString& key , const QString& def = QString::null ) const;
+		const QString& readStringOption( const QString& key , const QString& def = QString() ) const;
 
 		/**
 		 * return an int option
@@ -118,7 +118,7 @@ class YZInternalOptionPool {
 		/**
 		 * return a QString option
 		 */
-		const QString& readQStringEntry( const QString& key , const QString& def = QString::null ) const;
+		const QString& readQStringEntry( const QString& key , const QString& def = QString() ) const;
 
 		/**
 		 * Sets a qstring option

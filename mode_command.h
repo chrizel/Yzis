@@ -116,7 +116,7 @@ class YZMotionArgs;
 class YZIS_EXPORT YZMotionArgs
 {
 public:
-	YZMotionArgs(YZView *v, int cnt=1, QString a=QString::null,QString c=QString::null, bool uc = false, bool s=false) {
+	YZMotionArgs(YZView *v, int cnt=1, QString a=QString(),QString c=QString(), bool uc = false, bool s=false) {
 		cmd = c;
 		view=v;
 		count=cnt;

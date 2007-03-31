@@ -194,7 +194,7 @@ void YZLuaEngine::cleanLuaStack( lua_State * L ) {
 QString YZLuaEngine::lua(YZView *, const QString& args) {
     dbg().sprintf( "lua( view, args=%s )", qp(args) );
 	execInLua( args );
-	return QString::null;
+	return QString();
 }
 
 //see Lua's PIL chapter 25.3 for how to use this :)

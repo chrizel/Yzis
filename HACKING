@@ -15,9 +15,9 @@ void Class::myFunction( int param, int param2 )
 	}
 	
 	switch ( param ) {
-		case 0 :
+		case 0:
 			break;
-		default :
+		default:
 	}
 	
 	if ( good )
@@ -39,7 +39,7 @@ modify the buffer should do it with one of the method of the class.
 
 YZView is a view on a buffer. A view has a cursor but is not necessarily
 visible at all times (think MDI). A buffer may have multiple views on itself,
-like when a window is splitted, or even with multiple windows showing the same buffer.
+like when a window is split, or even with multiple windows showing the same buffer.
 
 YZSession is the central managing point of Yzis. Session is responsible for
 creating the views and buffer. It dispatches the events of the core to the
@@ -49,7 +49,7 @@ is one of the reason why we started yzis, see the link history on the web
 site).
 
 In order to start a new port of yzis, you need to subclass YZBuffer, YZView
-and YZSession and implement the pure virtuals functions.
+and YZSession and implement the pure virtual functions.
 
 When a line is changed on a buffer, the YZBuffer notifies the gui with an
 InvalidateLine event. The views retrieve the event and repaint the line. When

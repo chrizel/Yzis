@@ -148,7 +148,7 @@ QString KYZTextEditorIface::textLine(unsigned int line) const {
 	//or if it's just quanta which does not count properly (it asks textLine from 0 to 218 in my test file,
 	//whereas I said it the file have 218 lines)
 	if ( line >= m_buffer->lineCount() )
-		return QString::null;
+		return QString();
 	return m_buffer->textline(line);
 }
 
@@ -388,7 +388,7 @@ KMimeType::Ptr KYZTextEditorIface::mimeTypeForContent() {
 
 bool KYZTextEditorIface::setEncoding( const QString&enc ) { 
 	//use YZBuffer::setEncoding when it actually does something ?
-	YZExCommandArgs ex ( YZSession::me->currentView(), QString::null, "set", "encoding=" + enc, 0, 0, true );
+	YZExCommandArgs ex ( YZSession::me->currentView(), QString(), "set", "encoding=" + enc, 0, 0, true );
 	YZSession::me->getExPool()->set( ex );
 	return true; 
 }

@@ -64,7 +64,7 @@ private:
 	/**
 	 * Constructor. Give a session name to identify/save/load sessions.
 	 */
-	NYZSession(const QString& session_name = "default_nyzis_session", const QString& keys = QString::null );
+	NYZSession(const QString& session_name = "default_nyzis_session", const QString& keys = QString() );
 	NYZSession(const NYZSession&); // disable copy
 	NYZSession& operator=(const NYZSession&); // disable copy
 	virtual ~NYZSession( );

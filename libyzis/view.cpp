@@ -776,14 +776,14 @@ QString YZView::moveDown( int nb_lines, bool applyCursor ) {
 }
 QString YZView::moveDown( YZViewCursor* viewCursor, int nb_lines, bool applyCursor ) {
 	gotoStickyCol( viewCursor, qMin( mFoldPool->lineAfterFold( viewCursor->bufferY() + nb_lines ), mBuffer->lineCount() - 1 ), applyCursor );
-	return QString::null;
+	return QString();
 }
 QString YZView::moveUp( int nb_lines, bool applyCursor ) {
 	return moveUp( mainCursor, nb_lines, applyCursor );
 }
 QString YZView::moveUp( YZViewCursor* viewCursor, int nb_lines, bool applyCursor ) {
 	gotoStickyCol( viewCursor, qMax( viewCursor->bufferY() - nb_lines, 0 ), applyCursor );
-	return QString::null;
+	return QString();
 }
 
 QString YZView::moveLeft( int nb_cols, bool wrap, bool applyCursor ) {
@@ -815,7 +815,7 @@ QString YZView::moveLeft( YZViewCursor* viewCursor, int nb_cols, bool wrap, bool
 	if ( applyCursor ) updateStickyCol( viewCursor );
 
 	//return something
-	return QString::null;
+	return QString();
 }
 
 QString YZView::moveRight( int nb_cols, bool wrap, bool applyCursor ) {
@@ -847,7 +847,7 @@ QString YZView::moveRight( YZViewCursor* viewCursor, int nb_cols, bool wrap, boo
 	if ( applyCursor ) updateStickyCol( viewCursor );
 
 	//return something
-	return QString::null;
+	return QString();
 }
 
 QString YZView::moveToFirstNonBlankOfLine( ) {
@@ -862,7 +862,7 @@ QString YZView::moveToFirstNonBlankOfLine( YZViewCursor* viewCursor, bool applyC
 		updateStickyCol( viewCursor );
 
 	//return something
-	return QString::null;
+	return QString();
 }
 
 QString YZView::moveToStartOfLine( ) {
@@ -874,7 +874,7 @@ QString YZView::moveToStartOfLine( YZViewCursor* viewCursor, bool applyCursor ) 
 	if ( applyCursor )
 		updateStickyCol( viewCursor );
 
-	return QString::null;
+	return QString();
 }
 
 void YZView::gotoLastLine() {
@@ -908,7 +908,7 @@ QString YZView::moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor ) {
 	if ( applyCursor )
 		stickyCol = STICKY_COL_ENDLINE;
 
-	return QString::null;
+	return QString();
 }
 
 void YZView::applyStartPosition( const YZCursor pos ) {
@@ -960,7 +960,7 @@ void YZView::applyChanges( int /*x*/, int y ) {
 QString YZView::append () {
 	mModePool->change( YZMode::MODE_INSERT );
 	gotoxyAndStick(mainCursor->bufferX()+1, mainCursor->bufferY() );
-	return QString::null;
+	return QString();
 }
 
 void YZView::commitUndoItem() {
@@ -1592,9 +1592,9 @@ QString YZView::getCharBelow( int delta ) {
 	if ( delta < 0 && Y >= -delta || delta >= 0 && ( Y + delta ) < mBuffer->lineCount() )
 		Y += delta;
 	else
-		return QString::null;
+		return QString();
 
-	QString ret = QString::null;
+	QString ret;
 	int dx = vc.screenX();
 	int old_stickyCol = stickyCol;
 	updateStickyCol( &vc );

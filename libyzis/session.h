@@ -151,13 +151,13 @@ class YZIS_EXPORT YZSession {
 		/**
 		 * Creates a new buffer
 		 */
-		YZBuffer *createBuffer(const QString& path=QString::null);
+		YZBuffer *createBuffer(const QString& path=QString());
 		
 		/**
 		 * Creates a new buffer and puts it in a new view
 		 * To get the created buffer, call YZView::myBuffer()
 		 */
-		YZView *createBufferAndView( const QString &path = QString::null );
+		YZView *createBufferAndView( const QString &path = QString() );
 
 		/**
 		 * Deletes the given buffer

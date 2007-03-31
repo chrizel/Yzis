@@ -353,7 +353,7 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 
 			foreach( YZView *v, view->myBuffer()->views() )
 				v->setPaintAutoCommit( false );
-			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString::null));
+			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString()));
 			foreach( YZView *v, view->myBuffer()->views() )
 				v->commitPaintEvent();
 		}
@@ -526,7 +526,7 @@ YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 	int count = args.count > 0 ? args.count : 1;
 	int counter=0;
 	while ( start >= 1 && counter!=count) {
-		if (args.view->myBuffer()->textline(start-1) == "" ) {
+		if ( args.view->myBuffer()->textline(start-1).isEmpty() ) {
 			counter++;
 		}
 		start--;	
@@ -543,7 +543,7 @@ YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
 	int count = args.count > 0 ? args.count : 1;
 	int counter=0;
 	while ( start < args.view->myBuffer()->lineCount() && counter!=count ) {
-		if (args.view->myBuffer()->textline(start) == "" ) {
+		if ( args.view->myBuffer()->textline(start).isEmpty() ) {
 			counter++;
 		}
 		start++;	

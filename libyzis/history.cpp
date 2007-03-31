@@ -14,7 +14,7 @@
 #include <QStringList>
 #include <QTextStream>
 
-static QString Null = QString::null;
+static QString Null = QString();
 
 struct YZHistory::Private
 {

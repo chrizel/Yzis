@@ -60,7 +60,7 @@ value_t YZOptionValue::type() const {
 	return m_type;
 }
 QString YZOptionValue::toString() const {
-	QString ret = QString::null;
+	QString ret;
 	switch( type() ) {
 		case yzis::boolean_t :
 			ret = booleanToString( v_bool );

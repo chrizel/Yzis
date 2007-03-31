@@ -153,7 +153,7 @@ void Kyzis::fileOpen() {
 	// this slot is called whenever the File->Open menu is selected,
 	// the Open shortcut is pressed (usually CTRL+O) or the Open toolbar
 	// button is clicked
-	KUrl url = KFileDialog::getOpenURL( QString::null, QString::null, this );
+	KUrl url = KFileDialog::getOpenURL( QString(), QString(), this );
 	if (url.isEmpty())
 		return;
 	openURL(url);

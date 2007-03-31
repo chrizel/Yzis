@@ -183,7 +183,7 @@ void YZSession::rmBuffer( YZBuffer *b ) {
 QString YZSession::saveBufferExit() {
 	if ( saveAll() )
 		quit();
-	return QString::null;
+	return QString();
 }
 
 YZView* YZSession::findViewByBuffer( const YZBuffer *buffer ) {

@@ -506,7 +506,7 @@ void YZDebugStream::flush() {
     if ( output.right(1) == "\n" ) output = output.left( output.length()-1 );
     if ( output.isEmpty() ) return;
     YZDebugBackend::self()->flush(level, area, output.toUtf8());
-    output=QString::null;
+    output.clear();
 }
 
 YZDebugStream yzDebug( const char * area ) {

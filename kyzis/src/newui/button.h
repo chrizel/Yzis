@@ -41,7 +41,7 @@ class Button : public QPushButton {
     Q_OBJECT
 public:
     Button(ButtonBar *parent, const QString text, const QIcon &icon = QIcon(),
-        const QString &description = QString::null);
+        const QString &description = QString());
 
     /**Sets the description used as a tooltip.*/
     void setDescription(const QString &description);

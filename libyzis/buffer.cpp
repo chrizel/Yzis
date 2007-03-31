@@ -61,7 +61,7 @@
 #define ASSERT_PREV_COL_LINE_EXISTS( functionname, col, line ) \
 	YZASSERT_MSG( col <= textline(line).length(), QString("%1 - col %2 does not exist, line %3 has %4 columns").arg( functionname ).arg( col ).arg( line ).arg( textline(line).length() ) );
 
-static QString Null = QString::null;
+static QString Null = QString();
 	
 struct YZBuffer::Private
 {
@@ -809,7 +809,7 @@ void YZBuffer::setPath( const QString& _path ) {
 	QString oldPath = d->path;
 	d->path = QFileInfo( _path.trimmed() ).absoluteFilePath();
 	
-	if ( oldPath != QString::null ) {
+	if ( !oldPath.isEmpty() ) {
 		YZSession::self()->getOptions()->updateOptions(oldPath, d->path);
 	}
 	
@@ -910,7 +910,7 @@ QString YZBuffer::getWordAt( const YZCursor at ) const {
 	} else {
 		return reg.cap( 1 );
 	}
-	return QString::null;
+	return QString();
 }
 
 int YZBuffer::getLocalIntegerOption( const QString& option ) const {

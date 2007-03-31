@@ -159,7 +159,7 @@ bool YzisSyntaxDocument::nextItem( YzisSyntaxContextData* data)
  */
 QString YzisSyntaxDocument::groupItemData( const YzisSyntaxContextData* data, const QString& name){
   if(!data)
-    return QString::null;
+    return QString();
 
   // If there's no name just return the tag name of data->item
   if ( (!data->item.isNull()) && (name.isEmpty()))
@@ -173,14 +173,14 @@ QString YzisSyntaxDocument::groupItemData( const YzisSyntaxContextData* data, co
     return data->item.attribute(name);
   }
 
-  return QString::null;
+  return QString();
 
 }
 
 QString YzisSyntaxDocument::groupData( const YzisSyntaxContextData* data,const QString& name)
 {
   if(!data)
-    return QString::null;
+    return QString();
 
   if (!data->currentGroup.isNull())
   {
@@ -188,7 +188,7 @@ QString YzisSyntaxDocument::groupData( const YzisSyntaxContextData* data,const Q
   }
   else
   {
-    return QString::null;
+    return QString();
   }
 }
 

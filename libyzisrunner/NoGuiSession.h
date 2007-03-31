@@ -34,7 +34,7 @@ class NoGuiSession : public YZSession
 
 		virtual YZView* createView ( YZBuffer* buf);
 
-		virtual	YZBuffer *createBuffer(const QString& path=QString::null);
+		virtual	YZBuffer *createBuffer(const QString& path=QString());
 
 		virtual void popupMessage( const QString& message);
 

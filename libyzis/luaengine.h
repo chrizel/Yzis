@@ -218,7 +218,7 @@ class YZIS_EXPORT YZLuaEngine {
 		  *  displayed when an error occurs.
 		  *  @return true if the call is without error 
 		  */
-		bool yzpcall( int nbArg, int nbReturn, const QString & context=QString::null );
+		bool yzpcall( int nbArg, int nbReturn, const QString & context=QString() );
 
 		/** 
 		  * Check that the lua stack contains the number of expected argument.

@@ -42,7 +42,7 @@ class GYzis : public Bakery::App_WithDoc_Gtk, public YZSession
 		void quit(int errorCode=0) {}
 		void popupMessage( const QString& message ) {}
 		bool promptYesNo(const QString& title, const QString& message) {}
-		YZBuffer *createBuffer(const QString& path=QString::null) {}
+		YZBuffer *createBuffer(const QString& path=QString()) {}
 		YZView* createView ( YZBuffer* ) {}
 		void setFocusCommandLine() {}
 		void setFocusMainWindow() {}

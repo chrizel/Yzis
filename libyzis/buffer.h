@@ -252,7 +252,7 @@ public:
 	/**
 	 * Opens the file and fills the buffer with its content
 	 */
-	void load(const QString& file=QString::null);
+	void load(const QString& file=QString());
 
 	/**
 	 * Save the buffer content into the current filename

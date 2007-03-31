@@ -44,7 +44,7 @@ public:
      * @param initialKeys key sequence to be executed by yzis upon startup.
      * Very useful for testing.
      */
-    Qyzis(QWidget *w = 0, const QString& initialKeys=QString::null);
+    Qyzis(QWidget *w = 0, const QString& initialKeys=QString());
 
     /**
      * Default Destructor

@@ -3145,7 +3145,7 @@ QString YzisHlManager::findByContent( const QString& contents ) {
 #ifndef YZIS_WIN32_GCC
 // QString YzisHlManager::findByContent( const QByteArray& contents ) {
     if ( magicSet == NULL )
-    	return QString::null;
+    	return QString();
     const char* magic_result = magic_file( magicSet, contents.toUtf8() );
     if ( magic_result ) {
     	yzDebug() << "Magic for " << contents << " results " << magic_result << endl;
@@ -3154,7 +3154,7 @@ QString YzisHlManager::findByContent( const QString& contents ) {
     	return mime;
     }
 #endif
-    return QString::null;
+    return QString();
 }
 
 int YzisHlManager::mimeFind(const QString &contents)

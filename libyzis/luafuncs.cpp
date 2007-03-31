@@ -439,7 +439,7 @@ int YZLuaFuncs::highlight( lua_State *L ) {
 	}
 	lua_pop(L,n);
 
-	YZExCommandArgs args(NULL,QString::null,QString::null,arg.join(" "),0,0,true);
+	YZExCommandArgs args(NULL, QString(), QString(), arg.join(" "), 0, 0, true);
 	YZSession::self()->getExPool()->highlight(args);
 
 	YZASSERT_EQUALS( lua_gettop(L),  0  );
@@ -490,7 +490,7 @@ int YZLuaFuncs::setlocal(lua_State *L ) {
 	QString option = QString::fromUtf8( (  char * )lua_tostring (  L, 1 ) );
 	lua_pop(L,1);
 
-	YZExCommandArgs ex (YZSession::self()->currentView(), QString::null, "setlocal", option, 0, 0, true);
+	YZExCommandArgs ex (YZSession::self()->currentView(), QString(), "setlocal", option, 0, 0, true);
 	YZSession::self()->getExPool()->set(ex);
 
 	YZASSERT_EQUALS( lua_gettop(L),  0  );
@@ -766,7 +766,7 @@ int YZLuaFuncs::set(lua_State *L ) {
 	QString option = QString::fromUtf8( (  char * )lua_tostring (  L, 1 ) );
 	lua_pop(L,1);
 
-	YZSession::self()->getExPool()->set(YZExCommandArgs(YZSession::self()->currentView(), QString::null, QString::null, option, 0, 0, true));
+	YZSession::self()->getExPool()->set(YZExCommandArgs(YZSession::self()->currentView(), QString(), QString(), option, 0, 0, true));
 
 	YZASSERT_EQUALS( lua_gettop(L),  0  );
 	return  0 ;	

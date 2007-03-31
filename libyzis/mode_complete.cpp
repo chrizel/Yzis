@@ -46,7 +46,7 @@ YZModeCompletion::~YZModeCompletion() {
 }
 
 void YZModeCompletion::leave( YZView* /*view*/ ) {
-	mPrefix = QString::null;
+	mPrefix = QString();
 }
 
 bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {

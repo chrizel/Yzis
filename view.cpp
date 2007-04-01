@@ -198,7 +198,7 @@ void YZView::sendMultipleKey(const QString& _keys) {
 	for ( int i = 0 ; i < keys.length(); ) {
 		QString key = keys.mid( i );
 		dbg() << "Handling key: " << key << endl;
-		//exception : in SEARCH, SEARCH_BACKWARD and EX mode we dont send keys immediately
+		//exception : in SEARCH, SEARCH_BACKWARD and EX mode we don't send keys immediately
 		if (mModePool->current()->mapMode() & cmdline) {
 			if ( key.startsWith( "<ESC>" ) ) {
 				sendKey ( "<ESC>" );
@@ -303,7 +303,7 @@ void YZView::sendKey( const QString& _key, const QString& _modifiers) {
 		SWITCH_KEY( "h", "l" );
 	}
 
-	if ( modifiers.contains ("<SHIFT>")) {//usefull ?
+	if ( modifiers.contains ("<SHIFT>")) {//useful?
 		key = key.toUpper();
 		modifiers.remove( "<SHIFT>" );
 	}
@@ -437,7 +437,7 @@ void YZView::alignViewBufferVertically( int line ) {
 		/* nothing has changed */
 		return;
 	} else if ( qAbs(old_dCurrentTop - scrollCursor->screenY()) < mLinesVis ) {
-		/* optimisation: we can scroll */
+		/* optimization: we can scroll */
 		internalScroll( 0, old_dCurrentTop - scrollCursor->screenY() );
 	} else {
 		sendRefreshEvent();
@@ -489,7 +489,7 @@ void YZView::alignViewVertically( int line ) {
 		/* nothing has changed */
 		return;
 	} else if ( qAbs(old_dCurrentTop - scrollCursor->screenY()) < mLinesVis ) {
-		/* optimisation: we can scroll */
+		/* optimization: we can scroll */
 		internalScroll( 0, old_dCurrentTop - scrollCursor->screenY() );
 	} else {
 		sendRefreshEvent();
@@ -1034,7 +1034,7 @@ int YZView::getDrawCurrentLeft() const {
 }
 
 
-/* update sCurLine informations */
+/* update sCurLine information */
 void YZView::updateCurLine( ) {
 	sCurLineLength = sCurLine.length();
 	if ( wrap && ! drawMode ) {

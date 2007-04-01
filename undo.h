@@ -109,7 +109,7 @@ public:
 	QString toString(const QString& msg="") const;
 
 	/** Sets this while performing undo and redo, so that the operations
-	 * are not registred as new buffer commands */
+	 * are not registered as new buffer commands */
 	void setInsideUndo( bool set ) { mInsideUndo = set; }
 	bool isInsideUndo() const { return mInsideUndo; }
 

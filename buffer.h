@@ -192,7 +192,7 @@ public:
 
 	/**
 	 * Get the length of the entire buffer
-	 * @return an int with the lenght of the buffer
+	 * @return an int with the length of the buffer
 	 */
 	int getWholeTextLength() const;
 

@@ -699,7 +699,7 @@ class YZIS_EXPORT YZView {
 
 		/**
 		 * called when the mode is changed, so that gui can
-		 * update information diplayed to the user
+		 * update information displayed to the user
 		 */
 		virtual void modeChanged() {};
 

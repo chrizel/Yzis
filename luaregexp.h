@@ -165,7 +165,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_captured(lua_State *L);
 
-		/** Returns a string where the occurences of Regexp have been
+		/** Returns a string where the occurrences of Regexp have been
 		 * replaced by the provided string.
          *
 		 * \b Arguments: 

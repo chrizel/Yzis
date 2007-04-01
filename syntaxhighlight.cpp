@@ -1318,7 +1318,7 @@ int YzisHighlighting::makeDynamicContext(YzisHlContext *model, const QStringList
 }
 
 /**
- * Drop all dynamic contexts. Shall be called with extreme care, and shall be immediatly
+ * Drop all dynamic contexts. Shall be called with extreme care, and shall be immediately
  * followed by a full HL invalidation.
  */
 void YzisHighlighting::dropDynamicContexts()
@@ -1410,7 +1410,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
   const QString& text = textLine->data();
   const int len = textLine->length();
 
-  // calc at which char the first char occurs, set it to lenght of line if never
+  // calc at which char the first char occurs, set it to length of line if never
   const int firstChar = textLine->firstChar();
   const int startNonSpace = (firstChar == -1) ? len : firstChar;
 
@@ -1558,7 +1558,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
       generateContextStack(&ctxNum, context->ftctx, &ctx, &previousLine);  //regenerate context stack
       context=contextNum(ctxNum);
     //kdDebug(13010)<<"context num after fallthrough at col "<<z<<": "<<ctxNum<<endl;
-    // the next is nessecary, as otherwise keyword (or anything using the std delimitor check)
+    // the next is necessary, as otherwise keyword (or anything using the std delimitor check)
     // immediately after fallthrough fails. Is it bad?
     // jowenn, can you come up with a nicer way to do this?
     /*  if (offset)
@@ -2883,7 +2883,7 @@ QVector<YzisAttribute> *YzisHighlighting::attributes (uint schema)
 {
   QVector<YzisAttribute> *array;
 
-  // found it, allready floating around
+  // found it, already floating around
   if ((array = m_attributeArrays[schema]))
     return array;
 
@@ -3003,7 +3003,7 @@ YzisHlManager::~YzisHlManager()
 #endif
   delete syntax;
 
-  //we dont need to do it for hlDict, it uses the same pointers
+  // we don't need to do it for hlDict, it uses the same pointers
   foreach( YzisHighlighting *hl, hlList )
 	  delete hl;
 }

@@ -520,7 +520,7 @@ void YZInternalOptionPool::updateOptions(const QString& oldPath, const QString& 
 
 	//drop old records
 	for ( QStringList::Iterator it2 = toDrop.begin(); it2 != toDrop.end(); ++it2 ) {
-		//dont delete the pointers, it is still used by the new option ;)
+		//don't delete the pointers, it is still used by the new option ;)
 		mOptions.remove(*it2);
 	}
 

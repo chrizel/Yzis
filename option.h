@@ -367,7 +367,7 @@ class YZOptionMap : public YZOption {
 		QStringList m_allKeys; //!< XXX [not clear what it is used for]
 };
 
-/** An option containg a color */
+/** An option containing a color */
 class YZOptionColor : public YZOption {
 	public :
         /** Constructor.

@@ -259,10 +259,10 @@ private:
       */
     void init();
 
-    /** Private constuctors for a singleton */
+    /** Private constructors for a singleton */
 	YZDebugBackend();
 
-    /** Private copy constuctors for a singleton */
+    /** Private copy constructors for a singleton */
 	YZDebugBackend( YZDebugBackend & other);
 
     /** Private copy assignment for a singleton */

@@ -619,7 +619,7 @@ bool YZBuffer::save() {
 		// seems wrong to me
 		YZView *view = YZSession::self()->findViewByBuffer( this );
 		if ( !view || !view->popupFileSaveAs() )
-			return false; //dont try to save
+			return false; // don't try to save
 	}
 
 	QString codecName = getLocalStringOption( "fileencoding" );

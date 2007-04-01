@@ -77,7 +77,7 @@ void YZSwapFile::flush() {
 		f.close();
 	} else {
 		YZSession::self()->popupMessage(_( "Warning, the swapfile could not be opened maybe due to restrictive permissions." ));
-		mNotResetted = true;//dont try again ...
+		mNotResetted = true;//don't try again ...
 	}
 	mHistory.clear(); //clear previous history
 }

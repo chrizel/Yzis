@@ -253,7 +253,7 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 		const YZCommand *c=prevcmds.first();
 		i=j-1;
 		// read in a count that may follow
-		if (c->arg() == ARG_CHAR) {//dont try to read a motion !
+		if (c->arg() == ARG_CHAR) {// don't try to read a motion!
 			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
 			return CMD_OK;
 		}

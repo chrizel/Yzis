@@ -199,7 +199,7 @@ void NYZView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
 	if ( !fakeLine )
 		x += marginLeft;
 	if ( clearChar.isSpace() ) {
-		/* optimisation */
+		/* optimization */
 		wmove( editor, y, x );
 		wclrtoeol( editor );
 	} else {
@@ -380,7 +380,7 @@ void NYZView::refreshScreen() {
 
 #if 0
 
-// we once tried to use that, but failed (miserably) and as far as links/lynx/elinks dont
+// we once tried to use that, but failed (miserably) and as far as links/lynx/elinks don't
 // use that neither...
 
 	// magenta = 1, is used to display info on statusbar..

@@ -54,7 +54,7 @@ void YZAction::insertChar( YZView* pView, const YZCursor pos, const QString& tex
 	if( pos.y() == mBuffer->lineCount() )
 		mBuffer->insertNewLine( pos.x(), pos.y() );
 	else if (pos.y() > mBuffer->lineCount() )
-		return; //can't insert on non existing lines
+		return; // can't insert on non-existing lines
 	mBuffer->insertChar( pos.x(), pos.y(), text );
 	pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
 	commitViewsChanges(mBuffer);
@@ -63,7 +63,7 @@ void YZAction::insertChar( YZView* pView, const YZCursor pos, const QString& tex
 void YZAction::replaceText( YZView* pView, const YZCursor pos, int replacedLength, const QString& text ) {
 	yzDebug() << "replaceText :" << pos << " length: " << replacedLength << " text:" << text << endl;
 	if( pos.y() >= mBuffer->lineCount() ) 
-		return; //dont try on non existing lines
+		return; // don't try on non-existing lines
 	configureViews(mBuffer);
 	mBuffer->delChar( pos.x(), pos.y(), replacedLength );
 	mBuffer->insertChar( pos.x(), pos.y(), text );
@@ -73,7 +73,7 @@ void YZAction::replaceText( YZView* pView, const YZCursor pos, int replacedLengt
 
 void YZAction::replaceChar( YZView* pView, const YZCursor pos, const QString& text ) {
 	if( pos.y() >= mBuffer->lineCount() ) 
-		return; //dont try on non existing lines
+		return; // don't try on non-existing lines
 	configureViews(mBuffer);
 	mBuffer->delChar( pos.x(), pos.y(), text.length() );
 	mBuffer->insertChar( pos.x(), pos.y(), text );
@@ -83,7 +83,7 @@ void YZAction::replaceChar( YZView* pView, const YZCursor pos, const QString& te
 
 void YZAction::deleteChar( YZView* pView, const YZCursor pos, int len ) {
 	if( pos.y() >= mBuffer->lineCount() ) 
-		return; //dont try on non existing lines
+		return; // don't try on non-existing lines
 	configureViews(mBuffer);
 	mBuffer->delChar( pos.x(), pos.y(), len );
 	pView->gotoxyAndStick( pos.x(), pos.y() );
@@ -101,7 +101,7 @@ void YZAction::appendLine( YZView* pView, const QString& text ) {
 
 void YZAction::insertNewLine( YZView* pView, const YZCursor pos ) {
 	if( pos.y() > mBuffer->lineCount() ) 
-		return; //dont try on non existing lines
+		return; // don't try on non-existing lines
 	configureViews(mBuffer);
 	mBuffer->insertNewLine( pos.x(), pos.y() );
 	pView->gotoxyAndStick( 0, pos.y() + 1 );
@@ -110,7 +110,7 @@ void YZAction::insertNewLine( YZView* pView, const YZCursor pos ) {
 
 void YZAction::replaceLine( YZView* pView, const YZCursor pos, const QString &text ) {
 	if( pos.y() >= mBuffer->lineCount() ) 
-		return; //dont try on non existing lines
+		return; // don't try on non-existing lines
 	configureViews(mBuffer);
 	mBuffer->replaceLine( text, pos.y() );
 	pView->gotoxyAndStick( text.length(), pos.y() );
@@ -119,7 +119,7 @@ void YZAction::replaceLine( YZView* pView, const YZCursor pos, const QString &te
 
 void YZAction::insertLine( YZView* pView, const YZCursor pos, const QString &text ) {
 	if( pos.y() > mBuffer->lineCount() ) 
-		return; //dont try on non existing lines
+		return; // don't try on non-existing lines
 	configureViews(mBuffer);
 	mBuffer->insertLine( text, pos.y() );
 	pView->gotoxyAndStick( text.length(), pos.y() );

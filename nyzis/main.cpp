@@ -185,15 +185,15 @@ static void cleaning(void)
 
 static void sigint(int /*sig*/)
 {
-//	yzDebug(NYZIS) << "^C catched" << endl;
-	// ^c catched -> sends an escape char..
+//	yzDebug(NYZIS) << "^C caught" << endl;
+	// ^c caught -> sends an escape char..
 	NYZSession::self()->currentView()->sendKey( "<ESC>","" );
 }
 
 
 static void sigwinch(int /*sig*/)
 {
-//	yzDebug(NYZIS) << "sigwinch catched" << endl;
+//	yzDebug(NYZIS) << "sigwinch caught" << endl;
 	endwin();
 	refresh();
 	NYZView *view = static_cast<NYZView*>(NYZSession::self()->currentView());

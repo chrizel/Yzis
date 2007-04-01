@@ -83,7 +83,7 @@ public:
 	static int insert(lua_State *L);
 
 	/**
-	 * Remove the given number of caracters
+	 * Remove the given number of characters
      *
 	 * \b Arguments :
 	 * - int, the starting column

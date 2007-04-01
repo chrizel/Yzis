@@ -93,7 +93,7 @@ bool NYZSession::processInput(int /*fd*/) {
 //			return false;
 		case KEY_RESIZE: // do nothing with this one
 			return true;
-		// dont do  currentView->sendKey(QString(QChar(0x60+c)),"<CTRL>");
+		// don't do  currentView->sendKey(QString(QChar(0x60+c)),"<CTRL>");
 		// on all iscntrl(c), it would break <esc> and <enter>....
 		case 0x01: // ^a
 		case 0x02: // ^b

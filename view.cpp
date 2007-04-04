@@ -1821,7 +1821,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	/* to calculate relative position */
 	int shiftY = getDrawCurrentTop(); 
 	int shiftX = getDrawCurrentLeft();
-	int maxX = shiftX + getColumnsVisible();
+	int maxX = shiftX + getColumnsVisible() - 1;
 
 	YZSelectionMap map = drawMap.map();
 	int size = map.size();

@@ -178,9 +178,6 @@ void NYZView::drawCell( int x, int y, const YZDrawCell& cell, void* ) {
 	wattroff( editor, mAttributes );
 	free( wide_char );
 	delete[] from_char;
-	
-	// we need to clear the rest of the line
-	drawClearToEOL(x + my_char.length(), y, ' ');
 }
 
 void NYZView::paintEvent( const YZSelection& drawMap ) {

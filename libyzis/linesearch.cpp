@@ -24,22 +24,21 @@
 #include "buffer.h"
 #include "linesearch.h"
 
-class YZCursor;
-class YZBuffer;
-class YZView;
+#define dbg()    yzDebug("YZLineSearch")
+#define err()    yzError("YZLineSearch")
 
 /**
  * class YZLineSearch
  */
 YZLineSearch::YZLineSearch( const YZView *_view ) {
-	yzDebug() << "YZLineSearch Constructor" << endl;
+	dbg() << "YZLineSearch Constructor" << endl;
  	mView = _view;
 	mFirstTime = true;
 	//mPrevSearched = "a";
 }
 
 YZLineSearch::~YZLineSearch() {
-//        yzDebug() << "YZLineSearch Destructor" << endl;
+//        dbg() << "YZLineSearch Destructor" << endl;
 }
 
 YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int times ) {
@@ -114,11 +113,11 @@ YZCursor YZLineSearch::searchAgain( bool &found, unsigned int times ) {
 	found = false;
 	if ( mFirstTime ) {
 		// Can't search again if we haven't searched a first time...
-		yzDebug() << "Haven't searched before" << endl;
+		dbg() << "Haven't searched before" << endl;
 		return garbage;
 	}
 	
-	yzDebug() << "Searching for: " << mPrevSearched << endl;
+	dbg() << "Searching for: " << mPrevSearched << endl;
 	switch ( mType ) {
 	case YZ_LINE_SEARCH_FORWARD:
 		return forward( mPrevSearched, found, times );
@@ -130,7 +129,7 @@ YZCursor YZLineSearch::searchAgain( bool &found, unsigned int times ) {
 		return reverseAfter( mPrevSearched, found, times );
 	default:
 		/* Can't happen */
-		yzDebug() << "Invalid line search type" << endl;
+		dbg() << "Invalid line search type" << endl;
 		return garbage;
 	}
 }

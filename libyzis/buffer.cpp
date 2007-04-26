@@ -107,7 +107,7 @@ struct YZBuffer::Private
 YZBuffer::YZBuffer() 
 	: d(new Private)
 {
-	yzDebug("YZBuffer") << "YZBuffer()" << endl;
+	dbg() << "YZBuffer()" << endl;
 	
 	// flags
 	d->enableUpdateView = false;
@@ -129,7 +129,7 @@ YZBuffer::YZBuffer()
 	// other actions will make it ACTIVE later
 	setState( INACTIVE );
 	
-	yzDebug("YZBuffer") << "NEW BUFFER CREATED: " << d->path << endl;
+	dbg() << "NEW BUFFER CREATED : " << d->path << endl;
 }
 
 YZBuffer::~YZBuffer() {
@@ -253,7 +253,7 @@ void  YZBuffer::appendLine(const QString &l) {
 		YZLine *l = new YZLine();
 		d->highlight->doHighlight(( d->text->count() >= 2 ? yzline( d->text->count() - 2 ) : l), yzline( d->text->count() - 1 ), &foldingList, &ctxChanged );
 		delete l;
-//		if ( ctxChanged ) yzDebug("YZBuffer") << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
+//		if ( ctxChanged ) dbg() << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
 	YZSession::self()->search()->highlightLine( this, d->text->count() - 1 );
 
@@ -395,7 +395,7 @@ void YZBuffer::replaceLine( const QString& l, int line ) {
 // ------------------------------------------------------------------------
 
 void YZBuffer::clearText() {
-	yzDebug("YZBuffer") << "YZBuffer clearText" << endl;
+	dbg() << "YZBuffer clearText" << endl;
 	/* XXX clearText is not registered to the undo buffer but should be
 	 * as any other text operation. Although I doubt that this is a common
 	 * operation.
@@ -470,7 +470,7 @@ int YZBuffer::firstNonBlankChar( int line ) const {
 // ------------------------------------------------------------------------
 
 void YZBuffer::setEncoding( const QString& name ) {
-	yzDebug("YZBuffer") << "set encoding " << name << endl;
+	dbg() << "set encoding " << name << endl;
 	/*
 	 * We have to reload the file
 	 */
@@ -536,7 +536,7 @@ void YZBuffer::loadText( QString* content ) {
 }
 
 void YZBuffer::load(const QString& file) {
-	yzDebug("YZBuffer") << "YZBuffer load " << file << endl;
+	dbg() << "YZBuffer load " << file << endl;
 	if ( file.isNull() || file.isEmpty() ) return;
 
 	//stop redraws
@@ -568,7 +568,7 @@ void YZBuffer::load(const QString& file) {
 			QTextCodec *c = QTextCodec::codecForContent (buff,102400);
 			free(buff);
 			fl.reset();
-			yzDebug() << "Detected encoding " << c->name()  << " by reading " << readl << " bytes." << endl;
+			dbg() << "Detected encoding " << c->name()  << " by reading " << readl << " bytes." << endl;
 			if ( readl > 0 && c && c->name() != codec->name() ) {
 				codec = c;
 				setLocalQStringOption("encoding", c->name());
@@ -625,7 +625,7 @@ bool YZBuffer::save() {
 	QString codecName = getLocalStringOption( "fileencoding" );
 	if ( codecName.isEmpty() )
 		codecName = getLocalStringOption( "encoding" );
-	yzDebug("YZBuffer") << "save using " << codecName << " encoding" << endl;
+	dbg() << "save using " << codecName << " encoding" << endl;
 	QTextCodec* codec;
 	if ( codecName == "locale" ) {
 		codec = QTextCodec::codecForLocale();
@@ -636,7 +636,7 @@ bool YZBuffer::save() {
 
 	QFile file( d->path );
 	d->isHLUpdating = true; //override so that it does not parse all lines
-	yzDebug("YZBuffer") << "Saving file to " << d->path << endl;
+	dbg() << "Saving file to " << d->path << endl;
 	if ( codec && file.open( QIODevice::WriteOnly ) ) {
 		QTextStream stream( &file );
 		stream.setCodec( codec );
@@ -706,7 +706,7 @@ void YZBuffer::addView (YZView *v) {
 
 void YZBuffer::updateAllViews() {
 	if ( !d->enableUpdateView ) return;
-	yzDebug("YZBuffer") << "YZBuffer updateAllViews" << endl;
+	dbg() << "YZBuffer updateAllViews" << endl;
 	foreach( YZView *view, d->views ) {
 		view->sendRefreshEvent();
 		view->syncViewInfo();
@@ -725,7 +725,7 @@ YZView* YZBuffer::firstView() const {
 void YZBuffer::rmView(YZView *v) {
     dbg().sprintf("rmView( %s )", qp(v->toString() ) );
 	d->views.removeAll(v);
-//	yzDebug("YZBuffer") << "YZBuffer removeView found " << f << " views" << endl;
+//	dbg() << "YZBuffer removeView found " << f << " views" << endl;
 	if ( d->views.isEmpty() ) {
 		setState( HIDDEN );
 	}
@@ -942,7 +942,7 @@ QStringList YZBuffer::getLocalListOption( const QString& option ) const {
 }
 
 bool YZBuffer::updateHL( int line ) {
-//	yzDebug() << "updateHL " << line << endl;
+//	dbg() << "updateHL " << line << endl;
 	if ( d->isLoading ) return false;
 	int hlLine = line, nElines = 0;
 	bool ctxChanged = true;
@@ -959,7 +959,7 @@ bool YZBuffer::updateHL( int line ) {
 		YZLine *l = new YZLine();
 		d->highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : l), yl, &foldingList, &ctxChanged );
 		delete l;
-//		yzDebug() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
+//		dbg() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
 		hlChanged = ctxChanged || hlChanged;
 		if ( ! ctxChanged && yl->data().isEmpty() ) {
 			ctxChanged = true; // line is empty 
@@ -970,7 +970,7 @@ bool YZBuffer::updateHL( int line ) {
 	}
 	if ( hlChanged ) {
 		int nToDraw = hlLine - line - nElines - 1;
-//		yzDebug() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
+//		dbg() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
 		foreach( YZView *view, d->views )
 			view->sendBufferPaintEvent( line, nToDraw );
 	}
@@ -979,7 +979,7 @@ bool YZBuffer::updateHL( int line ) {
 
 void YZBuffer::initHL( int line ) {
 	if ( d->isHLUpdating ) return;
-//	yzDebug() << "initHL " << line << endl;
+//	dbg() << "initHL " << line << endl;
 	d->isHLUpdating = true;
 	if ( d->highlight != 0L ) {
 		int hlLine = line;
@@ -996,7 +996,7 @@ void YZBuffer::detectHighLight() {
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);
 	if ( hlMode >=0 )
 		setHighLight( hlMode );
-	yzDebug("YZBuffer") << "HIGHLIGHTING " << hlMode << endl;
+	dbg() << "HIGHLIGHTING " << hlMode << endl;
 }
 
 
@@ -1063,7 +1063,7 @@ const YZLine * YZBuffer::yzline(int line) const
 {
 	const YZLine* yl = NULL;
 	if ( line >= lineCount() ) {
-		yzDebug() << "ERROR: you are asking for line " << line << " (max is " << lineCount() << ")" << endl;
+		dbg() << "ERROR: you are asking for line " << line << " (max is " << lineCount() << ")" << endl;
 		YZIS_SAFE_MODE {
 			yl = new YZLine();
 		}

@@ -30,6 +30,9 @@
 #include "buffer.h"
 #include "selection.h"
 
+#define dbg()    yzDebug("YZSearch")
+#define err()    yzError("YZSearch")
+
 struct YZSearch::Private
 {		
 	void setCurrentSearch( const QString& pattern );
@@ -86,7 +89,7 @@ bool YZSearch::Private::active() {
 }
 
 YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor from, const QString& pattern, bool reverse, bool skipline, bool* found ) {
-	yzDebug() << "YZSearch::doSearch " << pattern << ", " << reverse << ", " << endl;
+	dbg() << "YZSearch::doSearch " << pattern << ", " << reverse << ", " << endl;
 	*found = false;
 	setCurrentSearch( pattern );
 	int direction = reverse ? 0 : 1;
@@ -114,12 +117,12 @@ YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor from, con
 
 	// use an action to do the search
 	int matchedLength;
-//	yzDebug() << "begin = " << cur << endl;
+//	dbg() << "begin = " << cur << endl;
 	YZCursor ret = buffer->action()->search( buffer, pattern, cur, end, &matchedLength, found );
 
 	// check to see if we need to wrap
 	if ( ! *found ) {
-		yzDebug() << "search hits top or bottom" << endl;
+		dbg() << "search hits top or bottom" << endl;
 		
 		// adjust the cursors for the next search
 		end = cur;
@@ -128,7 +131,7 @@ YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor from, con
 		} else {
 			cur = top;
 		}
-//		yzDebug() << "begin = " << cur << ", end = " << end << endl;
+//		dbg() << "begin = " << cur << ", end = " << end << endl;
 	
 		// repeat the search with the new bounds
 		ret = buffer->action()->search( buffer, pattern, cur, end, &matchedLength, found );
@@ -141,7 +144,7 @@ YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor from, con
 			}
 		}
 	}
-//	yzDebug() << "ret = " << ret << endl;
+//	dbg() << "ret = " << ret << endl;
 
 	return ret;
 }
@@ -210,7 +213,7 @@ void YZSearch::highlightLine( YZBuffer* buffer, int line ) {
 				cur.setX( cur.x() + matchedLength - 1 );
 				searchMap->addInterval( YZInterval( from, cur ) );
 				cur.setX( cur.x() + 1 );
-//				yzDebug() << "cur = " << cur << "; end = " << end << endl;
+//				dbg() << "cur = " << cur << "; end = " << end << endl;
 			}
 		} while ( found );
 
@@ -255,7 +258,7 @@ void YZSearch::Private::highlightSearch( YZView *view, YZSelectionMap searchMap 
 	vMap->clear();
 	if ( YZSession::self()->getBooleanOption( "hlsearch" ) ) {
 		vMap->setMap( searchMap );
-//		yzDebug() << "new search Map: " << *(vMap) << endl;
+//		dbg() << "new search Map : " << *(vMap) << endl;
 		view->sendPaintEvent( vMap->map() );
 	}
 	view->commitPaintEvent();

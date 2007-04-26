@@ -31,6 +31,7 @@ QMap<int,QString> NYZSession::keycodes; // map Ncurses to Qt codes
 
 void NYZSession::createInstance(const QString& name, const QString& keys)
 {
+    dbg() << "createInstance()" << endl;
 	// such allocation (i.e. not "new NYZSession") will ensure that
 	// "instance" object will be properly and automatically deleted 
 	// when program exits
@@ -41,6 +42,8 @@ void NYZSession::createInstance(const QString& name, const QString& keys)
 NYZSession::NYZSession(const QString& session_name, const QString& keys)
 	: YZSession(session_name)
 {
+    dbg() << "NYZSession()" << endl;
+
 	m_initialCommand = keys;
 	/* init screen */
 
@@ -65,6 +68,7 @@ NYZSession::NYZSession(const QString& session_name, const QString& keys)
 
 NYZSession::~NYZSession( )
 {
+    dbg() << "~NYZSession()" << endl;
 }
 
 void NYZSession::init() {
@@ -197,6 +201,7 @@ void NYZSession::changeCurrentView ( YZView * view  )
 
 YZView* NYZSession::doCreateView( YZBuffer* buffer )
 {
+    dbg() << "doCreateView( " << buffer->toString() << ")" << endl;
 	YZASSERT( buffer );
 	NYZView *v = new NYZView( buffer );
 	YZASSERT_MSG(v, "NYZSession::createView : failed creating a new NYZView");
@@ -205,6 +210,7 @@ YZView* NYZSession::doCreateView( YZBuffer* buffer )
 
 YZBuffer *NYZSession::doCreateBuffer()
 {
+    dbg() << "doCreateBuffer()" << endl;
 	return new YZBuffer;
 }
 

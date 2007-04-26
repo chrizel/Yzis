@@ -21,6 +21,9 @@
 #include "view.h"
 #include "debug.h"
 
+#define dbg()    yzDebug("YZFoldPool")
+#define err()    yzError("YZFoldPool")
+
 YZFoldPool::YZFoldPool( YZView* view ) {
 	m_view = view;
 }
@@ -28,7 +31,7 @@ YZFoldPool::~YZFoldPool() {
 }
 
 void YZFoldPool::create( int from, int to ) {
-	yzDebug() << "FOLDING: create from " << from << " to " << to << endl;
+	dbg() << "FOLDING: create from " << from << " to " << to << endl;
 	int head = from;
 	bool need_update = true;
 	if ( isHead( from ) || contains( from, &head ) ) {
@@ -46,7 +49,7 @@ void YZFoldPool::create( int from, int to ) {
 	if ( need_update ) {
 		m_view->sendRefreshEvent();
 	}
-	yzDebug() << "" << *this;
+	dbg() << "" << *this;
 }
 
 bool YZFoldPool::isHead( int line ) const {

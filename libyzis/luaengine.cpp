@@ -199,7 +199,7 @@ QString YZLuaEngine::lua(YZView *, const QString& args) {
 
 //see Lua's PIL chapter 25.3 for how to use this :)
 void YZLuaEngine::exe(const QString& function, const char* sig, ...) {
-    yzDebug() << "YZLuaEngine::exe( " << function << " ) sig: " << sig << endl;
+    dbg() << "YZLuaEngine::exe( " << function << " ) sig : " << sig << endl;
 	va_list vl;
 	int narg, nres;
 	
@@ -273,9 +273,9 @@ int YZLuaEngine::source( const QString& filename ) {
     QString fname = filename;
 	if ( !fname.endsWith( ".lua" ) ) fname += ".lua";
 
-	yzDebug() << "source() fname='" << fname << "'" << endl;
+	dbg() << "source() fname='" << fname << "'" << endl;
 	fname = YZBuffer::tildeExpand( fname );
-	yzDebug() << "source() fname='" << fname << "'" << endl;
+	dbg() << "source() fname='" << fname << "'" << endl;
 	QStringList candidates;
 	candidates << fname 
 	           << QDir::currentPath()+'/'+fname

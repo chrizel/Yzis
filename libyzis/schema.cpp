@@ -25,6 +25,9 @@
 
 #include "schema.h"
 
+#define dbg()    yzDebug("YzisSchemaManager")
+#define err()    yzError("YzisSchemaManager")
+
 QString YzisSchemaManager::normalSchema ()
 {
   return QString ("Yzis - Normal");

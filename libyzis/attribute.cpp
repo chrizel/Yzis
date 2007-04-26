@@ -27,6 +27,9 @@
 
 #include "attribute.h"
 
+#define dbg()    yzDebug("YzisAttribute")
+#define err()    yzError("YzisAttribute")
+
 YzisAttribute::YzisAttribute()
   : m_weight(YZFont::Normal)
   , m_italic(false)

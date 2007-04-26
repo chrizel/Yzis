@@ -46,8 +46,12 @@
 #include "buffer.h"
 #include "debug.h"
 
+#define dbg()    yzDebug("QYZSession")
+#define err()    yzError("QYZSession")
+
 void QYZisSession::createInstance()
 {
+    dbg() << "createInstance()" << endl;
 	// such allocation (i.e. not "new QYZisSession") will ensure that
 	// "instance" object will be properly and automatically deleted 
 	// when program exits

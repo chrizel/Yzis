@@ -14,6 +14,9 @@
 #include <QStringList>
 #include <QTextStream>
 
+#define dbg()    yzDebug("YZHistory")
+#define err()    yzError("YZHistory")
+
 static QString Null = QString();
 
 struct YZHistory::Private

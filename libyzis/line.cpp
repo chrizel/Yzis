@@ -22,6 +22,9 @@
 #include "line.h"
 #include "debug.h"
 
+#define dbg()    yzDebug("YZLine")
+#define err()    yzError("YZLine")
+
 YZLine::YZLine(const QString &l) :
 m_flags( YZLine::flagVisible ) {
 	setData(l);

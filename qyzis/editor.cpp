@@ -40,6 +40,9 @@
 /* QYzis */
 #include "qyzis.h"
 
+#define dbg()    yzDebug("QYZisEdit")
+#define err()    yzError("QYZisEdit")
+
 QYZisEdit::QYZisEdit(QYZisView *parent)
 : QWidget( parent )
 {
@@ -64,6 +67,7 @@ QYZisEdit::QYZisEdit(QYZisView *parent)
 
 
 QYZisEdit::~QYZisEdit() {
+    dbg() << "~QYZisEdit()" << endl;
 	delete signalMapper;
 	/*
 	for( int i = actionCollection->count() - 1; i>= 0; --i )
@@ -145,15 +149,15 @@ void QYZisEdit::updateArea( ) {
 
 	updateCursor();
 
-	yzDebug() << "fixedPitch = " << fontInfo().fixedPitch() << endl;
-	yzDebug() << "lineheight = " << fontMetrics().lineSpacing() << endl;
-	yzDebug() << "maxwidth = " << fontMetrics().maxWidth() << endl;
-	yzDebug() << "height = " << height();
+	dbg() << "fixedPitch = " << fontInfo().fixedPitch() << endl;
+	dbg() << "lineheight = " << fontMetrics().lineSpacing() << endl;
+	dbg() << "maxwidth = " << fontMetrics().maxWidth() << endl;
+	dbg() << "height = " << height();
 
 	int lines = height() / fontMetrics().lineSpacing();
 	int columns = width() / fontMetrics().maxWidth();
 
-	yzDebug() << "lines = " << lines;
+	dbg() << "lines = " << lines;
 
 	m_useArea.setBottomRight( QPoint( columns * fontMetrics().maxWidth(), lines * fontMetrics().lineSpacing()) );
 
@@ -175,7 +179,7 @@ bool QYZisEdit::event(QEvent *e) {
 }
 
 void QYZisEdit::keyPressEvent ( QKeyEvent * e ) {
-	//yzDebug() << "keyPressEvent: text=" << e->text() << ", key=" << e->key() << ", mod=" << e->modifiers() << endl;
+	dbg() << "keyPressEvent( QKeyEVent(text=\"" << e->text() << "\", key=" << e->key() << ", modifiers=" << e->modifiers() << ")" << endl;
 	Qt::KeyboardModifiers st = e->modifiers();
 	QString modifiers;
 	if ( st & Qt::ShiftModifier ) {
@@ -193,8 +197,8 @@ void QYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	} else {
 		text = keys[ e->key() ];
 	}
-	//yzDebug() << "====> modifiers = " << modifiers << ", text=" << text << endl;
 
+    dbg().sprintf("keyPressEvent: modifiers=%s, text=\"%s\"", qp(modifiers), qp(text) );
 	mParent->sendKey(text, modifiers);
 	e->accept();
 }
@@ -268,14 +272,14 @@ void QYZisEdit::paintEvent( QPaintEvent* pe ) {
 	QRect r = pe->rect();
 	r.setTopLeft( translateRealToAbsolutePosition( r.topLeft() ) );
 	r.setBottomRight( translateRealToAbsolutePosition( r.bottomRight() ) );
-	//yzDebug() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() << 
+	//dbg() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() << 
 	//				" => " << r.topLeft() << "," << r.bottomRight() << endl;
 	// paint it
 	mParent->paintEvent( mParent->clipSelection( YZSelection( r ) ) );
 }
 
 void QYZisEdit::setCursor( int c, int l ) {
-//	yzDebug() << "setCursor" << endl;
+//	dbg() << "setCursor" << endl;
 	c = c - mParent->getDrawCurrentLeft();
 	l -= mParent->getDrawCurrentTop();
 	unsigned int x = c * fontMetrics().maxWidth();
@@ -322,8 +326,8 @@ void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	}
 	QRect r( x*fontMetrics().maxWidth(), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 
-	//yzDebug() << "drawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
-	//yzDebug() << "drawCell: fg=" << p->pen().color().name() << endl;
+	//dbg() << "guiDrawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
+	//dbg() << "guiDrawCell: fg=" << p->pen().color().name() << endl;
 	if ( has_bg )
 		p->eraseRect( r ); 
 	p->drawText( r, cell.c );
@@ -448,6 +452,7 @@ QString QYZisEdit::keysToShortcut( const QString& keys ) {
 	ret = ret.replace( "<CTRL>", "CTRL+" );
 	ret = ret.replace( "<SHIFT>", "SHIFT+" );
 	ret = ret.replace( "<ALT>", "ALT+" );
+    dbg().sprintf("keysToShortcut( %s ) --> %s", qp(keys), qp(ret) );
 	return ret;
 }
 
@@ -462,7 +467,7 @@ void QYZisEdit::unregisterModifierKeys( const QString& keys ) {
 	QByteArray ke = keys.toUtf8();
 	KAction* k = actionCollection->action( ke.data() );
 	if ( k == NULL ) {
-		yzDebug() << "No KAction for " << keys << endl;
+		dbg() << "No KAction for " << keys << endl;
 		return;
 	}
 	actionCollection->take( k );
@@ -477,6 +482,7 @@ void QYZisEdit::unregisterModifierKeys( const QString& keys ) {
 }
 
 void QYZisEdit::sendMultipleKey( const QString& keys ) {
+    dbg().sprintf("sendMultipleKey( %s )", qp(keys) );
 	mParent->sendMultipleKey( keys );
 }
 
@@ -505,7 +511,7 @@ void QYZisEdit::imStartEvent( QIMEvent *e )
 // for InputMethod (OnTheSpot)
 /*
 void QYZisEdit::imComposeEvent( QIMEvent *e ) {
-	//yzDebug() << "QYZisEdit::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
+	//dbg() << "QYZisEdit::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
 	if ( mParent->modePool()->current()->supportsInputMethod() ) {
 		mParent->modePool()->current()->imCompose( mParent, e->text() );
 		e->accept();
@@ -517,7 +523,7 @@ void QYZisEdit::imComposeEvent( QIMEvent *e ) {
 // for InputMethod (OnTheSpot)
 /*
 void QYZisEdit::imEndEvent( QIMEvent *e ) {
-//	yzDebug() << "QYZisEdit::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
+//	dbg() << "QYZisEdit::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
 	if ( mParent->modePool()->current()->supportsInputMethod() ) {
 		mParent->modePool()->current()->imEnd( mParent, e->text() );
 	} else {

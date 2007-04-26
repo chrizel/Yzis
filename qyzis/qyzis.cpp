@@ -29,6 +29,8 @@
 #include "buffer.h"
 #include "configuredialog.h"
 
+#define dbg()    yzDebug("Qyzis")
+#define err()    yzError("Qyzis")
 Qyzis *Qyzis::me = NULL;
 
 Qyzis::Qyzis(QWidget *w, const QString& initialKeys)
@@ -57,7 +59,7 @@ void Qyzis::init () {
 }
 
 void Qyzis::load(const QString& url) {
-	yzDebug() << "load " << url << endl;
+	dbg() << "load " << url << endl;
 	/// TODO : do something here, like creating a buffer and such..
 //	KParts::ReadWritePart *p = getCurrentPart();
 //	if ( p ) p->openURL(url);
@@ -233,7 +235,7 @@ void Qyzis::raiseView(QWidget *view) {
     //by its wrapper helps here
     if (view->parent() && view->parent()->isA("EditorWrapper"))
     {
-//         yzDebug() << "parent is editor wrapper: " <<
+//         dbg() << "parent is editor wrapper: " <<
 //             static_cast<EditorWrapper*>(view->parent()) << endl;
         view = (QWidget*)view->parent();
     }

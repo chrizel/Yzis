@@ -21,6 +21,9 @@
 #include "debug.h"
 #include "view.h"
 
+#define dbg()    yzDebug("YZDrawBuffer")
+#define err()    yzError("YZDrawBuffer")
+
 YZDrawBuffer::YZDrawBuffer() : 
 	m_content(),
 	m_sel()
@@ -129,7 +132,7 @@ void YZDrawBuffer::push( const QString& c ) {
 }
 
 void YZDrawBuffer::newline( int y ) {
-//	yzDebug("drawbuffer") << "YZDrawBuffer::newline " << y << endl;
+//	dbg() << "YZDrawBuffer::newline " << y << endl;
 	flush();
 	insert_line( y );
 }
@@ -237,8 +240,8 @@ void YZDrawBuffer::applyPosition() {
 
 void YZDrawBuffer::replace( const YZInterval& interval ) {
 	flush();
-//	yzDebug() << "YZDrawBuffer::replace " << interval << endl;
-//	yzDebug() << "before replace:" << endl << (*this) << "----" << endl;
+//	dbg() << "YZDrawBuffer::replace " << interval << endl;
+//	dbg() << "before replace:" << endl << (*this) << "----" << endl;
 	int fx = interval.fromPos().x();
 	int fy = interval.fromPos().y();
 	int tx = interval.toPos().x();
@@ -253,7 +256,7 @@ void YZDrawBuffer::replace( const YZInterval& interval ) {
 		bool has_dest = find( interval.toPos(), &dx, &dy, &dvx );
 
 		if ( !seek( interval.fromPos(), YZDrawBuffer::YZ_SEEK_SET ) ) {
-		//XXX	yzDebug() << "unable to access " << interval.fromPos() << endl;
+		//XXX	dbg() << "unable to access " << interval.fromPos() << endl;
 			return;
 		}
 
@@ -301,7 +304,7 @@ void YZDrawBuffer::replace( const YZInterval& interval ) {
 			}
 		}
 	}
-//	yzDebug() << "after replace:" << endl << (*this) << "----" << endl;
+//	dbg() << "after replace:" << endl << (*this) << "----" << endl;
 }
 
 void YZDrawBuffer::Scroll( int dx, int dy ) {
@@ -323,7 +326,7 @@ void YZDrawBuffer::Scroll( int dx, int dy ) {
 
 void YZDrawBuffer::setSelectionLayout( YZSelectionPool::Layout_enum layout, const YZSelection& selection ) {
 	m_sel[ layout ].setMap( selection.map() );
-//	yzDebug() << "setSelection: " << layout << "=" << m_sel[layout] << endl;
+//	dbg() << "setSelection: " << layout << "=" << m_sel[layout] << endl;
 }
 
 YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff ) {

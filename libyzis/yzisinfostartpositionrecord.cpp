@@ -19,6 +19,9 @@
 
 #include "yzisinfostartpositionrecord.h"
 
+#define dbg()    yzDebug("YZYzisinfoStartPositionRecord")
+#define err()    yzError("YZYzisinfoStartPositionRecord")
+
 /**
  * YZYzisinfoStartPositionRecord::YZYzsinfoStartPositionRecord
  */

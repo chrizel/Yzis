@@ -19,6 +19,9 @@
 
 #include "yzisinfojumplistrecord.h"
 
+#define dbg()    yzDebug("YZYzisinfoJumpListRecord")
+#define err()    yzError("YZYzisinfoJumpListRecord")
+
 /**
  * YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord
  */

@@ -27,6 +27,9 @@
  * class YZViewCursor
  */
 
+#define dbg()    yzDebug("YZViewCursor")
+#define err()    yzError("YZViewCursor")
+
 YZViewCursor::YZViewCursor( YZView* parent ) {
 	mParent = parent;
 	reset();
@@ -85,7 +88,7 @@ bool YZViewCursor::valid() const {
 }
 
 void YZViewCursor::debug() {
-	yzDebug() << "YZViewCursor : buffer = " << mBuffer << " ; screen = " << mScreen
+	dbg() << "YZViewCursor : buffer = " << mBuffer << " ; screen = " << mScreen
 		<< " ; wrapNextLine = " << wrapNextLine << " ; wrapTab = " << wrapTab << endl
 		<< "               bLineIncrement = " << bLineIncrement << "; sLineIncrement = " << sLineIncrement
 		<< " ; lineHeight = " << lineHeight << endl

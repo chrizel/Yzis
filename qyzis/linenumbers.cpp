@@ -21,6 +21,9 @@
 
 #include "viewwidget.h"
 
+#define dbg()    yzDebug("LineNumber")
+#define err()    yzError("LineNumber")
+
 LineNumber::LineNumber( const QFont& f ) : QLabel() {
 	setAlignment( Qt::AlignVCenter | Qt::AlignRight );
 	setAutoFillBackground(true);

@@ -24,6 +24,9 @@
 #include "syntaxhighlight.h"
 #include "view.h"
 
+#define dbg()    yzDebug("YZEvents")
+#define err()    yzError("YZEvents")
+
 YZEvents::YZEvents() {
 }
 
@@ -32,7 +35,7 @@ YZEvents::~YZEvents() {
 }
 
 void YZEvents::connect(const QString& event, const QString& function) {
-	yzDebug() << "Events : connecting event " << event << " to " << function << endl;
+	dbg() << "Events : connecting event " << event << " to " << function << endl;
 	if ( mEvents.contains(event) ) {
 		QStringList list = mEvents[event];
 		if ( !list.contains(function) ) list += function;
@@ -47,7 +50,7 @@ void YZEvents::connect(const QString& event, const QString& function) {
 
 QStringList YZEvents::exec(const QString& event, YZView *view) {
 	/* XXX when view is NULL, what shall we do ? */
-	yzDebug() << "Executing event " << event << endl;
+	dbg() << "Executing event " << event << endl;
 	QMap<QString,QStringList>::Iterator it = mEvents.begin(), end = mEvents.end();
 	QStringList results;
 	QString hlName;
@@ -56,10 +59,10 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 	hlName = hlName.toLower();
 	hlName.replace("+","p");
 	for ( ; it != end; ++it ) {
-		yzDebug() << "Comparing " << it.key() << " to " << event << endl;
+		dbg() << "Comparing " << it.key() << " to " << event << endl;
 		if ( QString::compare(it.key(), event) == 0 ) {
 			QStringList list = it.value();
-			yzDebug() << "Matched " << list << endl;
+			dbg() << "Matched " << list << endl;
 			foreach( QString action, list ) {
 				int nbArgs = 0, nbResults = 0;
 				if ( event == "INDENT_ON_ENTER" && action != "Indent_" + hlName ) 
@@ -104,10 +107,10 @@ QStringList YZEvents::exec(const QString& event, YZView *view) {
 					QByteArray prev = prevLine.toUtf8();
 					QByteArray next = nextLine.toUtf8();
 					YZLuaEngine::self()->exe(action, "iiiiss>s",nbNextTabs,nbNextSpaces,nbPrevTabs,nbPrevSpaces, prev.data(), next.data(), &result);
-					yzDebug() << "Got INDENT_ON_ENTER response : (" << result << ")" << endl;
+					dbg() << "Got INDENT_ON_ENTER response : (" << result << ")" << endl;
 					results << QString(result);
 				} else {
-					yzDebug() << "Executing plugin " << action << " with " << nbArgs << " arguments and " << nbResults << " results" << endl;
+					dbg() << "Executing plugin " << action << " with " << nbArgs << " arguments and " << nbResults << " results" << endl;
 					YZLuaEngine::self()->execute(action,nbArgs,nbResults);
 					results += YZLuaEngine::self()->getLastResult(1);
 				}

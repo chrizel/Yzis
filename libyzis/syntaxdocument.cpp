@@ -36,6 +36,9 @@
 #include <QDir>
 #include <QFile>
 
+#define dbg()    yzDebug("YzisSyntaxDocument")
+#define err()    yzError("YzisSyntaxDocument")
+
 static void lookupPrefix( const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique );
 static void lookupDirectory( const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique );
 
@@ -213,7 +216,7 @@ YzisSyntaxContextData* YzisSyntaxDocument::getSubItems(YzisSyntaxContextData* da
 
 bool YzisSyntaxDocument::getElement (QDomElement &element, const QString &mainGroupName, const QString &config)
 {
-  yzDebug() << "Looking for \"" << mainGroupName << "\" -> \"" << config << "\"." << endl;
+  dbg() << "Looking for \"" << mainGroupName << "\" -> \"" << config << "\"." << endl;
 
   QDomNodeList nodes = documentElement().childNodes();
 
@@ -238,12 +241,12 @@ bool YzisSyntaxDocument::getElement (QDomElement &element, const QString &mainGr
         }
       }
 
-      yzDebug() << "WARNING: \""<< config <<"\" wasn't found!" << endl;
+      dbg() << "WARNING: \""<< config <<"\" wasn't found!" << endl;
       return false;
     }
   }
 
-  yzDebug() << "WARNING: \""<< mainGroupName <<"\" wasn't found!" << endl;
+  dbg() << "WARNING: \""<< mainGroupName <<"\" wasn't found!" << endl;
   return false;
 }
 
@@ -284,7 +287,7 @@ YzisSyntaxContextData* YzisSyntaxDocument::getGroupInfo(const QString& mainGroup
  */
 QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QString& type, bool clearList)
 {
-  yzDebug()<<"Create a list of keywords \""<<type<<"\" from \""<<mainGroup<<"\"."<<endl;
+  dbg()<<"Create a list of keywords \""<<type<<"\" from \""<<mainGroup<<"\"."<<endl;
   if (clearList)
     m_data.clear();
 
@@ -293,14 +296,14 @@ QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QStrin
     QDomElement elem = node.toElement();
     if (elem.tagName() == mainGroup)
     {
-      yzDebug()<<"\""<<mainGroup<<"\" found."<<endl;
+      dbg()<<"\""<<mainGroup<<"\" found."<<endl;
       QDomNodeList nodelist1 = elem.elementsByTagName("list");
 
       for (int l=0; l<nodelist1.count(); l++)
       {
         if (nodelist1.item(l).toElement().attribute("name") == type)
         {
-          yzDebug()<<"List with attribute name=\""<<type<<"\" found."<<endl;
+          dbg()<<"List with attribute name=\""<<type<<"\" found."<<endl;
           QDomNodeList childlist = nodelist1.item(l).toElement().childNodes();
 
           for (int i=0; i<childlist.count(); i++)
@@ -311,11 +314,11 @@ QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QStrin
 #ifndef NDEBUG
             if (i<6)
             {
-              yzDebug()<<"\""<<element<<"\" added to the list \""<<type<<"\""<<endl;
+              dbg()<<"\""<<element<<"\" added to the list \""<<type<<"\""<<endl;
             }
             else if(i==6)
             {
-              yzDebug()<<"... The list continues ..."<<endl;
+              dbg()<<"... The list continues ..."<<endl;
             }
 #endif
             m_data += element;
@@ -582,11 +585,11 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
       // Apend the item to the list
       myModeList.append(mli);
-      yzDebug ("HL") << "NO update hl cache for: " << *it << endl;
+      dbg() << "NO update hl cache for: " << *it << endl;
     }
     else
     {
-      yzDebug ("HL") << "UPDATE hl cache for: " << *it << endl;
+      dbg() << "UPDATE hl cache for: " << *it << endl;
 
       // We're forced to read the xml files or the mode doesn't exist in the katesyntax...rc
       QFile f(*it);

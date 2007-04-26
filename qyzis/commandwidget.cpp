@@ -24,6 +24,11 @@
 #include "mode.h"
 #include "view.h"
 
+
+#define dbg()    yzDebug("QYZisCommand")
+#define err()    yzError("QYZisCommand")
+
+
 QYZisCommand::QYZisCommand(QYZisView *parent)
 	: QLineEdit( parent ) {
 		_parent = parent;
@@ -33,7 +38,7 @@ QYZisCommand::~QYZisCommand() {
 }
 
 void QYZisCommand::keyPressEvent ( QKeyEvent * e ) {
-	yzDebug()<< " QYZisCommand Got key : " << e->key()<< " Got ASCII : " << e->text().toLatin1().constData() << " Got Unicode : " << e->text() << endl;
+	dbg()<< " QYZisCommand Got key : " << e->key()<< " Got ASCII : " << e->text().toLatin1().constData() << " Got Unicode : " << e->text() << endl;
 	QString modifiers;
 	if ( e->QInputEvent::modifiers() & Qt::ShiftModifier ) modifiers += "<SHIFT>";
 	if ( e->QInputEvent::modifiers() & Qt::AltModifier ) modifiers += "<ALT>";
@@ -50,7 +55,7 @@ void QYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 }
 
 void QYZisCommand::focusInEvent (QFocusEvent *) {
-	yzDebug() << "QYZisCommand : Focus IN -> EX mode" << endl;
+	dbg() << "QYZisCommand : Focus IN -> EX mode" << endl;
 	if ( _parent->modePool()->currentType() != YZMode::MODE_EX 
 			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH 
 			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH_BACKWARD )
@@ -58,7 +63,7 @@ void QYZisCommand::focusInEvent (QFocusEvent *) {
 }
 
 void QYZisCommand::focusOutEvent (QFocusEvent *e) {
-	yzDebug() << "QYZisCommand : Focus OUT -> reject" << endl;
+	dbg() << "QYZisCommand : Focus OUT -> reject" << endl;
 	if ( _parent->modePool()->currentType() != YZMode::MODE_EX 
 			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH 
 			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH_BACKWARD )

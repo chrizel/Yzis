@@ -42,6 +42,9 @@
 #include "buffer.h"
 #include <debug.h>
 
+#define dbg()    yzDebug("QYZisView")
+#define err()    yzError("QYZisView")
+
 QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	: YZView( _buffer, QYZisSession::self(), 0, 0 ), buffer( _buffer ), m_popup( 0 )
 
@@ -107,7 +110,7 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 }
 
 QYZisView::~QYZisView () {
-//	yzDebug() << "QYZisView::~QYZisView" << endl;
+	dbg() << "~QYZisView" << endl;
 //	if ( buffer ) buffer->removeView(this);
 }
 
@@ -164,11 +167,11 @@ void QYZisView::notifyContentChanged( const YZSelection& s ) {
 			r.setLeft( 0 );
 			r.setRight( getColumnsVisible() );
 		}
-//		yzDebug() << "notifiyContentChanged: interval=" << interval.fromPos() << "," << interval.toPos() 
+//		dbg() << "notifiyContentChanged: interval=" << interval.fromPos() << "," << interval.toPos() 
 //					<< ", r=" << r.topLeft() << "," << r.bottomRight();
 		r.setBottomRight( m_editor->translatePositionToReal( r.bottomRight() ) );
 		r.setTopLeft( m_editor->translatePositionToReal( r.topLeft() ) );
-//		yzDebug() << " => " << r.topLeft() << "," << r.bottomRight() << endl;
+//		dbg() << " => " << r.topLeft() << "," << r.bottomRight() << endl;
 		m_editor->update( r );
 	}
 }

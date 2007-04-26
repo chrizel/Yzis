@@ -123,7 +123,7 @@ void changeEncoding( YZBuffer* b, YZView* v ) {
 	if ( b ) {
 		QString enc = b->getLocalStringOption("encoding");
 		if ( enc != b->encoding() ) {
-			if (b->fileIsModified() && YZSession::self()->promptYesNo(_("File modified"), _("This file has been modified, do you want to save it ?"))){
+			if (b->fileIsModified() && YZSession::self()->guiPromptYesNo(_("File modified"), _("This file has been modified, do you want to save it ?"))){
 				b->save();
 			}
 			b->setEncoding( enc );

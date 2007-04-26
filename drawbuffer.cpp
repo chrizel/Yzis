@@ -44,7 +44,7 @@ void YZDrawBuffer::setCallbackArgument( void* callback_arg ) {
 	m_callback_arg = callback_arg;
 }
 void YZDrawBuffer::callback( int x, int y, const YZDrawCell& cell ) {
-	m_view->drawCell( x, y, cell, m_callback_arg );
+	m_view->guiDrawCell( x, y, cell, m_callback_arg );
 }
 
 void YZDrawBuffer::reset() {

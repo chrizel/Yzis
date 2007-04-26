@@ -138,9 +138,9 @@ YZCursor YZSearch::Private::doSearch( YZBuffer *buffer, const YZCursor from, con
 		if ( *found ) {
 			YZView *view = YZSession::self()->findViewByBuffer( buffer );
 			if ( view && reverse ) {
-				view->displayInfo( _("search hit TOP, continuing at BOTTOM") );
+				view->guiDisplayInfo( _("search hit TOP, continuing at BOTTOM") );
 			} else if ( view ) {
-				view->displayInfo( _("search hit BOTTOM, continuing at TOP") );
+				view->guiDisplayInfo( _("search hit BOTTOM, continuing at TOP") );
 			}
 		}
 	}

@@ -170,11 +170,6 @@ class YZIS_EXPORT YZView {
 //		const YZBuffer *myBuffer() const { return mBuffer; }
 
 		/**
-		 * Return my current session
-		 */
-		YZSession *mySession() { return mSession; }
-
-		/**
 		 * Return my current line search
 		 */
 		YZLineSearch* myLineSearch() { return mLineSearch; }
@@ -487,22 +482,22 @@ class YZIS_EXPORT YZView {
 		/**
 		 * Retrieve the text from command line
 		 */
-		virtual QString getCommandLineText() const = 0;
+		virtual QString guiGetCommandLineText() const = 0;
 
 		/**
 		 * Sets the command line text
 		 */
-		virtual void setCommandLineText( const QString& ) = 0;
+		virtual void guiSetCommandLineText( const QString& ) = 0;
 
 		/**
 		 * Displays an informational message
 		 */
-		virtual void displayInfo( const QString& info ) = 0;
+		virtual void guiDisplayInfo( const QString& info ) = 0;
 
 		/**
 		 * Display informational status about the current file and cursor
 		 */
-		virtual void syncViewInfo() = 0;
+		virtual void guiSyncViewInfo() = 0;
 
 		//-------------------------------------------------------
 		// ----------------- Macros
@@ -710,17 +705,17 @@ class YZIS_EXPORT YZView {
 		 * Ask the GUI to popup for a filename
 		 * @return whether a file name was successfully chosen
 		 */
-		virtual bool popupFileSaveAs() = 0;
+		virtual bool guiPopupFileSaveAs() = 0;
 
 		/**
 		 * Called whenever the filename is changed
 		 */
-		virtual void filenameChanged() = 0;
+		virtual void guiFilenameChanged() = 0;
 
 		/**
 		 * Notify GUIs that HL changed
 		 */
-		virtual void highlightingChanged() = 0;
+		virtual void guiHighlightingChanged() = 0;
 
 		virtual void emitSelectionChanged() {}
 
@@ -768,12 +763,16 @@ class YZIS_EXPORT YZView {
 		 */
 		YZSelection clipSelection( const YZSelection& sel ) const;
 
-	public slots :
+        /** Send a key sequence to libyzis (from gui to core).
+          *
+          * The method will call sendKey() repeatedly with
+          * keys one by one.
+          */
 		void sendMultipleKey( const QString& keys );
 
 	protected:
 
-		virtual void notifyContentChanged( const YZSelection& s ) = 0;
+		virtual void guiNotifyContentChanged( const YZSelection& s ) = 0;
 
 		void setupKeys();
 
@@ -784,11 +783,11 @@ class YZIS_EXPORT YZView {
 		/*
 		 * painting
 		 */
-		virtual void preparePaintEvent( int y_min, int y_max ) = 0;
-		virtual void endPaintEvent() = 0;
-		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg ) = 0;
-		virtual void drawClearToEOL( int x, int y, const QChar& clearChar ) = 0;
-		virtual void drawSetMaxLineNumber( int max ) = 0;
+		virtual void guiPreparePaintEvent( int y_min, int y_max ) = 0;
+		virtual void guiEndPaintEvent() = 0;
+		virtual void guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg ) = 0;
+		virtual void guiDrawClearToEOL( int x, int y, const QChar& clearChar ) = 0;
+		virtual void guiDrawSetMaxLineNumber( int max ) = 0;
 		/*!
 		 * This method is called by the backend to change the line
 		 * number displayed.
@@ -796,7 +795,7 @@ class YZIS_EXPORT YZView {
 		 * @arg n the actual number to display
 		 * @arg h ??? it seems to be some kind of boolean..
 		 */
-		virtual void drawSetLineNumber( int y, int n, int h ) = 0;
+		virtual void guiDrawSetLineNumber( int y, int n, int h ) = 0;
 
 		YZDrawBuffer m_drawBuffer;
 

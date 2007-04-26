@@ -216,7 +216,7 @@ void YZView::sendMultipleKey(const QString& _keys) {
 				i+=6;
 				continue;
 			} else {
-				setCommandLineText( getCommandLineText() + key.mid(0,1) );
+				guiSetCommandLineText( guiGetCommandLineText() + key.mid(0,1) );
 				i++;
 				continue;
 			}
@@ -390,7 +390,7 @@ void YZView::updateCursor() {
 	viewInformation.c1 = mainCursor->bufferX();
 	viewInformation.c2 = mainCursor->screenX(); // XXX pas du tout, c'est c1 mais en remplacant les tabs par 'tablenght' <-- avec le QRegexp() mais je l'ai perdu <--- English, please :)
 
-	syncViewInfo();
+	guiSyncViewInfo();
 }
 
 void YZView::centerViewHorizontally( int column) {
@@ -1495,7 +1495,7 @@ void YZView::printToFile( const QString& /*path*/ ) {
 			qtprinter.printToFile( path );
 			qtprinter.run( );
 		} else {
-			YZSession::self()->popupMessage( _("To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode") );
+			YZSession::self()->guiPopupMessage( _("To use the Qt printer, you need to have an X11 DISPLAY set and running, you should try pslib in console mode") );
 		}
 		return;
 	}
@@ -1674,7 +1674,7 @@ void YZView::commitPaintEvent() {
 			applyGoto( mainCursor );
 		}
 		if ( ! mPaintSelection->isEmpty() ) {
-			notifyContentChanged( clipSelection(*mPaintSelection) );
+			guiNotifyContentChanged( clipSelection(*mPaintSelection) );
 		}
 		abortPaintEvent();
 	}
@@ -1811,7 +1811,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 
 	bool number = getLocalBooleanOption( "number" );
 	if ( number ) {
-		drawSetMaxLineNumber( myBuffer()->lineCount() );
+		guiDrawSetMaxLineNumber( myBuffer()->lineCount() );
 	}
 	if ( m_paintAll ) {
 		/* entire screen has been updated already */
@@ -1834,7 +1834,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	int curX = 0;
 
 	/* inform the view we want to paint from line <fromY> to <toY> */
-	preparePaintEvent( curY - shiftY, toY - shiftY );
+	guiPreparePaintEvent( curY - shiftY, toY - shiftY );
 
 	int mapIdx = 0; /* first interval */
 
@@ -1887,7 +1887,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 		clearToEOL = drawEntireLine || drawIt && curY != tY;
 
 		if ( drawLine && number ) {
-			drawSetLineNumber( curY - shiftY, drawLineNumber(), lineHeight() - 1 );
+			guiDrawSetLineNumber( curY - shiftY, drawLineNumber(), lineHeight() - 1 );
 		}
 
 		if ( drawIt && curY > fY ) {
@@ -1925,7 +1925,7 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 			curX += drawLength();
 		}
 		if ( clearToEOL ) {
-			drawClearToEOL( curX - shiftX, curY - shiftY, drawLineFiller() );
+			guiDrawClearToEOL( curX - shiftX, curY - shiftY, drawLineFiller() );
 		}
 		curY += drawHeight();
 	}
@@ -1936,15 +1936,15 @@ void YZView::paintEvent( const YZSelection& drawMap ) {
 	m_drawBuffer.setColor( Qt::cyan );
 	for( ; curY <= toY; ++curY ) {
 		m_drawBuffer.newline( curY - shiftY );
-		if ( number ) drawSetLineNumber( curY - shiftY, 0, 0 );
+		if ( number ) guiDrawSetLineNumber( curY - shiftY, 0, 0 );
 		m_drawBuffer.push( "~" );
-		drawClearToEOL( 1, curY - shiftY, ' ' );
+		guiDrawClearToEOL( 1, curY - shiftY, ' ' );
 	}
 
 	m_drawBuffer.flush();
 
 //	dbg() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
 
-	endPaintEvent();
+	guiEndPaintEvent();
 }
 

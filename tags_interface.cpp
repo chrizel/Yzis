@@ -167,7 +167,7 @@ static bool jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 		// TODO: is this necessary?  It was in the old code, but it seems
 		// like it just gets in the way when using kyzis (nyzis may be another matter)
 		if ( buffer->fileIsModified() ) {
-			YZSession::self()->popupMessage( _("File has been modified") );
+			YZSession::self()->guiPopupMessage( _("File has been modified") );
 			return false;
 		}
 		
@@ -211,7 +211,7 @@ static void showNumMatches()
 	if ( max > 1 ) {
 		// TODO: is this localized properly?  I doubt it.
 		QString msg("Tag %1 of %2");
-		YZSession::self()->currentView()->displayInfo( msg.arg( cur ).arg( max ) );
+		YZSession::self()->currentView()->guiDisplayInfo( msg.arg( cur ).arg( max ) );
 	}
 }
 
@@ -226,7 +226,7 @@ void tagJumpTo ( const QString &word ) {
 	}
 
 	if ( !openTagFile() ) {
-		YZSession::self()->popupMessage( _("Unable to find tag file") );
+		YZSession::self()->guiPopupMessage( _("Unable to find tag file") );
 		return;
 	}
 	
@@ -266,7 +266,7 @@ void tagNext () {
 		showNumMatches();
 	}
 	else {
-		YZSession::self()->currentView()->displayInfo( _("Could not find next tag") );
+		YZSession::self()->currentView()->guiDisplayInfo( _("Could not find next tag") );
 	}
 }
 
@@ -279,7 +279,7 @@ void tagPrev () {
 
 		showNumMatches();
 	} else {
-		YZSession::self()->currentView()->displayInfo( _("Could not find previous tag") );
+		YZSession::self()->currentView()->guiDisplayInfo( _("Could not find previous tag") );
 	}
 }
 
@@ -287,7 +287,7 @@ void tagPop () {
 	YZTagStack &stack = YZSession::self()->getTagStack();
 	
 	if ( stack.empty() ) {
-		YZSession::self()->currentView()->displayInfo( _("At bottom of tag stack") );
+		YZSession::self()->currentView()->guiDisplayInfo( _("At bottom of tag stack") );
 		return;
 	}
 	

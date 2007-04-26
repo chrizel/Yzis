@@ -110,21 +110,21 @@ void YZModeEx::init() {
 	initPool();
 }
 void YZModeEx::enter( YZView* view ) {
-	YZSession::self()->setFocusCommandLine();
-	view->setCommandLineText( "" );
+	YZSession::self()->guiSetFocusCommandLine();
+	view->guiSetCommandLineText( "" );
 }
 void YZModeEx::leave( YZView* view ) {
-	view->setCommandLineText( "" );
-	YZSession::self()->setFocusMainWindow();
+	view->guiSetCommandLineText( "" );
+	YZSession::self()->guiSetFocusMainWindow();
 }
 cmd_state YZModeEx::execCommand( YZView* view, const QString& key ) {
 //	dbg() << "YZModeEx::execCommand " << key << endl;
 	cmd_state ret = CMD_OK;
 	if ( key == "<ENTER>" ) {
-		if( view->getCommandLineText().isEmpty()) {
+		if( view->guiGetCommandLineText().isEmpty()) {
 			view->modePool()->pop();
 		} else {
-			QString cmd = view->getCommandLineText();
+			QString cmd = view->guiGetCommandLineText();
 			mHistory->addEntry( cmd );
 			ret = execExCommand( view, cmd );
 			if ( ret != CMD_QUIT ) 
@@ -132,24 +132,24 @@ cmd_state YZModeEx::execCommand( YZView* view, const QString& key ) {
 		}
 	} else if ( key == "<DOWN>" ) {
 		mHistory->goForwardInTime();
-		view->setCommandLineText( mHistory->getEntry() );
+		view->guiSetCommandLineText( mHistory->getEntry() );
 	} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
 	} else if ( key == "<UP>" ) {
 		mHistory->goBackInTime();
-		view->setCommandLineText( mHistory->getEntry() );
+		view->guiSetCommandLineText( mHistory->getEntry() );
 	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
 		view->modePool()->pop( MODE_COMMAND );
 	} else if ( key == "<TAB>" ) {
 		//ignore for now
 	} else if ( key == "<BS>" ) {
-		QString back = view->getCommandLineText();
+		QString back = view->guiGetCommandLineText();
 		if ( back.isEmpty() ) {
 			view->modePool()->pop();
 			return ret;
 		}
-		view->setCommandLineText(back.remove(back.length() - 1, 1));
+		view->guiSetCommandLineText(back.remove(back.length() - 1, 1));
 	} else {
-		view->setCommandLineText( view->getCommandLineText() + key );
+		view->guiSetCommandLineText( view->guiGetCommandLineText() + key );
 	}
 	return ret;
 }
@@ -291,7 +291,7 @@ cmd_state YZModeEx::execExCommand( YZView* view, const QString& inputs ) {
 		view->gotoxy( 0, to );
 		view->moveToFirstNonBlankOfLine();
 	} else if ( !commandIsValid ) {
-		YZSession::self()->popupMessage( _("Not an editor command: ") + _input);
+		YZSession::self()->guiPopupMessage( _("Not an editor command: ") + _input);
 	}
 
 	return ret;
@@ -408,7 +408,7 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 			ret = CMD_QUIT;
 			YZSession::self()->exitRequest( );
 		} else {
-            args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
+            YZSession::self()->guiPopupMessage( _( "One file is modified! Save it first..." ) );
         }
 	} else {
 		//close current view, if it's the last one on a buffer , check it is saved or not
@@ -423,13 +423,13 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 					ret = CMD_OK;
 				}
 			}
-			else args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
+			else YZSession::self()->guiPopupMessage( _( "One file is modified! Save it first..." ) );
 		} else {
 			if ( force || !args.view->myBuffer()->fileIsModified() ) {
 				ret = CMD_QUIT;
 				YZSession::self()->deleteView(args.view);
 			}
-			else args.view->mySession()->popupMessage( _( "One file is modified! Save it first..." ) );
+			else YZSession::self()->guiPopupMessage( _( "One file is modified! Save it first..." ) );
 		}
 	}
 	return ret;
@@ -437,7 +437,7 @@ cmd_state YZModeEx::quit( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::bufferfirst( const YZExCommandArgs& args ) {
 	dbg() << "Switching buffers (actually sw views) ..." << endl;
-        YZView *v = args.view->mySession()->firstView();
+        YZView *v = YZSession::self()->firstView();
         if ( v )
                 YZSession::self()->setCurrentView(v);
         // else
@@ -513,7 +513,7 @@ cmd_state YZModeEx::edit ( const YZExCommandArgs& args ) {
 
 	// check if the file needs to be saved
 	if ( !force && args.view->myBuffer()->fileIsModified() ) {
-		args.view->mySession()->popupMessage( _( "No write since last change (add ! to override)" ) );
+		YZSession::self()->guiPopupMessage( _( "No write since last change (add ! to override)" ) );
 		return CMD_ERROR;
 	}
 
@@ -569,10 +569,10 @@ cmd_state YZModeEx::set ( const YZExCommandArgs& args ) {
 	
 	if ( ! matched ) {
 		ret = CMD_ERROR;
-		YZSession::self()->popupMessage( QString(_("Invalid option name : %1")).arg(args.arg.simplified()) );
+		YZSession::self()->guiPopupMessage( QString(_("Invalid option name : %1")).arg(args.arg.simplified()) );
 	} else if ( ! success ) {
 		ret = CMD_ERROR;
-		YZSession::self()->popupMessage( _("Bad value for option given") );
+		YZSession::self()->guiPopupMessage( _("Bad value for option given") );
 	}
 	return ret;
 }
@@ -628,7 +628,7 @@ cmd_state YZModeEx::substitute( const YZExCommandArgs& args ) {
 
 cmd_state YZModeEx::hardcopy( const YZExCommandArgs& args ) {
 	if ( args.arg.length() == 0 ) {
-		args.view->mySession()->popupMessage( _( "Please specify a filename" ) );
+		YZSession::self()->guiPopupMessage( _( "Please specify a filename" ) );
 		return CMD_ERROR;
 	}
 	QString path = args.arg;
@@ -653,7 +653,7 @@ cmd_state YZModeEx::source( const YZExCommandArgs& args ) {
 	QString filename = args.arg.left( args.arg.indexOf( " " ));
     dbg().sprintf( "source() filename=%s", qp(filename) );
 	if (YZLuaEngine::self()->source( filename ) != 0)
-		YZSession::self()->popupMessage(_("The file %1 could not be found" ).arg( filename ));
+		YZSession::self()->guiPopupMessage(_("The file %1 could not be found" ).arg( filename ));
     dbg() << "source() done" << endl;
 	return CMD_OK;
 }
@@ -869,7 +869,7 @@ cmd_state YZModeEx::registers( const YZExCommandArgs& ) {
 		}
 		infoMessage += regContents + '\n';
 	}
-	YZSession::self()->popupMessage( infoMessage );
+	YZSession::self()->guiPopupMessage( infoMessage );
 	return CMD_OK;
 }
 
@@ -961,7 +961,7 @@ cmd_state YZModeEx::highlight( const YZExCommandArgs& args ) {
 }
 
 cmd_state YZModeEx::split( const YZExCommandArgs& args ) {
-	YZSession::self()->splitHorizontally(args.view);
+	YZSession::self()->guiSplitHorizontally(args.view);
 	return CMD_OK;
 }
 
@@ -977,13 +977,13 @@ cmd_state YZModeEx::cd( const YZExCommandArgs& args ) {
 		tagReset();
 		return CMD_OK;
 	} else {
-		args.view->mySession()->popupMessage( _( "Cannot change to specified directory" ) );
+		YZSession::self()->guiPopupMessage( _( "Cannot change to specified directory" ) );
 		return CMD_ERROR;
 	}
 }
 
 cmd_state YZModeEx::pwd( const YZExCommandArgs& args ) {
-	args.view->mySession()->popupMessage( QDir::current().absolutePath().toUtf8().data() );
+	YZSession::self()->guiPopupMessage( QDir::current().absolutePath().toUtf8().data() );
 	return CMD_OK;
 }
 

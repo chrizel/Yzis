@@ -42,6 +42,9 @@ const QRgb  RGB_MASK    = 0x00ffffff;                // masks RGB values
 #define attribBlue mAttributesMap[0x0000ff]
 #define attribIntro mAttributesMap[0x00ff00]
 
+#define dbg() yzDebug("NYZView")
+#define err() yzError("NYZView")
+
 int NYZView::attributesMapInitialised = 0;
 QMap<QRgb,unsigned long int> NYZView::mAttributesMap;
 

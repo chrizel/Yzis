@@ -56,6 +56,9 @@ static void sigint(int sig);
 static void sigwinch(int sig);
 static void cleaning(void);
 
+#define dbg() yzDebug("NYzis.main")
+#define err() yzError("NYzyis.main")
+
 int
 main(int argc, char *argv[])
 {

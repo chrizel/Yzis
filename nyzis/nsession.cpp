@@ -27,6 +27,9 @@
 /* nyzis */
 #include "nsession.h"
 
+#define dbg() yzDebug("NYZSession")
+#define err() yzError("NYZSession")
+
 QMap<int,QString> NYZSession::keycodes; // map Ncurses to Qt codes
 
 void NYZSession::createInstance(const QString& name, const QString& keys)

@@ -32,22 +32,21 @@
 
 QMap<int,QString> NYZSession::keycodes; // map Ncurses to Qt codes
 
-void NYZSession::createInstance(const QString& name, const QString& keys)
+void NYZSession::createInstance()
 {
     dbg() << "createInstance()" << endl;
 	// such allocation (i.e. not "new NYZSession") will ensure that
 	// "instance" object will be properly and automatically deleted 
 	// when program exits
-	static NYZSession instance(name,keys);
+	static NYZSession instance;
 	setInstance(&instance);
 }
 
-NYZSession::NYZSession(const QString& session_name, const QString& keys)
-	: YZSession(session_name)
+NYZSession::NYZSession()
+	: YZSession()
 {
     dbg() << "NYZSession()" << endl;
 
-	m_initialCommand = keys;
 	/* init screen */
 
 	(void) initscr();	/* initialize the curses library */
@@ -185,14 +184,12 @@ void NYZSession::guiSetFocusMainWindow() {
 void NYZSession::guiSetFocusCommandLine() {
     dbg() << "guiSetFocusCommandLine()" << endl;
 	NYZView *yv = static_cast<NYZView*>( currentView() );
-	NYZView *yv = static_cast<NYZView*>( currentView() );
 	yv->setFocusCommandLine();
 }
 
 void NYZSession::guiChangeCurrentView ( YZView * view  )
 {
     dbg() << "changeCurrentView( " << view->toString() << ")" << endl;
-	NYZView *yv = static_cast<NYZView*>( currentView() );
 	NYZView *cur = static_cast<NYZView*>(currentView());
 	NYZView *v = static_cast<NYZView*>(view);
 	YZASSERT( view );
@@ -207,7 +204,7 @@ void NYZSession::guiChangeCurrentView ( YZView * view  )
 	v->refreshScreen();
 }
 
-YZView* NYZSession::doCreateView( YZBuffer* buffer )
+YZView* NYZSession::guiCreateView( YZBuffer* buffer )
 {
     dbg() << "doCreateView( " << buffer->toString() << ")" << endl;
 	YZASSERT( buffer );
@@ -216,7 +213,7 @@ YZView* NYZSession::doCreateView( YZBuffer* buffer )
 	return v;
 }
 
-YZBuffer *NYZSession::doCreateBuffer()
+YZBuffer *NYZSession::guiCreateBuffer()
 {
     dbg() << "doCreateBuffer()" << endl;
 	return new YZBuffer;
@@ -271,11 +268,13 @@ void NYZSession::guiPopupMessage( const QString &_message )
 }
 
 void NYZSession::guiDeleteBuffer(YZBuffer *b) {
+    dbg() << "guiDeleteBuffer( " << b << ")" << endl;
 	delete b;
 }
 
 void NYZSession::guiDeleteView( YZView *view )
 {
+    dbg() << "guiDeleteView( " << view << ")" << endl;
 	YZView *newview = currentView();
 	
 	rmBuffer( view->myBuffer() );
@@ -294,7 +293,7 @@ int NYZSession::guiPromptYesNoCancel( const QString& /*title*/, const QString& /
 	return 0;//return yes for now...
 }
 
-void NYZSession::splitHorizontally ( YZView* /*view*/ ) {
+void NYZSession::guiSplitHorizontally ( YZView* /*view*/ ) {
 	//TODO
 }
 

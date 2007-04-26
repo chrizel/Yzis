@@ -58,13 +58,10 @@ static void sigint(int sig);
 static void sigwinch(int sig);
 static void cleaning(void);
 
-#define dbg() yzDebug("NYzis.main")
-#define err() yzError("NYzyis.main")
-
 int
 main(int argc, char *argv[])
 {
-    YZSession::initDebug();
+    YZSession::initDebug( argc, argv );
 
     // ==============[ Create application ]=============
 #ifdef Q_WS_X11
@@ -92,7 +89,7 @@ main(int argc, char *argv[])
     // ==============[ create session ]=============
 	NYZSession::createInstance();
 	QSocketNotifier *socket = new QSocketNotifier(0,QSocketNotifier::Read);
-	QObject::connect( socket, SIGNAL( activated( int ) ),session, SLOT( processInput( int ) ) );
+	QObject::connect( socket, SIGNAL( activated( int ) ), static_cast<NYZSession*>(YZSession::self()), SLOT( processInput( int ) ) );
 
 	// Signal handling
 	(void) signal(SIGINT, sigint);      /* arrange interrupts to terminate */

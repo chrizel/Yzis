@@ -134,7 +134,7 @@ void NYZView::guiNotifyContentChanged( const YZSelection& s ) {
 }
 void NYZView::guiPreparePaintEvent(int, int) {
 }
-void NYZView::endPaintEvent() {
+void NYZView::guiEndPaintEvent() {
 }
 
 void NYZView::guiDrawCell( int x, int y, const YZDrawCell& cell, void* ) {

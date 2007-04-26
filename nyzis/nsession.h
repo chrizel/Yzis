@@ -40,7 +40,7 @@ public:
 	 *  Should be called from main() before any other yzis object
 	 *  construction.
 	 */
-	static void createInstance(const QString& name, const QString& keys);
+	static void createInstance();
 
 	/*
 	 * YZSession interface :
@@ -51,20 +51,17 @@ public:
 	virtual void guiSetFocusCommandLine();
 	virtual void guiSetFocusMainWindow();
 	virtual bool guiPromptYesNo( const QString& title, const QString& message );
-	virtual int guiPromptYesNoCancel( const QString& title, const QString& message );
-	virtual void splitHorizontally( YZView *view );
+	virtual int  guiPromptYesNoCancel( const QString& title, const QString& message );
+	virtual void guiSplitHorizontally( YZView *view );
 	virtual void guiSetClipboardText( const QString& text, Clipboard::Mode mode );
 	
 protected:
-	virtual YZView* doCreateView( YZBuffer* buffer );
-	virtual void doDeleteView( YZView *view );
-	virtual	YZBuffer *doCreateBuffer();
+	virtual YZView* guiCreateView( YZBuffer* buffer );
+	virtual void guiDeleteView( YZView *view );
+	virtual	YZBuffer *guiCreateBuffer();
 
 private:
-	/**
-	 * Constructor. Give a session name to identify/save/load sessions.
-	 */
-	NYZSession(const QString& session_name = "default_nyzis_session", const QString& keys = QString() );
+	NYZSession();
 	NYZSession(const NYZSession&); // disable copy
 	NYZSession& operator=(const NYZSession&); // disable copy
 	virtual ~NYZSession( );

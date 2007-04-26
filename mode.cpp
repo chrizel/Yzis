@@ -197,7 +197,7 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 //		dbg() << "input buffer was remapped to: " << mapped << endl;
 		mView->purgeInputBuffer();
 		mapMode = 0;
-		mView->sendMultipleKey( mapped );
+		YZSession::self()->sendMultipleKeys( mView, mapped );
 		return;
 	}
 	cmd_state state = stack.front()->execCommand( mView, mView->getInputBuffer() );
@@ -221,7 +221,7 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 	}
 }
 void YZModePool::replayKey() {
-	mView->sendKey( mKey, mModifiers );
+	YZSession::self()->sendKey( mView, mKey, mModifiers );
 }
 YZMode* YZModePool::current() const {
 	return stack.front();

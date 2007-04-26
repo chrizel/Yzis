@@ -422,7 +422,7 @@ int YZLuaFuncs::sendkeys( lua_State *L ) {
 	QString text = QString::fromUtf8( (  char * )lua_tostring (  L, 1 ) );
 	lua_pop(L,1);
 
-	YZSession::self()->sendMultipleKeys(text);
+	YZSession::self()->sendMultipleKeys(YZSession::self()->currentView(), text);
 
 	// nothing to return
 	YZASSERT_EQUALS( lua_gettop(L),  0  );

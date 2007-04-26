@@ -132,7 +132,7 @@ static void doJumpToTag ( const YZTagStackItem &entry ) {
 	}
 
 	pattern = pattern.mid( 2, pattern.length() - 4 );
-	yzDebug() << "mid = " << pattern << endl;
+	yzDebug("doJumpToTag") << "mid = " << pattern << endl;
 	pattern = pattern.replace("\\", "");
 	pattern = pattern.replace("(", "\\(");
 	pattern = pattern.replace(")", "\\)");
@@ -140,7 +140,7 @@ static void doJumpToTag ( const YZTagStackItem &entry ) {
 	pattern = pattern.replace("}", "\\}");
 	pattern = pattern.replace("*", "\\*");
 	pattern = pattern.replace("/", "\\/");
-	yzDebug() << "After escaping = " << pattern << endl;
+	yzDebug("doJumpToTag") << "After escaping = " << pattern << endl;
 	QRegExp rx(pattern);
 	
 	int lineCount = static_cast<int>( b->lineCount() );

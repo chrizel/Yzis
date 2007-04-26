@@ -32,6 +32,9 @@
 #include "view.h"
 #include "buffer.h"
 
+#define dbg()    yzDebug("YZInternalOptionPool")
+#define err()    yzError("YZInternalOptionPool")
+
 
 using namespace yzis;
 

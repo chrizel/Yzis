@@ -31,6 +31,9 @@
 #include "selection.h"
 #include "session.h"
 
+#define dbg()    yzDebug("YZModeSearch")
+#define err()    yzError("YZModeSearch")
+
 using namespace yzis;
 
 YZModeSearch::YZModeSearch() : YZMode() {

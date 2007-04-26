@@ -31,6 +31,9 @@
 #include "view.h"
 #include "viewcursor.h"
 
+#define dbg()    yzDebug("YZModeVisual")
+#define err()    yzError("YZModeVisual")
+
 using namespace yzis;
 
 YZModeVisual::YZModeVisual() : YZModeCommand() {
@@ -321,7 +324,7 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 		toLine = fromLine;
 		fromLine = tmp;
 	}
-	yzDebug() << "visual block : from " << fromCol << "," << fromLine << " to " << toCol << "," << toLine << endl;
+	dbg() << "visual block : from " << fromCol << "," << fromLine << " to " << toCol << "," << toLine << endl;
 	YZInterval sI, bI;
 	for ( int i = fromLine; i <= toLine; i++ ) {
 
@@ -335,7 +338,7 @@ void YZModeVisualBlock::cursorMoved( YZView* mView ) {
 		bI.setTo( YZBound(cur.buffer()) );
 
 		visual->addInterval( bI, sI );
-//		yzDebug() << "visual block>" << bI << ", " << sI << endl;
+//		dbg() << "visual block>" << bI << ", " << sI << endl;
 	}
 	YZSelection diff = YZSelection::diff( old, visual->screen() );
 	mView->sendPaintEvent( diff.map(), false );

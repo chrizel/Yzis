@@ -419,7 +419,7 @@ YzisHlItem::YzisHlItem(int attribute, int context,signed char regionId,signed ch
 
 YzisHlItem::~YzisHlItem()
 {
-  //yzDebug("HL")<<"In hlItem::~YzisHlItem()"<<endl;
+  //dbg()<<"In hlItem::~YzisHlItem()"<<endl;
   for (int i=0; i < subItems.size(); i++)
     delete subItems[i];
 }
@@ -1128,6 +1128,10 @@ YzisHlData::YzisHlData(const QString &wildcards, const QString &mimetypes, const
 }
 
 //BEGIN YzisHlContext
+
+#define dbg()    yzDebug("YzisHlContext")
+#define err()    yzError("YzisHlContext")
+
 YzisHlContext::YzisHlContext (const QString &_hlId, int attribute, int lineEndContext, int _lineBeginContext, bool _fallthrough, 
 	int _fallthroughContext, bool _dynamic, bool _noIndentationBasedFolding)
 {
@@ -1140,7 +1144,7 @@ YzisHlContext::YzisHlContext (const QString &_hlId, int attribute, int lineEndCo
   dynamic = _dynamic;
   dynamicChild = false;
   noIndentationBasedFolding=_noIndentationBasedFolding;
-  if ( _noIndentationBasedFolding ) yzDebug()<<QString( "**********************_noIndentationBasedFolding is TRUE*****************" )<<endl;
+  if ( _noIndentationBasedFolding ) dbg()<<QString( "**********************_noIndentationBasedFolding is TRUE*****************" )<<endl;
 }
 
 YzisHlContext *YzisHlContext::clone(const QStringList *args)
@@ -1173,6 +1177,12 @@ YzisHlContext::~YzisHlContext()
 //END
 
 //BEGIN YzisHighlighting
+
+#undef dbg
+#undef err
+#define dbg()    yzDebug("YzisHighlighting")
+#define err()    yzError("YzisHighlighting")
+
 YzisHighlighting::YzisHighlighting(const YzisSyntaxModeListItem *def) : refCount(0)
 {
   errorsAndWarnings = "";
@@ -1231,7 +1241,7 @@ void YzisHighlighting::cleanup()
 
 void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QVector<short>* ctxs, int *prevLine)
 {
-  //yzDebug("HL")<<QString("Entering generateContextStack with %1").arg(ctx)<<endl;
+  //dbg()<<QString("Entering generateContextStack with %1").arg(ctx)<<endl;
   while (true)
   {
     if (ctx >= 0)
@@ -1301,7 +1311,7 @@ int YzisHighlighting::makeDynamicContext(YzisHlContext *model, const QStringList
     value = dynamicCtxs[key];
   else
   {
-    yzDebug () << "new stuff: " << startctx << endl;
+    dbg () << "new stuff: " << startctx << endl;
 
     YzisHlContext *newctx = model->clone(args);
 
@@ -1376,14 +1386,14 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
     // There does an old context stack exist -> find the context at the line start
     ctxNum = ctx[ctx.size()-1]; //context ID of the last character in the previous line
 
-    //yzDebug("HL") << "\t\tctxNum = " << ctxNum << " contextList[ctxNum] = " << contextList[ctxNum] << endl; // ellis
+    //dbg() << "\t\tctxNum = " << ctxNum << " contextList[ctxNum] = " << contextList[ctxNum] << endl; // ellis
 
-    //if (lineContinue)   yzDebug("HL")<<QString("The old context should be %1").arg((int)ctxNum)<<endl;
+    //if (lineContinue)   dbg()<<QString("The old context should be %1").arg((int)ctxNum)<<endl;
 
     if (!(context = contextNum(ctxNum)))
       context = contextNum(0);
 
-    //yzDebug("HL")<<"test1-2-1-text2"<<endl;
+    //dbg()<<"test1-2-1-text2"<<endl;
 
     previousLine=ctx.size()-1; //position of the last context ID of th previous line within the stack
 
@@ -1402,7 +1412,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
 
     //kdDebug(13010)<<"test1-2-1-text4"<<endl;
 
-    //if (lineContinue)   yzDebug("HL")<<QString("The new context is %1").arg((int)ctxNum)<<endl;
+    //if (lineContinue)   dbg()<<QString("The new context is %1").arg((int)ctxNum)<<endl;
   }
 
   // text, for programming convenience :)
@@ -1900,7 +1910,7 @@ int  YzisHighlighting::lookupAttrName(const QString& name, YzisHlItemDataList &i
     if (iDl.at(i)->name == buildPrefix+name)
       return i;
 
-  yzDebug("HL")<<"Couldn't resolve itemDataName"<<endl;
+  dbg()<<"Couldn't resolve itemDataName"<<endl;
   return 0;
 }
 
@@ -1948,7 +1958,7 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data,
 
     regionId++;
 
-    yzDebug () << "########### BEG REG: "  << beginRegionStr << " NUM: " << regionId << endl;
+    dbg () << "########### BEG REG: "  << beginRegionStr << " NUM: " << regionId << endl;
   }
 
   if (!endRegionStr.isEmpty())
@@ -1963,7 +1973,7 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data,
 
     regionId2 = -regionId2 - 1;
 
-    yzDebug () << "########### END REG: "  << endRegionStr << " NUM: " << regionId2 << endl;
+    dbg () << "########### END REG: "  << endRegionStr << " NUM: " << regionId2 << endl;
   }
 
   int attr = 0;
@@ -2183,14 +2193,14 @@ void YzisHighlighting::readGlobalKeywordConfig()
 {
   deliminator = stdDeliminator;
   // Tell the syntax document class which file we want to parse
-  yzDebug("HL")<<"readGlobalKeywordConfig:BEGIN"<<endl;
+  dbg()<<"readGlobalKeywordConfig:BEGIN"<<endl;
 
   YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
   YzisSyntaxContextData *data = YzisHlManager::self()->syntax->getConfig("general","keywords");
 
   if (data)
   {
-    yzDebug("HL")<<"Found global keyword config"<<endl;
+    dbg()<<"Found global keyword config"<<endl;
 
     if (YzisHlManager::self()->syntax->groupItemData(data,QString("casesensitive"))!="0")
       casesensitive=true;
@@ -2200,7 +2210,7 @@ void YzisHighlighting::readGlobalKeywordConfig()
     //get the weak deliminators
     weakDeliminator=(YzisHlManager::self()->syntax->groupItemData(data,QString("weakDeliminator")));
 
-    yzDebug("HL")<<"weak delimiters are: "<<weakDeliminator<<endl;
+    dbg()<<"weak delimiters are: "<<weakDeliminator<<endl;
 
     // remove any weakDelimitars (if any) from the default list and store this list.
     for (int s=0; s < weakDeliminator.length(); s++)
@@ -2225,9 +2235,9 @@ void YzisHighlighting::readGlobalKeywordConfig()
     weakDeliminator=QString("");
   }
 
-  yzDebug("HL")<<"readGlobalKeywordConfig:END"<<endl;
+  dbg()<<"readGlobalKeywordConfig:END"<<endl;
 
-  yzDebug("HL")<<"delimiterCharacters are: "<<deliminator<<endl;
+  dbg()<<"delimiterCharacters are: "<<deliminator<<endl;
 
   m_additionalData[buildIdentifier]->deliminator = deliminator;
 }
@@ -2245,7 +2255,7 @@ void YzisHighlighting::readGlobalKeywordConfig()
 void YzisHighlighting::readWordWrapConfig()
 {
   // Tell the syntax document class which file we want to parse
-  yzDebug()<<"readWordWrapConfig:BEGIN"<<endl;
+  dbg()<<"readWordWrapConfig:BEGIN"<<endl;
 
   YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
   YzisSyntaxContextData *data = YzisHlManager::self()->syntax->getConfig("general","keywords");
@@ -2253,18 +2263,18 @@ void YzisHighlighting::readWordWrapConfig()
   QString wordWrapDeliminator = stdDeliminator;
   if (data)
   {
-    yzDebug()<<"Found global keyword config"<<endl;
+    dbg()<<"Found global keyword config"<<endl;
 
     wordWrapDeliminator = (YzisHlManager::self()->syntax->groupItemData(data,QString("wordWrapDeliminator")));
     //when no wordWrapDeliminator is defined use the deliminator list
     if ( wordWrapDeliminator.length() == 0 ) wordWrapDeliminator = deliminator;
 
-    yzDebug() << "word wrap deliminators are " << wordWrapDeliminator << endl;
+    dbg() << "word wrap deliminators are " << wordWrapDeliminator << endl;
 
     YzisHlManager::self()->syntax->freeGroupInfo(data);
   }
 
-  yzDebug()<<"readWordWrapConfig:END"<<endl;
+  dbg()<<"readWordWrapConfig:END"<<endl;
 
   m_additionalData[buildIdentifier]->wordWrapDeliminator = wordWrapDeliminator;
 }
@@ -2287,14 +2297,14 @@ void YzisHighlighting::readIndentationConfig()
 void YzisHighlighting::readFoldingConfig()
 {
   // Tell the syntax document class which file we want to parse
-  yzDebug("HL")<<"readfoldignConfig:BEGIN"<<endl;
+  dbg()<<"readfoldignConfig:BEGIN"<<endl;
 
   YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
   YzisSyntaxContextData *data = YzisHlManager::self()->syntax->getConfig("general","folding");
 
   if (data)
   {
-    yzDebug("HL")<<"Found global keyword config"<<endl;
+    dbg()<<"Found global keyword config"<<endl;
 
     if (YzisHlManager::self()->syntax->groupItemData(data,QString("indentationsensitive"))!="1")
       m_foldingIndentationSensitive=false;
@@ -2309,14 +2319,14 @@ void YzisHighlighting::readFoldingConfig()
     m_foldingIndentationSensitive = false;
   }
 
-  yzDebug("HL")<<"readfoldingConfig:END"<<endl;
+  dbg()<<"readfoldingConfig:END"<<endl;
 
-  yzDebug("HL")<<"############################ use indent for fold are: "<<m_foldingIndentationSensitive<<endl;
+  dbg()<<"############################ use indent for fold are: "<<m_foldingIndentationSensitive<<endl;
 }
 
 void  YzisHighlighting::createContextNameList(QStringList *ContextNameList,int ctx0)
 {
-  yzDebug("HL")<<"creatingContextNameList:BEGIN"<<endl;
+  dbg()<<"creatingContextNameList:BEGIN"<<endl;
 
   if (ctx0 == 0)
       ContextNameList->clear();
@@ -2343,7 +2353,7 @@ void  YzisHighlighting::createContextNameList(QStringList *ContextNameList,int c
      }
      YzisHlManager::self()->syntax->freeGroupInfo(data);
   }
-  yzDebug("HL")<<"creatingContextNameList:END"<<endl;
+  dbg()<<"creatingContextNameList:END"<<endl;
 
 }
 
@@ -2360,7 +2370,7 @@ int YzisHighlighting::getIdFromString(QStringList *ContextNameList, QString tmpL
     for(;tmpLineEndContext.startsWith("#pop");context--)
     {
       tmpLineEndContext.remove(0,4);
-//      yzDebug("HL")<<"#pop found"<<endl;
+//      dbg()<<"#pop found"<<endl;
     }
   }
 
@@ -2414,8 +2424,8 @@ void YzisHighlighting::makeContextList()
   building=true;
   do
   {
-    yzDebug()<<"**************** Outter loop in make ContextList"<<endl;
-    yzDebug()<<"**************** Hl List count:"<<embeddedHls.count()<<endl;
+    dbg()<<"**************** Outter loop in make ContextList"<<endl;
+    dbg()<<"**************** Hl List count:"<<embeddedHls.count()<<endl;
     something_changed=false; //assume all "embedded" hls have already been loaded
     
     YzisEmbeddedHlInfos::const_iterator it=embeddedHls.begin(), end=embeddedHls.end();
@@ -2423,22 +2433,22 @@ void YzisHighlighting::makeContextList()
     {
       if (!it.value().loaded)  // we found one, we still have to load
       {
-        yzDebug()<<"**************** Inner loop in make ContextList"<<endl;
+        dbg()<<"**************** Inner loop in make ContextList"<<endl;
         QString identifierToUse;
-        yzDebug()<<"Trying to open highlighting definition file: "<< it.key()<<endl;
+        dbg()<<"Trying to open highlighting definition file: "<< it.key()<<endl;
         if (iName==it.key())
           identifierToUse=identifier;  // the own identifier is known
         else
           identifierToUse=YzisHlManager::self()->identifierForName(it.key());
 
-    	yzDebug()<<"Location is:"<< identifierToUse<<endl;
+    	dbg()<<"Location is:"<< identifierToUse<<endl;
 
         buildPrefix=it.key()+':';  // attribute names get prefixed by the names
                                    // of the highlighting definitions they belong to
 
-    	if (identifierToUse.isEmpty() ) yzDebug()<<"OHOH, unknown highlighting description referenced"<<endl;
+    	if (identifierToUse.isEmpty() ) dbg()<<"OHOH, unknown highlighting description referenced"<<endl;
 
-        yzDebug()<<"setting ("<<it.key()<<") to loaded"<<endl;
+        dbg()<<"setting ("<<it.key()<<") to loaded"<<endl;
 
         //mark hl as loaded
         it=embeddedHls.insert(it.key(),YzisEmbeddedHlInfo(true,startctx));
@@ -2459,7 +2469,7 @@ void YzisHighlighting::makeContextList()
 
   // at this point all needed highlighing (sub)definitions are loaded. It's time to resolve cross file
   //   references (if there are some
-  yzDebug()<<"Unresolved contexts, which need attention: "<<unresolvedContextReferences.count()<<endl;
+  dbg()<<"Unresolved contexts, which need attention: "<<unresolvedContextReferences.count()<<endl;
 
   //optimize this a littlebit
   for (YzisHlUnresolvedCtxRefs::iterator unresIt=unresolvedContextReferences.begin();
@@ -2485,7 +2495,7 @@ void YzisHighlighting::makeContextList()
 
   // if there have been errors show them
   if (!errorsAndWarnings.isEmpty())
-  yzDebug() << QString("There were warning(s) and/or error(s) while parsing the syntax highlighting configuration.") << errorsAndWarnings << endl;
+  dbg() << QString("There were warning(s) and/or error(s) while parsing the syntax highlighting configuration.") << errorsAndWarnings << endl;
 
   // we have finished
   building=false;
@@ -2494,7 +2504,7 @@ void YzisHighlighting::makeContextList()
 void YzisHighlighting::handleYzisHlIncludeRules()
 {
   // if there are noe include rules to take care of, just return
-  yzDebug("HL")<<"YzisHlIncludeRules, which need attention: " <<includeRules.count()<<endl;
+  dbg()<<"YzisHlIncludeRules, which need attention: " <<includeRules.count()<<endl;
   if (includeRules.isEmpty()) return;
 
   buildPrefix="";
@@ -2526,7 +2536,7 @@ void YzisHighlighting::handleYzisHlIncludeRules()
       {
         // resolve name to id
         (*it)->incCtx=getIdFromString(&ContextNameList,(*it)->incCtxN,dummy);
-        yzDebug("HL")<<"Resolved "<<(*it)->incCtxN<< " to "<<(*it)->incCtx<<" for include rule"<<endl;
+        dbg()<<"Resolved "<<(*it)->incCtxN<< " to "<<(*it)->incCtx<<" for include rule"<<endl;
         // It would be good to look here somehow, if the result is valid
       }
     }
@@ -2624,7 +2634,7 @@ void YzisHighlighting::handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::ite
  */
 int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 {
-  yzDebug()<<"=== Adding hl with ident '"<<ident<<"'"<<endl;
+  dbg()<<"=== Adding hl with ident '"<<ident<<"'"<<endl;
 
   buildIdentifier=ident;
   YzisSyntaxContextData *data, *datasub;
@@ -2636,7 +2646,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   if (!YzisHlManager::self()->syntax->setIdentifier(ident))
   {
     noHl=true;
-    yzDebug() << "Since there has been an error parsing the highlighting description, this highlighting will be disabled" << endl;
+    dbg() << "Since there has been an error parsing the highlighting description, this highlighting will be disabled" << endl;
     return 0;
   }
 
@@ -2668,7 +2678,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   createContextNameList(&ContextNameList,ctx0);
 
 
-  yzDebug()<<"Parsing Context structure"<<endl;
+  dbg()<<"Parsing Context structure"<<endl;
   //start the real work
   data=YzisHlManager::self()->syntax->getGroupInfo("highlighting","context");
   uint i=buildContext0Offset;
@@ -2676,7 +2686,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   {
     while (YzisHlManager::self()->syntax->nextGroup(data))
     {
-      yzDebug()<<"Found a context in file, building structure now"<<endl;
+      dbg()<<"Found a context in file, building structure now"<<endl;
       //BEGIN - Translation of the attribute parameter
       QString tmpAttr=YzisHlManager::self()->syntax->groupData(data,QString("attribute")).simplified();
       int attr;
@@ -2711,7 +2721,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           ftc=getIdFromString(&ContextNameList, tmpFtc,dummy);
           if (ftc == -1) ftc =0;
 
-          yzDebug()<<"Setting fall through context (context "<<i<<"): "<<ftc<<endl;
+          dbg()<<"Setting fall through context (context "<<i<<"): "<<ftc<<endl;
         }
       }
       //END falltrhough props
@@ -2731,7 +2741,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 
       m_contexts.push_back (ctxNew);
 
-      yzDebug () << "INDEX: " << i << " LENGTH " << m_contexts.size()-1 << endl;
+      dbg () << "INDEX: " << i << " LENGTH " << m_contexts.size()-1 << endl;
 
       //Let's create all items for the context
       while (YzisHlManager::self()->syntax->nextItem(data))
@@ -2759,7 +2769,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           else
           {
             //a cross highlighting reference
-            yzDebug()<<"Cross highlight reference <IncludeRules>"<<endl;
+            dbg()<<"Cross highlight reference <IncludeRules>"<<endl;
             YzisHlIncludeRule *ir=new YzisHlIncludeRule(i,m_contexts[i]->items.count(),"",includeAttrib);
 
             //use the same way to determine cross hl file references as other items do
@@ -2833,11 +2843,11 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
     if (-1==commentregionid) {
       errorsAndWarnings+=QString("<B>%1</B>: Specified multiline comment region (%2) could not be resolved<BR>").arg(buildIdentifier).arg(m_additionalData[ ident ]->multiLineRegion);
       m_additionalData[ ident ]->multiLineRegion = QString();
-      yzDebug()<<"ERROR comment region attribute could not be resolved"<<endl;
+      dbg()<<"ERROR comment region attribute could not be resolved"<<endl;
 
     } else {
       m_additionalData[ ident ]->multiLineRegion=QString::number(commentregionid+1);
-      yzDebug()<<"comment region resolved to:"<<m_additionalData[ ident ]->multiLineRegion<<endl;
+      dbg()<<"comment region resolved to:"<<m_additionalData[ ident ]->multiLineRegion<<endl;
     }
   }
   //END Resolve multiline region if possible
@@ -2932,6 +2942,12 @@ void YzisHighlighting::getYzisHlItemDataListCopy (uint schema, YzisHlItemDataLis
 
 //END
 //BEGIN YzisHlManager
+
+#undef dbg
+#undef err
+#define err()    yzError("YzisHlManager")
+#define dbg()    yzDebug("YzisHlManager")
+
 YzisHlManager::YzisHlManager()
   : commonSuffixes (QString(".orig;.new;~;.bak;.BAK").split(";"))
   , syntax (new YzisSyntaxDocument())
@@ -2987,7 +3003,7 @@ YzisHlManager::YzisHlManager()
     QString p = PREFIX;
     p+= "/share/yzis/magic";
     if (magic_load( magicSet, p.toLatin1()  ) == -1) {
-      yzDebug() << "Magic error " << magic_error( magicSet ) << endl;
+      dbg() << "Magic error " << magic_error( magicSet ) << endl;
       magic_close(magicSet);
       magicSet = NULL;
     }
@@ -3075,7 +3091,7 @@ int YzisHlManager::detectHighlighting (YZBuffer *doc)
 
 int YzisHlManager::wildcardFind(const QString &fileName)
 {
-  yzDebug() << "WidcardFind " << fileName << endl;
+  dbg() << "WidcardFind " << fileName << endl;
   int result = -1;
   if ((result = realWildcardFind(fileName)) != -1)
     return result;
@@ -3099,7 +3115,7 @@ int YzisHlManager::wildcardFind(const QString &fileName)
 
 int YzisHlManager::realWildcardFind(const QString &fileName)
 {
-  yzDebug() << "realWidcardFind " << fileName << endl;
+  dbg() << "realWidcardFind " << fileName << endl;
   static QRegExp sep("\\s*;\\s*");
 
   QList<YzisHighlighting*> highlights;
@@ -3148,7 +3164,7 @@ QString YzisHlManager::findByContent( const QString& contents ) {
     	return QString();
     const char* magic_result = magic_file( magicSet, contents.toUtf8() );
     if ( magic_result ) {
-    	yzDebug() << "Magic for " << contents << " results " << magic_result << endl;
+    	dbg() << "Magic for " << contents << " results " << magic_result << endl;
     	QString mime = QString( magic_result );
     	mime = mime.mid( 0, mime.indexOf( ';' ) );
     	return mime;

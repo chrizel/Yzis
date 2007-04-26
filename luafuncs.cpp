@@ -393,7 +393,7 @@ int YZLuaFuncs::color(lua_State *L) {
 	QByteArray c = cView->drawColor(  sCol, sLine ).name().toUtf8();
 	const char *color = c.data();
 
-//	yzDebug() << "Asked color: " << color.latin1() << endl;
+//	dbg() << "Asked color: " << color.latin1() << endl;
 	lua_pushstring( L, color );
 	YZASSERT_EQUALS( lua_gettop(L),  1  );
 	return  1 ; // one result
@@ -451,7 +451,7 @@ int YZLuaFuncs::yzdebug( lua_State *L ) {
 	QString text = QString::fromUtf8( (  char * )lua_tostring (  L, 1 ) );
 	lua_pop(L,1);
 
-	yzDebug("Lua.exec") << text << endl;	
+	dbg() << text << endl;	
 
 	YZASSERT_EQUALS( lua_gettop(L),  0  );
 	return  0 ;

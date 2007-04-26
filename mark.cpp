@@ -21,6 +21,8 @@
 #include "mark.h"
 #include "cursor.h"
 
+#define dbg()    yzDebug("YZViewMark")
+#define err()    yzError("YZViewMark")
 
 void YZDocMark::add( uint line, uint mark )
 {

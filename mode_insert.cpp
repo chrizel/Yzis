@@ -29,6 +29,9 @@
 #include "mode_complete.h"
 #include "view.h"
 
+#define dbg()    yzDebug("YZModeInsert")
+#define err()    yzError("YZModeInsert")
+
 using namespace yzis;
 
 YZModeInsert::YZModeInsert() : YZMode() {

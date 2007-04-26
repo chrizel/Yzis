@@ -41,6 +41,9 @@ static YZYzisinfoJumpListRecord getRecord()
 	return YZYzisinfoJumpListRecord( buffer->fileName(), cursor.x(), cursor.y() );
 }
 
+#define dbg()    yzDebug("YZTagStack")
+#define err()    yzError("YZTagStack")
+
 YZTagStack::YZTagStack()
 {
 }

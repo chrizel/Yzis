@@ -19,6 +19,9 @@
 
 #include "font.h"
 
+#define dbg()    yzDebug("YZFont")
+#define err()    yzError("YZFont")
+
 YZFont::YZFont() {
 }
 YZFont::~YZFont() {

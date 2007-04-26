@@ -27,6 +27,9 @@
  * YZBound
  */
 
+#define dbg()    yzDebug("YZBound")
+#define err()    yzError("YZBound")
+
 void YZBound::setPos( const YZCursor pos ) {
 	mPos = pos;
 }
@@ -207,7 +210,7 @@ void YZSelection::delInterval( const YZInterval& i ) {
 	unsigned int idFrom = locatePosition( i.from(), &containsFrom );
 	unsigned int idTo = locatePosition( i.to(), &containsTo );
 	if ( idFrom == idTo && !containsFrom && !containsTo ) return;
-//	yzDebug() << "delInterval: from=" << idFrom << "," << containsFrom << "; to=" << idTo << "," << containsTo << endl;
+//	dbg() << "delInterval: from=" << idFrom << "," << containsFrom << "; to=" << idTo << "," << containsTo << endl;
 
 	if ( containsFrom && i.from() <= mMap[ idFrom ].from() ) {
 		containsFrom = false;
@@ -243,7 +246,7 @@ void YZSelection::removeInterval( unsigned int pos, unsigned int len ) {
 		for ( i = pos; i < size - len; ++i )
 			mMap[ i ] = mMap[ i + len ];
 	else // should not happen
-		yzDebug() << "WARNING: YZSelection::removeInterval remove more than size (" << len << " > " << size << ")" << endl;
+		dbg() << "WARNING: YZSelection::removeInterval remove more than size (" << len << " > " << size << ")" << endl;
 	for ( ; i < size; i++ ) {
 		mMap.remove( i );
 	}
@@ -273,7 +276,7 @@ void YZSelection::clear() {
 
 YZSelection YZSelection::clip( const YZInterval& bound ) const {
 
-//	yzDebug() << "YZSelection::clip " << bound << endl << "*** INPUT ***" << endl << *this << "*** END INPUT ***" << endl;
+//	dbg() << "YZSelection::clip " << bound << endl << "*** INPUT ***" << endl << *this << "*** END INPUT ***" << endl;
 
 	YZBound limitFrom( bound.fromPos(), !bound.from().opened() );
 	YZBound limitTo( bound.toPos(), !bound.to().opened() );
@@ -287,7 +290,7 @@ YZSelection YZSelection::clip( const YZInterval& bound ) const {
 	if ( !tmp.isEmpty() && firstBound < limitFrom )
 		tmp.delInterval( YZInterval( firstBound, limitFrom ) );
 
-//	yzDebug() << "*** TMP ****" << endl << tmp << "*** END TMP ***" << endl;
+//	dbg() << "*** TMP ****" << endl << tmp << "*** END TMP ***" << endl;
 
 	YZSelection ret( mName );
 
@@ -318,7 +321,7 @@ YZSelection YZSelection::clip( const YZInterval& bound ) const {
 		}
 	}
 
-//	yzDebug() << "#### result #####" << endl << ret << "#### end result ####" << endl;
+//	dbg() << "#### result #####" << endl << ret << "#### end result ####" << endl;
 
 	return ret;
 }
@@ -386,7 +389,7 @@ YZSelection YZSelection::diff( const YZSelection& _m1, const YZSelection& _m2 ) 
 		m2 = _m1;
 	}
 
-//	yzDebug() << "YZSelection::diff: " << endl << _m1 << endl << _m2 << endl << " ====> " << ret << endl;
+//	dbg() << "YZSelection::diff: " << endl << _m1 << endl << _m2 << endl << " ====> " << ret << endl;
 
 	return ret;
 }

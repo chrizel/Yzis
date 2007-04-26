@@ -34,6 +34,9 @@ extern "C" {
 #include <QPaintDevice>
 #include <QPainter>
 
+#define dbg()    yzDebug("YZPrinter")
+#define err()    yzError("YZPrinter")
+
 YZPrinter::YZPrinter( YZView *view ) /*: QPrinter(QPrinter::PrinterResolution) */{
 	PS_mp_init();
 	PS_boot();
@@ -72,7 +75,7 @@ void YZPrinter::doPrint( ) {
 	PS_set_info(doc, "BoundingBox", "0 0 596 792");
 	int font;
 	font=PS_findfont(doc, "Fixed", "", 0);
-	yzDebug() << "findfont returned " << font << endl;
+	dbg() << "findfont returned " << font << endl;
 	if ( !font ) return; //no font => abort
 
 	QPrinter lpr(QPrinter::PrinterResolution);

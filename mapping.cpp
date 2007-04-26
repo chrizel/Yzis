@@ -23,6 +23,9 @@
 #include "luaengine.h"
 #include "session.h"
 
+#define dbg()    yzDebug("YZMapping")
+#define err()    yzError("YZMapping")
+
 using namespace yzis;
 
 YZMapping *YZMapping::me = 0L;
@@ -64,7 +67,7 @@ bool YZMapping::applyMappings( QString& text, QMap<QString,QString>& mappings ) 
 }
 
 bool YZMapping::applyMappings( QString& text, int modes, bool *mapped ) {
-	// yzDebug() << "Text1: " << text << endl;
+	// dbg() << "Text1: " << text << endl;
 	bool pendingMapp = false;
 	QString old = text;
 	if (mNoremap) {
@@ -81,7 +84,7 @@ bool YZMapping::applyMappings( QString& text, int modes, bool *mapped ) {
 		pendingMapp = pendingMapp || applyMappings(text, mInsertMappings);
 	if ( modes & cmdline )
 		pendingMapp = pendingMapp || applyMappings(text, mCmdLineMappings);
-//	yzDebug() << "Text2: " << text << endl << "Pending mapping: " << pendingMapp << endl;
+//	dbg() << "Text2: " << text << endl << "Pending mapping : " << pendingMapp << endl;
 	*mapped = old != text;
 	return pendingMapp;
 }

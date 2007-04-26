@@ -19,6 +19,9 @@
  
 #include "option.h"
 
+#define dbg()    yzDebug("YZOptionValue")
+#define err()    yzError("YZOptionValue")
+
 using namespace yzis;
 
 YZOptionValue::YZOptionValue( YZOption* o ) {

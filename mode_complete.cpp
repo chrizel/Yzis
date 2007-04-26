@@ -34,6 +34,9 @@
  * YZModeCompletion
  */
 
+#define dbg()    yzDebug("YZModeCompletion")
+#define err()    yzError("YZModeCompletion")
+
 using namespace yzis;
 
 YZModeCompletion::YZModeCompletion() : YZMode() {
@@ -57,20 +60,20 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	
 	//we cant complete from col 0, neither if the line is empty, neither if the word does not end with a letter or number ;)
 	if (cur.x() == 0 || line.isEmpty() || !QChar(line.at(cur.x()-1)).isLetterOrNumber()) {
-		yzDebug() << "Abort completion" << endl;
+		dbg() << "Abort completion" << endl;
 		view->modePool()->pop();
 		return false;
 	}
 	
 	mCompletionStart = YZSession::self()->getCommandPool()->moveWordBackward( arg );
 	YZCursor stop( cur.x()-1, cur.y() );
-	yzDebug() << "Start: " << mCompletionStart << ", End:" << stop << endl;
+	dbg() << "Start : " << mCompletionStart << ", End:" << stop << endl;
 	QStringList list = buffer->getText(mCompletionStart, stop);
-	yzDebug() << "Completing word: " << list[0] << endl;
+	dbg() << "Completing word : " << list[0] << endl;
 	
 	// if there's nothing to complete, abort
 	if (list[0].isEmpty()) {
-		yzDebug() << "Abort completion" << endl;
+		dbg() << "Abort completion" << endl;
 		view->modePool()->pop();
 		return false;
 	}
@@ -82,7 +85,7 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward ) {
 	mCurrentProposal = 0;
 	mLastMatch = "";
 	
-	yzDebug() << "COMPLETION: mPrefix: " << mPrefix << endl;
+	dbg() << "COMPLETION: mPrefix: " << mPrefix << endl;
 	
 	QStringList completeOption = YZSession::self()->getOptions()->readListOption("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i");
 	
@@ -166,7 +169,7 @@ cmd_state YZModeCompletion::execCommand( YZView* view, const QString& _key ) {
 			mLastKey = _key;
 		}
 	} else if ( _key == "<CTRL>x" ) {
-		yzDebug() << "Skip CTRLx in completion mode" << endl;
+		dbg() << "Skip CTRLx in completion mode" << endl;
 		return CMD_OK;
 	} else {
 		view->modePool()->pop();
@@ -194,7 +197,7 @@ void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &propos
 	const YZCursor bufbegin(0, 0);
 	const YZCursor bufend(0, buffer->lineCount() + 1);
 	
-	yzDebug() << "COMPLETION: pattern: " << pattern << endl;
+	dbg() << "COMPLETION: pattern: " << pattern << endl;
 	
 	// set the initial search start
 	nextCursor = bufbegin;
@@ -224,7 +227,7 @@ void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &propos
 		}
 	} while( found );
 
-	yzDebug() << "COMPLETION: Found " << proposed.size() << " matches" << endl;
+	dbg() << "COMPLETION: Found " << proposed.size() << " matches" << endl;
 }
 
 void YZModeCompletion::completeFromOtherBuffers( YZBuffer *skip, QStringList &proposed )
@@ -234,7 +237,7 @@ void YZModeCompletion::completeFromOtherBuffers( YZBuffer *skip, QStringList &pr
 	for ( YZBufferList::iterator itr = buffers.begin(); itr != buffers.end(); ++itr ) {
 		YZBuffer *cur = *itr;
 
-		yzDebug() << "COMPLETION: Inspecting another buffer" << endl;
+		dbg() << "COMPLETION: Inspecting another buffer" << endl;
 		
 		// don't descend into the buffer we're told to skip
 		// this is done so that one buffer (probably the current)

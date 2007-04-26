@@ -28,6 +28,9 @@
 #include "view.h"
 #include "debug.h"
 
+#define dbg()    yzDebug("YZBufferOperation")
+#define err()    yzError("YZBufferOperation")
+
 QString YZBufferOperation::toString() const {
 	QString ots;
 	switch( type ) {

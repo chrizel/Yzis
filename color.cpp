@@ -19,6 +19,9 @@
 
 #include "color.h"
 
+#define dbg()    yzDebug("YZColor")
+#define err()    yzError("YZColor")
+
 /* 
  * Most of the code here has been copy/pasted from the Qt3 QColor class.
  * If some things looks weird, complain to Trolltech.

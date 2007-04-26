@@ -41,6 +41,9 @@
 #include "view.h"
 #include "viewcursor.h"
 
+#define dbg()    yzDebug("YZModeCommand")
+#define err()    yzError("YZModeCommand")
+
 using namespace yzis;
 
 YZModeCommand::YZModeCommand() : YZMode() {
@@ -187,7 +190,7 @@ void YZModeCommand::initModifierKeys() {
 }
 
 cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
-//	yzDebug() << "ExecCommand: " << inputs << endl;
+//	dbg() << "ExecCommand : " << inputs << endl;
 	int count=1;
 	bool hadCount = false;
 	int i=0;
@@ -201,7 +204,7 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 				j++;
 			count*=inputs.mid(i, j-i).toInt();
 			i=j;
-			yzDebug() << "Count " << count << endl;
+			dbg() << "Count " << count << endl;
 			hadCount=true; //we found digits given by the user
 		} else if(inputs.at( i ) == '\"') {
 			if(++i>=inputs.length())
@@ -668,7 +671,7 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args) {
 			len = ws.matchedLength();
 		}
 		if ( idx != -1 ) {
-			yzDebug() << "Match at " << idx << " Matched length " << len << endl;
+			dbg() << "Match at " << idx << " Matched length " << len << endl;
 			c++; //one match
 			result.setX( idx + len );
 			if ( ( c < args.count || args.standalone ) 
@@ -710,7 +713,7 @@ YZCursor YZModeCommand::moveSWordForward(const YZMotionArgs &args) {
 		int len = ws.matchedLength();
 
 		if ( idx != -1 ) {
-			yzDebug() << "Match at " << idx << " Matched length " << len << endl;
+			dbg() << "Match at " << idx << " Matched length " << len << endl;
 			c++; //one match
 			result.setX( idx + len );
 			if ( ( c < args.count || args.standalone ) 
@@ -757,20 +760,20 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 		const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
 		int lineLength = current.length();
 		int offset = lineLength - result.x();
-		yzDebug() << current << " at " << offset << endl;
+		dbg() << current << " at " << offset << endl;
 
 
 		int idx = rex1.indexIn( current, offset , QRegExp::CaretAtOffset );
 		int len = rex1.cap( 1 ).length();
-		yzDebug() << "rex1: " << idx << "," << len << endl;
+		dbg() << "rex1 : " << idx << "," << len << endl;
 		if ( idx == -1 ) {
 			idx = rex2.indexIn( current, offset, QRegExp::CaretAtOffset );
 			len = rex2.cap( 1 ).length();
-			yzDebug() << "rex2: " << idx << "," << len << endl;
+			dbg() << "rex2 : " << idx << "," << len << endl;
 			if ( idx == -1 ) {
 				idx = rex3.indexIn( current, offset, QRegExp::CaretAtOffset );
 				len = rex3.matchedLength();
-				yzDebug() << "rex3: " << idx << "," << len << endl;
+				dbg() << "rex3 : " << idx << "," << len << endl;
 			}
 		}
 		if ( wrapped && lineLength == 0 ) {
@@ -778,12 +781,12 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args) {
 			len = 0;
 		}
 		if ( idx != -1 ) {
-			yzDebug() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
+			dbg() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
 			c++; //one match
 			result.setX( lineLength - idx - len );
 		} else {
 			if ( result.y() == 0 ) break; //stop here
-			yzDebug() << "Previous line " << result.y() - 1 << endl;
+			dbg() << "Previous line " << result.y() - 1 << endl;
 			const QString& ncurrent = args.view->myBuffer()->textline( result.y() - 1 );
 			wrapped = true;
 			result.setX( ncurrent.length() );
@@ -809,20 +812,20 @@ YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args) {
 		const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
 		int lineLength = current.length();
 		int offset = lineLength - result.x();
-		yzDebug() << current << " at " << offset << endl;
+		dbg() << current << " at " << offset << endl;
 
 
 		int idx = rex1.indexIn( current, offset , QRegExp::CaretAtOffset );
 		int len = rex1.cap( 1 ).length();
 
-		yzDebug() << "rex1: " << idx << "," << len << endl;
+		dbg() << "rex1 : " << idx << "," << len << endl;
 		if ( idx != -1 ) {
-			yzDebug() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
+			dbg() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
 			c++; //one match
 			result.setX( lineLength - idx - len );
 		} else {
 			if ( result.y() == 0 ) break; //stop here
-			yzDebug() << "Previous line " << result.y() - 1 << endl;
+			dbg() << "Previous line " << result.y() - 1 << endl;
 			const QString& ncurrent = args.view->myBuffer()->textline( result.y() - 1 );
 			result.setX( ncurrent.length() );
 			result.setY( result.y() - 1 );
@@ -849,7 +852,7 @@ YZCursor YZModeCommand::gotoMark( const YZMotionArgs &args )
 	if ( mark->contains(args.arg))
 		return mark->value(args.arg).mBuffer;
 	else {
-		yzDebug() << "WARNING! mark " << args.arg << " not found" << endl;
+		dbg() << "WARNING! mark " << args.arg << " not found" << endl;
 		return viewCursor.buffer();
 	}
 }
@@ -864,7 +867,7 @@ YZCursor YZModeCommand::firstNonBlankNextLine( const YZMotionArgs &args ) {
 YZCursor YZModeCommand::gotoLine(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	int line = 0;
-	yzDebug() << "gotoLine " << args.cmd << "," << args.count << endl;
+	dbg() << "gotoLine " << args.cmd << "," << args.count << endl;
 	if ( args.count > 0 ) line	= args.count - 1;
 
 	if ( args.cmd == "gg"  || ( args.cmd == "G" && args.usercount ) ) {
@@ -889,7 +892,7 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args) {
 
 	QString word = args.view->myBuffer()->getWordAt( from );
 	if ( ! word.isNull() ) {
-		yzDebug() << "searchWord: " << word << endl;
+		dbg() << "searchWord : " << word << endl;
 		YZCursor pos;
 		bool found = true;
 		bool moved = true;
@@ -1003,7 +1006,7 @@ void YZModeCommand::change(const YZCommandArgs &args) {
 	YZInterval area = interval( args );
 	YZCursor cur = area.fromPos();
 	
-	yzDebug() << "YZModeCommand::change " << area << endl;
+	dbg() << "YZModeCommand::change " << area << endl;
 	args.view->myBuffer()->action()->deleteArea(args.view, area, args.regs);
 
 	if ( cur.y() >= args.view->myBuffer()->lineCount() ) {
@@ -1299,7 +1302,7 @@ void YZModeCommand::macro( const YZCommandArgs &args ) {
 void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 	args.view->purgeInputBuffer();
 	if ( args.view->isRecording()) {
-		yzDebug() << "User asked to play a macro he is currently recording, forget it !" << endl;
+		dbg() << "User asked to play a macro he is currently recording, forget it !" << endl;
 		if ( args.view->registersRecorded() == args.regs )
 			return;
 	}

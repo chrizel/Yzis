@@ -20,6 +20,8 @@
 #include "cursor.h"
 #include "debug.h"
 
+#define dbg()    yzDebug("YZCursor")
+#define err()    yzError("YZCursor")
 
 bool YZCursor::operator< (const YZCursor right ) const {
 	return y() < right.y() || y() == right.y() && x() < right.x();

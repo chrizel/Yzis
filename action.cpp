@@ -31,25 +31,33 @@
 #include "buffer.h"
 #include "session.h"
 
+#define dbg()    yzDebug("YZAction")
+#define err()    yzError("YZAction")
+
 YZAction::YZAction( YZBuffer* buffer ) {
+    dbg() << "YZAction(" << buffer->toString() << ")" << endl;
 	mBuffer = buffer;
 }
 YZAction::~YZAction( ) {
+    dbg() << "~YZAction()" << endl;
 }
 
 static void configureViews(YZBuffer *buffer)
 {
+    dbg() << "configureViews(" << buffer->toString() << ")" << endl;
 	foreach( YZView *view, buffer->views() )
 		view->setPaintAutoCommit( false );
 }
 
 static void commitViewsChanges(YZBuffer *buffer)
 {
+    dbg() << "commitViewsChanges(" << buffer->toString() << ")" << endl;
 	foreach( YZView *view, buffer->views() )
 		view->commitPaintEvent();
 }
 
 void YZAction::insertChar( YZView* pView, const YZCursor pos, const QString& text ) {
+    dbg() << "insertChar(" << pView->toString() << ", pos, " << text << ")" << endl;
 	configureViews(mBuffer);
 	if( pos.y() == mBuffer->lineCount() )
 		mBuffer->insertNewLine( pos.x(), pos.y() );
@@ -61,7 +69,7 @@ void YZAction::insertChar( YZView* pView, const YZCursor pos, const QString& tex
 }
 
 void YZAction::replaceText( YZView* pView, const YZCursor pos, int replacedLength, const QString& text ) {
-	yzDebug() << "replaceText :" << pos << " length: " << replacedLength << " text:" << text << endl;
+    dbg() << "replaceText(" << pView->toString() << ", pos, " << replacedLength << "," << text << ")" << endl;
 	if( pos.y() >= mBuffer->lineCount() ) 
 		return; // don't try on non-existing lines
 	configureViews(mBuffer);
@@ -184,7 +192,7 @@ void YZAction::copyArea( YZView* , const YZInterval& i, const QList<QChar> &reg 
 
 	YZSession::self()->setClipboardText( mBuffer->getText( i ).join("\n"), Clipboard::Clipboard );
 	
-	yzDebug() << "Copied " << buff << endl;
+	dbg() << "Copied " << buff << endl;
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
 		YZSession::self()->setRegister( reg.at(ab), buff );
 }
@@ -249,7 +257,7 @@ void YZAction::replaceArea( YZView* /*pView*/, const YZInterval& i, const QStrin
 }
 
 void YZAction::deleteArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg ) {
-	yzDebug() << "YZAction::deleteArea " << i << endl;
+	dbg() << "YZAction::deleteArea " << i << endl;
 	configureViews(mBuffer);
 
 	QStringList buff = mBuffer->getText( i );
@@ -419,7 +427,7 @@ YZCursor YZAction::match( YZView* pView, const YZCursor cursor, bool *found ) co
 	}
 	if ( count == 0 ) {//found it !
 		*found = true;
-		yzDebug() << "Result action: " << ( back ? j+1 : j-1 ) << ", " << curY << endl;
+		dbg() << "Result action: " << ( back ? j+1 : j-1 ) << ", " << curY << endl;
 		return YZCursor( ( back ? j + 1 : j - 1 ), curY );
 	}
 	*found=false;
@@ -429,7 +437,7 @@ YZCursor YZAction::match( YZView* pView, const YZCursor cursor, bool *found ) co
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
 // which makes reverseSearch redundant.  It's now calculated within the function based on a test of mEnd < mBegin
 YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCursor mBegin, const YZCursor mEnd, int *matchlength, bool *found ) const {
-//	yzDebug() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse: " << reverseSearch << endl;
+//	dbg() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
 	bool reverseSearch = mEnd < mBegin;
 	bool cs = true;
 	QString what = _what;
@@ -437,7 +445,7 @@ YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCurs
 		what.truncate(what.length()-2);
 		cs = false;
 	}
-//	yzDebug() << " Casesensitive: " << cs << endl;
+//	dbg() << " Casesensitive: " << cs << endl;
 	QRegExp ex( what );
 	ex.setCaseSensitivity(cs ? Qt::CaseSensitive : Qt::CaseInsensitive );
 
@@ -462,7 +470,7 @@ YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCurs
 			}
 			idx = ex.lastIndexIn( l, currentMatchColumn );
 			if ( i == mBegin.y() && idx >= mBegin.x() ) idx = -1;
-//			yzDebug() << "searchRev on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
+//			dbg() << "searchRev on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
 		} else {
 			currentMatchColumn = 0;
 			if ( i == mBegin.y() ) {
@@ -471,7 +479,7 @@ YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCurs
 				l = l.left( mEnd.x() );
 			}
 			idx = ex.indexIn( l, currentMatchColumn );
-//			yzDebug() << "search on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
+//			dbg() << "search on " << l << " starting at " << currentMatchColumn << " = " << idx << endl;
 		}
 
 		if ( idx >= 0 ) {
@@ -482,12 +490,12 @@ YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCurs
 				currentMatchColumn += mEnd.x();
 			*found = true;
 			*matchlength = ex.matchedLength();
-//			yzDebug() << "Search got one result " << endl;
+//			dbg() << "Search got one result " << endl;
 			return YZCursor(currentMatchColumn, currentMatchLine);
 		}
 	}
 	*found = false;
-//	yzDebug() << "Search got no result " << endl;
+//	dbg() << "Search got no result " << endl;
 	return YZCursor(0,0);//fake result
 }
 

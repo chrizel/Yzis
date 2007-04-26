@@ -29,6 +29,9 @@
 #include "buffer.h"
 #include "view.h"
 
+#define dbg()    yzDebug("YZQtPrinter")
+#define err()    yzError("YZQtPrinter")
+
 YZQtPrinter::YZQtPrinter( YZView *view ) : QPrinter(QPrinter::PrinterResolution) {
 	mView = view;
 

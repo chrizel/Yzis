@@ -134,7 +134,7 @@ void YZModeCompletion::doComplete( YZView* view, bool forward ) {
 		msg = _("Back at original");
 	}
 	
-	view->displayInfo( msg );
+	view->guiDisplayInfo( msg );
 }
 
 cmd_state YZModeCompletion::execCommand( YZView* view, const QString& _key ) {

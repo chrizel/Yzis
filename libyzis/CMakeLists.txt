@@ -55,10 +55,9 @@ set(yzis_LIB_SRCS
    yzisinfostartpositionrecord.cpp 
 )
 
-#add files needing MOC here :)
-#set(yzis_LIB_MOCS 
-#   fileneedingmoc.cpp
-#)
+set(yzis_LIB_MOCS 
+    session.h
+)
 
 qt4_wrap_cpp(yzis_LIB_MOC_SRCS ${yzis_LIB_MOCS})
 

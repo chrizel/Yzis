@@ -80,14 +80,14 @@ public:
 
 	//GUI interface
 	bool quit(int errorCode);
-	void popupMessage( const QString& message );
-	void deleteBuffer ( YZBuffer *b );
-	void setFocusCommandLine();
-	void setFocusMainWindow();
+	void guiPopupMessage( const QString& message );
+	void guiDeleteBuffer ( YZBuffer *b );
+	void guiSetFocusCommandLine();
+	void guiSetFocusMainWindow();
 	void splitHorizontally(YZView *view);
-	bool promptYesNo(const QString& title, const QString& message);
-	int promptYesNoCancel(const QString& title, const QString& message);
-	virtual void setClipboardText( const QString& text, Clipboard::Mode mode );
+	bool guiPromptYesNo(const QString& title, const QString& message);
+	int guiPromptYesNoCancel(const QString& title, const QString& message);
+	virtual void guiSetClipboardText( const QString& text, Clipboard::Mode mode );
 	
 	KYZTextEditorIface *createTextEditorIface();
 	
@@ -137,7 +137,7 @@ private:
 	KAboutData m_aboutData;
 	KInstance m_instance;
 	
-	void changeCurrentView( YZView* );
+	void guiChangeCurrentView( YZView* );
 
 	QList<KTextEditor::Document*> m_document;
 };

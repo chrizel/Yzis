@@ -304,8 +304,8 @@ void QYZisEdit::scroll( int dx, int dy ) {
 	QWidget::scroll( rx, ry, m_useArea );
 }
 
-void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
-	//yzDebug() << "QYZisEdit::drawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
+void QYZisEdit::guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
+	//dbg() << "QYZisEdit::guiDrawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
 	p->save();
 	bool has_bg = false;
 	if ( !cell.sel ) {
@@ -334,8 +334,8 @@ void QYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	p->restore();
 }
 
-void QYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
-	//yzDebug() << "QYZisEdit::drawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
+void QYZisEdit::guiDrawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
+	//dbg() << "QYZisEdit::guiDrawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
 	if ( clearChar.isSpace() ) {
 		// not needed as we called qt for repainting this widget, and autoFillBackground = True
 		return;

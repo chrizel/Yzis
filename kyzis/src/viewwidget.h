@@ -56,17 +56,17 @@ class KYZisView: public KTextEditor::View,
 		KYZisView(KYZTextEditorIface *doc, QWidget *parent, const char *name=0);
 	 	virtual ~KYZisView();
 		KTextEditor::Document *document () { return dynamic_cast<KTextEditor::Document*>( buffer ); }
-		void setCommandLineText( const QString& text );
-		QString getCommandLineText() const;
-		void setFocusCommandLine();
-		void setFocusMainWindow();
+		void guiSetCommandLineText( const QString& text );
+		QString guiGetCommandLineText() const;
+		void guiSetFocusCommandLine();
+		void guiSetFocusMainWindow();
 		void scrollDown( int l=1 );
 		void scrollUp( int l=1 );
 
 		void paintEvent( const YZSelection& drawMap );
 		virtual void modeChanged(void);
-		virtual void syncViewInfo();
-		void displayInfo( const QString& info );
+		virtual void guiSyncViewInfo();
+		void guiDisplayInfo( const QString& info );
 
 		void wheelEvent( QWheelEvent * e );
 		void contextMenuEvent( QContextMenuEvent * e );
@@ -122,9 +122,9 @@ class KYZisView: public KTextEditor::View,
 		virtual void registerModifierKeys( const QString& keys );
 		virtual void unregisterModifierKeys( const QString& keys );
 		
-		bool popupFileSaveAs();
-		void filenameChanged();
-		void highlightingChanged();
+		bool guiPopupFileSaveAs();
+		void guiFilenameChanged();
+		void guiHighlightingChanged();
 
 		void refreshScreen();
 		
@@ -134,8 +134,8 @@ class KYZisView: public KTextEditor::View,
 		void emitSelectionChanged();
 
 	protected :
-		void drawSetMaxLineNumber( int max );
-		void drawSetLineNumber( int y, int n, int h );
+		void guiDrawSetMaxLineNumber( int max );
+		void guiDrawSetLineNumber( int y, int n, int h );
 		
 
   // KTextEditor::View Stuff
@@ -202,10 +202,10 @@ class KYZisView: public KTextEditor::View,
 		void setupActions();
 		void setupCodeCompletion() {} //TODO
 
-		virtual void preparePaintEvent( int y_min, int y_max );
-		virtual void endPaintEvent();
-		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
-		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
+		virtual void guiPreparePaintEvent( int y_min, int y_max );
+		virtual void guiEndPaintEvent();
+		virtual void guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg );
+		virtual void guiDrawClearToEOL( int x, int y, const QChar& clearChar );
 
 	signals:
 		void gotFocus(  KTextEditor::View* );

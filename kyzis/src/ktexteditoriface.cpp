@@ -248,7 +248,7 @@ QString KYZTextEditorIface::hlModeSectionName (unsigned int mode) {
 	return YzisHlManager::self()->hlSection( mode );
 }
 
-void KYZTextEditorIface::highlightingChanged( ) {
+void KYZTextEditorIface::guiHighlightingChanged( ) {
 	emit hlChanged();
 }
 
@@ -430,7 +430,7 @@ bool KYZTextEditorIface::removeLine( int i ) {
 bool KYZTextEditorIface::documentSaveAs() {
 	YZView *v = m_buffer->firstView();
 	if (v)
-		return v->popupFileSaveAs();
+		return v->guiPopupFileSaveAs();
 	return false;
 }
 

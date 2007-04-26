@@ -36,53 +36,25 @@
 #include "qsession.h"
 #include "buffer.h"
 
-
 int main(int argc, char **argv) {
-	QApplication app(argc, argv);
+    YZSession::initDebug( argc, argv );
 
+    // ==============[ Create application ]=============
+	QApplication app(argc, argv);
 	app.setOrganizationName("Yzis");
 	app.setOrganizationDomain("yzis.org");
 	app.setApplicationName("QYzis");
 
-	setlocale( LC_ALL, "");
-
-#ifndef YZIS_WIN32_GCC
-	bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
-	bind_textdomain_codeset( "yzis", "UTF-8" );
-	textdomain( "yzis" );
-#endif
-
+    // ==============[ create session ]=============
 	QYZisSession::createInstance();
-
 	Qyzis* mw = new Qyzis();
 	mw->show();
 
-	QStringList args = app.arguments();
+    YZSession::self()->parseCommandLine( argc, argv );
+    //YZSession::self()->frontendGuiReady();
+    QTimer::singleShot(0, static_cast<QYZisSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
 
-    YZDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );
-    YZDebugBackend::self()->parseArgv( args );
-    yzDebug() << QDateTime::currentDateTime().toString() << endl;
-
-
-	YZView* first = NULL;
-	YZView* v;
-	for ( int i = 1; i < args.count(); ++i ) {
-		if ( args.at(i)[0] != '-' ) {
-			v = QYZisSession::self()->createBufferAndView( args.at(i) );
-			if ( !first) 
-				first = v;
-		}
-	}
-	if ( !first ) {
-		/* no view opened */
-		first = QYZisSession::self()->createBufferAndView();
-		first->myBuffer()->openNewFile();
-		first->displayIntro();
-	}
-
-	QYZisSession::self()->setCurrentView( first );
-
-	QTimer::singleShot(0, mw, SLOT( init() ));
+    // ==============[ let's rock ]=============
 
 	return app.exec();
 }

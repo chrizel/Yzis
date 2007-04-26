@@ -583,7 +583,7 @@ void YZBuffer::load(const QString& file) {
 			appendLine( stream.readLine() );
 		fl.close();
 	} else if (QFile::exists(d->path)) {
-		YZSession::self()->popupMessage(_("Failed opening file %1 for reading : %2").arg(d->path).arg(fl.errorString()));
+		YZSession::self()->guiPopupMessage(_("Failed opening file %1 for reading : %2").arg(d->path).arg(fl.errorString()));
 	}
 	if ( ! d->text->count() )
 		appendLine("");
@@ -594,7 +594,7 @@ void YZBuffer::load(const QString& file) {
 		struct stat buf;
 		int i = stat( d->path.toLocal8Bit(), &buf );
 		if ( i != -1 && S_ISREG( buf.st_mode ) && CHECK_GETEUID( buf.st_uid )  ) {
-			if ( YZSession::self()->promptYesNo(_("Recover"),_("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
+			if ( YZSession::self()->guiPromptYesNo(_("Recover"),_("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
 				if ( d->swapFile->recover() )
 					setChanged( true );
 			}
@@ -618,7 +618,7 @@ bool YZBuffer::save() {
 		// having the low level buffer open popups
 		// seems wrong to me
 		YZView *view = YZSession::self()->findViewByBuffer( this );
-		if ( !view || !view->popupFileSaveAs() )
+		if ( !view || !view->guiPopupFileSaveAs() )
 			return false; // don't try to save
 	}
 
@@ -650,13 +650,13 @@ bool YZBuffer::save() {
 		}
 		file.close();
 	} else {
-		YZSession::self()->popupMessage(_("Failed opening file %1 for writing : %2").arg(d->path).arg(file.errorString()));
+		YZSession::self()->guiPopupMessage(_("Failed opening file %1 for writing : %2").arg(d->path).arg(file.errorString()));
 		d->isHLUpdating = true;
 		return false;
 	}
 	d->isHLUpdating = false; //override so that it does not parse all lines
 	foreach( YZView *view, d->views )
-		view->displayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
+		view->guiDisplayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
 	setChanged( false );
 	filenameChanged();
 	//clear swap memory
@@ -709,7 +709,7 @@ void YZBuffer::updateAllViews() {
 	dbg() << "YZBuffer updateAllViews" << endl;
 	foreach( YZView *view, d->views ) {
 		view->sendRefreshEvent();
-		view->syncViewInfo();
+		view->guiSyncViewInfo();
 	}
 }
 
@@ -747,7 +747,7 @@ void YZBuffer::setModified( bool ) {
 void YZBuffer::statusChanged() {
 	//update all views
 	foreach( YZView *view, d->views )
-		view->syncViewInfo();
+		view->guiSyncViewInfo();
 }
 
 
@@ -776,7 +776,7 @@ void YZBuffer::setHighLight( int mode, bool warnGUI ) {
 		QString hlName = h->name();
 		hlName.replace("+","p");
 		if (YZLuaEngine::self()->source(hlName.toLower()) != 0) {
-			YZSession::self()->popupMessage(_("Couldn't fine the indent file for %1 in standard directories" ).arg( hlName.toLower() ));
+			YZSession::self()->guiPopupMessage(_("Couldn't fine the indent file for %1 in standard directories" ).arg( hlName.toLower() ));
 		}
 	}
 }
@@ -1026,7 +1026,7 @@ void YZBuffer::filenameChanged()
 {
     dbg() << HERE() << endl;
 	foreach( YZView *view, d->views )
-		view->filenameChanged();
+		view->guiFilenameChanged();
 }
 
 const QString YZBuffer::fileNameShort() const {
@@ -1037,7 +1037,7 @@ const QString YZBuffer::fileNameShort() const {
 void YZBuffer::highlightingChanged()
 {
 	foreach( YZView *view, d->views )
-		view->highlightingChanged();
+		view->guiHighlightingChanged();
 }
 
 void YZBuffer::preserve()

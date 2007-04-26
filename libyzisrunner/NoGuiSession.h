@@ -21,13 +21,17 @@
 #ifndef NOGUI_SESSION_H
 #define NOGUI_SESSION_H
 
+#include <QObject> 
+
 #include "NoGuiView.h"
 
 #include "libyzis/session.h"
 #include "libyzis/buffer.h"
 
-class NoGuiSession : public YZSession
+class NoGuiSession : public QObject, public YZSession
 {
+    Q_OBJECT
+
 	public:
         static void createInstance();
 
@@ -36,26 +40,31 @@ class NoGuiSession : public YZSession
 
 		virtual	YZBuffer *createBuffer(const QString& path=QString());
 
-		virtual void popupMessage( const QString& message);
+		virtual void guiPopupMessage( const QString& message);
 
-		virtual void quit(bool /*savePopup=true */);
+		virtual void guiQuit(bool /*savePopup=true */);
 
-		virtual void deleteView ( int  );
-		virtual void deleteBuffer ( YZBuffer * );
-		virtual void changeCurrentView( YZView* );
-		virtual void setFocusCommandLine( );
-		virtual void setFocusMainWindow( );
-		virtual bool quit(int);
-		virtual bool promptYesNo(const QString&, const QString&);
-		virtual int promptYesNoCancel( const QString&, const QString& );
-		virtual void splitHorizontally(YZView*);
-		virtual YZView *doCreateView(YZBuffer*b);
-		virtual void doDeleteView(YZView*v);
-		virtual YZBuffer* doCreateBuffer();
-		virtual void setClipboardText(const QString&, Clipboard::Mode);
+		virtual void guiDeleteBuffer ( YZBuffer * );
+		virtual void guiChangeCurrentView( YZView* );
+		virtual void guiSetFocusCommandLine( );
+		virtual void guiSetFocusMainWindow( );
+		virtual bool guiQuit(int);
+		virtual bool guiPromptYesNo(const QString&, const QString&);
+		virtual int guiPromptYesNoCancel( const QString&, const QString& );
+		virtual void guiSplitHorizontally(YZView*);
+		virtual YZView *guiCreateView(YZBuffer*b);
+		virtual void guiDeleteView(YZView*v);
+		virtual YZBuffer* guiCreateBuffer();
+		virtual void guiSetClipboardText(const QString&, Clipboard::Mode);
+
+    public slots:
+        /** To be called by single shot timer, when the gui is ready
+          * and the Qt event loop is running.
+          */
+        void frontendGuiReady();
 
     private:
-		NoGuiSession( const QString & sessionName="NoGuiSession" );
+		NoGuiSession();
 
 };
 

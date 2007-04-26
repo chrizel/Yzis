@@ -74,11 +74,10 @@ NYZSession::~NYZSession( )
     dbg() << "~NYZSession()" << endl;
 }
 
-void NYZSession::init() {
-	yzDebug() << "INIT " << endl;
-	if (m_initialCommand.length()) {
-		sendMultipleKeys(m_initialCommand);
-	}
+void NYZSession::frontendGuiReady()
+{
+    dbg() << "frontendGuiReady()" << endl;
+    YZSession::self()->frontendGuiReady();
 }
 
 bool NYZSession::processInput(int /*fd*/) {
@@ -167,27 +166,33 @@ bool NYZSession::processInput(int /*fd*/) {
 	return true;
 }
 
-void NYZSession::setClipboardText( const QString& text, Clipboard::Mode mode ) {
+void NYZSession::guiSetClipboardText( const QString& text, Clipboard::Mode mode ) {
 	// XXX
 }
 
-bool NYZSession::quit( int errorCode ) {
+bool NYZSession::guiQuit( int errorCode ) {
+    dbg() << "guiQuit(" << errorCode << ")" << endl;
 	exit( errorCode );
 	return true;
 }
 
-void NYZSession::setFocusMainWindow() {
+void NYZSession::guiSetFocusMainWindow() {
+    dbg() << "guiSetFocusMainWindow()" << endl;
 	NYZView *yv = static_cast<NYZView*>( currentView() );
 	yv->setFocusMainWindow();
 }
 
-void NYZSession::setFocusCommandLine() {
+void NYZSession::guiSetFocusCommandLine() {
+    dbg() << "guiSetFocusCommandLine()" << endl;
+	NYZView *yv = static_cast<NYZView*>( currentView() );
 	NYZView *yv = static_cast<NYZView*>( currentView() );
 	yv->setFocusCommandLine();
 }
 
-void NYZSession::changeCurrentView ( YZView * view  )
+void NYZSession::guiChangeCurrentView ( YZView * view  )
 {
+    dbg() << "changeCurrentView( " << view->toString() << ")" << endl;
+	NYZView *yv = static_cast<NYZView*>( currentView() );
 	NYZView *cur = static_cast<NYZView*>(currentView());
 	NYZView *v = static_cast<NYZView*>(view);
 	YZASSERT( view );
@@ -217,7 +222,7 @@ YZBuffer *NYZSession::doCreateBuffer()
 	return new YZBuffer;
 }
 
-void NYZSession::popupMessage( const QString &_message )
+void NYZSession::guiPopupMessage( const QString &_message )
 {
 	int nl,nc;
 	QString anyKeyMsg = _("(Press any key)");
@@ -265,26 +270,26 @@ void NYZSession::popupMessage( const QString &_message )
 	currentView()->refreshScreen();
 }
 
-void NYZSession::deleteBuffer(YZBuffer *b) {
+void NYZSession::guiDeleteBuffer(YZBuffer *b) {
 	delete b;
 }
 
-void NYZSession::doDeleteView( YZView *view )
+void NYZSession::guiDeleteView( YZView *view )
 {
 	YZView *newview = currentView();
 	
 	rmBuffer( view->myBuffer() );
 	
-	newview->setCommandLineText( "" );
+	newview->guiSetCommandLineText( "" );
 	newview->refreshScreen();
 }
 
-bool NYZSession::promptYesNo( const QString& /*title*/, const QString& /*message*/ ) {
+bool NYZSession::guiPromptYesNo( const QString& /*title*/, const QString& /*message*/ ) {
 //TODO
 	return true;
 }
 
-int NYZSession::promptYesNoCancel( const QString& /*title*/, const QString& /*message*/ ) {
+int NYZSession::guiPromptYesNoCancel( const QString& /*title*/, const QString& /*message*/ ) {
 //TODO
 	return 0;//return yes for now...
 }

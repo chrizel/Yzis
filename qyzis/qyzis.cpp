@@ -29,15 +29,16 @@
 #include "buffer.h"
 #include "configuredialog.h"
 
+
 #define dbg()    yzDebug("Qyzis")
 #define err()    yzError("Qyzis")
+
 Qyzis *Qyzis::me = NULL;
 
-Qyzis::Qyzis(QWidget *w, const QString& initialKeys)
+Qyzis::Qyzis(QWidget *w)
 	: QMainWindow(w),
 	mBuffers( 0 ), mViews( 0 )
 {
-	m_initialCommand = initialKeys;
 	resize( 800, 600 );
 
 	setupActions();
@@ -50,12 +51,6 @@ Qyzis::Qyzis(QWidget *w, const QString& initialKeys)
 }
 
 Qyzis::~Qyzis() {
-}
-
-void Qyzis::init () {
-	if (m_initialCommand.length()) {
-		QYZisSession::self()->sendMultipleKeys(m_initialCommand);
-	}
 }
 
 void Qyzis::load(const QString& url) {

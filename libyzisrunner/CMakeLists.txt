@@ -15,6 +15,12 @@ set(libyzisrunner_SRCS
    main.cpp
 )
 
+set(libyzisrunner_MOC
+    NoGuiSession.h
+)
+
+qt4_wrap_cpp(libyzisrunner_MOC_SRCS ${libyzisrunner_MOC})
+
 if (WIN32)
     set(CMAKE_EXE_LINKER_FLAGS 
         "-Wl,-enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc " 
@@ -24,7 +30,7 @@ endif (WIN32)
 
 
 if (UNIX OR WIN32)
-	add_executable(libyzisrunner ${libyzisrunner_SRCS})
+	add_executable(libyzisrunner ${libyzisrunner_SRCS} ${libyzisrunner_MOC_SRCS} )
 	install(TARGETS libyzisrunner DESTINATION bin)
 endif (UNIX OR WIN32)
 

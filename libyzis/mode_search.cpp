@@ -47,13 +47,13 @@ YZModeSearch::~YZModeSearch() {
 	delete mHistory;
 }
 void YZModeSearch::enter( YZView* view ) {
-	YZSession::self()->setFocusCommandLine();
-	view->setCommandLineText( "" );
+	YZSession::self()->guiSetFocusCommandLine();
+	view->guiSetCommandLineText( "" );
 	mSearchBegin = view->getBufferCursor();
 }
 void YZModeSearch::leave( YZView* view ) {
-	view->setCommandLineText( "" );
-	YZSession::self()->setFocusMainWindow();
+	view->guiSetCommandLineText( "" );
+	YZSession::self()->guiSetFocusMainWindow();
 }
 
 YZCursor YZModeSearch::replaySearch( YZView* view, bool* found ) {
@@ -76,8 +76,8 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 	YZSelection* searchSelection = view->getSelectionPool()->search();
 
 	if ( key == "<ENTER>" ) {
-		QString what = view->getCommandLineText();
-		yzDebug() << "Current search: " << what;
+		QString what = view->guiGetCommandLineText();
+		dbg() << "Current search: " << what;
 
 		bool found = false;
 		YZCursor pos;
@@ -94,19 +94,19 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 		if ( found ) {
 			view->gotoxy( pos.x(), pos.y() );
 		} else {
-			view->displayInfo(_("No match"));
+			view->guiDisplayInfo(_("No match"));
 		}
 		view->modePool()->pop();
 		return CMD_OK;
 	} else if ( key == "<DOWN>" ) {
 		mHistory->goForwardInTime();
-		view->setCommandLineText( mHistory->getEntry() );
+		view->guiSetCommandLineText( mHistory->getEntry() );
 		return CMD_OK;
 	} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
 		return CMD_OK;
 	} else if ( key == "<UP>" ) {
 		mHistory->goBackInTime();
-		view->setCommandLineText( mHistory->getEntry() );
+		view->guiSetCommandLineText( mHistory->getEntry() );
 		return CMD_OK;
 	} else if ( key == "<ALT>:" ) {
 		view->modePool()->change( MODE_EX );
@@ -123,20 +123,20 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 		view->modePool()->pop();
 		return CMD_OK;
 	} else if ( key == "<BS>" ) {
-		QString back = view->getCommandLineText();
+		QString back = view->guiGetCommandLineText();
 		if ( back.isEmpty() ) {
 			view->modePool()->pop();
 			return CMD_OK;
 		}
-		view->setCommandLineText(back.remove(back.length() - 1, 1));
+		view->guiSetCommandLineText(back.remove(back.length() - 1, 1));
 	} else {
-		view->setCommandLineText( view->getCommandLineText() + key );
+		view->guiSetCommandLineText( view->guiGetCommandLineText() + key );
 	}
 
 	if ( view->getLocalBooleanOption("incsearch") ) {
 		view->setPaintAutoCommit( false );
 		int matchlength;
-		incSearchResult = search(view, view->getCommandLineText(), mSearchBegin, &matchlength, &(incSearchFound));
+		incSearchResult = search(view, view->guiGetCommandLineText(), mSearchBegin, &matchlength, &(incSearchFound));
 		if ( incSearchFound ) {
 			if ( view->getLocalBooleanOption("hlsearch") ) {
 				YZCursor endResult(incSearchResult );

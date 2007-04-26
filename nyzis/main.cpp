@@ -49,6 +49,8 @@
 #include <X11/Xlib.h>
 #include <libintl.h>
 
+#define dbg()    yzDebug("NYzis")
+#define err()    yzError("NYzis")
 
 typedef void ( *sighandler_t )( int );
 
@@ -62,7 +64,9 @@ static void cleaning(void);
 int
 main(int argc, char *argv[])
 {
+    YZSession::initDebug();
 
+    // ==============[ Create application ]=============
 #ifdef Q_WS_X11
 	bool useGUI = getenv(  "DISPLAY" ) != 0;
 	if (useGUI) {
@@ -74,66 +78,20 @@ main(int argc, char *argv[])
 	bool useGUI = true;
 #endif
 
-    YZDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );
-    YZDebugBackend::self()->parseArgv( argc, argv );
-    yzDebug() << QDateTime::currentDateTime().toString() << endl;
-
 	QCoreApplication *app;
-/*if ( useGUI )
-	app = ( QCoreApplication* )new QApplication( argc, argv );
-else */
+    /*
+    if ( useGUI )
+        app = ( QCoreApplication* )new QApplication( argc, argv );
+    else 
+    */
 	app = new QCoreApplication( argc,argv );
+	app->setOrganizationName("Yzis");
+	app->setOrganizationDomain("yzis.org");
+	app->setApplicationName("NYzis");
 
+    // ==============[ create session ]=============
+	NYZSession::createInstance();
 	QSocketNotifier *socket = new QSocketNotifier(0,QSocketNotifier::Read);
-
-	QString initialSendKeys;
-
-	setlocale( LC_ALL, "");
-	QString l = QString(PREFIX) + "/share/locale";
-	bindtextdomain( "yzis", l.toUtf8() );
-	bind_textdomain_codeset( "yzis", "UTF-8" );
-	textdomain( "yzis" );
-	// option stuff
-	int option_index = 0;
-	static struct option long_options[] = { // 0,1,2 = no_argument,required_argument,optional_argument
-		{"help", no_argument, 0, 'h'},
-		{"version", no_argument, 0, 'v'},
-		{0, 0, 0, 0}
-	};
-
-	int c;
-	
-	while ( 1 ) {
-		c = getopt_long ( argc, argv, "hvc:", long_options, &option_index );
-		if ( -1 == c ) break; // end of parsing
-		switch (c) {
-			case 'h':
-				endwin();
-				printf("Nyzis, ncurses part of Yzis - http://www.yzis.org\n"
-					VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
-				printf("\nUsage : %s [--help|-h] [--version|-v] [filename1 [filename2] .... ]\n", argv[0]);
-				exit(0);
-				break;
-			case 'v':
-				endwin();
-				printf("Nyzis, ncurses part of Yzis - http://www.yzis.org\n"
-					VERSION_CHAR_LONG " " VERSION_CHAR_DATE "\n");
-				exit(0);
-				break;
-			case 'c':
-				initialSendKeys = (const char *) optarg;
-				break;
-			default:
-				printf ( "?? getopt returned character code 0%o ??\n", c );
-		}
-
-	};
-
-	// create session
-	NYZSession::createInstance( "default_session", initialSendKeys );
-
-	NYZSession *session = static_cast<NYZSession*>(NYZSession::self());
-
 	QObject::connect( socket, SIGNAL( activated( int ) ),session, SLOT( processInput( int ) ) );
 
 	// Signal handling
@@ -141,43 +99,18 @@ else */
 	atexit(cleaning);
 	(void)signal(SIGWINCH, sigwinch);// ncurses SHOULD handle that
 
-	/*
-	 * Open buffers. Create an empty view that will show error messages
-	 * in case something goes wrong when opening a file.
-	 */
-        
-	YZView* errorBuffer = session->createBufferAndView();
-	YZView* first = NULL;
-	YZView* v;
+    YZSession::self()->parseCommandLine( argc, argv );
+    QTimer::singleShot(0, static_cast<NYZSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
 
-	for ( int i=1; i<argc; i++ ) {
-		if ( '-' != argv[i][0] ) {
-			yzDebug(NYZIS)<< "nyzis : opening file " << argv[i]<<endl;
-			v = session->createBufferAndView(argv[ i ]);
-			if ( !first )
-				first = v;
-		}
-	}
 
-	if ( !first ) {
-		first = session->createBufferAndView();
-		first->myBuffer()->openNewFile();
-		first->displayIntro();
-	}
-		
-	session->setCurrentView( first );
-	session->deleteView(errorBuffer);
-
-	QTimer::singleShot( 0, session, SLOT( init() ) );
-
-	session->guiStarted();
+    // ==============[ let's rock ! ]=============
 
 	return app->exec();
 }
 
 static void cleaning(void)
 {
-	yzDebug(NYZIS) << "end of nyzis, cleaning" << endl;
+	dbg() << "cleaning()" << endl;
 
 	/* ncurses stuff */
 	endwin();
@@ -188,7 +121,7 @@ static void cleaning(void)
 
 static void sigint(int /*sig*/)
 {
-//	yzDebug(NYZIS) << "^C caught" << endl;
+	dbg() << "^C caught" << endl;
 	// ^c caught -> sends an escape char..
 	NYZSession::self()->currentView()->sendKey( "<ESC>","" );
 }
@@ -196,7 +129,7 @@ static void sigint(int /*sig*/)
 
 static void sigwinch(int /*sig*/)
 {
-//	yzDebug(NYZIS) << "sigwinch caught" << endl;
+	dbg() << "sigwinch caught" << endl;
 	endwin();
 	refresh();
 	NYZView *view = static_cast<NYZView*>(NYZSession::self()->currentView());

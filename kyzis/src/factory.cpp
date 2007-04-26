@@ -211,7 +211,7 @@ KParts::Part *KYZisFactory::createPartObject( QWidget *parentWidget, const char 
 	return doc;
 }
 
-void KYZisFactory::setClipboardText( const QString& text, Clipboard::Mode mode ) {
+void KYZisFactory::guiSetClipboardText( const QString& text, Clipboard::Mode mode ) {
 #ifdef Q_WS_X11
 	if ( QX11Info::display() )
 #endif
@@ -228,7 +228,7 @@ bool KYZisFactory::quit( int /*errorCode*/ ) {
 			deleteView(i);
 		*/
 	} else if ( currentView() && currentView()->modePool()->currentType() == YZMode::MODE_EX 
-				&& !currentView()->getCommandLineText().isEmpty() ) {
+				&& !currentView()->guiGetCommandLineText().isEmpty() ) {
 		return false;
 	}
 
@@ -264,7 +264,7 @@ void KYZisFactory::readConfig( ) {
 	applyConfig();
 }
 
-void KYZisFactory::changeCurrentView( YZView* view ) {
+void KYZisFactory::guiChangeCurrentView( YZView* view ) {
 	yzDebug() << "Kyzis : setCurrentView " << view->getId() << endl;
 	KYZisView *v = static_cast<KYZisView*>(view);
 	v->setActiveWindow();
@@ -310,7 +310,7 @@ YZBuffer *KYZisFactory::doCreateBuffer() {
 	return new KYZisBuffer;
 }
 
-void KYZisFactory::popupMessage( const QString& message ) {
+void KYZisFactory::guiPopupMessage( const QString& message ) {
 	KYZisView *v = static_cast<KYZisView*>(currentView());
 	KMessageBox::information(v, message, _( "Error" ));
 }
@@ -329,7 +329,7 @@ void KYZisFactory::closeView() {
 			yzDebug() << "DCOP call successful for " << QString( client->appId() ) << " to close view in kdevelop" << endl;
 		} else {
 			yzDebug() << "DCOP call failed for " << QString( client->appId() ) << endl;
-			popupMessage( "DCOP communication is broken !" );
+			guiPopupMessage( "DCOP communication is broken !" );
 		}
 
 	} else {
@@ -346,27 +346,27 @@ void KYZisFactory::doDeleteView( YZView *view ) {
 	}
 }
 
-void KYZisFactory::deleteBuffer(YZBuffer* b) {
+void KYZisFactory::guiDeleteBuffer(YZBuffer* b) {
 	delete b;
 }
 
-void KYZisFactory::setFocusMainWindow() {
+void KYZisFactory::guiSetFocusMainWindow() {
 	KYZisView *yv = static_cast<KYZisView*>( currentView() );
 	yv->setFocusMainWindow();
 }
 
-void KYZisFactory::setFocusCommandLine() {
+void KYZisFactory::guiSetFocusCommandLine() {
 	KYZisView *yv = static_cast<KYZisView*>( currentView() );
 	yv->setFocusCommandLine();
 }
 
-bool KYZisFactory::promptYesNo(const QString& title, const QString& message) {
+bool KYZisFactory::guiPromptYesNo(const QString& title, const QString& message) {
 	int v = KMessageBox::questionYesNo(static_cast<KYZisView*>(currentView()), message, title);
 	if (v == KMessageBox::Yes) return true;
 	else return false;
 }
 
-int KYZisFactory::promptYesNoCancel(const QString& title, const QString& message) {
+int KYZisFactory::guiPromptYesNoCancel(const QString& title, const QString& message) {
 	int v = KMessageBox::questionYesNoCancel(static_cast<KYZisView*>(currentView()), message, title);
 	if (v == KMessageBox::Yes) return 0;
 	else if (v == KMessageBox::No) return 1;

@@ -35,6 +35,12 @@
 
 #include <QCoreApplication>
 #include <QDir>
+#include <QTimer>
+#include <QDateTime>
+#include <QFile>
+#include <QDir>
+#include <QStringList>
+#include <QBuffer>
 
 #include "mode_command.h"
 #include "mode_complete.h"
@@ -51,6 +57,14 @@
 
 YZSession* YZSession::mInstance = 0;
 
+void YZSession::initDebug( int argc, char ** argv )
+{
+    // initDebug() must be run early in the creation process
+    YZDebugBackend::self()->parseRcfile( DEBUGRC_FNAME );
+    YZDebugBackend::self()->parseArgv( argc, argv );
+    dbg() << " ==============[ Yzis started at: " << QDateTime::currentDateTime().toString() << "]====================" << endl;
+}
+
 YZSession * YZSession::self()
 {
     if (mInstance == 0L) {
@@ -63,19 +77,23 @@ YZSession * YZSession::self()
 
 void YZSession::setInstance(YZSession* instance) 
 { 
-    mInstance = instance; 
+    mInstance = instance;
+    mInstance->init();
 }
 
-YZSession::YZSession(const QString& _sessionName) {
+YZSession::YZSession() {
+    // do not use debug code here because debug backend is not initialised yet
+}
+
+void YZSession::init()
+{
+    initLanguage();
+	initModes();
+
 	YZIS_SAFE_MODE {
 		dbg() << "Yzis SAFE MODE enabled." << endl;
 	}
-	dbg() << "If you see me twice in the debug , then immediately call the police because it means yzis is damn borked ..." << endl;
-	YZASSERT_MSG(mInstance==0, "YZSession called while an instance is already registered, shouldn't happen");
-
-	initModes();
 	mSearch = new YZSearch();
-	mSessionName = _sessionName;
 	mCurView = 0;
 	mCurBuffer = 0;
 	events = new YZEvents();
@@ -84,7 +102,97 @@ YZSession::YZSession(const QString& _sessionName) {
 	mRegisters = new YZRegisters();
 	mYzisinfo= new YZYzisinfo();
 	mTagStack = new YZTagStack;
+
+    initScript();
 //	mYzisinfo->read(this);
+}
+
+void YZSession::initLanguage()
+{
+	setlocale( LC_ALL, "");
+#ifndef YZIS_WIN32_GCC
+	bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
+	bind_textdomain_codeset( "yzis", "UTF-8" );
+	textdomain( "yzis" );
+#endif
+}
+
+void YZSession::initScript()
+{
+	//read init files
+	if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
+		YZLuaEngine::self()->source( QDir::rootPath() + "/etc/yzis/init.lua" );
+	if (QFile::exists(QDir::homePath() + "/.yzis/init.lua"))
+		YZLuaEngine::self()->source( QDir::homePath() + "/.yzis/init.lua" );
+}
+
+void YZSession::parseCommandLine( int argc, char * argv[] )
+{
+    QStringList args;
+	YZView* first = NULL;
+	YZView* v;
+    QString s;
+
+    for( int i=0; i<argc; i++) args << argv[i];
+
+	for ( int i = 1; i < args.count(); ++i ) {
+		if ( args.at(i)[0] != '-' ) {
+            dbg() << "Opening file : " << args.at(i) << endl;
+			v = YZSession::self()->createBufferAndView( args.at(i) );
+			if ( !first) {
+				first = v;
+            }
+	    } else {
+            dbg() << "Parsing option : " << args.at(i) << endl;
+		    s = args.at(i);
+		    if (s == "-h" || s == "--help") {
+                showCmdLineHelp( args[0] );
+			    exit(0);
+		    } else if (s == "-v" || s == "--version") {
+                showCmdLineVersion();
+			    exit(0);
+		    } else if (s == "-c") {
+                // no splash screen when executing scripts
+                YZSession::self()->getOptions()->setGroup("Global");
+                YZOptionValue* o_splash = YZSession::self()->getOptions()->getOption("blocksplash");
+			    o_splash->setBoolean( false );
+
+			    QString optArg;
+			    if (s.length() > 2) optArg = args[i].mid(2);
+			    else if (i < args.count()-1) optArg = args[++i];
+			    mInitkeys = optArg;
+                dbg().sprintf("Init keys = '%s'", qp(mInitkeys) );
+		    } else {
+                showCmdLineUnknowOption( args[i] );
+			    exit(-1);
+		    }
+	    }
+    }
+
+	if ( !first ) {
+		/* no view opened */
+		first = YZSession::self()->createBufferAndView();
+		first->myBuffer()->openNewFile();
+		first->displayIntro();
+	}
+
+	YZSession::self()->setCurrentView( first );
+}
+
+void YZSession::frontendGuiReady()
+{
+    dbg() << "frontendGuiReady()" << endl;
+    sendInitkeys();
+}
+
+void YZSession::sendInitkeys()
+{
+    dbg() << HERE() << endl;
+    dbg() << toString() << endl;
+    dbg() << "Init keys to send: '" << mInitkeys << "'" << endl;
+    if (mInitkeys.length()) {
+        YZSession::self()->sendMultipleKeys( mInitkeys );
+    }
 }
 
 
@@ -155,35 +263,142 @@ YZYzisinfo * YZSession::getYzisinfo() {
 	return mYzisinfo;
 }
 
-void YZSession::guiStarted() {
-    dbg() << toString() << endl;
-	//read init files
-	if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
-		YZLuaEngine::self()->source( QDir::rootPath() + "/etc/yzis/init.lua" );
-	if (QFile::exists(QDir::homePath() + "/.yzis/init.lua"))
-		YZLuaEngine::self()->source( QDir::homePath() + "/.yzis/init.lua" );
+// ================================================================
+//
+//                          Buffer stuff
+//
+// ================================================================
+
+YZBuffer *YZSession::createBuffer( const QString &filename ) {
+    dbg().sprintf("createBuffer( filename='%s' )", qp(filename) );
+	//make sure we don't have a buffer of this path yet
+	YZBuffer *buffer = findBuffer( filename );
+	if (buffer) { //already open !
+		return buffer;
+	}
+
+	buffer = guiCreateBuffer();
+	buffer->setState( YZBuffer::ACTIVE );
+	
+	if ( !filename.isEmpty() ) {
+		buffer->load( filename );
+	} else {
+		buffer->openNewFile();
+	}
+	
+	mBufferList.push_back( buffer );
+	
+	return buffer;
 }
 
-void YZSession::addBuffer( YZBuffer *b ) {
-	dbg() << "Session : addBuffer " << b->fileName() << endl;
-	mBufferList.push_back( b );
+YZView *YZSession::createBufferAndView( const QString& path ) {
+    dbg().sprintf("createBufferAndView( path='%s' )", qp(path) );
+	QString filename = YZBuffer::parseFilename(path);
+	YZBuffer *buffer = findBuffer( filename );
+	bool alreadyopen = true;
+	if (!buffer) {
+		alreadyopen=false;
+		buffer = createBuffer( filename );
+	}
+
+	YZView *view;
+	if (!alreadyopen) {
+		view = createView( buffer );
+	} else {
+		view = findViewByBuffer(buffer);
+	}
+	setCurrentView( view );
+
+	view->applyStartPosition( YZBuffer::getStartPosition(path) );
+
+	return view;
 }
 
 void YZSession::rmBuffer( YZBuffer *b ) {
-//	dbg() << "Session : rmBuffer " << b->fileName() << endl;
+	dbg() << "rmBuffer( " << b->toString() << " )" << endl;
 	if ( mBufferList.indexOf( b ) >= 0 ) {
 			mBufferList.removeAll( b );
-			deleteBuffer( b );
+			guiDeleteBuffer( b );
 	}
 	if ( mBufferList.empty() )
 		exitRequest( );
-//	delete b; // kinda hot,no?
 }
 
-QString YZSession::saveBufferExit() {
-	if ( saveAll() )
-		quit();
-	return QString();
+YZBuffer* YZSession::findBuffer( const QString& path ) {
+	QFileInfo fi (path);
+	foreach( YZBuffer *b, mBufferList )
+		if ( b->fileName() == fi.absoluteFilePath())
+			return b;
+	return NULL; //not found
+}
+
+bool YZSession::isOneBufferModified() const {
+    foreach( YZBuffer * b, mBufferList ) {
+        if (b->fileIsNew() ) return true;
+    }
+    return false;
+}
+
+// ================================================================
+//
+//                          View stuff
+//
+// ================================================================
+YZView *YZSession::createView( YZBuffer *buffer ) {
+    dbg().sprintf("createView( %s )", qp(buffer->toString()) );
+	YZView *view = guiCreateView( buffer );
+	mViewList.push_back( view );
+	return view;
+}
+
+void YZSession::deleteView( YZView* view ) {
+    dbg().sprintf("deleteView( %s )", qp(view->toString()) );
+	if ( !mViewList.contains(view) ) {
+		err() << "trying to remove an unknown view " << view->getId() << endl;
+		return;
+	}
+
+	// Guardian, if we're deleting the last view, close the app
+	if ( mViewList.size() == 1 ) {
+        dbg() << "last view being deleted, exiting!" << endl;
+		exitRequest( 0 );
+		return;
+	}
+
+	// if we're deleting the current view, then we have to switch views
+	if ( view == currentView() ) {
+		setCurrentView( prevView() );
+	}
+	
+	// remove it
+	mViewList.removeAll( view );
+	guiDeleteView( view );
+}
+
+void YZSession::setCurrentView( YZView* view ) {
+	dbg() << "setCurrentView( " << view->toString() <<  " )" << endl;
+	guiChangeCurrentView( view );
+	
+	mCurView = view;
+	mCurBuffer = view->myBuffer();
+	mCurBuffer->filenameChanged();
+	
+	guiSetFocusMainWindow();
+}
+
+const YZViewList YZSession::getAllViews() const {
+	YZViewList result;
+	
+	for ( YZBufferList::const_iterator itr = mBufferList.begin(); itr != mBufferList.end(); ++itr ) {
+		YZBuffer *buf = *itr;
+		const YZViewList views = buf->views();
+		
+		for ( YZViewList::const_iterator vitr = views.begin(); vitr != views.end(); ++vitr ) {
+			result.push_back( *vitr );
+		}
+	}
+	
+	return result;
 }
 
 YZView* YZSession::findViewByBuffer( const YZBuffer *buffer ) {
@@ -191,17 +406,6 @@ YZView* YZSession::findViewByBuffer( const YZBuffer *buffer ) {
 		if ( view->myBuffer() == buffer )
 			return view;
 	return NULL;
-}
-
-void YZSession::setCurrentView( YZView* view ) {
-	dbg() << "Session : setCurrentView" << endl;
-	changeCurrentView( view );
-	
-	mCurView = view;
-	mCurBuffer = view->myBuffer();
-	mCurBuffer->filenameChanged();
-	
-	setFocusMainWindow();
 }
 
 YZView* YZSession::firstView() {
@@ -242,34 +446,14 @@ YZView* YZSession::nextView() {
 	return mViewList.value( (idx+1)%mViewList.size() );
 }
 
-YZBuffer* YZSession::findBuffer( const QString& path ) {
-	QFileInfo fi (path);
-	foreach( YZBuffer *b, mBufferList )
-		if ( b->fileName() == fi.absoluteFilePath())
-			return b;
-	return NULL; //not found
-}
-
-bool YZSession::saveAll() {
-	bool savedAll=true;
-	foreach( YZBuffer *b, mBufferList )
-		if ( !b->fileIsNew() )
-			if ( b->fileIsModified() && !b->save() )
-				savedAll=false;
-	return savedAll;
-}
-
-bool YZSession::isOneBufferModified() const {
-	YZBufferList::ConstIterator it = mBufferList.begin();
-	YZBufferList::ConstIterator end = mBufferList.end();
-	for ( ; it != end; ++it )
-		if ( (*it)->fileIsNew() )
-			return true;
-	return false;
-}
+// ================================================================
+//
+//                          Application Termination
+//
+// ================================================================
 
 bool YZSession::exitRequest( int errorCode ) {
-	dbg() << "exitRequest() Preparing for final exit with code " << errorCode << endl;
+	dbg() << "exitRequest( " << errorCode << " ) " << endl;
 	//prompt unsaved files XXX
 	foreach( YZBuffer *b, mBufferList )
 		b->saveYzisInfo( b->firstView() );
@@ -282,7 +466,23 @@ bool YZSession::exitRequest( int errorCode ) {
                                        
 	getYzisinfo()->writeYzisinfo();*/
                                           
-	return quit( errorCode );
+	return guiQuit( errorCode );
+}
+
+void YZSession::saveBufferExit() {
+    dbg() << HERE() << endl;
+	if ( saveAll() )
+		guiQuit();
+}
+
+bool YZSession::saveAll() {
+    dbg() << HERE() << endl;
+	bool savedAll=true;
+	foreach( YZBuffer *b, mBufferList )
+		if ( !b->fileIsNew() )
+			if ( b->fileIsModified() && !b->save() )
+				savedAll=false;
+	return savedAll;
 }
 
 void YZSession::sendMultipleKeys ( const QString& text) {
@@ -325,44 +525,6 @@ YZTagStack &YZSession::getTagStack() {
 	return *mTagStack;
 }
 
-YZView *YZSession::createView( YZBuffer *buffer ) {
-	YZView *view = doCreateView( buffer );
-	
-	addView( view );
-	
-	return view;
-}
-
-void YZSession::deleteView( YZView* view ) {
-	if ( !mViewList.contains(view) ) {
-		yzError() << "trying to remove an unknown view " << view->getId() << endl;
-		return;
-	}
-
-	// Guardian, if we're deleting the last view, close the app
-	if ( mViewList.size() == 1 ) {
-		exitRequest( 0 );
-		return;
-	}
-
-	// if we're deleting the current view, then we have to switch views
-	if ( view == currentView() ) {
-		setCurrentView( prevView() );
-	}
-	
-	// remove it
-	doDeleteView( view );
-	removeView( view );
-}
-
-void YZSession::addView( YZView *view ) {
-	mViewList.push_back( view );
-}
-
-void YZSession::removeView( YZView *view ) {
-	mViewList.removeAll( view );
-}
-		
 int YZSession::getIntegerOption( const QString& option ) {
 	return YZSession::self()->getOptions()->readIntegerOption( option );
 }
@@ -403,64 +565,6 @@ QList<QChar> YZSession::getRegisters() const {
 	return mRegisters->keys(); 
 }
 
-const YZViewList YZSession::getAllViews() const {
-	YZViewList result;
-	
-	for ( YZBufferList::const_iterator itr = mBufferList.begin(); itr != mBufferList.end(); ++itr ) {
-		YZBuffer *buf = *itr;
-		const YZViewList views = buf->views();
-		
-		for ( YZViewList::const_iterator vitr = views.begin(); vitr != views.end(); ++vitr ) {
-			result.push_back( *vitr );
-		}
-	}
-	
-	return result;
-}
-
-YZBuffer *YZSession::createBuffer( const QString &filename /*=QString::null*/ ) {
-	//make sure we don't have a buffer of this path yet
-	YZBuffer *buffer = findBuffer( filename );
-	if (buffer) { //already open !
-		return buffer;
-	}
-
-	buffer = doCreateBuffer();
-	buffer->setState( YZBuffer::ACTIVE );
-	
-	if ( !filename.isEmpty() ) {
-		buffer->load( filename );
-	} else {
-		buffer->openNewFile();
-	}
-	
-	addBuffer( buffer );
-	
-	return buffer;
-}
-
-YZView *YZSession::createBufferAndView( const QString& path /*=QString::null*/ ) {
-	QString filename = YZBuffer::parseFilename(path);
-	YZBuffer *buffer = findBuffer( filename );
-	bool alreadyopen = true;
-	if (!buffer) {
-		alreadyopen=false;
-		buffer = createBuffer( filename );
-	}
-
-	YZView *view;
-	if (!alreadyopen) {
-		view = createView( buffer );
-	} else {
-		view = findViewByBuffer(buffer);
-	}
-	setCurrentView( view );
-
-	view->applyStartPosition( YZBuffer::getStartPosition(path) );
-
-	return view;
-}
-
 void * YZSession::operator new( size_t tSize )
 {
 	dbg() << "YZSession::new()" << tSize << endl;
@@ -469,7 +573,47 @@ void * YZSession::operator new( size_t tSize )
 
 void YZSession::operator delete( void *p )
 {
-	dbg() << "YZSession::delete()" << p << endl;
+    dbg().sprintf("YZSession::delete( %p )", p );
 	yzfree(p);
 }
 
+// ================================================================
+//
+//                          Command line stuff
+//
+// ================================================================
+
+/** Show help text for -h and --help option */
+void YZSession::showCmdLineHelp( const QString & progName )
+{
+    QString usage = QString(
+"%1 [options] [file1 [file2] ... ]\n"
+"-h | --help : show this message\n"
+"-v | --version: version information\n"
+"-c <some key presses> : execute immediately the key presses when yzis starts, asif they were typed by the user.\n"
+    ).arg(progName);
+    fprintf(stderr, qp(usage) );
+}
+
+/** Show version text for -v and --version option */
+void YZSession::showCmdLineVersion()
+{
+    QString versionText	= version(); 
+    fprintf(stderr, qp(versionText) );
+}
+
+QString YZSession::version()
+{
+    QString v( "Yzis - http://www.yzis.org\n"
+				VERSION_CHAR_LONG " " VERSION_CHAR_DATE 
+                );
+    return v;
+}
+
+/** Show error message for unknown option */
+void YZSession::showCmdLineUnknowOption( const QString & opt )
+{
+    fprintf(stderr, "Unrecognised option: %s", qp(opt) );
+    dbg().sprintf("Unrecognised option: %s", qp(opt) );
+}
+    	

@@ -38,13 +38,13 @@ public:
 
 	// Reimplemented to please compilation
 
-	virtual void setCommandLineText( const QString& text);
+	virtual void guiSetCommandLineText( const QString& text);
 
-	virtual void setFocusCommandLine();
+	virtual void guiSetFocusCommandLine();
 
-	virtual void setFocusMainWindow();
+	virtual void guiSetFocusMainWindow();
 
-	virtual QString getCommandLineText() const;
+	virtual QString guiGetCommandLineText() const;
 
 	virtual void invalidateLine( unsigned int );
 
@@ -54,9 +54,9 @@ public:
 
 	virtual void refreshScreen( );
 
-	virtual void syncViewInfo( );
+	virtual void guiSyncViewInfo( );
 
-	virtual void displayInfo( const QString& );
+	virtual void guiDisplayInfo( const QString& );
 
 	virtual void modeChanged( );
 
@@ -70,17 +70,17 @@ public:
 	
     virtual void Scroll( int dx, int dy );
 
-    virtual void notifyContentChanged( const YZSelection& s );
+    virtual void guiNotifyContentChanged( const YZSelection& s );
 
-	virtual bool popupFileSaveAs();
-	virtual void filenameChanged();
-	virtual void highlightingChanged();
-	void preparePaintEvent(int, int);
-	void endPaintEvent();
-	void drawCell(int, int, const YZDrawCell&, void*);
-	void drawClearToEOL(int, int, const QChar&);
-	void drawSetMaxLineNumber(int);
-	void drawSetLineNumber(int, int, int);
+	virtual bool guiPopupFileSaveAs();
+	virtual void guiFilenameChanged();
+	virtual void guiHighlightingChanged();
+	void guiPreparePaintEvent(int, int);
+	void guiEndPaintEvent();
+	void guiDrawCell(int, int, const YZDrawCell&, void*);
+	void guiDrawClearToEOL(int, int, const QChar&);
+	void guiDrawSetMaxLineNumber(int);
+	void guiDrawSetLineNumber(int, int, int);
 	
 protected:
 	class Mapping {

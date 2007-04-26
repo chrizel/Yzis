@@ -41,10 +41,8 @@ public:
     /**
 	 * Constructs a Qyzis widget
 	 * @param w parent widget
-     * @param initialKeys key sequence to be executed by yzis upon startup.
-     * Very useful for testing.
      */
-    Qyzis(QWidget *w = 0, const QString& initialKeys=QString());
+    Qyzis(QWidget *w = 0);
 
     /**
      * Default Destructor
@@ -73,7 +71,6 @@ public:
     virtual QMainWindow *main();
 
 public slots:
-	void init();
 	void closeTab(QWidget *);
     void closeTab();
 
@@ -97,7 +94,6 @@ private:
 	int mBuffers;
 	unsigned int mViews;
 
-	QString m_initialCommand;
 //	QMap<QWidget*, Q3DockWindow::Position> m_docks;
 //	Q3PopupMenu *m_windowMenu;
 	typedef QPair<int, QString> WinInfo;

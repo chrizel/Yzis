@@ -53,12 +53,12 @@ public:
 	NYZView(YZBuffer *b);
 	virtual ~NYZView();
 
-	virtual QString getCommandLineText(void) const {return commandline; }
-	virtual void setCommandLineText( const QString& );
-	virtual void modeChanged(void) { syncViewInfo(); }
+	virtual QString guiGetCommandLineText(void) const {return commandline; }
+	virtual void guiSetCommandLineText( const QString& );
+	virtual void modeChanged(void) { guiSyncViewInfo(); }
 	virtual void refreshScreen();
-	virtual void syncViewInfo();
-	virtual void displayInfo(  const QString& info );
+	virtual void guiSyncViewInfo();
+	virtual void guiDisplayInfo(  const QString& info );
 	void paintEvent( const YZSelection& drawMap );
 
 	void Scroll( int dx, int dy );
@@ -75,9 +75,9 @@ public:
 	virtual void registerModifierKeys( const QString& ) { }
 	virtual void unregisterModifierKeys( const QString& ) { }
 	
-	bool popupFileSaveAs();
-	void filenameChanged();
-	void highlightingChanged();
+	bool guiPopupFileSaveAs();
+	void guiFilenameChanged();
+	void guiHighlightingChanged();
 
 	void setFocusCommandLine();
 	void setFocusMainWindow();
@@ -89,15 +89,15 @@ public slots:
 
 	protected  :
 
-		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
+		virtual void guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg );
 
-		virtual void notifyContentChanged( const YZSelection& s );
+		virtual void guiNotifyContentChanged( const YZSelection& s );
 
-		void preparePaintEvent(int, int);
-		void endPaintEvent();
-		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
-		virtual void drawSetMaxLineNumber( int max );
-		virtual void drawSetLineNumber( int y, int n, int h );
+		void guiPreparePaintEvent(int, int);
+		void guiEndPaintEvent();
+		virtual void guiDrawClearToEOL( int x, int y, const QChar& clearChar );
+		virtual void guiDrawSetMaxLineNumber( int max );
+		virtual void guiDrawSetLineNumber( int y, int n, int h );
 
 		bool fakeLine; /* true if current line is a fake one (eg: ~) */
 

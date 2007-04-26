@@ -36,16 +36,16 @@ class GYzis : public Bakery::App_WithDoc_Gtk, public YZSession
 		virtual void init();
 
 		//YZSession
-		void changeCurrentView( YZView* ) {}
+		void guiChangeCurrentView( YZView* ) {}
 		void deleteView ( int Id = -1 ) {}
-		void deleteBuffer( YZBuffer *b ) {}
+		void guiDeleteBuffer( YZBuffer *b ) {}
 		void quit(int errorCode=0) {}
-		void popupMessage( const QString& message ) {}
-		bool promptYesNo(const QString& title, const QString& message) {}
+		void guiPopupMessage( const QString& message ) {}
+		bool guiPromptYesNo(const QString& title, const QString& message) {}
 		YZBuffer *createBuffer(const QString& path=QString()) {}
 		YZView* createView ( YZBuffer* ) {}
-		void setFocusCommandLine() {}
-		void setFocusMainWindow() {}
+		void guiSetFocusCommandLine() {}
+		void guiSetFocusMainWindow() {}
 
 
 

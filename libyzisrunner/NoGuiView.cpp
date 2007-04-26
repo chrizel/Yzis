@@ -54,21 +54,21 @@ uint NoGuiView::getCursorCol()
 
 // Reimplemented to please compilation
 
-void NoGuiView::setCommandLineText( const QString& text) {
-    // dbg() << "NoGuiView::setCommandLineText( text='" << text << "') \n";
+void NoGuiView::guiSetCommandLineText( const QString& text) {
+    // dbg() << "NoGuiView::guiSetCommandLineText( text='" << text << "') \n";
     mCommandLine = text;
 }
 
-void NoGuiView::setFocusCommandLine() {
-    dbg() << "NoGuiView::setFocusCommandLine" << endl;
+void NoGuiView::guiSetFocusCommandLine() {
+    dbg() << "NoGuiView::guiSetFocusCommandLine" << endl;
 }
 
-void NoGuiView::setFocusMainWindow() {
-    dbg() << "NoGuiView::setFocusMainWindow" << endl;
+void NoGuiView::guiSetFocusMainWindow() {
+    dbg() << "NoGuiView::guiSetFocusMainWindow" << endl;
 }
 
-QString NoGuiView::getCommandLineText() const {
-    // dbg() << "NoGuiView::getCommandLineText" << endl;
+QString NoGuiView::guiGetCommandLineText() const {
+    // dbg() << "NoGuiView::guiGetCommandLineText" << endl;
     return mCommandLine;
 }
 
@@ -88,12 +88,12 @@ void NoGuiView::refreshScreen( ) {
     dbg() << "NoGuiView::refreshScreen" << endl;
 }
 
-void NoGuiView::syncViewInfo( ) {
-    dbg() << "NoGuiView::syncViewInfo" << endl;
+void NoGuiView::guiSyncViewInfo( ) {
+    dbg() << "NoGuiView::guiSyncViewInfo" << endl;
 }
 
-void NoGuiView::displayInfo( const QString& ) {
-    dbg() << "NoGuiView::displayInfo" << endl;
+void NoGuiView::guiDisplayInfo( const QString& ) {
+    dbg() << "NoGuiView::guiDisplayInfo" << endl;
 }
 
 void NoGuiView::modeChanged( ) {
@@ -123,45 +123,45 @@ void NoGuiView::Scroll( int dx, int dy ) {
     dbg() << "NoGuiView::Scroll" << dx << dy << endl;
 }
 
-void NoGuiView::notifyContentChanged( const YZSelection& s ) {
-    dbg() << "NoGuiView::notifyContentChanged" << endl;
+void NoGuiView::guiNotifyContentChanged( const YZSelection& s ) {
+    dbg() << "NoGuiView::guiNotifyContentChanged" << endl;
 }
 
-bool NoGuiView::popupFileSaveAs() 
+bool NoGuiView::guiPopupFileSaveAs() 
 { 
     dbg() << HERE() << endl;
     return false; 
 }
-void NoGuiView::filenameChanged() 
+void NoGuiView::guiFilenameChanged() 
 {
     dbg() << HERE() << endl;
 }
 
-void NoGuiView::highlightingChanged() 
+void NoGuiView::guiHighlightingChanged() 
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::preparePaintEvent(int, int) 
+void NoGuiView::guiPreparePaintEvent(int, int) 
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::endPaintEvent() 
+void NoGuiView::guiEndPaintEvent() 
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::drawCell(int, int, const YZDrawCell&, void*) 
+void NoGuiView::guiDrawCell(int, int, const YZDrawCell&, void*) 
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::drawClearToEOL(int, int, const QChar&) 
+void NoGuiView::guiDrawClearToEOL(int, int, const QChar&) 
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::drawSetMaxLineNumber(int) 
+void NoGuiView::guiDrawSetMaxLineNumber(int) 
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::drawSetLineNumber(int, int, int) 
+void NoGuiView::guiDrawSetLineNumber(int, int, int) 
 {
     dbg() << HERE() << endl;
 }

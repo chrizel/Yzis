@@ -114,19 +114,19 @@ QYZisView::~QYZisView () {
 //	if ( buffer ) buffer->removeView(this);
 }
 
-void QYZisView::setCommandLineText( const QString& text ) {
+void QYZisView::guiSetCommandLineText( const QString& text ) {
 	command->setText( text );
 }
 
-QString QYZisView::getCommandLineText() const {
+QString QYZisView::guiGetCommandLineText() const {
 	return command->text();
 }
 
-void QYZisView::setFocusMainWindow() {
+void QYZisView::guiSetFocusMainWindow() {
 	m_editor->setFocus();
 }
 
-void QYZisView::setFocusCommandLine() {
+void QYZisView::guiSetFocusCommandLine() {
 	command->setFocus();
 }
 
@@ -148,7 +148,7 @@ void QYZisView::refreshScreen() {
 	YZView::refreshScreen();
 }
 
-void QYZisView::notifyContentChanged( const YZSelection& s ) {
+void QYZisView::guiNotifyContentChanged( const YZSelection& s ) {
 	// content has changed, ask qt to repaint changed parts
 
 	YZSelectionMap m = s.map();
@@ -176,15 +176,15 @@ void QYZisView::notifyContentChanged( const YZSelection& s ) {
 	}
 }
 
-void QYZisView::preparePaintEvent( int min_y, int max_y ) {
-//	yzDebug() << "QYZisView::preparePaintEvent" << endl;
+void QYZisView::guiPreparePaintEvent( int min_y, int max_y ) {
+//	dbg() << "QYZisView::guiPreparePaintEvent" << endl;
 	m_painter = new QPainter( m_editor );
 	m_drawBuffer.setCallbackArgument( m_painter );
 	//m_editor->drawMarginLeft( min_y, max_y, m_painter );
 }
-void QYZisView::endPaintEvent() {
+void QYZisView::guiEndPaintEvent() {
+	dbg() << "guiEndPaintEvent()" << endl;
 	delete m_painter;
-//	yzDebug() << "QYZisView::endPaintEvent" << endl;
 }
 
 void QYZisView::paintEvent( const YZSelection& s ) {
@@ -194,17 +194,17 @@ void QYZisView::paintEvent( const YZSelection& s ) {
 /*
  * View painting methods
  */
-void QYZisView::drawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
-	m_editor->drawCell( x, y, cell, (QPainter*)arg );
+void QYZisView::guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
+	m_editor->guiDrawCell( x, y, cell, (QPainter*)arg );
 }
-void QYZisView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
-	m_editor->drawClearToEOL( x, y, clearChar, m_painter );
+void QYZisView::guiDrawClearToEOL( int x, int y, const QChar& clearChar ) {
+	m_editor->guiDrawClearToEOL( x, y, clearChar, m_painter );
 }
-void QYZisView::drawSetMaxLineNumber( int max ) {
+void QYZisView::guiDrawSetMaxLineNumber( int max ) {
 	mVScroll->setMaximum( max );
 	m_lineNumbers->setMaxLineNumber( max );
 }
-void QYZisView::drawSetLineNumber( int y, int n, int h ) {
+void QYZisView::guiDrawSetLineNumber( int y, int n, int h ) {
 	m_lineNumbers->setLineNumber( y, h, n );
 }
 QChar QYZisView::currentChar() const {
@@ -226,8 +226,8 @@ void QYZisView::modeChanged (void) {
 	l_mode->setText( mode() );
 }
 
-void QYZisView::syncViewInfo() {
-//	yzDebug() << "QYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
+void QYZisView::guiSyncViewInfo() {
+//	dbg() << "QYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
 	m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
 	l_linestatus->setText( getLineStatusString() );
 
@@ -286,24 +286,24 @@ void QYZisView::fileSave() {
 }
 
 void QYZisView::fileSaveAs() {
-	if ( popupFileSaveAs() )
+	if ( guiPopupFileSaveAs() )
 		myBuffer()->save();
 }
 
-void QYZisView::filenameChanged() {
+void QYZisView::guiFilenameChanged() {
 	if (Qyzis::me) {
 		//Qyzis::me->setCaption(getId(), myBuffer()->fileName());
 		Qyzis::me->setWindowTitle( myBuffer()->fileName());
 	} else
-		yzWarning() << "QYZisView::filenameChanged : couldn't find Qyzis::me.. is that ok ?";
+		yzWarning() << "QYZisView::guiFilenameChanged : couldn't find Qyzis::me.. is that ok ?";
 
 }
 
-void QYZisView::highlightingChanged() {
+void QYZisView::guiHighlightingChanged() {
 	sendRefreshEvent();
 }
 
-bool QYZisView::popupFileSaveAs() {
+bool QYZisView::guiPopupFileSaveAs() {
 	QString url =	QFileDialog::getSaveFileName();
 	if ( url.isEmpty() ) return false;//canceled
 
@@ -316,7 +316,7 @@ bool QYZisView::popupFileSaveAs() {
 
 
 
-void QYZisView::displayInfo( const QString& info ) {
+void QYZisView::guiDisplayInfo( const QString& info ) {
 	m_central->setText(info);
 	//clean the info 2 seconds later
 	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );

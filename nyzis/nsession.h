@@ -45,15 +45,15 @@ public:
 	/*
 	 * YZSession interface :
 	 */
-	virtual bool quit ( int errorCode ) ;
-	virtual void popupMessage( const QString& message );
-	virtual void deleteBuffer ( YZBuffer *b );
-	virtual void setFocusCommandLine();
-	virtual void setFocusMainWindow();
-	virtual bool promptYesNo( const QString& title, const QString& message );
-	virtual int promptYesNoCancel( const QString& title, const QString& message );
+	virtual bool guiQuit ( int errorCode ) ;
+	virtual void guiPopupMessage( const QString& message );
+	virtual void guiDeleteBuffer ( YZBuffer *b );
+	virtual void guiSetFocusCommandLine();
+	virtual void guiSetFocusMainWindow();
+	virtual bool guiPromptYesNo( const QString& title, const QString& message );
+	virtual int guiPromptYesNoCancel( const QString& title, const QString& message );
 	virtual void splitHorizontally( YZView *view );
-	virtual void setClipboardText( const QString& text, Clipboard::Mode mode );
+	virtual void guiSetClipboardText( const QString& text, Clipboard::Mode mode );
 	
 protected:
 	virtual YZView* doCreateView( YZBuffer* buffer );
@@ -74,7 +74,7 @@ private:
 	 */
 	void initialiseKeycodes();
 	
-	virtual void changeCurrentView ( YZView * );
+	virtual void guiChangeCurrentView ( YZView * );
 	
 	/**
 	  * mapping ncurses->qt for keycodes
@@ -83,7 +83,10 @@ private:
 	QString m_initialCommand;
 
 public Q_SLOTS:
-	void init();
+    /** To be called by single shot timer, when the gui is ready
+      * and the Qt event loop is running.
+      */
+    void frontendGuiReady();
 	bool processInput( int );
 
 };

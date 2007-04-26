@@ -102,19 +102,19 @@ KYZisView::~KYZisView () {
 //	if ( buffer ) buffer->removeView(this);
 }
 
-void KYZisView::setCommandLineText( const QString& text ) {
+void KYZisView::guiSetCommandLineText( const QString& text ) {
 	command->setText( text );
 }
 
-QString KYZisView::getCommandLineText() const {
+QString KYZisView::guiGetCommandLineText() const {
 	return command->text();
 }
 
-void KYZisView::setFocusMainWindow() {
+void KYZisView::guiSetFocusMainWindow() {
 	m_editor->setFocus();
 }
 
-void KYZisView::setFocusCommandLine() {
+void KYZisView::guiSetFocusCommandLine() {
 	command->setFocus();
 }
 
@@ -131,8 +131,8 @@ void KYZisView::refreshScreen() {
 		m_editor->marginLeft = 0;
 	YZView::refreshScreen();
 }
-void KYZisView::preparePaintEvent( int min_y, int max_y ) {
-	yzDebug() << "KYZisView::preparePaintEvent" << endl;
+void KYZisView::guiPreparePaintEvent( int min_y, int max_y ) {
+	yzDebug() << "KYZisView::guiPreparePaintEvent" << endl;
 	m_painter = new QPainter( m_editor );
 	m_drawBuffer.setCallbackArgument( m_painter );
 	m_editor->drawMarginLeft( min_y, max_y, m_painter );
@@ -148,18 +148,18 @@ void KYZisView::paintEvent( const YZSelection& drawMap ) {
 		m_editor->paintEvent( drawMap );
 	}
 }
-void KYZisView::drawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
-	m_editor->drawCell( x, y, cell, (QPainter*)arg );
+void KYZisView::guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
+	m_editor->guiDrawCell( x, y, cell, (QPainter*)arg );
 }
-void KYZisView::drawClearToEOL( int x, int y, const QChar& clearChar ) {
-	m_editor->drawClearToEOL( x, y, clearChar, m_painter );
+void KYZisView::guiDrawClearToEOL( int x, int y, const QChar& clearChar ) {
+	m_editor->guiDrawClearToEOL( x, y, clearChar, m_painter );
 }
-void KYZisView::drawSetMaxLineNumber( int max ) {
+void KYZisView::guiDrawSetMaxLineNumber( int max ) {
 	mVScroll->setMaxValue( max );
-	m_editor->drawSetMaxLineNumber( max );
+	m_editor->guiDrawSetMaxLineNumber( max );
 }
-void KYZisView::drawSetLineNumber( int y, int n, int h ) {
-	m_editor->drawSetLineNumber( y, n, h, m_painter );
+void KYZisView::guiDrawSetLineNumber( int y, int n, int h ) {
+	m_editor->guiDrawSetLineNumber( y, n, h, m_painter );
 }
 unsigned int KYZisView::stringWidth( const QString& str ) const {
 	return m_editor->fontMetrics().width( str );
@@ -186,7 +186,7 @@ void KYZisView::modeChanged (void) {
 	status->changeItem(mode(), 0);
 }
 
-void KYZisView::syncViewInfo() {
+void KYZisView::guiSyncViewInfo() {
 //	yzDebug() << "KYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
 	m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
 	status->changeItem( getLineStatusString(), 99 );
@@ -236,7 +236,7 @@ void KYZisView::fileSave() {
 }
 
 void KYZisView::fileSaveAs() {
-	if ( popupFileSaveAs() )
+	if ( guiPopupFileSaveAs() )
 		myBuffer()->save();
 }
 
@@ -264,7 +264,7 @@ void KYZisView::resetInfo() {
 	m_central->setText("");
 }
 
-void KYZisView::displayInfo( const QString& info ) {
+void KYZisView::guiDisplayInfo( const QString& info ) {
 	m_central->setText(info);
 	//clean the info 2 seconds later
 	QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
@@ -394,7 +394,7 @@ bool KYZisView::selectAll() {
 		return true;
 	return setSelection( KTextEditor::Range(KTextEditor::Cursor(0, 0),KTextEditor::Cursor(buffer->lines() - 1, qMax( (int)(myBuffer()->textline( buffer->lines() - 1 ).length() - 1), 0 ))));
 }
-bool KYZisView::popupFileSaveAs() {
+bool KYZisView::guiPopupFileSaveAs() {
 	KUrl url =	KFileDialog::getSaveURL();
 	if ( url.isEmpty() ) return false;//canceled
 	else if ( !url.isLocalFile() ) {
@@ -449,13 +449,13 @@ bool KYZisView::removeSelectionText() {
 	return true;
 }
 
-void KYZisView::filenameChanged() {
+void KYZisView::guiFilenameChanged() {
 	if (Kyzis::me) {
 		Kyzis::me->setCaption(getId(), myBuffer()->fileName());
 	}
 }
 
-void KYZisView::highlightingChanged() {
+void KYZisView::guiHighlightingChanged() {
 	sendRefreshEvent();
 }
 

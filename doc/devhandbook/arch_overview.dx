@@ -125,4 +125,19 @@ depending on the current mode.
 Yzis core uses the API to call the upper GUI layer to display. (details
 are in section rendering).
 
+\section quit_buffer_view Closing buffers and views
+
+Vim has the notion of unseen buffer. If you quit with unseen buffer, you are
+prompted if you want to see them. Buffer are only seen with :next and :prev
+
+With unnamed modified buffer, when you quit you are prompted to save the
+changes.
+
+When the last view closes, you are prompted to save changes to all unmodified
+buffers.
+
+If you delete a buffer with more than one view on it, and there are other
+buffer left, all views on the buffer are closed but one, and the one view is
+set an another buffer.
+
 */

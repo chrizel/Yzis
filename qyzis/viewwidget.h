@@ -57,17 +57,17 @@ class QYZisView: public QWidget, public YZView
 		QYZisView(YZBuffer  *doc, QWidget *parent, const char *name=0);
 	 	virtual ~QYZisView();
 //		KTextEditor::Document *document () { return dynamic_cast<KTextEditor::Document*>( buffer ); }
-		void setCommandLineText( const QString& text );
-		QString getCommandLineText() const;
-		void setFocusCommandLine();
-		void setFocusMainWindow();
+		void guiSetCommandLineText( const QString& text );
+		QString guiGetCommandLineText() const;
+		void guiSetFocusCommandLine();
+		void guiSetFocusMainWindow();
 		void Scroll( int dx, int dy );
 
 		void setVisibleArea( int columns, int lines );
 
 		virtual void modeChanged(void);
-		virtual void syncViewInfo();
-		void displayInfo( const QString& info );
+		virtual void guiSyncViewInfo();
+		void guiDisplayInfo( const QString& info );
 
 		void wheelEvent( QWheelEvent * e );
 //		void contextMenuEvent( QContextMenuEvent * e );
@@ -83,22 +83,22 @@ class QYZisView: public QWidget, public YZView
 
 		void refreshScreen();
 		
-		bool popupFileSaveAs();
-		void filenameChanged();
-		void highlightingChanged();
+		bool guiPopupFileSaveAs();
+		void guiFilenameChanged();
+		void guiHighlightingChanged();
 	
 	protected:
-		void drawSetMaxLineNumber( int max );
-		void drawSetLineNumber( int y, int n, int h );
-		virtual void preparePaintEvent( int y_min, int y_max );
-		virtual void endPaintEvent();
-		virtual void drawCell( int x, int y, const YZDrawCell& cell, void* arg );
-		virtual void drawClearToEOL( int x, int y, const QChar& clearChar );
+		void guiDrawSetMaxLineNumber( int max );
+		void guiDrawSetLineNumber( int y, int n, int h );
+		virtual void guiPreparePaintEvent( int y_min, int y_max );
+		virtual void guiEndPaintEvent();
+		virtual void guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg );
+		virtual void guiDrawClearToEOL( int x, int y, const QChar& clearChar );
 
 		void paintEvent( const YZSelection& s );
 
 
-		virtual void notifyContentChanged( const YZSelection& i );
+		virtual void guiNotifyContentChanged( const YZSelection& i );
 
     /**
      * Get the screen coordinates of the cursor position

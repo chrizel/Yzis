@@ -38,6 +38,7 @@ YZAction::YZAction( YZBuffer* buffer ) {
     dbg() << "YZAction(" << buffer->toString() << ")" << endl;
 	mBuffer = buffer;
 }
+
 YZAction::~YZAction( ) {
     dbg() << "~YZAction()" << endl;
 }
@@ -159,7 +160,7 @@ void YZAction::copyLine( YZView* , const YZCursor pos, int len, const QList<QCha
 		text += line + '\n';
 	}
 	buff << QString::null;
-	YZSession::self()->setClipboardText( text, Clipboard::Clipboard );
+	YZSession::self()->guiSetClipboardText( text, Clipboard::Clipboard );
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
 		YZSession::self()->setRegister( reg.at(ab), buff );
 }
@@ -190,7 +191,7 @@ void YZAction::copyArea( YZView* , const YZInterval& i, const QList<QChar> &reg 
 			buff << mBuffer->textline( eY ).left( eX );
 	}
 
-	YZSession::self()->setClipboardText( mBuffer->getText( i ).join("\n"), Clipboard::Clipboard );
+	YZSession::self()->guiSetClipboardText( mBuffer->getText( i ).join("\n"), Clipboard::Clipboard );
 	
 	dbg() << "Copied " << buff << endl;
 	for ( int ab = 0 ; ab < reg.size(); ++ab )
@@ -436,6 +437,7 @@ YZCursor YZAction::match( YZView* pView, const YZCursor cursor, bool *found ) co
 
 //mBegin is always the beginning of the search so if reverseSearch is true , we have mEnd < mBegin ;)
 // which makes reverseSearch redundant.  It's now calculated within the function based on a test of mEnd < mBegin
+
 YZCursor YZAction::search( YZBuffer* pBuffer, const QString& _what, const YZCursor mBegin, const YZCursor mEnd, int *matchlength, bool *found ) const {
 //	dbg() << " Searching " << _what << " from " << mBegin << " to " << mEnd << " Reverse : " << reverseSearch << endl;
 	bool reverseSearch = mEnd < mBegin;

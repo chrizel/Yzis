@@ -37,9 +37,9 @@ class Document : public Bakery::Document, public YZBuffer
 		Glib::ustring get_something() const;
 
 		//YZBuffer
-		bool popupFileSaveAs() { return true;}
+		bool guiPopupFileSaveAs() { return true;}
 		void filenameChanged() {}
-		void highlightingChanged() {}
+		void guiHighlightingChanged() {}
 
 
 	protected:

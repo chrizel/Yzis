@@ -84,10 +84,10 @@ class KYZisEdit : public QWidget {
 
 	protected:
 		void paintEvent( const YZSelection& drawMap );
-		void drawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
-		void drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p );
-		void drawSetMaxLineNumber( int max );
-		void drawSetLineNumber( int y, int n, int h, QPainter* p );
+		void guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
+		void guiDrawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p );
+		void guiDrawSetMaxLineNumber( int max );
+		void guiDrawSetLineNumber( int y, int n, int h, QPainter* p );
 
 		void drawMarginLeft( int min_y, int max_y, QPainter* p );
 		

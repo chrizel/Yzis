@@ -323,7 +323,7 @@ void KYZisEdit::scrollDown( int n ) {
 	scrollUp( -n );
 }
 
-void KYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
+void KYZisEdit::guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	p->save();
 	if ( cell.fg.isValid() )
 		p->setPen( cell.fg.rgb() );
@@ -335,19 +335,19 @@ void KYZisEdit::drawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	p->restore();
 }
 
-void KYZisEdit::drawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
+void KYZisEdit::guiDrawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
 	QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
 	p->eraseRect( r );
 }
 
-void KYZisEdit::drawSetMaxLineNumber( int max ) {
+void KYZisEdit::guiDrawSetMaxLineNumber( int max ) {
 	int my_marginLeft = 2 + QString::number( max ).length();
 	if ( my_marginLeft != marginLeft ) {
 		marginLeft = my_marginLeft;
 		updateArea();
 	}
 }
-void KYZisEdit::drawSetLineNumber( int y, int n, int h, QPainter* p ) {
+void KYZisEdit::guiDrawSetLineNumber( int y, int n, int h, QPainter* p ) {
 	fakeLine = n <= 0;
 
 	QString num;

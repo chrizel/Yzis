@@ -335,7 +335,7 @@ int YZLuaEngine::execInLua( const QString & luacode ) {
     if (lua_isnil(L,-2) && lua_isstring(L,-1)) {
         // there was an error in loadstring
         err() << "Error during loadstring(): " << lua_tostring(L,-1) << endl;
-        YZSession::self()->popupMessage(
+        YZSession::self()->guiPopupMessage(
             QString("Error when executing lua code:\n%1\n\nCode was:\n%2")
                 .arg( lua_tostring(L,-1) ).arg( luacode ) );
         lua_pop(L,2);
@@ -374,7 +374,7 @@ bool YZLuaEngine::yzpcall( int nbArg, int nbReturn, const QString & context ) {
     QByteArray err = luaErrorMsg.toLatin1();
     err().sprintf("pCall error: %s\n", err.data() );
 
-	YZSession::self()->popupMessage(context + '\n' + luaErrorMsg );
+	YZSession::self()->guiPopupMessage(context + '\n' + luaErrorMsg );
 	return false;
 }
 

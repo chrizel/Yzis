@@ -31,6 +31,7 @@ class QYZisView;
 class QYZisSession : public QObject, public YZSession
 {
 	Q_OBJECT
+
 public:
 	/**
 	 *  Creates one and the only session instance.
@@ -40,15 +41,15 @@ public:
 	static void createInstance();
 
 	//GUI interface
-	bool quit(int errorCode);
-	void popupMessage( const QString& message );
-	void deleteBuffer ( YZBuffer *b );
-	void setFocusCommandLine();
-	void setFocusMainWindow();
-	void splitHorizontally(YZView *view);
-	bool promptYesNo(const QString& title, const QString& message);
-	int promptYesNoCancel(const QString& title, const QString& message);
-	virtual void setClipboardText( const QString& text, Clipboard::Mode mode );
+	bool guiQuit(int errorCode);
+	void guiDeleteBuffer ( YZBuffer *b );
+	void guiSetFocusCommandLine();
+	void guiSetFocusMainWindow();
+	void guiSplitHorizontally(YZView *view);
+	void guiPopupMessage( const QString& message );
+	bool guiPromptYesNo(const QString& title, const QString& message);
+	int  guiPromptYesNoCancel(const QString& title, const QString& message);
+	virtual void guiSetClipboardText( const QString& text, Clipboard::Mode mode );
 	
 	/**
 	 * Sets the parent widget for all created QYZisView
@@ -59,16 +60,21 @@ public:
 	 */
 	void setViewParentWidget( QWidget *viewParent ) { m_viewParent = viewParent; }
 		//Editor Interface
-	YZView *doCreateView( YZBuffer* buffer );
-	void doDeleteView( YZView *view );
+	YZView *guiCreateView( YZBuffer* buffer );
+	void guiDeleteView( YZView *view );
 	
 	/**
 	 * Opens a new buffer
 	 * @return the newly created buffer
 	 */
-	YZBuffer* doCreateBuffer();
+	YZBuffer* guiCreateBuffer();
 
 public slots:
+    /** To be called by single shot timer, when the gui is ready
+      * and the Qt event loop is running.
+      */
+    void frontendGuiReady();
+
 	void applyConfig();
 	void closeView();
 
@@ -78,7 +84,7 @@ private:
 	QYZisSession& operator=(const QYZisSession&); // disable copy
 	virtual ~QYZisSession();
 
-	void changeCurrentView( YZView* );
+	void guiChangeCurrentView( YZView* );
 public:
 	QYZisView *lastView;
 	QWidget *m_viewParent;

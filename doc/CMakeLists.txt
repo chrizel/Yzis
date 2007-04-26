@@ -1,9 +1,11 @@
 
 if (ENABLE_DOCUMENTATION)
-    
+
+    message( "Documentation generation is ON" )    
     FIND_PACKAGE(Doxygen REQUIRED)
 
 	if(GENERATE_DOC)
+        message( "Documentation generation is automatic" )    
         set( ALWAYS_GENERATE ALL )
 	endif(GENERATE_DOC)
 

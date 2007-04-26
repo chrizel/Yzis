@@ -90,7 +90,7 @@ class KYZTextEditorIface : public KTextEditor::Document,
 
 		QString textLine ( unsigned int line ) const;
 		bool setText (  const QString &text );
-		void highlightingChanged();
+		void guiHighlightingChanged();
 		bool startEditing (KTextEditor::View * = 0) { return false; } //TODO
 		bool endEditing() {return false;} //TODO
 

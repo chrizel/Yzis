@@ -1309,7 +1309,10 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
 
 	for ( int i = 0; i < args.count; i++ ) {
 		for ( int ab = 0 ; ab < args.regs.size(); ++ab)
-			args.view->sendMultipleKey(YZSession::self()->getRegister(args.regs.at(ab))[0]);
+			YZSession::self()->sendMultipleKeys(
+                args.view,
+                YZSession::self()->getRegister(args.regs.at(ab))[0]
+                    );
 	}
 
 	args.view->commitNextUndo();

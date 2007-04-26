@@ -511,8 +511,24 @@ class YZIS_EXPORT YZSession
          * The key sequence is automatically sent to the right view,
          * even if the view is switched in the middle.
 		 */
-		void sendMultipleKeys ( const QString& text );
+		void scriptSendMultipleKeys ( const QString& text );
 
+        /** Copied from view */
+		void sendMultipleKeys( YZView * view, const QString& keys );
+
+		//-------------------------------------------------------
+		// ----------------- Send events to GUI
+		//-------------------------------------------------------
+		/**
+		 * transfer key events from GUI to core
+		 */
+		void sendKey( YZView * view, const QString& key, const QString& modifiers="");
+
+		/**
+		 * To be called by the GUI once it has been initialised
+		 */
+		void guiStarted();
+		
 		void registerModifier ( const QString& mod );
 		void unregisterModifier ( const QString& mod );
 

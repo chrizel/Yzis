@@ -26,6 +26,8 @@
 #include <qmainwindow.h>
 #include <qmap.h>
 
+#include "debug.h"
+
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
  * statusbar but relies on the "Part" to do all the real work.
@@ -100,5 +102,8 @@ private:
 	QList<WinInfo> m_windowList;
 
 };
+
+YZDebugStream& operator<<( YZDebugStream& out, Qt::KeyboardModifiers v );
+
 
 #endif // QYZIS_H

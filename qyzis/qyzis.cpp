@@ -298,3 +298,19 @@ QMainWindow *Qyzis::main()
     return this;
 }
 
+YZDebugStream& operator<<( YZDebugStream& out, Qt::KeyboardModifiers v )
+{
+    QString s;
+    switch (v) {
+        case Qt::NoModifier:      s += "NoModifier |"; break;
+        case Qt::ShiftModifier:   s += "ShiftModifier |"; break;
+        case Qt::ControlModifier: s += "ControlModifier |"; break;
+        case Qt::AltModifier:     s += "AltModifier |"; break;
+        case Qt::MetaModifier:    s += "MetaModifier |"; break;
+        case Qt::KeypadModifier:  s += "KeypadModifier |"; break;
+        case Qt::GroupSwitchModifier: s += "GroupSwitchModifier |"; break;
+    }
+    s = s.left( s.length()-2 );
+    out << s;
+    return out;
+}

@@ -60,8 +60,15 @@ public :
 	void setCursor(int c,int l);
 	void scroll( int dx, int dy );
 
-	QYZisCursor::shape cursorShape();
+    /** Return a cursor shape according to the current mode and focus */
+	QYZisCursor::CursorShape cursorShape();
+
+    /** Adjust the cursor shape.
+      *
+      * Set the cursor shape returned bye cursorShape() to the current cursor.
+      */
 	void updateCursor();
+
 	// update text area
 	void updateArea( );
 
@@ -83,7 +90,7 @@ public :
 	QYZisView* view() const;
 
 public slots :
-	void sendMultipleKey( const QString& keys );
+	void sendMappedKey( const QString& keys );
 
 
 protected:

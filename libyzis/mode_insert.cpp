@@ -238,7 +238,7 @@ void YZModeInsert::imCompose( YZView* mView, const QString& entry ) {
 			pos.setX( 0 );
 		mView->myBuffer()->action()->replaceText( mView, pos, len, entry );
 	} else {
-		mView->sendKey( entry );
+		YZSession::self()->sendKey( mView, entry );
 	}
 	m_imPreedit = entry;
 }

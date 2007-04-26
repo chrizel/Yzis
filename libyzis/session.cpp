@@ -21,6 +21,7 @@
 
 #include "session.h"
 
+#include "yzis.h"
 #include "debug.h"
 #include "schema.h"
 #include "buffer.h"
@@ -48,6 +49,8 @@
 #include "mode_insert.h"
 #include "mode_search.h"
 #include "mode_visual.h"
+
+using namespace yzis;
 
 #include "tags_stack.h"
 
@@ -191,7 +194,7 @@ void YZSession::sendInitkeys()
     dbg() << toString() << endl;
     dbg() << "Init keys to send: '" << mInitkeys << "'" << endl;
     if (mInitkeys.length()) {
-        YZSession::self()->sendMultipleKeys( mInitkeys );
+        YZSession::self()->scriptSendMultipleKeys( mInitkeys );
     }
 }
 
@@ -469,6 +472,7 @@ bool YZSession::exitRequest( int errorCode ) {
 	return guiQuit( errorCode );
 }
 
+
 void YZSession::saveBufferExit() {
     dbg() << HERE() << endl;
 	if ( saveAll() )
@@ -485,14 +489,137 @@ bool YZSession::saveAll() {
 	return savedAll;
 }
 
-void YZSession::sendMultipleKeys ( const QString& text) {
+void YZSession::scriptSendMultipleKeys ( const QString& text) {
+    dbg() << "scriptSendMultipleKeys(" << text << ")" << endl;
 //	QStringList list = QStringList::split("<ENTER>", text);
 /*	QStringList::Iterator it = list.begin(), end = list.end();
 	for (; it != end; ++it) {*/
-		YZView* cView = currentView();
-		cView->sendMultipleKey(/* *it + "<ENTER>" */ text);
+		sendMultipleKeys( currentView(), /* *it + "<ENTER>" */ text);
 		QCoreApplication::instance()->processEvents();
 /*	}*/
+}
+
+void YZSession::sendMultipleKeys( YZView * view, const QString& _keys) {
+	dbg() << "sendMultipleKeys(" << view << ", keys=" << _keys << ")" << endl;
+	if (view->modePool()->current()->mapMode() & cmdline) {
+		view->modePool()->change( YZMode::MODE_COMMAND );
+	}
+	QString keys = _keys;
+	for ( int i = 0 ; i < keys.length(); ) {
+		QString key = keys.mid( i );
+		dbg() << "Handling key: " << key << endl;
+		//exception : in SEARCH, SEARCH_BACKWARD and EX mode we don't send keys immediately
+		if (view->modePool()->current()->mapMode() & cmdline) {
+			if ( key.startsWith( "<ESC>" ) ) {
+				sendKey( view, "<ESC>" );
+				continue;
+			} else if ( key.startsWith( "<ENTER>" ) ) {
+				sendKey( view, "<ENTER>" );
+				i+=7;
+				continue;
+			} else if ( key.startsWith( "<UP>" ) ) {
+				sendKey( view, "<UP>" );
+				i+=4;
+				continue;
+			} else if ( key.startsWith( "<DOWN>" ) ) {
+				sendKey( view, "<DOWN>" );
+				i+=6;
+				continue;
+			} else {
+				view->guiSetCommandLineText( view->guiGetCommandLineText() + key.mid(0,1) );
+				i++;
+				continue;
+			}
+		}
+		if ( key.startsWith( "<CTRL>" ) ) {
+			dbg() << "Sending " << key.mid(6,1) << endl;
+			sendKey( view, key.mid( 6,1 ), "<CTRL>" );
+			i+=7;
+			continue;
+		} else if ( key.startsWith( "<ALT>" ) ) {
+			sendKey( view, key.mid( 5,1 ), "<ALT>" );
+			i+=6;
+			continue;
+		} else if ( key.startsWith( "<SHIFT>" ) ) {
+			sendKey( view, key.mid( 7,1 ), "<SHIFT>" );
+			i+=8;
+			continue;
+		} else if ( key.startsWith( "<ESC>" ) ) {
+			sendKey( view, "<ESC>" );
+			i+=5;
+			continue;
+		} else if ( key.startsWith( "<ENTER>" ) ) {
+			sendKey( view, "<ENTER>" );
+			i+=7;
+			continue;
+		} else if ( key.startsWith( "<TAB>" ) ) {
+			sendKey( view, "<TAB>" );
+			i+=5;
+			continue;
+		} else if ( key.startsWith( "<UP>" ) ) {
+			sendKey( view, "<UP>" );
+			i+=4;
+			continue;
+		} else if ( key.startsWith( "<DOWN>" ) ) {
+			sendKey( view, "<DOWN>" );
+			i+=6;
+			continue;
+		} else if ( key.startsWith( "<RIGHT>" ) ) {
+			sendKey( view, "<RIGHT>" );
+			i+=7;
+			continue;
+		} else if ( key.startsWith( "<LEFT>" ) ) {
+			sendKey( view, "<LEFT>" );
+			i+=6;
+			continue;
+		} else if ( key.startsWith( "<DEL>" ) ) {
+			sendKey( view, "<DEL>" );
+			i+=5;
+			continue;
+		} else {
+			sendKey( view, key.mid( 0,1 ) );
+			i++;
+		}
+	}
+}
+
+void YZSession::sendKey( YZView * view, const QString& _key, const QString& _modifiers) {
+	dbg() << "sendKey( " << view << ", key=" << _key << " mod=" << _modifiers << ")" << endl;
+
+	QString key=_key;
+	QString modifiers=_modifiers;
+	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
+
+    QList<QChar> reg = view->registersRecorded();
+	if ( reg.count() > 0 ) {
+		for ( int ab = 0 ; ab < reg.size(); ++ab ) {
+			QString newReg = modifiers + _key;
+			QStringList curReg = getRegister( reg.at(ab) );
+			if ( curReg.size() > 0 )
+				newReg.prepend( curReg[ 0 ] );
+			setRegister( reg.at(ab), QStringList( newReg ) );
+		}
+	}
+
+	/** rightleft mapping **/
+	bool rightleft = view->getLocalBooleanOption( "rightleft" );
+	if ( rightleft && ( view->modePool()->current()->mapMode() & (visual|normal) ) ) {
+#define SWITCH_KEY( a, b ) \
+	if ( key == a ) key = b; \
+	else if ( key == b ) key = a
+		SWITCH_KEY( "<RIGHT>", "<LEFT>" );
+		SWITCH_KEY( "h", "l" );
+	}
+
+	if ( modifiers.contains ("<SHIFT>")) {//useful?
+		key = key.toUpper();
+		modifiers.remove( "<SHIFT>" );
+	}
+
+	view->appendInputBuffer( modifiers + key );
+	view->setPaintAutoCommit( false );
+	view->modePool()->sendKey( key, modifiers );
+	view->commitPaintEvent();
 }
 
 void YZSession::registerModifier ( const QString& mod ) {

@@ -46,8 +46,8 @@
 #include "buffer.h"
 #include "debug.h"
 
-#define dbg()    yzDebug("QYZSession")
-#define err()    yzError("QYZSession")
+#define dbg() yzDebug("QYZisSession")
+#define err() yzError("QYZisSession")
 
 void QYZisSession::createInstance()
 {

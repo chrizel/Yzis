@@ -44,9 +44,17 @@ typedef unsigned int QRgb;
 class YZIS_EXPORT YZColor {
 
 	public:
+        /** Creates an invalid color */
 		YZColor();
+
+        /** Creates valid color from a rgb triplet.
+          * \sa setRgb() */
 		YZColor( QRgb rgb );
+
 		YZColor( Qt::GlobalColor color );
+
+        /** Creates color from a rgb triplet as a string
+          * \sa setNamedColor() */
 		YZColor( const QString &name ) { setNamedColor( name ); }
 		virtual ~YZColor();
 
@@ -56,9 +64,16 @@ class YZIS_EXPORT YZColor {
 		 * "#RGB" or "#RRGGBB"
 		 * 
 		 * #123 yields the color #112233
+         *
+         * If the format is not correct, the color will remain invalid.
 		 */
 		void setNamedColor( const QString &name );
 
+        /** Return whether the color is valid.
+          *
+          * Initially, the color is set as invalid. It becomes valid
+          * after a successful setNamedColor() or setRgb().
+          */
 		bool isValid() const;
 
 		/*
@@ -67,8 +82,10 @@ class YZIS_EXPORT YZColor {
 		void invalidate();
 
 		QRgb rgb() const;
-		/* #RRGGBB */
+
+		/** Return a string in the form #RRGGBB */
 		QString name() const;
+
 		int red() const;
 		int green() const;
 		int blue() const;
@@ -83,7 +100,6 @@ class YZIS_EXPORT YZColor {
 		int m_blue;
 
 		bool m_valid;
-
 };
 
 #endif

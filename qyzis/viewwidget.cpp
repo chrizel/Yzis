@@ -42,8 +42,8 @@
 #include "buffer.h"
 #include <debug.h>
 
-#define dbg()    yzDebug("QYZisView")
-#define err()    yzError("QYZisView")
+#define dbg() yzDebug("QYZisView")
+#define err() yzError("QYZisView")
 
 QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 	: YZView( _buffer, QYZisSession::self(), 0, 0 ), buffer( _buffer ), m_popup( 0 )
@@ -74,6 +74,8 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
 
 	status->addWidget(l_linestatus, 0); // was status->insertItem("",99,0,true);
 //	status->setItemAlignment(99,Qt::AlignRight);
+	status->setFocusProxy( command );
+    status->setFocusPolicy( Qt::ClickFocus );
 
 	m_lineNumbers = new QYZisLineNumbers(this);
 
@@ -115,7 +117,7 @@ QYZisView::~QYZisView () {
 }
 
 void QYZisView::guiSetCommandLineText( const QString& text ) {
-	command->setText( text );
+    command->setText( text );
 }
 
 QString QYZisView::guiGetCommandLineText() const {
@@ -123,10 +125,12 @@ QString QYZisView::guiGetCommandLineText() const {
 }
 
 void QYZisView::guiSetFocusMainWindow() {
+    dbg() << "setFocusMainWindow()" << endl;
 	m_editor->setFocus();
 }
 
 void QYZisView::guiSetFocusCommandLine() {
+    dbg() << "setFocusCommandLine()" << endl;
 	command->setFocus();
 }
 

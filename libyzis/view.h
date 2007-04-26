@@ -111,14 +111,6 @@ class YZIS_EXPORT YZView {
 		void setVisibleArea (int c, int l, bool refresh = true );
 		
 		//-------------------------------------------------------
-		// ----------------- Send events to GUI
-		//-------------------------------------------------------
-		/**
-		 * transfer key events from GUI to core
-		 */
-		void sendKey(const QString& key, const QString& modifiers="");
-
-		//-------------------------------------------------------
 		// ----------------- Line Visibility
 		//-------------------------------------------------------
 		/**
@@ -235,6 +227,7 @@ class YZIS_EXPORT YZView {
 		 * Typically used after a command is recognized or when ESC is pressed
 		 */
 		void purgeInputBuffer() { mPreviousChars = ""; }
+		void appendInputBuffer( const QString & s ) { mPreviousChars += s; }
 		void saveInputBuffer();
 		QString getInputBuffer() const { return mPreviousChars; }
 		QString getLastInputBuffer() const { return mLastPreviousChars; }
@@ -762,13 +755,6 @@ class YZIS_EXPORT YZView {
 		 * returns a YZSelection which fit view
 		 */
 		YZSelection clipSelection( const YZSelection& sel ) const;
-
-        /** Send a key sequence to libyzis (from gui to core).
-          *
-          * The method will call sendKey() repeatedly with
-          * keys one by one.
-          */
-		void sendMultipleKey( const QString& keys );
 
 	protected:
 

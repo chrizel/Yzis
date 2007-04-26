@@ -23,51 +23,63 @@
 #include "editor.h"
 #include "mode.h"
 #include "view.h"
+#include "session.h"
+#include "qyzis.h"
 
-
-#define dbg()    yzDebug("QYZisCommand")
-#define err()    yzError("QYZisCommand")
-
+#define dbg() yzDebug("QYZisCommand")
+#define err() yzError("QYZisCommand")
 
 QYZisCommand::QYZisCommand(QYZisView *parent)
 	: QLineEdit( parent ) {
-		_parent = parent;
+    _parent = parent;
+    setFocusPolicy( Qt::ClickFocus );
 }
 
 QYZisCommand::~QYZisCommand() {
 }
 
 void QYZisCommand::keyPressEvent ( QKeyEvent * e ) {
-	dbg()<< " QYZisCommand Got key : " << e->key()<< " Got ASCII : " << e->text().toLatin1().constData() << " Got Unicode : " << e->text() << endl;
-	QString modifiers;
-	if ( e->QInputEvent::modifiers() & Qt::ShiftModifier ) modifiers += "<SHIFT>";
-	if ( e->QInputEvent::modifiers() & Qt::AltModifier ) modifiers += "<ALT>";
-	if ( e->QInputEvent::modifiers() & Qt::ControlModifier ) modifiers += "<CTRL>";
+	dbg()<< "keyPressEvent( modifier=" << e->modifiers() << ", key=" << e->key()<< ", ascii=" << e->text().toLatin1().constData() << ", unicode=" << e->text() << ")" << endl;
+	QString mod;
+	if ( e->modifiers() & Qt::ShiftModifier ) mod += "<SHIFT>";
+	if ( e->modifiers() & Qt::AltModifier ) mod += "<ALT>";
+	if ( e->modifiers() & Qt::ControlModifier ) mod += "<CTRL>";
 	if ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Up || e->key() == Qt::Key_Down || e->key() == Qt::Key_Escape) {
-		_parent->sendKey(_parent->editor()->convertKey( e->key() ), modifiers ) ;
+        dbg() << "keyPressEvent: sending to Session" << endl;
+		YZSession::self()->sendKey( static_cast< YZView * >( _parent ), _parent->editor()->convertKey( e->key() ), mod ) ;
 		e->accept();
 	} 
 	else if ( ( e->QInputEvent::modifiers() & Qt::ControlModifier ) && e->key() == Qt::Key_C ) { // handle CTRL-C 
-		_parent->sendKey( "c" , modifiers ) ;
+        dbg() << "keyPressEvent: sending CONTROL-C to Session" << endl;
+		YZSession::self()->sendKey( static_cast< YZView * >( _parent ), "c" , mod ) ;
 		e->accept();
 	}
-	else QLineEdit::keyPressEvent( e );
+	else {
+        dbg() << "keyPressEvent: sending to QLineEdit" << endl;
+        QLineEdit::keyPressEvent( e );
+    }
 }
 
-void QYZisCommand::focusInEvent (QFocusEvent *) {
-	dbg() << "QYZisCommand : Focus IN -> EX mode" << endl;
+void QYZisCommand::focusInEvent (QFocusEvent * e) {
+	dbg() << "focusInEvent() " << endl;
 	if ( _parent->modePool()->currentType() != YZMode::MODE_EX 
 			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH 
-			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH_BACKWARD )
+			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH_BACKWARD ) {
 		_parent->modePool()->push( YZMode::MODE_EX );
+    }
+
+    //e->accept();
+    QLineEdit::focusInEvent(e);
 }
 
 void QYZisCommand::focusOutEvent (QFocusEvent *e) {
-	dbg() << "QYZisCommand : Focus OUT -> reject" << endl;
+	dbg() << "focusOutEvent() " << endl;
+    /*
 	if ( _parent->modePool()->currentType() != YZMode::MODE_EX 
 			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH 
 			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH_BACKWARD )
 		return;
-	QWidget::focusOutEvent(e);
+    */
+	QLineEdit::focusOutEvent(e);
 }
 

@@ -31,7 +31,6 @@
 
 /* Yzis */
 #include "editor.h"
-#include "debug.h"
 #include "yzis.h"
 #include "qsession.h"
 #include "registers.h"
@@ -40,8 +39,8 @@
 /* QYzis */
 #include "qyzis.h"
 
-#define dbg()    yzDebug("QYZisEdit")
-#define err()    yzError("QYZisEdit")
+#define dbg() yzDebug("QYZisEdit")
+#define err() yzError("QYZisEdit")
 
 QYZisEdit::QYZisEdit(QYZisView *parent)
 : QWidget( parent )
@@ -60,7 +59,7 @@ QYZisEdit::QYZisEdit(QYZisView *parent)
 	/* show an edit cursor */
 	QWidget::setCursor( Qt::IBeamCursor );
 
-	mCursor = new QYZisCursor( this, QYZisCursor::SQUARE );
+	mCursor = new QYZisCursor( this, QYZisCursor::CursorFilledRect );
 
 	initKeys();
 }
@@ -107,43 +106,48 @@ void QYZisEdit::setPalette( const QPalette& p, qreal opacity ) {
 	Qyzis::me->setWindowOpacity(opacity);
 }
 
-QYZisCursor::shape QYZisEdit::cursorShape() {
-	QYZisCursor::shape s;
-	QString shape;
+QYZisCursor::CursorShape QYZisEdit::cursorShape() {
+	QYZisCursor::CursorShape shape;
+	QString shapeString;
 	YZMode::modeType m = mParent->modePool()->current()->type();
 	switch( m ) {
 		case YZMode::MODE_INSERT :
-			shape = mParent->getLocalStringOption("cursorinsert");
+			shapeString = mParent->getLocalStringOption("cursorinsert");
 			break;
 		case YZMode::MODE_REPLACE :
-			shape = mParent->getLocalStringOption("cursorreplace");
+			shapeString = mParent->getLocalStringOption("cursorreplace");
 			break;
 		case YZMode::MODE_COMPLETION :
-			shape = "keep";
+			shapeString = "keep";
 			break;
 		default :
-			shape = mParent->getLocalStringOption("cursor");
+			shapeString = mParent->getLocalStringOption("cursor");
+            // hbar, vbar or square
 			break;
 	}
-	if ( shape == "hbar" ) {
-		s = QYZisCursor::HBAR;
-	} else if ( shape == "vbar" ) {
-		s = QYZisCursor::VBAR;
-	} else if ( shape == "keep" ) {
-		s = mCursor->type();
+    dbg() << "cursorShape(), shapeString='" << shapeString << "'" << endl;
+	if ( shapeString == "hbar" ) {
+		shape = QYZisCursor::CursorHbar;
+	} else if ( shapeString == "vbar" ) {
+		shape = QYZisCursor::CursorVbar;
+	} else if ( shapeString == "keep" ) {
+		shape = mCursor->shape();
 	} else {
+        // when cursor option is square, the cursor is either a
+        // filled rectangle or a rectangle frame depending on focus.
 		if ( hasFocus() ) 
-			s = QYZisCursor::SQUARE;
+			shape = QYZisCursor::CursorFilledRect;
 		else
-			s = QYZisCursor::RECT;
+			shape = QYZisCursor::CursorRect;
 	}
-	return s;
-}
-void QYZisEdit::updateCursor() {
-	mCursor->setCursorType( cursorShape() );
-	mCursor->update();
+    dbg() << "cursorShape(), cursorShape=" << shape << endl;
+	return shape;
 }
 
+void QYZisEdit::updateCursor() {
+	mCursor->setCursorShape( cursorShape() );
+	mCursor->update();
+}
 
 void QYZisEdit::updateArea( ) {
 
@@ -170,10 +174,12 @@ void QYZisEdit::updateArea( ) {
 bool QYZisEdit::event(QEvent *e) {
 	if ( e->type() == QEvent::KeyPress ) {
 		QKeyEvent *ke = (QKeyEvent *)e;
+        dbg() << "event( KeyEvent( key=" << ke->text() << ", mod=" << ke->modifiers() << ") )" << endl;;
 		if ( ke->key() == Qt::Key_Tab ) {
 			keyPressEvent(ke);
 			return true;
 		}
+        dbg().sprintf("event: key event transferred to QWidget" );
 	}
 	return QWidget::event(e);
 }
@@ -197,9 +203,8 @@ void QYZisEdit::keyPressEvent ( QKeyEvent * e ) {
 	} else {
 		text = keys[ e->key() ];
 	}
-
-    dbg().sprintf("keyPressEvent: modifiers=%s, text=\"%s\"", qp(modifiers), qp(text) );
-	mParent->sendKey(text, modifiers);
+	dbg().sprintf("Event transferred to YZSession");
+	YZSession::self()->sendKey( static_cast<YZView*>( mParent ), text, modifiers);
 	e->accept();
 }
 
@@ -255,10 +260,12 @@ void QYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 }
 
 void QYZisEdit::focusInEvent ( QFocusEvent * ) {
+    dbg() << "focusInEvent()" << endl;
 	QYZisSession::self()->setCurrentView( mParent );
 	updateCursor();
 }
 void QYZisEdit::focusOutEvent ( QFocusEvent * ) {
+    dbg() << "focusOutEvent()" << endl;
 	updateCursor();
 }
 
@@ -444,7 +451,7 @@ void QYZisEdit::initKeys() {
 		keys[ Qt::Key_BracketRight ] = "]";
 	}
 	signalMapper = new QSignalMapper( this );
-	connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMultipleKey( const QString& ) ) );
+	connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMappedKey( const QString& ) ) );
 }
 
 QString QYZisEdit::keysToShortcut( const QString& keys ) {
@@ -481,9 +488,9 @@ void QYZisEdit::unregisterModifierKeys( const QString& keys ) {
 	*/
 }
 
-void QYZisEdit::sendMultipleKey( const QString& keys ) {
-    dbg().sprintf("sendMultipleKey( %s )", qp(keys) );
-	mParent->sendMultipleKey( keys );
+void QYZisEdit::sendMappedKey( const QString& keys ) {
+    dbg().sprintf("sendMappedKey( keys=%s )", qp(keys) );
+	YZSession::self()->sendMultipleKeys( static_cast<YZView *>( mParent ), keys );
 }
 
 const QString& QYZisEdit::convertKey( int key ) {
@@ -527,7 +534,7 @@ void QYZisEdit::imEndEvent( QIMEvent *e ) {
 	if ( mParent->modePool()->current()->supportsInputMethod() ) {
 		mParent->modePool()->current()->imEnd( mParent, e->text() );
 	} else {
-		mParent->sendKey( e->text() );
+		YZSession::self()->sendKey( static_cast<YZView *>( mParent ), e->text() );
 	}
 	e->accept();
 }*/

@@ -22,6 +22,9 @@
 
 #include <QWidget>
 
+#include "debug.h"
+#include "drawbuffer.h"
+
 class QYZisEdit;
 class QYZisView;
 
@@ -30,28 +33,36 @@ class QYZisCursor : public QWidget
 	Q_OBJECT
 
 public :
-	enum shape {
-		SQUARE,
-		VBAR,
-		HBAR,
-		RECT,
+	enum CursorShape {
+		CursorFilledRect,
+		CursorVbar,
+		CursorHbar,
+		CursorRect,
 	};
 
-	QYZisCursor( QYZisEdit* parent, shape type );
+	QYZisCursor( QYZisEdit* parent, CursorShape shape );
 	virtual ~QYZisCursor();
 
-	void setCursorType( shape type );
-	shape type() const;
+	void setCursorShape( CursorShape shape );
+	CursorShape shape() const;
+
+    YZDebugStream& operator<<( YZDebugStream& out );
 
 protected :
-	virtual void paintEvent( QPaintEvent* event );
+	virtual void paintEvent( QPaintEvent* pe );
+
+    inline void paintFilledRect();
+    inline void paintRect();
+    inline void paintVbar();
+    inline void paintHbar();
 
 private :
-	shape mCursorType;
+	CursorShape mCursorShape;
 	QYZisEdit* mEditor;
 	QYZisView* mView;
 
 };
+
 
 #endif
 

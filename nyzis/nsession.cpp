@@ -124,21 +124,21 @@ bool NYZSession::processInput(int /*fd*/) {
 		case 0x18: // ^x // important, tested
 		case 0x19: // ^y
 		case 0x1a: // ^z
-			currentView()->sendKey( QString( QChar( 0x60+c ) ),"<CTRL>" );
+			sendKey( currentView(), QString( QChar( 0x60+c ) ),"<CTRL>" );
 			return true;
 	} // switch
 	
 	if ( c == 0x1d ) {
-		currentView()->sendKey( "<CTRL>]" );
+		sendKey( currentView(), "<CTRL>]" );
 	}
 
 	if (keycodes.contains(c)) {
-		currentView()->sendKey(keycodes[c],"");
+		sendKey( currentView(), keycodes[c],"");
 		return true;
 	}
 	// remaining cases
 	if ( c& KEY_CODE_YES ) { // ncurses special key
-		yzError(NYZIS) << "*************** Unhandled" <<
+		err() << "*************** Unhandled" <<
 			"ncurses key code, please report : " << (int) c << endl;
 		return true;
 	}
@@ -149,7 +149,7 @@ bool NYZSession::processInput(int /*fd*/) {
 		c &= ~0200;
 	} */
 	if ( c>=KEY_MAX) { // non-ascii key
-		yzError(NYZIS) << "*************** Unhandled" <<
+		err() << "*************** Unhandled" <<
 			"and very strange (>KEY_MAX) char received from ncurses, please report : " << (int) c << endl;
 		return true;
 	}
@@ -160,7 +160,7 @@ bool NYZSession::processInput(int /*fd*/) {
 	if ( isupper( c ) ) { modifiers +="<SHIFT>"; }
 	//yzDebug() << "sendKey < " << c << " (" << QString( QChar( c ) ) << ") modifiers=" << modifiers << endl;
 	//TODO: META
-	currentView()->sendKey( QString( QChar( c ) ), modifiers );
+	sendKey( currentView(), QString( QChar( c ) ), modifiers );
 
 	return true;
 }

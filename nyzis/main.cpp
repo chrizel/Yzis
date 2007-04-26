@@ -120,7 +120,7 @@ static void sigint(int /*sig*/)
 {
 	dbg() << "^C caught" << endl;
 	// ^c caught -> sends an escape char..
-	NYZSession::self()->currentView()->sendKey( "<ESC>","" );
+	NYZSession::self()->sendKey( NYZSession::self()->currentView(), "<ESC>","" );
 }
 
 

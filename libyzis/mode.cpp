@@ -39,6 +39,36 @@ using namespace yzis;
 #define dbg() yzDebug("YZMode")
 #define err() yzError("YZMode")
 
+YZDebugStream& operator<<( YZDebugStream& out, const cmd_state & state )
+{
+    switch( state ) {
+        case CMD_ERROR: out << "CMD_ERROR"; break;
+        case NO_COMMAND_YET: out << "NO_COMMAND_YET"; break;
+        case OPERATOR_PENDING: out << "OPERATOR_PENDING"; break;
+        case CMD_OK: out << "CMD_OK"; break;
+        case CMD_QUIT: out << "CMD_QUIT"; break;
+    }
+    return out;
+}
+
+YZDebugStream& operator<<( YZDebugStream& out, const YZMode::modeType & type )
+{
+    switch( type ) {
+		case YZMode::MODE_COMMAND: out << "MODE_COMMAND"; break; 
+		case YZMode::MODE_INSERT: out << "MODE_INSERT"; break;
+		case YZMode::MODE_REPLACE: out << "MODE_REPLACE"; break;
+		case YZMode::MODE_EX: out << "MODE_EX"; break;
+		case YZMode::MODE_SEARCH: out << "MODE_SEARCH"; break;
+		case YZMode::MODE_SEARCH_BACKWARD: out << "MODE_SEARCH_BACKWARD"; break;
+		case YZMode::MODE_INTRO: out << "MODE_INTRO"; break;
+		case YZMode::MODE_COMPLETION: out << "MODE_COMPLETION"; break;
+		case YZMode::MODE_VISUAL: out << "MODE_VISUAL"; break;
+		case YZMode::MODE_VISUAL_LINE: out << "MODE_VISUAL_LINE"; break;
+		case YZMode::MODE_VISUAL_BLOCK: out << "MODE_VISUAL_BLOCK"; break;
+    }
+    return out;
+}
+
 YZMode::YZMode() {
 	mString = "if you see me, there is a problem :)";
 	mEditMode = false;

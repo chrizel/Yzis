@@ -28,6 +28,7 @@
 #include "yzis.h"
 
 
+class YZDebugStream;
 class YZView;
 class YZModePool;
 
@@ -43,6 +44,8 @@ enum cmd_state {
 	/** It is time to leave the event loop */
 	CMD_QUIT,
 };
+
+YZDebugStream& YZIS_EXPORT operator<<( YZDebugStream& out, const cmd_state & state );
 
 class YZIS_EXPORT YZMode
 {
@@ -108,6 +111,9 @@ protected:
 	QStringList mModifierKeys;
 	bool mRegistered;
 };
+
+YZDebugStream& YZIS_EXPORT operator<<( YZDebugStream& out, const YZMode::modeType & type );
+
 
 class YZModeIntro : public YZMode {
 public:

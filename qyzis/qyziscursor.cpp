@@ -21,6 +21,7 @@
 #include "editor.h"
 #include "viewwidget.h"
 #include "qyziscursor.h"
+#include "debug.h"
 
 #define dbg() yzDebug("QYZisCursor")
 #define err() yzError("QYZisCursor")
@@ -61,82 +62,91 @@ void QYZisCursor::paintEvent( QPaintEvent* pe )
 {
 	Q_UNUSED(pe);
 
-    mView->m_drawBuffer.at( mEditor->translateRealToPosition(pos()) );
-	switch( shape() ) {
-		case CursorFilledRect : paintFilledRect(); break;
-		case CursorRect : paintRect(); break;
-        case CursorVbar : paintVbar(); break;
-        case CursorHbar: paintHbar(); break;
-    }
-}
-
-void QYZisCursor::paintFilledRect()
-{
-	QPainter p( this );
     const YZDrawCell cell( mView->m_drawBuffer.at( mEditor->translateRealToPosition(pos()) ) );
+    QColor cbg, cfg;
+
     if (cell.bg.isValid()) {
-        dbg() << "paintFilledRect(): valid cell bg" << endl;
-        p.setPen( QColor(cell.bg.rgb()) );
+        dbg() << "paintEvent(): valid cell bg" << endl;
+        cbg = QColor(cell.bg.rgb());
+        //cbg = QColor( Qt::red );
     } else {
-        dbg() << "paintFilledRect(): invalid cell bg" << endl;
-        p.setPen( parentWidget()->palette().color(QPalette::Window) );
+        dbg() << "paintEvent(): invalid cell bg" << endl;
+        cbg = parentWidget()->palette().color(QPalette::Window);
+        //cbg = QColor(Qt::magenta);
     }
 
-    dbg() << "paintFilledRect(): pen=" << p.pen().color().name() << endl;
+    dbg() << "paintEvent(): cell background=" << cbg.name() << endl;
 
     if ( cell.fg.isValid() ) {
-        dbg() << "paintFilledRect(): valid cell fg" << endl;
-        p.setBackground( QColor(cell.fg.rgb()) );
+        dbg() << "paintEvent(): valid cell fg" << endl;
+        cfg = QColor(cell.fg.rgb());
+        //cfg = QColor(Qt::blue);
     } else {
-        dbg() << "paintFilledRect(): invalid cell fg" << endl;
-        p.setBackground( parentWidget()->palette().color(QPalette::WindowText) );
+        dbg() << "paintEvent(): invalid cell fg" << endl;
+        cfg = parentWidget()->palette().color(QPalette::WindowText);
+        //cfg = QColor(Qt::cyan);
     }
+    dbg() << "paintEvent(): cell foreground=" << cfg.name() << endl;
 
-    dbg() << "paintFilledRect(): background=" << p.background().color().name() << endl;
 
-    p.eraseRect( rect() );
-    p.drawText( rect(), cell.c );
-}
-
-void QYZisCursor::paintRect()
-{
 	QPainter p( this );
-    const YZDrawCell cell( mView->m_drawBuffer.at( mEditor->translateRealToPosition(pos()) ) );
-	if (cell.bg.isValid()) {
-        dbg() << "paintFilledRect(): valid cell bg" << endl;
-        p.setPen( QColor(cell.bg.rgb()) );
-    } else {
-        dbg() << "paintFilledRect(): invalid cell bg" << endl;
-        p.setPen( parentWidget()->palette().color(QPalette::Window) );
+    QRect r=rect();
+    CursorShape s = shape();
+    dbg() << "paintEvent(): shape=" << s << endl;
+	switch( s ) {
+		case CursorFilledRect : 
+            p.setPen( cbg );
+            p.setBackground( cfg );
+            // erase with cell foreground
+            p.eraseRect( rect() );
+            // paint character with cell background
+            p.drawText( rect(), cell.c );
+            break;
+
+		case CursorFrameRect : 
+            p.setPen( cfg );
+            p.setBackground( cbg );
+            // erase with cell background
+            p.eraseRect( r );
+            // paint character with cell foreground
+            p.drawText( r, cell.c );
+
+            // paint rect with cell foreground
+            r.adjust(0,0,-1,-1);
+            p.drawRect( r );
+            break;
+
+        case CursorVbar : 
+            r.setWidth( 2 );
+            p.fillRect( r, QBrush(cfg) );
+            break;
+
+        case CursorHbar: 
+            // erase with cell background
+            p.eraseRect( r );
+            // paint character with cell foreground
+            p.drawText( r, cell.c );
+            r.setTop( r.bottom()-2 );
+            p.fillRect( r, QBrush(cfg) );
+            break;
+
+        case CursorHidden: 
+            // erase with cell background
+            p.eraseRect( r );
+            // paint character with cell foreground
+            p.drawText( r, cell.c );
+            return;
     }
-    dbg() << "paintFilledRect(): pen=" << p.pen().color().name() << endl;
-
-    p.drawRect( rect() );
 }
 
-void QYZisCursor::paintVbar()
+YZDebugStream& operator<<( YZDebugStream& out, const QYZisCursor::CursorShape & shape )
 {
-    QPainter p( this );
-    const QBrush b( parentWidget()->palette().text() );
-    dbg() << "paintVbar(): brush=" << b.color().name() << endl;
-    p.fillRect( rect(), b );
-}
-
-void QYZisCursor::paintHbar()
-{
-	QPainter p( this );
-    const QBrush b( parentWidget()->palette().text() );
-    dbg() << "paintVbar(): brush=" << b.color().name() << endl;
-    p.fillRect( rect(), b );
-}
-
-YZDebugStream& QYZisCursor::operator<<( YZDebugStream& out )
-{
-    switch( mCursorShape ) {
+    switch( shape ) {
 		case QYZisCursor::CursorFilledRect : out << "CursorFilledRect"; break;
 		case QYZisCursor::CursorVbar : out << "CursorVbar"; break;
 		case QYZisCursor::CursorHbar : out << "CursorHbar"; break;
-		case QYZisCursor::CursorRect : out << "CursorRect"; break;
+		case QYZisCursor::CursorFrameRect : out << "CursorFrameRect"; break;
+		case QYZisCursor::CursorHidden : out << "CursorHidden"; break;
     }
     return out;
 }

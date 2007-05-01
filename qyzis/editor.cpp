@@ -108,38 +108,37 @@ void QYZisEdit::setPalette( const QPalette& p, qreal opacity ) {
 
 QYZisCursor::CursorShape QYZisEdit::cursorShape() {
 	QYZisCursor::CursorShape shape;
-	QString shapeString;
 	YZMode::modeType m = mParent->modePool()->current()->type();
-	switch( m ) {
-		case YZMode::MODE_INSERT :
-			shapeString = mParent->getLocalStringOption("cursorinsert");
-			break;
-		case YZMode::MODE_REPLACE :
-			shapeString = mParent->getLocalStringOption("cursorreplace");
-			break;
-		case YZMode::MODE_COMPLETION :
-			shapeString = "keep";
-			break;
-		default :
-			shapeString = mParent->getLocalStringOption("cursor");
-            // hbar, vbar or square
-			break;
-	}
-    dbg() << "cursorShape(), shapeString='" << shapeString << "'" << endl;
-	if ( shapeString == "hbar" ) {
-		shape = QYZisCursor::CursorHbar;
-	} else if ( shapeString == "vbar" ) {
-		shape = QYZisCursor::CursorVbar;
-	} else if ( shapeString == "keep" ) {
-		shape = mCursor->shape();
-	} else {
-        // when cursor option is square, the cursor is either a
-        // filled rectangle or a rectangle frame depending on focus.
-		if ( hasFocus() ) 
-			shape = QYZisCursor::CursorFilledRect;
-		else
-			shape = QYZisCursor::CursorRect;
-	}
+    dbg() << "cursorShape(): mode=" << m << endl;
+    shape = mCursor->shape();
+    if ( ! hasFocus() ) {
+        shape = QYZisCursor::CursorFrameRect;
+    } else {
+        switch( m ) {
+        case YZMode::MODE_INSERT :
+            shape = QYZisCursor::CursorVbar;
+            break;
+        case YZMode::MODE_REPLACE :
+            shape = QYZisCursor::CursorHbar;
+            break;
+		case YZMode::MODE_INTRO:
+        case YZMode::MODE_EX:
+		case YZMode::MODE_SEARCH:
+		case YZMode::MODE_SEARCH_BACKWARD:
+            shape = QYZisCursor::CursorHidden;
+            break;
+        case YZMode::MODE_COMPLETION :
+            // do not change it
+            break;
+        case YZMode::MODE_COMMAND:
+		case YZMode::MODE_VISUAL:
+		case YZMode::MODE_VISUAL_LINE:
+		case YZMode::MODE_VISUAL_BLOCK:
+            shape = QYZisCursor::CursorFilledRect;
+            break;
+        }
+    }
+
     dbg() << "cursorShape(), cursorShape=" << shape << endl;
 	return shape;
 }

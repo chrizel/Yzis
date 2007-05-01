@@ -22,9 +22,7 @@
 
 #include <QWidget>
 
-#include "debug.h"
-#include "drawbuffer.h"
-
+class YZDebugStream;
 class QYZisEdit;
 class QYZisView;
 
@@ -37,7 +35,8 @@ public :
 		CursorFilledRect,
 		CursorVbar,
 		CursorHbar,
-		CursorRect,
+		CursorFrameRect,
+		CursorHidden,
 	};
 
 	QYZisCursor( QYZisEdit* parent, CursorShape shape );
@@ -46,15 +45,9 @@ public :
 	void setCursorShape( CursorShape shape );
 	CursorShape shape() const;
 
-    YZDebugStream& operator<<( YZDebugStream& out );
 
 protected :
 	virtual void paintEvent( QPaintEvent* pe );
-
-    inline void paintFilledRect();
-    inline void paintRect();
-    inline void paintVbar();
-    inline void paintHbar();
 
 private :
 	CursorShape mCursorShape;
@@ -63,6 +56,7 @@ private :
 
 };
 
+YZDebugStream& operator<<( YZDebugStream& out, const QYZisCursor::CursorShape & shape );
 
 #endif
 

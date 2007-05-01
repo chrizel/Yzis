@@ -19,6 +19,7 @@
 
 
 #include "NoGuiView.h"
+#include "debug.h"
 
 #define dbg() yzDebug("NoGuiView")
 

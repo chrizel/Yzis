@@ -23,7 +23,6 @@
 
 #include "libyzis/view.h"
 #include "libyzis/viewcursor.h"
-#include "libyzis/debug.h"
 #include "libyzis/buffer.h"
 
 class NoGuiView : public YZView

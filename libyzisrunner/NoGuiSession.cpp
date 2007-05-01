@@ -19,7 +19,9 @@
 
 #include <QCoreApplication>
 
+#include "NoGuiView.h"
 #include "NoGuiSession.h"
+#include "debug.h"
 
 #define dbg() yzDebug("NoGuiSession")
 

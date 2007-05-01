@@ -23,7 +23,7 @@
 
 #include <QObject> 
 
-#include "NoGuiView.h"
+class NoGuiView;
 
 #include "libyzis/session.h"
 #include "libyzis/buffer.h"

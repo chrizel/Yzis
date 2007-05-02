@@ -45,7 +45,7 @@ enum cmd_state {
 	CMD_QUIT,
 };
 
-YZDebugStream& YZIS_EXPORT operator<<( YZDebugStream& out, const cmd_state & state );
+YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const cmd_state & state );
 
 class YZIS_EXPORT YZMode
 {
@@ -112,7 +112,7 @@ protected:
 	bool mRegistered;
 };
 
-YZDebugStream& YZIS_EXPORT operator<<( YZDebugStream& out, const YZMode::modeType & type );
+YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const YZMode::modeType & type );
 
 
 class YZModeIntro : public YZMode {

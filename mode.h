@@ -51,17 +51,17 @@ class YZIS_EXPORT YZMode
 {
 public:
 	enum modeType {
-		MODE_COMMAND,		// default mode, the one from which you move to the following :
-		MODE_INSERT,		// 'i' : entering text (insert)
-		MODE_REPLACE,		// 'R' : entering text (replace)
-		MODE_EX,		// ':' : execute some yzis command
-		MODE_SEARCH,		// '/' : search text
-		MODE_SEARCH_BACKWARD,	// '?' : search backward
-		MODE_INTRO,		// display intro text, and move to command mode on first key entered
-		MODE_COMPLETION,	// used from within insert mode for completion
-		MODE_VISUAL,		// 'v' : visual modes 
-		MODE_VISUAL_LINE,
-		MODE_VISUAL_BLOCK,
+		MODE_COMMAND,		   //!< default mode, the one from which you move to the following :
+		MODE_INSERT,		   //!< 'i' : entering text (insert)
+		MODE_REPLACE,		   //!< 'R' : entering text (replace)
+		MODE_EX,		       //!< ':' : execute some yzis command
+		MODE_SEARCH,		   //!< '/' : search text
+		MODE_SEARCH_BACKWARD,  //!< '?' : search backward
+		MODE_INTRO,		       //!< display intro text, and move to command mode on first key entered
+		MODE_COMPLETION,	   //!< used from within insert mode for completion
+		MODE_VISUAL,		   //!< 'v' : visual mode with characters and lines 
+		MODE_VISUAL_LINE,      //!< 'V' : visual mode lines by lines
+		MODE_VISUAL_BLOCK,     //!< C-V : visual mode, by blocks
 	};
 
 	YZMode();

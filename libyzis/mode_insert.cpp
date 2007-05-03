@@ -47,7 +47,9 @@ void YZModeInsert::leave( YZView* mView ) {
 }
 
 void YZModeInsert::initModifierKeys() {
-	mModifierKeys << "<CTRL>c" <<"<CTRL>e" << "<CTRL>n" << "<CTRL>p" << "<CTRL>x" << "<CTRL>y" << "<ALT>:" << "<ALT>v";
+	mModifierKeys << "<CTRL>c" << "<CTRL>e" << "<CTRL>n" << "<CTRL>p"
+	    << "<CTRL>x" << "<CTRL>y" << "<ALT>:" << "<ALT>v"
+	    << "<CTRL>[" << "<CTRL>h" ;
 }
 /*
  * if you add a command which use modifiers keys, add it in initModifierKeys too

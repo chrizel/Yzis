@@ -57,7 +57,9 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	cmd_state ret = CMD_OK;
 	     if ( key == "<HOME>" ) commandHome( mView, key );
 	else if ( key == "<END>" ) commandEnd( mView, key );
-	else if ( key == "<ESC>" || key == "<CTRL>c" ) commandEscape( mView, key );
+	else if ( key == "<ESC>"
+		|| key == "<CTRL>c"
+		|| key == "<CTRL>[" ) commandEscape( mView, key );
 	else if ( key == "<INS>" ) commandInsert( mView, key );
 	else if ( key == "<ALT>:" ) commandEx( mView, key );
 	else if ( key == "<ALT>v" ) commandVisual( mView, key );
@@ -73,7 +75,8 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	else if ( key == "<CTRL>x" ) commandCompletion( mView, key );
 	else if ( key == "<CTRL>n" ) commandCompletionNext( mView, key );
 	else if ( key == "<CTRL>p" ) commandCompletionPrevious( mView, key );
-	else if ( key == "<BS>" ) commandBackspace( mView, key );
+	else if ( key == "<BS>"
+		|| key == "<CTRL>h") commandBackspace( mView, key );
 	else if ( key == "<ENTER>" ) commandEnter( mView, key );
 	else if ( key == "<DEL>" ) commandDel( mView, key );
 	else {

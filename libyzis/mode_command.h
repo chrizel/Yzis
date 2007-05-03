@@ -29,15 +29,14 @@
 #include <QStringList>
 
 #include "mode.h"
-#include "cursor.h"
-#include "selection.h"
 #include "yzismacros.h"
 
 class YZBuffer;
-class YZView;
 class YZCursor;
 class YZCommand;
+class YZInterval;
 class YZModeCommand;
+class YZView;
 
 /** holds the arguments a command needs in order to execute */
 struct YZCommandArgs {

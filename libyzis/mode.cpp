@@ -131,8 +131,8 @@ void YZMode::imEnd( YZView*, const QString& ) {
 
 #undef dbg
 #undef err
-#define dbg() yzDebug("YZMode")
-#define err() yzError("YZMode")
+#define dbg() yzDebug("YZModeIntro")
+#define err() yzError("YZModeIntro")
 
 YZModeIntro::YZModeIntro() : YZMode() {
 	mType = MODE_INTRO;
@@ -185,7 +185,7 @@ cmd_state YZModeIntro::execCommand( YZView* mView, const QString& ) {
 
 // ====================================================================
 //
-//                          YZModeIntro
+//                          YZModePool
 //
 // ====================================================================
 

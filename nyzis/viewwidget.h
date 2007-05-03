@@ -24,7 +24,7 @@
 
 /* Std */
 #include <ncurses.h>
-// This is an ugly hack preventing the compiler to shock on scroll (used in
+// This is an ugly hack preventing the compiler to choke on scroll (used in
 // both Qt API and (as a macro!) in ncurses
 #define curses_scroll scroll
 #undef scroll

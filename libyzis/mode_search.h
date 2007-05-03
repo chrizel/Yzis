@@ -24,7 +24,6 @@
 #include "mode.h"
 #include "yzismacros.h"
 #include "cursor.h"
-#include "cursor.h"
 
 class YZView;
 class YZHistory;

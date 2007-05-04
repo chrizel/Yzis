@@ -54,6 +54,7 @@ class YZIS_EXPORT YZModeInsert : public YZMode {
 		virtual void commandPageUp( YZView* mView, const QString& key );
 		virtual void commandPageDown( YZView* mView, const QString& key );
 		virtual void commandBackspace( YZView* mView, const QString& key );
+		virtual void commandDeleteWordBefore( YZView* mView, const QString& key );
 		virtual void commandDel( YZView* mView, const QString& key );
 		virtual void commandEnter( YZView* mView, const QString& key );
 

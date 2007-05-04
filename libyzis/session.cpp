@@ -281,7 +281,7 @@ YZBuffer *YZSession::createBuffer( const QString &filename ) {
 	}
 
 	buffer = guiCreateBuffer();
-	buffer->setState( YZBuffer::ACTIVE );
+	buffer->setState( YZBuffer::BufferActive );
 	
 	if ( !filename.isEmpty() ) {
 		buffer->load( filename );

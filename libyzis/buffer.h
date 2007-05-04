@@ -418,15 +418,15 @@ public:
 	// ------------ Buffer State
 	//-------------------------------------------------------
 	
-	enum State
+	enum BufferState
 	{
-		ACTIVE,
-		HIDDEN,
-		INACTIVE
+		BufferActive,
+		BufferHidden,
+		BufferInactive,
 	};
 	
-	void setState( State state );
-	State getState() const;
+	void setState( BufferState state );
+	BufferState getState() const;
 
 	void saveYzisInfo( YZView* view );
 	
@@ -458,7 +458,7 @@ protected:
 private:
 	/**
 	 * This function is to be overridden by subclasses that have
-	 * extra work to do when the state is changed to INACTIVE
+	 * extra work to do when the state is changed to BufferInactive
 	 */
 	virtual void makeInactive() {}
 	
@@ -470,7 +470,7 @@ private:
 	
 	/**
 	 * This function is to be overridden by subclasses that have
-	 * extra work to do when the state is changed to ACTIVE
+	 * extra work to do when the state is changed to BufferActive
 	 */
 	virtual void makeActive() {}
 	

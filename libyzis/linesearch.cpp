@@ -61,7 +61,7 @@ YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int tim
 		pos.setX( x - 1 );
 		pos.setY( y );
 	}
-	updateHistory( ch, YZ_LINE_SEARCH_FORWARD );
+	updateHistory( ch, SearchForward );
 	return pos;
 }
 
@@ -70,7 +70,7 @@ YZCursor YZLineSearch::forwardBefore( const QString& ch, bool& found, unsigned i
 	if ( found ) {
 		pos.setX( pos.x() - 1 );
 	}
-	updateHistory( ch, YZ_LINE_SEARCH_FBEFORE );
+	updateHistory( ch, SearchForwardBefore );
 	return pos;
 }
 
@@ -95,7 +95,7 @@ YZCursor YZLineSearch::reverse( const QString& ch, bool& found, unsigned int tim
 		pos.setX( x + 1 );
 		pos.setY( y );
 	}
-	updateHistory( ch, YZ_LINE_SEARCH_REVERSE );
+	updateHistory( ch, SearchBackward );
 	return pos;
 }
 	
@@ -104,7 +104,7 @@ YZCursor YZLineSearch::reverseAfter( const QString& ch, bool& found, unsigned in
 	if ( found ) {
 		pos.setX( pos.x() + 1 );
 	}
-	updateHistory( ch, YZ_LINE_SEARCH_RAFTER );
+	updateHistory( ch, SearchBackwardAfter );
 	return pos;
 }
 
@@ -119,13 +119,13 @@ YZCursor YZLineSearch::searchAgain( bool &found, unsigned int times ) {
 	
 	dbg() << "Searching for: " << mPrevSearched << endl;
 	switch ( mType ) {
-	case YZ_LINE_SEARCH_FORWARD:
+	case SearchForward:
 		return forward( mPrevSearched, found, times );
-	case YZ_LINE_SEARCH_FBEFORE:
+	case SearchForwardBefore:
 		return forwardBefore( mPrevSearched, found, times );
-	case YZ_LINE_SEARCH_REVERSE:
+	case SearchBackward:
 		return reverse( mPrevSearched, found, times ); 
-	case YZ_LINE_SEARCH_RAFTER:
+	case SearchBackwardAfter:
 		return reverseAfter( mPrevSearched, found, times );
 	default:
 		/* Can't happen */
@@ -136,24 +136,24 @@ YZCursor YZLineSearch::searchAgain( bool &found, unsigned int times ) {
 
 YZCursor YZLineSearch::searchAgainOpposite( bool &found, unsigned int times ) {
 	switch ( mType ) {
-	case YZ_LINE_SEARCH_FORWARD:
-		mType = YZ_LINE_SEARCH_REVERSE;
+	case SearchForward:
+		mType = SearchBackward;
 		break;
-	case YZ_LINE_SEARCH_FBEFORE:
-		mType = YZ_LINE_SEARCH_RAFTER;
+	case SearchForwardBefore:
+		mType = SearchBackwardAfter;
 		break;
-	case YZ_LINE_SEARCH_REVERSE:
-		mType = YZ_LINE_SEARCH_FORWARD;
+	case SearchBackward:
+		mType = SearchForward;
 		break;
-	case YZ_LINE_SEARCH_RAFTER:
-		mType = YZ_LINE_SEARCH_FBEFORE;
+	case SearchBackwardAfter:
+		mType = SearchForwardBefore;
 		break;
 	}
 	return searchAgain( found, times );
 }
 
 /* PRIVATE */
-void YZLineSearch::updateHistory( const QString& newch, searchType type ) {
+void YZLineSearch::updateHistory( const QString& newch, SearchType type ) {
 	mPrevSearched = newch;
 	mType = type;
 	mFirstTime = false;

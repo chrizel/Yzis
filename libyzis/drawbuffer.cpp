@@ -121,7 +121,7 @@ void YZDrawBuffer::push( const QString& c ) {
 	YZCursor step(1,0);
 	for ( int i = 0; i < c.length(); ++i ) {
 		int sel = YZSelectionPool::None;
-		foreach( YZSelectionPool::Layout_enum layout, m_sel.keys() ) {
+		foreach( YZSelectionPool::SelectionLayout layout, m_sel.keys() ) {
 			if ( m_sel[layout].contains(pos) )
 				sel |= layout;
 		}
@@ -217,10 +217,10 @@ YZDrawCell YZDrawBuffer::at( const YZCursor pos ) const {
 	return n;
 }
 
-bool YZDrawBuffer::seek( const YZCursor pos, YZDrawBuffer::whence w ) {
+bool YZDrawBuffer::seek( const YZCursor pos, YZDrawBuffer::SetFromInfo sfi ) {
 	YZCursor rpos;
-	switch( w ) {
-		case YZDrawBuffer::YZ_SEEK_SET :
+	switch( sfi ) {
+		case YZDrawBuffer::SetFromSeek:
 			rpos = pos;
 			break;
 	}
@@ -255,7 +255,7 @@ void YZDrawBuffer::replace( const YZInterval& interval ) {
 		int dx, dy, dvx;
 		bool has_dest = find( interval.toPos(), &dx, &dy, &dvx );
 
-		if ( !seek( interval.fromPos(), YZDrawBuffer::YZ_SEEK_SET ) ) {
+		if ( !seek( interval.fromPos(), YZDrawBuffer::SetFromSeek ) ) {
 		//XXX	dbg() << "unable to access " << interval.fromPos() << endl;
 			return;
 		}
@@ -324,7 +324,7 @@ void YZDrawBuffer::Scroll( int dx, int dy ) {
 	}
 }
 
-void YZDrawBuffer::setSelectionLayout( YZSelectionPool::Layout_enum layout, const YZSelection& selection ) {
+void YZDrawBuffer::setSelectionLayout( YZSelectionPool::SelectionLayout layout, const YZSelection& selection ) {
 	m_sel[ layout ].setMap( selection.map() );
 //	dbg() << "setSelection: " << layout << "=" << m_sel[layout] << endl;
 }

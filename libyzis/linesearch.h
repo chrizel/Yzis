@@ -76,11 +76,11 @@ public:
 	 * Defines types of searches for history
 	 * Don't change the order b/c will break searchAgainOpposite
 	 */
-	enum searchType {
-		YZ_LINE_SEARCH_FORWARD = 0,
-		YZ_LINE_SEARCH_FBEFORE,
-		YZ_LINE_SEARCH_REVERSE,
-		YZ_LINE_SEARCH_RAFTER
+	enum SearchType {
+		SearchForward = 0,
+		SearchForwardBefore,
+		SearchBackward,
+		SearchBackwardAfter
 	};
 
 private:
@@ -98,7 +98,7 @@ private:
 	/**
 	 * Direction of last search forward/backwards
 	 */
-	searchType mType;
+	SearchType mType;
 	
 	/**
 	 * Last character that was searched for
@@ -108,7 +108,7 @@ private:
 	/**
 	 * Record search information
 	 */
-	void updateHistory( const QString&, searchType );
+	void updateHistory( const QString&, SearchType );
 };
 
 #endif /*  YZ_LINE_SEARCH_H */

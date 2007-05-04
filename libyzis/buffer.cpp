@@ -101,7 +101,7 @@ struct YZBuffer::Private
 	QString currentEncoding;
 	
 	// buffer state
-	State state;
+	BufferState state;
 };
 
 YZBuffer::YZBuffer() 
@@ -125,17 +125,17 @@ YZBuffer::YZBuffer()
 	d->swapFile = NULL;
 	d->text = NULL;
 	
-	// Default to an INACTIVE buffer
-	// other actions will make it ACTIVE later
-	setState( INACTIVE );
+	// Default to an BufferInactive buffer
+	// other actions will make it BufferActive later
+	setState( BufferInactive );
 	
 	dbg() << "NEW BUFFER CREATED : " << d->path << endl;
 }
 
 YZBuffer::~YZBuffer() {
-	setState( INACTIVE );
+	setState( BufferInactive );
 
-	// These two aren't deleted when the buffer is made INACTIVE
+	// These two aren't deleted when the buffer is made BufferInactive
 	delete d->docMarks;
 	delete d->viewMarks;
 }
@@ -727,7 +727,7 @@ void YZBuffer::rmView(YZView *v) {
 	d->views.removeAll(v);
 //	dbg() << "YZBuffer removeView found " << f << " views" << endl;
 	if ( d->views.isEmpty() ) {
-		setState( HIDDEN );
+		setState( BufferHidden );
 	}
 }
 
@@ -1095,10 +1095,10 @@ const QString YZBuffer::textline(int line) const {
 	}
 }
 
-void YZBuffer::setState( State state ) {
+void YZBuffer::setState( BufferState state ) {
 	// if we're making the buffer active or hidden, we have to ensure
 	// that all the support stuff has been created
-	if ( state == ACTIVE || state == HIDDEN ) {
+	if ( state == BufferActive || state == BufferHidden ) {
 		if ( !d->highlight ) {
 			d->highlight = NULL;
 		}
@@ -1130,7 +1130,7 @@ void YZBuffer::setState( State state ) {
 	}
 	// if we're making the buffer inactive, we have to
 	// do some cleanup
-	else if ( state == INACTIVE ) {
+	else if ( state == BufferInactive ) {
 		if ( d->swapFile ) {
 			d->swapFile->unlink();
 			delete d->swapFile;
@@ -1157,9 +1157,9 @@ void YZBuffer::setState( State state ) {
 	}
 	
 	// call virtual functions to allow subclasses to do special things
-	if  ( state == ACTIVE ) {
+	if  ( state == BufferActive ) {
 		makeActive();
-	} else if ( state == HIDDEN ) {
+	} else if ( state == BufferHidden ) {
 		makeHidden();
 	} else {
 		makeInactive();
@@ -1168,7 +1168,7 @@ void YZBuffer::setState( State state ) {
 	d->state = state;
 }
 
-YZBuffer::State YZBuffer::getState() const
+YZBuffer::BufferState YZBuffer::getState() const
 {
 	return d->state;
 }
@@ -1193,7 +1193,7 @@ void YZBuffer::openNewFile()
 		filename = QString("/tmp/yzisnew%1").arg(rand());
 	} while ( QFileInfo( filename ).exists() );
 	
-	setState( ACTIVE );
+	setState( BufferActive );
 	setPath( filename );
 	d->isFileNew = true;
 }

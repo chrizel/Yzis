@@ -169,7 +169,7 @@ class YZIS_EXPORT YZDoubleSelection {
 
 class YZIS_EXPORT YZSelectionPool {
 	public:
-		enum Layout_enum {
+		enum SelectionLayout {
 			None	= 0x0,
 			Visual	= 0x1,
 			Search	= 0x2,

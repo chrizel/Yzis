@@ -30,7 +30,7 @@
 
 class YZView;
 
-typedef QMap<YZSelectionPool::Layout_enum, YZSelection> YZSelectionLayout;
+typedef QMap<YZSelectionPool::SelectionLayout, YZSelection> YZSelectionLayout;
 
 struct YZDrawCell {
 	bool valid;
@@ -53,8 +53,8 @@ class YZIS_EXPORT YZDrawBuffer {
 
 	public:
 
-		enum whence {
-			YZ_SEEK_SET, // absolute position
+		enum SetFromInfo {
+			SetFromSeek, 
 		};
 		
 		YZDrawBuffer();
@@ -75,7 +75,7 @@ class YZIS_EXPORT YZDrawBuffer {
 		void setBackgroundColor( const YZColor& c );
 		void setSelection( int sel );
 
-		bool seek( const YZCursor pos, YZDrawBuffer::whence w );
+		bool seek( const YZCursor pos, YZDrawBuffer::SetFromInfo sfi );
 
 		YZDrawCell at( const YZCursor pos ) const;
 
@@ -84,7 +84,7 @@ class YZIS_EXPORT YZDrawBuffer {
 		/* Scroll dx to the right and dy downward */
 		void Scroll( int dx, int dy );
 
-		void setSelectionLayout( YZSelectionPool::Layout_enum layout, const YZSelection& selection );
+		void setSelectionLayout( YZSelectionPool::SelectionLayout layout, const YZSelection& selection );
 
 	private :
 		void insert_section( int pos = -1 );

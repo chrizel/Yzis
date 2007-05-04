@@ -57,15 +57,54 @@ overview. And then -- go and read the source!
 
 \section style Coding style
 
-- Class names: \b MyClass
-- Class methods: \b myMethod()
-- Class members: \b myMember
-- Class structures: \b mystructure
+For the coding style, we follow the Qt coding style.
 
-Preferred indentation is shown below. Tabs are used for indentation, shown here
-with tabstop=4:
+First, we define camel case as the concatenation of several words for which
+the first letter is in upper case, and the rest of the word is in lower case:
+ThisIsACamlCaseExample . Then, camel case with lower case beginning is a string in
+camel case where the first letter of the string is in lower case:
+thisIscamelCaseWithLowerStart .
+
+Now, our coding style:
+- class names are in camel case: 
+- class structures are like classes, in camel case
+- class methods are in camel case with lower case beginning
+- class members are in the form m + camel case
+- enum types are in Camel case
+- enum content are in camel case. The first word of the enum gives a hint of
+  the enum type.
+- namespaces are in camel case
+- typedef are in camel case
+- macros constants and functions are in upper case
+
+\b Examples:
 \code
-void Class::myFunction( int param, int param2 )
+class MyClass {
+public:
+    enum Alignment {
+        AlignLeft,
+        AlignRight,
+        AlignTop,
+        AlignBottom,
+    };
+
+    myMethod( Alignement a );
+
+protected:
+    int mSomeInt;
+    QString mSomeString;
+};
+
+typedef QList<MyClass>  SomeOfMyClasses;
+
+\endcode
+So, to sum it up:
+- all items that refer to a type are in camel case
+- methods and functions start with a lower case letter
+
+Tabs are used for indentation, shown here with tabstop=4:
+\code
+void MyClass::myMethod2( int param, int param2 )
 {
     if ( firstcheck == true ) {
         dothis();
@@ -108,9 +147,6 @@ Yzis has 5 mailing lists:
 http://gmane.org/find.php?list=yzis
 
 Mailing lists are usually write-restricted, but you still can post to them without being subscribed. Your message will get through moderation within a few hours/days.
-
-
-
 
   */
 

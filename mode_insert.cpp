@@ -49,7 +49,7 @@ void YZModeInsert::leave( YZView* mView ) {
 void YZModeInsert::initModifierKeys() {
 	mModifierKeys << "<CTRL>c" << "<CTRL>e" << "<CTRL>n" << "<CTRL>p"
 	    << "<CTRL>x" << "<CTRL>y" << "<ALT>:" << "<ALT>v"
-	    << "<CTRL>[" << "<CTRL>h" ;
+	    << "<CTRL>[" << "<CTRL>h" << "<CTRL>w" ;
 }
 /*
  * if you add a command which use modifiers keys, add it in initModifierKeys too
@@ -77,6 +77,7 @@ cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	else if ( key == "<CTRL>x" ) commandCompletion( mView, key );
 	else if ( key == "<CTRL>n" ) commandCompletionNext( mView, key );
 	else if ( key == "<CTRL>p" ) commandCompletionPrevious( mView, key );
+	else if ( key == "<CTRL>w" ) commandDeleteWordBefore( mView, key );
 	else if ( key == "<BS>"
 		|| key == "<CTRL>h") commandBackspace( mView, key );
 	else if ( key == "<ENTER>" ) commandEnter( mView, key );
@@ -194,6 +195,47 @@ void YZModeInsert::commandBackspace( YZView* mView, const QString& ) {
 		//mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 ); see bug #158
 	} else if ( cur.x() > 0 ) {
 		mBuffer->action()->deleteChar( mView, cur.x() - 1, cur.y(), 1 );
+	}
+}
+void YZModeInsert::commandDeleteWordBefore( YZView* mView, const QString& ) {
+	YZCursor cur = mView->getBufferCursor();
+	YZBuffer* mBuffer = mView->myBuffer();
+	if ( cur.x() == 0 && cur.y() > 0 && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+		mBuffer->action()->mergeNextLine( mView, cur.y() - 1 );
+		//mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 ); see bug #158
+	} else {
+	    QString line = mBuffer->textline( cur.y() );
+	    QChar tmp;
+	    bool isWord;
+	    
+	    int x = cur.x();
+	    // delete whitespace characters preceding current word
+	    while ( x > 0 && line[x-1].isSpace() )
+		--x;
+	    
+	    // delete a word or set of not-word not-whitespace characters
+	    if ( x > 0 ) {
+		tmp = line[x-1];
+		isWord = tmp.isLetterOrNumber() || tmp == '_' || tmp.isMark();
+
+		// delete word behind the cursor (if there is one)
+		if( isWord )
+		    while ( isWord && --x > 0 ) {
+			tmp = line[x-1];
+			isWord = ( tmp.isLetterOrNumber() || tmp == '_' || tmp.isMark() );
+		    }
+
+		// otherwise, delete all not-word and not-whitespace
+		// characters behind the cursor
+		else
+		    while ( !isWord && !tmp.isSpace() && --x > 0 ) {
+			tmp = line[x-1];
+			isWord = ( tmp.isLetterOrNumber() || tmp == '_' || tmp.isMark() );
+		    }
+	    }
+
+	    //do it
+	    mBuffer->action()->deleteChar( mView, x, cur.y(), cur.x() - x );
 	}
 }
 void YZModeInsert::commandDel( YZView* mView, const QString& ) {

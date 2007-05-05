@@ -90,7 +90,7 @@ YZSession::YZSession() {
 
 void YZSession::init()
 {
-    initLanguage();
+	initLanguage();
 	initModes();
 
 	YZIS_SAFE_MODE {
@@ -106,8 +106,12 @@ void YZSession::init()
 	mYzisinfo= new YZYzisinfo();
 	mTagStack = new YZTagStack;
 
-    initScript();
+	initScript();
 //	mYzisinfo->read(this);
+
+	// create HlManager right from the beginning to ensure that this isn't
+	// done in YZSession::~YZSession
+	YzisHlManager::self();
 }
 
 void YZSession::initLanguage()

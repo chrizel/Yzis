@@ -580,6 +580,10 @@ void YZSession::sendMultipleKeys( YZView * view, const QString& _keys) {
 			sendKey( view, "<DEL>" );
 			i+=5;
 			continue;
+		} else if ( key.startsWith( "<BS>" ) ) {
+			sendKey( view, "<BS>" );
+			i+=4;
+			continue;
 		} else {
 			sendKey( view, key.mid( 0,1 ) );
 			i++;

@@ -27,10 +27,10 @@ Utilities:
 Other scripts:
 ==============
 - test_vim_patterm.vim
-List of many vim regexp pattern. The file self-tests himself when run under
+List of many vim regexp pattern. The file self-tests itself when run under
 vim. The file is used to generate the test_vim_pattern.lua
 
-- convert_vim_test_to_lua.lua : script that generates the test_vim_patter.lua
+- convert_vim_test_to_lua.lua : script that generates the test_vim_pattern.lua
   from the test_vim_pattern.vim
 
 - test_vim_to_lua.lua: tests for the vim_to_lua script.

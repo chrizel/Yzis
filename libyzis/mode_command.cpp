@@ -1024,10 +1024,12 @@ void YZModeCommand::change(const YZCommandArgs &args) {
 }
 
 void YZModeCommand::changeLine(const YZCommandArgs &args) {
+	int y = args.view->getBufferCursor().y();
 	args.view->myBuffer()->action()->deleteLine(args.view, args.view->getBufferCursor(), args.count, args.regs);
 	args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor().y() );
 	args.view->modePool()->push( YZMode::MODE_INSERT );
-	args.view->commitNextUndo();
+	args.view->gotoxy(0, y);
+	//args.view->commitNextUndo();
 	
 }
 
@@ -1035,7 +1037,7 @@ void YZModeCommand::changeToEOL(const YZCommandArgs &args) {
 	YZCursor to=move(args.view, "$", 1, false);
 	args.view->myBuffer()->action()->deleteArea(args.view, args.view->getBufferCursor(), to, args.regs);
 	args.view->append();
-	args.view->commitNextUndo();
+	//args.view->commitNextUndo();
 	
 }
 
@@ -1153,7 +1155,7 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 	}
 	args.view->modePool()->push( YZMode::MODE_INSERT );
 	args.view->moveToEndOfLine();
-	args.view->commitNextUndo();
+	//args.view->commitNextUndo();
 	
 }
 

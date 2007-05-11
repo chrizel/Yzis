@@ -234,17 +234,17 @@ YZSession::~YZSession() {
 }
 
 void YZSession::initModes() {
-	mModes[ YZMode::MODE_INTRO ] = new YZModeIntro();
-	mModes[ YZMode::MODE_COMMAND ] = new YZModeCommand();
-	mModes[ YZMode::MODE_EX ] = new YZModeEx();
-	mModes[ YZMode::MODE_INSERT ] = new YZModeInsert();
-	mModes[ YZMode::MODE_REPLACE ] = new YZModeReplace();
-	mModes[ YZMode::MODE_VISUAL ] = new YZModeVisual();
-	mModes[ YZMode::MODE_VISUAL_LINE ] = new YZModeVisualLine();
-	mModes[ YZMode::MODE_VISUAL_BLOCK ] = new YZModeVisualBlock();
-	mModes[ YZMode::MODE_SEARCH ] = new YZModeSearch();
-	mModes[ YZMode::MODE_SEARCH_BACKWARD ] = new YZModeSearchBackward();
-	mModes[ YZMode::MODE_COMPLETION ] = new YZModeCompletion();
+	mModes[ YZMode::ModeIntro ] = new YZModeIntro();
+	mModes[ YZMode::ModeCommand ] = new YZModeCommand();
+	mModes[ YZMode::ModeEx ] = new YZModeEx();
+	mModes[ YZMode::ModeInsert ] = new YZModeInsert();
+	mModes[ YZMode::ModeReplace ] = new YZModeReplace();
+	mModes[ YZMode::ModeVisual ] = new YZModeVisual();
+	mModes[ YZMode::ModeVisualLine ] = new YZModeVisualLine();
+	mModes[ YZMode::ModeVisualBlock ] = new YZModeVisualBlock();
+	mModes[ YZMode::ModeSearch ] = new YZModeSearch();
+	mModes[ YZMode::ModeSearchBackward ] = new YZModeSearchBackward();
+	mModes[ YZMode::ModeCompletion ] = new YZModeCompletion();
 	YZModeMap::Iterator it;
 	// XXX orzel : why isn't that done in YZMode ctor or YZMode* ctors ?
 	for( it = mModes.begin(); it != mModes.end(); ++it )
@@ -260,10 +260,10 @@ YZModeMap YZSession::getModes() const {
 	return mModes;
 }
 YZModeEx* YZSession::getExPool() {
-	return (YZModeEx*)mModes[ YZMode::MODE_EX ];
+	return (YZModeEx*)mModes[ YZMode::ModeEx ];
 }
 YZModeCommand* YZSession::getCommandPool() {
-	return (YZModeCommand*)mModes[ YZMode::MODE_COMMAND ];
+	return (YZModeCommand*)mModes[ YZMode::ModeCommand ];
 }
 
 YZYzisinfo * YZSession::getYzisinfo() {
@@ -506,7 +506,7 @@ void YZSession::scriptSendMultipleKeys ( const QString& text) {
 void YZSession::sendMultipleKeys( YZView * view, const QString& _keys) {
 	dbg() << "sendMultipleKeys(" << view << ", keys=" << _keys << ")" << endl;
 	if (view->modePool()->current()->mapMode() & cmdline) {
-		view->modePool()->change( YZMode::MODE_COMMAND );
+		view->modePool()->change( YZMode::ModeCommand );
 	}
 	QString keys = _keys;
 	for ( int i = 0 ; i < keys.length(); ) {

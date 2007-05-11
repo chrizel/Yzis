@@ -35,7 +35,7 @@
 using namespace yzis;
 
 YZModeInsert::YZModeInsert() : YZMode() {
-	mType = YZMode::MODE_INSERT;
+	mType = YZMode::ModeInsert;
 	mString = _( "[ Insert ]" );
 	mEditMode = true;
 	mIM = true;
@@ -108,16 +108,16 @@ void YZModeInsert::commandEnd( YZView* mView, const QString& ) {
 	mView->moveToEndOfLine();
 }
 void YZModeInsert::commandEscape( YZView* mView, const QString& ) {
-	mView->modePool()->pop( MODE_COMMAND );
+	mView->modePool()->pop( ModeCommand );
 }
 void YZModeInsert::commandInsert( YZView* mView, const QString& ) {
-	mView->modePool()->change( MODE_REPLACE, false );
+	mView->modePool()->change( ModeReplace, false );
 }
 void YZModeInsert::commandEx( YZView* mView, const QString& ) {
-	mView->modePool()->push( MODE_EX );
+	mView->modePool()->push( ModeEx );
 }
 void YZModeInsert::commandVisual( YZView* mView, const QString& ) {
-	mView->modePool()->push( MODE_VISUAL );
+	mView->modePool()->push( ModeVisual );
 }
 void YZModeInsert::commandInsertFromAbove( YZView* mView, const QString& ) {
 	QString c = mView->getCharBelow( -1 );
@@ -130,15 +130,15 @@ void YZModeInsert::commandInsertFromBelow( YZView* mView, const QString& ) {
 		commandDefault( mView, c );
 }
 void YZModeInsert::commandCompletion( YZView* mView, const QString& ) {
-	mView->modePool()->push( MODE_COMPLETION );
+	mView->modePool()->push( ModeCompletion );
 }
 void YZModeInsert::commandCompletionNext( YZView* mView, const QString& ) {
-	mView->modePool()->push( MODE_COMPLETION );
+	mView->modePool()->push( ModeCompletion );
 	YZModeCompletion* c = static_cast<YZModeCompletion*>( mView->modePool()->current() );
 	c->execCommand(mView, "<CTRL>n");
 }
 void YZModeInsert::commandCompletionPrevious( YZView* mView, const QString& ) {
-	mView->modePool()->push( MODE_COMPLETION );
+	mView->modePool()->push( ModeCompletion );
 	YZModeCompletion* c = static_cast<YZModeCompletion*>( mView->modePool()->current() );
 	c->execCommand(mView, "<CTRL>p");
 }
@@ -300,12 +300,12 @@ void YZModeInsert::imEnd( YZView* mView, const QString& entry ) {
  */
 
 YZModeReplace::YZModeReplace() : YZModeInsert() {
-	mType = MODE_REPLACE;
+	mType = ModeReplace;
 	mString = _("[ Replace ]");
 }
 
 void YZModeReplace::commandInsert( YZView* mView, const QString& ) {
-	mView->modePool()->change( MODE_INSERT, false );
+	mView->modePool()->change( ModeInsert, false );
 }
 void YZModeReplace::commandBackspace( YZView* mView, const QString& key ) {
 	commandLeft( mView, key );

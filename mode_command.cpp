@@ -47,7 +47,7 @@
 using namespace yzis;
 
 YZModeCommand::YZModeCommand() : YZMode() {
-	mType = MODE_COMMAND;
+	mType = ModeCommand;
 	mString = _( "[ Awaiting Command ]" );
 	commands.clear();
 }
@@ -1011,12 +1011,12 @@ void YZModeCommand::change(const YZCommandArgs &args) {
 
 	if ( cur.y() >= args.view->myBuffer()->lineCount() ) {
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->myBuffer()->lineCount() );
-		args.view->modePool()->change( YZMode::MODE_INSERT );
+		args.view->modePool()->change( YZMode::ModeInsert );
 	} else {
 		args.view->gotoxyAndStick( cur );
 		// start insert mode, append if at EOL
 		if ( cur.x() < args.view->myBuffer()->getLineLength( cur.y() ) )
-			args.view->modePool()->change( YZMode::MODE_INSERT );
+			args.view->modePool()->change( YZMode::ModeInsert );
 		else
 			args.view->append();
 	}
@@ -1027,7 +1027,7 @@ void YZModeCommand::changeLine(const YZCommandArgs &args) {
 	int y = args.view->getBufferCursor().y();
 	args.view->myBuffer()->action()->deleteLine(args.view, args.view->getBufferCursor(), args.count, args.regs);
 	args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor().y() );
-	args.view->modePool()->push( YZMode::MODE_INSERT );
+	args.view->modePool()->push( YZMode::ModeInsert );
 	args.view->gotoxy(0, y);
 	//args.view->commitNextUndo();
 	
@@ -1059,17 +1059,17 @@ void YZModeCommand::deleteToEOL(const YZCommandArgs &args) {
 
 void YZModeCommand::insertAtSOL(const YZCommandArgs &args) {
 	args.view->moveToFirstNonBlankOfLine();
-	args.view->modePool()->push( YZMode::MODE_INSERT );
+	args.view->modePool()->push( YZMode::ModeInsert );
 	
 }
 
 void YZModeCommand::insertAtCol1(const YZCommandArgs &args) {
 	args.view->moveToStartOfLine();
-	args.view->modePool()->push( YZMode::MODE_INSERT );
+	args.view->modePool()->push( YZMode::ModeInsert );
 }
 
 void YZModeCommand::gotoCommandMode(const YZCommandArgs &args) {
-	args.view->modePool()->pop( YZMode::MODE_COMMAND );
+	args.view->modePool()->pop( YZMode::ModeCommand );
 }
 
 void YZModeCommand::gotoLineAtTop(const YZCommandArgs &args) {
@@ -1113,22 +1113,22 @@ void YZModeCommand::gotoLineAtBottom(const YZCommandArgs &args) {
 
 
 void YZModeCommand::gotoExMode(const YZCommandArgs &args) {
-	args.view->modePool()->push( YZMode::MODE_EX );
+	args.view->modePool()->push( YZMode::ModeEx );
 }
 void YZModeCommand::gotoInsertMode(const YZCommandArgs &args) {
-	args.view->modePool()->push( YZMode::MODE_INSERT );
+	args.view->modePool()->push( YZMode::ModeInsert );
 }
 void YZModeCommand::gotoReplaceMode(const YZCommandArgs &args) {
-	args.view->modePool()->push( YZMode::MODE_REPLACE );
+	args.view->modePool()->push( YZMode::ModeReplace );
 }
 void YZModeCommand::gotoVisualMode(const YZCommandArgs &args) {
-	args.view->modePool()->push( YZMode::MODE_VISUAL );
+	args.view->modePool()->push( YZMode::ModeVisual );
 }
 void YZModeCommand::gotoVisualLineMode(const YZCommandArgs &args) {
-	args.view->modePool()->push( YZMode::MODE_VISUAL_LINE );
+	args.view->modePool()->push( YZMode::ModeVisualLine );
 }
 void YZModeCommand::gotoVisualBlockMode(const YZCommandArgs &args) {
-	args.view->modePool()->push( YZMode::MODE_VISUAL_BLOCK );
+	args.view->modePool()->push( YZMode::ModeVisualBlock );
 }
 
 void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
@@ -1153,7 +1153,7 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args) {
 			}
 		}
 	}
-	args.view->modePool()->push( YZMode::MODE_INSERT );
+	args.view->modePool()->push( YZMode::ModeInsert );
 	args.view->moveToEndOfLine();
 	//args.view->commitNextUndo();
 	
@@ -1164,7 +1164,7 @@ void YZModeCommand::insertLineBefore(const YZCommandArgs &args) {
 	for ( int i = 0 ; i < args.count ; i++ )
 		args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
 	args.view->moveUp();
-	args.view->modePool()->push( YZMode::MODE_INSERT );
+	args.view->modePool()->push( YZMode::ModeInsert );
 	args.view->commitNextUndo();
 	
 }
@@ -1212,11 +1212,11 @@ void YZModeCommand::saveAndClose(const YZCommandArgs &/*args*/) {
 }
 
 void YZModeCommand::searchBackwards(const YZCommandArgs &args) {
-	args.view->modePool()->push( YZMode::MODE_SEARCH_BACKWARD );
+	args.view->modePool()->push( YZMode::ModeSearchBackward );
 }
 
 void YZModeCommand::searchForwards(const YZCommandArgs &args) {
-	args.view->modePool()->push( YZMode::MODE_SEARCH );
+	args.view->modePool()->push( YZMode::ModeSearch );
 }
 
 void YZModeCommand::del(const YZCommandArgs &args) {
@@ -1350,7 +1350,7 @@ void YZModeCommand::substitute( const YZCommandArgs &args ) {
 
 	// start insert mode, append if at EOL
 	if ( cur.x() != args.view->myBuffer()->getLineLength( cur.y() ) )
-		args.view->modePool()->push( YZMode::MODE_INSERT );
+		args.view->modePool()->push( YZMode::ModeInsert );
 	else
 		args.view->append();
 }

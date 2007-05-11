@@ -37,7 +37,7 @@
 using namespace yzis;
 
 YZModeVisual::YZModeVisual() : YZModeCommand() {
-	mType = YZMode::MODE_VISUAL;
+	mType = YZMode::ModeVisual;
 	mString = _( "[ Visual ]" );
 	mSelMode = true;
 	mMapMode = visual;
@@ -141,27 +141,27 @@ void YZModeVisual::initCommandPool() {
 	initVisualCommandPool();
 }
 void YZModeVisual::initVisualCommandPool() {
-	if ( type() == MODE_VISUAL ) 
+	if ( type() == ModeVisual ) 
 		commands.append( new YZCommand("v", (PoolMethod) &YZModeVisual::escape) );
 	else
 		commands.append( new YZCommand("v", (PoolMethod) &YZModeVisual::translateToVisual) );
-	if ( type() == MODE_VISUAL_LINE )
+	if ( type() == ModeVisualLine )
 		commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::escape) );
 	else
 		commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::translateToVisualLine) );
-	if ( type() == MODE_VISUAL_BLOCK ) 
+	if ( type() == ModeVisualBlock ) 
 		commands.append( new YZCommand("<CTRL>v", (PoolMethod) &YZModeVisual::escape) );
 	else
 		commands.append( new YZCommand("<CTRL>v", (PoolMethod) &YZModeVisual::translateToVisualBlock) );
 }
 void YZModeVisual::commandAppend( const YZCommandArgs& args ) {
 	YZCursor pos = qMax( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
-	args.view->modePool()->change( MODE_INSERT );
+	args.view->modePool()->change( ModeInsert );
 	args.view->gotoxy( pos.x(), pos.y() );
 }
 void YZModeVisual::commandInsert( const YZCommandArgs& args ) {
 	YZCursor pos = qMin( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
-	args.view->modePool()->change( MODE_INSERT );
+	args.view->modePool()->change( ModeInsert );
 	args.view->gotoxy( pos.x(), pos.y() );
 }
 void YZModeVisual::toLowerCase( const YZCommandArgs& args ) {
@@ -189,12 +189,12 @@ void YZModeVisual::changeWholeLines(const YZCommandArgs &args) {
 
 	// delete selected lines and enter insert mode
 	args.view->myBuffer()->action()->deleteArea( args.view, from, to, args.regs);
-	args.view->modePool()->change( MODE_INSERT );
+	args.view->modePool()->change( ModeInsert );
 }
 void YZModeVisual::deleteWholeLines(const YZCommandArgs &args) {
 	YZInterval i = interval(args);
 	unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
-	if ( type() == MODE_VISUAL_LINE )
+	if ( type() == ModeVisualLine )
 		--lines;
 
 	// delete whole lines, even those who are only partially selected
@@ -209,7 +209,7 @@ void YZModeVisual::yankWholeLines(const YZCommandArgs &args) {
 	YZInterval i = interval(args);
 	unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
 
-	if (args.view->modePool()->currentType() == YZMode::MODE_VISUAL_LINE) {
+	if (args.view->modePool()->currentType() == YZMode::ModeVisualLine) {
 		// visual line mode, we don't need to do anything special
 		args.view->myBuffer()->action()->copyArea( args.view, i, args.regs);
 	}
@@ -230,26 +230,26 @@ void YZModeVisual::yank( const YZCommandArgs& args ) {
 	args.view->gotoxyAndStick( topLeft.x(), topLeft.y() );
 }
 void YZModeVisual::translateToVisualLine( const YZCommandArgs& args ) {
-	args.view->modePool()->change( MODE_VISUAL_LINE, false ); // just translate (don't leave current mode)
+	args.view->modePool()->change( ModeVisualLine, false ); // just translate (don't leave current mode)
 }
 void YZModeVisual::translateToVisual( const YZCommandArgs& args ) {
-	args.view->modePool()->change( MODE_VISUAL, false );
+	args.view->modePool()->change( ModeVisual, false );
 }
 void YZModeVisual::translateToVisualBlock( const YZCommandArgs& args ) {
-	args.view->modePool()->change( MODE_VISUAL_BLOCK, false );
+	args.view->modePool()->change( ModeVisualBlock, false );
 }
 void YZModeVisual::escape( const YZCommandArgs& args ) {
 	args.view->modePool()->pop();
 }
 void YZModeVisual::gotoExMode( const YZCommandArgs& args ) {
-	args.view->modePool()->push( MODE_EX );
+	args.view->modePool()->push( ModeEx );
 	args.view->guiSetCommandLineText( "'<,'>" );
 }
 void YZModeVisual::movetoExMode( const YZCommandArgs& args ) {
-	args.view->modePool()->change( MODE_EX );
+	args.view->modePool()->change( ModeEx );
 }
 void YZModeVisual::movetoInsertMode( const YZCommandArgs& args ) {
-	args.view->modePool()->change( MODE_INSERT );
+	args.view->modePool()->change( ModeInsert );
 }
 
 YZInterval YZModeVisual::interval(const YZCommandArgs& args ) {
@@ -261,7 +261,7 @@ YZInterval YZModeVisual::interval(const YZCommandArgs& args ) {
  */
 
 YZModeVisualLine::YZModeVisualLine() : YZModeVisual() {
-	mType = YZMode::MODE_VISUAL_LINE;
+	mType = YZMode::ModeVisualLine;
 	mString = _("[ Visual Line ]");
 }
 YZModeVisualLine::~YZModeVisualLine() {
@@ -294,7 +294,7 @@ YZInterval YZModeVisualLine::buildScreenInterval( YZView* mView, const YZViewCur
  */
 
 YZModeVisualBlock::YZModeVisualBlock() : YZModeVisual() {
-	mType = YZMode::MODE_VISUAL_BLOCK;
+	mType = YZMode::ModeVisualBlock;
 	mString = _("[ Visual Block ]");
 }
 YZModeVisualBlock::~YZModeVisualBlock() {

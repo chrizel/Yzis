@@ -124,7 +124,7 @@ YZView::YZView(YZBuffer *_b, YZSession *sess, int cols, int lines)
 
 	abortPaintEvent();
 
-	mModePool->change( YZMode::MODE_COMMAND );
+	mModePool->change( YZMode::ModeCommand );
 }
 
 YZView::~YZView() {
@@ -190,7 +190,7 @@ void YZView::recalcScreen( ) {
 }
 
 void YZView::displayIntro() {
-	mModePool->change( YZMode::MODE_INTRO );
+	mModePool->change( YZMode::ModeIntro );
 }
 
 YZSelectionMap YZView::visualSelection() const {
@@ -836,7 +836,7 @@ void YZView::applyChanges( int /*x*/, int y ) {
 }
 
 QString YZView::append () {
-	mModePool->change( YZMode::MODE_INSERT );
+	mModePool->change( YZMode::ModeInsert );
 	gotoxyAndStick(mainCursor->bufferX()+1, mainCursor->bufferY() );
 	return QString();
 }

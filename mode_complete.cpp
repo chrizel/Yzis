@@ -40,7 +40,7 @@
 using namespace yzis;
 
 YZModeCompletion::YZModeCompletion() : YZMode() {
-	mType = MODE_COMPLETION;
+	mType = ModeCompletion;
 	mString = _("{ Completion }");
 	mEditMode = true;
 	mMapMode = insert;

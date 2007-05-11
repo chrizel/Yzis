@@ -32,20 +32,20 @@ class YZDebugStream;
 class YZView;
 class YZModePool;
 
-enum cmd_state {
+enum CmdState {
 	/** The command does not exist */
-	CMD_ERROR,
+	CmdError,
 	/** The user hasn't entered a valid, non-ambigous command yet. */
-	NO_COMMAND_YET,
+	CmdNotYetValid,
 	/** Waiting for a motion/text object. */
-	OPERATOR_PENDING,
+	CmdOperatorPending,
 	/** The command has been successfully executed. */
-	CMD_OK,
+	CmdOk,
 	/** It is time to leave the event loop */
-	CMD_QUIT,
+	CmdQuit,
 };
 
-YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const cmd_state & state );
+YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const CmdState & state );
 
 class YZIS_EXPORT YZMode
 {
@@ -71,7 +71,7 @@ public:
 	virtual void initModifierKeys();
 	virtual void enter( YZView* mView );
 	virtual void leave( YZView* mView );
-	virtual cmd_state execCommand( YZView* mView, const QString& key ) = 0;
+	virtual CmdState execCommand( YZView* mView, const QString& key ) = 0;
 
 	virtual void cursorMoved( YZView* mView );
 
@@ -122,7 +122,7 @@ public:
 
 	void enter( YZView* mView );
 	void leave( YZView* mView );
-	cmd_state execCommand( YZView* mView, const QString& key );
+	CmdState execCommand( YZView* mView, const QString& key );
 
 };
 

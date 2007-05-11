@@ -71,7 +71,7 @@ YZCursor YZModeSearch::search( YZView* view, const QString& s, const YZCursor be
 void YZModeSearch::initModifierKeys() {
 	mModifierKeys << "<ALT>:";
 }
-cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
+CmdState YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 	QString key = _key;
 	YZSelection* searchSelection = view->getSelectionPool()->search();
 
@@ -97,20 +97,20 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 			view->guiDisplayInfo(_("No match"));
 		}
 		view->modePool()->pop();
-		return CMD_OK;
+		return CmdOk;
 	} else if ( key == "<DOWN>" ) {
 		mHistory->goForwardInTime();
 		view->guiSetCommandLineText( mHistory->getEntry() );
-		return CMD_OK;
+		return CmdOk;
 	} else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
-		return CMD_OK;
+		return CmdOk;
 	} else if ( key == "<UP>" ) {
 		mHistory->goBackInTime();
 		view->guiSetCommandLineText( mHistory->getEntry() );
-		return CMD_OK;
+		return CmdOk;
 	} else if ( key == "<ALT>:" ) {
 		view->modePool()->change( MODE_EX );
-		return CMD_OK;
+		return CmdOk;
 	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
 		if ( view->getLocalBooleanOption( "incsearch" ) ) {
 			view->gotoxy(mSearchBegin.x(), mSearchBegin.y());
@@ -121,12 +121,12 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 			view->commitPaintEvent();
 		}
 		view->modePool()->pop();
-		return CMD_OK;
+		return CmdOk;
 	} else if ( key == "<BS>" ) {
 		QString back = view->guiGetCommandLineText();
 		if ( back.isEmpty() ) {
 			view->modePool()->pop();
-			return CMD_OK;
+			return CmdOk;
 		}
 		view->guiSetCommandLineText(back.remove(back.length() - 1, 1));
 	} else {
@@ -152,7 +152,7 @@ cmd_state YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 		}
 		view->commitPaintEvent();
 	}
-	return CMD_OK;
+	return CmdOk;
 }
 
 

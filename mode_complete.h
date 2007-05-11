@@ -39,7 +39,7 @@ class YZIS_EXPORT YZModeCompletion : public YZMode {
 		virtual ~YZModeCompletion();
 
 		virtual void leave( YZView* mView );
-		virtual cmd_state execCommand( YZView* mView, const QString& _key );
+		virtual CmdState execCommand( YZView* mView, const QString& _key );
 
 	protected :
 		void doComplete( YZView* mView, bool forward );

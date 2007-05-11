@@ -259,13 +259,13 @@ void NYZView::guiSetCommandLineText( const QString& text ) {
 	commandline = text;
 	static QChar modeChar = ':';
 	switch (modePool()->current()->type()) {
-		case YZMode::MODE_EX:
+		case YZMode::ModeEx:
 			modeChar = ':';
 			break;
-		case YZMode::MODE_SEARCH:
+		case YZMode::ModeSearch:
 			modeChar = '/';
 			break;
-		case YZMode::MODE_SEARCH_BACKWARD:
+		case YZMode::ModeSearchBackward:
 			modeChar = '?';
 			break;
 		default:

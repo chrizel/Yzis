@@ -62,10 +62,10 @@ void QYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 
 void QYZisCommand::focusInEvent (QFocusEvent * e) {
 	dbg() << "focusInEvent() " << endl;
-	if ( _parent->modePool()->currentType() != YZMode::MODE_EX 
-			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH 
-			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH_BACKWARD ) {
-		_parent->modePool()->push( YZMode::MODE_EX );
+	if ( _parent->modePool()->currentType() != YZMode::ModeEx 
+			&& _parent->modePool()->currentType() != YZMode::ModeSearch 
+			&& _parent->modePool()->currentType() != YZMode::ModeSearchBackward ) {
+		_parent->modePool()->push( YZMode::ModeEx );
     }
 
     //e->accept();
@@ -75,9 +75,9 @@ void QYZisCommand::focusInEvent (QFocusEvent * e) {
 void QYZisCommand::focusOutEvent (QFocusEvent *e) {
 	dbg() << "focusOutEvent() " << endl;
     /*
-	if ( _parent->modePool()->currentType() != YZMode::MODE_EX 
-			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH 
-			&& _parent->modePool()->currentType() != YZMode::MODE_SEARCH_BACKWARD )
+	if ( _parent->modePool()->currentType() != YZMode::ModeEx 
+			&& _parent->modePool()->currentType() != YZMode::ModeSearch 
+			&& _parent->modePool()->currentType() != YZMode::ModeSearchBackward )
 		return;
     */
 	QLineEdit::focusOutEvent(e);

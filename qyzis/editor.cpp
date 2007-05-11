@@ -108,32 +108,32 @@ void QYZisEdit::setPalette( const QPalette& p, qreal opacity ) {
 
 QYZisCursor::CursorShape QYZisEdit::cursorShape() {
 	QYZisCursor::CursorShape shape;
-	YZMode::modeType m = mParent->modePool()->current()->type();
+	YZMode::ModeType m = mParent->modePool()->current()->type();
     dbg() << "cursorShape(): mode=" << m << endl;
     shape = mCursor->shape();
     if ( ! hasFocus() ) {
         shape = QYZisCursor::CursorFrameRect;
     } else {
         switch( m ) {
-        case YZMode::MODE_INSERT :
+        case YZMode::ModeInsert :
             shape = QYZisCursor::CursorVbar;
             break;
-        case YZMode::MODE_REPLACE :
+        case YZMode::ModeReplace :
             shape = QYZisCursor::CursorHbar;
             break;
-		case YZMode::MODE_INTRO:
-        case YZMode::MODE_EX:
-		case YZMode::MODE_SEARCH:
-		case YZMode::MODE_SEARCH_BACKWARD:
+		case YZMode::ModeIntro:
+        case YZMode::ModeEx:
+		case YZMode::ModeSearch:
+		case YZMode::ModeSearchBackward:
             shape = QYZisCursor::CursorHidden;
             break;
-        case YZMode::MODE_COMPLETION :
+        case YZMode::ModeCompletion :
             // do not change it
             break;
-        case YZMode::MODE_COMMAND:
-		case YZMode::MODE_VISUAL:
-		case YZMode::MODE_VISUAL_LINE:
-		case YZMode::MODE_VISUAL_BLOCK:
+        case YZMode::ModeCommand:
+		case YZMode::ModeVisual:
+		case YZMode::ModeVisualLine:
+		case YZMode::ModeVisualBlock:
             shape = QYZisCursor::CursorFilledRect;
             break;
         }
@@ -225,7 +225,7 @@ void QYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 		mParent->modePool()->pop();
 	
 	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
-		if ( mParent->modePool()->currentType() != YZMode::MODE_EX ) {
+		if ( mParent->modePool()->currentType() != YZMode::ModeEx ) {
 			mParent->gotodxdyAndStick( translateRealToAbsolutePosition( e->pos() ) );
 		}
 	} else if ( e->button() == Qt::MidButton ) {
@@ -245,9 +245,9 @@ void QYZisEdit::mousePressEvent ( QMouseEvent * e ) {
 
 void QYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 	if (e->buttons() == Qt::LeftButton) {
-		if (mParent->modePool()->currentType() == YZMode::MODE_COMMAND) {
+		if (mParent->modePool()->currentType() == YZMode::ModeCommand) {
 			// start visual mode when user makes a selection with the left mouse button
-			mParent->modePool()->push( YZMode::MODE_VISUAL );
+			mParent->modePool()->push( YZMode::ModeVisual );
 		} else if (mParent->modePool()->current()->isSelMode() ) {
 			// already in visual mode - move cursor if the mouse pointer has moved over a new char
 			YZCursor pos = translateRealToAbsolutePosition( e->pos() );

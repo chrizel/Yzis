@@ -90,7 +90,7 @@ YZExCommand::YZExCommand( const QString& input, ExPoolMethod pm, const QStringLi
 }
 
 YZModeEx::YZModeEx() : YZMode() {
-	mType = MODE_EX;
+	mType = ModeEx;
 	mString = _("[ Ex ]");
 	mMapMode = cmdline;
 	commands.clear();
@@ -128,7 +128,7 @@ CmdState YZModeEx::execCommand( YZView* view, const QString& key ) {
 			mHistory->addEntry( cmd );
 			ret = execExCommand( view, cmd );
 			if ( ret != CmdQuit ) 
-				view->modePool()->pop( MODE_COMMAND );
+				view->modePool()->pop( ModeCommand );
 		}
 	} else if ( key == "<DOWN>" ) {
 		mHistory->goForwardInTime();
@@ -138,7 +138,7 @@ CmdState YZModeEx::execCommand( YZView* view, const QString& key ) {
 		mHistory->goBackInTime();
 		view->guiSetCommandLineText( mHistory->getEntry() );
 	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
-		view->modePool()->pop( MODE_COMMAND );
+		view->modePool()->pop( ModeCommand );
 	} else if ( key == "<TAB>" ) {
 		//ignore for now
 	} else if ( key == "<BS>" ) {

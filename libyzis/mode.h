@@ -50,18 +50,18 @@ YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const CmdState & stat
 class YZIS_EXPORT YZMode
 {
 public:
-	enum modeType {
-		MODE_COMMAND,		   //!< default mode, the one from which you move to the following :
-		MODE_INSERT,		   //!< 'i' : entering text (insert)
-		MODE_REPLACE,		   //!< 'R' : entering text (replace)
-		MODE_EX,		       //!< ':' : execute some yzis command
-		MODE_SEARCH,		   //!< '/' : search text
-		MODE_SEARCH_BACKWARD,  //!< '?' : search backward
-		MODE_INTRO,		       //!< display intro text, and move to command mode on first key entered
-		MODE_COMPLETION,	   //!< used from within insert mode for completion
-		MODE_VISUAL,		   //!< 'v' : visual mode with characters and lines 
-		MODE_VISUAL_LINE,      //!< 'V' : visual mode lines by lines
-		MODE_VISUAL_BLOCK,     //!< C-V : visual mode, by blocks
+	enum ModeType {
+		ModeCommand,		   //!< default mode, named normal mode in vim
+		ModeInsert,		   //!< 'i' : entering text (insert)
+		ModeReplace,		   //!< 'R' : entering text (replace)
+		ModeEx,		       //!< ':' : execute some yzis command
+		ModeSearch,		   //!< '/' : search text
+		ModeSearchBackward,  //!< '?' : search backward
+		ModeIntro,		       //!< display intro text, and move to command mode on first key entered
+		ModeCompletion,	   //!< used from within insert mode for completion
+		ModeVisual,		   //!< 'v' : visual mode with characters and lines 
+		ModeVisualLine,      //!< 'V' : visual mode lines by lines
+		ModeVisualBlock,     //!< C-V : visual mode, by blocks
 	};
 
 	YZMode();
@@ -75,7 +75,7 @@ public:
 
 	virtual void cursorMoved( YZView* mView );
 
-	modeType type() const;
+	ModeType type() const;
 	const QString& toString() const;
 	yzis::mapping_t mapMode() const;
 	bool registered() const;
@@ -102,7 +102,7 @@ public:
 	virtual void imEnd( YZView* mView, const QString& entry );
 
 protected:
-	modeType mType;
+	ModeType mType;
 	QString mString;
 	bool mEditMode;
 	bool mSelMode;
@@ -112,7 +112,7 @@ protected:
 	bool mRegistered;
 };
 
-YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const YZMode::modeType & type );
+YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const YZMode::ModeType & type );
 
 
 class YZModeIntro : public YZMode {
@@ -126,9 +126,9 @@ public:
 
 };
 
-typedef YZMode::modeType modeType;
+typedef YZMode::ModeType ModeType;
 
-typedef QMap<modeType, YZMode*> YZModeMap;
+typedef QMap<ModeType, YZMode*> YZModeMap;
 typedef QList<YZMode*> YZModeStack;
 
 class YZIS_EXPORT YZModePool
@@ -143,12 +143,12 @@ public:
 	/**
 	 * pop current mode and push @arg mode
 	 */
-	void change( modeType mode, bool leave_me = true );
+	void change( ModeType mode, bool leave_me = true );
 
 	/**
 	 * push @arg mode
 	 */
-	void push( modeType mode );
+	void push( ModeType mode );
 
 	/**
 	 * pop one mode (go to previous)
@@ -158,14 +158,14 @@ public:
 	/**
 	 * pop until current mode is @arg mode
 	 */
-	void pop( modeType mode );
+	void pop( ModeType mode );
 
 	void registerModifierKeys();
 	void unregisterModifierKeys();
 	void stop();
 
 	YZMode* current() const;
-	modeType currentType() const;
+	ModeType currentType() const;
 
 private :
 	YZView* mView;

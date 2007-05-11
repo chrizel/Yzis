@@ -90,7 +90,7 @@ bool QYZisSession::guiQuit( int errorCode ) {
     dbg() << "guiQuit(" << errorCode << ")" <<endl;
 	if (Qyzis::me) {
 		qApp->quit();
-	} else if ( currentView() && currentView()->modePool()->currentType() == YZMode::MODE_EX 
+	} else if ( currentView() && currentView()->modePool()->currentType() == YZMode::ModeEx 
 				&& !currentView()->guiGetCommandLineText().isEmpty() ) {
         dbg() << "guiQuit(" << errorCode << ") done." <<endl;
 		return false;

@@ -128,7 +128,7 @@ void YZYzisinfo::read(void)
 			}
 			
 			if ( list[0].startsWith("?") || list[0] == "search_list" ) {
-				YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::self()->getModes()[ YZMode::MODE_SEARCH ]);
+				YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::self()->getModes()[ YZMode::ModeSearch ]);
 				YZHistory *history = search->getHistory();
 				
 				history->addEntry( (list.join(" ")).remove(0, 1) );
@@ -295,7 +295,7 @@ void YZYzisinfo::saveExHistory( QTextStream & write ) {
  
 void YZYzisinfo::saveSearchHistory( QTextStream & write ) {
     dbg() << HERE() << endl;
-	YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::self()->getModes()[ YZMode::MODE_SEARCH ] );
+	YZModeSearch *search = dynamic_cast<YZModeSearch*>(YZSession::self()->getModes()[ YZMode::ModeSearch ] );
 	YZHistory *history = search->getHistory();
 	history->writeToStream( write );
 }

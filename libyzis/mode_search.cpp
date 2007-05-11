@@ -37,7 +37,7 @@
 using namespace yzis;
 
 YZModeSearch::YZModeSearch() : YZMode() {
-	mType = YZMode::MODE_SEARCH;
+	mType = YZMode::ModeSearch;
 	mString = _( "[ Search ]" );
 	mMapMode = cmdline;
 	mHistory = new YZHistory;
@@ -109,7 +109,7 @@ CmdState YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 		view->guiSetCommandLineText( mHistory->getEntry() );
 		return CmdOk;
 	} else if ( key == "<ALT>:" ) {
-		view->modePool()->change( MODE_EX );
+		view->modePool()->change( ModeEx );
 		return CmdOk;
 	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
 		if ( view->getLocalBooleanOption( "incsearch" ) ) {
@@ -157,7 +157,7 @@ CmdState YZModeSearch::execCommand( YZView* view, const QString& _key ) {
 
 
 YZModeSearchBackward::YZModeSearchBackward() : YZModeSearch() {
-	mType = YZMode::MODE_SEARCH_BACKWARD;
+	mType = YZMode::ModeSearchBackward;
 	mString = _( "[ Search backward ]" );
 }
 YZModeSearchBackward::~YZModeSearchBackward() {

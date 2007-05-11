@@ -137,7 +137,7 @@ void YZModeCompletion::doComplete( YZView* view, bool forward ) {
 	view->guiDisplayInfo( msg );
 }
 
-cmd_state YZModeCompletion::execCommand( YZView* view, const QString& _key ) {
+CmdState YZModeCompletion::execCommand( YZView* view, const QString& _key ) {
 	bool initOK = true;
 	
 	// if we're to cycle through the potential matches, do the cycling
@@ -170,14 +170,14 @@ cmd_state YZModeCompletion::execCommand( YZView* view, const QString& _key ) {
 		}
 	} else if ( _key == "<CTRL>x" ) {
 		dbg() << "Skip CTRLx in completion mode" << endl;
-		return CMD_OK;
+		return CmdOk;
 	} else {
 		view->modePool()->pop();
 		view->modePool()->replayKey();
-		return CMD_OK;
+		return CmdOk;
 
 	}
-	return CMD_ERROR;
+	return CmdError;
 }
 
 void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups /*=true*/, QList<YZCursor> *cursors /*=NULL*/ )

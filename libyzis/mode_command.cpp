@@ -189,7 +189,7 @@ void YZModeCommand::initModifierKeys() {
 	}
 }
 
-cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
+CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 //	dbg() << "ExecCommand : " << inputs << endl;
 	int count=1;
 	bool hadCount = false;
@@ -218,7 +218,7 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 		regs << '\"';
 
 	if(i>=inputs.length())
-		return NO_COMMAND_YET;
+		return CmdNotYetValid;
 
 	// collect all the commands
 	QList<YZCommand*> cmds, prevcmds;
@@ -251,14 +251,14 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 			else
 				++bc;
 		if(prevcmds.isEmpty())
-			return CMD_ERROR;
+			return CmdError;
 		// it really is a command with an argument, read it in
 		const YZCommand *c=prevcmds.first();
 		i=j-1;
 		// read in a count that may follow
 		if (c->arg() == ARG_CHAR) {// don't try to read a motion!
 			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
-			return CMD_OK;
+			return CmdOk;
 		}
 		if(inputs.at(i).digitValue() > 0) {
 			while(j<inputs.length() && inputs.at(j).digitValue() > 0)
@@ -266,7 +266,7 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 			count*=inputs.mid(i,j-i).toInt();
 			i=j;
 			if(i>=inputs.length() )
-				return OPERATOR_PENDING;
+				return CmdOperatorPending;
 		}
 
 		QString s=inputs.mid(i);
@@ -275,9 +275,9 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 			if(s[0]=='a' || s[0]=='i') {
 				// text object
 				if(s.length()==1)
-					return OPERATOR_PENDING;
+					return CmdOperatorPending;
 				else if(!textObjects.contains(s))
-					return CMD_ERROR;
+					return CmdError;
 			} else {
 				bool matched = false;
 				for (int ab = 0; ab < commands.size(); ++ab) {
@@ -291,7 +291,7 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 					for (int ab = 0; ab < commands.size(); ++ab ) {
 						const YZMotion *m=dynamic_cast<const YZMotion*>(commands.at(ab));
 						if(m && m->matches(s, false))
-							return OPERATOR_PENDING;
+							return CmdOperatorPending;
 
 					}
 				}
@@ -300,11 +300,11 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 		case ARG_CHAR:
 		case ARG_REG:
 			if(s.length()!=1)
-				return CMD_ERROR;
+				return CmdError;
 			break;
 		case ARG_MARK:
 			if(s.length()!=1 || !YZCommand::isMark(s[0]))
-				return CMD_ERROR;
+				return CmdError;
 			break;
 		default:
 			break;
@@ -333,14 +333,14 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 				++ab;
 		}
 		if(cmds.isEmpty())
-			return NO_COMMAND_YET;
+			return CmdNotYetValid;
 		const YZCommand *c=0;
 		if(cmds.count()==1) {
 			c=cmds.first();
 			if(c->arg() == ARG_NONE)
 				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount));
 			else
-				return OPERATOR_PENDING;
+				return CmdOperatorPending;
 		} else {
 			/* two or more commands with the same name, we assert that these are exactly
 			a cmd that needs a motion and one without an argument. In visual mode, we take
@@ -352,7 +352,7 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 					c = cmds.at(ab);
 			}
 			if(!c)
-				return CMD_ERROR;
+				return CmdError;
 
 			foreach( YZView *v, view->myBuffer()->views() )
 				v->setPaintAutoCommit( false );
@@ -362,7 +362,7 @@ cmd_state YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 		}
 	}
 
-	return CMD_OK;
+	return CmdOk;
 }
 
 bool YZMotion::matches(const QString &s, bool fully) const {

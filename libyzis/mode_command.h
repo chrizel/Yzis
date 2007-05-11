@@ -143,7 +143,7 @@ class YZIS_EXPORT YZModeCommand : public YZMode {
 
 		virtual void init();
 		/** This function is the entry point to execute any normal command in Yzis */
-		virtual cmd_state execCommand(YZView *view, const QString& inputs);
+		virtual CmdState execCommand(YZView *view, const QString& inputs);
 
 		virtual void initPool();
 		virtual void initMotionPool();

@@ -40,7 +40,7 @@ class YZIS_EXPORT YZModeSearch : public YZMode {
 		virtual void leave( YZView* view );
 		virtual void initModifierKeys();
 
-		virtual cmd_state execCommand( YZView* view, const QString& key );
+		virtual CmdState execCommand( YZView* view, const QString& key );
 
 		virtual YZCursor search( YZView* view, const QString& s, bool* found );
 		virtual YZCursor search( YZView* view, const QString& s, const YZCursor begin, int* matchlength, bool* found );

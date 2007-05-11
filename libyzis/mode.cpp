@@ -1,4 +1,4 @@
-/*  This file is part of the Yzis libraries
+/*  This file is part of the Yzis libraries 
  *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
  *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
  *
@@ -39,14 +39,14 @@ using namespace yzis;
 #define dbg() yzDebug("YZMode")
 #define err() yzError("YZMode")
 
-YZDebugStream& operator<<( YZDebugStream& out, const cmd_state & state )
+YZDebugStream& operator<<( YZDebugStream& out, const CmdState & state )
 {
     switch( state ) {
-        case CMD_ERROR: out << "CMD_ERROR"; break;
-        case NO_COMMAND_YET: out << "NO_COMMAND_YET"; break;
-        case OPERATOR_PENDING: out << "OPERATOR_PENDING"; break;
-        case CMD_OK: out << "CMD_OK"; break;
-        case CMD_QUIT: out << "CMD_QUIT"; break;
+        case CmdError: out << "CmdError"; break;
+        case CmdNotYetValid: out << "CmdNotYetValid"; break;
+        case CmdOperatorPending: out << "CmdOperatorPending"; break;
+        case CmdOk: out << "CmdOk"; break;
+        case CmdQuit: out << "CmdQuit"; break;
     }
     return out;
 }
@@ -177,10 +177,10 @@ void YZModeIntro::leave( YZView* mView ) {
 	mBuffer->setChanged( false );
 	mView->recalcScreen();
 }
-cmd_state YZModeIntro::execCommand( YZView* mView, const QString& ) {
+CmdState YZModeIntro::execCommand( YZView* mView, const QString& ) {
 	mView->modePool()->change( MODE_COMMAND );
 	mView->modePool()->replayKey();
-	return CMD_OK;
+	return CmdOk;
 }
 
 // ====================================================================
@@ -230,22 +230,22 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 		YZSession::self()->sendMultipleKeys( mView, mapped );
 		return;
 	}
-	cmd_state state = stack.front()->execCommand( mView, mView->getInputBuffer() );
+	CmdState state = stack.front()->execCommand( mView, mView->getInputBuffer() );
 	if ( mStop ) return;
 	switch(state) {
-		case CMD_ERROR: 
-			dbg() << "cmd_state = CMD_ERROR" << endl;
+		case CmdError: 
+			dbg() << "CmdState = CmdError" << endl;
 			if (pendingMapp) break;
-		case CMD_OK:
+		case CmdOk:
 			mView->purgeInputBuffer();
 			mapMode = 0;
 			break;
-		case OPERATOR_PENDING:
-			dbg() << "cmd_state = OPERATOR_PENDING" << endl;
+		case CmdOperatorPending:
+			dbg() << "CmdState = CmdOperatorPending" << endl;
 			mapMode = pendingop;
 			break;
-		case CMD_QUIT:
-			dbg() << "cmd_state = CMD_QUIT" << endl;
+		case CmdQuit:
+			dbg() << "CmdState = CmdQuit" << endl;
 		default:
 			break;
 	}

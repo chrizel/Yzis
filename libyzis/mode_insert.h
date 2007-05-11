@@ -33,9 +33,9 @@ class YZIS_EXPORT YZModeInsert : public YZMode {
 
 		virtual void leave( YZView* mView );
 		virtual void initModifierKeys();
-		virtual cmd_state execCommand( YZView* mView, const QString& key );
+		virtual CmdState execCommand( YZView* mView, const QString& key );
 
-		virtual cmd_state commandDefault( YZView* mView, const QString& key );
+		virtual CmdState commandDefault( YZView* mView, const QString& key );
 		virtual void commandHome( YZView* mView, const QString& key );
 		virtual void commandEnd( YZView* mView, const QString& key );
 		virtual void commandEscape( YZView* mView, const QString& key );
@@ -71,7 +71,7 @@ class YZIS_EXPORT YZModeReplace : public YZModeInsert {
 		YZModeReplace();
 		virtual ~YZModeReplace() {}
 		
-		virtual cmd_state commandDefault( YZView* mView, const QString& key );
+		virtual CmdState commandDefault( YZView* mView, const QString& key );
 		virtual void commandInsert( YZView* mView, const QString& key );
 		virtual void commandBackspace( YZView* mView, const QString& key );
 };

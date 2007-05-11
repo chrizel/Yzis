@@ -54,9 +54,9 @@ void YZModeInsert::initModifierKeys() {
 /*
  * if you add a command which use modifiers keys, add it in initModifierKeys too
  */
-cmd_state YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
+CmdState YZModeInsert::execCommand( YZView* mView, const QString& _key ) {
 	QString key = _key;
-	cmd_state ret = CMD_OK;
+	CmdState ret = CmdOk;
 	     if ( key == "<HOME>" ) commandHome( mView, key );
 	else if ( key == "<END>" ) commandEnd( mView, key );
 	else if ( key == "<ESC>"
@@ -265,11 +265,11 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 	}
 	mView->updateStickyCol();
 }
-cmd_state YZModeInsert::commandDefault( YZView* mView, const QString& key ) {
+CmdState YZModeInsert::commandDefault( YZView* mView, const QString& key ) {
 	mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
 	if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
 		mView->reindent( mView->getBufferCursor().x() - 1, mView->getBufferCursor().y() );
-	return CMD_OK;
+	return CmdOk;
 }
 
 void YZModeInsert::imBegin( YZView* ) {
@@ -311,8 +311,8 @@ void YZModeReplace::commandBackspace( YZView* mView, const QString& key ) {
 	commandLeft( mView, key );
 }
 
-cmd_state YZModeReplace::commandDefault( YZView* mView, const QString& key ) {
+CmdState YZModeReplace::commandDefault( YZView* mView, const QString& key ) {
 	mView->myBuffer()->action()->replaceChar( mView, mView->getBufferCursor(), key );
-	return CMD_OK;
+	return CmdOk;
 }
 

@@ -69,7 +69,7 @@ struct YZExCommandArgs {
     QString toString() const;
 };
 
-typedef cmd_state (YZModeEx::*ExPoolMethod) (const YZExCommandArgs&);
+typedef CmdState (YZModeEx::*ExPoolMethod) (const YZExCommandArgs&);
 typedef int (YZModeEx::*ExRangeMethod) (const YZExRangeArgs&);
 
 class YZIS_EXPORT YZExRange {
@@ -133,8 +133,8 @@ class YZIS_EXPORT YZModeEx : public YZMode {
 		void leave( YZView* mView );
 		
 		void initPool();
-		cmd_state execCommand( YZView* mView, const QString& key );
-		cmd_state execExCommand( YZView* view, const QString& inputs );
+		CmdState execCommand( YZView* mView, const QString& key );
+		CmdState execExCommand( YZView* view, const QString& inputs );
 		
 		YZHistory *getHistory();
 
@@ -155,58 +155,58 @@ class YZIS_EXPORT YZModeEx : public YZMode {
 
 	public:
 		// commands
-		cmd_state write( const YZExCommandArgs& args );
-		cmd_state quit( const YZExCommandArgs& args );
-                cmd_state bufferfirst( const YZExCommandArgs& args );
-                cmd_state bufferlast( const YZExCommandArgs& args );
-		cmd_state buffernext( const YZExCommandArgs& args );
-		cmd_state bufferprevious( const YZExCommandArgs& args );
-		cmd_state bufferdelete( const YZExCommandArgs& args );
-		cmd_state edit( const YZExCommandArgs& args );
-		cmd_state mkyzisrc( const YZExCommandArgs& args );
-		cmd_state set( const YZExCommandArgs& args );
-		cmd_state substitute( const YZExCommandArgs& args );
-		cmd_state hardcopy( const YZExCommandArgs& args );
-		cmd_state gotoOpenMode( const YZExCommandArgs& args );
-		cmd_state gotoCommandMode( const YZExCommandArgs& args );
-		cmd_state preserve( const YZExCommandArgs& args );
-		cmd_state lua( const YZExCommandArgs& args );
-		cmd_state source( const YZExCommandArgs& args );
-		cmd_state map( const YZExCommandArgs& args );
-		cmd_state unmap( const YZExCommandArgs& args );
-		cmd_state imap( const YZExCommandArgs& args );
-		cmd_state iunmap( const YZExCommandArgs& args );
-		cmd_state omap( const YZExCommandArgs& args );
-		cmd_state ounmap( const YZExCommandArgs& args );
-		cmd_state vmap( const YZExCommandArgs& args );
-		cmd_state vunmap( const YZExCommandArgs& args );
-		cmd_state cmap( const YZExCommandArgs& args );
-		cmd_state cunmap( const YZExCommandArgs& args );
-		cmd_state nmap( const YZExCommandArgs& args );
-		cmd_state nunmap( const YZExCommandArgs& args );
-		cmd_state noremap( const YZExCommandArgs& args );
-		cmd_state onoremap( const YZExCommandArgs& args );
-		cmd_state vnoremap( const YZExCommandArgs& args );
-		cmd_state inoremap( const YZExCommandArgs& args );
-		cmd_state cnoremap( const YZExCommandArgs& args );
-		cmd_state nnoremap( const YZExCommandArgs& args );
-		cmd_state indent( const YZExCommandArgs& args );
-		cmd_state enew( const YZExCommandArgs& args );
-		cmd_state syntax( const YZExCommandArgs& args );
-		cmd_state highlight( const YZExCommandArgs& args );
-		cmd_state registers( const YZExCommandArgs& args );
-		cmd_state split( const YZExCommandArgs& args );
-		cmd_state retab( const YZExCommandArgs& args );
-		cmd_state genericMap( const YZExCommandArgs& args, int );
-		cmd_state genericUnmap( const YZExCommandArgs& args, int );		
-		cmd_state genericNoremap( const YZExCommandArgs& args, int );
-		cmd_state foldCreate( const YZExCommandArgs& args );
-		cmd_state cd( const YZExCommandArgs& args );
-		cmd_state pwd( const YZExCommandArgs& args );
-		cmd_state tag( const YZExCommandArgs& args );
-		cmd_state pop( const YZExCommandArgs& args );
-		cmd_state tagnext( const YZExCommandArgs& args );
-		cmd_state tagprevious( const YZExCommandArgs& args );
+		CmdState write( const YZExCommandArgs& args );
+		CmdState quit( const YZExCommandArgs& args );
+                CmdState bufferfirst( const YZExCommandArgs& args );
+                CmdState bufferlast( const YZExCommandArgs& args );
+		CmdState buffernext( const YZExCommandArgs& args );
+		CmdState bufferprevious( const YZExCommandArgs& args );
+		CmdState bufferdelete( const YZExCommandArgs& args );
+		CmdState edit( const YZExCommandArgs& args );
+		CmdState mkyzisrc( const YZExCommandArgs& args );
+		CmdState set( const YZExCommandArgs& args );
+		CmdState substitute( const YZExCommandArgs& args );
+		CmdState hardcopy( const YZExCommandArgs& args );
+		CmdState gotoOpenMode( const YZExCommandArgs& args );
+		CmdState gotoCommandMode( const YZExCommandArgs& args );
+		CmdState preserve( const YZExCommandArgs& args );
+		CmdState lua( const YZExCommandArgs& args );
+		CmdState source( const YZExCommandArgs& args );
+		CmdState map( const YZExCommandArgs& args );
+		CmdState unmap( const YZExCommandArgs& args );
+		CmdState imap( const YZExCommandArgs& args );
+		CmdState iunmap( const YZExCommandArgs& args );
+		CmdState omap( const YZExCommandArgs& args );
+		CmdState ounmap( const YZExCommandArgs& args );
+		CmdState vmap( const YZExCommandArgs& args );
+		CmdState vunmap( const YZExCommandArgs& args );
+		CmdState cmap( const YZExCommandArgs& args );
+		CmdState cunmap( const YZExCommandArgs& args );
+		CmdState nmap( const YZExCommandArgs& args );
+		CmdState nunmap( const YZExCommandArgs& args );
+		CmdState noremap( const YZExCommandArgs& args );
+		CmdState onoremap( const YZExCommandArgs& args );
+		CmdState vnoremap( const YZExCommandArgs& args );
+		CmdState inoremap( const YZExCommandArgs& args );
+		CmdState cnoremap( const YZExCommandArgs& args );
+		CmdState nnoremap( const YZExCommandArgs& args );
+		CmdState indent( const YZExCommandArgs& args );
+		CmdState enew( const YZExCommandArgs& args );
+		CmdState syntax( const YZExCommandArgs& args );
+		CmdState highlight( const YZExCommandArgs& args );
+		CmdState registers( const YZExCommandArgs& args );
+		CmdState split( const YZExCommandArgs& args );
+		CmdState retab( const YZExCommandArgs& args );
+		CmdState genericMap( const YZExCommandArgs& args, int );
+		CmdState genericUnmap( const YZExCommandArgs& args, int );		
+		CmdState genericNoremap( const YZExCommandArgs& args, int );
+		CmdState foldCreate( const YZExCommandArgs& args );
+		CmdState cd( const YZExCommandArgs& args );
+		CmdState pwd( const YZExCommandArgs& args );
+		CmdState tag( const YZExCommandArgs& args );
+		CmdState pop( const YZExCommandArgs& args );
+		CmdState tagnext( const YZExCommandArgs& args );
+		CmdState tagprevious( const YZExCommandArgs& args );
 };
 
 

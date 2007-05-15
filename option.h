@@ -111,7 +111,7 @@ class YZOptionValue {
 		//! The YZOption from which I'm the value
 		YZOption* parent() const;
 	
-		yzis::value_t type() const; //!< type of the option
+		yzis::OptType type() const; //!< type of the option
 
         /** Convert the option value to a string */
 		QString toString() const;
@@ -159,13 +159,13 @@ class YZOptionValue {
 
 	private :
 		YZOption* m_parent; //!< YZOption() which stores this YZOptionValue() */
-		bool v_bool;        //!< boolean value when the option is of type boolean_t
-		QString v_str;      //!< string value when the option is of type string_t
-		int v_int;          //!< int value when the option is of type integer_t
-		QStringList v_list; //!< list of string value when the option is of type list_t
-		MapOption v_map;    //!< map option value when the option is of type map_t
-		YZColor v_color;    //!< color value when the option is of type color_t
-		yzis::value_t m_type;   //!< type of the option
+		bool v_bool;        //!< boolean value when the option is of type TypeBool
+		QString v_str;      //!< string value when the option is of type TypeString
+		int v_int;          //!< int value when the option is of type TypeInt
+		QStringList v_list; //!< list of string value when the option is of type TypeList
+		MapOption v_map;    //!< map option value when the option is of type TypeMap
+		YZColor v_color;    //!< color value when the option is of type TypeColor
+		yzis::OptType m_type;   //!< type of the option
 };
 
 /** A function that does something to a view or a buffer. 
@@ -175,7 +175,7 @@ typedef void (*ApplyOptionMethod) ( YZBuffer* b, YZView* v );
 /** Class holding a full option
   *
   * An option is composed of:
-  * - a context (yzis::context_t)
+  * - a context (yzis::OptContext)
   * - a scope
   * - an method to apply different actions
   * - a list of possible aliases
@@ -192,7 +192,7 @@ class YZOption {
           * \param m a method to apply different actions on an option
           * \param aliases a list of aliases
           */
-		YZOption( const QString& name, yzis::context_t ctx, yzis::scope_t scope, ApplyOptionMethod m, QStringList aliases );
+		YZOption( const QString& name, yzis::OptContext ctx, yzis::OptScope scope, ApplyOptionMethod m, QStringList aliases );
 
         /** Destructor */
 		virtual ~YZOption();
@@ -201,10 +201,10 @@ class YZOption {
 		const QString& name() const;
 
         /** Context of the option: buffer, view or session */
-		yzis::context_t context() const;
+		yzis::OptContext context() const;
 
         /** Scope of the option: global, local or default */
-		yzis::scope_t scope() const;
+		yzis::OptScope scope() const;
 
         /** Default value of the option */
 		YZOptionValue* defaultValue();
@@ -227,8 +227,8 @@ class YZOption {
 
 	private :
 		QString m_name; //!< name of the option
-		yzis::context_t m_ctx; //!< context of the option
-		yzis::scope_t m_scope; //!< scope of the option
+		yzis::OptContext m_ctx; //!< context of the option
+		yzis::OptScope m_scope; //!< scope of the option
 		ApplyOptionMethod m_apply; //!< method of the option
 
 	protected :
@@ -269,7 +269,7 @@ class YZOptionBoolean : public YZOption {
           * \param m a method to apply different actions on an option
           * \param aliases a list of aliases
           */
-		YZOptionBoolean( const QString& name, bool v, yzis::context_t ctx, yzis::scope_t scope, ApplyOptionMethod m, QStringList aliases );
+		YZOptionBoolean( const QString& name, bool v, yzis::OptContext ctx, yzis::OptScope scope, ApplyOptionMethod m, QStringList aliases );
 
         /** Destructor */
 		virtual ~YZOptionBoolean();
@@ -292,7 +292,7 @@ class YZOptionInteger : public YZOption {
           * \param min the mininum value taken by the option
           * \param max the maximum value taken by the option
           */
-		YZOptionInteger( const QString& name, int v, yzis::context_t ctx, yzis::scope_t scope, ApplyOptionMethod m, QStringList aliases, int min = INT_MIN, int max = INT_MAX );
+		YZOptionInteger( const QString& name, int v, yzis::OptContext ctx, yzis::OptScope scope, ApplyOptionMethod m, QStringList aliases, int min = INT_MIN, int max = INT_MAX );
 
         /** Destructor */
 		virtual ~YZOptionInteger();
@@ -317,7 +317,7 @@ class YZOptionString : public YZOption {
           * \param aliases a list of aliases
           * \param values XXX [not clear what it is used for]
           */
-		YZOptionString( const QString& name, const QString& v, yzis::context_t ctx, yzis::scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList values );
+		YZOptionString( const QString& name, const QString& v, yzis::OptContext ctx, yzis::OptScope scope, ApplyOptionMethod m, QStringList aliases, QStringList values );
         /** Destructor */
 		virtual ~YZOptionString();
 
@@ -337,7 +337,7 @@ class YZOptionList : public YZOption {
           * \param aliases a list of aliases
           * \param values XXX [not clear what it is for]
           */
-		YZOptionList( const QString& name, const QStringList& v, yzis::context_t ctx, yzis::scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList values );
+		YZOptionList( const QString& name, const QStringList& v, yzis::OptContext ctx, yzis::OptScope scope, ApplyOptionMethod m, QStringList aliases, QStringList values );
         /** Destructor */
 		virtual ~YZOptionList();
 
@@ -358,7 +358,7 @@ class YZOptionMap : public YZOption {
           * \param keys [not clear what it is used for]
           * \param values [not clear what it is used for]
           */
-		YZOptionMap( const QString& name, const MapOption& v, yzis::context_t ctx, yzis::scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList keys, QStringList values );
+		YZOptionMap( const QString& name, const MapOption& v, yzis::OptContext ctx, yzis::OptScope scope, ApplyOptionMethod m, QStringList aliases, QStringList keys, QStringList values );
         /** Destructor */
 		virtual ~YZOptionMap();
 
@@ -379,7 +379,7 @@ class YZOptionColor : public YZOption {
           * \param m a method to apply different actions on an option
           * \param aliases a list of aliases
           */
-		YZOptionColor( const QString& name, const YZColor& v, yzis::context_t ctx, yzis::scope_t scope, ApplyOptionMethod m, QStringList aliases );
+		YZOptionColor( const QString& name, const YZColor& v, yzis::OptContext ctx, yzis::OptScope scope, ApplyOptionMethod m, QStringList aliases );
         /** Destructor */
 		virtual ~YZOptionColor();
 

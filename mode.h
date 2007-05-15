@@ -77,7 +77,7 @@ public:
 
 	ModeType type() const;
 	const QString& toString() const;
-	yzis::mapping_t mapMode() const;
+	yzis::MapMode mapMode() const;
 	bool registered() const;
 	void setRegistered( bool registered );
 	QStringList modifierKeys() const;
@@ -107,7 +107,7 @@ protected:
 	bool mEditMode;
 	bool mSelMode;
 	bool mIM;
-	yzis::mapping_t mMapMode;
+	yzis::MapMode mMapMode;
 	QStringList mModifierKeys;
 	bool mRegistered;
 };

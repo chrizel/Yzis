@@ -26,7 +26,7 @@
 #define err()    yzError("YZLine")
 
 YZLine::YZLine(const QString &l) :
-m_flags( YZLine::flagVisible ) {
+m_flags( YZLine::FlagVisible ) {
 	setData(l);
 	m_initialized = false;
 }

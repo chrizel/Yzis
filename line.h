@@ -39,12 +39,12 @@ class YZLine
 		int length() const { return mData.length(); }
 		inline const QVector<short> &ctxArray () const { return m_ctx; };
 		inline void setContext (QVector<short> &val) { m_ctx = val; }
-		inline bool hlLineContinue () const { return m_flags & YZLine::flagHlContinue; }
+		inline bool hlLineContinue () const { return m_flags & YZLine::FlagHlContinue; }
 
 		inline void setHlLineContinue (bool cont)
 		{
-			if (cont) m_flags = m_flags | YZLine::flagHlContinue;
-			else m_flags = m_flags & ~ YZLine::flagHlContinue;
+			if (cont) m_flags = m_flags | YZLine::FlagHlContinue;
+			else m_flags = m_flags & ~ YZLine::FlagHlContinue;
 		}
 
 		void clearAttributes() { mAttributesList.clear(); }
@@ -62,10 +62,10 @@ class YZLine
 	private:
 		enum Flags
 		{
-//			flagNoOtherData = 0x1, // ONLY INTERNAL USE, NEVER EVER SET THAT !!!!
-			flagHlContinue = 0x2,
-			flagVisible = 0x4,
-			flagAutoWrapped = 0x8
+//			FlagNoOtherData = 0x1, // ONLY INTERNAL USE, NEVER EVER SET THAT !!!!
+			FlagHlContinue = 0x2,
+			FlagVisible = 0x4,
+			FlagAutoWrapped = 0x8
 		};
 		QString mData;
 

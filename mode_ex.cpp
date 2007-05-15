@@ -92,7 +92,7 @@ YZExCommand::YZExCommand( const QString& input, ExPoolMethod pm, const QStringLi
 YZModeEx::YZModeEx() : YZMode() {
 	mType = ModeEx;
 	mString = _("[ Ex ]");
-	mMapMode = cmdline;
+	mMapMode = MapCmdline;
 	commands.clear();
 	ranges.clear();
 	mHistory = new YZHistory;
@@ -555,11 +555,11 @@ CmdState YZModeEx::edit ( const YZExCommandArgs& args ) {
 CmdState YZModeEx::set ( const YZExCommandArgs& args ) {
 	CmdState ret = CmdOk;
 	
-	scope_t user_scope = default_scope;
+	OptScope user_scope = ScopeDefault;
 	if ( args.cmd.startsWith("setg") )
-		user_scope = global_scope;
+		user_scope = ScopeGlobal;
 	else if ( args.cmd.startsWith("setl") )
-		user_scope = local_scope;
+		user_scope = ScopeLocal;
 	YZBuffer* buff = NULL;
 	if ( args.view ) buff = args.view->myBuffer();
 	bool matched;
@@ -1034,7 +1034,7 @@ CmdState YZModeEx::retab( const YZExCommandArgs& args ) {
 		if (args.arg.toInt() > 0) {
 			// set the value of 'tabstop' to the argument given
 			YZSession::self()->getOptions()->setOptionFromString( args.arg.trimmed().insert(0, "tabstop="),
-					local_scope, args.view->myBuffer(), args.view );
+					ScopeLocal, args.view->myBuffer(), args.view );
 			tabstop = args.arg.toInt();
 		}
 		else {

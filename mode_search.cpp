@@ -39,7 +39,7 @@ using namespace yzis;
 YZModeSearch::YZModeSearch() : YZMode() {
 	mType = YZMode::ModeSearch;
 	mString = _( "[ Search ]" );
-	mMapMode = cmdline;
+	mMapMode = MapCmdline;
 	mHistory = new YZHistory;
 	incSearchFound = false;
 }

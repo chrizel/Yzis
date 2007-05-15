@@ -505,7 +505,7 @@ void YZSession::scriptSendMultipleKeys ( const QString& text) {
 
 void YZSession::sendMultipleKeys( YZView * view, const QString& _keys) {
 	dbg() << "sendMultipleKeys(" << view << ", keys=" << _keys << ")" << endl;
-	if (view->modePool()->current()->mapMode() & cmdline) {
+	if (view->modePool()->current()->mapMode() & MapCmdline) {
 		view->modePool()->change( YZMode::ModeCommand );
 	}
 	QString keys = _keys;
@@ -513,7 +513,7 @@ void YZSession::sendMultipleKeys( YZView * view, const QString& _keys) {
 		QString key = keys.mid( i );
 		dbg() << "Handling key: " << key << endl;
 		//exception : in SEARCH, SEARCH_BACKWARD and EX mode we don't send keys immediately
-		if (view->modePool()->current()->mapMode() & cmdline) {
+		if (view->modePool()->current()->mapMode() & MapCmdline) {
 			if ( key.startsWith( "<ESC>" ) ) {
 				sendKey( view, "<ESC>" );
 				continue;
@@ -611,7 +611,7 @@ void YZSession::sendKey( YZView * view, const QString& _key, const QString& _mod
 
 	/** rightleft mapping **/
 	bool rightleft = view->getLocalBooleanOption( "rightleft" );
-	if ( rightleft && ( view->modePool()->current()->mapMode() & (visual|normal) ) ) {
+	if ( rightleft && ( view->modePool()->current()->mapMode() & (MapVisual|MapNormal) ) ) {
 #define SWITCH_KEY( a, b ) \
 	if ( key == a ) key = b; \
 	else if ( key == b ) key = a

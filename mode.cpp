@@ -74,7 +74,7 @@ YZMode::YZMode() {
 	mEditMode = false;
 	mSelMode = false;
 	mIM = false;
-	mMapMode = normal;
+	mMapMode = MapNormal;
 	mRegistered = false;
 }
 ModeType YZMode::type() const {
@@ -92,7 +92,7 @@ bool YZMode::isSelMode() const {
 bool YZMode::supportsInputMethod() const {
 	return mIM;
 }
-mapping_t YZMode::mapMode() const {
+MapMode YZMode::mapMode() const {
 	return mMapMode;
 }
 QStringList YZMode::modifierKeys() const {
@@ -242,7 +242,7 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers ) {
 			break;
 		case CmdOperatorPending:
 			dbg() << "CmdState = CmdOperatorPending" << endl;
-			mapMode = pendingop;
+			mapMode = MapPendingOp;
 			break;
 		case CmdQuit:
 			dbg() << "CmdState = CmdQuit" << endl;

@@ -43,7 +43,7 @@ YZModeCompletion::YZModeCompletion() : YZMode() {
 	mType = ModeCompletion;
 	mString = _("{ Completion }");
 	mEditMode = true;
-	mMapMode = insert;
+	mMapMode = MapInsert;
 }
 YZModeCompletion::~YZModeCompletion() {
 }

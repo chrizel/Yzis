@@ -34,10 +34,10 @@
 QString YZBufferOperation::toString() const {
 	QString ots;
 	switch( type ) {
-		case ADDTEXT: ots= "ADDTEXT"; break;
-		case DELTEXT: ots= "DELTEXT"; break;
-		case ADDLINE: ots= "ADDLINE"; break;
-		case DELLINE: ots= "DELLINE"; break;
+		case OpAddText: ots= "OpAddText"; break;
+		case OpDelText: ots= "OpDelText"; break;
+		case OpAddLine: ots= "OpAddLine"; break;
+		case OpDelLine: ots= "OpDelLine"; break;
 	}
 	return QString("%1 '%2' line %3, col %4").arg(ots).arg(text).arg(line).arg(col) ;
 }
@@ -50,24 +50,24 @@ void YZBufferOperation::performOperation( YZView* pView, bool opposite)
 
 	if (opposite == true) {
 		switch( type ) {
-			case ADDTEXT: t = DELTEXT; break;
-			case DELTEXT: t = ADDTEXT; break;
-			case ADDLINE: t = DELLINE; break;
-			case DELLINE: t = ADDLINE; break;
+			case OpAddText: t = OpDelText; break;
+			case OpDelText: t = OpAddText; break;
+			case OpAddLine: t = OpDelLine; break;
+			case OpDelLine: t = OpAddLine; break;
 		}
 	}
 
 	switch( t) {
-		case ADDTEXT:
+		case OpAddText:
 			pView->myBuffer()->action()->insertChar( pView, col, line, text );
 			break;
-		case DELTEXT:
+		case OpDelText:
 			pView->myBuffer()->action()->deleteChar( pView, col, line, text.length() );
 			break;
-		case ADDLINE:
+		case OpAddLine:
 			pView->myBuffer()->action()->insertNewLine( pView, 0, line );
 			break;
-		case DELLINE:
+		case OpDelLine:
 			pView->myBuffer()->action()->deleteLine( pView, line, 1, QList<QChar>() );
 			break;
 	}

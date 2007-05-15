@@ -159,16 +159,16 @@ void YZSwapFile::replay( YZBufferOperation::OperationType type, unsigned int col
 	YZView *pView = mParent->firstView();
 	pView->setPaintAutoCommit(false);
 	switch( type ) {
-		case YZBufferOperation::ADDTEXT:
+		case YZBufferOperation::OpAddText:
 			mParent->action()->insertChar( pView, col, line, text );
 			break;
-		case YZBufferOperation::DELTEXT:
+		case YZBufferOperation::OpDelText:
 			mParent->action()->deleteChar( pView, col, line, text.length() );
 			break;
-		case YZBufferOperation::ADDLINE:
+		case YZBufferOperation::OpAddLine:
 			mParent->action()->insertNewLine( pView, 0, line );
 			break;
-		case YZBufferOperation::DELLINE:
+		case YZBufferOperation::OpDelLine:
 			mParent->action()->deleteLine( pView, line, 1, QList<QChar>() );
 			break;
 	}

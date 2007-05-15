@@ -199,8 +199,8 @@ void YZBuffer::insertChar(int x, int y, const QString& c ) {
 
 	viewsInit( this, x, y );
 
-	d->undoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, c, x, y );
-	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::ADDTEXT, c, x, y );
+	d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddText, c, x, y );
+	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpAddText, c, x, y );
 
 	l.insert(x, c);
 	setTextline(y,l);
@@ -222,8 +222,8 @@ void YZBuffer::delChar (int x, int y, int count ) {
 
 	viewsInit( this, x, y );
 
-	d->undoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, l.mid(x,count), x, y );
-	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::DELTEXT, l.mid( x,count ), x, y );
+	d->undoBuffer->addBufferOperation( YZBufferOperation::OpDelText, l.mid(x,count), x, y );
+	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpDelText, l.mid( x,count ), x, y );
 
 	/* do the actual modification */
 	l.remove(x, count);
@@ -241,10 +241,10 @@ void  YZBuffer::appendLine(const QString &l) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::appendLine(%1)").arg(l),l);
 	
 	if ( !d->isLoading ) {
-		d->undoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
-		d->swapFile->addToSwap( YZBufferOperation::ADDLINE, QString(), 0, lineCount() );
-		d->undoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l,  0, lineCount());
-		d->swapFile->addToSwap( YZBufferOperation::ADDTEXT, l, 0, lineCount() );
+		d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddLine, QString(), 0, lineCount() );
+		d->swapFile->addToSwap( YZBufferOperation::OpAddLine, QString(), 0, lineCount() );
+		d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddText, l,  0, lineCount());
+		d->swapFile->addToSwap( YZBufferOperation::OpAddText, l, 0, lineCount() );
 	}
 
 	d->text->append(new YZLine(l));
@@ -265,10 +265,10 @@ void  YZBuffer::appendLine(const QString &l) {
 void  YZBuffer::insertLine(const QString &l, int line) {
 	ASSERT_TEXT_WITHOUT_NEWLINE(QString("YZBuffer::insertLine(%1,%2)").arg(l).arg(line),l)
 	ASSERT_NEXT_LINE_EXISTS(QString("YZBuffer::insertLine(%1,%2)").arg(l).arg(line),line)
-	d->undoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, QString(), 0, line );
-	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::ADDLINE, QString(), 0, line );
-	d->undoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );
-	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::ADDTEXT, l, 0, line );
+	d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddLine, QString(), 0, line );
+	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpAddLine, QString(), 0, line );
+	d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddText, l, 0, line );
+	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpAddText, l, 0, line );
 
 	viewsInit( this, 0, line );
 
@@ -313,14 +313,14 @@ void YZBuffer::insertNewLine( int col, int line ) {
 	QString newline = l.mid( col );
 	if ( newline.isNull() ) newline = QString( "" );
 
-	d->undoBuffer->addBufferOperation( YZBufferOperation::ADDLINE, "", col, line+1 );
-	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::ADDLINE, "", col, line+1 );
+	d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddLine, "", col, line+1 );
+	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpAddLine, "", col, line+1 );
 	if (newline.length()) {
-		d->undoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, newline, col, line );
-		d->undoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, newline, 0, line+1 );
+		d->undoBuffer->addBufferOperation( YZBufferOperation::OpDelText, newline, col, line );
+		d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddText, newline, 0, line+1 );
 		if ( !d->isLoading ) {
-			d->swapFile->addToSwap( YZBufferOperation::DELTEXT, newline, col, line );
-			d->swapFile->addToSwap( YZBufferOperation::ADDTEXT, newline, 0, line+1 );
+			d->swapFile->addToSwap( YZBufferOperation::OpDelText, newline, col, line );
+			d->swapFile->addToSwap( YZBufferOperation::OpAddText, newline, 0, line+1 );
 		}
 	}
 
@@ -346,11 +346,11 @@ void YZBuffer::deleteLine( int line ) {
 	if (line >= lineCount()) return;
 
 	viewsInit( this, 0, line );
-	d->undoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
-	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::DELTEXT, textline( line ), 0, line );
+	d->undoBuffer->addBufferOperation( YZBufferOperation::OpDelText, textline(line), 0, line );
+	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpDelText, textline( line ), 0, line );
 	if (lineCount() > 1) {
-		d->undoBuffer->addBufferOperation( YZBufferOperation::DELLINE, "", 0, line );
-		if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::DELLINE, "", 0, line );
+		d->undoBuffer->addBufferOperation( YZBufferOperation::OpDelLine, "", 0, line );
+		if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpDelLine, "", 0, line );
 		QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 		int idx=0;
 		for ( ; idx < line && it != end; ++it, ++idx )
@@ -362,8 +362,8 @@ void YZBuffer::deleteLine( int line ) {
 		YZSession::self()->search()->highlightLine( this, line );
 		updateHL( line );
 	} else {
-		d->undoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, "", 0, line );
-		if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::DELTEXT, "", 0, line );
+		d->undoBuffer->addBufferOperation( YZBufferOperation::OpDelText, "", 0, line );
+		if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpDelText, "", 0, line );
 		setTextline(0,"");
 	}
 
@@ -380,11 +380,11 @@ void YZBuffer::replaceLine( const QString& l, int line ) {
 	if ( textline( line ).isNull() ) return;
 	viewsInit( this, 0, line );
 
-	d->undoBuffer->addBufferOperation( YZBufferOperation::DELTEXT, textline(line), 0, line );
-	d->undoBuffer->addBufferOperation( YZBufferOperation::ADDTEXT, l, 0, line );
+	d->undoBuffer->addBufferOperation( YZBufferOperation::OpDelText, textline(line), 0, line );
+	d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddText, l, 0, line );
 	if ( !d->isLoading ) {
-		d->swapFile->addToSwap( YZBufferOperation::DELTEXT, textline( line ), 0, line );
-		d->swapFile->addToSwap( YZBufferOperation::ADDTEXT, l, 0, line );
+		d->swapFile->addToSwap( YZBufferOperation::OpDelText, textline( line ), 0, line );
+		d->swapFile->addToSwap( YZBufferOperation::OpAddText, l, 0, line );
 	}
 	setTextline(line,l);
 

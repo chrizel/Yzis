@@ -33,15 +33,16 @@ class YZView;
 class YZBuffer;
 
 /** An individual operation on a buffer, that can be done or undone. */
-struct buffer_operation
+
+struct YZBufferOperation
 {
 	enum OperationType {
-		ADDTEXT, // insert some characters inside the line
-		DELTEXT, // delete some characters from the line
+		OpAddText, //!< insert some characters inside the line
+		OpDelText, //!< delete some characters from the line
 
-		// for ADDLINE and DELLINE, the arguments col and text are ignored.
-		ADDLINE, // insert a line before the specified line.
-		DELLINE  // delete the line from the buffer
+		// for OpAddLine and OpDelLine, the arguments col and text are ignored.
+		OpAddLine, //!< insert a line before the specified line.
+		OpDelLine  //!< delete the line from the buffer
 
 	};
 
@@ -57,7 +58,6 @@ struct buffer_operation
 
 	QString toString() const;
 };
-typedef struct buffer_operation YZBufferOperation;
 
 typedef QList<YZBufferOperation*> UndoItemBase;
 

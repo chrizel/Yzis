@@ -10,7 +10,6 @@ include_directories(${YZIS_INCLUDES})
 
 set(yzis_LIB_SRCS 
    action.cpp 
-   attribute.cpp 
    buffer.cpp 
    color.cpp 
    cursor.cpp 
@@ -36,15 +35,11 @@ set(yzis_LIB_SRCS
    mode_search.cpp 
    mode_visual.cpp 
    option.cpp 
-   readtags/readtags.c 
    registers.cpp 
-   schema.cpp 
    search.cpp 
    selection.cpp 
    session.cpp 
    swapfile.cpp 
-   syntaxdocument.cpp 
-   syntaxhighlight.cpp 
    tags_interface.cpp 
    tags_stack.cpp 
    undo.cpp 
@@ -53,6 +48,13 @@ set(yzis_LIB_SRCS
    yzisinfo.cpp 
    yzisinfojumplistrecord.cpp 
    yzisinfostartpositionrecord.cpp 
+
+   readtags/readtags.c 
+
+   kate/attribute.cpp 
+   kate/schema.cpp 
+   kate/syntaxdocument.cpp 
+   kate/syntaxhighlight.cpp 
 )
 
 set(yzis_LIB_MOCS 

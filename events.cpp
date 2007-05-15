@@ -21,7 +21,7 @@
 #include "debug.h"
 #include "luaengine.h"
 #include "buffer.h"
-#include "syntaxhighlight.h"
+#include "kate/syntaxhighlight.h"
 #include "view.h"
 
 #define dbg()    yzDebug("YZEvents")

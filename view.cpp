@@ -37,7 +37,7 @@
 #include "mark.h"
 #include "action.h"
 #include "session.h"
-#include "syntaxhighlight.h"
+#include "kate/syntaxhighlight.h"
 #include "linesearch.h"
 #include "folding.h"
 

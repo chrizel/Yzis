@@ -32,7 +32,7 @@
 #include "selection.h"
 #include "mapping.h"
 #include "action.h"
-#include "schema.h"
+#include "kate/schema.h"
 #include "tags_interface.h"
 #include "search.h"
 #include "internal_options.h"

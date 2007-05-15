@@ -23,7 +23,7 @@
 
 #include "yzis.h"
 #include "debug.h"
-#include "schema.h"
+#include "kate/schema.h"
 #include "buffer.h"
 #include "registers.h"
 #include "mapping.h"

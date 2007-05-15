@@ -27,6 +27,8 @@
 
 #include <QTextCodec>
 
+#include "kate/syntaxhighlight.h"
+
 #include "buffer.h"
 #include "line.h"
 #include "view.h"
@@ -36,7 +38,6 @@
 #include "internal_options.h"
 #include "swapfile.h"
 #include "session.h"
-#include "syntaxhighlight.h"
 #include "luaengine.h"
 #include "search.h"
 #include "mark.h"

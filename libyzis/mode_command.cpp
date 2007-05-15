@@ -67,44 +67,44 @@ void YZModeCommand::initPool() {
 	initCommandPool();
 }
 void YZModeCommand::initMotionPool() {
-	commands.append( new YZMotion("0", &YZModeCommand::gotoSOL, ARG_NONE) );
-	commands.append( new YZMotion("$", &YZModeCommand::gotoEOL, ARG_NONE) );
-	commands.append( new YZMotion("^", &YZModeCommand::firstNonBlank, ARG_NONE) );
-	commands.append( new YZMotion("w", &YZModeCommand::moveWordForward, ARG_NONE) );
-	commands.append( new YZMotion("W", &YZModeCommand::moveSWordForward, ARG_NONE) );
-	commands.append( new YZMotion("b", &YZModeCommand::moveWordBackward, ARG_NONE) );
-	commands.append( new YZMotion("B", &YZModeCommand::moveSWordBackward, ARG_NONE) );
-	commands.append( new YZMotion("j", &YZModeCommand::moveDown, ARG_NONE) );
-	commands.append( new YZMotion("k", &YZModeCommand::moveUp, ARG_NONE) );
-	commands.append( new YZMotion("h", &YZModeCommand::moveLeft, ARG_NONE) );
-	commands.append( new YZMotion("l", &YZModeCommand::moveRight, ARG_NONE) );
-	commands.append( new YZMotion("<BS>", &YZModeCommand::moveLeftWrap, ARG_NONE) );
-	commands.append( new YZMotion(" ", &YZModeCommand::moveRightWrap, ARG_NONE) );
-	commands.append( new YZMotion("f", &YZModeCommand::findNext, ARG_CHAR) );
-	commands.append( new YZMotion("t", &YZModeCommand::findBeforeNext, ARG_CHAR) );
-	commands.append( new YZMotion("F", &YZModeCommand::findPrevious, ARG_CHAR) );
-	commands.append( new YZMotion("T", &YZModeCommand::findAfterPrevious, ARG_CHAR) );
-	commands.append( new YZMotion(";", &YZModeCommand::repeatFind, ARG_CHAR) );
-	commands.append( new YZMotion("*", &YZModeCommand::searchWord, ARG_NONE) );
-	commands.append( new YZMotion("g*", &YZModeCommand::searchWord, ARG_NONE) );
-	commands.append( new YZMotion("#", &YZModeCommand::searchWord, ARG_NONE) );
-	commands.append( new YZMotion("g#", &YZModeCommand::searchWord, ARG_NONE) );
-	commands.append( new YZMotion("n", &YZModeCommand::searchNext, ARG_NONE) );
-	commands.append( new YZMotion("N", &YZModeCommand::searchPrev, ARG_NONE) );
-	commands.append( new YZMotion("<HOME>", &YZModeCommand::gotoSOL, ARG_NONE) );
-	commands.append( new YZMotion("<END>", &YZModeCommand::gotoEOL, ARG_NONE) );
-	commands.append( new YZMotion("<LEFT>", &YZModeCommand::moveLeft, ARG_NONE) );
-	commands.append( new YZMotion("<RIGHT>", &YZModeCommand::moveRight, ARG_NONE) );
-	commands.append( new YZMotion("<UP>", &YZModeCommand::moveUp, ARG_NONE) );
-	commands.append( new YZMotion("<DOWN>", &YZModeCommand::moveDown, ARG_NONE) );
-	commands.append( new YZMotion("%", &YZModeCommand::matchPair, ARG_NONE) );
-	commands.append( new YZMotion("`", &YZModeCommand::gotoMark, ARG_MARK) );
-	commands.append( new YZMotion("'", &YZModeCommand::gotoMark, ARG_MARK) );
-	commands.append( new YZMotion("<ENTER>", &YZModeCommand::firstNonBlankNextLine, ARG_NONE) );
-	commands.append( new YZMotion("gg", &YZModeCommand::gotoLine, ARG_NONE) );
-	commands.append( new YZMotion("G", &YZModeCommand::gotoLine, ARG_NONE) );
-	commands.append( new YZMotion("}", &YZModeCommand::nextEmptyLine, ARG_NONE) );
-	commands.append( new YZMotion("{", &YZModeCommand::previousEmptyLine, ARG_NONE) );
+	commands.append( new YZMotion("0", &YZModeCommand::gotoSOL, ArgNone) );
+	commands.append( new YZMotion("$", &YZModeCommand::gotoEOL, ArgNone) );
+	commands.append( new YZMotion("^", &YZModeCommand::firstNonBlank, ArgNone) );
+	commands.append( new YZMotion("w", &YZModeCommand::moveWordForward, ArgNone) );
+	commands.append( new YZMotion("W", &YZModeCommand::moveSWordForward, ArgNone) );
+	commands.append( new YZMotion("b", &YZModeCommand::moveWordBackward, ArgNone) );
+	commands.append( new YZMotion("B", &YZModeCommand::moveSWordBackward, ArgNone) );
+	commands.append( new YZMotion("j", &YZModeCommand::moveDown, ArgNone) );
+	commands.append( new YZMotion("k", &YZModeCommand::moveUp, ArgNone) );
+	commands.append( new YZMotion("h", &YZModeCommand::moveLeft, ArgNone) );
+	commands.append( new YZMotion("l", &YZModeCommand::moveRight, ArgNone) );
+	commands.append( new YZMotion("<BS>", &YZModeCommand::moveLeftWrap, ArgNone) );
+	commands.append( new YZMotion(" ", &YZModeCommand::moveRightWrap, ArgNone) );
+	commands.append( new YZMotion("f", &YZModeCommand::findNext, ArgChar) );
+	commands.append( new YZMotion("t", &YZModeCommand::findBeforeNext, ArgChar) );
+	commands.append( new YZMotion("F", &YZModeCommand::findPrevious, ArgChar) );
+	commands.append( new YZMotion("T", &YZModeCommand::findAfterPrevious, ArgChar) );
+	commands.append( new YZMotion(";", &YZModeCommand::repeatFind, ArgChar) );
+	commands.append( new YZMotion("*", &YZModeCommand::searchWord, ArgNone) );
+	commands.append( new YZMotion("g*", &YZModeCommand::searchWord, ArgNone) );
+	commands.append( new YZMotion("#", &YZModeCommand::searchWord, ArgNone) );
+	commands.append( new YZMotion("g#", &YZModeCommand::searchWord, ArgNone) );
+	commands.append( new YZMotion("n", &YZModeCommand::searchNext, ArgNone) );
+	commands.append( new YZMotion("N", &YZModeCommand::searchPrev, ArgNone) );
+	commands.append( new YZMotion("<HOME>", &YZModeCommand::gotoSOL, ArgNone) );
+	commands.append( new YZMotion("<END>", &YZModeCommand::gotoEOL, ArgNone) );
+	commands.append( new YZMotion("<LEFT>", &YZModeCommand::moveLeft, ArgNone) );
+	commands.append( new YZMotion("<RIGHT>", &YZModeCommand::moveRight, ArgNone) );
+	commands.append( new YZMotion("<UP>", &YZModeCommand::moveUp, ArgNone) );
+	commands.append( new YZMotion("<DOWN>", &YZModeCommand::moveDown, ArgNone) );
+	commands.append( new YZMotion("%", &YZModeCommand::matchPair, ArgNone) );
+	commands.append( new YZMotion("`", &YZModeCommand::gotoMark, ArgMark) );
+	commands.append( new YZMotion("'", &YZModeCommand::gotoMark, ArgMark) );
+	commands.append( new YZMotion("<ENTER>", &YZModeCommand::firstNonBlankNextLine, ArgNone) );
+	commands.append( new YZMotion("gg", &YZModeCommand::gotoLine, ArgNone) );
+	commands.append( new YZMotion("G", &YZModeCommand::gotoLine, ArgNone) );
+	commands.append( new YZMotion("}", &YZModeCommand::nextEmptyLine, ArgNone) );
+	commands.append( new YZMotion("{", &YZModeCommand::previousEmptyLine, ArgNone) );
 }
 
 void YZModeCommand::initCommandPool() {
@@ -122,17 +122,17 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("z.", &YZModeCommand::gotoLineAtCenter) );
 	commands.append( new YZCommand("z-", &YZModeCommand::gotoLineAtBottom) );
 	commands.append( new YZCommand("dd", &YZModeCommand::deleteLine) );
-	commands.append( new YZCommand("d", &YZModeCommand::del, ARG_MOTION) );
+	commands.append( new YZCommand("d", &YZModeCommand::del, ArgMotion) );
 	commands.append( new YZCommand("D", &YZModeCommand::deleteToEOL) );
 	commands.append( new YZCommand("s", &YZModeCommand::substitute) );
 	commands.append( new YZCommand("x", &YZModeCommand::deleteChar) );
 	commands.append( new YZCommand("X", &YZModeCommand::deleteCharBackwards) );
 	commands.append( new YZCommand("yy", &YZModeCommand::yankLine) );
-	commands.append( new YZCommand("y", &YZModeCommand::yank, ARG_MOTION) );
+	commands.append( new YZCommand("y", &YZModeCommand::yank, ArgMotion) );
 	commands.append( new YZCommand("Y", &YZModeCommand::yankToEOL) );
 	commands.append( new YZCommand("cc", &YZModeCommand::changeLine) );
 	commands.append( new YZCommand("S", &YZModeCommand::changeLine) );
-	commands.append( new YZCommand("c", &YZModeCommand::change, ARG_MOTION) );
+	commands.append( new YZCommand("c", &YZModeCommand::change, ArgMotion) );
 	commands.append( new YZCommand("C", &YZModeCommand::changeToEOL) );
 	commands.append( new YZCommand("p", &YZModeCommand::pasteAfter) );
 	commands.append( new YZCommand("P", &YZModeCommand::pasteBefore) );
@@ -142,17 +142,17 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("A", &YZModeCommand::appendAtEOL) );
 	commands.append( new YZCommand("J", &YZModeCommand::joinLine) );
 	commands.append( new YZCommand("gJ", &YZModeCommand::joinLineWithoutSpace) );
-	commands.append( new YZCommand("<", &YZModeCommand::indent, ARG_MOTION ) );
+	commands.append( new YZCommand("<", &YZModeCommand::indent, ArgMotion ) );
 	commands.append( new YZCommand("<<", &YZModeCommand::indent ) );
-	commands.append( new YZCommand(">", &YZModeCommand::indent, ARG_MOTION ) );
+	commands.append( new YZCommand(">", &YZModeCommand::indent, ArgMotion ) );
 	commands.append( new YZCommand(">>", &YZModeCommand::indent ) );
 	commands.append( new YZCommand("ZZ", &YZModeCommand::saveAndClose) );
 	commands.append( new YZCommand("ZQ", &YZModeCommand::closeWithoutSaving) );
 	commands.append( new YZCommand("/", &YZModeCommand::searchForwards) );
 	commands.append( new YZCommand("?", &YZModeCommand::searchBackwards) );
 	commands.append( new YZCommand("~", &YZModeCommand::changeCase) );
-	commands.append( new YZCommand("m", &YZModeCommand::mark, ARG_CHAR) );
-	commands.append( new YZCommand("r", &YZModeCommand::replace, ARG_CHAR) );
+	commands.append( new YZCommand("m", &YZModeCommand::mark, ArgChar) );
+	commands.append( new YZCommand("r", &YZModeCommand::replace, ArgChar) );
 	commands.append( new YZCommand("u", &YZModeCommand::undo) );
 	commands.append( new YZCommand("U", &YZModeCommand::redo) );
 	commands.append( new YZCommand("<CTRL>r", &YZModeCommand::redo) );
@@ -246,7 +246,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 	if(cmds.isEmpty()) {
 		// perhaps it is a command with an argument, isolate all those
 		for ( int bc = 0 ; bc < prevcmds.size() ; )
-			if ( prevcmds.at(bc)->arg() == ARG_NONE )
+			if ( prevcmds.at(bc)->arg() == ArgNone )
 				prevcmds.removeAt(bc);
 			else
 				++bc;
@@ -256,7 +256,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 		const YZCommand *c=prevcmds.first();
 		i=j-1;
 		// read in a count that may follow
-		if (c->arg() == ARG_CHAR) {// don't try to read a motion!
+		if (c->arg() == ArgChar) {// don't try to read a motion!
 			(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
 			return CmdOk;
 		}
@@ -271,7 +271,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 
 		QString s=inputs.mid(i);
 		switch(c->arg()) {
-		case ARG_MOTION:
+		case ArgMotion:
 			if(s[0]=='a' || s[0]=='i') {
 				// text object
 				if(s.length()==1)
@@ -297,12 +297,12 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 				}
 			}
 			break;
-		case ARG_CHAR:
-		case ARG_REG:
+		case ArgChar:
+		case ArgReg:
 			if(s.length()!=1)
 				return CmdError;
 			break;
-		case ARG_MARK:
+		case ArgMark:
 			if(s.length()!=1 || !YZCommand::isMark(s[0]))
 				return CmdError;
 			break;
@@ -319,7 +319,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 		foreach( YZView *v, view->myBuffer()->views() )
 			v->commitPaintEvent();
 			
-		if ( c->arg() == ARG_MARK ) {
+		if ( c->arg() == ArgMark ) {
 			YZSession::self()->saveJumpPosition();
 		}
 
@@ -337,7 +337,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 		const YZCommand *c=0;
 		if(cmds.count()==1) {
 			c=cmds.first();
-			if(c->arg() == ARG_NONE)
+			if(c->arg() == ArgNone)
 				(this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount));
 			else
 				return CmdOperatorPending;
@@ -345,10 +345,10 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 			/* two or more commands with the same name, we assert that these are exactly
 			a cmd that needs a motion and one without an argument. In visual mode, we take
 			the operator, in normal mode, we take the other. */
-			//this is not sufficient, see the 'q' (record macro command), we need a q+ARG_CHAR and a 'q' commands //mm //FIXME
+			//this is not sufficient, see the 'q' (record macro command), we need a q+ArgChar and a 'q' commands //mm //FIXME
 			for ( int ab = 0 ; ab < cmds.size(); ++ab ) {
-				if ( cmds.at(ab)->arg() == ARG_MOTION && visual ||
-						cmds.at(ab)->arg() == ARG_NONE && !visual )
+				if ( cmds.at(ab)->arg() == ArgMotion && visual ||
+						cmds.at(ab)->arg() == ArgNone && !visual )
 					c = cmds.at(ab);
 			}
 			if(!c)
@@ -369,15 +369,15 @@ bool YZMotion::matches(const QString &s, bool fully) const {
 	QString ks=mKeySeq;
 	if(s.startsWith(ks)) {
 		switch(mArg) {
-		case ARG_NONE:
+		case ArgNone:
 			if(s.length() == ks.length())
 				return true;
 			break;
-		case ARG_CHAR:
+		case ArgChar:
 			if(s.length() == ks.length()+1 || !fully && s.length() == ks.length())
 				return true;
 			break;
-		case ARG_MARK:
+		case ArgMark:
 			if(s.length() == ks.length()+1 && isMark(s.at(s.length()-1)) || !fully && s.length() == ks.length())
 				return true;
 			break;

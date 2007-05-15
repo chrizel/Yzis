@@ -236,28 +236,28 @@ bool YZOption::match( const QString& entry ) {
 	}
 	return false;
 }
-QString YZOption::readValue( const QString& entry, opt_action* action ) {
-	*action = opt_invalid;
+QString YZOption::readValue( const QString& entry, OptAction* action ) {
+	*action = OptInvalid;
 	QString value = entry;
-	for( int i = 0; *action == opt_invalid && i < m_aliases.size(); i++ ) {
+	for( int i = 0; *action == OptInvalid && i < m_aliases.size(); i++ ) {
 		if ( entry.startsWith( m_aliases[ i ] ) && ! entry.mid( m_aliases[ i ].length() )[ 0 ].isLetter() ) {
 			QString data = entry.mid( m_aliases[ i ].length() );
 			unsigned int idx = 1;
 			if ( data[ 0 ] == '&' ) {
-				*action = opt_reset;
+				*action = OptReset;
 			} else if ( data[ 0 ] == '=' || data[ 0 ] == ':' ) {
-				*action = opt_set;
+				*action = OptSet;
 			} else {
 				idx = 2;
 				if ( data.startsWith("+=") ) {
-					*action = opt_append;
+					*action = OptAppend;
 				} else if ( data.startsWith("^=") ) {
-					*action = opt_prepend;
+					*action = OptPrepend;
 				} else if ( data.startsWith("-=") ) {
-					*action = opt_subtract;
+					*action = OptSubtract;
 				}
 			}
-			if ( *action != opt_invalid )
+			if ( *action != OptInvalid )
 				value = data.mid( idx );
 		}
 	}
@@ -287,10 +287,10 @@ bool YZOptionBoolean::match( const QString& entry ) {
 bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
 	bool v = value->boolean();
-	opt_action action;
+	OptAction action;
 
 	QString v_s = readValue( entry, &action );
-	if ( action == opt_invalid ) {
+	if ( action == OptInvalid ) {
 		for( int i = 0; !ret && i < m_aliases.size(); i++ ) {
 			if ( entry == m_aliases[i] ) {
 				v = true;
@@ -303,10 +303,10 @@ bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value ) {
 				ret = true;
 			}
 		}
-	} else if ( action == opt_reset ) {
+	} else if ( action == OptReset ) {
 		ret = true;
 		v = v_default->boolean();
-	} else if ( action == opt_set ) {
+	} else if ( action == OptSet ) {
 		v = YZOptionValue::booleanFromString( &ret, v_s );
 	}
 	if ( ret )
@@ -326,22 +326,22 @@ YZOptionInteger::~YZOptionInteger() {
 bool YZOptionInteger::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
 	int v = value->integer();
-	opt_action action;
+	OptAction action;
 
 	QString v_s = readValue( entry, &action );
-	ret = action != opt_invalid;
-	if ( action != opt_reset )
+	ret = action != OptInvalid;
+	if ( action != OptReset )
 		v = YZOptionValue::integerFromString( &ret, v_s );
 	if ( ret ) {
-		if ( action == opt_reset ) {
+		if ( action == OptReset ) {
 			v = v_default->integer();
-		} else if ( action == opt_set ) {
+		} else if ( action == OptSet ) {
 			// nothing
-		} else if ( action == opt_append ) {
+		} else if ( action == OptAppend ) {
 			v += value->integer();
-		} else if ( action == opt_prepend ) { // multiply
+		} else if ( action == OptPrepend ) { // multiply
 			v *= value->integer();
-		} else if ( action == opt_subtract ) {
+		} else if ( action == OptSubtract ) {
 			v = value->integer() - v;
 		}
 		ret = ret && v >= v_min && v <= v_max;
@@ -362,20 +362,20 @@ YZOptionString::~YZOptionString() {
 
 bool YZOptionString::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
-	opt_action action;
+	OptAction action;
 
 	QString v = readValue( entry, &action );
-	ret = action != opt_invalid;
+	ret = action != OptInvalid;
 	if ( ret ) {
-		if ( action == opt_reset ) {
+		if ( action == OptReset ) {
 			v = v_default->string();
-		} else if ( action == opt_set ) {
+		} else if ( action == OptSet ) {
 			// nothing
-		} else if ( action == opt_append ) {
+		} else if ( action == OptAppend ) {
 			v = value->string() + v;
-		} else if ( action == opt_prepend ) {
+		} else if ( action == OptPrepend ) {
 			v = v + value->string();
-		} else if ( action == opt_subtract ) {
+		} else if ( action == OptSubtract ) {
 			QString mv = value->string();
 			v = mv.remove( v );
 		}
@@ -399,22 +399,22 @@ YZOptionList::~YZOptionList() {
 bool YZOptionList::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
 	QStringList v = value->list();
-	opt_action action;
+	OptAction action;
 
 	QString v_s = readValue( entry, &action );
-	ret = (action != opt_invalid);
-	if ( action != opt_reset )
+	ret = (action != OptInvalid);
+	if ( action != OptReset )
 		v = YZOptionValue::listFromString( &ret, v_s );
 	if ( ret ) {
-		if ( action == opt_reset ) {
+		if ( action == OptReset ) {
 			v = v_default->list();
-		} else if ( action == opt_set ) {
+		} else if ( action == OptSet ) {
 			// nothing
-		} else if ( action == opt_append ) {
+		} else if ( action == OptAppend ) {
 			v = value->list() + v;
-		} else if ( action == opt_prepend ) {
+		} else if ( action == OptPrepend ) {
 			v = v + value->list();
-		} else if ( action == opt_subtract ) {
+		} else if ( action == OptSubtract ) {
 			QStringList mv = value->list();
 			for( int i = 0; i < v.size(); i++ )
 				mv.removeAll( v[i] );
@@ -443,24 +443,24 @@ YZOptionMap::~YZOptionMap() {
 bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value ) {
 	bool ret = false;
 	MapOption v = value->map();
-	opt_action action;
+	OptAction action;
 	
 	QString v_s = readValue( entry, &action );
-	ret = (action != opt_invalid);
-	if ( action != opt_reset )
+	ret = (action != OptInvalid);
+	if ( action != OptReset )
 		v = YZOptionValue::mapFromString( &ret, v_s );
 	if ( ret ) {
-		if ( action == opt_reset ) {
+		if ( action == OptReset ) {
 			v = v_default->map();
-		} else if ( action == opt_set ) {
+		} else if ( action == OptSet ) {
 			// nothing
-		} else if ( action == opt_append || action == opt_prepend ) {
+		} else if ( action == OptAppend || action == OptPrepend ) {
 			MapOption mv = value->map();
 			QList<QString> keys = v.keys();
 			for ( int i = 0; i < keys.size(); i++ )
 				mv[ keys[i] ] = v[ keys[i] ];
 			v = mv;
-		} else if ( action == opt_subtract ) {
+		} else if ( action == OptSubtract ) {
 			MapOption mv = value->map();
 			QList<QString> keys = v.keys();
 			for ( int i = 0; i < keys.size(); i++ )

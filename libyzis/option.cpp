@@ -26,27 +26,27 @@ using namespace yzis;
 
 YZOptionValue::YZOptionValue( YZOption* o ) {
 	m_parent = o;
-	m_type = invalid_t;
+	m_type = TypeInvalid;
 }
 YZOptionValue::YZOptionValue( const YZOptionValue& ov ) {
 	m_parent = ov.parent();
 	switch( ov.type() ) {
-		case yzis::boolean_t :
+		case yzis::TypeBool :
 			setBoolean( ov.boolean() );
 			break;
-		case string_t :
+		case TypeString :
 			setString( ov.string() );
 			break;
-		case yzis::integer_t :
+		case yzis::TypeInt :
 			setInteger( ov.integer() );
 			break;
-		case list_t :
+		case TypeList :
 			setList( ov.list() );
 			break;
-		case map_t :
+		case TypeMap :
 			setMap( ov.map() );
 			break;
-		case color_t :
+		case TypeColor :
 			setColor( ov.color() );
 			break;
 		default:
@@ -59,28 +59,28 @@ YZOptionValue::~YZOptionValue() {
 YZOption* YZOptionValue::parent() const {
 	return m_parent;
 }
-value_t YZOptionValue::type() const {
+OptType YZOptionValue::type() const {
 	return m_type;
 }
 QString YZOptionValue::toString() const {
 	QString ret;
 	switch( type() ) {
-		case yzis::boolean_t :
+		case yzis::TypeBool :
 			ret = booleanToString( v_bool );
 			break;
-		case string_t :
+		case TypeString :
 			ret = stringToString( v_str );
 			break;
-		case yzis::integer_t :
+		case yzis::TypeInt :
 			ret = integerToString( v_int );
 			break;
-		case list_t :
+		case TypeList :
 			ret = listToString( v_list );
 			break;
-		case map_t :
+		case TypeMap :
 			ret = mapToString( v_map );
 			break;
-		case color_t :
+		case TypeColor :
 			ret = colorToString( v_color );
 			break;
 		default:
@@ -158,27 +158,27 @@ YZColor YZOptionValue::colorFromString( bool* success, const QString& value ) {
 
 void YZOptionValue::setBoolean( bool value ) {
 	v_bool = value;
-	m_type = yzis::boolean_t;
+	m_type = yzis::TypeBool;
 }
 void YZOptionValue::setString( const QString& value ) {
 	v_str = value;
-	m_type = string_t;
+	m_type = TypeString;
 }
 void YZOptionValue::setInteger( int value ) {
 	v_int = value;
-	m_type = yzis::integer_t;
+	m_type = yzis::TypeInt;
 }
 void YZOptionValue::setList( const QStringList& value ) {
 	v_list = value;
-	m_type = list_t;
+	m_type = TypeList;
 }
 void YZOptionValue::setMap( const MapOption& value ) {
 	v_map = value;
-	m_type = map_t;
+	m_type = TypeMap;
 }
 void YZOptionValue::setColor( const YZColor& value ) {
 	v_color = value;
-	m_type = color_t;
+	m_type = TypeColor;
 }
 
 bool YZOptionValue::boolean() const {
@@ -201,7 +201,7 @@ const YZColor& YZOptionValue::color() const {
 }
 
 
-YZOption::YZOption( const QString& name, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases ) {
+YZOption::YZOption( const QString& name, OptContext ctx, OptScope scope, ApplyOptionMethod m, QStringList aliases ) {
 	m_name = name;
 	m_ctx = ctx;
 	m_scope = scope;
@@ -217,10 +217,10 @@ YZOption::~YZOption() {
 const QString& YZOption::name() const {
 	return m_name;
 }
-context_t YZOption::context() const {
+OptContext YZOption::context() const {
 	return m_ctx;
 }
-scope_t YZOption::scope() const {
+OptScope YZOption::scope() const {
 	return m_scope;
 }
 YZOptionValue* YZOption::defaultValue() {
@@ -264,7 +264,7 @@ QString YZOption::readValue( const QString& entry, OptAction* action ) {
 	return value;
 }
 
-YZOptionBoolean::YZOptionBoolean( const QString& name, bool v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases )
+YZOptionBoolean::YZOptionBoolean( const QString& name, bool v, OptContext ctx, OptScope scope, ApplyOptionMethod m, QStringList aliases )
 	: YZOption( name, ctx, scope, m, aliases ) {
 	v_default->setBoolean( v );
 	m_allValues << "true" << "false" << "on" << "off" << "yes" << "no";
@@ -314,7 +314,7 @@ bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value ) {
 	return ret;
 }
 
-YZOptionInteger::YZOptionInteger( const QString& name, int v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, int min, int max ) 
+YZOptionInteger::YZOptionInteger( const QString& name, int v, OptContext ctx, OptScope scope, ApplyOptionMethod m, QStringList aliases, int min, int max ) 
 	: YZOption( name, ctx, scope, m, aliases ) {
 	v_min = min;
 	v_max = max;
@@ -352,7 +352,7 @@ bool YZOptionInteger::setValue( const QString& entry, YZOptionValue* value ) {
 }
 
 
-YZOptionString::YZOptionString( const QString& name, const QString& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList values ) 
+YZOptionString::YZOptionString( const QString& name, const QString& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, QStringList aliases, QStringList values ) 
 	: YZOption( name, ctx, scope, m, aliases ) {
 	m_allValues = values;
 	v_default->setString( v );
@@ -388,7 +388,7 @@ bool YZOptionString::setValue( const QString& entry, YZOptionValue* value ) {
 }
 
 
-YZOptionList::YZOptionList( const QString& name, const QStringList& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList values ) 
+YZOptionList::YZOptionList( const QString& name, const QStringList& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, QStringList aliases, QStringList values ) 
 	: YZOption( name, ctx, scope, m, aliases ) {
 	m_allValues = values;
 	v_default->setList( v );
@@ -431,7 +431,7 @@ bool YZOptionList::setValue( const QString& entry, YZOptionValue* value ) {
 	return ret;
 }
 
-YZOptionMap::YZOptionMap( const QString& name, const MapOption& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases, QStringList keys, QStringList values ) 
+YZOptionMap::YZOptionMap( const QString& name, const MapOption& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, QStringList aliases, QStringList keys, QStringList values ) 
 	: YZOption( name, ctx, scope, m, aliases ) {
 	m_allKeys = keys;
 	m_allValues = values;
@@ -487,7 +487,7 @@ bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value ) {
 	return ret;
 }
 
-YZOptionColor::YZOptionColor( const QString& name, const YZColor& v, context_t ctx, scope_t scope, ApplyOptionMethod m, QStringList aliases ) 
+YZOptionColor::YZOptionColor( const QString& name, const YZColor& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, QStringList aliases ) 
 	: YZOption( name, ctx, scope, m, aliases ) {
 	v_default->setColor( v );
 }

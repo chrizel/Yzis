@@ -347,8 +347,8 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs) {
 			the operator, in normal mode, we take the other. */
 			//this is not sufficient, see the 'q' (record macro command), we need a q+ArgChar and a 'q' commands //mm //FIXME
 			for ( int ab = 0 ; ab < cmds.size(); ++ab ) {
-				if ( cmds.at(ab)->arg() == ArgMotion && visual ||
-						cmds.at(ab)->arg() == ArgNone && !visual )
+				if ( cmds.at(ab)->arg() == ArgMotion && MapVisual ||
+						cmds.at(ab)->arg() == ArgNone && !MapVisual )
 					c = cmds.at(ab);
 			}
 			if(!c)

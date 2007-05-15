@@ -159,21 +159,21 @@ void updateHLSearch( YZBuffer*, YZView* ) {
 
 void YZInternalOptionPool::init() {
 	// here you add new options
-	options.append(new YZOptionString("backspace","eol", ctx_session,global_scope, &doNothing, QStringList("bs"), QStringList("eol" ) << "indent" << "start"));
-	options.append(new YZOptionBoolean("blocksplash",true, ctx_session,global_scope, &doNothing, QStringList()));
-	options.append(new YZOptionBoolean("startofline",true, ctx_session,global_scope, &doNothing, QStringList("sol")));
-	options.append(new YZOptionBoolean("cindent",false, ctx_buffer,local_scope, &doNothing, QStringList("cin")));
+	options.append(new YZOptionString("backspace","eol", ContextSession,ScopeGlobal, &doNothing, QStringList("bs"), QStringList("eol" ) << "indent" << "start"));
+	options.append(new YZOptionBoolean("blocksplash",true, ContextSession,ScopeGlobal, &doNothing, QStringList()));
+	options.append(new YZOptionBoolean("startofline",true, ContextSession,ScopeGlobal, &doNothing, QStringList("sol")));
+	options.append(new YZOptionBoolean("cindent",false, ContextBuffer,ScopeLocal, &doNothing, QStringList("cin")));
 	QStringList cursor_shape;
 	cursor_shape << "square" << "vbar" << "hbar";
-	options.append(new YZOptionString("cursor","square", ctx_view,local_scope, &changeCursor, QStringList(), cursor_shape) );
-	options.append(new YZOptionString("cursorinsert","square", ctx_view,local_scope, &changeCursor, QStringList(), cursor_shape) );
-	options.append(new YZOptionString("cursorreplace","square", ctx_view,local_scope, &changeCursor, QStringList(), cursor_shape) );
-	options.append(new YZOptionString("encoding","locale", ctx_buffer,local_scope, &changeEncoding, QStringList("enc"),QStringList())); // XXX find the supported codecs
-	options.append(new YZOptionString("fileencoding","", ctx_buffer,local_scope, &doNothing, QStringList("fenc"),QStringList()));
-	options.append(new YZOptionBoolean("hlsearch",false, ctx_session,global_scope, &updateHLSearch, QStringList("hls")));
-	options.append(new YZOptionList("indentkeys", QStringList(), ctx_buffer,local_scope, &doNothing, QStringList("indk"), QStringList()));
-	options.append(new YZOptionBoolean("incsearch",false, ctx_session,global_scope, &doNothing, QStringList("is")));
-	options.append(new YZOptionBoolean("list",false, ctx_view,local_scope, &refreshView, QStringList()));
+	options.append(new YZOptionString("cursor","square", ContextView,ScopeLocal, &changeCursor, QStringList(), cursor_shape) );
+	options.append(new YZOptionString("cursorinsert","square", ContextView,ScopeLocal, &changeCursor, QStringList(), cursor_shape) );
+	options.append(new YZOptionString("cursorreplace","square", ContextView,ScopeLocal, &changeCursor, QStringList(), cursor_shape) );
+	options.append(new YZOptionString("encoding","locale", ContextBuffer,ScopeLocal, &changeEncoding, QStringList("enc"),QStringList())); // XXX find the supported codecs
+	options.append(new YZOptionString("fileencoding","", ContextBuffer,ScopeLocal, &doNothing, QStringList("fenc"),QStringList()));
+	options.append(new YZOptionBoolean("hlsearch",false, ContextSession,ScopeGlobal, &updateHLSearch, QStringList("hls")));
+	options.append(new YZOptionList("indentkeys", QStringList(), ContextBuffer,ScopeLocal, &doNothing, QStringList("indk"), QStringList()));
+	options.append(new YZOptionBoolean("incsearch",false, ContextSession,ScopeGlobal, &doNothing, QStringList("is")));
+	options.append(new YZOptionBoolean("list",false, ContextView,ScopeLocal, &refreshView, QStringList()));
 	MapOption lc;
 	lc["trail"] = "-";
 	lc["space"] = ".";
@@ -181,20 +181,20 @@ void YZInternalOptionPool::init() {
 	lc["eol"] = "$";
 	lc["precedes"] = "<";
 	lc["extends"] = ">";
-	options.append(new YZOptionMap("listchars",lc, ctx_view,global_scope, &viewUpdateListChars, QStringList("lcs"), lc.keys(), QStringList()));
-	options.append(new YZOptionString("matchpairs","(){}[]", ctx_buffer,local_scope, &doNothing, QStringList("mps"), QStringList()));
-	options.append(new YZOptionBoolean("number",false, ctx_view,local_scope, &refreshView, QStringList("nu")));
-	options.append(new YZOptionString("printer","qtprinter", ctx_view,local_scope, &doNothing, QStringList(), QStringList("qtprinter" ) << "pslib"));
-	options.append(new YZOptionBoolean("rightleft",false, ctx_view,local_scope, &recalcView, QStringList("rl")));
-	options.append(new YZOptionBoolean("expandtab",false, ctx_view,local_scope, &recalcView, QStringList("et")));
-	options.append(new YZOptionInteger("schema",0, ctx_buffer,local_scope, &refreshView, QStringList(), 0));
-	options.append(new YZOptionString("syntax","", ctx_buffer,local_scope, &setSyntax, QStringList("syn"), QStringList())); // XXX put all name ofsyntaxes here
-	options.append(new YZOptionInteger("tabstop",8, ctx_view,local_scope, &recalcView, QStringList("ts"), 1));
-	options.append(new YZOptionInteger("updatecount",200, ctx_session,global_scope, &doNothing, QStringList("uc"), 1));
-	options.append(new YZOptionBoolean("wrap",true, ctx_view,local_scope, &recalcView, QStringList()));
-	options.append(new YZOptionBoolean("startofline",true, ctx_view,local_scope, &doNothing, QStringList("sol")));
-	options.append(new YZOptionList("tags", QStringList( "tags" ), ctx_session, global_scope, &doNothing, QStringList(), QStringList()));
-	options.append(new YZOptionList("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i", ctx_session, global_scope, &doNothing, 
+	options.append(new YZOptionMap("listchars",lc, ContextView,ScopeGlobal, &viewUpdateListChars, QStringList("lcs"), lc.keys(), QStringList()));
+	options.append(new YZOptionString("matchpairs","(){}[]", ContextBuffer,ScopeLocal, &doNothing, QStringList("mps"), QStringList()));
+	options.append(new YZOptionBoolean("number",false, ContextView,ScopeLocal, &refreshView, QStringList("nu")));
+	options.append(new YZOptionString("printer","qtprinter", ContextView,ScopeLocal, &doNothing, QStringList(), QStringList("qtprinter" ) << "pslib"));
+	options.append(new YZOptionBoolean("rightleft",false, ContextView,ScopeLocal, &recalcView, QStringList("rl")));
+	options.append(new YZOptionBoolean("expandtab",false, ContextView,ScopeLocal, &recalcView, QStringList("et")));
+	options.append(new YZOptionInteger("schema",0, ContextBuffer,ScopeLocal, &refreshView, QStringList(), 0));
+	options.append(new YZOptionString("syntax","", ContextBuffer,ScopeLocal, &setSyntax, QStringList("syn"), QStringList())); // XXX put all name ofsyntaxes here
+	options.append(new YZOptionInteger("tabstop",8, ContextView,ScopeLocal, &recalcView, QStringList("ts"), 1));
+	options.append(new YZOptionInteger("updatecount",200, ContextSession,ScopeGlobal, &doNothing, QStringList("uc"), 1));
+	options.append(new YZOptionBoolean("wrap",true, ContextView,ScopeLocal, &recalcView, QStringList()));
+	options.append(new YZOptionBoolean("startofline",true, ContextView,ScopeLocal, &doNothing, QStringList("sol")));
+	options.append(new YZOptionList("tags", QStringList( "tags" ), ContextSession, ScopeGlobal, &doNothing, QStringList(), QStringList()));
+	options.append(new YZOptionList("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i", ContextSession, ScopeGlobal, &doNothing, 
 						QStringList("cpt"), QStringList()));
 
 	for( int i = 0; i < options.size(); i++ ) {
@@ -206,20 +206,20 @@ void YZInternalOptionPool::init() {
 	initConfFiles();
 }
 
-void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t scope, YZBuffer* b, YZView* v )
+void YZInternalOptionPool::applyOption( YZOption* option, OptContext ctx, OptScope scope, YZBuffer* b, YZView* v )
 {
 	YZASSERT(option);
-	if ( ctx == ctx_session ) {
+	if ( ctx == ContextSession ) {
 		option->apply( NULL, NULL );
-	} else if ( ctx == ctx_buffer ) {
-		if ( scope == global_scope ) {
+	} else if ( ctx == ContextBuffer ) {
+		if ( scope == ScopeGlobal ) {
 			foreach( YZBuffer *buffer, YZSession::self()->buffers() )
 				option->apply( buffer, v );
 		} else if ( b ) {
 			option->apply( b, v );
 		}
-	} else if ( ctx == ctx_view ) {
-		if ( scope == global_scope ) {
+	} else if ( ctx == ContextView ) {
+		if ( scope == ScopeGlobal ) {
 			foreach( YZBuffer *buffer, YZSession::self()->buffers() )
 				foreach(  YZView *view, buffer->views() )
 					option->apply( buffer, view );
@@ -228,28 +228,28 @@ void YZInternalOptionPool::applyOption( YZOption* option, context_t ctx, scope_t
 		}
 	}
 }
-bool YZInternalOptionPool::setOptionFromString( const QString& entry, scope_t user_scope, YZBuffer* b, YZView* v ) {
+bool YZInternalOptionPool::setOptionFromString( const QString& entry, OptScope user_scope, YZBuffer* b, YZView* v ) {
 	bool test;
 	return setOptionFromString( &test, entry, user_scope, b, v );
 }
-bool YZInternalOptionPool::setOptionFromString( bool* matched, const QString& entry, scope_t user_scope, YZBuffer* b, YZView* v ) {
+bool YZInternalOptionPool::setOptionFromString( bool* matched, const QString& entry, OptScope user_scope, YZBuffer* b, YZView* v ) {
 	bool ret = false;
 	*matched = false;
 	int i;
 	for ( i = 0; !(*matched) && i < options.size(); i++ ) {
-		*matched = options[ i ]->context() != ctx_none && options[ i ]->match( entry );
+		*matched = options[ i ]->context() != ContextNone && options[ i ]->match( entry );
 	}
 	if ( *matched ) {
 		--i;
-		scope_t scope = options[i]->scope();
-		context_t ctx = options[i]->context();
-		if ( user_scope != default_scope ) 
+		OptScope scope = options[i]->scope();
+		OptContext ctx = options[i]->context();
+		if ( user_scope != ScopeDefault ) 
 			scope = user_scope;
 		setGroup( "Global" );
-		if ( scope == local_scope ) {
-			if ( b && ctx == ctx_buffer )
+		if ( scope == ScopeLocal ) {
+			if ( b && ctx == ContextBuffer )
 				setGroup( b->fileName() );
-			else if ( v && ctx == ctx_view )
+			else if ( v && ctx == ContextView )
 				setGroup( v->getLocalOptionKey() );
 		}
 		ret = fillOptionFromString( options[i], entry );
@@ -383,7 +383,7 @@ void YZInternalOptionPool::setQStringEntry( const QString& name, const QString& 
 	if ( found )
 		opt = options[ i-1 ];
 	else
-		opt = new YZOptionString( name, "", ctx_none,global_scope, &doNothing, QStringList(), QStringList() );
+		opt = new YZOptionString( name, "", ContextNone,ScopeGlobal, &doNothing, QStringList(), QStringList() );
 
 	success = fillOptionFromString( opt, name+'='+value );
 	if ( ! success && !found )
@@ -453,9 +453,9 @@ YZOptionValue* YZInternalOptionPool::getOption( const QString& option ) {
 	return NULL;
 }
 
-void YZInternalOptionPool::createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, context_t ctx, value_t type ) {
-	// TODO add scope_t parameter
-	scope_t scope = local_scope;
+void YZInternalOptionPool::createOption(const QString& optionName, const QString& group, const QString& defaultValue, const QString& value, OptContext ctx, OptType type ) {
+	// TODO add OptScope parameter
+	OptScope scope = ScopeLocal;
 	// we search for an already existing option :
 	bool found = false;
 	int i;
@@ -466,27 +466,27 @@ void YZInternalOptionPool::createOption(const QString& optionName, const QString
 		// create a new YZOption
 		YZOption* opt = NULL;
 		bool success = false;
-		if ( type == yzis::boolean_t ) {
+		if ( type == yzis::TypeBool ) {
 			bool d_v = YZOptionValue::booleanFromString( &success, defaultValue );
 			if ( success )
 				opt = new YZOptionBoolean( optionName, d_v, ctx,scope, &doNothing, QStringList() );
-		} else if ( type == string_t ) {
+		} else if ( type == TypeString ) {
 			QString d_v = YZOptionValue::stringFromString( &success, defaultValue );
 			if ( success ) 
 				opt = new YZOptionString( optionName, d_v, ctx,scope, &doNothing, QStringList(), QStringList() );
-		} else if ( type == yzis::integer_t ) {
+		} else if ( type == yzis::TypeInt ) {
 			int d_v = YZOptionValue::integerFromString( &success, defaultValue );
 			if ( success )
 				opt = new YZOptionInteger( optionName, d_v, ctx, scope, &doNothing, QStringList() );
-		} else if ( type == list_t ) {
+		} else if ( type == TypeList ) {
 			QStringList d_v = YZOptionValue::listFromString( &success, defaultValue );
 			if ( success )
 				opt = new YZOptionList( optionName, d_v, ctx,scope, &doNothing, QStringList(), QStringList() );
-		} else if ( type == map_t ) {
+		} else if ( type == TypeMap ) {
 			MapOption d_v = YZOptionValue::mapFromString( &success, defaultValue );
 			if ( success )
 				opt = new YZOptionMap( optionName, d_v, ctx,scope, &doNothing, QStringList(), d_v.keys(), QStringList() );
-		} else if ( type == color_t ) {
+		} else if ( type == TypeColor ) {
 			YZColor d_v = YZOptionValue::colorFromString( &success, defaultValue );
 			if ( success )
 				opt = new YZOptionColor( optionName, d_v, ctx,scope, &doNothing, QStringList() );

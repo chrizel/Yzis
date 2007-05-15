@@ -39,7 +39,7 @@ YZModeInsert::YZModeInsert() : YZMode() {
 	mString = _( "[ Insert ]" );
 	mEditMode = true;
 	mIM = true;
-	mMapMode = insert;
+	mMapMode = MapInsert;
 }
 void YZModeInsert::leave( YZView* mView ) {
 	if ( mView->getBufferCursor().x() > 0 )

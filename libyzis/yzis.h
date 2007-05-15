@@ -61,38 +61,38 @@
 namespace yzis {
 
 /** Possible scope of an option */
-enum scope_t {
-	default_scope, //!< XXX ???
-	global_scope,  //!< global to all buffers
-	local_scope,   //!< local to a buffer or a view
+enum OptScope {
+	ScopeDefault,   //!< XXX ???
+	ScopeGlobal,    //!< global to all buffers
+	ScopeLocal,     //!< local to a buffer or a view
 };
 
 /** visibility of an option */
-enum context_t {
-	ctx_none,   //!< no visibility
-	ctx_session,//!< session visibility (global)
-	ctx_buffer, //!< visbility to the buffer
-	ctx_view    //!< visiblity to the view
+enum OptContext {
+	ContextNone,    //!< no visibility
+	ContextSession, //!< session visibility (global)
+	ContextBuffer,  //!< visbility to the buffer
+	ContextView     //!< visiblity to the view
 };
 
 /** kind of value stored by an option */
-enum value_t {
-	invalid_t,  //!< No value yet
-	integer_t,  //!< Integer
-	string_t,   //!< String
-	list_t,     //!< List of string
-	boolean_t,  //!< Boolean
-	map_t,      //!< Dictionary of string to string
-	color_t,    //!< Color
+enum OptType {
+	TypeInvalid,  //!< No value yet
+	TypeInt,      //!< Integer
+	TypeString,   //!< String
+	TypeList,     //!< List of string
+	TypeBool,     //!< Boolean
+	TypeMap,      //!< Dictionary of string to string
+	TypeColor,    //!< Color
 };
 
 /** Different modes available for a mapping */
-enum mapping_t {
-	normal      = 1, //!< in normal mode
-	cmdline     = 2, //!< on command line
-	visual      = 4, //!< in visual mode
-	pendingop   = 8, //!< waiting for an operator
-	insert      = 16,//!< insert mode
+enum MapMode {
+	MapNormal      = 1,  //!< in normal mode
+	MapCmdline     = 2,  //!< on command line
+	MapVisual      = 4,  //!< in visual mode
+	MapPendingOp   = 8,  //!< waiting for an operator
+	MapInsert      = 16, //!< insert mode
 };
 
 };

@@ -74,15 +74,15 @@ bool YZMapping::applyMappings( QString& text, int modes, bool *mapped ) {
 		mNoremap = false;
 		return pendingMapp;
 	}
-	if ( modes & normal )
+	if ( modes & MapNormal )
 		pendingMapp = pendingMapp || applyMappings(text, mNormalMappings);
-	if ( modes & pendingop )
+	if ( modes & MapPendingOp )
 		pendingMapp = pendingMapp || applyMappings(text, mPendingOpMappings);
-	if ( modes & visual )
+	if ( modes & MapVisual )
 		pendingMapp = pendingMapp || applyMappings(text, mVisualMappings);
-	if ( modes & insert )
+	if ( modes & MapInsert )
 		pendingMapp = pendingMapp || applyMappings(text, mInsertMappings);
-	if ( modes & cmdline )
+	if ( modes & MapCmdline )
 		pendingMapp = pendingMapp || applyMappings(text, mCmdLineMappings);
 //	dbg() << "Text2: " << text << endl << "Pending mapping : " << pendingMapp << endl;
 	*mapped = old != text;

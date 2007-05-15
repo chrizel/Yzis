@@ -503,8 +503,8 @@ int YZLuaFuncs::newoption(lua_State *L ) {
 	QString group = QString::fromUtf8( (  char * )lua_tostring (  L, 2 ) );
 	QString defaultvalue = QString::fromUtf8( (  char * )lua_tostring (  L, 3 ) );
 	QString value = QString::fromUtf8( (  char * )lua_tostring (  L, 4 ) );
-	context_t visibility = (context_t)(int)lua_tonumber ( L, 5 );
-	value_t type = (value_t)(int)lua_tonumber ( L, 6 );
+	OptContext visibility = (OptContext)(int)lua_tonumber ( L, 5 );
+	OptType type = (OptType)(int)lua_tonumber ( L, 6 );
 	lua_pop(L,6);
 
 	YZSession::self()->getOptions()->createOption(option, group, defaultvalue, value, visibility, type );

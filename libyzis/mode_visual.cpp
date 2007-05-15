@@ -40,7 +40,7 @@ YZModeVisual::YZModeVisual() : YZModeCommand() {
 	mType = YZMode::ModeVisual;
 	mString = _( "[ Visual ]" );
 	mSelMode = true;
-	mMapMode = visual;
+	mMapMode = MapVisual;
 	commands.clear();
 }
 YZModeVisual::~YZModeVisual() {

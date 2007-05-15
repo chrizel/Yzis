@@ -36,7 +36,7 @@
 
 /* Yzis */
 #include "internal_options.h"
-#include "readtags.h"
+#include "readtags/readtags.h"
 #include "tags_interface.h"
 #include "session.h"
 #include "debug.h"

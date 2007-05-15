@@ -36,7 +36,7 @@ set(yzis_LIB_SRCS
    mode_search.cpp 
    mode_visual.cpp 
    option.cpp 
-   readtags.c 
+   readtags/readtags.c 
    registers.cpp 
    schema.cpp 
    search.cpp 

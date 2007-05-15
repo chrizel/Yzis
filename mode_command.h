@@ -73,12 +73,12 @@ struct YZCommandArgs {
 class YZModeCommand;
 typedef void (YZModeCommand::*PoolMethod) (const YZCommandArgs&);
 
-enum cmd_arg {
-	ARG_NONE,
-	ARG_MOTION,
-	ARG_CHAR,
-	ARG_MARK,
-	ARG_REG,
+enum CmdArg {
+	ArgNone,
+	ArgMotion,
+	ArgChar,
+	ArgMark,
+	ArgReg,
 };
 
 /** Contains all the necessary information that makes up a normal command. @ref YZModeCommand
@@ -86,7 +86,7 @@ enum cmd_arg {
  * after initialization. */
 class YZIS_EXPORT YZCommand {
 public:
-	YZCommand( const QString &keySeq, PoolMethod pm, cmd_arg a=ARG_NONE) {
+	YZCommand( const QString &keySeq, PoolMethod pm, CmdArg a=ArgNone) {
 		mKeySeq=keySeq;
 		mPoolMethod=pm;
 		mArg=a;
@@ -95,7 +95,7 @@ public:
 
 	QString keySeq() const { return mKeySeq; }
 	const PoolMethod &poolMethod() const { return mPoolMethod; }
-	cmd_arg arg() const { return mArg; }
+	CmdArg arg() const { return mArg; }
 
 	static bool isMark(const QChar &c) {
 		return c >= 'a' && c <= 'z';
@@ -106,7 +106,7 @@ protected:
 	/** the method of @ref YZModeCommand which will be called in order to execute the command */
 	PoolMethod mPoolMethod;
 	/** indicates what sort of argument this command takes */
-	cmd_arg mArg;
+	CmdArg mArg;
 };
 
 class YZMotionArgs;
@@ -264,7 +264,7 @@ class YZIS_EXPORT YZModeCommand : public YZMode {
  */
 class YZIS_EXPORT YZMotion : public YZCommand {
 public:
-	YZMotion(const QString &keySeq, MotionMethod mm, cmd_arg a=ARG_NONE)
+	YZMotion(const QString &keySeq, MotionMethod mm, CmdArg a=ArgNone)
 	: YZCommand(keySeq, &YZModeCommand::execMotion, a) {
 		mMotionMethod=mm;
 	}

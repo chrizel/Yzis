@@ -42,13 +42,13 @@
 typedef QMap<QString,QString> MapOption;
 
 /** Actions that can be done on an option */
-enum opt_action {
-	opt_invalid,    //!< no action set
-	opt_set,        //!< simply set the option
-	opt_reset,      //!< reset the option to its default value
-	opt_append,     //!< append to the existing value
-	opt_prepend,    //!< prepend to the existing value
-	opt_subtract,   //!< substract (remove) from the existing value
+enum OptAction {
+	OptInvalid,    //!< no action set
+	OptSet,        //!< simply set the option
+	OptReset,      //!< reset the option to its default value
+	OptAppend,     //!< append to the existing value
+	OptPrepend,    //!< prepend to the existing value
+	OptSubtract,   //!< substract (remove) from the existing value
 };
 
 class YZOption;
@@ -250,7 +250,7 @@ class YZOption {
          *
          * \return the value of the option (content of the option)
 		 */
-		QString readValue( const QString& entry, opt_action* action );
+		QString readValue( const QString& entry, OptAction* action );
 		
 		YZOptionValue* v_default; //!< default value of the option
 		QStringList m_allValues;  //!< XXX what is it for ?

@@ -43,8 +43,6 @@
 #include <QFileInfo>
 #include <QDir>
 
-#include <QDir>
-
 using namespace yzis;
 
 #define dbg() yzDebug("YZModeEx")

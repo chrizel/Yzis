@@ -14,9 +14,9 @@ void TestColor::testColor1()
 }
 
 
-void TestColor::subTestColor( QString name, 
+void TestColor::subTestColor( const QString& name, 
     int red, int green, int blue, 
-    QString hex, QString hex_short ) 
+    const QString& hex, const QString& hex_short ) 
 {
 	YZColor c;
 	QRgb rgb = YzqRgb( red, green, blue );

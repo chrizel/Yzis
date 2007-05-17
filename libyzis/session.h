@@ -130,7 +130,7 @@ class YZIS_EXPORT YZSession
           * Sends the keys that were passed in the command line with -c
           * to libyzis for processing.
           *
-          * This function should be called explicitely by the frontend
+          * This function should be called explicitly by the frontend
           * once all the frontend initialisation is complete.
           */
         void sendInitkeys();

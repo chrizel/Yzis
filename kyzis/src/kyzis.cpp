@@ -42,7 +42,6 @@
 #include <kmultitabbar.h>
 #include <kmenu.h>
 #include <kmenubar.h>
-#include <ktoolbar.h>
 
 #include "ktexteditoriface.h"
 #include "session.h"

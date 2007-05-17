@@ -40,7 +40,6 @@
 #include "qyzis.h"
 #include "linenumbers.h"
 #include "buffer.h"
-#include <debug.h>
 
 #define dbg() yzDebug("QYZisView")
 #define err() yzError("QYZisView")

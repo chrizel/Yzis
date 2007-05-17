@@ -39,7 +39,6 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QFile>
-#include <QDir>
 #include <QStringList>
 #include <QBuffer>
 

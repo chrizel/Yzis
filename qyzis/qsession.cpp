@@ -44,7 +44,6 @@
 #include "qyzis.h"
 #include "view.h"
 #include "buffer.h"
-#include "debug.h"
 
 #define dbg() yzDebug("QYZisSession")
 #define err() yzError("QYZisSession")

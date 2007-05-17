@@ -51,7 +51,7 @@ static QList<QString> tagfilenames;
 // the last search.  Otherwise, the temporary gets destroyed and tagNext fails.
 static QString lastsearch;
 
-static bool tagFileAlreadyOpen( QString filename ) {
+static bool tagFileAlreadyOpen( const QString& filename ) {
 	return tagfilenames.indexOf( filename ) != -1;
 }
 

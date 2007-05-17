@@ -368,7 +368,7 @@ CmdState YZModeEx::write( const YZExCommandArgs& args ) {
 	}
 	dbg() << args.arg << "," << args.cmd << " " << quit << " " << force << endl;
 	if ( quit && all ) {//write all modified buffers
-		if ( YZSession::self()->saveAll() ) {//if it fails => dont quit
+		if ( YZSession::self()->saveAll() ) {//if it fails => don't quit
 			YZSession::self()->exitRequest();
 			ret = CmdQuit;
 		}

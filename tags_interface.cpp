@@ -55,7 +55,7 @@ static bool tagFileAlreadyOpen( const QString& filename ) {
 	return tagfilenames.indexOf( filename ) != -1;
 }
 
-static tagFile* doOpenTagFile( QString filename ) {
+static tagFile* doOpenTagFile( QString &filename ) {
 	tagFile *tagfile = NULL;
 	YZASSERT_MSG( !tagFileAlreadyOpen( filename ), "Tried to open the tag file again" );
 	

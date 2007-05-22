@@ -267,7 +267,7 @@ int YZSelection::locatePosition( const YZBound& pos, bool* isSelected ) const {
 
 bool YZSelection::contains( const YZCursor pos ) const {
 	bool ret = false;
-	locatePosition( pos, &ret );
+	locatePosition( YZBound(pos), &ret );
 	return ret;
 }
 void YZSelection::clear() {
@@ -413,7 +413,7 @@ const YZSelection YZSelection::operator-( const YZCursor pos ) const {
 	YZSelection ret( mName );
 	int i;
 	int size = mMap.size();
-	for ( i = 0; i < size && mMap[i].to() < pos; ++i )
+	for ( i = 0; i < size && mMap[i].to() < YZBound(pos); ++i )
 		;
 	for ( ; i < size; ++i ) {
 		ret.addInterval( mMap[i] - pos );

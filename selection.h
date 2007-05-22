@@ -32,7 +32,7 @@ class YZIS_EXPORT YZBound {
 		YZBound( const YZBound& bound ) : mPos( bound.pos() ) {
 			mOpen = bound.opened();
 		}
-		YZBound( const YZCursor pos, bool open = false ) : mPos( pos ) {
+		explicit YZBound( const YZCursor pos, bool open = false ) : mPos( pos ) {
 			mOpen = open;
 		}
 		YZBound(){}

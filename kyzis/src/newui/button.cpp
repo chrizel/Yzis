@@ -174,7 +174,7 @@ QSize Button::sizeHint(const QString &text) const
         int iw = iconSet()->pixmap( QIcon::Small, QIcon::Normal ).width() + 4;
         int ih = iconSet()->pixmap( QIcon::Small, QIcon::Normal ).height();
         w += iw;
-        h = QMAX( h, ih );
+        h = qMax( h, ih );
     }
     if ( isMenuButton() ) {
         w += style()->pixelMetric(QStyle::PM_MenuButtonIndicator, &option, this);
@@ -193,7 +193,7 @@ QSize Button::sizeHint(const QString &text) const
         if(!empty || !w)
             w += sz.width();
         if(!empty || !h)
-            h = QMAX(h, sz.height());
+            h = qMax(h, sz.height());
     }
 
     return (style()->sizeFromContents(QStyle::CT_ToolButton, &option, QSize(w, h), this).

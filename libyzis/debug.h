@@ -313,7 +313,7 @@ class YZIS_EXPORT YZDebugStream {
 		/** Constrctor for the stream.
           *
           * The debug \p area and debug \p level are fixed by stream. */
-		YZDebugStream(const char * area="", int level=0);
+		explicit YZDebugStream(const char * area="", int level=0);
 
         /** Destructor */
 		~YZDebugStream();

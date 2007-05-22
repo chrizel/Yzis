@@ -57,10 +57,6 @@ set(yzis_LIB_SRCS
    kate/syntaxhighlight.cpp 
 )
 
-set(yzis_LIB_MOCS 
-    session.h
-)
-
 qt4_wrap_cpp(yzis_LIB_MOC_SRCS ${yzis_LIB_MOCS})
 
 add_library(yzis SHARED ${yzis_LIB_SRCS} ${yzis_LIB_MOC_SRCS} )

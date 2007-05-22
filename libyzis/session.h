@@ -24,7 +24,6 @@
  
 /* Qt */
 #include <QList>
-#include <QObject>
 
 /* yzis */
 #include "cursor.h"

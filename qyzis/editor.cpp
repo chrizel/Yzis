@@ -112,7 +112,13 @@ QYZisCursor::CursorShape QYZisEdit::cursorShape() {
     dbg() << "cursorShape(): mode=" << m << endl;
     shape = mCursor->shape();
     if ( ! hasFocus() ) {
-        shape = QYZisCursor::CursorFrameRect;
+        if (mParent->command->hasFocus()) {
+            // command line has focus
+            shape = QYZisCursor::CursorHidden;
+        } else {
+            // the widget no longer has focus
+            shape = QYZisCursor::CursorFrameRect;
+        }
     } else {
         switch( m ) {
         case YZMode::ModeInsert :

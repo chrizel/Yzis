@@ -274,6 +274,7 @@ void QYZisEdit::resizeEvent(QResizeEvent* e) {
 }
 
 void QYZisEdit::paintEvent( QPaintEvent* pe ) {
+    updateCursor();
 	// convert QPaintEvent rect to yzis coordinate
 	QRect r = pe->rect();
 	r.setTopLeft( translateRealToAbsolutePosition( r.topLeft() ) );

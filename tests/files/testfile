@@ -1,207 +1,72 @@
 first line
-	ident: ok
-//	ident commented
 
-Tab1	Tab2lll	Tab3s	Tab4	|	|
-				4 tabs laters....
-i	i	i	i	i	i
-        8 spaces afters....
-    	<a
+# ruler to count characters; The ^ marks the column
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+^1       ^10       ^20       ^30       ^40       ^50       ^60       ^70  
+
+# multiline ruler to count characters; The ^ marks the column
+1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
+^1       ^10       ^20       ^30       ^40       ^50       ^60       ^70       ^80       ^90       ^100      ^110      ^120      ^130      ^140      ^150   
+
+
+# tab markers on one line with ruler
+|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	|	
+12345678901234567890123456789012345678901234567890123456789012345678901234567890
+^1       ^10       ^20       ^30       ^40       ^50       ^60       ^70  
+
+
+
+# indentation tab after tab
+
+	1tab
+12345678
+
+		2tab
+1234567890123456
+^1       ^10       
+
+			3tab
+123456789012345678901234
+^1       ^10       ^20   
+
+				4tab
+12345678901234567890123456789012
+^1       ^10       ^20       ^30    
+
+					5tab
+1234567890123456789012345678901234567890
+^1       ^10       ^20       ^30       ^40  
+
+						6tab
+123456789012345678901234567890123456789012345678
+^1       ^10       ^20       ^30       ^40       ^50  
+
+
+# A very long sentence to check wrapping
 
 this is a long, long,long,long,long, long,  long,long, long, long, long, long, long, long, long, long, long, long, long, long sentence! la lala lala l ala la lalalala qsdmlkq sdlkqs dlmkqsmldk qsmlsdjflksjf sfjk sdlfjksjd fklj slkdjf lksjdlfk jskldjf ljsdfj lskdjfkljsldjf lsjdlkjf lksjdlkfj sdlkfjs ldkfj sld  fj lsdfj
-une phrase normale.
-														q
-														
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8	t
+une phrase normale^
+
+
+#### With ts=8, both sentenece should look the same													
+# a long sentence with a character every 8 character, padded with 8 spaces
+s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8
+
+
+# a long sentence with a tab + number
 t	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3
-one	two	three	four	five	six	seven	eight	nine	ten	eleven	one	two	three	four	five	six	seven	eight	nine	ten	eleven	a	long	sentence	again	is	it	working	?
-one     two     three   four    five    six     seven   eight   nine    ten     eleven  one     two     three   four    five    six     seven   eight   nine    ten     eleven  a       long    sentence        again   is      it      working ?
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8
+
+
+
+#### With ts=8, both sentenece should look the same													
+# a long sentence with words + tab
+t	one	two	three	four	five	six	seven	eight	nine	ten	eleven	one	two	three	four	five	six	seven	eight	nine	ten	eleven	a	long	sentence	again	is	it	working	?
+
+# a long sentence with words aligned on 8 characters, padded with spaces
+s       one     two     three   four    five    six     seven   eight   nine    ten     eleven  one     two     three   four    five    six     seven   eight   nine    ten     eleven  a       long    sentence        again   is      it      working ?
+
+
 taaaab	tab
 taaaaab	tab
 taaaaaaa	tab ( too much a :( )
 
-
-1
-2
-3
-4
-5
-6
-7
-8
-9
-sd
-	1
-		2
-			3
-				4
-
-		dsqd		dsd		sdq
-		dsdqsd
-		qsd
-			sqd
-first line
-	ident: ok
-//	ident commented
-
-Tab1	Tab2lll	Tab3s	Tab4	|	|
-				4 tabs laters....
-i	i	i	i	i	i
-        8 spaces afters....
-    	<a
-
-this is a long, long,long,long,long, long,  long,long, long, long, long, long, long, long, long, long, long, long, long, long sentence! la lala lala l ala la lalalala qsdmlkq sdlkqs dlmkqsmldk qsmlsdjflksjf sfjk sdlfjksjd fklj slkdjf lksjdlfk jskldjf ljsdfj lskdjfkljsldjf lsjdlkjf lksjdlkfj sdlkfjs ldkfj sld  fj lsdfj
-une phrase normale.
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8	t
-t	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3
-one	two	three	four	five	six	seven	eight	nine	ten	eleven	one	two	three	four	five	six	seven	eight	nine	ten	eleven	a	long	sentence	again	is	it	working	?
-one     two     three   four    five    six     seven   eight   nine    ten     eleven  one     two     three   four    five   six      seven   eight   nine    ten     eleven  a       long    sentence        again   is      it      working ?
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8
-taaaab	tab
-taaaaab	tab
-taaaaaaa	tab ( too much a :( )
-
-
-1
-2
-3
-4
-5
-6
-7
-8
-9
-sd
-	1
-		2
-			3
-				4
-
-		dsqd		dsd		sdq
-		dsdqsd
-		qsd
-			sqd
-first line
-	ident: ok
-//	ident commented
-
-Tab1	Tab2lll	Tab3s	Tab4	|	|
-				4 tabs laters....
-i	i	i	i	i	i
-        8 spaces afters....
-    	<a
-
-this is a long, long,long,long,long, long,  long,long, long, long, long, long, long, long, long, long, long, long, long, long sentence! la lala lala l ala la lalalala qsdmlkq sdlkqs dlmkqsmldk qsmlsdjflksjf sfjk sdlfjksjd fklj slkdjf lksjdlfk jskldjf ljsdfj lskdjfkljsldjf lsjdlkjf lksjdlkfj sdlkfjs ldkfj sld  fj lsdfj
-une phrase normale.
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8	t
-t	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3
-one	two	three	four	five	six	seven	eight	nine	ten	eleven	one	two	three	four	five	six	seven	eight	nine	ten	eleven	a	long	sentence	again	is	it	working	?
-one     two     three   four    five    six     seven   eight   nine    ten     eleven  one     two     three   four    five   six      seven   eight   nine    ten     eleven  a       long    sentence        again   is      it      working ?
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8
-taaaab	tab
-taaaaab	tab
-taaaaaaa	tab ( too much a :( )
-
-
-1
-2
-3
-4
-5
-6
-7
-8
-9
-sd
-	1
-		2
-			3
-				4
-
-		dsqd		dsd		sdq
-		dsdqsd
-		qsd
-			sqd
-first line
-	ident: ok
-//	ident commented
-
-Tab1	Tab2lll	Tab3s	Tab4	|	|
-				4 tabs laters....
-i	i	i	i	i	i
-        8 spaces afters....
-    	<a
-
-this is a long, long,long,long,long, long,  long,long, long, long, long, long, long, long, long, long, long, long, long, long sentence! la lala lala l ala la lalalala qsdmlkq sdlkqs dlmkqsmldk qsmlsdjflksjf sfjk sdlfjksjd fklj slkdjf lksjdlfk jskldjf ljsdfj lskdjfkljsldjf lsjdlkjf lksjdlkfj sdlkfjs ldkfj sld  fj lsdfj
-une phrase normale.
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8	t
-t	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3
-one	two	three	four	five	six	seven	eight	nine	ten	eleven	one	two	three	four	five	six	seven	eight	nine	ten	eleven	a	long	sentence	again	is	it	working	?
-one     two     three   four    five    six     seven   eight   nine    ten     eleven  one     two     three   four    five   six      seven   eight   nine    ten     eleven  a       long    sentence        again   is      it      working ?
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8
-taaaab	tab
-taaaaab	tab
-taaaaaaa	tab ( too much a :( )
-
-
-1
-2
-3
-4
-5
-6
-7
-8
-9
-sd
-	1
-		2
-			3
-				4
-
-		dsqd		dsd		sdq
-		dsdqsd
-		qsd
-			sqd
-first line
-	ident: ok
-//	ident commented
-
-Tab1	Tab2lll	Tab3s	Tab4	|	|
-				4 tabs laters....
-i	i	i	i	i	i
-        8 spaces afters....
-    	<a
-
-this is a long, long,long,long,long, long,  long,long, long, long, long, long, long, long, long, long, long, long, long, long sentence! la lala lala l ala la lalalala qsdmlkq sdlkqs dlmkqsmldk qsmlsdjflksjf sfjk sdlfjksjd fklj slkdjf lksjdlfk jskldjf ljsdfj lskdjfkljsldjf lsjdlkjf lksjdlkfj sdlkfjs ldkfj sld  fj lsdfj
-une phrase normale.
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8	t
-t	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3	4	5	6	7	8	9	0	1	2	3
-one	two	three	four	five	six	seven	eight	nine	ten	eleven	one	two	three	four	five	six	seven	eight	nine	ten	eleven	a	long	sentence	again	is	it	working	?
-one     two     three   four    five    six     seven   eight   nine    ten     eleven  one     two     three   four    five   six      seven   eight   nine    ten     eleven  a       long    sentence        again   is      it      working ?
-s       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8       8
-taaaab	tab
-taaaaab	tab
-taaaaaaa	tab ( too much a :( )
-
-
-1
-2
-3
-4
-5
-6
-7
-8
-9
-sd
-	1
-		2
-			3
-				4
-
-		dsqd		dsd		sdq
-		dsdqsd
-		qsd
-			sqd

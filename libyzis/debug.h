@@ -24,6 +24,11 @@
  * 1997 Matthias Kalle Dalheimer ( kalle@kde.org )
  * 2000-2002 Stephan Kulow ( coolo@kde.org )
  * 2002 Holger Freyther ( freyther@kde.org )
+ *
+ * Some improvements have been made to support area, and more different kind
+ * of debug output.
+ *
+ * See also \ref debugging .
  */
 
 #ifndef YZ_DEBUG_H
@@ -61,53 +66,82 @@ class QStringList;
 
 /** Log system used for debugging.
   *
+  * YZDebugBackend is a singleton instance that manages the debugging log,
+  * levels and area.
+  *
   * Our debugging system supports 4 levels:
   * - YZ_DEBUG_LEVEL: shows debugging output, warning and errors
   * - YZ_WARNING_LEVEL: shows warnings and errors, debug output is disabled
   * - YZ_ERROR_LEVEL: shows only errors, debug and warnings are disabled.
   * - YZ_FATAL_LEVEL: shows only fatal errors
-  * 
   *
-  * The debug output may be:
-  * - sent to a specified filename
-  * - sent to a file in the temp directory
-  * - sent to the stderr
-  * - sent to the stdout
-  * This is controlled by setDebugOutput()
+  * Levels can be assigned globally and to specific log areas.
   *
-  * Moreover, in order to ease the debugging process, it is possible to define
-  * areas, and to assign an individual debugging level to each of them with
-  * setAreaLevel().
+  * The debug output may be sent to:
+  * - a specified filename
+  * - a file in the temp directory
+  * - the stderr
+  * - the stdout
   *
-  * This allows for example to have the rendering code only display errors but
-  * keep all the debugging output of the scripting engine. Or the opposite.
+  * The debug information that you display in your code should be assigned to
+  * an area. An area is just a hierarchy of names, separated by dots. With
+  * area (and subarea), it is possible to have one part of Yzis in debug mode
+  * and the other part in error mode.
   *
-  * Because no two developers will need the same configuration, the debug
-  * level and areas can be configured dynamically through two methods:
-  * - command line arguments: see parseArgv()
+  * The debug level and areas can be configured dynamically through two methods:
+  * - command line arguments of Yzis: see parseArgv()
   * - .yzdebugrc file in the current directory: see parseRcfile()
   *
-  * The call to parseArgv() and parseRcfile() need to be explicit, the
-  * framework does not do any automatic action.
+  * The call to parseArgv() and parseRcfile() must be done early in the
+  * initialisation process of Yzis.
   *
   * By default, the debug framework will start with no areas, debug level set
-  * to debug in debug mode (DEBUG symbol defined) or warning in release mode
-  * (DEBUG symbol not defined). 
+  * to debug when compiled to debug (DEBUG symbol defined) or warning when
+  * compiled for release (DEBUG symbol not defined). 
   *
   * The default output is a file in the /tmp directory named yzisdebug.log on
-  * windows and yzisdebug-[your user name].log on unix.
+  * windows and yzisdebug-[your_user_name].log on unix. On windows, the debug
+  * log is also sent to the standard debugging stream (with
+  * OutputDebugString() ).
   *
-  * The framework gives a very flexible approach for debugging.
+  * The simple way to spy the debug log on unix is to do:
+  * tail -f /tmp/yzisdebug-[your_user_name].log
+  *
+  * <b>Important note for windows users</b><br>
+  * On windows, there is a bug where there is two instances of the singleton
+  * YZDebugBackend(). The consequence is that the debug log is not properly
+  * redirected and spying the /tmp/yzdebug.log will also create problems
+  * because windows can not create a new file when the file when the same name
+  * is still being read.
+  *
+  * The proper way to catch debug output on windows is to use DebugView from
+  * <a href="http://www.sysinternals.com">sys internals</a>.
+  *
+  * In practice, the log interface is used through the functions yzDebug(),
+  * yzWarning() and yzError(). Everything else is done in the background.
   *
   * When you are writing code, you should first define an area for your code
   * and then use the stream yzDebug(area) to output your debug information.
   *
   * My recommendation is to have a define at the beginning of your source file
   * to abbreviate the debug writing command:
-  * \code
-  * #define dbgHl() (yzDebug("SyntaxHighlighting"))
   *
-  * dbgHl() << "some debug data";
+  * \code
+  * #define dbg() (yzDebug("SyntaxHighlighting"))
+  * #define err() (yzError("SyntaxHighlighting"))
+  *
+  * void some_function(int a)
+  * {
+  *     dbg() << "some_function was called." << endl;
+  *     dbg().sprintf("a=%d", a );
+  *     // do some stuff
+  *     if (something_goes_wrong) {
+  *        err() << "There is a problem!" << endl;
+  *        return;
+  *     }
+  *     // do more stuff
+  *     return;
+  * }
   * \endcode
   *
   */
@@ -307,6 +341,50 @@ typedef YZDebugStream & (*YDBGFUNC)(YZDebugStream &);
  *
  * The output is stored internally in the YZDebugStream::output and flushed
  * using flush() when a '\\n' is sent or when a string ending in '\\n' is sent.
+ *
+ * This is the standard way of writing log statements in Yzis. The
+ * YZDebugStream supports printf like syntax with sprintf(), or more classical
+ * C++ stream. 
+ *
+ * The constructor specifies the area and level of logging. 
+ *
+ * The
+ * output is flushed to the log system each time a \\n is encountered, or
+ * automatically after a sprintf().
+ *
+ * The functions yzDebug() and yzError() return an YZDebugStream() with the
+ * right debugging level and area set.
+ *
+ * Typical code looks like this.
+ * \code
+ * #define dbg() yzDebug("area1", YZ_DEBUG_LEVEL)
+ * #define err() yzError("area1", YZ_DEBUG_LEVEL)
+ *
+ * int some_func( int * p, int q )
+ * {
+ *    if (p == NULL) {
+ *      err() << "p is NULL" << endl;
+ *      return 0;
+ *    }
+ *
+ *    dbg().sprintf("*p=%d, q=%d", *p, q );
+ *
+ *    // do some stuff
+ *
+ *    return q;
+ * }
+ * \endcode
+ *
+ * The YZDebugStream supports the display of many types of variables. Qt also
+ * provides a qPrintable() macro, that converts any Qt type into a const char
+ * *. In Yzis, we provide the qp() macro that calls qPrintable() but is
+ * shorter to type.
+ *
+ * There are also a few convenience macro:
+ * - HERE() : displays the name of the current function and position in the
+ * current file
+ * - 
+ *
  */
 class YZIS_EXPORT YZDebugStream {
 	public:
@@ -440,14 +518,49 @@ YZIS_EXPORT YZDebugStream yzFatal( const char * area = "" );
 
 //! \name Convenient macros for debugging
 //! @{
-/** qPrintable shortcut, convenient when debugging. */
+/** qPrintable is a Qt function that can turn any Qt type into a const char *.
+  *
+  * qp() provides a shortcut for qPrintable.
+  */
 #define qp(s)   qPrintable(s)
 
-/** Function + line, very convenient when debugging */
+/** Returns a string composed of the current function name and the current
+  * line number. Quite convenienent to quickly trace some code execution:
+  *
+  * Example:
+  * \code
+  * void f1()
+  * {
+  *     dbg() << HERE() << endl;
+  *     // more stuff
+  * }
+  *
+  * void f1( int a )
+  * {
+  *     dbg() << HERE() << endl;
+  *     // more stuff with a
+  * }
+  * \endcode
+  *
+  * In the example, the function name will be the same, but the line number
+  * will help to distinguish between the two calls.
+  */
 #define HERE() qp(QString("%1:%2 ").arg(__PRETTY_FUNCTION__).arg(__LINE__))
 
-/** File + line location, convenient when debugging.
-  * It makes anyting printable, from a QString to a QDate. */
+/** Returns a string composed of the filename, a colon and the current line
+  * number of the execution. Quite convenient when debugging:
+  *
+  * Example:
+  * \code
+  * void f1() 
+  * {
+  *     dbg() << LOCATION() << endl;
+  * }
+  * \endcode
+  *
+  * In practice, HERE() is preferred because knowing the function name
+  * is more precise information than just knowing the file.
+  */
 #define LOCATION() qp(QString("%1:%2 ").arg(__FILE__).arg(__LINE__))
 
 //! @}

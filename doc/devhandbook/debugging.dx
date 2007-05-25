@@ -1,15 +1,56 @@
-
-
 /** 
 
 \page debugging Debugging Yzis
 
-\section debug_build Building yzis with debugging support
+\section yzis_log_system Yzis Log System
+
+Debugging in Yzis is based on a flexible log system.
+
+Many developers take debugging as a kind of printf. They put a lot of
+printf code during debug and then comment it once the code is supposed to
+be working. This has several drawbacks:
+- when you need to debug a specific area, you need to uncomment a lot of
+stuff
+- if you want to debug a program which you can not control (on somebody
+else computer), you can not have the debug log
+- you get either too much logs because there is too much debug statements,
+or not enough information because the debug statement have been kept
+minmal.
+
+The proper way for good debugging is a good log system. The log system of
+Yzis has several features:
+- output can be sent to file, stdout, stderr
+- 4 log levels: debug, warning, error and fatal
+- the debug log can be assigned to areas and subareas
+- each area can have its own log level, indepandentely of the others.
+- the log level areas can be controlled dynamically, either with a .yzdebugrc
+  file or with command line arguments.
+
+With such a system, the developers are encouraged to put as much information
+as possible in the debug log, knowing that they can easily disable or enable
+it when necessary.
+
+Having a lot of precise debug log allows to follow Yzis execution path very
+accurately and is very practical to learn what Yzis is doing and how.
+
+The debugging system is described mainly in debug.h , YZDebugBackend and
+YZDebugStream .
+
+\section debug_with_gdb Debugging Yzis with gdb
+
+In addition to using the log system, running Yzis inside a debugger is a good
+way to diagnose crashes or find bugs. Step by step execution or
+breakpoints are a useful tool.
+
+\subsection debug_build Building yzis with debugging support
+
+Building yzis with debugging support allows to diagnose crashes, or to run
+Yzis in gdb - the Gnu Debugger.
 
 Make sure you build yzis with debugging enabled. Follow the instructions at the
 \subpage building_yzis page, and you should be fine.
 
-\section tools Tools you need
+\subsection debugging_tools Gdb and more
 
 First of all you need a recent version of gdb, the text ui used in the example
 below requires gdb version 5.1 or newer.
@@ -28,7 +69,7 @@ source /path/to/kde-devel-gdb
 
 This enables you to print the contents of QStrings and other Qt objects.
 
-\section using_gdb Using the GNU debugger (gdb) to debug yzis
+\subsection using_gdb Using the GNU debugger (gdb) to debug yzis
 
 This is not an gdb tutorial, if you want to learn to use gdb you can find plenty
 of tutorials by googling.
@@ -71,7 +112,5 @@ To switch between the source code view and the command line in the text ui,
 press <b>control+x</b> and then <b>control+o</b>.
 
 */
-
-
 
 

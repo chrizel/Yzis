@@ -51,15 +51,15 @@ class YZIS_EXPORT YZMode
 {
 public:
 	enum ModeType {
-		ModeCommand,		   //!< default mode, named normal mode in vim
-		ModeInsert,		   //!< 'i' : entering text (insert)
-		ModeReplace,		   //!< 'R' : entering text (replace)
-		ModeEx,		       //!< ':' : execute some yzis command
-		ModeSearch,		   //!< '/' : search text
+		ModeCommand,		 //!< default mode, named normal mode in vim
+		ModeInsert,		     //!< 'i' : entering text (insert)
+		ModeReplace,		 //!< 'R' : entering text (replace)
+		ModeEx,		         //!< ':' : execute some yzis command
+		ModeSearch,		     //!< '/' : search text
 		ModeSearchBackward,  //!< '?' : search backward
-		ModeIntro,		       //!< display intro text, and move to command mode on first key entered
-		ModeCompletion,	   //!< used from within insert mode for completion
-		ModeVisual,		   //!< 'v' : visual mode with characters and lines 
+		ModeIntro,		     //!< display intro text, and move to command mode on first key entered
+		ModeCompletion,	     //!< used from within insert mode for completion
+		ModeVisual,		     //!< 'v' : visual mode with characters and lines 
 		ModeVisualLine,      //!< 'V' : visual mode lines by lines
 		ModeVisualBlock,     //!< C-V : visual mode, by blocks
 	};

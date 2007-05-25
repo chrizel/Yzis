@@ -50,7 +50,7 @@ option(ENABLE_LIBYZISRUNNER "enable libyzisrunner compilation" ON)
 option(ENABLE_TESTS "enable tests compilation" ON)
 
 option(ENABLE_DOCUMENTATION "Allow doxygen documentation generation with 'make docs'" ON)
-option(GENERATE_DOC "Generate doxygen documentation during build" ON)
+option(GENERATE_DOC "Generate doxygen documentation during build" OFF)
 
 option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
 
@@ -174,7 +174,7 @@ if (ENABLE_TESTS)
 	add_subdirectory( tests )
 endif (ENABLE_TESTS)
 
-#add_subdirectory( doc )
+add_subdirectory( doc )
 #add_subdirectory( translations )
 #add_subdirectory( syntax )
 #add_subdirectory( scripts )

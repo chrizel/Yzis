@@ -1,11 +1,11 @@
 
 if (ENABLE_DOCUMENTATION)
 
-    message( "Documentation generation is ON" )    
     FIND_PACKAGE(Doxygen REQUIRED)
+    message( "You can generate documentation with \"make docs\"" )    
 
 	if(GENERATE_DOC)
-        message( "Documentation generation is automatic" )    
+        message( "Documentation is generated during build" )    
         set( ALWAYS_GENERATE ALL )
 	endif(GENERATE_DOC)
 

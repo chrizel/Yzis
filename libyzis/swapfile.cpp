@@ -58,14 +58,15 @@ void YZSwapFile::flush() {
 	if ( mNotResetted ) init();
 	dbg() << "Flushing swap to " << mFilename << endl;
 	QFile f( mFilename );
-	struct stat buf;
+    bool proceed;
 #ifndef YZIS_WIN32_GCC
+	struct stat buf;
 	int i = lstat( mFilename.toLocal8Bit(), &buf );
-	if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() 
+	proceed = ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() );
 #else
-	if ( true
+    proceed = true;
 #endif
-		&& f.open( QIODevice::WriteOnly | QIODevice::Append ) ) { //open at end of file
+    if (proceed && f.open( QIODevice::WriteOnly | QIODevice::Append ) ) { //open at end of file
 #ifndef YZIS_WIN32_GCC
 		chmod( mFilename.toLocal8Bit(), S_IRUSR | S_IWUSR );
 #endif

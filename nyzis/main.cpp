@@ -96,7 +96,12 @@ main(int argc, char *argv[])
 	atexit(cleaning);
 	(void)signal(SIGWINCH, sigwinch);// ncurses SHOULD handle that
 
+	// we need errorView in order to display error messages if there
+	// is a problem loading a file into a buffer
+	YZView* errorView = YZSession::self()->createBufferAndView();
     YZSession::self()->parseCommandLine( argc, argv );
+	YZSession::self()->deleteView(errorView);
+
     QTimer::singleShot(0, static_cast<NYZSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
 
 

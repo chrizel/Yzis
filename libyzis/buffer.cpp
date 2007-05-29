@@ -540,6 +540,13 @@ void YZBuffer::load(const QString& file) {
 	dbg() << "YZBuffer load " << file << endl;
 	if ( file.isNull() || file.isEmpty() ) return;
 
+	QFileInfo fileInfo( file );
+	if (fileInfo.isDir()) {
+		// TODO: we cannot handle directories now
+		YZSession::self()->guiPopupMessage( "Sorry, we cannot open directories at the moment :(");
+		return;
+	}
+
 	//stop redraws
 	d->enableUpdateView=false;
 

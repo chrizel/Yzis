@@ -279,12 +279,16 @@ public:
       */
     static void yzisMsgHandler( QtMsgType msgType, const char * text );
 
-    /** Because of windows, we need to have new defined in the
-      * shared library. */
+    /** Allocate memory for the object from libyzis.
+      *
+      * See \ref yzmalloc for details.
+      */
 	void * operator new( size_t tSize );
 
-    /** Because of windows, we need to have delete defined in the
-      * shared library. */
+    /** Free memory of the object from libyzis.
+      *
+      * See \ref yzmalloc for details.
+      */
 	void  operator delete( void* p );
 
 private:
@@ -328,7 +332,21 @@ private:
     QString _outputFname;
 };
 
+/** Special function to allocate memory.
+  *
+  * The need for this function is due to the memory handling of shared
+  * libraries in windows. On windows, objects allocated in shared libraries
+  * must be freed from the shared library. To make it happen, Yzis provides
+  * its own yzmalloc() and yzfree() functions. The only thing they do is call
+  * the C library real malloc/free. But from the right place.
+  *
+  * In order to make <i>deletion from shared library</i> happen for objects
+  * too, some objects in libyzis have a new() and delete() operator declared.
+  * Those new/delete will call yzmalloc() and yzfree().
+  */
 void * yzmalloc( size_t tSize );
+
+/** Free memory allocated by yzmalloc(). */
 void yzfree( void * p );
 
 class YZDebugStream;

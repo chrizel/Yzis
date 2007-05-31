@@ -65,6 +65,8 @@ void QYZisCursor::paintEvent( QPaintEvent* pe )
     const YZDrawCell cell( mView->m_drawBuffer.at( mEditor->translateRealToPosition(pos()) ) );
     QColor cbg, cfg;
 
+    dbg().sprintf( "paintEvent(): cell string='%s'", qp(cell.c) ); 
+
     if (cell.bg.isValid()) {
         dbg() << "paintEvent(): valid cell bg" << endl;
         cbg = QColor(cell.bg.rgb());

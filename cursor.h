@@ -30,6 +30,13 @@ class YZDebugStream;
   *
   * An YZCursor is nothing more than a QPoint with some more methods needed
   * by Yzis.
+  *
+  * The order used for comparison is first on y and then on x.
+  * With: x1 < x2, y1 < y2
+  * we get: 
+  * YZCursor( x1, y1 ) < YZCursor( x2, y1 )
+  * YZCursor( x2, y1 ) < YZCursor( x1, y2 )
+  *
   */
 class YZIS_EXPORT YZCursor : public QPoint {
 

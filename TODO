@@ -1,5 +1,42 @@
-- check get...() , set...() functions
-- remove all that c code with tab and #define *MAX -> use Qt
+- make tests/scripts/run_scripttests.sh use CMake to find the name of the
+  build directory: easy
+    + create run_scripttest.sh.in
+    + read cmake doc to convert that into run_scripttest.sh with correct
+directory
+ 
+- better key event system: medium
+    Currently, key event is half based on a string containing the character,
+    half-based on kind of meta-characters like <TAB> and <UP>. We need a
+    better key event system, modelled after QKeyEvent. We can not use
+    QKeyEvent itself because it is part of QtGui and we only depend on QtCore.
+
+    YZKeyEvent should:
+    + support modifier for ALT, CTRL, SHIFT
+    + store the key being pressed
+    + transform from and to a string that is compatible with vim, in the form
+of <TAB>, <C-A>, <ESC>. We probably have more power than vim but we should be
+compatible in terms of key sequence description.
+    + modify YZSession::sendKeyEvent()
+    + modify lua way of sending pseudo key event to yzis
+    + modify command line way of passing key event strings to yzis
+
+- more movements commands: easy
+    Check that yzis has all the movement commands that vim enjoys.
+    Write lua tests to validate that all the movements commands behave exactly
+like in vim.
+    Implement the missing commands.
+
+- Lua 5.1: medium
+    Yzis currently work with lua 5.0 . It will detect lua 5.1 and refuse to
+    compile and link with it, because lua 5.1 changed the behaviour and syntax of
+    few lua functions.
+
+    One should read the doc of lua 5.0 and the doc of lua 5.1 , and add #ifdef
+    in yzis code so that both are supported.
+
+
+Old TODO:
+=========
 - vim displays 'x,0-1' when positioned on the first char of an empty line: do the same
 - layout classes to handle geometry and windows positions, also add a layout manager to save 'profiles' ala konqueror
 - nyzis: report meta, etc..

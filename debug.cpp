@@ -47,6 +47,16 @@
 #define dbg()    yzDebug("YZDebugBackend")
 #define err()    yzError("YZDebugBackend")
 
+// Choose one of the two above to enable printf debugging or not
+// printf debugging is the only way to debug this file
+// #define DBG_SELF( s )    s
+#define DBG_SELF( s )    
+
+// #define DBG_FLUSH( s )    s
+#define DBG_FLUSH( s )    
+
+// #define DBG_AREALEVEL( s )    s
+#define DBG_AREALEVEL( s )    
 
 YZDebugBackend * YZDebugBackend::me = NULL;
 
@@ -110,10 +120,10 @@ void YZDebugBackend::init()
 
 YZDebugBackend * YZDebugBackend::self()
 {
-    //printf("YZDebugBackend::self() me = %p\n", YZDebugBackend::me );
+    DBG_SELF( printf("YZDebugBackend::self() me = %p\n", YZDebugBackend::me ); )
     if (YZDebugBackend::me == NULL) {
         me = new YZDebugBackend();
-        //printf("YZDebugBackend::self() me set to %p\n", me );
+        DBG_SELF( printf("YZDebugBackend::self() me set to %p\n", me ); )
         me->init();
     }
     return me;
@@ -179,11 +189,12 @@ void YZDebugBackend::setDebugOutput( const QString& fileName )
 
 void YZDebugBackend::flush( int level, const QString& area, const char * data )
 {
-#if 0
-    printf("flush: output=%p arealevel=%d, level=%d, area=%s, data='%s'\n", _output, areaLevel(area), level, qp(area), data );
-    printf("flush: this=%p _output=%p stdout=%p stderr=%p \n", this, _output, stdout, stderr );
-#endif
-    if (level < areaLevel(area)) return;
+    DBG_FLUSH( printf("flush(): output=%p arealevel=%d, level=%d, area=%s, data='%s'\n", _output, areaLevel(area), level, qp(area), data ); )
+    DBG_FLUSH( printf("flush(): this=%p _output=%p stdout=%p stderr=%p \n", this, _output, stdout, stderr ); )
+    if (level < areaLevel(area)) { 
+        DBG_FLUSH( printf("flush(): no flush!\n"); )
+        return;
+    }
     Q_ASSERT_X( _output != NULL, HERE(), "Output stream should not be NULL" );
     if (_output == NULL) return;
     fprintf( _output, "%s\n", data ); // data never ends with \n
@@ -192,7 +203,7 @@ void YZDebugBackend::flush( int level, const QString& area, const char * data )
     _flushall();
     OutputDebugString( data );
 #endif
-    // printf("flush done\n");
+    DBG_FLUSH( printf("flush(): done\n"); )
 }
 
 void YZDebugBackend::parseRcfile(const char * filename)
@@ -300,13 +311,16 @@ int YZDebugBackend::areaLevel( const QString& area ) const
     QString found;
     int areaLevel = debugLevel();
     foreach( QString itArea, _areaLevel.keys() ) {
+        DBG_AREALEVEL( printf("areaLevel(): Checking area %s with debug area %s\n", qp(area), qp(itArea) ); )
         if (area.startsWith( itArea )
             && found.length() < itArea.length() ) {
             // found a better matching area
             found = itArea;
             areaLevel = _areaLevel[itArea];
+            DBG_AREALEVEL( printf("areaLevel(): Found new area level for %s, matching with %s: %d\n", qp(area), qp(itArea), areaLevel ); )
         }
     }
+    DBG_AREALEVEL( printf("areaLevel(): returning %d\n", areaLevel ); )
     return areaLevel;
 }
 
@@ -331,9 +345,9 @@ void YZDebugBackend::yzisMsgHandler( QtMsgType msgType, const char * msg )
     // So, I recommend to disable it.
 
     /*
-    printf("========== Qt yzisMsgHandler called!\n");
-    printf("========== type %d\n", (int) msgType );
-    printf("========== msg %s\n", msg );
+    DBG_SELF( printf("========== Qt yzisMsgHandler called!\n"); )
+    DBG_SELF( printf("========== type %d\n", (int) msgType ); )
+    DBG_SELF( printf("========== msg %s\n", msg ); )
     dbg() << HERE() << msg << endl;
     */
     switch (msgType) {
@@ -367,13 +381,13 @@ void yzfree( void * p )
 
 void * YZDebugBackend::operator new( size_t tSize )
 {
-    printf("YZDebugBackend::new( %ld )\n", long(tSize));
+    DBG_SELF( printf("YZDebugBackend::new( %ld )\n", long(tSize)); )
 	return yzmalloc( tSize );
 }
 
 void YZDebugBackend::operator delete( void *p )
 {
-    printf("YZDebugBackend::delete %p\n", p );
+    DBG_SELF( printf("YZDebugBackend::delete %p\n", p ); )
 	yzfree(p);
 }
 

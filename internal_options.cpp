@@ -52,9 +52,13 @@ YZInternalOptionPool::YZInternalOptionPool(const YZInternalOptionPool&) {
 }
 
 void YZInternalOptionPool::loadFrom(const QString& file ) {
+    dbg() << "loadFrom( " << file << " ) " << endl;
 	QFile f( file );
 
-	if ( !f.exists() ) return;
+	if ( !f.exists() ) {
+        dbg() << "loadFrom(): file does not exist" << endl;
+        return;
+    }
 
 	if ( f.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
 		QTextStream stream( &f );
@@ -411,8 +415,15 @@ void YZInternalOptionPool::setGroup( const QString& group ) {
 void YZInternalOptionPool::initConfFiles() {
 	//first, do we have a config directory ?
 	QDir homeConf( QDir::homePath()+"/.yzis/" );
-	if ( !homeConf.exists( QDir::homePath()+"/.yzis/" ) )
-		if ( !homeConf.mkpath(QDir::homePath()+"/.yzis/") ) return;
+	if ( !homeConf.exists( QDir::homePath()+"/.yzis/" ) ) {
+        dbg() << "initConfFiles(): no yzis user directory " << endl;
+		if ( !homeConf.mkpath(QDir::homePath()+"/.yzis/") ) {
+            dbg() << "Could not create " << (QDir::homePath()+"/.yzis/") << endl;
+            return;
+        } else {
+            dbg() << "Yzis user dir created: " << (QDir::homePath()+"/.yzis/") << endl;
+        }
+    }
 
 	loadFrom(QDir::rootPath()+"/etc/yzis/yzis.conf");
 	loadFrom(QDir::homePath()+"/.yzis/yzis.conf");

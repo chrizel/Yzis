@@ -555,6 +555,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
   QStringList::Iterator it = list.begin(), end = list.end();
   for ( ; it != end; ++it )
   {
+    dbg() << "setupModeList(): analysing resource " << *it << endl;
     // Each file has a group called:
     QString Group="HL Cache "+ *it;
 

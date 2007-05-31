@@ -2990,10 +2990,21 @@ YzisHlManager::YzisHlManager()
   foreach( YzisAttribute *a, list )
 	  delete a;
   //read init files
-  if (QFile::exists(QDir::rootPath() + "/etc/yzis/hl.lua"))
-    YZLuaEngine::self()->source( QDir::rootPath() + "/etc/yzis/hl.lua" );
-  if (QFile::exists(QDir::homePath() + "/.yzis/hl.lua"))
-    YZLuaEngine::self()->source( QDir::homePath() + "/.yzis/hl.lua" );
+  QString fname = QDir::rootPath() + "/etc/yzis/hl.lua";
+  if (QFile::exists(fname)) {
+    dbg() << "YzisHlManager(): reading " << fname << endl;
+    YZLuaEngine::self()->source( fname );
+  } else {
+    dbg() << "YzisHlManager(): file " << fname << " not available." << endl;
+  }
+
+  fname = QDir::homePath() + "/.yzis/hl.lua";
+  if (QFile::exists(fname)) {
+    dbg() << "YzisHlManager(): reading " << fname << endl;
+    YZLuaEngine::self()->source( fname );
+  } else {
+    dbg() << "YzisHlManager(): file " << fname << " not available." << endl;
+  }
 
 #ifndef YZIS_WIN32_GCC
   magicSet = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );

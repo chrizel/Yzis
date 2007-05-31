@@ -63,6 +63,11 @@ else(WIN32)
     find_package(Gettext REQUIRED)
 endif(WIN32)
 
+if (UNIX)
+    find_package(X11 REQUIRED)
+endif (UNIX)
+
+
 if (APPLE) # XXX: workaround intl for Mac OSX
 	set(GETTEXT_LIBRARIES ${LIBINTL_LIBRARY})
 endif(APPLE)

@@ -1,5 +1,214 @@
+2007-05-29 bluebird
+  * put #ifdef correctly
+
+2007-05-29 lothar
+  * fix segfault in nyzis: one view is needed to display an error
+  * report that we can not edit directories
+
+2007-05-25 bluebird
+  * do not always generate doc 
+  * add section to dev handbook about debugging with logs
+  * use QtFlags for managing flags in yzline
+  * improve test files
+  * proper cursor when command line has focus
+
+2007-05-25 krzysiek (patch)
+  * redraw cursor after moving
+
+2007-05-22 orzel
+  * replace QMAX by qMax, as reported by krazy
+  * no more QObjects in session
+  * fix some FSF addresses, as reported by krazy
+  * add proper license
+
+2007-05-17 kari oikarinen (patch)
+  * remove duplicated includes, as reported by krazy
+  * change pass-by-value to pass-by-ref for large objects, as reported by
+    krazy
+
+2007-05-15 bluebird
+  * code naming cleanup: follow Qt style for enum
+  * move kate files into kate subdirectory
+  * move readtags files into readtags subdirectory
+
+2007-05-11 bluebird
+  * code naming cleanup: follow Qt style for enum
+
+2007-05-10 krzysiek
+  * lua test file for insert mode
+  * support for <BS> in sendMultipleKeys
+  * fix bug 198 and 199
+
+2007-05-05 lothar
+  * fix segfault: create hlmanager instance in YZSession::init()
+
+2007-05-04 bluebird
+  * update the coding style of the devhandbook to follow Qt style
+  * code naming cleanup: follow Qt style for enum
+
+2007-05-04 krzysiek goj (patch)
+  * Add <CHTL>W  in insert mode
+
+2007-05-03 krzysiek goj (patch)
+  * Add <CHTL>h and <CTRL>[ key bindings in insert mode
+
+2007-05-03 bluebird
+  * remove some include dependencies
+  * improve doc of YZMode
+
+2007-05-02 victor
+  * fix compilation on linux
+
+2007-05-01 bluebird
+  * debug log for cmd_state
+  * proper qyzis cursor display in the different modes (normal, command, out
+    of focus)
+  * remove dependencies on "debug.h"
+
+2007-04-26 bluebird
+  * replace all occurences of yzDebug() with dbg()
+  * rework yzis initialisation: lot of code is moved into YZSession
+  * improve YZSession documentation
+  * use YZSession::self() in more places
+  * more debug log
+  * add an application icon for qyzis on windows
+  * rework QYZisCursor for better readability
+  * clicking on status bar now switches to ex mode
+  * move sendMultipleKeys() and sendKeys() from view to session
+
+2007-04-04 lothar
+  * make yzis draw to the end of the line when necessary
+
+2007-04-01 morbuz
+  * fix spelling errors (reported by krazy)
+
+2007-03-31 morbuz
+  * fix spelling errors
+  * improve QString usage: use isEmpty(), clear(), ...
+
+2007-03-30 morbuz
+  * move error reporting one way up in YZLuaEngine
+
+2007-03-29 morbuz
+  * fix french punctuation
+  * more doc about debugging with gdb
+
+2007-03-29 kari oikarinen (patch)
+  * fix true/TRUE and false/FALSE issues reported by krazy
+  * remove double quotes char used in QString, reported by krazy
+
+2007-03-27 lothar
+  * leave search mode when <BS> is pressed and the line is empty
+
+2007-03-23 bluebird
+  * documentation is now generated with "make docs"
+  * more documentation about building documentation
+
+2007-03-21 bluebird
+  * add more documentation in the handbook about lua
+
+2007-03-12 bluebird
+  * move regexp from utils.lua to vimregexp.lua
+  * test/scripts/runscript.sh now supports cygwin
+
+2007-03-11 orzel
+  * more doc for session.h and view.h
+  * remove YZViewMarker
+
+2007-03-10 orzel
+  * use YZSession::self() in yzisinfo.cpp
+  * YZViewCursor now inherits YZCursorPos
+
+2007-03-09 orzel
+  * remove virtual destructor for YZCursor
+  * fix ncurses detection on gentoo
+  * fix 64 bits warning
+  * use YZCursor directly, no reference or pointer
+
+2007-03-08 lothar
+  * show mode in status line
+
+2007-03-01 lothar
+  * focus view after switching views
+
+2007-02-28 bluebird
+  * detect correctly lua 5.0 vs lua 5.1
+  * refuse to use lua 5.1 with a nice error message
+  * update build doc about lua
+
+2007-02-27 lothar braun 
+  * better lua 5.1 error reporting
+
+2007-02-26 lothar braun (patch), bluebird
+  * avoid nzyis crashing in case of error
+  * better detection of ncurses with wide-char
+
+2007-02-23 bluebird
+  * add dbg() log to many yzis classes
+  * convert from yzDebug() to dbg()
+  * add toString() to YZBuffer, YZview, YZSession for easier debugging
+  * fix segfault
+
+2007-02-13 morbuz
+  * shell script to build doxygen doc on linux from cmake
+
+2007-02-12 bluebird
+  * improve lua unit tests launching. It works on linux and windows and
+    supports more options.
+  * on windows, install libyzis in the same dir as yzis
+
+2007-02-09 bluebird
+  * improve use of lua 5.1 
+  * make lua tests related to regexp pass 100%
+  * luaengine can now print lua stack, and without recursion
+  * fix use of lua engine to make it work properly
+  * luaregexp doc and code improvements
+  * remove cmake support for lua 5.1 (because it is incompatible with lua 5.0)
+
+2007-02-02 Cyril Romain (patch)
+  * script to find lua 5.1
+  * use lua 5.1 and update doc
+
+2007-02-01 bluebird
+  * improvements to debug/log backend
+  * more debug logs
+  * improve singleton pattern with boost::non_copyable
+
+2007-01-31 kari oikarinen, dmitry suzdalev (patch)
+  * i18n fixes
+  * rename instance to me/self()
+
+2007-01-29 kari oikarinen (patch)
+  * include fixes (less include deps)
+
+2007-01-27 panard
+  * doc about view rendering
+
+2007-01-27 bluebird
+  * split doxygen documentation into devhandbook + libyzis + qyzis + nyzis +
+    kyzis
+
+2007-01-22 bluebird
+  * can set debug options from command line
+  * use .yzdebugrc file
+  * libyzisrunner, nyzis and qyzis now support command line options as well
+
+2007-01-15 panard
+  * remove notion of view id
+  * fixes for search
+
+2007-01-14 orzel
+  * more doc to the dev handbook in doxygen
+  * use of foreach in the code
+
 2007-01-13 panard
   * drop non-fixed fonts support
+  * fix lua compilation on gentoo
+  * introduce lua 5.1 compilation
+
+2007-01-11 bluebird
+  * make qyzis compile on windows
+  * fix CMake to link with Qt debug libraries
 
 2007-01-09 bluebird
   * full doxygen documentation for options.h, no more warnings
@@ -373,7 +582,7 @@
   * libyzis
   	new listchars option
   	
-2004-09-17 philippe
+2004-09-17 bluebird
   * libyzis
   	- more bug fixing for lua binding
   	- tests for all yzis lua functions
@@ -387,7 +596,7 @@
   * nyzis
   	support the CTRL modifier
 
-2004-09-11 philippe
+2004-09-11 bluebird
   * libyzis
   	- bug fixing and improvement of the lua binding
   	- tests for most of yzis lua functions
@@ -701,7 +910,7 @@
   * kyzis
     display the message :)
 
-2004-04-12 philippe
+2004-04-12 bluebird
   * tests
     . more tests on undo
 	. more tests on buffer operations
@@ -750,7 +959,7 @@
     add search support with commands : / and ?
     add command 'n'
 
-2004-03-22 philippe
+2004-03-22 bluebird
   * libyzis
     . undo support is now working
   * tests
@@ -765,7 +974,7 @@
     changed (normal mode) commands API with helper functions as initially
     designed by Phil
 
-2004-03-06 philippe
+2004-03-06 bluebird
   * tests
     . add tests for switching between command mode and insert mode
 	. add tests for up,down,left,right cursor movement
@@ -787,7 +996,7 @@
     basic support for options management
     basic support for registers (copy/paste)
 
-2004-02-23 philippe
+2004-02-23 bluebird
   * libyzis
   	add a YZASSERT() macro to report things that should not happen
 	make YZBuffer report and reject any out of limit argument
@@ -825,7 +1034,7 @@
     use mkstemp() for creating temporary filename
     print filename command line when opening a new file
 
-2004-02-23 philippe
+2004-02-23 bluebird
   * yzis
   	Introduce a test framework for libyzis
 	Add a few tests for line methods

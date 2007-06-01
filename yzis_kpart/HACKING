@@ -1,0 +1,17 @@
+This is the stub code for the yzis kpart. Please port the code from kyzis/
+into this directory.
+
+yzis_kpart compiles against "KDE 4 alpha 1" at the moment. 
+
+The install target does not work right now. You have to perform a manual
+installation:
+1.) Compile the sources (yzis_kpart is disabled by default. Use
+    -DENABLE_YZIS_KPART=ON to enable)
+2.) Copy yzis_kpart.rc to $KDEDIR/apps/yzis_kpart and yzis_kpart.desktop to
+    $KDEDIR/share/kde4/services/ (where $KDEDIR is the prefix of your
+    installation)
+3.) Copy $builddir/lib/yzis_kpart.so to $KDEDIR/lib/kde4/ (you have to do this
+    every time you recompile the kpart)
+    or
+    Add your build directory to the variable $KDEDIRS and then run 
+    kbuildsycoca4.

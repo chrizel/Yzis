@@ -20,12 +20,13 @@
 #include "ktedocument.h"
 #include "kteview.h"
 #include "kteeditor.h"
+#include "kyzissession.h"
 
 #include <libyzis/buffer.h>
 
 KTEDocument::KTEDocument( QObject* /*parent*/ )
 {
-	m_buffer = new YZBuffer();
+	m_buffer = KYZisSession::self()->createBuffer(); 
 }
 
 KTEDocument::~KTEDocument()

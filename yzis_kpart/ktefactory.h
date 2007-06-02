@@ -19,8 +19,8 @@
  **/
 
 
-#ifndef _KYZIS_FACTORY_H_
-#define _KYZIS_FACTORY_H_
+#ifndef _KTE_FACTORY_H_
+#define _KTE_FACTORY_H_
 
 #include <ktexteditor/factory.h>
 

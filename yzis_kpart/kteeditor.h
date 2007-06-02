@@ -18,16 +18,14 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KYZIS_EDITOR_H_
-#define _KYZIS_EDITOR_H_
+#ifndef _KTE_EDITOR_H_
+#define _KTE_EDITOR_H_
 
 #include <QList>
 
 #include <ktexteditor/editor.h>
 #include <ktexteditor/document.h>
 #include <ktexteditor/configpage.h>
-
-class KYZisSession;
 
 class KTEEditor : public KTextEditor::Editor {
 	Q_OBJECT
@@ -54,8 +52,6 @@ private:
 	KTEEditor (QObject *parent);
 
 	static KTEEditor* me;
-	KYZisSession* session;
-
 	QList<KTextEditor::Document*> m_documents;
 };
 

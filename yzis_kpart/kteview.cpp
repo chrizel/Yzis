@@ -21,10 +21,16 @@
 
 #include "kteview.h"
 #include "ktedocument.h"
+#include "kyzisview.h"
+#include "kyzissession.h"
+
+#include <libyzis/buffer.h>
+
 
 KTEView::KTEView(KTEDocument* doc, QWidget* parent)
 	: KTextEditor::View(parent), m_doc(doc)
 {
+	m_view = static_cast<KYZisView*>(KYZisSession::self()->createView(doc->buffer()));
 }
 
 KTEView::~KTEView()

@@ -15,6 +15,7 @@ set( part_SOURCES
 	kteeditor.cpp
 	kteview.cpp
 	kyzissession.cpp
+	kyzisview.cpp
 	   	)
 
 kde4_automoc( ${part_SOURCES} )

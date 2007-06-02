@@ -1,5 +1,7 @@
-/*  This file is part of the Yzis libraries
+/* This file is part of the Yzis libraries
  *  Copyright (C) 2007 Lothar Braun <lothar@lobraun.de>
+ *  Copyright (C) 2005 Erlend Hamberg <hamberg@stud.ntnu.no>
+ *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -13,35 +15,20 @@
  *
  *  You should have received a copy of the GNU Library General Public License
  *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  the Free Software Foundation, Inc., 51 Franklin Steet, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
  **/
 
-
-#include "ktefactory.h"
-#include "ktedocument.h"
-#include "kteeditor.h"
+#include "kyzisview.h"
 #include "kyzissession.h"
 
-KTEFactory::KTEFactory(QObject* parent)
-	: KTextEditor::Factory::Factory(parent)
+#include <kdebug.h>
+
+KYZisView::KYZisView(YZBuffer* buffer)
+	: YZView(buffer, KYZisSession::self(),0,0)
 {
-	KYZisSession::createInstance();
 }
 
-KTextEditor::Editor* KTEFactory::editor()
+KYZisView::~KYZisView()
 {
-	return KTEEditor::self();
 }
-
-
-KParts::Part* KTEFactory::createPartObject(QWidget*, QObject*, const char*, const QStringList&)
-{
-	KTEDocument* doc = new KTEDocument(NULL);
-	doc->setReadWrite(true);
-	return doc;
-}
-
-K_EXPORT_COMPONENT_FACTORY( yzis_kpart, KTEFactory );
-
-#include "ktefactory.moc"

@@ -26,6 +26,8 @@
 class KYZisSession : public YZSession
 {
 public:
+	static void createInstance();
+
 	virtual void guiDeleteBuffer(YZBuffer*) {}
 	virtual void guiSplitHorizontally(YZView*) {}
 	virtual bool guiQuit(int) { return false;}
@@ -35,10 +37,14 @@ public:
 	virtual void guiSetFocusCommandLine() {}
 	virtual void guiSetFocusMainWindow() {}
 	virtual void guiSetClipboardText(const QString&, Clipboard::Mode) {}
-	virtual YZView* guiCreateView(YZBuffer*) { return 0; }
+	virtual YZView* guiCreateView(YZBuffer*);
 	virtual void guiDeleteView(YZView*) {}
-	virtual YZBuffer* guiCreateBuffer() { return 0; }
+	virtual YZBuffer* guiCreateBuffer();
 	virtual void guiChangeCurrentView(YZView*) {}
+
+private:
+	KYZisSession();
+	static KYZisSession* me;
 };
 
 #endif

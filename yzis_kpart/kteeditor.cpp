@@ -35,7 +35,6 @@ KTEEditor* KTEEditor::me = 0;
 KTEEditor::KTEEditor(QObject* parent)
 	: KTextEditor::Editor(parent)
 {
-	session = new KYZisSession();
 }
 
 KTEEditor::~KTEEditor()

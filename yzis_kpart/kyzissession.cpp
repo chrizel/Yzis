@@ -20,3 +20,37 @@
  **/
 
 #include "kyzissession.h"
+#include "kyzisview.h"
+
+#include <kdebug.h>
+
+#include <libyzis/debug.h>
+#include <libyzis/buffer.h>
+
+
+KYZisSession* KYZisSession::me = NULL;
+
+KYZisSession::KYZisSession()
+{
+}
+
+void KYZisSession::createInstance()
+{
+	if (!me) {
+		me = new KYZisSession();
+		setInstance(me);
+	}
+}
+
+YZView* KYZisSession::guiCreateView(YZBuffer* buffer)
+{
+	yzDebug() << "doCreateView( " << buffer->toString() << ")" << endl;
+	KYZisView* view = new KYZisView(buffer);
+	YZASSERT_MSG(view, "KYZisSession::createView : failed creating a new KYZisView");
+	return view;
+}
+
+YZBuffer* KYZisSession::guiCreateBuffer()
+{
+	return new YZBuffer();
+}

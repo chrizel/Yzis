@@ -18,12 +18,13 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KYZIS_VIEW_H_
-#define _KYZIS_VIEW_H_
+#ifndef _KTE_VIEW_H_
+#define _KTE_VIEW_H_
 
 #include <ktexteditor/view.h>
 
 class KTEDocument;
+class KYZisView;
 
 class KTEView : public KTextEditor::View
 {
@@ -68,6 +69,7 @@ signals:
 
 private:
 	KTEDocument* m_doc;
+	KYZisView* m_view;
 };
 
 #endif

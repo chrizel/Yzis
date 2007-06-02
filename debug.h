@@ -39,6 +39,8 @@
 #include "yzismacros.h"
 #include "noncopyable.h"
 
+#include <cstdio>
+
 class QStringList;
 
 //! \name Debug levels

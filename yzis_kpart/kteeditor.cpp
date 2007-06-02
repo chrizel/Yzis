@@ -19,8 +19,8 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "kyziseditor.h"
-#include "kyzisdocument.h"
+#include "kteeditor.h"
+#include "ktedocument.h"
 #include "kyzissession.h"
 
 
@@ -28,96 +28,96 @@
 
 // --------------------------------  static variables
 
-KYZisEditor* KYZisEditor::me = 0;
+KTEEditor* KTEEditor::me = 0;
 
 // --------------------------------  methods
 
-KYZisEditor::KYZisEditor(QObject* parent)
+KTEEditor::KTEEditor(QObject* parent)
 	: KTextEditor::Editor(parent)
 {
 	session = new KYZisSession();
 }
 
-KYZisEditor::~KYZisEditor()
+KTEEditor::~KTEEditor()
 {
 
 }
 
-KTextEditor::Editor* KYZisEditor::self()
+KTextEditor::Editor* KTEEditor::self()
 {
 	if (!me) {
-		me = new KYZisEditor(0);
+		me = new KTEEditor(0);
 	}
 	return me;
 }
 
-KTextEditor::Document* KYZisEditor::createDocument( QObject *parent )
+KTextEditor::Document* KTEEditor::createDocument( QObject *parent )
 {
-	KYZisDocument* doc = new KYZisDocument(parent);
+	KTEDocument* doc = new KTEDocument(parent);
 	return doc;
 }
 
-const QList<KTextEditor::Document*>& KYZisEditor::documents() 
+const QList<KTextEditor::Document*>& KTEEditor::documents() 
 {
 	// TODO: create mechanism to register/unregister documents
 	return m_documents;
 }
 
-const KAboutData* KYZisEditor::aboutData () const 
+const KAboutData* KTEEditor::aboutData () const 
 {
 	// TODO: implement
 	return 0;
 }
 
-void KYZisEditor::readConfig (KConfig* /*config*/)
+void KTEEditor::readConfig (KConfig* /*config*/)
 {
 	// TODO: implement
 }
 
-void KYZisEditor::writeConfig( KConfig* /*config*/ )
+void KTEEditor::writeConfig( KConfig* /*config*/ )
 {
 	// TODO: implement
 }
 
-bool KYZisEditor::configDialogSupported() const
+bool KTEEditor::configDialogSupported() const
 {
 	// TODO: implement
 	return false;
 }
 
-void KYZisEditor::configDialog( QWidget* /*parent*/ ) 
+void KTEEditor::configDialog( QWidget* /*parent*/ ) 
 {
 	// TODO: implement
 }
 
-int KYZisEditor::configPages() const 
-{
-	// TODO: implement
-	return 0;
-}
-
-KTextEditor::ConfigPage* KYZisEditor::configPage( int /*number*/, QWidget* /*parent*/ ) 
+int KTEEditor::configPages() const 
 {
 	// TODO: implement
 	return 0;
 }
 
-QString KYZisEditor::configPageName( int /*number*/ ) const  
+KTextEditor::ConfigPage* KTEEditor::configPage( int /*number*/, QWidget* /*parent*/ ) 
+{
+	// TODO: implement
+	return 0;
+}
+
+QString KTEEditor::configPageName( int /*number*/ ) const  
 {
 	// TODO: implement
 	return QString();
 }
 
-QString KYZisEditor::configPageFullName( int /*number*/ ) const 
+QString KTEEditor::configPageFullName( int /*number*/ ) const 
 {
 	// TODO: implement
 	return QString();
 }
 
-KIcon KYZisEditor::configPageIcon( int /*number*/ ) const 
+KIcon KTEEditor::configPageIcon( int /*number*/ ) const 
 {
 	// TODO: implement
 	return KIcon();
 }
 
-#include "kyziseditor.moc"
+#include "kteeditor.moc"

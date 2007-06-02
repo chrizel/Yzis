@@ -19,142 +19,142 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "kyzisview.h"
-#include "kyzisdocument.h"
+#include "kteview.h"
+#include "ktedocument.h"
 
-KYZisView::KYZisView(KYZisDocument* doc, QWidget* parent)
+KTEView::KTEView(KTEDocument* doc, QWidget* parent)
 	: KTextEditor::View(parent), m_doc(doc)
 {
 }
 
-KYZisView::~KYZisView()
+KTEView::~KTEView()
 {
 
 }
 
-KTextEditor::Document* KYZisView::document() const
+KTextEditor::Document* KTEView::document() const
 {
 	return m_doc;
 }
 
-QString KYZisView::viewMode() const 
+QString KTEView::viewMode() const 
 {
 	// TODO: implement
 	return QString();
 }
 
-enum KTextEditor::View::EditMode KYZisView::viewEditMode() const
+enum KTextEditor::View::EditMode KTEView::viewEditMode() const
 {
     // TODO: implement
 	return KTextEditor::View::EditInsert;
 }
 
-void KYZisView::setContextMenu(QMenu* /*menu*/)
+void KTEView::setContextMenu(QMenu* /*menu*/)
 {
     // TODO: implement
 }
 
-QMenu* KYZisView::contextMenu() const
-{
-    // TODO: implement
-	return NULL;
-}
-
-QMenu* KYZisView::defaultContextMenu(QMenu* /*menu*/) const
+QMenu* KTEView::contextMenu() const
 {
     // TODO: implement
 	return NULL;
 }
 
-bool KYZisView::setCursorPosition(KTextEditor::Cursor /*position*/)
+QMenu* KTEView::defaultContextMenu(QMenu* /*menu*/) const
+{
+    // TODO: implement
+	return NULL;
+}
+
+bool KTEView::setCursorPosition(KTextEditor::Cursor /*position*/)
 {
     // TODO: implement
 	return false;
 }
 
-KTextEditor::Cursor KYZisView::cursorPosition() const
+KTextEditor::Cursor KTEView::cursorPosition() const
 {
     // TODO: implement
 	return KTextEditor::Cursor();
 }
 
-KTextEditor::Cursor KYZisView::cursorPositionVirtual() const
+KTextEditor::Cursor KTEView::cursorPositionVirtual() const
 {
     // TODO: implement
 	return KTextEditor::Cursor();
 }
 
-QPoint KYZisView::cursorToCoordinate(const KTextEditor::Cursor& /*cursor*/) const
+QPoint KTEView::cursorToCoordinate(const KTextEditor::Cursor& /*cursor*/) const
 {
     // TODO: implement
 	return QPoint(0,0);
 }
 
-QPoint KYZisView::cursorPositionCoordinates() const
+QPoint KTEView::cursorPositionCoordinates() const
 {
     // TODO: implement
 	return QPoint(0,0);
 }
 
-bool KYZisView::mouseTrackingEnabled() const
+bool KTEView::mouseTrackingEnabled() const
 {
     // TODO: implement
 	return false;
 }
 
-bool KYZisView::setMouseTrackingEnabled(bool /*enable*/)
+bool KTEView::setMouseTrackingEnabled(bool /*enable*/)
 {
     // TODO: implement
 	return false;
 }
 
-bool KYZisView::setSelection(const KTextEditor::Range& /*range*/)
+bool KTEView::setSelection(const KTextEditor::Range& /*range*/)
 {
     // TODO: implement
 	return false;
 }
 
-bool KYZisView::selection() const
+bool KTEView::selection() const
 {
     // TODO: implement
 	return false;
 }
 
-const KTextEditor::Range& KYZisView::selectionRange() const
+const KTextEditor::Range& KTEView::selectionRange() const
 {
     // TODO: implement
 	static KTextEditor::Range remove_me;
 	return remove_me;
 }
 
-QString KYZisView::selectionText() const
+QString KTEView::selectionText() const
 {
     // TODO: implement
 	return QString();
 }
 
-bool KYZisView::removeSelection()
+bool KTEView::removeSelection()
 {
     // TODO: implement
 	return false;
 }
 
-bool KYZisView::removeSelectionText()
+bool KTEView::removeSelectionText()
 {
     // TODO: implement
 	return false;
 }
 
-bool KYZisView::setBlockSelection(bool /*on*/)
+bool KTEView::setBlockSelection(bool /*on*/)
 {
     // TODO: implement
 	return false;
 }
 
-bool KYZisView::blockSelection() const
+bool KTEView::blockSelection() const
 {
     // TODO: implement
 	return false;
 }
 
-#include "kyzisview.moc"
+#include "kteview.moc"

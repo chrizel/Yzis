@@ -19,10 +19,8 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#ifndef _KYZIS_DOCUMENT_H_
-#define _KYZIS_DOCUMENT_H_
-
-#include "kyziseditor.h"
+#ifndef _KTE_DOCUMENT_H_
+#define _KTE_DOCUMENT_H_
 
 #include <ktexteditor/editor.h>
 #include <ktexteditor/document.h>
@@ -31,11 +29,11 @@
 
 class YZBuffer;
 
-class KYZisDocument : public KTextEditor::Document {
+class KTEDocument : public KTextEditor::Document {
 Q_OBJECT
 public:
-	KYZisDocument( QObject* parent=0 );
-	virtual ~KYZisDocument();
+	KTEDocument( QObject* parent=0 );
+	virtual ~KTEDocument();
 
 	virtual KTextEditor::Editor* editor();
 	virtual KTextEditor::View* createView( QWidget *parent );

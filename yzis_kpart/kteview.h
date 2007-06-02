@@ -23,14 +23,14 @@
 
 #include <ktexteditor/view.h>
 
-class KYZisDocument;
+class KTEDocument;
 
-class KYZisView : public KTextEditor::View
+class KTEView : public KTextEditor::View
 {
 Q_OBJECT
 public:
-	KYZisView(KYZisDocument* doc, QWidget* parent);
-	virtual ~KYZisView();
+	KTEView(KTEDocument* doc, QWidget* parent);
+	virtual ~KTEView();
 	virtual KTextEditor::Document* document() const; 
 	virtual QString viewMode() const;
 	virtual enum KTextEditor::View::EditMode viewEditMode() const;
@@ -67,7 +67,7 @@ signals:
 	void   selectionChanged (KTextEditor::View *view);
 
 private:
-	KYZisDocument* m_doc;
+	KTEDocument* m_doc;
 };
 
 #endif

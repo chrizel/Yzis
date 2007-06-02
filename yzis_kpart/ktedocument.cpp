@@ -17,241 +17,242 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "kyzisdocument.h"
-#include "kyzisview.h"
+#include "ktedocument.h"
+#include "kteview.h"
+#include "kteeditor.h"
 
 #include <libyzis/buffer.h>
 
-KYZisDocument::KYZisDocument( QObject* /*parent*/ )
+KTEDocument::KTEDocument( QObject* /*parent*/ )
 {
 	m_buffer = new YZBuffer();
 }
 
-KYZisDocument::~KYZisDocument()
+KTEDocument::~KTEDocument()
 {
 	delete m_buffer;
 }
 
-KTextEditor::Editor* KYZisDocument::editor()
+KTextEditor::Editor* KTEDocument::editor()
 {
-	return KYZisEditor::self();
+	return KTEEditor::self();
 }
 
-KTextEditor::View* KYZisDocument::createView( QWidget* /*parent*/ )
+KTextEditor::View* KTEDocument::createView( QWidget* /*parent*/ )
 {
-	KYZisView* view = new KYZisView(this, 0);
+	KTEView* view = new KTEView(this, 0);
 	return view;
 }
 
-KTextEditor::View* KYZisDocument::activeView() const
+KTextEditor::View* KTEDocument::activeView() const
 {
 	// TODO: implement
 	return NULL;
 }
 
-const QList<KTextEditor::View*>& KYZisDocument::views() const
+const QList<KTextEditor::View*>& KTEDocument::views() const
 {
 	return m_views;	
 }
 
-const QString& KYZisDocument::documentName () const
+const QString& KTEDocument::documentName () const
 {
 	// TODO: implement
 	static QString remove_me;
 	return remove_me;
 }
 
-QString KYZisDocument::mimeType()
+QString KTEDocument::mimeType()
 {
 	// TODO: implement
 	return QString();
 }
 
-bool KYZisDocument::setEncoding( const QString& /*encoding*/ )
+bool KTEDocument::setEncoding( const QString& /*encoding*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-const QString& KYZisDocument::encoding() const
+const QString& KTEDocument::encoding() const
 {
 	// TODO: implement
 	static QString remove_me;
 	return remove_me;
 }
 
-bool KYZisDocument::documentReload()
+bool KTEDocument::documentReload()
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::documentSave()
+bool KTEDocument::documentSave()
 {
     // TODO: implement
     return false;
 }
 
-bool KYZisDocument::documentSaveAs()
+bool KTEDocument::documentSaveAs()
 {
     // TODO: implement
     return false;
 }
 
-bool KYZisDocument::startEditing()
+bool KTEDocument::startEditing()
 {
     // TODO: implement
     return false;
 }
 
-bool KYZisDocument::endEditing()
+bool KTEDocument::endEditing()
 {
 	// TODO: implement
 	return false;
 }
 
-QString KYZisDocument::text() const
+QString KTEDocument::text() const
 {
 	// TODO: implement
 	return QString();
 }
 
-QString KYZisDocument::text( const KTextEditor::Range& /*range*/, bool /*block*/ ) const
+QString KTEDocument::text( const KTextEditor::Range& /*range*/, bool /*block*/ ) const
 {
 	// TODO: implement
 	return QString();
 }
 
-QChar KYZisDocument::character( const KTextEditor::Cursor& /*position*/ ) const
+QChar KTEDocument::character( const KTextEditor::Cursor& /*position*/ ) const
 {
 	// TODO: implement
 	return QChar();
 }
 
-QStringList KYZisDocument::textLines( const KTextEditor::Range& /*range*/, bool /*block*/ ) const
+QStringList KTEDocument::textLines( const KTextEditor::Range& /*range*/, bool /*block*/ ) const
 {
 	// TODO: implement
 	return QStringList();
 }
 
-QString KYZisDocument::line( int /*line*/ ) const
+QString KTEDocument::line( int /*line*/ ) const
 {
 	// TODO: implement
 	return QString();
 }
 
-int KYZisDocument::lines() const
+int KTEDocument::lines() const
 {
 	// TODO: implement
 	return 0;
 }
 
-KTextEditor::Cursor KYZisDocument::documentEnd() const
+KTextEditor::Cursor KTEDocument::documentEnd() const
 {
 	// TODO: implement
 	return KTextEditor::Cursor();
 }
 
-int KYZisDocument::totalCharacters() const
+int KTEDocument::totalCharacters() const
 {
 	// TODO: implement
 	return 0;
 }
 
-int KYZisDocument::lineLength( int /*line*/ ) const
+int KTEDocument::lineLength( int /*line*/ ) const
 {
 	// TODO: implement
 	return 0;
 }
 
-bool KYZisDocument::setText( const QString& /*text*/ )
+bool KTEDocument::setText( const QString& /*text*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::setText( const QStringList& /*text*/ )
+bool KTEDocument::setText( const QStringList& /*text*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::clear()
+bool KTEDocument::clear()
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::insertText( const KTextEditor::Cursor& /*position*/, const QString& /*text*/, bool /*block*/ )
+bool KTEDocument::insertText( const KTextEditor::Cursor& /*position*/, const QString& /*text*/, bool /*block*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::insertText( const KTextEditor::Cursor& /*position*/, const QStringList& /*text*/, bool /*block*/ )
+bool KTEDocument::insertText( const KTextEditor::Cursor& /*position*/, const QStringList& /*text*/, bool /*block*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::removeText( const KTextEditor::Range& /*range*/, bool /*block*/ )
+bool KTEDocument::removeText( const KTextEditor::Range& /*range*/, bool /*block*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::insertLine( int /*line*/, const QString& /*text*/ )
+bool KTEDocument::insertLine( int /*line*/, const QString& /*text*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::insertLines( int /*line*/, const QStringList& /*text*/ )
+bool KTEDocument::insertLines( int /*line*/, const QStringList& /*text*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::removeLine( int /*line*/ )
+bool KTEDocument::removeLine( int /*line*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-QString KYZisDocument::mode() const
+QString KTEDocument::mode() const
 {
 	// TODO: implement
 	return QString();
 }
 
-QString KYZisDocument::highlightingMode() const
+QString KTEDocument::highlightingMode() const
 {
 	// TODO: implement
 	return QString();
 }
 
-QStringList KYZisDocument::modes() const
+QStringList KTEDocument::modes() const
 {
 	// TODO: implement
 	return QStringList();
 }
 
-QStringList KYZisDocument::highlightingModes() const
+QStringList KTEDocument::highlightingModes() const
 {
 	// TODO: implement
 	return QStringList();
 }
 
-bool KYZisDocument::setMode( const QString& /*name*/ )
+bool KTEDocument::setMode( const QString& /*name*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-bool KYZisDocument::setHighlightingMode( const QString& /*name*/ )
+bool KTEDocument::setHighlightingMode( const QString& /*name*/ )
 {
 	// TODO: implement
 	return false;
 }
 
-#include "kyzisdocument.moc"
+#include "ktedocument.moc"

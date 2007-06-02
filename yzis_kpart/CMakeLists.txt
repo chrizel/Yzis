@@ -10,10 +10,10 @@ add_definitions( ${KDE4_DEFINITIONS} )
 link_directories( ${KDE4_LIB_DIR} )
 
 set( part_SOURCES
-	kyzisfactory.cpp
-	kyzisdocument.cpp
-	kyziseditor.cpp
-	kyzisview.cpp
+	ktefactory.cpp
+	ktedocument.cpp
+	kteeditor.cpp
+	kteview.cpp
 	kyzissession.cpp
 	   	)
 

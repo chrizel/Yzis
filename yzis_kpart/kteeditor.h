@@ -29,10 +29,10 @@
 
 class KYZisSession;
 
-class KYZisEditor : public KTextEditor::Editor {
+class KTEEditor : public KTextEditor::Editor {
 	Q_OBJECT
 public:
-	virtual ~KYZisEditor();
+	virtual ~KTEEditor();
 
 	static KTextEditor::Editor* self();
 
@@ -51,9 +51,9 @@ public:
 	virtual KIcon configPageIcon( int number ) const;
 
 private:
-	KYZisEditor (QObject *parent);
+	KTEEditor (QObject *parent);
 
-	static KYZisEditor* me;
+	static KTEEditor* me;
 	KYZisSession* session;
 
 	QList<KTextEditor::Document*> m_documents;

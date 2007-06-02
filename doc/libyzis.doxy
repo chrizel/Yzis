@@ -212,8 +212,19 @@ SUBGROUPING            = YES
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = ../libyzis
-#INPUT                  = ../libyzis/session.h
+ INPUT                  = ../libyzis
+
+# The following files should not generate any warning. To check that,
+# just comment out the _previous_ input line.
+INPUT                  += ../libyzis/luaengine.h
+INPUT                  += ../libyzis/luaregexp.h
+INPUT                  += ../libyzis/luafuncs.h
+INPUT                  += ../libyzis/option.h
+INPUT                  += ../libyzis/portability.h
+INPUT                  += ../libyzis/printer.h
+INPUT                  += ../libyzis/tags_interface.h
+INPUT                  += ../libyzis/yzis.h
+INPUT                  += ../libyzis/debug.h
 
 # If the value of the INPUT tag contains directories, you can use the 
 # FILE_PATTERNS tag to specify one or more wildcard pattern (like *.cpp 

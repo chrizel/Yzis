@@ -24,31 +24,37 @@ extern "C" {
 #include <lua.h>
 }
 
-/** All lua commands available in Yzis
+/* This class contains all the static functions that provide a lua
+ * command.
+ */
+
+/** \brief All lua commands available in Yzis
   *
-  * This class contains all the static functions that provide a lua
-  * command.
+  * The arguments described are for lua scripting.
   *
-  * XXX describe here how to write a lua command
+  * See also \ref YZLuaRegexp
   *
   */
 class YZLuaFuncs {
 
 public:
 
-	/** Register all lua functions defined in this class to lua.
+	/** \brief Register all lua functions defined in this class to lua.
 	  *
 	  * To be called during initialisation.
 	  */
 	static void registerLuaFuncs(lua_State *L);
 
-	/**
-	  * Replacement of lua print, allows to control the output of print
-	  * Just take one string argument
+	/** \brief Replacement of lua print. 
+      *
+      * Override print to catch print statements in yzis.
+	  * 
+      * \b Arguments:
+      * - string, text to print
 	  */
 	static int yzprint(lua_State *L);
 
-	/**
+	/** \brief 
 	 * Get one line of text.
      *
 	 * \b Arguments:
@@ -59,7 +65,7 @@ public:
 	 */
 	static int line(lua_State *L);
 
-	/**
+	/** \brief
 	 * Set one line of text.
      *
 	 * \b Arguments:
@@ -70,7 +76,7 @@ public:
 	 */
 	static int setline(lua_State *L);
 
-	/**
+	/** \brief
 	 * Insert text inside a line:
      *
 	 * \b Arguments:
@@ -82,7 +88,7 @@ public:
 	 */
 	static int insert(lua_State *L);
 
-	/**
+	/** \brief
 	 * Remove the given number of characters
      *
 	 * \b Arguments :
@@ -96,8 +102,9 @@ public:
 	 */
 	static int remove(lua_State *L);
 
-	/**
+	/** \brief
 	 * Insert a new line
+     *
 	 * \b Arguments:
 	 * - int, line number before which to insert
      * - string, text of the new line
@@ -106,8 +113,9 @@ public:
 	 */
 	static int insertline(lua_State *L);
 
-	/**
+	/** \brief
 	 * Append line at the end of the buffer
+     *
 	 * \b Arguments:
 	 * - string, text to append
 	 *
@@ -115,7 +123,7 @@ public:
 	 */
 	static int appendline(lua_State *L);
 
-	/**
+	/** \brief
 	 * Replace text on a given line.
      *
      * Does not accept multi-line strings.
@@ -129,7 +137,7 @@ public:
 	 */
 	static int replace(lua_State *L);
 
-	/**
+	/** \brief
 	 * Returns the current column position in buffer
      *
 	 * \b Arguments: None
@@ -138,7 +146,7 @@ public:
 	 */
 	static int wincol(lua_State *L);
 
-	/**
+	/** \brief
 	 * Returns the current line position in buffer
      *
 	 * \b Arguments: None
@@ -147,7 +155,7 @@ public:
 	 */
 	static int winline(lua_State *L);
 
-	/**
+	/** \brief
 	 * Returns the current cursor position: col, line
      *
 	 * \b Arguments: None
@@ -158,7 +166,7 @@ public:
 	 */
 	static int winpos(lua_State *L);
 
-	/**
+	/** \brief
 	 * Moves the cursor to the given position
      *
 	 * \b Arguments: 
@@ -170,7 +178,7 @@ public:
 	 */
 	static int _goto(lua_State *L);
 
-	/**
+	/** \brief
 	 * Returns the current column position on screen
      *
 	 * \b Arguments: None
@@ -181,7 +189,7 @@ public:
 	 */
 	static int scrcol(lua_State *L);
 
-	/**
+	/** \brief
 	 * Returns the current line position on screen
      *
 	 * \b Arguments: None
@@ -190,7 +198,7 @@ public:
      */
 	static int scrline(lua_State *L);
 
-	/**
+	/** \brief
 	 * Moves the cursor to the given position on screen
      *
 	 * \b Arguments: 
@@ -201,7 +209,7 @@ public:
 	 */
 	static int scrgoto(lua_State *L);
 
-	/**
+	/** \brief
 	 * Deletes the given line.
      *
 	 * \b Arguments:
@@ -211,7 +219,7 @@ public:
 	 */
 	static int deleteline(lua_State *L);
 
-	/**
+	/** \brief
 	 * Return the current buffer filename
      *
 	 * \b Arguments: nothing
@@ -220,7 +228,7 @@ public:
 	 */
 	static int filename(lua_State *L);
 
-	/**
+	/** \brief
 	 * Return current syntax highlighting color for given column,line
      *
 	 * \b Arguments: 
@@ -231,7 +239,7 @@ public:
 	 */
 	static int color(lua_State *L);
 
-	/**
+	/** \brief
 	 * Returns the number of lines of the current buffer.
      *
 	 * Note that empty buffer always have one empty line.
@@ -242,16 +250,16 @@ public:
 	 */
 	static int linecount(lua_State *L);
 
-	/**
+	/** \brief
 	 * Returns the yzis version string
      *
 	 * \b Arguments: nothing
 	 *
-     * \b Returns: string, the current version. See \ref VERSION_CHAR
+     * \b Returns: string, the current version.
 	 */
 	static int version(lua_State *L);
 
-	/**
+	/** \brief
 	 * Send a set of keys contained in a string asif they were typed
 	 * by the user.
      *
@@ -266,7 +274,7 @@ public:
 	 */
 	static int sendkeys(lua_State *L);
 
-	/**
+	/** \brief
 	 * Command to customize syntax highlighting settings
      *
 	 * \b Arguments : 
@@ -278,7 +286,7 @@ public:
 	 */
 	static int highlight(lua_State *L);
 
-	/**
+	/** \brief
 	 * Register a lua function to call when a specific event occurs.
      *
      * This is the main entry point for plugins.
@@ -291,7 +299,7 @@ public:
 	 */
 	static int connect(lua_State *L);
 
-	/**
+	/** \brief
 	 * Find a file in standard yzis plugin directories
 	 * and source it.
      *
@@ -303,7 +311,7 @@ public:
 	 */
 	static int source(lua_State *L);
 
-	/**
+	/** \brief
 	 * Sends a string to debug output from lua.
      *
      * See \ref YZDebugBackend for more information about debugging.
@@ -317,7 +325,7 @@ public:
 	 */
 	static int yzdebug(lua_State *L);
 
-	/**
+	/** \brief
 	 * Set an option as local
      *
 	 * \b Arguments:
@@ -329,7 +337,7 @@ public:
 	 */
 	static int setlocal(lua_State *L);
 
-	/**
+	/** \brief
 	 * Set global options
      *
 	 * \b Arguments:
@@ -341,7 +349,7 @@ public:
 	 */
 	static int set(lua_State *L);
 
-	/**
+	/** \brief
 	 * Create a new option
      *
 	 * \b Arguments:
@@ -356,7 +364,7 @@ public:
 	 */
 	static int newoption(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds a new global mapping
      *
 	 * \b Arguments:
@@ -367,7 +375,7 @@ public:
 	 */
 	static int map(lua_State *L);
 
-	/**
+	/** \brief
 	 * Removes a global mapping
      *
 	 * \b Arguments:
@@ -377,7 +385,7 @@ public:
 	 */
 	static int unmap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds new insert mappings
      *
 	 * \b Arguments:
@@ -387,7 +395,7 @@ public:
      * \b Returns: nothing
 	 */
 	static int imap(lua_State *L);
-	/**
+	/** \brief
 	 * Remove an insert mappings
      *
 	 * \b Arguments:
@@ -397,7 +405,7 @@ public:
 	 */
 	static int iunmap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds a new visual mapping
      *
 	 * \b Arguments:
@@ -407,7 +415,7 @@ public:
      * \b Returns: nothing
 	 */
 	static int vmap(lua_State *L);
-	/**
+	/** \brief
 	 * Remove a visual mapping
      *
 	 * \b Arguments:
@@ -417,7 +425,7 @@ public:
 	 */
 	static int vunmap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds a new cmdline mapping
      *
 	 * \b Arguments:
@@ -427,7 +435,7 @@ public:
      * \b Returns: nothing
 	 */
 	static int cmap(lua_State *L);
-	/**
+	/** \brief
 	 * Removes a cmdline mapping
      *
 	 * \b Arguments:
@@ -437,7 +445,7 @@ public:
 	 */
 	static int cunmap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds a new pending op mapping
      *
 	 * \b Arguments:
@@ -447,7 +455,7 @@ public:
      * \b Returns: nothing
 	 */
 	static int omap(lua_State *L);
-	/**
+	/** \brief
 	 * Removes a new pending op mapping
      *
 	 * \b Arguments:
@@ -457,7 +465,7 @@ public:
 	 */
 	static int ounmap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds a new normal mapping
      *
 	 * \b Arguments:
@@ -468,7 +476,7 @@ public:
 	 */
 	static int nmap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Removes a normal mapping
      *
      *
@@ -480,7 +488,7 @@ public:
 	static int nunmap(lua_State *L);
 
 
-	/**
+	/** \brief
 	 * Adds a new not remappable global mapping
      *
 	 * \b Arguments:
@@ -491,7 +499,7 @@ public:
 	 */
 	static int noremap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds a new not remappable normal mapping
      *
 	 * \b Arguments:
@@ -502,7 +510,7 @@ public:
 	 */
 	static int nnoremap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds a new not remappable visual mapping
      *
 	 * \b Arguments:
@@ -513,7 +521,7 @@ public:
 	 */
 	static int vnoremap(lua_State *L);
 	
-	/**
+	/** \brief
 	 * Adds a new not remappable pending op mapping
      *
 	 * \b Arguments:
@@ -524,7 +532,7 @@ public:
 	 */
 	static int onoremap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds a new not remappable insert mapping
      *
 	 * \b Arguments:
@@ -535,7 +543,7 @@ public:
 	 */
 	static int inoremap(lua_State *L);
 
-	/**
+	/** \brief
 	 * Adds a new not remappable cmd line mapping
      *
 	 * \b Arguments:
@@ -546,7 +554,7 @@ public:
 	 */
 	static int cnoremap(lua_State *L);
 
-    /** Find matching pair (parenthesis, brackets, ...)
+    /** \brief Find matching pair (parenthesis, brackets, ...)
      *
      * If a matching pair is found, the cursor is moved to this new position.
      * The pairs that can be matched are described in the option 'matchpairs'
@@ -560,7 +568,7 @@ public:
      */
 	static int matchpair(lua_State *L);
 
-	/**
+	/** \brief
 	 * Returns the current view mode
      *
 	 * \b Arguments: nothing
@@ -572,7 +580,7 @@ public:
 	 */
 	static int mode(lua_State *L);
 	
-	/**
+	/** \brief
 	 * Create a new buffer/view for the given file
      *
 	 * \b Arguments:

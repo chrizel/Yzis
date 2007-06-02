@@ -27,6 +27,8 @@
 #include <ktexteditor/document.h>
 #include <ktexteditor/configpage.h>
 
+class KYZisSession;
+
 class KYZisEditor : public KTextEditor::Editor {
 	Q_OBJECT
 public:
@@ -52,6 +54,7 @@ private:
 	KYZisEditor (QObject *parent);
 
 	static KYZisEditor* me;
+	KYZisSession* session;
 
 	QList<KTextEditor::Document*> m_documents;
 };

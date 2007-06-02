@@ -21,6 +21,8 @@
 
 #include "kyziseditor.h"
 #include "kyzisdocument.h"
+#include "kyzissession.h"
+
 
 #include <debug.h>
 
@@ -33,7 +35,7 @@ KYZisEditor* KYZisEditor::me = 0;
 KYZisEditor::KYZisEditor(QObject* parent)
 	: KTextEditor::Editor(parent)
 {
-
+	session = new KYZisSession();
 }
 
 KYZisEditor::~KYZisEditor()

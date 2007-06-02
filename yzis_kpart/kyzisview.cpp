@@ -22,7 +22,7 @@
 #include "kyzisview.h"
 #include "kyzisdocument.h"
 
-KYZisView::KYZisView(KYZisDocument* doc, QWidget *parent)
+KYZisView::KYZisView(KYZisDocument* doc, QWidget* parent)
 	: KTextEditor::View(parent), m_doc(doc)
 {
 }

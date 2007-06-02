@@ -29,6 +29,8 @@
 #include <ktexteditor/range.h>
 #include <ktexteditor/cursor.h>
 
+class YZBuffer;
+
 class KYZisDocument : public KTextEditor::Document {
 Q_OBJECT
 public:
@@ -77,6 +79,8 @@ public:
 
 	virtual bool openFile() { return false; }
 	virtual bool saveFile() { return false; }
+
+	YZBuffer* buffer() const { return m_buffer; }
 signals:
 	void   viewCreated (KTextEditor::Document *document, KTextEditor::View *view);
 	void   documentNameChanged (KTextEditor::Document *document);
@@ -92,6 +96,7 @@ signals:
 
 private:
 	QList<KTextEditor::View*> m_views;
+	YZBuffer* m_buffer;
 };
 
 #endif

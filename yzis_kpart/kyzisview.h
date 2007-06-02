@@ -29,7 +29,7 @@ class KYZisView : public KTextEditor::View
 {
 Q_OBJECT
 public:
-	KYZisView(KYZisDocument* doc, QWidget *parent);
+	KYZisView(KYZisDocument* doc, QWidget* parent);
 	virtual ~KYZisView();
 	virtual KTextEditor::Document* document() const; 
 	virtual QString viewMode() const;

@@ -20,14 +20,16 @@
 #include "kyzisdocument.h"
 #include "kyzisview.h"
 
+#include <libyzis/buffer.h>
+
 KYZisDocument::KYZisDocument( QObject* /*parent*/ )
 {
-
+	m_buffer = new YZBuffer();
 }
 
 KYZisDocument::~KYZisDocument()
 {
-
+	delete m_buffer;
 }
 
 KTextEditor::Editor* KYZisDocument::editor()

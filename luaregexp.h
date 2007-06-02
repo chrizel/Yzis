@@ -24,7 +24,7 @@ extern "C" {
 #include <lua.h>
 }
 
-/** Regexp class for lua.
+/** \brief Regexp class for lua.
  *
  * Lua does not feature a builtin regexp support, so this class provides one.
  * The support is entirely based on Qt <a
@@ -48,10 +48,10 @@ class YZLuaRegexp {
 
 	public:
 
-		/** Register the regexp functions to lua */
+		/** \brief Register the regexp functions to lua */
 		static void registerLuaRegexp(lua_State *L);
 
-		/** Create a regexp (based on QRegexp)
+		/** \brief Create a regexp (based on QRegexp)
          *
 		 * \b Arguments: 
          * - string: the regexp expression
@@ -67,7 +67,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_create(lua_State *L);
 
-		/** Match a regexp with a string.
+		/** \brief Match a regexp with a string.
          *
 		 * \b Argument: 
          * - string: the string to match
@@ -83,7 +83,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_match(lua_State *L);
 
-		/** Match a regexp with a string, return index
+		/** \brief Match a regexp with a string, return index
          *
 		 * \b Arguments: 
          * - string: the string to match
@@ -100,7 +100,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_matchIndex(lua_State *L);
 
-		/** Return positions of the matches in the string.
+		/** \brief Return positions of the matches in the string.
          *
 		 * \b Arguments: 
          * - number: index of the match for which we want the position (0 is
@@ -121,7 +121,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_pos(lua_State *L);
 
-		/** Returns the number of captured in the regular expression itself.
+		/** \brief Returns the number of captured in the regular expression itself.
          *
          * \b Arguments: none
          *
@@ -135,7 +135,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_numCaptures(lua_State *L);
 
-		/** Returns the text captured by the regexp
+		/** \brief Returns the text captured by the regexp
          *
 		 * \b Arguments: 
          * - number: index of match (0 for the whole regexp)
@@ -165,7 +165,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_captured(lua_State *L);
 
-		/** Returns a string where the occurrences of Regexp have been
+		/** \brief Returns a string where the occurrences of Regexp have been
 		 * replaced by the provided string.
          *
 		 * \b Arguments: 
@@ -185,7 +185,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_replace(lua_State *L);
 
-		/** Return the pattern of the regexp as a string 
+		/** \brief Return the pattern of the regexp as a string 
          *
          * \b Arugments: nothing
          *
@@ -200,7 +200,7 @@ class YZLuaRegexp {
          */
 		static int Regexp_pattern(lua_State *L);
 
-		/** Set regexp greediness
+		/** \brief Set regexp greediness
          *
 		 * \b Arguments: 
          * - bool: true will choose minimum greediness, false will choose
@@ -220,7 +220,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_setMinimal(lua_State *L);
 
-		/** Set regexp case sensitiveness
+		/** \brief Set regexp case sensitiveness
          *
 		 * \b Arguments: 
          * - bool: true for case sensitive regexp, false for non case
@@ -240,7 +240,7 @@ class YZLuaRegexp {
 		 */
 		static int Regexp_setCaseSensitive(lua_State *L);
 
-		/** 
+		/** \brief 
 		  * Called by lua when the regexp is about to be deleted
 		 */
 		static int Regexp_userdata_finalize(lua_State *L);

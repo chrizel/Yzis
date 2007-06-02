@@ -15,3 +15,8 @@ installation:
     or
     Add your build directory to the variable $KDEDIRS and then run 
     kbuildsycoca4.
+4.) Start kwrite/kate
+5.) Choose "Kyzis" as you desired editor component:
+    Settings->Choose Editor in kwrite
+    Settings->Configure Kate->Application->General in kate
+6.) Restart kate/kwrite

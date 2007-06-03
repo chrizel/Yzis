@@ -25,6 +25,7 @@
 
 class KTEDocument;
 class KYZisView;
+class KYZisCommand;
 
 class KTEView : public KTextEditor::View
 {
@@ -70,6 +71,7 @@ signals:
 private:
 	KTEDocument* m_doc;
 	KYZisView* m_view;
+	KYZisCommand* m_command;
 };
 
 #endif

@@ -75,8 +75,8 @@ public:
 	virtual bool setMode( const QString &name );
 	virtual bool setHighlightingMode( const QString &name );
 
-	virtual bool openFile() { return false; }
-	virtual bool saveFile() { return false; }
+	virtual bool openFile();
+	virtual bool saveFile();
 
 	YZBuffer* buffer() const { return m_buffer; }
 signals:

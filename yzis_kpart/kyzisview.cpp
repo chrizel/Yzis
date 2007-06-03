@@ -29,6 +29,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QClipboard>
+#include <QTimer>
 
 #include <kdebug.h>
 #include <kapplication.h>
@@ -62,6 +63,8 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
 	initKeys();
 
 	marginLeft = 0;
+
+	QTimer::singleShot(0, static_cast<KYZisSession*>(YZSession::self()), SLOT(frontendGuiReady()) );
 }
 
 KYZisView::~KYZisView()
@@ -235,8 +238,7 @@ void KYZisView::mouseMoveEvent( QMouseEvent *e ) {
 }
 
 void KYZisView::focusInEvent ( QFocusEvent * ) {
-	// TODO: port this
-	//KYZisFactory::self()->setCurrentView( this );
+	KYZisSession::self()->setCurrentView( this );
 	updateCursor();
 }
 void KYZisView::focusOutEvent ( QFocusEvent * ) {
@@ -248,6 +250,7 @@ void KYZisView::resizeEvent(QResizeEvent* e) {
 	e->accept();
 	updateArea();
 }
+
 void KYZisView::paintEvent( QPaintEvent* pe ) {
 	QRect r = pe->rect();
 	int fx = r.left();
@@ -370,8 +373,8 @@ void KYZisView::drawMarginLeft( int min_y, int max_y, QPainter* p ) {
 	if ( marginLeft > 0 ) {
 		int x = GETX( marginLeft ) /*- GETX( spaceWidth )*//2;
 		p->save();
-		// TODO: 
-		//p->setPen( Settings::colorFG() );
+		// TODO:
+		p->setPen( Qt::red );
 		p->drawLine( x, min_y*fontMetrics().lineSpacing(), x, max_y*fontMetrics().lineSpacing() );
 		p->restore();
 	}

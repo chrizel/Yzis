@@ -44,6 +44,7 @@ KTEView::KTEView(KTEDocument* doc, QWidget* parent)
 	g->addWidget(m_command, 1, 0);
 	g->addWidget(status, 2, 0);
 
+
 	m_view->show();
 	status->show();
 	m_command->show();
@@ -67,7 +68,7 @@ QString KTEView::viewMode() const
 
 enum KTextEditor::View::EditMode KTEView::viewEditMode() const
 {
-    // TODO: implement
+	// TODO: implement
 	return KTextEditor::View::EditInsert;
 }
 

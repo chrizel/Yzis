@@ -28,11 +28,16 @@
 #include <libyzis/buffer.h>
 
 
-KYZisSession* KYZisSession::me = NULL;
-
 KYZisSession::KYZisSession()
 {
 }
+
+KYZisSession::~KYZisSession()
+{
+
+}
+
+KYZisSession* KYZisSession::me = NULL;
 
 void KYZisSession::createInstance()
 {
@@ -54,3 +59,59 @@ YZBuffer* KYZisSession::guiCreateBuffer()
 {
 	return new YZBuffer();
 }
+
+void KYZisSession::guiDeleteBuffer(YZBuffer*)
+{
+
+}
+
+void KYZisSession::guiSplitHorizontally(YZView*) 
+{
+
+}
+
+bool KYZisSession::guiQuit(int) 
+{ 
+	return false;
+}
+
+void KYZisSession::guiPopupMessage(const QString&)
+{
+
+}
+
+bool KYZisSession::guiPromptYesNo(const QString&, const QString&) 
+{
+	return false;
+}
+
+int KYZisSession::guiPromptYesNoCancel(const QString&, const QString&) 
+{
+	return 0;
+}
+
+void KYZisSession::guiSetFocusCommandLine() 
+{
+
+}
+
+void KYZisSession::guiSetFocusMainWindow() 
+{
+
+}
+
+void KYZisSession::guiSetClipboardText(const QString&, Clipboard::Mode) 
+{
+
+}
+
+void KYZisSession::guiDeleteView(YZView*) 
+{
+
+}
+
+void KYZisSession::guiChangeCurrentView(YZView*) 
+{
+
+}
+

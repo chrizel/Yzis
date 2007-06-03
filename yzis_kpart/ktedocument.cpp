@@ -56,11 +56,21 @@ const QList<KTextEditor::View*>& KTEDocument::views() const
 	return m_views;	
 }
 
+bool KTEDocument::openFile()
+{
+	m_buffer->load();
+	return true;
+}
+
+bool KTEDocument::saveFile()
+{
+	m_buffer->save();
+	return true;
+}
+
 const QString& KTEDocument::documentName () const
 {
-	// TODO: implement
-	static QString remove_me;
-	return remove_me;
+	return m_buffer->fileName();
 }
 
 QString KTEDocument::mimeType()
@@ -69,17 +79,15 @@ QString KTEDocument::mimeType()
 	return QString();
 }
 
-bool KTEDocument::setEncoding( const QString& /*encoding*/ )
+bool KTEDocument::setEncoding( const QString& encoding )
 {
-	// TODO: implement
-	return false;
+	m_buffer->setEncoding(encoding);
+	return true;
 }
 
 const QString& KTEDocument::encoding() const
 {
-	// TODO: implement
-	static QString remove_me;
-	return remove_me;
+	return m_buffer->encoding();
 }
 
 bool KTEDocument::documentReload()
@@ -90,20 +98,19 @@ bool KTEDocument::documentReload()
 
 bool KTEDocument::documentSave()
 {
-    // TODO: implement
-    return false;
+	return m_buffer->save();
 }
 
 bool KTEDocument::documentSaveAs()
 {
-    // TODO: implement
-    return false;
+	// TODO: implement
+	return false;
 }
 
 bool KTEDocument::startEditing()
 {
-    // TODO: implement
-    return false;
+	// TODO: implement
+	return false;
 }
 
 bool KTEDocument::endEditing()
@@ -114,8 +121,7 @@ bool KTEDocument::endEditing()
 
 QString KTEDocument::text() const
 {
-	// TODO: implement
-	return QString();
+	return m_buffer->getWholeText();
 }
 
 QString KTEDocument::text( const KTextEditor::Range& /*range*/, bool /*block*/ ) const
@@ -136,16 +142,14 @@ QStringList KTEDocument::textLines( const KTextEditor::Range& /*range*/, bool /*
 	return QStringList();
 }
 
-QString KTEDocument::line( int /*line*/ ) const
+QString KTEDocument::line( int line ) const
 {
-	// TODO: implement
-	return QString();
+	return m_buffer->textline( line );
 }
 
 int KTEDocument::lines() const
 {
-	// TODO: implement
-	return 0;
+	return m_buffer->lineCount();
 }
 
 KTextEditor::Cursor KTEDocument::documentEnd() const
@@ -160,28 +164,32 @@ int KTEDocument::totalCharacters() const
 	return 0;
 }
 
-int KTEDocument::lineLength( int /*line*/ ) const
+int KTEDocument::lineLength( int line ) const
 {
-	// TODO: implement
-	return 0;
+	return m_buffer->getLineLength(line);
 }
 
-bool KTEDocument::setText( const QString& /*text*/ )
+bool KTEDocument::setText( const QString& text )
 {
-	// TODO: implement
+	QString content = text;
+	m_buffer->loadText( &content );
 	return false;
 }
 
-bool KTEDocument::setText( const QStringList& /*text*/ )
+bool KTEDocument::setText( const QStringList& text )
 {
-	// TODO: implement
-	return false;
+        for( int i = 0; i < text.size(); ++i ) {
+                QString content = text.at(i);
+                m_buffer->loadText( &content );
+        }
+
+        return true;
 }
 
 bool KTEDocument::clear()
 {
-	// TODO: implement
-	return false;
+	m_buffer->clearText();
+	return true;
 }
 
 bool KTEDocument::insertText( const KTextEditor::Cursor& /*position*/, const QString& /*text*/, bool /*block*/ )
@@ -202,22 +210,25 @@ bool KTEDocument::removeText( const KTextEditor::Range& /*range*/, bool /*block*
 	return false;
 }
 
-bool KTEDocument::insertLine( int /*line*/, const QString& /*text*/ )
+bool KTEDocument::insertLine( int line, const QString& text )
 {
-	// TODO: implement
-	return false;
+        m_buffer->insertLine(text, line);
+	return true;
 }
 
-bool KTEDocument::insertLines( int /*line*/, const QStringList& /*text*/ )
+bool KTEDocument::insertLines( int line, const QStringList& text )
 {
-	// TODO: implement
-	return false;
+        for( int i = 0; i < text.size(); ++i ) {
+                m_buffer->insertLine(text.at(i), line);
+                ++line;
+        }
+	return true;
 }
 
-bool KTEDocument::removeLine( int /*line*/ )
+bool KTEDocument::removeLine( int line )
 {
-	// TODO: implement
-	return false;
+        m_buffer->deleteLine(line);
+	return true;
 }
 
 QString KTEDocument::mode() const

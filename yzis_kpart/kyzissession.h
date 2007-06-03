@@ -23,26 +23,30 @@
 
 #include <libyzis/session.h>
 
-class KYZisSession : public YZSession
+#include <QObject>
+
+
+class KYZisSession : public YZSession, public  QObject
 {
 public:
 	static void createInstance();
 
-	virtual void guiDeleteBuffer(YZBuffer*) {}
-	virtual void guiSplitHorizontally(YZView*) {}
-	virtual bool guiQuit(int) { return false;}
-	virtual void guiPopupMessage(const QString&) {}
-	virtual bool guiPromptYesNo(const QString&, const QString&) { return false; }
-	virtual int guiPromptYesNoCancel(const QString&, const QString&) { return 0;}
-	virtual void guiSetFocusCommandLine() {}
-	virtual void guiSetFocusMainWindow() {}
-	virtual void guiSetClipboardText(const QString&, Clipboard::Mode) {}
+	virtual void guiDeleteBuffer(YZBuffer*);
+	virtual void guiSplitHorizontally(YZView*);
+	virtual bool guiQuit(int);
+	virtual void guiPopupMessage(const QString&);
+	virtual bool guiPromptYesNo(const QString&, const QString&);
+	virtual int guiPromptYesNoCancel(const QString&, const QString&);
+	virtual void guiSetFocusCommandLine();
+	virtual void guiSetFocusMainWindow();
+	virtual void guiSetClipboardText(const QString&, Clipboard::Mode);
 	virtual YZView* guiCreateView(YZBuffer*);
-	virtual void guiDeleteView(YZView*) {}
+	virtual void guiDeleteView(YZView*);
 	virtual YZBuffer* guiCreateBuffer();
-	virtual void guiChangeCurrentView(YZView*) {}
+	virtual void guiChangeCurrentView(YZView*);
 
 private:
+	virtual ~KYZisSession();
 	KYZisSession();
 	static KYZisSession* me;
 };

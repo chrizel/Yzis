@@ -16,8 +16,8 @@ set( part_SOURCES
 	kteview.cpp
 	kyzissession.cpp
 	kyzisview.cpp
-	commandwidget.cpp
-	cursor.cpp
+	kyziscommandwidget.cpp
+	kyziscursor.cpp
 	   	)
 
 kde4_automoc( ${part_SOURCES} )

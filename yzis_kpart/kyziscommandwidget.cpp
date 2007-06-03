@@ -18,7 +18,7 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "commandwidget.h"
+#include "kyziscommandwidget.h"
 #include "kyzisview.h"
 #include "kyzissession.h"
 
@@ -74,4 +74,4 @@ void KYZisCommand::focusOutEvent (QFocusEvent *e) {
 	QWidget::focusOutEvent(e);
 }
 
-#include "commandwidget.moc"
+#include "kyziscommandwidget.moc"

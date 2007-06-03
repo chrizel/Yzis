@@ -1,7 +1,6 @@
-/*  This file is part of the Yzis libraries
+/* This file is part of the Yzis libraries
  *  Copyright (C) 2007 Lothar Braun <lothar@lobraun.de>
- *  Copyright (C) 2003-2005 Mickael Marchand <mikmak@yzis.org>,
- *  Copyright (C) 2003-2004 Lucijan Busch <lucijan@kde.org>
+ *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -19,38 +18,30 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "kyzissession.h"
-#include "kyzisview.h"
+#ifndef _KYZIS_COMMAND_H_
+#define _KYZIS_COMMAND_H_
 
-#include <kdebug.h>
+#include <klineedit.h>
 
-#include <libyzis/debug.h>
-#include <libyzis/buffer.h>
+class KYZisView;
 
+/**
+ * KYzis command line
+ */
+class KYZisCommand : public KLineEdit {
+	Q_OBJECT
 
-KYZisSession* KYZisSession::me = NULL;
+	public :
+		KYZisCommand(KYZisView* view, QWidget* parent = 0);
+		virtual ~KYZisCommand();
 
-KYZisSession::KYZisSession()
-{
-}
+	protected:
+		void keyPressEvent (QKeyEvent *);
+		virtual void focusInEvent (QFocusEvent *);
+		virtual void focusOutEvent (QFocusEvent *);
 
-void KYZisSession::createInstance()
-{
-	if (!me) {
-		me = new KYZisSession();
-		setInstance(me);
-	}
-}
+	private :
+		KYZisView* m_view;
+};
 
-YZView* KYZisSession::guiCreateView(YZBuffer* buffer)
-{
-	yzDebug() << "doCreateView( " << buffer->toString() << ")" << endl;
-	KYZisView* view = new KYZisView(buffer, 0);
-	YZASSERT_MSG(view, "KYZisSession::createView : failed creating a new KYZisView");
-	return view;
-}
-
-YZBuffer* KYZisSession::guiCreateBuffer()
-{
-	return new YZBuffer();
-}
+#endif

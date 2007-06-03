@@ -1,7 +1,6 @@
-/*  This file is part of the Yzis libraries
+/* This file is part of the Yzis libraries
  *  Copyright (C) 2007 Lothar Braun <lothar@lobraun.de>
- *  Copyright (C) 2003-2005 Mickael Marchand <mikmak@yzis.org>,
- *  Copyright (C) 2003-2004 Lucijan Busch <lucijan@kde.org>
+ *  Copyright (C) 2004-2006 Loic Pauleve <panard@inzenet.org>
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -19,38 +18,36 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "kyzissession.h"
-#include "kyzisview.h"
+#ifndef _KYZIS_CURSOR_H_
+#define _KYZIS_CURSOR_H_
 
-#include <kdebug.h>
+#include <QPixmap>
+#include <QWidget>
 
-#include <libyzis/debug.h>
-#include <libyzis/buffer.h>
+class KYZisView;
 
+class KYZisCursor : public QWidget {
+Q_OBJECT
+public :
+	enum shape {
+		SQUARE,
+		VBAR,
+		HBAR,
+		RECT,
+	};
 
-KYZisSession* KYZisSession::me = NULL;
+	KYZisCursor( KYZisView* parent, shape type );
+	virtual ~KYZisCursor();
 
-KYZisSession::KYZisSession()
-{
-}
+	void setCursorType( shape type );
+	shape type() const;
 
-void KYZisSession::createInstance()
-{
-	if (!me) {
-		me = new KYZisSession();
-		setInstance(me);
-	}
-}
+protected :
+	virtual void paintEvent( QPaintEvent* event );
 
-YZView* KYZisSession::guiCreateView(YZBuffer* buffer)
-{
-	yzDebug() << "doCreateView( " << buffer->toString() << ")" << endl;
-	KYZisView* view = new KYZisView(buffer, 0);
-	YZASSERT_MSG(view, "KYZisSession::createView : failed creating a new KYZisView");
-	return view;
-}
+private :
+	shape mCursorType;
+};
 
-YZBuffer* KYZisSession::guiCreateBuffer()
-{
-	return new YZBuffer();
-}
+#endif
+

@@ -38,20 +38,20 @@ public:
 	KYZisView(YZBuffer*, QWidget*);	
 	~KYZisView();
 
-	virtual void Scroll(int, int) {}
-	virtual QString guiGetCommandLineText() const { return QString(); }
-	virtual void guiSetCommandLineText(const QString&) {}
-	virtual void guiDisplayInfo(const QString&) {}
-	virtual void guiSyncViewInfo() {}
-	virtual bool guiPopupFileSaveAs() { return false; }
-	virtual void guiFilenameChanged() {}
-	virtual void guiHighlightingChanged() {}
-	virtual void guiNotifyContentChanged(const YZSelection&) {}
-	virtual void guiPreparePaintEvent(int, int) {}
-	virtual void guiEndPaintEvent() {}
-	virtual void guiDrawCell(int, int, const YZDrawCell&, void*) {}
-	virtual void guiDrawClearToEOL(int, int, const QChar&) {}
-	virtual void guiDrawSetLineNumber(int, int, int) {}
+	virtual void Scroll(int, int);
+	virtual QString guiGetCommandLineText() const;
+	virtual void guiSetCommandLineText(const QString&);
+	virtual void guiDisplayInfo(const QString&);
+	virtual void guiSyncViewInfo();
+	virtual bool guiPopupFileSaveAs();
+	virtual void guiFilenameChanged();
+	virtual void guiHighlightingChanged();
+	virtual void guiNotifyContentChanged(const YZSelection&);
+	virtual void guiPreparePaintEvent(int, int);
+	virtual void guiEndPaintEvent();
+	virtual void guiDrawCell(int, int, const YZDrawCell&, void*);
+	virtual void guiDrawClearToEOL(int, int, const QChar&);
+	virtual void guiDrawSetLineNumber(int, int, int);
 
 	//erase all text, and set new text
 	void setText (const QString& );

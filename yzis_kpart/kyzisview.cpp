@@ -544,3 +544,75 @@ void KYZisView::imEndEvent( QIMEvent *e ) {
 	e->accept();
 }*/
 
+
+void KYZisView::Scroll(int, int)
+{
+
+}
+
+QString KYZisView::guiGetCommandLineText() const 
+{
+	return QString();
+}
+
+void KYZisView::guiSetCommandLineText(const QString&)
+{
+
+}
+
+void KYZisView::guiDisplayInfo(const QString& info) 
+{
+		
+}
+
+void KYZisView::guiSyncViewInfo() 
+{
+
+}
+
+bool KYZisView::guiPopupFileSaveAs() 
+{
+       return false;
+}
+
+void KYZisView::guiFilenameChanged()
+{
+
+}
+
+void KYZisView::guiHighlightingChanged()
+{
+
+}
+
+void KYZisView::guiNotifyContentChanged(const YZSelection&)
+{
+
+}
+
+void KYZisView::guiPreparePaintEvent(int, int)
+{
+
+}
+
+void KYZisView::guiEndPaintEvent()
+{
+
+}
+
+void KYZisView::guiDrawCell(int, int, const YZDrawCell&, void*)
+{
+
+}
+
+void KYZisView::guiDrawClearToEOL(int, int, const QChar&)
+{
+
+}
+
+void KYZisView::guiDrawSetLineNumber(int, int, int)
+{
+
+}
+
+

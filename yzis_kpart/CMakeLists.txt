@@ -18,6 +18,7 @@ set( part_SOURCES
 	kyzisview.cpp
 	kyziscommandwidget.cpp
 	kyziscursor.cpp
+	kyziseditor.cpp
 	   	)
 
 kde4_automoc( ${part_SOURCES} )

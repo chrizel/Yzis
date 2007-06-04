@@ -20,13 +20,14 @@
  **/
 
 #include "kyziscursor.h"
+#include "kyziseditor.h"
 #include "kyzisview.h"
 
 #include <libyzis/drawbuffer.h>
 
 #include <QPainter>
 
-KYZisCursor::KYZisCursor( KYZisView* parent, shape type )
+KYZisCursor::KYZisCursor( KYZisEditor* parent, shape type )
 	: QWidget( parent ){
 	move( 0, 0 );
 	setCursorType( type );
@@ -53,7 +54,7 @@ void KYZisCursor::paintEvent( QPaintEvent* ) {
 	QPainter p( this );
 
 #define GET_cell \
-	KYZisView* yzview = static_cast<KYZisView*>( parentWidget() ); \
+	KYZisView* yzview = static_cast<KYZisView*>( parentWidget()->parentWidget() ); \
 	YZDrawCell cell = yzview->getCursorDrawCell( )
 #define SET_pen \
 	p.setPen( cell.bg.isValid() ? QColor( cell.bg.rgb() ) : parentWidget()->palette().window().color() );

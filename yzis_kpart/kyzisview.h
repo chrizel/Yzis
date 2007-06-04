@@ -27,10 +27,11 @@
 
 #include <QWidget>
 
+class KYZisEditor;
+class KYZisCommand;
 class QSignalMapper;
+class QPainter;
 class KActionCollection;
-class YZDrawCell;
-
 
 class KYZisView : public YZView, public QWidget
 {
@@ -52,109 +53,29 @@ public:
 	virtual void guiDrawCell(int, int, const YZDrawCell&, void*);
 	virtual void guiDrawClearToEOL(int, int, const QChar&);
 	virtual void guiDrawSetLineNumber(int, int, int);
+	virtual void guiDrawSetMaxLineNumber(int);
 
-	//erase all text, and set new text
-	void setText (const QString& );
-
-	//append text
-	void append ( const QString& );
-
-	//move cursor to position column, line relative to viewport
-	void setCursor(int c,int l);
-	void scrollUp( int );
-	void scrollDown( int );
-
-	KYZisCursor::shape cursorShape();
-	void updateCursor();
-	// update text area
-	void updateArea( );
-
-	void setPalette( const QColor& fg, const QColor& bg, double opacity );
 	const QString& convertKey( int key );
-
-	unsigned int spaceWidth;
-
+	bool containsKey( int key ) { return keys.contains( key ); }
+	QString getKey( int key ) { return keys[ key ]; }
+	YZDrawCell getCursorDrawCell( );
 	void registerModifierKeys( const QString& keys );
 	void unregisterModifierKeys( const QString& keys );
-
-	QPoint cursorCoordinates( );
-	YZDrawCell getCursorDrawCell( );
-
-	QVariant inputMethodQuery ( Qt::InputMethodQuery query );
-
-public slots :
-	void sendMultipleKey( const QString& keys );
-
-
-protected:
 	void paintEvent( const YZSelection& drawMap );
-	void guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
-	void guiDrawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p );
-	void guiDrawSetMaxLineNumber( int max );
-	void guiDrawSetLineNumber( int y, int n, int h, QPainter* p );
 
-	void drawMarginLeft( int min_y, int max_y, QPainter* p );
-
-
-	//intercept tabs
-	virtual bool event(QEvent*);
-
-	void resizeEvent(QResizeEvent*);
-	void paintEvent(QPaintEvent*);
-
-	//normal keypressEvents processing
-	void keyPressEvent (QKeyEvent *);
-
-	//mouse events
-	void mousePressEvent (QMouseEvent *);
-
-	//mouse move event
-	void mouseMoveEvent( QMouseEvent *);
-
-	// mousebutton released
-//              void mouseReleaseEvent( QMouseEvent *);
-	//insert text at line
-	void insetTextAt(const QString&, int line);
-
-	//insert a char at idx on line ....
-	void insertCharAt(QChar,int);
-
-	//replace a char at idx on line ....
-	void replaceCharAt( QChar,int );
-
-	//number of lines
-	long lines();
-
-	virtual void focusInEvent( QFocusEvent * );
-	virtual void focusOutEvent( QFocusEvent * );
-
-	// for InputMethod
-	void inputMethodEvent ( QInputMethodEvent * );
-
-	bool fakeLine;
-
-private :
-	void initKeys();
-	KActionCollection* actionCollection;
-	QSignalMapper* signalMapper;
+private:
 	QString keysToShortcut( const QString& keys );
 
-	KYZisCursor* mCursor;
+	KYZisEditor* m_editor;
+	KYZisCommand* m_command;
 
-	QFontMetrics *standard;
-	QFontMetrics *standardBold;
-	QFontMetrics *standardBoldItalic;
-
-	bool isFontFixed;
-
-	bool m_insidePaintEvent;
-	/**
-	 * size of the left margin (used to draw line number)
-	 */
-	int marginLeft;
+	void initKeys();
 
 	// last line number
 	QMap<int,QString> keys;
+	KActionCollection* actionCollection;
+	QSignalMapper* signalMapper;
+	QPainter* m_painter;
 };
 
 #endif

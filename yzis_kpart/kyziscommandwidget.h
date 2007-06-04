@@ -32,7 +32,7 @@ class KYZisCommand : public KLineEdit {
 	Q_OBJECT
 
 	public :
-		KYZisCommand(KYZisView* view, QWidget* parent = 0);
+		KYZisCommand(KYZisView* view);
 		virtual ~KYZisCommand();
 
 	protected:

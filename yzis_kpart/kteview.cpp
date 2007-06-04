@@ -23,7 +23,6 @@
 #include "ktedocument.h"
 #include "kyzisview.h"
 #include "kyzissession.h"
-#include "kyziscommandwidget.h"
 
 #include <libyzis/buffer.h>
 
@@ -36,23 +35,20 @@ KTEView::KTEView(KTEDocument* doc, QWidget* parent)
 	: KTextEditor::View(parent), m_doc(doc)
 {
 	m_view = static_cast<KYZisView*>(KYZisSession::self()->createView(doc->buffer()));
+	m_view->setParent(this);
 	KStatusBar* status = new KStatusBar(this);
-	m_command = new KYZisCommand(m_view, this);
 
 	QGridLayout* g = new QGridLayout(this);
 	g->addWidget(m_view, 0, 0);
-	g->addWidget(m_command, 1, 0);
-	g->addWidget(status, 2, 0);
-
+	g->addWidget(status, 1, 0);
 
 	m_view->show();
 	status->show();
-	m_command->show();
 }
 
 KTEView::~KTEView()
 {
-
+	delete m_view;
 }
 
 KTextEditor::Document* KTEView::document() const

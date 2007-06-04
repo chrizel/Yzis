@@ -30,8 +30,8 @@
 #include <QKeyEvent>
 
 
-KYZisCommand::KYZisCommand(KYZisView *view, QWidget* parent)
-	: KLineEdit( parent ) 
+KYZisCommand::KYZisCommand(KYZisView *view)
+	: KLineEdit( view ) 
 {
 	m_view = view;
 }

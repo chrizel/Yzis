@@ -21,50 +21,35 @@
 
 #include "kyzisview.h"
 #include "kyzissession.h"
+#include "kyziseditor.h"
+#include "kyziscommandwidget.h"
 
 #include <QSignalMapper>
-#include <QAction>
-#include <QEvent>
-#include <QKeyEvent>
-#include <QMouseEvent>
+#include <QGridLayout>
 #include <QPainter>
-#include <QClipboard>
-#include <QTimer>
 
-#include <kdebug.h>
-#include <kapplication.h>
 #include <kactioncollection.h>
-#include <kshortcut.h>
 #include <kaction.h>
 
+#include <libyzis/view.h>
+#include <libyzis/buffer.h>
 #include <libyzis/debug.h>
 
-// TODO: do we still have something like isFontFixed?
-#define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
-
 KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
-	: YZView(buffer, KYZisSession::self(),0,0), QWidget(parent)
+	: YZView(buffer, KYZisSession::self(), 0, 0), QWidget(parent),
+	  actionCollection(0), signalMapper(0), m_painter(0)
 {
-	setFocusPolicy( Qt::StrongFocus );
+	m_editor = new KYZisEditor( this );
+	m_editor->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
+	m_editor->setPalette( Qt::red, Qt::black, 0 );
 
-	setAutoFillBackground( false );
-	setAttribute ( Qt::WA_PaintOutsidePaintEvent ); /* XXX */
+	m_command = new KYZisCommand( this );
 
-	/* show an edit cursor */
-	QWidget::setCursor( Qt::IBeamCursor );
-
-	isFontFixed = fontInfo().fixedPitch();
-
-	// for Input Method
-	setAttribute( Qt::WA_InputMethodEnabled, true );
-
-	mCursor = new KYZisCursor( this, KYZisCursor::SQUARE );
+	QGridLayout* g = new QGridLayout( this );
+	g->addWidget( m_editor, 0, 0 );
+       	g->addWidget( m_command, 1, 0 );	
 
 	initKeys();
-
-	marginLeft = 0;
-
-	QTimer::singleShot(0, static_cast<KYZisSession*>(YZSession::self()), SLOT(frontendGuiReady()) );
 }
 
 KYZisView::~KYZisView()
@@ -75,309 +60,109 @@ KYZisView::~KYZisView()
 	delete actionCollection;
 }
 
-void KYZisView::setPalette( const QColor& fg, const QColor& bg, double opacity ) {
-	QPalette p = palette();
-	p.setColor( QPalette::WindowText, fg );
-	p.setColor( QPalette::Window, bg );
-	QWidget::setPalette( p );
-	setWindowOpacity( opacity );
+void KYZisView::Scroll(int, int)
+{
+
 }
 
-KYZisCursor::shape KYZisView::cursorShape() {
-	KYZisCursor::shape s;
-	if ( !isFontFixed ) {
-		s = KYZisCursor::VBAR;
-	} else {
-		QString shape;
-		YZMode::ModeType m = modePool()->current()->type();
-		switch( m ) {
-			case YZMode::ModeInsert :
-				shape = getLocalStringOption("cursorinsert");
-				break;
-			case YZMode::ModeReplace :
-				shape = getLocalStringOption("cursorreplace");
-				break;
-			case YZMode::ModeCompletion :
-				shape = "keep";
-				break;
-			default :
-				shape = getLocalStringOption("cursor");
-				break;
-		}
-		if ( shape == "hbar" ) {
-			s = KYZisCursor::HBAR;
-		} else if ( shape == "vbar" ) {
-			s = KYZisCursor::VBAR;
-		} else if ( shape == "keep" ) {
-			s = mCursor->type();
-		} else {
-			if ( hasFocus() ) 
-				s = KYZisCursor::SQUARE;
-			else
-				s = KYZisCursor::RECT;
-		}
-	}
-	return s;
-}
-void KYZisView::updateCursor() {
-	mCursor->setCursorType( cursorShape() );
+QString KYZisView::guiGetCommandLineText() const 
+{
+	return m_command->text();
 }
 
-
-void KYZisView::updateArea( ) {
-
-	isFontFixed = fontInfo().fixedPitch();
-	//TODO: What about the next lines???
-	//setFixedFont( isFontFixed );
-	//spaceWidth = getSpaceWidth();
-	
-	mCursor->resize( fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
-	updateCursor();
-
-	int lines = height() / fontMetrics().lineSpacing();
-	// if font is fixed, calculate the number of columns fontMetrics().maxWidth(), else give the width of the widget
-	int columns = width() / GETX( 1 ) - marginLeft;
-	//erase();
-	setVisibleArea( columns, lines );
+void KYZisView::guiSetCommandLineText( const QString& text )
+{
+	m_command->setText( text );
 }
 
-/**
- * QWidget event handling
- */
-bool KYZisView::event(QEvent *e) {
-	if ( e->type() == QEvent::KeyPress ) {
-		QKeyEvent *ke = (QKeyEvent *)e;
-		if ( ke->key() == Qt::Key_Tab ) {
-			keyPressEvent(ke);
-			return true;
-		}
-	}
-	return QWidget::event(e);
-}
-
-void KYZisView::keyPressEvent ( QKeyEvent * e ) {
-	Qt::KeyboardModifiers st = e->modifiers();
-	QString modifiers;
-	if ( st & Qt::ShiftModifier )
-		modifiers = "<SHIFT>";
-	if ( st & Qt::AltModifier )
-		modifiers += "<ALT>";
-	if ( st & Qt::ControlModifier )
-		modifiers += "<CTRL>";
-
-	int lmode = modePool()->currentType();
-	QString k;
-	if ( keys.contains( e->key() ) ) //to handle some special keys
-		k = keys[ e->key() ];
-	else
-		k = e->text();
-
-	KYZisSession::self()->sendKey(this, k, modifiers);
-	if ( lmode == YZMode::ModeInsert || lmode == YZMode::ModeReplace ) {
-		//KYZTextEditorIface *d = static_cast<KYZTextEditorIface*>(document());
-		//emit d->emitChars(mCursor->y(), mCursor->x(),k);
-	}
-	e->accept();
-}
-
-void KYZisView::mousePressEvent ( QMouseEvent * e ) {
-	/*
-	FIXME: How to handle mouse events commented out now so kyzis will compile
-	
-	if ( mParent->myBuffer()->introShown() ) {
-		mParent->myBuffer()->clearIntro();
-		mParent->gotodxdy( 0, 0 );
-		return;
-	}
-	*/
-
-	// leave visual mode if the user clicks somewhere
-	// TODO: this should only be done if the left button is used. Right button
-	// should extend visual selection, like in vim.
-	if ( modePool()->current()->isSelMode() )
-		modePool()->pop();
-	
-	if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
-		if (modePool()->currentType() != YZMode::ModeEx) {
-			gotodxdy( e->x() / ( isFontFixed ? fontMetrics().maxWidth() : 1 ) + getDrawCurrentLeft( ) - marginLeft,
-						e->y() / fontMetrics().lineSpacing() + getDrawCurrentTop( ) );
-			updateStickyCol();
-		}
-	} else if ( e->button() == Qt::MidButton ) {
-		QString text = KApplication::clipboard()->text( QClipboard::Selection );
-		if ( text.isNull() )
-			text = QApplication::clipboard()->text( QClipboard::Clipboard );
-		if ( ! text.isNull() ) {
-			if ( modePool()->current()->isEditMode() ) {
-				QChar reg = '\"';
-				KYZisSession::self()->setRegister( reg, text.split( "\n" ) );
-				pasteContent( reg, false );
-				moveRight();
-			}
-		}
-	}
-}
-
-void KYZisView::mouseMoveEvent( QMouseEvent *e ) {
-	if (e->button() == Qt::LeftButton) {
-		if (modePool()->currentType() == YZMode::ModeCommand) {
-			// start visual mode when user makes a selection with the left mouse button
-			modePool()->push( YZMode::ModeVisual );
-		} else if (modePool()->current()->isSelMode() ) {
-			// already in visual mode - move cursor if the mouse pointer has moved over a new char
-			int newX = e->x() / ( isFontFixed ? fontMetrics().maxWidth() : 1 )
-				+ getDrawCurrentLeft() - marginLeft;
-			int newY = e->y() / fontMetrics().lineSpacing()
-				+ getDrawCurrentTop();
-
-			if (newX != getCursor().x() || newY != getCursor().y()) {
-				gotodxdy( newX, newY );
-			}
-		}
-	}
-}
-
-void KYZisView::focusInEvent ( QFocusEvent * ) {
-	KYZisSession::self()->setCurrentView( this );
-	updateCursor();
-}
-void KYZisView::focusOutEvent ( QFocusEvent * ) {
-	updateCursor();
-}
-
-
-void KYZisView::resizeEvent(QResizeEvent* e) {
-	e->accept();
-	updateArea();
-}
-
-void KYZisView::paintEvent( QPaintEvent* pe ) {
-	QRect r = pe->rect();
-	int fx = r.left();
-	int fy = r.top();
-	int tx = r.right();
-	int ty = r.bottom();
-	yzDebug() << "KYZisView < QPaintEvent( " << fx << "," << fy << " -> " << tx << "," << ty << " )" << endl;
-	m_insidePaintEvent = true;
-	if ( isFontFixed ) {
-		int linespace = fontMetrics().lineSpacing();
-		int maxwidth = fontMetrics().maxWidth();
-		fx /= maxwidth;
-		fy /= linespace;
-		int old_tx = tx, old_ty = ty;
-		tx /= maxwidth;
-		ty /= linespace;
-		if ( tx < old_tx ) ++tx;
-		if ( ty < old_ty ) ++ty;
-	}
-	fx = qMax( marginLeft, fx ) - marginLeft;
-	tx = qMax( marginLeft, tx ) - marginLeft;
-	fy += getDrawCurrentTop();
-	ty += getDrawCurrentTop();
-	if ( fx == (int)getDrawCurrentLeft() && tx - fx == (int)(getColumnsVisible() + 1) ) {
-		sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, ty ) );
-	} else {
-		setPaintAutoCommit( false );
-		for( ; fy <= ty; ++fy ) {
-			sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, fy ) );
-		}
-		commitPaintEvent();
-	}
-	m_insidePaintEvent = false;
-	yzDebug() << "KYZisView > QPaintEvent" << endl;
-}
-void KYZisView::paintEvent( const YZSelection& drawMap ) {
-	yzDebug() << "KYZisView::paintEvent" << endl;
-	YZSelectionMap m = drawMap.map();
-	for( int i = 0; i < m.size(); ++i ) {
-		int left = GETX( qMin( m[i].fromPos().x(), m[i].toPos().x() ) );
-		int right = GETX( qMax( m[i].fromPos().x(), m[i].toPos().x() ) );
-		int top = qMin( m[i].fromPos().y(), m[i].toPos().y() ) * fontMetrics().lineSpacing();
-		int bottom = qMax( m[i].fromPos().y(), m[i].toPos().y() ) * fontMetrics().lineSpacing();
+void KYZisView::guiDisplayInfo(const QString& info) 
+{
 		
-		update( QRect(left, top, right - left, bottom - top) );
-	}
-	yzDebug() << "KYZisView::paintEvent ends" << endl;
 }
 
-void KYZisView::setCursor( int c, int l ) {
-//	yzDebug() << "setCursor" << endl;
-	c = c - getDrawCurrentLeft() + marginLeft;
-	l -= getDrawCurrentTop();
-	unsigned int x = GETX( c );
-	if ( getLocalBooleanOption( "rightleft" ) ) {
-		x = width() - x - mCursor->width();
-	}
-	mCursor->move( x, l * fontMetrics().lineSpacing() );
+void KYZisView::guiSyncViewInfo() 
+{
+//      yzDebug() << "KYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
+	m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
+//	status->changeItem( getLineStatusString(), 99 );
 
-	// need for InputMethod (OverTheSpot)
-//	setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
+	QString fileInfo;
+	fileInfo +=( myBuffer()->fileIsNew() )?"N":" ";
+	fileInfo +=( myBuffer()->fileIsModified() )?"M":" ";
+
+//	status->changeItem(fileInfo, 90);
+//	if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->draggingSlider())
+//		mVScroll->setValue( getCurrentTop() );
+//	emit cursorPositionChanged();
+	modeChanged();
 }
 
-QPoint KYZisView::cursorCoordinates( ) {
-	return QPoint( mCursor->x(), mCursor->y() );
+bool KYZisView::guiPopupFileSaveAs() 
+{
+       return false;
 }
 
-void KYZisView::scrollUp( int n ) {
-	mCursor->hide();
-	scroll( 0, n * fontMetrics().lineSpacing() );
-	mCursor->show();
-}
-void KYZisView::scrollDown( int n ) {
-	scrollUp( -n );
+void KYZisView::guiFilenameChanged()
+{
+
 }
 
-void KYZisView::guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
-	p->save();
-	if ( cell.fg.isValid() )
-		p->setPen( cell.fg.rgb() );
-	if ( !fakeLine )
-		x += marginLeft;
-	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
-	p->eraseRect( r );
-	p->drawText( r, cell.c );
-	p->restore();
+void KYZisView::guiHighlightingChanged()
+{
+
 }
 
-void KYZisView::guiDrawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
-	QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
-	p->eraseRect( r );
+void KYZisView::guiNotifyContentChanged(const YZSelection&)
+{
+
 }
 
-void KYZisView::guiDrawSetMaxLineNumber( int max ) {
-	int my_marginLeft = 2 + QString::number( max ).length();
-	if ( my_marginLeft != marginLeft ) {
-		marginLeft = my_marginLeft;
-		updateArea();
-	}
-}
-void KYZisView::guiDrawSetLineNumber( int y, int n, int h, QPainter* p ) {
-	fakeLine = n <= 0;
-
-	QString num;
-	if ( !fakeLine && h == 0 )
-		num = QString::number( n );
-	num = num.rightJustified( marginLeft - 1, ' ' );
-
-	p->save();
-	p->setPen( Qt::yellow );
-
-	QRect r( 0, y*fontMetrics().lineSpacing(), GETX(marginLeft /*- spaceWidth*/), fontMetrics().lineSpacing() );
-	p->eraseRect( r );
-	p->drawText( r, num );
-
-	p->restore();
+void KYZisView::guiPreparePaintEvent(int min_y, int max_y)
+{
+	yzDebug() << "KYZisView::guiPreparePaintEvent" << endl;
+	m_painter = new QPainter( m_editor );
+	m_drawBuffer.setCallbackArgument( m_painter );
+	m_editor->drawMarginLeft( min_y, max_y, m_painter );
 }
 
-void KYZisView::drawMarginLeft( int min_y, int max_y, QPainter* p ) {
-	if ( marginLeft > 0 ) {
-		int x = GETX( marginLeft ) /*- GETX( spaceWidth )*//2;
-		p->save();
-		// TODO:
-		p->setPen( Qt::red );
-		p->drawLine( x, min_y*fontMetrics().lineSpacing(), x, max_y*fontMetrics().lineSpacing() );
-		p->restore();
-	}
+void KYZisView::paintEvent( const YZSelection& drawMap ) {
+	kDebug() << "KYZisView::paintEvent\n";
+        if ( m_editor->insidePaintEvent( ) ) {
+                YZView::paintEvent( drawMap );
+        } else {
+                m_editor->paintEvent( drawMap );
+        }
+	kDebug() << "End KYZisView::paint envent\n";
+}
+
+void KYZisView::guiEndPaintEvent()
+{
+	delete m_painter;
+	yzDebug() << "KYZisView::endPaintEvent" << endl;
+}
+
+void KYZisView::guiDrawCell(int x, int y, const YZDrawCell& cell, void* arg)
+{
+	m_editor->guiDrawCell( x, y, cell, (QPainter*)arg );
+}
+
+void KYZisView::guiDrawClearToEOL(int x, int y, const QChar& clearChar)
+{
+	m_editor->guiDrawClearToEOL( x, y, clearChar, m_painter );
+}
+
+void KYZisView::guiDrawSetLineNumber(int, int, int)
+{
+
+}
+
+void KYZisView::guiDrawSetMaxLineNumber( int max )
+{
+	m_editor->guiDrawSetMaxLineNumber( max );
+}
+
+const QString& KYZisView::convertKey( int key ) {
+	return keys[ key ];
 }
 
 void KYZisView::initKeys() {
@@ -451,15 +236,12 @@ void KYZisView::initKeys() {
 
 	actionCollection = new KActionCollection( this );
 	signalMapper = new QSignalMapper( this );
-	connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMultipleKey( const QString& ) ) );
+	connect( signalMapper, SIGNAL( mapped( const QString& ) ), m_editor, SLOT( sendMultipleKey( const QString& ) ) );
 }
 
-QString KYZisView::keysToShortcut( const QString& keys ) {
-	QString ret = keys;
-	ret = ret.replace( "<CTRL>", "CTRL+" );
-	ret = ret.replace( "<SHIFT>", "SHIFT+" );
-	ret = ret.replace( "<ALT>", "ALT+" );
-	return ret;
+YZDrawCell KYZisView::getCursorDrawCell( )
+{
+	return m_drawBuffer.at( getCursor() - YZCursor(getDrawCurrentLeft(), getDrawCurrentTop( )) );
 }
 
 void KYZisView::registerModifierKeys( const QString& keys ) {
@@ -489,130 +271,11 @@ void KYZisView::unregisterModifierKeys( const QString& keys ) {
 	delete q;
 }
 
-//void KYZisView::sendMultipleKey( const QString& keys ) {
-//	sendMultipleKey( keys );
-//}
-
-const QString& KYZisView::convertKey( int key ) {
-	return keys[ key ];
+QString KYZisView::keysToShortcut( const QString& keys ) {
+	QString ret = keys;
+	ret = ret.replace( "<CTRL>", "CTRL+" );
+	ret = ret.replace( "<SHIFT>", "SHIFT+" );
+	ret = ret.replace( "<ALT>", "ALT+" );
+	return ret;
 }
-
-void KYZisView::inputMethodEvent ( QInputMethodEvent * ) {
-	//TODO
-}
-
-QVariant KYZisView::inputMethodQuery ( Qt::InputMethodQuery query ) {
-	return QWidget::inputMethodQuery( query );
-}
-
-YZDrawCell KYZisView::getCursorDrawCell( )
-{
-	return m_drawBuffer.at( getCursor() - YZCursor(getDrawCurrentLeft(), getDrawCurrentTop( )) );
-}
-
-// for InputMethod (OnTheSpot)
-/*
-void KYZisView::imStartEvent( QIMEvent *e )
-{
-	if ( mParent->modePool()->current()->supportsInputMethod() ) {
-		mParent->modePool()->current()->imBegin( mParent );
-	}
-	e->accept();
-}*/
-
-// for InputMethod (OnTheSpot)
-/*
-void KYZisView::imComposeEvent( QIMEvent *e ) {
-	//yzDebug() << "KYZisView::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
-	if ( mParent->modePool()->current()->supportsInputMethod() ) {
-		mParent->modePool()->current()->imCompose( mParent, e->text() );
-		e->accept();
-	} else {
-		e->ignore();
-	}
-}*/
-
-// for InputMethod (OnTheSpot)
-/*
-void KYZisView::imEndEvent( QIMEvent *e ) {
-//	yzDebug() << "KYZisView::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
-	if ( mParent->modePool()->current()->supportsInputMethod() ) {
-		mParent->modePool()->current()->imEnd( mParent, e->text() );
-	} else {
-		mParent->sendKey( e->text() );
-	}
-	e->accept();
-}*/
-
-
-void KYZisView::Scroll(int, int)
-{
-
-}
-
-QString KYZisView::guiGetCommandLineText() const 
-{
-	return QString();
-}
-
-void KYZisView::guiSetCommandLineText(const QString&)
-{
-
-}
-
-void KYZisView::guiDisplayInfo(const QString& info) 
-{
-		
-}
-
-void KYZisView::guiSyncViewInfo() 
-{
-
-}
-
-bool KYZisView::guiPopupFileSaveAs() 
-{
-       return false;
-}
-
-void KYZisView::guiFilenameChanged()
-{
-
-}
-
-void KYZisView::guiHighlightingChanged()
-{
-
-}
-
-void KYZisView::guiNotifyContentChanged(const YZSelection&)
-{
-
-}
-
-void KYZisView::guiPreparePaintEvent(int, int)
-{
-
-}
-
-void KYZisView::guiEndPaintEvent()
-{
-
-}
-
-void KYZisView::guiDrawCell(int, int, const YZDrawCell&, void*)
-{
-
-}
-
-void KYZisView::guiDrawClearToEOL(int, int, const QChar&)
-{
-
-}
-
-void KYZisView::guiDrawSetLineNumber(int, int, int)
-{
-
-}
-
 

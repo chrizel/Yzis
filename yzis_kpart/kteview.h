@@ -73,7 +73,7 @@ private:
 	KTEDocument* m_doc;
 	KYZisView* m_view;
 	KSqueezedTextLabel* m_central;
-
+	QMenu* m_popup;
 };
 
 #endif

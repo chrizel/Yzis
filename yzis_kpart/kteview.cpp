@@ -27,13 +27,15 @@
 #include <libyzis/buffer.h>
 
 #include <QGridLayout>
+#include <QMenu>
 
 #include <kstatusbar.h>
 #include <ksqueezedtextlabel.h>
+#include <kxmlguifactory.h>
 
 
-KTEView::KTEView(KTEDocument* doc, QWidget* parent)
-	: KTextEditor::View(parent), m_doc(doc)
+KTEView::KTEView( KTEDocument* doc, QWidget* parent )
+	: KTextEditor::View(parent), m_doc(doc), m_popup(0)
 {
 	m_view = static_cast<KYZisView*>(KYZisSession::self()->createView(doc->buffer()));
 	m_view->setParent( this );
@@ -54,6 +56,8 @@ KTEView::KTEView(KTEDocument* doc, QWidget* parent)
 	QGridLayout* g = new QGridLayout( this );
 	g->addWidget( m_view, 0, 0 );
 	g->addWidget( status, 1, 0 );
+
+	setXMLFile( "yzis_kpart/yzis_kpart.rc" );
 
 	m_view->show();
 	status->show();
@@ -81,51 +85,51 @@ enum KTextEditor::View::EditMode KTEView::viewEditMode() const
 	return KTextEditor::View::EditInsert;
 }
 
-void KTEView::setContextMenu(QMenu* /*menu*/)
+void KTEView::setContextMenu( QMenu* menu )
 {
-    // TODO: implement
+	m_popup = menu;
 }
 
 QMenu* KTEView::contextMenu() const
 {
-    // TODO: implement
-	return NULL;
+	return m_popup;
 }
 
-QMenu* KTEView::defaultContextMenu(QMenu* /*menu*/) const
+QMenu* KTEView::defaultContextMenu( QMenu* menu ) const
 {
-    // TODO: implement
-	return NULL;
+        QMenu * popup = 0;
+        if (m_popup)
+                popup =  m_popup;
+        else
+		popup = menu;
+        
+	return popup;
 }
 
-bool KTEView::setCursorPosition(KTextEditor::Cursor /*position*/)
+bool KTEView::setCursorPosition( KTextEditor::Cursor position )
 {
-    // TODO: implement
-	return false;
+	m_view->gotoxy( position.column(), position.line() );
+	return true;
 }
 
 KTextEditor::Cursor KTEView::cursorPosition() const
 {
-    // TODO: implement
-	return KTextEditor::Cursor();
+	return KTextEditor::Cursor( m_view->getBufferCursor().y(), m_view->getBufferCursor().x() );	
 }
 
 KTextEditor::Cursor KTEView::cursorPositionVirtual() const
 {
-    // TODO: implement
-	return KTextEditor::Cursor();
+	return KTextEditor::Cursor( m_view->getBufferCursor().y(), m_view->getBufferCursor().x() );	
 }
 
-QPoint KTEView::cursorToCoordinate(const KTextEditor::Cursor& /*cursor*/) const
+QPoint KTEView::cursorToCoordinate( const KTextEditor::Cursor& cursor ) const
 {
-    // TODO: implement
-	return QPoint(0,0);
+	return QPoint( cursor.column(), cursor.line() );
 }
 
 QPoint KTEView::cursorPositionCoordinates() const
 {
-    // TODO: implement
-	return QPoint(0,0);
+	return cursorToCoordinate( cursorPosition() );
 }
 
 bool KTEView::mouseTrackingEnabled() const

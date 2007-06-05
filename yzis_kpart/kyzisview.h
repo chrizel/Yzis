@@ -32,6 +32,7 @@ class KYZisCommand;
 class QSignalMapper;
 class QPainter;
 class KActionCollection;
+class QScrollBar;
 
 class KYZisView : public YZView, public QWidget
 {
@@ -63,6 +64,11 @@ public:
 	void unregisterModifierKeys( const QString& keys );
 	void paintEvent( const YZSelection& drawMap );
 
+protected:
+	void scrollView( int );
+	void scrollLineUp( );
+	void scrollLineDown( );
+
 private:
 	QString keysToShortcut( const QString& keys );
 
@@ -76,6 +82,7 @@ private:
 	KActionCollection* actionCollection;
 	QSignalMapper* signalMapper;
 	QPainter* m_painter;
+	QScrollBar* mVScroll;
 };
 
 #endif

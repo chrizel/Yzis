@@ -27,6 +27,7 @@
 #include <QSignalMapper>
 #include <QGridLayout>
 #include <QPainter>
+#include <QScrollBar>
 
 #include <kactioncollection.h>
 #include <kaction.h>
@@ -41,13 +42,20 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
 {
 	m_editor = new KYZisEditor( this );
 	m_editor->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
-	m_editor->setPalette( Qt::red, Qt::black, 0 );
+	m_editor->setPalette( Qt::red, Qt::green, 0 );
 
 	m_command = new KYZisCommand( this );
 
+	mVScroll = new QScrollBar( this );
+	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
+	connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
+	connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
+	mVScroll->setMaximum( buffer->lineCount() - 1 );
+
 	QGridLayout* g = new QGridLayout( this );
 	g->addWidget( m_editor, 0, 0 );
-       	g->addWidget( m_command, 1, 0 );	
+	g->addWidget( mVScroll, 0, 1 );
+	g->addWidget( m_command, 1, 0 );	
 
 	initKeys();
 }
@@ -127,11 +135,11 @@ void KYZisView::guiPreparePaintEvent(int min_y, int max_y)
 
 void KYZisView::paintEvent( const YZSelection& drawMap ) {
 	kDebug() << "KYZisView::paintEvent\n";
-        if ( m_editor->insidePaintEvent( ) ) {
-                YZView::paintEvent( drawMap );
-        } else {
-                m_editor->paintEvent( drawMap );
-        }
+	if ( m_editor->insidePaintEvent( ) ) {
+		YZView::paintEvent( drawMap );
+	} else {
+		m_editor->paintEvent( drawMap );
+	}
 	kDebug() << "End KYZisView::paint envent\n";
 }
 
@@ -279,3 +287,27 @@ QString KYZisView::keysToShortcut( const QString& keys ) {
 	return ret;
 }
 
+void KYZisView::scrollLineUp() {
+	scrollView( getCurrentTop() - 1 );
+}
+
+void KYZisView::scrollLineDown() {
+	scrollView( getCurrentTop() + 1 );
+}
+
+
+// scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
+void KYZisView::scrollView( int value ) {
+	if ( value < 0 )
+		value = 0;
+	else if ( value > myBuffer()->lineCount() - 1 )
+		value = myBuffer()->lineCount() - 1;
+
+	// only redraw if the view actually moves
+	if (value != getCurrentTop()) {
+		alignViewBufferVertically( value );
+
+		if ( !mVScroll->isSliderDown() )
+			mVScroll->setValue( value );
+	}
+}

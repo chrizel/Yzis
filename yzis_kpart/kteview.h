@@ -25,6 +25,8 @@
 
 class KTEDocument;
 class KYZisView;
+class KSqueezedTextLabel;
+class QScrollBar;
 
 class KTEView : public KTextEditor::View
 {
@@ -70,6 +72,8 @@ signals:
 private:
 	KTEDocument* m_doc;
 	KYZisView* m_view;
+	KSqueezedTextLabel* m_central;
+
 };
 
 #endif

@@ -88,6 +88,8 @@ main(int argc, char *argv[])
 
     // ==============[ create session ]=============
 	NYZSession::createInstance();
+    // socket notifier created on the file descriptor 0 (stdin)
+    // to catch key events
 	QSocketNotifier *socket = new QSocketNotifier(0,QSocketNotifier::Read);
 	QObject::connect( socket, SIGNAL( activated( int ) ), static_cast<NYZSession*>(YZSession::self()), SLOT( processInput( int ) ) );
 

@@ -61,7 +61,7 @@ class QYZisView: public QWidget, public YZView
 		QString guiGetCommandLineText() const;
 		void guiSetFocusCommandLine();
 		void guiSetFocusMainWindow();
-		void Scroll( int dx, int dy );
+		void guiScroll( int dx, int dy );
 
 		void setVisibleArea( int columns, int lines );
 
@@ -95,7 +95,7 @@ class QYZisView: public QWidget, public YZView
 		virtual void guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg );
 		virtual void guiDrawClearToEOL( int x, int y, const QChar& clearChar );
 
-		void paintEvent( const YZSelection& s );
+		void guiPaintEvent( const YZSelection& s );
 
 
 		virtual void guiNotifyContentChanged( const YZSelection& i );

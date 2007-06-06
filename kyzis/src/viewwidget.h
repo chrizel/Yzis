@@ -63,7 +63,7 @@ class KYZisView: public KTextEditor::View,
 		void scrollDown( int l=1 );
 		void scrollUp( int l=1 );
 
-		void paintEvent( const YZSelection& drawMap );
+		void guiPaintEvent( const YZSelection& drawMap );
 		virtual void modeChanged(void);
 		virtual void guiSyncViewInfo();
 		void guiDisplayInfo( const QString& info );
@@ -131,7 +131,7 @@ class KYZisView: public KTextEditor::View,
 		void setKPart( KParts::ReadWritePart *part ) { m_part = part; }
 		KParts::ReadWritePart *getKPart() const { return m_part; }
 
-		void emitSelectionChanged();
+		void guiSelectionChanged();
 
 	protected :
 		void guiDrawSetMaxLineNumber( int max );

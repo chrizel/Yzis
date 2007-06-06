@@ -67,7 +67,7 @@ public:
 
 	virtual void paintEvent( const YZSelection& );
 	
-    virtual void Scroll( int dx, int dy );
+    virtual void guiScroll( int dx, int dy );
 
     virtual void guiNotifyContentChanged( const YZSelection& s );
 

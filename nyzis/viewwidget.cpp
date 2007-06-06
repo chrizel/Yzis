@@ -114,7 +114,7 @@ void NYZView::updateVis( bool refresh ) {
 	setVisibleArea( width - marginLeft, height - 2, refresh );
 }
 
-void NYZView::Scroll( int dx, int dy ) {
+void NYZView::guiScroll( int dx, int dy ) {
 	scrollok( editor, true );
 	wscrl( editor, -dy );
 	scrollok( editor, false );
@@ -130,7 +130,7 @@ void NYZView::Scroll( int dx, int dy ) {
 }
 
 void NYZView::guiNotifyContentChanged( const YZSelection& s ) {
-	paintEvent( s );
+	guiPaintEvent( s );
 }
 void NYZView::guiPreparePaintEvent(int, int) {
 }
@@ -183,10 +183,10 @@ void NYZView::guiDrawCell( int x, int y, const YZDrawCell& cell, void* ) {
 	delete[] from_char;
 }
 
-void NYZView::paintEvent( const YZSelection& drawMap ) {
+void NYZView::guiPaintEvent( const YZSelection& drawMap ) {
 	if (!editor)	// Avoid segfaults and infinite recursion.
 		return;
-	YZView::paintEvent( drawMap );
+	YZView::guiPaintEvent( drawMap );
 	drawCursor();
 }
 void NYZView::drawCursor() {

@@ -282,8 +282,8 @@ void KYZisEdit::paintEvent( QPaintEvent* pe ) {
 	m_insidePaintEvent = false;
 	yzDebug() << "KYzisEdit > QPaintEvent" << endl;
 }
-void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
-	yzDebug() << "KYZisEdit::paintEvent" << endl;
+void KYZisEdit::guiPaintEvent( const YZSelection& drawMap ) {
+	yzDebug() << "KYZisEdit::guiPaintEvent" << endl;
 	YZSelectionMap m = drawMap.map();
 	for( int i = 0; i < m.size(); ++i ) {
 		int left = GETX( qMin( m[i].fromPos().x(), m[i].toPos().x() ) );
@@ -293,7 +293,7 @@ void KYZisEdit::paintEvent( const YZSelection& drawMap ) {
 		
 		update( QRect(left, top, right - left, bottom - top) );
 	}
-	yzDebug() << "KYZisEdit::paintEvent ends" << endl;
+	yzDebug() << "KYZisEdit::guiPaintEvent ends" << endl;
 }
 
 void KYZisEdit::setCursor( int c, int l ) {

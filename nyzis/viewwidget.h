@@ -59,9 +59,9 @@ public:
 	virtual void refreshScreen();
 	virtual void guiSyncViewInfo();
 	virtual void guiDisplayInfo(  const QString& info );
-	void paintEvent( const YZSelection& drawMap );
+	virtual void guiPaintEvent( const YZSelection& drawMap );
 
-	void Scroll( int dx, int dy );
+	void guiScroll( int dx, int dy );
 
 	/**
 	  * Used when this view becomes viewable, that

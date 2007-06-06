@@ -1676,16 +1676,16 @@ QString YZView::getLineStatusString() const
 
 void YZView::internalScroll( int dx, int dy ) {
 	m_drawBuffer.Scroll( dx, dy );
-	Scroll( dx, dy );
+	guiScroll( dx, dy );
 }
 
 /**
- * default implementation for paintEvent
+ * default implementation for guiPaintEvent
  */
-void YZView::paintEvent( const YZSelection& drawMap ) {
+void YZView::guiPaintEvent( const YZSelection& drawMap ) {
 	if ( drawMap.isEmpty() )
 		return;
-	//dbg() << "YZView::paintEvent" << drawMap;
+	//dbg() << "YZView::guiPaintEvent" << drawMap;
 
 	bool number = getLocalBooleanOption( "number" );
 	if ( number ) {

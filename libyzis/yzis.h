@@ -97,5 +97,12 @@ enum MapMode {
 
 };
 
+namespace Clipboard {
+	enum Mode {
+		Clipboard,
+		Selection
+	};
+};
+
 #endif /* YZIS_H */
 

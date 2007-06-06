@@ -288,7 +288,7 @@ void QYZisEdit::paintEvent( QPaintEvent* pe ) {
 	//dbg() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() << 
 	//				" => " << r.topLeft() << "," << r.bottomRight() << endl;
 	// paint it
-	mParent->paintEvent( mParent->clipSelection( YZSelection( r ) ) );
+	mParent->guiPaintEvent( mParent->clipSelection( YZSelection( r ) ) );
 }
 
 void QYZisEdit::setCursor( int c, int l ) {

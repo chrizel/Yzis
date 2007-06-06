@@ -133,7 +133,7 @@ void QYZisView::guiSetFocusCommandLine() {
 	command->setFocus();
 }
 
-void QYZisView::Scroll( int dx, int dy ) {
+void QYZisView::guiScroll( int dx, int dy ) {
 	m_editor->scroll( dx, dy );
 	m_lineNumbers->scroll( dy );
 }
@@ -190,8 +190,8 @@ void QYZisView::guiEndPaintEvent() {
 	delete m_painter;
 }
 
-void QYZisView::paintEvent( const YZSelection& s ) {
-	YZView::paintEvent( s );
+void QYZisView::guiPaintEvent( const YZSelection& s ) {
+	YZView::guiPaintEvent( s );
 }
 
 /*

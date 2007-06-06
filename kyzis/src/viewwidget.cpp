@@ -141,11 +141,11 @@ void KYZisView::endPaintEvent() {
 	delete m_painter;
 	yzDebug() << "KYZisView::endPaintEvent" << endl;
 }
-void KYZisView::paintEvent( const YZSelection& drawMap ) {
+void KYZisView::guiPaintEvent( const YZSelection& drawMap ) {
 	if ( m_editor->m_insidePaintEvent ) {
-		YZView::paintEvent( drawMap );
+		YZView::guiPaintEvent( drawMap );
 	} else {
-		m_editor->paintEvent( drawMap );
+		m_editor->guiPaintEvent( drawMap );
 	}
 }
 void KYZisView::guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
@@ -366,7 +366,7 @@ bool KYZisView::selection() const {
 	return !getSelectionPool()->visual()->isEmpty();
 }
 
-void KYZisView::emitSelectionChanged() {
+void KYZisView::guiSelectionChanged() {
 	YZInterval i = visualSelection()[0];
 	m_range.setRange( KTextEditor::Cursor(i.fromPos().x(),i.fromPos().y()), KTextEditor::Cursor(i.toPos().x(),i.toPos().y()) );
 }

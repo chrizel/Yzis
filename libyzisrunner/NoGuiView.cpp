@@ -120,7 +120,7 @@ void NoGuiView::paintEvent( const YZSelection& ) {
     dbg() << "NoGuiView::paintEvent( )" << endl;
 }
 
-void NoGuiView::Scroll( int dx, int dy ) {
+void NoGuiView::guiScroll( int dx, int dy ) {
     dbg() << "NoGuiView::Scroll" << dx << dy << endl;
 }
 

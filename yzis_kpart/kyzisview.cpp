@@ -42,7 +42,8 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
 {
 	m_editor = new KYZisEditor( this );
 	m_editor->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
-	m_editor->setPalette( Qt::red, Qt::green, 0 );
+	// TODO: remove this, as soon as we can configure the edior component
+	m_editor->setPalette( Qt::black, Qt::white, 0 );
 
 	m_command = new KYZisCommand( this );
 
@@ -57,7 +58,11 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
 	g->addWidget( mVScroll, 0, 1 );
 	g->addWidget( m_command, 1, 0 );	
 
+
 	initKeys();
+
+	m_editor->setFocus();
+	setFocusProxy( m_editor );
 }
 
 KYZisView::~KYZisView()
@@ -120,9 +125,31 @@ void KYZisView::guiHighlightingChanged()
 
 }
 
-void KYZisView::guiNotifyContentChanged(const YZSelection&)
+void KYZisView::guiNotifyContentChanged(const YZSelection& s)
 {
-
+        YZSelectionMap m = s.map();
+        // convert each interval to QWidget coordinates and update
+        for( int i = 0; i < m.size(); ++i ) {
+                YZInterval interval = m[i] - getScreenPosition();
+                QRect r;
+                if ( interval.fromPos().y() == interval.toPos().y() ) {
+                        r = interval.boundingRect();
+                        r.setBottom( r.bottom() + 1 );
+                        r.setRight( r.right() + 1 );
+                } else {
+                        // XXX optimise : split into multiple qrect
+                        r.setTop( interval.fromPos().y() );
+                        r.setBottom( interval.toPos().y() + 1 );
+                        r.setLeft( 0 );
+                        r.setRight( getColumnsVisible() );
+                }
+//              dbg() << "notifiyContentChanged: interval=" << interval.fromPos() << "," << interval.toPos()
+//                                      << ", r=" << r.topLeft() << "," << r.bottomRight();
+                //r.setBottomRight( m_editor->translatePositionToReal( r.bottomRight() ) );
+                //r.setTopLeft( m_editor->translatePositionToReal( r.topLeft() ) );
+//              dbg() << " => " << r.topLeft() << "," << r.bottomRight() << endl;
+                m_editor->update( r );
+        }
 }
 
 void KYZisView::guiPreparePaintEvent(int min_y, int max_y)
@@ -134,13 +161,11 @@ void KYZisView::guiPreparePaintEvent(int min_y, int max_y)
 }
 
 void KYZisView::paintEvent( const YZSelection& drawMap ) {
-	kDebug() << "KYZisView::paintEvent\n";
 	if ( m_editor->insidePaintEvent( ) ) {
 		YZView::paintEvent( drawMap );
 	} else {
 		m_editor->paintEvent( drawMap );
 	}
-	kDebug() << "End KYZisView::paint envent\n";
 }
 
 void KYZisView::guiEndPaintEvent()
@@ -244,7 +269,7 @@ void KYZisView::initKeys() {
 
 	actionCollection = new KActionCollection( this );
 	signalMapper = new QSignalMapper( this );
-	connect( signalMapper, SIGNAL( mapped( const QString& ) ), m_editor, SLOT( sendMultipleKey( const QString& ) ) );
+	connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMultipleKeys( const QString& ) ) );
 }
 
 YZDrawCell KYZisView::getCursorDrawCell( )
@@ -310,4 +335,9 @@ void KYZisView::scrollView( int value ) {
 		if ( !mVScroll->isSliderDown() )
 			mVScroll->setValue( value );
 	}
+}
+
+void KYZisView::sendMultipleKeys( const QString& k )
+{
+	KYZisSession::self()->sendMultipleKeys( this, k );
 }

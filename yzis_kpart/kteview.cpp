@@ -108,6 +108,7 @@ QMenu* KTEView::defaultContextMenu( QMenu* menu ) const
 
 bool KTEView::setCursorPosition( KTextEditor::Cursor position )
 {
+	kDebug() << "KTEView::setCursorPosition x: " << position.column() << " y: " << position.line() << "\n";
 	m_view->gotoxy( position.column(), position.line() );
 	return true;
 }

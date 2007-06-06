@@ -64,6 +64,9 @@ public:
 	void unregisterModifierKeys( const QString& keys );
 	void paintEvent( const YZSelection& drawMap );
 
+public slots:
+	void sendMultipleKeys( const QString& );
+
 protected:
 	void scrollView( int );
 	void scrollLineUp( );

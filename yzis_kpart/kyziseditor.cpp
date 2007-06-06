@@ -39,9 +39,9 @@
 #include <kaction.h>
 
 #include <libyzis/debug.h>
+#include <libyzis/buffer.h>
 
-
-// TODO: do we still have something like isFontFixed?
+// TODO: this does not work for non-fixed fonts :(
 #define GETX( x ) ( isFontFixed ? ( x ) * fontMetrics().maxWidth() : x )
 
 KYZisEditor::KYZisEditor(KYZisView* parent)
@@ -56,6 +56,8 @@ KYZisEditor::KYZisEditor(KYZisView* parent)
 	/* show an edit cursor */
 	QWidget::setCursor( Qt::IBeamCursor );
 
+	// TODO: remove this, after we can handle non-fixed fonts
+	setFont( QFont( "Monospace" ) );
 	isFontFixed = fontInfo().fixedPitch();
 
 	// for Input Method
@@ -65,7 +67,7 @@ KYZisEditor::KYZisEditor(KYZisView* parent)
 
 	marginLeft = 0;
 
-	//QTimer::singleShot(0, static_cast<KYZisSession*>(YZSession::self()), SLOT(frontendGuiReady()) );
+	QTimer::singleShot(0, static_cast<KYZisSession*>(YZSession::self()), SLOT(frontendGuiReady()) );
 }
 
 KYZisEditor::~KYZisEditor()
@@ -273,7 +275,6 @@ void KYZisEditor::paintEvent( QPaintEvent* pe ) {
 	ty += m_parent->getDrawCurrentTop();
 
 	m_parent->paintEvent( m_parent->clipSelection( YZSelection( r ) ) );
-	/*
 	if ( fx == (int)m_parent->getDrawCurrentLeft() && tx - fx == (int)(m_parent->getColumnsVisible() + 1) ) {
 		m_parent->sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, ty ) );
 	} else {
@@ -283,12 +284,10 @@ void KYZisEditor::paintEvent( QPaintEvent* pe ) {
 		}
 		m_parent->commitPaintEvent();
 	}
-	*/
 	m_insidePaintEvent = false;
 	yzDebug() << "KYZisEditor > QPaintEvent" << endl;
 }
 void KYZisEditor::paintEvent( const YZSelection& drawMap ) {
-/*
 	yzDebug() << "KYZisEditor::paintEvent" << endl;
 	YZSelectionMap m = drawMap.map();
 	for( int i = 0; i < m.size(); ++i ) {
@@ -300,7 +299,6 @@ void KYZisEditor::paintEvent( const YZSelection& drawMap ) {
 		update( QRect(left, top, right - left, bottom - top) );
 	}
 	yzDebug() << "KYZisEditor::paintEvent ends" << endl;
-*/
 }
 
 void KYZisEditor::setCursor( int c, int l ) {
@@ -332,8 +330,9 @@ void KYZisEditor::scrollDown( int n ) {
 
 void KYZisEditor::guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
 	p->save();
-	if ( cell.fg.isValid() )
+	if ( cell.fg.isValid() ) {
 		p->setPen( cell.fg.rgb() );
+	}
 	if ( !fakeLine )
 		x += marginLeft;
 	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );

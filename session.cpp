@@ -408,6 +408,7 @@ const YZViewList YZSession::getAllViews() const {
 }
 
 YZView* YZSession::findViewByBuffer( const YZBuffer *buffer ) {
+    if (buffer == NULL) return NULL;
 	foreach(  YZView *view, mViewList )
 		if ( view->myBuffer() == buffer )
 			return view;

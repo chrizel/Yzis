@@ -536,6 +536,7 @@ CmdState YZModeEx::edit ( const YZExCommandArgs& args ) {
 	YZBuffer *b = YZSession::self()->findBuffer(filename);
 	YZView *v = YZSession::self()->findViewByBuffer(b);
 	if ( b && v ) {
+        // buffer and view already exist
 		YZSession::self()->setCurrentView( v );
 	} else if ( b ) {
 		v = YZSession::self()->createView( b );

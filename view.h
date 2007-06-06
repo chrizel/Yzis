@@ -25,10 +25,7 @@
 #include <QString>
 
 /* yzis */
-#include "yzismacros.h"
-#include "selection.h"
-#include "option.h"
-#include "drawbuffer.h"
+#include "viewiface.h"
 
 class YZViewCursor;
 class YZColor;
@@ -56,7 +53,7 @@ struct YZDrawCell;
  * @short Abstract object for a view.
  * 
  */
-class YZIS_EXPORT YZView {
+class YZIS_EXPORT YZView : public YZViewIface {
 
 	friend class YZDrawBuffer;
 
@@ -213,11 +210,6 @@ class YZIS_EXPORT YZView {
 		 * align view vertically on the given screen @arg line
 		 */
 		void alignViewVertically(int line);
-
-		/**
-		 * scroll dx to the right and dy downward
-		 */
-		virtual void Scroll( int dx, int dy ) = 0;
 
 		//-------------------------------------------------------
 		// ----------------- Command Input Buffer
@@ -470,29 +462,6 @@ class YZIS_EXPORT YZView {
 		void commitNextUndo();
 
 		//-------------------------------------------------------
-		// ----------------- GUI Status Notifications
-		//-------------------------------------------------------
-		/**
-		 * Retrieve the text from command line
-		 */
-		virtual QString guiGetCommandLineText() const = 0;
-
-		/**
-		 * Sets the command line text
-		 */
-		virtual void guiSetCommandLineText( const QString& ) = 0;
-
-		/**
-		 * Displays an informational message
-		 */
-		virtual void guiDisplayInfo( const QString& info ) = 0;
-
-		/**
-		 * Display informational status about the current file and cursor
-		 */
-		virtual void guiSyncViewInfo() = 0;
-
-		//-------------------------------------------------------
 		// ----------------- Macros
 		//-------------------------------------------------------
 		/**
@@ -573,7 +542,7 @@ class YZIS_EXPORT YZView {
 		//-------------------------------------------------------
 		// ----------------- Paint Events
 		//-------------------------------------------------------
-		virtual void paintEvent( const YZSelection& drawMap );
+		virtual void guiPaintEvent( const YZSelection& drawMap );
 
 		void sendPaintEvent( const YZCursor from, const YZCursor to );
 		void sendPaintEvent( int curx, int cury, int curw, int curh );
@@ -692,27 +661,6 @@ class YZIS_EXPORT YZView {
 		virtual void modeChanged() {};
 
 		//-------------------------------------------------------
-		// ----------------- GUI Notifications
-		//-------------------------------------------------------
-		/**
-		 * Ask the GUI to popup for a filename
-		 * @return whether a file name was successfully chosen
-		 */
-		virtual bool guiPopupFileSaveAs() = 0;
-
-		/**
-		 * Called whenever the filename is changed
-		 */
-		virtual void guiFilenameChanged() = 0;
-
-		/**
-		 * Notify GUIs that HL changed
-		 */
-		virtual void guiHighlightingChanged() = 0;
-
-		virtual void emitSelectionChanged() {}
-
-		//-------------------------------------------------------
 		// ----------------- Modifier Keys
 		//-------------------------------------------------------
 		virtual void registerModifierKeys( const QString& ) {}
@@ -758,30 +706,11 @@ class YZIS_EXPORT YZView {
 
 	protected:
 
-		virtual void guiNotifyContentChanged( const YZSelection& s ) = 0;
-
 		void setupKeys();
 
 		bool stringHasOnlySpaces ( const QString& what );
 		
 		QString getLineStatusString() const;
-
-		/*
-		 * painting
-		 */
-		virtual void guiPreparePaintEvent( int y_min, int y_max ) = 0;
-		virtual void guiEndPaintEvent() = 0;
-		virtual void guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg ) = 0;
-		virtual void guiDrawClearToEOL( int x, int y, const QChar& clearChar ) = 0;
-		virtual void guiDrawSetMaxLineNumber( int max ) = 0;
-		/*!
-		 * This method is called by the backend to change the line
-		 * number displayed.
-		 * @arg y the y-coordinate within the view where to display the line number
-		 * @arg n the actual number to display
-		 * @arg h ??? it seems to be some kind of boolean..
-		 */
-		virtual void guiDrawSetLineNumber( int y, int n, int h ) = 0;
 
 		YZDrawBuffer m_drawBuffer;
 

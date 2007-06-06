@@ -21,16 +21,16 @@
 
 #ifndef YZ_SESSION_H
 #define YZ_SESSION_H
- 
+
+#include "sessioniface.h" 
+
 /* Qt */
-#include <QList>
+// #include <QList>
 
 /* yzis */
-#include "cursor.h"
+//#include "cursor.h"
 #include "mode.h"  // for YZModeMap
  
-class YZView;
-class YZBuffer;
 class YzisSchemaManager;
 class YZInternalOptionPool;
 class YZRegisters;
@@ -42,16 +42,10 @@ class YZModeCommand;
 class YZViewCursor;
 class YZYzisinfo;
 class YZTagStack;
+class YZCursor;
 
 typedef QList<YZBuffer*> YZBufferList;
 typedef QList<YZView*> YZViewList;
-
-namespace Clipboard {
-	enum Mode {
-		Clipboard,
-		Selection
-	};
-};
 
 /**
   * Class YZSession
@@ -67,7 +61,7 @@ namespace Clipboard {
   * A session owns the buffers
   * A buffer owns the views
   */
-class YZIS_EXPORT YZSession 
+class YZIS_EXPORT YZSession  : public YZSessionIface 
 {
 	protected:
 		/**
@@ -247,14 +241,6 @@ class YZIS_EXPORT YZSession
 		YZView *createBufferAndView( const QString &path = QString() );
 
 		/**
-		 * Inform the frontend that the given buffer is being removed.
-         *
-         * The buffer @arg b is still valid when the call is made but is not
-         * used afterward, so it can be safely deleted by the frontend.
-		 */
-		virtual void guiDeleteBuffer( YZBuffer *b ) = 0;
-
-		/**
 		 * Remove a buffer from the list.
          *
          * Inform the gui frontend to delete the buffer. If this buffer was
@@ -307,8 +293,10 @@ class YZIS_EXPORT YZSession
 		 * Gets a list of all YZViews active in the system
 		 */
 		const YZViewList getAllViews() const;
-		/**
-		 * Find a view containing the buffer
+
+		/** \brief Find a view containing the buffer.
+         *
+         * Can be called with a NULL argument.
 		 */
 		YZView *findViewByBuffer( const YZBuffer *buffer );
 
@@ -332,32 +320,10 @@ class YZIS_EXPORT YZSession
 		 */
 		YZView* prevView();
 
-		/**
-		 * Splits horizontally the mainwindow area to create a new view on the current buffer
-		 */
-		virtual void guiSplitHorizontally ( YZView* ) = 0;
-
-		/**
-		 * Splits the screen vertically showing the 2 given views
-		 */
-//		virtual void splitHorizontallyWithViews( YZView*, YZView* ) = 0;
-
-		/**
-		 * Splits the screen vertically to show the 2 given views
-		 */
-//		virtual void splitVerticallyOnView( YZView*, YZView* ) = 0;
-		
 				
 		//-------------------------------------------------------
 		// ----------------- Application Termination
 		//-------------------------------------------------------
-		/**
-		 * Ask to quit the app
-         *
-         * @return XXX dunno
-		 */
-		virtual bool guiQuit(int errorCode=0) = 0;
-
 		/**
 		 * Prepare the app to quit
          *
@@ -385,38 +351,6 @@ class YZIS_EXPORT YZSession
          * Calls saveAll() and exitRequest()
 		 */
 		void saveBufferExit();
-
-		//-------------------------------------------------------
-		// ----------------- GUI Prompts
-		//-------------------------------------------------------
-		/**
-		 * Display the specified error/information message
-		 */
-		virtual void guiPopupMessage( const QString& message ) = 0;
-
-		/**
-		 * Prompt a Yes/No question for the user
-		 */
-		virtual bool guiPromptYesNo(const QString& title, const QString& message) = 0;
-
-		/**
-		 * Prompt a Yes/No/Cancel question for the user
-		 * Returns 0,1,2 in this order
-		 */
-		virtual int guiPromptYesNoCancel(const QString& title, const QString& message) = 0;
-
-		//-------------------------------------------------------
-		// ----------------- Focus
-		//-------------------------------------------------------
-		/**
-		 * Focus on the command line of the current view
-		 */
-		virtual void guiSetFocusCommandLine() = 0;
-
-		/**
-		 * Focus on the main window of the current view
-		 */
-		virtual void guiSetFocusMainWindow() = 0;
 
 		//-------------------------------------------------------
 		// ----------------- Options
@@ -474,11 +408,6 @@ class YZIS_EXPORT YZSession
 		QList<QChar> getRegisters() const;
 
 		//-------------------------------------------------------
-		// ----------------- Clipboard
-		//-------------------------------------------------------
-		virtual void guiSetClipboardText( const QString& text, Clipboard::Mode mode ) = 0;
-
-		//-------------------------------------------------------
 		// ----------------- Command line
 		//-------------------------------------------------------
         /** Show help text for -h and --help option */
@@ -510,10 +439,10 @@ class YZIS_EXPORT YZSession
          * The key sequence is automatically sent to the right view,
          * even if the view is switched in the middle.
 		 */
-		void scriptSendMultipleKeys ( const QString& text );
+		virtual void scriptSendMultipleKeys ( const QString& text );
 
         /** Copied from view */
-		void sendMultipleKeys( YZView * view, const QString& keys );
+		virtual void sendMultipleKeys( YZView * view, const QString& keys );
 
 		//-------------------------------------------------------
 		// ----------------- Send events to GUI
@@ -521,13 +450,8 @@ class YZIS_EXPORT YZSession
 		/**
 		 * transfer key events from GUI to core
 		 */
-		void sendKey( YZView * view, const QString& key, const QString& modifiers="");
+		virtual void sendKey( YZView * view, const QString& key, const QString& modifiers="");
 
-		/**
-		 * To be called by the GUI once it has been initialised
-		 */
-		void guiStarted();
-		
 		void registerModifier ( const QString& mod );
 		void unregisterModifier ( const QString& mod );
 
@@ -546,31 +470,10 @@ class YZIS_EXPORT YZSession
 
 		
 	protected:
-		virtual YZView * guiCreateView( YZBuffer *buffer ) = 0;
-
-        /** Ask the frontend to delete the @arg view.
-          *
-          * The view pointer is still valid but is no longer used
-          * after that call so it is safe for the frontend to delete
-          * the view instance.
-          */
-		virtual void guiDeleteView ( YZView *view ) = 0;
-	
-        /** Ask the frontend to create a buffer.
-          *
-          * The buffer pointer will be kept until a guiDeleteBuffer()
-          * call is made.
-          */
-		virtual	YZBuffer *guiCreateBuffer() = 0;
-
+		
 		void initModes();
 		void endModes();
 
-		/**
-		 * Notify the change of current view
-		 */
-		virtual void guiChangeCurrentView( YZView* ) = 0;
-		
 	private:
 		/**
 		 *  Copy constructor. Disable copy by declaring it as private

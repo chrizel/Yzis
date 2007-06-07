@@ -136,6 +136,13 @@ class YZIS_EXPORT YZViewIface
 		 */
 		virtual void guiDrawSetLineNumber( int y, int n, int h ) = 0;
 
+		//-------------------------------------------------------
+		// ----------------- Misc
+		//-------------------------------------------------------
+
+        /** Virtual destructor */
+        virtual ~YZViewIface();
+
 };
 
 

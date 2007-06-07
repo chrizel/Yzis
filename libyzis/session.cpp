@@ -57,6 +57,11 @@ using namespace yzis;
 #define err()    yzError("YZSession")
 #define ftl()    yzFatal("YZSession")
 
+YZSessionIface::~YZSessionIface()
+{
+    // nothing to do here
+}
+
 YZSession* YZSession::mInstance = 0;
 
 void YZSession::initDebug( int argc, char ** argv )
@@ -751,4 +756,4 @@ void YZSession::showCmdLineUnknowOption( const QString & opt )
     fprintf(stderr, "Unrecognised option: %s", qp(opt) );
     dbg().sprintf("Unrecognised option: %s", qp(opt) );
 }
-    	
+

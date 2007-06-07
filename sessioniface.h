@@ -163,6 +163,13 @@ class YZIS_EXPORT YZSessionIface
 		 */
 //		virtual void splitVerticallyOnView( YZView*, YZView* ) = 0;
 
+
+		//-------------------------------------------------------
+		// ----------------- Misc
+		//-------------------------------------------------------
+
+        /** Virtual destructor */
+        virtual ~YZSessionIface();
 };
 
 #endif // YZ_SESSION_IFACE_H

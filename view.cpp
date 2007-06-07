@@ -53,6 +53,11 @@ static YZColor blue( Qt::blue );
 #define dbg() yzDebug("YZView")
 #define err() yzError("YZView")
 
+YZViewIface::~YZViewIface()
+{
+    // nothing to do
+}
+
 /**
  * class YZView
  */

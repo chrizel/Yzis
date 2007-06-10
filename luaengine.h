@@ -197,8 +197,9 @@ class YZIS_EXPORT YZLuaEngine {
 		/** Called when lua wants to print */
 		void yzisprint(const QString & text);
 
-		/**
-		 * Empty the lua stack. Normally, you should not need
+		/** Empty the lua stack. 
+         *
+         * Normally, you should not need
          * this function because you should pop the lua stack items by items
          * and you should know exactly how many items were put on the stack.
 		 */

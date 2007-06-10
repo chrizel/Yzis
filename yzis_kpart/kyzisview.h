@@ -27,6 +27,7 @@
 
 #include <QWidget>
 
+
 class KYZisEditor;
 class KYZisCommand;
 class QSignalMapper;
@@ -34,13 +35,14 @@ class QPainter;
 class KActionCollection;
 class QScrollBar;
 
-class KYZisView : public YZView, public QWidget
+class KYZisView : public QWidget, public YZView
 {
+Q_OBJECT
 public:
 	KYZisView(YZBuffer*, QWidget*);	
-	~KYZisView();
+	virtual ~KYZisView();
 
-	virtual void Scroll(int, int);
+	virtual void guiScroll(int, int);
 	virtual QString guiGetCommandLineText() const;
 	virtual void guiSetCommandLineText(const QString&);
 	virtual void guiDisplayInfo(const QString&);
@@ -62,13 +64,13 @@ public:
 	YZDrawCell getCursorDrawCell( );
 	void registerModifierKeys( const QString& keys );
 	void unregisterModifierKeys( const QString& keys );
-	void paintEvent( const YZSelection& drawMap );
+	void guiPaintEvent( const YZSelection& drawMap );
 
 public slots:
 	void sendMultipleKeys( const QString& );
+	void scrollView( int );
 
 protected:
-	void scrollView( int );
 	void scrollLineUp( );
 	void scrollLineDown( );
 

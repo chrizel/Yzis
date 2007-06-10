@@ -274,7 +274,7 @@ void KYZisEditor::paintEvent( QPaintEvent* pe ) {
 	fy += m_parent->getDrawCurrentTop();
 	ty += m_parent->getDrawCurrentTop();
 
-	m_parent->paintEvent( m_parent->clipSelection( YZSelection( r ) ) );
+	m_parent->guiPaintEvent( m_parent->clipSelection( YZSelection( r ) ) );
 	if ( fx == (int)m_parent->getDrawCurrentLeft() && tx - fx == (int)(m_parent->getColumnsVisible() + 1) ) {
 		m_parent->sendPaintEvent( YZCursor( fx, fy ), YZCursor( tx, ty ) );
 	} else {
@@ -287,7 +287,7 @@ void KYZisEditor::paintEvent( QPaintEvent* pe ) {
 	m_insidePaintEvent = false;
 	yzDebug() << "KYZisEditor > QPaintEvent" << endl;
 }
-void KYZisEditor::paintEvent( const YZSelection& drawMap ) {
+void KYZisEditor::guiPaintEvent( const YZSelection& drawMap ) {
 	yzDebug() << "KYZisEditor::paintEvent" << endl;
 	YZSelectionMap m = drawMap.map();
 	for( int i = 0; i < m.size(); ++i ) {

@@ -66,7 +66,7 @@ public:
 	void drawMarginLeft( int min_y, int max_y, QPainter* p );
 
 	bool insidePaintEvent( ) { return m_insidePaintEvent; }
-	void paintEvent( const YZSelection& drawMap );
+	void guiPaintEvent( const YZSelection& drawMap );
 
 public slots :
 	void sendMultipleKey( const QString& keys ) {}

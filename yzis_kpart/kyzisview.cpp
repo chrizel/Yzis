@@ -23,6 +23,7 @@
 #include "kyzissession.h"
 #include "kyziseditor.h"
 #include "kyziscommandwidget.h"
+#include "kteview.h"
 
 #include <QSignalMapper>
 #include <QGridLayout>
@@ -37,8 +38,8 @@
 #include <libyzis/debug.h>
 
 KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
-	: YZView(buffer, KYZisSession::self(), 0, 0), QWidget(parent),
-	  actionCollection(0), signalMapper(0), m_painter(0)
+	: QWidget(parent), YZView(buffer, KYZisSession::self(), 0, 0),
+	actionCollection(0), signalMapper(0), m_painter(0)
 {
 	m_editor = new KYZisEditor( this );
 	m_editor->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
@@ -48,9 +49,9 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
 	m_command = new KYZisCommand( this );
 
 	mVScroll = new QScrollBar( this );
-	connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
-	connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
-	connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
+	connect( mVScroll, SIGNAL( sliderMoved(int) ), this, SLOT( scrollView( int ) ) );
+	connect( mVScroll, SIGNAL( prevLine() ), this, SLOT( scrollLineUp() ) );
+	connect( mVScroll, SIGNAL( nextLine() ), this, SLOT( scrollLineDown() ) );
 	mVScroll->setMaximum( buffer->lineCount() - 1 );
 
 	QGridLayout* g = new QGridLayout( this );
@@ -73,9 +74,9 @@ KYZisView::~KYZisView()
 	delete actionCollection;
 }
 
-void KYZisView::Scroll(int, int)
+void KYZisView::guiScroll(int, int)
 {
-
+	// TODO:
 }
 
 QString KYZisView::guiGetCommandLineText() const 
@@ -90,7 +91,9 @@ void KYZisView::guiSetCommandLineText( const QString& text )
 
 void KYZisView::guiDisplayInfo(const QString& info) 
 {
-		
+        //m_central->setText(info);
+        //clean the info 2 seconds later
+	//QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }
 
 void KYZisView::guiSyncViewInfo() 
@@ -160,11 +163,11 @@ void KYZisView::guiPreparePaintEvent(int min_y, int max_y)
 	m_editor->drawMarginLeft( min_y, max_y, m_painter );
 }
 
-void KYZisView::paintEvent( const YZSelection& drawMap ) {
+void KYZisView::guiPaintEvent( const YZSelection& drawMap ) {
 	if ( m_editor->insidePaintEvent( ) ) {
-		YZView::paintEvent( drawMap );
+		YZView::guiPaintEvent( drawMap );
 	} else {
-		m_editor->paintEvent( drawMap );
+		m_editor->guiPaintEvent( drawMap );
 	}
 }
 
@@ -341,3 +344,5 @@ void KYZisView::sendMultipleKeys( const QString& k )
 {
 	KYZisSession::self()->sendMultipleKeys( this, k );
 }
+
+#include "kyzisview.moc"

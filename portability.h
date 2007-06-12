@@ -21,7 +21,7 @@
 #ifndef PORTABILITY_H
 #define PORTABILITY_H
 
-#if YZIS_WIN32_GCC
+#ifdef YZIS_WIN32_GCC
 	// ooh, we are on windows with gcc
 	
 	// XXX Phil: I'll fix that later 

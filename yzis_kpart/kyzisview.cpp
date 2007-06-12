@@ -148,8 +148,8 @@ void KYZisView::guiNotifyContentChanged(const YZSelection& s)
                 }
 //              dbg() << "notifiyContentChanged: interval=" << interval.fromPos() << "," << interval.toPos()
 //                                      << ", r=" << r.topLeft() << "," << r.bottomRight();
-                //r.setBottomRight( m_editor->translatePositionToReal( r.bottomRight() ) );
-                //r.setTopLeft( m_editor->translatePositionToReal( r.topLeft() ) );
+                r.setBottomRight( m_editor->translatePositionToReal( r.bottomRight() ) );
+                r.setTopLeft( m_editor->translatePositionToReal( r.topLeft() ) );
 //              dbg() << " => " << r.topLeft() << "," << r.bottomRight() << endl;
                 m_editor->update( r );
         }

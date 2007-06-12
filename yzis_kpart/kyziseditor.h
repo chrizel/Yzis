@@ -65,15 +65,15 @@ public:
 
 	void guiPaintEvent( const YZSelection& drawMap );
 
+	QPoint translatePositionToReal( const YZCursor& c ) const;
+	YZCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
+	YZCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
+
 public slots :
 	void sendMultipleKey( const QString& keys ) {}
 
 
 protected:
-	QPoint translatePositionToReal( const YZCursor& c ) const;
-	YZCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
-	YZCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
-
 	//intercept tabs
 	virtual bool event(QEvent*);
 

@@ -241,7 +241,7 @@ void KYZisEditor::mouseMoveEvent( QMouseEvent *e ) {
 			m_parent->modePool()->push( YZMode::ModeVisual );
 		} else if (m_parent->modePool()->current()->isSelMode() ) {
 			// already in visual mode - move cursor if the mouse pointer has moved over a new char
-			int newX = e->x() / fontMetrics().maxWidth();
+			int newX = e->x() / fontMetrics().maxWidth()
 				+ m_parent->getDrawCurrentLeft();
 			int newY = e->y() / fontMetrics().lineSpacing()
 				+ m_parent->getDrawCurrentTop();

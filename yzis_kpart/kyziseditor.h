@@ -28,6 +28,7 @@
 class KYZisView;
 class YZDrawCell;
 class YZSelection;
+class YZCursor;
 
 class KYZisEditor : public QWidget
 {
@@ -42,10 +43,9 @@ public:
 	//append text
 	void append ( const QString& );
 
-	//move cursor to position column, line relative to viewport
 	void setCursor(int c,int l);
-	void scrollUp( int );
-	void scrollDown( int );
+	void scroll(int x, int y);
+
 
 	KYZisCursor::shape cursorShape();
 	void updateCursor();
@@ -61,11 +61,8 @@ public:
 	QVariant inputMethodQuery ( Qt::InputMethodQuery query );
 	void guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p );
 	void guiDrawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p );
-	void guiDrawSetMaxLineNumber( int max );
-	void guiDrawSetLineNumber( int y, int n, int h, QPainter* p );
 	void drawMarginLeft( int min_y, int max_y, QPainter* p );
 
-	bool insidePaintEvent( ) { return m_insidePaintEvent; }
 	void guiPaintEvent( const YZSelection& drawMap );
 
 public slots :
@@ -73,6 +70,9 @@ public slots :
 
 
 protected:
+	QPoint translatePositionToReal( const YZCursor& c ) const;
+	YZCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
+	YZCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
 
 	//intercept tabs
 	virtual bool event(QEvent*);
@@ -117,14 +117,6 @@ private :
 	QFontMetrics *standard;
 	QFontMetrics *standardBold;
 	QFontMetrics *standardBoldItalic;
-
-	bool isFontFixed;
-
-	bool m_insidePaintEvent;
-	/**
-	 * size of the left margin (used to draw line number)
-	 */
-	int marginLeft;
 
 	KYZisView* m_parent;
 };

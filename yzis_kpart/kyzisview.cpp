@@ -74,9 +74,9 @@ KYZisView::~KYZisView()
 	delete actionCollection;
 }
 
-void KYZisView::guiScroll(int, int)
+void KYZisView::guiScroll(int dx, int dy)
 {
-	// TODO:
+	m_editor->scroll( dx, dy );
 }
 
 QString KYZisView::guiGetCommandLineText() const 
@@ -160,15 +160,10 @@ void KYZisView::guiPreparePaintEvent(int min_y, int max_y)
 	yzDebug() << "KYZisView::guiPreparePaintEvent" << endl;
 	m_painter = new QPainter( m_editor );
 	m_drawBuffer.setCallbackArgument( m_painter );
-	m_editor->drawMarginLeft( min_y, max_y, m_painter );
 }
 
 void KYZisView::guiPaintEvent( const YZSelection& drawMap ) {
-	if ( m_editor->insidePaintEvent( ) ) {
-		YZView::guiPaintEvent( drawMap );
-	} else {
-		m_editor->guiPaintEvent( drawMap );
-	}
+	YZView::guiPaintEvent( drawMap );
 }
 
 void KYZisView::guiEndPaintEvent()
@@ -194,7 +189,6 @@ void KYZisView::guiDrawSetLineNumber(int, int, int)
 
 void KYZisView::guiDrawSetMaxLineNumber( int max )
 {
-	m_editor->guiDrawSetMaxLineNumber( max );
 }
 
 const QString& KYZisView::convertKey( int key ) {

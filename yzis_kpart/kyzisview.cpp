@@ -120,6 +120,12 @@ void KYZisView::guiSyncViewInfo()
 	modeChanged();
 }
 
+void KYZisView::modeChanged()
+{
+	m_editor->updateCursor();
+	m_infoBar->setMode( mode() );
+}
+
 bool KYZisView::guiPopupFileSaveAs() 
 {
        return false;

@@ -58,6 +58,7 @@ public:
 	virtual void guiDrawClearToEOL(int, int, const QChar&);
 	virtual void guiDrawSetLineNumber(int, int, int);
 	virtual void guiDrawSetMaxLineNumber(int);
+	virtual void modeChanged();
 
 	const QString& convertKey( int key );
 	bool containsKey( int key ) { return keys.contains( key ); }

@@ -1297,7 +1297,7 @@ void YZModeCommand::macro( const YZCommandArgs &args ) {
 		args.view->stopRecordMacro();
 	else
 		args.view->recordMacro( args.regs );
-	args.view->modeChanged();
+	args.view->guiModeChanged();
 
 }
 

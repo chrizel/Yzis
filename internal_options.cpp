@@ -136,7 +136,7 @@ void changeEncoding( YZBuffer* b, YZView* v ) {
 }
 void changeCursor( YZBuffer*, YZView* v ) {
 	if ( v )
-		v->modeChanged();
+		v->guiModeChanged();
 }
 void refreshView( YZBuffer*, YZView* v ) {
 	if ( v )

@@ -29,8 +29,6 @@
 #include <QGridLayout>
 #include <QMenu>
 
-#include <kstatusbar.h>
-#include <ksqueezedtextlabel.h>
 #include <kxmlguifactory.h>
 
 
@@ -39,28 +37,13 @@ KTEView::KTEView( KTEDocument* doc, QWidget* parent )
 {
 	m_view = static_cast<KYZisView*>(KYZisSession::self()->createView(doc->buffer()));
 	m_view->setParent( this );
-	KStatusBar* status = new KStatusBar( this );
-
-	status->insertItem(QString("Yzis Ready"),0,1);
-	status->setItemAlignment(0,Qt::AlignLeft);
-
-	m_central = new KSqueezedTextLabel( this );
-	status->addWidget( m_central, 100 );
-
-	status->insertItem("",90,1);
-	status->setItemAlignment(90,Qt::AlignRight);
-
-	status->insertItem("",99,0);
-	status->setItemAlignment(99,Qt::AlignRight);
 
 	QGridLayout* g = new QGridLayout( this );
 	g->addWidget( m_view, 0, 0 );
-	g->addWidget( status, 1, 0 );
 
 	setXMLFile( "yzis_kpart/yzis_kpart.rc" );
 
 	m_view->show();
-	status->show();
 }
 
 KTEView::~KTEView()

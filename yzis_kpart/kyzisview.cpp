@@ -23,6 +23,7 @@
 #include "kyzissession.h"
 #include "kyziseditor.h"
 #include "kyziscommandwidget.h"
+#include "kyzisinfobar.h"
 #include "kteview.h"
 
 #include <QSignalMapper>
@@ -54,10 +55,15 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
 	connect( mVScroll, SIGNAL( nextLine() ), this, SLOT( scrollLineDown() ) );
 	mVScroll->setMaximum( buffer->lineCount() - 1 );
 
+	m_infoBar = new KYZisInfoBar( this );
+	m_infoBar->setMode( mode() );
+	guiSyncViewInfo();
+
 	QGridLayout* g = new QGridLayout( this );
 	g->addWidget( m_editor, 0, 0 );
 	g->addWidget( mVScroll, 0, 1 );
-	g->addWidget( m_command, 1, 0 );	
+	g->addWidget( m_command, 1, 0 );
+	g->addWidget( m_infoBar, 2, 0 );
 
 
 	initKeys();
@@ -98,15 +104,16 @@ void KYZisView::guiDisplayInfo(const QString& info)
 
 void KYZisView::guiSyncViewInfo() 
 {
-//      yzDebug() << "KYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
 	m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
-//	status->changeItem( getLineStatusString(), 99 );
+	m_infoBar->setLineInfo( getLineStatusString() );
 
 	QString fileInfo;
 	fileInfo +=( myBuffer()->fileIsNew() )?"N":" ";
 	fileInfo +=( myBuffer()->fileIsModified() )?"M":" ";
+	m_infoBar->setFileInfo( fileInfo );
 
-//	status->changeItem(fileInfo, 90);
+	m_infoBar->setFileName( myBuffer()->fileName() );
+
 //	if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->draggingSlider())
 //		mVScroll->setValue( getCurrentTop() );
 //	emit cursorPositionChanged();

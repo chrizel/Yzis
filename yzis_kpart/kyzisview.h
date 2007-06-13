@@ -30,6 +30,7 @@
 
 class KYZisEditor;
 class KYZisCommand;
+class KYZisInfoBar;
 class QSignalMapper;
 class QPainter;
 class KActionCollection;
@@ -88,6 +89,7 @@ private:
 	QSignalMapper* signalMapper;
 	QPainter* m_painter;
 	QScrollBar* mVScroll;
+	KYZisInfoBar* m_infoBar;
 };
 
 #endif

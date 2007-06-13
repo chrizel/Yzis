@@ -55,7 +55,7 @@ public:
 
 	virtual QString guiGetCommandLineText(void) const {return commandline; }
 	virtual void guiSetCommandLineText( const QString& );
-	virtual void modeChanged(void) { guiSyncViewInfo(); }
+	virtual void guiModeChanged(void) { guiSyncViewInfo(); }
 	virtual void refreshScreen();
 	virtual void guiSyncViewInfo();
 	virtual void guiDisplayInfo(  const QString& info );

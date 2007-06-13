@@ -117,10 +117,10 @@ void KYZisView::guiSyncViewInfo()
 //	if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->draggingSlider())
 //		mVScroll->setValue( getCurrentTop() );
 //	emit cursorPositionChanged();
-	modeChanged();
+	guiModeChanged();
 }
 
-void KYZisView::modeChanged()
+void KYZisView::guiModeChanged()
 {
 	m_editor->updateCursor();
 	m_infoBar->setMode( mode() );

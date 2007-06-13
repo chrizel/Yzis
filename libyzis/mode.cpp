@@ -312,7 +312,7 @@ void YZModePool::push( ModeType mode ) {
 	if (mRegisterKeys) registerModifierKeys();
 	dbg() << "entering mode " << stack.front()->toString() << endl;
 	stack.front()->enter( mView );
-	mView->modeChanged();
+	mView->guiModeChanged();
 }
 void YZModePool::pop( bool leave_me ) {
 	if ( mStop ) return;
@@ -329,7 +329,7 @@ void YZModePool::pop( bool leave_me ) {
 	if ( stack.isEmpty() )
 		push( YZMode::ModeCommand );
 	else
-		mView->modeChanged();
+		mView->guiModeChanged();
 	if (mRegisterKeys) registerModifierKeys();
 }
 void YZModePool::pop( ModeType mode ) {
@@ -350,7 +350,7 @@ void YZModePool::pop( ModeType mode ) {
 	if ( stack.isEmpty() )
 		push( YZMode::ModeCommand );
 	else
-		mView->modeChanged();
+		mView->guiModeChanged();
 	if (mRegisterKeys) registerModifierKeys();
 }
 

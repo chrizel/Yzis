@@ -224,7 +224,7 @@ void QYZisView::wheelEvent( QWheelEvent * e ) {
 	e->accept();
 }
 
-void QYZisView::modeChanged (void) {
+void QYZisView::guiModeChanged (void) {
 	m_editor->updateCursor();
 	l_mode->setText( mode() );
 }
@@ -242,7 +242,7 @@ void QYZisView::guiSyncViewInfo() {
 	if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->isSliderDown())
 		mVScroll->setValue( getCurrentTop() );
 	emit cursorPositionChanged();
-	modeChanged();
+	guiModeChanged();
 }
 
 /*

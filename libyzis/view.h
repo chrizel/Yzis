@@ -658,7 +658,7 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		 * called when the mode is changed, so that gui can
 		 * update information displayed to the user
 		 */
-		virtual void modeChanged() {};
+		virtual void guiModeChanged() {};
 
 		//-------------------------------------------------------
 		// ----------------- Modifier Keys

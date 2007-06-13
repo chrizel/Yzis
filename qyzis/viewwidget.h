@@ -65,7 +65,7 @@ class QYZisView: public QWidget, public YZView
 
 		void setVisibleArea( int columns, int lines );
 
-		virtual void modeChanged(void);
+		virtual void guiModeChanged(void);
 		virtual void guiSyncViewInfo();
 		void guiDisplayInfo( const QString& info );
 

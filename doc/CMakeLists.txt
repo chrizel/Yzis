@@ -9,37 +9,40 @@ if (ENABLE_DOCUMENTATION)
 		set( ALWAYS_GENERATE ALL )
 	endif(GENERATE_DOC)
 
+    FILE( MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../apidoc )
+
 	add_custom_target(
 		doc_libyzis
-		COMMAND mkdir -p ${CMAKE_CURRENT_SOURCE_DIR}/../apidoc
 		COMMAND ${DOXYGEN} libyzis.doxy
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Building libyzis api documentation"
 	)
+
 	add_custom_target(
 		doc_qyzis
-		COMMAND mkdir -p ${CMAKE_CURRENT_SOURCE_DIR}/../apidoc
 		COMMAND ${DOXYGEN} qyzis.doxy
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Building qyzis api documentation"
 	)
 	add_custom_target(
 		doc_nyzis
-		COMMAND mkdir -p ${CMAKE_CURRENT_SOURCE_DIR}/../apidoc
 		COMMAND ${DOXYGEN} nyzis.doxy
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Building nyzis api documentation"
 	)
 	add_custom_target(
 		doc_devhandbook
 		COMMAND ${DOXYGEN} devhandbook.doxy
-		# second time to get all the links right
-		COMMAND ${DOXYGEN} devhandbook.doxy
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        COMMENT "Building dev handbook documentation"
 	)
 
 	add_custom_target(
 		docs ${ALWAYS_GENERATE}
 	)
+
 	add_dependencies(
-		docs doc_libyzis doc_qyzis doc_nyzis doc_devhandbook
+		docs doc_devhandbook doc_libyzis doc_qyzis doc_nyzis doc_devhandbook
 	)
 
 

@@ -2,8 +2,8 @@ Introduction:
 =============
 Yzis is a vi-compatible editor that is composed of a generic vi engine and 
 independent GUI. It is developed in C++ and relies on Qt for the some of the
-background classes (lists and strings mainly). A KDE, Qt and ncurses gui
-are available.
+background classes (lists and strings mainly). A Qt and ncurses gui are
+available. An embeddable component (KPart) and GUI for KDE are in development.
 
 Requirements:
 =============
@@ -18,7 +18,8 @@ Documentation:
 There is a developer handbook and a full API documentation available at
 http://doc.yzis.org
 
-The developer handbook includes instructions on how to build yzis.
+There is also a wiki at http://wiki.yzis.org which among other things contains
+help on building Yzis.
 
 Licenses:
 =========

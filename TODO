@@ -1,9 +1,6 @@
-- make tests/scripts/run_scripttests.sh use CMake to find the name of the
-  build directory: easy
-    + create run_scripttest.sh.in
-    + read cmake doc to convert that into run_scripttest.sh with correct
-directory
- 
+NOTE: This TODO list is obsolete. The current TODO list is maintained in a wiki
+      at http://wiki.yzis.org/index.php?title=TODO
+
 - better key event system: medium
     Currently, key event is half based on a string containing the character,
     half-based on kind of meta-characters like <TAB> and <UP>. We need a

@@ -39,9 +39,10 @@ KTextEditor::Editor* KTEDocument::editor()
 	return KTEEditor::self();
 }
 
-KTextEditor::View* KTEDocument::createView( QWidget* /*parent*/ )
+KTextEditor::View* KTEDocument::createView( QWidget* parent )
 {
-	KTEView* view = new KTEView(this, 0);
+	KTEView* view = new KTEView( this, parent );
+	emit viewCreated( this, view );
 	return view;
 }
 
@@ -58,7 +59,11 @@ const QList<KTextEditor::View*>& KTEDocument::views() const
 
 bool KTEDocument::openFile()
 {
-	m_buffer->load();
+	m_buffer->clearText();
+	emit textRemoved( this, documentRange() );
+	m_buffer->load( localFilePath() );
+	emit textInserted( this, documentRange() );
+	emit documentUrlChanged( this );
 	return true;
 }
 
@@ -68,7 +73,7 @@ bool KTEDocument::saveFile()
 	return true;
 }
 
-const QString& KTEDocument::documentName () const
+const QString& KTEDocument::documentName() const
 {
 	return m_buffer->fileName();
 }

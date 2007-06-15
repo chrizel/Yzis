@@ -1,4 +1,4 @@
-project( yzis_kpart )
+project( kpart_yzis )
 
 
 include_directories( ${YZIS_INCLUDES} ${KDE4_INCLUDE_DIR}
@@ -24,10 +24,10 @@ set( part_SOURCES
 
 kde4_automoc( ${part_SOURCES} )
 
-kde4_add_plugin(yzis_kpart  ${part_SOURCES})
-target_link_libraries(yzis_kpart ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS} ktexteditor yzis )
+kde4_add_plugin(yzispart ${part_SOURCES})
+target_link_libraries(yzispart ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS} ktexteditor yzis )
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} yzis_kpart )
-install_targets( ${PLUGIN_INSTALL_DIR} yzis_kpart )
-install_files( ${SERVICES_INSTALL_DIR} FILES  yzis_kpart.desktop )
-install_files( ${DATA_INSTALL_DIR}/yzis_kpart FILES  yzis_kpart.rc )
+kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} yzispart )
+install_targets( ${PLUGIN_INSTALL_DIR} yzispart )
+install_files( ${SERVICES_INSTALL_DIR} FILES  yzispart.desktop )
+install_files( ${DATA_INSTALL_DIR}/yzispart FILES  yzispart.rc )

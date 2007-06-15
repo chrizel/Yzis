@@ -25,8 +25,9 @@
 */
 			
    
-#include "view.h"
+/* Yzis */
 #include "action.h"
+#include "view.h"
 #include "debug.h"
 #include "buffer.h"
 #include "session.h"

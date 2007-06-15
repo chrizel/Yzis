@@ -18,9 +18,9 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+#include "qyziscursor.h"
 #include "editor.h"
 #include "viewwidget.h"
-#include "qyziscursor.h"
 #include "debug.h"
 
 #define dbg() yzDebug("QYZisCursor")

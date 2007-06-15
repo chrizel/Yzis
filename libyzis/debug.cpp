@@ -25,15 +25,19 @@
  * 2000-2002 Stephan Kulow ( coolo@kde.org )
  */
 
-
-#include "portability.h"
+/* Yzis */
 #include "debug.h"
+#include "portability.h"
+
+/* Std */
 #include <ctype.h>
 #include <stdarg.h>
 #include <strings.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+
+/* Qt */
 #include <QTextStream>
 #include <QRegExp>
 #include <QStringList>

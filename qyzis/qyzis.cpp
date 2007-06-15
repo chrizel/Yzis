@@ -16,18 +16,20 @@
 */
 
 
+/* Yzis */
+#include "qyzis.h"
+#include "qsession.h"
+#include "portability.h"
+#include "viewwidget.h"
+#include "debug.h"
+#include "buffer.h"
+#include "configuredialog.h"
+
+/* Qt */
 #include <QMenu>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <qmenubar.h>
-
-#include "portability.h"
-#include "qsession.h"
-#include "viewwidget.h"
-#include "qyzis.h"
-#include "debug.h"
-#include "buffer.h"
-#include "configuredialog.h"
 
 
 #define dbg()    yzDebug("Qyzis")

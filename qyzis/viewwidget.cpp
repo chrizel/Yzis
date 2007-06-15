@@ -19,18 +19,9 @@
  **/
 
 
-/* Qt */
-#include <QEvent>
-#include <QFileDialog>
-#include <QLabel>
-#include <QMenu>
-#include <QSettings>
-#include <QTimer>
-#include <qapplication.h>
-
-/* yzis */
-#include "portability.h"
+/* Yzis */
 #include "viewwidget.h"
+#include "portability.h"
 #include "viewcursor.h"
 #include "yzis.h"
 #include "mode_visual.h"
@@ -40,6 +31,15 @@
 #include "qyzis.h"
 #include "linenumbers.h"
 #include "buffer.h"
+
+/* Qt */
+#include <QEvent>
+#include <QFileDialog>
+#include <QLabel>
+#include <QMenu>
+#include <QSettings>
+#include <QTimer>
+#include <qapplication.h>
 
 #define dbg() yzDebug("QYZisView")
 #define err() yzError("QYZisView")

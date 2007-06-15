@@ -21,13 +21,18 @@
 #ifndef YZ_ACTION_H
 #define YZ_ACTION_H
 
-/* Qt */
-
+/* Yzis */
+#include "yzismacros.h"
 class YZBuffer;
 class YZView;
 class YZCursor;
 class YZInterval;
+
+/* Qt */
+#include <QList>
 class QString;
+class QStringList;
+class QChar;
 
 class YZIS_EXPORT YZAction
 {

@@ -18,6 +18,16 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+/* Yzis */
+#include "editor.h"
+#include "yzis.h"
+#include "qsession.h"
+#include "registers.h"
+#include "viewwidget.h"
+
+/* QYzis */
+#include "qyzis.h"
+
 /* Std */
 #include <math.h>
 #include <ctype.h>
@@ -29,15 +39,6 @@
 #include <qclipboard.h>
 #include <qcursor.h>
 
-/* Yzis */
-#include "editor.h"
-#include "yzis.h"
-#include "qsession.h"
-#include "registers.h"
-#include "viewwidget.h"
-
-/* QYzis */
-#include "qyzis.h"
 
 #define dbg() yzDebug("QYZisEdit")
 #define err() yzError("QYZisEdit")

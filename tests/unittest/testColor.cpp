@@ -1,8 +1,8 @@
 
+#include "testColor.h"
+
 #include <libyzis/debug.h>
 #include <libyzis/color.h>
-
-#include "testColor.h"
 
 void TestColor::testColor1()
 {

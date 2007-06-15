@@ -18,16 +18,20 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <QPainter>
-#include <QPaintDevice>
-#include <math.h>
-
+/* Yzis */
 #include "qtprinter.h"
-
 #include "debug.h"
 #include "session.h"
 #include "buffer.h"
 #include "view.h"
+
+/* Qt */
+#include <QPainter>
+#include <QPaintDevice>
+
+/* Std */
+#include <math.h>
+
 
 #define dbg()    yzDebug("YZQtPrinter")
 #define err()    yzError("YZQtPrinter")

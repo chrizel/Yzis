@@ -18,6 +18,16 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
+/* Yzis */
+#include "qsession.h"
+#include "portability.h"
+#include "viewwidget.h"
+#include "debug.h"
+#include "yzis.h"
+#include "qyzis.h"
+#include "view.h"
+#include "buffer.h"
+
 /* Std */
 #include <assert.h>
 #include <unistd.h>
@@ -34,16 +44,6 @@
 #ifdef Q_WS_X11
 #include <QX11Info>
 #endif
-
-/* Yzis */
-#include "portability.h"
-#include "qsession.h"
-#include "viewwidget.h"
-#include "debug.h"
-#include "yzis.h"
-#include "qyzis.h"
-#include "view.h"
-#include "buffer.h"
 
 #define dbg() yzDebug("QYZisSession")
 #define err() yzError("QYZisSession")

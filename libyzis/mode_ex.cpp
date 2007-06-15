@@ -22,8 +22,9 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include "debug.h"
+/* Yzis */
 #include "mode_ex.h"
+#include "debug.h"
 #include "buffer.h"
 #include "folding.h"
 #include "session.h"
@@ -40,6 +41,7 @@
 #include "viewcursor.h"
 #include "history.h"
 
+/* Qt */
 #include <QFileInfo>
 #include <QDir>
 

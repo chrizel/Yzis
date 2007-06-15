@@ -22,6 +22,7 @@
 #define YZIS_LINE_H
 
 #include <QVector>
+#include <QString>
 
 /**
  * this class represents a line in the buffer

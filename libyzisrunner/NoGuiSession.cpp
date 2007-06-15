@@ -17,11 +17,14 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+/* Yzis */
+#include "NoGuiSession.h"
+#include "NoGuiView.h"
+#include "debug.h"
+
+/* Qt */
 #include <QCoreApplication>
 
-#include "NoGuiView.h"
-#include "NoGuiSession.h"
-#include "debug.h"
 
 #define dbg() yzDebug("NoGuiSession")
 

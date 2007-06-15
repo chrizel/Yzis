@@ -16,16 +16,17 @@
     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
+/* Nyzis */
+#include "nsession.h"
+
+/* Yzis */
+#include "buffer.h"
+#include "debug.h"
+
 /* Std */
 #include <unistd.h>
 #include <ctype.h>
 
-/* libyzis */
-#include "buffer.h"
-#include "debug.h"
-
-/* nyzis */
-#include "nsession.h"
 
 #define dbg() yzDebug("NYZSession")
 #define err() yzError("NYZSession")

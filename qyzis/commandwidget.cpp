@@ -17,8 +17,9 @@
  *  Boston, MA 02111-1307, USA.
  **/
 
-#include "viewwidget.h"
+/* Yzis */
 #include "commandwidget.h"
+#include "viewwidget.h"
 #include "debug.h"
 #include "editor.h"
 #include "mode.h"

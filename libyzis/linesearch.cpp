@@ -18,11 +18,12 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+/* Yzis */
+#include "linesearch.h"
 #include "cursor.h"
 #include "view.h"
 #include "debug.h"
 #include "buffer.h"
-#include "linesearch.h"
 
 #define dbg()    yzDebug("YZLineSearch")
 #define err()    yzError("YZLineSearch")

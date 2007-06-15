@@ -17,16 +17,21 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <QRegExp>
 
+/* Yzis */
+#include "luaregexp.h"
 #include "portability.h"
 #include "luaengine.h"
-#include "luaregexp.h"
 #include "debug.h"
+
+/* Qt */
+#include <QRegExp>
+
 
 #define dbg()    yzDebug("YZLuaRegexp")
 #define err()    yzError("YZLuaRegexp")
 
+/* Lua */
 extern "C" {
 #include <lauxlib.h>
 #include <lualib.h>

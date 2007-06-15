@@ -9,32 +9,32 @@ if (ENABLE_DOCUMENTATION)
 		set( ALWAYS_GENERATE ALL )
 	endif(GENERATE_DOC)
 
-    FILE( MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../apidoc )
+	FILE( MAKE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../apidoc )
 
 	add_custom_target(
 		doc_libyzis
 		COMMAND ${DOXYGEN} libyzis.doxy
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Building libyzis api documentation"
+		COMMENT "Building libyzis api documentation"
 	)
 
 	add_custom_target(
 		doc_qyzis
 		COMMAND ${DOXYGEN} qyzis.doxy
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Building qyzis api documentation"
+		COMMENT "Building qyzis api documentation"
 	)
 	add_custom_target(
 		doc_nyzis
 		COMMAND ${DOXYGEN} nyzis.doxy
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Building nyzis api documentation"
+		COMMENT "Building nyzis api documentation"
 	)
 	add_custom_target(
 		doc_devhandbook
 		COMMAND ${DOXYGEN} devhandbook.doxy
 		WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Building dev handbook documentation"
+		COMMENT "Building dev handbook documentation"
 	)
 
 	add_custom_target(

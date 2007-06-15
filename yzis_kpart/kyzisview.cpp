@@ -60,6 +60,8 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
 	guiSyncViewInfo();
 
 	QGridLayout* g = new QGridLayout( this );
+	g->setMargin( 0 );
+	g->setSpacing( 0 );
 	g->addWidget( m_editor, 0, 0 );
 	g->addWidget( mVScroll, 0, 1 );
 	g->addWidget( m_command, 1, 0 );

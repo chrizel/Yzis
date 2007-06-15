@@ -43,6 +43,6 @@ KParts::Part* KTEFactory::createPartObject(QWidget*, QObject*, const char*, cons
 	return doc;
 }
 
-K_EXPORT_COMPONENT_FACTORY( yzis_kpart, KTEFactory );
+K_EXPORT_COMPONENT_FACTORY( yzispart, KTEFactory );
 
 #include "ktefactory.moc"

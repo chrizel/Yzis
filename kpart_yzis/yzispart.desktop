@@ -15,7 +15,7 @@ Name[ven]=Tshipida
 Name[xh]=KyzisIqela
 Name[zu]=KyzisIngxenye
 MimeType=text/plain;text/x-makefile;text/x-c++hdr;text/x-c++src;text/x-chdr;text/x-csrc;text/x-java;text/x-moc;text/x-pascal;text/x-tcl;text/x-tex;application/x-shellscript;
-X-KDE-Library=yzis_kpart
+X-KDE-Library=yzispart
 ServiceTypes=KParts/ReadWritePart,Browser/View,KTextEditor/Editor,KTextEditor/Document
 Type=Service
 

@@ -16,15 +16,10 @@
  *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *  Boston, MA 02110-1301, USA.
  **/
-#include <QFile>
-#include <QTextStream>
-#include <QDate>
-#include <QTime>
-#include <sys/types.h>
-#include <sys/stat.h>
 
-#include "debug.h"
+/* Yzis */
 #include "swapfile.h"
+#include "debug.h"
 #include "yzis.h"
 #include "internal_options.h"
 #include "buffer.h"
@@ -32,6 +27,14 @@
 #include "view.h"
 #include "session.h"
 #include "portability.h"
+
+/* Qt */
+#include <QFile>
+#include <QTextStream>
+#include <QDate>
+#include <QTime>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #define dbg()    yzDebug("YZSwapFile")
 #define err()    yzError("YZSwapFile")

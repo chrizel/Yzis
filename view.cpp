@@ -22,9 +22,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/* System */
-#include <math.h>
-
 /* Yzis */
 #include "view.h"
 #include "viewcursor.h"
@@ -40,6 +37,9 @@
 #include "kate/syntaxhighlight.h"
 #include "linesearch.h"
 #include "folding.h"
+
+/* System */
+#include <math.h>
 
 using namespace yzis;
 

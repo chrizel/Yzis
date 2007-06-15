@@ -24,6 +24,17 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+/* Yzis */
+#include "tags_interface.h"
+#include "internal_options.h"
+#include "readtags/readtags.h"
+#include "session.h"
+#include "debug.h"
+#include "view.h"
+#include "buffer.h"
+#include "tags_stack.h"
+#include "yzisinfojumplistrecord.h"
+
 /* System */
 #include <assert.h>
 
@@ -33,17 +44,6 @@
 #include <QStringList>
 #include <QList>
 #include <QVector>
-
-/* Yzis */
-#include "internal_options.h"
-#include "readtags/readtags.h"
-#include "tags_interface.h"
-#include "session.h"
-#include "debug.h"
-#include "view.h"
-#include "buffer.h"
-#include "tags_stack.h"
-#include "yzisinfojumplistrecord.h"
 
 static QList<tagFile*> tagfilelist;
 static QList<QString> tagfilenames;

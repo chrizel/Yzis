@@ -20,10 +20,14 @@
 #ifndef YZ_LINE_SEARCH_H
 #define YZ_LINE_SEARCH_H
 
+/* Yzis */
 class YZViewCursor;
 class YZCursor;
 class YZBuffer;
 class YZView;
+
+/* Qt */
+#include <QString>
 
 class YZLineSearch {
 

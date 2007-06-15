@@ -19,16 +19,18 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <QList>
-
+/* Yzis */
+#include "search.h"
 #include "portability.h"
 #include "debug.h"
 #include "action.h"
-#include "search.h"
 #include "view.h"
 #include "session.h"
 #include "buffer.h"
 #include "selection.h"
+
+/* Qt */
+#include <QList>
 
 #define dbg()    yzDebug("YZSearch")
 #define err()    yzError("YZSearch")

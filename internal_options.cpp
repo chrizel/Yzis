@@ -18,19 +18,19 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/* Qt */
-#include <qdir.h>
-#include <qfile.h>
-#include <qregexp.h>
-#include <QTextStream>
-
-/* yzis */
+/* Yzis */
 #include "internal_options.h"
 #include "debug.h"
 #include "session.h"
 #include "search.h"
 #include "view.h"
 #include "buffer.h"
+
+/* Qt */
+#include <qdir.h>
+#include <qfile.h>
+#include <qregexp.h>
+#include <QTextStream>
 
 #define dbg()    yzDebug("YZInternalOptionPool")
 #define err()    yzError("YZInternalOptionPool")

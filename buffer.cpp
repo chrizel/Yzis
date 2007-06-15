@@ -20,15 +20,7 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-
-// for tildeExpand
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <QTextCodec>
-
-#include "kate/syntaxhighlight.h"
-
+/* Yzis */
 #include "buffer.h"
 #include "line.h"
 #include "view.h"
@@ -43,6 +35,16 @@
 #include "mark.h"
 #include "yzisinfo.h"
 #include "portability.h"
+
+#include "kate/syntaxhighlight.h"
+
+// for tildeExpand
+#include <sys/types.h>
+#include <sys/stat.h>
+
+/* Qt */
+#include <QTextCodec>
+
 
 #define dbg()    yzDebug("YZBuffer")
 #define err()    yzError("YZBuffer")

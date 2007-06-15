@@ -18,9 +18,12 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-#include <qregexp.h>
+/* Yzis */
 #include "line.h"
 #include "debug.h"
+
+/* Qt */
+#include <qregexp.h>
 
 #define dbg()    yzDebug("YZLine")
 #define err()    yzError("YZLine")

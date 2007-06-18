@@ -53,6 +53,7 @@ KTextEditor::Editor* KTEEditor::self()
 KTextEditor::Document* KTEEditor::createDocument( QObject *parent )
 {
 	KTEDocument* doc = new KTEDocument(parent);
+	emit documentCreated( this, doc );
 	return doc;
 }
 

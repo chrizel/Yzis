@@ -68,10 +68,10 @@ void KYZisCommand::focusInEvent ( QFocusEvent* e ) {
 
 void KYZisCommand::focusOutEvent ( QFocusEvent* e ) {
 	yzDebug() << "KYZisCommand : Focus OUT -> reject" << endl;
-	if ( m_view->modePool()->currentType() != YZMode::ModeEx 
-			&& m_view->modePool()->currentType() != YZMode::ModeSearch 
-			&& m_view->modePool()->currentType() != YZMode::ModeSearch )
-		return;
+	if ( m_view->modePool()->currentType() == YZMode::ModeEx 
+			|| m_view->modePool()->currentType() == YZMode::ModeSearch 
+			|| m_view->modePool()->currentType() == YZMode::ModeSearch )
+		m_view->modePool()->pop();
 	KLineEdit::focusOutEvent( e );
 }
 

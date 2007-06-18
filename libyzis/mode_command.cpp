@@ -1362,6 +1362,9 @@ void YZModeCommand::redisplay( const YZCommandArgs &args ) {
 
 void YZModeCommand::replace( const YZCommandArgs &args ) {
 	YZCursor pos = args.view->getBufferCursor();
+	if (args.arg == "<ESC>") {
+		return;
+	}
 	args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg );
 	args.view->gotoxy(pos.x(),pos.y(),true);
 	args.view->updateStickyCol();

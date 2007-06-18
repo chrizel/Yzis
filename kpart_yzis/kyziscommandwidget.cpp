@@ -30,7 +30,7 @@
 #include <QKeyEvent>
 
 
-KYZisCommand::KYZisCommand(KYZisView *view)
+KYZisCommand::KYZisCommand( KYZisView *view )
 	: KLineEdit( view ) 
 {
 	m_view = view;
@@ -56,22 +56,23 @@ void KYZisCommand::keyPressEvent ( QKeyEvent * e ) {
 	else KLineEdit::keyPressEvent( e );
 }
 
-void KYZisCommand::focusInEvent (QFocusEvent *) {
+void KYZisCommand::focusInEvent ( QFocusEvent* e ) {
 	yzDebug() << "KYZisCommand : Focus IN -> EX mode" << endl;
 	if ( m_view->modePool()->currentType() != YZMode::ModeEx 
 			&& m_view->modePool()->currentType() != YZMode::ModeSearch 
 			&& m_view->modePool()->currentType() != YZMode::ModeSearchBackward ) {
 		m_view->modePool()->push( YZMode::ModeEx );
 	}
+	KLineEdit::focusInEvent( e );
 }
 
-void KYZisCommand::focusOutEvent (QFocusEvent *e) {
+void KYZisCommand::focusOutEvent ( QFocusEvent* e ) {
 	yzDebug() << "KYZisCommand : Focus OUT -> reject" << endl;
 	if ( m_view->modePool()->currentType() != YZMode::ModeEx 
 			&& m_view->modePool()->currentType() != YZMode::ModeSearch 
 			&& m_view->modePool()->currentType() != YZMode::ModeSearch )
 		return;
-	QWidget::focusOutEvent(e);
+	KLineEdit::focusOutEvent( e );
 }
 
 #include "kyziscommandwidget.moc"

@@ -32,13 +32,13 @@ class KYZisCommand : public KLineEdit {
 	Q_OBJECT
 
 	public :
-		KYZisCommand(KYZisView* view);
+		KYZisCommand( KYZisView* view );
 		virtual ~KYZisCommand();
 
 	protected:
-		void keyPressEvent (QKeyEvent *);
-		virtual void focusInEvent (QFocusEvent *);
-		virtual void focusOutEvent (QFocusEvent *);
+		void keyPressEvent( QKeyEvent* );
+		virtual void focusInEvent( QFocusEvent* );
+		virtual void focusOutEvent( QFocusEvent* );
 
 	private :
 		KYZisView* m_view;

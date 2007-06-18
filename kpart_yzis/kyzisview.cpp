@@ -45,7 +45,7 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
 	m_editor = new KYZisEditor( this );
 	m_editor->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
 	// TODO: remove this, as soon as we can configure the edior component
-	m_editor->setPalette( Qt::black, Qt::white, 0 );
+	m_editor->setPalette( Qt::white, Qt::black, 0 );
 
 	m_command = new KYZisCommand( this );
 
@@ -80,6 +80,16 @@ KYZisView::~KYZisView()
 	for( int i = actionCollection->count() - 1; i>= 0; --i )
 		delete actionCollection->takeAction( actionCollection->action(i) );
 	delete actionCollection;
+}
+
+void KYZisView::setFocusMainWindow()
+{
+	m_editor->setFocus();
+}
+
+void KYZisView::setFocusCommandLine()
+{
+	m_command->setFocus();
 }
 
 void KYZisView::guiScroll(int dx, int dy)

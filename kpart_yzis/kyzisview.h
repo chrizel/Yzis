@@ -68,6 +68,9 @@ public:
 	void unregisterModifierKeys( const QString& keys );
 	void guiPaintEvent( const YZSelection& drawMap );
 
+	void setFocusMainWindow();
+	void setFocusCommandLine();
+
 public slots:
 	void sendMultipleKeys( const QString& );
 	void scrollView( int );

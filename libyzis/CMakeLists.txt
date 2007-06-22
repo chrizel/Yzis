@@ -36,6 +36,7 @@ set(yzis_LIB_SRCS
    mode_visual.cpp 
    option.cpp 
    registers.cpp 
+   resourcemgr.cpp 
    search.cpp 
    selection.cpp 
    session.cpp 

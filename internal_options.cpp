@@ -25,6 +25,7 @@
 #include "search.h"
 #include "view.h"
 #include "buffer.h"
+#include "resourcemgr.h"
 
 /* Qt */
 #include <qdir.h>
@@ -55,10 +56,7 @@ void YZInternalOptionPool::loadFrom(const QString& file ) {
     dbg() << "loadFrom( " << file << " ) " << endl;
 	QFile f( file );
 
-	if ( !f.exists() ) {
-        dbg() << "loadFrom(): file does not exist" << endl;
-        return;
-    }
+	if ( file.isEmpty() || !f.exists() ) return;
 
 	if ( f.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
 		QTextStream stream( &f );
@@ -81,7 +79,7 @@ void YZInternalOptionPool::loadFrom(const QString& file ) {
 						setOptionFromString( line.trimmed() );
 					}
 				} else
-					yzDebug( "YZInternalOptionPool" ) << "Error parsing line " << idx << " of " << file << endl;
+					dbg() << "Error parsing line " << idx << " of " << file << endl;
 			}
 			idx++;
 		}
@@ -413,23 +411,9 @@ void YZInternalOptionPool::setGroup( const QString& group ) {
 }
 
 void YZInternalOptionPool::initConfFiles() {
-	//first, do we have a config directory ?
-	QDir homeConf( QDir::homePath()+"/.yzis/" );
-	if ( !homeConf.exists( QDir::homePath()+"/.yzis/" ) ) {
-        dbg() << "initConfFiles(): no yzis user directory " << endl;
-		if ( !homeConf.mkpath(QDir::homePath()+"/.yzis/") ) {
-            dbg() << "Could not create " << (QDir::homePath()+"/.yzis/") << endl;
-            return;
-        } else {
-            dbg() << "Yzis user dir created: " << (QDir::homePath()+"/.yzis/") << endl;
-        }
-    }
-
-	loadFrom(QDir::rootPath()+"/etc/yzis/yzis.conf");
-	loadFrom(QDir::homePath()+"/.yzis/yzis.conf");
-
+	loadFrom( resourceMgr()->findResource( ConfigResource, "yzis.conf" ) );
 	//load cache files
-	loadFrom(QDir::homePath()+"/.yzis/hl.conf");
+	loadFrom( resourceMgr()->findResource( ConfigResource, "hl.conf" ) );
 }
 
 bool YZInternalOptionPool::hasGroup( const QString& group ) const {

@@ -37,6 +37,7 @@
 #include "tags_interface.h"
 #include "search.h"
 #include "internal_options.h"
+#include "resourcemgr.h"
 #include "view.h"
 #include "viewcursor.h"
 #include "history.h"
@@ -579,7 +580,9 @@ CmdState YZModeEx::set ( const YZExCommandArgs& args ) {
 }
 
 CmdState YZModeEx::mkyzisrc ( const YZExCommandArgs& args ) {
-	YZSession::self()->getOptions()->saveTo( QDir::currentPath() + "/yzis.conf", "", "HL Cache", args.force );
+	YZSession::self()->getOptions()->saveTo( 
+        resourceMgr()->findResource( WritableConfigResource, "yzis.conf" ), 
+        "", "HL Cache", args.force );
 	return CmdOk;
 }
 

@@ -4,14 +4,17 @@ set(yzis_unittest_SRCS
     main.cpp 
     testDebug.cpp 
     testColor.cpp 
+    testResource.cpp 
     ../../libyzis/debug.cpp 
     ../../libyzis/color.cpp 
+    ../../libyzis/resourcemgr.cpp 
     )
 
 # files needing moc
 set(yzis_unittest_MOCS 
    testDebug.h
    testColor.h
+   testResource.h
 )
 
 qt4_wrap_cpp(yzis_unittest_MOC_SRCS ${yzis_unittest_MOCS})

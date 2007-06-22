@@ -1,6 +1,22 @@
 
 #include "testDebug.h"
 #include "testColor.h"
+#include "testResource.h"
+
+#include <QRegExp>
+
+/** Convert a QString list to an char * argv[] array.
+  *
+  * both argc and argv are updated. There is no check on the size
+  * of argv.
+  */
+void toArgvArray( QStringList l, char ** argv, int * argc )
+{
+    *argc = 0;
+    foreach( QString s, l ) {
+        argv[(*argc)++] = strdup( qPrintable(s) );
+    }
+}
 
 /** 
   * How to use it:
@@ -13,29 +29,51 @@
   */
 int main( int argc, char * argv[] )
 {
-    QMap<QString,bool> runMe;
+    QMap<QString,QString> runMe;
+    QStringList myArgv;
     bool runAll = false;
     int fakeArgc = 1;
-    char * fakeArgv[] = { "yzistest.exe", NULL };
+    char * fakeArgv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
+    QRegExp reTestName( "(\\w+)(::(\\w+))?(\\(\\))?" );
+
+    myArgv << "yzistest.exe";
 
     if (argc == 1) {
         runAll = true;
     } else {
         for( int i=1; i<argc; i++) {
-            runMe[argv[i]] = true;
+            //qDebug("argv[%d] = '%s'", i, argv[i] );
+            if (argv[i][0] == '-') {
+                myArgv << argv[i];
+            } else if (reTestName.exactMatch( argv[i] )) {
+                //qDebug("match: %s", qPrintable( reTestName.capturedTexts().join(" , ") ) );
+                runMe[reTestName.cap(1)] = reTestName.cap(3);
+            }
         }
     }
 
-    if (runAll || runMe.contains("TestYZDebugBackend")) {
-        TestYZDebugBackend testYZDebugBackend;
-        QTest::qExec( &testYZDebugBackend, fakeArgc, fakeArgv );
-        printf("\n");
-    }
+    QStringList myArgvBase = myArgv;
 
-    if (runAll || runMe.contains("TestColor")) {
-        TestColor testColor;
-        QTest::qExec( &testColor, fakeArgc, fakeArgv );
-        printf("\n");
-    }
+#define RUN_MY_TEST( TestName ) \
+    myArgv = myArgvBase; \
+    if (runAll || runMe.contains( #TestName )) { \
+        foreach( QString key, runMe.keys() ) { \
+            if (key == #TestName && (! runMe[key].isEmpty())) { \
+                myArgv << runMe[key]; \
+            } \
+        } \
+ \
+        toArgvArray( myArgv, fakeArgv, &fakeArgc ); \
+        fakeArgv[fakeArgc] = NULL; \
+ \
+        TestName TestName##inst ; \
+        QTest::qExec( & TestName##inst, fakeArgc, fakeArgv ); \
+        printf("\n"); \
+    } \
+
+    RUN_MY_TEST( TestYZDebugBackend )
+    RUN_MY_TEST( TestColor )
+    RUN_MY_TEST( TestResource )
+
 }
 

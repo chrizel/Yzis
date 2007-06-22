@@ -15,7 +15,7 @@ protected:
     YZResourceMgr * mResMgr;
 
 protected:
-    void TestResource::subTest( ResourceType restype, QString dir, QString fname, bool shouldFind);
+    void subTest( ResourceType restype, QString dir, QString fname, bool shouldFind);
 
 private slots:
     // whole suite execution

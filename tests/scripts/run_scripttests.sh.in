@@ -74,13 +74,20 @@ then
 	testname=$*
 fi
 
-# save config file on linux
-if [ -z "$CYGWIN" ]; then
-	if [ -f ~/.yzis/yzis.conf ]; then
-		mv ~/.yzis/yzis.conf ~/.yzis/yzis.conf.old
+# protect user config file
+if [ -n "$CYGWIN" ]; then
+    user_home=`cygpath "$USERPROFILE"`;
+else
+    user_home="~";
 	fi
-	if [ -f ~/.yzis/init.lua ]; then
-		mv -f ~/.yzis/init.lua ~/.yzis/init.lua.old
+
+if [ -e "$user_home/.yzis" ]; then
+    echo "Saving $user_home/.yzis to .yzis_saved_for_tests"
+    rm -rf "$user_home/.yzis_saved_for_tests"
+    mv "$user_home/.yzis" "$user_home/.yzis_saved_for_tests"
+    if [ "$?" != "0" ]; then
+        echo "Could not save $user_home/.yzis directory, aborting"; 
+        exit 1;
 	fi
 fi
 
@@ -104,13 +111,10 @@ else
 fi
 
 # restore config file on linux
-if [ -z "$CYGWIN" ]; then
-	if [ -f ~/.yzis/yzis.conf.old ]; then
-		mv ~/.yzis/yzis.conf.old ~/.yzis/yzis.conf
-	fi
-	if [ -f ~/.yzis/init.lua.old ]; then
-		mv -f ~/.yzis/init.lua.old ~/.yzis/init.lua
-	fi
+if [ -e "$user_home/.yzis_saved_for_tests" ]; then
+    echo "Restoring .yzis_saved_for_tests to $user_home/.yzis"
+    rm -rf "$user_home/.yzis"
+    mv "$user_home/.yzis_saved_for_tests" "$user_home/.yzis"
 fi
 
 # restore original LD_LIBRARY_PATH

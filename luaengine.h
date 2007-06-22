@@ -69,15 +69,13 @@ class YZIS_EXPORT YZLuaEngine {
 		/**
 		 * Source a lua file.
          *
-         * The file is looked for in:
-         * - the current path
-         * - ~/.yzis/scripts
-         * - ~/.yzis/scripts/indent
-         * - [install_dir]/share/yzis/scripts
-         * - [install_dir]/share/yzis/scripts/indent
+         * If the file can not be read, the function pops up a dialog.
          *
-         * @param filename the name of the lua file, with or without .lua
-         * extension.
+         * If you want to source a lua file that is an yzis resource, you must
+         * first find the resource with YZSession::findResource(
+         * YZSession::ScriptFile, fname )
+         *
+         * @param filename the name of the lua file, with .lua extension.
          * \return 1 if file isn't found, 0 otherwise
          *
 		 */

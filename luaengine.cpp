@@ -26,9 +26,6 @@
 #include "yzis.h"
 #include "portability.h"
 
-#include <QDir>
-
-
 class YZView;
 
 /*
@@ -270,38 +267,11 @@ void YZLuaEngine::execute(const QString& function, int nbArgs, int nbResults) {
 
 int YZLuaEngine::source( const QString& filename ) {
     dbg().sprintf( "source( '%s' )\n", qp(filename) );
-    QString fname = filename;
-	if ( !fname.endsWith( ".lua" ) ) fname += ".lua";
-
-	dbg() << "source() fname='" << fname << "'" << endl;
-	fname = YZBuffer::tildeExpand( fname );
-	dbg() << "source() fname='" << fname << "'" << endl;
-	QStringList candidates;
-	candidates << fname 
-	           << QDir::currentPath()+'/'+fname
-	           << QDir::homePath()+"/.yzis/scripts/"+fname
-	           << QDir::homePath()+"/.yzis/scripts/indent/"+fname
-		       << QString( PREFIX )+"/share/yzis/scripts/"+fname
-		       << QString( PREFIX )+"/share/yzis/scripts/indent/"+fname;
-
-	QString found;
-	QStringList::iterator it = candidates.begin(), end = candidates.end();
-	for( ; it!=end; ++it) {
-		if (QFile::exists( *it )) {
-            found = *it;
-            break;
-        }
-	}
-    dbg().sprintf( "source() found='%s'\n", qp(found) );
-
-	if (found.isEmpty()) {
-		return 1;
-	}
 
 	lua_pushstring(L,"dofile");
 	lua_gettable(L, LUA_GLOBALSINDEX);
-	lua_pushstring(L,found.toUtf8());
-	yzpcall(1,1, _("Lua error when running file %1:\n").arg(found) );
+	lua_pushstring(L,filename.toUtf8());
+	yzpcall(1,1, _("Lua error when running file %1:\n").arg(filename) );
 	cleanLuaStack( L ); // in case sourcing the file left something on the stack
 	return 0;
 }

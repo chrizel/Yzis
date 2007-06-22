@@ -368,11 +368,20 @@ public:
 	//-------------------------------------------------------
 	
 	/**
-	 * Sets the highlighting mode for this buffer
+	 * Sets the highlighting mode for this buffer.
+     *
+     * This will also try to load the indent script for this type of file.
+     *
 	 * @param mode the highlighting mode to use
-	 * @param warnGUI emit signal to GUI so they can reload the view if necessary
+	 * @param warnGUI emit signal highlightingChanged to GUI so they can reload the view if necessary
 	 */
 	void setHighLight(int mode, bool warnGUI=true);
+
+    /** Set highlighting mode by name.
+      *
+      * The highlighting mode is looked up using YzisHlManager::nameFind(). If
+      * found, setHighLight( mode, true ) is called.
+      */
 	void setHighLight( const QString& name );
 
 	bool updateHL( int line );

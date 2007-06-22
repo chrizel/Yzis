@@ -37,7 +37,7 @@
 #include "internal_options.h"
 #include "schema.h"
 #include "session.h"
-#include "resourceMgr.h"
+#include "resourcemgr.h"
 
 #include "portability.h"
 

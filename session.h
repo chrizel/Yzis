@@ -21,7 +21,7 @@
 
 #ifndef YZ_SESSION_H
 #define YZ_SESSION_H
-
+ 
 #include "sessioniface.h" 
 
 /* Qt */
@@ -43,6 +43,7 @@ class YZViewCursor;
 class YZYzisinfo;
 class YZTagStack;
 class YZCursor;
+class YZResourceMgr;
 
 typedef QList<YZBuffer*> YZBufferList;
 typedef QList<YZView*> YZViewList;
@@ -108,9 +109,16 @@ class YZIS_EXPORT YZSession  : public YZSessionIface
         /** Initialise the language stuff, for translation and display
           * in proper font and language.
           *
-          * This methed is called from init()
+          * This method is called from init()
           */
         void initLanguage();
+
+        /** Creates the Yzis Resource Manager and the ~/.yzis directory if
+          * needed.
+          *
+          * This methed is called from init().
+          */
+        void initResource();
 
         /** Load the init.lua scripts 
           *
@@ -429,6 +437,10 @@ class YZIS_EXPORT YZSession  : public YZSessionIface
           */
         virtual QString version();
     	
+
+        /** Get an instance of the resource manager */
+        virtual YZResourceMgr * resourceMgr() { return mResourceMgr; }
+
         //-------------------------------------------------------
 		// ----------------- Miscellaneous
 		//-------------------------------------------------------
@@ -451,7 +463,7 @@ class YZIS_EXPORT YZSession  : public YZSessionIface
 		 * transfer key events from GUI to core
 		 */
 		virtual void sendKey( YZView * view, const QString& key, const QString& modifiers="");
-
+		
 		void registerModifier ( const QString& mod );
 		void unregisterModifier ( const QString& mod );
 
@@ -470,7 +482,7 @@ class YZIS_EXPORT YZSession  : public YZSessionIface
 
 		
 	protected:
-		
+
 		void initModes();
 		void endModes();
 
@@ -501,6 +513,7 @@ class YZIS_EXPORT YZSession  : public YZSessionIface
 		YZRegisters *mRegisters;
 		YZYzisinfo* mYzisinfo;
 		YZTagStack *mTagStack;
+        YZResourceMgr * mResourceMgr;
 
 };
 

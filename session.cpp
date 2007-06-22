@@ -32,7 +32,10 @@
 #include "internal_options.h"
 #include "view.h"
 #include "yzisinfo.h"
+#include "resourcemgr.h"
 #include "luaengine.h"
+
+#include <stdlib.h>
 
 #include <QCoreApplication>
 #include <QDir>
@@ -96,6 +99,7 @@ void YZSession::init()
 {
 	initLanguage();
 	initModes();
+    initResource();
 
 	YZIS_SAFE_MODE {
 		dbg() << "Yzis SAFE MODE enabled." << endl;
@@ -128,13 +132,18 @@ void YZSession::initLanguage()
 #endif
 }
 
+void YZSession::initResource()
+{
+    mResourceMgr = new YZResourceMgr();
+}
+
 void YZSession::initScript()
 {
-	//read init files
-	if (QFile::exists(QDir::rootPath() + "/etc/yzis/init.lua"))
-		YZLuaEngine::self()->source( QDir::rootPath() + "/etc/yzis/init.lua" );
-	if (QFile::exists(QDir::homePath() + "/.yzis/init.lua"))
-		YZLuaEngine::self()->source( QDir::homePath() + "/.yzis/init.lua" );
+    QString resource;
+    resource = resourceMgr()->findResource( ConfigScriptResource, "init.lua" );
+    if (! resource.isEmpty()) {
+		YZLuaEngine::self()->source( resource );
+    }
 }
 
 void YZSession::parseCommandLine( int argc, char * argv[] )
@@ -235,6 +244,7 @@ YZSession::~YZSession() {
 	delete YZMapping::self();
 	delete YZLuaEngine::self();
 	delete mTagStack;
+    delete mResourceMgr;
 }
 
 void YZSession::initModes() {

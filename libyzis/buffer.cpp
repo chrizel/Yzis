@@ -31,6 +31,7 @@
 #include "swapfile.h"
 #include "session.h"
 #include "luaengine.h"
+#include "resourcemgr.h"
 #include "search.h"
 #include "mark.h"
 #include "yzisinfo.h"
@@ -785,10 +786,12 @@ void YZBuffer::setHighLight( int mode, bool warnGUI ) {
 		//XXX should we check whether it was already loaded ?
 		QString hlName = h->name();
 		hlName.replace("+","p");
-        dbg() << "setHighLight(): sourcing hl file " << hlName.toLower() << endl;
-		if (YZLuaEngine::self()->source(hlName.toLower()) != 0) {
-			YZSession::self()->guiPopupMessage(_("Couldn't fine the indent file for %1 in standard directories" ).arg( hlName.toLower() ));
-		}
+        hlName = hlName.toLower();
+        QString resource = resourceMgr()->findResource( IndentResource, hlName );
+        if (! resource.isEmpty()) {
+            dbg() << "setHighLight(): found indent file" << resource << endl;
+            YZLuaEngine::self()->source(hlName);
+        }
 	}
 }
 

@@ -27,6 +27,7 @@
 #include "mode_search.h"
 #include "session.h"
 #include "view.h"
+#include "resourcemgr.h"
 #include "yzisinfojumplistrecord.h"
 #include "yzisinfostartpositionrecord.h"
 
@@ -53,8 +54,7 @@ class YZYzisinfoCursor;
 YZYzisinfo::YZYzisinfo() 
 {
     dbg() << HERE() << endl;	
-	QString path = QDir::homePath() + "/.yzis";
-	mYzisinfo.setFileName( path + "/yzisinfo" );
+    mYzisinfo.setFileName( resourceMgr()->findResource( WritableConfigResource, "yzisinfo" ) );
 	mYzisinfoInitialized = false;
 }
 

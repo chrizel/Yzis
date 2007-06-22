@@ -37,6 +37,7 @@
 #include "internal_options.h"
 #include "schema.h"
 #include "session.h"
+#include "resourceMgr.h"
 
 #include "portability.h"
 
@@ -2989,22 +2990,10 @@ YzisHlManager::YzisHlManager()
   setDefaults(0,list);
   foreach( YzisAttribute *a, list )
 	  delete a;
-  //read init files
-  QString fname = QDir::rootPath() + "/etc/yzis/hl.lua";
-  if (QFile::exists(fname)) {
-    dbg() << "YzisHlManager(): reading " << fname << endl;
-    YZLuaEngine::self()->source( fname );
-  } else {
-    dbg() << "YzisHlManager(): file " << fname << " not available." << endl;
-  }
 
-  fname = QDir::homePath() + "/.yzis/hl.lua";
-  if (QFile::exists(fname)) {
-    dbg() << "YzisHlManager(): reading " << fname << endl;
-    YZLuaEngine::self()->source( fname );
-  } else {
-    dbg() << "YzisHlManager(): file " << fname << " not available." << endl;
-  }
+  //read init files
+  QString resource=resourceMgr()->findResource( ConfigScriptResource, "hl.lua" );
+  if (! resource.isEmpty()) YZLuaEngine::self()->source( resource );
 
 #ifndef YZIS_WIN32_GCC
   magicSet = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );

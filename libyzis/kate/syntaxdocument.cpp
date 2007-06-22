@@ -31,6 +31,7 @@
 #include "portability.h"
 #include "internal_options.h"
 #include "session.h"
+#include "resourcemgr.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <QDir>
@@ -548,8 +549,11 @@ void YzisSyntaxDocument::setupModeList (bool force)
   }
 
   // Let's get a list of all the xml files for hl
-  QStringList list = findAllResources("data",QString( PREFIX ) + "/share/yzis/syntax/*.xml",false,true);
-  list += findAllResources("data", QDir::homePath() + "/.yzis/syntax/*.xml", false, true);
+  QStringList resourceDirList = resourceMgr()->resourceDirList( SyntaxHlResource );
+  QStringList list;
+  foreach( QString resourceDir, resourceDirList ) {
+        list += findAllResources("data", resourceDir + "/*.xml",false,true);
+  }
 
   // Let's iterate through the list and build the Mode List
   QStringList::Iterator it = list.begin(), end = list.end();
@@ -673,6 +677,9 @@ void YzisSyntaxDocument::setupModeList (bool force)
       }
     }
   }
-  config->saveTo( QDir::homePath()+"/.yzis/hl.conf", "HL Cache", "", true );
+  QString resource = resourceMgr()->findResource( WritableConfigResource, "hl.conf" );
+  if (! resource.isEmpty()) {
+      config->saveTo( resource, "HL Cache", "", true );
+  }
 }
 

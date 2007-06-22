@@ -30,8 +30,6 @@
 #include "internal_options.h"
 #include "events.h"
 
-#include <QDir>
-
 #include "mode_ex.h"
 
 #include "luaengine.h"

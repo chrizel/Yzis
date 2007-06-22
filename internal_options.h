@@ -56,7 +56,9 @@ class YZInternalOptionPool {
 
 		
 		/**
-		 * Load settings from @param file
+		 * Load settings from @param file.
+         *
+         * Do not complain if the file does not exist or is not writeable.
 		 */
 		void loadFrom(const QString& file);
 

@@ -767,6 +767,7 @@ void YZBuffer::statusChanged() {
 // ------------------------------------------------------------------------
 
 void YZBuffer::setHighLight( int mode, bool warnGUI ) {
+    dbg().sprintf("setHighLight( %d, %d )", mode, warnGUI );
 	YzisHighlighting *h = YzisHlManager::self()->getHl( mode );
 
 	if ( h != d->highlight ) { //HL is changing
@@ -796,6 +797,7 @@ void YZBuffer::setHighLight( int mode, bool warnGUI ) {
 }
 
 void YZBuffer::setHighLight( const QString& name ) {
+    dbg().sprintf("setHighLight( %s )", qp(name) );
 	int hlMode = YzisHlManager::self()->nameFind( name );
 	if ( hlMode > 0 )
 		setHighLight( hlMode, true );
@@ -1007,10 +1009,12 @@ void YZBuffer::initHL( int line ) {
 }
 
 void YZBuffer::detectHighLight() {
+    dbg() << "detectHighLight()" << endl;
 	int hlMode = YzisHlManager::self()->detectHighlighting (this);
-	if ( hlMode >=0 )
+	if ( hlMode >=0 ) {
 		setHighLight( hlMode );
-	dbg() << "HIGHLIGHTING " << hlMode << endl;
+    }
+	dbg() << "detectHighLight() done: " << hlMode << endl;
 }
 
 

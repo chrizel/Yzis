@@ -3053,6 +3053,7 @@ int YzisHlManager::nameFind(const QString &name)
 
 int YzisHlManager::detectHighlighting (YZBuffer *doc)
 {
+  dbg() << "detectHighlighting( " << doc << " )" << endl;
   int hl = wildcardFind( doc->fileNameShort() );
 
   if (hl == -1)
@@ -3090,7 +3091,7 @@ int YzisHlManager::detectHighlighting (YZBuffer *doc)
 
 int YzisHlManager::wildcardFind(const QString &fileName)
 {
-  dbg() << "WidcardFind " << fileName << endl;
+  dbg() << "widcardFind( " << fileName << ")" << endl;
   int result = -1;
   if ((result = realWildcardFind(fileName)) != -1)
     return result;
@@ -3114,7 +3115,7 @@ int YzisHlManager::wildcardFind(const QString &fileName)
 
 int YzisHlManager::realWildcardFind(const QString &fileName)
 {
-  dbg() << "realWidcardFind " << fileName << endl;
+  dbg() << "realWidcardFind( " << fileName << ")" << endl;
   static QRegExp sep("\\s*;\\s*");
 
   QList<YzisHighlighting*> highlights;
@@ -3157,6 +3158,7 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 }
 
 QString YzisHlManager::findByContent( const QString& contents ) {
+    dbg() << "findByContent( " << contents << ")" << endl;
     if ( magicSet == NULL )
     	return QString();
     const char* magic_result = magic_file( magicSet, contents.toUtf8() );
@@ -3164,6 +3166,7 @@ QString YzisHlManager::findByContent( const QString& contents ) {
     	dbg() << "findByContent(): Magic for " << contents << " results: " << magic_result << endl;
     	QString mime = QString( magic_result );
     	mime = mime.mid( 0, mime.indexOf( ';' ) );
+        dbg() << "findByContent() return " << mime << endl;
     	return mime;
     }
     return QString();
@@ -3171,6 +3174,7 @@ QString YzisHlManager::findByContent( const QString& contents ) {
 
 int YzisHlManager::mimeFind(const QString &contents)
 {
+  dbg() << "mimeFind( " << contents << ")" << endl;
   static QRegExp sep("\\s*;\\s*");
 
   QString mt = findByContent( contents );
@@ -3180,15 +3184,19 @@ int YzisHlManager::mimeFind(const QString &contents)
   YzisHighlighting *highlight = hlList.at(0);
   for (int ab = 0 ; ab < hlList.size() && ( highlight=hlList.at( ab ) )!=0L; ++ab )
   {
+    dbg() << "mimeFind(): checking highlighting " << highlight->name() << endl;
     QStringList l = highlight->getMimetypes().split( sep );
 
     QStringList::Iterator it = l.begin(), end = l.end();
     for( ; it != end; ++it )
     {
+      dbg() << "mimeFind(): checking mimetype" << *it << " against "<< mt << endl;
       if ( *it == mt ) // faster than a regexp i guess?
         highlights.append (highlight);
     }
   }
+
+  dbg() << "mimeFind(): number of highlighting found = " << highlights.size() << endl;
 
   if ( !highlights.isEmpty() )
   {

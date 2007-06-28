@@ -39,11 +39,6 @@
 #include "session.h"
 #include "resourcemgr.h"
 
-#include "portability.h"
-
-#ifndef YZIS_WIN32_GCC
-#include "magic.h"
-#endif
 
 #include "luaengine.h"
 #include <QDir>
@@ -2995,28 +2990,32 @@ YzisHlManager::YzisHlManager()
   QString resource=resourceMgr()->findResource( ConfigScriptResource, "hl.lua" );
   if (! resource.isEmpty()) YZLuaEngine::self()->source( resource );
 
-#ifndef YZIS_WIN32_GCC
   magicSet = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );
   if ( magicSet == NULL ) {
     magic_close(magicSet);
   } else {
-    QString p = PREFIX;
-    p+= "/share/yzis/magic";
-    if (magic_load( magicSet, p.toLatin1()  ) == -1) {
-      dbg() << "Magic error " << magic_error( magicSet ) << endl;
+    const char * magic_db_path = NULL;
+    QString magicResource = resourceMgr()->findResource( ConfigResource, "magic.mime" );
+
+    if (! magicResource.isEmpty()) {
+        magicResource = magicResource.mid( 0, magicResource.length()-5 );
+        magic_db_path = strdup( (const char *) magicResource.toLocal8Bit() );
+    }
+
+    if (magic_load( magicSet, magic_db_path ) == -1) {
+      dbg() << "YzisHlManager(): magic_load(" << (magic_db_path ? magic_db_path : "NULL" ) << ") error: " << magic_error( magicSet ) << endl;
       magic_close(magicSet);
       magicSet = NULL;
+    } else {
+      dbg() << "YzisHlManager(): magic database loaded" << endl;
     }
   }
-#endif
 }
 
 YzisHlManager::~YzisHlManager()
 {
-#ifndef YZIS_WIN32_GCC
   if ( magicSet )
     magic_close( magicSet );
-#endif
   delete syntax;
 
   // we don't need to do it for hlDict, it uses the same pointers
@@ -3158,23 +3157,19 @@ int YzisHlManager::realWildcardFind(const QString &fileName)
 }
 
 QString YzisHlManager::findByContent( const QString& contents ) {
-#ifndef YZIS_WIN32_GCC
-// QString YzisHlManager::findByContent( const QByteArray& contents ) {
     if ( magicSet == NULL )
     	return QString();
     const char* magic_result = magic_file( magicSet, contents.toUtf8() );
     if ( magic_result ) {
-    	dbg() << "Magic for " << contents << " results " << magic_result << endl;
+    	dbg() << "findByContent(): Magic for " << contents << " results: " << magic_result << endl;
     	QString mime = QString( magic_result );
     	mime = mime.mid( 0, mime.indexOf( ';' ) );
     	return mime;
     }
-#endif
     return QString();
 }
 
 int YzisHlManager::mimeFind(const QString &contents)
-//int YzisHlManager::mimeFind(const QByteArray &contents)
 {
   static QRegExp sep("\\s*;\\s*");
 

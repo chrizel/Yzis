@@ -7,12 +7,14 @@
 
 FIND_PATH(MAGIC_INCLUDE_DIR magic.h
    /usr/local/include
+    ${GNUWIN32_INCLUDE_DIR}
 )
 
 FIND_LIBRARY(MAGIC_LIBRARIES NAMES magic
    PATHS
    /usr/lib
    /usr/local/lib
+    ${GNUWIN32_LIBRARY_DIR}
 )
 
 if(MAGIC_INCLUDE_DIR AND MAGIC_LIBRARIES)

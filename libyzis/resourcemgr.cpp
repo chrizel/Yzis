@@ -19,7 +19,7 @@
 
 #include "resourcemgr.h"
 #include "debug.h"
-#include "portability.h"
+#include "translator.h"
 
 #include <QDir>
 

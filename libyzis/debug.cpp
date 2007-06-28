@@ -27,7 +27,6 @@
 
 /* Yzis */
 #include "debug.h"
-#include "portability.h"
 
 /* Std */
 #include <ctype.h>

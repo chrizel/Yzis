@@ -1,10 +1,19 @@
 if (WIN32)
-    FILE(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
 
-    FIND_FILE(GNUWIN32_DIR gnuwin32
-       ${_progFiles}
-       "C:/"
-    )
+    FILE(TO_CMAKE_PATH "$ENV{PROGRAMFILES}" _progFiles)
+    FILE(TO_CMAKE_PATH "$ENV{GNUWIN32_DIR}" _gnuwin32Dir)
+    # message( _gnuwin32Dir=${_gnuwin32Dir} )
+
+    IF (_gnuwin32Dir AND EXISTS ${_gnuwin32Dir})
+        # there is an environement variable for it!
+        set( GNUWIN32_DIR ${_gnuwin32Dir} )
+    else ()
+        # we are on our own to find it
+        FIND_FILE(GNUWIN32_DIR gnuwin32
+           ${_progFiles}
+           "C:/"
+        )
+    endif ()
 
     if (GNUWIN32_DIR)
        set(GNUWIN32_INCLUDE_DIR ${GNUWIN32_DIR}/include)

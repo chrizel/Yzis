@@ -1,3 +1,5 @@
+SET( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )
+
 project(yzis)
 
 #enable_testing()
@@ -59,6 +61,8 @@ option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
 #
 if (WIN32)
 	add_definitions("-DYZIS_WIN32_GCC")
+    find_package(GNUWIN32)
+    find_package(Magic REQUIRED)
 else(WIN32)
     find_package(Magic REQUIRED)
     find_package(Gettext REQUIRED)
@@ -185,6 +189,6 @@ endif (ENABLE_TESTS)
 
 add_subdirectory( doc )
 #add_subdirectory( translations )
-#add_subdirectory( syntax )
+add_subdirectory( syntax )
 #add_subdirectory( scripts )
 

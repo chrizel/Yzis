@@ -26,7 +26,6 @@
 #include "session.h"
 #include "yzis.h"
 #include "mapping.h"
-#include "portability.h"
 #include "internal_options.h"
 #include "events.h"
 

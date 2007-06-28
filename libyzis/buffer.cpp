@@ -45,6 +45,7 @@
 /* Qt */
 #include <QTextCodec>
 
+#include <libintl.h>
 
 #define dbg()    yzDebug("YZBuffer")
 #define err()    yzError("YZBuffer")

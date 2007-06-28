@@ -24,9 +24,6 @@ PKGCONFIG(lua _libLuaIncDir _libLuaLinkDir _libLuaLinkFlags _libLuaCflags)
 
 set(LIBLUA50_DEFINITIONS ${_libLua50Cflags} ${_libLuaCflags} )
 
-# under windows, try to find the base gnuwin32 directory, do nothing under UNIX
-FIND_PACKAGE(GNUWIN32)
-
 FIND_PATH(LIBLUA50_INCLUDE_DIR lua.h
    ${WITH_LUA_HOME}/include
    ${_libLua50IncDir}/lua50

@@ -24,8 +24,11 @@
 #ifdef YZIS_WIN32_GCC
 	// ooh, we are on windows with gcc
 	
-	// XXX Phil: I'll fix that later 
-	#define gettext( s ) (s) 
+	#include <libintl.h>
+    // GnuWin32 uses libintl 0.14 which redefines sprintf and printf
+    // but this conflicts with our use of QString::sprintf()
+    #undef sprintf
+    #undef printf
 
 /*	
 	// emulate chmod

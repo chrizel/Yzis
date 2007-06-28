@@ -28,12 +28,15 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/libyzis/ 
     ${QT_INCLUDES}  
     ${LIBLUA_INCLUDE_DIR}
+    ${YZIS_INCLUDES}
     )
 
 target_link_libraries(yzis_unittest 
     ${QT_QTTEST_LIBRARY} 
     ${QT_QTCORE_LIBRARY}
     ${LIBLUA_LIBRARIES}
+    ${MAGIC_LIBRARIES} 
+    ${GETTEXT_LIBRARIES}
     yzis
     )
 

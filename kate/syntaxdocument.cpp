@@ -217,7 +217,7 @@ YzisSyntaxContextData* YzisSyntaxDocument::getSubItems(YzisSyntaxContextData* da
 
 bool YzisSyntaxDocument::getElement (QDomElement &element, const QString &mainGroupName, const QString &config)
 {
-  dbg() << "Looking for \"" << mainGroupName << "\" -> \"" << config << "\"." << endl;
+  dbg() << "getElement( element, \"" << mainGroupName << "\", \"" << config << "\" )" << endl;
 
   QDomNodeList nodes = documentElement().childNodes();
 
@@ -242,12 +242,12 @@ bool YzisSyntaxDocument::getElement (QDomElement &element, const QString &mainGr
         }
       }
 
-      dbg() << "WARNING: \""<< config <<"\" wasn't found!" << endl;
+      dbg() << "getElement(): WARNING: \""<< config <<"\" wasn't found!" << endl;
       return false;
     }
   }
 
-  dbg() << "WARNING: \""<< mainGroupName <<"\" wasn't found!" << endl;
+  dbg() << "getElement(): WARNING: \""<< mainGroupName <<"\" wasn't found!" << endl;
   return false;
 }
 
@@ -288,7 +288,7 @@ YzisSyntaxContextData* YzisSyntaxDocument::getGroupInfo(const QString& mainGroup
  */
 QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QString& type, bool clearList)
 {
-  dbg()<<"Create a list of keywords \""<<type<<"\" from \""<<mainGroup<<"\"."<<endl;
+  dbg()<< "finddata( mainGroup=\"" << mainGroup<<"\", type=\"" << type << "\", clearList="<< clearList <<" ) " <<endl;
   if (clearList)
     m_data.clear();
 
@@ -341,6 +341,7 @@ YzisSyntaxDocument::findAllResources( const char *,
 					 bool recursive,
 					 bool unique) const
 {
+    dbg() << "findAllResources( \"\" , filter=" << filter << ",recursive=" << recursive << ", unique=" << unique << ")" << endl;
     QStringList list;
     QString filterPath;
     QString filterFile;
@@ -360,8 +361,8 @@ YzisSyntaxDocument::findAllResources( const char *,
     QStringList candidates;
 /*    if (filterPath.startsWith("/")) // absolute path
     {*/
-        filterPath = filterPath.mid(1);
-        candidates << "/";
+        candidates << filterPath.mid(0, filterPath.indexOf("/")+1);
+        filterPath = filterPath.mid(filterPath.indexOf("/")+1);
 /*    }
     else
     {
@@ -385,6 +386,17 @@ YzisSyntaxDocument::findAllResources( const char *,
 }
 
 static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique) {
+
+    dbg() << "lookupDirectory( " << endl;
+    dbg() << "\tpath=" << path << endl;
+    dbg() << "\trelPart=" << relPart << endl;
+    dbg() << "\tregexp=" << regexp.pattern() << endl;
+    dbg() << "\tlist=(" << list.join(" , ") << " ) "  << endl;
+    dbg() << "\trelList=(" << relList.join(" , ") << " ) " << endl;
+    dbg() << "\trecursive=" << recursive << endl; 
+    dbg() << "\tunique=" << unique << endl;
+    dbg() << ")" << endl;
+
   QString pattern = regexp.pattern();
   if (recursive || pattern.contains('?') || pattern.contains('*'))
   {
@@ -453,6 +465,16 @@ static void lookupDirectory(const QString& path, const QString &relPart, const Q
 
 
 static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique) {
+    dbg() << "lookupPrefix( " << endl;
+    dbg() << "\tprefix=" << prefix << endl;
+    dbg() << "\trelpath=" << relpath << endl;
+    dbg() << "\trelPart=" << relPart << endl;
+    dbg() << "\tregexp=" << regexp.pattern() << endl;
+    dbg() << "\tlist=(" << list.join(" , ") << ")" << endl;
+    dbg() << "\trelList=("<<relList.join(" , ") << ")" << endl; 
+    dbg() << "\trecursive=" << recursive << endl; 
+    dbg() << "\tunique=" << unique << endl;
+    dbg() << ")" << endl;
 
     if (relpath.isNull()) {
        lookupDirectory(prefix, relPart, regexp, list,
@@ -545,6 +567,8 @@ void YzisSyntaxDocument::setupModeList (bool force)
   foreach( QString resourceDir, resourceDirList ) {
         list += findAllResources("data", resourceDir + "/*.xml",false,true);
   }
+
+  dbg() << "setupModeList(): syntax file list = " << list.join("\n") << endl;
 
   // Let's iterate through the list and build the Mode List
   QStringList::Iterator it = list.begin(), end = list.end();

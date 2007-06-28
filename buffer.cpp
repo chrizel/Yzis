@@ -35,7 +35,6 @@
 #include "search.h"
 #include "mark.h"
 #include "yzisinfo.h"
-#include "portability.h"
 
 #include "kate/syntaxhighlight.h"
 
@@ -133,7 +132,7 @@ YZBuffer::YZBuffer()
 	// other actions will make it BufferActive later
 	setState( BufferInactive );
 	
-	dbg() << "NEW BUFFER CREATED : " << d->path << endl;
+	dbg() << "YZBuffer() : " << d->path << endl;
 }
 
 YZBuffer::~YZBuffer() {
@@ -540,7 +539,7 @@ void YZBuffer::loadText( QString* content ) {
 }
 
 void YZBuffer::load(const QString& file) {
-	dbg() << "YZBuffer load " << file << endl;
+	dbg() << "YZBuffer::load( " << file << " ) " << endl;
 	if ( file.isNull() || file.isEmpty() ) return;
 
 	QFileInfo fileInfo( file );

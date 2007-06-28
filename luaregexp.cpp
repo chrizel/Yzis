@@ -20,7 +20,6 @@
 
 /* Yzis */
 #include "luaregexp.h"
-#include "portability.h"
 #include "luaengine.h"
 #include "debug.h"
 

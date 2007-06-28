@@ -25,7 +25,6 @@
 	// ooh, we are on windows with gcc
 	
 	// XXX Phil: I'll fix that later 
-	#define PREFIX ""
 	#define gettext( s ) (s) 
 
 /*	

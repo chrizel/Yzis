@@ -61,7 +61,7 @@ TestChanges = {} --class
 
 	assertPos(1,1)
 	insertline(1, "WORD")
-	goto(2,1)
+	goto(1,2)
 	sendkeys("D")
 	assertEquals(bufferContent(), "W")
 	assertPos(1,1)

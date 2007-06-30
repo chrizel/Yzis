@@ -71,6 +71,9 @@ class YZIS_EXPORT YZModeVisual : public YZModeCommand {
 		bool mEntireLines;
 };
 
+/**
+ * Visual line mode
+ */
 class YZModeVisualLine : public YZModeVisual {
 	public:
 		YZModeVisualLine();
@@ -81,6 +84,9 @@ class YZModeVisualLine : public YZModeVisual {
 		virtual YZInterval buildScreenInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to );
 };
 
+/**
+ * Visual block mode
+ */
 class YZModeVisualBlock : public YZModeVisual {
 	public:
 		YZModeVisualBlock();

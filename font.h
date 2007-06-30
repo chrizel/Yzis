@@ -22,6 +22,11 @@
 
 #include "yzismacros.h"
 
+/**
+ * A text font
+ *
+ * Holds font properties like bold, italic, underline...
+ */
 class YZIS_EXPORT YZFont {
 
 	public :

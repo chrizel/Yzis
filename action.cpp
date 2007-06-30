@@ -18,12 +18,6 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
-/**
-  YZAction: 
-  	Here are all buffer modifications methods. 
-	If you need to add a buffer modification method, you are at the _RIGHT_ place.
-*/
-			
    
 /* Yzis */
 #include "action.h"

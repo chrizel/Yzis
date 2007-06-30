@@ -26,7 +26,20 @@
 #include <QRect>
 
 #include "cursor.h"
+/**
+ * Boundary of an interval that either belongs to it or not
+ *
+ * Panard's explanation in an email to yzis-dev:
+ * I introduced bounds to remove ambiguity with the use of intervals :
+ * open and close correspond to (x,y)[ (open) or (x,y)] (close) then when defining
+ * intervals, you can do   [(x1,y1), (x2,y2)[,  [(x1,y1), (x2,y2)], etc...  In
+ * many methods (copy, paste, selections, rendering, etc...), the 'from' and 'to'
+ * positions are sometimes included and sometimes excluded.  Using an YZBound make
+ * it explicit.
 
+ * Another use is, by example, in visual mode : [(0,0), (0,1)[ will select line 0
+ * entirely without have to calculate line length.
+ */
 class YZIS_EXPORT YZBound {
 	public:
 		YZBound( const YZBound& bound ) : mPos( bound.pos() ) {
@@ -61,6 +74,11 @@ bool operator>=( const YZCursor left, const YZBound& right );
 bool operator<=( const YZCursor left, const YZBound& right );
 const YZBound operator-( const YZBound& left, const YZCursor right );
 
+/**
+ * An interval between two @ref YZBound "YZBounds"
+ *
+ * It can also be constructed from @ref YZCursor "YZCursors".
+ */
 class YZIS_EXPORT YZInterval {
 
 	friend YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i );
@@ -96,6 +114,9 @@ YZIS_EXPORT const YZInterval operator-( const YZInterval& l, const YZCursor r );
 
 typedef QMap<unsigned int, YZInterval> YZSelectionMap;
 
+/**
+ * Holds a selection
+ */
 class YZIS_EXPORT YZSelection {
 
 	friend YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s );
@@ -138,6 +159,9 @@ class YZIS_EXPORT YZSelection {
 		YZSelectionMap mMap;
 };
 
+/**
+ * Holds two @ref YZSelection "YZSelections", that is, an interval
+ */
 class YZIS_EXPORT YZDoubleSelection {
 
 	friend YZDebugStream& operator<<( YZDebugStream& out, const YZDoubleSelection& s );
@@ -167,6 +191,9 @@ class YZIS_EXPORT YZDoubleSelection {
 		YZSelection* sSelection;
 };
 
+/**
+ * Holds a @ref YZSelection and a @ref YZDoubleSelection
+ */
 class YZIS_EXPORT YZSelectionPool {
 	public:
 		enum SelectionLayout {

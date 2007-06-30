@@ -38,6 +38,9 @@ class YZExCommand;
 class YZExRange;
 class YZModeEx;
 
+/**
+ * Range argument for an Ex command
+ */
 struct YZExRangeArgs {
 	const YZExRange* cmd;
 	YZView* view;
@@ -50,6 +53,9 @@ struct YZExRangeArgs {
 	}
 };
 
+/**
+ * Command arguments for an Ex command
+ */
 struct YZExCommandArgs {
 	// caller view
 	YZView* view;
@@ -72,6 +78,9 @@ struct YZExCommandArgs {
 typedef CmdState (YZModeEx::*ExPoolMethod) (const YZExCommandArgs&);
 typedef int (YZModeEx::*ExRangeMethod) (const YZExRangeArgs&);
 
+/**
+ * Ex range
+ */
 class YZIS_EXPORT YZExRange {
 
 	public :

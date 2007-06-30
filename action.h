@@ -34,6 +34,12 @@ class QString;
 class QStringList;
 class QChar;
 
+/**
+ * Class that holds all buffer modification methods.
+ *
+ * Here are all buffer modifications methods. 
+ * If you need to add a buffer modification method, you are at the _RIGHT_ place.
+ */
 class YZIS_EXPORT YZAction
 {
 

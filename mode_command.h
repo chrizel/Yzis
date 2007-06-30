@@ -109,9 +109,10 @@ protected:
 	CmdArg mArg;
 };
 
-class YZMotionArgs;
 
-
+/**
+ * Arguments for a motion command
+ */
 class YZIS_EXPORT YZMotionArgs
 {
 public:
@@ -133,6 +134,11 @@ public:
 
 typedef YZCursor (YZModeCommand::*MotionMethod) (const YZMotionArgs&);
 
+/**
+ * Command mode (The default mode of Yzis)
+ *
+ * Commands in command mode are implemented as methods of this class.
+ */
 class YZIS_EXPORT YZModeCommand : public YZMode {
 
 	friend class YZMotion;

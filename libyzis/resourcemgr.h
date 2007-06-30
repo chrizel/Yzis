@@ -66,7 +66,9 @@ enum ResourceType {
     WritableConfigResource,     
 };
 
-
+/**
+ * Yzis resource manager
+ */
 class YZIS_EXPORT YZResourceMgr
 {
 

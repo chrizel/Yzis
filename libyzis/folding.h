@@ -26,11 +26,17 @@ class YZView;
 
 class YZDebugStream;
 
+/**
+ * A text fold
+ */
 struct YZFold {
 	int to;
 	bool opened;
 };
 
+/**
+ * Maintains a pool of @ref YZFold "YZFolds".
+ */
 class YZFoldPool {
 
 	friend YZDebugStream& operator<<( YZDebugStream& out, const YZFoldPool& f );

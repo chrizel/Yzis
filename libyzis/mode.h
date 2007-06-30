@@ -47,6 +47,9 @@ enum CmdState {
 
 YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const CmdState & state );
 
+/**
+ * Abstract class for modes
+ */
 class YZIS_EXPORT YZMode
 {
 public:
@@ -115,6 +118,9 @@ protected:
 YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const YZMode::ModeType & type );
 
 
+/**
+ * Mode with introductory text that is entered at startup
+ */
 class YZModeIntro : public YZMode {
 public:
 	YZModeIntro();
@@ -131,6 +137,9 @@ typedef YZMode::ModeType ModeType;
 typedef QMap<ModeType, YZMode*> YZModeMap;
 typedef QList<YZMode*> YZModeStack;
 
+/**
+ * Keeps track of modes to return to
+ */
 class YZIS_EXPORT YZModePool
 {
 public:

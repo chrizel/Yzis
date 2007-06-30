@@ -29,6 +29,9 @@ class YZView;
 /* Qt */
 #include <QString>
 
+/**
+ * Line search
+ */
 class YZLineSearch {
 
 public:

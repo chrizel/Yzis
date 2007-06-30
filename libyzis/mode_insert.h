@@ -26,6 +26,11 @@
 class YZMode;
 class YZView;
 
+/**
+ * Insert mode
+ *
+ * The mode that text is inserted in.
+ */
 class YZIS_EXPORT YZModeInsert : public YZMode {
 	public:
 		YZModeInsert();
@@ -66,6 +71,9 @@ class YZIS_EXPORT YZModeInsert : public YZMode {
 		QString m_imPreedit;
 };
 
+/**
+ * Replace mode
+ */
 class YZIS_EXPORT YZModeReplace : public YZModeInsert {
 	public :
 		YZModeReplace();

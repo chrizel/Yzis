@@ -79,6 +79,70 @@ TestChanges = {} --class
 	assertEquals(bufferContent(), "")
     end
 
+    function TestChanges:test_ctrl_a()
+	assertEquals(bufferContent(), "")
+	assertPos(1,1)
+	insertline(1, "A 0 B")
+	goto(1,1)
+	sendkeys("<CTRL>a")
+	assertEquals(bufferContent(), "A 0 B")
+	assertPos(1,1)
+
+	goto(3,1)
+	sendkeys("<CTRL>a")
+	assertEquals(bufferContent(), "A 1 B")
+	assertPos(1,3)
+	sendkeys("30<CTRL>a")
+	assertEquals(bufferContent(), "A 31 B")
+	assertPos(1, 4)
+
+	clearBuffer()
+
+	insertline(1, "B -5 A")
+	goto(4,1)
+	sendkeys("<CTRL>a")
+	assertEquals(bufferContent(), "B -4 A")
+	assertPos(1,4)
+
+	goto(3,1)
+	sendkeys("4<CTRL>a")
+	assertEquals(bufferContent(), "B 0 A")
+	assertPos(1,3)
+	clearBuffer()
+    end
+
+    function TestChanges:test_ctrl_x()
+	assertEquals(bufferContent(), "")
+	assertPos(1,1)
+	insertline(1, "A 0 B")
+	goto(1,1)
+	sendkeys("<CTRL>x")
+	assertEquals(bufferContent(), "A 0 B")
+	assertPos(1,1)
+
+	goto(3,1)
+	sendkeys("<CTRL>x")
+	assertEquals(bufferContent(), "A -1 B")
+	assertPos(1,4)
+	sendkeys("30<CTRL>x")
+	assertEquals(bufferContent(), "A -31 B")
+	assertPos(1,5)
+
+	clearBuffer()
+
+	insertline(1, "B 5 A")
+	goto(3,1)
+	sendkeys("<CTRL>x")
+	assertEquals(bufferContent(), "B 4 A")
+	assertPos(1,3)
+
+	goto(3,1)
+	sendkeys("4<CTRL>x")
+	assertEquals(bufferContent(), "B 0 A")
+	assertPos(1,3)
+	clearBuffer()
+    end
+
 if not _REQUIREDNAME then
     -- LuaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
     -- LuaUnit:run('TestLuaBinding') -- will execute only one class of test

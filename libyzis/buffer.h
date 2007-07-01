@@ -219,6 +219,11 @@ public:
 	QStringList getText(const YZInterval& i) const;
 
 	/**
+	 * Get the character at the given cursor position.
+	 */
+	QChar getCharAt( const YZCursor at ) const;
+
+	/**
 	 * Get entire word at given cursor position. Currently behaves like '*' in vim
 	 */
 	QString getWordAt( const YZCursor at ) const;

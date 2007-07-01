@@ -1433,11 +1433,17 @@ void YZModeCommand::decrementNumber( const YZCommandArgs& args ) {
 void YZModeCommand::adjustNumber( const YZCommandArgs& args, int change ) {
 	YZCursor pos = args.view->getBufferCursor();
 	//dbg() << "adjustNumber: pos: " << pos;
-	if ( !args.view->myBuffer()->getCharAt(pos).isDigit() ) {
-		dbg() << "adjustNumber: no digit under cursor";
-		return;
-	}
 	QString line = args.view->myBuffer()->textline(pos.y());
+	if ( !line[pos.x()].isDigit() ) {
+		// not a number, unless we're on the minus of a number
+		if ( line[pos.x()] == '-'
+				&& ( pos.x() + 1 < line.length() ) && line[pos.x()+1].isDigit() ) {
+			pos.setX(pos.x() + 1); // on the number
+		} else {
+			dbg() << "adjustNumber: no digit under cursor";
+			return;
+		}
+	}
 	// find the boundaries of the number
 	int begin;
 	int end;

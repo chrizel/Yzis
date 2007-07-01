@@ -905,6 +905,10 @@ void YZBuffer::intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor*
 	}
 }
 
+QChar YZBuffer::getCharAt( const YZCursor at ) const {
+	QString line = textline( at.y() );
+	return line[at.x()];
+}
 
 QString YZBuffer::getWordAt( const YZCursor at ) const {
 	QString l = textline( at.y() );

@@ -250,6 +250,8 @@ class YZIS_EXPORT YZModeCommand : public YZMode {
 		void tagNext( const YZCommandArgs & args );
 		void tagPrev( const YZCommandArgs & args );
 		void undoJump( const YZCommandArgs & args );
+		void incrementNumber( const YZCommandArgs& args );
+		void decrementNumber( const YZCommandArgs& args );
 
 		QList<YZCommand*> commands;
 		// this is not a QValueList because there is no constructor with no arguments for YZCommands
@@ -257,6 +259,8 @@ class YZIS_EXPORT YZModeCommand : public YZMode {
 
 		virtual YZInterval interval(const YZCommandArgs &args);
 
+	private:
+		void adjustNumber( const YZCommandArgs& args, int change );
 };
 
 /** This class represents a command that is also a motion. Its new member is

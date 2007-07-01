@@ -178,6 +178,8 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("<CTRL>]", &YZModeCommand::tagNext) );
 	commands.append( new YZCommand("<CTRL>t", &YZModeCommand::tagPrev) );
 	commands.append( new YZCommand("<CTRL>o", &YZModeCommand::undoJump) );
+	commands.append( new YZCommand("<CTRL>a", &YZModeCommand::incrementNumber) );
+	commands.append( new YZCommand("<CTRL>x", &YZModeCommand::decrementNumber) );
 }
 
 void YZModeCommand::initModifierKeys() {
@@ -1418,4 +1420,45 @@ void YZModeCommand::undoJump( const YZCommandArgs & /*args*/ ) {
 	const YZCursor cursor = YZSession::self()->previousJumpPosition();
 	YZSession::self()->currentView()->centerViewVertically( cursor.y() );
 	YZSession::self()->currentView()->gotodxdy( cursor.x(), cursor.y(), true );
+}
+
+void YZModeCommand::incrementNumber( const YZCommandArgs& args ) {
+	adjustNumber(args, args.count);
+}
+
+void YZModeCommand::decrementNumber( const YZCommandArgs& args ) {
+	adjustNumber(args, -args.count);
+}
+
+void YZModeCommand::adjustNumber( const YZCommandArgs& args, int change ) {
+	YZCursor pos = args.view->getBufferCursor();
+	//dbg() << "adjustNumber: pos: " << pos;
+	if ( !args.view->myBuffer()->getCharAt(pos).isDigit() ) {
+		dbg() << "adjustNumber: no digit under cursor";
+		return;
+	}
+	QString line = args.view->myBuffer()->textline(pos.y());
+	// find the boundaries of the number
+	int begin;
+	int end;
+	for (begin = pos.x(); begin >= 0 && line[begin].isDigit(); --begin)
+		;
+	if (begin < 0 || line[begin] != '-') {
+		++begin;
+	}
+	for (end = pos.x(); end < line.length() && line[end].isDigit(); ++end)
+		;
+	--end;
+
+	//dbg() << "adjustNumber: begin: " << begin << ", end: " << end;
+	int number = line.mid(begin, end - begin + 1).toInt();
+	dbg() << "adjustNumber: number:" << number;
+	number += change;
+	QString number_str = QString::number(number);
+	// replace old integer string with the new one
+	pos.setX(begin);
+	args.view->myBuffer()->action()->replaceText(args.view, pos, end-begin+1, number_str);
+	// move onto the last digit
+	pos.setX(begin + number_str.length() - 1);
+	args.view->gotoxyAndStick(pos);
 }

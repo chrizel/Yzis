@@ -67,7 +67,6 @@ void TestYZDebugBackend::testWhere()
     yzError() << LOCATION() << endl;
 }
 
-
 void TestYZDebugBackend::testParseArgv()
 {
     YZDebugBackend * dbe = YZDebugBackend::self();
@@ -106,6 +105,20 @@ void TestYZDebugBackend::testParseArgv()
     my_argc = 3;
     dbe->parseArgv( my_argc, my_argv );
     QCOMPARE( dbe->debugLevel(), YZ_FATAL_LEVEL );
+    QCOMPARE( dbe->areaLevel("b"), YZ_DEBUG_LEVEL );
+
+
+    my_argv[1] = "--level=error";
+    my_argv[2] = "--area-level=c,deepdebug";
+    my_argc = 3;
+    dbe->parseArgv( my_argc, my_argv );
+    QCOMPARE( dbe->debugLevel(), YZ_ERROR_LEVEL );
+    QCOMPARE( dbe->areaLevel("c"), YZ_DEEPDEBUG_LEVEL );
+
+    my_argv[1] = "--level=deepdebug";
+    my_argc = 2;
+    dbe->parseArgv( my_argc, my_argv );
+    QCOMPARE( dbe->debugLevel(), YZ_DEEPDEBUG_LEVEL );
     QCOMPARE( dbe->areaLevel("b"), YZ_DEBUG_LEVEL );
 }
 
@@ -168,26 +181,29 @@ void TestYZDebugBackend::testParseRcFile()
     ts.setDevice(&f);
     ts << "   level: debug \n";
     ts << " a : warning \n";
+    ts << " CC : deepdebug \n";
     f.close();
     QVERIFY( QFile::exists( fname ) );
 
     dbe->parseRcfile( fname );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->areaLevel("a"), YZ_WARNING_LEVEL );
+    QCOMPARE( dbe->areaLevel("CC"), YZ_DEEPDEBUG_LEVEL );
 
     // test start
     QVERIFY( f.open( QFile::ReadWrite ) );
     ts.setDevice(&f);
-    ts << "   level: debug \n";
+    ts << "   level: deepdebug \n";
     ts << " a : warning \n";
     ts << " AA : error \n";
     f.close();
     QVERIFY( QFile::exists( fname ) );
 
     dbe->parseRcfile( fname );
-    QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
+    QCOMPARE( dbe->debugLevel(), YZ_DEEPDEBUG_LEVEL );
     QCOMPARE( dbe->areaLevel("a"), YZ_WARNING_LEVEL );
     QCOMPARE( dbe->areaLevel("AA"), YZ_ERROR_LEVEL );
+
 
     QFile::remove( fname );
 }

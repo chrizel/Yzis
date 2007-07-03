@@ -92,11 +92,13 @@ YZDebugBackend::~YZDebugBackend() {
 void YZDebugBackend::init()
 {
     clearArea();
+    _levelByName["deepdebug"] = YZ_DEEPDEBUG_LEVEL;
     _levelByName["debug"] = YZ_DEBUG_LEVEL;
     _levelByName["warning"] = YZ_WARNING_LEVEL;
     _levelByName["error"] = YZ_ERROR_LEVEL;
     _levelByName["fatal"] = YZ_FATAL_LEVEL;
 
+    _nameByLevel[YZ_DEEPDEBUG_LEVEL] = "deepdebug";
     _nameByLevel[YZ_DEBUG_LEVEL] = "debug";
     _nameByLevel[YZ_WARNING_LEVEL] = "warning";
     _nameByLevel[YZ_ERROR_LEVEL] = "error";
@@ -527,6 +529,9 @@ void YZDebugStream::flush() {
     output.clear();
 }
 
+YZDebugStream yzDeepDebug( const char * area ) {
+    return YZDebugStream( area, YZ_DEEPDEBUG_LEVEL );
+}
 YZDebugStream yzDebug( const char * area ) {
     return YZDebugStream( area, YZ_DEBUG_LEVEL );
 }

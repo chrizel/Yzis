@@ -45,21 +45,12 @@ class QStringList;
 
 //! \name Debug levels
 //! @{
-#define YZ_DEBUG_LEVEL 0        //!< debuggging level
-#define YZ_WARNING_LEVEL 1      //!< warning level
-#define YZ_ERROR_LEVEL 2        //!< error level
-#define YZ_FATAL_LEVEL 3        //!< fatal level
+#define YZ_DEEPDEBUG_LEVEL   0  //!< deep debuggging level
+#define YZ_DEBUG_LEVEL   1      //!< debuggging level
+#define YZ_WARNING_LEVEL 2      //!< warning level
+#define YZ_ERROR_LEVEL   3      //!< error level
+#define YZ_FATAL_LEVEL   4      //!< fatal level
 //! @}
-
-//! \name Debug areas
-//! @{
-#define UNSPECIFIED 	""          //!< unspecified debug area
-#define CORE 			"libyzis"   //!< libyzis debug area
-#define KYZIS 			"kyzis"     //!< kyzis debug area
-#define NYZIS 			"nyzis"     //!< nyzis debug area
-#define QYZIS 			"qyzis"     //!< qyzis debug area
-#define AREA_TESTS 		"tests"     //!< tests debug area
-//! @} 
 
 /** default file name for controlling which area are enabled or not.
   * \see YZDebugBackend::parseRcfile()
@@ -491,6 +482,9 @@ inline YZDebugStream& flush( YZDebugStream& s ) { s.flush(); return s; }
   * yzDebug("some_area") << some_debug << some_more_debug << endl;
   * \endcode
   */
+YZIS_EXPORT YZDebugStream yzDeepDebug( const char * area = "" );
+
+/** Convenient function to build an deep debug stream. */
 YZIS_EXPORT YZDebugStream yzDebug( const char * area = "" );
 
 /** Convenient function to build a warning stream. */

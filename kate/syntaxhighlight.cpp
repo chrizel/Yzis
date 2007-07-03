@@ -415,7 +415,7 @@ YzisHlItem::YzisHlItem(int attribute, int context,signed char regionId,signed ch
 
 YzisHlItem::~YzisHlItem()
 {
-  //dbg()<<"In hlItem::~YzisHlItem()"<<endl;
+  //deepdbg()<<"In hlItem::~YzisHlItem()"<<endl;
   for (int i=0; i < subItems.size(); i++)
     delete subItems[i];
 }
@@ -1125,6 +1125,7 @@ YzisHlData::YzisHlData(const QString &wildcards, const QString &mimetypes, const
 
 //BEGIN YzisHlContext
 
+#define deepdbg()    yzDebug("YzisHlContext")
 #define dbg()    yzDebug("YzisHlContext")
 #define err()    yzError("YzisHlContext")
 
@@ -1174,10 +1175,12 @@ YzisHlContext::~YzisHlContext()
 
 //BEGIN YzisHighlighting
 
+#undef deepdbg
 #undef dbg
 #undef err
-#define dbg()    yzDebug("YzisHighlighting")
-#define err()    yzError("YzisHighlighting")
+#define deepdbg()   yzDeepDebug("YzisHighlighting")
+#define dbg()       yzDebug("YzisHighlighting")
+#define err()       yzError("YzisHighlighting")
 
 YzisHighlighting::YzisHighlighting(const YzisSyntaxModeListItem *def) : refCount(0)
 {
@@ -1237,7 +1240,7 @@ void YzisHighlighting::cleanup()
 
 void YzisHighlighting::generateContextStack(int *ctxNum, int ctx, QVector<short>* ctxs, int *prevLine)
 {
-  //dbg()<<QString("Entering generateContextStack with %1").arg(ctx)<<endl;
+  deepdbg()<<QString("Entering generateContextStack with %1").arg(ctx)<<endl;
   while (true)
   {
     if (ctx >= 0)
@@ -1382,14 +1385,14 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
     // There does an old context stack exist -> find the context at the line start
     ctxNum = ctx[ctx.size()-1]; //context ID of the last character in the previous line
 
-    //dbg() << "\t\tctxNum = " << ctxNum << " contextList[ctxNum] = " << contextList[ctxNum] << endl; // ellis
+    //deepdbg() << "\t\tctxNum = " << ctxNum << " contextList[ctxNum] = " << contextList[ctxNum] << endl; // ellis
 
     //if (lineContinue)   dbg()<<QString("The old context should be %1").arg((int)ctxNum)<<endl;
 
     if (!(context = contextNum(ctxNum)))
       context = contextNum(0);
 
-    //dbg()<<"test1-2-1-text2"<<endl;
+    deepdbg()<<"test1-2-1-text2"<<endl;
 
     previousLine=ctx.size()-1; //position of the last context ID of th previous line within the stack
 
@@ -2189,14 +2192,14 @@ void YzisHighlighting::readGlobalKeywordConfig()
 {
   deliminator = stdDeliminator;
   // Tell the syntax document class which file we want to parse
-  dbg()<<"readGlobalKeywordConfig:BEGIN"<<endl;
+  deepdbg()<<"readGlobalKeywordConfig:BEGIN"<<endl;
 
   YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
   YzisSyntaxContextData *data = YzisHlManager::self()->syntax->getConfig("general","keywords");
 
   if (data)
   {
-    dbg()<<"Found global keyword config"<<endl;
+    deepdbg()<<"Found global keyword config"<<endl;
 
     if (YzisHlManager::self()->syntax->groupItemData(data,QString("casesensitive"))!="0")
       casesensitive=true;
@@ -2206,7 +2209,7 @@ void YzisHighlighting::readGlobalKeywordConfig()
     //get the weak deliminators
     weakDeliminator=(YzisHlManager::self()->syntax->groupItemData(data,QString("weakDeliminator")));
 
-    dbg()<<"weak delimiters are: "<<weakDeliminator<<endl;
+    deepdbg()<<"weak delimiters are: "<<weakDeliminator<<endl;
 
     // remove any weakDelimitars (if any) from the default list and store this list.
     for (int s=0; s < weakDeliminator.length(); s++)
@@ -2231,9 +2234,9 @@ void YzisHighlighting::readGlobalKeywordConfig()
     weakDeliminator=QString("");
   }
 
-  dbg()<<"readGlobalKeywordConfig:END"<<endl;
+  deepdbg()<<"readGlobalKeywordConfig:END"<<endl;
 
-  dbg()<<"delimiterCharacters are: "<<deliminator<<endl;
+  deepdbg()<<"delimiterCharacters are: "<<deliminator<<endl;
 
   m_additionalData[buildIdentifier]->deliminator = deliminator;
 }
@@ -2251,7 +2254,7 @@ void YzisHighlighting::readGlobalKeywordConfig()
 void YzisHighlighting::readWordWrapConfig()
 {
   // Tell the syntax document class which file we want to parse
-  dbg()<<"readWordWrapConfig:BEGIN"<<endl;
+  deepdbg()<<"readWordWrapConfig:BEGIN"<<endl;
 
   YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
   YzisSyntaxContextData *data = YzisHlManager::self()->syntax->getConfig("general","keywords");
@@ -2259,18 +2262,18 @@ void YzisHighlighting::readWordWrapConfig()
   QString wordWrapDeliminator = stdDeliminator;
   if (data)
   {
-    dbg()<<"Found global keyword config"<<endl;
+    deepdbg()<<"Found global keyword config"<<endl;
 
     wordWrapDeliminator = (YzisHlManager::self()->syntax->groupItemData(data,QString("wordWrapDeliminator")));
     //when no wordWrapDeliminator is defined use the deliminator list
     if ( wordWrapDeliminator.length() == 0 ) wordWrapDeliminator = deliminator;
 
-    dbg() << "word wrap deliminators are " << wordWrapDeliminator << endl;
+    deepdbg() << "word wrap deliminators are " << wordWrapDeliminator << endl;
 
     YzisHlManager::self()->syntax->freeGroupInfo(data);
   }
 
-  dbg()<<"readWordWrapConfig:END"<<endl;
+  deepdbg()<<"readWordWrapConfig:END"<<endl;
 
   m_additionalData[buildIdentifier]->wordWrapDeliminator = wordWrapDeliminator;
 }
@@ -2293,14 +2296,14 @@ void YzisHighlighting::readIndentationConfig()
 void YzisHighlighting::readFoldingConfig()
 {
   // Tell the syntax document class which file we want to parse
-  dbg()<<"readfoldignConfig:BEGIN"<<endl;
+  deepdbg()<<"readfoldignConfig:BEGIN"<<endl;
 
   YzisHlManager::self()->syntax->setIdentifier(buildIdentifier);
   YzisSyntaxContextData *data = YzisHlManager::self()->syntax->getConfig("general","folding");
 
   if (data)
   {
-    dbg()<<"Found global keyword config"<<endl;
+    deepdbg()<<"Found global keyword config"<<endl;
 
     if (YzisHlManager::self()->syntax->groupItemData(data,QString("indentationsensitive"))!="1")
       m_foldingIndentationSensitive=false;
@@ -2315,14 +2318,14 @@ void YzisHighlighting::readFoldingConfig()
     m_foldingIndentationSensitive = false;
   }
 
-  dbg()<<"readfoldingConfig:END"<<endl;
+  deepdbg()<<"readfoldingConfig:END"<<endl;
 
-  dbg()<<"############################ use indent for fold are: "<<m_foldingIndentationSensitive<<endl;
+  deepdbg()<<"############################ use indent for fold are: "<<m_foldingIndentationSensitive<<endl;
 }
 
 void  YzisHighlighting::createContextNameList(QStringList *ContextNameList,int ctx0)
 {
-  dbg()<<"creatingContextNameList:BEGIN"<<endl;
+  deepdbg()<<"creatingContextNameList:BEGIN"<<endl;
 
   if (ctx0 == 0)
       ContextNameList->clear();
@@ -2349,7 +2352,7 @@ void  YzisHighlighting::createContextNameList(QStringList *ContextNameList,int c
      }
      YzisHlManager::self()->syntax->freeGroupInfo(data);
   }
-  dbg()<<"creatingContextNameList:END"<<endl;
+  deepdbg()<<"creatingContextNameList:END"<<endl;
 
 }
 
@@ -2420,8 +2423,8 @@ void YzisHighlighting::makeContextList()
   building=true;
   do
   {
-    dbg()<<"**************** Outter loop in make ContextList"<<endl;
-    dbg()<<"**************** Hl List count:"<<embeddedHls.count()<<endl;
+    deepdbg()<<"**************** Outter loop in make ContextList"<<endl;
+    deepdbg()<<"**************** Hl List count:"<<embeddedHls.count()<<endl;
     something_changed=false; //assume all "embedded" hls have already been loaded
     
     YzisEmbeddedHlInfos::const_iterator it=embeddedHls.begin(), end=embeddedHls.end();
@@ -2429,22 +2432,22 @@ void YzisHighlighting::makeContextList()
     {
       if (!it.value().loaded)  // we found one, we still have to load
       {
-        dbg()<<"**************** Inner loop in make ContextList"<<endl;
+        deepdbg()<<"**************** Inner loop in make ContextList"<<endl;
         QString identifierToUse;
-        dbg()<<"Trying to open highlighting definition file: "<< it.key()<<endl;
+        deepdbg()<<"Trying to open highlighting definition file: "<< it.key()<<endl;
         if (iName==it.key())
           identifierToUse=identifier;  // the own identifier is known
         else
           identifierToUse=YzisHlManager::self()->identifierForName(it.key());
 
-    	dbg()<<"Location is:"<< identifierToUse<<endl;
+    	deepdbg()<<"Location is:"<< identifierToUse<<endl;
 
         buildPrefix=it.key()+':';  // attribute names get prefixed by the names
                                    // of the highlighting definitions they belong to
 
     	if (identifierToUse.isEmpty() ) dbg()<<"OHOH, unknown highlighting description referenced"<<endl;
 
-        dbg()<<"setting ("<<it.key()<<") to loaded"<<endl;
+        deepdbg()<<"setting ("<<it.key()<<") to loaded"<<endl;
 
         //mark hl as loaded
         it=embeddedHls.insert(it.key(),YzisEmbeddedHlInfo(true,startctx));
@@ -2465,7 +2468,7 @@ void YzisHighlighting::makeContextList()
 
   // at this point all needed highlighing (sub)definitions are loaded. It's time to resolve cross file
   //   references (if there are some
-  dbg()<<"Unresolved contexts, which need attention: "<<unresolvedContextReferences.count()<<endl;
+  deepdbg()<<"Unresolved contexts, which need attention: "<<unresolvedContextReferences.count()<<endl;
 
   //optimize this a littlebit
   for (YzisHlUnresolvedCtxRefs::iterator unresIt=unresolvedContextReferences.begin();
@@ -2491,7 +2494,7 @@ void YzisHighlighting::makeContextList()
 
   // if there have been errors show them
   if (!errorsAndWarnings.isEmpty())
-  dbg() << QString("There were warning(s) and/or error(s) while parsing the syntax highlighting configuration.") << errorsAndWarnings << endl;
+  deepdbg() << QString("There were warning(s) and/or error(s) while parsing the syntax highlighting configuration.") << errorsAndWarnings << endl;
 
   // we have finished
   building=false;
@@ -2500,7 +2503,7 @@ void YzisHighlighting::makeContextList()
 void YzisHighlighting::handleYzisHlIncludeRules()
 {
   // if there are noe include rules to take care of, just return
-  dbg()<<"YzisHlIncludeRules, which need attention: " <<includeRules.count()<<endl;
+  deepdbg()<<"YzisHlIncludeRules, which need attention: " <<includeRules.count()<<endl;
   if (includeRules.isEmpty()) return;
 
   buildPrefix="";
@@ -2532,7 +2535,7 @@ void YzisHighlighting::handleYzisHlIncludeRules()
       {
         // resolve name to id
         (*it)->incCtx=getIdFromString(&ContextNameList,(*it)->incCtxN,dummy);
-        dbg()<<"Resolved "<<(*it)->incCtxN<< " to "<<(*it)->incCtx<<" for include rule"<<endl;
+        deepdbg()<<"Resolved "<<(*it)->incCtxN<< " to "<<(*it)->incCtx<<" for include rule"<<endl;
         // It would be good to look here somehow, if the result is valid
       }
     }
@@ -2630,7 +2633,7 @@ void YzisHighlighting::handleYzisHlIncludeRulesRecursive(YzisHlIncludeRules::ite
  */
 int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 {
-  dbg()<<"=== Adding hl with ident '"<<ident<<"'"<<endl;
+  deepdbg()<<"=== Adding hl with ident '"<<ident<<"'"<<endl;
 
   buildIdentifier=ident;
   YzisSyntaxContextData *data, *datasub;
@@ -2674,7 +2677,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   createContextNameList(&ContextNameList,ctx0);
 
 
-  dbg()<<"Parsing Context structure"<<endl;
+  deepdbg()<<"Parsing Context structure"<<endl;
   //start the real work
   data=YzisHlManager::self()->syntax->getGroupInfo("highlighting","context");
   uint i=buildContext0Offset;
@@ -2682,7 +2685,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
   {
     while (YzisHlManager::self()->syntax->nextGroup(data))
     {
-      dbg()<<"Found a context in file, building structure now"<<endl;
+      deepdbg()<<"Found a context in file, building structure now"<<endl;
       //BEGIN - Translation of the attribute parameter
       QString tmpAttr=YzisHlManager::self()->syntax->groupData(data,QString("attribute")).simplified();
       int attr;
@@ -2717,7 +2720,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           ftc=getIdFromString(&ContextNameList, tmpFtc,dummy);
           if (ftc == -1) ftc =0;
 
-          dbg()<<"Setting fall through context (context "<<i<<"): "<<ftc<<endl;
+          deepdbg()<<"Setting fall through context (context "<<i<<"): "<<ftc<<endl;
         }
       }
       //END falltrhough props
@@ -2765,7 +2768,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
           else
           {
             //a cross highlighting reference
-            dbg()<<"Cross highlight reference <IncludeRules>"<<endl;
+            deepdbg()<<"Cross highlight reference <IncludeRules>"<<endl;
             YzisHlIncludeRule *ir=new YzisHlIncludeRule(i,m_contexts[i]->items.count(),"",includeAttrib);
 
             //use the same way to determine cross hl file references as other items do
@@ -2843,7 +2846,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 
     } else {
       m_additionalData[ ident ]->multiLineRegion=QString::number(commentregionid+1);
-      dbg()<<"comment region resolved to:"<<m_additionalData[ ident ]->multiLineRegion<<endl;
+      deepdbg()<<"comment region resolved to:"<<m_additionalData[ ident ]->multiLineRegion<<endl;
     }
   }
   //END Resolve multiline region if possible
@@ -2939,10 +2942,12 @@ void YzisHighlighting::getYzisHlItemDataListCopy (uint schema, YzisHlItemDataLis
 //END
 //BEGIN YzisHlManager
 
+#undef deepdbg
 #undef dbg
 #undef err
-#define err()    yzError("YzisHlManager")
-#define dbg()    yzDebug("YzisHlManager")
+#define err()     yzError("YzisHlManager")
+#define dbg()     yzDebug("YzisHlManager")
+#define deepdbg() yzDeepDebug("YzisHlManager")
 
 YzisHlManager::YzisHlManager()
   : commonSuffixes (QString(".orig;.new;~;.bak;.BAK").split(";"))
@@ -3115,7 +3120,7 @@ int YzisHlManager::wildcardFind(const QString &fileName)
 
 int YzisHlManager::realWildcardFind(const QString &fileName)
 {
-  dbg() << "realWidcardFind( " << fileName << ")" << endl;
+  deepdbg() << "realWidcardFind( " << fileName << ")" << endl;
   static QRegExp sep("\\s*;\\s*");
 
   QList<YzisHighlighting*> highlights;
@@ -3184,13 +3189,13 @@ int YzisHlManager::mimeFind(const QString &contents)
   YzisHighlighting *highlight = hlList.at(0);
   for (int ab = 0 ; ab < hlList.size() && ( highlight=hlList.at( ab ) )!=0L; ++ab )
   {
-    dbg() << "mimeFind(): checking highlighting " << highlight->name() << endl;
+    deepdbg() << "mimeFind(): checking highlighting " << highlight->name() << endl;
     QStringList l = highlight->getMimetypes().split( sep );
 
     QStringList::Iterator it = l.begin(), end = l.end();
     for( ; it != end; ++it )
     {
-      dbg() << "mimeFind(): checking mimetype" << *it << " against "<< mt << endl;
+      deepdbg() << "mimeFind(): checking mimetype" << *it << " against "<< mt << endl;
       if ( *it == mt ) // faster than a regexp i guess?
         highlights.append (highlight);
     }

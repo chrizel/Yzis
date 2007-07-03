@@ -56,7 +56,7 @@ NYZView::NYZView(YZBuffer *b)
 
 	if ( !attributesMapInitialised ) initialiseAttributesMap();
 	YZASSERT( b );
-	yzDebug(NYZIS) << "NYZView::NYZView buffer is : " << (long int)b << endl;
+	dbg() << "NYZView::NYZView buffer is : " << (long int)b << endl;
 	window = NULL;
 	fakeLine = false;
 	m_focus = w_editor;
@@ -312,7 +312,7 @@ void NYZView::guiSyncViewInfo( void )
 }
 
 void NYZView::guiDisplayInfo( const QString& info ) {
-	yzDebug(NYZIS)<< "NYZView::guiDisplayInfo message is : " << info << endl;
+	dbg() << "NYZView::guiDisplayInfo message is : " << info << endl;
 	werase(statusbar);
 	waddstr( statusbar, info.toLocal8Bit().constData() );
 	wrefresh(statusbar);
@@ -335,8 +335,8 @@ void NYZView::initialiseAttributesMap()
 		yzWarning() << " _not_";
 	yzWarning() << " change colors" << endl;
 
-	yzDebug(NYZIS) << "COLOR_PAIRS is : " << COLOR_PAIRS << endl;
-	yzDebug(NYZIS) << "COLORS      is : " << COLORS << endl;
+	dbg() << "COLOR_PAIRS is : " << COLOR_PAIRS << endl;
+	dbg() << "COLORS      is : " << COLORS << endl;
 
 
 #undef MAP

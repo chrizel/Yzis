@@ -29,6 +29,7 @@
 
 
 #define dbg() yzDebug("NYZSession")
+#define warn() yzWarning("NYZSession")
 #define err() yzError("NYZSession")
 
 QMap<int,QString> NYZSession::keycodes; // map Ncurses to Qt codes
@@ -195,7 +196,7 @@ void NYZSession::guiChangeCurrentView ( YZView * view  )
 	NYZView *v = static_cast<NYZView*>(view);
 	YZASSERT( view );
 	if ( cur == v ){
-		yzWarning(NYZIS) << "changeCurrentView() called with same view.."<<endl;
+		warn() << "changeCurrentView() called with same view.."<<endl;
 		return;
 	}
 	if ( cur )

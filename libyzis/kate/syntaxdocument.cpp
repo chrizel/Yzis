@@ -37,8 +37,9 @@
 #include <QDir>
 #include <QFile>
 
-#define dbg()    yzDebug("YzisSyntaxDocument")
-#define err()    yzError("YzisSyntaxDocument")
+#define deepdbg()    yzDeepDebug("YzisSyntaxDocument")
+#define dbg()        yzDebug("YzisSyntaxDocument")
+#define err()        yzError("YzisSyntaxDocument")
 
 static void lookupPrefix( const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique );
 static void lookupDirectory( const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique );
@@ -217,7 +218,7 @@ YzisSyntaxContextData* YzisSyntaxDocument::getSubItems(YzisSyntaxContextData* da
 
 bool YzisSyntaxDocument::getElement (QDomElement &element, const QString &mainGroupName, const QString &config)
 {
-  dbg() << "getElement( element, \"" << mainGroupName << "\", \"" << config << "\" )" << endl;
+  deepdbg() << "getElement( element, \"" << mainGroupName << "\", \"" << config << "\" )" << endl;
 
   QDomNodeList nodes = documentElement().childNodes();
 
@@ -242,12 +243,12 @@ bool YzisSyntaxDocument::getElement (QDomElement &element, const QString &mainGr
         }
       }
 
-      dbg() << "getElement(): WARNING: \""<< config <<"\" wasn't found!" << endl;
+      deepdbg() << "getElement(): WARNING: \""<< config <<"\" wasn't found!" << endl;
       return false;
     }
   }
 
-  dbg() << "getElement(): WARNING: \""<< mainGroupName <<"\" wasn't found!" << endl;
+  deepdbg() << "getElement(): WARNING: \""<< mainGroupName <<"\" wasn't found!" << endl;
   return false;
 }
 
@@ -288,7 +289,7 @@ YzisSyntaxContextData* YzisSyntaxDocument::getGroupInfo(const QString& mainGroup
  */
 QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QString& type, bool clearList)
 {
-  dbg()<< "finddata( mainGroup=\"" << mainGroup<<"\", type=\"" << type << "\", clearList="<< clearList <<" ) " <<endl;
+  deepdbg()<< "finddata( mainGroup=\"" << mainGroup<<"\", type=\"" << type << "\", clearList="<< clearList <<" ) " <<endl;
   if (clearList)
     m_data.clear();
 
@@ -297,14 +298,14 @@ QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QStrin
     QDomElement elem = node.toElement();
     if (elem.tagName() == mainGroup)
     {
-      dbg()<<"\""<<mainGroup<<"\" found."<<endl;
+      deepdbg()<<"\""<<mainGroup<<"\" found."<<endl;
       QDomNodeList nodelist1 = elem.elementsByTagName("list");
 
       for (int l=0; l<nodelist1.count(); l++)
       {
         if (nodelist1.item(l).toElement().attribute("name") == type)
         {
-          dbg()<<"List with attribute name=\""<<type<<"\" found."<<endl;
+          deepdbg()<<"List with attribute name=\""<<type<<"\" found."<<endl;
           QDomNodeList childlist = nodelist1.item(l).toElement().childNodes();
 
           for (int i=0; i<childlist.count(); i++)
@@ -315,11 +316,11 @@ QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QStrin
 #ifndef NDEBUG
             if (i<6)
             {
-              dbg()<<"\""<<element<<"\" added to the list \""<<type<<"\""<<endl;
+              deepdbg()<<"\""<<element<<"\" added to the list \""<<type<<"\""<<endl;
             }
             else if(i==6)
             {
-              dbg()<<"... The list continues ..."<<endl;
+              deepdbg()<<"... The list continues ..."<<endl;
             }
 #endif
             m_data += element;
@@ -341,7 +342,7 @@ YzisSyntaxDocument::findAllResources( const char *,
 					 bool recursive,
 					 bool unique) const
 {
-    dbg() << "findAllResources( \"\" , filter=" << filter << ",recursive=" << recursive << ", unique=" << unique << ")" << endl;
+    deepdbg() << "findAllResources( \"\" , filter=" << filter << ",recursive=" << recursive << ", unique=" << unique << ")" << endl;
     QStringList list;
     QString filterPath;
     QString filterFile;
@@ -387,15 +388,15 @@ YzisSyntaxDocument::findAllResources( const char *,
 
 static void lookupDirectory(const QString& path, const QString &relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique) {
 
-    dbg() << "lookupDirectory( " << endl;
-    dbg() << "\tpath=" << path << endl;
-    dbg() << "\trelPart=" << relPart << endl;
-    dbg() << "\tregexp=" << regexp.pattern() << endl;
-    dbg() << "\tlist=(" << list.join(" , ") << " ) "  << endl;
-    dbg() << "\trelList=(" << relList.join(" , ") << " ) " << endl;
-    dbg() << "\trecursive=" << recursive << endl; 
-    dbg() << "\tunique=" << unique << endl;
-    dbg() << ")" << endl;
+    deepdbg() << "lookupDirectory( " << endl;
+    deepdbg() << "\tpath=" << path << endl;
+    deepdbg() << "\trelPart=" << relPart << endl;
+    deepdbg() << "\tregexp=" << regexp.pattern() << endl;
+    deepdbg() << "\tlist=(" << list.join(" , ") << " ) "  << endl;
+    deepdbg() << "\trelList=(" << relList.join(" , ") << " ) " << endl;
+    deepdbg() << "\trecursive=" << recursive << endl; 
+    deepdbg() << "\tunique=" << unique << endl;
+    deepdbg() << ")" << endl;
 
   QString pattern = regexp.pattern();
   if (recursive || pattern.contains('?') || pattern.contains('*'))
@@ -465,16 +466,16 @@ static void lookupDirectory(const QString& path, const QString &relPart, const Q
 
 
 static void lookupPrefix(const QString& prefix, const QString& relpath, const QString& relPart, const QRegExp &regexp, QStringList& list, QStringList& relList, bool recursive, bool unique) {
-    dbg() << "lookupPrefix( " << endl;
-    dbg() << "\tprefix=" << prefix << endl;
-    dbg() << "\trelpath=" << relpath << endl;
-    dbg() << "\trelPart=" << relPart << endl;
-    dbg() << "\tregexp=" << regexp.pattern() << endl;
-    dbg() << "\tlist=(" << list.join(" , ") << ")" << endl;
-    dbg() << "\trelList=("<<relList.join(" , ") << ")" << endl; 
-    dbg() << "\trecursive=" << recursive << endl; 
-    dbg() << "\tunique=" << unique << endl;
-    dbg() << ")" << endl;
+    deepdbg() << "lookupPrefix( " << endl;
+    deepdbg() << "\tprefix=" << prefix << endl;
+    deepdbg() << "\trelpath=" << relpath << endl;
+    deepdbg() << "\trelPart=" << relPart << endl;
+    deepdbg() << "\tregexp=" << regexp.pattern() << endl;
+    deepdbg() << "\tlist=(" << list.join(" , ") << ")" << endl;
+    deepdbg() << "\trelList=("<<relList.join(" , ") << ")" << endl; 
+    deepdbg() << "\trecursive=" << recursive << endl; 
+    deepdbg() << "\tunique=" << unique << endl;
+    deepdbg() << ")" << endl;
 
     if (relpath.isNull()) {
        lookupDirectory(prefix, relPart, regexp, list,
@@ -568,13 +569,13 @@ void YzisSyntaxDocument::setupModeList (bool force)
         list += findAllResources("data", resourceDir + "/*.xml",false,true);
   }
 
-  dbg() << "setupModeList(): syntax file list = " << list.join("\n") << endl;
+  deepdbg() << "setupModeList(): syntax file list = " << list.join("\n") << endl;
 
   // Let's iterate through the list and build the Mode List
   QStringList::Iterator it = list.begin(), end = list.end();
   for ( ; it != end; ++it )
   {
-    dbg() << "setupModeList(): analysing resource " << *it << endl;
+    deepdbg() << "setupModeList(): analysing resource " << *it << endl;
     // Each file has a group called:
     QString Group="HL Cache "+ *it;
 
@@ -605,11 +606,11 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
       // Apend the item to the list
       myModeList.append(mli);
-      dbg() << "NO update hl cache for: " << *it << endl;
+      deepdbg() << "NO update hl cache for: " << *it << endl;
     }
     else
     {
-      dbg() << "UPDATE hl cache for: " << *it << endl;
+      deepdbg() << "UPDATE hl cache for: " << *it << endl;
 
       // We're forced to read the xml files or the mode doesn't exist in the katesyntax...rc
       QFile f(*it);

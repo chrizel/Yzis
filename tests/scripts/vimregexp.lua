@@ -12,9 +12,7 @@ function inTable( t, ... )
     -- check whether the values passed in argument are keys of table t
     --print("InTable for table")
     --table.foreach(t, print)
-    for i = 1,arg['n']
-    do
-        v = arg[i] 
+    for i,v in ipairs({...})  do
         --print("\tChecking index "..tostring(i)..": '"..tostring(v).."'")
         --print ("t[v]="..tostring(t[v]))
         if t[v] then 
@@ -165,7 +163,7 @@ function VimRegexp( re )
     local tokenizedRe = tokenizer( __vimRegexpTokens, re )
     --print("Tokenized re")
     --table.foreach( tokenizedRe, print )
-    for i = 1, tokenizedRe['n']
+    for i = 1, #tokenizedRe
     do
         token = tokenizedRe[i]
         if __vimRegexpSubstTable[token]

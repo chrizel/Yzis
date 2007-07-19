@@ -159,13 +159,8 @@ YZLuaEngine::YZLuaEngine() {
 }
 
 void YZLuaEngine::init() {
-	L = lua_open();
-	luaopen_base(L);
-	luaopen_string( L );
-	luaopen_table( L );
-	luaopen_math( L );
-	luaopen_io( L );
-	luaopen_debug( L );
+	L = luaL_newstate();
+	luaL_openlibs( L );
 	dbg() << LUA_VERSION << " loaded" << endl;
 
     // luaopen leaves some garbage on the stack

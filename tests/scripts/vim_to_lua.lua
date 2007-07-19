@@ -178,7 +178,7 @@ function main()
 	state = {}
 	process_file( FINPUT )
 
-	for i = 1,out.n
+	for i = 1,#out
 	do
 		io.write( out[i]..'\n' )
 	end

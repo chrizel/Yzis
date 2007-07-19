@@ -41,6 +41,7 @@ This can be adjusted globally on a regexp with setMinimal()
 
 require('luaunit')
 require('utils')
+require('vimregexp')
 
 TestRegexp = {} --class
     function TestRegexp:test_usage()

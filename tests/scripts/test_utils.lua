@@ -10,6 +10,7 @@ License: LGPL
 
 require('utils')
 require('luaunit')
+require('vimregexp')
 
 TestUtils = {}
 function TestUtils:testInTable()

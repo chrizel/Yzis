@@ -1,3 +1,4 @@
+_REQUIREDNAME=true    -- small hack - Lua 5.1 does not have _REQUIREDNAME
 
 require('luaunit')
 require('test_bugs1')

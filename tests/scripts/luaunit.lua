@@ -27,7 +27,7 @@ REVERSED_ASSERT_EQUALS = true
 function assertError(f, ...)
 	-- assert that calling f with the arguments will raise an error
 	-- example: assertError( f, 1, 2 ) => f(1,2) should generate an error
-	has_error, error_msg = not pcall( f, unpack(arg) )
+	has_error, error_msg = not pcall( f, ... )
 	if has_error then return end 
 	error( "No error generated", 2 )
 end
@@ -68,13 +68,13 @@ function wrapFunctions(...)
 		testFunction = _G[testName]
 		testClass[testName] = testFunction
 	end
-	table.foreachi( arg, storeAsMethod )
+	table.foreachi( {...}, storeAsMethod )
 	return testClass
 end
 
 function __genOrderedIndex( t )
     local orderedIndex = {}
-    for key in t do
+    for key,_ in pairs(t) do
         table.insert( orderedIndex, key )
     end
     table.sort( orderedIndex )
@@ -330,17 +330,18 @@ LuaUnit = {
 		--
 		-- If arguments are passed, they must be strings of the class names 
 		-- that you want to run
-		if arg.n > 0 then
-			table.foreachi( arg, LuaUnit.runTestClassByName )
+                args={...};
+		if #args > 0 then
+			table.foreachi( args, LuaUnit.runTestClassByName )
 		else 
-			if argv and argv.n > 0 then
+			if argv and #argv > 0 then
 				table.foreachi(argv, LuaUnit.runTestClassByName )
 			else
 				-- create the list before. If you do not do it now, you
 				-- get undefined result because you modify _G while iterating
 				-- over it.
 				testClassList = {}
-				for key, val in _G do 
+				for key, val in pairs(_G) do 
 					if string.sub(key,1,4) == 'Test' then 
 						table.insert( testClassList, key )
 					end

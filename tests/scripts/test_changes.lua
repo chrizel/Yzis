@@ -5,7 +5,6 @@ Description: Test command mode commands that change text.
 require('luaunit')
 require('utils')
 
-
 TestChanges = {} --class
     function TestChanges:setUp() 
         clearBuffer()

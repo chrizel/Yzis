@@ -188,14 +188,14 @@ end
     function TestVimToLua:test_unsupported()
         before = strsplit('\n',
 [[
-        exe line3
+        exe line3
         %s/lt/>/ge
     z_rez = @z
             unlet! g:image
 ]] )
         after = strsplit('\n', 
 [[
-        -- XXX exe line3
+        -- XXX exe line3
         -- XXX %s/lt/>/ge
     -- XXX z_rez = @z
             -- XXX unlet! image

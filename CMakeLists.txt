@@ -7,22 +7,19 @@ project(yzis)
 
 # Always include srcdir and builddir in include path
 # This saves typing ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY} in about every subdir
-# since cmake 2.4.0
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # put the include dirs which are in the source or build tree
 # before all other include dirs, so the headers in the sources
 # are prefered over the already installed ones
-# since cmake 2.4.1
 set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 
 # Use colored output
-# since cmake 2.4.0
 set(CMAKE_COLOR_MAKEFILE ON)
 
 cmake_minimum_required(VERSION 2.4.1 FATAL_ERROR)
 
-set(CMAKE_COLOR_MAKEFILE ON)
+# yzis stores the cmake modules in cmake/modules
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -40,13 +37,12 @@ set( CMAKE_C_FLAGS_DEBUG "-g3 -Wall -DDEBUG" )
 ########################## options for compilation
 #
 if (WIN32)
-    option(ENABLE_QYZIS "enable qyzis compilation" ON)
     option(ENABLE_NYZIS "enable nyzis compilation" OFF)
 else(WIN32)
-    option(ENABLE_QYZIS "enable qyzis compilation" ON)
     option(ENABLE_NYZIS "enable nyzis compilation" ON)
 endif(WIN32)
 
+option(ENABLE_QYZIS "enable qyzis compilation" ON)
 option(ENABLE_KYZIS "enable kyzis compilation" OFF)
 option(ENABLE_KPART_YZIS "enable yzis_kpart compilation" OFF)
 option(ENABLE_LIBYZISRUNNER "enable libyzisrunner compilation" ON)
@@ -60,7 +56,7 @@ option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
 ########################## platform specific stuff
 #
 if (WIN32)
-	add_definitions("-DYZIS_WIN32_GCC")
+    add_definitions("-DYZIS_WIN32_GCC")
     find_package(GNUWIN32)
 endif ()
 find_package(Magic REQUIRED)

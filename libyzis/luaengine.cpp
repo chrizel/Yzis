@@ -260,15 +260,23 @@ void YZLuaEngine::execute(const QString& function, int nbArgs, int nbResults) {
 	yzpcall(nbArgs, nbResults, _("YZLuaEngine::execute function %1").arg(function)); 
 }
 
-int YZLuaEngine::source( const QString& filename ) {
+QString YZLuaEngine::source( const QString& filename ) {
+    QString luaReturnValue = "";
+
     dbg().sprintf( "source( '%s' )\n", qp(filename) );
 
+	lua_pushstring(L,"return");
 	lua_pushstring(L,"dofile");
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	lua_pushstring(L,filename.toUtf8());
-	yzpcall(1,1, _("Lua error when running file %1:\n").arg(filename) );
+	if ( yzpcall(1,1, _("Lua error when running file %1:\n").arg(filename) ) ) {
+		if (lua_isstring(L,-1)) {
+			// Get the return value
+			luaReturnValue = QString::fromUtf8( ( char * ) lua_tostring( L,lua_gettop( L ) ) );
+		}
+	}
 	cleanLuaStack( L ); // in case sourcing the file left something on the stack
-	return 0;
+	return luaReturnValue;
 }
 
 int YZLuaEngine::execInLua( const QString & luacode ) {

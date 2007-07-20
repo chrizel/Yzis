@@ -69,17 +69,15 @@ class YZIS_EXPORT YZLuaEngine {
 		/**
 		 * Source a lua file.
          *
-         * If the file can not be read, the function pops up a dialog.
-         *
          * If you want to source a lua file that is an yzis resource, you must
          * first find the resource with YZSession::findResource(
          * YZSession::ScriptFile, fname )
          *
          * @param filename the name of the lua file, with .lua extension.
-         * \return 1 if file isn't found, 0 otherwise
+         * \return "" if file isn't found, or Script raised an error, else returns the return value of the script
          *
 		 */
-		int source( const QString& filename );
+		QString source( const QString& filename );
 
 		/**
 		 * Execute some lua code.

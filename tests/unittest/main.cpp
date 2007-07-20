@@ -32,7 +32,7 @@ int main( int argc, char * argv[] )
     QMap<QString,QString> runMe;
     QStringList myArgv;
     bool runAll = false;
-    int result,fakeArgc = 1;
+    int result=0,fakeArgc = 1;
     char * fakeArgv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
     QRegExp reTestName( "(\\w+)(::(\\w+))?(\\(\\))?" );
 
@@ -67,7 +67,7 @@ int main( int argc, char * argv[] )
         fakeArgv[fakeArgc] = NULL; \
  \
         TestName TestName##inst ; \
-        result = QTest::qExec( & TestName##inst, fakeArgc, fakeArgv ); \
+        result += QTest::qExec( & TestName##inst, fakeArgc, fakeArgv ); \
         printf("\n"); \
     } \
 

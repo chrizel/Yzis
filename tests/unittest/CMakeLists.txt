@@ -42,4 +42,7 @@ target_link_libraries(yzis_unittest
 
 install(TARGETS yzis_unittest DESTINATION bin)
 
-add_test(yzis_unittest yzis_unittest)
+add_test(yzis_unittest_TestDebug    yzis_unittest TestDebug )
+add_test(yzis_unittest_TestResource yzis_unittest TestResource )
+add_test(yzis_unittest_TestColor    yzis_unittest TestColor )
+

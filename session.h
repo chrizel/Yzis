@@ -136,6 +136,16 @@ class YZIS_EXPORT YZSession  : public YZSessionIface
           */
         void sendInitkeys();
 
+        /** Run a Lua Script specified on the commandline
+          *
+          * run the Lua script that was passed on the command line with -s
+          * to libyzis for processing.
+          *
+          * This function should be called explicitly by the frontend
+          * once all the frontend initialisation is complete.
+          */
+        void runLuaScript();
+
 
 	public:
 
@@ -501,6 +511,7 @@ class YZIS_EXPORT YZSession  : public YZSessionIface
 		static YZSession* mInstance;
 
         QString mInitkeys;
+        QString mLuaScript;
 		YZView* mCurView;
 		YZBuffer* mCurBuffer;
 		YzisSchemaManager *mSchemaManager;

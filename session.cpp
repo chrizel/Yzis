@@ -164,28 +164,52 @@ void YZSession::parseCommandLine( int argc, char * argv[] )
             }
 	    } else {
             dbg() << "Parsing option : " << args.at(i) << endl;
-		    s = args.at(i);
-		    if (s == "-h" || s == "--help") {
+            s = args.at(i);
+
+            // --level and --area-level are parsed in YZDebugBackend, Ignore them here
+            if (s.startsWith("--level") || s.startsWith("--area-level") ) ;
+
+            // Asking for Help
+            else if (s == "-h" || s == "--help") {
                 showCmdLineHelp( args[0] );
-			    exit(0);
-		    } else if (s == "-v" || s == "--version") {
+                exit(0);
+            }
+
+            // Asking for Version Information
+            else if (s == "-v" || s == "--version") {
                 showCmdLineVersion();
-			    exit(0);
-		    } else if (s == "-c") {
+                exit(0);
+            }
+
+            // Passing Keys after the event loop started
+            else if (s == "-c") {
                 // no splash screen when executing scripts
                 YZSession::self()->getOptions()->setGroup("Global");
-                YZOptionValue* o_splash = YZSession::self()->getOptions()->getOption("blocksplash");
-			    o_splash->setBoolean( false );
+                YZSession::self()->getOptions()->getOption("blocksplash")->setBoolean( false );
 
-			    QString optArg;
-			    if (s.length() > 2) optArg = args[i].mid(2);
-			    else if (i < args.count()-1) optArg = args[++i];
-			    mInitkeys = optArg;
+                if (s.length() > 2) mInitkeys = args[i].mid(2);
+                else if (i < args.count()-1) mInitkeys = args[++i];
+
                 dbg().sprintf("Init keys = '%s'", qp(mInitkeys) );
-		    } else {
+            }
+
+            // Load a LUA script from a file
+            else if (s == "-s") {
+                // no splash screen when executing scripts
+                YZSession::self()->getOptions()->setGroup("Global");
+                YZSession::self()->getOptions()->getOption("blocksplash")->setBoolean( false );
+
+                QString luaScript;
+                if (s.length() > 2) mLuaScript = args[i].mid(2);
+                else if (i < args.count()-1) mLuaScript = args[++i];
+
+            }
+
+            // Everything else gets an unknown option
+            else {
                 showCmdLineUnknowOption( args[i] );
-			    exit(-1);
-		    }
+                exit(-1);
+            }
 	    }
     }
 
@@ -203,6 +227,21 @@ void YZSession::frontendGuiReady()
 {
     dbg() << "frontendGuiReady()" << endl;
     sendInitkeys();
+    runLuaScript();
+}
+
+void YZSession::runLuaScript()
+{
+    if (mLuaScript.length()) {
+        QString retValue = YZLuaEngine::self()->source(mLuaScript);
+        dbg() << "Return Value:" << retValue << endl;
+        bool ok;
+        int retInt = retValue.toInt(&ok, 0);
+        if(ok == true){
+            exit(retInt);
+        }
+        exit(1);
+    }
 }
 
 void YZSession::sendInitkeys()

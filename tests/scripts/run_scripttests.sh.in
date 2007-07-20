@@ -30,14 +30,14 @@ then
 	echo "Copying yzis files"
 	if [ -n "$CYGWIN" ];
 	then
-		cp -a $BUILD_DIR/libyzis/libyzis* .
-		cp -a $BUILD_DIR/qyzis/qyzis.exe .
-		cp -a $BUILD_DIR/libyzisrunner/libyzisrunner.exe .
+		cp -u $BUILD_DIR/libyzis/libyzis* .
+		cp -u $BUILD_DIR/qyzis/qyzis.exe .
+		cp -u $BUILD_DIR/libyzisrunner/libyzisrunner.exe .
 	else
-		cp -a $BUILD_DIR/lib/libyzis* .
-		cp -a $BUILD_DIR/qyzis/qyzis .
-		cp -a $BUILD_DIR/nyzis/nyzis .
-		cp -a $BUILD_DIR/libyzisrunner/libyzisrunner .
+		cp -u $BUILD_DIR/lib/libyzis* .
+		cp -u $BUILD_DIR/qyzis/qyzis .
+		cp -u $BUILD_DIR/nyzis/nyzis .
+		cp -u $BUILD_DIR/libyzisrunner/libyzisrunner .
 	fi
 else
 	echo "Not copying yzis files"
@@ -87,7 +87,7 @@ if [ -e "$user_home/.yzis" ]; then
     mv "$user_home/.yzis" "$user_home/.yzis_saved_for_tests"
     if [ "$?" != "0" ]; then
         echo "Could not save $user_home/.yzis directory, aborting"; 
-        exit 1;
+        exit -1;
 	fi
 fi
 

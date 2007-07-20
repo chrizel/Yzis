@@ -58,5 +58,5 @@ TestLuaUnit = {} --class
 -- LuaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
 -- LuaUnit:run('TestLuaBinding') -- will execute only one class of test
 -- LuaUnit.result.verbosity = 0
-LuaUnit:run() -- will execute all tests
+return LuaUnit:run() -- will execute all tests
 

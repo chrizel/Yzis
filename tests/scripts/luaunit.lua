@@ -179,6 +179,11 @@ UnitResult = { -- class
 		successCount = self.testCount - self.failureCount
 		print( string.format("Success : %d%% - %d / %d",
 			100-math.ceil(failurePercent), successCount, self.testCount) )
+        if successCount == self.testCount then
+            return 0;
+        else
+            return 1;
+        end
     end
 
 	function UnitResult:startClass(className)
@@ -351,7 +356,7 @@ LuaUnit = {
 				end
 			end
 		end
-		LuaUnit.result:displayFinalResult()
+		return LuaUnit.result:displayFinalResult()
 	end
 -- class LuaUnit
 

@@ -481,5 +481,5 @@ TestVimRegexp = {} --class
 
 
 if not _REQUIREDNAME then
-    LuaUnit:run() -- will execute all tests
+    return LuaUnit:run() -- will execute all tests
 end

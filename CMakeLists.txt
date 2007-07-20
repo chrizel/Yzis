@@ -2,8 +2,8 @@ SET( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS TRUE )
 
 project(yzis)
 
-#enable_testing()
-#include(CTest)
+enable_testing()
+include(CTest)
 
 # Always include srcdir and builddir in include path
 # This saves typing ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY} in about every subdir

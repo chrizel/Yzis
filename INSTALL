@@ -1,13 +1,8 @@
+
 Yzis uses the CMake system to compile and install itself, just like KDE.
 
-More detailed documentation on building Yzis can be found in the Yzis wiki at
-http://wiki.yzis.org/index.php?title=Build_Yzis. You are strongly recommended
-to read it (and improve it, if you find any mistakes or omissions).
+See the wiki documentation for help on building Yzis:
+http://wiki.yzis.org/index.php?title=Build_Yzis
 
-Minimal build process:
 
-	mkdir build # create a build directory
-	cd build
-	cmake ..
-	make
-	make install
+

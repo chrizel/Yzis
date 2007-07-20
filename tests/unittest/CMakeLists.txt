@@ -8,7 +8,7 @@ set(yzis_unittest_SRCS
     ../../libyzis/debug.cpp 
     ../../libyzis/color.cpp 
     ../../libyzis/resourcemgr.cpp 
-    )
+)
 
 # files needing moc
 set(yzis_unittest_MOCS 
@@ -42,4 +42,4 @@ target_link_libraries(yzis_unittest
 
 install(TARGETS yzis_unittest DESTINATION bin)
 
-
+add_test(yzis_unittest yzis_unittest)

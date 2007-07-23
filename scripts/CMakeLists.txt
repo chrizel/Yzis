@@ -3,7 +3,7 @@ add_subdirectory( indent )
 
 ########### install files ###############
 
-install_files( /share/yzis/scripts  FILES  2html.lua clevertab.lua switch.lua )
+install( FILES 2html.lua clevertab.lua switch.lua DESTINATION share/yzis/scripts )
 
 
 

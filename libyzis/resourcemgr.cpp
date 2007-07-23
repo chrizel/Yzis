@@ -107,6 +107,12 @@ QString YZResourceMgr::findResource( ResourceType type, const QString & fname )
             dbg() << "findResource(): Found at " << resource << endl;
             return resource;
         }
+	if ( !resource.endsWith(".lua") )
+		resource += ".lua";
+        if (QFile::exists( resource )) {
+            dbg() << "findResource(): Found at " << resource << endl;
+            return resource;
+        }
     }
 
     dbg() << "findResource(): resource " << fname << " not found" << endl;

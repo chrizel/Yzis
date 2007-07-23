@@ -184,5 +184,5 @@ endif (ENABLE_TESTS)
 add_subdirectory( doc )
 #add_subdirectory( translations )
 add_subdirectory( syntax )
-#add_subdirectory( scripts )
+add_subdirectory( scripts )
 

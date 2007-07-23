@@ -69,5 +69,5 @@ endif (APPLE)
 target_link_libraries(qyzis ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} yzis )
 
 ########### install files ###############
-install_files( ${APPLNK_INSTALL_DIR}/Editors FILES qyzis.desktop )
+install( FILES qyzis.desktop DESTINATION ${APPLNK_INSTALL_DIR}/Editors )
 

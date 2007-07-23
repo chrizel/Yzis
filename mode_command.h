@@ -199,6 +199,7 @@ class YZIS_EXPORT YZModeCommand : public YZMode {
 		void changeLine(const YZCommandArgs &args);
 		void changeToEOL(const YZCommandArgs &args);
 		void deleteLine(const YZCommandArgs &args);
+		void deleteToEndOfLastLine(const YZCommandArgs &args);
 		void deleteToEOL(const YZCommandArgs &args);
 		void gotoExMode(const YZCommandArgs &args);
 		void gotoLineAtTop(const YZCommandArgs &args);

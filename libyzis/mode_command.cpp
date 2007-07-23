@@ -122,6 +122,7 @@ void YZModeCommand::initCommandPool() {
 	commands.append( new YZCommand("z.", &YZModeCommand::gotoLineAtCenter) );
 	commands.append( new YZCommand("z-", &YZModeCommand::gotoLineAtBottom) );
 	commands.append( new YZCommand("dd", &YZModeCommand::deleteLine) );
+	commands.append( new YZCommand("dG", &YZModeCommand::deleteToEndOfLastLine) );
 	commands.append( new YZCommand("d", &YZModeCommand::del, ArgMotion) );
 	commands.append( new YZCommand("D", &YZModeCommand::deleteToEOL) );
 	commands.append( new YZCommand("s", &YZModeCommand::substitute) );
@@ -870,19 +871,19 @@ YZCursor YZModeCommand::gotoLine(const YZMotionArgs &args) {
 	YZViewCursor viewCursor = args.view->viewCursor();
 	int line = 0;
 	dbg() << "gotoLine " << args.cmd << "," << args.count << endl;
-	if ( args.count > 0 ) line	= args.count - 1;
+	if ( args.count > 0 ) line = args.count - 1;
 
 	if ( args.cmd == "gg"  || ( args.cmd == "G" && args.usercount ) ) {
 		args.view->gotoLine( &viewCursor, line, args.standalone );
-		if (YZSession::getBooleanOption("startofline"))
-			args.view->moveToFirstNonBlankOfLine();
-	}
-	else {
-		if ( args.cmd == "G" )
+	} else {
+		if ( args.cmd == "G" ) {
 			args.view->gotoLastLine( &viewCursor, args.standalone );
-		else
+			//args.view->moveToEndOfLine( &viewCursor, false );
+		} else
 			args.view->gotoLine( &viewCursor, 0, args.standalone );
 	}
+	if (YZSession::getBooleanOption("startofline"))
+		args.view->moveToFirstNonBlankOfLine();
 
 	YZSession::self()->saveJumpPosition();
 	
@@ -996,12 +997,10 @@ YZInterval YZModeCommand::interval(const YZCommandArgs& args) {
 void YZModeCommand::appendAtEOL(const YZCommandArgs &args) {
 	args.view->moveToEndOfLine();
 	args.view->append();
-	
 }
 
 void YZModeCommand::append(const YZCommandArgs &args) {
 	args.view->append();
-	
 }
 
 void YZModeCommand::change(const YZCommandArgs &args) {
@@ -1032,7 +1031,6 @@ void YZModeCommand::changeLine(const YZCommandArgs &args) {
 	args.view->modePool()->push( YZMode::ModeInsert );
 	args.view->gotoxy(0, y);
 	//args.view->commitNextUndo();
-	
 }
 
 void YZModeCommand::changeToEOL(const YZCommandArgs &args) {
@@ -1040,13 +1038,29 @@ void YZModeCommand::changeToEOL(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->deleteArea(args.view, args.view->getBufferCursor(), to, args.regs);
 	args.view->append();
 	//args.view->commitNextUndo();
-	
 }
 
 void YZModeCommand::deleteLine(const YZCommandArgs &args) {
 	args.view->myBuffer()->action()->deleteLine(args.view, args.view->getBufferCursor(), args.count, args.regs);
 	args.view->commitNextUndo();
-	
+}
+
+void YZModeCommand::deleteToEndOfLastLine(const YZCommandArgs &args) {
+	dbg() << "YZModeCommand::deleteToEndOfLastLine " << args.cmd;
+	int toy = args.view->myBuffer()->lineCount();
+	int tox = args.view->myBuffer()->getLineLength(toy);
+
+	int fromy = args.view->getBufferCursor().y() > 0 ? args.view->getBufferCursor().y()-1 : 0;
+	int fromx = args.view->myBuffer()->getLineLength(fromy);
+	//special case : the first line , we can't move up
+	if (fromy == args.view->getBufferCursor().y()) {
+		fromx = 0;
+	}
+	args.view->myBuffer()->action()->deleteArea(args.view, YZCursor(fromx, fromy), YZCursor(tox,toy), args.regs);
+
+	YZViewCursor viewCursor = args.view->viewCursor();
+	args.view->gotoxy ( &viewCursor, 0, viewCursor.bufferY(), true );
+	args.view->commitNextUndo();
 }
 
 void YZModeCommand::deleteToEOL(const YZCommandArgs &args) {
@@ -1054,15 +1068,11 @@ void YZModeCommand::deleteToEOL(const YZCommandArgs &args) {
 	YZCursor to=move(args.view, "$", 1, false);
 	args.view->myBuffer()->action()->deleteArea(args.view, args.view->getBufferCursor(), to, args.regs);
 	args.view->commitNextUndo();
-	
 }
-
-
 
 void YZModeCommand::insertAtSOL(const YZCommandArgs &args) {
 	args.view->moveToFirstNonBlankOfLine();
 	args.view->modePool()->push( YZMode::ModeInsert );
-	
 }
 
 void YZModeCommand::insertAtCol1(const YZCommandArgs &args) {
@@ -1081,7 +1091,6 @@ void YZModeCommand::gotoLineAtTop(const YZCommandArgs &args) {
 	args.view->alignViewVertically( line );
 	args.view->gotoLine( line );
 	args.view->moveToFirstNonBlankOfLine();
-	
 }
 
 void YZModeCommand::gotoLineAtCenter(const YZCommandArgs &args) {
@@ -1110,7 +1119,6 @@ void YZModeCommand::gotoLineAtBottom(const YZCommandArgs &args) {
 	//}
 	args.view->gotoLine( line );
 	args.view->moveToFirstNonBlankOfLine();
-	
 }
 
 
@@ -1168,7 +1176,6 @@ void YZModeCommand::insertLineBefore(const YZCommandArgs &args) {
 	args.view->moveUp();
 	args.view->modePool()->push( YZMode::ModeInsert );
 	args.view->commitNextUndo();
-	
 }
 
 void YZModeCommand::joinLine(const YZCommandArgs &args) {
@@ -1187,7 +1194,6 @@ void YZModeCommand::pasteAfter(const YZCommandArgs &args) {
 	for ( int i = 0 ; i < args.count ; i++ )
 		args.view->pasteContent( args.regs[ 0 ], true );
 	args.view->commitNextUndo();
-	
 }
 
 void YZModeCommand::pasteBefore(const YZCommandArgs &args) {
@@ -1263,7 +1269,6 @@ void YZModeCommand::changeCase( const YZCommandArgs &args ) {
 		}
 		args.view->commitNextUndo();
 	}
-
 }
 
 void YZModeCommand::lineToUpperCase( const YZCommandArgs &args ) {
@@ -1300,7 +1305,6 @@ void YZModeCommand::macro( const YZCommandArgs &args ) {
 	else
 		args.view->recordMacro( args.regs );
 	args.view->guiModeChanged();
-
 }
 
 void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
@@ -1318,9 +1322,7 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args ) {
                 YZSession::self()->getRegister(args.regs.at(ab))[0]
                     );
 	}
-
 	args.view->commitNextUndo();
-	
 }
 
 void YZModeCommand::deleteChar( const YZCommandArgs &args ) {
@@ -1359,7 +1361,6 @@ void YZModeCommand::substitute( const YZCommandArgs &args ) {
 
 void YZModeCommand::redisplay( const YZCommandArgs &args ) {
 	args.view->recalcScreen();
-	
 }
 
 void YZModeCommand::replace( const YZCommandArgs &args ) {
@@ -1371,7 +1372,6 @@ void YZModeCommand::replace( const YZCommandArgs &args ) {
 	args.view->gotoxy(pos.x(),pos.y(),true);
 	args.view->updateStickyCol();
 	args.view->commitNextUndo();
-	
 }
 
 void YZModeCommand::abort( const YZCommandArgs& /*args*/) {
@@ -1380,7 +1380,6 @@ void YZModeCommand::abort( const YZCommandArgs& /*args*/) {
 void YZModeCommand::delkey( const YZCommandArgs &args ) {
 	args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), 1);
 	args.view->commitNextUndo();
-	
 }
 
 void YZModeCommand::indent( const YZCommandArgs& args ) {

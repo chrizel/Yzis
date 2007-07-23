@@ -28,6 +28,7 @@ FIND_PATH(LIBLUALIB51_INCLUDE_DIR lualib.h
    ${WITH_LUA_HOME}/include
    ${_libLualib51IncDir}/lua51
    ${_libLualibIncDir}
+   /usr/include/lua5.1
    /usr/include/lua51
    /usr/local/include/lua51
    ${GNUWIN32_DIR}/include

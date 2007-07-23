@@ -117,6 +117,7 @@ class YZIS_EXPORT YZExCommand
 		const QString & keySeq() const { return mKeySeq; }
 		const QRegExp & regexp() const { return mRegexp; }
 		const ExPoolMethod& poolMethod() const { return mPoolMethod; }
+		const QStringList & longName() const { return mLongName; }
 
 	private :
 		QRegExp mRegexp;
@@ -151,6 +152,11 @@ class YZIS_EXPORT YZModeEx : public YZMode {
 		QList<const YZExCommand*> commands;
 		QList<const YZExRange*> ranges;
 		YZHistory *mHistory;
+		//completion stuff
+		QStringList mCompletePossibilities;
+		int mCurrentCompletionProposal;
+		QString mCompletionCurrentSearch;
+		void completeCommandLine(YZView *view);
 
 		QString parseRange( const QString& inputs, YZView* view, int* range, bool* matched );
 
@@ -163,6 +169,9 @@ class YZIS_EXPORT YZModeEx : public YZMode {
 		int rangeSearch( const YZExRangeArgs& args );
 
 	public:
+		// list all full command names
+		const QStringList extractCommandNames();
+
 		// commands
 		CmdState write( const YZExCommandArgs& args );
 		CmdState quit( const YZExCommandArgs& args );

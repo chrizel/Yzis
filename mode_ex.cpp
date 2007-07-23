@@ -58,7 +58,7 @@ YZExCommandArgs::YZExCommandArgs( YZView* _view, const QString& _input, const QS
     view = _view;
     fromLine = _fromLine;
     toLine = _toLine;
-    force = _force;
+    force = _force; 
 }
 
 QString YZExCommandArgs::toString() const {
@@ -97,6 +97,8 @@ YZModeEx::YZModeEx() : YZMode() {
 	commands.clear();
 	ranges.clear();
 	mHistory = new YZHistory;
+	mCompletePossibilities.clear();
+	mCurrentCompletionProposal = 0;
 }
 
 YZModeEx::~YZModeEx() {
@@ -114,13 +116,21 @@ void YZModeEx::enter( YZView* view ) {
 	YZSession::self()->guiSetFocusCommandLine();
 	view->guiSetCommandLineText( "" );
 }
+
 void YZModeEx::leave( YZView* view ) {
 	view->guiSetCommandLineText( "" );
 	YZSession::self()->guiSetFocusMainWindow();
 }
+
 CmdState YZModeEx::execCommand( YZView* view, const QString& key ) {
 //	dbg() << "YZModeEx::execCommand " << key << endl;
 	CmdState ret = CmdOk;
+	if ( key != "<TAB>" ) {
+		//clean up the whole completion stuff
+		mCompletePossibilities.clear();
+		mCompletionCurrentSearch = "";
+		mCurrentCompletionProposal = 0;
+	} 
 	if ( key == "<ENTER>" ) {
 		if( view->guiGetCommandLineText().isEmpty()) {
 			view->modePool()->pop();
@@ -141,7 +151,7 @@ CmdState YZModeEx::execCommand( YZView* view, const QString& key ) {
 	} else if ( key == "<ESC>" || key == "<CTRL>c" ) {
 		view->modePool()->pop( ModeCommand );
 	} else if ( key == "<TAB>" ) {
-		//ignore for now
+		completeCommandLine(view);
 	} else if ( key == "<BS>" ) {
 		QString back = view->guiGetCommandLineText();
 		if ( back.isEmpty() ) {
@@ -150,9 +160,63 @@ CmdState YZModeEx::execCommand( YZView* view, const QString& key ) {
 		}
 		view->guiSetCommandLineText(back.remove(back.length() - 1, 1));
 	} else {
-		view->guiSetCommandLineText( view->guiGetCommandLineText() + key );
+		view->guiSetCommandLineText(view->guiGetCommandLineText() + key);
 	}
 	return ret;
+}
+
+void YZModeEx::completeCommandLine(YZView *view) {
+	QString current = view->guiGetCommandLineText();
+	QStringList words = current.split(" ", QString::SkipEmptyParts);
+
+	//set the searched item to the last word part of the command line
+	if ( mCompletionCurrentSearch.isEmpty() && words.count()>0 ) {
+		mCompletionCurrentSearch = words.last();
+		current.chop(mCompletionCurrentSearch.length());
+	}
+
+	if ( current.endsWith(" ") ) { //file name completion
+		//TODO
+	} else if ( words.count() == 1 ) { //command completion
+		if ( mCompletePossibilities.isEmpty() ) { //init completion command list
+			QStringList l = extractCommandNames();
+			foreach ( const QString &s, l ) {
+				if ( s.startsWith(mCompletionCurrentSearch) ) {
+					mCompletePossibilities << s;
+				} 
+			}
+			mCompletePossibilities.sort();
+			mCompletePossibilities << mCompletionCurrentSearch; //add the searched item, so we can loop over
+		}
+		//so now we should have a list with proposals, fire them in order after a TAB key press, until the user presses something else (and stops completion)
+		if ( mCompletePossibilities.count() > 1 ) {
+			//remove previous proposal
+			if (mCurrentCompletionProposal>0) {
+				current.chop(mCompletePossibilities.at(mCurrentCompletionProposal-1).length());
+			}
+			//we looped all over possibilities, reset to beginning
+			if (mCurrentCompletionProposal >= mCompletePossibilities.count()) {
+				mCurrentCompletionProposal = 0;
+			}
+			//add new proposal to the command line
+			current += mCompletePossibilities.at(mCurrentCompletionProposal++);
+		} else { //nothing matched, reset search
+			current = view->guiGetCommandLineText();
+			mCompletionCurrentSearch = "";
+			mCompletePossibilities.clear();
+			mCurrentCompletionProposal = 0;
+		}
+		view->guiSetCommandLineText(current); 
+	} //command's option completion ?
+	//TODO
+}
+
+const QStringList YZModeEx::extractCommandNames() {
+	QStringList list; 
+	foreach( const YZExCommand *c, commands ) {
+		list << c->longName();
+	}
+	return list;
 }
 
 void YZModeEx::initPool() {

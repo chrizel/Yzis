@@ -266,7 +266,10 @@ void NYZSession::guiPopupMessage( const QString &_message )
 	halfdelay(1); // Go back to the halfdelay-mode.
 	
 	delwin( popup );
-	currentView()->refreshScreen();
+	if (currentView()) // view is not up yet, let's output that to stderr maybe ?
+		currentView()->refreshScreen();
+	else
+		fprintf(stderr, qp(message));
 }
 
 void NYZSession::guiDeleteBuffer(YZBuffer *b) {

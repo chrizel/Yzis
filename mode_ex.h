@@ -156,7 +156,31 @@ class YZIS_EXPORT YZModeEx : public YZMode {
 		QStringList mCompletePossibilities;
 		int mCurrentCompletionProposal;
 		QString mCompletionCurrentSearch;
+
+		/*
+		 * Init the completion for the command line
+		 * it will search for command names or file names
+		 */
 		void completeCommandLine(YZView *view);
+		/*
+		 * Get the list of completion items available
+		 * @return a QStringList containing the completion possibilities
+		 */
+		const QStringList& completionList();
+		/*
+		 * Reset all completion system
+		 */
+		void resetCompletion();
+		/*
+		 * Get the current completion proposal
+		 */
+		int completionIndex();
+		/*
+		 * Get the completion proposal at position @arg idx in the internal list
+		 * @param idx the index position
+		 * @return a QString containing the completion proposal
+		 */
+		const QString& completionItem(int idx);
 
 		QString parseRange( const QString& inputs, YZView* view, int* range, bool* matched );
 

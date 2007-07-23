@@ -127,9 +127,7 @@ CmdState YZModeEx::execCommand( YZView* view, const QString& key ) {
 	CmdState ret = CmdOk;
 	if ( key != "<TAB>" ) {
 		//clean up the whole completion stuff
-		mCompletePossibilities.clear();
-		mCompletionCurrentSearch = "";
-		mCurrentCompletionProposal = 0;
+		resetCompletion();
 	} 
 	if ( key == "<ENTER>" ) {
 		if( view->guiGetCommandLineText().isEmpty()) {
@@ -163,6 +161,24 @@ CmdState YZModeEx::execCommand( YZView* view, const QString& key ) {
 		view->guiSetCommandLineText(view->guiGetCommandLineText() + key);
 	}
 	return ret;
+}
+
+void YZModeEx::resetCompletion() {
+	mCompletePossibilities.clear();
+	mCompletionCurrentSearch = "";
+	mCurrentCompletionProposal = 0;
+}
+
+const QStringList& YZModeEx::completionList() {
+	return mCompletePossibilities;
+}
+
+int YZModeEx::completionIndex() {
+	return mCurrentCompletionProposal-1;
+}
+
+const QString& YZModeEx::completionItem(int idx) {
+	return mCompletePossibilities.at(idx);
 }
 
 void YZModeEx::completeCommandLine(YZView *view) {
@@ -238,7 +254,7 @@ void YZModeEx::completeCommandLine(YZView *view) {
 	if ( mCompletePossibilities.count() > 1 ) {
 		//remove previous proposal
 		if (mCurrentCompletionProposal>0) {
-			current.chop(mCompletePossibilities.at(mCurrentCompletionProposal-1).length());
+			current.chop(mCompletePossibilities.at(completionIndex()).length());
 		}
 		//we looped all over possibilities, reset to beginning
 		if (mCurrentCompletionProposal >= mCompletePossibilities.count()) {
@@ -250,9 +266,7 @@ void YZModeEx::completeCommandLine(YZView *view) {
 	} else { //nothing matched, reset search
 		dbg() << "no completion match, resetting";
 		current = view->guiGetCommandLineText();
-		mCompletionCurrentSearch = "";
-		mCompletePossibilities.clear();
-		mCurrentCompletionProposal = 0;
+		resetCompletion();
 	}
 	view->guiSetCommandLineText(current); 
 }

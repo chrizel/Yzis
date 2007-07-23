@@ -30,13 +30,16 @@ FIND_PACKAGE(GNUWIN32)
 FIND_PATH(LIBLUA51_INCLUDE_DIR lua.h
    ${WITH_LUA_HOME}/include
    ${_libLua51IncDir}/lua51
+   ${_libLua51IncDir}/lua5.1
    ${_libLuaIncDir}
    /usr/include/lua51
+   /usr/include/lua5.1
    /usr/local/include/lua51
+   /usr/local/include/lua5.1
    ${GNUWIN32_DIR}/include
 )
 
-FIND_LIBRARY(LIBLUA51_LIBRARIES NAMES lua51 lua
+FIND_LIBRARY(LIBLUA51_LIBRARIES NAMES lua5.1 lua51 lua
    PATHS
    ${WITH_LUA_HOME}/lib
    ${_libLua51LinkDir}

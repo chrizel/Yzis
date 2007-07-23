@@ -6,7 +6,12 @@ function cleverTab(key)
 --	debug("("..str..")")
 	
 	local c = string.sub(str, wincol()-1, wincol()-1)
-	if c == " " or c == "\t" or str == "" or wincol() == 1 then
+	if c == " " then
+		-- remove the space and put a TAB instead, #144
+		remove(wincol()-1, winline(), 1)
+		return "<TAB>"
+	end
+	if c == "\t" or str == "" or wincol() == 1 then
 		return "<TAB>"
 	else
 		return "<CTRL>p"

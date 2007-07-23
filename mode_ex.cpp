@@ -169,46 +169,92 @@ void YZModeEx::completeCommandLine(YZView *view) {
 	QString current = view->guiGetCommandLineText();
 	QStringList words = current.split(" ", QString::SkipEmptyParts);
 
-	//set the searched item to the last word part of the command line
-	if ( mCompletionCurrentSearch.isEmpty() && words.count()>0 ) {
-		mCompletionCurrentSearch = words.last();
-		current.chop(mCompletionCurrentSearch.length());
-	}
-
-	if ( current.endsWith(" ") ) { //file name completion
-		//TODO
-	} else if ( words.count() == 1 ) { //command completion
-		if ( mCompletePossibilities.isEmpty() ) { //init completion command list
+	if ( mCompletePossibilities.isEmpty() ) { //no list set up yet, init the completion stuff before proceding
+		//XXX we probably need something to say that a command can get a filename parameter, the following check is very lame for now...
+		if ( (current.endsWith(" ") && words.count()==1) || words.count()==2 ) { //file name completion : ":command /somefile<TAB>" or ":command <TAB>"
+			dbg() << "Init filename completion";
+			QDir cDir; //current dir
+			QStringList filters; //filename filtering
+			if ( words.count()==2 ) { //we have a prefix to look for
+				dbg() << "init filter for completion";
+				mCompletionCurrentSearch = words.last();
+				dbg() << "Searched item : " << mCompletionCurrentSearch;
+				current.chop(mCompletionCurrentSearch.length());
+				if (!mCompletionCurrentSearch.endsWith("/")) {
+					QFileInfo fi (mCompletionCurrentSearch);
+					filters << fi.fileName()+"*"; //add the filename part to the filters, this will be used to list only these matches just below
+					dbg() << "Adding filter : " <<fi.fileName()+"*";
+					cDir = QDir(fi.path()); //get the parent directory to switch over the entries in this directory
+				} else {
+					cDir.cd(mCompletionCurrentSearch);
+				}
+				//list of files in that directory
+				if (cDir.isAbsolute()) {
+					dbg() << "Using absolute paths from dir " << cDir.absolutePath();
+					QFileInfoList ifl = cDir.entryInfoList(filters,QDir::AllEntries|QDir::Dirs|QDir::NoDotAndDotDot);
+					for (int i = 0; i < ifl.size(); ++i) {
+						mCompletePossibilities << ifl.at(i).absoluteFilePath();
+					}
+				} else {
+					dbg() << "Using relative paths from dir " << cDir.path();
+					mCompletePossibilities = cDir.entryList(filters,QDir::AllEntries|QDir::Dirs|QDir::NoDotAndDotDot);
+					//prepend the relative path to the entries, so we keep a "full" but still relative path
+					QRegExp rx("^(.*)$");
+					mCompletePossibilities.replaceInStrings(rx, cDir.path() + QDir::separator() + "\\1");
+				}
+				mCompletePossibilities.sort();
+				mCompletePossibilities << mCompletionCurrentSearch; //XXX dups ?
+				dbg() << "complete with pfx : " << filters << " | " << mCompletePossibilities;
+			} else {
+				dbg() << "no filter given for completion";
+				mCompletionCurrentSearch = "";
+				//list of files in that directory
+				mCompletePossibilities = cDir.entryList(QStringList(),QDir::AllEntries|QDir::Dirs|QDir::NoDotAndDotDot);
+				mCompletePossibilities.sort();
+				mCompletePossibilities << mCompletionCurrentSearch; //XXX dups ?
+				dbg() << "complete no pfx : " << mCompletePossibilities;
+			}
+		} else if ( words.count() == 1 ) { //command completion
+			dbg() << "Init command completion";
+			//set the searched item to the last word part of the command line
+			if ( mCompletionCurrentSearch.isEmpty() && words.count()>0 ) {
+				mCompletionCurrentSearch = words.last();
+				current.chop(mCompletionCurrentSearch.length());
+			}
 			QStringList l = extractCommandNames();
 			foreach ( const QString &s, l ) {
 				if ( s.startsWith(mCompletionCurrentSearch) ) {
 					mCompletePossibilities << s;
-				} 
+				}
 			}
 			mCompletePossibilities.sort();
-			mCompletePossibilities << mCompletionCurrentSearch; //add the searched item, so we can loop over
+			mCompletePossibilities << mCompletionCurrentSearch; //add the searched item, so we can loop over XXX check dups
+		} else {//command's option completion ?
+			//TODO
+			return;
 		}
-		//so now we should have a list with proposals, fire them in order after a TAB key press, until the user presses something else (and stops completion)
-		if ( mCompletePossibilities.count() > 1 ) {
-			//remove previous proposal
-			if (mCurrentCompletionProposal>0) {
-				current.chop(mCompletePossibilities.at(mCurrentCompletionProposal-1).length());
-			}
-			//we looped all over possibilities, reset to beginning
-			if (mCurrentCompletionProposal >= mCompletePossibilities.count()) {
-				mCurrentCompletionProposal = 0;
-			}
-			//add new proposal to the command line
-			current += mCompletePossibilities.at(mCurrentCompletionProposal++);
-		} else { //nothing matched, reset search
-			current = view->guiGetCommandLineText();
-			mCompletionCurrentSearch = "";
-			mCompletePossibilities.clear();
+	}
+	//so now we should have a list with proposals, fire them in order after a TAB key press, until the user presses something else (and stops completion)
+	if ( mCompletePossibilities.count() > 1 ) {
+		//remove previous proposal
+		if (mCurrentCompletionProposal>0) {
+			current.chop(mCompletePossibilities.at(mCurrentCompletionProposal-1).length());
+		}
+		//we looped all over possibilities, reset to beginning
+		if (mCurrentCompletionProposal >= mCompletePossibilities.count()) {
 			mCurrentCompletionProposal = 0;
 		}
-		view->guiSetCommandLineText(current); 
-	} //command's option completion ?
-	//TODO
+		//add new proposal to the command line
+		dbg() << "next complete test : " << mCompletePossibilities.at(mCurrentCompletionProposal);
+		current += mCompletePossibilities.at(mCurrentCompletionProposal++);
+	} else { //nothing matched, reset search
+		dbg() << "no completion match, resetting";
+		current = view->guiGetCommandLineText();
+		mCompletionCurrentSearch = "";
+		mCompletePossibilities.clear();
+		mCurrentCompletionProposal = 0;
+	}
+	view->guiSetCommandLineText(current); 
 }
 
 const QStringList YZModeEx::extractCommandNames() {

@@ -80,7 +80,7 @@ YZSession * YZSession::self()
     if (mInstance == 0L) {
         err() << "YZSession::setInstance() has not been called" << endl;
         err() << "There is currently no instance of the session" << endl;
-        err() << "Exepct SEGFAULT as the next thing to happen!" << endl;
+        err() << "Expect SEGFAULT as the next thing to happen!" << endl;
     }
     return mInstance;
 }
@@ -154,6 +154,10 @@ void YZSession::parseCommandLine( int argc, char * argv[] )
     QString s;
 
     for( int i=0; i<argc; i++) args << argv[i];
+
+    //quick and very durty way to remove debug args from the args list
+    //needed to avoid nyzis to find "unknown options"
+    YZDebugBackend::self()->parseArgv( args );
 
 	for ( int i = 1; i < args.count(); ++i ) {
 		if ( args.at(i)[0] != '-' ) {

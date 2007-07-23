@@ -28,6 +28,7 @@
 #include "mapping.h"
 #include "internal_options.h"
 #include "events.h"
+#include "resourcemgr.h"
 
 #include "mode_ex.h"
 
@@ -117,6 +118,7 @@ void YZLuaFuncs::registerLuaFuncs(lua_State *L)
 	lua_register(L,"matchpair",matchpair);
 	lua_register(L,"mode",mode);
 	lua_register(L,"edit",edit);
+	lua_register(L,"loadplugin",loadplugin);
     dbg() << HERE() << " done." << endl;
 }
 
@@ -767,5 +769,21 @@ int YZLuaFuncs::set(lua_State *L ) {
 
 	YZASSERT_EQUALS( lua_gettop(L),  0  );
 	return  0 ;	
+}
+
+int YZLuaFuncs::loadplugin(lua_State *L ) {
+	if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "loadplugin", "plugin name")) return 0;
+	QString pname = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
+	lua_pop(L,1);
+
+	if (!pname.isEmpty()) {
+		QString resource = YZSession::self()->resourceMgr()->findResource( UserScriptResource, pname );
+		if (! resource.isEmpty()) {
+			YZLuaEngine::self()->source( resource );
+		}
+	}
+
+	YZASSERT_EQUALS( lua_gettop(L),  0  );
+	return  0 ;
 }
 

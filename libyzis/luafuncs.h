@@ -589,6 +589,10 @@ public:
      * \b Returns: nothing
 	 */
 	 static int edit(lua_State *L);
+	/*
+	 * Load a plugin using the resource manager
+	 */
+	static int loadplugin(lua_State *L );
 };
 
 #endif // YZLUASCRIPTING

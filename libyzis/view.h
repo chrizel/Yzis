@@ -26,6 +26,7 @@
 
 /* yzis */
 #include "viewiface.h"
+#include "viewcursor.h"
 
 class YZViewCursor;
 class YZColor;
@@ -591,13 +592,13 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		//-------------------------------------------------------
 		// ----------------- Cursors
 		//-------------------------------------------------------
-		void sendCursor( YZViewCursor* cursor );
+		void sendCursor( YZViewCursor cursor );
 		
 		/**
 		 * Get the view cursor
 		 * @return a constant ref to the view cursor ( YZViewCursor )
 		 */
-		const YZViewCursor &viewCursor() const { return *mainCursor; }
+		const YZViewCursor &viewCursor() const { return mainCursor; }
 
 		/**
 		 * Get the current cursor information
@@ -611,7 +612,7 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		 */
 		const YZCursor getBufferCursor() const;
 
-		YZViewCursor* visualCursor() { return mVisualCursor; }
+		YZViewCursor* visualCursor() { return &mVisualCursor; }
 
 		/**
 		 * Updates the position of the cursor
@@ -761,10 +762,10 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		/**
 	 	 * This is the main cursor, the one which is displayed
 		 */
-		YZViewCursor* mainCursor;
+		YZViewCursor mainCursor;
 
 		/* screen top-left cursor */
-		YZViewCursor* scrollCursor;
+		YZViewCursor scrollCursor;
 
 		/**
 		 * Searching backward
@@ -784,7 +785,7 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		/**
 		 * This is the worker cursor, the one which we directly modify in our draw engine
 		 */
-		YZViewCursor* workCursor;
+		YZViewCursor workCursor;
 
 		/**
 		 * are we moving cursor in draw mode ?
@@ -861,10 +862,10 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		QChar m_lineMarker;
 
 
-		YZCursor* origPos;
+		YZCursor origPos;
 		int lineDY;
 
-		YZCursor* beginChanges;
+		YZCursor beginChanges;
 
 		//cached value of tabstop option
 		int tabstop;
@@ -884,13 +885,13 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		YZSelection* mPaintSelection;
 
 		//Visual Mode stuff
-		YZViewCursor* mVisualCursor;
+		YZViewCursor mVisualCursor; // TODO : this one is only used by external class, not by this very one ?
 
 
 		//which regs to store macros in
 		QList<QChar> mRegs;
 		int m_paintAutoCommit;
-		YZViewCursor* keepCursor;
+		YZViewCursor keepCursor;
 
 		//the current attribute being used by the GUI
 		YzisAttribute * curAt;

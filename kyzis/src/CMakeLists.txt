@@ -22,8 +22,7 @@ SET(internkyzis_SRCS
    viewwidget.cpp
 )
 
-KDE4_AUTOMOC (${internkyzis_SRCS})
-KDE4_ADD_DCOP_SKELS (internkyzis_SRCS kyzis.h)
+#KDE4_ADD_DCOP_SKELS (internkyzis_SRCS kyzis.h)
 KDE4_ADD_KCFG_FILES (internkyzis_SRCS settings.kcfgc)
 
 ADD_LIBRARY(internkyzis STATIC ${internkyzis_SRCS} )

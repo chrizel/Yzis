@@ -10,8 +10,6 @@ set(gyzis_SRCS
    document.cpp 
    gyzis.cpp )
 
-kde4_automoc(${gyzis_SRCS})
-
 kde4_add_executable(gyzis ${gyzis_SRCS})
 
 target_link_libraries(gyzis  ${KDE4_KDECORE_LIBS} qtgtk yzis )
@@ -37,6 +35,4 @@ install_files( ${APPLNK_INSTALL_DIR}/Editeurs FILES  gyzis.desktop )
 #gyzis_SOURCES = main.cpp gview.cpp document.cpp gyzis.cpp
 #gyzis_LDFLAGS = $(all_libraries) `pkg-config bakery-2.4 --libs` -lqtgtk
 #gyzis_LDADD = $(top_builddir)/libyzis/libyzis.la
-#
-#
 #

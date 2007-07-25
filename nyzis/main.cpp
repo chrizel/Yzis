@@ -65,15 +65,15 @@ main(int argc, char *argv[])
 
     // ==============[ Create application ]=============
 #ifdef Q_WS_X11
+# ifdef ENABLE_X_IN_NYZIS
 	bool useGUI = getenv(  "DISPLAY" ) != 0;
 	if (useGUI) {
 		Display *d = XOpenDisplay(NULL);
 		if (d == NULL) //woups we failed to connect to X
 			useGUI = false; // so don't try again later ;)
 	}
-#else
-	bool useGUI = true;
-#endif
+# endif //ENABLE_X_IN_NYZIS
+#endif // Q_WS_X11
 
 	QCoreApplication *app;
     /*

@@ -15,7 +15,13 @@ set(nyzis_MOC nsession.h)
 
 qt4_wrap_cpp( nyzis_MOC_SRCS ${nyzis_MOC} )
 add_executable(nyzis ${nyzis_SRCS} ${nyzis_MOC_SRCS} )
-target_link_libraries(nyzis ${NCURSES_LIBRARIES} ${X11_LIBRARIES} ${QT_QTCORE_LIBRARY} yzis )
+target_link_libraries(nyzis ${NCURSES_LIBRARIES} ${QT_QTCORE_LIBRARY} yzis )
+
+if (ENABLE_X_IN_NYZIS)
+	target_link_libraries(nyzis ${NCURSES_LIBRARIES} ${X11_LIBRARIES} ${QT_QTCORE_LIBRARY} yzis )
+else (ENABLE_X_IN_NYZIS)
+	target_link_libraries(nyzis ${NCURSES_LIBRARIES} ${QT_QTCORE_LIBRARY} yzis )
+endif (ENABLE_X_IN_NYZIS)
 
 install(TARGETS nyzis DESTINATION bin)
 

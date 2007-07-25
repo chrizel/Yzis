@@ -1957,7 +1957,7 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data,
 
     regionId++;
 
-    dbg () << "########### BEG REG: "  << beginRegionStr << " NUM: " << regionId << endl;
+    deepdbg () << "########### BEG REG: "  << beginRegionStr << " NUM: " << regionId << endl;
   }
 
   if (!endRegionStr.isEmpty())
@@ -1972,7 +1972,7 @@ YzisHlItem *YzisHighlighting::createYzisHlItem(YzisSyntaxContextData *data,
 
     regionId2 = -regionId2 - 1;
 
-    dbg () << "########### END REG: "  << endRegionStr << " NUM: " << regionId2 << endl;
+    deepdbg () << "########### END REG: "  << endRegionStr << " NUM: " << regionId2 << endl;
   }
 
   int attr = 0;
@@ -2740,7 +2740,7 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
 
       m_contexts.push_back (ctxNew);
 
-      dbg () << "INDEX: " << i << " LENGTH " << m_contexts.size()-1 << endl;
+      deepdbg () << "INDEX: " << i << " LENGTH " << m_contexts.size()-1 << endl;
 
       //Let's create all items for the context
       while (YzisHlManager::self()->syntax->nextItem(data))

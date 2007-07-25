@@ -30,23 +30,10 @@ just not be used anywhere in libyzis.
 
 \section moduleslist Module description
 
-
-\subpage technologies
-Brief description of the technologies used in Yzis
-
 \subpage startup_guide
 Get you started with Yzis development
 
-\subpage building_yzis
-How to build Yzis and deal with cmake
-
-\subpage arch_overview
-An overview of some important compononents of Yzis
-
-\subpage debugging
-Tips to make your debug life in yzis easier
-
-\subpage scripting_in_lua
+\subpage scripting
 How to write scripts in lua, for non regression testing or for other purposes.
 
 \subpage testing

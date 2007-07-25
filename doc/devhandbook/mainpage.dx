@@ -3,30 +3,9 @@
  
 \section intro Introduction
 
-The developer handbook gathers all documentation available for Yzis.
 
-The book is organised in different modules. Each module describes a fonctionality of the Yzis core (\e libizis\e ). This is
-aimed towards developers wanting to work on Yzis code. 
-
-There is a separate \e User \e Handbook if you only intend to use Yzis.
-
-There is also an API documentation available for the yzis engine and each frontend. The documentation contains information about each class, method, variable and is extensively referenced by the developer handbook.
-
-API documentation links:
-- <a href="libyzis/index.html">libyzis</a>: yzis engine
-- <a href="nyzis/index.html">NYzis</a>: ncurses frontend
-- <a href="qyzis/index.html">QYzis</a>: Qt frontend
-- <a href="kyzis/index.html">KYzis</a>: KDE frontend
-
-
-\subsection bzzzzzzz Note: problem with the scroll symbol
-
-The ncurses library (only used by nyzis) defines a MACRO scroll .
-This creates big clashes with Qt API as some classes (QWidget for example)
-have methods with this name as well. NYzis handles this using some hack (see
- viewwidget.h ), but to ease handling this, the word \e scroll should
-just not be used anywhere in libyzis.
-
+THIS DOCUMENTATION IS BEING MOVED TO THE WIKI AT http://wiki.yzis.org Be
+warned.
 
 \section moduleslist Module description
 

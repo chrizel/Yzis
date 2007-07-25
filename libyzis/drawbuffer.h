@@ -92,7 +92,7 @@ class YZIS_EXPORT YZDrawBuffer {
 
 		void push( const QChar& c );
 
-		void callback( int x, int y, const YZDrawCell& cell );
+		void callback( QPoint pos, const YZDrawCell& cell );
 
 		bool find( const YZCursor pos, int* x, int* y, int* vx ) const;
 

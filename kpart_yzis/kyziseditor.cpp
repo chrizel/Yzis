@@ -305,20 +305,20 @@ void KYZisEditor::scroll( int x, int y ) {
 	mCursor->show();
 }
 
-void KYZisEditor::guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
+void KYZisEditor::guiDrawCell( QPoint pos, const YZDrawCell& cell, QPainter* p ) {
 	p->save();
 	if ( cell.fg.isValid() ) {
 		p->setPen( cell.fg.rgb() );
 	}
 
-	QRect r( GETX(x), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+	QRect r( GETX(pos.x()), pos.y()*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 	p->eraseRect( r );
 	p->drawText( r, cell.c );
 	p->restore();
 }
 
-void KYZisEditor::guiDrawClearToEOL( int x, int y, const QChar& /*clearChar*/, QPainter* p ) {
-	QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
+void KYZisEditor::guiDrawClearToEOL( QPoint pos, const QChar& /*clearChar*/, QPainter* p ) {
+	QRect r( GETX(pos.x()), pos.y()*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
 	p->eraseRect( r );
 }
 

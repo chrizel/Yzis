@@ -197,11 +197,11 @@ void QYZisView::guiPaintEvent( const YZSelection& s ) {
 /*
  * View painting methods
  */
-void QYZisView::guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg ) {
-	m_editor->guiDrawCell( x, y, cell, (QPainter*)arg );
+void QYZisView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg ) {
+	m_editor->guiDrawCell( pos, cell, (QPainter*)arg );
 }
-void QYZisView::guiDrawClearToEOL( int x, int y, const QChar& clearChar ) {
-	m_editor->guiDrawClearToEOL( x, y, clearChar, m_painter );
+void QYZisView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar ) {
+	m_editor->guiDrawClearToEOL( pos, clearChar, m_painter );
 }
 void QYZisView::guiDrawSetMaxLineNumber( int max ) {
 	mVScroll->setMaximum( max );

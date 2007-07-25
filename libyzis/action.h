@@ -23,6 +23,7 @@
 
 /* Yzis */
 #include "yzismacros.h"
+#include "cursor.h"
 class YZBuffer;
 class YZView;
 class YZCursor;
@@ -30,6 +31,7 @@ class YZInterval;
 
 /* Qt */
 #include <QList>
+#include <QPoint>
 class QString;
 class QStringList;
 class QChar;
@@ -47,27 +49,30 @@ public:
 	YZAction( YZBuffer* buffer );
 	virtual ~YZAction( );
 
+	// YZCursor versions
 	void insertChar( YZView* pView, const YZCursor pos, const QString& text );
-	void insertChar( YZView* pView, int X, int Y, const QString& text );
-
 	void replaceChar( YZView* pView, const YZCursor pos, const QString& text );
-	void replaceChar( YZView* pView, int X, int Y, const QString& text );
-
 	void deleteChar( YZView* pView, const YZCursor pos, int len );
-	void deleteChar( YZView* pView, int X, int Y, int len );
-
 	void insertLine( YZView* pView, const YZCursor pos, const QString &text );
-	void insertLine( YZView* pView, int Y, const QString &text );
+	void insertNewLine( YZView* pView, const YZCursor pos );
+	void replaceLine( YZView* pView, const YZCursor pos, const QString &text );
+	void deleteLine( YZView* pView, const YZCursor pos, int len, const QList<QChar> &reg );
+
+	// X,Y versions
+	void insertChar( YZView* pView, const int X, const int Y, const QString& text ) { YZCursor pos( X, Y ); insertChar( pView, pos, text ); }
+	void replaceChar( YZView* pView, const int X, const int Y, const QString& text ) { YZCursor pos( X, Y ); replaceChar( pView, pos, text ); }
+	void deleteChar( YZView* pView, const int X, const int Y, int len ) { YZCursor pos( X, Y ); deleteChar( pView, pos, len ); }
+	void insertLine( YZView* pView, int Y, const QString &text ) { YZCursor pos( 0, Y ); insertLine( pView, pos, text ); }
+	void insertNewLine( YZView* pView, const int X, const int Y ) { YZCursor pos( X, Y ); insertNewLine( pView, pos ); }
+	void deleteLine( YZView* pView, int Y, int len, const QList<QChar>& regs ) { YZCursor pos( 0, Y ); deleteLine( pView, pos, len, regs ); }
+	void replaceLine( YZView* pView, int Y, const QString& text ) { YZCursor pos( 0, Y ); replaceLine( pView, pos, text ); }
+
 
 	void mergeNextLine( YZView* pView, int Y, bool stripSpaces = true );
 
 	void appendLine( YZView* pView, const QString& text );
 
-	void insertNewLine( YZView* pView, const YZCursor pos );
-	void insertNewLine( YZView* pView, int X, int Y );
 
-	void deleteLine( YZView* pView, const YZCursor pos, int len, const QList<QChar> &reg );
-	void deleteLine( YZView* pView, int Y, int len , const QList<QChar> &reg );
 	void deleteArea( YZView* pView, const YZCursor begin, const YZCursor end, const QList<QChar> &reg );
 	void deleteArea( YZView* pView, const YZInterval& i, const QList<QChar> &reg );
 
@@ -77,8 +82,6 @@ public:
 
 	void replaceArea( YZView* pView, const YZInterval& i, const QStringList& text );
 
-	void replaceLine( YZView* pView, const YZCursor pos, const QString &text );
-	void replaceLine( YZView* pView, int Y, const QString &text );
 
 	void replaceText( YZView* pView, const YZCursor pos, int replacedLength, const QString& text );
 

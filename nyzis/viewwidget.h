@@ -89,13 +89,13 @@ public slots:
 
 	protected  :
 
-		virtual void guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg );
+		virtual void guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg );
 
 		virtual void guiNotifyContentChanged( const YZSelection& s );
 
 		void guiPreparePaintEvent(int, int);
 		void guiEndPaintEvent();
-		virtual void guiDrawClearToEOL( int x, int y, const QChar& clearChar );
+		virtual void guiDrawClearToEOL( QPoint pos, const QChar& clearChar );
 		virtual void guiDrawSetMaxLineNumber( int max );
 		virtual void guiDrawSetLineNumber( int y, int n, int h );
 

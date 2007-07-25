@@ -54,8 +54,8 @@ public:
 	virtual void guiNotifyContentChanged(const YZSelection&);
 	virtual void guiPreparePaintEvent(int, int);
 	virtual void guiEndPaintEvent();
-	virtual void guiDrawCell(int, int, const YZDrawCell&, void*);
-	virtual void guiDrawClearToEOL(int, int, const QChar&);
+	virtual void guiDrawCell(QPoint, const YZDrawCell&, void*);
+	virtual void guiDrawClearToEOL(QPoint, const QChar&);
 	virtual void guiDrawSetLineNumber(int, int, int);
 	virtual void guiDrawSetMaxLineNumber(int);
 	virtual void guiModeChanged();

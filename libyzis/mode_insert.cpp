@@ -268,7 +268,7 @@ void YZModeInsert::commandEnter( YZView* mView, const QString& ) {
 CmdState YZModeInsert::commandDefault( YZView* mView, const QString& key ) {
 	mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
 	if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
-		mView->reindent( mView->getBufferCursor().x() - 1, mView->getBufferCursor().y() );
+		mView->reindent( QPoint(mView->getBufferCursor().x() - 1, mView->getBufferCursor().y()));
 	return CmdOk;
 }
 

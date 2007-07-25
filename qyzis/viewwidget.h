@@ -92,8 +92,8 @@ class QYZisView: public QWidget, public YZView
 		void guiDrawSetLineNumber( int y, int n, int h );
 		virtual void guiPreparePaintEvent( int y_min, int y_max );
 		virtual void guiEndPaintEvent();
-		virtual void guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg );
-		virtual void guiDrawClearToEOL( int x, int y, const QChar& clearChar );
+		virtual void guiDrawCell( QPoint , const YZDrawCell& cell, void* arg );
+		virtual void guiDrawClearToEOL( QPoint, const QChar& clearChar );
 
 		void guiPaintEvent( const YZSelection& s );
 

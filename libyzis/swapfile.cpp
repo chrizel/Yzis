@@ -76,7 +76,7 @@ void YZSwapFile::flush() {
 		QTextStream stream( &f );
 		if ( !mHistory.empty() ) {
 			for ( int ab = 0 ; ab < mHistory.size(); ++ab )
-				stream << mHistory.at(ab).type << mHistory.at(ab).col <<","<< mHistory.at(ab).line <<","<< mHistory.at(ab).str << endl;
+				stream << mHistory.at(ab).type << mHistory.at(ab).pos.x() <<","<< mHistory.at(ab).pos.y() <<","<< mHistory.at(ab).str << endl;
 		}
 		f.close();
 	} else {
@@ -86,13 +86,12 @@ void YZSwapFile::flush() {
 	mHistory.clear(); //clear previous history
 }
 
-void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString& str, unsigned int col, unsigned int line ) {
+void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString& str, QPoint pos) {
 	if ( mRecovering ) return;
 	if ( mParent->getLocalIntegerOption("updatecount") == 0 ) return;
 	swapEntry e;
 	e.type = type;
-	e.col = col;
-	e.line = line;
+	e.pos = pos;
 	e.str = str;
 	mHistory.append( e );
 	if ( ( ( int )mHistory.size() ) >= mParent->getLocalIntegerOption("updatecount") ) flush();
@@ -143,7 +142,7 @@ bool YZSwapFile::recover() {
 				//stream << ( *it ).type << ( *it ).col <<","<< ( *it ).line <<","<< ( *it ).str << endl;
 			QRegExp rx("([0-9])([0-9]*),([0-9]*),(.*)");
 			if ( rx.exactMatch( line ) ) {
-				replay( ( YZBufferOperation::OperationType )rx.cap( 1 ).toInt(), rx.cap( 2 ).toUInt(), rx.cap( 3 ).toUInt(), rx.cap( 4 ) );
+				replay( ( YZBufferOperation::OperationType )rx.cap( 1 ).toInt(), QPoint (rx.cap( 2 ).toUInt(), rx.cap( 3 ).toUInt()), rx.cap( 4 ) );
 			} else {
 				dbg() << "Error replaying line: " << line << endl;
 			}
@@ -159,21 +158,21 @@ bool YZSwapFile::recover() {
 	return true;
 }
 
-void YZSwapFile::replay( YZBufferOperation::OperationType type, unsigned int col, unsigned int line, const QString& text ) {
+void YZSwapFile::replay( YZBufferOperation::OperationType type, QPoint pos, const QString& text ) {
 	YZView *pView = mParent->firstView();
 	pView->setPaintAutoCommit(false);
 	switch( type ) {
 		case YZBufferOperation::OpAddText:
-			mParent->action()->insertChar( pView, col, line, text );
+			mParent->action()->insertChar( pView, pos, text );
 			break;
 		case YZBufferOperation::OpDelText:
-			mParent->action()->deleteChar( pView, col, line, text.length() );
+			mParent->action()->deleteChar( pView, pos, text.length() );
 			break;
 		case YZBufferOperation::OpAddLine:
-			mParent->action()->insertNewLine( pView, 0, line );
+			mParent->action()->insertNewLine( pView, 0, pos.y() );
 			break;
 		case YZBufferOperation::OpDelLine:
-			mParent->action()->deleteLine( pView, line, 1, QList<QChar>() );
+			mParent->action()->deleteLine( pView, pos.y(), 1, QList<QChar>() );
 			break;
 	}
 	pView->commitPaintEvent();

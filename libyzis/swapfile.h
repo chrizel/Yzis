@@ -37,7 +37,7 @@ class YZSwapFile {
 		/**
 		 * Add an inputs event to history
 		 */
-		void addToSwap( YZBufferOperation::OperationType type, const QString& str, unsigned int col, unsigned int line );
+		void addToSwap( YZBufferOperation::OperationType type, const QString& str, QPoint pos);
 
 		/**
 		 * Clear the history
@@ -75,13 +75,12 @@ class YZSwapFile {
 		/**
 		 * Replay one event on the buffer during a recover
 		 */
-		void replay( YZBufferOperation::OperationType type, unsigned int col, unsigned int line, const QString& str );
+		void replay( YZBufferOperation::OperationType type, QPoint pos, const QString& str );
 
 	private:
 		struct swapEntry {
 			YZBufferOperation::OperationType type;
-			unsigned int col;
-			unsigned int line;
+			QPoint pos;
 			QString str;
 		} sE;
 

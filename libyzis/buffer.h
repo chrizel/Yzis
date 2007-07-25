@@ -81,19 +81,17 @@ public:
 
 	/**
 	 * Inserts a character into the buffer
-	 * @param x position on the line where to insert the character
-	 * @param y line where the character is to be added
+	 * @param pos : the position where to insert the character
 	 * @param c the character to add
 	 */
-	void insertChar (int x, int y, const QString& c);
+	void insertChar (QPoint pos, const QString& c);
 
 	/**
 	 * Deletes a character in the buffer
-	 * @param x position on the line where to delete the character
-	 * @param y line where the character is to be deleted
+	 * @param pos : the position where to insert the character
 	 * @param count number of characters to delete
 	 */
-	void delChar (int x, int y, int count);
+	void delChar (QPoint pos, int count);
 
 	//-------------------------------------------------------
 	// ----------------- Line Operations

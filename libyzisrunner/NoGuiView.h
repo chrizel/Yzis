@@ -76,8 +76,8 @@ public:
 	virtual void guiHighlightingChanged();
 	void guiPreparePaintEvent(int, int);
 	void guiEndPaintEvent();
-	void guiDrawCell(int, int, const YZDrawCell&, void*);
-	void guiDrawClearToEOL(int, int, const QChar&);
+	void guiDrawCell(QPoint, const YZDrawCell&, void*);
+	void guiDrawClearToEOL(QPoint, const QChar&);
 	void guiDrawSetMaxLineNumber(int);
 	void guiDrawSetLineNumber(int, int, int);
 	

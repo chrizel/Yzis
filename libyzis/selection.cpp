@@ -30,13 +30,6 @@
 #define dbg()    yzDebug("YZBound")
 #define err()    yzError("YZBound")
 
-void YZBound::setPos( const YZCursor pos ) {
-	mPos = pos;
-}
-void YZBound::setPos( unsigned int x, unsigned int y ) {
-	mPos.setX( x );
-	mPos.setY( y );
-}
 void YZBound::open() {
 	mOpen = true;
 }

@@ -137,12 +137,13 @@ void NYZView::guiPreparePaintEvent(int, int) {
 void NYZView::guiEndPaintEvent() {
 }
 
-void NYZView::guiDrawCell( int x, int y, const YZDrawCell& cell, void* ) {
+void NYZView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* ) {
 	YZColor c = cell.fg;
 	if ( !c.isValid() ) {
 		c.setNamedColor( "#fff" );
 	}
 
+	int x= pos.x();
 	if ( !fakeLine ) {
 		/* if this line is a fake, don't apply margins */
 		x += marginLeft;
@@ -177,7 +178,7 @@ void NYZView::guiDrawCell( int x, int y, const YZDrawCell& cell, void* ) {
 	wide_char[needed-1] = '\0';
 
 	wattron( editor, mAttributes );
-	mvwaddwstr( editor, y, x, wide_char );
+	mvwaddwstr( editor, pos.y(), x, wide_char );
 	wattroff( editor, mAttributes );
 	free( wide_char );
 	delete[] from_char;
@@ -195,17 +196,18 @@ void NYZView::drawCursor() {
 	wrefresh( editor );
 }
 
-void NYZView::guiDrawClearToEOL( int x, int y, const QChar& clearChar ) {
+void NYZView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar ) {
+	int x = pos.x();
 	if ( !fakeLine )
 		x += marginLeft;
 	if ( clearChar.isSpace() ) {
 		/* optimization */
-		wmove( editor, y, x );
+		wmove( editor, pos.y(), x );
 		wclrtoeol( editor );
 	} else {
 		QString erase;
 		erase.fill( clearChar, width - x );
-		mvwaddstr( editor, y, x, erase.toLocal8Bit().constData() );
+		mvwaddstr( editor, pos.y(), x, erase.toLocal8Bit().constData() );
 	}
 }
 

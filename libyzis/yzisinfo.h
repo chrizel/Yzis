@@ -85,7 +85,7 @@ class YZYzisinfo {
 		 * Method to update the jump list for the given file
 		 */
 
-		void updateJumpList( const YZBuffer *buffer, const int x, const int y );
+		void updateJumpList( const YZBuffer *buffer, const QPoint pos);
 		
 		/**
 		 * Method to write the yzisinfo file

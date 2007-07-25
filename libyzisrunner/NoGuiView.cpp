@@ -150,11 +150,11 @@ void NoGuiView::guiEndPaintEvent()
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::guiDrawCell(int, int, const YZDrawCell&, void*) 
+void NoGuiView::guiDrawCell(QPoint, const YZDrawCell&, void*) 
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::guiDrawClearToEOL(int, int, const QChar&) 
+void NoGuiView::guiDrawClearToEOL(QPoint, const QChar&) 
 {
     dbg() << HERE() << endl;
 }

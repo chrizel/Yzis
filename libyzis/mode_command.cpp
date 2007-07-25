@@ -538,7 +538,7 @@ YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args) {
 		start--;	
 	}
 	
-	YZSession::self()->saveJumpPosition( 0, start );
+	YZSession::self()->saveJumpPosition( QPoint(0, start));
 	
 	return YZCursor(0,start);
 }
@@ -555,7 +555,7 @@ YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args) {
 		start++;	
 	}
 	
-	YZSession::self()->saveJumpPosition( 0, start - 1 );
+	YZSession::self()->saveJumpPosition( QPoint(0, start - 1));
 	
 	return YZCursor(0,start-1);
 }
@@ -1418,7 +1418,7 @@ void YZModeCommand::tagPrev( const YZCommandArgs & /*args*/ ) {
 void YZModeCommand::undoJump( const YZCommandArgs & /*args*/ ) {
 	const YZCursor cursor = YZSession::self()->previousJumpPosition();
 	YZSession::self()->currentView()->centerViewVertically( cursor.y() );
-	YZSession::self()->currentView()->gotodxdy( cursor.x(), cursor.y(), true );
+	YZSession::self()->currentView()->gotodxdy( cursor, true );
 }
 
 void YZModeCommand::incrementNumber( const YZCommandArgs& args ) {

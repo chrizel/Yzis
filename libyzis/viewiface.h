@@ -23,6 +23,10 @@
 #ifndef YZ_VIEW_IFACE
 #define YZ_VIEW_IFACE
 
+// Qt
+#include <QPoint>
+
+// Project
 #include "yzismacros.h"
 #include "selection.h"
 #include "option.h"
@@ -119,10 +123,10 @@ class YZIS_EXPORT YZViewIface
 		virtual void guiEndPaintEvent() = 0;
 
         /** XXX to be written */
-		virtual void guiDrawCell( int x, int y, const YZDrawCell& cell, void* arg ) = 0;
+		virtual void guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg ) = 0;
 
         /** XXX to be written */
-		virtual void guiDrawClearToEOL( int x, int y, const QChar& clearChar ) = 0;
+		virtual void guiDrawClearToEOL( QPoint pos, const QChar& clearChar ) = 0;
 
         /** XXX to be written */
 		virtual void guiDrawSetMaxLineNumber( int max ) = 0;

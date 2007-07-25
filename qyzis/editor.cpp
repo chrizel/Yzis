@@ -259,7 +259,7 @@ void QYZisEdit::mouseMoveEvent( QMouseEvent *e ) {
 			// already in visual mode - move cursor if the mouse pointer has moved over a new char
 			YZCursor pos = translateRealToAbsolutePosition( e->pos() );
 			if ( pos != mParent->getCursor() ) {
-				mParent->gotodxdy( pos.x(), pos.y() );
+				mParent->gotodxdy( pos );
 			}
 		}
 	}
@@ -318,7 +318,7 @@ void QYZisEdit::scroll( int dx, int dy ) {
 	QWidget::scroll( rx, ry, m_useArea );
 }
 
-void QYZisEdit::guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p ) {
+void QYZisEdit::guiDrawCell( QPoint pos , const YZDrawCell& cell, QPainter* p ) {
 	//dbg() << "QYZisEdit::guiDrawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
 	p->save();
 	bool has_bg = false;
@@ -338,7 +338,7 @@ void QYZisEdit::guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p )
 		p->setBackground( cell.fg.isValid() ? QColor(cell.fg.rgb()) : palette().color( QPalette::WindowText ) );
 		p->setPen( cell.bg.isValid() ? QColor(cell.bg.rgb()) : palette().color( QPalette::Window ) );
 	}
-	QRect r( x*fontMetrics().maxWidth(), y*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+	QRect r( pos.x()*fontMetrics().maxWidth(), pos.y()*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
 
 	//dbg() << "guiDrawCell: r=" << r.topLeft() << "," << r.bottomRight() << " has_bg=" << has_bg << endl;
 	//dbg() << "guiDrawCell: fg=" << p->pen().color().name() << endl;
@@ -348,17 +348,17 @@ void QYZisEdit::guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p )
 	p->restore();
 }
 
-void QYZisEdit::guiDrawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
+void QYZisEdit::guiDrawClearToEOL( QPoint pos , const QChar& clearChar, QPainter* p ) {
 	//dbg() << "QYZisEdit::guiDrawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
 	if ( clearChar.isSpace() ) {
 		// not needed as we called qt for repainting this widget, and autoFillBackground = True
 		return;
 	} else {
 		QRect r;
-		r.setTopLeft( translatePositionToReal( YZCursor(x,y) ) );
+		r.setTopLeft( translatePositionToReal( YZCursor(pos) ) );
 		r.setRight( width() );
 		r.setHeight( fontMetrics().lineSpacing() );
-		int nb_char = mParent->getColumnsVisible() - x;
+		int nb_char = mParent->getColumnsVisible() - pos.x();
 		p->drawText( r, QString(nb_char, clearChar) );
 	}
 }

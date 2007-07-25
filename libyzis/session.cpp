@@ -703,15 +703,11 @@ void YZSession::unregisterModifier ( const QString& mod ) {
 }
 
 void YZSession::saveJumpPosition() {
-	mYzisinfo->updateJumpList( mCurBuffer, currentView()->getCursor().x(), currentView()->getCursor().y() );
+	mYzisinfo->updateJumpList( mCurBuffer, currentView()->getCursor());
 }
 
-void YZSession::saveJumpPosition( const int x, const int y ) {
-	mYzisinfo->updateJumpList( mCurBuffer, x, y );
-}
-
-void YZSession::saveJumpPosition( const YZCursor cursor ) {
-	mYzisinfo->updateJumpList( mCurBuffer, cursor.x(), cursor.y() );
+void YZSession::saveJumpPosition( const QPoint cursor ) {
+	mYzisinfo->updateJumpList( mCurBuffer, cursor );
 }
 
 const YZCursor YZSession::previousJumpPosition() {

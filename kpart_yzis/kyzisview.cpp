@@ -197,14 +197,14 @@ void KYZisView::guiEndPaintEvent()
 	yzDebug() << "KYZisView::endPaintEvent" << endl;
 }
 
-void KYZisView::guiDrawCell(int x, int y, const YZDrawCell& cell, void* arg)
+void KYZisView::guiDrawCell(QPoint pos, const YZDrawCell& cell, void* arg)
 {
-	m_editor->guiDrawCell( x, y, cell, (QPainter*)arg );
+	m_editor->guiDrawCell( pos, cell, (QPainter*)arg );
 }
 
-void KYZisView::guiDrawClearToEOL(int x, int y, const QChar& clearChar)
+void KYZisView::guiDrawClearToEOL(QPoint pos, const QChar& clearChar)
 {
-	m_editor->guiDrawClearToEOL( x, y, clearChar, m_painter );
+	m_editor->guiDrawClearToEOL( pos, clearChar, m_painter );
 }
 
 void KYZisView::guiDrawSetLineNumber(int, int, int)

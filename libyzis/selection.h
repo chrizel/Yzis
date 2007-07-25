@@ -50,8 +50,7 @@ class YZIS_EXPORT YZBound {
 		}
 		YZBound(){}
 
-		void setPos( const YZCursor pos );
-		void setPos( unsigned int x, unsigned int y );
+		void setPos( const YZCursor pos ) { mPos = pos; }
 		void open();
 		void close();
 		const YZCursor pos() const;

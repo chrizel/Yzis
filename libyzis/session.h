@@ -25,7 +25,7 @@
 #include "sessioniface.h" 
 
 /* Qt */
-// #include <QList>
+#include <QPoint>
 
 /* yzis */
 //#include "cursor.h"
@@ -478,8 +478,7 @@ class YZIS_EXPORT YZSession  : public YZSessionIface
 		void unregisterModifier ( const QString& mod );
 
 		void saveJumpPosition();
-		void saveJumpPosition( const int x, const int y );
-		void saveJumpPosition( const YZCursor cursor );
+		void saveJumpPosition( const QPoint cursor );
 		const YZCursor previousJumpPosition();
 
         /** Because of windows, we need to have new defined in the

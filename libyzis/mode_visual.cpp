@@ -270,8 +270,8 @@ YZModeVisualLine::~YZModeVisualLine() {
 YZInterval YZModeVisualLine::buildBufferInterval( YZView* , const YZViewCursor& from, const YZViewCursor& to ) {
 	YZBound bf( from.buffer() );
 	YZBound bt( to.buffer(), true );
-	bf.setPos( 0, from.bufferY() );
-	bt.setPos( 0, to.bufferY() + 1 );
+	bf.setPos( QPoint(0, from.bufferY()));
+	bt.setPos( QPoint(0, to.bufferY() + 1));
 	return YZInterval( bf, bt );
 }
 YZInterval YZModeVisualLine::buildScreenInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to ) {

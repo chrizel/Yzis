@@ -50,6 +50,7 @@ extern "C" {
 #include <lualib.h>
 }
 
+#define deepdbg()    yzDeepDebug("YZLuaEngine")
 #define dbg()    yzDebug("YZLuaEngine")
 #define err()    yzError("YZLuaEngine")
 
@@ -133,13 +134,13 @@ QString YZLuaEngine::lua_table_to_string(lua_State*L, int index, int depth)
 }
 
 void YZLuaEngine::print_lua_stack_value(lua_State*L, int index, bool type_only) {
-	// dbg().sprintf("print_lua_stack_value(index=%d, type_only=%d)\n", index, type_only );
-	dbg().sprintf( "stack value %d: %s", index, qp(lua_value_to_string(L,index, 0,type_only)) );
+	deepdbg().sprintf("print_lua_stack_value(index=%d, type_only=%d)\n", index, type_only );
+	deepdbg().sprintf( "stack value %d: %s", index, qp(lua_value_to_string(L,index, 0,type_only)) );
 }
 
 void YZLuaEngine::print_lua_stack(lua_State *L, const char * msg, bool type_only) {
-	// dbg().sprintf("print_lua_stack(msg=%s, type_only=%d)\n", msg, type_only );
-	dbg().sprintf("Stack (type_only=%d) - '%s' \n", type_only, msg  );
+	deepdbg().sprintf("print_lua_stack(msg=%s, type_only=%d)\n", msg, type_only );
+	deepdbg().sprintf("Stack (type_only=%d) - '%s' \n", type_only, msg  );
 	for(int i=1; i<=lua_gettop(L); i++) {
 		print_lua_stack_value(L,i, type_only);
 	}
@@ -280,13 +281,13 @@ QString YZLuaEngine::source( const QString& filename ) {
 }
 
 int YZLuaEngine::execInLua( const QString & luacode ) {
-    dbg().sprintf("execInLua( %s )", qp(luacode) );
+    deepdbg().sprintf("execInLua( %s )", qp(luacode) );
 	lua_pushstring(L, "loadstring" );
 	lua_gettable(L, LUA_GLOBALSINDEX);
 	lua_pushstring(L, luacode.toUtf8() );
 
 	// print_lua_stack(L, "loadstring step 0");
-	if (! yzpcall(1,2, _("Executing following code in lua:\n%1").arg(luacode) )) {
+	if (! yzpcall(1,2, _("Executing code in lua\n") )) {
         // Error in the call
         return 1;
 	}

@@ -19,6 +19,7 @@
  *  Boston, MA 02110-1301, USA.
  **/
 
+// Project
 #include "session.h"
 
 #include "yzis.h"
@@ -35,8 +36,10 @@
 #include "resourcemgr.h"
 #include "luaengine.h"
 
+// system
 #include <stdlib.h>
 
+// Qt
 #include <QCoreApplication>
 #include <QDir>
 #include <QTimer>
@@ -45,6 +48,7 @@
 #include <QStringList>
 #include <QBuffer>
 
+// project
 #include "mode_command.h"
 #include "mode_complete.h"
 #include "mode_ex.h"
@@ -785,22 +789,19 @@ void YZSession::showCmdLineHelp( const QString & progName )
 "-v | --version: version information\n"
 "-c <some key presses> : execute immediately the key presses when yzis starts, asif they were typed by the user.\n"
     ).arg(progName);
-    fprintf(stderr, qp(usage) );
+    fputs(qp(usage),stderr);
 }
 
 /** Show version text for -v and --version option */
 void YZSession::showCmdLineVersion()
 {
     QString versionText	= version(); 
-    fprintf(stderr, qp(versionText) );
+    fputs(qp(versionText),stderr);
 }
 
 QString YZSession::version()
 {
-    QString v( "Yzis - http://www.yzis.org\n"
-				VERSION_CHAR_LONG " " VERSION_CHAR_DATE 
-                );
-    return v;
+    return QString( "Yzis - http://www.yzis.org\n" VERSION_CHAR_LONG " " VERSION_CHAR_DATE );
 }
 
 /** Show error message for unknown option */

@@ -35,7 +35,9 @@ YZViewCursor::YZViewCursor( YZView* parent ) {
 	reset();
 }
 
-YZViewCursor::YZViewCursor( const YZViewCursor &c ) {
+YZViewCursor::YZViewCursor( const YZViewCursor &c )
+	:YZCursorPos()
+{
     copyFields( c );
 }
 

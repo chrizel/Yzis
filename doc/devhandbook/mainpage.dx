@@ -15,13 +15,6 @@ Get you started with Yzis development
 \subpage scripting
 How to write scripts in lua, for non regression testing or for other purposes.
 
-\subpage testing
-TODO 
-How to test yzis, from the C++ side or from the script side.
-    + you can test from c++ with unit tests
-    + you can test without any knowledge of C++, just lua is needed
-        --> see scripting in lua
-
 \subpage integrating_lua
 How the lua engine is integrated in Yzis
 

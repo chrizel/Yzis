@@ -3,6 +3,7 @@
 #define YZISMACROS_H
 
 #cmakedefine __YZIS_HAVE_GCC_VISIBILITY
+#cmakedefine ENABLE_X_IN_NYZIS
 
 #ifdef __YZIS_HAVE_GCC_VISIBILITY
 #define YZIS_NO_EXPORT __attribute__ ((visibility("hidden")))

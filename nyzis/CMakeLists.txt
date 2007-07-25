@@ -1,6 +1,8 @@
 
 project(nyzis)
 
+option(ENABLE_X_IN_NYZIS "with this option nyzis links to X and can access the X copy/paste buffer" OFF)
+
 include_directories(${YZIS_INCLUDES} ${NCURSES_INCLUDE_DIR})
 
 ########### next target ###############

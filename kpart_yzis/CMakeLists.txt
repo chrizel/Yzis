@@ -22,12 +22,9 @@ set( part_SOURCES
 	kyzisinfobar.cpp
 	   	)
 
-kde4_automoc( ${part_SOURCES} )
-
 kde4_add_plugin(yzispart ${part_SOURCES})
 target_link_libraries(yzispart ${KDE4_KDECORE_LIBS} ${KDE4_KPARTS_LIBS} ktexteditor yzis )
 
-kde4_install_libtool_file( ${PLUGIN_INSTALL_DIR} yzispart )
 install( TARGETS yzispart DESTINATION ${PLUGIN_INSTALL_DIR} )
 install( FILES yzispart.desktop DESTINATION ${SERVICES_INSTALL_DIR} )
 install( FILES yzispart.rc DESTINATION ${DATA_INSTALL_DIR}/yzispart )

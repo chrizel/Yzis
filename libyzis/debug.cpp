@@ -71,12 +71,13 @@ YZDebugBackend::YZDebugBackend()
     _outputFname = "";
 }
 
-YZDebugBackend::YZDebugBackend( YZDebugBackend & other)
+YZDebugBackend::YZDebugBackend( YZDebugBackend & )
+	:boost::noncopyable()
 {
     qFatal("YZDebugBackend copy constructor used %s", HERE());
 }
 
-YZDebugBackend & YZDebugBackend::operator=( YZDebugBackend & other )
+YZDebugBackend & YZDebugBackend::operator=( YZDebugBackend & )
 {
     qFatal("YZDebugBackend operator = used %s", HERE());
     return *this;

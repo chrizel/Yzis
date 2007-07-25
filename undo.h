@@ -27,6 +27,7 @@
 
 #include <QString>
 #include <QList>
+#include <QPoint>
 #include "yzismacros.h"
 
 class YZView;
@@ -53,8 +54,7 @@ struct YZBufferOperation
 
 	OperationType type;
 	QString text;
-	uint line;
-	uint col;
+	QPoint pos;
 
 	QString toString() const;
 };
@@ -86,7 +86,7 @@ public:
 	 */
 	void commitUndoItem( uint cursorX, uint cursorY );
 
-	void addBufferOperation( YZBufferOperation::OperationType type, const QString & text, uint col, uint line );
+	void addBufferOperation( YZBufferOperation::OperationType type, const QString & text, QPoint pos);
 
 	/**
 	 * Undo the last operations on the buffer, move backward in the undo list.

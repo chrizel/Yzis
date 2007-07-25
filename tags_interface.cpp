@@ -176,7 +176,7 @@ static bool jumpToJumpRecord(const YZYzisinfoJumpListRecord *record)
 	
 	const YZCursor &cursor = record->position();
 	YZSession::self()->currentView()->centerViewVertically( cursor.y() );
-	YZSession::self()->currentView()->gotodxdy( cursor.x(), cursor.y(), true );
+	YZSession::self()->currentView()->gotodxdy( cursor, true );
 	
 	return true;
 }

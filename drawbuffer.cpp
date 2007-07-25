@@ -43,8 +43,8 @@ void YZDrawBuffer::setCallback( YZView* v ) {
 void YZDrawBuffer::setCallbackArgument( void* callback_arg ) {
 	m_callback_arg = callback_arg;
 }
-void YZDrawBuffer::callback( int x, int y, const YZDrawCell& cell ) {
-	m_view->guiDrawCell( x, y, cell, m_callback_arg );
+void YZDrawBuffer::callback( QPoint pos,  const YZDrawCell& cell ) {
+	m_view->guiDrawCell( pos, cell, m_callback_arg );
 }
 
 void YZDrawBuffer::reset() {
@@ -63,7 +63,7 @@ void YZDrawBuffer::flush() {
 	QString keep( m_cell->c );
 	m_cell->c = m_cell->c.mid( v_x - v_xi );
 	if ( !m_cell->c.isEmpty() ) {
-		callback( v_x, m_y, *m_cell );
+		callback( QPoint(v_x, m_y), *m_cell );
 		/* move cursor */
 		v_x += m_cell->c.length();
 	}
@@ -118,7 +118,7 @@ void YZDrawBuffer::push( const QChar& c ) {
 
 void YZDrawBuffer::push( const QString& c ) {
 	YZCursor pos( v_xi + m_cell->c.length(), m_y );
-	YZCursor step(1,0);
+	QPoint step(1,0);
 	for ( int i = 0; i < c.length(); ++i ) {
 		int sel = YZSelectionPool::None;
 		foreach( YZSelectionPool::SelectionLayout layout, m_sel.keys() ) {

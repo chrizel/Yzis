@@ -38,7 +38,7 @@ static YZYzisinfoJumpListRecord getRecord()
 {
 	YZBuffer *buffer = YZSession::self()->currentView()->myBuffer();
 	const YZCursor &cursor = YZSession::self()->currentView()->getCursor();
-	return YZYzisinfoJumpListRecord( buffer->fileName(), cursor.x(), cursor.y() );
+	return YZYzisinfoJumpListRecord( buffer->fileName(), cursor);
 }
 
 #define dbg()    yzDebug("YZTagStack")

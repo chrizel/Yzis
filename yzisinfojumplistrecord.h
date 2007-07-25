@@ -46,7 +46,7 @@ class YZYzisinfoJumpListRecord {
 		 * @param y The y coordinate cursor position in the current file
 		 */
 		 
-		YZYzisinfoJumpListRecord( const QString & filename, const unsigned int x, const unsigned int y );
+		YZYzisinfoJumpListRecord( const QString & filename, const QPoint);
 		
 		/**
 		 * Destructor
@@ -111,7 +111,7 @@ class YZYzisinfoJumpListRecord {
 		 * @param y The y coordinate cursor position
 		 */
 		 
-		void setPosition( const unsigned int x, const unsigned int y );
+		void setPosition( const QPoint pos);
 
 	private:
 		QString mFilename;

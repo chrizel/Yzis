@@ -169,11 +169,11 @@ void YZView::recalcScreen( ) {
 	YZCursor old_pos = scrollCursor.buffer();
 	scrollCursor.reset();
 	if ( wrap ) old_pos.setX( 0 );
-	gotoxy( &scrollCursor, old_pos.x(), old_pos.y(), false );
+	gotoxy( &scrollCursor, old_pos, false );
 
 	old_pos = mainCursor.buffer();
 	mainCursor.reset();
-	gotoxy( &mainCursor, old_pos.x(), old_pos.y() );
+	gotoxy( &mainCursor, old_pos );
 
 	sendRefreshEvent();
 }
@@ -186,12 +186,12 @@ YZSelectionMap YZView::visualSelection() const {
 	return selectionPool->visual()->bufferMap();
 }
 
-void YZView::reindent( int X, int Y ) {
+void YZView::reindent(const QPoint pos) {
 	dbg() << "Reindent " << endl;
 	QRegExp rx("^(\\t*\\s*\\t*\\s*).*$"); //regexp to get all tabs and spaces
-	QString currentLine = mBuffer->textline( Y ).trimmed();
+	QString currentLine = mBuffer->textline( pos.y() ).trimmed();
 	bool found = false;
-	YZCursor cur( X, Y );
+	YZCursor cur( pos );
 	YZCursor match = mBuffer->action()->match(this, cur, &found);
 	if ( !found ) return;
 	dbg() << "Match found on line " << match.y() << endl;
@@ -579,13 +579,13 @@ void YZView::applyGoto( YZViewCursor* viewCursor, bool applyCursor ) {
 
 
 /* goto xdraw, ydraw */
-void YZView::gotodxdy( int nextx, int nexty, bool applyCursor ) {
-	gotodxdy( &mainCursor, nextx, nexty, applyCursor );
+void YZView::gotodxdy( QPoint nextpos, bool applyCursor ) {
+	gotodxdy( &mainCursor, nextpos, applyCursor );
 }
-void YZView::gotodxdy( YZViewCursor* viewCursor, int nextx, int nexty, bool applyCursor ) {
+void YZView::gotodxdy( YZViewCursor* viewCursor, QPoint nextpos, bool applyCursor ) {
 	initGoto( viewCursor );
-	gotody( nexty );
-	gotodx( nextx );
+	gotody( nextpos.y() );
+	gotodx( nextpos.x() );
 	applyGoto( viewCursor, applyCursor );
 }
 
@@ -612,30 +612,24 @@ void YZView::gotoxdy( YZViewCursor* viewCursor, int nextx, int nexty, bool apply
 }
 
 /* goto xbuffer, ybuffer */
-void YZView::gotoxy(int nextx, int nexty, bool applyCursor ) {
-	gotoxy( &mainCursor, nextx, nexty, applyCursor );
+void YZView::gotoxy(const QPoint nextpos, bool applyCursor ) {
+	gotoxy( &mainCursor, nextpos, applyCursor );
 }
-void YZView::gotoxy( YZViewCursor* viewCursor, int nextx, int nexty, bool applyCursor ) {
+void YZView::gotoxy( YZViewCursor* viewCursor, const QPoint nextpos, bool applyCursor ) {
 	initGoto( viewCursor );
-	gotoy( mFoldPool->lineHeadingFold( nexty ) );
-	gotox( nextx, viewCursor != &mainCursor );
+	gotoy( mFoldPool->lineHeadingFold( nextpos.y() ) );
+	gotox( nextpos.x(), viewCursor != &mainCursor );
 	applyGoto( viewCursor, applyCursor );
 }
 
-void YZView::gotodxdyAndStick( const YZCursor pos ) {
-	gotodxdy( &mainCursor, pos.x(), pos.y(), true );
+void YZView::gotodxdyAndStick( const QPoint pos ) {
+	gotodxdy( &mainCursor, pos, true );
 	updateStickyCol( &mainCursor );
-}
-void YZView::gotodxdyAndStick( int x, int y ) {
-	gotodxdyAndStick( YZCursor(x,y) );
 }
 
-void YZView::gotoxyAndStick( const YZCursor pos ) {
-	gotoxy( &mainCursor, pos.x(), pos.y() );
+void YZView::gotoxyAndStick( const QPoint pos ) {
+	gotoxy( &mainCursor, pos );
 	updateStickyCol( &mainCursor );
-}
-void YZView::gotoxyAndStick( int x, int y ) {
-	gotoxyAndStick( YZCursor(x,y) );
 }
 
 QString YZView::moveDown( int nb_lines, bool applyCursor ) {
@@ -796,18 +790,17 @@ void YZView::applyStartPosition( const YZCursor pos ) {
  * changes around x,y. Each view have to find what they have to redraw, depending
  * of the wrap option, and of course window size.
  */
-void YZView::initChanges( int x, int y ) {
-	beginChanges.setX( x );
-	beginChanges.setY( y );
+void YZView::initChanges( QPoint pos) {
+	beginChanges = pos;
 	origPos = mainCursor.buffer();
 	lineDY = 1;
-	if ( wrap && y < mBuffer->lineCount() ) {
-		gotoxy( qMax( 1, mBuffer->getLineLength( y ) ) - 1, y, false );
+	if ( wrap && pos.y() < mBuffer->lineCount() ) {
+		gotoxy( qMax( 1, mBuffer->getLineLength( pos.y() ) ) - 1, pos.y(), false );
 		lineDY = mainCursor.screenY();
 	}
-	gotoxy( x, y, false );
+	gotoxy( pos, false );
 }
-void YZView::applyChanges( int /*x*/, int y ) {
+void YZView::applyChanges( int y ) {
 	int dY = mainCursor.screenY() + 1 - mainCursor.lineHeight;
 	if ( y != beginChanges.y() ) {
 		sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor.screenY() ) );
@@ -821,7 +814,7 @@ void YZView::applyChanges( int /*x*/, int y ) {
 		} else
 			sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, 1 );
 	}
-	gotoxy( origPos.x(), origPos.y(), false );
+	gotoxy( origPos, false );
 }
 
 QString YZView::append () {
@@ -872,7 +865,7 @@ void YZView::pasteContent( QChar registr, bool after ) {
 		for( i = 1; i < list.size() - 1; i++ )
 			mBuffer->action()->insertLine( this, pos.y() + i - 1, list[ i ] );
 
-		gotoxy( pos.x(), pos.y() );
+		gotoxy( pos );
 	}
 	updateStickyCol( &mainCursor );
 }
@@ -887,19 +880,6 @@ bool YZView::isColumnVisible( int column, int  ) const {
 bool YZView::isLineVisible( int l ) const {
 	return ( ( l >= scrollCursor.screenY() ) && ( l < mLinesVis + scrollCursor.screenY() ) );
 }
-int YZView::getCurrentTop() const { 
-	return scrollCursor.bufferY(); 
-}
-int YZView::getDrawCurrentTop() const {
-	return scrollCursor.screenY();
-}
-int YZView::getCurrentLeft() const {
-	return scrollCursor.bufferX();
-}
-int YZView::getDrawCurrentLeft() const {
-	return scrollCursor.screenX();
-}
-
 
 /* update sCurLine information */
 void YZView::updateCurLine( ) {
@@ -1792,7 +1772,7 @@ void YZView::guiPaintEvent( const YZSelection& drawMap ) {
 			curX += drawLength();
 		}
 		if ( clearToEOL ) {
-			guiDrawClearToEOL( curX - shiftX, curY - shiftY, drawLineFiller() );
+			guiDrawClearToEOL( QPoint (curX - shiftX, curY - shiftY), drawLineFiller() );
 		}
 		curY += drawHeight();
 	}
@@ -1805,7 +1785,7 @@ void YZView::guiPaintEvent( const YZSelection& drawMap ) {
 		m_drawBuffer.newline( curY - shiftY );
 		if ( number ) guiDrawSetLineNumber( curY - shiftY, 0, 0 );
 		m_drawBuffer.push( "~" );
-		guiDrawClearToEOL( 1, curY - shiftY, ' ' );
+		guiDrawClearToEOL( QPoint(1, curY - shiftY), ' ' );
 	}
 
 	m_drawBuffer.flush();

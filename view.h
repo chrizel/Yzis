@@ -114,20 +114,22 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		/**
 		 * Returns the index of the first line displayed on the view
 		 */
-		int getCurrentTop() const;
-		int getDrawCurrentTop() const;
+		int getCurrentTop() const { return scrollCursor.bufferY(); }
+		int getDrawCurrentTop() const { return scrollCursor.screenY(); }
 
 		/**
 		 * Returns the index of the first "buffer" column displayed on the view
 		 * (does not care about tabs, wrapping ...)
 		 */
-		int getCurrentLeft() const;
+		int getCurrentLeft() const { return scrollCursor.bufferX(); }
 
 		/**
 		 * Returns the index of the first "screen" column displayed on the view
 		 * (does care about tabs, wrapping ...)
 		 */
-		int getDrawCurrentLeft() const;
+		int getDrawCurrentLeft() const { return scrollCursor.screenX(); }
+
+
 
 		/**
 		 * returns the number of line this view can display
@@ -274,8 +276,11 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		/**
 		 * Moves the draw cursor to @arg nextx, @arg nexty
 		 */
-		void gotodxdy(int nextx, int nexty, bool applyCursor = true );
-		void gotodxdy( YZViewCursor* viewCursor,int nextx, int nexty, bool applyCursor = true );
+		void gotodxdy(QPoint nextpos, bool applyCursor = true );
+		// TODO : remoev
+		void gotodxdy(int nextx, int nexty, bool applyCursor = true ) {gotodxdy(QPoint(nextx,nexty), applyCursor);}
+		void gotodxdy( YZViewCursor* viewCursor, QPoint nextpos, bool applyCursor = true );
+		void gotodxdy( YZViewCursor* viewCursor, const int x, const int y, bool applyCursor = true ) {gotodxdy(viewCursor, QPoint(x,y),applyCursor);}
 
 		/**
 		 * Moves the cursor to @arg buffer nextx, @arg draw nexty
@@ -292,16 +297,18 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		/**
 		 * Moves the buffer cursor to @arg nextx, @arg nexty
 		 */
-		void gotoxy(int nextx, int nexty, bool applyCursor = true );
-		void gotoxy( YZViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
+		void gotoxy(const QPoint nextpos, bool applyCursor = true );
+		void gotoxy( YZViewCursor* viewCursor, const QPoint nextpos, bool applyCursor = true );
+		void gotoxy(int nextx, int nexty, bool applyCursor = true ) {gotoxy(QPoint(nextx,nexty), applyCursor);}
+		void gotoxy( YZViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true ) {gotoxy(viewCursor,QPoint(nextx,nexty),applyCursor);}
 
 		/**
 		 * Moves the buffer cursor to @arg cursor and stick the column
 		 */
-		void gotoxyAndStick( const YZCursor cursor );
-		void gotoxyAndStick( int x, int y );
-		void gotodxdyAndStick( const YZCursor cursor );
-		void gotodxdyAndStick( int x, int y );
+		void gotoxyAndStick( const QPoint cursor );
+		void gotoxyAndStick( const int x, const int y) {gotoxyAndStick(QPoint(x,y)); }
+		void gotodxdyAndStick( const QPoint cursor );
+		void gotodxdyAndStick( const int x, const int y ) {gotodxdyAndStick(QPoint(x,y));}
 
 		/**
 		 * Go to line of file
@@ -496,7 +503,7 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		/**
 		 * Reindent given line ( cindent )
 		 */
-		void reindent( int X, int Y );
+		void reindent(const QPoint pos);
 
 		/**
 		 * Create new indented line
@@ -675,8 +682,8 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		 * changes around x,y. Each view have to find what they have to redraw, depending
 		 * of the wrap option, and of course window size.
 		 */
-		void initChanges( int x, int y );
-		void applyChanges( int x, int y );
+		void initChanges( QPoint pos );
+		void applyChanges( int y );
 
 		//-------------------------------------------------------
 		// ----------------- Miscellaneous

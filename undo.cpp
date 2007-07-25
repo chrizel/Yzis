@@ -39,7 +39,7 @@ QString YZBufferOperation::toString() const {
 		case OpAddLine: ots= "OpAddLine"; break;
 		case OpDelLine: ots= "OpDelLine"; break;
 	}
-	return QString("%1 '%2' line %3, col %4").arg(ots).arg(text).arg(line).arg(col) ;
+	return QString("%1 '%2' line %3, col %4").arg(ots).arg(text).arg(pos.y()).arg(pos.x()) ;
 }
 
 void YZBufferOperation::performOperation( YZView* pView, bool opposite)
@@ -59,16 +59,16 @@ void YZBufferOperation::performOperation( YZView* pView, bool opposite)
 
 	switch( t) {
 		case OpAddText:
-			pView->myBuffer()->action()->insertChar( pView, col, line, text );
+			pView->myBuffer()->action()->insertChar( pView, pos, text );
 			break;
 		case OpDelText:
-			pView->myBuffer()->action()->deleteChar( pView, col, line, text.length() );
+			pView->myBuffer()->action()->deleteChar( pView, pos, text.length() );
 			break;
 		case OpAddLine:
-			pView->myBuffer()->action()->insertNewLine( pView, 0, line );
+			pView->myBuffer()->action()->insertNewLine( pView, 0, pos.y() );
 			break;
 		case OpDelLine:
-			pView->myBuffer()->action()->deleteLine( pView, line, 1, QList<QChar>() );
+			pView->myBuffer()->action()->deleteLine( pView, pos.y(), 1, QList<QChar>() );
 			break;
 	}
 
@@ -128,14 +128,13 @@ void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY ) {
 
 void YZUndoBuffer::addBufferOperation( YZBufferOperation::OperationType type,
 									 const QString & text,
-									 uint col, uint line ) {
+									 QPoint pos ) {
 	if (mInsideUndo == true) return;
 	YZASSERT( mFutureUndoItem != NULL );
 	YZBufferOperation *bufOperation = new YZBufferOperation();
 	bufOperation->type = type;
 	bufOperation->text = text;
-	bufOperation->line = line;
-	bufOperation->col = col;
+	bufOperation->pos = pos;
 	mFutureUndoItem->push_back( bufOperation );
 	removeUndoItemAfterCurrent();
 }

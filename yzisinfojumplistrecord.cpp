@@ -33,9 +33,9 @@ YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord() {
  * YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord
  */
  
-YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord( const QString & filename, const unsigned int x, const unsigned int y ) {
+YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord( const QString & filename, const QPoint pos) {
 	mFilename = filename;
-	setPosition( x, y );
+	setPosition( pos );
 }
 
 /**
@@ -124,8 +124,8 @@ void YZYzisinfoJumpListRecord::setFilename( const QString & filename ) {
  * YZYzisinfoJumpListRecord::setPosition
  */
 
-void YZYzisinfoJumpListRecord::setPosition( const unsigned int x, const unsigned int y ) {
-	mPosition = YZCursor( x, y );
+void YZYzisinfoJumpListRecord::setPosition( const QPoint pos ) {
+	mPosition = YZCursor(pos);
 }
 
 /*

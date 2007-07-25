@@ -46,25 +46,6 @@ How to test yzis, from the C++ side or from the script side.
 \subpage integrating_lua
 How the lua engine is integrated in Yzis
 
-\subpage rendering
-A description of how a buffer is rendered on screen in a view (wrapping and
-tab handling)
-
-\subpage option_system
-TODO How the option system works in Yzis
-
-\subpage completion
-TODO How to implement completion
-
-\subpage undo_redo
-TODO How to manage undo/redo in Yzis
-
-\subpage swap_file
-TODO How the swap file is handled
-
-\subpage syntax_highlighting
-TODO How a file is syntax highlighted
- 
 */
 
 

@@ -70,7 +70,7 @@ public:
 	YZCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
 
 public slots :
-	void sendMultipleKey( const QString& keys ) {}
+	void sendMultipleKey( const QString& /*keys*/ ) {}
 
 
 protected:

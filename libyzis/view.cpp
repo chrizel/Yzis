@@ -65,7 +65,7 @@ YZViewIface::~YZViewIface()
 static int nextId = 1;
 
 YZView::YZView(YZBuffer *_b, YZSession *sess, int cols, int lines) 
-	:  m_drawBuffer(), id(nextId++), mainCursor(this), scrollCursor(this), workCursor(this), mVisualCursor(this), keepCursor(this)
+	:  m_drawBuffer(), mainCursor(this), scrollCursor(this), workCursor(this), mVisualCursor(this), keepCursor(this), id(nextId++)
 {
 	dbg().sprintf("YZView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
 	dbg() << "New View created with UID: " << getId() << endl;

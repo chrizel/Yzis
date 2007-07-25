@@ -124,7 +124,7 @@ void NoGuiView::guiScroll( int dx, int dy ) {
     dbg() << "NoGuiView::Scroll" << dx << dy << endl;
 }
 
-void NoGuiView::guiNotifyContentChanged( const YZSelection& s ) {
+void NoGuiView::guiNotifyContentChanged( const YZSelection& ) {
     dbg() << "NoGuiView::guiNotifyContentChanged" << endl;
 }
 

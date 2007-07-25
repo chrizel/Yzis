@@ -167,7 +167,7 @@ bool NYZSession::processInput(int /*fd*/) {
 	return true;
 }
 
-void NYZSession::guiSetClipboardText( const QString& text, Clipboard::Mode mode ) {
+void NYZSession::guiSetClipboardText( const QString& , Clipboard::Mode ) {
 	// XXX
 }
 
@@ -269,7 +269,7 @@ void NYZSession::guiPopupMessage( const QString &_message )
 	if (currentView()) // view is not up yet, let's output that to stderr maybe ?
 		currentView()->refreshScreen();
 	else
-		fprintf(stderr, qp(message));
+		fputs(qp(message),stderr);
 }
 
 void NYZSession::guiDeleteBuffer(YZBuffer *b) {

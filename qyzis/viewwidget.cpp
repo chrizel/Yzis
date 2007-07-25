@@ -179,7 +179,7 @@ void QYZisView::guiNotifyContentChanged( const YZSelection& s ) {
 	}
 }
 
-void QYZisView::guiPreparePaintEvent( int min_y, int max_y ) {
+void QYZisView::guiPreparePaintEvent( int /*min_y*/, int /*max_y*/ ) {
 //	dbg() << "QYZisView::guiPreparePaintEvent" << endl;
 	m_painter = new QPainter( m_editor );
 	m_drawBuffer.setCallbackArgument( m_painter );

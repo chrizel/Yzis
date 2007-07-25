@@ -317,7 +317,7 @@ void KYZisEditor::guiDrawCell( int x, int y, const YZDrawCell& cell, QPainter* p
 	p->restore();
 }
 
-void KYZisEditor::guiDrawClearToEOL( int x, int y, const QChar& clearChar, QPainter* p ) {
+void KYZisEditor::guiDrawClearToEOL( int x, int y, const QChar& /*clearChar*/, QPainter* p ) {
 	QRect r( GETX(x), y*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
 	p->eraseRect( r );
 }

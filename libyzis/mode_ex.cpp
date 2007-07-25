@@ -560,7 +560,7 @@ CmdState YZModeEx::quit( const YZExCommandArgs& args ) {
 	return ret;
 }
 
-CmdState YZModeEx::bufferfirst( const YZExCommandArgs& args ) {
+CmdState YZModeEx::bufferfirst( const YZExCommandArgs& ) {
 	dbg() << "Switching buffers (actually sw views) ..." << endl;
         YZView *v = YZSession::self()->firstView();
         if ( v )
@@ -570,7 +570,7 @@ CmdState YZModeEx::bufferfirst( const YZExCommandArgs& args ) {
         return CmdOk;
 }
 
-CmdState YZModeEx::bufferlast( const YZExCommandArgs& args ) {
+CmdState YZModeEx::bufferlast( const YZExCommandArgs& ) {
 	dbg() << "Switching buffers (actually sw views) ..." << endl;
         YZView *v = YZSession::self()->lastView();
         if ( v )
@@ -1110,7 +1110,7 @@ CmdState YZModeEx::cd( const YZExCommandArgs& args ) {
 	}
 }
 
-CmdState YZModeEx::pwd( const YZExCommandArgs& args ) {
+CmdState YZModeEx::pwd( const YZExCommandArgs& ) {
 	YZSession::self()->guiPopupMessage( QDir::current().absolutePath().toUtf8().data() );
 	return CmdOk;
 }

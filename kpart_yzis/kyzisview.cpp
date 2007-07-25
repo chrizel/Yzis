@@ -107,7 +107,7 @@ void KYZisView::guiSetCommandLineText( const QString& text )
 	m_command->setText( text );
 }
 
-void KYZisView::guiDisplayInfo(const QString& info) 
+void KYZisView::guiDisplayInfo(const QString& /*info*/) 
 {
         //m_central->setText(info);
         //clean the info 2 seconds later
@@ -180,7 +180,7 @@ void KYZisView::guiNotifyContentChanged(const YZSelection& s)
         }
 }
 
-void KYZisView::guiPreparePaintEvent(int min_y, int max_y)
+void KYZisView::guiPreparePaintEvent(int /*min_y*/, int /*max_y*/)
 {
 	yzDebug() << "KYZisView::guiPreparePaintEvent" << endl;
 	m_painter = new QPainter( m_editor );
@@ -212,7 +212,7 @@ void KYZisView::guiDrawSetLineNumber(int, int, int)
 
 }
 
-void KYZisView::guiDrawSetMaxLineNumber( int max )
+void KYZisView::guiDrawSetMaxLineNumber( int /*max*/ )
 {
 }
 

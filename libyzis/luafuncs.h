@@ -589,8 +589,14 @@ public:
      * \b Returns: nothing
 	 */
 	 static int edit(lua_State *L);
-	/*
+
+	/* \brief 
 	 * Load a plugin using the resource manager
+     *
+	 * \b Arguments:
+     * - string, name of the plugin
+     *
+     * \b Returns: nothing
 	 */
 	static int loadplugin(lua_State *L );
 };

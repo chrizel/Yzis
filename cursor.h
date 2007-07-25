@@ -21,7 +21,7 @@
 #define YZIS_CURSOR
 
 #include <QPoint>
-#include "yzismacros.h"
+#include "yzismacros.h" // YZIS_EXPORT
 
 class YZDebugStream;
 
@@ -42,10 +42,18 @@ class YZIS_EXPORT YZCursor : public QPoint {
 
 	public :
 		YZCursor() : QPoint(-1,-1) { }
-		YZCursor( const QPoint& c ) : QPoint( c.x(), c.y() ) { }
+		YZCursor( const QPoint &p ) : QPoint(p) { } // handles YZCursor(const YZCursor&) as well
 		YZCursor(const int x, const int y) : QPoint(x,y) { }
 
 		void setXY( int x, int y ) { setX(x); setY(y); }
+		void setLineColumn( int line, int col ) { setX(col); setY(line); }
+
+		// aliases
+		int column() const  {return x(); }
+		int line() const  {return y(); }
+
+		// TODO : we should add a QString cast to help when we want
+		// to output with QString.arg().
 
 		/*
 		 * operators

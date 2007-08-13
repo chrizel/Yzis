@@ -28,6 +28,10 @@
 class QStringList;
 class YZDebugStream;
 
+/** @file resourcemgr.h 
+  * Some documentation
+  */
+
 
 /** Resource type that one can look for in yzis. */
 enum ResourceType {

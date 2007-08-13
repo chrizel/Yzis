@@ -63,10 +63,11 @@ class QStringList;
   * levels and area.
   *
   * Our debugging system supports 4 levels:
-  * - YZ_DEBUG_LEVEL: shows debugging output, warning and errors
-  * - YZ_WARNING_LEVEL: shows warnings and errors, debug output is disabled
-  * - YZ_ERROR_LEVEL: shows only errors, debug and warnings are disabled.
   * - YZ_FATAL_LEVEL: shows only fatal errors
+  * - YZ_ERROR_LEVEL: shows only errors. Debug and warnings are disabled.
+  * - YZ_WARNING_LEVEL: shows warnings and errors. Debug output is disabled
+  * - YZ_DEBUG_LEVEL: shows regular debugging output, warning and errors
+  * - YZ_DEEPDEBUG_LEVEL: shows deep debugging output, warning and errors.
   *
   * Levels can be assigned globally and to specific log areas.
   *
@@ -187,13 +188,17 @@ public:
       *
       * Example:
       * After:
+      * \code
       * setAreaLevel( "area1", YZ_WARNING_LEVEL );
       * setAreaLevel( "area1.subarea2", YZ_DEBUG_LEVEL );
+      * \endcode
       *
       * we have:
+      * \code
       * "area1": warning
-      * "area1.area1": warning
-      * "area1.area2": debug
+      * "area1.subarea1": warning
+      * "area1.subarea2": debug
+      * \endcode
       *
       * You can remove an area level with removeArea()
       */
@@ -222,11 +227,11 @@ public:
 	void clearArea() { _areaLevel.clear(); }
 
 	/** Read a rcfile to adjust area output and debug level
-      *
+    *
 	  * The syntax is:
-      * "level" ":" "debug" | "warning" | "error"
-      *  [area]   ":" "debug" | "warning" | "error"
-      * "output" ":" [filename]
+    * \li "level" ":" "debug" | "warning" | "error"<br>
+    * \li [area] ":" "debug" | "warning" | "error"<br>
+    * \li "output" ":" [filename]<br>
 	  **/
 	void parseRcfile(const char * filename);
 
@@ -245,9 +250,9 @@ public:
       * other modules can happen.
       *
       * Allowed directives are:
-      * --level=debug|warning|error|fatal
-      * --area-level=[area name],debug|warning|error|fatal
-      * --debug-output=[filename]|stdout|stderr
+      * \li --level=debug|warning|error|fatal
+      * \li --area-level=[area name],debug|warning|error|fatal
+      * \li --debug-output=[filename]|stdout|stderr
       *
       * Example:
       * nyzis --level=warning --area-level=LuaEngine,debug --area-level=YZSession,debug
@@ -394,7 +399,6 @@ typedef YZDebugStream & (*YDBGFUNC)(YZDebugStream &);
  * There are also a few convenience macro:
  * - HERE() : displays the name of the current function and position in the
  * current file
- * - 
  *
  */
 class YZIS_EXPORT YZDebugStream {

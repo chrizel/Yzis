@@ -32,6 +32,12 @@ class YZDebugStream;
 class YZView;
 class YZModePool;
 
+/** @file mode.h 
+  * Some documentation
+  *
+  */
+
+/** Command mode state machine */
 enum CmdState {
 	/** The command does not exist */
 	CmdError,

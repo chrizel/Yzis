@@ -32,10 +32,9 @@
 #include "color.h"
 #include "yzis.h"
 
-/**
- * Options Handling in libyzis
- * 	YEP003 - http://www.yzis.org/devel/YEP/YEP003
- */
+/** @file option.h 
+  * Some documentation
+  */
 
 
 /** Shortcut for a dictionary of string keys and values */

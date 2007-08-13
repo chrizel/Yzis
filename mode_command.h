@@ -38,6 +38,10 @@ class YZInterval;
 class YZModeCommand;
 class YZView;
 
+/** @file mode_command.h 
+  * Some documentation
+  */
+
 /** holds the arguments a command needs in order to execute */
 struct YZCommandArgs {
 	//the command that is executed

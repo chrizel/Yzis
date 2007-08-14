@@ -26,16 +26,14 @@ then
 	echo "Copying yzis files"
 	if [ -n "$CYGWIN" ];
 	then
-		cp -u $BUILD_DIR/libyzis/libyzis* .
-	else
-		cp -u $BUILD_DIR/lib/libyzis* .
+		cp -u $BUILD_DIR/libyzis/libyzis.dll .
 	fi
 else
 	echo "Not copying yzis files"
 	shift
 fi
 
-YZIS="libyzisrunner"
+YZIS=$LIBYZISRUNNER_EXE
 
 case "x$1" in
 	("xqyzis")

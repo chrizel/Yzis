@@ -9,6 +9,9 @@
 # source pre_test.sh
 #
 # protect user config file
+
+source env_test.sh
+
 if [ -n "$CYGWIN" ]; then
     user_home=`cygpath "$USERPROFILE"`;
 else
@@ -27,5 +30,5 @@ fi
 
 # add current directory to LD_LIBRARY_PATH
 old_ld_lib_path=$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$BUILD_DIR/libyzis:$LD_LIBRARY_PATH
 

@@ -29,6 +29,9 @@ void toArgvArray( QStringList l, char ** argv, int * argc )
   */
 int main( int argc, char * argv[] )
 {
+    // If you want to add a new test, just ignore the stuff here until the end
+    // of main.
+    // =======================[ stuff to ignore ]=====================
     QMap<QString,QString> runMe;
     QStringList myArgv;
     bool runAll = false;
@@ -58,6 +61,7 @@ int main( int argc, char * argv[] )
     myArgv = myArgvBase; \
     if (runAll || runMe.contains( #TestName )) { \
         foreach( QString key, runMe.keys() ) { \
+            /* qDebug( "TestName=%s, key=%s, runMe[key]=%s\n", #TestName, * qp(key), qp(runMe[key]) ); */ \
             if (key == #TestName && (! runMe[key].isEmpty())) { \
                 myArgv << runMe[key]; \
             } \
@@ -69,11 +73,18 @@ int main( int argc, char * argv[] )
         TestName TestName##inst ; \
         result += QTest::qExec( & TestName##inst, fakeArgc, fakeArgv ); \
         printf("\n"); \
-    } \
+    }
 
+    // ===============================================================
+
+
+    // Add your test here. You need to include it first at the top of the
+    // main.
     RUN_MY_TEST( TestYZDebugBackend )
     RUN_MY_TEST( TestColor )
     RUN_MY_TEST( TestResource )
+
+    printf("Global status: %d failed tests\n", result );
 
     return result;
 }

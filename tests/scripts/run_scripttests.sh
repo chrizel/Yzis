@@ -18,12 +18,8 @@
 # ./runtests.sh gdb test_movements.lua --> execute tests with in gdb with libyzisrunner with test_movements.lua as argument
 
 # substituted by CMake during the build process
-BUILD_DIR=@CMAKE_BINARY_DIR@
 
-if [ -n "$CYGWIN" ]; then
-	export TMP="d:/tmp"
-	export TEMP="d:/tmp"
-fi
+source env_test.sh 
 
 if [ "X$1" != "Xnocopy" ];
 then
@@ -31,13 +27,8 @@ then
 	if [ -n "$CYGWIN" ];
 	then
 		cp -u $BUILD_DIR/libyzis/libyzis* .
-		cp -u $BUILD_DIR/qyzis/qyzis.exe .
-		cp -u $BUILD_DIR/libyzisrunner/libyzisrunner.exe .
 	else
 		cp -u $BUILD_DIR/lib/libyzis* .
-		cp -u $BUILD_DIR/qyzis/qyzis .
-		cp -u $BUILD_DIR/nyzis/nyzis .
-		cp -u $BUILD_DIR/libyzisrunner/libyzisrunner .
 	fi
 else
 	echo "Not copying yzis files"
@@ -49,12 +40,12 @@ YZIS="libyzisrunner"
 case "x$1" in
 	("xqyzis")
 	shift
-	YZIS="qyzis"
+	YZIS=$QYZIS_EXE
 	;;
 
 	("xlibyzisrunner")
 	shift
-	YZIS="libyzisrunner"
+	YZIS=$LIBYZISRUNNER_EXE
 	;;
 
 	("xgdb")
@@ -64,7 +55,7 @@ case "x$1" in
 
 	("xnyzis")
 	shift
-	YZIS="nyzis"
+	YZIS=$NYZIS_EXE
 	;;
 esac
 
@@ -74,26 +65,7 @@ then
 	testname=$*
 fi
 
-# protect user config file
-if [ -n "$CYGWIN" ]; then
-    user_home=`cygpath "$USERPROFILE"`;
-else
-    user_home="~";
-	fi
-
-if [ -e "$user_home/.yzis" ]; then
-    echo "Saving $user_home/.yzis to .yzis_saved_for_tests"
-    rm -rf "$user_home/.yzis_saved_for_tests"
-    mv "$user_home/.yzis" "$user_home/.yzis_saved_for_tests"
-    if [ "$?" != "0" ]; then
-        echo "Could not save $user_home/.yzis directory, aborting"; 
-        exit -1;
-	fi
-fi
-
-# add current directory to LD_LIBRARY_PATH
-old_ld_lib_path=$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=.:$LD_LIBRARY_PATH
+source pre_test.sh 
 
 echo "Testing with: $YZIS $testname"
 
@@ -103,20 +75,11 @@ yzis_arg2="\":source $testname <ENTER><ESC>:qall!<ENTER>\""
 if [ "$YZIS" == "gdb" ];
 then
 	# execution in gdb
-	LANG=C gdb libyzisrunner.exe -w -ex "set args $yzis_arg1 $yzis_arg2"
+	LANG=C gdb $LIBYZISRUNNER_EXE -ex "set args $yzis_arg1 $yzis_arg2"
 else
 	# normal execution
-	echo LANG=C ./$YZIS $yzis_arg1 $yzis_arg2
-	LANG=C ./$YZIS $yzis_arg1 "$yzis_arg2"
+	echo LANG=C $YZIS $yzis_arg1 $yzis_arg2
+	LANG=C $YZIS $yzis_arg1 "$yzis_arg2"
 fi
 
-# restore config file on linux
-if [ -e "$user_home/.yzis_saved_for_tests" ]; then
-    echo "Restoring .yzis_saved_for_tests to $user_home/.yzis"
-    rm -rf "$user_home/.yzis"
-    mv "$user_home/.yzis_saved_for_tests" "$user_home/.yzis"
-fi
-
-# restore original LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=$old_ld_lib_path
-
+source post_test.sh 

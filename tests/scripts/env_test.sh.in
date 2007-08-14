@@ -1,0 +1,20 @@
+
+BUILD_DIR=@CMAKE_BINARY_DIR@
+
+if [ -n "$CYGWIN" ]; then
+	export TMP="d:/tmp"
+	export TEMP="d:/tmp"
+fi
+
+if [ -n "$CYGWIN" ];
+then
+	LIBYZIS_DLL=$BUILD_DIR/libyzis/libyzis.dll
+	QYZIS_EXE=$BUILD_DIR/qyzis/qyzis.exe
+	LIBYZISRUNNER_EXE=$BUILD_DIR/libyzisrunner/libyzisrunner.exe
+else
+	LIBYZIS_DLL=$BUILD_DIR/libyzis/libyzis.so
+	QYZIS_EXE=$BUILD_DIR/qyzis/qyzis
+	NYZIS_EXE=$BUILD_DIR/nyzis/nyzis
+	LIBYZISRUNNER_EXE=$BUILD_DIR/libyzisrunner/libyzisrunner
+fi
+

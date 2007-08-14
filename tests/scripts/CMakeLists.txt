@@ -1,4 +1,4 @@
 configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/run_scripttests.sh.in ${CMAKE_CURRENT_SOURCE_DIR}/run_scripttests.sh
+    ${CMAKE_CURRENT_SOURCE_DIR}/env_test.sh.in ${CMAKE_CURRENT_SOURCE_DIR}/env_test.sh
     @ONLY
 )

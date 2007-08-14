@@ -42,8 +42,8 @@ if (WIN32)
     ADD_CUSTOM_COMMAND( OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/qyzis_ico.obj
                         COMMAND windres.exe 
                             -I${CMAKE_CURRENT_SOURCE_DIR} 
-                            -i${CMAKE_CURRENT_SOURCE_DIR}/qyzis_ico.rc 
                             -o ${CMAKE_CURRENT_BINARY_DIR}/qyzis_ico.obj
+                            < ${CMAKE_CURRENT_SOURCE_DIR}/qyzis_ico.rc
                         )
     SET( qyzis_SRCS ${qyzis_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/qyzis_ico.obj )
 endif (WIN32)

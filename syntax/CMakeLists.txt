@@ -1,20 +1,16 @@
 ########### install files ###############
 
-add_custom_target(GeneratePhpXmlFiles ALL DEPENDS
- ${CMAKE_CURRENT_BINARY_DIR}/css-php.xml
- ${CMAKE_CURRENT_BINARY_DIR}/html-php.xml
- ${CMAKE_CURRENT_BINARY_DIR}/javascript-php.xml )
+#
+# the following files :
+#	javascript-php.xml  css-php.xml html-php.xml
+# are generated using syntax/generate-php.pl from the files :
+#	javascript.xml css.xml  html.xml
+# using the simple command generate-php.pl < input > output
+#
+# As of 2007-08-14, we expect to change the highlighting backend soon
+# anyway
+#
 
-macro(GENERATE_PHP_XML targetFile srcFile)
-  add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${targetFile}
-  COMMAND ${PERL_EXECUTABLE} ARGS
-  ${CMAKE_CURRENT_SOURCE_DIR}/generate-php.pl < ${CMAKE_CURRENT_SOURCE_DIR}/${srcFile} > ${CMAKE_CURRENT_BINARY_DIR}/${targetFile}
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${srcFile} )
-endmacro(GENERATE_PHP_XML)
-
-generate_php_xml(javascript-php.xml javascript.xml)
-generate_php_xml(css-php.xml css.xml)
-generate_php_xml(html-php.xml html.xml)
 
 install_files( /share/yzis/syntax FILES language.dtd syntax.template cpp.xml c.xml html.xml kbasic.xml objectivec.xml
                changelog.xml ada.xml css.xml perl.xml php.xml xml.xml java.xml rpmspec.xml
@@ -32,6 +28,6 @@ install_files( /share/yzis/syntax FILES language.dtd syntax.template cpp.xml c.x
                purebasic.xml mips.xml logtalk.xml txt2tags.xml xslt.xml stata.xml glsl.xml
                lilypond.xml abc.xml asp.xml asm-avr.xml rib.xml cmake.xml octave.xml javadoc.xml cgis.xml
                spice.xml nasm.xml mediawiki.xml apache.xml m3u.xml ini.xml pgn.xml freebasic.xml ansys.xml gap.xml
-               ${CMAKE_CURRENT_BINARY_DIR}/html-php.xml ${CMAKE_CURRENT_BINARY_DIR}/css-php.xml ${CMAKE_CURRENT_BINARY_DIR}/javascript-php.xml
+	       javascript-php.xml  css-php.xml  html-php.xml
                )
 

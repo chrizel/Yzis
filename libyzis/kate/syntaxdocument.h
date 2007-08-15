@@ -1,20 +1,20 @@
 /* This file is part of the Yzis libraries
-*  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
-*
-*  This library is free software; you can redistribute it and/or
-*  modify it under the terms of the GNU Library General Public
-*  License version 2 as published by the Free Software Foundation
-*
-*  This library is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-*  Library General Public License for more details.
-*
-*  You should have received a copy of the GNU Library General Public License
-*  along with this library; see the file COPYING.LIB.  If not, write to
-*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-*  Boston, MA 02110-1301, USA.
-**/
+ *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Library General Public
+ *  License version 2 as published by the Free Software Foundation
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public License
+ *  along with this library; see the file COPYING.LIB.  If not, write to
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
+ **/
 
 /**
  * This file was taken from Kate, the KDE editor
@@ -38,7 +38,7 @@
  */
 class YzisSyntaxModeListItem
 {
-public:
+  public:
     QString name;
     QString nameTranslated;
     QString section;
@@ -62,7 +62,7 @@ typedef QList<YzisSyntaxModeListItem*> YzisSyntaxModeList;
  */
 class YzisSyntaxContextData
 {
-public:
+  public:
     QDomElement parent;
     QDomElement currentGroup;
     QDomElement item;
@@ -73,7 +73,7 @@ public:
  */
 class YzisSyntaxDocument : public QDomDocument
 {
-public:
+  public:
     /**
      * Constructor
      * Sets the current file to nothing and build the ModeList
@@ -87,7 +87,7 @@ public:
     ~YzisSyntaxDocument();
 
     /**
-    * If the open hl file is different from the one needed, it opens
+	 * If the open hl file is different from the one needed, it opens
      * the new one and assign some other things.
      * @param identifier file name and path of the new xml needed
      */
@@ -97,10 +97,7 @@ public:
      * Get the mode list
      * @return mode list
      */
-    const YzisSyntaxModeList &modeList() const
-    {
-        return myModeList;
-    }
+    const YzisSyntaxModeList &modeList() const { return myModeList; }
 
     /**
      * Jump to the next group, YzisSyntaxContextData::currentGroup will point to the next group
@@ -119,8 +116,8 @@ public:
     /**
      * This function is used to fetch the attributes of the tags.
      */
-    QString groupItemData(const YzisSyntaxContextData* data, const QString& name);
-    QString groupData(const YzisSyntaxContextData* data, const QString& name);
+    QString groupItemData(const YzisSyntaxContextData* data,const QString& name);
+    QString groupData(const YzisSyntaxContextData* data,const QString& name);
 
     void freeGroupInfo(YzisSyntaxContextData* data);
     YzisSyntaxContextData* getSubItems(YzisSyntaxContextData* data);
@@ -140,15 +137,15 @@ public:
     /**
      * Returns a list with all the keywords inside the list type
      */
-    QStringList& finddata(const QString& mainGroup, const QString& type, bool clearList = true);
+    QStringList& finddata(const QString& mainGroup,const QString& type,bool clearList=true);
 
 
-private:
+  private:
     /**
      * Generate the list of hl modes, store them in myModeList
      * force: if true forces to rebuild the Mode List from the xml files (instead of katesyntax...rc)
      * @param force if true forces to rebuild the Mode List from the xml files (instead of katesyntax...rc)
-    */
+	 */
     void setupModeList(bool force);
 
     /**
@@ -161,7 +158,7 @@ private:
      * List of mode items
      */
     YzisSyntaxModeList myModeList;
-    QStringList findAllResources( const char *type, const QString& filter, bool recursive, bool unique) const;
+	QStringList findAllResources( const char *type, const QString& filter, bool recursive, bool unique) const;
 
     /**
      * current parsed filename

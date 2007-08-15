@@ -1,20 +1,20 @@
 /* This file is part of the Yzis libraries
-*  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
-*
-*  This library is free software; you can redistribute it and/or
-*  modify it under the terms of the GNU Library General Public
-*  License version 2 as published by the Free Software Foundation
-*
-*  This library is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-*  Library General Public License for more details.
-*
-*  You should have received a copy of the GNU Library General Public License
-*  along with this library; see the file COPYING.LIB.  If not, write to
-*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-*  Boston, MA 02110-1301, USA.
-**/
+ *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
+ *
+ *  This library is free software; you can redistribute it and/or
+ *  modify it under the terms of the GNU Library General Public
+ *  License version 2 as published by the Free Software Foundation
+ *
+ *  This library is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *  Library General Public License for more details.
+ *
+ *  You should have received a copy of the GNU Library General Public License
+ *  along with this library; see the file COPYING.LIB.  If not, write to
+ *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ *  Boston, MA 02110-1301, USA.
+ **/
 
 /* This file was taken from the Kate editor which is part of KDE
    Kate's code is published under the LGPL version 2 (and 2 only not any later 
@@ -55,17 +55,11 @@ class QPopupMenu;
 
 class YzisEmbeddedHlInfo
 {
-public:
-    YzisEmbeddedHlInfo()
-    {
-        loaded = false;context0 = -1;
-    }
-    YzisEmbeddedHlInfo(bool l, int ctx0)
-    {
-        loaded = l;context0 = ctx0;
-    }
+  public:
+    YzisEmbeddedHlInfo() {loaded=false;context0=-1;}
+    YzisEmbeddedHlInfo(bool l, int ctx0) {loaded=l;context0=ctx0;}
 
-public:
+  public:
     bool loaded;
     int context0;
 };
@@ -76,42 +70,42 @@ typedef QLinkedList<YzisHlIncludeRule*> YzisHlIncludeRules;
 typedef QList<YzisHlItemData*> YzisHlItemDataList;
 typedef QList<YzisHlData*> YzisHlDataList;
 typedef QList<int> IntList;
-typedef QMap<QString, YzisEmbeddedHlInfo> YzisEmbeddedHlInfos;
-typedef QMap<int*, QString> YzisHlUnresolvedCtxRefs;
+typedef QMap<QString,YzisEmbeddedHlInfo> YzisEmbeddedHlInfos;
+typedef QMap<int*,QString> YzisHlUnresolvedCtxRefs;
 
 //Item Properties: name, Item Style, Item Font
 class YzisHlItemData : public YzisAttribute
 {
-public:
-    YzisHlItemData(const QString name, int defStyleNum);
+  public:
+    YzisHlItemData(const QString  name, int defStyleNum);
 
     enum ItemStyles {
-        dsNormal,
-        dsKeyword,
-        dsDataType,
-        dsDecVal,
-        dsBaseN,
-        dsFloat,
-        dsChar,
-        dsString,
-        dsComment,
-        dsOthers,
-        dsAlert,
-        dsFunction,
-        dsRegionMarker,
-        dsError };
+      dsNormal,
+      dsKeyword,
+      dsDataType,
+      dsDecVal,
+      dsBaseN,
+      dsFloat,
+      dsChar,
+      dsString,
+      dsComment,
+      dsOthers,
+      dsAlert,
+      dsFunction,
+      dsRegionMarker,
+      dsError  };
 
-public:
+  public:
     const QString name;
     int defStyleNum;
 };
 
 class YzisHlData
 {
-public:
-    YzisHlData(const QString &wildcards, const QString &mimetypes, const QString &identifier, int priority);
+  public:
+    YzisHlData(const QString &wildcards, const QString &mimetypes,const QString &identifier, int priority);
 
-public:
+  public:
     QString wildcards;
     QString mimetypes;
     QString identifier;
@@ -120,14 +114,14 @@ public:
 
 class YzisHighlighting
 {
-public:
+  public:
     YzisHighlighting(const YzisSyntaxModeListItem *def);
     ~YzisHighlighting();
 
-private:
-    void cleanup();
+  private:
+	void cleanup();
 
-public:
+  public:
     void doHighlight ( YZLine *prevLine,
                        YZLine *textLine,
                        QVector<uint> *foldingList,
@@ -140,7 +134,7 @@ public:
     QString getMimetypes();
 
     // this pointer needs to be deleted !!!!!!!!!!
-    //    YzisHlData *getData();
+//    YzisHlData *getData();
     void setData(YzisHlData *);
 
     void setYzisHlItemDataList(uint schema, YzisHlItemDataList &);
@@ -150,39 +144,15 @@ public:
     // keep track that you delete them, or mem will be lost
     void getYzisHlItemDataListCopy (uint schema, YzisHlItemDataList &);
 
-    const QString &name() const
-    {
-        return iName;
-    }
-    const QString &nameTranslated() const
-    {
-        return iNameTranslated;
-    }
-    const QString &section() const
-    {
-        return iSection;
-    }
-    bool hidden() const
-    {
-        return iHidden;
-    }
-    const QString &version() const
-    {
-        return iVersion;
-    }
-    const QString &author () const
-    {
-        return iAuthor;
-    }
-    const QString &license () const
-    {
-        return iLicense;
-    }
+    const QString &name() const {return iName;}
+    const QString &nameTranslated() const {return iNameTranslated;}
+    const QString &section() const {return iSection;}
+    bool hidden() const {return iHidden;}
+    const QString &version() const {return iVersion;}
+    const QString &author () const { return iAuthor; }
+    const QString &license () const { return iLicense; }
     int priority();
-    const QString &getIdentifier() const
-    {
-        return identifier;
-    }
+    const QString &getIdentifier() const {return identifier;}
     void use();
     void release();
 
@@ -190,13 +160,13 @@ public:
      * @return true if the character @p c is not a deliminator character
      *     for the corresponding highlight.
      */
-    bool isInWord( QChar c, int attrib = 0 ) const;
+    bool isInWord( QChar c, int attrib=0 ) const;
 
     /**
      * @return true if the character @p c is a wordwrap deliminator as specified
      * in the general keyword section of the xml file.
      */
-    bool canBreakAt( QChar c, int attrib = 0 ) const;
+    bool canBreakAt( QChar c, int attrib=0 ) const;
 
     /**
     * @return true if @p beginAttr and @p endAttr are members of the same
@@ -214,30 +184,30 @@ public:
      * @return the mulitiline comment start marker for the highlight
      * corresponding to @p attrib.
      */
-    QString getCommentStart( int attrib = 0 ) const;
+    QString getCommentStart( int attrib=0 ) const;
 
     /**
      * @return the muiltiline comment end marker for the highlight corresponding
      * to @p attrib.
      */
-    QString getCommentEnd( int attrib = 0 ) const;
+    QString getCommentEnd( int attrib=0 ) const;
 
     /**
      * @return the single comment marker for the highlight corresponding
      * to @p attrib.
      */
-    QString getCommentSingleLineStart( int attrib = 0 ) const;
+    QString getCommentSingleLineStart( int attrib=0 ) const;
 
-    /**
-     * This enum is used for storing the information where a single line comment marker should be inserted
-     */
-    enum CSLPos { CSLPosColumn0 = 0, CSLPosAfterWhitespace = 1};
+	/**
+	 * This enum is used for storing the information where a single line comment marker should be inserted
+	 */
+	enum CSLPos { CSLPosColumn0=0,CSLPosAfterWhitespace=1};
 
-    /**
-     * @return the single comment marker position for the highlight corresponding
-     * to @p attrib.
-     */
-    CSLPos getCommentSingleLinePosition( int attrib = 0 ) const;
+	/**
+	 * @return the single comment marker position for the highlight corresponding
+	 * to @p attrib.
+	 */
+	CSLPos getCommentSingleLinePosition(  int attrib=0 ) const;
 
     /**
     * @return the attribute for @p context.
@@ -248,20 +218,14 @@ public:
 
     QVector<YzisAttribute> *attributes (uint schema);
 
-    inline bool noHighlighting () const
-    {
-        return noHl;
-    };
+    inline bool noHighlighting () const { return noHl; };
 
     // be carefull: all documents hl should be invalidated after calling this method!
     void dropDynamicContexts();
 
-    QString indentation ()
-    {
-        return m_indentation;
-    }
+    QString indentation () { return m_indentation; }
 
-private:
+  private:
     // make this private, nobody should play with the internal data pointers
     void getYzisHlItemDataList(uint schema, YzisHlItemDataList &);
 
@@ -287,7 +251,7 @@ private:
     int lookupAttrName(const QString& name, YzisHlItemDataList &iDl);
 
     void createContextNameList(QStringList *ContextNameList, int ctx0);
-    int getIdFromString(QStringList *ContextNameList, QString tmpLineEndContext, /*NO CONST*/ QString &unres);
+    int getIdFromString(QStringList *ContextNameList, QString tmpLineEndContext,/*NO CONST*/ QString &unres);
 
     /**
      * @return the key to use for @p attrib in m_additionalData.
@@ -297,10 +261,7 @@ private:
     YzisHlItemDataList internalIDList;
 
     QVector<YzisHlContext*> m_contexts;
-    inline YzisHlContext *contextNum (int n)
-    {
-        if (n >= 0 && n < m_contexts.size()) return m_contexts[n]; return 0;
-    }
+    inline YzisHlContext *contextNum (int n) { if (n >= 0 && n < m_contexts.size()) return m_contexts[n]; return 0; }
 
     QMap< QPair<YzisHlContext *, QString>, short> dynamicCtxs;
 
@@ -354,14 +315,13 @@ private:
      *
      * If you need to add a property to a highlight, add it here.
      */
-    class HighlightPropertyBag
-    {
-    public:
+    class HighlightPropertyBag {
+      public:
         QString singleLineCommentMarker;
         QString multiLineCommentStart;
         QString multiLineCommentEnd;
         QString multiLineRegion;
-        CSLPos singleLineCommentPosition;
+		CSLPos  singleLineCommentPosition;
         QString deliminator;
         QString wordWrapDeliminator;
     };
@@ -370,7 +330,7 @@ private:
      * Highlight properties for each included highlight definition.
      * The key is the identifier
      */
-    QHash<QString, HighlightPropertyBag*> m_additionalData;
+    QHash<QString,HighlightPropertyBag*> m_additionalData;
 
     /**
      * Fast lookup of hl properties, based on attribute index
@@ -384,38 +344,29 @@ private:
     QList<QRegExp> regexpExtensions;
     QStringList plainExtensions;
 
-public:
-    inline bool foldingIndentationSensitive ()
-    {
-        return m_foldingIndentationSensitive;
-    }
-    inline bool allowsFolding()
-    {
-        return folding;
-    }
+  public:
+    inline bool foldingIndentationSensitive () { return m_foldingIndentationSensitive; }
+    inline bool allowsFolding(){return folding;}
 };
 
 class YZIS_EXPORT YzisHlManager
 {
-private:
+  private:
     YzisHlManager();
 
-public:
+  public:
     ~YzisHlManager();
 
     static YzisHlManager *self();
 
-    //    inline KConfig *getKConfig() { return &m_config; };
+//    inline KConfig *getKConfig() { return &m_config; };
 
     YzisHighlighting *getHl(int n);
     int nameFind(const QString &name);
 
     int detectHighlighting (class YZBuffer *doc);
 
-    int findHl(YzisHighlighting *h)
-    {
-        return hlList.indexOf(h);
-    }
+    int findHl(YzisHighlighting *h) {return hlList.indexOf(h);}
     QString identifierForName(const QString&);
 
     // methodes to get the default style count + names
@@ -431,38 +382,29 @@ public:
     QString hlSection(int n);
     bool hlHidden(int n);
 
-    void incDynamicCtxs()
-    {
-        ++dynamicCtxsCount;
-    };
-    uint countDynamicCtxs()
-    {
-        return dynamicCtxsCount;
-    };
-    void setForceNoDCReset(bool b)
-    {
-        forceNoDCReset = b;
-    };
+    void incDynamicCtxs() { ++dynamicCtxsCount; };
+    uint countDynamicCtxs() { return dynamicCtxsCount; };
+    void setForceNoDCReset(bool b) { forceNoDCReset = b; };
 
     // be carefull: all documents hl should be invalidated after having successfully called this method!
     bool resetDynamicCtxs();
 
-signals:
+  signals:
     void changed();
 
-private:
+  private:
     int wildcardFind(const QString &fileName);
     int mimeFind(const QString &contents);
-    //    int mimeFind(const QByteArray &contents);
+//    int mimeFind(const QByteArray &contents);
     int realWildcardFind(const QString &fileName);
-    QString findByContent( const QString& contents );
-    // QString findByContent( const QByteArray& contents );
+	QString findByContent( const QString& contents );
+//	QString findByContent( const QByteArray& contents );
 
-private:
+  private:
     friend class YzisHighlighting;
 
     QList<YzisHighlighting*> hlList;
-    QHash<QString, YzisHighlighting*> hlDict;
+    QHash<QString,YzisHighlighting*> hlDict;
 
     static YzisHlManager *s_self;
 

@@ -449,10 +449,38 @@ public:
 
     static QString tildeExpand( const QString& path );
 
-    /**
-     * handle /file/name:line:col syntax
+    /** Parses a string containing filename and possibly line col information.
+     *
+     * Input can be: 
+     * \li filename
+     * \li filename:line
+     * \li filename:line:col
+     * 
+     * If not NULL, the @p gotoPos is adjusted to the target line,col or (0,0)
+     * if there is no (line,col) information.
+     *
+     * @param filename a string containing filename and maybe line,col
+     * information
+     * @param gotoPos a cursor that receives the line,col information if any
+     * @return filename stripped from line,col information.
      */
     static QString parseFilename( const QString& filename, YZCursor* gotoPos = NULL );
+
+
+    /** Get the cursor initial position for a filename.
+     *
+     * If @a parseFilename is true, the filename is first parsed with
+     * parseFilename() to look for format filename:line:col . 
+     *
+     * If there is no line/col information in the filename string, the
+     * function looks into YzisInfo for the last position in that file.
+     *
+     * @param filename filename that may contain line:col information
+     * @param parseFilename If true, use parseFilename() to look for line:col
+     * information. If false, just look into YzisInfo file for last cursor
+     * position.
+     * @return a cursor containing line:col that was found (if any).
+     */
     static YZCursor getStartPosition( const QString& filename, bool parseFilename = true );
 
 protected:

@@ -697,12 +697,14 @@ CmdState YZModeEx::edit ( const YZExCommandArgs& args )
     YZView *v = YZSession::self()->findViewByBuffer(b);
     if ( b && v ) {
         // buffer and view already exist
+        dbg() << "edit(): using existing view for " << filename << endl;
         YZSession::self()->setCurrentView( v );
     } else if ( b ) {
+        dbg() << "edit(): new view for " << filename << endl;
         v = YZSession::self()->createView( b );
         YZSession::self()->setCurrentView( v );
     } else {
-        dbg() << "New buffer / view: " << filename << endl;
+        dbg() << "edit(): New buffer / view: " << filename << endl;
         v = YZSession::self()->createBufferAndView( args.arg );
         YZSession::self()->setCurrentView( v );
     }

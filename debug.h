@@ -1,21 +1,21 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
- **/
+*  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License as published by the Free Software Foundation; either
+*  version 2 of the License, or (at your option) any later version.
+*
+*  This library is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+*  Library General Public License for more details.
+*
+*  You should have received a copy of the GNU Library General Public License
+*  along with this library; see the file COPYING.LIB.  If not, write to
+*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+*  Boston, MA 02110-1301, USA.
+**/
 
 /** \file debug.h
  * This file was mostly inspired from the kdelibs kdDebug class distributed under LGPL
@@ -49,13 +49,13 @@ class QStringList;
 #define YZ_DEBUG_LEVEL   1      //!< debuggging level
 #define YZ_WARNING_LEVEL 2      //!< warning level
 #define YZ_ERROR_LEVEL   3      //!< error level
-#define YZ_FATAL_LEVEL   4      //!< fatal level
+#define YZ_FATAL_LEVEL   4      //!< fatal level 
 //! @}
 
 /** default file name for controlling which area are enabled or not.
   * \see YZDebugBackend::parseRcfile()
   */
-#define DEBUGRC_FNAME ".yzdebugrc" 
+#define DEBUGRC_FNAME ".yzdebugrc"
 
 /** Log system used for debugging.
   *
@@ -139,108 +139,119 @@ class QStringList;
   * \endcode
   *
   */
-class YZIS_EXPORT YZDebugBackend : private boost::noncopyable {
+class YZIS_EXPORT YZDebugBackend : private boost::noncopyable
+{
 
 public:
 
     /** The singleton constructor */
-	static YZDebugBackend * self();
+    static YZDebugBackend * self();
 
-	/** Write data to the debug backend. 
-      *
-      * Note that Qt provides a macro qPrintable that makes mostly
-      * anything printable as a const char * . This can be convenient.
-      *
-      * \param level the debugging level
-      * \param area  the area
-      * \param data  the data to display
+    /** Write data to the debug backend.
+         *
+         * Note that Qt provides a macro qPrintable that makes mostly
+         * anything printable as a const char * . This can be convenient.
+         *
+         * \param level the debugging level
+         * \param area  the area
+         * \param data  the data to display
+         */
+    void flush( int level, const QString& area, const char * data );
+
+    /** Set debugging level.
+         *
+         * \param level can YZ_DEBUG_LEVEL, YZ_ERROR_LEVEL or YZ_FATAL_LEVEL
       */
-	void flush( int level, const QString& area, const char * data );
+    void setDebugLevel( int level )
+    {
+        _level = level;
+    }
 
-	/** Set debugging level.
-      *
-      * \param level can YZ_DEBUG_LEVEL, YZ_ERROR_LEVEL or YZ_FATAL_LEVEL
-	  */
-	void setDebugLevel( int level ) { _level = level; }
+    /** Current global debugging level */
+    int debugLevel() const
+    {
+        return _level;
+    }
 
-    /** Current global debugging level */ 
-	int debugLevel() const { return _level; }
+    /** All debug will be logged to the open file descriptor \p file.
+         *
+      * stdout and stderr are perfectly valid file descriptors for this.
+         */
+    void setDebugOutput( FILE * file );
 
-	/** All debug will be logged to the open file descriptor \p file.
-      *
-	  * stdout and stderr are perfectly valid file descriptors for this.
-      */
-	void setDebugOutput( FILE * file );
+    /** Same as above, but just specifies a file name that
+         * will be opened instead of a file descriptor. 
+         */
+    void setDebugOutput( const QString& fileName);
 
-	/** Same as above, but just specifies a file name that 
-      * will be opened instead of a file descriptor. 
-      */
-	void setDebugOutput( const QString& fileName);
+    /** Set the debug \p level of an \p area
+         *
+         * Once the debug level of an area has been set, it no longer
+         * obeys the global debugging level.
+         *
+         * It is possible to use area and subarea. For example, "area1.subarea1"
+         * is a sub-area of "area1". Subarea obeys the debugging level of the
+         * area unless they are set individually.
+         *
+         * Example:
+         * After:
+         * \code
+         * setAreaLevel( "area1", YZ_WARNING_LEVEL );
+         * setAreaLevel( "area1.subarea2", YZ_DEBUG_LEVEL );
+         * \endcode
+         *
+         * we have:
+         * \code
+         * "area1": warning
+         * "area1.subarea1": warning
+         * "area1.subarea2": debug
+         * \endcode
+         *
+         * You can remove an area level with removeArea()
+         */
+    void setAreaLevel( const QString& area, int level );
 
-	/** Set the debug \p level of an \p area 
-      *
-      * Once the debug level of an area has been set, it no longer
-      * obeys the global debugging level.
-      *
-      * It is possible to use area and subarea. For example, "area1.subarea1"
-      * is a sub-area of "area1". Subarea obeys the debugging level of the
-      * area unless they are set individually.
-      *
-      * Example:
-      * After:
-      * \code
-      * setAreaLevel( "area1", YZ_WARNING_LEVEL );
-      * setAreaLevel( "area1.subarea2", YZ_DEBUG_LEVEL );
-      * \endcode
-      *
-      * we have:
-      * \code
-      * "area1": warning
-      * "area1.subarea1": warning
-      * "area1.subarea2": debug
-      * \endcode
-      *
-      * You can remove an area level with removeArea()
-      */
-	void setAreaLevel( const QString& area, int level );
-
-	/** Returns the debugging level of an \p area. 
-      *
-      * If the area has not been assigned an individual debugging level,
-      * returns the upmost area matching the beginning of area or if non
-      * matches, the global level.
-      */
-	int areaLevel( const QString& area ) const;
+    /** Returns the debugging level of an \p area.
+         *
+         * If the area has not been assigned an individual debugging level,
+         * returns the upmost area matching the beginning of area or if non
+         * matches, the global level.
+         */
+    int areaLevel( const QString& area ) const;
 
     /** Remove the individual debugging level of this area.
       *
       * The area now obeys the global debugging level.
       */
-    void removeArea(const QString & area) {
+    void removeArea(const QString & area)
+    {
         _areaLevel.remove( area );
     }
 
-	/** Remove all debug areas. 
-      *
-      * Debug value returns to the global value.
-      */
-	void clearArea() { _areaLevel.clear(); }
+    /** Remove all debug areas.
+         *
+         * Debug value returns to the global value.
+         */
+    void clearArea()
+    {
+        _areaLevel.clear();
+    }
 
-	/** Read a rcfile to adjust area output and debug level
-    *
-	  * The syntax is:
-    * \li "level" ":" "debug" | "warning" | "error" | "deepdebug" <br>
-    * \li [area] ":" "debug" | "warning" | "error" | "deepdebug" <br>
-    * \li "output" ":" [filename]<br>
-	  **/
-	void parseRcfile(const char * filename);
+    /** Read a rcfile to adjust area output and debug level
+       *
+      * The syntax is:
+       * \li "level" ":" "debug" | "warning" | "error" | "deepdebug" <br>
+       * \li [area] ":" "debug" | "warning" | "error" | "deepdebug" <br>
+       * \li "output" ":" [filename]<br>
+      **/
+    void parseRcfile(const char * filename);
 
     /** Parse default rc file.
       *
       * The default rc file is a file named .yzdebugrc located in the
       * directory where yzis is executed.
       */
-	void parseRcfile();
+    void parseRcfile();
 
 
     /** Parses argv to check for debug directives.
@@ -281,13 +292,13 @@ public:
       *
       * See \ref yzmalloc for details.
       */
-	void * operator new( size_t tSize );
+    void * operator new( size_t tSize );
 
     /** Free memory of the object from libyzis.
       *
       * See \ref yzmalloc for details.
       */
-	void  operator delete( void* p );
+    void operator delete( void* p );
 
 private:
     /** Initialise the YZDebugBackend(), set a few internal variables
@@ -296,35 +307,35 @@ private:
     void init();
 
     /** Private constructors for a singleton */
-	YZDebugBackend();
+    YZDebugBackend();
 
     /** Private copy constructors for a singleton */
-	YZDebugBackend( YZDebugBackend & other);
+    YZDebugBackend( YZDebugBackend & other);
 
     /** Private copy assignment for a singleton */
-	YZDebugBackend & operator=( YZDebugBackend & other );
+    YZDebugBackend & operator=( YZDebugBackend & other );
 
     /** Private destructor for a singleton */
-	~YZDebugBackend();
+    ~YZDebugBackend();
 
     /** Singleton instance holder */
-	static YZDebugBackend * me;
+    static YZDebugBackend * me;
 
     /** debug level assigned to each area */
-	QMap<QString,int> _areaLevel; 
+    QMap<QString, int> _areaLevel;
 
     /** dictionnary from area string to area level */
-	QMap<QString,int> _levelByName;
+    QMap<QString, int> _levelByName;
 
     /** dictionnary from area level to area string */
-	QMap<int,QString> _nameByLevel;
+    QMap<int, QString> _nameByLevel;
 
     /** Global debugging level */
-	int _level;
+    int _level;
 
     /** File output of the debugging (may be stderr, stdout or any open file
-      * descriptor */ 
-	FILE * _output;
+      * descriptor */
+    FILE * _output;
 
     /** File name of the output */
     QString _outputFname;
@@ -401,83 +412,91 @@ typedef YZDebugStream & (*YDBGFUNC)(YZDebugStream &);
  * current file
  *
  */
-class YZIS_EXPORT YZDebugStream {
-	public:
-		/** Constrctor for the stream.
-          *
-          * The debug \p area and debug \p level are fixed by stream. */
-		explicit YZDebugStream(const char * area="", int level=0);
+class YZIS_EXPORT YZDebugStream
+{
+public:
+    /** Constrctor for the stream.
+            *
+            * The debug \p area and debug \p level are fixed by stream. */
+    explicit YZDebugStream(const char * area = "", int level = 0);
 
-        /** Destructor */
-		~YZDebugStream();
+    /** Destructor */
+    ~YZDebugStream();
 
-		/** Operator to output a boolean */
-		YZDebugStream& operator << (bool i);
+    /** Operator to output a boolean */
+    YZDebugStream& operator << (bool i);
 
-		/** Operator to output a char */
-		YZDebugStream& operator << (char i);
+    /** Operator to output a char */
+    YZDebugStream& operator << (char i);
 
-		/** Operator to output an unsigned char */
-		YZDebugStream& operator << (unsigned char i);
+    /** Operator to output an unsigned char */
+    YZDebugStream& operator << (unsigned char i);
 
-		/** Operator to output a string */
-		YZDebugStream& operator << (const QString& string);
+    /** Operator to output a string */
+    YZDebugStream& operator << (const QString& string);
 
-		/** Operator to output a string list */
-		YZDebugStream& operator << (const QStringList& string);
+    /** Operator to output a string list */
+    YZDebugStream& operator << (const QStringList& string);
 
-		/** Operator to output a string list */
-		YZDebugStream& operator << (const char* string);
+    /** Operator to output a string list */
+    YZDebugStream& operator << (const char* string);
 
-		/** Operator to output an int */
-		YZDebugStream& operator << (int i);
+    /** Operator to output an int */
+    YZDebugStream& operator << (int i);
 
-		/** Operator to output an unsigned int */
-		YZDebugStream& operator << (unsigned int i);
+    /** Operator to output an unsigned int */
+    YZDebugStream& operator << (unsigned int i);
 
-		/** Operator to output a long */
-		YZDebugStream& operator << (long i);
+    /** Operator to output a long */
+    YZDebugStream& operator << (long i);
 
-		/** Operator to output an unsigned long */
-		YZDebugStream& operator << (unsigned long i);
+    /** Operator to output an unsigned long */
+    YZDebugStream& operator << (unsigned long i);
 
-		/** Operator to output a short */
-		YZDebugStream& operator << (short i);
+    /** Operator to output a short */
+    YZDebugStream& operator << (short i);
 
-		/** Operator to output a unsigned short */
-		YZDebugStream& operator << (unsigned short i);
+    /** Operator to output a unsigned short */
+    YZDebugStream& operator << (unsigned short i);
 
-		/** Operator to output a unsigned double */
-		YZDebugStream& operator << (double d);
+    /** Operator to output a unsigned double */
+    YZDebugStream& operator << (double d);
 
-		/** Operator that execute the YZDebugStream() manipulator function \p
-          * f */
-		YZDebugStream& operator << (YDBGFUNC f) {
-			return ( *f )( *this );
-		}
+    /** Operator that execute the YZDebugStream() manipulator function \p
+            * f */
+    YZDebugStream& operator << (YDBGFUNC f)
+    {
+        return ( *f )( *this );
+    }
 
-        /** Convenient sprintf function on debug streams */
-        void sprintf( const char * fmt, ... );
+    /** Convenient sprintf function on debug streams */
+    void sprintf( const char * fmt, ... );
 
-        /** Flushes the current debug text to the debug output. 
-          *
-          * Most operator<<() will flush the output if it ends with '\\n'.
-          * If not the output is stored internally in \ref output.
-          */
-		void flush();
+    /** Flushes the current debug text to the debug output.
+      *
+      * Most operator<<() will flush the output if it ends with '\\n'.
+      * If not the output is stored internally in \ref output.
+      */
+    void flush();
 
-	private:
-		QString output;     //!< Temporary stored the debug output
-		int level;          //!< debugging level of the stream
-		QString area;       //!< debugging area of the stream
+private:
+    QString output;     //!< Temporary stored the debug output
+    int level;          //!< debugging level of the stream
+    QString area;       //!< debugging area of the stream
 
 };
 
 /** Output a \\n */
-inline YZDebugStream & endl( YZDebugStream& s ) { s << "\n"; return s; }
+inline YZDebugStream & endl( YZDebugStream& s )
+{
+    s << "\n"; return s;
+}
 
 /** Flush the debug stream */
-inline YZDebugStream& flush( YZDebugStream& s ) { s.flush(); return s; }
+inline YZDebugStream& flush( YZDebugStream& s )
+{
+    s.flush(); return s;
+}
 
 /** Convenient function to build a debug stream.
   *

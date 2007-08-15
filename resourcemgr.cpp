@@ -1,21 +1,21 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2007 Philippe Fremy <phil@freehackers.org>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
- **/
+*  Copyright (C) 2007 Philippe Fremy <phil@freehackers.org>
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License as published by the Free Software Foundation; either
+*  version 2 of the License, or (at your option) any later version.
+*
+*  This library is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+*  Library General Public License for more details.
+*
+*  You should have received a copy of the GNU Library General Public License
+*  along with this library; see the file COPYING.LIB.  If not, write to
+*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+*  Boston, MA 02110-1301, USA.
+**/
 
 #include "resourcemgr.h"
 #include "debug.h"
@@ -42,12 +42,11 @@ YZResourceMgr::YZResourceMgr()
 
 YZResourceMgr::~YZResourceMgr()
 {
-
 }
 
 void YZResourceMgr::initConfig()
 {
-    QString yzisSuffix = ".yzis"; 
+    QString yzisSuffix = ".yzis";
     bool isTmpDir = false;
     mYzisUserDir = QDir::homePath() + "/" + yzisSuffix + "/";
     QDir yzisUserDir( mYzisUserDir );
@@ -58,15 +57,15 @@ void YZResourceMgr::initConfig()
             isTmpDir = true;
             mYzisUserDir = QDir::tempPath() + "/";
             err() << "initConfig(): could not create yzis user directory, falling back on " << mYzisUserDir;
-        } 
+        }
     }
 
     yzisUserDir.setPath( mYzisUserDir );
 
     if ( (!QFileInfo(mYzisUserDir).isWritable()) && (!isTmpDir) ) {
-            mYzisUserDir = QDir::tempPath() + "/";
-            err() << "initConfig(): yzis user directory is not writable, falling back on " << mYzisUserDir;
-            isTmpDir = true;
+        mYzisUserDir = QDir::tempPath() + "/";
+        err() << "initConfig(): yzis user directory is not writable, falling back on " << mYzisUserDir;
+        isTmpDir = true;
     }
 
     if ((! QFileInfo(mYzisUserDir).isWritable() )) {
@@ -81,7 +80,7 @@ QString YZResourceMgr::findResource( ResourceType type, const QString & fname )
 {
     QString resource;
     QStringList dirCandidates;
-    
+
     dbg() << "findResource(" << type << ", " << fname << ")" << endl;
 
     // Writable config is always in the config subdir
@@ -107,8 +106,8 @@ QString YZResourceMgr::findResource( ResourceType type, const QString & fname )
             dbg() << "findResource(): Found at " << resource << endl;
             return resource;
         }
-	if ( !resource.endsWith(".lua") )
-		resource += ".lua";
+        if ( !resource.endsWith(".lua") )
+            resource += ".lua";
         if (QFile::exists( resource )) {
             dbg() << "findResource(): Found at " << resource << endl;
             return resource;
@@ -124,41 +123,41 @@ QStringList YZResourceMgr::resourceDirList( ResourceType type )
     QStringList dirCandidates;
 
     QString subdir;
-    switch( type ) {
-        case IndentResource:
-            subdir = "/indent/";
-            break;
-        case SyntaxHlResource:
-            subdir = "/syntax/";
-            break;
-        case ConfigScriptResource:
-        case UserScriptResource:
-            subdir = "/scripts/";
-            break;
-        case ConfigResource:
-        case WritableConfigResource:
-            subdir = "/";
-            break;
+    switch ( type ) {
+    case IndentResource:
+        subdir = "/indent/";
+        break;
+    case SyntaxHlResource:
+        subdir = "/syntax/";
+        break;
+    case ConfigScriptResource:
+    case UserScriptResource:
+        subdir = "/scripts/";
+        break;
+    case ConfigResource:
+    case WritableConfigResource:
+        subdir = "/";
+        break;
     }
-   
+
     if (type == UserScriptResource) dirCandidates << "./";
     dirCandidates << mYzisUserDir + subdir;
     char * s = getenv("YZISHOME");
     if (s != NULL) dirCandidates << (s + subdir);
-	dirCandidates << QString( PREFIX )+"/share/yzis/" + subdir;
+    dirCandidates << QString( PREFIX ) + "/share/yzis/" + subdir;
 
     return dirCandidates;
 }
 
 YZDebugStream& operator<<( YZDebugStream& out, const ResourceType & type )
 {
-    switch( type ) {
-        case IndentResource: out << "IndentResource"; break;
-        case SyntaxHlResource: out << "SyntaxHlResource"; break;
-        case ConfigScriptResource: out << "ConfigScriptResource"; break;
-        case UserScriptResource: out << "UserScriptResource"; break;
-        case ConfigResource: out << "ConfigResource"; break;
-        case WritableConfigResource: out << "WritableConfigResource"; break;
+    switch ( type ) {
+    case IndentResource: out << "IndentResource"; break;
+    case SyntaxHlResource: out << "SyntaxHlResource"; break;
+    case ConfigScriptResource: out << "ConfigScriptResource"; break;
+    case UserScriptResource: out << "UserScriptResource"; break;
+    case ConfigResource: out << "ConfigResource"; break;
+    case WritableConfigResource: out << "WritableConfigResource"; break;
     }
     return out;
 }

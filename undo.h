@@ -1,22 +1,22 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2004 Philippe Fremy <phil@freehackers.org>
- *  Copyright (C) 2004-2005 Mickael Marchand <mikmak@yzis.org>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
- **/
+*  Copyright (C) 2004 Philippe Fremy <phil@freehackers.org>
+*  Copyright (C) 2004-2005 Mickael Marchand <mikmak@yzis.org>
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License as published by the Free Software Foundation; either
+*  version 2 of the License, or (at your option) any later version.
+*
+*  This library is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+*  Library General Public License for more details.
+*
+*  You should have received a copy of the GNU Library General Public License
+*  along with this library; see the file COPYING.LIB.  If not, write to
+*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+*  Boston, MA 02110-1301, USA.
+**/
 
 /**
  * This file contains the classes necessary to handle undo/redo
@@ -37,26 +37,26 @@ class YZBuffer;
 
 struct YZBufferOperation
 {
-	enum OperationType {
-		OpAddText, //!< insert some characters inside the line
-		OpDelText, //!< delete some characters from the line
+    enum OperationType {
+        OpAddText,  //!< insert some characters inside the line
+        OpDelText,  //!< delete some characters from the line
 
-		// for OpAddLine and OpDelLine, the arguments col and text are ignored.
-		OpAddLine, //!< insert a line before the specified line.
-		OpDelLine  //!< delete the line from the buffer
+        // for OpAddLine and OpDelLine, the arguments col and text are ignored.
+        OpAddLine,  //!< insert a line before the specified line.
+        OpDelLine  //!< delete the line from the buffer
 
-	};
+    };
 
-	/**  Perform the buffer operation on the buffer passed in argument.
-	  *  If opposite is true, perform the opposite operation (used for undo)
-	  */
-	void performOperation( YZView* pView, bool opposite=false );
+    /**  Perform the buffer operation on the buffer passed in argument.
+      *  If opposite is true, perform the opposite operation (used for undo)
+      */
+    void performOperation( YZView* pView, bool opposite = false );
 
-	OperationType type;
-	QString text;
-	QPoint pos;
+    OperationType type;
+    QString text;
+    QPoint pos;
 
-	QString toString() const;
+    QString toString() const;
 };
 
 typedef QList<YZBufferOperation*> UndoItemBase;
@@ -67,68 +67,87 @@ typedef QList<YZBufferOperation*> UndoItemBase;
 class UndoItem : public UndoItemBase
 {
 public:
-	UndoItem();
+    UndoItem();
 
-	int startCursorX, startCursorY;
-	int endCursorX, endCursorY;
+    int startCursorX, startCursorY;
+    int endCursorX, endCursorY;
 };
 
 /** This class contains all the UndoItem. It stores them (commitUndoItem), do
   * or undo them.
   */
-class YZIS_EXPORT YZUndoBuffer {
+class YZIS_EXPORT YZUndoBuffer
+{
 public:
-	YZUndoBuffer( YZBuffer * );
-	virtual ~YZUndoBuffer();
+    YZUndoBuffer( YZBuffer * );
+    virtual ~YZUndoBuffer();
 
-	/*
-	 * * Store the previous undo item (if any) and start a new one
-	 */
-	void commitUndoItem( uint cursorX, uint cursorY );
+    /*
+     * * Store the previous undo item (if any) and start a new one
+     */
+    void commitUndoItem( uint cursorX, uint cursorY );
 
-	void addBufferOperation( YZBufferOperation::OperationType type, const QString & text, QPoint pos);
+    void addBufferOperation( YZBufferOperation::OperationType type, const QString & text, QPoint pos);
 
-	/**
-	 * Undo the last operations on the buffer, move backward in the undo list.
-	 * cursorX and cursorY will be set to the new cursor position
-	 */
-	void undo( YZView* pView );
+    /**
+     * Undo the last operations on the buffer, move backward in the undo list.
+     * cursorX and cursorY will be set to the new cursor position
+     */
+    void undo( YZView* pView );
 
-	/**
-	 * Redo the current operation on the buffer, move forward in the undo list
-	 * cursorX and cursorY will be set to the new cursor position
-	 */
-	void redo( YZView* pView );
+    /**
+     * Redo the current operation on the buffer, move forward in the undo list
+     * cursorX and cursorY will be set to the new cursor position
+     */
+    void redo( YZView* pView );
 
-	/*! Return whether it is possibe to issue a redo */
-	bool mayRedo() const;
+    /*! Return whether it is possibe to issue a redo */
+    bool mayRedo() const;
 
-	/*! Return whether it is possibe to issue an undo */
-	bool mayUndo() const;
+    /*! Return whether it is possibe to issue an undo */
+    bool mayUndo() const;
 
-	QString toString(const QString& msg="") const;
+    QString toString(const QString& msg = "") const;
 
-	/** Sets this while performing undo and redo, so that the operations
-	 * are not registered as new buffer commands */
-	void setInsideUndo( bool set ) { mInsideUndo = set; }
-	bool isInsideUndo() const { return mInsideUndo; }
+    /** Sets this while performing undo and redo, so that the operations
+     * are not registered as new buffer commands */
+    void setInsideUndo( bool set )
+    {
+        mInsideUndo = set;
+    }
+    bool isInsideUndo() const
+    {
+        return mInsideUndo;
+    }
 
-	void clearUndo() { mUndoItemList.clear(); }
-	void clearRedo() { removeUndoItemAfterCurrent(); }
-	unsigned int undoCount() const { return mCurrentIndex; }
-	unsigned int redoCount() const { return mUndoItemList.count() - mCurrentIndex; }
+    void clearUndo()
+    {
+        mUndoItemList.clear();
+    }
+    void clearRedo()
+    {
+        removeUndoItemAfterCurrent();
+    }
+    unsigned int undoCount() const
+    {
+        return mCurrentIndex;
+    }
+    unsigned int redoCount() const
+    {
+        return mUndoItemList.count() - mCurrentIndex;
+    }
 
 protected:
-	/** purge the undo list after the current item */
-	void removeUndoItemAfterCurrent();
+    /** purge the undo list after the current item */
+    void removeUndoItemAfterCurrent();
 
-	QString undoItemToString( UndoItem * item) const;
+    QString undoItemToString( UndoItem * item) const;
 
-	YZBuffer * mBuffer;
-	UndoItem * mFutureUndoItem;
-	QList<UndoItem*> mUndoItemList;
-	uint mCurrentIndex;
-	bool mInsideUndo;
+    YZBuffer * mBuffer;
+    UndoItem * mFutureUndoItem;
+    QList<UndoItem*> mUndoItemList;
+    uint mCurrentIndex;
+    bool mInsideUndo;
 };
 
 #endif // YZ_UNDO_H

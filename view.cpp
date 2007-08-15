@@ -34,7 +34,7 @@
 #include "mark.h"
 #include "action.h"
 #include "session.h"
-#include "kate/syntaxhighlight.h"
+#include "kate4/katehighlight.h"
 #include "linesearch.h"
 #include "folding.h"
 
@@ -1053,10 +1053,13 @@ bool YZView::drawNextLine( ) {
 			rHLnoAttribs = !rHLa;
 			rHLa = rHLa + workCursor.bufferX() - 1;
 			rHLAttributes = 0L;
-			YzisHighlighting * highlight = mBuffer->highlight();
+			KateHighlighting * highlight = mBuffer->highlight();
+#warning port me
 			if ( highlight )
-				rHLAttributes = highlight->attributes( opt_schema )->data( );
-			rHLAttributesLen = rHLAttributes ? highlight->attributes( opt_schema )->size() : 0;
+				rHLAttributes = highlight->attributes( "" )->data( );
+				//rHLAttributes = highlight->attributes( opt_schema )->data( );
+			rHLAttributesLen = rHLAttributes ? highlight->attributes( "" )->size() : 0;
+			//rHLAttributesLen = rHLAttributes ? highlight->attributes( opt_schema )->size() : 0;
 			return true;
 		}
 	} else {
@@ -1224,16 +1227,16 @@ int YZView::lineHeight() const {
 
 const YZColor& YZView::drawColor ( int col, int line ) const {
 	YZLine *yl = mBuffer->yzline( line );
-	YzisHighlighting * highlight = mBuffer->highlight();
+	KateHighlighting * highlight = mBuffer->highlight();
 	const uchar* hl=NULL;
-	YzisAttribute *at = NULL;
+	KateExtendedAttribute::Ptr at;
 	
 	if ( yl->length() != 0 && highlight ) {
 		hl = yl->attributes(); //attributes of this line
 		hl += col; // -1 ? //move pointer to the correct column
 		int len = hl ? highlight->attributes( 0 )->size() : 0 ; //length of attributes
 		int schema = getLocalIntegerOption("schema");
-		YzisAttribute *list = highlight->attributes( schema )->data( ); //attributes defined by the syntax highlighting document
+		QList<KateExtendedAttribute::Ptr> list = highlight->attributes( schema )->data( ); //attributes defined by the syntax highlighting document
 		at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
 	}
 	if ( opt_list && ( yl->data().at(col) == ' ' || yl->data().at(col) == tabChar ) )

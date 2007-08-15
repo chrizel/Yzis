@@ -36,7 +36,7 @@
 #include "mark.h"
 #include "yzisinfo.h"
 
-#include "kate/syntaxhighlight.h"
+#include "kate4/katehighlight.h"
 
 // for tildeExpand
 #include <sys/types.h>
@@ -83,7 +83,7 @@ struct YZBuffer::Private
 	
 	// pointers to sub-objects
 	YZUndoBuffer *undoBuffer;
-	YzisHighlighting *highlight;
+	KateHighlighting *highlight;
 	
 	//if a file is new, this one is true ;) (used at saving time)
 	bool isFileNew;
@@ -254,9 +254,9 @@ void  YZBuffer::appendLine(const QString &l) {
 	d->text->append(new YZLine(l));
 	if ( !d->isLoading && d->highlight != 0L ) {
 		bool ctxChanged = false;
-		QVector<uint> foldingList;
+		QVector<int> foldingList;
 		YZLine *l = new YZLine();
-		d->highlight->doHighlight(( d->text->count() >= 2 ? yzline( d->text->count() - 2 ) : l), yzline( d->text->count() - 1 ), &foldingList, &ctxChanged );
+		d->highlight->doHighlight(( d->text->count() >= 2 ? yzline( d->text->count() - 2 ) : l), yzline( d->text->count() - 1 ), foldingList, ctxChanged );
 		delete l;
 //		if ( ctxChanged ) dbg() << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
 	}
@@ -676,9 +676,12 @@ bool YZBuffer::save() {
 
 	saveYzisInfo( firstView() );
    
-	int hlMode = YzisHlManager::self()->detectHighlighting (this);
-	if ( hlMode >= 0 && d->highlight != YzisHlManager::self()->getHl( hlMode ) )
+#warning port me
+#if 0
+	int hlMode = KateHlManager::self()->detectHighlighting (this);
+	if ( hlMode >= 0 && d->highlight != KateHlManager::self()->getHl( hlMode ) )
 		setHighLight( hlMode );
+#endif
 	return true;
 }
 
@@ -768,7 +771,7 @@ void YZBuffer::statusChanged() {
 
 void YZBuffer::setHighLight( int mode, bool warnGUI ) {
     dbg().sprintf("setHighLight( %d, %d )", mode, warnGUI );
-	YzisHighlighting *h = YzisHlManager::self()->getHl( mode );
+	KateHighlighting *h = KateHlManager::self()->getHl( mode );
 
 	if ( h != d->highlight ) { //HL is changing
 		if ( d->highlight != 0L )
@@ -798,7 +801,7 @@ void YZBuffer::setHighLight( int mode, bool warnGUI ) {
 
 void YZBuffer::setHighLight( const QString& name ) {
     dbg().sprintf("setHighLight( %s )", qp(name) );
-	int hlMode = YzisHlManager::self()->nameFind( name );
+	int hlMode = KateHlManager::self()->nameFind( name );
 	if ( hlMode > 0 )
 		setHighLight( hlMode, true );
 }
@@ -811,9 +814,9 @@ void YZBuffer::makeAttribs() {
 	int hlLine = 0;
 	if ( !d->isLoading )
 		while ( hlLine < lineCount()) {
-			QVector<uint> foldingList;
+			QVector<int> foldingList;
 			YZLine *l = new YZLine();
-			d->highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : l), yzline( hlLine ), &foldingList, &ctxChanged );
+			d->highlight->doHighlight( ( hlLine >= 1 ? yzline( hlLine -1 ) : l), yzline( hlLine ), foldingList, ctxChanged );
 			delete l;
 			hlLine++;
 		}
@@ -975,9 +978,9 @@ bool YZBuffer::updateHL( int line ) {
 	if ( d->highlight == 0L ) return false;
 	while ( ctxChanged && hlLine < maxLine ) {
 		yl = yzline( hlLine );
-		QVector<uint> foldingList;
+		QVector<int> foldingList;
 		YZLine *l = new YZLine();
-		d->highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : l), yl, &foldingList, &ctxChanged );
+		d->highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : l), yl, foldingList, ctxChanged );
 		delete l;
 //		dbg() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
 		hlChanged = ctxChanged || hlChanged;
@@ -1004,9 +1007,9 @@ void YZBuffer::initHL( int line ) {
 	if ( d->highlight != 0L ) {
 		int hlLine = line;
 		bool ctxChanged = true;
-		QVector<uint> foldingList;
+		QVector<int> foldingList;
 		YZLine *l = new YZLine();
-		d->highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : l), yzline( hlLine ), &foldingList, &ctxChanged );
+		d->highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine -1 ) : l), yzline( hlLine ), foldingList, ctxChanged );
 		delete l;
 	}
 	d->isHLUpdating=false;
@@ -1014,11 +1017,14 @@ void YZBuffer::initHL( int line ) {
 
 void YZBuffer::detectHighLight() {
     dbg() << "detectHighLight()" << endl;
-	int hlMode = YzisHlManager::self()->detectHighlighting (this);
+#warning port me
+#if 0
+	int hlMode = KateHlManager::self()->detectHighlighting (this);
 	if ( hlMode >=0 ) {
 		setHighLight( hlMode );
     }
 	dbg() << "detectHighLight() done: " << hlMode << endl;
+#endif
 }
 
 
@@ -1199,7 +1205,7 @@ YZUndoBuffer * YZBuffer::undoBuffer() const { return d->undoBuffer; }
 YZAction* YZBuffer::action() const { return d->action; }
 YZViewMarker* YZBuffer::viewMarks() const { return d->viewMarks; }
 YZDocMark* YZBuffer::docMarks() const { return d->docMarks; }
-YzisHighlighting *YZBuffer::highlight() const { return d->highlight; }
+KateHighlighting *YZBuffer::highlight() const { return d->highlight; }
 const QString& YZBuffer::encoding() const { return d->currentEncoding; }
 bool YZBuffer::fileIsModified() const { return d->isModified; }
 bool YZBuffer::fileIsNew() const { return d->isFileNew; }

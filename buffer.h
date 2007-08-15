@@ -40,7 +40,7 @@ class YZView;
 class YZViewId;
 class YZInterval;
 
-class YzisHighlighting;
+class KateHighlighting;
 
 typedef QVector<YZLine*> YZBufferData;
 
@@ -364,7 +364,7 @@ public:
 	YZAction* action() const;
 	YZViewMarker* viewMarks() const;
 	YZDocMark* docMarks() const;
-	YzisHighlighting* highlight() const;
+	KateHighlighting* highlight() const;
 
 	//-------------------------------------------------------
 	// ------------ Highlighting
@@ -382,7 +382,7 @@ public:
 
     /** Set highlighting mode by name.
       *
-      * The highlighting mode is looked up using YzisHlManager::nameFind(). If
+      * The highlighting mode is looked up using KateHlManager::nameFind(). If
       * found, setHighLight( mode, true ) is called.
       */
 	void setHighLight( const QString& name );

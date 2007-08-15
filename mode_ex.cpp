@@ -33,7 +33,7 @@
 #include "selection.h"
 #include "mapping.h"
 #include "action.h"
-#include "kate/schema.h"
+#include "kate4/schema.h"
 #include "tags_interface.h"
 #include "search.h"
 #include "internal_options.h"
@@ -1078,7 +1078,7 @@ CmdState YZModeEx::highlight( const YZExCommandArgs& args ) {
 	YZSession::self()->getOptions()->setGroup("Global");
 
 	if ( args.view && args.view->myBuffer() ) {
-		YzisHighlighting *yzis = args.view->myBuffer()->highlight();
+		KateHighlighting *yzis = args.view->myBuffer()->highlight();
 		if (yzis) {
 			args.view->myBuffer()->makeAttribs();
 			args.view->sendRefreshEvent();

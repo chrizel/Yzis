@@ -24,7 +24,7 @@
 
 #include "yzis.h"
 #include "debug.h"
-#include "kate/schema.h"
+#include "kate4/schema.h"
 #include "buffer.h"
 #include "registers.h"
 #include "mapping.h"
@@ -123,7 +123,7 @@ void YZSession::init()
 
 	// create HlManager right from the beginning to ensure that this isn't
 	// done in YZSession::~YZSession
-	YzisHlManager::self();
+	KateHlManager::self();
 }
 
 void YZSession::initLanguage()
@@ -286,7 +286,7 @@ QString YZSession::toString() const
 YZSession::~YZSession() {
 	mYzisinfo->write(); // save yzisinfo
 	endModes();
-	delete YzisHlManager::self();
+	delete KateHlManager::self();
 	delete mSchemaManager;
 	delete mSearch;
 	delete events;

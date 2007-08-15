@@ -52,10 +52,12 @@ set(yzis_LIB_SRCS
 
    readtags/readtags.c 
 
-   kate/attribute.cpp 
-   kate/schema.cpp 
-   kate/syntaxdocument.cpp 
-   kate/syntaxhighlight.cpp 
+   kate4/kateextendedattribute.cpp 
+   kate4/schema.cpp 
+   kate4/katesyntaxmanager.cpp 
+   kate4/katesyntaxdocument.cpp 
+   kate4/katehighlight.cpp 
+   kate4/katehighlighthelpers.cpp
 )
 
 qt4_wrap_cpp(yzis_LIB_MOC_SRCS ${yzis_LIB_MOCS})

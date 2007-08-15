@@ -36,6 +36,7 @@ class YZLine
 		~YZLine();
 
 		const QString& data() const { return mData; }
+		const QString& string() const { return mData; }
 		void setData(const QString &data);
 		int length() const { return mData.length(); }
 		inline const QVector<short> &ctxArray () const { return m_ctx; };

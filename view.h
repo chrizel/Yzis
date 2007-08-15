@@ -27,6 +27,7 @@
 /* yzis */
 #include "viewiface.h"
 #include "viewcursor.h"
+#include "kate4/kateextendedattribute.h"
 
 class YZViewCursor;
 class YZColor;
@@ -34,7 +35,7 @@ class YZCursor;
 class YZBuffer;
 class YZSession;
 class YZSelectionPool;
-class YzisAttribute;
+//class KateExtendedAttribute;
 class YZLineSearch;
 class YZView;
 class YZModePool;
@@ -838,7 +839,7 @@ class YZIS_EXPORT YZView : public YZViewIface {
 
 		int rHLAttributesLen;
 
-		YzisAttribute *rHLAttributes;
+		QList<KateExtendedAttribute::Ptr> rHLAttributes;
 
 		// current line
 		QString  sCurLine;
@@ -901,7 +902,7 @@ class YZIS_EXPORT YZView : public YZViewIface {
 		YZViewCursor keepCursor;
 
 		//the current attribute being used by the GUI
-		YzisAttribute * curAt;
+		KateExtendedAttribute::Ptr curAt;
 		YZModePool* mModePool;
 
 		/**

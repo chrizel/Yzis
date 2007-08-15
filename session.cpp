@@ -240,16 +240,21 @@ void YZSession::frontendGuiReady()
 
 void YZSession::runLuaScript()
 {
-    if (mLuaScript.length()) {
-        QString retValue = YZLuaEngine::self()->source(mLuaScript);
-        dbg() << "Return Value:" << retValue << endl;
-        bool ok;
-        int retInt = retValue.toInt(&ok, 0);
-        if(ok == true){
-            exit(retInt);
-        }
-        exit(1);
-    }
+	dbg() << "runLuaScript(): Running lua script '" << mLuaScript << "'" << endl;
+    if (mLuaScript.length() == 0) {
+		exit(-2);
+	}
+
+	QString retValue = YZLuaEngine::self()->source(mLuaScript);
+	dbg().sprintf( "runLuaScript(): Return Value='%s'",  qp(retValue) );
+	bool ok;
+	int retInt = retValue.toInt(&ok, 0);
+	if (ok == false){
+		err().sprintf("runLuaScript(): Could not convert script return value '%s' to int: ", qp(retValue));
+		exit(-2);
+	} else {
+		exit(retInt);
+	}
 }
 
 void YZSession::sendInitkeys()

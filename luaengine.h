@@ -286,12 +286,16 @@ class YZIS_EXPORT YZLuaEngine {
           */
         static QString lua_table_to_string(lua_State*L, int index, int depth);
 
+        void setLuaReturnValue( const QString & value );
+  
 	protected:
         /** Lua state.
           *
           * The lua state is created in init() and destroyed in the destructor
           */
 		lua_State *L;
+
+    QString luaReturnValue;
 
 
 		/**

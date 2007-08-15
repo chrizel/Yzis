@@ -119,6 +119,7 @@ void YZLuaFuncs::registerLuaFuncs(lua_State *L)
 	lua_register(L,"mode",mode);
 	lua_register(L,"edit",edit);
 	lua_register(L,"loadplugin",loadplugin);
+	lua_register(L,"setLuaReturnValue",setLuaReturnValue);
     dbg() << HERE() << " done." << endl;
 }
 
@@ -477,6 +478,7 @@ int YZLuaFuncs::connect(lua_State *L ) {
 int YZLuaFuncs::source(lua_State *L ) {
 	if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "source", "filename")) return 0;
 	QString filename = QString::fromUtf8( (  char * )lua_tostring (  L, 1 ) );
+	lua_pop(L,1);
 
 	YZLuaEngine::self()->source(filename);
 
@@ -787,3 +789,13 @@ int YZLuaFuncs::loadplugin(lua_State *L ) {
 	return  0 ;
 }
 
+int YZLuaFuncs::setLuaReturnValue(lua_State *L )
+{
+	if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "setLuaReturnValue", "return value as string")) return 0;
+	QString luaReturnValue = QString::fromUtf8( (  char * )lua_tostring (  L, 1 ) );
+	lua_pop(L,1);
+	YZLuaEngine::self()->setLuaReturnValue( luaReturnValue );
+
+	YZASSERT_EQUALS( lua_gettop(L),  0  );
+	return  0 ;
+}

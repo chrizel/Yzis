@@ -222,7 +222,7 @@ void YZBuffer::delChar (QPoint pos, int count ) {
 	if (pos.x() >= l.length())
 		return;
 
-	ASSERT_POS_EXISTS( QString("YZBuffer::delChar(%1,%2,%3)").arg(pos.x()).arg(pos.y()).arg(count),pos)
+	ASSERT_POS_EXISTS( QString("YZBuffer::delChar(QPoint(%1,%2),%3)").arg(pos.x()).arg(pos.y()).arg(count),pos)
 
 	viewsInit( this, pos );
 
@@ -291,58 +291,56 @@ void  YZBuffer::insertLine(const QString &l, int line) {
 	viewsApply( this, line + 1 );
 }
 
-void YZBuffer::insertNewLine( int line, int col ) {
-	if (line == lineCount()) {
-		YZASSERT_MSG(line==lineCount() && col==0, QString("YZBuffer::insertNewLine on last line is only possible on col 0").arg(col).arg(line));
+void YZBuffer::insertNewLine( QPoint pos ) {
+	if (pos.y() == lineCount()) {
+		YZASSERT_MSG(pos.y()==lineCount() && pos.x()==0, QString("YZBuffer::insertNewLine on last line is only possible on col 0"));
 	} else {
-		ASSERT_LINE_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),line);
+		ASSERT_LINE_EXISTS(QString("YZBuffer::insertNewLine(QPoint(%1,%2))").arg(pos.y()).arg(pos.x()),pos.y());
 	}
-	if ( line == lineCount() ) {
+	if ( pos.y() == lineCount() ) {
 		//we are adding a new line at the end of the buffer by adding a new
 		//line at the beginning of the next unexisting line
 		//fake being at end of last line to make it work
-		line --;
-		col = textline(line).length();
+		pos = QPoint( textline(pos.y()-1).length(), pos.y()-1);
 	}
-	QPoint pos(col,line);
 	viewsInit( this, pos);
 
-	if ( line >= lineCount() ) return;
-	QString l=textline(line);
+	if ( pos.y() >= lineCount() ) return;
+	QString l=textline(pos.y());
 	if (l.isNull()) return;
 
-	ASSERT_PREV_POS_EXISTS(QString("YZBuffer::insertNewLine(%1,%2)").arg(col).arg(line),pos )
+	ASSERT_PREV_POS_EXISTS(QString("YZBuffer::insertNewLine(QPoint(%1,%2))").arg(pos.x()).arg(pos.y()),pos )
 
-	if (col > l.length() ) return;
+	if (pos.x() > l.length() ) return;
 
-	QString newline = l.mid( col );
+	QString newline = l.mid( pos.x() );
 	if ( newline.isNull() ) newline = QString( "" );
 
-	d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddLine, "", QPoint(col, line+1));
-	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpAddLine, "", QPoint(col, line+1));
+	d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddLine, "", QPoint(pos.x(), pos.y()+1));
+	if ( !d->isLoading ) d->swapFile->addToSwap( YZBufferOperation::OpAddLine, "", QPoint(pos.x(), pos.y()+1));
 	if (newline.length()) {
 		d->undoBuffer->addBufferOperation( YZBufferOperation::OpDelText, newline, pos);
-		d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddText, newline, QPoint(0, line+1));
+		d->undoBuffer->addBufferOperation( YZBufferOperation::OpAddText, newline, QPoint(0, pos.y()+1));
 		if ( !d->isLoading ) {
 			d->swapFile->addToSwap( YZBufferOperation::OpDelText, newline, pos);
-			d->swapFile->addToSwap( YZBufferOperation::OpAddText, newline, QPoint(0, line+1));
+			d->swapFile->addToSwap( YZBufferOperation::OpAddText, newline, QPoint(0, pos.y()+1));
 		}
 	}
 
 	//add new line
 	QVector<YZLine*>::iterator it = d->text->begin(), end = d->text->end();
 	int idx=0;
-	for ( ; idx < line+1 && it != end; ++it, ++idx )
+	for ( ; idx < pos.y()+1 && it != end; ++it, ++idx )
 		;
 	d->text->insert(it, new YZLine( newline ));
 
-	YZSession::self()->search()->shiftHighlight( this, line+1, 1 );
-	YZSession::self()->search()->highlightLine( this, line+1 );
+	YZSession::self()->search()->shiftHighlight( this, pos.y()+1, 1 );
+	YZSession::self()->search()->highlightLine( this, pos.y()+1 );
 	//replace old line
-	setTextline(line,l.left( col ));
-	updateHL( line + 1 );
+	setTextline(pos.y(),l.left( pos.x() ));
+	updateHL( pos.y() + 1 );
 
-	viewsApply( this, line+1 );
+	viewsApply( this, pos.y()+1 );
 }
 
 void YZBuffer::deleteLine( int line ) {

@@ -117,7 +117,7 @@ public:
 	 * @param col the position in line where to add a \n
 	 * @param line is the line after which a new line is added
 	 */
-	void insertNewLine( int col, int line);
+	void insertNewLine( QPoint pos);
 
 	/**
 	 * Deletes the given line

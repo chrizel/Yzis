@@ -56,7 +56,7 @@ void YZAction::insertChar( YZView* pView, const YZCursor pos, const QString& tex
     dbg() << "insertChar(" << pView->toString() << ", pos, " << text << ")" << endl;
 	configureViews(mBuffer);
 	if( pos.y() == mBuffer->lineCount() )
-		mBuffer->insertNewLine( pos.x(), pos.y() );
+		mBuffer->insertNewLine( pos );
 	else if (pos.y() > mBuffer->lineCount() )
 		return; // can't insert on non-existing lines
 	mBuffer->insertChar( pos, text );
@@ -97,7 +97,7 @@ void YZAction::deleteChar( YZView* pView, const YZCursor pos, int len ) {
 void YZAction::appendLine( YZView* pView, const QString& text ) {
 	configureViews(mBuffer);
 	int y = mBuffer->lineCount();
-	mBuffer->insertNewLine( 0, y );
+	mBuffer->insertNewLine( QPoint(0,y));
 	mBuffer->insertChar( QPoint(0,y), text );
 	pView->gotoxyAndStick( text.length(), y );
 	commitViewsChanges(mBuffer);
@@ -107,7 +107,7 @@ void YZAction::insertNewLine( YZView* pView, const YZCursor pos ) {
 	if( pos.y() > mBuffer->lineCount() ) 
 		return; // don't try on non-existing lines
 	configureViews(mBuffer);
-	mBuffer->insertNewLine( pos.x(), pos.y() );
+	mBuffer->insertNewLine( pos );
 	pView->gotoxyAndStick( 0, pos.y() + 1 );
 	commitViewsChanges(mBuffer);
 }

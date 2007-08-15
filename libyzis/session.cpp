@@ -241,10 +241,9 @@ void YZSession::frontendGuiReady()
 
 void YZSession::runLuaScript()
 {
+    if (mLuaScript.length() == 0) return;
+
     dbg() << "runLuaScript(): Running lua script '" << mLuaScript << "'" << endl;
-    if (mLuaScript.length() == 0) {
-        exit( -2);
-    }
 
     QString retValue = YZLuaEngine::self()->source(mLuaScript);
     dbg().sprintf( "runLuaScript(): Return Value='%s'", qp(retValue) );

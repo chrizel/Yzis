@@ -229,8 +229,8 @@ public:
 	/** Read a rcfile to adjust area output and debug level
     *
 	  * The syntax is:
-    * \li "level" ":" "debug" | "warning" | "error"<br>
-    * \li [area] ":" "debug" | "warning" | "error"<br>
+    * \li "level" ":" "debug" | "warning" | "error" | "deepdebug" <br>
+    * \li [area] ":" "debug" | "warning" | "error" | "deepdebug" <br>
     * \li "output" ":" [filename]<br>
 	  **/
 	void parseRcfile(const char * filename);

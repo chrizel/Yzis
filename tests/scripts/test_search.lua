@@ -59,7 +59,7 @@ TestSearch = {} --class
 	end
 
 if not _REQUIREDNAME then
-     return LuaUnit:run('TestSearch:test_search_case_sensitive') -- will execute only one test
-    -- LuaUnit:run('TestLuaBinding') -- will execute only one class of test
-    --LuaUnit:run() -- will execute all tests
+     -- ret = LuaUnit:run('TestSearch:test_search_case_sensitive') -- will execute only one test
+    ret = LuaUnit:run() -- will execute all tests
+    setLuaReturnValue( ret )
 end

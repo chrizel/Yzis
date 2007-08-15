@@ -55,8 +55,8 @@ TestLuaUnit = {} --class
         g()
     end
 
--- LuaUnit:run('TestLuaBinding:test_setline') -- will execute only one test
--- LuaUnit:run('TestLuaBinding') -- will execute only one class of test
+-- ret = LuaUnit:run('TestLuaUnit:test_assertEquals') -- will execute only one test
 -- LuaUnit.result.verbosity = 0
-return LuaUnit:run() -- will execute all tests
+ret = LuaUnit:run() -- will execute all tests
+setLuaReturnValue( ret )
 

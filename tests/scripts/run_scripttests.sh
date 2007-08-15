@@ -67,19 +67,22 @@ source pre_test.sh
 
 echo "Testing with: $YZIS $testname"
 
-yzis_arg1="-c"
-yzis_arg2="\":source $testname <ENTER><ESC>:qall!<ENTER>\""
+yzis_arg1="-s"
+yzis_arg2="$testname"
 
 if [ "$YZIS" == "gdb" ];
 then
 	# execution in gdb
 	LANG=C gdb $LIBYZISRUNNER_EXE -ex "set args $yzis_arg1 $yzis_arg2"
+	exitcode=$?
 else
 	# normal execution
 	echo LANG=C $YZIS $yzis_arg1 $yzis_arg2
 	LANG=C $YZIS $yzis_arg1 "$yzis_arg2"
+	exitcode=$?
+	echo "exitcode=$exitcode"
 fi
 
 source post_test.sh 
 
-
+exit $exitcode

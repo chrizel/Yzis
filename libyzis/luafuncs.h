@@ -554,7 +554,7 @@ public:
 	 */
 	static int cnoremap(lua_State *L);
 
-    /** \brief Find matching pair (parenthesis, brackets, ...)
+     /** \brief Find matching pair (parenthesis, brackets, ...)
      *
      * If a matching pair is found, the cursor is moved to this new position.
      * The pairs that can be matched are described in the option 'matchpairs'
@@ -590,15 +590,34 @@ public:
 	 */
 	 static int edit(lua_State *L);
 
-	/* \brief 
+	/** \brief 
 	 * Load a plugin using the resource manager
-     *
+      *
 	 * \b Arguments:
-     * - string, name of the plugin
-     *
-     * \b Returns: nothing
+      * - string, name of the plugin
+      *
+      * \b Returns: nothing
 	 */
 	static int loadplugin(lua_State *L );
+
+	/* \brief 
+	 * Set the script return value for Yzis.
+      *
+      * The return value is used as the exit code of Yzis when running a
+      * script with <i>yzis -s scriptname.lua</i>.
+      *
+      * The function does not stop the execution, it justs informs the yzis
+      * core of the return value and returns to lua.
+      *
+      * The recommendation is to put the function as the last one of the lua
+      * script.
+      *
+	 * \b Arguments:
+      * - string, the return value for Yzis
+      *
+      * \b Returns: nothing
+	 */
+	static int setLuaReturnValue(lua_State *L );
 };
 
 #endif // YZLUASCRIPTING

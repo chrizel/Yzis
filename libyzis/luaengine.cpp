@@ -281,7 +281,7 @@ QString YZLuaEngine::source( const QString& filename )
     lua_pushstring(L, "dofile");
     lua_gettable(L, LUA_GLOBALSINDEX);
     lua_pushstring(L, filename.toUtf8());
-    bool success = yzpcall(1, 1, _("Lua error when running file %1:\n").arg(filename) );
+    /*bool success = */ yzpcall(1, 1, _("Lua error when running file %1:\n").arg(filename) );
     cleanLuaStack( L ); // in case sourcing the file left something on the stack
     return luaReturnValue;
 }

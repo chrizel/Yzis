@@ -1,7 +1,7 @@
 //
 // C++ Interface: kyzisbuffer
 //
-// Description: 
+// Description:
 //
 //
 // Author: Craig Howard <craig@choward.ca>, (C) 2005
@@ -17,7 +17,7 @@
 class KYZTextEditorIface;
 
 /**
-	@author Craig Howard <craig@choward.ca>
+ @author Craig Howard <craig@choward.ca>
 */
 class KYZisBuffer : public YZBuffer
 {
@@ -25,17 +25,26 @@ public:
     KYZisBuffer();
 
     virtual ~KYZisBuffer();
-	
-	void setTextEditorIface( KYZTextEditorIface *iface ) { m_iface = iface; }
-	KYZTextEditorIface *getTextEditorIface() { return m_iface; }
-	const KYZTextEditorIface *getTextEditorIface() const { return m_iface; }
+
+    void setTextEditorIface( KYZTextEditorIface *iface )
+    {
+        m_iface = iface;
+    }
+    KYZTextEditorIface *getTextEditorIface()
+    {
+        return m_iface;
+    }
+    const KYZTextEditorIface *getTextEditorIface() const
+    {
+        return m_iface;
+    }
 
 private:
-	virtual void makeActive();
-	virtual void makeHidden();
-	virtual void makeInactive();
-	
-	KYZTextEditorIface *m_iface;
+    virtual void makeActive();
+    virtual void makeHidden();
+    virtual void makeInactive();
+
+    KYZTextEditorIface *m_iface;
 };
 
 #endif

@@ -8,12 +8,12 @@ void TestYZDebugBackend::testAreaLevel()
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
 
-    QString a1="area1", a2="area2";
+    QString a1 = "area1", a2 = "area2";
 
     QCOMPARE( dbe->areaLevel(a1), YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->areaLevel(a2), YZ_DEBUG_LEVEL );
 
-    dbe->setAreaLevel( a1, YZ_ERROR_LEVEL );    
+    dbe->setAreaLevel( a1, YZ_ERROR_LEVEL );
     QCOMPARE( dbe->areaLevel(a1), YZ_ERROR_LEVEL );
     QCOMPARE( dbe->areaLevel(a2), YZ_DEBUG_LEVEL );
 
@@ -34,18 +34,18 @@ void TestYZDebugBackend::testSubAreaLevel()
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
 
-    QString a1="area1", a11="area1.1bis", a12="area1.2bis";
+    QString a1 = "area1", a11 = "area1.1bis", a12 = "area1.2bis";
 
     QCOMPARE( dbe->areaLevel(a1), YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->areaLevel(a11), YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->areaLevel(a12), YZ_DEBUG_LEVEL );
 
-    dbe->setAreaLevel( a1, YZ_ERROR_LEVEL );    
+    dbe->setAreaLevel( a1, YZ_ERROR_LEVEL );
     QCOMPARE( dbe->areaLevel(a1), YZ_ERROR_LEVEL );
     QCOMPARE( dbe->areaLevel(a11), YZ_ERROR_LEVEL );
     QCOMPARE( dbe->areaLevel(a12), YZ_ERROR_LEVEL );
 
-    dbe->setAreaLevel( a11, YZ_WARNING_LEVEL );    
+    dbe->setAreaLevel( a11, YZ_WARNING_LEVEL );
     QCOMPARE( dbe->areaLevel(a1), YZ_ERROR_LEVEL );
     QCOMPARE( dbe->areaLevel(a11), YZ_WARNING_LEVEL );
     QCOMPARE( dbe->areaLevel(a12), YZ_ERROR_LEVEL );

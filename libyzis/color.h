@@ -1,21 +1,21 @@
 /*  This file is part of the Yzis libraries
- *  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
- **/
+*  Copyright (C) 2005 Loic Pauleve <panard@inzenet.org>
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License as published by the Free Software Foundation; either
+*  version 2 of the License, or (at your option) any later version.
+*
+*  This library is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+*  Library General Public License for more details.
+*
+*  You should have received a copy of the GNU Library General Public License
+*  along with this library; see the file COPYING.LIB.  If not, write to
+*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+*  Boston, MA 02110-1301, USA.
+**/
 
 #ifndef YZ_COLOR_H
 #define YZ_COLOR_H
@@ -41,65 +41,69 @@ typedef unsigned int QRgb;
   *
   * @short Color Handling for Yzis
   */
-class YZIS_EXPORT YZColor {
+class YZIS_EXPORT YZColor
+{
 
-	public:
-        /** Creates an invalid color */
-		YZColor();
+public:
+    /** Creates an invalid color */
+    YZColor();
 
-        /** Creates valid color from a rgb triplet.
-          * \sa setRgb() */
-		YZColor( QRgb rgb );
+    /** Creates valid color from a rgb triplet.
+      * \sa setRgb() */
+    YZColor( QRgb rgb );
 
-		YZColor( Qt::GlobalColor color );
+    YZColor( Qt::GlobalColor color );
 
-        /** Creates color from a rgb triplet as a string
-          * \sa setNamedColor() */
-		YZColor( const QString &name ) { setNamedColor( name ); }
-		virtual ~YZColor();
+    /** Creates color from a rgb triplet as a string
+      * \sa setNamedColor() */
+    YZColor( const QString &name )
+    {
+        setNamedColor( name );
+    }
+    virtual ~YZColor();
 
-		void setRgb( QRgb );
-		/**
-		 * @arg name can take the form:
-		 * "#RGB" or "#RRGGBB"
-		 * 
-		 * #123 yields the color #112233
-         *
-         * If the format is not correct, the color will remain invalid.
-		 */
-		void setNamedColor( const QString &name );
+    void setRgb( QRgb );
+    /**
+     * @arg name can take the form:
+     * "#RGB" or "#RRGGBB"
+     * 
+     * #123 yields the color #112233
+           *
+           * If the format is not correct, the color will remain invalid.
+     */
+    void setNamedColor( const QString &name );
 
-        /** Return whether the color is valid.
-          *
-          * Initially, the color is set as invalid. It becomes valid
-          * after a successful setNamedColor() or setRgb().
-          */
-		bool isValid() const;
+    /** Return whether the color is valid.
+      *
+      * Initially, the color is set as invalid. It becomes valid
+      * after a successful setNamedColor() or setRgb().
+      */
+    bool isValid() const;
 
-		/*
-		 * mark the color as not valid
-		 */
-		void invalidate();
+    /*
+     * mark the color as not valid
+     */
+    void invalidate();
 
-		QRgb rgb() const;
+    QRgb rgb() const;
 
-		/** Return a string in the form #RRGGBB */
-		QString name() const;
+    /** Return a string in the form #RRGGBB */
+    QString name() const;
 
-		int red() const;
-		int green() const;
-		int blue() const;
+    int red() const;
+    int green() const;
+    int blue() const;
 
-		bool operator!=( const YZColor& color ) const;
-	
-	private:
-		
-		// rgb
-		int m_red;
-		int m_green;
-		int m_blue;
+    bool operator!=( const YZColor& color ) const;
 
-		bool m_valid;
+private:
+
+    // rgb
+    int m_red;
+    int m_green;
+    int m_blue;
+
+    bool m_valid;
 };
 
 #endif

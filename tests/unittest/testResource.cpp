@@ -33,7 +33,7 @@ bool removeTree( const QString & path )
 
     stack.append( QFileInfo(path).absoluteFilePath() );
 
-    while( ! stack.isEmpty()) {
+    while ( ! stack.isEmpty()) {
         //cout << "Stack: " << qp(stack.join(" , ")) << endl;
         f = stack.takeLast();
         //cout << "f=" << qp(f) << endl;
@@ -64,7 +64,7 @@ bool removeTree( const QString & path )
   *
   * @return true on success
   */
-bool createFile( QString path, QString content=QString() )
+bool createFile( QString path, QString content = QString() )
 {
     FILE * f = fopen( path.toUtf8(), "w" );
     if (! f) return false;
@@ -76,15 +76,15 @@ bool createFile( QString path, QString content=QString() )
 void TestResource::initTestCase()
 {
     mInitSuccess = true;
-    QString yzisDir = QDir::homePath()+"/.yzis/";
-    QString saveYzisDir = QDir::homePath()+"/.yzis_saved_for_tests/";
+    QString yzisDir = QDir::homePath() + "/.yzis/";
+    QString saveYzisDir = QDir::homePath() + "/.yzis_saved_for_tests/";
 
     QVERIFY( removeTree( saveYzisDir ) );
 
     if (QFile::exists( saveYzisDir )) {
         mInitSuccess = false;
         QFAIL( QString("Can not save .yzis to " + saveYzisDir + ". Aborting test.").toUtf8() );
-        return;
+        return ;
     }
 
     if (QFile::exists( yzisDir ) ) {
@@ -99,15 +99,15 @@ void TestResource::initTestCase()
 void TestResource::cleanupTestCase()
 {
     QVERIFY( mInitSuccess );
-    QString yzisDir = QDir::homePath()+"/.yzis/";
-    QString saveYzisDir = QDir::homePath()+"/.yzis_saved_for_tests/";
+    QString yzisDir = QDir::homePath() + "/.yzis/";
+    QString saveYzisDir = QDir::homePath() + "/.yzis_saved_for_tests/";
 
     QVERIFY( removeTree( yzisDir ) );
 
     // restore .yzis
     if (!QFile::exists( saveYzisDir ) ) {
         // nothing to do
-        return;
+        return ;
     }
 
     // protect .yzis by saving it
@@ -119,9 +119,9 @@ void TestResource::cleanupTestCase()
 void TestResource::init()
 {
     QVERIFY( removeTree( "./tmpfiles" ) );
-    QVERIFY( removeTree( QDir::homePath()+"/.yzis" ) );
+    QVERIFY( removeTree( QDir::homePath() + "/.yzis" ) );
     QVERIFY( removeTree( "./yzishome" ) );
-    QDir d= QDir::current();
+    QDir d = QDir::current();
     QVERIFY( d.mkdir( "tmpfiles" ) );
     QVERIFY( d.mkdir( "yzishome" ) );
     QVERIFY( d.cd("yzishome" ) );
@@ -134,7 +134,7 @@ void TestResource::init()
 void TestResource::cleanup()
 {
     if (mResMgr != NULL) delete mResMgr;
-    QVERIFY( removeTree( QDir::homePath()+"/.yzis" ) );
+    QVERIFY( removeTree( QDir::homePath() + "/.yzis" ) );
     QVERIFY( removeTree( "./yzishome" ) );
     QVERIFY( removeTree( "./tmpfiles" ) );
 }
@@ -165,13 +165,13 @@ void TestResource::testResourceMgrCreatesYzisDir()
     // resource manager is alrady created, remove it
     delete mResMgr;
     mResMgr = NULL;
-    QVERIFY( removeTree( QDir::homePath()+"/.yzis" ) );
+    QVERIFY( removeTree( QDir::homePath() + "/.yzis" ) );
 
-    QVERIFY( ! QFile::exists( QDir::homePath() + "/.yzis"  ) );
+    QVERIFY( ! QFile::exists( QDir::homePath() + "/.yzis" ) );
     mResMgr = new YZResourceMgr();
     QVERIFY( (mResMgr != NULL) );
 
-    QVERIFY( QFile::exists( QDir::homePath() + "/.yzis"  ) );
+    QVERIFY( QFile::exists( QDir::homePath() + "/.yzis" ) );
 }
 
 void TestResource::testYzisHomeEnv()
@@ -213,14 +213,14 @@ void TestResource::testUserScript()
     QCOMPARE( resource, QString() );
 
     subTest( UserScriptResource, "yzishome/scripts/", "f1.lua", true );
-    subTest( UserScriptResource, QDir::homePath()+"/.yzis/scripts/", "f1.lua", true );
+    subTest( UserScriptResource, QDir::homePath() + "/.yzis/scripts/", "f1.lua", true );
     subTest( UserScriptResource, "", "tmpfiles/f1.lua", true );
     subTest( UserScriptResource, "", QFileInfo("tmpfiles/f2.lua").absoluteFilePath() , true );
 
 }
 
 
-    // syntax file is not looked up reolative or absolute
+// syntax file is not looked up reolative or absolute
 
 void TestResource::testConfigScript()
 {
@@ -236,7 +236,7 @@ void TestResource::testConfigScript()
     QVERIFY( resource.isEmpty() );
 
     subTest( ConfigScriptResource, "yzishome/scripts/", "f1.lua", true );
-    subTest( ConfigScriptResource, QDir::homePath()+"/.yzis/scripts/", "f1.lua", true );
+    subTest( ConfigScriptResource, QDir::homePath() + "/.yzis/scripts/", "f1.lua", true );
     subTest( ConfigScriptResource, "", "tmpfiles/f1.lua", false );
     subTest( ConfigScriptResource, "", QFileInfo("tmpfiles/f2.lua").absoluteFilePath() , true );
 
@@ -256,7 +256,7 @@ void TestResource::testSyntaxFile()
     QVERIFY( resource.isEmpty() );
 
     subTest( SyntaxHlResource, "yzishome/syntax/", "f1.xml", true );
-    subTest( SyntaxHlResource, QDir::homePath()+"/.yzis/syntax/", "f1.xml", true );
+    subTest( SyntaxHlResource, QDir::homePath() + "/.yzis/syntax/", "f1.xml", true );
     subTest( SyntaxHlResource, "", "tmpfiles/f1.xml", false );
     subTest( SyntaxHlResource, "", QFileInfo("tmpfiles/f2.xml").absoluteFilePath() , true );
 
@@ -276,7 +276,7 @@ void TestResource::testIndentFile()
     QVERIFY( resource.isEmpty() );
 
     subTest( IndentResource, "yzishome/indent/", "f1.lua", true );
-    subTest( IndentResource, QDir::homePath()+"/.yzis/indent/", "f1.lua", true );
+    subTest( IndentResource, QDir::homePath() + "/.yzis/indent/", "f1.lua", true );
     subTest( IndentResource, "", "tmpfiles/f1.lua", false );
     subTest( IndentResource, "", QFileInfo("tmpfiles/f2.lua").absoluteFilePath() , true );
 
@@ -292,7 +292,7 @@ void TestResource::testConfigFile()
     QVERIFY( resource.isEmpty() );
 
     subTest( ConfigResource, "yzishome/", "f1.conf", true );
-    subTest( ConfigResource, QDir::homePath()+"/.yzis/", "f1.conf", true );
+    subTest( ConfigResource, QDir::homePath() + "/.yzis/", "f1.conf", true );
     subTest( ConfigResource, "", "tmpfiles/f1.conf", false );
     subTest( ConfigResource, "", QFileInfo("tmpfiles/f2.conf").absoluteFilePath() , true );
 
@@ -309,7 +309,7 @@ void TestResource::testWConfigFile()
     QVERIFY( d.cd(".yzis") );
     d = QDir( "yzishome" );
 
-    
+
     // create file in yzishome, .yzis is returned
     fname = "f1.conf";
     expected = QFileInfo( QDir::homePath() + "/.yzis/" + fname).absoluteFilePath();

@@ -1,7 +1,7 @@
 //
 // C++ Implementation: kyzisbuffer
 //
-// Description: 
+// Description:
 //
 //
 // Author: Craig Howard <craig@choward.ca>, (C) 2005
@@ -15,34 +15,34 @@
 #include "ktexteditoriface.h"
 
 KYZisBuffer::KYZisBuffer()
- : YZBuffer()
+        : YZBuffer()
 {
-	m_iface = 0;
+    m_iface = 0;
 }
 
 
 KYZisBuffer::~KYZisBuffer()
 {
-	delete m_iface;
+    delete m_iface;
 }
 
 void KYZisBuffer::makeActive()
 {
-	if ( !m_iface ) {
-		m_iface = static_cast<KYZisFactory*>(YZSession::me)->createTextEditorIface();
-		m_iface->setBuffer( this );
-		setTextEditorIface( m_iface );
-	}
+    if ( !m_iface ) {
+        m_iface = static_cast<KYZisFactory*>(YZSession::me)->createTextEditorIface();
+        m_iface->setBuffer( this );
+        setTextEditorIface( m_iface );
+    }
 }
 
 void KYZisBuffer::makeInactive()
 {
-	delete m_iface;
-	m_iface = 0;
+    delete m_iface;
+    m_iface = 0;
 }
 
 void KYZisBuffer::makeHidden()
 {
-	delete m_iface;
-	m_iface = 0;
+    delete m_iface;
+    m_iface = 0;
 }

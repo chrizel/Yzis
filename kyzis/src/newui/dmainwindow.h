@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Alexander Dymo                                  *
- *   adymo@kdevelop.org                                                    *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Library General Public License as       *
- *   published by the Free Software Foundation; either version 2 of the    *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU Library General Public     *
- *   License along with this program; if not, write to the                 *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
- ***************************************************************************/
+*   Copyright (C) 2005 by Alexander Dymo                                  *
+*   adymo@kdevelop.org                                                    *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU Library General Public License as       *
+*   published by the Free Software Foundation; either version 2 of the    *
+*   License, or (at your option) any later version.                       *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU Library General Public     *
+*   License along with this program; if not, write to the                 *
+*   Free Software Foundation, Inc.,                                       *
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+***************************************************************************/
 #ifndef DMAINWINDOW_H
 #define DMAINWINDOW_H
 
@@ -25,12 +25,14 @@
 #include "ddockwindow.h"
 
 class DTabWidget;
-namespace Ideal {
-    class DockSplitter;
+namespace Ideal
+{
+class DockSplitter;
 }
 
 /**Main window which provides simplified IDEA mode.*/
-class DMainWindow: public KParts::MainWindow {
+class DMainWindow: public KParts::MainWindow
+{
     Q_OBJECT
 public:
     DMainWindow(QWidget *parent = 0, const char *name = 0);
@@ -58,7 +60,7 @@ protected slots:
     when hover close button is pressed.*/
     virtual void closeTab(QWidget*);
     /**This does nothing. Reimplement in subclass to show tab context menu.*/
-    virtual void tabContext(QWidget*,const QPoint &);
+    virtual void tabContext(QWidget*, const QPoint &);
 
 signals:
     void widgetChanged(QWidget *);

@@ -1,18 +1,18 @@
 /*
-    Copyright (c) 2003-2005 Mickael Marchand <mikmak@yzis.org>
+   Copyright (c) 2003-2005 Mickael Marchand <mikmak@yzis.org>
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of version 2 of the GNU General Public
-    License as published by the Free Software Foundation
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of version 2 of the GNU General Public
+   License as published by the Free Software Foundation
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #ifndef KYZIS_H
@@ -42,13 +42,13 @@ class KRecentFilesAction;
 
 class Kyzis : public DMainWindow, public DCOPObject
 {
-	K_DCOP
-	Q_OBJECT
+    K_DCOP
+    Q_OBJECT
 public:
     /**
-	 * Constructs a Kyzis widget
-	 * @param w the parent widget
-	 * @param initialKeys the string if initial key strokes, very useful for
+    * Constructs a Kyzis widget
+    * @param w the parent widget
+    * @param initialKeys the string if initial key strokes, very useful for
      * testing.
      */
     Kyzis(QWidget *w, const QString& initialKeys);
@@ -68,7 +68,10 @@ public:
 
     KParts::ReadWritePart* getCurrentPart();
 
-    void createKPartGUI( KParts::ReadWritePart *part ) { createGUI( part ); }
+    void createKPartGUI( KParts::ReadWritePart *part )
+    {
+        createGUI( part );
+    }
 
     virtual void embedPartView(QWidget *view, const QString &title, const QString& toolTip = QString());
     virtual void embedSelectView(QWidget *view, const QString &title, const QString &toolTip);
@@ -83,14 +86,14 @@ public:
 
 
 k_dcop:
-	/**
-	 * Sets the caption of the tab
-	 */
-	void setCaption( const YZViewId &id, const QString& caption );
+    /**
+     * Sets the caption of the tab
+     */
+    void setCaption( const YZViewId &id, const QString& caption );
 
 public slots:
-	void init();
-	void closeTab(QWidget *);
+    void init();
+    void closeTab(QWidget *);
     void closeTab();
 
 private slots:
@@ -105,9 +108,9 @@ private slots:
     void preferences();
     void gotoNextWindow();
     void gotoPreviousWindow();
-//    void gotoFirstWindow();
+    //    void gotoFirstWindow();
     void gotoLastWindow();
-//    void raiseEditor();
+    //    void raiseEditor();
 
 private:
     void setupWindowMenu();
@@ -115,18 +118,18 @@ private:
 
 private:
     void setupActions();
-	virtual bool queryClose();
+    virtual bool queryClose();
 
     KToggleAction *m_toolbarAction;
     KRecentFilesAction *m_openRecentAction;
-	int mBuffers;
-	unsigned int mViews;
+    int mBuffers;
+    unsigned int mViews;
 
-	QString m_initialCommand;
-	QMap<QWidget*, Qt::DockWidgetArea> m_docks;
-	KMenu *m_windowMenu;
-	typedef QPair<int, KUrl> WinInfo;
-	QList<WinInfo> m_windowList;
+    QString m_initialCommand;
+    QMap<QWidget*, Qt::DockWidgetArea> m_docks;
+    KMenu *m_windowMenu;
+    typedef QPair<int, KUrl> WinInfo;
+    QList<WinInfo> m_windowList;
 
 };
 

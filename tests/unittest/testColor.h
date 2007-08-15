@@ -12,8 +12,8 @@ private slots:
     void testColor1();
 
 protected:
-    void subTestColor( const QString& name, int red, int green, int blue, 
-        const QString& hex, const QString& hex_short );
+    void subTestColor( const QString& name, int red, int green, int blue,
+                       const QString& hex, const QString& hex_short );
 };
 
 #endif // TEST_COLOR_H

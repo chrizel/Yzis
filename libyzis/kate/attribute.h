@@ -1,20 +1,20 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License version 2 as published by the Free Software Foundation
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
- **/
+*  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License version 2 as published by the Free Software Foundation
+*
+*  This library is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+*  Library General Public License for more details.
+*
+*  You should have received a copy of the GNU Library General Public License
+*  along with this library; see the file COPYING.LIB.  If not, write to
+*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+*  Boston, MA 02110-1301, USA.
+**/ 
 /**
  * This file was originally taken from Kate, KDE editor
    Kate's code is published under the LGPL version 2 (and 2 only not any later 
@@ -35,107 +35,143 @@
 class YzisAttribute
 {
 public:
-  enum items {
-    Weight = 0x1,
-    Bold = 0x2,
-    Italic = 0x4,
-    Underline = 0x8,
-    StrikeOut = 0x10,
-    Outline = 0x20,
-    TextColor = 0x40,
-    SelectedTextColor = 0x80,
-    BGColor = 0x100,
-    SelectedBGColor = 0x200,
-	Overline = 0x400
-  };
+    enum items {
+        Weight = 0x1,
+        Bold = 0x2,
+        Italic = 0x4,
+        Underline = 0x8,
+        StrikeOut = 0x10,
+        Outline = 0x20,
+        TextColor = 0x40,
+        SelectedTextColor = 0x80,
+        BGColor = 0x100,
+        SelectedBGColor = 0x200,
+        Overline = 0x400
+    };
 
-  YzisAttribute();
-  virtual ~YzisAttribute();
+    YzisAttribute();
+    virtual ~YzisAttribute();
 
-  YZFont font(const YZFont& ref) const;
+    YZFont font(const YZFont& ref) const;
 
-  inline bool itemSet(int item) const
-  { return item & m_itemsSet; };
+    inline bool itemSet(int item) const
+    {
+        return item & m_itemsSet;
+    };
 
-  inline bool isSomethingSet() const
-  { return m_itemsSet; };
+    inline bool isSomethingSet() const
+    {
+        return m_itemsSet;
+    };
 
-  inline int itemsSet() const
-  { return m_itemsSet; };
+    inline int itemsSet() const
+    {
+        return m_itemsSet;
+    };
 
-  inline void clearAttribute(int item)
-  { m_itemsSet &= (~item); }
+    inline void clearAttribute(int item)
+    {
+        m_itemsSet &= (~item);
+    }
 
-  inline int weight() const
-  { return m_weight; };
+    inline int weight() const
+    {
+        return m_weight;
+    };
 
-  void setWeight(int weight);
+    void setWeight(int weight);
 
-  inline bool bold() const
-  { return weight() >= YZFont::Bold; };
+    inline bool bold() const
+    {
+        return weight() >= YZFont::Bold;
+    };
 
-  void setBold(bool enable = true);
+    void setBold(bool enable = true);
 
-  inline bool italic() const
-  { return m_italic; };
+    inline bool italic() const
+    {
+        return m_italic;
+    };
 
-  void setItalic(bool enable = true);
+    void setItalic(bool enable = true);
 
-  inline bool overline() const
-  { return m_overline; };
+    inline bool overline() const
+    {
+        return m_overline;
+    };
 
-  void setOverline(bool enable = true);
+    void setOverline(bool enable = true);
 
-  inline bool underline() const
-  { return m_underline; };
+    inline bool underline() const
+    {
+        return m_underline;
+    };
 
-  void setUnderline(bool enable = true);
+    void setUnderline(bool enable = true);
 
-  inline bool strikeOut() const
-  { return m_strikeout; };
+    inline bool strikeOut() const
+    {
+        return m_strikeout;
+    };
 
-  void setStrikeOut(bool enable = true);
+    void setStrikeOut(bool enable = true);
 
-  inline const YZColor& outline() const
-  { return m_outline; };
+    inline const YZColor& outline() const
+    {
+        return m_outline;
+    };
 
-  void setOutline(const YZColor& color);
+    void setOutline(const YZColor& color);
 
-  inline const YZColor& textColor() const
-  { return m_textColor; };
+    inline const YZColor& textColor() const
+    {
+        return m_textColor;
+    };
 
-  void setTextColor(const YZColor& color);
+    void setTextColor(const YZColor& color);
 
-  inline const YZColor& selectedTextColor() const
-  { return m_selectedTextColor; };
+    inline const YZColor& selectedTextColor() const
+    {
+        return m_selectedTextColor;
+    };
 
-  void setSelectedTextColor(const YZColor& color);
+    void setSelectedTextColor(const YZColor& color);
 
-  inline const YZColor& bgColor() const
-  { return m_bgColor; };
+    inline const YZColor& bgColor() const
+    {
+        return m_bgColor;
+    };
 
-  void setBGColor(const YZColor& color);
+    void setBGColor(const YZColor& color);
 
-  inline const YZColor& selectedBGColor() const
-  { return m_selectedBGColor; };
+    inline const YZColor& selectedBGColor() const
+    {
+        return m_selectedBGColor;
+    };
 
-  void setSelectedBGColor(const YZColor& color);
+    void setSelectedBGColor(const YZColor& color);
 
-  YzisAttribute& operator+=(const YzisAttribute& a);
+    YzisAttribute& operator+=(const YzisAttribute& a);
 
-  friend bool operator ==(const YzisAttribute& h1, const YzisAttribute& h2);
-  friend bool operator !=(const YzisAttribute& h1, const YzisAttribute& h2);
+    friend bool operator ==(const YzisAttribute& h1, const YzisAttribute& h2);
+    friend bool operator !=(const YzisAttribute& h1, const YzisAttribute& h2);
 
-  virtual void changed() { m_changed = true; };
-  bool isChanged() { bool ret = m_changed; m_changed = false; return ret; };
+    virtual void changed()
+    {
+        m_changed = true;
+    };
+    bool isChanged()
+    {
+        bool ret = m_changed; m_changed = false; return ret;
+    };
 
-  void clear();
+    void clear();
 
 private:
-  int m_weight;
-  bool m_italic, m_underline, m_overline, m_strikeout, m_changed;
-  YZColor m_outline, m_textColor, m_selectedTextColor, m_bgColor, m_selectedBGColor;
-  int m_itemsSet;
+    int m_weight;
+    bool m_italic, m_underline, m_overline, m_strikeout, m_changed;
+    YZColor m_outline, m_textColor, m_selectedTextColor, m_bgColor, m_selectedBGColor;
+    int m_itemsSet;
 };
 
 #endif

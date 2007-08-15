@@ -1,18 +1,18 @@
 /*
-    Copyright (c) 2003-2005 Mickael Marchand <mikmak@yzis.org>
+   Copyright (c) 2003-2005 Mickael Marchand <mikmak@yzis.org>
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of version 2 of the GNU General Public
-    License as published by the Free Software Foundation
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of version 2 of the GNU General Public
+   License as published by the Free Software Foundation
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 /* This file was copied from the KDE project (Kate)
@@ -30,82 +30,80 @@
 #include <qlayout.h>
 #include "debug.h"
 
-Konsole::Konsole (QWidget* kvm, const char* name) : QWidget (kvm, name),part(0)
+Konsole::Konsole (QWidget* kvm, const char* name) : QWidget (kvm, name), part(0)
 {
     lo = new QVBoxLayout(this);
-    m_kvm=kvm;
+    m_kvm = kvm;
 }
 
 Konsole::~Konsole ()
 {
-	delete part;
+    delete part;
 }
 
 void Konsole::loadConsoleIfNeeded()
 {
-  yzDebug()<<"================================ loadConsoleIfNeeded()"<<endl;
-  if (part!=0) return;
-/*  if (!kapp->loopLevel()) {
-	connect(kapp,SIGNAL(onEventLoopEnter()),this,SLOT(loadConsoleIfNeeded()));
-	return;
-  }
-  if (!topLevelWidget() || !parentWidget()) return;
-  if (!topLevelWidget() || !isVisibleTo(topLevelWidget())) return;
-*/
-  yzDebug()<<"CREATING A CONSOLE PART"<<endl;
+    yzDebug() << "================================ loadConsoleIfNeeded()" << endl;
+    if (part != 0) return ;
+    /*  if (!kapp->loopLevel()) {
+     connect(kapp,SIGNAL(onEventLoopEnter()),this,SLOT(loadConsoleIfNeeded()));
+     return;
+      }
+      if (!topLevelWidget() || !parentWidget()) return;
+      if (!topLevelWidget() || !isVisibleTo(topLevelWidget())) return;
+    */
+    yzDebug() << "CREATING A CONSOLE PART" << endl;
 
     KLibFactory *factory = 0;
     factory = KLibLoader::self()->factory("libkonsolepart");
     part = 0L;
-      if (factory)
-        {
-          part = static_cast<KParts::ReadOnlyPart *>(factory->create(this,"libkonsolepart",	"KParts::ReadOnlyPart"));
-	  if (part)
-	    {
-              KGlobal::locale()->insertCatalog(QString::fromLatin1("konsole"));
-              part->widget()->show();
-              lo->addWidget(part->widget());
-              connect ( part, SIGNAL(destroyed()), this, SLOT(slotDestroyed()) );
-/*	      if (m_kvm->activeView())
-	      	if (m_kvm->activeView()->getDoc()->url().isValid())
-			cd(KUrl( m_kvm->activeView()->getDoc()->url().path() ));*/
-            }
+    if (factory) {
+        part = static_cast<KParts::ReadOnlyPart *>(factory->create(this, "libkonsolepart", "KParts::ReadOnlyPart"));
+        if (part) {
+            KGlobal::locale()->insertCatalog(QString::fromLatin1("konsole"));
+            part->widget()->show();
+            lo->addWidget(part->widget());
+            connect ( part, SIGNAL(destroyed()), this, SLOT(slotDestroyed()) );
+            /*       if (m_kvm->activeView())
+                    if (m_kvm->activeView()->getDoc()->url().isValid())
+               cd(KUrl( m_kvm->activeView()->getDoc()->url().path() ));*/
         }
+    }
 }
 
 void Konsole::showEvent(QShowEvent *)
 {
-  if (!part)
-    loadConsoleIfNeeded();
+    if (!part)
+        loadConsoleIfNeeded();
 }
 
 void Konsole::cd (KUrl url)
 {
-  if (!part)
-    return;
+    if (!part)
+        return ;
 
-  part->openURL (url);
+    part->openURL (url);
 }
 
 void Konsole::sendInput( const QString& text )
 {
-  if (!part)
-    return;
+    if (!part)
+        return ;
 
-  TerminalInterface *t = dynamic_cast<TerminalInterface*>( part );
+    TerminalInterface *t = dynamic_cast<TerminalInterface*>( part );
 
-  if (!t)
-    return;
+    if (!t)
+        return ;
 
-  t->sendInput (text);
+    t->sendInput (text);
 }
 
 void Konsole::slotDestroyed ()
 {
-  part=0;
+    part = 0;
 
-  // hide the dockwidget
-  if (parentWidget())
-    parentWidget()->hide ();
+    // hide the dockwidget
+    if (parentWidget())
+        parentWidget()->hide ();
 }
 

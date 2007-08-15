@@ -1,22 +1,22 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2004 Loic Pauleve <panard@inzenet.org>
- *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
- **/
+*  Copyright (C) 2004 Loic Pauleve <panard@inzenet.org>
+*  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License as published by the Free Software Foundation; either
+*  version 2 of the License, or (at your option) any later version.
+*
+*  This library is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+*  Library General Public License for more details.
+*
+*  You should have received a copy of the GNU Library General Public License
+*  along with this library; see the file COPYING.LIB.  If not, write to
+*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+*  Boston, MA 02110-1301, USA.
+**/
 
 #include "qyziscursor.h"
 #include "editor.h"
@@ -26,46 +26,48 @@
 #define dbg() yzDebug("QYZisCursor")
 #define err() yzError("QYZisCursor")
 
-QYZisCursor::QYZisCursor( QYZisEdit* edit, CursorShape shape ) 
-: QWidget( edit )  
+QYZisCursor::QYZisCursor( QYZisEdit* edit, CursorShape shape )
+        : QWidget( edit )
 {
-	mEditor = edit;
-	mView = edit->view();
+    mEditor = edit;
+    mView = edit->view();
 
-	setAutoFillBackground( false );
-	setAttribute( Qt::WA_NoSystemBackground );
-	setAttribute( Qt::WA_PaintOnScreen );
-	setAttribute( Qt::WA_OpaquePaintEvent );
+    setAutoFillBackground( false );
+    setAttribute( Qt::WA_NoSystemBackground );
+    setAttribute( Qt::WA_PaintOnScreen );
+    setAttribute( Qt::WA_OpaquePaintEvent );
 
-	move( 0, 0 );
-	setCursorShape( shape );
+    move( 0, 0 );
+    setCursorShape( shape );
 }
 
-QYZisCursor::~QYZisCursor() {
-}
+QYZisCursor::~QYZisCursor()
+{}
 
-QYZisCursor::CursorShape QYZisCursor::shape() const {
-	return mCursorShape;
-}
-void QYZisCursor::setCursorShape( CursorShape shape ) {
-	if ( shape == mCursorShape )
-		return;
-	mCursorShape = shape;
-	int w = parentWidget()->fontMetrics().maxWidth();
-	int h = parentWidget()->fontMetrics().lineSpacing();
-	if ( mCursorShape == CursorVbar ) 
-		w = 2;
-	resize( w, h );
-}
-
-void QYZisCursor::paintEvent( QPaintEvent* pe ) 
+QYZisCursor::CursorShape QYZisCursor::shape() const
 {
-	Q_UNUSED(pe);
+    return mCursorShape;
+}
+void QYZisCursor::setCursorShape( CursorShape shape )
+{
+    if ( shape == mCursorShape )
+        return ;
+    mCursorShape = shape;
+    int w = parentWidget()->fontMetrics().maxWidth();
+    int h = parentWidget()->fontMetrics().lineSpacing();
+    if ( mCursorShape == CursorVbar )
+        w = 2;
+    resize( w, h );
+}
+
+void QYZisCursor::paintEvent( QPaintEvent* pe )
+{
+    Q_UNUSED(pe);
 
     const YZDrawCell cell( mView->m_drawBuffer.at( mEditor->translateRealToPosition(pos()) ) );
     QColor cbg, cfg;
 
-    dbg().sprintf( "paintEvent(): cell string='%s'", qp(cell.c) ); 
+    dbg().sprintf( "paintEvent(): cell string='%s'", qp(cell.c) );
 
     if (cell.bg.isValid()) {
         dbg() << "paintEvent(): valid cell bg" << endl;
@@ -91,64 +93,64 @@ void QYZisCursor::paintEvent( QPaintEvent* pe )
     dbg() << "paintEvent(): cell foreground=" << cfg.name() << endl;
 
 
-	QPainter p( this );
-    QRect r=rect();
+    QPainter p( this );
+    QRect r = rect();
     CursorShape s = shape();
     dbg() << "paintEvent(): shape=" << s << endl;
-	switch( s ) {
-		case CursorFilledRect : 
-            p.setPen( cbg );
-            p.setBackground( cfg );
-            // erase with cell foreground
-            p.eraseRect( rect() );
-            // paint character with cell background
-            p.drawText( rect(), cell.c );
-            break;
+    switch ( s ) {
+    case CursorFilledRect :
+        p.setPen( cbg );
+        p.setBackground( cfg );
+        // erase with cell foreground
+        p.eraseRect( rect() );
+        // paint character with cell background
+        p.drawText( rect(), cell.c );
+        break;
 
-		case CursorFrameRect : 
-            p.setPen( cfg );
-            p.setBackground( cbg );
-            // erase with cell background
-            p.eraseRect( r );
-            // paint character with cell foreground
-            p.drawText( r, cell.c );
+    case CursorFrameRect :
+        p.setPen( cfg );
+        p.setBackground( cbg );
+        // erase with cell background
+        p.eraseRect( r );
+        // paint character with cell foreground
+        p.drawText( r, cell.c );
 
-            // paint rect with cell foreground
-            r.adjust(0,0,-1,-1);
-            p.drawRect( r );
-            break;
+        // paint rect with cell foreground
+        r.adjust(0, 0, -1, -1);
+        p.drawRect( r );
+        break;
 
-        case CursorVbar : 
-            r.setWidth( 2 );
-            p.fillRect( r, QBrush(cfg) );
-            break;
+    case CursorVbar :
+        r.setWidth( 2 );
+        p.fillRect( r, QBrush(cfg) );
+        break;
 
-        case CursorHbar: 
-            // erase with cell background
-            p.eraseRect( r );
-            // paint character with cell foreground
-            p.drawText( r, cell.c );
-            r.setTop( r.bottom()-2 );
-            p.fillRect( r, QBrush(cfg) );
-            break;
+    case CursorHbar:
+        // erase with cell background
+        p.eraseRect( r );
+        // paint character with cell foreground
+        p.drawText( r, cell.c );
+        r.setTop( r.bottom() - 2 );
+        p.fillRect( r, QBrush(cfg) );
+        break;
 
-        case CursorHidden: 
-            // erase with cell background
-            p.eraseRect( r );
-            // paint character with cell foreground
-            p.drawText( r, cell.c );
-            return;
+    case CursorHidden:
+        // erase with cell background
+        p.eraseRect( r );
+        // paint character with cell foreground
+        p.drawText( r, cell.c );
+        return ;
     }
 }
 
 YZDebugStream& operator<<( YZDebugStream& out, const QYZisCursor::CursorShape & shape )
 {
-    switch( shape ) {
-		case QYZisCursor::CursorFilledRect : out << "CursorFilledRect"; break;
-		case QYZisCursor::CursorVbar : out << "CursorVbar"; break;
-		case QYZisCursor::CursorHbar : out << "CursorHbar"; break;
-		case QYZisCursor::CursorFrameRect : out << "CursorFrameRect"; break;
-		case QYZisCursor::CursorHidden : out << "CursorHidden"; break;
+    switch ( shape ) {
+    case QYZisCursor::CursorFilledRect : out << "CursorFilledRect"; break;
+    case QYZisCursor::CursorVbar : out << "CursorVbar"; break;
+    case QYZisCursor::CursorHbar : out << "CursorHbar"; break;
+    case QYZisCursor::CursorFrameRect : out << "CursorFrameRect"; break;
+    case QYZisCursor::CursorHidden : out << "CursorHidden"; break;
     }
     return out;
 }

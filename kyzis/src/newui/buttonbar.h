@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Alexander Dymo                                  *
- *   adymo@kdevelop.org                                                    *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Library General Public License as       *
- *   published by the Free Software Foundation; either version 2 of the    *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU Library General Public     *
- *   License along with this program; if not, write to the                 *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
- ***************************************************************************/
+*   Copyright (C) 2004 by Alexander Dymo                                  *
+*   adymo@kdevelop.org                                                    *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU Library General Public License as       *
+*   published by the Free Software Foundation; either version 2 of the    *
+*   License, or (at your option) any later version.                       *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU Library General Public     *
+*   License along with this program; if not, write to the                 *
+*   Free Software Foundation, Inc.,                                       *
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+***************************************************************************/
 #ifndef IDEALBUTTONBAR_H
 #define IDEALBUTTONBAR_H
 
@@ -27,15 +27,17 @@
 
 #include <qlayout.h>
 
-namespace Ideal {
+namespace Ideal
+{
 
 class Button;
 class ButtonBar;
 
 /**@short A layout for a ButtonBar class.
-
+ 
 Overrides minimumSize method to allow shrinking button bar buttons.*/
-class ButtonLayout: public QBoxLayout{
+class ButtonLayout: public QBoxLayout
+{
 public:
     ButtonLayout(ButtonBar *parent, Direction d, int margin = 0, int spacing = -1, const char * name = 0);
 
@@ -47,15 +49,16 @@ private:
 
 /**
 @short A bar with tool buttons.
-
+ 
 Looks like a toolbar but has another behaviour. It is suitable for
 placing on the left(right, bottom, top) corners of a window as a bar with slider.
 */
-class ButtonBar : public QWidget {
+class ButtonBar : public QWidget
+{
     Q_OBJECT
 public:
     ButtonBar(Place place, ButtonMode mode = IconsAndText,
-        QWidget *parent = 0, const char *name = 0);
+              QWidget *parent = 0, const char *name = 0);
     virtual ~ButtonBar();
 
     /**Adds a button to the bar.*/

@@ -1,29 +1,29 @@
 /*
-	Copyright (c) 2003 Thomas Capricelli <orzel@freehackers.org>
-	Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
+Copyright (c) 2003 Thomas Capricelli <orzel@freehackers.org>
+Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of version 2 of the GNU General Public
-    License as published by the Free Software Foundation
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of version 2 of the GNU General Public
+   License as published by the Free Software Foundation
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 #ifndef NYZ_VIEW_H
-#define NYZ_VIEW_H
+#define NYZ_VIEW_H 
 /**
  * ncurses-based GUI for yzis
  */
 
 /* Std */
-#include <ncurses.h>
+#include <ncurses.h> 
 // This is an ugly hack preventing the compiler to choke on scroll (used in
 // both Qt API and (as a macro!) in ncurses
 #define curses_scroll scroll
@@ -40,111 +40,120 @@
 
 class NYZSession;
 
-/** \file viewwidget.h 
+/** \file viewwidget.h
   */
 
-class NYZView : public YZView {
+class NYZView : public YZView
+{
 
 public:
-	/**
-	  * constructor. Each view is binded to a buffer, @arg lines is the initial number of lines that
-	  * this view can display
-	  */
-	NYZView(YZBuffer *b);
-	virtual ~NYZView();
+    /**
+      * constructor. Each view is binded to a buffer, @arg lines is the initial number of lines that
+      * this view can display
+      */
+    NYZView(YZBuffer *b);
+    virtual ~NYZView();
 
-	virtual QString guiGetCommandLineText(void) const {return commandline; }
-	virtual void guiSetCommandLineText( const QString& );
-	virtual void guiModeChanged(void) { guiSyncViewInfo(); }
-	virtual void refreshScreen();
-	virtual void guiSyncViewInfo();
-	virtual void guiDisplayInfo(  const QString& info );
-	virtual void guiPaintEvent( const YZSelection& drawMap );
+    virtual QString guiGetCommandLineText(void) const
+    {
+        return commandline;
+    }
+    virtual void guiSetCommandLineText( const QString& );
+    virtual void guiModeChanged(void)
+    {
+        guiSyncViewInfo();
+    }
+    virtual void refreshScreen();
+    virtual void guiSyncViewInfo();
+    virtual void guiDisplayInfo( const QString& info );
+    virtual void guiPaintEvent( const YZSelection& drawMap );
 
-	void guiScroll( int dx, int dy );
+    void guiScroll( int dx, int dy );
 
-	/**
-	  * Used when this view becomes viewable, that
-	  * is on front of others
-	  */
-	void map( void );
-	/**
-	  * This view is not the front one anymore, hide it
-	  */
-	void unmap( void );
-	virtual void registerModifierKeys( const QString& ) { }
-	virtual void unregisterModifierKeys( const QString& ) { }
-	
-	bool guiPopupFileSaveAs();
-	void guiFilenameChanged();
-	void guiHighlightingChanged();
+    /**
+      * Used when this view becomes viewable, that
+      * is on front of others
+      */
+    void map( void );
+    /**
+      * This view is not the front one anymore, hide it
+      */
+    void unmap( void );
+    virtual void registerModifierKeys( const QString& )
+    { }
+    virtual void unregisterModifierKeys( const QString& )
+    { }
 
-	void setFocusCommandLine();
-	void setFocusMainWindow();
-	void restoreFocus();
+    bool guiPopupFileSaveAs();
+    void guiFilenameChanged();
+    void guiHighlightingChanged();
+
+    void setFocusCommandLine();
+    void setFocusMainWindow();
+    void restoreFocus();
 
 protected :
 
 public slots:
 
-	protected  :
+protected :
 
-		virtual void guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg );
+    virtual void guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg );
 
-		virtual void guiNotifyContentChanged( const YZSelection& s );
+    virtual void guiNotifyContentChanged( const YZSelection& s );
 
-		void guiPreparePaintEvent(int, int);
-		void guiEndPaintEvent();
-		virtual void guiDrawClearToEOL( QPoint pos, const QChar& clearChar );
-		virtual void guiDrawSetMaxLineNumber( int max );
-		virtual void guiDrawSetLineNumber( int y, int n, int h );
+    void guiPreparePaintEvent(int, int);
+    void guiEndPaintEvent();
+    virtual void guiDrawClearToEOL( QPoint pos, const QChar& clearChar );
+    virtual void guiDrawSetMaxLineNumber( int max );
+    virtual void guiDrawSetLineNumber( int y, int n, int h );
 
-		bool fakeLine; /* true if current line is a fake one (eg: ~) */
+    bool fakeLine; /* true if current line is a fake one (eg: ~) */
 
 
 private:
-	WINDOW		*window;	/* ncurses window to write to */
-	/**
-	 * update visible area
-	 */
-	void updateVis( bool refresh=true );
+    WINDOW *window; /* ncurses window to write to */
+    /**
+     * update visible area
+     */
+    void updateVis( bool refresh = true );
 
-	/**
-	  * draw cursor
-	  */
-	void drawCursor();
+    /**
+      * draw cursor
+      */
+    void drawCursor();
 
-	/* layout */
-	WINDOW		*editor;
-	WINDOW		*infobar;	// the white one with filename/size/position...
-	WINDOW		*statusbar;	// the one we show in which mode we are
-	WINDOW          *fileInfo;     // the one with info about current file (modified..)
-	
-	enum e_focusable {
-		w_editor,
-		w_statusbar
-	};
+    /* layout */
+    WINDOW *editor;
+    WINDOW *infobar; // the white one with filename/size/position...
+    WINDOW *statusbar; // the one we show in which mode we are
+    WINDOW *fileInfo;     // the one with info about current file (modified..)
 
-	bool statusbarHasCommand; // true if status bar contains a command
+    enum e_focusable {
+        w_editor,
+        w_statusbar
+    };
 
-	/**
-	  * used to implement set/get CommandLine, as we have no
-	  * special widget for that
-	  */
-	QString commandline;
-		int marginLeft;
-		int height;
-		int width;
+    bool statusbarHasCommand; // true if status bar contains a command
 
-	void initialiseAttributesMap();
-	static int attributesMapInitialised;
-	/**
-	  * maps QRgb to ncurses attributes, as those used in
-	  * mAttributesMap[ QRgb ] is the # of the corresponding pair in ncurses
-	  */
-	static QMap<QRgb,unsigned long int> mAttributesMap;
+    /**
+      * used to implement set/get CommandLine, as we have no
+      * special widget for that
+      */
+    QString commandline;
+    int marginLeft;
+    int height;
+    int width;
 
-	e_focusable m_focus;
+    void initialiseAttributesMap();
+    static int attributesMapInitialised;
+    /**
+      * maps QRgb to ncurses attributes, as those used in
+      * mAttributesMap[ QRgb ] is the # of the corresponding pair in ncurses
+      */
+    static QMap<QRgb, unsigned long int> mAttributesMap;
+
+    e_focusable m_focus;
 
 };
 

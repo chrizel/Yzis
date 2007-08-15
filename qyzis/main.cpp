@@ -1,18 +1,18 @@
 /*
-    Copyright (c) 2003-2005 Mickael Marchand <marchand@kde.org>
+   Copyright (c) 2003-2005 Mickael Marchand <marchand@kde.org>
 
-    This program is free software; you can redistribute it and/or
-    modify it under the terms of version 2 of the GNU General Public
-    License as published by the Free Software Foundation
+   This program is free software; you can redistribute it and/or
+   modify it under the terms of version 2 of the GNU General Public
+   License as published by the Free Software Foundation
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
 /* St */
@@ -36,19 +36,20 @@
 #include "qsession.h"
 #include "buffer.h"
 
-int main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
     YZSession::initDebug( argc, argv );
 
     // ==============[ Create application ]=============
-	QApplication app(argc, argv);
-	app.setOrganizationName("Yzis");
-	app.setOrganizationDomain("yzis.org");
-	app.setApplicationName("QYzis");
+    QApplication app(argc, argv);
+    app.setOrganizationName("Yzis");
+    app.setOrganizationDomain("yzis.org");
+    app.setApplicationName("QYzis");
 
     // ==============[ create session ]=============
-	QYZisSession::createInstance();
-	Qyzis* mw = new Qyzis();
-	mw->show();
+    QYZisSession::createInstance();
+    Qyzis* mw = new Qyzis();
+    mw->show();
 
     YZSession::self()->parseCommandLine( argc, argv );
     //YZSession::self()->frontendGuiReady();
@@ -56,6 +57,6 @@ int main(int argc, char **argv) {
 
     // ==============[ let's rock ]=============
 
-	return app.exec();
+    return app.exec();
 }
 

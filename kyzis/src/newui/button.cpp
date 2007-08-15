@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Alexander Dymo                                  *
- *   adymo@kdevelop.org                                                    *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Library General Public License as       *
- *   published by the Free Software Foundation; either version 2 of the    *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU Library General Public     *
- *   License along with this program; if not, write to the                 *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
- ***************************************************************************/
+*   Copyright (C) 2004 by Alexander Dymo                                  *
+*   adymo@kdevelop.org                                                    *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU Library General Public License as       *
+*   published by the Free Software Foundation; either version 2 of the    *
+*   License, or (at your option) any later version.                       *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU Library General Public     *
+*   License along with this program; if not, write to the                 *
+*   Free Software Foundation, Inc.,                                       *
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+***************************************************************************/
 #include "button.h"
 
 #include <qpainter.h>
@@ -32,12 +32,13 @@
 
 #include "buttonbar.h"
 
-namespace Ideal {
+namespace Ideal
+{
 
 Button::Button(ButtonBar *parent, const QString text, const QIcon &icon,
-    const QString &description)
-    :QPushButton(icon, text, parent), m_buttonBar(parent), m_description(description),
-    m_place(parent->place()), m_realText(text), m_realIconSet(icon)
+               const QString &description)
+        : QPushButton(icon, text, parent), m_buttonBar(parent), m_description(description),
+        m_place(parent->place()), m_realText(text), m_realIconSet(icon)
 {
     hide();
     setFlat(true);
@@ -53,7 +54,7 @@ Button::Button(ButtonBar *parent, const QString text, const QIcon &icon,
 
 Button::~Button()
 {
-//     m_buttonBar->removeButton(this);
+    //     m_buttonBar->removeButton(this);
 }
 
 void Button::setDescription(const QString &description)
@@ -106,19 +107,18 @@ void Button::paintEvent(QPaintEvent *)
 
     QPainter p(this);
 
-    switch (m_place)
-    {
-        case Ideal::Left:
-                p.rotate(-90);
-                p.drawPixmap(1-pm.width(), 0, pm);
-                break;
-        case Ideal::Right:
-                p.rotate(90);
-                p.drawPixmap(0, 1-pm.height(), pm);
-                break;
-        default:
-                p.drawPixmap(0, 0, pm);
-                break;
+    switch (m_place) {
+    case Ideal::Left:
+        p.rotate( -90);
+        p.drawPixmap(1 - pm.width(), 0, pm);
+        break;
+    case Ideal::Right:
+        p.rotate(90);
+        p.drawPixmap(0, 1 - pm.height(), pm);
+        break;
+    default:
+        p.drawPixmap(0, 0, pm);
+        break;
     }
 }
 
@@ -136,26 +136,23 @@ void Button::setPlace(Ideal::Place place)
 
 void Button::fixDimensions(Place oldPlace)
 {
-    switch (m_place)
-    {
-        case Ideal::Left:
-        case Ideal::Right:
-            if ((oldPlace == Ideal::Bottom) || (oldPlace == Ideal::Top))
-            {
-                setFixedWidth(height());
-                setMinimumHeight(sizeHint().width());
-                setMaximumHeight(32767);
-            }
-            break;
-        case Ideal::Top:
-        case Ideal::Bottom:
-            if ((oldPlace == Ideal::Left) || (oldPlace == Ideal::Right))
-            {
-                setFixedHeight(width());
-                setMinimumWidth(sizeHint().height());
-                setMaximumWidth(32767);
-            }
-            break;
+    switch (m_place) {
+    case Ideal::Left:
+    case Ideal::Right:
+        if ((oldPlace == Ideal::Bottom) || (oldPlace == Ideal::Top)) {
+            setFixedWidth(height());
+            setMinimumHeight(sizeHint().width());
+            setMaximumHeight(32767);
+        }
+        break;
+    case Ideal::Top:
+    case Ideal::Bottom:
+        if ((oldPlace == Ideal::Left) || (oldPlace == Ideal::Right)) {
+            setFixedHeight(width());
+            setMinimumWidth(sizeHint().height());
+            setMaximumWidth(32767);
+        }
+        break;
     }
 }
 
@@ -190,9 +187,9 @@ QSize Button::sizeHint(const QString &text) const
             s = QString::fromLatin1("XXXX");
         QFontMetrics fm = fontMetrics();
         QSize sz = fm.size( Qt::TextShowMnemonic, s );
-        if(!empty || !w)
+        if (!empty || !w)
             w += sz.width();
-        if(!empty || !h)
+        if (!empty || !h)
             h = qMax(h, sz.height());
     }
 
@@ -202,17 +199,16 @@ QSize Button::sizeHint(const QString &text) const
 
 void Ideal::Button::updateSize()
 {
-    switch (m_place)
-    {
-        case Ideal::Left:
-        case Ideal::Right:
-             setMinimumHeight(sizeHint().width());
-             resize(sizeHint().height(), sizeHint().width());
-            break;
-        case Ideal::Top:
-        case Ideal::Bottom:
-            resize(sizeHint().width(), sizeHint().height());
-            break;
+    switch (m_place) {
+    case Ideal::Left:
+    case Ideal::Right:
+        setMinimumHeight(sizeHint().width());
+        resize(sizeHint().height(), sizeHint().width());
+        break;
+    case Ideal::Top:
+    case Ideal::Bottom:
+        resize(sizeHint().width(), sizeHint().height());
+        break;
     }
 }
 
@@ -223,27 +219,25 @@ QString Button::realText() const
 
 void Button::setMode(Ideal::ButtonMode mode)
 {
-    switch (mode)
-    {
-        case Text:
-            disableIconSet();
-            enableText();
-            break;
-        case IconsAndText:
-            enableIconSet();
-            enableText();
-            break;
-        case Icons:
-            disableText();
-            enableIconSet();
-            break;
+    switch (mode) {
+    case Text:
+        disableIconSet();
+        enableText();
+        break;
+    case IconsAndText:
+        enableIconSet();
+        enableText();
+        break;
+    case Icons:
+        disableText();
+        enableIconSet();
+        break;
     }
 }
 
 void Button::enableIconSet()
 {
-    if (!iconSet())
-    {
+    if (!iconSet()) {
         if (m_realIconSet.isNull())
             m_realIconSet = SmallIcon("file_new");
         setIconSet(m_realIconSet);

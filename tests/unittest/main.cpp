@@ -18,7 +18,7 @@ void toArgvArray( QStringList l, char ** argv, int * argc )
     }
 }
 
-/** 
+/**
   * How to use it:
   *
   * Run an individual class test: yzistest <TestClassName>
@@ -32,10 +32,10 @@ int main( int argc, char * argv[] )
     // If you want to add a new test, just ignore the stuff here until the end
     // of main.
     // =======================[ stuff to ignore ]=====================
-    QMap<QString,QString> runMe;
+    QMap<QString, QString> runMe;
     QStringList myArgv;
     bool runAll = false;
-    int result=0,fakeArgc = 1;
+    int result = 0, fakeArgc = 1;
     char * fakeArgv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL };
     QRegExp reTestName( "(\\w+)(::(\\w+))?(\\(\\))?" );
 
@@ -44,7 +44,7 @@ int main( int argc, char * argv[] )
     if (argc == 1) {
         runAll = true;
     } else {
-        for( int i=1; i<argc; i++) {
+        for ( int i = 1; i < argc; i++) {
             //qDebug("argv[%d] = '%s'", i, argv[i] );
             if (argv[i][0] == '-') {
                 myArgv << argv[i];
@@ -66,10 +66,10 @@ int main( int argc, char * argv[] )
                 myArgv << runMe[key]; \
             } \
         } \
- \
+        \
         toArgvArray( myArgv, fakeArgv, &fakeArgc ); \
         fakeArgv[fakeArgc] = NULL; \
- \
+        \
         TestName TestName##inst ; \
         result += QTest::qExec( & TestName##inst, fakeArgc, fakeArgv ); \
         printf("\n"); \

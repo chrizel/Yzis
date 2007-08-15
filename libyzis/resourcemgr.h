@@ -1,21 +1,21 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2007 Philippe Fremy <phil@freehackers.org>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
- **/
+*  Copyright (C) 2007 Philippe Fremy <phil@freehackers.org>
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License as published by the Free Software Foundation; either
+*  version 2 of the License, or (at your option) any later version.
+*
+*  This library is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+*  Library General Public License for more details.
+*
+*  You should have received a copy of the GNU Library General Public License
+*  along with this library; see the file COPYING.LIB.  If not, write to
+*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+*  Boston, MA 02110-1301, USA.
+**/
 
 
 #ifndef RESOURCE_MGR_H
@@ -28,7 +28,7 @@
 class QStringList;
 class YZDebugStream;
 
-/** @file resourcemgr.h 
+/** @file resourcemgr.h
   * Some documentation
   */
 
@@ -39,35 +39,35 @@ enum ResourceType {
       *
       * The search path for such a script includes the current  directory.
       * Those files are normally stored in the scripts subdirectory. */
-    UserScriptResource,     
+    UserScriptResource,
 
     /** A script file run by yzis (eg: hl.lua).
       *
       * The file is searched in the scripts subdirectory of the
       * different yzis config directories. */
-    ConfigScriptResource,   
+    ConfigScriptResource,
 
     /** A file managing indentation (script file).
       *
       * The file is looked up in the indent subdirectory.  */
-    IndentResource,     
+    IndentResource,
 
     /** A file managing syntax highlighting (xml file).
       *
       * The file is looked up in the syntax subdirectory. */
-    SyntaxHlResource,   
-    
+    SyntaxHlResource,
+
     /**  A config file.
       *
       *  The file is looked up in the yzis directory. */
-    ConfigResource,     
+    ConfigResource,
 
     /**  A config file writeable by yzis.
       *
       *  The file is not looked up. A fixed location is returned,
       *  where file can be read and written. The fixed location is the
       *  yzis directory. */
-    WritableConfigResource,     
+    WritableConfigResource,
 };
 
 /**
@@ -135,8 +135,10 @@ protected:
 };
 
 /** Shortcut for YZSession::self()->resourceMgr(); */
-inline YZResourceMgr * resourceMgr() 
-    { return YZSession::self()->resourceMgr(); }
+inline YZResourceMgr * resourceMgr()
+{
+    return YZSession::self()->resourceMgr();
+}
 
 YZDebugStream& operator<<( YZDebugStream& out, const ResourceType & type );
 

@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Alexander Dymo                                  *
- *   adymo@kdevelop.org                                                    *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Library General Public License as       *
- *   published by the Free Software Foundation; either version 2 of the    *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU Library General Public     *
- *   License along with this program; if not, write to the                 *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
- ***************************************************************************/
+*   Copyright (C) 2004 by Alexander Dymo                                  *
+*   adymo@kdevelop.org                                                    *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU Library General Public License as       *
+*   published by the Free Software Foundation; either version 2 of the    *
+*   License, or (at your option) any later version.                       *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU Library General Public     *
+*   License along with this program; if not, write to the                 *
+*   Free Software Foundation, Inc.,                                       *
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+***************************************************************************/
 #ifndef IDEALBUTTON_H
 #define IDEALBUTTON_H
 
@@ -27,21 +27,23 @@
 
 class QStyleOptionButton;
 
-namespace Ideal {
+namespace Ideal
+{
 
 class ButtonBar;
 
 /**
 @short A button to place onto the ButtonBar
-
+ 
 A QPushButton derivative with a size of a QToolBar. Button can be rotated
 (placed onto different places in ideal mode).
 */
-class Button : public QPushButton {
+class Button : public QPushButton
+{
     Q_OBJECT
 public:
     Button(ButtonBar *parent, const QString text, const QIcon &icon = QIcon(),
-        const QString &description = QString());
+           const QString &description = QString());
 
     /**Sets the description used as a tooltip.*/
     void setDescription(const QString &description);
@@ -86,7 +88,7 @@ private:
     QString m_realText;
     QIcon m_realIconSet;
 
-friend class ButtonBar;
+    friend class ButtonBar;
 };
 
 }

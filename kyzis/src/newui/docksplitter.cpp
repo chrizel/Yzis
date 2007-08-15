@@ -1,47 +1,46 @@
 /***************************************************************************
- *   Copyright (C) 2004 by Alexander Dymo                                  *
- *   adymo@kdevelop.org                                                    *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Library General Public License as       *
- *   published by the Free Software Foundation; either version 2 of the    *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU Library General Public     *
- *   License along with this program; if not, write to the                 *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
- ***************************************************************************/
+*   Copyright (C) 2004 by Alexander Dymo                                  *
+*   adymo@kdevelop.org                                                    *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU Library General Public License as       *
+*   published by the Free Software Foundation; either version 2 of the    *
+*   License, or (at your option) any later version.                       *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU Library General Public     *
+*   License along with this program; if not, write to the                 *
+*   Free Software Foundation, Inc.,                                       *
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+***************************************************************************/
 #include "docksplitter.h"
 
 #include <kdebug.h>
 
-namespace Ideal {
+namespace Ideal
+{
 
 DockSplitter::DockSplitter(Qt::Orientation orientation, QWidget *parent, const char *name)
-    :QSplitter(parent, name), m_orientation(orientation)
+        : QSplitter(parent, name), m_orientation(orientation)
 {
-    switch (m_orientation)
-    {
-        case Qt::Horizontal:
-            setOrientation(Qt::Vertical);
-            break;
-        case Qt::Vertical:
-            setOrientation(Qt::Horizontal);
-            break;
+    switch (m_orientation) {
+    case Qt::Horizontal:
+        setOrientation(Qt::Vertical);
+        break;
+    case Qt::Vertical:
+        setOrientation(Qt::Horizontal);
+        break;
     }
     setOpaqueResize(true);
     appendSplitter();
 }
 
 DockSplitter::~DockSplitter()
-{
-}
+{}
 
 void DockSplitter::addDock(int row, int col, QWidget *dock)
 {
@@ -49,13 +48,11 @@ void DockSplitter::addDock(int row, int col, QWidget *dock)
         for (int i = m_docks.count(); i <= row ; ++i)
             m_docks.append(QList<QWidget*>());
 
-    if (m_docks.at(row).count() <= col)
-    {
+    if (m_docks.at(row).count() <= col) {
         for (int i = m_docks.at(row).count(); i <= col ; ++i)
             m_docks[row].append(0);
         m_docks[row][col] = dock;
-    }
-    else if (m_docks.at(row).at(col) == 0)
+    } else if (m_docks.at(row).at(col) == 0)
         m_docks[row][col] = dock;
     else
         m_docks[row].insert(col, dock);
@@ -64,9 +61,9 @@ void DockSplitter::addDock(int row, int col, QWidget *dock)
         createSplitters(row);
     QSplitter *splitter = m_splitters.at(row);
 
-    dock->reparent(splitter, QPoint(0,0), true);
-    if (col < m_docks.at(row).count()-1)
-        shiftWidgets(splitter, row, col+1);
+    dock->reparent(splitter, QPoint(0, 0), true);
+    if (col < m_docks.at(row).count() - 1)
+        shiftWidgets(splitter, row, col + 1);
 }
 
 void DockSplitter::appendSplitter()
@@ -80,8 +77,7 @@ void DockSplitter::appendSplitter()
 void DockSplitter::createSplitters(int index)
 {
     kDebug() << "DockSplitter::createSplitters index = " << index << " count = " << m_splitters.count() << endl;
-    for (int i = m_splitters.count(); i <= index; ++i)
-    {
+    for (int i = m_splitters.count(); i <= index; ++i) {
         kDebug() << "    appendSplitter..." << endl;
         appendSplitter();
     }
@@ -90,27 +86,23 @@ void DockSplitter::createSplitters(int index)
 void DockSplitter::removeDock(int row, int col, bool alsoDelete)
 {
     if ((row >= m_docks.count()) || (col >= m_docks[row].count()))
-        return;
+        return ;
 
     QWidget *w = m_docks.at(row).at(col);
     m_docks[row].removeAll(m_docks.at(row).at(col));
 
-    if (alsoDelete)
-    {
+    if (alsoDelete) {
         delete w;
         w = 0;
-    }
-    else
-    {
-        w->reparent(0, QPoint(0,0), false);
+    } else {
+        w->reparent(0, QPoint(0, 0), false);
         w->hide();
     }
 
     QSplitter *splitter = m_splitters.at(row);
     splitter->setMinimumSize(splitter->minimumSizeHint());
 
-    if (isRowEmpty(row))
-    {
+    if (isRowEmpty(row)) {
         m_docks.removeAt(row);
         delete m_splitters.takeAt(row);
     }
@@ -130,8 +122,7 @@ void DockSplitter::shiftWidgets(QSplitter *splitter, int row, int fromCol)
     kDebug() << "shiftWidgets: row=" << row << "  from col=" << fromCol << endl;
     kDebug() << "row size is: " << m_docks[row].count() << endl;
 
-    for (int i = fromCol; i < m_docks.at(row).count(); ++i)
-    {
+    for (int i = fromCol; i < m_docks.at(row).count(); ++i) {
         kDebug() << "move from " << i << " to last" << endl;
         if (m_docks[row][i])
             splitter->moveToLast(m_docks[row][i]);

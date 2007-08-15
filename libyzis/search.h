@@ -1,22 +1,22 @@
 /*  This file is part of the Yzis libraries
- *  Copyright (C) 2004 Loic Pauleve <panard@inzenet.org>
- *  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
- **/
+*  Copyright (C) 2004 Loic Pauleve <panard@inzenet.org>
+*  Copyright (C) 2004-2005 Mickael Marchand <marchand@kde.org>
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License as published by the Free Software Foundation; either
+*  version 2 of the License, or (at your option) any later version.
+*
+*  This library is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+*  Library General Public License for more details.
+*
+*  You should have received a copy of the GNU Library General Public License
+*  along with this library; see the file COPYING.LIB.  If not, write to
+*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+*  Boston, MA 02110-1301, USA.
+**/
 
 #ifndef YZ_SEARCH_H
 #define YZ_SEARCH_H
@@ -27,66 +27,67 @@ class YZBuffer;
 
 /**
  * YZSearch : 
- *	Searches are common to all buffers and views. 
- *	When doing a search if hlsearch is set, we have to highlight
- *	all matching strings on all views of each buffers.
+ * Searches are common to all buffers and views. 
+ * When doing a search if hlsearch is set, we have to highlight
+ * all matching strings on all views of each buffers.
  */
 
-class YZSearch {
+class YZSearch
+{
 
-	public :
-		YZSearch();
-		~YZSearch();
+public :
+    YZSearch();
+    ~YZSearch();
 
-		/**
-		 * search after current cursor position
-		 */
-		YZCursor forward( YZBuffer* buffer, const QString& pattern, bool* found, const YZCursor from );
+    /**
+     * search after current cursor position
+     */
+    YZCursor forward( YZBuffer* buffer, const QString& pattern, bool* found, const YZCursor from );
 
-		/**
-		 * search before current cursor position
-		 */
-		YZCursor backward( YZBuffer *buffer, const QString& pattern, bool* found, const YZCursor from );
+    /**
+     * search before current cursor position
+     */
+    YZCursor backward( YZBuffer *buffer, const QString& pattern, bool* found, const YZCursor from );
 
-		/**
-		 * replay search forward
-		 */
-		YZCursor replayForward( YZBuffer *buffer, bool* found, const YZCursor from, bool skipline = false );
+    /**
+     * replay search forward
+     */
+    YZCursor replayForward( YZBuffer *buffer, bool* found, const YZCursor from, bool skipline = false );
 
-		/**
-		 * replay search backward
-		 */
-		YZCursor replayBackward( YZBuffer *buffer, bool* found, const YZCursor from, bool skipline = false );
+    /**
+     * replay search backward
+     */
+    YZCursor replayBackward( YZBuffer *buffer, bool* found, const YZCursor from, bool skipline = false );
 
-		/**
-		 * Highlight given line
-		 */
-		void highlightLine( YZBuffer* buffer, int line );
+    /**
+     * Highlight given line
+     */
+    void highlightLine( YZBuffer* buffer, int line );
 
-		/**
-		 * Shift @arg shift lines to the bottom the search highlight layout from @ærg line line
-		 */
-		void shiftHighlight( YZBuffer* buffer, int line, int shift );
+    /**
+     * Shift @arg shift lines to the bottom the search highlight layout from @ærg line line
+     */
+    void shiftHighlight( YZBuffer* buffer, int line, int shift );
 
-		/**
-		 * return current search
-		 */
-		const QString& currentSearch() const;
+    /**
+     * return current search
+     */
+    const QString& currentSearch() const;
 
-		/**
-		 * true if currentSearch is not null
-		 */
-		bool active();
+    /**
+     * true if currentSearch is not null
+     */
+    bool active();
 
-		/**
-		 * take care of correctly updating hl
-		 */
-		void update();
+    /**
+     * take care of correctly updating hl
+     */
+    void update();
 
 
-	private :
-		struct Private;
-		Private *d;
+private :
+    struct Private;
+    Private *d;
 };
 
 #endif

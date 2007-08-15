@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Alexander Dymo                                  *
- *   adymo@kdevelop.org                                                    *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Library General Public License as       *
- *   published by the Free Software Foundation; either version 2 of the    *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU Library General Public     *
- *   License along with this program; if not, write to the                 *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
- ***************************************************************************/
+*   Copyright (C) 2005 by Alexander Dymo                                  *
+*   adymo@kdevelop.org                                                    *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU Library General Public License as       *
+*   published by the Free Software Foundation; either version 2 of the    *
+*   License, or (at your option) any later version.                       *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU Library General Public     *
+*   License along with this program; if not, write to the                 *
+*   Free Software Foundation, Inc.,                                       *
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+***************************************************************************/
 #include "dtabwidget.h"
 
 #include <qtoolbutton.h>
@@ -28,7 +28,7 @@
 #include <kglobal.h>
 
 DTabWidget::DTabWidget(QWidget *parent, const char *name)
-    :KTabWidget(parent), m_closeButton(0)
+        : KTabWidget(parent), m_closeButton(0)
 {
     setObjectName( name );
     setFocusPolicy(Qt::NoFocus);
@@ -52,14 +52,14 @@ DTabWidget::DTabWidget(QWidget *parent, const char *name)
     }
 
     connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(setFocus(QWidget*)));
-//    connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(updateHistory(QWidget*)));
+    //    connect(this, SIGNAL(currentChanged(QWidget*)), this, SLOT(updateHistory(QWidget*)));
 }
 
 void DTabWidget::loadSettings()
 {
     KConfig *config = KGlobal::config();
     config->setGroup("UI");
-//    m_tabBarShown = config->readBoolEntry("TabBarShown", true);
+    //    m_tabBarShown = config->readBoolEntry("TabBarShown", true);
     m_tabBarShown = ! config->readNumEntry("TabWidgetVisibility", 0);
     m_closeOnHover = config->readBoolEntry("CloseOnHover", false);
     m_closeButtonShown = config->readBoolEntry("ShowCloseTabsButton", true);
@@ -68,8 +68,7 @@ void DTabWidget::loadSettings()
 }
 
 void DTabWidget::saveSettings()
-{
-}
+{}
 
 QToolButton *DTabWidget::closeButton() const
 {
@@ -91,7 +90,7 @@ void DTabWidget::insertTab(QWidget *child, const QString &label, int index)
 }
 
 void DTabWidget::insertTab(QWidget *child, const QIcon &iconset,
-    const QString &label, int index)
+                           const QString &label, int index)
 {
     if (m_closeButton && m_closeButtonShown)
         m_closeButton->show();

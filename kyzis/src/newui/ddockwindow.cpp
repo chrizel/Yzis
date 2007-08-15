@@ -1,22 +1,22 @@
 /***************************************************************************
- *   Copyright (C) 2005 by Alexander Dymo                                  *
- *   adymo@kdevelop.org                                                    *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU Library General Public License as       *
- *   published by the Free Software Foundation; either version 2 of the    *
- *   License, or (at your option) any later version.                       *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU Library General Public     *
- *   License along with this program; if not, write to the                 *
- *   Free Software Foundation, Inc.,                                       *
- *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
- ***************************************************************************/
+*   Copyright (C) 2005 by Alexander Dymo                                  *
+*   adymo@kdevelop.org                                                    *
+*                                                                         *
+*   This program is free software; you can redistribute it and/or modify  *
+*   it under the terms of the GNU Library General Public License as       *
+*   published by the Free Software Foundation; either version 2 of the    *
+*   License, or (at your option) any later version.                       *
+*                                                                         *
+*   This program is distributed in the hope that it will be useful,       *
+*   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+*   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+*   GNU General Public License for more details.                          *
+*                                                                         *
+*   You should have received a copy of the GNU Library General Public     *
+*   License along with this program; if not, write to the                 *
+*   Free Software Foundation, Inc.,                                       *
+*   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.             *
+***************************************************************************/
 #include "ddockwindow.h"
 
 #include <QStackedWidget>
@@ -34,10 +34,10 @@
 #include <kmainwindow.h>
 
 DDockWidget::DDockWidget(Qt::DockWidgetArea area, KMainWindow* mainWindow)
-    : QDockWidget(mainWindow)
-    , m_selectedAction(0)
-    , m_expanded(false)
-    , m_area(area)
+        : QDockWidget(mainWindow)
+        , m_selectedAction(0)
+        , m_expanded(false)
+        , m_area(area)
 {
     setFeatures(NoDockWidgetFeatures);
 
@@ -48,23 +48,23 @@ DDockWidget::DDockWidget(Qt::DockWidgetArea area, KMainWindow* mainWindow)
     layout->setMargin(0);
     layout->setSpacing(0);
     switch (area) {
-        default:
-        case Qt::TopDockWidgetArea:
-            setObjectName("TopToolWindow");
-            layout->setDirection(QBoxLayout::BottomToTop);
-            break;
-        case Qt::LeftDockWidgetArea:
-            setObjectName("LeftToolWindow");
-            layout->setDirection(QBoxLayout::RightToLeft);
-            break;
-        case Qt::RightDockWidgetArea:
-            setObjectName("RightToolWindow");
-            layout->setDirection(QBoxLayout::LeftToRight);
-            break;
-        case Qt::BottomDockWidgetArea:
-            setObjectName("BottomToolWindow");
-            layout->setDirection(QBoxLayout::TopToBottom);
-            break;
+    default:
+    case Qt::TopDockWidgetArea:
+        setObjectName("TopToolWindow");
+        layout->setDirection(QBoxLayout::BottomToTop);
+        break;
+    case Qt::LeftDockWidgetArea:
+        setObjectName("LeftToolWindow");
+        layout->setDirection(QBoxLayout::RightToLeft);
+        break;
+    case Qt::RightDockWidgetArea:
+        setObjectName("RightToolWindow");
+        layout->setDirection(QBoxLayout::LeftToRight);
+        break;
+    case Qt::BottomDockWidgetArea:
+        setObjectName("BottomToolWindow");
+        layout->setDirection(QBoxLayout::TopToBottom);
+        break;
     }
 
     m_widgetStack = new QStackedWidget(container);
@@ -74,17 +74,17 @@ DDockWidget::DDockWidget(Qt::DockWidgetArea area, KMainWindow* mainWindow)
     QSizePolicy ssp = m_selectionBar->sizePolicy();
 
     switch (area) {
-        case Qt::LeftDockWidgetArea:
-        case Qt::RightDockWidgetArea:
-            m_selectionBar->setOrientation(Qt::Vertical);
-            wsp.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
-            ssp.setHorizontalPolicy(QSizePolicy::Fixed);
-            break;
+    case Qt::LeftDockWidgetArea:
+    case Qt::RightDockWidgetArea:
+        m_selectionBar->setOrientation(Qt::Vertical);
+        wsp.setHorizontalPolicy(QSizePolicy::MinimumExpanding);
+        ssp.setHorizontalPolicy(QSizePolicy::Fixed);
+        break;
 
-        default:
-            wsp.setVerticalPolicy(QSizePolicy::MinimumExpanding);
-            ssp.setVerticalPolicy(QSizePolicy::Fixed);
-            break;
+    default:
+        wsp.setVerticalPolicy(QSizePolicy::MinimumExpanding);
+        ssp.setVerticalPolicy(QSizePolicy::Fixed);
+        break;
     }
 
     m_widgetStack->setSizePolicy(wsp);
@@ -138,25 +138,19 @@ void DDockWidget::setExpanded(bool v)
     m_widgetStack->setVisible(v);
     m_expanded = v;
 
-    if (!m_expanded)
-    {
+    if (!m_expanded) {
         widget()->setMinimumSize(m_selectionBar->minimumSize());
         if (isBottom)
             resize(width(), layout()->minimumSize().height());
         else
             resize(layout()->minimumSize().width(), height());
-    }
-    else
-    {
+    } else {
         //restore widget size from the config
         int size = 0;
-        if (isBottom)
-        {
+        if (isBottom) {
             size = config->readEntry("ViewWidth", layout()->minimumSize().height());
             resize(width(), size);
-        }
-        else
-        {
+        } else {
             size = config->readEntry("ViewWidth", layout()->minimumSize().width());
             resize(size, height());
         }
@@ -164,8 +158,7 @@ void DDockWidget::setExpanded(bool v)
 }
 
 void DDockWidget::loadSettings()
-{
-}
+{}
 
 void DDockWidget::saveSettings()
 {
@@ -177,12 +170,10 @@ void DDockWidget::saveSettings()
         invisibleWidth = config->readEntry("ViewWidth", 0);
     config->deleteEntry("ViewWidth");
     config->deleteEntry("ViewLastWidget");
-    if (m_selectedAction && m_expanded)
-    {
+    if (m_selectedAction && m_expanded) {
         config->writeEntry("ViewWidth", (m_area == Qt::BottomDockWidgetArea) ? height() : width());
         config->writeEntry("ViewLastWidget", m_selectedAction->text());
-    }
-    else if (invisibleWidth != 0)
+    } else if (invisibleWidth != 0)
         config->writeEntry("ViewWidth", invisibleWidth);
 }
 
@@ -207,8 +198,7 @@ void DDockWidget::addWidget(const QString &title, QWidget *widget)
     KConfig *config = KGlobal::config();
     QString group = QString("%1").arg(objectName());
     config->setGroup(group);
-    if (config->readEntry("ViewLastWidget") == title)
-    {
+    if (config->readEntry("ViewLastWidget") == title) {
         kDebug() << k_funcinfo << " : activating last widget " << title << endl;
         action->setChecked(true);
         selectWidget(action);
@@ -227,7 +217,7 @@ void DDockWidget::removeWidget(QWidget *widget)
 {
     kDebug() << k_funcinfo << endl;
     if (m_widgetStack->indexOf(widget) == -1)
-        return; //not in dock
+        return ; //not in dock
 
     bool changeVisibility = false;
     if (m_widgetStack->currentWidget() == widget)
@@ -240,8 +230,7 @@ void DDockWidget::removeWidget(QWidget *widget)
 
     m_widgetStack->removeWidget(widget);
 
-    if (changeVisibility)
-    {
+    if (changeVisibility) {
         m_selectedAction = 0;
         setExpanded(false);
     }
@@ -251,12 +240,11 @@ void DDockWidget::selectWidget(QAction* qaction)
 {
     KAction* action = qobject_cast<KAction*>(qaction);
     if (!action)
-      return;
+        return ;
 
-    if (m_selectedAction == action)
-    {
+    if (m_selectedAction == action) {
         setExpanded(!m_expanded);
-        return;
+        return ;
     }
 
     setSelectedAction(action);
@@ -269,8 +257,7 @@ void DDockWidget::selectWidget(QAction* qaction)
 void DDockWidget::hideWidget(QWidget *widget)
 {
     KAction* action = m_actions[widget];
-    if (action)
-    {
+    if (action) {
         action->setChecked(false);
         action->setVisible(false);
     }
@@ -311,8 +298,8 @@ void DDockWidget::setSelectedAction( KAction * action )
 
 void DDockWidget::resizeEvent( QResizeEvent * event )
 {
-  kDebug() << k_funcinfo << event->oldSize() << " new " << event->size() << endl;
-  QDockWidget::resizeEvent(event);
+    kDebug() << k_funcinfo << event->oldSize() << " new " << event->size() << endl;
+    QDockWidget::resizeEvent(event);
 }
 
 #include "ddockwindow.moc"

@@ -1,23 +1,23 @@
 /* This file is part of the KDE libraries
 
-   Copyright (C) 2001 Joseph Wenninger <jowenn@kde.org>
-   Copyright (C) 2002 John Firebaugh <jfirebaugh@kde.org>
-   Copyright (C) 2001 by Victor Röder <Victor_Roeder@GMX.de>
-   Copyright (C) 2002 by Roberto Raggi <roberto@kdevelop.org>
+  Copyright (C) 2001 Joseph Wenninger <jowenn@kde.org>
+  Copyright (C) 2002 John Firebaugh <jfirebaugh@kde.org>
+  Copyright (C) 2001 by Victor Röder <Victor_Roeder@GMX.de>
+  Copyright (C) 2002 by Roberto Raggi <roberto@kdevelop.org>
 
-   This library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Library General Public
-   License version 2 as published by the Free Software Foundation.
+  This library is free software; you can redistribute it and/or
+  modify it under the terms of the GNU Library General Public
+  License version 2 as published by the Free Software Foundation.
 
-   This library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Library General Public License for more details.
+  This library is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  Library General Public License for more details.
 
-   You should have received a copy of the GNU Library General Public License
-   along with this library; see the file COPYING.LIB.  If not, write to
-   the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-   Boston, MA 02110-1301, USA.
+  You should have received a copy of the GNU Library General Public License
+  along with this library; see the file COPYING.LIB.  If not, write to
+  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+  Boston, MA 02110-1301, USA.
 */
 
 /******** Partly based on the ArgHintWidget of Qt3 by Trolltech AS *********/
@@ -47,15 +47,15 @@ class QLayout;
 
 class KYZisCodeCompletionCommentLabel : public QLabel
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
+public:
     KYZisCodeCompletionCommentLabel( QWidget* parent, const QString& text) : QLabel( parent, "toolTipTip",
-             Qt::WStyle_StaysOnTop | Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WX11BypassWM )
+                    Qt::WStyle_StaysOnTop | Qt::WStyle_Customize | Qt::WStyle_NoBorder | Qt::WStyle_Tool | Qt::WX11BypassWM )
     {
         setMargin(1);
         setIndent(0);
-//        setAutoMask( false );
+        //        setAutoMask( false );
         setFrameStyle( Q3Frame::Plain | Q3Frame::Box );
         setLineWidth( 1 );
         setAlignment( Qt::AlignLeft | Qt::AlignTop );
@@ -67,76 +67,87 @@ class KYZisCodeCompletionCommentLabel : public QLabel
 
 class KYZisCodeCompletion : public QObject
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
+public:
     KYZisCodeCompletion(KYZisView *view);
 
     bool codeCompletionVisible ();
 
-	void showCompletion(const KTextEditor::Cursor &position, const QLinkedList<KTextEditor::CompletionData> &data);
+    void showCompletion(const KTextEditor::Cursor &position, const QLinkedList<KTextEditor::CompletionData> &data);
     void showArgHint( QStringList functionList, const QString& strWrapping, const QString& strDelimiter );
-//    void showCompletionBox( Q3ValueList<KTextEditor::CompletionEntry> entries, int offset = 0, bool casesensitive = true );
+    //    void showCompletionBox( Q3ValueList<KTextEditor::CompletionEntry> entries, int offset = 0, bool casesensitive = true );
     bool eventFilter( QObject* o, QEvent* e );
-	void handleKey(QKeyEvent *e);
+    void handleKey(QKeyEvent *e);
 
-  public slots:
+public slots:
     void slotCursorPosChanged();
     void showComment();
-	void updateBox() { updateBox(false); }
+    void updateBox()
+    {
+        updateBox(false);
+    }
 
-  signals:
+signals:
     void argHintHidden();
 
-  private:
+private:
     void doComplete();
     void abortCompletion();
     void complete( KTextEditor::CompletionItem );
     void updateBox( bool newCoordinate );
 
-    KYZisArgHint*    m_pArgHint;
-    KYZisView*       m_view;
-    Q3VBox*          m_completionPopup;
-    KYZisCCListBox*       m_completionListBox;
- //   Q3ValueList<KTextEditor::CompletionEntry> m_complList;
-    int            m_lineCursor;
-    int            m_colCursor;
-    int             m_offset;
-    bool            m_caseSensitive;
+    KYZisArgHint* m_pArgHint;
+    KYZisView* m_view;
+    Q3VBox* m_completionPopup;
+    KYZisCCListBox* m_completionListBox;
+    //   Q3ValueList<KTextEditor::CompletionEntry> m_complList;
+    int m_lineCursor;
+    int m_colCursor;
+    int m_offset;
+    bool m_caseSensitive;
     KYZisCodeCompletionCommentLabel* m_commentLabel;
 
-	friend class KYZisCompletionItem;
-    class CompletionItem {
+    friend class KYZisCompletionItem;
+    class CompletionItem
+    {
     public:
-      CompletionItem(const KTextEditor::CompletionData* _data,int _index):data(_data),index(_index) {}
-      const KTextEditor::CompletionData* data;
-      int index;
-      int col;
-      inline bool operator <(const CompletionItem& other) const {
-        const KTextEditor::CompletionItem& oi(other.data->items().at(other.index));
-        const KTextEditor::CompletionItem& ti(data->items().at(index));
-        //longest match first, implement more accurately
-        bool longer=(data->matchStart().column()<other.data->matchStart().column());
-        bool equal=(data->matchStart().column()==other.data->matchStart().column());
-        bool result= longer || (equal &&(oi.text()>ti.text()));
-        return result;
+        CompletionItem(const KTextEditor::CompletionData* _data, int _index): data(_data), index(_index)
+        {}
+        const KTextEditor::CompletionData* data;
+        int index;
+        int col;
+        inline bool operator <(const CompletionItem& other) const
+        {
+            const KTextEditor::CompletionItem& oi(other.data->items().at(other.index));
+            const KTextEditor::CompletionItem& ti(data->items().at(index));
+            //longest match first, implement more accurately
+            bool longer = (data->matchStart().column() < other.data->matchStart().column());
+            bool equal = (data->matchStart().column() == other.data->matchStart().column());
+            bool result = longer || (equal && (oi.text() > ti.text()));
+            return result;
 
-      };
-      inline CompletionItem& operator=(const CompletionItem& c) {data=c.data;index=c.index; return *this;} //FIXME
-      inline const QString& text() const {
-#if 0        
-        kdDebug()<<"data="<<data<<endl;
-        kdDebug()<<"data->items().size()="<<data->items().size()<<endl;
-#endif
-        return data->items().at(index).text();
-      }
-      inline KTextEditor::CompletionItem item() const {
+        };
+        inline CompletionItem& operator=(const CompletionItem& c)
+        {
+            data = c.data;index = c.index; return *this;
+        } //FIXME
+        inline const QString& text() const
+        {
 #if 0
-        kdDebug()<<"data="<<data<<endl;
-        kdDebug()<<"data->items().size()="<<data->items().size()<<endl;
+            kdDebug() << "data=" << data << endl;
+            kdDebug() << "data->items().size()=" << data->items().size() << endl;
 #endif
-        return data->items().at(index);
-      }
+            return data->items().at(index).text();
+        }
+        inline KTextEditor::CompletionItem item() const
+        {
+#if 0
+            kdDebug() << "data=" << data << endl;
+            kdDebug() << "data->items().size()=" << data->items().size() << endl;
+#endif
+            return data->items().at(index);
+        }
     };
     QList<CompletionItem> m_items;
     QLinkedList<KTextEditor::CompletionData> m_data;
@@ -146,47 +157,53 @@ class KYZisCodeCompletion : public QObject
 
 class KYZisArgHint: public Q3Frame
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  public:
-      KYZisArgHint( KYZisView* =0, const char* =0 );
-      virtual ~KYZisArgHint();
+public:
+    KYZisArgHint( KYZisView* = 0, const char* = 0 );
+    virtual ~KYZisArgHint();
 
-      virtual void setCurrentFunction( int );
-      virtual int currentFunction() const { return m_currentFunction; }
+    virtual void setCurrentFunction( int );
+    virtual int currentFunction() const
+    {
+        return m_currentFunction;
+    }
 
-      void setArgMarkInfos( const QString&, const QString& );
+    void setArgMarkInfos( const QString&, const QString& );
 
-      virtual void addFunction( int, const QString& );
-      QString functionAt( int id ) const { return m_functionMap[ id ]; }
+    virtual void addFunction( int, const QString& );
+    QString functionAt( int id ) const
+    {
+        return m_functionMap[ id ];
+    }
 
-      virtual void show();
-      virtual void adjustSize();
-      virtual bool eventFilter( QObject*, QEvent* );
+    virtual void show();
+    virtual void adjustSize();
+    virtual bool eventFilter( QObject*, QEvent* );
 
-  signals:
-      void argHintHidden();
-      void argHintCompleted();
-      void argHintAborted();
+signals:
+    void argHintHidden();
+    void argHintCompleted();
+    void argHintAborted();
 
-  public slots:
-      virtual void reset( int, int );
-      virtual void cursorPositionChanged( KYZisView*, int, int );
+public slots:
+    virtual void reset( int, int );
+    virtual void cursorPositionChanged( KYZisView*, int, int );
 
-  private slots:
-      void slotDone(bool completed);
+private slots:
+    void slotDone(bool completed);
 
-  private:
-      QMap<int, QString> m_functionMap;
-      int m_currentFunction;
-      QString m_wrapping;
-      QString m_delimiter;
-      bool m_markCurrentFunction;
-      int m_currentLine;
-      int m_currentCol;
-      KYZisView* editorView;
-      Q3IntDict<QLabel> labelDict;
-      QLayout* layout;
+private:
+    QMap<int, QString> m_functionMap;
+    int m_currentFunction;
+    QString m_wrapping;
+    QString m_delimiter;
+    bool m_markCurrentFunction;
+    int m_currentLine;
+    int m_currentCol;
+    KYZisView* editorView;
+    Q3IntDict<QLabel> labelDict;
+    QLayout* layout;
 };
 
 #endif

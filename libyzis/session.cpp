@@ -1,23 +1,23 @@
 /* This file is part of the Yzis libraries
- *  Copyright (C) 2003-2005 Mickael Marchand <mikmak@yzis.org>,
- *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
- *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Library General Public
- *  License as published by the Free Software Foundation; either
- *  version 2 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Library General Public License for more details.
- *
- *  You should have received a copy of the GNU Library General Public License
- *  along with this library; see the file COPYING.LIB.  If not, write to
- *  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
- *  Boston, MA 02110-1301, USA.
- **/
+*  Copyright (C) 2003-2005 Mickael Marchand <mikmak@yzis.org>,
+*  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
+*  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
+*
+*  This library is free software; you can redistribute it and/or
+*  modify it under the terms of the GNU Library General Public
+*  License as published by the Free Software Foundation; either
+*  version 2 of the License, or (at your option) any later version.
+*
+*  This library is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+*  Library General Public License for more details.
+*
+*  You should have received a copy of the GNU Library General Public License
+*  along with this library; see the file COPYING.LIB.  If not, write to
+*  the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+*  Boston, MA 02110-1301, USA.
+**/
 
 // Project
 #include "session.h"
@@ -89,50 +89,51 @@ YZSession * YZSession::self()
     return mInstance;
 }
 
-void YZSession::setInstance(YZSession* instance) 
-{ 
+void YZSession::setInstance(YZSession* instance)
+{
     mInstance = instance;
     mInstance->init();
 }
 
-YZSession::YZSession() {
+YZSession::YZSession()
+{
     // do not use debug code here because debug backend is not initialised yet
 }
 
 void YZSession::init()
 {
-	initLanguage();
-	initModes();
+    initLanguage();
+    initModes();
     initResource();
 
-	YZIS_SAFE_MODE {
-		dbg() << "Yzis SAFE MODE enabled." << endl;
-	}
-	mSearch = new YZSearch();
-	mCurView = 0;
-	mCurBuffer = 0;
-	events = new YZEvents();
-	mSchemaManager = new YzisSchemaManager();
-	mOptions = new YZInternalOptionPool();
-	mRegisters = new YZRegisters();
-	mYzisinfo= new YZYzisinfo();
-	mTagStack = new YZTagStack;
+    YZIS_SAFE_MODE {
+        dbg() << "Yzis SAFE MODE enabled." << endl;
+    }
+    mSearch = new YZSearch();
+    mCurView = 0;
+    mCurBuffer = 0;
+    events = new YZEvents();
+    mSchemaManager = new YzisSchemaManager();
+    mOptions = new YZInternalOptionPool();
+    mRegisters = new YZRegisters();
+    mYzisinfo = new YZYzisinfo();
+    mTagStack = new YZTagStack;
 
-	initScript();
-//	mYzisinfo->read(this);
+    initScript();
+    // mYzisinfo->read(this);
 
-	// create HlManager right from the beginning to ensure that this isn't
-	// done in YZSession::~YZSession
-	YzisHlManager::self();
+    // create HlManager right from the beginning to ensure that this isn't
+    // done in YZSession::~YZSession
+    YzisHlManager::self();
 }
 
 void YZSession::initLanguage()
 {
-	setlocale( LC_ALL, "");
+    setlocale( LC_ALL, "");
 #ifndef YZIS_WIN32_GCC
-	bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
-	bind_textdomain_codeset( "yzis", "UTF-8" );
-	textdomain( "yzis" );
+    bindtextdomain( "yzis", QString("%1%2").arg( PREFIX ).arg("/share/locale").toUtf8().data() );
+    bind_textdomain_codeset( "yzis", "UTF-8" );
+    textdomain( "yzis" );
 #endif
 }
 
@@ -146,31 +147,31 @@ void YZSession::initScript()
     QString resource;
     resource = resourceMgr()->findResource( ConfigScriptResource, "init.lua" );
     if (! resource.isEmpty()) {
-		YZLuaEngine::self()->source( resource );
+        YZLuaEngine::self()->source( resource );
     }
 }
 
 void YZSession::parseCommandLine( int argc, char * argv[] )
 {
     QStringList args;
-	YZView* first = NULL;
-	YZView* v;
+    YZView* first = NULL;
+    YZView* v;
     QString s;
 
-    for( int i=0; i<argc; i++) args << argv[i];
+    for ( int i = 0; i < argc; i++) args << argv[i];
 
     //quick and very durty way to remove debug args from the args list
     //needed to avoid nyzis to find "unknown options"
     YZDebugBackend::self()->parseArgv( args );
 
-	for ( int i = 1; i < args.count(); ++i ) {
-		if ( args.at(i)[0] != '-' ) {
+    for ( int i = 1; i < args.count(); ++i ) {
+        if ( args.at(i)[0] != '-' ) {
             dbg() << "Opening file : " << args.at(i) << endl;
-			v = YZSession::self()->createBufferAndView( args.at(i) );
-			if ( !first) {
-				first = v;
+            v = YZSession::self()->createBufferAndView( args.at(i) );
+            if ( !first) {
+                first = v;
             }
-	    } else {
+        } else {
             dbg() << "Parsing option : " << args.at(i) << endl;
             s = args.at(i);
 
@@ -196,7 +197,7 @@ void YZSession::parseCommandLine( int argc, char * argv[] )
                 YZSession::self()->getOptions()->getOption("blocksplash")->setBoolean( false );
 
                 if (s.length() > 2) mInitkeys = args[i].mid(2);
-                else if (i < args.count()-1) mInitkeys = args[++i];
+                else if (i < args.count() - 1) mInitkeys = args[++i];
 
                 dbg().sprintf("Init keys = '%s'", qp(mInitkeys) );
             }
@@ -209,26 +210,26 @@ void YZSession::parseCommandLine( int argc, char * argv[] )
 
                 QString luaScript;
                 if (s.length() > 2) mLuaScript = args[i].mid(2);
-                else if (i < args.count()-1) mLuaScript = args[++i];
+                else if (i < args.count() - 1) mLuaScript = args[++i];
 
             }
 
             // Everything else gets an unknown option
             else {
                 showCmdLineUnknowOption( args[i] );
-                exit(-1);
+                exit( -1);
             }
-	    }
+        }
     }
 
-	if ( !first ) {
-		/* no view opened */
-		first = YZSession::self()->createBufferAndView();
-		first->myBuffer()->openNewFile();
-		first->displayIntro();
-	}
+    if ( !first ) {
+        /* no view opened */
+        first = YZSession::self()->createBufferAndView();
+        first->myBuffer()->openNewFile();
+        first->displayIntro();
+    }
 
-	YZSession::self()->setCurrentView( first );
+    YZSession::self()->setCurrentView( first );
 }
 
 void YZSession::frontendGuiReady()
@@ -240,21 +241,21 @@ void YZSession::frontendGuiReady()
 
 void YZSession::runLuaScript()
 {
-	dbg() << "runLuaScript(): Running lua script '" << mLuaScript << "'" << endl;
+    dbg() << "runLuaScript(): Running lua script '" << mLuaScript << "'" << endl;
     if (mLuaScript.length() == 0) {
-		exit(-2);
-	}
+        exit( -2);
+    }
 
-	QString retValue = YZLuaEngine::self()->source(mLuaScript);
-	dbg().sprintf( "runLuaScript(): Return Value='%s'",  qp(retValue) );
-	bool ok;
-	int retInt = retValue.toInt(&ok, 0);
-	if (ok == false){
-		err().sprintf("runLuaScript(): Could not convert script return value '%s' to int: ", qp(retValue));
-		exit(-2);
-	} else {
-		exit(retInt);
-	}
+    QString retValue = YZLuaEngine::self()->source(mLuaScript);
+    dbg().sprintf( "runLuaScript(): Return Value='%s'", qp(retValue) );
+    bool ok;
+    int retInt = retValue.toInt(&ok, 0);
+    if (ok == false) {
+        err().sprintf("runLuaScript(): Could not convert script return value '%s' to int: ", qp(retValue));
+        exit( -2);
+    } else {
+        exit(retInt);
+    }
 }
 
 void YZSession::sendInitkeys()
@@ -283,57 +284,64 @@ QString YZSession::toString() const
     return s;
 }
 
-YZSession::~YZSession() {
-	mYzisinfo->write(); // save yzisinfo
-	endModes();
-	delete YzisHlManager::self();
-	delete mSchemaManager;
-	delete mSearch;
-	delete events;
-	delete mRegisters;
-	delete mOptions;
-	delete mYzisinfo;
-	delete YZMapping::self();
-	delete YZLuaEngine::self();
-	delete mTagStack;
+YZSession::~YZSession()
+{
+    mYzisinfo->write(); // save yzisinfo
+    endModes();
+    delete YzisHlManager::self();
+    delete mSchemaManager;
+    delete mSearch;
+    delete events;
+    delete mRegisters;
+    delete mOptions;
+    delete mYzisinfo;
+    delete YZMapping::self();
+    delete YZLuaEngine::self();
+    delete mTagStack;
     delete mResourceMgr;
 }
 
-void YZSession::initModes() {
-	mModes[ YZMode::ModeIntro ] = new YZModeIntro();
-	mModes[ YZMode::ModeCommand ] = new YZModeCommand();
-	mModes[ YZMode::ModeEx ] = new YZModeEx();
-	mModes[ YZMode::ModeInsert ] = new YZModeInsert();
-	mModes[ YZMode::ModeReplace ] = new YZModeReplace();
-	mModes[ YZMode::ModeVisual ] = new YZModeVisual();
-	mModes[ YZMode::ModeVisualLine ] = new YZModeVisualLine();
-	mModes[ YZMode::ModeVisualBlock ] = new YZModeVisualBlock();
-	mModes[ YZMode::ModeSearch ] = new YZModeSearch();
-	mModes[ YZMode::ModeSearchBackward ] = new YZModeSearchBackward();
-	mModes[ YZMode::ModeCompletion ] = new YZModeCompletion();
-	YZModeMap::Iterator it;
-	// XXX orzel : why isn't that done in YZMode ctor or YZMode* ctors ?
-	for( it = mModes.begin(); it != mModes.end(); ++it )
-		it.value()->init();
+void YZSession::initModes()
+{
+    mModes[ YZMode::ModeIntro ] = new YZModeIntro();
+    mModes[ YZMode::ModeCommand ] = new YZModeCommand();
+    mModes[ YZMode::ModeEx ] = new YZModeEx();
+    mModes[ YZMode::ModeInsert ] = new YZModeInsert();
+    mModes[ YZMode::ModeReplace ] = new YZModeReplace();
+    mModes[ YZMode::ModeVisual ] = new YZModeVisual();
+    mModes[ YZMode::ModeVisualLine ] = new YZModeVisualLine();
+    mModes[ YZMode::ModeVisualBlock ] = new YZModeVisualBlock();
+    mModes[ YZMode::ModeSearch ] = new YZModeSearch();
+    mModes[ YZMode::ModeSearchBackward ] = new YZModeSearchBackward();
+    mModes[ YZMode::ModeCompletion ] = new YZModeCompletion();
+    YZModeMap::Iterator it;
+    // XXX orzel : why isn't that done in YZMode ctor or YZMode* ctors ?
+    for ( it = mModes.begin(); it != mModes.end(); ++it )
+        it.value()->init();
 }
-void YZSession::endModes() {
-	YZModeMap::Iterator it;
-	for( it = mModes.begin(); it != mModes.end(); ++it )
-		delete it.value();
-	mModes.clear();
+void YZSession::endModes()
+{
+    YZModeMap::Iterator it;
+    for ( it = mModes.begin(); it != mModes.end(); ++it )
+        delete it.value();
+    mModes.clear();
 }
-YZModeMap YZSession::getModes() const {
-	return mModes;
+YZModeMap YZSession::getModes() const
+{
+    return mModes;
 }
-YZModeEx* YZSession::getExPool() {
-	return (YZModeEx*)mModes[ YZMode::ModeEx ];
+YZModeEx* YZSession::getExPool()
+{
+    return (YZModeEx*)mModes[ YZMode::ModeEx ];
 }
-YZModeCommand* YZSession::getCommandPool() {
-	return (YZModeCommand*)mModes[ YZMode::ModeCommand ];
+YZModeCommand* YZSession::getCommandPool()
+{
+    return (YZModeCommand*)mModes[ YZMode::ModeCommand ];
 }
 
-YZYzisinfo * YZSession::getYzisinfo() {
-	return mYzisinfo;
+YZYzisinfo * YZSession::getYzisinfo()
+{
+    return mYzisinfo;
 }
 
 // ================================================================
@@ -342,70 +350,75 @@ YZYzisinfo * YZSession::getYzisinfo() {
 //
 // ================================================================
 
-YZBuffer *YZSession::createBuffer( const QString &filename ) {
+YZBuffer *YZSession::createBuffer( const QString &filename )
+{
     dbg().sprintf("createBuffer( filename='%s' )", qp(filename) );
-	//make sure we don't have a buffer of this path yet
-	YZBuffer *buffer = findBuffer( filename );
-	if (buffer) { //already open !
-		return buffer;
-	}
+    //make sure we don't have a buffer of this path yet
+    YZBuffer *buffer = findBuffer( filename );
+    if (buffer) { //already open !
+        return buffer;
+    }
 
-	buffer = guiCreateBuffer();
-	buffer->setState( YZBuffer::BufferActive );
-	
-	if ( !filename.isEmpty() ) {
-		buffer->load( filename );
-	} else {
-		buffer->openNewFile();
-	}
-	
-	mBufferList.push_back( buffer );
-	
-	return buffer;
+    buffer = guiCreateBuffer();
+    buffer->setState( YZBuffer::BufferActive );
+
+    if ( !filename.isEmpty() ) {
+        buffer->load( filename );
+    } else {
+        buffer->openNewFile();
+    }
+
+    mBufferList.push_back( buffer );
+
+    return buffer;
 }
 
-YZView *YZSession::createBufferAndView( const QString& path ) {
+YZView *YZSession::createBufferAndView( const QString& path )
+{
     dbg().sprintf("createBufferAndView( path='%s' )", qp(path) );
-	QString filename = YZBuffer::parseFilename(path);
-	YZBuffer *buffer = findBuffer( filename );
-	bool alreadyopen = true;
-	if (!buffer) {
-		alreadyopen=false;
-		buffer = createBuffer( filename );
-	}
+    QString filename = YZBuffer::parseFilename(path);
+    YZBuffer *buffer = findBuffer( filename );
+    bool alreadyopen = true;
+    if (!buffer) {
+        alreadyopen = false;
+        buffer = createBuffer( filename );
+    }
 
-	YZView *view;
-	if (!alreadyopen) {
-		view = createView( buffer );
-	} else {
-		view = findViewByBuffer(buffer);
-	}
-	setCurrentView( view );
+    YZView *view;
+    if (!alreadyopen) {
+        view = createView( buffer );
+    } else {
+        view = findViewByBuffer(buffer);
+    }
+    setCurrentView( view );
 
-	view->applyStartPosition( YZBuffer::getStartPosition(path) );
+    view->applyStartPosition( YZBuffer::getStartPosition(path) );
 
-	return view;
+    return view;
 }
 
-void YZSession::rmBuffer( YZBuffer *b ) {
-	dbg() << "rmBuffer( " << b->toString() << " )" << endl;
-	if ( mBufferList.indexOf( b ) >= 0 ) {
-			mBufferList.removeAll( b );
-			guiDeleteBuffer( b );
-	}
-	if ( mBufferList.empty() )
-		exitRequest( );
+void YZSession::rmBuffer( YZBuffer *b )
+{
+    dbg() << "rmBuffer( " << b->toString() << " )" << endl;
+    if ( mBufferList.indexOf( b ) >= 0 ) {
+        mBufferList.removeAll( b );
+        guiDeleteBuffer( b );
+    }
+    if ( mBufferList.empty() )
+        exitRequest( );
 }
 
-YZBuffer* YZSession::findBuffer( const QString& path ) {
-	QFileInfo fi (path);
-	foreach( YZBuffer *b, mBufferList )
-		if ( b->fileName() == fi.absoluteFilePath())
-			return b;
-	return NULL; //not found
+YZBuffer* YZSession::findBuffer( const QString& path )
+{
+    QFileInfo fi (path);
+    foreach( YZBuffer *b, mBufferList )
+    if ( b->fileName() == fi.absoluteFilePath())
+        return b;
+    return NULL; //not found
 }
 
-bool YZSession::isOneBufferModified() const {
+bool YZSession::isOneBufferModified() const
+{
     foreach( YZBuffer * b, mBufferList ) {
         if (b->fileIsNew() ) return true;
     }
@@ -417,107 +430,116 @@ bool YZSession::isOneBufferModified() const {
 //                          View stuff
 //
 // ================================================================
-YZView *YZSession::createView( YZBuffer *buffer ) {
+YZView *YZSession::createView( YZBuffer *buffer )
+{
     dbg().sprintf("createView( %s )", qp(buffer->toString()) );
-	YZView *view = guiCreateView( buffer );
-	mViewList.push_back( view );
-	return view;
+    YZView *view = guiCreateView( buffer );
+    mViewList.push_back( view );
+    return view;
 }
 
-void YZSession::deleteView( YZView* view ) {
+void YZSession::deleteView( YZView* view )
+{
     dbg().sprintf("deleteView( %s )", qp(view->toString()) );
-	if ( !mViewList.contains(view) ) {
-		err() << "trying to remove an unknown view " << view->getId() << endl;
-		return;
-	}
+    if ( !mViewList.contains(view) ) {
+        err() << "trying to remove an unknown view " << view->getId() << endl;
+        return ;
+    }
 
-	// Guardian, if we're deleting the last view, close the app
-	if ( mViewList.size() == 1 ) {
+    // Guardian, if we're deleting the last view, close the app
+    if ( mViewList.size() == 1 ) {
         dbg() << "last view being deleted, exiting!" << endl;
-		exitRequest( 0 );
-		return;
-	}
+        exitRequest( 0 );
+        return ;
+    }
 
-	// if we're deleting the current view, then we have to switch views
-	if ( view == currentView() ) {
-		setCurrentView( prevView() );
-	}
-	
-	// remove it
-	mViewList.removeAll( view );
-	guiDeleteView( view );
+    // if we're deleting the current view, then we have to switch views
+    if ( view == currentView() ) {
+        setCurrentView( prevView() );
+    }
+
+    // remove it
+    mViewList.removeAll( view );
+    guiDeleteView( view );
 }
 
-void YZSession::setCurrentView( YZView* view ) {
-	dbg() << "setCurrentView( " << view->toString() <<  " )" << endl;
-	guiChangeCurrentView( view );
-	
-	mCurView = view;
-	mCurBuffer = view->myBuffer();
-	mCurBuffer->filenameChanged();
-	
-	guiSetFocusMainWindow();
+void YZSession::setCurrentView( YZView* view )
+{
+    dbg() << "setCurrentView( " << view->toString() << " )" << endl;
+    guiChangeCurrentView( view );
+
+    mCurView = view;
+    mCurBuffer = view->myBuffer();
+    mCurBuffer->filenameChanged();
+
+    guiSetFocusMainWindow();
 }
 
-const YZViewList YZSession::getAllViews() const {
-	YZViewList result;
-	
-	for ( YZBufferList::const_iterator itr = mBufferList.begin(); itr != mBufferList.end(); ++itr ) {
-		YZBuffer *buf = *itr;
-		const YZViewList views = buf->views();
-		
-		for ( YZViewList::const_iterator vitr = views.begin(); vitr != views.end(); ++vitr ) {
-			result.push_back( *vitr );
-		}
-	}
-	
-	return result;
+const YZViewList YZSession::getAllViews() const
+{
+    YZViewList result;
+
+    for ( YZBufferList::const_iterator itr = mBufferList.begin(); itr != mBufferList.end(); ++itr ) {
+        YZBuffer *buf = *itr;
+        const YZViewList views = buf->views();
+
+        for ( YZViewList::const_iterator vitr = views.begin(); vitr != views.end(); ++vitr ) {
+            result.push_back( *vitr );
+        }
+    }
+
+    return result;
 }
 
-YZView* YZSession::findViewByBuffer( const YZBuffer *buffer ) {
+YZView* YZSession::findViewByBuffer( const YZBuffer *buffer )
+{
     if (buffer == NULL) return NULL;
-	foreach(  YZView *view, mViewList )
-		if ( view->myBuffer() == buffer )
-			return view;
-	return NULL;
+    foreach( YZView *view, mViewList )
+    if ( view->myBuffer() == buffer )
+        return view;
+    return NULL;
 }
 
-YZView* YZSession::firstView() {
-	return mViewList.front();
+YZView* YZSession::firstView()
+{
+    return mViewList.front();
 }
 
-YZView* YZSession::lastView() {
-	return mViewList.back();
+YZView* YZSession::lastView()
+{
+    return mViewList.back();
 }
 
-YZView* YZSession::prevView() {
-	if ( currentView() == 0 ) {
-		dbg() << "WOW, current view is NULL !" << endl;
-		return NULL;
-	}
-	int idx = mViewList.indexOf( currentView() );
-	if ( idx == -1 ) {
-		dbg() << "WOW, current view is not in mViewList !" << endl;
-		return NULL;
-	}
+YZView* YZSession::prevView()
+{
+    if ( currentView() == 0 ) {
+        dbg() << "WOW, current view is NULL !" << endl;
+        return NULL;
+    }
+    int idx = mViewList.indexOf( currentView() );
+    if ( idx == -1 ) {
+        dbg() << "WOW, current view is not in mViewList !" << endl;
+        return NULL;
+    }
 
-	if ( idx == 0 )
-		idx = mViewList.size();
-	return mViewList.value( idx - 1 );
+    if ( idx == 0 )
+        idx = mViewList.size();
+    return mViewList.value( idx - 1 );
 }
 
-YZView* YZSession::nextView() {
-	if ( currentView() == 0 ) {
-		dbg() << "WOW, current view is NULL !" << endl;
-		return NULL;
-	}
-	
-	int idx = mViewList.indexOf( currentView() );
-	if ( idx == -1 ) {
-		dbg() << "WOW, current view is not in mViewList !" << endl;
-		return NULL;
-	}
-	return mViewList.value( (idx+1)%mViewList.size() );
+YZView* YZSession::nextView()
+{
+    if ( currentView() == 0 ) {
+        dbg() << "WOW, current view is NULL !" << endl;
+        return NULL;
+    }
+
+    int idx = mViewList.indexOf( currentView() );
+    if ( idx == -1 ) {
+        dbg() << "WOW, current view is not in mViewList !" << endl;
+        return NULL;
+    }
+    return mViewList.value( (idx + 1) % mViewList.size() );
 }
 
 // ================================================================
@@ -526,253 +548,275 @@ YZView* YZSession::nextView() {
 //
 // ================================================================
 
-bool YZSession::exitRequest( int errorCode ) {
-	dbg() << "exitRequest( " << errorCode << " ) " << endl;
-	//prompt unsaved files XXX
-	foreach( YZBuffer *b, mBufferList )
-		b->saveYzisInfo( b->firstView() );
-	/*
-	mBuffers.clear();
-	
-	getYzisinfo()->updateStartPosition( 
-                  mCurBuffer->fileName(),
-                  (currentView())->getCursor());
-                                       
-	getYzisinfo()->writeYzisinfo();*/
+bool YZSession::exitRequest( int errorCode )
+{
+    dbg() << "exitRequest( " << errorCode << " ) " << endl;
+    //prompt unsaved files XXX
+    foreach( YZBuffer *b, mBufferList )
+    b->saveYzisInfo( b->firstView() );
+    /*
+    mBuffers.clear();
+
+    getYzisinfo()->updateStartPosition( 
+                     mCurBuffer->fileName(),
+                     (currentView())->getCursor());
                                           
-	return guiQuit( errorCode );
+    getYzisinfo()->writeYzisinfo();*/
+
+    return guiQuit( errorCode );
 }
 
 
-void YZSession::saveBufferExit() {
+void YZSession::saveBufferExit()
+{
     dbg() << HERE() << endl;
-	if ( saveAll() )
-		guiQuit();
+    if ( saveAll() )
+        guiQuit();
 }
 
-bool YZSession::saveAll() {
+bool YZSession::saveAll()
+{
     dbg() << HERE() << endl;
-	bool savedAll=true;
-	foreach( YZBuffer *b, mBufferList )
-		if ( !b->fileIsNew() )
-			if ( b->fileIsModified() && !b->save() )
-				savedAll=false;
-	return savedAll;
+    bool savedAll = true;
+    foreach( YZBuffer *b, mBufferList )
+    if ( !b->fileIsNew() )
+        if ( b->fileIsModified() && !b->save() )
+            savedAll = false;
+    return savedAll;
 }
 
-void YZSession::scriptSendMultipleKeys ( const QString& text) {
+void YZSession::scriptSendMultipleKeys ( const QString& text)
+{
     dbg() << "scriptSendMultipleKeys(" << text << ")" << endl;
-//	QStringList list = QStringList::split("<ENTER>", text);
-/*	QStringList::Iterator it = list.begin(), end = list.end();
-	for (; it != end; ++it) {*/
-		sendMultipleKeys( currentView(), /* *it + "<ENTER>" */ text);
-		QCoreApplication::instance()->processEvents();
-/*	}*/
+    // QStringList list = QStringList::split("<ENTER>", text);
+    /* QStringList::Iterator it = list.begin(), end = list.end();
+     for (; it != end; ++it) {*/
+    sendMultipleKeys( currentView(),  /* *it + "<ENTER>" */ text);
+    QCoreApplication::instance()->processEvents();
+    /* }*/
 }
 
-void YZSession::sendMultipleKeys( YZView * view, const QString& _keys) {
-	dbg() << "sendMultipleKeys(" << view << ", keys=" << _keys << ")" << endl;
-	if (view->modePool()->current()->mapMode() & MapCmdline) {
-		view->modePool()->change( YZMode::ModeCommand );
-	}
-	QString keys = _keys;
-	for ( int i = 0 ; i < keys.length(); ) {
-		QString key = keys.mid( i );
-		dbg() << "Handling key: " << key << endl;
-		//exception : in SEARCH, SEARCH_BACKWARD and EX mode we don't send keys immediately
-		if (view->modePool()->current()->mapMode() & MapCmdline) {
-			if ( key.startsWith( "<ESC>" ) ) {
-				sendKey( view, "<ESC>" );
-				continue;
-			} else if ( key.startsWith( "<ENTER>" ) ) {
-				sendKey( view, "<ENTER>" );
-				i+=7;
-				continue;
-			} else if ( key.startsWith( "<UP>" ) ) {
-				sendKey( view, "<UP>" );
-				i+=4;
-				continue;
-			} else if ( key.startsWith( "<DOWN>" ) ) {
-				sendKey( view, "<DOWN>" );
-				i+=6;
-				continue;
-			} else {
-				view->guiSetCommandLineText( view->guiGetCommandLineText() + key.mid(0,1) );
-				i++;
-				continue;
-			}
-		}
-		if ( key.startsWith( "<CTRL>" ) ) {
-			dbg() << "Sending " << key.mid(6,1) << endl;
-			sendKey( view, key.mid( 6,1 ), "<CTRL>" );
-			i+=7;
-			continue;
-		} else if ( key.startsWith( "<ALT>" ) ) {
-			sendKey( view, key.mid( 5,1 ), "<ALT>" );
-			i+=6;
-			continue;
-		} else if ( key.startsWith( "<SHIFT>" ) ) {
-			sendKey( view, key.mid( 7,1 ), "<SHIFT>" );
-			i+=8;
-			continue;
-		} else if ( key.startsWith( "<ESC>" ) ) {
-			sendKey( view, "<ESC>" );
-			i+=5;
-			continue;
-		} else if ( key.startsWith( "<ENTER>" ) ) {
-			sendKey( view, "<ENTER>" );
-			i+=7;
-			continue;
-		} else if ( key.startsWith( "<TAB>" ) ) {
-			sendKey( view, "<TAB>" );
-			i+=5;
-			continue;
-		} else if ( key.startsWith( "<UP>" ) ) {
-			sendKey( view, "<UP>" );
-			i+=4;
-			continue;
-		} else if ( key.startsWith( "<DOWN>" ) ) {
-			sendKey( view, "<DOWN>" );
-			i+=6;
-			continue;
-		} else if ( key.startsWith( "<RIGHT>" ) ) {
-			sendKey( view, "<RIGHT>" );
-			i+=7;
-			continue;
-		} else if ( key.startsWith( "<LEFT>" ) ) {
-			sendKey( view, "<LEFT>" );
-			i+=6;
-			continue;
-		} else if ( key.startsWith( "<DEL>" ) ) {
-			sendKey( view, "<DEL>" );
-			i+=5;
-			continue;
-		} else if ( key.startsWith( "<BS>" ) ) {
-			sendKey( view, "<BS>" );
-			i+=4;
-			continue;
-		} else {
-			sendKey( view, key.mid( 0,1 ) );
-			i++;
-		}
-	}
+void YZSession::sendMultipleKeys( YZView * view, const QString& _keys)
+{
+    dbg() << "sendMultipleKeys(" << view << ", keys=" << _keys << ")" << endl;
+    if (view->modePool()->current()->mapMode() & MapCmdline) {
+        view->modePool()->change( YZMode::ModeCommand );
+    }
+    QString keys = _keys;
+    for ( int i = 0 ; i < keys.length(); ) {
+        QString key = keys.mid( i );
+        dbg() << "Handling key: " << key << endl;
+        //exception : in SEARCH, SEARCH_BACKWARD and EX mode we don't send keys immediately
+        if (view->modePool()->current()->mapMode() & MapCmdline) {
+            if ( key.startsWith( "<ESC>" ) ) {
+                sendKey( view, "<ESC>" );
+                continue;
+            } else if ( key.startsWith( "<ENTER>" ) ) {
+                sendKey( view, "<ENTER>" );
+                i += 7;
+                continue;
+            } else if ( key.startsWith( "<UP>" ) ) {
+                sendKey( view, "<UP>" );
+                i += 4;
+                continue;
+            } else if ( key.startsWith( "<DOWN>" ) ) {
+                sendKey( view, "<DOWN>" );
+                i += 6;
+                continue;
+            } else {
+                view->guiSetCommandLineText( view->guiGetCommandLineText() + key.mid(0, 1) );
+                i++;
+                continue;
+            }
+        }
+        if ( key.startsWith( "<CTRL>" ) ) {
+            dbg() << "Sending " << key.mid(6, 1) << endl;
+            sendKey( view, key.mid( 6, 1 ), "<CTRL>" );
+            i += 7;
+            continue;
+        } else if ( key.startsWith( "<ALT>" ) ) {
+            sendKey( view, key.mid( 5, 1 ), "<ALT>" );
+            i += 6;
+            continue;
+        } else if ( key.startsWith( "<SHIFT>" ) ) {
+            sendKey( view, key.mid( 7, 1 ), "<SHIFT>" );
+            i += 8;
+            continue;
+        } else if ( key.startsWith( "<ESC>" ) ) {
+            sendKey( view, "<ESC>" );
+            i += 5;
+            continue;
+        } else if ( key.startsWith( "<ENTER>" ) ) {
+            sendKey( view, "<ENTER>" );
+            i += 7;
+            continue;
+        } else if ( key.startsWith( "<TAB>" ) ) {
+            sendKey( view, "<TAB>" );
+            i += 5;
+            continue;
+        } else if ( key.startsWith( "<UP>" ) ) {
+            sendKey( view, "<UP>" );
+            i += 4;
+            continue;
+        } else if ( key.startsWith( "<DOWN>" ) ) {
+            sendKey( view, "<DOWN>" );
+            i += 6;
+            continue;
+        } else if ( key.startsWith( "<RIGHT>" ) ) {
+            sendKey( view, "<RIGHT>" );
+            i += 7;
+            continue;
+        } else if ( key.startsWith( "<LEFT>" ) ) {
+            sendKey( view, "<LEFT>" );
+            i += 6;
+            continue;
+        } else if ( key.startsWith( "<DEL>" ) ) {
+            sendKey( view, "<DEL>" );
+            i += 5;
+            continue;
+        } else if ( key.startsWith( "<BS>" ) ) {
+            sendKey( view, "<BS>" );
+            i += 4;
+            continue;
+        } else {
+            sendKey( view, key.mid( 0, 1 ) );
+            i++;
+        }
+    }
 }
 
-void YZSession::sendKey( YZView * view, const QString& _key, const QString& _modifiers) {
-	dbg() << "sendKey( " << view << ", key=" << _key << " mod=" << _modifiers << ")" << endl;
+void YZSession::sendKey( YZView * view, const QString& _key, const QString& _modifiers)
+{
+    dbg() << "sendKey( " << view << ", key=" << _key << " mod=" << _modifiers << ")" << endl;
 
-	QString key=_key;
-	QString modifiers=_modifiers;
-	if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return; //we are not supposed to received modifiers in key
+    QString key = _key;
+    QString modifiers = _modifiers;
+    if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return ; //we are not supposed to received modifiers in key
 
     QList<QChar> reg = view->registersRecorded();
-	if ( reg.count() > 0 ) {
-		for ( int ab = 0 ; ab < reg.size(); ++ab ) {
-			QString newReg = modifiers + _key;
-			QStringList curReg = getRegister( reg.at(ab) );
-			if ( curReg.size() > 0 )
-				newReg.prepend( curReg[ 0 ] );
-			setRegister( reg.at(ab), QStringList( newReg ) );
-		}
-	}
+    if ( reg.count() > 0 ) {
+        for ( int ab = 0 ; ab < reg.size(); ++ab ) {
+            QString newReg = modifiers + _key;
+            QStringList curReg = getRegister( reg.at(ab) );
+            if ( curReg.size() > 0 )
+                newReg.prepend( curReg[ 0 ] );
+            setRegister( reg.at(ab), QStringList( newReg ) );
+        }
+    }
 
-	/** rightleft mapping **/
-	bool rightleft = view->getLocalBooleanOption( "rightleft" );
-	if ( rightleft && ( view->modePool()->current()->mapMode() & (MapVisual|MapNormal) ) ) {
+    /** rightleft mapping **/
+    bool rightleft = view->getLocalBooleanOption( "rightleft" );
+    if ( rightleft && ( view->modePool()->current()->mapMode() & (MapVisual | MapNormal) ) ) {
 #define SWITCH_KEY( a, b ) \
-	if ( key == a ) key = b; \
-	else if ( key == b ) key = a
-		SWITCH_KEY( "<RIGHT>", "<LEFT>" );
-		SWITCH_KEY( "h", "l" );
-	}
+    if ( key == a ) key = b; \
+    else if ( key == b ) key = a
+        SWITCH_KEY( "<RIGHT>", "<LEFT>" );
+        SWITCH_KEY( "h", "l" );
+    }
 
-	if ( modifiers.contains ("<SHIFT>")) {//useful?
-		key = key.toUpper();
-		modifiers.remove( "<SHIFT>" );
-	}
+    if ( modifiers.contains ("<SHIFT>")) { //useful?
+        key = key.toUpper();
+        modifiers.remove( "<SHIFT>" );
+    }
 
-	view->appendInputBuffer( modifiers + key );
-	view->setPaintAutoCommit( false );
-	view->modePool()->sendKey( key, modifiers );
-	view->commitPaintEvent();
+    view->appendInputBuffer( modifiers + key );
+    view->setPaintAutoCommit( false );
+    view->modePool()->sendKey( key, modifiers );
+    view->commitPaintEvent();
 }
 
-void YZSession::registerModifier ( const QString& mod ) {
-	foreach(  YZView *view, mViewList )
-		view->registerModifierKeys( mod );
+void YZSession::registerModifier ( const QString& mod )
+{
+    foreach( YZView *view, mViewList )
+    view->registerModifierKeys( mod );
 }
 
-void YZSession::unregisterModifier ( const QString& mod ) {
-	foreach(  YZView *view, mViewList )
-		view->unregisterModifierKeys( mod );
+void YZSession::unregisterModifier ( const QString& mod )
+{
+    foreach( YZView *view, mViewList )
+    view->unregisterModifierKeys( mod );
 }
 
-void YZSession::saveJumpPosition() {
-	mYzisinfo->updateJumpList( mCurBuffer, currentView()->getCursor());
+void YZSession::saveJumpPosition()
+{
+    mYzisinfo->updateJumpList( mCurBuffer, currentView()->getCursor());
 }
 
-void YZSession::saveJumpPosition( const QPoint cursor ) {
-	mYzisinfo->updateJumpList( mCurBuffer, cursor );
+void YZSession::saveJumpPosition( const QPoint cursor )
+{
+    mYzisinfo->updateJumpList( mCurBuffer, cursor );
 }
 
-const YZCursor YZSession::previousJumpPosition() {
-	return mYzisinfo->previousJumpPosition();
+const YZCursor YZSession::previousJumpPosition()
+{
+    return mYzisinfo->previousJumpPosition();
 }
 
-YZTagStack &YZSession::getTagStack() {
-	return *mTagStack;
+YZTagStack &YZSession::getTagStack()
+{
+    return *mTagStack;
 }
 
-int YZSession::getIntegerOption( const QString& option ) {
-	return YZSession::self()->getOptions()->readIntegerOption( option );
+int YZSession::getIntegerOption( const QString& option )
+{
+    return YZSession::self()->getOptions()->readIntegerOption( option );
 }
 
-bool YZSession::getBooleanOption( const QString& option ) {
-	return YZSession::self()->getOptions()->readBooleanOption( option );
+bool YZSession::getBooleanOption( const QString& option )
+{
+    return YZSession::self()->getOptions()->readBooleanOption( option );
 }
 
-QString YZSession::getStringOption( const QString& option ) {
-	return YZSession::self()->getOptions()->readStringOption( option );
+QString YZSession::getStringOption( const QString& option )
+{
+    return YZSession::self()->getOptions()->readStringOption( option );
 }
 
-QStringList YZSession::getListOption( const QString& option ) {
-	return YZSession::self()->getOptions()->readListOption( option );
+QStringList YZSession::getListOption( const QString& option )
+{
+    return YZSession::self()->getOptions()->readListOption( option );
 }
 
-void YZSession::eventConnect( const QString& event, const QString& function ) {
-	events->connect( event, function );
+void YZSession::eventConnect( const QString& event, const QString& function )
+{
+    events->connect( event, function );
 }
 
-QStringList YZSession::eventCall( const QString& event, YZView *view /*=NULL*/ ) {
-	return events->exec( event, view );
+QStringList YZSession::eventCall( const QString& event, YZView *view /*=NULL*/ )
+{
+    return events->exec( event, view );
 }
 
-YZInternalOptionPool *YZSession::getOptions() {
-	return mOptions;
+YZInternalOptionPool *YZSession::getOptions()
+{
+    return mOptions;
 }
 
-void YZSession::setRegister( QChar r, const QStringList& value ) {
-	mRegisters->setRegister( r, value );
+void YZSession::setRegister( QChar r, const QStringList& value )
+{
+    mRegisters->setRegister( r, value );
 }
 
-QStringList& YZSession::getRegister ( QChar r ) {
-	return mRegisters->getRegister( r );
+QStringList& YZSession::getRegister ( QChar r )
+{
+    return mRegisters->getRegister( r );
 }
 
-QList<QChar> YZSession::getRegisters() const { 
-	return mRegisters->keys(); 
+QList<QChar> YZSession::getRegisters() const
+{
+    return mRegisters->keys();
 }
 
 void * YZSession::operator new( size_t tSize )
 {
-	dbg() << "YZSession::new()" << tSize << endl;
-	return yzmalloc( tSize );
+    dbg() << "YZSession::new()" << tSize << endl;
+    return yzmalloc( tSize );
 }
 
 void YZSession::operator delete( void *p )
 {
     dbg().sprintf("YZSession::delete( %p )", p );
-	yzfree(p);
+    yzfree(p);
 }
 
 // ================================================================
@@ -785,19 +829,19 @@ void YZSession::operator delete( void *p )
 void YZSession::showCmdLineHelp( const QString & progName )
 {
     QString usage = QString(
-"%1 [options] [file1 [file2] ... ]\n"
-"-h | --help : show this message\n"
-"-v | --version: version information\n"
-"-c <some key presses> : execute immediately the key presses when yzis starts, asif they were typed by the user.\n"
-    ).arg(progName);
-    fputs(qp(usage),stderr);
+                        "%1 [options] [file1 [file2] ... ]\n"
+                        "-h | --help : show this message\n"
+                        "-v | --version: version information\n"
+                        "-c <some key presses> : execute immediately the key presses when yzis starts, asif they were typed by the user.\n"
+                    ).arg(progName);
+    fputs(qp(usage), stderr);
 }
 
 /** Show version text for -v and --version option */
 void YZSession::showCmdLineVersion()
 {
-    QString versionText	= version(); 
-    fputs(qp(versionText),stderr);
+    QString versionText = version();
+    fputs(qp(versionText), stderr);
 }
 
 QString YZSession::version()

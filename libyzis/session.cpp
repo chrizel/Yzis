@@ -1,7 +1,8 @@
 /* This file is part of the Yzis libraries
 *  Copyright (C) 2003-2005 Mickael Marchand <mikmak@yzis.org>,
 *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
-*  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
+*  Copyright (C) 2005      Scott Newton <scottn@ihug.co.nz>
+*  Copyright (C) 2006-2007 Philippe Fremy <phil at freehackers dot org>
 *
 *  This library is free software; you can redistribute it and/or
 *  modify it under the terms of the GNU Library General Public
@@ -236,7 +237,9 @@ void YZSession::frontendGuiReady()
 {
     dbg() << "frontendGuiReady()" << endl;
     sendInitkeys();
-    runLuaScript();
+    if (mLuaScript.length()) { 
+        runLuaScript();
+    }
 }
 
 void YZSession::runLuaScript()

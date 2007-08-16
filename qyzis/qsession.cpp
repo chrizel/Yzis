@@ -35,9 +35,9 @@
 /* Qt */
 #include <QApplication>
 #include <QString>
-#include <QmessageBox>
+#include <QMessageBox>
 #include <QTimer>
-#include <QTextcodec>
+#include <QTextCodec>
 #include <QClipboard>
 #include <QSettings>
 #include <QList>

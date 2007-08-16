@@ -16,11 +16,11 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-#ifndef NYZ_SESSION_H
-#define NYZ_SESSION_H
+#ifndef NY_SESSION_H
+#define NY_SESSION_H
 
 /**
- * NYZSession - Ncurses main class for the whole session
+ * NYSession - Ncurses main class for the whole session
  */
 
 /* yzis */
@@ -28,9 +28,9 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 #include "session.h"
 
 /**
-  * @short Implementation of YZSession for the NCurses frontend.
+  * @short Implementation of YSession for the NCurses frontend.
   */
-class NYZSession : public QObject, public YZSession
+class NYSession : public QObject, public YZSession
 {
     Q_OBJECT
 
@@ -61,10 +61,10 @@ protected:
     virtual YZBuffer *guiCreateBuffer();
 
 private:
-    NYZSession();
-    NYZSession(const NYZSession&); // disable copy
-    NYZSession& operator=(const NYZSession&); // disable copy
-    virtual ~NYZSession( );
+    NYSession();
+    NYSession(const NYSession&); // disable copy
+    NYSession& operator=(const NYSession&); // disable copy
+    virtual ~NYSession( );
 
     /**
      * Fill the map of keycodes ncurses->Qt
@@ -88,5 +88,5 @@ public Q_SLOTS:
 
 };
 
-#endif // NYZ_SESSION_H
+#endif // NY_SESSION_H
 

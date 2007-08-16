@@ -28,26 +28,26 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 #include <ctype.h>
 
 
-#define dbg() yzDebug("NYZSession")
-#define warn() yzWarning("NYZSession")
-#define err() yzError("NYZSession")
+#define dbg() yzDebug("NYSession")
+#define warn() yzWarning("NYSession")
+#define err() yzError("NYSession")
 
-QMap<int, QString> NYZSession::keycodes; // map Ncurses to Qt codes
+QMap<int, QString> NYSession::keycodes; // map Ncurses to Qt codes
 
-void NYZSession::createInstance()
+void NYSession::createInstance()
 {
     dbg() << "createInstance()" << endl;
-    // such allocation (i.e. not "new NYZSession") will ensure that
+    // such allocation (i.e. not "new NYSession") will ensure that
     // "instance" object will be properly and automatically deleted
     // when program exits
-    static NYZSession instance;
+    static NYSession instance;
     setInstance(&instance);
 }
 
-NYZSession::NYZSession()
+NYSession::NYSession()
         : YZSession()
 {
-    dbg() << "NYZSession()" << endl;
+    dbg() << "NYSession()" << endl;
 
     /* init screen */
 
@@ -70,20 +70,20 @@ NYZSession::NYZSession()
     initialiseKeycodes();
 }
 
-NYZSession::~NYZSession( )
+NYSession::~NYSession( )
 {
-    dbg() << "~NYZSession()" << endl;
+    dbg() << "~NYSession()" << endl;
 }
 
-void NYZSession::frontendGuiReady()
+void NYSession::frontendGuiReady()
 {
     dbg() << "frontendGuiReady()" << endl;
     YZSession::self()->frontendGuiReady();
 }
 
-bool NYZSession::processInput(int /*fd*/)
+bool NYSession::processInput(int /*fd*/)
 {
-    YZASSERT_MSG( currentView(), "NYZSession::event_loop : arghhhhhhh event_loop called with no currentView" );
+    YZASSERT_MSG( currentView(), "NYSession::event_loop : arghhhhhhh event_loop called with no currentView" );
 
     wint_t c;
 
@@ -170,37 +170,37 @@ bool NYZSession::processInput(int /*fd*/)
     return true;
 }
 
-void NYZSession::guiSetClipboardText( const QString& , Clipboard::Mode )
+void NYSession::guiSetClipboardText( const QString& , Clipboard::Mode )
 {
     // XXX
 }
 
-bool NYZSession::guiQuit( int errorCode )
+bool NYSession::guiQuit( int errorCode )
 {
     dbg() << "guiQuit(" << errorCode << ")" << endl;
     exit( errorCode );
     return true;
 }
 
-void NYZSession::guiSetFocusMainWindow()
+void NYSession::guiSetFocusMainWindow()
 {
     dbg() << "guiSetFocusMainWindow()" << endl;
-    NYZView *yv = static_cast<NYZView*>( currentView() );
+    NYView *yv = static_cast<NYView*>( currentView() );
     yv->setFocusMainWindow();
 }
 
-void NYZSession::guiSetFocusCommandLine()
+void NYSession::guiSetFocusCommandLine()
 {
     dbg() << "guiSetFocusCommandLine()" << endl;
-    NYZView *yv = static_cast<NYZView*>( currentView() );
+    NYView *yv = static_cast<NYView*>( currentView() );
     yv->setFocusCommandLine();
 }
 
-void NYZSession::guiChangeCurrentView ( YZView * view )
+void NYSession::guiChangeCurrentView ( YZView * view )
 {
     dbg() << "changeCurrentView( " << view->toString() << ")" << endl;
-    NYZView *cur = static_cast<NYZView*>(currentView());
-    NYZView *v = static_cast<NYZView*>(view);
+    NYView *cur = static_cast<NYView*>(currentView());
+    NYView *v = static_cast<NYView*>(view);
     YZASSERT( view );
     if ( cur == v ) {
         warn() << "changeCurrentView() called with same view.." << endl;
@@ -213,22 +213,22 @@ void NYZSession::guiChangeCurrentView ( YZView * view )
     v->refreshScreen();
 }
 
-YZView* NYZSession::guiCreateView( YZBuffer* buffer )
+YZView* NYSession::guiCreateView( YZBuffer* buffer )
 {
     dbg() << "doCreateView( " << buffer->toString() << ")" << endl;
     YZASSERT( buffer );
-    NYZView *v = new NYZView( buffer );
-    YZASSERT_MSG(v, "NYZSession::createView : failed creating a new NYZView");
+    NYView *v = new NYView( buffer );
+    YZASSERT_MSG(v, "NYSession::createView : failed creating a new NYView");
     return v;
 }
 
-YZBuffer *NYZSession::guiCreateBuffer()
+YZBuffer *NYSession::guiCreateBuffer()
 {
     dbg() << "doCreateBuffer()" << endl;
     return new YZBuffer;
 }
 
-void NYZSession::guiPopupMessage( const QString &_message )
+void NYSession::guiPopupMessage( const QString &_message )
 {
     int nl, nc;
     QString anyKeyMsg = _("(Press any key)");
@@ -279,13 +279,13 @@ void NYZSession::guiPopupMessage( const QString &_message )
         fputs(qp(message), stderr);
 }
 
-void NYZSession::guiDeleteBuffer(YZBuffer *b)
+void NYSession::guiDeleteBuffer(YZBuffer *b)
 {
     dbg() << "guiDeleteBuffer( " << b << ")" << endl;
     delete b;
 }
 
-void NYZSession::guiDeleteView( YZView *view )
+void NYSession::guiDeleteView( YZView *view )
 {
     dbg() << "guiDeleteView( " << view << ")" << endl;
     YZView *newview = currentView();
@@ -296,24 +296,24 @@ void NYZSession::guiDeleteView( YZView *view )
     newview->refreshScreen();
 }
 
-bool NYZSession::guiPromptYesNo( const QString& /*title*/, const QString& /*message*/ )
+bool NYSession::guiPromptYesNo( const QString& /*title*/, const QString& /*message*/ )
 {
     //TODO
     return true;
 }
 
-int NYZSession::guiPromptYesNoCancel( const QString& /*title*/, const QString& /*message*/ )
+int NYSession::guiPromptYesNoCancel( const QString& /*title*/, const QString& /*message*/ )
 {
     //TODO
     return 0; //return yes for now...
 }
 
-void NYZSession::guiSplitHorizontally ( YZView* /*view*/ )
+void NYSession::guiSplitHorizontally ( YZView* /*view*/ )
 {
     //TODO
 }
 
-void NYZSession::initialiseKeycodes()
+void NYSession::initialiseKeycodes()
 {
     keycodes.clear();
 

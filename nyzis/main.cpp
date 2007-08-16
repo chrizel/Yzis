@@ -87,11 +87,11 @@ main(int argc, char *argv[])
     app->setApplicationName("NYzis");
 
     // ==============[ create session ]=============
-    NYZSession::createInstance();
+    NYSession::createInstance();
     // socket notifier created on the file descriptor 0 (stdin)
     // to catch key events
     QSocketNotifier *socket = new QSocketNotifier(0, QSocketNotifier::Read);
-    QObject::connect( socket, SIGNAL( activated( int ) ), static_cast<NYZSession*>(YZSession::self()), SLOT( processInput( int ) ) );
+    QObject::connect( socket, SIGNAL( activated( int ) ), static_cast<NYSession*>(YZSession::self()), SLOT( processInput( int ) ) );
 
     // Signal handling
     (void) signal(SIGINT, sigint);      /* arrange interrupts to terminate */
@@ -104,7 +104,7 @@ main(int argc, char *argv[])
     YZSession::self()->parseCommandLine( argc, argv );
     YZSession::self()->deleteView(errorView);
 
-    QTimer::singleShot(0, static_cast<NYZSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
+    QTimer::singleShot(0, static_cast<NYSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
 
 
     // ==============[ let's rock ! ]=============
@@ -127,7 +127,7 @@ static void sigint(int /*sig*/)
 {
     dbg() << "^C caught" << endl;
     // ^c caught -> sends an escape char..
-    NYZSession::self()->sendKey( NYZSession::self()->currentView(), "<ESC>", "" );
+    NYSession::self()->sendKey( NYSession::self()->currentView(), "<ESC>", "" );
 }
 
 
@@ -136,7 +136,7 @@ static void sigwinch(int /*sig*/)
     dbg() << "sigwinch caught" << endl;
     endwin();
     refresh();
-    NYZView *view = static_cast<NYZView*>(NYZSession::self()->currentView());
+    NYView *view = static_cast<NYView*>(NYSession::self()->currentView());
     view->unmap();
     view->map();
     view->refreshScreen();

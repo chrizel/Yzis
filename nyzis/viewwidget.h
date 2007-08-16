@@ -41,9 +41,9 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 class NYZSession;
 
 /** \file viewwidget.h
+  * @short Implementation of YView for the NCurses frontend.
   */
-
-class NYZView : public YZView
+class NYView : public YZView
 {
 
 public:
@@ -51,8 +51,8 @@ public:
       * constructor. Each view is binded to a buffer, @arg lines is the initial number of lines that
       * this view can display
       */
-    NYZView(YZBuffer *b);
-    virtual ~NYZView();
+    NYView(YZBuffer *b);
+    virtual ~NYView();
 
     virtual QString guiGetCommandLineText(void) const
     {

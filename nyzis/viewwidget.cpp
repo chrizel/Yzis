@@ -42,34 +42,34 @@ const QRgb RGB_MASK = 0x00ffffff;                // masks RGB values
 #define attribBlue mAttributesMap[0x0000ff]
 #define attribIntro mAttributesMap[0x00ff00]
 
-#define dbg() yzDebug("NYZView")
-#define err() yzError("NYZView")
+#define dbg() yzDebug("NYView")
+#define err() yzError("NYView")
 
-int NYZView::attributesMapInitialised = 0;
-QMap<QRgb, unsigned long int> NYZView::mAttributesMap;
+int NYView::attributesMapInitialised = 0;
+QMap<QRgb, unsigned long int> NYView::mAttributesMap;
 
 
-NYZView::NYZView(YZBuffer *b)
-        : YZView(b, NYZSession::self(), 0, 0), editor(0)
+NYView::NYView(YZBuffer *b)
+        : YZView(b, NYSession::self(), 0, 0), editor(0)
 {
     statusbarHasCommand = false;
 
     if ( !attributesMapInitialised ) initialiseAttributesMap();
     YZASSERT( b );
-    dbg() << "NYZView::NYZView buffer is : " << (long int)b << endl;
+    dbg() << "NYView::NYView buffer is : " << (long int)b << endl;
     window = NULL;
     fakeLine = false;
     m_focus = w_editor;
 }
 
-NYZView::~NYZView()
+NYView::~NYView()
 {
     if ( window ) unmap();
 }
 
-void NYZView::map( void )
+void NYView::map( void )
 {
-    yzDebug() << "NYZView::map" << endl;
+    yzDebug() << "NYView::map" << endl;
     marginLeft = 0;
     updateVis(false);
 
@@ -101,7 +101,7 @@ void NYZView::map( void )
 }
 
 
-void NYZView::unmap( void )
+void NYView::unmap( void )
 {
     YZASSERT( statusbar ); delwin( statusbar );
     YZASSERT( infobar ); delwin( infobar );
@@ -110,13 +110,13 @@ void NYZView::unmap( void )
     window = editor = statusbar = infobar = NULL;
 }
 
-void NYZView::updateVis( bool refresh )
+void NYView::updateVis( bool refresh )
 {
     getmaxyx( stdscr, height, width );
     setVisibleArea( width - marginLeft, height - 2, refresh );
 }
 
-void NYZView::guiScroll( int dx, int dy )
+void NYView::guiScroll( int dx, int dy )
 {
     scrollok( editor, true );
     wscrl( editor, -dy );
@@ -132,16 +132,16 @@ void NYZView::guiScroll( int dx, int dy )
     sendPaintEvent( YZCursor( left, top ), YZCursor( left + getColumnsVisible(), top + n ) );
 }
 
-void NYZView::guiNotifyContentChanged( const YZSelection& s )
+void NYView::guiNotifyContentChanged( const YZSelection& s )
 {
     guiPaintEvent( s );
 }
-void NYZView::guiPreparePaintEvent(int, int)
+void NYView::guiPreparePaintEvent(int, int)
 {}
-void NYZView::guiEndPaintEvent()
+void NYView::guiEndPaintEvent()
 {}
 
-void NYZView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* )
+void NYView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* )
 {
     YZColor c = cell.fg;
     if ( !c.isValid() ) {
@@ -189,21 +189,21 @@ void NYZView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* )
     delete[] from_char;
 }
 
-void NYZView::guiPaintEvent( const YZSelection& drawMap )
+void NYView::guiPaintEvent( const YZSelection& drawMap )
 {
     if (!editor) // Avoid segfaults and infinite recursion.
         return ;
     YZView::guiPaintEvent( drawMap );
     drawCursor();
 }
-void NYZView::drawCursor()
+void NYView::drawCursor()
 {
     int x = getCursor().x() - getDrawCurrentLeft () + marginLeft;
     wmove( editor, getCursor().y() - getDrawCurrentTop (), x );
     wrefresh( editor );
 }
 
-void NYZView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar )
+void NYView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar )
 {
     int x = pos.x();
     if ( !fakeLine )
@@ -219,7 +219,7 @@ void NYZView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar )
     }
 }
 
-void NYZView::guiDrawSetMaxLineNumber( int max )
+void NYView::guiDrawSetMaxLineNumber( int max )
 {
     int my_marginLeft = 2 + QString::number( max ).length();
     if ( my_marginLeft != marginLeft ) {
@@ -227,7 +227,7 @@ void NYZView::guiDrawSetMaxLineNumber( int max )
         updateVis();
     }
 }
-void NYZView::guiDrawSetLineNumber( int y, int n, int h )
+void NYView::guiDrawSetLineNumber( int y, int n, int h )
 {
     fakeLine = n <= 0;
 
@@ -242,7 +242,7 @@ void NYZView::guiDrawSetLineNumber( int y, int n, int h )
 }
 
 
-void NYZView::setFocusMainWindow()
+void NYView::setFocusMainWindow()
 {
     if ( statusbarHasCommand ) {
         werase(statusbar);
@@ -251,13 +251,13 @@ void NYZView::setFocusMainWindow()
     m_focus = w_editor;
     drawCursor();
 }
-void NYZView::setFocusCommandLine()
+void NYView::setFocusCommandLine()
 {
     m_focus = w_statusbar;
     wmove(statusbar, 0, guiGetCommandLineText().length() + 1 );
     wrefresh(statusbar);
 }
-void NYZView::restoreFocus()
+void NYView::restoreFocus()
 {
     switch ( m_focus ) {
     case w_editor :
@@ -269,9 +269,9 @@ void NYZView::restoreFocus()
     }
 }
 
-void NYZView::guiSetCommandLineText( const QString& text )
+void NYView::guiSetCommandLineText( const QString& text )
 {
-    yzDebug() << "NYZView::guiSetCommandLineText: " << text << endl;
+    yzDebug() << "NYView::guiSetCommandLineText: " << text << endl;
     commandline = text;
     static QChar modeChar = ':';
     switch (modePool()->current()->type()) {
@@ -294,7 +294,7 @@ void NYZView::guiSetCommandLineText( const QString& text )
 }
 
 
-void NYZView::guiSyncViewInfo( void )
+void NYView::guiSyncViewInfo( void )
 {
     yzDebug() << "guiSyncViewInfo" << endl;
     // older versions of ncurses want non const..
@@ -327,9 +327,9 @@ void NYZView::guiSyncViewInfo( void )
     restoreFocus();
 }
 
-void NYZView::guiDisplayInfo( const QString& info )
+void NYView::guiDisplayInfo( const QString& info )
 {
-    dbg() << "NYZView::guiDisplayInfo message is : " << info << endl;
+    dbg() << "NYView::guiDisplayInfo message is : " << info << endl;
     werase(statusbar);
     waddstr( statusbar, info.toLocal8Bit().constData() );
     wrefresh(statusbar);
@@ -338,7 +338,7 @@ void NYZView::guiDisplayInfo( const QString& info )
 }
 
 
-void NYZView::initialiseAttributesMap()
+void NYView::initialiseAttributesMap()
 {
     attributesMapInitialised = true;
 
@@ -387,7 +387,7 @@ void NYZView::initialiseAttributesMap()
 
 }
 
-void NYZView::refreshScreen()
+void NYView::refreshScreen()
 {
     if ( marginLeft > 0 && !getLocalBooleanOption("number") )
         marginLeft = 0;
@@ -444,14 +444,14 @@ if ( changecolorok )
 
 #endif
 
-    bool NYZView::guiPopupFileSaveAs()
+    bool NYView::guiPopupFileSaveAs()
 {
     // TODO
     guiDisplayInfo ( "Save as not implemented yet, use :w<filename>" );
     return false;
 }
 
-void NYZView::guiFilenameChanged()
+void NYView::guiFilenameChanged()
 {
     QString filename = myBuffer()->fileName();
     int lineCount = myBuffer()->lineCount();
@@ -459,6 +459,6 @@ void NYZView::guiFilenameChanged()
     guiDisplayInfo ( QString("\"%1\" %2L, %3C" ).arg(filename).arg(lineCount).arg(wholeLength));
 }
 
-void NYZView::guiHighlightingChanged()
+void NYView::guiHighlightingChanged()
 {}
 

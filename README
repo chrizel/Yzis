@@ -9,18 +9,26 @@ WxWidgets and XUL frontend added to the source tree.
 Requirements:
 =============
 For more details about requirements and build instructions, see:
-http://wiki.yzis.org/index.php?title=Build_Yzis
+http://www.yzis.org/Build_Yzis
+
+
+Install:
+========
+Yzis uses the CMake system to compile and install itself, just like KDE.
+
+See the wiki documentation for help on building Yzis:
+http://www.yzis.org/Build_Yzis
 
 
 Planning and project status:
 ============================
 We try to maintain the current state of the project and a planning on the
 wiki:
-http://wiki.yzis.org/
+http://www.yzis.org/
 
 Documentation: 
 ==============
-Most of the documentation is stored on the wiki: http://wiki.yzis.org  . Build
+Most of the documentation is stored on the wiki: http://www.yzis.org  . Build
 instructions, project status, ...  . And if you are missing something, the
 magic of wiki allows you to add it yourself.
 
@@ -33,7 +41,7 @@ http://bugs.yzis.org
 You can help:
 =============
 See: 
-http://wiki.yzis.org/index.php?title=TODO
+http://www.yzis.org/TODO
 
 Licenses:
 =========

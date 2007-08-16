@@ -16,14 +16,16 @@
 */
 
 
-/* Yzis */
+/* QYzis */
 #include "qyzis.h"
-#include "qsession.h"
+#include "qysession.h"
+#include "qyview.h"
+#include "qyconfiguredialog.h"
+
+/* Yzis */
 #include "portability.h"
-#include "viewwidget.h"
 #include "debug.h"
 #include "buffer.h"
-#include "configuredialog.h"
 
 /* Qt */
 #include <QMenu>

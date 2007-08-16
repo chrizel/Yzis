@@ -24,18 +24,22 @@
 #include <qevent.h>
 #include <qscrollbar.h>
 #include <qlayout.h>
-#include "cursor.h"
-#include "commandwidget.h"
+
 #include "view.h"
 
-class QYEdit;
-class YBuffer;
+#include "qycursor.h"
+#include "qycommandline.h"
+
 class QLabel;
+class QSettings;
+
+class YBuffer;
+
+class QYEdit;
 class QYCommandLine;
 class QYZisCodeCompletion;
 class QYLineNumbers;
 
-class QSettings;
 
 /**
   * @short Implementation of YView for the Qt GUI

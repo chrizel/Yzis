@@ -21,6 +21,13 @@
 #ifndef QYZISEDIT_H
 #define QYZISEDIT_H
 
+/* QYzis */
+#include "qycursor.h"
+
+/* Yzis */
+#include "drawbuffer.h"
+#include "action.h"
+
 /* Qt */
 #include <qpainter.h>
 #include <qevent.h>
@@ -29,11 +36,6 @@
 #include <qfont.h>
 #include <qnamespace.h>
 #include <qsignalmapper.h>
-
-/* Project */
-#include "libyzis/drawbuffer.h"
-#include "qyziscursor.h"
-#include "action.h"
 
 class QYView;
 class QYCursor;
@@ -137,7 +139,7 @@ private :
     QString keysToShortcut( const QString& keys );
 
     /* area to use */
-    QRect m_useArea;
+    QRect mUseArea;
 
     QYView *mView;
     QYCursor* mCursor;

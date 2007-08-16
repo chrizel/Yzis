@@ -18,15 +18,15 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-/* Yzis */
-#include "editor.h"
-#include "yzis.h"
-#include "qsession.h"
-#include "registers.h"
-#include "viewwidget.h"
-
 /* QYzis */
+#include "qyedit.h"
+#include "qysession.h"
+#include "qyview.h"
 #include "qyzis.h"
+
+/* Yzis */
+#include "yzis.h"
+#include "registers.h"
 
 /* Std */
 #include <math.h>
@@ -48,7 +48,7 @@ QYEdit::QYEdit(QYView * view )
 {
     mView = view;
 
-    m_useArea.setCoords(0, 0, 0, 0);
+    mUseArea.setCoords(0, 0, 0, 0);
 
     setFocusPolicy( Qt::StrongFocus );
 
@@ -178,7 +178,7 @@ void QYEdit::updateArea( )
 
     dbg() << "lines = " << lines;
 
-    m_useArea.setBottomRight( QPoint( columns * fontMetrics().maxWidth(), lines * fontMetrics().lineSpacing()) );
+    mUseArea.setBottomRight( QPoint( columns * fontMetrics().maxWidth(), lines * fontMetrics().lineSpacing()) );
 
     mView->setVisibleArea( columns, lines );
 }
@@ -334,7 +334,7 @@ void QYEdit::scroll( int dx, int dy )
     QRect cursorRect = mCursor->rect();
     cursorRect.moveTo( mCursor->pos() );
     update(cursorRect);
-    QWidget::scroll( rx, ry, m_useArea );
+    QWidget::scroll( rx, ry, mUseArea );
 }
 
 void QYEdit::guiDrawCell( QPoint pos , const YDrawCell& cell, QPainter* p )

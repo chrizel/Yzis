@@ -60,7 +60,7 @@ public:
      */
     void setViewParentWidget( QWidget *viewParent )
     {
-        m_viewParent = viewParent;
+        mViewParent = viewParent;
     }
     //Editor Interface
     YView *guiCreateView( YBuffer* buffer );
@@ -89,8 +89,8 @@ private:
 
     void guiChangeCurrentView( YView* );
 public:
-    QYView *lastView;
-    QWidget *m_viewParent;
+    QYView *mLastView;
+    QWidget *mViewParent;
 };
 
 #endif // QYZIS_SESSION_H

@@ -15,7 +15,7 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 */
 
-/* St */
+/* Std */
 #ifndef YZIS_WIN32_GCC
 #include <libintl.h>
 #endif
@@ -27,14 +27,16 @@
 #include <QDateTime>
 
 /* Yzis */
-#include "libyzis/translator.h"
-#include "libyzis/session.h"
-#include "libyzis/view.h"
+#include "translator.h"
+#include "session.h"
+#include "view.h"
 #include "debug.h"
-#include "yzis.h"
-#include "qyzis.h"
-#include "qsession.h"
 #include "buffer.h"
+#include "yzis.h"
+
+/* QYzis */
+#include "qyzis.h"
+#include "qysession.h"
 
 int main(int argc, char **argv)
 {

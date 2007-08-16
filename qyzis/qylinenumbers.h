@@ -44,7 +44,7 @@ class QYLineNumbers : public QWidget
     Q_OBJECT
 
 public :
-    QYLineNumbers( QYView* parent );
+    QYLineNumbers( QYView* view );
     virtual ~QYLineNumbers();
 
     void setLineNumber( int y, int h, int line );
@@ -56,11 +56,9 @@ public :
     void setLineCount( int lines );
 
 protected :
-    QVBoxLayout* rows;
+    QVBoxLayout* mRows;
 
 private :
-
-    QYView* m_view;
 
 };
 

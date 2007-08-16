@@ -8,30 +8,30 @@ add_subdirectory( pics )
 ########### next target ###############
 
 set(qyzis_UI
-   configuredialog.ui
+   qyconfiguredialog.ui
 )
 
 set(qyzis_SRCS 
-   commandwidget.cpp 
-   configuredialog.cpp
-   qyziscursor.cpp 
-   editor.cpp 
-   qsession.cpp 
-   linenumbers.cpp 
+   qycommandline.cpp 
+   qyconfiguredialog.cpp
+   qycursor.cpp 
+   qyedit.cpp 
+   qysession.cpp 
+   qylinenumbers.cpp 
    main.cpp 
    qyzis.cpp
-   viewwidget.cpp 
+   qyview.cpp 
 )
 
 set(qyzis_MOC
-   commandwidget.h
-   configuredialog.h
-   qyziscursor.h
-   editor.h
-   qsession.h
-   linenumbers.h
+   qycommandline.h
+   qyconfiguredialog.h
+   qycursor.h
+   qyedit.h
+   qysession.h
+   qylinenumbers.h
    qyzis.h
-   viewwidget.h
+   qyview.h
 )
 
 qt4_wrap_ui(qyzis_SRCS ${qyzis_UI})

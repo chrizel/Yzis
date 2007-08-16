@@ -17,9 +17,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#include "linenumbers.h"
-
-#include "viewwidget.h"
+#include "qylinenumbers.h"
+#include "qyview.h"
 
 #define dbg()    yzDebug("QYNumberLabel")
 #define err()    yzError("QYNumberLabel")
@@ -46,18 +45,17 @@ void QYNumberLabel::setFont( const QFont& f )
     QLabel::setFont( f );
 }
 
-QYLineNumbers::QYLineNumbers( QYView* parent )
-        : QWidget( parent )
+QYLineNumbers::QYLineNumbers( QYView* view )
+        : QWidget( view )
 {
-    m_view = parent;
     setAutoFillBackground(true);
     QPalette p = palette();
     p.setColor( QPalette::Window, Qt::lightGray );
     p.setColor( QPalette::WindowText, Qt::black );
     setPalette(p);
-    rows = new QVBoxLayout( this );
-    rows->setSpacing(0);
-    rows->setMargin(0);
+    mRows = new QVBoxLayout( this );
+    mRows->setSpacing(0);
+    mRows->setMargin(0);
 }
 QYLineNumbers::~QYLineNumbers()
 {}
@@ -65,14 +63,14 @@ QYLineNumbers::~QYLineNumbers()
 void QYLineNumbers::setLineCount( int lines )
 {
     setUpdatesEnabled(false);
-    if ( rows->count() > lines ) {
+    if ( mRows->count() > lines ) {
         QLayoutItem* row;
-        while ( (row = rows->takeAt(lines)) ) {
+        while ( (row = mRows->takeAt(lines)) ) {
             delete row;
         }
     } else {
-        for ( int i = rows->count(); i < lines; ++i ) {
-            rows->addWidget( new QYNumberLabel( font() ) );
+        for ( int i = mRows->count(); i < lines; ++i ) {
+            mRows->addWidget( new QYNumberLabel( font() ) );
         }
     }
     setUpdatesEnabled(true);
@@ -81,8 +79,8 @@ void QYLineNumbers::setLineCount( int lines )
 void QYLineNumbers::setFont( const QFont& f )
 {
     QWidget::setFont( f );
-    for ( int i = 0; i < rows->count(); ++i ) {
-        static_cast<QYNumberLabel*>(rows->itemAt(i)->widget())->setFont(f);
+    for ( int i = 0; i < mRows->count(); ++i ) {
+        static_cast<QYNumberLabel*>(mRows->itemAt(i)->widget())->setFont(f);
     }
 }
 
@@ -92,20 +90,20 @@ void QYLineNumbers::scroll( int dy )
     if ( dy < 0 ) {
         for ( int i = dy; i < 0; ++i ) {
             // remove top
-            QWidget* w = rows->itemAt(0)->widget();
-            rows->removeWidget(w);
+            QWidget* w = mRows->itemAt(0)->widget();
+            mRows->removeWidget(w);
             delete w;
             // add empty bot
-            rows->addWidget( new QYNumberLabel( font() ) );
+            mRows->addWidget( new QYNumberLabel( font() ) );
         }
     } else if ( dy > 0 ) {
         for ( int i = 0; i < dy; ++i ) {
             // remove bot
-            QWidget* w = rows->itemAt(rows->count() - 1)->widget();
-            rows->removeWidget(w);
+            QWidget* w = mRows->itemAt(mRows->count() - 1)->widget();
+            mRows->removeWidget(w);
             delete w;
             // add empty top
-            rows->insertWidget(0, new QYNumberLabel(font()));
+            mRows->insertWidget(0, new QYNumberLabel(font()));
         }
     }
     setUpdatesEnabled(true);
@@ -113,7 +111,7 @@ void QYLineNumbers::scroll( int dy )
 
 void QYLineNumbers::setLineNumber( int y, int h, int line )
 {
-    QYNumberLabel* n = static_cast<QYNumberLabel*>(rows->itemAt(y)->widget());
+    QYNumberLabel* n = static_cast<QYNumberLabel*>(mRows->itemAt(y)->widget());
     if ( h == 0 && line > 0 ) {
         n->setNumber( line );
     } else {

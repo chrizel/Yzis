@@ -18,13 +18,15 @@
 *  Boston, MA 02111-1307, USA.
 **/
 
+/* QYzis */
+#include "qysession.h"
+#include "qyview.h"
+#include "qyzis.h"
+
 /* Yzis */
-#include "qsession.h"
 #include "portability.h"
-#include "viewwidget.h"
 #include "debug.h"
 #include "yzis.h"
-#include "qyzis.h"
 #include "view.h"
 #include "buffer.h"
 
@@ -61,8 +63,8 @@ void QYSession::createInstance()
 
 QYSession::QYSession() :
         YSession(),
-        lastView(0),
-        m_viewParent(0)
+        mLastView(0),
+        mViewParent(0)
 {
     dbg() << "QYSession()" << endl;
 }
@@ -133,7 +135,7 @@ YView* QYSession::guiCreateView( YBuffer *buffer )
     dbg() << "guiCreateView(" << buffer->toString() << ")" << endl;
     QYView *view;
 
-    view = new QYView( buffer, m_viewParent, QString(buffer->fileName() + "-view").toUtf8().constData() );
+    view = new QYView( buffer, mViewParent, QString(buffer->fileName() + "-view").toUtf8().constData() );
 
     if ( QYzis::me ) {
         QYzis::me->embedPartView( view, buffer->fileName(), buffer->fileName() );
@@ -167,9 +169,9 @@ void QYSession::closeView()
     if (QYzis::me) {
         QYzis::me->closeTab();
     } else {
-        lastView->close();
+        mLastView->close();
     }
-    lastView = 0;
+    mLastView = 0;
 }
 
 void QYSession::guiDeleteView( YView *view )
@@ -177,7 +179,7 @@ void QYSession::guiDeleteView( YView *view )
     dbg() << "guiDeleteView(" << view->toString() << ")" << endl;
     QYView *kview = dynamic_cast<QYView*>(view);
     if ( kview ) {
-        lastView = kview;
+        mLastView = kview;
         QTimer::singleShot(0, this, SLOT( closeView() ));
     }
 }

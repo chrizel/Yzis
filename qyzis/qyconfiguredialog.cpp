@@ -16,7 +16,7 @@
 *  Boston, MA 02110-1301, USA.
 */
 
-#include "configuredialog.h"
+#include "qyconfiguredialog.h"
 
 QYConfigureDialog::QYConfigureDialog( QWidget* parent ) : QDialog( parent )
 {

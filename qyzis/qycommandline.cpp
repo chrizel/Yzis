@@ -17,15 +17,17 @@
 *  Boston, MA 02111-1307, USA.
 **/
 
+/* QYzis */
+#include "qycommandline.h"
+#include "qyview.h"
+#include "qyedit.h"
+#include "qyzis.h"
+
 /* Yzis */
-#include "commandwidget.h"
-#include "viewwidget.h"
 #include "debug.h"
-#include "editor.h"
 #include "mode.h"
 #include "view.h"
 #include "session.h"
-#include "qyzis.h"
 
 #define dbg() yzDebug("QYCommandLine")
 #define err() yzError("QYCommandLine")

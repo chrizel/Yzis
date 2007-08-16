@@ -19,17 +19,19 @@
 **/
 
 
+/* QYzis */
+#include "qyview.h"
+#include "qyedit.h"
+#include "qycursor.h"
+#include "qysession.h"
+#include "qyzis.h"
+#include "qylinenumbers.h"
+
 /* Yzis */
-#include "viewwidget.h"
 #include "portability.h"
-#include "viewcursor.h"
 #include "yzis.h"
 #include "mode_visual.h"
-#include "qsession.h"
 #include "debug.h"
-#include "editor.h"
-#include "qyzis.h"
-#include "linenumbers.h"
 #include "buffer.h"
 
 /* Qt */

@@ -22,18 +22,15 @@
 
 #include <qlineedit.h>
 
-class QYZisView;
+class QYView;
 
-/**
- * KYzis command line
- */
-class QYZisCommand : public QLineEdit
+class QYCommandLine : public QLineEdit
 {
     Q_OBJECT
 
 public :
-    QYZisCommand(QYZisView *parent = 0);
-    virtual ~QYZisCommand();
+    QYCommandLine(QYView * view = 0);
+    virtual ~QYCommandLine();
 
 protected:
     void keyPressEvent (QKeyEvent *);
@@ -41,7 +38,7 @@ protected:
     virtual void focusOutEvent (QFocusEvent *);
 
 private :
-    QYZisView *_parent;
+    QYView *mView;
 };
 
 #endif

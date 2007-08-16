@@ -38,22 +38,22 @@ class QTabWidget;
  * @author Yzis Team <yzis-dev@yzis.org>
  */
 
-class Qyzis : public QMainWindow
+class QYzis : public QMainWindow
 {
     Q_OBJECT
 public:
     /**
-    * Constructs a Qyzis widget
+    * Constructs a QYzis widget
     * @param w parent widget
      */
-    Qyzis(QWidget *w = 0);
+    QYzis(QWidget *w = 0);
 
     /**
      * Default Destructor
      */
-    virtual ~Qyzis();
+    virtual ~QYzis();
 
-    static Qyzis *me;
+    static QYzis *me;
 
     /**
      * Use this method to load whatever file/URL you have

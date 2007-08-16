@@ -28,12 +28,12 @@
 #include "commandwidget.h"
 #include "view.h"
 
-class QYZisEdit;
+class QYEdit;
 class YZBuffer;
 class QLabel;
-class QYZisCommand;
+class QYCommandLine;
 class QYZisCodeCompletion;
-class QYZisLineNumbers;
+class QYLineNumbers;
 
 class QSettings;
 
@@ -42,20 +42,20 @@ class QSettings;
   *
   * In QYzis, the view is implemented using a QWidget
   */
-class QYZisView: public QWidget, public YZView
+class QYView: public QWidget, public YZView
 {
     Q_OBJECT
 
-    friend class QYZisCursor;
-    friend class QYZisEdit;
+    friend class QYCursor;
+    friend class QYEdit;
 
 signals :
     void cursorPositionChanged();
     void newStatus();
 
 public:
-    QYZisView(YZBuffer *doc, QWidget *parent, const char *name = 0);
-    virtual ~QYZisView();
+    QYView(YZBuffer *doc, QWidget *parent, const char *name = 0);
+    virtual ~QYView();
     //  KTextEditor::Document *document () { return dynamic_cast<KTextEditor::Document*>( buffer ); }
     void guiSetCommandLineText( const QString& text );
     QString guiGetCommandLineText() const;
@@ -76,7 +76,7 @@ public:
 
     QChar currentChar() const;
 
-    QYZisEdit *editor()
+    QYEdit *editor()
     {
         return m_editor;
     }
@@ -124,9 +124,9 @@ private:
     YZBuffer *buffer;
     bool m_customComplete;
     bool m_cc_cleanup;
-    QYZisEdit *m_editor;
+    QYEdit *m_editor;
     QStatusBar *status;
-    QYZisCommand *command;
+    QYCommandLine *command;
     QScrollBar *mVScroll; //vertical scroll
     QMenu *m_popup;
     QYZisCodeCompletion *m_codeCompletion;
@@ -134,7 +134,7 @@ private:
     QLabel *m_central;
     QLabel *l_mode, *l_fileinfo, *l_linestatus;
 
-    QYZisLineNumbers* m_lineNumbers;
+    QYLineNumbers* m_lineNumbers;
 
     QPainter* m_painter;
 };

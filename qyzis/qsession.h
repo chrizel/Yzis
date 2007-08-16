@@ -26,9 +26,9 @@
 #include "session.h"
 
 class YZBuffer;
-class QYZisView;
+class QYView;
 
-class QYZisSession : public QObject, public YZSession
+class QYSession : public QObject, public YZSession
 {
     Q_OBJECT
 
@@ -52,7 +52,7 @@ public:
     virtual void guiSetClipboardText( const QString& text, Clipboard::Mode mode );
 
     /**
-     * Sets the parent widget for all created QYZisView
+     * Sets the parent widget for all created QYView
      * This is an ugly hack to get around the deep calls into
      * YZSession in order to create Views.  These calls cannot
      * have parent information passed around.  createPartObject
@@ -82,14 +82,14 @@ public slots:
     void closeView();
 
 private:
-    QYZisSession();
-    QYZisSession(const QYZisSession&); // disable copy
-    QYZisSession& operator=(const QYZisSession&); // disable copy
-    virtual ~QYZisSession();
+    QYSession();
+    QYSession(const QYSession&); // disable copy
+    QYSession& operator=(const QYSession&); // disable copy
+    virtual ~QYSession();
 
     void guiChangeCurrentView( YZView* );
 public:
-    QYZisView *lastView;
+    QYView *lastView;
     QWidget *m_viewParent;
 };
 

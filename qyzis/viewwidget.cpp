@@ -41,16 +41,16 @@
 #include <QTimer>
 #include <qapplication.h>
 
-#define dbg() yzDebug("QYZisView")
-#define err() yzError("QYZisView")
+#define dbg() yzDebug("QYView")
+#define err() yzError("QYView")
 
-QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
-        : YZView( _buffer, QYZisSession::self(), 0, 0 ), buffer( _buffer ), m_popup( 0 )
+QYView::QYView ( YZBuffer *_buffer, QWidget *, const char *)
+        : YZView( _buffer, QYSession::self(), 0, 0 ), buffer( _buffer ), m_popup( 0 )
 
 {
-    m_editor = new QYZisEdit( this );
+    m_editor = new QYEdit( this );
     status = new QStatusBar (this);
-    command = new QYZisCommand (this);
+    command = new QYCommandLine (this);
     mVScroll = new QScrollBar( this);
     connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
     //connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
@@ -76,7 +76,7 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
     status->setFocusProxy( command );
     status->setFocusPolicy( Qt::ClickFocus );
 
-    m_lineNumbers = new QYZisLineNumbers(this);
+    m_lineNumbers = new QYLineNumbers(this);
 
     QHBoxLayout* editorLayout = new QHBoxLayout();
     editorLayout->setMargin(0);
@@ -110,47 +110,47 @@ QYZisView::QYZisView ( YZBuffer *_buffer, QWidget *, const char *)
     // setupCodeCompletion();
 }
 
-QYZisView::~QYZisView ()
+QYView::~QYView ()
 {
-    dbg() << "~QYZisView" << endl;
+    dbg() << "~QYView()" << endl;
     // if ( buffer ) buffer->removeView(this);
 }
 
-void QYZisView::guiSetCommandLineText( const QString& text )
+void QYView::guiSetCommandLineText( const QString& text )
 {
     command->setText( text );
 }
 
-QString QYZisView::guiGetCommandLineText() const
+QString QYView::guiGetCommandLineText() const
 {
     return command->text();
 }
 
-void QYZisView::guiSetFocusMainWindow()
+void QYView::guiSetFocusMainWindow()
 {
     dbg() << "setFocusMainWindow()" << endl;
     m_editor->setFocus();
 }
 
-void QYZisView::guiSetFocusCommandLine()
+void QYView::guiSetFocusCommandLine()
 {
     dbg() << "setFocusCommandLine()" << endl;
     command->setFocus();
 }
 
-void QYZisView::guiScroll( int dx, int dy )
+void QYView::guiScroll( int dx, int dy )
 {
     m_editor->scroll( dx, dy );
     m_lineNumbers->scroll( dy );
 }
 
-void QYZisView::setVisibleArea( int columns, int lines )
+void QYView::setVisibleArea( int columns, int lines )
 {
     m_lineNumbers->setLineCount( lines );
     YZView::setVisibleArea( columns, lines );
 }
 
-void QYZisView::refreshScreen()
+void QYView::refreshScreen()
 {
     bool o_number = getLocalBooleanOption("number");
     if ( o_number != m_lineNumbers->isVisible() ) {
@@ -159,7 +159,7 @@ void QYZisView::refreshScreen()
     YZView::refreshScreen();
 }
 
-void QYZisView::guiNotifyContentChanged( const YZSelection& s )
+void QYView::guiNotifyContentChanged( const YZSelection& s )
 {
     // content has changed, ask qt to repaint changed parts
 
@@ -188,20 +188,20 @@ void QYZisView::guiNotifyContentChanged( const YZSelection& s )
     }
 }
 
-void QYZisView::guiPreparePaintEvent( int /*min_y*/, int /*max_y*/ )
+void QYView::guiPreparePaintEvent( int /*min_y*/, int /*max_y*/ )
 {
-    // dbg() << "QYZisView::guiPreparePaintEvent" << endl;
+    // dbg() << "QYView::guiPreparePaintEvent" << endl;
     m_painter = new QPainter( m_editor );
     m_drawBuffer.setCallbackArgument( m_painter );
     //m_editor->drawMarginLeft( min_y, max_y, m_painter );
 }
-void QYZisView::guiEndPaintEvent()
+void QYView::guiEndPaintEvent()
 {
     dbg() << "guiEndPaintEvent()" << endl;
     delete m_painter;
 }
 
-void QYZisView::guiPaintEvent( const YZSelection& s )
+void QYView::guiPaintEvent( const YZSelection& s )
 {
     YZView::guiPaintEvent( s );
 }
@@ -209,29 +209,29 @@ void QYZisView::guiPaintEvent( const YZSelection& s )
 /*
  * View painting methods
  */
-void QYZisView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg )
+void QYView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg )
 {
     m_editor->guiDrawCell( pos, cell, (QPainter*)arg );
 }
-void QYZisView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar )
+void QYView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar )
 {
     m_editor->guiDrawClearToEOL( pos, clearChar, m_painter );
 }
-void QYZisView::guiDrawSetMaxLineNumber( int max )
+void QYView::guiDrawSetMaxLineNumber( int max )
 {
     mVScroll->setMaximum( max );
     m_lineNumbers->setMaxLineNumber( max );
 }
-void QYZisView::guiDrawSetLineNumber( int y, int n, int h )
+void QYView::guiDrawSetLineNumber( int y, int n, int h )
 {
     m_lineNumbers->setLineNumber( y, h, n );
 }
-QChar QYZisView::currentChar() const
+QChar QYView::currentChar() const
 {
     return myBuffer()->textline( viewCursor().bufferY() ).at( viewCursor().bufferX() );
 }
 
-void QYZisView::wheelEvent( QWheelEvent * e )
+void QYView::wheelEvent( QWheelEvent * e )
 {
     if ( e->orientation() == Qt::Vertical ) {
         int n = - ( e->delta() * mVScroll->singleStep() ) / 40; // WHEEL_DELTA(120) / 3 XXX
@@ -242,15 +242,15 @@ void QYZisView::wheelEvent( QWheelEvent * e )
     e->accept();
 }
 
-void QYZisView::guiModeChanged (void)
+void QYView::guiModeChanged (void)
 {
     m_editor->updateCursor();
     l_mode->setText( mode() );
 }
 
-void QYZisView::guiSyncViewInfo()
+void QYView::guiSyncViewInfo()
 {
-    // dbg() << "QYZisView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
+    // dbg() << "QYView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
     m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
     l_linestatus->setText( getLineStatusString() );
 
@@ -266,22 +266,22 @@ void QYZisView::guiSyncViewInfo()
 }
 
 /*
-void QYZisView::setupActions() {
+void QYView::setupActions() {
  KStdAction::save(this, SLOT(fileSave()), actionCollection());
  KStdAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());
 }
 */
 
-void QYZisView::registerModifierKeys( const QString& keys )
+void QYView::registerModifierKeys( const QString& keys )
 {
     m_editor->registerModifierKeys( keys );
 }
-void QYZisView::unregisterModifierKeys( const QString& keys )
+void QYView::unregisterModifierKeys( const QString& keys )
 {
     m_editor->unregisterModifierKeys( keys );
 }
 
-void QYZisView::applyConfig( const QSettings& settings, bool refresh )
+void QYView::applyConfig( const QSettings& settings, bool refresh )
 {
 
     QFont default_font;
@@ -307,33 +307,33 @@ void QYZisView::applyConfig( const QSettings& settings, bool refresh )
     }
 }
 
-void QYZisView::fileSave()
+void QYView::fileSave()
 {
     myBuffer()->save();
 }
 
-void QYZisView::fileSaveAs()
+void QYView::fileSaveAs()
 {
     if ( guiPopupFileSaveAs() )
         myBuffer()->save();
 }
 
-void QYZisView::guiFilenameChanged()
+void QYView::guiFilenameChanged()
 {
-    if (Qyzis::me) {
-        //Qyzis::me->setCaption(getId(), myBuffer()->fileName());
-        Qyzis::me->setWindowTitle( myBuffer()->fileName());
+    if (QYzis::me) {
+        //QYzis::me->setCaption(getId(), myBuffer()->fileName());
+        QYzis::me->setWindowTitle( myBuffer()->fileName());
     } else
-        yzWarning() << "QYZisView::guiFilenameChanged : couldn't find Qyzis::me.. is that ok ?";
+        err() << "guiFilenameChanged() : couldn't find QYzis::me.. is that ok ?";
 
 }
 
-void QYZisView::guiHighlightingChanged()
+void QYView::guiHighlightingChanged()
 {
     sendRefreshEvent();
 }
 
-bool QYZisView::guiPopupFileSaveAs()
+bool QYView::guiPopupFileSaveAs()
 {
     QString url = QFileDialog::getSaveFileName();
     if ( url.isEmpty() ) return false; //canceled
@@ -347,7 +347,7 @@ bool QYZisView::guiPopupFileSaveAs()
 
 
 
-void QYZisView::guiDisplayInfo( const QString& info )
+void QYView::guiDisplayInfo( const QString& info )
 {
     m_central->setText(info);
     //clean the info 2 seconds later
@@ -355,7 +355,7 @@ void QYZisView::guiDisplayInfo( const QString& info )
 }
 
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
-void QYZisView::scrollView( int value )
+void QYView::scrollView( int value )
 {
     if ( value < 0 ) value = 0;
     else if ( value > buffer->lineCount() - 1 )

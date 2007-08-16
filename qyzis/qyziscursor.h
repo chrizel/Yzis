@@ -23,10 +23,10 @@
 #include <QWidget>
 
 class YZDebugStream;
-class QYZisEdit;
-class QYZisView;
+class QYEdit;
+class QYView;
 
-class QYZisCursor : public QWidget
+class QYCursor : public QWidget
 {
     Q_OBJECT
 
@@ -39,8 +39,8 @@ public :
         CursorHidden,
     };
 
-    QYZisCursor( QYZisEdit* parent, CursorShape shape );
-    virtual ~QYZisCursor();
+    QYCursor( QYEdit* parent, CursorShape shape );
+    virtual ~QYCursor();
 
     void setCursorShape( CursorShape shape );
     CursorShape shape() const;
@@ -51,12 +51,12 @@ protected :
 
 private :
     CursorShape mCursorShape;
-    QYZisEdit* mEditor;
-    QYZisView* mView;
+    QYEdit* mEdit;
+    QYView* mView;
 
 };
 
-YZDebugStream& operator<<( YZDebugStream& out, const QYZisCursor::CursorShape & shape );
+YZDebugStream& operator<<( YZDebugStream& out, const QYCursor::CursorShape & shape );
 
 #endif
 

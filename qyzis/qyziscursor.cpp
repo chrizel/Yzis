@@ -23,13 +23,13 @@
 #include "viewwidget.h"
 #include "debug.h"
 
-#define dbg() yzDebug("QYZisCursor")
-#define err() yzError("QYZisCursor")
+#define dbg() yzDebug("QYCursor")
+#define err() yzError("QYCursor")
 
-QYZisCursor::QYZisCursor( QYZisEdit* edit, CursorShape shape )
+QYCursor::QYCursor( QYEdit* edit, CursorShape shape )
         : QWidget( edit )
 {
-    mEditor = edit;
+    mEdit = edit;
     mView = edit->view();
 
     setAutoFillBackground( false );
@@ -41,14 +41,14 @@ QYZisCursor::QYZisCursor( QYZisEdit* edit, CursorShape shape )
     setCursorShape( shape );
 }
 
-QYZisCursor::~QYZisCursor()
+QYCursor::~QYCursor()
 {}
 
-QYZisCursor::CursorShape QYZisCursor::shape() const
+QYCursor::CursorShape QYCursor::shape() const
 {
     return mCursorShape;
 }
-void QYZisCursor::setCursorShape( CursorShape shape )
+void QYCursor::setCursorShape( CursorShape shape )
 {
     if ( shape == mCursorShape )
         return ;
@@ -60,11 +60,11 @@ void QYZisCursor::setCursorShape( CursorShape shape )
     resize( w, h );
 }
 
-void QYZisCursor::paintEvent( QPaintEvent* pe )
+void QYCursor::paintEvent( QPaintEvent* pe )
 {
     Q_UNUSED(pe);
 
-    const YZDrawCell cell( mView->m_drawBuffer.at( mEditor->translateRealToPosition(pos()) ) );
+    const YZDrawCell cell( mView->m_drawBuffer.at( mEdit->translateRealToPosition(pos()) ) );
     QColor cbg, cfg;
 
     dbg().sprintf( "paintEvent(): cell string='%s'", qp(cell.c) );
@@ -143,14 +143,14 @@ void QYZisCursor::paintEvent( QPaintEvent* pe )
     }
 }
 
-YZDebugStream& operator<<( YZDebugStream& out, const QYZisCursor::CursorShape & shape )
+YZDebugStream& operator<<( YZDebugStream& out, const QYCursor::CursorShape & shape )
 {
     switch ( shape ) {
-    case QYZisCursor::CursorFilledRect : out << "CursorFilledRect"; break;
-    case QYZisCursor::CursorVbar : out << "CursorVbar"; break;
-    case QYZisCursor::CursorHbar : out << "CursorHbar"; break;
-    case QYZisCursor::CursorFrameRect : out << "CursorFrameRect"; break;
-    case QYZisCursor::CursorHidden : out << "CursorHidden"; break;
+    case QYCursor::CursorFilledRect : out << "CursorFilledRect"; break;
+    case QYCursor::CursorVbar : out << "CursorVbar"; break;
+    case QYCursor::CursorHbar : out << "CursorHbar"; break;
+    case QYCursor::CursorFrameRect : out << "CursorFrameRect"; break;
+    case QYCursor::CursorHidden : out << "CursorHidden"; break;
     }
     return out;
 }

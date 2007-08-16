@@ -21,10 +21,10 @@
 
 #include "viewwidget.h"
 
-#define dbg()    yzDebug("LineNumber")
-#define err()    yzError("LineNumber")
+#define dbg()    yzDebug("QYNumberLabel")
+#define err()    yzError("QYNumberLabel")
 
-LineNumber::LineNumber( const QFont& f ) : QLabel()
+QYNumberLabel::QYNumberLabel( const QFont& f ) : QLabel()
 {
     setAlignment( Qt::AlignVCenter | Qt::AlignRight );
     setAutoFillBackground(true);
@@ -34,19 +34,19 @@ LineNumber::LineNumber( const QFont& f ) : QLabel()
     setPalette(p);
     setFont(f);
 }
-LineNumber::~LineNumber()
+QYNumberLabel::~QYNumberLabel()
 {}
-void LineNumber::setNumber( int n )
+void QYNumberLabel::setNumber( int n )
 {
     setText( ' ' + QString::number(n) + ' ' );
 }
-void LineNumber::setFont( const QFont& f )
+void QYNumberLabel::setFont( const QFont& f )
 {
     setFixedHeight( QFontMetrics(f).lineSpacing() );
     QLabel::setFont( f );
 }
 
-QYZisLineNumbers::QYZisLineNumbers( QYZisView* parent )
+QYLineNumbers::QYLineNumbers( QYView* parent )
         : QWidget( parent )
 {
     m_view = parent;
@@ -59,10 +59,10 @@ QYZisLineNumbers::QYZisLineNumbers( QYZisView* parent )
     rows->setSpacing(0);
     rows->setMargin(0);
 }
-QYZisLineNumbers::~QYZisLineNumbers()
+QYLineNumbers::~QYLineNumbers()
 {}
 
-void QYZisLineNumbers::setLineCount( int lines )
+void QYLineNumbers::setLineCount( int lines )
 {
     setUpdatesEnabled(false);
     if ( rows->count() > lines ) {
@@ -72,21 +72,21 @@ void QYZisLineNumbers::setLineCount( int lines )
         }
     } else {
         for ( int i = rows->count(); i < lines; ++i ) {
-            rows->addWidget( new LineNumber( font() ) );
+            rows->addWidget( new QYNumberLabel( font() ) );
         }
     }
     setUpdatesEnabled(true);
 }
 
-void QYZisLineNumbers::setFont( const QFont& f )
+void QYLineNumbers::setFont( const QFont& f )
 {
     QWidget::setFont( f );
     for ( int i = 0; i < rows->count(); ++i ) {
-        static_cast<LineNumber*>(rows->itemAt(i)->widget())->setFont(f);
+        static_cast<QYNumberLabel*>(rows->itemAt(i)->widget())->setFont(f);
     }
 }
 
-void QYZisLineNumbers::scroll( int dy )
+void QYLineNumbers::scroll( int dy )
 {
     setUpdatesEnabled(false);
     if ( dy < 0 ) {
@@ -96,7 +96,7 @@ void QYZisLineNumbers::scroll( int dy )
             rows->removeWidget(w);
             delete w;
             // add empty bot
-            rows->addWidget( new LineNumber( font() ) );
+            rows->addWidget( new QYNumberLabel( font() ) );
         }
     } else if ( dy > 0 ) {
         for ( int i = 0; i < dy; ++i ) {
@@ -105,15 +105,15 @@ void QYZisLineNumbers::scroll( int dy )
             rows->removeWidget(w);
             delete w;
             // add empty top
-            rows->insertWidget(0, new LineNumber(font()));
+            rows->insertWidget(0, new QYNumberLabel(font()));
         }
     }
     setUpdatesEnabled(true);
 }
 
-void QYZisLineNumbers::setLineNumber( int y, int h, int line )
+void QYLineNumbers::setLineNumber( int y, int h, int line )
 {
-    LineNumber* n = static_cast<LineNumber*>(rows->itemAt(y)->widget());
+    QYNumberLabel* n = static_cast<QYNumberLabel*>(rows->itemAt(y)->widget());
     if ( h == 0 && line > 0 ) {
         n->setNumber( line );
     } else {
@@ -121,7 +121,7 @@ void QYZisLineNumbers::setLineNumber( int y, int h, int line )
     }
 }
 
-void QYZisLineNumbers::setMaxLineNumber( int line )
+void QYLineNumbers::setMaxLineNumber( int line )
 {
     setFixedWidth( fontMetrics().width( ' ' + QString::number(line) + ' ' ) );
 }

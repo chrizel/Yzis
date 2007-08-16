@@ -33,12 +33,12 @@
 #include <QTabWidget>
 
 
-#define dbg()    yzDebug("Qyzis")
-#define err()    yzError("Qyzis")
+#define dbg()    yzDebug("QYzis")
+#define err()    yzError("QYzis")
 
-Qyzis *Qyzis::me = NULL;
+QYzis *QYzis::me = NULL;
 
-Qyzis::Qyzis(QWidget *w)
+QYzis::QYzis(QWidget *w)
         : QMainWindow(w),
         mBuffers( 0 ), mViews( 0 )
 {
@@ -56,10 +56,10 @@ Qyzis::Qyzis(QWidget *w)
     me = this;
 }
 
-Qyzis::~Qyzis()
+QYzis::~QYzis()
 {}
 
-void Qyzis::load(const QString& url)
+void QYzis::load(const QString& url)
 {
     dbg() << "load " << url << endl;
     /// TODO : do something here, like creating a buffer and such..
@@ -68,7 +68,7 @@ void Qyzis::load(const QString& url)
     //XXX else
 }
 
-void Qyzis::setupActions()
+void QYzis::setupActions()
 {
     QAction *a;
     QMenu *m;
@@ -95,7 +95,7 @@ void Qyzis::setupActions()
 
     m = mb->addMenu( _( "&Help" ) );
 
-    a = new QAction( _( "&About Qyzis" ), this );
+    a = new QAction( _( "&About QYzis" ), this );
     connect( a, SIGNAL( triggered() ), this, SLOT( about() ) );
     m->addAction(a);
 
@@ -106,7 +106,7 @@ void Qyzis::setupActions()
     */
 }
 
-void Qyzis::fileNew()
+void QYzis::fileNew()
 {
     // this slot is called whenever the File->New menu is selected,
     // the New shortcut is pressed (usually CTRL+N) or the New toolbar
@@ -118,16 +118,16 @@ void Qyzis::fileNew()
     // in its initial state.  This is what we do here..
     // if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
     //   KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
-    QYZisSession::self()->createBufferAndView();
+    QYSession::self()->createBufferAndView();
     // };
 }
 
-void Qyzis::fileQuit()
+void QYzis::fileQuit()
 {
     close();
 }
 
-void Qyzis::fileOpen()
+void QYzis::fileOpen()
 {
     // this slot is called whenever the File->Open menu is selected,
     // the Open shortcut is pressed (usually CTRL+O) or the Open toolbar
@@ -138,7 +138,7 @@ void Qyzis::fileOpen()
     openURL(url);
 }
 
-void Qyzis::openURL(const QString &url)
+void QYzis::openURL(const QString &url)
 {
     if (url.isEmpty()) {
         fileOpen();
@@ -150,12 +150,12 @@ void Qyzis::openURL(const QString &url)
     m_openRecentAction->saveEntries( kapp->config(), "RecentFiles" );
     */
 
-    QYZisSession::self()->createBufferAndView( url );
+    QYSession::self()->createBufferAndView( url );
 }
 
-bool Qyzis::queryClose()
+bool QYzis::queryClose()
 {
-    const YZBufferList &buffers = QYZisSession::self()->buffers();
+    const YZBufferList &buffers = QYSession::self()->buffers();
 
     for ( YZBufferList::const_iterator it = buffers.begin(); it != buffers.end(); ++it ) {
         YZBuffer *buf = *it;
@@ -183,20 +183,20 @@ bool Qyzis::queryClose()
     return true;
 }
 
-void Qyzis::preferences()
+void QYzis::preferences()
 {
-    QYZConfigureDialog* w = new QYZConfigureDialog(this);
+    QYConfigureDialog* w = new QYConfigureDialog(this);
     w->exec();
 }
 
-void Qyzis::about()
+void QYzis::about()
 {
-    QMessageBox::about(this, _("About Qyzis"),
+    QMessageBox::about(this, _("About QYzis"),
                        _("Qt frontend for the yzis text editor\n\n"\
                          "http://www.yzis.org"));
 }
 
-void Qyzis::embedPartView(QWidget *view, const QString & title, const QString& tooltip )
+void QYzis::embedPartView(QWidget *view, const QString & title, const QString& tooltip )
 {
     Q_UNUSED( tooltip );
     if (!view)
@@ -210,7 +210,7 @@ void Qyzis::embedPartView(QWidget *view, const QString & title, const QString& t
 
 #if 0 
 // removed by orzel, those are newui stuff not even used in Kyzis
-void Qyzis::removeView(QWidget *view)
+void QYzis::removeView(QWidget *view)
 {
     if (!view)
         return ;
@@ -230,7 +230,7 @@ void Qyzis::removeView(QWidget *view)
 }
 
 /*
-void Qyzis::setViewAvailable(QWidget *pView, bool bEnabled) {
+void QYzis::setViewAvailable(QWidget *pView, bool bEnabled) {
     Q3DockWindow *dock;
     if (m_docks.contains(pView))
         dock = toolWindow(m_docks[pView]);
@@ -241,7 +241,7 @@ void Qyzis::setViewAvailable(QWidget *pView, bool bEnabled) {
 }
 */
 
-void Qyzis::raiseView(QWidget *view)
+void QYzis::raiseView(QWidget *view)
 {
     //adymo: a workaround to make editor wrappers work:
     //editor view is passed to this function but the ui library knows only
@@ -264,12 +264,12 @@ void Qyzis::raiseView(QWidget *view)
         m_widgetTabs[view]->showPage(view);
 }
 
-void Qyzis::lowerView(QWidget * /*view*/)
+void QYzis::lowerView(QWidget * /*view*/)
 {
     //nothing to do
 }
 
-void Qyzis::gotoNextWindow()
+void QYzis::gotoNextWindow()
 {
     if ((m_activeTabWidget->currentPageIndex() + 1) < m_activeTabWidget->count())
         m_activeTabWidget->setCurrentPage(m_activeTabWidget->currentPageIndex() + 1);
@@ -277,7 +277,7 @@ void Qyzis::gotoNextWindow()
         m_activeTabWidget->setCurrentPage(0);
 }
 
-void Qyzis::gotoPreviousWindow()
+void QYzis::gotoPreviousWindow()
 {
     if ((m_activeTabWidget->currentPageIndex() - 1) >= 0)
         m_activeTabWidget->setCurrentPage(m_activeTabWidget->currentPageIndex() - 1);
@@ -285,20 +285,20 @@ void Qyzis::gotoPreviousWindow()
         m_activeTabWidget->setCurrentPage(m_activeTabWidget->count() - 1);
 }
 
-void Qyzis::gotoLastWindow()
+void QYzis::gotoLastWindow()
 {
     //@todo implement
 }
 #endif
 
-void Qyzis::closeTab()
+void QYzis::closeTab()
 {
     // TODO : do something smart
     //    actionCollection()->action("file_close")->activate();
 }
 
 
-void Qyzis::closeTab(QWidget *)
+void QYzis::closeTab(QWidget *)
 {
     /*    const Q3PtrList<KParts::Part> *partlist = PartController::getInstance()->parts();
         Q3PtrListIterator<KParts::Part> it(*partlist);
@@ -314,7 +314,7 @@ void Qyzis::closeTab(QWidget *)
         }*/
 }
 
-QMainWindow *Qyzis::main()
+QMainWindow *QYzis::main()
 {
     return this;
 }

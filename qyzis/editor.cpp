@@ -40,13 +40,13 @@
 #include <qcursor.h>
 
 
-#define dbg() yzDebug("QYZisEdit")
-#define err() yzError("QYZisEdit")
+#define dbg() yzDebug("QYEdit")
+#define err() yzError("QYEdit")
 
-QYZisEdit::QYZisEdit(QYZisView *parent)
-        : QWidget( parent )
+QYEdit::QYEdit(QYView * view )
+        : QWidget( view )
 {
-    mParent = parent;
+    mView = view;
 
     m_useArea.setCoords(0, 0, 0, 0);
 
@@ -60,15 +60,15 @@ QYZisEdit::QYZisEdit(QYZisView *parent)
     /* show an edit cursor */
     QWidget::setCursor( Qt::IBeamCursor );
 
-    mCursor = new QYZisCursor( this, QYZisCursor::CursorFilledRect );
+    mCursor = new QYCursor( this, QYCursor::CursorFilledRect );
 
     initKeys();
 }
 
 
-QYZisEdit::~QYZisEdit()
+QYEdit::~QYEdit()
 {
-    dbg() << "~QYZisEdit()" << endl;
+    dbg() << "~QYEdit()" << endl;
     delete signalMapper;
     /*
     for( int i = actionCollection->count() - 1; i>= 0; --i )
@@ -77,16 +77,16 @@ QYZisEdit::~QYZisEdit()
     */
 }
 
-QYZisView* QYZisEdit::view() const
+QYView* QYEdit::view() const
 {
-    return mParent;
+    return mView;
 }
 
-QPoint QYZisEdit::translatePositionToReal( const YZCursor& c ) const
+QPoint QYEdit::translatePositionToReal( const YZCursor& c ) const
 {
     return QPoint( c.x() * fontMetrics().maxWidth(), c.y() * fontMetrics().lineSpacing() );
 }
-YZCursor QYZisEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
+YZCursor QYEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
 {
     int height = fontMetrics().lineSpacing();
     int width = fontMetrics().maxWidth();
@@ -101,45 +101,45 @@ YZCursor QYZisEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
     }
     return YZCursor( x, y );
 }
-YZCursor QYZisEdit::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
+YZCursor QYEdit::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
 {
-    return translateRealToPosition( p, ceil ) + mParent->getScreenPosition();
+    return translateRealToPosition( p, ceil ) + mView->getScreenPosition();
 }
 
-void QYZisEdit::setPalette( const QPalette& p, qreal opacity )
+void QYEdit::setPalette( const QPalette& p, qreal opacity )
 {
     QWidget::setPalette( p );
     //setWindowOpacity( opacity ); XXX doesn't work...
-    Qyzis::me->setWindowOpacity(opacity);
+    QYzis::me->setWindowOpacity(opacity);
 }
 
-QYZisCursor::CursorShape QYZisEdit::cursorShape()
+QYCursor::CursorShape QYEdit::cursorShape()
 {
-    QYZisCursor::CursorShape shape;
-    YZMode::ModeType m = mParent->modePool()->current()->type();
+    QYCursor::CursorShape shape;
+    YZMode::ModeType m = mView->modePool()->current()->type();
     dbg() << "cursorShape(): mode=" << m << endl;
     shape = mCursor->shape();
     if ( ! hasFocus() ) {
-        if (mParent->command->hasFocus()) {
+        if (mView->command->hasFocus()) {
             // command line has focus
-            shape = QYZisCursor::CursorHidden;
+            shape = QYCursor::CursorHidden;
         } else {
             // the widget no longer has focus
-            shape = QYZisCursor::CursorFrameRect;
+            shape = QYCursor::CursorFrameRect;
         }
     } else {
         switch ( m ) {
         case YZMode::ModeInsert :
-            shape = QYZisCursor::CursorVbar;
+            shape = QYCursor::CursorVbar;
             break;
         case YZMode::ModeReplace :
-            shape = QYZisCursor::CursorHbar;
+            shape = QYCursor::CursorHbar;
             break;
         case YZMode::ModeIntro:
         case YZMode::ModeEx:
         case YZMode::ModeSearch:
         case YZMode::ModeSearchBackward:
-            shape = QYZisCursor::CursorHidden;
+            shape = QYCursor::CursorHidden;
             break;
         case YZMode::ModeCompletion :
             // do not change it
@@ -148,7 +148,7 @@ QYZisCursor::CursorShape QYZisEdit::cursorShape()
         case YZMode::ModeVisual:
         case YZMode::ModeVisualLine:
         case YZMode::ModeVisualBlock:
-            shape = QYZisCursor::CursorFilledRect;
+            shape = QYCursor::CursorFilledRect;
             break;
         }
     }
@@ -157,13 +157,13 @@ QYZisCursor::CursorShape QYZisEdit::cursorShape()
     return shape;
 }
 
-void QYZisEdit::updateCursor()
+void QYEdit::updateCursor()
 {
     mCursor->setCursorShape( cursorShape() );
     mCursor->update();
 }
 
-void QYZisEdit::updateArea( )
+void QYEdit::updateArea( )
 {
 
     updateCursor();
@@ -180,13 +180,13 @@ void QYZisEdit::updateArea( )
 
     m_useArea.setBottomRight( QPoint( columns * fontMetrics().maxWidth(), lines * fontMetrics().lineSpacing()) );
 
-    mParent->setVisibleArea( columns, lines );
+    mView->setVisibleArea( columns, lines );
 }
 
 /**
  * QWidget event handling
  */
-bool QYZisEdit::event(QEvent *e)
+bool QYEdit::event(QEvent *e)
 {
     if ( e->type() == QEvent::KeyPress ) {
         QKeyEvent *ke = (QKeyEvent *)e;
@@ -200,7 +200,7 @@ bool QYZisEdit::event(QEvent *e)
     return QWidget::event(e);
 }
 
-void QYZisEdit::keyPressEvent ( QKeyEvent * e )
+void QYEdit::keyPressEvent ( QKeyEvent * e )
 {
     dbg() << "keyPressEvent( QKeyEVent(text=\"" << e->text() << "\", key=" << e->key() << ", modifiers=" << e->modifiers() << ")" << endl;
     Qt::KeyboardModifiers st = e->modifiers();
@@ -221,18 +221,18 @@ void QYZisEdit::keyPressEvent ( QKeyEvent * e )
         text = keys[ e->key() ];
     }
     dbg().sprintf("Event transferred to YZSession");
-    YZSession::self()->sendKey( static_cast<YZView*>( mParent ), text, modifiers);
+    YZSession::self()->sendKey( static_cast<YZView*>( mView ), text, modifiers);
     e->accept();
 }
 
-void QYZisEdit::mousePressEvent ( QMouseEvent * e )
+void QYEdit::mousePressEvent ( QMouseEvent * e )
 {
     /*
     FIXME: How to handle mouse events commented out now so kyzis will compile
 
-    if ( mParent->myBuffer()->introShown() ) {
-     mParent->myBuffer()->clearIntro();
-     mParent->gotodxdy( 0, 0 );
+    if ( mView->myBuffer()->introShown() ) {
+     mView->myBuffer()->clearIntro();
+     mView->gotodxdy( 0, 0 );
      return;
     }
     */
@@ -240,82 +240,82 @@ void QYZisEdit::mousePressEvent ( QMouseEvent * e )
     // leave visual mode if the user clicks somewhere
     // TODO: this should only be done if the left button is used. Right button
     // should extend visual selection, like in vim.
-    if ( mParent->modePool()->current()->isSelMode() )
-        mParent->modePool()->pop();
+    if ( mView->modePool()->current()->isSelMode() )
+        mView->modePool()->pop();
 
     if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
-        if ( mParent->modePool()->currentType() != YZMode::ModeEx ) {
-            mParent->gotodxdyAndStick( translateRealToAbsolutePosition( e->pos() ) );
+        if ( mView->modePool()->currentType() != YZMode::ModeEx ) {
+            mView->gotodxdyAndStick( translateRealToAbsolutePosition( e->pos() ) );
         }
     } else if ( e->button() == Qt::MidButton ) {
         QString text = QApplication::clipboard()->text( QClipboard::Selection );
         if ( text.isNull() )
             text = QApplication::clipboard()->text( QClipboard::Clipboard );
         if ( ! text.isNull() ) {
-            if ( mParent->modePool()->current()->isEditMode() ) {
+            if ( mView->modePool()->current()->isEditMode() ) {
                 QChar reg = '\"';
                 YZSession::self()->setRegister( reg, text.split("\n") );
-                mParent->pasteContent( reg, false );
-                mParent->moveRight();
+                mView->pasteContent( reg, false );
+                mView->moveRight();
             }
         }
     }
 }
 
-void QYZisEdit::mouseMoveEvent( QMouseEvent *e )
+void QYEdit::mouseMoveEvent( QMouseEvent *e )
 {
     if (e->buttons() == Qt::LeftButton) {
-        if (mParent->modePool()->currentType() == YZMode::ModeCommand) {
+        if (mView->modePool()->currentType() == YZMode::ModeCommand) {
             // start visual mode when user makes a selection with the left mouse button
-            mParent->modePool()->push( YZMode::ModeVisual );
-        } else if (mParent->modePool()->current()->isSelMode() ) {
+            mView->modePool()->push( YZMode::ModeVisual );
+        } else if (mView->modePool()->current()->isSelMode() ) {
             // already in visual mode - move cursor if the mouse pointer has moved over a new char
             YZCursor pos = translateRealToAbsolutePosition( e->pos() );
-            if ( pos != mParent->getCursor() ) {
-                mParent->gotodxdy( pos );
+            if ( pos != mView->getCursor() ) {
+                mView->gotodxdy( pos );
             }
         }
     }
 }
 
-void QYZisEdit::focusInEvent ( QFocusEvent * )
+void QYEdit::focusInEvent ( QFocusEvent * )
 {
     dbg() << "focusInEvent()" << endl;
-    QYZisSession::self()->setCurrentView( mParent );
+    QYSession::self()->setCurrentView( mView );
     updateCursor();
 }
-void QYZisEdit::focusOutEvent ( QFocusEvent * )
+void QYEdit::focusOutEvent ( QFocusEvent * )
 {
     dbg() << "focusOutEvent()" << endl;
     updateCursor();
 }
 
-void QYZisEdit::resizeEvent(QResizeEvent* e)
+void QYEdit::resizeEvent(QResizeEvent* e)
 {
     e->accept();
     updateArea();
 }
 
-void QYZisEdit::paintEvent( QPaintEvent* pe )
+void QYEdit::paintEvent( QPaintEvent* pe )
 {
     updateCursor();
     // convert QPaintEvent rect to yzis coordinate
     QRect r = pe->rect();
     r.setTopLeft( translateRealToAbsolutePosition( r.topLeft() ) );
     r.setBottomRight( translateRealToAbsolutePosition( r.bottomRight() ) );
-    //dbg() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() <<
+    //dbg() << "QYEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() <<
     //    " => " << r.topLeft() << "," << r.bottomRight() << endl;
     // paint it
-    mParent->guiPaintEvent( mParent->clipSelection( YZSelection( r ) ) );
+    mView->guiPaintEvent( mView->clipSelection( YZSelection( r ) ) );
 }
 
-void QYZisEdit::setCursor( int c, int l )
+void QYEdit::setCursor( int c, int l )
 {
     // dbg() << "setCursor" << endl;
-    c = c - mParent->getDrawCurrentLeft();
-    l -= mParent->getDrawCurrentTop();
+    c = c - mView->getDrawCurrentLeft();
+    l -= mView->getDrawCurrentTop();
     unsigned int x = c * fontMetrics().maxWidth();
-    if ( mParent->getLocalBooleanOption( "rightleft" ) ) {
+    if ( mView->getLocalBooleanOption( "rightleft" ) ) {
         x = width() - x - mCursor->width();
     }
     mCursor->move( x, l * fontMetrics().lineSpacing() );
@@ -326,7 +326,7 @@ void QYZisEdit::setCursor( int c, int l )
     // setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
 }
 
-void QYZisEdit::scroll( int dx, int dy )
+void QYEdit::scroll( int dx, int dy )
 {
     int rx = dx * fontMetrics().maxWidth();
     int ry = dy * fontMetrics().lineSpacing();
@@ -337,9 +337,9 @@ void QYZisEdit::scroll( int dx, int dy )
     QWidget::scroll( rx, ry, m_useArea );
 }
 
-void QYZisEdit::guiDrawCell( QPoint pos , const YZDrawCell& cell, QPainter* p )
+void QYEdit::guiDrawCell( QPoint pos , const YZDrawCell& cell, QPainter* p )
 {
-    //dbg() << "QYZisEdit::guiDrawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
+    //dbg() << "QYEdit::guiDrawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
     p->save();
     bool has_bg = false;
     if ( !cell.sel ) {
@@ -368,9 +368,9 @@ void QYZisEdit::guiDrawCell( QPoint pos , const YZDrawCell& cell, QPainter* p )
     p->restore();
 }
 
-void QYZisEdit::guiDrawClearToEOL( QPoint pos , const QChar& clearChar, QPainter* p )
+void QYEdit::guiDrawClearToEOL( QPoint pos , const QChar& clearChar, QPainter* p )
 {
-    //dbg() << "QYZisEdit::guiDrawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
+    //dbg() << "QYEdit::guiDrawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
     if ( clearChar.isSpace() ) {
         // not needed as we called qt for repainting this widget, and autoFillBackground = True
         return ;
@@ -379,12 +379,12 @@ void QYZisEdit::guiDrawClearToEOL( QPoint pos , const QChar& clearChar, QPainter
         r.setTopLeft( translatePositionToReal( YZCursor(pos) ) );
         r.setRight( width() );
         r.setHeight( fontMetrics().lineSpacing() );
-        int nb_char = mParent->getColumnsVisible() - pos.x();
+        int nb_char = mView->getColumnsVisible() - pos.x();
         p->drawText( r, QString(nb_char, clearChar) );
     }
 }
 
-void QYZisEdit::initKeys()
+void QYEdit::initKeys()
 {
     if ( keys.empty() ) {
         /* initialize keys */
@@ -483,7 +483,7 @@ void QYZisEdit::initKeys()
     connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMappedKey( const QString& ) ) );
 }
 
-QString QYZisEdit::keysToShortcut( const QString& keys )
+QString QYEdit::keysToShortcut( const QString& keys )
 {
     QString ret = keys;
     ret = ret.replace( "<CTRL>", "CTRL+" );
@@ -493,14 +493,14 @@ QString QYZisEdit::keysToShortcut( const QString& keys )
     return ret;
 }
 
-void QYZisEdit::registerModifierKeys( const QString& keys )
+void QYEdit::registerModifierKeys( const QString& keys )
 {
     /*
     KAction* k = new KAction( "", KShortcut( keysToShortcut( keys ) ), signalMapper, SLOT( map() ), actionCollection, keys.ascii() );
     signalMapper->setMapping( k, keys );
     */
 }
-void QYZisEdit::unregisterModifierKeys( const QString& keys )
+void QYEdit::unregisterModifierKeys( const QString& keys )
 {
     /*
     QByteArray ke = keys.toUtf8();
@@ -520,43 +520,43 @@ void QYZisEdit::unregisterModifierKeys( const QString& keys )
     */
 }
 
-void QYZisEdit::sendMappedKey( const QString& keys )
+void QYEdit::sendMappedKey( const QString& keys )
 {
     dbg().sprintf("sendMappedKey( keys=%s )", qp(keys) );
-    YZSession::self()->sendMultipleKeys( static_cast<YZView *>( mParent ), keys );
+    YZSession::self()->sendMultipleKeys( static_cast<YZView *>( mView ), keys );
 }
 
-const QString& QYZisEdit::convertKey( int key )
+const QString& QYEdit::convertKey( int key )
 {
     return keys[ key ];
 }
 
-void QYZisEdit::inputMethodEvent ( QInputMethodEvent * )
+void QYEdit::inputMethodEvent ( QInputMethodEvent * )
 {
     //TODO
 }
 
-QVariant QYZisEdit::inputMethodQuery ( Qt::InputMethodQuery query ) const
+QVariant QYEdit::inputMethodQuery ( Qt::InputMethodQuery query ) const
 {
     return QWidget::inputMethodQuery( query );
 }
 
 // for InputMethod (OnTheSpot)
 /*
-void QYZisEdit::imStartEvent( QIMEvent *e )
+void QYEdit::imStartEvent( QIMEvent *e )
 {
- if ( mParent->modePool()->current()->supportsInputMethod() ) {
-  mParent->modePool()->current()->imBegin( mParent );
+ if ( mView->modePool()->current()->supportsInputMethod() ) {
+  mView->modePool()->current()->imBegin( mView );
  }
  e->accept();
 }*/
 
 // for InputMethod (OnTheSpot)
 /*
-void QYZisEdit::imComposeEvent( QIMEvent *e ) {
- //dbg() << "QYZisEdit::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
- if ( mParent->modePool()->current()->supportsInputMethod() ) {
-  mParent->modePool()->current()->imCompose( mParent, e->text() );
+void QYEdit::imComposeEvent( QIMEvent *e ) {
+ //dbg() << "QYEdit::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
+ if ( mView->modePool()->current()->supportsInputMethod() ) {
+  mView->modePool()->current()->imCompose( mView, e->text() );
   e->accept();
  } else {
   e->ignore();
@@ -565,16 +565,16 @@ void QYZisEdit::imComposeEvent( QIMEvent *e ) {
 
 // for InputMethod (OnTheSpot)
 /*
-void QYZisEdit::imEndEvent( QIMEvent *e ) {
-// dbg() << "QYZisEdit::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
- if ( mParent->modePool()->current()->supportsInputMethod() ) {
-  mParent->modePool()->current()->imEnd( mParent, e->text() );
+void QYEdit::imEndEvent( QIMEvent *e ) {
+// dbg() << "QYEdit::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
+ if ( mView->modePool()->current()->supportsInputMethod() ) {
+  mView->modePool()->current()->imEnd( mView, e->text() );
  } else {
-  YZSession::self()->sendKey( static_cast<YZView *>( mParent ), e->text() );
+  YZSession::self()->sendKey( static_cast<YZView *>( mView ), e->text() );
  }
  e->accept();
 }*/
 
 
-QMap<int, QString> QYZisEdit::keys;
+QMap<int, QString> QYEdit::keys;
 

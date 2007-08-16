@@ -21,12 +21,12 @@
 
 #include "ui_configuredialog.h"
 
-class QYZConfigureDialog : public QDialog, private Ui::ConfigureDialog
+class QYConfigureDialog : public QDialog, private Ui::ConfigureDialog
 {
     Q_OBJECT
 
 public :
-    QYZConfigureDialog( QWidget* parent = 0 );
+    QYConfigureDialog( QWidget* parent = 0 );
 };
 
 

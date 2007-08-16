@@ -47,13 +47,13 @@ int main(int argc, char **argv)
     app.setApplicationName("QYzis");
 
     // ==============[ create session ]=============
-    QYZisSession::createInstance();
-    Qyzis* mw = new Qyzis();
+    QYSession::createInstance();
+    QYzis* mw = new QYzis();
     mw->show();
 
     YZSession::self()->parseCommandLine( argc, argv );
     //YZSession::self()->frontendGuiReady();
-    QTimer::singleShot(0, static_cast<QYZisSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
+    QTimer::singleShot(0, static_cast<QYSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
 
     // ==============[ let's rock ]=============
 

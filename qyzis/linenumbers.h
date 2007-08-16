@@ -24,28 +24,28 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-class QYZisView;
+class QYView;
 
-class LineNumber : public QLabel
+class QYNumberLabel : public QLabel
 {
     Q_OBJECT
 
 public :
-    LineNumber( const QFont& f );
-    virtual ~LineNumber();
+    QYNumberLabel( const QFont& f );
+    virtual ~QYNumberLabel();
 
     void setNumber( int n );
     void setFont( const QFont& );
 };
 
 
-class QYZisLineNumbers : public QWidget
+class QYLineNumbers : public QWidget
 {
     Q_OBJECT
 
 public :
-    QYZisLineNumbers( QYZisView* parent );
-    virtual ~QYZisLineNumbers();
+    QYLineNumbers( QYView* parent );
+    virtual ~QYLineNumbers();
 
     void setLineNumber( int y, int h, int line );
     void setMaxLineNumber( int line );
@@ -60,7 +60,7 @@ protected :
 
 private :
 
-    QYZisView* m_view;
+    QYView* m_view;
 
 };
 

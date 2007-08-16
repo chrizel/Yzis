@@ -35,20 +35,20 @@
 #include "qyziscursor.h"
 #include "action.h"
 
-class QYZisView;
-class QYZisCursor;
+class QYView;
+class QYCursor;
 
 /**
  * QYZis Painter Widget
  */
-class QYZisEdit : public QWidget
+class QYEdit : public QWidget
 {
     Q_OBJECT
 
 
 public :
-    QYZisEdit(QYZisView *parent = 0);
-    virtual ~QYZisEdit();
+    QYEdit(QYView * view = 0);
+    virtual ~QYEdit();
 
     //erase all text, and set new text
     void setText (const QString& );
@@ -61,7 +61,7 @@ public :
     void scroll( int dx, int dy );
 
     /** Return a cursor shape according to the current mode and focus */
-    QYZisCursor::CursorShape cursorShape();
+    QYCursor::CursorShape cursorShape();
 
     /** Adjust the cursor shape.
       *
@@ -87,7 +87,7 @@ public :
 
     QVariant inputMethodQuery ( Qt::InputMethodQuery query ) const;
 
-    QYZisView* view() const;
+    QYView* view() const;
 
 public slots :
     void sendMappedKey( const QString& keys );
@@ -139,15 +139,15 @@ private :
     /* area to use */
     QRect m_useArea;
 
-    QYZisView *mParent;
-    QYZisCursor* mCursor;
+    QYView *mView;
+    QYCursor* mCursor;
 
     bool isFontFixed;
 
     static QMap<int, QString> keys;
 
-    friend class QYZisCursor;
-    friend class QYZisView;
+    friend class QYCursor;
+    friend class QYView;
 };
 
 #endif

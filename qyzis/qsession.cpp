@@ -46,40 +46,40 @@
 #include <QX11Info>
 #endif
 
-#define dbg() yzDebug("QYZisSession")
-#define err() yzError("QYZisSession")
+#define dbg() yzDebug("QYSession")
+#define err() yzError("QYSession")
 
-void QYZisSession::createInstance()
+void QYSession::createInstance()
 {
     dbg() << "createInstance()" << endl;
-    // such allocation (i.e. not "new QYZisSession") will ensure that
+    // such allocation (i.e. not "new QYSession") will ensure that
     // "instance" object will be properly and automatically deleted
     // when program exits
-    static QYZisSession instance;
+    static QYSession instance;
     setInstance(&instance);
 }
 
-QYZisSession::QYZisSession() :
+QYSession::QYSession() :
         YZSession(),
         lastView(0),
         m_viewParent(0)
 {
-    dbg() << "QYZisSession()" << endl;
+    dbg() << "QYSession()" << endl;
 }
 
-QYZisSession::~QYZisSession()
+QYSession::~QYSession()
 {
-    dbg() << "~QYZisSession()" << endl;
+    dbg() << "~QYSession()" << endl;
 }
 
-void QYZisSession::frontendGuiReady()
+void QYSession::frontendGuiReady()
 {
     dbg() << "frontendGuiReady()" << endl;
     YZSession::self()->frontendGuiReady();
 }
 
 
-void QYZisSession::guiSetClipboardText( const QString& text, Clipboard::Mode mode )
+void QYSession::guiSetClipboardText( const QString& text, Clipboard::Mode mode )
 {
     dbg() << QString("guiSetClipboardText( %1, %2 )").arg(text).arg((int)mode) << endl;
 #ifdef Q_WS_X11
@@ -88,10 +88,10 @@ void QYZisSession::guiSetClipboardText( const QString& text, Clipboard::Mode mod
         QApplication::clipboard()->setText( text, mode == Clipboard::Clipboard ? QClipboard::Clipboard : QClipboard::Selection );
 }
 
-bool QYZisSession::guiQuit( int errorCode )
+bool QYSession::guiQuit( int errorCode )
 {
     dbg() << "guiQuit(" << errorCode << ")" << endl;
-    if (Qyzis::me) {
+    if (QYzis::me) {
         qApp->quit();
     } else if ( currentView() && currentView()->modePool()->currentType() == YZMode::ModeEx
                 && !currentView()->guiGetCommandLineText().isEmpty() ) {
@@ -104,7 +104,7 @@ bool QYZisSession::guiQuit( int errorCode )
     return true;
 }
 
-void QYZisSession::applyConfig()
+void QYSession::applyConfig()
 {
     dbg() << "applyConfig()" << endl;
     QSettings settings;
@@ -115,31 +115,31 @@ void QYZisSession::applyConfig()
         YZBuffer *b = *it;
         QList<YZView*> l = b->views();
         for ( QList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
-            QYZisView* yv = static_cast<QYZisView*>( *itr );
+            QYView* yv = static_cast<QYView*>( *itr );
             yv->applyConfig( settings );
         }
     }
 }
 
-void QYZisSession::guiChangeCurrentView( YZView* view )
+void QYSession::guiChangeCurrentView( YZView* view )
 {
     dbg() << "guiChangeCurrentView(" << view->toString() << ")" << endl;
-    QYZisView *v = static_cast<QYZisView*>(view);
-    Qyzis::me->mTabWidget->setCurrentWidget( v );
+    QYView *v = static_cast<QYView*>(view);
+    QYzis::me->mTabWidget->setCurrentWidget( v );
 }
 
-YZView* QYZisSession::guiCreateView( YZBuffer *buffer )
+YZView* QYSession::guiCreateView( YZBuffer *buffer )
 {
     dbg() << "guiCreateView(" << buffer->toString() << ")" << endl;
-    QYZisView *view;
+    QYView *view;
 
-    view = new QYZisView( buffer, m_viewParent, QString(buffer->fileName() + "-view").toUtf8().constData() );
+    view = new QYView( buffer, m_viewParent, QString(buffer->fileName() + "-view").toUtf8().constData() );
 
-    if ( Qyzis::me ) {
-        Qyzis::me->embedPartView( view, buffer->fileName(), buffer->fileName() );
+    if ( QYzis::me ) {
+        QYzis::me->embedPartView( view, buffer->fileName(), buffer->fileName() );
     } else {
         //?   view->setMdiChildView( 0 );
-        err() << "unhandled case in YZView* QYZisSession::guiCreateView( YZBuffer *buffer ) " ;
+        err() << "unhandled case in YZView* QYSession::guiCreateView( YZBuffer *buffer ) " ;
     }
 
     view->setFocus();
@@ -148,75 +148,75 @@ YZView* QYZisSession::guiCreateView( YZBuffer *buffer )
     return view;
 }
 
-YZBuffer *QYZisSession::guiCreateBuffer()
+YZBuffer *QYSession::guiCreateBuffer()
 {
     dbg() << "guiCreateBuffer()" << endl;
     return new YZBuffer;
 }
 
-void QYZisSession::guiPopupMessage( const QString& message )
+void QYSession::guiPopupMessage( const QString& message )
 {
     dbg() << "popupMessage(" << message << ")" << endl;
-    QYZisView *v = static_cast<QYZisView*>(currentView());
+    QYView *v = static_cast<QYView*>(currentView());
     QMessageBox::information(v, _( "Error" ), message);
 }
 
-void QYZisSession::closeView()
+void QYSession::closeView()
 {
     dbg() << "closeView()" << endl;
-    if (Qyzis::me) {
-        Qyzis::me->closeTab();
+    if (QYzis::me) {
+        QYzis::me->closeTab();
     } else {
         lastView->close();
     }
     lastView = 0;
 }
 
-void QYZisSession::guiDeleteView( YZView *view )
+void QYSession::guiDeleteView( YZView *view )
 {
     dbg() << "guiDeleteView(" << view->toString() << ")" << endl;
-    QYZisView *kview = dynamic_cast<QYZisView*>(view);
+    QYView *kview = dynamic_cast<QYView*>(view);
     if ( kview ) {
         lastView = kview;
         QTimer::singleShot(0, this, SLOT( closeView() ));
     }
 }
 
-void QYZisSession::guiDeleteBuffer(YZBuffer* b)
+void QYSession::guiDeleteBuffer(YZBuffer* b)
 {
     dbg() << "guiDeleteBuffer(" << b->toString() << ")" << endl;
     delete b;
 }
 
-void QYZisSession::guiSetFocusMainWindow()
+void QYSession::guiSetFocusMainWindow()
 {
     dbg() << "guiSetFocusMainWindow()" << endl;
-    QYZisView *yv = static_cast<QYZisView*>( currentView() );
+    QYView *yv = static_cast<QYView*>( currentView() );
     yv->guiSetFocusMainWindow();
 }
 
-void QYZisSession::guiSetFocusCommandLine()
+void QYSession::guiSetFocusCommandLine()
 {
     dbg() << "guiSetFocusCommandLine()" << endl;
-    QYZisView *yv = static_cast<QYZisView*>( currentView() );
+    QYView *yv = static_cast<QYView*>( currentView() );
     yv->guiSetFocusCommandLine();
 }
 
-bool QYZisSession::guiPromptYesNo(const QString& title, const QString& message)
+bool QYSession::guiPromptYesNo(const QString& title, const QString& message)
 {
     dbg() << "guiPromptYesNo(" << title << "," << message << ")" << endl;
-    int v = QMessageBox::question(static_cast<QYZisView*>(currentView()), title, message, _("Yes"), _("No"));
+    int v = QMessageBox::question(static_cast<QYView*>(currentView()), title, message, _("Yes"), _("No"));
     if (v == 0) return true;
     else return false;
 }
 
-int QYZisSession::guiPromptYesNoCancel(const QString& title, const QString& message)
+int QYSession::guiPromptYesNoCancel(const QString& title, const QString& message)
 {
     dbg() << "guiPromptYesNoCancel(" << title << "," << message << ")" << endl;
-    return QMessageBox::question(static_cast<QYZisView*>(currentView()), title, message, _("Yes"), _("No"), _("Cancel"));
+    return QMessageBox::question(static_cast<QYView*>(currentView()), title, message, _("Yes"), _("No"), _("Cancel"));
 }
 
-void QYZisSession::guiSplitHorizontally(YZView* view)
+void QYSession::guiSplitHorizontally(YZView* view)
 {
     dbg() << "guiSplitHorizontally(" << view->toString() << ")" << endl;
 }

@@ -18,7 +18,7 @@
 
 #include "configuredialog.h"
 
-QYZConfigureDialog::QYZConfigureDialog( QWidget* parent ) : QDialog( parent )
+QYConfigureDialog::QYConfigureDialog( QWidget* parent ) : QDialog( parent )
 {
     setupUi(this);
 }

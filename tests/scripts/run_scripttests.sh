@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # Usage:
 # ./runtests.sh ["nocopy"] [Yzis frontend] [test name]
 # Copies from the build tree the latest versions of nyzis, qyzis, libyzis and

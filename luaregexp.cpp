@@ -27,8 +27,8 @@
 #include <QRegExp>
 
 
-#define dbg()    yzDebug("YZLuaRegexp")
-#define err()    yzError("YZLuaRegexp")
+#define dbg()    yzDebug("YLuaRegexp")
+#define err()    yzError("YLuaRegexp")
 
 /* Lua */
 extern "C"
@@ -44,11 +44,11 @@ extern "C"
 //
 // ========================================================
 
-void YZLuaRegexp::registerLuaRegexp(lua_State * L)
+void YLuaRegexp::registerLuaRegexp(lua_State * L)
 {
     dbg() << HERE() << endl;
 
-    YZLuaEngine::self()->print_lua_stack( L, "registerLuaRegexp - step 1" );
+    YLuaEngine::self()->print_lua_stack( L, "registerLuaRegexp - step 1" );
 
     lua_register(L, "Regexp_create", Regexp_create);
     lua_register(L, "Regexp_matchIndex", Regexp_matchIndex);
@@ -62,7 +62,7 @@ void YZLuaRegexp::registerLuaRegexp(lua_State * L)
     lua_register(L, "Regexp_pattern", Regexp_pattern);
     lua_register(L, "Regexp_userdata_finalize", Regexp_userdata_finalize);
 
-    // YZLuaEngine::self()->print_lua_stack( L, "registerLuaRegexp - step 2" );
+    // YLuaEngine::self()->print_lua_stack( L, "registerLuaRegexp - step 2" );
 
     QString regexpLuaCode = ""
                             "Regexp = {      \n"
@@ -91,7 +91,7 @@ void YZLuaRegexp::registerLuaRegexp(lua_State * L)
                             "         \n"
                             ;
 
-    int ret = YZLuaEngine::self()->execInLua( regexpLuaCode );
+    int ret = YLuaEngine::self()->execInLua( regexpLuaCode );
     if (ret != 0) {
         err() << "Regexp class could not be installed in lua" << endl;
         dbg() << HERE() << " done with error" << endl;
@@ -101,9 +101,9 @@ void YZLuaRegexp::registerLuaRegexp(lua_State * L)
     dbg() << HERE() << " done" << endl;
 }
 
-int YZLuaRegexp::Regexp_create(lua_State *L)
+int YLuaRegexp::Regexp_create(lua_State *L)
 {
-    if (! YZLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.create", "Regexp table, pattern")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.create", "Regexp table, pattern")) return 0;
     // stack: table, string
     QString re = QString::fromUtf8( ( char * )lua_tostring ( L, -1 ) );
     lua_pop(L, 2);
@@ -144,16 +144,16 @@ int YZLuaRegexp::Regexp_create(lua_State *L)
     lua_setmetatable(L, -2);
     // stack: table
 
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1;
 }
 
-#define deepdbgf() yzDeepDebug("YZLuaRegexp.Regexp_userdata_finalize")
+#define deepdbgf() yzDeepDebug("YLuaRegexp.Regexp_userdata_finalize")
 
-int YZLuaRegexp::Regexp_userdata_finalize(lua_State *L)
+int YLuaRegexp::Regexp_userdata_finalize(lua_State *L)
 {
     deepdbgf() << "called" << endl;
-    if (! YZLuaEngine::checkFunctionArguments(L, 1, 1, "Regexp.finalize", "Regexp object")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 1, 1, "Regexp.finalize", "Regexp object")) return 0;
 
     // stack: userdata
     QRegExp ** pRegexp = (QRegExp **) lua_touserdata(L, -1);
@@ -167,13 +167,13 @@ int YZLuaRegexp::Regexp_userdata_finalize(lua_State *L)
     *pRegexp = NULL;
 
     deepdbgf() << "done" << endl;
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaRegexp::Regexp_match(lua_State *L)
+int YLuaRegexp::Regexp_match(lua_State *L)
 {
-    if (! YZLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.match", "Regexp object, string")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.match", "Regexp object, string")) return 0;
 
     // stack: table, string
     QString s = QString::fromUtf8( ( char * ) lua_tostring ( L, -1 ) );
@@ -192,14 +192,14 @@ int YZLuaRegexp::Regexp_match(lua_State *L)
 
     lua_pushboolean( L, regexp->indexIn( s ) != -1);
     // stack: bool
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
 
-int YZLuaRegexp::Regexp_matchIndex(lua_State *L)
+int YLuaRegexp::Regexp_matchIndex(lua_State *L)
 {
-    if (! YZLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.matchIndex", "Regexp object, string")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.matchIndex", "Regexp object, string")) return 0;
 
     // stack: table, string
     QString s = QString::fromUtf8( ( char * ) lua_tostring ( L, -1 ) );
@@ -217,14 +217,14 @@ int YZLuaRegexp::Regexp_matchIndex(lua_State *L)
 
     lua_pushnumber( L, regexp->indexIn( s ) );
     // stack: number
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
 
-int YZLuaRegexp::Regexp_setMinimal(lua_State *L)
+int YLuaRegexp::Regexp_setMinimal(lua_State *L)
 {
-    if (! YZLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.setMinimal", "Regexp object, boolean")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.setMinimal", "Regexp object, boolean")) return 0;
 
     // stack: table, bool
     bool b = lua_toboolean ( L, -1 );
@@ -241,14 +241,14 @@ int YZLuaRegexp::Regexp_setMinimal(lua_State *L)
     // stack: /
 
     regexp->setMinimal( b );
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
 
-int YZLuaRegexp::Regexp_setCaseSensitive(lua_State *L)
+int YLuaRegexp::Regexp_setCaseSensitive(lua_State *L)
 {
-    if (! YZLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.setCaseSensitive", "Regexp object, boolean")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.setCaseSensitive", "Regexp object, boolean")) return 0;
 
     // stack: table, boolean
     bool b = lua_toboolean ( L, -1 );
@@ -265,14 +265,14 @@ int YZLuaRegexp::Regexp_setCaseSensitive(lua_State *L)
     // stack: /
 
     regexp->setCaseSensitivity( b ? Qt::CaseSensitive : Qt::CaseInsensitive );
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
 
-int YZLuaRegexp::Regexp_pos(lua_State *L)
+int YLuaRegexp::Regexp_pos(lua_State *L)
 {
-    if (! YZLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.pos", "Regexp object, index")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.pos", "Regexp object, index")) return 0;
 
     // stack: table, int
     int index = ( int )lua_tonumber( L, -1 );
@@ -290,13 +290,13 @@ int YZLuaRegexp::Regexp_pos(lua_State *L)
 
     lua_pushnumber( L, regexp->pos( index ) );
     // stack: int
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
-int YZLuaRegexp::Regexp_numCaptures(lua_State *L)
+int YLuaRegexp::Regexp_numCaptures(lua_State *L)
 {
-    if (! YZLuaEngine::checkFunctionArguments(L, 1, 1, "Regexp.numCaptures", "Regexp object")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 1, 1, "Regexp.numCaptures", "Regexp object")) return 0;
     // stack: table
 
     // extract userdata from table Regexp
@@ -310,13 +310,13 @@ int YZLuaRegexp::Regexp_numCaptures(lua_State *L)
 
     lua_pushnumber( L, regexp->numCaptures() );
     // stack: int
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
-int YZLuaRegexp::Regexp_captured(lua_State *L)
+int YLuaRegexp::Regexp_captured(lua_State *L)
 {
-    if (! YZLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.captured", "Regexp object, index")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 2, 2, "Regexp.captured", "Regexp object, index")) return 0;
 
     // stack: table, int
     int index = ( int )lua_tonumber( L, -1 );
@@ -334,14 +334,14 @@ int YZLuaRegexp::Regexp_captured(lua_State *L)
 
     lua_pushstring( L, regexp->cap( index ).toUtf8().data() );
     // stack: string
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
-int YZLuaRegexp::Regexp_replace(lua_State *L)
+int YLuaRegexp::Regexp_replace(lua_State *L)
 {
     dbg() << HERE() << endl;
-    if (! YZLuaEngine::checkFunctionArguments(L, 3, 4, "Regexp.replace", "Regexp object, string, string")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 3, 4, "Regexp.replace", "Regexp object, string, string")) return 0;
 
     // stack: table, string, string
     QString replacement = lua_tostring( L, -1 );
@@ -368,13 +368,13 @@ int YZLuaRegexp::Regexp_replace(lua_State *L)
 
     lua_pushstring( L, s.toUtf8().data() );
     // stack: string
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
-int YZLuaRegexp::Regexp_pattern(lua_State *L)
+int YLuaRegexp::Regexp_pattern(lua_State *L)
 {
-    if (! YZLuaEngine::checkFunctionArguments(L, 1, 1, "Regexp.pattern", "Regexp object")) return 0;
+    if (! YLuaEngine::checkFunctionArguments(L, 1, 1, "Regexp.pattern", "Regexp object")) return 0;
 
     // stack: table
 
@@ -389,7 +389,7 @@ int YZLuaRegexp::Regexp_pattern(lua_State *L)
 
     lua_pushstring( L, regexp->pattern().toUtf8().data() );
     // stack: string
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 

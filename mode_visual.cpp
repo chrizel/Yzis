@@ -31,51 +31,51 @@
 #include "view.h"
 #include "viewcursor.h"
 
-#define dbg()    yzDebug("YZModeVisual")
-#define err()    yzError("YZModeVisual")
+#define dbg()    yzDebug("YModeVisual")
+#define err()    yzError("YModeVisual")
 
 using namespace yzis;
 
-YZModeVisual::YZModeVisual() : YZModeCommand()
+YModeVisual::YModeVisual() : YModeCommand()
 {
-    mType = YZMode::ModeVisual;
+    mType = YMode::ModeVisual;
     mString = _( "[ Visual ]" );
     mSelMode = true;
     mMapMode = MapVisual;
     commands.clear();
 }
-YZModeVisual::~YZModeVisual()
+YModeVisual::~YModeVisual()
 {
     for ( int ab = 0 ; ab < commands.size(); ++ab)
         delete commands.at(ab);
     commands.clear();
 }
 
-void YZModeVisual::toClipboard( YZView* mView )
+void YModeVisual::toClipboard( YView* mView )
 {
-    YZInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
-    YZSession::self()->guiSetClipboardText( mView->myBuffer()->getText( interval ).join( "\n" ), Clipboard::Selection );
+    YInterval interval = mView->getSelectionPool()->visual()->bufferMap()[0];
+    YSession::self()->guiSetClipboardText( mView->myBuffer()->getText( interval ).join( "\n" ), Clipboard::Selection );
 }
 
-YZInterval YZModeVisual::buildBufferInterval( YZView*, const YZViewCursor& from, const YZViewCursor& to )
+YInterval YModeVisual::buildBufferInterval( YView*, const YViewCursor& from, const YViewCursor& to )
 {
-    return YZInterval( from.buffer(), to.buffer() );
+    return YInterval( from.buffer(), to.buffer() );
 }
-YZInterval YZModeVisual::buildScreenInterval( YZView*, const YZViewCursor& from, const YZViewCursor& to )
+YInterval YModeVisual::buildScreenInterval( YView*, const YViewCursor& from, const YViewCursor& to )
 {
-    return YZInterval( from.screen(), to.screen() );
+    return YInterval( from.screen(), to.screen() );
 }
 
-void YZModeVisual::enter( YZView* mView )
+void YModeVisual::enter( YView* mView )
 {
-    YZDoubleSelection* visual = mView->getSelectionPool()->visual();
+    YDoubleSelection* visual = mView->getSelectionPool()->visual();
 
     mView->setPaintAutoCommit( false );
     if ( ! visual->isEmpty() ) {
         mView->sendPaintEvent( visual->screenMap(), false );
         cursorMoved( mView );
     } else {
-        YZViewCursor pos = mView->viewCursor();
+        YViewCursor pos = mView->viewCursor();
         *mView->visualCursor() = pos;
         visual->addInterval( buildBufferInterval( mView, pos, pos ), buildScreenInterval( mView, pos, pos ) );
         mView->sendPaintEvent( visual->screenMap(), false );
@@ -85,100 +85,100 @@ void YZModeVisual::enter( YZView* mView )
     mView->commitPaintEvent();
     mView->guiSelectionChanged();
 }
-void YZModeVisual::leave( YZView* mView )
+void YModeVisual::leave( YView* mView )
 {
-    YZDoubleSelection* visual = mView->getSelectionPool()->visual();
+    YDoubleSelection* visual = mView->getSelectionPool()->visual();
     mView->setPaintAutoCommit( false );
     mView->sendPaintEvent( visual->screenMap(), false );
     visual->clear();
     mView->commitPaintEvent();
     mView->guiSelectionChanged();
 }
-void YZModeVisual::cursorMoved( YZView* mView )
+void YModeVisual::cursorMoved( YView* mView )
 {
-    YZDoubleSelection* visual = mView->getSelectionPool()->visual();
+    YDoubleSelection* visual = mView->getSelectionPool()->visual();
 
-    YZViewCursor curPos = mView->viewCursor();
-    YZViewCursor visPos = *mView->visualCursor();
+    YViewCursor curPos = mView->viewCursor();
+    YViewCursor visPos = *mView->visualCursor();
     bool reverse = visPos.buffer() > curPos.buffer();
-    YZInterval bufI = buildBufferInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
-    YZInterval scrI = buildScreenInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
-    YZInterval curI = visual->screenMap()[0];
+    YInterval bufI = buildBufferInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
+    YInterval scrI = buildScreenInterval( mView, reverse ? curPos : visPos, reverse ? visPos : curPos );
+    YInterval curI = visual->screenMap()[0];
 
     visual->clear();
     visual->addInterval( bufI, scrI );
 
-    YZSelection tmp("tmp");
-    tmp.addInterval( YZInterval( qMin( scrI.from(), curI.from() ), qMax( scrI.to(), curI.to() ) ) );
-    tmp.delInterval( YZInterval( qMax( scrI.from(), curI.from() ), qMin( scrI.to(), curI.to() ) ) );
+    YSelection tmp("tmp");
+    tmp.addInterval( YInterval( qMin( scrI.from(), curI.from() ), qMax( scrI.to(), curI.to() ) ) );
+    tmp.delInterval( YInterval( qMax( scrI.from(), curI.from() ), qMin( scrI.to(), curI.to() ) ) );
     mView->sendPaintEvent( tmp.map(), false );
 
     toClipboard( mView );
     mView->guiSelectionChanged();
 }
 
-void YZModeVisual::initCommandPool()
+void YModeVisual::initCommandPool()
 {
-    commands.append( new YZCommand("<ALT>:", (PoolMethod) &YZModeVisual::movetoExMode) );
-    commands.append( new YZCommand("<ALT>i", (PoolMethod) &YZModeVisual::movetoInsertMode) );
-    commands.append( new YZCommand("<CTRL>[", &YZModeCommand::gotoCommandMode) );
-    commands.append( new YZCommand("<CTRL>l", &YZModeCommand::redisplay) );
-    commands.append( new YZCommand("<DEL>", &YZModeCommand::del) );
-    commands.append( new YZCommand("<ESC>", (PoolMethod) &YZModeVisual::escape) );
-    commands.append( new YZCommand("<CTRL>c", (PoolMethod) &YZModeVisual::escape) );
-    commands.append( new YZCommand(":", (PoolMethod) &YZModeVisual::gotoExMode ) );
-    commands.append( new YZCommand("A", (PoolMethod) &YZModeVisual::commandAppend ) );
-    commands.append( new YZCommand("D", (PoolMethod) &YZModeVisual::deleteWholeLines) );
-    commands.append( new YZCommand("I", (PoolMethod) &YZModeVisual::commandInsert ) );
-    commands.append( new YZCommand("S", (PoolMethod) &YZModeVisual::changeWholeLines) );
-    commands.append( new YZCommand("u", (PoolMethod) &YZModeVisual::toLowerCase) );
-    commands.append( new YZCommand("U", (PoolMethod) &YZModeVisual::toUpperCase) );
-    commands.append( new YZCommand("X", (PoolMethod) &YZModeVisual::deleteWholeLines) );
-    commands.append( new YZCommand("Y", (PoolMethod) &YZModeVisual::yankWholeLines ) );
-    commands.append( new YZCommand("c", &YZModeCommand::change) );
-    commands.append( new YZCommand("s", &YZModeCommand::change) );
-    commands.append( new YZCommand("d", &YZModeCommand::del) );
-    commands.append( new YZCommand("y", (PoolMethod) &YZModeVisual::yank) );
-    commands.append( new YZCommand("x", &YZModeCommand::del) );
-    commands.append( new YZCommand(">", &YZModeCommand::indent) );
-    commands.append( new YZCommand("<", &YZModeCommand::indent) );
+    commands.append( new YCommand("<ALT>:", (PoolMethod) &YModeVisual::movetoExMode) );
+    commands.append( new YCommand("<ALT>i", (PoolMethod) &YModeVisual::movetoInsertMode) );
+    commands.append( new YCommand("<CTRL>[", &YModeCommand::gotoCommandMode) );
+    commands.append( new YCommand("<CTRL>l", &YModeCommand::redisplay) );
+    commands.append( new YCommand("<DEL>", &YModeCommand::del) );
+    commands.append( new YCommand("<ESC>", (PoolMethod) &YModeVisual::escape) );
+    commands.append( new YCommand("<CTRL>c", (PoolMethod) &YModeVisual::escape) );
+    commands.append( new YCommand(":", (PoolMethod) &YModeVisual::gotoExMode ) );
+    commands.append( new YCommand("A", (PoolMethod) &YModeVisual::commandAppend ) );
+    commands.append( new YCommand("D", (PoolMethod) &YModeVisual::deleteWholeLines) );
+    commands.append( new YCommand("I", (PoolMethod) &YModeVisual::commandInsert ) );
+    commands.append( new YCommand("S", (PoolMethod) &YModeVisual::changeWholeLines) );
+    commands.append( new YCommand("u", (PoolMethod) &YModeVisual::toLowerCase) );
+    commands.append( new YCommand("U", (PoolMethod) &YModeVisual::toUpperCase) );
+    commands.append( new YCommand("X", (PoolMethod) &YModeVisual::deleteWholeLines) );
+    commands.append( new YCommand("Y", (PoolMethod) &YModeVisual::yankWholeLines ) );
+    commands.append( new YCommand("c", &YModeCommand::change) );
+    commands.append( new YCommand("s", &YModeCommand::change) );
+    commands.append( new YCommand("d", &YModeCommand::del) );
+    commands.append( new YCommand("y", (PoolMethod) &YModeVisual::yank) );
+    commands.append( new YCommand("x", &YModeCommand::del) );
+    commands.append( new YCommand(">", &YModeCommand::indent) );
+    commands.append( new YCommand("<", &YModeCommand::indent) );
 
-    commands.append( new YZCommand("<PDOWN>", &YZModeCommand::scrollPageDown) );
-    commands.append( new YZCommand("<CTRL>f", &YZModeCommand::scrollPageDown) );
-    commands.append( new YZCommand("<PUP>", &YZModeCommand::scrollPageUp) );
-    commands.append( new YZCommand("<CTRL>b", &YZModeCommand::scrollPageUp) );
+    commands.append( new YCommand("<PDOWN>", &YModeCommand::scrollPageDown) );
+    commands.append( new YCommand("<CTRL>f", &YModeCommand::scrollPageDown) );
+    commands.append( new YCommand("<PUP>", &YModeCommand::scrollPageUp) );
+    commands.append( new YCommand("<CTRL>b", &YModeCommand::scrollPageUp) );
     initVisualCommandPool();
 }
-void YZModeVisual::initVisualCommandPool()
+void YModeVisual::initVisualCommandPool()
 {
     if ( type() == ModeVisual )
-        commands.append( new YZCommand("v", (PoolMethod) &YZModeVisual::escape) );
+        commands.append( new YCommand("v", (PoolMethod) &YModeVisual::escape) );
     else
-        commands.append( new YZCommand("v", (PoolMethod) &YZModeVisual::translateToVisual) );
+        commands.append( new YCommand("v", (PoolMethod) &YModeVisual::translateToVisual) );
     if ( type() == ModeVisualLine )
-        commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::escape) );
+        commands.append( new YCommand("V", (PoolMethod) &YModeVisual::escape) );
     else
-        commands.append( new YZCommand("V", (PoolMethod) &YZModeVisual::translateToVisualLine) );
+        commands.append( new YCommand("V", (PoolMethod) &YModeVisual::translateToVisualLine) );
     if ( type() == ModeVisualBlock )
-        commands.append( new YZCommand("<CTRL>v", (PoolMethod) &YZModeVisual::escape) );
+        commands.append( new YCommand("<CTRL>v", (PoolMethod) &YModeVisual::escape) );
     else
-        commands.append( new YZCommand("<CTRL>v", (PoolMethod) &YZModeVisual::translateToVisualBlock) );
+        commands.append( new YCommand("<CTRL>v", (PoolMethod) &YModeVisual::translateToVisualBlock) );
 }
-void YZModeVisual::commandAppend( const YZCommandArgs& args )
+void YModeVisual::commandAppend( const YCommandArgs& args )
 {
-    YZCursor pos = qMax( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
+    YCursor pos = qMax( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
     args.view->modePool()->change( ModeInsert );
     args.view->gotoxy( pos.x(), pos.y() );
 }
-void YZModeVisual::commandInsert( const YZCommandArgs& args )
+void YModeVisual::commandInsert( const YCommandArgs& args )
 {
-    YZCursor pos = qMin( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
+    YCursor pos = qMin( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
     args.view->modePool()->change( ModeInsert );
     args.view->gotoxy( pos.x(), pos.y() );
 }
-void YZModeVisual::toLowerCase( const YZCommandArgs& args )
+void YModeVisual::toLowerCase( const YCommandArgs& args )
 {
-    YZInterval inter = interval( args );
+    YInterval inter = interval( args );
     QStringList t = args.view->myBuffer()->getText( inter );
     QStringList lt;
     for ( int i = 0; i < t.size(); i++ )
@@ -186,9 +186,9 @@ void YZModeVisual::toLowerCase( const YZCommandArgs& args )
     args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
     args.view->commitNextUndo();
 }
-void YZModeVisual::toUpperCase( const YZCommandArgs& args )
+void YModeVisual::toUpperCase( const YCommandArgs& args )
 {
-    YZInterval inter = interval( args );
+    YInterval inter = interval( args );
     QStringList t = args.view->myBuffer()->getText( inter );
     QStringList lt;
     for ( int i = 0; i < t.size(); i++ )
@@ -196,19 +196,19 @@ void YZModeVisual::toUpperCase( const YZCommandArgs& args )
     args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
     args.view->commitNextUndo();
 }
-void YZModeVisual::changeWholeLines(const YZCommandArgs &args)
+void YModeVisual::changeWholeLines(const YCommandArgs &args)
 {
-    YZInterval i = interval(args);
-    YZCursor from( 0, i.fromPos().y());
-    YZCursor to( args.view->myBuffer()->getLineLength(i.toPos().y()) - 1, i.toPos().y());
+    YInterval i = interval(args);
+    YCursor from( 0, i.fromPos().y());
+    YCursor to( args.view->myBuffer()->getLineLength(i.toPos().y()) - 1, i.toPos().y());
 
     // delete selected lines and enter insert mode
     args.view->myBuffer()->action()->deleteArea( args.view, from, to, args.regs);
     args.view->modePool()->change( ModeInsert );
 }
-void YZModeVisual::deleteWholeLines(const YZCommandArgs &args)
+void YModeVisual::deleteWholeLines(const YCommandArgs &args)
 {
-    YZInterval i = interval(args);
+    YInterval i = interval(args);
     unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
     if ( type() == ModeVisualLine )
         --lines;
@@ -219,14 +219,14 @@ void YZModeVisual::deleteWholeLines(const YZCommandArgs &args)
 
     args.view->modePool()->pop();
 }
-void YZModeVisual::yankWholeLines(const YZCommandArgs &args)
+void YModeVisual::yankWholeLines(const YCommandArgs &args)
 {
-    YZCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
+    YCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
 
-    YZInterval i = interval(args);
+    YInterval i = interval(args);
     unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
 
-    if (args.view->modePool()->currentType() == YZMode::ModeVisualLine) {
+    if (args.view->modePool()->currentType() == YMode::ModeVisualLine) {
         // visual line mode, we don't need to do anything special
         args.view->myBuffer()->action()->copyArea( args.view, i, args.regs);
     } else {
@@ -240,43 +240,43 @@ void YZModeVisual::yankWholeLines(const YZCommandArgs &args)
     args.view->gotoxy( topLeft.x(), topLeft.y(), true );
     args.view->updateStickyCol( );
 }
-void YZModeVisual::yank( const YZCommandArgs& args )
+void YModeVisual::yank( const YCommandArgs& args )
 {
-    YZCursor topLeft = interval( args ).fromPos();
-    YZModeCommand::yank( args );
+    YCursor topLeft = interval( args ).fromPos();
+    YModeCommand::yank( args );
     args.view->gotoxyAndStick( topLeft.x(), topLeft.y() );
 }
-void YZModeVisual::translateToVisualLine( const YZCommandArgs& args )
+void YModeVisual::translateToVisualLine( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeVisualLine, false ); // just translate (don't leave current mode)
 }
-void YZModeVisual::translateToVisual( const YZCommandArgs& args )
+void YModeVisual::translateToVisual( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeVisual, false );
 }
-void YZModeVisual::translateToVisualBlock( const YZCommandArgs& args )
+void YModeVisual::translateToVisualBlock( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeVisualBlock, false );
 }
-void YZModeVisual::escape( const YZCommandArgs& args )
+void YModeVisual::escape( const YCommandArgs& args )
 {
     args.view->modePool()->pop();
 }
-void YZModeVisual::gotoExMode( const YZCommandArgs& args )
+void YModeVisual::gotoExMode( const YCommandArgs& args )
 {
     args.view->modePool()->push( ModeEx );
     args.view->guiSetCommandLineText( "'<,'>" );
 }
-void YZModeVisual::movetoExMode( const YZCommandArgs& args )
+void YModeVisual::movetoExMode( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeEx );
 }
-void YZModeVisual::movetoInsertMode( const YZCommandArgs& args )
+void YModeVisual::movetoInsertMode( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeInsert );
 }
 
-YZInterval YZModeVisual::interval(const YZCommandArgs& args )
+YInterval YModeVisual::interval(const YCommandArgs& args )
 {
     return args.view->getSelectionPool()->visual()->bufferMap()[0];
 }
@@ -285,56 +285,56 @@ YZInterval YZModeVisual::interval(const YZCommandArgs& args )
  * MODE VISUAL LINES
  */
 
-YZModeVisualLine::YZModeVisualLine() : YZModeVisual()
+YModeVisualLine::YModeVisualLine() : YModeVisual()
 {
-    mType = YZMode::ModeVisualLine;
+    mType = YMode::ModeVisualLine;
     mString = _("[ Visual Line ]");
 }
-YZModeVisualLine::~YZModeVisualLine()
+YModeVisualLine::~YModeVisualLine()
 {}
 
-YZInterval YZModeVisualLine::buildBufferInterval( YZView* , const YZViewCursor& from, const YZViewCursor& to )
+YInterval YModeVisualLine::buildBufferInterval( YView* , const YViewCursor& from, const YViewCursor& to )
 {
-    YZBound bf( from.buffer() );
-    YZBound bt( to.buffer(), true );
+    YBound bf( from.buffer() );
+    YBound bt( to.buffer(), true );
     bf.setPos( QPoint(0, from.bufferY()));
     bt.setPos( QPoint(0, to.bufferY() + 1));
-    return YZInterval( bf, bt );
+    return YInterval( bf, bt );
 }
-YZInterval YZModeVisualLine::buildScreenInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to )
+YInterval YModeVisualLine::buildScreenInterval( YView* mView, const YViewCursor& from, const YViewCursor& to )
 {
-    YZViewCursor pos = from;
+    YViewCursor pos = from;
     mView->gotoxy( &pos, 0, from.bufferY() );
-    YZBound bf( pos.screen() );
-    YZBound bt( pos.screen(), true );
+    YBound bf( pos.screen() );
+    YBound bt( pos.screen(), true );
     if ( to.bufferY() < mView->myBuffer()->lineCount() - 1 ) {
         mView->gotoxy( &pos, 0, to.bufferY() + 1 );
         bt.setPos( pos.screen() );
     } else {
         mView->gotoxy( &pos, qMax( 1, mView->myBuffer()->getLineLength( to.bufferY() ) ) - 1, to.bufferY() );
-        bt.setPos( YZCursor( 0, pos.screenY() + 1 ) );
+        bt.setPos( YCursor( 0, pos.screenY() + 1 ) );
     }
-    return YZInterval( bf, bt );
+    return YInterval( bf, bt );
 }
 
 /**
  * MODE VISUAL BLOCK
  */
 
-YZModeVisualBlock::YZModeVisualBlock() : YZModeVisual()
+YModeVisualBlock::YModeVisualBlock() : YModeVisual()
 {
-    mType = YZMode::ModeVisualBlock;
+    mType = YMode::ModeVisualBlock;
     mString = _("[ Visual Block ]");
 }
-YZModeVisualBlock::~YZModeVisualBlock()
+YModeVisualBlock::~YModeVisualBlock()
 {}
 
-void YZModeVisualBlock::cursorMoved( YZView* mView )
+void YModeVisualBlock::cursorMoved( YView* mView )
 {
     mView->setPaintAutoCommit( false );
 
-    YZDoubleSelection* visual = mView->getSelectionPool()->visual();
-    YZSelection old = visual->screen();
+    YDoubleSelection* visual = mView->getSelectionPool()->visual();
+    YSelection old = visual->screen();
     visual->clear();
 
     int fromLine = mView->visualCursor()->bufferY();
@@ -342,7 +342,7 @@ void YZModeVisualBlock::cursorMoved( YZView* mView )
     int fromCol = (mView->visualCursor()->curLineHeight() - 1) * mView->getColumnsVisible() + mView->visualCursor()->screenX();
     int toCol = (mView->viewCursor().curLineHeight() - 1) * mView->getColumnsVisible() + mView->getCursor().x();
 
-    YZViewCursor cur = *mView->visualCursor();
+    YViewCursor cur = *mView->visualCursor();
     if ( fromCol > toCol ) {
         int tmp = toCol;
         toCol = fromCol;
@@ -355,22 +355,22 @@ void YZModeVisualBlock::cursorMoved( YZView* mView )
         fromLine = tmp;
     }
     dbg() << "visual block : from " << fromCol << "," << fromLine << " to " << toCol << "," << toLine << endl;
-    YZInterval sI, bI;
+    YInterval sI, bI;
     for ( int i = fromLine; i <= toLine; i++ ) {
 
         mView->gotodxy( &cur, fromCol, i );
-        sI.setFromPos( YZCursor(fromCol, cur.screenY()) );
+        sI.setFromPos( YCursor(fromCol, cur.screenY()) );
         bI.setFromPos( cur.buffer() );
 
         mView->gotodxy( &cur, toCol, i );
         if ( cur.screenX() < fromCol ) continue; // too far, skip this line
-        sI.setTo( YZBound(YZCursor(toCol, cur.screenY())) );
-        bI.setTo( YZBound(cur.buffer()) );
+        sI.setTo( YBound(YCursor(toCol, cur.screenY())) );
+        bI.setTo( YBound(cur.buffer()) );
 
         visual->addInterval( bI, sI );
         //  dbg() << "visual block>" << bI << ", " << sI << endl;
     }
-    YZSelection diff = YZSelection::diff( old, visual->screen() );
+    YSelection diff = YSelection::diff( old, visual->screen() );
     mView->sendPaintEvent( diff.map(), false );
 
     mView->commitPaintEvent();

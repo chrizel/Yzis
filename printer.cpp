@@ -38,7 +38,7 @@ extern "C"
 #define dbg()    yzDebug("YZPrinter")
 #define err()    yzError("YZPrinter")
 
-YZPrinter::YZPrinter( YZView *view ) /*: QPrinter(QPrinter::PrinterResolution) */{
+YZPrinter::YZPrinter( YView *view ) /*: QPrinter(QPrinter::PrinterResolution) */{
     PS_mp_init();
     PS_boot();
 
@@ -116,7 +116,7 @@ void YZPrinter::doPrint( )
         marginLeft = ( 2 + QString::number( mView->myBuffer()->lineCount() ).length() );
     }
 
-    YZOptionValue* ov_wrap = mView->getLocalOption( "wrap" );
+    YOptionValue* ov_wrap = mView->getLocalOption( "wrap" );
     bool oldWrap = ov_wrap->boolean();
     ov_wrap->setBoolean( true );
 

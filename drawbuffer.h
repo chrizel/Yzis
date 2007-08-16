@@ -28,30 +28,30 @@
 #include "font.h"
 #include "selection.h"
 
-class YZView;
+class YView;
 
-typedef QMap<YZSelectionPool::SelectionLayout, YZSelection> YZSelectionLayout;
+typedef QMap<YSelectionPool::SelectionLayout, YSelection> YSelectionLayout;
 
-struct YZDrawCell
+struct YDrawCell
 {
     bool valid;
     int flag;
-    YZFont font;
+    YFont font;
     QString c;
-    YZColor bg;
-    YZColor fg;
+    YColor bg;
+    YColor fg;
     int sel;
-    YZDrawCell():
+    YDrawCell():
             flag( 0 ),
             font(), c(), bg(), fg()
     {}
 }
 ;
 
-typedef QVector<YZDrawCell> YZDrawSection;
-typedef QVector<YZDrawSection> YZDrawLine;
+typedef QVector<YDrawCell> YDrawSection;
+typedef QVector<YDrawSection> YDrawLine;
 
-class YZIS_EXPORT YZDrawBuffer
+class YZIS_EXPORT YDrawBuffer
 {
 
 public:
@@ -60,10 +60,10 @@ public:
         SetFromSeek,
     };
 
-    YZDrawBuffer();
-    ~YZDrawBuffer();
+    YDrawBuffer();
+    ~YDrawBuffer();
 
-    void setCallback( YZView* v );
+    void setCallback( YView* v );
     void setCallbackArgument( void* callback_arg );
 
     /* clear the buffer */
@@ -73,21 +73,21 @@ public:
     void newline( int y = -1 );
     void flush();
 
-    void setFont( const YZFont& f );
-    void setColor( const YZColor& c );
-    void setBackgroundColor( const YZColor& c );
+    void setFont( const YFont& f );
+    void setColor( const YColor& c );
+    void setBackgroundColor( const YColor& c );
     void setSelection( int sel );
 
-    bool seek( const YZCursor pos, YZDrawBuffer::SetFromInfo sfi );
+    bool seek( const YCursor pos, YDrawBuffer::SetFromInfo sfi );
 
-    YZDrawCell at( const YZCursor pos ) const;
+    YDrawCell at( const YCursor pos ) const;
 
-    void replace( const YZInterval& interval );
+    void replace( const YInterval& interval );
 
     /* Scroll dx to the right and dy downward */
     void Scroll( int dx, int dy );
 
-    void setSelectionLayout( YZSelectionPool::SelectionLayout layout, const YZSelection& selection );
+    void setSelectionLayout( YSelectionPool::SelectionLayout layout, const YSelection& selection );
 
 private :
     void insert_section( int pos = -1 );
@@ -95,28 +95,28 @@ private :
 
     void push( const QChar& c );
 
-    void callback( QPoint pos, const YZDrawCell& cell );
+    void callback( QPoint pos, const YDrawCell& cell );
 
-    bool find( const YZCursor pos, int* x, int* y, int* vx ) const;
+    bool find( const YCursor pos, int* x, int* y, int* vx ) const;
 
     void applyPosition();
 
     /*
-     * copy YZColor @param c into YZColor* @param dest.
+     * copy YColor @param c into YColor* @param dest.
      * Returns true if *dest has changed, false else
      */
-    static bool updateColor( YZColor* dest, const YZColor& c );
+    static bool updateColor( YColor* dest, const YColor& c );
 
     /* buffer content */
-    YZDrawLine m_content;
+    YDrawLine m_content;
 
     /* current line */
-    YZDrawSection* m_line;
+    YDrawSection* m_line;
     /* current cell */
-    YZDrawCell* m_cell;
+    YDrawCell* m_cell;
 
     /* current selection layouts */
-    YZSelectionLayout m_sel;
+    YSelectionLayout m_sel;
 
     int v_xi; /* column of the current section */
     int v_x; /* current draw column */
@@ -125,16 +125,16 @@ private :
     int m_y; /* current line index == current draw line */
 
     bool changed;
-    YZDrawCell m_cur;
+    YDrawCell m_cur;
 
-    YZView* m_view;
+    YView* m_view;
     void* m_callback_arg;
 
-    friend YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff );
+    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
 };
 
-YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff );
+YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
 
 #endif

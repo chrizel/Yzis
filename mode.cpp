@@ -32,14 +32,14 @@ using namespace yzis;
 
 // ====================================================================
 //
-//                          YZMode
+//                          YMode
 //
 // ====================================================================
 
-#define dbg() yzDebug("YZMode")
-#define err() yzError("YZMode")
+#define dbg() yzDebug("YMode")
+#define err() yzError("YMode")
 
-YZDebugStream& operator<<( YZDebugStream& out, const CmdState & state )
+YDebugStream& operator<<( YDebugStream& out, const CmdState & state )
 {
     switch ( state ) {
     case CmdError: out << "CmdError"; break;
@@ -51,25 +51,25 @@ YZDebugStream& operator<<( YZDebugStream& out, const CmdState & state )
     return out;
 }
 
-YZDebugStream& operator<<( YZDebugStream& out, const YZMode::ModeType & type )
+YDebugStream& operator<<( YDebugStream& out, const YMode::ModeType & type )
 {
     switch ( type ) {
-    case YZMode::ModeCommand: out << "ModeCommand"; break;
-    case YZMode::ModeInsert: out << "ModeInsert"; break;
-    case YZMode::ModeReplace: out << "ModeReplace"; break;
-    case YZMode::ModeEx: out << "ModeEx"; break;
-    case YZMode::ModeSearch: out << "ModeSearch"; break;
-    case YZMode::ModeSearchBackward: out << "ModeSearchBackward"; break;
-    case YZMode::ModeIntro: out << "ModeIntro"; break;
-    case YZMode::ModeCompletion: out << "ModeCompletion"; break;
-    case YZMode::ModeVisual: out << "ModeVisual"; break;
-    case YZMode::ModeVisualLine: out << "ModeVisualLine"; break;
-    case YZMode::ModeVisualBlock: out << "ModeVisualBlock"; break;
+    case YMode::ModeCommand: out << "ModeCommand"; break;
+    case YMode::ModeInsert: out << "ModeInsert"; break;
+    case YMode::ModeReplace: out << "ModeReplace"; break;
+    case YMode::ModeEx: out << "ModeEx"; break;
+    case YMode::ModeSearch: out << "ModeSearch"; break;
+    case YMode::ModeSearchBackward: out << "ModeSearchBackward"; break;
+    case YMode::ModeIntro: out << "ModeIntro"; break;
+    case YMode::ModeCompletion: out << "ModeCompletion"; break;
+    case YMode::ModeVisual: out << "ModeVisual"; break;
+    case YMode::ModeVisualLine: out << "ModeVisualLine"; break;
+    case YMode::ModeVisualBlock: out << "ModeVisualBlock"; break;
     }
     return out;
 }
 
-YZMode::YZMode()
+YMode::YMode()
 {
     mString = "if you see me, there is a problem :)";
     mEditMode = false;
@@ -78,81 +78,81 @@ YZMode::YZMode()
     mMapMode = MapNormal;
     mRegistered = false;
 }
-ModeType YZMode::type() const
+ModeType YMode::type() const
 {
     return mType;
 }
-const QString& YZMode::toString() const
+const QString& YMode::toString() const
 {
     return mString;
 }
-bool YZMode::isEditMode() const
+bool YMode::isEditMode() const
 {
     return mEditMode;
 }
-bool YZMode::isSelMode() const
+bool YMode::isSelMode() const
 {
     return mSelMode;
 }
-bool YZMode::supportsInputMethod() const
+bool YMode::supportsInputMethod() const
 {
     return mIM;
 }
-MapMode YZMode::mapMode() const
+MapMode YMode::mapMode() const
 {
     return mMapMode;
 }
-QStringList YZMode::modifierKeys() const
+QStringList YMode::modifierKeys() const
 {
     return mModifierKeys;
 }
-bool YZMode::registered() const
+bool YMode::registered() const
 {
     return mRegistered;
 }
-void YZMode::setRegistered( bool registered )
+void YMode::setRegistered( bool registered )
 {
     mRegistered = registered;
 }
-void YZMode::init()
+void YMode::init()
 {
     initModifierKeys();
 }
-void YZMode::initModifierKeys()
+void YMode::initModifierKeys()
 {}
-void YZMode::enter( YZView* )
+void YMode::enter( YView* )
 {}
-void YZMode::leave( YZView* )
+void YMode::leave( YView* )
 {}
-void YZMode::cursorMoved( YZView* )
+void YMode::cursorMoved( YView* )
 {}
-void YZMode::imBegin( YZView* )
+void YMode::imBegin( YView* )
 {}
-void YZMode::imCompose( YZView*, const QString& )
+void YMode::imCompose( YView*, const QString& )
 {}
-void YZMode::imEnd( YZView*, const QString& )
+void YMode::imEnd( YView*, const QString& )
 {}
 
 
 // ====================================================================
 //
-//                          YZModeIntro
+//                          YModeIntro
 //
 // ====================================================================
 
 #undef dbg
 #undef err
-#define dbg() yzDebug("YZModeIntro")
-#define err() yzError("YZModeIntro")
+#define dbg() yzDebug("YModeIntro")
+#define err() yzError("YModeIntro")
 
-YZModeIntro::YZModeIntro() : YZMode()
+YModeIntro::YModeIntro() : YMode()
 {
     mType = ModeIntro;
     mString = _("[ Introduction ]");
 }
-void YZModeIntro::enter( YZView* mView )
+void YModeIntro::enter( YView* mView )
 {
-    YZBuffer* mBuffer = mView->myBuffer();
+    YBuffer* mBuffer = mView->myBuffer();
     unsigned int i;
     unsigned int mLinesVis = mView->getLinesVisible();
     unsigned int linesInIntro = 11; // Update this is if you change # of lines in message
@@ -181,9 +181,9 @@ void YZModeIntro::enter( YZView* mView )
     mBuffer->undoBuffer()->setInsideUndo( false );
     mView->refreshScreen();
 }
-void YZModeIntro::leave( YZView* mView )
+void YModeIntro::leave( YView* mView )
 {
-    YZBuffer* mBuffer = mView->myBuffer();
+    YBuffer* mBuffer = mView->myBuffer();
     mBuffer->undoBuffer()->setInsideUndo( true );
     mView->gotoxy( 0, 0 );
     mBuffer->clearText();
@@ -191,7 +191,7 @@ void YZModeIntro::leave( YZView* mView )
     mBuffer->setChanged( false );
     mView->recalcScreen();
 }
-CmdState YZModeIntro::execCommand( YZView* mView, const QString& )
+CmdState YModeIntro::execCommand( YView* mView, const QString& )
 {
     mView->modePool()->change( ModeCommand );
     mView->modePool()->replayKey();
@@ -200,35 +200,35 @@ CmdState YZModeIntro::execCommand( YZView* mView, const QString& )
 
 // ====================================================================
 //
-//                          YZModePool
+//                          YModePool
 //
 // ====================================================================
 
 #undef dbg
 #undef err
-#define dbg() yzDebug("YZModePool")
-#define err() yzError("YZModePool")
+#define dbg() yzDebug("YModePool")
+#define err() yzError("YModePool")
 
-YZModePool::YZModePool( YZView* view )
+YModePool::YModePool( YView* view )
 {
     mView = view;
-    mModes = YZSession::self()->getModes();
+    mModes = YSession::self()->getModes();
     mapMode = 0;
     mRegisterKeys = false;
     mStop = false;
 }
-YZModePool::~YZModePool()
+YModePool::~YModePool()
 {
     // dbg() << HERE() << endl;
     stop();
 }
-void YZModePool::stop()
+void YModePool::stop()
 {
     // dbg() << HERE() << endl;
     mStop = true;
-    // dbg() << "YZModePool stopped for view " << mView->myId << endl;
+    // dbg() << "YModePool stopped for view " << mView->myId << endl;
 }
-void YZModePool::sendKey( const QString& key, const QString& modifiers )
+void YModePool::sendKey( const QString& key, const QString& modifiers )
 {
     mKey = key;
     mModifiers = modifiers;
@@ -246,7 +246,7 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers )
         //  dbg() << "input buffer was remapped to: " << mapped << endl;
         mView->purgeInputBuffer();
         mapMode = 0;
-        YZSession::self()->sendMultipleKeys( mView, mapped );
+        YSession::self()->sendMultipleKeys( mView, mapped );
         return ;
     }
     CmdState state = stack.front()->execCommand( mView, mView->getInputBuffer() );
@@ -269,24 +269,24 @@ void YZModePool::sendKey( const QString& key, const QString& modifiers )
         break;
     }
 }
-void YZModePool::replayKey()
+void YModePool::replayKey()
 {
-    YZSession::self()->sendKey( mView, mKey, mModifiers );
+    YSession::self()->sendKey( mView, mKey, mModifiers );
 }
-YZMode* YZModePool::current() const
+YMode* YModePool::current() const
 {
     return stack.front();
 }
-ModeType YZModePool::currentType() const
+ModeType YModePool::currentType() const
 {
     return current()->type();
 }
-void YZModePool::registerModifierKeys()
+void YModePool::registerModifierKeys()
 {
     if ( mStop ) return ;
 
     QStringList mModifierKeys;
-    YZModeMap::Iterator it;
+    YModeMap::Iterator it;
     for ( it = mModes.begin(); it != mModes.end(); ++it ) {
         mModifierKeys += it.value()->modifierKeys();
     }
@@ -314,7 +314,7 @@ void YZModePool::registerModifierKeys()
     stack.front()->setRegistered( true );
 #endif
 }
-void YZModePool::unregisterModifierKeys()
+void YModePool::unregisterModifierKeys()
 {
     if ( mStop ) return ;
     if ( stack.isEmpty() || !stack.front()->registered() ) return ;
@@ -326,12 +326,12 @@ void YZModePool::unregisterModifierKeys()
     stack.front()->setRegistered( false );
 }
 
-void YZModePool::change( ModeType mode, bool leave_me )
+void YModePool::change( ModeType mode, bool leave_me )
 {
     pop( leave_me );
     push( mode );
 }
-void YZModePool::push( ModeType mode )
+void YModePool::push( ModeType mode )
 {
     // unregisterModifierKeys();
     stack.push_front( mModes[ mode ] );
@@ -340,7 +340,7 @@ void YZModePool::push( ModeType mode )
     stack.front()->enter( mView );
     mView->guiModeChanged();
 }
-void YZModePool::pop( bool leave_me )
+void YModePool::pop( bool leave_me )
 {
     if ( mStop ) return ;
     mView->commitUndoItem();
@@ -354,19 +354,19 @@ void YZModePool::pop( bool leave_me )
         stack.pop_front();
     }
     if ( stack.isEmpty() )
-        push( YZMode::ModeCommand );
+        push( YMode::ModeCommand );
     else
         mView->guiModeChanged();
     if (mRegisterKeys) registerModifierKeys();
 }
-void YZModePool::pop( ModeType mode )
+void YModePool::pop( ModeType mode )
 {
     if ( mStop ) return ;
     // unregisterModifierKeys();
     mView->commitUndoItem();
     mView->purgeInputBuffer();
     // do not leave two times the same mode
-    QList<YZMode*> leaved;
+    QList<YMode*> leaved;
     while ( stack.size() > 0 && stack.front()->type() != mode ) {
         if ( ! leaved.contains( stack.front() ) ) {
             dbg() << "leaving mode " << stack.front()->toString() << endl;
@@ -376,7 +376,7 @@ void YZModePool::pop( ModeType mode )
         stack.pop_front();
     }
     if ( stack.isEmpty() )
-        push( YZMode::ModeCommand );
+        push( YMode::ModeCommand );
     else
         mView->guiModeChanged();
     if (mRegisterKeys) registerModifierKeys();

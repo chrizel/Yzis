@@ -20,19 +20,19 @@
 #include "registers.h"
 #include "debug.h"
 
-#define dbg()    yzDebug("YZRegisters")
-#define err()    yzError("YZRegisters")
+#define dbg()    yzDebug("YRegisters")
+#define err()    yzError("YRegisters")
 
-YZRegisters::YZRegisters()
+YRegisters::YRegisters()
 {}
 
-void YZRegisters::setRegister( QChar c, const QStringList& value )
+void YRegisters::setRegister( QChar c, const QStringList& value )
 {
     mRegisters[ c ] = value;
     dbg() << "Register : " << QString( c ) << " Value : " << value << endl;
 }
 
-QStringList& YZRegisters::getRegister( QChar c )
+QStringList& YRegisters::getRegister( QChar c )
 {
     return  /*( QStringList& )*/mRegisters[ c ];
 }

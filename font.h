@@ -27,7 +27,7 @@
  *
  * Holds font properties like bold, italic, underline...
  */
-class YZIS_EXPORT YZFont
+class YZIS_EXPORT YFont
 {
 
 public :
@@ -39,8 +39,8 @@ public :
         Black
     };
 
-    YZFont();
-    virtual ~YZFont();
+    YFont();
+    virtual ~YFont();
 
     void setWeight( int weight );
     void setItalic( bool enable );

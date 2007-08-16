@@ -26,7 +26,7 @@
 #include "yzismacros.h"
 #include "viewcursor.h"
 
-typedef QMap<QString, YZCursorPos> YZViewMarker;
+typedef QMap<QString, YCursorPos> YViewMarker;
 
 
 // struct YZMarkPos{
@@ -37,15 +37,15 @@ typedef QMap<QString, YZCursorPos> YZViewMarker;
 // };
 
 //line <-> marks
-typedef QMap<uint, uint> YZDocMarker;
+typedef QMap<uint, uint> YDocMarker;
 
 
 /**Contains document marks (integers) like KTE bookmarks, breakpoints, etc.*/
-class YZIS_EXPORT YZDocMark
+class YZIS_EXPORT YDocMark
 {
 
 public:
-    YZDocMark( )
+    YDocMark( )
     {}
 
     void clear( )
@@ -59,13 +59,13 @@ public:
 
     uint get( uint line ) const;
 
-    const YZDocMarker &getMarker() const
+    const YDocMarker &getMarker() const
     {
         return marker;
     }
 
 private:
-    YZDocMarker marker;
+    YDocMarker marker;
 
 };
 

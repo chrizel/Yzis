@@ -24,28 +24,28 @@
 #include "debug.h"
 
 /**
- * class YZViewCursor
+ * class YViewCursor
  */
 
-#define dbg()    yzDebug("YZViewCursor")
-#define err()    yzError("YZViewCursor")
+#define dbg()    yzDebug("YViewCursor")
+#define err()    yzError("YViewCursor")
 
-YZViewCursor::YZViewCursor( YZView* parent )
+YViewCursor::YViewCursor( YView* parent )
 {
     mParent = parent;
     reset();
 }
 
-YZViewCursor::YZViewCursor( const YZViewCursor &c )
-        : YZCursorPos()
+YViewCursor::YViewCursor( const YViewCursor &c )
+        : YCursorPos()
 {
     copyFields( c );
 }
 
-YZViewCursor::~YZViewCursor( )
+YViewCursor::~YViewCursor( )
 {}
 
-void YZViewCursor::copyFields( const YZViewCursor &c )
+void YViewCursor::copyFields( const YViewCursor &c )
 {
     mScreen = c.mScreen;
     mBuffer = c.mBuffer;
@@ -60,14 +60,14 @@ void YZViewCursor::copyFields( const YZViewCursor &c )
     wrapNextLine = c.wrapNextLine;
 }
 
-YZViewCursor &YZViewCursor::operator=( const YZViewCursor& c )
+YViewCursor &YViewCursor::operator=( const YViewCursor& c )
 {
     mValid = true;
     copyFields( c );
     return *this;
 }
 
-void YZViewCursor::reset()
+void YViewCursor::reset()
 {
     mValid = true;
     spaceFill = 0;
@@ -85,55 +85,55 @@ void YZViewCursor::reset()
     mScreen.setY( 0 );
 }
 
-void YZViewCursor::invalidate()
+void YViewCursor::invalidate()
 {
     mValid = false;
 }
-bool YZViewCursor::valid() const
+bool YViewCursor::valid() const
 {
     return mValid;
 }
 
-void YZViewCursor::debug()
+void YViewCursor::debug()
 {
-    dbg() << "YZViewCursor : buffer = " << mBuffer << " ; screen = " << mScreen
+    dbg() << "YViewCursor : buffer = " << mBuffer << " ; screen = " << mScreen
     << " ; wrapNextLine = " << wrapNextLine << " ; wrapTab = " << wrapTab << endl
     << "               bLineIncrement = " << bLineIncrement << "; sLineIncrement = " << sLineIncrement
     << " ; lineHeight = " << lineHeight << endl
     << "               lastCharWasTab = " << lastCharWasTab << " ; sColIncrement = " << sColIncrement << endl;
 }
 
-int YZViewCursor::bufferX() const
+int YViewCursor::bufferX() const
 {
     return mBuffer.x();
 }
-int YZViewCursor::bufferY() const
+int YViewCursor::bufferY() const
 {
     return mBuffer.y();
 }
-int YZViewCursor::screenX() const
+int YViewCursor::screenX() const
 {
     return mScreen.x();
 }
-int YZViewCursor::screenY() const
+int YViewCursor::screenY() const
 {
     return mScreen.y();
 }
 
 
-void YZViewCursor::setBufferX( int value )
+void YViewCursor::setBufferX( int value )
 {
     mBuffer.setX( value );
 }
-void YZViewCursor::setBufferY( int value )
+void YViewCursor::setBufferY( int value )
 {
     mBuffer.setY( value );
 }
-void YZViewCursor::setScreenX( int value )
+void YViewCursor::setScreenX( int value )
 {
     mScreen.setX( value );
 }
-void YZViewCursor::setScreenY( int value )
+void YViewCursor::setScreenY( int value )
 {
     mScreen.setY( value );
 }

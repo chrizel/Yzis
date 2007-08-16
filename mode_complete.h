@@ -28,35 +28,36 @@
 #include "cursor.h"
 #include "yzismacros.h"
 
-class YZBuffer;
+
+class YBuffer;
 
 /**
   * @short Completion mode.
   */
-class YZIS_EXPORT YZModeCompletion : public YZMode
+class YZIS_EXPORT YModeCompletion : public YMode
 {
 public :
-    YZModeCompletion();
-    virtual ~YZModeCompletion();
+    YModeCompletion();
+    virtual ~YModeCompletion();
 
-    virtual void leave( YZView* mView );
-    virtual CmdState execCommand( YZView* mView, const QString& _key );
+    virtual void leave( YView* mView );
+    virtual CmdState execCommand( YView* mView, const QString& _key );
 
 protected :
-    void doComplete( YZView* mView, bool forward );
-    bool initCompletion( YZView* mView, bool forward );
+    void doComplete( YView* mView, bool forward );
+    bool initCompletion( YView* mView, bool forward );
 
 private :
-    void completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups = true, QList<YZCursor> *cursors = NULL );
-    void completeFromCurrentBuffer( const YZCursor cursor, bool forward, QStringList &proposed );
-    void completeFromOtherBuffers( YZBuffer *skip, QStringList &proposed );
+    void completeFromBuffer( YBuffer *buffer, QStringList &proposed, bool elimDups = true, QList<YCursor> *cursors = NULL );
+    void completeFromCurrentBuffer( const YCursor cursor, bool forward, QStringList &proposed );
+    void completeFromOtherBuffers( YBuffer *skip, QStringList &proposed );
     void completeFromIncludes( QStringList &proposed );
     void completeFromTags( QStringList &proposed );
     void completeFromDictionary( QStringList &proposed );
     void completeFromFileNames( QStringList &proposed );
     QString mPrefix;
-    YZCursor mCompletionStart;
-    YZCursor mCompletionEnd;
+    YCursor mCompletionStart;
+    YCursor mCompletionEnd;
 
     QStringList mProposedCompletions;
     unsigned int mCurrentProposal;

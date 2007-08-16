@@ -39,7 +39,7 @@
 class KateHlContext;
 class KateHlItem;
 class KateHlIncludeRule;
-class YZLine;
+class YLine;
 class KateSyntaxModeListItem;
 class KateSyntaxContextData;
 
@@ -127,8 +127,8 @@ class KateHighlighting
     void cleanup ();
 
   public:
-    void doHighlight ( YZLine *prevLine,
-                       YZLine *textLine,
+    void doHighlight ( YLine *prevLine,
+                       YLine *textLine,
                        QVector<int> &foldingList,
                        bool &ctxChanged );
 

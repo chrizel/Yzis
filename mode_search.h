@@ -25,27 +25,27 @@
 #include "yzismacros.h"
 #include "cursor.h"
 
-class YZView;
+class YView;
 class YZHistory;
 
 /**
   * @short (forward) search is handled by a special mode.
   */
-class YZIS_EXPORT YZModeSearch : public YZMode
+class YZIS_EXPORT YModeSearch : public YMode
 {
 public:
-    YZModeSearch();
-    virtual ~YZModeSearch();
+    YModeSearch();
+    virtual ~YModeSearch();
 
-    virtual void enter( YZView* view );
-    virtual void leave( YZView* view );
+    virtual void enter( YView* view );
+    virtual void leave( YView* view );
     virtual void initModifierKeys();
 
-    virtual CmdState execCommand( YZView* view, const QString& key );
+    virtual CmdState execCommand( YView* view, const QString& key );
 
-    virtual YZCursor search( YZView* view, const QString& s, bool* found );
-    virtual YZCursor search( YZView* view, const QString& s, const YZCursor begin, int* matchlength, bool* found );
-    virtual YZCursor replaySearch( YZView* view, bool* found );
+    virtual YCursor search( YView* view, const QString& s, bool* found );
+    virtual YCursor search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found );
+    virtual YCursor replaySearch( YView* view, bool* found );
 
     YZHistory *getHistory()
     {
@@ -56,24 +56,24 @@ private:
     YZHistory *mHistory;
 
     //search mode cursors
-    YZCursor mSearchBegin;
+    YCursor mSearchBegin;
     bool incSearchFound;
-    YZCursor incSearchResult;
+    YCursor incSearchResult;
 };
 
 
 /**
   * @short Backward search is a special mode.
   */
-class YZIS_EXPORT YZModeSearchBackward : public YZModeSearch
+class YZIS_EXPORT YModeSearchBackward : public YModeSearch
 {
 public :
-    YZModeSearchBackward();
-    virtual ~YZModeSearchBackward();
+    YModeSearchBackward();
+    virtual ~YModeSearchBackward();
 
-    virtual YZCursor search( YZView* view, const QString& s, bool* found );
-    virtual YZCursor search( YZView* view, const QString& s, const YZCursor begin, int* matchlength, bool* found );
-    virtual YZCursor replaySearch( YZView* view, bool* found );
+    virtual YCursor search( YView* view, const QString& s, bool* found );
+    virtual YCursor search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found );
+    virtual YCursor replaySearch( YView* view, bool* found );
 };
 
 

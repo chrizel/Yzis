@@ -1349,8 +1349,8 @@ void YzisHighlighting::dropDynamicContexts()
  * @param foldingList will be filled
  * @param ctxChanged will be set to reflect if the context changed
  */
-void YzisHighlighting::doHighlight ( YZLine *prevLine,
-                                     YZLine *textLine,
+void YzisHighlighting::doHighlight ( YLine *prevLine,
+                                     YLine *textLine,
                                      QVector<uint>* foldingList,
                                      bool *ctxChanged )
 {
@@ -1620,7 +1620,7 @@ void YzisHighlighting::doHighlight ( YZLine *prevLine,
 
 void YzisHighlighting::loadWildcards()
 {
-	YZInternalOptionPool* config = YZSession::self()->getOptions();
+	YInternalOptionPool* config = YSession::self()->getOptions();
     QString extensionString = config->readQStringEntry("Highlighting " + iName + "/Wildcards", iWildcards);
 
     if (extensionSource != extensionString) {
@@ -1656,14 +1656,14 @@ QStringList& YzisHighlighting::getPlainExtensions()
 
 QString YzisHighlighting::getMimetypes()
 {
-	YZInternalOptionPool* config = YZSession::self()->getOptions();
+	YInternalOptionPool* config = YSession::self()->getOptions();
 	config->setGroup("Highlighting " + iName);
 	return config->readQStringEntry("Highlighting " + iName + "/Mimetypes", iMimetypes);
 }
 
 int YzisHighlighting::priority()
 {
-	YZInternalOptionPool* config = YZSession::self()->getOptions();
+	YInternalOptionPool* config = YSession::self()->getOptions();
 	config->setGroup("Highlighting " + iName);
 
     return config->readIntEntry("Highlighting " + iName + "/Priority", m_priority);
@@ -1698,8 +1698,8 @@ void YzisHighlighting::setData(YzisHlData *)
 
 void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &list)
 {
-  YZInternalOptionPool* config = YZSession::self()->getOptions();
-  config->setGroup("Highlighting " + iName + " - Schema " + YZSession::self()->schemaManager()->name(schema));
+  YInternalOptionPool* config = YSession::self()->getOptions();
+  config->setGroup("Highlighting " + iName + " - Schema " + YSession::self()->schemaManager()->name(schema));
 
   list.clear();
   createYzisHlItemData(list);
@@ -1750,8 +1750,8 @@ void YzisHighlighting::getYzisHlItemDataList (uint schema, YzisHlItemDataList &l
  */
 void YzisHighlighting::setYzisHlItemDataList(uint schema, YzisHlItemDataList& list)
 {
-  YZInternalOptionPool* config = YZSession::self()->getOptions();
-  config->setGroup("Highlighting " + iName + " - Schema " + YZSession::self()->schemaManager()->name( schema ));
+  YInternalOptionPool* config = YSession::self()->getOptions();
+  config->setGroup("Highlighting " + iName + " - Schema " + YSession::self()->schemaManager()->name( schema ));
 
   QStringList settings;
 
@@ -1875,15 +1875,15 @@ void YzisHighlighting::addToYzisHlItemDataList()
             getDefStyleNum(YzisHlManager::self()->syntax->groupData(data,QString("defStyleNum"))));
 
     /* here the custom style overrides are specified, if needed */
-    if (!color.isEmpty()) newData->setTextColor(YZColor(color));
-    if (!selColor.isEmpty()) newData->setSelectedTextColor(YZColor(selColor));
+    if (!color.isEmpty()) newData->setTextColor(YColor(color));
+    if (!selColor.isEmpty()) newData->setSelectedTextColor(YColor(selColor));
     if (!bold.isEmpty()) newData->setBold( IS_TRUE(bold) );
     if (!italic.isEmpty()) newData->setItalic( IS_TRUE(italic) );
     // new attributes for the new rendering view
     if (!underline.isEmpty()) newData->setUnderline( IS_TRUE(underline) );
     if (!strikeOut.isEmpty()) newData->setStrikeOut( IS_TRUE(strikeOut) );
-    if (!bgColor.isEmpty()) newData->setBGColor(YZColor(bgColor));
-    if (!selBgColor.isEmpty()) newData->setSelectedBGColor(YZColor(selBgColor));
+    if (!bgColor.isEmpty()) newData->setBGColor(YColor(bgColor));
+    if (!selBgColor.isEmpty()) newData->setSelectedBGColor(YColor(selBgColor));
 
     internalIDList.append(newData);
   }
@@ -2897,7 +2897,7 @@ QVector<YzisAttribute> *YzisHighlighting::attributes (uint schema)
     return array;
 
   // ohh, not found, check if valid schema number
-  if (!YZSession::self()->schemaManager()->validSchema(schema))
+  if (!YSession::self()->schemaManager()->validSchema(schema))
   {
     // uhh, not valid :/, stick with normal default schema, it's always there !
     return attributes (0);
@@ -2993,7 +2993,7 @@ YzisHlManager::YzisHlManager()
 
   //read init files
   QString resource=resourceMgr()->findResource( ConfigScriptResource, "hl.lua" );
-  if (! resource.isEmpty()) YZLuaEngine::self()->source( resource );
+  if (! resource.isEmpty()) YLuaEngine::self()->source( resource );
 
   magicSet = magic_open( MAGIC_MIME | MAGIC_COMPRESS | MAGIC_SYMLINK );
   if ( magicSet == NULL ) {
@@ -3056,7 +3056,7 @@ int YzisHlManager::nameFind(const QString &name)
   return z;
 }
 
-int YzisHlManager::detectHighlighting (YZBuffer *doc)
+int YzisHlManager::detectHighlighting (YBuffer *doc)
 {
   dbg() << "detectHighlighting( " << doc << " )" << endl;
   int hl = wildcardFind( doc->fileNameShort() );
@@ -3315,7 +3315,7 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 
   YzisAttribute* string = new YzisAttribute();
   string->setTextColor(Qt::red);
-//  string->setTextColor(YZColor("#D00"));
+//  string->setTextColor(YColor("#D00"));
   string->setSelectedTextColor(Qt::red);
   list.append(string);
 
@@ -3332,9 +3332,9 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 
   YzisAttribute* alert = new YzisAttribute();
   alert->setTextColor(Qt::lightGray);
-  alert->setSelectedTextColor( YZColor("#FCC") );
+  alert->setSelectedTextColor( YColor("#FCC") );
   alert->setBold(true);
-  alert->setBGColor( YZColor("red") );
+  alert->setBGColor( YColor("red") );
   list.append(alert);
 
   YzisAttribute* functionAttribute = new YzisAttribute();
@@ -3354,8 +3354,8 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
   error->setSelectedTextColor(Qt::red);
   list.append(error);
 
-  YZInternalOptionPool* config = YZSession::self()->getOptions();
-  config->setGroup("Default Item Styles - Schema " + YZSession::self()->schemaManager()->name( schema ));
+  YInternalOptionPool* config = YSession::self()->getOptions();
+  config->setGroup("Default Item Styles - Schema " + YSession::self()->schemaManager()->name( schema ));
 
   for (uint z = 0; z < defaultStyles(); z++)
   {
@@ -3407,8 +3407,8 @@ void YzisHlManager::getDefaults(uint schema, YzisAttributeList &list)
 
 void YzisHlManager::setDefaults(uint schema, YzisAttributeList &list)
 {
-  YZInternalOptionPool* config = YZSession::self()->getOptions();
-  config->setGroup("Default Item Styles - Schema " + YZSession::self()->schemaManager()->name(schema));
+  YInternalOptionPool* config = YSession::self()->getOptions();
+  config->setGroup("Default Item Styles - Schema " + YSession::self()->schemaManager()->name(schema));
 
   for (uint z = 0; z < defaultStyles(); z++)
   {

@@ -31,7 +31,7 @@
 #define err()    yzError("YzisAttribute")
 
 YzisAttribute::YzisAttribute()
-  : m_weight(YZFont::Normal)
+  : m_weight(YFont::Normal)
   , m_italic(false)
   , m_underline(false)
   , m_overline(false)
@@ -85,9 +85,9 @@ YzisAttribute& YzisAttribute::operator+=(const YzisAttribute& a)
   return *this;
 }
 
-YZFont YzisAttribute::font(const YZFont& ref) const
+YFont YzisAttribute::font(const YFont& ref) const
 {
-  YZFont ret = ref;
+  YFont ret = ref;
 
   if (itemSet(Weight))
     ret.setWeight(weight());
@@ -117,7 +117,7 @@ void YzisAttribute::setWeight(int weight)
 
 void YzisAttribute::setBold(bool enable)
 {
-  setWeight(enable ? YZFont::Bold : YZFont::Normal);
+  setWeight(enable ? YFont::Bold : YFont::Normal);
 }
 
 void YzisAttribute::setItalic(bool enable)
@@ -168,7 +168,7 @@ void YzisAttribute::setStrikeOut(bool enable)
   }
 }
 
-void YzisAttribute::setOutline(const YZColor& color)
+void YzisAttribute::setOutline(const YColor& color)
 {
   if (!(m_itemsSet & Outline) || m_outline != color)
   {
@@ -180,7 +180,7 @@ void YzisAttribute::setOutline(const YZColor& color)
   }
 }
 
-void YzisAttribute::setTextColor(const YZColor& color)
+void YzisAttribute::setTextColor(const YColor& color)
 {
   if (!(m_itemsSet & TextColor) || m_textColor != color)
   {
@@ -192,7 +192,7 @@ void YzisAttribute::setTextColor(const YZColor& color)
   }
 }
 
-void YzisAttribute::setSelectedTextColor(const YZColor& color)
+void YzisAttribute::setSelectedTextColor(const YColor& color)
 {
   if (!(m_itemsSet & SelectedTextColor) || m_selectedTextColor != color)
   {
@@ -204,7 +204,7 @@ void YzisAttribute::setSelectedTextColor(const YZColor& color)
   }
 }
 
-void YzisAttribute::setBGColor(const YZColor& color)
+void YzisAttribute::setBGColor(const YColor& color)
 {
   if (!(m_itemsSet & BGColor) || m_bgColor != color)
   {
@@ -216,7 +216,7 @@ void YzisAttribute::setBGColor(const YZColor& color)
   }
 }
 
-void YzisAttribute::setSelectedBGColor(const YZColor& color)
+void YzisAttribute::setSelectedBGColor(const YColor& color)
 {
   if (!(m_itemsSet & SelectedBGColor) || m_selectedBGColor != color)
   {

@@ -36,10 +36,10 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define dbg()    yzDebug("YZSwapFile")
-#define err()    yzError("YZSwapFile")
+#define dbg()    yzDebug("YSwapFile")
+#define err()    yzError("YSwapFile")
 
-YZSwapFile::YZSwapFile(YZBuffer *b)
+YSwapFile::YSwapFile(YBuffer *b)
 {
     mParent = b;
     mRecovering = false;
@@ -49,7 +49,7 @@ YZSwapFile::YZSwapFile(YZBuffer *b)
     //init();
 }
 
-void YZSwapFile::setFileName( const QString& fname )
+void YSwapFile::setFileName( const QString& fname )
 {
     dbg() << "setFileName( " << fname << ")" << endl;
     unlink();
@@ -57,7 +57,7 @@ void YZSwapFile::setFileName( const QString& fname )
     dbg() << "Swap filename = " << mFilename << endl;
 }
 
-void YZSwapFile::flush()
+void YSwapFile::flush()
 {
     if ( mRecovering ) return ;
     if ( mParent->getLocalIntegerOption("updatecount") == 0 ) return ;
@@ -83,13 +83,13 @@ void YZSwapFile::flush()
         }
         f.close();
     } else {
-        YZSession::self()->guiPopupMessage(_( "Warning, the swapfile could not be opened maybe due to restrictive permissions." ));
+        YSession::self()->guiPopupMessage(_( "Warning, the swapfile could not be opened maybe due to restrictive permissions." ));
         mNotResetted = true; //don't try again ...
     }
     mHistory.clear(); //clear previous history
 }
 
-void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString& str, QPoint pos)
+void YSwapFile::addToSwap( YBufferOperation::OperationType type, const QString& str, QPoint pos)
 {
     if ( mRecovering ) return ;
     if ( mParent->getLocalIntegerOption("updatecount") == 0 ) return ;
@@ -101,7 +101,7 @@ void YZSwapFile::addToSwap( YZBufferOperation::OperationType type, const QString
     if ( ( ( int )mHistory.size() ) >= mParent->getLocalIntegerOption("updatecount") ) flush();
 }
 
-void YZSwapFile::unlink()
+void YSwapFile::unlink()
 {
     dbg() << "Unlink swap file " << mFilename << endl;
     if ( ! mFilename.isNull() && QFile::exists( mFilename ) )
@@ -109,7 +109,7 @@ void YZSwapFile::unlink()
     mNotResetted = true;
 }
 
-void YZSwapFile::init()
+void YSwapFile::init()
 {
     dbg() << "init() mFilename=" << mFilename << endl;
     if ( QFile::exists( mFilename ) ) {
@@ -131,14 +131,14 @@ void YZSwapFile::init()
         stream << endl << endl << endl;
         f.close();
     } else {
-        YZSession::self()->guiPopupMessage(_( "Warning, the swapfile could not be created maybe due to restrictive permissions." ));
+        YSession::self()->guiPopupMessage(_( "Warning, the swapfile could not be created maybe due to restrictive permissions." ));
         mNotResetted = true;
         return ;
     }
     mNotResetted = false;
 }
 
-bool YZSwapFile::recover()
+bool YSwapFile::recover()
 {
     mRecovering = true;
     QFile f( mFilename );
@@ -149,14 +149,14 @@ bool YZSwapFile::recover()
             //stream << ( *it ).type << ( *it ).col <<","<< ( *it ).line <<","<< ( *it ).str << endl;
             QRegExp rx("([0-9])([0-9]*),([0-9]*),(.*)");
             if ( rx.exactMatch( line ) ) {
-                replay( ( YZBufferOperation::OperationType )rx.cap( 1 ).toInt(), QPoint (rx.cap( 2 ).toUInt(), rx.cap( 3 ).toUInt()), rx.cap( 4 ) );
+                replay( ( YBufferOperation::OperationType )rx.cap( 1 ).toInt(), QPoint (rx.cap( 2 ).toUInt(), rx.cap( 3 ).toUInt()), rx.cap( 4 ) );
             } else {
                 dbg() << "Error replaying line: " << line << endl;
             }
         }
         f.close();
     } else {
-        YZSession::self()->guiPopupMessage(_( "The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files." ));
+        YSession::self()->guiPopupMessage(_( "The swap file could not be opened, there will be no recovering for this file, you might want to check permissions of files." ));
         mRecovering = false;
         return false;
     }
@@ -165,21 +165,21 @@ bool YZSwapFile::recover()
     return true;
 }
 
-void YZSwapFile::replay( YZBufferOperation::OperationType type, QPoint pos, const QString& text )
+void YSwapFile::replay( YBufferOperation::OperationType type, QPoint pos, const QString& text )
 {
-    YZView *pView = mParent->firstView();
+    YView *pView = mParent->firstView();
     pView->setPaintAutoCommit(false);
     switch ( type ) {
-    case YZBufferOperation::OpAddText:
+    case YBufferOperation::OpAddText:
         mParent->action()->insertChar( pView, pos, text );
         break;
-    case YZBufferOperation::OpDelText:
+    case YBufferOperation::OpDelText:
         mParent->action()->deleteChar( pView, pos, text.length() );
         break;
-    case YZBufferOperation::OpAddLine:
+    case YBufferOperation::OpAddLine:
         mParent->action()->insertNewLine( pView, 0, pos.y() );
         break;
-    case YZBufferOperation::OpDelLine:
+    case YBufferOperation::OpDelLine:
         mParent->action()->deleteLine( pView, pos.y(), 1, QList<QChar>() );
         break;
     }

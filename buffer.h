@@ -32,26 +32,26 @@
 
 class YZUndoBuffer;
 class YZAction;
-class YZDocMark;
-class YZCursor;
-class YZSwapFile;
-class YZLine;
-class YZView;
-class YZViewId;
-class YZInterval;
+class YDocMark;
+class YCursor;
+class YSwapFile;
+class YLine;
+class YView;
+class YViewId;
+class YInterval;
 
 class KateHighlighting;
 
-typedef QVector<YZLine*> YZBufferData;
+typedef QVector<YLine*> YBufferData;
 
 /**
  * A buffer is the implementation of the content of a file.
  * 
  * A buffer can have multiple views. Every buffer is registered in a
- * @ref YZSession
+ * @ref YSession
  * @short An abstract class to handle the content of a file.
  */
-class YZIS_EXPORT YZBuffer
+class YZIS_EXPORT YBuffer
 {
 public:
     //-------------------------------------------------------
@@ -61,12 +61,12 @@ public:
     /**
      * Creates a new buffer
      */
-    YZBuffer();
+    YBuffer();
 
     /**
      * Default destructor
      */
-    virtual ~YZBuffer();
+    virtual ~YBuffer();
 
     /** Return a string description of the buffer.
       *
@@ -134,15 +134,15 @@ public:
     void replaceLine( const QString& l, int line );
 
     /**
-     * Finds the @ref YZLine pointer for a line in the buffer
+     * Finds the @ref YLine pointer for a line in the buffer
      * @param line the line to return
      * @param noHL if set to false, the highlighting of the line is initialised XXX (need proof-reading)
-     * @return a YZLine pointer or 0 if none
+     * @return a YLine pointer or 0 if none
      *
      * Note: the valid line numbers are between 0 and lineCount()-1
      */
-    YZLine * yzline(int line, bool noHL = true);
-    const YZLine * yzline(int line) const;
+    YLine * yzline(int line, bool noHL = true);
+    const YLine * yzline(int line) const;
 
     /**
      * Replaces the given regexp @arg what with the given string @arg with on the specified @arg line
@@ -204,9 +204,9 @@ public:
     void loadText( QString* content );
 
     /**
-     * Extract the corresponding 'from' and 'to' YZCursor from the YZInterval i.
+     * Extract the corresponding 'from' and 'to' YCursor from the YInterval i.
      */
-    void intervalToCursors( const YZInterval& i, YZCursor* from, YZCursor* to ) const;
+    void intervalToCursors( const YInterval& i, YCursor* from, YCursor* to ) const;
 
     /**
      * Get a list of strings between two cursors
@@ -214,18 +214,18 @@ public:
      * @param to the end cursor
      * @return a list of strings
      */
-    QStringList getText(const YZCursor from, const YZCursor to) const;
-    QStringList getText(const YZInterval& i) const;
+    QStringList getText(const YCursor from, const YCursor to) const;
+    QStringList getText(const YInterval& i) const;
 
     /**
      * Get the character at the given cursor position.
      */
-    QChar getCharAt( const YZCursor at ) const;
+    QChar getCharAt( const YCursor at ) const;
 
     /**
      * Get entire word at given cursor position. Currently behaves like '*' in vim
      */
-    QString getWordAt( const YZCursor at ) const;
+    QString getWordAt( const YCursor at ) const;
 
     /**
      * Number of lines in the buffer
@@ -242,12 +242,12 @@ public:
     /**
      * Returns a cursor at the beginning of the buffer
      */
-    YZCursor begin() const;
+    YCursor begin() const;
 
     /**
      * Returns a cursor at the end of the buffer
      */
-    YZCursor end() const;
+    YCursor end() const;
 
     //-------------------------------------------------------
     // --------------------- File Operations
@@ -332,25 +332,25 @@ public:
      * Adds a new view to the buffer
      * @param v the view to be added
      */
-    void addView (YZView *v);
+    void addView (YView *v);
 
     /**
      * Removes a view from this buffer
      * @param v the view to be removed
      */
-    void rmView (YZView *v);
+    void rmView (YView *v);
 
     /**
      * The list of view for this buffer
      * @return a QValuelist of pointers to the views
      */
-    QList<YZView*> views() const;
+    QList<YView*> views() const;
 
     /**
      * Find the first view of this buffer
      * Temporary function
      */
-    YZView* firstView() const;
+    YView* firstView() const;
 
     /**
      * Refresh all views
@@ -363,8 +363,8 @@ public:
 
     YZUndoBuffer * undoBuffer() const;
     YZAction* action() const;
-    YZViewMarker* viewMarks() const;
-    YZDocMark* docMarks() const;
+    YViewMarker* viewMarks() const;
+    YDocMark* docMarks() const;
     KateHighlighting* highlight() const;
 
     //-------------------------------------------------------
@@ -441,7 +441,7 @@ public:
     void setState( BufferState state );
     BufferState getState() const;
 
-    void saveYzisInfo( YZView* view );
+    void saveYzisInfo( YView* view );
 
     //-------------------------------------------------------
     // ------------ Static
@@ -449,11 +449,39 @@ public:
 
     static QString tildeExpand( const QString& path );
 
-    /**
-     * handle /file/name:line:col syntax
+    /** Parses a string containing filename and possibly line col information.
+     *
+     * Input can be: 
+     * \li filename
+     * \li filename:line
+     * \li filename:line:col
+     * 
+     * If not NULL, the @p gotoPos is adjusted to the target line,col or (0,0)
+     * if there is no (line,col) information.
+     *
+     * @param filename a string containing filename and maybe line,col
+     * information
+     * @param gotoPos a cursor that receives the line,col information if any
+     * @return filename stripped from line,col information.
      */
-    static QString parseFilename( const QString& filename, YZCursor* gotoPos = NULL );
-    static YZCursor getStartPosition( const QString& filename, bool parseFilename = true );
+    static QString parseFilename( const QString& filename, YCursor* gotoPos = NULL );
+
+
+    /** Get the cursor initial position for a filename.
+     *
+     * If @a parseFilename is true, the filename is first parsed with
+     * parseFilename() to look for format filename:line:col . 
+     *
+     * If there is no line/col information in the filename string, the
+     * function looks into YzisInfo for the last position in that file.
+     *
+     * @param filename filename that may contain line:col information
+     * @param parseFilename If true, use parseFilename() to look for line:col
+     * information. If false, just look into YzisInfo file for last cursor
+     * position.
+     * @return a cursor containing line:col that was found (if any).
+     */
+    static YCursor getStartPosition( const QString& filename, bool parseFilename = true );
 
 protected:
     /**

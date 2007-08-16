@@ -29,36 +29,35 @@
 #include "viewcursor.h"
 #include "kate4/kateextendedattribute.h"
 
-class YZViewCursor;
-class YZColor;
-class YZCursor;
-class YZBuffer;
-class YZSession;
-class YZSelectionPool;
+class YViewCursor;
+class YColor;
+class YCursor;
+class YBuffer;
+class YSession;
+class YSelectionPool;
 //class KateExtendedAttribute;
-class YZLineSearch;
-class YZView;
-class YZModePool;
-class YZMode;
-class YZModeCompletion;
-class YZOptionValue;
+class YLineSearch;
+class YModePool;
+class YMode;
+class YModeCompletion;
+class YOptionValue;
 class YZFoldPool;
-struct YZDrawCell;
+struct YDrawCell;
 
 /**
  * MUST be reimplemented in the GUI. 
  * It's the basis to display the content of a buffer.
  * One view is the display of some part of a buffer, it is used to receive inputs and displays
  * corresponding outputs.
- * Each @ref YZBuffer can have multiple views.
- * @ref YZBuffer will take care of synchronizing every views so updates are propagated to all views.
+ * Each @ref YBuffer can have multiple views.
+ * @ref YBuffer will take care of synchronizing every views so updates are propagated to all views.
  * @short Abstract object for a view.
  * 
  */
-class YZIS_EXPORT YZView : public YZViewIface
+class YZIS_EXPORT YView : public YViewIface
 {
 
-    friend class YZDrawBuffer;
+    friend class YDrawBuffer;
 
 public:
     //-------------------------------------------------------
@@ -69,12 +68,12 @@ public:
      * number of columns and @arg lines the initial
      * number of lines that this view can display
      */
-    YZView(YZBuffer *_b, YZSession *sess, int cols, int lines);
+    YView(YBuffer *_b, YSession *sess, int cols, int lines);
 
     /**
      * The destructor
      */
-    virtual ~YZView();
+    virtual ~YView();
 
     /**
      * Accessor to the list of foldings
@@ -179,25 +178,25 @@ public:
     /**
      * Return my current buffer
      */
-    YZBuffer *myBuffer() const
+    YBuffer *myBuffer() const
     {
         return mBuffer;
     }
-    //  const YZBuffer *myBuffer() const { return mBuffer; }
+    //  const YBuffer *myBuffer() const { return mBuffer; }
 
     /**
      * Return my current line search
      */
-    YZLineSearch* myLineSearch()
+    YLineSearch* myLineSearch()
     {
         return mLineSearch;
     }
 
     /**
      * Accessor to the list of availables modes
-     * @return a QMap of @ref YZMode
+     * @return a QMap of @ref YMode
      */
-    YZModePool* modePool() const
+    YModePool* modePool() const
     {
         return mModePool;
     }
@@ -205,21 +204,21 @@ public:
     /**
      * Accessor to the list of current selections
      */
-    YZSelectionPool* getSelectionPool() const
+    YSelectionPool* getSelectionPool() const
     {
         return selectionPool;
     }
 
     /**
      * Accessor to the list of recorded registers
-     * @return a QList of @ref YZRegisters
+     * @return a QList of @ref YRegisters
      */
     const QList<QChar> registersRecorded() const
     {
         return mRegs;
     }
 
-    YZSelectionMap visualSelection() const;
+    YSelectionMap visualSelection() const;
 
     //-------------------------------------------------------
     // ----------------- Scrolling
@@ -282,44 +281,44 @@ public:
      * moves the cursor of the current view down
      */
     QString moveDown( int nb_lines = 1, bool applyCursor = true );
-    QString moveDown( YZViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
+    QString moveDown( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
 
     /**
      * moves the cursor of the current view up
      */
     QString moveUp( int nb_lines = 1, bool applyCursor = true );
-    QString moveUp( YZViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
+    QString moveUp( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
 
     /**
      * moves the cursor of the current view to the left
      */
     QString moveLeft(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
-    QString moveLeft( YZViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
+    QString moveLeft( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
 
     /**
      * moves the cursor of the current view to the right
      */
     QString moveRight(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
-    QString moveRight( YZViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
+    QString moveRight( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
 
     /**
      * moves the cursor of the current view to the first non-blank character
      * of the current line
      */
     QString moveToFirstNonBlankOfLine();
-    QString moveToFirstNonBlankOfLine( YZViewCursor* viewCursor, bool applyCursor = true );
+    QString moveToFirstNonBlankOfLine( YViewCursor* viewCursor, bool applyCursor = true );
 
     /**
      * moves the cursor of the current view to the start of the current line
      */
     QString moveToStartOfLine();
-    QString moveToStartOfLine( YZViewCursor* viewCursor, bool applyCursor = true );
+    QString moveToStartOfLine( YViewCursor* viewCursor, bool applyCursor = true );
 
     /**
      * moves the cursor of the current view to the end of the current line
      */
     QString moveToEndOfLine();
-    QString moveToEndOfLine( YZViewCursor* viewCursor, bool applyCursor = true );
+    QString moveToEndOfLine( YViewCursor* viewCursor, bool applyCursor = true );
 
     /**
      * Moves the draw cursor to @arg nextx, @arg nexty
@@ -330,8 +329,8 @@ public:
     {
         gotodxdy(QPoint(nextx, nexty), applyCursor);
     }
-    void gotodxdy( YZViewCursor* viewCursor, QPoint nextpos, bool applyCursor = true );
-    void gotodxdy( YZViewCursor* viewCursor, const int x, const int y, bool applyCursor = true )
+    void gotodxdy( YViewCursor* viewCursor, QPoint nextpos, bool applyCursor = true );
+    void gotodxdy( YViewCursor* viewCursor, const int x, const int y, bool applyCursor = true )
     {
         gotodxdy(viewCursor, QPoint(x, y), applyCursor);
     }
@@ -340,24 +339,24 @@ public:
      * Moves the cursor to @arg buffer nextx, @arg draw nexty
      */
     void gotoxdy(int nextx, int nexty, bool applyCursor = true );
-    void gotoxdy( YZViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
+    void gotoxdy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
 
     /**
      * Moves the cursor to @arg draw nextx, @arg buffer nexty
      */
     void gotodxy(int nextx, int nexty, bool applyCursor = true );
-    void gotodxy( YZViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
+    void gotodxy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
 
     /**
      * Moves the buffer cursor to @arg nextx, @arg nexty
      */
     void gotoxy(const QPoint nextpos, bool applyCursor = true );
-    void gotoxy( YZViewCursor* viewCursor, const QPoint nextpos, bool applyCursor = true );
+    void gotoxy( YViewCursor* viewCursor, const QPoint nextpos, bool applyCursor = true );
     void gotoxy(int nextx, int nexty, bool applyCursor = true )
     {
         gotoxy(QPoint(nextx, nexty), applyCursor);
     }
-    void gotoxy( YZViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true )
+    void gotoxy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true )
     {
         gotoxy(viewCursor, QPoint(nextx, nexty), applyCursor);
     }
@@ -380,21 +379,21 @@ public:
      * Go to line of file
      */
     void gotoLine( int line );
-    void gotoLine( YZViewCursor* viewCursor, int line, bool applyCursor = true );
+    void gotoLine( YViewCursor* viewCursor, int line, bool applyCursor = true );
 
     /**
      * Go to last line of the file
      */
     void gotoLastLine();
-    void gotoLastLine( YZViewCursor* viewCursor, bool applyCursor = true );
+    void gotoLastLine( YViewCursor* viewCursor, bool applyCursor = true );
 
     /**
      * move the cursor to the sticky column
      */
     void gotoStickyCol( int Y );
-    void gotoStickyCol( YZViewCursor* viewCursor, int Y, bool applyCursor = true );
+    void gotoStickyCol( YViewCursor* viewCursor, int Y, bool applyCursor = true );
 
-    void applyStartPosition( const YZCursor pos );
+    void applyStartPosition( const YCursor pos );
 
     //-------------------------------------------------------
     // ----------------- Drawing
@@ -450,22 +449,22 @@ public:
     /**
      * char color
      */
-    const YZColor& drawColor();
+    const YColor& drawColor();
 
     /**
      * char color if selected
      */
-    const YZColor& drawSelColor();
+    const YColor& drawSelColor();
 
     /**
      * char background color
      */
-    const YZColor& drawBgColor();
+    const YColor& drawBgColor();
 
     /**
      * char background color if selected
      */
-    const YZColor& drawBgSelColor();
+    const YColor& drawBgSelColor();
 
     /**
      * current char is bold
@@ -495,12 +494,12 @@ public:
     /**
      * current char outline color
      */
-    const YZColor& drawOutline();
+    const YColor& drawOutline();
 
     /**
      * Character color at column line
      */
-    const YZColor& drawColor ( int col, int line ) const;
+    const YColor& drawColor ( int col, int line ) const;
 
     /**
      * return current buffer line
@@ -589,7 +588,7 @@ public:
     //-------------------------------------------------------
     QString getLocalOptionKey() const;
 
-    YZOptionValue* getLocalOption( const QString& option ) const;
+    YOptionValue* getLocalOption( const QString& option ) const;
 
     /**
      * Retrieve an int option
@@ -619,11 +618,11 @@ public:
     //-------------------------------------------------------
     // ----------------- Paint Events
     //-------------------------------------------------------
-    virtual void guiPaintEvent( const YZSelection& drawMap );
+    virtual void guiPaintEvent( const YSelection& drawMap );
 
-    void sendPaintEvent( const YZCursor from, const YZCursor to );
+    void sendPaintEvent( const YCursor from, const YCursor to );
     void sendPaintEvent( int curx, int cury, int curw, int curh );
-    void sendPaintEvent( YZSelectionMap map, bool isBufferMap = true );
+    void sendPaintEvent( YSelectionMap map, bool isBufferMap = true );
 
     /**
      * ask to draw from buffer line @arg line to @arg line + @arg n
@@ -635,7 +634,7 @@ public:
      */
     void sendRefreshEvent();
 
-    void removePaintEvent( const YZCursor from, const YZCursor to );
+    void removePaintEvent( const YCursor from, const YCursor to );
 
     /**
      * @arg enable is true, future paint events will be directly applied
@@ -668,13 +667,13 @@ public:
     //-------------------------------------------------------
     // ----------------- Cursors
     //-------------------------------------------------------
-    void sendCursor( YZViewCursor cursor );
+    void sendCursor( YViewCursor cursor );
 
     /**
      * Get the view cursor
-     * @return a constant ref to the view cursor ( YZViewCursor )
+     * @return a constant ref to the view cursor ( YViewCursor )
      */
-    const YZViewCursor &viewCursor() const
+    const YViewCursor &viewCursor() const
     {
         return mainCursor;
     }
@@ -683,15 +682,15 @@ public:
      * Get the current cursor information
      * @return a reference on the current cursor
      */
-    const YZCursor getCursor() const;
+    const YCursor getCursor() const;
 
     /**
      * Get the current buffer cursor information
      * @return a reference on the current buffer cursor
      */
-    const YZCursor getBufferCursor() const;
+    const YCursor getBufferCursor() const;
 
-    YZViewCursor* visualCursor()
+    YViewCursor* visualCursor()
     {
         return &mVisualCursor;
     }
@@ -717,7 +716,7 @@ public:
     /**
      * update stickCol to according to viewCursor
      */
-    void updateStickyCol( YZViewCursor* viewCursor );
+    void updateStickyCol( YViewCursor* viewCursor );
 
     //-------------------------------------------------------
     // ----------------- Dimensions
@@ -782,17 +781,17 @@ public:
     /*
      * @returns screen top-left corner position
      */
-    YZCursor getScreenPosition() const;
+    YCursor getScreenPosition() const;
 
     /*
-     * @returns current screen YZCursor relative to top-left screen corner
+     * @returns current screen YCursor relative to top-left screen corner
      */
-    YZCursor getRelativeScreenCursor() const;
+    YCursor getRelativeScreenCursor() const;
 
     /**
-     * returns a YZSelection which fit view
+     * returns a YSelection which fit view
      */
-    YZSelection clipSelection( const YZSelection& sel ) const;
+    YSelection clipSelection( const YSelection& sel ) const;
 
 protected:
 
@@ -802,7 +801,7 @@ protected:
 
     QString getLineStatusString() const;
 
-    YZDrawBuffer m_drawBuffer;
+    YDrawBuffer m_drawBuffer;
 
 private:
 
@@ -812,7 +811,7 @@ private:
     void internalScroll( int dx, int dy );
 
     /**
-     * Information about the view. Used internally in @ref YZView to create
+     * Information about the view. Used internally in @ref YView to create
      * the text for the statusbar displaying line/column numbers and how
      * much of the buffer that's being displayed.
      */
@@ -847,15 +846,15 @@ private:
     /**
      * The buffer we depend on
      */
-    YZBuffer *mBuffer;
+    YBuffer *mBuffer;
 
     /**
       * This is the main cursor, the one which is displayed
      */
-    YZViewCursor mainCursor;
+    YViewCursor mainCursor;
 
     /* screen top-left cursor */
-    YZViewCursor scrollCursor;
+    YViewCursor scrollCursor;
 
     /**
      * Searching backward
@@ -865,17 +864,17 @@ private:
     /**
      * The current session, provided by the GUI
      */
-    YZSession *mSession;
+    YSession *mSession;
 
     /**
      * Line search
      */
-    YZLineSearch* mLineSearch;
+    YLineSearch* mLineSearch;
 
     /**
      * This is the worker cursor, the one which we directly modify in our draw engine
      */
-    YZViewCursor workCursor;
+    YViewCursor workCursor;
 
     /**
      * are we moving cursor in draw mode ?
@@ -936,8 +935,8 @@ private:
     void gotody( int y );
     void gotox( int x, bool forceGoBehindEOL = false );
     void gotodx( int x );
-    void applyGoto( YZViewCursor* viewCursor, bool applyCursor = true );
-    void initGoto( YZViewCursor* viewCursor );
+    void applyGoto( YViewCursor* viewCursor, bool applyCursor = true );
+    void initGoto( YViewCursor* viewCursor );
     void updateCurLine( );
 
     bool m_paintAll;
@@ -952,10 +951,10 @@ private:
     QChar m_lineMarker;
 
 
-    YZCursor origPos;
+    YCursor origPos;
     int lineDY;
 
-    YZCursor beginChanges;
+    YCursor beginChanges;
 
     //cached value of tabstop option
     int tabstop;
@@ -971,21 +970,21 @@ private:
     // if true, do not check for cursor visibility
     bool adjust;
 
-    YZSelectionPool * selectionPool;
-    YZSelection* mPaintSelection;
+    YSelectionPool * selectionPool;
+    YSelection* mPaintSelection;
 
     //Visual Mode stuff
-    YZViewCursor mVisualCursor; // TODO : this one is only used by external class, not by this very one ?
+    YViewCursor mVisualCursor; // TODO : this one is only used by external class, not by this very one ?
 
 
     //which regs to store macros in
     QList<QChar> mRegs;
     int m_paintAutoCommit;
-    YZViewCursor keepCursor;
+    YViewCursor keepCursor;
 
     //the current attribute being used by the GUI
     KateExtendedAttribute::Ptr curAt;
-    YZModePool* mModePool;
+    YModePool* mModePool;
 
     /**
      * options cache

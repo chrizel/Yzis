@@ -29,18 +29,18 @@
 #include <QPair>
 #include <QVector>
 
-class YZYzisinfoJumpListRecord;
+class YInfoJumpListRecord;
 
 /**
   * @short In-memory representation of a tag
   */
-struct YZTagStackItem
+struct YTagStackItem
 {
-    YZTagStackItem()
+    YTagStackItem()
     {}
-    YZTagStackItem(const YZTagStackItem &o) : pattern(o.pattern), filename(o.filename)
+    YTagStackItem(const YTagStackItem &o) : pattern(o.pattern), filename(o.filename)
     {}
-    YZTagStackItem(const QString &p, const QString &f) : pattern(p), filename(f)
+    YTagStackItem(const QString &p, const QString &f) : pattern(p), filename(f)
     {}
     QString pattern;
     QString filename;
@@ -48,29 +48,29 @@ struct YZTagStackItem
 
 /**
   * @short Handle the content of a tag file.
-  * It is only used as part of YZSession
+  * It is only used as part of YSession
   */
-class YZTagStack
+class YTagStack
 {
 public:
-    YZTagStack();
-    virtual ~YZTagStack();
+    YTagStack();
+    virtual ~YTagStack();
 
     void push();
-    const YZYzisinfoJumpListRecord *getHead() const;
-    const YZTagStackItem *moveToPrevious();
-    const YZTagStackItem *moveToNext();
+    const YInfoJumpListRecord *getHead() const;
+    const YTagStackItem *moveToPrevious();
+    const YTagStackItem *moveToNext();
     void pop();
     bool empty() const;
 
     unsigned int getNumMatchingTags() const;
     unsigned int getNumCurMatchingTag() const;
 
-    void storeMatchingTags(const QVector<YZTagStackItem> &tags);
+    void storeMatchingTags(const QVector<YTagStackItem> &tags);
 
 private:
-    typedef QVector<YZYzisinfoJumpListRecord> StackType;
-    typedef QVector<YZTagStackItem> MatchingTagsType;
+    typedef QVector<YInfoJumpListRecord> StackType;
+    typedef QVector<YTagStackItem> MatchingTagsType;
     typedef QPair<MatchingTagsType, unsigned int> MatchingStackItem;
     typedef QVector<MatchingStackItem> MatchingStackType;
 

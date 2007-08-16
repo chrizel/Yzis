@@ -24,37 +24,37 @@
 #include "cursor.h"
 #include "yzismacros.h"
 
-class YZView;
+class YView;
 
 /**
   * @short Handle both buffer/drawing cursors
   *
-  * Coumpound object containing a YZCursor for the buffer, and another one
+  * Coumpound object containing a YCursor for the buffer, and another one
   * for the display
   */
-struct YZCursorPos
+struct YCursorPos
 {
-    YZCursor mBuffer;  /* buffer position */
-    YZCursor mScreen; /* display position */
+    YCursor mBuffer;  /* buffer position */
+    YCursor mScreen; /* display position */
 };
 
 
 
 /**
- * class YZViewCursor : buffer and screen cursor with all members that YZView needs to move it.
- * this is only an interface, it doesn't have to know how move itself ( this is YZView stuff )
+ * class YViewCursor : buffer and screen cursor with all members that YView needs to move it.
+ * this is only an interface, it doesn't have to know how move itself ( this is YView stuff )
  */
-class YZIS_EXPORT YZViewCursor : public YZCursorPos
+class YZIS_EXPORT YViewCursor : public YCursorPos
 {
 
-    friend class YZView;
+    friend class YView;
 
 public:
-    explicit YZViewCursor( YZView* parent );
-    YZViewCursor( const YZViewCursor &c);
-    virtual ~YZViewCursor();
+    explicit YViewCursor( YView* parent );
+    YViewCursor( const YViewCursor &c);
+    virtual ~YViewCursor();
 
-    YZViewCursor &operator=( const YZViewCursor &c );
+    YViewCursor &operator=( const YViewCursor &c );
 
     void reset();
 
@@ -68,11 +68,11 @@ public:
 
     bool valid() const;
 
-    inline const YZCursor buffer() const
+    inline const YCursor buffer() const
     {
         return mBuffer;
     }
-    inline const YZCursor screen() const
+    inline const YCursor screen() const
     {
         return mScreen;
     }
@@ -87,11 +87,11 @@ public:
 
     void debug();
 
-    void setBuffer( const YZCursor value )
+    void setBuffer( const YCursor value )
     {
         mBuffer = value;
     }
-    void setScreen( const YZCursor value )
+    void setScreen( const YCursor value )
     {
         mScreen = value;
     }
@@ -102,12 +102,12 @@ public:
     void setScreenY( int value );
 
 private :
-    void copyFields( const YZViewCursor &rhs );
+    void copyFields( const YViewCursor &rhs );
 
     /**
      * parent view
      */
-    YZView* mParent;
+    YView* mParent;
 
     /**
      * spaceFill is the shift for starting tabs

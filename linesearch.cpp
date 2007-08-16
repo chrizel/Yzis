@@ -25,28 +25,28 @@
 #include "debug.h"
 #include "buffer.h"
 
-#define dbg()    yzDebug("YZLineSearch")
-#define err()    yzError("YZLineSearch")
+#define dbg()    yzDebug("YLineSearch")
+#define err()    yzError("YLineSearch")
 
 /**
- * class YZLineSearch
+ * class YLineSearch
  */
-YZLineSearch::YZLineSearch( const YZView *_view )
+YLineSearch::YLineSearch( const YView *_view )
 {
-    dbg() << "YZLineSearch Constructor" << endl;
+    dbg() << "YLineSearch Constructor" << endl;
     mView = _view;
     mFirstTime = true;
     //mPrevSearched = "a";
 }
 
-YZLineSearch::~YZLineSearch()
+YLineSearch::~YLineSearch()
 {
-    //        dbg() << "YZLineSearch Destructor" << endl;
+    //        dbg() << "YLineSearch Destructor" << endl;
 }
 
-YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int times )
+YCursor YLineSearch::forward( const QString& ch, bool& found, unsigned int times )
 {
-    YZCursor cur = mView->getBufferCursor();
+    YCursor cur = mView->getBufferCursor();
     int x = cur.x() + 1; // Start search after cursor pos
     int y = cur.y();
     const QString& current = mView->myBuffer()->textline( y );
@@ -59,7 +59,7 @@ YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int tim
         x = index + 1;
         nfound++;
     }
-    YZCursor pos;
+    YCursor pos;
     found = ( nfound == times );
     if ( found ) {
         pos.setX( x - 1 );
@@ -69,9 +69,9 @@ YZCursor YZLineSearch::forward( const QString& ch, bool& found, unsigned int tim
     return pos;
 }
 
-YZCursor YZLineSearch::forwardBefore( const QString& ch, bool& found, unsigned int times )
+YCursor YLineSearch::forwardBefore( const QString& ch, bool& found, unsigned int times )
 {
-    YZCursor pos = forward( ch, found, times );
+    YCursor pos = forward( ch, found, times );
     if ( found ) {
         pos.setX( pos.x() - 1 );
     }
@@ -79,9 +79,9 @@ YZCursor YZLineSearch::forwardBefore( const QString& ch, bool& found, unsigned i
     return pos;
 }
 
-YZCursor YZLineSearch::reverse( const QString& ch, bool& found, unsigned int times )
+YCursor YLineSearch::reverse( const QString& ch, bool& found, unsigned int times )
 {
-    YZCursor cur = mView->getBufferCursor();
+    YCursor cur = mView->getBufferCursor();
     unsigned int x = cur.x();
     unsigned int y = cur.y();
     if ( x ) x--; // Start search before current cursor
@@ -95,7 +95,7 @@ YZCursor YZLineSearch::reverse( const QString& ch, bool& found, unsigned int tim
         x = index - 1;
         nfound++;
     }
-    YZCursor pos;
+    YCursor pos;
     found = ( nfound == times );
     if ( found ) {
         pos.setX( x + 1 );
@@ -105,9 +105,9 @@ YZCursor YZLineSearch::reverse( const QString& ch, bool& found, unsigned int tim
     return pos;
 }
 
-YZCursor YZLineSearch::reverseAfter( const QString& ch, bool& found, unsigned int times )
+YCursor YLineSearch::reverseAfter( const QString& ch, bool& found, unsigned int times )
 {
-    YZCursor pos = reverse( ch, found, times );
+    YCursor pos = reverse( ch, found, times );
     if ( found ) {
         pos.setX( pos.x() + 1 );
     }
@@ -115,9 +115,9 @@ YZCursor YZLineSearch::reverseAfter( const QString& ch, bool& found, unsigned in
     return pos;
 }
 
-YZCursor YZLineSearch::searchAgain( bool &found, unsigned int times )
+YCursor YLineSearch::searchAgain( bool &found, unsigned int times )
 {
-    YZCursor garbage;
+    YCursor garbage;
     found = false;
     if ( mFirstTime ) {
         // Can't search again if we haven't searched a first time...
@@ -142,7 +142,7 @@ YZCursor YZLineSearch::searchAgain( bool &found, unsigned int times )
     }
 }
 
-YZCursor YZLineSearch::searchAgainOpposite( bool &found, unsigned int times )
+YCursor YLineSearch::searchAgainOpposite( bool &found, unsigned int times )
 {
     switch ( mType ) {
     case SearchForward:
@@ -162,7 +162,7 @@ YZCursor YZLineSearch::searchAgainOpposite( bool &found, unsigned int times )
 }
 
 /* PRIVATE */
-void YZLineSearch::updateHistory( const QString& newch, SearchType type )
+void YLineSearch::updateHistory( const QString& newch, SearchType type )
 {
     mPrevSearched = newch;
     mType = type;

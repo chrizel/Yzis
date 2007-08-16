@@ -23,28 +23,28 @@
 
 #include <QDir>
 
-#define dbg()    yzDebug("YZResourceMgr")
-#define err()    yzError("YZResourceMgr")
-#define ftl()    yzFatal("YZResourceMgr")
+#define dbg()    yzDebug("YResourceMgr")
+#define err()    yzError("YResourceMgr")
+#define ftl()    yzFatal("YResourceMgr")
 
 
 
 // ================================================================
 //
-//                      YZResourceMgr
+//                      YResourceMgr
 //
 // ================================================================
 
-YZResourceMgr::YZResourceMgr()
+YResourceMgr::YResourceMgr()
 {
     initConfig();
 }
 
-YZResourceMgr::~YZResourceMgr()
+YResourceMgr::~YResourceMgr()
 {
 }
 
-void YZResourceMgr::initConfig()
+void YResourceMgr::initConfig()
 {
     QString yzisSuffix = ".yzis";
     bool isTmpDir = false;
@@ -76,7 +76,7 @@ void YZResourceMgr::initConfig()
     dbg() << "initConfig(): yzis user directory set to " << mYzisUserDir << endl;
 }
 
-QString YZResourceMgr::findResource( ResourceType type, const QString & fname )
+QString YResourceMgr::findResource( ResourceType type, const QString & fname )
 {
     QString resource;
     QStringList dirCandidates;
@@ -118,7 +118,7 @@ QString YZResourceMgr::findResource( ResourceType type, const QString & fname )
     return QString();
 }
 
-QStringList YZResourceMgr::resourceDirList( ResourceType type )
+QStringList YResourceMgr::resourceDirList( ResourceType type )
 {
     QStringList dirCandidates;
 
@@ -149,7 +149,7 @@ QStringList YZResourceMgr::resourceDirList( ResourceType type )
     return dirCandidates;
 }
 
-YZDebugStream& operator<<( YZDebugStream& out, const ResourceType & type )
+YDebugStream& operator<<( YDebugStream& out, const ResourceType & type )
 {
     switch ( type ) {
     case IndentResource: out << "IndentResource"; break;

@@ -21,10 +21,9 @@
 #define YZ_LINE_SEARCH_H
 
 /* Yzis */
-class YZViewCursor;
-class YZCursor;
-class YZBuffer;
-class YZView;
+class YViewCursor;
+class YCursor;
+class YView;
 
 /* Qt */
 #include <QString>
@@ -32,19 +31,19 @@ class YZView;
 /**
  * Line search
  */
-class YZLineSearch
+class YLineSearch
 {
 
 public:
     /**
      * Each search is bound to a view
      */
-    YZLineSearch( const YZView *_view );
-    ~YZLineSearch();
+    YLineSearch( const YView *_view );
+    ~YLineSearch();
 
     /**
      * Searches start from current cursor location to line boundary
-     * for times instances of ch and return a YZCursor
+     * for times instances of ch and return a YCursor
      * containing location of successful search
      * found is modified to indicate search success/failure
      * times instances of ch must be found for a search to be successful
@@ -53,32 +52,32 @@ public:
     /**
      * Search from cursor to end of line for times instances of ch
      */
-    YZCursor forward( const QString& ch, bool& found, unsigned int times );
+    YCursor forward( const QString& ch, bool& found, unsigned int times );
 
     /**
      * Search from cursor to end of line for times instances of ch
      */
-    YZCursor forwardBefore( const QString& ch, bool& found, unsigned int times );
+    YCursor forwardBefore( const QString& ch, bool& found, unsigned int times );
 
     /**
      * Return location of ch searching backwards
      */
-    YZCursor reverse( const QString& ch, bool& found, unsigned int times );
+    YCursor reverse( const QString& ch, bool& found, unsigned int times );
 
     /**
      * Return locate right after ch
      */
-    YZCursor reverseAfter( const QString& ch, bool& found, unsigned int times );
+    YCursor reverseAfter( const QString& ch, bool& found, unsigned int times );
 
     /**
      * Searches for the next instance of a previously searched character
      */
-    YZCursor searchAgain( bool &found, unsigned int times );
+    YCursor searchAgain( bool &found, unsigned int times );
 
     /**
      * Searches for previously searched character in opposite direction
      */
-    YZCursor searchAgainOpposite( bool &found, unsigned int times );
+    YCursor searchAgainOpposite( bool &found, unsigned int times );
 
     /**
      * Defines types of searches for history
@@ -96,7 +95,7 @@ private:
     /**
      * View we are working for
      */
-    const YZView* mView;
+    const YView* mView;
 
     /**
      * Have we searched for anything yet?

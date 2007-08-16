@@ -25,26 +25,26 @@
 /* Qt */
 #include <qregexp.h>
 
-#define dbg()    yzDebug("YZLine")
-#define err()    yzError("YZLine")
+#define dbg()    yzDebug("YLine")
+#define err()    yzError("YLine")
 
-YZLine::YZLine(const QString &l) :
-        m_flags( YZLine::FlagVisible )
+YLine::YLine(const QString &l) :
+        m_flags( YLine::FlagVisible )
 {
     setData(l);
     m_initialized = false;
 }
 
-YZLine::YZLine()
+YLine::YLine()
 {
     setData( "" );
     m_initialized = false;
 }
 
-YZLine::~YZLine()
+YLine::~YLine()
 {}
 
-void YZLine::setData(const QString &data)
+void YLine::setData(const QString &data)
 {
     mData = data;
     uint len = data.length();
@@ -54,17 +54,17 @@ void YZLine::setData(const QString &data)
         mAttributes.data()[ i ] = 0;
 }
 
-int YZLine::firstChar() const
+int YLine::firstChar() const
 {
     return nextNonSpaceChar(0);
 }
 
-int YZLine::lastChar() const
+int YLine::lastChar() const
 {
     return previousNonSpaceChar(mData.length() - 1);
 }
 
-int YZLine::nextNonSpaceChar(uint pos) const
+int YLine::nextNonSpaceChar(uint pos) const
 {
     int length = (int)mData.length();
     for (int i = pos; i < length; ++i) {
@@ -74,7 +74,7 @@ int YZLine::nextNonSpaceChar(uint pos) const
     return -1;
 }
 
-int YZLine::previousNonSpaceChar(uint pos) const
+int YLine::previousNonSpaceChar(uint pos) const
 {
     if (pos >= ( uint )mData.length())
         pos = mData.length() - 1;
@@ -85,7 +85,7 @@ int YZLine::previousNonSpaceChar(uint pos) const
     return -1;
 }
 
-void YZLine::addAttribute ( int start, int length, int attribute )
+void YLine::addAttribute ( int start, int length, int attribute )
 {
     if ((mAttributesList.size() > 2) && (mAttributesList[mAttributesList.size() - 1] == attribute)
             && (mAttributesList[mAttributesList.size() - 3] + mAttributesList[mAttributesList.size() - 2]

@@ -19,96 +19,96 @@
 
 #include "yzisinfojumplistrecord.h"
 
-#define dbg()    yzDebug("YZYzisinfoJumpListRecord")
-#define err()    yzError("YZYzisinfoJumpListRecord")
+#define dbg()    yzDebug("YInfoJumpListRecord")
+#define err()    yzError("YInfoJumpListRecord")
 
 /**
- * YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord
+ * YInfoJumpListRecord::YInfoJumpListRecord
  */
 
-YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord()
+YInfoJumpListRecord::YInfoJumpListRecord()
 {}
 
 /**
- * YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord
+ * YInfoJumpListRecord::YInfoJumpListRecord
  */
 
-YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord( const QString & filename, const QPoint pos)
+YInfoJumpListRecord::YInfoJumpListRecord( const QString & filename, const QPoint pos)
 {
     mFilename = filename;
     setPosition( pos );
 }
 
 /**
- * YZYzisinfoJumpListRecord::~YZYzisinfoJumpListRecord
+ * YInfoJumpListRecord::~YInfoJumpListRecord
  */
 
-YZYzisinfoJumpListRecord::~YZYzisinfoJumpListRecord()
+YInfoJumpListRecord::~YInfoJumpListRecord()
 {}
 
 /**
- * YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord
+ * YInfoJumpListRecord::YInfoJumpListRecord
  */
 
-YZYzisinfoJumpListRecord::YZYzisinfoJumpListRecord( const YZYzisinfoJumpListRecord & copy )
+YInfoJumpListRecord::YInfoJumpListRecord( const YInfoJumpListRecord & copy )
 {
     mFilename = copy.filename();
-    mPosition = YZCursor( copy.position().x(), copy.position().y() );
+    mPosition = YCursor( copy.position().x(), copy.position().y() );
 }
 
 /**
- * YZYzisinfoJumpListRecord::operator=
+ * YInfoJumpListRecord::operator=
  */
 
-YZYzisinfoJumpListRecord & YZYzisinfoJumpListRecord::operator=( const YZYzisinfoJumpListRecord & copy )
+YInfoJumpListRecord & YInfoJumpListRecord::operator=( const YInfoJumpListRecord & copy )
 {
     mFilename = copy.filename();
-    mPosition = YZCursor( copy.position().x(), copy.position().y() );
+    mPosition = YCursor( copy.position().x(), copy.position().y() );
 
     return *this;
 }
 
 /**
- * YZYzisinfoJumpListRecord::filename
+ * YInfoJumpListRecord::filename
  */
 
-QString & YZYzisinfoJumpListRecord::filename()
+QString & YInfoJumpListRecord::filename()
 {
     return mFilename;
 }
 
 /**
- * YZYzisinfoJumpListRecord::position
+ * YInfoJumpListRecord::position
  */
 
-YZCursor YZYzisinfoJumpListRecord::position()
+YCursor YInfoJumpListRecord::position()
 {
     return mPosition;
 }
 
 /**
- * YZYzisinfoJumpListRecord::filename
+ * YInfoJumpListRecord::filename
  */
 
-const QString & YZYzisinfoJumpListRecord::filename() const
+const QString & YInfoJumpListRecord::filename() const
 {
     return mFilename;
 }
 
 /**
- * YZYzisinfoJumpListRecord::position
+ * YInfoJumpListRecord::position
  */
 
-const YZCursor YZYzisinfoJumpListRecord::position() const
+const YCursor YInfoJumpListRecord::position() const
 {
     return mPosition;
 }
 
 /**
- * YZYzisinfoJumpListRecord::previousSearchPosition
+ * YInfoJumpListRecord::previousSearchPosition
  */
 
-/*YZCursor * YZYzisinfoJumpListRecord::previousSearchPosition() {
+/*YCursor * YInfoJumpListRecord::previousSearchPosition() {
  
  --mIndex;
  
@@ -120,21 +120,21 @@ const YZCursor YZYzisinfoJumpListRecord::position() const
 }*/
 
 /**
- * YZYzisinfoJumpListRecord::setFilename
+ * YInfoJumpListRecord::setFilename
  */
 
-void YZYzisinfoJumpListRecord::setFilename( const QString & filename )
+void YInfoJumpListRecord::setFilename( const QString & filename )
 {
     mFilename = filename;
 }
 
 /**
- * YZYzisinfoJumpListRecord::setPosition
+ * YInfoJumpListRecord::setPosition
  */
 
-void YZYzisinfoJumpListRecord::setPosition( const QPoint pos )
+void YInfoJumpListRecord::setPosition( const QPoint pos )
 {
-    mPosition = YZCursor(pos);
+    mPosition = YCursor(pos);
 }
 
 /*

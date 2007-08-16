@@ -25,15 +25,15 @@
 /**
   * @short registers are used to store macro.
   * Macro are a recorded sequence of keystroke, that you can replay.
-  * This class is only used in YZSession.
+  * This class is only used in YSession.
   */
-class YZRegisters
+class YRegisters
 {
 public:
     /**
      * Default constructor
      */
-    YZRegisters();
+    YRegisters();
 
     /**
      * Fills the register @param r with the @param value

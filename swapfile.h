@@ -22,23 +22,23 @@
 
 #include "undo.h"
 
-class YZBuffer;
+class YBuffer;
 
 /**
  * Creates a swapfile on a buffer
  */
-class YZSwapFile
+class YSwapFile
 {
 public:
     /**
      * Default constructor
      */
-    YZSwapFile(YZBuffer *b);
+    YSwapFile(YBuffer *b);
 
     /**
      * Add an inputs event to history
      */
-    void addToSwap( YZBufferOperation::OperationType type, const QString& str, QPoint pos);
+    void addToSwap( YBufferOperation::OperationType type, const QString& str, QPoint pos);
 
     /**
      * Clear the history
@@ -82,19 +82,19 @@ protected:
     /**
      * Replay one event on the buffer during a recover
      */
-    void replay( YZBufferOperation::OperationType type, QPoint pos, const QString& str );
+    void replay( YBufferOperation::OperationType type, QPoint pos, const QString& str );
 
 private:
     struct swapEntry
     {
-        YZBufferOperation::OperationType type;
+        YBufferOperation::OperationType type;
         QPoint pos;
         QString str;
     }
     sE;
 
     QList<swapEntry> mHistory;
-    YZBuffer *mParent;
+    YBuffer *mParent;
     QString mFilename;
     bool mRecovering;
     bool mNotResetted;

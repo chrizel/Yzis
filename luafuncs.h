@@ -33,10 +33,10 @@ extern "C"
   *
   * The arguments described are for lua scripting.
   *
-  * See also \ref YZLuaRegexp
+  * See also \ref YLuaRegexp
   *
   */
-class YZLuaFuncs
+class YLuaFuncs
 {
 
 public:
@@ -316,7 +316,7 @@ public:
     /** \brief
      * Sends a string to debug output from lua.
         *
-        * See \ref YZDebugBackend for more information about debugging.
+        * See \ref YDebugBackend for more information about debugging.
         *
         * The debug is in the area "Lua.exec".
         *

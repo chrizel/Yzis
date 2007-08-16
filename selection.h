@@ -34,125 +34,125 @@
  * open and close correspond to (x,y)[ (open) or (x,y)] (close) then when defining
  * intervals, you can do   [(x1,y1), (x2,y2)[,  [(x1,y1), (x2,y2)], etc...  In
  * many methods (copy, paste, selections, rendering, etc...), the 'from' and 'to'
- * positions are sometimes included and sometimes excluded.  Using an YZBound make
+ * positions are sometimes included and sometimes excluded.  Using an YBound make
  * it explicit.
  
  * Another use is, by example, in visual mode : [(0,0), (0,1)[ will select line 0
  * entirely without have to calculate line length.
  */
-class YZIS_EXPORT YZBound
+class YZIS_EXPORT YBound
 {
 public:
-    YZBound( const YZBound& bound ) : mPos( bound.pos() )
+    YBound( const YBound& bound ) : mPos( bound.pos() )
     {
         mOpen = bound.opened();
     }
-    explicit YZBound( const YZCursor pos, bool open = false ) : mPos( pos )
+    explicit YBound( const YCursor pos, bool open = false ) : mPos( pos )
     {
         mOpen = open;
     }
-    YZBound()
+    YBound()
     {}
 
-    void setPos( const YZCursor pos )
+    void setPos( const YCursor pos )
     {
         mPos = pos;
     }
     void open();
     void close();
-    const YZCursor pos() const;
+    const YCursor pos() const;
     bool opened() const;
     bool closed() const;
 
 private:
-    YZCursor mPos;
+    YCursor mPos;
     bool mOpen;
 };
 
-bool operator==( const YZBound& left, const YZBound& right );
-bool operator>( const YZBound& left, const YZBound& right );
-bool operator<( const YZBound& left, const YZBound& right );
-bool operator>=( const YZBound& left, const YZBound& right );
-bool operator<=( const YZBound& left, const YZBound& right );
-bool operator>=( const YZBound& left, const YZCursor right );
-bool operator<=( const YZBound& left, const YZCursor right );
-bool operator>=( const YZCursor left, const YZBound& right );
-bool operator<=( const YZCursor left, const YZBound& right );
-const YZBound operator-( const YZBound& left, const YZCursor right );
+bool operator==( const YBound& left, const YBound& right );
+bool operator>( const YBound& left, const YBound& right );
+bool operator<( const YBound& left, const YBound& right );
+bool operator>=( const YBound& left, const YBound& right );
+bool operator<=( const YBound& left, const YBound& right );
+bool operator>=( const YBound& left, const YCursor right );
+bool operator<=( const YBound& left, const YCursor right );
+bool operator>=( const YCursor left, const YBound& right );
+bool operator<=( const YCursor left, const YBound& right );
+const YBound operator-( const YBound& left, const YCursor right );
 
 /**
- * An interval between two @ref YZBound "YZBounds"
+ * An interval between two @ref YBound "YBounds"
  *
- * It can also be constructed from @ref YZCursor "YZCursors".
+ * It can also be constructed from @ref YCursor "YCursors".
  */
-class YZIS_EXPORT YZInterval
+class YZIS_EXPORT YInterval
 {
 
-    friend YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i );
+    friend YDebugStream& operator<<( YDebugStream& out, const YInterval& i );
 
 public:
-    YZInterval( const YZBound& from, const YZBound& to ) : mFrom( from ), mTo( to )
+    YInterval( const YBound& from, const YBound& to ) : mFrom( from ), mTo( to )
     {}
-    YZInterval( const YZCursor from, const YZCursor to ) : mFrom( from ), mTo( to )
+    YInterval( const YCursor from, const YCursor to ) : mFrom( from ), mTo( to )
     {}
-    YZInterval( const YZBound& from, const YZCursor to ) : mFrom( from ), mTo( to )
+    YInterval( const YBound& from, const YCursor to ) : mFrom( from ), mTo( to )
     {}
-    YZInterval( const YZCursor from, const YZBound& to ) : mFrom( from ), mTo( to )
+    YInterval( const YCursor from, const YBound& to ) : mFrom( from ), mTo( to )
     {}
-    YZInterval( const QRect& r ) : mFrom( YZCursor(r.left(), r.top()) ), mTo( YZCursor(r.right(), r.bottom()) )
+    YInterval( const QRect& r ) : mFrom( YCursor(r.left(), r.top()) ), mTo( YCursor(r.right(), r.bottom()) )
     {}
-    YZInterval()
+    YInterval()
     {}
 
-    void setFrom( const YZBound& bound );
-    void setTo( const YZBound& bound );
-    const YZBound& from() const;
-    const YZBound& to() const;
+    void setFrom( const YBound& bound );
+    void setTo( const YBound& bound );
+    const YBound& from() const;
+    const YBound& to() const;
 
-    void setFromPos( const YZCursor pos );
-    void setToPos( const YZCursor pos );
-    const YZCursor fromPos() const;
-    const YZCursor toPos() const;
+    void setFromPos( const YCursor pos );
+    void setToPos( const YCursor pos );
+    const YCursor fromPos() const;
+    const YCursor toPos() const;
 
-    bool contains( const YZCursor pos ) const;
-    bool contains( const YZInterval& pos ) const;
+    bool contains( const YCursor pos ) const;
+    bool contains( const YInterval& pos ) const;
 
     QRect boundingRect() const;
 
 private:
-    YZBound mFrom;
-    YZBound mTo;
+    YBound mFrom;
+    YBound mTo;
 };
-YZIS_EXPORT const YZInterval operator-( const YZInterval& l, const YZCursor r );
+YZIS_EXPORT const YInterval operator-( const YInterval& l, const YCursor r );
 
-typedef QMap<unsigned int, YZInterval> YZSelectionMap;
+typedef QMap<unsigned int, YInterval> YSelectionMap;
 
 /**
  * Holds a selection
  */
-class YZIS_EXPORT YZSelection
+class YZIS_EXPORT YSelection
 {
 
-    friend YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s );
+    friend YZIS_EXPORT YDebugStream& operator<<( YDebugStream& out, const YSelection& s );
 
 public:
-    YZSelection();
-    YZSelection( const QString& name );
-    YZSelection( const YZInterval& i );
+    YSelection();
+    YSelection( const QString& name );
+    YSelection( const YInterval& i );
 
-    YZSelectionMap map() const;
-    void setMap( const YZSelectionMap& m );
+    YSelectionMap map() const;
+    void setMap( const YSelectionMap& m );
 
-    void addMap( const YZSelectionMap& m );
-    void addInterval( const YZInterval& i );
-    void delInterval( const YZInterval& i );
-    bool contains( const YZCursor pos ) const;
+    void addMap( const YSelectionMap& m );
+    void addInterval( const YInterval& i );
+    void delInterval( const YInterval& i );
+    bool contains( const YCursor pos ) const;
 
     bool isEmpty() const;
 
     void clear();
 
-    YZSelection clip( const YZInterval& bound ) const;
+    YSelection clip( const YInterval& bound ) const;
 
     QRect boundingRect() const;
 
@@ -160,58 +160,58 @@ public:
      * operators
      */
     /* shift the entier selection */
-    const YZSelection operator-( const YZCursor pos ) const;
+    const YSelection operator-( const YCursor pos ) const;
 
-    static YZSelection diff( const YZSelection& _m1, const YZSelection& _m2 );
+    static YSelection diff( const YSelection& _m1, const YSelection& _m2 );
 
 private:
-    void insertInterval( unsigned int pos, const YZInterval& interval );
+    void insertInterval( unsigned int pos, const YInterval& interval );
     void removeInterval( unsigned int pos, unsigned int len );
-    int locatePosition( const YZBound& pos, bool* isSelected ) const;
+    int locatePosition( const YBound& pos, bool* isSelected ) const;
 
     QString mName;
-    YZSelectionMap mMap;
+    YSelectionMap mMap;
 };
 
 /**
- * Holds two @ref YZSelection "YZSelections", that is, an interval
+ * Holds two @ref YSelection "YSelections", that is, an interval
  */
-class YZIS_EXPORT YZDoubleSelection
+class YZIS_EXPORT YDoubleSelection
 {
 
-    friend YZDebugStream& operator<<( YZDebugStream& out, const YZDoubleSelection& s );
+    friend YDebugStream& operator<<( YDebugStream& out, const YDoubleSelection& s );
 
 public:
-    YZDoubleSelection( const QString& name );
-    virtual ~YZDoubleSelection();
+    YDoubleSelection( const QString& name );
+    virtual ~YDoubleSelection();
 
-    YZSelectionMap screenMap() const;
-    YZSelectionMap bufferMap() const;
-    inline const YZSelection& screen() const
+    YSelectionMap screenMap() const;
+    YSelectionMap bufferMap() const;
+    inline const YSelection& screen() const
     {
         return *sSelection;
     }
-    inline const YZSelection& buffer() const
+    inline const YSelection& buffer() const
     {
         return *bSelection;
     }
 
-    void addInterval( const YZInterval& bi, const YZInterval& si );
-    void delInterval( const YZInterval& bi, const YZInterval& si );
+    void addInterval( const YInterval& bi, const YInterval& si );
+    void delInterval( const YInterval& bi, const YInterval& si );
 
-    bool contains( const YZCursor pos ) const;
+    bool contains( const YCursor pos ) const;
 
     bool isEmpty() const;
     void clear();
 private:
-    YZSelection* bSelection;
-    YZSelection* sSelection;
+    YSelection* bSelection;
+    YSelection* sSelection;
 };
 
 /**
- * Holds a @ref YZSelection and a @ref YZDoubleSelection
+ * Holds a @ref YSelection and a @ref YDoubleSelection
  */
-class YZIS_EXPORT YZSelectionPool
+class YZIS_EXPORT YSelectionPool
 {
 public:
     enum SelectionLayout {
@@ -220,19 +220,19 @@ public:
         Search = 0x2,
     };
 
-    YZSelectionPool();
-    virtual ~YZSelectionPool();
+    YSelectionPool();
+    virtual ~YSelectionPool();
 
-    bool isSelected( const YZCursor pos ) const;
+    bool isSelected( const YCursor pos ) const;
 
-    void setSearch( YZSelection* s );
+    void setSearch( YSelection* s );
 
-    YZSelection* search();
-    YZDoubleSelection* visual();
+    YSelection* search();
+    YDoubleSelection* visual();
 
 private:
-    YZSelection* mSearch;
-    YZDoubleSelection* mVisual;
+    YSelection* mSearch;
+    YDoubleSelection* mVisual;
 };
 
 #endif

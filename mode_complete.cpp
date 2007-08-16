@@ -31,34 +31,34 @@
 #include "internal_options.h"
 
 /**
- * YZModeCompletion
+ * YModeCompletion
  */
 
-#define dbg()    yzDebug("YZModeCompletion")
-#define err()    yzError("YZModeCompletion")
+#define dbg()    yzDebug("YModeCompletion")
+#define err()    yzError("YModeCompletion")
 
 using namespace yzis;
 
-YZModeCompletion::YZModeCompletion() : YZMode()
+YModeCompletion::YModeCompletion() : YMode()
 {
     mType = ModeCompletion;
     mString = _("{ Completion }");
     mEditMode = true;
     mMapMode = MapInsert;
 }
-YZModeCompletion::~YZModeCompletion()
+YModeCompletion::~YModeCompletion()
 {}
 
-void YZModeCompletion::leave( YZView* /*view*/ )
+void YModeCompletion::leave( YView* /*view*/ )
 {
     mPrefix = QString();
 }
 
-bool YZModeCompletion::initCompletion( YZView* view, bool forward )
+bool YModeCompletion::initCompletion( YView* view, bool forward )
 {
-    YZBuffer* buffer = view->myBuffer();
-    YZMotionArgs arg(view, 1);
-    YZCursor cur = view->getBufferCursor();
+    YBuffer* buffer = view->myBuffer();
+    YMotionArgs arg(view, 1);
+    YCursor cur = view->getBufferCursor();
     QString line = buffer->textline(cur.y());
 
     //we cant complete from col 0, neither if the line is empty, neither if the word does not end with a letter or number ;)
@@ -68,8 +68,8 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward )
         return false;
     }
 
-    mCompletionStart = YZSession::self()->getCommandPool()->moveWordBackward( arg );
-    YZCursor stop( cur.x() - 1, cur.y() );
+    mCompletionStart = YSession::self()->getCommandPool()->moveWordBackward( arg );
+    YCursor stop( cur.x() - 1, cur.y() );
     dbg() << "Start : " << mCompletionStart << ", End:" << stop << endl;
     QStringList list = buffer->getText(mCompletionStart, stop);
     dbg() << "Completing word : " << list[0] << endl;
@@ -90,7 +90,7 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward )
 
     dbg() << "COMPLETION: mPrefix: " << mPrefix << endl;
 
-    QStringList completeOption = YZSession::self()->getOptions()->readListOption("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i");
+    QStringList completeOption = YSession::self()->getOptions()->readListOption("complete", QStringList(".") << "w" << "b" << "u" << "t" << "i");
 
     for ( int i = 0; i < completeOption.size(); ++i ) {
         QString option = completeOption[ i ];
@@ -110,7 +110,7 @@ bool YZModeCompletion::initCompletion( YZView* view, bool forward )
     return true;
 }
 
-void YZModeCompletion::doComplete( YZView* view, bool forward )
+void YModeCompletion::doComplete( YView* view, bool forward )
 {
     // move iterator
     // first do bounds check.  Do wrap around.
@@ -127,7 +127,7 @@ void YZModeCompletion::doComplete( YZView* view, bool forward )
     // replace text
     QString proposal = mProposedCompletions[ mCurrentProposal ];
     YZAction *action = view->myBuffer()->action();
-    YZCursor currentCursor = view->getBufferCursor();
+    YCursor currentCursor = view->getBufferCursor();
     action->replaceText( view, mCompletionStart, currentCursor.x() - mCompletionStart.x(), proposal );
     view->gotoxy( mCompletionStart.x() + proposal.length(), currentCursor.y() );
 
@@ -141,7 +141,7 @@ void YZModeCompletion::doComplete( YZView* view, bool forward )
     view->guiDisplayInfo( msg );
 }
 
-CmdState YZModeCompletion::execCommand( YZView* view, const QString& _key )
+CmdState YModeCompletion::execCommand( YView* view, const QString& _key )
 {
     bool initOK = true;
 
@@ -185,7 +185,7 @@ CmdState YZModeCompletion::execCommand( YZView* view, const QString& _key )
     return CmdError;
 }
 
-void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &proposed, bool elimDups /*=true*/, QList<YZCursor> *cursors /*=NULL*/ )
+void YModeCompletion::completeFromBuffer( YBuffer *buffer, QStringList &proposed, bool elimDups /*=true*/, QList<YCursor> *cursors /*=NULL*/ )
 {
     // Guardian for empty buffers
     if ( buffer->isEmpty() ) {
@@ -194,13 +194,13 @@ void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &propos
 
     int matchedLength;
     bool found;
-    YZCursor matchCursor;
-    YZCursor nextCursor;
-    YZCursor endCursor;
+    YCursor matchCursor;
+    YCursor nextCursor;
+    YCursor endCursor;
     YZAction *action = buffer->action();
     const QString pattern = "\\b" + mPrefix + "\\w*";
-    const YZCursor bufbegin(0, 0);
-    const YZCursor bufend(0, buffer->lineCount() + 1);
+    const YCursor bufbegin(0, 0);
+    const YCursor bufend(0, buffer->lineCount() + 1);
 
     dbg() << "COMPLETION: pattern: " << pattern << endl;
 
@@ -214,7 +214,7 @@ void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &propos
     do {
         // search from the end of the prefix to the end of the buffer
         matchCursor = action->search(buffer, pattern, nextCursor, endCursor, &matchedLength, &found);
-        nextCursor = YZCursor( matchCursor.x() + matchedLength, matchCursor.y() );
+        nextCursor = YCursor( matchCursor.x() + matchedLength, matchCursor.y() );
 
         if ( found ) {
             QString possible = buffer->getWordAt( matchCursor );
@@ -235,12 +235,12 @@ void YZModeCompletion::completeFromBuffer( YZBuffer *buffer, QStringList &propos
     dbg() << "COMPLETION: Found " << proposed.size() << " matches" << endl;
 }
 
-void YZModeCompletion::completeFromOtherBuffers( YZBuffer *skip, QStringList &proposed )
+void YModeCompletion::completeFromOtherBuffers( YBuffer *skip, QStringList &proposed )
 {
     // for each buffer, call completeFromBuffer
-    YZBufferList buffers = YZSession::self()->buffers();
-    for ( YZBufferList::iterator itr = buffers.begin(); itr != buffers.end(); ++itr ) {
-        YZBuffer *cur = *itr;
+    YBufferList buffers = YSession::self()->buffers();
+    for ( YBufferList::iterator itr = buffers.begin(); itr != buffers.end(); ++itr ) {
+        YBuffer *cur = *itr;
 
         dbg() << "COMPLETION: Inspecting another buffer" << endl;
 
@@ -253,10 +253,10 @@ void YZModeCompletion::completeFromOtherBuffers( YZBuffer *skip, QStringList &pr
     }
 }
 
-void YZModeCompletion::completeFromIncludes( QStringList & /*proposed*/ )
+void YModeCompletion::completeFromIncludes( QStringList & /*proposed*/ )
 {}
 
-void YZModeCompletion::completeFromTags( QStringList &proposed )
+void YModeCompletion::completeFromTags( QStringList &proposed )
 {
     QStringList tags;
     tagStartsWith( mPrefix, tags );
@@ -268,18 +268,18 @@ void YZModeCompletion::completeFromTags( QStringList &proposed )
     }
 }
 
-void YZModeCompletion::completeFromDictionary( QStringList & /*proposed*/ )
+void YModeCompletion::completeFromDictionary( QStringList & /*proposed*/ )
 {}
 
-void YZModeCompletion::completeFromFileNames( QStringList & /*proposed*/ )
+void YModeCompletion::completeFromFileNames( QStringList & /*proposed*/ )
 {}
 
-void YZModeCompletion::completeFromCurrentBuffer( const YZCursor cursor, bool forward, QStringList &proposed )
+void YModeCompletion::completeFromCurrentBuffer( const YCursor cursor, bool forward, QStringList &proposed )
 {
-    YZBuffer *buffer = YZSession::self()->currentView()->myBuffer();
+    YBuffer *buffer = YSession::self()->currentView()->myBuffer();
 
     QStringList matches;
-    QList<YZCursor> cursorlist;
+    QList<YCursor> cursorlist;
 
     completeFromBuffer( buffer, matches, false, &cursorlist );
 
@@ -288,7 +288,7 @@ void YZModeCompletion::completeFromCurrentBuffer( const YZCursor cursor, bool fo
     //   we'll find it where we typed
     //   Therefore: cursor must appear exactly once in
     //   the list cursors!
-    YZASSERT_MSG( cursorlist.contains( cursor ) == 1, "Current cursor not found in list of matched cursors" );
+    YASSERT_MSG( cursorlist.contains( cursor ) == 1, "Current cursor not found in list of matched cursors" );
 
     // use the above fact to locate where in the cursors list
     // we should start scanning from

@@ -36,7 +36,7 @@
 #define dbg()    yzDebug("YZQtPrinter")
 #define err()    yzError("YZQtPrinter")
 
-YZQtPrinter::YZQtPrinter( YZView *view ) : QPrinter(QPrinter::PrinterResolution)
+YZQtPrinter::YZQtPrinter( YView *view ) : QPrinter(QPrinter::PrinterResolution)
 {
     mView = view;
 
@@ -87,7 +87,7 @@ void YZQtPrinter::doPrint( )
     }
 
 
-    YZOptionValue* ov_wrap = mView->getLocalOption( "wrap" );
+    YOptionValue* ov_wrap = mView->getLocalOption( "wrap" );
     bool oldWrap = ov_wrap->boolean();
     ov_wrap->setBoolean( true );
     mView->setVisibleArea( clipw - marginLeft, cliph, false );

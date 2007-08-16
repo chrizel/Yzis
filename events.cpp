@@ -24,18 +24,18 @@
 #include "kate4/katehighlight.h"
 #include "view.h"
 
-#define dbg()    yzDebug("YZEvents")
-#define err()    yzError("YZEvents")
+#define dbg()    yzDebug("YEvents")
+#define err()    yzError("YEvents")
 
-YZEvents::YZEvents()
+YEvents::YEvents()
 {}
 
-YZEvents::~YZEvents()
+YEvents::~YEvents()
 {
     mEvents.clear();
 }
 
-void YZEvents::connect(const QString& event, const QString& function)
+void YEvents::connect(const QString& event, const QString& function)
 {
     dbg() << "Events : connecting event " << event << " to " << function << endl;
     if ( mEvents.contains(event) ) {
@@ -50,7 +50,7 @@ void YZEvents::connect(const QString& event, const QString& function)
 }
 
 
-QStringList YZEvents::exec(const QString& event, YZView *view)
+QStringList YEvents::exec(const QString& event, YView *view)
 {
     /* XXX when view is NULL, what shall we do ? */
     dbg() << "Executing event " << event << endl;
@@ -95,7 +95,7 @@ QStringList YZEvents::exec(const QString& event, YZView *view)
                     QByteArray cur = curLine.toUtf8();
                     QByteArray prev = prevLine.toUtf8();
                     QByteArray next = nextLine.toUtf8();
-                    YZLuaEngine::self()->exe(action, "siiiiiisss", inputs, nbPrevTabs, nbPrevSpaces, nbCurTabs, nbCurSpaces, nbNextTabs, nbNextSpaces, cur.data(), prev.data(), next.data());
+                    YLuaEngine::self()->exe(action, "siiiiiisss", inputs, nbPrevTabs, nbPrevSpaces, nbCurTabs, nbCurSpaces, nbNextTabs, nbNextSpaces, cur.data(), prev.data(), next.data());
                 } else if ( QString::compare(event, "INDENT_ON_ENTER") == 0 ) {
                     QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
                     QString nextLine = view->myBuffer()->textline(view->getBufferCursor().y());
@@ -109,13 +109,13 @@ QStringList YZEvents::exec(const QString& event, YZView *view)
                     char *result;
                     QByteArray prev = prevLine.toUtf8();
                     QByteArray next = nextLine.toUtf8();
-                    YZLuaEngine::self()->exe(action, "iiiiss>s", nbNextTabs, nbNextSpaces, nbPrevTabs, nbPrevSpaces, prev.data(), next.data(), &result);
+                    YLuaEngine::self()->exe(action, "iiiiss>s", nbNextTabs, nbNextSpaces, nbPrevTabs, nbPrevSpaces, prev.data(), next.data(), &result);
                     dbg() << "Got INDENT_ON_ENTER response : (" << result << ")" << endl;
                     results << QString(result);
                 } else {
                     dbg() << "Executing plugin " << action << " with " << nbArgs << " arguments and " << nbResults << " results" << endl;
-                    YZLuaEngine::self()->execute(action, nbArgs, nbResults);
-                    results += YZLuaEngine::self()->getLastResult(1);
+                    YLuaEngine::self()->execute(action, nbArgs, nbResults);
+                    results += YLuaEngine::self()->getLastResult(1);
                 }
             }
         }

@@ -26,8 +26,8 @@
 #include "portability.h"
 #include "option.h"
 
-class YZBuffer;
-class YZView;
+class YBuffer;
+class YView;
 
 /**
  * Class to handle the internal options.
@@ -36,15 +36,15 @@ class YZView;
  * The key is composed of two strings, one is for the "group" of the option
  * the other is the actual key name
  */
-class YZInternalOptionPool
+class YInternalOptionPool
 {
 public:
     /**
      * Default constructor
      */
-    YZInternalOptionPool();
-    YZInternalOptionPool(const YZInternalOptionPool&);
-    virtual ~YZInternalOptionPool();
+    YInternalOptionPool();
+    YInternalOptionPool(const YInternalOptionPool&);
+    virtual ~YInternalOptionPool();
 
     /**
      * set an option value from a QString
@@ -52,8 +52,8 @@ public:
      * returns true if we succed to set the value
      *  => matched && returns false => option found, but the value given in the entry is bad.
      */
-    bool setOptionFromString( bool* matched, const QString& entry, yzis::OptScope user_scope = yzis::ScopeDefault, YZBuffer* b = NULL, YZView* v = NULL );
-    bool setOptionFromString( const QString& entry, yzis::OptScope user_scope = yzis::ScopeDefault, YZBuffer* b = NULL, YZView* v = NULL );
+    bool setOptionFromString( bool* matched, const QString& entry, yzis::OptScope user_scope = yzis::ScopeDefault, YBuffer* b = NULL, YView* v = NULL );
+    bool setOptionFromString( const QString& entry, yzis::OptScope user_scope = yzis::ScopeDefault, YBuffer* b = NULL, YView* v = NULL );
 
 
     /**
@@ -115,7 +115,7 @@ public:
     /**
      * return a color option
      */
-    YZColor readColorOption( const QString& key, const YZColor& def = YZColor() ) const;
+    YColor readColorOption( const QString& key, const YColor& def = YColor() ) const;
 
 
     /**
@@ -159,14 +159,14 @@ public:
     void setQStringListEntry( const QString& key, const QStringList& value );
 
     /**
-     * return a YZColor option
+     * return a YColor option
      */
-    YZColor readYZColorEntry( const QString& key, const YZColor& def ) const;
+    YColor readYColorEntry( const QString& key, const YColor& def ) const;
 
     /**
-     * Sets a YZColor option
+     * Sets a YColor option
      */
-    void setYZColorEntry( const QString& key, const YZColor& value );
+    void setYColorEntry( const QString& key, const YColor& value );
 
 
     /**
@@ -187,7 +187,7 @@ public:
     /**
      * Return a pointer on a specific option
      */
-    YZOptionValue* getOption( const QString& option );
+    YOptionValue* getOption( const QString& option );
 
     /**
      * Dynamically creates a new option for yzis
@@ -199,21 +199,21 @@ public:
      */
     void updateOptions(const QString& oldPath, const QString& newPath);
 
-    QList<YZOption*> options;
+    QList<YOption*> options;
 
 private:
     void init();
     void initConfFiles();
-    void applyOption( YZOption* option, yzis::OptContext ctx, yzis::OptScope scope, YZBuffer* b, YZView* v );
+    void applyOption( YOption* option, yzis::OptContext ctx, yzis::OptScope scope, YBuffer* b, YView* v );
 
-    bool fillOptionFromString( YZOption* opt, const QString& entry );
+    bool fillOptionFromString( YOption* opt, const QString& entry );
 
     /**
      * Clean memory
      */
     void cleanup();
 
-    QMap<QString, YZOptionValue*> mOptions;
+    QMap<QString, YOptionValue*> mOptions;
     QString currentGroup;
 };
 

@@ -55,7 +55,7 @@ bool YZMapping::applyMappings( QString& text, QMap<QString, QString>& mappings )
         if ( it.value().startsWith("<Script>") && match ) {
             char *result;
             QByteArray t = it.key().toUtf8();
-            YZLuaEngine::self()->exe( it.value().mid(8, it.value().length() - 10), "s>s", t.data(), &result);
+            YLuaEngine::self()->exe( it.value().mid(8, it.value().length() - 10), "s>s", t.data(), &result);
             text.replace(it.key(), result);
         } else if ( it.value().startsWith("<Noremap>") && match ) {
             text.replace(it.key(), it.value().right(it.value().length() - 9));
@@ -95,11 +95,11 @@ bool YZMapping::applyMappings( QString& text, int modes, bool *mapped )
 
 void YZMapping::registerModifier(const QString& map)
 {
-    YZSession::self()->registerModifier(map);
+    YSession::self()->registerModifier(map);
 }
 
 void YZMapping::unregisterModifier(const QString& map)
 {
-    YZSession::self()->unregisterModifier(map);
+    YSession::self()->unregisterModifier(map);
 }
 

@@ -19,17 +19,17 @@
 
 #include "option.h"
 
-#define dbg()    yzDebug("YZOptionValue")
-#define err()    yzError("YZOptionValue")
+#define dbg()    yzDebug("YOptionValue")
+#define err()    yzError("YOptionValue")
 
 using namespace yzis;
 
-YZOptionValue::YZOptionValue( YZOption* o )
+YOptionValue::YOptionValue( YOption* o )
 {
     m_parent = o;
     m_type = TypeInvalid;
 }
-YZOptionValue::YZOptionValue( const YZOptionValue& ov )
+YOptionValue::YOptionValue( const YOptionValue& ov )
 {
     m_parent = ov.parent();
     switch ( ov.type() ) {
@@ -55,18 +55,18 @@ YZOptionValue::YZOptionValue( const YZOptionValue& ov )
         break;
     }
 }
-YZOptionValue::~YZOptionValue()
+YOptionValue::~YOptionValue()
 {}
 
-YZOption* YZOptionValue::parent() const
+YOption* YOptionValue::parent() const
 {
     return m_parent;
 }
-OptType YZOptionValue::type() const
+OptType YOptionValue::type() const
 {
     return m_type;
 }
-QString YZOptionValue::toString() const
+QString YOptionValue::toString() const
 {
     QString ret;
     switch ( type() ) {
@@ -93,23 +93,23 @@ QString YZOptionValue::toString() const
     }
     return ret;
 }
-QString YZOptionValue::booleanToString( bool value )
+QString YOptionValue::booleanToString( bool value )
 {
     return value ? "true" : "false";
 }
-QString YZOptionValue::stringToString( const QString& value )
+QString YOptionValue::stringToString( const QString& value )
 {
     return value;
 }
-QString YZOptionValue::integerToString( int value )
+QString YOptionValue::integerToString( int value )
 {
     return QString::number( value );
 }
-QString YZOptionValue::listToString( const QStringList& value )
+QString YOptionValue::listToString( const QStringList& value )
 {
     return value.join( "," );
 }
-QString YZOptionValue::mapToString( const MapOption& value )
+QString YOptionValue::mapToString( const MapOption& value )
 {
     QString ret = "";
     QList<QString> keys = value.keys();
@@ -119,12 +119,12 @@ QString YZOptionValue::mapToString( const MapOption& value )
     }
     return ret;
 }
-QString YZOptionValue::colorToString( const YZColor& value )
+QString YOptionValue::colorToString( const YColor& value )
 {
     return value.name();
 }
 
-bool YZOptionValue::booleanFromString( bool* success, const QString& value )
+bool YOptionValue::booleanFromString( bool* success, const QString& value )
 {
     bool ret = false;
     *success = false;
@@ -137,21 +137,21 @@ bool YZOptionValue::booleanFromString( bool* success, const QString& value )
     }
     return ret;
 }
-QString YZOptionValue::stringFromString( bool* success, const QString& value )
+QString YOptionValue::stringFromString( bool* success, const QString& value )
 {
     *success = true;
     return value;
 }
-int YZOptionValue::integerFromString( bool* success, const QString& value )
+int YOptionValue::integerFromString( bool* success, const QString& value )
 {
     return value.toInt( success );
 }
-QStringList YZOptionValue::listFromString( bool* success, const QString& value )
+QStringList YOptionValue::listFromString( bool* success, const QString& value )
 {
     *success = true;
     return value.split( "," );
 }
-MapOption YZOptionValue::mapFromString( bool* success, const QString& value )
+MapOption YOptionValue::mapFromString( bool* success, const QString& value )
 {
     *success = true;
     MapOption ret;
@@ -166,106 +166,106 @@ MapOption YZOptionValue::mapFromString( bool* success, const QString& value )
     }
     return ret;
 }
-YZColor YZOptionValue::colorFromString( bool* success, const QString& value )
+YColor YOptionValue::colorFromString( bool* success, const QString& value )
 {
-    YZColor ret( value );
+    YColor ret( value );
     *success = ret.isValid();
     return ret;
 }
 
-void YZOptionValue::setBoolean( bool value )
+void YOptionValue::setBoolean( bool value )
 {
     v_bool = value;
     m_type = yzis::TypeBool;
 }
-void YZOptionValue::setString( const QString& value )
+void YOptionValue::setString( const QString& value )
 {
     v_str = value;
     m_type = TypeString;
 }
-void YZOptionValue::setInteger( int value )
+void YOptionValue::setInteger( int value )
 {
     v_int = value;
     m_type = yzis::TypeInt;
 }
-void YZOptionValue::setList( const QStringList& value )
+void YOptionValue::setList( const QStringList& value )
 {
     v_list = value;
     m_type = TypeList;
 }
-void YZOptionValue::setMap( const MapOption& value )
+void YOptionValue::setMap( const MapOption& value )
 {
     v_map = value;
     m_type = TypeMap;
 }
-void YZOptionValue::setColor( const YZColor& value )
+void YOptionValue::setColor( const YColor& value )
 {
     v_color = value;
     m_type = TypeColor;
 }
 
-bool YZOptionValue::boolean() const
+bool YOptionValue::boolean() const
 {
     return v_bool;
 }
-const QString& YZOptionValue::string() const
+const QString& YOptionValue::string() const
 {
     return v_str;
 }
-int YZOptionValue::integer() const
+int YOptionValue::integer() const
 {
     return v_int;
 }
-const QStringList& YZOptionValue::list() const
+const QStringList& YOptionValue::list() const
 {
     return v_list;
 }
-const MapOption& YZOptionValue::map() const
+const MapOption& YOptionValue::map() const
 {
     return v_map;
 }
-const YZColor& YZOptionValue::color() const
+const YColor& YOptionValue::color() const
 {
     return v_color;
 }
 
 
-YZOption::YZOption( const QString& name, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases )
+YOption::YOption( const QString& name, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases )
 {
     m_name = name;
     m_ctx = ctx;
     m_scope = scope;
     m_apply = m;
-    v_default = new YZOptionValue( this );
+    v_default = new YOptionValue( this );
     m_aliases << name;
     m_aliases += aliases;
 }
-YZOption::~YZOption()
+YOption::~YOption()
 {
     if ( v_default )
         delete v_default;
 }
-const QString& YZOption::name() const
+const QString& YOption::name() const
 {
     return m_name;
 }
-OptContext YZOption::context() const
+OptContext YOption::context() const
 {
     return m_ctx;
 }
-OptScope YZOption::scope() const
+OptScope YOption::scope() const
 {
     return m_scope;
 }
-YZOptionValue* YZOption::defaultValue()
+YOptionValue* YOption::defaultValue()
 {
     return v_default;
 }
-void YZOption::apply( YZBuffer* b, YZView* v )
+void YOption::apply( YBuffer* b, YView* v )
 {
     m_apply( b, v );
 }
-bool YZOption::match( const QString& entry )
+bool YOption::match( const QString& entry )
 {
     for ( int i = 0; i < m_aliases.size(); i++ ) {
         if ( entry.startsWith( m_aliases[ i ] ) && !entry.mid( m_aliases[ i ].length() )[0].isLetter() )
@@ -273,7 +273,7 @@ bool YZOption::match( const QString& entry )
     }
     return false;
 }
-QString YZOption::readValue( const QString& entry, OptAction* action )
+QString YOption::readValue( const QString& entry, OptAction* action )
 {
     *action = OptInvalid;
     QString value = entry;
@@ -302,18 +302,18 @@ QString YZOption::readValue( const QString& entry, OptAction* action )
     return value;
 }
 
-YZOptionBoolean::YZOptionBoolean( const QString& name, bool v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases )
-        : YZOption( name, ctx, scope, m, aliases )
+YOptionBoolean::YOptionBoolean( const QString& name, bool v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases )
+        : YOption( name, ctx, scope, m, aliases )
 {
     v_default->setBoolean( v );
     m_allValues << "true" << "false" << "on" << "off" << "yes" << "no";
 }
-YZOptionBoolean::~YZOptionBoolean()
+YOptionBoolean::~YOptionBoolean()
 {}
 
-bool YZOptionBoolean::match( const QString& entry )
+bool YOptionBoolean::match( const QString& entry )
 {
-    bool ret = YZOption::match( entry );
+    bool ret = YOption::match( entry );
     if ( !ret ) {
         for ( int i = 0; !ret && i < m_aliases.size(); i++ ) {
             if ( entry == m_aliases[i] || entry == "no" + m_aliases[i] \
@@ -324,7 +324,7 @@ bool YZOptionBoolean::match( const QString& entry )
     return ret;
 }
 
-bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value )
+bool YOptionBoolean::setValue( const QString& entry, YOptionValue* value )
 {
     bool ret = false;
     bool v = value->boolean();
@@ -348,24 +348,24 @@ bool YZOptionBoolean::setValue( const QString& entry, YZOptionValue* value )
         ret = true;
         v = v_default->boolean();
     } else if ( action == OptSet ) {
-        v = YZOptionValue::booleanFromString( &ret, v_s );
+        v = YOptionValue::booleanFromString( &ret, v_s );
     }
     if ( ret )
         value->setBoolean( v );
     return ret;
 }
 
-YZOptionInteger::YZOptionInteger( const QString& name, int v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases, int min, int max )
-        : YZOption( name, ctx, scope, m, aliases )
+YOptionInteger::YOptionInteger( const QString& name, int v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases, int min, int max )
+        : YOption( name, ctx, scope, m, aliases )
 {
     v_min = min;
     v_max = max;
     v_default->setInteger( v );
 }
-YZOptionInteger::~YZOptionInteger()
+YOptionInteger::~YOptionInteger()
 {}
 
-bool YZOptionInteger::setValue( const QString& entry, YZOptionValue* value )
+bool YOptionInteger::setValue( const QString& entry, YOptionValue* value )
 {
     bool ret = false;
     int v = value->integer();
@@ -374,7 +374,7 @@ bool YZOptionInteger::setValue( const QString& entry, YZOptionValue* value )
     QString v_s = readValue( entry, &action );
     ret = action != OptInvalid;
     if ( action != OptReset )
-        v = YZOptionValue::integerFromString( &ret, v_s );
+        v = YOptionValue::integerFromString( &ret, v_s );
     if ( ret ) {
         if ( action == OptReset ) {
             v = v_default->integer();
@@ -395,16 +395,16 @@ bool YZOptionInteger::setValue( const QString& entry, YZOptionValue* value )
 }
 
 
-YZOptionString::YZOptionString( const QString& name, const QString& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases, const QStringList& values )
-        : YZOption( name, ctx, scope, m, aliases )
+YOptionString::YOptionString( const QString& name, const QString& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases, const QStringList& values )
+        : YOption( name, ctx, scope, m, aliases )
 {
     m_allValues = values;
     v_default->setString( v );
 }
-YZOptionString::~YZOptionString()
+YOptionString::~YOptionString()
 {}
 
-bool YZOptionString::setValue( const QString& entry, YZOptionValue* value )
+bool YOptionString::setValue( const QString& entry, YOptionValue* value )
 {
     bool ret = false;
     OptAction action;
@@ -433,16 +433,16 @@ bool YZOptionString::setValue( const QString& entry, YZOptionValue* value )
 }
 
 
-YZOptionList::YZOptionList( const QString& name, const QStringList& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases, const QStringList& values )
-        : YZOption( name, ctx, scope, m, aliases )
+YOptionList::YOptionList( const QString& name, const QStringList& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases, const QStringList& values )
+        : YOption( name, ctx, scope, m, aliases )
 {
     m_allValues = values;
     v_default->setList( v );
 }
-YZOptionList::~YZOptionList()
+YOptionList::~YOptionList()
 {}
 
-bool YZOptionList::setValue( const QString& entry, YZOptionValue* value )
+bool YOptionList::setValue( const QString& entry, YOptionValue* value )
 {
     bool ret = false;
     QStringList v = value->list();
@@ -451,7 +451,7 @@ bool YZOptionList::setValue( const QString& entry, YZOptionValue* value )
     QString v_s = readValue( entry, &action );
     ret = (action != OptInvalid);
     if ( action != OptReset )
-        v = YZOptionValue::listFromString( &ret, v_s );
+        v = YOptionValue::listFromString( &ret, v_s );
     if ( ret ) {
         if ( action == OptReset ) {
             v = v_default->list();
@@ -478,17 +478,17 @@ bool YZOptionList::setValue( const QString& entry, YZOptionValue* value )
     return ret;
 }
 
-YZOptionMap::YZOptionMap( const QString& name, const MapOption& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases, QStringList keys, QStringList values )
-        : YZOption( name, ctx, scope, m, aliases )
+YOptionMap::YOptionMap( const QString& name, const MapOption& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases, QStringList keys, QStringList values )
+        : YOption( name, ctx, scope, m, aliases )
 {
     m_allKeys = keys;
     m_allValues = values;
     v_default->setMap( v );
 }
-YZOptionMap::~YZOptionMap()
+YOptionMap::~YOptionMap()
 {}
 
-bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value )
+bool YOptionMap::setValue( const QString& entry, YOptionValue* value )
 {
     bool ret = false;
     MapOption v = value->map();
@@ -497,7 +497,7 @@ bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value )
     QString v_s = readValue( entry, &action );
     ret = (action != OptInvalid);
     if ( action != OptReset )
-        v = YZOptionValue::mapFromString( &ret, v_s );
+        v = YOptionValue::mapFromString( &ret, v_s );
     if ( ret ) {
         if ( action == OptReset ) {
             v = v_default->map();
@@ -536,21 +536,21 @@ bool YZOptionMap::setValue( const QString& entry, YZOptionValue* value )
     return ret;
 }
 
-YZOptionColor::YZOptionColor( const QString& name, const YZColor& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases )
-        : YZOption( name, ctx, scope, m, aliases )
+YOptionColor::YOptionColor( const QString& name, const YColor& v, OptContext ctx, OptScope scope, ApplyOptionMethod m, const QStringList& aliases )
+        : YOption( name, ctx, scope, m, aliases )
 {
     v_default->setColor( v );
 }
-YZOptionColor::~YZOptionColor()
+YOptionColor::~YOptionColor()
 {}
 
-bool YZOptionColor::setValue( const QString& entry, YZOptionValue* value )
+bool YOptionColor::setValue( const QString& entry, YOptionValue* value )
 {
     bool ret = false;
-    YZColor v = value->color();
+    YColor v = value->color();
     int idx = entry.indexOf('=');
     if ( idx >= 0 ) {
-        v = YZOptionValue::colorFromString( &ret, entry.mid( idx + 1 ) );
+        v = YOptionValue::colorFromString( &ret, entry.mid( idx + 1 ) );
     }
     if ( ret )
         value->setColor( v );

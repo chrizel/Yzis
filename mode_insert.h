@@ -23,51 +23,51 @@
 #include "mode.h"
 #include "yzismacros.h"
 
-class YZMode;
-class YZView;
+class YMode;
+class YView;
 
 /**
  * Insert mode
  *
  * The mode that text is inserted in.
  */
-class YZIS_EXPORT YZModeInsert : public YZMode
+class YZIS_EXPORT YModeInsert : public YMode
 {
 public:
-    YZModeInsert();
-    virtual ~YZModeInsert()
+    YModeInsert();
+    virtual ~YModeInsert()
     {}
 
-    virtual void leave( YZView* mView );
+    virtual void leave( YView* mView );
     virtual void initModifierKeys();
-    virtual CmdState execCommand( YZView* mView, const QString& key );
+    virtual CmdState execCommand( YView* mView, const QString& key );
 
-    virtual CmdState commandDefault( YZView* mView, const QString& key );
-    virtual void commandHome( YZView* mView, const QString& key );
-    virtual void commandEnd( YZView* mView, const QString& key );
-    virtual void commandEscape( YZView* mView, const QString& key );
-    virtual void commandInsert( YZView* mView, const QString& key );
-    virtual void commandEx( YZView* mView, const QString& key );
-    virtual void commandVisual( YZView* mView, const QString& key );
-    virtual void commandInsertFromBelow( YZView* mView, const QString& key );
-    virtual void commandInsertFromAbove( YZView* mView, const QString& key );
-    virtual void commandCompletion( YZView* mView, const QString& key );
-    virtual void commandCompletionPrevious( YZView* mView, const QString& key );
-    virtual void commandCompletionNext( YZView* mView, const QString& key );
-    virtual void commandDown( YZView* mView, const QString& key );
-    virtual void commandUp( YZView* mView, const QString& key );
-    virtual void commandLeft( YZView* mView, const QString& key );
-    virtual void commandRight( YZView* mView, const QString& key );
-    virtual void commandPageUp( YZView* mView, const QString& key );
-    virtual void commandPageDown( YZView* mView, const QString& key );
-    virtual void commandBackspace( YZView* mView, const QString& key );
-    virtual void commandDeleteWordBefore( YZView* mView, const QString& key );
-    virtual void commandDel( YZView* mView, const QString& key );
-    virtual void commandEnter( YZView* mView, const QString& key );
+    virtual CmdState commandDefault( YView* mView, const QString& key );
+    virtual void commandHome( YView* mView, const QString& key );
+    virtual void commandEnd( YView* mView, const QString& key );
+    virtual void commandEscape( YView* mView, const QString& key );
+    virtual void commandInsert( YView* mView, const QString& key );
+    virtual void commandEx( YView* mView, const QString& key );
+    virtual void commandVisual( YView* mView, const QString& key );
+    virtual void commandInsertFromBelow( YView* mView, const QString& key );
+    virtual void commandInsertFromAbove( YView* mView, const QString& key );
+    virtual void commandCompletion( YView* mView, const QString& key );
+    virtual void commandCompletionPrevious( YView* mView, const QString& key );
+    virtual void commandCompletionNext( YView* mView, const QString& key );
+    virtual void commandDown( YView* mView, const QString& key );
+    virtual void commandUp( YView* mView, const QString& key );
+    virtual void commandLeft( YView* mView, const QString& key );
+    virtual void commandRight( YView* mView, const QString& key );
+    virtual void commandPageUp( YView* mView, const QString& key );
+    virtual void commandPageDown( YView* mView, const QString& key );
+    virtual void commandBackspace( YView* mView, const QString& key );
+    virtual void commandDeleteWordBefore( YView* mView, const QString& key );
+    virtual void commandDel( YView* mView, const QString& key );
+    virtual void commandEnter( YView* mView, const QString& key );
 
-    virtual void imBegin( YZView* mView );
-    virtual void imCompose( YZView* mView, const QString& entry );
-    virtual void imEnd( YZView* mView, const QString& entry );
+    virtual void imBegin( YView* mView );
+    virtual void imCompose( YView* mView, const QString& entry );
+    virtual void imEnd( YView* mView, const QString& entry );
 
 protected :
     QString m_imPreedit;
@@ -76,16 +76,16 @@ protected :
 /**
  * Replace mode
  */
-class YZIS_EXPORT YZModeReplace : public YZModeInsert
+class YZIS_EXPORT YModeReplace : public YModeInsert
 {
 public :
-    YZModeReplace();
-    virtual ~YZModeReplace()
+    YModeReplace();
+    virtual ~YModeReplace()
     {}
 
-    virtual CmdState commandDefault( YZView* mView, const QString& key );
-    virtual void commandInsert( YZView* mView, const QString& key );
-    virtual void commandBackspace( YZView* mView, const QString& key );
+    virtual CmdState commandDefault( YView* mView, const QString& key );
+    virtual void commandInsert( YView* mView, const QString& key );
+    virtual void commandBackspace( YView* mView, const QString& key );
 };
 
 #endif

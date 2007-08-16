@@ -314,6 +314,17 @@ TestMovements = {} --class
 	    set("cindent&")
 	end
 
+	function TestMovements:testColumnAfterUndo()
+		clearBuffer()
+		insertline(1, "LINE1")
+		insertline(2, "LINE2")
+		sendkeys("dG")
+		sendkeys("u")
+	    assertPos( 1, 1 )
+		sendkeys("j")
+	    assertPos( 2, 1 )
+	end
+
 	function TestMovements:testStickyColumn()
 		clearBuffer()
 		insertline(1, "line1 line1 line1 line1 line1")

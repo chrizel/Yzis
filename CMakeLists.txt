@@ -151,10 +151,11 @@ endif (ENABLE_SAFE_MODE)
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config.h )
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/yzismacros.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h )
-macro_additional_clean_files(
-	${CMAKE_CURRENT_BINARY_DIR}/config.h
-	${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h
-)
+
+# macro_additional_clean_files(
+#	${CMAKE_CURRENT_BINARY_DIR}/config.h
+#	${CMAKE_CURRENT_BINARY_DIR}/yzismacros.h
+#)
 
 
 ####################### subdirectories to compile

@@ -19,7 +19,7 @@
 
 #include <QDialog>
 
-#include "ui_configuredialog.h"
+#include "ui_qyconfiguredialog.h"
 
 class QYConfigureDialog : public QDialog, private Ui::ConfigureDialog
 {

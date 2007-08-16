@@ -25,17 +25,17 @@
 
 #include <QWidget>
 
-class KYZisView;
+class KYView;
 class YZDrawCell;
 class YZSelection;
 class YZCursor;
 
-class KYZisEditor : public QWidget
+class KYEditor : public QWidget
 {
     Q_OBJECT
 public:
-    KYZisEditor(KYZisView* parent = 0);
-    ~KYZisEditor();
+    KYEditor(KYView* parent = 0);
+    ~KYEditor();
 
     //erase all text, and set new text
     void setText (const QString& );
@@ -47,7 +47,7 @@ public:
     void scroll(int x, int y);
 
 
-    KYZisCursor::shape cursorShape();
+    KYCursor::shape cursorShape();
     void updateCursor();
     // update text area
     void updateArea( );
@@ -114,12 +114,12 @@ protected:
 
 private :
 
-    KYZisCursor* mCursor;
+    KYCursor* mCursor;
     QFontMetrics *standard;
     QFontMetrics *standardBold;
     QFontMetrics *standardBoldItalic;
 
-    KYZisView* m_parent;
+    KYView* m_parent;
 };
 
 #endif

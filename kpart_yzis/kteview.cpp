@@ -35,7 +35,7 @@
 KTEView::KTEView( KTEDocument* doc, QWidget* parent )
         : KTextEditor::View(parent), m_doc(doc), m_popup(0)
 {
-    m_view = static_cast<KYZisView*>(KYZisSession::self()->createView(doc->buffer()));
+    m_view = static_cast<KYView*>(KYSession::self()->createView(doc->buffer()));
     m_view->setParent( this );
 
     QGridLayout* g = new QGridLayout( this );

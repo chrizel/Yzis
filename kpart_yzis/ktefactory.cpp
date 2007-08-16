@@ -26,8 +26,8 @@
 KTEFactory::KTEFactory(QObject* parent)
         : KTextEditor::Factory::Factory(parent)
 {
-    KYZisSession::initDebug(0, 0);
-    KYZisSession::createInstance();
+    KYSession::initDebug(0, 0);
+    KYSession::createInstance();
 }
 
 KTextEditor::Editor* KTEFactory::editor()

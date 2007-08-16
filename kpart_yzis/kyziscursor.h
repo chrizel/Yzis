@@ -24,9 +24,9 @@
 #include <QPixmap>
 #include <QWidget>
 
-class KYZisEditor;
+class KYEditor;
 
-class KYZisCursor : public QWidget
+class KYCursor : public QWidget
 {
     Q_OBJECT
 public :
@@ -37,8 +37,8 @@ public :
         RECT,
     };
 
-    KYZisCursor( KYZisEditor* parent, shape type );
-    virtual ~KYZisCursor();
+    KYCursor( KYEditor* parent, shape type );
+    virtual ~KYCursor();
 
     void setCursorType( shape type );
     shape type() const;

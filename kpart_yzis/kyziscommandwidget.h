@@ -23,18 +23,18 @@
 
 #include <klineedit.h>
 
-class KYZisView;
+class KYView;
 
 /**
  * KYzis command line
  */
-class KYZisCommand : public KLineEdit
+class KYCommand : public KLineEdit
 {
     Q_OBJECT
 
 public :
-    KYZisCommand( KYZisView* view );
-    virtual ~KYZisCommand();
+    KYCommand( KYView* view );
+    virtual ~KYCommand();
 
 protected:
     void keyPressEvent( QKeyEvent* );
@@ -42,7 +42,7 @@ protected:
     virtual void focusOutEvent( QFocusEvent* );
 
 private :
-    KYZisView* m_view;
+    KYView* m_view;
 };
 
 #endif

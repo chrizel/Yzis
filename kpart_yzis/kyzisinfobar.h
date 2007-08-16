@@ -25,12 +25,12 @@
 class QLabel;
 class QString;
 
-class KYZisInfoBar : public QWidget
+class KYInfoBar : public QWidget
 {
     Q_OBJECT
 public:
-    KYZisInfoBar( QWidget* );
-    ~KYZisInfoBar();
+    KYInfoBar( QWidget* );
+    ~KYInfoBar();
 
     void setMode( const QString& );
     void setFileName( const QString& );

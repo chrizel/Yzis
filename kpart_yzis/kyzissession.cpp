@@ -29,68 +29,68 @@
 #include <libyzis/buffer.h>
 
 
-KYZisSession::KYZisSession()
+KYSession::KYSession()
 {}
 
-KYZisSession::~KYZisSession()
+KYSession::~KYSession()
 {
 }
 
-KYZisSession* KYZisSession::me = NULL;
+KYSession* KYSession::me = NULL;
 
-void KYZisSession::createInstance()
+void KYSession::createInstance()
 {
     if (!me) {
-        me = new KYZisSession();
+        me = new KYSession();
         setInstance(me);
     }
 }
 
-YZView* KYZisSession::guiCreateView(YZBuffer* buffer)
+YZView* KYSession::guiCreateView(YZBuffer* buffer)
 {
     yzDebug() << "doCreateView( " << buffer->toString() << ")" << endl;
-    KYZisView* view = new KYZisView(buffer, 0);
-    YZASSERT_MSG(view, "KYZisSession::createView : failed creating a new KYZisView");
+    KYView* view = new KYView(buffer, 0);
+    YZASSERT_MSG(view, "KYSession::createView : failed creating a new KYView");
     return view;
 }
 
-YZBuffer* KYZisSession::guiCreateBuffer()
+YZBuffer* KYSession::guiCreateBuffer()
 {
     return new YZBuffer();
 }
 
-void KYZisSession::guiDeleteBuffer( YZBuffer* b )
+void KYSession::guiDeleteBuffer( YZBuffer* b )
 {
     delete b;
 }
 
-void KYZisSession::guiSplitHorizontally(YZView*)
+void KYSession::guiSplitHorizontally(YZView*)
 {
 }
 
-bool KYZisSession::guiQuit( int )
+bool KYSession::guiQuit( int )
 {
     return true;
 }
 
-void KYZisSession::guiPopupMessage(const QString& message)
+void KYSession::guiPopupMessage(const QString& message)
 {
-    KYZisView* v = static_cast< KYZisView* >( currentView() );
+    KYView* v = static_cast< KYView* >( currentView() );
     KMessageBox::information( v, message );
 }
 
-bool KYZisSession::guiPromptYesNo(const QString& title, const QString& message)
+bool KYSession::guiPromptYesNo(const QString& title, const QString& message)
 {
-    int v = KMessageBox::questionYesNo( static_cast< KYZisView* >( currentView() ), message, title );
+    int v = KMessageBox::questionYesNo( static_cast< KYView* >( currentView() ), message, title );
     if ( v == KMessageBox::Yes )
         return true;
     else
         return false;
 }
 
-int KYZisSession::guiPromptYesNoCancel(const QString& title, const QString& message)
+int KYSession::guiPromptYesNoCancel(const QString& title, const QString& message)
 {
-    int v = KMessageBox::questionYesNoCancel( static_cast< KYZisView* >( currentView() ), message, title );
+    int v = KMessageBox::questionYesNoCancel( static_cast< KYView* >( currentView() ), message, title );
     if ( v == KMessageBox::Yes )
         return 0;
     else if ( v == KMessageBox::No )
@@ -99,31 +99,31 @@ int KYZisSession::guiPromptYesNoCancel(const QString& title, const QString& mess
     return 2;
 }
 
-void KYZisSession::guiSetFocusCommandLine()
+void KYSession::guiSetFocusCommandLine()
 {
-    KYZisView *v = static_cast<KYZisView*>( currentView() );
+    KYView *v = static_cast<KYView*>( currentView() );
     v->setFocusCommandLine();
 }
 
-void KYZisSession::guiSetFocusMainWindow()
+void KYSession::guiSetFocusMainWindow()
 {
-    KYZisView *v = static_cast<KYZisView*>( currentView() );
+    KYView *v = static_cast<KYView*>( currentView() );
     v->setFocusMainWindow();
 }
 
-void KYZisSession::guiSetClipboardText(const QString&, Clipboard::Mode)
+void KYSession::guiSetClipboardText(const QString&, Clipboard::Mode)
 {
 }
 
-void KYZisSession::guiDeleteView(YZView* view)
+void KYSession::guiDeleteView(YZView* view)
 {
-    KYZisView* v = static_cast< KYZisView* >( view );
+    KYView* v = static_cast< KYView* >( view );
     v->close();
 }
 
-void KYZisSession::guiChangeCurrentView( YZView* view)
+void KYSession::guiChangeCurrentView( YZView* view)
 {
-    KYZisView* kyzisview = static_cast< KYZisView* >( view );
+    KYView* kyzisview = static_cast< KYView* >( view );
     kyzisview->activateWindow();
     kyzisview->setFocus();
 }

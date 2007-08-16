@@ -28,20 +28,20 @@
 #include <QWidget>
 
 
-class KYZisEditor;
-class KYZisCommand;
-class KYZisInfoBar;
+class KYEditor;
+class KYCommand;
+class KYInfoBar;
 class QSignalMapper;
 class QPainter;
 class KActionCollection;
 class QScrollBar;
 
-class KYZisView : public QWidget, public YZView
+class KYView : public QWidget, public YZView
 {
     Q_OBJECT
 public:
-    KYZisView(YZBuffer*, QWidget*);
-    virtual ~KYZisView();
+    KYView(YZBuffer*, QWidget*);
+    virtual ~KYView();
 
     virtual void guiScroll(int, int);
     virtual QString guiGetCommandLineText() const;
@@ -88,8 +88,8 @@ protected:
 private:
     QString keysToShortcut( const QString& keys );
 
-    KYZisEditor* m_editor;
-    KYZisCommand* m_command;
+    KYEditor* m_editor;
+    KYCommand* m_command;
 
     void initKeys();
 
@@ -99,7 +99,7 @@ private:
     QSignalMapper* signalMapper;
     QPainter* m_painter;
     QScrollBar* mVScroll;
-    KYZisInfoBar* m_infoBar;
+    KYInfoBar* m_infoBar;
 };
 
 #endif

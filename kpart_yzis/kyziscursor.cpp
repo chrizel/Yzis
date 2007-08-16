@@ -27,21 +27,21 @@
 
 #include <QPainter>
 
-KYZisCursor::KYZisCursor( KYZisEditor* parent, shape type )
+KYCursor::KYCursor( KYEditor* parent, shape type )
         : QWidget( parent )
 {
     move( 0, 0 );
     setCursorType( type );
 }
 
-KYZisCursor::~KYZisCursor()
+KYCursor::~KYCursor()
 {}
 
-KYZisCursor::shape KYZisCursor::type() const
+KYCursor::shape KYCursor::type() const
 {
     return mCursorType;
 }
-void KYZisCursor::setCursorType( shape type )
+void KYCursor::setCursorType( shape type )
 {
     if ( type == mCursorType )
         return ;
@@ -53,12 +53,12 @@ void KYZisCursor::setCursorType( shape type )
     resize( w, h );
 }
 
-void KYZisCursor::paintEvent( QPaintEvent* )
+void KYCursor::paintEvent( QPaintEvent* )
 {
     QPainter p( this );
 
 #define GET_cell \
-    KYZisView* yzview = static_cast<KYZisView*>( parentWidget()->parentWidget() ); \
+    KYView* yzview = static_cast<KYView*>( parentWidget()->parentWidget() ); \
     YZDrawCell cell = yzview->getCursorDrawCell( )
 #define SET_pen \
     p.setPen( cell.bg.isValid() ? QColor( cell.bg.rgb() ) : parentWidget()->palette().window().color() );

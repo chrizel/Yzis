@@ -23,7 +23,7 @@
 #include <QHBoxLayout>
 #include <QLabel>
 
-KYZisInfoBar::KYZisInfoBar(QWidget* parent)
+KYInfoBar::KYInfoBar(QWidget* parent)
         : QWidget(parent)
 {
     QHBoxLayout* l = new QHBoxLayout( this );
@@ -38,25 +38,25 @@ KYZisInfoBar::KYZisInfoBar(QWidget* parent)
     l->addWidget( m_fileName );
 }
 
-KYZisInfoBar::~KYZisInfoBar()
+KYInfoBar::~KYInfoBar()
 {}
 
-void KYZisInfoBar::setMode( const QString& mode )
+void KYInfoBar::setMode( const QString& mode )
 {
     m_mode->setText( mode );
 }
 
-void KYZisInfoBar::setFileName( const QString& fileName )
+void KYInfoBar::setFileName( const QString& fileName )
 {
     m_fileName->setText( fileName );
 }
 
-void KYZisInfoBar::setFileInfo( const QString& fileInfo )
+void KYInfoBar::setFileInfo( const QString& fileInfo )
 {
     m_fileInfo->setText( fileInfo );
 }
 
-void KYZisInfoBar::setLineInfo( const QString& lineInfo )
+void KYInfoBar::setLineInfo( const QString& lineInfo )
 {
     m_lineInfo->setText( lineInfo );
 }

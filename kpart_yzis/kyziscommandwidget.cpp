@@ -30,34 +30,34 @@
 #include <QKeyEvent>
 
 
-KYZisCommand::KYZisCommand( KYZisView *view )
+KYCommand::KYCommand( KYView *view )
         : KLineEdit( view )
 {
     m_view = view;
 }
 
-KYZisCommand::~KYZisCommand()
+KYCommand::~KYCommand()
 {}
 
-void KYZisCommand::keyPressEvent ( QKeyEvent * e )
+void KYCommand::keyPressEvent ( QKeyEvent * e )
 {
-    yzDebug() << " KYZisCommand Got key : " << e->key() << " Got ASCII : " /*<< e->text().toAscii()*/ << " Got Unicode : " << e->text() << endl;
+    yzDebug() << " KYCommand Got key : " << e->key() << " Got ASCII : " /*<< e->text().toAscii()*/ << " Got Unicode : " << e->text() << endl;
     QString modifiers;
     if ( e->modifiers() & Qt::ShiftModifier ) modifiers += "<SHIFT>";
     if ( e->modifiers() & Qt::AltModifier ) modifiers += "<ALT>";
     if ( e->modifiers() & Qt::ControlModifier ) modifiers += "<CTRL>";
     if ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Up || e->key() == Qt::Key_Down || e->key() == Qt::Key_Escape) {
-        KYZisSession::self()->sendKey(m_view, m_view->convertKey( e->key() ), modifiers ) ;
+        KYSession::self()->sendKey(m_view, m_view->convertKey( e->key() ), modifiers ) ;
         e->accept();
     } else if ( ( e->modifiers() & Qt::ControlModifier ) && e->key() == Qt::Key_C ) { // handle CTRL-C
-        KYZisSession::self()->sendKey( m_view, "c" , modifiers ) ;
+        KYSession::self()->sendKey( m_view, "c" , modifiers ) ;
         e->accept();
     } else KLineEdit::keyPressEvent( e );
 }
 
-void KYZisCommand::focusInEvent ( QFocusEvent* e )
+void KYCommand::focusInEvent ( QFocusEvent* e )
 {
-    yzDebug() << "KYZisCommand : Focus IN -> EX mode" << endl;
+    yzDebug() << "KYCommand : Focus IN -> EX mode" << endl;
     if ( m_view->modePool()->currentType() != YZMode::ModeEx
             && m_view->modePool()->currentType() != YZMode::ModeSearch
             && m_view->modePool()->currentType() != YZMode::ModeSearchBackward ) {
@@ -66,9 +66,9 @@ void KYZisCommand::focusInEvent ( QFocusEvent* e )
     KLineEdit::focusInEvent( e );
 }
 
-void KYZisCommand::focusOutEvent ( QFocusEvent* e )
+void KYCommand::focusOutEvent ( QFocusEvent* e )
 {
-    yzDebug() << "KYZisCommand : Focus OUT -> reject" << endl;
+    yzDebug() << "KYCommand : Focus OUT -> reject" << endl;
     if ( m_view->modePool()->currentType() == YZMode::ModeEx
             || m_view->modePool()->currentType() == YZMode::ModeSearch
             || m_view->modePool()->currentType() == YZMode::ModeSearch )

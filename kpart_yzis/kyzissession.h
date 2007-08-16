@@ -26,7 +26,7 @@
 #include <QObject>
 
 
-class KYZisSession : public YZSession, public QObject
+class KYSession : public YZSession, public QObject
 {
 public:
     static void createInstance();
@@ -46,9 +46,9 @@ public:
     virtual void guiChangeCurrentView(YZView*);
 
 private:
-    virtual ~KYZisSession();
-    KYZisSession();
-    static KYZisSession* me;
+    virtual ~KYSession();
+    KYSession();
+    static KYSession* me;
 };
 
 #endif

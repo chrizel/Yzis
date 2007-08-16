@@ -38,16 +38,16 @@
 #include <libyzis/buffer.h>
 #include <libyzis/debug.h>
 
-KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
-        : QWidget(parent), YZView(buffer, KYZisSession::self(), 0, 0),
+KYView::KYView(YZBuffer* buffer, QWidget* parent)
+        : QWidget(parent), YZView(buffer, KYSession::self(), 0, 0),
         actionCollection(0), signalMapper(0), m_painter(0)
 {
-    m_editor = new KYZisEditor( this );
+    m_editor = new KYEditor( this );
     m_editor->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
     // TODO: remove this, as soon as we can configure the edior component
     m_editor->setPalette( Qt::white, Qt::black, 0 );
 
-    m_command = new KYZisCommand( this );
+    m_command = new KYCommand( this );
 
     mVScroll = new QScrollBar( this );
     connect( mVScroll, SIGNAL( sliderMoved(int) ), this, SLOT( scrollView( int ) ) );
@@ -55,7 +55,7 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
     connect( mVScroll, SIGNAL( nextLine() ), this, SLOT( scrollLineDown() ) );
     mVScroll->setMaximum( buffer->lineCount() - 1 );
 
-    m_infoBar = new KYZisInfoBar( this );
+    m_infoBar = new KYInfoBar( this );
     m_infoBar->setMode( mode() );
     guiSyncViewInfo();
 
@@ -74,7 +74,7 @@ KYZisView::KYZisView(YZBuffer* buffer, QWidget* parent)
     setFocusProxy( m_editor );
 }
 
-KYZisView::~KYZisView()
+KYView::~KYView()
 {
     delete signalMapper;
     for ( int i = actionCollection->count() - 1; i >= 0; --i )
@@ -82,39 +82,39 @@ KYZisView::~KYZisView()
     delete actionCollection;
 }
 
-void KYZisView::setFocusMainWindow()
+void KYView::setFocusMainWindow()
 {
     m_editor->setFocus();
 }
 
-void KYZisView::setFocusCommandLine()
+void KYView::setFocusCommandLine()
 {
     m_command->setFocus();
 }
 
-void KYZisView::guiScroll(int dx, int dy)
+void KYView::guiScroll(int dx, int dy)
 {
     m_editor->scroll( dx, dy );
 }
 
-QString KYZisView::guiGetCommandLineText() const
+QString KYView::guiGetCommandLineText() const
 {
     return m_command->text();
 }
 
-void KYZisView::guiSetCommandLineText( const QString& text )
+void KYView::guiSetCommandLineText( const QString& text )
 {
     m_command->setText( text );
 }
 
-void KYZisView::guiDisplayInfo(const QString& /*info*/)
+void KYView::guiDisplayInfo(const QString& /*info*/)
 {
     //m_central->setText(info);
     //clean the info 2 seconds later
     //QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
 }
 
-void KYZisView::guiSyncViewInfo()
+void KYView::guiSyncViewInfo()
 {
     m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
     m_infoBar->setLineInfo( getLineStatusString() );
@@ -132,26 +132,26 @@ void KYZisView::guiSyncViewInfo()
     guiModeChanged();
 }
 
-void KYZisView::guiModeChanged()
+void KYView::guiModeChanged()
 {
     m_editor->updateCursor();
     m_infoBar->setMode( mode() );
 }
 
-bool KYZisView::guiPopupFileSaveAs()
+bool KYView::guiPopupFileSaveAs()
 {
     return false;
 }
 
-void KYZisView::guiFilenameChanged()
+void KYView::guiFilenameChanged()
 {
 }
 
-void KYZisView::guiHighlightingChanged()
+void KYView::guiHighlightingChanged()
 {
 }
 
-void KYZisView::guiNotifyContentChanged(const YZSelection& s)
+void KYView::guiNotifyContentChanged(const YZSelection& s)
 {
     YZSelectionMap m = s.map();
     // convert each interval to QWidget coordinates and update
@@ -178,47 +178,47 @@ void KYZisView::guiNotifyContentChanged(const YZSelection& s)
     }
 }
 
-void KYZisView::guiPreparePaintEvent(int /*min_y*/, int /*max_y*/)
+void KYView::guiPreparePaintEvent(int /*min_y*/, int /*max_y*/)
 {
-    yzDebug() << "KYZisView::guiPreparePaintEvent" << endl;
+    yzDebug() << "KYView::guiPreparePaintEvent" << endl;
     m_painter = new QPainter( m_editor );
     m_drawBuffer.setCallbackArgument( m_painter );
 }
 
-void KYZisView::guiPaintEvent( const YZSelection& drawMap )
+void KYView::guiPaintEvent( const YZSelection& drawMap )
 {
     YZView::guiPaintEvent( drawMap );
 }
 
-void KYZisView::guiEndPaintEvent()
+void KYView::guiEndPaintEvent()
 {
     delete m_painter;
-    yzDebug() << "KYZisView::endPaintEvent" << endl;
+    yzDebug() << "KYView::endPaintEvent" << endl;
 }
 
-void KYZisView::guiDrawCell(QPoint pos, const YZDrawCell& cell, void* arg)
+void KYView::guiDrawCell(QPoint pos, const YZDrawCell& cell, void* arg)
 {
     m_editor->guiDrawCell( pos, cell, (QPainter*)arg );
 }
 
-void KYZisView::guiDrawClearToEOL(QPoint pos, const QChar& clearChar)
+void KYView::guiDrawClearToEOL(QPoint pos, const QChar& clearChar)
 {
     m_editor->guiDrawClearToEOL( pos, clearChar, m_painter );
 }
 
-void KYZisView::guiDrawSetLineNumber(int, int, int)
+void KYView::guiDrawSetLineNumber(int, int, int)
 {
 }
 
-void KYZisView::guiDrawSetMaxLineNumber( int /*max*/ )
+void KYView::guiDrawSetMaxLineNumber( int /*max*/ )
 {}
 
-const QString& KYZisView::convertKey( int key )
+const QString& KYView::convertKey( int key )
 {
     return keys[ key ];
 }
 
-void KYZisView::initKeys()
+void KYView::initKeys()
 {
     keys[ Qt::Key_Escape ] = "<ESC>" ;
     keys[ Qt::Key_Tab ] = "<TAB>" ;
@@ -293,12 +293,12 @@ void KYZisView::initKeys()
     connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMultipleKeys( const QString& ) ) );
 }
 
-YZDrawCell KYZisView::getCursorDrawCell( )
+YZDrawCell KYView::getCursorDrawCell( )
 {
     return m_drawBuffer.at( getCursor() - YZCursor(getDrawCurrentLeft(), getDrawCurrentTop( )) );
 }
 
-void KYZisView::registerModifierKeys( const QString& keys )
+void KYView::registerModifierKeys( const QString& keys )
 {
     KAction* k = new KAction( actionCollection );
     k->setShortcut( KShortcut( keysToShortcut( keys ) ) );
@@ -306,7 +306,7 @@ void KYZisView::registerModifierKeys( const QString& keys )
 
     signalMapper->setMapping( k, keys );
 }
-void KYZisView::unregisterModifierKeys( const QString& keys )
+void KYView::unregisterModifierKeys( const QString& keys )
 {
     QByteArray ke = keys.toUtf8();
     QAction* q = actionCollection->action( ke.data() );
@@ -327,7 +327,7 @@ void KYZisView::unregisterModifierKeys( const QString& keys )
     delete q;
 }
 
-QString KYZisView::keysToShortcut( const QString& keys )
+QString KYView::keysToShortcut( const QString& keys )
 {
     QString ret = keys;
     ret = ret.replace( "<CTRL>", "CTRL+" );
@@ -336,19 +336,19 @@ QString KYZisView::keysToShortcut( const QString& keys )
     return ret;
 }
 
-void KYZisView::scrollLineUp()
+void KYView::scrollLineUp()
 {
     scrollView( getCurrentTop() - 1 );
 }
 
-void KYZisView::scrollLineDown()
+void KYView::scrollLineDown()
 {
     scrollView( getCurrentTop() + 1 );
 }
 
 
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
-void KYZisView::scrollView( int value )
+void KYView::scrollView( int value )
 {
     if ( value < 0 )
         value = 0;
@@ -364,9 +364,9 @@ void KYZisView::scrollView( int value )
     }
 }
 
-void KYZisView::sendMultipleKeys( const QString& k )
+void KYView::sendMultipleKeys( const QString& k )
 {
-    KYZisSession::self()->sendMultipleKeys( this, k );
+    KYSession::self()->sendMultipleKeys( this, k );
 }
 
 #include "kyzisview.moc"

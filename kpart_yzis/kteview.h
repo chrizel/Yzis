@@ -24,7 +24,7 @@
 #include <ktexteditor/view.h>
 
 class KTEDocument;
-class KYZisView;
+class KYView;
 class QScrollBar;
 
 class KTEView : public KTextEditor::View
@@ -70,7 +70,7 @@ signals:
 
 private:
     KTEDocument* m_doc;
-    KYZisView* m_view;
+    KYView* m_view;
     QMenu* m_popup;
 };
 

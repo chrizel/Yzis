@@ -26,7 +26,7 @@
 
 KTEDocument::KTEDocument( QObject* /*parent*/ )
 {
-    m_buffer = KYZisSession::self()->createBuffer();
+    m_buffer = KYSession::self()->createBuffer();
 }
 
 KTEDocument::~KTEDocument()

@@ -43,7 +43,7 @@
 
 #define GETX( x ) ( ( x ) * fontMetrics().maxWidth() )
 
-KYZisEditor::KYZisEditor(KYZisView* parent)
+KYEditor::KYEditor(KYView* parent)
         : QWidget(parent)
 {
     m_parent = parent;
@@ -61,15 +61,15 @@ KYZisEditor::KYZisEditor(KYZisView* parent)
     // for Input Method
     setAttribute( Qt::WA_InputMethodEnabled, true );
 
-    mCursor = new KYZisCursor( this, KYZisCursor::SQUARE );
+    mCursor = new KYCursor( this, KYCursor::SQUARE );
 
-    QTimer::singleShot(0, static_cast<KYZisSession*>(YZSession::self()), SLOT(frontendGuiReady()) );
+    QTimer::singleShot(0, static_cast<KYSession*>(YZSession::self()), SLOT(frontendGuiReady()) );
 }
 
-KYZisEditor::~KYZisEditor()
+KYEditor::~KYEditor()
 {}
 
-void KYZisEditor::setPalette( const QColor& fg, const QColor& bg, double opacity )
+void KYEditor::setPalette( const QColor& fg, const QColor& bg, double opacity )
 {
     QPalette p = palette();
     p.setColor( QPalette::WindowText, fg );
@@ -78,9 +78,9 @@ void KYZisEditor::setPalette( const QColor& fg, const QColor& bg, double opacity
     setWindowOpacity( opacity );
 }
 
-KYZisCursor::shape KYZisEditor::cursorShape()
+KYCursor::shape KYEditor::cursorShape()
 {
-    KYZisCursor::shape s;
+    KYCursor::shape s;
 
     QString shape;
     YZMode::ModeType m = m_parent->modePool()->current()->type();
@@ -99,26 +99,26 @@ KYZisCursor::shape KYZisEditor::cursorShape()
         break;
     }
     if ( shape == "hbar" ) {
-        s = KYZisCursor::HBAR;
+        s = KYCursor::HBAR;
     } else if ( shape == "vbar" ) {
-        s = KYZisCursor::VBAR;
+        s = KYCursor::VBAR;
     } else if ( shape == "keep" ) {
         s = mCursor->type();
     } else {
         if ( hasFocus() )
-            s = KYZisCursor::SQUARE;
+            s = KYCursor::SQUARE;
         else
-            s = KYZisCursor::RECT;
+            s = KYCursor::RECT;
     }
     return s;
 }
 
-QPoint KYZisEditor::translatePositionToReal( const YZCursor& c ) const
+QPoint KYEditor::translatePositionToReal( const YZCursor& c ) const
 {
     return QPoint( c.x() * fontMetrics().maxWidth(), c.y() * fontMetrics().lineSpacing() );
 }
 
-YZCursor KYZisEditor::translateRealToPosition( const QPoint& p, bool ceil ) const
+YZCursor KYEditor::translateRealToPosition( const QPoint& p, bool ceil ) const
 {
     int height = fontMetrics().lineSpacing();
     int width = fontMetrics().maxWidth();
@@ -134,18 +134,18 @@ YZCursor KYZisEditor::translateRealToPosition( const QPoint& p, bool ceil ) cons
     return YZCursor( x, y );
 }
 
-YZCursor KYZisEditor::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
+YZCursor KYEditor::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
 {
     return translateRealToPosition( p, ceil ) + m_parent->getScreenPosition();
 }
 
-void KYZisEditor::updateCursor()
+void KYEditor::updateCursor()
 {
     mCursor->setCursorType( cursorShape() );
 }
 
 
-void KYZisEditor::updateArea( )
+void KYEditor::updateArea( )
 {
     mCursor->resize( fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
     updateCursor();
@@ -158,7 +158,7 @@ void KYZisEditor::updateArea( )
 /**
  * QWidget event handling
  */
-bool KYZisEditor::event(QEvent *e)
+bool KYEditor::event(QEvent *e)
 {
     if ( e->type() == QEvent::KeyPress ) {
         QKeyEvent *ke = (QKeyEvent *)e;
@@ -170,7 +170,7 @@ bool KYZisEditor::event(QEvent *e)
     return QWidget::event(e);
 }
 
-void KYZisEditor::keyPressEvent ( QKeyEvent * e )
+void KYEditor::keyPressEvent ( QKeyEvent * e )
 {
     Qt::KeyboardModifiers st = e->modifiers();
     QString modifiers;
@@ -188,7 +188,7 @@ void KYZisEditor::keyPressEvent ( QKeyEvent * e )
     else
         k = e->text();
 
-    KYZisSession::self()->sendKey(m_parent, k, modifiers);
+    KYSession::self()->sendKey(m_parent, k, modifiers);
 
     // TODO: find out what this did! seems to be useless right now
     //if ( lmode == YZMode::ModeInsert || lmode == YZMode::ModeReplace ) {
@@ -198,7 +198,7 @@ void KYZisEditor::keyPressEvent ( QKeyEvent * e )
     e->accept();
 }
 
-void KYZisEditor::mousePressEvent ( QMouseEvent * e )
+void KYEditor::mousePressEvent ( QMouseEvent * e )
 {
     /*
     FIXME: How to handle mouse events commented out now so kyzis will compile
@@ -230,7 +230,7 @@ void KYZisEditor::mousePressEvent ( QMouseEvent * e )
         if ( ! text.isNull() ) {
             if ( m_parent->modePool()->current()->isEditMode() ) {
                 QChar reg = '\"';
-                KYZisSession::self()->setRegister( reg, text.split( "\n" ) );
+                KYSession::self()->setRegister( reg, text.split( "\n" ) );
                 m_parent->pasteContent( reg, false );
                 m_parent->moveRight();
             }
@@ -238,7 +238,7 @@ void KYZisEditor::mousePressEvent ( QMouseEvent * e )
     }
 }
 
-void KYZisEditor::mouseMoveEvent( QMouseEvent *e )
+void KYEditor::mouseMoveEvent( QMouseEvent *e )
 {
     if (e->button() == Qt::LeftButton) {
         if (m_parent->modePool()->currentType() == YZMode::ModeCommand) {
@@ -258,24 +258,24 @@ void KYZisEditor::mouseMoveEvent( QMouseEvent *e )
     }
 }
 
-void KYZisEditor::focusInEvent ( QFocusEvent * )
+void KYEditor::focusInEvent ( QFocusEvent * )
 {
-    KYZisSession::self()->setCurrentView( m_parent );
+    KYSession::self()->setCurrentView( m_parent );
     updateCursor();
 }
-void KYZisEditor::focusOutEvent ( QFocusEvent * )
+void KYEditor::focusOutEvent ( QFocusEvent * )
 {
     updateCursor();
 }
 
 
-void KYZisEditor::resizeEvent(QResizeEvent* e)
+void KYEditor::resizeEvent(QResizeEvent* e)
 {
     e->accept();
     updateArea();
 }
 
-void KYZisEditor::paintEvent( QPaintEvent* pe )
+void KYEditor::paintEvent( QPaintEvent* pe )
 {
     updateCursor();
 
@@ -289,7 +289,7 @@ void KYZisEditor::paintEvent( QPaintEvent* pe )
     m_parent->guiPaintEvent( m_parent->clipSelection( YZSelection( r ) ) );
 }
 
-void KYZisEditor::setCursor( int c, int l )
+void KYEditor::setCursor( int c, int l )
 {
     // yzDebug() << "setCursor" << endl;
     c = c - m_parent->getDrawCurrentLeft();
@@ -305,19 +305,19 @@ void KYZisEditor::setCursor( int c, int l )
     // setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
 }
 
-QPoint KYZisEditor::cursorCoordinates( )
+QPoint KYEditor::cursorCoordinates( )
 {
     return QPoint( mCursor->x(), mCursor->y() );
 }
 
-void KYZisEditor::scroll( int x, int y )
+void KYEditor::scroll( int x, int y )
 {
     mCursor->hide();
     QWidget::scroll( x * fontMetrics().maxWidth(), y * fontMetrics().lineSpacing() );
     mCursor->show();
 }
 
-void KYZisEditor::guiDrawCell( QPoint pos, const YZDrawCell& cell, QPainter* p )
+void KYEditor::guiDrawCell( QPoint pos, const YZDrawCell& cell, QPainter* p )
 {
     p->save();
     if ( cell.fg.isValid() ) {
@@ -330,22 +330,22 @@ void KYZisEditor::guiDrawCell( QPoint pos, const YZDrawCell& cell, QPainter* p )
     p->restore();
 }
 
-void KYZisEditor::guiDrawClearToEOL( QPoint pos, const QChar& /*clearChar*/, QPainter* p )
+void KYEditor::guiDrawClearToEOL( QPoint pos, const QChar& /*clearChar*/, QPainter* p )
 {
     QRect r( GETX(pos.x()), pos.y()*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
     p->eraseRect( r );
 }
 
-//void KYZisEditor::sendMultipleKey( const QString& keys ) {
+//void KYEditor::sendMultipleKey( const QString& keys ) {
 // sendMultipleKey( keys );
 //}
 
-void KYZisEditor::inputMethodEvent ( QInputMethodEvent * )
+void KYEditor::inputMethodEvent ( QInputMethodEvent * )
 {
     //TODO
 }
 
-QVariant KYZisEditor::inputMethodQuery ( Qt::InputMethodQuery query )
+QVariant KYEditor::inputMethodQuery ( Qt::InputMethodQuery query )
 {
     return QWidget::inputMethodQuery( query );
 }
@@ -354,7 +354,7 @@ QVariant KYZisEditor::inputMethodQuery ( Qt::InputMethodQuery query )
 
 // for InputMethod (OnTheSpot)
 /*
-void KYZisEditor::imStartEvent( QIMEvent *e )
+void KYEditor::imStartEvent( QIMEvent *e )
 {
  if ( mParent->m_parent->modePool()->current()->supportsInputMethod() ) {
   mParent->m_parent->modePool()->current()->imBegin( mParent );
@@ -364,8 +364,8 @@ void KYZisEditor::imStartEvent( QIMEvent *e )
 
 // for InputMethod (OnTheSpot)
 /*
-void KYZisEditor::imComposeEvent( QIMEvent *e ) {
- //yzDebug() << "KYZisEditor::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
+void KYEditor::imComposeEvent( QIMEvent *e ) {
+ //yzDebug() << "KYEditor::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
  if ( mParent->m_parent->modePool()->current()->supportsInputMethod() ) {
   mParent->m_parent->modePool()->current()->imCompose( mParent, e->text() );
   e->accept();
@@ -376,8 +376,8 @@ void KYZisEditor::imComposeEvent( QIMEvent *e ) {
 
 // for InputMethod (OnTheSpot)
 /*
-void KYZisEditor::imEndEvent( QIMEvent *e ) {
-// yzDebug() << "KYZisEditor::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
+void KYEditor::imEndEvent( QIMEvent *e ) {
+// yzDebug() << "KYEditor::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
  if ( mParent->m_parent->modePool()->current()->supportsInputMethod() ) {
   mParent->m_parent->modePool()->current()->imEnd( mParent, e->text() );
  } else {

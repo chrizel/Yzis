@@ -25,19 +25,19 @@
 #include "cursor.h"
 
 /**
- * Class YZYzisinfoJumpListRecord
+ * Class YInfoJumpListRecord
  * 
  * Class to hold the jump positions which is used within and between files
  */
 
-class YZYzisinfoJumpListRecord
+class YInfoJumpListRecord
 {
 public:
     /**
      * Constructor
      */
 
-    YZYzisinfoJumpListRecord();
+    YInfoJumpListRecord();
 
     /**
      * Constructor
@@ -47,29 +47,29 @@ public:
      * @param y The y coordinate cursor position in the current file
      */
 
-    YZYzisinfoJumpListRecord( const QString & filename, const QPoint);
+    YInfoJumpListRecord( const QString & filename, const QPoint);
 
     /**
      * Destructor
      */
 
-    ~YZYzisinfoJumpListRecord();
+    ~YInfoJumpListRecord();
 
     /**
      * Copy constructor
      * 
-     * @param copy The YZYzisinfoJumpListRecord instance to copy
+     * @param copy The YInfoJumpListRecord instance to copy
      */
 
-    YZYzisinfoJumpListRecord( const YZYzisinfoJumpListRecord & copy );
+    YInfoJumpListRecord( const YInfoJumpListRecord & copy );
 
     /**
      * Assignment operator
      * 
-     * @param copy The YZYzisinfoJumpListRecord instance to assign from
+     * @param copy The YInfoJumpListRecord instance to assign from
      */
 
-    YZYzisinfoJumpListRecord & operator=( const YZYzisinfoJumpListRecord & copy );
+    YInfoJumpListRecord & operator=( const YInfoJumpListRecord & copy );
 
     /**
      * Returns the current index position in the mCursorData vector
@@ -88,14 +88,14 @@ public:
      * Returns the recorded cursor position
      */
 
-    YZCursor position();
-    const YZCursor position() const;
+    YCursor position();
+    const YCursor position() const;
 
     /**
      * Returns the previous recorded search cursor position
      */
 
-    //YZCursor * previousSearchPosition();
+    //YCursor * previousSearchPosition();
 
     /**
      * Sets the current filename
@@ -116,7 +116,7 @@ public:
 
 private:
     QString mFilename;
-    YZCursor mPosition;
+    YCursor mPosition;
 };
 
 #endif // YZISINFOJUMPLISTRECORD_H

@@ -23,8 +23,8 @@
 
 #define dbg() yzDebug("NoGuiView")
 
-NoGuiView::NoGuiView(YZBuffer *buf, YZSession *sess, int cols, int lines)
-        : YZView(buf, sess, cols, lines)
+NoGuiView::NoGuiView(YBuffer *buf, YSession *sess, int cols, int lines)
+        : YView(buf, sess, cols, lines)
 {
     dbg().sprintf("NoGuiView( %s, cols=%d, lines=%d )", qp(buf->toString()), cols, lines );
 }
@@ -131,7 +131,7 @@ void NoGuiView::registerModifierKeys(const QString& s)
     return ;
 }
 
-void NoGuiView::paintEvent( const YZSelection& )
+void NoGuiView::paintEvent( const YSelection& )
 {
     dbg() << "NoGuiView::paintEvent( )" << endl;
 }
@@ -141,7 +141,7 @@ void NoGuiView::guiScroll( int dx, int dy )
     dbg() << "NoGuiView::Scroll" << dx << dy << endl;
 }
 
-void NoGuiView::guiNotifyContentChanged( const YZSelection& )
+void NoGuiView::guiNotifyContentChanged( const YSelection& )
 {
     dbg() << "NoGuiView::guiNotifyContentChanged" << endl;
 }
@@ -168,7 +168,7 @@ void NoGuiView::guiEndPaintEvent()
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::guiDrawCell(QPoint, const YZDrawCell&, void*)
+void NoGuiView::guiDrawCell(QPoint, const YDrawCell&, void*)
 {
     dbg() << HERE() << endl;
 }

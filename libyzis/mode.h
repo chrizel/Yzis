@@ -28,9 +28,9 @@
 #include "yzis.h"
 
 
-class YZDebugStream;
-class YZView;
-class YZModePool;
+class YDebugStream;
+class YView;
+class YModePool;
 
 /** @file mode.h
   * Some documentation
@@ -51,12 +51,12 @@ enum CmdState {
     CmdQuit,
 };
 
-YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const CmdState & state );
+YZIS_EXPORT YDebugStream& operator<<( YDebugStream& out, const CmdState & state );
 
 /**
  * Abstract class for modes
  */
-class YZIS_EXPORT YZMode
+class YZIS_EXPORT YMode
 {
 public:
     enum ModeType {
@@ -73,17 +73,17 @@ public:
         ModeVisualBlock,      //!< C-V : visual mode, by blocks
     };
 
-    YZMode();
-    virtual ~YZMode()
+    YMode();
+    virtual ~YMode()
     {}
 
     virtual void init();
     virtual void initModifierKeys();
-    virtual void enter( YZView* mView );
-    virtual void leave( YZView* mView );
-    virtual CmdState execCommand( YZView* mView, const QString& key ) = 0;
+    virtual void enter( YView* mView );
+    virtual void leave( YView* mView );
+    virtual CmdState execCommand( YView* mView, const QString& key ) = 0;
 
-    virtual void cursorMoved( YZView* mView );
+    virtual void cursorMoved( YView* mView );
 
     ModeType type() const;
     const QString& toString() const;
@@ -107,9 +107,9 @@ public:
     /**
      * Input Method
      */
-    virtual void imBegin( YZView* mView );
-    virtual void imCompose( YZView* mView, const QString& entry );
-    virtual void imEnd( YZView* mView, const QString& entry );
+    virtual void imBegin( YView* mView );
+    virtual void imCompose( YView* mView, const QString& entry );
+    virtual void imEnd( YView* mView, const QString& entry );
 
 protected:
     ModeType mType;
@@ -122,38 +122,38 @@ protected:
     bool mRegistered;
 };
 
-YZIS_EXPORT YZDebugStream& operator<<( YZDebugStream& out, const YZMode::ModeType & type );
+YZIS_EXPORT YDebugStream& operator<<( YDebugStream& out, const YMode::ModeType & type );
 
 
 /**
  * Mode with introductory text that is entered at startup
  */
-class YZModeIntro : public YZMode
+class YModeIntro : public YMode
 {
 public:
-    YZModeIntro();
-    virtual ~YZModeIntro()
+    YModeIntro();
+    virtual ~YModeIntro()
     {}
 
-    void enter( YZView* mView );
-    void leave( YZView* mView );
-    CmdState execCommand( YZView* mView, const QString& key );
+    void enter( YView* mView );
+    void leave( YView* mView );
+    CmdState execCommand( YView* mView, const QString& key );
 
 };
 
-typedef YZMode::ModeType ModeType;
+typedef YMode::ModeType ModeType;
 
-typedef QMap<ModeType, YZMode*> YZModeMap;
-typedef QList<YZMode*> YZModeStack;
+typedef QMap<ModeType, YMode*> YModeMap;
+typedef QList<YMode*> YModeStack;
 
 /**
  * Keeps track of modes to return to
  */
-class YZIS_EXPORT YZModePool
+class YZIS_EXPORT YModePool
 {
 public:
-    YZModePool( YZView* view );
-    virtual ~YZModePool();
+    YModePool( YView* view );
+    virtual ~YModePool();
 
     void sendKey( const QString& key, const QString& modifiers );
     void replayKey();
@@ -182,15 +182,15 @@ public:
     void unregisterModifierKeys();
     void stop();
 
-    YZMode* current() const;
+    YMode* current() const;
     ModeType currentType() const;
 
 private :
-    YZView* mView;
+    YView* mView;
     QString mKey;
     QString mModifiers;
-    YZModeMap mModes;
-    YZModeStack stack;
+    YModeMap mModes;
+    YModeStack stack;
     int mapMode;
     bool mRegisterKeys;
     bool mStop;

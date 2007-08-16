@@ -80,7 +80,7 @@ int main( int argc, char * argv[] )
 
     // Add your test here. You need to include it first at the top of the
     // main.
-    RUN_MY_TEST( TestYZDebugBackend )
+    RUN_MY_TEST( TestYDebugBackend )
     RUN_MY_TEST( TestColor )
     RUN_MY_TEST( TestResource )
 

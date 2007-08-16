@@ -36,31 +36,31 @@ typedef unsigned int QRgb;
   *
   * Colors are stored as triplets of red,green,blue byte values.
   *
-  * The YZColor class is basically a stripped down version of QColor. We can
+  * The YColor class is basically a stripped down version of QColor. We can
   * not use QColor in libyzis since it is part of QtGui.
   *
   * @short Color Handling for Yzis
   */
-class YZIS_EXPORT YZColor
+class YZIS_EXPORT YColor
 {
 
 public:
     /** Creates an invalid color */
-    YZColor();
+    YColor();
 
     /** Creates valid color from a rgb triplet.
       * \sa setRgb() */
-    YZColor( QRgb rgb );
+    YColor( QRgb rgb );
 
-    YZColor( Qt::GlobalColor color );
+    YColor( Qt::GlobalColor color );
 
     /** Creates color from a rgb triplet as a string
       * \sa setNamedColor() */
-    YZColor( const QString &name )
+    YColor( const QString &name )
     {
         setNamedColor( name );
     }
-    virtual ~YZColor();
+    virtual ~YColor();
 
     void setRgb( QRgb );
     /**
@@ -94,7 +94,7 @@ public:
     int green() const;
     int blue() const;
 
-    bool operator!=( const YZColor& color ) const;
+    bool operator!=( const YColor& color ) const;
 
 private:
 

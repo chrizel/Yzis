@@ -81,9 +81,9 @@ public :
     void registerModifierKeys( const QString& keys );
     void unregisterModifierKeys( const QString& keys );
 
-    QPoint translatePositionToReal( const YZCursor& c ) const;
-    YZCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
-    YZCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
+    QPoint translatePositionToReal( const YCursor& c ) const;
+    YCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
+    YCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
 
     QVariant inputMethodQuery ( Qt::InputMethodQuery query ) const;
 
@@ -94,8 +94,8 @@ public slots :
 
 
 protected:
-    void guiPaintEvent( const YZSelection& drawMap );
-    void guiDrawCell( QPoint pos, const YZDrawCell& cell, QPainter* p );
+    void guiPaintEvent( const YSelection& drawMap );
+    void guiDrawCell( QPoint pos, const YDrawCell& cell, QPainter* p );
     void guiDrawClearToEOL( QPoint pos, const QChar& clearChar, QPainter* p );
 
     //intercept tabs

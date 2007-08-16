@@ -20,27 +20,27 @@
 #include "cursor.h"
 #include "debug.h"
 
-#define dbg()    yzDebug("YZCursor")
-#define err()    yzError("YZCursor")
+#define dbg()    yzDebug("YCursor")
+#define err()    yzError("YCursor")
 
-bool YZCursor::operator< (const YZCursor right ) const
+bool YCursor::operator< (const YCursor right ) const
 {
     return y() < right.y() || y() == right.y() && x() < right.x();
 }
-bool YZCursor::operator<= (const YZCursor right ) const
+bool YCursor::operator<= (const YCursor right ) const
 {
     return *this == right || *this < right;
 }
-bool YZCursor::operator> (const YZCursor right ) const
+bool YCursor::operator> (const YCursor right ) const
 {
     return *this != right && !(*this < right);
 }
-bool YZCursor::operator>= (const YZCursor right ) const
+bool YCursor::operator>= (const YCursor right ) const
 {
     return right <= *this;
 }
 
-YZDebugStream& operator<< ( YZDebugStream& out, const YZCursor c )
+YDebugStream& operator<< ( YDebugStream& out, const YCursor c )
 {
     out << "(" << c.x() << "," << c.y() << ")";
     return out;

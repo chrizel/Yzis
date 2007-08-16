@@ -82,11 +82,11 @@ QYView* QYEdit::view() const
     return mView;
 }
 
-QPoint QYEdit::translatePositionToReal( const YZCursor& c ) const
+QPoint QYEdit::translatePositionToReal( const YCursor& c ) const
 {
     return QPoint( c.x() * fontMetrics().maxWidth(), c.y() * fontMetrics().lineSpacing() );
 }
-YZCursor QYEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
+YCursor QYEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
 {
     int height = fontMetrics().lineSpacing();
     int width = fontMetrics().maxWidth();
@@ -99,9 +99,9 @@ YZCursor QYEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
         if ( p.x() % width )
             ++x;
     }
-    return YZCursor( x, y );
+    return YCursor( x, y );
 }
-YZCursor QYEdit::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
+YCursor QYEdit::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
 {
     return translateRealToPosition( p, ceil ) + mView->getScreenPosition();
 }
@@ -116,7 +116,7 @@ void QYEdit::setPalette( const QPalette& p, qreal opacity )
 QYCursor::CursorShape QYEdit::cursorShape()
 {
     QYCursor::CursorShape shape;
-    YZMode::ModeType m = mView->modePool()->current()->type();
+    YMode::ModeType m = mView->modePool()->current()->type();
     dbg() << "cursorShape(): mode=" << m << endl;
     shape = mCursor->shape();
     if ( ! hasFocus() ) {
@@ -129,25 +129,25 @@ QYCursor::CursorShape QYEdit::cursorShape()
         }
     } else {
         switch ( m ) {
-        case YZMode::ModeInsert :
+        case YMode::ModeInsert :
             shape = QYCursor::CursorVbar;
             break;
-        case YZMode::ModeReplace :
+        case YMode::ModeReplace :
             shape = QYCursor::CursorHbar;
             break;
-        case YZMode::ModeIntro:
-        case YZMode::ModeEx:
-        case YZMode::ModeSearch:
-        case YZMode::ModeSearchBackward:
+        case YMode::ModeIntro:
+        case YMode::ModeEx:
+        case YMode::ModeSearch:
+        case YMode::ModeSearchBackward:
             shape = QYCursor::CursorHidden;
             break;
-        case YZMode::ModeCompletion :
+        case YMode::ModeCompletion :
             // do not change it
             break;
-        case YZMode::ModeCommand:
-        case YZMode::ModeVisual:
-        case YZMode::ModeVisualLine:
-        case YZMode::ModeVisualBlock:
+        case YMode::ModeCommand:
+        case YMode::ModeVisual:
+        case YMode::ModeVisualLine:
+        case YMode::ModeVisualBlock:
             shape = QYCursor::CursorFilledRect;
             break;
         }
@@ -220,8 +220,8 @@ void QYEdit::keyPressEvent ( QKeyEvent * e )
     } else {
         text = keys[ e->key() ];
     }
-    dbg().sprintf("Event transferred to YZSession");
-    YZSession::self()->sendKey( static_cast<YZView*>( mView ), text, modifiers);
+    dbg().sprintf("Event transferred to YSession");
+    YSession::self()->sendKey( static_cast<YView*>( mView ), text, modifiers);
     e->accept();
 }
 
@@ -244,7 +244,7 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
         mView->modePool()->pop();
 
     if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
-        if ( mView->modePool()->currentType() != YZMode::ModeEx ) {
+        if ( mView->modePool()->currentType() != YMode::ModeEx ) {
             mView->gotodxdyAndStick( translateRealToAbsolutePosition( e->pos() ) );
         }
     } else if ( e->button() == Qt::MidButton ) {
@@ -254,7 +254,7 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
         if ( ! text.isNull() ) {
             if ( mView->modePool()->current()->isEditMode() ) {
                 QChar reg = '\"';
-                YZSession::self()->setRegister( reg, text.split("\n") );
+                YSession::self()->setRegister( reg, text.split("\n") );
                 mView->pasteContent( reg, false );
                 mView->moveRight();
             }
@@ -265,12 +265,12 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
 void QYEdit::mouseMoveEvent( QMouseEvent *e )
 {
     if (e->buttons() == Qt::LeftButton) {
-        if (mView->modePool()->currentType() == YZMode::ModeCommand) {
+        if (mView->modePool()->currentType() == YMode::ModeCommand) {
             // start visual mode when user makes a selection with the left mouse button
-            mView->modePool()->push( YZMode::ModeVisual );
+            mView->modePool()->push( YMode::ModeVisual );
         } else if (mView->modePool()->current()->isSelMode() ) {
             // already in visual mode - move cursor if the mouse pointer has moved over a new char
-            YZCursor pos = translateRealToAbsolutePosition( e->pos() );
+            YCursor pos = translateRealToAbsolutePosition( e->pos() );
             if ( pos != mView->getCursor() ) {
                 mView->gotodxdy( pos );
             }
@@ -306,7 +306,7 @@ void QYEdit::paintEvent( QPaintEvent* pe )
     //dbg() << "QYEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() <<
     //    " => " << r.topLeft() << "," << r.bottomRight() << endl;
     // paint it
-    mView->guiPaintEvent( mView->clipSelection( YZSelection( r ) ) );
+    mView->guiPaintEvent( mView->clipSelection( YSelection( r ) ) );
 }
 
 void QYEdit::setCursor( int c, int l )
@@ -337,7 +337,7 @@ void QYEdit::scroll( int dx, int dy )
     QWidget::scroll( rx, ry, m_useArea );
 }
 
-void QYEdit::guiDrawCell( QPoint pos , const YZDrawCell& cell, QPainter* p )
+void QYEdit::guiDrawCell( QPoint pos , const YDrawCell& cell, QPainter* p )
 {
     //dbg() << "QYEdit::guiDrawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
     p->save();
@@ -349,7 +349,7 @@ void QYEdit::guiDrawCell( QPoint pos , const YZDrawCell& cell, QPainter* p )
             has_bg = true;
             p->setBackground( QColor(cell.bg.rgb()) );
         }
-    } else if ( cell.sel & YZSelectionPool::Visual ) {
+    } else if ( cell.sel & YSelectionPool::Visual ) {
         has_bg = true;
         p->setBackground( QColor(181, 24, 181) ); //XXX setting
         p->setPen( Qt::white );
@@ -376,7 +376,7 @@ void QYEdit::guiDrawClearToEOL( QPoint pos , const QChar& clearChar, QPainter* p
         return ;
     } else {
         QRect r;
-        r.setTopLeft( translatePositionToReal( YZCursor(pos) ) );
+        r.setTopLeft( translatePositionToReal( YCursor(pos) ) );
         r.setRight( width() );
         r.setHeight( fontMetrics().lineSpacing() );
         int nb_char = mView->getColumnsVisible() - pos.x();
@@ -523,7 +523,7 @@ void QYEdit::unregisterModifierKeys( const QString& keys )
 void QYEdit::sendMappedKey( const QString& keys )
 {
     dbg().sprintf("sendMappedKey( keys=%s )", qp(keys) );
-    YZSession::self()->sendMultipleKeys( static_cast<YZView *>( mView ), keys );
+    YSession::self()->sendMultipleKeys( static_cast<YView *>( mView ), keys );
 }
 
 const QString& QYEdit::convertKey( int key )
@@ -570,7 +570,7 @@ void QYEdit::imEndEvent( QIMEvent *e ) {
  if ( mView->modePool()->current()->supportsInputMethod() ) {
   mView->modePool()->current()->imEnd( mView, e->text() );
  } else {
-  YZSession::self()->sendKey( static_cast<YZView *>( mView ), e->text() );
+  YSession::self()->sendKey( static_cast<YView *>( mView ), e->text() );
  }
  e->accept();
 }*/

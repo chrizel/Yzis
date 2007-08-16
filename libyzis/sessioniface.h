@@ -25,21 +25,21 @@
 
 #include "yzis.h"
 
-class YZView;
-class YZBuffer;
+class YView;
+class YBuffer;
 class QString;
 
 /** @brief The session interface that must be re-implemented by the GUI
   * frontend.
   *
-  * The GUI should inherit YZSession which
+  * The GUI should inherit YSession which
   * inherits from this class.
   *
   * All the methods prefixed by gui are methods called by libyzis, to ask the
   * GUI to perform a task or inform the GUI about something. Those are the
   * methods that should be implemented by each GUI.
   */
-class YZIS_EXPORT YZSessionIface
+class YZIS_EXPORT YSessionIface
 {
 public:
 
@@ -92,15 +92,15 @@ public:
            * The key sequence is automatically sent to the right view,
            * even if the view is switched in the middle.
            *
-           * <i>This method is implemented in @ref YZSession.</i>
+           * <i>This method is implemented in @ref YSession.</i>
      */
     virtual void scriptSendMultipleKeys ( const QString& text ) = 0;
 
     /** @brief Copied from view
       *
-     * <i>This method is implemented in @ref YZSession.</i>
+     * <i>This method is implemented in @ref YSession.</i>
      */
-    virtual void sendMultipleKeys( YZView * view, const QString& keys ) = 0;
+    virtual void sendMultipleKeys( YView * view, const QString& keys ) = 0;
 
 
     //-------------------------------------------------------
@@ -118,11 +118,11 @@ public:
 
     /** @brief Create new views on an existing buffer.
       */
-    virtual YZView * guiCreateView( YZBuffer *buffer ) = 0;
+    virtual YView * guiCreateView( YBuffer *buffer ) = 0;
 
     /** @brief Switch the current view.
      */
-    virtual void guiChangeCurrentView( YZView* ) = 0;
+    virtual void guiChangeCurrentView( YView* ) = 0;
 
     /** @brief Ask the frontend to delete the view.
       *
@@ -130,21 +130,21 @@ public:
       * after that call so it is safe for the frontend to delete
       * the view instance.
       */
-    virtual void guiDeleteView ( YZView *view ) = 0;
+    virtual void guiDeleteView ( YView *view ) = 0;
 
     /** @brief Ask the frontend to create a buffer.
       *
       * The buffer pointer will be kept until a @ref guiDeleteBuffer
       * call is made.
       */
-    virtual YZBuffer *guiCreateBuffer() = 0;
+    virtual YBuffer *guiCreateBuffer() = 0;
 
     /** @brief Inform the frontend that the given buffer is being removed.
            *
            * The buffer @arg b is still valid when the call is made but is not
            * used afterward, so it can be safely deleted by the frontend.
      */
-    virtual void guiDeleteBuffer( YZBuffer *b ) = 0;
+    virtual void guiDeleteBuffer( YBuffer *b ) = 0;
 
 
     //-------------------------------------------------------
@@ -153,15 +153,15 @@ public:
 
     /** @brief Splits horizontally the mainwindow area to create a new view on the current buffer
      */
-    virtual void guiSplitHorizontally ( YZView* ) = 0;
+    virtual void guiSplitHorizontally ( YView* ) = 0;
 
     /** @brief Splits the screen vertically showing the 2 given views
      */ 
-    //  virtual void splitHorizontallyWithViews( YZView*, YZView* ) = 0;
+    //  virtual void splitHorizontallyWithViews( YView*, YView* ) = 0;
 
     /** @brief Splits the screen vertically to show the 2 given views
      */ 
-    //  virtual void splitVerticallyOnView( YZView*, YZView* ) = 0;
+    //  virtual void splitVerticallyOnView( YView*, YView* ) = 0;
 
 
     //-------------------------------------------------------
@@ -169,7 +169,7 @@ public:
     //-------------------------------------------------------
 
     /** Virtual destructor */
-    virtual ~YZSessionIface();
+    virtual ~YSessionIface();
 };
 
 #endif // YZ_SESSION_IFACE_H

@@ -64,7 +64,7 @@ void QYCursor::paintEvent( QPaintEvent* pe )
 {
     Q_UNUSED(pe);
 
-    const YZDrawCell cell( mView->m_drawBuffer.at( mEdit->translateRealToPosition(pos()) ) );
+    const YDrawCell cell( mView->m_drawBuffer.at( mEdit->translateRealToPosition(pos()) ) );
     QColor cbg, cfg;
 
     dbg().sprintf( "paintEvent(): cell string='%s'", qp(cell.c) );
@@ -143,7 +143,7 @@ void QYCursor::paintEvent( QPaintEvent* pe )
     }
 }
 
-YZDebugStream& operator<<( YZDebugStream& out, const QYCursor::CursorShape & shape )
+YDebugStream& operator<<( YDebugStream& out, const QYCursor::CursorShape & shape )
 {
     switch ( shape ) {
     case QYCursor::CursorFilledRect : out << "CursorFilledRect"; break;

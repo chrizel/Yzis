@@ -21,10 +21,10 @@
 #include "mark.h"
 #include "cursor.h"
 
-#define dbg()    yzDebug("YZViewMark")
-#define err()    yzError("YZViewMark")
+#define dbg()    yzDebug("YViewMark")
+#define err()    yzError("YViewMark")
 
-void YZDocMark::add( uint line, uint mark )
+void YDocMark::add( uint line, uint mark )
 {
     if (marker.contains(line)) {
         mark &= ~marker[line];
@@ -35,7 +35,7 @@ void YZDocMark::add( uint line, uint mark )
         marker[line] = mark;
 }
 
-void YZDocMark::del( uint line, uint mark )
+void YDocMark::del( uint line, uint mark )
 {
     mark &= marker[line];
     if (mark == 0)
@@ -45,12 +45,12 @@ void YZDocMark::del( uint line, uint mark )
         marker.remove(line);
 }
 
-void YZDocMark::del( uint line )
+void YDocMark::del( uint line )
 {
     marker.remove(line);
 }
 
-uint YZDocMark::get( uint line ) const
+uint YDocMark::get( uint line ) const
     {
         return marker[line];
     }

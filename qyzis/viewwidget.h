@@ -29,7 +29,7 @@
 #include "view.h"
 
 class QYEdit;
-class YZBuffer;
+class YBuffer;
 class QLabel;
 class QYCommandLine;
 class QYZisCodeCompletion;
@@ -38,11 +38,11 @@ class QYLineNumbers;
 class QSettings;
 
 /**
-  * @short Implementation of YZView for the Qt GUI
+  * @short Implementation of YView for the Qt GUI
   *
   * In QYzis, the view is implemented using a QWidget
   */
-class QYView: public QWidget, public YZView
+class QYView: public QWidget, public YView
 {
     Q_OBJECT
 
@@ -54,7 +54,7 @@ signals :
     void newStatus();
 
 public:
-    QYView(YZBuffer *doc, QWidget *parent, const char *name = 0);
+    QYView(YBuffer *doc, QWidget *parent, const char *name = 0);
     virtual ~QYView();
     //  KTextEditor::Document *document () { return dynamic_cast<KTextEditor::Document*>( buffer ); }
     void guiSetCommandLineText( const QString& text );
@@ -95,13 +95,13 @@ protected:
     void guiDrawSetLineNumber( int y, int n, int h );
     virtual void guiPreparePaintEvent( int y_min, int y_max );
     virtual void guiEndPaintEvent();
-    virtual void guiDrawCell( QPoint , const YZDrawCell& cell, void* arg );
+    virtual void guiDrawCell( QPoint , const YDrawCell& cell, void* arg );
     virtual void guiDrawClearToEOL( QPoint, const QChar& clearChar );
 
-    void guiPaintEvent( const YZSelection& s );
+    void guiPaintEvent( const YSelection& s );
 
 
-    virtual void guiNotifyContentChanged( const YZSelection& i );
+    virtual void guiNotifyContentChanged( const YSelection& i );
 
     /**
      * Get the screen coordinates of the cursor position
@@ -121,7 +121,7 @@ public slots:
     //  void scrollLineDown();
 
 private:
-    YZBuffer *buffer;
+    YBuffer *buffer;
     bool m_customComplete;
     bool m_cc_cleanup;
     QYEdit *m_editor;

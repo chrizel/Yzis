@@ -34,8 +34,8 @@
 
 #include "luaengine.h"
 
-#define dbg()    yzDebug("YZLuaFuncs")
-#define err()    yzError("YZLuaFuncs")
+#define dbg()    yzDebug("YLuaFuncs")
+#define err()    yzError("YLuaFuncs")
 
 /*
  * TODO:
@@ -69,7 +69,7 @@ using namespace yzis;
 //
 // ========================================================
 
-void YZLuaFuncs::registerLuaFuncs(lua_State *L)
+void YLuaFuncs::registerLuaFuncs(lua_State *L)
 {
     lua_register(L, "line", line);
     lua_register(L, "setline", setline);
@@ -125,25 +125,25 @@ void YZLuaFuncs::registerLuaFuncs(lua_State *L)
 }
 
 
-int YZLuaFuncs::line(lua_State *L)
+int YLuaFuncs::line(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "line", "line")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "line", "line")) return 0;
     int line = ( int )lua_tonumber( L, 1 );
     lua_pop(L, 1);
 
     line = line ? line - 1 : 0;
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     QString t = cView->myBuffer()->textline( line );
 
     lua_pushstring( L, t.toUtf8() ); // first result
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
-int YZLuaFuncs::setline(lua_State *L)
+int YLuaFuncs::setline(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "setline", "line, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "setline", "line, text")) return 0;
     int sLine = ( int )lua_tonumber( L, 1 );
     QString text = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     lua_pop(L, 2);
@@ -151,19 +151,19 @@ int YZLuaFuncs::setline(lua_State *L)
     sLine = sLine ? sLine - 1 : 0;
     if (text.indexOf("\n") != -1) {
         printf("setline with line containing \n");
-        YZASSERT_EQUALS( lua_gettop(L), 0 );
+        YASSERT_EQUALS( lua_gettop(L), 0 );
         return 0;
     }
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     cView->myBuffer()->action()->replaceLine(cView, sLine, text );
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0; // no result
 }
 
-int YZLuaFuncs::insert(lua_State *L)
+int YLuaFuncs::insert(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 3, 3, "insert", "line, col, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 3, 3, "insert", "line, col, text")) return 0;
     int sCol = ( int )lua_tonumber( L, 1 );
     int sLine = ( int )lua_tonumber( L, 2 );
     QString text = QString::fromUtf8( ( char * )lua_tostring ( L, 3 ) );
@@ -172,7 +172,7 @@ int YZLuaFuncs::insert(lua_State *L)
     sCol = sCol ? sCol - 1 : 0;
     sLine = sLine ? sLine - 1 : 0;
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
     for ( ; it != end; ++it ) {
@@ -182,13 +182,13 @@ int YZLuaFuncs::insert(lua_State *L)
         sLine++;
     }
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ; // no result
 }
 
-int YZLuaFuncs::remove(lua_State *L)
+int YLuaFuncs::remove(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 3, 3, "remove", "line, col, nb")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 3, 3, "remove", "line, col, nb")) return 0;
     int sCol = ( int )lua_tonumber( L, 1 );
     int sLine = ( int )lua_tonumber( L, 2 );
     int sNb = ( int )lua_tonumber( L, 3 );
@@ -197,29 +197,29 @@ int YZLuaFuncs::remove(lua_State *L)
     sCol = sCol ? sCol - 1 : 0;
     sLine = sLine ? sLine - 1 : 0;
 
-    YZView* cView = YZSession::self()->currentView();
-    YZBuffer * cBuffer = cView->myBuffer();
+    YView* cView = YSession::self()->currentView();
+    YBuffer * cBuffer = cView->myBuffer();
     YZAction * cAction = cBuffer->action();
     cAction->deleteChar(cView, sCol, sLine, sNb);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ; // no result
 }
 
-int YZLuaFuncs::insertline(lua_State *L)
+int YLuaFuncs::insertline(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "insertline", "line, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "insertline", "line, text")) return 0;
     int sLine = ( int )lua_tonumber( L, 1 );
     QString text = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     lua_pop(L, 2);
 
     sLine = sLine ? sLine - 1 : 0;
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
     for ( ; it != end; ++it ) {
-        YZBuffer * cBuffer = cView->myBuffer();
+        YBuffer * cBuffer = cView->myBuffer();
         YZAction * cAction = cBuffer->action();
         if (!(cBuffer->isEmpty() && sLine == 0)) {
             cAction->insertNewLine( cView, 0, sLine );
@@ -228,18 +228,18 @@ int YZLuaFuncs::insertline(lua_State *L)
         sLine++;
     }
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ; // no result
 }
 
-int YZLuaFuncs::appendline(lua_State *L)
+int YLuaFuncs::appendline(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "appendline", "text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "appendline", "text")) return 0;
     QString text = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
-    YZView* cView = YZSession::self()->currentView();
-    YZBuffer * cBuffer = cView->myBuffer();
+    YView* cView = YSession::self()->currentView();
+    YBuffer * cBuffer = cView->myBuffer();
     YZAction * cAction = cBuffer->action();
     QStringList list = text.split( "\n" );
     QStringList::Iterator it = list.begin(), end = list.end();
@@ -251,13 +251,13 @@ int YZLuaFuncs::appendline(lua_State *L)
         }
     }
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ; // no result
 }
 
-int YZLuaFuncs::replace(lua_State *L)
+int YLuaFuncs::replace(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 3, 3, "replace", "line, col, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 3, 3, "replace", "line, col, text")) return 0;
     int sCol = ( int )lua_tonumber( L, 1 );
     int sLine = ( int )lua_tonumber( L, 2 );
     QString text = QString::fromUtf8( ( char * )lua_tostring ( L, 3 ) );
@@ -269,190 +269,190 @@ int YZLuaFuncs::replace(lua_State *L)
     if (text.indexOf('\n') != -1) {
         // replace does not accept multiline strings, it is too strange
         // XXX raises an error
-        YZASSERT_EQUALS( lua_gettop(L), 0 );
+        YASSERT_EQUALS( lua_gettop(L), 0 );
         return 0 ;
     }
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     if ( sLine >= cView->myBuffer()->lineCount() ) {
         cView->myBuffer()->action()->insertNewLine( cView, 0, sLine );
         sCol = 0;
     }
     cView->myBuffer()->action()->replaceChar( cView, sCol, sLine, text );
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ; // no result
 }
 
-int YZLuaFuncs::winline(lua_State *L)
+int YLuaFuncs::winline(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "winline", "")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "winline", "")) return 0;
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     uint result = cView->getBufferCursor().y() + 1;
 
     lua_pushnumber( L, result ); // first result
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ; // one result
 }
 
-int YZLuaFuncs::wincol(lua_State *L)
+int YLuaFuncs::wincol(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "wincol", "")) return 0;
-    YZView* cView = YZSession::self()->currentView();
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "wincol", "")) return 0;
+    YView* cView = YSession::self()->currentView();
     uint result = cView->getBufferCursor().x() + 1;
 
     lua_pushnumber( L, result ); // first result
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ; // one result
 }
 
-int YZLuaFuncs::scrline(lua_State *L)
+int YLuaFuncs::scrline(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "scrline", "")) return 0;
-    YZView* cView = YZSession::self()->currentView();
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "scrline", "")) return 0;
+    YView* cView = YSession::self()->currentView();
     uint result = cView->getCursor().y() + 1;
 
     lua_pushnumber( L, result ); // first result
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ; // one result
 }
 
-int YZLuaFuncs::scrcol(lua_State *L)
+int YLuaFuncs::scrcol(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "scrcol", "")) return 0;
-    YZView* cView = YZSession::self()->currentView();
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "scrcol", "")) return 0;
+    YView* cView = YSession::self()->currentView();
     uint result = cView->getCursor().x() + 1;
 
     lua_pushnumber( L, result ); // first result
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ; // one result
 }
 
-int YZLuaFuncs::winpos(lua_State *L)
+int YLuaFuncs::winpos(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "winpos", "")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "winpos", "")) return 0;
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     uint line = cView->getBufferCursor().y() + 1;
     uint col = cView->getBufferCursor().x() + 1;
 
     lua_pushnumber( L, col );
     lua_pushnumber( L, line );
-    YZASSERT_EQUALS( lua_gettop(L), 2 );
+    YASSERT_EQUALS( lua_gettop(L), 2 );
     return 2 ; // two results
 }
 
-int YZLuaFuncs::_goto(lua_State *L)
+int YLuaFuncs::_goto(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "goto", "line, col")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "goto", "line, col")) return 0;
     int sCol = ( int )lua_tonumber( L, 1 );
     int sLine = ( int )lua_tonumber( L, 2 );
     lua_pop(L, 2);
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     cView->gotoxy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::scrgoto(lua_State *L)
+int YLuaFuncs::scrgoto(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "scrgoto", "line, col")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "scrgoto", "line, col")) return 0;
     int sCol = ( int )lua_tonumber( L, 1 );
     int sLine = ( int )lua_tonumber( L, 2 );
     lua_pop(L, 2);
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     cView->gotodxdy(sCol ? sCol - 1 : 0, sLine ? sLine - 1 : 0 );
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::deleteline(lua_State *L)
+int YLuaFuncs::deleteline(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "deleteline", "line")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "deleteline", "line")) return 0;
     int sLine = ( int )lua_tonumber( L, 1 );
     lua_pop(L, 1);
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     QList<QChar> regs;
     regs << QChar( '"' ) ;
     cView->myBuffer()->action()->deleteLine( cView, sLine ? sLine - 1 : 0, 1, regs );
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::filename(lua_State *L)
+int YLuaFuncs::filename(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "filename", "")) return 0;
-    YZView* cView = YZSession::self()->currentView();
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "filename", "")) return 0;
+    YView* cView = YSession::self()->currentView();
     QByteArray fn = cView->myBuffer()->fileName().toUtf8();
     const char *filename = fn.data();
 
     lua_pushstring( L, filename );
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
-int YZLuaFuncs::color(lua_State *L)
+int YLuaFuncs::color(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "color", "line, col")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "color", "line, col")) return 0;
     int sCol = ( int )lua_tonumber( L, 1 );
     int sLine = ( int )lua_tonumber( L, 2 );
     lua_pop(L, 2);
     sCol = sCol ? sCol - 1 : 0;
     sLine = sLine ? sLine - 1 : 0;
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
     QByteArray c = cView->drawColor( sCol, sLine ).name().toUtf8();
     const char *color = c.data();
 
     // dbg() << "Asked color: " << color.latin1() << endl;
     lua_pushstring( L, color );
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ; // one result
 }
 
-int YZLuaFuncs::linecount(lua_State *L)
+int YLuaFuncs::linecount(lua_State *L)
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "linecount", "")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "linecount", "")) return 0;
 
-    YZView* cView = YZSession::self()->currentView();
+    YView* cView = YSession::self()->currentView();
 
     lua_pushnumber( L, cView->myBuffer()->lineCount()); // first result
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ; // one result
 }
 
-int YZLuaFuncs::version( lua_State *L )
+int YLuaFuncs::version( lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "version", "")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "version", "")) return 0;
 
     lua_pushstring( L, VERSION_CHAR );
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
-int YZLuaFuncs::sendkeys( lua_State *L )
+int YLuaFuncs::sendkeys( lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "sendkeys", "text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "sendkeys", "text")) return 0;
     QString text = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
-    YZSession::self()->sendMultipleKeys(YZSession::self()->currentView(), text);
+    YSession::self()->sendMultipleKeys(YSession::self()->currentView(), text);
 
     // nothing to return
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::highlight( lua_State *L )
+int YLuaFuncs::highlight( lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 3, 100, "highlight", "type, style, ...")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 3, 100, "highlight", "type, style, ...")) return 0;
 
     QStringList arg;
     int n = lua_gettop(L);
@@ -461,73 +461,73 @@ int YZLuaFuncs::highlight( lua_State *L )
     }
     lua_pop(L, n);
 
-    YZExCommandArgs args(NULL, QString(), QString(), arg.join(" "), 0, 0, true);
-    YZSession::self()->getExPool()->highlight(args);
+    YExCommandArgs args(NULL, QString(), QString(), arg.join(" "), 0, 0, true);
+    YSession::self()->getExPool()->highlight(args);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::yzdebug( lua_State *L )
+int YLuaFuncs::yzdebug( lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "yzdebug", "text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "yzdebug", "text")) return 0;
     QString text = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
     dbg() << text << endl;
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::yzprint(lua_State * /*L*/)
+int YLuaFuncs::yzprint(lua_State * /*L*/)
 {
     // fetch string from the stack
     // print it
     return 0;
 }
 
-int YZLuaFuncs::connect(lua_State *L )
+int YLuaFuncs::connect(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "connect", "event (string), function (string)")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "connect", "event (string), function (string)")) return 0;
     QString event = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     QString function = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     lua_pop(L, 2);
 
-    YZSession::self()->eventConnect(event, function);
+    YSession::self()->eventConnect(event, function);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::source(lua_State *L )
+int YLuaFuncs::source(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "source", "filename")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "source", "filename")) return 0;
     QString filename = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
-    YZLuaEngine::self()->source(filename);
+    YLuaEngine::self()->source(filename);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::setlocal(lua_State *L )
+int YLuaFuncs::setlocal(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "setlocal", "option name")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "setlocal", "option name")) return 0;
     QString option = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
-    YZExCommandArgs ex (YZSession::self()->currentView(), QString(), "setlocal", option, 0, 0, true);
-    YZSession::self()->getExPool()->set(ex);
+    YExCommandArgs ex (YSession::self()->currentView(), QString(), "setlocal", option, 0, 0, true);
+    YSession::self()->getExPool()->set(ex);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::newoption(lua_State *L )
+int YLuaFuncs::newoption(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 6, 6, "newoption", "option name, group name, default value, value, visibility (number), type (number)")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 6, 6, "newoption", "option name, group name, default value, value, visibility (number), type (number)")) return 0;
     QString option = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     QString group = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     QString defaultvalue = QString::fromUtf8( ( char * )lua_tostring ( L, 3 ) );
@@ -536,317 +536,317 @@ int YZLuaFuncs::newoption(lua_State *L )
     OptType type = (OptType)(int)lua_tonumber ( L, 6 );
     lua_pop(L, 6);
 
-    YZSession::self()->getOptions()->createOption(option, group, defaultvalue, value, visibility, type );
+    YSession::self()->getOptions()->createOption(option, group, defaultvalue, value, visibility, type );
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::map(lua_State *L )
+int YLuaFuncs::map(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "map", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "map", "key, text")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     QString mapp = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     lua_pop(L, 2);
 
     YZMapping::self()->addGlobalMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::unmap(lua_State *L )
+int YLuaFuncs::unmap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "unmap", "key")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "unmap", "key")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
     YZMapping::self()->deleteGlobalMapping(key);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::imap(lua_State *L )
+int YLuaFuncs::imap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "imap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "imap", "key, text")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     QString mapp = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     lua_pop(L, 2);
 
     YZMapping::self()->addInsertMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::iunmap(lua_State *L )
+int YLuaFuncs::iunmap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "iunmap", "key")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "iunmap", "key")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
     YZMapping::self()->deleteInsertMapping(key);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::omap(lua_State *L )
+int YLuaFuncs::omap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "omap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "omap", "key, text")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     QString mapp = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     lua_pop(L, 2);
 
     YZMapping::self()->addPendingOpMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::ounmap(lua_State *L )
+int YLuaFuncs::ounmap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "ounmap", "key")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "ounmap", "key")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
     YZMapping::self()->deletePendingOpMapping(key);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::vmap(lua_State *L )
+int YLuaFuncs::vmap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "vmap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "vmap", "key, text")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     QString mapp = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     lua_pop(L, 2);
 
     YZMapping::self()->addVisualMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::vunmap(lua_State *L )
+int YLuaFuncs::vunmap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "vunmap", "key")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "vunmap", "key")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
     YZMapping::self()->deleteVisualMapping(key);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::cmap(lua_State *L )
+int YLuaFuncs::cmap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "cmap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "cmap", "key, text")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     QString mapp = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     lua_pop(L, 2);
 
     YZMapping::self()->addCmdLineMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::cunmap(lua_State *L )
+int YLuaFuncs::cunmap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "cunmap", "key")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "cunmap", "key")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
     YZMapping::self()->deleteCmdLineMapping(key);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::nmap(lua_State *L )
+int YLuaFuncs::nmap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "nmap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "nmap", "key, text")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     QString mapp = QString::fromUtf8( ( char * )lua_tostring ( L, 2 ) );
     lua_pop(L, 2);
 
     YZMapping::self()->addNormalMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::nunmap(lua_State *L )
+int YLuaFuncs::nunmap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "nunmap", "key (string)")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "nunmap", "key (string)")) return 0;
     QString key = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
     YZMapping::self()->deleteNormalMapping(key);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::noremap(lua_State *L )
+int YLuaFuncs::noremap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "noremap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "noremap", "key, text")) return 0;
     QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
     QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
     lua_pop(L, 2);
 
     YZMapping::self()->addGlobalNoreMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::nnoremap(lua_State *L )
+int YLuaFuncs::nnoremap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "nnoremap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "nnoremap", "key, text")) return 0;
     QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
     QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
     lua_pop(L, 2);
 
     YZMapping::self()->addNormalNoreMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::vnoremap(lua_State *L )
+int YLuaFuncs::vnoremap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "vnoremap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "vnoremap", "key, text")) return 0;
     QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
     QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
     lua_pop(L, 2);
 
     YZMapping::self()->addVisualNoreMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::onoremap(lua_State *L )
+int YLuaFuncs::onoremap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "onoremap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "onoremap", "key, text")) return 0;
     QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
     QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
     lua_pop(L, 2);
 
     YZMapping::self()->addPendingOpNoreMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::inoremap(lua_State *L )
+int YLuaFuncs::inoremap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "inoremap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "inoremap", "key, text")) return 0;
     QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
     QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
     lua_pop(L, 2);
 
     YZMapping::self()->addInsertNoreMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::cnoremap(lua_State *L )
+int YLuaFuncs::cnoremap(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 2, 2, "cnoremap", "key, text")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 2, 2, "cnoremap", "key, text")) return 0;
     QString key = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
     QString mapp = QString::fromUtf8(( char * )lua_tostring ( L, 2 ));
     lua_pop(L, 2);
 
     YZMapping::self()->addCmdLineNoreMapping(key, mapp);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::matchpair(lua_State *L )
+int YLuaFuncs::matchpair(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "matchpair", "")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "matchpair", "")) return 0;
 
     bool found = false;
-    YZView *v = YZSession::self()->currentView();
-    YZCursor s = v->getBufferCursor();
-    YZCursor c = v->myBuffer()->action()->match(v, s, &found);
+    YView *v = YSession::self()->currentView();
+    YCursor s = v->getBufferCursor();
+    YCursor c = v->myBuffer()->action()->match(v, s, &found);
 
     lua_pushboolean(L , found);
     lua_pushnumber(L, c.x());
     lua_pushnumber(L, c.y());
-    YZASSERT_EQUALS( lua_gettop(L), 3 );
+    YASSERT_EQUALS( lua_gettop(L), 3 );
     return 3 ;
 }
 
-int YZLuaFuncs::mode(lua_State *L )
+int YLuaFuncs::mode(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 0, 0, "mode", "")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "mode", "")) return 0;
 
-    YZView *v = YZSession::self()->currentView();
+    YView *v = YSession::self()->currentView();
     QString mode = v->mode();
 
     lua_pushstring(L, mode.toUtf8());
-    YZASSERT_EQUALS( lua_gettop(L), 1 );
+    YASSERT_EQUALS( lua_gettop(L), 1 );
     return 1 ;
 }
 
-int YZLuaFuncs::edit(lua_State *L )
+int YLuaFuncs::edit(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "edit", "filename")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "edit", "filename")) return 0;
     QString fname = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
     lua_pop(L, 1);
 
     if (!fname.isEmpty())
-        YZSession::self()->createBufferAndView(fname);
+        YSession::self()->createBufferAndView(fname);
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::set(lua_State *L )
+int YLuaFuncs::set(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "set", "option (string)")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "set", "option (string)")) return 0;
     QString option = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
 
-    YZSession::self()->getExPool()->set(YZExCommandArgs(YZSession::self()->currentView(), QString(), QString(), option, 0, 0, true));
+    YSession::self()->getExPool()->set(YExCommandArgs(YSession::self()->currentView(), QString(), QString(), option, 0, 0, true));
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::loadplugin(lua_State *L )
+int YLuaFuncs::loadplugin(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "loadplugin", "plugin name")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "loadplugin", "plugin name")) return 0;
     QString pname = QString::fromUtf8(( char * )lua_tostring ( L, 1 ));
     lua_pop(L, 1);
 
     if (!pname.isEmpty()) {
-        QString resource = YZSession::self()->resourceMgr()->findResource( UserScriptResource, pname );
+        QString resource = YSession::self()->resourceMgr()->findResource( UserScriptResource, pname );
         if (! resource.isEmpty()) {
-            YZLuaEngine::self()->source( resource );
+            YLuaEngine::self()->source( resource );
         }
     }
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }
 
-int YZLuaFuncs::setLuaReturnValue(lua_State *L )
+int YLuaFuncs::setLuaReturnValue(lua_State *L )
 {
-    if (!YZLuaEngine::checkFunctionArguments(L, 1, 1, "setLuaReturnValue", "return value as string")) return 0;
+    if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "setLuaReturnValue", "return value as string")) return 0;
     QString luaReturnValue = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
     lua_pop(L, 1);
-    YZLuaEngine::self()->setLuaReturnValue( luaReturnValue );
+    YLuaEngine::self()->setLuaReturnValue( luaReturnValue );
 
-    YZASSERT_EQUALS( lua_gettop(L), 0 );
+    YASSERT_EQUALS( lua_gettop(L), 0 );
     return 0 ;
 }

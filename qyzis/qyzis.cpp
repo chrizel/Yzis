@@ -155,10 +155,10 @@ void QYzis::openURL(const QString &url)
 
 bool QYzis::queryClose()
 {
-    const YZBufferList &buffers = QYSession::self()->buffers();
+    const YBufferList &buffers = QYSession::self()->buffers();
 
-    for ( YZBufferList::const_iterator it = buffers.begin(); it != buffers.end(); ++it ) {
-        YZBuffer *buf = *it;
+    for ( YBufferList::const_iterator it = buffers.begin(); it != buffers.end(); ++it ) {
+        YBuffer *buf = *it;
 
         if ( buf->fileIsModified() ) {
             int msg = QMessageBox::warning(
@@ -319,7 +319,7 @@ QMainWindow *QYzis::main()
     return this;
 }
 
-YZDebugStream& operator<<( YZDebugStream& out, Qt::KeyboardModifiers v )
+YDebugStream& operator<<( YDebugStream& out, Qt::KeyboardModifiers v )
 {
     QString s;
     switch (v) {

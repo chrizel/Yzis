@@ -24,7 +24,7 @@
 #define dbg()    yzDebug("YZFoldPool")
 #define err()    yzError("YZFoldPool")
 
-YZFoldPool::YZFoldPool( YZView* view )
+YZFoldPool::YZFoldPool( YView* view )
 {
     m_view = view;
 }
@@ -98,7 +98,7 @@ int YZFoldPool::lineHeadingFold( int line ) const
     return line;
 }
 
-YZDebugStream& operator<<( YZDebugStream& out, const YZFoldPool& f )
+YDebugStream& operator<<( YDebugStream& out, const YZFoldPool& f )
 {
     QList<int> keys = f.m_folds.keys();
     for ( int i = 0; i < keys.size(); ++i ) {

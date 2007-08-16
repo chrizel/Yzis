@@ -128,7 +128,7 @@ void TestResource::init()
 
     QCOMPARE( putenv( "YZISHOME=./yzishome"), 0 );
 
-    mResMgr = new YZResourceMgr();
+    mResMgr = new YResourceMgr();
 }
 
 void TestResource::cleanup()
@@ -147,12 +147,12 @@ void TestResource::testResourceMgrNewDel()
     delete mResMgr;
 
     mResMgr = NULL;
-    mResMgr = new YZResourceMgr();
+    mResMgr = new YResourceMgr();
     QVERIFY( (mResMgr != NULL) );
     delete mResMgr;
     mResMgr = NULL;
 
-    mResMgr = new YZResourceMgr();
+    mResMgr = new YResourceMgr();
     QVERIFY( (mResMgr != NULL) );
     delete mResMgr;
     mResMgr = NULL;
@@ -168,7 +168,7 @@ void TestResource::testResourceMgrCreatesYzisDir()
     QVERIFY( removeTree( QDir::homePath() + "/.yzis" ) );
 
     QVERIFY( ! QFile::exists( QDir::homePath() + "/.yzis" ) );
-    mResMgr = new YZResourceMgr();
+    mResMgr = new YResourceMgr();
     QVERIFY( (mResMgr != NULL) );
 
     QVERIFY( QFile::exists( QDir::homePath() + "/.yzis" ) );

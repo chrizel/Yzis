@@ -19,56 +19,56 @@
 
 #include "font.h"
 
-#define dbg()    yzDebug("YZFont")
-#define err()    yzError("YZFont")
+#define dbg()    yzDebug("YFont")
+#define err()    yzError("YFont")
 
-YZFont::YZFont()
+YFont::YFont()
 {}
-YZFont::~YZFont()
+YFont::~YFont()
 {}
 
-void YZFont::setWeight( int weight )
+void YFont::setWeight( int weight )
 {
     m_weight = weight;
 }
-void YZFont::setItalic( bool enable )
+void YFont::setItalic( bool enable )
 {
     m_italic = enable;
 }
-void YZFont::setUnderline( bool enable )
+void YFont::setUnderline( bool enable )
 {
     m_underline = enable;
 }
-void YZFont::setOverline( bool enable )
+void YFont::setOverline( bool enable )
 {
     m_overline = enable;
 }
-void YZFont::setStrikeOut( bool enable )
+void YFont::setStrikeOut( bool enable )
 {
     m_strikeOut = enable;
 }
 
-bool YZFont::bold() const
+bool YFont::bold() const
 {
     return m_weight > Normal;
 }
-int YZFont::weight() const
+int YFont::weight() const
 {
     return m_weight;
 }
-bool YZFont::italic() const
+bool YFont::italic() const
 {
     return m_italic;
 }
-bool YZFont::underline() const
+bool YFont::underline() const
 {
     return m_underline;
 }
-bool YZFont::overline() const
+bool YFont::overline() const
 {
     return m_overline;
 }
-bool YZFont::strikeOut() const
+bool YFont::strikeOut() const
 {
     return m_strikeOut;
 }

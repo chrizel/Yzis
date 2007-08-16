@@ -28,12 +28,12 @@
  * this class represents a line in the buffer
  * it holds the actual data and metadata
  */
-class YZLine
+class YLine
 {
 public:
-    YZLine(const QString &l);
-    YZLine();
-    ~YZLine();
+    YLine(const QString &l);
+    YLine();
+    ~YLine();
 
     const QString& data() const
     {
@@ -54,13 +54,13 @@ public:
     }
     inline bool hlLineContinue () const
     {
-        return m_flags & YZLine::FlagHlContinue;
+        return m_flags & YLine::FlagHlContinue;
     }
 
     inline void setHlLineContinue (bool cont)
     {
-        if (cont) m_flags = m_flags | YZLine::FlagHlContinue;
-        else m_flags = m_flags & ~ YZLine::FlagHlContinue;
+        if (cont) m_flags = m_flags | YLine::FlagHlContinue;
+        else m_flags = m_flags & ~ YLine::FlagHlContinue;
     }
 
     void clearAttributes()
@@ -109,6 +109,6 @@ private:
     bool m_initialized;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS( YZLine::Flags );
+Q_DECLARE_OPERATORS_FOR_FLAGS( YLine::Flags );
 
 #endif

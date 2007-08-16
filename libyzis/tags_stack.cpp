@@ -34,29 +34,29 @@
 #include "session.h"
 #include "yzisinfojumplistrecord.h"
 
-static YZYzisinfoJumpListRecord getRecord()
+static YInfoJumpListRecord getRecord()
 {
-    YZBuffer *buffer = YZSession::self()->currentView()->myBuffer();
-    const YZCursor &cursor = YZSession::self()->currentView()->getCursor();
-    return YZYzisinfoJumpListRecord( buffer->fileName(), cursor);
+    YBuffer *buffer = YSession::self()->currentView()->myBuffer();
+    const YCursor &cursor = YSession::self()->currentView()->getCursor();
+    return YInfoJumpListRecord( buffer->fileName(), cursor);
 }
 
-#define dbg()    yzDebug("YZTagStack")
-#define err()    yzError("YZTagStack")
+#define dbg()    yzDebug("YTagStack")
+#define err()    yzError("YTagStack")
 
-YZTagStack::YZTagStack()
+YTagStack::YTagStack()
 {}
 
-YZTagStack::~YZTagStack()
+YTagStack::~YTagStack()
 {}
 
-void YZTagStack::push()
+void YTagStack::push()
 {
     mCurrentTags.push_back(qMakePair(MatchingTagsType(), static_cast<unsigned int>(0)));
     mStack.push_back(getRecord());
 }
 
-const YZYzisinfoJumpListRecord *YZTagStack::getHead() const
+const YInfoJumpListRecord *YTagStack::getHead() const
 {
     if ( !mStack.empty() ) {
         return &mStack.back();
@@ -65,9 +65,9 @@ const YZYzisinfoJumpListRecord *YZTagStack::getHead() const
     }
 }
 
-const YZTagStackItem *YZTagStack::moveToNext()
+const YTagStackItem *YTagStack::moveToNext()
 {
-    const YZTagStackItem *result = NULL;
+    const YTagStackItem *result = NULL;
     MatchingStackItem &pair = mCurrentTags.back();
 
     if ( pair.second < ( unsigned )pair.first.size() - 1 ) {
@@ -78,9 +78,9 @@ const YZTagStackItem *YZTagStack::moveToNext()
     return result;
 }
 
-const YZTagStackItem *YZTagStack::moveToPrevious()
+const YTagStackItem *YTagStack::moveToPrevious()
 {
-    const YZTagStackItem *result = NULL;
+    const YTagStackItem *result = NULL;
     MatchingStackItem &pair = mCurrentTags.back();
 
     if ( pair.second != 0 ) {
@@ -91,25 +91,25 @@ const YZTagStackItem *YZTagStack::moveToPrevious()
     return result;
 }
 
-void YZTagStack::pop()
+void YTagStack::pop()
 {
     mStack.pop_back();
     mCurrentTags.pop_back();
 }
 
-bool YZTagStack::empty() const
+bool YTagStack::empty() const
 {
     return mStack.empty();
 }
 
-void YZTagStack::storeMatchingTags(const QVector<YZTagStackItem> &tags)
+void YTagStack::storeMatchingTags(const QVector<YTagStackItem> &tags)
 {
     MatchingStackItem &pair = mCurrentTags.back();
     pair.first = tags;
     pair.second = static_cast<unsigned int>(0);
 }
 
-unsigned int YZTagStack::getNumMatchingTags() const
+unsigned int YTagStack::getNumMatchingTags() const
 {
     if ( !mCurrentTags.empty() ) {
         const MatchingStackItem &pair = mCurrentTags.back();
@@ -119,7 +119,7 @@ unsigned int YZTagStack::getNumMatchingTags() const
     }
 }
 
-unsigned int YZTagStack::getNumCurMatchingTag() const
+unsigned int YTagStack::getNumCurMatchingTag() const
 {
     if ( !mCurrentTags.empty() ) {
         const MatchingStackItem &pair = mCurrentTags.back();

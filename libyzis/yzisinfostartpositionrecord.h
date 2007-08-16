@@ -24,20 +24,20 @@
 #include "cursor.h"
 
 /**
- * Class YZYzisinfoStartPositionRecord
+ * Class YInfoStartPositionRecord
  * 
  * Class that holds the details about where to position the cursor in a 
  * given file when opening it.
  */
 
-class YZYzisinfoStartPositionRecord
+class YInfoStartPositionRecord
 {
 public:
     /**
      * Constructor
      */
 
-    YZYzisinfoStartPositionRecord();
+    YInfoStartPositionRecord();
 
     /**
      * Constructor
@@ -46,7 +46,7 @@ public:
      * @param c The cursor for the start position in the current file 
      */
 
-    YZYzisinfoStartPositionRecord( const QString & filename, const YZCursor c );
+    YInfoStartPositionRecord( const QString & filename, const YCursor c );
 
 
 
@@ -54,22 +54,22 @@ public:
      * Destructor
      */
 
-    ~YZYzisinfoStartPositionRecord();
+    ~YInfoStartPositionRecord();
 
     /**
      * The copy constructor
      */
 
-    YZYzisinfoStartPositionRecord( YZYzisinfoStartPositionRecord & copy );
+    YInfoStartPositionRecord( YInfoStartPositionRecord & copy );
 
     /**
      * Assignment operator
      * 
-     * @param copy The YZYzisinfoStartPositionRecord instance to use for the
+     * @param copy The YInfoStartPositionRecord instance to use for the
      *             assignment
      */
 
-    YZYzisinfoStartPositionRecord & operator=( YZYzisinfoStartPositionRecord & copy );
+    YInfoStartPositionRecord & operator=( YInfoStartPositionRecord & copy );
 
     /**
      * Returns the current filename
@@ -81,7 +81,7 @@ public:
      * Returns the recorded start position for the current filename
      */
 
-    YZCursor position() const;
+    YCursor position() const;
 
     /**
      * Sets the current filename
@@ -98,14 +98,14 @@ public:
      * @param y The y coordinate of the cursor position
      */
 
-    void setPosition( const YZCursor c)
+    void setPosition( const YCursor c)
     {
         mPosition = c ;
     }
 
 private:
     QString mFilename;
-    YZCursor mPosition;
+    YCursor mPosition;
 };
 
 #endif // YZISINFOSTARTPOSITIONRECORD_H

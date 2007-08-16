@@ -27,7 +27,7 @@
 #include <ktexteditor/range.h>
 #include <ktexteditor/cursor.h>
 
-class YZBuffer;
+class YBuffer;
 
 class KTEDocument : public KTextEditor::Document
 {
@@ -79,7 +79,7 @@ public:
     virtual bool openFile();
     virtual bool saveFile();
 
-    YZBuffer* buffer() const
+    YBuffer* buffer() const
     {
         return m_buffer;
     }
@@ -98,7 +98,7 @@ signals:
 
 private:
     QList<KTextEditor::View*> m_views;
-    YZBuffer* m_buffer;
+    YBuffer* m_buffer;
 };
 
 #endif

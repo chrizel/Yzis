@@ -29,15 +29,15 @@
 /* Project */
 #include "cursor.h"
 
-class YZBuffer;
-class YZYzisinfoStartPositionRecord;
-class YZYzisinfoJumpListRecord;
+class YBuffer;
+class YInfoStartPositionRecord;
+class YInfoJumpListRecord;
 
-typedef QVector<YZYzisinfoStartPositionRecord*> StartPositionVector;
-typedef QVector<YZYzisinfoJumpListRecord*> JumpListVector;
+typedef QVector<YInfoStartPositionRecord*> StartPositionVector;
+typedef QVector<YInfoJumpListRecord*> JumpListVector;
 
 /**
- * Class YZYzisinfo
+ * Class YInfo
  *
  * @short Handle the ~/.yzisinfo file.
  * 
@@ -45,7 +45,7 @@ typedef QVector<YZYzisinfoJumpListRecord*> JumpListVector;
  * This file is the equivalent of the ~/.viminfo file in vim
  */
 
-class YZYzisinfo
+class YInfo
 {
 public:
     /**
@@ -53,7 +53,7 @@ public:
      * ~/.yzis/fileinfo, but doesn't try to read the file yet.
      */
 
-    YZYzisinfo();
+    YInfo();
 
     /**
      * Constructor. Set the filename to path, but doesn't try
@@ -62,13 +62,13 @@ public:
      * @param path The full path to the yzisinfo file
      */
 
-    YZYzisinfo( const QString & path );
+    YInfo( const QString & path );
 
     /**
      * Destructor. Does nothing.
      */
 
-    ~YZYzisinfo();
+    ~YInfo();
 
     /**
      * Actually read the yzisinfo file.
@@ -80,13 +80,13 @@ public:
      * Method to update the start position for the given file
      */
 
-    void updateStartPosition( const YZBuffer *buffer, const YZCursor cursor );
+    void updateStartPosition( const YBuffer *buffer, const YCursor cursor );
 
     /**
      * Method to update the jump list for the given file
      */
 
-    void updateJumpList( const YZBuffer *buffer, const QPoint pos);
+    void updateJumpList( const YBuffer *buffer, const QPoint pos);
 
     /**
      * Method to write the yzisinfo file
@@ -134,19 +134,19 @@ public:
      * Method to return the start position for the current file
      */
 
-    YZCursor startPosition( const QString& filename ) const;
-    YZCursor startPosition( const YZBuffer *buffer ) const;
+    YCursor startPosition( const QString& filename ) const;
+    YCursor startPosition( const YBuffer *buffer ) const;
 
     /**
      * Method to return the previous search position for the current file
      */
 
-    YZCursor searchPosition( const YZBuffer *buffer );
+    YCursor searchPosition( const YBuffer *buffer );
 
     /**
      * Returns the previous jump position
      */
-    const YZCursor previousJumpPosition();
+    const YCursor previousJumpPosition();
 
 private:
     /**

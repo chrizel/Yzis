@@ -23,13 +23,13 @@
 
 #include <QPrinter>
 
-class YZView;
+class YView;
 
 class YZQtPrinter : public QPrinter
 {
 
 public:
-    YZQtPrinter( YZView *view );
+    YZQtPrinter( YView *view );
     virtual ~YZQtPrinter( );
 
     void printToFile( const QString& path );
@@ -40,7 +40,7 @@ private:
     void doPrint( );
 
     /* members */
-    YZView *mView;
+    YView *mView;
 };
 
 #endif

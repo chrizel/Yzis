@@ -47,7 +47,7 @@ class YzisHlItemData;
 class YzisHlData;
 class YzisHlIncludeRule;
 class YzisSyntaxDocument;
-class YZLine;
+class YLine;
 class YzisSyntaxModeListItem;
 class YzisSyntaxContextData;
 
@@ -122,8 +122,8 @@ class YzisHighlighting
 	void cleanup();
 
   public:
-    void doHighlight ( YZLine *prevLine,
-                       YZLine *textLine,
+    void doHighlight ( YLine *prevLine,
+                       YLine *textLine,
                        QVector<uint> *foldingList,
                        bool *ctxChanged );
 
@@ -364,7 +364,7 @@ class YZIS_EXPORT YzisHlManager
     YzisHighlighting *getHl(int n);
     int nameFind(const QString &name);
 
-    int detectHighlighting (class YZBuffer *doc);
+    int detectHighlighting (class YBuffer *doc);
 
     int findHl(YzisHighlighting *h) {return hlList.indexOf(h);}
     QString identifierForName(const QString&);

@@ -23,8 +23,8 @@
    Copyright (C) 2003 Hamish Rodda <rodda@kde.org>
 */
 
-#ifndef __YZIS_ATTRIBUTE_H__
-#define __YZIS_ATTRIBUTE_H__
+#ifndef __YIS_ATTRIBUTE_H__
+#define __YIS_ATTRIBUTE_H__
 
 #include "color.h"
 #include "font.h"
@@ -52,7 +52,7 @@ public:
   YzisAttribute();
   virtual ~YzisAttribute();
 
-  YZFont font(const YZFont& ref) const;
+  YFont font(const YFont& ref) const;
 
   inline bool itemSet(int item) const
   { return item & m_itemsSet; };
@@ -72,7 +72,7 @@ public:
   void setWeight(int weight);
 
   inline bool bold() const
-  { return weight() >= YZFont::Bold; };
+  { return weight() >= YFont::Bold; };
 
   void setBold(bool enable = true);
 
@@ -96,30 +96,30 @@ public:
 
   void setStrikeOut(bool enable = true);
 
-  inline const YZColor& outline() const
+  inline const YColor& outline() const
   { return m_outline; };
 
-  void setOutline(const YZColor& color);
+  void setOutline(const YColor& color);
 
-  inline const YZColor& textColor() const
+  inline const YColor& textColor() const
   { return m_textColor; };
 
-  void setTextColor(const YZColor& color);
+  void setTextColor(const YColor& color);
 
-  inline const YZColor& selectedTextColor() const
+  inline const YColor& selectedTextColor() const
   { return m_selectedTextColor; };
 
-  void setSelectedTextColor(const YZColor& color);
+  void setSelectedTextColor(const YColor& color);
 
-  inline const YZColor& bgColor() const
+  inline const YColor& bgColor() const
   { return m_bgColor; };
 
-  void setBGColor(const YZColor& color);
+  void setBGColor(const YColor& color);
 
-  inline const YZColor& selectedBGColor() const
+  inline const YColor& selectedBGColor() const
   { return m_selectedBGColor; };
 
-  void setSelectedBGColor(const YZColor& color);
+  void setSelectedBGColor(const YColor& color);
 
   YzisAttribute& operator+=(const YzisAttribute& a);
 
@@ -134,7 +134,7 @@ public:
 private:
   int m_weight;
   bool m_italic, m_underline, m_overline, m_strikeout, m_changed;
-  YZColor m_outline, m_textColor, m_selectedTextColor, m_bgColor, m_selectedBGColor;
+  YColor m_outline, m_textColor, m_selectedTextColor, m_bgColor, m_selectedBGColor;
   int m_itemsSet;
 };
 

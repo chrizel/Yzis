@@ -23,20 +23,20 @@
 #include <QMap>
 #include <QStringList>
 
-class YZView;
+class YView;
 
 /**
-  * Each View has one YZEvents, and this is the only place where this is
+  * Each View has one YEvents, and this is the only place where this is
   * used.
   */
-class YZEvents
+class YEvents
 {
 public:
     /**
      * Default constructor
      */
-    YZEvents();
-    virtual ~YZEvents();
+    YEvents();
+    virtual ~YEvents();
 
     /**
      * Connect a Lua function to a specific event
@@ -48,10 +48,10 @@ public:
     /**
      * Call plugins for event
      * @param event the event to execute plugins for
-     * @param view view is the YZView in which to execute the event string
+     * @param view view is the YView in which to execute the event string
      * (can be different from the current view)
      */
-    QStringList exec(const QString& event, YZView *view = NULL);
+    QStringList exec(const QString& event, YView *view = NULL);
 
 private:
     QMap<QString, QStringList> mEvents;

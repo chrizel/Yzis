@@ -108,7 +108,7 @@ public:
 
 };
 
-YZDebugStream& operator<<( YZDebugStream& out, Qt::KeyboardModifiers v );
+YDebugStream& operator<<( YDebugStream& out, Qt::KeyboardModifiers v );
 
 
 #endif // QYZIS_H

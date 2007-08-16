@@ -29,11 +29,11 @@ extern "C"
 
 #include <QString>
 
-class YZView;
+class YView;
 
 /** This class is the main interface for the lua engine.
   *
-  * YZLuaEngine is the central point of interaction with the lua engine. It is
+  * YLuaEngine is the central point of interaction with the lua engine. It is
   * responsible for initialising the lua engine, and provides all the
   * facilities needed to deal with lua.
   *
@@ -42,8 +42,8 @@ class YZView;
   *
   * All code related to the lua engine and lua stack should go in this class.
   * Implementation of actual lua functions (the binding) is done in \ref
-  * YZLuaFuncs. The functions are registered to lua by the call to 
-  * YZLuaFuncs::registerLuaFuncs(),
+  * YLuaFuncs. The functions are registered to lua by the call to 
+  * YLuaFuncs::registerLuaFuncs(),
   * performed during the class instancing.
   *
   * The function that are useful when dealing with lua in the libyzis are:
@@ -60,20 +60,20 @@ class YZView;
   * interface
   *
   */
-class YZIS_EXPORT YZLuaEngine
+class YZIS_EXPORT YLuaEngine
 {
 public:
-    /** Get the pointer to the singleton YZLuaEngine */
-    static YZLuaEngine * self();
+    /** Get the pointer to the singleton YLuaEngine */
+    static YLuaEngine * self();
 
-    ~YZLuaEngine();
+    ~YLuaEngine();
 
     /**
      * Source a lua file.
            *
            * If you want to source a lua file that is an yzis resource, you must
-           * first find the resource with YZSession::findResource(
-           * YZSession::ScriptFile, fname )
+           * first find the resource with YSession::findResource(
+           * YSession::ScriptFile, fname )
            *
            * @param filename the name of the lua file, with .lua extension.
            * \return "" if file isn't found, or Script raised an error, else returns the return value of the script
@@ -89,7 +89,7 @@ public:
            *
            * The method will call execInLua().
      */
-    QString lua(YZView *view, const QString& args);
+    QString lua(YView *view, const QString& args);
 
     /** Calls a lua function.
       *
@@ -307,8 +307,8 @@ protected:
 
 private:
     /** Private constructor for a singleton */
-    YZLuaEngine();
-    static YZLuaEngine * me; //!< Singleton instance holder
+    YLuaEngine();
+    static YLuaEngine * me; //!< Singleton instance holder
 
 
 };

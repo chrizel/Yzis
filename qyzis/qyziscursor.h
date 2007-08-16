@@ -22,7 +22,7 @@
 
 #include <QWidget>
 
-class YZDebugStream;
+class YDebugStream;
 class QYEdit;
 class QYView;
 
@@ -56,7 +56,7 @@ private :
 
 };
 
-YZDebugStream& operator<<( YZDebugStream& out, const QYCursor::CursorShape & shape );
+YDebugStream& operator<<( YDebugStream& out, const QYCursor::CursorShape & shape );
 
 #endif
 

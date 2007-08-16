@@ -59,7 +59,7 @@ void KYCursor::paintEvent( QPaintEvent* )
 
 #define GET_cell \
     KYView* yzview = static_cast<KYView*>( parentWidget()->parentWidget() ); \
-    YZDrawCell cell = yzview->getCursorDrawCell( )
+    YDrawCell cell = yzview->getCursorDrawCell( )
 #define SET_pen \
     p.setPen( cell.bg.isValid() ? QColor( cell.bg.rgb() ) : parentWidget()->palette().window().color() );
 

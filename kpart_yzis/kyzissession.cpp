@@ -46,25 +46,25 @@ void KYSession::createInstance()
     }
 }
 
-YZView* KYSession::guiCreateView(YZBuffer* buffer)
+YView* KYSession::guiCreateView(YBuffer* buffer)
 {
     yzDebug() << "doCreateView( " << buffer->toString() << ")" << endl;
     KYView* view = new KYView(buffer, 0);
-    YZASSERT_MSG(view, "KYSession::createView : failed creating a new KYView");
+    YASSERT_MSG(view, "KYSession::createView : failed creating a new KYView");
     return view;
 }
 
-YZBuffer* KYSession::guiCreateBuffer()
+YBuffer* KYSession::guiCreateBuffer()
 {
-    return new YZBuffer();
+    return new YBuffer();
 }
 
-void KYSession::guiDeleteBuffer( YZBuffer* b )
+void KYSession::guiDeleteBuffer( YBuffer* b )
 {
     delete b;
 }
 
-void KYSession::guiSplitHorizontally(YZView*)
+void KYSession::guiSplitHorizontally(YView*)
 {
 }
 
@@ -115,13 +115,13 @@ void KYSession::guiSetClipboardText(const QString&, Clipboard::Mode)
 {
 }
 
-void KYSession::guiDeleteView(YZView* view)
+void KYSession::guiDeleteView(YView* view)
 {
     KYView* v = static_cast< KYView* >( view );
     v->close();
 }
 
-void KYSession::guiChangeCurrentView( YZView* view)
+void KYSession::guiChangeCurrentView( YView* view)
 {
     KYView* kyzisview = static_cast< KYView* >( view );
     kyzisview->activateWindow();

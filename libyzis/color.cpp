@@ -19,8 +19,8 @@
 
 #include "color.h"
 
-#define dbg()    yzDebug("YZColor")
-#define err()    yzError("YZColor")
+#define dbg()    yzDebug("YColor")
+#define err()    yzError("YColor")
 
 /*
  * Most of the code here has been copy/pasted from the Qt3 QColor class.
@@ -213,17 +213,17 @@ static int rgb_cmp(const void *d1, const void *d2)
 }
 
 
-YZColor::YZColor()
+YColor::YColor()
 {
     invalidate();
 }
 
-YZColor::YZColor( QRgb rgb )
+YColor::YColor( QRgb rgb )
 {
     setRgb( rgb );
 }
 
-YZColor::YZColor( Qt::GlobalColor color )
+YColor::YColor( Qt::GlobalColor color )
 {
 
     static const QRgb global_colors[] = {
@@ -251,16 +251,16 @@ YZColor::YZColor( Qt::GlobalColor color )
 
     setRgb( global_colors[color] );
 }
-YZColor::~YZColor()
+YColor::~YColor()
 {}
 
-void YZColor::invalidate()
+void YColor::invalidate()
 {
     m_valid = false;
     m_red = m_green = m_blue = -1;
 }
 
-void YZColor::setRgb( QRgb rgb )
+void YColor::setRgb( QRgb rgb )
 {
     m_red = ( ( rgb >> 16 ) & 0xff ) * 0x101;
     m_green = ( ( rgb >> 8 ) & 0xff ) * 0x101;
@@ -268,7 +268,7 @@ void YZColor::setRgb( QRgb rgb )
     m_valid = true;
 }
 
-void YZColor::setNamedColor( const QString &name )
+void YColor::setNamedColor( const QString &name )
 {
     invalidate();
     if ( !name.isEmpty() ) {
@@ -315,34 +315,34 @@ void YZColor::setNamedColor( const QString &name )
     }
 }
 
-bool YZColor::isValid() const
+bool YColor::isValid() const
 {
     return m_valid;
 }
-QRgb YZColor::rgb() const
+QRgb YColor::rgb() const
 {
     return qRgb( red(), green(), blue() );
 }
-QString YZColor::name() const
+QString YColor::name() const
 {
     QString s;
     s.sprintf("#%02x%02x%02x", red(), green(), blue() );
     return s;
 }
-int YZColor::red() const
+int YColor::red() const
 {
     return m_red >> 8;
 }
-int YZColor::green() const
+int YColor::green() const
 {
     return m_green >> 8;
 }
-int YZColor::blue() const
+int YColor::blue() const
 {
     return m_blue >> 8;
 }
 
-bool YZColor::operator!=( const YZColor& color ) const
+bool YColor::operator!=( const YColor& color ) const
 {
     return m_red == color.m_red && m_green == color.m_green && m_blue == color.m_blue;
 }

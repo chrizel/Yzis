@@ -31,65 +31,65 @@
 #include "selection.h"
 #include "session.h"
 
-#define dbg()    yzDebug("YZModeSearch")
-#define err()    yzError("YZModeSearch")
+#define dbg()    yzDebug("YModeSearch")
+#define err()    yzError("YModeSearch")
 
 using namespace yzis;
 
-YZModeSearch::YZModeSearch() : YZMode()
+YModeSearch::YModeSearch() : YMode()
 {
-    mType = YZMode::ModeSearch;
+    mType = YMode::ModeSearch;
     mString = _( "[ Search ]" );
     mMapMode = MapCmdline;
     mHistory = new YZHistory;
     incSearchFound = false;
 }
-YZModeSearch::~YZModeSearch()
+YModeSearch::~YModeSearch()
 {
     delete mHistory;
 }
-void YZModeSearch::enter( YZView* view )
+void YModeSearch::enter( YView* view )
 {
-    YZSession::self()->guiSetFocusCommandLine();
+    YSession::self()->guiSetFocusCommandLine();
     view->guiSetCommandLineText( "" );
     mSearchBegin = view->getBufferCursor();
 }
-void YZModeSearch::leave( YZView* view )
+void YModeSearch::leave( YView* view )
 {
     view->guiSetCommandLineText( "" );
-    YZSession::self()->guiSetFocusMainWindow();
+    YSession::self()->guiSetFocusMainWindow();
 }
 
-YZCursor YZModeSearch::replaySearch( YZView* view, bool* found )
+YCursor YModeSearch::replaySearch( YView* view, bool* found )
 {
-    return YZSession::self()->search()->replayForward( view->myBuffer(), found, view->getBufferCursor() );
+    return YSession::self()->search()->replayForward( view->myBuffer(), found, view->getBufferCursor() );
 }
-YZCursor YZModeSearch::search( YZView* view, const QString& s, bool* found )
+YCursor YModeSearch::search( YView* view, const QString& s, bool* found )
 {
-    return YZSession::self()->search()->forward( view->myBuffer(), s, found, view->getBufferCursor() );
+    return YSession::self()->search()->forward( view->myBuffer(), s, found, view->getBufferCursor() );
 }
-YZCursor YZModeSearch::search( YZView* view, const QString& s, const YZCursor begin, int* matchlength, bool* found )
+YCursor YModeSearch::search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found )
 {
-    YZCursor end( 0, view->myBuffer()->lineCount() - 1 );
+    YCursor end( 0, view->myBuffer()->lineCount() - 1 );
     end.setX( view->myBuffer()->textline( end.y() ).length() );
     return view->myBuffer()->action()->search( view->myBuffer(), s, begin, end, matchlength, found );
 }
 
-void YZModeSearch::initModifierKeys()
+void YModeSearch::initModifierKeys()
 {
     mModifierKeys << "<ALT>:";
 }
-CmdState YZModeSearch::execCommand( YZView* view, const QString& _key )
+CmdState YModeSearch::execCommand( YView* view, const QString& _key )
 {
     QString key = _key;
-    YZSelection* searchSelection = view->getSelectionPool()->search();
+    YSelection* searchSelection = view->getSelectionPool()->search();
 
     if ( key == "<ENTER>" ) {
         QString what = view->guiGetCommandLineText();
         dbg() << "Current search: " << what;
 
         bool found = false;
-        YZCursor pos;
+        YCursor pos;
         if ( what.isEmpty() ) {
             pos = replaySearch( view, &found );
         } else {
@@ -148,9 +148,9 @@ CmdState YZModeSearch::execCommand( YZView* view, const QString& _key )
         incSearchResult = search(view, view->guiGetCommandLineText(), mSearchBegin, &matchlength, &(incSearchFound));
         if ( incSearchFound ) {
             if ( view->getLocalBooleanOption("hlsearch") ) {
-                YZCursor endResult(incSearchResult );
+                YCursor endResult(incSearchResult );
                 endResult.setX( endResult.x() + matchlength - 1 );
-                searchSelection->addInterval( YZInterval(incSearchResult, endResult) );
+                searchSelection->addInterval( YInterval(incSearchResult, endResult) );
                 view->sendPaintEvent( searchSelection->map() );
             }
             view->gotoxyAndStick(incSearchResult );
@@ -165,27 +165,27 @@ CmdState YZModeSearch::execCommand( YZView* view, const QString& _key )
 }
 
 
-YZModeSearchBackward::YZModeSearchBackward() : YZModeSearch()
+YModeSearchBackward::YModeSearchBackward() : YModeSearch()
 {
-    mType = YZMode::ModeSearchBackward;
+    mType = YMode::ModeSearchBackward;
     mString = _( "[ Search backward ]" );
 }
-YZModeSearchBackward::~YZModeSearchBackward()
+YModeSearchBackward::~YModeSearchBackward()
 {}
 
-YZCursor YZModeSearchBackward::replaySearch( YZView* view, bool * found )
+YCursor YModeSearchBackward::replaySearch( YView* view, bool * found )
 {
-    return YZSession::self()->search()->replayBackward( view->myBuffer(), found, view->getBufferCursor() );
+    return YSession::self()->search()->replayBackward( view->myBuffer(), found, view->getBufferCursor() );
 }
-YZCursor YZModeSearchBackward::search( YZView* view, const QString& s, bool* found )
+YCursor YModeSearchBackward::search( YView* view, const QString& s, bool* found )
 {
-    YZCursor buffer = view->getBufferCursor();
+    YCursor buffer = view->getBufferCursor();
     view->gotoxy( buffer.x() + 1, buffer.y(), false );
-    return YZSession::self()->search()->backward( view->myBuffer(), s, found, view->getBufferCursor() );
+    return YSession::self()->search()->backward( view->myBuffer(), s, found, view->getBufferCursor() );
 }
-YZCursor YZModeSearchBackward::search( YZView* view, const QString& s, const YZCursor begin, int* matchlength, bool* found )
+YCursor YModeSearchBackward::search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found )
 {
-    YZCursor end( 0, 0 );
+    YCursor end( 0, 0 );
     return view->myBuffer()->action()->search( view->myBuffer(), s, begin, end, matchlength, found );
 }
 

@@ -12,7 +12,7 @@ class TestResource : public QObject
 
 protected:
     bool mInitSuccess;
-    YZResourceMgr * mResMgr;
+    YResourceMgr * mResMgr;
 
 protected:
     void subTest( ResourceType restype, QString dir, QString fname, bool shouldFind);

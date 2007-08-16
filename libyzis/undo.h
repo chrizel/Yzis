@@ -30,12 +30,12 @@
 #include <QPoint>
 #include "yzismacros.h"
 
-class YZView;
-class YZBuffer;
+class YView;
+class YBuffer;
 
 /** An individual operation on a buffer, that can be done or undone. */
 
-struct YZBufferOperation
+struct YBufferOperation
 {
     enum OperationType {
         OpAddText,  //!< insert some characters inside the line
@@ -50,7 +50,7 @@ struct YZBufferOperation
     /**  Perform the buffer operation on the buffer passed in argument.
       *  If opposite is true, perform the opposite operation (used for undo)
       */
-    void performOperation( YZView* pView, bool opposite = false );
+    void performOperation( YView* pView, bool opposite = false );
 
     OperationType type;
     QString text;
@@ -59,7 +59,7 @@ struct YZBufferOperation
     QString toString() const;
 };
 
-typedef QList<YZBufferOperation*> UndoItemBase;
+typedef QList<YBufferOperation*> UndoItemBase;
 
 /** An UndoItem contains a list of individual buffer operations
   * and the two cursor positions: before and after the whole set of operations
@@ -79,7 +79,7 @@ public:
 class YZIS_EXPORT YZUndoBuffer
 {
 public:
-    YZUndoBuffer( YZBuffer * );
+    YZUndoBuffer( YBuffer * );
     virtual ~YZUndoBuffer();
 
     /*
@@ -87,19 +87,19 @@ public:
      */
     void commitUndoItem( uint cursorX, uint cursorY );
 
-    void addBufferOperation( YZBufferOperation::OperationType type, const QString & text, QPoint pos);
+    void addBufferOperation( YBufferOperation::OperationType type, const QString & text, QPoint pos);
 
     /**
      * Undo the last operations on the buffer, move backward in the undo list.
      * cursorX and cursorY will be set to the new cursor position
      */
-    void undo( YZView* pView );
+    void undo( YView* pView );
 
     /**
      * Redo the current operation on the buffer, move forward in the undo list
      * cursorX and cursorY will be set to the new cursor position
      */
-    void redo( YZView* pView );
+    void redo( YView* pView );
 
     /*! Return whether it is possibe to issue a redo */
     bool mayRedo() const;
@@ -143,7 +143,7 @@ protected:
 
     QString undoItemToString( UndoItem * item) const;
 
-    YZBuffer * mBuffer;
+    YBuffer * mBuffer;
     UndoItem * mFutureUndoItem;
     QList<UndoItem*> mUndoItemList;
     uint mCurrentIndex;

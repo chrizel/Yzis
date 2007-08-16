@@ -6,7 +6,7 @@
 
 #include "debug.h"
 
-class TestYZDebugBackend: public QObject
+class TestYDebugBackend: public QObject
 {
     Q_OBJECT
 

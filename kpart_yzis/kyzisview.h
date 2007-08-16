@@ -36,11 +36,11 @@ class QPainter;
 class KActionCollection;
 class QScrollBar;
 
-class KYView : public QWidget, public YZView
+class KYView : public QWidget, public YView
 {
     Q_OBJECT
 public:
-    KYView(YZBuffer*, QWidget*);
+    KYView(YBuffer*, QWidget*);
     virtual ~KYView();
 
     virtual void guiScroll(int, int);
@@ -51,10 +51,10 @@ public:
     virtual bool guiPopupFileSaveAs();
     virtual void guiFilenameChanged();
     virtual void guiHighlightingChanged();
-    virtual void guiNotifyContentChanged(const YZSelection&);
+    virtual void guiNotifyContentChanged(const YSelection&);
     virtual void guiPreparePaintEvent(int, int);
     virtual void guiEndPaintEvent();
-    virtual void guiDrawCell(QPoint, const YZDrawCell&, void*);
+    virtual void guiDrawCell(QPoint, const YDrawCell&, void*);
     virtual void guiDrawClearToEOL(QPoint, const QChar&);
     virtual void guiDrawSetLineNumber(int, int, int);
     virtual void guiDrawSetMaxLineNumber(int);
@@ -69,10 +69,10 @@ public:
     {
         return keys[ key ];
     }
-    YZDrawCell getCursorDrawCell( );
+    YDrawCell getCursorDrawCell( );
     void registerModifierKeys( const QString& keys );
     void unregisterModifierKeys( const QString& keys );
-    void guiPaintEvent( const YZSelection& drawMap );
+    void guiPaintEvent( const YSelection& drawMap );
 
     void setFocusMainWindow();
     void setFocusCommandLine();

@@ -30,7 +30,7 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 /**
   * @short Implementation of YSession for the NCurses frontend.
   */
-class NYSession : public QObject, public YZSession
+class NYSession : public QObject, public YSession
 {
     Q_OBJECT
 
@@ -43,22 +43,22 @@ public:
     static void createInstance();
 
     /*
-     * YZSession interface :
+     * YSession interface :
      */
     virtual bool guiQuit ( int errorCode ) ;
     virtual void guiPopupMessage( const QString& message );
-    virtual void guiDeleteBuffer ( YZBuffer *b );
+    virtual void guiDeleteBuffer ( YBuffer *b );
     virtual void guiSetFocusCommandLine();
     virtual void guiSetFocusMainWindow();
     virtual bool guiPromptYesNo( const QString& title, const QString& message );
     virtual int guiPromptYesNoCancel( const QString& title, const QString& message );
-    virtual void guiSplitHorizontally( YZView *view );
+    virtual void guiSplitHorizontally( YView *view );
     virtual void guiSetClipboardText( const QString& text, Clipboard::Mode mode );
 
 protected:
-    virtual YZView* guiCreateView( YZBuffer* buffer );
-    virtual void guiDeleteView( YZView *view );
-    virtual YZBuffer *guiCreateBuffer();
+    virtual YView* guiCreateView( YBuffer* buffer );
+    virtual void guiDeleteView( YView *view );
+    virtual YBuffer *guiCreateBuffer();
 
 private:
     NYSession();
@@ -71,7 +71,7 @@ private:
      */
     void initialiseKeycodes();
 
-    virtual void guiChangeCurrentView ( YZView * );
+    virtual void guiChangeCurrentView ( YView * );
 
     /**
       * mapping ncurses->qt for keycodes

@@ -21,10 +21,10 @@
 #include "debug.h"
 #include "view.h"
 
-#define dbg()    yzDebug("YZDrawBuffer")
-#define err()    yzError("YZDrawBuffer")
+#define dbg()    yzDebug("YDrawBuffer")
+#define err()    yzError("YDrawBuffer")
 
-YZDrawBuffer::YZDrawBuffer() :
+YDrawBuffer::YDrawBuffer() :
         m_content(),
         m_sel()
 {
@@ -34,23 +34,23 @@ YZDrawBuffer::YZDrawBuffer() :
     m_cell = NULL;
     reset();
 }
-YZDrawBuffer::~YZDrawBuffer()
+YDrawBuffer::~YDrawBuffer()
 {}
 
-void YZDrawBuffer::setCallback( YZView* v )
+void YDrawBuffer::setCallback( YView* v )
 {
     m_view = v;
 }
-void YZDrawBuffer::setCallbackArgument( void* callback_arg )
+void YDrawBuffer::setCallbackArgument( void* callback_arg )
 {
     m_callback_arg = callback_arg;
 }
-void YZDrawBuffer::callback( QPoint pos, const YZDrawCell& cell )
+void YDrawBuffer::callback( QPoint pos, const YDrawCell& cell )
 {
     m_view->guiDrawCell( pos, cell, m_callback_arg );
 }
 
-void YZDrawBuffer::reset()
+void YDrawBuffer::reset()
 {
     v_xi = v_x = 0;
     m_x = m_y = -1;
@@ -58,7 +58,7 @@ void YZDrawBuffer::reset()
     changed = false;
 }
 
-void YZDrawBuffer::flush()
+void YDrawBuffer::flush()
 {
     changed = false;
 
@@ -75,7 +75,7 @@ void YZDrawBuffer::flush()
     m_cell->c = keep;
 }
 
-void YZDrawBuffer::setFont( const YZFont& f )
+void YDrawBuffer::setFont( const YFont& f )
 {
     /* if ( f != m_cur.font ) { */
     m_cur.font = f;
@@ -83,7 +83,7 @@ void YZDrawBuffer::setFont( const YZFont& f )
      } */
 }
 
-bool YZDrawBuffer::updateColor( YZColor* dest, const YZColor& c )
+bool YDrawBuffer::updateColor( YColor* dest, const YColor& c )
 {
     bool changed = false;
     bool was_valid = dest->isValid();
@@ -99,15 +99,15 @@ bool YZDrawBuffer::updateColor( YZColor* dest, const YZColor& c )
     return changed;
 }
 
-void YZDrawBuffer::setColor( const YZColor& c )
+void YDrawBuffer::setColor( const YColor& c )
 {
     changed = updateColor( &m_cur.fg, c );
 }
-void YZDrawBuffer::setBackgroundColor( const YZColor& c )
+void YDrawBuffer::setBackgroundColor( const YColor& c )
 {
     changed = updateColor( &m_cur.bg, c );
 }
-void YZDrawBuffer::setSelection( int sel )
+void YDrawBuffer::setSelection( int sel )
 {
     if ( sel != m_cur.sel ) {
         m_cur.sel = sel;
@@ -115,7 +115,7 @@ void YZDrawBuffer::setSelection( int sel )
     }
 }
 
-void YZDrawBuffer::push( const QChar& c )
+void YDrawBuffer::push( const QChar& c )
 {
     if ( changed ) {
         /* flush last vector */
@@ -127,13 +127,13 @@ void YZDrawBuffer::push( const QChar& c )
     m_cell->c.append( c );
 }
 
-void YZDrawBuffer::push( const QString& c )
+void YDrawBuffer::push( const QString& c )
 {
-    YZCursor pos( v_xi + m_cell->c.length(), m_y );
+    YCursor pos( v_xi + m_cell->c.length(), m_y );
     QPoint step(1, 0);
     for ( int i = 0; i < c.length(); ++i ) {
-        int sel = YZSelectionPool::None;
-        foreach( YZSelectionPool::SelectionLayout layout, m_sel.keys() ) {
+        int sel = YSelectionPool::None;
+        foreach( YSelectionPool::SelectionLayout layout, m_sel.keys() ) {
             if ( m_sel[layout].contains(pos) )
                 sel |= layout;
         }
@@ -143,20 +143,20 @@ void YZDrawBuffer::push( const QString& c )
     }
 }
 
-void YZDrawBuffer::newline( int y )
+void YDrawBuffer::newline( int y )
 {
-    // dbg() << "YZDrawBuffer::newline " << y << endl;
+    // dbg() << "YDrawBuffer::newline " << y << endl;
     flush();
     insert_line( y );
 }
 
-void YZDrawBuffer::insert_line( int pos )
+void YDrawBuffer::insert_line( int pos )
 {
     if ( pos == -1 )
         pos = m_y + 1;
 
     if ( pos < m_content.size() )
-        m_content.insert( pos, YZDrawSection() );
+        m_content.insert( pos, YDrawSection() );
     else
         m_content.resize( pos + 1 );
 
@@ -168,7 +168,7 @@ void YZDrawBuffer::insert_line( int pos )
     insert_section();
 }
 
-void YZDrawBuffer::insert_section( int pos )
+void YDrawBuffer::insert_section( int pos )
 {
     if ( pos == -1 ) {
         pos = m_x + 1;
@@ -177,7 +177,7 @@ void YZDrawBuffer::insert_section( int pos )
     }
 
     /* copy properties */
-    YZDrawCell n;
+    YDrawCell n;
     updateColor( &n.fg, m_cur.fg );
     updateColor( &n.bg, m_cur.bg );
     n.sel = m_cur.sel;
@@ -197,16 +197,16 @@ void YZDrawBuffer::insert_section( int pos )
     m_cell = & (*m_line)[m_x];
 }
 
-bool YZDrawBuffer::find( const YZCursor pos, int* x, int* y, int* vx ) const
+bool YDrawBuffer::find( const YCursor pos, int* x, int* y, int* vx ) const
 {
     bool found = false;
     int i, cx;
 
     if ( (int)pos.y() < m_content.size() ) {
-        const YZDrawSection& l = m_content.at(pos.y());
+        const YDrawSection& l = m_content.at(pos.y());
         cx = 0;
         for ( i = 0; i < l.size(); ++i ) {
-            const YZDrawCell& cell = l.at(i);
+            const YDrawCell& cell = l.at(i);
             if ( (cx + cell.c.length()) > (int)pos.x() ) {
                 found = true;
                 break;
@@ -223,9 +223,9 @@ bool YZDrawBuffer::find( const YZCursor pos, int* x, int* y, int* vx ) const
     return found;
 }
 
-YZDrawCell YZDrawBuffer::at( const YZCursor pos ) const
+YDrawCell YDrawBuffer::at( const YCursor pos ) const
 {
-    YZDrawCell n;
+    YDrawCell n;
     int x, y, vx;
     if ( find( pos, &x, &y, &vx ) ) {
         n = m_content.at( y ).at( x );
@@ -234,11 +234,11 @@ YZDrawCell YZDrawBuffer::at( const YZCursor pos ) const
     return n;
 }
 
-bool YZDrawBuffer::seek( const YZCursor pos, YZDrawBuffer::SetFromInfo sfi )
+bool YDrawBuffer::seek( const YCursor pos, YDrawBuffer::SetFromInfo sfi )
 {
-    YZCursor rpos;
+    YCursor rpos;
     switch ( sfi ) {
-    case YZDrawBuffer::SetFromSeek:
+    case YDrawBuffer::SetFromSeek:
         rpos = pos;
         break;
     }
@@ -250,17 +250,17 @@ bool YZDrawBuffer::seek( const YZCursor pos, YZDrawBuffer::SetFromInfo sfi )
     return false;
 }
 
-void YZDrawBuffer::applyPosition()
+void YDrawBuffer::applyPosition()
 {
     m_line = & m_content[m_y];
     m_cell = & (*m_line)[m_x];
     m_cur = *m_cell;
 }
 
-void YZDrawBuffer::replace( const YZInterval& interval )
+void YDrawBuffer::replace( const YInterval& interval )
 {
     flush();
-    // dbg() << "YZDrawBuffer::replace " << interval << endl;
+    // dbg() << "YDrawBuffer::replace " << interval << endl;
     // dbg() << "before replace:" << endl << (*this) << "----" << endl;
     int fx = interval.fromPos().x();
     int fy = interval.fromPos().y();
@@ -275,7 +275,7 @@ void YZDrawBuffer::replace( const YZInterval& interval )
         int dx, dy, dvx;
         bool has_dest = find( interval.toPos(), &dx, &dy, &dvx );
 
-        if ( !seek( interval.fromPos(), YZDrawBuffer::SetFromSeek ) ) {
+        if ( !seek( interval.fromPos(), YDrawBuffer::SetFromSeek ) ) {
             //XXX dbg() << "unable to access " << interval.fromPos() << endl;
             return ;
         }
@@ -327,7 +327,7 @@ void YZDrawBuffer::replace( const YZInterval& interval )
     // dbg() << "after replace:" << endl << (*this) << "----" << endl;
 }
 
-void YZDrawBuffer::Scroll( int , int dy )
+void YDrawBuffer::Scroll( int , int dy )
 {
     // TODO: implement scroll to the left/right
     if ( dy < 0 ) {
@@ -345,13 +345,13 @@ void YZDrawBuffer::Scroll( int , int dy )
     }
 }
 
-void YZDrawBuffer::setSelectionLayout( YZSelectionPool::SelectionLayout layout, const YZSelection& selection )
+void YDrawBuffer::setSelectionLayout( YSelectionPool::SelectionLayout layout, const YSelection& selection )
 {
     m_sel[ layout ].setMap( selection.map() );
     // dbg() << "setSelection: " << layout << "=" << m_sel[layout] << endl;
 }
 
-YZDebugStream& operator<< ( YZDebugStream& out, const YZDrawBuffer& buff )
+YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff )
 {
     for ( int i = 0; i < buff.m_content.size(); ++i ) {
         out << i << ": ";

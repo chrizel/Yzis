@@ -26,13 +26,13 @@
 #include <QObject>
 
 
-class KYSession : public YZSession, public QObject
+class KYSession : public YSession, public QObject
 {
 public:
     static void createInstance();
 
-    virtual void guiDeleteBuffer(YZBuffer*);
-    virtual void guiSplitHorizontally(YZView*);
+    virtual void guiDeleteBuffer(YBuffer*);
+    virtual void guiSplitHorizontally(YView*);
     virtual bool guiQuit(int);
     virtual void guiPopupMessage(const QString&);
     virtual bool guiPromptYesNo(const QString&, const QString&);
@@ -40,10 +40,10 @@ public:
     virtual void guiSetFocusCommandLine();
     virtual void guiSetFocusMainWindow();
     virtual void guiSetClipboardText(const QString&, Clipboard::Mode);
-    virtual YZView* guiCreateView(YZBuffer*);
-    virtual void guiDeleteView(YZView*);
-    virtual YZBuffer* guiCreateBuffer();
-    virtual void guiChangeCurrentView(YZView*);
+    virtual YView* guiCreateView(YBuffer*);
+    virtual void guiDeleteView(YView*);
+    virtual YBuffer* guiCreateBuffer();
+    virtual void guiChangeCurrentView(YView*);
 
 private:
     virtual ~KYSession();

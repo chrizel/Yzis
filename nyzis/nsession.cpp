@@ -45,7 +45,7 @@ void NYSession::createInstance()
 }
 
 NYSession::NYSession()
-        : YZSession()
+        : YSession()
 {
     dbg() << "NYSession()" << endl;
 
@@ -78,12 +78,12 @@ NYSession::~NYSession( )
 void NYSession::frontendGuiReady()
 {
     dbg() << "frontendGuiReady()" << endl;
-    YZSession::self()->frontendGuiReady();
+    YSession::self()->frontendGuiReady();
 }
 
 bool NYSession::processInput(int /*fd*/)
 {
-    YZASSERT_MSG( currentView(), "NYSession::event_loop : arghhhhhhh event_loop called with no currentView" );
+    YASSERT_MSG( currentView(), "NYSession::event_loop : arghhhhhhh event_loop called with no currentView" );
 
     wint_t c;
 
@@ -196,12 +196,12 @@ void NYSession::guiSetFocusCommandLine()
     yv->setFocusCommandLine();
 }
 
-void NYSession::guiChangeCurrentView ( YZView * view )
+void NYSession::guiChangeCurrentView ( YView * view )
 {
     dbg() << "changeCurrentView( " << view->toString() << ")" << endl;
     NYView *cur = static_cast<NYView*>(currentView());
     NYView *v = static_cast<NYView*>(view);
-    YZASSERT( view );
+    YASSERT( view );
     if ( cur == v ) {
         warn() << "changeCurrentView() called with same view.." << endl;
         return ;
@@ -213,19 +213,19 @@ void NYSession::guiChangeCurrentView ( YZView * view )
     v->refreshScreen();
 }
 
-YZView* NYSession::guiCreateView( YZBuffer* buffer )
+YView* NYSession::guiCreateView( YBuffer* buffer )
 {
     dbg() << "doCreateView( " << buffer->toString() << ")" << endl;
-    YZASSERT( buffer );
+    YASSERT( buffer );
     NYView *v = new NYView( buffer );
-    YZASSERT_MSG(v, "NYSession::createView : failed creating a new NYView");
+    YASSERT_MSG(v, "NYSession::createView : failed creating a new NYView");
     return v;
 }
 
-YZBuffer *NYSession::guiCreateBuffer()
+YBuffer *NYSession::guiCreateBuffer()
 {
     dbg() << "doCreateBuffer()" << endl;
-    return new YZBuffer;
+    return new YBuffer;
 }
 
 void NYSession::guiPopupMessage( const QString &_message )
@@ -279,16 +279,16 @@ void NYSession::guiPopupMessage( const QString &_message )
         fputs(qp(message), stderr);
 }
 
-void NYSession::guiDeleteBuffer(YZBuffer *b)
+void NYSession::guiDeleteBuffer(YBuffer *b)
 {
     dbg() << "guiDeleteBuffer( " << b << ")" << endl;
     delete b;
 }
 
-void NYSession::guiDeleteView( YZView *view )
+void NYSession::guiDeleteView( YView *view )
 {
     dbg() << "guiDeleteView( " << view << ")" << endl;
-    YZView *newview = currentView();
+    YView *newview = currentView();
 
     rmBuffer( view->myBuffer() );
 
@@ -308,7 +308,7 @@ int NYSession::guiPromptYesNoCancel( const QString& /*title*/, const QString& /*
     return 0; //return yes for now...
 }
 
-void NYSession::guiSplitHorizontally ( YZView* /*view*/ )
+void NYSession::guiSplitHorizontally ( YView* /*view*/ )
 {
     //TODO
 }

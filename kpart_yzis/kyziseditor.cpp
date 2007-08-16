@@ -63,7 +63,7 @@ KYEditor::KYEditor(KYView* parent)
 
     mCursor = new KYCursor( this, KYCursor::SQUARE );
 
-    QTimer::singleShot(0, static_cast<KYSession*>(YZSession::self()), SLOT(frontendGuiReady()) );
+    QTimer::singleShot(0, static_cast<KYSession*>(YSession::self()), SLOT(frontendGuiReady()) );
 }
 
 KYEditor::~KYEditor()
@@ -83,15 +83,15 @@ KYCursor::shape KYEditor::cursorShape()
     KYCursor::shape s;
 
     QString shape;
-    YZMode::ModeType m = m_parent->modePool()->current()->type();
+    YMode::ModeType m = m_parent->modePool()->current()->type();
     switch ( m ) {
-    case YZMode::ModeInsert :
+    case YMode::ModeInsert :
         shape = m_parent->getLocalStringOption("cursorinsert");
         break;
-    case YZMode::ModeReplace :
+    case YMode::ModeReplace :
         shape = m_parent->getLocalStringOption("cursorreplace");
         break;
-    case YZMode::ModeCompletion :
+    case YMode::ModeCompletion :
         shape = "keep";
         break;
     default :
@@ -113,12 +113,12 @@ KYCursor::shape KYEditor::cursorShape()
     return s;
 }
 
-QPoint KYEditor::translatePositionToReal( const YZCursor& c ) const
+QPoint KYEditor::translatePositionToReal( const YCursor& c ) const
 {
     return QPoint( c.x() * fontMetrics().maxWidth(), c.y() * fontMetrics().lineSpacing() );
 }
 
-YZCursor KYEditor::translateRealToPosition( const QPoint& p, bool ceil ) const
+YCursor KYEditor::translateRealToPosition( const QPoint& p, bool ceil ) const
 {
     int height = fontMetrics().lineSpacing();
     int width = fontMetrics().maxWidth();
@@ -131,10 +131,10 @@ YZCursor KYEditor::translateRealToPosition( const QPoint& p, bool ceil ) const
         if ( p.x() % width )
             ++x;
     }
-    return YZCursor( x, y );
+    return YCursor( x, y );
 }
 
-YZCursor KYEditor::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
+YCursor KYEditor::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
 {
     return translateRealToPosition( p, ceil ) + m_parent->getScreenPosition();
 }
@@ -191,8 +191,8 @@ void KYEditor::keyPressEvent ( QKeyEvent * e )
     KYSession::self()->sendKey(m_parent, k, modifiers);
 
     // TODO: find out what this did! seems to be useless right now
-    //if ( lmode == YZMode::ModeInsert || lmode == YZMode::ModeReplace ) {
-    //KYZTextEditorIface *d = static_cast<KYZTextEditorIface*>(document());
+    //if ( lmode == YMode::ModeInsert || lmode == YMode::ModeReplace ) {
+    //KYTextEditorIface *d = static_cast<KYTextEditorIface*>(document());
     //emit d->emitChars(mCursor->y(), mCursor->x(),k);
     //}
     e->accept();
@@ -217,7 +217,7 @@ void KYEditor::mousePressEvent ( QMouseEvent * e )
         m_parent->modePool()->pop();
 
     if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
-        if (m_parent->modePool()->currentType() != YZMode::ModeEx) {
+        if (m_parent->modePool()->currentType() != YMode::ModeEx) {
             m_parent->gotodxdy( e->x() / ( GETX( 1 ) ) + m_parent->getDrawCurrentLeft( ),
                                 e->y() / fontMetrics().lineSpacing() + m_parent->getDrawCurrentTop( ) );
             m_parent->updateStickyCol();
@@ -241,9 +241,9 @@ void KYEditor::mousePressEvent ( QMouseEvent * e )
 void KYEditor::mouseMoveEvent( QMouseEvent *e )
 {
     if (e->button() == Qt::LeftButton) {
-        if (m_parent->modePool()->currentType() == YZMode::ModeCommand) {
+        if (m_parent->modePool()->currentType() == YMode::ModeCommand) {
             // start visual mode when user makes a selection with the left mouse button
-            m_parent->modePool()->push( YZMode::ModeVisual );
+            m_parent->modePool()->push( YMode::ModeVisual );
         } else if (m_parent->modePool()->current()->isSelMode() ) {
             // already in visual mode - move cursor if the mouse pointer has moved over a new char
             int newX = e->x() / fontMetrics().maxWidth()
@@ -283,10 +283,10 @@ void KYEditor::paintEvent( QPaintEvent* pe )
     QRect r = pe->rect();
     r.setTopLeft( translateRealToAbsolutePosition( r.topLeft() ) );
     r.setBottomRight( translateRealToAbsolutePosition( r.bottomRight() ) );
-    //dbg() << "QYZisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() <<
+    //dbg() << "QYisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() <<
     //                              " => " << r.topLeft() << "," << r.bottomRight() << endl;
     // paint it
-    m_parent->guiPaintEvent( m_parent->clipSelection( YZSelection( r ) ) );
+    m_parent->guiPaintEvent( m_parent->clipSelection( YSelection( r ) ) );
 }
 
 void KYEditor::setCursor( int c, int l )
@@ -317,7 +317,7 @@ void KYEditor::scroll( int x, int y )
     mCursor->show();
 }
 
-void KYEditor::guiDrawCell( QPoint pos, const YZDrawCell& cell, QPainter* p )
+void KYEditor::guiDrawCell( QPoint pos, const YDrawCell& cell, QPainter* p )
 {
     p->save();
     if ( cell.fg.isValid() ) {

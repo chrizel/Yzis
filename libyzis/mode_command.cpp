@@ -41,155 +41,155 @@
 #include "view.h"
 #include "viewcursor.h"
 
-#define dbg()    yzDebug("YZModeCommand")
-#define err()    yzError("YZModeCommand")
+#define dbg()    yzDebug("YModeCommand")
+#define err()    yzError("YModeCommand")
 
 using namespace yzis;
 
-YZModeCommand::YZModeCommand() : YZMode()
+YModeCommand::YModeCommand() : YMode()
 {
     mType = ModeCommand;
     mString = _( "[ Awaiting Command ]" );
     commands.clear();
 }
 
-YZModeCommand::~YZModeCommand()
+YModeCommand::~YModeCommand()
 {
     for ( int ab = 0 ; ab < commands.size(); ++ab)
         delete commands.at(ab);
     commands.clear();
 }
-void YZModeCommand::init()
+void YModeCommand::init()
 {
     initPool();
     initModifierKeys();
 }
 
-void YZModeCommand::initPool()
+void YModeCommand::initPool()
 {
     initMotionPool();
     initCommandPool();
 }
-void YZModeCommand::initMotionPool()
+void YModeCommand::initMotionPool()
 {
-    commands.append( new YZMotion("0", &YZModeCommand::gotoSOL, ArgNone) );
-    commands.append( new YZMotion("$", &YZModeCommand::gotoEOL, ArgNone) );
-    commands.append( new YZMotion("^", &YZModeCommand::firstNonBlank, ArgNone) );
-    commands.append( new YZMotion("w", &YZModeCommand::moveWordForward, ArgNone) );
-    commands.append( new YZMotion("W", &YZModeCommand::moveSWordForward, ArgNone) );
-    commands.append( new YZMotion("b", &YZModeCommand::moveWordBackward, ArgNone) );
-    commands.append( new YZMotion("B", &YZModeCommand::moveSWordBackward, ArgNone) );
-    commands.append( new YZMotion("j", &YZModeCommand::moveDown, ArgNone) );
-    commands.append( new YZMotion("k", &YZModeCommand::moveUp, ArgNone) );
-    commands.append( new YZMotion("h", &YZModeCommand::moveLeft, ArgNone) );
-    commands.append( new YZMotion("l", &YZModeCommand::moveRight, ArgNone) );
-    commands.append( new YZMotion("<BS>", &YZModeCommand::moveLeftWrap, ArgNone) );
-    commands.append( new YZMotion(" ", &YZModeCommand::moveRightWrap, ArgNone) );
-    commands.append( new YZMotion("f", &YZModeCommand::findNext, ArgChar) );
-    commands.append( new YZMotion("t", &YZModeCommand::findBeforeNext, ArgChar) );
-    commands.append( new YZMotion("F", &YZModeCommand::findPrevious, ArgChar) );
-    commands.append( new YZMotion("T", &YZModeCommand::findAfterPrevious, ArgChar) );
-    commands.append( new YZMotion(";", &YZModeCommand::repeatFind, ArgChar) );
-    commands.append( new YZMotion("*", &YZModeCommand::searchWord, ArgNone) );
-    commands.append( new YZMotion("g*", &YZModeCommand::searchWord, ArgNone) );
-    commands.append( new YZMotion("#", &YZModeCommand::searchWord, ArgNone) );
-    commands.append( new YZMotion("g#", &YZModeCommand::searchWord, ArgNone) );
-    commands.append( new YZMotion("n", &YZModeCommand::searchNext, ArgNone) );
-    commands.append( new YZMotion("N", &YZModeCommand::searchPrev, ArgNone) );
-    commands.append( new YZMotion("<HOME>", &YZModeCommand::gotoSOL, ArgNone) );
-    commands.append( new YZMotion("<END>", &YZModeCommand::gotoEOL, ArgNone) );
-    commands.append( new YZMotion("<LEFT>", &YZModeCommand::moveLeft, ArgNone) );
-    commands.append( new YZMotion("<RIGHT>", &YZModeCommand::moveRight, ArgNone) );
-    commands.append( new YZMotion("<UP>", &YZModeCommand::moveUp, ArgNone) );
-    commands.append( new YZMotion("<DOWN>", &YZModeCommand::moveDown, ArgNone) );
-    commands.append( new YZMotion("%", &YZModeCommand::matchPair, ArgNone) );
-    commands.append( new YZMotion("`", &YZModeCommand::gotoMark, ArgMark) );
-    commands.append( new YZMotion("'", &YZModeCommand::gotoMark, ArgMark) );
-    commands.append( new YZMotion("<ENTER>", &YZModeCommand::firstNonBlankNextLine, ArgNone) );
-    commands.append( new YZMotion("gg", &YZModeCommand::gotoLine, ArgNone) );
-    commands.append( new YZMotion("G", &YZModeCommand::gotoLine, ArgNone) );
-    commands.append( new YZMotion("}", &YZModeCommand::nextEmptyLine, ArgNone) );
-    commands.append( new YZMotion("{", &YZModeCommand::previousEmptyLine, ArgNone) );
+    commands.append( new YMotion("0", &YModeCommand::gotoSOL, ArgNone) );
+    commands.append( new YMotion("$", &YModeCommand::gotoEOL, ArgNone) );
+    commands.append( new YMotion("^", &YModeCommand::firstNonBlank, ArgNone) );
+    commands.append( new YMotion("w", &YModeCommand::moveWordForward, ArgNone) );
+    commands.append( new YMotion("W", &YModeCommand::moveSWordForward, ArgNone) );
+    commands.append( new YMotion("b", &YModeCommand::moveWordBackward, ArgNone) );
+    commands.append( new YMotion("B", &YModeCommand::moveSWordBackward, ArgNone) );
+    commands.append( new YMotion("j", &YModeCommand::moveDown, ArgNone) );
+    commands.append( new YMotion("k", &YModeCommand::moveUp, ArgNone) );
+    commands.append( new YMotion("h", &YModeCommand::moveLeft, ArgNone) );
+    commands.append( new YMotion("l", &YModeCommand::moveRight, ArgNone) );
+    commands.append( new YMotion("<BS>", &YModeCommand::moveLeftWrap, ArgNone) );
+    commands.append( new YMotion(" ", &YModeCommand::moveRightWrap, ArgNone) );
+    commands.append( new YMotion("f", &YModeCommand::findNext, ArgChar) );
+    commands.append( new YMotion("t", &YModeCommand::findBeforeNext, ArgChar) );
+    commands.append( new YMotion("F", &YModeCommand::findPrevious, ArgChar) );
+    commands.append( new YMotion("T", &YModeCommand::findAfterPrevious, ArgChar) );
+    commands.append( new YMotion(";", &YModeCommand::repeatFind, ArgChar) );
+    commands.append( new YMotion("*", &YModeCommand::searchWord, ArgNone) );
+    commands.append( new YMotion("g*", &YModeCommand::searchWord, ArgNone) );
+    commands.append( new YMotion("#", &YModeCommand::searchWord, ArgNone) );
+    commands.append( new YMotion("g#", &YModeCommand::searchWord, ArgNone) );
+    commands.append( new YMotion("n", &YModeCommand::searchNext, ArgNone) );
+    commands.append( new YMotion("N", &YModeCommand::searchPrev, ArgNone) );
+    commands.append( new YMotion("<HOME>", &YModeCommand::gotoSOL, ArgNone) );
+    commands.append( new YMotion("<END>", &YModeCommand::gotoEOL, ArgNone) );
+    commands.append( new YMotion("<LEFT>", &YModeCommand::moveLeft, ArgNone) );
+    commands.append( new YMotion("<RIGHT>", &YModeCommand::moveRight, ArgNone) );
+    commands.append( new YMotion("<UP>", &YModeCommand::moveUp, ArgNone) );
+    commands.append( new YMotion("<DOWN>", &YModeCommand::moveDown, ArgNone) );
+    commands.append( new YMotion("%", &YModeCommand::matchPair, ArgNone) );
+    commands.append( new YMotion("`", &YModeCommand::gotoMark, ArgMark) );
+    commands.append( new YMotion("'", &YModeCommand::gotoMark, ArgMark) );
+    commands.append( new YMotion("<ENTER>", &YModeCommand::firstNonBlankNextLine, ArgNone) );
+    commands.append( new YMotion("gg", &YModeCommand::gotoLine, ArgNone) );
+    commands.append( new YMotion("G", &YModeCommand::gotoLine, ArgNone) );
+    commands.append( new YMotion("}", &YModeCommand::nextEmptyLine, ArgNone) );
+    commands.append( new YMotion("{", &YModeCommand::previousEmptyLine, ArgNone) );
 }
 
-void YZModeCommand::initCommandPool()
+void YModeCommand::initCommandPool()
 {
-    commands.append( new YZCommand("I", &YZModeCommand::insertAtSOL) );
-    commands.append( new YZCommand("gI", &YZModeCommand::insertAtCol1) );
-    commands.append( new YZCommand("i", &YZModeCommand::gotoInsertMode) );
-    commands.append( new YZCommand("<INS>", &YZModeCommand::gotoInsertMode) );
-    commands.append( new YZCommand(":", &YZModeCommand::gotoExMode) );
-    commands.append( new YZCommand("R", &YZModeCommand::gotoReplaceMode) );
-    commands.append( new YZCommand("v", &YZModeCommand::gotoVisualMode) );
-    commands.append( new YZCommand("V", &YZModeCommand::gotoVisualLineMode) );
-    commands.append( new YZCommand("<CTRL>v", &YZModeCommand::gotoVisualBlockMode) );
-    commands.append( new YZCommand("z<ENTER>", &YZModeCommand::gotoLineAtTop) );
-    commands.append( new YZCommand("z+", &YZModeCommand::gotoLineAtTop) );
-    commands.append( new YZCommand("z.", &YZModeCommand::gotoLineAtCenter) );
-    commands.append( new YZCommand("z-", &YZModeCommand::gotoLineAtBottom) );
-    commands.append( new YZCommand("dd", &YZModeCommand::deleteLine) );
-    commands.append( new YZCommand("dG", &YZModeCommand::deleteToEndOfLastLine) );
-    commands.append( new YZCommand("d", &YZModeCommand::del, ArgMotion) );
-    commands.append( new YZCommand("D", &YZModeCommand::deleteToEOL) );
-    commands.append( new YZCommand("s", &YZModeCommand::substitute) );
-    commands.append( new YZCommand("x", &YZModeCommand::deleteChar) );
-    commands.append( new YZCommand("X", &YZModeCommand::deleteCharBackwards) );
-    commands.append( new YZCommand("yy", &YZModeCommand::yankLine) );
-    commands.append( new YZCommand("y", &YZModeCommand::yank, ArgMotion) );
-    commands.append( new YZCommand("Y", &YZModeCommand::yankToEOL) );
-    commands.append( new YZCommand("cc", &YZModeCommand::changeLine) );
-    commands.append( new YZCommand("S", &YZModeCommand::changeLine) );
-    commands.append( new YZCommand("c", &YZModeCommand::change, ArgMotion) );
-    commands.append( new YZCommand("C", &YZModeCommand::changeToEOL) );
-    commands.append( new YZCommand("p", &YZModeCommand::pasteAfter) );
-    commands.append( new YZCommand("P", &YZModeCommand::pasteBefore) );
-    commands.append( new YZCommand("o", &YZModeCommand::insertLineAfter) );
-    commands.append( new YZCommand("O", &YZModeCommand::insertLineBefore) );
-    commands.append( new YZCommand("a", &YZModeCommand::append) );
-    commands.append( new YZCommand("A", &YZModeCommand::appendAtEOL) );
-    commands.append( new YZCommand("J", &YZModeCommand::joinLine) );
-    commands.append( new YZCommand("gJ", &YZModeCommand::joinLineWithoutSpace) );
-    commands.append( new YZCommand("<", &YZModeCommand::indent, ArgMotion ) );
-    commands.append( new YZCommand("<<", &YZModeCommand::indent ) );
-    commands.append( new YZCommand(">", &YZModeCommand::indent, ArgMotion ) );
-    commands.append( new YZCommand(">>", &YZModeCommand::indent ) );
-    commands.append( new YZCommand("ZZ", &YZModeCommand::saveAndClose) );
-    commands.append( new YZCommand("ZQ", &YZModeCommand::closeWithoutSaving) );
-    commands.append( new YZCommand("/", &YZModeCommand::searchForwards) );
-    commands.append( new YZCommand("?", &YZModeCommand::searchBackwards) );
-    commands.append( new YZCommand("~", &YZModeCommand::changeCase) );
-    commands.append( new YZCommand("m", &YZModeCommand::mark, ArgChar) );
-    commands.append( new YZCommand("r", &YZModeCommand::replace, ArgChar) );
-    commands.append( new YZCommand("u", &YZModeCommand::undo) );
-    commands.append( new YZCommand("U", &YZModeCommand::redo) );
-    commands.append( new YZCommand("<CTRL>r", &YZModeCommand::redo) );
-    commands.append( new YZCommand("q", &YZModeCommand::macro) );
-    commands.append( new YZCommand("@", &YZModeCommand::replayMacro) );
-    commands.append( new YZCommand("<CTRL>l", &YZModeCommand::redisplay) );
-    commands.append( new YZCommand("<CTRL>[", &YZModeCommand::gotoCommandMode) );
-    commands.append( new YZCommand("<ESC>", &YZModeCommand::abort) );
-    commands.append( new YZCommand("<CTRL>c", &YZModeCommand::abort) );
-    commands.append( new YZCommand("<DEL>", &YZModeCommand::delkey) );
-    commands.append( new YZCommand("<ALT>:", &YZModeCommand::gotoExMode) );
-    commands.append( new YZCommand("gUU", &YZModeCommand::lineToUpperCase) );
-    commands.append( new YZCommand("gUgU", &YZModeCommand::lineToUpperCase) );
-    commands.append( new YZCommand("guu", &YZModeCommand::lineToLowerCase) );
-    commands.append( new YZCommand("gugu", &YZModeCommand::lineToLowerCase) );
-    commands.append( new YZCommand("<PUP>", &YZModeCommand::scrollPageUp) );
-    commands.append( new YZCommand("<CTRL>b", &YZModeCommand::scrollPageUp) );
-    commands.append( new YZCommand("<CTRL>y", &YZModeCommand::scrollLineUp) );
-    commands.append( new YZCommand("<PDOWN>", &YZModeCommand::scrollPageDown) );
-    commands.append( new YZCommand("<CTRL>f", &YZModeCommand::scrollPageDown) );
-    commands.append( new YZCommand("<CTRL>e", &YZModeCommand::scrollLineDown) );
-    commands.append( new YZCommand(".", &YZModeCommand::redoLastCommand) );
-    commands.append( new YZCommand("<CTRL>]", &YZModeCommand::tagNext) );
-    commands.append( new YZCommand("<CTRL>t", &YZModeCommand::tagPrev) );
-    commands.append( new YZCommand("<CTRL>o", &YZModeCommand::undoJump) );
-    commands.append( new YZCommand("<CTRL>a", &YZModeCommand::incrementNumber) );
-    commands.append( new YZCommand("<CTRL>x", &YZModeCommand::decrementNumber) );
+    commands.append( new YCommand("I", &YModeCommand::insertAtSOL) );
+    commands.append( new YCommand("gI", &YModeCommand::insertAtCol1) );
+    commands.append( new YCommand("i", &YModeCommand::gotoInsertMode) );
+    commands.append( new YCommand("<INS>", &YModeCommand::gotoInsertMode) );
+    commands.append( new YCommand(":", &YModeCommand::gotoExMode) );
+    commands.append( new YCommand("R", &YModeCommand::gotoReplaceMode) );
+    commands.append( new YCommand("v", &YModeCommand::gotoVisualMode) );
+    commands.append( new YCommand("V", &YModeCommand::gotoVisualLineMode) );
+    commands.append( new YCommand("<CTRL>v", &YModeCommand::gotoVisualBlockMode) );
+    commands.append( new YCommand("z<ENTER>", &YModeCommand::gotoLineAtTop) );
+    commands.append( new YCommand("z+", &YModeCommand::gotoLineAtTop) );
+    commands.append( new YCommand("z.", &YModeCommand::gotoLineAtCenter) );
+    commands.append( new YCommand("z-", &YModeCommand::gotoLineAtBottom) );
+    commands.append( new YCommand("dd", &YModeCommand::deleteLine) );
+    commands.append( new YCommand("dG", &YModeCommand::deleteToEndOfLastLine) );
+    commands.append( new YCommand("d", &YModeCommand::del, ArgMotion) );
+    commands.append( new YCommand("D", &YModeCommand::deleteToEOL) );
+    commands.append( new YCommand("s", &YModeCommand::substitute) );
+    commands.append( new YCommand("x", &YModeCommand::deleteChar) );
+    commands.append( new YCommand("X", &YModeCommand::deleteCharBackwards) );
+    commands.append( new YCommand("yy", &YModeCommand::yankLine) );
+    commands.append( new YCommand("y", &YModeCommand::yank, ArgMotion) );
+    commands.append( new YCommand("Y", &YModeCommand::yankToEOL) );
+    commands.append( new YCommand("cc", &YModeCommand::changeLine) );
+    commands.append( new YCommand("S", &YModeCommand::changeLine) );
+    commands.append( new YCommand("c", &YModeCommand::change, ArgMotion) );
+    commands.append( new YCommand("C", &YModeCommand::changeToEOL) );
+    commands.append( new YCommand("p", &YModeCommand::pasteAfter) );
+    commands.append( new YCommand("P", &YModeCommand::pasteBefore) );
+    commands.append( new YCommand("o", &YModeCommand::insertLineAfter) );
+    commands.append( new YCommand("O", &YModeCommand::insertLineBefore) );
+    commands.append( new YCommand("a", &YModeCommand::append) );
+    commands.append( new YCommand("A", &YModeCommand::appendAtEOL) );
+    commands.append( new YCommand("J", &YModeCommand::joinLine) );
+    commands.append( new YCommand("gJ", &YModeCommand::joinLineWithoutSpace) );
+    commands.append( new YCommand("<", &YModeCommand::indent, ArgMotion ) );
+    commands.append( new YCommand("<<", &YModeCommand::indent ) );
+    commands.append( new YCommand(">", &YModeCommand::indent, ArgMotion ) );
+    commands.append( new YCommand(">>", &YModeCommand::indent ) );
+    commands.append( new YCommand("ZZ", &YModeCommand::saveAndClose) );
+    commands.append( new YCommand("ZQ", &YModeCommand::closeWithoutSaving) );
+    commands.append( new YCommand("/", &YModeCommand::searchForwards) );
+    commands.append( new YCommand("?", &YModeCommand::searchBackwards) );
+    commands.append( new YCommand("~", &YModeCommand::changeCase) );
+    commands.append( new YCommand("m", &YModeCommand::mark, ArgChar) );
+    commands.append( new YCommand("r", &YModeCommand::replace, ArgChar) );
+    commands.append( new YCommand("u", &YModeCommand::undo) );
+    commands.append( new YCommand("U", &YModeCommand::redo) );
+    commands.append( new YCommand("<CTRL>r", &YModeCommand::redo) );
+    commands.append( new YCommand("q", &YModeCommand::macro) );
+    commands.append( new YCommand("@", &YModeCommand::replayMacro) );
+    commands.append( new YCommand("<CTRL>l", &YModeCommand::redisplay) );
+    commands.append( new YCommand("<CTRL>[", &YModeCommand::gotoCommandMode) );
+    commands.append( new YCommand("<ESC>", &YModeCommand::abort) );
+    commands.append( new YCommand("<CTRL>c", &YModeCommand::abort) );
+    commands.append( new YCommand("<DEL>", &YModeCommand::delkey) );
+    commands.append( new YCommand("<ALT>:", &YModeCommand::gotoExMode) );
+    commands.append( new YCommand("gUU", &YModeCommand::lineToUpperCase) );
+    commands.append( new YCommand("gUgU", &YModeCommand::lineToUpperCase) );
+    commands.append( new YCommand("guu", &YModeCommand::lineToLowerCase) );
+    commands.append( new YCommand("gugu", &YModeCommand::lineToLowerCase) );
+    commands.append( new YCommand("<PUP>", &YModeCommand::scrollPageUp) );
+    commands.append( new YCommand("<CTRL>b", &YModeCommand::scrollPageUp) );
+    commands.append( new YCommand("<CTRL>y", &YModeCommand::scrollLineUp) );
+    commands.append( new YCommand("<PDOWN>", &YModeCommand::scrollPageDown) );
+    commands.append( new YCommand("<CTRL>f", &YModeCommand::scrollPageDown) );
+    commands.append( new YCommand("<CTRL>e", &YModeCommand::scrollLineDown) );
+    commands.append( new YCommand(".", &YModeCommand::redoLastCommand) );
+    commands.append( new YCommand("<CTRL>]", &YModeCommand::tagNext) );
+    commands.append( new YCommand("<CTRL>t", &YModeCommand::tagPrev) );
+    commands.append( new YCommand("<CTRL>o", &YModeCommand::undoJump) );
+    commands.append( new YCommand("<CTRL>a", &YModeCommand::incrementNumber) );
+    commands.append( new YCommand("<CTRL>x", &YModeCommand::decrementNumber) );
 }
 
-void YZModeCommand::initModifierKeys()
+void YModeCommand::initModifierKeys()
 {
     for ( int ab = 0 ; ab < commands.size(); ++ab) {
         const QString& keys = commands.at(ab)->keySeq();
@@ -199,7 +199,7 @@ void YZModeCommand::initModifierKeys()
     }
 }
 
-CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
+CmdState YModeCommand::execCommand(YView *view, const QString& inputs)
 {
     // dbg() << "ExecCommand : " << inputs << endl;
     int count = 1;
@@ -232,7 +232,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
         return CmdNotYetValid;
 
     // collect all the commands
-    QList<YZCommand*> cmds, prevcmds;
+    QList<YCommand*> cmds, prevcmds;
 
     int j = i;
 
@@ -264,11 +264,11 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
         if (prevcmds.isEmpty())
             return CmdError;
         // it really is a command with an argument, read it in
-        const YZCommand *c = prevcmds.first();
+        const YCommand *c = prevcmds.first();
         i = j - 1;
         // read in a count that may follow
         if (c->arg() == ArgChar) { // don't try to read a motion!
-            (this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
+            (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
             return CmdOk;
         }
         if (inputs.at(i).digitValue() > 0) {
@@ -292,7 +292,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
             } else {
                 bool matched = false;
                 for (int ab = 0; ab < commands.size(); ++ab) {
-                    const YZMotion *m = dynamic_cast<const YZMotion*>(commands.at(ab));
+                    const YMotion *m = dynamic_cast<const YMotion*>(commands.at(ab));
                     if (m && m->matches(s)) {
                         matched = true;
                         break;
@@ -300,7 +300,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
                 }
                 if (!matched) {
                     for (int ab = 0; ab < commands.size(); ++ab ) {
-                        const YZMotion *m = dynamic_cast<const YZMotion*>(commands.at(ab));
+                        const YMotion *m = dynamic_cast<const YMotion*>(commands.at(ab));
                         if (m && m->matches(s, false))
                             return CmdOperatorPending;
 
@@ -314,7 +314,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
                 return CmdError;
             break;
         case ArgMark:
-            if (s.length() != 1 || !YZCommand::isMark(s[0]))
+            if (s.length() != 1 || !YCommand::isMark(s[0]))
                 return CmdError;
             break;
         default:
@@ -322,16 +322,16 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
         }
 
         // the argument is OK, go for it
-        foreach( YZView *v, view->myBuffer()->views() )
+        foreach( YView *v, view->myBuffer()->views() )
         v->setPaintAutoCommit( false );
 
-        (this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, s));
+        (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, s));
 
-        foreach( YZView *v, view->myBuffer()->views() )
+        foreach( YView *v, view->myBuffer()->views() )
         v->commitPaintEvent();
 
         if ( c->arg() == ArgMark ) {
-            YZSession::self()->saveJumpPosition();
+            YSession::self()->saveJumpPosition();
         }
 
     } else {
@@ -345,11 +345,11 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
         }
         if (cmds.isEmpty())
             return CmdNotYetValid;
-        const YZCommand *c = 0;
+        const YCommand *c = 0;
         if (cmds.count() == 1) {
             c = cmds.first();
             if (c->arg() == ArgNone)
-                (this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount));
+                (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount));
             else
                 return CmdOperatorPending;
         } else {
@@ -365,10 +365,10 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
             if (!c)
                 return CmdError;
 
-            foreach( YZView *v, view->myBuffer()->views() )
+            foreach( YView *v, view->myBuffer()->views() )
             v->setPaintAutoCommit( false );
-            (this->*(c->poolMethod()))(YZCommandArgs(c, view, regs, count, hadCount, QString()));
-            foreach( YZView *v, view->myBuffer()->views() )
+            (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, QString()));
+            foreach( YView *v, view->myBuffer()->views() )
             v->commitPaintEvent();
         }
     }
@@ -376,7 +376,7 @@ CmdState YZModeCommand::execCommand(YZView *view, const QString& inputs)
     return CmdOk;
 }
 
-bool YZMotion::matches(const QString &s, bool fully) const
+bool YMotion::matches(const QString &s, bool fully) const
 {
     QString ks = mKeySeq;
     if (s.startsWith(ks)) {
@@ -402,13 +402,13 @@ bool YZMotion::matches(const QString &s, bool fully) const
     return false;
 }
 
-YZCursor YZModeCommand::move(YZView *view, const QString &inputs, int count, bool usercount)
+YCursor YModeCommand::move(YView *view, const QString &inputs, int count, bool usercount)
 {
     for (int ab = 0 ; ab < commands.size(); ++ab ) {
-        const YZMotion *m = dynamic_cast<const YZMotion*>(commands.at(ab));
+        const YMotion *m = dynamic_cast<const YMotion*>(commands.at(ab));
         if (m && m->matches(inputs)) {
             // execute the corresponding method
-            YZCursor to = (this->*(m->motionMethod()))(YZMotionArgs(view, count, inputs.right( m->keySeq().length()),
+            YCursor to = (this->*(m->motionMethod()))(YMotionArgs(view, count, inputs.right( m->keySeq().length()),
                           inputs.left(m->keySeq().length()), usercount ));
             return to;
         }
@@ -419,37 +419,37 @@ YZCursor YZModeCommand::move(YZView *view, const QString &inputs, int count, boo
 
 // MOTIONS
 
-YZCursor YZModeCommand::moveLeft(const YZMotionArgs &args)
+YCursor YModeCommand::moveLeft(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveLeft(&viewCursor, args.count, false, args.standalone );
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::moveRight(const YZMotionArgs &args)
+YCursor YModeCommand::moveRight(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveRight(&viewCursor, args.count, false, args.standalone );
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::moveLeftWrap( const YZMotionArgs & args )
+YCursor YModeCommand::moveLeftWrap( const YMotionArgs & args )
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveLeft(&viewCursor, args.count, true, args.standalone );
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::moveRightWrap( const YZMotionArgs & args )
+YCursor YModeCommand::moveRightWrap( const YMotionArgs & args )
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveRight(&viewCursor, args.count, true, args.standalone );
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::moveDown(const YZMotionArgs &args)
+YCursor YModeCommand::moveDown(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     if ( args.standalone )
         args.view->moveDown(&viewCursor, args.count, true );
     else { //LINEWISE
@@ -462,9 +462,9 @@ YZCursor YZModeCommand::moveDown(const YZMotionArgs &args)
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::moveUp(const YZMotionArgs &args)
+YCursor YModeCommand::moveUp(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     if ( args.standalone )
         args.view->moveUp(&viewCursor, args.count, true );
     else { //LINEWISE
@@ -480,7 +480,7 @@ YZCursor YZModeCommand::moveUp(const YZMotionArgs &args)
     return viewCursor.buffer();
 }
 
-void YZModeCommand::scrollPageUp(const YZCommandArgs &args)
+void YModeCommand::scrollPageUp(const YCommandArgs &args)
 {
     int line = args.view->getCurrentTop() - args.view->getLinesVisible();
 
@@ -492,7 +492,7 @@ void YZModeCommand::scrollPageUp(const YZCommandArgs &args)
     }
 }
 
-void YZModeCommand::scrollLineUp(const YZCommandArgs &args)
+void YModeCommand::scrollLineUp(const YCommandArgs &args)
 {
     int line = args.view->getCurrentTop() - 1;
 
@@ -504,13 +504,13 @@ void YZModeCommand::scrollLineUp(const YZCommandArgs &args)
     }
 }
 
-void YZModeCommand::scrollPageDown(const YZCommandArgs &args)
+void YModeCommand::scrollPageDown(const YCommandArgs &args)
 {
     int line = args.view->getCurrentTop() + args.view->getLinesVisible();
-    YZView *view = args.view;
+    YView *view = args.view;
 
     if (view->getLocalBooleanOption("wrap")) {
-        YZViewCursor temp = view->viewCursor();
+        YViewCursor temp = view->viewCursor();
         view->gotodxdy( &temp, view->getDrawCurrentLeft(), view->getDrawCurrentTop() + view->getLinesVisible() );
 
         line = temp.bufferY();
@@ -525,13 +525,13 @@ void YZModeCommand::scrollPageDown(const YZCommandArgs &args)
     }
 }
 
-void YZModeCommand::scrollLineDown(const YZCommandArgs &args)
+void YModeCommand::scrollLineDown(const YCommandArgs &args)
 {
     int line = args.view->getCurrentTop() + args.view->getLinesVisible();
-    YZView *view = args.view;
+    YView *view = args.view;
 
     if (view->getLocalBooleanOption("wrap")) {
-        YZViewCursor temp = view->viewCursor();
+        YViewCursor temp = view->viewCursor();
         view->gotodxdy( &temp, view->getDrawCurrentLeft(), view->getDrawCurrentTop() + 1 );
 
         line = temp.bufferY();
@@ -546,9 +546,9 @@ void YZModeCommand::scrollLineDown(const YZCommandArgs &args)
     }
 }
 
-YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args)
+YCursor YModeCommand::previousEmptyLine(const YMotionArgs &args)
 {
-    YZCursor from = args.view->getBufferCursor();
+    YCursor from = args.view->getBufferCursor();
     int start = from.y();
     int count = args.count > 0 ? args.count : 1;
     int counter = 0;
@@ -559,14 +559,14 @@ YZCursor YZModeCommand::previousEmptyLine(const YZMotionArgs &args)
         start--;
     }
 
-    YZSession::self()->saveJumpPosition( QPoint(0, start));
+    YSession::self()->saveJumpPosition( QPoint(0, start));
 
-    return YZCursor(0, start);
+    return YCursor(0, start);
 }
 
-YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args)
+YCursor YModeCommand::nextEmptyLine(const YMotionArgs &args)
 {
-    YZCursor from = args.view->getBufferCursor();
+    YCursor from = args.view->getBufferCursor();
     int start = from.y() + 1;
     int count = args.count > 0 ? args.count : 1;
     int counter = 0;
@@ -577,20 +577,20 @@ YZCursor YZModeCommand::nextEmptyLine(const YZMotionArgs &args)
         start++;
     }
 
-    YZSession::self()->saveJumpPosition( QPoint(0, start - 1));
+    YSession::self()->saveJumpPosition( QPoint(0, start - 1));
 
-    return YZCursor(0, start - 1);
+    return YCursor(0, start - 1);
 }
 
-YZCursor YZModeCommand::matchPair(const YZMotionArgs &args)
+YCursor YModeCommand::matchPair(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     bool found = false;
-    YZCursor pos = args.view->myBuffer()->action()->match( args.view, viewCursor.buffer(), &found );
+    YCursor pos = args.view->myBuffer()->action()->match( args.view, viewCursor.buffer(), &found );
     if ( found ) {
         if ( args.standalone ) {
             args.view->gotoxyAndStick( pos );
-            YZSession::self()->saveJumpPosition();
+            YSession::self()->saveJumpPosition();
         }
 
         return pos;
@@ -599,11 +599,11 @@ YZCursor YZModeCommand::matchPair(const YZMotionArgs &args)
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::findNext(const YZMotionArgs &args)
+YCursor YModeCommand::findNext(const YMotionArgs &args)
 {
-    YZLineSearch* finder = args.view->myLineSearch();
+    YLineSearch* finder = args.view->myLineSearch();
     bool found;
-    YZCursor pos = finder->forward( args.arg, found, args.count );
+    YCursor pos = finder->forward( args.arg, found, args.count );
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
@@ -612,11 +612,11 @@ YZCursor YZModeCommand::findNext(const YZMotionArgs &args)
     return args.view->getBufferCursor();
 }
 
-YZCursor YZModeCommand::findBeforeNext(const YZMotionArgs &args)
+YCursor YModeCommand::findBeforeNext(const YMotionArgs &args)
 {
-    YZLineSearch* finder = args.view->myLineSearch();
+    YLineSearch* finder = args.view->myLineSearch();
     bool found;
-    YZCursor pos = finder->forwardBefore( args.arg, found, args.count );
+    YCursor pos = finder->forwardBefore( args.arg, found, args.count );
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
@@ -625,11 +625,11 @@ YZCursor YZModeCommand::findBeforeNext(const YZMotionArgs &args)
     return args.view->getBufferCursor();
 }
 
-YZCursor YZModeCommand::findPrevious(const YZMotionArgs &args)
+YCursor YModeCommand::findPrevious(const YMotionArgs &args)
 {
-    YZLineSearch* finder = args.view->myLineSearch();
+    YLineSearch* finder = args.view->myLineSearch();
     bool found;
-    YZCursor pos = finder->reverse( args.arg, found, args.count );
+    YCursor pos = finder->reverse( args.arg, found, args.count );
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
@@ -638,11 +638,11 @@ YZCursor YZModeCommand::findPrevious(const YZMotionArgs &args)
     return args.view->getBufferCursor();
 }
 
-YZCursor YZModeCommand::findAfterPrevious(const YZMotionArgs &args)
+YCursor YModeCommand::findAfterPrevious(const YMotionArgs &args)
 {
-    YZLineSearch* finder = args.view->myLineSearch();
+    YLineSearch* finder = args.view->myLineSearch();
     bool found;
-    YZCursor pos = finder->reverseAfter( args.arg, found, args.count );
+    YCursor pos = finder->reverseAfter( args.arg, found, args.count );
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
@@ -651,11 +651,11 @@ YZCursor YZModeCommand::findAfterPrevious(const YZMotionArgs &args)
     return args.view->getBufferCursor();
 }
 
-YZCursor YZModeCommand::repeatFind(const YZMotionArgs &args)
+YCursor YModeCommand::repeatFind(const YMotionArgs &args)
 {
-    YZLineSearch* finder = args.view->myLineSearch();
+    YLineSearch* finder = args.view->myLineSearch();
     bool found;
-    YZCursor pos = finder->searchAgain( found, args.count );
+    YCursor pos = finder->searchAgain( found, args.count );
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
@@ -664,24 +664,24 @@ YZCursor YZModeCommand::repeatFind(const YZMotionArgs &args)
     return args.view->getBufferCursor();
 }
 
-YZCursor YZModeCommand::gotoSOL(const YZMotionArgs &args)
+YCursor YModeCommand::gotoSOL(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveToStartOfLine(&viewCursor, args.standalone);
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::gotoEOL(const YZMotionArgs &args)
+YCursor YModeCommand::gotoEOL(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveToEndOfLine(&viewCursor, args.standalone);
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args)
+YCursor YModeCommand::moveWordForward(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
-    YZCursor result( viewCursor.buffer() );
+    YViewCursor viewCursor = args.view->viewCursor();
+    YCursor result( viewCursor.buffer() );
     int c = 0;
     QRegExp rex1("^\\w+\\s*"); //a word with boundaries
     QRegExp rex2("^[^\\w\\s]+\\s*"); //non-word chars with boundaries
@@ -733,10 +733,10 @@ YZCursor YZModeCommand::moveWordForward(const YZMotionArgs &args)
 }
 
 
-YZCursor YZModeCommand::moveSWordForward(const YZMotionArgs &args)
+YCursor YModeCommand::moveSWordForward(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
-    YZCursor result( viewCursor.buffer() );
+    YViewCursor viewCursor = args.view->viewCursor();
+    YCursor result( viewCursor.buffer() );
     int c = 0;
     QRegExp ws("\\s+"); //whitespace
 
@@ -783,10 +783,10 @@ QString invertQString( const QString& from )
     return res;
 }
 
-YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args)
+YCursor YModeCommand::moveWordBackward(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
-    YZCursor result( viewCursor.buffer() );
+    YViewCursor viewCursor = args.view->viewCursor();
+    YCursor result( viewCursor.buffer() );
     int c = 0;
     QRegExp rex1("^(\\w+)\\s*"); //a word with boundaries
     QRegExp rex2("^([^\\w\\s]+)\\s*"); //non-word chars with boundaries
@@ -839,10 +839,10 @@ YZCursor YZModeCommand::moveWordBackward(const YZMotionArgs &args)
 }
 
 
-YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args)
+YCursor YModeCommand::moveSWordBackward(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
-    YZCursor result( viewCursor.buffer() );
+    YViewCursor viewCursor = args.view->viewCursor();
+    YCursor result( viewCursor.buffer() );
     int c = 0;
     QRegExp rex1("([\\S]+)\\s*"); //
 
@@ -877,17 +877,17 @@ YZCursor YZModeCommand::moveSWordBackward(const YZMotionArgs &args)
     return result;
 }
 
-YZCursor YZModeCommand::firstNonBlank(const YZMotionArgs &args)
+YCursor YModeCommand::firstNonBlank(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveToFirstNonBlankOfLine(&viewCursor, args.standalone);
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::gotoMark( const YZMotionArgs &args )
+YCursor YModeCommand::gotoMark( const YMotionArgs &args )
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
-    YZViewMarker *mark = args.view->myBuffer()->viewMarks();
+    YViewCursor viewCursor = args.view->viewCursor();
+    YViewMarker *mark = args.view->myBuffer()->viewMarks();
     if ( mark->contains(args.arg))
         return mark->value(args.arg).mBuffer;
     else {
@@ -896,17 +896,17 @@ YZCursor YZModeCommand::gotoMark( const YZMotionArgs &args )
     }
 }
 
-YZCursor YZModeCommand::firstNonBlankNextLine( const YZMotionArgs &args )
+YCursor YModeCommand::firstNonBlankNextLine( const YMotionArgs &args )
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveDown(&viewCursor, args.count, args.standalone );
     args.view->moveToFirstNonBlankOfLine( &viewCursor, args.standalone );
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::gotoLine(const YZMotionArgs &args)
+YCursor YModeCommand::gotoLine(const YMotionArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     int line = 0;
     dbg() << "gotoLine " << args.cmd << "," << args.count << endl;
     if ( args.count > 0 ) line = args.count - 1;
@@ -920,22 +920,22 @@ YZCursor YZModeCommand::gotoLine(const YZMotionArgs &args)
         } else
             args.view->gotoLine( &viewCursor, 0, args.standalone );
     }
-    if (YZSession::getBooleanOption("startofline"))
+    if (YSession::getBooleanOption("startofline"))
         args.view->moveToFirstNonBlankOfLine();
 
-    YZSession::self()->saveJumpPosition();
+    YSession::self()->saveJumpPosition();
 
     return viewCursor.buffer();
 }
 
-YZCursor YZModeCommand::searchWord(const YZMotionArgs &args)
+YCursor YModeCommand::searchWord(const YMotionArgs &args)
 {
-    YZCursor from = args.view->getBufferCursor();
+    YCursor from = args.view->getBufferCursor();
 
     QString word = args.view->myBuffer()->getWordAt( from );
     if ( ! word.isNull() ) {
         dbg() << "searchWord : " << word << endl;
-        YZCursor pos;
+        YCursor pos;
         bool found = true;
         bool moved = true;
         word = QRegExp::escape( word );
@@ -948,9 +948,9 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args)
         }
         for ( int i = 0; found && i < args.count; i++ ) {
             if ( args.cmd.contains('*') ) {
-                pos = YZSession::self()->search()->forward( args.view->myBuffer(), word, &found, from );
+                pos = YSession::self()->search()->forward( args.view->myBuffer(), word, &found, from );
             } else {
-                pos = YZSession::self()->search()->backward( args.view->myBuffer(), word, &found, from );
+                pos = YSession::self()->search()->backward( args.view->myBuffer(), word, &found, from );
             }
             if ( found ) {
                 from = pos;
@@ -962,14 +962,14 @@ YZCursor YZModeCommand::searchWord(const YZMotionArgs &args)
     return from;
 }
 
-YZCursor YZModeCommand::searchNext(const YZMotionArgs &args)
+YCursor YModeCommand::searchNext(const YMotionArgs &args)
 {
-    YZCursor from = args.view->getBufferCursor();
-    YZCursor pos;
+    YCursor from = args.view->getBufferCursor();
+    YCursor pos;
     bool found = true;
     bool moved = true;
     for ( int i = 0; found && i < args.count; i++ ) {
-        pos = YZSession::self()->search()->replayForward( args.view->myBuffer(), &found, from );
+        pos = YSession::self()->search()->replayForward( args.view->myBuffer(), &found, from );
         if ( found ) {
             from = pos;
             moved = true;
@@ -978,20 +978,20 @@ YZCursor YZModeCommand::searchNext(const YZMotionArgs &args)
 
     if ( args.standalone && moved ) {
         args.view->gotoxyAndStick( from );
-        YZSession::self()->saveJumpPosition();
+        YSession::self()->saveJumpPosition();
     }
 
     return from;
 }
 
-YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args)
+YCursor YModeCommand::searchPrev(const YMotionArgs &args)
 {
-    YZCursor from = args.view->getBufferCursor();
-    YZCursor pos;
+    YCursor from = args.view->getBufferCursor();
+    YCursor pos;
     bool found = true;
     bool moved = false;
     for ( int i = 0; found && i < args.count; i++ ) {
-        pos = YZSession::self()->search()->replayBackward( args.view->myBuffer(), &found, from );
+        pos = YSession::self()->search()->replayBackward( args.view->myBuffer(), &found, from );
         if ( found ) {
             from = pos;
             moved = true;
@@ -1000,7 +1000,7 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args)
 
     if ( args.standalone && moved ) {
         args.view->gotoxyAndStick( from );
-        YZSession::self()->saveJumpPosition();
+        YSession::self()->saveJumpPosition();
     }
 
     return from;
@@ -1008,22 +1008,22 @@ YZCursor YZModeCommand::searchPrev(const YZMotionArgs &args)
 
 // COMMANDS
 
-void YZModeCommand::execMotion( const YZCommandArgs &args )
+void YModeCommand::execMotion( const YCommandArgs &args )
 {
-    const YZMotion *m = dynamic_cast<const YZMotion*>(args.cmd);
-    YZASSERT(m);
-    YZCursor to = (this->*(m->motionMethod()))(YZMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true));
+    const YMotion *m = dynamic_cast<const YMotion*>(args.cmd);
+    YASSERT(m);
+    YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true));
     //args.view->centerViewVertically( to.y() );
     args.view->gotoxy(to.x(), to.y());
 
 }
 
-YZInterval YZModeCommand::interval(const YZCommandArgs& args)
+YInterval YModeCommand::interval(const YCommandArgs& args)
 {
-    YZCursor from( args.view->getBufferCursor() );
-    YZCursor to = move( args.view, args.arg, args.count, args.usercount );
+    YCursor from( args.view->getBufferCursor() );
+    YCursor to = move( args.view, args.arg, args.count, args.usercount );
     if ( from > to ) {
-        YZCursor tmp( from );
+        YCursor tmp( from );
         from = to;
         to = tmp;
     }
@@ -1033,70 +1033,70 @@ YZInterval YZModeCommand::interval(const YZCommandArgs& args)
         to.setX( 0 );
         to.setY( to.y() + 1 );
     }
-    YZInterval ret( from, YZBound(to, true) );
+    YInterval ret( from, YBound(to, true) );
     return ret;
 }
 
-void YZModeCommand::appendAtEOL(const YZCommandArgs &args)
+void YModeCommand::appendAtEOL(const YCommandArgs &args)
 {
     args.view->moveToEndOfLine();
     args.view->append();
 }
 
-void YZModeCommand::append(const YZCommandArgs &args)
+void YModeCommand::append(const YCommandArgs &args)
 {
     args.view->append();
 }
 
-void YZModeCommand::change(const YZCommandArgs &args)
+void YModeCommand::change(const YCommandArgs &args)
 {
-    YZInterval area = interval( args );
-    YZCursor cur = area.fromPos();
+    YInterval area = interval( args );
+    YCursor cur = area.fromPos();
 
-    dbg() << "YZModeCommand::change " << area << endl;
+    dbg() << "YModeCommand::change " << area << endl;
     args.view->myBuffer()->action()->deleteArea(args.view, area, args.regs);
 
     if ( cur.y() >= args.view->myBuffer()->lineCount() ) {
         args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->myBuffer()->lineCount() );
-        args.view->modePool()->change( YZMode::ModeInsert );
+        args.view->modePool()->change( YMode::ModeInsert );
     } else {
         args.view->gotoxyAndStick( cur );
         // start insert mode, append if at EOL
         if ( cur.x() < args.view->myBuffer()->getLineLength( cur.y() ) )
-            args.view->modePool()->change( YZMode::ModeInsert );
+            args.view->modePool()->change( YMode::ModeInsert );
         else
             args.view->append();
     }
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::changeLine(const YZCommandArgs &args)
+void YModeCommand::changeLine(const YCommandArgs &args)
 {
     int y = args.view->getBufferCursor().y();
     args.view->myBuffer()->action()->deleteLine(args.view, args.view->getBufferCursor(), args.count, args.regs);
     args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor().y() );
-    args.view->modePool()->push( YZMode::ModeInsert );
+    args.view->modePool()->push( YMode::ModeInsert );
     args.view->gotoxy(0, y);
     //args.view->commitNextUndo();
 }
 
-void YZModeCommand::changeToEOL(const YZCommandArgs &args)
+void YModeCommand::changeToEOL(const YCommandArgs &args)
 {
-    YZCursor to = move(args.view, "$", 1, false);
+    YCursor to = move(args.view, "$", 1, false);
     args.view->myBuffer()->action()->deleteArea(args.view, args.view->getBufferCursor(), to, args.regs);
     args.view->append();
     //args.view->commitNextUndo();
 }
 
-void YZModeCommand::deleteLine(const YZCommandArgs &args)
+void YModeCommand::deleteLine(const YCommandArgs &args)
 {
     args.view->myBuffer()->action()->deleteLine(args.view, args.view->getBufferCursor(), args.count, args.regs);
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::deleteToEndOfLastLine(const YZCommandArgs &args)
+void YModeCommand::deleteToEndOfLastLine(const YCommandArgs &args)
 {
-    dbg() << "YZModeCommand::deleteToEndOfLastLine " << args.cmd;
+    dbg() << "YModeCommand::deleteToEndOfLastLine " << args.cmd;
     int toy = args.view->myBuffer()->lineCount();
     int tox = args.view->myBuffer()->getLineLength(toy);
 
@@ -1106,39 +1106,39 @@ void YZModeCommand::deleteToEndOfLastLine(const YZCommandArgs &args)
     if (fromy == args.view->getBufferCursor().y()) {
         fromx = 0;
     }
-    args.view->myBuffer()->action()->deleteArea(args.view, YZCursor(fromx, fromy), YZCursor(tox, toy), args.regs);
+    args.view->myBuffer()->action()->deleteArea(args.view, YCursor(fromx, fromy), YCursor(tox, toy), args.regs);
 
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->gotoxy ( &viewCursor, 0, viewCursor.bufferY(), true );
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::deleteToEOL(const YZCommandArgs &args)
+void YModeCommand::deleteToEOL(const YCommandArgs &args)
 {
     //in vim : 2d$ does not behave as d$d$, this is illogical ..., you cannot delete twice to end of line ...
-    YZCursor to = move(args.view, "$", 1, false);
+    YCursor to = move(args.view, "$", 1, false);
     args.view->myBuffer()->action()->deleteArea(args.view, args.view->getBufferCursor(), to, args.regs);
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::insertAtSOL(const YZCommandArgs &args)
+void YModeCommand::insertAtSOL(const YCommandArgs &args)
 {
     args.view->moveToFirstNonBlankOfLine();
-    args.view->modePool()->push( YZMode::ModeInsert );
+    args.view->modePool()->push( YMode::ModeInsert );
 }
 
-void YZModeCommand::insertAtCol1(const YZCommandArgs &args)
+void YModeCommand::insertAtCol1(const YCommandArgs &args)
 {
     args.view->moveToStartOfLine();
-    args.view->modePool()->push( YZMode::ModeInsert );
+    args.view->modePool()->push( YMode::ModeInsert );
 }
 
-void YZModeCommand::gotoCommandMode(const YZCommandArgs &args)
+void YModeCommand::gotoCommandMode(const YCommandArgs &args)
 {
-    args.view->modePool()->pop( YZMode::ModeCommand );
+    args.view->modePool()->pop( YMode::ModeCommand );
 }
 
-void YZModeCommand::gotoLineAtTop(const YZCommandArgs &args)
+void YModeCommand::gotoLineAtTop(const YCommandArgs &args)
 {
     int line;
 
@@ -1148,7 +1148,7 @@ void YZModeCommand::gotoLineAtTop(const YZCommandArgs &args)
     args.view->moveToFirstNonBlankOfLine();
 }
 
-void YZModeCommand::gotoLineAtCenter(const YZCommandArgs &args)
+void YModeCommand::gotoLineAtCenter(const YCommandArgs &args)
 {
     int line;
     line = ( args.usercount ) ? args.count - 1 : args.view->getBufferCursor().y();
@@ -1156,7 +1156,7 @@ void YZModeCommand::gotoLineAtCenter(const YZCommandArgs &args)
     args.view->gotoxy(args.view->viewCursor().bufferX(), line );
 }
 
-void YZModeCommand::gotoLineAtBottom(const YZCommandArgs &args)
+void YModeCommand::gotoLineAtBottom(const YCommandArgs &args)
 {
     int line;
     //int linesFromCenter;
@@ -1165,7 +1165,7 @@ void YZModeCommand::gotoLineAtBottom(const YZCommandArgs &args)
 
     if ( args.view->getLocalBooleanOption("wrap") ) {
         // the textline could span several screen lines
-        YZViewCursor viewCursor = args.view->viewCursor();
+        YViewCursor viewCursor = args.view->viewCursor();
         viewCursor.setBufferY(line);
         args.view->moveToEndOfLine(&viewCursor );
 
@@ -1178,37 +1178,37 @@ void YZModeCommand::gotoLineAtBottom(const YZCommandArgs &args)
 }
 
 
-void YZModeCommand::gotoExMode(const YZCommandArgs &args)
+void YModeCommand::gotoExMode(const YCommandArgs &args)
 {
-    args.view->modePool()->push( YZMode::ModeEx );
+    args.view->modePool()->push( YMode::ModeEx );
 }
-void YZModeCommand::gotoInsertMode(const YZCommandArgs &args)
+void YModeCommand::gotoInsertMode(const YCommandArgs &args)
 {
-    args.view->modePool()->push( YZMode::ModeInsert );
+    args.view->modePool()->push( YMode::ModeInsert );
 }
-void YZModeCommand::gotoReplaceMode(const YZCommandArgs &args)
+void YModeCommand::gotoReplaceMode(const YCommandArgs &args)
 {
-    args.view->modePool()->push( YZMode::ModeReplace );
+    args.view->modePool()->push( YMode::ModeReplace );
 }
-void YZModeCommand::gotoVisualMode(const YZCommandArgs &args)
+void YModeCommand::gotoVisualMode(const YCommandArgs &args)
 {
-    args.view->modePool()->push( YZMode::ModeVisual );
+    args.view->modePool()->push( YMode::ModeVisual );
 }
-void YZModeCommand::gotoVisualLineMode(const YZCommandArgs &args)
+void YModeCommand::gotoVisualLineMode(const YCommandArgs &args)
 {
-    args.view->modePool()->push( YZMode::ModeVisualLine );
+    args.view->modePool()->push( YMode::ModeVisualLine );
 }
-void YZModeCommand::gotoVisualBlockMode(const YZCommandArgs &args)
+void YModeCommand::gotoVisualBlockMode(const YCommandArgs &args)
 {
-    args.view->modePool()->push( YZMode::ModeVisualBlock );
+    args.view->modePool()->push( YMode::ModeVisualBlock );
 }
 
-void YZModeCommand::insertLineAfter(const YZCommandArgs &args)
+void YModeCommand::insertLineAfter(const YCommandArgs &args)
 {
     int y = args.view->getBufferCursor().y();
-    YZBuffer *mBuffer = args.view->myBuffer();
+    YBuffer *mBuffer = args.view->myBuffer();
     mBuffer->action()->insertNewLine( args.view, mBuffer->textline( y ).length(), y );
-    QStringList results = YZSession::self()->eventCall("INDENT_ON_ENTER", args.view);
+    QStringList results = YSession::self()->eventCall("INDENT_ON_ENTER", args.view);
     if (results.count() > 0 ) {
         if (results[0].length() != 0) {
             mBuffer->action()->replaceLine( args.view, y + 1, results[0] + mBuffer->textline( y + 1 ).trimmed() );
@@ -1218,7 +1218,7 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args)
     for ( int i = 1 ; i < args.count ; i++ ) {
         y = args.view->getBufferCursor().y();
         args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
-        results = YZSession::self()->eventCall("INDENT_ON_ENTER", args.view);
+        results = YSession::self()->eventCall("INDENT_ON_ENTER", args.view);
         if (results.count() > 0 ) {
             if (results[0].length() != 0) {
                 mBuffer->action()->replaceLine( args.view, y + 1, results[0] + mBuffer->textline( y + 1 ).trimmed() );
@@ -1226,115 +1226,115 @@ void YZModeCommand::insertLineAfter(const YZCommandArgs &args)
             }
         }
     }
-    args.view->modePool()->push( YZMode::ModeInsert );
+    args.view->modePool()->push( YMode::ModeInsert );
     args.view->moveToEndOfLine();
     //args.view->commitNextUndo();
 
 }
 
-void YZModeCommand::insertLineBefore(const YZCommandArgs &args)
+void YModeCommand::insertLineBefore(const YCommandArgs &args)
 {
     int y = args.view->getBufferCursor().y();
     for ( int i = 0 ; i < args.count ; i++ )
         args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
     args.view->moveUp();
-    args.view->modePool()->push( YZMode::ModeInsert );
+    args.view->modePool()->push( YMode::ModeInsert );
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::joinLine(const YZCommandArgs &args)
+void YModeCommand::joinLine(const YCommandArgs &args)
 {
     for ( int i = 0; i < args.count; i++ )
         args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor().y(), true );
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::joinLineWithoutSpace(const YZCommandArgs &args)
+void YModeCommand::joinLineWithoutSpace(const YCommandArgs &args)
 {
     for ( int i = 0; i < args.count; i++ )
         args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor().y(), false );
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::pasteAfter(const YZCommandArgs &args)
+void YModeCommand::pasteAfter(const YCommandArgs &args)
 {
     for ( int i = 0 ; i < args.count ; i++ )
         args.view->pasteContent( args.regs[ 0 ], true );
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::pasteBefore(const YZCommandArgs &args)
+void YModeCommand::pasteBefore(const YCommandArgs &args)
 {
     for ( int i = 0 ; i < args.count ; i++ )
         args.view->pasteContent( args.regs[ 0 ], false );
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::yankLine(const YZCommandArgs &args)
+void YModeCommand::yankLine(const YCommandArgs &args)
 {
     args.view->myBuffer()->action()->copyLine( args.view, args.view->getBufferCursor(), args.count, args.regs );
 }
 
-void YZModeCommand::yankToEOL(const YZCommandArgs &args)
+void YModeCommand::yankToEOL(const YCommandArgs &args)
 {
-    YZCursor to = move(args.view, "$", 1, false);
+    YCursor to = move(args.view, "$", 1, false);
     args.view->myBuffer()->action()->copyArea(args.view, args.view->getBufferCursor(), to, args.regs);
 }
 
-void YZModeCommand::closeWithoutSaving(const YZCommandArgs & /*args*/)
+void YModeCommand::closeWithoutSaving(const YCommandArgs & /*args*/)
 {
-    YZSession::self()->exitRequest( 0 );
+    YSession::self()->exitRequest( 0 );
 }
 
-void YZModeCommand::saveAndClose(const YZCommandArgs & /*args*/)
+void YModeCommand::saveAndClose(const YCommandArgs & /*args*/)
 {
-    YZSession::self()->saveBufferExit();
+    YSession::self()->saveBufferExit();
 }
 
-void YZModeCommand::searchBackwards(const YZCommandArgs &args)
+void YModeCommand::searchBackwards(const YCommandArgs &args)
 {
-    args.view->modePool()->push( YZMode::ModeSearchBackward );
+    args.view->modePool()->push( YMode::ModeSearchBackward );
 }
 
-void YZModeCommand::searchForwards(const YZCommandArgs &args)
+void YModeCommand::searchForwards(const YCommandArgs &args)
 {
-    args.view->modePool()->push( YZMode::ModeSearch );
+    args.view->modePool()->push( YMode::ModeSearch );
 }
 
-void YZModeCommand::del(const YZCommandArgs &args)
+void YModeCommand::del(const YCommandArgs &args)
 {
     args.view->myBuffer()->action()->deleteArea( args.view, interval( args ), args.regs );
     args.view->commitNextUndo();
     args.view->modePool()->pop();
 }
 
-void YZModeCommand::yank(const YZCommandArgs &args)
+void YModeCommand::yank(const YCommandArgs &args)
 {
     args.view->myBuffer()->action()->copyArea( args.view, interval( args ), args.regs );
-    YZCursor to = move( args.view, args.arg, args.count, args.usercount );
+    YCursor to = move( args.view, args.arg, args.count, args.usercount );
     args.view->gotoxyAndStick( to );
     args.view->modePool()->pop();
 }
 
-void YZModeCommand::mark(const YZCommandArgs &args)
+void YModeCommand::mark(const YCommandArgs &args)
 {
-    YZViewCursor viewCursor = args.view->viewCursor();
+    YViewCursor viewCursor = args.view->viewCursor();
     args.view->myBuffer()->viewMarks()->insert( args.arg, viewCursor );
 }
 
-void YZModeCommand::undo(const YZCommandArgs &args)
+void YModeCommand::undo(const YCommandArgs &args)
 {
     args.view->undo( args.count );
 }
 
-void YZModeCommand::redo(const YZCommandArgs &args)
+void YModeCommand::redo(const YCommandArgs &args)
 {
     args.view->redo( args.count );
 }
 
-void YZModeCommand::changeCase( const YZCommandArgs &args )
+void YModeCommand::changeCase( const YCommandArgs &args )
 {
-    YZCursor pos = args.view->getBufferCursor();
+    YCursor pos = args.view->getBufferCursor();
     const QString line = args.view->myBuffer()->textline( pos.y() );
     if ( ! line.isNull() ) {
         int length = line.length();
@@ -1351,9 +1351,9 @@ void YZModeCommand::changeCase( const YZCommandArgs &args )
     }
 }
 
-void YZModeCommand::lineToUpperCase( const YZCommandArgs &args )
+void YModeCommand::lineToUpperCase( const YCommandArgs &args )
 {
-    YZCursor pos = args.view->getBufferCursor();
+    YCursor pos = args.view->getBufferCursor();
     int i = 0;
     while ( i < args.count ) {
         const QString line = args.view->myBuffer()->textline( pos.y() + i );
@@ -1366,9 +1366,9 @@ void YZModeCommand::lineToUpperCase( const YZCommandArgs &args )
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::lineToLowerCase( const YZCommandArgs &args )
+void YModeCommand::lineToLowerCase( const YCommandArgs &args )
 {
-    YZCursor pos = args.view->getBufferCursor();
+    YCursor pos = args.view->getBufferCursor();
     int i = 0;
     while ( i < args.count ) {
         const QString line = args.view->myBuffer()->textline( pos.y() + i );
@@ -1381,7 +1381,7 @@ void YZModeCommand::lineToLowerCase( const YZCommandArgs &args )
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::macro( const YZCommandArgs &args )
+void YModeCommand::macro( const YCommandArgs &args )
 {
     if ( args.view->isRecording() )
         args.view->stopRecordMacro();
@@ -1390,7 +1390,7 @@ void YZModeCommand::macro( const YZCommandArgs &args )
     args.view->guiModeChanged();
 }
 
-void YZModeCommand::replayMacro( const YZCommandArgs &args )
+void YModeCommand::replayMacro( const YCommandArgs &args )
 {
     args.view->purgeInputBuffer();
     if ( args.view->isRecording()) {
@@ -1401,25 +1401,25 @@ void YZModeCommand::replayMacro( const YZCommandArgs &args )
 
     for ( int i = 0; i < args.count; i++ ) {
         for ( int ab = 0 ; ab < args.regs.size(); ++ab)
-            YZSession::self()->sendMultipleKeys(
+            YSession::self()->sendMultipleKeys(
                 args.view,
-                YZSession::self()->getRegister(args.regs.at(ab))[0]
+                YSession::self()->getRegister(args.regs.at(ab))[0]
             );
     }
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::deleteChar( const YZCommandArgs &args )
+void YModeCommand::deleteChar( const YCommandArgs &args )
 {
-    YZCursor to( args.view->getBufferCursor() );
+    YCursor to( args.view->getBufferCursor() );
     args.view->myBuffer()->action()->copyArea(args.view, args.view->getBufferCursor(), to, args.regs);
     args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::deleteCharBackwards( const YZCommandArgs &args )
+void YModeCommand::deleteCharBackwards( const YCommandArgs &args )
 {
-    YZCursor pos = args.view->getBufferCursor();
+    YCursor pos = args.view->getBufferCursor();
     int oldX = pos.x();
     int newX = oldX - args.count;
     if ( newX < 0 )
@@ -1432,28 +1432,28 @@ void YZModeCommand::deleteCharBackwards( const YZCommandArgs &args )
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::substitute( const YZCommandArgs &args )
+void YModeCommand::substitute( const YCommandArgs &args )
 {
-    YZCursor cur = args.view->getBufferCursor();
+    YCursor cur = args.view->getBufferCursor();
 
     args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
     args.view->commitNextUndo();
 
     // start insert mode, append if at EOL
     if ( cur.x() != args.view->myBuffer()->getLineLength( cur.y() ) )
-        args.view->modePool()->push( YZMode::ModeInsert );
+        args.view->modePool()->push( YMode::ModeInsert );
     else
         args.view->append();
 }
 
-void YZModeCommand::redisplay( const YZCommandArgs &args )
+void YModeCommand::redisplay( const YCommandArgs &args )
 {
     args.view->recalcScreen();
 }
 
-void YZModeCommand::replace( const YZCommandArgs &args )
+void YModeCommand::replace( const YCommandArgs &args )
 {
-    YZCursor pos = args.view->getBufferCursor();
+    YCursor pos = args.view->getBufferCursor();
     if (args.arg == "<ESC>") {
         return ;
     }
@@ -1463,18 +1463,18 @@ void YZModeCommand::replace( const YZCommandArgs &args )
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::abort( const YZCommandArgs& /*args*/)
+void YModeCommand::abort( const YCommandArgs& /*args*/)
 {}
 
-void YZModeCommand::delkey( const YZCommandArgs &args )
+void YModeCommand::delkey( const YCommandArgs &args )
 {
     args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), 1);
     args.view->commitNextUndo();
 }
 
-void YZModeCommand::indent( const YZCommandArgs& args )
+void YModeCommand::indent( const YCommandArgs& args )
 {
-    YZInterval area = interval( args );
+    YInterval area = interval( args );
     int fromY = area.fromPos().y();
     int toY = area.toPos().y();
     if ( toY > fromY && area.to().opened() && area.toPos().x() == 0 )
@@ -1489,46 +1489,46 @@ void YZModeCommand::indent( const YZCommandArgs& args )
     args.view->modePool()->pop();
 }
 
-void YZModeCommand::redoLastCommand( const YZCommandArgs & args )
+void YModeCommand::redoLastCommand( const YCommandArgs & args )
 {
-    YZView * view = args.view;
+    YView * view = args.view;
     execCommand( view, view->getLastInputBuffer() );
 }
 
-void YZModeCommand::tagNext( const YZCommandArgs & args )
+void YModeCommand::tagNext( const YCommandArgs & args )
 {
-    YZView * view = args.view;
-    YZCursor from = view->getBufferCursor();
+    YView * view = args.view;
+    YCursor from = view->getBufferCursor();
     QString word = view->myBuffer()->getWordAt( from );
 
     tagJumpTo(word);
 }
 
-void YZModeCommand::tagPrev( const YZCommandArgs & /*args*/ )
+void YModeCommand::tagPrev( const YCommandArgs & /*args*/ )
 {
     tagPop();
 }
 
-void YZModeCommand::undoJump( const YZCommandArgs & /*args*/ )
+void YModeCommand::undoJump( const YCommandArgs & /*args*/ )
 {
-    const YZCursor cursor = YZSession::self()->previousJumpPosition();
-    YZSession::self()->currentView()->centerViewVertically( cursor.y() );
-    YZSession::self()->currentView()->gotodxdy( cursor, true );
+    const YCursor cursor = YSession::self()->previousJumpPosition();
+    YSession::self()->currentView()->centerViewVertically( cursor.y() );
+    YSession::self()->currentView()->gotodxdy( cursor, true );
 }
 
-void YZModeCommand::incrementNumber( const YZCommandArgs& args )
+void YModeCommand::incrementNumber( const YCommandArgs& args )
 {
     adjustNumber(args, args.count);
 }
 
-void YZModeCommand::decrementNumber( const YZCommandArgs& args )
+void YModeCommand::decrementNumber( const YCommandArgs& args )
 {
     adjustNumber(args, -args.count);
 }
 
-void YZModeCommand::adjustNumber( const YZCommandArgs& args, int change )
+void YModeCommand::adjustNumber( const YCommandArgs& args, int change )
 {
-    YZCursor pos = args.view->getBufferCursor();
+    YCursor pos = args.view->getBufferCursor();
     //dbg() << "adjustNumber: pos: " << pos;
     QString line = args.view->myBuffer()->textline(pos.y());
     if ( !line[pos.x()].isDigit() ) {

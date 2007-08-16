@@ -38,7 +38,7 @@
 
 int main(int argc, char **argv)
 {
-    YZSession::initDebug( argc, argv );
+    YSession::initDebug( argc, argv );
 
     // ==============[ Create application ]=============
     QApplication app(argc, argv);
@@ -51,9 +51,9 @@ int main(int argc, char **argv)
     QYzis* mw = new QYzis();
     mw->show();
 
-    YZSession::self()->parseCommandLine( argc, argv );
-    //YZSession::self()->frontendGuiReady();
-    QTimer::singleShot(0, static_cast<QYSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
+    YSession::self()->parseCommandLine( argc, argv );
+    //YSession::self()->frontendGuiReady();
+    QTimer::singleShot(0, static_cast<QYSession*>( YSession::self() ), SLOT(frontendGuiReady()) );
 
     // ==============[ let's rock ]=============
 

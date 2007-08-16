@@ -29,59 +29,59 @@
 
 /* yzis */
 //#include "cursor.h"
-#include "mode.h"  // for YZModeMap
+#include "mode.h"  // for YModeMap
 
 class YzisSchemaManager;
-class YZInternalOptionPool;
-class YZRegisters;
-class YZSearch;
-class YZEvents;
-class YZMode;
-class YZModeEx;
-class YZModeCommand;
-class YZViewCursor;
-class YZYzisinfo;
-class YZTagStack;
-class YZCursor;
-class YZResourceMgr;
+class YInternalOptionPool;
+class YRegisters;
+class YSearch;
+class YEvents;
+class YMode;
+class YModeEx;
+class YModeCommand;
+class YViewCursor;
+class YInfo;
+class YTagStack;
+class YCursor;
+class YResourceMgr;
 
-typedef QList<YZBuffer*> YZBufferList;
-typedef QList<YZView*> YZViewList;
+typedef QList<YBuffer*> YBufferList;
+typedef QList<YView*> YViewList;
 
 /**
-  * Class YZSession
+  * Class YSession
   *
   * @short Singleton class representing an Yzis application.
   *
-  * The YZSession is managing all global attributes and method of Yzis. 
+  * The YSession is managing all global attributes and method of Yzis. 
   *
-  * It takes care of everything that is not local to a YZBuffer or YZView.
+  * It takes care of everything that is not local to a YBuffer or YView.
   *
   * Contains data referring to an instance of yzis
   * This may also be used to "transfer" a session from a GUI to another
   * A session owns the buffers
   * A buffer owns the views
   */
-class YZIS_EXPORT YZSession : public YZSessionIface
+class YZIS_EXPORT YSession : public YSessionIface
 {
 protected:
     /**
-     * Constructor. Protected, because YZSession is a singleton.
+     * Constructor. Protected, because YSession is a singleton.
            *
            * The constructor does mostly nothing. All the hard work
            * is done in setInstance() and init()
      */
-    YZSession();
+    YSession();
 
     /**
-     * Destructor. Protected, because YZSession is a singleton.
+     * Destructor. Protected, because YSession is a singleton.
      */
-    virtual ~YZSession();
+    virtual ~YSession();
 
     /**
      *  Sets the session instance object and initialise the session.
            *
-     *  It MUST be called from concrete class which inherits from YZSession.
+     *  It MUST be called from concrete class which inherits from YSession.
      *
      *  Example from QYZisSession:
      *  \code
@@ -96,11 +96,11 @@ protected:
      *  before any other libyzis object gets created
      *
      *  @see QYZisSession::createInstance()
-     *  @see NYZSession::createInstance()
+     *  @see NYSession::createInstance()
      */
-    static void setInstance(YZSession* instance);
+    static void setInstance(YSession* instance);
 
-    /** Initialise YZSession.
+    /** Initialise YSession.
       *
       * This method is called in setInstance()
       */
@@ -155,17 +155,17 @@ public:
             * of your program, to ensure that all components can properly
             * use debug code.
             *
-            * initDebug() should be called even before YZSession() creation.
+            * initDebug() should be called even before YSession() creation.
             *
       */
     static void initDebug(int argc, char ** argv);
 
     /** YZis singleton instance.
            *
-     *  @return the one and only one instance of YZSession
+     *  @return the one and only one instance of YSession
      *  @see setInstance
      */
-    static YZSession * self();
+    static YSession * self();
 
     /** Parse the command line of the application.
       *
@@ -200,38 +200,38 @@ public:
 public:
     /** Returns the mode map
      * 
-     * @return YZModeMap
+     * @return YModeMap
      */
-    YZModeMap getModes() const;
+    YModeMap getModes() const;
 
     /** Returns the ex pool
      * 
-     * @return YZModeEx*
+     * @return YModeEx*
      */
-    YZModeEx* getExPool();
+    YModeEx* getExPool();
 
     /** Returns the command pool
      * 
-     * @return YZModeCommand*
+     * @return YModeCommand*
      */
-    YZModeCommand* getCommandPool();
+    YModeCommand* getCommandPool();
 
     /** Returns the yzisinfo list
      * 
-     * @return YZYzisinfo*
+     * @return YInfo*
      */
-    YZYzisinfo* getYzisinfo();
+    YInfo* getYzisinfo();
 
     /**
      * search
      */
-    YZSearch *search()
+    YSearch *search()
     {
         return mSearch;
     }
 
-    YZTagStack &getTagStack();
-    const YZTagStack &getTagStack() const;
+    YTagStack &getTagStack();
+    const YTagStack &getTagStack() const;
 
     /**
      * Get a pointer on the schema manager for syntax highlighting
@@ -244,7 +244,7 @@ public:
     /**
      * Get the Internal Option Pool
      */
-    YZInternalOptionPool *getOptions();
+    YInternalOptionPool *getOptions();
 
     //-------------------------------------------------------
     // ----------------- Buffer Management
@@ -256,13 +256,13 @@ public:
            * ask the frontend to create a buffer with guiCreateBuffer()
            * set the buffer as current and return it.
      */
-    YZBuffer *createBuffer(const QString& path = QString());
+    YBuffer *createBuffer(const QString& path = QString());
 
     /**
      * Creates a new buffer and puts it in a new view
-     * To get the created buffer, call YZView::myBuffer()
+     * To get the created buffer, call YView::myBuffer()
      */
-    YZView *createBufferAndView( const QString &path = QString() );
+    YView *createBufferAndView( const QString &path = QString() );
 
     /**
      * Remove a buffer from the list.
@@ -270,14 +270,14 @@ public:
            * Inform the gui frontend to delete the buffer. If this buffer was
            * the last one, calls exit.
      */
-    void rmBuffer( YZBuffer * );
+    void rmBuffer( YBuffer * );
 
     /**
      * Returns a const reference to the buffer list
      * Designed to be used for operations that have to occur
      * for each buffer
      */
-    const YZBufferList & buffers() const
+    const YBufferList & buffers() const
     {
         return mBufferList;
     }
@@ -285,7 +285,7 @@ public:
     /**
      * Finds a buffer by a filename
      */
-    YZBuffer* findBuffer( const QString& path );
+    YBuffer* findBuffer( const QString& path );
 
     /**
      * Check if one buffer is modified and not saved
@@ -299,17 +299,17 @@ public:
     /**
      * Create a new view
      */
-    YZView* createView ( YZBuffer* buffer );
+    YView* createView ( YBuffer* buffer );
 
     /**
      * Delete the current view
      */
-    void deleteView ( YZView* v );
+    void deleteView ( YView* v );
 
     /**
      * Returns a pointer to the current view
      */
-    YZView* currentView()
+    YView* currentView()
     {
         return mCurView;
     }
@@ -317,38 +317,38 @@ public:
     /**
      * Change the current view ( unassigned )
      */
-    void setCurrentView( YZView* );
+    void setCurrentView( YView* );
 
     /**
-     * Gets a list of all YZViews active in the system
+     * Gets a list of all YViews active in the system
      */
-    const YZViewList getAllViews() const;
+    const YViewList getAllViews() const;
 
     /** \brief Find a view containing the buffer.
            *
            * Can be called with a NULL argument.
      */
-    YZView *findViewByBuffer( const YZBuffer *buffer );
+    YView *findViewByBuffer( const YBuffer *buffer );
 
     /**
      * Finds the first view
      */
-    YZView* firstView();
+    YView* firstView();
 
     /**
      * Finds the last view
      */
-    YZView* lastView();
+    YView* lastView();
 
     /**
      * Finds the next view relative to the current one
      */
-    YZView* nextView();
+    YView* nextView();
 
     /**
      * Finds the previous view relative to the current one
      */
-    YZView* prevView();
+    YView* prevView();
 
 
     //-------------------------------------------------------
@@ -370,7 +370,7 @@ public:
      * Saves all buffers with a filename set.
            *
            * May popup to ask fo the name of the file to save (from
-           * YZBuffer::save() ).
+           * YBuffer::save() ).
            *
      * @return whether all buffers were saved correctly
      */
@@ -416,7 +416,7 @@ public:
     /**
      * call a lua event
      */
-    QStringList eventCall(const QString& event, YZView *view = NULL);
+    QStringList eventCall(const QString& event, YView *view = NULL);
 
     //-------------------------------------------------------
     // ----------------- Registers
@@ -461,7 +461,7 @@ public:
 
 
     /** Get an instance of the resource manager */
-    virtual YZResourceMgr * resourceMgr()
+    virtual YResourceMgr * resourceMgr()
     {
         return mResourceMgr;
     }
@@ -479,7 +479,7 @@ public:
     virtual void scriptSendMultipleKeys ( const QString& text );
 
     /** Copied from view */
-    virtual void sendMultipleKeys( YZView * view, const QString& keys );
+    virtual void sendMultipleKeys( YView * view, const QString& keys );
 
     //-------------------------------------------------------
     // ----------------- Send events to GUI
@@ -487,14 +487,14 @@ public:
     /**
      * transfer key events from GUI to core
      */
-    virtual void sendKey( YZView * view, const QString& key, const QString& modifiers = "");
+    virtual void sendKey( YView * view, const QString& key, const QString& modifiers = "");
 
     void registerModifier ( const QString& mod );
     void unregisterModifier ( const QString& mod );
 
     void saveJumpPosition();
     void saveJumpPosition( const QPoint cursor );
-    const YZCursor previousJumpPosition();
+    const YCursor previousJumpPosition();
 
     /** Because of windows, we need to have new defined in the
       * shared library. */
@@ -514,31 +514,31 @@ private:
     /**
      *  Copy constructor. Disable copy by declaring it as private
      */
-    YZSession(const YZSession&);
+    YSession(const YSession&);
     /**
      *  Copy operator. Disable copy by declaring it as private
      */
-    YZSession& operator=(const YZSession&);
+    YSession& operator=(const YSession&);
     /**
-     *  Single instance of YZSession
+     *  Single instance of YSession
      */
-    static YZSession* mInstance;
+    static YSession* mInstance;
 
     QString mInitkeys;
     QString mLuaScript;
-    YZView* mCurView;
-    YZBuffer* mCurBuffer;
+    YView* mCurView;
+    YBuffer* mCurBuffer;
     YzisSchemaManager *mSchemaManager;
-    YZSearch *mSearch;
-    YZModeMap mModes;
-    YZBufferList mBufferList;
-    YZViewList mViewList;
-    YZEvents *events;
-    YZInternalOptionPool *mOptions;
-    YZRegisters *mRegisters;
-    YZYzisinfo* mYzisinfo;
-    YZTagStack *mTagStack;
-    YZResourceMgr * mResourceMgr;
+    YSearch *mSearch;
+    YModeMap mModes;
+    YBufferList mBufferList;
+    YViewList mViewList;
+    YEvents *events;
+    YInternalOptionPool *mOptions;
+    YRegisters *mRegisters;
+    YInfo* mYzisinfo;
+    YTagStack *mTagStack;
+    YResourceMgr * mResourceMgr;
 
 };
 

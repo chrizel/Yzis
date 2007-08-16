@@ -35,13 +35,13 @@
 /** \brief The view interface that must be re-implemented by the GUI
   * frontend.
   *
-  * The GUI should inherit from YZView, not directly from this interface.
+  * The GUI should inherit from YView, not directly from this interface.
   *
   * All the methods prefixed by gui are methods called by libyzis, to ask the
   * GUI to perform a task or inform the GUI about something. Those are the
   * methods that should be implemented by each GUI.
   */
-class YZIS_EXPORT YZViewIface
+class YZIS_EXPORT YViewIface
 {
 public:
 
@@ -115,7 +115,7 @@ public:
       *
       * XXX This needs more doc.
       */
-    virtual void guiNotifyContentChanged( const YZSelection& s ) = 0;
+    virtual void guiNotifyContentChanged( const YSelection& s ) = 0;
 
     /** Inform GUI that a paint event is going to arrive. */
     virtual void guiPreparePaintEvent( int y_min, int y_max ) = 0;
@@ -124,7 +124,7 @@ public:
     virtual void guiEndPaintEvent() = 0;
 
     /** XXX to be written */
-    virtual void guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg ) = 0;
+    virtual void guiDrawCell( QPoint pos, const YDrawCell& cell, void* arg ) = 0;
 
     /** XXX to be written */
     virtual void guiDrawClearToEOL( QPoint pos, const QChar& clearChar ) = 0;
@@ -146,7 +146,7 @@ public:
     //-------------------------------------------------------
 
     /** Virtual destructor */
-    virtual ~YZViewIface();
+    virtual ~YViewIface();
 
 };
 

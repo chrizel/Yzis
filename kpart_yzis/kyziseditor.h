@@ -26,9 +26,9 @@
 #include <QWidget>
 
 class KYView;
-class YZDrawCell;
-class YZSelection;
-class YZCursor;
+class YDrawCell;
+class YSelection;
+class YCursor;
 
 class KYEditor : public QWidget
 {
@@ -59,15 +59,15 @@ public:
     QPoint cursorCoordinates( );
 
     QVariant inputMethodQuery ( Qt::InputMethodQuery query );
-    void guiDrawCell( QPoint pos, const YZDrawCell& cell, QPainter* p );
+    void guiDrawCell( QPoint pos, const YDrawCell& cell, QPainter* p );
     void guiDrawClearToEOL( QPoint pos, const QChar& clearChar, QPainter* p );
     void drawMarginLeft( int min_y, int max_y, QPainter* p );
 
-    void guiPaintEvent( const YZSelection& drawMap );
+    void guiPaintEvent( const YSelection& drawMap );
 
-    QPoint translatePositionToReal( const YZCursor& c ) const;
-    YZCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
-    YZCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
+    QPoint translatePositionToReal( const YCursor& c ) const;
+    YCursor translateRealToPosition( const QPoint& p, bool ceil = false ) const;
+    YCursor translateRealToAbsolutePosition( const QPoint& p, bool ceil = false ) const;
 
 public slots :
     void sendMultipleKey( const QString& /*keys*/ )

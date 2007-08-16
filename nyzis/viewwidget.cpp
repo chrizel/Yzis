@@ -49,13 +49,13 @@ int NYView::attributesMapInitialised = 0;
 QMap<QRgb, unsigned long int> NYView::mAttributesMap;
 
 
-NYView::NYView(YZBuffer *b)
-        : YZView(b, NYSession::self(), 0, 0), editor(0)
+NYView::NYView(YBuffer *b)
+        : YView(b, NYSession::self(), 0, 0), editor(0)
 {
     statusbarHasCommand = false;
 
     if ( !attributesMapInitialised ) initialiseAttributesMap();
-    YZASSERT( b );
+    YASSERT( b );
     dbg() << "NYView::NYView buffer is : " << (long int)b << endl;
     window = NULL;
     fakeLine = false;
@@ -74,10 +74,10 @@ void NYView::map( void )
     updateVis(false);
 
     // main editor, fullscreen
-    window = newwin( 0, 0, 0, 0 ); YZASSERT( window );
+    window = newwin( 0, 0, 0, 0 ); YASSERT( window );
     touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
 
-    editor = subwin( window, getLinesVisible(), 0, 0, 0); YZASSERT( editor );
+    editor = subwin( window, getLinesVisible(), 0, 0, 0); YASSERT( editor );
     wattrset( editor, A_NORMAL );
     wmove( editor, 0, 0 );
     keypad( editor , true); //active symbols for special keycodes
@@ -88,11 +88,11 @@ void NYView::map( void )
      * ------------------ infobar ---------------------
      * ------------------ statusbar -------------------
      */
-    infobar = subwin(window, 1, 0, getLinesVisible(), 0); YZASSERT( infobar );
+    infobar = subwin(window, 1, 0, getLinesVisible(), 0); YASSERT( infobar );
     wattrset(infobar, A_REVERSE);
     wbkgd(infobar, A_REVERSE );           // so that blank char are reversed, too
 
-    statusbar = subwin(window, 1, 0, getLinesVisible() + 1, 0); YZASSERT( statusbar );
+    statusbar = subwin(window, 1, 0, getLinesVisible() + 1, 0); YASSERT( statusbar );
     wattrset(statusbar, A_NORMAL | A_BOLD );
     if (has_colors())
         wattron(statusbar, attribWhite );
@@ -103,10 +103,10 @@ void NYView::map( void )
 
 void NYView::unmap( void )
 {
-    YZASSERT( statusbar ); delwin( statusbar );
-    YZASSERT( infobar ); delwin( infobar );
-    YZASSERT( editor ); delwin( editor );
-    YZASSERT( window ); delwin( window );
+    YASSERT( statusbar ); delwin( statusbar );
+    YASSERT( infobar ); delwin( infobar );
+    YASSERT( editor ); delwin( editor );
+    YASSERT( window ); delwin( window );
     window = editor = statusbar = infobar = NULL;
 }
 
@@ -129,10 +129,10 @@ void NYView::guiScroll( int dx, int dy )
         /* redraw the new bottom */
         top += getLinesVisible() - n;
     }
-    sendPaintEvent( YZCursor( left, top ), YZCursor( left + getColumnsVisible(), top + n ) );
+    sendPaintEvent( YCursor( left, top ), YCursor( left + getColumnsVisible(), top + n ) );
 }
 
-void NYView::guiNotifyContentChanged( const YZSelection& s )
+void NYView::guiNotifyContentChanged( const YSelection& s )
 {
     guiPaintEvent( s );
 }
@@ -141,9 +141,9 @@ void NYView::guiPreparePaintEvent(int, int)
 void NYView::guiEndPaintEvent()
 {}
 
-void NYView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* )
+void NYView::guiDrawCell( QPoint pos, const YDrawCell& cell, void* )
 {
-    YZColor c = cell.fg;
+    YColor c = cell.fg;
     if ( !c.isValid() ) {
         c.setNamedColor( "#fff" );
     }
@@ -156,7 +156,7 @@ void NYView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* )
 
     /*
      * XXX: reverse bg/fg... but... how set bg ? 
-    if ( cell.sel & YZSelectionPool::Visual ) {
+    if ( cell.sel & YSelectionPool::Visual ) {
      }
      */
 
@@ -189,11 +189,11 @@ void NYView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* )
     delete[] from_char;
 }
 
-void NYView::guiPaintEvent( const YZSelection& drawMap )
+void NYView::guiPaintEvent( const YSelection& drawMap )
 {
     if (!editor) // Avoid segfaults and infinite recursion.
         return ;
-    YZView::guiPaintEvent( drawMap );
+    YView::guiPaintEvent( drawMap );
     drawCursor();
 }
 void NYView::drawCursor()
@@ -275,13 +275,13 @@ void NYView::guiSetCommandLineText( const QString& text )
     commandline = text;
     static QChar modeChar = ':';
     switch (modePool()->current()->type()) {
-    case YZMode::ModeEx:
+    case YMode::ModeEx:
         modeChar = ':';
         break;
-    case YZMode::ModeSearch:
+    case YMode::ModeSearch:
         modeChar = '/';
         break;
-    case YZMode::ModeSearchBackward:
+    case YMode::ModeSearchBackward:
         modeChar = '?';
         break;
     default:
@@ -358,17 +358,17 @@ void NYView::initialiseAttributesMap()
 
 #undef MAP
 #define RAWMAP( nb, rawcolor, color, attributes )               \
-    YZASSERT( ERR != init_pair( nb, (color), -1 /*COLOR_BLACK*/ ) );    \
+    YASSERT( ERR != init_pair( nb, (color), -1 /*COLOR_BLACK*/ ) );    \
     mAttributesMap[(rawcolor)] = COLOR_PAIR((nb)) | (attributes);
 #define MAP( nb, qtcolor, color, attributes )               \
-    RAWMAP((nb),YZColor(qtcolor).rgb() & RGB_MASK,(color),(attributes))
+    RAWMAP((nb),YColor(qtcolor).rgb() & RGB_MASK,(color),(attributes))
     // first arg is the new rawcolor, second arg is the one that should be used
 #define ALIASMAP(rawcolor1,rawcolor2) \
-    YZASSERT( ! mAttributesMap.contains( rawcolor1) ); \
+    YASSERT( ! mAttributesMap.contains( rawcolor1) ); \
     mAttributesMap[(rawcolor1)] = mAttributesMap[(rawcolor2)];
 
     MAP( 1, Qt::red, COLOR_RED, A_BOLD ); // red = 1, is used to display info on statusbar..
-    YZASSERT( ERR != init_pair( 2, COLOR_WHITE, COLOR_BLUE) ); \
+    YASSERT( ERR != init_pair( 2, COLOR_WHITE, COLOR_BLUE) ); \
     MAP( 3, Qt::yellow, COLOR_YELLOW, A_BOLD );
     MAP( 4, Qt::lightGray, COLOR_WHITE, A_NORMAL );
     MAP( 5, Qt::gray, COLOR_WHITE, A_NORMAL );
@@ -391,7 +391,7 @@ void NYView::refreshScreen()
 {
     if ( marginLeft > 0 && !getLocalBooleanOption("number") )
         marginLeft = 0;
-    YZView::refreshScreen();
+    YView::refreshScreen();
     refresh();
     updateCursor();
 }
@@ -410,7 +410,7 @@ if ( changecolorok )
 #define COLOR_CURSES2QT(a) ((a)*256/1000)
 #define MAP( nb, color )       \
     init_color( nb, COLOR_QT2CURSES(qRed(color.rgb())), COLOR_QT2CURSES( qGreen(color.rgb())), COLOR_QT2CURSES( qBlue(color.rgb()))) ; \
-    YZASSERT ( ERR != init_pair( nb, nb%COLORS, COLOR_BLACK ) );    \
+    YASSERT ( ERR != init_pair( nb, nb%COLORS, COLOR_BLACK ) );    \
     mColormap[color.rgb()] = nb;
 
     /*

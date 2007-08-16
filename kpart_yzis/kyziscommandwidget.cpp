@@ -58,10 +58,10 @@ void KYCommand::keyPressEvent ( QKeyEvent * e )
 void KYCommand::focusInEvent ( QFocusEvent* e )
 {
     yzDebug() << "KYCommand : Focus IN -> EX mode" << endl;
-    if ( m_view->modePool()->currentType() != YZMode::ModeEx
-            && m_view->modePool()->currentType() != YZMode::ModeSearch
-            && m_view->modePool()->currentType() != YZMode::ModeSearchBackward ) {
-        m_view->modePool()->push( YZMode::ModeEx );
+    if ( m_view->modePool()->currentType() != YMode::ModeEx
+            && m_view->modePool()->currentType() != YMode::ModeSearch
+            && m_view->modePool()->currentType() != YMode::ModeSearchBackward ) {
+        m_view->modePool()->push( YMode::ModeEx );
     }
     KLineEdit::focusInEvent( e );
 }
@@ -69,9 +69,9 @@ void KYCommand::focusInEvent ( QFocusEvent* e )
 void KYCommand::focusOutEvent ( QFocusEvent* e )
 {
     yzDebug() << "KYCommand : Focus OUT -> reject" << endl;
-    if ( m_view->modePool()->currentType() == YZMode::ModeEx
-            || m_view->modePool()->currentType() == YZMode::ModeSearch
-            || m_view->modePool()->currentType() == YZMode::ModeSearch )
+    if ( m_view->modePool()->currentType() == YMode::ModeEx
+            || m_view->modePool()->currentType() == YMode::ModeSearch
+            || m_view->modePool()->currentType() == YMode::ModeSearch )
         m_view->modePool()->pop();
     KLineEdit::focusOutEvent( e );
 }

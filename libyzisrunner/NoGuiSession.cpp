@@ -31,7 +31,7 @@
 void NoGuiSession::createInstance()
 {
     dbg() << HERE();
-    // such allocation (i.e. not "new QYZisSession") will ensure that
+    // such allocation (i.e. not "new QYisSession") will ensure that
     // "instance" object will be properly and automatically deleted
     // when program exits
 
@@ -40,7 +40,7 @@ void NoGuiSession::createInstance()
 }
 
 NoGuiSession::NoGuiSession()
-        : YZSession()
+        : YSession()
 {
     dbg() << HERE() << endl;
 }
@@ -48,20 +48,20 @@ NoGuiSession::NoGuiSession()
 void NoGuiSession::frontendGuiReady()
 {
     dbg() << "frontendGuiReady()" << endl;
-    YZSession::self()->frontendGuiReady();
+    YSession::self()->frontendGuiReady();
 }
 
-YZView* NoGuiSession::createView ( YZBuffer* buf)
+YView* NoGuiSession::createView ( YBuffer* buf)
 {
     dbg() << "createView( " << buf->toString() << " ) " << endl;
-    NoGuiView * view = new NoGuiView( buf, YZSession::self() );
+    NoGuiView * view = new NoGuiView( buf, YSession::self() );
     return view;
 }
 
-YZBuffer * NoGuiSession::createBuffer(const QString& path)
+YBuffer * NoGuiSession::createBuffer(const QString& path)
 {
     dbg() << "NoGuiSession::createBuffer( path=" << path << " ) " << endl;
-    YZBuffer * buf = new YZBuffer();
+    YBuffer * buf = new YBuffer();
     setCurrentView( createView( buf ) );
     buf->load( path );
     currentView()->refreshScreen();
@@ -82,11 +82,11 @@ void NoGuiSession::guiQuit(bool savePopup)
     QCoreApplication::exit(0);
 }
 
-void NoGuiSession::guiDeleteBuffer ( YZBuffer * b )
+void NoGuiSession::guiDeleteBuffer ( YBuffer * b )
 {
     dbg() << "guiDeleteBuffer( " << b->toString() << " )" << endl;
 }
-void NoGuiSession::guiChangeCurrentView( YZView* v )
+void NoGuiSession::guiChangeCurrentView( YView* v )
 {
     // notification
     dbg() << "changeCurrentView( " << v->toString() << " )" << endl;
@@ -120,27 +120,27 @@ int NoGuiSession::guiPromptYesNoCancel( const QString&, const QString& )
     return 0;
 }
 
-void NoGuiSession::guiSplitHorizontally(YZView*)
+void NoGuiSession::guiSplitHorizontally(YView*)
 {
     dbg() << "NoGuiSession::guiSplitHorizontally" << endl;
 }
 
-YZView * NoGuiSession::guiCreateView(YZBuffer*b)
+YView * NoGuiSession::guiCreateView(YBuffer*b)
 {
     dbg().sprintf("guiCreateView( %s )", qp(b->toString() ) );
-    return new NoGuiView(b, YZSession::self());
+    return new NoGuiView(b, YSession::self());
 }
 
-void NoGuiSession::guiDeleteView(YZView*v)
+void NoGuiSession::guiDeleteView(YView*v)
 {
     dbg().sprintf("guiDeleteView( %s )", qp(v->toString() ) );
     delete v;
 }
 
-YZBuffer* NoGuiSession::guiCreateBuffer()
+YBuffer* NoGuiSession::guiCreateBuffer()
 {
     dbg().sprintf("doCreateBuffer()");
-    return new YZBuffer();
+    return new YBuffer();
 }
 
 void NoGuiSession::guiSetClipboardText(const QString& text, Clipboard::Mode)

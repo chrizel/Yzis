@@ -26,13 +26,13 @@
 #include <qprinter.h>
 #include <qcolor.h>
 
-class YZView;
+class YView;
 
 class YZPrinter /*: public QPrinter*/
 {
 
 public:
-    YZPrinter( YZView *view );
+    YZPrinter( YView *view );
     virtual ~YZPrinter( );
 
     void printToFile( const QString& path );
@@ -44,7 +44,7 @@ private:
     void convertColor(const QColor& c, double &r, double &g, double &b);
 
     /* members */
-    YZView *mView;
+    YView *mView;
     QString m_path;
 
 };

@@ -60,7 +60,7 @@ void QYSession::createInstance()
 }
 
 QYSession::QYSession() :
-        YZSession(),
+        YSession(),
         lastView(0),
         m_viewParent(0)
 {
@@ -75,7 +75,7 @@ QYSession::~QYSession()
 void QYSession::frontendGuiReady()
 {
     dbg() << "frontendGuiReady()" << endl;
-    YZSession::self()->frontendGuiReady();
+    YSession::self()->frontendGuiReady();
 }
 
 
@@ -93,7 +93,7 @@ bool QYSession::guiQuit( int errorCode )
     dbg() << "guiQuit(" << errorCode << ")" << endl;
     if (QYzis::me) {
         qApp->quit();
-    } else if ( currentView() && currentView()->modePool()->currentType() == YZMode::ModeEx
+    } else if ( currentView() && currentView()->modePool()->currentType() == YMode::ModeEx
                 && !currentView()->guiGetCommandLineText().isEmpty() ) {
         dbg() << "guiQuit(" << errorCode << ") done." << endl;
         return false;
@@ -109,26 +109,26 @@ void QYSession::applyConfig()
     dbg() << "applyConfig()" << endl;
     QSettings settings;
     // apply new configuration to all views
-    YZBufferList::ConstIterator it = buffers().begin();
-    YZBufferList::ConstIterator end = buffers().end();
+    YBufferList::ConstIterator it = buffers().begin();
+    YBufferList::ConstIterator end = buffers().end();
     for ( ; it != end; ++it ) {
-        YZBuffer *b = *it;
-        QList<YZView*> l = b->views();
-        for ( QList<YZView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
+        YBuffer *b = *it;
+        QList<YView*> l = b->views();
+        for ( QList<YView*>::Iterator itr = l.begin(); itr != l.end(); ++itr ) {
             QYView* yv = static_cast<QYView*>( *itr );
             yv->applyConfig( settings );
         }
     }
 }
 
-void QYSession::guiChangeCurrentView( YZView* view )
+void QYSession::guiChangeCurrentView( YView* view )
 {
     dbg() << "guiChangeCurrentView(" << view->toString() << ")" << endl;
     QYView *v = static_cast<QYView*>(view);
     QYzis::me->mTabWidget->setCurrentWidget( v );
 }
 
-YZView* QYSession::guiCreateView( YZBuffer *buffer )
+YView* QYSession::guiCreateView( YBuffer *buffer )
 {
     dbg() << "guiCreateView(" << buffer->toString() << ")" << endl;
     QYView *view;
@@ -139,7 +139,7 @@ YZView* QYSession::guiCreateView( YZBuffer *buffer )
         QYzis::me->embedPartView( view, buffer->fileName(), buffer->fileName() );
     } else {
         //?   view->setMdiChildView( 0 );
-        err() << "unhandled case in YZView* QYSession::guiCreateView( YZBuffer *buffer ) " ;
+        err() << "unhandled case in YView* QYSession::guiCreateView( YBuffer *buffer ) " ;
     }
 
     view->setFocus();
@@ -148,10 +148,10 @@ YZView* QYSession::guiCreateView( YZBuffer *buffer )
     return view;
 }
 
-YZBuffer *QYSession::guiCreateBuffer()
+YBuffer *QYSession::guiCreateBuffer()
 {
     dbg() << "guiCreateBuffer()" << endl;
-    return new YZBuffer;
+    return new YBuffer;
 }
 
 void QYSession::guiPopupMessage( const QString& message )
@@ -172,7 +172,7 @@ void QYSession::closeView()
     lastView = 0;
 }
 
-void QYSession::guiDeleteView( YZView *view )
+void QYSession::guiDeleteView( YView *view )
 {
     dbg() << "guiDeleteView(" << view->toString() << ")" << endl;
     QYView *kview = dynamic_cast<QYView*>(view);
@@ -182,7 +182,7 @@ void QYSession::guiDeleteView( YZView *view )
     }
 }
 
-void QYSession::guiDeleteBuffer(YZBuffer* b)
+void QYSession::guiDeleteBuffer(YBuffer* b)
 {
     dbg() << "guiDeleteBuffer(" << b->toString() << ")" << endl;
     delete b;
@@ -216,7 +216,7 @@ int QYSession::guiPromptYesNoCancel(const QString& title, const QString& message
     return QMessageBox::question(static_cast<QYView*>(currentView()), title, message, _("Yes"), _("No"), _("Cancel"));
 }
 
-void QYSession::guiSplitHorizontally(YZView* view)
+void QYSession::guiSplitHorizontally(YView* view)
 {
     dbg() << "guiSplitHorizontally(" << view->toString() << ")" << endl;
 }

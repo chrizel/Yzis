@@ -28,10 +28,10 @@
 #include "view.h"
 #include "debug.h"
 
-#define dbg()    yzDebug("YZBufferOperation")
-#define err()    yzError("YZBufferOperation")
+#define dbg()    yzDebug("YBufferOperation")
+#define err()    yzError("YBufferOperation")
 
-QString YZBufferOperation::toString() const
+QString YBufferOperation::toString() const
 {
     QString ots;
     switch ( type ) {
@@ -43,11 +43,11 @@ QString YZBufferOperation::toString() const
     return QString("%1 '%2' line %3, col %4").arg(ots).arg(text).arg(pos.y()).arg(pos.x()) ;
 }
 
-void YZBufferOperation::performOperation( YZView* pView, bool opposite)
+void YBufferOperation::performOperation( YView* pView, bool opposite)
 {
     OperationType t = type;
 
-    yzDebug("YZUndoBuffer") << "YZBufferOperation: " << (opposite ? "undo " : "redo ") << toString() << endl;
+    yzDebug("YZUndoBuffer") << "YBufferOperation: " << (opposite ? "undo " : "redo ") << toString() << endl;
 
     if (opposite == true) {
         switch ( type ) {
@@ -73,7 +73,7 @@ void YZBufferOperation::performOperation( YZView* pView, bool opposite)
         break;
     }
 
-    // yzDebug("YZUndoBuffer") << "YZBufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
+    // yzDebug("YZUndoBuffer") << "YBufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
 }
 
 // -------------------------------------------------------------------
@@ -90,7 +90,7 @@ UndoItem::UndoItem()
 //                          YZUndoBuffer
 // -------------------------------------------------------------------
 
-YZUndoBuffer::YZUndoBuffer( YZBuffer * buffer )
+YZUndoBuffer::YZUndoBuffer( YBuffer * buffer )
         : mBuffer(buffer), mFutureUndoItem( 0L )
 {
     mCurrentIndex = 0;
@@ -103,7 +103,7 @@ YZUndoBuffer::YZUndoBuffer( YZBuffer * buffer )
 YZUndoBuffer::~YZUndoBuffer()
 {
     if ( mFutureUndoItem ) {
-        foreach ( YZBufferOperation *operation, *mFutureUndoItem )
+        foreach ( YBufferOperation *operation, *mFutureUndoItem )
         delete operation;
         delete mFutureUndoItem;
     }
@@ -130,13 +130,13 @@ void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY )
     mFutureUndoItem->startCursorY = cursorY;
 }
 
-void YZUndoBuffer::addBufferOperation( YZBufferOperation::OperationType type,
+void YZUndoBuffer::addBufferOperation( YBufferOperation::OperationType type,
                                        const QString & text,
                                        QPoint pos )
 {
     if (mInsideUndo == true) return ;
-    YZASSERT( mFutureUndoItem != NULL );
-    YZBufferOperation *bufOperation = new YZBufferOperation();
+    YASSERT( mFutureUndoItem != NULL );
+    YBufferOperation *bufOperation = new YBufferOperation();
     bufOperation->type = type;
     bufOperation->text = text;
     bufOperation->pos = pos;
@@ -161,7 +161,7 @@ static QList<T> reverse(const QList<T> &yzlist)
     return rev;
 }
 
-void YZUndoBuffer::undo( YZView* pView )
+void YZUndoBuffer::undo( YView* pView )
 {
     if (mayUndo() == false) {
         // notify the user that undo is not possible
@@ -173,7 +173,7 @@ void YZUndoBuffer::undo( YZView* pView )
     UndoItem *item = mUndoItemList[ mCurrentIndex - 1 ];
     UndoItemBase reversed = reverse( *item );
 
-    foreach ( YZBufferOperation *operation, reversed)
+    foreach ( YBufferOperation *operation, reversed)
     operation->performOperation( pView, true );
     /*
     UndoItem * undoItem = mUndoItemList.at(mCurrentIndex-1);
@@ -190,7 +190,7 @@ void YZUndoBuffer::undo( YZView* pView )
     setInsideUndo( false );
 }
 
-void YZUndoBuffer::redo( YZView* pView )
+void YZUndoBuffer::redo( YView* pView )
 {
     if (mayRedo() == false) {
         // notify the user that undo is not possible
@@ -202,7 +202,7 @@ void YZUndoBuffer::redo( YZView* pView )
     ++mCurrentIndex;
 
     UndoItem * undoItem = mUndoItemList[ mCurrentIndex - 1 ];
-    foreach ( YZBufferOperation *operation, *undoItem)
+    foreach ( YBufferOperation *operation, *undoItem)
     operation->performOperation( pView, false );
 
     setInsideUndo( false );
@@ -231,7 +231,7 @@ QString YZUndoBuffer::undoItemToString( UndoItem * undoItem ) const
     if (! undoItem ) return s;
     s += offsetS + offsetS + QString("start cursor: line %1 col %2\n").arg(undoItem->startCursorX).arg(undoItem->startCursorY);
 
-    foreach ( YZBufferOperation*operation, *undoItem )
+    foreach ( YBufferOperation*operation, *undoItem )
     s += offsetS + offsetS + offsetS + operation->toString() + '\n';
     s += offsetS + offsetS + QString("end cursor: line %1 col %2\n").arg(undoItem->endCursorX).arg(undoItem->endCursorY);
 

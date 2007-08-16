@@ -1,9 +1,9 @@
 
 #include "testDebug.h"
 
-void TestYZDebugBackend::testAreaLevel()
+void TestYDebugBackend::testAreaLevel()
 {
-    YZDebugBackend * dbe = YZDebugBackend::self();
+    YDebugBackend * dbe = YDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
@@ -27,9 +27,9 @@ void TestYZDebugBackend::testAreaLevel()
 }
 
 
-void TestYZDebugBackend::testSubAreaLevel()
+void TestYDebugBackend::testSubAreaLevel()
 {
-    YZDebugBackend * dbe = YZDebugBackend::self();
+    YDebugBackend * dbe = YDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
@@ -52,13 +52,13 @@ void TestYZDebugBackend::testSubAreaLevel()
 }
 
 
-void TestYZDebugBackend::testSprintf()
+void TestYDebugBackend::testSprintf()
 {
     // segfault ?
     yzError().sprintf( "%d %s %f", 34, "toto", 1.0 );
 }
 
-void TestYZDebugBackend::testWhere()
+void TestYDebugBackend::testWhere()
 {
     // need to check debug output to see that one
     yzError() << HERE() << endl;
@@ -67,9 +67,9 @@ void TestYZDebugBackend::testWhere()
     yzError() << LOCATION() << endl;
 }
 
-void TestYZDebugBackend::testParseArgv()
+void TestYDebugBackend::testParseArgv()
 {
-    YZDebugBackend * dbe = YZDebugBackend::self();
+    YDebugBackend * dbe = YDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
@@ -122,9 +122,9 @@ void TestYZDebugBackend::testParseArgv()
     QCOMPARE( dbe->areaLevel("b"), YZ_DEBUG_LEVEL );
 }
 
-void TestYZDebugBackend::testParseArgv2()
+void TestYDebugBackend::testParseArgv2()
 {
-    YZDebugBackend * dbe = YZDebugBackend::self();
+    YDebugBackend * dbe = YDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );
@@ -140,9 +140,9 @@ void TestYZDebugBackend::testParseArgv2()
 
 
 
-void TestYZDebugBackend::testParseRcFile()
+void TestYDebugBackend::testParseRcFile()
 {
-    YZDebugBackend * dbe = YZDebugBackend::self();
+    YDebugBackend * dbe = YDebugBackend::self();
     dbe->clearArea();
     dbe->setDebugLevel( YZ_DEBUG_LEVEL );
     QCOMPARE( dbe->debugLevel(), YZ_DEBUG_LEVEL );

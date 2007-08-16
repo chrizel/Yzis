@@ -44,8 +44,8 @@
 #define dbg() yzDebug("QYView")
 #define err() yzError("QYView")
 
-QYView::QYView ( YZBuffer *_buffer, QWidget *, const char *)
-        : YZView( _buffer, QYSession::self(), 0, 0 ), buffer( _buffer ), m_popup( 0 )
+QYView::QYView ( YBuffer *_buffer, QWidget *, const char *)
+        : YView( _buffer, QYSession::self(), 0, 0 ), buffer( _buffer ), m_popup( 0 )
 
 {
     m_editor = new QYEdit( this );
@@ -147,7 +147,7 @@ void QYView::guiScroll( int dx, int dy )
 void QYView::setVisibleArea( int columns, int lines )
 {
     m_lineNumbers->setLineCount( lines );
-    YZView::setVisibleArea( columns, lines );
+    YView::setVisibleArea( columns, lines );
 }
 
 void QYView::refreshScreen()
@@ -156,17 +156,17 @@ void QYView::refreshScreen()
     if ( o_number != m_lineNumbers->isVisible() ) {
         m_lineNumbers->setVisible(o_number);
     }
-    YZView::refreshScreen();
+    YView::refreshScreen();
 }
 
-void QYView::guiNotifyContentChanged( const YZSelection& s )
+void QYView::guiNotifyContentChanged( const YSelection& s )
 {
     // content has changed, ask qt to repaint changed parts
 
-    YZSelectionMap m = s.map();
+    YSelectionMap m = s.map();
     // convert each interval to QWidget coordinates and update
     for ( int i = 0; i < m.size(); ++i ) {
-        YZInterval interval = m[i] - getScreenPosition();
+        YInterval interval = m[i] - getScreenPosition();
         QRect r;
         if ( interval.fromPos().y() == interval.toPos().y() ) {
             r = interval.boundingRect();
@@ -201,15 +201,15 @@ void QYView::guiEndPaintEvent()
     delete m_painter;
 }
 
-void QYView::guiPaintEvent( const YZSelection& s )
+void QYView::guiPaintEvent( const YSelection& s )
 {
-    YZView::guiPaintEvent( s );
+    YView::guiPaintEvent( s );
 }
 
 /*
  * View painting methods
  */
-void QYView::guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg )
+void QYView::guiDrawCell( QPoint pos, const YDrawCell& cell, void* arg )
 {
     m_editor->guiDrawCell( pos, cell, (QPainter*)arg );
 }

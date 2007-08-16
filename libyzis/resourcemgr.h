@@ -26,7 +26,7 @@
 #include "session.h"
 
 class QStringList;
-class YZDebugStream;
+class YDebugStream;
 
 /** @file resourcemgr.h
   * Some documentation
@@ -73,12 +73,12 @@ enum ResourceType {
 /**
  * Yzis resource manager
  */
-class YZIS_EXPORT YZResourceMgr
+class YZIS_EXPORT YResourceMgr
 {
 
 public:
-    YZResourceMgr();
-    ~YZResourceMgr();
+    YResourceMgr();
+    ~YResourceMgr();
 
 
     /** Try to find a resource in the different yzis directories.
@@ -134,12 +134,12 @@ protected:
 
 };
 
-/** Shortcut for YZSession::self()->resourceMgr(); */
-inline YZResourceMgr * resourceMgr()
+/** Shortcut for YSession::self()->resourceMgr(); */
+inline YResourceMgr * resourceMgr()
 {
-    return YZSession::self()->resourceMgr();
+    return YSession::self()->resourceMgr();
 }
 
-YZDebugStream& operator<<( YZDebugStream& out, const ResourceType & type );
+YDebugStream& operator<<( YDebugStream& out, const ResourceType & type );
 
 #endif // RESOURCE_MGR_H

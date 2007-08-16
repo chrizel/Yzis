@@ -38,8 +38,8 @@
 #include <libyzis/buffer.h>
 #include <libyzis/debug.h>
 
-KYView::KYView(YZBuffer* buffer, QWidget* parent)
-        : QWidget(parent), YZView(buffer, KYSession::self(), 0, 0),
+KYView::KYView(YBuffer* buffer, QWidget* parent)
+        : QWidget(parent), YView(buffer, KYSession::self(), 0, 0),
         actionCollection(0), signalMapper(0), m_painter(0)
 {
     m_editor = new KYEditor( this );
@@ -151,12 +151,12 @@ void KYView::guiHighlightingChanged()
 {
 }
 
-void KYView::guiNotifyContentChanged(const YZSelection& s)
+void KYView::guiNotifyContentChanged(const YSelection& s)
 {
-    YZSelectionMap m = s.map();
+    YSelectionMap m = s.map();
     // convert each interval to QWidget coordinates and update
     for ( int i = 0; i < m.size(); ++i ) {
-        YZInterval interval = m[i] - getScreenPosition();
+        YInterval interval = m[i] - getScreenPosition();
         QRect r;
         if ( interval.fromPos().y() == interval.toPos().y() ) {
             r = interval.boundingRect();
@@ -185,9 +185,9 @@ void KYView::guiPreparePaintEvent(int /*min_y*/, int /*max_y*/)
     m_drawBuffer.setCallbackArgument( m_painter );
 }
 
-void KYView::guiPaintEvent( const YZSelection& drawMap )
+void KYView::guiPaintEvent( const YSelection& drawMap )
 {
-    YZView::guiPaintEvent( drawMap );
+    YView::guiPaintEvent( drawMap );
 }
 
 void KYView::guiEndPaintEvent()
@@ -196,7 +196,7 @@ void KYView::guiEndPaintEvent()
     yzDebug() << "KYView::endPaintEvent" << endl;
 }
 
-void KYView::guiDrawCell(QPoint pos, const YZDrawCell& cell, void* arg)
+void KYView::guiDrawCell(QPoint pos, const YDrawCell& cell, void* arg)
 {
     m_editor->guiDrawCell( pos, cell, (QPainter*)arg );
 }
@@ -293,9 +293,9 @@ void KYView::initKeys()
     connect( signalMapper, SIGNAL( mapped( const QString& ) ), this, SLOT( sendMultipleKeys( const QString& ) ) );
 }
 
-YZDrawCell KYView::getCursorDrawCell( )
+YDrawCell KYView::getCursorDrawCell( )
 {
-    return m_drawBuffer.at( getCursor() - YZCursor(getDrawCurrentLeft(), getDrawCurrentTop( )) );
+    return m_drawBuffer.at( getCursor() - YCursor(getDrawCurrentLeft(), getDrawCurrentTop( )) );
 }
 
 void KYView::registerModifierKeys( const QString& keys )

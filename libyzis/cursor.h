@@ -23,30 +23,30 @@
 #include <QPoint>
 #include "yzismacros.h" // YZIS_EXPORT
 
-class YZDebugStream;
+class YDebugStream;
 
 /**
   * @short Store a cursor position
   *
-  * An YZCursor is nothing more than a QPoint with some more methods needed
+  * An YCursor is nothing more than a QPoint with some more methods needed
   * by Yzis.
   *
   * The order used for comparison is first on y and then on x.
   * With: x1 < x2, y1 < y2
   * we get: 
-  * YZCursor( x1, y1 ) < YZCursor( x2, y1 )
-  * YZCursor( x2, y1 ) < YZCursor( x1, y2 )
+  * YCursor( x1, y1 ) < YCursor( x2, y1 )
+  * YCursor( x2, y1 ) < YCursor( x1, y2 )
   *
   */
-class YZIS_EXPORT YZCursor : public QPoint
+class YZIS_EXPORT YCursor : public QPoint
 {
 
 public :
-    YZCursor() : QPoint( -1, -1)
+    YCursor() : QPoint( -1, -1)
     { }
-    YZCursor( const QPoint &p ) : QPoint(p)
-    { } // handles YZCursor(const YZCursor&) as well
-    YZCursor(const int x, const int y) : QPoint(x, y)
+    YCursor( const QPoint &p ) : QPoint(p)
+    { } // handles YCursor(const YCursor&) as well
+    YCursor(const int x, const int y) : QPoint(x, y)
     { }
 
     void setXY( int x, int y )
@@ -74,14 +74,14 @@ public :
     /*
      * operators
      */
-    bool operator< ( const YZCursor right ) const;
-    bool operator<= ( const YZCursor right ) const;
-    bool operator> ( const YZCursor right ) const;
-    bool operator>= ( const YZCursor right ) const;
+    bool operator< ( const YCursor right ) const;
+    bool operator<= ( const YCursor right ) const;
+    bool operator> ( const YCursor right ) const;
+    bool operator>= ( const YCursor right ) const;
 
 };
 
-extern YZIS_EXPORT YZDebugStream &operator<< ( YZDebugStream & out, const YZCursor c );
+extern YZIS_EXPORT YDebugStream &operator<< ( YDebugStream & out, const YCursor c );
 
 #endif
 

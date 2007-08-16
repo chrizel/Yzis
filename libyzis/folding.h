@@ -22,9 +22,9 @@
 
 #include <QMap>
 
-class YZView;
+class YView;
 
-class YZDebugStream;
+class YDebugStream;
 
 /**
  * A text fold
@@ -41,10 +41,10 @@ struct YZFold
 class YZFoldPool
 {
 
-    friend YZDebugStream& operator<<( YZDebugStream& out, const YZFoldPool& f );
+    friend YDebugStream& operator<<( YDebugStream& out, const YZFoldPool& f );
 
 public:
-    YZFoldPool( YZView* view );
+    YZFoldPool( YView* view );
     virtual ~YZFoldPool();
 
     /**
@@ -80,7 +80,7 @@ public:
     int lineHeadingFold( int line ) const;
 
 private:
-    YZView* m_view;
+    YView* m_view;
     QMap<int, YZFold> m_folds;
 
 };

@@ -38,12 +38,12 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 #include "view.h"
 #include "cursor.h"
 
-class NYZSession;
+class NYSession;
 
 /** \file viewwidget.h
   * @short Implementation of YView for the NCurses frontend.
   */
-class NYView : public YZView
+class NYView : public YView
 {
 
 public:
@@ -51,7 +51,7 @@ public:
       * constructor. Each view is binded to a buffer, @arg lines is the initial number of lines that
       * this view can display
       */
-    NYView(YZBuffer *b);
+    NYView(YBuffer *b);
     virtual ~NYView();
 
     virtual QString guiGetCommandLineText(void) const
@@ -66,7 +66,7 @@ public:
     virtual void refreshScreen();
     virtual void guiSyncViewInfo();
     virtual void guiDisplayInfo( const QString& info );
-    virtual void guiPaintEvent( const YZSelection& drawMap );
+    virtual void guiPaintEvent( const YSelection& drawMap );
 
     void guiScroll( int dx, int dy );
 
@@ -98,9 +98,9 @@ public slots:
 
 protected :
 
-    virtual void guiDrawCell( QPoint pos, const YZDrawCell& cell, void* arg );
+    virtual void guiDrawCell( QPoint pos, const YDrawCell& cell, void* arg );
 
-    virtual void guiNotifyContentChanged( const YZSelection& s );
+    virtual void guiNotifyContentChanged( const YSelection& s );
 
     void guiPreparePaintEvent(int, int);
     void guiEndPaintEvent();

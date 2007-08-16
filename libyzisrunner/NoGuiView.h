@@ -25,10 +25,10 @@
 #include "libyzis/viewcursor.h"
 #include "libyzis/buffer.h"
 
-class NoGuiView : public YZView
+class NoGuiView : public YView
 {
 public:
-    NoGuiView(YZBuffer *buf, YZSession *sess, int cols = 50, int lines = 50);
+    NoGuiView(YBuffer *buf, YSession *sess, int cols = 50, int lines = 50);
 
     uint getCursorX();
     uint getCursorY();
@@ -65,18 +65,18 @@ public:
     virtual void scrollDown( int );
     virtual void registerModifierKeys(const QString& s);
 
-    virtual void paintEvent( const YZSelection& );
+    virtual void paintEvent( const YSelection& );
 
     virtual void guiScroll( int dx, int dy );
 
-    virtual void guiNotifyContentChanged( const YZSelection& s );
+    virtual void guiNotifyContentChanged( const YSelection& s );
 
     virtual bool guiPopupFileSaveAs();
     virtual void guiFilenameChanged();
     virtual void guiHighlightingChanged();
     void guiPreparePaintEvent(int, int);
     void guiEndPaintEvent();
-    void guiDrawCell(QPoint, const YZDrawCell&, void*);
+    void guiDrawCell(QPoint, const YDrawCell&, void*);
     void guiDrawClearToEOL(QPoint, const QChar&);
     void guiDrawSetMaxLineNumber(int);
     void guiDrawSetLineNumber(int, int, int);

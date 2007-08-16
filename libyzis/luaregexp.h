@@ -45,7 +45,7 @@ extern "C"
  * result.
  *
  */
-class YZLuaRegexp
+class YLuaRegexp
 {
 
 public:

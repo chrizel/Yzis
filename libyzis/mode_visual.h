@@ -25,77 +25,77 @@
 #include "mode_command.h"
 #include "yzismacros.h"
 
-class YZMode;
-class YZView;
-class YZViewCursor;
+class YMode;
+class YView;
+class YViewCursor;
 
 /**
   * @short Visual mode (selecting with v, shift+v or control-v)
   */
-class YZIS_EXPORT YZModeVisual : public YZModeCommand
+class YZIS_EXPORT YModeVisual : public YModeCommand
 {
 public:
-    YZModeVisual();
-    virtual ~YZModeVisual();
+    YModeVisual();
+    virtual ~YModeVisual();
 
     virtual void initCommandPool();
     virtual void initVisualCommandPool();
 
-    virtual void enter( YZView* mView );
-    virtual void leave( YZView* mView );
+    virtual void enter( YView* mView );
+    virtual void leave( YView* mView );
 
-    virtual void cursorMoved( YZView* mView );
-    virtual void toClipboard( YZView* mView );
+    virtual void cursorMoved( YView* mView );
+    virtual void toClipboard( YView* mView );
 
 
-    void commandInsert( const YZCommandArgs& args );
-    void commandAppend( const YZCommandArgs& args );
-    void gotoExMode( const YZCommandArgs& args );
-    void movetoExMode( const YZCommandArgs& args );
-    void movetoInsertMode( const YZCommandArgs& args );
-    void escape( const YZCommandArgs& args );
-    void changeWholeLines(const YZCommandArgs &args);
-    void deleteWholeLines(const YZCommandArgs &args);
-    void yankWholeLines(const YZCommandArgs &args);
-    void yank(const YZCommandArgs &args);
-    void toUpperCase( const YZCommandArgs& args );
-    void toLowerCase( const YZCommandArgs& args );
-    void translateToVisual( const YZCommandArgs& args );
-    void translateToVisualLine( const YZCommandArgs& args );
-    void translateToVisualBlock( const YZCommandArgs& args );
+    void commandInsert( const YCommandArgs& args );
+    void commandAppend( const YCommandArgs& args );
+    void gotoExMode( const YCommandArgs& args );
+    void movetoExMode( const YCommandArgs& args );
+    void movetoInsertMode( const YCommandArgs& args );
+    void escape( const YCommandArgs& args );
+    void changeWholeLines(const YCommandArgs &args);
+    void deleteWholeLines(const YCommandArgs &args);
+    void yankWholeLines(const YCommandArgs &args);
+    void yank(const YCommandArgs &args);
+    void toUpperCase( const YCommandArgs& args );
+    void toLowerCase( const YCommandArgs& args );
+    void translateToVisual( const YCommandArgs& args );
+    void translateToVisualLine( const YCommandArgs& args );
+    void translateToVisualBlock( const YCommandArgs& args );
 
-    virtual YZInterval interval(const YZCommandArgs &args);
+    virtual YInterval interval(const YCommandArgs &args);
 
 protected:
-    virtual YZInterval buildBufferInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to );
-    virtual YZInterval buildScreenInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to );
+    virtual YInterval buildBufferInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
+    virtual YInterval buildScreenInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
     bool mEntireLines;
 };
 
 /**
  * Visual line mode
  */
-class YZModeVisualLine : public YZModeVisual
+class YModeVisualLine : public YModeVisual
 {
 public:
-    YZModeVisualLine();
-    virtual ~YZModeVisualLine();
+    YModeVisualLine();
+    virtual ~YModeVisualLine();
 
 protected:
-    virtual YZInterval buildBufferInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to );
-    virtual YZInterval buildScreenInterval( YZView* mView, const YZViewCursor& from, const YZViewCursor& to );
+    virtual YInterval buildBufferInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
+    virtual YInterval buildScreenInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );
 };
 
 /**
  * Visual block mode
  */
-class YZModeVisualBlock : public YZModeVisual
+class YModeVisualBlock : public YModeVisual
 {
 public:
-    YZModeVisualBlock();
-    virtual ~YZModeVisualBlock();
+    YModeVisualBlock();
+    virtual ~YModeVisualBlock();
 
-    virtual void cursorMoved( YZView* mView );
+    virtual void cursorMoved( YView* mView );
 };
 
 #endif

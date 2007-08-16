@@ -61,7 +61,7 @@ static void cleaning(void);
 int
 main(int argc, char *argv[])
 {
-    YZSession::initDebug( argc, argv );
+    YSession::initDebug( argc, argv );
 
     // ==============[ Create application ]=============
 #ifdef Q_WS_X11
@@ -91,7 +91,7 @@ main(int argc, char *argv[])
     // socket notifier created on the file descriptor 0 (stdin)
     // to catch key events
     QSocketNotifier *socket = new QSocketNotifier(0, QSocketNotifier::Read);
-    QObject::connect( socket, SIGNAL( activated( int ) ), static_cast<NYSession*>(YZSession::self()), SLOT( processInput( int ) ) );
+    QObject::connect( socket, SIGNAL( activated( int ) ), static_cast<NYSession*>(YSession::self()), SLOT( processInput( int ) ) );
 
     // Signal handling
     (void) signal(SIGINT, sigint);      /* arrange interrupts to terminate */
@@ -100,11 +100,11 @@ main(int argc, char *argv[])
 
     // we need errorView in order to display error messages if there
     // is a problem loading a file into a buffer
-    YZView* errorView = YZSession::self()->createBufferAndView();
-    YZSession::self()->parseCommandLine( argc, argv );
-    YZSession::self()->deleteView(errorView);
+    YView* errorView = YSession::self()->createBufferAndView();
+    YSession::self()->parseCommandLine( argc, argv );
+    YSession::self()->deleteView(errorView);
 
-    QTimer::singleShot(0, static_cast<NYSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
+    QTimer::singleShot(0, static_cast<NYSession*>( YSession::self() ), SLOT(frontendGuiReady()) );
 
 
     // ==============[ let's rock ! ]=============

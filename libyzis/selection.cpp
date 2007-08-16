@@ -24,121 +24,121 @@
 #include "yzis.h"
 
 /**
- * YZBound
+ * YBound
  */
 
-#define dbg()    yzDebug("YZBound")
-#define err()    yzError("YZBound")
+#define dbg()    yzDebug("YBound")
+#define err()    yzError("YBound")
 
-void YZBound::open()
+void YBound::open()
 {
     mOpen = true;
 }
-void YZBound::close()
+void YBound::close()
 {
     mOpen = false;
 }
-const YZCursor YZBound::pos() const
+const YCursor YBound::pos() const
 {
     return mPos;
 }
-bool YZBound::opened() const
+bool YBound::opened() const
 {
     return mOpen;
 }
-bool YZBound::closed() const
+bool YBound::closed() const
 {
     return !mOpen;
 }
 // operators on bounds
-bool operator==( const YZBound& left, const YZBound& right )
+bool operator==( const YBound& left, const YBound& right )
 {
     return left.pos() == right.pos() && left.opened() == right.opened();
 }
-bool operator>( const YZBound& left, const YZBound& right )
+bool operator>( const YBound& left, const YBound& right )
 {
     return left.pos() > right.pos() || left.pos() == right.pos() && !left.opened() && right.opened();
 }
-bool operator<( const YZBound& left, const YZBound& right )
+bool operator<( const YBound& left, const YBound& right )
 {
     return left.pos() < right.pos() || left.pos() == right.pos() && left.opened() && !right.opened();
 }
-bool operator>=( const YZBound& left, const YZBound& right )
+bool operator>=( const YBound& left, const YBound& right )
 {
     return left.pos() > right.pos() || left.pos() == right.pos() && ( !left.opened() || right.opened() );
 }
-bool operator<=( const YZBound& left, const YZBound& right )
+bool operator<=( const YBound& left, const YBound& right )
 {
     return left.pos() < right.pos() || left.pos() == right.pos() && ( left.opened() || !right.opened() );
 }
-bool operator>=( const YZBound& left, const YZCursor right )
+bool operator>=( const YBound& left, const YCursor right )
 {
     return left.pos() > right || !left.opened() && left.pos() == right;
 }
-bool operator<=( const YZBound& left, const YZCursor right )
+bool operator<=( const YBound& left, const YCursor right )
 {
     return left.pos() < right || !left.opened() && left.pos() == right;
 }
-bool operator>=( const YZCursor left, const YZBound& right )
+bool operator>=( const YCursor left, const YBound& right )
 {
     return right <= left;
 }
-bool operator<=( const YZCursor left, const YZBound& right )
+bool operator<=( const YCursor left, const YBound& right )
 {
     return right >= left;
 }
 
-const YZBound operator-( const YZBound& left, const YZCursor right )
+const YBound operator-( const YBound& left, const YCursor right )
 {
-    return YZBound( (QPoint)left.pos() - right, left.opened() );
+    return YBound( (QPoint)left.pos() - right, left.opened() );
 }
 /**
- * YZInterval
+ * YInterval
  */
 
-void YZInterval::setFrom( const YZBound& bound )
+void YInterval::setFrom( const YBound& bound )
 {
     mFrom = bound;
 }
-void YZInterval::setTo( const YZBound& bound )
+void YInterval::setTo( const YBound& bound )
 {
     mTo = bound;
 }
-void YZInterval::setFromPos( const YZCursor pos )
+void YInterval::setFromPos( const YCursor pos )
 {
     mFrom.setPos( pos );
 }
-void YZInterval::setToPos( const YZCursor pos )
+void YInterval::setToPos( const YCursor pos )
 {
     mTo.setPos( pos );
 }
-const YZBound& YZInterval::from() const
+const YBound& YInterval::from() const
 {
     return mFrom;
 }
-const YZBound& YZInterval::to() const
+const YBound& YInterval::to() const
 {
     return mTo;
 }
-const YZCursor YZInterval::fromPos() const
+const YCursor YInterval::fromPos() const
 {
     return mFrom.pos();
 }
-const YZCursor YZInterval::toPos() const
+const YCursor YInterval::toPos() const
 {
     return mTo.pos();
 }
 
-bool YZInterval::contains( const YZCursor pos ) const
+bool YInterval::contains( const YCursor pos ) const
 {
     return mFrom >= pos && pos <= mTo;
 }
-bool YZInterval::contains( const YZInterval& i ) const
+bool YInterval::contains( const YInterval& i ) const
 {
     return mFrom <= i.from() && mTo >= i.to();
 }
 
-QRect YZInterval::boundingRect() const
+QRect YInterval::boundingRect() const
 {
     QRect r;
     if ( mFrom.pos().x() <= mTo.pos().x() ) {
@@ -153,12 +153,12 @@ QRect YZInterval::boundingRect() const
     return r;
 }
 
-const YZInterval operator- ( const YZInterval& l, const YZCursor r )
+const YInterval operator- ( const YInterval& l, const YCursor r )
 {
-    return YZInterval( qMax(l.from() - r, YZBound(YZCursor(0, 0))), qMax(l.to() - r, YZBound(YZCursor(0, 0), true)) );
+    return YInterval( qMax(l.from() - r, YBound(YCursor(0, 0))), qMax(l.to() - r, YBound(YCursor(0, 0), true)) );
 }
 
-YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i )
+YDebugStream& operator<<( YDebugStream& out, const YInterval& i )
 {
     if ( i.from().opened() )
         out << i.from().pos() << "]";
@@ -174,41 +174,41 @@ YZDebugStream& operator<<( YZDebugStream& out, const YZInterval& i )
 
 
 /**
- * YZSelection
+ * YSelection
  */
-YZSelection::YZSelection()
+YSelection::YSelection()
 {
     mMap.clear();
 }
-YZSelection::YZSelection( const QString& name )
+YSelection::YSelection( const QString& name )
 {
     mName = name;
     mMap.clear();
 }
-YZSelection::YZSelection( const YZInterval& i )
+YSelection::YSelection( const YInterval& i )
 {
     addInterval( i );
 }
-void YZSelection::setMap( const YZSelectionMap& m )
+void YSelection::setMap( const YSelectionMap& m )
 {
     clear();
     mMap = m;
 }
-YZSelectionMap YZSelection::map() const
+YSelectionMap YSelection::map() const
 {
     return mMap;
 }
-bool YZSelection::isEmpty() const
+bool YSelection::isEmpty() const
 {
     return mMap.isEmpty();
 }
 
-void YZSelection::addMap( const YZSelectionMap& m )
+void YSelection::addMap( const YSelectionMap& m )
 {
     for ( int i = 0; i < m.size(); i++ )
         addInterval( m[ i ] );
 }
-void YZSelection::addInterval( const YZInterval& i )
+void YSelection::addInterval( const YInterval& i )
 {
     bool containsFrom;
     bool containsTo;
@@ -233,7 +233,7 @@ void YZSelection::addInterval( const YZInterval& i )
         insertInterval( idFrom, i );
     }
 }
-void YZSelection::delInterval( const YZInterval& i )
+void YSelection::delInterval( const YInterval& i )
 {
     bool containsFrom;
     bool containsTo;
@@ -255,13 +255,13 @@ void YZSelection::delInterval( const YZInterval& i )
     }
 
     if ( containsFrom )
-        mMap[ idFrom ].setTo( YZBound(i.from().pos(), !i.from().opened()) );
+        mMap[ idFrom ].setTo( YBound(i.from().pos(), !i.from().opened()) );
     if ( containsTo )
-        mMap[ idTo ].setFrom( YZBound(i.to().pos(), !i.to().opened()) );
+        mMap[ idTo ].setFrom( YBound(i.to().pos(), !i.to().opened()) );
     removeInterval( idFrom + (containsFrom ? 1 : 0), idTo - idFrom - (containsFrom && containsTo ? 1 : 0) );
 }
 
-void YZSelection::insertInterval( unsigned int pos, const YZInterval& interval )
+void YSelection::insertInterval( unsigned int pos, const YInterval& interval )
 {
     unsigned int size = mMap.size() + 1;
     for ( unsigned int i = size - 1; i > pos; i-- ) {
@@ -269,7 +269,7 @@ void YZSelection::insertInterval( unsigned int pos, const YZInterval& interval )
     }
     mMap.insert( pos, interval );
 }
-void YZSelection::removeInterval( unsigned int pos, unsigned int len )
+void YSelection::removeInterval( unsigned int pos, unsigned int len )
 {
     if ( len == 0 ) return ;
     unsigned int i;
@@ -278,13 +278,13 @@ void YZSelection::removeInterval( unsigned int pos, unsigned int len )
         for ( i = pos; i < size - len; ++i )
             mMap[ i ] = mMap[ i + len ];
     else // should not happen
-        dbg() << "WARNING: YZSelection::removeInterval remove more than size (" << len << " > " << size << ")" << endl;
+        dbg() << "WARNING: YSelection::removeInterval remove more than size (" << len << " > " << size << ")" << endl;
     for ( ; i < size; i++ ) {
         mMap.remove( i );
     }
 }
 
-int YZSelection::locatePosition( const YZBound& pos, bool* isSelected ) const
+int YSelection::locatePosition( const YBound& pos, bool* isSelected ) const
 {
     unsigned int i;
     *isSelected = false;
@@ -298,37 +298,37 @@ int YZSelection::locatePosition( const YZBound& pos, bool* isSelected ) const
     return i;
 }
 
-bool YZSelection::contains( const YZCursor pos ) const
+bool YSelection::contains( const YCursor pos ) const
 {
     bool ret = false;
-    locatePosition( YZBound(pos), &ret );
+    locatePosition( YBound(pos), &ret );
     return ret;
 }
-void YZSelection::clear()
+void YSelection::clear()
 {
     mMap.clear();
 }
 
-YZSelection YZSelection::clip( const YZInterval& bound ) const
+YSelection YSelection::clip( const YInterval& bound ) const
 {
 
-    // dbg() << "YZSelection::clip " << bound << endl << "*** INPUT ***" << endl << *this << "*** END INPUT ***" << endl;
+    // dbg() << "YSelection::clip " << bound << endl << "*** INPUT ***" << endl << *this << "*** END INPUT ***" << endl;
 
-    YZBound limitFrom( bound.fromPos(), !bound.from().opened() );
-    YZBound limitTo( bound.toPos(), !bound.to().opened() );
+    YBound limitFrom( bound.fromPos(), !bound.from().opened() );
+    YBound limitTo( bound.toPos(), !bound.to().opened() );
 
-    YZSelection tmp( mName );
+    YSelection tmp( mName );
     tmp.setMap( mMap );
-    YZBound lastBound = mMap[ mMap.size() - 1 ].to();
-    YZBound firstBound = mMap[ 0 ].from();
+    YBound lastBound = mMap[ mMap.size() - 1 ].to();
+    YBound firstBound = mMap[ 0 ].from();
     if ( lastBound > limitTo )
-        tmp.delInterval( YZInterval( limitTo, lastBound ) );
+        tmp.delInterval( YInterval( limitTo, lastBound ) );
     if ( !tmp.isEmpty() && firstBound < limitFrom )
-        tmp.delInterval( YZInterval( firstBound, limitFrom ) );
+        tmp.delInterval( YInterval( firstBound, limitFrom ) );
 
     // dbg() << "*** TMP ****" << endl << tmp << "*** END TMP ***" << endl;
 
-    YZSelection ret( mName );
+    YSelection ret( mName );
 
     unsigned int startX = bound.fromPos().x();
     unsigned int endX = bound.toPos().x();
@@ -353,7 +353,7 @@ YZSelection YZSelection::clip( const YZInterval& bound ) const
             } else {
                 continue;
             }
-            ret.addInterval( YZInterval( YZCursor( fX, fY ), YZCursor( tX, tY ) ) );
+            ret.addInterval( YInterval( YCursor( fX, fY ), YCursor( tX, tY ) ) );
         }
     }
 
@@ -362,20 +362,20 @@ YZSelection YZSelection::clip( const YZInterval& bound ) const
     return ret;
 }
 
-YZSelection YZSelection::diff( const YZSelection& _m1, const YZSelection& _m2 )
+YSelection YSelection::diff( const YSelection& _m1, const YSelection& _m2 )
 {
-    YZSelection ret( _m1.mName );
+    YSelection ret( _m1.mName );
     unsigned int i;
-    YZInterval iv;
-    YZBound b1, b2, n;
+    YInterval iv;
+    YBound b1, b2, n;
     bool cb1, cb2;
     int ib1, ib2;
 
-    YZSelection m1 = _m1;
-    YZSelection m2 = _m2;
+    YSelection m1 = _m1;
+    YSelection m2 = _m2;
     for ( int k = 0; k <= 1; k++ ) {
-        YZSelectionMap s1 = m1.map();
-        YZSelectionMap s2 = m2.map();
+        YSelectionMap s1 = m1.map();
+        YSelectionMap s2 = m2.map();
         unsigned int size1 = s1.size();
         //  unsigned int size2 = s2.size();
         for ( i = 0; i < size1; i++ ) {
@@ -426,12 +426,12 @@ YZSelection YZSelection::diff( const YZSelection& _m1, const YZSelection& _m2 )
         m2 = _m1;
     }
 
-    // dbg() << "YZSelection::diff: " << endl << _m1 << endl << _m2 << endl << " ====> " << ret << endl;
+    // dbg() << "YSelection::diff: " << endl << _m1 << endl << _m2 << endl << " ====> " << ret << endl;
 
     return ret;
 }
 
-QRect YZSelection::boundingRect() const
+QRect YSelection::boundingRect() const
 {
     QRect r;
     for ( int i = 0; i < mMap.size(); ++i ) {
@@ -441,19 +441,19 @@ QRect YZSelection::boundingRect() const
 }
 
 // operators on selections
-YZDebugStream& operator<<( YZDebugStream& out, const YZSelection& s )
+YDebugStream& operator<<( YDebugStream& out, const YSelection& s )
 {
     unsigned int size = s.mMap.size();
     for ( unsigned int i = 0; i < size; i++ )
         out << "(" << s.mName << " " << i << ") " << s.mMap[ i ] << endl;
     return out;
 }
-const YZSelection YZSelection::operator-( const YZCursor pos ) const
+const YSelection YSelection::operator-( const YCursor pos ) const
 {
-    YZSelection ret( mName );
+    YSelection ret( mName );
     int i;
     int size = mMap.size();
-    for ( i = 0; i < size && mMap[i].to() < YZBound(pos); ++i )
+    for ( i = 0; i < size && mMap[i].to() < YBound(pos); ++i )
         ;
     for ( ; i < size; ++i ) {
         ret.addInterval( mMap[i] - pos );
@@ -461,51 +461,51 @@ const YZSelection YZSelection::operator-( const YZCursor pos ) const
     return ret;
 }
 
-YZDoubleSelection::YZDoubleSelection( const QString& name )
+YDoubleSelection::YDoubleSelection( const QString& name )
 {
-    bSelection = new YZSelection( name + " buffer" );
-    sSelection = new YZSelection( name + " screen" );
+    bSelection = new YSelection( name + " buffer" );
+    sSelection = new YSelection( name + " screen" );
 }
-YZDoubleSelection::~YZDoubleSelection()
+YDoubleSelection::~YDoubleSelection()
 {
     delete bSelection;
     delete sSelection;
 }
-YZSelectionMap YZDoubleSelection::bufferMap() const
+YSelectionMap YDoubleSelection::bufferMap() const
 {
     return bSelection->map();
 }
-YZSelectionMap YZDoubleSelection::screenMap() const
+YSelectionMap YDoubleSelection::screenMap() const
 {
     return sSelection->map();
 }
-bool YZDoubleSelection::isEmpty() const
+bool YDoubleSelection::isEmpty() const
 {
     return bSelection->isEmpty();
 }
 
-void YZDoubleSelection::addInterval( const YZInterval& bi, const YZInterval& si )
+void YDoubleSelection::addInterval( const YInterval& bi, const YInterval& si )
 {
     bSelection->addInterval( bi );
     sSelection->addInterval( si );
 }
-void YZDoubleSelection::delInterval( const YZInterval& bi, const YZInterval& si )
+void YDoubleSelection::delInterval( const YInterval& bi, const YInterval& si )
 {
     bSelection->delInterval( bi );
     sSelection->delInterval( si );
 }
 
-bool YZDoubleSelection::contains( const YZCursor pos ) const
+bool YDoubleSelection::contains( const YCursor pos ) const
 {
     return bSelection->contains( pos );
 }
-void YZDoubleSelection::clear()
+void YDoubleSelection::clear()
 {
     bSelection->clear();
     sSelection->clear();
 }
 
-YZDebugStream& operator<<( YZDebugStream& out, const YZDoubleSelection& s )
+YDebugStream& operator<<( YDebugStream& out, const YDoubleSelection& s )
 {
     out << *s.bSelection << *s.sSelection;
     return out;
@@ -514,32 +514,32 @@ YZDebugStream& operator<<( YZDebugStream& out, const YZDoubleSelection& s )
 
 
 /*
- * YZSelectionPool
+ * YSelectionPool
  **/
 
-YZSelectionPool::YZSelectionPool()
+YSelectionPool::YSelectionPool()
 {
-    mSearch = new YZSelection( "SEARCH" );
-    mVisual = new YZDoubleSelection( "VISUAL" );
+    mSearch = new YSelection( "SEARCH" );
+    mVisual = new YDoubleSelection( "VISUAL" );
 }
-YZSelectionPool::~YZSelectionPool( )
+YSelectionPool::~YSelectionPool( )
 {
     delete mSearch;
     delete mVisual;
 }
-void YZSelectionPool::setSearch( YZSelection* s )
+void YSelectionPool::setSearch( YSelection* s )
 {
     mSearch->setMap( s->map() );
 }
-YZSelection* YZSelectionPool::search()
+YSelection* YSelectionPool::search()
 {
     return mSearch;
 }
-YZDoubleSelection* YZSelectionPool::visual()
+YDoubleSelection* YSelectionPool::visual()
 {
     return mVisual;
 }
-bool YZSelectionPool::isSelected( const YZCursor pos ) const
+bool YSelectionPool::isSelected( const YCursor pos ) const
 {
     return mSearch->contains( pos ) || mVisual->contains( pos );
 }

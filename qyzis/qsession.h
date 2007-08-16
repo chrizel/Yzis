@@ -25,10 +25,10 @@
 
 #include "session.h"
 
-class YZBuffer;
+class YBuffer;
 class QYView;
 
-class QYSession : public QObject, public YZSession
+class QYSession : public QObject, public YSession
 {
     Q_OBJECT
 
@@ -42,10 +42,10 @@ public:
 
     //GUI interface
     bool guiQuit(int errorCode);
-    void guiDeleteBuffer ( YZBuffer *b );
+    void guiDeleteBuffer ( YBuffer *b );
     void guiSetFocusCommandLine();
     void guiSetFocusMainWindow();
-    void guiSplitHorizontally(YZView *view);
+    void guiSplitHorizontally(YView *view);
     void guiPopupMessage( const QString& message );
     bool guiPromptYesNo(const QString& title, const QString& message);
     int guiPromptYesNoCancel(const QString& title, const QString& message);
@@ -54,7 +54,7 @@ public:
     /**
      * Sets the parent widget for all created QYView
      * This is an ugly hack to get around the deep calls into
-     * YZSession in order to create Views.  These calls cannot
+     * YSession in order to create Views.  These calls cannot
      * have parent information passed around.  createPartObject
      * can look in this field to get a parent
      */
@@ -63,14 +63,14 @@ public:
         m_viewParent = viewParent;
     }
     //Editor Interface
-    YZView *guiCreateView( YZBuffer* buffer );
-    void guiDeleteView( YZView *view );
+    YView *guiCreateView( YBuffer* buffer );
+    void guiDeleteView( YView *view );
 
     /**
      * Opens a new buffer
      * @return the newly created buffer
      */
-    YZBuffer* guiCreateBuffer();
+    YBuffer* guiCreateBuffer();
 
 public slots:
     /** To be called by single shot timer, when the gui is ready
@@ -87,7 +87,7 @@ private:
     QYSession& operator=(const QYSession&); // disable copy
     virtual ~QYSession();
 
-    void guiChangeCurrentView( YZView* );
+    void guiChangeCurrentView( YView* );
 public:
     QYView *lastView;
     QWidget *m_viewParent;

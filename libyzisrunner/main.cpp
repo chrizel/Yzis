@@ -31,14 +31,14 @@
 
 int main(int argc, char **argv)
 {
-    YZSession::initDebug( argc, argv );
+    YSession::initDebug( argc, argv );
 
     QCoreApplication *app = new QCoreApplication( argc, argv );
 
     NoGuiSession::createInstance();
 
-    YZSession::self()->parseCommandLine( argc, argv );
-    QTimer::singleShot(0, static_cast<NoGuiSession*>( YZSession::self() ), SLOT(frontendGuiReady()) );
+    YSession::self()->parseCommandLine( argc, argv );
+    QTimer::singleShot(0, static_cast<NoGuiSession*>( YSession::self() ), SLOT(frontendGuiReady()) );
 
     app->exec();
 

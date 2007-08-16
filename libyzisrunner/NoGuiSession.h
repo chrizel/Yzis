@@ -28,7 +28,7 @@ class NoGuiView;
 #include "libyzis/session.h"
 #include "libyzis/buffer.h"
 
-class NoGuiSession : public QObject, public YZSession
+class NoGuiSession : public QObject, public YSession
 {
     Q_OBJECT
 
@@ -36,25 +36,25 @@ public:
     static void createInstance();
 
 
-    virtual YZView* createView ( YZBuffer* buf);
+    virtual YView* createView ( YBuffer* buf);
 
-    virtual YZBuffer *createBuffer(const QString& path = QString());
+    virtual YBuffer *createBuffer(const QString& path = QString());
 
     virtual void guiPopupMessage( const QString& message);
 
     virtual void guiQuit(bool /*savePopup=true */);
 
-    virtual void guiDeleteBuffer ( YZBuffer * );
-    virtual void guiChangeCurrentView( YZView* );
+    virtual void guiDeleteBuffer ( YBuffer * );
+    virtual void guiChangeCurrentView( YView* );
     virtual void guiSetFocusCommandLine( );
     virtual void guiSetFocusMainWindow( );
     virtual bool guiQuit(int);
     virtual bool guiPromptYesNo(const QString&, const QString&);
     virtual int guiPromptYesNoCancel( const QString&, const QString& );
-    virtual void guiSplitHorizontally(YZView*);
-    virtual YZView *guiCreateView(YZBuffer*b);
-    virtual void guiDeleteView(YZView*v);
-    virtual YZBuffer* guiCreateBuffer();
+    virtual void guiSplitHorizontally(YView*);
+    virtual YView *guiCreateView(YBuffer*b);
+    virtual void guiDeleteView(YView*v);
+    virtual YBuffer* guiCreateBuffer();
     virtual void guiSetClipboardText(const QString&, Clipboard::Mode);
 
 public slots:

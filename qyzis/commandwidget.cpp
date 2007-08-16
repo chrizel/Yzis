@@ -49,11 +49,11 @@ void QYCommandLine::keyPressEvent ( QKeyEvent * e )
     if ( e->modifiers() & Qt::ControlModifier ) mod += "<CTRL>";
     if ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Up || e->key() == Qt::Key_Down || e->key() == Qt::Key_Escape) {
         dbg() << "keyPressEvent: sending to Session" << endl;
-        YZSession::self()->sendKey( static_cast< YZView * >( mView ), mView->editor()->convertKey( e->key() ), mod ) ;
+        YSession::self()->sendKey( static_cast< YView * >( mView ), mView->editor()->convertKey( e->key() ), mod ) ;
         e->accept();
     } else if ( ( e->QInputEvent::modifiers() & Qt::ControlModifier ) && e->key() == Qt::Key_C ) { // handle CTRL-C
         dbg() << "keyPressEvent: sending CONTROL-C to Session" << endl;
-        YZSession::self()->sendKey( static_cast< YZView * >( mView ), "c" , mod ) ;
+        YSession::self()->sendKey( static_cast< YView * >( mView ), "c" , mod ) ;
         e->accept();
     } else {
         dbg() << "keyPressEvent: sending to QLineEdit" << endl;
@@ -64,10 +64,10 @@ void QYCommandLine::keyPressEvent ( QKeyEvent * e )
 void QYCommandLine::focusInEvent (QFocusEvent * e)
 {
     dbg() << "focusInEvent() " << endl;
-    if ( mView->modePool()->currentType() != YZMode::ModeEx
-            && mView->modePool()->currentType() != YZMode::ModeSearch
-            && mView->modePool()->currentType() != YZMode::ModeSearchBackward ) {
-        mView->modePool()->push( YZMode::ModeEx );
+    if ( mView->modePool()->currentType() != YMode::ModeEx
+            && mView->modePool()->currentType() != YMode::ModeSearch
+            && mView->modePool()->currentType() != YMode::ModeSearchBackward ) {
+        mView->modePool()->push( YMode::ModeEx );
     }
 
     //e->accept();
@@ -78,9 +78,9 @@ void QYCommandLine::focusOutEvent (QFocusEvent *e)
 {
     dbg() << "focusOutEvent() " << endl;
     /*
-    if ( mView->modePool()->currentType() != YZMode::ModeEx 
-    && mView->modePool()->currentType() != YZMode::ModeSearch 
-    && mView->modePool()->currentType() != YZMode::ModeSearchBackward )
+    if ( mView->modePool()->currentType() != YMode::ModeEx 
+    && mView->modePool()->currentType() != YMode::ModeSearch 
+    && mView->modePool()->currentType() != YMode::ModeSearchBackward )
     return;
     */
     QLineEdit::focusOutEvent(e);

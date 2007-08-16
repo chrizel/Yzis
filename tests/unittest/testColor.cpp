@@ -18,7 +18,7 @@ void TestColor::subTestColor( const QString& name,
                               int red, int green, int blue,
                               const QString& hex, const QString& hex_short )
 {
-    YZColor c;
+    YColor c;
     QRgb rgb = YzqRgb( red, green, blue );
 
 #define CHECK_VALIDITY() \

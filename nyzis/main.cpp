@@ -40,10 +40,10 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 /* libyzis */
 #include "libyzis/translator.h"
 #include "buffer.h"
+#include "debug.h"
 
 /* nyzis */
-#include "debug.h"
-#include "nsession.h"
+#include "nysession.h"
 
 /* X11 */
 #include <X11/Xlib.h>

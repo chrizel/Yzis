@@ -24,7 +24,7 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
  */
 
 /* yzis */
-#include "viewwidget.h"
+#include "nyview.h"
 #include "session.h"
 
 /**

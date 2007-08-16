@@ -17,7 +17,7 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 */
 
 /* Nyzis */
-#include "nsession.h"
+#include "nysession.h"
 
 /* Yzis */
 #include "buffer.h"

@@ -26,7 +26,7 @@
 #include "debug.h"
 
 /* yzis */
-#include "nsession.h"
+#include "nysession.h"
 #include "buffer.h"
 #include "color.h"
 
@@ -116,7 +116,7 @@ void NYView::updateVis( bool refresh )
     setVisibleArea( width - marginLeft, height - 2, refresh );
 }
 
-void NYView::guiScroll( int dx, int dy )
+void NYView::guiScroll( int /* dx */, int dy )
 {
     scrollok( editor, true );
     wscrl( editor, -dy );

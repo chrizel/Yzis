@@ -581,7 +581,6 @@ void YBuffer::load(const QString& file)
     for ( ; it != end; ++it )
         delete ( *it );
     d->text->clear();
-    d->isFileNew = false;
 
     setPath( file );
 
@@ -868,6 +867,9 @@ void YBuffer::setPath( const QString& _path )
 
     // update swap file too
     d->swapFile->setFileName( _path );
+	
+	//no more a new file since it got a name
+    d->isFileNew = false;
 
     filenameChanged();
 }

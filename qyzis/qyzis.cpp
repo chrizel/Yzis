@@ -29,7 +29,8 @@
 #include <QMenu>
 #include <QFileDialog>
 #include <QMessageBox>
-#include <qmenubar.h>
+#include <QMenuBar>
+#include <QTabWidget>
 
 
 #define dbg()    yzDebug("Qyzis")
@@ -42,6 +43,9 @@ Qyzis::Qyzis(QWidget *w)
         mBuffers( 0 ), mViews( 0 )
 {
     resize( 800, 600 );
+
+    mTabWidget = new QTabWidget();
+    setCentralWidget( mTabWidget );
 
     setupActions();
     //createShellGUI( true );
@@ -192,12 +196,14 @@ void Qyzis::about()
                          "http://www.yzis.org"));
 }
 
-void Qyzis::embedPartView(QWidget *view, const QString &, const QString& )
+void Qyzis::embedPartView(QWidget *view, const QString & title, const QString& tooltip )
 {
+    Q_UNUSED( tooltip );
     if (!view)
         return ;
+    mTabWidget->addTab( view, title );
     // addWidget(view, QString());
-    setCentralWidget(view);
+    //setCentralWidget(view);
     view->show();
 }
 

@@ -33,14 +33,15 @@
 #include <unistd.h>
 
 /* Qt */
-#include <qapplication.h>
-#include <qstring.h>
-#include <qmessagebox.h>
-#include <qtimer.h>
-#include <qtextcodec.h>
+#include <QApplication>
+#include <QString>
+#include <QmessageBox>
+#include <QTimer>
+#include <QTextcodec>
 #include <QClipboard>
 #include <QSettings>
 #include <QList>
+#include <QTabWidget>
 #ifdef Q_WS_X11
 #include <QX11Info>
 #endif
@@ -124,8 +125,7 @@ void QYZisSession::guiChangeCurrentView( YZView* view )
 {
     dbg() << "guiChangeCurrentView(" << view->toString() << ")" << endl;
     QYZisView *v = static_cast<QYZisView*>(view);
-    v->activateWindow();
-    v->setFocus();
+    Qyzis::me->mTabWidget->setCurrentWidget( v );
 }
 
 YZView* QYZisSession::guiCreateView( YZBuffer *buffer )

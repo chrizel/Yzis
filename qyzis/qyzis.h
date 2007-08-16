@@ -26,6 +26,8 @@
 #include <qmainwindow.h>
 #include <qmap.h>
 
+class QTabWidget;
+
 #include "debug.h"
 
 /**
@@ -100,6 +102,9 @@ private:
     // Q3PopupMenu *m_windowMenu;
     typedef QPair<int, QString> WinInfo;
     QList<WinInfo> m_windowList;
+
+public:
+    QTabWidget * mTabWidget;
 
 };
 

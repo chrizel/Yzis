@@ -10,7 +10,7 @@
 #
 # protect user config file
 
-source env_test.sh
+source ../env_test.sh
 
 if [ -n "$CYGWIN" ]; then
     user_home=`cygpath "$USERPROFILE"`;

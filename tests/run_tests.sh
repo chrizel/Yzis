@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 nb_failed=0
 

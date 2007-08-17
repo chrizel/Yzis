@@ -249,6 +249,10 @@ TestMovements = {} --class
 	    assertPos( 1, 1)
 	    sendkeys("99w")
 	    assertPos( 1, 32)
+	    sendkeys("<CTRL><HOME>")
+	    assertPos( 1, 1 )
+	    sendkeys("<CTRL><END>")
+	    assertPos( 1, 32 )
 	    sendkeys( "dd" )
 	
 	    --tests with delimiters on one line
@@ -305,6 +309,12 @@ TestMovements = {} --class
 	    sendkeys("11b")
 	    assertPos( 1, 7 )
 	    sendkeys("b")
+	    assertPos( 1, 1 )
+	    sendkeys("<CTRL><HOME>")
+	    assertPos( 1, 1 )
+	    sendkeys("<CTRL><END>")
+	    assertPos( 3, 13 )
+	    sendkeys("<CTRL><HOME>")
 	    assertPos( 1, 1 )
 	
 	    --tests with delimiters on multiple lines

@@ -2,31 +2,16 @@
 # Usage:
 # ./runtests.sh [testname]
 #
-# Copies from the build tree the latest versions of testyzis
-# Then execute the test name provided on the command line.
-#
-
-export TMP="d:/tmp"
-export TEMP="d:/tmp"
-
-if [ -n "$CYGWIN" ]; 
-then
-    _exe=".exe"
-else
-    _exe=""
-fi
+# shortcut to run the unittests from the source tree
 
 
-echo "Copying yzis files"
-cp -a ../../build-cmake/libyzis/libyzis* . 
-cp -a ../../build-cmake/tests/unittest/yzistest$_exe .
+source ../env_test.sh
 
-YZIS=testyzis$_exe
 
 case "x$1" in
     ("xgdb")
         shift
-        YZIS="gdb"
+        GDB="gdb"
         ;;
 esac
 
@@ -35,15 +20,11 @@ then
     testname=$*
 fi
 
-echo "Testing with: $YZIS $testname"
+LANG=C $GDB $UNITTEST_EXE $testname
 
-if [ "$YZIS" == "gdb" ];
-then
-    # execution in gdb
-    LANG=C gdb yzistest$_exe $testname
-else
-    # normal execution
-    LANG=C ./yzistest$_exe $testname
-fi
+nb_failure=$?
 
+echo "$nb_failure failed tests"
+
+exit $nb_failure
 

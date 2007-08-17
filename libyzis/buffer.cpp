@@ -889,6 +889,11 @@ bool YBuffer::substitute( const QString& _what, const QString& with, bool wholel
     int pos = 0;
     int offset = 0;
     while ( ( pos = rx.indexIn( l, offset ) ) != -1 ) {
+		QPoint unique_pos(pos, line);
+		d->undoBuffer->addBufferOperation(YBufferOperation::OpDelText,
+				rx.capturedTexts()[0], unique_pos);
+		d->undoBuffer->addBufferOperation(YBufferOperation::OpAddText,
+				 with, unique_pos);
         l = l.replace( pos, rx.matchedLength(), with );
         changed = true;
         offset = pos + with.length();

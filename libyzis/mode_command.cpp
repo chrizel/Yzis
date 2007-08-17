@@ -203,8 +203,6 @@ CmdState YModeCommand::execCommand(YView *view, const QString& inputs)
 {
     // dbg() << "ExecCommand : " << inputs << endl;
 
-    view->guiSetCommandLineText( "" );
-
     int count = 1;
     bool hadCount = false;
     int i = 0;

@@ -56,6 +56,7 @@ void YModeSearch::enter( YView* view )
 }
 void YModeSearch::leave( YView* view )
 {
+    view->guiSetCommandLineText( "" ); 
     YSession::self()->guiSetFocusMainWindow();
 }
 

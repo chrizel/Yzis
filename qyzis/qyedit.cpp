@@ -191,7 +191,7 @@ bool QYEdit::event(QEvent *e)
     if ( e->type() == QEvent::KeyPress ) {
         QKeyEvent *ke = (QKeyEvent *)e;
         dbg() << "event( KeyEvent( key=" << ke->text() << ", mod=" << ke->modifiers() << ") )" << endl;;
-        if ( ke->key() == Qt::Key_Tab ) {
+        if ( ke->key() == Qt::Key_Tab || ke->key() == Qt::Key_Backtab ) {
             keyPressEvent(ke);
             return true;
         }

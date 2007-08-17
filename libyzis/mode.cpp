@@ -237,18 +237,29 @@ void YModePool::sendKey( const QString& key, const QString& modifiers )
     mapMode |= current()->mapMode();
     bool map = false;
     mView->saveInputBuffer();
-    QString mapped = mView->getInputBuffer(); // + modifiers + key;
-    // dbg() << "Looking mappings for " << mapped << endl;
+    QString mapped = mView->getInputBuffer() + mModifiers + mKey;
+    dbg() << "Looking mappings for " << mapped << endl;
     bool pendingMapp = YZMapping::self()->applyMappings( mapped, mapMode, &map );
-    // if (pendingMapp)
-    //  dbg() << "Pending mapping on " << mapped << endl;
+    if (pendingMapp)
+      dbg() << "Pending mapping on " << mapped << endl;
     if ( map ) {
-        //  dbg() << "input buffer was remapped to: " << mapped << endl;
+        dbg() << "input buffer was remapped to: " << mapped << endl;
         mView->purgeInputBuffer();
         mapMode = 0;
         YSession::self()->sendMultipleKeys( mView, mapped );
         return ;
     }
+
+	// shift might have been used for remapping, 
+	// so we remove it only after having check the mappings
+	// we remove it so that one can type upper case letters without entering a <SHIFT> on screen
+    if ( mModifiers.contains ("<SHIFT>")) {
+        mKey = mKey.toUpper();
+        mModifiers.remove( "<SHIFT>" );
+    }
+	dbg() << "Appending to input buffer " << mModifiers + mKey << endl;
+    mView->appendInputBuffer( mModifiers + mKey );
+
     CmdState state = stack.front()->execCommand( mView, mView->getInputBuffer() );
     if ( mStop ) return ;
     switch (state) {

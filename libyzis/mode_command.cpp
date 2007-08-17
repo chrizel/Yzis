@@ -193,7 +193,7 @@ void YModeCommand::initModifierKeys()
 {
     for ( int ab = 0 ; ab < commands.size(); ++ab) {
         const QString& keys = commands.at(ab)->keySeq();
-        if ( keys.indexOf( "<CTRL>" ) > -1 || keys.indexOf( "<ALT>" ) > -1 ) {
+        if ( keys.indexOf( "<SHIFT>" ) > -1 || keys.indexOf( "<CTRL>" ) > -1 || keys.indexOf( "<ALT>" ) > -1 ) {
             mModifierKeys << keys;
         }
     }

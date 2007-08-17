@@ -853,7 +853,7 @@ CmdState YModeEx::genericMap ( const YExCommandArgs& args, int type)
             YZMapping::self()->addCmdLineMapping(rx.cap(1), rx.cap(2));
             break;
         }
-        if (rx.cap(1).startsWith("<CTRL>")) {
+        if (rx.cap(1).startsWith("<CTRL>") || rx.cap(1).startsWith("<SHIFT>")) {
             mModifierKeys << rx.cap(1);
             YViewList views = YSession::self()->getAllViews();
             foreach ( YView *v, views )

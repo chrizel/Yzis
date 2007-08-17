@@ -61,7 +61,10 @@ bool YZMapping::applyMappings( QString& text, QMap<QString, QString>& mappings )
             text.replace(it.key(), it.value().right(it.value().length() - 9));
             mNoremap = true;
         } else if ( match ) {
-            text.replace(it.key(), it.value());
+			if ( it.key() == "<BTAB>" ) //backtab comes with shift modifier in front of it, so remove it too
+				text.replace("<SHIFT>"+it.key(), it.value());
+			else
+				text.replace(it.key(), it.value());
         } else {
             pendingMapp = pendingMapp || it.key().startsWith(text);
         }

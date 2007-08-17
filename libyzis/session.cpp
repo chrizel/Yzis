@@ -716,12 +716,12 @@ void YSession::sendKey( YView * view, const QString& _key, const QString& _modif
         SWITCH_KEY( "h", "l" );
     }
 
-    if ( modifiers.contains ("<SHIFT>")) { //useful?
-        key = key.toUpper();
-        modifiers.remove( "<SHIFT>" );
-    }
+//    if ( modifiers.contains ("<SHIFT>")) { //useful?
+//        key = key.toUpper();
+//        modifiers.remove( "<SHIFT>" );
+//    }
 
-    view->appendInputBuffer( modifiers + key );
+//    view->appendInputBuffer( modifiers + key );
     view->setPaintAutoCommit( false );
     view->modePool()->sendKey( key, modifiers );
     view->commitPaintEvent();

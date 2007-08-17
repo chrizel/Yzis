@@ -380,7 +380,7 @@ QString YModeEx::parseRange( const QString& inputs, YView* view, int* range, boo
                 if ( s_add[ 0 ] == '-' ) add = -add;
                 *range += add;
             }
-            _input = reg.cap( nc );
+            return reg.cap( nc );
         }
     }
     return _input;
@@ -783,6 +783,7 @@ CmdState YModeEx::substitute( const YExCommandArgs& args )
             }
         }
         if ( needsUpdate ) {
+            args.view->commitNextUndo();
             args.view->myBuffer()->updateAllViews();
             args.view->gotoxy( 0, lastLine );
             args.view->moveToFirstNonBlankOfLine();

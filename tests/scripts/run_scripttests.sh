@@ -19,7 +19,7 @@
 
 # substituted by CMake during the build process
 
-source env_test.sh 
+source ../env_test.sh 
 
 if [ "X$1" != "Xnocopy" ];
 then
@@ -80,9 +80,10 @@ else
 	echo LANG=C $YZIS $yzis_arg1 $yzis_arg2
 	LANG=C $YZIS $yzis_arg1 "$yzis_arg2"
 	exitcode=$?
-	echo "exitcode=$exitcode"
+	echo "$exitcode failed tests"
 fi
 
 source post_test.sh 
 
 exit $exitcode
+

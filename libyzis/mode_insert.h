@@ -46,6 +46,8 @@ public:
     virtual CmdState commandDefault( YView* mView, const QString& key );
     virtual void commandHome( YView* mView, const QString& key );
     virtual void commandEnd( YView* mView, const QString& key );
+    virtual void commandDocumentHome( YView* mView, const QString& key );
+    virtual void commandDocumentEnd( YView* mView, const QString& key );
     virtual void commandEscape( YView* mView, const QString& key );
     virtual void commandInsert( YView* mView, const QString& key );
     virtual void commandEx( YView* mView, const QString& key );

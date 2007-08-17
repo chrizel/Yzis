@@ -58,7 +58,8 @@ void YModeInsert::initModifierKeys()
 {
     mModifierKeys << "<CTRL>c" << "<CTRL>e" << "<CTRL>n" << "<CTRL>p"
     << "<CTRL>x" << "<CTRL>y" << "<ALT>:" << "<ALT>v"
-    << "<CTRL>[" << "<CTRL>h" << "<CTRL>w" ;
+    << "<CTRL>[" << "<CTRL>h" << "<CTRL>w" << "<CTRL><HOME>"
+    << "<CTRL><END>";
 }
 /*
  * if you add a command which use modifiers keys, add it in initModifierKeys too
@@ -69,6 +70,8 @@ CmdState YModeInsert::execCommand( YView* mView, const QString& _key )
     CmdState ret = CmdOk;
     if ( key == "<HOME>" ) commandHome( mView, key );
     else if ( key == "<END>" ) commandEnd( mView, key );
+    else if ( key == "<CTRL><HOME>" ) commandDocumentHome( mView, key );
+    else if ( key == "<CTRL><END>" ) commandDocumentEnd ( mView, key );
     else if ( key == "<ESC>"
               || key == "<CTRL>c"
               || key == "<CTRL>[" ) commandEscape( mView, key );
@@ -117,6 +120,16 @@ void YModeInsert::commandHome( YView* mView, const QString& )
 }
 void YModeInsert::commandEnd( YView* mView, const QString& )
 {
+    mView->moveToEndOfLine();
+}
+void YModeInsert::commandDocumentHome( YView* mView, const QString& )
+{
+    mView->gotoLine(0);
+    mView->moveToStartOfLine();
+}
+void YModeInsert::commandDocumentEnd( YView* mView, const QString& )
+{
+    mView->gotoLastLine();
     mView->moveToEndOfLine();
 }
 void YModeInsert::commandEscape( YView* mView, const QString& )

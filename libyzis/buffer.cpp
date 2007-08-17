@@ -116,7 +116,7 @@ YBuffer::YBuffer()
     dbg() << "YBuffer()" << endl;
 
     // flags
-    d->enableUpdateView = false;
+    d->enableUpdateView = true;
     d->isModified = false;
     d->isHLUpdating = false;
     d->isFileNew = true;

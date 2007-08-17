@@ -149,6 +149,10 @@ TestMovements = {} --class
 	    assertPos( 3, 1 )
 	    sendkeys("$")
 	    assertPos( 3, 7 )
+	    sendkeys("<HOME>")
+	    assertPos( 3, 1 )
+	    sendkeys("<END>")
+	    assertPos( 3, 7 )
 	
 	    sendkeys("<UP>")
 	    sendkeys("0")
@@ -157,6 +161,10 @@ TestMovements = {} --class
 	    assertPos( 2, 1 )
 	    sendkeys("$")
 	    assertPos( 2, 4 )
+	    sendkeys("<HOME>")
+	    assertPos( 2, 1 )
+	    sendkeys("<END>")
+	    assertPos( 2, 4 )
 	
 	    sendkeys("<UP>")
 	    sendkeys("0")
@@ -164,6 +172,10 @@ TestMovements = {} --class
 	    sendkeys("^")
 	    assertPos( 1, 2 )
 	    sendkeys("$")
+	    assertPos( 1, 5 )
+	    sendkeys("<HOME>")
+	    assertPos( 1, 1 )
+	    sendkeys("<END>")
 	    assertPos( 1, 5 )
 	    set("cindent&")
 	end

@@ -98,6 +98,8 @@ void YModeCommand::initMotionPool()
     commands.append( new YMotion("N", &YModeCommand::searchPrev, ArgNone) );
     commands.append( new YMotion("<HOME>", &YModeCommand::gotoSOL, ArgNone) );
     commands.append( new YMotion("<END>", &YModeCommand::gotoEOL, ArgNone) );
+    commands.append( new YMotion("<CTRL><HOME>", &YModeCommand::gotoStartOfDocument, ArgNone) );
+    commands.append( new YMotion("<CTRL><END>", &YModeCommand::gotoEndOfDocument, ArgNone) );
     commands.append( new YMotion("<LEFT>", &YModeCommand::moveLeft, ArgNone) );
     commands.append( new YMotion("<RIGHT>", &YModeCommand::moveRight, ArgNone) );
     commands.append( new YMotion("<UP>", &YModeCommand::moveUp, ArgNone) );
@@ -675,6 +677,22 @@ YCursor YModeCommand::gotoSOL(const YMotionArgs &args)
 YCursor YModeCommand::gotoEOL(const YMotionArgs &args)
 {
     YViewCursor viewCursor = args.view->viewCursor();
+    args.view->moveToEndOfLine(&viewCursor, args.standalone);
+    return viewCursor.buffer();
+}
+
+YCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args)
+{
+    YViewCursor viewCursor = args.view->viewCursor();
+    args.view->gotoLine(&viewCursor, 0, args.standalone);
+    args.view->moveToStartOfLine(&viewCursor, args.standalone);
+    return viewCursor.buffer();
+}
+
+YCursor YModeCommand::gotoEndOfDocument(const YMotionArgs &args)
+{
+    YViewCursor viewCursor = args.view->viewCursor();
+    args.view->gotoLastLine(&viewCursor, args.standalone);
     args.view->moveToEndOfLine(&viewCursor, args.standalone);
     return viewCursor.buffer();
 }

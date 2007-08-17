@@ -194,6 +194,8 @@ public:
     YCursor moveSWordBackward(const YMotionArgs &args);
     YCursor gotoSOL(const YMotionArgs &args);
     YCursor gotoEOL(const YMotionArgs &args);
+    YCursor gotoStartOfDocument(const YMotionArgs &args);
+    YCursor gotoEndOfDocument(const YMotionArgs &args);
     //YCursor find(const YMotionArgs &args);
     YCursor findNext(const YMotionArgs &args);
     YCursor findBeforeNext(const YMotionArgs &args);

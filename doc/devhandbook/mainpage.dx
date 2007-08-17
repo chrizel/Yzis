@@ -1,24 +1,13 @@
 
-/*! \mainpage Yzis Developer Book
+/*! \mainpage Yzis API documentation
  
-\section intro Introduction
+\section components API documentation
 
+    - <a href="libyzis/index.html" />libyzis</a>
+    - <a href="nyzis/index.html" />nyzis</a>
+    - <a href="qyzis/index.html" />qyzis</a>
 
-THIS DOCUMENTATION IS BEING MOVED TO THE WIKI AT http://wiki.yzis.org Be
-warned.
+\section other_doc Other documentation
 
-\section moduleslist Module description
-
-\subpage startup_guide
-Get you started with Yzis development
-
-\subpage scripting
-How to write scripts in lua, for non regression testing or for other purposes.
-
-\subpage integrating_lua
-How the lua engine is integrated in Yzis
-
+The rest of the documentation is in the Yzis wiki at http://www.yzis.org.
 */
-
-
-

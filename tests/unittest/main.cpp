@@ -84,7 +84,7 @@ int main( int argc, char * argv[] )
     RUN_MY_TEST( TestColor )
     RUN_MY_TEST( TestResource )
 
-    printf("Global status: %d failed tests\n", result );
+    printf("Unittest status: %d failed tests\n", result );
 
     return result;
 }

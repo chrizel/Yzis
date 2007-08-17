@@ -42,6 +42,12 @@ YModeInsert::YModeInsert() : YMode()
     mIM = true;
     mMapMode = MapInsert;
 }
+
+void YModeInsert::enter( YView* mView )
+{
+    mView->guiSetCommandLineText( "" );
+}
+
 void YModeInsert::leave( YView* mView )
 {
     if ( mView->getBufferCursor().x() > 0 )

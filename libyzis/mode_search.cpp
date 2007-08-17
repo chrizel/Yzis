@@ -56,7 +56,6 @@ void YModeSearch::enter( YView* view )
 }
 void YModeSearch::leave( YView* view )
 {
-    view->guiSetCommandLineText( "" );
     YSession::self()->guiSetFocusMainWindow();
 }
 
@@ -103,7 +102,7 @@ CmdState YModeSearch::execCommand( YView* view, const QString& _key )
         if ( found ) {
             view->gotoxy( pos.x(), pos.y() );
         } else {
-            view->guiDisplayInfo(_("No match"));
+            view->guiDisplayInfo( _( "Pattern not found: " ) + what );
         }
         view->modePool()->pop();
         return CmdOk;

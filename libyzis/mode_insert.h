@@ -38,6 +38,7 @@ public:
     virtual ~YModeInsert()
     {}
 
+    virtual void enter( YView* mView );
     virtual void leave( YView* mView );
     virtual void initModifierKeys();
     virtual CmdState execCommand( YView* mView, const QString& key );

@@ -50,6 +50,7 @@
 #include <QBuffer>
 
 // project
+#include "mode_pool.h"
 #include "mode_command.h"
 #include "mode_complete.h"
 #include "mode_ex.h"

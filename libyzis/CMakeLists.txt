@@ -27,6 +27,7 @@ set(yzis_LIB_SRCS
    linesearch.cpp 
    mapping.cpp 
    mark.cpp 
+   mode_pool.cpp 
    mode_command.cpp 
    mode_complete.cpp 
    mode.cpp 

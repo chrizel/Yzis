@@ -20,7 +20,7 @@
 **/
 
 #include "mode_search.h"
-
+#include "mode_pool.h"
 #include "debug.h"
 #include "portability.h"
 #include "action.h"
@@ -43,6 +43,9 @@ YModeSearch::YModeSearch() : YMode()
     mMapMode = MapCmdline;
     mHistory = new YZHistory;
     incSearchFound = false;
+    mIsEditMode = false;
+    mIsCmdLineMode = true;
+    mIsSelMode = false;
 }
 YModeSearch::~YModeSearch()
 {

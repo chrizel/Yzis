@@ -32,6 +32,7 @@
 #include "buffer.h"
 #include "line.h"
 #include "mark.h"
+#include "mode_pool.h"
 #include "action.h"
 #include "session.h"
 #include "kate/syntaxhighlight.h"
@@ -1719,7 +1720,7 @@ bool YView::stringHasOnlySpaces ( const QString& what )
     return true;
 }
 
-QString YView::mode() const
+QString YView::modeString() const
 {
     QString ret = mModePool->current()->toString();
     if ( isRecording() )

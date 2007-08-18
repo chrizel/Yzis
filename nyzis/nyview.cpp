@@ -307,7 +307,7 @@ void NYView::guiSyncViewInfo( void )
 
     werase(infobar);
     wmove( infobar, 0, 0 );
-    QString m = mode();
+    QString m = modeString();
     wattron( infobar, COLOR_PAIR(2) );
     wprintw( infobar, "%s", m.toLocal8Bit().constData() );
     wattroff( infobar, COLOR_PAIR(2) );

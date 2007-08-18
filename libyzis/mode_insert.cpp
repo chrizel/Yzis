@@ -20,6 +20,7 @@
 **/
 
 #include "mode_insert.h"
+#include "mode_pool.h"
 #include "portability.h"
 
 #include "buffer.h"
@@ -38,9 +39,11 @@ YModeInsert::YModeInsert() : YMode()
 {
     mType = YMode::ModeInsert;
     mString = _( "[ Insert ]" );
-    mEditMode = true;
     mIM = true;
     mMapMode = MapInsert;
+    mIsEditMode = true;
+    mIsCmdLineMode = false;
+    mIsSelMode = false;
 }
 
 void YModeInsert::enter( YView* mView )

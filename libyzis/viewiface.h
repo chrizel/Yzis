@@ -74,6 +74,13 @@ public:
     {}
 
     /**
+     * Called when the mode is changed, so that gui can
+     * update information displayed to the user
+     */
+    virtual void guiModeChanged()
+    {}
+
+    /**
      * scroll dx to the right and dy downward
      */
     virtual void guiScroll( int dx, int dy ) = 0;

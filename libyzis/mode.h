@@ -60,22 +60,21 @@ class YZIS_EXPORT YMode
 {
 public:
     enum ModeType {
-        ModeCommand,    //!< default mode, named normal mode in vim
-        ModeInsert,        //!< 'i' : entering text (insert)
-        ModeReplace,    //!< 'R' : entering text (replace)
-        ModeEx,            //!< ':' : execute some yzis command
-        ModeSearch,        //!< '/' : search text
-        ModeSearchBackward,   //!< '?' : search backward
-        ModeIntro,        //!< display intro text, and move to command mode on first key entered
-        ModeCompletion,       //!< used from within insert mode for completion
-        ModeVisual,        //!< 'v' : visual mode with characters and lines
-        ModeVisualLine,       //!< 'V' : visual mode lines by lines
-        ModeVisualBlock,      //!< C-V : visual mode, by blocks
+        ModeCommand,        //!< default mode, named normal mode in vim
+        ModeInsert,         //!< 'i' : entering text (insert)
+        ModeReplace,        //!< 'R' : entering text (replace)
+        ModeEx,             //!< ':' : execute some yzis command
+        ModeSearch,         //!< '/' : search text
+        ModeSearchBackward, //!< '?' : search backward
+        ModeIntro,          //!< display intro text, and move to command mode on first key entered
+        ModeCompletion,     //!< used from within insert mode for completion
+        ModeVisual,         //!< 'v' : visual mode with characters and lines
+        ModeVisualLine,     //!< 'V' : visual mode lines by lines
+        ModeVisualBlock,    //!< C-V : visual mode, by blocks
     };
 
     YMode();
-    virtual ~YMode()
-    {}
+    virtual ~YMode() {}
 
     virtual void init();
     virtual void initModifierKeys();
@@ -92,6 +91,27 @@ public:
     void setRegistered( bool registered );
     QStringList modifierKeys() const;
 
+
+    /** Returns true if the command line has focus in this mode.
+     *
+     * List of the modes for which this is true:
+     *  \li ModeEx
+     *  \li ModeSearch
+     *  \li ModeSearchBackward
+     */
+    virtual bool isCommandLineMode() const;
+
+    /** Returns if the editor widget has focus in this mode.
+     *
+     * List of the modes for which this is true:
+     *  \li ModeInsert
+     *  \li ModeReplace
+     *  \li ModeIntro
+     *  \li ModeCompletion
+     *  \li ModeVisual
+     *  \li ModeVisualLine
+     *  \li ModeVisualBlock
+     */
     virtual bool isEditMode() const;
 
     /**
@@ -114,8 +134,9 @@ public:
 protected:
     ModeType mType;
     QString mString;
-    bool mEditMode;
-    bool mSelMode;
+    bool mIsEditMode;
+    bool mIsSelMode;
+    bool mIsCmdLineMode;
     bool mIM;
     yzis::MapMode mMapMode;
     QStringList mModifierKeys;
@@ -132,8 +153,7 @@ class YModeIntro : public YMode
 {
 public:
     YModeIntro();
-    virtual ~YModeIntro()
-    {}
+    virtual ~YModeIntro() {}
 
     void enter( YView* mView );
     void leave( YView* mView );
@@ -146,55 +166,5 @@ typedef YMode::ModeType ModeType;
 typedef QMap<ModeType, YMode*> YModeMap;
 typedef QList<YMode*> YModeStack;
 
-/**
- * Keeps track of modes to return to
- */
-class YZIS_EXPORT YModePool
-{
-public:
-    YModePool( YView* view );
-    virtual ~YModePool();
-
-    void sendKey( const QString& key, const QString& modifiers );
-    void replayKey();
-
-    /**
-     * pop current mode and push @arg mode
-     */
-    void change( ModeType mode, bool leave_me = true );
-
-    /**
-     * push @arg mode
-     */
-    void push( ModeType mode );
-
-    /**
-     * pop one mode (go to previous)
-     */
-    void pop( bool leave_me = true );
-
-    /**
-     * pop until current mode is @arg mode
-     */
-    void pop( ModeType mode );
-
-    void registerModifierKeys();
-    void unregisterModifierKeys();
-    void stop();
-
-    YMode* current() const;
-    ModeType currentType() const;
-
-private :
-    YView* mView;
-    QString mKey;
-    QString mModifiers;
-    YModeMap mModes;
-    YModeStack stack;
-    int mapMode;
-    bool mRegisterKeys;
-    bool mStop;
-};
-
-#endif
+#endif // YZ_MODE_H
 

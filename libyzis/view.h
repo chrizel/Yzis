@@ -27,6 +27,7 @@
 /* yzis */
 #include "viewiface.h"
 #include "viewcursor.h"
+#include "mode_pool.h"
 
 class YViewCursor;
 class YColor;
@@ -36,7 +37,6 @@ class YSession;
 class YSelectionPool;
 class YzisAttribute;
 class YLineSearch;
-class YModePool;
 class YMode;
 class YModeCompletion;
 class YOptionValue;
@@ -189,15 +189,6 @@ public:
     YLineSearch* myLineSearch()
     {
         return mLineSearch;
-    }
-
-    /**
-     * Accessor to the list of availables modes
-     * @return a QMap of @ref YMode
-     */
-    YModePool* modePool() const
-    {
-        return mModePool;
     }
 
     /**
@@ -734,17 +725,26 @@ public:
     // ----------------- Mode
     //-------------------------------------------------------
     /**
-     * Get the text describing the mode
+     * Get the text describing the mode, adding the text recording when
+     * the view is recording.
      */
-    QString mode() const;
+    QString modeString() const;
 
     /**
-     * called when the mode is changed, so that gui can
-     * update information displayed to the user
+     * Accessor to the list of availables modes
+     * @return a QMap of @ref YMode
      */
-    virtual void guiModeChanged()
-    {}
-    ;
+    YModePool* modePool() const
+    {
+        return mModePool;
+    }
+
+    /** Return the current key mode of the view
+     */
+    YMode * currentMode() const 
+    {
+        return mModePool->current();
+    }
 
     //-------------------------------------------------------
     // ----------------- Modifier Keys

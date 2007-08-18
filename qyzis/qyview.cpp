@@ -247,7 +247,7 @@ void QYView::wheelEvent( QWheelEvent * e )
 void QYView::guiModeChanged (void)
 {
     m_editor->updateCursor();
-    l_mode->setText( mode() );
+    l_mode->setText( modeString() );
 }
 
 void QYView::guiSyncViewInfo()

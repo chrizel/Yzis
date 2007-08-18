@@ -24,10 +24,8 @@
 **/
 
 #include "mode_command.h"
+#include "mode_pool.h"
 #include "portability.h"
-
-#include <QRegExp>
-
 #include "debug.h"
 
 #include "action.h"
@@ -41,6 +39,9 @@
 #include "view.h"
 #include "viewcursor.h"
 
+#include <QRegExp>
+
+
 #define dbg()    yzDebug("YModeCommand")
 #define err()    yzError("YModeCommand")
 
@@ -51,6 +52,9 @@ YModeCommand::YModeCommand() : YMode()
     mType = ModeCommand;
     mString = _( "[ Awaiting Command ]" );
     commands.clear();
+    mIsEditMode = false;
+    mIsCmdLineMode = true;
+    mIsSelMode = false;
 }
 
 YModeCommand::~YModeCommand()

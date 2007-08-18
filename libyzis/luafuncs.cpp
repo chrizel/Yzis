@@ -791,7 +791,7 @@ int YLuaFuncs::mode(lua_State *L )
     if (!YLuaEngine::checkFunctionArguments(L, 0, 0, "mode", "")) return 0;
 
     YView *v = YSession::self()->currentView();
-    QString mode = v->mode();
+    QString mode = v->currentMode()->toString();
 
     lua_pushstring(L, mode.toUtf8());
     YASSERT_EQUALS( lua_gettop(L), 1 );

@@ -20,7 +20,7 @@
 **/
 
 #include "mode_visual.h"
-
+#include "mode_pool.h"
 #include "debug.h"
 
 #include "portability.h"
@@ -40,9 +40,11 @@ YModeVisual::YModeVisual() : YModeCommand()
 {
     mType = YMode::ModeVisual;
     mString = _( "[ Visual ]" );
-    mSelMode = true;
     mMapMode = MapVisual;
     commands.clear();
+    mIsEditMode = true;
+    mIsCmdLineMode = false;
+    mIsSelMode = true;
 }
 YModeVisual::~YModeVisual()
 {

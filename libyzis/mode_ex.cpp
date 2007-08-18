@@ -24,6 +24,8 @@
 
 /* Yzis */
 #include "mode_ex.h"
+#include "mode.h"
+#include "mode_pool.h"
 #include "debug.h"
 #include "buffer.h"
 #include "folding.h"
@@ -50,6 +52,7 @@ using namespace yzis;
 
 #define dbg() yzDebug("YModeEx")
 #define err() yzError("YModeEx")
+#define ftl() yzError("YModeEx")
 
 YExCommandArgs::YExCommandArgs( YView* _view, const QString& _input, const QString& _cmd, const QString& _arg, unsigned int _fromLine, unsigned int _toLine, bool _force )
 {
@@ -104,6 +107,9 @@ YModeEx::YModeEx() : YMode()
     mHistory = new YZHistory;
     mCompletePossibilities.clear();
     mCurrentCompletionProposal = 0;
+    mIsEditMode = false;
+    mIsCmdLineMode = true;
+    mIsSelMode = false;
 }
 
 YModeEx::~YModeEx()

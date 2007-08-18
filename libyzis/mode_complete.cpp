@@ -21,7 +21,7 @@
 
 #include "mode_complete.h"
 #include "mode_command.h"
-
+#include "mode_pool.h"
 #include "buffer.h"
 #include "debug.h"
 #include "session.h"
@@ -43,8 +43,10 @@ YModeCompletion::YModeCompletion() : YMode()
 {
     mType = ModeCompletion;
     mString = _("{ Completion }");
-    mEditMode = true;
     mMapMode = MapInsert;
+    mIsEditMode = true;
+    mIsCmdLineMode = false;
+    mIsSelMode = false;
 }
 YModeCompletion::~YModeCompletion()
 {}

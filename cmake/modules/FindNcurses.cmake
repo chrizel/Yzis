@@ -9,6 +9,7 @@ message(STATUS "Looking for libncurses(w)")
 
 #to be completed I guess ...
 FIND_PATH(NCURSES_INCLUDE_DIR cursesw.h ncurses.h
+   PATHS
    /usr/include/ncursesw/
    /usr/include/
    /usr/local/include/

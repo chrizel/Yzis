@@ -160,7 +160,7 @@ QString YBuffer::toString() const
     sViewlist.chop(1);
 
     s.sprintf("Buffer(this=%p filename='%s' views=%s modif=%d new=%d",
-              this, qp(fileName()), qp(sViewlist), d->isModified, d->isFileNew
+              this, qp(fileNameShort()), qp(sViewlist), d->isModified, d->isFileNew
              );
     return s;
 }

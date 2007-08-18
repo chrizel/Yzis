@@ -94,8 +94,7 @@ public:
     /**
      * Sets the current position in the current file
      * 
-     * @param x The x coordinate of the cursor position 
-     * @param y The y coordinate of the cursor position
+     * @param c The cursor position 
      */
 
     void setPosition( const YCursor c)

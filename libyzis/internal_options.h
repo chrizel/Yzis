@@ -57,9 +57,11 @@ public:
 
 
     /**
-     * Load settings from @param file.
-           *
-           * Do not complain if the file does not exist or is not writeable.
+     * Load settings from a file.
+     *
+     * Do not complain if the file does not exist or is not writeable.
+     *
+     * @param file A file from which the settings will be loaded.
      */
     void loadFrom(const QString& file);
 

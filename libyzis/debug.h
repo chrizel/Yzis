@@ -28,7 +28,7 @@
  * Some improvements have been made to support area, and more different kind
  * of debug output.
  *
- * See also \ref debugging .
+ * See also http://www.yzis.org/Debugging.
  */
 
 #ifndef YZ_DEBUG_H

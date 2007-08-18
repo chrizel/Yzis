@@ -40,9 +40,9 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 
 class NYSession;
 
-/** \file viewwidget.h
-  * @short Implementation of YView for the NCurses frontend.
-  */
+/**
+ * Implementation of YView for the NCurses frontend.
+ */
 class NYView : public YView
 {
 

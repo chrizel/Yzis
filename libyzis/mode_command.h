@@ -44,17 +44,17 @@ class YView;
 /** holds the arguments a command needs in order to execute */
 struct YCommandArgs
 {
-    //the command that is executed
+    /// the command that is executed
     const YCommand *cmd;
-    //the origin of inputs
+    /// the origin of inputs
     YView *view;
-    //the registers to operate upon
+    /// the registers to operate upon
     QList<QChar> regs;
-    //exec this number of times the command
+    /// exec this number of times the command
     int count;
-    //was the count gave by the user
+    /// was the count gave by the user
     bool usercount;
-    //the argument
+    /// the argument
     QString arg;
 
     YCommandArgs(const YCommand *_cmd, YView *v, const QList<QChar> &r, int c, bool user, QString a)
@@ -291,7 +291,7 @@ private:
  * mMotionMethod, which is also a pointer to a member function of
  * @ref YModeCommand, but which does nothing but calculate the new position
  * of the cursor. This way, other commands can easily "call" this motion by executing
- * the function whose pointer they can get with @ref motionMethod().
+ * the function whose pointer they can get with motionMethod().
  * When this motion is executed as a command, the function
  * YModeCommand::execMotion() is called which itself calls the function pointed
  * to by mMotionMethod.

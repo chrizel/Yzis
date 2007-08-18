@@ -1075,7 +1075,6 @@ SKIP_FUNCTION_MACROS   = YES
 TAGFILES               = ../apidoc/libyzis.doxytag=libyzis \
                          ../apidoc/nyzis.doxytag=nyzis \
                          ../apidoc/qyzis.doxytag=qyzis \
-                         ../apidoc/kyzis.doxytag=kyzis
 
 # When a file name is specified after GENERATE_TAGFILE, doxygen will create 
 # a tag file that is based on the input files it reads.

@@ -114,9 +114,9 @@ public:
     void insertLine(const QString &l, int line);
 
     /**
-     * Opens a new line at the indicated position
-     * @param col the position in line where to add a \n
-     * @param line is the line after which a new line is added
+     * Break a new line at the indicated position, moving rest of the line onto
+     * a line of its own.
+     * @param pos The position to add '\n' in.
      */
     void insertNewLine( QPoint pos);
 

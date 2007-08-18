@@ -43,11 +43,10 @@ public:
      * Constructor
      * 
      * @param filename The filename of the current file
-     * @param x The x coordinate cursor position in the current file
-     * @param y The y coordinate cursor position in the current file
+     * @param pos The cursor position in the current file
      */
 
-    YInfoJumpListRecord( const QString & filename, const QPoint);
+    YInfoJumpListRecord( const QString & filename, const QPoint pos);
 
     /**
      * Destructor
@@ -108,8 +107,7 @@ public:
     /**
      * Sets the cursor position to record
      * 
-     * @param x The x coordinate cursor position
-     * @param y The y coordinate cursor position
+     * @param pos The cursor position
      */
 
     void setPosition( const QPoint pos);

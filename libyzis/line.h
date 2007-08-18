@@ -98,10 +98,10 @@ private:
 
     QString mData;
 
-    //rendering settings for each char
+    /// Rendering settings for each char
     QVector<uchar> mAttributes;
     QVector<int> mAttributesList;
-    //contexts for HL
+    /// Contexts for HL
     QVector<short> m_ctx;
     /**
       Some bools packed

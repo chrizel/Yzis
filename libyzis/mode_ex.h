@@ -60,16 +60,17 @@ struct YExRangeArgs
  */
 struct YExCommandArgs
 {
-    // caller view
+    /// caller view
     YView* view;
-    // all input
+    /// all input
     QString input;
-    // command to execute
+    /// command to execute
     QString cmd;
-    // arguments
+    /// arguments
     QString arg;
-    // range
+    /// start of the range
     unsigned int fromLine;
+    /// end of the range
     unsigned int toLine;
     // !
     bool force;

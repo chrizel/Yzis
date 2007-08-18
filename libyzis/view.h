@@ -921,13 +921,13 @@ private:
 
     YzisAttribute *rHLAttributes;
 
-    // current line
+    ///  current line
     QString sCurLine;
-    // current line length
+    ///  current line length
     int sCurLineLength;
-    // current line max width ( tab is 8 spaces )
+    ///  current line max width ( tab is 8 spaces )
     int rCurLineLength;
-    // current line min width( tab is 1 space )
+    ///  current line min width( tab is 1 space )
     int rMinCurLineLength;
 
     void gotoy( int y );
@@ -955,18 +955,18 @@ private:
 
     YCursor beginChanges;
 
-    //cached value of tabstop option
+    /// cached value of tabstop option
     int tabstop;
     bool wrap;
     bool rightleft;
 
-    // tabstop * spaceWidth
+    /// tabstop * spaceWidth
     int tablength;
 
-    // tablength to wrap
+    /// tablength to wrap
     int areaModTab;
 
-    // if true, do not check for cursor visibility
+    /// if true, do not check for cursor visibility
     bool adjust;
 
     YSelectionPool * selectionPool;
@@ -976,12 +976,12 @@ private:
     YViewCursor mVisualCursor; // TODO : this one is only used by external class, not by this very one ?
 
 
-    //which regs to store macros in
+    /// which regs to store macros in
     QList<QChar> mRegs;
     int m_paintAutoCommit;
     YViewCursor keepCursor;
 
-    //the current attribute being used by the GUI
+    /// the current attribute being used by the GUI
     YzisAttribute * curAt;
     YModePool* mModePool;
 

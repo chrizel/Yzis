@@ -77,12 +77,13 @@ TestChanges = {} --class
 	sendkeys("dG")
 	assertEquals(bufferContent(), "")
 
-	assertPos(1,1)
-	insertline(1, "LINE 1")
-	insertline(2, "LINE 2")
-	goto(1,1)
-	sendkeys("dj")
-	assertEquals(bufferContent(), "")
+	-- removed - this is listed as an intended Vim incompatibility
+	--assertPos(1,1)
+	--insertline(1, "LINE 1")
+	--insertline(2, "LINE 2")
+	--goto(1,1)
+	--sendkeys("dj")
+	--assertEquals(bufferContent(), "")
     end
 
     function TestChanges:test_ctrl_a()

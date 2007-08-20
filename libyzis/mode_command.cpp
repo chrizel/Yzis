@@ -1439,7 +1439,7 @@ CmdState YModeCommand::searchForwards(const YCommandArgs &args)
 
 CmdState YModeCommand::del(const YCommandArgs &args)
 {
-    bool stopped;
+    bool stopped = false;
     YInterval area = interval( args, &stopped );
     
     if ( stopped )

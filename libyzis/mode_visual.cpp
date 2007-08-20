@@ -182,7 +182,8 @@ CmdState YModeVisual::commandInsert( const YCommandArgs& args )
 }
 CmdState YModeVisual::toLowerCase( const YCommandArgs& args )
 {
-    YInterval inter = interval( args );
+    bool stopped;
+    YInterval inter = interval( args, &stopped );
     QStringList t = args.view->myBuffer()->getText( inter );
     QStringList lt;
     for ( int i = 0; i < t.size(); i++ )
@@ -193,7 +194,8 @@ CmdState YModeVisual::toLowerCase( const YCommandArgs& args )
 }
 CmdState YModeVisual::toUpperCase( const YCommandArgs& args )
 {
-    YInterval inter = interval( args );
+    bool stopped;
+    YInterval inter = interval( args, &stopped );
     QStringList t = args.view->myBuffer()->getText( inter );
     QStringList lt;
     for ( int i = 0; i < t.size(); i++ )
@@ -204,7 +206,8 @@ CmdState YModeVisual::toUpperCase( const YCommandArgs& args )
 }
 CmdState YModeVisual::changeWholeLines(const YCommandArgs &args)
 {
-    YInterval i = interval(args);
+    bool stopped;
+    YInterval i = interval(args, &stopped);
     YCursor from( 0, i.fromPos().y());
     YCursor to( args.view->myBuffer()->getLineLength(i.toPos().y()) - 1, i.toPos().y());
 
@@ -215,7 +218,8 @@ CmdState YModeVisual::changeWholeLines(const YCommandArgs &args)
 }
 CmdState YModeVisual::deleteWholeLines(const YCommandArgs &args)
 {
-    YInterval i = interval(args);
+    bool stopped;
+    YInterval i = interval(args, bool *stopped);
     unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
     if ( type() == ModeVisualLine )
         --lines;
@@ -231,7 +235,8 @@ CmdState YModeVisual::yankWholeLines(const YCommandArgs &args)
 {
     YCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
 
-    YInterval i = interval(args);
+    bool stopped;
+    YInterval i = interval(args, &stopped);
     unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
 
     if (args.view->modePool()->currentType() == YMode::ModeVisualLine) {
@@ -251,7 +256,8 @@ CmdState YModeVisual::yankWholeLines(const YCommandArgs &args)
 }
 CmdState YModeVisual::yank( const YCommandArgs& args )
 {
-    YCursor topLeft = interval( args ).fromPos();
+    bool stopped;
+    YCursor topLeft = interval( args, &stopped ).fromPos();
     YModeCommand::yank( args );
     args.view->gotoxyAndStick( topLeft.x(), topLeft.y() );
     return CmdOk;

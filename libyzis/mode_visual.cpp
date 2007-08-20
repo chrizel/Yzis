@@ -219,7 +219,7 @@ CmdState YModeVisual::changeWholeLines(const YCommandArgs &args)
 CmdState YModeVisual::deleteWholeLines(const YCommandArgs &args)
 {
     bool stopped;
-    YInterval i = interval(args, bool *stopped);
+    YInterval i = interval(args, &stopped);
     unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
     if ( type() == ModeVisualLine )
         --lines;

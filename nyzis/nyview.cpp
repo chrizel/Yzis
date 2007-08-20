@@ -316,10 +316,17 @@ void NYView::guiSyncViewInfo( void )
     // update infobar
     myfmt = ( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if
     // it's rather unlikely..
-    wprintw( infobar, myfmt,
-             ( myBuffer()->fileIsNew() ) ? ( _( "[No File]" ).toLocal8Bit().constData() ) : ( myBuffer()->fileName().toLocal8Bit().constData() ),
-             ( myBuffer()->fileIsModified() ) ? " [+]" : ""
-           );
+    if ( infoMessage.isEmpty() ) {
+        wprintw( infobar, myfmt,
+                 myBuffer()->fileName().toLocal8Bit().constData(), 
+                 ( myBuffer()->fileIsModified() ) ? " [+]" : ""
+               );
+    } else {
+        wprintw( infobar, myfmt,
+                 infoMessage.toLocal8Bit().constData(),
+                 ( myBuffer()->fileIsModified() ) ? " [+]" : ""
+               );
+    }
     // prevent  gcc to use string
     mvwprintw( infobar, 0, getColumnsVisible() - 20, getLineStatusString().toUtf8().constData() );
     wrefresh(infobar);
@@ -329,14 +336,8 @@ void NYView::guiSyncViewInfo( void )
 
 void NYView::guiDisplayInfo( const QString& info )
 {
-    dbg() << "NYView::guiDisplayInfo message is : " << info << endl;
-    werase(statusbar);
-    waddstr( statusbar, info.toLocal8Bit().constData() );
-    wrefresh(statusbar);
-    statusbarHasCommand = false;
-    restoreFocus();
+    infoMessage = info;
 }
-
 
 void NYView::initialiseAttributesMap()
 {

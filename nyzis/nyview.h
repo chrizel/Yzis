@@ -155,6 +155,7 @@ private:
 
     e_focusable m_focus;
 
+    QString infoMessage;
 };
 
 #endif // NYZ_VIEW_H

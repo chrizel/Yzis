@@ -214,6 +214,8 @@ CmdState YModeCommand::execCommand(YView *view, const QString& inputs)
     int i = 0;
     QList<QChar> regs;
 
+    view->guiDisplayInfo( "" );
+
     // read in the register operations and the counts
     while (i < inputs.length()) {
         if (inputs.at( i ).digitValue() > 0) {

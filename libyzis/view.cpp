@@ -1885,11 +1885,19 @@ void YView::guiPaintEvent( const YSelection& drawMap )
             m_drawBuffer.newline( curY - shiftY );
         }
         while ( drawNextCol() ) {
-            if ( !drawEntireLine ) { /* we have to care of starting/stoping to draw on that line */
-                if ( !drawIt && curY == fY ) { // start drawing ?
+            if ( !drawEntireLine ) { /* we have to care of starting/stopping to draw on that line */
+                if ( !drawIt && curY == fY ) { // start drawing 
                     drawIt = ( curX == fX );
+                    if ( curX < fX && curX + drawLength() >= fX ) { // Next char will overlap beginning of redraw
+                        m_drawBuffer.replace( YInterval(YCursor(curX, curY), YCursor(fX-1, curY)) );
+                        drawIt = true;
+                    }
                     clearToEOL = drawIt && curY != tY;
-                } else if ( drawIt && curY == tY ) { // stop drawing ?
+                }
+                if ( drawIt && curY == tY ) { // stop drawing ?
+                    if ( curX > tX+1 ) // Char just added actually overlaps existing cells
+                        m_drawBuffer.replace( YInterval(YCursor(curX, curY),
+                                                        YCursor(curX + (curX - tX - 2), curY)) );
                     drawIt = !( curX > tX );
                     if ( ! drawIt ) {
                         ++mapIdx;

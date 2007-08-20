@@ -48,23 +48,23 @@ public:
     virtual void toClipboard( YView* mView );
 
 
-    void commandInsert( const YCommandArgs& args );
-    void commandAppend( const YCommandArgs& args );
-    void gotoExMode( const YCommandArgs& args );
-    void movetoExMode( const YCommandArgs& args );
-    void movetoInsertMode( const YCommandArgs& args );
-    void escape( const YCommandArgs& args );
-    void changeWholeLines(const YCommandArgs &args);
-    void deleteWholeLines(const YCommandArgs &args);
-    void yankWholeLines(const YCommandArgs &args);
-    void yank(const YCommandArgs &args);
-    void toUpperCase( const YCommandArgs& args );
-    void toLowerCase( const YCommandArgs& args );
-    void translateToVisual( const YCommandArgs& args );
-    void translateToVisualLine( const YCommandArgs& args );
-    void translateToVisualBlock( const YCommandArgs& args );
+    CmdState commandInsert( const YCommandArgs& args );
+    CmdState commandAppend( const YCommandArgs& args );
+    CmdState gotoExMode( const YCommandArgs& args );
+    CmdState movetoExMode( const YCommandArgs& args );
+    CmdState movetoInsertMode( const YCommandArgs& args );
+    CmdState escape( const YCommandArgs& args );
+    CmdState changeWholeLines(const YCommandArgs &args);
+    CmdState deleteWholeLines(const YCommandArgs &args);
+    CmdState yankWholeLines(const YCommandArgs &args);
+    CmdState yank(const YCommandArgs &args);
+    CmdState toUpperCase( const YCommandArgs& args );
+    CmdState toLowerCase( const YCommandArgs& args );
+    CmdState translateToVisual( const YCommandArgs& args );
+    CmdState translateToVisualLine( const YCommandArgs& args );
+    CmdState translateToVisualBlock( const YCommandArgs& args );
 
-    virtual YInterval interval(const YCommandArgs &args);
+    virtual YInterval interval(const YCommandArgs &args, bool *stopped = 0);
 
 protected:
     virtual YInterval buildBufferInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );

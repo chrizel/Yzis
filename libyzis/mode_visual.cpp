@@ -166,19 +166,21 @@ void YModeVisual::initVisualCommandPool()
     else
         commands.append( new YCommand("<CTRL>v", (PoolMethod) &YModeVisual::translateToVisualBlock) );
 }
-void YModeVisual::commandAppend( const YCommandArgs& args )
+CmdState YModeVisual::commandAppend( const YCommandArgs& args )
 {
     YCursor pos = qMax( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
     args.view->modePool()->change( ModeInsert );
     args.view->gotoxy( pos.x(), pos.y() );
+    return CmdOk;
 }
-void YModeVisual::commandInsert( const YCommandArgs& args )
+CmdState YModeVisual::commandInsert( const YCommandArgs& args )
 {
     YCursor pos = qMin( args.view->visualCursor()->buffer(), args.view->getBufferCursor() );
     args.view->modePool()->change( ModeInsert );
     args.view->gotoxy( pos.x(), pos.y() );
+    return CmdOk;
 }
-void YModeVisual::toLowerCase( const YCommandArgs& args )
+CmdState YModeVisual::toLowerCase( const YCommandArgs& args )
 {
     YInterval inter = interval( args );
     QStringList t = args.view->myBuffer()->getText( inter );
@@ -187,8 +189,9 @@ void YModeVisual::toLowerCase( const YCommandArgs& args )
         lt << t[i].toLower();
     args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
     args.view->commitNextUndo();
+    return CmdOk;
 }
-void YModeVisual::toUpperCase( const YCommandArgs& args )
+CmdState YModeVisual::toUpperCase( const YCommandArgs& args )
 {
     YInterval inter = interval( args );
     QStringList t = args.view->myBuffer()->getText( inter );
@@ -197,8 +200,9 @@ void YModeVisual::toUpperCase( const YCommandArgs& args )
         lt << t[i].toUpper();
     args.view->myBuffer()->action()->replaceArea( args.view, inter, lt );
     args.view->commitNextUndo();
+    return CmdOk;
 }
-void YModeVisual::changeWholeLines(const YCommandArgs &args)
+CmdState YModeVisual::changeWholeLines(const YCommandArgs &args)
 {
     YInterval i = interval(args);
     YCursor from( 0, i.fromPos().y());
@@ -207,8 +211,9 @@ void YModeVisual::changeWholeLines(const YCommandArgs &args)
     // delete selected lines and enter insert mode
     args.view->myBuffer()->action()->deleteArea( args.view, from, to, args.regs);
     args.view->modePool()->change( ModeInsert );
+    return CmdOk;
 }
-void YModeVisual::deleteWholeLines(const YCommandArgs &args)
+CmdState YModeVisual::deleteWholeLines(const YCommandArgs &args)
 {
     YInterval i = interval(args);
     unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
@@ -220,8 +225,9 @@ void YModeVisual::deleteWholeLines(const YCommandArgs &args)
     args.view->commitNextUndo();
 
     args.view->modePool()->pop();
+    return CmdOk;
 }
-void YModeVisual::yankWholeLines(const YCommandArgs &args)
+CmdState YModeVisual::yankWholeLines(const YCommandArgs &args)
 {
     YCursor topLeft = args.view->getSelectionPool()->visual()->bufferMap()[0].fromPos();
 
@@ -241,45 +247,55 @@ void YModeVisual::yankWholeLines(const YCommandArgs &args)
     // move cursor to top left corner of selection (yes, this is correct behaviour :)
     args.view->gotoxy( topLeft.x(), topLeft.y(), true );
     args.view->updateStickyCol( );
+    return CmdOk;
 }
-void YModeVisual::yank( const YCommandArgs& args )
+CmdState YModeVisual::yank( const YCommandArgs& args )
 {
     YCursor topLeft = interval( args ).fromPos();
     YModeCommand::yank( args );
     args.view->gotoxyAndStick( topLeft.x(), topLeft.y() );
+    return CmdOk;
 }
-void YModeVisual::translateToVisualLine( const YCommandArgs& args )
+CmdState YModeVisual::translateToVisualLine( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeVisualLine, false ); // just translate (don't leave current mode)
+    return CmdOk;
 }
-void YModeVisual::translateToVisual( const YCommandArgs& args )
+CmdState YModeVisual::translateToVisual( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeVisual, false );
+    return CmdOk;
 }
-void YModeVisual::translateToVisualBlock( const YCommandArgs& args )
+CmdState YModeVisual::translateToVisualBlock( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeVisualBlock, false );
+    return CmdOk;
 }
-void YModeVisual::escape( const YCommandArgs& args )
+CmdState YModeVisual::escape( const YCommandArgs& args )
 {
     args.view->modePool()->pop();
+    return CmdOk;
 }
-void YModeVisual::gotoExMode( const YCommandArgs& args )
+CmdState YModeVisual::gotoExMode( const YCommandArgs& args )
 {
     args.view->modePool()->push( ModeEx );
     args.view->guiSetCommandLineText( "'<,'>" );
+    return CmdOk;
 }
-void YModeVisual::movetoExMode( const YCommandArgs& args )
+CmdState YModeVisual::movetoExMode( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeEx );
+    return CmdOk;
 }
-void YModeVisual::movetoInsertMode( const YCommandArgs& args )
+CmdState YModeVisual::movetoInsertMode( const YCommandArgs& args )
 {
     args.view->modePool()->change( ModeInsert );
+    return CmdOk;
 }
 
-YInterval YModeVisual::interval(const YCommandArgs& args )
+YInterval YModeVisual::interval(const YCommandArgs& args, bool *stopped )
 {
+    *stopped = false;
     return args.view->getSelectionPool()->visual()->bufferMap()[0];
 }
 

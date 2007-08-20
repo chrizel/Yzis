@@ -894,9 +894,16 @@ bool YBuffer::substitute( const QString& _what, const QString& with, bool wholel
 				rx.capturedTexts()[0], unique_pos);
 		d->undoBuffer->addBufferOperation(YBufferOperation::OpAddText,
 				 with, unique_pos);
-        l = l.replace( pos, rx.matchedLength(), with );
+		//in order to apply captures , extract the match first, apply the regexp+captures, then replace full strings in the real
+		//text line ;) see #167
+		QString rep = l.mid( pos, rx.matchedLength());
+		int savedlen = rx.matchedLength();
+		QString result = rep.replace ( rx, with ); //this should apply captures correctly
+		//replace it in the real string
+		l = l.replace ( pos, result.length(), result);
+        //l = l.replace( pos, rx.matchedLength(), with );
         changed = true;
-        offset = pos + with.length();
+        offset = pos + savedlen;
         if ( !wholeline ) break;
     }
     if ( changed ) {

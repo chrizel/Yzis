@@ -1384,7 +1384,7 @@ CmdState YModeCommand::joinLineWithoutSpace(const YCommandArgs &args)
 CmdState YModeCommand::pasteAfter(const YCommandArgs &args)
 {
     for ( int i = 0 ; i < args.count ; i++ )
-        args.view->pasteContent( args.regs[ 0 ], true );
+		args.view->myBuffer()->action()->pasteContent( args.view, args.regs[ 0 ], true);
     args.view->commitNextUndo();
     return CmdOk;
 }
@@ -1392,7 +1392,7 @@ CmdState YModeCommand::pasteAfter(const YCommandArgs &args)
 CmdState YModeCommand::pasteBefore(const YCommandArgs &args)
 {
     for ( int i = 0 ; i < args.count ; i++ )
-        args.view->pasteContent( args.regs[ 0 ], false );
+		args.view->myBuffer()->action()->pasteContent( args.view, args.regs[ 0 ], false);
     args.view->commitNextUndo();
     return CmdOk;
 }

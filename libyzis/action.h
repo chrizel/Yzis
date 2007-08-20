@@ -111,6 +111,11 @@ public:
     YCursor match( YView* pView, const YCursor cursor, bool *found ) const;
     YCursor search( YBuffer* pBuffer, const QString& what, const YCursor mBegin, const YCursor mEnd, int *matchlength, bool *found ) const;
 
+    /**
+     * Pastes the content of default or given register
+     */
+    void pasteContent( YView *pView, QChar registr, bool after = true );
+
 private:
     YBuffer* mBuffer;
     YCursor* mPos;

@@ -108,6 +108,9 @@ struct YBuffer::Private
 
     // buffer state
     BufferState state;
+
+	// Pending replay (on load only)
+	bool mPendingReplay;
 };
 
 YBuffer::YBuffer()
@@ -130,10 +133,11 @@ YBuffer::YBuffer()
     d->docMarks = NULL;
     d->swapFile = NULL;
     d->text = NULL;
+	d->mPendingReplay = false;
 
     // Default to an BufferInactive buffer
     // other actions will make it BufferActive later
-    setState( BufferInactive );
+    //setState( BufferInactive );
 
     dbg() << "YBuffer() : " << d->path << endl;
 }
@@ -177,13 +181,13 @@ QString YBuffer::toString() const
 static void viewsInit( YBuffer *buffer, QPoint pos )
 {
     foreach( YView *view, buffer->views() )
-    view->initChanges(pos);
+	view->initChanges(pos);
 }
 
 static void viewsApply( YBuffer *buffer, int y )
 {
     foreach( YView *view, buffer->views() )
-    view->applyChanges(y);
+	view->applyChanges(y);
 }
 
 void YBuffer::insertChar(QPoint pos, const QString& c )
@@ -628,9 +632,12 @@ void YBuffer::load(const QString& file)
         struct stat buf;
         int i = stat( d->path.toLocal8Bit(), &buf );
         if ( i != -1 && S_ISREG( buf.st_mode ) && CHECK_GETEUID( buf.st_uid ) ) {
-            if ( YSession::self()->guiPromptYesNo(_("Recover"), _("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
-                if ( d->swapFile->recover() )
-                    setChanged( true );
+			YView *view = YSession::self()->findViewByBuffer( this );
+			if ( !view )
+				d->mPendingReplay = true;
+			else 
+			{
+				checkRecover();
             }
         }
     }
@@ -691,7 +698,7 @@ bool YBuffer::save()
     }
     d->isHLUpdating = false; //override so that it does not parse all lines
     foreach( YView *view, d->views )
-    view->guiDisplayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
+		view->guiDisplayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
     setChanged( false );
     filenameChanged();
     //clear swap memory
@@ -824,7 +831,7 @@ void YBuffer::setHighLight( int mode, bool warnGUI )
         QString resource = resourceMgr()->findResource( IndentResource, hlName );
         if (! resource.isEmpty()) {
             dbg() << "setHighLight(): found indent file" << resource << endl;
-            YLuaEngine::self()->source(hlName);
+            YLuaEngine::self()->source(resource);
         }
     }
 }
@@ -1331,3 +1338,13 @@ YCursor YBuffer::end() const
     return YCursor( getLineLength( lineCount() - 1 ), lineCount() );
 }
 
+bool YBuffer::checkRecover() {
+	//check if we have a pending replay
+	if ( d->mPendingReplay && YSession::self()->guiPromptYesNo(_("Recover"), _("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
+		if ( d->swapFile->recover() )
+			setChanged( true );
+		d->mPendingReplay = false;
+		return true;
+	}
+	return false;
+}

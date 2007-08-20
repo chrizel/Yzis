@@ -555,11 +555,6 @@ public:
     QString append ( );
 
     /**
-     * Pastes the content of default or given register
-     */
-    void pasteContent( QChar registr, bool after = true );
-
-    /**
      * Reindent given line ( cindent )
      */
     void reindent(const QPoint pos);

@@ -44,14 +44,14 @@ static void configureViews(YBuffer *buffer)
 {
     dbg() << "configureViews(" << buffer->toString() << ")" << endl;
     foreach( YView *view, buffer->views() )
-    view->setPaintAutoCommit( false );
+		view->setPaintAutoCommit( false );
 }
 
 static void commitViewsChanges(YBuffer *buffer)
 {
     dbg() << "commitViewsChanges(" << buffer->toString() << ")" << endl;
     foreach( YView *view, buffer->views() )
-    view->commitPaintEvent();
+		view->commitPaintEvent();
 }
 
 void YZAction::insertChar( YView* pView, const YCursor pos, const QString& text )
@@ -488,3 +488,50 @@ YCursor YZAction::search( YBuffer* pBuffer, const QString& _what, const YCursor 
     return YCursor(0, 0); //fake result
 }
 
+void YZAction::pasteContent( YView *view, QChar registr, bool after )
+{
+    QStringList list = YSession::self()->getRegister( registr );
+    if ( list.isEmpty() ) return ;
+
+    YCursor pos( view->viewCursor().buffer() );
+    int i = 0;
+    bool copyWholeLinesOnly = list[ 0 ].isNull();
+    QString copy = mBuffer->textline( pos.y() );
+    if ( after || ! copyWholeLinesOnly ) { //paste after current char
+        int start;
+        if ( after )
+            start = copy.length() > 0 ? pos.x() + 1 : 0;
+        else
+            start = pos.x();
+        i = 0;
+        if ( ! copyWholeLinesOnly ) {
+            copy = copy.mid( start );
+            deleteChar( view, start, pos.y(), copy.length() );
+            insertChar( view, start, pos.y(), list[ 0 ] + ( list.size() == 1 ? copy : "" ) );
+            view->gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.y() );
+        }
+        i++;
+        while ( i < list.size() - 1 ) {
+			mBuffer->insertLine( list[ i ], pos.y() + i );
+            i++;
+        }
+        if ( i < list.size() && ! copyWholeLinesOnly ) {
+	    configureViews(mBuffer);
+	    mBuffer->insertLine( (list[ i ].isNull() ? "" : list[ i ] ) + copy, pos.y() + i );
+	    commitViewsChanges(mBuffer);
+            view->gotoxy( list[ i ].length(), pos.y() + i );
+        } else if ( copyWholeLinesOnly ) {
+            view->gotoxy( 0, pos.y() + 1 );
+            view->moveToFirstNonBlankOfLine();
+        }
+
+    } else if ( !after ) { //paste whole lines before current char
+        configureViews(mBuffer);
+        for ( i = 1; i < list.size() - 1; i++ )
+		mBuffer->insertLine( list[ i ], pos.y() + i - 1 );
+   	commitViewsChanges(mBuffer);
+
+        view->gotoxy( pos );
+    }
+    view->updateStickyCol();
+}

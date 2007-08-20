@@ -125,7 +125,7 @@ QStringList YResourceMgr::resourceDirList( ResourceType type )
     QString subdir;
     switch ( type ) {
     case IndentResource:
-        subdir = "/indent/";
+        subdir = "/scripts/indent/";
         break;
     case SyntaxHlResource:
         subdir = "/syntax/";

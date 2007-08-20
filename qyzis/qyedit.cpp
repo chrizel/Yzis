@@ -27,6 +27,7 @@
 /* Yzis */
 #include "yzis.h"
 #include "registers.h"
+#include "buffer.h"
 
 /* Std */
 #include <math.h>
@@ -255,7 +256,8 @@ void QYEdit::mousePressEvent ( QMouseEvent * e )
             if ( mView->modePool()->current()->isEditMode() ) {
                 QChar reg = '\"';
                 YSession::self()->setRegister( reg, text.split("\n") );
-                mView->pasteContent( reg, false );
+				mView->myBuffer()->action()->pasteContent( mView, reg, false);
+                //mView->pasteContent( reg, false );
                 mView->moveRight();
             }
         }

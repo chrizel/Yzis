@@ -443,6 +443,11 @@ public:
 
     void saveYzisInfo( YView* view );
 
+	/*
+	 * Checks if a file needs a recovery
+	 */
+	bool checkRecover();
+
     //-------------------------------------------------------
     // ------------ Static
     //-------------------------------------------------------

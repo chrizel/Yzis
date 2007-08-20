@@ -900,50 +900,6 @@ void YView::commitUndoItem()
     mBuffer->undoBuffer()->commitUndoItem(mainCursor.bufferX(), mainCursor.bufferY());
 }
 
-void YView::pasteContent( QChar registr, bool after )
-{
-    QStringList list = YSession::self()->getRegister( registr );
-    if ( list.isEmpty() ) return ;
-
-    YCursor pos( mainCursor.buffer() );
-    int i = 0;
-    bool copyWholeLinesOnly = list[ 0 ].isNull();
-    QString copy = mBuffer->textline( pos.y() );
-    if ( after || ! copyWholeLinesOnly ) { //paste after current char
-        int start;
-        if ( after )
-            start = copy.length() > 0 ? pos.x() + 1 : 0;
-        else
-            start = pos.x();
-        i = 0;
-        if ( ! copyWholeLinesOnly ) {
-            copy = copy.mid( start );
-            mBuffer->action()->deleteChar( this, start, pos.y(), copy.length() );
-            mBuffer->action()->insertChar( this, start, pos.y(), list[ 0 ] + ( list.size() == 1 ? copy : "" ) );
-            gotoxy( start + list[ 0 ].length() - ( list[ 0 ].length() > 0 ? 1 : 0 ), pos.y() );
-        }
-        i++;
-        while ( i < list.size() - 1 ) {
-            mBuffer->action()->insertLine( this, pos.y() + i, list[ i ] );
-            i++;
-        }
-        if ( i < list.size() && ! copyWholeLinesOnly ) {
-            mBuffer->action()->insertLine( this, pos.y() + i, ( list[ i ].isNull() ? "" : list[ i ] ) + copy );
-            gotoxy( list[ i ].length(), pos.y() + i );
-        } else if ( copyWholeLinesOnly ) {
-            gotoxy( 0, pos.y() + 1 );
-            moveToFirstNonBlankOfLine();
-        }
-
-    } else if ( !after ) { //paste whole lines before current char
-        for ( i = 1; i < list.size() - 1; i++ )
-            mBuffer->action()->insertLine( this, pos.y() + i - 1, list[ i ] );
-
-        gotoxy( pos );
-    }
-    updateStickyCol( &mainCursor );
-}
-
 /*
  * Drawing engine
  */

@@ -394,6 +394,7 @@ YView *YSession::createBufferAndView( const QString& path )
         view = findViewByBuffer(buffer);
     }
     setCurrentView( view );
+	buffer->checkRecover();
 
     view->applyStartPosition( YBuffer::getStartPosition(path) );
 

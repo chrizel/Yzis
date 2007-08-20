@@ -44,13 +44,20 @@ extern "C"
  * the QRegexp pointer, calls the appropriate method on QRegexp and return the
  * result.
  *
+ * The function registerLuaRegexp() registers all the other function to the
+ * lua engine. All the functions but this one are called directly by Lua.
  */
 class YLuaRegexp
 {
 
 public:
 
-    /** \brief Register the regexp functions to lua */
+    /** \brief Register the regexp functions to lua
+     *
+     * This functions register all the other methods listed in this
+     * class as function callable from lua. This function is called by
+     * YZLuaEngine::init() upon initialisation.
+     */
     static void registerLuaRegexp(lua_State *L);
 
     /** \brief Create a regexp (based on QRegexp)

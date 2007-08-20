@@ -100,7 +100,7 @@ public:
       *
      * <i>This method is implemented in @ref YSession.</i>
      */
-    virtual void sendMultipleKeys( YView * view, const QString& keys ) = 0;
+    virtual bool sendMultipleKeys( YView * view, const QString& keys ) = 0;
 
 
     //-------------------------------------------------------

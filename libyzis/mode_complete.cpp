@@ -58,6 +58,7 @@ void YModeCompletion::leave( YView* /*view*/ )
 
 bool YModeCompletion::initCompletion( YView* view, bool forward )
 {
+    bool stopped;
     YBuffer* buffer = view->myBuffer();
     YMotionArgs arg(view, 1);
     YCursor cur = view->getBufferCursor();
@@ -70,7 +71,7 @@ bool YModeCompletion::initCompletion( YView* view, bool forward )
         return false;
     }
 
-    mCompletionStart = YSession::self()->getCommandPool()->moveWordBackward( arg );
+    mCompletionStart = YSession::self()->getCommandPool()->moveWordBackward( arg, &stopped );
     YCursor stop( cur.x() - 1, cur.y() );
     dbg() << "Start : " << mCompletionStart << ", End:" << stop << endl;
     QStringList list = buffer->getText(mCompletionStart, stop);

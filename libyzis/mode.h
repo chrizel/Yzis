@@ -167,4 +167,3 @@ typedef QMap<ModeType, YMode*> YModeMap;
 typedef QList<YMode*> YModeStack;
 
 #endif // YZ_MODE_H
-

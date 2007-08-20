@@ -77,7 +77,7 @@ struct YCommandArgs
 };
 
 class YModeCommand;
-typedef void (YModeCommand::*PoolMethod) (const YCommandArgs&);
+typedef CmdState (YModeCommand::*PoolMethod) (const YCommandArgs&);
 
 enum CmdArg {
     ArgNone,
@@ -152,7 +152,7 @@ public:
     QString cmd;
 };
 
-typedef YCursor (YModeCommand::*MotionMethod) (const YMotionArgs&);
+typedef YCursor (YModeCommand::*MotionMethod) (const YMotionArgs&, bool *);
 
 /**
  * Command mode (The default mode of Yzis)
@@ -179,112 +179,112 @@ public:
 
     /** Parses the string inputs, which must be a valid motion + argument,
      * and executes the corresponding motion function. */
-    YCursor move(YView *view, const QString &inputs, int count, bool usercount );
+    YCursor move(YView *view, const QString &inputs, int count, bool usercount, bool *stopped );
 
     // methods implementing motions
-    YCursor moveLeft(const YMotionArgs &args);
-    YCursor moveRight(const YMotionArgs &args);
-    YCursor moveLeftWrap(const YMotionArgs &args);
-    YCursor moveRightWrap(const YMotionArgs &args);
-    YCursor moveDown(const YMotionArgs &args);
-    YCursor moveUp(const YMotionArgs &args);
-    YCursor moveWordForward(const YMotionArgs &args);
-    YCursor moveSWordForward(const YMotionArgs &args);
-    YCursor moveWordBackward(const YMotionArgs &args);
-    YCursor moveSWordBackward(const YMotionArgs &args);
-    YCursor gotoSOL(const YMotionArgs &args);
-    YCursor gotoEOL(const YMotionArgs &args);
-    YCursor gotoStartOfDocument(const YMotionArgs &args);
-    YCursor gotoEndOfDocument(const YMotionArgs &args);
+    YCursor moveLeft(const YMotionArgs &args, bool *stopped);
+    YCursor moveRight(const YMotionArgs &args, bool *stopped);
+    YCursor moveLeftWrap(const YMotionArgs &args, bool *stopped);
+    YCursor moveRightWrap(const YMotionArgs &args, bool *stopped);
+    YCursor moveDown(const YMotionArgs &args, bool *stopped);
+    YCursor moveUp(const YMotionArgs &args, bool *stopped);
+    YCursor moveWordForward(const YMotionArgs &args, bool *stopped);
+    YCursor moveSWordForward(const YMotionArgs &args, bool *stopped);
+    YCursor moveWordBackward(const YMotionArgs &args, bool *stopped);
+    YCursor moveSWordBackward(const YMotionArgs &args, bool *stopped);
+    YCursor gotoSOL(const YMotionArgs &args, bool *stopped);
+    YCursor gotoEOL(const YMotionArgs &args, bool *stopped);
+    YCursor gotoStartOfDocument(const YMotionArgs &args, bool *stopped);
+    YCursor gotoEndOfDocument(const YMotionArgs &args, bool *stopped);
     //YCursor find(const YMotionArgs &args);
-    YCursor findNext(const YMotionArgs &args);
-    YCursor findBeforeNext(const YMotionArgs &args);
-    YCursor findPrevious(const YMotionArgs &args);
-    YCursor findAfterPrevious(const YMotionArgs &args);
-    YCursor repeatFind(const YMotionArgs &args);
-    YCursor matchPair(const YMotionArgs &args);
-    YCursor firstNonBlank(const YMotionArgs &args);
-    YCursor gotoMark(const YMotionArgs &args);
-    YCursor firstNonBlankNextLine(const YMotionArgs &args);
-    YCursor gotoLine(const YMotionArgs &args);
-    YCursor searchWord(const YMotionArgs &args);
-    YCursor searchNext(const YMotionArgs &args);
-    YCursor searchPrev(const YMotionArgs &args);
-    YCursor nextEmptyLine(const YMotionArgs &args);
-    YCursor previousEmptyLine(const YMotionArgs &args);
+    YCursor findNext(const YMotionArgs &args, bool *stopped);
+    YCursor findBeforeNext(const YMotionArgs &args, bool *stopped);
+    YCursor findPrevious(const YMotionArgs &args, bool *stopped);
+    YCursor findAfterPrevious(const YMotionArgs &args, bool *stopped);
+    YCursor repeatFind(const YMotionArgs &args, bool *stopped);
+    YCursor matchPair(const YMotionArgs &args, bool *stopped);
+    YCursor firstNonBlank(const YMotionArgs &args, bool *stopped);
+    YCursor gotoMark(const YMotionArgs &args, bool *stopped);
+    YCursor firstNonBlankNextLine(const YMotionArgs &args, bool *stopped);
+    YCursor gotoLine(const YMotionArgs &args, bool *stopped);
+    YCursor searchWord(const YMotionArgs &args, bool *stopped);
+    YCursor searchNext(const YMotionArgs &args, bool *stopped);
+    YCursor searchPrev(const YMotionArgs &args, bool *stopped);
+    YCursor nextEmptyLine(const YMotionArgs &args, bool *stopped);
+    YCursor previousEmptyLine(const YMotionArgs &args, bool *stopped);
 
     // methods implementing commands
-    void execMotion(const YCommandArgs &args);
-    void moveWordForward(const YCommandArgs &args);
-    void appendAtEOL(const YCommandArgs &args);
-    void append(const YCommandArgs &args);
-    void substitute(const YCommandArgs &args);
-    void changeLine(const YCommandArgs &args);
-    void changeToEOL(const YCommandArgs &args);
-    void deleteLine(const YCommandArgs &args);
-    void deleteToEndOfLastLine(const YCommandArgs &args);
-    void deleteToEOL(const YCommandArgs &args);
-    void gotoExMode(const YCommandArgs &args);
-    void gotoLineAtTop(const YCommandArgs &args);
-    void gotoLineAtCenter(const YCommandArgs &args);
-    void gotoLineAtBottom(const YCommandArgs &args);
-    void insertAtSOL(const YCommandArgs &args);
-    void insertAtCol1(const YCommandArgs &args);
-    void gotoInsertMode(const YCommandArgs &args);
-    void gotoCommandMode(const YCommandArgs &args);
-    void gotoReplaceMode(const YCommandArgs &args);
-    void gotoVisualLineMode(const YCommandArgs &args);
-    void gotoVisualBlockMode(const YCommandArgs &args);
-    void gotoVisualMode(const YCommandArgs &args);
-    void insertLineAfter(const YCommandArgs &args);
-    void insertLineBefore(const YCommandArgs &args);
-    void joinLine(const YCommandArgs &args);
-    void joinLineWithoutSpace(const YCommandArgs& args);
-    void pasteAfter(const YCommandArgs &args);
-    void pasteBefore(const YCommandArgs &args);
-    void yankLine(const YCommandArgs &args);
-    void yankToEOL(const YCommandArgs &args);
-    void closeWithoutSaving(const YCommandArgs &args);
-    void saveAndClose(const YCommandArgs &args);
-    void searchBackwards(const YCommandArgs &args);
-    void searchForwards(const YCommandArgs &args);
-    void change(const YCommandArgs &args);
-    void del(const YCommandArgs &args);
-    void yank(const YCommandArgs &args);
-    void mark(const YCommandArgs &args);
-    void undo(const YCommandArgs &args);
-    void redo(const YCommandArgs &args);
-    void macro(const YCommandArgs &args);
-    void replayMacro(const YCommandArgs &args);
-    void deleteChar(const YCommandArgs &args);
-    void deleteCharBackwards(const YCommandArgs &args);
-    void redisplay(const YCommandArgs &args);
-    void changeCase(const YCommandArgs &args);
-    void lineToUpperCase(const YCommandArgs &args);
-    void lineToLowerCase(const YCommandArgs &args);
-    void replace(const YCommandArgs &args);
-    void abort(const YCommandArgs &args);
-    void delkey(const YCommandArgs &args);
-    void indent( const YCommandArgs& args );
-    void scrollPageUp( const YCommandArgs &args );
-    void scrollPageDown( const YCommandArgs &args );
-    void scrollLineUp( const YCommandArgs &args );
-    void scrollLineDown( const YCommandArgs &args );
-    void redoLastCommand( const YCommandArgs & args );
-    void tagNext( const YCommandArgs & args );
-    void tagPrev( const YCommandArgs & args );
-    void undoJump( const YCommandArgs & args );
-    void incrementNumber( const YCommandArgs& args );
-    void decrementNumber( const YCommandArgs& args );
+    CmdState execMotion(const YCommandArgs &args);
+    CmdState moveWordForward(const YCommandArgs &args);
+    CmdState appendAtEOL(const YCommandArgs &args);
+    CmdState append(const YCommandArgs &args);
+    CmdState substitute(const YCommandArgs &args);
+    CmdState changeLine(const YCommandArgs &args);
+    CmdState changeToEOL(const YCommandArgs &args);
+    CmdState deleteLine(const YCommandArgs &args);
+    CmdState deleteToEndOfLastLine(const YCommandArgs &args);
+    CmdState deleteToEOL(const YCommandArgs &args);
+    CmdState gotoExMode(const YCommandArgs &args);
+    CmdState gotoLineAtTop(const YCommandArgs &args);
+    CmdState gotoLineAtCenter(const YCommandArgs &args);
+    CmdState gotoLineAtBottom(const YCommandArgs &args);
+    CmdState insertAtSOL(const YCommandArgs &args);
+    CmdState insertAtCol1(const YCommandArgs &args);
+    CmdState gotoInsertMode(const YCommandArgs &args);
+    CmdState gotoCommandMode(const YCommandArgs &args);
+    CmdState gotoReplaceMode(const YCommandArgs &args);
+    CmdState gotoVisualLineMode(const YCommandArgs &args);
+    CmdState gotoVisualBlockMode(const YCommandArgs &args);
+    CmdState gotoVisualMode(const YCommandArgs &args);
+    CmdState insertLineAfter(const YCommandArgs &args);
+    CmdState insertLineBefore(const YCommandArgs &args);
+    CmdState joinLine(const YCommandArgs &args);
+    CmdState joinLineWithoutSpace(const YCommandArgs& args);
+    CmdState pasteAfter(const YCommandArgs &args);
+    CmdState pasteBefore(const YCommandArgs &args);
+    CmdState yankLine(const YCommandArgs &args);
+    CmdState yankToEOL(const YCommandArgs &args);
+    CmdState closeWithoutSaving(const YCommandArgs &args);
+    CmdState saveAndClose(const YCommandArgs &args);
+    CmdState searchBackwards(const YCommandArgs &args);
+    CmdState searchForwards(const YCommandArgs &args);
+    CmdState change(const YCommandArgs &args);
+    CmdState del(const YCommandArgs &args);
+    CmdState yank(const YCommandArgs &args);
+    CmdState mark(const YCommandArgs &args);
+    CmdState undo(const YCommandArgs &args);
+    CmdState redo(const YCommandArgs &args);
+    CmdState macro(const YCommandArgs &args);
+    CmdState replayMacro(const YCommandArgs &args);
+    CmdState deleteChar(const YCommandArgs &args);
+    CmdState deleteCharBackwards(const YCommandArgs &args);
+    CmdState redisplay(const YCommandArgs &args);
+    CmdState changeCase(const YCommandArgs &args);
+    CmdState lineToUpperCase(const YCommandArgs &args);
+    CmdState lineToLowerCase(const YCommandArgs &args);
+    CmdState replace(const YCommandArgs &args);
+    CmdState abort(const YCommandArgs &args);
+    CmdState delkey(const YCommandArgs &args);
+    CmdState indent( const YCommandArgs& args );
+    CmdState scrollPageUp( const YCommandArgs &args );
+    CmdState scrollPageDown( const YCommandArgs &args );
+    CmdState scrollLineUp( const YCommandArgs &args );
+    CmdState scrollLineDown( const YCommandArgs &args );
+    CmdState redoLastCommand( const YCommandArgs & args );
+    CmdState tagNext( const YCommandArgs & args );
+    CmdState tagPrev( const YCommandArgs & args );
+    CmdState undoJump( const YCommandArgs & args );
+    CmdState incrementNumber( const YCommandArgs& args );
+    CmdState decrementNumber( const YCommandArgs& args );
 
     QList<YCommand*> commands;
     // this is not a QValueList because there is no constructor with no arguments for YCommands
     QStringList textObjects;
 
-    virtual YInterval interval(const YCommandArgs &args);
+    virtual YInterval interval(const YCommandArgs &args, bool *stopped);
 
 private:
-    void adjustNumber( const YCommandArgs& args, int change );
+    CmdState adjustNumber( const YCommandArgs& args, int change );
 };
 
 /** This class represents a command that is also a motion. Its new member is

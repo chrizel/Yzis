@@ -31,10 +31,10 @@ class QStringList;
 
 extern void tagReset();
 
-extern void tagJumpTo(const QString &word);
+extern bool tagJumpTo(const QString &word);
 extern void tagNext();
 extern void tagPrev();
-extern void tagPop();
+extern bool tagPop();
 
 extern void tagStartsWith(const QString &prefix, QStringList &list);
 

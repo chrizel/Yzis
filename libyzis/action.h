@@ -51,8 +51,8 @@ public:
 
     // YCursor versions
     void insertChar( YView* pView, const YCursor pos, const QString& text );
-    void replaceChar( YView* pView, const YCursor pos, const QString& text );
-    void deleteChar( YView* pView, const YCursor pos, int len );
+    bool replaceChar( YView* pView, const YCursor pos, const QString& text );
+    bool deleteChar( YView* pView, const YCursor pos, int len );
     void insertLine( YView* pView, const YCursor pos, const QString &text );
     void insertNewLine( YView* pView, const YCursor pos );
     void replaceLine( YView* pView, const YCursor pos, const QString &text );
@@ -63,13 +63,13 @@ public:
     {
         YCursor pos( X, Y ); insertChar( pView, pos, text );
     }
-    void replaceChar( YView* pView, const int X, const int Y, const QString& text )
+    bool replaceChar( YView* pView, const int X, const int Y, const QString& text )
     {
-        YCursor pos( X, Y ); replaceChar( pView, pos, text );
+        YCursor pos( X, Y ); return replaceChar( pView, pos, text );
     }
-    void deleteChar( YView* pView, const int X, const int Y, int len )
+    bool deleteChar( YView* pView, const int X, const int Y, int len )
     {
-        YCursor pos( X, Y ); deleteChar( pView, pos, len );
+        YCursor pos( X, Y ); return deleteChar( pView, pos, len );
     }
     void insertLine( YView* pView, int Y, const QString &text )
     {

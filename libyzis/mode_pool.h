@@ -38,7 +38,7 @@ public:
     YModePool( YView* view );
     virtual ~YModePool();
 
-    void sendKey( const QString& key, const QString& modifiers );
+    bool sendKey( const QString& key, const QString& modifiers );
     void replayKey();
 
     /**

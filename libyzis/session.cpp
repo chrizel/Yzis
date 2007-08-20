@@ -599,8 +599,9 @@ void YSession::scriptSendMultipleKeys ( const QString& text)
     /* }*/
 }
 
-void YSession::sendMultipleKeys( YView * view, const QString& _keys)
+bool YSession::sendMultipleKeys( YView * view, const QString& _keys)
 {
+    bool stopped = false;
     dbg() << "sendMultipleKeys(" << view << ", keys=" << _keys << ")" << endl;
     if (view->modePool()->current()->mapMode() & MapCmdline) {
         view->modePool()->change( YMode::ModeCommand );
@@ -612,18 +613,18 @@ void YSession::sendMultipleKeys( YView * view, const QString& _keys)
         //exception : in SEARCH, SEARCH_BACKWARD and EX mode we don't send keys immediately
         if (view->modePool()->current()->mapMode() & MapCmdline) {
             if ( key.startsWith( "<ESC>" ) ) {
-                sendKey( view, "<ESC>" );
+                stopped = sendKey( view, "<ESC>" );
                 continue;
             } else if ( key.startsWith( "<ENTER>" ) ) {
-                sendKey( view, "<ENTER>" );
+                stopped = sendKey( view, "<ENTER>" );
                 i += 7;
                 continue;
             } else if ( key.startsWith( "<UP>" ) ) {
-                sendKey( view, "<UP>" );
+                stopped = sendKey( view, "<UP>" );
                 i += 4;
                 continue;
             } else if ( key.startsWith( "<DOWN>" ) ) {
-                sendKey( view, "<DOWN>" );
+                stopped = sendKey( view, "<DOWN>" );
                 i += 6;
                 continue;
             } else {
@@ -634,67 +635,73 @@ void YSession::sendMultipleKeys( YView * view, const QString& _keys)
         }
         if ( key.startsWith( "<CTRL>" ) ) {
             dbg() << "Sending " << key.mid(6, 1) << endl;
-            sendKey( view, key.mid( 6, 1 ), "<CTRL>" );
+            stopped = sendKey( view, key.mid( 6, 1 ), "<CTRL>" );
             i += 7;
             continue;
         } else if ( key.startsWith( "<ALT>" ) ) {
-            sendKey( view, key.mid( 5, 1 ), "<ALT>" );
+            stopped = sendKey( view, key.mid( 5, 1 ), "<ALT>" );
             i += 6;
             continue;
         } else if ( key.startsWith( "<SHIFT>" ) ) {
-            sendKey( view, key.mid( 7, 1 ), "<SHIFT>" );
+            stopped =sendKey( view, key.mid( 7, 1 ), "<SHIFT>" );
             i += 8;
             continue;
         } else if ( key.startsWith( "<ESC>" ) ) {
-            sendKey( view, "<ESC>" );
+            stopped = sendKey( view, "<ESC>" );
             i += 5;
             continue;
         } else if ( key.startsWith( "<ENTER>" ) ) {
-            sendKey( view, "<ENTER>" );
+            stopped =sendKey( view, "<ENTER>" );
             i += 7;
             continue;
         } else if ( key.startsWith( "<TAB>" ) ) {
-            sendKey( view, "<TAB>" );
+            stopped = sendKey( view, "<TAB>" );
             i += 5;
             continue;
         } else if ( key.startsWith( "<UP>" ) ) {
-            sendKey( view, "<UP>" );
+            stopped = sendKey( view, "<UP>" );
             i += 4;
             continue;
         } else if ( key.startsWith( "<DOWN>" ) ) {
-            sendKey( view, "<DOWN>" );
+            stopped = sendKey( view, "<DOWN>" );
             i += 6;
             continue;
         } else if ( key.startsWith( "<RIGHT>" ) ) {
-            sendKey( view, "<RIGHT>" );
+            stopped = sendKey( view, "<RIGHT>" );
             i += 7;
             continue;
         } else if ( key.startsWith( "<LEFT>" ) ) {
-            sendKey( view, "<LEFT>" );
+            stopped = sendKey( view, "<LEFT>" );
             i += 6;
             continue;
         } else if ( key.startsWith( "<DEL>" ) ) {
-            sendKey( view, "<DEL>" );
+            stopped = sendKey( view, "<DEL>" );
             i += 5;
             continue;
         } else if ( key.startsWith( "<BS>" ) ) {
-            sendKey( view, "<BS>" );
+            stopped = sendKey( view, "<BS>" );
             i += 4;
             continue;
         } else {
-            sendKey( view, key.mid( 0, 1 ) );
+            stopped = sendKey( view, key.mid( 0, 1 ) );
             i++;
         }
+	if ( stopped )
+	    break;
     }
+
+    return stopped;
 }
 
-void YSession::sendKey( YView * view, const QString& _key, const QString& _modifiers)
+bool YSession::sendKey( YView * view, const QString& _key, const QString& _modifiers)
 {
     dbg() << "sendKey( " << view << ", key=" << _key << " mod=" << _modifiers << ")" << endl;
 
     QString key = _key;
     QString modifiers = _modifiers;
-    if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return ; //we are not supposed to received modifiers in key
+    bool stopped;
+
+    if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return false; //we are not supposed to received modifiers in key
 
     QList<QChar> reg = view->registersRecorded();
     if ( reg.count() > 0 ) {
@@ -724,8 +731,10 @@ void YSession::sendKey( YView * view, const QString& _key, const QString& _modif
 
 //    view->appendInputBuffer( modifiers + key );
     view->setPaintAutoCommit( false );
-    view->modePool()->sendKey( key, modifiers );
+    stopped = view->modePool()->sendKey( key, modifiers );
     view->commitPaintEvent();
+
+    return stopped;
 }
 
 void YSession::registerModifier ( const QString& mod )

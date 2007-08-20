@@ -79,25 +79,27 @@ void YZAction::replaceText( YView* pView, const YCursor pos, int replacedLength,
     commitViewsChanges(mBuffer);
 }
 
-void YZAction::replaceChar( YView* pView, const YCursor pos, const QString& text )
+bool YZAction::replaceChar( YView* pView, const YCursor pos, const QString& text )
 {
     if ( pos.y() >= mBuffer->lineCount() )
-        return ; // don't try on non-existing lines
+        return true; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->delChar( pos, text.length() );
     mBuffer->insertChar( pos, text );
     pView->gotoxyAndStick( pos.x() + text.length(), pos.y() );
     commitViewsChanges(mBuffer);
+    return false;
 }
 
-void YZAction::deleteChar( YView* pView, const YCursor pos, int len )
+bool YZAction::deleteChar( YView* pView, const YCursor pos, int len )
 {
     if ( pos.y() >= mBuffer->lineCount() )
-        return ; // don't try on non-existing lines
+        return true; // don't try on non-existing lines
     configureViews(mBuffer);
     mBuffer->delChar( pos, len );
     pView->gotoxyAndStick( pos );
     commitViewsChanges(mBuffer);
+    return false;
 }
 
 void YZAction::appendLine( YView* pView, const QString& text )

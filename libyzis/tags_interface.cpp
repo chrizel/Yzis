@@ -224,16 +224,16 @@ void tagReset ()
     closeTagFile();
 }
 
-void tagJumpTo ( const QString &word )
+bool tagJumpTo ( const QString &word )
 {
     // Guardian for empty tag search
     if ( word.isNull() ) {
-        return ;
+        return true;
     }
 
     if ( !openTagFile() ) {
         YSession::self()->guiPopupMessage( _("Unable to find tag file") );
-        return ;
+        return true;
     }
 
     tagEntry entry;
@@ -260,6 +260,7 @@ void tagJumpTo ( const QString &word )
     }
 
     closeTagFile();
+    return (tagResult == TagSuccess) ? false : true;
 }
 
 void tagNext ()
@@ -290,13 +291,13 @@ void tagPrev ()
     }
 }
 
-void tagPop ()
+bool tagPop ()
 {
     YTagStack &stack = YSession::self()->getTagStack();
 
     if ( stack.empty() ) {
         YSession::self()->currentView()->guiDisplayInfo( _("At bottom of tag stack") );
-        return ;
+        return true;
     }
 
     const YInfoJumpListRecord *head = stack.getHead();
@@ -305,6 +306,7 @@ void tagPop ()
 
         showNumMatches();
     }
+    return false;
 }
 
 void tagStartsWith(const QString &prefix, QStringList &list)

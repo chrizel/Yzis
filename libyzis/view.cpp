@@ -665,32 +665,36 @@ void YView::gotoxyAndStick( const QPoint pos )
     updateStickyCol( &mainCursor );
 }
 
-QString YView::moveDown( int nb_lines, bool applyCursor )
+// These all return whether the motion was stopped
+bool YView::moveDown( int nb_lines, bool applyCursor )
 {
     return moveDown( &mainCursor, nb_lines, applyCursor );
 }
-QString YView::moveDown( YViewCursor* viewCursor, int nb_lines, bool applyCursor )
+bool YView::moveDown( YViewCursor* viewCursor, int nb_lines, bool applyCursor )
 {
-    gotoStickyCol( viewCursor, qMin( mFoldPool->lineAfterFold( viewCursor->bufferY() + nb_lines ), mBuffer->lineCount() - 1 ), applyCursor );
-    return QString();
+    int destRequested = mFoldPool->lineAfterFold( viewCursor->bufferY() + nb_lines );
+    gotoStickyCol( viewCursor, qMin( destRequested, mBuffer->lineCount() - 1 ), applyCursor );
+    return destRequested > (mBuffer->lineCount() - 1);
 }
-QString YView::moveUp( int nb_lines, bool applyCursor )
+bool YView::moveUp( int nb_lines, bool applyCursor )
 {
     return moveUp( &mainCursor, nb_lines, applyCursor );
 }
-QString YView::moveUp( YViewCursor* viewCursor, int nb_lines, bool applyCursor )
+bool YView::moveUp( YViewCursor* viewCursor, int nb_lines, bool applyCursor )
 {
-    gotoStickyCol( viewCursor, qMax( viewCursor->bufferY() - nb_lines, 0 ), applyCursor );
-    return QString();
+    int destRequested = viewCursor->bufferY() - nb_lines;
+    gotoStickyCol( viewCursor, qMax( destRequested, 0 ), applyCursor );
+    return destRequested < 0;
 }
 
-QString YView::moveLeft( int nb_cols, bool wrap, bool applyCursor )
+bool YView::moveLeft( int nb_cols, bool wrap, bool applyCursor )
 {
     return moveLeft( &mainCursor, nb_cols, wrap, applyCursor );
 }
 
-QString YView::moveLeft( YViewCursor* viewCursor, int nb_cols, bool wrap, bool applyCursor )
+bool YView::moveLeft( YViewCursor* viewCursor, int nb_cols, bool wrap, bool applyCursor )
 {
+    bool stopped = false;
     int x = int(viewCursor->bufferX());
     int y = viewCursor->bufferY();
     x -= nb_cols;
@@ -706,25 +710,33 @@ QString YView::moveLeft( YViewCursor* viewCursor, int nb_cols, bool wrap, bool a
                 diff -= line_length + 1;
             }
             // if we moved too far, go back
-            if (diff < 0) x -= diff;
-        } else
+            if (diff < 0) {
+		x -= diff;
+		stopped = true;
+	    }
+	    
+        } else {
             x = 0;
+	    stopped = true;
+	}
+	
     }
     gotoxy( viewCursor, x, y);
 
     if ( applyCursor ) updateStickyCol( viewCursor );
 
     //return something
-    return QString();
+    return stopped;
 }
 
-QString YView::moveRight( int nb_cols, bool wrap, bool applyCursor )
+bool YView::moveRight( int nb_cols, bool wrap, bool applyCursor )
 {
     return moveRight( &mainCursor, nb_cols, wrap, applyCursor );
 }
 
-QString YView::moveRight( YViewCursor* viewCursor, int nb_cols, bool wrap, bool applyCursor )
+bool YView::moveRight( YViewCursor* viewCursor, int nb_cols, bool wrap, bool applyCursor )
 {
+    bool stopped = false;
     int x = viewCursor->bufferX();
     int y = viewCursor->bufferY();
     x += nb_cols;
@@ -740,16 +752,21 @@ QString YView::moveRight( YViewCursor* viewCursor, int nb_cols, bool wrap, bool 
                 diff -= line_length + 1;
             }
             // if we moved too far, go back
-            if (diff < 0) x += diff;
-        } else
+            if (diff < 0) {
+		x += diff;
+		stopped = true;
+	    }
+        } else {
+	    stopped = true;
             x = myBuffer()->textline(y).length();
+	}
     }
     gotoxy( viewCursor, x, y);
 
     if ( applyCursor ) updateStickyCol( viewCursor );
 
     //return something
-    return QString();
+    return stopped;
 }
 
 QString YView::moveToFirstNonBlankOfLine( )

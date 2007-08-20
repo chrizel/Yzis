@@ -267,29 +267,30 @@ public:
     //-------------------------------------------------------
     // ----------------- Cursor Motion
     //-------------------------------------------------------
+    // Return value is whether motion stopped by constraints of buffer
     /**
      * moves the cursor of the current view down
      */
-    QString moveDown( int nb_lines = 1, bool applyCursor = true );
-    QString moveDown( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
+    bool moveDown( int nb_lines = 1, bool applyCursor = true );
+    bool moveDown( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
 
     /**
      * moves the cursor of the current view up
      */
-    QString moveUp( int nb_lines = 1, bool applyCursor = true );
-    QString moveUp( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
+    bool moveUp( int nb_lines = 1, bool applyCursor = true );
+    bool moveUp( YViewCursor* viewCursor, int nb_lines = 1, bool applyCursor = true );
 
     /**
      * moves the cursor of the current view to the left
      */
-    QString moveLeft(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
-    QString moveLeft( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
+    bool moveLeft(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
+    bool moveLeft( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
 
     /**
      * moves the cursor of the current view to the right
      */
-    QString moveRight(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
-    QString moveRight( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
+    bool moveRight(int nb_cols = 1, bool wrap = false, bool applyCursor = true);
+    bool moveRight( YViewCursor* viewCursor, int nb_cols = 1, bool wrap = false, bool applyCursor = true);
 
     /**
      * moves the cursor of the current view to the first non-blank character

@@ -208,7 +208,7 @@ void YModeCommand::initModifierKeys()
 CmdState YModeCommand::execCommand(YView *view, const QString& inputs)
 {
     // dbg() << "ExecCommand : " << inputs << endl;
-
+    CmdState result;
     int count = 1;
     bool hadCount = false;
     int i = 0;
@@ -275,8 +275,7 @@ CmdState YModeCommand::execCommand(YView *view, const QString& inputs)
         i = j - 1;
         // read in a count that may follow
         if (c->arg() == ArgChar) { // don't try to read a motion!
-            (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
-            return CmdOk;
+            return (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
         }
         if (inputs.at(i).digitValue() > 0) {
             while (j < inputs.length() && inputs.at(j).digitValue() > 0)
@@ -332,7 +331,7 @@ CmdState YModeCommand::execCommand(YView *view, const QString& inputs)
         foreach( YView *v, view->myBuffer()->views() )
         v->setPaintAutoCommit( false );
 
-        (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, s));
+        result = (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, s));
 
         foreach( YView *v, view->myBuffer()->views() )
         v->commitPaintEvent();
@@ -356,7 +355,7 @@ CmdState YModeCommand::execCommand(YView *view, const QString& inputs)
         if (cmds.count() == 1) {
             c = cmds.first();
             if (c->arg() == ArgNone)
-                (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount));
+                result = (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount));
             else
                 return CmdOperatorPending;
         } else {
@@ -374,13 +373,13 @@ CmdState YModeCommand::execCommand(YView *view, const QString& inputs)
 
             foreach( YView *v, view->myBuffer()->views() )
             v->setPaintAutoCommit( false );
-            (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, QString()));
+            result = (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, QString()));
             foreach( YView *v, view->myBuffer()->views() )
             v->commitPaintEvent();
         }
     }
 
-    return CmdOk;
+    return result;
 }
 
 bool YMotion::matches(const QString &s, bool fully) const
@@ -409,14 +408,14 @@ bool YMotion::matches(const QString &s, bool fully) const
     return false;
 }
 
-YCursor YModeCommand::move(YView *view, const QString &inputs, int count, bool usercount)
+YCursor YModeCommand::move(YView *view, const QString &inputs, int count, bool usercount, bool *stopped)
 {
     for (int ab = 0 ; ab < commands.size(); ++ab ) {
         const YMotion *m = dynamic_cast<const YMotion*>(commands.at(ab));
         if (m && m->matches(inputs)) {
             // execute the corresponding method
             YCursor to = (this->*(m->motionMethod()))(YMotionArgs(view, count, inputs.right( m->keySeq().length()),
-                          inputs.left(m->keySeq().length()), usercount ));
+                                      inputs.left(m->keySeq().length()), usercount ), stopped);
             return to;
         }
     }
@@ -426,54 +425,56 @@ YCursor YModeCommand::move(YView *view, const QString &inputs, int count, bool u
 
 // MOTIONS
 
-YCursor YModeCommand::moveLeft(const YMotionArgs &args)
+YCursor YModeCommand::moveLeft(const YMotionArgs &args, bool *stopped )
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveLeft(&viewCursor, args.count, false, args.standalone );
+    *stopped = false;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveRight(const YMotionArgs &args)
+YCursor YModeCommand::moveRight(const YMotionArgs &args, bool *stopped )
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveRight(&viewCursor, args.count, false, args.standalone );
+    *stopped = false;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveLeftWrap( const YMotionArgs & args )
+YCursor YModeCommand::moveLeftWrap( const YMotionArgs & args, bool *stopped )
 {
     YViewCursor viewCursor = args.view->viewCursor();
-    args.view->moveLeft(&viewCursor, args.count, true, args.standalone );
+    *stopped = args.view->moveLeft(&viewCursor, args.count, true, args.standalone );
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveRightWrap( const YMotionArgs & args )
+YCursor YModeCommand::moveRightWrap( const YMotionArgs & args, bool *stopped )
 {
     YViewCursor viewCursor = args.view->viewCursor();
-    args.view->moveRight(&viewCursor, args.count, true, args.standalone );
+    *stopped = args.view->moveRight(&viewCursor, args.count, true, args.standalone );
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveDown(const YMotionArgs &args)
+YCursor YModeCommand::moveDown(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     if ( args.standalone )
-        args.view->moveDown(&viewCursor, args.count, true );
+        *stopped = args.view->moveDown(&viewCursor, args.count, true );
     else { //LINEWISE
         //update starting point
         args.view->gotoxy( 0, viewCursor.bufferY(), false );
         // end point
-        args.view->moveDown( &viewCursor, args.count + 1, false );
+        *stopped = args.view->moveDown( &viewCursor, args.count + 1, false );
         args.view->moveToStartOfLine( &viewCursor, true );
     }
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveUp(const YMotionArgs &args)
+YCursor YModeCommand::moveUp(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     if ( args.standalone )
-        args.view->moveUp(&viewCursor, args.count, true );
+        *stopped = args.view->moveUp(&viewCursor, args.count, true );
     else { //LINEWISE
         //update starting point
         if ( viewCursor.bufferY() == args.view->myBuffer()->lineCount() - 1 )
@@ -481,37 +482,42 @@ YCursor YModeCommand::moveUp(const YMotionArgs &args)
         else
             args.view->gotoxy( 0, viewCursor.bufferY() + 1, false );
         // end point
-        args.view->moveUp( &viewCursor, args.count, false );
+        *stopped = args.view->moveUp( &viewCursor, args.count, false );
         args.view->gotoxy ( &viewCursor, 0, viewCursor.bufferY(), true );
     }
     return viewCursor.buffer();
 }
 
-void YModeCommand::scrollPageUp(const YCommandArgs &args)
+CmdState YModeCommand::scrollPageUp(const YCommandArgs &args)
 {
     int line = args.view->getCurrentTop() - args.view->getLinesVisible();
-
+    
     if (line < 0)
         line = 0;
 
-    if (line != (int)args.view->getCurrentTop()) {
-        args.view->alignViewBufferVertically( line );
-    }
+    if (line == (int)args.view->getCurrentTop())
+	return CmdError;
+	
+    args.view->alignViewBufferVertically( line );
+    return CmdOk;
 }
 
-void YModeCommand::scrollLineUp(const YCommandArgs &args)
+CmdState YModeCommand::scrollLineUp(const YCommandArgs &args)
 {
     int line = args.view->getCurrentTop() - 1;
 
     if (line < 0)
         line = 0;
 
-    if (line != (int)args.view->getCurrentTop()) {
-        args.view->alignViewBufferVertically( line );
+    if (line == (int)args.view->getCurrentTop()) {
+	return CmdError;
     }
+    
+    args.view->alignViewBufferVertically( line );
+    return CmdOk;
 }
 
-void YModeCommand::scrollPageDown(const YCommandArgs &args)
+CmdState YModeCommand::scrollPageDown(const YCommandArgs &args)
 {
     int line = args.view->getCurrentTop() + args.view->getLinesVisible();
     YView *view = args.view;
@@ -527,12 +533,14 @@ void YModeCommand::scrollPageDown(const YCommandArgs &args)
     if (line > view->myBuffer()->lineCount())
         line = view->myBuffer()->lineCount();
 
-    if (line != view->getCurrentTop()) {
-        view->alignViewBufferVertically( line );
-    }
+    if (line == view->getCurrentTop())
+	return CmdError;
+    
+    view->alignViewBufferVertically( line );
+    return CmdOk;
 }
 
-void YModeCommand::scrollLineDown(const YCommandArgs &args)
+CmdState YModeCommand::scrollLineDown(const YCommandArgs &args)
 {
     int line = args.view->getCurrentTop() + args.view->getLinesVisible();
     YView *view = args.view;
@@ -548,17 +556,22 @@ void YModeCommand::scrollLineDown(const YCommandArgs &args)
     if (line > view->myBuffer()->lineCount())
         line = view->myBuffer()->lineCount();
 
-    if (line != view->getCurrentTop()) {
-        view->alignViewBufferVertically( line );
-    }
+    if (line == view->getCurrentTop())
+	return CmdError;
+    
+    view->alignViewBufferVertically( line );
+    return CmdOk;
 }
 
-YCursor YModeCommand::previousEmptyLine(const YMotionArgs &args)
+YCursor YModeCommand::previousEmptyLine(const YMotionArgs &args, bool *stopped)
 {
     YCursor from = args.view->getBufferCursor();
     int start = from.y();
     int count = args.count > 0 ? args.count : 1;
     int counter = 0;
+
+    *stopped = false; // Always succeeds
+
     while ( start >= 1 && counter != count) {
         if ( args.view->myBuffer()->textline(start - 1).isEmpty() ) {
             counter++;
@@ -571,12 +584,15 @@ YCursor YModeCommand::previousEmptyLine(const YMotionArgs &args)
     return YCursor(0, start);
 }
 
-YCursor YModeCommand::nextEmptyLine(const YMotionArgs &args)
+YCursor YModeCommand::nextEmptyLine(const YMotionArgs &args, bool *stopped)
 {
     YCursor from = args.view->getBufferCursor();
     int start = from.y() + 1;
     int count = args.count > 0 ? args.count : 1;
     int counter = 0;
+
+    *stopped = false; // Always succeeds
+
     while ( start < args.view->myBuffer()->lineCount() && counter != count ) {
         if ( args.view->myBuffer()->textline(start).isEmpty() ) {
             counter++;
@@ -589,11 +605,13 @@ YCursor YModeCommand::nextEmptyLine(const YMotionArgs &args)
     return YCursor(0, start - 1);
 }
 
-YCursor YModeCommand::matchPair(const YMotionArgs &args)
+YCursor YModeCommand::matchPair(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     bool found = false;
     YCursor pos = args.view->myBuffer()->action()->match( args.view, viewCursor.buffer(), &found );
+    
+    *stopped = false; // Always succeeds
     if ( found ) {
         if ( args.standalone ) {
             args.view->gotoxyAndStick( pos );
@@ -606,33 +624,42 @@ YCursor YModeCommand::matchPair(const YMotionArgs &args)
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::findNext(const YMotionArgs &args)
+YCursor YModeCommand::findNext(const YMotionArgs &args, bool *stopped)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
     YCursor pos = finder->forward( args.arg, found, args.count );
+
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
+	*stopped = false;
         return pos;
     }
+
+    *stopped = true;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::findBeforeNext(const YMotionArgs &args)
+YCursor YModeCommand::findBeforeNext(const YMotionArgs &args, bool *stopped)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
     YCursor pos = finder->forwardBefore( args.arg, found, args.count );
+
+    
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
+	*stopped = false;
         return pos;
     }
+    
+    *stopped = true;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::findPrevious(const YMotionArgs &args)
+YCursor YModeCommand::findPrevious(const YMotionArgs &args, bool *stopped)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
@@ -640,12 +667,14 @@ YCursor YModeCommand::findPrevious(const YMotionArgs &args)
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
+	*stopped = false;
         return pos;
     }
+    *stopped = true;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::findAfterPrevious(const YMotionArgs &args)
+YCursor YModeCommand::findAfterPrevious(const YMotionArgs &args, bool *stopped)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
@@ -653,12 +682,14 @@ YCursor YModeCommand::findAfterPrevious(const YMotionArgs &args)
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
+	*stopped = false;
         return pos;
     }
+    *stopped = true;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::repeatFind(const YMotionArgs &args)
+YCursor YModeCommand::repeatFind(const YMotionArgs &args, bool *stopped)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
@@ -666,42 +697,48 @@ YCursor YModeCommand::repeatFind(const YMotionArgs &args)
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
+	*stopped = false;
         return pos;
     }
+    *stopped = true;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::gotoSOL(const YMotionArgs &args)
+YCursor YModeCommand::gotoSOL(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveToStartOfLine(&viewCursor, args.standalone);
+    *stopped = false;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoEOL(const YMotionArgs &args)
+YCursor YModeCommand::gotoEOL(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveToEndOfLine(&viewCursor, args.standalone);
+    *stopped = false;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args)
+YCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->gotoLine(&viewCursor, 0, args.standalone);
     args.view->moveToStartOfLine(&viewCursor, args.standalone);
+    *stopped = false;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoEndOfDocument(const YMotionArgs &args)
+YCursor YModeCommand::gotoEndOfDocument(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->gotoLastLine(&viewCursor, args.standalone);
     args.view->moveToEndOfLine(&viewCursor, args.standalone);
+    *stopped = false;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveWordForward(const YMotionArgs &args)
+YCursor YModeCommand::moveWordForward(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     YCursor result( viewCursor.buffer() );
@@ -710,6 +747,8 @@ YCursor YModeCommand::moveWordForward(const YMotionArgs &args)
     QRegExp rex2("^[^\\w\\s]+\\s*"); //non-word chars with boundaries
     QRegExp ws("^\\s+"); //whitespace
     bool wrapped = false;
+
+    *stopped = false;
 
     while ( c < args.count ) { //for each word
         const QString& current = args.view->myBuffer()->textline( result.y() );
@@ -756,12 +795,14 @@ YCursor YModeCommand::moveWordForward(const YMotionArgs &args)
 }
 
 
-YCursor YModeCommand::moveSWordForward(const YMotionArgs &args)
+YCursor YModeCommand::moveSWordForward(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     YCursor result( viewCursor.buffer() );
     int c = 0;
     QRegExp ws("\\s+"); //whitespace
+
+    *stopped = false;
 
     while ( c < args.count ) { //for each word
         const QString& current = args.view->myBuffer()->textline( result.y() );
@@ -806,7 +847,7 @@ QString invertQString( const QString& from )
     return res;
 }
 
-YCursor YModeCommand::moveWordBackward(const YMotionArgs &args)
+YCursor YModeCommand::moveWordBackward(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     YCursor result( viewCursor.buffer() );
@@ -815,6 +856,8 @@ YCursor YModeCommand::moveWordBackward(const YMotionArgs &args)
     QRegExp rex2("^([^\\w\\s]+)\\s*"); //non-word chars with boundaries
     QRegExp rex3("^\\s+([^\\w\\s$]+|\\w+)"); //whitespace
     bool wrapped = false;
+
+    *stopped = false;
 
     while ( c < args.count ) { //for each word
         const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
@@ -862,12 +905,14 @@ YCursor YModeCommand::moveWordBackward(const YMotionArgs &args)
 }
 
 
-YCursor YModeCommand::moveSWordBackward(const YMotionArgs &args)
+YCursor YModeCommand::moveSWordBackward(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     YCursor result( viewCursor.buffer() );
     int c = 0;
     QRegExp rex1("([\\S]+)\\s*"); //
+
+    *stopped = false;
 
     while ( c < args.count ) { //for each word
         const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
@@ -900,38 +945,44 @@ YCursor YModeCommand::moveSWordBackward(const YMotionArgs &args)
     return result;
 }
 
-YCursor YModeCommand::firstNonBlank(const YMotionArgs &args)
+YCursor YModeCommand::firstNonBlank(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveToFirstNonBlankOfLine(&viewCursor, args.standalone);
+    *stopped = false;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoMark( const YMotionArgs &args )
+YCursor YModeCommand::gotoMark( const YMotionArgs &args, bool *stopped )
 {
     YViewCursor viewCursor = args.view->viewCursor();
     YViewMarker *mark = args.view->myBuffer()->viewMarks();
-    if ( mark->contains(args.arg))
+    if ( mark->contains(args.arg)) {
+	*stopped = false;
         return mark->value(args.arg).mBuffer;
+    }
     else {
         dbg() << "WARNING! mark " << args.arg << " not found" << endl;
+	*stopped = true;
         return viewCursor.buffer();
     }
 }
 
-YCursor YModeCommand::firstNonBlankNextLine( const YMotionArgs &args )
+YCursor YModeCommand::firstNonBlankNextLine( const YMotionArgs &args, bool *stopped )
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveDown(&viewCursor, args.count, args.standalone );
     args.view->moveToFirstNonBlankOfLine( &viewCursor, args.standalone );
+    *stopped = false;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoLine(const YMotionArgs &args)
+YCursor YModeCommand::gotoLine(const YMotionArgs &args, bool *stopped)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     int line = 0;
     dbg() << "gotoLine " << args.cmd << "," << args.count << endl;
+    *stopped = false;
     if ( args.count > 0 ) line = args.count - 1;
 
     if ( args.cmd == "gg" || ( args.cmd == "G" && args.usercount ) ) {
@@ -951,11 +1002,12 @@ YCursor YModeCommand::gotoLine(const YMotionArgs &args)
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::searchWord(const YMotionArgs &args)
+YCursor YModeCommand::searchWord(const YMotionArgs &args, bool *stopped)
 {
     YCursor from = args.view->getBufferCursor();
 
     QString word = args.view->myBuffer()->getWordAt( from );
+    *stopped = false;
     if ( ! word.isNull() ) {
         dbg() << "searchWord : " << word << endl;
         YCursor pos;
@@ -985,16 +1037,18 @@ YCursor YModeCommand::searchWord(const YMotionArgs &args)
     return from;
 }
 
-YCursor YModeCommand::searchNext(const YMotionArgs &args)
+YCursor YModeCommand::searchNext(const YMotionArgs &args, bool *stopped)
 {
     YCursor from = args.view->getBufferCursor();
     YCursor pos;
     bool found = true;
     bool moved = true;
+    *stopped = true;
     for ( int i = 0; found && i < args.count; i++ ) {
         pos = YSession::self()->search()->replayForward( args.view->myBuffer(), &found, from );
         if ( found ) {
             from = pos;
+	    *stopped = false;
             moved = true;
         }
     }
@@ -1007,15 +1061,17 @@ YCursor YModeCommand::searchNext(const YMotionArgs &args)
     return from;
 }
 
-YCursor YModeCommand::searchPrev(const YMotionArgs &args)
+YCursor YModeCommand::searchPrev(const YMotionArgs &args, bool *stopped)
 {
     YCursor from = args.view->getBufferCursor();
     YCursor pos;
     bool found = true;
     bool moved = false;
+    *stopped = true;
     for ( int i = 0; found && i < args.count; i++ ) {
         pos = YSession::self()->search()->replayBackward( args.view->myBuffer(), &found, from );
         if ( found ) {
+	    *stopped = false;
             from = pos;
             moved = true;
         }
@@ -1031,20 +1087,22 @@ YCursor YModeCommand::searchPrev(const YMotionArgs &args)
 
 // COMMANDS
 
-void YModeCommand::execMotion( const YCommandArgs &args )
+CmdState YModeCommand::execMotion( const YCommandArgs &args )
 {
     const YMotion *m = dynamic_cast<const YMotion*>(args.cmd);
+    bool stopped;
     YASSERT(m);
-    YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true));
+    YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true), &stopped);
     //args.view->centerViewVertically( to.y() );
     args.view->gotoxy(to.x(), to.y());
-
+    
+    return stopped ? CmdError : CmdOk;
 }
 
-YInterval YModeCommand::interval(const YCommandArgs& args)
+YInterval YModeCommand::interval(const YCommandArgs& args, bool *stopped)
 {
     YCursor from( args.view->getBufferCursor() );
-    YCursor to = move( args.view, args.arg, args.count, args.usercount );
+    YCursor to = move( args.view, args.arg, args.count, args.usercount, stopped );
     if ( from > to ) {
         YCursor tmp( from );
         from = to;
@@ -1060,22 +1118,27 @@ YInterval YModeCommand::interval(const YCommandArgs& args)
     return ret;
 }
 
-void YModeCommand::appendAtEOL(const YCommandArgs &args)
+CmdState YModeCommand::appendAtEOL(const YCommandArgs &args)
 {
     args.view->moveToEndOfLine();
     args.view->append();
+    return CmdOk;
 }
 
-void YModeCommand::append(const YCommandArgs &args)
+CmdState YModeCommand::append(const YCommandArgs &args)
 {
     args.view->append();
+    return CmdOk;
 }
 
-void YModeCommand::change(const YCommandArgs &args)
+CmdState YModeCommand::change(const YCommandArgs &args)
 {
-    YInterval area = interval( args );
+    bool stopped;
+    YInterval area = interval( args, &stopped );
     YCursor cur = area.fromPos();
 
+    if ( stopped )
+	return CmdError;
     dbg() << "YModeCommand::change " << area << endl;
     args.view->myBuffer()->action()->deleteArea(args.view, area, args.regs);
 
@@ -1091,9 +1154,10 @@ void YModeCommand::change(const YCommandArgs &args)
             args.view->append();
     }
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::changeLine(const YCommandArgs &args)
+CmdState YModeCommand::changeLine(const YCommandArgs &args)
 {
     int y = args.view->getBufferCursor().y();
     args.view->myBuffer()->action()->deleteLine(args.view, args.view->getBufferCursor(), args.count, args.regs);
@@ -1101,23 +1165,27 @@ void YModeCommand::changeLine(const YCommandArgs &args)
     args.view->modePool()->push( YMode::ModeInsert );
     args.view->gotoxy(0, y);
     //args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::changeToEOL(const YCommandArgs &args)
+CmdState YModeCommand::changeToEOL(const YCommandArgs &args)
 {
-    YCursor to = move(args.view, "$", 1, false);
+    bool stopped;
+    YCursor to = move(args.view, "$", 1, false, &stopped);
     args.view->myBuffer()->action()->deleteArea(args.view, args.view->getBufferCursor(), to, args.regs);
     args.view->append();
     //args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::deleteLine(const YCommandArgs &args)
+CmdState YModeCommand::deleteLine(const YCommandArgs &args)
 {
     args.view->myBuffer()->action()->deleteLine(args.view, args.view->getBufferCursor(), args.count, args.regs);
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::deleteToEndOfLastLine(const YCommandArgs &args)
+CmdState YModeCommand::deleteToEndOfLastLine(const YCommandArgs &args)
 {
     dbg() << "YModeCommand::deleteToEndOfLastLine " << args.cmd;
     int toy = args.view->myBuffer()->lineCount();
@@ -1134,34 +1202,40 @@ void YModeCommand::deleteToEndOfLastLine(const YCommandArgs &args)
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->gotoxy ( &viewCursor, 0, viewCursor.bufferY(), true );
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::deleteToEOL(const YCommandArgs &args)
+CmdState YModeCommand::deleteToEOL(const YCommandArgs &args)
 {
     //in vim : 2d$ does not behave as d$d$, this is illogical ..., you cannot delete twice to end of line ...
-    YCursor to = move(args.view, "$", 1, false);
+    bool stopped;
+    YCursor to = move(args.view, "$", 1, false, &stopped);
     args.view->myBuffer()->action()->deleteArea(args.view, args.view->getBufferCursor(), to, args.regs);
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::insertAtSOL(const YCommandArgs &args)
+CmdState YModeCommand::insertAtSOL(const YCommandArgs &args)
 {
     args.view->moveToFirstNonBlankOfLine();
     args.view->modePool()->push( YMode::ModeInsert );
+    return CmdOk;
 }
 
-void YModeCommand::insertAtCol1(const YCommandArgs &args)
+CmdState YModeCommand::insertAtCol1(const YCommandArgs &args)
 {
     args.view->moveToStartOfLine();
     args.view->modePool()->push( YMode::ModeInsert );
+    return CmdOk;
 }
 
-void YModeCommand::gotoCommandMode(const YCommandArgs &args)
+CmdState YModeCommand::gotoCommandMode(const YCommandArgs &args)
 {
     args.view->modePool()->pop( YMode::ModeCommand );
+    return CmdOk;
 }
 
-void YModeCommand::gotoLineAtTop(const YCommandArgs &args)
+CmdState YModeCommand::gotoLineAtTop(const YCommandArgs &args)
 {
     int line;
 
@@ -1169,17 +1243,19 @@ void YModeCommand::gotoLineAtTop(const YCommandArgs &args)
     args.view->alignViewVertically( line );
     args.view->gotoLine( line );
     args.view->moveToFirstNonBlankOfLine();
+    return CmdOk;
 }
 
-void YModeCommand::gotoLineAtCenter(const YCommandArgs &args)
+CmdState YModeCommand::gotoLineAtCenter(const YCommandArgs &args)
 {
     int line;
     line = ( args.usercount ) ? args.count - 1 : args.view->getBufferCursor().y();
     args.view->centerViewVertically( line );
     args.view->gotoxy(args.view->viewCursor().bufferX(), line );
+    return CmdOk;
 }
 
-void YModeCommand::gotoLineAtBottom(const YCommandArgs &args)
+CmdState YModeCommand::gotoLineAtBottom(const YCommandArgs &args)
 {
     int line;
     //int linesFromCenter;
@@ -1198,35 +1274,42 @@ void YModeCommand::gotoLineAtBottom(const YCommandArgs &args)
     //}
     args.view->gotoLine( line );
     args.view->moveToFirstNonBlankOfLine();
+    return CmdOk;
 }
 
 
-void YModeCommand::gotoExMode(const YCommandArgs &args)
+CmdState YModeCommand::gotoExMode(const YCommandArgs &args)
 {
     args.view->modePool()->push( YMode::ModeEx );
+    return CmdOk;
 }
-void YModeCommand::gotoInsertMode(const YCommandArgs &args)
+CmdState YModeCommand::gotoInsertMode(const YCommandArgs &args)
 {
     args.view->modePool()->push( YMode::ModeInsert );
+    return CmdOk;
 }
-void YModeCommand::gotoReplaceMode(const YCommandArgs &args)
+CmdState YModeCommand::gotoReplaceMode(const YCommandArgs &args)
 {
     args.view->modePool()->push( YMode::ModeReplace );
+    return CmdOk;
 }
-void YModeCommand::gotoVisualMode(const YCommandArgs &args)
+CmdState YModeCommand::gotoVisualMode(const YCommandArgs &args)
 {
     args.view->modePool()->push( YMode::ModeVisual );
+    return CmdOk;
 }
-void YModeCommand::gotoVisualLineMode(const YCommandArgs &args)
+CmdState YModeCommand::gotoVisualLineMode(const YCommandArgs &args)
 {
     args.view->modePool()->push( YMode::ModeVisualLine );
+    return CmdOk;
 }
-void YModeCommand::gotoVisualBlockMode(const YCommandArgs &args)
+CmdState YModeCommand::gotoVisualBlockMode(const YCommandArgs &args)
 {
     args.view->modePool()->push( YMode::ModeVisualBlock );
+    return CmdOk;
 }
 
-void YModeCommand::insertLineAfter(const YCommandArgs &args)
+CmdState YModeCommand::insertLineAfter(const YCommandArgs &args)
 {
     int y = args.view->getBufferCursor().y();
     YBuffer *mBuffer = args.view->myBuffer();
@@ -1252,10 +1335,10 @@ void YModeCommand::insertLineAfter(const YCommandArgs &args)
     args.view->modePool()->push( YMode::ModeInsert );
     args.view->moveToEndOfLine();
     //args.view->commitNextUndo();
-
+    return CmdOk;
 }
 
-void YModeCommand::insertLineBefore(const YCommandArgs &args)
+CmdState YModeCommand::insertLineBefore(const YCommandArgs &args)
 {
     int y = args.view->getBufferCursor().y();
     for ( int i = 0 ; i < args.count ; i++ )
@@ -1263,99 +1346,144 @@ void YModeCommand::insertLineBefore(const YCommandArgs &args)
     args.view->moveUp();
     args.view->modePool()->push( YMode::ModeInsert );
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::joinLine(const YCommandArgs &args)
+CmdState YModeCommand::joinLine(const YCommandArgs &args)
 {
-    for ( int i = 0; i < args.count; i++ )
+    CmdState ret = CmdOk;
+    
+    for ( int i = 0; i < args.count; i++ ) {
+	if ( args.view->getBufferCursor().y() == args.view->myBuffer()->lineCount()-1 ) {
+	    ret = CmdError;
+	    break;
+	}	
         args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor().y(), true );
+    }
+    
     args.view->commitNextUndo();
+    return ret;
 }
 
-void YModeCommand::joinLineWithoutSpace(const YCommandArgs &args)
+CmdState YModeCommand::joinLineWithoutSpace(const YCommandArgs &args)
 {
-    for ( int i = 0; i < args.count; i++ )
+    CmdState ret = CmdOk;
+    
+    for ( int i = 0; i < args.count; i++ ) {
+	if ( args.view->getBufferCursor().y() == args.view->myBuffer()->lineCount()-1 ) {
+	    ret = CmdError;
+	    break;
+	}
         args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor().y(), false );
+    }
+    
     args.view->commitNextUndo();
+    return ret;
 }
 
-void YModeCommand::pasteAfter(const YCommandArgs &args)
+CmdState YModeCommand::pasteAfter(const YCommandArgs &args)
 {
     for ( int i = 0 ; i < args.count ; i++ )
         args.view->pasteContent( args.regs[ 0 ], true );
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::pasteBefore(const YCommandArgs &args)
+CmdState YModeCommand::pasteBefore(const YCommandArgs &args)
 {
     for ( int i = 0 ; i < args.count ; i++ )
         args.view->pasteContent( args.regs[ 0 ], false );
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::yankLine(const YCommandArgs &args)
+CmdState YModeCommand::yankLine(const YCommandArgs &args)
 {
     args.view->myBuffer()->action()->copyLine( args.view, args.view->getBufferCursor(), args.count, args.regs );
+    return CmdOk;
 }
 
-void YModeCommand::yankToEOL(const YCommandArgs &args)
+CmdState YModeCommand::yankToEOL(const YCommandArgs &args)
 {
-    YCursor to = move(args.view, "$", 1, false);
+    bool stopped;
+    YCursor to = move(args.view, "$", 1, false, &stopped);
     args.view->myBuffer()->action()->copyArea(args.view, args.view->getBufferCursor(), to, args.regs);
+    return CmdOk;
 }
 
-void YModeCommand::closeWithoutSaving(const YCommandArgs & /*args*/)
+CmdState YModeCommand::closeWithoutSaving(const YCommandArgs & /*args*/)
 {
     YSession::self()->exitRequest( 0 );
+    return CmdOk;
 }
 
-void YModeCommand::saveAndClose(const YCommandArgs & /*args*/)
+CmdState YModeCommand::saveAndClose(const YCommandArgs & /*args*/)
 {
     YSession::self()->saveBufferExit();
+    return CmdOk;
 }
 
-void YModeCommand::searchBackwards(const YCommandArgs &args)
+CmdState YModeCommand::searchBackwards(const YCommandArgs &args)
 {
     args.view->modePool()->push( YMode::ModeSearchBackward );
+    return CmdOk;
 }
 
-void YModeCommand::searchForwards(const YCommandArgs &args)
+CmdState YModeCommand::searchForwards(const YCommandArgs &args)
 {
     args.view->modePool()->push( YMode::ModeSearch );
+    return CmdOk;
 }
 
-void YModeCommand::del(const YCommandArgs &args)
+CmdState YModeCommand::del(const YCommandArgs &args)
 {
-    args.view->myBuffer()->action()->deleteArea( args.view, interval( args ), args.regs );
+    bool stopped;
+    YInterval area = interval( args, &stopped );
+    
+    if ( stopped )
+	return CmdError;
+
+    args.view->myBuffer()->action()->deleteArea( args.view, area, args.regs );
     args.view->commitNextUndo();
     args.view->modePool()->pop();
+    return CmdOk;
 }
 
-void YModeCommand::yank(const YCommandArgs &args)
+CmdState YModeCommand::yank(const YCommandArgs &args)
 {
-    args.view->myBuffer()->action()->copyArea( args.view, interval( args ), args.regs );
-    YCursor to = move( args.view, args.arg, args.count, args.usercount );
+    bool stopped;
+    YInterval area = interval( args, &stopped );
+    
+    if ( stopped )
+	return CmdError;
+    
+    args.view->myBuffer()->action()->copyArea( args.view, area, args.regs );
+    YCursor to = move( args.view, args.arg, args.count, args.usercount, &stopped );
     args.view->gotoxyAndStick( to );
     args.view->modePool()->pop();
+    return CmdOk;
 }
 
-void YModeCommand::mark(const YCommandArgs &args)
+CmdState YModeCommand::mark(const YCommandArgs &args)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->myBuffer()->viewMarks()->insert( args.arg, viewCursor );
+    return CmdOk;
 }
 
-void YModeCommand::undo(const YCommandArgs &args)
+CmdState YModeCommand::undo(const YCommandArgs &args)
 {
     args.view->undo( args.count );
+    return CmdOk;
 }
 
-void YModeCommand::redo(const YCommandArgs &args)
+CmdState YModeCommand::redo(const YCommandArgs &args)
 {
     args.view->redo( args.count );
+    return CmdOk;
 }
 
-void YModeCommand::changeCase( const YCommandArgs &args )
+CmdState YModeCommand::changeCase( const YCommandArgs &args )
 {
     YCursor pos = args.view->getBufferCursor();
     const QString line = args.view->myBuffer()->textline( pos.y() );
@@ -1372,9 +1500,10 @@ void YModeCommand::changeCase( const YCommandArgs &args )
         }
         args.view->commitNextUndo();
     }
+    return CmdOk;
 }
 
-void YModeCommand::lineToUpperCase( const YCommandArgs &args )
+CmdState YModeCommand::lineToUpperCase( const YCommandArgs &args )
 {
     YCursor pos = args.view->getBufferCursor();
     int i = 0;
@@ -1387,9 +1516,10 @@ void YModeCommand::lineToUpperCase( const YCommandArgs &args )
     }
     args.view->gotoxy( 0, pos.y() + i );
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::lineToLowerCase( const YCommandArgs &args )
+CmdState YModeCommand::lineToLowerCase( const YCommandArgs &args )
 {
     YCursor pos = args.view->getBufferCursor();
     int i = 0;
@@ -1402,45 +1532,53 @@ void YModeCommand::lineToLowerCase( const YCommandArgs &args )
     }
     args.view->gotoxy( 0, pos.y() + i );
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::macro( const YCommandArgs &args )
+CmdState YModeCommand::macro( const YCommandArgs &args )
 {
     if ( args.view->isRecording() )
         args.view->stopRecordMacro();
     else
         args.view->recordMacro( args.regs );
     args.view->guiModeChanged();
+    return CmdOk;
 }
 
-void YModeCommand::replayMacro( const YCommandArgs &args )
+CmdState YModeCommand::replayMacro( const YCommandArgs &args )
 {
     args.view->purgeInputBuffer();
     if ( args.view->isRecording()) {
         dbg() << "User asked to play a macro he is currently recording, forget it !" << endl;
         if ( args.view->registersRecorded() == args.regs )
-            return ;
+            return CmdError;
     }
 
     for ( int i = 0; i < args.count; i++ ) {
         for ( int ab = 0 ; ab < args.regs.size(); ++ab)
-            YSession::self()->sendMultipleKeys(
-                args.view,
-                YSession::self()->getRegister(args.regs.at(ab))[0]
-            );
+            if ( YSession::self()->sendMultipleKeys(
+		     args.view,
+		     YSession::self()->getRegister(args.regs.at(ab))[0]
+		     ) ) {
+		args.view->commitNextUndo();
+		return CmdError;
+	    }
+	
     }
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::deleteChar( const YCommandArgs &args )
+CmdState YModeCommand::deleteChar( const YCommandArgs &args )
 {
     YCursor to( args.view->getBufferCursor() );
     args.view->myBuffer()->action()->copyArea(args.view, args.view->getBufferCursor(), to, args.regs);
     args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::deleteCharBackwards( const YCommandArgs &args )
+CmdState YModeCommand::deleteCharBackwards( const YCommandArgs &args )
 {
     YCursor pos = args.view->getBufferCursor();
     int oldX = pos.x();
@@ -1449,13 +1587,14 @@ void YModeCommand::deleteCharBackwards( const YCommandArgs &args )
         newX = 0;
     int delCount = oldX - newX;
     if ( delCount == 0 )
-        return ; // nothing to delete
+        return CmdOk; // nothing to delete
     pos.setX( newX );
     args.view->myBuffer()->action()->deleteChar( args.view, pos, delCount );
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::substitute( const YCommandArgs &args )
+CmdState YModeCommand::substitute( const YCommandArgs &args )
 {
     YCursor cur = args.view->getBufferCursor();
 
@@ -1467,37 +1606,46 @@ void YModeCommand::substitute( const YCommandArgs &args )
         args.view->modePool()->push( YMode::ModeInsert );
     else
         args.view->append();
+    return CmdOk;
 }
 
-void YModeCommand::redisplay( const YCommandArgs &args )
+CmdState YModeCommand::redisplay( const YCommandArgs &args )
 {
     args.view->recalcScreen();
+    return CmdOk;
 }
 
-void YModeCommand::replace( const YCommandArgs &args )
+CmdState YModeCommand::replace( const YCommandArgs &args )
 {
     YCursor pos = args.view->getBufferCursor();
     if (args.arg == "<ESC>") {
-        return ;
+        return CmdError;
     }
-    args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg );
+    if ( args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg ) )
+	return CmdError;
     args.view->gotoxy(pos.x(), pos.y(), true);
     args.view->updateStickyCol();
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::abort( const YCommandArgs& /*args*/)
-{}
-
-void YModeCommand::delkey( const YCommandArgs &args )
+CmdState YModeCommand::abort( const YCommandArgs& /*args*/)
 {
-    args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), 1);
+    return CmdOk;
+}
+
+CmdState YModeCommand::delkey( const YCommandArgs &args )
+{
+    if ( args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), 1) )
+	return CmdError;
     args.view->commitNextUndo();
+    return CmdOk;
 }
 
-void YModeCommand::indent( const YCommandArgs& args )
+CmdState YModeCommand::indent( const YCommandArgs& args )
 {
-    YInterval area = interval( args );
+    bool stopped;
+    YInterval area = interval( args, &stopped );
     int fromY = area.fromPos().y();
     int toY = area.toPos().y();
     if ( toY > fromY && area.to().opened() && area.toPos().x() == 0 )
@@ -1510,46 +1658,54 @@ void YModeCommand::indent( const YCommandArgs& args )
     }
     args.view->commitNextUndo();
     args.view->modePool()->pop();
+    return CmdOk;
 }
 
-void YModeCommand::redoLastCommand( const YCommandArgs & args )
+CmdState YModeCommand::redoLastCommand( const YCommandArgs & args )
 {
     YView * view = args.view;
-    execCommand( view, view->getLastInputBuffer() );
+    return execCommand( view, view->getLastInputBuffer() );
 }
 
-void YModeCommand::tagNext( const YCommandArgs & args )
+CmdState YModeCommand::tagNext( const YCommandArgs & args )
 {
     YView * view = args.view;
     YCursor from = view->getBufferCursor();
     QString word = view->myBuffer()->getWordAt( from );
 
-    tagJumpTo(word);
+    if ( tagJumpTo(word) )
+	return CmdError;
+    else
+	return CmdOk;
 }
 
-void YModeCommand::tagPrev( const YCommandArgs & /*args*/ )
+CmdState YModeCommand::tagPrev( const YCommandArgs & /*args*/ )
 {
-    tagPop();
+    if ( tagPop() )
+	return CmdError;
+    else
+	return CmdOk;
 }
 
-void YModeCommand::undoJump( const YCommandArgs & /*args*/ )
+CmdState YModeCommand::undoJump( const YCommandArgs & /*args*/ )
 {
     const YCursor cursor = YSession::self()->previousJumpPosition();
     YSession::self()->currentView()->centerViewVertically( cursor.y() );
     YSession::self()->currentView()->gotodxdy( cursor, true );
+    return CmdOk;
 }
 
-void YModeCommand::incrementNumber( const YCommandArgs& args )
+CmdState YModeCommand::incrementNumber( const YCommandArgs& args )
 {
-    adjustNumber(args, args.count);
+    return adjustNumber(args, args.count);
 }
 
-void YModeCommand::decrementNumber( const YCommandArgs& args )
+CmdState YModeCommand::decrementNumber( const YCommandArgs& args )
 {
-    adjustNumber(args, -args.count);
+    return adjustNumber(args, -args.count);
 }
 
-void YModeCommand::adjustNumber( const YCommandArgs& args, int change )
+CmdState YModeCommand::adjustNumber( const YCommandArgs& args, int change )
 {
     YCursor pos = args.view->getBufferCursor();
     //dbg() << "adjustNumber: pos: " << pos;
@@ -1561,7 +1717,7 @@ void YModeCommand::adjustNumber( const YCommandArgs& args, int change )
             pos.setX(pos.x() + 1); // on the number
         } else {
             dbg() << "adjustNumber: no digit under cursor";
-            return ;
+            return CmdError;
         }
     }
     // find the boundaries of the number
@@ -1587,4 +1743,5 @@ void YModeCommand::adjustNumber( const YCommandArgs& args, int change )
     // move onto the last digit
     pos.setX(begin + number_str.length() - 1);
     args.view->gotoxyAndStick(pos);
+    return CmdOk;
 }

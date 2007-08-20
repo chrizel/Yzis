@@ -55,8 +55,10 @@ void YModePool::stop()
     mStop = true;
     // dbg() << "YModePool stopped for view " << mView->myId << endl;
 }
-void YModePool::sendKey( const QString& key, const QString& modifiers )
+bool YModePool::sendKey( const QString& key, const QString& modifiers )
 {
+    bool stopped = false;
+
     mKey = key;
     mModifiers = modifiers;
 
@@ -73,8 +75,7 @@ void YModePool::sendKey( const QString& key, const QString& modifiers )
         dbg() << "input buffer was remapped to: " << mapped << endl;
         mView->purgeInputBuffer();
         mapMode = 0;
-        YSession::self()->sendMultipleKeys( mView, mapped );
-        return ;
+        return YSession::self()->sendMultipleKeys( mView, mapped );
     }
 
 	// shift might have been used for remapping, 
@@ -88,13 +89,15 @@ void YModePool::sendKey( const QString& key, const QString& modifiers )
     mView->appendInputBuffer( mModifiers + mKey );
 
     CmdState state = stack.front()->execCommand( mView, mView->getInputBuffer() );
-    if ( mStop ) return ;
+    if ( mStop ) return true;
     switch (state) {
     case CmdError:
         dbg() << "CmdState = CmdError" << endl;
+        stopped = true;
         if (pendingMapp) break;
     case CmdOk:
         mView->purgeInputBuffer();
+        // stopped is false if state == CmdOk
         mapMode = 0;
         break;
     case CmdOperatorPending:
@@ -102,10 +105,12 @@ void YModePool::sendKey( const QString& key, const QString& modifiers )
         mapMode = MapPendingOp;
         break;
     case CmdQuit:
+        stopped = true;
         dbg() << "CmdState = CmdQuit" << endl;
     default:
         break;
     }
+    return stopped;
 }
 void YModePool::replayKey()
 {

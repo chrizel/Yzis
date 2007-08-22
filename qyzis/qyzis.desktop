@@ -1,7 +1,7 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=Qyzis
-Exec=Qyzis %u
+Exec=qyzis %u
 Icon=Qyzis
 Type=Application
 DocPath=qyzis/qyzis.html

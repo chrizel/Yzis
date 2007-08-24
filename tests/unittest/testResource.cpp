@@ -268,15 +268,17 @@ void TestResource::testIndentFile()
 
     QDir d = QDir::home();
     QVERIFY( d.cd(".yzis") );
-    QVERIFY( d.mkdir("indent") );
+    QVERIFY( d.mkdir("scripts") );
+    QVERIFY( d.mkdir("scripts/indent") );
     d = QDir( "yzishome" );
-    QVERIFY( d.mkdir("indent") );
+    QVERIFY( d.mkdir("scripts") );
+    QVERIFY( d.mkdir("scripts/indent") );
 
     QString resource = mResMgr->findResource( IndentResource, "f1.lua" );
     QVERIFY( resource.isEmpty() );
 
-    subTest( IndentResource, "yzishome/indent/", "f1.lua", true );
-    subTest( IndentResource, QDir::homePath() + "/.yzis/indent/", "f1.lua", true );
+    subTest( IndentResource, "yzishome/scripts/indent/", "f1.lua", true );
+    subTest( IndentResource, QDir::homePath() + "/.yzis/scripts/indent/", "f1.lua", true );
     subTest( IndentResource, "", "tmpfiles/f1.lua", false );
     subTest( IndentResource, "", QFileInfo("tmpfiles/f2.lua").absoluteFilePath() , true );
 

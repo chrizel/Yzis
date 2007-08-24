@@ -25,7 +25,9 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 /* Std */
 // This define is needed on Macinotsh. Else the ncurses wide char API 
 // is not exported
+#ifndef _XOPEN_SOURCE_EXTENDED
 #define _XOPEN_SOURCE_EXTENDED
+#endif
 #include <ncurses.h> 
 // This is an ugly hack preventing the compiler to choke on scroll (used in
 // both Qt API and (as a macro!) in ncurses

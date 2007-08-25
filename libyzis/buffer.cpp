@@ -788,10 +788,7 @@ void YBuffer::setChanged( bool modif )
     d->isModified = modif;
     if ( !d->enableUpdateView ) return ;
     statusChanged();
-    setModified( modif );
 }
-void YBuffer::setModified( bool )
-{}
 
 void YBuffer::statusChanged()
 {

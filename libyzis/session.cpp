@@ -424,7 +424,7 @@ YBuffer* YSession::findBuffer( const QString& path )
 bool YSession::isOneBufferModified() const
 {
     foreach( YBuffer * b, mBufferList ) {
-        if (b->fileIsNew() ) return true;
+        if (b->fileIsModified() ) return true;
     }
     return false;
 }

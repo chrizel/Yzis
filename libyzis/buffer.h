@@ -308,7 +308,6 @@ public:
      * Change the modified flag of the file
      */
     void setChanged(bool v);
-    virtual void setModified( bool modified );
 
     void setEncoding( const QString& name );
     const QString& encoding() const;

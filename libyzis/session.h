@@ -479,7 +479,7 @@ public:
     virtual void scriptSendMultipleKeys ( const QString& text );
 
     /** Copied from view */
-    virtual bool sendMultipleKeys( YView * view, const QString& keys );
+    virtual CmdState sendMultipleKeys( YView * view, YKeySequence &keys, YKeySequence::const_iterator &parsePos );
 
     //-------------------------------------------------------
     // ----------------- Send events to GUI
@@ -487,7 +487,7 @@ public:
     /**
      * transfer key events from GUI to core
      */
-    virtual bool sendKey( YView * view, const QString& key, const QString& modifiers = "");
+    virtual CmdState sendKey( YView * view, YKey _key );
 
     void registerModifier ( const QString& mod );
     void unregisterModifier ( const QString& mod );

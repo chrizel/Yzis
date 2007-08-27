@@ -52,6 +52,7 @@ YModeCommand::YModeCommand() : YMode()
     mType = ModeCommand;
     mString = _( "[ Awaiting Command ]" );
     commands.clear();
+    motions.clear();
     mIsEditMode = false;
     mIsCmdLineMode = true;
     mIsSelMode = false;
@@ -61,7 +62,10 @@ YModeCommand::~YModeCommand()
 {
     for ( int ab = 0 ; ab < commands.size(); ++ab)
         delete commands.at(ab);
+    for ( int ab = 0; ab < motions.size(); ++ab )
+        delete motions.at(ab);
     commands.clear();
+    motions.clear();
 }
 void YModeCommand::init()
 {
@@ -76,407 +80,348 @@ void YModeCommand::initPool()
 }
 void YModeCommand::initMotionPool()
 {
-    commands.append( new YMotion("0", &YModeCommand::gotoSOL, ArgNone) );
-    commands.append( new YMotion("$", &YModeCommand::gotoEOL, ArgNone) );
-    commands.append( new YMotion("^", &YModeCommand::firstNonBlank, ArgNone) );
-    commands.append( new YMotion("w", &YModeCommand::moveWordForward, ArgNone) );
-    commands.append( new YMotion("W", &YModeCommand::moveSWordForward, ArgNone) );
-    commands.append( new YMotion("b", &YModeCommand::moveWordBackward, ArgNone) );
-    commands.append( new YMotion("B", &YModeCommand::moveSWordBackward, ArgNone) );
-    commands.append( new YMotion("j", &YModeCommand::moveDown, ArgNone) );
-    commands.append( new YMotion("k", &YModeCommand::moveUp, ArgNone) );
-    commands.append( new YMotion("h", &YModeCommand::moveLeft, ArgNone) );
-    commands.append( new YMotion("l", &YModeCommand::moveRight, ArgNone) );
-    commands.append( new YMotion("<BS>", &YModeCommand::moveLeftWrap, ArgNone) );
-    commands.append( new YMotion(" ", &YModeCommand::moveRightWrap, ArgNone) );
-    commands.append( new YMotion("f", &YModeCommand::findNext, ArgChar) );
-    commands.append( new YMotion("t", &YModeCommand::findBeforeNext, ArgChar) );
-    commands.append( new YMotion("F", &YModeCommand::findPrevious, ArgChar) );
-    commands.append( new YMotion("T", &YModeCommand::findAfterPrevious, ArgChar) );
-    commands.append( new YMotion(";", &YModeCommand::repeatFind, ArgChar) );
-    commands.append( new YMotion("*", &YModeCommand::searchWord, ArgNone) );
-    commands.append( new YMotion("g*", &YModeCommand::searchWord, ArgNone) );
-    commands.append( new YMotion("#", &YModeCommand::searchWord, ArgNone) );
-    commands.append( new YMotion("g#", &YModeCommand::searchWord, ArgNone) );
-    commands.append( new YMotion("n", &YModeCommand::searchNext, ArgNone) );
-    commands.append( new YMotion("N", &YModeCommand::searchPrev, ArgNone) );
-    commands.append( new YMotion("<HOME>", &YModeCommand::gotoSOL, ArgNone) );
-    commands.append( new YMotion("<END>", &YModeCommand::gotoEOL, ArgNone) );
-    commands.append( new YMotion("<CTRL><HOME>", &YModeCommand::gotoStartOfDocument, ArgNone) );
-    commands.append( new YMotion("<CTRL><END>", &YModeCommand::gotoEndOfDocument, ArgNone) );
-    commands.append( new YMotion("<LEFT>", &YModeCommand::moveLeft, ArgNone) );
-    commands.append( new YMotion("<RIGHT>", &YModeCommand::moveRight, ArgNone) );
-    commands.append( new YMotion("<UP>", &YModeCommand::moveUp, ArgNone) );
-    commands.append( new YMotion("<DOWN>", &YModeCommand::moveDown, ArgNone) );
-    commands.append( new YMotion("%", &YModeCommand::matchPair, ArgNone) );
-    commands.append( new YMotion("`", &YModeCommand::gotoMark, ArgMark) );
-    commands.append( new YMotion("'", &YModeCommand::gotoMark, ArgMark) );
-    commands.append( new YMotion("<ENTER>", &YModeCommand::firstNonBlankNextLine, ArgNone) );
-    commands.append( new YMotion("gg", &YModeCommand::gotoLine, ArgNone) );
-    commands.append( new YMotion("G", &YModeCommand::gotoLine, ArgNone) );
-    commands.append( new YMotion("}", &YModeCommand::nextEmptyLine, ArgNone) );
-    commands.append( new YMotion("{", &YModeCommand::previousEmptyLine, ArgNone) );
+    motions.append( new YMotion(YKeySequence("0"), &YModeCommand::gotoSOL, ArgNone) );
+    motions.append( new YMotion(YKeySequence("$"), &YModeCommand::gotoEOL, ArgNone) );
+    motions.append( new YMotion(YKeySequence("^"), &YModeCommand::firstNonBlank, ArgNone) );
+    motions.append( new YMotion(YKeySequence("w"), &YModeCommand::moveWordForward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("W"), &YModeCommand::moveSWordForward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("b"), &YModeCommand::moveWordBackward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("B"), &YModeCommand::moveSWordBackward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("j"), &YModeCommand::moveDown, ArgNone) );
+    motions.append( new YMotion(YKeySequence("k"), &YModeCommand::moveUp, ArgNone) );
+    motions.append( new YMotion(YKeySequence("h"), &YModeCommand::moveLeft, ArgNone) );
+    motions.append( new YMotion(YKeySequence("l"), &YModeCommand::moveRight, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<BS>"), &YModeCommand::moveLeftWrap, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<SPACE>"), &YModeCommand::moveRightWrap, ArgNone) );
+    motions.append( new YMotion(YKeySequence("f"), &YModeCommand::findNext, ArgChar) );
+    motions.append( new YMotion(YKeySequence("t"), &YModeCommand::findBeforeNext, ArgChar) );
+    motions.append( new YMotion(YKeySequence("F"), &YModeCommand::findPrevious, ArgChar) );
+    motions.append( new YMotion(YKeySequence("T"), &YModeCommand::findAfterPrevious, ArgChar) );
+    motions.append( new YMotion(YKeySequence(";"), &YModeCommand::repeatFind, ArgNone) );
+    motions.append( new YMotion(YKeySequence("*"), &YModeCommand::searchWord, ArgNone) );
+    motions.append( new YMotion(YKeySequence("g*"), &YModeCommand::searchWord, ArgNone) );
+    motions.append( new YMotion(YKeySequence("#"), &YModeCommand::searchWord, ArgNone) );
+    motions.append( new YMotion(YKeySequence("g#"), &YModeCommand::searchWord, ArgNone) );
+    motions.append( new YMotion(YKeySequence("n"), &YModeCommand::searchNext, ArgNone) );
+    motions.append( new YMotion(YKeySequence("N"), &YModeCommand::searchPrev, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<HOME>"), &YModeCommand::gotoSOL, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<END>"), &YModeCommand::gotoEOL, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<C-HOME>"), &YModeCommand::gotoStartOfDocument, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<C-END>"), &YModeCommand::gotoEndOfDocument, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<LEFT>"), &YModeCommand::moveLeft, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<RIGHT>"), &YModeCommand::moveRight, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<UP>"), &YModeCommand::moveUp, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<DOWN>"), &YModeCommand::moveDown, ArgNone) );
+    motions.append( new YMotion(YKeySequence("%"), &YModeCommand::matchPair, ArgNone) );
+    motions.append( new YMotion(YKeySequence("`"), &YModeCommand::gotoMark, ArgMark) );
+    motions.append( new YMotion(YKeySequence("'"), &YModeCommand::gotoMark, ArgMark) );
+    motions.append( new YMotion(YKeySequence("<ENTER>"), &YModeCommand::firstNonBlankNextLine, ArgNone) );
+    motions.append( new YMotion(YKeySequence("gg"), &YModeCommand::gotoLine, ArgNone) );
+    motions.append( new YMotion(YKeySequence("G"), &YModeCommand::gotoLine, ArgNone) );
+    motions.append( new YMotion(YKeySequence("}"), &YModeCommand::nextEmptyLine, ArgNone) );
+    motions.append( new YMotion(YKeySequence("{"), &YModeCommand::previousEmptyLine, ArgNone) );
 }
 
 void YModeCommand::initCommandPool()
 {
-    commands.append( new YCommand("I", &YModeCommand::insertAtSOL) );
-    commands.append( new YCommand("gI", &YModeCommand::insertAtCol1) );
-    commands.append( new YCommand("i", &YModeCommand::gotoInsertMode) );
-    commands.append( new YCommand("<INS>", &YModeCommand::gotoInsertMode) );
-    commands.append( new YCommand(":", &YModeCommand::gotoExMode) );
-    commands.append( new YCommand("R", &YModeCommand::gotoReplaceMode) );
-    commands.append( new YCommand("v", &YModeCommand::gotoVisualMode) );
-    commands.append( new YCommand("V", &YModeCommand::gotoVisualLineMode) );
-    commands.append( new YCommand("<CTRL>v", &YModeCommand::gotoVisualBlockMode) );
-    commands.append( new YCommand("z<ENTER>", &YModeCommand::gotoLineAtTop) );
-    commands.append( new YCommand("z+", &YModeCommand::gotoLineAtTop) );
-    commands.append( new YCommand("z.", &YModeCommand::gotoLineAtCenter) );
-    commands.append( new YCommand("z-", &YModeCommand::gotoLineAtBottom) );
-    commands.append( new YCommand("dd", &YModeCommand::deleteLine) );
-    commands.append( new YCommand("dG", &YModeCommand::deleteToEndOfLastLine) );
-    commands.append( new YCommand("d", &YModeCommand::del, ArgMotion) );
-    commands.append( new YCommand("D", &YModeCommand::deleteToEOL) );
-    commands.append( new YCommand("s", &YModeCommand::substitute) );
-    commands.append( new YCommand("x", &YModeCommand::deleteChar) );
-    commands.append( new YCommand("X", &YModeCommand::deleteCharBackwards) );
-    commands.append( new YCommand("yy", &YModeCommand::yankLine) );
-    commands.append( new YCommand("y", &YModeCommand::yank, ArgMotion) );
-    commands.append( new YCommand("Y", &YModeCommand::yankToEOL) );
-    commands.append( new YCommand("cc", &YModeCommand::changeLine) );
-    commands.append( new YCommand("S", &YModeCommand::changeLine) );
-    commands.append( new YCommand("c", &YModeCommand::change, ArgMotion) );
-    commands.append( new YCommand("C", &YModeCommand::changeToEOL) );
-    commands.append( new YCommand("p", &YModeCommand::pasteAfter) );
-    commands.append( new YCommand("P", &YModeCommand::pasteBefore) );
-    commands.append( new YCommand("o", &YModeCommand::insertLineAfter) );
-    commands.append( new YCommand("O", &YModeCommand::insertLineBefore) );
-    commands.append( new YCommand("a", &YModeCommand::append) );
-    commands.append( new YCommand("A", &YModeCommand::appendAtEOL) );
-    commands.append( new YCommand("J", &YModeCommand::joinLine) );
-    commands.append( new YCommand("gJ", &YModeCommand::joinLineWithoutSpace) );
-    commands.append( new YCommand("<", &YModeCommand::indent, ArgMotion ) );
-    commands.append( new YCommand("<<", &YModeCommand::indent ) );
-    commands.append( new YCommand(">", &YModeCommand::indent, ArgMotion ) );
-    commands.append( new YCommand(">>", &YModeCommand::indent ) );
-    commands.append( new YCommand("ZZ", &YModeCommand::saveAndClose) );
-    commands.append( new YCommand("ZQ", &YModeCommand::closeWithoutSaving) );
-    commands.append( new YCommand("/", &YModeCommand::searchForwards) );
-    commands.append( new YCommand("?", &YModeCommand::searchBackwards) );
-    commands.append( new YCommand("~", &YModeCommand::changeCase) );
-    commands.append( new YCommand("m", &YModeCommand::mark, ArgChar) );
-    commands.append( new YCommand("r", &YModeCommand::replace, ArgChar) );
-    commands.append( new YCommand("u", &YModeCommand::undo) );
-    commands.append( new YCommand("U", &YModeCommand::redo) );
-    commands.append( new YCommand("<CTRL>r", &YModeCommand::redo) );
-    commands.append( new YCommand("q", &YModeCommand::macro) );
-    commands.append( new YCommand("@", &YModeCommand::replayMacro) );
-    commands.append( new YCommand("<CTRL>l", &YModeCommand::redisplay) );
-    commands.append( new YCommand("<CTRL>[", &YModeCommand::gotoCommandMode) );
-    commands.append( new YCommand("<ESC>", &YModeCommand::abort) );
-    commands.append( new YCommand("<CTRL>c", &YModeCommand::abort) );
-    commands.append( new YCommand("<DEL>", &YModeCommand::delkey) );
-    commands.append( new YCommand("<ALT>:", &YModeCommand::gotoExMode) );
-    commands.append( new YCommand("gUU", &YModeCommand::lineToUpperCase) );
-    commands.append( new YCommand("gUgU", &YModeCommand::lineToUpperCase) );
-    commands.append( new YCommand("guu", &YModeCommand::lineToLowerCase) );
-    commands.append( new YCommand("gugu", &YModeCommand::lineToLowerCase) );
-    commands.append( new YCommand("<PUP>", &YModeCommand::scrollPageUp) );
-    commands.append( new YCommand("<CTRL>b", &YModeCommand::scrollPageUp) );
-    commands.append( new YCommand("<CTRL>y", &YModeCommand::scrollLineUp) );
-    commands.append( new YCommand("<PDOWN>", &YModeCommand::scrollPageDown) );
-    commands.append( new YCommand("<CTRL>f", &YModeCommand::scrollPageDown) );
-    commands.append( new YCommand("<CTRL>e", &YModeCommand::scrollLineDown) );
-    commands.append( new YCommand(".", &YModeCommand::redoLastCommand) );
-    commands.append( new YCommand("<CTRL>]", &YModeCommand::tagNext) );
-    commands.append( new YCommand("<CTRL>t", &YModeCommand::tagPrev) );
-    commands.append( new YCommand("<CTRL>o", &YModeCommand::undoJump) );
-    commands.append( new YCommand("<CTRL>a", &YModeCommand::incrementNumber) );
-    commands.append( new YCommand("<CTRL>x", &YModeCommand::decrementNumber) );
+    commands.append( new YCommand(YKeySequence("I"), &YModeCommand::insertAtSOL) );
+    commands.append( new YCommand(YKeySequence("gI"), &YModeCommand::insertAtCol1) );
+    commands.append( new YCommand(YKeySequence("i"), &YModeCommand::gotoInsertMode) );
+    commands.append( new YCommand(YKeySequence("<INSERT>"), &YModeCommand::gotoInsertMode) );
+    commands.append( new YCommand(YKeySequence(":"), &YModeCommand::gotoExMode) );
+    commands.append( new YCommand(YKeySequence("R"), &YModeCommand::gotoReplaceMode) );
+    commands.append( new YCommand(YKeySequence("v"), &YModeCommand::gotoVisualMode) );
+    commands.append( new YCommand(YKeySequence("V"), &YModeCommand::gotoVisualLineMode) );
+    commands.append( new YCommand(YKeySequence("<C-v>"), &YModeCommand::gotoVisualBlockMode) );
+    commands.append( new YCommand(YKeySequence("z<ENTER>"), &YModeCommand::gotoLineAtTop) );
+    commands.append( new YCommand(YKeySequence("z+"), &YModeCommand::gotoLineAtTop) );
+    commands.append( new YCommand(YKeySequence("z."), &YModeCommand::gotoLineAtCenter) );
+    commands.append( new YCommand(YKeySequence("z-"), &YModeCommand::gotoLineAtBottom) );
+    commands.append( new YCommand(YKeySequence("dd"), &YModeCommand::deleteLine) );
+    commands.append( new YCommand(YKeySequence("dG"), &YModeCommand::deleteToEndOfLastLine) );
+    commands.append( new YCommand(YKeySequence("d"), &YModeCommand::del, ArgMotion) );
+    commands.append( new YCommand(YKeySequence("D"), &YModeCommand::deleteToEOL) );
+    commands.append( new YCommand(YKeySequence("s"), &YModeCommand::substitute) );
+    commands.append( new YCommand(YKeySequence("x"), &YModeCommand::deleteChar) );
+    commands.append( new YCommand(YKeySequence("X"), &YModeCommand::deleteCharBackwards) );
+    commands.append( new YCommand(YKeySequence("yy"), &YModeCommand::yankLine) );
+    commands.append( new YCommand(YKeySequence("y"), &YModeCommand::yank, ArgMotion) );
+    commands.append( new YCommand(YKeySequence("Y"), &YModeCommand::yankToEOL) );
+    commands.append( new YCommand(YKeySequence("cc"), &YModeCommand::changeLine) );
+    commands.append( new YCommand(YKeySequence("S"), &YModeCommand::changeLine) );
+    commands.append( new YCommand(YKeySequence("c"), &YModeCommand::change, ArgMotion) );
+    commands.append( new YCommand(YKeySequence("C"), &YModeCommand::changeToEOL) );
+    commands.append( new YCommand(YKeySequence("p"), &YModeCommand::pasteAfter) );
+    commands.append( new YCommand(YKeySequence("P"), &YModeCommand::pasteBefore) );
+    commands.append( new YCommand(YKeySequence("o"), &YModeCommand::insertLineAfter) );
+    commands.append( new YCommand(YKeySequence("O"), &YModeCommand::insertLineBefore) );
+    commands.append( new YCommand(YKeySequence("a"), &YModeCommand::append) );
+    commands.append( new YCommand(YKeySequence("A"), &YModeCommand::appendAtEOL) );
+    commands.append( new YCommand(YKeySequence("J"), &YModeCommand::joinLine) );
+    commands.append( new YCommand(YKeySequence("gJ"), &YModeCommand::joinLineWithoutSpace) );
+    commands.append( new YCommand(YKeySequence("<LT>"), &YModeCommand::indent, ArgMotion ) );
+    commands.append( new YCommand(YKeySequence("<LT><LT>"), &YModeCommand::indent ) );
+    commands.append( new YCommand(YKeySequence("<GT>"), &YModeCommand::indent, ArgMotion ) );
+    commands.append( new YCommand(YKeySequence("<GT><GT>"), &YModeCommand::indent ) );
+    commands.append( new YCommand(YKeySequence("ZZ"), &YModeCommand::saveAndClose) );
+    commands.append( new YCommand(YKeySequence("ZQ"), &YModeCommand::closeWithoutSaving) );
+    commands.append( new YCommand(YKeySequence("/"), &YModeCommand::searchForwards) );
+    commands.append( new YCommand(YKeySequence("?"), &YModeCommand::searchBackwards) );
+    commands.append( new YCommand(YKeySequence("~"), &YModeCommand::changeCase) );
+    commands.append( new YCommand(YKeySequence("m"), &YModeCommand::mark, ArgChar) );
+    commands.append( new YCommand(YKeySequence("r"), &YModeCommand::replace, ArgChar) );
+    commands.append( new YCommand(YKeySequence("u"), &YModeCommand::undo) );
+    commands.append( new YCommand(YKeySequence("U"), &YModeCommand::redo) );
+    commands.append( new YCommand(YKeySequence("<C-r>"), &YModeCommand::redo) );
+    commands.append( new YCommand(YKeySequence("q"), &YModeCommand::macro) );
+    commands.append( new YCommand(YKeySequence("@"), &YModeCommand::replayMacro) );
+    commands.append( new YCommand(YKeySequence("<C-l>"), &YModeCommand::redisplay) );
+    commands.append( new YCommand(YKeySequence("<C-[>"), &YModeCommand::gotoCommandMode) );
+    commands.append( new YCommand(YKeySequence("<ESC>"), &YModeCommand::abort) );
+    commands.append( new YCommand(YKeySequence("<C-c>"), &YModeCommand::abort) );
+    commands.append( new YCommand(YKeySequence("<DELETE>"), &YModeCommand::delkey) );
+    commands.append( new YCommand(YKeySequence("<A-:>"), &YModeCommand::gotoExMode) );
+    commands.append( new YCommand(YKeySequence("gUU"), &YModeCommand::lineToUpperCase) );
+    commands.append( new YCommand(YKeySequence("gUgU"), &YModeCommand::lineToUpperCase) );
+    commands.append( new YCommand(YKeySequence("guu"), &YModeCommand::lineToLowerCase) );
+    commands.append( new YCommand(YKeySequence("gugu"), &YModeCommand::lineToLowerCase) );
+    commands.append( new YCommand(YKeySequence("<PAGEUP>"), &YModeCommand::scrollPageUp) );
+    commands.append( new YCommand(YKeySequence("<C-b>"), &YModeCommand::scrollPageUp) );
+    commands.append( new YCommand(YKeySequence("<C-y>"), &YModeCommand::scrollLineUp) );
+    commands.append( new YCommand(YKeySequence("<PAGEDOWN>"), &YModeCommand::scrollPageDown) );
+    commands.append( new YCommand(YKeySequence("<C-f>"), &YModeCommand::scrollPageDown) );
+    commands.append( new YCommand(YKeySequence("<C-e>"), &YModeCommand::scrollLineDown) );
+    commands.append( new YCommand(YKeySequence("."), &YModeCommand::redoLastCommand) );
+    commands.append( new YCommand(YKeySequence("<C-]>"), &YModeCommand::tagNext) );
+    commands.append( new YCommand(YKeySequence("<C-t>"), &YModeCommand::tagPrev) );
+    commands.append( new YCommand(YKeySequence("<C-o>"), &YModeCommand::undoJump) );
+    commands.append( new YCommand(YKeySequence("<C-a>"), &YModeCommand::incrementNumber) );
+    commands.append( new YCommand(YKeySequence("<C-x>"), &YModeCommand::decrementNumber) );
 }
 
 void YModeCommand::initModifierKeys()
 {
-    for ( int ab = 0 ; ab < commands.size(); ++ab) {
-        const QString& keys = commands.at(ab)->keySeq();
-        if ( keys.indexOf( "<SHIFT>" ) > -1 || keys.indexOf( "<CTRL>" ) > -1 || keys.indexOf( "<ALT>" ) > -1 ) {
-            mModifierKeys << keys;
-        }
-    }
+    mModifierKeys << "<SHIFT>" << "<CTRL>" << "<ALT>";
 }
 
-CmdState YModeCommand::execCommand(YView *view, const QString& inputs)
+// Basic context-free grammar parsed by execCommand:
+//
+// Command := (count|register)* (MotionCmd | Cmd)
+// MotionCmd := MOTION
+// Cmd := CMD_WITH_CHAR CHAR | CMD_WITH_NONE | CMD_WITH_MARK CHAR
+//        | CMD_WITH_MOTION ( (count) ? MotionCmd | 'a' textBlock | 'i' textBlock )
+//
+// Note: MotionCmd can always be preceeded by count, so will absorb that into parseMotion
+CmdState YModeCommand::execCommand(YView *view, const YKeySequence &inputs, 
+                                   YKeySequence::const_iterator &parsePos)
 {
     // dbg() << "ExecCommand : " << inputs << endl;
     CmdState result;
     int count = 1;
     bool hadCount = false;
-    int i = 0;
     QList<QChar> regs;
 
     view->guiDisplayInfo( "" );
-
-    // read in the register operations and the counts
-    while (i < inputs.length()) {
-        if (inputs.at( i ).digitValue() > 0) {
-            int j = i + 1;
-            while (j < inputs.length() && inputs.at(j).digitValue() >= 0)
-                j++;
-            count *= inputs.mid(i, j - i).toInt();
-            i = j;
-            dbg() << "Count " << count << endl;
-            hadCount = true; //we found digits given by the user
-        } else if (inputs.at( i ) == '\"') {
-            if (++i >= inputs.length())
-                break;
-            regs << inputs.at(i++);
-        } else
-            break;
-    }
-    //if regs is empty add the default register
-    if ( regs.count() == 0 )
-        regs << '\"';
-
-    if (i >= inputs.length())
+    if ( parsePos == inputs.end() )
         return CmdNotYetValid;
 
-    // collect all the commands
-    QList<YCommand*> cmds, prevcmds;
-
-    int j = i;
-
-    // retrieve all the matching commands
-    // .. first the ones whose first key matches
-    if (j < inputs.length()) {
-        for (int ab = 0; ab < commands.size(); ++ab )
-            if (commands.at(ab)->keySeq().startsWith(inputs.mid(j, 1)))
-                cmds.append(commands.at(ab));
-    }
-    j++;
-    // .. then the ones whose next keys match, too
-    while (!cmds.isEmpty() && ++j <= inputs.length()) {
-        prevcmds = cmds;
-        // delete all the commands that don't match
-        for ( int bc = 0 ; bc < cmds.size() ; )
-            if (cmds.at(bc)->keySeq().startsWith(inputs.mid(i, j - i)))
-                ++bc;
+    // read in the register operations and the counts: (count|register)*
+    while ( parsePos != inputs.end() ) {
+        // Try to parse a count out of the input
+        int tmpCount;
+        tmpCount = inputs.parseUInt(parsePos);
+        if ( tmpCount > 0 ) {
+            count = tmpCount;
+            hadCount = true;
+        }
+        else if ( *parsePos == YKey::Key_DblQuote ) {
+            ++parsePos;
+            if ( parsePos == inputs.end() )
+                break;
+            if ( parsePos->isUnicode() )
+                regs << *parsePos;
             else
-                cmds.removeAt(bc);
+                return CmdError;
+            ++parsePos;
+        }
+        else
+            break;
     }
-    if (cmds.isEmpty()) {
-        // perhaps it is a command with an argument, isolate all those
-        for ( int bc = 0 ; bc < prevcmds.size() ; )
-            if ( prevcmds.at(bc)->arg() == ArgNone )
-                prevcmds.removeAt(bc);
-            else
-                ++bc;
-        if (prevcmds.isEmpty())
+    
+    //if regs is empty add the default register
+    if ( regs.count() == 0 )
+        regs << YKey::Key_DblQuote;
+
+    if (parsePos == inputs.end())
+        return CmdNotYetValid;
+
+    // retrieve all the matching commands: (MotionCmd | Cmd)
+    YKeySequence::const_iterator cmdPos = parsePos, motionResult=inputs.begin();
+    YCommand *c = parseMotion( inputs, parsePos, count );
+    // If it's not a motion, it's probably a regular command
+    if ( c == NULL ) {
+        motionResult = parsePos; // Save how successful motion was, in case it's a better match than command
+        parsePos = cmdPos;
+        c = parseCommand( inputs, parsePos );
+    }
+    
+    // If still null, find out if we have incomplete command, or wrong command
+    if ( c == NULL ) {
+      if ( parsePos == inputs.end() || motionResult == inputs.end() )
+            return CmdNotYetValid;
+        else
             return CmdError;
-        // it really is a command with an argument, read it in
-        const YCommand *c = prevcmds.first();
-        i = j - 1;
-        // read in a count that may follow
-        if (c->arg() == ArgChar) { // don't try to read a motion!
-            return (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, inputs.mid(i)));
-        }
-        if (inputs.at(i).digitValue() > 0) {
-            while (j < inputs.length() && inputs.at(j).digitValue() > 0)
-                j++;
-            count *= inputs.mid(i, j - i).toInt();
-            i = j;
-            if (i >= inputs.length() )
-                return CmdOperatorPending;
-        }
+    }
 
-        QString s = inputs.mid(i);
-        switch (c->arg()) {
-        case ArgMotion:
-            if (s[0] == 'a' || s[0] == 'i') {
-                // text object
-                if (s.length() == 1)
-                    return CmdOperatorPending;
-                else if (!textObjects.contains(s))
-                    return CmdError;
-            } else {
-                bool matched = false;
-                for (int ab = 0; ab < commands.size(); ++ab) {
-                    const YMotion *m = dynamic_cast<const YMotion*>(commands.at(ab));
-                    if (m && m->matches(s)) {
-                        matched = true;
-                        break;
-                    }
-                }
-                if (!matched) {
-                    for (int ab = 0; ab < commands.size(); ++ab ) {
-                        const YMotion *m = dynamic_cast<const YMotion*>(commands.at(ab));
-                        if (m && m->matches(s, false))
-                            return CmdOperatorPending;
-
-                    }
-                }
-            }
-            break;
-        case ArgChar:
-        case ArgReg:
-            if (s.length() != 1)
-                return CmdError;
-            break;
-        case ArgMark:
-            if (s.length() != 1 || !YCommand::isMark(s[0]))
-                return CmdError;
-            break;
-        default:
-            break;
-        }
-
-        // the argument is OK, go for it
-        foreach( YView *v, view->myBuffer()->views() )
+    // Actually execute the command, will parse rest of input as necessary
+    foreach( YView *v, view->myBuffer()->views() )
         v->setPaintAutoCommit( false );
 
-        result = (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, s));
+    result = (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, &inputs, &parsePos));
+    
+    foreach( YView *v, view->myBuffer()->views() )
+        v->commitPaintEvent();    
 
-        foreach( YView *v, view->myBuffer()->views() )
-        v->commitPaintEvent();
-
-        if ( c->arg() == ArgMark ) {
-            YSession::self()->saveJumpPosition();
-        }
-
-    } else {
-        // keep the commands that match exactly
-        QString s = inputs.mid(i);
-        for ( int ab = 0 ; ab < cmds.size(); ) {
-            if (cmds.at(ab)->keySeq() != s)
-                cmds.removeAt(ab);
-            else
-                ++ab;
-        }
-        if (cmds.isEmpty())
-            return CmdNotYetValid;
-        const YCommand *c = 0;
-        if (cmds.count() == 1) {
-            c = cmds.first();
-            if (c->arg() == ArgNone)
-                result = (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount));
-            else
-                return CmdOperatorPending;
-        } else {
-            /* two or more commands with the same name, we assert that these are exactly
-            a cmd that needs a motion and one without an argument. In visual mode, we take
-            the operator, in normal mode, we take the other. */ 
-            //this is not sufficient, see the 'q' (record macro command), we need a q+ArgChar and a 'q' commands //mm //FIXME
-            for ( int ab = 0 ; ab < cmds.size(); ++ab ) {
-                if ( cmds.at(ab)->arg() == ArgMotion && MapVisual ||
-                        cmds.at(ab)->arg() == ArgNone && !MapVisual )
-                    c = cmds.at(ab);
-            }
-            if (!c)
-                return CmdError;
-
-            foreach( YView *v, view->myBuffer()->views() )
-            v->setPaintAutoCommit( false );
-            result = (this->*(c->poolMethod()))(YCommandArgs(c, view, regs, count, hadCount, QString()));
-            foreach( YView *v, view->myBuffer()->views() )
-            v->commitPaintEvent();
-        }
+    if ( c->arg() == ArgMark ) {
+        YSession::self()->saveJumpPosition();
     }
 
     return result;
 }
 
-bool YMotion::matches(const QString &s, bool fully) const
+YCommand *YModeCommand::parseCommand( const YKeySequence &inputs, YKeySequence::const_iterator &initParsePos )
 {
-    QString ks = mKeySeq;
-    if (s.startsWith(ks)) {
-        switch (mArg) {
-        case ArgNone:
-            if (s.length() == ks.length())
-                return true;
-            break;
-        case ArgChar:
-            if (s.length() == ks.length() + 1 || !fully && s.length() == ks.length())
-                return true;
-            break;
-        case ArgMark:
-            if (s.length() == ks.length() + 1 && isMark(s.at(s.length() - 1)) || !fully && s.length() == ks.length())
-                return true;
-            break;
-        default:
-            break;
+    YKeySequence::const_iterator bestMatch = initParsePos, parsePos;
+    QList<YCommand *> cmds;
+    
+    for ( QList<YCommand*>::const_iterator cs = commands.begin(); cs != commands.end(); ++cs ) {
+        parsePos = initParsePos;
+        if ( (*cs)->keySeq().match( parsePos, inputs.end() ) ) {
+            // parsePos is updated by match
+            if ( parsePos > bestMatch ) // Have a better match, so get rid of old ones
+                cmds.clear();
+            if ( parsePos >= bestMatch )
+                cmds.append(*cs);
         }
-    } else if (!fully && ks.startsWith(s))
-        return true;
+        if ( parsePos > bestMatch )
+          bestMatch = parsePos;
+    }
 
-    return false;
-}
+    initParsePos = bestMatch;
 
-YCursor YModeCommand::move(YView *view, const QString &inputs, int count, bool usercount, bool *stopped)
-{
-    for (int ab = 0 ; ab < commands.size(); ++ab ) {
-        const YMotion *m = dynamic_cast<const YMotion*>(commands.at(ab));
-        if (m && m->matches(inputs)) {
-            // execute the corresponding method
-            YCursor to = (this->*(m->motionMethod()))(YMotionArgs(view, count, inputs.right( m->keySeq().length()),
-                                      inputs.left(m->keySeq().length()), usercount ), stopped);
-            return to;
+    if ( cmds.isEmpty() )
+        return NULL;
+    
+    YCommand *c;
+    if ( cmds.count() != 1 ) {
+        /* Assert precisely two matching commands, distinguished by argument */
+//this is not sufficient, see the 'q' (record macro command), we need a q+ArgChar and a 'q' commands //mm //FIXME
+        if ( MapVisual ) {
+            if ( cmds[0]->arg() == ArgMotion) // Find the one with a motion arg
+                c = cmds[0];
+            else
+                c = cmds[1];
+        }
+        else {
+            if ( cmds[0]->arg() == ArgNone )
+                c = cmds[0];
+            else
+                c = cmds[1];
         }
     }
-    return view->getBufferCursor();
+    else
+        c = cmds[0];
+    return c;
 }
 
+// MotionCmd taken as (count)? MOTION_CMD
+YMotion *YModeCommand::parseMotion( const YKeySequence &inputs, YKeySequence::const_iterator &initParsePos, int &count )
+{
+    QList<YMotion *> mots;
+    int tmpCount = inputs.parseUInt(initParsePos);
+    if ( tmpCount != -1 )
+        count *= tmpCount;
+
+    YKeySequence::const_iterator bestMatch = initParsePos, parsePos;    
+    for ( QList<YMotion*>::const_iterator ms = motions.begin(); ms != motions.end(); ++ms ) {
+        parsePos = initParsePos;
+        if ( (*ms)->keySeq().match( parsePos, inputs.end() ) ) {
+            // parsePos is updated by match
+            if ( parsePos > bestMatch )
+                mots.clear();
+            if ( parsePos >= bestMatch )
+                mots.append(*ms);
+        }
+        if ( parsePos > bestMatch) {
+          bestMatch = parsePos;
+        }
+    }
+
+    initParsePos = bestMatch;
+    
+    if ( mots.isEmpty() )
+        return NULL;
+    else
+        return mots.first();
+}
 
 // MOTIONS
 
-YCursor YModeCommand::moveLeft(const YMotionArgs &args, bool *stopped )
+YCursor YModeCommand::moveLeft(const YMotionArgs &args, CmdState *state )
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveLeft(&viewCursor, args.count, false, args.standalone );
-    *stopped = false;
+    *state = CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveRight(const YMotionArgs &args, bool *stopped )
+YCursor YModeCommand::moveRight(const YMotionArgs &args, CmdState *state )
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveRight(&viewCursor, args.count, false, args.standalone );
-    *stopped = false;
+    *state = CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveLeftWrap( const YMotionArgs & args, bool *stopped )
+YCursor YModeCommand::moveLeftWrap( const YMotionArgs & args, CmdState *state )
 {
     YViewCursor viewCursor = args.view->viewCursor();
-    *stopped = args.view->moveLeft(&viewCursor, args.count, true, args.standalone );
+    bool stopped  = args.view->moveLeft(&viewCursor, args.count, true, args.standalone );
+    *state = stopped ? CmdStopped : CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveRightWrap( const YMotionArgs & args, bool *stopped )
+YCursor YModeCommand::moveRightWrap( const YMotionArgs & args, CmdState *state )
 {
     YViewCursor viewCursor = args.view->viewCursor();
-    *stopped = args.view->moveRight(&viewCursor, args.count, true, args.standalone );
+    bool stopped = args.view->moveRight(&viewCursor, args.count, true, args.standalone );
+    *state = stopped ? CmdStopped : CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveDown(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::moveDown(const YMotionArgs &args, CmdState *state)
 {
+    bool stopped;
     YViewCursor viewCursor = args.view->viewCursor();
     if ( args.standalone )
-        *stopped = args.view->moveDown(&viewCursor, args.count, true );
+        stopped = args.view->moveDown(&viewCursor, args.count, true );
     else { //LINEWISE
         //update starting point
         args.view->gotoxy( 0, viewCursor.bufferY(), false );
         // end point
-        *stopped = args.view->moveDown( &viewCursor, args.count + 1, false );
+        stopped = args.view->moveDown( &viewCursor, args.count + 1, false );
         args.view->moveToStartOfLine( &viewCursor, true );
     }
+    *state = stopped ? CmdStopped : CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveUp(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::moveUp(const YMotionArgs &args, CmdState *state)
 {
+    bool stopped;
     YViewCursor viewCursor = args.view->viewCursor();
     if ( args.standalone )
-        *stopped = args.view->moveUp(&viewCursor, args.count, true );
+        stopped = args.view->moveUp(&viewCursor, args.count, true );
     else { //LINEWISE
         //update starting point
         if ( viewCursor.bufferY() == args.view->myBuffer()->lineCount() - 1 )
@@ -484,9 +429,10 @@ YCursor YModeCommand::moveUp(const YMotionArgs &args, bool *stopped)
         else
             args.view->gotoxy( 0, viewCursor.bufferY() + 1, false );
         // end point
-        *stopped = args.view->moveUp( &viewCursor, args.count, false );
+        stopped = args.view->moveUp( &viewCursor, args.count, false );
         args.view->gotoxy ( &viewCursor, 0, viewCursor.bufferY(), true );
     }
+    *state = stopped ? CmdStopped : CmdOk;
     return viewCursor.buffer();
 }
 
@@ -498,8 +444,8 @@ CmdState YModeCommand::scrollPageUp(const YCommandArgs &args)
         line = 0;
 
     if (line == (int)args.view->getCurrentTop())
-	return CmdError;
-	
+        return CmdStopped;
+        
     args.view->alignViewBufferVertically( line );
     return CmdOk;
 }
@@ -512,7 +458,7 @@ CmdState YModeCommand::scrollLineUp(const YCommandArgs &args)
         line = 0;
 
     if (line == (int)args.view->getCurrentTop()) {
-	return CmdError;
+        return CmdStopped;
     }
     
     args.view->alignViewBufferVertically( line );
@@ -536,7 +482,7 @@ CmdState YModeCommand::scrollPageDown(const YCommandArgs &args)
         line = view->myBuffer()->lineCount();
 
     if (line == view->getCurrentTop())
-	return CmdError;
+        return CmdStopped;
     
     view->alignViewBufferVertically( line );
     return CmdOk;
@@ -559,20 +505,20 @@ CmdState YModeCommand::scrollLineDown(const YCommandArgs &args)
         line = view->myBuffer()->lineCount();
 
     if (line == view->getCurrentTop())
-	return CmdError;
+        return CmdStopped;
     
     view->alignViewBufferVertically( line );
     return CmdOk;
 }
 
-YCursor YModeCommand::previousEmptyLine(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::previousEmptyLine(const YMotionArgs &args, CmdState *state)
 {
     YCursor from = args.view->getBufferCursor();
     int start = from.y();
     int count = args.count > 0 ? args.count : 1;
     int counter = 0;
 
-    *stopped = false; // Always succeeds
+    *state = CmdOk; // Always succeeds
 
     while ( start >= 1 && counter != count) {
         if ( args.view->myBuffer()->textline(start - 1).isEmpty() ) {
@@ -586,14 +532,14 @@ YCursor YModeCommand::previousEmptyLine(const YMotionArgs &args, bool *stopped)
     return YCursor(0, start);
 }
 
-YCursor YModeCommand::nextEmptyLine(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::nextEmptyLine(const YMotionArgs &args, CmdState *state)
 {
     YCursor from = args.view->getBufferCursor();
     int start = from.y() + 1;
     int count = args.count > 0 ? args.count : 1;
     int counter = 0;
 
-    *stopped = false; // Always succeeds
+    *state = CmdOk; // Always succeeds
 
     while ( start < args.view->myBuffer()->lineCount() && counter != count ) {
         if ( args.view->myBuffer()->textline(start).isEmpty() ) {
@@ -607,13 +553,13 @@ YCursor YModeCommand::nextEmptyLine(const YMotionArgs &args, bool *stopped)
     return YCursor(0, start - 1);
 }
 
-YCursor YModeCommand::matchPair(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::matchPair(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     bool found = false;
     YCursor pos = args.view->myBuffer()->action()->match( args.view, viewCursor.buffer(), &found );
     
-    *stopped = false; // Always succeeds
+    *state = CmdOk; // Always succeeds
     if ( found ) {
         if ( args.standalone ) {
             args.view->gotoxyAndStick( pos );
@@ -626,72 +572,79 @@ YCursor YModeCommand::matchPair(const YMotionArgs &args, bool *stopped)
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::findNext(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::findNext(const YMotionArgs &args, CmdState *state)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
-    YCursor pos = finder->forward( args.arg, found, args.count );
+
+    YCursor pos = finder->forward( (*args.parsePos)->toString(), found, args.count );
+    ++(*args.parsePos);
 
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
-	*stopped = false;
+        *state = CmdOk;
         return pos;
     }
 
-    *stopped = true;
+    *state = CmdStopped;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::findBeforeNext(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::findBeforeNext(const YMotionArgs &args, CmdState *state)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
-    YCursor pos = finder->forwardBefore( args.arg, found, args.count );
-
+    
+    YCursor pos = finder->forwardBefore( (*args.parsePos)->toString(), found, args.count );
+    ++(*args.parsePos);
     
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
-	*stopped = false;
+        *state = CmdOk;
         return pos;
     }
     
-    *stopped = true;
+    *state = CmdStopped;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::findPrevious(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::findPrevious(const YMotionArgs &args, CmdState *state)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
-    YCursor pos = finder->reverse( args.arg, found, args.count );
+    YCursor pos = finder->reverse( (*args.parsePos)->toString(), found, args.count );
+    ++(*args.parsePos);
+
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
-	*stopped = false;
+        *state = CmdOk;
         return pos;
     }
-    *stopped = true;
+    *state = CmdStopped;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::findAfterPrevious(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::findAfterPrevious(const YMotionArgs &args, CmdState *state)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
-    YCursor pos = finder->reverseAfter( args.arg, found, args.count );
+    YCursor pos = finder->reverseAfter( (*args.parsePos)->toString(), found, args.count );
+    ++(*args.parsePos);
+
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
-	*stopped = false;
+        *state = CmdOk;
         return pos;
     }
-    *stopped = true;
+    *state = CmdStopped;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::repeatFind(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::repeatFind(const YMotionArgs &args, CmdState *state)
 {
     YLineSearch* finder = args.view->myLineSearch();
     bool found;
@@ -699,48 +652,48 @@ YCursor YModeCommand::repeatFind(const YMotionArgs &args, bool *stopped)
     if ( found ) {
         if ( args.standalone )
             args.view->gotoxyAndStick( pos );
-	*stopped = false;
+        *state = CmdOk;
         return pos;
     }
-    *stopped = true;
+    *state = CmdStopped;
     return args.view->getBufferCursor();
 }
 
-YCursor YModeCommand::gotoSOL(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::gotoSOL(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveToStartOfLine(&viewCursor, args.standalone);
-    *stopped = false;
+    *state = CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoEOL(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::gotoEOL(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveToEndOfLine(&viewCursor, args.standalone);
-    *stopped = false;
+    *state = CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::gotoStartOfDocument(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->gotoLine(&viewCursor, 0, args.standalone);
     args.view->moveToStartOfLine(&viewCursor, args.standalone);
-    *stopped = false;
+    *state = CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoEndOfDocument(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::gotoEndOfDocument(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->gotoLastLine(&viewCursor, args.standalone);
     args.view->moveToEndOfLine(&viewCursor, args.standalone);
-    *stopped = false;
+    *state = CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::moveWordForward(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::moveWordForward(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     YCursor result( viewCursor.buffer() );
@@ -750,7 +703,7 @@ YCursor YModeCommand::moveWordForward(const YMotionArgs &args, bool *stopped)
     QRegExp ws("^\\s+"); //whitespace
     bool wrapped = false;
 
-    *stopped = false;
+    *state = CmdOk;
 
     while ( c < args.count ) { //for each word
         const QString& current = args.view->myBuffer()->textline( result.y() );
@@ -797,14 +750,14 @@ YCursor YModeCommand::moveWordForward(const YMotionArgs &args, bool *stopped)
 }
 
 
-YCursor YModeCommand::moveSWordForward(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::moveSWordForward(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     YCursor result( viewCursor.buffer() );
     int c = 0;
     QRegExp ws("\\s+"); //whitespace
 
-    *stopped = false;
+    *state = CmdOk;
 
     while ( c < args.count ) { //for each word
         const QString& current = args.view->myBuffer()->textline( result.y() );
@@ -849,7 +802,7 @@ QString invertQString( const QString& from )
     return res;
 }
 
-YCursor YModeCommand::moveWordBackward(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::moveWordBackward(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     YCursor result( viewCursor.buffer() );
@@ -859,7 +812,7 @@ YCursor YModeCommand::moveWordBackward(const YMotionArgs &args, bool *stopped)
     QRegExp rex3("^\\s+([^\\w\\s$]+|\\w+)"); //whitespace
     bool wrapped = false;
 
-    *stopped = false;
+    *state = CmdOk;
 
     while ( c < args.count ) { //for each word
         const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
@@ -907,14 +860,14 @@ YCursor YModeCommand::moveWordBackward(const YMotionArgs &args, bool *stopped)
 }
 
 
-YCursor YModeCommand::moveSWordBackward(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::moveSWordBackward(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     YCursor result( viewCursor.buffer() );
     int c = 0;
     QRegExp rex1("([\\S]+)\\s*"); //
 
-    *stopped = false;
+    *state = CmdOk;
 
     while ( c < args.count ) { //for each word
         const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
@@ -947,44 +900,48 @@ YCursor YModeCommand::moveSWordBackward(const YMotionArgs &args, bool *stopped)
     return result;
 }
 
-YCursor YModeCommand::firstNonBlank(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::firstNonBlank(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveToFirstNonBlankOfLine(&viewCursor, args.standalone);
-    *stopped = false;
+    *state = CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoMark( const YMotionArgs &args, bool *stopped )
+YCursor YModeCommand::gotoMark( const YMotionArgs &args, CmdState *state )
 {
+    YCursor ret;
     YViewCursor viewCursor = args.view->viewCursor();
     YViewMarker *mark = args.view->myBuffer()->viewMarks();
-    if ( mark->contains(args.arg)) {
-	*stopped = false;
-        return mark->value(args.arg).mBuffer;
+    if ( mark->contains(QChar(*(*args.parsePos))) ) {
+      *state = CmdOk;
+        ret =  mark->value( QChar(*(*args.parsePos)) ).mBuffer;
     }
     else {
-        dbg() << "WARNING! mark " << args.arg << " not found" << endl;
-	*stopped = true;
-        return viewCursor.buffer();
+        dbg() << "WARNING! mark " << QChar(*(*args.parsePos)) << " not found" << endl;
+        *state = CmdStopped;
+        ret =  viewCursor.buffer();
     }
+    ++(*args.parsePos);
+    return ret;
 }
 
-YCursor YModeCommand::firstNonBlankNextLine( const YMotionArgs &args, bool *stopped )
+YCursor YModeCommand::firstNonBlankNextLine( const YMotionArgs &args, CmdState *state )
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveDown(&viewCursor, args.count, args.standalone );
     args.view->moveToFirstNonBlankOfLine( &viewCursor, args.standalone );
-    *stopped = false;
+    *state = CmdOk;
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::gotoLine(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::gotoLine(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
     int line = 0;
-    dbg() << "gotoLine " << args.cmd << "," << args.count << endl;
-    *stopped = false;
+    dbg() << "gotoLine," << args.count << endl;
+    *state = CmdOk;
+
     if ( args.count > 0 ) line = args.count - 1;
 
     if ( args.cmd == "gg" || ( args.cmd == "G" && args.usercount ) ) {
@@ -1004,12 +961,12 @@ YCursor YModeCommand::gotoLine(const YMotionArgs &args, bool *stopped)
     return viewCursor.buffer();
 }
 
-YCursor YModeCommand::searchWord(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::searchWord(const YMotionArgs &args, CmdState *state)
 {
     YCursor from = args.view->getBufferCursor();
 
     QString word = args.view->myBuffer()->getWordAt( from );
-    *stopped = false;
+    *state = CmdOk;
     if ( ! word.isNull() ) {
         dbg() << "searchWord : " << word << endl;
         YCursor pos;
@@ -1039,18 +996,18 @@ YCursor YModeCommand::searchWord(const YMotionArgs &args, bool *stopped)
     return from;
 }
 
-YCursor YModeCommand::searchNext(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::searchNext(const YMotionArgs &args, CmdState *state)
 {
     YCursor from = args.view->getBufferCursor();
     YCursor pos;
     bool found = true;
     bool moved = true;
-    *stopped = true;
+    *state = CmdStopped;
     for ( int i = 0; found && i < args.count; i++ ) {
         pos = YSession::self()->search()->replayForward( args.view->myBuffer(), &found, from );
         if ( found ) {
             from = pos;
-	    *stopped = false;
+            *state = CmdOk;
             moved = true;
         }
     }
@@ -1063,17 +1020,17 @@ YCursor YModeCommand::searchNext(const YMotionArgs &args, bool *stopped)
     return from;
 }
 
-YCursor YModeCommand::searchPrev(const YMotionArgs &args, bool *stopped)
+YCursor YModeCommand::searchPrev(const YMotionArgs &args, CmdState *state)
 {
     YCursor from = args.view->getBufferCursor();
     YCursor pos;
     bool found = true;
     bool moved = false;
-    *stopped = true;
+    *state = CmdStopped;
     for ( int i = 0; found && i < args.count; i++ ) {
         pos = YSession::self()->search()->replayBackward( args.view->myBuffer(), &found, from );
         if ( found ) {
-	    *stopped = false;
+            *state = CmdOk;
             from = pos;
             moved = true;
         }
@@ -1089,28 +1046,59 @@ YCursor YModeCommand::searchPrev(const YMotionArgs &args, bool *stopped)
 
 // COMMANDS
 
+// To execute a motion, we find out where it goes, and go there.
 CmdState YModeCommand::execMotion( const YCommandArgs &args )
 {
     const YMotion *m = dynamic_cast<const YMotion*>(args.cmd);
-    bool stopped;
+    if ( ! m || ! m->argsPresent( *args.inputs, *args.parsePos ))
+        return CmdOperatorPending;
+    CmdState state;
     YASSERT(m);
-    YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, args.count, args.arg, args.cmd->keySeq(), args.usercount, true), &stopped);
+    YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, args.count, args.inputs, 
+                                                          args.parsePos, args.cmd->keySeq().toString(),
+                                                          args.usercount, true), &state);
     //args.view->centerViewVertically( to.y() );
     args.view->gotoxy(to.x(), to.y());
     
-    return stopped ? CmdError : CmdOk;
+    return state;
 }
 
-YInterval YModeCommand::interval(const YCommandArgs& args, bool *stopped)
+// Have Cmd requiring motion, so parse and find out where motion goes
+YInterval YModeCommand::interval(const YCommandArgs& args, CmdState *state)
 {
+    // First things first, if we're at the end of input, operator is incomplete
+    if ( *args.parsePos == args.inputs->end() ) {
+        *state = CmdOperatorPending;
+        return YInterval();
+    }
+
+    YKeySequence::const_iterator motPos = *args.parsePos;
+    int count = args.count;
     YCursor from( args.view->getBufferCursor() );
-    YCursor to = move( args.view, args.arg, args.count, args.usercount, stopped );
+    bool entireLines = ( *args.parsePos != args.inputs->end() 
+                         && *(*args.parsePos) == YKey(YKey::Key_Quote) );
+    YMotion *m = parseMotion( *args.inputs, *args.parsePos, count );
+
+    // Now we know whether we've got a valid motion
+    // Decide whether a mismatch is due to incompleteness or error
+    if ( !m && *args.parsePos == motPos ) {
+        *state = CmdError;
+        return YInterval();
+    }
+    else if ( !m || ! m->argsPresent(*args.inputs, *args.parsePos) ) {
+        *state = CmdOperatorPending;
+        return YInterval();
+    }
+    
+    // We have a valid motion so lets try executing it
+    YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, count, args.inputs, 
+                                                          args.parsePos, args.cmd->keySeq().toString(),
+                                                          args.usercount ), state);
     if ( from > to ) {
         YCursor tmp( from );
         from = to;
         to = tmp;
     }
-    bool entireLines = ( args.arg.length() > 0 && args.arg[ 0 ] == QChar('\'') );
     if ( entireLines ) {
         from.setX( 0 );
         to.setX( 0 );
@@ -1135,12 +1123,12 @@ CmdState YModeCommand::append(const YCommandArgs &args)
 
 CmdState YModeCommand::change(const YCommandArgs &args)
 {
-    bool stopped;
-    YInterval area = interval( args, &stopped );
+    CmdState state;
+    YInterval area = interval( args, &state );
     YCursor cur = area.fromPos();
 
-    if ( stopped )
-	return CmdError;
+    if ( state != CmdOk )
+        return state;
     dbg() << "YModeCommand::change " << area << endl;
     args.view->myBuffer()->action()->deleteArea(args.view, area, args.regs);
 
@@ -1164,7 +1152,7 @@ CmdState YModeCommand::changeLine(const YCommandArgs &args)
     int y = args.view->getBufferCursor().y();
     args.view->myBuffer()->action()->deleteLine(args.view, args.view->getBufferCursor(), args.count, args.regs);
     args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor().y() );
-    args.view->modePool()->push( YMode::ModeInsert );
+    gotoInsertMode(args);
     args.view->gotoxy(0, y);
     //args.view->commitNextUndo();
     return CmdOk;
@@ -1172,8 +1160,10 @@ CmdState YModeCommand::changeLine(const YCommandArgs &args)
 
 CmdState YModeCommand::changeToEOL(const YCommandArgs &args)
 {
-    bool stopped;
-    YCursor to = move(args.view, "$", 1, false, &stopped);
+    YViewCursor viewCursor = args.view->viewCursor();
+    args.view->moveToEndOfLine(&viewCursor, false);
+    YCursor to = viewCursor.buffer();
+
     args.view->myBuffer()->action()->deleteArea(args.view, args.view->getBufferCursor(), to, args.regs);
     args.view->append();
     //args.view->commitNextUndo();
@@ -1210,8 +1200,10 @@ CmdState YModeCommand::deleteToEndOfLastLine(const YCommandArgs &args)
 CmdState YModeCommand::deleteToEOL(const YCommandArgs &args)
 {
     //in vim : 2d$ does not behave as d$d$, this is illogical ..., you cannot delete twice to end of line ...
-    bool stopped;
-    YCursor to = move(args.view, "$", 1, false, &stopped);
+    YViewCursor viewCursor = args.view->viewCursor();
+    args.view->moveToEndOfLine(&viewCursor, false);
+    YCursor to = viewCursor.buffer();
+
     args.view->myBuffer()->action()->deleteArea(args.view, args.view->getBufferCursor(), to, args.regs);
     args.view->commitNextUndo();
     return CmdOk;
@@ -1220,15 +1212,13 @@ CmdState YModeCommand::deleteToEOL(const YCommandArgs &args)
 CmdState YModeCommand::insertAtSOL(const YCommandArgs &args)
 {
     args.view->moveToFirstNonBlankOfLine();
-    args.view->modePool()->push( YMode::ModeInsert );
-    return CmdOk;
+    return gotoInsertMode(args);
 }
 
 CmdState YModeCommand::insertAtCol1(const YCommandArgs &args)
 {
     args.view->moveToStartOfLine();
-    args.view->modePool()->push( YMode::ModeInsert );
-    return CmdOk;
+    return gotoInsertMode(args);
 }
 
 CmdState YModeCommand::gotoCommandMode(const YCommandArgs &args)
@@ -1334,7 +1324,7 @@ CmdState YModeCommand::insertLineAfter(const YCommandArgs &args)
             }
         }
     }
-    args.view->modePool()->push( YMode::ModeInsert );
+    gotoInsertMode(args);
     args.view->moveToEndOfLine();
     //args.view->commitNextUndo();
     return CmdOk;
@@ -1346,7 +1336,7 @@ CmdState YModeCommand::insertLineBefore(const YCommandArgs &args)
     for ( int i = 0 ; i < args.count ; i++ )
         args.view->myBuffer()->action()->insertNewLine( args.view, 0, y );
     args.view->moveUp();
-    args.view->modePool()->push( YMode::ModeInsert );
+    gotoInsertMode(args);
     args.view->commitNextUndo();
     return CmdOk;
 }
@@ -1356,10 +1346,10 @@ CmdState YModeCommand::joinLine(const YCommandArgs &args)
     CmdState ret = CmdOk;
     
     for ( int i = 0; i < args.count; i++ ) {
-	if ( args.view->getBufferCursor().y() == args.view->myBuffer()->lineCount()-1 ) {
-	    ret = CmdError;
-	    break;
-	}	
+        if ( args.view->getBufferCursor().y() == args.view->myBuffer()->lineCount()-1 ) {
+            ret = CmdStopped;
+            break;
+        }        
         args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor().y(), true );
     }
     
@@ -1372,10 +1362,10 @@ CmdState YModeCommand::joinLineWithoutSpace(const YCommandArgs &args)
     CmdState ret = CmdOk;
     
     for ( int i = 0; i < args.count; i++ ) {
-	if ( args.view->getBufferCursor().y() == args.view->myBuffer()->lineCount()-1 ) {
-	    ret = CmdError;
-	    break;
-	}
+        if ( args.view->getBufferCursor().y() == args.view->myBuffer()->lineCount()-1 ) {
+            ret = CmdStopped;
+            break;
+        }
         args.view->myBuffer()->action()->mergeNextLine( args.view, args.view->getBufferCursor().y(), false );
     }
     
@@ -1386,7 +1376,7 @@ CmdState YModeCommand::joinLineWithoutSpace(const YCommandArgs &args)
 CmdState YModeCommand::pasteAfter(const YCommandArgs &args)
 {
     for ( int i = 0 ; i < args.count ; i++ )
-		args.view->myBuffer()->action()->pasteContent( args.view, args.regs[ 0 ], true);
+                args.view->myBuffer()->action()->pasteContent( args.view, args.regs[ 0 ], true);
     args.view->commitNextUndo();
     return CmdOk;
 }
@@ -1394,7 +1384,7 @@ CmdState YModeCommand::pasteAfter(const YCommandArgs &args)
 CmdState YModeCommand::pasteBefore(const YCommandArgs &args)
 {
     for ( int i = 0 ; i < args.count ; i++ )
-		args.view->myBuffer()->action()->pasteContent( args.view, args.regs[ 0 ], false);
+                args.view->myBuffer()->action()->pasteContent( args.view, args.regs[ 0 ], false);
     args.view->commitNextUndo();
     return CmdOk;
 }
@@ -1407,8 +1397,9 @@ CmdState YModeCommand::yankLine(const YCommandArgs &args)
 
 CmdState YModeCommand::yankToEOL(const YCommandArgs &args)
 {
-    bool stopped;
-    YCursor to = move(args.view, "$", 1, false, &stopped);
+    YViewCursor viewCursor = args.view->viewCursor();
+    args.view->moveToEndOfLine(&viewCursor, false);
+    YCursor to = viewCursor.buffer();
     args.view->myBuffer()->action()->copyArea(args.view, args.view->getBufferCursor(), to, args.regs);
     return CmdOk;
 }
@@ -1439,11 +1430,12 @@ CmdState YModeCommand::searchForwards(const YCommandArgs &args)
 
 CmdState YModeCommand::del(const YCommandArgs &args)
 {
-    bool stopped = false;
-    YInterval area = interval( args, &stopped );
+    CmdState state = CmdOk;
+
+    YInterval area = interval( args, &state );
     
-    if ( stopped )
-	return CmdError;
+    if ( state != CmdOk )
+        return state;
 
     args.view->myBuffer()->action()->deleteArea( args.view, area, args.regs );
     args.view->commitNextUndo();
@@ -1453,15 +1445,14 @@ CmdState YModeCommand::del(const YCommandArgs &args)
 
 CmdState YModeCommand::yank(const YCommandArgs &args)
 {
-    bool stopped;
-    YInterval area = interval( args, &stopped );
+    CmdState state;
+    YInterval area = interval( args, &state );
     
-    if ( stopped )
-	return CmdError;
+    if ( state != CmdOk )
+        return state;
     
     args.view->myBuffer()->action()->copyArea( args.view, area, args.regs );
-    YCursor to = move( args.view, args.arg, args.count, args.usercount, &stopped );
-    args.view->gotoxyAndStick( to );
+    args.view->gotoxyAndStick( area.from().pos() );
     args.view->modePool()->pop();
     return CmdOk;
 }
@@ -1469,7 +1460,10 @@ CmdState YModeCommand::yank(const YCommandArgs &args)
 CmdState YModeCommand::mark(const YCommandArgs &args)
 {
     YViewCursor viewCursor = args.view->viewCursor();
-    args.view->myBuffer()->viewMarks()->insert( args.arg, viewCursor );
+    if ( *args.parsePos == args.inputs->end() )
+      return CmdOperatorPending;
+    args.view->myBuffer()->viewMarks()->insert( (*args.parsePos)->toString(), viewCursor );
+    ++(*args.parsePos);
     return CmdOk;
 }
 
@@ -1553,19 +1547,18 @@ CmdState YModeCommand::replayMacro( const YCommandArgs &args )
     if ( args.view->isRecording()) {
         dbg() << "User asked to play a macro he is currently recording, forget it !" << endl;
         if ( args.view->registersRecorded() == args.regs )
-            return CmdError;
+            return CmdStopped;
     }
 
     for ( int i = 0; i < args.count; i++ ) {
-        for ( int ab = 0 ; ab < args.regs.size(); ++ab)
-            if ( YSession::self()->sendMultipleKeys(
-		     args.view,
-		     YSession::self()->getRegister(args.regs.at(ab))[0]
-		     ) ) {
-		args.view->commitNextUndo();
-		return CmdError;
-	    }
-	
+        for ( int ab = 0 ; ab < args.regs.size(); ++ab) {
+            YKeySequence inputs(YSession::self()->getRegister(args.regs.at(ab))[0]);
+            YKeySequence::const_iterator parsePos = inputs.begin();
+            if ( YSession::self()->sendMultipleKeys(args.view, inputs, parsePos) ) {
+                args.view->commitNextUndo();
+                return CmdStopped;
+            }    
+        }        
     }
     args.view->commitNextUndo();
     return CmdOk;
@@ -1620,14 +1613,17 @@ CmdState YModeCommand::redisplay( const YCommandArgs &args )
 CmdState YModeCommand::replace( const YCommandArgs &args )
 {
     YCursor pos = args.view->getBufferCursor();
-    if (args.arg == "<ESC>") {
-        return CmdError;
+    if ( *args.parsePos == args.inputs->end() )
+        return CmdOperatorPending;
+    if (*(*args.parsePos) == YKey::Key_Esc) {
+        return CmdStopped;
     }
-    if ( args.view->myBuffer()->action()->replaceChar( args.view, pos, args.arg ) )
-	return CmdError;
+    if ( args.view->myBuffer()->action()->replaceChar( args.view, pos, (*args.parsePos)->toString() ) )
+        return CmdStopped;
     args.view->gotoxy(pos.x(), pos.y(), true);
     args.view->updateStickyCol();
     args.view->commitNextUndo();
+    ++(*args.parsePos);
     return CmdOk;
 }
 
@@ -1639,22 +1635,34 @@ CmdState YModeCommand::abort( const YCommandArgs& /*args*/)
 CmdState YModeCommand::delkey( const YCommandArgs &args )
 {
     if ( args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), 1) )
-	return CmdError;
+        return CmdStopped;
     args.view->commitNextUndo();
     return CmdOk;
 }
 
 CmdState YModeCommand::indent( const YCommandArgs& args )
 {
-    bool stopped;
-    YInterval area = interval( args, &stopped );
+    CmdState state;
+    YInterval area;
+    int factor = ( *((*args.parsePos)-1) == YKey::Key_LessThan ? -1 : 1 ) * args.count;
+    // First check how we got here: via a command with motion, or <</>> type
+    // No easy way unfortunately
+    if ( args.cmd->keySeq().count() == 2 ) {
+        area = YInterval(args.view->getBufferCursor(), args.view->getBufferCursor());
+        state = CmdOk;
+    }
+    else
+        area = interval( args, &state );
+    
+    if ( state != CmdOk )
+        return state;
     int fromY = area.fromPos().y();
     int toY = area.toPos().y();
     if ( toY > fromY && area.to().opened() && area.toPos().x() == 0 )
         --toY;
     int maxY = args.view->myBuffer()->lineCount() - 1;
     if ( toY > maxY ) toY = maxY;
-    int factor = ( args.cmd->keySeq()[0] == '<' ? -1 : 1 ) * args.count;
+    
     for ( int l = fromY; l <= toY; l++ ) {
         args.view->myBuffer()->action()->indentLine( args.view, l, factor );
     }
@@ -1666,7 +1674,12 @@ CmdState YModeCommand::indent( const YCommandArgs& args )
 CmdState YModeCommand::redoLastCommand( const YCommandArgs & args )
 {
     YView * view = args.view;
-    return execCommand( view, view->getLastInputBuffer() );
+    YKeySequence::const_iterator parsePos = view->getLastInputBuffer().begin();
+    CmdState state = execCommand( view, view->getLastInputBuffer(), parsePos );
+    if ( state == CmdNotYetValid )
+      return CmdStopped;
+    else
+      return state;
 }
 
 CmdState YModeCommand::tagNext( const YCommandArgs & args )
@@ -1676,17 +1689,17 @@ CmdState YModeCommand::tagNext( const YCommandArgs & args )
     QString word = view->myBuffer()->getWordAt( from );
 
     if ( tagJumpTo(word) )
-	return CmdError;
+        return CmdStopped;
     else
-	return CmdOk;
+        return CmdOk;
 }
 
 CmdState YModeCommand::tagPrev( const YCommandArgs & /*args*/ )
 {
     if ( tagPop() )
-	return CmdError;
+        return CmdStopped;
     else
-	return CmdOk;
+        return CmdOk;
 }
 
 CmdState YModeCommand::undoJump( const YCommandArgs & /*args*/ )
@@ -1719,7 +1732,7 @@ CmdState YModeCommand::adjustNumber( const YCommandArgs& args, int change )
             pos.setX(pos.x() + 1); // on the number
         } else {
             dbg() << "adjustNumber: no digit under cursor";
-            return CmdError;
+            return CmdStopped;
         }
     }
     // find the boundaries of the number

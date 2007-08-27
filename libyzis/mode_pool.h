@@ -38,8 +38,8 @@ public:
     YModePool( YView* view );
     virtual ~YModePool();
 
-    bool sendKey( const QString& key, const QString& modifiers );
-    void replayKey();
+    CmdState sendKey( const YKey &key );
+    CmdState replayKey();
 
     /**
      * pop current @arg mode and push @arg mode
@@ -70,8 +70,7 @@ public:
 
 private :
     YView* mView;
-    QString mKey;
-    QString mModifiers;
+    YKey mKey;
     YModeMap mModes;
     YModeStack stack;
     int mapMode;

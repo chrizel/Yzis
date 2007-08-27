@@ -58,7 +58,7 @@ void YModeCompletion::leave( YView* /*view*/ )
 
 bool YModeCompletion::initCompletion( YView* view, bool forward )
 {
-    bool stopped;
+    CmdState state;
     YBuffer* buffer = view->myBuffer();
     YMotionArgs arg(view, 1);
     YCursor cur = view->getBufferCursor();
@@ -71,7 +71,7 @@ bool YModeCompletion::initCompletion( YView* view, bool forward )
         return false;
     }
 
-    mCompletionStart = YSession::self()->getCommandPool()->moveWordBackward( arg, &stopped );
+    mCompletionStart = YSession::self()->getCommandPool()->moveWordBackward( arg, &state );
     YCursor stop( cur.x() - 1, cur.y() );
     dbg() << "Start : " << mCompletionStart << ", End:" << stop << endl;
     QStringList list = buffer->getText(mCompletionStart, stop);
@@ -144,17 +144,19 @@ void YModeCompletion::doComplete( YView* view, bool forward )
     view->guiDisplayInfo( msg );
 }
 
-CmdState YModeCompletion::execCommand( YView* view, const QString& _key )
+CmdState YModeCompletion::execCommand( YView* view, const YKeySequence &keys, 
+                                       YKeySequence::const_iterator &parsePos )
 {
     bool initOK = true;
+    YKey _key = *parsePos;
 
     // if we're to cycle through the potential matches, do the cycling
-    if ( _key == "<CTRL>n" || _key == "<CTRL>p" ) {
+    if ( _key == YKey(YKey::Key_n, YKey::Mod_Ctrl) || _key == YKey(YKey::Key_p, YKey::Mod_Ctrl) ) {
         // check if we need to generated the matches
         if ( mPrefix.isEmpty() ) {
             mLastKey = _key;
             bool forward = true; // this is different than mForward and indicates the direction of user search
-            if ( _key == "<CTRL>p" ) {
+            if ( _key == YKey(YKey::Key_p, YKey::Mod_Ctrl ) ) {
                 forward = false;
             }
 
@@ -173,11 +175,14 @@ CmdState YModeCompletion::execCommand( YView* view, const QString& _key )
             }
 
             doComplete( view, mForward );
-
+            
             mLastKey = _key;
         }
-    } else if ( _key == "<CTRL>x" ) {
+        // Have used key, so advance pointer
+        ++parsePos;
+    } else if ( _key == YKey(YKey::Key_x, YKey::Mod_Ctrl) ) {
         dbg() << "Skip CTRLx in completion mode" << endl;
+        ++parsePos;
         return CmdOk;
     } else {
         view->modePool()->pop();

@@ -41,7 +41,8 @@ public:
     virtual void enter( YView* mView );
     virtual void leave( YView* mView );
     virtual void initModifierKeys();
-    virtual CmdState execCommand( YView* mView, const QString& key );
+    virtual CmdState execCommand( YView* mView, const YKeySequence& key,
+                                  YKeySequence::const_iterator &parsePos);
 
     virtual CmdState commandDefault( YView* mView, const QString& key );
     virtual void commandHome( YView* mView, const QString& key );

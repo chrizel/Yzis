@@ -26,6 +26,7 @@
 
 /* Yzis */
 #include "yzis.h"
+#include "keys.h"
 
 
 class YDebugStream;
@@ -47,6 +48,8 @@ enum CmdState {
     CmdOperatorPending,
     /** The command has been successfully executed. */
     CmdOk,
+    /** The command has been executed, but stopped due to text constraints*/
+    CmdStopped,
     /** It is time to leave the event loop */
     CmdQuit,
 };
@@ -80,7 +83,8 @@ public:
     virtual void initModifierKeys();
     virtual void enter( YView* mView );
     virtual void leave( YView* mView );
-    virtual CmdState execCommand( YView* mView, const QString& key ) = 0;
+    virtual CmdState execCommand( YView* mView, const YKeySequence & keys, 
+                                  YKeySequence::const_iterator &parsePos ) = 0;
 
     virtual void cursorMoved( YView* mView );
 
@@ -157,7 +161,7 @@ public:
 
     void enter( YView* mView );
     void leave( YView* mView );
-    CmdState execCommand( YView* mView, const QString& key );
+    CmdState execCommand( YView* mView, const YKeySequence& key, YKeySequence::const_iterator &parsePos );
 
 };
 

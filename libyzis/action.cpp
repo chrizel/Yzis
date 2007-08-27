@@ -44,14 +44,14 @@ static void configureViews(YBuffer *buffer)
 {
     dbg() << "configureViews(" << buffer->toString() << ")" << endl;
     foreach( YView *view, buffer->views() )
-		view->setPaintAutoCommit( false );
+                view->setPaintAutoCommit( false );
 }
 
 static void commitViewsChanges(YBuffer *buffer)
 {
     dbg() << "commitViewsChanges(" << buffer->toString() << ")" << endl;
     foreach( YView *view, buffer->views() )
-		view->commitPaintEvent();
+                view->commitPaintEvent();
 }
 
 void YZAction::insertChar( YView* pView, const YCursor pos, const QString& text )
@@ -512,13 +512,13 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
         }
         i++;
         while ( i < list.size() - 1 ) {
-			mBuffer->insertLine( list[ i ], pos.y() + i );
+                        mBuffer->insertLine( list[ i ], pos.y() + i );
             i++;
         }
         if ( i < list.size() && ! copyWholeLinesOnly ) {
-	    configureViews(mBuffer);
-	    mBuffer->insertLine( (list[ i ].isNull() ? "" : list[ i ] ) + copy, pos.y() + i );
-	    commitViewsChanges(mBuffer);
+            configureViews(mBuffer);
+            mBuffer->insertLine( (list[ i ].isNull() ? "" : list[ i ] ) + copy, pos.y() + i );
+            commitViewsChanges(mBuffer);
             view->gotoxy( list[ i ].length(), pos.y() + i );
         } else if ( copyWholeLinesOnly ) {
             view->gotoxy( 0, pos.y() + 1 );
@@ -528,8 +528,8 @@ void YZAction::pasteContent( YView *view, QChar registr, bool after )
     } else if ( !after ) { //paste whole lines before current char
         configureViews(mBuffer);
         for ( i = 1; i < list.size() - 1; i++ )
-		mBuffer->insertLine( list[ i ], pos.y() + i - 1 );
-   	commitViewsChanges(mBuffer);
+                mBuffer->insertLine( list[ i ], pos.y() + i - 1 );
+           commitViewsChanges(mBuffer);
 
         view->gotoxy( pos );
     }

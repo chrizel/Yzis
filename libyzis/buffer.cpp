@@ -109,8 +109,8 @@ struct YBuffer::Private
     // buffer state
     BufferState state;
 
-	// Pending replay (on load only)
-	bool mPendingReplay;
+        // Pending replay (on load only)
+        bool mPendingReplay;
 };
 
 YBuffer::YBuffer()
@@ -133,7 +133,7 @@ YBuffer::YBuffer()
     d->docMarks = NULL;
     d->swapFile = NULL;
     d->text = NULL;
-	d->mPendingReplay = false;
+        d->mPendingReplay = false;
 
     // Default to an BufferInactive buffer
     // other actions will make it BufferActive later
@@ -181,13 +181,13 @@ QString YBuffer::toString() const
 static void viewsInit( YBuffer *buffer, QPoint pos )
 {
     foreach( YView *view, buffer->views() )
-	view->initChanges(pos);
+        view->initChanges(pos);
 }
 
 static void viewsApply( YBuffer *buffer, int y )
 {
     foreach( YView *view, buffer->views() )
-	view->applyChanges(y);
+        view->applyChanges(y);
 }
 
 void YBuffer::insertChar(QPoint pos, const QString& c )
@@ -488,7 +488,7 @@ int YBuffer::firstNonBlankChar( int line ) const
     int i = 0;
     QString s = textline(line);
     if (s.isEmpty() ) return 0;
-    while ( s.at(i).isSpace() && i < ( int )s.length())
+    while ( i < (int)s.length() && s.at(i).isSpace() )
         i++;
     return i;
 }
@@ -632,12 +632,12 @@ void YBuffer::load(const QString& file)
         struct stat buf;
         int i = stat( d->path.toLocal8Bit(), &buf );
         if ( i != -1 && S_ISREG( buf.st_mode ) && CHECK_GETEUID( buf.st_uid ) ) {
-			YView *view = YSession::self()->findViewByBuffer( this );
-			if ( !view )
-				d->mPendingReplay = true;
-			else 
-			{
-				checkRecover();
+                        YView *view = YSession::self()->findViewByBuffer( this );
+                        if ( !view )
+                                d->mPendingReplay = true;
+                        else 
+                        {
+                                checkRecover();
             }
         }
     }
@@ -698,7 +698,7 @@ bool YBuffer::save()
     }
     d->isHLUpdating = false; //override so that it does not parse all lines
     foreach( YView *view, d->views )
-		view->guiDisplayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
+                view->guiDisplayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
     setChanged( false );
     filenameChanged();
     //clear swap memory
@@ -871,8 +871,8 @@ void YBuffer::setPath( const QString& _path )
 
     // update swap file too
     d->swapFile->setFileName( _path );
-	
-	//no more a new file since it got a name
+        
+        //no more a new file since it got a name
     d->isFileNew = false;
 
     filenameChanged();
@@ -893,18 +893,18 @@ bool YBuffer::substitute( const QString& _what, const QString& with, bool wholel
     int pos = 0;
     int offset = 0;
     while ( ( pos = rx.indexIn( l, offset ) ) != -1 ) {
-		QPoint unique_pos(pos, line);
-		d->undoBuffer->addBufferOperation(YBufferOperation::OpDelText,
-				rx.capturedTexts()[0], unique_pos);
-		d->undoBuffer->addBufferOperation(YBufferOperation::OpAddText,
-				 with, unique_pos);
-		//in order to apply captures , extract the match first, apply the regexp+captures, then replace full strings in the real
-		//text line ;) see #167
-		QString rep = l.mid( pos, rx.matchedLength());
-		int savedlen = rx.matchedLength();
-		QString result = rep.replace ( rx, with ); //this should apply captures correctly
-		//replace it in the real string
-		l = l.replace ( pos, result.length(), result);
+                QPoint unique_pos(pos, line);
+                d->undoBuffer->addBufferOperation(YBufferOperation::OpDelText,
+                                rx.capturedTexts()[0], unique_pos);
+                d->undoBuffer->addBufferOperation(YBufferOperation::OpAddText,
+                                 with, unique_pos);
+                //in order to apply captures , extract the match first, apply the regexp+captures, then replace full strings in the real
+                //text line ;) see #167
+                QString rep = l.mid( pos, rx.matchedLength());
+                int savedlen = rx.matchedLength();
+                QString result = rep.replace ( rx, with ); //this should apply captures correctly
+                //replace it in the real string
+                l = l.replace ( pos, result.length(), result);
         //l = l.replace( pos, rx.matchedLength(), with );
         changed = true;
         offset = pos + savedlen;
@@ -1336,12 +1336,12 @@ YCursor YBuffer::end() const
 }
 
 bool YBuffer::checkRecover() {
-	//check if we have a pending replay
-	if ( d->mPendingReplay && YSession::self()->guiPromptYesNo(_("Recover"), _("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
-		if ( d->swapFile->recover() )
-			setChanged( true );
-		d->mPendingReplay = false;
-		return true;
-	}
-	return false;
+        //check if we have a pending replay
+        if ( d->mPendingReplay && YSession::self()->guiPromptYesNo(_("Recover"), _("A swap file was found for this file, it was presumably created because your computer or yzis crashed, do you want to start the recovery of this file ?")) ) {
+                if ( d->swapFile->recover() )
+                        setChanged( true );
+                d->mPendingReplay = false;
+                return true;
+        }
+        return false;
 }

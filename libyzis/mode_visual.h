@@ -64,7 +64,7 @@ public:
     CmdState translateToVisualLine( const YCommandArgs& args );
     CmdState translateToVisualBlock( const YCommandArgs& args );
 
-    virtual YInterval interval(const YCommandArgs &args, bool *stopped);
+    virtual YInterval interval(const YCommandArgs &args, CmdState *state);
 
 protected:
     virtual YInterval buildBufferInterval( YView* mView, const YViewCursor& from, const YViewCursor& to );

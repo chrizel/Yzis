@@ -76,7 +76,7 @@ private:
     /**
       * mapping ncurses->qt for keycodes
       */
-    static QMap<int, QString> keycodes; // map Ncurses to Qt codes
+    static QMap<int, YKey> keycodes; // map Ncurses to Qt codes
     QString m_initialCommand;
 
 public Q_SLOTS:

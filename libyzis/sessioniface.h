@@ -24,10 +24,13 @@
 #define YZ_SESSION_IFACE_H
 
 #include "yzis.h"
+#include "keys.h"
+#include "mode.h"
 
 class YView;
 class YBuffer;
 class QString;
+class YKeySequence;
 
 /** @brief The session interface that must be re-implemented by the GUI
   * frontend.
@@ -100,7 +103,7 @@ public:
       *
      * <i>This method is implemented in @ref YSession.</i>
      */
-    virtual bool sendMultipleKeys( YView * view, const QString& keys ) = 0;
+    virtual CmdState sendMultipleKeys( YView * view, YKeySequence& keys, YKeySequence::const_iterator &parsePos ) = 0;
 
 
     //-------------------------------------------------------

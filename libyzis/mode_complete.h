@@ -41,7 +41,7 @@ public :
     virtual ~YModeCompletion();
 
     virtual void leave( YView* mView );
-    virtual CmdState execCommand( YView* mView, const QString& _key );
+    virtual CmdState execCommand( YView* mView, const YKeySequence &keys, YKeySequence::const_iterator &parsePos);
 
 protected :
     void doComplete( YView* mView, bool forward );
@@ -63,7 +63,7 @@ private :
     unsigned int mCurrentProposal;
     QString mLastMatch;
 
-    QString mLastKey;
+    YKey mLastKey;
     bool mForward;
 };
 

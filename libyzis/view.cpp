@@ -93,8 +93,8 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     reverseSearch = false;
     viewInformation.l = viewInformation.c1 = viewInformation.c2 = 0;
     viewInformation.percentage = "";
-    mPreviousChars = "";
-    mLastPreviousChars = "";
+    mPreviousChars.clear();
+    mPreviousChars.clear();
 
     mPaintSelection = new YSelection("PAINT");
     selectionPool = new YSelectionPool();
@@ -711,15 +711,15 @@ bool YView::moveLeft( YViewCursor* viewCursor, int nb_cols, bool wrap, bool appl
             }
             // if we moved too far, go back
             if (diff < 0) {
-		x -= diff;
-		stopped = true;
-	    }
-	    
+                x -= diff;
+                stopped = true;
+            }
+            
         } else {
             x = 0;
-	    stopped = true;
-	}
-	
+            stopped = true;
+        }
+        
     }
     gotoxy( viewCursor, x, y);
 
@@ -753,13 +753,13 @@ bool YView::moveRight( YViewCursor* viewCursor, int nb_cols, bool wrap, bool app
             }
             // if we moved too far, go back
             if (diff < 0) {
-		x += diff;
-		stopped = true;
-	    }
+                x += diff;
+                stopped = true;
+            }
         } else {
-	    stopped = true;
+            stopped = true;
             x = myBuffer()->textline(y).length();
-	}
+        }
     }
     gotoxy( viewCursor, x, y);
 
@@ -1703,17 +1703,21 @@ QString YView::modeString() const
 
 void YView::saveInputBuffer()
 {
-    // We don't need to remember ENTER or ESC or CTRL-C
-    if ( mPreviousChars == "<ENTER>"
-            || mPreviousChars == "<ESC>"
-            || mPreviousChars == "<CTRL>c" ) {
-        return ;
+    // Only have special cases for length 1
+    if ( mPreviousChars.count() == 1 ) {
+        // We don't need to remember ENTER or ESC or CTRL-C
+        if ( *mPreviousChars.begin() == YKey::Key_Enter
+             || *mPreviousChars.begin() == YKey::Key_Esc
+             || *mPreviousChars.begin() == YKey(YKey::Key_C, YKey::Mod_Ctrl) )
+            return;
+
+        // Provided we are not repeating the command don't overwrite
+        if ( *mPreviousChars.begin() == YKey::Key_Period ) 
+            return;
     }
 
-    // If we are repeating the command don't overwrite
-    if ( mPreviousChars != "." ) {
-        mLastPreviousChars = mPreviousChars;
-    }
+    // Nothing odd, so go ahead and save copy
+    mLastPreviousChars = mPreviousChars;
 }
 
 const int YView::getId() const

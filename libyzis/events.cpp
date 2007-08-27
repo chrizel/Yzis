@@ -75,7 +75,7 @@ QStringList YEvents::exec(const QString& event, YView *view)
 
                 //special handling for indent
                 if ( QString::compare(event, "INDENT_ON_KEY") == 0 ) {
-                    QByteArray b = view->getInputBuffer().toUtf8();
+                    QByteArray b = view->getInputBuffer().toString().toUtf8();
                     const char *inputs = b.data();
                     QRegExp rx("^(\\s*).*$"); //regexp to get all tabs and spaces
                     QString curLine = view->myBuffer()->textline(view->getBufferCursor().y());

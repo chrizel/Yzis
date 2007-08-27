@@ -441,9 +441,11 @@ int YLuaFuncs::sendkeys( lua_State *L )
 {
     if (!YLuaEngine::checkFunctionArguments(L, 1, 1, "sendkeys", "text")) return 0;
     QString text = QString::fromUtf8( ( char * )lua_tostring ( L, 1 ) );
+    YKeySequence input(text); // Performs the lexical analysis here
+    YKeySequence::const_iterator parsePos = input.begin();
     lua_pop(L, 1);
 
-    YSession::self()->sendMultipleKeys(YSession::self()->currentView(), text);
+    YSession::self()->sendMultipleKeys(YSession::self()->currentView(), input, parsePos);
 
     // nothing to return
     YASSERT_EQUALS( lua_gettop(L), 0 );

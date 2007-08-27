@@ -82,12 +82,11 @@ void YModeSearch::initModifierKeys()
 {
     mModifierKeys << "<ALT>:";
 }
-CmdState YModeSearch::execCommand( YView* view, const QString& _key )
+CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySequence::const_iterator &parsePos )
 {
-    QString key = _key;
     YSelection* searchSelection = view->getSelectionPool()->search();
 
-    if ( key == "<ENTER>" ) {
+    if ( *parsePos == YKey::Key_Enter ) {
         QString what = view->guiGetCommandLineText();
         dbg() << "Current search: " << what;
 
@@ -109,21 +108,27 @@ CmdState YModeSearch::execCommand( YView* view, const QString& _key )
             view->guiDisplayInfo( _( "Pattern not found: " ) + what );
         }
         view->modePool()->pop();
+        ++parsePos;
         return CmdOk;
-    } else if ( key == "<DOWN>" ) {
+    } else if ( *parsePos == YKey::Key_Down ) {
         mHistory->goForwardInTime();
         view->guiSetCommandLineText( mHistory->getEntry() );
+        ++parsePos;
         return CmdOk;
-    } else if ( key == "<LEFT>" || key == "<RIGHT>" ) {
+    } else if ( *parsePos == YKey::Key_Left || *parsePos == YKey::Key_Right ) {
+        ++parsePos;
         return CmdOk;
-    } else if ( key == "<UP>" ) {
+    } else if ( *parsePos == YKey::Key_Up ) {
         mHistory->goBackInTime();
         view->guiSetCommandLineText( mHistory->getEntry() );
+        ++parsePos;
         return CmdOk;
-    } else if ( key == "<ALT>:" ) {
+    } else if ( *parsePos == YKey(YKey::Key_Colon, YKey::Mod_Alt) ) {
         view->modePool()->change( ModeEx );
+        ++parsePos;
         return CmdOk;
-    } else if ( key == "<ESC>" || key == "<CTRL>c" ) {
+    } else if ( *parsePos == YKey::Key_Esc 
+                || *parsePos == YKey(YKey::Key_c, YKey::Mod_Ctrl) ) {
         if ( view->getLocalBooleanOption( "incsearch" ) ) {
             view->gotoxy(mSearchBegin.x(), mSearchBegin.y());
             view->setPaintAutoCommit( false );
@@ -133,16 +138,18 @@ CmdState YModeSearch::execCommand( YView* view, const QString& _key )
             view->commitPaintEvent();
         }
         view->modePool()->pop();
+        ++parsePos;
         return CmdOk;
-    } else if ( key == "<BS>" ) {
+    } else if ( *parsePos == YKey::Key_BackSpace ) {
         QString back = view->guiGetCommandLineText();
         if ( back.isEmpty() ) {
             view->modePool()->pop();
+            ++parsePos;
             return CmdOk;
         }
         view->guiSetCommandLineText(back.remove(back.length() - 1, 1));
     } else {
-        view->guiSetCommandLineText( view->guiGetCommandLineText() + key );
+        view->guiSetCommandLineText( view->guiGetCommandLineText() + parsePos->toString() );
     }
 
     if ( view->getLocalBooleanOption("incsearch") ) {
@@ -164,6 +171,8 @@ CmdState YModeSearch::execCommand( YView* view, const QString& _key )
         }
         view->commitPaintEvent();
     }
+
+    ++parsePos;
     return CmdOk;
 }
 

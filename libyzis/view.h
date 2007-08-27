@@ -248,18 +248,18 @@ public:
      */
     void purgeInputBuffer()
     {
-        mPreviousChars = "";
+        mPreviousChars.clear();
     }
-    void appendInputBuffer( const QString & s )
+    void appendInputBuffer( const YKey & k )
     {
-        mPreviousChars += s;
+        mPreviousChars.append( k );
     }
     void saveInputBuffer();
-    QString getInputBuffer() const
+    const YKeySequence &getInputBuffer() const
     {
         return mPreviousChars;
     }
-    QString getLastInputBuffer() const
+    const YKeySequence &getLastInputBuffer() const
     {
         return mLastPreviousChars;
     }
@@ -835,8 +835,8 @@ private:
      * Used to store previous keystrokes which are not recognised as a command,
      * this should allow us to have commands like : 100g or gg etc ...
      */
-    QString mPreviousChars;
-    QString mLastPreviousChars;
+    YKeySequence mPreviousChars;
+    YKeySequence mLastPreviousChars;
 
     /**
      * The buffer we depend on

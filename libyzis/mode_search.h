@@ -41,7 +41,7 @@ public:
     virtual void leave( YView* view );
     virtual void initModifierKeys();
 
-    virtual CmdState execCommand( YView* view, const QString& key );
+    virtual CmdState execCommand( YView* view, const YKeySequence &keys, YKeySequence::const_iterator &parsePos );
 
     virtual YCursor search( YView* view, const QString& s, bool* found );
     virtual YCursor search( YView* view, const QString& s, const YCursor begin, int* matchlength, bool* found );

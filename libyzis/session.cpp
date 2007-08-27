@@ -394,7 +394,7 @@ YView *YSession::createBufferAndView( const QString& path )
         view = findViewByBuffer(buffer);
     }
     setCurrentView( view );
-	buffer->checkRecover();
+        buffer->checkRecover();
 
     view->applyStartPosition( YBuffer::getStartPosition(path) );
 
@@ -592,122 +592,56 @@ bool YSession::saveAll()
 void YSession::scriptSendMultipleKeys ( const QString& text)
 {
     dbg() << "scriptSendMultipleKeys(" << text << ")" << endl;
-    // QStringList list = QStringList::split("<ENTER>", text);
-    /* QStringList::Iterator it = list.begin(), end = list.end();
-     for (; it != end; ++it) {*/
-    sendMultipleKeys( currentView(),  /* *it + "<ENTER>" */ text);
+    YKeySequence inputs(text);
+    YKeySequence::const_iterator parsePos = inputs.begin();
+
+    sendMultipleKeys( currentView(),  inputs, parsePos);
     QCoreApplication::instance()->processEvents();
     /* }*/
 }
 
-bool YSession::sendMultipleKeys( YView * view, const QString& _keys)
+CmdState YSession::sendMultipleKeys( YView * view, YKeySequence & inputs, YKeySequence::const_iterator &parsePos)
 {
-    bool stopped = false;
-    dbg() << "sendMultipleKeys(" << view << ", keys=" << _keys << ")" << endl;
+    CmdState state = CmdOk;
+    dbg() << "sendMultipleKeys(" << view << ", keys=" << inputs.toString() << ")" << endl;
     if (view->modePool()->current()->mapMode() & MapCmdline) {
         view->modePool()->change( YMode::ModeCommand );
     }
-    QString keys = _keys;
-    for ( int i = 0 ; i < keys.length(); ) {
-        QString key = keys.mid( i );
-        dbg() << "Handling key: " << key << endl;
-        //exception : in SEARCH, SEARCH_BACKWARD and EX mode we don't send keys immediately
-        if (view->modePool()->current()->mapMode() & MapCmdline) {
-            if ( key.startsWith( "<ESC>" ) ) {
-                stopped = sendKey( view, "<ESC>" );
-                continue;
-            } else if ( key.startsWith( "<ENTER>" ) ) {
-                stopped = sendKey( view, "<ENTER>" );
-                i += 7;
-                continue;
-            } else if ( key.startsWith( "<UP>" ) ) {
-                stopped = sendKey( view, "<UP>" );
-                i += 4;
-                continue;
-            } else if ( key.startsWith( "<DOWN>" ) ) {
-                stopped = sendKey( view, "<DOWN>" );
-                i += 6;
-                continue;
-            } else {
-                view->guiSetCommandLineText( view->guiGetCommandLineText() + key.mid(0, 1) );
-                i++;
+
+    for(; parsePos != inputs.end() && state != CmdStopped && state != CmdError; ++parsePos ) {
+        if ( view->modePool()->current()->mapMode() & MapCmdline ) {
+            if ( *parsePos == YKey::Key_Esc
+                 || *parsePos == YKey::Key_Enter
+                 || *parsePos == YKey::Key_Up
+                 || *parsePos == YKey::Key_Down ) {
+                state = sendKey( view, *parsePos );
                 continue;
             }
+            else {
+                view->guiSetCommandLineText( view->guiGetCommandLineText() + parsePos->toString() );
+                continue;
+            }
+            
         }
-        if ( key.startsWith( "<CTRL>" ) ) {
-            dbg() << "Sending " << key.mid(6, 1) << endl;
-            stopped = sendKey( view, key.mid( 6, 1 ), "<CTRL>" );
-            i += 7;
-            continue;
-        } else if ( key.startsWith( "<ALT>" ) ) {
-            stopped = sendKey( view, key.mid( 5, 1 ), "<ALT>" );
-            i += 6;
-            continue;
-        } else if ( key.startsWith( "<SHIFT>" ) ) {
-            stopped =sendKey( view, key.mid( 7, 1 ), "<SHIFT>" );
-            i += 8;
-            continue;
-        } else if ( key.startsWith( "<ESC>" ) ) {
-            stopped = sendKey( view, "<ESC>" );
-            i += 5;
-            continue;
-        } else if ( key.startsWith( "<ENTER>" ) ) {
-            stopped =sendKey( view, "<ENTER>" );
-            i += 7;
-            continue;
-        } else if ( key.startsWith( "<TAB>" ) ) {
-            stopped = sendKey( view, "<TAB>" );
-            i += 5;
-            continue;
-        } else if ( key.startsWith( "<UP>" ) ) {
-            stopped = sendKey( view, "<UP>" );
-            i += 4;
-            continue;
-        } else if ( key.startsWith( "<DOWN>" ) ) {
-            stopped = sendKey( view, "<DOWN>" );
-            i += 6;
-            continue;
-        } else if ( key.startsWith( "<RIGHT>" ) ) {
-            stopped = sendKey( view, "<RIGHT>" );
-            i += 7;
-            continue;
-        } else if ( key.startsWith( "<LEFT>" ) ) {
-            stopped = sendKey( view, "<LEFT>" );
-            i += 6;
-            continue;
-        } else if ( key.startsWith( "<DEL>" ) ) {
-            stopped = sendKey( view, "<DEL>" );
-            i += 5;
-            continue;
-        } else if ( key.startsWith( "<BS>" ) ) {
-            stopped = sendKey( view, "<BS>" );
-            i += 4;
-            continue;
-        } else {
-            stopped = sendKey( view, key.mid( 0, 1 ) );
-            i++;
-        }
-	if ( stopped )
-	    break;
+        state = sendKey( view, *parsePos );
     }
-
-    return stopped;
+    return state;
 }
 
-bool YSession::sendKey( YView * view, const QString& _key, const QString& _modifiers)
+CmdState YSession::sendKey( YView * view, YKey _key)
 {
-    dbg() << "sendKey( " << view << ", key=" << _key << " mod=" << _modifiers << ")" << endl;
+    dbg() << "sendKey( " << view << ", key=" << _key.toString() << ")" << endl;
+    CmdState state;
 
-    QString key = _key;
-    QString modifiers = _modifiers;
-    bool stopped;
-
-    if ( _key == "<SHIFT>" || _key == "<CTRL>" || _key == "<ALT>" ) return false; //we are not supposed to received modifiers in key
+    // Don't respond to pure modifier keys
+    if ( _key.key() == YKey::Key_Shift || _key.key() == YKey::Key_Ctrl 
+         || _key.key() == YKey::Key_Alt )
+        return CmdOk;
 
     QList<QChar> reg = view->registersRecorded();
     if ( reg.count() > 0 ) {
         for ( int ab = 0 ; ab < reg.size(); ++ab ) {
-            QString newReg = modifiers + _key;
+            QString newReg = _key.toString();
             QStringList curReg = getRegister( reg.at(ab) );
             if ( curReg.size() > 0 )
                 newReg.prepend( curReg[ 0 ] );
@@ -719,10 +653,10 @@ bool YSession::sendKey( YView * view, const QString& _key, const QString& _modif
     bool rightleft = view->getLocalBooleanOption( "rightleft" );
     if ( rightleft && ( view->modePool()->current()->mapMode() & (MapVisual | MapNormal) ) ) {
 #define SWITCH_KEY( a, b ) \
-    if ( key == a ) key = b; \
-    else if ( key == b ) key = a
-        SWITCH_KEY( "<RIGHT>", "<LEFT>" );
-        SWITCH_KEY( "h", "l" );
+    if ( _key == a ) _key.setKey( b );        \
+    else if ( _key == b ) _key.setKey( a );
+    SWITCH_KEY( YKey::Key_Right, YKey::Key_Left );
+    SWITCH_KEY( YKey::Key_H, YKey::Key_L );
     }
 
 //    if ( modifiers.contains ("<SHIFT>")) { //useful?
@@ -732,10 +666,10 @@ bool YSession::sendKey( YView * view, const QString& _key, const QString& _modif
 
 //    view->appendInputBuffer( modifiers + key );
     view->setPaintAutoCommit( false );
-    stopped = view->modePool()->sendKey( key, modifiers );
+    state = view->modePool()->sendKey( _key );
     view->commitPaintEvent();
 
-    return stopped;
+    return state;
 }
 
 void YSession::registerModifier ( const QString& mod )

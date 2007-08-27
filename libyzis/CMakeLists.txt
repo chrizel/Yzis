@@ -23,6 +23,7 @@ set(yzis_LIB_SRCS
    font.cpp 
    history.cpp 
    internal_options.cpp 
+   keys.cpp
    line.cpp 
    linesearch.cpp 
    mapping.cpp 

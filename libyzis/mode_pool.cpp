@@ -55,18 +55,16 @@ void YModePool::stop()
     mStop = true;
     // dbg() << "YModePool stopped for view " << mView->myId << endl;
 }
-bool YModePool::sendKey( const QString& key, const QString& modifiers )
+CmdState YModePool::sendKey( const YKey &key )
 {
-    bool stopped = false;
+    CmdState state = CmdOk;
 
     mKey = key;
-    mModifiers = modifiers;
 
     //check mappings
     mapMode |= current()->mapMode();
     bool map = false;
-    mView->saveInputBuffer();
-    QString mapped = mView->getInputBuffer() + mModifiers + mKey;
+    QString mapped = mView->getInputBuffer().toString() + mKey.toString();
     dbg() << "Looking mappings for " << mapped << endl;
     bool pendingMapp = YZMapping::self()->applyMappings( mapped, mapMode, &map );
     if (pendingMapp)
@@ -75,26 +73,23 @@ bool YModePool::sendKey( const QString& key, const QString& modifiers )
         dbg() << "input buffer was remapped to: " << mapped << endl;
         mView->purgeInputBuffer();
         mapMode = 0;
-        return YSession::self()->sendMultipleKeys( mView, mapped );
+        YKeySequence inputs(mapped);
+        YKeySequence::const_iterator parsePos = inputs.begin();
+            return YSession::self()->sendMultipleKeys( mView, inputs, parsePos );
     }
 
-	// shift might have been used for remapping, 
-	// so we remove it only after having check the mappings
-	// we remove it so that one can type upper case letters without entering a <SHIFT> on screen
-    if ( mModifiers.contains ("<SHIFT>")) {
-        mKey = mKey.toUpper();
-        mModifiers.remove( "<SHIFT>" );
-    }
-	dbg() << "Appending to input buffer " << mModifiers + mKey << endl;
-    mView->appendInputBuffer( mModifiers + mKey );
-
-    CmdState state = stack.front()->execCommand( mView, mView->getInputBuffer() );
-    if ( mStop ) return true;
+    dbg() << "Appending to input buffer " << mKey.toString() << endl;
+    mView->appendInputBuffer( mKey );
+    
+    YKeySequence::const_iterator parsePos = mView->getInputBuffer().begin();
+    state = stack.front()->execCommand( mView, mView->getInputBuffer(), parsePos);
+    
+    if ( mStop ) return CmdStopped;
     switch (state) {
     case CmdError:
         dbg() << "CmdState = CmdError" << endl;
-        stopped = true;
         if (pendingMapp) break;
+    case CmdStopped:
     case CmdOk:
         mView->purgeInputBuffer();
         // stopped is false if state == CmdOk
@@ -105,16 +100,15 @@ bool YModePool::sendKey( const QString& key, const QString& modifiers )
         mapMode = MapPendingOp;
         break;
     case CmdQuit:
-        stopped = true;
         dbg() << "CmdState = CmdQuit" << endl;
     default:
         break;
     }
-    return stopped;
+    return state;
 }
-void YModePool::replayKey()
+CmdState YModePool::replayKey()
 {
-    YSession::self()->sendKey( mView, mKey, mModifiers );
+    return YSession::self()->sendKey( mView, mKey );
 }
 YMode* YModePool::current() const
 {

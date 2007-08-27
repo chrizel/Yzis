@@ -45,17 +45,17 @@ QYCommandLine::~QYCommandLine()
 void QYCommandLine::keyPressEvent ( QKeyEvent * e )
 {
     dbg() << "keyPressEvent( modifier=" << e->modifiers() << ", key=" << e->key() << ", ascii=" << e->text().toLatin1().constData() << ", unicode=" << e->text() << ")" << endl;
-    QString mod;
-    if ( e->modifiers() & Qt::ShiftModifier ) mod += "<SHIFT>";
-    if ( e->modifiers() & Qt::AltModifier ) mod += "<ALT>";
-    if ( e->modifiers() & Qt::ControlModifier ) mod += "<CTRL>";
+    int modifiers = 0;
+    if ( e->modifiers() & Qt::ShiftModifier ) modifiers |= YKey::Mod_Shift;
+    if ( e->modifiers() & Qt::AltModifier ) modifiers |= YKey::Mod_Alt;
+    if ( e->modifiers() & Qt::ControlModifier ) modifiers |= YKey::Mod_Ctrl;
     if ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Up || e->key() == Qt::Key_Down || e->key() == Qt::Key_Escape) {
         dbg() << "keyPressEvent: sending to Session" << endl;
-        YSession::self()->sendKey( static_cast< YView * >( mView ), mView->editor()->convertKey( e->key() ), mod ) ;
+        YSession::self()->sendKey( static_cast< YView * >( mView ), mView->editor()->convertKey( e->key() ) ) ;
         e->accept();
     } else if ( ( e->QInputEvent::modifiers() & Qt::ControlModifier ) && e->key() == Qt::Key_C ) { // handle CTRL-C
         dbg() << "keyPressEvent: sending CONTROL-C to Session" << endl;
-        YSession::self()->sendKey( static_cast< YView * >( mView ), "c" , mod ) ;
+        YSession::self()->sendKey( static_cast< YView * >( mView ), YKey(YKey::Key_c, modifiers) ) ;
         e->accept();
     } else {
         dbg() << "keyPressEvent: sending to QLineEdit" << endl;

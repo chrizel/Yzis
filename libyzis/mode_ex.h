@@ -172,8 +172,10 @@ public :
     void leave( YView* mView );
 
     void initPool();
-    CmdState execCommand( YView* mView, const QString& key );
-    CmdState execExCommand( YView* view, const QString& inputs );
+    CmdState execCommand( YView* mView, const YKeySequence &inputs, 
+                          YKeySequence::const_iterator &parsePos );
+    CmdState execExCommand( YView *view, const QString &cmd);
+    
 
     YZHistory *getHistory();
 

@@ -43,6 +43,7 @@ using namespace yzis;
 YDebugStream& operator<<( YDebugStream& out, const CmdState & state )
 {
     switch ( state ) {
+    case CmdStopped: out << "CmdStopped"; break;
     case CmdError: out << "CmdError"; break;
     case CmdNotYetValid: out << "CmdNotYetValid"; break;
     case CmdOperatorPending: out << "CmdOperatorPending"; break;
@@ -200,10 +201,9 @@ void YModeIntro::leave( YView* mView )
     mBuffer->setChanged( false );
     mView->recalcScreen();
 }
-CmdState YModeIntro::execCommand( YView* mView, const QString& )
+CmdState YModeIntro::execCommand( YView* mView, const YKeySequence &keys, YKeySequence::const_iterator &parsePos )
 {
     mView->modePool()->change( ModeCommand );
-    mView->modePool()->replayKey();
-    return CmdOk;
+    return mView->modePool()->replayKey();
 }
 

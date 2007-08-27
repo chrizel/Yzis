@@ -137,15 +137,17 @@ void YModeEx::leave( YView* view )
     YSession::self()->guiSetFocusMainWindow();
 }
 
-CmdState YModeEx::execCommand( YView* view, const QString& key )
+CmdState YModeEx::execCommand( YView* view, const YKeySequence &inputs, 
+                               YKeySequence::const_iterator &parsePos )
 {
     // dbg() << "YModeEx::execCommand " << key << endl;
+    YKey key = *parsePos;
     CmdState ret = CmdOk;
-    if ( key != "<TAB>" ) {
+    if ( key != YKey::Key_Tab ) {
         //clean up the whole completion stuff
         resetCompletion();
     }
-    if ( key == "<ENTER>" ) {
+    if ( key == YKey::Key_Enter ) {
         if ( view->guiGetCommandLineText().isEmpty()) {
             view->modePool()->pop();
         } else {
@@ -155,27 +157,29 @@ CmdState YModeEx::execCommand( YView* view, const QString& key )
             if ( ret != CmdQuit )
                 view->modePool()->pop( ModeCommand );
         }
-    } else if ( key == "<DOWN>" ) {
+    } else if ( key == YKey::Key_Down ) {
         mHistory->goForwardInTime();
         view->guiSetCommandLineText( mHistory->getEntry() );
-    } else if ( key == "<LEFT>" || key == "<RIGHT>" ) {}
-    else if ( key == "<UP>" ) {
+    } else if ( key == YKey::Key_Left || key == YKey::Key_Right ) {}
+    else if ( key == YKey::Key_Up ) {
         mHistory->goBackInTime();
         view->guiSetCommandLineText( mHistory->getEntry() );
-    } else if ( key == "<ESC>" || key == "<CTRL>c" ) {
+    } else if ( key == YKey::Key_Esc || key == YKey(YKey::Key_c, YKey::Mod_Ctrl) ) {
         view->modePool()->pop( ModeCommand );
-    } else if ( key == "<TAB>" ) {
+    } else if ( key == YKey::Key_Tab ) {
         completeCommandLine(view);
-    } else if ( key == "<BS>" ) {
+    } else if ( key == YKey::Key_BackSpace ) {
         QString back = view->guiGetCommandLineText();
         if ( back.isEmpty() ) {
-            view->modePool()->pop();
-            return ret;
+            view->modePool()->pop();            
         }
-        view->guiSetCommandLineText(back.remove(back.length() - 1, 1));
+        else
+            view->guiSetCommandLineText(back.remove(back.length() - 1, 1));
     } else {
-        view->guiSetCommandLineText(view->guiGetCommandLineText() + key);
+        view->guiSetCommandLineText(view->guiGetCommandLineText() + key.toString());
     }
+    // We've processed a key, advance the pointer in case the caller cares
+    ++parsePos;
     return ret;
 }
 

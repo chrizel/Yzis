@@ -27,6 +27,7 @@
 /* Yzis */
 #include "drawbuffer.h"
 #include "action.h"
+#include "keys.h"
 
 /* Qt */
 #include <qpainter.h>
@@ -76,7 +77,7 @@ public :
 
     void setPalette( const QPalette& p, qreal opacity );
 
-    const QString& convertKey( int key );
+    const YKey& convertKey( int key );
 
     unsigned int spaceWidth;
 
@@ -146,7 +147,7 @@ private :
 
     bool isFontFixed;
 
-    static QMap<int, QString> keys;
+    static QMap<int, YKey> keys;
 
     friend class QYCursor;
     friend class QYView;

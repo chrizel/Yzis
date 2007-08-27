@@ -67,39 +67,40 @@ void YModeInsert::initModifierKeys()
 /*
  * if you add a command which use modifiers keys, add it in initModifierKeys too
  */
-CmdState YModeInsert::execCommand( YView* mView, const QString& _key )
+CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& input, 
+                                   YKeySequence::const_iterator & parsePos )
 {
-    QString key = _key;
+    QString key = parsePos->toString();
     CmdState ret = CmdOk;
-    if ( key == "<HOME>" ) commandHome( mView, key );
-    else if ( key == "<END>" ) commandEnd( mView, key );
-    else if ( key == "<CTRL><HOME>" ) commandDocumentHome( mView, key );
-    else if ( key == "<CTRL><END>" ) commandDocumentEnd ( mView, key );
-    else if ( key == "<ESC>"
-              || key == "<CTRL>c"
-              || key == "<CTRL>[" ) commandEscape( mView, key );
-    else if ( key == "<INS>" ) commandInsert( mView, key );
-    else if ( key == "<ALT>:" ) commandEx( mView, key );
-    else if ( key == "<ALT>v" ) commandVisual( mView, key );
-    else if ( key == "<DOWN>" ) commandDown( mView, key );
-    else if ( key == "<LEFT>" ) commandLeft( mView, key );
-    else if ( key == "<RIGHT>" ) commandRight( mView, key );
-    else if ( key == "<UP>" ) commandUp( mView, key );
-    else if ( key == "<PDOWN>" ) commandPageDown( mView, key );
-    else if ( key == "<PUP>" ) commandPageUp( mView, key );
-    else if ( key == "<CTRL>e" ) commandInsertFromBelow( mView, key );
-    else if ( key == "<CTRL>y" ) commandInsertFromAbove( mView, key );
+    if ( *parsePos == YKey::Key_Home ) commandHome( mView, key );
+    else if ( *parsePos == YKey::Key_End ) commandEnd( mView, key );
+    else if ( key == "<C-HOME>" ) commandDocumentHome( mView, key );
+    else if ( key == "<C-END>" ) commandDocumentEnd ( mView, key );
+    else if ( *parsePos == YKey::Key_Esc 
+              || key == "<C-c>"
+              || key == "<C-[>" ) commandEscape( mView, key );
+    else if ( *parsePos == YKey::Key_Insert ) commandInsert( mView, key );
+    else if ( *parsePos == YKey::Key_Alt ) commandEx( mView, key );
+    else if ( key ==  "<A-v>" ) commandVisual( mView, key );
+    else if ( *parsePos == YKey::Key_Down ) commandDown( mView, key );
+    else if ( *parsePos == YKey::Key_Left ) commandLeft( mView, key );
+    else if ( *parsePos == YKey::Key_Right ) commandRight( mView, key );
+    else if ( *parsePos == YKey::Key_Up ) commandUp( mView, key );
+    else if ( *parsePos == YKey::Key_PageDown ) commandPageDown( mView, key );
+    else if ( *parsePos == YKey::Key_PageUp ) commandPageUp( mView, key );
+    else if ( key == "<C-e>" ) commandInsertFromBelow( mView, key );
+    else if ( key == "<C-y>" ) commandInsertFromAbove( mView, key );
     // completion
-    else if ( key == "<CTRL>x" ) commandCompletion( mView, key );
-    else if ( key == "<CTRL>n" ) commandCompletionNext( mView, key );
-    else if ( key == "<CTRL>p" ) commandCompletionPrevious( mView, key );
-    else if ( key == "<CTRL>w" ) commandDeleteWordBefore( mView, key );
-    else if ( key == "<BS>"
-              || key == "<CTRL>h") commandBackspace( mView, key );
-    else if ( key == "<ENTER>" ) commandEnter( mView, key );
-    else if ( key == "<DEL>" ) commandDel( mView, key );
+    else if ( key == "<C-x>" ) commandCompletion( mView, key );
+    else if ( key == "<C-n>" ) commandCompletionNext( mView, key );
+    else if ( key == "<C-p>" ) commandCompletionPrevious( mView, key );
+    else if ( key == "<C-w>" ) commandDeleteWordBefore( mView, key );
+    else if ( *parsePos == YKey::Key_BackSpace
+              || key == "<C-h>" ) commandBackspace( mView, key );
+    else if ( *parsePos == YKey::Key_Enter ) commandEnter( mView, key );
+    else if ( *parsePos == YKey::Key_Delete ) commandDel( mView, key );
     else {
-        if ( key == "<TAB>" ) {
+        if ( *parsePos == YKey::Key_Tab ) {
             // expand a tab to [tabstop] spaces if 'expandtab' is set
             if (mView->getLocalBooleanOption("expandtab"))
                 key.fill(' ', mView->getLocalIntegerOption("tabstop"));
@@ -171,13 +172,17 @@ void YModeInsert::commandCompletionNext( YView* mView, const QString& )
 {
     mView->modePool()->push( ModeCompletion );
     YModeCompletion* c = static_cast<YModeCompletion*>( mView->modePool()->current() );
-    c->execCommand(mView, "<CTRL>n");
+    YKeySequence inputs("<C-n>");
+    YKeySequence::const_iterator parsePos = inputs.begin();
+    c->execCommand(mView, inputs, parsePos);
 }
 void YModeInsert::commandCompletionPrevious( YView* mView, const QString& )
 {
     mView->modePool()->push( ModeCompletion );
     YModeCompletion* c = static_cast<YModeCompletion*>( mView->modePool()->current() );
-    c->execCommand(mView, "<CTRL>p");
+    YKeySequence inputs("<C-p>");
+    YKeySequence::const_iterator parsePos = inputs.begin();
+    c->execCommand(mView, inputs, parsePos);
 }
 void YModeInsert::commandDown( YView* mView, const QString& )
 {
@@ -335,7 +340,9 @@ void YModeInsert::imCompose( YView* mView, const QString& entry )
             pos.setX( 0 );
         mView->myBuffer()->action()->replaceText( mView, pos, len, entry );
     } else {
-        YSession::self()->sendKey( mView, entry );
+        YKey input;
+        input.fromString(entry);
+        YSession::self()->sendKey( mView, input );
     }
     m_imPreedit = entry;
 }

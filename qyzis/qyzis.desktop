@@ -2,7 +2,7 @@
 Encoding=UTF-8
 Name=Qyzis
 Exec=qyzis %u
-Icon=Qyzis
+Icon=qyzis
 Type=Application
 DocPath=qyzis/qyzis.html
 GenericName=Yzis Frontend for Qt

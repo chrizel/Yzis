@@ -35,7 +35,7 @@
 
 using namespace yzis;
 
-YModeInsert::YModeInsert() : YMode()
+YModeInsert::YModeInsert() : YModeCommand()
 {
     mType = YMode::ModeInsert;
     mString = _( "[ Insert ]" );
@@ -57,6 +57,42 @@ void YModeInsert::leave( YView* mView )
         mView->moveLeft();
 }
 
+void YModeInsert::initMotionPool()
+{
+    // Syntactic difference between commands and motions doesn't exist in
+    // insert mode. So motions are in commands
+}
+
+void YModeInsert::initCommandPool()
+{
+    commands.append( new YMotion(YKeySequence("<HOME>"), &YModeCommand::gotoSOL) );
+    commands.append( new YMotion(YKeySequence("<END>"), &YModeCommand::gotoEOL) );
+    commands.append( new YMotion(YKeySequence("<C-HOME>"), &YModeCommand::gotoStartOfDocument) );
+    commands.append( new YMotion(YKeySequence("<C-END>"), &YModeCommand::gotoEndOfDocument) );
+    commands.append( new YCommand(YKeySequence("<ESC>"), &YModeCommand::gotoCommandMode) );
+    commands.append( new YCommand(YKeySequence("<C-c>"), &YModeCommand::gotoCommandMode) );
+    commands.append( new YCommand(YKeySequence("<C-[>"), &YModeCommand::gotoCommandMode) );
+    commands.append( new YCommand(YKeySequence("<INSERT>"), (PoolMethod) &YModeInsert::commandInsert) );
+    commands.append( new YCommand(YKeySequence("<ALT>"), &YModeCommand::gotoExMode) );
+    commands.append( new YCommand(YKeySequence("<A-v>"), &YModeCommand::gotoVisualMode) );
+    commands.append( new YMotion(YKeySequence("<DOWN>"), &YModeCommand::moveDown) );
+    commands.append( new YMotion(YKeySequence("<LEFT>"), &YModeCommand::moveLeft) );
+    commands.append( new YMotion(YKeySequence("<RIGHT>"), &YModeCommand::moveRight) );
+    commands.append( new YMotion(YKeySequence("<UP>"), &YModeCommand::moveUp) );
+    commands.append( new YCommand(YKeySequence("<PAGEDOWN>"), &YModeCommand::scrollPageDown) );
+    commands.append( new YCommand(YKeySequence("<PAGEUP>"), &YModeCommand::scrollPageUp) );
+    commands.append( new YCommand(YKeySequence("<C-e>"), (PoolMethod)&YModeInsert::insertFromBelow) );
+    commands.append( new YCommand(YKeySequence("<C-y>"), (PoolMethod)&YModeInsert::insertFromAbove) );
+    commands.append( new YCommand(YKeySequence("<C-x>"), (PoolMethod)&YModeInsert::completion) );
+    commands.append( new YCommand(YKeySequence("<C-n>"), (PoolMethod)&YModeInsert::completionNext) );
+    commands.append( new YCommand(YKeySequence("<C-p>"), (PoolMethod)&YModeInsert::completionPrevious) );
+    commands.append( new YCommand(YKeySequence("<C-w>"), (PoolMethod)&YModeInsert::deleteWordBefore) );
+    commands.append( new YCommand(YKeySequence("<BS>"), (PoolMethod)&YModeInsert::backspace) );
+    commands.append( new YCommand(YKeySequence("<C-h>"), (PoolMethod)&YModeInsert::backspace) );
+    commands.append( new YCommand(YKeySequence("<ENTER>"), (PoolMethod)&YModeInsert::commandEnter) );
+    commands.append( new YCommand(YKeySequence("<DELETE>"), &YModeCommand::deleteChar) );
+}
+
 void YModeInsert::initModifierKeys()
 {
     mModifierKeys << "<CTRL>c" << "<CTRL>e" << "<CTRL>n" << "<CTRL>p"
@@ -67,191 +103,87 @@ void YModeInsert::initModifierKeys()
 /*
  * if you add a command which use modifiers keys, add it in initModifierKeys too
  */
-CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& input, 
+CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& inputs, 
                                    YKeySequence::const_iterator & parsePos )
 {
-    QString key = parsePos->toString();
-    CmdState ret = CmdOk;
-    if ( *parsePos == YKey::Key_Home ) commandHome( mView, key );
-    else if ( *parsePos == YKey::Key_End ) commandEnd( mView, key );
-    else if ( key == "<C-HOME>" ) commandDocumentHome( mView, key );
-    else if ( key == "<C-END>" ) commandDocumentEnd ( mView, key );
-    else if ( *parsePos == YKey::Key_Esc 
-              || key == "<C-c>"
-              || key == "<C-[>" ) commandEscape( mView, key );
-    else if ( *parsePos == YKey::Key_Insert ) commandInsert( mView, key );
-    else if ( *parsePos == YKey::Key_Alt ) commandEx( mView, key );
-    else if ( key ==  "<A-v>" ) commandVisual( mView, key );
-    else if ( *parsePos == YKey::Key_Down ) commandDown( mView, key );
-    else if ( *parsePos == YKey::Key_Left ) commandLeft( mView, key );
-    else if ( *parsePos == YKey::Key_Right ) commandRight( mView, key );
-    else if ( *parsePos == YKey::Key_Up ) commandUp( mView, key );
-    else if ( *parsePos == YKey::Key_PageDown ) commandPageDown( mView, key );
-    else if ( *parsePos == YKey::Key_PageUp ) commandPageUp( mView, key );
-    else if ( key == "<C-e>" ) commandInsertFromBelow( mView, key );
-    else if ( key == "<C-y>" ) commandInsertFromAbove( mView, key );
-    // completion
-    else if ( key == "<C-x>" ) commandCompletion( mView, key );
-    else if ( key == "<C-n>" ) commandCompletionNext( mView, key );
-    else if ( key == "<C-p>" ) commandCompletionPrevious( mView, key );
-    else if ( key == "<C-w>" ) commandDeleteWordBefore( mView, key );
-    else if ( *parsePos == YKey::Key_BackSpace
-              || key == "<C-h>" ) commandBackspace( mView, key );
-    else if ( *parsePos == YKey::Key_Enter ) commandEnter( mView, key );
-    else if ( *parsePos == YKey::Key_Delete ) commandDel( mView, key );
-    else {
-        if ( *parsePos == YKey::Key_Tab ) {
-            // expand a tab to [tabstop] spaces if 'expandtab' is set
-            if (mView->getLocalBooleanOption("expandtab"))
-                key.fill(' ', mView->getLocalIntegerOption("tabstop"));
-            else
-                key = "\t";
-        }
-        /* if ( key.startsWith("<CTRL>") ) // XXX no sense
-         ret = YSession::self()->getCommandPool()->execCommand(mView, key);
-        else*/
-        ret = commandDefault( mView, key );
-        QStringList ikeys = mView->myBuffer()->getLocalListOption("indentkeys");
-        if ( ikeys.contains(key) )
-            YSession::self()->eventCall("INDENT_ON_KEY", mView);
+    CmdState ret;
+    YCommand *c = parseCommand(inputs, parsePos);
+
+    if ( c != NULL ) { // We have a special command
+	QList<QChar> regs;
+	regs << YKey::Key_DblQuote;
+	// 1 is for count, false for hadCount
+	return (this->*(c->poolMethod()))(YCommandArgs(c, mView, regs, 1, false, &inputs, &parsePos) );
     }
+
+    /* if ( key.startsWith("<CTRL>") ) // XXX no sense
+       ret = YSession::self()->getCommandPool()->execCommand(mView, key);
+       else*/
+
+    // As all insert mode commands are one key, we know parsePos hasn't changed if we're here
+    QString text;
+    if ( *parsePos == YKey::Key_Tab ) {
+	// expand a tab to [tabstop] spaces if 'expandtab' is set
+	if (mView->getLocalBooleanOption("expandtab"))
+	    text.fill(' ', mView->getLocalIntegerOption("tabstop"));
+	else
+	    text = "\t";
+    }
+    else
+	text = parsePos->toString();
+    ret = addText( mView, text );
+    QStringList ikeys = mView->myBuffer()->getLocalListOption("indentkeys");
+    if ( ikeys.contains(text) )
+	YSession::self()->eventCall("INDENT_ON_KEY", mView);
+
     return ret;
 }
 
-void YModeInsert::commandHome( YView* mView, const QString& )
+
+CmdState YModeInsert::insertFromAbove( const YCommandArgs &args )
 {
-    mView->moveToStartOfLine();
-}
-void YModeInsert::commandEnd( YView* mView, const QString& )
-{
-    mView->moveToEndOfLine();
-}
-void YModeInsert::commandDocumentHome( YView* mView, const QString& )
-{
-    mView->gotoLine(0);
-    mView->moveToStartOfLine();
-}
-void YModeInsert::commandDocumentEnd( YView* mView, const QString& )
-{
-    mView->gotoLastLine();
-    mView->moveToEndOfLine();
-}
-void YModeInsert::commandEscape( YView* mView, const QString& )
-{
-    mView->modePool()->pop( ModeCommand );
-}
-void YModeInsert::commandInsert( YView* mView, const QString& )
-{
-    mView->modePool()->change( ModeReplace, false );
-}
-void YModeInsert::commandEx( YView* mView, const QString& )
-{
-    mView->modePool()->push( ModeEx );
-}
-void YModeInsert::commandVisual( YView* mView, const QString& )
-{
-    mView->modePool()->push( ModeVisual );
-}
-void YModeInsert::commandInsertFromAbove( YView* mView, const QString& )
-{
-    QString c = mView->getCharBelow( -1 );
+    QString c = args.view->getCharBelow( -1 );
     if ( ! c.isNull() )
-        commandDefault( mView, c );
+        return addText( args.view, c );
+    return CmdStopped;
 }
-void YModeInsert::commandInsertFromBelow( YView* mView, const QString& )
+
+CmdState YModeInsert::insertFromBelow( const YCommandArgs &args )
 {
-    QString c = mView->getCharBelow( 1 );
+    QString c = args.view->getCharBelow( 1 );
     if ( ! c.isNull() )
-        commandDefault( mView, c );
+        return addText( args.view, c );
+    return CmdStopped;
 }
-void YModeInsert::commandCompletion( YView* mView, const QString& )
+CmdState YModeInsert::completion( const YCommandArgs &args )
 {
-    mView->modePool()->push( ModeCompletion );
+    args.view->modePool()->push( ModeCompletion );
+    return CmdOk;
 }
-void YModeInsert::commandCompletionNext( YView* mView, const QString& )
+
+CmdState YModeInsert::completionNext( const YCommandArgs &args )
 {
-    mView->modePool()->push( ModeCompletion );
-    YModeCompletion* c = static_cast<YModeCompletion*>( mView->modePool()->current() );
+    args.view->modePool()->push( ModeCompletion );
+    YModeCompletion* c = static_cast<YModeCompletion*>( args.view->modePool()->current() );
     YKeySequence inputs("<C-n>");
     YKeySequence::const_iterator parsePos = inputs.begin();
-    c->execCommand(mView, inputs, parsePos);
+    return c->execCommand(args.view, inputs, parsePos);
 }
-void YModeInsert::commandCompletionPrevious( YView* mView, const QString& )
+CmdState YModeInsert::completionPrevious( const YCommandArgs &args )
 {
-    mView->modePool()->push( ModeCompletion );
-    YModeCompletion* c = static_cast<YModeCompletion*>( mView->modePool()->current() );
+    args.view->modePool()->push( ModeCompletion );
+    YModeCompletion* c = static_cast<YModeCompletion*>( args.view->modePool()->current() );
     YKeySequence inputs("<C-p>");
     YKeySequence::const_iterator parsePos = inputs.begin();
-    c->execCommand(mView, inputs, parsePos);
+    return c->execCommand(args.view, inputs, parsePos);
 }
-void YModeInsert::commandDown( YView* mView, const QString& )
-{
-    mView->moveDown();
-}
-void YModeInsert::commandUp( YView* mView, const QString& )
-{
-    mView->moveUp();
-}
-void YModeInsert::commandLeft( YView* mView, const QString& )
-{
-    mView->moveLeft();
-}
-void YModeInsert::commandRight( YView* mView, const QString& )
-{
-    mView->moveRight();
-}
-void YModeInsert::commandPageDown( YView* mView, const QString& )
-{
-    int line = mView->getCurrentTop() + mView->getLinesVisible();
 
-    if (mView->getLocalBooleanOption("wrap")) {
-        YViewCursor temp = mView->viewCursor();
-        mView->gotodxdy( &temp, mView->getDrawCurrentLeft(),
-                         mView->getDrawCurrentTop() + mView->getLinesVisible() );
-
-        line = temp.bufferY();
-    }
-
-    // don't scroll below the last line of the buffer
-    if (line > mView->myBuffer()->lineCount())
-        line = mView->myBuffer()->lineCount();
-
-    // scroll the view one screen down, and move the cursor to the first nonblank on
-    // the line it was moved to, like vim does.
-    if (line != mView->getCurrentTop()) {
-        mView->alignViewBufferVertically( line );
-        mView->moveToFirstNonBlankOfLine();
-    }
-}
-void YModeInsert::commandPageUp( YView* mView, const QString& )
+CmdState YModeInsert::deleteWordBefore( const YCommandArgs &args )
 {
-    int line = mView->getCurrentTop() - mView->getLinesVisible();
-
-    if (line < 0)
-        line = 0;
-
-    if (line != (int)mView->getCurrentTop()) {
-        mView->alignViewBufferVertically( line );
-        mView->moveToFirstNonBlankOfLine();
-    }
-}
-void YModeInsert::commandBackspace( YView* mView, const QString& )
-{
-    YCursor cur = mView->getBufferCursor();
-    YBuffer* mBuffer = mView->myBuffer();
-    if ( cur.x() == 0 && cur.y() > 0 && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-        mBuffer->action()->mergeNextLine( mView, cur.y() - 1 );
-        //mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 ); see bug #158
-    } else if ( cur.x() > 0 ) {
-        mBuffer->action()->deleteChar( mView, cur.x() - 1, cur.y(), 1 );
-    }
-}
-void YModeInsert::commandDeleteWordBefore( YView* mView, const QString& )
-{
-    YCursor cur = mView->getBufferCursor();
-    YBuffer* mBuffer = mView->myBuffer();
-    if ( cur.x() == 0 && cur.y() > 0 && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-        mBuffer->action()->mergeNextLine( mView, cur.y() - 1 );
+    YCursor cur = args.view->getBufferCursor();
+    YBuffer* mBuffer = args.view->myBuffer();
+    if ( cur.x() == 0 && cur.y() > 0 && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+        mBuffer->action()->mergeNextLine( args.view, cur.y() - 1 );
         //mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 ); see bug #158
     } else {
         QString line = mBuffer->textline( cur.y() );
@@ -285,39 +217,57 @@ void YModeInsert::commandDeleteWordBefore( YView* mView, const QString& )
         }
 
         //do it
-        mBuffer->action()->deleteChar( mView, x, cur.y(), cur.x() - x );
+        mBuffer->action()->deleteChar( args.view, x, cur.y(), cur.x() - x );
     }
+    return CmdOk;
 }
-void YModeInsert::commandDel( YView* mView, const QString& )
+
+CmdState YModeInsert::deleteChar( const YCommandArgs &args )
 {
-    YCursor cur = mView->getBufferCursor();
-    YBuffer* mBuffer = mView->myBuffer();
+    YCursor cur = args.view->getBufferCursor();
+    YBuffer* mBuffer = args.view->myBuffer();
     if ( cur.x() == mBuffer->textline( cur.y() ).length()
-            && mView->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
-        mBuffer->action()->mergeNextLine( mView, cur.y(), false );
+            && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+        mBuffer->action()->mergeNextLine( args.view, cur.y(), false );
     } else {
-        mBuffer->action()->deleteChar( mView, cur, 1 );
+        mBuffer->action()->deleteChar( args.view, cur, 1 );
     }
+    return CmdOk;
 }
-void YModeInsert::commandEnter( YView* mView, const QString& )
+
+CmdState YModeInsert::backspace( const YCommandArgs &args )
 {
-    YCursor cur = mView->getBufferCursor();
-    YBuffer* mBuffer = mView->myBuffer();
-    if ( mView->getLocalBooleanOption("cindent") ) {
-        mView->indent();
+    YCursor cur = args.view->getBufferCursor();
+    YBuffer* mBuffer = args.view->myBuffer();
+    if ( cur.x() == 0 && cur.y() > 0 && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+        mBuffer->action()->mergeNextLine( args.view, cur.y() - 1 );
+        //mBuffer->action()->deleteChar( mView, *mView->getBufferCursor(), 1 ); see bug #158
+    } else if ( cur.x() > 0 ) {
+        mBuffer->action()->deleteChar( args.view, cur.x() - 1, cur.y(), 1 );
+    }
+    return CmdOk;
+}
+
+CmdState YModeInsert::commandEnter( const YCommandArgs &args )
+{
+    YCursor cur = args.view->getBufferCursor();
+    YBuffer* mBuffer = args.view->myBuffer();
+    if ( args.view->getLocalBooleanOption("cindent") ) {
+        args.view->indent();
     } else {
-        mBuffer->action()->insertNewLine( mView, cur );
-        QStringList results = YSession::self()->eventCall("INDENT_ON_ENTER", mView);
+        mBuffer->action()->insertNewLine( args.view, cur );
+        QStringList results = YSession::self()->eventCall("INDENT_ON_ENTER", args.view);
         if (results.count() > 0 ) {
             if (results[0].length() != 0) {
-                mBuffer->action()->replaceLine( mView, cur.y() + 1, results[0] + mBuffer->textline( cur.y() + 1 ).trimmed() );
-                mView->gotoxy(results[0].length(), cur.y() + 1);
+                mBuffer->action()->replaceLine( args.view, cur.y() + 1, results[0] + mBuffer->textline( cur.y() + 1 ).trimmed() );
+                args.view->gotoxy(results[0].length(), cur.y() + 1);
             }
         }
     }
-    mView->updateStickyCol();
+    args.view->updateStickyCol();
+    return CmdOk;
 }
-CmdState YModeInsert::commandDefault( YView* mView, const QString& key )
+CmdState YModeInsert::addText( YView* mView, const QString& key )
 {
     mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
     if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
@@ -346,10 +296,17 @@ void YModeInsert::imCompose( YView* mView, const QString& entry )
     }
     m_imPreedit = entry;
 }
+
 void YModeInsert::imEnd( YView* mView, const QString& entry )
 {
     imCompose( mView, entry );
     m_imPreedit = "";
+}
+
+CmdState YModeInsert::commandInsert( const YCommandArgs &args)
+{
+    args.view->modePool()->change( ModeReplace, false );
+    return CmdOk;
 }
 
 
@@ -363,18 +320,21 @@ YModeReplace::YModeReplace() : YModeInsert()
     mString = _("[ Replace ]");
 }
 
-void YModeReplace::commandInsert( YView* mView, const QString& )
+CmdState YModeReplace::commandInsert( const YCommandArgs &args )
 {
-    mView->modePool()->change( ModeInsert, false );
-}
-void YModeReplace::commandBackspace( YView* mView, const QString& key )
-{
-    commandLeft( mView, key );
+    args.view->modePool()->change( ModeInsert, false );
+    return CmdOk;
 }
 
-CmdState YModeReplace::commandDefault( YView* mView, const QString& key )
+CmdState YModeReplace::backspace( const YCommandArgs &args )
 {
-    mView->myBuffer()->action()->replaceChar( mView, mView->getBufferCursor(), key );
+    args.view->moveLeft();
+    return CmdOk;
+}
+
+CmdState YModeReplace::addText( YView* mView, const QString &text )
+{
+    mView->myBuffer()->action()->replaceChar( mView, mView->getBufferCursor(), text );
     return CmdOk;
 }
 

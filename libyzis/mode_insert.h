@@ -21,6 +21,7 @@
 #define YZ_MODE_INSERT_H
 
 #include "mode.h"
+#include "mode_command.h"
 #include "yzismacros.h"
 
 class YMode;
@@ -31,48 +32,41 @@ class YView;
  *
  * The mode that text is inserted in.
  */
-class YZIS_EXPORT YModeInsert : public YMode
+class YZIS_EXPORT YModeInsert : public YModeCommand
 {
 public:
     YModeInsert();
     virtual ~YModeInsert()
     {}
 
-    virtual void enter( YView* mView );
-    virtual void leave( YView* mView );
-    virtual void initModifierKeys();
-    virtual CmdState execCommand( YView* mView, const YKeySequence& key,
-                                  YKeySequence::const_iterator &parsePos);
+    virtual void initMotionPool();
+    virtual void initCommandPool();
 
-    virtual CmdState commandDefault( YView* mView, const QString& key );
-    virtual void commandHome( YView* mView, const QString& key );
-    virtual void commandEnd( YView* mView, const QString& key );
-    virtual void commandDocumentHome( YView* mView, const QString& key );
-    virtual void commandDocumentEnd( YView* mView, const QString& key );
-    virtual void commandEscape( YView* mView, const QString& key );
-    virtual void commandInsert( YView* mView, const QString& key );
-    virtual void commandEx( YView* mView, const QString& key );
-    virtual void commandVisual( YView* mView, const QString& key );
-    virtual void commandInsertFromBelow( YView* mView, const QString& key );
-    virtual void commandInsertFromAbove( YView* mView, const QString& key );
-    virtual void commandCompletion( YView* mView, const QString& key );
-    virtual void commandCompletionPrevious( YView* mView, const QString& key );
-    virtual void commandCompletionNext( YView* mView, const QString& key );
-    virtual void commandDown( YView* mView, const QString& key );
-    virtual void commandUp( YView* mView, const QString& key );
-    virtual void commandLeft( YView* mView, const QString& key );
-    virtual void commandRight( YView* mView, const QString& key );
-    virtual void commandPageUp( YView* mView, const QString& key );
-    virtual void commandPageDown( YView* mView, const QString& key );
-    virtual void commandBackspace( YView* mView, const QString& key );
-    virtual void commandDeleteWordBefore( YView* mView, const QString& key );
-    virtual void commandDel( YView* mView, const QString& key );
-    virtual void commandEnter( YView* mView, const QString& key );
+    virtual void enter( YView *view );
+    virtual void leave( YView *view );
+    virtual CmdState execCommand( YView *view, const YKeySequence &inputs,
+				  YKeySequence::const_iterator &parsePos);
 
-    virtual void imBegin( YView* mView );
-    virtual void imCompose( YView* mView, const QString& entry );
-    virtual void imEnd( YView* mView, const QString& entry );
+    virtual CmdState commandInsert(const YCommandArgs &args);
+    CmdState insertFromBelow( const YCommandArgs &args );
+    CmdState insertFromAbove( const YCommandArgs &args );
+    CmdState completion( const YCommandArgs &args );
+    CmdState completionNext( const YCommandArgs &args );
+    CmdState completionPrevious( const YCommandArgs &args );
+    virtual CmdState backspace( const YCommandArgs &args );
+    CmdState deleteWordBefore( const YCommandArgs &args );
+    CmdState commandEnter( const YCommandArgs &args );
 
+    virtual CmdState addText( YView* mView, const QString& text );
+
+    // Dubious
+    CmdState deleteChar( const YCommandArgs &args );
+    CmdState deleteCharBackwards( const YCommandArgs &args );
+    void imBegin( YView* );
+    void imCompose( YView* mView, const QString& entry );
+    void imEnd( YView* mView, const QString& entry );
+
+    void initModifierKeys();
 protected :
     QString m_imPreedit;
 };
@@ -87,9 +81,9 @@ public :
     virtual ~YModeReplace()
     {}
 
-    virtual CmdState commandDefault( YView* mView, const QString& key );
-    virtual void commandInsert( YView* mView, const QString& key );
-    virtual void commandBackspace( YView* mView, const QString& key );
+    virtual CmdState addText( YView* mView, const QString& key );
+    virtual CmdState commandInsert( const YCommandArgs &args );
+    virtual CmdState backspace( const YCommandArgs &args );
 };
 
 #endif

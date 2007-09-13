@@ -18,8 +18,12 @@
 **/
 
 #include "keys.h"
+#include "debug.h"
 #include <QRegExp>
 #include <iostream>
+
+#define dbg()    yzDebug("YKeySequence")
+#define err()    yzError("YKeySequence")
 
 using namespace std;
 
@@ -246,8 +250,10 @@ void YKeySequence::appendString(QString input)
     
     while( input.count() ) {
         used = k.fromString(input);
-        if ( used == -1 )
+        if ( used == -1 ) {
+	    dbg() << "Asked to parse invalid key string";
             break;
+	}
         mKeys->append(k);
         input = input.mid(used);
     }

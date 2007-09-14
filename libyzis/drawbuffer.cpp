@@ -343,6 +343,12 @@ void YDrawBuffer::Scroll( int , int dy )
             m_content.remove( max, m_content.size() - max );
         }
     }
+
+    // This function is only called if there will be lines left at the end,
+    // so set invalidated members to reasonable values
+    m_x = m_y = 0;
+    v_x = 0;
+    applyPosition();
 }
 
 void YDrawBuffer::setSelectionLayout( YSelectionPool::SelectionLayout layout, const YSelection& selection )

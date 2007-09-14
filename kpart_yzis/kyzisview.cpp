@@ -37,6 +37,7 @@
 #include <libyzis/view.h>
 #include <libyzis/buffer.h>
 #include <libyzis/debug.h>
+#include <libyzis/keys.h>
 
 KYView::KYView(YBuffer* buffer, QWidget* parent)
         : QWidget(parent), YView(buffer, KYSession::self(), 0, 0),
@@ -56,7 +57,7 @@ KYView::KYView(YBuffer* buffer, QWidget* parent)
     mVScroll->setMaximum( buffer->lineCount() - 1 );
 
     m_infoBar = new KYInfoBar( this );
-    m_infoBar->setMode( mode() );
+    m_infoBar->setMode( modeString() );
     guiSyncViewInfo();
 
     QGridLayout* g = new QGridLayout( this );
@@ -135,7 +136,7 @@ void KYView::guiSyncViewInfo()
 void KYView::guiModeChanged()
 {
     m_editor->updateCursor();
-    m_infoBar->setMode( mode() );
+    m_infoBar->setMode( modeString() );
 }
 
 bool KYView::guiPopupFileSaveAs()
@@ -213,80 +214,80 @@ void KYView::guiDrawSetLineNumber(int, int, int)
 void KYView::guiDrawSetMaxLineNumber( int /*max*/ )
 {}
 
-const QString& KYView::convertKey( int key )
+const YKey& KYView::convertKey( int key )
 {
     return keys[ key ];
 }
 
 void KYView::initKeys()
 {
-    keys[ Qt::Key_Escape ] = "<ESC>" ;
-    keys[ Qt::Key_Tab ] = "<TAB>" ;
-    keys[ Qt::Key_Backtab ] = "<BTAB>" ;
-    keys[ Qt::Key_Backspace ] = "<BS>" ;
-    keys[ Qt::Key_Return ] = "<ENTER>" ;
-    keys[ Qt::Key_Enter ] = "<ENTER>" ;
-    keys[ Qt::Key_Insert ] = "<INS>" ;
-    keys[ Qt::Key_Delete ] = "<DEL>" ;
-    keys[ Qt::Key_Pause ] = "<PAUSE>" ;
-    keys[ Qt::Key_Print ] = "<PRINT>" ;
-    keys[ Qt::Key_SysReq ] = "<SYSREQ>" ;
-    keys[ Qt::Key_Home ] = "<HOME>" ;
-    keys[ Qt::Key_End ] = "<END>" ;
-    keys[ Qt::Key_Left ] = "<LEFT>" ;
-    keys[ Qt::Key_Up ] = "<UP>" ;
-    keys[ Qt::Key_Right ] = "<RIGHT>" ;
-    keys[ Qt::Key_Down ] = "<DOWN>" ;
-    //keys[ Qt::Key_Prior ] = "<PUP>" ; seems like it doesn't exist any longer with qt 4.3
-    //keys[ Qt::Key_Next ] = "<PDOWN>" ; seems like it doesn't exist any longer with qt 4.3
-    keys[ Qt::Key_PageUp ] = "<PUP>" ;
-    keys[ Qt::Key_PageDown ] = "<PDOWN>" ;
-    keys[ Qt::Key_Shift ] = "<SHIFT>" ;
-    keys[ Qt::Key_Control ] = "<CTRL>" ;
-    keys[ Qt::Key_Meta ] = "<META>" ;
-    keys[ Qt::Key_Alt ] = "<ALT>" ;
-    //hmm ignore it keys[ Qt::Key_CapsLock ] = "<CAPSLOCK>" ;
-    //hmm ignore it keys[ Qt::Key_NumLock ] = "<NUMLOCK>" ;
-    //hmm ignore it keys[ Qt::Key_ScrollLock ] = "<SCROLLLOCK>" ;
-    keys[ Qt::Key_Clear ] = "<CLEAR>" ;
-    keys[ Qt::Key_F1 ] = "<F1>" ;
-    keys[ Qt::Key_F2 ] = "<F2>" ;
-    keys[ Qt::Key_F3 ] = "<F3>" ;
-    keys[ Qt::Key_F4 ] = "<F4>" ;
-    keys[ Qt::Key_F5 ] = "<F5>" ;
-    keys[ Qt::Key_F6 ] = "<F6>" ;
-    keys[ Qt::Key_F7 ] = "<F7>" ;
-    keys[ Qt::Key_F8 ] = "<F8>" ;
-    keys[ Qt::Key_F9 ] = "<F9>" ;
-    keys[ Qt::Key_F10 ] = "<F10>" ;
-    keys[ Qt::Key_F11 ] = "<F11>" ;
-    keys[ Qt::Key_F12 ] = "<F12>" ;
-    keys[ Qt::Key_F13 ] = "<F13>" ;
-    keys[ Qt::Key_F14 ] = "<F14>" ;
-    keys[ Qt::Key_F15 ] = "<F15>" ;
-    keys[ Qt::Key_F16 ] = "<F16>" ;
-    keys[ Qt::Key_F17 ] = "<F17>" ;
-    keys[ Qt::Key_F18 ] = "<F18>" ;
-    keys[ Qt::Key_F19 ] = "<F19>" ;
-    keys[ Qt::Key_F20 ] = "<F20>" ;
-    keys[ Qt::Key_F21 ] = "<F21>" ;
-    keys[ Qt::Key_F22 ] = "<F22>" ;
-    keys[ Qt::Key_F23 ] = "<F23>" ;
-    keys[ Qt::Key_F24 ] = "<F24>" ;
-    keys[ Qt::Key_F25 ] = "<F25>" ;
-    keys[ Qt::Key_F26 ] = "<F26>" ;
-    keys[ Qt::Key_F27 ] = "<F27>" ;
-    keys[ Qt::Key_F28 ] = "<F28>" ;
-    keys[ Qt::Key_F29 ] = "<F29>" ;
-    keys[ Qt::Key_F30 ] = "<F30>" ;
-    keys[ Qt::Key_F31 ] = "<F31>" ;
-    keys[ Qt::Key_F32 ] = "<F32>" ;
-    keys[ Qt::Key_F33 ] = "<F33>" ;
-    keys[ Qt::Key_F34 ] = "<F34>" ;
-    keys[ Qt::Key_F35 ] = "<F35>" ;
-    // keys[ Qt::Key_BracketLeft ] = "[";
-    // keys[ Qt::Key_BracketRight ] = "]";
-
+    if ( keys.empty() ) { 
+        /* initialize keys */ 
+        keys[ Qt::Key_Escape ] = YKey::Key_Esc;
+        keys[ Qt::Key_Tab ] = YKey::Key_Tab ;
+        keys[ Qt::Key_Backtab ] = YKey::Key_BTab ;
+        keys[ Qt::Key_Backspace ] = YKey::Key_BackSpace ;
+        keys[ Qt::Key_Return ] = YKey::Key_Enter ;
+        keys[ Qt::Key_Enter ] = YKey::Key_Enter ;
+        keys[ Qt::Key_Insert ] = YKey::Key_Insert ;
+        keys[ Qt::Key_Delete ] = YKey::Key_Delete ;
+        keys[ Qt::Key_Pause ] = YKey::Key_Pause ;
+        keys[ Qt::Key_Print ] = YKey::Key_PrintScreen ;
+        keys[ Qt::Key_SysReq ] = YKey::Key_SysReq ;
+        keys[ Qt::Key_Home ] = YKey::Key_Home;
+        keys[ Qt::Key_End ] = YKey::Key_End;
+        keys[ Qt::Key_Left ] = YKey::Key_Left ;
+        keys[ Qt::Key_Up ] = YKey::Key_Up ; 
+        keys[ Qt::Key_Right ] = YKey::Key_Right ;
+        keys[ Qt::Key_Down ] = YKey::Key_Down ;
+        keys[ Qt::Key_PageUp ] = YKey::Key_PageUp ;
+        keys[ Qt::Key_PageDown ] = YKey::Key_PageDown ;
+        keys[ Qt::Key_Shift ] = YKey::Key_Shift ;
+        keys[ Qt::Key_Control ] = YKey::Key_Ctrl ;
+        keys[ Qt::Key_Meta ] = YKey::Key_Meta ;
+        keys[ Qt::Key_Alt ] = YKey::Key_Alt ;
+        //hmm ignore it keys[ Qt::Key_CapsLock ] = "<CAPSLOCK>" ;
+        //hmm ignore it keys[ Qt::Key_NumLock ] = "<NUMLOCK>" ;
+        //hmm ignore it keys[ Qt::Key_ScrollLock ] = "<SCROLLLOCK>" ;
+        keys[ Qt::Key_Clear ] = YKey::Key_Clear ;
+        keys[ Qt::Key_F1 ] = YKey::Key_F1 ;
+        keys[ Qt::Key_F2 ] = YKey::Key_F2 ;
+        keys[ Qt::Key_F3 ] = YKey::Key_F3 ;
+        keys[ Qt::Key_F4 ] = YKey::Key_F4 ;
+        keys[ Qt::Key_F5 ] = YKey::Key_F5 ;
+        keys[ Qt::Key_F6 ] = YKey::Key_F6 ;
+        keys[ Qt::Key_F7 ] = YKey::Key_F7 ;
+        keys[ Qt::Key_F8 ] = YKey::Key_F8 ;
+        keys[ Qt::Key_F9 ] = YKey::Key_F9 ; 
+        keys[ Qt::Key_F10 ] = YKey::Key_F10 ;
+        keys[ Qt::Key_F11 ] = YKey::Key_F11 ;
+        keys[ Qt::Key_F12 ] = YKey::Key_F12 ;
+        keys[ Qt::Key_F13 ] = YKey::Key_F13 ;
+        keys[ Qt::Key_F14 ] = YKey::Key_F14 ;
+        keys[ Qt::Key_F15 ] = YKey::Key_F15 ;
+        keys[ Qt::Key_F16 ] = YKey::Key_F16 ;
+        keys[ Qt::Key_F17 ] = YKey::Key_F17 ;
+        keys[ Qt::Key_F18 ] = YKey::Key_F18 ;
+        keys[ Qt::Key_F19 ] = YKey::Key_F19 ;
+        keys[ Qt::Key_F20 ] = YKey::Key_F20 ;
+        keys[ Qt::Key_F21 ] = YKey::Key_F21 ;
+        keys[ Qt::Key_F22 ] = YKey::Key_F22 ;
+        keys[ Qt::Key_F23 ] = YKey::Key_F23 ;
+        keys[ Qt::Key_F24 ] = YKey::Key_F24 ;
+        keys[ Qt::Key_F25 ] = YKey::Key_F25 ;
+        keys[ Qt::Key_F26 ] = YKey::Key_F26 ;
+        keys[ Qt::Key_F27 ] = YKey::Key_F27 ;
+        keys[ Qt::Key_F28 ] = YKey::Key_F28 ;
+        keys[ Qt::Key_F29 ] = YKey::Key_F29 ;
+        keys[ Qt::Key_F30 ] = YKey::Key_F30 ;
+        keys[ Qt::Key_F31 ] = YKey::Key_F31 ;
+        keys[ Qt::Key_F32 ] = YKey::Key_F32 ;
+        keys[ Qt::Key_F33 ] = YKey::Key_F33 ;
+        keys[ Qt::Key_F34 ] = YKey::Key_F34 ;
+        keys[ Qt::Key_F35 ] = YKey::Key_F35 ;
+        keys[ Qt::Key_BracketLeft ] = YKey::Key_LeftSBracket;
+        keys[ Qt::Key_BracketRight ] = YKey::Key_RightSBracket;
+    }
 
     actionCollection = new KActionCollection( this );
     signalMapper = new QSignalMapper( this );
@@ -366,7 +367,9 @@ void KYView::scrollView( int value )
 
 void KYView::sendMultipleKeys( const QString& k )
 {
-    KYSession::self()->sendMultipleKeys( this, k );
+    YKeySequence input(k);
+    YKeySequence::const_iterator parsePos = input.begin();
+    KYSession::self()->sendMultipleKeys( this, input, parsePos );
 }
 
 #include "kyzisview.moc"

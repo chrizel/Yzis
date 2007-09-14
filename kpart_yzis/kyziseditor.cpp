@@ -40,6 +40,7 @@
 
 #include <libyzis/debug.h>
 #include <libyzis/buffer.h>
+#include <libyzis/action.h>
 
 #define GETX( x ) ( ( x ) * fontMetrics().maxWidth() )
 
@@ -173,22 +174,22 @@ bool KYEditor::event(QEvent *e)
 void KYEditor::keyPressEvent ( QKeyEvent * e )
 {
     Qt::KeyboardModifiers st = e->modifiers();
-    QString modifiers;
+    int modifiers = 0;
     if ( st & Qt::ShiftModifier )
-        modifiers = "<SHIFT>";
+        modifiers |= YKey::Mod_Shift;
     if ( st & Qt::AltModifier )
-        modifiers += "<ALT>";
+        modifiers |= YKey::Mod_Alt;
     if ( st & Qt::ControlModifier )
-        modifiers += "<CTRL>";
+        modifiers |= YKey::Mod_Ctrl;
 
     //int lmode = m_parent->modePool()->currentType();
-    QString k;
+    QChar k;
     if ( m_parent->containsKey( e->key() ) ) //to handle some special keys
         k = m_parent->getKey( e->key() );
     else
-        k = e->text();
+        k = e->text()[0];
 
-    KYSession::self()->sendKey(m_parent, k, modifiers);
+    KYSession::self()->sendKey(m_parent, YKey( k, modifiers ) );
 
     // TODO: find out what this did! seems to be useless right now
     //if ( lmode == YMode::ModeInsert || lmode == YMode::ModeReplace ) {
@@ -231,7 +232,7 @@ void KYEditor::mousePressEvent ( QMouseEvent * e )
             if ( m_parent->modePool()->current()->isEditMode() ) {
                 QChar reg = '\"';
                 KYSession::self()->setRegister( reg, text.split( "\n" ) );
-                m_parent->pasteContent( reg, false );
+                m_parent->myBuffer()->action()->pasteContent( m_parent, reg, false );
                 m_parent->moveRight();
             }
         }

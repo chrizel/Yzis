@@ -31,6 +31,7 @@
 class KYEditor;
 class KYCommand;
 class KYInfoBar;
+class YKey;
 class QSignalMapper;
 class QPainter;
 class KActionCollection;
@@ -60,12 +61,12 @@ public:
     virtual void guiDrawSetMaxLineNumber(int);
     virtual void guiModeChanged();
 
-    const QString& convertKey( int key );
+    const YKey& convertKey( int key );
     bool containsKey( int key )
     {
         return keys.contains( key );
     }
-    QString getKey( int key )
+    YKey getKey( int key )
     {
         return keys[ key ];
     }
@@ -94,7 +95,7 @@ private:
     void initKeys();
 
     // last line number
-    QMap<int, QString> keys;
+    QMap<int, YKey> keys;
     KActionCollection* actionCollection;
     QSignalMapper* signalMapper;
     QPainter* m_painter;

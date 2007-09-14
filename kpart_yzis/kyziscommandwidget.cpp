@@ -42,15 +42,15 @@ KYCommand::~KYCommand()
 void KYCommand::keyPressEvent ( QKeyEvent * e )
 {
     yzDebug() << " KYCommand Got key : " << e->key() << " Got ASCII : " /*<< e->text().toAscii()*/ << " Got Unicode : " << e->text() << endl;
-    QString modifiers;
-    if ( e->modifiers() & Qt::ShiftModifier ) modifiers += "<SHIFT>";
-    if ( e->modifiers() & Qt::AltModifier ) modifiers += "<ALT>";
-    if ( e->modifiers() & Qt::ControlModifier ) modifiers += "<CTRL>";
+    int modifiers = 0;
+    if ( e->modifiers() & Qt::ShiftModifier ) modifiers |= YKey::Mod_Shift;
+    if ( e->modifiers() & Qt::AltModifier ) modifiers |= YKey::Mod_Alt;
+    if ( e->modifiers() & Qt::ControlModifier ) modifiers |= YKey::Mod_Ctrl;
     if ( e->key() == Qt::Key_Return || e->key() == Qt::Key_Up || e->key() == Qt::Key_Down || e->key() == Qt::Key_Escape) {
-        KYSession::self()->sendKey(m_view, m_view->convertKey( e->key() ), modifiers ) ;
+        KYSession::self()->sendKey(m_view, m_view->convertKey( e->key() ) ) ;
         e->accept();
     } else if ( ( e->modifiers() & Qt::ControlModifier ) && e->key() == Qt::Key_C ) { // handle CTRL-C
-        KYSession::self()->sendKey( m_view, "c" , modifiers ) ;
+        KYSession::self()->sendKey( m_view, YKey( YKey::Key_c , modifiers ) ) ;
         e->accept();
     } else KLineEdit::keyPressEvent( e );
 }

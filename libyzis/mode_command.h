@@ -225,6 +225,10 @@ public:
     YCursor searchPrev(const YMotionArgs &args, CmdState *state);
     YCursor nextEmptyLine(const YMotionArgs &args, CmdState *state);
     YCursor previousEmptyLine(const YMotionArgs &args, CmdState *state);
+    YCursor scrollPageUp( const YMotionArgs &args, CmdState *state );
+    YCursor scrollPageDown( const YMotionArgs &args, CmdState *state );
+    YCursor scrollLineUp( const YMotionArgs &args, CmdState *state );
+    YCursor scrollLineDown( const YMotionArgs &args, CmdState *state );
 
     // methods implementing commands
     CmdState execMotion(const YCommandArgs &args);
@@ -279,10 +283,6 @@ public:
     CmdState abort(const YCommandArgs &args);
     CmdState delkey(const YCommandArgs &args);
     CmdState indent( const YCommandArgs& args );
-    CmdState scrollPageUp( const YCommandArgs &args );
-    CmdState scrollPageDown( const YCommandArgs &args );
-    CmdState scrollLineUp( const YCommandArgs &args );
-    CmdState scrollLineDown( const YCommandArgs &args );
     CmdState redoLastCommand( const YCommandArgs & args );
     CmdState tagNext( const YCommandArgs & args );
     CmdState tagPrev( const YCommandArgs & args );

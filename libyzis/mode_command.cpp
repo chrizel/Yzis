@@ -87,6 +87,8 @@ void YModeCommand::initGenericMotionPool()
     motions.append( new YMotion(YKeySequence("<END>"), &YModeCommand::gotoEOL, ArgNone) );
     motions.append( new YMotion(YKeySequence("<C-HOME>"), &YModeCommand::gotoStartOfDocument, ArgNone) );
     motions.append( new YMotion(YKeySequence("<C-END>"), &YModeCommand::gotoEndOfDocument, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<PAGEUP>"), &YModeCommand::scrollPageUp, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<PAGEDOWN>"), &YModeCommand::scrollPageDown, ArgNone) );
     motions.append( new YMotion(YKeySequence("<LEFT>"), &YModeCommand::moveLeft, ArgNone) );
     motions.append( new YMotion(YKeySequence("<RIGHT>"), &YModeCommand::moveRight, ArgNone) );
     motions.append( new YMotion(YKeySequence("<UP>"), &YModeCommand::moveUp, ArgNone) );
@@ -95,6 +97,8 @@ void YModeCommand::initGenericMotionPool()
     motions.append( new YMotion(YKeySequence("<C-LEFT>"), &YModeCommand::moveSWordBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("<S-RIGHT>"), &YModeCommand::moveWordForward, ArgNone) );
     motions.append( new YMotion(YKeySequence("<C-RIGHT>"), &YModeCommand::moveSWordForward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<S-UP>"), &YModeCommand::scrollPageUp, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<S-DOWN>"), &YModeCommand::scrollPageDown, ArgNone) );
 }
 
 void YModeCommand::initMotionPool()
@@ -131,6 +135,11 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("G"), &YModeCommand::gotoLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("}"), &YModeCommand::nextEmptyLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("{"), &YModeCommand::previousEmptyLine, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<C-b>"), &YModeCommand::scrollPageUp) );
+    motions.append( new YMotion(YKeySequence("<C-y>"), &YModeCommand::scrollLineUp) );
+    motions.append( new YMotion(YKeySequence("<PAGEDOWN>"), &YModeCommand::scrollPageDown) );
+    motions.append( new YMotion(YKeySequence("<C-f>"), &YModeCommand::scrollPageDown) );
+    motions.append( new YMotion(YKeySequence("<C-e>"), &YModeCommand::scrollLineDown) );
 }
 
 void YModeCommand::initCommandPool()
@@ -196,12 +205,6 @@ void YModeCommand::initCommandPool()
     commands.append( new YCommand(YKeySequence("gUgU"), &YModeCommand::lineToUpperCase) );
     commands.append( new YCommand(YKeySequence("guu"), &YModeCommand::lineToLowerCase) );
     commands.append( new YCommand(YKeySequence("gugu"), &YModeCommand::lineToLowerCase) );
-    commands.append( new YCommand(YKeySequence("<PAGEUP>"), &YModeCommand::scrollPageUp) );
-    commands.append( new YCommand(YKeySequence("<C-b>"), &YModeCommand::scrollPageUp) );
-    commands.append( new YCommand(YKeySequence("<C-y>"), &YModeCommand::scrollLineUp) );
-    commands.append( new YCommand(YKeySequence("<PAGEDOWN>"), &YModeCommand::scrollPageDown) );
-    commands.append( new YCommand(YKeySequence("<C-f>"), &YModeCommand::scrollPageDown) );
-    commands.append( new YCommand(YKeySequence("<C-e>"), &YModeCommand::scrollLineDown) );
     commands.append( new YCommand(YKeySequence("."), &YModeCommand::redoLastCommand) );
     commands.append( new YCommand(YKeySequence("<C-]>"), &YModeCommand::tagNext) );
     commands.append( new YCommand(YKeySequence("<C-t>"), &YModeCommand::tagPrev) );
@@ -447,21 +450,24 @@ YCursor YModeCommand::moveUp(const YMotionArgs &args, CmdState *state)
     return viewCursor.buffer();
 }
 
-CmdState YModeCommand::scrollPageUp(const YCommandArgs &args)
+YCursor YModeCommand::scrollPageUp(const YMotionArgs &args, CmdState *state)
 {
     int line = args.view->getCurrentTop() - args.view->getLinesVisible();
     
     if (line < 0)
         line = 0;
 
-    if (line == (int)args.view->getCurrentTop())
-        return CmdStopped;
+    if (line == (int)args.view->getCurrentTop()) {
+	*state = CmdStopped;
+	return args.view->viewCursor().buffer();
+    }
         
     args.view->alignViewBufferVertically( line );
-    return CmdOk;
+    *state = CmdOk;
+    return args.view->viewCursor().buffer();
 }
 
-CmdState YModeCommand::scrollLineUp(const YCommandArgs &args)
+YCursor YModeCommand::scrollLineUp(const YMotionArgs &args, CmdState *state)
 {
     int line = args.view->getCurrentTop() - 1;
 
@@ -469,14 +475,16 @@ CmdState YModeCommand::scrollLineUp(const YCommandArgs &args)
         line = 0;
 
     if (line == (int)args.view->getCurrentTop()) {
-        return CmdStopped;
+	*state = CmdStopped;
+        return args.view->viewCursor().buffer();
     }
     
     args.view->alignViewBufferVertically( line );
-    return CmdOk;
+    *state = CmdOk;
+    return args.view->viewCursor().buffer();
 }
 
-CmdState YModeCommand::scrollPageDown(const YCommandArgs &args)
+YCursor YModeCommand::scrollPageDown(const YMotionArgs &args, CmdState *state)
 {
     int line = args.view->getCurrentTop() + args.view->getLinesVisible();
     YView *view = args.view;
@@ -492,14 +500,17 @@ CmdState YModeCommand::scrollPageDown(const YCommandArgs &args)
     if (line > view->myBuffer()->lineCount())
         line = view->myBuffer()->lineCount();
 
-    if (line == view->getCurrentTop())
-        return CmdStopped;
+    if (line == view->getCurrentTop()) {
+	*state = CmdStopped;
+	return args.view->viewCursor().buffer();
+    }
     
     view->alignViewBufferVertically( line );
-    return CmdOk;
+    *state = CmdOk;
+    return args.view->viewCursor().buffer();
 }
 
-CmdState YModeCommand::scrollLineDown(const YCommandArgs &args)
+YCursor YModeCommand::scrollLineDown(const YMotionArgs &args, CmdState *state)
 {
     int line = args.view->getCurrentTop() + args.view->getLinesVisible();
     YView *view = args.view;
@@ -515,11 +526,14 @@ CmdState YModeCommand::scrollLineDown(const YCommandArgs &args)
     if (line > view->myBuffer()->lineCount())
         line = view->myBuffer()->lineCount();
 
-    if (line == view->getCurrentTop())
-        return CmdStopped;
+    if (line == view->getCurrentTop()) {
+	*state = CmdStopped;
+	return args.view->viewCursor().buffer();
+    }
     
     view->alignViewBufferVertically( line );
-    return CmdOk;
+    *state = CmdOk;
+    return args.view->viewCursor().buffer();
 }
 
 YCursor YModeCommand::previousEmptyLine(const YMotionArgs &args, CmdState *state)

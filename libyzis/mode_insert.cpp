@@ -59,28 +59,17 @@ void YModeInsert::leave( YView* mView )
 
 void YModeInsert::initMotionPool()
 {
-    // Syntactic difference between commands and motions doesn't exist in
-    // insert mode. So motions are in commands
+    // No insert mode specific motions
 }
 
 void YModeInsert::initCommandPool()
 {
-    commands.append( new YMotion(YKeySequence("<HOME>"), &YModeCommand::gotoSOL) );
-    commands.append( new YMotion(YKeySequence("<END>"), &YModeCommand::gotoEOL) );
-    commands.append( new YMotion(YKeySequence("<C-HOME>"), &YModeCommand::gotoStartOfDocument) );
-    commands.append( new YMotion(YKeySequence("<C-END>"), &YModeCommand::gotoEndOfDocument) );
     commands.append( new YCommand(YKeySequence("<ESC>"), &YModeCommand::gotoCommandMode) );
     commands.append( new YCommand(YKeySequence("<C-c>"), &YModeCommand::gotoCommandMode) );
     commands.append( new YCommand(YKeySequence("<C-[>"), &YModeCommand::gotoCommandMode) );
     commands.append( new YCommand(YKeySequence("<INSERT>"), (PoolMethod) &YModeInsert::commandInsert) );
     commands.append( new YCommand(YKeySequence("<ALT>"), &YModeCommand::gotoExMode) );
     commands.append( new YCommand(YKeySequence("<A-v>"), &YModeCommand::gotoVisualMode) );
-    commands.append( new YMotion(YKeySequence("<DOWN>"), &YModeCommand::moveDown) );
-    commands.append( new YMotion(YKeySequence("<LEFT>"), &YModeCommand::moveLeft) );
-    commands.append( new YMotion(YKeySequence("<RIGHT>"), &YModeCommand::moveRight) );
-    commands.append( new YMotion(YKeySequence("<UP>"), &YModeCommand::moveUp) );
-    commands.append( new YCommand(YKeySequence("<PAGEDOWN>"), &YModeCommand::scrollPageDown) );
-    commands.append( new YCommand(YKeySequence("<PAGEUP>"), &YModeCommand::scrollPageUp) );
     commands.append( new YCommand(YKeySequence("<C-e>"), (PoolMethod)&YModeInsert::insertFromBelow) );
     commands.append( new YCommand(YKeySequence("<C-y>"), (PoolMethod)&YModeInsert::insertFromAbove) );
     commands.append( new YCommand(YKeySequence("<C-x>"), (PoolMethod)&YModeInsert::completion) );
@@ -91,6 +80,14 @@ void YModeInsert::initCommandPool()
     commands.append( new YCommand(YKeySequence("<C-h>"), (PoolMethod)&YModeInsert::backspace) );
     commands.append( new YCommand(YKeySequence("<ENTER>"), (PoolMethod)&YModeInsert::commandEnter) );
     commands.append( new YCommand(YKeySequence("<DELETE>"), &YModeCommand::deleteChar) );
+    
+    // Motions don't need special processing in insert mode, so shove them
+    // on the back of the command list
+    for(QList<YMotion *>::const_iterator mot = motions.begin(); mot != motions.end(); ++mot)
+	commands.append(*mot);
+    
+    // Get rid of unnecessary motion list now
+    motions.clear();
 }
 
 void YModeInsert::initModifierKeys()
@@ -115,6 +112,7 @@ CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& inputs,
 	// 1 is for count, false for hadCount
 	return (this->*(c->poolMethod()))(YCommandArgs(c, mView, regs, 1, false, &inputs, &parsePos) );
     }
+
 
     /* if ( key.startsWith("<CTRL>") ) // XXX no sense
        ret = YSession::self()->getCommandPool()->execCommand(mView, key);

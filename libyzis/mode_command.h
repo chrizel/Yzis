@@ -181,6 +181,7 @@ public:
     virtual CmdState execCommand(YView *view, const YKeySequence & inputs, YKeySequence::const_iterator &parsePos);
 
     virtual void initPool();
+    void initGenericMotionPool();
     virtual void initMotionPool();
     virtual void initCommandPool();
     virtual void initModifierKeys();

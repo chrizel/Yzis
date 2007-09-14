@@ -145,9 +145,7 @@ void YModeVisual::initCommandPool()
     commands.append( new YCommand(YKeySequence(">"), &YModeCommand::indent) );
     commands.append( new YCommand(YKeySequence("<"), &YModeCommand::indent) );
 
-    commands.append( new YCommand(YKeySequence("<PDOWN>"), &YModeCommand::scrollPageDown) );
     commands.append( new YCommand(YKeySequence("<C-f>"), &YModeCommand::scrollPageDown) );
-    commands.append( new YCommand(YKeySequence("<PUP>"), &YModeCommand::scrollPageUp) );
     commands.append( new YCommand(YKeySequence("<C-b>"), &YModeCommand::scrollPageUp) );
     initVisualCommandPool();
 }

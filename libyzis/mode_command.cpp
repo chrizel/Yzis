@@ -75,9 +75,28 @@ void YModeCommand::init()
 
 void YModeCommand::initPool()
 {
+    initGenericMotionPool();
     initMotionPool();
     initCommandPool();
 }
+
+void YModeCommand::initGenericMotionPool()
+{
+    // These are motions generic to most modes, basically those from special keys on the keyboard
+    motions.append( new YMotion(YKeySequence("<HOME>"), &YModeCommand::gotoSOL, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<END>"), &YModeCommand::gotoEOL, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<C-HOME>"), &YModeCommand::gotoStartOfDocument, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<C-END>"), &YModeCommand::gotoEndOfDocument, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<LEFT>"), &YModeCommand::moveLeft, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<RIGHT>"), &YModeCommand::moveRight, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<UP>"), &YModeCommand::moveUp, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<DOWN>"), &YModeCommand::moveDown, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<S-LEFT>"), &YModeCommand::moveWordBackward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<C-LEFT>"), &YModeCommand::moveSWordBackward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<S-RIGHT>"), &YModeCommand::moveWordForward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<C-RIGHT>"), &YModeCommand::moveSWordForward, ArgNone) );
+}
+
 void YModeCommand::initMotionPool()
 {
     motions.append( new YMotion(YKeySequence("0"), &YModeCommand::gotoSOL, ArgNone) );
@@ -104,14 +123,6 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("g#"), &YModeCommand::searchWord, ArgNone) );
     motions.append( new YMotion(YKeySequence("n"), &YModeCommand::searchNext, ArgNone) );
     motions.append( new YMotion(YKeySequence("N"), &YModeCommand::searchPrev, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<HOME>"), &YModeCommand::gotoSOL, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<END>"), &YModeCommand::gotoEOL, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<C-HOME>"), &YModeCommand::gotoStartOfDocument, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<C-END>"), &YModeCommand::gotoEndOfDocument, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<LEFT>"), &YModeCommand::moveLeft, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<RIGHT>"), &YModeCommand::moveRight, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<UP>"), &YModeCommand::moveUp, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<DOWN>"), &YModeCommand::moveDown, ArgNone) );
     motions.append( new YMotion(YKeySequence("%"), &YModeCommand::matchPair, ArgNone) );
     motions.append( new YMotion(YKeySequence("`"), &YModeCommand::gotoMark, ArgMark) );
     motions.append( new YMotion(YKeySequence("'"), &YModeCommand::gotoMark, ArgMark) );

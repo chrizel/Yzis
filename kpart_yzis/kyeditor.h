@@ -110,16 +110,11 @@ protected:
     // for InputMethod
     void inputMethodEvent ( QInputMethodEvent * );
 
-    bool fakeLine;
-
 private :
 
     KYCursor* mCursor;
-    QFontMetrics *standard;
-    QFontMetrics *standardBold;
-    QFontMetrics *standardBoldItalic;
-
-    KYView* m_parent;
+    KYView* mParent;
+    QRect mUseArea;
 };
 
 #endif

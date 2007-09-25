@@ -42,15 +42,14 @@
 #include <libyzis/buffer.h>
 #include <libyzis/action.h>
 
-#define GETX( x ) ( ( x ) * fontMetrics().maxWidth() )
-
 KYEditor::KYEditor(KYView* parent)
         : QWidget(parent)
 {
-    m_parent = parent;
+    mParent = parent;
     setFocusPolicy( Qt::StrongFocus );
+    mUseArea.setCoords( 0, 0, 0, 0 );
 
-    setAutoFillBackground( false );
+    setAutoFillBackground( true );
     setAttribute ( Qt::WA_PaintOutsidePaintEvent ); /* XXX */
 
     /* show an edit cursor */
@@ -84,19 +83,19 @@ KYCursor::shape KYEditor::cursorShape()
     KYCursor::shape s;
 
     QString shape;
-    YMode::ModeType m = m_parent->modePool()->current()->type();
+    YMode::ModeType m = mParent->modePool()->current()->type();
     switch ( m ) {
     case YMode::ModeInsert :
-        shape = m_parent->getLocalStringOption("cursorinsert");
+        shape = mParent->getLocalStringOption("cursorinsert");
         break;
     case YMode::ModeReplace :
-        shape = m_parent->getLocalStringOption("cursorreplace");
+        shape = mParent->getLocalStringOption("cursorreplace");
         break;
     case YMode::ModeCompletion :
         shape = "keep";
         break;
     default :
-        shape = m_parent->getLocalStringOption("cursor");
+        shape = mParent->getLocalStringOption("cursor");
         break;
     }
     if ( shape == "hbar" ) {
@@ -137,23 +136,24 @@ YCursor KYEditor::translateRealToPosition( const QPoint& p, bool ceil ) const
 
 YCursor KYEditor::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
 {
-    return translateRealToPosition( p, ceil ) + m_parent->getScreenPosition();
+    return translateRealToPosition( p, ceil ) + mParent->getScreenPosition();
 }
 
 void KYEditor::updateCursor()
 {
     mCursor->setCursorType( cursorShape() );
+    mCursor->update();
 }
 
 
 void KYEditor::updateArea( )
 {
-    mCursor->resize( fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
     updateCursor();
 
     int lines = height() / fontMetrics().lineSpacing();
-    int columns = width() / GETX( 1 );
-    m_parent->setVisibleArea( columns, lines );
+    int columns = width() / fontMetrics().maxWidth();
+    mUseArea.setBottomRight( QPoint( columns * fontMetrics().maxWidth(), lines * fontMetrics().lineSpacing()) );
+    mParent->setVisibleArea( columns, lines );
 }
 
 /**
@@ -163,7 +163,7 @@ bool KYEditor::event(QEvent *e)
 {
     if ( e->type() == QEvent::KeyPress ) {
         QKeyEvent *ke = (QKeyEvent *)e;
-        if ( ke->key() == Qt::Key_Tab ) {
+        if ( ke->key() == Qt::Key_Tab || ke->key() == Qt::Key_Backtab ) {
             keyPressEvent(ke);
             return true;
         }
@@ -183,16 +183,16 @@ void KYEditor::keyPressEvent ( QKeyEvent * e )
         modifiers |= YKey::Mod_Ctrl;
 
     YKey key( YKey::Key_Invalid, modifiers );
-    if ( !m_parent->containsKey( e->key() ) ) {
+    if ( !mParent->containsKey( e->key() ) ) {
         if ( e->key() >= Qt::Key_A && e->key() <= Qt::Key_Z && modifiers & YKey::Mod_Ctrl )
              key.setKey( QChar(e->key()).toLower() );
         else
              key.setKey( e->text()[0] );
     } else {
-        key.setKey( m_parent->getKey( e->key() ) );
+        key.setKey( mParent->getKey( e->key() ) );
     }
 
-    KYSession::self()->sendKey(m_parent, key );
+    KYSession::self()->sendKey(mParent, key );
 
     e->accept();
 }
@@ -212,14 +212,14 @@ void KYEditor::mousePressEvent ( QMouseEvent * e )
     // leave visual mode if the user clicks somewhere
     // TODO: this should only be done if the left button is used. Right button
     // should extend visual selection, like in vim.
-    if ( m_parent->modePool()->current()->isSelMode() )
-        m_parent->modePool()->pop();
+    if ( mParent->modePool()->current()->isSelMode() )
+        mParent->modePool()->pop();
 
     if (( e->button() == Qt::LeftButton ) || ( e->button() == Qt::RightButton )) {
-        if (m_parent->modePool()->currentType() != YMode::ModeEx) {
-            m_parent->gotodxdy( e->x() / ( GETX( 1 ) ) + m_parent->getDrawCurrentLeft( ),
-                                e->y() / fontMetrics().lineSpacing() + m_parent->getDrawCurrentTop( ) );
-            m_parent->updateStickyCol();
+        if (mParent->modePool()->currentType() != YMode::ModeEx) {
+            mParent->gotodxdy( e->x() / ( fontMetrics().maxWidth() ) + mParent->getDrawCurrentLeft( ),
+                                e->y() / fontMetrics().lineSpacing() + mParent->getDrawCurrentTop( ) );
+            mParent->updateStickyCol();
         }
     } else if ( e->button() == Qt::MidButton ) {
         QString text = KApplication::clipboard()->text( QClipboard::Selection );
@@ -227,11 +227,11 @@ void KYEditor::mousePressEvent ( QMouseEvent * e )
         if ( text.isNull() )
             text = QApplication::clipboard()->text( QClipboard::Clipboard );
         if ( ! text.isNull() ) {
-            if ( m_parent->modePool()->current()->isEditMode() ) {
+            if ( mParent->modePool()->current()->isEditMode() ) {
                 QChar reg = '\"';
                 KYSession::self()->setRegister( reg, text.split( "\n" ) );
-                m_parent->myBuffer()->action()->pasteContent( m_parent, reg, false );
-                m_parent->moveRight();
+                mParent->myBuffer()->action()->pasteContent( mParent, reg, false );
+                mParent->moveRight();
             }
         }
     }
@@ -240,18 +240,18 @@ void KYEditor::mousePressEvent ( QMouseEvent * e )
 void KYEditor::mouseMoveEvent( QMouseEvent *e )
 {
     if (e->button() == Qt::LeftButton) {
-        if (m_parent->modePool()->currentType() == YMode::ModeCommand) {
+        if (mParent->modePool()->currentType() == YMode::ModeCommand) {
             // start visual mode when user makes a selection with the left mouse button
-            m_parent->modePool()->push( YMode::ModeVisual );
-        } else if (m_parent->modePool()->current()->isSelMode() ) {
+            mParent->modePool()->push( YMode::ModeVisual );
+        } else if (mParent->modePool()->current()->isSelMode() ) {
             // already in visual mode - move cursor if the mouse pointer has moved over a new char
             int newX = e->x() / fontMetrics().maxWidth()
-                       + m_parent->getDrawCurrentLeft();
+                       + mParent->getDrawCurrentLeft();
             int newY = e->y() / fontMetrics().lineSpacing()
-                       + m_parent->getDrawCurrentTop();
+                       + mParent->getDrawCurrentTop();
 
-            if (newX != m_parent->getCursor().x() || newY != m_parent->getCursor().y()) {
-                m_parent->gotodxdy( newX, newY );
+            if (newX != mParent->getCursor().x() || newY != mParent->getCursor().y()) {
+                mParent->gotodxdy( newX, newY );
             }
         }
     }
@@ -259,7 +259,7 @@ void KYEditor::mouseMoveEvent( QMouseEvent *e )
 
 void KYEditor::focusInEvent ( QFocusEvent * )
 {
-    KYSession::self()->setCurrentView( m_parent );
+    KYSession::self()->setCurrentView( mParent );
     updateCursor();
 }
 void KYEditor::focusOutEvent ( QFocusEvent * )
@@ -285,20 +285,21 @@ void KYEditor::paintEvent( QPaintEvent* pe )
     //dbg() << "QYisEdit::paintEvent : " << pe->rect().topLeft() << "," << pe->rect().bottomRight() <<
     //                              " => " << r.topLeft() << "," << r.bottomRight() << endl;
     // paint it
-    m_parent->guiPaintEvent( m_parent->clipSelection( YSelection( r ) ) );
+    mParent->guiPaintEvent( mParent->clipSelection( YSelection( r ) ) );
 }
 
 void KYEditor::setCursor( int c, int l )
 {
     // yzDebug() << "setCursor" << endl;
-    c = c - m_parent->getDrawCurrentLeft();
-    l -= m_parent->getDrawCurrentTop();
-    unsigned int x = GETX( c );
-    if ( m_parent->getLocalBooleanOption( "rightleft" ) ) {
+    c = c - mParent->getDrawCurrentLeft();
+    l -= mParent->getDrawCurrentTop();
+    unsigned int x = c * fontMetrics().maxWidth();
+    if ( mParent->getLocalBooleanOption( "rightleft" ) ) {
         x = width() - x - mCursor->width();
     }
     mCursor->move( x, l * fontMetrics().lineSpacing() );
-    updateCursor();
+    if ( !mCursor->isVisible() )
+      mCursor->show();
 
     // need for InputMethod (OverTheSpot)
     // setMicroFocusHint( mCursor->x(), mCursor->y(), mCursor->width(), mCursor->height() );
@@ -309,11 +310,16 @@ QPoint KYEditor::cursorCoordinates( )
     return QPoint( mCursor->x(), mCursor->y() );
 }
 
-void KYEditor::scroll( int x, int y )
+void KYEditor::scroll( int dx, int dy )
 {
+    int rx = dx * fontMetrics().maxWidth();
+    int ry = dy * fontMetrics().lineSpacing();
+
     mCursor->hide();
-    QWidget::scroll( x * fontMetrics().maxWidth(), y * fontMetrics().lineSpacing() );
-    mCursor->show();
+    QRect cursorRect = mCursor->rect();
+    cursorRect.moveTo( mCursor->pos() );
+    update( cursorRect );
+    QWidget::scroll( rx, ry, mUseArea );
 }
 
 void KYEditor::guiDrawCell( QPoint pos, const YDrawCell& cell, QPainter* p )
@@ -323,16 +329,25 @@ void KYEditor::guiDrawCell( QPoint pos, const YDrawCell& cell, QPainter* p )
         p->setPen( cell.fg.rgb() );
     }
 
-    QRect r( GETX(pos.x()), pos.y()*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
+    QRect r( pos.x() * fontMetrics().maxWidth(), pos.y()*fontMetrics().lineSpacing(), cell.c.length()*fontMetrics().maxWidth(), fontMetrics().lineSpacing() );
     p->eraseRect( r );
     p->drawText( r, cell.c );
     p->restore();
 }
 
-void KYEditor::guiDrawClearToEOL( QPoint pos, const QChar& /*clearChar*/, QPainter* p )
+void KYEditor::guiDrawClearToEOL( QPoint pos, const QChar& clearChar, QPainter* p )
 {
-    QRect r( GETX(pos.x()), pos.y()*fontMetrics().lineSpacing(), width(), fontMetrics().lineSpacing() );
-    p->eraseRect( r );
+    if ( clearChar.isSpace() ) {
+        // not needed as we called qt for repainting this widget, and autoFillBackground = True
+        return ;
+    } else {
+        QRect r;
+        r.setTopLeft( translatePositionToReal( YCursor(pos) ) );
+        r.setRight( width() );
+        r.setHeight( fontMetrics().lineSpacing() );
+        int nb_char = mParent->getColumnsVisible() - pos.x();
+        p->drawText( r, QString( nb_char, clearChar ) );
+    }
 }
 
 //void KYEditor::sendMultipleKey( const QString& keys ) {
@@ -355,8 +370,8 @@ QVariant KYEditor::inputMethodQuery ( Qt::InputMethodQuery query )
 /*
 void KYEditor::imStartEvent( QIMEvent *e )
 {
- if ( mParent->m_parent->modePool()->current()->supportsInputMethod() ) {
-  mParent->m_parent->modePool()->current()->imBegin( mParent );
+ if ( mParent->mParent->modePool()->current()->supportsInputMethod() ) {
+  mParent->mParent->modePool()->current()->imBegin( mParent );
  }
  e->accept();
 }*/
@@ -365,8 +380,8 @@ void KYEditor::imStartEvent( QIMEvent *e )
 /*
 void KYEditor::imComposeEvent( QIMEvent *e ) {
  //yzDebug() << "KYEditor::imComposeEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
- if ( mParent->m_parent->modePool()->current()->supportsInputMethod() ) {
-  mParent->m_parent->modePool()->current()->imCompose( mParent, e->text() );
+ if ( mParent->mParent->modePool()->current()->supportsInputMethod() ) {
+  mParent->mParent->modePool()->current()->imCompose( mParent, e->text() );
   e->accept();
  } else {
   e->ignore();
@@ -377,8 +392,8 @@ void KYEditor::imComposeEvent( QIMEvent *e ) {
 /*
 void KYEditor::imEndEvent( QIMEvent *e ) {
 // yzDebug() << "KYEditor::imEndEvent text=" << e->text() << " len=" << e->selectionLength() << " pos=" << e->cursorPos() << endl;
- if ( mParent->m_parent->modePool()->current()->supportsInputMethod() ) {
-  mParent->m_parent->modePool()->current()->imEnd( mParent, e->text() );
+ if ( mParent->mParent->modePool()->current()->supportsInputMethod() ) {
+  mParent->mParent->modePool()->current()->imEnd( mParent, e->text() );
  } else {
   mParent->sendKey( e->text() );
  }

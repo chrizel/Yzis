@@ -14,12 +14,12 @@ set( part_SOURCES
 	ktedocument.cpp
 	kteeditor.cpp
 	kteview.cpp
-	kyzissession.cpp
-	kyzisview.cpp
-	kyziscommandwidget.cpp
-	kyziscursor.cpp
-	kyziseditor.cpp
-	kyzisinfobar.cpp
+	kysession.cpp
+	kyview.cpp
+	kycommand.cpp
+	kycursor.cpp
+	kyeditor.cpp
+	kyinfobar.cpp
 	   	)
 
 kde4_add_plugin(yzispart ${part_SOURCES})

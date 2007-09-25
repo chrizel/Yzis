@@ -182,20 +182,18 @@ void KYEditor::keyPressEvent ( QKeyEvent * e )
     if ( st & Qt::ControlModifier )
         modifiers |= YKey::Mod_Ctrl;
 
-    //int lmode = m_parent->modePool()->currentType();
-    QChar k;
-    if ( m_parent->containsKey( e->key() ) ) //to handle some special keys
-        k = m_parent->getKey( e->key() );
-    else
-        k = e->text()[0];
+    YKey key( YKey::Key_Invalid, modifiers );
+    if ( !m_parent->containsKey( e->key() ) ) {
+        if ( e->key() >= Qt::Key_A && e->key() <= Qt::Key_Z && modifiers & YKey::Mod_Ctrl )
+             key.setKey( QChar(e->key()).toLower() );
+        else
+             key.setKey( e->text()[0] );
+    } else {
+        key.setKey( m_parent->getKey( e->key() ) );
+    }
 
-    KYSession::self()->sendKey(m_parent, YKey( k, modifiers ) );
+    KYSession::self()->sendKey(m_parent, key );
 
-    // TODO: find out what this did! seems to be useless right now
-    //if ( lmode == YMode::ModeInsert || lmode == YMode::ModeReplace ) {
-    //KYTextEditorIface *d = static_cast<KYTextEditorIface*>(document());
-    //emit d->emitChars(mCursor->y(), mCursor->x(),k);
-    //}
     e->accept();
 }
 

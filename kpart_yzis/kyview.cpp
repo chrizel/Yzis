@@ -19,11 +19,11 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#include "kyzisview.h"
-#include "kyzissession.h"
-#include "kyziseditor.h"
-#include "kyziscommandwidget.h"
-#include "kyzisinfobar.h"
+#include "kyview.h"
+#include "kysession.h"
+#include "kyeditor.h"
+#include "kycommand.h"
+#include "kyinfobar.h"
 #include "kteview.h"
 
 #include <QSignalMapper>
@@ -372,4 +372,4 @@ void KYView::sendMultipleKeys( const QString& k )
     KYSession::self()->sendMultipleKeys( this, input, parsePos );
 }
 
-#include "kyzisview.moc"
+#include "kyview.moc"

@@ -18,8 +18,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#ifndef _KYZIS_COMMAND_H_
-#define _KYZIS_COMMAND_H_
+#ifndef _KY_COMMAND_H_
+#define _KY_COMMAND_H_
 
 #include <klineedit.h>
 

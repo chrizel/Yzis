@@ -19,9 +19,9 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#include "kyziscursor.h"
-#include "kyziseditor.h"
-#include "kyzisview.h"
+#include "kycursor.h"
+#include "kyeditor.h"
+#include "kyview.h"
 
 #include <libyzis/drawbuffer.h>
 
@@ -87,4 +87,4 @@ void KYCursor::paintEvent( QPaintEvent* )
     }
 }
 
-#include "kyziscursor.moc"
+#include "kycursor.moc"

@@ -18,7 +18,7 @@
 **/
 
 
-#include "kyzisinfobar.h"
+#include "kyinfobar.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -61,4 +61,4 @@ void KYInfoBar::setLineInfo( const QString& lineInfo )
     m_lineInfo->setText( lineInfo );
 }
 
-#include "kyzisinfobar.moc"
+#include "kyinfobar.moc"

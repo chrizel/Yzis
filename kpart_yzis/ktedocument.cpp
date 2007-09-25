@@ -20,7 +20,7 @@
 #include "ktedocument.h"
 #include "kteview.h"
 #include "kteeditor.h"
-#include "kyzissession.h"
+#include "kysession.h"
 
 #include <libyzis/buffer.h>
 

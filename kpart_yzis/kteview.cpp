@@ -21,8 +21,8 @@
 
 #include "kteview.h"
 #include "ktedocument.h"
-#include "kyzisview.h"
-#include "kyzissession.h"
+#include "kyview.h"
+#include "kysession.h"
 
 #include <libyzis/buffer.h>
 

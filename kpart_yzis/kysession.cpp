@@ -19,8 +19,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#include "kyzissession.h"
-#include "kyzisview.h"
+#include "kysession.h"
+#include "kyview.h"
 
 #include <kdebug.h>
 #include <kmessagebox.h>

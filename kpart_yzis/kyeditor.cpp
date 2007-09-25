@@ -19,9 +19,9 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#include "kyziseditor.h"
-#include "kyzisview.h"
-#include "kyzissession.h"
+#include "kyeditor.h"
+#include "kyview.h"
+#include "kysession.h"
 
 #include <QSignalMapper>
 #include <QAction>
@@ -389,4 +389,4 @@ void KYEditor::imEndEvent( QIMEvent *e ) {
 
 
 
-#include "kyziseditor.moc"
+#include "kyeditor.moc"

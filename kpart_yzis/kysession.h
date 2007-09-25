@@ -18,8 +18,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#ifndef _KYZIS_SESSION_H_
-#define _KYZIS_SESSION_H_
+#ifndef _KY_SESSION_H_
+#define _KY_SESSION_H_
 
 #include <libyzis/session.h>
 

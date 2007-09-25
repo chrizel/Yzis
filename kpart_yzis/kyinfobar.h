@@ -17,8 +17,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#ifndef _KYZIS_STATUS_H_
-#define _KYZIS_STATUS_H_
+#ifndef _KY_INFOBAR_H_
+#define _KY_INFOBAR_H_
 
 #include <QWidget>
 

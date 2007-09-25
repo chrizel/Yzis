@@ -21,7 +21,7 @@
 #include "ktefactory.h"
 #include "ktedocument.h"
 #include "kteeditor.h"
-#include "kyzissession.h"
+#include "kysession.h"
 
 KTEFactory::KTEFactory(QObject* parent)
         : KTextEditor::Factory::Factory(parent)

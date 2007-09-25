@@ -18,8 +18,8 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#ifndef _KYZIS_CURSOR_H_
-#define _KYZIS_CURSOR_H_
+#ifndef _KY_CURSOR_H_
+#define _KY_CURSOR_H_
 
 #include <QPixmap>
 #include <QWidget>

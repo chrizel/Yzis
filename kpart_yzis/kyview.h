@@ -21,7 +21,7 @@
 #ifndef _KYZIS_VIEW_H_
 #define _KYZIS_VIEW_H_
 
-#include "kyziscursor.h"
+#include "kycursor.h"
 
 #include <libyzis/view.h>
 

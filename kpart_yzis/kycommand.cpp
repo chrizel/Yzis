@@ -18,9 +18,9 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#include "kyziscommandwidget.h"
-#include "kyzisview.h"
-#include "kyzissession.h"
+#include "kycommand.h"
+#include "kyview.h"
+#include "kysession.h"
 
 
 #include <libyzis/view.h>
@@ -76,4 +76,4 @@ void KYCommand::focusOutEvent ( QFocusEvent* e )
     KLineEdit::focusOutEvent( e );
 }
 
-#include "kyziscommandwidget.moc"
+#include "kycommand.moc"

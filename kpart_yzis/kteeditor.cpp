@@ -21,7 +21,7 @@
 
 #include "kteeditor.h"
 #include "ktedocument.h"
-#include "kyzissession.h"
+#include "kysession.h"
 
 
 #include <debug.h>

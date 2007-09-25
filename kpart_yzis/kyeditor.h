@@ -18,10 +18,10 @@
 *  Boston, MA 02110-1301, USA.
 **/
 
-#ifndef _KYZIS_EDITOR_H_
-#define _KYZIS_EDITOR_H_
+#ifndef _KY_EDITOR_H_
+#define _KY_EDITOR_H_
 
-#include "kyziscursor.h"
+#include "kycursor.h"
 
 #include <QWidget>
 

@@ -75,6 +75,8 @@ public:
     virtual QStringList highlightingModes() const;
     virtual bool setMode( const QString &name );
     virtual bool setHighlightingMode( const QString &name );
+    virtual QString highlightingModeSection(int) const;
+    virtual QString modeSection(int) const;
 
     virtual bool openFile();
     virtual bool saveFile();

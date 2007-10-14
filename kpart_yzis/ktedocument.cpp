@@ -272,4 +272,16 @@ bool KTEDocument::setHighlightingMode( const QString& /*name*/ )
     return false;
 }
 
+QString KTEDocument::highlightingModeSection(int) const
+{
+    // TODO:implement
+    return QString();
+}
+
+QString KTEDocument::modeSection(int) const
+{
+    // TODO:implement
+    return QString();
+}
+
 #include "ktedocument.moc"

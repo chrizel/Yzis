@@ -1,7 +1,7 @@
-This is the stub code for the yzis kpart. Please port the code from kyzis/
-into this directory.
+This is the stub code for the yzis kpart.
 
-yzis_kpart compiles against "KDE 4 alpha 1" at the moment. 
+yzis_kpart compiles against the newest kdelibs svn version at the moment.
+You cannot compile/link against KDE 4 beta2
 
 The install target does not work right now. You have to perform a manual
 installation:

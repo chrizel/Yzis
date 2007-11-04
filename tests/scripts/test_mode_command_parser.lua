@@ -59,15 +59,12 @@ TestParser = {} -- class
         assertEquals( bufferContent(), "4 5 7 7 8 9")
         
         -- Cmd with basic argchar motion
-        -- This test may fail if dt... is changed to conform with vim
-        -- nothing to do with parser
         sendkeys("dt5")
-        assertEquals( bufferContent(), " 5 7 7 8 9")
+        assertEquals( bufferContent(), "5 7 7 8 9")
         
         -- Cmd with countet argchar motion
-        -- Same issue
         sendkeys("d2t7")
-        assertEquals( bufferContent(), " 7 8 9")
+        assertEquals( bufferContent(), "7 8 9")
 
         -- Cmd with initial and mid count
         clearBuffer()
@@ -81,7 +78,7 @@ TestParser = {} -- class
         sendkeys("i1 1 1 1 1 1 1 2 3<ESC>0")
         assertEquals( bufferContent(), "1 1 1 1 1 1 1 2 3")
         sendkeys("3d2t1")
-        assertEquals( bufferContent(), " 1 2 3")
+        assertEquals( bufferContent(), "1 2 3")
         
         -- Cmd with registers
         clearBuffer()

@@ -53,7 +53,7 @@ struct YCommandArgs
     QList<QChar> regs;
     /// exec this number of times the command
     int count;
-    /// was the count gave by the user
+    /// was the count given by the user
     bool usercount;
     /// the input being parsed
     const YKeySequence *inputs;
@@ -90,6 +90,12 @@ enum CmdArg {
     ArgChar,
     ArgMark,
     ArgReg,
+};
+
+enum MotionType {
+    MotionTypeExclusive,
+    MotionTypeInclusive,
+    MotionTypeLinewise
 };
 
 /** Contains all the necessary information that makes up a normal command. @ref YModeCommand
@@ -205,6 +211,10 @@ public:
     YCursor moveSWordForward(const YMotionArgs &args, CmdState *state);
     YCursor moveWordBackward(const YMotionArgs &args, CmdState *state);
     YCursor moveSWordBackward(const YMotionArgs &args, CmdState *state);
+    YCursor moveWordEndForward(const YMotionArgs &args, CmdState *state);
+    YCursor moveSWordEndForward(const YMotionArgs &args, CmdState *state);
+    //YCursor moveWordEndBackward(const YMotionArgs &args, CmdState *state);
+    //YCursor moveSWordEndBackward(const YMotionArgs &args, CmdState *state);
     YCursor gotoSOL(const YMotionArgs &args, CmdState *state);
     YCursor gotoEOL(const YMotionArgs &args, CmdState *state);
     YCursor gotoStartOfDocument(const YMotionArgs &args, CmdState *state);
@@ -314,16 +324,21 @@ private:
 class YZIS_EXPORT YMotion : public YCommand
 {
 public:
-    YMotion(const YKeySequence &keySeq, MotionMethod mm, CmdArg a = ArgNone)
+    YMotion(const YKeySequence &keySeq, MotionMethod mm, CmdArg a = ArgNone, MotionType type = MotionTypeExclusive)
             : YCommand(keySeq, &YModeCommand::execMotion, a)
     {
         mMotionMethod = mm;
+	mMotionType = type;
     }
     virtual ~YMotion()
     {}
     const MotionMethod &motionMethod() const
     {
         return mMotionMethod;
+    }
+    const MotionType &motionType() const
+    {
+	return mMotionType;
     }
     bool argsPresent( const YKeySequence &inputs, YKeySequence::const_iterator &parsePos ) const {
         if ( mArg == ArgNone )
@@ -338,6 +353,7 @@ public:
     bool matches(const QString &s, bool fully = true) const;
 protected:
     MotionMethod mMotionMethod;
+    MotionType   mMotionType;
 };
 
 

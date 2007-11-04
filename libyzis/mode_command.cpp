@@ -91,8 +91,8 @@ void YModeCommand::initGenericMotionPool()
     motions.append( new YMotion(YKeySequence("<PAGEDOWN>"), &YModeCommand::scrollPageDown, ArgNone) );
     motions.append( new YMotion(YKeySequence("<LEFT>"), &YModeCommand::moveLeft, ArgNone) );
     motions.append( new YMotion(YKeySequence("<RIGHT>"), &YModeCommand::moveRight, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<UP>"), &YModeCommand::moveUp, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<DOWN>"), &YModeCommand::moveDown, ArgNone) );
+    motions.append( new YMotion(YKeySequence("<UP>"), &YModeCommand::moveUp, ArgNone) ); // add MotionTypeLinewise for vim compatibility
+    motions.append( new YMotion(YKeySequence("<DOWN>"), &YModeCommand::moveDown, ArgNone) ); // add MotionTypeLinewise for vim compatibility
     motions.append( new YMotion(YKeySequence("<S-LEFT>"), &YModeCommand::moveWordBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("<C-LEFT>"), &YModeCommand::moveSWordBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("<S-RIGHT>"), &YModeCommand::moveWordForward, ArgNone) );
@@ -110,16 +110,20 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("W"), &YModeCommand::moveSWordForward, ArgNone) );
     motions.append( new YMotion(YKeySequence("b"), &YModeCommand::moveWordBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("B"), &YModeCommand::moveSWordBackward, ArgNone) );
-    motions.append( new YMotion(YKeySequence("j"), &YModeCommand::moveDown, ArgNone) );
-    motions.append( new YMotion(YKeySequence("k"), &YModeCommand::moveUp, ArgNone) );
+    motions.append( new YMotion(YKeySequence("e"), &YModeCommand::moveWordEndForward, ArgNone, MotionTypeInclusive) );
+    motions.append( new YMotion(YKeySequence("E"), &YModeCommand::moveSWordEndForward, ArgNone, MotionTypeInclusive) );
+    //motions.append( new YMotion(YKeySequence("ge"), &YModeCommand::moveWordEndBackward, ArgNone) );
+    //motions.append( new YMotion(YKeySequence("gE"), &YModeCommand::moveSWordEndBackward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("j"), &YModeCommand::moveDown, ArgNone) ); // add MotionTypeLinewise for vim compatibility
+    motions.append( new YMotion(YKeySequence("k"), &YModeCommand::moveUp, ArgNone) ); // add MotionTypeLinewise for vim compatibility
     motions.append( new YMotion(YKeySequence("h"), &YModeCommand::moveLeft, ArgNone) );
     motions.append( new YMotion(YKeySequence("l"), &YModeCommand::moveRight, ArgNone) );
     motions.append( new YMotion(YKeySequence("<BS>"), &YModeCommand::moveLeftWrap, ArgNone) );
     motions.append( new YMotion(YKeySequence("<SPACE>"), &YModeCommand::moveRightWrap, ArgNone) );
-    motions.append( new YMotion(YKeySequence("f"), &YModeCommand::findNext, ArgChar) );
-    motions.append( new YMotion(YKeySequence("t"), &YModeCommand::findBeforeNext, ArgChar) );
-    motions.append( new YMotion(YKeySequence("F"), &YModeCommand::findPrevious, ArgChar) );
-    motions.append( new YMotion(YKeySequence("T"), &YModeCommand::findAfterPrevious, ArgChar) );
+    motions.append( new YMotion(YKeySequence("f"), &YModeCommand::findNext, ArgChar, MotionTypeInclusive) );
+    motions.append( new YMotion(YKeySequence("t"), &YModeCommand::findBeforeNext, ArgChar, MotionTypeInclusive) );
+    motions.append( new YMotion(YKeySequence("F"), &YModeCommand::findPrevious, ArgChar, MotionTypeInclusive) );
+    motions.append( new YMotion(YKeySequence("T"), &YModeCommand::findAfterPrevious, ArgChar, MotionTypeInclusive) );
     motions.append( new YMotion(YKeySequence(";"), &YModeCommand::repeatFind, ArgNone) );
     motions.append( new YMotion(YKeySequence("*"), &YModeCommand::searchWord, ArgNone) );
     motions.append( new YMotion(YKeySequence("g*"), &YModeCommand::searchWord, ArgNone) );
@@ -925,6 +929,95 @@ YCursor YModeCommand::moveSWordBackward(const YMotionArgs &args, CmdState *state
     return result;
 }
 
+YCursor YModeCommand::moveWordEndForward(const YMotionArgs &args, CmdState *state)
+{
+    YViewCursor viewCursor = args.view->viewCursor();
+    YCursor result( viewCursor.buffer() );
+    int c = 0;
+    QRegExp rex1("^\\s*\\w+"); //a word with leading whitespace
+    QRegExp rex2("^\\s*[^\\w\\s]+"); //non-word chars with leading whitespace
+    bool wrapped = false;
+
+    *state = CmdOk;
+
+    while ( c < args.count ) { //for each word end
+        const QString& current = args.view->myBuffer()->textline( result.y() );
+        //  if ( current.isNull() ) return false; //be safe ?
+	if (wrapped && current.length() == 1 )
+	    result.setX(0);
+	else if ( result.x()<current.length() && !current[result.x()].isSpace() )
+	    result.setX( result.x() + 1 );
+        int idx = rex1.indexIn( current, result.x(), QRegExp::CaretAtOffset );
+        int len = rex1.matchedLength();
+        if ( idx == -1 ) {
+            idx = rex2.indexIn( current, result.x(), QRegExp::CaretAtOffset );
+            len = rex2.matchedLength();
+        }
+
+        if ( idx != -1) {
+	    dbg() << "Match at " << idx << " Matched length " << len << endl;
+	    c++; //one match
+	    result.setX( idx + len );
+	    if( c == args.count && result.x() > 0 && result.x() < current.length())
+		result.setX( result.x() - 1 );
+        } else {
+            if ( result.y() >= args.view->myBuffer()->lineCount() - 1 ) {
+                result.setX( current.length() );
+                break;
+            }
+            result.setX(0);
+            result.setY( result.y() + 1 );
+            wrapped = true;
+        }
+    }
+    if ( args.standalone )
+        args.view->gotoxyAndStick( result );
+
+    return result;
+}
+
+YCursor YModeCommand::moveSWordEndForward(const YMotionArgs &args, CmdState *state)
+{
+    YViewCursor viewCursor = args.view->viewCursor();
+    YCursor result( viewCursor.buffer() );
+    int c = 0;
+    QRegExp rex("^\\s*[^\\s]+"); //an s-word whitespace
+    bool wrapped = false;
+
+    *state = CmdOk;
+
+    while ( c < args.count ) { //for each word end
+        const QString& current = args.view->myBuffer()->textline( result.y() );
+        //  if ( current.isNull() ) return false; //be safe ?
+	if ( wrapped && current.length() == 1 )
+	    result.setX(0);
+	else if ( result.x()<current.length() && !current[result.x()].isSpace() )
+	    result.setX( result.x() + 1 );
+        int idx = rex.indexIn( current, result.x(), QRegExp::CaretAtOffset );
+        int len = rex.matchedLength();
+
+        if ( idx != -1) {
+	    dbg() << "Match at " << idx << " Matched length " << len << endl;
+	    c++; //one match
+	    result.setX( idx + len );
+	    if( c == args.count && result.x() > 0 && result.x() < current.length())
+		result.setX( result.x() - 1 );
+        } else {
+            if ( result.y() >= args.view->myBuffer()->lineCount() - 1 ) {
+                result.setX( current.length() );
+                break;
+            }
+            result.setX(0);
+            result.setY( result.y() + 1 );
+            wrapped = true;
+        }
+    }
+    if ( args.standalone )
+        args.view->gotoxyAndStick( result );
+
+    return result;
+}
+
 YCursor YModeCommand::firstNonBlank(const YMotionArgs &args, CmdState *state)
 {
     YViewCursor viewCursor = args.view->viewCursor();
@@ -1119,6 +1212,17 @@ YInterval YModeCommand::interval(const YCommandArgs& args, CmdState *state)
     YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, count, args.inputs, 
                                                           args.parsePos, args.cmd->keySeq().toString(),
                                                           args.usercount ), state);
+    bool bound_open;
+    switch(m->motionType()) {
+        case MotionTypeInclusive: bound_open = false; break;
+        case MotionTypeExclusive: bound_open = true;  break;
+        case MotionTypeLinewise:
+                                  bound_open = true;
+                                  from.setX( 0 );
+                                  to.setX( 0 );
+                                  break;
+    }
+
     if ( from > to ) {
         YCursor tmp( from );
         from = to;
@@ -1129,7 +1233,7 @@ YInterval YModeCommand::interval(const YCommandArgs& args, CmdState *state)
         to.setX( 0 );
         to.setY( to.y() + 1 );
     }
-    YInterval ret( from, YBound(to, true) );
+    YInterval ret( from, YBound(to, bound_open) );
     return ret;
 }
 
@@ -1176,7 +1280,8 @@ CmdState YModeCommand::changeLine(const YCommandArgs &args)
 {
     int y = args.view->getBufferCursor().y();
     args.view->myBuffer()->action()->deleteLine(args.view, args.view->getBufferCursor(), args.count, args.regs);
-    args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor().y() );
+    if(!args.view->myBuffer()->isEmpty())
+	args.view->myBuffer()->action()->insertNewLine( args.view, 0, args.view->getBufferCursor().y() );
     gotoInsertMode(args);
     args.view->gotoxy(0, y);
     //args.view->commitNextUndo();

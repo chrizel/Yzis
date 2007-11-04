@@ -35,10 +35,7 @@ TestInsert = {} --class
     end
 
     function TestInsert:test_delete()
-	clearBuffer()
-	insertline(1, "Ala has a cat.")
-        assertEquals( bufferContent(), "Ala has a cat." )
-        sendkeys( "wwwwa" )
+        sendkeys( "iAla has a cat." )
         assertEquals(mode(), MODE_INSERT)
         assertPos( 1, 15 )
         sendkeys( "<C-h>" )

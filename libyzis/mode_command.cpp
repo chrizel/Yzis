@@ -112,8 +112,8 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("B"), &YModeCommand::moveSWordBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("e"), &YModeCommand::moveWordEndForward, ArgNone, MotionTypeInclusive) );
     motions.append( new YMotion(YKeySequence("E"), &YModeCommand::moveSWordEndForward, ArgNone, MotionTypeInclusive) );
-    //motions.append( new YMotion(YKeySequence("ge"), &YModeCommand::moveWordEndBackward, ArgNone) );
-    //motions.append( new YMotion(YKeySequence("gE"), &YModeCommand::moveSWordEndBackward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("ge"), &YModeCommand::moveWordEndBackward, ArgNone) );
+    motions.append( new YMotion(YKeySequence("gE"), &YModeCommand::moveSWordEndBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("j"), &YModeCommand::moveDown, ArgNone) ); // add MotionTypeLinewise for vim compatibility
     motions.append( new YMotion(YKeySequence("k"), &YModeCommand::moveUp, ArgNone) ); // add MotionTypeLinewise for vim compatibility
     motions.append( new YMotion(YKeySequence("h"), &YModeCommand::moveLeft, ArgNone) );
@@ -943,22 +943,21 @@ YCursor YModeCommand::moveWordEndForward(const YMotionArgs &args, CmdState *stat
     while ( c < args.count ) { //for each word end
         const QString& current = args.view->myBuffer()->textline( result.y() );
         //  if ( current.isNull() ) return false; //be safe ?
-	if (wrapped && current.length() == 1 )
-	    result.setX(0);
-	else if ( result.x()<current.length() && !current[result.x()].isSpace() )
+	if ( !wrapped && result.x() < current.length() )
 	    result.setX( result.x() + 1 );
         int idx = rex1.indexIn( current, result.x(), QRegExp::CaretAtOffset );
         int len = rex1.matchedLength();
         if ( idx == -1 ) {
             idx = rex2.indexIn( current, result.x(), QRegExp::CaretAtOffset );
             len = rex2.matchedLength();
-        }
+        } 
 
-        if ( idx != -1) {
+        if ( idx != -1 ) {
 	    dbg() << "Match at " << idx << " Matched length " << len << endl;
 	    c++; //one match
+            wrapped = false;
 	    result.setX( idx + len );
-	    if( c == args.count && result.x() > 0 && result.x() < current.length())
+	    if(result.x() > 0 && result.x() < current.length())
 		result.setX( result.x() - 1 );
         } else {
             if ( result.y() >= args.view->myBuffer()->lineCount() - 1 ) {
@@ -981,7 +980,7 @@ YCursor YModeCommand::moveSWordEndForward(const YMotionArgs &args, CmdState *sta
     YViewCursor viewCursor = args.view->viewCursor();
     YCursor result( viewCursor.buffer() );
     int c = 0;
-    QRegExp rex("^\\s*[^\\s]+"); //an s-word whitespace
+    QRegExp rex("^\\s*\\S+"); //an s-word with optional whitespace before
     bool wrapped = false;
 
     *state = CmdOk;
@@ -989,18 +988,17 @@ YCursor YModeCommand::moveSWordEndForward(const YMotionArgs &args, CmdState *sta
     while ( c < args.count ) { //for each word end
         const QString& current = args.view->myBuffer()->textline( result.y() );
         //  if ( current.isNull() ) return false; //be safe ?
-	if ( wrapped && current.length() == 1 )
-	    result.setX(0);
-	else if ( result.x()<current.length() && !current[result.x()].isSpace() )
+	if ( !wrapped && result.x() < current.length() )
 	    result.setX( result.x() + 1 );
         int idx = rex.indexIn( current, result.x(), QRegExp::CaretAtOffset );
         int len = rex.matchedLength();
 
-        if ( idx != -1) {
+        if ( idx != -1 ) {
 	    dbg() << "Match at " << idx << " Matched length " << len << endl;
 	    c++; //one match
+            wrapped = false;
 	    result.setX( idx + len );
-	    if( c == args.count && result.x() > 0 && result.x() < current.length())
+	    if(result.x() > 0 && result.x() < current.length())
 		result.setX( result.x() - 1 );
         } else {
             if ( result.y() >= args.view->myBuffer()->lineCount() - 1 ) {
@@ -1012,6 +1010,122 @@ YCursor YModeCommand::moveSWordEndForward(const YMotionArgs &args, CmdState *sta
             wrapped = true;
         }
     }
+    if ( args.standalone )
+        args.view->gotoxyAndStick( result );
+
+    return result;
+}
+
+YCursor YModeCommand::moveWordEndBackward(const YMotionArgs &args, CmdState *state)
+{
+    YViewCursor viewCursor = args.view->viewCursor();
+    YCursor result( viewCursor.buffer() );
+    int c = 0;
+    bool wrapped = false;
+    QRegExp ws("^\\s+");
+    QRegExp rex1("^\\w+\\s*");
+    QRegExp rex2("^[^\\w\\s]+\\s*");
+
+    *state = CmdOk;
+
+    while ( c < args.count ) { //for each word
+        const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
+        int lineLength = current.length();
+        int offset = lineLength - result.x() - 1;
+        offset = qMax(offset, 0);
+        dbg() << current << " at " << offset << endl;
+
+        int idx, len;
+        if ( wrapped && offset == 0 && current.length() > 0 && !current[0].isSpace() ) {
+            idx = len = 0;
+            dbg() << "word end at end of line" << endl;
+        }
+        else {
+            idx = ws.indexIn( current, offset , QRegExp::CaretAtOffset );
+            len = ws.matchedLength();
+            if ( idx == -1 ) {
+                idx = rex1.indexIn( current, offset , QRegExp::CaretAtOffset );
+                len = rex1.matchedLength();
+            }
+            if ( idx == -1 ) {
+                idx = rex2.indexIn( current, offset , QRegExp::CaretAtOffset );
+                len = rex2.matchedLength();
+            }
+        }
+
+        if ( idx != -1 && idx + len < lineLength ) {
+            dbg() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
+            c++; //one match
+            wrapped = false;
+            result.setX( lineLength - idx - len );
+	    if(result.x() > 0 && result.x() < current.length())
+		result.setX( result.x() - 1 );
+        } else {
+            if ( result.y() == 0 ) {
+                result.setX(0);
+                break; //stop here
+            }
+            dbg() << "Previous line " << result.y() - 1 << endl;
+            const QString& ncurrent = args.view->myBuffer()->textline( result.y() - 1 );
+            wrapped = true;
+            result.setX( ncurrent.length() );
+            result.setY( result.y() - 1 );
+        }
+
+    }
+
+    if ( args.standalone )
+        args.view->gotoxyAndStick( result );
+
+    return result;
+}
+
+YCursor YModeCommand::moveSWordEndBackward(const YMotionArgs &args, CmdState *state)
+{
+    YViewCursor viewCursor = args.view->viewCursor();
+    YCursor result( viewCursor.buffer() );
+    int c = 0;
+    QRegExp rex1("(\\s+)\\S"); //whitespace
+
+    *state = CmdOk;
+
+    while ( c < args.count ) { //for each word
+        const QString& current = invertQString( args.view->myBuffer()->textline( result.y() ) );
+        int lineLength = current.length();
+        int offset = lineLength - result.x();
+        dbg() << current << " at " << offset << endl;
+
+        int idx, len;
+        if(offset == 0 && current.length() > 0 && !current[0].isSpace()) {
+            idx = len = 0;
+            dbg() << "word end at end of line" << endl;
+        }
+        else {
+            idx = rex1.indexIn( current, offset , QRegExp::CaretAtOffset );
+            len = rex1.cap(1).length();
+            dbg() << "rex1 : " << idx << "," << len << endl;
+        }
+
+        if ( idx != -1 ) {
+            dbg() << "Match at " << idx << " = " << lineLength - idx << " Matched length " << len << endl;
+            c++; //one match
+            result.setX( lineLength - idx - len );
+	    if(result.x() > 0 && result.x() < current.length())
+		result.setX( result.x() - 1 );
+
+        } else {
+            if ( result.y() == 0 ) {
+                result.setX(0);
+                break; //stop here
+            }
+            dbg() << "Previous line " << result.y() - 1 << endl;
+            const QString& ncurrent = args.view->myBuffer()->textline( result.y() - 1 );
+            result.setX( ncurrent.length() );
+            result.setY( result.y() - 1 );
+        }
+
+    }
+
     if ( args.standalone )
         args.view->gotoxyAndStick( result );
 

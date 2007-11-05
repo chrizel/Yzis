@@ -213,8 +213,8 @@ public:
     YCursor moveSWordBackward(const YMotionArgs &args, CmdState *state);
     YCursor moveWordEndForward(const YMotionArgs &args, CmdState *state);
     YCursor moveSWordEndForward(const YMotionArgs &args, CmdState *state);
-    //YCursor moveWordEndBackward(const YMotionArgs &args, CmdState *state);
-    //YCursor moveSWordEndBackward(const YMotionArgs &args, CmdState *state);
+    YCursor moveWordEndBackward(const YMotionArgs &args, CmdState *state);
+    YCursor moveSWordEndBackward(const YMotionArgs &args, CmdState *state);
     YCursor gotoSOL(const YMotionArgs &args, CmdState *state);
     YCursor gotoEOL(const YMotionArgs &args, CmdState *state);
     YCursor gotoStartOfDocument(const YMotionArgs &args, CmdState *state);

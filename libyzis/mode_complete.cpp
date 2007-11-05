@@ -141,7 +141,7 @@ void YModeCompletion::doComplete( YView* view, bool forward )
         msg = _("Back at original");
     }
 
-    view->guiDisplayInfo( msg );
+    view->displayInfo(msg);
 }
 
 CmdState YModeCompletion::execCommand( YView* view, const YKeySequence &keys, 

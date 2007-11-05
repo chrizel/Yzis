@@ -147,9 +147,9 @@ YCursor YSearch::Private::doSearch( YBuffer *buffer, const YCursor from, const Q
         if ( *found ) {
             YView *view = YSession::self()->findViewByBuffer( buffer );
             if ( view && reverse ) {
-                view->guiDisplayInfo( _("search hit TOP, continuing at BOTTOM") );
+                view->displayInfo(_("search hit TOP, continuing at BOTTOM"));
             } else if ( view ) {
-                view->guiDisplayInfo( _("search hit BOTTOM, continuing at TOP") );
+                view->displayInfo(_("search hit BOTTOM, continuing at TOP"));
             }
         }
     }

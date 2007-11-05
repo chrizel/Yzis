@@ -25,6 +25,8 @@
 #include "libyzis/viewcursor.h"
 #include "libyzis/buffer.h"
 
+class YStatusBarIface;
+
 class NoGuiView : public YView
 {
 public:
@@ -47,17 +49,7 @@ public:
 
     virtual void invalidateLine( unsigned int );
 
-    virtual void setStatusBar( const QString& );
-
-    virtual void updateCursor( unsigned int, unsigned int, unsigned int, const QString& );
-
     virtual void refreshScreen( );
-
-    virtual void guiSyncViewInfo( );
-
-    virtual void guiDisplayInfo( const QString& );
-
-    virtual void modeChanged( );
 
     virtual void paintEvent( unsigned int /*curx*/, unsigned int /*cury*/, unsigned int /*curw*/, unsigned int /*curh*/ );
 
@@ -72,7 +64,15 @@ public:
     virtual void guiNotifyContentChanged( const YSelection& s );
 
     virtual bool guiPopupFileSaveAs();
-    virtual void guiFilenameChanged();
+
+    virtual YStatusBarIface* guiStatusBar();
+
+    virtual void guiUpdateFileName();
+    virtual void guiUpdateFileInfo();
+    virtual void guiUpdateMode();
+    virtual void guiUpdateCursor();
+    virtual void guiDisplayInfo(const QString&);
+
     virtual void guiHighlightingChanged();
     void guiPreparePaintEvent(int, int);
     void guiEndPaintEvent();

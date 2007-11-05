@@ -91,8 +91,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     QString line = mBuffer->textline(scrollCursor.bufferY());
 
     reverseSearch = false;
-    viewInformation.l = viewInformation.c1 = viewInformation.c2 = 0;
-    viewInformation.percentage = "";
     mPreviousChars.clear();
     mPreviousChars.clear();
 
@@ -120,8 +118,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     opt_listchars = getLocalMapOption( "listchars" );
 
     abortPaintEvent();
-
-    mModePool->change( YMode::ModeCommand );
 }
 
 YView::~YView()
@@ -253,23 +249,71 @@ QString YView::centerLine( const QString& s )
 void YView::updateCursor()
 {
     int lasty = -1;
-    viewInformation.percentage = _( "All" );
+    QString percentage;
+    QString lineinfo;
+
     int y = mainCursor.bufferY();
 
-    if ( y != lasty ) {
+    if (y != lasty) {
         int nblines = mBuffer->lineCount();
-        viewInformation.percentage = QString("%1%").arg( ( y * 100 / ( nblines == 0 ? 1 : nblines )));
-        if ( scrollCursor.bufferY() < 1 ) viewInformation.percentage = _( "Top" );
-        if ( scrollCursor.bufferY() + mLinesVis >= nblines ) viewInformation.percentage = _( "Bot" );
-        if ( (scrollCursor.bufferY() < 1 ) && ( scrollCursor.bufferY() + mLinesVis >= nblines ) ) viewInformation.percentage = _( "All" );
-        lasty = y;
+        if (getCurrentTop() < 1)
+            if ((getCurrentTop() + getLinesVisible()) >= nblines)
+                    percentage = _("All");
+            else
+                    percentage =  _("Top");
+
+        else if ((getCurrentTop() + getLinesVisible()) >= nblines)
+            percentage = _("Bot");
+
+        else
+            if(y < 0 || y > nblines)
+                err() << HERE() << "Percentage out of range" << endl;
+            else
+                percentage.setNum((int)(y * 100 / (nblines == 0 ? 1 : nblines)));
+
+    } else {
+        percentage = _("All");
     }
 
-    viewInformation.l = y;
-    viewInformation.c1 = mainCursor.bufferX();
-    viewInformation.c2 = mainCursor.screenX(); // XXX pas du tout, c'est c1 mais en remplacant les tabs par 'tablenght' <-- avec le QRegexp() mais je l'ai perdu <--- English, please :)
+    if (guiStatusBar())
+        guiStatusBar()->setLineInfo(y + 1, viewCursor().bufferX() + 1,
+                                    viewCursor().screenX() + 1, percentage);
+    guiUpdateCursor();
+}
 
-    guiSyncViewInfo();
+void YView::updateMode()
+{
+    QString mode;
+
+    mode = currentMode()->toString();
+    if (isRecording())
+        mode += _(" { Recording }");
+
+    if (guiStatusBar())
+        guiStatusBar()->setMode(mode);
+    guiUpdateMode();
+}
+
+void YView::updateFileName()
+{
+    QString filename = myBuffer()->fileName();
+    if (guiStatusBar())
+        guiStatusBar()->setFileName(filename);
+    guiUpdateFileName();
+}
+
+void YView::updateFileInfo()
+{
+    if (guiStatusBar())
+        guiStatusBar()->setFileInfo(myBuffer()->fileIsNew(), myBuffer()->fileIsModified());
+    guiUpdateFileInfo();
+}
+
+void YView::displayInfo(const QString& message)
+{
+    if (guiStatusBar())
+        guiStatusBar()->setMessage(message);
+    guiDisplayInfo(message);
 }
 
 void YView::centerViewHorizontally( int column)
@@ -1693,14 +1737,6 @@ bool YView::stringHasOnlySpaces ( const QString& what )
     return true;
 }
 
-QString YView::modeString() const
-{
-    QString ret = mModePool->current()->toString();
-    if ( isRecording() )
-        ret += _(" { Recording }");
-    return ret;
-}
-
 void YView::saveInputBuffer()
 {
     // Only have special cases for length 1
@@ -1723,26 +1759,6 @@ void YView::saveInputBuffer()
 const int YView::getId() const
 {
     return id;
-}
-
-QString YView::getLineStatusString() const
-{
-    QString status;
-
-    if (viewInformation.c1 != viewInformation.c2) {
-        status = QString("%1,%2-%3 (%4)")
-                 .arg(viewInformation.l + 1 )
-                 .arg( viewInformation.c1 + 1 )
-                 .arg( viewInformation.c2 + 1 )
-                 .arg( viewInformation.percentage);
-    } else {
-        status = QString("%1,%2 (%3)")
-                 .arg(viewInformation.l + 1 )
-                 .arg( viewInformation.c1 + 1 )
-                 .arg( viewInformation.percentage );
-    }
-
-    return status;
 }
 
 void YView::internalScroll( int dx, int dy )

@@ -26,6 +26,7 @@
 #include "qysession.h"
 #include "qyzis.h"
 #include "qylinenumbers.h"
+#include "qystatusbar.h"
 
 /* Yzis */
 #include "portability.h"
@@ -40,7 +41,6 @@
 #include <QLabel>
 #include <QMenu>
 #include <QSettings>
-#include <QTimer>
 #include <qapplication.h>
 
 #define dbg() yzDebug("QYView")
@@ -51,30 +51,13 @@ QYView::QYView ( YBuffer *_buffer, QWidget *, const char *)
 
 {
     m_editor = new QYEdit( this );
-    status = new QStatusBar (this);
+    status = new QYStatusBar(this);
     command = new QYCommandLine (this);
     mVScroll = new QScrollBar( this);
     connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
     //connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
     //connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
 
-    l_mode = new QLabel( _("QYzis Ready") );
-    m_central = new QLabel();
-    l_fileinfo = new QLabel();
-    l_linestatus = new QLabel();
-
-    status->addWidget(l_mode, 1); // was : status->insertItem(_("Yzis Ready"),0,1);
-    //status->setItemAlignment(0,Qt::AlignLeft);
-
-    status->addWidget(m_central, 100);
-    // status->insertItem("",80,80,0);
-    // status->setItemAlignment(80,Qt::AlignLeft);
-
-    status->addWidget(l_fileinfo, 1); // was  status->insertItem("",90,1);
-    // status->setItemAlignment(90,Qt::AlignRight);
-
-    status->addWidget(l_linestatus, 0); // was status->insertItem("",99,0,true);
-    // status->setItemAlignment(99,Qt::AlignRight);
     status->setFocusProxy( command );
     status->setFocusPolicy( Qt::ClickFocus );
 
@@ -106,7 +89,6 @@ QYView::QYView ( YBuffer *_buffer, QWidget *, const char *)
     status->show();
     m_editor->setFocus();
     setFocusProxy( m_editor );
-    myBuffer()->statusChanged();
     mVScroll->setMaximum( buffer->lineCount() - 1 );
 
     // setupCodeCompletion();
@@ -244,29 +226,6 @@ void QYView::wheelEvent( QWheelEvent * e )
     e->accept();
 }
 
-void QYView::guiModeChanged (void)
-{
-    m_editor->updateCursor();
-    l_mode->setText( modeString() );
-}
-
-void QYView::guiSyncViewInfo()
-{
-    // dbg() << "QYView::updateCursor" << viewInformation.c1 << " " << viewInformation.c2 << endl;
-    m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
-    l_linestatus->setText( getLineStatusString() );
-
-    QString fileInfo;
-    fileInfo += ( myBuffer()->fileIsNew() ) ? "N" : " ";
-    fileInfo += ( myBuffer()->fileIsModified() ) ? "M" : " ";
-
-    l_fileinfo->setText( fileInfo );
-    if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->isSliderDown())
-        mVScroll->setValue( getCurrentTop() );
-    emit cursorPositionChanged();
-    guiModeChanged();
-}
-
 /*
 void QYView::setupActions() {
  KStdAction::save(this, SLOT(fileSave()), actionCollection());
@@ -320,14 +279,24 @@ void QYView::fileSaveAs()
         myBuffer()->save();
 }
 
-void QYView::guiFilenameChanged()
+void QYView::guiUpdateFileName()
 {
     if (QYzis::me) {
         //QYzis::me->setCaption(getId(), myBuffer()->fileName());
         QYzis::me->setWindowTitle( myBuffer()->fileName());
     } else
-        err() << "guiFilenameChanged() : couldn't find QYzis::me.. is that ok ?";
+        err() << "guiUpdateFileName() : couldn't find QYzis::me.. is that ok ?";
 
+}
+
+void QYView::guiUpdateCursor()
+{
+    m_editor->setCursor(viewCursor().screenX(), viewCursor().screenY());
+}
+
+void QYView::guiUpdateMode()
+{
+    m_editor->updateCursor();
 }
 
 void QYView::guiHighlightingChanged()
@@ -347,13 +316,9 @@ bool QYView::guiPopupFileSaveAs()
     return false;
 }
 
-
-
-void QYView::guiDisplayInfo( const QString& info )
+YStatusBarIface* QYView::guiStatusBar()
 {
-    m_central->setText(info);
-    //clean the info 2 seconds later
-    QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
+    return status;
 }
 
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen

@@ -105,7 +105,7 @@ CmdState YModeSearch::execCommand( YView* view, const YKeySequence& keys, YKeySe
         if ( found ) {
             view->gotoxy( pos.x(), pos.y() );
         } else {
-            view->guiDisplayInfo( _( "Pattern not found: " ) + what );
+            view->displayInfo(_("Pattern not found: ") + what);
         }
         view->modePool()->pop();
         ++parsePos;

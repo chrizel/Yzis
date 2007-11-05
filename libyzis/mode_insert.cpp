@@ -48,7 +48,7 @@ YModeInsert::YModeInsert() : YModeCommand()
 
 void YModeInsert::enter( YView* mView )
 {
-    mView->guiDisplayInfo( "" );
+    mView->displayInfo("");
 }
 
 void YModeInsert::leave( YView* mView )

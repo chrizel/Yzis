@@ -10,6 +10,7 @@ set(nyzis_SRCS
    main.cpp
    nysession.cpp
    nyview.cpp
+   nystatusbar.cpp
 )
 set(nyzis_MOC nysession.h)
 

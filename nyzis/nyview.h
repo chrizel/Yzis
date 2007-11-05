@@ -42,6 +42,7 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 /* Yzis */
 #include "view.h"
 #include "cursor.h"
+#include "nystatusbar.h"
 
 class NYSession;
 
@@ -64,13 +65,7 @@ public:
         return commandline;
     }
     virtual void guiSetCommandLineText( const QString& );
-    virtual void guiModeChanged(void)
-    {
-        guiSyncViewInfo();
-    }
     virtual void refreshScreen();
-    virtual void guiSyncViewInfo();
-    virtual void guiDisplayInfo( const QString& info );
     virtual void guiPaintEvent( const YSelection& drawMap );
 
     void guiScroll( int dx, int dy );
@@ -90,8 +85,16 @@ public:
     { }
 
     bool guiPopupFileSaveAs();
-    void guiFilenameChanged();
-    void guiHighlightingChanged();
+
+    /** Returns the status bar */
+    virtual YStatusBarIface* guiStatusBar();
+    virtual void guiUpdateFileName();
+    virtual void guiUpdateMode();
+    virtual void guiUpdateFileInfo();
+    virtual void guiUpdateCursor();
+    virtual void guiDisplayInfo(const QString&);
+
+    virtual void guiHighlightingChanged();
 
     void setFocusCommandLine();
     void setFocusMainWindow();
@@ -102,7 +105,6 @@ protected :
 public slots:
 
 protected :
-
     virtual void guiDrawCell( QPoint pos, const YDrawCell& cell, void* arg );
 
     virtual void guiNotifyContentChanged( const YSelection& s );
@@ -130,9 +132,8 @@ private:
 
     /* layout */
     WINDOW *editor;
-    WINDOW *infobar; // the white one with filename/size/position...
-    WINDOW *statusbar; // the one we show in which mode we are
-    WINDOW *fileInfo;     // the one with info about current file (modified..)
+    NYStatusBar infobar;
+    WINDOW *statusbar; // TODO: rename to commandbar
 
     enum e_focusable {
         w_editor,
@@ -159,8 +160,6 @@ private:
     static QMap<QRgb, unsigned long int> mAttributesMap;
 
     e_focusable m_focus;
-
-    QString infoMessage;
 };
 
 #endif // NYZ_VIEW_H

@@ -215,7 +215,7 @@ static void showNumMatches()
     if ( max > 1 ) {
         // TODO: is this localized properly?  I doubt it.
         QString msg("Tag %1 of %2");
-        YSession::self()->currentView()->guiDisplayInfo( msg.arg( cur ).arg( max ) );
+        YSession::self()->currentView()->displayInfo(msg.arg(cur).arg(max));
     }
 }
 
@@ -273,7 +273,7 @@ void tagNext ()
 
         showNumMatches();
     } else {
-        YSession::self()->currentView()->guiDisplayInfo( _("Could not find next tag") );
+        YSession::self()->currentView()->displayInfo(_("Could not find next tag"));
     }
 }
 
@@ -287,7 +287,7 @@ void tagPrev ()
 
         showNumMatches();
     } else {
-        YSession::self()->currentView()->guiDisplayInfo( _("Could not find previous tag") );
+        YSession::self()->currentView()->displayInfo(_("Could not find previous tag"));
     }
 }
 
@@ -296,7 +296,7 @@ bool tagPop ()
     YTagStack &stack = YSession::self()->getTagStack();
 
     if ( stack.empty() ) {
-        YSession::self()->currentView()->guiDisplayInfo( _("At bottom of tag stack") );
+        YSession::self()->currentView()->displayInfo(_("At bottom of tag stack"));
         return true;
     }
 

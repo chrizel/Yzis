@@ -698,7 +698,7 @@ bool YBuffer::save()
     }
     d->isHLUpdating = false; //override so that it does not parse all lines
     foreach( YView *view, d->views )
-                view->guiDisplayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
+                view->displayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
     setChanged( false );
     filenameChanged();
     //clear swap memory
@@ -755,7 +755,11 @@ void YBuffer::updateAllViews()
     dbg() << "YBuffer updateAllViews" << endl;
     foreach( YView *view, d->views ) {
         view->sendRefreshEvent();
-        view->guiSyncViewInfo();
+        view->updateFileInfo();
+        view->updateFileName();
+        view->updateMode();
+        view->updateCursor();
+        view->displayInfo("");
     }
 }
 
@@ -783,18 +787,18 @@ void YBuffer::rmView(YView *v)
 //                            Undo/Redo Operations
 // ------------------------------------------------------------------------
 
-void YBuffer::setChanged( bool modif )
+void YBuffer::setChanged(bool modif)
 {
-    d->isModified = modif;
-    if ( !d->enableUpdateView ) return ;
-    statusChanged();
-}
+    if (d->isModified == modif)
+        return;
+    else 
+        d->isModified = modif;
 
-void YBuffer::statusChanged()
-{
+    if (!d->enableUpdateView) return;
+
     //update all views
-    foreach( YView *view, d->views )
-    view->guiSyncViewInfo();
+    foreach(YView *view, d->views)
+        view->updateFileInfo();
 }
 
 
@@ -1118,7 +1122,7 @@ void YBuffer::filenameChanged()
 {
     dbg() << HERE() << endl;
     foreach( YView *view, d->views )
-    view->guiFilenameChanged();
+        view->updateFileName();
 }
 
 const QString YBuffer::fileNameShort() const

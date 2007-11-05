@@ -31,6 +31,7 @@
 #include "selection.h"
 #include "option.h"
 #include "drawbuffer.h"
+#include "statusbariface.h"
 
 /** \brief The view interface that must be re-implemented by the GUI
   * frontend.
@@ -55,10 +56,37 @@ public:
      */
     virtual bool guiPopupFileSaveAs() = 0;
 
-    /**
-     * Called whenever the filename is changed
+    /** Tells the GUI to update the editor's cursor position.
+     * Status bar feedback is handled by YView.
      */
-    virtual void guiFilenameChanged() = 0;
+    virtual void guiUpdateCursor() = 0;
+
+    /** Called when buffer's filename has changed.
+     * Basic feedback is already handled by YView,
+     * so implementation is optional in the GUI.
+     */
+    virtual void guiUpdateFileName()
+    {}
+
+    /** Called when current mode has changed.
+     * The GUI must update the editor's cursor shape.
+     * Status bar feedback is handled by YView.
+     */
+    virtual void guiUpdateMode() = 0;
+
+    /** Called when buffer status information has changed.
+     * Basic feedback is already handled by YView,
+     * so implementation is optional in the GUI.
+     */
+    virtual void guiUpdateFileInfo()
+    {}
+
+    /** Called when an informational message has been sent to the user.
+     * Basic feedback is already handled by YView,
+     * so implementation is optional in the GUI.
+     */
+    virtual void guiDisplayInfo(const QString&)
+    {}
 
     /**
      * Notify GUIs that HL changed
@@ -71,13 +99,6 @@ public:
       * change events.
       */
     virtual void guiSelectionChanged()
-    {}
-
-    /**
-     * Called when the mode is changed, so that gui can
-     * update information displayed to the user
-     */
-    virtual void guiModeChanged()
     {}
 
     /**
@@ -102,15 +123,11 @@ public:
     //-------------------------------------------------------
     //                  GUI Status Bar
     //-------------------------------------------------------
-    /**
-     * Displays an informational message
+    /** Returns the GUI status bar.
+     * It is used by libyzis to export information about
+     * the buffer and the view to the GUI.
      */
-    virtual void guiDisplayInfo( const QString& info ) = 0;
-
-    /**
-     * Display informational status about the current file and cursor
-     */
-    virtual void guiSyncViewInfo() = 0;
+    virtual YStatusBarIface* guiStatusBar() = 0;
 
     //-------------------------------------------------------
     //                  GUI Painting

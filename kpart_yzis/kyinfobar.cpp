@@ -20,45 +20,91 @@
 
 #include "kyinfobar.h"
 
+#include "libyzis/debug.h"
+#define dbg() yzDebug("KYInfoBar")
+#define err() yzError("KYInfoBar")
+#define deepdbg() yzDeepDebug("KYInfoBar")
+
 #include <QHBoxLayout>
 #include <QLabel>
 
 KYInfoBar::KYInfoBar(QWidget* parent)
         : QWidget(parent)
 {
+    dbg() << QString("KYInfoBar( %1 )").arg(qp(parent->objectName())) << endl;
     QHBoxLayout* l = new QHBoxLayout( this );
     m_mode = new QLabel( this );
     m_fileName = new QLabel( this );
     m_fileInfo = new QLabel( this );
     m_lineInfo = new QLabel( this );
+    m_infoMessage = new QLabel( this );
 
-    l->addWidget( m_mode );
-    l->addWidget( m_fileInfo );
-    l->addWidget( m_lineInfo );
-    l->addWidget( m_fileName );
+    l->addWidget( m_mode, 1 );
+    l->addWidget( m_fileName, 1 );
+    l->addWidget( m_fileInfo, 1 );
+    l->addWidget( m_infoMessage, 100 );
+    l->addWidget( m_lineInfo, 1 );
 }
 
 KYInfoBar::~KYInfoBar()
-{}
+{
+    dbg() << "~KYInfoBar()" << endl;
+}
 
 void KYInfoBar::setMode( const QString& mode )
 {
+    deepdbg() << "setMode( " << mode << " )" << endl;
     m_mode->setText( mode );
 }
 
 void KYInfoBar::setFileName( const QString& fileName )
 {
+    deepdbg() << "setFileName( " << filename << " )" << endl;
     m_fileName->setText( fileName );
 }
 
-void KYInfoBar::setFileInfo( const QString& fileInfo )
+void KYInfoBar::setFileInfo( bool isNew, bool isModified )
 {
+    deepdbg() << QString("setFileInfo( isNew=%1, isModified=%2 )").arg(isNew).arg(isModified) << endl;
+    QString fileInfo;
+
+    fileInfo += isNew ? 'N' : ' ';
+    fileInfo += isModified ? 'M' : ' ';
+
     m_fileInfo->setText( fileInfo );
 }
 
-void KYInfoBar::setLineInfo( const QString& lineInfo )
+void KYInfoBar::setLineInfo( int bufferLine, int bufferColumn, int screenColumn, QString percentage )
 {
-    m_lineInfo->setText( lineInfo );
+    deepdbg() << QString("setLineInfo( %1, %2, %3, %4 )")
+                 .arg(bufferLine)
+                 .arg(bufferColumn)
+                 .arg(screenColumn)
+                 .arg(percentage)
+              << endl;
+
+    bool isNumber;
+    percentage.toInt(&isNumber);
+    if(isNumber)
+        percentage += '%';
+
+    if (bufferColumn != screenColumn)
+        m_lineInfo->setText( QString("%1,%2-%3 (%4)")
+                   .arg( bufferLine )
+                   .arg( bufferColumn )
+                   .arg( screenColumn )
+                   .arg( percentage ) );
+    else
+        m_lineInfo->setText( QString("%1,%2 (%3)")
+                   .arg( bufferLine )
+                   .arg( bufferColumn )
+                   .arg( percentage ) );
+}
+
+void KYInfoBar::setMessage( const QString& message )
+{
+    deepdbg() << "setMessage( " << message << " )" << endl;
+    m_infoMessage->setText( message );
 }
 
 #include "kyinfobar.moc"

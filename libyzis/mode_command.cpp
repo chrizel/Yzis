@@ -239,7 +239,7 @@ CmdState YModeCommand::execCommand(YView *view, const YKeySequence &inputs,
     bool hadCount = false;
     QList<QChar> regs;
 
-    view->guiDisplayInfo( "" );
+    view->displayInfo("");
     if ( parsePos == inputs.end() )
         return CmdNotYetValid;
 
@@ -1667,7 +1667,7 @@ CmdState YModeCommand::macro( const YCommandArgs &args )
         args.view->stopRecordMacro();
     else
         args.view->recordMacro( args.regs );
-    args.view->guiModeChanged();
+    args.view->updateMode();
     return CmdOk;
 }
 

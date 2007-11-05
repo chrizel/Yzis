@@ -36,6 +36,7 @@ class QSignalMapper;
 class QPainter;
 class KActionCollection;
 class QScrollBar;
+class YStatusBarIface;
 
 class KYView : public QWidget, public YView
 {
@@ -47,10 +48,11 @@ public:
     virtual void guiScroll(int, int);
     virtual QString guiGetCommandLineText() const;
     virtual void guiSetCommandLineText(const QString&);
-    virtual void guiDisplayInfo(const QString&);
-    virtual void guiSyncViewInfo();
     virtual bool guiPopupFileSaveAs();
-    virtual void guiFilenameChanged();
+    virtual YStatusBarIface* guiStatusBar();
+    virtual void guiUpdateFileName();
+    virtual void guiUpdateCursor();
+    virtual void guiUpdateMode();
     virtual void guiHighlightingChanged();
     virtual void guiNotifyContentChanged(const YSelection&);
     virtual void guiPreparePaintEvent(int, int);
@@ -59,7 +61,6 @@ public:
     virtual void guiDrawClearToEOL(QPoint, const QChar&);
     virtual void guiDrawSetLineNumber(int, int, int);
     virtual void guiDrawSetMaxLineNumber(int);
-    virtual void guiModeChanged();
 
     const YKey& convertKey( int key );
     bool containsKey( int key )

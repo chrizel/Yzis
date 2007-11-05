@@ -20,27 +20,44 @@
 #ifndef _KY_INFOBAR_H_
 #define _KY_INFOBAR_H_
 
+#include "libyzis/statusbariface.h"
+
 #include <QWidget>
 
 class QLabel;
 class QString;
 
-class KYInfoBar : public QWidget
+/** Yzis KPart status bar implementation */
+class KYInfoBar : public QWidget, public YStatusBarIface
 {
     Q_OBJECT
 public:
-    KYInfoBar( QWidget* );
-    ~KYInfoBar();
+    /** Initialize the status bar */
+    KYInfoBar( QWidget *parent );
+    virtual ~KYInfoBar();
 
-    void setMode( const QString& );
-    void setFileName( const QString& );
-    void setFileInfo( const QString& );
-    void setLineInfo( const QString& );
+    /** Displays current mode */
+    virtual void setMode( const QString& mode );
+    /** Displays current file name */
+    virtual void setFileName( const QString& filename );
+    /** Displays current file status information */
+    virtual void setFileInfo( bool isNew, bool isModified );
+    /** Displays current position within the buffer */
+    virtual void setLineInfo( int bufferLine, int bufferColumn, int screenColumn, QString percentage );
+    /** Displays an informational message */
+    virtual void setMessage( const QString& message );
+
 private:
+    /** Area where current mode is shown */
     QLabel* m_mode;
+    /** Area where file name is shown */
     QLabel* m_fileName;
+    /** Area where file status information is shown */
     QLabel* m_fileInfo;
+    /** Area where view's position withing the buffer is shown */
     QLabel* m_lineInfo;
+    /** Area where informational messages are shown */
+    QLabel* m_infoMessage;
 };
 
 #endif

@@ -17,6 +17,7 @@ set(qyzis_SRCS
    qycursor.cpp 
    qyedit.cpp 
    qysession.cpp 
+   qystatusbar.cpp
    qylinenumbers.cpp 
    main.cpp 
    qyzis.cpp

@@ -44,14 +44,18 @@ const QRgb RGB_MASK = 0x00ffffff;                // masks RGB values
 
 #define dbg() yzDebug("NYView")
 #define err() yzError("NYView")
+#define deepdbg() yzDeepDebug("NYView")
 
 int NYView::attributesMapInitialised = 0;
 QMap<QRgb, unsigned long int> NYView::mAttributesMap;
 
 
 NYView::NYView(YBuffer *b)
-        : YView(b, NYSession::self(), 0, 0), editor(0)
+        : YView(b, NYSession::self(), 0, 0)
+        , editor(0)
+        , infobar(this)
 {
+    dbg() << "NYView( " << b->toString() << " )" << endl;
     statusbarHasCommand = false;
 
     if ( !attributesMapInitialised ) initialiseAttributesMap();
@@ -64,12 +68,13 @@ NYView::NYView(YBuffer *b)
 
 NYView::~NYView()
 {
+    dbg() << "~NYView()" << endl;
     if ( window ) unmap();
 }
 
 void NYView::map( void )
 {
-    yzDebug() << "NYView::map" << endl;
+    deepdbg() << "map()" << endl;
     marginLeft = 0;
     updateVis(false);
 
@@ -88,26 +93,23 @@ void NYView::map( void )
      * ------------------ infobar ---------------------
      * ------------------ statusbar -------------------
      */
-    infobar = subwin(window, 1, 0, getLinesVisible(), 0); YASSERT( infobar );
-    wattrset(infobar, A_REVERSE);
-    wbkgd(infobar, A_REVERSE );           // so that blank char are reversed, too
+    infobar.setup( window );
 
     statusbar = subwin(window, 1, 0, getLinesVisible() + 1, 0); YASSERT( statusbar );
     wattrset(statusbar, A_NORMAL | A_BOLD );
     if (has_colors())
         wattron(statusbar, attribWhite );
     statusbarHasCommand = false;
-
 }
 
 
 void NYView::unmap( void )
 {
+    deepdbg() << "unmap()" << endl;
     YASSERT( statusbar ); delwin( statusbar );
-    YASSERT( infobar ); delwin( infobar );
     YASSERT( editor ); delwin( editor );
     YASSERT( window ); delwin( window );
-    window = editor = statusbar = infobar = NULL;
+    window = editor = statusbar = NULL;
 }
 
 void NYView::updateVis( bool refresh )
@@ -293,50 +295,9 @@ void NYView::guiSetCommandLineText( const QString& text )
     statusbarHasCommand = true;
 }
 
-
-void NYView::guiSyncViewInfo( void )
+YStatusBarIface* NYView::guiStatusBar()
 {
-    yzDebug() << "guiSyncViewInfo" << endl;
-    // older versions of ncurses want non const..
-    char * myfmt;
-
-    /*
-     * ------------------ infobar ---------------------
-     * ------------------ statusbar -------------------
-     */
-
-    werase(infobar);
-    wmove( infobar, 0, 0 );
-    QString m = modeString();
-    wattron( infobar, COLOR_PAIR(2) );
-    wprintw( infobar, "%s", m.toLocal8Bit().constData() );
-    wattroff( infobar, COLOR_PAIR(2) );
-    waddch( infobar, ' ' );
-
-    // update infobar
-    myfmt = ( char* )"%s%s"; // <- prevent %s in percentage to fubar everything, even if
-    // it's rather unlikely..
-    if ( infoMessage.isEmpty() ) {
-        wprintw( infobar, myfmt,
-                 myBuffer()->fileName().toLocal8Bit().constData(), 
-                 ( myBuffer()->fileIsModified() ) ? " [+]" : ""
-               );
-    } else {
-        wprintw( infobar, myfmt,
-                 infoMessage.toLocal8Bit().constData(),
-                 ( myBuffer()->fileIsModified() ) ? " [+]" : ""
-               );
-    }
-    // prevent  gcc to use string
-    mvwprintw( infobar, 0, getColumnsVisible() - 20, getLineStatusString().toUtf8().constData() );
-    wrefresh(infobar);
-
-    restoreFocus();
-}
-
-void NYView::guiDisplayInfo( const QString& info )
-{
-    infoMessage = info;
+    return &infobar;
 }
 
 void NYView::initialiseAttributesMap()
@@ -448,16 +409,37 @@ if ( changecolorok )
     bool NYView::guiPopupFileSaveAs()
 {
     // TODO
-    guiDisplayInfo ( "Save as not implemented yet, use :w<filename>" );
+    displayInfo ("Save as not implemented yet, use :w<filename>");
     return false;
 }
 
-void NYView::guiFilenameChanged()
+void NYView::guiUpdateFileName()
 {
     QString filename = myBuffer()->fileName();
     int lineCount = myBuffer()->lineCount();
     int wholeLength = myBuffer()->getWholeTextLength();
-    guiDisplayInfo ( QString("\"%1\" %2L, %3C" ).arg(filename).arg(lineCount).arg(wholeLength));
+    displayInfo(QString("\"%1\" %2L, %3C" ).arg(filename).arg(lineCount).arg(wholeLength));
+    restoreFocus();
+}
+
+void NYView::guiUpdateMode()
+{
+    restoreFocus();
+}
+
+void NYView::guiUpdateFileInfo()
+{
+    restoreFocus();
+}
+
+void NYView::guiUpdateCursor()
+{
+    restoreFocus();
+}
+
+void NYView::guiDisplayInfo(const QString&)
+{
+    restoreFocus();
 }
 
 void NYView::guiHighlightingChanged()

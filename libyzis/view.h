@@ -681,10 +681,45 @@ public:
         return &mVisualCursor;
     }
 
-    /**
-     * Updates the position of the cursor
+    /** Update the GUI when the cursor position has changed.
+     * Updates the status bar and notificates the GUI through
+     * guiUpdateCursor, which should update the editor cursor position.
+     *
+     * Can't be called until the GUI has been initialized.
      */
     void updateCursor();
+
+    /** Update the GUI when current mode has changed.
+     * Updates the status bar and informs the GUI through 
+     * guiUpdateMode, which should update the cursor shape.
+     *
+     * Can't be called until the GUI has been initialized.
+     */
+    void updateMode();
+
+    /** Update the GUI when current file name has changed.
+     * Updates the status bar and notificates the GUI
+     * through guiUpdateFileName.
+     *
+     * Can't be called until the GUI has been initialized.
+     */
+    void updateFileName();
+
+    /** Update the GUI when file status has changed.
+     * Updates the status bar and notificates the GUI
+     * through guiUpdateFileInfo.
+     *
+     * Can't be called until the GUI has been initialized.
+     */
+    void updateFileInfo();
+
+    /** Display an informational message to the user.
+     * The message is shown in the status bar and passed
+     * to the GUI through guiDisplayInfo.
+     *
+     * Can't be called until the GUI has been initialized.
+     */
+    void displayInfo(const QString&);
 
     //-------------------------------------------------------
     // ----------------- Sticky
@@ -720,11 +755,6 @@ public:
     //-------------------------------------------------------
     // ----------------- Mode
     //-------------------------------------------------------
-    /**
-     * Get the text describing the mode, adding the text recording when
-     * the view is recording.
-     */
-    QString modeString() const;
 
     /**
      * Accessor to the list of availables modes
@@ -794,8 +824,6 @@ protected:
 
     bool stringHasOnlySpaces ( const QString& what );
 
-    QString getLineStatusString() const;
-
     YDrawBuffer m_drawBuffer;
 
 private:
@@ -804,32 +832,6 @@ private:
      * scroll draw buffer and view
      */
     void internalScroll( int dx, int dy );
-
-    /**
-     * Information about the view. Used internally in @ref YView to create
-     * the text for the statusbar displaying line/column numbers and how
-     * much of the buffer that's being displayed.
-     */
-    class ViewInformation
-    {
-    public:
-        /** buffer line */
-        int l;
-
-        /** buffer column */
-        int c1;
-
-        /** the virtual column of the cursor.  This is counting screen
-         * cells from the left side of the window.  The leftmost column is
-         * one. This will be the same as c1 if no tab characters are
-         * present on this line. (1 tab = several screen columns) */
-        int c2;
-
-        /** how much of the buffer that is being displayed. */
-        QString percentage;
-    };
-
-    ViewInformation viewInformation;
 
     /**
      * Used to store previous keystrokes which are not recognised as a command,

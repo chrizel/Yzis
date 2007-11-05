@@ -20,6 +20,7 @@
 
 #include "NoGuiView.h"
 #include "debug.h"
+#include "statusbariface.h"
 
 #define dbg() yzDebug("NoGuiView")
 
@@ -82,34 +83,9 @@ void NoGuiView::invalidateLine( unsigned int )
     dbg() << "NoGuiView::invalidateLine" << endl;
 }
 
-void NoGuiView::setStatusBar( const QString& )
-{
-    dbg() << "NoGuiView::setStatusBar" << endl;
-}
-
-void NoGuiView::updateCursor( unsigned int, unsigned int, unsigned int, const QString& )
-{
-    dbg() << "NoGuiView::updateCursor" << endl;
-}
-
 void NoGuiView::refreshScreen( )
 {
     dbg() << "NoGuiView::refreshScreen" << endl;
-}
-
-void NoGuiView::guiSyncViewInfo( )
-{
-    dbg() << "NoGuiView::guiSyncViewInfo" << endl;
-}
-
-void NoGuiView::guiDisplayInfo( const QString& )
-{
-    dbg() << "NoGuiView::guiDisplayInfo" << endl;
-}
-
-void NoGuiView::modeChanged( )
-{
-    dbg() << "NoGuiView::modeChanged" << endl;
 }
 
 void NoGuiView::paintEvent( unsigned int /*curx*/, unsigned int /*cury*/, unsigned int /*curw*/, unsigned int /*curh*/ )
@@ -151,11 +127,33 @@ bool NoGuiView::guiPopupFileSaveAs()
     dbg() << HERE() << endl;
     return false;
 }
-void NoGuiView::guiFilenameChanged()
+
+YStatusBarIface* NoGuiView::guiStatusBar()
+{
+    dbg() << HERE() << endl;
+    return NULL;
+}
+
+void NoGuiView::guiUpdateFileName()
 {
     dbg() << HERE() << endl;
 }
-
+void NoGuiView::guiUpdateFileInfo()
+{
+    dbg() << HERE() << endl;
+}
+void NoGuiView::guiUpdateMode()
+{
+    dbg() << HERE() << endl;
+}
+void NoGuiView::guiUpdateCursor()
+{
+    dbg() << HERE() << endl;
+}
+void NoGuiView::guiDisplayInfo( const QString& )
+{
+    dbg() << HERE() << endl;
+}
 void NoGuiView::guiHighlightingChanged()
 {
     dbg() << HERE() << endl;

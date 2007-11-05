@@ -439,6 +439,15 @@ YView *YSession::createView( YBuffer *buffer )
     dbg().sprintf("createView( %s )", qp(buffer->toString()) );
     YView *view = guiCreateView( buffer );
     mViewList.push_back( view );
+
+    /* The view must poll the initial information. The reason is
+     * that the buffer and the mode had been initialized before the view.
+     */
+    view->updateFileName();
+    view->updateFileInfo();
+    view->updateMode();
+    view->updateCursor();
+
     return view;
 }
 
@@ -474,7 +483,6 @@ void YSession::setCurrentView( YView* view )
 
     mCurView = view;
     mCurBuffer = view->myBuffer();
-    mCurBuffer->filenameChanged();
 
     guiSetFocusMainWindow();
 }

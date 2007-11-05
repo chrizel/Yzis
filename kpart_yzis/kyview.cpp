@@ -57,8 +57,6 @@ KYView::KYView(YBuffer* buffer, QWidget* parent)
     mVScroll->setMaximum( buffer->lineCount() - 1 );
 
     m_infoBar = new KYInfoBar( this );
-    m_infoBar->setMode( modeString() );
-    guiSyncViewInfo();
 
     QGridLayout* g = new QGridLayout( this );
     g->setMargin( 0 );
@@ -108,35 +106,19 @@ void KYView::guiSetCommandLineText( const QString& text )
     m_command->setText( text );
 }
 
-void KYView::guiDisplayInfo(const QString& /*info*/)
+YStatusBarIface* KYView::guiStatusBar()
 {
-    //m_central->setText(info);
-    //clean the info 2 seconds later
-    //QTimer::singleShot(2000, this, SLOT( resetInfo() ) );
+    return m_infoBar;
 }
 
-void KYView::guiSyncViewInfo()
+void KYView::guiUpdateCursor()
 {
     m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
-    m_infoBar->setLineInfo( getLineStatusString() );
-
-    QString fileInfo;
-    fileInfo += ( myBuffer()->fileIsNew() ) ? "N" : " ";
-    fileInfo += ( myBuffer()->fileIsModified() ) ? "M" : " ";
-    m_infoBar->setFileInfo( fileInfo );
-
-    m_infoBar->setFileName( myBuffer()->fileName() );
-
-    // if (mVScroll->value() != (int)getCurrentTop() && !mVScroll->draggingSlider())
-    //  mVScroll->setValue( getCurrentTop() );
-    // emit cursorPositionChanged();
-    guiModeChanged();
 }
 
-void KYView::guiModeChanged()
+void KYView::guiUpdateMode()
 {
     m_editor->updateCursor();
-    m_infoBar->setMode( modeString() );
 }
 
 bool KYView::guiPopupFileSaveAs()
@@ -144,7 +126,7 @@ bool KYView::guiPopupFileSaveAs()
     return false;
 }
 
-void KYView::guiFilenameChanged()
+void KYView::guiUpdateFileName()
 {
 }
 

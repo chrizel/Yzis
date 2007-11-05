@@ -43,6 +43,8 @@ YModePool::YModePool( YView* view )
     mapMode = 0;
     mRegisterKeys = false;
     mStop = false;
+    stack.push_front(mModes[YMode::ModeCommand]);
+    stack.front()->enter(mView);
 }
 YModePool::~YModePool()
 {
@@ -176,7 +178,7 @@ void YModePool::push( ModeType mode )
     if (mRegisterKeys) registerModifierKeys();
     dbg() << "push(): entering mode " << stack.front()->toString() << endl;
     stack.front()->enter( mView );
-    mView->guiModeChanged();
+    mView->updateMode();
     dbg() << "push() done" << endl;
 }
 void YModePool::pop( bool leave_me )
@@ -196,7 +198,7 @@ void YModePool::pop( bool leave_me )
     if ( stack.isEmpty() )
         push( YMode::ModeCommand );
     else
-        mView->guiModeChanged();
+        mView->updateMode();
     if (mRegisterKeys) registerModifierKeys();
 }
 
@@ -223,7 +225,7 @@ void YModePool::pop( ModeType mode )
     if ( stack.isEmpty() )
         push( YMode::ModeCommand );
     else
-        mView->guiModeChanged();
+        mView->updateMode();
     if (mRegisterKeys) registerModifierKeys();
     dbg() << "pop() done" << endl;
 }

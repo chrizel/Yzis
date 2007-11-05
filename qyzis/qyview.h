@@ -20,7 +20,6 @@
 #ifndef QYZISVIEW_H
 #define QYZISVIEW_H
 
-#include <QStatusBar>
 #include <qevent.h>
 #include <qscrollbar.h>
 #include <qlayout.h>
@@ -34,7 +33,9 @@ class QLabel;
 class QSettings;
 
 class YBuffer;
+class YStatusBarIface;
 
+class QYStatusBar;
 class QYEdit;
 class QYCommandLine;
 class QYZisCodeCompletion;
@@ -69,9 +70,7 @@ public:
 
     void setVisibleArea( int columns, int lines );
 
-    virtual void guiModeChanged(void);
-    virtual void guiSyncViewInfo();
-    void guiDisplayInfo( const QString& info );
+    virtual YStatusBarIface* guiStatusBar();
 
     void wheelEvent( QWheelEvent * e );
     //  void contextMenuEvent( QContextMenuEvent * e );
@@ -91,7 +90,9 @@ public:
     void refreshScreen();
 
     bool guiPopupFileSaveAs();
-    void guiFilenameChanged();
+    virtual void guiUpdateFileName();
+    virtual void guiUpdateCursor();
+    virtual void guiUpdateMode();
     void guiHighlightingChanged();
 
 protected:
@@ -119,7 +120,6 @@ public slots:
 
     void fileSave();
     void fileSaveAs();
-    //  void resetInfo();
     void scrollView( int );
     //  void scrollLineUp();
     //  void scrollLineDown();
@@ -129,14 +129,12 @@ private:
     bool m_customComplete;
     bool m_cc_cleanup;
     QYEdit *m_editor;
-    QStatusBar *status;
+    QYStatusBar *status;
     QYCommandLine *command;
     QScrollBar *mVScroll; //vertical scroll
     QMenu *m_popup;
     QYZisCodeCompletion *m_codeCompletion;
     QGridLayout *g ;
-    QLabel *m_central;
-    QLabel *l_mode, *l_fileinfo, *l_linestatus;
 
     QYLineNumbers* m_lineNumbers;
 

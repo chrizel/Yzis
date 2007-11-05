@@ -264,14 +264,7 @@ public:
      */
     bool save();
 
-    /**
-     * Notification that some status of the file changed
-     * Can be : file modified, file readonly ? , other ? XXX
-     * This is only informational so that GUIs can display the correct information
-     */
-    void statusChanged();
-
-    /**
+     /**
      * Get the absolute filename of the buffer
      * @return the filename
      */

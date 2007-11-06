@@ -191,7 +191,7 @@ void TestResource::subTest( ResourceType restype, QString dir, QString fname, bo
     QVERIFY( createFile( target ) );
     resource = mResMgr->findResource( restype, fname );
     if (shouldFind) {
-        if (! resource.isEmpty()) resource = QFileInfo(resource).absoluteFilePath();
+        if (! resource.isEmpty()) resource = QFileInfo(resource).canonicalFilePath();
         QCOMPARE( resource, target );
     } else {
         QCOMPARE( resource, QString() );

@@ -37,7 +37,6 @@ target_link_libraries(yzis_unittest
     ${LIBLUA_LIBRARIES}
     ${MAGIC_LIBRARIES} 
     ${GETTEXT_LIBRARIES}
-    yzis
     )
 
 install(TARGETS yzis_unittest DESTINATION bin)

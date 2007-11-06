@@ -13,7 +13,7 @@
 source ../env_test.sh
 
 if [ -n "$CYGWIN" ]; then
-    user_home=`cygpath "$USERPROFILE"`;
+    user_home=`cygpath -m "$USERPROFILE"`;
 else
     user_home="~";
 	fi

@@ -23,6 +23,8 @@
 #define dbg()    yzDebug("QYNumberLabel")
 #define err()    yzError("QYNumberLabel")
 
+// ====================[ QYNumberLabel ]=====================
+
 QYNumberLabel::QYNumberLabel( const QFont& f ) : QLabel()
 {
     setAlignment( Qt::AlignVCenter | Qt::AlignRight );
@@ -44,6 +46,8 @@ void QYNumberLabel::setFont( const QFont& f )
     setFixedHeight( QFontMetrics(f).lineSpacing() );
     QLabel::setFont( f );
 }
+
+// ====================[ QYLineNumbers ]=====================
 
 QYLineNumbers::QYLineNumbers( QYView* view )
         : QWidget( view )

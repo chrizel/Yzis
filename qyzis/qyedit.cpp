@@ -123,7 +123,7 @@ QYCursor::CursorShape QYEdit::cursorShape()
     dbg() << "cursorShape(): mode=" << m << endl;
     shape = mCursor->shape();
     if ( ! hasFocus() ) {
-        if (mView->command->hasFocus()) {
+        if (mView->mCommandLine->hasFocus()) {
             // command line has focus
             shape = QYCursor::CursorHidden;
         } else {

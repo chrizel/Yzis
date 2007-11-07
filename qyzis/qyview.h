@@ -81,7 +81,7 @@ public:
 
     QYEdit *editor()
     {
-        return m_editor;
+        return mEdit;
     }
 
     virtual void registerModifierKeys( const QString& keys );
@@ -128,17 +128,17 @@ private:
     YBuffer *buffer;
     bool m_customComplete;
     bool m_cc_cleanup;
-    QYEdit *m_editor;
-    QYStatusBar *status;
-    QYCommandLine *command;
+    QYEdit *mEdit;
+    QYStatusBar *mStatusBar;
+    QYCommandLine *mCommandLine;
     QScrollBar *mVScroll; //vertical scroll
-    QMenu *m_popup;
-    QYZisCodeCompletion *m_codeCompletion;
+    QMenu *mPopup;
+    QYZisCodeCompletion *mCodeCompletion;
     QGridLayout *g ;
 
-    QYLineNumbers* m_lineNumbers;
+    QYLineNumbers* mLineNumbers;
 
-    QPainter* m_painter;
+    QPainter* mPainter;
 };
 
 #endif

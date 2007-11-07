@@ -47,104 +47,103 @@
 #define err() yzError("QYView")
 
 QYView::QYView ( YBuffer *_buffer, QWidget *, const char *)
-        : YView( _buffer, QYSession::self(), 0, 0 ), buffer( _buffer ), m_popup( 0 )
+        : YView( _buffer, QYSession::self(), 0, 0 ), buffer( _buffer ), mPopup( 0 )
 
 {
-    m_editor = new QYEdit( this );
-    status = new QYStatusBar(this);
-    command = new QYCommandLine (this);
+    mEdit = new QYEdit( this );
+    mStatusBar = new QYStatusBar(this);
+    mCommandLine = new QYCommandLine (this);
     mVScroll = new QScrollBar( this);
     connect( mVScroll, SIGNAL(sliderMoved(int)), this, SLOT(scrollView(int)) );
     //connect( mVScroll, SIGNAL(prevLine()), this, SLOT(scrollLineUp()) );
     //connect( mVScroll, SIGNAL(nextLine()), this, SLOT(scrollLineDown()) );
 
-    status->setFocusProxy( command );
-    status->setFocusPolicy( Qt::ClickFocus );
+    mStatusBar->setFocusProxy( mCommandLine );
+    mStatusBar->setFocusPolicy( Qt::ClickFocus );
 
-    m_lineNumbers = new QYLineNumbers(this);
+    mLineNumbers = new QYLineNumbers(this);
 
     QHBoxLayout* editorLayout = new QHBoxLayout();
     editorLayout->setMargin(0);
     editorLayout->setSpacing(0);
-    editorLayout->addWidget( m_lineNumbers );
-    editorLayout->addWidget( m_editor );
+    editorLayout->addWidget( mLineNumbers );
+    editorLayout->addWidget( mEdit );
     editorLayout->addWidget( mVScroll );
 
     QVBoxLayout* viewLayout = new QVBoxLayout( this );
     viewLayout->setMargin(0);
     viewLayout->setSpacing(0);
     viewLayout->addLayout( editorLayout );
-    viewLayout->addWidget( command );
-    viewLayout->addWidget( status );
+    viewLayout->addWidget( mCommandLine );
+    viewLayout->addWidget( mStatusBar );
 
-    // setupActions();
     setupKeys();
 
-    m_editor->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
+    mEdit->setSizePolicy( QSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding ) );
 
     QSettings settings;
     applyConfig( settings ); // XXX factory role
 
-    m_editor->show();
-    status->show();
-    m_editor->setFocus();
-    setFocusProxy( m_editor );
-    mVScroll->setMaximum( buffer->lineCount() - 1 );
+    mEdit->show();
+    mStatusBar->show();
+    mEdit->setFocus();
+    setFocusProxy( mEdit );
+    mVScroll->setMaximum( myBuffer()->lineCount() - 1 );
 
-    // setupCodeCompletion();
 }
 
 QYView::~QYView ()
 {
-    dbg() << "~QYView()" << endl;
-    // if ( buffer ) buffer->removeView(this);
+    dbg() << "~QYView() done" << endl;
 }
 
 void QYView::guiSetCommandLineText( const QString& text )
 {
-    command->setText( text );
+    mCommandLine->setText( text );
 }
 
 QString QYView::guiGetCommandLineText() const
 {
-    return command->text();
+    return mCommandLine->text();
 }
 
 void QYView::guiSetFocusMainWindow()
 {
-    dbg() << "setFocusMainWindow()" << endl;
-    m_editor->setFocus();
+    dbg() << "setFocusMainWindow() for " << myBuffer()->fileNameShort() << endl;
+    mEdit->setFocus();
 }
 
 void QYView::guiSetFocusCommandLine()
 {
     dbg() << "setFocusCommandLine()" << endl;
-    command->setFocus();
+    mCommandLine->setFocus();
 }
 
 void QYView::guiScroll( int dx, int dy )
 {
-    m_editor->scroll( dx, dy );
-    m_lineNumbers->scroll( dy );
+    mEdit->scroll( dx, dy );
+    mLineNumbers->scroll( dy );
+    // TODO scroll QScrollBar
 }
 
 void QYView::setVisibleArea( int columns, int lines )
 {
-    m_lineNumbers->setLineCount( lines );
+    mLineNumbers->setLineCount( lines );
     YView::setVisibleArea( columns, lines );
 }
 
 void QYView::refreshScreen()
 {
     bool o_number = getLocalBooleanOption("number");
-    if ( o_number != m_lineNumbers->isVisible() ) {
-        m_lineNumbers->setVisible(o_number);
+    if ( o_number != mLineNumbers->isVisible() ) {
+        mLineNumbers->setVisible(o_number);
     }
     YView::refreshScreen();
 }
 
 void QYView::guiNotifyContentChanged( const YSelection& s )
 {
+    dbg() << "guiNotifyContentChanged()" << endl;
     // content has changed, ask qt to repaint changed parts
 
     YSelectionMap m = s.map();
@@ -165,24 +164,25 @@ void QYView::guiNotifyContentChanged( const YSelection& s )
         }
         //  dbg() << "notifiyContentChanged: interval=" << interval.fromPos() << "," << interval.toPos()
         //     << ", r=" << r.topLeft() << "," << r.bottomRight();
-        r.setBottomRight( m_editor->translatePositionToReal( r.bottomRight() ) );
-        r.setTopLeft( m_editor->translatePositionToReal( r.topLeft() ) );
+        r.setBottomRight( mEdit->translatePositionToReal( r.bottomRight() ) );
+        r.setTopLeft( mEdit->translatePositionToReal( r.topLeft() ) );
         //  dbg() << " => " << r.topLeft() << "," << r.bottomRight() << endl;
-        m_editor->update( r );
+        mEdit->update( r );
     }
 }
 
-void QYView::guiPreparePaintEvent( int /*min_y*/, int /*max_y*/ )
+void QYView::guiPreparePaintEvent( int min_y, int max_y )
 {
-    // dbg() << "QYView::guiPreparePaintEvent" << endl;
-    m_painter = new QPainter( m_editor );
-    m_drawBuffer.setCallbackArgument( m_painter );
-    //m_editor->drawMarginLeft( min_y, max_y, m_painter );
+    // dbg().sprintf( "guiPreparePaintEvent( min_y=%d, max_y=%d )", min_y, max_y );
+    mPainter = new QPainter( mEdit );
+    m_drawBuffer.setCallbackArgument( mPainter );
+    //mEdit->drawMarginLeft( min_y, max_y, mPainter );
 }
 void QYView::guiEndPaintEvent()
 {
-    dbg() << "guiEndPaintEvent()" << endl;
-    delete m_painter;
+    // dbg() << "guiEndPaintEvent()" << endl;
+    delete mPainter;
+    mPainter = NULL;
 }
 
 void QYView::guiPaintEvent( const YSelection& s )
@@ -195,20 +195,20 @@ void QYView::guiPaintEvent( const YSelection& s )
  */
 void QYView::guiDrawCell( QPoint pos, const YDrawCell& cell, void* arg )
 {
-    m_editor->guiDrawCell( pos, cell, (QPainter*)arg );
+    mEdit->guiDrawCell( pos, cell, (QPainter*)arg );
 }
 void QYView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar )
 {
-    m_editor->guiDrawClearToEOL( pos, clearChar, m_painter );
+    mEdit->guiDrawClearToEOL( pos, clearChar, mPainter );
 }
 void QYView::guiDrawSetMaxLineNumber( int max )
 {
     mVScroll->setMaximum( max );
-    m_lineNumbers->setMaxLineNumber( max );
+    mLineNumbers->setMaxLineNumber( max );
 }
 void QYView::guiDrawSetLineNumber( int y, int n, int h )
 {
-    m_lineNumbers->setLineNumber( y, h, n );
+    mLineNumbers->setLineNumber( y, h, n );
 }
 QChar QYView::currentChar() const
 {
@@ -226,20 +226,13 @@ void QYView::wheelEvent( QWheelEvent * e )
     e->accept();
 }
 
-/*
-void QYView::setupActions() {
- KStdAction::save(this, SLOT(fileSave()), actionCollection());
- KStdAction::saveAs(this, SLOT(fileSaveAs()), actionCollection());
-}
-*/
-
 void QYView::registerModifierKeys( const QString& keys )
 {
-    m_editor->registerModifierKeys( keys );
+    mEdit->registerModifierKeys( keys );
 }
 void QYView::unregisterModifierKeys( const QString& keys )
 {
-    m_editor->unregisterModifierKeys( keys );
+    mEdit->unregisterModifierKeys( keys );
 }
 
 void QYView::applyConfig( const QSettings& settings, bool refresh )
@@ -249,22 +242,21 @@ void QYView::applyConfig( const QSettings& settings, bool refresh )
     default_font.setStyleHint(QFont::TypeWriter);
     default_font.setFamily("Courier");
     QFont user_font = settings.value("appearance/font", default_font).value<QFont>();
-    // TODO: support non-fixed fonts
     if ( !user_font.fixedPitch() ) {
         user_font = default_font;
     }
-    m_editor->setFont( user_font );
-    m_lineNumbers->setFont( user_font );
+    mEdit->setFont( user_font );
+    mLineNumbers->setFont( user_font );
 
     QPalette default_palette;
     default_palette.setColor( QPalette::Window, Qt::black );
     default_palette.setColor( QPalette::WindowText, Qt::white );
     QPalette my_palette = settings.value("appearance/palette", default_palette).value<QPalette>();
     qreal opacity = settings.value("appearance/opacity", 1.).value<qreal>();
-    m_editor->setPalette( my_palette, opacity );
+    mEdit->setPalette( my_palette, opacity );
 
     if ( refresh ) {
-        m_editor->updateArea( );
+        mEdit->updateArea( );
     }
 }
 
@@ -291,12 +283,12 @@ void QYView::guiUpdateFileName()
 
 void QYView::guiUpdateCursor()
 {
-    m_editor->setCursor(viewCursor().screenX(), viewCursor().screenY());
+    mEdit->setCursor(viewCursor().screenX(), viewCursor().screenY());
 }
 
 void QYView::guiUpdateMode()
 {
-    m_editor->updateCursor();
+    mEdit->updateCursor();
 }
 
 void QYView::guiHighlightingChanged()
@@ -318,15 +310,15 @@ bool QYView::guiPopupFileSaveAs()
 
 YStatusBarIface* QYView::guiStatusBar()
 {
-    return status;
+    return mStatusBar;
 }
 
 // scrolls the _view_ on a buffer and moves the cursor it scrolls off the screen
 void QYView::scrollView( int value )
 {
     if ( value < 0 ) value = 0;
-    else if ( value > buffer->lineCount() - 1 )
-        value = buffer->lineCount() - 1;
+    else if ( value > myBuffer()->lineCount() - 1 )
+        value = myBuffer()->lineCount() - 1;
 
     // only redraw if the view actually moves
     if (value != getCurrentTop()) {

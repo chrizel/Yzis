@@ -39,7 +39,7 @@ public :
         CursorHidden,
     };
 
-    QYCursor( QYEdit* parent, CursorShape shape );
+    QYCursor( QYView * view, QYEdit* parent, CursorShape shape );
     virtual ~QYCursor();
 
     void setCursorShape( CursorShape shape );

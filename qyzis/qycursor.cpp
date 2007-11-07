@@ -27,14 +27,15 @@
 #include "debug.h"
 
 
+#define deepdbg() yzDeepDebug("QYCursor")
 #define dbg() yzDebug("QYCursor")
 #define err() yzError("QYCursor")
 
-QYCursor::QYCursor( QYEdit* edit, CursorShape shape )
+QYCursor::QYCursor( QYView * view, QYEdit* edit, CursorShape shape )
         : QWidget( edit )
 {
+    mView = view;
     mEdit = edit;
-    mView = edit->view();
 
     setAutoFillBackground( false );
     setAttribute( Qt::WA_NoSystemBackground );
@@ -71,36 +72,36 @@ void QYCursor::paintEvent( QPaintEvent* pe )
     const YDrawCell cell( mView->m_drawBuffer.at( mEdit->translateRealToPosition(pos()) ) );
     QColor cbg, cfg;
 
-    dbg().sprintf( "paintEvent(): cell string='%s'", qp(cell.c) );
+    deepdbg().sprintf( "paintEvent(): cell string='%s'", qp(cell.c) );
 
     if (cell.bg.isValid()) {
-        dbg() << "paintEvent(): valid cell bg" << endl;
+        deepdbg() << "paintEvent(): valid cell bg" << endl;
         cbg = QColor(cell.bg.rgb());
         //cbg = QColor( Qt::red );
     } else {
-        dbg() << "paintEvent(): invalid cell bg" << endl;
+        deepdbg() << "paintEvent(): invalid cell bg" << endl;
         cbg = parentWidget()->palette().color(QPalette::Window);
         //cbg = QColor(Qt::magenta);
     }
 
-    dbg() << "paintEvent(): cell background=" << cbg.name() << endl;
+    deepdbg() << "paintEvent(): cell background=" << cbg.name() << endl;
 
     if ( cell.fg.isValid() ) {
-        dbg() << "paintEvent(): valid cell fg" << endl;
+        deepdbg() << "paintEvent(): valid cell fg" << endl;
         cfg = QColor(cell.fg.rgb());
         //cfg = QColor(Qt::blue);
     } else {
-        dbg() << "paintEvent(): invalid cell fg" << endl;
+        deepdbg() << "paintEvent(): invalid cell fg" << endl;
         cfg = parentWidget()->palette().color(QPalette::WindowText);
         //cfg = QColor(Qt::cyan);
     }
-    dbg() << "paintEvent(): cell foreground=" << cfg.name() << endl;
+    deepdbg() << "paintEvent(): cell foreground=" << cfg.name() << endl;
 
 
     QPainter p( this );
     QRect r = rect();
     CursorShape s = shape();
-    dbg() << "paintEvent(): shape=" << s << endl;
+    deepdbg() << "paintEvent(): shape=" << s << endl;
     switch ( s ) {
     case CursorFilledRect :
         p.setPen( cbg );

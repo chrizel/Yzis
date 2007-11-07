@@ -63,7 +63,7 @@ QYEdit::QYEdit(QYView * view )
     /* show an edit cursor */
     QWidget::setCursor( Qt::IBeamCursor );
 
-    mCursor = new QYCursor( this, QYCursor::CursorFilledRect );
+    mCursor = new QYCursor( mView, this, QYCursor::CursorFilledRect );
 
     initKeys();
 }

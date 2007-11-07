@@ -27,6 +27,7 @@
 #include "debug.h"
 #include "mode.h"
 #include "view.h"
+#include "buffer.h"
 #include "session.h"
 
 #define dbg() yzDebug("QYCommandLine")
@@ -65,12 +66,7 @@ void QYCommandLine::keyPressEvent ( QKeyEvent * e )
 
 void QYCommandLine::focusInEvent (QFocusEvent * e)
 {
-    dbg() << "focusInEvent() " << endl;
-    if ( mView->modePool()->currentType() != YMode::ModeEx
-            && mView->modePool()->currentType() != YMode::ModeSearch
-            && mView->modePool()->currentType() != YMode::ModeSearchBackward ) {
-        mView->modePool()->push( YMode::ModeEx );
-    }
+    dbg() << "focusInEvent() for " << mView->myBuffer()->fileNameShort() << ", reason=" << e->reason() << endl;
 
     //e->accept();
     QLineEdit::focusInEvent(e);
@@ -78,7 +74,7 @@ void QYCommandLine::focusInEvent (QFocusEvent * e)
 
 void QYCommandLine::focusOutEvent (QFocusEvent *e)
 {
-    dbg() << "focusOutEvent() " << endl;
+    dbg() << "focusOutEvent() for " << mView->myBuffer()->fileNameShort() << " ,reason=" << e->reason() << endl;
     /*
     if ( mView->modePool()->currentType() != YMode::ModeEx 
     && mView->modePool()->currentType() != YMode::ModeSearch 

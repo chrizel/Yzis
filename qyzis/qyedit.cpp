@@ -43,6 +43,7 @@ using namespace std;
 #include <qcursor.h>
 
 
+#define deepdbg() yzDeepDebug("QYEdit")
 #define dbg() yzDebug("QYEdit")
 #define err() yzError("QYEdit")
 
@@ -73,11 +74,7 @@ QYEdit::~QYEdit()
 {
     dbg() << "~QYEdit()" << endl;
     delete signalMapper;
-    /*
-    for( int i = actionCollection->count() - 1; i>= 0; --i )
-     delete actionCollection->take( actionCollection->action(i) );
-    delete actionCollection;
-    */
+    dbg() << "~QYEdit() done" << endl;
 }
 
 QYView* QYEdit::view() const
@@ -119,8 +116,8 @@ void QYEdit::setPalette( const QPalette& p, qreal opacity )
 QYCursor::CursorShape QYEdit::cursorShape()
 {
     QYCursor::CursorShape shape;
-    YMode::ModeType m = mView->modePool()->current()->type();
-    dbg() << "cursorShape(): mode=" << m << endl;
+    YMode::ModeType m = mView->modePool()->currentType();
+    deepdbg() << "cursorShape(): mode=" << m << endl;
     shape = mCursor->shape();
     if ( ! hasFocus() ) {
         if (mView->mCommandLine->hasFocus()) {
@@ -156,7 +153,7 @@ QYCursor::CursorShape QYEdit::cursorShape()
         }
     }
 
-    dbg() << "cursorShape(), cursorShape=" << shape << endl;
+    deepdbg() << "cursorShape(), cursorShape=" << shape << endl;
     return shape;
 }
 
@@ -168,18 +165,18 @@ void QYEdit::updateCursor()
 
 void QYEdit::updateArea( )
 {
-
+    dbg() << "updatearea()" << endl;
     updateCursor();
 
-    dbg() << "fixedPitch = " << fontInfo().fixedPitch() << endl;
-    dbg() << "lineheight = " << fontMetrics().lineSpacing() << endl;
-    dbg() << "maxwidth = " << fontMetrics().maxWidth() << endl;
-    dbg() << "height = " << height();
+    dbg() << "updateArea(): fixedPitch = " << fontInfo().fixedPitch() << endl;
+    dbg() << "updateArea(): lineheight = " << fontMetrics().lineSpacing() << endl;
+    dbg() << "updateArea(): maxwidth = " << fontMetrics().maxWidth() << endl;
+    dbg() << "updateArea(): height = " << height();
 
     int lines = height() / fontMetrics().lineSpacing();
     int columns = width() / fontMetrics().maxWidth();
 
-    dbg() << "lines = " << lines;
+    dbg().sprintf("updateArea(): lines,col = %d,%d", lines, columns );
 
     mUseArea.setBottomRight( QPoint( columns * fontMetrics().maxWidth(), lines * fontMetrics().lineSpacing()) );
 
@@ -289,19 +286,19 @@ void QYEdit::mouseMoveEvent( QMouseEvent *e )
 
 void QYEdit::focusInEvent ( QFocusEvent * )
 {
-    dbg() << "focusInEvent()" << endl;
+    dbg() << "focusInEvent() for " << mView->myBuffer()->fileNameShort() << endl;
     QYSession::self()->setCurrentView( mView );
     updateCursor();
 }
 void QYEdit::focusOutEvent ( QFocusEvent * )
 {
-    dbg() << "focusOutEvent()" << endl;
+    dbg() << "focusOutEvent() for " << mView->myBuffer()->fileNameShort() << endl;
     updateCursor();
 }
 
 void QYEdit::resizeEvent(QResizeEvent* e)
 {
-    e->accept();
+    dbg() << "resizeEvent(" << *e << ") - filename=" << mView->myBuffer()->fileNameShort() << endl;
     updateArea();
 }
 

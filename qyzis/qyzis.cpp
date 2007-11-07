@@ -33,6 +33,9 @@
 #include <QMessageBox>
 #include <QMenuBar>
 #include <QTabWidget>
+#include <QClipboard>
+#include <QSettings>
+#include <QResizeEvent>
 
 
 #define dbg()    yzDebug("QYzis")
@@ -321,7 +324,7 @@ QMainWindow *QYzis::main()
     return this;
 }
 
-YDebugStream& operator<<( YDebugStream& out, Qt::KeyboardModifiers v )
+YDebugStream& operator<<( YDebugStream& out, const Qt::KeyboardModifiers & v )
 {
     QString s;
     switch (v) {
@@ -337,3 +340,32 @@ YDebugStream& operator<<( YDebugStream& out, Qt::KeyboardModifiers v )
     out << s;
     return out;
 }
+
+YDebugStream& operator<<( YDebugStream& out, const QSize & sz )
+{
+    out << sz.width() << "," << sz.height();
+    return out;
+}
+
+YDebugStream& operator<<( YDebugStream& out, const QResizeEvent & e )
+{
+    out << "(oldsize=" << e.oldSize() << ",newSize=" << e.size() << ")" << endl;
+    return out;
+}
+
+YDebugStream& operator<<( YDebugStream& out, const Qt::FocusReason & e )
+{
+    switch( e ) {
+    case Qt::NoFocusReason: out << "NoFocusReason"; break;
+    case Qt::MouseFocusReason: out << "MouseFocusReason"; break;
+    case Qt::TabFocusReason: out << "TabFocusReason"; break;
+    case Qt::BacktabFocusReason: out << "BacktabFocusReason"; break;
+    case Qt::ActiveWindowFocusReason: out << "ActiveWindowFocusReason"; break;
+    case Qt::PopupFocusReason: out << "PopupFocusReason"; break;
+    case Qt::ShortcutFocusReason: out << "ShortcutFocusReason"; break;
+    case Qt::MenuBarFocusReason: out << "MenuBarFocusReason"; break;
+    case Qt::OtherFocusReason: out << "OtherFocusReason"; break;
+    }
+    return out;
+}
+

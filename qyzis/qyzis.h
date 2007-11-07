@@ -108,7 +108,10 @@ public:
 
 };
 
-YDebugStream& operator<<( YDebugStream& out, Qt::KeyboardModifiers v );
+YDebugStream& operator<<( YDebugStream& out, const Qt::KeyboardModifiers & v );
+YDebugStream& operator<<( YDebugStream& out, const QSize & sz );
+YDebugStream& operator<<( YDebugStream& out, const QResizeEvent & e );
+YDebugStream& operator<<( YDebugStream& out, const Qt::FocusReason & e );
 
 
 #endif // QYZIS_H

@@ -36,6 +36,13 @@ struct YCursorPos
 {
     YCursor mBuffer;  /* buffer position */
     YCursor mScreen; /* display position */
+
+    QString toString() const
+    {
+        QString s;
+        s = "buffer pos=" + mBuffer.toString() + ", screen pos=" + mScreen.toString();
+        return s;
+    }
 };
 
 

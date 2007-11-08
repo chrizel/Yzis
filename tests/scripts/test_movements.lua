@@ -70,7 +70,16 @@ TestMovements = {} --class
         assertEquals(mode(), MODE_NORMAL)
         assertPos( 4, 4)
 
+        sendkeys( "0" )
         sendkeys( "<RIGHT>" )
+        sendkeys( "<RIGHT>" )
+        sendkeys( "<RIGHT>" )
+        sendkeys( "<RIGHT>" )
+        sendkeys( "<RIGHT>" )
+        sendkeys( "<RIGHT>" )
+        assertPos( 4, 4 )
+
+
         sendkeys( "<DOWN>" )
         assertPos( 4, 4 )
 

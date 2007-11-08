@@ -40,8 +40,9 @@ end
 
 -- Assertion for line,col
 function assertPos(line,col)
-    assertEquals( winline(), line )
-    assertEquals( wincol(), col )
+    if ((winline() == line) and (wincol() == col)) then return end
+    errorMsg = "expected: (line,col)=("..tostring(line)..","..tostring(col)..") , actual: ("..tostring(winline())..","..tostring(wincol())..")\n"
+    assertMsg( nil, errorMsg )
 end
 
 

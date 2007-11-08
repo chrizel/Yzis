@@ -697,8 +697,9 @@ bool YBuffer::save()
         return false;
     }
     d->isHLUpdating = false; //override so that it does not parse all lines
-    foreach( YView *view, d->views )
+    foreach( YView *view, d->views ) {
                 view->displayInfo(_("Written %1 bytes to file %2").arg(getWholeTextLength()).arg(d->path));
+    }
     setChanged( false );
     filenameChanged();
     //clear swap memory
@@ -789,16 +790,18 @@ void YBuffer::rmView(YView *v)
 
 void YBuffer::setChanged(bool modif)
 {
-    if (d->isModified == modif)
+    if (d->isModified == modif) {
         return;
-    else 
+    } else {
         d->isModified = modif;
+    }
 
     if (!d->enableUpdateView) return;
 
     //update all views
-    foreach(YView *view, d->views)
+    foreach(YView *view, d->views) {
         view->updateFileInfo();
+    }
 }
 
 

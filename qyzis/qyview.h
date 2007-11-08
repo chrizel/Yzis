@@ -20,21 +20,20 @@
 #ifndef QYZISVIEW_H
 #define QYZISVIEW_H
 
-#include <qevent.h>
-#include <qscrollbar.h>
-#include <qlayout.h>
-
-#include "view.h"
-
-#include "qycursor.h"
-#include "qycommandline.h"
+#include <QEvent>
+#include <QScrollBar>
+#include <QLayout.h>
 
 class QLabel;
 class QSettings;
 
+#include "view.h"
 class YBuffer;
 class YStatusBarIface;
 
+#include "qycursor.h"
+#include "qycommandline.h"
+class QYzis;
 class QYStatusBar;
 class QYEdit;
 class QYCommandLine;
@@ -61,7 +60,6 @@ signals :
 public:
     QYView(YBuffer *doc, QWidget *parent, const char *name = 0);
     virtual ~QYView();
-    //  KTextEditor::Document *document () { return dynamic_cast<KTextEditor::Document*>( buffer ); }
     void guiSetCommandLineText( const QString& text );
     QString guiGetCommandLineText() const;
     void guiSetFocusCommandLine();
@@ -73,16 +71,12 @@ public:
     virtual YStatusBarIface* guiStatusBar();
 
     void wheelEvent( QWheelEvent * e );
-    //  void contextMenuEvent( QContextMenuEvent * e );
 
     void applyConfig( const QSettings& settings, bool refresh = true );
 
     QChar currentChar() const;
 
-    QYEdit *editor()
-    {
-        return mEdit;
-    }
+    QYEdit *editor() { return mEdit; }
 
     virtual void registerModifierKeys( const QString& keys );
     virtual void unregisterModifierKeys( const QString& keys );
@@ -96,6 +90,8 @@ public:
     void guiHighlightingChanged();
 
 protected:
+    void focusInEvent( QFocusEvent * e );
+    void resizeEvent( QResizeEvent * e );
     void guiDrawSetMaxLineNumber( int max );
     void guiDrawSetLineNumber( int y, int n, int h );
     virtual void guiPreparePaintEvent( int y_min, int y_max );
@@ -125,16 +121,11 @@ public slots:
     //  void scrollLineDown();
 
 private:
-    YBuffer *buffer;
-    bool m_customComplete;
-    bool m_cc_cleanup;
+    QYzis * mQyzis;
     QYEdit *mEdit;
     QYStatusBar *mStatusBar;
     QYCommandLine *mCommandLine;
     QScrollBar *mVScroll; //vertical scroll
-    QMenu *mPopup;
-    QYZisCodeCompletion *mCodeCompletion;
-    QGridLayout *g ;
 
     QYLineNumbers* mLineNumbers;
 

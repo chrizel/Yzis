@@ -233,7 +233,7 @@ void YModeCommand::initModifierKeys()
 CmdState YModeCommand::execCommand(YView *view, const YKeySequence &inputs, 
                                    YKeySequence::const_iterator &parsePos)
 {
-    // dbg() << "ExecCommand : " << inputs << endl;
+    dbg() << "ExecCommand( view, " << ", inputs='" << inputs.toString() << "')" << endl;
     CmdState result;
     int count = 1;
     bool hadCount = false;

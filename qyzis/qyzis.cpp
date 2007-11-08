@@ -212,6 +212,15 @@ void QYzis::embedPartView(QWidget *view, const QString & title, const QString& t
     view->show();
 }
 
+void QYzis::viewFilenameChanged( QYView * view, const QString & filename )
+{
+    Q_ASSERT( view );
+    int tabIdx = mTabWidget->indexOf( view );
+    mTabWidget->setTabText( tabIdx, filename );
+    setWindowTitle( filename );
+}
+
+
 
 #if 0 
 // removed by orzel, those are newui stuff not even used in Kyzis

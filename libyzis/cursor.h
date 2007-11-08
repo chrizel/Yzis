@@ -21,6 +21,7 @@
 #define YZIS_CURSOR
 
 #include <QPoint>
+#include <QString>
 #include "yzismacros.h" // YZIS_EXPORT
 
 class YDebugStream;
@@ -68,8 +69,10 @@ public :
         return y();
     }
 
-    // TODO : we should add a QString cast to help when we want
-    // to output with QString.arg().
+    QString toString() const
+    {
+        return QString("(line,col)=(%1,%2)").arg(y()).arg(x());
+    }
 
     /*
      * operators

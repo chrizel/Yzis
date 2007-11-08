@@ -47,7 +47,7 @@
 #define err() yzError("QYView")
 
 QYView::QYView ( YBuffer *_buffer, QWidget *, const char *)
-        : YView( _buffer, QYSession::self(), 0, 0 ), buffer( _buffer ), mPopup( 0 )
+        : YView( _buffer, QYSession::self(), 0, 0 )
 
 {
     mEdit = new QYEdit( this );
@@ -107,16 +107,28 @@ QString QYView::guiGetCommandLineText() const
     return mCommandLine->text();
 }
 
+void QYView::focusInEvent( QFocusEvent * e )
+{
+    dbg() << "focusInEvent() for " << myBuffer()->fileNameShort() << endl;
+}
+
+void QYView::resizeEvent( QResizeEvent * e )
+{
+    dbg() << "resizeEvent() for " << myBuffer()->fileNameShort() << endl;
+}
+
 void QYView::guiSetFocusMainWindow()
 {
     dbg() << "setFocusMainWindow() for " << myBuffer()->fileNameShort() << endl;
     mEdit->setFocus();
+    mCommandLine->setEnabled( false );
 }
 
 void QYView::guiSetFocusCommandLine()
 {
     dbg() << "setFocusCommandLine()" << endl;
     mCommandLine->setFocus();
+    mCommandLine->setEnabled( true );
 }
 
 void QYView::guiScroll( int dx, int dy )
@@ -252,8 +264,6 @@ void QYView::applyConfig( const QSettings& settings, bool refresh )
     default_palette.setColor( QPalette::Window, Qt::black );
     default_palette.setColor( QPalette::WindowText, Qt::white );
     QPalette my_palette = settings.value("appearance/palette", default_palette).value<QPalette>();
-    qreal opacity = settings.value("appearance/opacity", 1.).value<qreal>();
-    mEdit->setPalette( my_palette, opacity );
 
     if ( refresh ) {
         mEdit->updateArea( );
@@ -276,9 +286,9 @@ void QYView::guiUpdateFileName()
     if (QYzis::me) {
         //QYzis::me->setCaption(getId(), myBuffer()->fileName());
         QYzis::me->setWindowTitle( myBuffer()->fileName());
-    } else
+    } else {
         err() << "guiUpdateFileName() : couldn't find QYzis::me.. is that ok ?";
-
+    }
 }
 
 void QYView::guiUpdateCursor()

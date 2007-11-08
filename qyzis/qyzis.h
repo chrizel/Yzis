@@ -27,6 +27,7 @@
 #include <qmap.h>
 
 class QTabWidget;
+class QYView;
 
 #include "debug.h"
 
@@ -54,6 +55,7 @@ public:
     virtual ~QYzis();
 
     static QYzis *me;
+    void viewFilenameChanged( QYView * view, const QString & filename );
 
     /**
      * Use this method to load whatever file/URL you have

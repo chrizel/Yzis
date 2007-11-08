@@ -139,8 +139,9 @@ void changeEncoding( YBuffer* b, YView* v )
 }
 void changeCursor( YBuffer*, YView* v )
 {
-    if ( v )
+    if ( v ) {
         v->updateMode();
+    }
 }
 void refreshView( YBuffer*, YView* v )
 {

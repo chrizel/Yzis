@@ -56,7 +56,8 @@ static YColor blue( Qt::blue );
 
 YViewIface::~YViewIface()
 {
-    // nothing to do
+    // nothing to do but compiler will complain if ~YZViewIface() is pure
+    // virtual.
 }
 
 /**
@@ -91,7 +92,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     QString line = mBuffer->textline(scrollCursor.bufferY());
 
     reverseSearch = false;
-    mPreviousChars.clear();
     mPreviousChars.clear();
 
     mPaintSelection = new YSelection("PAINT");
@@ -137,7 +137,7 @@ YView::~YView()
 QString YView::toString() const
 {
     QString s;
-    s.sprintf("View(this=%p id=%d buffer='%s')", this, getId(), qp(myBuffer()->fileName()) );
+    s.sprintf("View(this=%p id=%d buffer='%s')", this, getId(), qp(myBuffer()->fileNameShort()) );
     return s;
 }
 

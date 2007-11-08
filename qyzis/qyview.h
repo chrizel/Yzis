@@ -33,7 +33,7 @@ class YStatusBarIface;
 
 #include "qycursor.h"
 #include "qycommandline.h"
-class QYzis;
+class QYSession;
 class QYStatusBar;
 class QYEdit;
 class QYCommandLine;
@@ -58,7 +58,7 @@ signals :
     void newStatus();
 
 public:
-    QYView(YBuffer *doc, QYzis * qyzis );
+    QYView(YBuffer *doc, QYSession * qysession );
     virtual ~QYView();
     void guiSetCommandLineText( const QString& text );
     QString guiGetCommandLineText() const;
@@ -121,7 +121,7 @@ public slots:
     //  void scrollLineDown();
 
 private:
-    QYzis * mQyzis;
+    QYSession * mSession;
     QYEdit *mEdit;
     QYStatusBar *mStatusBar;
     QYCommandLine *mCommandLine;

@@ -19,7 +19,7 @@ set(qyzis_SRCS
    qystatusbar.cpp
    qylinenumbers.cpp 
    main.cpp 
-   qyzis.cpp
+   qysession.cpp
    qyview.cpp 
 )
 
@@ -29,7 +29,7 @@ set(qyzis_MOC
    qycursor.h
    qyedit.h
    qylinenumbers.h
-   qyzis.h
+   qysession.h
    qyview.h
 )
 

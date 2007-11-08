@@ -41,20 +41,20 @@ class QYView;
  * @author Yzis Team <yzis-dev@yzis.org>
  */
 
-class QYzis : public QMainWindow, public YSession
+class QYSession : public QMainWindow, public YSession
 {
     Q_OBJECT
 public:
     /**
-    * Constructs a QYzis widget and initialise the YSession instance.
+    * Constructs a QYSession widget and initialise the YSession instance.
     * @param w parent widget
      */
-    QYzis(QWidget *w = 0);
+    QYSession(QWidget *w = 0);
 
     /**
      * Default Destructor
      */
-    virtual ~QYzis();
+    virtual ~QYSession();
 
     // ===============[ GUI interface of Yzis ]===================
     bool guiQuit(int errorCode);

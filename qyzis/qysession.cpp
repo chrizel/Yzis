@@ -17,7 +17,7 @@
 
 
 /* QYzis */
-#include "qyzis.h"
+#include "qysession.h"
 #include "qyview.h"
 #include "qyconfiguredialog.h"
 
@@ -40,16 +40,16 @@
 #endif
 
 
-#define dbg()    yzDebug("QYzis")
-#define err()    yzError("QYzis")
+#define dbg()    yzDebug("QYSession")
+#define err()    yzError("QYSession")
 
 // ===================[ Qt stuff for the main windows ]==================
 
-QYzis::QYzis(QWidget *w)
+QYSession::QYSession(QWidget *w)
         : QMainWindow(w),
         YSession()
 {
-    dbg() << "QYzis()" << endl;
+    dbg() << "QYSession()" << endl;
     resize( 800, 600 );
 
     mTabWidget = new QTabWidget();
@@ -60,18 +60,18 @@ QYzis::QYzis(QWidget *w)
     YSession::setInstance( this );
 }
 
-QYzis::~QYzis()
+QYSession::~QYSession()
 {
-    dbg() << "~QYzis()" << endl;
+    dbg() << "~QYSession()" << endl;
 }
 
-void QYzis::slotFrontendGuiReady()
+void QYSession::slotFrontendGuiReady()
 {
     dbg() << "slotFrontendGuiReady()" << endl;
     YSession::self()->frontendGuiReady();
 }
 
-void QYzis::setupActions()
+void QYSession::setupActions()
 {
     QAction *a;
     QMenu *m;
@@ -103,19 +103,19 @@ void QYzis::setupActions()
     m->addAction(a);
 }
 
-void QYzis::slotFileNew()
+void QYSession::slotFileNew()
 {
     dbg() << "slotFileNew()" << endl;
     createBufferAndView();
 }
 
-void QYzis::slotFileQuit()
+void QYSession::slotFileQuit()
 {
     dbg() << "slotFileQuit()" << endl;
     close();
 }
 
-void QYzis::slotFileOpen()
+void QYSession::slotFileOpen()
 {
     dbg() << "slotFileOpen()" << endl;
 
@@ -125,7 +125,7 @@ void QYzis::slotFileOpen()
     openURL(url);
 }
 
-void QYzis::openURL(const QString &url)
+void QYSession::openURL(const QString &url)
 {
     dbg() << "openURL( " << url << ")" << endl;
     if (url.isEmpty()) {
@@ -135,14 +135,14 @@ void QYzis::openURL(const QString &url)
     createBufferAndView( url );
 }
 
-void QYzis::slotPreferences()
+void QYSession::slotPreferences()
 {
     dbg() << "slotPreferences()" << endl;
     QYConfigureDialog* w = new QYConfigureDialog(this);
     w->exec();
 }
 
-void QYzis::slotAbout()
+void QYSession::slotAbout()
 {
     dbg() << "slotAbout()" << endl;
     QMessageBox::about(this, _("About QYzis"),
@@ -153,7 +153,7 @@ void QYzis::slotAbout()
 
 // ===================[ Yzis stuff ]==================
 //
-void QYzis::guiSetClipboardText( const QString& text, Clipboard::Mode mode )
+void QYSession::guiSetClipboardText( const QString& text, Clipboard::Mode mode )
 {
     dbg() << QString("guiSetClipboardText( %1, %2 )").arg(text).arg((int)mode) << endl;
     bool hasDisplay = true;
@@ -166,14 +166,14 @@ void QYzis::guiSetClipboardText( const QString& text, Clipboard::Mode mode )
     }
 }
 
-bool QYzis::guiQuit( int errorCode )
+bool QYSession::guiQuit( int errorCode )
 {
     dbg() << "guiQuit(" << errorCode << ")" << endl;
     qApp->quit();
     return true;
 }
 
-void QYzis::applyConfig()
+void QYSession::applyConfig()
 {
     dbg() << "applyConfig()" << endl;
     QSettings settings;
@@ -183,7 +183,7 @@ void QYzis::applyConfig()
     // TODO
 }
 
-void QYzis::guiChangeCurrentView( YView* view )
+void QYSession::guiChangeCurrentView( YView* view )
 {
     dbg() << "guiChangeCurrentView(" << view->toString() << ")" << endl;
     QYView *v = static_cast<QYView*>(view);
@@ -191,7 +191,7 @@ void QYzis::guiChangeCurrentView( YView* view )
     mTabWidget->setCurrentWidget( v );
 }
 
-YView* QYzis::guiCreateView( YBuffer *buffer )
+YView* QYSession::guiCreateView( YBuffer *buffer )
 {
     dbg() << "guiCreateView(" << buffer->toString() << ")" << endl;
     QYView *view;
@@ -203,7 +203,7 @@ YView* QYzis::guiCreateView( YBuffer *buffer )
     return view;
 }
 
-void QYzis::viewFilenameChanged( QYView * view, const QString & filename )
+void QYSession::viewFilenameChanged( QYView * view, const QString & filename )
 {
     Q_ASSERT( view );
     int tabIdx = mTabWidget->indexOf( view );
@@ -212,7 +212,7 @@ void QYzis::viewFilenameChanged( QYView * view, const QString & filename )
 }
 
 
-void QYzis::guiDeleteView( YView *view )
+void QYSession::guiDeleteView( YView *view )
 {
     dbg() << "guiDeleteView(" << view->toString() << ")" << endl;
     QYView * v = dynamic_cast<QYView*>(view);
@@ -224,13 +224,13 @@ void QYzis::guiDeleteView( YView *view )
 }
 
 
-void QYzis::guiPopupMessage( const QString& message )
+void QYSession::guiPopupMessage( const QString& message )
 {
     dbg() << "popupMessage(" << message << ")" << endl;
     QMessageBox::information( this , _( "Error" ), message);
 }
 
-bool QYzis::guiPromptYesNo(const QString& title, const QString& message)
+bool QYSession::guiPromptYesNo(const QString& title, const QString& message)
 {
     dbg() << "guiPromptYesNo(" << title << "," << message << ")" << endl;
     int v = QMessageBox::question( this , title, message, _("Yes"), _("No"));
@@ -238,13 +238,13 @@ bool QYzis::guiPromptYesNo(const QString& title, const QString& message)
     else return false;
 }
 
-int QYzis::guiPromptYesNoCancel(const QString& title, const QString& message)
+int QYSession::guiPromptYesNoCancel(const QString& title, const QString& message)
 {
     dbg() << "guiPromptYesNoCancel(" << title << "," << message << ")" << endl;
     return QMessageBox::question( this, title, message, _("Yes"), _("No"), _("Cancel"));
 }
 
-void QYzis::guiSplitHorizontally(YView *view)
+void QYSession::guiSplitHorizontally(YView *view)
 {
     dbg() << "guiSplitHorizontally(" << view->toString() << ")" << endl;
 }

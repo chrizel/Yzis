@@ -21,7 +21,7 @@
 #include "qycommandline.h"
 #include "qyview.h"
 #include "qyedit.h"
-#include "qyzis.h"
+#include "qysession.h"
 
 /* Yzis */
 #include "debug.h"

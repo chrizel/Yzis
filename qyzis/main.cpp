@@ -35,7 +35,7 @@
 #include "yzis.h"
 
 /* QYzis */
-#include "qyzis.h"
+#include "qysession.h"
 
 int main(int argc, char **argv)
 {
@@ -48,12 +48,12 @@ int main(int argc, char **argv)
     app.setApplicationName("QYzis");
 
     // ==============[ create session ]=============
-    QYzis* qyzis = new QYzis();
-    qyzis->show();
+    QYSession * session = new QYSession();
+    session->show();
 
     YSession::self()->parseCommandLine( argc, argv );
     //YSession::self()->frontendGuiReady();
-    QTimer::singleShot(0, qyzis, SLOT(slotFrontendGuiReady()) );
+    QTimer::singleShot(0, session, SLOT(slotFrontendGuiReady()) );
 
     // ==============[ let's rock ]=============
 

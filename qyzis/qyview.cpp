@@ -23,7 +23,7 @@
 #include "qyview.h"
 #include "qyedit.h"
 #include "qycursor.h"
-#include "qyzis.h"
+#include "qysession.h"
 #include "qylinenumbers.h"
 #include "qystatusbar.h"
 
@@ -45,10 +45,10 @@
 #define dbg() yzDebug("QYView")
 #define err() yzError("QYView")
 
-QYView::QYView ( YBuffer * buffer, QYzis * qyzis)
+QYView::QYView ( YBuffer * buffer, QYSession * qysession)
         : QWidget( ),
-          YView(  buffer, qyzis, 0, 0 ),
-          mQyzis( qyzis )
+          YView(  buffer, qysession, 0, 0 ),
+          mSession( qysession )
 {
     mEdit = new QYEdit( this );
     mStatusBar = new QYStatusBar(this);
@@ -284,7 +284,7 @@ void QYView::fileSaveAs()
 
 void QYView::guiUpdateFileName()
 {
-    mQyzis->viewFilenameChanged( this, myBuffer()->fileNameShort() );
+    mSession->viewFilenameChanged( this, myBuffer()->fileNameShort() );
 }
 
 void QYView::guiUpdateCursor()

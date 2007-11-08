@@ -21,7 +21,7 @@
 /* QYzis */
 #include "qyedit.h"
 #include "qyview.h"
-#include "qyzis.h"
+#include "qysession.h"
 
 /* Yzis */
 #include "yzis.h"

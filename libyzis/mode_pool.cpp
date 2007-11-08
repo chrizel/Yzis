@@ -118,7 +118,7 @@ YMode* YModePool::current() const
 }
 ModeType YModePool::currentType() const
 {
-    return current()->type();
+    return current()->modeType();
 }
 void YModePool::registerModifierKeys()
 {
@@ -214,7 +214,7 @@ void YModePool::pop( ModeType mode )
     mView->purgeInputBuffer();
     // do not leave two times the same mode
     QList<YMode*> leaved;
-    while ( stack.size() > 0 && stack.front()->type() != mode ) {
+    while ( stack.size() > 0 && stack.front()->modeType() != mode ) {
         if ( ! leaved.contains( stack.front() ) ) {
             dbg() << "leaving mode " << stack.front()->toString() << endl;
             stack.front()->leave( mView );

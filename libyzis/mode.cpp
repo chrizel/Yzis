@@ -81,7 +81,7 @@ YMode::YMode()
     mMapMode = MapNormal;
     mRegistered = false;
 }
-ModeType YMode::type() const
+ModeType YMode::modeType() const
 {
     return mType;
 }

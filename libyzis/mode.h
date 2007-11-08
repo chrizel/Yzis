@@ -88,7 +88,7 @@ public:
 
     virtual void cursorMoved( YView* mView );
 
-    ModeType type() const;
+    ModeType modeType() const;
     const QString& toString() const;
     yzis::MapMode mapMode() const;
     bool registered() const;

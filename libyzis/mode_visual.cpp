@@ -151,15 +151,15 @@ void YModeVisual::initCommandPool()
 }
 void YModeVisual::initVisualCommandPool()
 {
-    if ( type() == ModeVisual )
+    if ( modeType() == ModeVisual )
         commands.append( new YCommand(YKeySequence("v"), (PoolMethod) &YModeVisual::escape) );
     else
         commands.append( new YCommand(YKeySequence("v"), (PoolMethod) &YModeVisual::translateToVisual) );
-    if ( type() == ModeVisualLine )
+    if ( modeType() == ModeVisualLine )
         commands.append( new YCommand(YKeySequence("V"), (PoolMethod) &YModeVisual::escape) );
     else
         commands.append( new YCommand(YKeySequence("V"), (PoolMethod) &YModeVisual::translateToVisualLine) );
-    if ( type() == ModeVisualBlock )
+    if ( modeType() == ModeVisualBlock )
         commands.append( new YCommand(YKeySequence("<C-v>"), (PoolMethod) &YModeVisual::escape) );
     else
         commands.append( new YCommand(YKeySequence("<C-v>"), (PoolMethod) &YModeVisual::translateToVisualBlock) );
@@ -219,7 +219,7 @@ CmdState YModeVisual::deleteWholeLines(const YCommandArgs &args)
     CmdState state;
     YInterval i = interval(args, &state);
     unsigned int lines = i.toPos().y() - i.fromPos().y() + 1;
-    if ( type() == ModeVisualLine )
+    if ( modeType() == ModeVisualLine )
         --lines;
 
     // delete whole lines, even those who are only partially selected

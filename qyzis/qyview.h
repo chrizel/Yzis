@@ -22,7 +22,7 @@
 
 #include <QEvent>
 #include <QScrollBar>
-#include <QLayout.h>
+#include <QLayout>
 
 class QLabel;
 class QSettings;

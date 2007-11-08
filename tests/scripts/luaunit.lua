@@ -32,13 +32,25 @@ function assertError(f, ...)
 	error( "No error generated", 2 )
 end
 
+function wrapValue( v )
+	-- return a string for any value passed to it. The string is wrapped
+	-- inside single quotes. Other values are returned using lua toString()
+	-- conversion.
+	if type(v) == 'string' then return "'"..v.."'" end
+	return tostring(v)
+end
+
+function assertMsg( assertion, msg )
+	-- check assertion and if false, displays msg
+	if (assertion) then return end
+	errorMsg = "\nAssertion failed: "..wrapValue(assertion).."\nAssertion msg: "..msg
+		print (errorMsg)
+		error( errorMsg, 2 )
+end
+
 function assertEquals(expected, actual)
 	-- assert that two values are equal and calls error else
 	if  actual ~= expected  then
-		local function wrapValue( v )
-			if type(v) == 'string' then return "'"..v.."'" end
-			return tostring(v)
-		end
 		if REVERSED_ASSERT_EQUALS then
 			expected, actual = actual, expected
 		end

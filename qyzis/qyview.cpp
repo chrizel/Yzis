@@ -23,7 +23,6 @@
 #include "qyview.h"
 #include "qyedit.h"
 #include "qycursor.h"
-#include "qysession.h"
 #include "qyzis.h"
 #include "qylinenumbers.h"
 #include "qystatusbar.h"

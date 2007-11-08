@@ -36,7 +36,6 @@
 
 /* QYzis */
 #include "qyzis.h"
-#include "qysession.h"
 
 int main(int argc, char **argv)
 {

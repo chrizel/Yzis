@@ -18,7 +18,6 @@
 
 /* QYzis */
 #include "qyzis.h"
-#include "qysession.h"
 #include "qyview.h"
 #include "qyconfiguredialog.h"
 
@@ -36,7 +35,9 @@
 #include <QClipboard>
 #include <QSettings>
 #include <QResizeEvent>
+#ifdef Q_WS_X11
 #include <QX11Info>
+#endif
 
 
 #define dbg()    yzDebug("QYzis")

@@ -20,7 +20,6 @@
 
 /* QYzis */
 #include "qyedit.h"
-#include "qysession.h"
 #include "qyview.h"
 #include "qyzis.h"
 
@@ -285,7 +284,7 @@ void QYEdit::mouseMoveEvent( QMouseEvent *e )
 void QYEdit::focusInEvent ( QFocusEvent * )
 {
     dbg() << "focusInEvent() for " << mView->myBuffer()->fileNameShort() << endl;
-    QYSession::self()->setCurrentView( mView );
+    YSession::self()->setCurrentView( mView );
     updateCursor();
 }
 void QYEdit::focusOutEvent ( QFocusEvent * )

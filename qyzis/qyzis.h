@@ -23,7 +23,7 @@
 #endif
 
 #include <QApplication>
-#include <QMainwindow>
+#include <QMainWindow>
 #include <QMap>
 class QTabWidget;
 class QResizeEvent;

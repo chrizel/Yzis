@@ -96,8 +96,9 @@ public:
 
     virtual void guiHighlightingChanged();
 
-    void setFocusCommandLine();
-    void setFocusMainWindow();
+
+    virtual void guiSetFocusCommandLine();
+    virtual void guiSetFocusMainWindow();
     void restoreFocus();
 
 protected :

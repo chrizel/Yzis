@@ -36,6 +36,7 @@
 #include <QClipboard>
 #include <QSettings>
 #include <QResizeEvent>
+#include <QX11Info>
 
 
 #define dbg()    yzDebug("QYzis")
@@ -217,7 +218,7 @@ void QYzis::guiDeleteView( YView *view )
     Q_ASSERT( v );
     dbg() << "guiDeleteView(): delete v;" << endl;
     delete v;
-    dumpObjectTree();
+    // dumpObjectTree();
     dbg() << "guiDeleteView(): done" << endl;
 }
 

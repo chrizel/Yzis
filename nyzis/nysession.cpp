@@ -186,14 +186,14 @@ void NYSession::guiSetFocusMainWindow()
 {
     dbg() << "guiSetFocusMainWindow()" << endl;
     NYView *yv = static_cast<NYView*>( currentView() );
-    yv->setFocusMainWindow();
+    yv->guiSetFocusMainWindow();
 }
 
 void NYSession::guiSetFocusCommandLine()
 {
     dbg() << "guiSetFocusCommandLine()" << endl;
     NYView *yv = static_cast<NYView*>( currentView() );
-    yv->setFocusCommandLine();
+    yv->guiSetFocusCommandLine();
 }
 
 void NYSession::guiChangeCurrentView ( YView * view )
@@ -275,13 +275,18 @@ void NYSession::guiPopupMessage( const QString &_message )
 
 void NYSession::guiDeleteView( YView *view )
 {
-    dbg() << "guiDeleteView( " << view << ")" << endl;
-    YView *newview = currentView();
-
-    rmBuffer( view->myBuffer() );
-
+    dbg() << "guiDeleteView(" << view->toString() << ")" << endl;
+    NYView *oldview = dynamic_cast<NYView*>(view);
+    Q_ASSERT( oldview );
+    NYView *newview = dynamic_cast<NYView*>(currentView());
+    Q_ASSERT( newview );
     newview->guiSetCommandLineText( "" );
     newview->refreshScreen();
+    
+    dbg() << "guiDeleteView(): delete oldview;" << endl;
+    delete oldview;
+    // dumpObjectTree();
+    dbg() << "guiDeleteView(): done" << endl;
 }
 
 bool NYSession::guiPromptYesNo( const QString& /*title*/, const QString& /*message*/ )

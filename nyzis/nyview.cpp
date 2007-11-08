@@ -244,7 +244,7 @@ void NYView::guiDrawSetLineNumber( int y, int n, int h )
 }
 
 
-void NYView::setFocusMainWindow()
+void NYView::guiSetFocusMainWindow()
 {
     if ( statusbarHasCommand ) {
         werase(statusbar);
@@ -253,7 +253,7 @@ void NYView::setFocusMainWindow()
     m_focus = w_editor;
     drawCursor();
 }
-void NYView::setFocusCommandLine()
+void NYView::guiSetFocusCommandLine()
 {
     m_focus = w_statusbar;
     wmove(statusbar, 0, guiGetCommandLineText().length() + 1 );
@@ -263,10 +263,10 @@ void NYView::restoreFocus()
 {
     switch ( m_focus ) {
     case w_editor :
-        setFocusMainWindow();
+        guiSetFocusMainWindow();
         break;
     case w_statusbar :
-        setFocusCommandLine();
+        guiSetFocusCommandLine();
         break;
     }
 }
@@ -276,7 +276,7 @@ void NYView::guiSetCommandLineText( const QString& text )
     yzDebug() << "NYView::guiSetCommandLineText: " << text << endl;
     commandline = text;
     static QChar modeChar = ':';
-    switch (modePool()->current()->type()) {
+    switch (modePool()->current()->modeType()) {
     case YMode::ModeEx:
         modeChar = ':';
         break;

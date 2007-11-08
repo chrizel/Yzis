@@ -35,16 +35,10 @@ class NoGuiSession : public QObject, public YSession
 public:
     static void createInstance();
 
-
-    virtual YView* createView ( YBuffer* buf);
-
-    virtual YBuffer *createBuffer(const QString& path = QString());
-
     virtual void guiPopupMessage( const QString& message);
 
     virtual void guiQuit(bool /*savePopup=true */);
 
-    virtual void guiDeleteBuffer ( YBuffer * );
     virtual void guiChangeCurrentView( YView* );
     virtual void guiSetFocusCommandLine( );
     virtual void guiSetFocusMainWindow( );
@@ -54,7 +48,6 @@ public:
     virtual void guiSplitHorizontally(YView*);
     virtual YView *guiCreateView(YBuffer*b);
     virtual void guiDeleteView(YView*v);
-    virtual YBuffer* guiCreateBuffer();
     virtual void guiSetClipboardText(const QString&, Clipboard::Mode);
 
 public slots:

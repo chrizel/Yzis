@@ -51,36 +51,6 @@
 #define dbg() yzDebug("QYSession")
 #define err() yzError("QYSession")
 
-void QYSession::createInstance()
-{
-    dbg() << "createInstance()" << endl;
-    // such allocation (i.e. not "new QYSession") will ensure that
-    // "instance" object will be properly and automatically deleted
-    // when program exits
-    static QYSession instance;
-    setInstance(&instance);
-}
-
-QYSession::QYSession() :
-        YSession(),
-        mLastView(0),
-        mViewParent(0)
-{
-    dbg() << "QYSession()" << endl;
-}
-
-QYSession::~QYSession()
-{
-    dbg() << "~QYSession()" << endl;
-}
-
-void QYSession::frontendGuiReady()
-{
-    dbg() << "frontendGuiReady()" << endl;
-    YSession::self()->frontendGuiReady();
-}
-
-
 void QYSession::guiSetClipboardText( const QString& text, Clipboard::Mode mode )
 {
     dbg() << QString("guiSetClipboardText( %1, %2 )").arg(text).arg((int)mode) << endl;
@@ -150,12 +120,6 @@ YView* QYSession::guiCreateView( YBuffer *buffer )
     return view;
 }
 
-YBuffer *QYSession::guiCreateBuffer()
-{
-    dbg() << "guiCreateBuffer()" << endl;
-    return new YBuffer;
-}
-
 void QYSession::guiPopupMessage( const QString& message )
 {
     dbg() << "popupMessage(" << message << ")" << endl;
@@ -182,12 +146,6 @@ void QYSession::guiDeleteView( YView *view )
         mLastView = kview;
         QTimer::singleShot(0, this, SLOT( closeView() ));
     }
-}
-
-void QYSession::guiDeleteBuffer(YBuffer* b)
-{
-    dbg() << "guiDeleteBuffer(" << b->toString() << ")" << endl;
-    delete b;
 }
 
 void QYSession::guiSetFocusMainWindow()

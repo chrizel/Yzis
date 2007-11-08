@@ -127,14 +127,21 @@ void YModeEx::init()
 }
 void YModeEx::enter( YView* view )
 {
-    YSession::self()->guiSetFocusCommandLine();
+    dbg() << "enter( " << view << ")" << endl;
+    view->guiSetFocusCommandLine();
     view->guiSetCommandLineText( "" );
 }
 
 void YModeEx::leave( YView* view )
 {
+    dbg() << "leave( " << view << ")" << endl;
     view->guiSetCommandLineText( "" );
-    YSession::self()->guiSetFocusMainWindow();
+    // we need to fetch the current view because it may no longer
+    // be the view on which the command was done (think :bn )
+    if (view == YSession::self()->currentView()) {
+        view->guiSetFocusMainWindow();
+    }
+    dbg() << "leave() done" << endl;
 }
 
 CmdState YModeEx::execCommand( YView* view, const YKeySequence &inputs, 
@@ -651,11 +658,9 @@ CmdState YModeEx::bufferprevious ( const YExCommandArgs& args )
 
 CmdState YModeEx::bufferdelete ( const YExCommandArgs& args )
 {
-    dbg() << "Delete buffer " << (long int)args.view->myBuffer() << endl;
+    dbg() << "bufferdelete( " << args.toString() << " ) " << endl;
 
-    QList<YView*> l = args.view->myBuffer()->views();
-    foreach ( YView *v, l )
-    YSession::self()->deleteView( v );
+    YSession::self()->removeBuffer( args.view->myBuffer() );
 
     return CmdQuit;
 }
@@ -689,7 +694,7 @@ CmdState YModeEx::edit ( const YExCommandArgs& args )
 
     // Guardian for no arguments
     // in this case Vim reloads the current buffer
-    if ( filename.isEmpty() ) {
+    if ( filename.isEmpty() /* XXX or if the filename is the name of the current buffer */ ) {
         YBuffer *buff = args.view->myBuffer();
         buff->saveYzisInfo( args.view );
         filename = buff->fileName();
@@ -710,9 +715,8 @@ CmdState YModeEx::edit ( const YExCommandArgs& args )
         dbg() << "edit(): using existing view for " << filename << endl;
         YSession::self()->setCurrentView( v );
     } else if ( b ) {
-        dbg() << "edit(): new view for " << filename << endl;
-        v = YSession::self()->createView( b );
-        YSession::self()->setCurrentView( v );
+        err() << HERE() << endl;
+        ftl() << "edit(): the buffer containing " << filename << " was found without a view on it. That should never happen!" << endl;
     } else {
         dbg() << "edit(): New buffer / view: " << filename << endl;
         v = YSession::self()->createBufferAndView( args.arg );

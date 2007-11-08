@@ -93,17 +93,20 @@ YSession * YSession::self()
 
 void YSession::setInstance(YSession* instance)
 {
+    dbg().sprintf("setInstance( %p )", (void *) instance );
     mInstance = instance;
     mInstance->init();
 }
 
 YSession::YSession()
 {
+    dbg() << "YSession()" << endl;
     // do not use debug code here because debug backend is not initialised yet
 }
 
 void YSession::init()
 {
+    dbg() << "init()" << endl;
     initLanguage();
     initModes();
     initResource();
@@ -127,6 +130,7 @@ void YSession::init()
     // create HlManager right from the beginning to ensure that this isn't
     // done in YSession::~YSession
     YzisHlManager::self();
+    dbg() << "init() done" << endl;
 }
 
 void YSession::initLanguage()
@@ -289,6 +293,7 @@ QString YSession::toString() const
 
 YSession::~YSession()
 {
+    dbg() << "~YSession" << endl;
     mYzisinfo->write(); // save yzisinfo
     endModes();
     delete YzisHlManager::self();
@@ -362,7 +367,7 @@ YBuffer *YSession::createBuffer( const QString &filename )
         return buffer;
     }
 
-    buffer = guiCreateBuffer();
+    buffer = new YBuffer();
     buffer->setState( YBuffer::BufferActive );
 
     if ( !filename.isEmpty() ) {
@@ -372,6 +377,7 @@ YBuffer *YSession::createBuffer( const QString &filename )
     }
 
     mBufferList.push_back( buffer );
+    guiCreateBuffer( buffer );
 
     return buffer;
 }
@@ -401,15 +407,26 @@ YView *YSession::createBufferAndView( const QString& path )
     return view;
 }
 
-void YSession::rmBuffer( YBuffer *b )
+void YSession::removeBuffer( YBuffer *b )
 {
-    dbg() << "rmBuffer( " << b->toString() << " )" << endl;
+    dbg() << "removeBuffer( " << b->toString() << " )" << endl;
+    foreach ( YView *v, b->views() ) {
+        deleteView( v );
+    }
+}
+
+void YSession::deleteBuffer( YBuffer *b )
+{
+    dbg() << "deleteBuffer( " << b->toString() << " )" << endl;
     if ( mBufferList.indexOf( b ) >= 0 ) {
         mBufferList.removeAll( b );
-        guiDeleteBuffer( b );
+        guiRemoveBuffer( b );
+        delete b;
     }
-    if ( mBufferList.empty() )
-        exitRequest( );
+
+    if ( mBufferList.empty() ) {
+        exitRequest();
+    }
 }
 
 YBuffer* YSession::findBuffer( const QString& path )
@@ -455,13 +472,13 @@ void YSession::deleteView( YView* view )
 {
     dbg().sprintf("deleteView( %s )", qp(view->toString()) );
     if ( !mViewList.contains(view) ) {
-        err() << "trying to remove an unknown view " << view->getId() << endl;
+        ftl() << "deleteView(): trying to remove an unknown view " << view->getId() << endl;
         return ;
     }
 
     // Guardian, if we're deleting the last view, close the app
     if ( mViewList.size() == 1 ) {
-        dbg() << "last view being deleted, exiting!" << endl;
+        dbg() << "deleteView(): last view being deleted, exiting!" << endl;
         exitRequest( 0 );
         return ;
     }
@@ -479,12 +496,15 @@ void YSession::deleteView( YView* view )
 void YSession::setCurrentView( YView* view )
 {
     dbg() << "setCurrentView( " << view->toString() << " )" << endl;
+    if (view == currentView()) {
+        dbg() << "setCurrentView(): view already set. Returning. " << endl;
+        return;
+    }
     guiChangeCurrentView( view );
+    view->guiSetFocusMainWindow();
 
     mCurView = view;
     mCurBuffer = view->myBuffer();
-
-    guiSetFocusMainWindow();
 }
 
 const YViewList YSession::getAllViews() const
@@ -524,13 +544,20 @@ YView* YSession::lastView()
 
 YView* YSession::prevView()
 {
-    if ( currentView() == 0 ) {
-        dbg() << "WOW, current view is NULL !" << endl;
+    if (mViewList.isEmpty()) {
+        ftl() << "prevView(): WOW, no view in the list!" << endl;
         return NULL;
     }
+
+    if ( currentView() == NULL ) {
+        err() << "prevView(): WOW, current view is NULL !" << endl;
+        // if that's null, the previous view is the last view
+        return mViewList.last();
+    }
+
     int idx = mViewList.indexOf( currentView() );
     if ( idx == -1 ) {
-        dbg() << "WOW, current view is not in mViewList !" << endl;
+        ftl() << "prevView(): WOW, current view is not in mViewList !" << endl;
         return NULL;
     }
 
@@ -541,14 +568,20 @@ YView* YSession::prevView()
 
 YView* YSession::nextView()
 {
-    if ( currentView() == 0 ) {
-        dbg() << "WOW, current view is NULL !" << endl;
+    if (mViewList.isEmpty()) {
+        ftl() << "nextView(): WOW, no view in the list!" << endl;
         return NULL;
+    }
+
+    if ( currentView() == NULL ) {
+        err() << "nextView(): WOW, current view is NULL !" << endl;
+        // if that's null, the previous view is the last view
+        return mViewList.first();
     }
 
     int idx = mViewList.indexOf( currentView() );
     if ( idx == -1 ) {
-        dbg() << "WOW, current view is not in mViewList !" << endl;
+        ftl() << "nextView(): WOW, current view is not in mViewList !" << endl;
         return NULL;
     }
     return mViewList.value( (idx + 1) % mViewList.size() );

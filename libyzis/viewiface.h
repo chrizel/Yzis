@@ -120,6 +120,14 @@ public:
      */
     virtual void guiSetCommandLineText( const QString& ) = 0;
 
+    /** Focus on the command line
+     */
+    virtual void guiSetFocusCommandLine() = 0;
+
+    /** Focus on the editing area
+     */
+    virtual void guiSetFocusMainWindow() = 0;
+
     //-------------------------------------------------------
     //                  GUI Status Bar
     //-------------------------------------------------------

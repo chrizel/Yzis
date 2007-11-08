@@ -81,15 +81,6 @@ public:
       */
     virtual bool guiQuit(int errorCode = 0) = 0;
 
-
-    /** @brief Focus on the command line of the current view
-     */
-    virtual void guiSetFocusCommandLine() = 0;
-
-    /** @brief Focus on the main window of the current view
-     */
-    virtual void guiSetFocusMainWindow() = 0;
-
     /** @brief Send multiple key sequence to yzis.
      * 
            * The key sequence is automatically sent to the right view,
@@ -130,24 +121,22 @@ public:
     /** @brief Ask the frontend to delete the view.
       *
       * The @arg view pointer is still valid but is no longer used
-      * after that call so it is safe for the frontend to delete
-      * the view instance.
+     * after that call. The frontend should call delete on its
+     * view instance.
       */
     virtual void guiDeleteView ( YView *view ) = 0;
 
-    /** @brief Ask the frontend to create a buffer.
+    /** @brief Inform the frontend of the buffer creation.
       *
-      * The buffer pointer will be kept until a @ref guiDeleteBuffer
-      * call is made.
       */
-    virtual YBuffer *guiCreateBuffer() = 0;
+    virtual void guiCreateBuffer( YBuffer * b ) {}
 
     /** @brief Inform the frontend that the given buffer is being removed.
            *
            * The buffer @arg b is still valid when the call is made but is not
-           * used afterward, so it can be safely deleted by the frontend.
+     * used afterward. 
      */
-    virtual void guiDeleteBuffer( YBuffer *b ) = 0;
+    virtual void guiRemoveBuffer( YBuffer *b ) {}
 
 
     //-------------------------------------------------------

@@ -72,10 +72,13 @@ public :
       */
     void updateCursor();
 
+    /** Called when the mode has changed.
+     *
+     */
+    void modeChanged();
     // update text area
     void updateArea( );
 
-    void setPalette( const QPalette& p, qreal opacity );
 
     const YKey& convertKey( int key );
 

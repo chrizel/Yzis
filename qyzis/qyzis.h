@@ -22,14 +22,16 @@
 #include <config.h>
 #endif
 
-#include <qapplication.h>
-#include <qmainwindow.h>
-#include <qmap.h>
-
+#include <QApplication>
+#include <QMainwindow>
+#include <QMap>
 class QTabWidget;
-class QYView;
+class QResizeEvent;
 
 #include "debug.h"
+#include "session.h"
+
+class QYView;
 
 /**
  * This is the application "Shell".  It has a menubar, toolbar, and
@@ -39,12 +41,12 @@ class QYView;
  * @author Yzis Team <yzis-dev@yzis.org>
  */
 
-class QYzis : public QMainWindow
+class QYzis : public QMainWindow, public YSession
 {
     Q_OBJECT
 public:
     /**
-    * Constructs a QYzis widget
+    * Constructs a QYzis widget and initialise the YSession instance.
     * @param w parent widget
      */
     QYzis(QWidget *w = 0);
@@ -54,59 +56,40 @@ public:
      */
     virtual ~QYzis();
 
-    static QYzis *me;
+    // ===============[ GUI interface of Yzis ]===================
+    bool guiQuit(int errorCode);
+    void guiSplitHorizontally(YView *view);
+    void guiPopupMessage( const QString& message );
+    bool guiPromptYesNo(const QString& title, const QString& message);
+    int guiPromptYesNoCancel(const QString& title, const QString& message);
+    virtual void guiSetClipboardText( const QString& text, Clipboard::Mode mode );
+    YView *guiCreateView( YBuffer* buffer );
+    void guiDeleteView( YView *view );
+    void guiChangeCurrentView( YView* );
+
     void viewFilenameChanged( QYView * view, const QString & filename );
 
-    /**
-     * Use this method to load whatever file/URL you have
-    * @param url the url to open
-     */
-    void load(const QString& url);
-
-    virtual void embedPartView(QWidget *view, const QString &title, const QString& toolTip = QString());
-    /*
-    virtual void embedSelectView(QWidget *view, const QString &title, const QString &toolTip);
-    virtual void embedOutputView(QWidget *view, const QString &title, const QString &toolTip);
-    virtual void embedSelectViewRight(QWidget* view, const QString& title, const QString &toolTip);
-
-    virtual void removeView(QWidget *view);
-    virtual void setViewAvailable(QWidget *pView, bool bEnabled);
-    virtual void raiseView(QWidget *view);
-    virtual void lowerView(QWidget *view);
-    */
-    virtual QMainWindow *main();
-
-public slots:
-    void closeTab(QWidget *);
-    void closeTab();
 
 private slots:
-    void fileNew();
-    void fileOpen();
+    void slotFileNew();
+    void slotFileOpen();
+    void slotFileQuit();
+    void slotPreferences();
+    void slotAbout();
+
+    /** To be called by single shot timer, when the gui is ready
+      * and the Qt event loop is running.
+    */
+    void slotFrontendGuiReady();
+
+protected: 
     void openURL( const QString & );
-    void fileQuit();
-    void preferences();
-    void about();
-    //    void gotoNextWindow();
-    //    void gotoPreviousWindow();
-    //    void gotoFirstWindow();
-    //    void gotoLastWindow();
-    //    void raiseEditor();
-
-private:
     void setupActions();
-    virtual bool queryClose();
+    void applyConfig();
+    void closeView();
 
-    int mBuffers;
-    unsigned int mViews;
-
-    // QMap<QWidget*, Q3DockWindow::Position> m_docks;
-    // Q3PopupMenu *m_windowMenu;
-    typedef QPair<int, QString> WinInfo;
-    QList<WinInfo> m_windowList;
-
-public:
     QTabWidget * mTabWidget;
+
 
 };
 

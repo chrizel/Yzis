@@ -126,6 +126,10 @@ YView::~YView()
     mModePool->stop();
     mBuffer->saveYzisInfo(this);
     mBuffer->rmView(this); //make my buffer forget about me
+    if (mBuffer->views().isEmpty()) {
+        // last view deleted, delete the buffer
+        YSession::self()->deleteBuffer( mBuffer );
+    }
 
     delete selectionPool;
     delete mPaintSelection;

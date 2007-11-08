@@ -58,7 +58,7 @@ signals :
     void newStatus();
 
 public:
-    QYView(YBuffer *doc, QWidget *parent, const char *name = 0);
+    QYView(YBuffer *doc, QYzis * qyzis );
     virtual ~QYView();
     void guiSetCommandLineText( const QString& text );
     QString guiGetCommandLineText() const;

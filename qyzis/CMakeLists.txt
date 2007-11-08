@@ -16,7 +16,6 @@ set(qyzis_SRCS
    qyconfiguredialog.cpp
    qycursor.cpp 
    qyedit.cpp 
-   qysession.cpp 
    qystatusbar.cpp
    qylinenumbers.cpp 
    main.cpp 
@@ -29,7 +28,6 @@ set(qyzis_MOC
    qyconfiguredialog.h
    qycursor.h
    qyedit.h
-   qysession.h
    qylinenumbers.h
    qyzis.h
    qyview.h

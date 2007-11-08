@@ -106,13 +106,6 @@ YCursor QYEdit::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) co
     return translateRealToPosition( p, ceil ) + mView->getScreenPosition();
 }
 
-void QYEdit::setPalette( const QPalette& p, qreal opacity )
-{
-    QWidget::setPalette( p );
-    //setWindowOpacity( opacity ); XXX doesn't work...
-    QYzis::me->setWindowOpacity(opacity);
-}
-
 QYCursor::CursorShape QYEdit::cursorShape()
 {
     QYCursor::CursorShape shape;
@@ -161,6 +154,11 @@ void QYEdit::updateCursor()
 {
     mCursor->setCursorShape( cursorShape() );
     mCursor->update();
+}
+
+void QYEdit::modeChanged()
+{
+    updateCursor();
 }
 
 void QYEdit::updateArea( )

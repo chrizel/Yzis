@@ -53,14 +53,14 @@ YModeSearch::~YModeSearch()
 }
 void YModeSearch::enter( YView* view )
 {
-    YSession::self()->guiSetFocusCommandLine();
+    view->guiSetFocusCommandLine();
     view->guiSetCommandLineText( "" );
     mSearchBegin = view->getBufferCursor();
 }
 void YModeSearch::leave( YView* view )
 {
     view->guiSetCommandLineText( "" ); 
-    YSession::self()->guiSetFocusMainWindow();
+    view->guiSetFocusMainWindow();
 }
 
 YCursor YModeSearch::replaySearch( YView* view, bool* found )

@@ -41,36 +41,32 @@
 #define dbg()    yzDebug("QYzis")
 #define err()    yzError("QYzis")
 
-QYzis *QYzis::me = NULL;
+// ===================[ Qt stuff for the main windows ]==================
 
 QYzis::QYzis(QWidget *w)
         : QMainWindow(w),
-        mBuffers( 0 ), mViews( 0 )
+        YSession()
 {
+    dbg() << "QYzis()" << endl;
     resize( 800, 600 );
 
     mTabWidget = new QTabWidget();
     setCentralWidget( mTabWidget );
 
     setupActions();
-    //createShellGUI( true );
 
-    // call it as last thing, must be sure everything is already set up ;)
-    //setAutoSaveSettings ("MainWindow Settings");
-
-    me = this;
+    YSession::setInstance( this );
 }
 
 QYzis::~QYzis()
-{}
-
-void QYzis::load(const QString& url)
 {
-    dbg() << "load " << url << endl;
-    /// TODO : do something here, like creating a buffer and such..
-    // KParts::ReadWritePart *p = getCurrentPart();
-    // if ( p ) p->openURL(url);
-    //XXX else
+    dbg() << "~QYzis()" << endl;
+}
+
+void QYzis::slotFrontendGuiReady()
+{
+    dbg() << "slotFrontendGuiReady()" << endl;
+    YSession::self()->frontendGuiReady();
 }
 
 void QYzis::setupActions()
@@ -82,61 +78,45 @@ void QYzis::setupActions()
     m = mb->addMenu( _( "&File" ) );
 
     a = new QAction( QIcon( ":/images/new.png" ), _( "&New..." ), this );
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileNew() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( slotFileNew() ) );
     m->addAction(a);
 
     a = new QAction( QIcon( ":/images/open.png" ), _( "&Open..." ), this );
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileOpen() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( slotFileOpen() ) );
     m->addAction(a);
 
     a = new QAction( QIcon( ":/images/quit.png" ), _( "&Quit..." ), this );
-    connect( a, SIGNAL( triggered() ), this, SLOT( fileQuit() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( slotFileQuit() ) );
     m->addAction(a);
 
     m = mb->addMenu( _( "&Settings" ) );
     a = new QAction( _( "&Preferences..." ), this );
-    connect( a, SIGNAL( triggered() ), this, SLOT( preferences() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( slotPreferences() ) );
     m->addAction(a);
 
     m = mb->addMenu( _( "&Help" ) );
 
     a = new QAction( _( "&About QYzis" ), this );
-    connect( a, SIGNAL( triggered() ), this, SLOT( about() ) );
+    connect( a, SIGNAL( triggered() ), this, SLOT( slotAbout() ) );
     m->addAction(a);
-
-    /*
-    m_openRecentAction = KStdAction::openRecent(this, SLOT(openURL(const QString&)), actionCollection() );
-    m_openRecentAction->setWhatsThis( i18n("Opens recently opened file.") );
-    m_openRecentAction->loadEntries( kapp->config(), "RecentFiles" );
-    */
 }
 
-void QYzis::fileNew()
+void QYzis::slotFileNew()
 {
-    // this slot is called whenever the File->New menu is selected,
-    // the New shortcut is pressed (usually CTRL+N) or the New toolbar
-    // button is clicked
-
-    // About this function, the style guide (
-    // http://developer.kde.org/documentation/standards/kde/style/basics/index.html )
-    // says that it should open a new window if the document is _not_
-    // in its initial state.  This is what we do here..
-    // if ( ! m_currentPart->url().isEmpty() || m_currentPart->isModified() ) {
-    //   KTempFile *tmp = new KTempFile(locateLocal("tmp", "kyzis"));
-    QYSession::self()->createBufferAndView();
-    // };
+    dbg() << "slotFileNew()" << endl;
+    createBufferAndView();
 }
 
-void QYzis::fileQuit()
+void QYzis::slotFileQuit()
 {
+    dbg() << "slotFileQuit()" << endl;
     close();
 }
 
-void QYzis::fileOpen()
+void QYzis::slotFileOpen()
 {
-    // this slot is called whenever the File->Open menu is selected,
-    // the Open shortcut is pressed (usually CTRL+O) or the Open toolbar
-    // button is clicked
+    dbg() << "slotFileOpen()" << endl;
+
     QString url = QFileDialog::getOpenFileName(this, "Open a file" );
     if (url.isEmpty())
         return ;
@@ -145,71 +125,80 @@ void QYzis::fileOpen()
 
 void QYzis::openURL(const QString &url)
 {
+    dbg() << "openURL( " << url << ")" << endl;
     if (url.isEmpty()) {
-        fileOpen();
         return ;
     }
 
-    /*
-    m_openRecentAction->addURL(url);
-    m_openRecentAction->saveEntries( kapp->config(), "RecentFiles" );
-    */
-
-    QYSession::self()->createBufferAndView( url );
+    createBufferAndView( url );
 }
 
-bool QYzis::queryClose()
+void QYzis::slotPreferences()
 {
-    const YBufferList &buffers = QYSession::self()->buffers();
-
-    for ( YBufferList::const_iterator it = buffers.begin(); it != buffers.end(); ++it ) {
-        YBuffer *buf = *it;
-
-        if ( buf->fileIsModified() ) {
-            int msg = QMessageBox::warning(
-                          this,
-                          "Close Document",
-                          QString("The file '%1' has been modified but not saved, do you want to save it ?" )
-                          .arg( buf->fileName() ),
-                          _("save"),
-                          _("cancel"),
-                          QString(),  // button 2
-                          0,  // default to "ok"
-                          2 ); // escape is "cancel"
-            if ( msg == 2 ) {
-                return false;
-            }
-            if ( msg == 1 ) {
-                buf->save(); //automatically popups saveAs dialog if needed
-            }
-        }
-    }
-
-    return true;
-}
-
-void QYzis::preferences()
-{
+    dbg() << "slotPreferences()" << endl;
     QYConfigureDialog* w = new QYConfigureDialog(this);
     w->exec();
 }
 
-void QYzis::about()
+void QYzis::slotAbout()
 {
+    dbg() << "slotAbout()" << endl;
     QMessageBox::about(this, _("About QYzis"),
                        _("Qt frontend for the yzis text editor\n\n"\
                          "http://www.yzis.org"));
 }
 
-void QYzis::embedPartView(QWidget *view, const QString & title, const QString& tooltip )
+
+// ===================[ Yzis stuff ]==================
+//
+void QYzis::guiSetClipboardText( const QString& text, Clipboard::Mode mode )
 {
-    Q_UNUSED( tooltip );
-    if (!view)
-        return ;
-    mTabWidget->addTab( view, title );
-    // addWidget(view, QString());
-    //setCentralWidget(view);
+    dbg() << QString("guiSetClipboardText( %1, %2 )").arg(text).arg((int)mode) << endl;
+    bool hasDisplay = true;
+#ifdef Q_WS_X11
+    hasDisplay = QX11Info::display();
+#endif
+
+    if (hasDisplay) {
+        QApplication::clipboard()->setText( text, mode == Clipboard::Clipboard ? QClipboard::Clipboard : QClipboard::Selection );
+    }
+}
+
+bool QYzis::guiQuit( int errorCode )
+{
+    dbg() << "guiQuit(" << errorCode << ")" << endl;
+    qApp->quit();
+    return true;
+}
+
+void QYzis::applyConfig()
+{
+    dbg() << "applyConfig()" << endl;
+    QSettings settings;
+    qreal opacity = settings.value("appearance/opacity", 1.).value<qreal>();
+    setWindowOpacity(opacity);
+    // apply new configuration to all views
+    // TODO
+}
+
+void QYzis::guiChangeCurrentView( YView* view )
+{
+    dbg() << "guiChangeCurrentView(" << view->toString() << ")" << endl;
+    QYView *v = static_cast<QYView*>(view);
+    Q_ASSERT( v );
+    mTabWidget->setCurrentWidget( v );
+}
+
+YView* QYzis::guiCreateView( YBuffer *buffer )
+{
+    dbg() << "guiCreateView(" << buffer->toString() << ")" << endl;
+    QYView *view;
+    view = new QYView( buffer, this );
+    dbg().sprintf("guiCreateView(): new view=%p\n", view );
+    mTabWidget->addTab( view, buffer->fileNameShort() );
+    dbg().sprintf("guiCreateView(): tabIdx=%d\n", mTabWidget->indexOf( view ) );
     view->show();
+    return view;
 }
 
 void QYzis::viewFilenameChanged( QYView * view, const QString & filename )
@@ -221,116 +210,41 @@ void QYzis::viewFilenameChanged( QYView * view, const QString & filename )
 }
 
 
-
-#if 0 
-// removed by orzel, those are newui stuff not even used in Kyzis
-void QYzis::removeView(QWidget *view)
+void QYzis::guiDeleteView( YView *view )
 {
-    if (!view)
-        return ;
-
-    //try to remove it from all parts of main window
-    //@fixme This method needs to be divided in two - one for docks and one for part views
-    // TODO : orzel : something is probably really wrong in commenting
-    // that :
-
-
-    /*
-    if (m_docks.contains(view))
-     toolWindow(m_docks[view])->removeWidget(view);
-    else
-    */
-    removeWidget(view);
-}
-
-/*
-void QYzis::setViewAvailable(QWidget *pView, bool bEnabled) {
-    Q3DockWindow *dock;
-    if (m_docks.contains(pView))
-        dock = toolWindow(m_docks[pView]);
-    else
-        return;
- 
-    bEnabled ? dock->showWidget(pView) : dock->hideWidget(pView);
-}
-*/
-
-void QYzis::raiseView(QWidget *view)
-{
-    //adymo: a workaround to make editor wrappers work:
-    //editor view is passed to this function but the ui library knows only
-    //of its parent which is an editor wrapper, simply replacing the view
-    //by its wrapper helps here
-    if (view->parent() && view->parent()->isA("EditorWrapper")) {
-        //         dbg() << "parent is editor wrapper: " <<
-        //             static_cast<EditorWrapper*>(view->parent()) << endl;
-        view = (QWidget*)view->parent();
-    }
-
-    // TODO : orzel: commenting that out is probably really wrong
-    /*
-    if (m_docks.contains(view))
-    {
-        Q3DockWindow *dock = toolWindow(m_docks[view]);
-        dock->raiseWidget(view);
-    }
-    else*/ if  (m_widgets.contains(view) &&  m_widgetTabs.contains(view))
-        m_widgetTabs[view]->showPage(view);
-}
-
-void QYzis::lowerView(QWidget * /*view*/)
-{
-    //nothing to do
-}
-
-void QYzis::gotoNextWindow()
-{
-    if ((m_activeTabWidget->currentPageIndex() + 1) < m_activeTabWidget->count())
-        m_activeTabWidget->setCurrentPage(m_activeTabWidget->currentPageIndex() + 1);
-    else
-        m_activeTabWidget->setCurrentPage(0);
-}
-
-void QYzis::gotoPreviousWindow()
-{
-    if ((m_activeTabWidget->currentPageIndex() - 1) >= 0)
-        m_activeTabWidget->setCurrentPage(m_activeTabWidget->currentPageIndex() - 1);
-    else
-        m_activeTabWidget->setCurrentPage(m_activeTabWidget->count() - 1);
-}
-
-void QYzis::gotoLastWindow()
-{
-    //@todo implement
-}
-#endif
-
-void QYzis::closeTab()
-{
-    // TODO : do something smart
-    //    actionCollection()->action("file_close")->activate();
+    dbg() << "guiDeleteView(" << view->toString() << ")" << endl;
+    QYView * v = dynamic_cast<QYView*>(view);
+    Q_ASSERT( v );
+    dbg() << "guiDeleteView(): delete v;" << endl;
+    delete v;
+    dumpObjectTree();
+    dbg() << "guiDeleteView(): done" << endl;
 }
 
 
-void QYzis::closeTab(QWidget *)
+void QYzis::guiPopupMessage( const QString& message )
 {
-    /*    const Q3PtrList<KParts::Part> *partlist = PartController::getInstance()->parts();
-        Q3PtrListIterator<KParts::Part> it(*partlist);
-        while (KParts::Part* part = it.current())
-        {
-            QWidget *widget = EditorProxy::getInstance()->topWidgetForPart(part);
-            if (widget && widget == w)
-            {
-                PartController::getInstance()->closePart(part);
-                return;
-            }
-            ++it;
-        }*/
+    dbg() << "popupMessage(" << message << ")" << endl;
+    QMessageBox::information( this , _( "Error" ), message);
 }
 
-QMainWindow *QYzis::main()
+bool QYzis::guiPromptYesNo(const QString& title, const QString& message)
 {
-    return this;
+    dbg() << "guiPromptYesNo(" << title << "," << message << ")" << endl;
+    int v = QMessageBox::question( this , title, message, _("Yes"), _("No"));
+    if (v == 0) return true;
+    else return false;
+}
+
+int QYzis::guiPromptYesNoCancel(const QString& title, const QString& message)
+{
+    dbg() << "guiPromptYesNoCancel(" << title << "," << message << ")" << endl;
+    return QMessageBox::question( this, title, message, _("Yes"), _("No"), _("Cancel"));
+}
+
+void QYzis::guiSplitHorizontally(YView *view)
+{
+    dbg() << "guiSplitHorizontally(" << view->toString() << ")" << endl;
 }
 
 YDebugStream& operator<<( YDebugStream& out, const Qt::KeyboardModifiers & v )

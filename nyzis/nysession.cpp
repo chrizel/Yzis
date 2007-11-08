@@ -222,12 +222,6 @@ YView* NYSession::guiCreateView( YBuffer* buffer )
     return v;
 }
 
-YBuffer *NYSession::guiCreateBuffer()
-{
-    dbg() << "doCreateBuffer()" << endl;
-    return new YBuffer;
-}
-
 void NYSession::guiPopupMessage( const QString &_message )
 {
     int nl, nc;
@@ -277,12 +271,6 @@ void NYSession::guiPopupMessage( const QString &_message )
         currentView()->refreshScreen();
     else
         fputs(qp(message), stderr);
-}
-
-void NYSession::guiDeleteBuffer(YBuffer *b)
-{
-    dbg() << "guiDeleteBuffer( " << b << ")" << endl;
-    delete b;
 }
 
 void NYSession::guiDeleteView( YView *view )

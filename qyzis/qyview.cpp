@@ -46,9 +46,10 @@
 #define dbg() yzDebug("QYView")
 #define err() yzError("QYView")
 
-QYView::QYView ( YBuffer *_buffer, QWidget *, const char *)
-        : YView( _buffer, QYSession::self(), 0, 0 )
-
+QYView::QYView ( YBuffer * buffer, QYzis * qyzis)
+        : QWidget( ),
+          YView(  buffer, qyzis, 0, 0 ),
+          mQyzis( qyzis )
 {
     mEdit = new QYEdit( this );
     mStatusBar = new QYStatusBar(this);
@@ -264,6 +265,7 @@ void QYView::applyConfig( const QSettings& settings, bool refresh )
     default_palette.setColor( QPalette::Window, Qt::black );
     default_palette.setColor( QPalette::WindowText, Qt::white );
     QPalette my_palette = settings.value("appearance/palette", default_palette).value<QPalette>();
+    mEdit->setPalette( my_palette );
 
     if ( refresh ) {
         mEdit->updateArea( );
@@ -283,12 +285,7 @@ void QYView::fileSaveAs()
 
 void QYView::guiUpdateFileName()
 {
-    if (QYzis::me) {
-        //QYzis::me->setCaption(getId(), myBuffer()->fileName());
-        QYzis::me->setWindowTitle( myBuffer()->fileName());
-    } else {
-        err() << "guiUpdateFileName() : couldn't find QYzis::me.. is that ok ?";
-    }
+    mQyzis->viewFilenameChanged( this, myBuffer()->fileNameShort() );
 }
 
 void QYView::guiUpdateCursor()

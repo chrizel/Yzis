@@ -51,23 +51,6 @@ void NoGuiSession::frontendGuiReady()
     YSession::self()->frontendGuiReady();
 }
 
-YView* NoGuiSession::createView ( YBuffer* buf)
-{
-    dbg() << "createView( " << buf->toString() << " ) " << endl;
-    NoGuiView * view = new NoGuiView( buf, YSession::self() );
-    return view;
-}
-
-YBuffer * NoGuiSession::createBuffer(const QString& path)
-{
-    dbg() << "NoGuiSession::createBuffer( path=" << path << " ) " << endl;
-    YBuffer * buf = new YBuffer();
-    setCurrentView( createView( buf ) );
-    buf->load( path );
-    currentView()->refreshScreen();
-    return buf;
-}
-
 void NoGuiSession::guiPopupMessage( const QString& message)
 {
     dbg() << "NoGuiSession::guiPopupMessage: '" << message << "' \n";
@@ -82,10 +65,6 @@ void NoGuiSession::guiQuit(bool savePopup)
     QCoreApplication::exit(0);
 }
 
-void NoGuiSession::guiDeleteBuffer ( YBuffer * b )
-{
-    dbg() << "guiDeleteBuffer( " << b->toString() << " )" << endl;
-}
 void NoGuiSession::guiChangeCurrentView( YView* v )
 {
     // notification
@@ -134,13 +113,8 @@ YView * NoGuiSession::guiCreateView(YBuffer*b)
 void NoGuiSession::guiDeleteView(YView*v)
 {
     dbg().sprintf("guiDeleteView( %s )", qp(v->toString() ) );
-    delete v;
-}
-
-YBuffer* NoGuiSession::guiCreateBuffer()
-{
-    dbg().sprintf("doCreateBuffer()");
-    return new YBuffer();
+    NoGuiView * ngv = static_cast<NoGuiView *>( v );
+    delete ngv;
 }
 
 void NoGuiSession::guiSetClipboardText(const QString& text, Clipboard::Mode)

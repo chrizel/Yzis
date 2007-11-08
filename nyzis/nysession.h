@@ -47,7 +47,6 @@ public:
      */
     virtual bool guiQuit ( int errorCode ) ;
     virtual void guiPopupMessage( const QString& message );
-    virtual void guiDeleteBuffer ( YBuffer *b );
     virtual void guiSetFocusCommandLine();
     virtual void guiSetFocusMainWindow();
     virtual bool guiPromptYesNo( const QString& title, const QString& message );
@@ -58,7 +57,6 @@ public:
 protected:
     virtual YView* guiCreateView( YBuffer* buffer );
     virtual void guiDeleteView( YView *view );
-    virtual YBuffer *guiCreateBuffer();
 
 private:
     NYSession();

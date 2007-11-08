@@ -249,14 +249,6 @@ public:
     //-------------------------------------------------------
     // ----------------- Buffer Management
     //-------------------------------------------------------
-    /**
-     * Creates a new buffer.
-           *
-           * If a buffer on the path already exists, return it. Else,
-           * ask the frontend to create a buffer with guiCreateBuffer()
-           * set the buffer as current and return it.
-     */
-    YBuffer *createBuffer(const QString& path = QString());
 
     /**
      * Creates a new buffer and puts it in a new view
@@ -265,12 +257,25 @@ public:
     YView *createBufferAndView( const QString &path = QString() );
 
     /**
-     * Remove a buffer from the list.
+     * Remove a buffer.
            *
-           * Inform the gui frontend to delete the buffer. If this buffer was
-           * the last one, calls exit.
+     * This buffer is no longer used by Yzis. Yzis calls deleteView() on all
+     * the views of the buffer. The last view calls deleteBuffer().
      */
-    void rmBuffer( YBuffer * );
+    void removeBuffer( YBuffer * b );
+
+    /**
+     * Final step of buffer deletion.
+     *
+     * Only the YView destructor should call this function, because buffer
+     * destruction is managed by the views.
+     *
+     * For starting the buffer removal, please call removeBuffer()
+     *
+     * The gui is informed of the buffer deletion
+     * with a call to guiDeleteBuffer().
+     */
+    void deleteBuffer( YBuffer * b );
 
     /**
      * Returns a const reference to the buffer list
@@ -293,26 +298,44 @@ public:
      */
     bool isOneBufferModified() const;
 
+private:
+    /**
+     * Creates a new buffer.
+     *
+     * If a buffer on the path already exists, return it. Else,
+     * ask the frontend to create a buffer with guiCreateBuffer()
+     * set the buffer as current and return it.
+     */
+    YBuffer *createBuffer(const QString& path = QString());
+
+public:
     //-------------------------------------------------------
     // ----------------- View Management
     //-------------------------------------------------------
     /**
-     * Create a new view
+     * Create a new view on a @p buffer.
      */
     YView* createView ( YBuffer* buffer );
 
     /**
-     * Delete the current view
+     * Delete the view @p v.
+     *
+     * The view is removed from the view list and guiDeleteView() is called to
+     * let the GUI delete the view instance. 
+     *
+     * Deleting a view triggers a buffer deletion if the view is the last one
+     * on the buffer.
+     *
+     * When the view is the last view of the application, exitRequest() is
+     * called and methods returns immediately, without calling
+     * guiDeleteView().
      */
     void deleteView ( YView* v );
 
     /**
      * Returns a pointer to the current view
      */
-    YView* currentView()
-    {
-        return mCurView;
-    }
+    YView* currentView() { return mCurView; }
 
     /**
      * Change the current view ( unassigned )

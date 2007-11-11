@@ -46,6 +46,7 @@ FIND_LIBRARY(LIBLUA51_LIBRARIES NAMES lua5.1 lua51 lua
    ${_libLuaLinkDir}
    /usr/lib
    /usr/local/lib
+   /usr/local/lib/lua51
    ${GNUWIN32_DIR}/lib
 )
 

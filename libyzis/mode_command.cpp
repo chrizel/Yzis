@@ -91,8 +91,8 @@ void YModeCommand::initGenericMotionPool()
     motions.append( new YMotion(YKeySequence("<PAGEDOWN>"), &YModeCommand::scrollPageDown, ArgNone) );
     motions.append( new YMotion(YKeySequence("<LEFT>"), &YModeCommand::moveLeft, ArgNone) );
     motions.append( new YMotion(YKeySequence("<RIGHT>"), &YModeCommand::moveRight, ArgNone) );
-    motions.append( new YMotion(YKeySequence("<UP>"), &YModeCommand::moveUp, ArgNone) ); // add MotionTypeLinewise for vim compatibility
-    motions.append( new YMotion(YKeySequence("<DOWN>"), &YModeCommand::moveDown, ArgNone) ); // add MotionTypeLinewise for vim compatibility
+    motions.append( new YMotion(YKeySequence("<UP>"),   &YModeCommand::moveUp,   ArgNone, MotionTypeLinewise) );
+    motions.append( new YMotion(YKeySequence("<DOWN>"), &YModeCommand::moveDown, ArgNone, MotionTypeLinewise) );
     motions.append( new YMotion(YKeySequence("<S-LEFT>"), &YModeCommand::moveWordBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("<C-LEFT>"), &YModeCommand::moveSWordBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("<S-RIGHT>"), &YModeCommand::moveWordForward, ArgNone) );
@@ -114,8 +114,8 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("E"), &YModeCommand::moveSWordEndForward, ArgNone, MotionTypeInclusive) );
     motions.append( new YMotion(YKeySequence("ge"), &YModeCommand::moveWordEndBackward, ArgNone) );
     motions.append( new YMotion(YKeySequence("gE"), &YModeCommand::moveSWordEndBackward, ArgNone) );
-    motions.append( new YMotion(YKeySequence("j"), &YModeCommand::moveDown, ArgNone) ); // add MotionTypeLinewise for vim compatibility
-    motions.append( new YMotion(YKeySequence("k"), &YModeCommand::moveUp, ArgNone) ); // add MotionTypeLinewise for vim compatibility
+    motions.append( new YMotion(YKeySequence("j"), &YModeCommand::moveDown, ArgNone, MotionTypeLinewise) );
+    motions.append( new YMotion(YKeySequence("k"), &YModeCommand::moveUp,   ArgNone, MotionTypeLinewise) );
     motions.append( new YMotion(YKeySequence("h"), &YModeCommand::moveLeft, ArgNone) );
     motions.append( new YMotion(YKeySequence("l"), &YModeCommand::moveRight, ArgNone) );
     motions.append( new YMotion(YKeySequence("<BS>"), &YModeCommand::moveLeftWrap, ArgNone) );
@@ -275,7 +275,8 @@ CmdState YModeCommand::execCommand(YView *view, const YKeySequence &inputs,
 
     // retrieve all the matching commands: (MotionCmd | Cmd)
     YKeySequence::const_iterator cmdPos = parsePos, motionResult=inputs.begin();
-    YCommand *c = parseMotion( inputs, parsePos, count );
+    MotionType motionType;
+    YCommand *c = parseMotion( inputs, parsePos, count, motionType );
     // If it's not a motion, it's probably a regular command
     if ( c == NULL ) {
         motionResult = parsePos; // Save how successful motion was, in case it's a better match than command
@@ -353,12 +354,24 @@ YCommand *YModeCommand::parseCommand( const YKeySequence &inputs, YKeySequence::
 }
 
 // MotionCmd taken as (count)? MOTION_CMD
-YMotion *YModeCommand::parseMotion( const YKeySequence &inputs, YKeySequence::const_iterator &initParsePos, int &count )
+YMotion *YModeCommand::parseMotion( const YKeySequence &inputs, YKeySequence::const_iterator &initParsePos, int &count, MotionType &motionType)
 {
     QList<YMotion *> mots;
+    bool motionTypeSet = false;
     int tmpCount = inputs.parseUInt(initParsePos);
     if ( tmpCount != -1 )
         count *= tmpCount;
+
+    motionType = MotionTypeExclusive;
+    for(; initParsePos != inputs.end(); ++initParsePos) {
+        if(*initParsePos == 'v')
+            motionType = (motionType == MotionTypeExclusive) ? MotionTypeInclusive : MotionTypeExclusive;
+        else if(*initParsePos == 'V')
+            motionType = MotionTypeLinewise;
+        else
+            break;
+        motionTypeSet = true;
+    }
 
     YKeySequence::const_iterator bestMatch = initParsePos, parsePos;    
     for ( QList<YMotion*>::const_iterator ms = motions.begin(); ms != motions.end(); ++ms ) {
@@ -379,8 +392,15 @@ YMotion *YModeCommand::parseMotion( const YKeySequence &inputs, YKeySequence::co
     
     if ( mots.isEmpty() )
         return NULL;
+
+    if(!motionTypeSet)
+        motionType = mots.first()->motionType();
+    else if(motionType == MotionTypeInclusive || motionType == MotionTypeExclusive) // toggle inclusive/exclusive
+        motionType = (mots.first()->motionType() == MotionTypeExclusive) ? MotionTypeInclusive : MotionTypeExclusive;
     else
-        return mots.first();
+        motionType = MotionTypeLinewise;
+
+    return mots.first();
 }
 
 // MOTIONS
@@ -421,15 +441,7 @@ YCursor YModeCommand::moveDown(const YMotionArgs &args, CmdState *state)
 {
     bool stopped;
     YViewCursor viewCursor = args.view->viewCursor();
-    if ( args.standalone )
-        stopped = args.view->moveDown(&viewCursor, args.count, true );
-    else { //LINEWISE
-        //update starting point
-        args.view->gotoxy( 0, viewCursor.bufferY(), false );
-        // end point
-        stopped = args.view->moveDown( &viewCursor, args.count + 1, false );
-        args.view->moveToStartOfLine( &viewCursor, true );
-    }
+    stopped = args.view->moveDown(&viewCursor, args.count, args.standalone );
     *state = stopped ? CmdStopped : CmdOk;
     return viewCursor.buffer();
 }
@@ -438,18 +450,7 @@ YCursor YModeCommand::moveUp(const YMotionArgs &args, CmdState *state)
 {
     bool stopped;
     YViewCursor viewCursor = args.view->viewCursor();
-    if ( args.standalone )
-        stopped = args.view->moveUp(&viewCursor, args.count, true );
-    else { //LINEWISE
-        //update starting point
-        if ( viewCursor.bufferY() == args.view->myBuffer()->lineCount() - 1 )
-            args.view->moveToEndOfLine( &viewCursor, false );
-        else
-            args.view->gotoxy( 0, viewCursor.bufferY() + 1, false );
-        // end point
-        stopped = args.view->moveUp( &viewCursor, args.count, false );
-        args.view->gotoxy ( &viewCursor, 0, viewCursor.bufferY(), true );
-    }
+    stopped = args.view->moveUp(&viewCursor, args.count, args.standalone  );
     *state = stopped ? CmdStopped : CmdOk;
     return viewCursor.buffer();
 }
@@ -1306,10 +1307,12 @@ YInterval YModeCommand::interval(const YCommandArgs& args, CmdState *state)
 
     YKeySequence::const_iterator motPos = *args.parsePos;
     int count = args.count;
+    MotionType motionType;
     YCursor from( args.view->getBufferCursor() );
     bool entireLines = ( *args.parsePos != args.inputs->end() 
                          && *(*args.parsePos) == YKey(YKey::Key_Quote) );
-    YMotion *m = parseMotion( *args.inputs, *args.parsePos, count );
+
+    YMotion *m = parseMotion( *args.inputs, *args.parsePos, count, motionType );
 
     // Now we know whether we've got a valid motion
     // Decide whether a mismatch is due to incompleteness or error
@@ -1326,26 +1329,24 @@ YInterval YModeCommand::interval(const YCommandArgs& args, CmdState *state)
     YCursor to = (this->*(m->motionMethod()))(YMotionArgs(args.view, count, args.inputs, 
                                                           args.parsePos, args.cmd->keySeq().toString(),
                                                           args.usercount ), state);
-    bool bound_open;
-    switch(m->motionType()) {
-        case MotionTypeInclusive: bound_open = false; break;
-        case MotionTypeExclusive: bound_open = true;  break;
-        case MotionTypeLinewise:
-                                  bound_open = true;
-                                  from.setX( 0 );
-                                  to.setX( 0 );
-                                  break;
-    }
 
+    bool bound_open = true;
+    switch(motionType) {
+        case MotionTypeInclusive: bound_open  = false; break;
+        case MotionTypeExclusive: bound_open  = true;  break;
+        case MotionTypeLinewise:  entireLines = true;  break;
+    }
     if ( from > to ) {
         YCursor tmp( from );
         from = to;
         to = tmp;
     }
+
     if ( entireLines ) {
         from.setX( 0 );
         to.setX( 0 );
         to.setY( to.y() + 1 );
+        bound_open = true;
     }
     YInterval ret( from, YBound(to, bound_open) );
     return ret;

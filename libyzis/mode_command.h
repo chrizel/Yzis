@@ -196,7 +196,7 @@ public:
      * and executes the corresponding motion function. */
     
     YCommand *parseCommand( const YKeySequence &inputs, YKeySequence::const_iterator &parsePos );
-    YMotion *parseMotion( const YKeySequence &inputs, YKeySequence::const_iterator &parsePos, int &count );
+    YMotion *parseMotion( const YKeySequence &inputs, YKeySequence::const_iterator &parsePos, int &count, MotionType &motionType );
 
     YCursor execMotion(YView *view, const QString &inputs, int count, bool usercount, bool *stopped );
 

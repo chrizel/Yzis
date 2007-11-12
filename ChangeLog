@@ -1,3 +1,13 @@
+2007-11-13 krzysiek
+  * make 'dj' and similar commands vim compatible
+  * allow commands be explicitly chosen to be inclusive/exclusive/linewise (v/V)
+  * parser tests
+
+2007-11-05 krzysiek
+  * add 'e', 'E', 'ge' and 'gE' motions
+  * make commands either inclusive/exclusive/linewise
+  * tests
+
 2007-05-29 bluebird
   * put #ifdef correctly
 

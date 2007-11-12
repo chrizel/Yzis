@@ -21,9 +21,16 @@ require('luaunit')
 require('utils')
 
 TestParser = {} -- class
+    function TestParser:setUp() 
+        clearBuffer()
+    end
+
+    function TestParser:tearDown() 
+        clearBuffer()
+    end
+
     function TestParser:test_command_parser()
         -- Basic command
-        clearBuffer()
         sendkeys("iWibble<ESC>0")
         assertEquals( bufferContent(), "Wibble")
         assertPos(1, 1)
@@ -96,6 +103,22 @@ TestParser = {} -- class
         assertEquals( bufferContent(), "12111")
         sendkeys("\"b3p")
         assertEquals( bufferContent(), "12111222")
+    end
+
+    function TestParser:test_command_modes()
+        sendkeys("i1 2 3 4 5 6 7 8 9<ESC>0")
+        sendkeys("<ESC>0vt2")
+        assertEquals(bufferContent(), "1 2 3 4 5 6 7 8 9")
+        assertEquals(mode(), MODE_VISUAL)
+        sendkeys("<ESC>0dvt2")
+        assertEquals(mode(), MODE_NORMAL)
+        assertEquals(bufferContent(), " 2 3 4 5 6 7 8 9")
+        sendkeys("<ESC>0Vt2")
+        assertEquals(mode(), MODE_VISUAL_LINE)
+        assertEquals(bufferContent(), " 2 3 4 5 6 7 8 9")
+        sendkeys("<ESC>0dVt2")
+        assertEquals(bufferContent(), "")
+        assertEquals(mode(), MODE_NORMAL)
     end
 
 if not _REQUIREDNAME then

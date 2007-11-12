@@ -54,4 +54,6 @@ end
 MODE_NORMAL = "[ Awaiting Command ]"
 MODE_INSERT = "[ Insert ]"
 MODE_COMMAND = "[ Ex ]"
+MODE_VISUAL = "[ Visual ]"
+MODE_VISUAL_LINE = "[ Visual Line ]"
 

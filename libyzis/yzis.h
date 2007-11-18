@@ -29,6 +29,8 @@
 
 /* System */
 
+#include <libintl.h>
+
 /* Qt */
 
 /* yzis */

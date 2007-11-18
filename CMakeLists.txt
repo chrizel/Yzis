@@ -87,6 +87,17 @@ else (ENABLE_QYZIS)
     set(QT_MIN_VERSION "4.1.0")
 endif (ENABLE_QYZIS)
 find_package(Qt4 REQUIRED)
+if (NOT QT_QTTEST_FOUND)
+	MESSAGE(FATAL_ERROR "Could not find qt-test library")
+endif(NOT QT_QTTEST_FOUND)
+if (NOT QT_QTGUI_FOUND)
+	MESSAGE(FATAL_ERROR "Could not find qt-gui library")
+endif(NOT QT_QTGUI_FOUND)
+if (NOT QT_QTXML_FOUND)
+	MESSAGE(FATAL_ERROR "Could not find qt-xml library")
+endif (NOT QT_QTXML_FOUND)
+
+
 include( FixQt4DebugBuild )
 
 # for syntax files

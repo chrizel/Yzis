@@ -55,6 +55,7 @@ public:
     CmdState completionPrevious( const YCommandArgs &args );
     virtual CmdState backspace( const YCommandArgs &args );
     CmdState deleteWordBefore( const YCommandArgs &args );
+    CmdState deleteLineBefore( const YCommandArgs &args );
     CmdState commandEnter( const YCommandArgs &args );
 
     virtual CmdState addText( YView* mView, const QString& text );

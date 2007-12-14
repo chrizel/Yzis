@@ -76,6 +76,7 @@ void YModeInsert::initCommandPool()
     commands.append( new YCommand(YKeySequence("<C-n>"), (PoolMethod)&YModeInsert::completionNext) );
     commands.append( new YCommand(YKeySequence("<C-p>"), (PoolMethod)&YModeInsert::completionPrevious) );
     commands.append( new YCommand(YKeySequence("<C-w>"), (PoolMethod)&YModeInsert::deleteWordBefore) );
+    commands.append( new YCommand(YKeySequence("<C-u>"), (PoolMethod)&YModeInsert::deleteLineBefore) );
     commands.append( new YCommand(YKeySequence("<BS>"), (PoolMethod)&YModeInsert::backspace) );
     commands.append( new YCommand(YKeySequence("<C-h>"), (PoolMethod)&YModeInsert::backspace) );
     commands.append( new YCommand(YKeySequence("<ENTER>"), (PoolMethod)&YModeInsert::commandEnter) );
@@ -94,7 +95,7 @@ void YModeInsert::initModifierKeys()
 {
     mModifierKeys << "<CTRL>c" << "<CTRL>e" << "<CTRL>n" << "<CTRL>p"
     << "<CTRL>x" << "<CTRL>y" << "<ALT>:" << "<ALT>v"
-    << "<CTRL>[" << "<CTRL>h" << "<CTRL>w" << "<CTRL><HOME>"
+    << "<CTRL>[" << "<CTRL>h" << "<CTRL>w" << "<CTRL>u" << "<CTRL><HOME>"
     << "<CTRL><END>";
 }
 /*
@@ -216,6 +217,18 @@ CmdState YModeInsert::deleteWordBefore( const YCommandArgs &args )
 
         //do it
         mBuffer->action()->deleteChar( args.view, x, cur.y(), cur.x() - x );
+    }
+    return CmdOk;
+}
+
+CmdState YModeInsert::deleteLineBefore( const YCommandArgs &args )
+{
+    YCursor cur = args.view->getBufferCursor();
+    YBuffer* mBuffer = args.view->myBuffer();
+    if ( cur.x() == 0 && cur.y() > 0 && args.view->getLocalStringOption( "backspace" ).contains( "eol" ) ) {
+        mBuffer->action()->mergeNextLine( args.view, cur.y() - 1 );
+    } else {
+        mBuffer->action()->deleteChar( args.view, 0, cur.y(), cur.x() );
     }
     return CmdOk;
 }

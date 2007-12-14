@@ -147,7 +147,8 @@ void YModeEx::leave( YView* view )
 CmdState YModeEx::execCommand( YView* view, const YKeySequence &inputs, 
                                YKeySequence::const_iterator &parsePos )
 {
-    // dbg() << "YModeEx::execCommand " << key << endl;
+    dbg() << "YModeEx::execCommand(" << view << ",..., " << parsePos << ")"
+        << endl;
     YKey key = *parsePos;
     CmdState ret = CmdOk;
     if ( key != YKey::Key_Tab ) {
@@ -182,6 +183,20 @@ CmdState YModeEx::execCommand( YView* view, const YKeySequence &inputs,
         }
         else
             view->guiSetCommandLineText(back.remove(back.length() - 1, 1));
+    } else if ( key == YKey(YKey::Key_w, YKey::Mod_Ctrl) ) {
+        QString cmd = view->guiGetCommandLineText();
+        dbg() << "YModeEx::execCommand(): " << "deleting word from: '"
+            << cmd << "'" << endl;
+        QRegExp rx("\\b\\S+\\s*$");
+        int pos = rx.lastIndexIn(cmd);
+        if (-1 != pos) {
+            dbg() << "YModeEx::execCommand(): " << "match at: " << pos << endl;
+            view->guiSetCommandLineText(cmd.left(pos));
+        } else {
+            dbg() << "YModeEx::execCommand(): " << "didn't match" << endl;
+        }
+    } else if ( key == YKey(YKey::Key_u, YKey::Mod_Ctrl) ) {
+        view->guiSetCommandLineText(QString::null);
     } else {
         view->guiSetCommandLineText(view->guiGetCommandLineText() + key.toString());
     }

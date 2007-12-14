@@ -23,6 +23,8 @@ ELSE (DEFINED CACHED_GETTEXT)
   include(CheckLibraryExists)
   include(CheckFunctionExists)
   
+  FIND_PATH(LIBINTL_INCLUDE_DIR libintl.h)
+  set(CMAKE_REQUIRED_INCLUDES "${LIBINTL_INCLUDE_DIR}")
   check_include_files(libintl.h HAVE_LIBINTL_H)
   
   set(GETTEXT_INCLUDE_DIR)

@@ -48,6 +48,8 @@ public:
     virtual void guiScroll(int, int);
     virtual QString guiGetCommandLineText() const;
     virtual void guiSetCommandLineText(const QString&);
+	virtual void guiSetFocusCommandLine();
+	virtual void guiSetFocusMainWindow();
     virtual bool guiPopupFileSaveAs();
     virtual YStatusBarIface* guiStatusBar();
     virtual void guiUpdateFileName();
@@ -75,9 +77,6 @@ public:
     void registerModifierKeys( const QString& keys );
     void unregisterModifierKeys( const QString& keys );
     void guiPaintEvent( const YSelection& drawMap );
-
-    void setFocusMainWindow();
-    void setFocusCommandLine();
 
 public slots:
     void sendMultipleKeys( const QString& );

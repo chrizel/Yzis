@@ -129,14 +129,14 @@ public:
     /** @brief Inform the frontend of the buffer creation.
       *
       */
-    virtual void guiCreateBuffer( YBuffer * b ) {}
+    virtual void guiCreateBuffer( YBuffer * b ) { Q_UNUSED(b); }
 
     /** @brief Inform the frontend that the given buffer is being removed.
            *
            * The buffer @arg b is still valid when the call is made but is not
      * used afterward. 
      */
-    virtual void guiRemoveBuffer( YBuffer *b ) {}
+    virtual void guiRemoveBuffer( YBuffer *b ) { Q_UNUSED(b); }
 
 
     //-------------------------------------------------------

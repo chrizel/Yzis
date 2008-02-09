@@ -81,12 +81,12 @@ KYView::~KYView()
     delete actionCollection;
 }
 
-void KYView::setFocusMainWindow()
+void KYView::guiSetFocusMainWindow()
 {
     m_editor->setFocus();
 }
 
-void KYView::setFocusCommandLine()
+void KYView::guiSetFocusCommandLine()
 {
     m_command->setFocus();
 }

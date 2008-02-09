@@ -298,7 +298,7 @@ public:
      */
     bool isOneBufferModified() const;
 
-private:
+/*private: XXX why is this thing private?? */
     /**
      * Creates a new buffer.
      *

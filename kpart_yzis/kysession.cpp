@@ -102,13 +102,13 @@ int KYSession::guiPromptYesNoCancel(const QString& title, const QString& message
 void KYSession::guiSetFocusCommandLine()
 {
     KYView *v = static_cast<KYView*>( currentView() );
-    v->setFocusCommandLine();
+    v->guiSetFocusCommandLine();
 }
 
 void KYSession::guiSetFocusMainWindow()
 {
     KYView *v = static_cast<KYView*>( currentView() );
-    v->setFocusMainWindow();
+    v->guiSetFocusMainWindow();
 }
 
 void KYSession::guiSetClipboardText(const QString&, Clipboard::Mode)

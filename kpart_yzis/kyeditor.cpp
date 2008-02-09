@@ -83,7 +83,7 @@ KYCursor::shape KYEditor::cursorShape()
     KYCursor::shape s;
 
     QString shape;
-    YMode::ModeType m = mParent->modePool()->current()->type();
+    YMode::ModeType m = mParent->modePool()->current()->modeType();
     switch ( m ) {
     case YMode::ModeInsert :
         shape = mParent->getLocalStringOption("cursorinsert");

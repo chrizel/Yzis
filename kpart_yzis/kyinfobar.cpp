@@ -59,7 +59,7 @@ void KYInfoBar::setMode( const QString& mode )
 
 void KYInfoBar::setFileName( const QString& fileName )
 {
-    deepdbg() << "setFileName( " << filename << " )" << endl;
+    deepdbg() << "setFileName( " << fileName << " )" << endl;
     m_fileName->setText( fileName );
 }
 

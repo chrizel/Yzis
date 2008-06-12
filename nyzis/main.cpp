@@ -35,7 +35,7 @@ Copyright (c) 2004-2005 Mickael Marchand <marchand@kde.org>
 #include <QTextCodec>
 #include <QDateTime>
 #include <QSocketNotifier>
-#include <qtimer.h>
+#include <QTimer>
 
 /* libyzis */
 #include "libyzis/translator.h"

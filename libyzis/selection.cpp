@@ -272,16 +272,14 @@ void YSelection::insertInterval( unsigned int pos, const YInterval& interval )
 void YSelection::removeInterval( unsigned int pos, unsigned int len )
 {
     if ( len == 0 ) return ;
-    unsigned int i;
     unsigned int size = mMap.size();
-    if ( size >= len )
-        for ( i = pos; i < size - len; ++i )
-            mMap[ i ] = mMap[ i + len ];
-    else // should not happen
-        dbg() << "WARNING: YSelection::removeInterval remove more than size (" << len << " > " << size << ")" << endl;
-    for ( ; i < size; i++ ) {
-        mMap.remove( i );
-    }
+	YASSERT( size >= len );
+	unsigned int i = pos;
+	for ( ; i < size - len; ++i )
+		mMap[ i ] = mMap[ i + len ];
+	for ( ; i < size; i++ ) {
+		mMap.remove( i );
+	}
 }
 
 int YSelection::locatePosition( const YBound& pos, bool* isSelected ) const

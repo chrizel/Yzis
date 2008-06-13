@@ -33,6 +33,7 @@
 #include <ctype.h>
 #include <stdarg.h>
 #include <strings.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <sys/stat.h>
 #include <sys/types.h>

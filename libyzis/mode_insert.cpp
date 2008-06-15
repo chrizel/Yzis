@@ -116,7 +116,9 @@ CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& inputs,
         // 1 is for count, false for hadCount
 //        dbg() << ((void * )(&YModeCommand::deleteChar));
 //        dbg() << HERE() << " got a special command : "<< c->describe() << " with address " << (long int)(c->poolMethod())  << ", executing it" << endl;
+#ifdef DEBUG
         dbg() << HERE() << " got a special command : "<< c->describe() << ", executing it" << endl;
+#endif
 
         return (this->*(c->poolMethod()))  (YCommandArgs(c, mView, regs, 1, false, &inputs, &parsePos) );
     }

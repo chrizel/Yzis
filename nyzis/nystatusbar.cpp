@@ -8,7 +8,7 @@
 
 NYStatusBar::NYStatusBar(NYView *view)
 {
-    dbg().sprintf("NStatusBar( nyview=%s )\n", qp(view->toString()));
+    dbg().SPrintf("NStatusBar( nyview=%s )\n", qp(view->toString()));
     m_view = view;
     m_bar = NULL;
 

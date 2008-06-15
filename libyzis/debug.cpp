@@ -151,7 +151,7 @@ void YDebugBackend::setDebugOutput( FILE * file )
 void YDebugBackend::setDebugOutput( const QString& fileName )
 {
     if ( _output != NULL) {
-        dbg().sprintf( "setDebugOutput( %s )", qp( fileName ) );
+        dbg().SPrintf( "setDebugOutput( %s )", qp( fileName ) );
 
         if (_output != stdout && _output != stderr ) {
             fclose( _output );
@@ -178,7 +178,7 @@ void YDebugBackend::setDebugOutput( const QString& fileName )
 
     FILE * f = fopen( fileName.toLocal8Bit(), "w" );
     setDebugOutput( f );
-    dbg().sprintf( "_output set to file %s: FILE * = %p\n", qp(fileName), f );
+    dbg().SPrintf( "_output set to file %s: FILE * = %p\n", qp(fileName), f );
 
 #ifndef YZIS_WIN32_GCC
     struct stat buf;
@@ -217,7 +217,7 @@ void YDebugBackend::flush( int level, const QString& area, const char * data )
 
 void YDebugBackend::parseRcfile(const char * filename)
 {
-    dbg().sprintf("parseRcfile(%s)\n", filename );
+    dbg().SPrintf("parseRcfile(%s)\n", filename );
     QFile f( filename );
     if (f.open( QIODevice::ReadOnly ) == false) {
         err() << "Could not open rcfile '" << filename << "'" << endl;
@@ -256,7 +256,7 @@ void YDebugBackend::parseRcfile(const char * filename)
         }
     }
     f.close();
-    dbg().sprintf("Parsing done for %s\n", filename );
+    dbg().SPrintf("Parsing done for %s\n", filename );
     dbg() << toString();
 }
 
@@ -284,7 +284,7 @@ void YDebugBackend::parseArgv( QStringList & argv )
             dbg() << "sLevel='" << sLevel << "'" << endl;
             argv.removeAt( i );
             if ( _levelByName.contains(sLevel) == false) {
-                err().sprintf("global debug level unrecognised: %s", qp(sLevel));
+                err().SPrintf("global debug level unrecognised: %s", qp(sLevel));
             } else {
                 setDebugLevel( _levelByName[sLevel] );
             }
@@ -295,7 +295,7 @@ void YDebugBackend::parseArgv( QStringList & argv )
             dbg() << "sArea='" << sArea << "'" << endl;
             argv.removeAt( i );
             if ( _levelByName.contains(sLevel) == false) {
-                yzError("YDebugBackend").sprintf("debug level unrecognised for area %s: %s", qp(sArea), qp(sLevel));
+                yzError("YDebugBackend").SPrintf("debug level unrecognised for area %s: %s", qp(sArea), qp(sLevel));
             } else {
                 setAreaLevel( sArea, _levelByName[sLevel] );
             }
@@ -420,7 +420,7 @@ YDebugStream::~YDebugStream()
         *this << "\n"; //flush
 }
 
-void YDebugStream::sprintf( const char * fmt, ... )
+void YDebugStream::SPrintf( const char * fmt, ... )
 {
     static char buf[1024];
 

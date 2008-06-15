@@ -173,7 +173,7 @@ void QYEdit::updateArea( )
     int lines = height() / fontMetrics().lineSpacing();
     int columns = width() / fontMetrics().maxWidth();
 
-    dbg().sprintf("updateArea(): lines,col = %d,%d", lines, columns );
+    dbg().SPrintf("updateArea(): lines,col = %d,%d", lines, columns );
 
     mUseArea.setBottomRight( QPoint( columns * fontMetrics().maxWidth(), lines * fontMetrics().lineSpacing()) );
 
@@ -192,7 +192,7 @@ bool QYEdit::event(QEvent *e)
             keyPressEvent(ke);
             return true;
         }
-        dbg().sprintf("event: key event transferred to QWidget" );
+        dbg().SPrintf("event: key event transferred to QWidget" );
     }
     return QWidget::event(e);
 }
@@ -227,7 +227,7 @@ void QYEdit::keyPressEvent ( QKeyEvent * e )
     } else {
         key.setKey ( keys[ e->key() ] );
     }
-    dbg().sprintf("Event transferred to YSession");
+    dbg().SPrintf("Event transferred to YSession");
     YSession::self()->sendKey( static_cast<YView*>( mView ), key);
     e->accept();
 }
@@ -471,7 +471,7 @@ QString QYEdit::keysToShortcut( const QString& keys )
     ret = ret.replace( "<CTRL>", "CTRL+" );
     ret = ret.replace( "<SHIFT>", "SHIFT+" );
     ret = ret.replace( "<ALT>", "ALT+" );
-    dbg().sprintf("keysToShortcut( %s ) --> %s", qp(keys), qp(ret) );
+    dbg().SPrintf("keysToShortcut( %s ) --> %s", qp(keys), qp(ret) );
     return ret;
 }
 
@@ -504,7 +504,7 @@ void QYEdit::unregisterModifierKeys( const QString& keys )
 
 void QYEdit::sendMappedKey( const QString & keys )
 {
-    dbg().sprintf("sendMappedKey( keys=%s )", qp(keys) );
+    dbg().SPrintf("sendMappedKey( keys=%s )", qp(keys) );
     YKeySequence input(keys);
     YKeySequence::const_iterator parsePos = input.begin();
     

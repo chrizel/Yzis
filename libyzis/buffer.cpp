@@ -742,7 +742,7 @@ YCursor YBuffer::getStartPosition( const QString& filename, bool parseFilename )
 
 void YBuffer::addView (YView *v)
 {
-    dbg().sprintf("addView( %s )", qp(v->toString() ) );
+    dbg().SPrintf("addView( %s )", qp(v->toString() ) );
     if ( d->views.contains( v ) ) {
         err() << "view " << v->getId() << " added for the second time, discarding" << endl;
         return ; // don't append twice
@@ -767,7 +767,7 @@ void YBuffer::updateAllViews()
 YView* YBuffer::firstView() const
 {
     if ( d->views.isEmpty() ) {
-        err().sprintf("firstView() - no view to return, returning NULL" );
+        err().SPrintf("firstView() - no view to return, returning NULL" );
         return NULL; //crash me :)
     }
 
@@ -776,7 +776,7 @@ YView* YBuffer::firstView() const
 
 void YBuffer::rmView(YView *v)
 {
-    dbg().sprintf("rmView( %s )", qp(v->toString() ) );
+    dbg().SPrintf("rmView( %s )", qp(v->toString() ) );
     d->views.removeAll(v);
     // dbg() << "YBuffer removeView found " << f << " views" << endl;
     if ( d->views.isEmpty() ) {
@@ -811,7 +811,7 @@ void YBuffer::setChanged(bool modif)
 
 void YBuffer::setHighLight( int mode, bool warnGUI )
 {
-    dbg().sprintf("setHighLight( %d, %d )", mode, warnGUI );
+    dbg().SPrintf("setHighLight( %d, %d )", mode, warnGUI );
     YzisHighlighting *h = YzisHlManager::self()->getHl( mode );
 
     if ( h != d->highlight ) { //HL is changing
@@ -842,7 +842,7 @@ void YBuffer::setHighLight( int mode, bool warnGUI )
 
 void YBuffer::setHighLight( const QString& name )
 {
-    dbg().sprintf("setHighLight( %s )", qp(name) );
+    dbg().SPrintf("setHighLight( %s )", qp(name) );
     int hlMode = YzisHlManager::self()->nameFind( name );
     if ( hlMode > 0 )
         setHighLight( hlMode, true );

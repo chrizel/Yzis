@@ -93,7 +93,7 @@ YSession * YSession::self()
 
 void YSession::setInstance(YSession* instance)
 {
-    dbg().sprintf("setInstance( %p )", (void *) instance );
+    dbg().SPrintf("setInstance( %p )", (void *) instance );
     mInstance = instance;
     mInstance->init();
 }
@@ -205,7 +205,7 @@ void YSession::parseCommandLine( int argc, char * argv[] )
                 if (s.length() > 2) mInitkeys = args[i].mid(2);
                 else if (i < args.count() - 1) mInitkeys = args[++i];
 
-                dbg().sprintf("Init keys = '%s'", qp(mInitkeys) );
+                dbg().SPrintf("Init keys = '%s'", qp(mInitkeys) );
             }
 
             // Load a LUA script from a file
@@ -254,11 +254,11 @@ void YSession::runLuaScript()
     dbg() << "runLuaScript(): Running lua script '" << mLuaScript << "'" << endl;
 
     QString retValue = YLuaEngine::self()->source(mLuaScript);
-    dbg().sprintf( "runLuaScript(): Return Value='%s'", qp(retValue) );
+    dbg().SPrintf( "runLuaScript(): Return Value='%s'", qp(retValue) );
     bool ok;
     int retInt = retValue.toInt(&ok, 0);
     if (ok == false) {
-        err().sprintf("runLuaScript(): Could not convert script return value '%s' to int: ", qp(retValue));
+        err().SPrintf("runLuaScript(): Could not convert script return value '%s' to int: ", qp(retValue));
         exit( -2);
     } else {
         exit(retInt);
@@ -360,7 +360,7 @@ YInfo * YSession::getYzisinfo()
 
 YBuffer *YSession::createBuffer( const QString &filename )
 {
-    dbg().sprintf("createBuffer( filename='%s' )", qp(filename) );
+    dbg().SPrintf("createBuffer( filename='%s' )", qp(filename) );
     //make sure we don't have a buffer of this path yet
     YBuffer *buffer = findBuffer( filename );
     if (buffer) { //already open !
@@ -384,7 +384,7 @@ YBuffer *YSession::createBuffer( const QString &filename )
 
 YView *YSession::createBufferAndView( const QString& path )
 {
-    dbg().sprintf("createBufferAndView( path='%s' )", qp(path) );
+    dbg().SPrintf("createBufferAndView( path='%s' )", qp(path) );
     QString filename = YBuffer::parseFilename(path);
     YBuffer *buffer = findBuffer( filename );
     bool alreadyopen = true;
@@ -453,7 +453,7 @@ bool YSession::isOneBufferModified() const
 // ================================================================
 YView *YSession::createView( YBuffer *buffer )
 {
-    dbg().sprintf("createView( %s )", qp(buffer->toString()) );
+    dbg().SPrintf("createView( %s )", qp(buffer->toString()) );
     YView *view = guiCreateView( buffer );
     mViewList.push_back( view );
 
@@ -470,7 +470,7 @@ YView *YSession::createView( YBuffer *buffer )
 
 void YSession::deleteView( YView* view )
 {
-    dbg().sprintf("deleteView( %s )", qp(view->toString()) );
+    dbg().SPrintf("deleteView( %s )", qp(view->toString()) );
     if ( !mViewList.contains(view) ) {
         ftl() << "deleteView(): trying to remove an unknown view " << view->getId() << endl;
         return ;
@@ -803,7 +803,7 @@ void * YSession::operator new( size_t tSize )
 
 void YSession::operator delete( void *p )
 {
-    dbg().sprintf("YSession::delete( %p )", p );
+    dbg().SPrintf("YSession::delete( %p )", p );
     yzfree(p);
 }
 
@@ -841,6 +841,6 @@ QString YSession::version()
 void YSession::showCmdLineUnknowOption( const QString & opt )
 {
     fprintf(stderr, "Unrecognised option: %s", qp(opt) );
-    dbg().sprintf("Unrecognised option: %s", qp(opt) );
+    dbg().SPrintf("Unrecognised option: %s", qp(opt) );
 }
 

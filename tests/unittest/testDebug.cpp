@@ -55,7 +55,7 @@ void TestYDebugBackend::testSubAreaLevel()
 void TestYDebugBackend::testSprintf()
 {
     // segfault ?
-    yzError().sprintf( "%d %s %f", 34, "toto", 1.0 );
+    yzError().SPrintf( "%d %s %f", 34, "toto", 1.0 );
 }
 
 void TestYDebugBackend::testWhere()

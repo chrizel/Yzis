@@ -67,10 +67,13 @@ YViewIface::~YViewIface()
 static int nextId = 1;
 
 YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
-        : m_drawBuffer(), mainCursor(this), scrollCursor(this), workCursor(this), mVisualCursor(this), keepCursor(this), id(nextId++)
-          , mPreviousChars(""),mLastPreviousChars("")
+        :
+          m_drawBuffer(),
+          mPreviousChars(""),mLastPreviousChars(""),
+          mainCursor(this), scrollCursor(this), workCursor(this), mVisualCursor(this), keepCursor(this),
+          id(nextId++)
 {
-    dbg().sprintf("YView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
+    dbg().SPrintf("YView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
     dbg() << "New View created with UID: " << getId() << endl;
     YASSERT( _b ); YASSERT( sess );
     mSession = sess;

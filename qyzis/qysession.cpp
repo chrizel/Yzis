@@ -196,9 +196,9 @@ YView* QYSession::guiCreateView( YBuffer *buffer )
     dbg() << "guiCreateView(" << buffer->toString() << ")" << endl;
     QYView *view;
     view = new QYView( buffer, this );
-    dbg().sprintf("guiCreateView(): new view=%p\n", view );
+    dbg().SPrintf("guiCreateView(): new view=%p\n", view );
     mTabWidget->addTab( view, buffer->fileNameShort() );
-    dbg().sprintf("guiCreateView(): tabIdx=%d\n", mTabWidget->indexOf( view ) );
+    dbg().SPrintf("guiCreateView(): tabIdx=%d\n", mTabWidget->indexOf( view ) );
     view->show();
     return view;
 }

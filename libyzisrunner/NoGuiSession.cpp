@@ -106,19 +106,19 @@ void NoGuiSession::guiSplitHorizontally(YView*)
 
 YView * NoGuiSession::guiCreateView(YBuffer*b)
 {
-    dbg().sprintf("guiCreateView( %s )", qp(b->toString() ) );
+    dbg().SPrintf("guiCreateView( %s )", qp(b->toString() ) );
     return new NoGuiView(b, YSession::self());
 }
 
 void NoGuiSession::guiDeleteView(YView*v)
 {
-    dbg().sprintf("guiDeleteView( %s )", qp(v->toString() ) );
+    dbg().SPrintf("guiDeleteView( %s )", qp(v->toString() ) );
     NoGuiView * ngv = static_cast<NoGuiView *>( v );
     delete ngv;
 }
 
 void NoGuiSession::guiSetClipboardText(const QString& text, Clipboard::Mode)
 {
-    dbg().sprintf("guiSetClipboardText( text='%s' )", qp(text) );
+    dbg().SPrintf("guiSetClipboardText( text='%s' )", qp(text) );
 }
 

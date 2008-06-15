@@ -851,7 +851,7 @@ CmdState YModeEx::source( const YExCommandArgs& args )
 {
     dbg() << "source( " << args.toString() << " ) " << endl;
     QString filename = args.arg.left( args.arg.indexOf( " " ));
-    dbg().sprintf( "source() filename=%s", qp(filename) );
+    dbg().SPrintf( "source() filename=%s", qp(filename) );
     if (YLuaEngine::self()->source( filename ) != 0)
         YSession::self()->guiPopupMessage(_("The file %1 could not be found" ).arg( filename ));
     dbg() << "source() done" << endl;

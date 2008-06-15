@@ -60,7 +60,7 @@ using namespace yzis;
 
 QString YLuaEngine::lua_value_to_string(lua_State*L, int index, int depth, bool type_only)
 {
-    // dbg().sprintf( "lua_value_to_string(index=%d, depth=%d, type_only=%d", index, depth, type_only );
+    // dbg().SPrintf( "lua_value_to_string(index=%d, depth=%d, type_only=%d", index, depth, type_only );
     QString s(depth*2, ' ');
 
     switch (lua_type(L, index)) {
@@ -80,7 +80,7 @@ QString YLuaEngine::lua_value_to_string(lua_State*L, int index, int depth, bool 
     case LUA_TTHREAD: s += "thread"; break;
     case LUA_TLIGHTUSERDATA: s += "light user data:";break;
     default:
-        err().sprintf("Unknown lua type: %d\n", lua_type(L, index) );
+        err().SPrintf("Unknown lua type: %d\n", lua_type(L, index) );
         s += "Unknown lua type";
     }
     return s;
@@ -89,13 +89,13 @@ QString YLuaEngine::lua_value_to_string(lua_State*L, int index, int depth, bool 
 
 QString YLuaEngine::lua_table_to_string(lua_State*L, int index, int depth)
 {
-    // dbg().sprintf( "lua_table_to_string( index=%d depth=%d )", index, depth );
+    // dbg().SPrintf( "lua_table_to_string( index=%d depth=%d )", index, depth );
     QString prefix(depth*2, ' ');
     QString s;
     QMap<QString, QString> content;
 
     if (depth > 5) {
-        err().sprintf("lua_table_to_string - recursion error");
+        err().SPrintf("lua_table_to_string - recursion error");
         return s;
     }
 
@@ -129,21 +129,21 @@ QString YLuaEngine::lua_table_to_string(lua_State*L, int index, int depth)
         s += prefix + "  " + key + " -> " + content[key] + '\n';
     }
     s += prefix + "} ";
-    // dbg().sprintf( "lua_table_to_string done - depth=%d stack_size=%d\n",  depth, lua_gettop(L) );
+    // dbg().SPrintf( "lua_table_to_string done - depth=%d stack_size=%d\n",  depth, lua_gettop(L) );
 
     return s;
 }
 
 void YLuaEngine::print_lua_stack_value(lua_State*L, int index, bool type_only)
 {
-    deepdbg().sprintf("print_lua_stack_value(index=%d, type_only=%d)\n", index, type_only );
-    deepdbg().sprintf( "stack value %d: %s", index, qp(lua_value_to_string(L, index, 0, type_only)) );
+    deepdbg().SPrintf("print_lua_stack_value(index=%d, type_only=%d)\n", index, type_only );
+    deepdbg().SPrintf( "stack value %d: %s", index, qp(lua_value_to_string(L, index, 0, type_only)) );
 }
 
 void YLuaEngine::print_lua_stack(lua_State *L, const char * msg, bool type_only)
 {
-    deepdbg().sprintf("print_lua_stack(msg=%s, type_only=%d)\n", msg, type_only );
-    deepdbg().sprintf("Stack (type_only=%d) - '%s' \n", type_only, msg );
+    deepdbg().SPrintf("print_lua_stack(msg=%s, type_only=%d)\n", msg, type_only );
+    deepdbg().SPrintf("Stack (type_only=%d) - '%s' \n", type_only, msg );
     for (int i = 1; i <= lua_gettop(L); i++) {
         print_lua_stack_value(L, i, type_only);
     }
@@ -193,7 +193,7 @@ void YLuaEngine::cleanLuaStack( lua_State * L )
 
 QString YLuaEngine::lua(YView *, const QString& args)
 {
-    dbg().sprintf( "lua( view, args=%s )", qp(args) );
+    dbg().SPrintf( "lua( view, args=%s )", qp(args) );
     execInLua( args );
     return QString();
 }
@@ -267,14 +267,14 @@ endwhile:
 
 void YLuaEngine::execute(const QString& function, int nbArgs, int nbResults)
 {
-    dbg().sprintf("execute( function=%s, nbArgs=%d, nbResults=%d", qp(function), nbArgs, nbResults );
+    dbg().SPrintf("execute( function=%s, nbArgs=%d, nbResults=%d", qp(function), nbArgs, nbResults );
     lua_getglobal(L, function.toUtf8());
     yzpcall(nbArgs, nbResults, _("YLuaEngine::execute function %1").arg(function));
 }
 
 QString YLuaEngine::source( const QString& filename )
 {
-    dbg().sprintf( "source( '%s' )\n", qp(filename) );
+    dbg().SPrintf( "source( '%s' )\n", qp(filename) );
     luaReturnValue = "";
 
     lua_pushstring(L, "return");
@@ -288,7 +288,7 @@ QString YLuaEngine::source( const QString& filename )
 
 int YLuaEngine::execInLua( const QString & luacode )
 {
-    deepdbg().sprintf("execInLua( %s )", qp(luacode) );
+    deepdbg().SPrintf("execInLua( %s )", qp(luacode) );
     lua_pushstring(L, "loadstring" );
     lua_gettable(L, LUA_GLOBALSINDEX);
     lua_pushstring(L, luacode.toUtf8() );
@@ -330,16 +330,16 @@ int YLuaEngine::execInLua( const QString & luacode )
 
 bool YLuaEngine::yzpcall( int nbArg, int nbReturn, const QString & context )
 {
-    dbg().sprintf("yzpcall( %d, %d, %s )", nbArg, nbReturn, qp(context) );
+    dbg().SPrintf("yzpcall( %d, %d, %s )", nbArg, nbReturn, qp(context) );
     int lua_err = lua_pcall(L, nbArg, nbReturn, 0);
     QString luaErrorMsg;
 
     if (! lua_err) {
-        dbg().sprintf( "yzpcall() done successfully" );
+        dbg().SPrintf( "yzpcall() done successfully" );
         return true; // call is successful
     }
 
-    err().sprintf("yzpcall() error");
+    err().SPrintf("yzpcall() error");
     if (lua_isstring(L, -1)) {
         // an error message on the stack
         luaErrorMsg = QString::fromUtf8( ( char * ) lua_tostring( L, lua_gettop( L ) ) );
@@ -354,7 +354,7 @@ bool YLuaEngine::yzpcall( int nbArg, int nbReturn, const QString & context )
     }
 
     QByteArray err = luaErrorMsg.toLatin1();
-    err().sprintf("pCall error: %s\n", err.data() );
+    err().SPrintf("pCall error: %s\n", err.data() );
 
     YSession::self()->guiPopupMessage(context + '\n' + luaErrorMsg );
     return false;
@@ -362,7 +362,7 @@ bool YLuaEngine::yzpcall( int nbArg, int nbReturn, const QString & context )
 
 void YLuaEngine::yzisprint(const QString & text)
 {
-    dbg().sprintf("yzisprint( %s )\n", qp(text) );
+    dbg().SPrintf("yzisprint( %s )\n", qp(text) );
     // XXX to be implemented
 }
 

@@ -51,7 +51,7 @@ void YResourceMgr::initConfig()
     mYzisUserDir = QDir::homePath() + "/" + yzisSuffix + "/";
     QDir yzisUserDir( mYzisUserDir );
     if (! yzisUserDir.exists() ) {
-        dbg().sprintf("User dir does not exist, creating it: %s", qp(mYzisUserDir) );
+        dbg().SPrintf("User dir does not exist, creating it: %s", qp(mYzisUserDir) );
         yzisUserDir.cdUp();
         if (! yzisUserDir.mkdir( yzisSuffix )) {
             isTmpDir = true;

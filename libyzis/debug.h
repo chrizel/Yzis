@@ -127,7 +127,7 @@ class QStringList;
   * void some_function(int a)
   * {
   *     dbg() << "some_function was called." << endl;
-  *     dbg().sprintf("a=%d", a );
+  *     dbg().SPrintf("a=%d", a );
   *     // do some stuff
   *     if (something_goes_wrong) {
   *        err() << "There is a problem!" << endl;
@@ -370,14 +370,14 @@ typedef YDebugStream & (*YDBGFUNC)(YDebugStream &);
  * using flush() when a '\\n' is sent or when a string ending in '\\n' is sent.
  *
  * This is the standard way of writing log statements in Yzis. The
- * YDebugStream supports printf like syntax with sprintf(), or more classical
+ * YDebugStream supports printf like syntax with SPrintf(), or more classical
  * C++ stream. 
  *
  * The constructor specifies the area and level of logging. 
  *
  * The
  * output is flushed to the log system each time a \\n is encountered, or
- * automatically after a sprintf().
+ * automatically after a SPrintf().
  *
  * The functions yzDebug() and yzError() return an YDebugStream() with the
  * right debugging level and area set.
@@ -394,7 +394,7 @@ typedef YDebugStream & (*YDBGFUNC)(YDebugStream &);
  *      return 0;
  *    }
  *
- *    dbg().sprintf("*p=%d, q=%d", *p, q );
+ *    dbg().SPrintf("*p=%d, q=%d", *p, q );
  *
  *    // do some stuff
  *
@@ -469,8 +469,8 @@ public:
         return ( *f )( *this );
     }
 
-    /** Convenient sprintf function on debug streams */
-    void sprintf( const char * fmt, ... );
+    /** Convenient SPrintf function on debug streams */
+    void SPrintf( const char * fmt, ... );
 
     /** Flushes the current debug text to the debug output.
       *

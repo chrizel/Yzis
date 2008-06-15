@@ -27,7 +27,7 @@
 NoGuiView::NoGuiView(YBuffer *buf, YSession *sess, int cols, int lines)
         : YView(buf, sess, cols, lines)
 {
-    dbg().sprintf("NoGuiView( %s, cols=%d, lines=%d )", qp(buf->toString()), cols, lines );
+    dbg().SPrintf("NoGuiView( %s, cols=%d, lines=%d )", qp(buf->toString()), cols, lines );
 }
 
 uint NoGuiView::getCursorX()

@@ -31,8 +31,8 @@ QYNumberLabel::QYNumberLabel( const QFont& f ) : QLabel()
     setAlignment( Qt::AlignVCenter | Qt::AlignRight );
     setAutoFillBackground(true);
     QPalette p = palette();
-    p.setColor( QPalette::Window, Qt::lightGray );
-    p.setColor( QPalette::WindowText, Qt::black );
+    p.setColor( QPalette::Window, Qt::black );
+    p.setColor( QPalette::WindowText, Qt::yellow );
     setPalette(p);
     setFont(f);
 }
@@ -55,8 +55,8 @@ QYLineNumbers::QYLineNumbers( QYView* view )
 {
     setAutoFillBackground(true);
     QPalette p = palette();
-    p.setColor( QPalette::Window, Qt::lightGray );
-    p.setColor( QPalette::WindowText, Qt::black );
+    p.setColor( QPalette::Window, Qt::black );
+    p.setColor( QPalette::WindowText, Qt::yellow );
     setPalette(p);
     mRows = new QVBoxLayout( this );
     mRows->setSpacing(0);

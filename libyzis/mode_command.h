@@ -117,7 +117,7 @@ public:
     {
         return mKeySeq;
     }
-    const PoolMethod &poolMethod() const
+    const PoolMethod poolMethod() const
     {
         return mPoolMethod;
     }

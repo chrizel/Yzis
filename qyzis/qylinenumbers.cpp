@@ -19,6 +19,7 @@
 
 #include "qylinenumbers.h"
 #include "qyview.h"
+#include <libyzis/debug.h>
 
 #define dbg()    yzDebug("QYNumberLabel")
 #define err()    yzError("QYNumberLabel")

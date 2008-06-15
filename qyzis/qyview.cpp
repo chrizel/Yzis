@@ -89,6 +89,7 @@ QYView::QYView ( YBuffer * buffer, QYSession * qysession)
     mEdit->setFocus();
     setFocusProxy( mEdit );
     mVScroll->setMaximum( myBuffer()->lineCount() - 1 );
+	refreshScreen();
 
 }
 

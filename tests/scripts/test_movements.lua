@@ -407,6 +407,7 @@ TestMovements = {} --class
 	    assertPos( 1, 1 )
 	end
 
+--[[
 	function TestMovements:testColumnAfterUndo()
 		clearBuffer()
 		insertline(1, "LINE1")
@@ -417,6 +418,7 @@ TestMovements = {} --class
 		sendkeys("j")
 	    assertPos( 2, 1 )
 	end
+]]--
 
 	function TestMovements:testStickyColumn()
 		clearBuffer()

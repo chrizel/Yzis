@@ -60,6 +60,7 @@ QYLineNumbers::QYLineNumbers( QYView* view )
     mRows = new QVBoxLayout( this );
     mRows->setSpacing(0);
     mRows->setMargin(0);
+	setVisible(false);
 }
 QYLineNumbers::~QYLineNumbers()
 {}

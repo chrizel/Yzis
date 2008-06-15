@@ -172,12 +172,10 @@ public:
     typedef QVector<YKey>::const_iterator const_iterator;
     
     explicit YKeySequence(const QString &);
-    YKeySequence(const YKey &key)
-    { mKeys = new QVector<YKey>; mKeys->append(key);}
+    YKeySequence(const YKey &key);
     
     YKeySequence(const YKeySequence &seq);
-    YKeySequence() 
-    { mKeys = new QVector<YKey>; mKeys->clear();}    
+    YKeySequence();
 
     ~YKeySequence() {
         delete mKeys;
@@ -210,8 +208,14 @@ public:
     }
     
     YKeySequence &operator =(const YKeySequence &from);
+#ifdef DEBUG
+    QString describe(void) { return mName; }
+#endif
 private:
     QVector<YKey> *mKeys;
+#ifdef DEBUG
+    QString mName;
+#endif
 };
 
 

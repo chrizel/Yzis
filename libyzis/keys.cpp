@@ -221,11 +221,32 @@ int YKey::fromString(const QString &key)
     return charFormat.matchedLength();
 }
 
+YKeySequence::YKeySequence(const YKey &key)
+{
+    mKeys = new QVector<YKey>; mKeys->append(key);
+#ifdef DEBUG
+    mName = QString("single key : %1").arg(key.toString());
+#endif
+}
+
+#if 1
+YKeySequence::YKeySequence() 
+{
+    mKeys = new QVector<YKey>; mKeys->clear();
+#ifdef DEBUG
+    mName = QString("(empty constructor)");
+#endif
+}
+#endif
+
 YKeySequence::YKeySequence(const YKeySequence &from)
 {
     mKeys = new QVector<YKey>;
     for(const_iterator i = from.mKeys->begin(); i != from.mKeys->end(); ++i)
         mKeys->append(*i);
+#ifdef DEBUG
+    mName = QString("copy of %1").arg(from.mName);
+#endif
 }
 
 YKeySequence &YKeySequence::operator=(const YKeySequence &from)
@@ -241,6 +262,9 @@ YKeySequence::YKeySequence(const QString &input)
 {
     mKeys = new QVector<YKey>;
     appendString(input);
+#ifdef DEBUG
+    mName = input;
+#endif
 }
 
 void YKeySequence::appendString(QString input)

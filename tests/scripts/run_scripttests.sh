@@ -10,12 +10,12 @@
 # If no frontend is given, execute the tests with libyzisrunner
 # If no test name is specified, run all tests
 #
-# ./runtests.sh -> execute all tests
-# ./runtests.sh test_movements.lua -> execute only test_movements.lua
-# ./runtests.sh qyzis --> execute tests with qyzis frontend
-# ./runtests.sh libyzisrunner --> execute tests with no gui yzis frontend
-# ./runtests.sh gdb --> execute tests with in gdb with libyzisrunner
-# ./runtests.sh gdb test_movements.lua --> execute tests with in gdb with libyzisrunner with test_movements.lua as argument
+# ./run_scripttests.sh -> execute all tests
+# ./run_scripttests.sh test_movements.lua -> execute only "test_movements.lua"
+# ./run_scripttests.sh qyzis --> execute all tests using the qyzis frontend
+# ./run_scripttests.sh libyzisrunner --> execute all tests using libyzisrunner (No need for X-window)
+# ./run_scripttests.sh gdb --> execute all tests from inside gdb with libyzisrunner
+# ./run_scripttests.sh gdb test_movements.lua --> execute only "test_movements.lua" from inside gdb using libyzisrunner
 
 # substituted by CMake during the build process
 

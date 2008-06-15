@@ -28,6 +28,7 @@
 #include "action.h"
 #include "viewcursor.h"
 #include "mode_complete.h"
+#include "debug.h"
 #include "view.h"
 
 #define dbg()    yzDebug("YModeInsert")
@@ -107,14 +108,21 @@ CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& inputs,
     CmdState ret;
     YCommand *c = parseCommand(inputs, parsePos);
 
+    dbg() << HERE() << endl;
+
     if ( c != NULL ) { // We have a special command
-	QList<QChar> regs;
-	regs << YKey::Key_DblQuote;
-	// 1 is for count, false for hadCount
-	return (this->*(c->poolMethod()))(YCommandArgs(c, mView, regs, 1, false, &inputs, &parsePos) );
+        QList<QChar> regs;
+        regs << YKey::Key_DblQuote;
+        // 1 is for count, false for hadCount
+//        dbg() << ((void * )(&YModeCommand::deleteChar));
+//        dbg() << HERE() << " got a special command : "<< c->describe() << " with address " << (long int)(c->poolMethod())  << ", executing it" << endl;
+        dbg() << HERE() << " got a special command : "<< c->describe() << ", executing it" << endl;
+
+        return (this->*(c->poolMethod()))  (YCommandArgs(c, mView, regs, 1, false, &inputs, &parsePos) );
     }
 
 
+    dbg() << HERE() << " NO command found, inserting text" << endl;
     /* if ( key.startsWith("<CTRL>") ) // XXX no sense
        ret = YSession::self()->getCommandPool()->execCommand(mView, key);
        else*/
@@ -122,18 +130,18 @@ CmdState YModeInsert::execCommand( YView* mView, const YKeySequence& inputs,
     // As all insert mode commands are one key, we know parsePos hasn't changed if we're here
     QString text;
     if ( *parsePos == YKey::Key_Tab ) {
-	// expand a tab to [tabstop] spaces if 'expandtab' is set
-	if (mView->getLocalBooleanOption("expandtab"))
-	    text.fill(' ', mView->getLocalIntegerOption("tabstop"));
-	else
-	    text = "\t";
+        // expand a tab to [tabstop] spaces if 'expandtab' is set
+        if (mView->getLocalBooleanOption("expandtab"))
+            text.fill(' ', mView->getLocalIntegerOption("tabstop"));
+        else
+            text = "\t";
     }
     else
-	text = parsePos->toString();
+        text = parsePos->toString();
     ret = addText( mView, text );
     QStringList ikeys = mView->myBuffer()->getLocalListOption("indentkeys");
     if ( ikeys.contains(text) )
-	YSession::self()->eventCall("INDENT_ON_KEY", mView);
+        YSession::self()->eventCall("INDENT_ON_KEY", mView);
 
     return ret;
 }
@@ -235,6 +243,8 @@ CmdState YModeInsert::deleteLineBefore( const YCommandArgs &args )
 
 CmdState YModeInsert::deleteChar( const YCommandArgs &args )
 {
+    dbg() << HERE() << endl ; 
+
     YCursor cur = args.view->getBufferCursor();
     YBuffer* mBuffer = args.view->myBuffer();
     if ( cur.x() == mBuffer->textline( cur.y() ).length()
@@ -280,6 +290,7 @@ CmdState YModeInsert::commandEnter( const YCommandArgs &args )
 }
 CmdState YModeInsert::addText( YView* mView, const QString& key )
 {
+    dbg() << HERE() << endl;
     mView->myBuffer()->action()->insertChar( mView, mView->getBufferCursor(), key );
     if ( mView->getLocalBooleanOption( "cindent" ) && key == "}" )
         mView->reindent( QPoint(mView->getBufferCursor().x() - 1, mView->getBufferCursor().y()));

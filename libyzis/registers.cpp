@@ -29,7 +29,7 @@ YRegisters::YRegisters()
 void YRegisters::setRegister( QChar c, const QStringList& value )
 {
     mRegisters[ c ] = value;
-    dbg() << "Register : " << QString( c ) << " Value : " << value << endl;
+    dbg() << "setRegister : " << QString( c ) << " Value : " << value << endl;
 }
 
 QStringList& YRegisters::getRegister( QChar c )

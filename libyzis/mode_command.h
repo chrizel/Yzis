@@ -105,8 +105,8 @@ class YZIS_EXPORT YCommand
 {
 public:
     YCommand( const YKeySequence &keySeq, PoolMethod pm, CmdArg a = ArgNone)
+        : mKeySeq(keySeq)
     {
-        mKeySeq = keySeq;
         mPoolMethod = pm;
         mArg = a;
     }
@@ -130,6 +130,9 @@ public:
     {
         return c >= 'a' && c <= 'z';
     }
+#ifdef DEBUG
+    QString describe(void) { return QString("Command with key sequence : \"%1\"").arg(mKeySeq.describe()); }
+#endif
 protected:
     /** the key sequence the command "listens to" */
     YKeySequence mKeySeq;

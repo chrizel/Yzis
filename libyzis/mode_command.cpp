@@ -310,6 +310,8 @@ CmdState YModeCommand::execCommand(YView *view, const YKeySequence &inputs,
 
 YCommand *YModeCommand::parseCommand( const YKeySequence &inputs, YKeySequence::const_iterator &initParsePos )
 {
+    dbg() << HERE() << endl;
+
     YKeySequence::const_iterator bestMatch = initParsePos, parsePos;
     QList<YCommand *> cmds;
     
@@ -1811,6 +1813,7 @@ CmdState YModeCommand::replayMacro( const YCommandArgs &args )
 
 CmdState YModeCommand::deleteChar( const YCommandArgs &args )
 {
+    dbg() << HERE() << endl;
     YCursor to( args.view->getBufferCursor() );
     args.view->myBuffer()->action()->copyArea(args.view, args.view->getBufferCursor(), to, args.regs);
     args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), args.count );
@@ -1879,6 +1882,7 @@ CmdState YModeCommand::abort( const YCommandArgs& /*args*/)
 
 CmdState YModeCommand::delkey( const YCommandArgs &args )
 {
+    dbg() << HERE() << endl;
     if ( args.view->myBuffer()->action()->deleteChar( args.view, args.view->getBufferCursor(), 1) )
         return CmdStopped;
     args.view->commitNextUndo();

@@ -12,6 +12,8 @@ if (WIN32)
         FIND_FILE(GNUWIN32_DIR gnuwin32
            ${_progFiles}
            "C:/"
+           "C:/Program Files/"
+           "C:/usr/local/"
         )
     endif ()
 
@@ -33,7 +35,11 @@ if (WIN32)
       endif (NOT GNUWIN32_FIND_QUIETLY)
     else (GNUWIN32_FOUND)
       if (GNUWIN32_FIND_REQUIRED)
-        message(SEND_ERROR "Could NOT find GNUWIN32")
+        message(FATAL_ERROR "Could NOT find GNUWIN32")
+      else (GNUWIN32_FIND_REQUIRED)
+        if (NOT GNUWIN32_FIND_QUIETLY)
+          message("Could NOT find GNUWIN32")
+        endif (NOT GNUWIN32_FIND_QUIETLY)
       endif (GNUWIN32_FIND_REQUIRED)
     endif (GNUWIN32_FOUND)
 

@@ -22,8 +22,14 @@ ELSE (DEFINED CACHED_GETTEXT)
   include(CheckIncludeFiles)
   include(CheckLibraryExists)
   include(CheckFunctionExists)
-  
-  FIND_PATH(LIBINTL_INCLUDE_DIR libintl.h)
+
+  # under windows, try to find the base gnuwin32 directory, do nothing under UNIX
+  FIND_PACKAGE(GNUWIN32)
+
+  FIND_PATH(LIBINTL_INCLUDE_DIR libintl.h
+     /usr/local/include
+     ${GNUWIN32_INCLUDE_DIR}
+  )
   set(CMAKE_REQUIRED_INCLUDES "${LIBINTL_INCLUDE_DIR}")
   check_include_files(libintl.h HAVE_LIBINTL_H)
   
@@ -57,7 +63,7 @@ ELSE (DEFINED CACHED_GETTEXT)
      endif (NOT Gettext_FIND_QUIETLY)
   else (GETTEXT_FOUND)
      if (Gettext_FIND_REQUIRED)
-        message(STATUS "Could NOT find Gettext")
+        message(FATAL_ERROR "Could NOT find Gettext")
      else (Gettext_FIND_REQUIRED)
         set(CACHED_GETTEXT "NO")
      endif (Gettext_FIND_REQUIRED)

@@ -74,7 +74,6 @@ set_target_properties(yzis PROPERTIES VERSION 0.0.0 SOVERSION 0 )
 if (WIN32)
     install(TARGETS yzis 
             RUNTIME DESTINATION bin
-            LIBRARY DESTINATION bin
             LIBRARY DESTINATION lib
             )
 else (WIN32)

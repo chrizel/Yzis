@@ -101,7 +101,9 @@ endif (NOT QT_QTXML_FOUND)
 include( FixQt4DebugBuild )
 
 # for syntax files
+if (NOT WIN32)
 find_package(Perl REQUIRED)
+endif(NOT WIN32)
 
 # optional packages dependencies :
 if (ENABLE_KYZIS OR ENABLE_KPART_YZIS)

@@ -17,7 +17,12 @@ set(CMAKE_INCLUDE_DIRECTORIES_PROJECT_BEFORE ON)
 # Use colored output
 set(CMAKE_COLOR_MAKEFILE ON)
 
-cmake_minimum_required(VERSION 2.4.1 FATAL_ERROR)
+
+if (WIN32)
+    cmake_minimum_required(VERSION 2.6 FATAL_ERROR)
+else(WIN32)
+    cmake_minimum_required(VERSION 2.4.8 FATAL_ERROR)
+endif(WIN32)
 
 # yzis stores the cmake modules in cmake/modules
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
@@ -59,6 +64,7 @@ if (WIN32)
     add_definitions("-DYZIS_WIN32_GCC")
     find_package(GNUWIN32)
 endif ()
+
 find_package(Magic REQUIRED)
 find_package(Gettext REQUIRED)
 

@@ -1849,6 +1849,7 @@ void YView::guiPaintEvent( const YSelection& drawMap )
         //      << " (changed=" << interval_changed << ")" << endl;
         if ( interval_changed ) {
             m_drawBuffer.replace( map[ mapIdx ] - scrollCursor.screen() );
+			//dbg() << "replacing " << (map[mapIdx] - scrollCursor.screen()) << endl;
             interval_changed = false;
         }
 
@@ -1872,16 +1873,8 @@ void YView::guiPaintEvent( const YSelection& drawMap )
             if ( !drawEntireLine ) { /* we have to care of starting/stopping to draw on that line */
                 if ( !drawIt && curY == fY ) { // start drawing 
                     drawIt = ( curX == fX );
-                    if ( curX < fX && curX + drawLength() >= fX ) { // Next char will overlap beginning of redraw
-                        m_drawBuffer.replace( YInterval(YCursor(curX, curY), YCursor(fX-1, curY)) );
-                        drawIt = true;
-                    }
                     clearToEOL = drawIt && curY != tY;
-                }
-                if ( drawIt && curY == tY ) { // stop drawing ?
-                    if ( curX > tX+1 ) // Char just added actually overlaps existing cells
-                        m_drawBuffer.replace( YInterval(YCursor(curX, curY),
-                                                        YCursor(curX + (curX - tX - 2), curY)) );
+                } else if ( drawIt && curY == tY ) { // stop drawing ?
                     drawIt = !( curX > tX );
                     if ( ! drawIt ) {
                         ++mapIdx;
@@ -1900,6 +1893,9 @@ void YView::guiPaintEvent( const YSelection& drawMap )
             if ( drawIt ) {
                 QString disp = QString( drawChar() );
                 disp = disp.leftJustified( drawLength(), fillChar() );
+				if ( curY == tY && curX + drawLength() > tX+1 ) { /* overlap */
+					disp = disp.left(tX - curX + 1);
+				}
 
                 m_drawBuffer.setColor( drawColor() );
 
@@ -1926,7 +1922,7 @@ void YView::guiPaintEvent( const YSelection& drawMap )
 
     m_drawBuffer.flush();
 
-    // dbg() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
+    //dbg() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
 
     guiEndPaintEvent();
 }

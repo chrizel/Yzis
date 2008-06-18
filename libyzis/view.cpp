@@ -1562,7 +1562,7 @@ QString YView::getCharBelow( int delta )
 {
     YViewCursor vc = viewCursor();
     int Y = vc.bufferY();
-    if ( delta < 0 && Y >= -delta || delta >= 0 && ( Y + delta ) < mBuffer->lineCount() )
+    if ( (delta < 0 && Y >= -delta) || (delta >= 0 && ( Y + delta ) < mBuffer->lineCount()) )
         Y += delta;
     else
         return QString();
@@ -1823,7 +1823,7 @@ void YView::guiPaintEvent( const YSelection& drawMap )
     bool drawLine; /* if we have to paint a part of line */
     bool drawEntireLine; /* if we have to paint the entire line */
 
-    bool drawStartAfterBOL; /* if we don't have to draw from the begin of line */
+    bool drawStartAfterSOL; /* if we don't have to draw from the begin of line */
     bool drawStopBeforeEOL; /* if we don't have to draw until the end of line */
 
     bool clearToEOL; /* if we have to clear the rest of line */
@@ -1852,14 +1852,14 @@ void YView::guiPaintEvent( const YSelection& drawMap )
             interval_changed = false;
         }
 
-        drawStartAfterBOL = ( curY == fY && fX > shiftX );
+        drawStartAfterSOL = ( curY == fY && fX > shiftX );
         drawStopBeforeEOL = ( curY == tY && tX < maxX );
 
         drawLine = fY <= curY; // curY <= tY always true */
-        drawIt = drawLine && !drawStartAfterBOL;
+        drawIt = drawLine && !drawStartAfterSOL;
         drawEntireLine = drawIt && !drawStopBeforeEOL;
 
-        clearToEOL = drawEntireLine || drawIt && curY != tY;
+        clearToEOL = drawEntireLine || (drawIt && curY != tY);
 
         if ( drawLine && number ) {
             guiDrawSetLineNumber( curY - shiftY, drawLineNumber(), lineHeight() - 1 );

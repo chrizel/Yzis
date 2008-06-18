@@ -90,15 +90,18 @@ YCursor QYEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
     int height = fontMetrics().lineSpacing();
     int width = fontMetrics().maxWidth();
 
-    int x = p.x() / width;
-    int y = p.y() / height;
+	int px = qMax(p.x(), 0);
+	int py = qMax(p.y(), 0);
+
+    int x = px / width;
+    int y = py / height;
     if ( ceil ) {
-        if ( p.y() % height )
+        if ( py % height )
             ++y;
-        if ( p.x() % width )
+        if ( px % width )
             ++x;
     }
-    return YCursor( x, y );
+    return YCursor(x, y);
 }
 YCursor QYEdit::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
 {

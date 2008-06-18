@@ -54,24 +54,17 @@ public :
     {
         setX(x); setY(y);
     }
-    void setLineColumn( int line, int col )
-    {
-        setX(col); setY(line);
-    }
 
-    // aliases
-    int column() const
-    {
-        return x();
-    }
-    int line() const
-    {
-        return y();
-    }
+	/* aliases : line is y, column is x */
+	inline void setLine( int line ) { setY(line); }
+	inline int line() const { return y(); }
+	inline void setColumn( int column ) { setX(column); }
+	inline int column() const { return x(); }
+	inline void setLineColumn( int line, int column ) { setXY(column, line); }
 
     QString toString() const
     {
-        return QString("(line,col)=(%1,%2)").arg(y()).arg(x());
+        return QString("(line,col)=(%1,%2)").arg(line()).arg(column());
     }
 
     /*

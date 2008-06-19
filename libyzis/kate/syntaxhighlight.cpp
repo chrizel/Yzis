@@ -2999,16 +2999,8 @@ YzisHlManager::YzisHlManager()
   if ( magicSet == NULL ) {
     magic_close(magicSet);
   } else {
-    const char * magic_db_path = NULL;
-    QString magicResource = resourceMgr()->findResource( ConfigResource, "magic.mime" );
-
-    if (! magicResource.isEmpty()) {
-        magicResource = magicResource + ":" + magicResource.left(magicResource.length()-5 );
-        magic_db_path = strdup( (const char *) magicResource.toLocal8Bit() );
-    }
-
-    if (magic_load( magicSet, magic_db_path ) == -1) {
-      dbg() << "YzisHlManager(): magic_load(" << (magic_db_path ? magic_db_path : "NULL" ) << ") error: " << magic_error( magicSet ) << endl;
+    if ( magic_load(magicSet, NULL) == -1 ) {
+      dbg() << "YzisHlManager(): magic_load(NULL) error: " << magic_error( magicSet ) << endl;
       magic_close(magicSet);
       magicSet = NULL;
     } else {

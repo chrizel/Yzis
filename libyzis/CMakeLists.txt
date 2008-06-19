@@ -82,5 +82,4 @@ else (WIN32)
             LIBRARY DESTINATION lib
             )
 endif (WIN32)
-install(FILES magic.mime DESTINATION share/yzis)
 

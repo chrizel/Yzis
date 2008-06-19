@@ -3003,7 +3003,7 @@ YzisHlManager::YzisHlManager()
     QString magicResource = resourceMgr()->findResource( ConfigResource, "magic.mime" );
 
     if (! magicResource.isEmpty()) {
-        //magicResource = magicResource.mid( 0, magicResource.length()-5 );
+        magicResource = magicResource + ":" + magicResource.left(magicResource.length()-5 );
         magic_db_path = strdup( (const char *) magicResource.toLocal8Bit() );
     }
 

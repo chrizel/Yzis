@@ -67,7 +67,9 @@ YDebugBackend * YDebugBackend::me = NULL;
 
 YDebugBackend::YDebugBackend()
 {
+#ifndef YZIS_WIN32_GCC
     qDebug("YDebugBackend::YDebugBackend() constructor");
+#endif
     _output = NULL;
     _outputFname = "";
 }

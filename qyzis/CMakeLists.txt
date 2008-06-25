@@ -50,12 +50,13 @@ endif (WIN32)
 
 if (WIN32)
     add_executable(qyzis ${qyzis_SRCS} ${qyzis_MOC_SRCS} ${qyzis_RESOURCES} ${qyzis_UI_SRCS} )
-	install(TARGETS qyzis DESTINATION bin)
+    install(TARGETS qyzis DESTINATION bin)
+    set_target_properties(qyzis PROPERTIES LINK_FLAGS "-mwindows")
 endif (WIN32)
 
 if (UNIX)
     add_executable(qyzis ${qyzis_SRCS} ${qyzis_MOC_SRCS} ${qyzis_RESOURCES} ${qyzis_UI_SRCS} )
-	install(TARGETS qyzis DESTINATION bin)
+    install(TARGETS qyzis DESTINATION bin)
 endif (UNIX)
 
 if(APPLE)

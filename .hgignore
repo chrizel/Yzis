@@ -28,6 +28,8 @@ tags
 translations/rc.cpp
 Makefile
 .*.swp
+run
+YzisWindowsInstaller*
 doorzel
 doorzel.*
 .yzdebugrc

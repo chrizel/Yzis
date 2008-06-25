@@ -1,0 +1,7 @@
+
+Examples of compilation
+
+
+windows:
+cmake -G "MinGW Makefiles" -DLIBLUA51_LIBRARIES="C:/usr/local/lua5.1.2/lua5.1.lib" -DLIBLUA51_INCLUDE_DIR="C:/usr/local/lua5.1.2/include" -DENABLE_NYZIS=off -DENABLE_QYZIS=on -DENABLE_DOCUMENTATION=off  -DCMAKE_VERBOSE_MAKEFILE=off -DCMAKE_BUILD_TYPE=Release ..
+

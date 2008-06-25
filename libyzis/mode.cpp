@@ -175,8 +175,9 @@ void YModeIntro::enter( YView* mView )
     mView->gotoxy( 0, 0 );
     for (i = 0; i < vMargin; i++ ) mBuffer->appendLine("");
     mBuffer->appendLine( mView->centerLine( VERSION_CHAR_LONG ) );
-    if ( VERSION_CHAR_ST == VERSION_CHAR_STATE2 )
-        mBuffer->appendLine( mView->centerLine( VERSION_CHAR_DATE ) );
+#if defined VERSION_CHAR_DATE
+    mBuffer->appendLine( mView->centerLine( VERSION_CHAR_DATE ) );
+#endif
     mBuffer->appendLine( mView->centerLine( VERSION_CHAR_ST ) );
     mBuffer->appendLine( "" );
     mBuffer->appendLine( mView->centerLine( "http://www.yzis.org" ) );

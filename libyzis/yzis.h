@@ -41,15 +41,17 @@
 #define VERSION_PATCH 0
 
 //let's use the patch number since it exists ...
-#define VERSION_CHAR "M3++"
+#define VERSION_CHAR "1.0-alpha1"
 #define VERSION_CHAR_LONG "Yzis "VERSION_CHAR" for Qt4" 
-//don't change these 2 and don't use them in the code
-#define VERSION_CHAR_STATE1 "(stable release)"
-#define VERSION_CHAR_STATE2 "(development release - Use for testing only)"
-#define VERSION_CHAR_STATE3 "(preview release - Use for testing only)" 
-//and change/use this one in the code
-#define VERSION_CHAR_ST VERSION_CHAR_STATE2
-#define VERSION_CHAR_DATE "SVN>2007-07-18"
+
+// either 
+
+//#define VERSION_CHAR_ST "(stable release)"
+//#define VERSION_CHAR_ST "(development release - Use for testing only)"
+#define VERSION_CHAR_ST "(preview release - Use for testing only)" 
+
+// if defined, will be displayed in the "Intro" Mode
+#define VERSION_CHAR_DATE "mercurial>2008-06-25"
 
 #define _(a) QString::fromUtf8(gettext(a))
 

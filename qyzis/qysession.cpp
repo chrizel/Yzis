@@ -92,10 +92,13 @@ void QYSession::setupActions()
     connect( a, SIGNAL( triggered() ), this, SLOT( slotFileQuit() ) );
     m->addAction(a);
 
+#if 0
+    // orzel : not working yet, disabled
     m = mb->addMenu( _( "&Settings" ) );
     a = new QAction( _( "&Preferences..." ), this );
     connect( a, SIGNAL( triggered() ), this, SLOT( slotPreferences() ) );
     m->addAction(a);
+#endif
 
     m = mb->addMenu( _( "&Help" ) );
 

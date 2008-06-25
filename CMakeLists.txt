@@ -66,10 +66,10 @@ if (WIN32)
     link_libraries(imm32 winmm)  # missing by default :/
 endif(WIN32)
 
-if(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
-  set(CMAKE_CXX_FLAGS "-static-libgcc ${CMAKE_CXX_FLAGS}")
-  link_directories(${CMAKE_BINARY_DIR}/staticlibs) # override dynamic libs
-endif(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
+#if(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
+#  set(CMAKE_CXX_FLAGS "-static-libgcc ${CMAKE_CXX_FLAGS}")
+#  link_directories(${CMAKE_BINARY_DIR}/staticlibs) # override dynamic libs
+#endif(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
 
 find_package(Magic REQUIRED)
 find_package(Gettext REQUIRED)

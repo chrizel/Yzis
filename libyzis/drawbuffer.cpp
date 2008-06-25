@@ -88,7 +88,7 @@ bool YDrawBuffer::updateColor( YColor* dest, const YColor& c )
     bool changed = false;
     bool was_valid = dest->isValid();
     bool is_valid = c.isValid();
-    if ( was_valid != is_valid || is_valid && c.rgb() != dest->rgb() ) {
+    if ( was_valid != is_valid || (is_valid && c.rgb() != dest->rgb()) ) {
         changed = true;
         if ( is_valid ) {
             dest->setRgb( c.rgb() );
@@ -304,7 +304,7 @@ void YDrawBuffer::replace( const YInterval& interval )
                 applyPosition();
             }
         } else {
-            if ( fy == ty && !has_dest || fy < ty && (m_x + 1) < m_line->size() ) {
+            if ( (fy == ty && !has_dest) || (fy < ty && (m_x + 1) < m_line->size()) ) {
                 /* remove all until EOL */
                 m_line->remove( m_x + 1, m_line->size() - (m_x + 1) );
             }

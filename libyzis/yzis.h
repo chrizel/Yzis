@@ -42,7 +42,7 @@
 
 //let's use the patch number since it exists ...
 #define VERSION_CHAR "1.0-alpha1"
-#define VERSION_CHAR_LONG "Yzis "VERSION_CHAR" for Qt4" 
+#define VERSION_CHAR_LONG "Yzis "VERSION_CHAR
 
 // either 
 

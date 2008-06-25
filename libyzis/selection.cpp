@@ -57,27 +57,27 @@ bool operator==( const YBound& left, const YBound& right )
 }
 bool operator>( const YBound& left, const YBound& right )
 {
-    return left.pos() > right.pos() || left.pos() == right.pos() && !left.opened() && right.opened();
+    return left.pos() > right.pos() || (left.pos() == right.pos() && !left.opened() && right.opened());
 }
 bool operator<( const YBound& left, const YBound& right )
 {
-    return left.pos() < right.pos() || left.pos() == right.pos() && left.opened() && !right.opened();
+    return left.pos() < right.pos() || (left.pos() == right.pos() && left.opened() && !right.opened());
 }
 bool operator>=( const YBound& left, const YBound& right )
 {
-    return left.pos() > right.pos() || left.pos() == right.pos() && ( !left.opened() || right.opened() );
+    return left.pos() > right.pos() || (left.pos() == right.pos() && ( !left.opened() || right.opened() ));
 }
 bool operator<=( const YBound& left, const YBound& right )
 {
-    return left.pos() < right.pos() || left.pos() == right.pos() && ( left.opened() || !right.opened() );
+    return left.pos() < right.pos() || (left.pos() == right.pos() && ( left.opened() || !right.opened() ));
 }
 bool operator>=( const YBound& left, const YCursor right )
 {
-    return left.pos() > right || !left.opened() && left.pos() == right;
+    return left.pos() > right || (!left.opened() && left.pos() == right);
 }
 bool operator<=( const YBound& left, const YCursor right )
 {
-    return left.pos() < right || !left.opened() && left.pos() == right;
+    return left.pos() < right || (!left.opened() && left.pos() == right);
 }
 bool operator>=( const YCursor left, const YBound& right )
 {

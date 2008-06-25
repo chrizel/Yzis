@@ -63,7 +63,14 @@ option(ENABLE_SAFE_MODE "prevent yzis from crashing when some bugs occured" ON)
 if (WIN32)
     add_definitions("-DYZIS_WIN32_GCC")
     find_package(GNUWIN32)
-endif ()
+    link_libraries(imm32 winmm)  # missing by default :/
+endif(WIN32)
+
+if(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
+  set(CMAKE_CXX_FLAGS "-static-libgcc ${CMAKE_CXX_FLAGS}")
+  link_directories(${CMAKE_BINARY_DIR}/staticlibs) # override dynamic libs
+endif(STATIC AND CMAKE_COMPILER_IS_GNUCXX)
+
 
 find_package(Magic REQUIRED)
 find_package(Gettext REQUIRED)

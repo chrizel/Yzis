@@ -231,7 +231,7 @@ void YModeCompletion::completeFromBuffer( YBuffer *buffer, QStringList &proposed
             // This is O(n^2), but hopefully it won't kill us, since the
             // sets are likely small
             // but only do the contains check if we're to eliminate duplicates
-            if ( !elimDups || elimDups && proposed.contains( possible ) == 0 ) {
+            if ( !elimDups || (elimDups && proposed.contains( possible ) == 0 )) {
                 proposed.push_back( possible );
                 if ( cursors ) {
                     cursors->push_back( matchCursor );

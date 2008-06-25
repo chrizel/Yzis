@@ -1033,7 +1033,7 @@ static int checkEscapedChar(const QString& text, int offset, int& len)
         // replaced with something else but
         // for right now they work
         // check for hexdigits
-        for (i = 0; (len > 0) && (i < 2) && (text[offset].toAscii() >= '0' && text[offset].toAscii() <= '9' || text[offset].toAscii() >= 'A' && text[offset].toAscii() <= 'F'); i++)
+        for (i = 0; len > 0 && i < 2 && ( (text[offset].toAscii() >= '0' && text[offset].toAscii() <= '9') || (text[offset].toAscii() >= 'A' && text[offset].toAscii() <= 'F')); i++)
         {
           offset++;
           len--;
@@ -2813,9 +2813,8 @@ int YzisHighlighting::addToContextList(const QString &ident, int ctx0)
         // Not supported completely atm and only one level. Subitems.(all have
         // to be matched to at once)
         datasub=YzisHlManager::self()->syntax->getSubItems(data);
-        bool tmpbool;
-        if (tmpbool=YzisHlManager::self()->syntax->nextItem(datasub))
-        {
+        bool tmpbool=YzisHlManager::self()->syntax->nextItem(datasub);
+        if (tmpbool) {
           for (;tmpbool;tmpbool=YzisHlManager::self()->syntax->nextItem(datasub))
           {
             c->subItems.resize (c->subItems.size()+1);

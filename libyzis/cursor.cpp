@@ -25,15 +25,15 @@
 
 bool YCursor::operator< (const YCursor right ) const
 {
-    return y() < right.y() || y() == right.y() && x() < right.x();
+    return (y() < right.y()) || (y() == right.y() && x() < right.x());
 }
 bool YCursor::operator<= (const YCursor right ) const
 {
-    return *this == right || *this < right;
+    return (*this == right) || (*this < right);
 }
 bool YCursor::operator> (const YCursor right ) const
 {
-    return *this != right && !(*this < right);
+    return (*this != right) && (!(*this < right));
 }
 bool YCursor::operator>= (const YCursor right ) const
 {

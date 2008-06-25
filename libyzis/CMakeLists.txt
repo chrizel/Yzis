@@ -9,6 +9,7 @@ include_directories(${YZIS_INCLUDES})
 ########### next target ###############
 
 set(yzis_LIB_SRCS 
+   mode.cpp 
    action.cpp 
    buffer.cpp 
    color.cpp 
@@ -31,7 +32,6 @@ set(yzis_LIB_SRCS
    mode_pool.cpp 
    mode_command.cpp 
    mode_complete.cpp 
-   mode.cpp 
    mode_ex.cpp 
    mode_insert.cpp 
    mode_search.cpp 

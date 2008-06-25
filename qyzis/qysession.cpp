@@ -57,6 +57,7 @@ QYSession::QYSession(QWidget *w)
 
     setupActions();
 
+    setWindowIcon(QIcon(":pics/cr64-app-qyzis.png"));
     YSession::setInstance( this );
 }
 

@@ -35,6 +35,7 @@ set(qyzis_MOC
 
 qt4_wrap_ui(qyzis_SRCS ${qyzis_UI})
 qt4_wrap_cpp(qyzis_MOC_SRCS ${qyzis_MOC})
+qt4_add_resources(qyzis_RESOURCES qyzis.qrc)
 
 if (WIN32)
     # resource compilation for MinGW
@@ -48,12 +49,12 @@ if (WIN32)
 endif (WIN32)
 
 if (WIN32)
-	add_executable(qyzis ${qyzis_SRCS} ${qyzis_MOC_SRCS} ${qyzis_UI_SRCS} )
+    add_executable(qyzis ${qyzis_SRCS} ${qyzis_MOC_SRCS} ${qyzis_RESOURCES} ${qyzis_UI_SRCS} )
 	install(TARGETS qyzis DESTINATION bin)
 endif (WIN32)
 
 if (UNIX)
-	add_executable(qyzis ${qyzis_SRCS} ${qyzis_MOC_SRCS} ${qyzis_UI_SRCS} )
+    add_executable(qyzis ${qyzis_SRCS} ${qyzis_MOC_SRCS} ${qyzis_RESOURCES} ${qyzis_UI_SRCS} )
 	install(TARGETS qyzis DESTINATION bin)
 endif (UNIX)
 

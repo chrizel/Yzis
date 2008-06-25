@@ -69,8 +69,7 @@ endif(WIN32)
 if(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
   set(CMAKE_CXX_FLAGS "-static-libgcc ${CMAKE_CXX_FLAGS}")
   link_directories(${CMAKE_BINARY_DIR}/staticlibs) # override dynamic libs
-endif(STATIC AND CMAKE_COMPILER_IS_GNUCXX)
-
+endif(WIN32 AND CMAKE_COMPILER_IS_GNUCXX)
 
 find_package(Magic REQUIRED)
 find_package(Gettext REQUIRED)
@@ -99,13 +98,17 @@ if (ENABLE_QYZIS)
 else (ENABLE_QYZIS)
     set(QT_MIN_VERSION "4.1.0")
 endif (ENABLE_QYZIS)
+
 find_package(Qt4 REQUIRED)
+
 if (NOT QT_QTTEST_FOUND)
 	MESSAGE(FATAL_ERROR "Could not find qt-test library")
 endif(NOT QT_QTTEST_FOUND)
+
 if (NOT QT_QTGUI_FOUND)
 	MESSAGE(FATAL_ERROR "Could not find qt-gui library")
 endif(NOT QT_QTGUI_FOUND)
+
 if (NOT QT_QTXML_FOUND)
 	MESSAGE(FATAL_ERROR "Could not find qt-xml library")
 endif (NOT QT_QTXML_FOUND)
@@ -191,18 +194,23 @@ add_subdirectory( libyzis )
 if (ENABLE_LIBYZISRUNNER)
 	add_subdirectory( libyzisrunner )
 endif (ENABLE_LIBYZISRUNNER)
+
 if (ENABLE_NYZIS)
 	add_subdirectory( nyzis )
 endif (ENABLE_NYZIS)
+
 if (ENABLE_QYZIS)
 	add_subdirectory( qyzis )
 endif (ENABLE_QYZIS)
+
 if (ENABLE_KYZIS)
 	add_subdirectory( kyzis )
 endif (ENABLE_KYZIS)
+
 if (ENABLE_KPART_YZIS)
 	add_subdirectory( kpart_yzis )
 endif (ENABLE_KPART_YZIS)
+
 if (ENABLE_TESTS)
 	add_subdirectory( tests )
 endif (ENABLE_TESTS)

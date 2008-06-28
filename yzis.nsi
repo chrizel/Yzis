@@ -5,7 +5,7 @@ Name "Yzis"
 Icon "${NSISDIR}\Contrib\Graphics\Icons\nsis1-install.ico"
 
 ; The file to write
-OutFile "YzisWindowsInstaller-1.0-alpha1.exe"
+OutFile "YzisWindowsInstaller-1.0-alpha1.1.exe"
 
 LicenseText "You must agree to the license before installing."
 LicenseData "COPYING"
@@ -42,7 +42,10 @@ Section "" ;No components page, name is not important
   File c:\qt\4.4.0\bin\mingwm10.DLL
   File c:\qt\4.4.0\bin\QtCore4.dll
   File c:\qt\4.4.0\bin\QtGui4.dll
+  File c:\qt\4.4.0\bin\QtXml4.dll
   File C:\usr\local\gnuwin32\bin\libintl3.dll
+  File C:\usr\local\gnuwin32\bin\magic1.dll
+  File C:\usr\local\gnuwin32\bin\libiconv2.dll
   File c:\usr\local\lua5.1.2\lua5.1.dll
   WriteUninstaller "yzis-uninst.exe"
 

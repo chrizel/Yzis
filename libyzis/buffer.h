@@ -44,6 +44,10 @@ class YzisHighlighting;
 
 typedef QVector<YLine*> YBufferData;
 
+typedef QStringList YRawData;
+static QString YRawData_newline = QString::null;
+
+
 /**
  * A buffer is the implementation of the content of a file.
  * 
@@ -75,6 +79,31 @@ public:
       * - whether the buffer is currently modified.
       */
     QString toString() const;
+
+    //-------------------------------------------------------
+    // ----------------- Content Operations
+    //-------------------------------------------------------
+
+	/*
+	 * Inserts data into the buffer at given position
+	 * @param begin : position where to insert data
+	 * @param data : data to insert, may start and end with YRawData_endline
+	 */
+	void insertRegion(const YCursor& begin, const YRawData& data);
+
+	/*
+	 * Remove data contained in the given interval
+	 * @param bi : interval to remove
+	 */
+	void deleteRegion(const YInterval& bi);
+
+	/*
+	 * Shortcut for deleteRegion + insertRegion
+	 * @param bi : interval to remove
+	 * @param data : data to insert, may start and end with YRawData_endline
+	 */
+	void replaceRegion(const YInterval& bi, const YRawData& data);
+
 
     //-------------------------------------------------------
     // ----------------- Character Operations

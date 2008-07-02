@@ -2,6 +2,7 @@
 #include "testDebug.h"
 #include "testColor.h"
 #include "testResource.h"
+#include "testBufferChanges.h"
 
 #include <QRegExp>
 
@@ -83,6 +84,7 @@ int main( int argc, char * argv[] )
     RUN_MY_TEST( TestYDebugBackend )
     RUN_MY_TEST( TestColor )
     RUN_MY_TEST( TestResource )
+    RUN_MY_TEST( TestBufferChanges )
 
     printf("Unittest status: %d failed tests\n", result );
 

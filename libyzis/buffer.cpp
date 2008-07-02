@@ -411,6 +411,109 @@ void YBuffer::replaceLine( const QString& l, int line )
 //                            Content Operations
 // ------------------------------------------------------------------------
 
+void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
+{
+	YLine* l;
+	QString ldata;
+	QString rdata;
+	int ln = begin.line();
+
+	l = yzline(ln);
+	QString curdata = l->data();
+	ldata = curdata.left(begin.column());
+	rdata = curdata.mid(begin.column());
+
+	int i = 0;
+
+	/* first line */
+	if ( data[i] != YRawData_newline ) {
+		ldata += data[i];
+	}
+	++i;
+	if ( i == data.size() ) {
+		ldata += rdata;
+	}
+	l->setData(ldata);
+
+	if ( i < data.size() ) {
+		/* middle lines */
+		for( ; i < data.size() - 1; ++i ) {
+			d->text->insert(++ln, new YLine(data[i]));
+		}
+
+		/* last line */
+		ldata.clear();
+		if ( data[i] != YRawData_newline ) {
+			ldata = data[i];
+		}
+		ldata += rdata;
+		d->text->insert(++ln, new YLine(ldata));
+	}
+
+	/* TODO: HL */
+
+	/* TODO: undo */
+
+	/* TODO: drawbuffer push */
+	foreach( YView* v, views() ) {
+	}
+
+    setChanged( true );
+}
+
+void YBuffer::deleteRegion( const YInterval& bi )
+{
+	QString ldata;
+	QString rdata;
+
+	YCursor begin = bi.fromPos();
+	if ( bi.from().opened() )
+		begin.setColumn(begin.column() + 1);
+	YCursor end = bi.toPos();
+	if ( bi.to().closed() )
+		end.setColumn(end.column() + 1);
+
+	/* merge first and last line */
+	YLine* l;
+	l = yzline(begin.line());
+	ldata = l->data().left(begin.column());
+	rdata = textline(end.line()).mid(end.column());
+	l->setData(ldata + rdata);
+
+	/* delete ylines */
+	int ln = begin.line() + 1;
+	int n = end.line() - begin.line();
+	QVector<YLine*>::iterator it = d->text->begin() + ln;
+	while ( n-- && it != d->text->end() ) {
+		delete (*it);
+		it = d->text->erase(it);
+	}
+
+	/* ensure at least one empty line exists */
+	if ( lineCount() == 0 ) {
+		d->text->append(new YLine());
+	}
+
+
+	/* TODO: HL */
+
+	/* TODO: undo */
+
+	/* TODO: drawbuffer push */
+
+    setChanged( true );
+}
+
+void YBuffer::replaceRegion( const YInterval& bi, const YRawData& data )
+{
+	deleteRegion(bi);
+	YCursor begin = bi.fromPos();
+	if ( bi.from().opened() )
+		begin.setColumn(begin.column() + 1);
+	insertRegion(begin, data);
+}
+
+
 void YBuffer::clearText()
 {
     dbg() << "YBuffer clearText" << endl;
@@ -1352,3 +1455,4 @@ bool YBuffer::checkRecover() {
         }
         return false;
 }
+

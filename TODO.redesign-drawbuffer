@@ -1,0 +1,10 @@
+
+YBuffer/{insert,delete}Region :
+	- undo operation
+	- HL update
+	- search HL shift
+	- YViews update
+
+YBuffer: deprecate old buffer operations
+YAction: use of new YBuffer operations
+

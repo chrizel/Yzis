@@ -1,0 +1,110 @@
+Voici un rapide aperçu du fonctionnement buffer/vue actuel, avec des début de 
+propositions pour simplifier tout ca.
+C'est vraiment le bordel nivo design dans Yzis : beaucoup de couches ont été 
+rajoutées pour éviter de casser le design courant. Du coup on a un bel oignon 
+qui sent pas bon.
+
+
+Abbréviations :
+pos = cursor
+bpos = buffer pos (cursor)
+dpos = draw pos
+binterval = interval buffer (couple bpos, avec ouver/fermé)
+dinterval = interval dessin
+
+Objets : YBuffer, YView, YDrawBuffer
+
+C'est le bordel (couche rajoutée, aller-retours API, duplication de 
+fonctionnalités) :
+L'idée générale a été de tout faire pour dessiner au dernier moment, une seule 
+fois.
+De base, le fonctionnement était celui ci (sans YDrawBuffer)
+* une modification est divisée en plusieurs modifs unitaires (généralement sur 
+les lignes seules)
+** le buffer informe les vues qu'il va modifier à partir d'une certaine bpos
+*** la vue calcule la dpos correspondante
+** le buffer effectue sa modification
+** le buffer informe les vues qu'il a terminé sur un ligne donnée
+*** la vue calcule alors la zone concerné par le changement
+*** la vue accumule ce changement
+* quand l'action a terminée, on envoit un commit sur les vues
+** pour chaque région modifiée, la vue demande au buffer les data associées et 
+dessine
+
+Le YDrawBuffer a ensuite été introduit pour jouer le rôle d'un double buffer : 
+Au lieu de calculer chaque réaffichage, les modifications sont appliquées sur 
+le drawBuffer, qui stock le texte et ses attributs, et calcul les tabs, wrap, 
+etc...
+Les data sont alors regroupées par attributs, ce qui permet de dessiner 
+rapidement (on dessine d'un coup une portion de texte de même attributs)
+Pour ne pas casser le design courant, le YDrawBuffer a été greffé sur la vue
+C'est la vue qui va modifier le drawBuffer lors du commit. Lorsqu'elle aura 
+terminée ses modif, elle comitera le drawbuffer, qui à son tour appelera un 
+callback sur la vue qui va dessiner une portion de texte... ouf :)
+
+Du coup, pleins de choses s'entre-croisent. On a deux manières de différer un 
+repaint : entre le buffer et la vue et entre la vue et le drawbuffer.
+De plus, on recalcul les changement unitaires lors du commit de la vue : ils 
+seront répercutés sur le drawbuffer.
+
+Un schéma plus clair serait évidemment :
+YBuffer -> YDrawBuffer -> YView
+que l'on peut renommer en :
+YBuffer -> YView -> YEditor
+
+Les UI n'auraient ainsi que la partie YEditor à inplémenter.
+
+De plus, on peut généraliser les modifications unitaires d'un buffer, en 
+utilisant des régions (YInterval).
+Le buffer appelera alors directement la modification associée dans le 
+drawBuffer, qui calculera ce dont il a besoin (shift buffer/draw), et 
+appelera directement ou a retardement la fonction de dessin sur la vue.
+
+Les scénaris auraient cette gueule là :
+
+* l'action appele, par exemple, buffer.replaceRegion( binterval, data )
+** le buffer rajoute, selon, les regions affectées par un changement de HL
+** le buffer forward aux vues (ancien drawbuffer)
+*** la vue fait son calcul (binterval en dinterval), stock le résultat en 
+mémoire
+*** selon autocommit, appele des primitives de dessin sur le YEditor
+** le buffer applique la modification
+
+Les modifications seront ainsi moins regroupées, mais on gagne un bon paquet 
+d'aller-retour et de temps de calcul de dessin.
+
+Pour le HL, cela a toutes les chances de bien se passer, voire même beaucoup 
+mieux :
+le buffer peut passer directement au drawbuffer les (portions d')YLine qui 
+contiennent les attributs, au lieu d'un aller-retour buffer<->vue comme cela 
+se fait actuellement.
+
+Tâches à effectuer :
+- merge/split de YView/YDrawBuffer en YView (vue virtuelle) et YEditor (lieu 
+du dessin)
+- redefinition des modifications de base de YBuffer  (liste non exhaustive?):
+        * replaceRegion( binterval, &data )
+        * insertRegion( bpos, &data )
+        * deleteRegion( binterval )
+data pouvant etre une liste de YLine, avec YLine::null pour indiquer un EOL.
+- concernant l'autocommit, je propose de ne pas s'embêter avec ça dès 
+maintenant : cela peut jouer sur les perf, mais ça risque de rajouter pas mal 
+de difficultés pour le calcul / application du dessin. 
+- propagation des modifications d'API (ne devrait pas être gigantesque, les 
+principaux fichiers concernées étant actions.cpp et quelques modes)
+
+Bon, c'est un premier jet rapide des idées sur le refactor du dessin. Il faut 
+bien sûr qu'on en discute comme il faut.
+Donc j'attend vos retours.
+Il va falloir de toute façon que l'on s'organise un WE à paris entre mi et fin 
+mars, je crois que y'a pas mal de choses à revoir... ;)
+Mais si on arrive à se mettre d'accord sur la partie Buffer/Vue avant, ça 
+n'est pas plus mal (surtout que j'ai un peu de temps pour coder ces temps 
+ci).
+
+Sinon, questions bassement pratiques : c'est quand qu'on switch à mantis et 
+hg ? :)
+
+@ +
+
+Panard

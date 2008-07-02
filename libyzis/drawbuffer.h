@@ -28,7 +28,7 @@
 #include "font.h"
 #include "selection.h"
 
-class YView;
+class YViewCursor;
 
 typedef QMap<YSelectionPool::SelectionLayout, YSelection> YSelectionLayout;
 
@@ -48,58 +48,30 @@ struct YDrawCell
 }
 ;
 
-typedef QVector<YDrawCell> YDrawSection;
-typedef QVector<YDrawSection> YDrawLine;
-
-class YZIS_EXPORT YDrawBuffer
-{
-
-public:
-
-    enum SetFromInfo {
-        SetFromSeek,
-    };
-
-    YDrawBuffer();
-    ~YDrawBuffer();
-
-    void setCallback( YView* v );
-    void setCallbackArgument( void* callback_arg );
-
-    /* clear the buffer */
-    void reset();
-
-    void push( const QString& c );
-    void newline( int y = -1 );
-    void flush();
+class YDrawLine {
+public :
+	YDrawLine();
+	~YDrawLine();
 
     void setFont( const YFont& f );
     void setColor( const YColor& c );
     void setBackgroundColor( const YColor& c );
+	// TODO: setOutline
     void setSelection( int sel );
 
-    bool seek( const YCursor pos, YDrawBuffer::SetFromInfo sfi );
+    int push( const QString& c );
+	void flush();
 
-    YDrawCell at( const YCursor pos ) const;
+	YViewCursor beginViewCursor() const;
+	YViewCursor endViewCursor() const;
 
-    void replace( const YInterval& interval );
+	YDrawSection arrange( int columns );
 
-    /* Scroll dx to the right and dy downward */
-    void Scroll( int dx, int dy );
+	inline const QList<int> steps() const { return mSteps; }
 
-    void setSelectionLayout( YSelectionPool::SelectionLayout layout, const YSelection& selection );
+private:
 
-private :
-    void insert_section( int pos = -1 );
-    void insert_line( int pos = -1 );
-
-    void push( const QChar& c );
-
-    void callback( QPoint pos, const YDrawCell& cell );
-
-    bool find( const YCursor pos, int* x, int* y, int* vx ) const;
-
-    void applyPosition();
+    void insertCell( int pos = -1 );
 
     /*
      * copy YColor @param c into YColor* @param dest.
@@ -107,28 +79,41 @@ private :
      */
     static bool updateColor( YColor* dest, const YColor& c );
 
-    /* buffer content */
-    YDrawLine m_content;
+	void setLineCursor( int bufferY, int screenY );
 
-    /* current line */
-    YDrawSection* m_line;
-    /* current cell */
-    YDrawCell* m_cell;
+	QVector<YDrawCell> mCells;
+	QList<int> mSteps;
 
-    /* current selection layouts */
-    YSelectionLayout m_sel;
-
-    int v_xi; /* column of the current section */
-    int v_x; /* current draw column */
-
-    int m_x; /* current section index */
-    int m_y; /* current line index == current draw line */
+	/* current cell */
+    YDrawCell mCur;
+    /* working cell */
+    YDrawCell* mCell;
 
     bool changed;
-    YDrawCell m_cur;
 
-    YView* m_view;
-    void* m_callback_arg;
+	YViewCursor mBeginViewCursor;
+	YViewCursor mEndViewCursor;
+
+	friend YDrawBuffer;
+    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
+};
+YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
+
+
+typedef QVector<YDrawLine> YDrawSection;
+
+class YZIS_EXPORT YDrawBuffer
+{
+
+public:
+
+    YDrawBuffer();
+    ~YDrawBuffer();
+
+	void setBufferDrawSection( int lid, YDrawSection ds );
+
+private :
+	QVector<YDrawSection> mContent;
 
     friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 

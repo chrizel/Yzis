@@ -450,12 +450,21 @@ void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 		d->text->insert(++ln, new YLine(ldata));
 	}
 
-	/* TODO: HL */
+	/* syntax highlighting update */
+	int el = begin.line();
+	int nl = el;
+	while( el <= ln ) {
+		nl = updateHL(el);
+		el = nl > el ? nl : el+1;
+	}
+	YBound end(YCursor(0,el), true);
+	dbg() << "insertRegion: insert \\cup hl : " << begin << " -> " << end << endl;
 
+	/* TODO: other highlighting */
 	/* TODO: undo */
 
-	/* TODO: drawbuffer push */
 	foreach( YView* v, views() ) {
+		v->updateBufferInterval(YInterval(begin, end));
 	}
 
     setChanged( true );
@@ -494,11 +503,15 @@ void YBuffer::deleteRegion( const YInterval& bi )
 		d->text->append(new YLine());
 	}
 
+	/* syntax highlighting update */
+	ln = updateHL(begin.line());
+	if ( ln > begin.line() ) {
+		--ln;
+	}
+	YCursor update_end(getLineLength(ln), ln);
 
-	/* TODO: HL */
-
+	/* TODO: other highlighting */
 	/* TODO: undo */
-
 	/* TODO: drawbuffer push */
 
     setChanged( true );
@@ -1142,9 +1155,6 @@ int YBuffer::updateHL( int line )
     if ( d->isLoading ) 
 		return line;
 
-    /* TODO: may be a good idea to do this here...
-	YSession::self()->search()->highlightLine( this, line );
-	*/
     int hlLine = line;
 	int nElines = 0;
     if ( d->highlight != 0L ) {

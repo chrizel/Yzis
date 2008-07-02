@@ -1,11 +1,9 @@
 
-YBuffer::insertRegion: HL update
 YBuffer::insertRegion: shift search hl, etc..
 YBuffer::insertRegion: views update
 YBuffer::insertRegion: d->isLoading?
 YBuffer::insertRegion: undo
 
-YBuffer::deleteRegion: HL update
 YBuffer::deleteRegion: shift search hl, etc..
 YBuffer::deleteRegion: views update
 YBuffer::deleteRegion: d->isLoading?

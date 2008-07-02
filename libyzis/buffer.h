@@ -409,7 +409,13 @@ public:
       */
     void setHighLight( const QString& name );
 
-    bool updateHL( int line );
+	/*
+	 * update highlight from given line
+	 * @param line : line number to start the HL update
+	 * @returns first line number not affected by the update
+	 */
+    int updateHL(int line);
+
     void initHL( int line );
 
     /**

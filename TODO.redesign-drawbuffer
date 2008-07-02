@@ -1,10 +1,17 @@
 
-YBuffer/{insert,delete}Region :
-	- undo operation
-	- HL update
-	- search HL shift
-	- YViews update
+YBuffer::insertRegion: HL update
+YBuffer::insertRegion: shift search hl, etc..
+YBuffer::insertRegion: views update
+YBuffer::insertRegion: d->isLoading?
+YBuffer::insertRegion: undo
+
+YBuffer::deleteRegion: HL update
+YBuffer::deleteRegion: shift search hl, etc..
+YBuffer::deleteRegion: views update
+YBuffer::deleteRegion: d->isLoading?
+YBuffer::deleteRegion: undo
 
 YBuffer: deprecate old buffer operations
+
 YAction: use of new YBuffer operations
 

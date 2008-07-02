@@ -1136,41 +1136,50 @@ QStringList YBuffer::getLocalListOption( const QString& option ) const
         return YSession::self()->getOptions()->readListOption( "Global\\" + option, QStringList() );
 }
 
-bool YBuffer::updateHL( int line )
+int YBuffer::updateHL( int line )
 {
     // dbg() << "updateHL " << line << endl;
-    if ( d->isLoading ) return false;
-    int hlLine = line, nElines = 0;
-    bool ctxChanged = true;
-    bool hlChanged = false;
-    YLine* yl = NULL;
-    int maxLine = lineCount();
-    /* for ( int i = hlLine; i < maxLine; i++ ) {
-      YSession::self()->search()->highlightLine( this, i );
-     }*/
-    if ( d->highlight == 0L ) return false;
-    while ( ctxChanged && hlLine < maxLine ) {
-        yl = yzline( hlLine );
-        QVector<uint> foldingList;
-        YLine *l = new YLine();
-        d->highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine - 1 ) : l), yl, &foldingList, &ctxChanged );
-        delete l;
-        //  dbg() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
-        hlChanged = ctxChanged || hlChanged;
-        if ( ! ctxChanged && yl->data().isEmpty() ) {
-            ctxChanged = true; // line is empty
-            ++nElines;
-        } else if ( ctxChanged )
-            nElines = 0;
-        hlLine++;
-    }
-    if ( hlChanged ) {
-        int nToDraw = hlLine - line - nElines - 1;
-        //  dbg() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
-        foreach( YView *view, d->views )
-        view->sendBufferPaintEvent( line, nToDraw );
-    }
-    return hlChanged;
+    if ( d->isLoading ) 
+		return line;
+
+    /* TODO: may be a good idea to do this here...
+	YSession::self()->search()->highlightLine( this, line );
+	*/
+    int hlLine = line;
+	int nElines = 0;
+    if ( d->highlight != 0L ) {
+		bool ctxChanged = true;
+		bool hlChanged = false;
+		int maxLine = lineCount();
+
+		YLine* yl = NULL;
+		YLine* last_yl = hlLine > 0 ? yzline(hlLine-1) : new YLine();
+
+		for( ; ctxChanged && hlLine < maxLine; ++hlLine ) {
+			yl = yzline(hlLine);
+			QVector<uint> foldingList;
+			d->highlight->doHighlight(last_yl, yl, &foldingList, &ctxChanged );
+			if ( hlLine == 0 )
+				delete last_yl;
+			last_yl = yl;
+			//  dbg() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
+			hlChanged = ctxChanged || hlChanged;
+			if ( !ctxChanged && yl->data().isEmpty() ) {
+				ctxChanged = true; // line is empty, continue
+				++nElines;
+			} else if ( ctxChanged ) {
+				nElines = 0;
+			}
+		}
+
+		if ( hlChanged ) { // XXX: remove it when redesign will be done
+			int nToDraw = hlLine - line - nElines - 1;
+			//  dbg() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
+			foreach( YView *view, d->views )
+				view->sendBufferPaintEvent( line, nToDraw );
+		}
+	}
+	return hlLine - nElines;
 }
 
 void YBuffer::initHL( int line )

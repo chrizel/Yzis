@@ -711,7 +711,7 @@ protected:
 
     bool stringHasOnlySpaces ( const QString& what );
 
-    YDrawBuffer m_drawBuffer;
+    YDrawBuffer mDrawBuffer;
 
 private:
 

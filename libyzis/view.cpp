@@ -1332,9 +1332,10 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 	if ( wrap ) {
 		ds = dl.arrange(mColumnsVis);
 	} else {
-		ds = dl.extract(XXX);
+		YASSERT(false);
+		// TODO nowrap support
+		//ds = dl.extract(XXX);
 	}
 	mDrawBuffer.setBufferDrawSection(lid, ds);
 }
-
 

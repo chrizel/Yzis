@@ -21,7 +21,7 @@
 #define DRAWBUFFER_H
 
 /* Qt */
-#include <QVector>
+#include <QList>
 
 /* Yzis */
 #include "color.h"
@@ -65,7 +65,7 @@ public :
 	YViewCursor beginViewCursor() const;
 	YViewCursor endViewCursor() const;
 
-	YDrawSection arrange( int columns );
+	YDrawSection arrange( int columns ) const;
 
 	inline const QList<int> steps() const { return mSteps; }
 
@@ -81,7 +81,7 @@ private:
 
 	void setLineCursor( int bufferY, int screenY );
 
-	QVector<YDrawCell> mCells;
+	QList<YDrawCell> mCells;
 	QList<int> mSteps;
 
 	/* current cell */
@@ -100,7 +100,7 @@ private:
 YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
 
 
-typedef QVector<YDrawLine> YDrawSection;
+typedef QList<YDrawLine> YDrawSection;
 
 class YZIS_EXPORT YDrawBuffer
 {
@@ -113,7 +113,7 @@ public:
 	void setBufferDrawSection( int lid, YDrawSection ds );
 
 private :
-	QVector<YDrawSection> mContent;
+	QList<YDrawSection> mContent;
 
     friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 

@@ -161,6 +161,62 @@ YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl )
     return out;
 }
 
+YDrawSection YDrawLine::arrange( int columns ) const
+{
+	YDrawSection ds;
+
+	QList<YDrawCell>::const_iterator cit = mCells.constBegin();
+	QList<int>::const_iterator sit = mSteps.constBegin();
+
+	QList<YDrawCell> cur_c;
+	QList<int> cur_s;
+	int cur_width = 0;
+
+	YDrawCell c;
+	int w;
+
+	for ( cit != mCells.constEnd(); ++cit ) {
+		c = *cit;
+		w = c.c.length();
+		if ( cur_width + w <= columns ) {
+			cur_c << c;
+			for ( int sw = 0; (sw + *sit) <= w; ++sit ) {
+				cur_s << *sit;
+			}
+		} else {
+			int r = columns - cur_width;
+			QString left = c.c.left(r);
+			QString right = c.c.mid(r);
+			if ( !left.isEmpty() ) {
+				c.c = left;
+				w = c.c.length();
+				cur_c << c;
+				for ( int sw = 0; (sw + *sit) <= w; ++sit ) {
+					cur_s << *sit;
+				}
+			}
+
+			YDrawLine dl;
+			dl.mCells = cur_c;
+			dl.mSteps = cur_s;
+			dl.flush();
+			ds << dl;
+
+			cur_c.clear();
+			cur_s.clear();
+
+			c.c = right;
+			w = c.c.length();
+			cur_c << c;
+			for ( int sw = 0; (sw + *sit) <= w; ++sit ) {
+				cur_s << *sit;
+			}
+		}
+	}
+
+	return ds;
+}
+
 
 
 /************************

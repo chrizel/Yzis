@@ -129,6 +129,10 @@ const YCursor YInterval::toPos() const
     return mTo.pos();
 }
 
+bool YInterval::contains( const YBound& pos ) const 
+{
+	return mFrom >= pos && pos <= mTo;
+}
 bool YInterval::contains( const YCursor pos ) const
 {
     return mFrom >= pos && pos <= mTo;
@@ -136,6 +140,10 @@ bool YInterval::contains( const YCursor pos ) const
 bool YInterval::contains( const YInterval& i ) const
 {
     return mFrom <= i.from() && mTo >= i.to();
+}
+bool YInterval::overlap( const YInterval& i ) const
+{
+	return contains(i.from()) || contains(i.to()) || i.contains(from()) || i.contains(to());
 }
 
 QRect YInterval::boundingRect() const

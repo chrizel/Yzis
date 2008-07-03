@@ -73,7 +73,7 @@ struct YDrawCell
 }
 ;
 
-class YDrawLine {
+class YZIS_EXPORT YDrawLine {
 public :
 	YDrawLine();
 	~YDrawLine();
@@ -84,6 +84,8 @@ public :
 	// TODO: setOutline
     void setSelection( int sel );
 
+	void clear();
+
     int push( const QString& c );
 	void flush();
 
@@ -93,6 +95,7 @@ public :
 	YDrawSection arrange( int columns ) const;
 
 	inline const QList<int> steps() const { return mSteps; }
+	inline const QList<YDrawCell> cells() const { return mCells; }
 
 private:
 

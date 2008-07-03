@@ -30,8 +30,9 @@
 #include "yzismacros.h"
 #include "selection.h"
 #include "option.h"
-#include "drawbuffer.h"
 #include "statusbariface.h"
+
+struct YDrawCell;
 
 /** \brief The view interface that must be re-implemented by the GUI
   * frontend.

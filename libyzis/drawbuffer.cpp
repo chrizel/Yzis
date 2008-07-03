@@ -175,8 +175,10 @@ YDrawSection YDrawLine::arrange( int columns ) const
 		w = c.c.length();
 		if ( cur_width + w <= columns ) {
 			cur_c << c;
+			cur_width += w;
 			for ( int sw = 0; (sw + *sit) <= w; ++sit ) {
 				cur_s << *sit;
+				sw += *sit;
 			}
 		} else {
 			int r = columns - cur_width;
@@ -188,6 +190,7 @@ YDrawSection YDrawLine::arrange( int columns ) const
 				cur_c << c;
 				for ( int sw = 0; (sw + *sit) <= w; ++sit ) {
 					cur_s << *sit;
+					sw += *sit;
 				}
 			}
 
@@ -199,16 +202,25 @@ YDrawSection YDrawLine::arrange( int columns ) const
 
 			cur_c.clear();
 			cur_s.clear();
+			cur_width = 0;
 
 			c.c = right;
 			w = c.c.length();
 			cur_c << c;
-			for ( int sw = 0; (sw + *sit) <= w; ++sit ) {
+			cur_width += w;
+			for ( int sw = 0; sit!=mSteps.constEnd() && (sw + *sit) <= w; ++sit ) {
 				cur_s << *sit;
+				sw += *sit;
 			}
 		}
 	}
-
+	if ( cur_c.count() ) {
+		YDrawLine dl;
+		dl.mCells = cur_c;
+		dl.mSteps = cur_s;
+		dl.flush();
+		ds << dl;
+	}
 	return ds;
 }
 

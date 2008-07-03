@@ -5,31 +5,29 @@
 #include <libyzis/color.h>
 
 #define STRING_FROM_QSTRINGLIST(x, sl) \
-	x = QString::number(sl.count())+"://"; \
+	x = QString::number((sl).count())+"://"; \
 	foreach( QString s, sl ) x += s + "#"
 #define STRING_FROM_INTLIST(x, l) \
-	x = QString::number(l.count())+"://"; \
+	x = QString::number((l).count())+"://"; \
 	foreach( int i, l ) x += QString::number(i) + "#"
 
-void TestDrawBuffer::checkCellsContent( const YDrawLine& dl, const QStringList& sl )
-{
-	QStringList cC;
-	foreach( YDrawCell c, dl.cells() ) cC << c.c;
-	QString a, b;
-	STRING_FROM_QSTRINGLIST(a, cC);
-	STRING_FROM_QSTRINGLIST(b, sl);
-	QCOMPARE(a, b);
-}
-void TestDrawBuffer::checkSteps( const YDrawLine& dl, const QList<int>& steps )
-{
-	QString a, b;
-	STRING_FROM_INTLIST(a, dl.steps());
-	STRING_FROM_INTLIST(b, steps);
+#define CHECK_STEPS(sA, sB) \
+	STRING_FROM_INTLIST(a, sA); \
+	STRING_FROM_INTLIST(b, sB); \
 	QCOMPARE(a,b);
-}
+
+#define CHECK_CELLSCONTENT(dl, sl) \
+	cC.clear(); \
+	foreach( YDrawCell c, dl.cells() ) cC << c.c; \
+	STRING_FROM_QSTRINGLIST(a, cC); \
+	STRING_FROM_QSTRINGLIST(b, sl); \
+	QCOMPARE(a, b);
 
 void TestDrawBuffer::testDrawLine()
 {
+	QString a, b;
+	QStringList cC;
+
 	YDrawLine dl;
 	dl.setColor(YColor("red"));
 	dl.push("h");
@@ -47,8 +45,15 @@ void TestDrawBuffer::testDrawLine()
 	dl.push("d");
 	dl.flush();
 
-	checkCellsContent(dl, QStringList() << "hel" << "lo    w" << "orld");
-	checkSteps(dl, QList<int>() << 1 << 1 << 1 << 1 << 1 << 4 << 1 << 1 << 1 << 1 << 1 );
+	CHECK_CELLSCONTENT(dl, QStringList() << "hel" << "lo    w" << "orld");
+	CHECK_STEPS(dl.steps(), QList<int>() << 1 << 1 << 1 << 1 << 1 << 4 << 1 << 1 << 1 << 1 << 1 );
+
+	YDrawSection ds = dl.arrange(11);
+	QCOMPARE(ds.count(), 2);
+	CHECK_CELLSCONTENT(ds[0], QStringList()<<"hel"<<"lo    w"<<"o");
+	CHECK_STEPS(ds[0].steps(), QList<int>()<<1<<1<<1<<1<<1<<4<<1<<1);
+	CHECK_CELLSCONTENT(ds[1], QStringList()<<"rld");
+	CHECK_STEPS(ds[1].steps(), QList<int>()<<1<<1<<1);
 }
 
 void TestDrawBuffer::testDrawBuffer()

@@ -17,10 +17,6 @@ private slots:
 	void testDrawLine();
 	void testDrawBuffer();
 
-protected :
-	void checkCellsContent( const YDrawLine& dl, const QStringList& sl );
-	void checkSteps( const YDrawLine& dl, const QList<int>& steps );
-
 };
 
 #endif

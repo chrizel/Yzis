@@ -231,6 +231,13 @@ YDrawBuffer::~YDrawBuffer()
 {
 }
 
+YCursor YDrawBuffer::bufferBegin() const {
+	return mContent.first().first().beginViewCursor().buffer();
+}
+YCursor YDrawBuffer::bufferEnd() const {
+	return mContent.last().last().endViewCursor().buffer();
+}
+
 void YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 {
 	YASSERT(lid <= mContent.count());

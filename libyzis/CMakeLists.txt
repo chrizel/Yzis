@@ -9,8 +9,9 @@ include_directories(${YZIS_INCLUDES})
 ########### next target ###############
 
 set(yzis_LIB_SRCS 
+   drawbuffer.cpp 
    view.cpp 
-   viewcursor.cpp 
+   buffer.cpp 
    action.cpp 
    buffer.cpp 
    color.cpp 

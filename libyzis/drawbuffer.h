@@ -42,6 +42,9 @@ public:
     YDrawBuffer();
     ~YDrawBuffer();
 
+	YCursor bufferBegin() const;
+	YCursor bufferEnd() const;
+
 	inline const QList<YDrawSection> sections() { return mContent; }
 	void setBufferDrawSection( int lid, YDrawSection ds );
 

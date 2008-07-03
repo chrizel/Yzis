@@ -27,8 +27,9 @@ void TestDrawBuffer::testDrawLine()
 {
 	QString a, b;
 	QStringList cC;
-
 	YDrawLine dl;
+	YDrawSection ds;
+
 	dl.setColor(YColor("red"));
 	dl.push("h");
 	dl.push("e");
@@ -45,15 +46,31 @@ void TestDrawBuffer::testDrawLine()
 	dl.push("d");
 	dl.flush();
 
-	CHECK_CELLSCONTENT(dl, QStringList() << "hel" << "lo    w" << "orld");
-	CHECK_STEPS(dl.steps(), QList<int>() << 1 << 1 << 1 << 1 << 1 << 4 << 1 << 1 << 1 << 1 << 1 );
+	CHECK_CELLSCONTENT(dl, QStringList()<<"hel"<<"lo    w"<<"orld");
+	CHECK_STEPS(dl.steps(),QList<int>()<<1<<1<<1<<1<<1<<4<<1<<1<<1<<1<<1);
 
-	YDrawSection ds = dl.arrange(11);
+	ds = dl.arrange(11);
 	QCOMPARE(ds.count(), 2);
 	CHECK_CELLSCONTENT(ds[0], QStringList()<<"hel"<<"lo    w"<<"o");
 	CHECK_STEPS(ds[0].steps(), QList<int>()<<1<<1<<1<<1<<1<<4<<1<<1);
 	CHECK_CELLSCONTENT(ds[1], QStringList()<<"rld");
 	CHECK_STEPS(ds[1].steps(), QList<int>()<<1<<1<<1);
+
+	ds = dl.arrange(7);
+	QCOMPARE(ds.count(), 2);
+	CHECK_CELLSCONTENT(ds[0], QStringList()<<"hel"<<"lo  ");
+	CHECK_STEPS(ds[0].steps(), QList<int>()<<1<<1<<1<<1<<1<<2);
+	CHECK_CELLSCONTENT(ds[1], QStringList()<<"  w"<<"orld");
+	CHECK_STEPS(ds[1].steps(), QList<int>()<<2<<1<<1<<1<<1<<1);
+
+	ds = dl.arrange(6);
+	QCOMPARE(ds.count(), 3);
+	CHECK_CELLSCONTENT(ds[0], QStringList()<<"hel"<<"lo ");
+	CHECK_STEPS(ds[0].steps(), QList<int>()<<1<<1<<1<<1<<1<<1);
+	CHECK_CELLSCONTENT(ds[1], QStringList()<<"   w"<<"or");
+	CHECK_STEPS(ds[1].steps(), QList<int>()<<3<<1<<1<<1);
+	CHECK_CELLSCONTENT(ds[2], QStringList()<<"ld");
+	CHECK_STEPS(ds[2].steps(), QList<int>()<<1<<1);
 }
 
 void TestDrawBuffer::testDrawBuffer()

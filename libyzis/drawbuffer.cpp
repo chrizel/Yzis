@@ -19,7 +19,6 @@
 
 #include "drawbuffer.h"
 #include "debug.h"
-#include "view.h"
 #include "viewcursor.h"
 
 #define dbg()    yzDebug("YDrawBuffer")
@@ -35,11 +34,19 @@ YDrawLine::YDrawLine() :
 	mBeginViewCursor(),
 	mEndViewCursor()
 {
-	mBeginViewCursor.setScreenX(0);
-	mBeginViewCursor.setBufferX(0);
+	clear();
 }
 YDrawLine::~YDrawLine()
 {
+}
+
+void YDrawLine::clear() {
+	mCell = NULL;
+	mCells.clear();
+	mSteps.clear();
+	mBeginViewCursor.setScreenX(0);
+	mBeginViewCursor.setBufferX(0);
+	changed = true;
 }
 
 YViewCursor YDrawLine::beginViewCursor() const {
@@ -89,25 +96,13 @@ void YDrawLine::setSelection( int sel )
 }
 int YDrawLine::push( const QString& c )
 {
-    //YCursor pos( v_xi + mCell->c.length(), m_y );
-    //QPoint step(1, 0);
-    for ( int i = 0; i < c.length(); ++i ) {
-		/* TODO : selection
-        int sel = YSelectionPool::None;
-        foreach( YSelectionPool::SelectionLayout layout, m_sel.keys() ) {
-            if ( m_sel[layout].contains(pos) )
-                sel |= layout;
-        }
-        setSelection( sel );
-		*/
-		if ( changed ) {
-			/* set the new properties */
-			insertCell();
-		}
-		mCell->c.append( c );
-		mSteps.append(c.length());
-        //pos = pos + step;
-    }
+	if ( changed ) {
+		/* set the new properties */
+		insertCell();
+		changed = false;
+	}
+	mCell->c.append( c );
+	mSteps.append(c.length());
 	return c.length();
 }
 void YDrawLine::flush() {

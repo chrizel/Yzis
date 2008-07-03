@@ -42,9 +42,8 @@ class YLineSearch;
 class YMode;
 class YModeCompletion;
 class YOptionValue;
+
 class YZFoldPool;
-struct YDrawCell;
-class YDrawLine;
 
 /**
  * MUST be reimplemented in the GUI. 

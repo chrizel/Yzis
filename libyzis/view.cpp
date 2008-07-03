@@ -38,6 +38,7 @@
 #include "kate/syntaxhighlight.h"
 #include "linesearch.h"
 #include "folding.h"
+#include "drawbuffer.h"
 
 /* System */
 #include <math.h>

@@ -1235,8 +1235,6 @@ void YView::updateBufferInterval( const YInterval& bi )
 }
 
 
-// TODO: mHighlightAttributes
-
 YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 	YDrawLine dl;
 
@@ -1340,5 +1338,9 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 		//ds = dl.extract(XXX);
 	}
 	mDrawBuffer.setBufferDrawSection(lid, ds);
+}
+
+void YView::guiPaintEvent( const YSelection& drawMap )
+{
 }
 

@@ -188,7 +188,7 @@ void QYView::guiPreparePaintEvent( int min_y, int max_y )
 {
     // dbg().sprintf( "guiPreparePaintEvent( min_y=%d, max_y=%d )", min_y, max_y );
     mPainter = new QPainter( mEdit );
-    m_drawBuffer.setCallbackArgument( mPainter );
+    /*mDrawBuffer.setCallbackArgument( mPainter ); TODO */
     //mEdit->drawMarginLeft( min_y, max_y, mPainter );
 }
 void QYView::guiEndPaintEvent()

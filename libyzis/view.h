@@ -36,6 +36,7 @@ class YBuffer;
 class YSession;
 class YSelectionPool;
 class YzisAttribute;
+class YLine;
 class YLineSearch;
 class YMode;
 class YModeCompletion;
@@ -704,6 +705,14 @@ public:
      * returns a YSelection which fit view
      */
     YSelection clipSelection( const YSelection& sel ) const;
+
+	/*
+	 * TODO: docstring
+	 */
+	void updateBufferInterval( const YInterval& bi );
+
+	// TODO: docstring
+	YDrawLine drawLineFromYLine( const YLine* yl, int start_column = 0 );
 
 protected:
 

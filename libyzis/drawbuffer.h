@@ -27,10 +27,31 @@
 #include "color.h"
 #include "font.h"
 #include "selection.h"
+#include "viewcursor.h"
 
-class YViewCursor;
+class YDrawLine;
+typedef QList<YDrawLine> YDrawSection;
 
 typedef QMap<YSelectionPool::SelectionLayout, YSelection> YSelectionLayout;
+
+class YZIS_EXPORT YDrawBuffer
+{
+
+public:
+
+    YDrawBuffer();
+    ~YDrawBuffer();
+
+	void setBufferDrawSection( int lid, YDrawSection ds );
+
+private :
+	QList<YDrawSection> mContent;
+
+    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
+
+};
+
+YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
 struct YDrawCell
 {
@@ -94,32 +115,9 @@ private:
 	YViewCursor mBeginViewCursor;
 	YViewCursor mEndViewCursor;
 
-	friend YDrawBuffer;
+	friend class YDrawBuffer;
     friend YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
 };
 YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
-
-
-typedef QList<YDrawLine> YDrawSection;
-
-class YZIS_EXPORT YDrawBuffer
-{
-
-public:
-
-    YDrawBuffer();
-    ~YDrawBuffer();
-
-	void setBufferDrawSection( int lid, YDrawSection ds );
-
-private :
-	QList<YDrawSection> mContent;
-
-    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
-
-};
-
-YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
-
 
 #endif

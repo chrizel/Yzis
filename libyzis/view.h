@@ -821,7 +821,7 @@ private:
 
     int rHLAttributesLen;
 
-    YzisAttribute *rHLAttributes;
+    YzisAttribute* mHighlightAttributes;
 
     ///  current line
     QString sCurLine;

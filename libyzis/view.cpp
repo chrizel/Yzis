@@ -166,6 +166,12 @@ void YView::setVisibleArea(int c, int l, bool refresh)
 void YView::refreshScreen()
 {
     opt_schema = getLocalIntegerOption( "schema" );
+	mHighlightAttributes = NULL;
+	YzisHighlighting* highlight = mBuffer->highlight();
+	if ( highlight ) {
+		mHighlightAttributes = highlight->attributes(opt_schema)->data();
+	}
+
     opt_list = getLocalBooleanOption( "list" );
     opt_listchars = getLocalMapOption( "listchars" );
     sendRefreshEvent();
@@ -446,14 +452,14 @@ void YView::gotody( int nexty )
 void YView::gotoy( int nexty )
 {
 	//TODO: nexty domain
-	if ( nexty < mBufferInterval.fromPos().line() ||
-			nexty > mBufferInterval.toPos().line() ) {
+	if ( nexty < mDrawBuffer.bufferBegin().line() ||
+			nexty > mDrawBuffer.bufferEnd().line() ) {
 		dbg() << "gotoy("<<nexty<<") : out of view" << endl;
 		// TODO
 		YASSERT(false);
 		return;
 	}
-	int top_bl = mBufferInterval.fromPos().line();
+	int top_bl = mDrawBuffer.bufferBegin().line();
 	mWorkDrawSection = mDrawBuffer.sections()[nexty - top_bl];
 }
 
@@ -873,9 +879,7 @@ const YColor& YView::drawColor ( int col, int line ) const
         hl = yl->attributes(); //attributes of this line
         hl += col; // -1 ? //move pointer to the correct column
         int len = hl ? highlight->attributes( 0 )->size() : 0 ; //length of attributes
-        int schema = getLocalIntegerOption("schema");
-        YzisAttribute *list = highlight->attributes( schema )->data( ); //attributes defined by the syntax highlighting document
-        at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
+        at = ( ( *hl ) >= len ) ? &mHighlightAttributes[ 0 ] : &mHighlightAttributes[*hl]; //attributes pointed by line's attribute for current column
     }
     if ( opt_list && ( yl->data().at(col) == ' ' || yl->data().at(col) == tabChar ) )
         return blue;
@@ -1211,14 +1215,13 @@ void YView::internalScroll( int dx, int dy )
     guiScroll( dx, dy );
 }
 
-//TODO: mBufferInterval
 
 void YView::updateBufferInterval( const YInterval& bi )
 {
-	if ( !mBufferInterval.overlap(bi) )
+	if ( !bi.overlap(YInterval(mDrawBuffer.bufferBegin(), mDrawBuffer.bufferEnd())) )
 		return;
 
-	int top_bl = mBufferInterval.fromPos().line();
+	int top_bl = mDrawBuffer.bufferBegin().line();
 
 	/* buffer line where start our update */
 	int bl = qMax(bi.fromPos().line(), top_bl);

@@ -1,4 +1,7 @@
 
+YDrawLine: unittest
+YDrawBuffer: unittest
+
 YBuffer::insertRegion: shift search hl, etc..
 YBuffer::insertRegion: views update
 YBuffer::insertRegion: d->isLoading?
@@ -8,6 +11,10 @@ YBuffer::deleteRegion: shift search hl, etc..
 YBuffer::deleteRegion: views update
 YBuffer::deleteRegion: d->isLoading?
 YBuffer::deleteRegion: undo
+
+YView: vertical scroll
+YView: nowrap
+YView: horizontal scroll
 
 YBuffer: deprecate old buffer operations
 

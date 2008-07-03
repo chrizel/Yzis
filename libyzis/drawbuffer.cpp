@@ -176,22 +176,28 @@ YDrawSection YDrawLine::arrange( int columns ) const
 		if ( cur_width + w <= columns ) {
 			cur_c << c;
 			cur_width += w;
-			for ( int sw = 0; (sw + *sit) <= w; ++sit ) {
+			for ( int sw = 0; sit != mSteps.constEnd() && (sw + *sit) <= w; ++sit ) {
 				cur_s << *sit;
 				sw += *sit;
 			}
 		} else {
+			/* split current cell */
 			int r = columns - cur_width;
 			QString left = c.c.left(r);
 			QString right = c.c.mid(r);
+			int rs = 0;
 			if ( !left.isEmpty() ) {
 				c.c = left;
 				w = c.c.length();
 				cur_c << c;
-				for ( int sw = 0; (sw + *sit) <= w; ++sit ) {
+				int sw;
+				for ( sw = 0; (sw + *sit) < w; ++sit ) {
 					cur_s << *sit;
 					sw += *sit;
 				}
+				cur_s << w - sw;
+				rs = *sit - (w-sw);
+				++sit;
 			}
 
 			YDrawLine dl;
@@ -208,7 +214,10 @@ YDrawSection YDrawLine::arrange( int columns ) const
 			w = c.c.length();
 			cur_c << c;
 			cur_width += w;
-			for ( int sw = 0; sit!=mSteps.constEnd() && (sw + *sit) <= w; ++sit ) {
+			if ( rs )
+				cur_s << rs;
+			int sw = rs;
+			for ( ; sit!=mSteps.constEnd() && (sw + *sit) <= w; ++sit ) {
 				cur_s << *sit;
 				sw += *sit;
 			}

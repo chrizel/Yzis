@@ -458,13 +458,14 @@ void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 		el = nl > el ? nl : el+1;
 	}
 	YBound end(YCursor(0,el), true);
-	dbg() << "insertRegion: insert \\cup hl : " << begin << " -> " << end << endl;
+	YInterval bi(begin, end);
+	dbg() << "insertRegion: insert \\cup hl : " << bi << endl;
 
 	/* TODO: other highlighting */
 	/* TODO: undo */
 
 	foreach( YView* v, views() ) {
-		v->updateBufferInterval(YInterval(begin, end));
+		v->updateBufferInterval(bi);
 	}
 
     setChanged( true );

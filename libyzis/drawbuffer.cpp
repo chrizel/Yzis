@@ -1,5 +1,5 @@
 /*  This file is part of the Yzis libraries
-*  Copyright (C) 2006 Loic Pauleve <panard@inzenet.org>
+*  Copyright (C) 2006-2008 Loic Pauleve <panard@inzenet.org>
 *
 *  This library is free software; you can redistribute it and/or
 *  modify it under the terms of the GNU Library General Public
@@ -108,7 +108,7 @@ int YDrawLine::push( const QString& c )
 		mSteps.append(c.length());
         //pos = pos + step;
     }
-	return i;
+	return c.length();
 }
 void YDrawLine::flush() {
 	mEndViewCursor = mBeginViewCursor;
@@ -122,8 +122,9 @@ void YDrawLine::flush() {
 
 void YDrawLine::insertCell( int pos )
 {
+	YASSERT(pos <= mCells.count());
     if ( pos == -1 ) {
-        pos = mCells->size();
+        pos = mCells.count();
     }
 
     /* copy properties */
@@ -132,18 +133,17 @@ void YDrawLine::insertCell( int pos )
     updateColor(&n.bg, mCur.bg);
     n.sel = mCur.sel;
 
-    if ( pos >= mCells->size() ) {
-        mCells->resize(pos + 1);
-        mCells->replace(pos, n);
+    if ( pos == mCells.count() ) {
+		mCells << n;
     } else {
-        if ( mCells->at(pos).c.length() > 0 ) {
-            mCells->insert(pos, n);
+        if ( !mCells[pos].c.isEmpty() ) {
+            mCells.insert(pos, n);
         } else {
-            mCells->replace(pos, n);
+            mCells.replace(pos, n);
         }
     }
 
-    mCell = &(*mCells)[pos];
+    mCell =& mCells[pos];
 }
 
 void YDrawLine::setLineCursor( int bufferY, int screenY ) {
@@ -155,7 +155,7 @@ void YDrawLine::setLineCursor( int bufferY, int screenY ) {
 
 YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl )
 {
-	for ( int i = 0; j < dl.mCells.size(); ++i ) {
+	for ( int i = 0; i < dl.mCells.size(); ++i ) {
 		out << "'" << dl.mCells[i].c << "' ";
 	}
     return out;
@@ -175,7 +175,7 @@ YDrawSection YDrawLine::arrange( int columns ) const
 	YDrawCell c;
 	int w;
 
-	for ( cit != mCells.constEnd(); ++cit ) {
+	for ( ; cit != mCells.constEnd(); ++cit ) {
 		c = *cit;
 		w = c.c.length();
 		if ( cur_width + w <= columns ) {
@@ -233,18 +233,20 @@ YDrawBuffer::~YDrawBuffer()
 
 void YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 {
-	if ( lid > mContent.count() ) {
-		mContent.resize(lid+1);
-	}
+	YASSERT(lid <= mContent.count());
 	/* compute screenY */
 	int dy = 0;
 	for ( int i = 0; i < lid; ++i ) {
 		dy += mContent[i].count();
 	}
 	/* section size changed? */
-	int shift = ds.count() - mContent[lid].count()
+	int shift = ds.count() - mContent[lid].count();
 	/* apply section */
-	mContent.replace(lid, ds);
+	if ( lid == mContent.count() ) {
+		mContent << ds;
+	} else {
+		mContent.replace(lid, ds);
+	}
 	for ( int j = 0; j < ds.count(); ++j ) {
 		mContent[lid][j].setLineCursor(lid, dy++);
 	}
@@ -260,7 +262,7 @@ void YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 
 YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff )
 {
-	dy = 0;
+	int dy = 0;
     for ( int i = 0; i < buff.mContent.size(); ++i ) {
 		for ( int j = 0; j < buff.mContent[i].count(); ++j ) {
 			out << dy++ << ": " << buff.mContent[i][j] << endl;

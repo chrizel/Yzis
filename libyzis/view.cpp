@@ -1233,7 +1233,6 @@ void YView::updateBufferInterval( const YInterval& bi )
 
 // TODO: mHighlightAttributes
 
-YDrawLine drawLineFromYLine( const YLine* yl, int start_column = 0 );
 YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 	YDrawLine dl;
 

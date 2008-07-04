@@ -184,16 +184,12 @@ void QYView::guiNotifyContentChanged( const YSelection& s )
     }
 }
 
-void QYView::guiPreparePaintEvent( int min_y, int max_y )
+void QYView::guiPreparePaintEvent()
 {
-    // dbg().sprintf( "guiPreparePaintEvent( min_y=%d, max_y=%d )", min_y, max_y );
     mPainter = new QPainter( mEdit );
-    /*mDrawBuffer.setCallbackArgument( mPainter ); TODO */
-    //mEdit->drawMarginLeft( min_y, max_y, mPainter );
 }
 void QYView::guiEndPaintEvent()
 {
-    // dbg() << "guiEndPaintEvent()" << endl;
     delete mPainter;
     mPainter = NULL;
 }
@@ -335,7 +331,5 @@ void QYView::scrollView( int value )
             mVScroll->setValue( value );
     }
 }
-
-
 
 

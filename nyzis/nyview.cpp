@@ -138,12 +138,12 @@ void NYView::guiNotifyContentChanged( const YSelection& s )
 {
     guiPaintEvent( s );
 }
-void NYView::guiPreparePaintEvent(int, int)
+void NYView::guiPreparePaintEvent()
 {}
 void NYView::guiEndPaintEvent()
 {}
 
-void NYView::guiDrawCell( QPoint pos, const YDrawCell& cell, void* )
+void NYView::guiDrawCell( YCursor pos, const YDrawCell& cell )
 {
     YColor c = cell.fg;
     if ( !c.isValid() ) {
@@ -205,8 +205,9 @@ void NYView::drawCursor()
     wrefresh( editor );
 }
 
-void NYView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar )
+void NYView::guiDrawClearToEOL( YCursor pos, const YDrawCell& cell )
 {
+	QChar clearChar = cell.c[0]; /* TODO */
     int x = pos.x();
     if ( !fakeLine )
         x += marginLeft;

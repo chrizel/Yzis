@@ -30,32 +30,10 @@
 #include "viewcursor.h"
 
 class YDrawLine;
+class YCursor;
 typedef QList<YDrawLine> YDrawSection;
 
 typedef QMap<YSelectionPool::SelectionLayout, YSelection> YSelectionLayout;
-
-class YZIS_EXPORT YDrawBuffer
-{
-
-public:
-
-    YDrawBuffer();
-    ~YDrawBuffer();
-
-	YCursor bufferBegin() const;
-	YCursor bufferEnd() const;
-
-	inline const QList<YDrawSection> sections() { return mContent; }
-	void setBufferDrawSection( int lid, YDrawSection ds );
-
-private :
-	QList<YDrawSection> mContent;
-
-    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
-
-};
-
-YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
 struct YDrawCell
 {
@@ -70,13 +48,66 @@ struct YDrawCell
             flag( 0 ),
             font(), c(), bg(), fg()
     {}
-}
-;
+};
+
+struct YDrawCellInfo
+{
+	enum YDrawCellType {
+		Data,
+		EOL
+	};
+
+	YDrawCellType type;
+	YCursor pos;
+	YDrawCell cell;
+};
+
+class YDrawBuffer;
+class YZIS_EXPORT YDrawBufferIterator
+{
+public:
+	YDrawBufferIterator( const YDrawBuffer* db, const YInterval& i );
+	virtual ~YDrawBufferIterator();
+
+	bool hasNext();
+	const YDrawCellInfo next();
+
+private:
+
+	const YDrawBuffer* mDrawBuffer;
+	YInterval mI;
+};
+
+class YZIS_EXPORT YDrawBuffer
+{
+	friend class YDrawBufferIterator;
+
+public:
+
+    YDrawBuffer();
+    virtual ~YDrawBuffer();
+
+	YCursor bufferBegin() const;
+	YCursor bufferEnd() const;
+
+	YDrawBufferIterator iterator( const YInterval& i ) const;
+
+	inline const QList<YDrawSection> sections() { return mContent; }
+	void setBufferDrawSection( int lid, YDrawSection ds );
+
+private :
+	QList<YDrawSection> mContent;
+
+    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
+
+};
+
+YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
 class YZIS_EXPORT YDrawLine {
 public :
 	YDrawLine();
-	~YDrawLine();
+	virtual ~YDrawLine();
 
     void setFont( const YFont& f );
     void setColor( const YColor& c );

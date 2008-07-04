@@ -1345,14 +1345,10 @@ void YView::guiPaintEvent( const YSelection& drawMap )
 {
     if ( drawMap.isEmpty() )
         return ;
-    dbg() << "YView::guiPaintEvent" << drawMap;
+
+    dbg() << "guiPaintEvent" << drawMap;
 
     guiPreparePaintEvent();
-
-    bool number = getLocalBooleanOption( "number" );
-    if ( number ) {
-        guiDrawSetMaxLineNumber(mBuffer->lineCount());
-    }
 
 	foreach( YInterval di, drawMap.map() ) {
 		YDrawBufferIterator it = mDrawBuffer.iterator(di);
@@ -1367,8 +1363,6 @@ void YView::guiPaintEvent( const YSelection& drawMap )
 					break;
 			}
 		}
-		/* TODO: out of file lines (~) */
-		/* Qt::cyan, ~, clearnumber */
 	}
 
     guiEndPaintEvent();

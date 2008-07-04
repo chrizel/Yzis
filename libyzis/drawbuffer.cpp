@@ -294,3 +294,31 @@ YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff )
     return out;
 }
 
+YDrawBufferIterator YDrawBuffer::iterator( const YInterval& i ) const
+{
+	return YDrawBufferIterator(this, i);
+}
+
+
+YDrawBufferIterator::YDrawBufferIterator( const YDrawBuffer* db, const YInterval& i )
+{
+	mDrawBuffer = db;
+	mI = i;
+}
+YDrawBufferIterator::~YDrawBufferIterator()
+{
+}
+
+
+bool YDrawBufferIterator::hasNext()
+{
+	return false;
+}
+
+const YDrawCellInfo YDrawBufferIterator::next()
+{
+	YDrawCellInfo ci;
+	ci.type = YDrawCellInfo::Data;
+	return ci;
+}
+

@@ -158,7 +158,7 @@ void NoGuiView::guiHighlightingChanged()
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::guiPreparePaintEvent(int, int)
+void NoGuiView::guiPreparePaintEvent()
 {
     dbg() << HERE() << endl;
 }
@@ -166,11 +166,11 @@ void NoGuiView::guiEndPaintEvent()
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::guiDrawCell(QPoint, const YDrawCell&, void*)
+void NoGuiView::guiDrawCell(YCursor, const YDrawCell&)
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::guiDrawClearToEOL(QPoint, const QChar&)
+void NoGuiView::guiDrawClearToEOL(YCursor, const YDrawCell&)
 {
     dbg() << HERE() << endl;
 }

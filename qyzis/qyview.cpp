@@ -206,13 +206,13 @@ void QYView::guiPaintEvent( const YSelection& s )
 /*
  * View painting methods
  */
-void QYView::guiDrawCell( QPoint pos, const YDrawCell& cell, void* arg )
+void QYView::guiDrawCell( YCursor pos, const YDrawCell& cell )
 {
-    mEdit->guiDrawCell( pos, cell, (QPainter*)arg );
+    mEdit->guiDrawCell( pos, cell, mPainter );
 }
-void QYView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar )
+void QYView::guiDrawClearToEOL( YCursor pos, const YDrawCell& clearCell )
 {
-    mEdit->guiDrawClearToEOL( pos, clearChar, mPainter );
+    mEdit->guiDrawClearToEOL( pos, clearCell, mPainter );
 }
 void QYView::guiDrawSetMaxLineNumber( int max )
 {

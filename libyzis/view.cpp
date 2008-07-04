@@ -1,7 +1,7 @@
 /* This file is part of the Yzis libraries
 *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
 *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>.
-*  Copyright (C) 2003-2006 Loic Pauleve <panard@inzenet.org>
+*  Copyright (C) 2003-2008 Loic Pauleve <panard@inzenet.org>
 *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
 *  Copyright (C) 2005 Erlend Hamberg <hamberg@stud.ntnu.no>
 *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
@@ -89,8 +89,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     /* start of visual mode */
 
     mFoldPool = new YZFoldPool( this );
-
-    //mDrawBuffer.setCallback( this ); TODO
 
     stickyCol = 0;
 
@@ -1338,10 +1336,41 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 		// TODO nowrap support
 		//ds = dl.extract(XXX);
 	}
-	mDrawBuffer.setBufferDrawSection(lid, ds);
+
+	/*TODO YInterval affected = */mDrawBuffer.setBufferDrawSection(lid, ds);
+	/*TODO sendPaintEvent(affected) */
 }
 
 void YView::guiPaintEvent( const YSelection& drawMap )
 {
+    if ( drawMap.isEmpty() )
+        return ;
+    dbg() << "YView::guiPaintEvent" << drawMap;
+
+    guiPreparePaintEvent();
+
+    bool number = getLocalBooleanOption( "number" );
+    if ( number ) {
+        guiDrawSetMaxLineNumber(mBuffer->lineCount());
+    }
+
+	foreach( YInterval di, drawMap.map() ) {
+		YDrawBufferIterator it = mDrawBuffer.iterator(di);
+		while ( it.hasNext() ) {
+			const YDrawCellInfo ci = it.next();
+			switch ( ci.type ) {
+				case YDrawCellInfo::Data :
+					guiDrawCell(ci.pos, ci.cell);
+					break;
+				case YDrawCellInfo::EOL :
+					guiDrawClearToEOL(ci.pos, ci.cell);
+					break;
+			}
+		}
+		/* TODO: out of file lines (~) */
+		/* Qt::cyan, ~, clearnumber */
+	}
+
+    guiEndPaintEvent();
 }
 

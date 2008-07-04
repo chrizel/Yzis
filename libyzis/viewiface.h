@@ -151,16 +151,16 @@ public:
     virtual void guiNotifyContentChanged( const YSelection& s ) = 0;
 
     /** Inform GUI that a paint event is going to arrive. */
-    virtual void guiPreparePaintEvent( int y_min, int y_max ) = 0;
+    virtual void guiPreparePaintEvent() = 0;
 
     /** Inform GUI that the paint event is finished. */
     virtual void guiEndPaintEvent() = 0;
 
     /** XXX to be written */
-    virtual void guiDrawCell( QPoint pos, const YDrawCell& cell, void* arg ) = 0;
+    virtual void guiDrawCell( YCursor pos, const YDrawCell& cell ) = 0;
 
     /** XXX to be written */
-    virtual void guiDrawClearToEOL( QPoint pos, const QChar& clearChar ) = 0;
+    virtual void guiDrawClearToEOL( YCursor pos, const YDrawCell& clearCell ) = 0;
 
     /** XXX to be written */
     virtual void guiDrawSetMaxLineNumber( int max ) = 0;

@@ -629,19 +629,6 @@ public:
     void updateStickyCol( YViewCursor* viewCursor );
 
     //-------------------------------------------------------
-    // ----------------- Dimensions
-    //-------------------------------------------------------
-    /**
-     * line increment (on buffer)
-     */
-    int lineIncrement( ) const;
-
-    /**
-     * current line height (on screen)
-     */
-    int lineHeight( ) const;
-
-    //-------------------------------------------------------
     // ----------------- Mode
     //-------------------------------------------------------
 

@@ -857,16 +857,6 @@ void YView::updateCurLine( )
     }
 }
 
-
-int YView::lineIncrement() const
-{
-    return workCursor.bLineIncrement;
-}
-int YView::lineHeight() const
-{
-    return workCursor.lineHeight;
-}
-
 const YColor& YView::drawColor ( int col, int line ) const
 {
     YLine *yl = mBuffer->yzline( line );

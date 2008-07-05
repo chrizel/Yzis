@@ -178,18 +178,6 @@ QString YBuffer::toString() const
  * do _not_ use them directly, use action() ( actions.cpp ) instead.
  */
 
-static void viewsInit( YBuffer *buffer, QPoint pos )
-{
-    foreach( YView *view, buffer->views() )
-        view->initChanges(pos);
-}
-
-static void viewsApply( YBuffer *buffer, int y )
-{
-    foreach( YView *view, buffer->views() )
-        view->applyChanges(y);
-}
-
 void YBuffer::insertChar(QPoint pos, const QString& c )
 {
     ASSERT_TEXT_WITHOUT_NEWLINE( QString("YBuffer::insertChar(%1,%2,%3)").arg(pos.x()).arg(pos.y()).arg(c), c )
@@ -208,15 +196,12 @@ void YBuffer::insertChar(QPoint pos, const QString& c )
     }
 
 
-    viewsInit( this, pos );
-
     d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, c, pos);
     if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpAddText, c, pos );
 
     l.insert(pos.x(), c);
     setTextline(pos.y(), l);
 
-    viewsApply( this, pos.y() );
 }
 
 void YBuffer::delChar (QPoint pos, int count )
@@ -232,8 +217,6 @@ void YBuffer::delChar (QPoint pos, int count )
 
     ASSERT_POS_EXISTS( QString("YBuffer::delChar(QPoint(%1,%2),%3)").arg(pos.x()).arg(pos.y()).arg(count), pos)
 
-    viewsInit( this, pos );
-
     d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, l.mid(pos.x(), count), pos );
     if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpDelText, l.mid( pos.x(), count ), pos );
 
@@ -242,7 +225,6 @@ void YBuffer::delChar (QPoint pos, int count )
 
     setTextline(pos.y(), l);
 
-    viewsApply( this, pos.y() );
 }
 
 // ------------------------------------------------------------------------
@@ -284,8 +266,6 @@ void YBuffer::insertLine(const QString &l, int line)
     d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, l, QPoint(0, line));
     if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpAddText, l, QPoint(0, line));
 
-    viewsInit( this, QPoint(0, line));
-
     QVector<YLine*>::iterator it = d->text->begin(), end = d->text->end();
     int idx = 0;
     for ( ; idx < line && it != end; ++it, ++idx )
@@ -298,9 +278,7 @@ void YBuffer::insertLine(const QString &l, int line)
 
     setChanged( true );
 
-    viewsApply( this, line + 1 );
 }
-
 void YBuffer::insertNewLine( QPoint pos )
 {
     if (pos.y() == lineCount()) {
@@ -314,7 +292,6 @@ void YBuffer::insertNewLine( QPoint pos )
         //fake being at end of last line to make it work
         pos = QPoint( textline(pos.y() - 1).length(), pos.y() - 1);
     }
-    viewsInit( this, pos);
 
     if ( pos.y() >= lineCount() ) return ;
     QString l = textline(pos.y());
@@ -350,8 +327,6 @@ void YBuffer::insertNewLine( QPoint pos )
     //replace old line
     setTextline(pos.y(), l.left( pos.x() ));
     updateHL( pos.y() + 1 );
-
-    viewsApply( this, pos.y() + 1 );
 }
 
 void YBuffer::deleteLine( int line )
@@ -360,7 +335,6 @@ void YBuffer::deleteLine( int line )
 
     if (line >= lineCount()) return ;
 
-    viewsInit( this, QPoint(0, line));
     d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, textline(line), QPoint(0, line));
     if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpDelText, textline( line ), QPoint(0, line));
     if (lineCount() > 1) {
@@ -384,7 +358,6 @@ void YBuffer::deleteLine( int line )
 
     setChanged( true );
 
-    viewsApply( this, line + 1 );
 }
 
 void YBuffer::replaceLine( const QString& l, int line )
@@ -394,7 +367,6 @@ void YBuffer::replaceLine( const QString& l, int line )
 
     if ( line >= lineCount() ) return ;
     if ( textline( line ).isNull() ) return ;
-    viewsInit( this, QPoint(0, line));
 
     d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, textline(line), QPoint(0, line));
     d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, l, QPoint(0, line));
@@ -404,7 +376,6 @@ void YBuffer::replaceLine( const QString& l, int line )
     }
     setTextline(line, l);
 
-    viewsApply( this, line );
 }
 
 // ------------------------------------------------------------------------

@@ -25,6 +25,8 @@ YBuffer: deprecate old buffer operations
 
 YAction: use of new YBuffer operations
 
+YVisualMode: VisualBlock
+
 YView: redo folding support:
 	m_lineFiller = ' '; 
 	m_lineMarker = ' '; 

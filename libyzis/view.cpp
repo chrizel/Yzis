@@ -403,6 +403,7 @@ void YView::alignViewBufferVertically( int line )
 
 void YView::alignViewVertically( int line )
 {
+	/* TODO */
     // dbg() << "YView::alignViewVertically " << line << endl;
     int newcurrent = line;
     int screenX = scrollCursor.screenX();
@@ -413,8 +414,8 @@ void YView::alignViewVertically( int line )
             gotody( newcurrent );
             // rLineHeight > 1 => our new top is in middle of a wrapped line, move new top to next line
             newcurrent = workCursor.bufferY();
-            if ( workCursor.lineHeight > 1 )
-                ++newcurrent;
+            /*if ( workCursor.lineHeight > 1 ) TODO
+                ++newcurrent;*/
             gotoy( newcurrent );
             gotodx( screenX );
             applyGoto( &scrollCursor, false );
@@ -787,40 +788,6 @@ void YView::applyStartPosition( const YCursor pos )
     }
 }
 
-/**
- * initChanges and applyChanges are called by the buffer to inform the view that there are
- * changes around x,y. Each view have to find what they have to redraw, depending
- * of the wrap option, and of course window size.
- */
-void YView::initChanges( QPoint pos)
-{
-    beginChanges = pos;
-    origPos = mainCursor.buffer();
-    lineDY = 1;
-    if ( wrap && pos.y() < mBuffer->lineCount() ) {
-        gotoxy( qMax( 1, mBuffer->getLineLength( pos.y() ) ) - 1, pos.y(), false );
-        lineDY = mainCursor.screenY();
-    }
-    gotoxy( pos, false );
-}
-void YView::applyChanges( int y )
-{
-    int dY = mainCursor.screenY() + 1 - mainCursor.lineHeight;
-    if ( y != beginChanges.y() ) {
-        sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor.screenY() ) );
-    } else {
-        if ( wrap ) {
-            gotoxy( qMax( 1, mBuffer->getLineLength( y ) ) - 1, y, false );
-            if ( mainCursor.screenY() != lineDY )
-                sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor.screenY() ) );
-            else
-                sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, 1 + mainCursor.screenY() - dY );
-        } else
-            sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, 1 );
-    }
-    gotoxy( origPos, false );
-}
-
 QString YView::append ()
 {
     mModePool->change( YMode::ModeInsert );
@@ -1021,7 +988,9 @@ void YView::updateStickyCol( )
 }
 void YView::updateStickyCol( YViewCursor* viewCursor )
 {
+	/* TODO 
     stickyCol = ( viewCursor->lineHeight - 1 ) * mColumnsVis + viewCursor->screenX();
+	*/
 }
 
 void YView::commitNextUndo()

@@ -48,7 +48,6 @@ void YViewCursor::copyFields( const YViewCursor &c )
 {
     mScreen = c.mScreen;
     mBuffer = c.mBuffer;
-    lineHeight = c.lineHeight;
 }
 
 YViewCursor &YViewCursor::operator=( const YViewCursor& c )
@@ -61,11 +60,8 @@ YViewCursor &YViewCursor::operator=( const YViewCursor& c )
 void YViewCursor::reset()
 {
     mValid = true;
-    lineHeight = 1;
-    mBuffer.setX( 0 );
-    mBuffer.setY( 0 );
-    mScreen.setX( 0 );
-    mScreen.setY( 0 );
+    mBuffer.setLineColumn(0, 0);
+    mScreen.setLineColumn(0, 0);
 }
 
 void YViewCursor::invalidate()
@@ -75,12 +71,6 @@ void YViewCursor::invalidate()
 bool YViewCursor::valid() const
 {
     return mValid;
-}
-
-void YViewCursor::debug()
-{
-    dbg() << "YViewCursor : buffer = " << mBuffer << " ; screen = " << mScreen
-    << " ; lineHeight = " << lineHeight << endl
 }
 
 int YViewCursor::bufferX() const

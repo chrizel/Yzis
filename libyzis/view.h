@@ -657,17 +657,6 @@ public:
     {}
 
     //-------------------------------------------------------
-    // ----------------- Changes occurred around (x, y)
-    //-------------------------------------------------------
-    /**
-     * initChanges and applyChanges are called by the buffer to inform the view that there are
-     * changes around x,y. Each view have to find what they have to redraw, depending
-     * of the wrap option, and of course window size.
-     */
-    void initChanges( QPoint pos );
-    void applyChanges( int y );
-
-    //-------------------------------------------------------
     // ----------------- Miscellaneous
     //-------------------------------------------------------
     /**

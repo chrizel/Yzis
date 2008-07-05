@@ -24,8 +24,6 @@
 #include "cursor.h"
 #include "yzismacros.h"
 
-class YView;
-
 /**
   * @short Handle both buffer/drawing cursors
   *
@@ -48,13 +46,13 @@ struct YCursorPos
 
 
 /**
- * class YViewCursor : buffer and screen cursor with all members that YView needs to move it.
- * this is only an interface, it doesn't have to know how move itself ( this is YView stuff )
- */
+  * @short Handle both buffer/drawing cursors
+  *
+  * Coumpound object containing a YCursor for the buffer, and another one
+  * for the display
+  */
 class YZIS_EXPORT YViewCursor : public YCursorPos
 {
-
-    friend class YView;
 
 public:
     YViewCursor();
@@ -84,16 +82,6 @@ public:
         return mScreen;
     }
 
-    /**
-     * curLineHeight : line height at current cursor position
-     */
-    inline int curLineHeight() const
-    {
-        return lineHeight;
-    }
-
-    void debug();
-
     void setBuffer( const YCursor value )
     {
         mBuffer = value;
@@ -110,12 +98,6 @@ public:
 
 private :
     void copyFields( const YViewCursor &rhs );
-
-
-    /**
-     * current line height
-     */
-    int lineHeight;
 
     /**
      * valid token

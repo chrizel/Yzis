@@ -69,7 +69,7 @@ static int nextId = 1;
 
 YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
         :
-          mDrawBuffer(),
+          mDrawBuffer(cols,lines),
           mPreviousChars(""),mLastPreviousChars(""),
           mainCursor(), scrollCursor(), workCursor(), mVisualCursor(), keepCursor(),
           id(nextId++)
@@ -91,8 +91,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     mFoldPool = new YZFoldPool( this );
 
     stickyCol = 0;
-
-    QString line = mBuffer->textline(scrollCursor.bufferY());
 
     reverseSearch = false;
     mPreviousChars.clear();
@@ -158,6 +156,8 @@ void YView::setVisibleArea(int c, int l, bool refresh)
     dbg() << "YView::setVisibleArea(" << c << "," << l << ");" << endl;
     mLinesVis = l;
     mColumnsVis = c;
+	mDrawBuffer.setScreenSize(c, l);
+	/* TODO */
     if ( refresh )
         recalcScreen();
 }

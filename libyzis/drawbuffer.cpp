@@ -239,12 +239,21 @@ YDrawSection YDrawLine::arrange( int columns ) const
  * YDrawBuffer
  ************************/
 
-YDrawBuffer::YDrawBuffer() :
-	mContent()
+YDrawBuffer::YDrawBuffer( int columns, int lines ) :
+	mContent(),
+	mEOLCell()
 {
+	mEOLCell.c = " ";
+	setScreenSize(columns, lines);
 }
 YDrawBuffer::~YDrawBuffer()
 {
+}
+
+void YDrawBuffer::setScreenSize( int columns, int lines ) 
+{
+	mScreenWidth = columns;
+	mScreenHeight = lines;
 }
 
 YCursor YDrawBuffer::bufferBegin() const {
@@ -294,6 +303,11 @@ YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff )
     return out;
 }
 
+void YDrawBuffer::setEOLCell( const YDrawCell& cell )
+{
+	mEOLCell = cell;
+}
+
 YDrawBufferIterator YDrawBuffer::iterator( const YInterval& i ) const
 {
 	return YDrawBufferIterator(this, i);
@@ -303,22 +317,132 @@ YDrawBufferIterator YDrawBuffer::iterator( const YInterval& i ) const
 YDrawBufferIterator::YDrawBufferIterator( const YDrawBuffer* db, const YInterval& i )
 {
 	mDrawBuffer = db;
-	mI = i;
+	setup(i);
 }
 YDrawBufferIterator::~YDrawBufferIterator()
 {
 }
 
+void YDrawBufferIterator::setup( const YInterval& i )
+{
+	mStopped = false;
+	mI = i;
+
+	int fLine = mI.fromPos().line();
+	int fCol = mI.fromPos().column();
+	if ( mI.from().opened() ) ++fCol;
+
+	int dy = 0;
+	mCurBLine = 0;
+	int h = mDrawBuffer->mContent[mCurBLine].count();
+	while ( mCurBLine < mDrawBuffer->mContent.count() && (dy + h) <= fLine ) {
+		dy += h;
+		++mCurBLine;
+		h = mDrawBuffer->mContent[mCurBLine].count();
+	}
+	if ( mCurBLine >= mDrawBuffer->mContent.count() ) {
+		mStopped = true;
+	} else {
+		mCurLine = fLine - dy;
+		mCurCell = 0;
+		int w = 0;
+		bool found = false;
+		mPos = YCursor(fCol, fLine);
+		mNext.pos = mPos;
+		foreach( YDrawCell cell, mDrawBuffer->mContent[mCurBLine][mCurLine].cells() ) {
+			int cw = cell.c.length();
+			if ( w + cw > fCol ) {
+				cell.c = cell.c.mid(cw - (fCol - w));
+				if ( fLine == mI.toPos().line() ) {
+					/* take care of to() */
+					int tCol = mI.toPos().column();
+					if ( mI.to().opened() ) {
+						--tCol;
+						YASSERT(tCol >= 0);
+					}
+					cell.c = cell.c.left(tCol - fCol + 1);
+				}
+				mNext.type = YDrawCellInfo::Data;
+				mNext.cell = cell;
+				found = true;
+				break;
+			}
+			mCurCell += 1;
+		}
+		if ( !found ) {
+			// EOL
+			mNext.type = YDrawCellInfo::EOL;
+			mNext.cell = mDrawBuffer->mEOLCell;
+		}
+	}
+}
+
+void YDrawBufferIterator::step()
+{
+	if ( mCurCell >= mDrawBuffer->mContent[mCurBLine][mCurLine].cells().count() ) {
+		/* go to next line */
+		++mCurLine;
+		if ( mCurLine >= mDrawBuffer->mContent[mCurBLine].count() ) {
+			/* go to next buffer line */
+			++mCurBLine;
+			mCurLine = 0;
+			if ( mCurBLine >= mDrawBuffer->mContent.count() ) {
+				/* getting out of screen */
+				mStopped = true;
+				return;
+			}
+		}
+		mPos.setColumn(0);
+		mPos.setLine(mPos.line() + 1);
+		mCurCell = -1;
+		mNext.cell = YDrawCell();
+		step();
+	} else {
+		/* go to next cell */
+		mPos.setColumn(mPos.column() + mNext.cell.c.length());
+		if ( mPos > mI.toPos() || (mI.to().opened() && mPos >= mI.toPos()) ) {
+			mStopped = true;
+			return;
+		}
+		++mCurCell;
+		mNext.pos = mPos;
+		if ( mCurCell >= mDrawBuffer->mContent[mCurBLine][mCurLine].cells().count() ) {
+			/* going out of line */
+			if ( mPos.column() < mDrawBuffer->screenWidth() ) {
+				/* EOL */
+				mNext.type = YDrawCellInfo::EOL;
+				mNext.cell = mDrawBuffer->mEOLCell;
+			} else {
+				step();
+			}
+		} else {
+			YDrawCell cell = mDrawBuffer->mContent[mCurBLine][mCurLine].mCells[mCurCell];
+			mNext.type == YDrawCellInfo::Data;
+			if ( mPos.line() == mI.toPos().line() ) {
+				/* take care of last line */
+				int w = cell.c.length();
+				int tCol = mI.toPos().column();
+				if ( mI.to().opened() ) {
+					--tCol;
+					YASSERT(tCol >= 0);
+				}
+				cell.c = cell.c.left(tCol - mPos.column() + 1);
+			}
+			mNext.cell = cell;
+		}
+	}
+}
+
 
 bool YDrawBufferIterator::hasNext()
 {
-	return false;
+	return !mStopped;
 }
-
 const YDrawCellInfo YDrawBufferIterator::next()
 {
-	YDrawCellInfo ci;
-	ci.type = YDrawCellInfo::Data;
-	return ci;
+	YASSERT(hasNext());
+	YDrawCellInfo ret = mNext;
+	step();
+	return ret;
 }
 

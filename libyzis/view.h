@@ -58,8 +58,6 @@ class YZFoldPool;
 class YZIS_EXPORT YView : public YViewIface
 {
 
-    friend class YDrawBuffer;
-
 public:
     //-------------------------------------------------------
     // ----------------- Constructor/Destructor and ID
@@ -752,11 +750,6 @@ private:
      */
     YViewCursor workCursor;
 
-    /**
-     * are we moving cursor in draw mode ?
-     */
-    bool drawMode;
-
 
     /**
      * Number of visible lines on the view
@@ -788,24 +781,7 @@ private:
      */
     int rCurrentTop;
 
-    int spaceWidth;
-
-    const uchar* rHLa;
-
-    bool rHLnoAttribs;
-
-    int rHLAttributesLen;
-
     YzisAttribute* mHighlightAttributes;
-
-    ///  current line
-    QString sCurLine;
-    ///  current line length
-    int sCurLineLength;
-    ///  current line max width ( tab is 8 spaces )
-    int rCurLineLength;
-    ///  current line min width( tab is 1 space )
-    int rMinCurLineLength;
 
     void gotoy( int y );
     void gotody( int y );
@@ -813,38 +789,18 @@ private:
     void gotodx( int x );
     void applyGoto( YViewCursor* viewCursor, bool applyCursor = true );
     void initGoto( YViewCursor* viewCursor );
-    void updateCurLine( );
 
     bool m_paintAll;
 
     int stickyCol;
 
-    QChar mFillChar;
-    QChar lastChar;
-    bool listChar;
-
     QChar m_lineFiller;
     QChar m_lineMarker;
-
-
-    YCursor origPos;
-    int lineDY;
-
-    YCursor beginChanges;
 
     /// cached value of tabstop option
     int tabstop;
     bool wrap;
     bool rightleft;
-
-    /// tabstop * spaceWidth
-    int tablength;
-
-    /// tablength to wrap
-    int areaModTab;
-
-    /// if true, do not check for cursor visibility
-    bool adjust;
 
     YSelectionPool * selectionPool;
     YSelection* mPaintSelection;
@@ -858,8 +814,6 @@ private:
     int m_paintAutoCommit;
     YViewCursor keepCursor;
 
-    /// the current attribute being used by the GUI
-    YzisAttribute * curAt;
     YModePool* mModePool;
 
     /**

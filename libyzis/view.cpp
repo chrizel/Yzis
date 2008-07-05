@@ -98,19 +98,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     mPaintSelection = new YSelection("PAINT");
     selectionPool = new YSelectionPool();
 
-    drawMode = false;
-    rHLnoAttribs = false;
-    rHLAttributesLen = 0;
-
-    sCurLineLength = 0;
-    rCurLineLength = 0;
-
-    rHLnoAttribs = false;
-    rHLAttributesLen = 0;
-    listChar = false;
-    mFillChar = ' ';
-
-    lineDY = 0;
     tabstop = getLocalIntegerOption("tabstop");
     wrap = getLocalBooleanOption( "wrap" );
     rightleft = getLocalBooleanOption( "rightleft" );
@@ -813,17 +800,6 @@ bool YView::isLineVisible( int l ) const
     return ( ( l >= scrollCursor.screenY() ) && ( l < mLinesVis + scrollCursor.screenY() ) );
 }
 
-/* update sCurLine information */
-void YView::updateCurLine( )
-{
-    sCurLineLength = sCurLine.length();
-    if ( wrap && ! drawMode ) {
-        int nbTabs = sCurLine.count( '\t' );
-        rMinCurLineLength = sCurLineLength;
-        rCurLineLength = rMinCurLineLength + nbTabs * ( tablength - 1 );
-    }
-}
-
 const YColor& YView::drawColor ( int col, int line ) const
 {
     YLine *yl = mBuffer->yzline( line );
@@ -1214,8 +1190,8 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 
 		fillChar = ' ';
 		if ( text == tabChar ) {
-			drawLength = tablength - column % tablength;
-			/* column + drawLength = 0 mod tablength */
+			drawLength = tabstop - column % tabstop;
+			/* column + drawLength = 0 mod tabstop */
 		} else {
 			drawLength = 1;
 		}

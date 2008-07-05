@@ -1,10 +1,10 @@
 
-YDrawBufferIterator
+YDrawBufferIterator: unittest
 YView: set line number
 YView: ~ lines
 YView: check sendPaintEvent calls
+YView: check screen info (mLinesVis, etc..)
 YDrawBuffer: unittest
-YDrawBufferIterator: unittest
 YView: unittest
 
 YBuffer::insertRegion: shift search hl, etc..

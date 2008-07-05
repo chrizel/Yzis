@@ -111,51 +111,11 @@ public:
 private :
     void copyFields( const YViewCursor &rhs );
 
-    /**
-     * spaceFill is the shift for starting tabs
-     * ( when wrapping a line, or scrolling horizontally )
-     */
-    int spaceFill;
-
-    /**
-     * buffer column increment
-     */
-    int bColIncrement;
-
-    /**
-     * buffer line increment
-     */
-    int bLineIncrement;
-
-    /**
-     * screen column increment
-     */
-    int sColIncrement;
-
-    /**
-     * screen line increment
-     */
-    int sLineIncrement;
 
     /**
      * current line height
      */
     int lineHeight;
-
-    /**
-     * last char was a tab ?
-     */
-    bool lastCharWasTab;
-
-    /**
-     * are we wrapping a tab ?
-     */
-    bool wrapTab;
-
-    /**
-     * are we wrapping a line ?
-     */
-    bool wrapNextLine;
 
     /**
      * valid token

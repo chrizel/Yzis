@@ -314,6 +314,10 @@ YDrawBufferIterator YDrawBuffer::iterator( const YInterval& i ) const
 }
 
 
+/*************************
+ * YDrawBufferIterator
+ *************************/
+
 YDrawBufferIterator::YDrawBufferIterator( const YDrawBuffer* db, const YInterval& i )
 {
 	mDrawBuffer = db;

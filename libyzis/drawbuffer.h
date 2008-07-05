@@ -73,9 +73,17 @@ public:
 	const YDrawCellInfo next();
 
 private:
+	void setup( const YInterval& i );
+	void step();
 
 	const YDrawBuffer* mDrawBuffer;
 	YInterval mI;
+	YDrawCellInfo mNext;
+	bool mStopped;
+	int mCurBLine;
+	int mCurLine;
+	int mCurCell;
+	YCursor mPos;
 };
 
 class YZIS_EXPORT YDrawBuffer
@@ -84,19 +92,29 @@ class YZIS_EXPORT YDrawBuffer
 
 public:
 
-    YDrawBuffer();
+    YDrawBuffer( int columns, int height );
     virtual ~YDrawBuffer();
 
 	YCursor bufferBegin() const;
 	YCursor bufferEnd() const;
+
+	void setScreenSize( int columns, int lines );
+	inline int screenHeight() const { return mScreenHeight; }
+	inline int screenWidth() const { return mScreenWidth; }
 
 	YDrawBufferIterator iterator( const YInterval& i ) const;
 
 	inline const QList<YDrawSection> sections() { return mContent; }
 	void setBufferDrawSection( int lid, YDrawSection ds );
 
+	void setEOLCell( const YDrawCell& cell );
+
 private :
 	QList<YDrawSection> mContent;
+
+	YDrawCell mEOLCell;
+	int mScreenWidth;
+	int mScreenHeight;
 
     friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
@@ -154,6 +172,7 @@ private:
 	YViewCursor mEndViewCursor;
 
 	friend class YDrawBuffer;
+	friend class YDrawBufferIterator;
     friend YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
 };
 YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );

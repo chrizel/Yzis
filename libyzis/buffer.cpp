@@ -394,12 +394,9 @@ void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 	ldata = curdata.left(begin.column());
 	rdata = curdata.mid(begin.column());
 
-	int i = 0;
-
 	/* first line */
-	if ( data[i] != YRawData_newline ) {
-		ldata += data[i];
-	}
+	int i = 0;
+	ldata += data[i];
 	++i;
 	if ( i == data.size() ) {
 		ldata += rdata;
@@ -413,10 +410,7 @@ void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 		}
 
 		/* last line */
-		ldata.clear();
-		if ( data[i] != YRawData_newline ) {
-			ldata = data[i];
-		}
+		ldata = data[i];
 		ldata += rdata;
 		d->text->insert(++ln, new YLine(ldata));
 	}

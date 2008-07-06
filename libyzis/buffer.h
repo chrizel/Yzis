@@ -45,7 +45,6 @@ class YzisHighlighting;
 typedef QVector<YLine*> YBufferData;
 
 typedef QStringList YRawData;
-static QString YRawData_newline = QString::null;
 
 
 /**

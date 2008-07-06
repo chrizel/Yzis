@@ -17,10 +17,10 @@ void TestBufferChanges::testBasic() {
 	b.insertRegion(YCursor(0,0), YRawData() << "hello world");
 	QCOMPARE(b.getWholeText(), QString("hello world\n"));
 
-	b.insertRegion(YCursor(6,0), YRawData() << YRawData_newline << "my name is ");
+	b.insertRegion(YCursor(6,0), YRawData() << "" << "my name is ");
 	QCOMPARE(b.getWholeText(), QString("hello \nmy name is world\n"));
 
-	b.insertRegion(YCursor(11,1), YRawData() << "panard" << "this is a test" << YRawData_newline);
+	b.insertRegion(YCursor(11,1), YRawData() << "panard" << "this is a test" << "");
 	QCOMPARE(b.getWholeText(), QString("hello \nmy name is panard\nthis is a test\nworld\n"));
 
 	b.insertRegion(YCursor(0,3), YRawData() << "hello ");
@@ -34,5 +34,11 @@ void TestBufferChanges::testBasic() {
 
 	b.deleteRegion(YInterval(YBound(YCursor(5,0),true),YBound(YCursor(6,2),true)));
 	QCOMPARE(b.getWholeText(), QString("hello world\n"));
+
+	b.insertRegion(YCursor(6,0), YRawData() << "" << "");
+	QCOMPARE(b.getWholeText(), QString("hello \nworld\n"));
+
+	b.insertRegion(YCursor(3,0), YRawData() << "" << "" << "" << "" );
+	QCOMPARE(b.getWholeText(), QString("hel\n\n\nlo \nworld\n"));
 }
 

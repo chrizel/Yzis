@@ -1278,7 +1278,6 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 	}
 
 	YInterval affected = mDrawBuffer.setBufferDrawSection(lid, ds);
-	dbg() << "setBufferLineContent " << lid << ": affected = " << affected << endl;
 	sendPaintEvent(affected);
 }
 

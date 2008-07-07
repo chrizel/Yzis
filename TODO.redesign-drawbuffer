@@ -11,11 +11,13 @@ YView: unittest
 YBuffer::insertRegion: shift search hl, etc..
 YBuffer::insertRegion: d->isLoading?
 YBuffer::insertRegion: undo
+YBuffer::insertRegion: swap
 
 YBuffer::deleteRegion: shift search hl, etc..
 YBuffer::deleteRegion: views update
 YBuffer::deleteRegion: d->isLoading?
 YBuffer::deleteRegion: undo
+YBuffer::deleteRegion: swap
 
 YView: vertical scroll
 YView: nowrap

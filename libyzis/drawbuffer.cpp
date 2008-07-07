@@ -68,7 +68,7 @@ bool YDrawLine::updateColor( YColor* dest, const YColor& c )
     bool changed = false;
     bool was_valid = dest->isValid();
     bool is_valid = c.isValid();
-    if ( was_valid != is_valid || is_valid && c.rgb() != dest->rgb() ) {
+    if ( was_valid != is_valid || (is_valid && c.rgb() != dest->rgb()) ) {
         changed = true;
         if ( is_valid ) {
             dest->setRgb( c.rgb() );
@@ -108,7 +108,7 @@ int YDrawLine::push( const QString& c )
 void YDrawLine::flush() {
 	mEndViewCursor = mBeginViewCursor;
 	mEndViewCursor.setBufferX(mBeginViewCursor.bufferX() + mSteps.count() - 1);
-	int acc;
+	int acc = 0;
 	foreach( int s, mSteps ) {
 		acc += s;
 	}
@@ -256,26 +256,31 @@ void YDrawBuffer::setScreenSize( int columns, int lines )
 	mScreenHeight = lines;
 }
 
-YCursor YDrawBuffer::bufferBegin() const {
+YCursor YDrawBuffer::bufferBegin() const
+{
 	return mContent.first().first().beginViewCursor().buffer();
 }
-YCursor YDrawBuffer::bufferEnd() const {
+YCursor YDrawBuffer::bufferEnd() const
+{
 	return mContent.last().last().endViewCursor().buffer();
 }
 
-void YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
+YInterval YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 {
 	YASSERT(lid <= mContent.count());
+	YInterval affected;
 	/* compute screenY */
 	int dy = 0;
 	for ( int i = 0; i < lid; ++i ) {
 		dy += mContent[i].count();
 	}
-	int shift = 0; /* section size changed? */
+	affected.setFrom(YBound(YCursor(0,dy)));
+	int shift = 0;
 	/* apply section */
 	if ( lid == mContent.count() ) {
 		mContent << ds;
 	} else {
+		 /* section size changed? */
 		shift = ds.count() - mContent[lid].count();
 		mContent.replace(lid, ds);
 	}
@@ -290,6 +295,8 @@ void YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 			}
 		}
 	}
+	affected.setTo(YBound(YCursor(0,dy), true));
+	return affected;
 }
 
 YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff )
@@ -421,10 +428,9 @@ void YDrawBufferIterator::step()
 			}
 		} else {
 			YDrawCell cell = mDrawBuffer->mContent[mCurBLine][mCurLine].mCells[mCurCell];
-			mNext.type == YDrawCellInfo::Data;
+			mNext.type = YDrawCellInfo::Data;
 			if ( mPos.line() == mI.toPos().line() ) {
 				/* take care of last line */
-				int w = cell.c.length();
 				int tCol = mI.toPos().column();
 				if ( mI.to().opened() ) {
 					--tCol;

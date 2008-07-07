@@ -1049,12 +1049,11 @@ void YView::sendCursor( YViewCursor cursor )
 {
     keepCursor = cursor;
 }
-void YView::sendPaintEvent( const YCursor from, const YCursor to )
+void YView::sendPaintEvent( const YInterval& i )
 {
-    m_paintAll = false;
-    setPaintAutoCommit( false );
-    mPaintSelection->addInterval( YInterval( from, to ) );
-    commitPaintEvent();
+	setPaintAutoCommit(false);
+	mPaintSelection->addInterval(i);
+	commitPaintEvent();
 }
 void YView::sendPaintEvent( int curx, int cury, int curw, int curh )
 {
@@ -1062,7 +1061,11 @@ void YView::sendPaintEvent( int curx, int cury, int curw, int curh )
         dbg() << "Warning: YView::sendPaintEvent with height = 0" << endl;
         return ;
     }
-    sendPaintEvent( YCursor(curx, cury), YCursor(curx + curw, cury + curh - 1) );
+    sendPaintEvent(YInterval(YCursor(curx, cury), YCursor(curx + curw, cury + curh - 1)));
+}
+void YView::sendPaintEvent( const YCursor from, const YCursor to )
+{
+	sendPaintEvent(YInterval(from, to));
 }
 void YView::sendPaintEvent( YSelectionMap map, bool isBufferMap )
 {
@@ -1100,13 +1103,11 @@ void YView::sendBufferPaintEvent( int line, int n )
 void YView::sendRefreshEvent( )
 {
     mPaintSelection->clear();
-    m_paintAll = true;
-    sendPaintEvent( getDrawCurrentLeft(), getDrawCurrentTop(), getColumnsVisible(), getLinesVisible() );
+    sendPaintEvent(YInterval(YCursor(0,0), YBound(YCursor(0,mDrawBuffer.screenHeight()), true)));
 }
 
 void YView::removePaintEvent( const YCursor from, const YCursor to )
 {
-    m_paintAll = false;
     mPaintSelection->delInterval( YInterval( from, to ) );
 }
 
@@ -1136,11 +1137,6 @@ void YView::saveInputBuffer()
 
     // Nothing odd, so go ahead and save copy
     mLastPreviousChars = mPreviousChars;
-}
-
-const int YView::getId() const
-{
-    return id;
 }
 
 void YView::internalScroll( int dx, int dy )
@@ -1179,7 +1175,7 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 	QChar fillChar;
 	YColor fg, bg, outline;
 	YFont font;
-	YzisAttribute* at;
+	YzisAttribute* at = NULL;
 	bool is_listchar;
 	int drawLength;
 	int column = start_column;
@@ -1272,8 +1268,8 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 		//ds = dl.extract(XXX);
 	}
 
-	/*TODO YInterval affected = */mDrawBuffer.setBufferDrawSection(lid, ds);
-	/*TODO sendPaintEvent(affected) */
+	YInterval affected = mDrawBuffer.setBufferDrawSection(lid, ds);
+	sendPaintEvent(affected);
 }
 
 void YView::guiPaintEvent( const YSelection& drawMap )

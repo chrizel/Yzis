@@ -1,5 +1,5 @@
 /*  This file is part of the Yzis libraries
-*  Copyright (C) 2006 Loic Pauleve <panard@inzenet.org>
+*  Copyright (C) 2006-2008 Loic Pauleve <panard@inzenet.org>
 *
 *  This library is free software; you can redistribute it and/or
 *  modify it under the terms of the GNU Library General Public
@@ -37,17 +37,13 @@ typedef QMap<YSelectionPool::SelectionLayout, YSelection> YSelectionLayout;
 
 struct YDrawCell
 {
-    bool valid;
     int flag;
     YFont font;
     QString c;
     YColor bg;
     YColor fg;
     int sel;
-    YDrawCell():
-            flag( 0 ),
-            font(), c(), bg(), fg()
-    {}
+    YDrawCell() : flag(0), font(), c(), bg(), fg(), sel(0) {}
 };
 
 struct YDrawCellInfo

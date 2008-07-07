@@ -1281,7 +1281,7 @@ void YView::guiPaintEvent( const YSelection& drawMap )
     if ( drawMap.isEmpty() )
         return ;
 
-    dbg() << "guiPaintEvent" << drawMap;
+    dbg() << "guiPaintEvent" << drawMap << endl;
 
     guiPreparePaintEvent();
 

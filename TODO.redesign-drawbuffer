@@ -1,4 +1,6 @@
 
+- delete lines
+
 YView: set line number
 YView: ~ lines
 YView: check sendPaintEvent calls
@@ -7,7 +9,6 @@ YDrawBuffer: unittest
 YView: unittest
 
 YBuffer::insertRegion: shift search hl, etc..
-YBuffer::insertRegion: views update
 YBuffer::insertRegion: d->isLoading?
 YBuffer::insertRegion: undo
 

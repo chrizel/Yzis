@@ -429,6 +429,7 @@ void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 	/* TODO: other highlighting */
 	/* TODO: undo */
 
+	/* inform views */
 	foreach( YView* v, views() ) {
 		v->updateBufferInterval(bi);
 	}
@@ -478,7 +479,11 @@ void YBuffer::deleteRegion( const YInterval& bi )
 
 	/* TODO: other highlighting */
 	/* TODO: undo */
-	/* TODO: drawbuffer push */
+
+	/* inform views */
+	foreach( YView* v, views() ) {
+		v->updateBufferInterval(bi);
+	}
 
     setChanged( true );
 }
@@ -495,17 +500,7 @@ void YBuffer::replaceRegion( const YInterval& bi, const YRawData& data )
 
 void YBuffer::clearText()
 {
-    dbg() << "YBuffer clearText" << endl;
-    /* XXX clearText is not registered to the undo buffer but should be
-     * as any other text operation. Although I doubt that this is a common
-     * operation.
-     */ 
-    //clear is fine but better _delete_ all yzlines too ;)
-    QVector<YLine*>::iterator it = d->text->begin(), end = d->text->end();
-    for ( ; it != end; ++it )
-        delete ( *it );
-    d->text->clear(); //remove the _pointers_ now
-    d->text->append(new YLine());
+	deleteRegion(YInterval(YCursor(0,0), YBound(YCursor(0,lineCount()), true)));
 }
 
 void YBuffer::setTextline( int line , const QString & l)

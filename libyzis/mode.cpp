@@ -162,34 +162,43 @@ YModeIntro::YModeIntro() : YMode()
 }
 void YModeIntro::enter( YView* mView )
 {
-    YBuffer* mBuffer = mView->myBuffer();
     unsigned int i;
     unsigned int mLinesVis = mView->getLinesVisible();
     unsigned int linesInIntro = 11; // Update this is if you change # of lines in message
+	if ( strcmp(VERSION_CHAR_ST, VERSION_CHAR_STATE2) == 0 )
+		++linesInIntro;
     unsigned int vMargin = mLinesVis > linesInIntro ? mLinesVis - linesInIntro : 0;
     vMargin = ( vMargin + 1 ) / 2; // round up to have enough lines so '~' isn't shown
 
+	/* TODO: maybe we should bypass buffer and write directly into the drawbuffer */
+
+	YRawData content;
+    for ( i = 0; i < vMargin; i++ )
+		content << "";
+	content << mView->centerLine(VERSION_CHAR_LONG);
+    if ( strcmp(VERSION_CHAR_ST, VERSION_CHAR_STATE2) == 0 )
+		content << mView->centerLine(VERSION_CHAR_DATE);
+    content << mView->centerLine( VERSION_CHAR_ST );
+    content << "";
+    content << mView->centerLine( "http://www.yzis.org" );
+    content << mView->centerLine( "contact/patches/requests: yzis-dev@yzis.org" );
+    content << "";
+    content << mView->centerLine( "Yzis is distributed under the terms of the GPL v2" );
+    content << "";
+    content << mView->centerLine( "please report bugs at http://bugs.yzis.org" );
+    for ( i = 0; i < vMargin; i++ )
+		content << "";
+
     /* Don't record these in the undo list */
-    mBuffer->undoBuffer()->setInsideUndo( true );
+    mView->myBuffer()->undoBuffer()->setInsideUndo(true);
 
-    mView->gotoxy( 0, 0 );
-    for (i = 0; i < vMargin; i++ ) mBuffer->appendLine("");
-    mBuffer->appendLine( mView->centerLine( VERSION_CHAR_LONG ) );
-    if ( VERSION_CHAR_ST == VERSION_CHAR_STATE2 )
-        mBuffer->appendLine( mView->centerLine( VERSION_CHAR_DATE ) );
-    mBuffer->appendLine( mView->centerLine( VERSION_CHAR_ST ) );
-    mBuffer->appendLine( "" );
-    mBuffer->appendLine( mView->centerLine( "http://www.yzis.org" ) );
-    mBuffer->appendLine( mView->centerLine( "contact/patches/requests: yzis-dev@yzis.org" ) );
-    mBuffer->appendLine( "" );
-    mBuffer->appendLine( mView->centerLine( "Yzis is distributed under the terms of the GPL v2" ) );
-    mBuffer->appendLine( "" );
-    mBuffer->appendLine( mView->centerLine( "please report bugs at http://bugs.yzis.org" ) );
-    for ( i = 0; i < vMargin; i++ ) mBuffer->appendLine( "" );
-    mBuffer->setChanged( false );
+    mView->gotoxy(0, 0);
 
-    mBuffer->undoBuffer()->setInsideUndo( false );
-    mView->refreshScreen();
+	mView->myBuffer()->clearText();
+	mView->myBuffer()->insertRegion(YCursor(0,0), content);
+	mView->myBuffer()->setChanged(false);
+
+    mView->myBuffer()->undoBuffer()->setInsideUndo(false);
 }
 void YModeIntro::leave( YView* mView )
 {

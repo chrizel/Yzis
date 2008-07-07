@@ -95,18 +95,31 @@ public:
     YDrawBuffer( int columns, int height );
     virtual ~YDrawBuffer();
 
+	/* TODO: docstring */
 	YCursor bufferBegin() const;
+
+	/* TODO: docstring */
 	YCursor bufferEnd() const;
 
+	/* TODO: docstring */
 	void setScreenSize( int columns, int lines );
+
+	/* TODO: docstring */
 	inline int screenHeight() const { return mScreenHeight; }
+
+	/* TODO: docstring */
 	inline int screenWidth() const { return mScreenWidth; }
 
+	/* TODO: docstring */
 	YDrawBufferIterator iterator( const YInterval& i ) const;
 
+	/* TODO: docstring */
 	inline const QList<YDrawSection> sections() { return mContent; }
-	void setBufferDrawSection( int lid, YDrawSection ds );
 
+	/* TODO: docstring */
+	YInterval setBufferDrawSection( int lid, YDrawSection ds );
+
+	/* TODO: docstring */
 	void setEOLCell( const YDrawCell& cell );
 
 private :

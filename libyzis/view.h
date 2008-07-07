@@ -86,7 +86,7 @@ public:
      * A global UID for this view
      *   only used for local options (<filename>-view-<id>)
      **/
-    const int getId() const;
+    inline const int getId() const { return id; }
 
     /** Return a string description of the view.
      *
@@ -493,21 +493,22 @@ public:
     //-------------------------------------------------------
     virtual void guiPaintEvent( const YSelection& drawMap );
 
-    void sendPaintEvent( const YCursor from, const YCursor to );
-    void sendPaintEvent( int curx, int cury, int curw, int curh );
-    void sendPaintEvent( YSelectionMap map, bool isBufferMap = true );
+	void sendPaintEvent( const YInterval& i );
+    void sendPaintEvent( const YCursor from, const YCursor to ) QT_DEPRECATED;
+    void sendPaintEvent( int curx, int cury, int curw, int curh ) QT_DEPRECATED;
+    void sendPaintEvent( YSelectionMap map, bool isBufferMap = true ) QT_DEPRECATED;
 
     /**
      * ask to draw from buffer line @arg line to @arg line + @arg n
      */
-    void sendBufferPaintEvent( int line, int n );
+    void sendBufferPaintEvent( int line, int n ) QT_DEPRECATED;
 
     /**
      * Ask for refresh screen
      */
-    void sendRefreshEvent();
+    void sendRefreshEvent() QT_DEPRECATED;
 
-    void removePaintEvent( const YCursor from, const YCursor to );
+    void removePaintEvent( const YCursor from, const YCursor to ) QT_DEPRECATED;
 
     /**
      * @arg enable is true, future paint events will be directly applied
@@ -789,8 +790,6 @@ private:
     void gotodx( int x );
     void applyGoto( YViewCursor* viewCursor, bool applyCursor = true );
     void initGoto( YViewCursor* viewCursor );
-
-    bool m_paintAll;
 
     int stickyCol;
 

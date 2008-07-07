@@ -1253,7 +1253,6 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 		// TODO: setSelection
 		// TODO: setOutline
 		dl.setFont(font);
-		dbg() << "drawLineFromYLine: pushing '" << text << "'" << endl;
 		column += dl.push(text);
 	}
 

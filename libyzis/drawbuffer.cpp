@@ -271,12 +271,12 @@ void YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 	for ( int i = 0; i < lid; ++i ) {
 		dy += mContent[i].count();
 	}
-	/* section size changed? */
-	int shift = ds.count() - mContent[lid].count();
+	int shift = 0; /* section size changed? */
 	/* apply section */
 	if ( lid == mContent.count() ) {
 		mContent << ds;
 	} else {
+		shift = ds.count() - mContent[lid].count();
 		mContent.replace(lid, ds);
 	}
 	for ( int j = 0; j < ds.count(); ++j ) {
@@ -356,7 +356,7 @@ void YDrawBufferIterator::setup( const YInterval& i )
 		foreach( YDrawCell cell, mDrawBuffer->mContent[mCurBLine][mCurLine].cells() ) {
 			int cw = cell.c.length();
 			if ( w + cw > fCol ) {
-				cell.c = cell.c.mid(cw - (fCol - w));
+				cell.c = cell.c.mid(fCol - w);
 				if ( fLine == mI.toPos().line() ) {
 					/* take care of to() */
 					int tCol = mI.toPos().column();

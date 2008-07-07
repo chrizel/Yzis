@@ -16,6 +16,7 @@ class TestDrawBuffer : public QObject
 private slots:
 	void testDrawLine();
 	void testDrawBuffer();
+	void testDrawBufferIterator();
 
 };
 

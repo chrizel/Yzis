@@ -78,3 +78,56 @@ void TestDrawBuffer::testDrawBuffer()
 	// TODO
 }
 
+void TestDrawBuffer::testDrawBufferIterator()
+{
+	YDrawBuffer db(11, 20);
+
+	YDrawLine dl;
+	dl.setColor(YColor("red"));
+	dl.push("h"); dl.push("e"); dl.push("l");
+	dl.setColor(YColor("green"));
+	dl.push("l"); dl.push("o"); dl.push("    "/*4*/); dl.push("w");
+	dl.setColor(YColor("red"));
+	dl.push("o"); dl.push("r"); dl.push("l"); dl.push("d");
+	dl.flush();
+
+#define COMPARE_CELLINFO(ci, ci_t, ci_p, ci_cc) \
+	QCOMPARE(ci.type, ci_t); \
+	QCOMPARE(ci.pos, ci_p); \
+	QCOMPARE(ci.cell.c, ci_cc)
+#define NEXT_CELLINFO(ci, it) \
+	QVERIFY(it.hasNext()); \
+	ci = it.next()
+
+	db.setBufferDrawSection(0, dl.arrange(db.screenWidth()));
+	/*drawbuffer content:
+	 * 0:hel#lo    w#o#
+	 *   rld#
+	 */
+	YDrawCellInfo ci;
+	YDrawBufferIterator it = db.iterator(YInterval(YCursor(0,0), YBound(YCursor(0,2), true)));
+	NEXT_CELLINFO(ci, it);
+	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(0,0), QString("hel"));
+	NEXT_CELLINFO(ci, it);
+	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(3,0), QString("lo    w"));
+	NEXT_CELLINFO(ci, it);
+	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(10,0), QString("o"));
+	NEXT_CELLINFO(ci, it);
+	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(0,1), QString("rld"));
+	NEXT_CELLINFO(ci, it);
+	COMPARE_CELLINFO(ci, YDrawCellInfo::EOL, YCursor(3,1), QString(" "));
+	QVERIFY(!it.hasNext());
+
+	it = db.iterator(YInterval(YCursor(1,0), YCursor(1,0)));
+	NEXT_CELLINFO(ci, it);
+	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(1,0), QString("e"));
+	QVERIFY(!it.hasNext());
+
+	it = db.iterator(YInterval(YCursor(2,0), YCursor(4,0)));
+	NEXT_CELLINFO(ci, it);
+	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(2,0), QString("l"));
+	NEXT_CELLINFO(ci, it);
+	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(3,0), QString("lo"));
+	QVERIFY(!it.hasNext());
+}
+

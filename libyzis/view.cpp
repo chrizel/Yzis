@@ -1152,6 +1152,8 @@ void YView::updateBufferInterval( const YInterval& bi )
 		return;
 	dbg() << "updateBufferInterval " << bi << endl;
 
+	// TODO clip
+
 	int top_bl = mDrawBuffer.bufferBegin().line();
 
 	/* buffer line where start our update */
@@ -1161,9 +1163,13 @@ void YView::updateBufferInterval( const YInterval& bi )
 		--last_bl;
 
 	setPaintAutoCommit(false);
-	for( ; bl <= last_bl; ++bl ) {
+
+	/* update requested lines */
+	for( ; bl < mBuffer->lineCount() && bl <= last_bl; ++bl ) {
 		setBufferLineContent(bl - top_bl, mBuffer->yzline(bl));
 	}
+	// TODO delete resting lines
+
 	commitPaintEvent();
 }
 

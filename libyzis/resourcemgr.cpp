@@ -46,6 +46,7 @@ YResourceMgr::~YResourceMgr()
 
 void YResourceMgr::initConfig()
 {
+    // handle ~/.yzis/
     QString yzisSuffix = ".yzis";
     bool isTmpDir = false;
     mYzisUserDir = QDir::homePath() + "/" + yzisSuffix + "/";
@@ -59,9 +60,7 @@ void YResourceMgr::initConfig()
             err() << "initConfig(): could not create yzis user directory, falling back on " << mYzisUserDir;
         }
     }
-
     yzisUserDir.setPath( mYzisUserDir );
-
     if ( (!QFileInfo(mYzisUserDir).isWritable()) && (!isTmpDir) ) {
         mYzisUserDir = QDir::tempPath() + "/";
         err() << "initConfig(): yzis user directory is not writable, falling back on " << mYzisUserDir;
@@ -136,11 +135,12 @@ QStringList YResourceMgr::resourceDirList( ResourceType type )
         break;
     case ConfigResource:
     case WritableConfigResource:
+    default:
         subdir = "/";
         break;
     }
 
-    if (type == UserScriptResource) dirCandidates << "./";
+    if (type == UserScriptResource) dirCandidates << "./"+subdir;
     dirCandidates << mYzisUserDir + subdir;
     char * s = getenv("YZISHOME");
     if (s != NULL) dirCandidates << (s + subdir);

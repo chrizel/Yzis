@@ -252,10 +252,6 @@ bool YzisSyntaxDocument::getElement (QDomElement &element, const QString &mainGr
   return false;
 }
 
-/**
- * Get the YzisSyntaxContextData of the QDomElement Config inside mainGroupName
- * YzisSyntaxContextData::item will contain the QDomElement found
- */
 YzisSyntaxContextData* YzisSyntaxDocument::getConfig(const QString& mainGroupName, const QString &config)
 {
   QDomElement element;
@@ -268,10 +264,6 @@ YzisSyntaxContextData* YzisSyntaxDocument::getConfig(const QString& mainGroupNam
   return 0;
 }
 
-/**
- * Get the YzisSyntaxContextData of the QDomElement Config inside mainGroupName
- * YzisSyntaxContextData::parent will contain the QDomElement found
- */
 YzisSyntaxContextData* YzisSyntaxDocument::getGroupInfo(const QString& mainGroupName, const QString &group)
 {
   QDomElement element;
@@ -284,9 +276,6 @@ YzisSyntaxContextData* YzisSyntaxDocument::getGroupInfo(const QString& mainGroup
   return 0;
 }
 
-/**
- * Returns a list with all the keywords inside the list type
- */
 QStringList& YzisSyntaxDocument::finddata(const QString& mainGroup, const QString& type, bool clearList)
 {
   deepdbg()<< "finddata( mainGroup=\"" << mainGroup<<"\", type=\"" << type << "\", clearList="<< clearList <<" ) " <<endl;
@@ -564,6 +553,7 @@ void YzisSyntaxDocument::setupModeList (bool force)
 
   // Let's get a list of all the xml files for hl
   QStringList resourceDirList = resourceMgr()->resourceDirList( SyntaxHlResource );
+  dbg() << "setupModeList() looking for syntax files in directories : "<< resourceDirList << endl;
   QStringList list;
   foreach( QString resourceDir, resourceDirList ) {
         list += findAllResources("data", resourceDir + "/*.xml",false,true);

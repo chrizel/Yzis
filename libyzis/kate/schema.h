@@ -28,6 +28,9 @@
 
 #include "syntaxhighlight.h"
 
+/**
+  * Syntax highlighting manager for yzis (from kate)
+  */
 class YzisSchemaManager
 {
   public:

@@ -123,7 +123,7 @@ class YzisSyntaxDocument : public QDomDocument
     YzisSyntaxContextData* getSubItems(YzisSyntaxContextData* data);
 
     /**
-     * Get the YzisSyntaxContextData of the DomElement Config inside mainGroupName
+     * Get the YzisSyntaxContextData of the QDomElement Config inside mainGroupName
      * It just fills YzisSyntaxContextData::item
      */
     YzisSyntaxContextData* getConfig(const QString& mainGroupName, const QString &config);

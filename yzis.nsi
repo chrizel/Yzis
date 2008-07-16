@@ -35,8 +35,6 @@ Section "" ;No components page, name is not important
 
   ; Set output path to the installation directory.
   SetOutPath $INSTDIR
-  
-  ; Put file there
   File build\libyzis\libyzis.dll
   File build\qyzis\qyzis.exe
   File c:\qt\4.4.0\bin\mingwm10.DLL
@@ -51,9 +49,14 @@ Section "" ;No components page, name is not important
   File c:\usr\local\lua5.1.2\lua5.1.dll
   WriteUninstaller "yzis-uninst.exe"
 
+
   CreateDirectory $SMPROGRAMS\Yzis
   CreateShortCut "$SMPROGRAMS\Yzis\Yzis.lnk" $INSTDIR\qyzis.exe
   CreateShortCut "$SMPROGRAMS\Yzis\Uninstall Yzis.lnk" $INSTDIR\yzis-uninst.exe
+
+  SetOutPath $INSTDIR\share\syntax
+  File /r .\syntax\*.*
+
 #  SetShellVarContext All
 #  CreateShortCut "$SMPROGRAMS\Yzis\Yzis.lnk" $INSTDIR\qyzis.exe
 #  CreateShortCut "$SMPROGRAMS\Yzis\Uninstall Yzis.lnk" $INSTDIR\yzis-uninst.exe
@@ -68,6 +71,9 @@ UninstallText "This will uninstall Yzis. Hit next to continue."
 UninstallIcon "${NSISDIR}\Contrib\Graphics\Icons\nsis1-uninstall.ico"
 Section "Uninstall"
 
+  Delete "$INSTDIR\share\syntax\*.*"
+  RMDir "$INSTDIR\share\syntax"
+  RMDir "$INSTDIR\share"
   Delete "$INSTDIR\*.*"
   RMDir "$INSTDIR"
 

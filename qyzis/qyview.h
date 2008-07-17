@@ -94,10 +94,10 @@ protected:
     void resizeEvent( QResizeEvent * e );
     void guiDrawSetMaxLineNumber( int max );
     void guiDrawSetLineNumber( int y, int n, int h );
-    virtual void guiPreparePaintEvent( int y_min, int y_max );
+    virtual void guiPreparePaintEvent();
     virtual void guiEndPaintEvent();
-    virtual void guiDrawCell( QPoint , const YDrawCell& cell, void* arg );
-    virtual void guiDrawClearToEOL( QPoint, const QChar& clearChar );
+    virtual void guiDrawCell( YCursor pos, const YDrawCell& cell );
+    virtual void guiDrawClearToEOL( YCursor pos, const YDrawCell& clearCell );
 
     void guiPaintEvent( const YSelection& s );
 

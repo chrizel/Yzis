@@ -2,6 +2,7 @@
 *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
 *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>
 *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
+*  Copyright (C) 2008 Loic Pauleve <panard@inzenet.org>
 *
 *  This library is free software; you can redistribute it and/or
 *  modify it under the terms of the GNU Library General Public
@@ -28,6 +29,7 @@
 #include "viewiface.h"
 #include "viewcursor.h"
 #include "mode_pool.h"
+#include "drawbuffer.h"
 
 class YViewCursor;
 class YColor;
@@ -36,12 +38,13 @@ class YBuffer;
 class YSession;
 class YSelectionPool;
 class YzisAttribute;
+class YLine;
 class YLineSearch;
 class YMode;
 class YModeCompletion;
 class YOptionValue;
+
 class YZFoldPool;
-struct YDrawCell;
 
 /**
  * MUST be reimplemented in the GUI. 
@@ -55,8 +58,6 @@ struct YDrawCell;
  */
 class YZIS_EXPORT YView : public YViewIface
 {
-
-    friend class YDrawBuffer;
 
 public:
     //-------------------------------------------------------
@@ -86,7 +87,7 @@ public:
      * A global UID for this view
      *   only used for local options (<filename>-view-<id>)
      **/
-    const int getId() const;
+    inline const int getId() const { return id; }
 
     /** Return a string description of the view.
      *
@@ -327,12 +328,6 @@ public:
     }
 
     /**
-     * Moves the cursor to @arg buffer nextx, @arg draw nexty
-     */
-    void gotoxdy(int nextx, int nexty, bool applyCursor = true );
-    void gotoxdy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
-
-    /**
      * Moves the cursor to @arg draw nextx, @arg buffer nexty
      */
     void gotodxy(int nextx, int nexty, bool applyCursor = true );
@@ -389,118 +384,11 @@ public:
     //-------------------------------------------------------
     // ----------------- Drawing
     //-------------------------------------------------------
-    /**
-     * init r and s Cursor
-     */
-    void initDraw( );
-    void initDraw( int sLeft, int sTop, int rLeft, int rTop, bool draw = true );
-
-    int initDrawContents( int clipy );
-
-    /**
-     * go to previous line
-     */
-    bool drawPrevLine( );
-
-    /**
-     * go to next line
-     */
-    bool drawNextLine( );
-
-    /**
-     * go to prev col
-     */
-    bool drawPrevCol( );
-
-    /**
-     * go to next col
-     */
-    bool drawNextCol( );
-
-    const QChar& drawLineFiller() const;
-    const QChar& drawLineMarker() const;
-
-    const QChar& fillChar() const;
-
-    /**
-     * draw char
-     */
-    const QChar& drawChar() const;
-
-    /**
-     * char length
-     */
-    int drawLength() const;
-
-    /**
-     * line increment (on screen)
-     */
-    int drawHeight() const;
-
-    /**
-     * char color
-     */
-    const YColor& drawColor();
-
-    /**
-     * char color if selected
-     */
-    const YColor& drawSelColor();
-
-    /**
-     * char background color
-     */
-    const YColor& drawBgColor();
-
-    /**
-     * char background color if selected
-     */
-    const YColor& drawBgSelColor();
-
-    /**
-     * current char is bold
-     */
-    bool drawBold();
-
-    /**
-     * current char is italic
-     */
-    bool drawItalic();
-
-    /**
-     * current char is underlined
-     */
-    bool drawUnderline();
-
-    /**
-     * current char is overlined
-     */
-    bool drawOverline();
-
-    /**
-     * current char is striked-out
-     */
-    bool drawStrikeOutLine();
-
-    /**
-     * current char outline color
-     */
-    const YColor& drawOutline();
 
     /**
      * Character color at column line
      */
     const YColor& drawColor ( int col, int line ) const;
-
-    /**
-     * return current buffer line
-     */
-    int drawLineNumber() const;
-
-    /**
-     * total height ( draw )
-     */
-    int drawTotalHeight();
 
     //-------------------------------------------------------
     // ----------------- Undo
@@ -606,21 +494,22 @@ public:
     //-------------------------------------------------------
     virtual void guiPaintEvent( const YSelection& drawMap );
 
-    void sendPaintEvent( const YCursor from, const YCursor to );
-    void sendPaintEvent( int curx, int cury, int curw, int curh );
-    void sendPaintEvent( YSelectionMap map, bool isBufferMap = true );
+	void sendPaintEvent( const YInterval& i );
+    void sendPaintEvent( const YCursor from, const YCursor to ) QT_DEPRECATED;
+    void sendPaintEvent( int curx, int cury, int curw, int curh ) QT_DEPRECATED;
+    void sendPaintEvent( YSelectionMap map, bool isBufferMap = true ) QT_DEPRECATED;
 
     /**
      * ask to draw from buffer line @arg line to @arg line + @arg n
      */
-    void sendBufferPaintEvent( int line, int n );
+    void sendBufferPaintEvent( int line, int n ) QT_DEPRECATED;
 
     /**
      * Ask for refresh screen
      */
-    void sendRefreshEvent();
+    void sendRefreshEvent() QT_DEPRECATED;
 
-    void removePaintEvent( const YCursor from, const YCursor to );
+    void removePaintEvent( const YCursor from, const YCursor to ) QT_DEPRECATED;
 
     /**
      * @arg enable is true, future paint events will be directly applied
@@ -740,19 +629,6 @@ public:
     void updateStickyCol( YViewCursor* viewCursor );
 
     //-------------------------------------------------------
-    // ----------------- Dimensions
-    //-------------------------------------------------------
-    /**
-     * line increment (on buffer)
-     */
-    int lineIncrement( ) const;
-
-    /**
-     * current line height (on screen)
-     */
-    int lineHeight( ) const;
-
-    //-------------------------------------------------------
     // ----------------- Mode
     //-------------------------------------------------------
 
@@ -781,17 +657,6 @@ public:
     {}
 
     //-------------------------------------------------------
-    // ----------------- Changes occurred around (x, y)
-    //-------------------------------------------------------
-    /**
-     * initChanges and applyChanges are called by the buffer to inform the view that there are
-     * changes around x,y. Each view have to find what they have to redraw, depending
-     * of the wrap option, and of course window size.
-     */
-    void initChanges( QPoint pos );
-    void applyChanges( int y );
-
-    //-------------------------------------------------------
     // ----------------- Miscellaneous
     //-------------------------------------------------------
     /**
@@ -818,15 +683,29 @@ public:
      */
     YSelection clipSelection( const YSelection& sel ) const;
 
+	/*
+	 * TODO: docstring
+	 */
+	void updateBufferInterval( const YInterval& bi );
+
+	// TODO: docstring
+	YDrawLine drawLineFromYLine( const YLine* yl, int start_column = 0 );
+
 protected:
 
     void setupKeys();
 
     bool stringHasOnlySpaces ( const QString& what );
 
-    YDrawBuffer m_drawBuffer;
+    YDrawBuffer mDrawBuffer;
 
 private:
+
+	// TODO: docstring
+	void setBufferLineContent( int lid, const YLine* yl );
+
+	YDrawSection mWorkDrawSection;
+	YDrawLine mWorkDrawLine;
 
     /*
      * scroll draw buffer and view
@@ -873,11 +752,6 @@ private:
      */
     YViewCursor workCursor;
 
-    /**
-     * are we moving cursor in draw mode ?
-     */
-    bool drawMode;
-
 
     /**
      * Number of visible lines on the view
@@ -909,24 +783,7 @@ private:
      */
     int rCurrentTop;
 
-    int spaceWidth;
-
-    const uchar* rHLa;
-
-    bool rHLnoAttribs;
-
-    int rHLAttributesLen;
-
-    YzisAttribute *rHLAttributes;
-
-    ///  current line
-    QString sCurLine;
-    ///  current line length
-    int sCurLineLength;
-    ///  current line max width ( tab is 8 spaces )
-    int rCurLineLength;
-    ///  current line min width( tab is 1 space )
-    int rMinCurLineLength;
+    YzisAttribute* mHighlightAttributes;
 
     void gotoy( int y );
     void gotody( int y );
@@ -934,38 +791,16 @@ private:
     void gotodx( int x );
     void applyGoto( YViewCursor* viewCursor, bool applyCursor = true );
     void initGoto( YViewCursor* viewCursor );
-    void updateCurLine( );
-
-    bool m_paintAll;
 
     int stickyCol;
 
-    QChar mFillChar;
-    QChar lastChar;
-    bool listChar;
-
     QChar m_lineFiller;
     QChar m_lineMarker;
-
-
-    YCursor origPos;
-    int lineDY;
-
-    YCursor beginChanges;
 
     /// cached value of tabstop option
     int tabstop;
     bool wrap;
     bool rightleft;
-
-    /// tabstop * spaceWidth
-    int tablength;
-
-    /// tablength to wrap
-    int areaModTab;
-
-    /// if true, do not check for cursor visibility
-    bool adjust;
 
     YSelectionPool * selectionPool;
     YSelection* mPaintSelection;
@@ -979,8 +814,6 @@ private:
     int m_paintAutoCommit;
     YViewCursor keepCursor;
 
-    /// the current attribute being used by the GUI
-    YzisAttribute * curAt;
     YModePool* mModePool;
 
     /**

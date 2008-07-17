@@ -1,0 +1,39 @@
+
+- delete lines
+
+YView: set line number
+YView: ~ lines
+YView: check sendPaintEvent calls
+YView: check screen info (mLinesVis, etc..)
+YDrawBuffer: unittest
+YView: unittest
+
+YBuffer::insertRegion: shift search hl, etc..
+YBuffer::insertRegion: d->isLoading?
+YBuffer::insertRegion: undo
+YBuffer::insertRegion: swap
+
+YBuffer::deleteRegion: shift search hl, etc..
+YBuffer::deleteRegion: views update
+YBuffer::deleteRegion: d->isLoading?
+YBuffer::deleteRegion: undo
+YBuffer::deleteRegion: swap
+
+YView: vertical scroll
+YView: nowrap
+YView: horizontal scroll
+
+YBuffer: deprecate old buffer operations
+
+YAction: use of new YBuffer operations
+
+YVisualMode: VisualBlock
+
+YView: redo folding support:
+	m_lineFiller = ' '; 
+	m_lineMarker = ' '; 
+	if ( mFoldPool->isHead( workCursor.bufferY() ) ) {
+		m_lineFiller = '-'; 
+		m_lineMarker = '+'; 
+	}
+

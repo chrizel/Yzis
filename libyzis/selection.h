@@ -115,7 +115,15 @@ public:
     const YCursor toPos() const;
 
     bool contains( const YCursor pos ) const;
-    bool contains( const YInterval& pos ) const;
+    bool contains( const YBound& pos ) const;
+    bool contains( const YInterval& i ) const;
+
+	/*
+	 * @param i : interval to check with
+	 * @returns true if there is common part between the two intervals
+	 */
+	bool overlap( const YInterval& i ) const;
+
 
     QRect boundingRect() const;
 

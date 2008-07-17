@@ -101,8 +101,8 @@ public slots :
 
 protected:
     void guiPaintEvent( const YSelection& drawMap );
-    void guiDrawCell( QPoint pos, const YDrawCell& cell, QPainter* p );
-    void guiDrawClearToEOL( QPoint pos, const QChar& clearChar, QPainter* p );
+    void guiDrawCell( YCursor pos, const YDrawCell& cell, QPainter* p );
+    void guiDrawClearToEOL( YCursor pos, const YDrawCell& clearCell, QPainter* p );
 
     //intercept tabs
     virtual bool event(QEvent*);

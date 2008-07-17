@@ -178,18 +178,6 @@ QString YBuffer::toString() const
  * do _not_ use them directly, use action() ( actions.cpp ) instead.
  */
 
-static void viewsInit( YBuffer *buffer, QPoint pos )
-{
-    foreach( YView *view, buffer->views() )
-        view->initChanges(pos);
-}
-
-static void viewsApply( YBuffer *buffer, int y )
-{
-    foreach( YView *view, buffer->views() )
-        view->applyChanges(y);
-}
-
 void YBuffer::insertChar(QPoint pos, const QString& c )
 {
     ASSERT_TEXT_WITHOUT_NEWLINE( QString("YBuffer::insertChar(%1,%2,%3)").arg(pos.x()).arg(pos.y()).arg(c), c )
@@ -208,15 +196,12 @@ void YBuffer::insertChar(QPoint pos, const QString& c )
     }
 
 
-    viewsInit( this, pos );
-
     d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, c, pos);
     if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpAddText, c, pos );
 
     l.insert(pos.x(), c);
     setTextline(pos.y(), l);
 
-    viewsApply( this, pos.y() );
 }
 
 void YBuffer::delChar (QPoint pos, int count )
@@ -232,8 +217,6 @@ void YBuffer::delChar (QPoint pos, int count )
 
     ASSERT_POS_EXISTS( QString("YBuffer::delChar(QPoint(%1,%2),%3)").arg(pos.x()).arg(pos.y()).arg(count), pos)
 
-    viewsInit( this, pos );
-
     d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, l.mid(pos.x(), count), pos );
     if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpDelText, l.mid( pos.x(), count ), pos );
 
@@ -242,7 +225,6 @@ void YBuffer::delChar (QPoint pos, int count )
 
     setTextline(pos.y(), l);
 
-    viewsApply( this, pos.y() );
 }
 
 // ------------------------------------------------------------------------
@@ -284,8 +266,6 @@ void YBuffer::insertLine(const QString &l, int line)
     d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, l, QPoint(0, line));
     if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpAddText, l, QPoint(0, line));
 
-    viewsInit( this, QPoint(0, line));
-
     QVector<YLine*>::iterator it = d->text->begin(), end = d->text->end();
     int idx = 0;
     for ( ; idx < line && it != end; ++it, ++idx )
@@ -298,9 +278,7 @@ void YBuffer::insertLine(const QString &l, int line)
 
     setChanged( true );
 
-    viewsApply( this, line + 1 );
 }
-
 void YBuffer::insertNewLine( QPoint pos )
 {
     if (pos.y() == lineCount()) {
@@ -314,7 +292,6 @@ void YBuffer::insertNewLine( QPoint pos )
         //fake being at end of last line to make it work
         pos = QPoint( textline(pos.y() - 1).length(), pos.y() - 1);
     }
-    viewsInit( this, pos);
 
     if ( pos.y() >= lineCount() ) return ;
     QString l = textline(pos.y());
@@ -350,8 +327,6 @@ void YBuffer::insertNewLine( QPoint pos )
     //replace old line
     setTextline(pos.y(), l.left( pos.x() ));
     updateHL( pos.y() + 1 );
-
-    viewsApply( this, pos.y() + 1 );
 }
 
 void YBuffer::deleteLine( int line )
@@ -360,7 +335,6 @@ void YBuffer::deleteLine( int line )
 
     if (line >= lineCount()) return ;
 
-    viewsInit( this, QPoint(0, line));
     d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, textline(line), QPoint(0, line));
     if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpDelText, textline( line ), QPoint(0, line));
     if (lineCount() > 1) {
@@ -384,7 +358,6 @@ void YBuffer::deleteLine( int line )
 
     setChanged( true );
 
-    viewsApply( this, line + 1 );
 }
 
 void YBuffer::replaceLine( const QString& l, int line )
@@ -394,7 +367,6 @@ void YBuffer::replaceLine( const QString& l, int line )
 
     if ( line >= lineCount() ) return ;
     if ( textline( line ).isNull() ) return ;
-    viewsInit( this, QPoint(0, line));
 
     d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, textline(line), QPoint(0, line));
     d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, l, QPoint(0, line));
@@ -404,26 +376,131 @@ void YBuffer::replaceLine( const QString& l, int line )
     }
     setTextline(line, l);
 
-    viewsApply( this, line );
 }
 
 // ------------------------------------------------------------------------
 //                            Content Operations
 // ------------------------------------------------------------------------
 
+void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
+{
+	YLine* l;
+	QString ldata;
+	QString rdata;
+	int ln = begin.line();
+
+	l = yzline(ln);
+	QString curdata = l->data();
+	ldata = curdata.left(begin.column());
+	rdata = curdata.mid(begin.column());
+
+	/* first line */
+	int i = 0;
+	ldata += data[i];
+	++i;
+	if ( i == data.size() ) {
+		ldata += rdata;
+	}
+	l->setData(ldata);
+
+	if ( i < data.size() ) {
+		/* middle lines */
+		for( ; i < data.size() - 1; ++i ) {
+			d->text->insert(++ln, new YLine(data[i]));
+		}
+
+		/* last line */
+		ldata = data[i];
+		ldata += rdata;
+		d->text->insert(++ln, new YLine(ldata));
+	}
+
+	/* syntax highlighting update */
+	int el = begin.line();
+	int nl = el;
+	while( el <= ln ) {
+		nl = updateHL(el);
+		el = nl > el ? nl : el+1;
+	}
+	YBound end(YCursor(0,el), true);
+	YInterval bi(begin, end);
+	dbg() << "insertRegion: insert \\cup hl : " << bi << endl;
+
+	/* TODO: other highlighting */
+	/* TODO: undo */
+
+	/* inform views */
+	foreach( YView* v, views() ) {
+		v->updateBufferInterval(bi);
+	}
+
+    setChanged( true );
+}
+
+void YBuffer::deleteRegion( const YInterval& bi )
+{
+	QString ldata;
+	QString rdata;
+
+	YCursor begin = bi.fromPos();
+	if ( bi.from().opened() )
+		begin.setColumn(begin.column() + 1);
+	YCursor end = bi.toPos();
+	if ( bi.to().closed() )
+		end.setColumn(end.column() + 1);
+
+	/* merge first and last line */
+	YLine* l;
+	l = yzline(begin.line());
+	ldata = l->data().left(begin.column());
+	rdata = textline(end.line()).mid(end.column());
+	l->setData(ldata + rdata);
+
+	/* delete ylines */
+	int ln = begin.line() + 1;
+	int n = end.line() - begin.line();
+	QVector<YLine*>::iterator it = d->text->begin() + ln;
+	while ( n-- && it != d->text->end() ) {
+		delete (*it);
+		it = d->text->erase(it);
+	}
+
+	/* ensure at least one empty line exists */
+	if ( lineCount() == 0 ) {
+		d->text->append(new YLine());
+	}
+
+	/* syntax highlighting update */
+	ln = updateHL(begin.line());
+	if ( ln > begin.line() ) {
+		--ln;
+	}
+	YCursor update_end(getLineLength(ln), ln);
+
+	/* TODO: other highlighting */
+	/* TODO: undo */
+
+	/* inform views */
+	foreach( YView* v, views() ) {
+		v->updateBufferInterval(bi);
+	}
+
+    setChanged( true );
+}
+
+void YBuffer::replaceRegion( const YInterval& bi, const YRawData& data )
+{
+	deleteRegion(bi);
+	YCursor begin = bi.fromPos();
+	if ( bi.from().opened() )
+		begin.setColumn(begin.column() + 1);
+	insertRegion(begin, data);
+}
+
+
 void YBuffer::clearText()
 {
-    dbg() << "YBuffer clearText" << endl;
-    /* XXX clearText is not registered to the undo buffer but should be
-     * as any other text operation. Although I doubt that this is a common
-     * operation.
-     */ 
-    //clear is fine but better _delete_ all yzlines too ;)
-    QVector<YLine*>::iterator it = d->text->begin(), end = d->text->end();
-    for ( ; it != end; ++it )
-        delete ( *it );
-    d->text->clear(); //remove the _pointers_ now
-    d->text->append(new YLine());
+	deleteRegion(YInterval(YCursor(0,0), YBound(YCursor(0,lineCount()), true)));
 }
 
 void YBuffer::setTextline( int line , const QString & l)
@@ -1033,41 +1110,47 @@ QStringList YBuffer::getLocalListOption( const QString& option ) const
         return YSession::self()->getOptions()->readListOption( "Global\\" + option, QStringList() );
 }
 
-bool YBuffer::updateHL( int line )
+int YBuffer::updateHL( int line )
 {
     // dbg() << "updateHL " << line << endl;
-    if ( d->isLoading ) return false;
-    int hlLine = line, nElines = 0;
-    bool ctxChanged = true;
-    bool hlChanged = false;
-    YLine* yl = NULL;
-    int maxLine = lineCount();
-    /* for ( int i = hlLine; i < maxLine; i++ ) {
-      YSession::self()->search()->highlightLine( this, i );
-     }*/
-    if ( d->highlight == 0L ) return false;
-    while ( ctxChanged && hlLine < maxLine ) {
-        yl = yzline( hlLine );
-        QVector<uint> foldingList;
-        YLine *l = new YLine();
-        d->highlight->doHighlight(( hlLine >= 1 ? yzline( hlLine - 1 ) : l), yl, &foldingList, &ctxChanged );
-        delete l;
-        //  dbg() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
-        hlChanged = ctxChanged || hlChanged;
-        if ( ! ctxChanged && yl->data().isEmpty() ) {
-            ctxChanged = true; // line is empty
-            ++nElines;
-        } else if ( ctxChanged )
-            nElines = 0;
-        hlLine++;
-    }
-    if ( hlChanged ) {
-        int nToDraw = hlLine - line - nElines - 1;
-        //  dbg() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
-        foreach( YView *view, d->views )
-        view->sendBufferPaintEvent( line, nToDraw );
-    }
-    return hlChanged;
+    if ( d->isLoading ) 
+		return line;
+
+    int hlLine = line;
+	int nElines = 0;
+    if ( d->highlight != 0L ) {
+		bool ctxChanged = true;
+		bool hlChanged = false;
+		int maxLine = lineCount();
+
+		YLine* yl = NULL;
+		YLine* last_yl = hlLine > 0 ? yzline(hlLine-1) : new YLine();
+
+		for( ; ctxChanged && hlLine < maxLine; ++hlLine ) {
+			yl = yzline(hlLine);
+			QVector<uint> foldingList;
+			d->highlight->doHighlight(last_yl, yl, &foldingList, &ctxChanged );
+			if ( hlLine == 0 )
+				delete last_yl;
+			last_yl = yl;
+			//  dbg() << "updateHL line " << hlLine << ", " << ctxChanged << "; " << yl->data() << endl;
+			hlChanged = ctxChanged || hlChanged;
+			if ( !ctxChanged && yl->data().isEmpty() ) {
+				ctxChanged = true; // line is empty, continue
+				++nElines;
+			} else if ( ctxChanged ) {
+				nElines = 0;
+			}
+		}
+
+		if ( hlChanged ) { // XXX: remove it when redesign will be done
+			int nToDraw = hlLine - line - nElines - 1;
+			//  dbg() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
+			foreach( YView *view, d->views )
+				view->sendBufferPaintEvent( line, nToDraw );
+		}
+	}
+	return hlLine - nElines;
 }
 
 void YBuffer::initHL( int line )
@@ -1352,3 +1435,4 @@ bool YBuffer::checkRecover() {
         }
         return false;
 }
+

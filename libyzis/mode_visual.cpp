@@ -362,8 +362,9 @@ void YModeVisualBlock::cursorMoved( YView* mView )
 
     int fromLine = mView->visualCursor()->bufferY();
     int toLine = mView->getBufferCursor().y();
-    int fromCol = (mView->visualCursor()->curLineHeight() - 1) * mView->getColumnsVisible() + mView->visualCursor()->screenX();
-    int toCol = (mView->viewCursor().curLineHeight() - 1) * mView->getColumnsVisible() + mView->getCursor().x();
+	/* TODO */
+    int fromCol = /*(mView->visualCursor()->curLineHeight() - 1) * mView->getColumnsVisible()*/ + mView->visualCursor()->screenX();
+    int toCol = /*(mView->viewCursor().curLineHeight() - 1) * mView->getColumnsVisible()*/ + mView->getCursor().x();
 
     YViewCursor cur = *mView->visualCursor();
     if ( fromCol > toCol ) {

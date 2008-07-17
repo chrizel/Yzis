@@ -28,6 +28,7 @@
 #include "viewiface.h"
 #include "viewcursor.h"
 #include "mode_pool.h"
+#include "drawbuffer.h"
 
 class YViewCursor;
 class YColor;
@@ -43,6 +44,7 @@ class YModeCompletion;
 class YOptionValue;
 class YZFoldPool;
 struct YDrawCell;
+class YDrawLine;
 
 /**
  * MUST be reimplemented in the GUI. 
@@ -723,6 +725,12 @@ protected:
     YDrawBuffer mDrawBuffer;
 
 private:
+
+	// TODO: docstring
+	void setBufferLineContent( int lid, const YLine* yl );
+
+	YDrawSection mWorkDrawSection;
+	YDrawLine mWorkDrawLine;
 
     /*
      * scroll draw buffer and view

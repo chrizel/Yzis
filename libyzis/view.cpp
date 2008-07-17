@@ -68,9 +68,9 @@ static int nextId = 1;
 
 YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
         :
-          m_drawBuffer(),
+          mDrawBuffer(),
           mPreviousChars(""),mLastPreviousChars(""),
-          mainCursor(this), scrollCursor(this), workCursor(this), mVisualCursor(this), keepCursor(this),
+          mainCursor(), scrollCursor(), workCursor(), mVisualCursor(), keepCursor(),
           id(nextId++)
 {
     dbg().SPrintf("YView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
@@ -89,7 +89,7 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
 
     mFoldPool = new YZFoldPool( this );
 
-    m_drawBuffer.setCallback( this );
+    //mDrawBuffer.setCallback( this ); TODO
 
     stickyCol = 0;
 
@@ -454,7 +454,7 @@ void YView::gotoy( int nexty )
 		return;
 	}
 	int top_bl = mBufferInterval.fromPos().line();
-	mWorkDrawSection = mDrawBuffer.bufferDrawSection(nexty - top_bl);
+	mWorkDrawSection = mDrawBuffer.sections()[nexty - top_bl];
 }
 
 void YView::gotox( int nextx, bool forceGoBehindEOL )
@@ -471,6 +471,7 @@ void YView::gotox( int nextx, bool forceGoBehindEOL )
 	}
 	workCursor = mWorkDrawLine.beginViewCursor();
 	int acc_dx = workCursor.screenX();
+	QList<int>::const_iterator it = mWorkDrawLine.steps().constBegin();
 	for( int i = workCursor.bufferX(); i < nextx; ++i, ++it ) {
 		acc_dx += *it;
 	}
@@ -1206,7 +1207,7 @@ const int YView::getId() const
 
 void YView::internalScroll( int dx, int dy )
 {
-    m_drawBuffer.Scroll( dx, dy );
+    //mDrawBuffer.Scroll( dx, dy ); TODO
     guiScroll( dx, dy );
 }
 
@@ -1221,12 +1222,12 @@ void YView::updateBufferInterval( const YInterval& bi )
 
 	/* buffer line where start our update */
 	int bl = qMax(bi.fromPos().line(), top_bl);
-	int last_bl = bi.toPos().line()
+	int last_bl = bi.toPos().line();
 	if ( bi.to().opened() && bi.toPos().column() == 0 )
 		--last_bl;
 
 	for( ; bl <= last_bl; ++bl ) {
-		setBufferLineContent(bl - top_bl, mBuffer.yzline(bl));
+		setBufferLineContent(bl - top_bl, mBuffer->yzline(bl));
 	}
 }
 
@@ -1261,9 +1262,9 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 		}
 
 		/* :set list support */
-		is_listchar = opt_list && (text == ' ' || text == tabChar);
+		is_listchar = opt_list && (text == " " || text == tabChar);
 		if ( is_listchar ) {
-			if ( text == ' ' ) {
+			if ( text == " " ) {
 				if ( stringHasOnlySpaces(data.mid(i)) && opt_listchars[ "trail" ].length() > 0 ) {
 					text = opt_listchars["trail"][0];
 				} else if ( opt_listchars["space"].length() > 0 ) {
@@ -1292,7 +1293,7 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 		if ( at ) {
 			fg = at->textColor();
 			bg = at->bgColor();
-			font.setBold(at->bold());
+			font.setWeight(at->bold() ? YFont::Bold : YFont::Normal);
 			font.setItalic(at->italic());
 			font.setUnderline(at->underline());
 			font.setOverline(at->overline());
@@ -1301,7 +1302,7 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 		} else {
 			fg = color_null;
 			bg = color_null;
-			font.setBold(false);
+			font.setWeight(YFont::Normal);
 			font.setItalic(false);
 			font.setUnderline(false);
 			font.setOverline(false);

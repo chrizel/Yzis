@@ -42,6 +42,7 @@ public:
     YDrawBuffer();
     ~YDrawBuffer();
 
+	inline const QList<YDrawSection> sections() { return mContent; }
 	void setBufferDrawSection( int lid, YDrawSection ds );
 
 private :

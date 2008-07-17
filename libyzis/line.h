@@ -70,10 +70,9 @@ public:
     void addAttribute ( int start, int length, int attribute );
 
 
-    inline uchar *attributes ()
-    {
-        return mAttributes.data();
-    }
+    inline uchar *attributes() { return mAttributes.data(); }
+    inline const uchar *attributes() const { return mAttributes.data(); }
+
     bool initialized() const
     {
         return m_initialized;

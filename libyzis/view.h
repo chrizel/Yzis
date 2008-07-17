@@ -327,12 +327,6 @@ public:
     }
 
     /**
-     * Moves the cursor to @arg buffer nextx, @arg draw nexty
-     */
-    void gotoxdy(int nextx, int nexty, bool applyCursor = true );
-    void gotoxdy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor = true );
-
-    /**
      * Moves the cursor to @arg draw nextx, @arg buffer nexty
      */
     void gotodxy(int nextx, int nexty, bool applyCursor = true );
@@ -389,118 +383,11 @@ public:
     //-------------------------------------------------------
     // ----------------- Drawing
     //-------------------------------------------------------
-    /**
-     * init r and s Cursor
-     */
-    void initDraw( );
-    void initDraw( int sLeft, int sTop, int rLeft, int rTop, bool draw = true );
-
-    int initDrawContents( int clipy );
-
-    /**
-     * go to previous line
-     */
-    bool drawPrevLine( );
-
-    /**
-     * go to next line
-     */
-    bool drawNextLine( );
-
-    /**
-     * go to prev col
-     */
-    bool drawPrevCol( );
-
-    /**
-     * go to next col
-     */
-    bool drawNextCol( );
-
-    const QChar& drawLineFiller() const;
-    const QChar& drawLineMarker() const;
-
-    const QChar& fillChar() const;
-
-    /**
-     * draw char
-     */
-    const QChar& drawChar() const;
-
-    /**
-     * char length
-     */
-    int drawLength() const;
-
-    /**
-     * line increment (on screen)
-     */
-    int drawHeight() const;
-
-    /**
-     * char color
-     */
-    const YColor& drawColor();
-
-    /**
-     * char color if selected
-     */
-    const YColor& drawSelColor();
-
-    /**
-     * char background color
-     */
-    const YColor& drawBgColor();
-
-    /**
-     * char background color if selected
-     */
-    const YColor& drawBgSelColor();
-
-    /**
-     * current char is bold
-     */
-    bool drawBold();
-
-    /**
-     * current char is italic
-     */
-    bool drawItalic();
-
-    /**
-     * current char is underlined
-     */
-    bool drawUnderline();
-
-    /**
-     * current char is overlined
-     */
-    bool drawOverline();
-
-    /**
-     * current char is striked-out
-     */
-    bool drawStrikeOutLine();
-
-    /**
-     * current char outline color
-     */
-    const YColor& drawOutline();
 
     /**
      * Character color at column line
      */
     const YColor& drawColor ( int col, int line ) const;
-
-    /**
-     * return current buffer line
-     */
-    int drawLineNumber() const;
-
-    /**
-     * total height ( draw )
-     */
-    int drawTotalHeight();
 
     //-------------------------------------------------------
     // ----------------- Undo

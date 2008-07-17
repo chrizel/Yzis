@@ -13,3 +13,11 @@ YBuffer: deprecate old buffer operations
 
 YAction: use of new YBuffer operations
 
+YView: redo folding support:
+	m_lineFiller = ' '; 
+	m_lineMarker = ' '; 
+	if ( mFoldPool->isHead( workCursor.bufferY() ) ) {
+		m_lineFiller = '-'; 
+		m_lineMarker = '+'; 
+	}
+

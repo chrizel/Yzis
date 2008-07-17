@@ -57,7 +57,7 @@ class YZIS_EXPORT YViewCursor : public YCursorPos
     friend class YView;
 
 public:
-    explicit YViewCursor( YView* parent );
+    YViewCursor();
     YViewCursor( const YViewCursor &c);
     virtual ~YViewCursor();
 
@@ -110,11 +110,6 @@ public:
 
 private :
     void copyFields( const YViewCursor &rhs );
-
-    /**
-     * parent view
-     */
-    YView* mParent;
 
     /**
      * spaceFill is the shift for starting tabs

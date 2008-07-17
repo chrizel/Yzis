@@ -30,9 +30,8 @@
 #define dbg()    yzDebug("YViewCursor")
 #define err()    yzError("YViewCursor")
 
-YViewCursor::YViewCursor( YView* parent )
+YViewCursor::YViewCursor()
 {
-    mParent = parent;
     reset();
 }
 

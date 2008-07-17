@@ -20,75 +20,48 @@
 #include "drawbuffer.h"
 #include "debug.h"
 #include "view.h"
+#include "viewcursor.h"
 
 #define dbg()    yzDebug("YDrawBuffer")
 #define err()    yzError("YDrawBuffer")
 
-YDrawBuffer::YDrawBuffer() :
-        m_content(),
-        m_sel()
-{
-    m_view = NULL;
-    m_callback_arg = NULL;
-    m_line = NULL;
-    m_cell = NULL;
-    reset();
-}
-YDrawBuffer::~YDrawBuffer()
-{}
+/************************
+ * YDrawLine
+ ************************/
 
-void YDrawBuffer::setCallback( YView* v )
+YDrawLine::YDrawLine() :
+	mCells(),
+	mSteps(),
+	mBeginViewCursor(),
+	mEndViewCursor()
 {
-    m_view = v;
+	mBeginViewCursor.setScreenX(0);
+	mBeginViewCursor.setBufferX(0);
 }
-void YDrawBuffer::setCallbackArgument( void* callback_arg )
+YDrawLine::~YDrawLine()
 {
-    m_callback_arg = callback_arg;
-}
-void YDrawBuffer::callback( QPoint pos, const YDrawCell& cell )
-{
-    m_view->guiDrawCell( pos, cell, m_callback_arg );
 }
 
-void YDrawBuffer::reset()
-{
-    v_xi = v_x = 0;
-    m_x = m_y = -1;
-    m_content.clear();
-    changed = false;
+YViewCursor YDrawLine::beginViewCursor() const {
+	return mBeginViewCursor;
+}
+YViewCursor YDrawLine::endViewCursor() const {
+	return mEndViewCursor;
 }
 
-void YDrawBuffer::flush()
+void YDrawLine::setFont( const YFont& f )
 {
-    changed = false;
-
-    if ( m_cell == NULL || m_cell->c.isEmpty() )
-        return ;
-    /* call callback with the undrawed part of section */
-    QString keep( m_cell->c );
-    m_cell->c = m_cell->c.mid( v_x - v_xi );
-    if ( !m_cell->c.isEmpty() ) {
-        callback( QPoint(v_x, m_y), *m_cell );
-        /* move cursor */
-        v_x += m_cell->c.length();
-    }
-    m_cell->c = keep;
-}
-
-void YDrawBuffer::setFont( const YFont& f )
-{
-    /* if ( f != m_cur.font ) { */
-    m_cur.font = f;
+    /* TODO if ( f != mCur.font ) { */ 
+    mCur.font = f;
     /*  changed = true;
      } */
 }
-
-bool YDrawBuffer::updateColor( YColor* dest, const YColor& c )
+bool YDrawLine::updateColor( YColor* dest, const YColor& c )
 {
     bool changed = false;
     bool was_valid = dest->isValid();
     bool is_valid = c.isValid();
-    if ( was_valid != is_valid || (is_valid && c.rgb() != dest->rgb()) ) {
+    if ( was_valid != is_valid || is_valid && c.rgb() != dest->rgb() ) {
         changed = true;
         if ( is_valid ) {
             dest->setRgb( c.rgb() );
@@ -99,272 +72,143 @@ bool YDrawBuffer::updateColor( YColor* dest, const YColor& c )
     return changed;
 }
 
-void YDrawBuffer::setColor( const YColor& c )
+void YDrawLine::setColor( const YColor& c )
 {
-    changed = updateColor( &m_cur.fg, c );
+    changed = updateColor(&mCur.fg, c);
 }
-void YDrawBuffer::setBackgroundColor( const YColor& c )
+void YDrawLine::setBackgroundColor( const YColor& c )
 {
-    changed = updateColor( &m_cur.bg, c );
+    changed = updateColor(&mCur.bg, c);
 }
-void YDrawBuffer::setSelection( int sel )
+void YDrawLine::setSelection( int sel )
 {
-    if ( sel != m_cur.sel ) {
-        m_cur.sel = sel;
+    if ( sel != mCur.sel ) {
+        mCur.sel = sel;
         changed = true;
     }
 }
-
-void YDrawBuffer::push( const QChar& c )
+int YDrawLine::push( const QString& c )
 {
-    if ( changed ) {
-        /* flush last vector */
-        flush();
-        /* set the new properties */
-        v_xi += m_cell->c.length();
-        insert_section();
-    }
-    m_cell->c.append( c );
-}
-
-void YDrawBuffer::push( const QString& c )
-{
-    YCursor pos( v_xi + m_cell->c.length(), m_y );
-    QPoint step(1, 0);
+    //YCursor pos( v_xi + mCell->c.length(), m_y );
+    //QPoint step(1, 0);
     for ( int i = 0; i < c.length(); ++i ) {
+		/* TODO : selection
         int sel = YSelectionPool::None;
         foreach( YSelectionPool::SelectionLayout layout, m_sel.keys() ) {
             if ( m_sel[layout].contains(pos) )
                 sel |= layout;
         }
         setSelection( sel );
-        push( c[i] );
-        pos = pos + step;
+		*/
+		if ( changed ) {
+			/* set the new properties */
+			insertCell();
+		}
+		mCell->c.append( c );
+		mSteps.append(c.length());
+        //pos = pos + step;
     }
+	return i;
+}
+void YDrawLine::flush() {
+	mEndViewCursor = mBeginViewCursor;
+	mEndViewCursor.setBufferX(mBeginViewCursor.bufferX() + mSteps.count() - 1);
+	int acc;
+	foreach( int s, mSteps ) {
+		acc += s;
+	}
+	mEndViewCursor.setScreenX(mBeginViewCursor.screenX() + acc - 1);
 }
 
-void YDrawBuffer::newline( int y )
-{
-    // dbg() << "YDrawBuffer::newline " << y << endl;
-    flush();
-    insert_line( y );
-}
-
-void YDrawBuffer::insert_line( int pos )
-{
-    if ( pos == -1 )
-        pos = m_y + 1;
-
-    if ( pos < m_content.size() )
-        m_content.insert( pos, YDrawSection() );
-    else
-        m_content.resize( pos + 1 );
-
-    m_y = pos;
-    m_line = & m_content[m_y];
-
-    v_x = v_xi = 0;
-    m_x = -1;
-    insert_section();
-}
-
-void YDrawBuffer::insert_section( int pos )
+void YDrawLine::insertCell( int pos )
 {
     if ( pos == -1 ) {
-        pos = m_x + 1;
-        if ( m_x >= 0 && m_line->at( m_x ).c.length() == 0 ) /* current section is empty, don't move */
-            pos = m_x;
+        pos = mCells->size();
     }
 
     /* copy properties */
     YDrawCell n;
-    updateColor( &n.fg, m_cur.fg );
-    updateColor( &n.bg, m_cur.bg );
-    n.sel = m_cur.sel;
+    updateColor(&n.fg, mCur.fg);
+    updateColor(&n.bg, mCur.bg);
+    n.sel = mCur.sel;
 
-    if ( pos >= m_line->size() ) {
-        m_line->resize( pos + 1 );
-        m_line->replace( pos, n );
+    if ( pos >= mCells->size() ) {
+        mCells->resize(pos + 1);
+        mCells->replace(pos, n);
     } else {
-        if ( m_line->at( pos ).c.length() > 0 ) {
-            m_line->insert( pos, n );
+        if ( mCells->at(pos).c.length() > 0 ) {
+            mCells->insert(pos, n);
         } else {
-            m_line->replace( pos, n );
+            mCells->replace(pos, n);
         }
     }
 
-    m_x = pos;
-    m_cell = & (*m_line)[m_x];
+    mCell = &(*mCells)[pos];
 }
 
-bool YDrawBuffer::find( const YCursor pos, int* x, int* y, int* vx ) const
-{
-    bool found = false;
-    int i, cx;
-
-    if ( (int)pos.y() < m_content.size() ) {
-        const YDrawSection& l = m_content.at(pos.y());
-        cx = 0;
-        for ( i = 0; i < l.size(); ++i ) {
-            const YDrawCell& cell = l.at(i);
-            if ( (cx + cell.c.length()) > (int)pos.x() ) {
-                found = true;
-                break;
-            }
-            cx += cell.c.length();
-        }
-    }
-
-    if ( found ) {
-        if ( x ) *x = i;
-        if ( y ) *y = pos.y();
-        if ( vx ) *vx = cx;
-    }
-    return found;
+void YDrawLine::setLineCursor( int bufferY, int screenY ) {
+	mBeginViewCursor.setBufferY(bufferY);
+	mBeginViewCursor.setScreenY(screenY);
+	mEndViewCursor.setBufferY(bufferY);
+	mEndViewCursor.setScreenY(screenY);
 }
 
-YDrawCell YDrawBuffer::at( const YCursor pos ) const
+YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl )
 {
-    YDrawCell n;
-    int x, y, vx;
-    if ( find( pos, &x, &y, &vx ) ) {
-        n = m_content.at( y ).at( x );
-        n.c = n.c.mid( pos.x() - vx, 1 );
-    }
-    return n;
+	for ( int i = 0; j < dl.mCells.size(); ++i ) {
+		out << "'" << dl.mCells[i].c << "' ";
+	}
+    return out;
 }
 
-bool YDrawBuffer::seek( const YCursor pos, YDrawBuffer::SetFromInfo sfi )
+
+
+/************************
+ * YDrawBuffer
+ ************************/
+
+YDrawBuffer::YDrawBuffer() :
+	mContent()
 {
-    YCursor rpos;
-    switch ( sfi ) {
-    case YDrawBuffer::SetFromSeek:
-        rpos = pos;
-        break;
-    }
-    if ( find( rpos, &m_x, &m_y, &v_xi ) ) {
-        v_x = pos.x();
-        applyPosition();
-        return true;
-    }
-    return false;
+}
+YDrawBuffer::~YDrawBuffer()
+{
 }
 
-void YDrawBuffer::applyPosition()
+void YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 {
-    m_line = & m_content[m_y];
-    m_cell = & (*m_line)[m_x];
-    m_cur = *m_cell;
-}
-
-void YDrawBuffer::replace( const YInterval& interval )
-{
-    flush();
-    // dbg() << "YDrawBuffer::replace " << interval << endl;
-    // dbg() << "before replace:" << endl << (*this) << "----" << endl;
-    int fx = interval.fromPos().x();
-    int fy = interval.fromPos().y();
-    int tx = interval.toPos().x();
-    int ty = interval.toPos().y();
-
-    if ( fy >= m_content.size() ) {
-        /* interval does'nt exists */
-        insert_line( fy );
-        v_x = v_xi = fx;
-    } else {
-        int dx, dy, dvx;
-        bool has_dest = find( interval.toPos(), &dx, &dy, &dvx );
-
-        if ( !seek( interval.fromPos(), YDrawBuffer::SetFromSeek ) ) {
-            //XXX dbg() << "unable to access " << interval.fromPos() << endl;
-            return ;
-        }
-
-        /* cut content */
-        QString append = "";
-        QString prepend = m_cell->c.left( fx - v_xi );
-        if ( has_dest ) {
-            append = m_content.at(dy).at(dx).c.mid( tx - dvx + 1 );
-            m_content[dy][dx].c = append;
-        }
-        m_cell->c = prepend;
-
-        if ( m_x == dx && m_y == dy ) { /* same section */
-            if ( append.length() > 0 ) {
-                /* save current position */
-                int s_mx = m_x, s_my = m_y, s_vxi = v_xi;
-
-                /* insert a new section */
-                insert_section(m_x + 1);
-                m_cell->c = append;
-
-                /* restore old position */
-                m_x = s_mx; m_y = s_my; v_xi = s_vxi;
-                v_x = v_xi + prepend.length();
-                applyPosition();
-            }
-        } else {
-            if ( (fy == ty && !has_dest) || (fy < ty && (m_x + 1) < m_line->size()) ) {
-                /* remove all until EOL */
-                m_line->remove( m_x + 1, m_line->size() - (m_x + 1) );
-            }
-            if ( fy == ty && has_dest ) {
-                /* remove sections between m_x and dx */
-                m_line->remove( m_x + 1, (dx - m_x) - 1 );
-            }
-            if ( fy < ty ) {
-                if ( has_dest ) {
-                    m_content[dy].remove( 0, dx );
-                }
-                int len = (ty - fy) - (has_dest ? 1 : 0 );
-                if ( (fy + len) >= m_content.size() ) {
-                    len = m_content.size() - (fy + 1);
-                }
-                m_content.remove( fy + 1, len );
-            }
-        }
-    }
-    // dbg() << "after replace:" << endl << (*this) << "----" << endl;
-}
-
-void YDrawBuffer::Scroll( int , int dy )
-{
-    // TODO: implement scroll to the left/right
-    if ( dy < 0 ) {
-        // remove top lines
-        m_content.remove(0, qAbs(dy));
-    } else if ( dy > 0 ) {
-        // add empty top lines
-        for ( int i = 0; i < dy; ++i )
-            insert_line(0);
-        // clip
-        int max = m_view->getLinesVisible();
-        if ( m_content.size() > max ) {
-            m_content.remove( max, m_content.size() - max );
-        }
-    }
-
-    // This function is only called if there will be lines left at the end,
-    // so set invalidated members to reasonable values
-    m_x = m_y = 0;
-    v_x = 0;
-    applyPosition();
-}
-
-void YDrawBuffer::setSelectionLayout( YSelectionPool::SelectionLayout layout, const YSelection& selection )
-{
-    m_sel[ layout ].setMap( selection.map() );
-    // dbg() << "setSelection: " << layout << "=" << m_sel[layout] << endl;
+	if ( lid > mContent.count() ) {
+		mContent.resize(lid+1);
+	}
+	/* compute screenY */
+	int dy = 0;
+	for ( int i = 0; i < lid; ++i ) {
+		dy += mContent[i].count();
+	}
+	/* section size changed? */
+	int shift = ds.count() - mContent[lid].count()
+	/* apply section */
+	mContent.replace(lid, ds);
+	for ( int j = 0; j < ds.count(); ++j ) {
+		mContent[lid][j].setLineCursor(lid, dy++);
+	}
+	/* apply shift */
+	if ( shift ) {
+		for ( int i = lid + 1; i < mContent.count(); ++i ) {
+			for ( int j = 0; j < mContent[i].count(); ++j ) {
+				mContent[i][j].setLineCursor(lid, dy++);
+			}
+		}
+	}
 }
 
 YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff )
 {
-    for ( int i = 0; i < buff.m_content.size(); ++i ) {
-        out << i << ": ";
-        for ( int j = 0; j < buff.m_content.at(i).size(); ++j ) {
-            out << "'" << buff.m_content.at(i).at(j).c << "' ";
-        }
-        out << endl;
+	dy = 0;
+    for ( int i = 0; i < buff.mContent.size(); ++i ) {
+		for ( int j = 0; j < buff.mContent[i].count(); ++j ) {
+			out << dy++ << ": " << buff.mContent[i][j] << endl;
+		}
     }
     return out;
 }

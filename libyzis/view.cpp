@@ -1150,6 +1150,7 @@ void YView::updateBufferInterval( const YInterval& bi )
 {
 	if ( !bi.overlap(YInterval(mDrawBuffer.bufferBegin(), mDrawBuffer.bufferEnd())) )
 		return;
+	dbg() << "updateBufferInterval " << bi << endl;
 
 	int top_bl = mDrawBuffer.bufferBegin().line();
 
@@ -1159,9 +1160,11 @@ void YView::updateBufferInterval( const YInterval& bi )
 	if ( bi.to().opened() && bi.toPos().column() == 0 )
 		--last_bl;
 
+	setPaintAutoCommit(false);
 	for( ; bl <= last_bl; ++bl ) {
 		setBufferLineContent(bl - top_bl, mBuffer->yzline(bl));
 	}
+	commitPaintEvent();
 }
 
 
@@ -1250,6 +1253,7 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 		// TODO: setSelection
 		// TODO: setOutline
 		dl.setFont(font);
+		dbg() << "drawLineFromYLine: pushing '" << text << "'" << endl;
 		column += dl.push(text);
 	}
 
@@ -1261,7 +1265,7 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 	YDrawLine dl = drawLineFromYLine(yl);
 	YDrawSection ds;
 	if ( wrap ) {
-		ds = dl.arrange(mColumnsVis);
+		ds = dl.arrange(mDrawBuffer.screenWidth());
 	} else {
 		YASSERT(false);
 		// TODO nowrap support
@@ -1269,6 +1273,7 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 	}
 
 	YInterval affected = mDrawBuffer.setBufferDrawSection(lid, ds);
+	dbg() << "setBufferLineContent " << lid << ": affected = " << affected << endl;
 	sendPaintEvent(affected);
 }
 

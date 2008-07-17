@@ -81,11 +81,11 @@ bool YDrawLine::updateColor( YColor* dest, const YColor& c )
 
 void YDrawLine::setColor( const YColor& c )
 {
-    changed = updateColor(&mCur.fg, c);
+    changed |= updateColor(&mCur.fg, c);
 }
 void YDrawLine::setBackgroundColor( const YColor& c )
 {
-    changed = updateColor(&mCur.bg, c);
+    changed |= updateColor(&mCur.bg, c);
 }
 void YDrawLine::setSelection( int sel )
 {
@@ -158,8 +158,10 @@ YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl )
 
 YDrawSection YDrawLine::arrange( int columns ) const
 {
+	if ( mCells.count() == 0 ) {
+		return YDrawSection() << YDrawLine();
+	}
 	YDrawSection ds;
-
 	QList<YDrawCell>::const_iterator cit = mCells.constBegin();
 	QList<int>::const_iterator sit = mSteps.constBegin();
 
@@ -245,6 +247,7 @@ YDrawBuffer::YDrawBuffer( int columns, int lines ) :
 {
 	mEOLCell.c = " ";
 	setScreenSize(columns, lines);
+	mContent << (YDrawSection() << YDrawLine());
 }
 YDrawBuffer::~YDrawBuffer()
 {

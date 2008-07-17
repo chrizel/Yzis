@@ -17,6 +17,7 @@ private slots:
 	void testDrawLine();
 	void testDrawBuffer();
 	void testDrawBufferIterator();
+	void testDrawBufferEmpty();
 
 };
 

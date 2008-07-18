@@ -170,7 +170,7 @@ public:
      * number displayed.
      * @arg y the y-coordinate within the view where to display the line number
      * @arg n the actual number to display
-     * @arg h ??? it seems to be some kind of boolean..
+     * @arg h line height, starting at 0
      */
     virtual void guiDrawSetLineNumber( int y, int n, int h ) = 0;
 

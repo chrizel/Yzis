@@ -243,6 +243,7 @@ YDrawSection YDrawLine::arrange( int columns ) const
 
 YDrawBuffer::YDrawBuffer( int columns, int lines ) :
 	mContent(),
+	mScreenOffset(0,0),
 	mEOLCell()
 {
 	mEOLCell.c = " ";
@@ -341,7 +342,6 @@ void YDrawBufferIterator::setup( const YInterval& i )
 {
 	mStopped = false;
 	mI = i;
-
 	int fLine = mI.fromPos().line();
 	int fCol = mI.fromPos().column();
 	if ( mI.from().opened() ) ++fCol;
@@ -450,6 +450,18 @@ void YDrawBufferIterator::step()
 bool YDrawBufferIterator::hasNext()
 {
 	return !mStopped;
+}
+int YDrawBufferIterator::currentBufferLine() const
+{
+	return mDrawBuffer->mContent[mCurBLine].first().beginViewCursor().buffer().line();
+}
+int YDrawBufferIterator::currentScreenLine() const
+{
+	return mPos.line();
+}
+int YDrawBufferIterator::currentLineHeight() const
+{
+	return mCurLine;
 }
 const YDrawCellInfo YDrawBufferIterator::next()
 {

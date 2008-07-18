@@ -1,7 +1,6 @@
 
 - delete lines
 
-YView: set line number
 YView: ~ lines
 YView: check sendPaintEvent calls
 YView: check screen info (mLinesVis, etc..)
@@ -20,15 +19,13 @@ YBuffer::deleteRegion: undo
 YBuffer::deleteRegion: swap
 
 YBuffer: unittest dataRegion
-YBuffer: better assertions
+YBuffer: insert and delete assertions
 
 YView: vertical scroll
 YView: nowrap
 YView: horizontal scroll
 
-YBuffer: deprecate old buffer operations
-
-YAction: use of new YBuffer operations
+YBuffer: substitute?
 
 YVisualMode: VisualBlock
 

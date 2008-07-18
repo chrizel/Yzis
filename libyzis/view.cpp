@@ -1290,9 +1290,19 @@ void YView::guiPaintEvent( const YSelection& drawMap )
 
     guiPreparePaintEvent();
 
+	bool show_numbers = getLocalBooleanOption("number");
+	if ( show_numbers ) {
+		guiDrawSetMaxLineNumber(mBuffer->lineCount());
+	}
+
+	int cur_line = -1;
 	foreach( YInterval di, drawMap.map() ) {
 		YDrawBufferIterator it = mDrawBuffer.iterator(di);
 		while ( it.hasNext() ) {
+			if ( show_numbers && cur_line != it.currentScreenLine() ) {
+				guiDrawSetLineNumber(it.currentScreenLine(), it.currentBufferLine() + 1, it.currentLineHeight());
+				cur_line = it.currentScreenLine();
+			}
 			const YDrawCellInfo ci = it.next();
 			switch ( ci.type ) {
 				case YDrawCellInfo::Data :

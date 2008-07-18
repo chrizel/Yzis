@@ -68,6 +68,13 @@ public:
 	bool hasNext();
 	const YDrawCellInfo next();
 
+	/* TODO: docstring */
+	int currentBufferLine() const;
+	/* TODO: docstring */
+	int currentScreenLine() const;
+	/* TODO: docstring */
+	int currentLineHeight() const;
+
 private:
 	void setup( const YInterval& i );
 	void step();
@@ -121,6 +128,7 @@ public:
 private :
 	QList<YDrawSection> mContent;
 
+	YCursor mScreenOffset;
 	YDrawCell mEOLCell;
 	int mScreenWidth;
 	int mScreenHeight;

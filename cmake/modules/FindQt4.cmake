@@ -892,7 +892,7 @@ IF (QT4_QMAKE_FOUND)
     FIND_LIBRARY(QT_PHONON_LIBRARY NAMES phonon phonon4 phonon_debug phonond4    PATHS ${QT_LIBRARY_DIR} NO_DEFAULT_PATH)
 
 
-    IF(MSVC)
+    IF(MSVC OR MINGW)
       FIND_LIBRARY(QT_QTCORE_LIBRARY_RELEASE    NAMES QtCore4            PATHS ${QT_LIBRARY_DIR} NO_DEFAULT_PATH)
       FIND_LIBRARY(QT_QTCORE_LIBRARY_DEBUG      NAMES QtCored4            PATHS ${QT_LIBRARY_DIR} NO_DEFAULT_PATH)
       FIND_LIBRARY(QT_QT3SUPPORT_LIBRARY_RELEASE NAMES Qt3Support4        PATHS ${QT_LIBRARY_DIR} NO_DEFAULT_PATH)
@@ -925,7 +925,7 @@ IF (QT4_QMAKE_FOUND)
       FIND_LIBRARY(QT_QTDESIGNERCOMPONENTS_LIBRARY_DEBUG NAMES QtDesignerComponentsd4 PATHS ${QT_LIBRARY_DIR} NO_DEFAULT_PATH)
       FIND_LIBRARY(QT_QTMAIN_LIBRARY_RELEASE    NAMES qtmain             PATHS ${QT_LIBRARY_DIR} NO_DEFAULT_PATH)
       FIND_LIBRARY(QT_QTMAIN_LIBRARY_DEBUG      NAMES qtmaind             PATHS ${QT_LIBRARY_DIR} NO_DEFAULT_PATH)
-    ENDIF(MSVC)
+    ENDIF(MSVC OR MINGW)
   ENDIF (QT_USE_FRAMEWORKS)
 
   IF( NOT QT_QTCORE_LIBRARY )
@@ -957,7 +957,7 @@ IF (QT4_QMAKE_FOUND)
   MACRO (_QT4_ADJUST_LIB_VARS basename)
     IF (QT_${basename}_LIBRARY OR QT_${basename}_LIBRARY_DEBUG)
 
-      IF(MSVC)
+      IF(MSVC OR MINGW)
         # Both set
         IF (QT_${basename}_LIBRARY_RELEASE AND QT_${basename}_LIBRARY_DEBUG)
           SET(QT_${basename}_LIBRARY optimized ${QT_${basename}_LIBRARY_RELEASE} debug ${QT_${basename}_LIBRARY_DEBUG})
@@ -976,7 +976,7 @@ IF (QT4_QMAKE_FOUND)
         # Hmm, is this used anywhere ? Yes, in UseQt4.cmake. We are currently incompatible :-(
         SET(QT_${basename}_LIBRARIES optimized ${QT_${basename}_LIBRARY} debug ${QT_${basename}_LIBRARY_DEBUG})
 
-      ENDIF(MSVC)
+      ENDIF(MSVC OR MINGW)
 
       SET(QT_${basename}_LIBRARY ${QT_${basename}_LIBRARY} CACHE FILEPATH "The Qt ${basename} library")
 

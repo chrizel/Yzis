@@ -1272,9 +1272,7 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 	if ( wrap ) {
 		ds = dl.arrange(mDrawBuffer.screenWidth());
 	} else {
-		YASSERT(false);
-		// TODO nowrap support
-		//ds = dl.extract(XXX);
+		ds << dl;
 	}
 
 	YInterval affected = mDrawBuffer.setBufferDrawSection(lid, ds);

@@ -87,8 +87,9 @@ public:
 	 * Inserts data into the buffer at given position
 	 * @param begin : position where to insert data
 	 * @param data : data to insert, may start and end with YRawData_endline
+	 * @returns position of char after inserted data
 	 */
-	void insertRegion(const YCursor& begin, const YRawData& data);
+	YCursor insertRegion(const YCursor& begin, const YRawData& data);
 
 	/*
 	 * Remove data contained in the given interval
@@ -101,7 +102,9 @@ public:
 	 * @param bi : interval to remove
 	 * @param data : data to insert, may start and end with YRawData_endline
 	 */
-	void replaceRegion(const YInterval& bi, const YRawData& data);
+	YCursor replaceRegion(const YInterval& bi, const YRawData& data);
+
+	YRawData dataRegion( const YInterval& bi ) const;
 
 
     //-------------------------------------------------------
@@ -113,14 +116,14 @@ public:
      * @param pos : the position where to insert the character
      * @param c the character to add
      */
-    void insertChar (QPoint pos, const QString& c) QT_DEPRECATED;
+    void insertChar (YCursor pos, const QString& c);
 
     /**
      * Deletes a character in the buffer
      * @param pos : the position where to insert the character
      * @param count number of characters to delete
      */
-    void delChar (QPoint pos, int count) QT_DEPRECATED;
+    void delChar (YCursor pos, int count);
 
     //-------------------------------------------------------
     // ----------------- Line Operations
@@ -132,21 +135,21 @@ public:
      *
      * Note: the line is not supposed to contain '\n'
      */
-    void appendLine(const QString &l) QT_DEPRECATED;
+    void appendLine(const QString &l);
 
     /**
      * Insert the text l in the current line
      * @param l the text to insert
      * @param line the line which is changed
      */
-    void insertLine(const QString &l, int line) QT_DEPRECATED;
+    void insertLine(const QString &l, int line);
 
     /**
      * Break a new line at the indicated position, moving rest of the line onto
      * a line of its own.
      * @param pos The position to add '\n' in.
      */
-    void insertNewLine( QPoint pos) QT_DEPRECATED;
+    void insertNewLine( YCursor pos);
 
     /**
      * Deletes the given line
@@ -154,12 +157,22 @@ public:
      *
      * Note: the valid line numbers are between 0 and lineCount()-1
      */
-    void deleteLine( int line ) QT_DEPRECATED;
+    void deleteLine( int line );
 
     /**
      * Replaces the line at @param line with the given string @param l
      */
-    void replaceLine( const QString& l, int line ) QT_DEPRECATED;
+    void replaceLine( const QString& l, int line );
+
+	/**
+	 * Get a list of strings between two cursors
+	 * @param from the origin cursor
+	 * @param to the end cursor
+	 * @return a list of strings
+	 */
+	QStringList getText(const YCursor from, const YCursor to) const;
+	QStringList getText(const YInterval& i) const;
+
 
     /**
      * Finds the @ref YLine pointer for a line in the buffer
@@ -231,19 +244,6 @@ public:
 
     void loadText( QString* content );
 
-    /**
-     * Extract the corresponding 'from' and 'to' YCursor from the YInterval i.
-     */
-    void intervalToCursors( const YInterval& i, YCursor* from, YCursor* to ) const;
-
-    /**
-     * Get a list of strings between two cursors
-     * @param from the origin cursor
-     * @param to the end cursor
-     * @return a list of strings
-     */
-    QStringList getText(const YCursor from, const YCursor to) const;
-    QStringList getText(const YInterval& i) const;
 
     /**
      * Get the character at the given cursor position.
@@ -521,11 +521,6 @@ protected:
      * @param l may not contain '\n'
      */
     void setTextline( int line, const QString & l );
-
-    /**
-     * Is a line displayed in any view ?
-     */
-    bool isLineVisible(int line) const;
 
 private:
     /**

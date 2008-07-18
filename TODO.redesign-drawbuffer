@@ -19,6 +19,9 @@ YBuffer::deleteRegion: d->isLoading?
 YBuffer::deleteRegion: undo
 YBuffer::deleteRegion: swap
 
+YBuffer: unittest dataRegion
+YBuffer: better assertions
+
 YView: vertical scroll
 YView: nowrap
 YView: horizontal scroll

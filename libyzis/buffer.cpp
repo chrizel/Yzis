@@ -178,216 +178,52 @@ QString YBuffer::toString() const
  * do _not_ use them directly, use action() ( actions.cpp ) instead.
  */
 
-void YBuffer::insertChar(QPoint pos, const QString& c )
+void YBuffer::insertChar(YCursor pos, const QString& c )
 {
-    ASSERT_TEXT_WITHOUT_NEWLINE( QString("YBuffer::insertChar(%1,%2,%3)").arg(pos.x()).arg(pos.y()).arg(c), c )
-    ASSERT_LINE_EXISTS( QString("YBuffer::insertChar(%1,%2,%3)").arg(pos.x()).arg(pos.y()).arg(c), pos.y() )
-
-    /* brute force, we'll have events specific for that later on */
-    QString l = textline(pos.y());
-    if (l.isNull()) return ;
-
-    ASSERT_PREV_POS_EXISTS( QString("YBuffer::insertChar(%1,%2,%3)").arg(pos.x()).arg(pos.y()).arg(c), pos)
-
-    if (pos.x() > l.length()) {
-        // if we let Qt proceed, it would append spaces to extend the line
-        // and we do not want that
-        return ;
-    }
-
-
-    d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, c, pos);
-    if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpAddText, c, pos );
-
-    l.insert(pos.x(), c);
-    setTextline(pos.y(), l);
-
+	insertRegion(pos, YRawData()<<c);
 }
 
-void YBuffer::delChar (QPoint pos, int count )
+void YBuffer::delChar (YCursor pos, int count )
 {
-    ASSERT_LINE_EXISTS( QString("YBuffer::delChar(%1,%2,%3)").arg(pos.x()).arg(pos.y()).arg(count), pos.y() )
-
-    /* brute force, we'll have events specific for that later on */
-    QString l = textline(pos.y());
-    if (l.isNull()) return ;
-
-    if (pos.x() >= l.length())
-        return ;
-
-    ASSERT_POS_EXISTS( QString("YBuffer::delChar(QPoint(%1,%2),%3)").arg(pos.x()).arg(pos.y()).arg(count), pos)
-
-    d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, l.mid(pos.x(), count), pos );
-    if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpDelText, l.mid( pos.x(), count ), pos );
-
-    /* do the actual modification */
-    l.remove(pos.x(), count);
-
-    setTextline(pos.y(), l);
-
+	deleteRegion(YInterval(pos, YCursor(pos.column()+count-1, pos.line())));
 }
 
 // ------------------------------------------------------------------------
 //                            Line Operations
 // ------------------------------------------------------------------------
 
-void YBuffer::appendLine(const QString &l)
-{
-    ASSERT_TEXT_WITHOUT_NEWLINE(QString("YBuffer::appendLine(%1)").arg(l), l);
-
-    if ( !d->isLoading ) {
-        d->undoBuffer->addBufferOperation( YBufferOperation::OpAddLine, QString(), QPoint(0, lineCount()));
-        d->swapFile->addToSwap( YBufferOperation::OpAddLine, QString(), QPoint(0, lineCount()));
-        d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, l, QPoint(0, lineCount()));
-        d->swapFile->addToSwap( YBufferOperation::OpAddText, l, QPoint(0, lineCount()));
-    }
-
-    d->text->append(new YLine(l));
-    if ( !d->isLoading && d->highlight != 0L ) {
-        bool ctxChanged = false;
-        QVector<uint> foldingList;
-        YLine *l = new YLine();
-        d->highlight->doHighlight(( d->text->count() >= 2 ? yzline( d->text->count() - 2 ) : l), yzline( d->text->count() - 1 ), &foldingList, &ctxChanged );
-        delete l;
-        //  if ( ctxChanged ) dbg() << "CONTEXT changed"<<endl; //no need to take any action at EOF ;)
-    }
-    YSession::self()->search()->highlightLine( this, d->text->count() - 1 );
-
-    setChanged( true );
-}
-
-
 void YBuffer::insertLine(const QString &l, int line)
 {
-    ASSERT_TEXT_WITHOUT_NEWLINE(QString("YBuffer::insertLine(%1,%2)").arg(l).arg(line), l)
-    ASSERT_NEXT_LINE_EXISTS(QString("YBuffer::insertLine(%1,%2)").arg(l).arg(line), line)
-    d->undoBuffer->addBufferOperation( YBufferOperation::OpAddLine, QString(), QPoint(0, line));
-    if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpAddLine, QString(), QPoint(0, line));
-    d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, l, QPoint(0, line));
-    if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpAddText, l, QPoint(0, line));
-
-    QVector<YLine*>::iterator it = d->text->begin(), end = d->text->end();
-    int idx = 0;
-    for ( ; idx < line && it != end; ++it, ++idx )
-        ;
-    d->text->insert(it, new YLine( l ));
-
-    YSession::self()->search()->shiftHighlight( this, line, 1 );
-    YSession::self()->search()->highlightLine( this, line );
-    updateHL( line );
-
-    setChanged( true );
-
+	insertRegion(YCursor(getLineLength(line-1),line-1), YRawData()<<""<<l);
 }
-void YBuffer::insertNewLine( QPoint pos )
+void YBuffer::appendLine(const QString &l)
 {
-    if (pos.y() == lineCount()) {
-        YASSERT_MSG(pos.y() == lineCount() && pos.x() == 0, QString("YBuffer::insertNewLine on last line is only possible on col 0"));
-    } else {
-        ASSERT_LINE_EXISTS(QString("YBuffer::insertNewLine(QPoint(%1,%2))").arg(pos.y()).arg(pos.x()), pos.y());
-    }
-    if ( pos.y() == lineCount() ) {
-        //we are adding a new line at the end of the buffer by adding a new
-        //line at the beginning of the next unexisting line
-        //fake being at end of last line to make it work
-        pos = QPoint( textline(pos.y() - 1).length(), pos.y() - 1);
-    }
-
-    if ( pos.y() >= lineCount() ) return ;
-    QString l = textline(pos.y());
-    if (l.isNull()) return ;
-
-    ASSERT_PREV_POS_EXISTS(QString("YBuffer::insertNewLine(QPoint(%1,%2))").arg(pos.x()).arg(pos.y()), pos )
-
-    if (pos.x() > l.length() ) return ;
-
-    QString newline = l.mid( pos.x() );
-    if ( newline.isNull() ) newline = QString( "" );
-
-    d->undoBuffer->addBufferOperation( YBufferOperation::OpAddLine, "", QPoint(pos.x(), pos.y() + 1));
-    if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpAddLine, "", QPoint(pos.x(), pos.y() + 1));
-    if (newline.length()) {
-        d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, newline, pos);
-        d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, newline, QPoint(0, pos.y() + 1));
-        if ( !d->isLoading ) {
-            d->swapFile->addToSwap( YBufferOperation::OpDelText, newline, pos);
-            d->swapFile->addToSwap( YBufferOperation::OpAddText, newline, QPoint(0, pos.y() + 1));
-        }
-    }
-
-    //add new line
-    QVector<YLine*>::iterator it = d->text->begin(), end = d->text->end();
-    int idx = 0;
-    for ( ; idx < pos.y() + 1 && it != end; ++it, ++idx )
-        ;
-    d->text->insert(it, new YLine( newline ));
-
-    YSession::self()->search()->shiftHighlight( this, pos.y() + 1, 1 );
-    YSession::self()->search()->highlightLine( this, pos.y() + 1 );
-    //replace old line
-    setTextline(pos.y(), l.left( pos.x() ));
-    updateHL( pos.y() + 1 );
+	insertLine(l, lineCount());
 }
-
+void YBuffer::insertNewLine( YCursor pos )
+{
+	insertRegion(pos, YRawData()<<""<<"");
+}
 void YBuffer::deleteLine( int line )
 {
-    ASSERT_LINE_EXISTS(QString("YBuffer::deleteLine(%1)").arg(line), line)
-
-    if (line >= lineCount()) return ;
-
-    d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, textline(line), QPoint(0, line));
-    if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpDelText, textline( line ), QPoint(0, line));
-    if (lineCount() > 1) {
-        d->undoBuffer->addBufferOperation( YBufferOperation::OpDelLine, "", QPoint(0, line));
-        if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpDelLine, "", QPoint(0, line));
-        QVector<YLine*>::iterator it = d->text->begin(), end = d->text->end();
-        int idx = 0;
-        for ( ; idx < line && it != end; ++it, ++idx )
-            ;
-        delete (*it);
-        d->text->erase(it);
-
-        YSession::self()->search()->shiftHighlight( this, line + 1, -1 );
-        YSession::self()->search()->highlightLine( this, line );
-        updateHL( line );
-    } else {
-        d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, "", QPoint(0, line));
-        if ( !d->isLoading ) d->swapFile->addToSwap( YBufferOperation::OpDelText, "", QPoint(0, line));
-        setTextline(0, "");
-    }
-
-    setChanged( true );
-
+	deleteRegion(YInterval(YCursor(0,line), YBound(YCursor(0,line+1), true)));
 }
-
 void YBuffer::replaceLine( const QString& l, int line )
 {
-    ASSERT_TEXT_WITHOUT_NEWLINE(QString("YBuffer::replaceLine(%1,%2)").arg(l).arg(line), l)
-    ASSERT_LINE_EXISTS(QString("YBuffer::replaceLine(%1,%2)").arg(l).arg(line), line)
-
-    if ( line >= lineCount() ) return ;
-    if ( textline( line ).isNull() ) return ;
-
-    d->undoBuffer->addBufferOperation( YBufferOperation::OpDelText, textline(line), QPoint(0, line));
-    d->undoBuffer->addBufferOperation( YBufferOperation::OpAddText, l, QPoint(0, line));
-    if ( !d->isLoading ) {
-        d->swapFile->addToSwap( YBufferOperation::OpDelText, textline( line ), QPoint(0, line));
-        d->swapFile->addToSwap( YBufferOperation::OpAddText, l, QPoint(0, line));
-    }
-    setTextline(line, l);
-
+	replaceRegion(YInterval(YCursor(0,line), YCursor(getLineLength(line)-1,line)), YRawData()<<l);
 }
 
 // ------------------------------------------------------------------------
 //                            Content Operations
 // ------------------------------------------------------------------------
 
-void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
+YCursor YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 {
 	YLine* l;
 	QString ldata;
 	QString rdata;
 	int ln = begin.line();
+	YCursor after;
 
 	l = yzline(ln);
 	QString curdata = l->data();
@@ -397,12 +233,13 @@ void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 	/* first line */
 	int i = 0;
 	ldata += data[i];
+	after.setLine(begin.line());
 	++i;
 	if ( i == data.size() ) {
+		after.setColumn(ldata.length());
 		ldata += rdata;
 	}
 	l->setData(ldata);
-
 	if ( i < data.size() ) {
 		/* middle lines */
 		for( ; i < data.size() - 1; ++i ) {
@@ -411,8 +248,10 @@ void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 
 		/* last line */
 		ldata = data[i];
+		after.setColumn(ldata.length());
 		ldata += rdata;
 		d->text->insert(++ln, new YLine(ldata));
+		after.setLine(ln);
 	}
 
 	/* syntax highlighting update */
@@ -435,6 +274,8 @@ void YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 	}
 
     setChanged( true );
+
+	return after;
 }
 
 void YBuffer::deleteRegion( const YInterval& bi )
@@ -488,15 +329,47 @@ void YBuffer::deleteRegion( const YInterval& bi )
     setChanged( true );
 }
 
-void YBuffer::replaceRegion( const YInterval& bi, const YRawData& data )
+YCursor YBuffer::replaceRegion( const YInterval& bi, const YRawData& data )
 {
 	deleteRegion(bi);
 	YCursor begin = bi.fromPos();
 	if ( bi.from().opened() )
 		begin.setColumn(begin.column() + 1);
-	insertRegion(begin, data);
+	return insertRegion(begin, data);
 }
 
+YRawData YBuffer::dataRegion( const YInterval& bi ) const
+{
+	YRawData d;
+
+	YCursor begin = bi.fromPos();
+	if ( bi.from().opened() )
+		begin.setColumn(begin.column() + 1);
+	YCursor end = bi.toPos();
+	if ( bi.to().closed() ) {
+		end.setColumn(end.column() + 1);
+	}
+
+	const YLine* l = yzline(begin.line());
+	QString data = l->data().mid(begin.column());
+	if ( end.line() == begin.line() ) {
+		data = data.left(end.column() - begin.column());
+	}
+	d << data;
+	int i = begin.line() + 1;
+	for ( ; i <= end.line() && i < lineCount(); ++i ) {
+		if ( i == end.line() ) {
+			d << textline(i).left(end.column());
+		} else {
+			d << textline(i);
+		}
+	}
+	if ( i <= end.line() ) {
+		d << "";
+	}
+
+	return d;
+}
 
 void YBuffer::clearText()
 {
@@ -507,25 +380,7 @@ void YBuffer::setTextline( int line , const QString & l)
 {
     ASSERT_TEXT_WITHOUT_NEWLINE( QString("YBuffer::setTextline(%1,%2)").arg(line).arg(l), l );
     ASSERT_LINE_EXISTS( QString("YBuffer::setTextline(%1,%2)").arg(line).arg(l), line );
-    if (yzline(line)) {
-        if (l.isNull()) {
-            yzline(line)->setData("");
-        } else {
-            yzline(line)->setData(l);
-        }
-    }
-    updateHL( line );
-    YSession::self()->search()->highlightLine( this, line );
-    setChanged( true );
-}
-
-// XXX Wrong
-bool YBuffer::isLineVisible(int line) const
-{
-    bool shown = false;
-    foreach( YView *view, d->views )
-    shown = shown | view->isLineVisible(line);
-    return shown;
+	replaceRegion(YInterval(YCursor(0,line), YBound(YCursor(0,line+1), true)), YRawData() << l << "");
 }
 
 bool YBuffer::isEmpty() const
@@ -1001,53 +856,6 @@ bool YBuffer::substitute( const QString& _what, const QString& with, bool wholel
     return false;
 }
 
-QStringList YBuffer::getText(const YCursor from, const YCursor to) const
-{
-    d->isHLUpdating = true; //override
-    //the first line
-    QStringList list;
-    if ( from.y() != to.y() )
-        list << textline( from.y() ).mid( from.x() );
-    else
-        list << textline( from.y() ).mid( from.x(), to.x() - from.x() + 1 );
-
-    //other lines
-    int i = from.y() + 1;
-    while ( i < to.y() ) {
-        list << textline( i ); //the whole line
-        i++;
-    }
-
-    //last line
-    if ( from.y() != to.y() )
-        list << textline( to.y() ).left( to.x() + 1 );
-
-    d->isHLUpdating = false; //override
-    return list;
-}
-QStringList YBuffer::getText( const YInterval& i ) const
-{
-    YCursor from, to;
-    intervalToCursors( i, &from, &to );
-    return getText( from, to );
-}
-
-void YBuffer::intervalToCursors( const YInterval& i, YCursor* from, YCursor* to ) const
-{
-    *from = i.fromPos();
-    *to = i.toPos();
-    if ( i.from().opened() )
-        from->setX( from->x() + 1 );
-    if ( i.to().opened() ) {
-        if ( to->x() > 0 ) {
-            to->setX( to->x() - 1 );
-        } else if ( to->y() > 0 ) {
-            to->setY( to->y() - 1 );
-            to->setX( textline(to->y()).length() - 1 );
-        }
-    }
-}
-
 QChar YBuffer::getCharAt( const YCursor at ) const
 {
     QString line = textline( at.y() );
@@ -1076,6 +884,15 @@ QString YBuffer::getWordAt( const YCursor at ) const
         return reg.cap( 1 );
     }
     return QString();
+}
+
+QStringList YBuffer::getText(const YCursor from, const YCursor to) const
+{
+	return getText(YInterval(from, to));
+}
+QStringList YBuffer::getText( const YInterval& i ) const
+{
+	return dataRegion(i);
 }
 
 int YBuffer::getLocalIntegerOption( const QString& option ) const

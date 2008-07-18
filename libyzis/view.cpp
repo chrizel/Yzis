@@ -71,7 +71,7 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
         :
           mDrawBuffer(cols,lines),
           mPreviousChars(""),mLastPreviousChars(""),
-          mainCursor(), scrollCursor(), workCursor(), mVisualCursor(), keepCursor(),
+          mainCursor(), workCursor(), mVisualCursor(), keepCursor(),
           id(nextId++)
 {
     dbg().SPrintf("YView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
@@ -81,8 +81,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     mBuffer = _b;
     _b->addView( this );
     mLineSearch = new YLineSearch( this );
-    mLinesVis = lines;
-    mColumnsVis = cols;
 
     mModePool = new YModePool( this );
 
@@ -141,8 +139,6 @@ void YView::setupKeys()
 void YView::setVisibleArea(int c, int l, bool refresh)
 {
     dbg() << "YView::setVisibleArea(" << c << "," << l << ");" << endl;
-    mLinesVis = l;
-    mColumnsVis = c;
 	mDrawBuffer.setScreenSize(c, l);
 	/* TODO */
     if ( refresh )
@@ -168,12 +164,7 @@ void YView::recalcScreen( )
     wrap = getLocalBooleanOption( "wrap" );
     rightleft = getLocalBooleanOption( "rightleft" );
 
-    YCursor old_pos = scrollCursor.buffer();
-    scrollCursor.reset();
-    if ( wrap ) old_pos.setX( 0 );
-    gotoxy( &scrollCursor, old_pos, false );
-
-    old_pos = mainCursor.buffer();
+    YCursor old_pos = mainCursor.buffer();
     mainCursor.reset();
     gotoxy( &mainCursor, old_pos );
 
@@ -239,7 +230,7 @@ void YView::indent()
 QString YView::centerLine( const QString& s )
 {
     QString spacer = "";
-    int nspaces = mColumnsVis > s.length() ? mColumnsVis - s.length() : 0;
+    int nspaces = mDrawBuffer.screenWidth() > s.length() ? mDrawBuffer.screenWidth() - s.length() : 0;
     nspaces /= 2;
     spacer.fill( ' ', nspaces );
     spacer.append( s );
@@ -318,15 +309,8 @@ void YView::displayInfo(const QString& message)
 
 void YView::centerViewHorizontally( int column)
 {
+	/* TODO */
     // dbg() << "YView::centerViewHorizontally " << column << endl;
-    int newcurrentLeft = 0;
-    if ( column > mColumnsVis / 2 ) newcurrentLeft = column - mColumnsVis / 2;
-    if ( newcurrentLeft != scrollCursor.bufferX() ) {
-        // we are not in wrap mode, so buffer == screen
-        scrollCursor.setBufferX( newcurrentLeft );
-        scrollCursor.setScreenX( newcurrentLeft );
-        sendRefreshEvent();
-    }
 }
 
 void YView::centerViewVertically( int line )
@@ -334,95 +318,25 @@ void YView::centerViewVertically( int line )
     if ( line == -1 )
         line = mainCursor.screenY();
     int newcurrent = 0;
-    if ( line > mLinesVis / 2 ) newcurrent = line - mLinesVis / 2;
+    if ( line > mDrawBuffer.screenHeight() / 2 ) newcurrent = line - mDrawBuffer.screenHeight() / 2;
     alignViewVertically ( newcurrent );
 }
 
 void YView::bottomViewVertically( int line )
 {
     int newcurrent = 0;
-    if ( line >= mLinesVis ) newcurrent = (line - mLinesVis) + 1;
+    if ( line >= mDrawBuffer.screenHeight() ) newcurrent = (line - mDrawBuffer.screenHeight()) + 1;
     alignViewVertically( newcurrent );
 }
 
 void YView::alignViewBufferVertically( int line )
 {
-    // dbg() << "YView::alignViewBufferVertically " << line << endl;
-    int newcurrent = line;
-    int old_dCurrentTop = scrollCursor.screenY();
-    if ( newcurrent > 0 ) {
-        if ( wrap ) {
-            gotodxy( &scrollCursor, scrollCursor.screenX(), newcurrent );
-        } else {
-            scrollCursor.setBufferY( newcurrent );
-            scrollCursor.setScreenY( newcurrent );
-        }
-    } else {
-        scrollCursor.reset();
-    }
-    if ( old_dCurrentTop == scrollCursor.screenY() ) {
-        /* nothing has changed */
-        return ;
-    } else if ( qAbs(old_dCurrentTop - scrollCursor.screenY()) < mLinesVis ) {
-        /* optimization: we can scroll */
-        internalScroll( 0, old_dCurrentTop - scrollCursor.screenY() );
-    } else {
-        sendRefreshEvent();
-    }
-
-    // find the last visible line in the buffer
-    int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
-
-    if ( wrap ) {
-        YViewCursor temp = scrollCursor;
-        gotodxdy( &temp, getCursor().x(), getDrawCurrentTop() + getLinesVisible() - 1 );
-        lastBufferLineVisible = temp.bufferY();
-    }
-
-    // move cursor if it scrolled off the screen
-    if (getCursor().y() < getCurrentTop())
-        gotoxy(getCursor().x(), getCurrentTop());
-    else if (getCursor().y() > lastBufferLineVisible)
-        gotoxy( getCursor().x(), lastBufferLineVisible );
-
-    updateCursor();
+	/* TODO */
 }
-
 void YView::alignViewVertically( int line )
 {
 	/* TODO */
     // dbg() << "YView::alignViewVertically " << line << endl;
-    int newcurrent = line;
-    int screenX = scrollCursor.screenX();
-    int old_dCurrentTop = scrollCursor.screenY();
-    if ( newcurrent > 0 ) {
-        if ( wrap ) {
-            initGoto( &scrollCursor );
-            gotody( newcurrent );
-            // rLineHeight > 1 => our new top is in middle of a wrapped line, move new top to next line
-            newcurrent = workCursor.bufferY();
-            /*if ( workCursor.lineHeight > 1 ) TODO
-                ++newcurrent;*/
-            gotoy( newcurrent );
-            gotodx( screenX );
-            applyGoto( &scrollCursor, false );
-        } else {
-            scrollCursor.setBufferY( newcurrent );
-            scrollCursor.setScreenY( newcurrent );
-        }
-    } else {
-        scrollCursor.reset();
-    }
-
-    if ( old_dCurrentTop == scrollCursor.screenY() ) {
-        /* nothing has changed */
-        return ;
-    } else if ( qAbs(old_dCurrentTop - scrollCursor.screenY()) < mLinesVis ) {
-        /* optimization: we can scroll */
-        internalScroll( 0, old_dCurrentTop - scrollCursor.screenY() );
-    } else {
-        sendRefreshEvent();
-    }
 }
 
 /*
@@ -524,7 +438,7 @@ void YView::applyGoto( YViewCursor* viewCursor, bool applyCursor )
             centerViewHorizontally( mainCursor.screenX( ) );
         }
         if ( !isLineVisible( mainCursor.screenY() ) ) {
-            if ( mainCursor.screenY() >= mLinesVis + scrollCursor.screenY() )
+            if ( mainCursor.screenY() >= mDrawBuffer.screenHeight() )
                 bottomViewVertically( mainCursor.screenY() );
             else
                 alignViewVertically( mainCursor.screenY() );
@@ -793,11 +707,13 @@ void YView::commitUndoItem()
 
 bool YView::isColumnVisible( int column, int ) const
 {
-    return ! (column < scrollCursor.screenX() || column >= (scrollCursor.screenX() + mColumnsVis));
+	/* TODO */
+	return true;
 }
 bool YView::isLineVisible( int l ) const
 {
-    return ( ( l >= scrollCursor.screenY() ) && ( l < mLinesVis + scrollCursor.screenY() ) );
+	/* TODO: buffer or screen ? */
+    return true;
 }
 
 const YColor& YView::drawColor ( int col, int line ) const
@@ -911,8 +827,8 @@ void YView::gotoStickyCol( YViewCursor* viewCursor, int Y, bool applyCursor )
     if ( stickyCol == STICKY_COL_ENDLINE )
         gotoxy( viewCursor, mBuffer->textline( Y ).length(), Y, applyCursor );
     else {
-        int col = stickyCol % mColumnsVis;
-        int deltaY = stickyCol / mColumnsVis;
+        int col = stickyCol % mDrawBuffer.screenWidth();
+        int deltaY = stickyCol / mDrawBuffer.screenWidth();
         if ( deltaY == 0 ) {
             gotodxy( viewCursor, col, Y, applyCursor );
         } else {
@@ -965,7 +881,7 @@ void YView::updateStickyCol( )
 void YView::updateStickyCol( YViewCursor* viewCursor )
 {
 	/* TODO 
-    stickyCol = ( viewCursor->lineHeight - 1 ) * mColumnsVis + viewCursor->screenX();
+    stickyCol = ( viewCursor->lineHeight - 1 ) * mDrawBuffer.screenWidth() + viewCursor->screenX();
 	*/
 }
 
@@ -983,11 +899,7 @@ const YCursor YView::getBufferCursor() const
 }
 YCursor YView::getRelativeScreenCursor() const
 {
-    return (QPoint)mainCursor.screen() - scrollCursor.screen();
-}
-YCursor YView::getScreenPosition() const
-{
-    return scrollCursor.screen();
+    return (QPoint)mainCursor.screen();
 }
 
 void YView::recordMacro( const QList<QChar> &regs )
@@ -1010,8 +922,8 @@ void YView::stopRecordMacro()
 
 YSelection YView::clipSelection( const YSelection& sel ) const
 {
-    YCursor bottomRight = scrollCursor.screen() + YCursor(getColumnsVisible() - 1, getLinesVisible() - 1);
-    return sel.clip( YInterval(scrollCursor.screen(), bottomRight) );
+    YCursor bottomRight = YCursor(getColumnsVisible() - 1, getLinesVisible() - 1);
+    return sel.clip(YInterval(YCursor(0,0), bottomRight));
 }
 
 void YView::setPaintAutoCommit( bool enable )
@@ -1033,7 +945,7 @@ void YView::commitPaintEvent()
             applyGoto( &mainCursor );
         }
         if ( ! mPaintSelection->isEmpty() ) {
-            guiNotifyContentChanged( clipSelection(*mPaintSelection) );
+            guiNotifyContentChanged(clipSelection(*mPaintSelection));
         }
         abortPaintEvent();
     }
@@ -1084,21 +996,6 @@ void YView::sendPaintEvent( YSelectionMap map, bool isBufferMap )
     mPaintSelection->addMap( map );
     commitPaintEvent();
 }
-void YView::sendBufferPaintEvent( int line, int n )
-{
-    YViewCursor vCursor = viewCursor();
-    if ( wrap ) {
-        gotoxy( &vCursor, 0, line );
-        line = vCursor.screenY();
-    }
-    if ( isLineVisible( line ) ) {
-        if ( wrap ) {
-            gotoxy( &vCursor, 0, line + n );
-            n = vCursor.screenY() - line;
-        }
-        sendPaintEvent( getDrawCurrentLeft(), line, getColumnsVisible(), n );
-    }
-}
 
 void YView::sendRefreshEvent( )
 {
@@ -1143,6 +1040,19 @@ void YView::internalScroll( int dx, int dy )
 {
     //mDrawBuffer.Scroll( dx, dy ); TODO
     guiScroll( dx, dy );
+}
+
+int YView::getCurrentTop() const
+{
+	return mDrawBuffer.bufferBegin().line();
+}
+int YView::getLinesVisible() const
+{
+	return mDrawBuffer.screenHeight();
+}
+int YView::getColumnsVisible() const
+{
+	return mDrawBuffer.screenWidth();
 }
 
 

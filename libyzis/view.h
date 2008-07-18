@@ -116,51 +116,18 @@ public:
     /**
      * Returns the index of the first line displayed on the view
      */
-    int getCurrentTop() const
-    {
-        return scrollCursor.bufferY();
-    }
-    int getDrawCurrentTop() const
-    {
-        return scrollCursor.screenY();
-    }
-
-    /**
-     * Returns the index of the first "buffer" column displayed on the view
-     * (does not care about tabs, wrapping ...)
-     */
-    int getCurrentLeft() const
-    {
-        return scrollCursor.bufferX();
-    }
-
-    /**
-     * Returns the index of the first "screen" column displayed on the view
-     * (does care about tabs, wrapping ...)
-     */
-    int getDrawCurrentLeft() const
-    {
-        return scrollCursor.screenX();
-    }
-
-
+    int getCurrentTop() const;
 
     /**
      * returns the number of line this view can display
      */
-    int getLinesVisible() const
-    {
-        return mLinesVis;
-    }
+    int getLinesVisible() const;
 
     /**
      * returns the number of lines this view can display
      * @return the number of visible lines
      */
-    int getColumnsVisible() const
-    {
-        return mColumnsVis;
-    }
+    int getColumnsVisible() const;
 
     /**
      * Returns true if the line @arg l is visible. False otherwise.
@@ -500,11 +467,6 @@ public:
     void sendPaintEvent( YSelectionMap map, bool isBufferMap = true ) QT_DEPRECATED;
 
     /**
-     * ask to draw from buffer line @arg line to @arg line + @arg n
-     */
-    void sendBufferPaintEvent( int line, int n ) QT_DEPRECATED;
-
-    /**
      * Ask for refresh screen
      */
     void sendRefreshEvent() QT_DEPRECATED;
@@ -669,11 +631,6 @@ public:
     QString getCharBelow( int delta );
 
     /*
-     * @returns screen top-left corner position
-     */
-    YCursor getScreenPosition() const;
-
-    /*
      * @returns current screen YCursor relative to top-left screen corner
      */
     YCursor getRelativeScreenCursor() const;
@@ -729,9 +686,6 @@ private:
      */
     YViewCursor mainCursor;
 
-    /* screen top-left cursor */
-    YViewCursor scrollCursor;
-
     /**
      * Searching backward
      */
@@ -751,37 +705,6 @@ private:
      * This is the worker cursor, the one which we directly modify in our draw engine
      */
     YViewCursor workCursor;
-
-
-    /**
-     * Number of visible lines on the view
-     */
-    int mLinesVis;
-
-    /**
-     * Number of visible columns on the view
-     */
-    int mColumnsVis;
-
-    /**
-     * Index of the first visible line (buffer)
-     */
-    int sCurrentTop;
-
-    /**
-     * Index of the first visible line (buffer)
-     */
-    int sCurrentLeft;
-
-    /**
-     * Index of the first visible column (draw)
-     */
-    int rCurrentLeft;
-
-    /**
-     * Index of the first visible line (draw)
-     */
-    int rCurrentTop;
 
     YzisAttribute* mHighlightAttributes;
 

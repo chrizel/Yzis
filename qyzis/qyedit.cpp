@@ -105,7 +105,7 @@ YCursor QYEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
 }
 YCursor QYEdit::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
 {
-    return translateRealToPosition( p, ceil ) + mView->getScreenPosition();
+    return translateRealToPosition( p, ceil );
 }
 
 QYCursor::CursorShape QYEdit::cursorShape()
@@ -323,8 +323,6 @@ void QYEdit::paintEvent( QPaintEvent* pe )
 void QYEdit::setCursor( int c, int l )
 {
     // dbg() << "setCursor" << endl;
-    c = c - mView->getDrawCurrentLeft();
-    l -= mView->getDrawCurrentTop();
     unsigned int x = c * fontMetrics().maxWidth();
     if ( mView->getLocalBooleanOption( "rightleft" ) ) {
         x = width() - x - mCursor->width();

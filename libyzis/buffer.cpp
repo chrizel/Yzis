@@ -964,7 +964,7 @@ int YBuffer::updateHL( int line )
 			int nToDraw = hlLine - line - nElines - 1;
 			//  dbg() << "syntaxHL: update " << nToDraw << " lines from line " << line << endl;
 			foreach( YView *view, d->views )
-				view->sendBufferPaintEvent( line, nToDraw );
+				view->updateBufferInterval(YInterval(YCursor(0,line), YBound(YCursor(0,line+nToDraw),true)));
 		}
 	}
 	return hlLine - nElines;

@@ -3,9 +3,8 @@
 
 YView: ~ lines
 YView: check sendPaintEvent calls
-YView: check screen info (mLinesVis, etc..)
 YDrawBuffer: unittest
-YView: unittest
+View: unittest
 
 YBuffer::insertRegion: shift search hl, etc..
 YBuffer::insertRegion: d->isLoading?

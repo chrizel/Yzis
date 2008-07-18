@@ -162,7 +162,7 @@ void QYView::guiNotifyContentChanged( const YSelection& s )
     YSelectionMap m = s.map();
     // convert each interval to QWidget coordinates and update
     for ( int i = 0; i < m.size(); ++i ) {
-        YInterval interval = m[i] - getScreenPosition();
+        YInterval interval = m[i];
         QRect r;
         if ( interval.fromPos().y() == interval.toPos().y() ) {
             r = interval.boundingRect();

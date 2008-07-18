@@ -120,18 +120,19 @@ void NYView::updateVis( bool refresh )
 
 void NYView::guiScroll( int /* dx */, int dy )
 {
+	/* TODO */
     scrollok( editor, true );
     wscrl( editor, -dy );
     scrollok( editor, false );
 
-    int left = getDrawCurrentLeft();
-    int top = getDrawCurrentTop();
+    int left = 0;
+    int top = 0;
     int n = qAbs(dy);
     if ( dy < 0 ) {
         /* redraw the new bottom */
         top += getLinesVisible() - n;
     }
-    sendPaintEvent( YCursor( left, top ), YCursor( left + getColumnsVisible(), top + n ) );
+    sendPaintEvent(YCursor(left, top ), YCursor( left + getColumnsVisible(), top + n ) );
 }
 
 void NYView::guiNotifyContentChanged( const YSelection& s )
@@ -200,8 +201,8 @@ void NYView::guiPaintEvent( const YSelection& drawMap )
 }
 void NYView::drawCursor()
 {
-    int x = getCursor().x() - getDrawCurrentLeft () + marginLeft;
-    wmove( editor, getCursor().y() - getDrawCurrentTop (), x );
+    int x = getCursor().x() + marginLeft;
+    wmove( editor, getCursor().y(), x );
     wrefresh( editor );
 }
 

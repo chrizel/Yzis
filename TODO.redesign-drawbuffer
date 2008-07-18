@@ -1,28 +1,22 @@
 
-- delete lines
-
 YView: ~ lines
+delete lines
+YView: vertical scroll
+YView, YAction: cursor/stickyCol
+
 YView: check sendPaintEvent calls
-YDrawBuffer: unittest
-View: unittest
 
 YBuffer::insertRegion: shift search hl, etc..
 YBuffer::insertRegion: d->isLoading?
 YBuffer::insertRegion: undo
 YBuffer::insertRegion: swap
-
 YBuffer::deleteRegion: shift search hl, etc..
-YBuffer::deleteRegion: views update
 YBuffer::deleteRegion: d->isLoading?
 YBuffer::deleteRegion: undo
 YBuffer::deleteRegion: swap
 
 YBuffer: unittest dataRegion
 YBuffer: insert and delete assertions
-
-YView: vertical scroll
-YView: nowrap
-YView: horizontal scroll
 
 YBuffer: substitute?
 
@@ -35,4 +29,8 @@ YView: redo folding support:
 		m_lineFiller = '-'; 
 		m_lineMarker = '+'; 
 	}
+
+big wrapped lines (y screen offset)
+nowrap (horizontal scroll)
+
 

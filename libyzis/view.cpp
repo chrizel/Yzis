@@ -1298,12 +1298,12 @@ void YView::guiPaintEvent( const YSelection& drawMap )
 	int cur_line = -1;
 	foreach( YInterval di, drawMap.map() ) {
 		YDrawBufferIterator it = mDrawBuffer.iterator(di);
-		while ( it.hasNext() ) {
-			if ( show_numbers && cur_line != it.currentScreenLine() ) {
-				guiDrawSetLineNumber(it.currentScreenLine(), it.currentBufferLine() + 1, it.currentLineHeight());
-				cur_line = it.currentScreenLine();
+		for ( YDrawBufferIterator it = mDrawBuffer.iterator(di); it.isValid(); it.next() ) {
+			if ( show_numbers && cur_line != it.screenLine() ) {
+				guiDrawSetLineNumber(it.screenLine(), it.bufferLine() + 1, it.lineHeight());
+				cur_line = it.screenLine();
 			}
-			const YDrawCellInfo ci = it.next();
+			const YDrawCellInfo ci = it.drawCellInfo();
 			switch ( ci.type ) {
 				case YDrawCellInfo::Data :
 					guiDrawCell(ci.pos, ci.cell);

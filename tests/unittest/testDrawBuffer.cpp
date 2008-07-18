@@ -83,8 +83,9 @@ void TestDrawBuffer::testDrawBuffer()
 	QCOMPARE(ci.pos, ci_p); \
 	QCOMPARE(ci.cell.c, ci_cc)
 #define NEXT_CELLINFO(ci, it) \
-	QVERIFY(it.hasNext()); \
-	ci = it.next()
+	QVERIFY(it.isValid()); \
+	ci = it.drawCellInfo(); \
+	it.next()
 
 void TestDrawBuffer::testDrawBufferIterator()
 {
@@ -116,19 +117,19 @@ void TestDrawBuffer::testDrawBufferIterator()
 	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(0,1), QString("rld"));
 	NEXT_CELLINFO(ci, it);
 	COMPARE_CELLINFO(ci, YDrawCellInfo::EOL, YCursor(3,1), QString(" "));
-	QVERIFY(!it.hasNext());
+	QVERIFY(!it.isValid());
 
 	it = db.iterator(YInterval(YCursor(1,0), YCursor(1,0)));
 	NEXT_CELLINFO(ci, it);
 	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(1,0), QString("e"));
-	QVERIFY(!it.hasNext());
+	QVERIFY(!it.isValid());
 
 	it = db.iterator(YInterval(YCursor(2,0), YCursor(4,0)));
 	NEXT_CELLINFO(ci, it);
 	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(2,0), QString("l"));
 	NEXT_CELLINFO(ci, it);
 	COMPARE_CELLINFO(ci, YDrawCellInfo::Data, YCursor(3,0), QString("lo"));
-	QVERIFY(!it.hasNext());
+	QVERIFY(!it.isValid());
 }
 
 void TestDrawBuffer::testDrawBufferEmpty()
@@ -138,6 +139,6 @@ void TestDrawBuffer::testDrawBufferEmpty()
 	YDrawBufferIterator it = db.iterator(YInterval(YCursor(0,0), YCursor(0,0)));
 	NEXT_CELLINFO(ci, it);
 	COMPARE_CELLINFO(ci, YDrawCellInfo::EOL, YCursor(0,0), QString(" "));
-	QVERIFY(!it.hasNext());
+	QVERIFY(!it.isValid());
 }
 

@@ -65,15 +65,19 @@ public:
 	YDrawBufferIterator( const YDrawBuffer* db, const YInterval& i );
 	virtual ~YDrawBufferIterator();
 
-	bool hasNext();
-	const YDrawCellInfo next();
+	/* TODO: docstring */
+	bool isValid() const;
+	/* TODO: docstring */
+	void next();
 
 	/* TODO: docstring */
-	int currentBufferLine() const;
+	const YDrawCellInfo drawCellInfo() const;
 	/* TODO: docstring */
-	int currentScreenLine() const;
+	int bufferLine() const;
 	/* TODO: docstring */
-	int currentLineHeight() const;
+	int screenLine() const;
+	/* TODO: docstring */
+	int lineHeight() const;
 
 private:
 	void setup( const YInterval& i );

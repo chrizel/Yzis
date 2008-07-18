@@ -446,28 +446,34 @@ void YDrawBufferIterator::step()
 	}
 }
 
-
-bool YDrawBufferIterator::hasNext()
+bool YDrawBufferIterator::isValid() const
 {
 	return !mStopped;
 }
-int YDrawBufferIterator::currentBufferLine() const
+void YDrawBufferIterator::next()
 {
+	YASSERT(isValid());
+	step();
+}
+
+const YDrawCellInfo YDrawBufferIterator::drawCellInfo() const
+{
+	YASSERT(isValid());
+	return mNext;
+}
+int YDrawBufferIterator::bufferLine() const
+{
+	YASSERT(isValid());
 	return mDrawBuffer->mContent[mCurBLine].first().beginViewCursor().buffer().line();
 }
-int YDrawBufferIterator::currentScreenLine() const
+int YDrawBufferIterator::screenLine() const
 {
+	YASSERT(isValid());
 	return mPos.line();
 }
-int YDrawBufferIterator::currentLineHeight() const
+int YDrawBufferIterator::lineHeight() const
 {
+	YASSERT(isValid());
 	return mCurLine;
-}
-const YDrawCellInfo YDrawBufferIterator::next()
-{
-	YASSERT(hasNext());
-	YDrawCellInfo ret = mNext;
-	step();
-	return ret;
 }
 

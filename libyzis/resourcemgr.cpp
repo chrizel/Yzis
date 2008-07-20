@@ -135,12 +135,11 @@ QStringList YResourceMgr::resourceDirList( ResourceType type )
         break;
     case ConfigResource:
     case WritableConfigResource:
-    default:
         subdir = "/";
         break;
     }
 
-    if (type == UserScriptResource) dirCandidates << "./"+subdir;
+    if (type == UserScriptResource) dirCandidates << "./";
     dirCandidates << mYzisUserDir + subdir;
     char * s = getenv("YZISHOME");
     if (s != NULL) dirCandidates << (s + subdir);

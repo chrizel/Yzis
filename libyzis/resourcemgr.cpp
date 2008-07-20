@@ -135,12 +135,14 @@ QStringList YResourceMgr::resourceDirList( ResourceType type )
         break;
     case ConfigResource:
     case WritableConfigResource:
-    default:
         subdir = "/";
         break;
+    default:
+        err().SPrintf( "Unknown resource type requested: %d\n", (int) type );
+        return dirCandidates;
     }
 
-    if (type == UserScriptResource) dirCandidates << "./"+subdir;
+    if (type == UserScriptResource) dirCandidates << "./";
     dirCandidates << mYzisUserDir + subdir;
     char * s = getenv("YZISHOME");
     if (s != NULL) dirCandidates << (s + subdir);

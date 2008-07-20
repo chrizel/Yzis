@@ -137,6 +137,9 @@ QStringList YResourceMgr::resourceDirList( ResourceType type )
     case WritableConfigResource:
         subdir = "/";
         break;
+    default:
+        err().SPrintf( "Unknown resource type requested: %d\n", (int) type );
+        return dirCandidates;
     }
 
     if (type == UserScriptResource) dirCandidates << "./";

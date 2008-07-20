@@ -162,20 +162,7 @@ YModeIntro::YModeIntro() : YMode()
 }
 void YModeIntro::enter( YView* mView )
 {
-    unsigned int i;
-    unsigned int mLinesVis = mView->getLinesVisible();
-    unsigned int linesInIntro = 11; // Update this is if you change # of lines in message
-#if defined VERSION_CHAR_DATE
-	++linesInIntro;
-#endif
-    unsigned int vMargin = mLinesVis > linesInIntro ? mLinesVis - linesInIntro : 0;
-    vMargin = ( vMargin + 1 ) / 2; // round up to have enough lines so '~' isn't shown
-
-	/* TODO: maybe we should bypass buffer and write directly into the drawbuffer */
-
 	YRawData content;
-    for ( i = 0; i < vMargin; i++ )
-		content << "";
 	content << mView->centerLine(VERSION_CHAR_LONG);
 #if defined VERSION_CHAR_DATE
 	content << mView->centerLine(VERSION_CHAR_DATE);
@@ -188,14 +175,20 @@ void YModeIntro::enter( YView* mView )
     content << mView->centerLine( "Yzis is distributed under the terms of the GPL v2" );
     content << "";
     content << mView->centerLine( "please report bugs at http://bugs.yzis.org" );
-    for ( i = 0; i < vMargin; i++ )
+
+	int spaceh = mView->getLinesVisible() - content.count();
+	int i = 0;
+	for ( ; i < spaceh / 2; ++i ) {
+		content.insert(0, "");
+	}
+	for ( ; i < spaceh; ++i ) {
 		content << "";
+	}
 
     /* Don't record these in the undo list */
     mView->myBuffer()->undoBuffer()->setInsideUndo(true);
 
     mView->gotoxy(0, 0);
-
 	mView->myBuffer()->clearText();
 	mView->myBuffer()->insertRegion(YCursor(0,0), content);
 	mView->myBuffer()->setChanged(false);

@@ -269,6 +269,15 @@ YCursor YDrawBuffer::bufferEnd() const
 	return mContent.last().last().endViewCursor().buffer();
 }
 
+int YDrawBuffer::currentHeight() const
+{
+	int dy = 0;
+	for ( int i = 0; i < mContent.count(); ++i ) {
+		dy += mContent[i].count();
+	}
+	return dy;
+}
+
 YInterval YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 {
 	YASSERT(lid <= mContent.count());
@@ -300,6 +309,24 @@ YInterval YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 		}
 	}
 	affected.setTo(YBound(YCursor(0,dy), true));
+	return affected;
+}
+YInterval YDrawBuffer::deleteFromBufferDrawSection( int lid )
+{
+	YASSERT(lid <= mContent.count());
+	YInterval affected;
+	/* compute screenY */
+	int dy = 0;
+	int i = 0;
+	for ( ; i < lid; ++i ) {
+		dy += mContent[i].count();
+	}
+	affected.setFrom(YBound(YCursor(0,dy)));
+	while ( lid < mContent.count() ) {
+		dy += mContent[lid].count();
+		mContent.takeAt(lid);
+	}
+	affected.setTo(YBound(YCursor(screenWidth(), dy)));
 	return affected;
 }
 

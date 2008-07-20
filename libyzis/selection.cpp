@@ -145,6 +145,14 @@ bool YInterval::overlap( const YInterval& i ) const
 {
 	return contains(i.from()) || contains(i.to()) || i.contains(from()) || i.contains(to());
 }
+YInterval YInterval::intersection( const YInterval& i ) const
+{
+	return YInterval(i.from() < from() ? from() : i.from(), i.to() < to() ? i.to() : to());
+}
+bool YInterval::valid() const
+{
+	return from() <= to();
+}
 
 QRect YInterval::boundingRect() const
 {

@@ -1078,8 +1078,9 @@ void YView::updateBufferInterval( const YInterval& bi )
 	for( ; bl < mBuffer->lineCount() && bl <= last_bl; ++bl ) {
 		setBufferLineContent(bl - top_bl, mBuffer->yzline(bl));
 	}
-	// TODO delete resting lines
-
+	if ( bl <= last_bl ) {
+		deleteFromBufferLine(bl - top_bl);
+	}
 	commitPaintEvent();
 }
 
@@ -1188,6 +1189,11 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 	YInterval affected = mDrawBuffer.setBufferDrawSection(lid, ds);
 	sendPaintEvent(affected);
 }
+void YView::deleteFromBufferLine( int lid )
+{
+	YInterval affected = mDrawBuffer.deleteFromBufferDrawSection(lid);
+	sendPaintEvent(affected);
+}
 
 void YView::guiPaintEvent( const YSelection& drawMap )
 {
@@ -1219,6 +1225,30 @@ void YView::guiPaintEvent( const YSelection& drawMap )
 				case YDrawCellInfo::EOL :
 					guiDrawClearToEOL(ci.pos, ci.cell);
 					break;
+			}
+		}
+	}
+
+	int cur_dy = mDrawBuffer.currentHeight();
+	if ( mDrawBuffer.screenHeight() > cur_dy ) { 
+		/* may be fake lines ? */
+
+		YDrawCell fl;
+		fl.c = "~";
+		fl.fg = YColor("cyan");
+
+		YInterval fake(YCursor(0,cur_dy),YCursor(mDrawBuffer.screenWidth()-1,mDrawBuffer.screenHeight()));
+		foreach( YInterval di, drawMap.map() ) {
+			YInterval i = di.intersection(fake);
+			if ( !i.valid() ) {
+				continue;
+			}
+			for ( cur_dy = i.fromPos().line(); cur_dy <= i.toPos().line(); ++cur_dy ) {
+				if ( show_numbers ) {
+					guiDrawSetLineNumber(cur_dy, -1, 0); /* clear line number */
+				}
+				guiDrawCell(YCursor(0,cur_dy), fl);
+				guiDrawClearToEOL(YCursor(1,cur_dy), mDrawBuffer.EOLCell());
 			}
 		}
 	}

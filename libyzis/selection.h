@@ -124,6 +124,8 @@ public:
 	 */
 	bool overlap( const YInterval& i ) const;
 
+	YInterval intersection( const YInterval& i ) const;
+	bool valid() const;
 
     QRect boundingRect() const;
 

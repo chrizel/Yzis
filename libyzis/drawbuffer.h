@@ -127,7 +127,15 @@ public:
 	YInterval setBufferDrawSection( int lid, YDrawSection ds );
 
 	/* TODO: docstring */
+	YInterval deleteFromBufferDrawSection( int lid );
+
+	/* TODO: docstring */
 	void setEOLCell( const YDrawCell& cell );
+
+	inline const YDrawCell EOLCell() const { return mEOLCell; };
+
+	/* TODO: docstring */
+	int currentHeight() const;
 
 private :
 	QList<YDrawSection> mContent;

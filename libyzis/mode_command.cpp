@@ -135,6 +135,8 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("`"), &YModeCommand::gotoMark, ArgMark) );
     motions.append( new YMotion(YKeySequence("'"), &YModeCommand::gotoMark, ArgMark) );
     motions.append( new YMotion(YKeySequence("<ENTER>"), &YModeCommand::firstNonBlankNextLine, ArgNone) );
+    motions.append( new YMotion(YKeySequence("+"), &YModeCommand::firstNonBlankNextLine, ArgNone) );
+    motions.append( new YMotion(YKeySequence("-"), &YModeCommand::firstNonBlankPreviousLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("gg"), &YModeCommand::gotoLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("G"), &YModeCommand::gotoLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("}"), &YModeCommand::nextEmptyLine, ArgNone) );
@@ -1165,6 +1167,15 @@ YCursor YModeCommand::firstNonBlankNextLine( const YMotionArgs &args, CmdState *
 {
     YViewCursor viewCursor = args.view->viewCursor();
     args.view->moveDown(&viewCursor, args.count, args.standalone );
+    args.view->moveToFirstNonBlankOfLine( &viewCursor, args.standalone );
+    *state = CmdOk;
+    return viewCursor.buffer();
+}
+
+YCursor YModeCommand::firstNonBlankPreviousLine( const YMotionArgs &args, CmdState *state )
+{
+    YViewCursor viewCursor = args.view->viewCursor();
+    args.view->moveUp(&viewCursor, args.count, args.standalone );
     args.view->moveToFirstNonBlankOfLine( &viewCursor, args.standalone );
     *state = CmdOk;
     return viewCursor.buffer();

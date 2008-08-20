@@ -232,6 +232,7 @@ public:
     YCursor firstNonBlank(const YMotionArgs &args, CmdState *state);
     YCursor gotoMark(const YMotionArgs &args, CmdState *state);
     YCursor firstNonBlankNextLine(const YMotionArgs &args, CmdState *state);
+    YCursor firstNonBlankPreviousLine(const YMotionArgs &args, CmdState *state);
     YCursor gotoLine(const YMotionArgs &args, CmdState *state);
     YCursor searchWord(const YMotionArgs &args, CmdState *state);
     YCursor searchNext(const YMotionArgs &args, CmdState *state);

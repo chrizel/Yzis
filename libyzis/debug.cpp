@@ -117,8 +117,6 @@ void YDebugBackend::init()
 
 #ifndef YZIS_WIN32_GCC
     setDebugOutput( "/tmp/yzisdebug-" + QString(getpwuid(geteuid())->pw_name) + ".log" );
-#else
-    setDebugOutput( "/tmp/yzisdebug.log" );
 #endif
 
     // our message handler does not manage to display all messages. So,
@@ -144,9 +142,9 @@ void YDebugBackend::setDebugOutput( FILE * file )
 {
     if (file == NULL) {
         flush( YZ_WARNING_LEVEL, 0, "YDebugBackend: setting output to a NULL file descriptor\n" );
-        return ;
+    } else {
+        setvbuf( file, NULL, _IONBF, 0 ); // disable buffering
     }
-    setvbuf( file, NULL, _IONBF, 0 ); // disable buffering
     _output = file;
 }
 
@@ -174,11 +172,13 @@ void YDebugBackend::setDebugOutput( const QString& fileName )
         return ;
     }
 
-    if ( QFile::exists( fileName ) ) {
-        QFile::remove ( fileName );
-    }
-
     FILE * f = fopen( fileName.toLocal8Bit(), "w" );
+    if (f == NULL) {
+        err().SPrintf( "Could not open file %s for writing\n", qp(fileName) );
+        _outputFname = "<NULL>";
+        setDebugOutput( f );
+        return;
+    }
     setDebugOutput( f );
     dbg().SPrintf( "_output set to file %s: FILE * = %p\n", qp(fileName), f );
 
@@ -187,15 +187,12 @@ void YDebugBackend::setDebugOutput( const QString& fileName )
     int i = lstat( fileName.toLocal8Bit(), &buf );
     if ( i != -1 && S_ISREG( buf.st_mode ) && !S_ISLNK( buf.st_mode ) && buf.st_uid == geteuid() )
         chmod( fileName.toLocal8Bit(), S_IRUSR | S_IWUSR );
-#else
-    if ( true )
-        ;
-#endif
     else {
         fclose( _output );
         _output = NULL;
         _outputFname = "";
     }
+#endif
 }
 
 void YDebugBackend::flush( int level, const QString& area, const char * data )
@@ -206,15 +203,15 @@ void YDebugBackend::flush( int level, const QString& area, const char * data )
         DBG_FLUSH( printf("flush(): no flush!\n"); )
         return ;
     }
-    Q_ASSERT_X( _output != NULL, HERE(), "Output stream should not be NULL" );
-    if (_output == NULL) return ;
-    fprintf( _output, "%s\n", data ); // data never ends with \n
-    fflush( _output );
 #ifdef YZIS_WIN32_GCC
     _flushall();
     OutputDebugString( data );
-#endif
+#else
+    if (_output == NULL) return ;
+    fprintf( _output, "%s\n", data ); // data never ends with \n
+    fflush( _output );
     DBG_FLUSH( printf("flush(): done\n"); )
+#endif
 }
 
 void YDebugBackend::parseRcfile(const char * filename)

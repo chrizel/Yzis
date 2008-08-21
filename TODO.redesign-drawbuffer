@@ -6,11 +6,9 @@ YView, YAction: cursor/stickyCol
 YView: check sendPaintEvent calls
 
 YBuffer::insertRegion: shift search hl, etc..
-YBuffer::insertRegion: d->isLoading?
 YBuffer::insertRegion: undo
 YBuffer::insertRegion: swap
 YBuffer::deleteRegion: shift search hl, etc..
-YBuffer::deleteRegion: d->isLoading?
 YBuffer::deleteRegion: undo
 YBuffer::deleteRegion: swap
 

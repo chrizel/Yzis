@@ -25,13 +25,13 @@ NYStatusBar::~NYStatusBar()
     YASSERT(m_bar); delwin(m_bar);
 }
 
-void NYStatusBar::setup( WINDOW* mainwin )
+void NYStatusBar::setup( WINDOW* mainwin, int line )
 {
     dbg() << QString().sprintf("setup( mainwin = %p )", mainwin) << endl;
     if (m_bar)
         delwin(m_bar);
 
-    m_bar = subwin(mainwin, 1, 0, m_view->getLinesVisible() + 0, 0); YASSERT(m_bar);
+    m_bar = subwin(mainwin, 1, 0, line, 0); YASSERT(m_bar);
     wattrset(m_bar, A_REVERSE);
     wbkgd(m_bar, A_REVERSE );           // so that blank char are reversed, too
 }

@@ -124,7 +124,7 @@ private:
     /**
      * update visible area
      */
-    void updateVis( bool refresh = true );
+    void updateVis();
 
     /**
       * draw cursor

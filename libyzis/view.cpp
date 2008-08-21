@@ -96,6 +96,7 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     mPaintSelection = new YSelection("PAINT");
     selectionPool = new YSelectionPool();
 
+	mHighlightAttributes = NULL;
     tabstop = getLocalIntegerOption("tabstop");
     wrap = getLocalBooleanOption( "wrap" );
     rightleft = getLocalBooleanOption( "rightleft" );
@@ -136,34 +137,41 @@ void YView::setupKeys()
     mModePool->registerModifierKeys();
 }
 
-void YView::setVisibleArea(int c, int l, bool refresh)
+void YView::setVisibleArea( int c, int l )
 {
-    dbg() << "YView::setVisibleArea(" << c << "," << l << ", refresh="<<refresh<<");" << endl;
-	mDrawBuffer.setScreenSize(c, l);
-	/* TODO:panard recalc YDrawLines, etc.. */
-    if ( refresh )
+    dbg() << "setVisibleArea(" << c << "," << l << ")" << endl;
+	if ( c != mDrawBuffer.screenWidth() || l != mDrawBuffer.screenHeight() ) {
+		mDrawBuffer.setScreenSize(c, l);
         recalcScreen();
+	}
+}
+
+void YView::updateInternalAttributes()
+{
+    tabstop = getLocalIntegerOption("tabstop");
+    wrap = getLocalBooleanOption( "wrap" );
+    rightleft = getLocalBooleanOption( "rightleft" );
+    opt_list = getLocalBooleanOption( "list" );
+    opt_listchars = getLocalMapOption( "listchars" );
+
+    opt_schema = getLocalIntegerOption( "schema" );
+	YzisHighlighting* highlight = mBuffer->highlight();
+	if ( highlight ) {
+		mHighlightAttributes = highlight->attributes(opt_schema)->data();
+	} else {
+		mHighlightAttributes = NULL;
+	}
 }
 
 void YView::refreshScreen()
 {
-    opt_schema = getLocalIntegerOption( "schema" );
-	mHighlightAttributes = NULL;
-	YzisHighlighting* highlight = mBuffer->highlight();
-	if ( highlight ) {
-		mHighlightAttributes = highlight->attributes(opt_schema)->data();
-	}
-
-    opt_list = getLocalBooleanOption( "list" );
-    opt_listchars = getLocalMapOption( "listchars" );
+	updateInternalAttributes();
     sendRefreshEvent();
 }
 void YView::recalcScreen( )
 {
 	dbg() << "recalcScreen" << endl;
-    tabstop = getLocalIntegerOption( "tabstop" );
-    wrap = getLocalBooleanOption( "wrap" );
-    rightleft = getLocalBooleanOption( "rightleft" );
+	updateInternalAttributes();
 
     YCursor old_pos = mainCursor.buffer();
     mainCursor.reset();

@@ -64,6 +64,7 @@ NYView::NYView(YBuffer *b)
     window = NULL;
     fakeLine = false;
     m_focus = w_editor;
+	marginLeft = 0;
 }
 
 NYView::~NYView()
@@ -75,14 +76,14 @@ NYView::~NYView()
 void NYView::map( void )
 {
     deepdbg() << "map()" << endl;
-    marginLeft = 0;
-    updateVis(false);
+
+	getmaxyx(stdscr, height, width);
 
     // main editor, fullscreen
     window = newwin( 0, 0, 0, 0 ); YASSERT( window );
     touchwin( window ); // throw away optimisations because we're going to subwin , as said in doc
 
-    editor = subwin( window, getLinesVisible(), 0, 0, 0); YASSERT( editor );
+    editor = subwin( window, height-2, 0, 0, 0); YASSERT( editor );
     wattrset( editor, A_NORMAL );
     wmove( editor, 0, 0 );
     keypad( editor , true); //active symbols for special keycodes
@@ -93,13 +94,15 @@ void NYView::map( void )
      * ------------------ infobar ---------------------
      * ------------------ statusbar -------------------
      */
-    infobar.setup( window );
+	infobar.setup(window, height-2);
 
-    statusbar = subwin(window, 1, 0, getLinesVisible() + 1, 0); YASSERT( statusbar );
+    statusbar = subwin(window, 1, 0, height-1, 0); YASSERT( statusbar );
     wattrset(statusbar, A_NORMAL | A_BOLD );
     if (has_colors())
         wattron(statusbar, attribWhite );
     statusbarHasCommand = false;
+
+	updateVis();
 }
 
 
@@ -112,10 +115,10 @@ void NYView::unmap( void )
     window = editor = statusbar = NULL;
 }
 
-void NYView::updateVis( bool refresh )
+void NYView::updateVis()
 {
-    getmaxyx( stdscr, height, width );
-    setVisibleArea( width - marginLeft, height - 2, refresh );
+	getmaxyx(stdscr, height, width);
+	setVisibleArea(width-marginLeft, height-2);
 }
 
 void NYView::guiScroll( int /* dx */, int dy )
@@ -146,34 +149,28 @@ void NYView::guiEndPaintEvent()
 
 void NYView::guiDrawCell( YCursor pos, const YDrawCell& cell )
 {
-    YColor c = cell.fg;
-    if ( !c.isValid() ) {
-        c.setNamedColor( "#fff" );
-    }
-
     int x = pos.x();
     if ( !fakeLine ) {
         /* if this line is a fake, don't apply margins */
         x += marginLeft;
     }
 
-    /*
-     * XXX: reverse bg/fg... but... how set bg ? 
-    if ( cell.sel & YSelectionPool::Visual ) {
-     }
-     */
+	/*
+	 * TODO: reverse bg/fg... but... how set bg ? 
+	if ( cell.sel & YSelectionPool::Visual ) {
+	 }
+	 */
 
-
-
-    int mAttributes;
-    int rawcolor = c.rgb() & RGB_MASK;
-    if ( mAttributesMap.contains( rawcolor ) ) {
-        mAttributes = mAttributesMap[ rawcolor ];
-    } else {
-        mAttributes = attribWhite;
-        yzWarning() << "Unknown color from libyzis, c.name() is " << c.name() << endl;
-    }
-    if ( cell.sel ) mAttributes |= A_REVERSE; // XXX, reverse bg/fg
+	int mAttributes = attribWhite;
+	if ( cell.fg.isValid() ) {
+		int rawcolor = cell.fg.rgb() & RGB_MASK;
+		if ( mAttributesMap.contains( rawcolor ) ) {
+			mAttributes = mAttributesMap[ rawcolor ];
+		} else {
+			yzWarning() << "Unknown color from libyzis, cell.fg.name() is " << cell.fg.name() << endl;
+		}
+	}
+	if ( cell.sel ) mAttributes |= A_REVERSE; // TODO, reverse bg/fg
     //if ( drawUnderline() ) mAttributes |= A_UNDERLINE;
 
     /* convert string to wide_char */

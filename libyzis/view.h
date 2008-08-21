@@ -104,11 +104,11 @@ public:
     //-------------------------------------------------------
     /**
      * Updates the number of visible @arg c columns and @arg l lines
+	 * 	it will cause a screen recalculation.
      * @arg c is the number of columns
      * @arg l is the number of lines
-     * @arg resfresh if true, refreshView is called
      */
-    void setVisibleArea (int c, int l, bool refresh = true );
+    void setVisibleArea( int c, int l );
 
     //-------------------------------------------------------
     // ----------------- Line Visibility
@@ -657,6 +657,9 @@ protected:
     YDrawBuffer mDrawBuffer;
 
 private:
+	/* update internal attributes */
+	void updateInternalAttributes();
+
 
 	// TODO: docstring
 	void setBufferLineContent( int lid, const YLine* yl );

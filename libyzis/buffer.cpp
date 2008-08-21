@@ -495,12 +495,13 @@ QString YBuffer::parseFilename( const QString& filename, YCursor* gotoPos )
 
 void YBuffer::loadText( QString* content )
 {
-    d->text->clear(); //remove the _pointers_ now
+	clearText();
     QTextStream stream( content, QIODevice::ReadOnly );
+	YRawData data;
     while ( !stream.atEnd() ) {
-        appendLine( stream.readLine() );
+		data << stream.readLine();
     }
-
+	insertRegion(YCursor(0,0), data);
     d->isFileNew = true;
 }
 
@@ -519,11 +520,7 @@ void YBuffer::load(const QString& file)
     //stop redraws
     d->enableUpdateView = false;
 
-    QVector<YLine*>::iterator it = d->text->begin(), end = d->text->end();
-    for ( ; it != end; ++it )
-        delete ( *it );
-    d->text->clear();
-	d->text->append(new YLine());
+	clearText();
 
     setPath( file );
 
@@ -556,8 +553,11 @@ void YBuffer::load(const QString& file)
         }
         QTextStream stream( &fl );
         stream.setCodec( codec );
-        while ( !stream.atEnd() )
-            appendLine( stream.readLine() );
+		YRawData data;
+        while ( !stream.atEnd() ) {
+			data << stream.readLine();
+		}
+		insertRegion(YCursor(0,0), data);
         fl.close();
     } else if (QFile::exists(d->path)) {
         YSession::self()->guiPopupMessage(_("Failed opening file %1 for reading : %2").arg(d->path).arg(fl.errorString()));
@@ -893,7 +893,7 @@ QString YBuffer::getWordAt( const YCursor at ) const
 
 QStringList YBuffer::getText(const YCursor from, const YCursor to) const
 {
-	return getText(YInterval(from, to));
+	return dataRegion(YInterval(from, to));
 }
 QStringList YBuffer::getText( const YInterval& i ) const
 {

@@ -131,14 +131,6 @@ public:
     //-------------------------------------------------------
 
     /**
-     * Appends a new line at the end of file
-     * @param l the line of text to be appended
-     *
-     * Note: the line is not supposed to contain '\n'
-     */
-    void appendLine(const QString &l) YZIS_DEPRECATED;
-
-    /**
      * Insert the text l in the current line
      * @param l the text to insert
      * @param line the line which is changed

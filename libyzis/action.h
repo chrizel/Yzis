@@ -91,9 +91,6 @@ public:
 
     void mergeNextLine( YView* pView, int Y, bool stripSpaces = true );
 
-    void appendLine( YView* pView, const QString& text );
-
-
     void deleteArea( YView* pView, const YCursor begin, const YCursor end, const QList<QChar> &reg );
     void deleteArea( YView* pView, const YInterval& i, const QList<QChar> &reg );
 

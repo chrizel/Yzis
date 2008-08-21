@@ -262,10 +262,10 @@ YCursor YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 
 	/* syntax highlighting update */
 	int el = begin.line();
-	int nl = el;
+	int nl; // next line not affected by HL update
 	while( el <= ln ) {
 		nl = updateHL(el);
-		el = nl > el ? nl : el+1;
+		el = qMax(nl, el+1);
 	}
 	YBound end(YCursor(0,el), true);
 	YInterval bi(begin, end);
@@ -689,6 +689,7 @@ void YBuffer::addView (YView *v)
 
 void YBuffer::updateAllViews()
 {
+	/* TODO: useful? */
     if ( !d->enableUpdateView ) return ;
     dbg() << "YBuffer updateAllViews" << endl;
     foreach( YView *view, d->views ) {
@@ -792,7 +793,7 @@ void YBuffer::makeAttribs()
 
     bool ctxChanged = true;
     int hlLine = 0;
-    if ( !d->isLoading )
+    if ( !d->isLoading ) {
         while ( hlLine < lineCount()) {
             QVector<uint> foldingList;
             YLine *l = new YLine();
@@ -800,6 +801,9 @@ void YBuffer::makeAttribs()
             delete l;
             hlLine++;
         }
+	} else {
+		dbg() << "makeAttribs aborted because YBuffer marked as loading" << endl;
+	}
     updateAllViews();
 
 }
@@ -935,8 +939,6 @@ QStringList YBuffer::getLocalListOption( const QString& option ) const
 int YBuffer::updateHL( int line )
 {
     // dbg() << "updateHL " << line << endl;
-    if ( d->isLoading ) 
-		return line;
 
     int hlLine = line;
 	int nElines = 0;

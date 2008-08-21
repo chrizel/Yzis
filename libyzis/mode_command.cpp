@@ -143,7 +143,6 @@ void YModeCommand::initMotionPool()
     motions.append( new YMotion(YKeySequence("{"), &YModeCommand::previousEmptyLine, ArgNone) );
     motions.append( new YMotion(YKeySequence("<C-b>"), &YModeCommand::scrollPageUp) );
     motions.append( new YMotion(YKeySequence("<C-y>"), &YModeCommand::scrollLineUp) );
-    motions.append( new YMotion(YKeySequence("<PAGEDOWN>"), &YModeCommand::scrollPageDown) );
     motions.append( new YMotion(YKeySequence("<C-f>"), &YModeCommand::scrollPageDown) );
     motions.append( new YMotion(YKeySequence("<C-e>"), &YModeCommand::scrollLineDown) );
 }

@@ -96,13 +96,7 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     mPaintSelection = new YSelection("PAINT");
     selectionPool = new YSelectionPool();
 
-	mHighlightAttributes = NULL;
-    tabstop = getLocalIntegerOption("tabstop");
-    wrap = getLocalBooleanOption( "wrap" );
-    rightleft = getLocalBooleanOption( "rightleft" );
-    opt_schema = getLocalIntegerOption( "schema" );
-    opt_list = getLocalBooleanOption( "list" );
-    opt_listchars = getLocalMapOption( "listchars" );
+	updateInternalAttributes();
 
     abortPaintEvent();
 }

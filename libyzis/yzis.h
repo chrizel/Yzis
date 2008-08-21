@@ -32,6 +32,7 @@
 #include <libintl.h>
 
 /* Qt */
+#include <qglobal.h>
 
 /* yzis */
 #include "yzismacros.h"
@@ -59,6 +60,12 @@
 #define YZIS_SAFE_MODE
 #else
 #define YZIS_SAFE_MODE if(0)
+#endif
+
+#if defined(Q_CC_GNU)
+#	define YZIS_DEPRECATED __attribute__ ((__deprecated__))
+#else
+#	define YZIS_DEPRECATED
 #endif
 
 /** Standard namespace for yzis special types */

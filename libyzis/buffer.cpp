@@ -195,7 +195,12 @@ void YBuffer::delChar (YCursor pos, int count )
 
 void YBuffer::insertLine(const QString &l, int line)
 {
-	insertRegion(YCursor(getLineLength(line-1),line-1), YRawData()<<""<<l);
+	YASSERT(line <= lineCount());
+	if ( line == 0 ) {
+		insertRegion(YCursor(0,0), YRawData()<<l);
+	} else {
+		insertRegion(YCursor(getLineLength(line-1),line-1), YRawData()<<""<<l);
+	}
 }
 void YBuffer::appendLine(const QString &l)
 {
@@ -518,6 +523,7 @@ void YBuffer::load(const QString& file)
     for ( ; it != end; ++it )
         delete ( *it );
     d->text->clear();
+	d->text->append(new YLine());
 
     setPath( file );
 
@@ -556,8 +562,6 @@ void YBuffer::load(const QString& file)
     } else if (QFile::exists(d->path)) {
         YSession::self()->guiPopupMessage(_("Failed opening file %1 for reading : %2").arg(d->path).arg(fl.errorString()));
     }
-    if ( ! d->text->count() )
-        appendLine("");
     setChanged( false );
     //check for a swap file left after a crash
     d->swapFile->setFileName( d->path );

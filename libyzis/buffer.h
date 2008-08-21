@@ -28,7 +28,7 @@
 #include <QVector>
 #include <QList>
 
-#include "yzismacros.h"
+#include "yzis.h"
 #include "mark.h"
 
 class YZUndoBuffer;
@@ -117,14 +117,14 @@ public:
      * @param pos : the position where to insert the character
      * @param c the character to add
      */
-    void insertChar (YCursor pos, const QString& c);
+    void insertChar (YCursor pos, const QString& c) YZIS_DEPRECATED;
 
     /**
      * Deletes a character in the buffer
      * @param pos : the position where to insert the character
      * @param count number of characters to delete
      */
-    void delChar (YCursor pos, int count);
+    void delChar (YCursor pos, int count) YZIS_DEPRECATED;
 
     //-------------------------------------------------------
     // ----------------- Line Operations
@@ -136,21 +136,21 @@ public:
      *
      * Note: the line is not supposed to contain '\n'
      */
-    void appendLine(const QString &l);
+    void appendLine(const QString &l) YZIS_DEPRECATED;
 
     /**
      * Insert the text l in the current line
      * @param l the text to insert
      * @param line the line which is changed
      */
-    void insertLine(const QString &l, int line);
+    void insertLine(const QString &l, int line) YZIS_DEPRECATED;
 
     /**
      * Break a new line at the indicated position, moving rest of the line onto
      * a line of its own.
      * @param pos The position to add '\n' in.
      */
-    void insertNewLine( YCursor pos);
+    void insertNewLine( YCursor pos) YZIS_DEPRECATED;
 
     /**
      * Deletes the given line
@@ -158,12 +158,12 @@ public:
      *
      * Note: the valid line numbers are between 0 and lineCount()-1
      */
-    void deleteLine( int line );
+    void deleteLine( int line ) YZIS_DEPRECATED;
 
     /**
      * Replaces the line at @param line with the given string @param l
      */
-    void replaceLine( const QString& l, int line );
+    void replaceLine( const QString& l, int line ) YZIS_DEPRECATED;
 
 	/**
 	 * Get a list of strings between two cursors
@@ -171,8 +171,8 @@ public:
 	 * @param to the end cursor
 	 * @return a list of strings
 	 */
-	QStringList getText(const YCursor from, const YCursor to) const;
-	QStringList getText(const YInterval& i) const;
+	QStringList getText(const YCursor from, const YCursor to) const YZIS_DEPRECATED;
+	QStringList getText(const YInterval& i) const YZIS_DEPRECATED;
 
 
     /**

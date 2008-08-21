@@ -138,9 +138,9 @@ void YView::setupKeys()
 
 void YView::setVisibleArea(int c, int l, bool refresh)
 {
-    dbg() << "YView::setVisibleArea(" << c << "," << l << ");" << endl;
+    dbg() << "YView::setVisibleArea(" << c << "," << l << ", refresh="<<refresh<<");" << endl;
 	mDrawBuffer.setScreenSize(c, l);
-	/* TODO */
+	/* TODO:panard recalc YDrawLines, etc.. */
     if ( refresh )
         recalcScreen();
 }
@@ -160,15 +160,17 @@ void YView::refreshScreen()
 }
 void YView::recalcScreen( )
 {
+	dbg() << "recalcScreen" << endl;
     tabstop = getLocalIntegerOption( "tabstop" );
     wrap = getLocalBooleanOption( "wrap" );
     rightleft = getLocalBooleanOption( "rightleft" );
 
     YCursor old_pos = mainCursor.buffer();
     mainCursor.reset();
-    gotoxy( &mainCursor, old_pos );
 
-    sendRefreshEvent();
+	updateBufferInterval(YInterval(YCursor(0,0), YBound(YCursor(0, mBuffer->lineCount()), true)));
+
+    gotoxy( &mainCursor, old_pos );
 }
 
 void YView::displayIntro()
@@ -937,8 +939,7 @@ void YView::setPaintAutoCommit( bool enable )
 
 void YView::commitPaintEvent()
 {
-    if ( m_paintAutoCommit == 0 ) return ;
-    if ( --m_paintAutoCommit == 0 ) {
+    if ( m_paintAutoCommit == 0 || --m_paintAutoCommit == 0 ) {
         if ( keepCursor.valid() ) {
             mainCursor = keepCursor;
             keepCursor.invalidate();

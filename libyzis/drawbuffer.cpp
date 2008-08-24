@@ -324,7 +324,7 @@ void YDrawBuffer::verticalScroll( int delta ) {
 		}
 	} else {
 		for ( int i = 0; i < delta && mContent.size() > 0; ++i ) {
-			mContent.takeAt(i);
+			mContent.takeAt(0);
 		}
 	}
 }

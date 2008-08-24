@@ -305,6 +305,7 @@ YInterval YDrawBuffer::deleteFromBufferDrawSection( int bl )
 }
 
 void YDrawBuffer::verticalScroll( int delta ) {
+	dbg() << "verticalScroll "<<delta<<" ; current mTopBufferLine = " << mTopBufferLine << endl;
 	mTopBufferLine += delta;
 	if ( delta < 0 ) {
 		delta = qMin(mScreenHeight, -delta);

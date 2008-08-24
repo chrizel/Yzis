@@ -1103,8 +1103,10 @@ void YView::updateBufferInterval( int bl, int bl_last )
 {
 	YASSERT(bl <= bl_last);
 	if ( mDrawBuffer.topBufferLine() > bl_last ||
-			mDrawBuffer.bottomBufferLine() < bl )
+			(mDrawBuffer.bottomBufferLine()+(mDrawBuffer.full()?0:1) < bl) ) {
+		dbg() << "ignoring updateBufferInterval from line "<<bl<<" to " << bl_last << " ["<<mDrawBuffer.topBufferLine()<<" to "<<mDrawBuffer.bottomBufferLine()<<" full=" << mDrawBuffer.full()<<"]" << endl;
 		return;
+	}
 
 	/* clipping */
 	bl = qMax(bl, mDrawBuffer.topBufferLine());

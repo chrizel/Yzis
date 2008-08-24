@@ -143,6 +143,8 @@ public:
 	/* TODO: docstring */
 	int currentHeight() const;
 
+	inline bool full() const { return currentHeight() >= mScreenHeight; }
+
 	/* TODO: docstring */
 	const YDrawSection bufferDrawSection( int bl ) const;
 	

@@ -288,8 +288,11 @@ int YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds, int* shift )
 YInterval YDrawBuffer::deleteFromBufferDrawSection( int bl )
 {
 	int lid = bl - mTopBufferLine;
-	YASSERT(0 <= lid && lid <= mContent.count());
+	YASSERT(0 <= lid)
 	YInterval affected;
+	if ( lid >= mContent.count() ) {
+		return affected;
+	}
 	/* compute screenY */
 	int dy = bufferDrawSectionScreenLine(bl);
 	affected.setFrom(YBound(YCursor(0,dy)));

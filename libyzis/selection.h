@@ -101,7 +101,7 @@ public:
     {}
     YInterval( const QRect& r ) : mFrom( YCursor(r.left(), r.top()) ), mTo( YCursor(r.right(), r.bottom()) )
     {}
-    YInterval()
+    YInterval() : mFrom(YCursor(0,0)), mTo(YCursor(0,0),true)
     {}
 
     void setFrom( const YBound& bound );

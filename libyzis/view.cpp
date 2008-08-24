@@ -997,9 +997,11 @@ void YView::sendCursor( YViewCursor cursor )
 }
 void YView::sendPaintEvent( const YInterval& i )
 {
-	setPaintAutoCommit(false);
-	mPaintSelection->addInterval(i);
-	commitPaintEvent();
+	if ( i.valid() ) {
+		setPaintAutoCommit(false);
+		mPaintSelection->addInterval(i);
+		commitPaintEvent();
+	}
 }
 void YView::sendPaintEvent( int curx, int cury, int curw, int curh )
 {
@@ -1104,15 +1106,11 @@ void YView::updateBufferInterval( int bl, int bl_last )
 			mDrawBuffer.bottomBufferLine() < bl )
 		return;
 
+	/* clipping */
+	bl = qMax(bl, mDrawBuffer.topBufferLine());
 	dbg() << "updateBufferInterval from line "<<bl<<" to " << bl_last << endl;
 
-	// TODO clip
-
-	/* buffer line where start our update */
-	bl = qMax(bl, mDrawBuffer.topBufferLine());
-
 	setPaintAutoCommit(false);
-
 	int nextScreenLine = 0;
 	/* update requested lines */
 	for( ; bl < mBuffer->lineCount() && bl <= bl_last && nextScreenLine < mDrawBuffer.screenHeight(); ++bl ) {

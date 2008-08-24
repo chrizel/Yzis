@@ -30,9 +30,7 @@
 
 YDrawLine::YDrawLine() :
 	mCells(),
-	mSteps(),
-	mBeginViewCursor(),
-	mEndViewCursor()
+	mSteps()
 {
 	clear();
 }
@@ -44,16 +42,7 @@ void YDrawLine::clear() {
 	mCell = NULL;
 	mCells.clear();
 	mSteps.clear();
-	mBeginViewCursor.setScreenX(0);
-	mBeginViewCursor.setBufferX(0);
 	changed = true;
-}
-
-YViewCursor YDrawLine::beginViewCursor() const {
-	return mBeginViewCursor;
-}
-YViewCursor YDrawLine::endViewCursor() const {
-	return mEndViewCursor;
 }
 
 void YDrawLine::setFont( const YFont& f )
@@ -106,13 +95,13 @@ int YDrawLine::push( const QString& c )
 	return c.length();
 }
 void YDrawLine::flush() {
-	mEndViewCursor = mBeginViewCursor;
-	mEndViewCursor.setBufferX(mBeginViewCursor.bufferX() + mSteps.count() - 1);
+	/* useless for now
 	int acc = 0;
 	foreach( int s, mSteps ) {
 		acc += s;
 	}
 	mEndViewCursor.setScreenX(mBeginViewCursor.screenX() + acc - 1);
+	*/
 }
 
 void YDrawLine::insertCell( int pos )
@@ -139,13 +128,6 @@ void YDrawLine::insertCell( int pos )
     }
 
     mCell =& mCells[pos];
-}
-
-void YDrawLine::setLineCursor( int bufferY, int screenY ) {
-	mBeginViewCursor.setBufferY(bufferY);
-	mBeginViewCursor.setScreenY(screenY);
-	mEndViewCursor.setBufferY(bufferY);
-	mEndViewCursor.setScreenY(screenY);
 }
 
 YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl )
@@ -246,6 +228,7 @@ YDrawBuffer::YDrawBuffer( int columns, int lines ) :
 	mScreenOffset(0,0),
 	mEOLCell()
 {
+	mTopBufferLine = 0;
 	mEOLCell.c = " ";
 	setScreenSize(columns, lines);
 	mContent << (YDrawSection() << YDrawLine());
@@ -260,15 +243,6 @@ void YDrawBuffer::setScreenSize( int columns, int lines )
 	mScreenHeight = lines;
 }
 
-YCursor YDrawBuffer::bufferBegin() const
-{
-	return mContent.first().first().beginViewCursor().buffer();
-}
-YCursor YDrawBuffer::bufferEnd() const
-{
-	return mContent.last().last().endViewCursor().buffer();
-}
-
 int YDrawBuffer::currentHeight() const
 {
 	int dy = 0;
@@ -278,8 +252,9 @@ int YDrawBuffer::currentHeight() const
 	return dy;
 }
 
-YInterval YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
+YInterval YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds )
 {
+	int lid = bl - mTopBufferLine;
 	YASSERT(lid <= mContent.count());
 	YInterval affected;
 	/* compute screenY */
@@ -297,36 +272,26 @@ YInterval YDrawBuffer::setBufferDrawSection( int lid, YDrawSection ds )
 		shift = ds.count() - mContent[lid].count();
 		mContent.replace(lid, ds);
 	}
-	for ( int j = 0; j < ds.count(); ++j ) {
-		mContent[lid][j].setLineCursor(lid, dy++);
-	}
 	/* apply shift */
 	if ( shift ) {
-		for ( int i = lid + 1; i < mContent.count(); ++i ) {
-			for ( int j = 0; j < mContent[i].count(); ++j ) {
-				mContent[i][j].setLineCursor(lid, dy++);
-			}
-		}
+		dy = mScreenHeight;
 	}
-	affected.setTo(YBound(YCursor(0,dy), true));
+	affected.setTo(YBound(YCursor(0, dy), true));
 	return affected;
 }
-YInterval YDrawBuffer::deleteFromBufferDrawSection( int lid )
+YInterval YDrawBuffer::deleteFromBufferDrawSection( int bl )
 {
-	YASSERT(lid <= mContent.count());
+	int lid = bl - mTopBufferLine;
+	YASSERT(0 <= lid && lid <= mContent.count());
 	YInterval affected;
 	/* compute screenY */
-	int dy = 0;
-	int i = 0;
-	for ( ; i < lid; ++i ) {
-		dy += mContent[i].count();
-	}
+	int dy = bufferDrawSectionScreenLine(bl);
 	affected.setFrom(YBound(YCursor(0,dy)));
 	while ( lid < mContent.count() ) {
 		dy += mContent[lid].count();
 		mContent.takeAt(lid);
 	}
-	affected.setTo(YBound(YCursor(screenWidth(), dy)));
+	affected.setTo(YBound(YCursor(0, dy), true));
 	return affected;
 }
 
@@ -349,6 +314,22 @@ void YDrawBuffer::setEOLCell( const YDrawCell& cell )
 YDrawBufferIterator YDrawBuffer::iterator( const YInterval& i ) const
 {
 	return YDrawBufferIterator(this, i);
+}
+
+const YDrawSection YDrawBuffer::bufferDrawSection( int bl ) const
+{
+	int lid = bl - mTopBufferLine;
+	YASSERT(0 <= lid && lid < mContent.count());
+	return mContent[lid];
+}
+int YDrawBuffer::bufferDrawSectionScreenLine( int bl ) const {
+	int lid = bl - mTopBufferLine;
+	YASSERT(0 <= lid && lid < mContent.count());
+	int sl = 0;
+	for ( int i = 0; i < lid; ++i ) {
+		sl += mContent[i].count();
+	}
+	return sl;
 }
 
 
@@ -491,7 +472,7 @@ const YDrawCellInfo YDrawBufferIterator::drawCellInfo() const
 int YDrawBufferIterator::bufferLine() const
 {
 	YASSERT(isValid());
-	return mDrawBuffer->mContent[mCurBLine].first().beginViewCursor().buffer().line();
+	return mDrawBuffer->topBufferLine() + mCurBLine;
 }
 int YDrawBufferIterator::screenLine() const
 {

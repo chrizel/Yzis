@@ -662,9 +662,9 @@ private:
 
 
 	// TODO: docstring
-	void setBufferLineContent( int lid, const YLine* yl );
+	void setBufferLineContent( int bl, const YLine* yl );
 	/* TODO: docstring */
-	void deleteFromBufferLine( int lid );
+	void deleteFromBufferLine( int bl );
 
 	YDrawSection mWorkDrawSection;
 	YDrawLine mWorkDrawLine;

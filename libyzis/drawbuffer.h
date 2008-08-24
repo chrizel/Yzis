@@ -103,10 +103,13 @@ public:
     virtual ~YDrawBuffer();
 
 	/* TODO: docstring */
-	YCursor bufferBegin() const;
-
+	inline int topBufferLine() const {
+		return mTopBufferLine;
+	}
 	/* TODO: docstring */
-	YCursor bufferEnd() const;
+	inline int bottomBufferLine() const {
+		return mTopBufferLine + mContent.size() - 1;
+	}
 
 	/* TODO: docstring */
 	void setScreenSize( int columns, int lines );
@@ -124,10 +127,10 @@ public:
 	inline const QList<YDrawSection> sections() { return mContent; }
 
 	/* TODO: docstring */
-	YInterval setBufferDrawSection( int lid, YDrawSection ds );
+	YInterval setBufferDrawSection( int bl, YDrawSection ds );
 
 	/* TODO: docstring */
-	YInterval deleteFromBufferDrawSection( int lid );
+	YInterval deleteFromBufferDrawSection( int bl );
 
 	/* TODO: docstring */
 	void setEOLCell( const YDrawCell& cell );
@@ -137,6 +140,12 @@ public:
 	/* TODO: docstring */
 	int currentHeight() const;
 
+	/* TODO: docstring */
+	const YDrawSection bufferDrawSection( int bl ) const;
+	
+	/* TODO: docstring */
+	int bufferDrawSectionScreenLine( int bl ) const;
+
 private :
 	QList<YDrawSection> mContent;
 
@@ -144,6 +153,7 @@ private :
 	YDrawCell mEOLCell;
 	int mScreenWidth;
 	int mScreenHeight;
+	int mTopBufferLine;
 
     friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
@@ -167,13 +177,12 @@ public :
     int push( const QString& c );
 	void flush();
 
-	YViewCursor beginViewCursor() const;
-	YViewCursor endViewCursor() const;
-
 	YDrawSection arrange( int columns ) const;
 
 	inline const QList<int> steps() const { return mSteps; }
 	inline const QList<YDrawCell> cells() const { return mCells; }
+
+	inline int bufferLength() const { return mSteps.count(); }
 
 private:
 
@@ -185,8 +194,6 @@ private:
      */
     static bool updateColor( YColor* dest, const YColor& c );
 
-	void setLineCursor( int bufferY, int screenY );
-
 	QList<YDrawCell> mCells;
 	QList<int> mSteps;
 
@@ -196,9 +203,6 @@ private:
     YDrawCell* mCell;
 
     bool changed;
-
-	YViewCursor mBeginViewCursor;
-	YViewCursor mEndViewCursor;
 
 	friend class YDrawBuffer;
 	friend class YDrawBufferIterator;

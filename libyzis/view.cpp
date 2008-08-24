@@ -356,49 +356,70 @@ void YView::gotody( int nexty )
 
 void YView::gotoy( int nexty )
 {
-	//TODO: nexty domain
-	if ( nexty < mDrawBuffer.bufferBegin().line() ||
-			nexty > mDrawBuffer.bufferEnd().line() ) {
+	YASSERT(nexty >= 0);
+	YASSERT(nexty < mBuffer->lineCount());
+	if ( nexty < mDrawBuffer.topBufferLine() ||
+			nexty > mDrawBuffer.bottomBufferLine() ) {
 		dbg() << "gotoy("<<nexty<<") : out of view" << endl;
 		// TODO
 		YASSERT(false);
 		return;
 	}
-	int top_bl = mDrawBuffer.bufferBegin().line();
-	mWorkDrawSection = mDrawBuffer.sections()[nexty - top_bl];
+	mWorkDrawSection = mDrawBuffer.bufferDrawSection(nexty);
+	workCursor.setBufferY(nexty);
+	workCursor.setScreenY(mDrawBuffer.bufferDrawSectionScreenLine(nexty));
 }
 
 void YView::gotox( int nextx, bool forceGoBehindEOL )
 {
-	//TODO: nextx domain
-	//TODO support forceGoBehinEOL
-    //int shift = !drawMode && mModePo ol->current()->isEditMode() && sCurLineLength > 0 ? 0 : 1;
+	YASSERT(nextx >= 0);
+	//TODO check this forceGoBehindEOL parameter...
+	int shift = (forceGoBehindEOL || mModePool->current()->isEditMode()) ? 1 : 0;
 
 	/* select targeted YDrawLine */
+	int acc_x = 0;
+	int dy = 0;
 	foreach( mWorkDrawLine, mWorkDrawSection ) {
-		if ( mWorkDrawLine.endViewCursor().bufferX() >= nextx ) {
+		if ( (acc_x + mWorkDrawLine.bufferLength() + shift) > nextx ) {
 			break;
+		} else {
+			acc_x += mWorkDrawLine.bufferLength();
+			dy += 1;
 		}
 	}
-	workCursor = mWorkDrawLine.beginViewCursor();
-	int acc_dx = workCursor.screenX();
+	YASSERT((acc_x + mWorkDrawLine.bufferLength() + shift) > nextx);
+
+	workCursor.setScreenY(workCursor.screenY() + dy);
+
+	int acc_dx = 0;
+
 	QList<int>::const_iterator it = mWorkDrawLine.steps().constBegin();
-	for( int i = workCursor.bufferX(); i < nextx; ++i, ++it ) {
+	for( ; it!=mWorkDrawLine.steps().constEnd() && acc_x < nextx; ++acc_x, ++it ) {
 		acc_dx += *it;
 	}
+	if ( shift && acc_x < nextx ) {
+		acc_dx += 1;
+		if ( acc_dx == mDrawBuffer.screenWidth() ) {
+			acc_dx = 0;
+			workCursor.setScreenY(workCursor.screenY()+1);
+		}
+		acc_x += 1;
+	}
+	workCursor.setBufferX(acc_x);
 	workCursor.setScreenX(acc_dx);
 }
 
 void YView::gotodx( int nextx )
 {
-	//TODO: nextx domain
-	//TODO support forceGoBehinEOL
-    //int shift = !drawMode && mModePo ol->current()->isEditMode() && sCurLineLength > 0 ? 0 : 1;
+	//TODO: directly support nextx > screenWidth
+	int shift = mModePool->current()->isEditMode() ? 1 : 0;
+	YASSERT(0 <= nextx && nextx < (mDrawBuffer.screenWidth()+shift));
+
 
 	mWorkDrawLine = mWorkDrawSection.at(0);
-	workCursor = mWorkDrawLine.beginViewCursor();
-	int acc_x = workCursor.bufferX();
-	int acc_dx = workCursor.screenX();
+
+	int acc_x = 0;
+	int acc_dx = 0;
 	foreach( int step, mWorkDrawLine.steps() ) {
 		acc_dx += step;
 		if ( acc_dx > nextx ) {
@@ -406,6 +427,15 @@ void YView::gotodx( int nextx )
 		}
 		++acc_x;
 	}
+	if ( shift && acc_dx < nextx ) {
+		acc_dx += 1;
+		if ( acc_dx == mDrawBuffer.screenWidth() ) {
+			acc_dx = 0;
+			workCursor.setScreenY(workCursor.screenY()+1);
+		}
+		acc_x += 1;
+	}
+	workCursor.setScreenX(acc_dx);
 	workCursor.setBufferX(acc_x);
 }
 
@@ -425,12 +455,6 @@ void YView::applyGoto( YViewCursor* viewCursor, bool applyCursor )
         sendCursor( *viewCursor );
         applyCursor = false;
     }
-
-
-    /* dbg() << "applyGoto: "
-       << "dColLength=" << dColLength << "; dLineLength=" << dLineLength << "; mLineLength=" << mLineLength
-       << "; dWrapNextLine=" << dWrapNextLine << "; dWrapTab=" << dWrapTab << endl;
-     dbg() << "mCursor:" << *mCursor << "; dCursor:" << *dCursor << endl; */
 
     if ( applyCursor ) {
 
@@ -1047,7 +1071,7 @@ void YView::internalScroll( int dx, int dy )
 
 int YView::getCurrentTop() const
 {
-	return mDrawBuffer.bufferBegin().line();
+	return mDrawBuffer.topBufferLine();
 }
 int YView::getLinesVisible() const
 {
@@ -1061,16 +1085,15 @@ int YView::getColumnsVisible() const
 
 void YView::updateBufferInterval( const YInterval& bi )
 {
-	if ( !bi.overlap(YInterval(mDrawBuffer.bufferBegin(), mDrawBuffer.bufferEnd())) )
+	if ( mDrawBuffer.topBufferLine() > bi.toPos().line() ||
+			mDrawBuffer.bottomBufferLine() < bi.fromPos().line() ) // XXX need a YInterval<int>
 		return;
 	dbg() << "updateBufferInterval " << bi << endl;
 
 	// TODO clip
 
-	int top_bl = mDrawBuffer.bufferBegin().line();
-
 	/* buffer line where start our update */
-	int bl = qMax(bi.fromPos().line(), top_bl);
+	int bl = qMax(bi.fromPos().line(), mDrawBuffer.topBufferLine());
 	int last_bl = bi.toPos().line();
 	if ( bi.to().opened() && bi.toPos().column() == 0 )
 		--last_bl;
@@ -1079,10 +1102,10 @@ void YView::updateBufferInterval( const YInterval& bi )
 
 	/* update requested lines */
 	for( ; bl < mBuffer->lineCount() && bl <= last_bl; ++bl ) {
-		setBufferLineContent(bl - top_bl, mBuffer->yzline(bl));
+		setBufferLineContent(bl, mBuffer->yzline(bl));
 	}
 	if ( bl <= last_bl ) {
-		deleteFromBufferLine(bl - top_bl);
+		deleteFromBufferLine(bl);
 	}
 	commitPaintEvent();
 }
@@ -1179,7 +1202,7 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 	return dl;
 }
 
-void YView::setBufferLineContent( int lid, const YLine* yl )
+void YView::setBufferLineContent( int bl, const YLine* yl )
 {
 	YDrawLine dl = drawLineFromYLine(yl);
 	YDrawSection ds;
@@ -1189,12 +1212,12 @@ void YView::setBufferLineContent( int lid, const YLine* yl )
 		ds << dl;
 	}
 
-	YInterval affected = mDrawBuffer.setBufferDrawSection(lid, ds);
+	YInterval affected = mDrawBuffer.setBufferDrawSection(bl, ds);
 	sendPaintEvent(affected);
 }
-void YView::deleteFromBufferLine( int lid )
+void YView::deleteFromBufferLine( int bl )
 {
-	YInterval affected = mDrawBuffer.deleteFromBufferDrawSection(lid);
+	YInterval affected = mDrawBuffer.deleteFromBufferDrawSection(bl);
 	sendPaintEvent(affected);
 }
 

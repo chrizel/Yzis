@@ -1,7 +1,9 @@
 
 insert/delete lines
 YView: vertical scroll
-YView, YAction: cursor/stickyCol
+YView, YAction: cursor/stickyCol, gotod?[xy]
+YView/YDrawBuffer: clip
+YView/YDrawLine: wrapped tab
 
 YView: check sendPaintEvent calls
 

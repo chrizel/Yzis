@@ -360,10 +360,19 @@ void YView::gotoy( int nexty )
 	YASSERT(nexty < mBuffer->lineCount());
 	if ( nexty < mDrawBuffer.topBufferLine() ||
 			nexty > mDrawBuffer.bottomBufferLine() ) {
-		dbg() << "gotoy("<<nexty<<") : out of view" << endl;
-		// TODO
-		YASSERT(false);
-		return;
+		dbg() << "gotoy("<<nexty<<") : out of drawbuffer" << endl;
+		// scroll drawbuffer
+		if ( nexty < mDrawBuffer.topBufferLine() ) {
+			int delta = nexty - mDrawBuffer.topBufferLine();   // mDrawBuffer.topBufferLine+delta == nexty
+			mDrawBuffer.verticalScroll(delta);
+			updateBufferInterval(mDrawBuffer.topBufferLine(), mDrawBuffer.topBufferLine()-delta-1);
+		} else {
+			int previousBottomLine = mDrawBuffer.bottomBufferLine();
+			int delta = nexty - mDrawBuffer.bottomBufferLine();
+			mDrawBuffer.verticalScroll(delta);
+			updateBufferInterval(previousBottomLine+1, nexty);
+		}
+		sendRefreshEvent(); //XXX optimize with guiScroll
 	}
 	mWorkDrawSection = mDrawBuffer.bufferDrawSection(nexty);
 	workCursor.setBufferY(nexty);
@@ -466,10 +475,8 @@ void YView::applyGoto( YViewCursor* viewCursor, bool applyCursor )
             centerViewHorizontally( mainCursor.screenX( ) );
         }
         if ( !isLineVisible( mainCursor.screenY() ) ) {
-            if ( mainCursor.screenY() >= mDrawBuffer.screenHeight() )
-                bottomViewVertically( mainCursor.screenY() );
-            else
-                alignViewVertically( mainCursor.screenY() );
+			dbg() << "applyGoto: cursor is out of screen! TODO" << endl;
+			YASSERT(false);
         }
         commitPaintEvent();
         updateCursor( );
@@ -740,8 +747,8 @@ bool YView::isColumnVisible( int column, int ) const
 }
 bool YView::isLineVisible( int l ) const
 {
-	/* TODO: buffer or screen ? */
-    return true;
+	/* screen line */
+	return l >= 0 and l < mDrawBuffer.screenWidth();
 }
 
 const YColor& YView::drawColor ( int col, int line ) const
@@ -1082,29 +1089,36 @@ int YView::getColumnsVisible() const
 	return mDrawBuffer.screenWidth();
 }
 
-
 void YView::updateBufferInterval( const YInterval& bi )
 {
-	if ( mDrawBuffer.topBufferLine() > bi.toPos().line() ||
-			mDrawBuffer.bottomBufferLine() < bi.fromPos().line() ) // XXX need a YInterval<int>
+	int last_bl = bi.toPos().line();
+	if ( bi.to().opened() && bi.toPos().column() == 0 )
+		--last_bl;
+	return updateBufferInterval(bi.fromPos().line(), last_bl);
+}
+
+void YView::updateBufferInterval( int bl, int bl_last )
+{
+	YASSERT(bl <= bl_last);
+	if ( mDrawBuffer.topBufferLine() > bl_last ||
+			mDrawBuffer.bottomBufferLine() < bl )
 		return;
-	dbg() << "updateBufferInterval " << bi << endl;
+
+	dbg() << "updateBufferInterval from line "<<bl<<" to " << bl_last << endl;
 
 	// TODO clip
 
 	/* buffer line where start our update */
-	int bl = qMax(bi.fromPos().line(), mDrawBuffer.topBufferLine());
-	int last_bl = bi.toPos().line();
-	if ( bi.to().opened() && bi.toPos().column() == 0 )
-		--last_bl;
+	bl = qMax(bl, mDrawBuffer.topBufferLine());
 
 	setPaintAutoCommit(false);
 
+	int nextScreenLine = 0;
 	/* update requested lines */
-	for( ; bl < mBuffer->lineCount() && bl <= last_bl; ++bl ) {
-		setBufferLineContent(bl, mBuffer->yzline(bl));
+	for( ; bl < mBuffer->lineCount() && bl <= bl_last && nextScreenLine < mDrawBuffer.screenHeight(); ++bl ) {
+		nextScreenLine = setBufferLineContent(bl, mBuffer->yzline(bl));
 	}
-	if ( bl <= last_bl ) {
+	if ( bl <= bl_last ) {
 		deleteFromBufferLine(bl);
 	}
 	commitPaintEvent();
@@ -1202,7 +1216,7 @@ YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
 	return dl;
 }
 
-void YView::setBufferLineContent( int bl, const YLine* yl )
+int YView::setBufferLineContent( int bl, const YLine* yl )
 {
 	YDrawLine dl = drawLineFromYLine(yl);
 	YDrawSection ds;
@@ -1212,8 +1226,21 @@ void YView::setBufferLineContent( int bl, const YLine* yl )
 		ds << dl;
 	}
 
-	YInterval affected = mDrawBuffer.setBufferDrawSection(bl, ds);
-	sendPaintEvent(affected);
+	int shift = 0;
+	int dy = mDrawBuffer.setBufferDrawSection(bl, ds, &shift);
+	int ndy = dy+ds.count();
+	if ( shift != 0 ) {
+		if ( shift < 0 ) {
+			/* try to add new lines */
+			int start_bl = mDrawBuffer.bottomBufferLine() + 1;
+			if ( start_bl < mBuffer->lineCount() ) {
+				updateBufferInterval(start_bl, mBuffer->lineCount()-1);	
+			}
+		}
+		sendPaintEvent(YInterval(YCursor(0,ndy), YBound(YCursor(0,mDrawBuffer.screenHeight()), true))); //XXX optimize with guiScroll
+	}
+	sendPaintEvent(YInterval(YCursor(0,dy), YBound(YCursor(0,ndy), true)));
+	return ndy;
 }
 void YView::deleteFromBufferLine( int bl )
 {

@@ -19,6 +19,8 @@ YBuffer: insert and delete assertions
 
 YBuffer: substitute?
 
+guiScroll
+
 YVisualMode: VisualBlock
 
 YView: redo folding support:

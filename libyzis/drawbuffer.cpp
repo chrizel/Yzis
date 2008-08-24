@@ -252,7 +252,7 @@ int YDrawBuffer::currentHeight() const
 	return dy;
 }
 
-YInterval YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds )
+int YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds, int* shift )
 {
 	int lid = bl - mTopBufferLine;
 	YASSERT(lid <= mContent.count());
@@ -262,22 +262,28 @@ YInterval YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds )
 	for ( int i = 0; i < lid; ++i ) {
 		dy += mContent[i].count();
 	}
+	YASSERT(dy < mScreenHeight);
 	affected.setFrom(YBound(YCursor(0,dy)));
-	int shift = 0;
+	int m_shift = 0;
 	/* apply section */
 	if ( lid == mContent.count() ) {
 		mContent << ds;
 	} else {
 		 /* section size changed? */
-		shift = ds.count() - mContent[lid].count();
+		m_shift = ds.count() - mContent[lid].count();
 		mContent.replace(lid, ds);
+		if ( m_shift > 0 ) { 
+			/* remove out of screen lines */
+			int my_h = currentHeight();
+			int i = mContent.size() - 1;
+			while ( my_h - mContent[i].count() > mScreenHeight ) {
+				my_h -= mContent[i].count();
+				mContent.takeAt(i);
+			}
+		}
 	}
-	/* apply shift */
-	if ( shift ) {
-		dy = mScreenHeight;
-	}
-	affected.setTo(YBound(YCursor(0, dy), true));
-	return affected;
+	if ( shift ) *shift = m_shift;
+	return dy;
 }
 YInterval YDrawBuffer::deleteFromBufferDrawSection( int bl )
 {
@@ -293,6 +299,30 @@ YInterval YDrawBuffer::deleteFromBufferDrawSection( int bl )
 	}
 	affected.setTo(YBound(YCursor(0, dy), true));
 	return affected;
+}
+
+void YDrawBuffer::verticalScroll( int delta ) {
+	mTopBufferLine += delta;
+	if ( delta < 0 ) {
+		delta = qMin(mScreenHeight, -delta);
+		int i = 0;
+		for ( ; i < delta; ++i ) {
+			mContent.insert(0, YDrawSection() << YDrawLine());
+		}
+		// remove out of screen lines
+		for ( ; i < mContent.size() && delta < mScreenHeight; ++i ) {
+			delta += mContent[i].count();
+		}
+		if ( delta >= mScreenHeight ) {
+			while ( i < mContent.size() ) {
+				mContent.takeAt(i);
+			}
+		}
+	} else {
+		for ( int i = 0; i < delta && mContent.size() > 0; ++i ) {
+			mContent.takeAt(i);
+		}
+	}
 }
 
 YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff )
@@ -319,12 +349,15 @@ YDrawBufferIterator YDrawBuffer::iterator( const YInterval& i ) const
 const YDrawSection YDrawBuffer::bufferDrawSection( int bl ) const
 {
 	int lid = bl - mTopBufferLine;
-	YASSERT(0 <= lid && lid < mContent.count());
+	YASSERT(0 <= lid)
+	YASSERT(lid < mContent.count());
 	return mContent[lid];
 }
-int YDrawBuffer::bufferDrawSectionScreenLine( int bl ) const {
+int YDrawBuffer::bufferDrawSectionScreenLine( int bl ) const
+{
 	int lid = bl - mTopBufferLine;
-	YASSERT(0 <= lid && lid < mContent.count());
+	YASSERT(0 <= lid)
+	YASSERT(lid < mContent.count());
 	int sl = 0;
 	for ( int i = 0; i < lid; ++i ) {
 		sl += mContent[i].count();

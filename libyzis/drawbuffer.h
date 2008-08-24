@@ -112,6 +112,9 @@ public:
 	}
 
 	/* TODO: docstring */
+	void verticalScroll( int delta );
+
+	/* TODO: docstring */
 	void setScreenSize( int columns, int lines );
 
 	/* TODO: docstring */
@@ -127,7 +130,7 @@ public:
 	inline const QList<YDrawSection> sections() { return mContent; }
 
 	/* TODO: docstring */
-	YInterval setBufferDrawSection( int bl, YDrawSection ds );
+	int setBufferDrawSection( int bl, YDrawSection ds, int* shift = NULL );
 
 	/* TODO: docstring */
 	YInterval deleteFromBufferDrawSection( int bl );

@@ -643,6 +643,7 @@ public:
 	/*
 	 * TODO: docstring
 	 */
+	void updateBufferInterval( int bl, int bl_last );
 	void updateBufferInterval( const YInterval& bi );
 
 	// TODO: docstring
@@ -662,7 +663,7 @@ private:
 
 
 	// TODO: docstring
-	void setBufferLineContent( int bl, const YLine* yl );
+	int setBufferLineContent( int bl, const YLine* yl );
 	/* TODO: docstring */
 	void deleteFromBufferLine( int bl );
 

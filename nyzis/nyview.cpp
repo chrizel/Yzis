@@ -432,7 +432,7 @@ void NYView::guiUpdateFileInfo()
     restoreFocus();
 }
 
-void NYView::guiUpdateCursor()
+void NYView::guiUpdateCursorPosition()
 {
     restoreFocus();
 }

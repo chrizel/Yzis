@@ -53,7 +53,7 @@ public:
     virtual bool guiPopupFileSaveAs();
     virtual YStatusBarIface* guiStatusBar();
     virtual void guiUpdateFileName();
-    virtual void guiUpdateCursor();
+    virtual void guiUpdateCursorPosition();
     virtual void guiUpdateMode();
     virtual void guiHighlightingChanged();
     virtual void guiNotifyContentChanged(const YSelection&);

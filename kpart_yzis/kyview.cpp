@@ -111,7 +111,7 @@ YStatusBarIface* KYView::guiStatusBar()
     return m_infoBar;
 }
 
-void KYView::guiUpdateCursor()
+void KYView::guiUpdateCursorPosition()
 {
     m_editor->setCursor( viewCursor().screenX(), viewCursor().screenY() );
 }

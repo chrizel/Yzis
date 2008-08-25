@@ -70,7 +70,7 @@ public:
     virtual void guiUpdateFileName();
     virtual void guiUpdateFileInfo();
     virtual void guiUpdateMode();
-    virtual void guiUpdateCursor();
+    virtual void guiUpdateCursorPosition();
     virtual void guiDisplayInfo(const QString&);
 
     virtual void guiHighlightingChanged();

@@ -683,7 +683,7 @@ public:
 
     /** Update the GUI when the cursor position has changed.
      * Updates the status bar and notificates the GUI through
-     * guiUpdateCursor, which should update the editor cursor position.
+     * guiUpdateCursorPosition, which should update the editor cursor position.
      *
      * Can't be called until the GUI has been initialized.
      */

@@ -146,7 +146,7 @@ void NoGuiView::guiUpdateMode()
 {
     dbg() << HERE() << endl;
 }
-void NoGuiView::guiUpdateCursor()
+void NoGuiView::guiUpdateCursorPosition()
 {
     dbg() << HERE() << endl;
 }

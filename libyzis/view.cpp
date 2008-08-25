@@ -286,7 +286,7 @@ void YView::updateCursor()
     if (guiStatusBar())
         guiStatusBar()->setLineInfo(y + 1, viewCursor().bufferX() + 1,
                                     viewCursor().screenX() + 1, percentage);
-    guiUpdateCursor();
+    guiUpdateCursorPosition();
 }
 
 void YView::updateMode()

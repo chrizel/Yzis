@@ -288,7 +288,7 @@ void QYView::guiUpdateFileName()
     mSession->viewFilenameChanged( this, myBuffer()->fileNameShort() );
 }
 
-void QYView::guiUpdateCursor()
+void QYView::guiUpdateCursorPosition()
 {
     mEdit->setCursor(viewCursor().screenX(), viewCursor().screenY());
 }

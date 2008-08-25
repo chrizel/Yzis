@@ -59,7 +59,7 @@ public:
     /** Tells the GUI to update the editor's cursor position.
      * Status bar feedback is handled by YView.
      */
-    virtual void guiUpdateCursor() = 0;
+    virtual void guiUpdateCursorPosition() = 0;
 
     /** Called when buffer's filename has changed.
      * Basic feedback is already handled by YView,

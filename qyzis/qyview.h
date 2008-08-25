@@ -85,7 +85,7 @@ public:
 
     bool guiPopupFileSaveAs();
     virtual void guiUpdateFileName();
-    virtual void guiUpdateCursor();
+    virtual void guiUpdateCursorPosition();
     virtual void guiUpdateMode();
     void guiHighlightingChanged();
 

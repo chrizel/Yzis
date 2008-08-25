@@ -393,13 +393,14 @@ void YView::gotox( int nextx, bool forceGoBehindEOL )
 	int dy = 0;
 	foreach( mWorkDrawLine, mWorkDrawSection ) {
 		if ( (acc_x + mWorkDrawLine.bufferLength() + shift) > nextx ) {
+			// drawLine contains our destination
 			break;
-		} else {
+		} else if ( dy < mWorkDrawSection.count() - 1 ) {
+			// destination is after drawLine, prepare next
 			acc_x += mWorkDrawLine.bufferLength();
 			dy += 1;
 		}
 	}
-	YASSERT((acc_x + mWorkDrawLine.bufferLength() + shift) > nextx);
 
 	workCursor.setScreenY(workCursor.screenY() + dy);
 

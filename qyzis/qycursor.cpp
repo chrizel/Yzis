@@ -69,7 +69,10 @@ void QYCursor::paintEvent( QPaintEvent* pe )
 {
     Q_UNUSED(pe);
 
-    const YDrawCell cell/*( mView->mDrawBuffer.at( mEdit->translateRealToPosition(pos()) ) TODO )*/;
+	YCursor my_pos = mEdit->translateRealToPosition(pos());
+	YDrawBufferIterator it = mEdit->mView->mDrawBuffer.iterator(YInterval(my_pos, my_pos));
+	const YDrawCell cell = it.drawCellInfo().cell;
+
     QColor cbg, cfg;
 
     deepdbg().SPrintf( "paintEvent(): cell string='%s'", qp(cell.c) );

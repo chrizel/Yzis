@@ -146,7 +146,7 @@ void changeCursor( YBuffer*, YView* v )
 void refreshView( YBuffer*, YView* v )
 {
     if ( v )
-        v->refreshScreen();
+        v->sendRefreshEvent();
 }
 void recalcView( YBuffer*, YView* v )
 {
@@ -156,7 +156,7 @@ void recalcView( YBuffer*, YView* v )
 void viewUpdateListChars( YBuffer*, YView* v )
 {
     if ( v && v->getLocalBooleanOption("list") )
-        v->refreshScreen();
+        v->sendRefreshEvent();
 }
 void setSyntax( YBuffer* b, YView* v )
 {

@@ -89,8 +89,6 @@ QYView::QYView ( YBuffer * buffer, QYSession * qysession)
     mEdit->setFocus();
     setFocusProxy( mEdit );
     mVScroll->setMaximum( myBuffer()->lineCount() - 1 );
-	refreshScreen();
-
 }
 
 QYView::~QYView ()
@@ -162,7 +160,7 @@ void QYView::guiNotifyContentChanged( const YSelection& s )
     YSelectionMap m = s.map();
     // convert each interval to QWidget coordinates and update
     for ( int i = 0; i < m.size(); ++i ) {
-        YInterval interval = m[i] - getScreenPosition();
+        YInterval interval = m[i];
         QRect r;
         if ( interval.fromPos().y() == interval.toPos().y() ) {
             r = interval.boundingRect();
@@ -184,16 +182,12 @@ void QYView::guiNotifyContentChanged( const YSelection& s )
     }
 }
 
-void QYView::guiPreparePaintEvent( int min_y, int max_y )
+void QYView::guiPreparePaintEvent()
 {
-    // dbg().sprintf( "guiPreparePaintEvent( min_y=%d, max_y=%d )", min_y, max_y );
     mPainter = new QPainter( mEdit );
-    m_drawBuffer.setCallbackArgument( mPainter );
-    //mEdit->drawMarginLeft( min_y, max_y, mPainter );
 }
 void QYView::guiEndPaintEvent()
 {
-    // dbg() << "guiEndPaintEvent()" << endl;
     delete mPainter;
     mPainter = NULL;
 }
@@ -206,13 +200,13 @@ void QYView::guiPaintEvent( const YSelection& s )
 /*
  * View painting methods
  */
-void QYView::guiDrawCell( QPoint pos, const YDrawCell& cell, void* arg )
+void QYView::guiDrawCell( YCursor pos, const YDrawCell& cell )
 {
-    mEdit->guiDrawCell( pos, cell, (QPainter*)arg );
+    mEdit->guiDrawCell( pos, cell, mPainter );
 }
-void QYView::guiDrawClearToEOL( QPoint pos, const QChar& clearChar )
+void QYView::guiDrawClearToEOL( YCursor pos, const YDrawCell& clearCell )
 {
-    mEdit->guiDrawClearToEOL( pos, clearChar, mPainter );
+    mEdit->guiDrawClearToEOL( pos, clearCell, mPainter );
 }
 void QYView::guiDrawSetMaxLineNumber( int max )
 {
@@ -335,7 +329,5 @@ void QYView::scrollView( int value )
             mVScroll->setValue( value );
     }
 }
-
-
 
 

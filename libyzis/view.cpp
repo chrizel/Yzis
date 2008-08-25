@@ -1,7 +1,7 @@
 /* This file is part of the Yzis libraries
 *  Copyright (C) 2003-2005 Mickael Marchand <marchand@kde.org>,
 *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>.
-*  Copyright (C) 2003-2006 Loic Pauleve <panard@inzenet.org>
+*  Copyright (C) 2003-2008 Loic Pauleve <panard@inzenet.org>
 *  Copyright (C) 2003-2004 Pascal "Poizon" Maillard <poizon@gmx.at>
 *  Copyright (C) 2005 Erlend Hamberg <hamberg@stud.ntnu.no>
 *  Copyright (C) 2005 Scott Newton <scottn@ihug.co.nz>
@@ -38,6 +38,7 @@
 #include "kate/syntaxhighlight.h"
 #include "linesearch.h"
 #include "folding.h"
+#include "drawbuffer.h"
 
 /* System */
 #include <math.h>
@@ -68,9 +69,9 @@ static int nextId = 1;
 
 YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
         :
-          m_drawBuffer(),
+          mDrawBuffer(cols,lines),
           mPreviousChars(""),mLastPreviousChars(""),
-          mainCursor(this), scrollCursor(this), workCursor(this), mVisualCursor(this), keepCursor(this),
+          mainCursor(), workCursor(), mVisualCursor(), keepCursor(),
           id(nextId++)
 {
     dbg().SPrintf("YView( %s, cols=%d, lines=%d )", qp(_b->toString()), cols, lines );
@@ -80,8 +81,6 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     mBuffer = _b;
     _b->addView( this );
     mLineSearch = new YLineSearch( this );
-    mLinesVis = lines;
-    mColumnsVis = cols;
 
     mModePool = new YModePool( this );
 
@@ -89,11 +88,7 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
 
     mFoldPool = new YZFoldPool( this );
 
-    m_drawBuffer.setCallback( this );
-
     stickyCol = 0;
-
-    QString line = mBuffer->textline(scrollCursor.bufferY());
 
     reverseSearch = false;
     mPreviousChars.clear();
@@ -101,25 +96,7 @@ YView::YView(YBuffer *_b, YSession *sess, int cols, int lines)
     mPaintSelection = new YSelection("PAINT");
     selectionPool = new YSelectionPool();
 
-    drawMode = false;
-    rHLnoAttribs = false;
-    rHLAttributesLen = 0;
-
-    sCurLineLength = 0;
-    rCurLineLength = 0;
-
-    rHLnoAttribs = false;
-    rHLAttributesLen = 0;
-    listChar = false;
-    mFillChar = ' ';
-
-    lineDY = 0;
-    tabstop = getLocalIntegerOption("tabstop");
-    wrap = getLocalBooleanOption( "wrap" );
-    rightleft = getLocalBooleanOption( "rightleft" );
-    opt_schema = getLocalIntegerOption( "schema" );
-    opt_list = getLocalBooleanOption( "list" );
-    opt_listchars = getLocalMapOption( "listchars" );
+	updateInternalAttributes();
 
     abortPaintEvent();
 }
@@ -154,38 +131,51 @@ void YView::setupKeys()
     mModePool->registerModifierKeys();
 }
 
-void YView::setVisibleArea(int c, int l, bool refresh)
+void YView::setVisibleArea( int c, int l )
 {
-    dbg() << "YView::setVisibleArea(" << c << "," << l << ");" << endl;
-    mLinesVis = l;
-    mColumnsVis = c;
-    if ( refresh )
+    dbg() << "setVisibleArea(" << c << "," << l << ")" << endl;
+	if ( c != mDrawBuffer.screenWidth() || l != mDrawBuffer.screenHeight() ) {
+		mDrawBuffer.setScreenSize(c, l);
         recalcScreen();
+	}
+}
+
+void YView::updateInternalAttributes()
+{
+    tabstop = getLocalIntegerOption("tabstop");
+    wrap = getLocalBooleanOption( "wrap" );
+    rightleft = getLocalBooleanOption( "rightleft" );
+    opt_list = getLocalBooleanOption( "list" );
+    opt_listchars = getLocalMapOption( "listchars" );
+
+    opt_schema = getLocalIntegerOption( "schema" );
+	YzisHighlighting* highlight = mBuffer->highlight();
+	if ( highlight ) {
+		mHighlightAttributes = highlight->attributes(opt_schema)->data();
+	} else {
+		mHighlightAttributes = NULL;
+	}
 }
 
 void YView::refreshScreen()
 {
-    opt_schema = getLocalIntegerOption( "schema" );
-    opt_list = getLocalBooleanOption( "list" );
-    opt_listchars = getLocalMapOption( "listchars" );
+	updateInternalAttributes();
     sendRefreshEvent();
 }
 void YView::recalcScreen( )
 {
-    tabstop = getLocalIntegerOption( "tabstop" );
-    wrap = getLocalBooleanOption( "wrap" );
-    rightleft = getLocalBooleanOption( "rightleft" );
+	dbg() << "recalcScreen" << endl;
+	updateInternalAttributes();
 
-    YCursor old_pos = scrollCursor.buffer();
-    scrollCursor.reset();
-    if ( wrap ) old_pos.setX( 0 );
-    gotoxy( &scrollCursor, old_pos, false );
-
-    old_pos = mainCursor.buffer();
+    YCursor old_pos = mainCursor.buffer();
     mainCursor.reset();
-    gotoxy( &mainCursor, old_pos );
 
-    sendRefreshEvent();
+	setPaintAutoCommit(false);
+	updateBufferInterval(YInterval(YCursor(0,0), YBound(YCursor(0, mBuffer->lineCount()), true)));
+	sendRefreshEvent();
+	commitPaintEvent();
+
+    gotoxy( &mainCursor, old_pos );
 }
 
 void YView::displayIntro()
@@ -247,7 +237,7 @@ void YView::indent()
 QString YView::centerLine( const QString& s )
 {
     QString spacer = "";
-    int nspaces = mColumnsVis > s.length() ? mColumnsVis - s.length() : 0;
+    int nspaces = mDrawBuffer.screenWidth() > s.length() ? mDrawBuffer.screenWidth() - s.length() : 0;
     nspaces /= 2;
     spacer.fill( ' ', nspaces );
     spacer.append( s );
@@ -326,15 +316,8 @@ void YView::displayInfo(const QString& message)
 
 void YView::centerViewHorizontally( int column)
 {
+	/* TODO */
     // dbg() << "YView::centerViewHorizontally " << column << endl;
-    int newcurrentLeft = 0;
-    if ( column > mColumnsVis / 2 ) newcurrentLeft = column - mColumnsVis / 2;
-    if ( newcurrentLeft != scrollCursor.bufferX() ) {
-        // we are not in wrap mode, so buffer == screen
-        scrollCursor.setBufferX( newcurrentLeft );
-        scrollCursor.setScreenX( newcurrentLeft );
-        sendRefreshEvent();
-    }
 }
 
 void YView::centerViewVertically( int line )
@@ -342,275 +325,135 @@ void YView::centerViewVertically( int line )
     if ( line == -1 )
         line = mainCursor.screenY();
     int newcurrent = 0;
-    if ( line > mLinesVis / 2 ) newcurrent = line - mLinesVis / 2;
+    if ( line > mDrawBuffer.screenHeight() / 2 ) newcurrent = line - mDrawBuffer.screenHeight() / 2;
     alignViewVertically ( newcurrent );
 }
 
 void YView::bottomViewVertically( int line )
 {
     int newcurrent = 0;
-    if ( line >= mLinesVis ) newcurrent = (line - mLinesVis) + 1;
+    if ( line >= mDrawBuffer.screenHeight() ) newcurrent = (line - mDrawBuffer.screenHeight()) + 1;
     alignViewVertically( newcurrent );
 }
 
 void YView::alignViewBufferVertically( int line )
 {
-    // dbg() << "YView::alignViewBufferVertically " << line << endl;
-    int newcurrent = line;
-    int old_dCurrentTop = scrollCursor.screenY();
-    if ( newcurrent > 0 ) {
-        if ( wrap ) {
-            gotodxy( &scrollCursor, scrollCursor.screenX(), newcurrent );
-        } else {
-            scrollCursor.setBufferY( newcurrent );
-            scrollCursor.setScreenY( newcurrent );
-        }
-    } else {
-        scrollCursor.reset();
-    }
-    if ( old_dCurrentTop == scrollCursor.screenY() ) {
-        /* nothing has changed */
-        return ;
-    } else if ( qAbs(old_dCurrentTop - scrollCursor.screenY()) < mLinesVis ) {
-        /* optimization: we can scroll */
-        internalScroll( 0, old_dCurrentTop - scrollCursor.screenY() );
-    } else {
-        sendRefreshEvent();
-    }
-
-    // find the last visible line in the buffer
-    int lastBufferLineVisible = getCurrentTop() + getLinesVisible() - 1;
-
-    if ( wrap ) {
-        YViewCursor temp = scrollCursor;
-        gotodxdy( &temp, getCursor().x(), getDrawCurrentTop() + getLinesVisible() - 1 );
-        lastBufferLineVisible = temp.bufferY();
-    }
-
-    // move cursor if it scrolled off the screen
-    if (getCursor().y() < getCurrentTop())
-        gotoxy(getCursor().x(), getCurrentTop());
-    else if (getCursor().y() > lastBufferLineVisible)
-        gotoxy( getCursor().x(), lastBufferLineVisible );
-
-    updateCursor();
+	/* TODO */
 }
-
 void YView::alignViewVertically( int line )
 {
+	/* TODO */
     // dbg() << "YView::alignViewVertically " << line << endl;
-    int newcurrent = line;
-    int screenX = scrollCursor.screenX();
-    int old_dCurrentTop = scrollCursor.screenY();
-    if ( newcurrent > 0 ) {
-        if ( wrap ) {
-            initGoto( &scrollCursor );
-            gotody( newcurrent );
-            // rLineHeight > 1 => our new top is in middle of a wrapped line, move new top to next line
-            newcurrent = workCursor.bufferY();
-            if ( workCursor.lineHeight > 1 )
-                ++newcurrent;
-            gotoy( newcurrent );
-            gotodx( screenX );
-            applyGoto( &scrollCursor, false );
-        } else {
-            scrollCursor.setBufferY( newcurrent );
-            scrollCursor.setScreenY( newcurrent );
-        }
-    } else {
-        scrollCursor.reset();
-    }
-
-    if ( old_dCurrentTop == scrollCursor.screenY() ) {
-        /* nothing has changed */
-        return ;
-    } else if ( qAbs(old_dCurrentTop - scrollCursor.screenY()) < mLinesVis ) {
-        /* optimization: we can scroll */
-        internalScroll( 0, old_dCurrentTop - scrollCursor.screenY() );
-    } else {
-        sendRefreshEvent();
-    }
 }
 
 /*
  * all the goto-like commands
  */
 
-/* PRIVATE */
-void YView::gotodx( int nextx )
-{
-    YASSERT( nextx >= 0 );
-    YZIS_SAFE_MODE {
-        if ( nextx < 0 ) nextx = 0;
-    }
-    int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 0 : 1;
-    if ( sCurLineLength == 0 ) nextx = 0;
-
-    // WARNING! we must drawPrevCol _before_ drawNextCol because drawPrevCol doesn't support tab!
-    while ( workCursor.screenX() > nextx )
-        if ( ! drawPrevCol( ) ) break;
-    YViewCursor last = workCursor;
-    while ( workCursor.screenX() < nextx && workCursor.bufferX() < sCurLineLength - shift ) {
-        last = workCursor;
-        drawNextCol( );
-    }
-    if ( workCursor.screenX() > nextx )
-        workCursor = last;
-}
-
-void YView::gotox( int nextx, bool forceGoBehindEOL )
-{
-    YASSERT( nextx >= 0 );
-    YZIS_SAFE_MODE {
-        if ( nextx < 0 ) nextx = 0;
-    }
-    int shift = (!drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0) || forceGoBehindEOL ? 1 : 0;
-    if ( nextx >= sCurLineLength ) {
-        if ( sCurLineLength == 0 ) nextx = 0;
-        else nextx = sCurLineLength - 1 + shift;
-    }
-    while ( workCursor.bufferX() > nextx ) {
-        if ( ! wrap || rCurLineLength <= mColumnsVis - shift ) {
-            if ( ! drawPrevCol( ) ) break;
-        } else {
-            if ( ! drawPrevCol( ) ) {
-                if ( workCursor.bufferX() >= nextx && workCursor.wrapNextLine ) drawPrevLine( );
-                else break;
-            }
-        }
-    }
-    bool maywrap = wrap && rCurLineLength + shift > mColumnsVis;
-    while ( workCursor.bufferX() < nextx ) {
-        if ( !maywrap ) {
-            drawNextCol( );
-        } else {
-            while ( drawNextCol() && workCursor.bufferX() < nextx ) ;
-            if ( workCursor.wrapNextLine ) {
-                drawNextLine();
-                maywrap = rCurLineLength + shift > mColumnsVis;
-            } else if ( shift && workCursor.bufferX() == nextx && workCursor.screenX() == mColumnsVis ) {
-                workCursor.wrapNextLine = true;
-                drawNextLine();
-                maywrap = rCurLineLength + shift > mColumnsVis;
-            }
-        }
-    }
-}
 
 void YView::gotody( int nexty )
 {
-    YASSERT( nexty >= 0 );
-    YZIS_SAFE_MODE {
-        if ( nexty < 0 ) nexty = 0;
-    }
-    if ( workCursor.bufferY() >= mBuffer->lineCount() ) nexty = qMax( 0, mBuffer->lineCount() - 1 );
-
-    /* some easy case */
-    if ( nexty == 0 ) {
-        gotoy( 0 );
-    } else if ( nexty == scrollCursor.screenY() ) {
-        gotoy( scrollCursor.bufferY() );
-    } else {
-        /** gotody when cursor is > nexty seems buggy, use gotoy way, I'll try to find a better solution */
-        bool first = true;
-        while ( workCursor.screenY() > nexty ) {
-            if ( first && wrap && rCurLineLength > mColumnsVis ) { // move to begin of line
-                initDraw( 0, workCursor.bufferY(), 0, workCursor.screenY() - workCursor.lineHeight + 1, drawMode );
-                workCursor.lineHeight = workCursor.sLineIncrement = workCursor.bLineIncrement = 1;
-                first = false;
-            }
-            drawPrevLine( );
-            if ( wrap && rCurLineLength > mColumnsVis ) {
-                /* goto begin of line */
-                int wrapLineMinHeight = (int)ceil( rMinCurLineLength / mColumnsVis ) + 1;
-                int wrapLineMaxHeight = (int)ceil( rCurLineLength / mColumnsVis ) + 1;
-                if ( wrapLineMinHeight == wrapLineMaxHeight ) {
-                    workCursor.setScreenY( workCursor.screenY() + 1 - wrapLineMinHeight );
-                } else {
-                    int cury = workCursor.bufferY();
-                    int prevRX = workCursor.screenY();
-                    initDraw( 0, cury, 0, 0, drawMode );
-                    while ( drawNextCol( ) ) ;
-                    while ( workCursor.bufferY() == cury ) {
-                        wrapLineMinHeight = workCursor.lineHeight;
-                        drawNextLine( );
-                        if ( workCursor.bufferY() == cury ) while ( drawNextCol( ) ) ;
-                    }
-                    initDraw ( 0, cury, 0, prevRX - wrapLineMinHeight + 1, drawMode );
-                    workCursor.lineHeight = workCursor.sLineIncrement = workCursor.bLineIncrement = 1;
-                }
-            }
-        }
-        while ( workCursor.screenY() < nexty && workCursor.bufferY() < mBuffer->lineCount() - 1 ) {
-            if ( wrap && ! workCursor.wrapNextLine && rCurLineLength > mColumnsVis ) // make line wrapping
-                while ( drawNextCol( ) ) ;
-            drawNextLine( );
-            if ( wrap && workCursor.screenY() < nexty && rCurLineLength > mColumnsVis ) // move to end of draw line
-                while ( drawNextCol( ) ) ;
-        }
-    }
+	// TODO
+	YASSERT(false);
 }
 
 void YView::gotoy( int nexty )
 {
-    YASSERT( nexty >= 0 );
-    YZIS_SAFE_MODE {
-        if ( nexty < 0 ) nexty = 0;
-    }
-    if ( nexty >= mBuffer->lineCount() ) nexty = qMax( 0, mBuffer->lineCount() - 1 );
+	YASSERT(nexty >= 0);
+	YASSERT(nexty < mBuffer->lineCount());
+	if ( nexty < mDrawBuffer.topBufferLine() ||
+			nexty > mDrawBuffer.bottomBufferLine() ) {
+		dbg() << "gotoy("<<nexty<<") : out of drawbuffer" << endl;
+		// scroll drawbuffer
+		if ( nexty < mDrawBuffer.topBufferLine() ) {
+			int delta = nexty - mDrawBuffer.topBufferLine();   // mDrawBuffer.topBufferLine+delta == nexty
+			mDrawBuffer.verticalScroll(delta);
+			updateBufferInterval(mDrawBuffer.topBufferLine(), mDrawBuffer.topBufferLine()-delta-1);
+		} else {
+			int previousBottomLine = mDrawBuffer.bottomBufferLine();
+			int delta = nexty - mDrawBuffer.bottomBufferLine();
+			mDrawBuffer.verticalScroll(delta);
+			updateBufferInterval(previousBottomLine+1, nexty);
+		}
+		sendRefreshEvent(); //XXX optimize with guiScroll
+	}
+	mWorkDrawSection = mDrawBuffer.bufferDrawSection(nexty);
+	workCursor.setBufferY(nexty);
+	workCursor.setScreenY(mDrawBuffer.bufferDrawSectionScreenLine(nexty));
+}
 
-    /* some easy case */
-    if ( nexty == 0 ) {
-        initDraw( 0, 0, 0, 0, drawMode );
-        workCursor.lineHeight = workCursor.sLineIncrement = workCursor.bLineIncrement = 1;
-    } else if ( nexty == scrollCursor.bufferY() ) {
-        bool old_drawMode = drawMode;
-        initDraw( ); // XXX
-        drawMode = old_drawMode;
-        workCursor.lineHeight = workCursor.sLineIncrement = workCursor.bLineIncrement = 1;
-    } else if ( nexty != workCursor.bufferY() ) {
-        bool first = true;
-        while ( workCursor.bufferY() > nexty ) {
-            if ( first && wrap && rCurLineLength > mColumnsVis ) { // move to begin of line
-                initDraw( 0, workCursor.bufferY(), 0, workCursor.screenY() - workCursor.lineHeight + 1, drawMode );
-                workCursor.lineHeight = workCursor.sLineIncrement = workCursor.bLineIncrement = 1;
-                first = false;
-            }
-            drawPrevLine( );
-            if ( wrap && rCurLineLength > mColumnsVis ) {
-                /* goto begin of line */
-                int wrapLineMinHeight = (int)ceil( rMinCurLineLength / mColumnsVis ) + 1;
-                int wrapLineMaxHeight = (int)ceil( rCurLineLength / mColumnsVis ) + 1;
-                if ( wrapLineMinHeight == wrapLineMaxHeight ) {
-                    workCursor.setScreenY( workCursor.screenY() + 1 - wrapLineMinHeight );
-                } else {
-                    int cury = workCursor.bufferY();
-                    int prevRX = workCursor.screenY();
-                    initDraw( 0, cury, 0, 0, drawMode );
-                    while ( drawNextCol( ) ) ;
-                    while ( workCursor.bufferY() == cury ) {
-                        wrapLineMinHeight = workCursor.lineHeight;
-                        drawNextLine( );
-                        if ( workCursor.bufferY() == cury ) while ( drawNextCol( ) ) ;
-                    }
-                    initDraw ( 0, cury, 0, prevRX - wrapLineMinHeight + 1, drawMode );
-                    workCursor.lineHeight = workCursor.sLineIncrement = workCursor.bLineIncrement = 1;
-                }
-            }
-        }
-        while ( workCursor.bufferY() < nexty ) {
-            if ( wrap && ! workCursor.wrapNextLine && rCurLineLength > mColumnsVis ) // move to end of draw line
-                while ( drawNextCol( ) );
-            drawNextLine( );
-            if ( wrap && workCursor.bufferY() < nexty && rCurLineLength > mColumnsVis ) // move to end of draw line
-                while ( drawNextCol( ) ) ;
-        }
-    }
+void YView::gotox( int nextx, bool forceGoBehindEOL )
+{
+	YASSERT(nextx >= 0);
+	//TODO check this forceGoBehindEOL parameter...
+	int shift = (mWorkDrawLine.bufferLength() == 0 || forceGoBehindEOL || mModePool->current()->isEditMode()) ? 1 : 0;
+
+	/* select targeted YDrawLine */
+	int acc_x = 0;
+	int dy = 0;
+	foreach( mWorkDrawLine, mWorkDrawSection ) {
+		if ( (acc_x + mWorkDrawLine.bufferLength() + shift) > nextx ) {
+			// drawLine contains our destination
+			break;
+		} else if ( dy < mWorkDrawSection.count() - 1 ) {
+			// destination is after drawLine, prepare next
+			acc_x += mWorkDrawLine.bufferLength();
+			dy += 1;
+		}
+	}
+
+	workCursor.setScreenY(workCursor.screenY() + dy);
+
+	int acc_dx = 0;
+
+	QList<int>::const_iterator it = mWorkDrawLine.steps().constBegin();
+	for( ; it!=mWorkDrawLine.steps().constEnd() && acc_x < nextx; ++acc_x, ++it ) {
+		acc_dx += *it;
+	}
+	if ( shift && acc_x < nextx ) {
+		acc_dx += 1;
+		if ( acc_dx == mDrawBuffer.screenWidth() ) {
+			acc_dx = 0;
+			workCursor.setScreenY(workCursor.screenY()+1);
+		}
+		acc_x += 1;
+	}
+	workCursor.setBufferX(acc_x);
+	workCursor.setScreenX(acc_dx);
+}
+
+void YView::gotodx( int nextx )
+{
+	//TODO: directly support nextx > screenWidth
+	int shift = (mWorkDrawLine.bufferLength() == 0 || mModePool->current()->isEditMode()) ? 1 : 0;
+	YASSERT(0 <= nextx && nextx < (mDrawBuffer.screenWidth()+shift));
+
+
+	mWorkDrawLine = mWorkDrawSection.at(0);
+
+	int acc_x = 0;
+	int acc_dx = 0;
+	foreach( int step, mWorkDrawLine.steps() ) {
+		acc_dx += step;
+		if ( acc_dx > nextx ) {
+			break;
+		}
+		++acc_x;
+	}
+	if ( shift && acc_dx < nextx ) {
+		acc_dx += 1;
+		if ( acc_dx == mDrawBuffer.screenWidth() ) {
+			acc_dx = 0;
+			workCursor.setScreenY(workCursor.screenY()+1);
+		}
+		acc_x += 1;
+	}
+	workCursor.setScreenX(acc_dx);
+	workCursor.setBufferX(acc_x);
 }
 
 void YView::initGoto( YViewCursor* viewCursor )
 {
-    initDraw( viewCursor->bufferX(), viewCursor->bufferY(), viewCursor->screenX(), viewCursor->screenY(), false );
     workCursor = *viewCursor;
 }
 
@@ -626,12 +469,6 @@ void YView::applyGoto( YViewCursor* viewCursor, bool applyCursor )
         applyCursor = false;
     }
 
-
-    /* dbg() << "applyGoto: "
-       << "dColLength=" << dColLength << "; dLineLength=" << dLineLength << "; mLineLength=" << mLineLength
-       << "; dWrapNextLine=" << dWrapNextLine << "; dWrapTab=" << dWrapTab << endl;
-     dbg() << "mCursor:" << *mCursor << "; dCursor:" << *dCursor << endl; */
-
     if ( applyCursor ) {
 
         setPaintAutoCommit( false );
@@ -642,10 +479,8 @@ void YView::applyGoto( YViewCursor* viewCursor, bool applyCursor )
             centerViewHorizontally( mainCursor.screenX( ) );
         }
         if ( !isLineVisible( mainCursor.screenY() ) ) {
-            if ( mainCursor.screenY() >= mLinesVis + scrollCursor.screenY() )
-                bottomViewVertically( mainCursor.screenY() );
-            else
-                alignViewVertically( mainCursor.screenY() );
+			dbg() << "applyGoto: cursor is out of screen! TODO" << endl;
+			YASSERT(false);
         }
         commitPaintEvent();
         updateCursor( );
@@ -676,19 +511,6 @@ void YView::gotodxy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCu
     initGoto( viewCursor );
     gotoy( mFoldPool->lineHeadingFold( nexty ) );
     gotodx( nextx );
-    applyGoto( viewCursor, applyCursor );
-}
-
-/* goto xdraw, ybuffer */
-void YView::gotoxdy( int nextx, int nexty, bool applyCursor )
-{
-    gotoxdy( &mainCursor, nextx, nexty, applyCursor );
-}
-void YView::gotoxdy( YViewCursor* viewCursor, int nextx, int nexty, bool applyCursor )
-{
-    initGoto( viewCursor );
-    gotody( nexty );
-    gotox( nextx );
     applyGoto( viewCursor, applyCursor );
 }
 
@@ -906,40 +728,6 @@ void YView::applyStartPosition( const YCursor pos )
     }
 }
 
-/**
- * initChanges and applyChanges are called by the buffer to inform the view that there are
- * changes around x,y. Each view have to find what they have to redraw, depending
- * of the wrap option, and of course window size.
- */
-void YView::initChanges( QPoint pos)
-{
-    beginChanges = pos;
-    origPos = mainCursor.buffer();
-    lineDY = 1;
-    if ( wrap && pos.y() < mBuffer->lineCount() ) {
-        gotoxy( qMax( 1, mBuffer->getLineLength( pos.y() ) ) - 1, pos.y(), false );
-        lineDY = mainCursor.screenY();
-    }
-    gotoxy( pos, false );
-}
-void YView::applyChanges( int y )
-{
-    int dY = mainCursor.screenY() + 1 - mainCursor.lineHeight;
-    if ( y != beginChanges.y() ) {
-        sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor.screenY() ) );
-    } else {
-        if ( wrap ) {
-            gotoxy( qMax( 1, mBuffer->getLineLength( y ) ) - 1, y, false );
-            if ( mainCursor.screenY() != lineDY )
-                sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, mLinesVis - ( dY - scrollCursor.screenY() ) );
-            else
-                sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, 1 + mainCursor.screenY() - dY );
-        } else
-            sendPaintEvent( scrollCursor.screenX(), dY, mColumnsVis, 1 );
-    }
-    gotoxy( origPos, false );
-}
-
 QString YView::append ()
 {
     mModePool->change( YMode::ModeInsert );
@@ -958,368 +746,13 @@ void YView::commitUndoItem()
 
 bool YView::isColumnVisible( int column, int ) const
 {
-    return ! (column < scrollCursor.screenX() || column >= (scrollCursor.screenX() + mColumnsVis));
+	/* TODO */
+	return true;
 }
 bool YView::isLineVisible( int l ) const
 {
-    return ( ( l >= scrollCursor.screenY() ) && ( l < mLinesVis + scrollCursor.screenY() ) );
-}
-
-/* update sCurLine information */
-void YView::updateCurLine( )
-{
-    sCurLineLength = sCurLine.length();
-    if ( wrap && ! drawMode ) {
-        int nbTabs = sCurLine.count( '\t' );
-        rMinCurLineLength = sCurLineLength;
-        rCurLineLength = rMinCurLineLength + nbTabs * ( tablength - 1 );
-    }
-}
-
-int YView::initDrawContents( int clipy )
-{
-    if ( ! wrap ) {
-        initDraw( getCurrentLeft(), clipy, getDrawCurrentLeft(), clipy, true );
-    } else {
-        int currentY = getDrawCurrentTop();
-        initDraw();
-        drawMode = true;
-        while ( currentY < clipy && drawNextLine() ) {
-            while ( drawNextCol() );
-            currentY += drawHeight();
-        }
-        clipy = currentY;
-    }
-    return clipy;
-}
-
-void YView::initDraw( )
-{
-    initDraw( scrollCursor.bufferX(), scrollCursor.bufferY(), scrollCursor.screenX(), scrollCursor.screenY() );
-}
-
-/**
- * initDraw is called before each cursor/draw manipulation.
- */
-void YView::initDraw( int sLeft, int sTop, int rLeft, int rTop, bool draw )
-{
-    sCurrentLeft = sLeft;
-    sCurrentTop = sTop;
-    rCurrentLeft = rLeft;
-    rCurrentTop = rTop;
-
-    workCursor.setBufferX( sCurrentLeft );
-    workCursor.setBufferY( sCurrentTop );
-    workCursor.setScreenX( rCurrentLeft );
-    workCursor.setScreenY( rCurrentTop );
-
-    workCursor.sColIncrement = 1;
-    workCursor.bLineIncrement = 0;
-    workCursor.sLineIncrement = 0;
-
-    workCursor.lineHeight = 1;
-
-    workCursor.spaceFill = 0;
-
-    adjust = false;
-
-    tablength = tabstop;
-    areaModTab = ( tablength - mColumnsVis % tablength ) % tablength;
-
-    workCursor.wrapNextLine = false;
-    if ( workCursor.bufferY() < mBuffer->lineCount() ) {
-        sCurLine = mBuffer->textline ( workCursor.bufferY() );
-        if ( sCurLine.isNull() ) sCurLine = "";
-    } else sCurLine = "";
-
-    drawMode = draw;
-    updateCurLine( );
-}
-
-bool YView::drawPrevLine( )
-{
-    if ( ! workCursor.wrapNextLine ) {
-        if ( workCursor.lineHeight > 1 ) {
-            workCursor.sLineIncrement = 0;
-            --workCursor.lineHeight;
-        } else {
-            workCursor.sLineIncrement = 1;
-            workCursor.lineHeight = 1;
-        }
-        workCursor.setBufferX( sCurrentLeft );
-        workCursor.setBufferY( mFoldPool->lineHeadingFold( workCursor.bufferY() - workCursor.sLineIncrement ) );
-        workCursor.setScreenX( rCurrentLeft );
-        if ( workCursor.sLineIncrement == 0 && workCursor.bLineIncrement > 0 ) {
-            workCursor.sLineIncrement = 1;
-        }
-        workCursor.spaceFill = 0;
-        workCursor.bLineIncrement = 1;
-        workCursor.sColIncrement = 1;
-    } else {
-        workCursor.setScreenX( mColumnsVis - workCursor.sColIncrement );
-        workCursor.spaceFill = workCursor.spaceFill - areaModTab;
-        --workCursor.lineHeight;
-    }
-    workCursor.setScreenY( workCursor.screenY() - workCursor.sLineIncrement );
-    workCursor.sLineIncrement = 1;
-
-    if ( workCursor.bufferY() < mBuffer->lineCount() ) {
-        if ( ! workCursor.wrapNextLine ) {
-            sCurLine = mBuffer->textline( workCursor.bufferY() );
-            updateCurLine( );
-        }
-        if ( rCurrentLeft > 0 && ! workCursor.wrapNextLine ) {
-            workCursor.setScreenX( 0 );
-            workCursor.setBufferX( 0 );
-            gotodx( rCurrentLeft );
-        }
-        if ( ( workCursor.screenY() - rCurrentTop ) < mLinesVis ) {
-            return true;
-        }
-    } else {
-        sCurLine = "";
-        sCurLineLength = sCurLine.length();
-    }
-    workCursor.wrapNextLine = false;
-    return false;
-}
-
-bool YView::drawNextLine( )
-{
-    if ( ! workCursor.wrapNextLine ) {
-        workCursor.setBufferX( sCurrentLeft );
-        workCursor.setBufferY( mFoldPool->lineAfterFold( workCursor.bufferY() + workCursor.bLineIncrement ) );
-        workCursor.setScreenX( rCurrentLeft );
-        if ( workCursor.sLineIncrement == 0 && workCursor.bLineIncrement > 0 ) {
-            // this is need when drawNextCol is called before drawNextLine ( when scrolling )
-            workCursor.sLineIncrement = 1;
-        }
-        workCursor.spaceFill = 0;
-        workCursor.bLineIncrement = 1;
-        workCursor.lineHeight = 1;
-    } else {
-        if ( workCursor.wrapTab ) workCursor.setBufferX( workCursor.bufferX() - 1 );
-        workCursor.setScreenX( 0 );
-        workCursor.spaceFill = ( workCursor.spaceFill + areaModTab ) % tablength;
-        ++workCursor.lineHeight;
-        if ( workCursor.sLineIncrement == 0 ) {
-            workCursor.sLineIncrement = 1;
-        }
-    }
-    workCursor.setScreenY( workCursor.screenY() + workCursor.sLineIncrement );
-    workCursor.sLineIncrement = 1;
-
-    if ( workCursor.bufferY() < mBuffer->lineCount() ) {
-        YLine* yl = drawMode ? mBuffer->yzline( workCursor.bufferY(), false ) : NULL;
-        if ( ! workCursor.wrapNextLine ) {
-            sCurLine = drawMode ? yl->data() : mBuffer->textline( workCursor.bufferY() );
-            updateCurLine( );
-        }
-        if ( rCurrentLeft > 0 && ! workCursor.wrapNextLine ) {
-            workCursor.setBufferX( 0 );
-            workCursor.setScreenX( 0 );
-            adjust = true;
-            gotodx( rCurrentLeft );
-            adjust = false;
-            if ( drawMode ) {
-                if ( scrollCursor.bufferX() > 0 )
-                    workCursor.spaceFill = ( tablength - scrollCursor.bufferX() % tablength ) % tablength;
-                if ( workCursor.screenX() > rCurrentLeft ) {
-                    workCursor.setBufferX( workCursor.bufferX() - 1 );
-                    workCursor.setScreenX( rCurrentLeft );
-                }
-            }
-        }
-        if ( drawMode && ( workCursor.screenY() - rCurrentTop ) < mLinesVis ) {
-            m_lineFiller = ' ';
-            m_lineMarker = ' ';
-            if ( mFoldPool->isHead( workCursor.bufferY() ) ) {
-                m_lineFiller = '-';
-                m_lineMarker = '+';
-            }
-            rHLa = NULL;
-            if ( yl->length() != 0 )
-                rHLa = yl->attributes();
-            rHLnoAttribs = !rHLa;
-            rHLa = rHLa + workCursor.bufferX() - 1;
-            rHLAttributes = 0L;
-            YzisHighlighting * highlight = mBuffer->highlight();
-            if ( highlight )
-                rHLAttributes = highlight->attributes( opt_schema )->data( );
-            rHLAttributesLen = rHLAttributes ? highlight->attributes( opt_schema )->size() : 0;
-            return true;
-        }
-    } else {
-        sCurLine = "";
-        sCurLineLength = sCurLine.length();
-    }
-    workCursor.wrapNextLine = false;
-    return false;
-}
-
-bool YView::drawPrevCol( )
-{
-    workCursor.wrapNextLine = false;
-    int shift = !drawMode && mModePool->current()->isEditMode() && sCurLineLength > 0 ? 1 : 0;
-    if ( workCursor.bufferX() >= workCursor.bColIncrement ) {
-        int curx = workCursor.bufferX() - 1;
-        workCursor.setBufferX( curx );
-        lastChar = sCurLine.at( curx );
-        if ( lastChar != tabChar ) {
-            workCursor.sColIncrement = 1;
-            if ( workCursor.screenX() >= workCursor.sColIncrement )
-                workCursor.setScreenX( workCursor.screenX() - workCursor.sColIncrement );
-            else
-                workCursor.wrapNextLine = ( wrap && rCurLineLength > mColumnsVis - shift && workCursor.screenX() == 0 && workCursor.bufferX() > 0 );
-            workCursor.bLineIncrement = workCursor.wrapNextLine ? 0 : 1;
-        } else {
-            /* go back to begin of line */
-            initDraw( 0, workCursor.bufferY(), 0, workCursor.screenY() - workCursor.lineHeight + 1, drawMode );
-            return false;
-        }
-    }
-    return ! workCursor.wrapNextLine;
-}
-
-bool YView::drawNextCol( )
-{
-    bool ret = false;
-
-    int curx = workCursor.bufferX();
-    bool lastCharWasTab = workCursor.lastCharWasTab;
-
-    int nextLength = ( drawMode ? 0 : 1 );
-
-    workCursor.sColIncrement = 1;
-    workCursor.wrapNextLine = false;
-    workCursor.lastCharWasTab = false;
-
-    if ( curx < sCurLineLength ) {
-        int lenToTest;
-        lastChar = sCurLine.at( curx );
-        mFillChar = ' ';
-        if ( lastChar != tabChar ) {
-            listChar = drawMode && opt_list && lastChar == ' ';
-            if ( listChar ) {
-                if ( stringHasOnlySpaces(sCurLine.mid(curx) ) && opt_listchars[ "trail" ].length() > 0 ) {
-                    lastChar = opt_listchars["trail"][0];
-                } else if ( opt_listchars["space"].length() > 0 ) {
-                    lastChar = opt_listchars["space"][0];
-                }
-            }
-            workCursor.sColIncrement = 1;
-            lenToTest = workCursor.sColIncrement;
-        } else {
-            workCursor.lastCharWasTab = true;
-            lastChar = ' ';
-            listChar = drawMode && opt_list;
-            if ( listChar ) {
-                if ( opt_listchars["tab"].length() > 0 ) {
-                    lastChar = opt_listchars["tab"][0];
-                    if ( opt_listchars["tab"].length() > 1 )
-                        mFillChar = opt_listchars["tab"][1];
-                    if ( workCursor.wrapTab )
-                        lastChar = mFillChar;
-                }
-            }
-            if ( workCursor.screenX( ) == scrollCursor.bufferX() )
-                workCursor.sColIncrement = ( workCursor.spaceFill ? workCursor.spaceFill : tablength );
-            else {
-                // calculate tab position
-                int mySpaceFill = ( scrollCursor.bufferX() == 0 ? workCursor.spaceFill : 0 ); // do not care about rSpaceFill if we arent't in wrapped mode
-                if ( workCursor.screenX() >= mySpaceFill )
-                    workCursor.sColIncrement = ( ( workCursor.screenX() - mySpaceFill ) / tablength + 1 ) * tablength + mySpaceFill - workCursor.screenX();
-                else
-                    workCursor.sColIncrement = mySpaceFill + 1 - workCursor.screenX();
-            }
-            if ( drawMode ) lenToTest = 1;
-            else lenToTest = workCursor.sColIncrement;
-        }
-
-        // will our new char appear in the area ?
-        ret = adjust || workCursor.screenX() + lenToTest - scrollCursor.screenX() <= mColumnsVis - nextLength;
-
-        if ( ret || ! drawMode ) {
-            // moving cursors
-            workCursor.setScreenX( workCursor.screenX() + workCursor.sColIncrement );
-            workCursor.setBufferX( workCursor.bufferX() + workCursor.bColIncrement );
-            // update HL
-            if ( drawMode ) rHLa += workCursor.bColIncrement;
-        }
-    } else if ( sCurLineLength == 0 && drawMode && curx == 0 ) { // empty line
-        ret = true;
-        lastChar = ' ';
-        workCursor.setScreenX( 1 );
-        workCursor.setBufferX( 1 );
-    }
-
-    if ( wrap ) {
-        // screen pos
-        int sx = workCursor.screenX() + nextLength + ( (ret || !drawMode) ? 0 : workCursor.sColIncrement );
-        // buff pos
-        int bx = curx + ( drawMode ? 0 : workCursor.bColIncrement );
-        workCursor.wrapNextLine = sx > mColumnsVis;
-        if ( bx == sCurLineLength ) { // wrap a tab at EOL
-            workCursor.wrapNextLine &= ( drawMode ? lastCharWasTab : workCursor.lastCharWasTab );
-        } else {
-            workCursor.wrapNextLine &= bx < sCurLineLength;
-        }
-    }
-
-    // only remember of case where wrapNextLine is true ( => we will wrap a tab next drawNextCol )
-    workCursor.lastCharWasTab &= workCursor.wrapNextLine;
-
-    // wrapNextLine is true, we are out of area ( ret is false ), last char was a tab => we are wrapping a tab
-    workCursor.wrapTab = false;
-    if ( workCursor.wrapNextLine ) {
-        if ( drawMode ) {
-            workCursor.wrapTab = ! ret && lastCharWasTab;
-        } else {
-            workCursor.wrapTab = workCursor.lastCharWasTab && workCursor.screenX() > mColumnsVis;
-        }
-    }
-    // do not increment line buffer if we are wrapping a line
-    workCursor.bLineIncrement = workCursor.wrapNextLine ? 0 : 1;
-
-    /* if ( !drawMode && (workCursor.bufferY() == 12 || workCursor.bufferY() == 13 ) ) {
-      workCursor.debug();
-      dbg() << ret << endl;
-     }
-    */ 
-    return ret;
-}
-
-const QChar& YView::fillChar() const
-{
-    return mFillChar;
-}
-const QChar& YView::drawChar() const
-{
-    return lastChar;
-}
-const QChar& YView::drawLineFiller() const
-{
-    return m_lineFiller;
-}
-const QChar& YView::drawLineMarker() const
-{
-    return m_lineMarker;
-}
-int YView::drawLength() const
-{
-    return workCursor.sColIncrement;
-}
-int YView::drawHeight() const
-{
-    return workCursor.sLineIncrement;
-}
-int YView::lineIncrement() const
-{
-    return workCursor.bLineIncrement;
-}
-int YView::lineHeight() const
-{
-    return workCursor.lineHeight;
+	/* screen line */
+	return l >= 0 and l < mDrawBuffer.screenWidth();
 }
 
 const YColor& YView::drawColor ( int col, int line ) const
@@ -1333,118 +766,12 @@ const YColor& YView::drawColor ( int col, int line ) const
         hl = yl->attributes(); //attributes of this line
         hl += col; // -1 ? //move pointer to the correct column
         int len = hl ? highlight->attributes( 0 )->size() : 0 ; //length of attributes
-        int schema = getLocalIntegerOption("schema");
-        YzisAttribute *list = highlight->attributes( schema )->data( ); //attributes defined by the syntax highlighting document
-        at = ( ( *hl ) >= len ) ? &list[ 0 ] : &list[*hl]; //attributes pointed by line's attribute for current column
+        at = ( ( *hl ) >= len ) ? &mHighlightAttributes[ 0 ] : &mHighlightAttributes[*hl]; //attributes pointed by line's attribute for current column
     }
     if ( opt_list && ( yl->data().at(col) == ' ' || yl->data().at(col) == tabChar ) )
         return blue;
     if ( at ) return at->textColor(); //textcolor :)
     return color_null;
-}
-
-const YColor& YView::drawColor()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-
-    if ( listChar ) return blue; //XXX make custom
-    else if ( curAt ) return curAt->textColor();
-    else return color_null;
-}
-
-const YColor& YView::drawSelColor()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-
-    if ( listChar ) return color_null; //XXX make custom
-    else if ( curAt ) return (*curAt).selectedTextColor();
-    else return color_null;
-}
-
-const YColor& YView::drawBgColor()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-
-    if ( listChar ) return color_null; //XXX make custom
-    else if ( curAt ) return (*curAt).bgColor();
-    else return color_null;
-}
-
-const YColor& YView::drawBgSelColor()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-
-    if ( listChar ) return color_null; //XXX make custom
-    else if ( curAt ) return (*curAt).selectedBGColor();
-    else return color_null;
-}
-
-bool YView::drawBold()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-    if ( curAt )
-        return (*curAt).bold();
-    return false;
-}
-
-bool YView::drawItalic()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-    if ( curAt )
-        return (*curAt).italic();
-    return false;
-}
-
-bool YView::drawUnderline()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-    if ( curAt )
-        return (*curAt).underline();
-    return false;
-}
-
-bool YView::drawOverline()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-    if ( curAt )
-        return (*curAt).overline();
-    return false;
-}
-
-bool YView::drawStrikeOutLine()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-    if ( curAt )
-        return (*curAt).strikeOut();
-    return false;
-}
-
-const YColor& YView::drawOutline()
-{
-    curAt = ( rHLnoAttribs || (*rHLa) >= rHLAttributesLen ) ? &rHLAttributes[ 0 ] : &rHLAttributes[*rHLa];
-
-    if ( listChar ) return color_null; //XXX make custom
-    else if ( curAt ) return (*curAt).outline();
-    else return color_null;
-}
-
-int YView::drawLineNumber() const
-{
-    return workCursor.bufferY( ) + 1;
-}
-
-int YView::drawTotalHeight()
-{
-    int totalHeight = 0;
-    int nb = mBuffer->lineCount();
-    if ( nb > 0 ) {
-        YViewCursor cursor = viewCursor();
-        int x = mBuffer->textline( nb - 1 ).length();
-        if ( x > 0 ) --x;
-        gotoxy( &cursor, x, nb - 1 );
-        totalHeight = cursor.screenY() + 1;
-    }
-    return totalHeight;
 }
 
 void YView::printToFile( const QString& /*path*/ )
@@ -1539,8 +866,8 @@ void YView::gotoStickyCol( YViewCursor* viewCursor, int Y, bool applyCursor )
     if ( stickyCol == STICKY_COL_ENDLINE )
         gotoxy( viewCursor, mBuffer->textline( Y ).length(), Y, applyCursor );
     else {
-        int col = stickyCol % mColumnsVis;
-        int deltaY = stickyCol / mColumnsVis;
+        int col = stickyCol % mDrawBuffer.screenWidth();
+        int deltaY = stickyCol / mDrawBuffer.screenWidth();
         if ( deltaY == 0 ) {
             gotodxy( viewCursor, col, Y, applyCursor );
         } else {
@@ -1592,7 +919,9 @@ void YView::updateStickyCol( )
 }
 void YView::updateStickyCol( YViewCursor* viewCursor )
 {
-    stickyCol = ( viewCursor->lineHeight - 1 ) * mColumnsVis + viewCursor->screenX();
+	/* TODO 
+    stickyCol = ( viewCursor->lineHeight - 1 ) * mDrawBuffer.screenWidth() + viewCursor->screenX();
+	*/
 }
 
 void YView::commitNextUndo()
@@ -1609,11 +938,7 @@ const YCursor YView::getBufferCursor() const
 }
 YCursor YView::getRelativeScreenCursor() const
 {
-    return (QPoint)mainCursor.screen() - scrollCursor.screen();
-}
-YCursor YView::getScreenPosition() const
-{
-    return scrollCursor.screen();
+    return (QPoint)mainCursor.screen();
 }
 
 void YView::recordMacro( const QList<QChar> &regs )
@@ -1636,8 +961,8 @@ void YView::stopRecordMacro()
 
 YSelection YView::clipSelection( const YSelection& sel ) const
 {
-    YCursor bottomRight = scrollCursor.screen() + YCursor(getColumnsVisible() - 1, getLinesVisible() - 1);
-    return sel.clip( YInterval(scrollCursor.screen(), bottomRight) );
+    YCursor bottomRight = YCursor(getColumnsVisible() - 1, getLinesVisible() - 1);
+    return sel.clip(YInterval(YCursor(0,0), bottomRight));
 }
 
 void YView::setPaintAutoCommit( bool enable )
@@ -1651,15 +976,14 @@ void YView::setPaintAutoCommit( bool enable )
 
 void YView::commitPaintEvent()
 {
-    if ( m_paintAutoCommit == 0 ) return ;
-    if ( --m_paintAutoCommit == 0 ) {
+    if ( m_paintAutoCommit == 0 || --m_paintAutoCommit == 0 ) {
         if ( keepCursor.valid() ) {
             mainCursor = keepCursor;
             keepCursor.invalidate();
             applyGoto( &mainCursor );
         }
         if ( ! mPaintSelection->isEmpty() ) {
-            guiNotifyContentChanged( clipSelection(*mPaintSelection) );
+            guiNotifyContentChanged(clipSelection(*mPaintSelection));
         }
         abortPaintEvent();
     }
@@ -1675,12 +999,13 @@ void YView::sendCursor( YViewCursor cursor )
 {
     keepCursor = cursor;
 }
-void YView::sendPaintEvent( const YCursor from, const YCursor to )
+void YView::sendPaintEvent( const YInterval& i )
 {
-    m_paintAll = false;
-    setPaintAutoCommit( false );
-    mPaintSelection->addInterval( YInterval( from, to ) );
-    commitPaintEvent();
+	if ( i.valid() ) {
+		setPaintAutoCommit(false);
+		mPaintSelection->addInterval(i);
+		commitPaintEvent();
+	}
 }
 void YView::sendPaintEvent( int curx, int cury, int curw, int curh )
 {
@@ -1688,7 +1013,11 @@ void YView::sendPaintEvent( int curx, int cury, int curw, int curh )
         dbg() << "Warning: YView::sendPaintEvent with height = 0" << endl;
         return ;
     }
-    sendPaintEvent( YCursor(curx, cury), YCursor(curx + curw, cury + curh - 1) );
+    sendPaintEvent(YInterval(YCursor(curx, cury), YCursor(curx + curw, cury + curh - 1)));
+}
+void YView::sendPaintEvent( const YCursor from, const YCursor to )
+{
+	sendPaintEvent(YInterval(from, to));
 }
 void YView::sendPaintEvent( YSelectionMap map, bool isBufferMap )
 {
@@ -1707,32 +1036,15 @@ void YView::sendPaintEvent( YSelectionMap map, bool isBufferMap )
     mPaintSelection->addMap( map );
     commitPaintEvent();
 }
-void YView::sendBufferPaintEvent( int line, int n )
-{
-    YViewCursor vCursor = viewCursor();
-    if ( wrap ) {
-        gotoxy( &vCursor, 0, line );
-        line = vCursor.screenY();
-    }
-    if ( isLineVisible( line ) ) {
-        if ( wrap ) {
-            gotoxy( &vCursor, 0, line + n );
-            n = vCursor.screenY() - line;
-        }
-        sendPaintEvent( getDrawCurrentLeft(), line, getColumnsVisible(), n );
-    }
-}
 
 void YView::sendRefreshEvent( )
 {
     mPaintSelection->clear();
-    m_paintAll = true;
-    sendPaintEvent( getDrawCurrentLeft(), getDrawCurrentTop(), getColumnsVisible(), getLinesVisible() );
+    sendPaintEvent(YInterval(YCursor(0,0), YBound(YCursor(0,mDrawBuffer.screenHeight()), true)));
 }
 
 void YView::removePaintEvent( const YCursor from, const YCursor to )
 {
-    m_paintAll = false;
     mPaintSelection->delInterval( YInterval( from, to ) );
 }
 
@@ -1764,165 +1076,237 @@ void YView::saveInputBuffer()
     mLastPreviousChars = mPreviousChars;
 }
 
-const int YView::getId() const
-{
-    return id;
-}
-
 void YView::internalScroll( int dx, int dy )
 {
-    m_drawBuffer.Scroll( dx, dy );
+    //mDrawBuffer.Scroll( dx, dy ); TODO
     guiScroll( dx, dy );
 }
 
-/**
- * default implementation for guiPaintEvent
- */
+int YView::getCurrentTop() const
+{
+	return mDrawBuffer.topBufferLine();
+}
+int YView::getLinesVisible() const
+{
+	return mDrawBuffer.screenHeight();
+}
+int YView::getColumnsVisible() const
+{
+	return mDrawBuffer.screenWidth();
+}
+
+void YView::updateBufferInterval( const YInterval& bi )
+{
+	int last_bl = bi.toPos().line();
+	if ( bi.to().opened() && bi.toPos().column() == 0 )
+		--last_bl;
+	return updateBufferInterval(bi.fromPos().line(), last_bl);
+}
+
+void YView::updateBufferInterval( int bl, int bl_last )
+{
+	YASSERT(bl <= bl_last);
+	if ( mDrawBuffer.topBufferLine() > bl_last ||
+			(mDrawBuffer.bottomBufferLine()+(mDrawBuffer.full()?0:1) < bl) ) {
+		dbg() << "ignoring updateBufferInterval from line "<<bl<<" to " << bl_last << " ["<<mDrawBuffer.topBufferLine()<<" to "<<mDrawBuffer.bottomBufferLine()<<" full=" << mDrawBuffer.full()<<"]" << endl;
+		return;
+	}
+
+	/* clipping */
+	bl = qMax(bl, mDrawBuffer.topBufferLine());
+	dbg() << "updateBufferInterval from line "<<bl<<" to " << bl_last << endl;
+
+	setPaintAutoCommit(false);
+	int nextScreenLine = 0;
+	/* update requested lines */
+	for( ; bl < mBuffer->lineCount() && bl <= bl_last && nextScreenLine < mDrawBuffer.screenHeight(); ++bl ) {
+		nextScreenLine = setBufferLineContent(bl, mBuffer->yzline(bl));
+	}
+	if ( bl <= bl_last ) {
+		deleteFromBufferLine(bl);
+	}
+	commitPaintEvent();
+}
+
+
+YDrawLine YView::drawLineFromYLine( const YLine* yl, int start_column ) {
+	YDrawLine dl;
+
+	QString data = yl->data();
+    const uchar* hl = mHighlightAttributes ? yl->attributes() : NULL;
+
+	QString text;
+	QChar fillChar;
+	YColor fg, bg, outline;
+	YFont font;
+	YzisAttribute* at = NULL;
+	bool is_listchar;
+	int drawLength;
+	int column = start_column;
+
+	for ( int i = 0; i < data.length(); ++i ) {
+
+		text = data.at(i);
+
+		fillChar = ' ';
+		if ( text == tabChar ) {
+			drawLength = tabstop - column % tabstop;
+			/* column + drawLength = 0 mod tabstop */
+		} else {
+			drawLength = 1;
+		}
+
+		/* :set list support */
+		is_listchar = opt_list && (text == " " || text == tabChar);
+		if ( is_listchar ) {
+			if ( text == " " ) {
+				if ( stringHasOnlySpaces(data.mid(i)) && opt_listchars[ "trail" ].length() > 0 ) {
+					text = opt_listchars["trail"][0];
+				} else if ( opt_listchars["space"].length() > 0 ) {
+					text = opt_listchars["space"][0];
+				}
+			} else if ( text == tabChar ) {
+				if ( opt_listchars["tab"].length() > 0 ) {
+					text = opt_listchars["tab"][0];
+					if ( opt_listchars["tab"].length() > 1 ) {
+						fillChar = opt_listchars["tab"][1];
+					}
+				}
+			}
+		}
+
+		if ( drawLength > 1 ) {
+			text = text.leftJustified(drawLength, fillChar);
+		}
+
+		/* syntax highlighting attributes */
+		if ( hl ) {
+			at = &mHighlightAttributes[*hl];
+			++hl;
+		}
+
+		if ( at ) {
+			fg = at->textColor();
+			bg = at->bgColor();
+			font.setWeight(at->bold() ? YFont::Bold : YFont::Normal);
+			font.setItalic(at->italic());
+			font.setUnderline(at->underline());
+			font.setOverline(at->overline());
+			font.setStrikeOut(at->strikeOut());
+			outline = at->outline();
+		} else {
+			fg = color_null;
+			bg = color_null;
+			font.setWeight(YFont::Normal);
+			font.setItalic(false);
+			font.setUnderline(false);
+			font.setOverline(false);
+			font.setStrikeOut(false);
+			outline = color_null;
+		}
+		if ( is_listchar ) {
+			fg = blue; // TODO: make custom
+			outline = color_null; // TODO: make custom
+		}
+
+		dl.setColor(fg);
+		dl.setBackgroundColor(bg);
+		// TODO: setSelection
+		// TODO: setOutline
+		dl.setFont(font);
+		column += dl.push(text);
+	}
+
+	return dl;
+}
+
+int YView::setBufferLineContent( int bl, const YLine* yl )
+{
+	YDrawLine dl = drawLineFromYLine(yl);
+	YDrawSection ds;
+	if ( wrap ) {
+		ds = dl.arrange(mDrawBuffer.screenWidth());
+	} else {
+		ds << dl;
+	}
+
+	int shift = 0;
+	int dy = mDrawBuffer.setBufferDrawSection(bl, ds, &shift);
+	int ndy = dy+ds.count();
+	if ( shift != 0 ) {
+		if ( shift < 0 ) {
+			/* try to add new lines */
+			int start_bl = mDrawBuffer.bottomBufferLine() + 1;
+			if ( start_bl < mBuffer->lineCount() ) {
+				updateBufferInterval(start_bl, mBuffer->lineCount()-1);	
+			}
+		}
+		sendPaintEvent(YInterval(YCursor(0,ndy), YBound(YCursor(0,mDrawBuffer.screenHeight()), true))); //XXX optimize with guiScroll
+	}
+	sendPaintEvent(YInterval(YCursor(0,dy), YBound(YCursor(0,ndy), true)));
+	return ndy;
+}
+void YView::deleteFromBufferLine( int bl )
+{
+	YInterval affected = mDrawBuffer.deleteFromBufferDrawSection(bl);
+	sendPaintEvent(affected);
+}
+
 void YView::guiPaintEvent( const YSelection& drawMap )
 {
     if ( drawMap.isEmpty() )
         return ;
-    //dbg() << "YView::guiPaintEvent" << drawMap;
 
-    bool number = getLocalBooleanOption( "number" );
-    if ( number ) {
-        guiDrawSetMaxLineNumber( myBuffer()->lineCount() );
-    }
-    if ( m_paintAll ) {
-        /* entire screen has been updated already */
-        return ;
-    }
+    dbg() << "guiPaintEvent" << drawMap << endl;
 
-    /* to calculate relative position */
-    int shiftY = getDrawCurrentTop();
-    int shiftX = getDrawCurrentLeft();
-    int maxX = shiftX + getColumnsVisible() - 1;
+    guiPreparePaintEvent();
 
-    YSelectionMap map = drawMap.map();
-    int size = map.size();
+	bool show_numbers = getLocalBooleanOption("number");
+	if ( show_numbers ) {
+		guiDrawSetMaxLineNumber(mBuffer->lineCount());
+	}
 
-    int fromY = map[ 0 ].fromPos().y(); /* first line */
-    int toY = map[ size - 1 ].toPos().y(); /* last line */
+	int cur_line = -1;
+	foreach( YInterval di, drawMap.map() ) {
+		for ( YDrawBufferIterator it = mDrawBuffer.iterator(di); it.isValid(); it.next() ) {
+			if ( show_numbers && cur_line != it.screenLine() ) {
+				guiDrawSetLineNumber(it.screenLine(), it.bufferLine() + 1, it.lineHeight());
+				cur_line = it.screenLine();
+			}
+			const YDrawCellInfo ci = it.drawCellInfo();
+			switch ( ci.type ) {
+				case YDrawCellInfo::Data :
+					guiDrawCell(ci.pos, ci.cell);
+					break;
+				case YDrawCellInfo::EOL :
+					guiDrawClearToEOL(ci.pos, ci.cell);
+					break;
+			}
+		}
+	}
 
-    /* where the draw begins */
-    int curY = initDrawContents( fromY );
-    int curX = 0;
+	if ( !mDrawBuffer.full() ) { 
+		/* may be fake lines ? */
 
-    /* inform the view we want to paint from line <fromY> to <toY> */
-    guiPreparePaintEvent( curY - shiftY, toY - shiftY );
+		YDrawCell fl;
+		fl.c = "~";
+		fl.fg = YColor("cyan");
 
-    int mapIdx = 0; /* first interval */
-
-    int fX = map[ mapIdx ].fromPos().x(); /* first col of interval */
-    int fY = map[ mapIdx ].fromPos().y(); /* first line of interval */
-    int tX = map[ mapIdx ].toPos().x(); /* last col of interval */
-    int tY = map[ mapIdx ].toPos().y(); /* last line of interval */
-
-    bool drawIt; /* if we are inside the interval */
-
-    bool drawLine; /* if we have to paint a part of line */
-    bool drawEntireLine; /* if we have to paint the entire line */
-
-    bool drawStartAfterSOL; /* if we don't have to draw from the begin of line */
-    bool drawStopBeforeEOL; /* if we don't have to draw until the end of line */
-
-    bool clearToEOL; /* if we have to clear the rest of line */
-
-    bool interval_changed = true;
-
-    /* set selection layouts */
-    m_drawBuffer.setSelectionLayout( YSelectionPool::Search, *getSelectionPool()->search() - scrollCursor.screen() ); //XXX: search map is buffer only
-    m_drawBuffer.setSelectionLayout( YSelectionPool::Visual, getSelectionPool()->visual()->screen() - scrollCursor.screen() );
-
-    while ( curY <= toY && drawNextLine() ) {
-        curX = shiftX;
-
-        while ( tY < curY ) { /* next interval */
-            ++mapIdx;
-            fX = map[ mapIdx ].fromPos().x();
-            fY = map[ mapIdx ].fromPos().y();
-            tX = map[ mapIdx ].toPos().x();
-            tY = map[ mapIdx ].toPos().y();
-            interval_changed = true;
-        }
-        //yzDebug("painting") << curX << "," << curY << ":painting interval " << map[ mapIdx ]
-        //      << " (changed=" << interval_changed << ")" << endl;
-        if ( interval_changed ) {
-            m_drawBuffer.replace( map[ mapIdx ] - scrollCursor.screen() );
-			//dbg() << "replacing " << (map[mapIdx] - scrollCursor.screen()) << endl;
-            interval_changed = false;
-        }
-
-        drawStartAfterSOL = ( curY == fY && fX > shiftX );
-        drawStopBeforeEOL = ( curY == tY && tX < maxX );
-
-        drawLine = fY <= curY; // curY <= tY always true */
-        drawIt = drawLine && !drawStartAfterSOL;
-        drawEntireLine = drawIt && !drawStopBeforeEOL;
-
-        clearToEOL = drawEntireLine || (drawIt && curY != tY);
-
-        if ( drawLine && number ) {
-            guiDrawSetLineNumber( curY - shiftY, drawLineNumber(), lineHeight() - 1 );
-        }
-
-        if ( drawIt && curY > fY ) {
-            m_drawBuffer.newline( curY - shiftY );
-        }
-        while ( drawNextCol() ) {
-            if ( !drawEntireLine ) { /* we have to care of starting/stopping to draw on that line */
-                if ( !drawIt && curY == fY ) { // start drawing 
-                    drawIt = ( curX == fX );
-                    clearToEOL = drawIt && curY != tY;
-                } else if ( drawIt && curY == tY ) { // stop drawing ?
-                    drawIt = !( curX > tX );
-                    if ( ! drawIt ) {
-                        ++mapIdx;
-                        if ( mapIdx != size ) {
-                            fX = map[ mapIdx ].fromPos().x();
-                            fY = map[ mapIdx ].fromPos().y();
-                            tX = map[ mapIdx ].toPos().x();
-                            tY = map[ mapIdx ].toPos().y();
-                            m_drawBuffer.replace( map[ mapIdx ] - scrollCursor.screen() );
-                        } else {
-                            fX = fY = tX = tY = 0;
-                        }
-                    }
-                }
-            }
-            if ( drawIt ) {
-                QString disp = QString( drawChar() );
-                disp = disp.leftJustified( drawLength(), fillChar() );
-				if ( curY == tY && curX + drawLength() > tX+1 ) { /* overlap */
-					disp = disp.left(tX - curX + 1);
+		YInterval fake(YCursor(0,mDrawBuffer.currentHeight()),YCursor(mDrawBuffer.screenWidth()-1,mDrawBuffer.screenHeight()-1));
+		foreach( YInterval di, drawMap.map() ) {
+			YInterval i = di.intersection(fake);
+			if ( !i.valid() ) {
+				continue;
+			}
+			for ( int cur_dy = i.fromPos().line(); cur_dy <= i.toPos().line(); ++cur_dy ) {
+				if ( show_numbers ) {
+					guiDrawSetLineNumber(cur_dy, -1, 0); /* clear line number */
 				}
-
-                m_drawBuffer.setColor( drawColor() );
-
-                m_drawBuffer.push( disp );
-            }
-            curX += drawLength();
-        }
-        if ( clearToEOL ) {
-            guiDrawClearToEOL( QPoint (curX - shiftX, curY - shiftY), drawLineFiller() );
-        }
-        curY += drawHeight();
-    }
-
-    /* out of file lines (~) */
-    int fh = shiftY + getLinesVisible();
-    toY = qMin( toY, fh - 1 );
-    m_drawBuffer.setColor( Qt::cyan );
-    for ( ; curY <= toY; ++curY ) {
-        m_drawBuffer.newline( curY - shiftY );
-        if ( number ) guiDrawSetLineNumber( curY - shiftY, 0, 0 );
-        m_drawBuffer.push( "~" );
-        guiDrawClearToEOL( QPoint(1, curY - shiftY), ' ' );
-    }
-
-    m_drawBuffer.flush();
-
-    //dbg() << "after drawing: " << endl << m_drawBuffer << "--------" << endl;
+				guiDrawCell(YCursor(0,cur_dy), fl);
+				guiDrawClearToEOL(YCursor(1,cur_dy), mDrawBuffer.EOLCell());
+			}
+		}
+	}
 
     guiEndPaintEvent();
 }

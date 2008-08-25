@@ -38,7 +38,7 @@ public:
     /**
      * Add an inputs event to history
      */
-    void addToSwap( YBufferOperation::OperationType type, const QString& str, QPoint pos);
+    void addToSwap( YBufferOperation::OperationType type, const YRawData& data, const YInterval& interval);
 
     /**
      * Clear the history
@@ -82,14 +82,14 @@ protected:
     /**
      * Replay one event on the buffer during a recover
      */
-    void replay( YBufferOperation::OperationType type, QPoint pos, const QString& str );
+    void replay( YBufferOperation::OperationType type, const YInterval& interval, const YRawData& data );
 
 private:
     struct swapEntry
     {
         YBufferOperation::OperationType type;
-        QPoint pos;
-        QString str;
+        YInterval interval;
+        YRawData data;
     }
     sE;
 

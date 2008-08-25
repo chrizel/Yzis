@@ -1,5 +1,5 @@
 /*  This file is part of the Yzis libraries
-*  Copyright (C) 2006 Loic Pauleve <panard@inzenet.org>
+*  Copyright (C) 2006-2008 Loic Pauleve <panard@inzenet.org>
 *
 *  This library is free software; you can redistribute it and/or
 *  modify it under the terms of the GNU Library General Public
@@ -21,114 +21,144 @@
 #define DRAWBUFFER_H
 
 /* Qt */
-#include <QVector>
+#include <QList>
 
 /* Yzis */
 #include "color.h"
 #include "font.h"
 #include "selection.h"
+#include "viewcursor.h"
 
-class YView;
+class YDrawLine;
+class YCursor;
+typedef QList<YDrawLine> YDrawSection;
 
 typedef QMap<YSelectionPool::SelectionLayout, YSelection> YSelectionLayout;
 
 struct YDrawCell
 {
-    bool valid;
     int flag;
     YFont font;
     QString c;
     YColor bg;
     YColor fg;
     int sel;
-    YDrawCell():
-            flag( 0 ),
-            font(), c(), bg(), fg()
-    {}
-}
-;
+    YDrawCell() : flag(0), font(), c(), bg(), fg(), sel(0) {}
+};
 
-typedef QVector<YDrawCell> YDrawSection;
-typedef QVector<YDrawSection> YDrawLine;
+struct YDrawCellInfo
+{
+	enum YDrawCellType {
+		Data,
+		EOL
+	};
+
+	YDrawCellType type;
+	YCursor pos;
+	YDrawCell cell;
+};
+
+class YDrawBuffer;
+class YZIS_EXPORT YDrawBufferIterator
+{
+public:
+	YDrawBufferIterator( const YDrawBuffer* db, const YInterval& i );
+	virtual ~YDrawBufferIterator();
+
+	/* TODO: docstring */
+	bool isValid() const;
+	/* TODO: docstring */
+	void next();
+
+	/* TODO: docstring */
+	const YDrawCellInfo drawCellInfo() const;
+	/* TODO: docstring */
+	int bufferLine() const;
+	/* TODO: docstring */
+	int screenLine() const;
+	/* TODO: docstring */
+	int lineHeight() const;
+
+private:
+	void setup( const YInterval& i );
+	void step();
+
+	const YDrawBuffer* mDrawBuffer;
+	YInterval mI;
+	YDrawCellInfo mNext;
+	bool mStopped;
+	int mCurBLine;
+	int mCurLine;
+	int mCurCell;
+	YCursor mPos;
+};
 
 class YZIS_EXPORT YDrawBuffer
 {
+	friend class YDrawBufferIterator;
 
 public:
 
-    enum SetFromInfo {
-        SetFromSeek,
-    };
+    YDrawBuffer( int columns, int height );
+    virtual ~YDrawBuffer();
 
-    YDrawBuffer();
-    ~YDrawBuffer();
+	/* TODO: docstring */
+	inline int topBufferLine() const {
+		return mTopBufferLine;
+	}
+	/* TODO: docstring */
+	inline int bottomBufferLine() const {
+		return mTopBufferLine + mContent.size() - 1;
+	}
 
-    void setCallback( YView* v );
-    void setCallbackArgument( void* callback_arg );
+	/* TODO: docstring */
+	void verticalScroll( int delta );
 
-    /* clear the buffer */
-    void reset();
+	/* TODO: docstring */
+	void setScreenSize( int columns, int lines );
 
-    void push( const QString& c );
-    void newline( int y = -1 );
-    void flush();
+	/* TODO: docstring */
+	inline int screenHeight() const { return mScreenHeight; }
 
-    void setFont( const YFont& f );
-    void setColor( const YColor& c );
-    void setBackgroundColor( const YColor& c );
-    void setSelection( int sel );
+	/* TODO: docstring */
+	inline int screenWidth() const { return mScreenWidth; }
 
-    bool seek( const YCursor pos, YDrawBuffer::SetFromInfo sfi );
+	/* TODO: docstring */
+	YDrawBufferIterator iterator( const YInterval& i ) const;
 
-    YDrawCell at( const YCursor pos ) const;
+	/* TODO: docstring */
+	inline const QList<YDrawSection> sections() { return mContent; }
 
-    void replace( const YInterval& interval );
+	/* TODO: docstring */
+	int setBufferDrawSection( int bl, YDrawSection ds, int* shift = NULL );
 
-    /* Scroll dx to the right and dy downward */
-    void Scroll( int dx, int dy );
+	/* TODO: docstring */
+	YInterval deleteFromBufferDrawSection( int bl );
 
-    void setSelectionLayout( YSelectionPool::SelectionLayout layout, const YSelection& selection );
+	/* TODO: docstring */
+	void setEOLCell( const YDrawCell& cell );
+
+	inline const YDrawCell EOLCell() const { return mEOLCell; };
+
+	/* TODO: docstring */
+	int currentHeight() const;
+
+	inline bool full() const { return currentHeight() >= mScreenHeight; }
+
+	/* TODO: docstring */
+	const YDrawSection bufferDrawSection( int bl ) const;
+	
+	/* TODO: docstring */
+	int bufferDrawSectionScreenLine( int bl ) const;
 
 private :
-    void insert_section( int pos = -1 );
-    void insert_line( int pos = -1 );
+	QList<YDrawSection> mContent;
 
-    void push( const QChar& c );
-
-    void callback( QPoint pos, const YDrawCell& cell );
-
-    bool find( const YCursor pos, int* x, int* y, int* vx ) const;
-
-    void applyPosition();
-
-    /*
-     * copy YColor @param c into YColor* @param dest.
-     * Returns true if *dest has changed, false else
-     */
-    static bool updateColor( YColor* dest, const YColor& c );
-
-    /* buffer content */
-    YDrawLine m_content;
-
-    /* current line */
-    YDrawSection* m_line;
-    /* current cell */
-    YDrawCell* m_cell;
-
-    /* current selection layouts */
-    YSelectionLayout m_sel;
-
-    int v_xi; /* column of the current section */
-    int v_x; /* current draw column */
-
-    int m_x; /* current section index */
-    int m_y; /* current line index == current draw line */
-
-    bool changed;
-    YDrawCell m_cur;
-
-    YView* m_view;
-    void* m_callback_arg;
+	YCursor mScreenOffset;
+	YDrawCell mEOLCell;
+	int mScreenWidth;
+	int mScreenHeight;
+	int mTopBufferLine;
 
     friend YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
@@ -136,5 +166,53 @@ private :
 
 YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
+class YZIS_EXPORT YDrawLine {
+public :
+	YDrawLine();
+	virtual ~YDrawLine();
+
+    void setFont( const YFont& f );
+    void setColor( const YColor& c );
+    void setBackgroundColor( const YColor& c );
+	// TODO: setOutline
+    void setSelection( int sel );
+
+	void clear();
+
+    int push( const QString& c );
+	void flush();
+
+	YDrawSection arrange( int columns ) const;
+
+	inline const QList<int> steps() const { return mSteps; }
+	inline const QList<YDrawCell> cells() const { return mCells; }
+
+	inline int bufferLength() const { return mSteps.count(); }
+
+private:
+
+    void insertCell( int pos = -1 );
+
+    /*
+     * copy YColor @param c into YColor* @param dest.
+     * Returns true if *dest has changed, false else
+     */
+    static bool updateColor( YColor* dest, const YColor& c );
+
+	QList<YDrawCell> mCells;
+	QList<int> mSteps;
+
+	/* current cell */
+    YDrawCell mCur;
+    /* working cell */
+    YDrawCell* mCell;
+
+    bool changed;
+
+	friend class YDrawBuffer;
+	friend class YDrawBufferIterator;
+    friend YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
+};
+YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
 
 #endif

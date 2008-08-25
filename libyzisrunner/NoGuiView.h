@@ -74,10 +74,10 @@ public:
     virtual void guiDisplayInfo(const QString&);
 
     virtual void guiHighlightingChanged();
-    void guiPreparePaintEvent(int, int);
+    void guiPreparePaintEvent();
     void guiEndPaintEvent();
-    void guiDrawCell(QPoint, const YDrawCell&, void*);
-    void guiDrawClearToEOL(QPoint, const QChar&);
+    void guiDrawCell(YCursor, const YDrawCell&);
+    void guiDrawClearToEOL(YCursor, const YDrawCell&);
     void guiDrawSetMaxLineNumber(int);
     void guiDrawSetLineNumber(int, int, int);
 

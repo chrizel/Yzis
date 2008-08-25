@@ -494,6 +494,8 @@ YCursor YModeCommand::scrollLineUp(const YMotionArgs &args, CmdState *state)
 
 YCursor YModeCommand::scrollPageDown(const YMotionArgs &args, CmdState *state)
 {
+	/* TODO */
+#if 0
     int line = args.view->getCurrentTop() + args.view->getLinesVisible();
     YView *view = args.view;
 
@@ -514,12 +516,15 @@ YCursor YModeCommand::scrollPageDown(const YMotionArgs &args, CmdState *state)
     }
     
     view->alignViewBufferVertically( line );
+#endif
     *state = CmdOk;
     return args.view->viewCursor().buffer();
 }
 
 YCursor YModeCommand::scrollLineDown(const YMotionArgs &args, CmdState *state)
 {
+	/* TODO */
+#if 0
     int line = args.view->getCurrentTop() + args.view->getLinesVisible();
     YView *view = args.view;
 
@@ -540,6 +545,7 @@ YCursor YModeCommand::scrollLineDown(const YMotionArgs &args, CmdState *state)
     }
     
     view->alignViewBufferVertically( line );
+#endif
     *state = CmdOk;
     return args.view->viewCursor().buffer();
 }

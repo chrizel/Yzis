@@ -102,16 +102,6 @@ bool YZAction::deleteChar( YView* pView, const YCursor pos, int len )
     return false;
 }
 
-void YZAction::appendLine( YView* pView, const QString& text )
-{
-    configureViews(mBuffer);
-    int y = mBuffer->lineCount();
-    mBuffer->insertNewLine( QPoint(0, y));
-    mBuffer->insertChar( QPoint(0, y), text );
-    pView->gotoxyAndStick( text.length(), y );
-    commitViewsChanges(mBuffer);
-}
-
 void YZAction::insertNewLine( YView* pView, const YCursor pos )
 {
     if ( pos.y() > mBuffer->lineCount() )

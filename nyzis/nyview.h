@@ -106,13 +106,13 @@ protected :
 public slots:
 
 protected :
-    virtual void guiDrawCell( QPoint pos, const YDrawCell& cell, void* arg );
+    virtual void guiDrawCell( YCursor pos, const YDrawCell& cell );
 
     virtual void guiNotifyContentChanged( const YSelection& s );
 
-    void guiPreparePaintEvent(int, int);
+    void guiPreparePaintEvent();
     void guiEndPaintEvent();
-    virtual void guiDrawClearToEOL( QPoint pos, const QChar& clearChar );
+    virtual void guiDrawClearToEOL( YCursor pos, const YDrawCell& cell );
     virtual void guiDrawSetMaxLineNumber( int max );
     virtual void guiDrawSetLineNumber( int y, int n, int h );
 
@@ -124,7 +124,7 @@ private:
     /**
      * update visible area
      */
-    void updateVis( bool refresh = true );
+    void updateVis();
 
     /**
       * draw cursor

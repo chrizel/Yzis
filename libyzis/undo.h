@@ -29,22 +29,18 @@
 #include <QList>
 #include <QPoint>
 #include "yzismacros.h"
+#include "buffer.h"
+#include "selection.h"
 
 class YView;
-class YBuffer;
 
 /** An individual operation on a buffer, that can be done or undone. */
 
 struct YBufferOperation
 {
     enum OperationType {
-        OpAddText,  //!< insert some characters inside the line
-        OpDelText,  //!< delete some characters from the line
-
-        // for OpAddLine and OpDelLine, the arguments col and text are ignored.
-        OpAddLine,  //!< insert a line before the specified line.
-        OpDelLine  //!< delete the line from the buffer
-
+		OpAddRegion, //!< insert a block of text at a given position
+		OpDelRegion, //!< delete a block of text inside a given interval
     };
 
     /**  Perform the buffer operation on the buffer passed in argument.
@@ -53,8 +49,8 @@ struct YBufferOperation
     void performOperation( YView* pView, bool opposite = false );
 
     OperationType type;
-    QString text;
-    QPoint pos;
+    YRawData data;
+    YInterval interval;
 
     QString toString() const;
 };
@@ -87,7 +83,7 @@ public:
      */
     void commitUndoItem( uint cursorX, uint cursorY );
 
-    void addBufferOperation( YBufferOperation::OperationType type, const QString & text, QPoint pos);
+	void addBufferOperation( YBufferOperation::OperationType type, const YRawData& data, const YInterval& interval );
 
     /**
      * Undo the last operations on the buffer, move backward in the undo list.

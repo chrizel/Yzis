@@ -3,6 +3,7 @@
 *  Copyright (C) 2003-2004 Thomas Capricelli <orzel@freehackers.org>,
 *  Copyright (C) 2003-2004 Philippe Fremy <pfremy@freehackers.org>
 *  Copyright (C) 2005 Erlend Hamberg <hamberg@stud.ntnu.no>
+*  Copyright (C) 2008 Loic Pauleve <panard@inzenet.org>
 *
 *  This library is free software; you can redistribute it and/or
 *  modify it under the terms of the GNU Library General Public
@@ -27,7 +28,7 @@
 #include <QVector>
 #include <QList>
 
-#include "yzismacros.h"
+#include "yzis.h"
 #include "mark.h"
 
 class YZUndoBuffer;
@@ -43,6 +44,9 @@ class YInterval;
 class YzisHighlighting;
 
 typedef QVector<YLine*> YBufferData;
+
+typedef QStringList YRawData;
+
 
 /**
  * A buffer is the implementation of the content of a file.
@@ -77,6 +81,34 @@ public:
     QString toString() const;
 
     //-------------------------------------------------------
+    // ----------------- Content Operations
+    //-------------------------------------------------------
+
+	/*
+	 * Inserts data into the buffer at given position
+	 * @param begin : position where to insert data
+	 * @param data : data to insert, may start and end with YRawData_endline
+	 * @returns position of char after inserted data
+	 */
+	YCursor insertRegion(const YCursor& begin, const YRawData& data);
+
+	/*
+	 * Remove data contained in the given interval
+	 * @param bi : interval to remove
+	 */
+	void deleteRegion(const YInterval& bi);
+
+	/*
+	 * Shortcut for deleteRegion + insertRegion
+	 * @param bi : interval to remove
+	 * @param data : data to insert, may start and end with YRawData_endline
+	 */
+	YCursor replaceRegion(const YInterval& bi, const YRawData& data);
+
+	YRawData dataRegion( const YInterval& bi ) const;
+
+
+    //-------------------------------------------------------
     // ----------------- Character Operations
     //-------------------------------------------------------
 
@@ -85,40 +117,32 @@ public:
      * @param pos : the position where to insert the character
      * @param c the character to add
      */
-    void insertChar (QPoint pos, const QString& c);
+    void insertChar (YCursor pos, const QString& c) YZIS_DEPRECATED;
 
     /**
      * Deletes a character in the buffer
      * @param pos : the position where to insert the character
      * @param count number of characters to delete
      */
-    void delChar (QPoint pos, int count);
+    void delChar (YCursor pos, int count) YZIS_DEPRECATED;
 
     //-------------------------------------------------------
     // ----------------- Line Operations
     //-------------------------------------------------------
 
     /**
-     * Appends a new line at the end of file
-     * @param l the line of text to be appended
-     *
-     * Note: the line is not supposed to contain '\n'
-     */
-    void appendLine(const QString &l);
-
-    /**
      * Insert the text l in the current line
      * @param l the text to insert
      * @param line the line which is changed
      */
-    void insertLine(const QString &l, int line);
+    void insertLine(const QString &l, int line) YZIS_DEPRECATED;
 
     /**
      * Break a new line at the indicated position, moving rest of the line onto
      * a line of its own.
      * @param pos The position to add '\n' in.
      */
-    void insertNewLine( QPoint pos);
+    void insertNewLine( YCursor pos) YZIS_DEPRECATED;
 
     /**
      * Deletes the given line
@@ -126,12 +150,22 @@ public:
      *
      * Note: the valid line numbers are between 0 and lineCount()-1
      */
-    void deleteLine( int line );
+    void deleteLine( int line ) YZIS_DEPRECATED;
 
     /**
      * Replaces the line at @param line with the given string @param l
      */
-    void replaceLine( const QString& l, int line );
+    void replaceLine( const QString& l, int line ) YZIS_DEPRECATED;
+
+	/**
+	 * Get a list of strings between two cursors
+	 * @param from the origin cursor
+	 * @param to the end cursor
+	 * @return a list of strings
+	 */
+	QStringList getText(const YCursor from, const YCursor to) const YZIS_DEPRECATED;
+	QStringList getText(const YInterval& i) const YZIS_DEPRECATED;
+
 
     /**
      * Finds the @ref YLine pointer for a line in the buffer
@@ -203,19 +237,6 @@ public:
 
     void loadText( QString* content );
 
-    /**
-     * Extract the corresponding 'from' and 'to' YCursor from the YInterval i.
-     */
-    void intervalToCursors( const YInterval& i, YCursor* from, YCursor* to ) const;
-
-    /**
-     * Get a list of strings between two cursors
-     * @param from the origin cursor
-     * @param to the end cursor
-     * @return a list of strings
-     */
-    QStringList getText(const YCursor from, const YCursor to) const;
-    QStringList getText(const YInterval& i) const;
 
     /**
      * Get the character at the given cursor position.
@@ -380,7 +401,13 @@ public:
       */
     void setHighLight( const QString& name );
 
-    bool updateHL( int line );
+	/*
+	 * update highlight from given line
+	 * @param line : line number to start the HL update
+	 * @returns first line number not affected by the update
+	 */
+    int updateHL(int line);
+
     void initHL( int line );
 
     /**
@@ -487,11 +514,6 @@ protected:
      * @param l may not contain '\n'
      */
     void setTextline( int line, const QString & l );
-
-    /**
-     * Is a line displayed in any view ?
-     */
-    bool isLineVisible(int line) const;
 
 private:
     /**

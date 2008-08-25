@@ -30,9 +30,8 @@
 #define dbg()    yzDebug("YViewCursor")
 #define err()    yzError("YViewCursor")
 
-YViewCursor::YViewCursor( YView* parent )
+YViewCursor::YViewCursor()
 {
-    mParent = parent;
     reset();
 }
 
@@ -49,15 +48,6 @@ void YViewCursor::copyFields( const YViewCursor &c )
 {
     mScreen = c.mScreen;
     mBuffer = c.mBuffer;
-    spaceFill = c.spaceFill;
-    bColIncrement = c.bColIncrement;
-    bLineIncrement = c.bLineIncrement;
-    sColIncrement = c.sColIncrement;
-    sLineIncrement = c.sLineIncrement;
-    lineHeight = c.lineHeight;
-    lastCharWasTab = c.lastCharWasTab;
-    wrapTab = c.wrapTab;
-    wrapNextLine = c.wrapNextLine;
 }
 
 YViewCursor &YViewCursor::operator=( const YViewCursor& c )
@@ -70,19 +60,8 @@ YViewCursor &YViewCursor::operator=( const YViewCursor& c )
 void YViewCursor::reset()
 {
     mValid = true;
-    spaceFill = 0;
-    bColIncrement = 1; // XXX seems to be no longer used... ( always 1 )
-    bLineIncrement = 0;
-    sColIncrement = 1;
-    sLineIncrement = 0;
-    lineHeight = 1;
-    lastCharWasTab = false;
-    wrapNextLine = false;
-    wrapTab = false;
-    mBuffer.setX( 0 );
-    mBuffer.setY( 0 );
-    mScreen.setX( 0 );
-    mScreen.setY( 0 );
+    mBuffer.setLineColumn(0, 0);
+    mScreen.setLineColumn(0, 0);
 }
 
 void YViewCursor::invalidate()
@@ -92,15 +71,6 @@ void YViewCursor::invalidate()
 bool YViewCursor::valid() const
 {
     return mValid;
-}
-
-void YViewCursor::debug()
-{
-    dbg() << "YViewCursor : buffer = " << mBuffer << " ; screen = " << mScreen
-    << " ; wrapNextLine = " << wrapNextLine << " ; wrapTab = " << wrapTab << endl
-    << "               bLineIncrement = " << bLineIncrement << "; sLineIncrement = " << sLineIncrement
-    << " ; lineHeight = " << lineHeight << endl
-    << "               lastCharWasTab = " << lastCharWasTab << " ; sColIncrement = " << sColIncrement << endl;
 }
 
 int YViewCursor::bufferX() const

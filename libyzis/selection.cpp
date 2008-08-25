@@ -129,6 +129,10 @@ const YCursor YInterval::toPos() const
     return mTo.pos();
 }
 
+bool YInterval::contains( const YBound& pos ) const 
+{
+	return mFrom >= pos && pos <= mTo;
+}
 bool YInterval::contains( const YCursor pos ) const
 {
     return mFrom >= pos && pos <= mTo;
@@ -136,6 +140,18 @@ bool YInterval::contains( const YCursor pos ) const
 bool YInterval::contains( const YInterval& i ) const
 {
     return mFrom <= i.from() && mTo >= i.to();
+}
+bool YInterval::overlap( const YInterval& i ) const
+{
+	return contains(i.from()) || contains(i.to()) || i.contains(from()) || i.contains(to());
+}
+YInterval YInterval::intersection( const YInterval& i ) const
+{
+	return YInterval(i.from() < from() ? from() : i.from(), i.to() < to() ? i.to() : to());
+}
+bool YInterval::valid() const
+{
+	return from() <= to();
 }
 
 QRect YInterval::boundingRect() const
@@ -158,18 +174,24 @@ const YInterval operator- ( const YInterval& l, const YCursor r )
     return YInterval( qMax(l.from() - r, YBound(YCursor(0, 0))), qMax(l.to() - r, YBound(YCursor(0, 0), true)) );
 }
 
+QString YInterval::toString() const {
+	QString out;
+    if ( from().opened() )
+        out += from().pos().toString() + "]";
+    else
+        out += "[" + from().pos().toString();
+    out += "<==============>";
+    if ( to().opened() )
+        out += "[" + to().pos().toString();
+    else
+		out += to().pos().toString() + "]";
+    return out;
+}
+
 YDebugStream& operator<<( YDebugStream& out, const YInterval& i )
 {
-    if ( i.from().opened() )
-        out << i.from().pos() << "]";
-    else
-        out << "[" << i.from().pos();
-    out << "<==============>";
-    if ( i.to().opened() )
-        out << "[" << i.to().pos();
-    else
-        out << i.to().pos() << "]";
-    return out;
+	out << i.toString();
+	return out;
 }
 
 

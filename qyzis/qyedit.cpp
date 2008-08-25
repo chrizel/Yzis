@@ -105,7 +105,7 @@ YCursor QYEdit::translateRealToPosition( const QPoint& p, bool ceil ) const
 }
 YCursor QYEdit::translateRealToAbsolutePosition( const QPoint& p, bool ceil ) const
 {
-    return translateRealToPosition( p, ceil ) + mView->getScreenPosition();
+    return translateRealToPosition( p, ceil );
 }
 
 QYCursor::CursorShape QYEdit::cursorShape()
@@ -323,8 +323,6 @@ void QYEdit::paintEvent( QPaintEvent* pe )
 void QYEdit::setCursor( int c, int l )
 {
     // dbg() << "setCursor" << endl;
-    c = c - mView->getDrawCurrentLeft();
-    l -= mView->getDrawCurrentTop();
     unsigned int x = c * fontMetrics().maxWidth();
     if ( mView->getLocalBooleanOption( "rightleft" ) ) {
         x = width() - x - mCursor->width();
@@ -348,7 +346,7 @@ void QYEdit::scroll( int dx, int dy )
     QWidget::scroll( rx, ry, mUseArea );
 }
 
-void QYEdit::guiDrawCell( QPoint pos , const YDrawCell& cell, QPainter* p )
+void QYEdit::guiDrawCell( YCursor pos , const YDrawCell& cell, QPainter* p )
 {
     //dbg() << "QYEdit::guiDrawCell(" << x << "," << y <<",'" << cell.c << "')" << endl;
     p->save();
@@ -379,10 +377,11 @@ void QYEdit::guiDrawCell( QPoint pos , const YDrawCell& cell, QPainter* p )
     p->restore();
 }
 
-void QYEdit::guiDrawClearToEOL( QPoint pos , const QChar& clearChar, QPainter* p )
+void QYEdit::guiDrawClearToEOL( YCursor pos , const YDrawCell& clearCell, QPainter* p )
 {
+	/* TODO 
     //dbg() << "QYEdit::guiDrawClearToEOL("<< x << "," << y <<"," << clearChar << ")" << endl;
-    if ( clearChar.isSpace() ) {
+    if ( clearCell.c.isSpace() ) {
         // not needed as we called qt for repainting this widget, and autoFillBackground = True
         return ;
     } else {
@@ -393,6 +392,7 @@ void QYEdit::guiDrawClearToEOL( QPoint pos , const QChar& clearChar, QPainter* p
         int nb_char = mView->getColumnsVisible() - pos.x();
         p->drawText( r, QString(nb_char, clearChar) );
     }
+	*/
 }
 
 void QYEdit::initKeys()

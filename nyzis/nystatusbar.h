@@ -30,7 +30,7 @@ public:
      * If the subwindow already exists we delete it beforehand.
      * @param mainwin view's window, parent of m_bar
      */
-    void setup(WINDOW *mainwin);
+    void setup(WINDOW *mainwin, int line);
 
 private:
     /** Paint current information */

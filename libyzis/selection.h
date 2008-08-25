@@ -101,7 +101,7 @@ public:
     {}
     YInterval( const QRect& r ) : mFrom( YCursor(r.left(), r.top()) ), mTo( YCursor(r.right(), r.bottom()) )
     {}
-    YInterval()
+    YInterval() : mFrom(YCursor(0,0)), mTo(YCursor(0,0),true)
     {}
 
     void setFrom( const YBound& bound );
@@ -115,9 +115,21 @@ public:
     const YCursor toPos() const;
 
     bool contains( const YCursor pos ) const;
-    bool contains( const YInterval& pos ) const;
+    bool contains( const YBound& pos ) const;
+    bool contains( const YInterval& i ) const;
+
+	/*
+	 * @param i : interval to check with
+	 * @returns true if there is common part between the two intervals
+	 */
+	bool overlap( const YInterval& i ) const;
+
+	YInterval intersection( const YInterval& i ) const;
+	bool valid() const;
 
     QRect boundingRect() const;
+
+	QString toString() const;
 
 private:
     YBound mFrom;

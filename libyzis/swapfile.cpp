@@ -78,8 +78,16 @@ void YSwapFile::flush()
 #endif
         QTextStream stream( &f );
         if ( !mHistory.empty() ) {
-            for ( int ab = 0 ; ab < mHistory.size(); ++ab )
-                stream << mHistory.at(ab).type << mHistory.at(ab).pos.x() << "," << mHistory.at(ab).pos.y() << "," << mHistory.at(ab).str << endl;
+            for ( int ab = 0 ; ab < mHistory.size(); ++ab ) {
+				const swapEntry* e =& mHistory.at(ab);
+#define DUMP_BOUND( bound ) \
+	(bound).pos().x() << " " << (bound).pos().y() << " " << ((bound).closed()?1:0)
+				stream << e->type << " " << DUMP_BOUND(e->interval.from()) << " " << DUMP_BOUND(e->interval.to()) << endl;
+				for( int i = 0; i < e->data.count(); ++i ) {
+					stream << " " << e->data.at(i) << endl;
+				}
+				stream << endl;
+			}
         }
         f.close();
     } else {
@@ -89,14 +97,14 @@ void YSwapFile::flush()
     mHistory.clear(); //clear previous history
 }
 
-void YSwapFile::addToSwap( YBufferOperation::OperationType type, const QString& str, QPoint pos)
+void YSwapFile::addToSwap( YBufferOperation::OperationType type, const YRawData& data, const YInterval& interval )
 {
     if ( mRecovering ) return ;
     if ( mParent->getLocalIntegerOption("updatecount") == 0 ) return ;
     swapEntry e;
     e.type = type;
-    e.pos = pos;
-    e.str = str;
+    e.interval = interval;
+    e.data = data;
     mHistory.append( e );
     if ( ( ( int )mHistory.size() ) >= mParent->getLocalIntegerOption("updatecount") ) flush();
 }
@@ -146,12 +154,30 @@ bool YSwapFile::recover()
         QTextStream stream( &f );
         while ( !stream.atEnd() ) {
             QString line = stream.readLine();
-            //stream << ( *it ).type << ( *it ).col <<","<< ( *it ).line <<","<< ( *it ).str << endl;
-            QRegExp rx("([0-9])([0-9]*),([0-9]*),(.*)");
-            if ( rx.exactMatch( line ) ) {
-                replay( ( YBufferOperation::OperationType )rx.cap( 1 ).toInt(), QPoint (rx.cap( 2 ).toUInt(), rx.cap( 3 ).toUInt()), rx.cap( 4 ) );
-            } else {
-                dbg() << "Error replaying line: " << line << endl;
+            QRegExp rx("([0-9]) ([0-9]*) ([0-9]*) ([01]) ([0-9]*) ([0-9]*) ([01])");
+			bool error = !stream.atEnd();
+            if ( !error && rx.exactMatch( line ) ) {
+				YBufferOperation::OperationType type = (YBufferOperation::OperationType)rx.cap(1).toInt();
+				YBound from = YBound(YCursor(rx.cap(2).toInt(),rx.cap(3).toInt()), rx.cap(4) == "0");
+				YBound to = YBound(YCursor(rx.cap(5).toInt(),rx.cap(6).toInt()), rx.cap(7) == "0");
+				YRawData data;
+				line = stream.readLine();
+				while ( !error && line.length() > 0 ) {
+					if ( stream.atEnd() ) {
+						error = true;
+					} else {
+						data << line.mid(1);
+						line = stream.readLine();
+					}
+				}
+				if ( !error ) {
+					replay(type, YInterval(from, to), data);
+				}
+			} else {
+				error = true;
+			}
+			if ( error ) {
+                dbg() << "Error reading swap file" << endl;
             }
         }
         f.close();
@@ -165,24 +191,15 @@ bool YSwapFile::recover()
     return true;
 }
 
-void YSwapFile::replay( YBufferOperation::OperationType type, QPoint pos, const QString& text )
+void YSwapFile::replay( YBufferOperation::OperationType type, const YInterval& interval, const YRawData& data )
 {
-    YView *pView = mParent->firstView();
-    pView->setPaintAutoCommit(false);
     switch ( type ) {
-    case YBufferOperation::OpAddText:
-        mParent->action()->insertChar( pView, pos, text );
+    case YBufferOperation::OpAddRegion:
+        mParent->insertRegion(interval.fromPos(), data);
         break;
-    case YBufferOperation::OpDelText:
-        mParent->action()->deleteChar( pView, pos, text.length() );
-        break;
-    case YBufferOperation::OpAddLine:
-        mParent->action()->insertNewLine( pView, 0, pos.y() );
-        break;
-    case YBufferOperation::OpDelLine:
-        mParent->action()->deleteLine( pView, pos.y(), 1, QList<QChar>() );
+    case YBufferOperation::OpDelRegion:
+        mParent->deleteRegion(interval);
         break;
     }
-    pView->commitPaintEvent();
 }
 

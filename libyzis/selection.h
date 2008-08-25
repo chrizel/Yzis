@@ -129,6 +129,8 @@ public:
 
     QRect boundingRect() const;
 
+	QString toString() const;
+
 private:
     YBound mFrom;
     YBound mTo;

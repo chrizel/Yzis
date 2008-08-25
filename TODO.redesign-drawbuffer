@@ -5,6 +5,8 @@ YView/YDrawLine: take care of wrapped tab
 
 YView: check sendPaintEvent calls
 
+YDrawBuffer: Selections
+
 YBuffer::insertRegion: shift search hl, etc..
 YBuffer::insertRegion: undo
 YBuffer::insertRegion: swap
@@ -14,8 +16,6 @@ YBuffer::deleteRegion: swap
 
 YBuffer: unittest dataRegion
 YBuffer: insert and delete assertions
-
-YBuffer: substitute?
 
 guiScroll
 

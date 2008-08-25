@@ -35,12 +35,10 @@ QString YBufferOperation::toString() const
 {
     QString ots;
     switch ( type ) {
-    case OpAddText: ots = "OpAddText"; break;
-    case OpDelText: ots = "OpDelText"; break;
-    case OpAddLine: ots = "OpAddLine"; break;
-    case OpDelLine: ots = "OpDelLine"; break;
+		case OpAddRegion: ots = "OpAddText"; break;
+		case OpDelRegion: ots = "OpDelRegion"; break;
     }
-    return QString("%1 '%2' line %3, col %4").arg(ots).arg(text).arg(pos.y()).arg(pos.x()) ;
+	return QString("%1 %2 '%3'").arg(ots).arg(interval.toString()).arg(data.join("\\n"));
 }
 
 void YBufferOperation::performOperation( YView* pView, bool opposite)
@@ -51,26 +49,18 @@ void YBufferOperation::performOperation( YView* pView, bool opposite)
 
     if (opposite == true) {
         switch ( type ) {
-        case OpAddText: t = OpDelText; break;
-        case OpDelText: t = OpAddText; break;
-        case OpAddLine: t = OpDelLine; break;
-        case OpDelLine: t = OpAddLine; break;
+			case OpAddRegion: t = OpDelRegion; break;
+			case OpDelRegion: t = OpAddRegion; break;
         }
     }
 
     switch ( t) {
-    case OpAddText:
-        pView->myBuffer()->action()->insertChar( pView, pos, text );
-        break;
-    case OpDelText:
-        pView->myBuffer()->action()->deleteChar( pView, pos, text.length() );
-        break;
-    case OpAddLine:
-        pView->myBuffer()->action()->insertNewLine( pView, 0, pos.y() );
-        break;
-    case OpDelLine:
-        pView->myBuffer()->action()->deleteLine( pView, pos.y(), 1, QList<QChar>() );
-        break;
+		case OpAddRegion:
+			pView->myBuffer()->insertRegion(interval.fromPos(), data);
+			break;
+		case OpDelRegion:
+			pView->myBuffer()->deleteRegion(interval);
+			break;
     }
 
     // yzDebug("YZUndoBuffer") << "YBufferOperation::performOperation Buf -> '" << buf->getWholeText() << "'\n";
@@ -131,15 +121,15 @@ void YZUndoBuffer::commitUndoItem(uint cursorX, uint cursorY )
 }
 
 void YZUndoBuffer::addBufferOperation( YBufferOperation::OperationType type,
-                                       const QString & text,
-                                       QPoint pos )
+                                       const YRawData& data,
+                                       const YInterval& interval )
 {
     if (mInsideUndo == true) return ;
     YASSERT( mFutureUndoItem != NULL );
     YBufferOperation *bufOperation = new YBufferOperation();
     bufOperation->type = type;
-    bufOperation->text = text;
-    bufOperation->pos = pos;
+    bufOperation->data = data;
+    bufOperation->interval = interval;
     mFutureUndoItem->push_back( bufOperation );
     removeUndoItemAfterCurrent();
 }

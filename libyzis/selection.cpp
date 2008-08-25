@@ -174,18 +174,24 @@ const YInterval operator- ( const YInterval& l, const YCursor r )
     return YInterval( qMax(l.from() - r, YBound(YCursor(0, 0))), qMax(l.to() - r, YBound(YCursor(0, 0), true)) );
 }
 
+QString YInterval::toString() const {
+	QString out;
+    if ( from().opened() )
+        out += from().pos().toString() + "]";
+    else
+        out += "[" + from().pos().toString();
+    out += "<==============>";
+    if ( to().opened() )
+        out += "[" + to().pos().toString();
+    else
+		out += to().pos().toString() + "]";
+    return out;
+}
+
 YDebugStream& operator<<( YDebugStream& out, const YInterval& i )
 {
-    if ( i.from().opened() )
-        out << i.from().pos() << "]";
-    else
-        out << "[" << i.from().pos();
-    out << "<==============>";
-    if ( i.to().opened() )
-        out << "[" << i.to().pos();
-    else
-        out << i.to().pos() << "]";
-    return out;
+	out << i.toString();
+	return out;
 }
 
 

@@ -383,7 +383,7 @@ void YView::gotox( int nextx, bool forceGoBehindEOL )
 {
 	YASSERT(nextx >= 0);
 	//TODO check this forceGoBehindEOL parameter...
-	int shift = (forceGoBehindEOL || mModePool->current()->isEditMode()) ? 1 : 0;
+	int shift = (mWorkDrawLine.bufferLength() == 0 || forceGoBehindEOL || mModePool->current()->isEditMode()) ? 1 : 0;
 
 	/* select targeted YDrawLine */
 	int acc_x = 0;
@@ -421,7 +421,7 @@ void YView::gotox( int nextx, bool forceGoBehindEOL )
 void YView::gotodx( int nextx )
 {
 	//TODO: directly support nextx > screenWidth
-	int shift = mModePool->current()->isEditMode() ? 1 : 0;
+	int shift = (mWorkDrawLine.bufferLength() == 0 || mModePool->current()->isEditMode()) ? 1 : 0;
 	YASSERT(0 <= nextx && nextx < (mDrawBuffer.screenWidth()+shift));
 
 

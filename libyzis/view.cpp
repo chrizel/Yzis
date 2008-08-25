@@ -170,7 +170,10 @@ void YView::recalcScreen( )
     YCursor old_pos = mainCursor.buffer();
     mainCursor.reset();
 
+	setPaintAutoCommit(false);
 	updateBufferInterval(YInterval(YCursor(0,0), YBound(YCursor(0, mBuffer->lineCount()), true)));
+	sendRefreshEvent();
+	commitPaintEvent();
 
     gotoxy( &mainCursor, old_pos );
 }
@@ -1281,21 +1284,20 @@ void YView::guiPaintEvent( const YSelection& drawMap )
 		}
 	}
 
-	int cur_dy = mDrawBuffer.currentHeight();
-	if ( mDrawBuffer.screenHeight() > cur_dy ) { 
+	if ( !mDrawBuffer.full() ) { 
 		/* may be fake lines ? */
 
 		YDrawCell fl;
 		fl.c = "~";
 		fl.fg = YColor("cyan");
 
-		YInterval fake(YCursor(0,cur_dy),YCursor(mDrawBuffer.screenWidth()-1,mDrawBuffer.screenHeight()));
+		YInterval fake(YCursor(0,mDrawBuffer.currentHeight()),YCursor(mDrawBuffer.screenWidth()-1,mDrawBuffer.screenHeight()-1));
 		foreach( YInterval di, drawMap.map() ) {
 			YInterval i = di.intersection(fake);
 			if ( !i.valid() ) {
 				continue;
 			}
-			for ( cur_dy = i.fromPos().line(); cur_dy <= i.toPos().line(); ++cur_dy ) {
+			for ( int cur_dy = i.fromPos().line(); cur_dy <= i.toPos().line(); ++cur_dy ) {
 				if ( show_numbers ) {
 					guiDrawSetLineNumber(cur_dy, -1, 0); /* clear line number */
 				}

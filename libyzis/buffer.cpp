@@ -274,7 +274,7 @@ YCursor YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 	dbg() << "insertRegion: insert \\cup hl : " << bi << endl;
 
 	if ( data.count() > 1 ) {
-		bi.setTo(YBound(YCursor(0,lineCount()), true));
+		bi.setToPos(YCursor(0,lineCount()));
 	}
 
 	/* TODO: other highlighting */
@@ -337,7 +337,7 @@ void YBuffer::deleteRegion( const YInterval& bi )
 
 	YInterval update_interval(bi.from(), update_end);
 	if ( bi.fromPos().line() != bi.toPos().line()) {
-		update_interval.setTo(YBound(YCursor(0,lineCount()), true));
+		update_interval.setToPos(YCursor(0,lineCount()));
 	}
 
 	/* TODO: other highlighting */

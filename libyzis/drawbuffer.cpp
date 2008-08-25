@@ -424,6 +424,7 @@ void YDrawBufferIterator::setup( const YInterval& i )
 				found = true;
 				break;
 			}
+			w += cw;
 			mCurCell += 1;
 		}
 		if ( !found ) {

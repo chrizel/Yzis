@@ -256,14 +256,12 @@ int YDrawBuffer::setBufferDrawSection( int bl, YDrawSection ds, int* shift )
 {
 	int lid = bl - mTopBufferLine;
 	YASSERT(lid <= mContent.count());
-	YInterval affected;
 	/* compute screenY */
 	int dy = 0;
 	for ( int i = 0; i < lid; ++i ) {
 		dy += mContent[i].count();
 	}
 	YASSERT(dy < mScreenHeight);
-	affected.setFrom(YBound(YCursor(0,dy)));
 	int m_shift = 0;
 	/* apply section */
 	if ( lid == mContent.count() ) {

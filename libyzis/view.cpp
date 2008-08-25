@@ -385,8 +385,9 @@ void YView::gotoy( int nexty )
 void YView::gotox( int nextx, bool forceGoBehindEOL )
 {
 	YASSERT(nextx >= 0);
-	//TODO check this forceGoBehindEOL parameter...
 	int shift = (mWorkDrawLine.bufferLength() == 0 || forceGoBehindEOL || mModePool->current()->isEditMode()) ? 1 : 0;
+	nextx = qMin(mBuffer->getLineLength(workCursor.bufferY()) - 1 + shift, nextx);
+	//TODO check this forceGoBehindEOL parameter...
 
 	/* select targeted YDrawLine */
 	int acc_x = 0;
@@ -427,6 +428,7 @@ void YView::gotodx( int nextx )
 	//TODO: directly support nextx > screenWidth
 	int shift = (mWorkDrawLine.bufferLength() == 0 || mModePool->current()->isEditMode()) ? 1 : 0;
 	YASSERT(0 <= nextx && nextx < (mDrawBuffer.screenWidth()+shift));
+	//TODO nextx = qMin(...);
 
 
 	mWorkDrawLine = mWorkDrawSection.at(0);

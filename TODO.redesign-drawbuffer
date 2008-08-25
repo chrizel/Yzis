@@ -8,11 +8,7 @@ YView: check sendPaintEvent calls
 YDrawBuffer: Selections
 
 YBuffer::insertRegion: shift search hl, etc..
-YBuffer::insertRegion: undo
-YBuffer::insertRegion: swap
 YBuffer::deleteRegion: shift search hl, etc..
-YBuffer::deleteRegion: undo
-YBuffer::deleteRegion: swap
 
 YBuffer: unittest dataRegion
 YBuffer: insert and delete assertions

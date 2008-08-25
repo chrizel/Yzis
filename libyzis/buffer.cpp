@@ -256,6 +256,12 @@ YCursor YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 		after.setLine(ln);
 	}
 
+	YInterval opInterval = YInterval(begin, YBound(after, true));
+	if ( !d->isLoading ) {
+		d->undoBuffer->addBufferOperation(YBufferOperation::OpAddRegion, data, opInterval);
+		d->swapFile->addToSwap(YBufferOperation::OpAddRegion, data, opInterval);
+	}
+
 	/* syntax highlighting update */
 	int el = begin.line();
 	int nl; // next line not affected by HL update
@@ -268,7 +274,6 @@ YCursor YBuffer::insertRegion( const YCursor& begin, const YRawData& data )
 	dbg() << "insertRegion: insert \\cup hl : " << bi << endl;
 
 	/* TODO: other highlighting */
-	/* TODO: undo */
 
 	/* inform views */
 	foreach( YView* v, views() ) {
@@ -284,6 +289,12 @@ void YBuffer::deleteRegion( const YInterval& bi )
 {
 	QString ldata;
 	QString rdata;
+
+	if ( !d->isLoading ) {
+		YRawData deletedText = dataRegion(bi);
+		d->undoBuffer->addBufferOperation(YBufferOperation::OpDelRegion, deletedText, bi);
+		d->swapFile->addToSwap(YBufferOperation::OpDelRegion, deletedText, bi);
+	}
 
 	YCursor begin = bi.fromPos();
 	if ( bi.from().opened() )

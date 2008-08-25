@@ -9,7 +9,6 @@ include_directories(${YZIS_INCLUDES})
 ########### next target ###############
 
 set(yzis_LIB_SRCS 
-   undo.cpp 
    drawbuffer.cpp 
    view.cpp 
    buffer.cpp 

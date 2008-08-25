@@ -210,7 +210,7 @@ void NYSession::guiChangeCurrentView ( YView * view )
         cur->unmap();
 
     v->map();
-    v->refreshScreen();
+    v->sendRefreshEvent();
 }
 
 YView* NYSession::guiCreateView( YBuffer* buffer )

@@ -462,16 +462,16 @@ public:
     virtual void guiPaintEvent( const YSelection& drawMap );
 
 	void sendPaintEvent( const YInterval& i );
-    void sendPaintEvent( const YCursor from, const YCursor to ) QT_DEPRECATED;
-    void sendPaintEvent( int curx, int cury, int curw, int curh ) QT_DEPRECATED;
-    void sendPaintEvent( YSelectionMap map, bool isBufferMap = true ) QT_DEPRECATED;
+    void sendPaintEvent( const YCursor from, const YCursor to ) YZIS_DEPRECATED;
+    void sendPaintEvent( int curx, int cury, int curw, int curh ) YZIS_DEPRECATED;
+    void sendPaintEvent( YSelectionMap map, bool isBufferMap = true ) YZIS_DEPRECATED;
 
     /**
      * Ask for refresh screen
      */
-    void sendRefreshEvent() QT_DEPRECATED;
+    void sendRefreshEvent();
 
-    void removePaintEvent( const YCursor from, const YCursor to ) QT_DEPRECATED;
+    void removePaintEvent( const YCursor from, const YCursor to ) YZIS_DEPRECATED;
 
     /**
      * @arg enable is true, future paint events will be directly applied
@@ -492,9 +492,9 @@ public:
     void commitPaintEvent();
 
     /**
-     * Asks a redraw of the whole view
+     * Asks a redraw of the whole view, use sendRefreshEvent instead
      */
-    virtual void refreshScreen();
+    virtual void refreshScreen() YZIS_DEPRECATED;
 
     /**
      * recalcScreen refresh the screen and recalculate cursor position

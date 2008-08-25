@@ -3,8 +3,6 @@ insert/delete lines
 YView, YAction: cursor/stickyCol, gotod?[xy]
 YView/YDrawLine: take care of wrapped tab
 
-YView: check sendPaintEvent calls
-
 YDrawBuffer: Selections
 
 YBuffer::insertRegion: shift search hl, etc..

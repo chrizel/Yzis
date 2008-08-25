@@ -164,7 +164,7 @@ private :
 
 };
 
-YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
+extern YZIS_EXPORT YDebugStream& operator<< ( YDebugStream& out, const YDrawBuffer& buff );
 
 class YZIS_EXPORT YDrawLine {
 public :
@@ -213,6 +213,6 @@ private:
 	friend class YDrawBufferIterator;
     friend YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
 };
-YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
+extern YZIS_EXPORT YDebugStream& operator<< ( YDebugStream& out, const YDrawLine& dl );
 
 #endif

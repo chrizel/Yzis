@@ -1,5 +1,4 @@
 
-insert/delete lines
 YView, YAction: cursor/stickyCol, gotod?[xy]
 YView/YDrawLine: take care of wrapped tab
 

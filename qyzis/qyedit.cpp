@@ -480,6 +480,7 @@ QString QYEdit::keysToShortcut( const QString& keys )
 
 void QYEdit::registerModifierKeys( const QString& keys )
 {
+    Q_UNUSED(keys);
     /*
     KAction* k = new KAction( "", KShortcut( keysToShortcut( keys ) ), signalMapper, SLOT( map() ), actionCollection, keys.ascii() );
     signalMapper->setMapping( k, keys );
@@ -487,6 +488,7 @@ void QYEdit::registerModifierKeys( const QString& keys )
 }
 void QYEdit::unregisterModifierKeys( const QString& keys )
 {
+    Q_UNUSED(keys);
     /*
     QByteArray ke = keys.toUtf8();
     KAction* k = actionCollection->action( ke.data() );
